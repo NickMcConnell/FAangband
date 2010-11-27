@@ -1,0 +1,72 @@
+
+===================== Gameplay basics:  The Novice's Guide =====================
+
+
+NOTE:   In the unlikely event that you are using the roguelike keyset and still
+feel the need for a walkthrough, please review the list of commands (in the 
+help file "cmdlist.txt"), as all commands mentioned are those of the original 
+keyset.
+
+     When you (we shall use the second person from now on) begin the game, you 
+start out in a town with stores happy to sell you whatever they stock and you 
+can afford.  The town is also populated; stay away from rogues and Battle-
+scarred Veterans.  Visit the stores and stop by your very own home (the symbol 
+'8'), where you can safely stash all sorts of useful gear for later use.
+     You are carrying a few objects, which go in logical places on your person
+(your equipment) or in your backpack (your inventory).  Look at your 
+'i'nventory by typing 'i', and you will see a few items appropriate to your 
+character class.  If you have armor, 'w'ear it, if you have a spellbook, 
+'b'rowse it, and 'w'ield any weapons and bows you have.  After you have done
+this, look at your 'e'quipment by typing 'e', and check out the places that 
+gear can fit into.
+
+     Look at the left side of the screen, where all the most important info
+about you is displayed.  Reading from the top, you'll see your race, class,
+present title, then your experience level, experience points, and money on
+hand.  Your race and class never change, but you can gain more experience
+points by killing monsters and more gold by selling the loot they drop.
+     Next, the six physical statistics.  You already know that higher is 
+better, and you can learn more about them by reading the help file 
+"abilattr.txt".  Learn about specialty abilities by reading the help file
+"specialt.txt".
+     Near the bottom, you will see your armor class, hit points, and (for 
+most classes) your spell points.  Armor class shields you from direct damage.  
+Hit points are your life wrapped up in a number, so run from anything that 
+drops them too low, too fast.  Most classes also have spell points, or 
+magical energy that you can put to work by praying or casting spells.
+
+     Get familiar with some of the commands you have available to you, either
+by reading the online help file "cmdlist.txt", or by experimenting, whichever 
+you prefer.
+
+
+--- After this... (assumes a little knowledge of commands) ---
+
+     Okay, time to get playing!  Pick up some flasks of oil, or a sling and 
+some shots, and either some armor (If you are a warrior.  Store 2, if your 
+town has one), some arrows (if you are a ranger.  Store 0, 1 or 3), or some 
+phase door scrolls (If you are most other classes.  Stores 4 or 5).  If you 
+can afford it, get your hands on a lantern, because the extra light it provides
+is very handy at night. Once you've earned a little money, invest in a shovel 
+or a pickaxe, and some potions of Cure Light Wounds.  Now, 'w'ear a torch or 
+your lantern.  The 'O' command allows you to gain speciality abilities, and to 
+view your race, class, and specialty abilities.
+     See that path '>'?  It's the way to the world outside your home town.  Out
+there is a wilderness of forests, plains and mountains, swamps and deserts, 
+and the deadly, lucrative dungeons.  Head off (Once on the path, type '>').
+     Once you do that, you will find yourself in the wilderness.  Unless you 
+have spent a long time in town, it will still be daytime, but it is probably
+best to keep your light wielded anyway.  If you want some idea of where you're
+going, look at the Map of Middle-Earth in this help.
+     If you are a warrior, check to make certain everything you can wear is on 
+you, and go monster-hunting.  If you are any other class, see if you can learn 
+any spells (if "study" is visible on the bottom of your screen, you can).  If 
+you can, 'G'ain them, and either 'p'ray or use 'm'agic to use them.  Be very 
+careful when experimenting with spells, because you haven't many hit points.  
+If you can't learn spells, or find that they aren't doing enough damage, 'v' 
+(throw) your flasks of oil and 'f'ire your ammo at monsters (make certain you
+have a wielded shooter that fires whatever you have).  When you get hungry, 
+'E'at some of the food your character started out with.  And one last note:  
+Buy a scroll of Recall.  Find out what it does.
+
+Have fun, and keep your eyes peeled for a Lamp...

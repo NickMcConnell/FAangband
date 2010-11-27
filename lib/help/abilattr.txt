@@ -1,0 +1,276 @@
+
+============================ Character Attributes =============================
+
+     This file describes your character.  It discusses the attributes shown on 
+the left side of the main window, the basic skills characters possess, and the 
+various special immunities and qualities that characters may acquire in their 
+adventures.  It also tells you how to keep track of all this information.
+     Your character may view your race, class, and "specialty" abilties
+(described in the file "specialt.txt") or learn new specialty abilities using
+the 'O' command.
+
+
+=== Character Attributes Shown on the Left Side of the Main Window ===
+
+     Experience:
+         Experience affects almost everything else about your character.  As he 
+         kills monsters, casts spells and prays prayers for the first time, 
+         learns about an object kind by using it, disarms traps, and unlocks 
+         doors (listed in descending order of importance), he gains experience.  
+         Every so often, he will attain a new experience level.  This:
+              -increases hit points (HPs)
+              -increases magical power (mana)
+              -improves every skill except searching, perception, and stealth.
+              -makes it possible to use more powerful magical devices, wield 
+               heavier weapons, learn more effective spells and improve spells 
+               already learnt.
+              -adds entirely new abilities or benefits.
+         The maximum experience level is 50.
+
+     Gold:
+         Gold is amazingly handy, because everything the town can sell can be 
+         yours with enough of the stuff.  Characters start out with an amount 
+         of gold determined by ability scores (lower is better) and sex (female 
+	 characters start with more gold - In FAangband, males and females are 
+         clones, so take advantage of this!).  If the character is being
+	 'rolled' with random atributes, social class also influences starting
+	 gold (higher is better).
+
+         Inside the dungeon lies more gold than you will ever find, more seams 
+         of treasure than you will ever dig, and more monsters carrying loot 
+         than you will ever kill.
+
+     Vital Statistics:
+         Your character has six primary statistics, or stats.  Each of them has 
+         important effects, and how you juggle equipment to boost some stats at 
+         the expense of others can greatly help or hinder your character's ad-
+         venturing.  Because stats are so important, you will want to keep a 
+         sharp eye out for potions of Strength, Wisdom, etc.  They may start 
+         appearing at level 25 and don't become at all common until well 
+         past level 40.
+              The lowest any stat can go is 3, a level which greatly reduces any
+         abilities that stat influences.  The lowest "safe" figure for most 
+         stats is 7, but you can't expect any significant bonuses until the stat 
+         reaches 18 or higher.  Once you get a stat that high, further increases 
+         will greatly enhance your character's skills, eventually making it pos-
+         sible to slay some truly formidable monsters.  Stats max out at 18/220.
+         More information on individual stats is available below.
+
+     Armor Class:
+         Armor class helps prevent you getting killed.  It may be increased by 
+         equipping more and better armor, and by increasing your Dexterity.  As 
+         time passes, you will find this value rising past 100, even to 150 and 
+         above at very high levels.  More information is available in the help 
+         file "defence.txt".
+
+     Hit Points:
+         Each character has hit points, representing how much damage he can 
+         sustain before he dies.  The maximum number of hit points is derived 
+         from your race, class, level, and constitution.  Hit points may be 
+         regained by resting, or by a variety of magical means.
+
+     Mana:
+         Each character has spell points, or mana, which represents how many 
+         spells (or prayers) a character can cast (or pray).  The maximum number 
+         of spell points is derived from your class, level, and intelligence 
+         (for classes using sorcery and necromancy) or wisdom (for classes using 
+         natural or holy magics).  Spell points may be regained by resting, or 
+         (very rarely) by magical means.
+
+     Be warned:  Every one of the above can be lowered by monster attacks or
+by traps.  On the plus side, every character has means of repairing the
+damage or hunting down the thief.  See the help file "defence.txt".
+
+
+=== Stats ===
+
+     Strength:
+         Strength is critical to fighting effectively in melee and with missile 
+         weapons.  Increases in Strength increase damage, allows players to 
+         get more blows with heavier weapons, and boost the effectiveness of 
+         shield bashes.  Strength is also useful in tunneling and for carrying 
+         heavy items without being slowed down.
+ 
+     Intelligence:
+         Intelligence affects the spellcasting abilities of mages, rogues, 
+         necromancers, and assassins.  For these classes, this stat will affect 
+         the number of spells they may learn each level, the number of spell 
+         points they receive, and the chance for spells to fail.  These classes 
+         cannot learn spells if their intelligence is 6 or lower.  Intelligent 
+         characters also use magic devices, pick locks, and disarm traps more 
+         effectively.
+ 
+     Wisdom:
+          Wisdom affects the spellcasting abilities of priests, druids, rangers,
+          and paladins. For these classes, this stat will affect the number of 
+          prayers or spells they may learn each level, the number of spell 
+          points they receive, and the chance for prayers or spells to fail.  
+          These classes cannot learn spells if their wisdom is 6 or lower.  Wise 
+          characters also have a better chance of resisting magical spells cast 
+          upon them by monsters.
+ 
+     Dexterity:
+          Dexterity is a combination of agility and quickness.  A high dexterity 
+          may allow a character to get multiple blows with lighter weapons, get 
+          in slightly more shield bashes, and will significantly increase his 
+          chances of hitting with any weapon and dodging blows from enemies. 
+          Dexterity is also useful in picking locks, disarming traps, and pro-
+          tecting yourself from some of the thieves that inhabit the dungeon.
+ 
+     Constitution:
+          Constitution is a character's ability to resist damage to his body, 
+          and to recover from stuns, poison, cuts, and pure damage.  Therefore a 
+          character with a high constitution will receive more hit points and 
+          also recover them faster while resting.
+ 
+     Charisma:
+          Charisma represents a character's personality and physical appearance.  
+          A character with a high charisma will receive better prices from store 
+          owners, whereas a character with a very low charisma may be robbed 
+          blind.  A high charisma will also mean more starting money for the 
+          character.
+ 
+
+=== Abilities ===
+
+Characters possess various abilities which help them to survive and prosper.  
+The starting abilities of a character are based upon race and class.  Abilities 
+may be adjusted by high or low stats, and some increase with experience level.
+ 
+     Fighting Ability:
+          Melee (hand to hand) combat depends on this skill.  A character with 
+          a low fighting skill cannot hope to either hit monsters often or do 
+          much damage if he does.  This skill increases with the level of the 
+          character. The only stat that affects it is Dexterity.
+
+     Shooting Ability:
+          Using ranged missile weapons and throwing objects are both included in 
+          this skill.  The higher your character's shooting ability, the more 
+          frequently he will hit his target and the more damage he will do when 
+          he does.  This skill increases with the level of the character.  The 
+          only stat that affects it is Dexterity.
+
+     Saving Throws:
+          A Saving Throw is the ability of a character to resist the effects of 
+          a spell cast on him by another person/creature.  This does not include 
+          spells cast on the player by his own stupidity, such as quaffing a 
+          nasty potion.  This ability increases with the level of the character,  
+          but then most high level creatures are better at casting spells, so it
+          tends to even out.  A high wisdom also increases this ability.
+ 
+     Stealth:
+          The ability to move silently about is very useful.  Characters with 
+          good stealth can usually surprise their opponents, gaining the first 
+          blow.  Also, creatures may fail to notice a stealthy character en-
+          tirely, allowing a player to avoid certain fights and squash multiply-
+          ing monsters before they take over the area.  This skill is 
+          based entirely upon race and class, and will never improve unless 
+          magically enhanced.  Note that mages slowly lose stealth as they 
+          gain levels.
+ 
+     Disarming:  (Warning:  much more important in FAangband)
+          Disarming is the ability to safely remove traps and pick locks on 
+          chests and doors.  A successful disarming will gain the character 
+          some experience.  A trap must be found before it can be disarmed.  
+          Dexterity and Intelligence both modify the ability to disarm, and this
+          ability increases with the level of the character.
+ 
+     Magical Devices:  (Warning:  somewhat more important in FAangband)
+          Using a magical device such as a wand, staff, or any activatable 
+          object requires experience and knowledge.  Mages have considerably 
+          more skill in this field than any other class.  This skill is modified 
+          by Intelligence, and increases with the level of the character.
+ 
+     Searching Frequency (Perception):
+          Perception is the ability to notice something without actively seeking 
+          it out.  Only rogues and assassins can improve this skill naturally, 
+          but anyone can magically enhance it.
+ 
+     Searching Ability (Searching):
+          To search is to actively look for secret doors, ground traps, and traps 
+          on chests.  Rogues are the best at searching, but mages, druids, 
+          assassins, rangers, and priests are also good at it.  Only rogues and 
+          assassins can improve this skill naturally, but anyone can magically 
+          enhance it.
+
+     Infra-vision:
+          Infra-vision is the ability to see heat sources.  It will allow a 
+          character to see any warm-blooded creature up to a certain distance.  
+          This ability works equally well with or without a light source.  Many 
+          non-human races have innate infravision, and this skill can be 
+          enhanced only by magical means.
+
+
+=== The Special Qualities and Immunities that your Character may Possess === 
+
+     After your character is born, you may discover what special qualities and 
+immunities he has - and that you know about - by displaying the Character Screen 
+(type "C"), and then hitting "h" twice to display a list.  This list is amaz-
+ingly handy for finding out what you qualities you need and do not yet possess.  
+Because it only takes into account your racial intrinsics, shapeshift bonuses, 
+and fully known (*Identified*) or obvious items, consulting this list is not 
+cheating. A list of displayed qualities and their full names follows.  Consult 
+the help file "equip.txt" if you want full details:
+
+     Acid, Elec, Fire, Cold, Pois:
+          Acid, electricity, fire, cold, and poison resistance.
+     Fear:
+          You cannot fight hand-to-hand when panicking.  Some potions remove 
+          fear and you may obtain resist fear from various items of equipment.
+     Lite, Dark:
+          Resistance to light and darkness.
+     Blind, Confu:
+          Resistance to blindness and confusion can save your life.  Until you 
+          get these important survival aids, keep certain potions and mushrooms 
+          handy.
+     Sound, Shard, Nexus, Nethr, Chaos, Disen:
+          Resistance to sound, shards, nexus, nether, chaos, and disenchantment.
+     S. Dig:
+          Slow Digestion reduces the amount of food you consume.
+     PLite:
+          Wearing one (or more) objects possessing Permanent Light will increase 
+          your light radius by one; very handy for seeing foes before they leap 
+          upon you.
+     Regen:
+          Characters who regenerate regain hit points at twice the normal rate 
+          and mana at 1.5x the normal rate.  Characters who regenerate need to 
+          eat heartily.
+     Telep:
+          Try not to randomly teleport.
+     Invis:
+          Many creatures in the dungeons are invisible, and you will need to 
+          keep some source of permanent or temporary see invisible handy if you  
+          descend more than a few levels into the dungeon.
+     FrAct:
+          Some creatures are able to paralyze or slow you with melee attacks or 
+          spells.  Free Action is a survival essential in dungeons and the more
+	  dangerous wilderness.
+     HLife:
+          Characters with Hold Life resist experience draining attacks, and may 
+          even escape their effects entirely.
+     M-Mas:
+          Some items increase your magical device skill, allowing you to more 
+          easily take advantage of important utility and combat magics.
+     Stea :
+          Items with this ability decrease the amount of noise your character 
+          makes as he moves around the dungeon and performs actions.
+     Sear :
+          Items with this ability allow your character to find traps and secret 
+          doors more easily.
+     Infra:
+          Some objects increase the range at which you may see warm-blooded 
+          creatures, regardless of whether they are illuminated or even visible 
+          to the unaided eye.
+     Tunn :
+          All shovels and picks and certain other weapons grant bonuses to 
+          tunnelling skill.
+     Speed:
+          The faster you move, the fewer dangerous things monsters can do to 
+          you before you get to take a turn.  Speed items are rare for all but 
+          high-level characters.
+     Might:
+          Some missile launchers have a higher base damage multiplier than 
+          normal.
+     Shots:
+          Some missile launchers allow you to spend less time firing each shot.
+

@@ -1,0 +1,146 @@
+
+========================== Wilderness and Dungeons ==========================
+
+     Once you venture out of your home town, you will find yourself in 
+wilderness (unless you are playing in dungeon only mode).  The region of 
+Middle Earth you are in and the danger level (1 is the lowest outside towns) 
+will be shown at the bottom of the screen.  Take careful note of the danger 
+level outside your town - some regions are very deadly.  As a general rule, 
+the closer to Morgoth's fortress of Angband you get, the more dangerous it is.  
+Look at the file "memap.txt" to get some idea of the layout of Middle Earth.
+    Each region will appear as a large rectangle with paths off some sides 
+leading to other regions, and sometimes with stairs leading down into a 
+dungeon.  Each time you visit a region it will appear different, as there is a 
+wide variety of paths through the wilderness.  There are also different types
+of wilderness - plains which are mainly grass with sometimes a river running 
+through, forests which are mainly trees, mountains with a maze of rocky paths, 
+deserts full of rock and rubble, and pathless swamps of grass and water.
+     There are five dungeons (well, almost) to be explored, each of which has 
+a guardian on its deepest level (well, actually there are deeper levels of 
+Angband, but let's not be too ambitious yet).  New specialist abilities become 
+available after defeating your first and second dungeon guardians.  The 
+shallowest levels of the dungeons are 16 (for Amon Rudh), 30 (for Nargothrond 
+and Tol-In-Gaurhoth) and 40 (for Angband).  Nan Dungortheb is not a dungeon, 
+but a spider-ridden valley which can only be descended and not ascended;
+it also has a guardian.
+
+--- Dungeon Features, Light, Level Feelings, and Mining ---
+
+Terrain:
+     In FAangband, the following terrain types affect movement, combat, or 
+both.  Because they less frequently take advantage of terrain, monsters 
+benefit more from favorable and suffer less from unfavorable terrain than the 
+player does.
+
+     Rubble:
+          Slows down the player (apart from all types of dwarves) and all 
+     monsters that cannot bore or pass through rock.  Ends LOS, stops 
+     missiles, bolts, and beams, and reduces 
+     the radius of ball spells.  Grants the player and monsters within it some 
+     protection from melee, ranged, or magical attacks.  Rubble may dissolve 
+     to normal floor.
+
+     Water:
+          Greatly slows players (apart from Maiar) with heavy burdens, and 
+     humanoid monstersor fiery, and is impassable to earthbound
+     monsters.  All melee or ranged attacks and most spells benefit when the 
+     target is in water, especially water-based spells.  Fire-based spells 
+     become much less powerful, so find a lake if you battle Smaug.  Water may 
+     evaporate.
+
+     Lava:
+          Can be passed by any character, but inflicts substantial fire damage 
+     (less for players with feather fall - they're light on their feet).  All 
+     monsters other than fiery or strong flying creatures will not cross.  
+     Water and cold-based spells suffer and fire-based spells become more 
+     powerful against a target in lava.  Lava may freeze to rubble or normal 
+     floor.
+
+     Trees:
+          Slows down players not familiar with druidic techniques or elven, 
+     and all non-natural monsters that neither fly nor pass through rock.  
+     Ends LOS, stops missiles, bolts, and beams, and reduces the radius of 
+     ball spells.  Grants the player and monsters within it some protection 
+     from melee, ranged, or magical attacks.  Trees can burn.
+
+     Grass:
+          Just like open floors, but green.
+
+     Web: 
+	  Woven by spiders.  Does not block line of sight or the passage of 
+     missiles, but players and monsters other than spiders will need to take a 
+     turn to clear the web before they can move on (players using the 'T' 
+     command).
+
+     Abyss:
+          Inhabitable only by flying monsters or players.  Others venturing 
+     (or forced) into it will fall into the darkness.
+
+Staircases, Secret Doors, and Traps:
+          Paths lead from one region to another in wilderness.  Staircases 
+     allow your character to ascend or descend from one dungeon level to 
+     another.  Both are represented by "<" (up) and ">" (down), with paths 
+     being colour-coded and staircases white.  Each wilderness area has at 
+     least two paths to any adjoining area, and each dungeon level has at
+     least one up staircase, and two down staircases, unless it is the home of
+     one of the dungeon guardians.  In the four lesser dungeons the guardians
+     appear on the lowest possible level; in Angband, Morgoth appears on level
+     100, and you must kill him before staircases will appear.  Otherwise, the 
+     staircases are guaranteed, but they may be difficult to find.  Staircases 
+     may sometimes allow you to ascend or descend more than one level at a 
+     time.  Once you leave a level or wilderness area you can never return to 
+     it.  Artifacts will be lost, even unidentified ones if you are not using 
+     the "preserve" startup option.
+          Many secret doors exist in the dungeon, and may lead to anything 
+     from a new section of the dungeon level to an empty closet.  As your 
+     familiarity with the dungeon grows, you will know where many secret doors 
+     are likely to be.  Secret doors always look like granite until found and, 
+     for historical reasons, are never locked.  
+          Traps also await you in the dungeon and wilderness.  They look like 
+     normal floor or grass squares until found, too often by your getting 
+     caught by one.  Both secret doors and traps may be found using the 
+     's'earch once command, or by going into 'S'earching mode ('#', using the 
+     roguelike keyset).  Many classes can also use magic, and everyone can use 
+     the appropriate rod or staff.  Be warned: although magical disarming is 
+     convenient, it is never a sure thing.
+
+Light:
+          Your character must have some source of light in order to see, 
+     unless the area around him is lit by sun or magic.  In the wilderness, a 
+     light source is not needed during the day; if the sun sets, however, you 
+     will find yourself not only in need of illumination, but assailed by 
+     monsters that do not dare brave the sunlight.  Depending on the 
+     items he has equipped, he may have a light radius of one (torches), two 
+     (a lantern), or more, up to a rarely-attained maximum of five.
+          A torch or lantern burns fuel, and may be refilled (use the 'F'uel 
+     command) with other torches or flasks of oil respectively.  It is 
+     rumoured that other light sources exist which never need replenishing.
+
+Level Feelings:
+          After being on a level for a short while, you will get a 
+     message describing it.  The more interesting the 
+     choice of adjectives, the more dangerous and lucrative the level is 
+     likely to be.  If you have chosen Preserve mode when creating your 
+     character, you will occasionally get the message "you have a special 
+     feeling about this level", indicating the presence of a monster pit or 
+     nest (sometimes, only at shallow dungeon depths), a vault (more often in 
+     the dungeon), a player ghost, or an artifact.
+
+Themed Levels:
+          If you are in a dangerous enough area, and have spent a bit of time 
+     on the previous level, you may very rarely find a themed level, filled 
+     with monsters of a given type.  Such levels only appear once in a 
+     lifetime, so don't leave them unless you really want to.  Vision range is 
+     reduced on themed levels.
+
+Mining:
+          There is much treasure in the walls of the dungeon, mountains, and 
+     sometimes other places, just waiting for an industrious adventurer to 
+     come and dig it out.  Once you can afford it, and if you can handle the 
+     weight, bring a shovel or pick along.
+          As you get richer, the treasures in the wall won't seem so appealing 
+     anymore, but keep an item or spell of tunnelling handy.  Not only do all 
+     sorts of special vaults lie deep below the surface, some completely en-
+     closed by solid rock, but smart adventurers deliberately alter the 
+     dungeon to make the most dangerous breathers and summoners manageable.
+          Dwarves are exceptionally good miners.

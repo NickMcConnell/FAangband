@@ -1,0 +1,52 @@
+50
+******** BUFFER LINE *********************************** DO NOT REMOVE *******
+says: 'Has your folly led to this?'
+asks:  'Dare you stand against me?'
+snarls:  'I want you dead - and I'll do the job myself!'
+snickers:  'Oh, look, a walking corpse!'
+wonders aloud how many experience points you're worth...
+says: 'Pride yourself on this, that you were slain by a champion.'
+says:  'A fray! A fray!'
+yells:  'Stand back boys, he's my meat!'
+thunders: 'May heaven have mercy on your soul, for I will have none.'
+screams for your blood!
+sighs: 'They send a poorer grade of adventurer down each year than the last.'
+says: 'Your life-blood will baptise my blade!'
+shouts: 'Come here and take your medicine!'
+snickers: 'Mommy's not here to save you now!'
+says: 'You're almost not worth killing...almost!'
+leaps towards you with death in its eye.
+sings: 'Cut yer if ye stand, shoot yer if ye run.'
+says: 'Another adventurer?  I just got through picking my teeth with the last.'
+says: 'Your two ears will decorate my belt.'
+hisses:  'Yea, I will drink thy blood gladly.'
+grumbles:  'This puny an adventurer won't have much of a drop...'
+measures you by eye.  Readies the Standard size coffin.
+yells:  'I'm way bored!  The adventurers on this level are pathetic!'
+thunders:  'Run away, puppy, and find more resists!'
+says:  'Evil have been all thy ways.'
+says:  'Nice drinking cup you got attached to your neck!'
+says:  'Ready or not, you're playing with the big boys now.'
+says:  'You clearly haven't been keeping up with your RNG sacrifices...'
+declaims: 'Better men than you have fallen to my blade.'
+says:  'Abandon all hope, ye who enter here.'
+says:  'The dungeon's no place for weaklings.'
+shouts:  'Choose quickly!  Will you run or die?'
+roars:  'Enter my domain, will you?  The toll is death!'
+says:  'Your bones belong to the jackals now.'
+provides you with a copy of 'How to Make a Will in 5 Easy Steps'.
+gloats:  'Fighting's fun when you know you're going to win!'
+says:  'Don't even TRY to fight me; I'm in Wizard mode!'
+says:  'I've slain the best; why do they send me the rest?'
+says:  'Shield your face as you observe me - don't use the naked eye!'
+roars:  'Fight me if you dare, bastard!  You 'n me for an empire!'
+readies for slaughter.
+eyes you calculatingly.
+says:  'If thou wilt be slain, I will slay thee gladly.'
+screams:  'Die now and let the darkness have thee!'
+laughs:  'Ai!  I shall have some fun now!'
+cackles:  'I'm invincible.  You haven't a chance against me!'
+says:  'There will be none to sing sad songs over your bones.'
+says:  'Lost, abandoned, alone, and now you're about to die.'
+declaims:  'Your sins have just caught up with you.'
+screams:  'Witness my fury!'

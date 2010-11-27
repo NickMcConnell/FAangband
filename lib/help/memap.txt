@@ -1,0 +1,40 @@
+=================== "Map" of Middle Earth =======================
+
+Below is a rough diagram of the linkages between the regions of Middle
+Earth which your character can visit.  Dungeons are shown in brackets under
+the region where their entrance lies (Nan Dungortheb is not strictly a dungeon,
+but acts like one in some ways).  Some towns are clearly marked; for the
+others and for a description of towns, see "town.txt".  For more information
+about wilderness and dungeons, see "wild-dun.txt".
+
+   Anfauglith -------------------------Lothlann
+    (Angband) \                              \
+        |      \_____Dorthonion               \
+    Fen of Serech  (Nan Dungortheb)            \
+        |                   \                   |
+Sirion Vale-----Gondolin  Dor Dinen             |
+(Tol-in-Gaurhoth)           |    \              |         Hithaeglir--Gladden
+          \                 |    Himlad         |             /       Fields
+          Brethil           |        \        Ered Luin   Khazad Dum
+             \              |         East        \         /
+          ___ Ephel        Doriath   Beleriand     \    Hithaeglir
+        /    Brandir             \        \         |     /
+Talath /         \                \      Thargelion |   Eriador
+Dirnen       West Beleriand    Menegroth     \      |  /    \            
+(Nargothrond)     \                \           Belegost      \
+              Amon Rudh           Doriath          |          Eriador
+              (Amon Rudh)             \         Ered Luin      town
+                    \                  \            |            |
+                West Beleriand    East Beleriand    |            |
+                     \                        \   Ossiriand      |
+                   Andram                      \     |           |
+                      \                         \    |           |
+                    East Beleriand              Ossiriand        |
+                        \                        /town           |
+                      Taur-Im-Duinath   _Ent Path   |            |
+                          \            /           Ossiriand     |
+                        Taur-Im-Duinath             |            |
+                            town                Ered Luin South  |
+                                                        |       /
+                                                    Ered Luin South
+                                                        town

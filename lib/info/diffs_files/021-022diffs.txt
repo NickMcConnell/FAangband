@@ -1,0 +1,68 @@
+New features
+------------
+ - made the game almost completely playable with mouse and no keyboard, to
+   enable Si Griffin's Windows CE port to work.  A lot of detail hidden here.
+   There is a new help file, mouse.txt, available from the commands and 
+   options file.
+
+ - enabled screen width of 48 instead of 80 (using -l option in x11 or menu
+   command in windows) - also largely to fit in with Si's port.  Altered many
+   screens, prompts etc to fit in small screen mode.  Made an option of 
+   printing player stats etc at the bottom of the screen (a little like in 
+   Unangband) to allow play in portrait mode on portables.
+
+ - included graphics support (David Gervais tiles, Adam Bolt tiles and 
+   original tiles) and bigtile support for x11, xaw and windows; also Andrew 
+   Doull's double/triple tile graphics for windows, and extended this to x11.
+
+ - did more modern flavouring with flavor.txt edit file, moved standard .prf
+   files from the lib/user directory to lib/pref
+
+ - changed the behaviour of teleport level; it is now possible to go in both
+   directions in Nan Dungortheb, and in other wilderness the player can escape,
+   but not progress using it.  Put trapdoors back in wilderness.
+
+ - increased magic missile damage
+
+ - in preserve mode, made special feelings only occur with artifacts or greater
+   vaults
+
+ - introduced the equivalent of vaults in wilderness of level higher than 10
+
+ - tweaked/renamed/introduced some artifacts
+
+ - added Rapid Fire specialty for rangers (trades some accuracy for more shots)
+
+ - changed map so that the major dungeons are shorter and some wilderness 
+   increases two levels at a time
+
+ - items inscribed @v or @f are picked up straight into the quiver (as with =g)
+
+ - amended priority in 'M' map so that 'floors' are shown in wilderness
+
+ - added more complaints
+
+ - added command for resting until the next sunrise or sunset
+
+ - changed 'leaving detection area' warning to before you leave it, not after
+   (suggested by Christophe Cavalaria)
+
+ - made flying more consistent
+
+Bugs fixed
+----------
+ - removed a filename error from Makefile.ibm 
+
+ - home items are now fully ID'd on death
+
+ - dungeon mapping was broken with some light settings
+
+ - monster AI was not taking removed walls into account
+
+ - pathfinding algorithm was starting runs in the opposite direction to what
+   was intended
+
+ - 'M' map now works properly in towns
+
+ - saving and reloading was sometimes causing mana loss
+

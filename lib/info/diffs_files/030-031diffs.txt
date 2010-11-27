@@ -1,0 +1,51 @@
+Feature
+-------
+
+Added Andrew Doull's multiline messages (easy_more option) from UnAngband.
+
+Player now loses target on being confused.
+
+Bugfixes
+--------
+
+Multiple level feelings on themed levels.
+
+Turn not noted properly if an artifact is IDd on the ground.
+
+Ammo not showed in 'i' inventory  - reverted to old one.
+
+Crash on exit in windows.
+
+Rings of resist cold (etc) which give vulnerability have value, and stack 
+despite different percentages.
+
+Cursed items shouldn't be throwable (except from the quiver).
+
+Specialty browsing screen - arrows don't scroll.
+
+SP_SHADOW shouldn't show "hurt by bright light".
+
+Speed display needs to update more often.
+
+Player placed in wall sometimes on entering river levels.
+
+Subwindow area map & dbl/trptile.
+
+Flags and percent resists in 'C' not matching.
+
+Autoinscriptions don't work.
+
+Dbl/trptile settings don't save in sdl.
+
+'I' screen indenting is bad.
+
+Nature's vengeance doesn't show damage on browsing.
+
+Notes-related crash on 'C' screen.
+
+Immunities not working.
+
+Proofing - will only do 1 item but then stacks and proofs multiple.
+
+AC appearing for inIDd rings of power.
+

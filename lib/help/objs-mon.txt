@@ -1,0 +1,175 @@
+
+============================= Objects and Monsters =============================
+
+     The mines of Angband and the surrounding areas of Beleriand are full of 
+objects just waiting to be picked up and used.  The treasures of fallen 
+kingdoms, dragon's hordes, heirlooms, wizard's stashes, and the plunder from 
+the First Age ofthe world and before unite with the scattered earthly 
+possessions of all the foolish adventurers that died before you to offer 
+unimaginable wealth for those bold enough to seize it.
+
+
+Your inventory (backpack) and equipment (your person):
+          You pick up objects by moving on top on them (if you have the 
+      "auto_pickup" option on), or using the 'g'et command.  You may carry up to 
+     23 different items or piles of items, and have 12 areas of your body where 
+     wearable equipment may go.  If you somehow manage to stuff 24 items into 
+     your pack, for example, by removing a helmet from your head while your pack 
+     is full, then your pack will overflow and the most recently added item will 
+     fall out and onto the ground.
+          Carry too much weight, and you will begin to slow down, making it 
+     easier for monsters to catch up to you.  The point at which your load thus 
+     hinders you depends on your strength.
+
+Your quiver:
+          Your equipment includes a quiver, which may hold up to ten different 
+     kinds of ammo or throwing weapons.  Once placed in the quiver (using the 
+     wield command), ammo and weapons normally sort in the quiver slots just 
+     as they do in the packpack.  You may lock them into a specific slot, and 
+     make ranged combat a lot more convenient, by inscribing them with 
+     inscriptions similar to "@1", or "@f1", or "@v1".  Wherever you 
+     store it, ammo still takes up space; for every 99 missiles (or fraction 
+     thereof) that you place in the quiver slots, you lose an inventory slot. 
+     Throwing weapons take the space of 5 pieces of ammo each.  Any such slots 
+     will be clearly marked in your inventory listing.  Ammo on the floor will 
+     automatically combine with similar items in the quiver, which makes 
+     cleaning up after a big fight much easier.
+
+
+Specific Types of Objects:
+          Many objects in the world have special commands for their 
+     use.  Wands must be Aimed, staves must be Used, scrolls must be Read, and 
+     potions must be Quaffed.  You may, in general, not only use items in your 
+     pack, but also items on the ground, if you are standing on top of them.
+
+     Wands:
+          In FAangband, known wands stack, combining their charges.  Such a stack 
+          may be heavier, but can be recharged more safely and effectively.
+     Staffs:
+          Staffs do not combine their charges and only stack if they happen to 
+          have the same number of charges (they take up plenty of space in your 
+          backpack).  If stacked, the number of charges that they display is 
+          prefixed by a quantity indicator (e.g. "(2x 13 charges)", which shows 
+          that each of two staffs have 13 charges.  Although bulky, staffs often 
+          have plenty of charges and recharge well.
+     Rods:
+          Rods always stack.  A stack of rods with at least one charging member 
+          will show an appropriate inscription.  When zapped, a rod is "timed 
+          out" for a given number of turns.  Each recharging rod in a stack 
+          contributes to the stack's total recharge rate; if three out of five 
+          rods are charging, the stack's total timeout period will decrease by 
+          three per normal player turn.  
+          Note:  In FAangband, rods are not invulnerable...
+
+     Chests:
+          Chests are difficult and dangerous to open, as they contain both traps 
+     and locks, but the adventurer that opens one may be rewarded handsomely.
+
+     Scroll of Word of Recall:
+          The Scroll of Word of Recall deserves special mention.  Read away 
+     from home, it brings you back to your home town.  Read in your home town, 
+     it takes you to one of four points you have been to.  This spell takes a 
+     little time to take effect, so don't expect it to save you in a crisis.  
+     Should you mistakenly read a Scroll of Word of Recall, you may cancel it 
+     by reading another.
+
+Object Inscriptions:
+      Use the '{' and '}' keys to inscribe and uninscribe objects.  Inscriptions 
+      go very well with keymaps and macros:  See the help file "macro.txt".
+
+     To designate a main and backup weapon:
+          Inscribe both with "@0" (or "@w0").  The 'X' command will replace 
+          whatever melee weapon you are wielding with another so inscribed.  
+          You may also inscribe these or other weapons with "@1", etc., and 
+          wield weapons 0, 1, 2 and so on as desired.
+
+     To prevent accidental use of an object with any command:
+          Inscribe it with "!x", where 'x' is the letter you type to issue that 
+          command.
+
+     To be very paranoid about an object:
+          Inscribe it with "!*".
+
+     To set up a wand that is always aimed with the same set of keystrokes:
+          Inscribe it with "@a#", or "@z#" in the roguelike keyset, replacing 
+          the '#' with whatever digit you desire.  This allows you to set up 
+          macros to, say, check for traps instantly.  Similar inscriptions make 
+          archery very convenient, and make certain that spellbooks are always 
+          accessed using the same keystrokes.
+
+     To get notification when an object that recharges automatically is ready 
+     for use:
+          Inscribe it with "!!".
+
+     Inscriptions for fun and profit:
+          Try inscribing the first monster killed by a weapon, hidden object 
+     abilities (once you discover them), and where you found the item or who 
+     dropped it.
+
+          The game also inscribes objects automatically.  Wands and staves which 
+     are known to be empty will be inscribed with "empty".  Objects which have 
+     been tried at least once but haven't been identified yet will be inscribed 
+     with "tried".  Artifacts that you discovered by trying to destroy them 
+     will be inscribed "special".  Items purchased at a discount are so marked.
+     Some of these inscriptions will disappear when the item is identified, 
+     and you may overwrite others.
+
+Pseudo-ID:
+          All adventurers are able to automatically gain information about many 
+     equippable objects, but some classes learn more about objects this way 
+     than others.  Priests, Mages, Druids, and Necromancers can tell whether 
+     an item is "good" (with magical enhancements of some sort), or "dubious" 
+     (items with some disadvantages).  Warriors, Rogues, Paladins, Rangers and 
+     Assassins can learn whether an item is "perilous" (a powerful item with 
+     some disadvantages), "dubious", "average" (an item with no magical 
+     bonuses or penalties), "good", "excellent" (an item that grants special 
+     bonuses or abilities), or even "special" (an artifact).
+
+Cursed Objects:
+          Some objects, mainly armor and weapons, are cursed.  There are many 
+     different curses, some of them more deadly than others - for more 
+     information on the different types, see the help file "equip.txt".  Some
+     curses have the potential to be removed; curse removal on these does not 
+     always work, though, and attempting again may destroy the item (even 
+     artifacts).  The curses on many items and standard artifacts are known
+     immediately on identification, but there are other items where the curses
+     need to be discovered by use or by a Scroll of Reveal Curses.
+
+ID by Use:
+          Most objects - particularly those which can be worn or wielded - can 
+     be learnt about by using them.  Once you have learnt all the properties 
+     of an item it will be marked as fully known; if you're in more of a hurry, 
+     you can use the Identify spell.
+
+Sensation ID:
+	  Most rings and amulets have magical properties.  Once you are aware
+     of a property of a ring or amulet you are wearing, you will be able to
+     recognise that property on other jewellery items.
+
+
+=== Monsters: Monster Memories, Stealth, and Player Ghosts ===
+
+Your Monster Memory:
+          When you see a monster for the first time, all you know are its 
+     physical attributes and whatever information the monster description may 
+     provide.  As you fight and kill monsters, use various attacks on them, 
+     probe them with magic, and get killed by them, you learn more about their 
+     strengths and weaknesses.
+
+Stealth:
+          Characters have a base chance to wake up monsters that increases as 
+     player speed does (since a speedy character will perform more actions 
+     making noise every time a monster gets to take its turn) and greatly 
+     decreases as stealth improves.  This value can be modified:  combat and 
+     bashing boors makes it more likely that monsters will awake (especially 
+     those in line of sight), and resting makes it less likely.  The higher 
+     your base stealth, the less extra noise you will make in combat.
+
+Player Ghosts:
+          Player ghosts vary from game to game depending on the name, sex, 
+     race, and class of the adventurer or Angband/Oangband/FAangband Hero 
+     whose bones file was used during ghost creation.  Should your character 
+     die, information about him will often be added to a new bones file, 
+     inside the folder /lib/bones, and a future game might bring him back from 
+     the dead...
+

@@ -1,0 +1,89 @@
+Player resistances:
+- Instituted a system of incremental resists for the player.  The
+  current known resistance percentage is show on the second stat
+  screen.
+
+Traps:
+- All monster trappers get an extra trap at level 25.
+- Monster trappers with the Extra Trap get an extra trap, as 
+  well as learning advanced traps faster and gaining some new
+  advanced traps at high levels: Drain Life [NPP], Unmagic, Dispel 
+  Monsters [NPP].
+
+Information for specialty/racial/class abilities:
+- The "view specialty" interface is now more general, providing
+  information about a variety of racial and class-based abilities as
+  well as specialties.
+- Cleaned up and color coded the interface.
+- Got rid of the annoying more on the learn/view abilities prompt.
+- Removed the specialty information from the self knowledge display.
+
+New Specialties:
+- New specialty: Mana Burn - may reduce monster mana with melee 
+  weapon attacks.  Mana burned hurts the target.
+- New specialty: Trap Setting - as the basic Rogue ability, though
+  with lower disarming skill.
+- New Specialty: Channeling - provides a bonus similar to heighten
+  magic, but depending on the casters current mana level.
+- New specialty choices: Trap Setting (Warriors and Rangers), Mana
+  Burn (Rogues and Assassins), Harmony (Paladins), Channeling
+  (all spellcasters).
+
+Items:
+- The "bonus" ability for the Green DSM shapeshift is changed from
+  Regeneration to Poison immunity.
+
+Classes:
+- Increased Ranger pseudo-id speed.
+- Gave Rangers another +1 strength, +1 to hit dice.
+- Tweaked missile skill and weapon specific bonuses for Rangers.  This
+  is a cleanup with little net effect.
+- Increased the number of starting arrows for Rangers, and gave some
+  shots to Assassins.
+
+Misc:
+- Greatly reduced the distance penalty to accuracy for ranged attacks.
+  All throws/shots have a "point blank" range equal to half their max
+  range (up to 10 squares) over which they incur no penalty.
+- Unresisted disenchantment attacks now reduce monster and player
+  mana, and dispel magic on the player.
+- The dispel magic monster spell is more effective at low spell power.
+- The dispel magic monster spell is slightly more likely to be cast.
+- Many more high level monsters now cast dispel magic.
+- The Beorning default shapeshift now requires a player turn to
+  activate.
+- Added a monster mana bar [NPP].
+- Changed windows settings to look nicer by default with "bizarre"
+  windows.
+
+Upgrades:
+- Created p_class.txt; this controlls pretty much everything
+  class-dependant except magic and chest drops.  These   may be 
+  added in a future release.
+- Removed more magic numbers from code [Christer Nyfalt].
+
+Bugs fixed:
+- Mushrooms of Poison and Potions of Poison do not identify when
+  eaten.
+- Aman, Elvenkind, and Permanance ego items fail to generate random
+  high resists.
+- Enhance Magic is too effective with temporary resists.
+- Resist Light/Dark from the specialties Holy Light/Unlight is not
+  displayed on stat screen (resistance does work).
+- Necromancer Orb of Death is bugged - does way too little damage.
+- Some saving throws are miscalculated.
+- Damage from weak Light attacks is really screwed up.
+- No display of heightened magic for necromancers.
+- Minor rounding inconsistency in heighten magic display vs actual
+  effects.
+- Sauron is missing the Morgul Magic flag.
+- Several item descriptions are missing spaces between words.
+- '/' command still says 'A' symbols represent angels.
+- Identify/recharge spells drain mana if cancelled.
+- Help files inconsistent with implementation of Acid Immunity.
+- Unlight bonuses apply when they should not.
+- Unlight allows dodging of missiles while blind (added by mistake).
+- Non-moving monsters may move when the player has superstealth.
+- Perfect Balance price adjustment was being skiped for items with
+  no pval.
+- Changed a couple of staff flavor colors.

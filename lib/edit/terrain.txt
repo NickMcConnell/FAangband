@@ -1,0 +1,963 @@
+# File: f_info.txt
+
+
+# This file is used to initialize the "lib/raw/f_info.raw" file, which is
+# used to initialize the "terrain feature" information for the Angband game.
+
+# Do not modify this file unless you know exactly what you are doing,
+# unless you wish to risk possible system crashes and broken savefiles.
+
+# Note that the terrain feature are grouped into very regular groups,
+# such that each of the bits in the feature type conveys information.
+
+# Note that terrain feature zero contains the "darkness" picture.
+
+
+# Version stamp (required)
+
+V:1.1.5
+
+#N: index: name
+#G: ASCII char used to represent the feature: color symbol
+#M: index of the feature whose display this feature uses.
+#F: terrain flags
+#D: descriptions
+
+
+# 0x0* - basic terrain
+
+# 0x00 --> nothing
+
+N:0:nothing
+G: :w
+
+
+# 0x01 --> open floor
+
+N:1:open floor
+G:.:w
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_FLOOR | TF_OBJECT 
+D:An open floor or bare ground.  Can be walked across by anything, and can 
+D:hold traps or items.  Does not break line of sight.
+
+# 0x02 --> invisible trap (drawn as open floor)
+
+N:2:invisible trap
+G:.:w
+M:1
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_FLOOR | TF_TRAP_INVIS 
+D:It looks like open ground, but beware!
+
+# 0x03 --> open door
+
+N:3:open door
+G:':U
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_DOOR_ANY | TF_INTERESTING
+D:A door that is already open.  Player, monster, spell and missile can pass
+D:through as long as it stays open.
+
+# 0x04 --> broken door
+
+N:4:broken door
+G:':u
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_DOOR_ANY | TF_INTERESTING
+D:A door so broken that it cannot be shut.
+
+# 0x05 --> down stairs (perm)
+
+N:5:down staircase
+G:>:w
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING | TF_STAIR
+D:A staircase down to a deeper part of the dungeon.
+
+# 0x06 --> up stairs (perm)
+
+N:6:up staircase
+G:<:w
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING | TF_STAIR
+D:A staircase up to a shallower part of the dungeon.
+
+# 0x07 --> down shaft (perm)
+
+N:7:down shaft
+G:>:s
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING | TF_STAIR
+D:A staircase down to a much deeper part of the dungeon.
+
+# 0x08 --> up shaft (perm)
+
+N:8:up shaft
+G:<:s
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING | TF_STAIR
+D:A staircase up to a much shallower part of the dungeon.
+
+# 0x09 --> rune of the elements
+
+N:9:rune of the elements
+G:;:o
+F:TF_LOS | TF_PROJECT | TF_INTERESTING | TF_RUNE 
+D:A magical rune which affects elemental spells and breaths.
+
+# 0x0A --> rune of magic influence
+
+N:10:rune of magic influence
+G:;:b
+F:TF_LOS | TF_PROJECT | TF_INTERESTING | TF_RUNE 
+D:A magical rune which affects resistance to magic.
+
+# 0x0B --> rune of instability
+
+N:11:rune of instability
+G:;:u
+F:TF_LOS | TF_PROJECT | TF_INTERESTING | TF_RUNE 
+D:A magical rune which causes earthquakes.
+
+# 0x0C --> rune of mana
+
+N:12:rune of mana
+G:;:r
+F:TF_LOS | TF_PROJECT | TF_INTERESTING | TF_RUNE 
+D:A magical rune which holds a reserve of mana.
+
+# 0x0D --> rune of protection
+
+N:13:rune of protection
+G:;:y
+F:TF_LOS | TF_PROJECT | TF_INTERESTING | TF_RUNE 
+D:A magical rune which monsters cannot pass without difficulty.
+
+# 0x0E --> rune of power
+
+N:14:rune of power
+G:;:s
+F:TF_LOS | TF_PROJECT | TF_INTERESTING | TF_RUNE 
+D:A magical rune which affects spell power.
+
+# 0x0F --> rune of speed
+
+N:15:rune of speed
+G:;:G
+F:TF_LOS | TF_PROJECT | TF_INTERESTING | TF_RUNE 
+D:A magical rune which affects speed.
+
+# 0x1* - player traps -- trap door.  Level 2 and below.
+# This location is hard-coded, to prevent trap doors on quest levels.
+
+N:16:trap door
+G:^:w
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_FLOOR | TF_INTERESTING | TF_TRAP 
+D:It looks like floor, but step incautiously and you will fall through.
+
+# 0x11 --> visible trap -- pit.  Level 2 and below.
+
+N:17:pit
+G:^:u
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_FLOOR | TF_INTERESTING | TF_TRAP 
+D:A hole dug to snare the unwary - hard to get out of, and maybe spiky.
+
+# 0x12 --> visible trap -- stat-reducing dart.  Level 8 and below.
+
+N:18:dart trap
+G:^:r
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_FLOOR | TF_INTERESTING | TF_TRAP 
+D:A trap which shoots damaging darts.
+
+# 0x13 --> visible trap -- discolored spot.  Level 5 and below.
+
+N:19:discolored spot
+G:^:s
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_FLOOR | TF_INTERESTING | TF_TRAP 
+D:A strange coloured spot on the ground - beware its elemental attack.
+
+# 0x14 --> visible trap -- gas, with various possible effects.  Any level.
+
+N:20:gas trap
+G:^:g
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_FLOOR | TF_INTERESTING | TF_TRAP 
+D:A trap that releases gas with various effects.
+
+# 0x15 --> visible trap -- rune -- summoning.  Level 3 and below.
+
+N:21:strange rune
+G:^:o
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_FLOOR | TF_INTERESTING | TF_TRAP 
+D:A magical rune which calls up monsters to attack you.
+
+# 0x16 --> visible trap -- dungeon alteration.  Level 20 and below.
+
+N:22:strange rune
+G:^:U
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_FLOOR | TF_INTERESTING | TF_TRAP 
+D:A magical rune which shakes the area.
+
+# 0x17 --> visible trap -- various (mostly rather nasty) traps.  Level 40 and below.
+
+N:23:hex
+G:^:v
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_FLOOR | TF_INTERESTING | TF_TRAP 
+D:A trap of strange chaotic magical effects.
+
+# 0x18 --> visible trap -- move player.  Any level.
+
+N:24:shimmering portal
+G:^:b
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_FLOOR | TF_INTERESTING | TF_TRAP 
+D:A portal to another area.
+
+# 0x19 --> visible trap -- arrow, bolt, or shot trap.  Level 4 and below.
+
+N:25:murder hole
+G:^:W
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_FLOOR | TF_INTERESTING | TF_TRAP 
+D:A booby-trap which shoots you.
+
+# 0x1A --> visible trap -- falling tree branch
+
+N:26:falling branch
+G:^:g
+F:TF_PASSABLE | TF_OBJECT | TF_TREE | TF_INTERESTING | TF_TRAP 
+D:A falling branch could be random, or an act of an enemy, animal or vegetable.
+
+# 0x1B --> visible trap -- falling tree branch
+
+N:27:falling branch
+G:^:g1
+F:TF_PASSABLE | TF_OBJECT | TF_TREE | TF_INTERESTING | TF_TRAP 
+D:A falling branch could be random, or an act of an enemy, animal or vegetable.
+
+# 0x1C --> visible trap -- unused
+
+#N:28:????
+#G:^:g
+
+# 0x1D --> visible trap -- unused
+
+#N:29:????
+#G:^:g
+
+# 0x1E --> visible trap -- unused
+
+#N:30:????
+#G:^:g
+
+# 0x1F --> visible trap -- unused
+
+#N:31:????
+#G:^:g
+
+# 0x2* - doors
+
+# 0x20 --> locked door (power 0)
+
+N:32:door
+G:+:U
+M:32
+F:TF_DOOR_ANY | TF_DOOR_CLOSED | TF_INTERESTING
+D:Doors may be locked or stuck; getting through them may not be easy.  Your 
+D:disarming skill makes all the difference to your ability to handle locks, 
+D:but you can also bash doors down, take a pickaxe to them, or blast them open 
+D:with magic.  Monsters are also slowed down by doors; you can earn yourself 
+D:valuable time by jamming or locking them.
+
+
+# 0x21 --> locked door (power 1)
+
+N:33:locked door
+G:+:U
+M:32
+F:TF_DOOR_ANY | TF_DOOR_CLOSED | TF_INTERESTING
+D:Doors may be locked or stuck; getting through them may not be easy.  Your 
+D:disarming skill makes all the difference to your ability to handle locks, 
+D:but you can also bash doors down, take a pickaxe to them, or blast them open 
+D:with magic.  Monsters are also slowed down by doors; you can earn yourself 
+D:valuable time by jamming or locking them.
+
+# 0x22 --> locked door (power 2)
+
+N:34:locked door
+G:+:U
+M:32
+F:TF_DOOR_ANY | TF_DOOR_CLOSED | TF_INTERESTING
+D:Doors may be locked or stuck; getting through them may not be easy.  Your 
+D:disarming skill makes all the difference to your ability to handle locks, 
+D:but you can also bash doors down, take a pickaxe to them, or blast them open 
+D:with magic.  Monsters are also slowed down by doors; you can earn yourself 
+D:valuable time by jamming or locking them.
+
+# 0x23 --> locked door (power 3)
+
+N:35:locked door
+G:+:U
+M:32
+F:TF_DOOR_ANY | TF_DOOR_CLOSED | TF_INTERESTING
+D:Doors may be locked or stuck; getting through them may not be easy.  Your 
+D:disarming skill makes all the difference to your ability to handle locks, 
+D:but you can also bash doors down, take a pickaxe to them, or blast them open 
+D:with magic.  Monsters are also slowed down by doors; you can earn yourself 
+D:valuable time by jamming or locking them.
+
+# 0x24 --> locked door (power 4)
+
+N:36:locked door
+G:+:U
+M:32
+F:TF_DOOR_ANY | TF_DOOR_CLOSED | TF_INTERESTING
+D:Doors may be locked or stuck; getting through them may not be easy.  Your 
+D:disarming skill makes all the difference to your ability to handle locks, 
+D:but you can also bash doors down, take a pickaxe to them, or blast them open 
+D:with magic.  Monsters are also slowed down by doors; you can earn yourself 
+D:valuable time by jamming or locking them.
+
+# 0x25 --> locked door (power 5)
+
+N:37:locked door
+G:+:U
+M:32
+F:TF_DOOR_ANY | TF_DOOR_CLOSED | TF_INTERESTING
+D:Doors may be locked or stuck; getting through them may not be easy.  Your 
+D:disarming skill makes all the difference to your ability to handle locks, 
+D:but you can also bash doors down, take a pickaxe to them, or blast them open 
+D:with magic.  Monsters are also slowed down by doors; you can earn yourself 
+D:valuable time by jamming or locking them.
+
+# 0x26 --> locked door (power 6)
+
+N:38:locked door
+G:+:U
+M:32
+F:TF_DOOR_ANY | TF_DOOR_CLOSED | TF_INTERESTING
+D:Doors may be locked or stuck; getting through them may not be easy.  Your 
+D:disarming skill makes all the difference to your ability to handle locks, 
+D:but you can also bash doors down, take a pickaxe to them, or blast them open 
+D:with magic.  Monsters are also slowed down by doors; you can earn yourself 
+D:valuable time by jamming or locking them.
+
+# 0x27 --> locked door (power 7)
+
+N:39:locked door
+G:+:U
+M:32
+F:TF_DOOR_ANY | TF_DOOR_CLOSED | TF_INTERESTING
+D:Doors may be locked or stuck; getting through them may not be easy.  Your 
+D:disarming skill makes all the difference to your ability to handle locks, 
+D:but you can also bash doors down, take a pickaxe to them, or blast them open 
+D:with magic.  Monsters are also slowed down by doors; you can earn yourself 
+D:valuable time by jamming or locking them.
+
+# 0x28 --> jammed door (power 0)
+
+N:40:jammed door
+G:+:U
+M:32
+F:TF_DOOR_ANY | TF_DOOR_CLOSED | TF_INTERESTING | TF_DOOR_JAMMED
+D:Doors may be locked or stuck; getting through them may not be easy.  Your 
+D:disarming skill makes all the difference to your ability to handle locks, 
+D:but you can also bash doors down, take a pickaxe to them, or blast them open 
+D:with magic.  Monsters are also slowed down by doors; you can earn yourself 
+D:valuable time by jamming or locking them.
+
+# 0x29 --> jammed door (power 1)
+
+N:41:jammed door
+G:+:U
+M:32
+F:TF_DOOR_ANY | TF_DOOR_CLOSED | TF_INTERESTING | TF_DOOR_JAMMED
+D:Doors may be locked or stuck; getting through them may not be easy.  Your 
+D:disarming skill makes all the difference to your ability to handle locks, 
+D:but you can also bash doors down, take a pickaxe to them, or blast them open 
+D:with magic.  Monsters are also slowed down by doors; you can earn yourself 
+D:valuable time by jamming or locking them.
+
+# 0x2A --> jammed door (power 2)
+
+N:42:jammed door
+G:+:U
+M:32
+F:TF_DOOR_ANY | TF_DOOR_CLOSED | TF_INTERESTING | TF_DOOR_JAMMED
+D:Doors may be locked or stuck; getting through them may not be easy.  Your 
+D:disarming skill makes all the difference to your ability to handle locks, 
+D:but you can also bash doors down, take a pickaxe to them, or blast them open 
+D:with magic.  Monsters are also slowed down by doors; you can earn yourself 
+D:valuable time by jamming or locking them.
+
+# 0x2B --> jammed door (power 3)
+
+N:43:jammed door
+G:+:U
+M:32
+F:TF_DOOR_ANY | TF_DOOR_CLOSED | TF_INTERESTING | TF_DOOR_JAMMED
+D:Doors may be locked or stuck; getting through them may not be easy.  Your 
+D:disarming skill makes all the difference to your ability to handle locks, 
+D:but you can also bash doors down, take a pickaxe to them, or blast them open 
+D:with magic.  Monsters are also slowed down by doors; you can earn yourself 
+D:valuable time by jamming or locking them.
+
+# 0x2C --> jammed door (power 4)
+
+N:44:jammed door
+G:+:U
+M:32
+F:TF_DOOR_ANY | TF_DOOR_CLOSED | TF_INTERESTING | TF_DOOR_JAMMED
+D:Doors may be locked or stuck; getting through them may not be easy.  Your 
+D:disarming skill makes all the difference to your ability to handle locks, 
+D:but you can also bash doors down, take a pickaxe to them, or blast them open 
+D:with magic.  Monsters are also slowed down by doors; you can earn yourself 
+D:valuable time by jamming or locking them.
+
+# 0x2D --> jammed door (power 5)
+
+N:45:jammed door
+G:+:U
+M:32
+F:TF_DOOR_ANY | TF_DOOR_CLOSED | TF_INTERESTING | TF_DOOR_JAMMED
+D:Doors may be locked or stuck; getting through them may not be easy.  Your 
+D:disarming skill makes all the difference to your ability to handle locks, 
+D:but you can also bash doors down, take a pickaxe to them, or blast them open 
+D:with magic.  Monsters are also slowed down by doors; you can earn yourself 
+D:valuable time by jamming or locking them.
+
+# 0x2E --> jammed door (power 6)
+
+N:46:jammed door
+G:+:U
+M:32
+F:TF_DOOR_ANY | TF_DOOR_CLOSED | TF_INTERESTING | TF_DOOR_JAMMED
+D:Doors may be locked or stuck; getting through them may not be easy.  Your 
+D:disarming skill makes all the difference to your ability to handle locks, 
+D:but you can also bash doors down, take a pickaxe to them, or blast them open 
+D:with magic.  Monsters are also slowed down by doors; you can earn yourself 
+D:valuable time by jamming or locking them.
+
+# 0x2F --> jammed door (power 7)
+
+N:47:jammed door
+G:+:U
+M:32
+F:TF_DOOR_ANY | TF_DOOR_CLOSED | TF_INTERESTING | TF_DOOR_JAMMED
+D:Doors may be locked or stuck; getting through them may not be easy.  Your 
+D:disarming skill makes all the difference to your ability to handle locks, 
+D:but you can also bash doors down, take a pickaxe to them, or blast them open 
+D:with magic.  Monsters are also slowed down by doors; you can earn yourself 
+D:valuable time by jamming or locking them.
+
+# 0x3* - walls
+
+# 0x30 --> secret door
+
+N:48:secret door
+G:#:w
+M:56
+F:TF_WALL | TF_ROCK | TF_DOOR_ANY | TF_DOOR_CLOSED | TF_GRANITE
+D:A door that appears like a granite wall to untrained eyes.
+
+# 0x31 --> pile of rubble
+
+N:49:pile of rubble
+G:::w
+F:TF_ROCK | TF_PASSABLE | TF_OBJECT 
+D:Greatly slows down any creature that cannot bore or pass through rock.  Ends 
+D:LOS, stops missiles, bolts, and beams, and reduces the radius of ball 
+D:spells.  Grants the character and monsters within it some protection from 
+D:melee, ranged, or magical attacks.  Rubble may dissolve to normal floor.
+
+
+# 0x32 --> magma vein
+
+N:50:magma vein
+G:%:s
+F:TF_WALL | TF_ROCK | TF_NO_SCENT
+D:A seam of soft rock.  It can be removed by digging or magic, and passed 
+D:through by immaterial monsters.  It stops any spells, missiles or line of 
+D:sight.
+
+# 0x33 --> quartz vein
+
+N:51:quartz vein
+G:%:w
+F:TF_WALL | TF_ROCK | TF_NO_SCENT
+D:A seam of hardish rock.  It can be removed by digging or magic, and passed 
+D:through by immaterial monsters.  It stops any spells, missiles or line of 
+D:sight.
+
+# 0x34 --> magma vein + treasure
+
+N:52:magma vein
+G:%:s
+M:50
+F:TF_WALL | TF_ROCK | TF_NO_SCENT
+D:A seam of soft rock.  It can be removed by digging or magic, and passed 
+D:through by immaterial monsters.  It stops any spells, missiles or line of 
+D:sight.  It contains hidden treasure.
+
+
+# 0x35 --> quartz vein + treasure
+
+N:53:quartz vein
+G:%:w
+M:51
+F:TF_WALL | TF_ROCK | TF_NO_SCENT
+D:A seam of hardish rock.  It can be removed by digging or magic, and passed 
+D:through by immaterial monsters.  It stops any spells, missiles or line of 
+D:sight.  It contains hidden treasure.
+
+# 0x36 --> magma vein + known treasure
+
+N:54:magma vein with treasure
+G:*:o
+F:TF_WALL | TF_ROCK | TF_INTERESTING | TF_NO_SCENT
+D:A seam of soft rock.  It can be removed by digging or magic, and passed 
+D:through by immaterial monsters.  It stops any spells, missiles or line of 
+D:sight.  It contains visible treasure.
+
+
+# 0x37 --> quartz vein + known treasure
+
+N:55:quartz vein with treasure
+G:*:o
+F:TF_WALL | TF_ROCK | TF_INTERESTING | TF_NO_SCENT
+D:A seam of hardish rock.  It can be removed by digging or magic, and passed 
+D:through by immaterial monsters.  It stops any spells, missiles or line of 
+D:sight.  It contains visible treasure.
+
+# 0x38 --> granite wall -- basic
+
+N:56:granite wall
+G:#:w
+F:TF_WALL | TF_ROCK | TF_GRANITE | TF_NO_SCENT
+D:A seam of hard rock.  It can be removed by digging or magic, and passed 
+D:through by immaterial monsters.  It stops any spells, missiles or line of 
+D:sight. 
+
+
+# 0x39 --> granite wall -- inner
+
+N:57:granite wall
+G:#:w
+M:56
+F:TF_WALL | TF_ROCK | TF_GRANITE | TF_NO_SCENT
+D:A seam of hard rock.  It can be removed by digging or magic, and passed 
+D:through by immaterial monsters.  It stops any spells, missiles or line of 
+D:sight. 
+
+
+# 0x3A --> granite wall -- outer
+
+N:58:granite wall
+G:#:w
+M:56
+F:TF_WALL | TF_ROCK | TF_GRANITE | TF_NO_SCENT
+D:A seam of hard rock.  It can be removed by digging or magic, and passed 
+D:through by immaterial monsters.  It stops any spells, missiles or line of 
+D:sight. 
+
+
+# 0x3B --> granite wall -- solid
+
+N:59:granite wall
+G:#:w
+M:56
+F:TF_WALL | TF_ROCK | TF_GRANITE | TF_NO_SCENT
+D:A seam of hard rock.  It can be removed by digging or magic, and passed 
+D:through by immaterial monsters.  It stops any spells, missiles or line of 
+D:sight. 
+
+
+# 0x3C --> permanent wall -- basic (perm)
+
+N:60:permanent wall
+G:#:w
+F:TF_WALL | TF_ROCK | TF_PERMANENT | TF_NO_SCENT
+D:You can dig through most walls but some are impenetrable.  The dungeon is 
+D:surrounded by these kinds of walls and some special rooms are made of them.
+
+# 0x3D --> permanent wall -- inner (perm)
+
+N:61:permanent wall
+G:#:w
+M:60
+F:TF_WALL | TF_ROCK | TF_PERMANENT | TF_NO_SCENT
+D:You can dig through most walls but some are impenetrable.  The dungeon is 
+D:surrounded by these kinds of walls and some special rooms are made of them.
+
+# 0x3E --> permanent wall -- outer (perm)
+
+N:62:permanent wall
+G:#:w
+M:60
+F:TF_WALL | TF_ROCK | TF_PERMANENT | TF_NO_SCENT
+D:You can dig through most walls but some are impenetrable.  The dungeon is 
+D:surrounded by these kinds of walls and some special rooms are made of them.
+
+# 0x3F --> permanent wall -- solid (perm)
+
+N:63:permanent wall
+G:#:w
+M:60
+F:TF_WALL | TF_ROCK | TF_PERMANENT | TF_NO_SCENT
+D:You can dig through most walls but some are impenetrable.  The dungeon is 
+D:surrounded by these kinds of walls and some special rooms are made of them.
+
+
+# 0x4* - shops
+
+# 0x40 --> shop -- general store (perm)
+
+N:64:General Store
+G:1:U
+F:TF_SHOP | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING
+D:The General Store sells food, ammunition and lighting supplies.
+
+# 0x41 --> shop -- armoury (perm)
+
+N:65:Armoury
+G:2:s
+F:TF_SHOP | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING
+D:The armour sold here will give you some protection against the blows of your 
+D:enemies.
+
+# 0x42 --> shop -- weapon shop (perm)
+
+N:66:Weapon Smiths
+F:TF_SHOP | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING
+G:3:w
+D:Weapons for hitting and shooting your enemies are forged in the hot, acrid 
+D:backroom of this enticing shop.
+
+# 0x43 --> shop -- temple (perm)
+
+N:67:Temple
+G:4:g
+F:TF_SHOP | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING
+D:A quiet, reflective place of refuge, with supplies of magical and hallowed 
+D:goods for the pure of heart.
+
+# 0x44 --> shop -- alchemist (perm)
+
+N:68:Alchemy Shop
+G:5:b
+F:TF_SHOP | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING
+D:A dim, scented room where potions and scrolls are traded.
+
+# 0x45 --> shop -- magic shop (perm)
+
+N:69:Magic Shop
+G:6:r
+F:TF_SHOP | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING
+D:A shop for devices with magic trapped within.
+
+# 0x46 --> shop -- black market (perm)
+
+N:70:Black Market
+G:7:D
+F:TF_SHOP | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING
+D:Watch your back and hold onto your purse as you enter this disreputable 
+D:haunt - and do not expect friendly service or good bargains.
+
+# 0x47 --> shop -- home (perm)
+
+N:71:Home
+G:8:y
+F:TF_SHOP | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING
+D:Your safe piece of Middle Earth, and the only place you can store goods apart 
+D:from on your person.
+
+# 0x48 --> shop -- bookstore (perm)
+
+N:72:Bookstore
+G:9:o
+F:TF_SHOP | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING
+D:A dusty room lined with shelves of mystical tomes.
+
+# 0x49 --> shop -- travelling merchant (perm)
+
+N:73:Travelling Merchant
+G:0:u
+F:TF_SHOP | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING
+D:This merchant travels around, buying anything of value and selling basic 
+D:commodities.  He will take orders for some magic potions, scrolls and books.
+
+# 0x5* - monster traps
+
+# 0x50 --> monster trap -- basic
+
+N:80:monster trap (basic)
+G:^:y
+F:TF_LOS | TF_PROJECT | TF_M_TRAP
+D:A trap that rogues and some druids, rangers and warriors can set.
+
+# 0x51 --> monster trap -- sturdy
+
+N:81:monster trap (sturdy)
+G:^:y
+F:TF_LOS | TF_PROJECT | TF_M_TRAP
+D:A monster trap that lasts longer than normal.
+
+# 0x52 --> monster trap -- netted
+
+N:82:monster trap (netted)
+G:^:y
+F:TF_LOS | TF_PROJECT | TF_M_TRAP
+D:A monster trap that with a net to trap flying monsters.
+
+# 0x53 --> monster trap -- confusion
+
+N:83:monster trap (confusion)
+G:^:y
+F:TF_LOS | TF_PROJECT | TF_M_TRAP
+D:A monster trap that confuses those caught in it.
+
+# 0x54 --> monster trap -- poison
+
+N:84:monster trap (poison gas)
+G:^:y
+F:TF_LOS | TF_PROJECT | TF_M_TRAP
+D:A monster trap that releases a cloud of poison.
+
+# 0x55 --> monster trap -- spirit
+
+N:85:monster trap (spirit)
+G:^:y
+F:TF_LOS | TF_PROJECT | TF_M_TRAP
+D:A monster trap that strikes at immaterial monsters.
+
+# 0x56 --> monster trap -- shocking
+
+N:86:monster trap (lightning)
+G:^:y
+F:TF_LOS | TF_PROJECT | TF_M_TRAP
+D:A monster trap that zaps a monster with electricity.
+
+# 0x57 --> monster trap -- explosive
+
+N:87:monster trap (explosive)
+G:^:y
+F:TF_LOS | TF_PROJECT | TF_M_TRAP
+D:A monster trap that sets off an explosion.
+
+# 0x58 --> monster trap -- portal
+
+N:88:monster trap (portal)
+G:^:y
+F:TF_LOS | TF_PROJECT | TF_M_TRAP
+D:A monster trap that teleports its victim.
+
+# 0x59 --> monster trap -- stasis
+
+N:89:monster trap (stasis)
+G:^:y
+F:TF_LOS | TF_PROJECT | TF_M_TRAP
+D:A monster trap that holds a monster immobile.
+
+# 0x5A --> monster trap -- drain life
+
+N:90:monster trap (drain life)
+G:^:y
+F:TF_LOS | TF_PROJECT | TF_M_TRAP
+D:A monster trap that drains the life force from living monsters.
+
+# 0x5B --> monster trap -- unmagic
+
+N:91:monster trap (unmagic)
+G:^:y
+F:TF_LOS | TF_PROJECT | TF_M_TRAP
+D:A monster trap that hurts and drains mana from monsters.
+
+# 0x5C --> monster trap -- dispel monsters
+
+N:92:monster trap (dispel monsters)
+G:^:y
+F:TF_LOS | TF_PROJECT | TF_M_TRAP
+D:A monster trap that hurts all monsters in sight.
+
+# 0x5D --> monster trap -- genocide
+
+#N:93:monster trap (genocide)
+#G:^:y
+F:TF_LOS | TF_PROJECT | TF_M_TRAP
+D:A monster trap that removes all nearby like monsters.
+
+# 0x5E --> monster trap -- unused
+
+#N:94:monster trap
+#G:^:y
+
+# 0x5F --> monster trap -- unused
+
+#N:95:monster trap
+#G:^:y
+
+# 0x6* - wilderness only features
+
+# 0x60  --> easy path north
+
+N:96:path north
+G:<:r
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING | TF_STAIR
+D:A path to the neighbouring region.
+
+# 0x61  --> hard path north
+
+N:97:path north
+G:>:r
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING | TF_STAIR
+D:A path to the neighbouring region.
+
+# 0x62  --> easy path east
+
+N:98:path east
+G:<:y
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING | TF_STAIR
+D:A path to the neighbouring region.
+
+# 0x63  --> hard path east
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING | TF_STAIR
+
+N:99:path east
+G:>:y
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING | TF_STAIR
+D:A path to the neighbouring region.
+
+# 0x64  --> easy path south
+
+N:100:path south
+G:<:o
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING | TF_STAIR
+D:A path to the neighbouring region.
+
+# 0x65  --> hard path south
+
+N:101:path south
+G:>:o
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING | TF_STAIR
+D:A path to the neighbouring region.
+
+# 0x66  --> easy path west
+
+N:102:path west
+G:<:b
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING | TF_STAIR
+D:A path to the neighbouring region.
+
+# 0x67  --> hard path west
+
+N:103:path west
+G:>:b
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_PERMANENT | TF_INTERESTING | TF_STAIR
+D:A path to the neighbouring region.
+
+
+# 0x7* Special features
+
+# 0x70 --> special feature -- lava
+
+N:112:lava
+G:#:r
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_NO_SCENT
+D:Can be passed by any character, but inflicts substantial fire damage (less 
+D:for players with feather fall - they're light on their feet).  All monsters 
+D:other than fiery or strong flying creatures will not cross.  Water and 
+D:cold-based spells suffer and fire-based spells become more powerful against 
+D:a target in lava.  Lava may freeze to rubble or normal floor.
+
+
+# 0x71 --> special feature -- water
+
+N:113:water
+G:.:b
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_NO_SCENT 
+D:Cannot be passed by fiery, earthbound monsters, slows down most other 
+D:monsters.  Slows you down if you are carrying too much.  You and your 
+D:enemies are easier to hit when in water, and most spells (especially 
+D:water-based ones) gain in strength.  It is hard to dodge in water.  However, 
+D:fire-based spells become much less powerful, so find a lake if you battle 
+D:Smaug.  Water may evaporate.
+
+# 0x72 --> special feature -- lowland trees
+
+N:114:lowland trees
+G:+:g
+F:TF_PASSABLE | TF_OBJECT | TF_TREE 
+D:Slows down characters not familiar with druidic techniques, and all 
+D:non-natural monsters that neither fly nor pass through rock.  Ends LOS, 
+D:stops missiles, bolts, and beams, and reduces the radius of ball spells.  
+D:Grants the character and monsters within it some protection from melee, 
+D:ranged, or magical attacks.  Trees can burn.
+
+
+# 0x73 --> special feature -- highland trees
+
+N:115:highland trees
+G:+:g1
+F:TF_PASSABLE | TF_OBJECT | TF_TREE 
+D:Slows down characters not familiar with druidic techniques, and all 
+D:non-natural monsters that neither fly nor pass through rock.  Ends LOS, 
+D:stops missiles, bolts, and beams, and reduces the radius of ball spells.  
+D:Grants the character and monsters within it some protection from melee, 
+D:ranged, or magical attacks.  Trees can burn.
+
+# 0x74 --> special feature -- grass
+
+N:116:grass
+G:.:g
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_FLOOR | TF_OBJECT 
+D:Open ground that can be crossed easily by all creatures.  It occurs only in 
+D:wilderness.  It may contain traps. 
+
+# 0x75 --> special feature -- trap drawn as grass
+
+N:117:invisible trap
+G:.:g
+M:116
+F:TF_LOS | TF_PROJECT | TF_PASSABLE | TF_FLOOR | TF_TRAP_INVIS 
+D:A trap hidden in the grass.
+
+# 0x76 --> special feature -- web
+
+N:118:web
+G:%:y
+F:TF_LOS | TF_PROJECT
+D:Woven by a spider, this traps insects.  Monsters which are not spiders and 
+D:cannot pass through rock will need a turn to clear the web, as will the 
+D:player.  It can be seen through.
+
+# 0x77 --> special feature -- void
+
+N:119:empty space
+G: :D
+F:TF_LOS | TF_PROJECT 
+D:Empty space - only flying creatures can pass across without falling.  All 
+D:spells and missiles can pass through.
+
+# 0x78 --> special feature -- trapped tree
+
+N:120:invisible trap
+G:+:g
+M:114
+F:TF_PASSABLE | TF_TRAP_INVIS | TF_TREE 
+D:A tree which can hurt.
+
+# 0x79 --> special feature -- trapped tree
+
+N:121:invisible trap
+G:+:g1
+M:115
+F:TF_PASSABLE | TF_TRAP_INVIS | TF_TREE 
+D:A tree which can hurt.
+
+# 0x7a --> special feature -- sand dune
+
+N:122:sand dunes
+G:.:y
+F:TF_PASSABLE | TF_OBJECT 
+D:Ends LOS, stops missiles, bolts, and beams, and reduces the radius of ball 
+D:spells.  
+
+
+
+#
+# Apply the flags of a terrain type to all terrain types which mimic it.
+# (we may want to reconsider this at some point)
+#
+!:Verify Terrain
+
+

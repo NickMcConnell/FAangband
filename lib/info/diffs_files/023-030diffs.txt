@@ -1,0 +1,133 @@
+Code Cleanup/Modernisation
+--------------------------
+Massive.  Started with some cleanups provided by Christer Nyfalt, then moved 
+on to importing most of the low level code from Angband 3.0.9ish  - z-* files, 
+initialisation, sdl and gtk ports, display modules, compilation process, 
+Pete Mack's menu code, command menus, squelch, birth process, context help, 
+file viewing, auto-wielding at birth.
+
+
+Percentage resistances
+----------------------
+Resistances are now percentages, applied multiplicatively (which is really 
+just the old points system with increased precision).  20% resistance is now 
+the threshold for immunity from effects (so 20% or more RConf will mean the 
+player can't be confused), except poison which is 80%.
+
+Major overhaul of items, particularly egos as a consequence:
+
+- Armour, shields of Resist Acid, Fire, Lightning and Cold have gone, and of 
+  Resistance now has at least one, usually low, resist, likely to be more as 
+  you get deeper.  
+
+- Elvenkind armour (and now shields) now get RBase at least one extra resist, 
+  although that can occasionally be extra in a low resist.  
+
+- Rings of protection give a small amount of resistance to at least one element
+  - cursed ones give vulnerability.  
+
+- Armour/shields ofulnerability are the cursed versions of Resistance.  
+
+- The one extra resist of other items (Cloaks of Aman, etc) is treated as for 
+  Elvenkind.
+
+- All ordinary and ego resists are randomised by up to a quarter, so the 
+  nominal 40% base resists on Elvenkind armour each end up between 30% and 50%.
+
+- Artifacts have varying levels of resistance (and/or vulnerability), not
+  randomised.
+
+
+Element proofing
+----------------
+Items can now be proofed against acid, fire, cold and electricity by scrolls
+of *proofing - these are deep and fairly rare.
+
+Random artifacts
+----------------
+Randarts have been overhauled and powered up a bit.  Randart rings and amulets
+now exist, with some of the rings being potentially very powerful - this is to
+make up for the lack of the Rings of Power in FA.  
+
+Good (ie not cursed) artifacts may have elemental vulnerabilities.
+
+Mouse interface
+---------------
+This has been cleaned up a lot, with the hackish clicking on words in prompt
+lines replaced by a context-sensitive system of "buttons" (eg [ESC]) on the 
+bottom line of the screen.  I'll post more details of this separately, as the 
+plan is to include it (or something like it) in Vanilla.
+
+Character screens
+-----------------
+The character screens (from the 'C' command) have been replaced by a scrolling,
+coloured version of the character dump.  Player notes have been coded more
+cleanly (similar to a proposal in the angband-dev mailing list), and
+colourised :).  Subwindow display of character details are a now a subset of 
+this.
+
+Resistances -> Powers
+---------------------
+RBlind and RFear have become powers rather than resists, so random resist
+items (like Elvenkind armour) can't get them but random power items (like
+Blessed weapons) can.
+
+Odds and Ends
+-------------
+- Changed some randart names to be more thematically consistent or avoid
+  standard artifact names.
+
+- elven druids/rangers get their speed bonus in trees rather than on forest 
+  levels now.
+
+- tweaked racial properties, including removing the Dark Elf vulnerability to
+  light and giving humans evasion rather than a to-hit bonus in their 
+  preferred terrain.
+
+- gave druids some cool new spells, and better HP.
+
+- gave trap setting and martial arts specialties to more classes
+
+- made the "turns to fight" message only appear for monsters going from 
+  frightened to not.
+
+- added more speed to rings of Warfare, added Boots of Elvenkind and Amulets 
+  of Sustenance.
+
+- made catastrophic failure of wand recharge less catastrophic (destroys 2 of 
+  a stack then a roll for subsequent ones rather than the whole stack)
+
+- removed all birth options (maximise and preserve now always on, stat choice
+  is on the birth screen)
+
+- made rivers weave a bit more
+
+- made sure wilderness vaults are not too close to the player to make instakill
+  on entering a level less likely
+
+- tidied up options a little
+
+- updated the standard player ghosts (probably avoiding a defamation suit)
+
+- prompt for destroying on pickup
+
+Bugfixes
+--------
+- Monsters were mostly not trying to break runes of protection (Si Griffin)
+
+- Some high value randart properties (like telepathy) were not possible, and
+  the randart generation could hang sometimes (Me!)
+
+- some tvals in the Magic Shop were wrong, so the wrong items were being 
+  stocked (Pete Mack)
+
+- made Unlight stealth bonuses update correctly (Dario Saccavino)
+
+- made {cursed} appear immediately on wielding a cursed item (ekolis)
+
+- overhead map in mini-window wasn't working properly (someone - sorry!)
+
+- Underworld had light (Arralen)
+
+- Mountaintops didn't (Si Griffin)
+

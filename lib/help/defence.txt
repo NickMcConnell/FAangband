@@ -1,0 +1,105 @@
+
+======================= Defending Yourself from Attacks =======================
+
+     Monsters have all sorts of ways to hinder, damage, reduce, annoy, or even 
+kill your character.  As you move down deeper into the dungeon in search of 
+better items, you will need to steadily improve your defences against pure
+damage, wounds, cuts, and stunning, bolts, balls, and breaths of various kinds, 
+reductions of exp and stats, theft, and a variety of miscellaneous magical 
+attacks.  By deliberate policy, this file leaves a lot of information out.  
+Half the fun is discovery...
+
+
+-- Pure Damage --
+
+     Virtually all monsters can lower your hit points, and if you lose too many, 
+you die.  Fortunately, this is also the attack most easily guarded against.  
+Your armor class (or AC) is a number that describes the amount and the quality 
+of the armor you are wearing.  The higher your armor class, the less likely you 
+are to be hit by any melee blow, and the fewer HPs any successful standard hit 
+will cost you.  Armour class has no effect on magical attacks.
+
+     Your Armor:
+              Each piece of armour has a base armor value which, like the damage 
+         from weapons, is assumed to be known by the player, and possibly a 
+         magical bonus, which will not be displayed unless the armor has been 
+         identified.  Add the two together, and you have the total protective 
+         value of the item; for example, a Chain Mail (-2) [14, +6] increases 
+         your armor class by 20.  Note the "(-2)".  It is a penalty to Skill.  
+              Above a certain weight limit, all spellcasters lose mana for 
+         wearing heavy armor, although the penalty falls less heavily on 
+         Priests, less still on Rogues, Rangers, and Assassins, and least on 
+         Paladins.  Unlike in Angband, this penalty is as important for high-
+         level characters as it was when they first started adventuring.  In 
+         addition, Mages and Necromancers lose a chunk of mana if they wear 
+         gloves that do not provide free action or increase magic mastery skill.
+
+
+-- Cuts, Poison, and Stunning --
+
+     Many monsters can inflict special kinds of physical damage on you, such as
+opening wounds, and poisoning or stunning you.  After you start earning a little
+money, plow some of it back into potions of cure Serious and Critical Wounds, 
+and keep one or the other handy at all times.  If a monster manages to Heavy 
+Stun you, teleport away!
+
+
+-- Bolt, Ball, and Breath attacks --
+
+     Just as spellcasters can do damage to monsters using many different kinds 
+of magic, so too can monsters get some of their own back.  In the course of a
+complete game, you will face roughly a score of different ranged attack types, 
+only a few of which you cannot resist.
+
+     Fire, Acid, Electricity, and Cold are the basic elemental attacks.  Because 
+the maximum damage they can do to you is very high, find and wear items that 
+confer resistance as soon as possible.  As with all attack types stacking
+multiple sources of resistance is especially effective.  Temporary resistance
+sources are more effective than permanent resist.  The rare items which grant
+immunity are best of all.
+     Poison is deadly, and not so easy to gain resistance to.  Fortunately, you 
+can journey quite a way into the dungeon without meeting monsters that breath it 
+powerfully.
+     Darkness, Light, Shards, and Sound can be moderately dangerous if unresis-
+ted, but monsters that breath any of them powerfully are rare enough that you 
+can concentrate on more urgent issues.  Keep a eye open, though...
+     A fair number of creatures deep in the dungeon breath Nether and Chaos, and 
+both can do a great deal of damage, but you can eventually acquire resistance.
+
+     Be warned:  Some kinds of attacks cannot be resisted!  Fortunately, they
+have low damage limits.  See the help file "equip.txt" for details on resis-
+tances and similar things.
+
+
+-- Reductions of Experience and Stats --
+
+    Even when your character is starting out, there are rare traps and monsters 
+capable of lowering his stats and draining his exp.  In addition, a strong 
+elemental attack can occasionally lower a stat.  Slowly, these dangers increase 
+until it becomes very important that you find objects that provide hold life and 
+sustain at least your critical stats.  Until you get to the abyssal depths, 
+though, these attacks aren't too bad, because you can quaff a potion of Restore 
+Life or restore a stat (you will not infrequently find all of these in town) 
+when the loss become too serious to ignore.
+
+
+-- Theft --
+
+     Nobody is more annoying than a thief.  You've just found that cool spell-
+book or nifty weapon, and now it's gone.  You can gain a significant degree of 
+protection from theft by increasing your armour class and Dexterity, and can 
+always collect your stuff from the thief's corpse.  Unfortunately, thieves are 
+smart enough to stash away the money they take from you.
+
+
+-- Miscellaneous magical attacks --
+
+     There are many monsters capable of casting spells to blind, confuse, slow, 
+and paralyze you, plus quite a few other nasty tricks I will not mention.  Find
+some objects that give you Free Action and See Invisible somewhere between 1500' 
+and 2000', and keep a sharp lookout for something that prevents blindness and 
+confusion.  Your Saving throw protects against these and other attacks, and you
+can raise this survival skill by increasing Wisdom.
+
+It is rumoured that certain undead possess a very deadly touch...
+The same rumors whisper that Athelas has remarkable curative properties...

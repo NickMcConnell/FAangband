@@ -1,0 +1,239 @@
+
+=================== Casting Spells and Using Magical Devices ==================
+
+     Most classes can use spells, and Warriors can learn to pseudo-probe 
+monsters.  Everyone will find magical devices extremely handy in learning about 
+their environment and hurting and hindering their foes.
+
+
+=== Casting Spells ===
+
+     Characters use magic by typing the 'm' or 'p' keys.  Any class may use 
+either key.  They then choose a book, and then a spell.  This process can be 
+sped up for commonly-used spells by using keymaps (see the help file 
+"macro.txt").  Spellbooks may also be given absolute reference numbers, so that 
+"m5b" always casts the same spell, no matter where the book is in inventory.  
+See the help file "objs-mon.txt", section on inscribing.
+
+     All classes other than warriors need to carry around books; the pure spell-
+casters always have nine books, and the half-spellcasters use between four and 
+six.  If a spellbook of the player's realm has no useful spells contained in it, 
+it will appear gray in listings and on the main screen.
+
+     In FAangband, it is far easier than in Angband to confuse, slow, frighten,
+     turn, or sleep most monsters, and many creatures (including uniques) are vulnerable.  
+With skill and patience, you can badly hinder even formidable opponents.  On 
+the other hand, many monster races have at least one intrinsic immunity, high-
+level monsters are still very resistant, all attacks of this type are chancy, 
+and the monster AI is capable of dealing with at least some of your new 
+tricks.
+
+     Note that you may see your bolts whiz about and your balls explode in vivid 
+color by setting the "delay factor", found in options, to (for most machines) 
+between two and four.
+
+=== Spell Projection Types ===
+
+     The names of spells and magical devices sometimes give you information 
+about what areas they affect, and what shapes they take.
+
+     "Bolt", "Missile":
+          Fires a magical bolt in a direction or at your chosen target.  Such 
+      spells are stopped by the first monster or wall in their way.  Some also
+      "Beam" upon occasion.
+
+     "Beam", "Spear", "Lance", "Line", "Spark"
+          Fires a beam of magic in the direction you choose, or towards your 
+     target.  They are quite useful because they do full damage to every monster 
+     in a straight line.  Wands and Rods of Light work this way.  A few beam 
+     spells ("spark") have short ranges.
+
+     "Arc", "Cone", "Breath"
+          Fires an arc, centered on the direction you choose or on your target, 
+     and always originating at your location.  These are short-range spells, 
+     because arcs lose energy as they expand.  All monster breaths are arcs.
+
+     "Ball", "Storm"  (storms have a larger radius)
+          If you target a specific monster, such spells explode centered at that 
+     location.  Otherwise, they travel in the direction you choose, and explode 
+     as soon they hit a monster or wall, or reach their maximum range.  These 
+     spells only do full damage to the single grid at the center of the 
+     explosion, but can affect monsters that can't see you.
+
+     "Orb", "Sphere"
+          Orbs are ball spells that do full damage to every grid they affect, 
+     and usually have small explosions.
+
+          Some ball spells center on you.  Such spells do full damage to all 
+     adjacent squares.
+
+     "Dispel", "Confuse/Slow/Frighten/etc. Monsters"
+          A fair number of spells affect all monsters in line of sight (no 
+          walls, rubble, or trees between you and them, up to a range of 20).
+
+
+=== The Four Realms of Magic ===
+
+Sorcery:
+          Although they have lost magical invulnerability and genocide, and 
+     will find dungeon destruction spells expensive, mages can learn to recover 
+     mana very quickly, and move about the dungeon better than anyone else; it 
+     is rumoured that precise control of teleportation is not impossible for 
+     them.  In addition, mages can recharge the magical items they need to help 
+     improve damage dealing ability far better than anyone else.  They are 
+     skilled at slowing, sleeping, and confusing their foes.
+          Rogues find their spells very handy for searching the dungeon (they 
+     are better at this than anyone else), gaining information, improving their 
+     combat skill, sneaking up on their unwary foes, and getting out of tough 
+     spots.  Rogues use five magic books.
+
+Piety:
+          Priests are the shining wielders of holy light, and will eventually be 
+     able to hurl radiant spheres, gain an increased light radius, and flood the 
+     entire dungeon level.  They are formidable champions of Good, with enough 
+     evil-smiting prayers to do a lot of dungeon cleansing, and are unexcelled 
+     at frightening and turning foes.  They can magically recover from virtually 
+     all forms of damage more readily then any other class.
+          Paladins are the sanctified knights of the dungeon, masters of the 
+     elements, and have six books packed with prayers to aid in combat, protect 
+     from their foes, and learn about the world around them.  They will even-
+     tually gain an increased light radius.
+
+Nature Magics:
+          Druids are probably the most flexible spellcaster available, and the
+     only one capable of doing significant damage in melee.  In addition, they 
+     can unleash the cunning and might of nature to hinder, baffle, and then 
+     kill their foes.  On the other hand, they have almost no dungeon movement 
+     spells, and many of their methods of gaining knowledge work poorly or are 
+     rather expensive far from trees and sky.  In addition, their combat spells 
+     are more random than are those of other realms.  They will eventually be 
+     able to shapeshift into any of five creatures, each of which possesses 
+     valuable advantages, but lower maximum mana.
+          Rangers deeply understand their quarry, and will learn about hidden 
+     monster attributes of every kind faster and more completely then anyone 
+     else.  The lore they share with druids allows them to heal themselves and 
+     learn about the dungeon, but they have to travel almost everywhere on foot.
+     Rangers use five books.
+
+Necromancy:
+          Necromancers and  Assassins dabble in evil magic, but use their 
+     knowledge to defeat the greatest of evils.
+          To accomplish this mighty task, Necromancers wield unrivaled damage-
+     dealing spells, with the most "bang for the buck" of any magical realm.  
+     Unfortunately, their mighty attack is not matched by a strong defence; 
+     indeed they have the sad distinction of being the least survivable class 
+     going.  Although at high levels this disadvantage is substantially reduced, 
+     and the forms that they can assume provide important benefits, Necro-
+     mancers are always going to have to be cautious.
+          Assassin magic renders them silent and deadly, and eventually allows 
+     them to reliably poison any missile.  Assassins use four books.
+
+
+=== Shapeshifts ===
+
+Listing of shapeshifts and their effects.  All shapeshifts reduce mana by a 
+third, and greatly reduce shooting and throwing skills.  Various effects can 
+be checked by using the 'C'haracter screen, then typing 'h' twice.  Shapeshifts 
+may be canceled by typing ']'.
+
+Druid:
+      Mouse-has superb stealth and very poor combat and magical device skills.
+      Ferret-high DEX, searching, regeneration, and a little extra speed, but 
+             serious penalties to Deadliness and magical device skills.
+      Hound-So high is this creature's ability to smell, hear, and see the world
+             around it that they are represented by telepathy.  Poor magical 
+             device skill.
+      Gazelle-Increase in speed, DEX, and Skill, but penalties to STR, WIS, Dead-
+             liness, and magical device skills.
+      Lion-Bonuses to STR, combat skills, armour class, resist fear and 
+             regeneration, and a small bonus to speed, but penalties to 
+             CHR/INT/WIS and magical device skill.
+      Elder Ent-Bonuses to most stats, resist cold and poison, see
+             invisible, free action, plus to Deadliness and tunnelling, but 
+             loses any feather fall and some protection from fire.  Imposes
+	     a cap on fire resistance.
+
+Necromancer:
+     Bat-Cannot be blinded, large bonus to infravision, feather fall, speed 
+            bonus, but penalties to magical device skill, combat skills, and 
+            various stats.
+     Werewolf-Bonuses to infravision, STR, regeneration, and is a fighting 
+            machine, but penalties to INT, CHR, magical devices, and aggravates 
+            nearby monsters.
+     Vampire-Bonuses to various stats, resist cold, hold life, see invisible, 
+            regenerate, fights and uses magical devices well, and is stealthy, 
+            but is vulnerable to light (including daylight) and has a cap on 
+	    overall light resistance,
+	    may never have temporary resistance to fire, and has a penalty to
+            CHR, and never has a light radius of more than two.  The bows/throws
+	    skill penalty is much smaller than for other shapeshifts.
+
+Item based shapeshifts:
+     Lion-As with the Druid spell.
+     Vampire-Like the Necromancer spell.  It is not advisable to try to turn a
+            pious or nature-loving character into a Vampire.
+     Wyrm-This form is a human-sized Dragon.  Bonuses to most stats, AC, dead-
+            liness and magic device skill.  Penalties to stealth, DEX and CHR.
+            Depending on the item that caused the shapeshift, there may be an
+            additional bonus power.
+
+Intrinsic racial shapeshifts:
+     Bear-As Beornings gain levels, their Bear form gains increasing bonuses to
+            STR, CON, armour class, and combat.  Bears have small INT and CHR
+            penalties, and are poor magic device skills.
+
+=== Warrior special ability:  Pseudo-probing ===
+
+Command to use: 'm'.
+Command to show ability information: 'b'; 'P' in the roguelike keyset.
+
+     Warriors know more about how a given weapon will affect a given monster 
+than any other class.  Starting at level 35, they can probe a monster to reveal 
+approximate hitpoints, race, and the basic resistances.  The ability costs 
+nothing, takes a full turn to use, and learns about a single monster.  The 
+information it provides is never faulty, but sometimes incomplete.
+
+
+=== Using Magical Devices ===
+
+     Wands, staffs, and rods are an important part of many adventurers' 
+arsenals, and are critical for mages.  The lower-level items are easy to use, 
+the higher-level items can do quite a bit of damage, but they take up a lot of 
+space in your backpack.  In addition to these items, certain rare rings can be 
+'A'ctivated and there are rumors of armors and artifacts that can unleash enor-
+mous destruction.
+     Mages are the masters of magical items.  They can use them with greater 
+confidence than anyone else, learn extra information about them more quickly, 
+and recharge them more safely.
+     If you use magical devices often enough, you will eventually get the 
+message "you feel you know more about...".  'I'nspect the object, and you may 
+very well see extra numerical information about damage, etc.  This takes a lot 
+of the guesswork out of using staffs, wands, and rods to kill your foes.
+     If you use wands and staffs, keep your eyes open for scrolls of recharging.
+Be warned, recharging is not a sure deal...
+
+
+=== Ways to Hinder Monsters ===
+
+     Sleep:  Sleeping monsters can't hurt you - until they wake up again.
+     Slow:  If you can slow down a monster, you are well on the way to killing 
+          it.  Slowed monsters eventually return to normal speed.
+     Stun:  Bashing, strong electrical attacks, and some other things can stun 
+          monsters, reducing their spellcasting and melee ability.
+     Confuse:  Monsters may be confused by bright light (blinding), confusion 
+          attacks, or spells of confuse monster.  They move randomly about and 
+          cannot cast any spells until the effects wear off.
+     Fear:  Most monsters can be frightened.  Those that are will attempt to 
+          teleport away (if they have such a spell) or run.  Monsters slower 
+          than you will charge and go down fighting if nearby.
+     Black Breath:  Necromancers can eventually learn to Black Breath their 
+          foes.  Until the effects wear off, the monster cannot regenerate.
+     Hold:  Priests can eventually learn to Hold monsters.  For a little while, 
+          that monster can do nothing at all, and cannot be harmed by any means.
+
+     Wait for the monster to run out of mana:  Most monsters have a limited 
+          amount of mana.  It may take a long time for them to run out, but 
+          once they do, they'll need a while to recover.  Be aware that some 
+          monsters can magically recover mana.
+
+Check the monster health bar for the monster's current status.

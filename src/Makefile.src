@@ -1,0 +1,93 @@
+#
+# File: Makefile.src
+#
+# A makefile which includes the current object files, hopefully includable
+# across a range of different makefiles, to cut down on maintenance.
+#
+
+NAME = FAangband
+VERSION = 1.1.5
+COPYRIGHT = (c) 2005-2010 Nick McConnell and contributors
+
+HEADERS = \
+	angband.h \
+	cmds.h \
+	config.h \
+	defines.h \
+	externs.h \
+	$(GTKHEADERS) \
+	h-basic.h \
+	h-config.h \
+	h-define.h \
+	h-system.h \
+	h-type.h \
+	init.h \
+	jewel.h \
+	main.h \
+	randname.h \
+	types.h \
+	ui.h \
+	z-file.h \
+	z-form.h \
+	z-rand.h \
+	z-term.h \
+	z-type.h \
+	z-util.h \
+	z-virt.h
+
+GTKHEADERS = \
+	gtk/cairo-utils.h \
+	gtk/main-gtk.h \
+	
+ZFILES = z-file.o z-form.o z-rand.o z-term.o z-type.o \
+         z-util.o z-virt.o
+MAINFILES = main.o main-crb.o main-gcu.o $(GTKMAINFILES) \
+            main-sdl.o main-win.o main-x11.o snd-sdl.o
+
+GTKMAINFILES = \
+	gtk/main-gtk.o \
+	gtk/cairo-utils.o 
+	
+ANGFILES = \
+	attack.o \
+	birth.o \
+	cave.o \
+	cmd0.o \
+	cmd1.o \
+	cmd2.o \
+	cmd3.o \
+	cmd4.o \
+	cmd5.o \
+	cmd6.o \
+	dungeon.o \
+	files.o \
+	generate.o \
+	identify.o \
+	info.o \
+	init1.o \
+	init2.o \
+	jewel.o \
+	load.o \
+	monattk.o \
+	monmove.o \
+	monster1.o \
+	monster2.o \
+	object1.o \
+	object2.o \
+	prefs.o \
+	randart.o \
+	randname.o \
+	save.o \
+	score.o \
+	spells1.o \
+	spells2.o \
+	squelch.o \
+	store.o \
+	tables.o \
+	ui.o \
+	util.o  \
+	variable.o \
+	wizard1.o \
+	wizard2.o \
+	xtra1.o \
+	xtra2.o

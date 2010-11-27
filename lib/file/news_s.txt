@@ -1,0 +1,47 @@
+************************************************
+***  FAangband 1.1.5  ****  First Age Angband  *
+*Beleriand in the days of the War of the Jewels*
+************************************************
+                                                
+Based on Moria, Angband and variants            
+                                                
+Contributors include Robert Alan Koeneke,       
+James E. Wilson, Alex Cutler, Andy Astrand,     
+Sean Marsh, Geoff Hill, Charles Teague,         
+Charles Swiger, Ben Harrison, Robert Ruehlmann, 
+Leon Marrick, Bahman Rabii, Jeff Greene,        
+Diego Gonzalez, Andrew Doull, Andi Sidwell,   
+Pete Mack, Si Griffin.                          
+                                                
+FAangband 0.1.0-1.1.5: Copyright (c) 2005-2010  
+                      Nick McConnell, Si Griffin
+                                                
+Send comments, etc. to nckmccnnll@yahoo.com.au  
+FAangband page: http://angband.oook.cz/faangband
+Angband newsgroup: rec.games.roguelike.angband  
+Angband ladder page: http://angband.oook.cz     
+          '?' for in-game help.                 
+
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwbbbbbbbbbbbbbbbbwwwwwbbbbbbbbbbbbbbbbbbbwww
+wbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbw
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+bbbbbbbbbbbbbbbbbbbbbwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwBBBBBBBBBBBBBBBBBBBBBBBww
+wwwwwwwwwwwwwwwwBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+wwwwwwwwwwwwwwwwwwwBBBBBBBBBBBBBBBBBBBBBBBBBBBww
+wwwwwwwwwwwwwwwwwwwwwBBBBBBBBBBBBBBBBBBBBBBwwwww
+wwwwwwwwwwwGwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww

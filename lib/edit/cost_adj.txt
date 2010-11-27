@@ -1,0 +1,61 @@
+# File: g_info.txt
+
+
+# This file is used to initialize the "lib/data/g_info.raw" file, which is
+# used to initialize the "racial price adjustment" information for the
+# Angband game.
+
+# Do not modify this file unless you know exactly what you are doing,
+# unless you wish to risk possible system crashes and broken savefiles.
+
+# Format:
+# A:store adjustments
+
+
+# Version stamp (required)
+
+V:1.1.5
+
+# Eas,GnE,GyE,Hob,PDw,Dwa,Dru,Lbd,Ada,HiE,Mai,DkE,Ent,Beo
+
+# Easterling
+A:100:110:110:105:120:115:110:115:110:110:105:105:115:100
+
+# Green Elf
+A:110:100:100:110:125:120:110:120:110:105:105:100:105:110
+
+# Grey Elf
+A:120:100:100:110:130:130:110:125:115:130:105:100:105:120
+
+# Hobbit
+A:110:110:110: 95:110:110:110:110:110:105:105:105:110:105
+
+# Petty-Dwarf
+A:115:120:120:110: 95:110:115:110:130:130:105:115:125:115
+
+# Dwarf
+A:110:125:130:105:110: 95:110:100:110:130:105:125:125:105
+
+# Druadan
+A:110:110:110:115:115:115: 95:115:100:110:105:115:105:115
+
+# Longbeard
+A:110:115:115:105:110:100:110: 95:110:115:105:115:120:110
+
+# Edain
+A:110:105:105:110:130:120:100:120:100:105:105:105:115:110
+
+# High-Elf
+A:120:110:120:110:130:130:105:130:105:100:105:120:105:120
+
+# Maia
+A:105:105:105:105:110:105:100:105:105:105:100:105:105:105
+
+# Dark Elf
+A:105:110:115:105:125:125:115:120:110:115:105: 95:105:105
+
+# Ent
+A:115:100:100:105:130:125:105:125:115:100:105:100:100:115
+
+# Beorning
+A:100:110:110:105:125:120:105:120:105:110:105:110:105:100

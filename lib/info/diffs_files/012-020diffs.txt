@@ -1,0 +1,237 @@
+Nan Dungortheb 
+--------------
+This is no longer a dungeon as such, although it still has a guardian.  It is
+now a sunless valley, full of trees and spiderwebs, with cliffs to fall off
+and no way back up except recall.  Specifically:
+
+ - web is a new type of terrain.  It can be removed in a single turn by player
+(using the 'T' command) or monster, but spiders and PASS_WALL and KILL_WALL
+monsters can go straight through, and insects get stuck.  It can be burnt by 
+fire, and does not block line of sight.  There are vault-equivalent areas of 
+web, good gear and nasty spiders.
+
+ - empty space is a new type of terrain.  Only flying monsters or player as a
+bat can exist in it; anything else falls.  If the player falls, they can fall
+more than one level, and be hurt, cut and stunned.  Sleeping a flying monster
+in empty space is fun.
+
+ - as in dungeons, there is no daylight.
+
+ - the only way off a level is down, teleport level or recall.
+
+ - there are many spiders.
+
+
+Stores
+------
+ - each town now has its own distinct set of stores - so that's now 50 
+different stores.
+
+ - storekeeper races are town-dependent.  Races whose home the town is are most
+likely, but others are possible - so, for example, Longbeards are quite likely
+in Belegost, but less likely in Menegroth.
+
+ - there is a new type of store, the Travelling Merchant (entrance '0').
+This shop replaces the General Store in small towns.  It sells a range of 
+General Store type items, weapons and armour, but at a premium price.  
+Anything you sell the Merchant will be stashed in his travelling bag rather 
+than resold straight away.  It is also possible to put in an order for the 
+regular spellcaster books, and most potions and scrolls that have already 
+been identified; if you return later, the merchant may have stocked some of 
+your desired item.
+
+
+Monster shapechanges
+--------------------
+ - some monsters (with the SHAPECHANGE flag) can temporarily change shape.
+This is different from polymorph; the shapechanger will resume their original
+form after a little while, or on death.  For the most part, monsters will
+shapechange into something they could have summoned; there are some low level
+exceptions, and one notable high level exception.
+
+
+Racial terrain based specialties
+--------------------------------
+All races now have some terrain based advantage:
+
+ - Green, Grey, High and Dark Elves have a Druid/Ranger-like ability to step
+through treed grids in a single turn.  Elven druids and rangers get a 
++3 speed boost in forest and valley levels.
+
+ - Petty-Dwarves, Dwarves and Longbeards get the ability to step through 
+rubble in a single turn, and the ability to evade attacks in mountain levels.
+
+ - Easterlings, Hobbits and Beornings get a bonus +5 to hit in plain levels.
+
+ - Edain and Druedain get a bonus +5 to hit in forest and valley levels.
+
+ - Ents get superstealth in forest levels.
+
+ - Maiar can pass through water unhindered.
+
+
+Spell changes
+-------------
+ - the deepest books for priests (Wrath of the Valar) and druids (Powers of
+Aman) now have their spells named after Valar.  
+
+ - the druid/ranger Detect Living spell now also detects trees.
+
+ - mage spells have been rearranged a little, and they have three new spells:
+
+    - Telekinesis, which fetches a distant non-gold object
+
+    - Blink Monster
+
+    - Magical Throw, which throws an object or weapon with greater than 
+normal accuracy, and using INT for impetus instead of STR
+
+
+Stat potion changes
+-------------------
+ - there are now two levels of stat potions (idea due to Elliot).  Potions of
+Strength, etc start 10 levels earlier than before, and increase the 
+pre-modifier value of the relevant stat to a maximum of 18.  Potions of
+*Strength* etc have the same depth/rarities as the old stat potions and have
+the same effect - pre-modifer value increases to a maximum of 18/100.
+
+
+UI improvements
+---------------
+ - implemented html screendumps.
+
+ - special colours for floor grids option now greys all terrain grids out of 
+line of sight.  
+
+ - implemented Andrew Sidwell's trap detect patch, so the DTrap notice at the
+bottom of screen comes up whenever the player is on a grid which has been 
+covered by trap detection at any point (and regardless of possible trap 
+creation since then). 
+  
+ - implemented NPP colour patch.  This doesn't work properly (on my machine, 
+at least) with -mxaw, so I have changed main.c so x11 is the default instead 
+of xaw.  
+
+ - colourised the title screen, and added a splash screen on opening and some
+new coloured winner screens (so, for example, elves don't die of ripe old age).
+
+ - the 'M' command in wilderness now gives the whole level map, followed
+by a regional map showing where and what type the nearby levels are.
+
+ - more complete ego-item descriptions. 
+
+ - included NPP y/n/s squelch prompt on destruction.
+
+ - included ToME-style description (on inspection) of weapon and ammo damage, 
+including the effects of any slays, brands and other equipment bonuses that 
+are known to the player.
+
+
+Improvements from Oangband 1.1.0
+--------------------------------
+ - throwing weapons can be held in the quiver 
+
+ - replaced some occurrences of TV_DRUID_BOOK with SP_WOODSMAN.
+  
+ - reduced rarity of deepest books.
+
+ - increased sides for basic ammo dice (shots now 1d5, arrows 1d6, bolts 1d7).
+
+ - made dark elf and ent susceptibilities cleaner.
+
+ - added 5% hp boost for Athletics and 5% mana boost for Clarity.
+
+ - fixed non-creation of cursed ego-items.
+
+ - made all teleporting away of monsters bolt, not beam.
+
+Rebalances and map and level generation changes
+-----------------------------------------------
+ - changed depth of Nargothrond from 70 to 55, and included a new region, 
+Eriador South, between Eriador Town and Ered Luin South.  Renamed Anfauglith 
+East to Lothlann, Anfauglith West to Anfauglith. 
+
+ -  made pond generation (ie small ponds in wilderness), which was supposed
+to be in 0.1.2, work properly.
+
+ - changed quantities of monsters in wilderness so there aren't so many in 
+about the level 15-30 wilderness levels.
+
+ - adjusted monster probabilities for locality (animals more likely in 
+forests, reptiles in mountains, etc).  Tol-In_Gaurhoth now has a greater
+proportion of hounds and undead.
+
+ - made ragged edges for wilderness levels.
+ 
+ - water now slows overburdened players by three times the dry land amount
+instead of being a complete barrier.
+
+ - items dropped in trees now don't vanish, but do disappear from sight (like
+for grass in Unangband).  
+
+ - made sleeping monsters in trees and rubble unable to dodge spells.
+
+ - recall and teleport level now put the player in the middle of the level.
+
+ - all wilderness monsters are created asleep at night (even hounds).
+
+ - introduced some new artifacts and tweaked a couple of sets.
+
+ - made staves of Teleportation and wands of Teleport Away shallower.  
+
+ - made murder holes run out of ammo 1 in 8 times.  
+
+ - raised both MAX_O_IDX and MAX_M_IDX to 1024 to reduce compacting problems.
+
+ - replaced Gorlim with the Phantom of Eilenel.
+
+ - did easy object stacking - two identical weapons or armours will now stack, 
+which amounts to a kind of weak ID, and in particular .
+
+ - made earthquakes in areas with water, lava or empty space more likely to
+create more of the same.
+
+ - modified the Unlight specialty so that the player gets a vision radius of
+2 when not wielding anything in the light source slot; bonuses are mostly
+dependent on not wielding a light, and in some cases on the player grid not
+being lit.
+
+ - added Wolves of Sauron (only in Tol-In-Gaurhoth) and Children of 
+Ungoliant (only in Nan Dungortheb).
+
+ - Sauron now has S_UNIQUE.
+
+
+Bug fixes
+---------
+ - fixed running in towns (which I had broken in 0.1.2).
+
+ - closed exploit where repeated shapechanging gained mana.
+
+ - finally (I think) fixed objects in walls bug, disconnectedness of
+mountain levels.
+ 
+ - changed tmpnam(NULL) to tmpfile() in path_temp in util.c to stop 
+accumulation of old temporary notes files.
+
+ - fixed player placement bug where playing with autoscum could leave the 
+player stuck in a wall when moving between wilderness levels.
+
+ - fixed object description so it shows the object symbol of flavored objects 
+in the knowledge screen properly.
+
+ - made !! inscriptions time out correctly.
+ 
+ - made Genocide, Mass Genocide and Word of Destruction actually kill all
+the relevant monsters.
+
+ - committed an atrocious hack to eliminate a nasty bug where items were 
+being involuntarily squelched (duplicated the squelch field in object_kind
+with a sq_info array - urrrgh).
+
+Miscellaneous
+-------------
+ - got rid of load1.c, renamed load2.c load.c.
+
+ - some other tidying up and reformatting of code.
+

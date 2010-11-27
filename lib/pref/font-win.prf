@@ -1,0 +1,52 @@
+# File: font-win.prf
+
+#
+# This file is used by Angband (when it was compiled using "main-win.c")
+# to specify simple attr/char remappings using a standard font, allowing
+# the use of special pseudo-graphic pictures for walls and such.
+#
+# Redone by Nick McConnell for FAangband 0.3.5
+
+### Terrain features ###
+
+
+# Floors (white / centered dot)
+
+F:1:0x01:0x07
+
+# Invis traps (white / centered dot)
+
+F:2:0x01:0x07
+
+
+# Magma (slate / solid block)
+
+F:50:0x02:0x03
+
+
+# Quartz (light slate / solid block)
+
+F:51:0x09:0x03
+
+
+# Granite walls & permanent rock (white / solid block)
+
+# granite wall
+F:56:0x01:0x02
+
+# permanent wall
+F:60:0x01:0x01
+
+# Water (blue / centered blob)
+
+F:113:0x06:0x09
+
+# Grass (green / centered dot)
+
+F:116:0x05:0x08
+
+# Invis grass traps (green / centered dot)
+
+F:117:0x05:0x08
+
+

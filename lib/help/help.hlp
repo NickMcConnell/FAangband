@@ -1,0 +1,23 @@
+              Welcome to the FAangband Online Help System.
+
+    (1) The Fundamentals                                   (general.hlp)
+    (2) Creating a Character                               (birth.hlp)
+    (3) Commands and Options                               (command.hlp)
+    (4) Magic and Combat                                   (combat.hlp)
+    (5) Exploring Wilderness and Dungeons                  (explore.hlp)
+
+
+
+
+
+Help Commands:
+       ?     : leave the online help
+       ESC   : return to previous document or menu
+       space : advance one page
+       -     : back up one half page
+
+***** [1] general.hlp
+***** [2] birth.hlp
+***** [3] command.hlp
+***** [4] combat.hlp
+***** [5] explore.hlp

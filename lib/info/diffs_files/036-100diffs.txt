@@ -1,0 +1,102 @@
+Object Changes
+--------------
+Complete overhaul of ego items, with most purely bad types removed 
+and many "mixed blessing" types introduced.  There are now many types of curse,
+with the traditional "sticky" curse just one of them.  Curse removal is no 
+longer certain, and multiple removal attempts can destroy the item (even 
+artifacts).  Stat boosts, bonuses, slays, brands and resists are now all values 
+rather than flags, so multiple "pvals" and variable slays and brands are 
+possible.  The objects bitflags have been completely reworked, and all 
+information about an object is now kept with the object rather than referring 
+to the object kind.
+
+Pseudo-id is now instant for all classes, and applies to all wearable items.  
+Strong pseudo now shows perilous (ego with drawbacks), dubious (some drawback), 
+average, good, excellent (ego with no drawbacks) and special (all artifacts); 
+weak pseudo shows perilous (some drawback), average or good.  Squelch 
+categories have been changed accordingly, I hope in a useful way.  *ID* has 
+been reintroduced; now regular ID shows everything except curses, which are 
+discoverable either by *ID* or (automatically) noticing when they show up.  
+
+There are some corresponding changes to regular items and artifacts, and some 
+new artifacts.  Ungoliant now drops a specific item, making Nan Dungortheb 
+worth visiting.  Blades of Chaos have been replaced with Valinorean Swords, and 
+"of Chaos" is now an ego type.  Pricing has been changed to be more dependent 
+on the object properties and less on the type.  Activatible items can now be 
+activated before they are ID'd.
+
+Player Race Monsters
+--------------------
+Most former human ('p') monsters are now assigned one of the player races, and
+have a chance not to be hostile to the player.  Groups of these monsters now 
+have the same player race, but not necessarily the same monster race.  These 
+groups have leaders, which influence the behaviour of the other monsters.  The 
+AI for these guys is still fairly basic, but will mature over the 1.x series.
+
+Mages and Magic
+---------------
+Mage spells have been completely reworked to make early mages playable, and 
+late game mages very powerful.  Books have been reorganised and renamed, and 
+spells changed - most notably the last book now consists of varoius rune laying 
+spells.  Magestaffs now activate to restore a small amount of mana.  Mana 
+attacks have been completely removed from player and monsters (apart from a 
+couple of devices).  Some monsters (and PDSM) now get an "elemental attack" 
+spell comprised of all 14 resistable elements; this is chiefly useful for 
+determining player resistances.  Chaos has become much more chaotic, with 
+multiple effects on terrain, monsters and (if unresisted) the player.
+
+Code Modernisation
+------------------
+Much of the low level code from V3.1.1dev has been incorporated - including 
+most of: the build system for *nix and windows, the OSX port and file handling. 
+
+Other changes
+-------------
+A new terrain type - sand dunes - has been introduced.  It can hold objects, 
+and is easy to move through, but blocks line of sight.
+
+Some improvement to object descriptions.
+
+Spell descriptions appear before the spell is learned.
+
+Wands of the same type always stack; if one has an unknown number of charges, 
+the whole stack does.
+
+Some of the Lothlann region is now plains instead of desert.
+
+Some monsters only appear in dungeons (gelatinous cubes, lurkers, etc).
+
+The Complainer has increased his vocabulary.
+
+Themed wilderness now exists - there are five themed wilderness levels, and 
+four themed dungeon levels.
+
+Sound support has been upgraded so that it works properly, and Dubtrain's sound 
+patch can be included in the same way as for Vanilla.
+
+Monster traps and runes can be laid on grids containing non-artifact objects 
+(by destroying the objects).
+
+Uniques are more resistant to stunning.
+
+Bugfixes
+--------
+Killing dungeon guardians on Angband 100 no longer causes weird stuff.
+
+Squelched gear is dropped more quickly if hide_squelchable is on.
+
+Extended colours show properly in html screenshots.
+
+Autoinscriptions actually work.
+
+Ego squelch settings are reset at the start of each game.
+
+Anfauglith 58 is no longer chock full of artifacts.
+
+Stairs in to Amon Rudh dungeon are no longer ever encased in granite.
+
+Player ghosts work properly.
+
+Crash from buffer overflow with too much gold or experience fixed.
+
+Tree traps no longer appear under the player.

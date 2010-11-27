@@ -1,0 +1,84 @@
+
+============================= Symbols On Your Map =============================
+
+     Angband and many of its variants allow you to use either ASCII (text) 
+characters or graphics to represent the world around you.  Other variants, 
+including FAangband, are text-only.  Using text characters has the great advan-
+tage of allowing instant on-line identification of any symbol you see.  Type 
+'/', then the character.  Also, you may consult the following tables of symbols, 
+divided into dungeon features, objects, and monsters:
+
+
+                               Special
+  @   The player
+
+                Features that do not block line of sight
+ 
+  .   A floor space                   1   Entrance to General Store
+  .   A trap (hidden)                 2   Entrance to Armoury
+  ^   A trap (known)                  3   Entrance to Weapon Smith
+  ;   A rune                          4   Entrance to Temple
+  '   An open door                    5   Entrance to Alchemy Shop
+  '   A broken door                   6   Entrance to Magic Shop
+  <   A stair/path to less danger     7   Entrance to the Black Market
+  >   A stair/path to greater danger  8   Entrance to your Home
+  .   Water                           9   Entrance to the Bookseller
+  #   Lava (red)                      0   Entrance to the Travelling Merchant
+  .   Grass (green)
+  %   Web (yellow)
+
+                   Features that block line of sight
+
+  #   A secret door                   #   A wall
+  +   A closed door                   %   A mineral vein
+  +   A locked door                   *   A mineral vein with treasure
+  +   A jammed door                   :   A pile of rubble
+  +   Tree (green)                    .   Sand dune (yellow)
+
+                             Objects
+ 
+  !   A potion (or flask)             /   A pole-arm
+  ?   A scroll (or book)              |   An edged weapon
+  ,   A mushroom (or food)            \   A hafted weapon
+  -   A wand or rod                   }   A sling, bow, or x-bow
+  _   A staff                         {   A shot, arrow, or bolt
+  =   A ring                          (   Soft armour
+  "   An amulet                       [   Hard armour
+  $   Gold or gems                    ]   Misc. armour
+  ~   Lights and Chests               )   A shield
+  `   Junk, Sticks, Skeletons, etc    &   (unused)
+ 
+ 
+                             Monsters
+ 
+            $   Creeping Coins      ,   Mushroom Patch
+            a   Giant Ant           A   Angelic being
+            b   Giant Bat           B   Bird
+            c   Giant Centipede     C   Canine
+            d   Dragon              D   Ancient Dragon
+            e   Floating Eye        E   Elemental
+            f   Feline              F   Dragon Fly
+            g   Golem               G   Ghost
+            h   Humanoid            H   Hybrid
+            i   Icky-Thing          I   Insect
+            j   Jelly               J   Snake
+            k   Kobold              K   Killer Beetle
+            l   Giant Louse         L   Lich
+            m   Mold                M   Mummy
+            n   Naga                N   (unused)
+            o   Orc                 O   Ogre
+            p   Human               P   Giant Human(oid)
+            q   Quadruped           Q   Quylthulg
+            r   Rodent              R   Reptile/Amphibian
+            s   Skeleton            S   Spider/Scorpion/Tick
+            t   Townsperson         T   Troll
+            u   Minor demon         U   Major demon
+            v   Vortex              V   Vampire
+            w   Worm or Worm Mass   W   Wight/Wraith
+            x   (unused)            X   Xorn/Xaren
+            y   Yeek                Y   Yeti
+            z   Zombie/Mummy        Z   Zephyr Hound
+
+     Any of these symbols may be changed using preference files, accessed using 
+the command '%'.
+

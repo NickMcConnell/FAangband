@@ -1,0 +1,25 @@
+# File: graf-win.prf
+
+#
+# This file defines special attr/char mappings for use in "graphics" mode
+#
+# See "lib/help/command.txt" and "src/files.c" for more information.
+#
+
+
+# Standard file
+?:[EQU $GRAF old]
+%:graf-xxx.prf
+
+# New tiles
+?:[EQU $GRAF new]
+%:graf-new.prf
+
+# David Gervais' iso-tiles
+?:[EQU $GRAF davidiso]
+%:graf-iso.prf
+
+# David Gervais' tiles
+?:[EQU $GRAF david]
+%:graf-dvg.prf
+

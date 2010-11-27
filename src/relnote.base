@@ -1,0 +1,18 @@
+L quick    = toggle keyboard
+L hold     = direction pad overlay
+L + key    = shifted key
+L + dirpad = run
+
+R = toggle zoom
+
+Default key bindings (can be changed):
+
+  X = Esc
+  A = Return / accept
+  B = attack nearest / rest
+  Y = 'y' (yes)
+
+Automatic options: auto_more, Term-1=messages
+Suggested options: center_player
+
+L long hold to redefine all key bindings

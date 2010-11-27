@@ -1,0 +1,40 @@
+
+======================= Bigscreen and Multiple Terminals ======================
+
+********************** Using a Larger Display (Bigscreen) *********************
+
+This version of FAangband uses's Steven Fuerst's bigscreen code, which
+allows you to have a terminal larger than 80x24.  This allows you to
+see more of the dungeon map.  It is not necessary to set any particular 
+command line or preference options.
+
+Under most systems, you can simply resize the terminal while FAangband
+is running, and the game will take advantage of the new size.  In some
+cases (eg gcu 'curses' consoles), FAangband will use the terminal size
+available when you start the game, but will not resize further.
+
+*************************** Using Multiple Terminals **************************
+
+Terminals other than the main FAangband window can be used to display
+addition information such as character stats and monster memory.  Use
+the window flags options (in game, type: "* W") to take advantage of
+this.
+
+On most systems, the creation of extra terminals is handled
+automatically, or through in-game menus.  In a few cases, options must
+be used when starting FAangband:
+
+Using an X display -
+
+FAangband will open only the main terminal by default.  To use more the
+terminals put the option "-- -n#" at the end of the command line when
+launching FAangband, where # is the number of terminals desired, up to
+eight (eg "faangband -mx11 -- -n3").
+
+Using a gcu 'curses' console display -
+
+When the console is large enough, FAangband will attempt to use space
+along the right and bottom of to create three additional terminals.
+This uses space which would otherwise be used for the main FAangband
+window.  To disable this feature put the option "-- -x" at the end of
+the command line when launching FAangband (eg "faangband -mgcu -- -x").

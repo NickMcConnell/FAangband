@@ -1,0 +1,38 @@
+ID by use
+---------
+Wieldable abjects can be learned about by wielding and using them.  Ego weapon
+and armour types can be learned by learning an identifying property.  
+
+Score
+-----
+Score is now the sum of the experience gained for the first kill of every 
+monster type.  This is an attempt to make score actually meaningful.
+
+Rings and Amulets
+-----------------
+These are completely different now.  Basic ring types are metals; basic amulet 
+types are gems.  All rings and amulets are ego items.  ID by use is "sensation-
+based" (otherwise known as rune-based) for jewellery.
+
+Birth Options
+-------------
+There are two new birth options:
+
+- dungeon only gives the player a conventional Angband town-and-dungeon game 
+(although there are optional fixed quests on the way down, and recall is 
+*necessary* after a while);
+
+- no selling is like it says on the box - items can be donated to shops for 
+identification, and gold drops are doubled.
+
+Sound
+-----
+Dubtrain's sound pack is now fully incorporated.
+
+Bugfixes and minor changes
+--------------------------
+Adjusted Razorback's weight down to normal for DSMs (Si Griffin)
+
+Added buzzkill's world map.
+
+Alt key not working in SDL (jsv)

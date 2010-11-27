@@ -1,0 +1,429 @@
+
+============================= Equipment Attributes ============================
+
+     All effective combat methods other than Druid bare-handed attacks require 
+equipment, and all benefit greatly from various qualities that your equipped 
+items may possess.  Defence is similarly equipment-dependent.
+
+     This file explains every attribute of any wearable item you might 
+encounter in your adventures.  Some of the special attributes are quite rare.
+
+
+
+--- Ordinary Attributes ---
+
+Example 1:  A Glaive (3d4) (+6, +4) [8, +0]
+
+Bonus to Skill:
+     The glaive above increases melee Skill by 6. This bonus improves your 
+chance to strike a monster and the number and quality of critical hits.  Apart 
+from rare gloves, armours seldom have bonuses to Skill.
+
+Bonus to Deadliness:
+     The glaive above increases melee Deadliness by 4.  This increases the 
+damage of every blow you land.  Apart from rare gloves, armours seldom have 
+bonuses to Deadliness.
+
+Bonus to Base Armour Class:
+     All armours have bonuses to base armour class.  Glaives and some other 
+weapons have bonuses to base armour class, usually because they help keep 
+monsters further away from you, or parry blows.  The example above increases 
+this value by 8.
+
+Bonus, Plus to Armour Class:
+     Armour of unusually good quality or that is magical also increases your 
+plus to armour class.  This adds to your total protection value.  Only rare 
+weapons do the same.
+
+
+--- Attributes that can be increased or decreased by a number ---
+
+Stat Bonuses:
+     Any kind of special wearable item may affect one or more stats.  See the 
+help file "abilattr.txt" to find out more about what altering a stat does.
+
+Sustain Stats:
+     Any kind of special wearable item may sustain one or more stats.  This 
+ensures that the attacks of your foes never lowers that stat.
+
+Magic Mastery:
+     Certain amulets and gloves improve your skills with magical devices and 
+activatable items.
+
+Stealth:
+     Certain cloaks, boots, and (more rarely) other items lessen the amount 
+of noise you make when moving around the dungeon.  This is very handy for 
+avoiding fights and getting in the first hit.  Stealth also reduces the 
+noise you make in combat, but the effect is less noticeable.
+
+Searching:
+     Some rings, headgear, and various other items improve your chances to 
+reveal secret doors and find traps before they find you.
+
+Infravision:
+     Some headgear and (more rarely) other items increase the range at which 
+you can see warm-blooded creatures, even those that would otherwise be 
+invisible.
+
+Tunnelling:
+     Some gloves and weapons allow you to dig through rock more effectively.  
+All special digging tools have a bonus to tunnelling.
+
+Speed:
+     Boots, rings, and weapons that hasten you are rare and powerful, for a 
+fast player can perform several actions in the time it used to take to do just 
+one.  Players moving at speed -10 are half as fast as normal, at +10 are twice 
+as fast as normal, and at +20 are three times as fast as normal.  The maximum 
+useful speed is (roughly) +40.
+
+--- Missile Weapon Qualities ---
+
+Extra Might:
+     Rare missile launchers have a greater than normal missile damage multi-
+plier.  For example: a "Sling of Extra Might (x3)" multiplies damage, not by 
+two like lesser slings, but by three.  The true missile weapon multiplier is 
+never known for sure until the object is identified.
+
+Extra Shots:
+     Rare missile launchers may allow the player to shoot more quickly than 
+normal.  Each shot takes a fraction of a turn, making your target appear to 
+move in slow motion.  Some classes get innate extra shots.
+
+
+--- Melee Weapon and Missile Ammunition Qualities ---
+
+Note:  Only the largest applicable multiplier is used.
+
+Slay Animals:
+     Multiplies the number of damage dice rolled by 1.7 against natural 
+creatures.  For example, a Broadsword of Slay Animal would normally roll 2 
+dice, but 3.4 against animals.  The ".4" is significant.  Rare weapons of 
+*Slay Animal* multiply the number of dice rolled by 2.
+
+Slay Evil:
+     Multiplies the number of damage dice rolled by 1.5 against evil 
+creatures.  
+(exception:  *Slay Evil* weapons multiply the dice by 1.7).
+
+Slay Undead:
+     Multiplies the number of damage dice rolled by 2.0 against the undead.  
+(exception:  *Slay Undead* weapons multiply the dice by 2.5).
+
+Slay Demons:
+     Multiplies the number of damage dice rolled by 2.0 against demons.  
+(exception:  *Slay Demon* weapons multiply the dice by 2.5).
+
+Slay Orcs:
+     Multiplies the number of damage dice rolled by 2.0 against orcs.  
+(exception:  *Slay Orc* weapons multiply the dice by 2.5).
+
+Slay Trolls:
+     Multiplies the number of damage dice rolled by 2.0 against trolls.  
+(exception:  *Slay Troll* weapons multiply the dice by 2.5).
+
+Slay Giants:
+     Multiplies the number of damage dice rolled by 2.0 against giants.  
+(exception:  *Slay Giant* weapons multiply the dice by 2.5).
+
+Slay Dragons:
+     Multiplies the number of damage dice rolled by 2.0 against dragons.  
+(exception:  *Slay Dragon* weapons multiply the dice by 2.5).
+
+
+Poison Brand:
+     Multiplies the number of damage dice rolled by 1.7 against monsters 
+who do not resist poison.
+
+Lightning Brand:
+     Multiplies the number of damage dice rolled by 1.7 against monsters 
+who do not resist electricity.
+
+Flame Brand:
+     Multiplies the number of damage dice rolled by 1.7 against monsters 
+who do not resist fire.  Weapons of the Balrog multiply the dice by three.
+
+Frost Brand:
+     Multiplies the number of damage dice rolled by 1.7 against monsters 
+who do not resist frost.
+
+
+--- Miscellaneous Weapon Attributes ---
+
+
+Perfect Balance:
+     This weapon can be thrown with unusual force, doubling the number of 
+damage dice rolled should it hit.  This bonus is cumulative with slays or 
+brands.
+
+Earthquake:
+     Rarely, a weapon will possess the earthquake brand.  Every time you hit a 
+monster for large amounts of damage using one of these, the walls and floors 
+of the immediate neighborhood are rearranged.  This can put a wall between you 
+and nasty breathers, but most people find this quality to be really annoying.
+
+Two-handed Wield Required:
+     Glaives, Halberds, and Quarterstaffs require two hands to wield.
+
+Two-handed Wield Desired:
+     A fair number of large, powerful weapons must be wielded in two hands 
+unless the player has amazing strength (normally around 18/140, varying with 
+weapon weight).
+
+Blessed:
+     Priests and Paladins normally cannot wield edged weapons and polearms 
+comfortably, unless they are especially blessed for their use.
+
+Chaotic:
+     These uncanny weapons can occasionally produce chaotic effects
+
+--- Immunities ---
+
+     If you should ever be fortunate enough to find a piece of equipment that 
+grants immunity to an element, you will take no damage from that element.  Be 
+warned that immunity does not extend to your backpack; the stuff you are 
+carrying in inventory can still be destroyed on rare occasions.  Under certian
+circumstances, characters that are vulnerable to an element (i.e. Ent with
+Fire) may still take a tiny amount of damage through immunity.
+
+Immunity to Acid:
+     You take no damage from acid.  Staffs, missiles, weapons, armour, and 
+scrolls in your backpack become highly resistant to destruction.
+
+Immunity to Electricity:
+     You take no damage from electricity.  Rings, wands, and rods in your back-
+pack become highly resistant to destruction.
+
+Immunity to Cold:
+     You take no damage from cold.  Potions in your backpack become highly 
+resistant to destruction.
+
+Immunity to Fire:
+     You take no damage from fire.  Spellbooks, scrolls, staffs, and burnable 
+weapons, missiles, and armour in your backpack become highly resistant to 
+destruction.
+
+
+--- Resistances ---
+
+     Resistances from equipment can be combined with resistance from other
+equipment and "temporary" resistance sources such as spell and potions.  Your
+current level of resistance can be seen in the Character Description screen
+(type 'C h').  In general, any positive level of resistance will block most
+side effects from that damage type.
+
+Resist Acid:
+     You take reduced damage from acid.  Staffs, missiles, weapons, armour, 
+and scrolls in your backpack become a little more resistant to destruction.
+
+Resist Electricity:
+     You take reduced damage from electricity.  Rings, wands, and rods in 
+your backpack become a little more resistant to destruction.
+
+Resist Cold:
+     You take one thirds damage from cold.  Potions in your backpack become 
+a little more resistant to destruction.
+
+Resist Fire:
+     You take reduced damage from fire.  Spellbooks, scrolls, staffs, and 
+burnable weapons, missiles, and armour in your backpack become a little more 
+resistant to destruction.
+
+Resist Poison:
+     You take reduced damage and ongoing damage from poison.  Note that
+multipe sources of Resist Poison are needed to completely prevent the
+ongoing damaging.
+
+Resist Light:
+     The damage you take from light is reduced.  You cannot be blinded by 
+bright light.
+
+Resist Darkness:
+     The damage you take from darkness is reduced.  You cannot be blinded by 
+darkness.
+
+Resist Sound:
+     The damage you take from sound is reduced.  You cannot be stunned by 
+sound or by a few other kinds of distance attacks.
+
+Resist Shards:
+     The damage you take from blasts of shards is reduced.  You cannot be cut 
+by shards.
+
+Resist Nexus:
+     The damage you take from nexus attacks is reduced.  You cannot be 
+randomly teleported by nexus, and will sometimes resist being warped around by 
+gravity.
+
+Resist Nether:
+     The damage you take from nether is reduced.  You cannot lose experience 
+to nether.
+
+Resist Chaos:
+     The damage you take from chaos is reduced, and you are immune to all the 
+nasty things chaos can do to you.  This resistance does not make you resistant 
+to confusion.
+
+Resist Disenchantment:
+     Rarest of all the resistances, this reduces damage from disenchantment 
+attacks and renders your equipment immune to disenchantment.
+
+
+--- Survival Attributes ---
+
+Resist Fear:
+     Renders you fearless.
+
+Resist Blindness:
+     Protects you from being blinded.
+
+Resist Confusion:
+     Makes you incapable of being confused.  Also reduces damage from blasts 
+of confusion.
+
+
+--- Character Qualities ---
+
+Slow Digestion:
+     Reduces your need to consume food.
+
+Feather Fall:
+     Protects you from all pit traps, however deadly, and reduces the damage 
+you take when walking on lava and the chance for you to be warped around by 
+gravity.
+
+Light:
+     Some weapons and helms shine with inner light.  Wearing any number of 
+such objects will increase your illumination radius by one.
+
+Regeneration:
+     Players who regenerate recover hitpoints twice as quickly as normal, 
+and mana 3/2rds as quickly.  They also need to eat more.
+
+Telepathy (ESP):
+     It is not easy to acquire this, but players who do can see smart monsters 
+nearby.  Stupid monsters never appear, and "kind of smart" monsters only 
+appear occasionally.
+
+See Invisible:
+     Allows you to see and target monsters invisible to ordinary sight.
+
+Free Action:
+     Protects you from paralyzation and most slowing attacks.  Because paraly-
+zation can instantly kill you, keep an eye out for this important survival aid.
+
+Hold Life:
+     Offers a high degree of protection from attacks that drain experience.  
+Such attacks will either have no effect, or drain much less exp.
+
+Darkness:
+     Allows you to see in the dark.
+
+--- Curses  ---
+
+Random Teleportation:
+     Some objects, especially rings, amulets, and boots randomly take control 
+of your movement and whisk you around the dungeon. 
+
+No Teleportation:
+     When wearing or wielding an object with this curse, you will be unable to
+use any form of teleportation.
+
+Permanent aggravation:
+     Aggravation effectively reduces your stealth to nil, immediately waking 
+up all monsters nearby. Some rings and amulets possess curses that aggravate, 
+and some weapons and armours are so powerful that no creature can ignore them.
+
+Random aggravation:
+     Objects with this curse don't aggravate all the time, but will 
+occasionally let out a shriek that wakes and hastes surrounding monsters.
+
+Slow regeneration:
+     Your recovery of hit points and spell points seems to take forever.
+
+Permanent fear:
+     Unless you recover your courage by spell, potion or other equipment you 
+will be too terrified to hit monsters in melee.
+
+Fast digestion:
+     You feel hungry much more quickly.
+
+Random poisoning:
+     Objects bearing this curse will occasionally poison you.
+
+Random poison cloud:
+     Will occasionally envelop you in a toxic cloud.
+
+Random cuts:
+     An item with this curse will sometimes injure you slightly.
+
+Random bad cuts:
+     An item with this curse will sometimes give you a bad cut.
+
+Random hallucination:
+     From time to time you will start to hallucinate.
+
+Drop weapon:
+     When you're least expecting it your weapon will leap from your hands.
+
+Attract demon:
+     Demons will be randomly attracted to you.
+
+Attract undead:
+     This curse randomly calls the dead from their graves or attracts lost 
+spirits.
+
+Sticky carry:
+     An item with this curse cannot be dropped from your inventory.
+
+Sticky wield:
+     An item with this curse cannot be taken off once wielded.
+
+Paralyse:
+     You will occasionally be paralysed for a turn unless you have immunity
+from paralysis.
+
+Paralyse all:
+     You will occasionally be paralysed for a turn even if you have immunity
+from paralysis.
+
+Drain Exp:
+     Objects that drain experience are perilous, because they slowly but 
+surely erase your accumulated memories.  Of course, you can keep killing 
+monsters to replace the experience which you lose.
+
+Drain Mana:
+     You will occasionally lose some mana; best hope you weren't relying on it.
+
+Drain stat:
+     This curse will occasionally drain one of your unsustained stats.
+
+Drain charge:
+     Items like this will sometimes suck the magical energy out of your magic
+devices.
+
+--- Ego-Weapons and Armours ---
+
+     Some rare weapons and armours have special abilities.  These are called 
+ego items, and are feared by great and meek.  Ego-item information is not 
+provided in the standard FAangband help files, because you can 'I'nspect any 
+normally identified ego-item to learn everything about it.
+
+--- Dragon Scale Mails ---
+
+     These extremely rare pieces of armour come in many different colors, each 
+protecting you against the relevant dragons.  Naturally they are all resistant 
+to acid damage.  They also you to take the form of a dragon.  In dragon form
+you have heightened abilities and can occasionally breathe as a dragon would!
+
+--- Artifacts ---
+
+     There are rumors of incredibly rare "artifact" armours which are even 
+more powerful than ego armour.  Some artifact are standard, and you may 
+already know of their fame, while others will certainly be unfamiliar to you 
+and will need to be fully identified and checked for curses.
+
+     In addition, a small number of artifacts, known as Set Items are designed
+to be used in conjunction with related items.  Equipping an entire set of these
+items will grant the wearer additional bonuses and abilities.  Item sets
+generally  consist of two items, but may include more.  A set item is revealed
+when identified.

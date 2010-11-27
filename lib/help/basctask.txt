@@ -1,0 +1,90 @@
+
+================ Saving, Loading, Winning, Cheating, and Dying =================
+
+     Saving and loading your character should be easy.  So, sadly, is getting 
+him killed.  Winning is a little harder, but the novice player can take 
+advantage of various cheats to improve his chances down in the dungeon.
+
+
+=== Saving and Loading your Game, and Importing Angband Savefiles ===
+
+     Depending on the port of FAangband you are playing, you will have various 
+saving and loading commands available to you.  DOS, IBM, and UNIX versions use 
+the commands described in the help file "cmddesc.txt", while Macintosh and 
+Windows users may also use menu options (normally found in the "file" menu).  
+Be warned that the Macintosh uses preference files to determine where saves 
+should go; it may take a little fiddling before you make them appear where you 
+want them to.  If you get errors when saving your game, make sure the lib/save 
+directory exists and, on multi-user machines, that you have write permission.
+
+     If you are playing most ports of FAangband, the game will automatically load 
+any savefile named "player" found in <<whatever directory FAangband is in>>
+/lib/save/.  Under other systems, the game will wait for you to select a menu 
+option (normally found in the "file" menu) and choose a savefile to load.  
+     If the character contained in that savefile is dead, you are asked to 
+generate a new adventurer, who possesses all the monster memories of the slain 
+hero and starts out using the same options.  Otherwise, you continue your game 
+where you left off.
+
+     Because of the race changes and introduction of wilderness to FAangband,
+savefiles from Oangband and Angband cannot be imported.
+
+
+=== Winning The Game ===
+
+     Once your character is ready, he/she should head to level 100 of Angband.
+Morgoth lurks on this level of his dungeon, and you will not be able 
+to go below his level until you have killed him.  Try to avoid wandering around 
+on level 100 unless you are ready for him, since he has a habit of coming at you 
+across the dungeon, the Mighty Hammer 'Grond' in hand, to slay you for your 
+impudence.
+
+     Morgoth cannot be killed by some of the easier methods used on normal
+creatures.  Morgoth, like all other "Unique" monsters, will simply teleport away 
+to another region of the level if you attempt to use a spell such as destruction 
+upon him.  Morgoth, like some other monsters, cannot be polymorphed, slept, 
+charmed, or genocided.  Magical spells like Mana Storm and Annihilation are 
+effective against him, as are some of the more powerful weapons, but he is 
+difficult to kill and if allowed to escape for a time will heal himself rapidly.
+
+     If you should actually survive the attempt of killing Morgoth, you will 
+receive the status of WINNER.  You may continue to explore, and may even save 
+the game and play more later, but since you have defeated the toughest creature 
+alive, there is really not much point.  Unless you wish to listen to the rumors 
+of more powerful items buried somewhere in the dungeon...
+
+     When you are ready to retire, simply "commit suicide" (using the "Q" key)
+to have your character entered into the high score list as a winner.  Note that 
+until you retire, you can still be killed, so you may want to retire before 
+wandering into a room with 95 Power Dragons crammed inside...
+
+
+=== Upon Death and Dying ===
+ 
+     If your character's hit points fall below zero, he dies.  The dreaded 
+tombstone will appear, and you may then dump a record of your character to a 
+document in the /lib/files folder.  Afterwards, you see all of your possessions 
+(identified) on screen.
+
+     Your character will leave behind a reduced save file, which contains only
+the monster memory and your option choices, both of which new characters may 
+use.  It is very helpful to know something about the monster that slew your 
+ancestor!
+
+Cheating Death:  For those who, like myself, find such information helpful...
+     One of the really neat things about Angband is that your character's life 
+is so important.  Let him die, and you start over from scratch.  This is one of 
+the secrets to this game's fascination; anyone who cheats death is really not 
+getting the full Angband experience, and any Morgoth-slayers yanked from the 
+jaws of death are not full winners.
+      But what if your characters seem to die all the time (like mine!), and you 
+really want to keep playing with the same guy?  Well, Angband has a few answers 
+for that too.  You may cheat death by:
+     -toggling on the "cheat death" option (see the help file "optdesc.txt").  
+      This keeps your character ticking, and is even kind enough to give you a 
+      running tally of your deaths by setting the character's age to zero when 
+      first activated, and increasing it by one each time thereafter.
+     -making backup savefiles.
+     -Aborting the game just as the tombstone appears or before.
+
+Good luck!

@@ -1,0 +1,305 @@
+Valid for FAangband 1.0
+
+attack.c
+/* All player non-magical attack code.  Hit chance, critical hits when 
+ * shooting/throwing and in melee, calculate ego multiplier, druid blows, 
+ * bashing, melee attacks.  Chance of object breakage, the shooting code, 
+ * the throwing code.
+
+birth.c
+/* All sorts of code used when a character is selected, rolled, and born. 
+ * Includes background info, determination and rolling of stats and skills,
+ * the character birth interface, the autoroller, and actual creation of a
+ * character.
+
+cave.c
+/* distance, LOS (and targetting), destruction of a square, legal object
+ * and monster codes, hallucination, code for dungeon display, memorization
+ * of objects and features, small-scale dungeon maps,  and management,
+ * magic mapping, wizard light the dungeon, forget the dungeon, the pro-
+ * jection code, disturb player, check for quest level.
+
+cmd0.c
+/* Deal with command processing. 
+
+
+cmd1.c
+/* Searching, pickup, effects of traps, move one square (including special 
+ * terrain effects), and the running algorithm. Mouse input. 
+
+cmd2.c
+/* Going up and down stairs, items that a chest may contain, opening 
+ * chests, tunnelling, disarming, opening doors, alter adjacent grid, 
+ * spiking, starting various movement and resting routines.
+
+cmd3.c
+/* Inventory and equipment display and management interface, observing an 
+ * object, inscribing, refuelling, (l)ooking around the screen and 
+ * Looking around the dungeon, help info on textual chars ("8" is the home, 
+ * etc.), monster memory interface, stealing and setting monster traps.
+
+cmd4.c
+/* Screen refresh, change character name, message recall, interacting 
+ * with options (inc. text of cheat options), macros, visuals, also level 
+ * feelings, screen dumps/loading, and knowledge screens for monsters,
+ * objects, notes, recalling the contents of the home.
+
+cmd5.c
+/* Warrior probing.  Selection, browsing, learning, and casting of spells 
+ * and prayers.  Includes definitions of all spells and prayers.  Shape-
+ * shifting and making Athelas.
+
+cmd6.c
+/* Code for eating food, drinking potions, reading scrolls, aiming wands, 
+ * using staffs, zapping rods, and activating anything that can be 
+ * activated.  Also defines all effects of the items listed, and all 
+ * activations.  Ending a druid shapechange.
+
+dungeon.c
+/* Char & monster regeneration, town and dungeon management,
+ * all timed character, monster, and object states, entry into Wizard, 
+ * debug, and borg mode, definitions of user commands, process player, 
+ * the basic function for interacting with the dungeon (including what 
+ * happens when a wizard cheats death).
+
+files.c
+/* Code for multiuser machines, Colors for skill descriptions, the char-
+ * acter screens (inc. resistance flags for races, etc.), equippy chars, 
+ * online-help, extraction of base name (for savefiles), saving, death 
+ * (with inventory, equip, etc. display), calculating and displaying 
+ * scores, creating tombstones, winners, panic saves, reading a random 
+ * line from a file, and signal handling.
+
+generate.c
+/* Code for making, stocking, and populating levels when generated.  
+ * Additions to level feelings.  Includes rooms of every kind, pits, 
+ * nests, vaults (inc. interpretation of v_info.txt), and all the 
+ * different types of wilderness.  Level feelings 
+ * and other messages, autoscummer behavior.  Creation of the town.
+
+identify.c
+/* Pseudo-ID and ID by use.
+
+info.c
+/* Tables containing object kind descriptions, extra numerical info.  
+ * Detailed info on spells.  Text for extended object descriptions of 
+ * various kinds, artifact and DSM activation and flag descriptions.  Self 
+ * Knowledge.  Spell failure chance, if is OK to cast, extra info shown in 
+ * books, and print spells of a given spellbook.  Weapon damage info.
+
+init1.c
+/* Initialization of monsters, objects, artifacts, ego-items, and terrain.
+ * All code to handle *_info.txt files.  Lists all monster and object flags
+ * that *_info.txt files contain, translation of colors.
+
+init2.c
+/* Paths, initializiation of *_info arrays from the binary files, control 
+ * of what items are sold in the stores, prepare stores, inventory, and 
+ * many other things, some error text, startup initializations.
+
+jewel.c
+/* Ring and amulet generation.
+
+load.c
+/* Savefile handling.
+
+main.c
+/* system-specific variations and special features, command-line arguments.
+
+monattk.c
+/* Monster melee attacks.  Monster critical blows, whether a monster 
+ * attack hits, insult messages.  The code used when a monster attacks 
+ * an adjacent player, including descriptions and effects.
+
+monmove.c
+/* Monster learning, monster distance attacks and spells, fear, flow/
+ * movement, monster AI effecting movement and spells, process a monster 
+ * (with spells and actions of all kinds, reproduction, effects of any 
+ * terrain on monster movement, picking up and destroying objects), 
+ * process all monsters.
+
+monster1.c
+/* how the char gains new monster info and the monster recall, including 
+ * all descriptions.  The player ghost code.
+
+monster2.c
+/* Monster processing, compacting, generation, goody drops, deletion, 
+ * place the player, monsters, and their escorts at a given location, 
+ * generation of monsters, summoning, monster reaction to pain 
+ * levels, monster learning.
+
+object1.c
+/* Object flavors, colors, easy-know, display of modifiers (eg. "(+2 to 
+ * strength)"), naming, puralizations, etc., what items 
+ * go where in equipment, equipment-related strings, etc., and inventory 
+ * management and display functions.
+
+object2.c
+/* Object stacks, compaction, generation, IDing, "trying", pricing, 
+ * stacking.  Creating special artifacts, Adding charges to wands and 
+ * staffs, bonuses to weapons and armour, powers and higher pvals to 
+ * amulets and rings, fuel to lights, trap difficulty to chests, creating
+ * ego items, what consititutes "good" and "great" items,
+ * generate objects (inc. Acquirement code) and treasures, object &
+ * inventory routines, inventory sorting, equipment.
+
+prefs.c
+/* Pref file handling.
+
+randart.c
+/* Random artifacts.  Selling and providing qualities.  Choosing a object 
+ * type and kind, determining the potential, depth and rarity of the 
+ * artifact.  Selecting a theme, and the properties of all possible themes.  
+ * Adding semi-random qualities until potential is all used up.  Cursing 
+ * an artifact.  Removing contradictory flags.  Naming an artifact, using 
+ * either of two methods.  Initializing one random artifact.  Adding new 
+ * names to the a_name array.  Initializing all random artifacts.
+
+save.c
+/* Creation of savefiles.
+
+spells1.c
+/* Polymorph, teleport monster, teleport player, colors and ascii 
+ * graphics for spells, hurt and kill player, melting/burning/freezing/
+ * electrocuting items, effects of these attacks on the player and his 
+ * stuff, spells that increase, decrease, and restore stats, disenchant, 
+ * nexus, destroy and create terrain features, light+dark, destroy ob-
+ * jects.  handlers for beam/bolt/ball spells that do damage to a monster, 
+ * other player combat spells, special effects of monster and player 
+ * breaths and  spells to the player, monsters, and dungeon terrain.  The 
+ * projection code.
+
+spells2.c
+/* Healing spells, glyphs of warding, reducing or sustaining a stat, ID 
+ * everything, chance for enchant spells to fail, remove curses, regain 
+ * exp, detection spells, create stairs.  Definitions of armour & weapons, 
+ * enchantment, branding, temporary branding, cursing, and ID code, what 
+ * items are rechargable and the recharging code.  Various special object 
+ * spells.  Spells that effect an area or LOS, lighten & darken rooms and 
+ * areas, casting ball, projection, beam, and bolt spells.  Some miscel-
+ * lanious non-damage spell functions.
+
+squelch.c
+/* Item squelching support.  Setting squelch parameters for both squelch 
+ * on generate and squelch on identify.  Handling squelching menus.
+ * Determining if items should be squelched.  Actually squelching items.
+
+store.c
+/* Store comments, racial penalties, what an item will cost, store 
+ * inventory management, what a store will buy (what stores will sell
+ * is in init2.c, and store owners in tables.c), interacting with the
+ * stores (entering, haggling, buying, selling, leaving, getting kicked
+ * out, etc.).  Shuffle store owners, select the right race for the town.
+
+tables.c
+/* Mapping of directions, what classes are legal for what races.  Stat 
+ * effects, blows per round, store owners, speed-to-energy, base exp level 
+ * cost, player sexes, races, classes, spell table (for each class), spell 
+ * names by index, conversion of +to_d to Deadliness, traps on chests, 
+ * class names, color names, stat abbrevs, window flags, options and their
+ * default values.  Druid blows.  The entire world map structure, and 
+ * store types.
+
+ui.c
+/* Generic menu interaction functions
+
+util.c
+/* Functions, etc. for various machines that need them.  Basic text-handing 
+ * functions.
+
+variable.c
+/* The copyright.  Definitions for a large number of variables, arrays,
+ * and pointers, plus the color table and sound names. 
+
+wizard1.c
+/* Generation of object, artifact, and monster spoilers.
+
+wizard2.c
+/* The wizard & debugging commands and their effects.
+
+xtra1.c
+/* Display of stats to the user from internal figures, char info shown on 
+ * main screen and status displays, monster health bar, display various
+ * things in sub-windows, spell management, calculation of max mana, max
+ * HP, light radius, and weight limit.  Apply and display all modifiers,
+ * attributes, etc. of the player, his gear, and temporary conditions to
+ * the player.  Includes all racial and class attributes, effects of Bless
+ * and the like, encumbrance, blows table inputs, and over-heavy weapons.
+
+xtra2.c
+/* Handlers for most of the player's temporary attributes, resistances,
+ * nutrition, experience.  Monsters that drop a specific treasure, monster
+ * death and subsequent events, screen scrolling, monster health descrip-
+ * tions.  Sorting, targetting, what and how squares appear when looked at,
+ * prompting for a direction to aim at and move in.
+
+z-file.c
+/* Low level file handling functions
+
+z-form.c
+/* Purpose: Low level text formatting -BEN- */
+
+z-rand.c
+ * This file provides an optimized random number generator.
+
+z-term.c
+/* Purpose: a generic, efficient, terminal window package -BEN- */
+
+z-type.c
+/* Define some type unions
+
+z-util.c
+/* Purpose: Low level utilities -BEN- */
+
+z-virt.c
+/* Purpose: Memory management routines -BEN- */
+
+angband.h
+/* The basic include file.
+
+cmds.h
+/* Definitions of the command processing functions 
+
+config.h
+/* Compilation options.
+
+defines.h
+/* Version #, grid, etc. size, MAX_* figures, limits, constants, critical
+ * values, etc. for every characteristic of Angband.  Indexes, text locat-
+ * ions, list of summonable monsters. Feature, artifact and ego-item codes.
+ * Object tval (kind) and sval (specific type) with sval limitations.
+ * Monster blow constants, functions, player, object and monster bit flags
+ * (translation from code to flag).  Definitions of options and object in-
+ * scriptions.
+
+externs.h
+/* Global variable and function definitions.  A superb map of the code.
+
+h-basic.h
+* The most basic "include" file.
+
+h-config.h
+ * Choose the hardware, operating system, and compiler.
+ * Also, choose various "system level" compilation options.
+
+h-define.h
+ * Define some simple constants
+
+h-system.h
+ * Include the basic "system" files.
+
+h-type.h
+ * Basic "types".
+
+init.h
+/* Definitions of the initialisation functions
+
+main.h
+/* Definitions of the *nix display modules
+
+types.h
+/* Definitions for a large number of types and arrays.  This file controls
+ * what sort of data can go where.
+
+ui.h
+/* Definitions of the menu functions

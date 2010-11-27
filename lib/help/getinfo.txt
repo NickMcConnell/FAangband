@@ -1,0 +1,116 @@
+
+====================== Getting Information From the Game =======================
+
+     This file tells you how to get help about nearly any question you might 
+have occasion to ask.  It covers the help system you are navigating, how to 
+learn more about yourself, monsters, objects, spells, and the dungeon, and 
+offers a little list of useful places on the Web for people with questions about 
+Angband, Oangband or FAangband.
+
+
+=== How to use the In-game Help System ===
+
+You can press Question Mark (?) at any time to leave the online help.
+
+You can press Escape (ESC) to exit the current file, and return to the previous 
+help file or menu.  This is handy for navigating.
+
+You can press Space to advance one page, or Return (RET) to advance one line.
+If you reach the end of the help file, you will wrap around to the start.
+
+You can press Minus (-) to back up one half page at a time towards the start of 
+the help file (this is very inefficient).
+
+You can press Pound (#) [or Percent (%)] to go to a specific line [or file].  
+This is very useful for instantly checking out cross-references.
+
+You can press Slash (/) [or Equals (=)] to search for [or highlight] a string
+(case sensitive).  Use "#" + "0" + RET + "/" + RET to restart a search.
+
+
+=== Learning More About Yourself:  The Character Screen ===
+
+     Your character has many attributes that are not shown on the main window. 
+Type 'C' to see the character screen, and you will discover:
+-how good and how deadly you are with melee weapons and missile launchers,
+-your approximate abilities in various special skills, such as disarming,
+-yow much exp you need to attain the next experience level, and plenty more.
+
+Once in the character screen, type 'c' to change the name of your character,  
+and 'f' to dump your character information to a file in the "lib/user" 
+directory.
+
+
+=== Learning More About Monsters:  Your Monster Memory ===
+
+     There are hundreds of different creatures in the pits of Angband, and it is 
+sometimes difficult to remember what various monsters can do to you.  Luckily, 
+the game automatically keeps track of your experiences.  Your monster memory 
+contains any information you learn about the monster's race, attacks, resis-
+tances, and various attributes (like rapid breeding), and can be accessed by 
+'l'ooking at (or 'x'amining, in the roguelike keyset) the monster.  
+     Even if the creature is no longer around, you may recall this information 
+by typing '/', followed by the letter that symbolizes that monster race (such as 
+'b' for bat).  If you have questions about other symbols, use the '/' key to ask 
+about them too.
+     Your monster memory can be passed on to a new character even after you die 
+by means of a reduced save file.  You may also recall what uniques your charac-
+ter knows about and has killed by using the '~' command.
+
+
+=== Learning More About Objects:  Object Information ===
+
+     You may 'I'nspect objects to recall what you know about them.  
+Depending on how much you've learned, you may merely get information about the 
+general kind of object, a basic description of that specific object, artifact 
+and special object lore, or even a complete listing of special qualities and 
+attributes.  If the object is a weapon or ammunition, you will also get an 
+assessment of how much damage can be done with it.  This is very useful to
+help you decide which weapon to use.
+     If you want to know what artifacts have appeared in the game (and will 
+therefore not appear again), or whether you already know about Rings of Speed, 
+use the '~' command.
+
+
+=== Learning More about Spells:  The Browse/Peruse Command ===
+
+All classes may use the 'b'rowse ('P'eruse in the roguelike command set) key 
+to thumb through spellbooks or (for warriors) get information about a special 
+ability.  If browsing a spellbook, you can get extra information about any 
+known spell by typing its letter.
+
+
+=== Learning More About the Environment:  The "Look" Command ===
+
+     There's so much to see and do in the that you might get a little 
+confused about all the symbols around you.  The 'l'ook (or 'x'amine, in the 
+roguelike keyset) command is your friend; simply type that letter, type 'o' if 
+you like precise movement control, and use the direction keys to move the cursor 
+around.
+
+
+=== Places with Useful Information ===
+
+     If you have questions, you cannot do better than to ask them of people 
+who've been in the same boat as you.  Here are some resources:
+
+http://angband.oook.cz/ : The Angband ladder site.  Post your character dumps
+and screenshots, read and post to the forums, browse the newsgroup...
+
+news:rec.games.roguelike.angband  :  The Angband Newsgroup.  It also covers 
+all her variants, including Oangband and FAangband.  Lots of friendly people.  
+You may post character dumps there and ask for and offer advice.  Please put a 
+"[FA]" before FAangband-specific posts.
+
+http://rephial.org/ : The official Angband website.  Find out the latest about
+Vanilla Angband, check out the status of the GPL project, even get involved in 
+development.
+
+
+http://www.oangband.com/  :  The Oangband website.  Get the latest 
+version, download some spoilers and Oangband tips.
+
+http://www.thangorodrim.net/  :  The largest clearinghouse of Angband 
+and Angband variant information on the Internet.  The old official Angband 
+site.  Has more than enough links to keep you busy.
+

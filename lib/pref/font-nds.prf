@@ -1,0 +1,211 @@
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# begin Dump Feature attr/chars
+# *Warning!*  The lines below are an automatic dump.
+# Don't edit them; changes will be deleted and replaced automatically.
+
+
+#  Feature attr/chars definitions
+
+# nothing
+F:0:0x01:0x20
+
+# open floor
+F:1:0x01:0x2E
+
+# invisible trap
+F:2:0x01:0x2E
+
+# glyph of warding
+F:3:0x0B:0x3B
+
+# open door
+F:4:0x0F:0x27
+
+# broken door
+F:5:0x07:0x27
+
+# up staircase
+F:6:0x01:0x3C
+
+# down staircase
+F:7:0x01:0x3E
+
+# trap door
+F:16:0x01:0x5E
+
+# pit
+F:17:0x07:0x5E
+
+# dart trap
+F:18:0x04:0x5E
+
+# discolored spot
+F:19:0x02:0x5E
+
+# gas trap
+F:20:0x05:0x5E
+
+# strange rune
+F:21:0x03:0x5E
+
+# strange rune
+F:22:0x0F:0x5E
+
+# hex
+F:23:0x0A:0x5E
+
+# shimmering portal
+F:24:0x06:0x5E
+
+# murder hole
+F:25:0x09:0x5E
+
+# falling branch
+F:26:0x05:0x5E
+
+# falling branch
+F:27:0x15:0x5E
+
+# door
+F:32:0x0F:0x2B
+
+# pile of rubble
+F:49:0x01:0x3A
+
+# magma vein
+F:50:0x02:0x25
+
+# quartz vein
+F:51:0x01:0x25
+
+# magma vein with treasure
+F:54:0x03:0x2A
+
+# quartz vein with treasure
+F:55:0x03:0x2A
+
+# granite wall
+F:56:0x01:0xDB
+
+# permanent wall
+F:60:0x01:0xDB
+
+# General Store
+F:64:0x0F:0x31
+
+# Armoury
+F:65:0x02:0x32
+
+# Weapon Smiths
+F:66:0x01:0x33
+
+# Temple
+F:67:0x05:0x34
+
+# Alchemy Shop
+F:68:0x06:0x35
+
+# Magic Shop
+F:69:0x04:0x36
+
+# Black Market
+F:70:0x08:0x37
+
+# Home
+F:71:0x0B:0x38
+
+# Bookstore
+F:72:0x03:0x39
+
+# Travelling Merchant
+F:73:0x07:0x30
+
+# monster trap (basic)
+F:80:0x0B:0x5E
+
+# monster trap (sturdy)
+F:81:0x0B:0x5E
+
+# monster trap (netted)
+F:82:0x0B:0x5E
+
+# monster trap (confusion)
+F:83:0x0B:0x5E
+
+# monster trap (poison gas)
+F:84:0x0B:0x5E
+
+# monster trap (spirit)
+F:85:0x0B:0x5E
+
+# monster trap (lightning)
+F:86:0x0B:0x5E
+
+# monster trap (explosive)
+F:87:0x0B:0x5E
+
+# monster trap (portal)
+F:88:0x0B:0x5E
+
+# monster trap (stasis)
+F:89:0x0B:0x5E
+
+# monster trap (drain life)
+F:90:0x0B:0x5E
+
+# monster trap (unmagic)
+F:91:0x0B:0x5E
+
+# monster trap (dispel monsters)
+F:92:0x0B:0x5E
+
+# path north
+F:96:0x04:0x3C
+
+# path north
+F:97:0x04:0x3E
+
+# path east
+F:98:0x0B:0x3C
+
+# path east
+F:99:0x0B:0x3E
+
+# path south
+F:100:0x03:0x3C
+
+# path south
+F:101:0x03:0x3E
+
+# path west
+F:102:0x06:0x3C
+
+# path west
+F:103:0x06:0x3E
+
+# lava
+F:112:0x04:0x23
+
+# water
+F:113:0x06:0x2E
+
+# lowland trees
+F:114:0x05:0x2B
+
+# highland trees
+F:115:0x05:0x2B
+
+# grass
+F:116:0x05:0x2E
+
+# web
+F:118:0x0B:0x25
+
+# empty space
+F:119:0x08:0x20
+
+
+
+
+# *Warning!*  The lines above are an automatic dump.
+# Don't edit them; changes will be deleted and replaced automatically.
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# end Dump Feature attr/chars

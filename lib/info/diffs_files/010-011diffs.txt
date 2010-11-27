@@ -1,0 +1,55 @@
+Changes from 0.1.0:
+
+ - Included recent locations and resistance etc tables in the character dump 
+
+ - Made stat modifiers on the birth screen show cumulatively
+
+ - Forced a choice of recall points (to avoid reading recall and not setting a 
+   point) (HallucinationMushroom)
+
+ - Included a number of things from NPPangband, including
+
+    - character notes file
+
+    - known monsters display
+
+    - kills counts
+
+    - hall of fame viewing
+
+    - colour change of @ with HP 
+
+    - delayed level feelings 
+
+    - more compact messages (as also in Vanilla) (Leisa Condie)
+
+ - Increased Cure Foo Wounds from 2,4,6d8 to 2,4,6d10 (Leisa Condie)  
+
+ - Removed some out of theme uses of "dungeon"
+
+ - Gave novice paladins CURE instead of SCARE flag (Sampsa Lahtonen)
+
+ - Changed gnomes to petty-dwarves (mages, skeletons etc)
+
+ - Reintroduced a town unique -  The Complainer (Big thank you to Sampsa 
+   Lahtonen :)
+
+
+Bugs Fixed from 0.1.0:
+
+ - "Walk off the edge" bug (Several people)
+ 
+ - Disconnected mountain generation; teleport traps are back in, but can't 
+   land the player in a "stone prison" any more (Helpful discussion from rgra)
+
+ - Teleport level bug that was giving weird results near towns and at the
+   bottom of dungeons (Drez Worth, Sampsa Lahtonen)
+
+ - A generation bug that could result in the player being placed in a wall
+   (only me, I hope)
+
+ - Another generation bug that was making down staircases leading to Nowhere 
+   Town at the bottom of dungeons after the questor was killed 
+   (HallucinationMushroom)
+
+ - Bows of Ossiriand now have a pval (HallucinationMushroom)

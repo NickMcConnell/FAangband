@@ -1,0 +1,283 @@
+# File: p_class.txt
+
+
+# This file is used to initialize the "lib/data/p_class.raw" file, which is
+# used to initialize the "player class" information for the Angband game.
+
+# Do not modify this file unless you know exactly what you are doing,
+# unless you wish to risk possible system crashes and broken savefiles.
+# After modifying this file, delete the "lib/data/p_class.raw" file.
+
+# === Understanding p_class.txt ===
+
+# Format:
+# N:class number:class name
+# S:str:int:wis:dex:con:chr
+# C:dis:dev:sav:stl:srh:fos:thn:thb
+# X:dis:dev:sav:stl:srh:fos:thn:thb
+# I:mhp:sense_base
+# A:max_1:max_50:penalty:max_penalty:bonus:max_bonus
+# T:title
+# E:tval:sval:min:max
+# U:class specials
+# L:available specialties
+
+# 'N' indicates the beginning of an entry. The serial number must
+# increase for each new class.
+
+# 'S' is for the stat modifiers - strength, intelligence, wisdom,
+# dexterity, constitution, charisma.
+
+# 'C' is for the base skills - disarming, magic devices, saving throws,
+# stealth, searching ability, searching frequency, to hit (normal),
+# to hit (bows).
+
+# 'X' is for the skill modifiers - disarming, magic devices, saving
+# throws, stealth, searching ability, searching frequency, to hit
+# (normal), to hit (bows).  The modifiers/50 are added to the base skill
+# every level.
+
+# 'I' is for extra info - max. hitpoints gained per level, base chance
+# for pseudo-id (smaller is better)
+
+# 'A' is for attack info - Max weight (level 1), Max weight (level 50),
+# Penalty per 10 pounds over, Max penalty, Bonus per 10 pounds under,
+# Max bonus
+
+# 'B' is for spell/prayer info - number of the spell, level, mana
+# required, fail-rate, experience for first casting.
+
+# 'T' is for class titles.
+
+# 'E' is for starting equipment - tval of the item, sval of the item,
+# minimum amount, maximum amount.
+
+# 'U' is for class specials.
+
+# 'L' is for specialty abilities available to this class.
+
+# Version stamp (required)
+
+V:1.1.5
+
+
+N:0:Warrior
+S:5:-2:-2:2:2:-1
+C:18:18:18:1:14:5:25:25
+X:50:35:50:0:0:0:100:80
+I:9:9000
+A:150:450:17:10:0:0
+E:75:33:1:1
+E:23:17:1:1
+E:37:4:1:1
+U:STRONG_BASHES | SPREAD_ATTACKS | PROBE |
+U:PSEUDO_ID_HEAVY | RELENTLESS | XTRA_SPECIALTY | 
+U:BOW_SPEED_GOOD | XBOW_SPEED_GOOD
+L:ARMOR_MAST | ARMSMAN | ATHLETICS | MIGHTY_THROW | FAST_ATTACK | 
+L:FURY | MARKSMAN | PIERCE_SHOT | REGENERATION | SHIELD_MAST
+L:EVASION | MARTIAL_ARTS | TRAP
+T:Rookie
+T:Soldier
+T:Mercenary
+T:Veteran
+T:Swordsman
+T:Champion
+T:Hero
+T:Baron
+T:Duke
+T:Lord
+
+N:1:Mage
+S:-4:3:0:1:-2:1
+C:14:36:30:3:16:12:10:15
+X:30:65:45:-3:0:0:25:25
+I:0:240000
+A:60:160:33:30:0:0
+E:90:0:1:1
+E:21:1:1:1
+E:70:11:1:1
+U:BEAM | DEVICE_EXPERT | STRONG_MAGIC | CHARM
+L:ARMOR_PROFICIENCY | BEGUILE | CLARITY | ENHANCE_MAGIC | FAST_CAST | 
+L:MEDITATION | POWER_SIPHON | MAGIC_RESIST | PHASEWALK | HEIGHTEN_MAGIC |
+L:CHANNELING
+T:Novice
+T:Apprentice
+T:Trickster
+T:Illusionist
+T:Spellbinder
+T:Evoker
+T:Conjurer
+T:Warlock
+T:Sorcerer
+T:Mage Lord
+
+N:2:Priest
+S:-1:-3:3:-1:0:2
+C:15:32:32:2:16:8:16:15
+X:30:50:60:0:0:0:50:25
+I:2:10000
+A:120:220:25:25:0:0
+E:91:0:1:1
+E:21:5:1:1
+E:75:37:1:1
+U:STRONG_MAGIC | HOLY | BLESS_WEAPON
+L:CLARITY | ENHANCE_MAGIC | FAST_CAST | MEDITATION | ARMSMAN | 
+L:PHASEWALK | HOLY_LIGHT | HARMONY | FURY | HEIGHTEN_MAGIC |
+L:CHANNELING
+T:Initiate
+T:Acolyte
+T:Adept
+T:Curate
+T:Theurgist
+T:Harmonist
+T:Priest
+T:Patriarch
+T:High Priest
+T:Priest Lord
+
+N:3:Rogue
+S:2:1:-2:3:1:-5
+C:45:32:28:6:36:28:15:29
+X:90:50:50:0:40:40:70:60
+I:5:25000
+A:100:200:33:25:17:15
+E:90:0:1:1
+E:23:4:1:1
+E:36:4:1:1
+U:BACKSTAB | STEAL | TRAP | PSEUDO_ID_HEAVY | SLING_SPEED_GREAT
+L:ARMSMAN | ATHLETICS | EVASION | FAST_ATTACK | MARKSMAN | 
+L:REGENERATION | MIGHTY_THROW | PHASEWALK | UNLIGHT | EXTRA_TRAP |
+L:MANA_BURN
+T:Vagabond
+T:Cutpurse
+T:Robber
+T:Burglar
+T:Filcher
+T:Sharper
+T:Low Thief
+T:High Thief
+T:Master Thief
+T:Guildmaster
+
+N:4:Ranger
+S:2:0:1:2:1:0
+C:22:26:28:4:24:16:15:30
+X:50:40:50:0:0:0:65:85
+I:6:25000
+A:120:250:20:20:0:0
+E:92:0:1:1
+E:23:8:1:1
+E:19:12:1:1
+E:17:1:40:40
+U:WOODSMAN | BOW_SPEED_GREAT | SLING_SPEED_GOOD | XBOW_SPEED_GOOD | LORE |
+U:PSEUDO_ID_HEAVY
+L:ARMSMAN | ATHLETICS | EVASION | FAST_ATTACK | FURY
+L:MARKSMAN | PIERCE_SHOT | REGENERATION | MIGHTY_THROW | SHIELD_MAST | 
+L:TRAP | RAPID_FIRE
+T:Runner
+T:Strider
+T:Scout
+T:Courser
+T:Tracker
+T:Guide
+T:Pathfinder
+T:Low Ranger
+T:High Ranger
+T:Ranger Lord
+
+N:5:Paladin
+S:2:-3:1:0:1:2
+C:14:16:25:1:12:2:19:15
+X:30:30:55:0:0:0:76:20
+I:7:50000
+A:150:450:17:10:0:0
+E:91:0:1:1
+E:21:5:1:1
+E:75:32:1:1
+U:STRONG_BASHES | PSEUDO_ID_HEAVY | HOLY | BLESS_WEAPON
+L:ARMOR_MAST | ARMSMAN | ATHLETICS | FAST_ATTACK | FURY
+L:REGENERATION | SHIELD_MAST | ENHANCE_MAGIC | MAGIC_RESIST | HOLY_LIGHT |
+L:HARMONY | MARTIAL_ARTS
+T:Gallant
+T:Keeper
+T:Protector
+T:Defender
+T:Warder
+T:Knight
+T:Guardian
+T:Crusader
+T:Paladin
+T:Paladin Lord
+
+N:6:Druid
+S:-2:-2:3:1:0:1
+C:22:26:30:4:24:16:12:21
+X:40:45:60:0:0:0:30:40
+I:2:360000
+A:50:120:33:30:0:0
+E:92:0:1:1
+E:75:27:1:1
+E:75:37:1:1
+U:UNARMED_COMBAT | WOODSMAN | STRONG_MAGIC | CHARM
+L:ARMOR_PROFICIENCY | BEGUILE | CLARITY | FAST_CAST | MEDITATION
+L:ENHANCE_MAGIC | REGENERATION | HARMONY | POWER_STRIKE | HEIGHTEN_MAGIC |
+L:CHANNELING | TRAP 
+T:Wanderer
+T:Tamer
+T:Nurturer
+T:Gardener
+T:Creator
+T:Earth Warder
+T:Windrider
+T:Stormwielder
+T:High Mystic
+T:Mystic Lord
+
+N:7:Necromancer
+S:-2:3:-2:1:0:-2
+C:14:32:25:2:14:6:10:15
+X:30:50:40:0:0:0:30:30
+I:0:180000
+A:60:160:33:30:0:0
+E:93:0:1:1
+E:21:2:1:1
+E:35:1:1:1
+U:BEAM | EVIL | STRONG_MAGIC
+L:UNLIGHT | ARMOR_PROFICIENCY | BEGUILE | CLARITY | ENHANCE_MAGIC
+L:FAST_CAST | MEDITATION | MAGIC_RESIST | SOUL_SIPHON | HEIGHTEN_MAGIC |
+L:CHANNELING
+T:Acolyte
+T:Curser
+T:Dark Student
+T:Initiate
+T:Slavemaster
+T:Summoner
+T:Controller
+T:Commander
+T:Dark Master
+T:Night Lord
+
+N:8:Assassin
+S:2:1:-3:2:0:-2
+C:35:26:20:5:30:22:20:29
+X:70:50:40:0:10:10:85:80
+I:4:25000
+A:100:200:33:25:22:20
+E:93:0:1:1
+E:23:5:1:1
+E:19:2:1:1
+E:16:1:25:25
+U:ASSASSINATE | STRONG_SHOOT | EVIL | PSEUDO_ID_HEAVY
+L:ARMSMAN | ATHLETICS | EVASION | FAST_ATTACK | MARKSMAN
+L:PIERCE_SHOT | REGENERATION | MIGHTY_THROW | UNLIGHT | FURY |
+L:MANA_BURN | MARTIAL_ARTS
+T:Trainee
+T:Myrmidon
+T:Initiate
+T:Knifer
+T:Bladesman
+T:Hashishin
+T:Black Dagger
+T:Shadowstrike
+T:Assassinator
+T:Death Lord

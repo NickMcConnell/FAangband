@@ -1,0 +1,150 @@
+
+================================ The Town Level ================================
+
+Every adventure begins in a town.  The town consists of either four or
+nine buildings (each with an entrance), some townspeople, and a wall which
+surrounds the town.  The first time you are in town it will be daytime, but
+note that the sun rises and sets (rather instantly) as time passes.
+
+--- Townspeople ---
+
+     Towns contains many different kinds of people.  There are the street
+urchins, young children who will mob an adventurer for money, and seem to come 
+out of the woodwork when excited.  Blubbering idiots are a constant annoyance, 
+but not harmful.  Public drunks wander about the town singing, and pose no 
+threat to anyone.  Sneaky rogues hang about watching for a likely victim to 
+mug.  And finally, what town would be complete without a swarm of half drunk 
+warriors, who take offense or become annoyed just for the fun of it.
+
+     Most of the townspeople should be avoided by the largest possible distance
+when you wander from store to store.  Fights will break out, though, so be 
+prepared.  Since your character grew up in this world of intrigue, no 
+experience is awarded for killing the town inhabitants, though you may acquire 
+treasure.
+
+--- Other Towns ---
+
+     As you wander around the world, you will encounter other towns.  If your
+race originates in a small town, finding a larger town will allow you to do 
+some more extensive shopping, and maybe sell some of the weapons and armour
+you've been carrying around.  The large towns are Khazad Dum, Belegost, 
+Menegroth and Gondolin; the small ones are Gladden Fields, Eriador, Ossiriand,
+Taur-Im-Duinath, Ephel Brandir and Ered Luin South.
+
+
+--- Stores ---
+
+     To enter a store, simply move onto the entrance, which is represented by 
+a number from 0 to 9.  Once inside a store, you will see the name and race of 
+the store owner, the name of the store, the maximum amount of cash that the 
+store owner will pay for any one item, and the store inventory.  The price of 
+items on sale depends on their base cost, how well your and the store owner's 
+races get along*, your Charisma, and the innate greediness of the store owner. 
+Some shopkeepers have really small purses, which can force you to sell 
+valuable items for a pittance.  On the other hand, these same people hold 
+plenty of sales.  Occasionally, shopkeepers retire, and the store comes under 
+new management.
+
+     * Everyone likes their own race best.
+     * Elves and Dwarves detest each other.
+     * Nobody loves a Petty-Dwarf.
+
+     You will also see an (incomplete) list of available commands.  Note that
+many of the commands which work in the dungeon work in the stores as well, but 
+some do not, especially those which involve using objects.
+
+     Stores do not always have everything in stock.  As the game progresses, 
+they will get new items, so check from time to time.  Any item that you sell 
+them will eventually be sold to another adventurer.  Note that the inventory 
+of a store will not change while you are in town, even if you save the game 
+and reload.  If you have a lot of spare gold, you can purchase every item in a 
+store, which will induce the store owner to bring out new stock, and perhaps 
+even retire.
+
+     Store owners will not buy harmful or useless items.  If an object is un-
+identified, they will pay you some base price for it.  Once they have bought 
+it they will immediately identify the object.  If it is a good object, they 
+will add it to their inventory.  If it was a bad bargain, they simply throw 
+the item away.  In any case, you may receive some knowledge of the item type.
+Travelling merchants do not put out the stock you sell them - see below for
+more details.
+
+Bargaining:
+     If you toggle the auto-haggle option off, you may bargain with the store 
+owners for items, which allows you to get noticeably better deals with only a 
+small amount of effort.  When bargaining, you enter prices you will pay (or 
+accept) for some object.  You can either enter the absolute amount, or precede 
+a number with a plus or minus sign to give a positive or negative increment on 
+your previous offer.  Once you learn how much to increment or decrement your 
+offers by, you will be able to avoid insulting the shopkeepers, and possibly 
+even getting thrown out of the store.  After you have bargained with a shop-
+keeper long enough, and forced him down to his final offer often enough, he 
+will recognize that you are such a superb haggler that he'd might as well give 
+you the best possible price without argument.  The more expensive the item is, 
+the less likely the store owner is to assume that you are a good haggler.
+
+The General Store ("1")
+     The General Store sells foods, drinks, cloaks, torches, lamps, oil, 
+     shovels, picks, spikes, and ammo.  All of these items and some others can 
+     be sold back to the General Store for money.  There is a General Store in
+     every town.
+
+The Armoury ("2")
+     The Armoury is where the town's armour is fashioned.  All sorts of pro- 
+     tective gear may be bought and sold here.  Armouries can only be found in
+     large towns.
+
+The Weaponsmith's Shop ("3")
+     The Weaponsmith's Shop is where the town's weapons are fashioned.  Hand 
+     and missile weapons may be purchased and sold here, along with arrows, 
+     bolts, and shots.  Weaponsmiths can only be found in large towns.
+
+The Temple ("4")
+     The Temple deals in healing and restoration potions, as well as blessing 
+     scrolls, word of recall scrolls, some approved priestly weapons, as 
+     well as prayer books.  There is a Temple in every town
+
+The Alchemy shop ("5")
+     The Alchemy Shop deals in all types of potions and scrolls.  There is an 
+     Alchemist shop in every town.
+
+The Magic User's Shop ("6")
+     The Magic User's Shop deals in all sorts of rings, wands, amulets, rods, 
+     and staffs.  Only to be found in large towns.
+
+The Black Market ("7")
+     The Black Market will sell and buy anything at extortionate prices.  
+     However, it occasionally has VERY good items in it.   This store often 
+     sells large quantities of useful scrolls or potions, and stacks of 
+     magical devices.  This is where you turn abundant gold into useful gear,
+     but you'll have to go to a large town to find one.  The shopkeepers are 
+     not known for their tolerance...
+
+Your Home ("8")
+     This is your house where you can store objects that you cannot carry on 
+     your travels, or will need at a  later date.  You may check the contents 
+     of your home when in the dungeon using one of the options available 
+     through the '~' command.  It is only (naturally enough) in your home town,
+     but you may also move house - see below.
+
+The Bookseller ("9")
+     This shop carries all low-level spellbooks, and will purchase any book 
+     you find.  Spellcasters beware - these are only available in large towns.
+
+The Travelling Merchant ("0")
+    This shop appears only in small towns.  It sells a range of General Store
+    type items, weapons and armour, but at a premium price.  Anything you sell
+    the Merchant will be stashed in his travelling bag rather than resold 
+    straight away.  It is also possible to put in an order for the regular
+    spellcaster books, and most potions and scrolls that have already been
+    identified; if you return later, the merchant may have stocked some of 
+    your desired item.
+
+---Moving House---
+
+There may come a time when you want to leave your home town - particularly if
+it is too small.  Once you have reached another town, you will notice that 
+you do not have a house there.  If you choose, you can move there; simply use
+the 'H' (or '$' for roguelike keys) command and your house will have appeared
+next time you return to your new home town.
+

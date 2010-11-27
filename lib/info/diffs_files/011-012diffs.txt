@@ -1,0 +1,41 @@
+Changes from 0.1.1:
+
+ - There is now a proper run command for wilderness.  Running (for example) 
+   east will run east or north-east or south-east for as many steps as possible
+   on paths or grass (if no path available), stopping if there is a north-east/
+   south-east choice or for the usual disturbances.
+
+ - Panel movement is controllable by a user-set parameter.  Previously there
+   were two modes: normal, where the displayed panel moved when the player got 
+   within 2 grids of the top/bottom or 4 grids of the sides; and the
+   center_player option, where the panel moved on every step.  The parameter 
+   allows for a range of panel movement between these two extremes. 
+
+ - A visible monster window is now available
+
+ - Paths off the level to the south are no longer the same colour as grass
+
+ - Description of the quiver in character dumps has been tidied up
+
+ - Murder holes now vanish after being set off once, so they can't be scummed
+   for ammo.
+
+ - A number of the UI changes from Oangband 1.1.0, namely strong squelch, 
+   targetting interface (in part originally from NPP) and object knowledge 
+   interface (originally from EyAngband (I think), and like the existing FA
+   monster knowledge interface, which came from NPP and probably originally
+   from Ey as well.  Or Un.  Anyway, kudos to whoever did it first).
+
+
+Bugs Fixed from 0.1.1
+
+- Walk-through permanent walls in swamps 
+
+- Down stairs and trapdoors on quest levels finally nailed (I hope)
+
+- Desert levels being way too easy
+
+- Messy formatting of continued entries in character notes
+
+- Some monster and object descriptions had incorrect spacing
+

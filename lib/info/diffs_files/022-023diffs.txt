@@ -1,0 +1,33 @@
+New features
+------------
+ - major reduction of monsters in wilderness.  Hounds don't get a boost to 
+   generation probability in forests any more (unlike other animals).
+
+ - private user paths now used as in Vanilla, NPP etc.  This is principally
+   an improvement for OSX.
+
+ - a few more dungeon vaults added
+
+ - greater wilderness vaults are more common (about 1 in 10 levels at level 10
+   up to about 1 in 5 at level 56).
+
+Bugfixes
+--------
+ - monsters can now be hit by missiles in trees and rubble
+
+ - shop interface works again (so that after choice repeatedly hitting return
+   will buy instead of backing out)
+
+ - the player can no longer teleport to land in midair
+
+ - branding works on items in the quiver
+
+ - selecting a brand using the keyboard no longer cancels branding
+
+ - cancelling branding no longer uses the scroll/mana
+
+ - the notes file now records the turn an artifact was picked up rather than 
+   when it was identified.  This can lead to out of order entries in the notes
+   file, but that was the lesser evil and will be fixed at some later date.
+
+ - resting until sunrise/sunset now works inside

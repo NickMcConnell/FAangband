@@ -1,0 +1,7 @@
+.bzr/
+.bzrignore
+src/main-wce.c
+src/Makefile.win_sdl
+config.*
+autom4te.cache/
+aclocal.m4

@@ -1,0 +1,1457 @@
+# File: e_info.txt
+
+
+# This file is used to initialize the "lib/raw/e_info.raw" file, which is
+# used to initialize the "ego-item" information for the Angband game.
+
+# Do not modify this file unless you know exactly what you are doing,
+# unless you wish to risk possible system crashes and broken savefiles.
+
+# The ego-item indexes are defined in "defines.h", and must not be changed.
+
+# Ego-items 1-63 are "armour", and 64-127 are "weapons"
+# Items 128-192 are for rings and amulets (which are not really ego items, but
+# generation is simpler this way).
+
+# Note that every "ego-item" type has a different "index", and can only be
+# created from items that belong to a certain "slot" in the equipment, if
+# one assumes that "ammo" belongs to an imaginary slot (23).
+#
+# Note that several "ego-item" types may share the same "textual name",
+# such as with "Armour of Resistance" and "Shield of Resistance".
+#
+# Ego-items have descriptions that appear after that of the base object 
+# type if the object is identified.
+
+
+# Version stamp (required)
+
+V:1.1.5
+
+#N: ego-item index: name (appended to base object description)
+#X: amount the level feeling is increased by: activation index 
+#W: depth: rarity: no longer used: bonus to value
+#T: tval: min sval: max sval
+#C: Bonus to Skill: Bonus to Deadliness: Bonus to armour class
+#F: All item-specific flags (special qualities).
+#B: All item-specific values (special qualities).
+#I: Flags/values needed to identify the object as an ego-item.
+
+# 'X' is for extra information - rating affecting level feelings,
+# and activation index.
+
+# Unlike Angband, the cursed/non-cursed decision is made before rarity
+# is checked.  So, rarities are not compared between cursed and
+# non-cursed items.
+
+### Body Armour ###
+
+N:1:of Anchoring
+X:5:0
+W:0:10:0:200
+T:36:0:99
+T:37:0:99
+C:0:0:20
+F:HEAVY | NO_TELEPORT | XTRA_TO_A | SHOW_CURSE | PERMA_CURSE 
+I:NO_TELEPORT 
+D:This armour will protect you well, but at the cost of keeping you tethered 
+D:to the Earth.
+
+N:2:(Wolfhide)
+X:5:0
+W:0:10:0:1000
+T:36:4:11
+C:0:0:10
+B:RES_COLD[60] | CHR[-3]
+F:POIS_RAND | HALLU_RAND | FEARLESS | XTRA_TO_A | SHOW_CURSE | PERMA_CURSE
+I:FEARLESS | HALLU_RAND | POIS_RAND 
+D:This tough armour is made of the hide of wolves of the frozen North, and 
+D:still bears an overpowering stench.
+
+N:3:of Ered Engrin
+X:5:0
+W:0:10:0:1000
+T:37:1:18
+C:0:0:10
+B:RES_FIRE[40] | STEALTH[-2]
+F:CUT_RAND | SLOW_REGEN | HOLD_LIFE | XTRA_TO_A | SHOW_CURSE | PERMA_CURSE
+I:HOLD_LIFE | CUT_RAND | SLOW_REGEN 
+D:Forged in the fire of Angband beneath the Iron Mountains, this rough iron 
+D:suit of armour is hard on your body, but will defend against the dread touch 
+D:of Morgoth's servants.
+
+N:4:of Desirability
+X:5:0
+W:0:10:0:100000
+T:37:20:30
+C:0:0:15
+B:CHR[4] | RES_LITE[30]
+F:ATTRACT_DEMON | ATTRACT_UNDEAD | LITE | REGEN | XTRA_TO_A | 
+F:SHOW_CURSE | PERMA_CURSE | FIRE_PROOF 
+I:REGEN | ATTRACT_DEMON | ATTRACT_UNDEAD 
+D:Lovingly crafted of the finest materials, this is more a work of art than a 
+D:battle suit.  Everyone will want to take it from you.
+
+# 5 (unused)
+
+# 6 (unused)
+
+N:7:of Vulnerability
+X:0:0
+W:0:5:0:0
+T:36:0:99
+T:37:0:99
+F:RAND_RES_NEG | RAND_CURSE | 
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF 
+I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
+I:RES_POIS | RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN | 
+I:TELEPORT | AGGRO_PERM | AGGRO_RAND | AFRAID | HUNGRY | POIS_RAND_BAD |
+I:CUT_RAND_BAD | STICKY_CARRY | STICKY_WIELD | PARALYZE | PARALYZE_ALL | 
+I:DRAIN_EXP | DRAIN_MANA | DRAIN_STAT | DRAIN_CHARGE
+D:It makes you fear spells and breaths.
+
+N:8:of Resistance
+X:10:0
+W:0:5:0:500
+C:0:0:10
+T:36:0:99
+T:37:0:99
+T:38:0:99
+F:RAND_RES | 
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
+I:RES_POIS | RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN 
+D:It grants at least one resistance, and cannot be harmed by elemental attacks.
+
+N:9:of Elvenkind
+X:25:0
+W:0:20:0:1500
+C:0:0:10
+T:36:0:99
+T:37:0:99
+B:STEALTH[3] | 
+B:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40] 
+F:RAND_RES_XTRA | 
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
+I:RES_POIS | RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN 
+D:Made in the smithies of Beleriand, this armour resists the elements and 
+D:at least one other attack, cannot be harmed by the elements, and conceals 
+D:the wearer from hostile eyes.
+
+N:10:(Dwarven)
+X:5:0
+W:0:12:0:1500
+T:36:4:99
+T:37:3:99
+T:38:3:99
+C:0:0:12
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+F:FREE_ACT | XTRA_AC | LIGHT 
+I:FREE_ACT | AC 
+D:Although not magical, this surprisingly light armour is made with such 
+D:skill as to resist damage by the elements and offer enhanced protection. 
+D:The wearer will be immune from paralysing attacks.
+
+N:11:of Permanence
+X:30:0
+W:0:12:0:10000
+C:0:0:10
+T:36:2:2
+B:RES_ACID[45] | RES_ELEC[45] | RES_FIRE[45] | RES_COLD[45] 
+F:SUST_STR | SUST_DEX | SUST_CON | SUST_INT | SUST_WIS | SUST_CHR | 
+F:HOLD_LIFE | RAND_RES_XTRA |
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF 
+I:SUST_STR | SUST_DEX | SUST_CON | SUST_INT | SUST_WIS | SUST_CHR | 
+I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
+I:RES_POIS | RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN | HOLD_LIFE 
+D:The great sorcerers of old wore light mantles that protected against the 
+D:elements and at least one other attack, stat-draining, and experience loss.  
+D:Fortunate indeed are you to discover one.
+
+# 12 (unused)
+
+# 13 (unused)
+
+# 14 (unused)
+
+# 15 (unused)
+
+
+### Shields ###
+
+N:16:(Reinforced)
+X:5:0
+W:0:8:0:2000
+C:0:0:15
+T:34:0:99
+F:HEAVY | XTRA_SIDES | ACID_PROOF | FIRE_PROOF
+I:DD_DS
+D:This shield has been given extra weight, so that it becomes an offensive 
+D:weapon in the hands of a strong fighter.
+
+N:17:(Coated)
+X:5:0
+W:0:5:0:1000
+C:0:0:8
+T:34:1:2
+T:34:4:4
+B:RES_ACID[40] | RES_FIRE[-10]
+F:ACID_PROOF
+I:RES_ACID | RES_FIRE 
+D:Its porous surface has been given an acid-resistant (but flammable) coating.
+
+N:18:of the Earth
+X:5:0
+W:0:8:0:1000
+C:0:0:8
+T:34:3:3
+T:34:5:10
+B:RES_ELEC[40] | INFRA[-2] | SEARCH[-2]
+F:ACID_PROOF
+I:RES_ELEC 
+D:Cunningly constructed to divert electricity from its bearer, this shield 
+D:also makes perception less clear.
+
+N:19:of Vulnerability
+X:0:0
+W:0:5:0:0
+T:34:0:99
+F:RAND_RES_NEG | RAND_CURSE | 
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
+I:RES_POIS | RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN | 
+I:TELEPORT | NO_TELEPORT | AGGRO_PERM | AGGRO_RAND | SLOW_REGEN | AFRAID | 
+I:HUNGRY | POIS_RAND | POIS_RAND_BAD | CUT_RAND | CUT_RAND_BAD | HALLU_RAND | 
+I:ATTRACT_DEMON | ATTRACT_UNDEAD | STICKY_CARRY | STICKY_WIELD | PARALYZE | 
+I:PARALYZE_ALL | DRAIN_EXP | DRAIN_MANA | DRAIN_STAT | DRAIN_CHARGE
+D:It makes you fear spells and breaths.
+
+N:20:of Resistance
+X:10:0
+W:0:5:0:500
+C:0:0:10
+T:34:0:99
+F:RAND_RES | 
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+D:It grants at least one resistance, and cannot be harmed by elemental attacks.
+
+N:21:of Night and Day
+X:10:0
+W:0:10:0:1000
+C:0:0:5
+T:34:0:99
+B:RES_LITE[35] | RES_DARK[35]
+I:RES_LITE | RES_DARK 
+D:It grants resistance to light and darkness.
+
+N:22:of Elvenkind
+X:25:0
+W:0:20:0:1500
+C:0:0:10
+T:34:0:99
+B:STEALTH[3] | 
+B:RES_ACID[35] | RES_ELEC[35] | RES_FIRE[35] | RES_COLD[35] 
+F:RAND_RES_XTRA | ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
+I:RES_POIS | RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN 
+D:Made in the smithies of Beleriand, this shield resists the elements and 
+D:at least one other attack, cannot be harmed by the elements, and conceals 
+D:the wearer from hostile eyes.
+
+N:23:of Preservation
+X:25:0
+W:30:25:0:2000
+C:0:0:15
+T:34:0:99
+F:SUST_STR | SUST_DEX | SUST_CON |
+F:RAND_RES | RAND_RES_XTRA | RAND_RES_SML |
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+I:SUST_STR | SUST_DEX | SUST_CON |
+D:A powerful shield that preserves your physical nature as 
+D:well as offering protection from a variety of attacks.
+
+### Crowns and Helms ###
+
+N:24:of Intelligence
+X:11:0
+W:0:12:0:500
+T:32:0:99
+B:INT[2] 
+F:SUST_INT 
+I:AC
+D:It increases and sustains your intelligence.
+
+N:25:of Wisdom
+X:11:0
+W:0:12:0:500
+T:32:0:99
+B:WIS[2] 
+F:SUST_WIS
+I:AC
+D:It increases and sustains your wisdom.
+
+N:26:of Beauty
+X:4:0
+W:0:12:0:1000
+T:32:0:99
+B:CHR[4] 
+F:SUST_CHR
+I:AC
+D:It increases and sustains your charisma.
+
+N:27:of the Magi
+X:17:0
+W:0:24:0:1500
+T:33:0:99
+B:INT[3] | RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40]  
+F:SUST_INT | RAND_POWER | ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | SLOW_DIGEST | 
+I:FEATHER | REGEN | TELEPATHY | SEE_INVIS | FREE_ACT | HOLD_LIFE | 
+I:SEEING | FEARLESS | LITE 
+D:It increases and sustains your intelligence, resists the four basic 
+D:elements, and cannot be harmed by elemental attacks.  You may benefit 
+D:greatly from the one hidden power it contains.
+
+N:28:of Might
+X:20:0
+W:0:24:0:1000
+T:33:0:99
+B:STR[3] | DEX[3] | CON[3] 
+F:SUST_STR | SUST_DEX | SUST_CON | FREE_ACT
+I:SUST_STR | SUST_DEX | SUST_CON | FREE_ACT
+D:This warrior's crown increases and sustains strength, dexterity, and 
+D:constitution, and protects against paralysis.
+
+N:29:of Lordliness
+X:17:0
+W:0:12:0:1000
+T:33:0:99
+B:WIS[3] | CHR[3] 
+F:SUST_WIS | SUST_CHR | RAND_POWER 
+I:SUST_WIS | SUST_CHR | SLOW_DIGEST | 
+I:FEATHER | REGEN | TELEPATHY | SEE_INVIS | FREE_ACT | HOLD_LIFE | 
+I:SEEING | FEARLESS | LITE 
+D:This paladin's crown increases and sustains wisdom and charisma. 
+D:You may benefit greatly from the one hidden power it contains.
+
+N:30:of Seeing
+X:10:0
+W:0:12:0:500
+T:32:0:99
+T:33:0:99
+B:SEARCH[5] 
+F:SEEING | SEE_INVIS 
+I:SEEING | SEE_INVIS 
+D:This helm grants sight beyond sight that can never be blinded, and its 
+D:wearer will seldom miss a trap or hidden door.
+
+N:31:of Serenity
+X:14:0
+W:0:24:0:1500
+T:32:0:99
+T:33:0:99
+B:RES_CONFU[35] | RES_SOUND[35]
+F:FEARLESS
+I:RES_CONFU | RES_SOUND | FEARLESS 
+D:This headgear makes the wearer serene among the sound and confusion 
+D:of the world.
+
+N:32:of Light
+X:6:0
+W:0:8:0:500
+T:32:0:99
+B:RES_LITE[45]
+F:LITE 
+I:RES_LITE | LITE 
+D:This helm shines so brightly as to light the way for the wearer, and offers 
+D:resistance to light.
+
+N:33:of Telepathy
+X:20:0
+W:0:24:0:20000
+T:33:0:99
+F:TELEPATHY
+I:TELEPATHY
+D:Suddenly, the minds of your enemies stand revealed, and you perceive 
+D:those who attempt to waylay you in the dark.
+
+N:34:of Regeneration
+X:10:0
+W:0:24:0:1000
+T:33:0:99
+F:REGEN
+I:REGEN
+D:This helm offers hastened recovery of both hit points and mana.
+
+N:35:of Teleportation
+X:0:0
+W:0:24:0:0
+T:32:0:99
+T:33:0:99
+F:TELEPORT | PERMA_CURSE | SHOW_CURSE 
+I:TELEPORT
+D:This headgear randomly teleports you around the dungeon.
+
+N:36:of Trollkind
+X:0:0
+W:0:12:0:0
+T:32:0:99
+B:INT[-5] | WIS[-5] | STR[3] | CON[3]
+I:AC
+D:This headgear saps the powers of the mind, but adds to the powers of the body.
+
+N:37:of the Shadow Realm
+X:15:0
+W:0:24:0:5000
+T:32:0:99
+T:33:0:99
+B:RES_DARK[40] | RES_NETHR[25] | STEALTH[3] | INFRA[3] 
+F:DARKNESS | DRAIN_EXP | ATTRACT_UNDEAD | PARALYZE | XTRA_TO_A | 
+F:PERMA_CURSE | SHOW_CURSE 
+I:RES_DARK | RES_NETHR | DARKNESS | ATTRACT_UNDEAD | PARALYZE 
+D:This headgear takes you into the realm of shadow, with the attendant bonuses 
+D:and dangers.
+
+N:39:of Sickliness
+X:0:0
+W:0:24:0:0
+T:32:0:99
+T:33:0:99
+B:STR[-5] | DEX[-5] | CON[-5] 
+F:SLOW_REGEN | STICKY_WIELD | SHOW_CURSE 
+I:SLOW_REGEN | STICKY_WIELD 
+D:This headgear withers the body away, and is reluctant to release its grip.
+
+
+### Cloaks ###
+
+N:40:of Protection
+X:8:0
+W:0:4:0:200
+C:0:0:10
+T:35:0:99
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF | RAND_RES_SML 
+I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS | 
+I:RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN 
+D:It offers enhanced ordinary protection and some resistance, and cannot be 
+D:harmed by elemental attacks.
+
+N:41:of Stealth
+X:10:0
+W:0:4:0:500
+T:35:0:99
+B:STEALTH[3]
+I:AC
+D:It improves your ability to hide from your enemies.
+
+N:42:of Aman
+X:20:0
+W:0:28:0:4000
+C:0:0:20
+T:35:0:99
+B:STEALTH[3] 
+F:RAND_RES_XTRA | ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS | 
+I:RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN 
+D:Made in the Blessed Realm far to the west, these highly magical garments 
+D:are seldom seen and highly valued.  They increase stealth, have at least one 
+D:special resistance, and cannot be harmed by the elements.
+
+# 43 (unused)
+
+N:44:of Enveloping
+X:0:0
+W:0:14:0:0
+C:-10:-10:10
+T:35:0:99
+F:XTRA_TO_A | SHOW_MODS 
+I:TO_A | TO_H | TO_D 
+D:The swirling folds of this cloak seem always to be in the way when you 
+D:most want to strike your opponents, or they you.
+
+N:45:of Exposure
+X:0:0
+W:0:14:0:0
+C:-10:-10:-50
+T:35:0:99
+F:AGGRO_PERM | STICKY_WIELD | RAND_RES_NEG | SHOW_MODS
+I:AGGRO_PERM | STICKY_WIELD |
+I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS | 
+I:RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN 
+D:You feel horribly naked and defenceless, and wonder how you'll get 
+D:this accursed clock off your back.
+
+N:47:of Shard Protection
+X:10:0
+W:0:14:0:500
+C:0:0:5
+T:35:0:99
+B:RES_SHARD[45]
+I:RES_SHARD 
+D:It wraps around you, offering protection from blasts of shards.
+
+
+### Gloves ###
+
+N:48:of Free Action
+X:11:0
+T:31:0:99
+W:0:6:0:500
+F:FREE_ACT
+I:FREE_ACT
+D:They protect from paralyzation and certain slowing attacks.  Mages and 
+D:Necromancers can wear these comfortably.
+
+N:49:of Slaying
+X:16:0
+W:0:8:0:1500
+C:8:8:0
+T:31:0:99
+F:SHOW_MODS
+I:TO_H | TO_D 
+D:You strike with force and accuracy when wearing these.
+
+N:50:of Agility
+X:14:0
+W:0:12:0:1000
+T:31:0:99
+B:DEX[5] 
+I:AC
+D:While wearing these, your fingers seem divinely nimble, and your whole body 
+D:lithe and limber.
+
+N:51:of Power
+X:22:0
+T:31:0:99
+W:0:6:0:2000
+C:8:8:0
+B:STR[5] 
+F:SHOW_MODS 
+I:TO_H | TO_D 
+D:He who wears these gains considerable combat power, and feels his 
+D:muscles bulge as he hammers his foes.
+
+N:52:of Magic Mastery
+X:15:0
+T:31:0:99
+W:0:6:0:500
+B:MAGIC_MASTERY[4]
+I:AC
+D:They enhance magical device skill.  Mages and Necromancers can wear 
+D:these comfortably.
+
+N:53:of Weakness
+X:0:0
+T:31:0:99
+W:0:12:0:0
+B:STR[-10] | INT[3] | MAGIC_MASTERY[3]
+I:AC
+D:They suck the strength out of your nerveless arms, but can aid in magic.
+
+N:54:of Clumsiness
+X:0:0
+T:31:0:99
+W:0:12:0:0
+B:DEX[-10] 
+I:AC
+D:Your fingers seem thick and clumsy, and you fumble around instead of 
+D:slaying your foes.
+
+
+### Boots ###
+
+N:55:of Elvenkind
+X:30:0
+T:30:2:99
+W:0:18:0:10000
+B:STEALTH[5] | SPEED[5] 
+F:FEATHER | ACID_PROOF | FIRE_PROOF 
+I:AC
+D:Light and fast are your footfalls in these superbly made boots.
+
+N:56:of Slow Descent
+X:5:0
+T:30:0:99
+W:0:4:0:250
+F:FEATHER
+I:FEATHER
+D:They make you light-footed, able to escape pits and dance lightly over 
+D:lava.
+
+N:57:of Stealth
+X:12:0
+T:30:0:99
+W:0:5:0:500
+B:STEALTH[3]
+I:AC
+D:Your footfalls make no noise at all wearing these.
+
+N:58:of Free Action
+X:12:0
+T:30:0:99
+W:0:9:0:500
+F:FREE_ACT
+I:FREE_ACT
+D:These protect against paralyzation and some slowing attacks.
+
+N:59:of Speed
+X:35:0
+T:30:0:99
+W:0:36:0:5000
+B:SPEED[10] 
+I:AC 
+D:All around you seem to move with dreamlike sloth; time itself waits 
+D:patiently for you.
+
+N:60:of Stability
+X:15:0
+T:30:0:99
+W:0:12:0:1000
+B:RES_NEXUS[45]
+I:RES_NEXUS
+D:The wearer of these has his feet planted firmly on the floor, and need 
+D:not fear nexus attacks.
+
+N:61:of Kicking
+X:0:0
+T:30:0:99
+W:0:12:0:0
+C:5:5:0
+F:AGGRO_PERM | HEAVY | XTRA_TO_H | XTRA_TO_D | SHOW_CURSE | PERMA_CURSE
+I:AGGRO_PERM | TO_H | TO_D 
+D:These hefty boots add damage to every blow, but every step you take 
+D:echoes through the dungeon, and all around you annoyed creatures advance 
+D:to kill. 
+
+N:62:of Slowness
+X:0:0
+T:30:0:99
+W:0:12:0:0
+C:0:0:10
+B:SPEED[-5] | RES_NEXUS[30] 
+F:NO_TELEPORT | SHOW_CURSE | PERMA_CURSE | XTRA_TO_A
+I:RES_NEXUS | NO_TELEPORT 
+D:These slow the wearer down as if stuck to the spot.
+
+N:63:of Pitiless Torment
+X:0:0
+T:30:0:99
+W:0:24:0:0
+C:-20:-20:-50
+B:SPEED[-10] 
+F:AGGRO_PERM | STICKY_WIELD | SHOW_CURSE 
+I:AGGRO_PERM | STICKY_WIELD 
+D:These horrific footgear crush the wearer down, rendering him exposed and 
+D:helpless, utterly unable to face the gleaming eyes of suddenly energized 
+D:foes.
+
+
+### Weapons ###
+
+N:64:(Holy Avenger)
+X:25:0
+W:0:20:0:10000
+C:6:6:4
+T:21:0:99
+T:22:0:99
+T:23:0:99
+B:WIS[4] | SLAY_EVIL[15] | SLAY_UNDEAD[20] | SLAY_DEMON[20] 
+F:SEE_INVIS | BLESSED | RAND_SUSTAIN 
+I:SLAY_EVIL | SLAY_UNDEAD | SLAY_DEMON | SEE_INVIS | 
+I:SUST_STR | SUST_DEX | SUST_CON | SUST_INT | SUST_WIS | SUST_CHR  
+D:The sanctified weapon of Priests and Paladins, it slays evil, demons, and 
+D:the undead, increases wisdom and sustains a random stat, can be wielded by 
+D:pious characters comfortably, grants sight beyond sight, and boosts armour 
+D:class.
+
+N:65:of Doriath
+X:22:0
+W:0:20:0:10000
+C:4:4:8:4
+T:21:0:99
+T:22:0:99
+T:23:0:99
+B:STEALTH[4] | RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40] 
+F:FREE_ACT | SEE_INVIS | FEATHER | REGEN | RAND_SUSTAIN | 
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
+I:FREE_ACT | SEE_INVIS | FEATHER | REGEN |  
+I:SUST_STR | SUST_DEX | SUST_CON | SUST_INT | SUST_WIS | SUST_CHR  
+D:Strong friend in peril, this weapon enhances stealth, resists all four 
+D:basic elements and cannot be damaged by them, grants see invisible and 
+D:protection from paralysis, increases armour class, boosts regeneration 
+D:speed, and renders the wearer lightfooted.  It also randomly sustains one 
+D:stat.
+
+# OneAbility
+
+N:66:(Blessed)
+X:12:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:20:0:5000
+B:WIS[3] 
+F:BLESSED | RAND_POWER
+I:FEATHER | REGEN | TELEPATHY | SEE_INVIS | FREE_ACT | HOLD_LIFE | 
+I:SEEING | FEARLESS | LITE | SLOW_DIGEST 
+D:A priestly weapon that increases wisdom and bears a hidden power.
+
+N:67:of Gondolin
+X:23:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:20:20:0:15000
+C:7:7:0
+B:SLAY_DEMON[20] | SLAY_ORC[20] | SLAY_TROLL[20] | SLAY_DRAGON[20] |
+B:RES_DARK[40] 
+F:LITE | SEE_INVIS | FREE_ACT | RAND_POWER | 
+F:ACID_PROOF | FIRE_PROOF 
+I:LITE | SEE_INVIS | RES_DARK 
+D:A weapon crafted for the defence of the Hidden Kingdom, it is deadly to the 
+D:invading hordes of orcs, trolls, dragons and demons from Angband.  It gives 
+D:its bearer resistance to dark, permanent light, the ability to see those 
+D:hidden from normal sight, immunity from paralysis, and one extra power.
+
+N:68:of the Noldor
+X:20:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:20:0:10000
+C:5:5:0
+B:STR[2] | DEX[2] | CON[2] | 
+B:SLAY_ORC[20] | SLAY_TROLL[20] | SLAY_GIANT[20] 
+F:FREE_ACT | SEE_INVIS
+I:FREE_ACT | SEE_INVIS | SLAY_ORC | SLAY_TROLL | SLAY_GIANT 
+D:A weapon made by the Deep Elves, feared by trolls, orcs, and giants.  It 
+D:offers sight of the unseen and protects from paralysis, and increases 
+D:strength, dexterity and constitution.
+
+
+N:69:of Nogrod
+X:19:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:20:0:6000
+B:TUNNEL[2] | SPEED[2] | STR[2] 
+F:LITE | XTRA_DICE | LIGHT 
+I:LITE
+D:Cunningly designed by the dwarves of Nogrod, this weapon will aid swift 
+D:movement underground.  It glows permanently, and increases the wielder's 
+D:strength, speed and tunnelling ability.
+
+# 70 (unused)
+
+# 71 (unused)
+
+# The "Elemental" brands (4)
+
+N:72:of Melting
+X:18:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:10:0:4500
+B:BRAND_ACID[17] | RES_ACID[45] 
+F:ACID_PROOF
+I:BRAND_ACID 
+D:This weapon smokes and sizzles with noxious black corrosions.  It grants 
+D:resistance to acid and cannot be harmed by that element.
+
+N:73:of Shocking
+X:18:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:10:0:4500
+B:BRAND_ELEC[17] | RES_ELEC[45]
+F:ELEC_PROOF 
+I:BRAND_ELEC 
+D:Sparks form tiny coronas upon its surface from top to bottom, and it 
+D:grants resistance to electricity.
+
+N:74:of Burning
+X:15:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:10:0:4000
+B:BRAND_FIRE[17] | RES_FIRE[45]
+F:FIRE_PROOF 
+I:BRAND_FIRE 
+D:Flames dance merrily up and down it.  It grants resistance to fire, and 
+D:cannot be harmed by that element.
+
+N:75:of Freezing
+X:15:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:10:0:4000
+B:BRAND_COLD[17] | RES_COLD[45]
+F:COLD_PROOF 
+I:BRAND_COLD 
+D:Crystals of coldly gleaming ice form upon its surface, and it grants 
+D:resistance to frost.
+
+N:76:of Poisoning
+X:15:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:10:0:4000
+B:BRAND_POIS[17] | RES_POIS[10] 
+I:BRAND_POIS 
+D:It gleams a sickly green, and you dare not hold it above the handle.
+
+# A Whip of the Balrog.  At least 2d5, and x3 damage to all not immune 
+# to fire, but reduces stealth.  Can also lash out at a distance of two.
+N:77:of the Balrog
+X:30:245
+T:21:2:2
+W:0:5:0:10000
+C:-20:10:0
+B:STEALTH[-4] | BRAND_FIRE[30] | RES_FIRE[45] 
+F:LITE | XTRA_DICE | HEAVY | FIRE_PROOF
+I:LITE | BRAND_FIRE
+D:This perilous demon's lash burns redly with the dread fires of Utumno, 
+D:doing triple damage to all monsters not resitant to fire, and 
+D:blazing so brightly as to light your path and disturb nearby foes.
+
+N:78:of Chaos
+X:20:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:15:0:10000
+C:10:10:0
+B:RES_CHAOS[30]
+F:CHAOTIC | LIGHT 
+I:RES_CHAOS | CHAOTIC 
+I:CHAOTIC
+D:The forces of chaos are bound up inside.  Do not release them lightly!
+
+# 79 (unused)
+
+# Used to be the "Slay" brands - now more interesting
+
+N:80:of the Hunter
+X:12:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:12:0:500
+B:SLAY_ANIMAL[17]
+F:HUNGRY | SHOW_CURSE | PERMA_CURSE | XTRA_TO_H
+I:HUNGRY | SLAY_ANIMAL 
+D:This weapon is especially deadly against natural creatures, but will leave 
+D:you feeling hungry.
+
+N:81:of Slay Evil
+X:17:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:12:0:500
+B:SLAY_EVIL[15]
+I:SLAY_EVIL
+D:This weapon fights against evil with holy fury.
+
+N:82:of Dread
+X:17:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:20:20:0:-3000
+B:SLAY_UNDEAD[20] | SPEED[3] | STEALTH[3] | INFRA[3] 
+F:AFRAID | HUNGRY | SLOW_REGEN | DROP_WEAPON | PARALYZE | SHOW_CURSE | 
+F:PERMA_CURSE | DARKNESS
+I:SLAY_UNDEAD | AFRAID | HUNGRY | SLOW_REGEN | DROP_WEAPON | 
+I:PARALYZE | DARKNESS 
+D:If you can overcome the crippling fear, this weapon will heighten your 
+D:senses and reactions and prove destructive to the undead.
+
+N:83:of Slay Demon
+X:17:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:12:0:500
+B:SLAY_DEMON[20] 
+F:DRAIN_STAT | SHOW_CURSE | PERMA_CURSE 
+I:SLAY_DEMON | DRAIN_STAT 
+D:This weapon smites the physical forms - demons - of the fallen Maiar of 
+D:Morgoth's following; use it warily, because it takes a toll on your bodily 
+D:attributes.
+
+N:84:of the Dr[^u]gs
+X:7:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:12:0:500
+B:SLAY_ORC[20] | SPEED[-2] 
+F:FEARLESS 
+I:SLAY_ORC | FEARLESS 
+D:This weapon embodies the Dr[^u]-folk - slow, but courageous and with a hatred 
+D:of orcs.
+
+N:85:of Sneaking
+X:7:0
+T:21:0:2
+T:22:0:2
+T:23:0:11
+W:0:12:0:500
+B:SLAY_TROLL[20] | SLAY_GIANT[20] | STEALTH[3] 
+F:LIGHT | TELEPORT | DRAIN_MANA | SHOW_CURSE | PERMA_CURSE 
+I:SLAY_TROLL | SLAY_GIANT | TELEPORT | DRAIN_MANA 
+D:This weapon is small and light, making it ideal for use against the large and 
+D:slow-witted. Unfortunately it will also use up your magical energy to 
+D:teleport you around randomly.
+
+# 86 - unused
+
+N:87:of Slay Dragon
+X:18:0
+T:22:0:99
+T:23:0:99
+W:0:12:0:500
+B:SLAY_DRAGON[20]
+F:CUT_RAND | CUT_RAND_BAD | SHOW_CURSE | PERMA_CURSE | XTRA_TO_D
+I:SLAY_DRAGON | CUT_RAND | CUT_RAND_BAD 
+D:This weapon is especially deadly against dragons, by virtue of it's extreme 
+D:sharpness to cut through or pierce their thick hide.
+
+# The "Kill" brands (8)
+
+N:88:of *Slay* Animal
+X:15:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:50:0:1000
+B:INT[2] | SLAY_ANIMAL[20] 
+F:REGEN 
+I:SLAY_ANIMAL | REGEN 
+D:This weapon withers animals, increases intelligence, and hastens recovery.
+
+N:89:of *Slay* Evil
+X:20:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:50:0:1000
+B:WIS[2] | SLAY_EVIL[17] 
+F:BLESSED 
+I:SLAY_EVIL
+D:This holy weapon is peerless in combat with evil creatures, increases 
+D:wisdom, and is blessed.
+
+N:90:of *Slay* Undead
+X:20:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:50:0:1000
+B:WIS[2] | SLAY_UNDEAD[25] 
+F:SEE_INVIS 
+I:SLAY_UNDEAD 
+D:This weapon dispels undead as you strike them, increases wisdom, and allows 
+D:you to see monsters that are normally invisible.
+
+N:91:of *Slay* Demon
+X:20:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:50:0:1000
+B:INT[2] | SLAY_DEMON[25] | RES_FIRE[40]
+I:SLAY_DEMON | RES_FIRE
+D:This weapon smites down demons with holy wrath, increases intelligence, 
+D:and protects against the element of fire.
+
+N:92:of *Slay* Orc
+X:12:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:50:0:1000
+B:DEX[2] | SLAY_ORC[25] 
+I:SLAY_ORC 
+D:This weapon wreaks orcish armies and increases dexterity.
+
+N:93:of *Slay* Troll
+X:12:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:50:0:1000
+B:STR[2] | SLAY_TROLL[25] 
+I:SLAY_TROLL 
+D:This weapon pierces the tough hides of trolls with ease, and you feel 
+D:mighty as you swing it.
+
+N:94:of *Slay* Giant
+X:12:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:50:0:1000
+B:STR[2] | SLAY_GIANT[25] 
+I:SLAY_GIANT 
+D:This weapon loans you some of the strength of giants, and cripples them with 
+D:every deadly blow.
+
+N:95:of *Slay* Dragon
+X:20:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:0:50:0:1000
+B:CON[3] | SLAY_DRAGON[25] 
+I:SLAY_DRAGON 
+D:This weapon is a mighty dragonbane, and increases constitution.
+
+# 96 (unused)
+
+# 97 (unused)
+
+# 98 (unused)
+
+# 99 (unused)
+
+N:100:of Digging
+X:4:0
+T:20:0:99
+W:0:10:0:500
+B:TUNNEL[5] | BRAND_ACID[17]  
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF 
+I:ACID_PROOF | BRAND_ACID 
+D:It digs rapidly through walls, bears an acidic brand, and cannot be 
+D:harmed by the elements.
+
+# 101 (unused)
+
+N:102:of Angband
+X:0:0
+T:21:0:99
+T:22:0:99
+T:23:0:99
+W:10:15:0:-3000
+C:-10:+5:0
+F:SEE_INVIS | HOLD_LIFE | RAND_CURSE | XTRA_SIDES | XTRA_TO_D | RAND_POWER 
+B:RES_NETHR[50] | RES_COLD[20] | RES_POIS[20] | RES_FIRE[-30] | 
+B:RES_LITE[-15] | CON[-4] | DEX[-4] | STEALTH[-4] | 
+B:BRAND_COLD[17] | BRAND_POIS[17] 
+I:SEE_INVIS | HOLD_LIFE | RES_NETHR | RES_COLD | RES_POIS | RES_FIRE | 
+I:RES_LITE | BRAND_COLD | BRAND_POIS 
+D:A weapon of despair, that draws you ever deeper into the realm 
+D:of the undead.
+
+# 103 (unused)
+
+
+### Missile Launchers ###
+
+N:104:of Accuracy
+X:10:0
+T:19:0:99
+W:0:4:0:500
+C:15:5:0
+I:TO_H
+D:This missile launcher shoots missiles with pinpoint accuracy, and 
+D:sometimes almost guarantees a hit.
+
+N:105:of Velocity
+X:10:0
+T:19:0:99
+W:0:4:0:500
+C:5:15:0
+I:TO_D
+D:This missile launcher has an unnaturally high Deadliness bonus, 
+D:and sometimes energizes for additional damage.
+
+N:106:of Ossiriand
+X:25:0
+T:19:12:13
+W:50:4:0:5000
+C:10:10:0
+B:DEX[2] | MIGHT[1] | STEALTH[2] 
+F:ACID_PROOF | FIRE_PROOF | RAND_POWER 
+I:FEATHER | REGEN | TELEPATHY | SEE_INVIS | FREE_ACT | HOLD_LIFE | 
+I:SEEING | FEARLESS | LITE | SLOW_DIGEST 
+D:A bow of the Green Elves of the Land of the Seven Rivers.  It's wielder 
+D:will find extra power in its shots, and will have greater stealth and 
+D:dexterity.
+
+N:107:of Extra Might
+X:25:0
+T:19:0:99
+W:0:48:0:1000
+C:5:10:0
+B:MIGHT[2]
+I:DD_DS
+D:A missile weapon of legend, powerful beyond the measure of its kind, 
+D:capable of shots that kill and maim.
+
+N:109:of Extra Shots
+X:20:0
+C:10:5:0
+T:19:0:99
+W:0:12:0:1000
+B:SHOTS[1]
+I:DD_DS
+D:So wondrously easy to reload is this weapon that little time passes 
+D:between one shot and the next.
+
+# 110 (unused)
+
+### Ammo ###
+
+N:111:of Hurt Animal
+X:7:0
+T:16:0:99
+T:17:0:99
+T:18:0:99
+W:0:10:0:5
+B:SLAY_ANIMAL[17]
+I:SLAY_ANIMAL
+D:They slay natural creatures.
+
+N:112:of Hurt Evil
+X:10:0
+T:16:0:99
+T:17:0:99
+T:18:0:99
+W:0:10:0:5
+B:SLAY_EVIL[15]
+I:SLAY_EVIL
+D:They do extra damage to evil creatures.
+
+N:113:of Hurt Undead
+X:10:0
+T:16:0:99
+T:17:0:99
+T:18:0:99
+W:0:20:0:5
+B:SLAY_UNDEAD[20]
+I:SLAY_UNDEAD
+D:They do extra damage to the undead.
+
+N:114:of Hurt Demon
+X:10:0
+T:16:0:99
+T:17:0:99
+T:18:0:99
+W:0:20:0:5
+B:SLAY_DEMON[20]
+I:SLAY_DEMON
+D:They smite demonic foes.
+
+N:115:of the Noldor
+X:10:0
+T:16:0:99
+T:17:0:99
+T:18:0:99
+W:0:8:0:10
+B:SLAY_ORC[20] | SLAY_TROLL[20] | SLAY_GIANT[20]
+I:SLAY_ORC | SLAY_TROLL | SLAY_GIANT
+D:They pierce deeply into orcs, trolls and giants.
+
+N:116:of Holy Might
+X:15:0
+T:16:0:99
+T:17:0:99
+T:18:0:99
+W:40:22:0:10
+C:5:5:0
+B:SLAY_EVIL[15] | SLAY_UNDEAD[20] | SLAY_DEMON[20]
+I:SLAY_UNDEAD | SLAY_DEMON
+D:They do extra damage to evil, undead and demons.
+
+N:117:of *Hurt* Evil
+X:15:0
+T:16:0:99
+T:17:0:99
+T:18:0:99
+W:30:20:0:5
+B:SLAY_EVIL[17] 
+I:SLAY_EVIL
+D:They are a great bane of evil.
+
+N:118:of Hurt Dragon
+X:10:0
+T:16:0:99
+T:17:0:99
+T:18:0:99
+W:0:20:0:5
+B:SLAY_DRAGON[20]
+I:SLAY_DRAGON
+D:They do extra damage to dragons.
+
+N:119:of Acid
+X:11:0
+T:16:0:99
+T:17:0:99
+T:18:0:99
+W:0:20:0:5
+B:BRAND_ACID[17] 
+F:ACID_PROOF
+I:BRAND_ACID
+D:They smoke and sizzle with noxious black corrosions, and they cannot be 
+D:harmed by acid.
+
+N:120:of Electricity
+X:11:0
+T:16:0:99
+T:17:0:99
+T:18:0:99
+W:0:20:0:5
+B:BRAND_ELEC[17] 
+F:ELEC_PROOF
+I:BRAND_ELEC
+D:Sparks form tiny coronas upon their surfaces from top to bottom.
+
+N:121:of Flame
+X:10:0
+T:16:0:99
+T:17:0:99
+T:18:0:99
+W:0:10:0:5
+B:BRAND_FIRE[17] 
+F:FIRE_PROOF
+I:BRAND_FIRE
+D:Flames dance merrily up and down them, and they cannot be harmed by fire.
+
+N:122:of Frost
+X:10:0
+T:16:0:99
+T:17:0:99
+T:18:0:99
+W:0:10:0:5
+B:BRAND_COLD[17] 
+F:COLD_PROOF
+I:BRAND_COLD
+D:Crystals of coldly gleaming ice form upon their surfaces.
+
+N:123:of Poison
+X:10:0
+T:16:0:99
+T:17:0:99
+T:18:0:99
+W:0:20:0:5
+B:BRAND_POIS[17]
+I:BRAND_POIS
+D:They gleam a sickly green.
+
+N:124:of Wounding
+X:5:0
+T:16:0:99
+T:17:0:99
+T:18:0:99
+W:0:5:0:10
+C:8:8:0
+I:TO_H | TO_D
+D:They are easy to aim, and pierce deep into your foes.
+
+N:125:of Backbiting
+X:0:0
+T:16:0:99
+T:17:0:99
+T:18:0:99
+W:20:10:0:0
+C:-50:-50:0
+I:TO_H 
+D:They seem only interested in hurting you.
+
+N:126:(Heavy)
+X:2:0
+T:16:0:99
+T:17:0:99
+T:18:0:99
+W:0:5:0:5
+C:-10:10:0
+I:TO_D
+D:The skilled marksman may find these worth using.
+
+# 127 unused
+
+### Rings ###
+
+N:128:of the Elements
+T:45:0:99
+W:0:4:0:0
+I:BRAND_FIRE | BRAND_COLD | BRAND_ACID | BRAND_POIS | BRAND_ELEC
+D:A ring imparting elemental force to your blows.
+
+N:129:of Physical Prowess
+T:45:0:99
+W:0:4:0:0
+I:DD_DS
+D:This ring will enhance your physical powers.
+
+N:130:of Combat
+T:45:0:99
+W:0:4:0:0
+I:TO_H | TO_D | FEARLESS | AGGRO_PERM | AGGRO_RAND 
+D:You feel your combative urges rising as you slip this ring on.
+
+N:131:of Mobility
+T:45:0:99
+W:0:4:0:0
+I:FREE_ACT 
+D:A ring that guarantees your freedom to move.
+
+N:132:of Arcane Resistance
+T:45:0:99
+W:0:4:0:0
+I:RES_POIS | RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | 
+I:RES_SHARD | RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN 
+D:This ring protects you from at least one high element.
+
+N:133:of Utility
+T:45:0:99
+W:0:4:0:0
+I:SLOW_DIGEST | FEATHER 
+D:A ring designed to make your life a little easier.
+
+N:134:of Basic Resistance
+T:45:0:99
+W:0:4:0:0
+I:RES_FIRE | RES_COLD 
+D:This type of ring gives magical protection from one of the base elements; 
+D:the elements of Fire and Cold are most easily controlled by a ring.
+
+N:135:of Hindrance
+T:45:0:99
+W:0:4:0:0
+I:DD_DS
+D:This ring grabs you and reduces your abilities.
+
+N:136:of the Dawn
+T:45:0:99
+W:0:4:0:0
+I:RES_LITE | RES_DARK | SEEING
+D:A ring that calls a truce around you between the powers of Dark and Light.
+
+N:137:of Speed
+T:45:0:99
+W:0:4:0:0
+I:DD_DS
+D:As you put on this ring, you feel the world slow down around you.
+
+N:138:of Woe
+T:45:0:99
+W:0:4:0:0
+I:DD_DS
+D:It seems that this ring is draining everything good and joyous from your 
+D:being.
+
+N:139:of Fickleness
+T:45:0:99
+W:0:4:0:0
+I:TELEPORT
+D:Wearing this ring will put you at the mercy of the whims and chances of fate.
+
+N:140:of Power
+T:45:0:99
+W:0:4:0:0
+I:RES_FIRE | RES_COLD | RES_ACID | RES_ELEC
+D:Immunity from one of the base elements is just one prize for the finder of 
+D:this mighty ring.
+
+# 141-159 unused
+
+### Amulets ###
+
+N:160:of Mental Strength
+T:40:0:99
+W:0:4:0:0
+I:DD_DS
+D:This amulet will enhance your mental abilities.
+
+N:161:of Doom
+T:40:0:99
+W:0:4:0:0
+I:DD_DS
+D:As a millstone around your neck, this amulet drags you toward destruction.
+
+N:162:of Basic Resistance
+T:40:0:99
+W:0:4:0:0
+I:RES_ACID | RES_ELEC
+D:This type of amulet gives magical protection from one of the base elements; 
+D:the elements of Acid and Lightning are most easily controlled by an amulet.
+
+N:163:of Magical Item Mastery
+T:40:0:99
+W:0:4:0:0
+I:DD_DS
+D:An amulet that helps your ability to use rods, wands and staves.
+
+N:164:of Clarity
+T:40:0:99
+W:0:4:0:0
+I:RES_CONFU | SEEING | FREE_ACT | SEE_INVIS 
+D:Wearing this amulet gives you the mental powers to be master of your own 
+D:destiny.
+
+N:165:of the Shadows
+T:40:0:99
+W:0:4:0:0
+I:DARKNESS | RES_LITE | RES_DARK
+D:As you don this amulet you feel yourself at one with the night.
+
+N:166:of Metamorphosis
+T:40:0:99
+W:0:4:0:0
+I:DD_DS
+D:Within this amulet is locked the Maiar secret of shapechanging; a pity that 
+D:it is not a power that lesser beings can easily control.
+
+N:167:of Sustenance
+T:40:0:99
+W:0:4:0:0
+I:SUST_STR | SUST_INT | SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR 
+D:This amulet will help to ward off attacks that would reduce your potency.
+
+N:168:of Trickery
+T:40:0:99
+W:0:4:0:0
+I:DD_DS
+D:Wary should be the foe who attacks the wearer of this amulet.
+
+N:169:of Weaponmastery
+T:40:0:99
+W:0:4:0:0
+I:FEARLESS | TO_H | TO_D | RES_DISEN 
+D:An amulet that allows the warrior to concentrate on his attacking with no 
+D:fear of fell magic.
+
+N:170:of Vitality
+T:40:0:99
+W:0:4:0:0
+I:RES_POIS | RES_NETHR | RES_CHAOS
+D:The life force of this amulet's fortunate wearer is held secure by the power 
+D:within.
+
+N:171:of Insight
+T:40:0:99
+W:0:4:0:0
+I:SEE_INVIS | TELEPATHY | SEEING 
+D:This amulet gives you vision of that which would otherwise be hard to see.
+
+# 172-191 unused

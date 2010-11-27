@@ -1,0 +1,101 @@
+FAangband version 0.1.1
+
+One day, a keen player of Angband said to himself: "I enjoy many Angband 
+variants, and appreciate many different types of gameplay.  I would never want 
+to write my own variant.  What would I have to add?"
+
+First Age Angband is an attempt to answer that question.
+
+FAangband is based on Oangband 0.7.0 (started by Leon Marrick, now maintained 
+and developed by Bahman Rabii).  Changes have been made principally with the 
+intent of immersing the player in the world of Tolkien's Silmarillion late in 
+the First Age.  While it is certainly not perfectly consistent (all the bad 
+guys are still alive; all the good guys are dead, or at least have lost their 
+best equipment), an attempt has been made to remove as many anachronisms as 
+possible.
+
+Here are the big changes from Oangband:
+
+- Races have been significantly changed.  Half-Orcs, Half-Trolls, Half-elves 
+  and Shadow Fairies have gone; there are new varieties of Elves, Dwarves and 
+  Men.  Dwarves as a whole tend to have better Intelligence than Wisdom; the 
+  reverse is true for (most) Elves and Hobbits.  Different races also have 
+  significantly different starting conditions.
+
+- There is wilderness.  Wilderness is like and unlike dungeon. On the similar 
+  side, it is randomly generated in rectangular pieces; the "level" still only 
+  goes up or down by one in going from one piece to the next; there is a 
+  structured way of advancing through the wilderness.  On the other hand, it 
+  looks different (no rooms); there are sometimes choices as to how to advance
+  (north or west, maybe, rather than just down); and tactics become quite
+  different.  There are five basic types of wilderness - open plains, dense 
+  forests, rocky mountains, harsh deserts and pathless swamps.  It also has
+  day and night, which affects light-hating monsters and the player's need for
+  light.
+
+- There are multiple towns, small and large, spread throughout the wilderness. 
+  Each race starts in its natural town.  This means that the starting towns 
+  for some races are in the middle of quite dangerous wilderness.  In order to
+  reduce extreme effects of this (instant death, or instant growth of 15 
+  levels), some races have improved starting equipment, and several races start
+  with some experience already (advancing them in character level up to a 
+  maximum of level 5).  High elves are no longer the easy option, at least at
+  first.  You can move your house to a different town, but only once you have
+  walked there.
+
+- There are multiple dungeons (five, to be precise).  At the bottom of each is
+  a guardian, who can only appear there or in special circumstances (which you 
+  may be able to guess...) be summoned.  The first specialist ability (and 
+  second as well for warriors) is still learned at the beginning, but the two
+  others each become available on killing a dungeon guardian.  It is possible
+  to ignore the other dungeons and head straight for Angband, but there's a 
+  heavy price to pay.
+
+- Word of Recall works differently.  Read away from your home town, it still 
+  takes you back there.  Read in your home town, you are given a list of up to 
+  four points to recall to.  When you recall back to town, you get the choice 
+  of which of your recall points you wish to update.
+
+- Anything from later than the First Age has been removed.  No more Rings of
+  Power, Grishnakh, Anduril, Saruman, Witch-King, etc.  There are some new 
+  uniques, artifacts and ego-items (and some just renamed).  There are also new
+  item sets, and some reworked artifacts.
+
+- There is no savefile compatibility with Oangband or Angband.  Savefiles had 
+  to change at least to accommodate changes to data structures (particularly
+  the player data), and the big changes to races meant that any translation
+  would be rather artificial.  Anyone with an Oangband savefile should keep
+  playing it in Oangband; anyone with an Oangband compatible Angband savefile
+  (version 2.9.1 or older) should be congratulated and, well, upgrade.
+
+Thanks to everyone who posts to rec.games.roguelike.angband and/or 
+angband.oook.cz, and particularly to Leon Marrick and Bahman Rabii for
+Oangband.
+
+Nick McConnell
+
+
+
+=== FAangband Copyright Information ===
+=== See also oangdesc.txt for OAngband Copyright Information ===
+=== See also angdesc.txt for Angband Copyright Information ===
+
+FAangband Version 0.3.2:  Nick McConnell
+
+Copyright (c) 2005-2008 Nick McConnell, Bahman Rabii, Leon Marrick, 
+                        Robert Ruehlmann, Ben Harrison, James E. Wilson, 
+                        Robert A. Koeneke
+
+This software may be copied and distributed for educational, research,
+and not for profit purposes provided that this copyright and statement
+are included in all such copies.  Other copyrights may also apply.
+
+All changes made by Nick McConnell are also available under the GNU
+GENERAL PUBLIC LICENSE.  Note that this doesn't influence the current
+distribution, since parts of the source are still only available under
+the old Moria/Angband/Oangband/FAangband license.  Until all parts of Angband
+are distributed under the GPL the only valid license remains the
+original Moria/Angband license.
+
+Note, though, that current efforts to release Angband and its variants under
+the GPL are close to complete, so future versions of FAangband may be GPLd.

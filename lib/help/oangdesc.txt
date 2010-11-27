@@ -1,0 +1,117 @@
+
+                        Welcome to Opinion Angband!
+
+     Opinion Angband, or Oangband for short, is one of the many variants of 
+Angband.  It was created to accomplish exactly two things:  To be an exercise 
+in C programming, and to turn a new conception of non-magical combat into a 
+game you can enjoy.  As you will shortly discover, however, this variant has 
+developed a life of its own.  A selection of features includes:
+
+- The elimination of years of slow HP and damage inflation, and a "tabula
+rasa" approach to game balance in general.
+
+- A fundamentally altered conception of physical combat.
+
+- Specialty abilities alowing character customization.
+
+- A radically revised magical system, offering you the chance to play any of 
+four spellcasters, any of four warrior-spellcasters, or the pure warrior we 
+all know and love.
+
+- A new system of incremental resistance to elements.
+
+- Very much more varied classes.  Mages are great with magical items, Rogues 
+steal and set traps, Assassins whip poisoned knives at their foes, Paladins 
+smite with elemental powers, Priests evoke the power of Holy Light, and 
+Necromancers just blast everything in sight.  
+
+- Races are also more differentiated.  There are three new races, including 
+one designed especially for new players.
+
+- More ways to combat monsters.  Now you really can start and win the game 
+relying on magic, melee, shooting, throwing, or magical devices to do damage 
+to your foes.
+
+- The most cunning AI in any Angband variant.  Monster mana.  All
+sorts of new monster nastiness.
+
+- Dragons are dangerous once more, Undead have a deadly touch, Trolls
+will gleefully pelt you to death with boulders, and those Zephyr
+Hounds are out of control.  In Oangband, even the snakes have
+attitude.
+
+- Enhanced object description and learning code.  Dungeon features that affect 
+movement, sighting, and combat.  Exciting chests and nasty traps.
+
+- More varied dungeons, including new room types, special levels, lakes, forests, 
+and lots of new vaults.
+
+- Shapeshifting, interface enhancements (including big-screen), and circular 
+detection spells.
+
+- One-slot wand and rod stacking, arc spells, themed random artifacts, and 
+player ghosts that challenge you to mortal combat.
+
+- A versatile quiver that makes archery really practical.
+
+- Sets of artifacts that grow in power when used together.
+
+- New just about everything.  Whether it be Wands of Storms, the Dark Elven 
+Smith Eol, Shields of Night and Day, Athelas, Amulets of the Lion, Large 
+Jeweled Chests, or activatable rings, Oangband has novelty enough for anyone.
+
+- And Angband-compatible savefiles.
+
+
+If you feel the need for more detail, I'd suggest just perusing the help
+files.  You will also find a file in the "lib/info/diffs" folder that lists
+(many of) the changes between Oangband 0.6.2 and 0.7.0.
+
+
+=== The Jaded Angband Player's Guide to Oangband ===
+
+-Don't think a whip will instantly make you a combat machine.
+-Don't ignore combat magic and spells that hinder monsters.
+-Melee requires as much backpack space as magic.
+-Don't try to melee or shoot with the pros if you haven't the Skill to swing
+ it.
+-For similar effects to "resistance" in Angband, you will need two resistance
+ items for basic elements, and one item for "high" elements.
+-Forget about blows.  Most characters get two for a long time.
+-Don't ignore infravision, searching, and perception.
+-Don't go into autopilot and sell every damage-dealing wand, staff, or rod you 
+ see.
+-Useful utility magics aren't only found in spellbooks and rods.
+-Don't expect to deal with vaults just using Genocide and Destruction.
+-Don't expect to trap or trick Morgoth easily.
+-Beware of uniques you don't know from Angband; even some you do know
+ (like Ancalagon) may be different.
+-And never, never, never, think this game is fair.  It's not.
+
+
+Bahman Rabii and Leon Marrick
+
+=== Oangband Copyright Information ===
+=== See also angdesc.txt for Angband Copyright Information ===
+
+Oangband Version 0.4  : 4/18/99  Leon Marrick
+
+Oangband Version 0.5  : 4/18/99  Bahman Rabii
+
+Oangband Version 0.6  : 1/10/03  Bahman Rabii
+
+Oangband Version 0.7  : 4/21/05  Bahman Rabii
+
+Copyright (c) 2005      Bahman Rabii, Leon Marrick, Robert Ruehlmann,
+                        Ben Harrison, James E. Wilson, Robert A. Koeneke
+
+This software may be copied and distributed for educational, research,
+and not for profit purposes provided that this copyright and statement
+are included in all such copies.  Other copyrights may also apply.
+
+All changes made by Bahman Rabii are also available under the GNU
+GENERAL PUBLIC LICENSE.  Note that this doesn't influence the current
+distribution, since parts of the source are still only available under
+the old Moria/Angband/Oangband license.  Until all parts of Angband
+are distributed under the GPL the only valid license remains the
+original Moria/Angband license.

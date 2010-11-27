@@ -1,0 +1,101 @@
+Features
+--------
+
+- Reworked dragons.  There are now four levels of dragons - worms (roughly as
+  strong as young dragons used to be), drakes (mature dragons), dragons 
+  (ancient dragons) and winged dragons (great wyrms).  Only winged dragons can 
+  fly, and they are faster and breathe nastier stuff than the lower level ones.
+  There is a new breath element, dragonfire, which is half fire and half poison;
+  also, storm and ice can now be breathed.  Winged dragons are only found in
+  Angband.
+
+- Morgoth has lost speed and gained spellcasting power, especially summoning.
+
+- Implemented Sangband-style terrain flags - although there is still more
+  functionality to be added.  Each feature now has a description in the 
+  '~' knowledge screens.  Other visible changes include traps in trees, and 
+  two types of tree.
+
+- *ID* no longer exists - ordinary ID fully identifies everything.  A future
+  release will rework pseudo-ID.
+
+- Thralls now get waybread instead of regular food.
+
+- Made 'I'nspecting an object print at the top of the regular screen, not load
+  a special screen.
+
+- Added NPP-style accented characters for the Macintosh, Windows, SDL and x11
+  ports (but not WinCE or gtk).  No accents in random names yet.
+
+- Added Hugo Kornelis' 'h'andle command - 'h' can be used to aim a wand, quaff
+  a potion, etc etc.
+
+- Made stairs and wilderness paths not take any energy
+
+- Added average barehand damage for druids/martial artists to 'C' screen
+
+- Included a "small device" birth option which reduces all view, missile and 
+  spell projection distances by half.  This is intended for playing on very 
+  small WinCE devices and (soon, I hope) the Nintendo DS.
+
+- Added lots more wilderness vaults and imported some new dungeon vaults from
+  vanilla.  Changed wilderness vault frequencies so that vaults specific to a
+  particular type of wilderness are more common relative to generic ones.
+
+- Made amnesia only lose map knowledge, not object knowledge.
+
+Bugfixes and cleanup
+--------------------
+
+- made ARC_ spells work.
+
+- fixed bug that was giving set items the wrong percentage resistance
+
+- randarts and egos no longer get immunities when they shouldn't; the maximum 
+  percentage non-immunity resist for a single item is now 80%. (Arralen, Si
+  Griffin)
+
+- fixed (yet again...) bug where HP/SP were being lost on saving and reloading.
+  (Si Griffin)
+
+- did fix from NPP to make tunnelling/immaterial monsters disturb the player
+  in a more reasonable way.  (Si Griffin)
+
+- stopped space from selecting the first menu item - instead it toggles the menu
+  (as it should have all along).  (Eddie Grove, Remuz)
+
+- made some improvements to macros, although keymap triggers still don't play
+  very nicely with inscriptions.
+
+- birth options are no longer labelled as cheat options in character dumps (Si
+  Griffin)
+
+- game no longer becomes bizarre when a half-caster attempts to browse one of 
+  the unused books of the correct realm (Si Griffin)
+
+- may have got rid of some excessive beeping (darkDrone)
+
+- fixed x11 default fonts (Bandobras)
+
+- fixed amusing bug where thrall mode had multiple players (me, Si Griffin, 
+  Seany Clayton, HallucinationMushroom)
+
+- removed redundant roff and c_roff printing functions
+
+- dragon scale mail can no longer give vulnerability (Si Griffin)
+
+- "Underworld Town" and related silliness should no longer appear in the
+  character notes
+
+- replaced hard-coded limits, so that all limits appear in limits.txt (with an
+  exception for loading artifacts that will need attention at some point).
+
+- pseudo-IDed items now stack consistently
+
+- patched a couple of memory leaks
+
+- fixed incorrect (fro FA) vault encoding in some vaults previously taken from 
+  vanilla - now less food to be found in vaults :)
+
+- fixed bug with pathfinding through trees and rubble only getting the player 
+  half as far as expected. (Si Griffin)

@@ -1,0 +1,36 @@
+Features
+--------
+- added (still very rough) Nintendo DS port
+
+- made days 5 times shorter
+
+- made taking stairs use energy again, but made the player get the first turn 
+  on entering a new level
+
+- hitting the enter key to bring up menus is now an option
+
+- light fuel is no longer used when there is natural light
+
+Bugfixes
+--------
+
+- stopped crashes on lighting rooms (fix by George)
+
+- fixed delay in monster action on entering a level (fix by Si Griffin)
+
+- made macros work properly (Irashtar)
+
+- fixed (I hope) running, tunnelling etc crash bugs in Windows XP, partly by 
+  disabling the 'h'andle command (which I hope to bring back later) (Zikke, 
+  Elrosk, HallucinationMushroom, Seany Clayton at least)
+
+- the player can rest when monsters which can pass through walls are moving 
+  (Si Griffin)
+
+- staves of Banish Evil and scrolls of Elemental Attacks id properly 
+  on use (Si Griffin)
+
+- fonts have been extended, and made to work properly in Windows (blank walls
+  fix due to Arralen!)
+
+- slight formatting error in character notes fixed

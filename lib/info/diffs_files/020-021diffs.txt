@@ -1,0 +1,52 @@
+New features
+------------
+ - added Christophe Cavalaria's mouse patch, using Andrew Doull's pathfinding
+   algorithm from UnAngband.  
+
+ - made messages accessible from death screen. 
+
+ - added some more complaints.  
+
+ - made molds release spores, not hit.  
+
+ - added slings to the merchant.
+
+ - changed heavy weapon dice a la Oangband1.1.0.  
+
+ - objects now disappear from view in rubble
+
+ - added ***WINNER*** to line 7 of chardump (for recognition on oook).
+
+ - added house moves and specialty learning to notes file.  
+
+ - added an option to write the notes file to the save directory in an attempt 
+   to get around a problem in some newish versions of XP where the notes file
+   was not permitted to be written
+
+Bugs fixed
+----------
+ - possible to attempt ordering from any store, including the home
+
+ - targetting left a track of stars; targetting of grids in the walls outside
+   towns was possible
+
+ - game crashed when a monster tried to use teleport_towards and found no 
+   vacant floor grids - common in swamps.
+
+ - the character dump code was failing to find the home inventory
+
+ - the observe command output was messed up if used on a weapon which would 
+   normally give a message when changed to (edged weapons for priests, 
+   double-handed weapons, etc)
+
+ - objects would disappear from view when the player is blind
+
+ - teleport level in Nan Dungortheb would land the player in Nowhere Town
+
+ - hostile teleport could land a player over an abyss without them falling 
+
+ - html dumps work better
+
+ - colours now work in xaw (from new NPP - thanks Diego)
+
+ - regional maps don't allow collisions any more (I hope)

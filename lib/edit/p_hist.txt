@@ -1,0 +1,505 @@
+# File: h_info.txt
+
+
+# This file is used to initialize the "lib/data/h_info.raw" file, which is
+# used to initialize the "player history" information for the Angband game.
+
+# Do not modify this file unless you know exactly what you are doing,
+# unless you wish to risk possible system crashes and broken savefiles.
+
+#
+# Background information (see below)
+#
+# Chart progression by race:
+#   Human           -->  1 -->  2 -->  3 --> 50 --> 51 --> 52 --> 53
+#   Green Elf       -->  4 -->  7 -->  9 --> 54 --> 55 --> 56
+#   Grey Elf        -->  5 -->  7 -->  9 --> 54 --> 55 --> 56
+#   Hobbit          --> 10 --> 11 -->  3 --> 50 --> 51 --> 52 --> 53
+#   Petty-Dwarf     --> 13 --> 14 --> 57 --> 58 --> 59 --> 60 --> 61
+#   Dwarf/Longbeard --> 16 --> 17 --> 18 --> 57 --> 58 --> 59 --> 60 --> 61
+#   Druadan         --> 19 --> 23 --> 62 --> 63 --> 64 --> 66
+#   Adan            --> 20 --> 21 -->  3 --> 50 --> 51 --> 52 --> 53
+#   High Elf        -->  6 -->  7 -->  9 --> 54 --> 55 --> 56
+#   Maia            --> 25 --> 26 --> 67 --> 68
+#   Dark Elf        --> 28 --> 29 --> 54 --> 55 --> 56
+#   Ent             --> 31 --> 32 --> 74 --> 75 --> 76
+#   Beorning        --> 80 --> 81 -->  3 --> 50 --> 51 --> 52 --> 53
+#
+# XXX XXX XXX This table *must* be correct or drastic errors may occur!
+
+# N:chart:next:roll:bonus
+
+# Note that the "spacing" in the "description" lines is very important!
+
+
+# Version stamp (required)
+
+V:1.1.5
+
+N:1:2:10:25
+D:You are the illegitimate and unacknowledged child 
+N:1:2:20:35
+D:You are the illegitimate but acknowledged child 
+N:1:2:95:45
+D:You are one of several children 
+N:1:2:100:50
+D:You are the first child 
+
+N:2:3:40:65
+D:of a Serf.  
+N:2:3:65:80
+D:of a Yeoman.  
+N:2:3:80:90
+D:of a Townsman.  
+N:2:3:90:105
+D:of a Guildsman.  
+N:2:3:96:120
+D:of a Landed Knight.  
+N:2:3:99:130
+D:of a Titled Noble.  
+N:2:3:100:140
+D:of a Royal Blood Line.  
+
+N:3:50:20:20
+D:You are the black sheep of the family.  
+N:3:50:80:55
+D:You are a credit to the family.  
+N:3:50:100:60
+D:You are a well liked child.  
+
+N:4:7:40:50
+D:You are of the Nandor.  
+N:4:7:75:55
+D:You were born by the River Adurant.  
+N:4:7:90:55
+D:You followed Denethor across the Ered Luin.  
+N:4:7:95:60
+D:You are of the clan of Lenw["e].  
+N:4:7:98:65
+D:You are regarded as a leader of the Nandor.  
+N:4:7:100:70
+D:You were a counsellor of Denethor son of Lenw["e].  
+
+N:5:7:40:50
+D:You are of the Sindar.  
+N:5:7:75:55
+D:You are from the Forest of Neldoreth.  
+N:5:7:90:55
+D:You have lived in Menegroth.  
+N:5:7:95:60
+D:You have served in the border guard of Doriath.  
+N:5:7:98:65
+D:You were born on the journey from Cuivi['e]nen.  
+N:5:7:100:70
+D:You are of the court of Thingol Greycloak.  
+
+N:6:7:40:50
+D:You are a scion of the House of the Tower of Snow.  
+N:6:7:75:55
+D:You were born into the House of the Hammer of Wrath.  
+N:6:7:90:55
+D:You were born in Nevrast.  
+N:6:7:95:60
+D:You have served in the Guard of the Fountains.  
+N:6:7:98:65
+D:You followed Turgon from Valinor.  
+N:6:7:100:70
+D:You fought in the Nirnaeth Arnoediad.  
+
+N:7:9:60:50
+D:You are one of several children 
+N:7:9:100:55
+D:You are the only child 
+
+N:9:54:40:80
+D:of a Ranger.  
+N:9:54:70:90
+D:of an Archer.  
+N:9:54:87:110
+D:of a Warrior.  
+N:9:54:95:125
+D:of a Mage.  
+N:9:54:100:140
+D:of a Lord.  
+
+N:10:11:85:45
+D:You are one of several children of a Hobbit 
+N:10:11:100:55
+D:You are the only child of a Hobbit 
+
+D:Bum.  
+N:11:3:30:80
+D:Tavern Owner.  
+N:11:3:40:90
+D:Miller.  
+N:11:3:50:100
+D:Home Owner.  
+N:11:3:80:110
+D:Burglar.  
+N:11:3:95:115
+D:Warrior.  
+N:11:3:99:125
+D:Mage.  
+N:11:3:100:140
+D:Clan Elder.  
+
+N:13:14:85:45
+D:You are one of two children of a Petty-Dwarf 
+N:13:14:100:55
+D:You are the only child of a Petty-Dwarf 
+
+N:14:57:20:55
+D:Beggar.  
+N:14:57:50:70
+D:Vagabond.  
+N:14:57:75:85
+D:Assassin.  
+N:14:57:95:100
+D:Warrior.  
+N:14:57:100:125
+D:Mage.  
+
+N:16:17:25:40
+D:You are one of two children of a Dwarven 
+N:16:17:100:50
+D:You are the only child of a Dwarven 
+
+N:17:18:10:60
+D:Thief.  
+N:17:18:25:75
+D:Prison Guard.  
+N:17:18:75:90
+D:Miner.  
+N:17:18:90:110
+D:Warrior.  
+N:17:18:99:130
+D:Priest.  
+N:17:18:100:150
+D:King.  
+
+N:18:57:15:10
+D:You are the black sheep of the family.  
+N:18:57:85:50
+D:You are a credit to the family.  
+N:18:57:100:55
+D:You are a well liked child.  
+
+N:19:23:85:45
+D:You are one of several children of a Dr['u]adan 
+N:19:23:100:55
+D:You are the only child of a Dr['u]adan 
+
+N:20:21:10:25
+D:You are the illegitimate and unacknowledged child 
+N:20:21:20:35
+D:You are the illegitimate but acknowledged child 
+N:20:21:95:45
+D:You are one of several children 
+N:20:21:100:50
+D:You are the first child 
+
+N:21:3:40:65
+D:of a servant from Dorthonion.  
+N:21:3:65:80
+D:of a Haladin woodsman.  
+N:21:3:80:90
+D:of a foot-soldier slain in the Dagor Bragollach.  
+N:21:3:90:105
+D:of a fugitive of the House of B["e]or.  
+N:21:3:96:120
+D:of a dispossessed landowner of Dor-L['o]min.  
+N:21:3:99:130
+D:of a guard of Handir of Brethil.  
+N:21:3:100:140
+D:of a lesser branch of the House of Hador.  
+
+N:23:62:5:60
+D:Cook.  
+N:23:62:45:60
+D:Farmer.  
+N:23:62:95:55
+D:Warrior.  
+N:23:62:99:65
+D:Shaman.  
+N:23:62:100:80
+D:Clan Chief.  
+
+N:25:26:10:20
+D:You are a unnoticed minion of 
+N:25:26:25:30
+D:You are a minor servant of 
+N:25:26:45:40
+D:You are a subject of 
+N:25:26:65:50
+D:You have attached yourself to 
+N:25:26:85:65
+D:You are associated with 
+N:25:26:95:80
+D:You are a notable follower of 
+N:25:26:100:100
+D:You are a celebrated assistant to 
+
+N:26:67:20:55
+D:Nessa.  
+N:26:67:40:60
+D:V['a]na.  
+N:26:67:50:65
+D:Tulkas.  
+N:26:67:80:75
+D:Mandos.  
+N:26:67:90:80
+D:Nienna.  
+N:26:67:95:90
+D:Varda.  
+N:26:67:100:95
+D:Manw["e].  
+
+N:28:29:10:35
+D:You are the bastard child of a Dark Elf 
+N:28:29:30:45
+D:You are one of several children of a Dark Elf 
+N:28:29:55:50
+D:You are the second child of a Dark Elf 
+N:28:29:80:55
+D:You are the first child of a Dark Elf 
+N:28:29:100:60
+D:You are the only child of a Dark Elf 
+
+N:29:54:5:25
+D:whose identity you are uncertain of.  
+N:29:54:20:35
+D:Captive.  
+N:29:54:40:45
+D:Fighter.  
+N:29:54:50:50
+D:Ranger.  
+N:29:54:70:65
+D:Scribe.  
+N:29:54:83:75
+D:Witch.  
+N:29:54:93:90
+D:Alchemist.  
+N:29:54:98:110
+D:Lady.  
+N:29:54:100:140
+D:Queen.  
+
+N:31:32:25:40
+D:You are the lost offspring of 
+N:31:32:50:50
+D:You are the wandering offspring of 
+N:31:32:75:60
+D:You are the only offspring of 
+N:31:32:100:70
+D:You are the beloved offspring of 
+
+N:32:74:10:35
+D:an Ent whose name you have no recollection of.  
+N:32:74:35:50
+D:a solitary Ent.  
+N:32:74:55:60
+D:a member of a farflung Entish band.  
+N:32:74:70:70
+D:a leader of a prosperous community of Ents.  
+N:32:74:81:80
+D:an Entish Forestwarden.  
+N:32:74:91:90
+D:a respected Entish sage.  
+N:32:74:96:100
+D:an Entwife whose memory men cherish.  
+N:32:74:100:110
+D:Fangorn himself.  
+
+N:50:51:20:50
+D:You have dark brown eyes, 
+N:50:51:60:50
+D:You have brown eyes, 
+N:50:51:70:50
+D:You have hazel eyes, 
+N:50:51:80:50
+D:You have green eyes, 
+N:50:51:90:50
+D:You have blue eyes, 
+N:50:51:100:50
+D:You have blue-gray eyes, 
+
+N:51:52:70:50
+D:straight 
+N:51:52:90:50
+D:wavy 
+N:51:52:100:50
+D:curly 
+
+N:52:53:30:50
+D:black hair, 
+N:52:53:70:50
+D:brown hair, 
+N:52:53:80:50
+D:auburn hair, 
+N:52:53:90:50
+D:red hair, 
+N:52:53:100:50
+D:blond hair, 
+
+N:53:0:10:50
+D:and a very dark complexion.
+N:53:0:30:50
+D:and a dark complexion.
+N:53:0:80:50
+D:and an average complexion.
+N:53:0:90:50
+D:and a fair complexion.
+N:53:0:100:50
+D:and a very fair complexion.
+
+N:54:55:85:50
+D:You have light grey eyes, 
+N:54:55:95:50
+D:You have light blue eyes, 
+N:54:55:100:50
+D:You have light green eyes, 
+
+N:55:56:75:50
+D:straight 
+N:55:56:100:50
+D:wavy 
+
+N:56:0:75:50
+D:black hair, and a fair complexion.
+N:56:0:85:50
+D:brown hair, and a fair complexion.
+N:56:0:95:50
+D:blond hair, and a fair complexion.
+N:56:0:100:50
+D:silver hair, and a fair complexion.
+
+N:57:58:99:50
+D:You have dark brown eyes, 
+N:57:58:100:60
+D:You have glowing red eyes, 
+
+N:58:59:90:50
+D:straight 
+N:58:59:100:50
+D:wavy 
+
+N:59:60:75:50
+D:black hair, 
+N:59:60:100:50
+D:brown hair, 
+
+N:60:61:25:50
+D:a one foot beard, 
+N:60:61:60:51
+D:a two foot beard, 
+N:60:61:90:53
+D:a three foot beard, 
+N:60:61:100:55
+D:a four foot beard, 
+
+N:61:0:100:50
+D:and a dark complexion.
+
+N:62:63:80:50
+D:You have black eyes, 
+N:62:63:100:55
+D:You have glowing red eyes, 
+
+N:63:64:33:50
+D:unkempt 
+N:63:64:66:50
+D:tied back 
+N:63:64:100:50
+D:plaited 
+
+N:64:66:20:50
+D:dark-brown hair, 
+N:64:66:40:50
+D:steel-grey hair, 
+N:64:66:100:50
+D:black hair, 
+
+N:66:0:33:50
+D:and bronzed skin.
+N:66:0:66:50
+D:and darkly-tanned skin.
+N:66:0:100:50
+D:and weather-beaten skin, with a small beard.
+
+N:67:68:100:50
+D:In the past, you dwelt on earth in the form of 
+
+N:68:0:25:50
+D:various animals.
+N:68:0:55:55
+D:a spirit of forest and river.
+N:68:0:70:60
+D:a beneficent but unseen force.
+N:68:0:96:70
+D:a wise and ancient counselor.
+N:68:0:100:80
+D:a Wizard of legend.
+
+
+N:74:75:100:50
+D:You have  
+
+N:75:76:5:50
+D:three fingers and toes, and are covered in 
+N:75:76:20:50
+D:four fingers and toes, and are covered in 
+N:75:76:40:50
+D:five fingers and toes, and are covered in 
+N:75:76:60:50
+D:six fingers and toes, and are covered in 
+N:75:76:80:50
+D:seven fingers and toes, and are covered in 
+N:75:76:95:50
+D:eight fingers and toes, and are covered in 
+N:75:76:100:50
+D:nine fingers and toes, and are covered in 
+
+N:76:0:10:50
+D:scaly brown skin.
+N:76:0:20:50
+D:rough brown skin.
+N:76:0:30:50
+D:smooth grey skin.
+N:76:0:40:50
+D:dark green skin.
+N:76:0:50:50
+D:mossy skin.
+N:76:0:60:50
+D:deep brown skin.
+N:76:0:70:50
+D:pale brown, flaky skin.
+N:76:0:80:50
+D:rich chocolate-colored skin.
+N:76:0:90:50
+D:ridged black skin.
+N:76:0:100:50
+D:thick, almost corky skin.
+
+N:80:81:10:25
+D:You are the illegitimate and unacknowledged child 
+N:80:81:20:35
+D:You are the illegitimate but acknowledged child 
+N:80:81:95:45
+D:You are one of several children 
+N:80:81:100:50
+D:You are the first child 
+
+N:81:3:40:65
+D:of a Villager.  
+N:81:3:65:80
+D:of a solitary Trapper.  
+N:81:3:80:90
+D:of a respected Hunter.  
+N:81:3:90:105
+D:of prosperous Woodfolk.  
+N:81:3:96:120
+D:of a Ranger.  
+N:81:3:99:130
+D:of a Druid.  
+N:81:3:100:140
+D:of a Lord.  

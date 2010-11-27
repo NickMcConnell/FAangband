@@ -1,0 +1,31 @@
+Features
+--------
+
+Introduced two new modes of play
+
+- Ironman: The player can never go to an area of less danger (except necessary 
+  towns, which are completely empty).  When a dungeon guardian is killed, a 
+  portal becomes available to go from the bottom of the current dungeon to a
+  choice of locations of the right level.
+
+- Thrall: The player is a thrall who has just escaped through the gate of 
+  Angband; homeless, standing in the desert and unable to recall until he or 
+  she can reach a town to make a home.
+
+Bugfixes
+--------
+
+- show_choice option now works again (Seany Clayton)
+
+- NO_ORDER flag works again (so stat potions can't be ordered from the 
+  Merchant) (Si Griffin)
+
+- monsters in trees are safer from NON-(elves/nature lore chars) rather than
+  the opposite (karthoum@forum)
+
+- command menu box is now wiped properly in big/dbl/trptile modes (Si Griffin)
+
+- item selection for throwing brings up equipment immediately
+  
+- selecting two specialties at once no longer makes the second one wrong 
+  sometimes (Si Griffin)

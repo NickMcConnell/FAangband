@@ -1,0 +1,198 @@
+# File: p_race.txt
+
+
+# This file is used to initialize the "lib/data/p_race.raw" file, which is
+# used to initialize the "player race" information for the Angband game.
+
+# Do not modify this file unless you know exactly what you are doing,
+# unless you wish to risk possible system crashes and broken savefiles.
+# Note that pairing of races to towns is hard-coded 
+
+# Format:
+# N:race number:race name
+# S:str:int:wis:dex:con:chr
+# R:dis:dev:sav:stl:srh:fos:thn:thb
+# M:xdis:xdev:xsav:xstl:xsrh:xfos:xthn:xthb
+# E:id:mint:maxt:sk/de:ac:pval:xtra1:xtra2
+# X:hitdie:expbase:infra:startlevel:hometown
+# I:history:agebase:agemod
+# H:hgtmale:hgtfemale
+# W:wgtmale:wgtfemale
+# F:racial flags
+# U:racial specials
+# C:classes (numeric)
+
+# Version stamp (required)
+
+V:1.1.5
+
+N:0:Easterling
+S:1:0:0:0:1:-1
+R:0:0:0:0:0:10:0:0
+M:0:0:0:0:0:0:0:0
+X:9:6:0:2:0
+I:1:14:6
+H:72:6:66:4
+W:180:25:150:20
+U:SWORD_SKILL | XBOW_SKILL | PLAINSMAN 
+C:0|1|2|3|4|5|6|7|8
+
+N:1:Green-Elf
+S:-1:-1:2:2:-1:2
+R:-1:-1:3:3:7:11:-1:3
+M:0:0:0:0:0:0:-4:6
+X:10:6:2:2:1
+I:4:50:20
+H:66:6:62:6
+W:130:15:100:10
+U:BOW_SKILL | ELVEN 
+C:0|1|2|3|4|5|6|7|8
+
+N:2:Grey-Elf
+S:1:0:2:2:0:3
+R:-1:-1:5:1:4:12:0:2
+M:0:0:0:0:0:0:-6:10
+E:65:21:23:2:4:1:1:5
+X:10:19:2:4:8
+I:5:300:100
+H:60:4:54:4
+W:100:6:80:6
+B:RES_LITE[40]
+U:BOW_SKILL | ELVEN 
+C:0|1|2|3|4|5|6|7|8
+
+N:3:Hobbit
+S:-2:-1:2:3:2:1
+R:15:8:10:3:10:15:-3:2
+M:0:0:0:0:0:0:-17:8
+X:7:1:4:1:5
+I:10:21:12
+H:36:3:33:3
+W:60:3:50:3
+F:SUST_DEX
+U:SLING_SKILL | HARDY | PLAINSMAN
+C:0|1|2|3|4|5|6|7|8
+
+N:4:Petty-Dwarf
+S:-1:3:-3:3:-1:-4
+R:10:18:3:1:6:12:-3:0
+M:0:0:0:0:0:0:-12:0
+X:8:1:5:1:2
+I:13:50:40
+H:42:3:39:3
+W:90:6:75:3
+F:FREE_ACT 
+U:DWARVEN 
+C:0|1|3|7|8
+
+N:5:Dwarf
+S:2:1:-2:1:2:-1
+R:2:2:10:-2:2:11:2:0
+M:0:0:0:0:0:0:11:0
+E:69:21:23:2:0:1:0:0
+X:11:10:5:3:7
+I:16:35:15
+H:48:3:46:3
+W:150:10:120:10
+F:SEEING
+U:POLEARM_SKILL | BOW_UNSKILL | DWARVEN 
+C:0|1|2|3|5|6|7|8
+
+N:6:Dr['u]adan
+S:2:-2:2:-1:2:-4
+R:-3:-5:7:2:2:15:2:-2
+M:0:0:0:0:0:0:5:-6
+X:11:19:0:4:4
+I:19:11:4
+H:66:1:62:1
+W:150:5:120:5
+F:TELEPATHY 
+U:EDAIN 
+C:0|1|2|3|4|5|6|7|8
+
+N:7:Longbeard
+S:3:1:-1:2:2:0
+R:2:2:10:-2:2:11:3:0
+M:0:0:0:0:0:0:11:0
+X:12:2:5:1:6
+I:16:20:10
+H:96:10:84:8
+W:250:50:225:40
+F:SEEING
+U:POLEARM_SKILL | DWARVEN 
+C:0|1|2|3|5|6|7|8
+
+N:8:Adan
+S:1:1:3:1:3:1
+R:5:5:0:1:3:13:2:0
+M:0:0:0:0:0:0:8:0
+E:68:21:23:3:0:1:0:0
+X:10:19:0:4:4
+I:20:50:20
+H:82:5:78:6
+W:190:20:180:15
+F:SUST_CON 
+U:EDAIN 
+C:0|1|2|3|4|5|6|7|8
+
+
+N:9:High-Elf
+S:2:3:0:3:2:5
+R:6:13:9:2:4:13:2:2
+M:0:0:0:0:0:0:0:12
+E:67:21:23:3:0:0:3:1
+X:11:28:2:5:9
+I:6:400:200
+H:90:10:82:10
+W:190:20:180:15
+B:RES_LITE[40] 
+F:SEE_INVIS 
+U:ELVEN 
+C:0|1|2|3|4|6|7|8
+# Note that this race does not get U:BOW_SKILL, despite being Elven.
+# This is because they have such high missle weapon skill in general.
+
+N:10:Maia
+S:2:3:3:2:4:4
+R:10:15:16:1:5:15:4:4
+M:0:0:0:0:0:0:20:20
+X:12:1:0:1:5
+I:25:10000:5000
+H:130:40:130:50
+W:300:40:280:40
+U:DIVINE 
+C:0|1|2|3|4|5|6|7|8
+
+N:11:Dark-Elf
+S:-2:-1:2:2:-1:1
+R:7:7:0:6:10:15:0:-1
+M:0:0:0:0:0:0:-12:-4
+X:9:1:2:1:3
+I:28:200:100
+H:80:8:73:8
+W:90:20:80:15
+U:SHADOW | ELVEN 
+C:0|1|2|3|4|5|6|7|8
+
+N:12:Ent
+S:4:-4:2:-3:3:0
+R:-5:-2:7:0:-5:10:2:-2
+M:0:0:0:0:0:0:8:-8
+X:12:1:0:1:3
+I:31:120:60
+H:80:27:75:25
+W:240:50:220:40
+B:RES_FIRE[-30]
+U:WOODEN | POLEARM_UNSKILL  
+C:0|2|4|5|6
+
+N:13:Beorning
+S:1:-1:1:0:1:-1
+R:2:-2:0:1:3:13:2:0
+M:0:0:0:0:0:0:6:0
+X:10:1:0:1:5
+I:80:14:6
+H:72:6:66:4
+W:180:25:150:20
+U:BEARSKIN | PLAINSMAN 
+C:0|1|2|3|4|5|6|7|8

@@ -1,0 +1,93 @@
+NPP style shafts replace the old double stairs
+Automatic pseudo happens on wielding
+Weak pseudo now detects {average} items
+Monsters that hit you when you are hidden (superstealth) will now target that 
+grid until you move
+Enhanced dice for weapons are more variable
+New damage dice on ammo. Archery should be better in the early game and less 
+powerful at the end
+Brand and slay multipliers on ammo have been reduced
+New ammo egos: 'of the Noldor' (combines and replaces Hurt Orc, Hurt Troll, 
+Hurt Giant), *Hurt* Evil, Holy Might (slay evil, demon, undead)
+New shield ego 'of Preservation' (at a minimum sustains STR, DEX, CON and has a 
+selection of resists)
+Reworked weapon ego 'of Angband' (can now potentially be a good weapon - at a 
+physical price)
+Reworked weapon ego 'of Nogrod' (will now have more dice, be lighter and also 
+give a bonus to strength)
+Great Axes are now 4d5 rather than 5d4 (marginally better criticals, but 
+enhanced dice versions will be much better)
+Potions of Death and Ruination are a lot less likely to ruin your game
+Crowns of Lordliness now get a bonus power
+Multiple resists slightly more common on extra resist items (elvenkinds etc)
+Wands and rods of Teleport Away and Staves of Banish Evil are now considered 
+good items
+Perception rods are much more common
+The three sustain rings have been replaced by rings of physical endurance and 
+mental strength
+Rings of Light and Dark have been replaced by Rings of the Dawn, which also
+give blindness resistance
+Eregion rings now have power + resistance(s)
+Rings of Speed have a slightly better chance of a higher pval
+Rings of <Element> now apply a (weaker) brand to your melee attacks in addition 
+to their old properties
+Dragon armour now gets a DL weighted speed bonus (1-5), quicker recharge and 
+can be Dwarven or Resistance ego
+The breath activation is now based on player level and is potentially a lot 
+more powerful
+New item from V: Amulet of Trickery (max pval +3)
+Rebalanced how various objects, egos and artifacts affect the level feeling
+Throwing hammers and axes are no longer considered powerful base objects for 
+randarts (their dice are rubbish)
+Randart Dragon armour will be slightly better
+Powerful randarts are less likely to aggravate
+The enhance dice code for randart weapons has been improved. It is now more 
+likely to generate extra damage dice rather than spiralling
+dice sides.
+Randarts are more likely to get speed boosts
+Randarts are less rare (no point in generating random content if you can't find 
+it!) except...
+Randart jewelry is rarer and power rings rarer still
+Randart shields can now get immunities
+Many other tweaks and bugfixes to randarts!
+Ents can now walk easily through trees
+Ents now get superstealth when on tree grids rather than on Forest levels
+Rangers now get strong pseudo - same as rogues and assassins
+Great launcher speed and rapid fire now give less bonus shots
+Paladins have faster pseudo
+Runes of Protection are easier for monsters to break
+Morgoth casts teleport to
+Morgoth is faster
+More artifacts have speed bonuses
+Nearly all the equivalent artifacts with speed in Vanilla now have speed 
+bonuses and...
+Razorback gets +10 speed
+Bladeturner gets +5 speed
+Cubragol now fires (weaker) branded bolts rather than having a branding 
+activation
+Belthronding has a (weaker) slay evil
+Bregor has a (weaker) slay animals
+Several artifacts have bigger dice
+Firestar (3d6)
+Eonwe (4d7)
+Dramborleg (5d5)
+Several artifacts have been tweaked
+Holhenneth has rConf
+Carlammas has rNether
+Angrist is less rare
+Elessar gets combat bonuses
+Stone of Lore grants ID on pickup
+Chain Mail (Dwarven) of the Mormegil is now [19,+15] - in line with AC boost 
+from Dwarven ego armour
+New artifact: The Amulet of Denethor (formerly Faramir in OAngband)
+New artifact: The Small Metal Shield of Khazad-Dum (formerly Thorin in OAngband)
+New artifact: The Spear of Boldog
+New artifact set: Mablung's Items
+*Big* enhancements to all existing artifact sets.
+Bug fixes:
+Artifact set item resistances now work properly on reloading the game
+Artifact set item immunities now provide immunity
+Greater vault, Snake Maze is no longer considered an interesting room
+OoD monsters were not included in level feelings unless you were cheating (!?)
+Various bug fixes from Nick's enhancements to OAngband
+Buttons no longer vanish after changing name from 'C' screen

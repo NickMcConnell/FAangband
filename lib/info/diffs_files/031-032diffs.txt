@@ -1,0 +1,45 @@
+Features
+-------
+
+The following selections from a list now use Pete Mack's menus:
+
+- item selection
+
+- spellcasting
+
+- specialty browsing and selection
+
+- player and object mouse menus
+
+- store ordering
+
+Removed haggling
+
+Added mouse buttons to message recall
+
+Added NPP-style ego item squelching, but retaining V menus and hiding rather
+than destroying squelched objects
+
+Added context-sensitive mouse buttons for stairs and pickup
+
+Added NPP fast string concatenation to support ego squelching
+
+Bugfixes
+--------
+
+Minor errors in player histories
+
+Error placing wilderness vaults which was causing crashes (fixed by Si Griffin)
+
+Vampire shapechanges in light work correctly
+
+Pre-030 savefiles were giving all imported objects 100% resistance to 
+everything (found by Seany Clayton)
+
+Some randart rings still showing AC pre ID; some others were too shallow and
+common (Si Griffin)
+
+'p' and 's' now work for buying and selling in stores
+
+Hidden squelchable things still appeared in the floor menu, despite not being
+'l'ookable at

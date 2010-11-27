@@ -1,0 +1,350 @@
+============================== Non-magical Combat =============================
+
+     Without using magic, you may attack monsters in hand-to-hand (melee) 
+combat, by using missile weapons, or by throwing objects at them.
+
+
+-- Basics of Non-magical Combat --
+
+Example:
+1) Dagger (1d4):
+   1 die rolling four
+
+2) Gets a critical hit which adds two extra damage dice:
+   3 dice rolling four.  The average value of a die with four sides is 2.5.
+   (sides + 1) / 2  -->  (4 + 1) / 2  -->  5 / 2  -->  2.5
+
+3) Dagger is a weapon of Slay Orc, and monster is an orc:
+   Multiply the average value by the brand/slay multiplier (x2 in this case).
+   average of each die is now  2.5 * 2  -->  5
+
+4) Player has a Deadliness value shown on his character screen of about 40%:
+   5 * (100% + 40%)  -->  average of each die is now 7
+
+5) Roll three dice, each with an average of 7, to get an average damage 
+   of 21.
+
+6) Finally, the special bonus for orc slaying weapons against orcs is 
+   added:
+   21 + 10 bonus  -->  average damage of 31.
+
+
+     Missile and throwing weapons work exactly the same way, except
+that the first benefit from a launcher multiplier and the second from
+a special thrown weapons multiplier.
+
+
+-- Melee Combat --
+
+     Melee can do more damage per turn than any other form of attack,
+and the basic equipment (a weapon) is easy to find.  On the other
+hand, melee only works against adjacent monsters and takes a great
+deal of training and equipment to come into its own deeper in the
+dungeons.  As you will discover, upgrading to weapons with higher base
+damages is vital but heavy weapons are very hard to master.  You will
+have to find a compromise, depending on class, experience level, and
+available equipment (use the 'C'haracter screen or the 'I' (observe) command
+to see how various weapons affect your melee skill).  Magical aids to combat 
+(Bless, Heroism, and Berserk) can make all the difference when fighting tough
+monsters.
+
+
+     Managing Weapons and Shields:
+          Most melee weapons fit comfortably in one hand, keeping your
+          shield arm free.  If you have a shield on your arm, you can
+          automatically take advantage of opportunities to bash, gain
+          a significant amount of standard protection (shield have a
+          high base armour class), and sometimes even deflect
+          non-magical missiles or partially protect against shards.
+          Other weapons require two hands (but many of these can be
+          wielded in one hand by very strong players).  Any shield
+          worn is transferred to your back.  This reduces armour
+          protection, removes the special shield abilities above, but
+          has no effect on magical resistances or other attributes.
+
+     Attacking:
+         If you move your character into a square containing a
+         monster, you will attack that monster.  If you are wielding
+         no weapon, and are not a Druid or a Warrior with the Martial
+         Arts specialty ability, you will do very little damage.  If
+	 you are wielding a weapon, things are a little different.
+
+     Number of Blows:
+         On your character screen ('C') is displayed the number of
+         blows you can get per turn.  If you are wielding no weapon,
+         you get between two and four blows, depending on your level.
+	 If your weapon is too heavy for you to wield properly, you
+         get one blow.  Otherwise, you get between two and six blows,
+         depending solely on weapon weight, Dexterity, and Strength.
+
+     Your Weapon and its Damage Dice:
+         All weapons have damage dice displayed after their name.
+         When you hit a monster with a Dagger (1d4), you start off
+         rolling one die with four sides.  Damage dice are the single
+         most important attribute of any weapon, the expression of
+         what is like to wield in battle.  You will want to upgrade to
+         higher values if your character has enough combat ability
+         (it's hard for a lot of characters to wield heavy weapons).
+         Increasing the number of dice both adds damage and makes the
+         attack more reliable (because the damage done is more likely
+         to be closer to the average).  Increasing dice sides raises
+         the average damage without affecting reliability.
+
+     Combat Skill:
+         Your total combat skill not only allows you to even hit a
+         monster, but also determines how often you get critical hits.
+         Critical hits are vital for any serious fighter using any
+         weapon, especially ones rolling few dice.  They always add at
+         least two damage dice to the attack, and possibly as many as
+         five.  You know you just got a critical hit when you get any
+         combat message other than "you hit" (or punch) "the <<monster
+         name>>".
+
+     Brands and Slays:
+         Some remarkable weapons do extra damage to various kinds of
+         monsters; a Dagger of Fire, for instance, would do extra
+         damage to creatures not immune to fire.  Against such
+         creatures, the average value of each of the dice the weapon
+         rolls is multiplied by 1.7, and 7 points are added to the
+         final damage figure.  Things work very similarly with the
+         other special brands you may find.  Slays, in contrast, do
+         extra damage to particular monster races, so wield that Mace
+         of Orc Slaying if you come upon any orcs.  Only the best
+         applicable quality is used; they do not combine.
+
+     Deadliness:
+         As you descend deeper into the dungeons, a character relying
+         on melee will need to play careful attention to Deadliness.
+         It acts as a percentage bonus (you may inspect your current
+         bonus on the character screen).  High-level characters may
+         have bonuses of 200% displayed on their character screens,
+         and therefore triple the damage they do with the Deadliness
+         multiplier alone.
+
+     Special bonuses to Damage:
+         Once Deadliness if applied, the dice are rolled to give the
+         final damage.  To this value, any bonuses from slays or
+         brands are added.
+
+     Shield Bashes:
+         When fighting hand-to-hand, you will occasionally get in a
+         shield bash, if you are wearing a shield on your arm.  The
+         frequency of shield bashes depends on Dexterity, melee combat
+         skill, and the level of monster you are fighting.  Warriors
+         and Paladins get in more shield bashes.  The effectiveness of
+         shield bashes depends mostly on strength and shield size and
+         weight.  When you bash a monster, you will inflict damage,
+         and possibly stunning or even confusion.  You may also
+         stumble, and lose normal melee blows.
+
+     Special Notes:
+         In order to attack a creature that you can't see in a wall or
+         door, you must issue the Tunnel or alter adjacent grid
+         command.
+
+
+-- Shooting Missiles --
+
+Shooting missiles:
+     Ranged fire with missile launchers is a non-magical method of
+doing damage at a safe distance.  As in melee, lighter weapons are
+much easier to effectively use, but heavier weapons can do enormous
+damage in skilled hands.  Skill and Deadliness bonuses are used from
+all equipped items other than your melee weapon.  As in melee, magical
+aids to combat (Bless and Heroism) can make all the difference, but
+note that Berserkers make lousy archers and throwers.
+
+     Setting up to Shoot:
+         Slings shoot shots and seeker shots, bows shoot arrows and
+         seeker arrows, and crossbows shoot bolts and seeker bolts.
+         Simply equip the weapon and keep plenty of the ammo on hand
+         and you're ready.
+
+     The Quiver Slots:
+         Ammo is best kept in special quiver slots.  You may "wield"
+         up to ten different groups of ammo, then fire them just as
+         you would those in the backpack.  Ammo in the quiver will use
+         space in your backpack.
+
+     Attacking:
+         You shoot at a monster by typing 'f' (or 't' in the
+         rogue-like command set), then selecting a missile you would
+         like to fire.  This activates the targeting interface
+         described in the help file "cmddesc.txt".
+
+     Number of Shots:
+         On your character screen ('C') is displayed the number of
+         shots you can get per turn.  The number of shots depends on
+         class and dexterity, plus any bonus shots that the weapon
+         provides.  Unlike in melee, extra shots are not fired all at
+         once (to avoid wasted ammo).  Instead, each shot takes less
+         time, making monsters appear to move in slow motion.
+
+     Your Launcher and Ammo:
+         All launchers have a multiplier to damage, for example a
+         Longbow (x3) would multiply the average damage of the ammo it
+         fires by three.  Like melee weapons, launchers can have
+         plusses to Skill and to Deadliness.  Unlike such weapons,
+         they can have bonuses to shots, bonuses to their damage
+         multiplier, and cannot impart slays and brands.  Ammo also
+         can have bonuses to Skill and to Deadliness, and occasionally
+         possess the same kinds of slays and brands you can find on
+         melee weapons.
+
+     What Happens When You Hit a Monster:
+         Here, archery and melee are virtually identical, with the
+         biggest difference being that missile weapons have a damage
+         multiplier.  In addition, critical hits add fewer dice than
+         in melee, but - since all ammunition rolls only one die to
+         begin with - they remain very power- ful.  As in melee, Skill
+         is essential to fighting effectively, having the right slays
+         for tough targets is very handy, and Deadliness can make all
+         the difference in the long run.
+
+
+--- Throwing Objects ---
+
+     Throwing objects requires less skill than using missile weapons,
+and can be an important combat method in FAangband.  On the other hand,
+most thrown objects do not benefit from Skill and Deadliness bonuses
+from other equipped items.  For novice adventurers, throwing flasks of
+oil can be a life-saver, and there are rumours of objects deep in the
+dungeon that can do large amounts of damage when thrown.  Perhaps the
+most effective use of a high throwing skill is whipping daggers,
+darts, spears, throwing axes, and throwing hammers at your foes.  Such
+items do benefit from other Skill and Deadliness bonuses.  Rogues, Warriors, 
+Assassins and Rangers have the best throwing skills; Mages can get similar
+throwing ability with a spell. 
+
+     Attacking:
+         To throw an object, you use the 'v' command and select any
+         item in your backpack, on your person, or on the floor.  This
+         activates the targeting interface described in the help file
+         "cmddesc.txt".
+  
+     Number of Throws:
+         You may never throw more than one item per turn.
+
+     Your Thrown Object:
+         All objects have damage dice, but most do not display them.
+         If you think an object should do nasty things to your foes,
+         it's certainly worth trying to throw it at them, just to see
+         if anything happens.  Whether or not they display them, all
+         thrown objects may benefit from bonuses to Skill and
+         Deadliness, should they possess any.  In addition, throwing
+         weapons may have the same kind of elemental brands and
+         monster slaying abilities as other weapons do.  If they
+         possess such special qualities, they may also be perfectly
+         balanced and do even more damage.
+
+     What Happens When You Hit a Monster:
+         Here, throwing and melee are broadly similar.  Throwing
+         weapons, however, benefit from a special damage multiplier,
+         which increases as you gain experience levels (it ranges from
+         2 to 6, or 4 to 12 with perfectly balanced weapons), and are
+         the only thrown objects that can get critical hits, or
+         benefit from bonuses to Skill and Deadliness granted by your
+         equipment.
+
+         Note that thrown objects may break, but throwing weapons
+         seldom do.
+
+
+=== How to Steal and Set Traps ===
+
+     Only Rogues may steal.  Characters with the Trap Setting ability may 
+set traps.  If you type the alter command ('+' in either keyset), enter a
+direction and target a visible monster, you will attempt to steal.  If you 
+target a totally bare floor square, you will set a monster trap.  You may not
+use these abilities when shapeshifted.
+     Stealing is lucrative but risky.  All monsters that drop anything will
+have at least some treasure on them.  Humans, humanoids, and dragons are the
+juiciest targets, and most other smart bipedal creatures, nagas, or wraiths
+are fairly well-off too; the higher the monster level, the larger the purse.
+Uniques are especially rich.  High-level monsters and other thieves are harder
+to steal from, but sleeping monsters are easier.  But burglary is not all fun
+and games.  Every time you steal on a level, the monsters get warier.  Steal
+too often, and you may very quickly get hunted down.
+     Monster traps are trivial to set and upgrade using the alter command '+'.
+They can be disarmed like any other trap.  The power of traps increases with
+player level and disarming skill.  Monsters may sometimes disarm traps, or
+they may be destroyed when they activate.  Monsters that trigger traps may
+temporarily become wary and less susceptible to further traps.  Only one
+monster trap may exist on a level at any one time, so disarm an old trap to
+use your trap gear elsewhere.  If your trap is buried in rubble, you will not
+be able to reset it on that level.
+     There are 13 types of monster trap: the basic trap, and 12 advanced traps.
+Advanced traps are created by updgrading a basic trap using the alter command.
+As your level increases, you gain access to more of the advanced traps.  
+Characters with the "Extra Trap" specialty ability learn to use the advanced
+traps sooner and get access to the most advanced traps.  Most traps are
+unreliable versus flying and insubstantial monsters.  The traps are as follows:
+	
+   Basic Monster Trap - This is the fastest to set, and does the most damage
+      of any trap.
+   Sturdy Trap - This trap is less likely to be destroyed after activation.
+   Netted Trap - Consistently affects flying monsters but is unreliable
+      against non-flying monsters.  (Requires level 6)
+   Confusion Trap - Confuses monsters but does not damage them.  (Requires
+      level 12)
+   Poison Gas Trap - Releases a cloud of poison gas.  Covers a good area, but
+      does the least damage of any damage dealing trap.  Though the gas can
+      affect any monster, flyers and insubstantial monsters will rarely
+      trigger it.  (Requires level 18)
+   Spirit Trap - Consistently affects insubstantial monsters such as ghosts
+      but never affects others.  (Requires level 24)
+   Lightning Trap - Shoots a bolt of lightning at the target.  May stun,
+      unless the target resists electricity.  Consistently triggered by flying
+      and non-flying monsters.  (Requires level 30)
+   Explosive Trap - Releases a burst of fire and shards.  Does damage over an
+      area.  Though the explosion can affect any monster, flyers and
+      insubstantial monsters will rarely trigger it. This trap is always
+      destroyed when it detonates.  (Requires level 36)
+   Portal Trap - Does not damage monsters, but teleports them away.
+      (Requires level 42)
+   Stasis Trap - Places a monsters in suspended animation, so they can take
+      no actions and can not be moved or harmed.  Does no damage.
+      Consistently triggered by all sorts of monsters.  This trap is always
+      destroyed when activated.  (Requires level 48)
+   Drain Life Trap - Releases a blast of life draining, damaging living
+      monsters in a good area.  (Requires level *)
+   Unmagic Trap - Unleashes disenchantment, damaging the target and reducing
+      mana.  (Requires level *)
+   Dispel Monsters Trap - Damages all monsters within sight of the trap when
+      detonated.  (Requires level *)
+
+* These traps are available at high levels to those with the Extra Trap ability.
+
+
+=== Listing of Druid/Martial Arts Blows and their Damage Potential ===
+
+Name        number of dice, sides to each die
+
+"punch",                 1, 5
+"kick",                  2, 4
+"knee",                  1,12
+"chop",                  2, 7
+"uppercut",              3, 6
+"boot",                  3, 9
+"bang on",               6, 4
+"slam",                  4, 9
+"grapple with",         13, 3
+"hammer",                9, 6
+"head butt",             3,24
+"strangle",              8,10
+"roundhouse kick",       5,19
+"assault",              10,11
+"crush",                11,11
+"double-kick",          21, 6
+"thunderclap belt",      8,19
+"blizzard gouge",       14,11
+"tsunami whirl",         7,26
+"stormwind chop",       10,22
+
+There are twenty possible barehanded attacks for druids (and warriors with
+the Martial Arts specialty ability).  The highest level attack a druid is
+capable of depends on his experience level:  for example, a 25th level druid
+can use the first 10 attack types.  In combat, druids will automatically pick
+one at random, biased towards those with the largest damage.  Deadliness does
+not affect the damage of these attacks, but increases the bias toward larger
+attacks.

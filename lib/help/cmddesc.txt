@@ -1,0 +1,662 @@
+
+============================== Commands in detail =============================
+
+     This file first gives basic information about commands in general, than 
+provides full information about each command in turn.  Details on special keys 
+are available at the bottom.
+
+
+=== Basic Command Information ===
+
+Canceling a Command:
+     Virtually all commands can be cancelled at any point before execution by 
+hitting the ESC key.
+
+Command Directions:
+     If you issue a command that requires a direction, you will be prompted for
+one.  Simply type the appropriate direction key, and the command will activate.
+
+Selecting an Object:
+     Angband has an extremely easy-to-use interface for selecting objects in
+your backpack (your inventory), on your person (your equipment), or on the 
+floor underneath you.  If you issue a command that uses or manipulates any 
+item, you can hit the spacebar or type "*" to see a list of all the objects 
+that command can accept.  If the command can accept objects both on your 
+person and in your backpack, you can hit '/' to cycle between the two.  If an 
+object that the command can accept is lying on the floor underneath your feet, 
+you can type "_" to use that item.  You then select the exact item by typing 
+its index letter; if you want to play it safe, and get an "are you sure" 
+message, type the letter in uppercase.
+     Spellcasting works very similarly.  You type 'm' or 'p', select a book, 
+and select a spell within that book.  You can even use books on the floor.
+
+Choosing Quantities:
+     If you issue a command that might logically use more than one object, and
+more than one object is available, you will be prompted for a quantity.  Try 
+'d'ropping your torches as an example.
+
+Targeting:
+     The target command ("*") makes it possible to set up a location or fix a 
+monster as the point which you want future missiles and spells to aim for.
+Some other commands use the targeting interface, including all those that 
+fire magic or ammo, or look around the dungeon.
+     After you have typed "*", you have a number of options available to you.  
+See command description for more detail.
+     If you have the "use old target by default" option on, be careful about 
+clearing targets on the floor when done.
+
+Command Counts:
+     Any command that can be repeated or that can manipulate more than one
+object can take a count.  By default, most that do are automatically given a 
+count of 99 (you may change this in the options if you like).  Although most 
+commands that usually need a quantity will ask for one, for other commands a 
+quantity is only sometimes desired.  Hence command counts.  For example, to 
+tunnel into a wall exactly 50 times, you would type a zero ("0"), then "50", 
+followed by a return.  Then, type "T" (or ^T).  All commands that use quan-
+tities will stop if you are disturbed, accomplish your intended task, hit any 
+key, or when the count expires.
+
+Doing More with Less Effort:
+     In the help file "macro.txt" is a section on making keymaps to:
+-quickly switch to a shovel or backup weapon, 
+-fire a missile or cast commonly used spells with a single keystroke, 
+-prevent accidental use of valuable equipment, 
+-and do various other useful things
+
+
+=== Command Descriptions ===
+
+     The following command descriptions are listed as the command name plus 
+the key used to activate it in the original keyset.  This is followed by the 
+"roguelike" keyset key, if different from the original command key.  Then 
+comes a brief description of the command, including information about 
+alternative methods of specifying the command in each keyset when needed.
+
+     Some commands use the "repeat count" to automatically repeat the command 
+several times, while others use the repeat count to specify a quantity for the 
+command, and still others use it as an "argument" of some kind.  Some commands 
+are auto-repeated several times if no repeat count is given and the 
+"always_repeat" option is set (which it is by default).
+
+     Many commands take no "energy" to perform, while most other commands only 
+take energy when they cause the world to change in some way.
+
+
+--- Inventory Commands ---
+
+Inventory list (i)
+     Displays a list of objects being carried but not equipped.  You can carry 
+     up to 23 different items, not counting those in your equipment.  Often, 
+     many identical objects can be "stacked" into a "pile" which will count as 
+     a single item.  Each object has a weight, and if you carry more objects 
+     than your strength permits you will begin to slow down.
+ 
+Equipment list (e)
+     Displays a list of objects you are currently wielding, wearing, or other-
+     wise have immediately to hand.  Your character has twelve slots for 
+     equipment, each of which accepts logical kinds of objects.  For example, 
+     bows will automatically go in your shooting slot, and amulets around your 
+     neck.
+
+Drop an item (d)
+     This drops an item from your inventory or equipment onto the dungeon 
+     floor.  
+     If the floor spot you are standing on has 20 objects already, or contains 
+     trees, water, doors, traps, or glyphs of warding, the game will attempt 
+     to drop the item onto an adjacent space.  This command may take a 
+     quantity, and takes some energy.
+
+Destroy an item (k) or Destroy an item (Ctrl-D)
+     This destroys an item in your inventory or on the dungeon floor.  If the 
+     selected pile contains multiple objects, you may specify a quantity.  You 
+     must always (currently) verify this command.  This command may take a 
+     quantity, and takes some energy.
+
+Wear/Wield equipment (w)
+     To wear or wield an object in your inventory or from the floor, use this 
+     command.  Since only one object can be in each slot at a time, if you 
+     wear or wield an item into a slot which is already occupied, the old item 
+     will first be taken off, and may in fact be dropped if there is no room 
+     for it in your inventory.  This command takes some energy.
+
+Take off equipment (t) or Take off equipment (T)
+     Use this command to take off a piece of equipment and return it to your 
+     inventory.  Occasionally, you will encounter a cursed item which cannot 
+     be easily removed once put on.  These items normally penalize you in some 
+     way and cannot be taken off until the curse is removed.  If there is no 
+     room in your inventory for the item, your pack will overflow and you will 
+     drop the item after taking it off.  This command takes some energy.
+
+Switch primary and secondary weapon (X)
+     Actually a macro, this command exchanges whatever weapon you have wielded 
+     with the first weapon in your inventory inscribed {@0} or {@w0}.
+
+
+--- Movement Commands ---
+
+Walk (with normal pickup) (;)
+     This command is activated every time you press a direction key; it moves 
+     you one step in the given direction.  This command may take a count, 
+     requires a direction, and takes some energy.
+     If the auto-pickup option is on, you will be able to pick up objects.  If 
+     the option to prompt before picking things up is off, you will automati-
+     cally grap everything you encounter until your backpack is full.  If this 
+     option is on (recommended after the first few levels of the dungeon), you 
+     will be asked about objects; a menu will be available if more than one 
+     object is on the floor.
+
+Walk (flip pickup) (-)
+     This is just like normal move, except that the "Pick things up" option is 
+     inverted.  In other words, if you normally pick up anything you encounter 
+     (the default), you will not pick things up when using this command.  If 
+     you normally do not pick things up, you will when using this command.  
+     This command may take a count, requires a direction, and takes some 
+     energy.
+
+Run (.) or Run (,)
+     This command is very useful for rapid dungeon exploration.  It will move 
+     you in the given direction, following any bends in the corridor, until 
+     you either have to make a "choice" between two directions or are 
+     disturbed.  This command may take an argument, requires a direction, and 
+     takes some energy.  It can also be activated by holding down Shift and 
+     pressing a direction key.
+
+Go to a less dangerous area (<)
+     Ascends an up staircase you are standing on in a dungeon, or takes a path
+     to an area of less danger in the wilderness.  These will both 
+     take you to a new area or town.  Some up staircases in dungeons will 
+     allow you to go up more than one level.  This command takes some energy.
+
+Go to a more dangerous area (>)
+     Descends a down staircase you are standing on in (or into) a dungeon.  
+     These will both take you to a new area.  Some down staircases in dungeons 
+     will allow you to go down more than one level. This command takes some 
+     energy.
+
+
+--- Resting Commands ---
+
+Stay still (with normal pickup) (,) or Stay still (with normal pickup) (.)
+     Stays in the same square for one move.  If you normally pick up objects 
+     you encounter, you will pick up whatever you are standing on.  You may 
+     also use the "5" key (both keysets).  This command may take a count, and 
+     takes some energy.
+
+Get Objects (g)
+     Pick up objects and gold on the ground beneath you.  Picking up gold 
+     takes no time, and objects take 1/10th of a normal turn each (maximum 
+     time cost is a full turn).  You may pick up objects until the ground is 
+     empty or your backpack is full.
+
+Rest (R)
+     You recover from wounds twice as fast by resting than by repeatedly 
+     staying still.  This command can be told to automatically stop after a 
+     certain amount of time, or when various conditions are met.  In either 
+     case, you always wake up when anything disturbing happens, or when you 
+     press any key.  
+     After typing 'R', use "*" to rest until your hitpoints and mana are 
+     restored, and "&" to rest until you are fully "healed".  This command may 
+     accept a command count (used for the number of turns to rest), and takes 
+     some energy.
+
+Easy Rest (x)   (not available in the roguelike keyset)
+     Actually a macro, this command automatically makes you rest until your 
+     HPs and mana are restored or you are disturbed.  Oangband included it to 
+     cut down on wrist stress and allow more effective waiting.
+
+
+--- Searching Commands ---
+
+Search (s)
+     This command can be used to locate hidden traps and secret doors in the 
+     spaces adjacent to the player.  More than a single turn of searching will 
+     be required in most cases.  You should always search a chest before 
+     trying to open it, since they are generally trapped.  This command can 
+     take a count, which is useful if you are fairly sure of finding something 
+     eventually, since the command stops as soon as anything is found.  This 
+     command may take a count, and takes some energy.
+
+Toggle search mode (S) or Toggle search mode (#)
+     This command will take you into and out of search mode.  When first 
+     pressed, the message "Searching" will appear at the bottom of the screen. 
+     You are now taking two turns for each command, one for the command and 
+     one turn to search.  This means that you are taking twice the time to 
+     move around, and therefore twice the food.  Search mode will 
+     automatically turn off if you are disturbed.  You may also turn off 
+     search mode by entering the Search Mode command again.
+
+
+--- Environment and Object Alteration Commands ---
+
+Tunnel (T) or Tunnel (Ctrl-T)
+     This command allows you to dig through barriers, obtain treasure found in 
+     wall seams, and otherwise alter the environment to your liking.  Races 
+     other than Ents would be well advised to be wielding a weapon, preferably 
+     something heavy or especially designed for digging, before attempting to 
+     tunnel.  This command will also remove a web, either from within it 
+     (automatically) or beside it.
+     This command may take a count, is affected by the "always_repeat" option, 
+     requires a direction, and takes some energy.
+
+
+Open a door or chest (o)
+     If the option to open doors automatically is off, or more than one door 
+     or chest can be opened at the moment, you must use this command to open 
+     anything.  If the door or object is locked, you will attempt to pick the 
+     lock based on your disarming ability.  If you open a trapped chest 
+     without disarming the traps first, they will activate.  Some doors will 
+     be jammed shut and may have to be bashed open.  You may need several 
+     tries to open a door or chest.  This command may take a count, is 
+     affected by the "always_repeat" option, usually requires a direction, and 
+     takes some energy.
+
+Close a door (c)
+     Non-intelligent and some other creatures cannot open doors, so shutting 
+     doors can be quite valuable.  Broken doors cannot be closed.  This 
+     command may take a count, is affected by the "always_repeat" option, 
+     usually requires a direction, and takes some energy.
+
+Jam a door (j) or Spike a door (S)
+     Many monsters can simply open closed doors, and can eventually get 
+     through a locked door.  You may therefore occasionally want to jam a door 
+     shut with iron spikes.  Each spike used on the door will make it harder 
+     to bash down the door, up to a limit of eight.  Smaller monsters are less 
+     able to bash down doors.  In order to use this command, you must be 
+     carrying iron spikes.  This command requires a direction, and takes some 
+     energy.
+
+Bash a door (B) or Force a door (f)
+     This command allows you to bash down jammed doors.  Your door bashing 
+     ability increases with strength.  Bashing open a door can (briefly) throw 
+     you off balance.  Doors that are stuck, or which have been jammed closed 
+     with spikes can only be opened by bashing, and all closed doors can be 
+     bashed open if desired.  Bashing a door open may permanently break it so 
+     that it can never be closed.  This command may take a count, is affected 
+     by the "always_repeat" option, requires a direction, and takes some 
+     energy.
+
+Disarm a trap or chest / Desanctify a glyph (D)
+     You can attempt to disarm known traps or glyphs on the floor or on 
+     chests.  If you have a very high disarming skill, disarming by hand can 
+     actually be safer than using magic, but for most players, magic is 
+     preferable.  If you fail to disarm a trap, there is a chance that you 
+     will blunder and set the trap off.  This command may take a count, is 
+     affected by the "always_repeat" option, requires a direction, and takes 
+     some energy.
+
+Alter (+)
+     This special command allows the use of a single keypress to select any of 
+     the alteration commands above (attack, tunnel, bash, open, disarm,
+     close), and, by using macros or keymaps, to combine this keypress with 
+     directions.  For (non-shapeshifted) Rogues, it also allows stealing; for
+     Rogues and those with the "Trap Setting" specialty ability, it allow the
+     setting traps.  In  general, this allows the use of the control key plus
+     the appropriate direction key (including the roguelike direction keys in 
+     roguelike mode) as a kind of generic "alter the terrain feature of an
+     adjacent grid" command.  This command may take a count, is affected by the
+     "always_repeat" option, requires a direction, and takes some energy.
+
+
+--- Ability Interaction Commands ---
+
+View abilites/Gain specialty (O)
+     Use this command to get information about your existing race, class, and
+     specialty abilities or to learn new specialty abilities.  If both options
+     are possible, you will be given a choice.  When you are able to learn new
+     specialty abilities, the word "Spec." will appear on the status line at 
+     the bottom of the screen.
+
+
+--- Spell and Prayer Commands ---
+
+Browse a book (b) or Peruse a book (P)
+     Most classes use spellbooks, and can scan the spells in books of their 
+     realm with this command.  Warriors get a special information screen 
+     giving information about their pseudo-probing ability.
+
+Gain new spells or prayers (G)
+     Use this command to actually learn new spells or prayers.  When you are 
+     able to learn new spells or prayers, the word "Study" will appear on the 
+     status line at the bottom of the screen.  If you have a book in your 
+     possession, containing spells or prayers which you may learn, then you 
+     may choose to study that book.  If you are a mage, rogue, druid, ranger, 
+     necromancer, or assassin, you may actually choose which spell to study.  
+     If you are a priest or paladin, tha Valar will choose a prayer for you.  
+     This command takes some energy.
+     If you can learn new spells and you can also learn new specialty abilities
+     the "Study" notification will be replaced by the "Spec." notification.  
+     You can still gain spells, even if you choose not to specialize.
+
+Cast a spell or Pray a Prayer (m and p)
+     To cast a spell, you must have previously learned the spell and must have 
+     in your inventory a book from which the spell can be read.  Each spell 
+     has a chance of failure which starts out fairly large but decreases as 
+     you gain levels.  If you don't have enough mana to cast a spell, you will 
+     be prompted for confirmation.  If you decide to go ahead, the chance of 
+     failure is greatly increased, and you may lose a point of constitution.  
+     Since you must read the spell from a book, you cannot be blind or 
+     confused while casting, and there must be some light present.  This 
+     command takes some energy.
+     Once Warriors attain experience level 35, they may pseudo-probe monsters 
+     using this command.
+
+
+--- Player Manipulation Commands ---
+
+End/Default shapechange (])
+     This command will return you to your normal state, if you have previously 
+     transformed yourself into any creature.  In addition, if your character
+     has an intrinsic ability to shapechange (ie the Beorning player race)
+     this command will initiate the shape change.
+
+Move house (H) or ($)
+     Given in a town, this will move your house to that town.  Some towns have
+     a wider range of shops than others, so it is advisable to move to a large
+     town at some point.
+
+--- Object Manipulation Commands ---
+
+Eat some food (E)
+     You may use this command to eat food in your inventory or from the floor, 
+     which you must do regularly to prevent starvation.  As you grow hungry, a 
+     message will appear at the bottom of the screen saying "Hungry".  If you go 
+     hungry long enough, you will become weak, then start fainting, and eventu-
+     ally will die of starvation.  This command takes some energy.
+
+Fuel your lantern/torch (F)
+     If you are using a torch and have more torches in your pack, or you are 
+     using a lantern and have flasks of oil in your pack, then your can 
+     "refuel" them with this command.  In general, two flasks will fully fuel 
+     a lantern and two torches will fully fuel a torch.  This command takes 
+     some energy.
+
+Quaff a potion (q)
+     Use this command to drink a potion.  Potions affect the player in various 
+     ways, but the effects are not always immediately obvious.  This command 
+     takes some energy.
+
+Read a scroll (r)
+     Use this command to read a scroll.  Scroll spells usually have an area 
+     effect, except for a few cases where they act on other objects.  Reading 
+     a scroll causes the parchment to disintegrate as the scroll takes effect. 
+     Most scrolls which prompt for more information can be aborted (by 
+     pressing escape), which will stop reading the scroll before it 
+     disintegrates.  This command takes some energy.
+ 
+Inscribe an object ({) 
+     This command inscribes a string on an object.  The inscription is 
+     displayed inside curly braces after the object description.  The 
+     inscription is limited to the particular object (or pile) and is not 
+     automatically transferred to all similar objects, unless the "Merge 
+     Inscriptions when Stacking" option is on.  Certain inscriptions have a 
+     meaning to the game - see the help file "objs-mon.txt".
+
+Uninscribe an object (})
+     This command removes the inscription on an object.  This command will 
+     have no effect on some "fake" inscriptions added by the game itself (such 
+     as "{cursed}").
+
+
+--- Magical Object Commands ---
+
+Activate an artifact (A)
+     You have heard rumors of special weapons and armor deep in the Pits, 
+     items that can let you breath fire like a dragon or light rooms with just 
+     a thought.  Should you ever be lucky enough to find such an item, this 
+     command will let you activate its special ability.  Special abilities can 
+     only be used if you are wearing or wielding the item.  This command takes 
+     some energy.
+
+Aim a wand (a) or Zap a wand (z)
+     Aim the wand you choose.  If you succeed in using it, the wand will fire. 
+     This command requires a direction, can use a target, and takes some 
+     energy.
+
+Use a staff (u) or Zap a staff (Z)
+     Attempt to use a staff.  If your magical device skill is high enough, the 
+     staff will work.  This command takes some energy.
+ 
+Zap a rod (z) or Activate a rod (a)
+     Attempt to use a rod.  If your magical device skill is high enough, the 
+     rod will activate.  This command may require a direction (depending on 
+     the type of rod, and whether you are aware of its type), may sometimes 
+     use a target, and takes some energy.
+
+
+--- Throwing and Missile Weapons ---
+
+Fire an item (f) or Fire an item (t)
+     You may throw ammo carried by your character, if you are wielding a 
+     missile weapon that accepts it.  See the help file "combat.txt" for more 
+     information.  Firing requires a direction, may use targeting (type "*" at 
+     the direction prompt), and takes some energy.
+
+Throw an item (v)
+     You may throw any object carried by your character.  See the help file 
+     "combat.txt" for more information.  Throwing requires a direction, may 
+     use targeting (type "*" at the direction prompt), and takes some energy.
+
+Targeting Mode (*)
+     This command allows you to aim your spells and such directly at a 
+     specific monster or grid.  See the "targeting" section above for usage 
+     tips.
+
+     Options available within targeting mode:
+          -ESCAPE and "q" :  Exit targeting mode.  Cancel target.
+          -"p" :  Return to the player.  Start looking at all grids.
+          -"o" :  Stay in place.  Start looking at all grids.
+          -"m" :  Start looking only at monsters (if any monsters are around).
+          -"+" :  Look at next monster or interesting grid.
+          -"-" :  Look at previous monster or interesting grid.
+          -"r" :  (If cursor is on a monster) recall monster information.
+          -"t" :  Target grid or monster.
+
+     
+--- Looking Commands ---
+
+Full screen map (M)
+     This command will show a map of the entire area, reduced by a factor of 
+     nine, on the screen.  Only the major features will be visible 
+     because of the scale, so even some important objects may not show up on 
+     the map.  This is particularly useful in locating where the stairs or 
+     paths are relative to your current position, or for identifying 
+     unexplored areas of the dungeon.
+
+Locate player on map (L) or Where is the player (W)
+     This command lets you scroll your map around, looking at all sectors of 
+     the current stage, until you press escape, at which point the map will 
+     be re-centered on the player if necessary.  To scroll the map around, 
+     simply press any of the "direction" keys.  The top line will display the 
+     sector location, and the offset from your current sector.
+
+Look around (l) or Examine things (x)
+     This command is used to look around at nearby monsters (to determine 
+     their type and health) and objects (to determine their type).  It can 
+     also be used to find out what objects (if any) are under monsters, and if 
+     a monster is currently inside a wall, and what is under the player.  See 
+     the description of targeting mode for more information.
+
+Observe an item (I)
+     This command provides extra object information.  If you know nothing 
+     about the object, you see generic information about the object kind.  If 
+     you have identified or otherwise know the object, a object description 
+     will also often appear.  If you have fully *identified* an object, you 
+     will recall all the object attributes.  This command will also give a 
+     summary of damage dealt by weapons and ammunition.
+
+
+--- Message Commands ---
+
+Repeat level feeling (Ctrl-F)
+     Repeats the feeling about the dungeon level that you got when you first 
+     entered the level.
+
+View previous messages (Ctrl-P)
+     This command shows you all the recent messages.  You can scroll through 
+     them, or exit with ESCAPE.
+
+Take notes (:)
+     This command allows you to take notes, which will then appear in your 
+     message list (prefixed with "Note:").
+
+
+--- Game Status Commands ---
+
+Character Description (C)
+     Brings up a full description of your character, including your skill 
+     levels, your current and potential stats, and various other information.  
+     From this screen, you can change your name or use the file character 
+     description command to save your character status to a file.  That 
+     command saves additional information, including your background, your 
+     inventory, and the contents of your house.
+
+Check knowledge (~)
+     This command allows you to ask about the knowledge possessed by your 
+     character.  Currently, this includes being able to list all known 
+     artifacts, uniques, objects, and the contents of your home.
+
+Time of day (Ctrl-T) or (')
+     Displays the day and hour/minute.
+
+
+--- Saving and Exiting Commands ---
+
+Save and Quit (Ctrl-X)
+     To save your game so that you can return to it later, use this command.  
+     Save files will also be generated (hopefully) if the game crashes due to 
+     a system error.  After you die, you can use your savefile to play again 
+     with the same options and such.
+
+Save (Ctrl-S)
+     This command saves the game but doesn't exit FAangband.  Use this 
+     frequently if you are paranoid about having your computer crash (or your 
+     power go out) 
+     while you are playing.
+
+Quit (commit suicide) (Q or Ctrl-K)
+     Kills your character and exits Angband.  You will be prompted to make 
+     sure you really want to do this, and then asked to verify that choice.  
+     Note that dead characters are dead forever.
+
+
+--- User pref file commands ---
+
+Interact with options (=)
+     Allow you to interact with options.  Note that using the "cheat" options 
+     will mark your savefile as unsuitable for the high score list.  You may 
+     change normal options using the "X" and "Y" user pref commands.  The 
+     "window" options allow you to specify what should be drawn in any of the 
+     special sub-windows (not available on all platforms).  See the help file 
+     "optdesc.txt" for more information.
+
+Interact with macros (@)
+     Allow you to interact with macros.  You may load or save macros from user 
+     pref files, create macros of various types, or define keymaps.  You must 
+     define a "current action", shown at the bottom of the screen, before you 
+     attempt to use any of the "create macro" commands, which use that 
+     "current action" as their action.
+
+Interact with visuals (%)
+     Allow you to interact with visuals.  You may load or save visuals from 
+     user pref files, or modify the attr/char mappings for the monsters, 
+     objects, and terrain features.  You must use the "redraw" command 
+     (Ctrl-R) to redraw the map after changing attr/char mappings.
+
+Interact with colors (&)
+     Allow the user to interact with colors.  This command only works on some 
+     systems.
+ 
+
+--- Help ---
+
+Help (?)
+     Brings up the FAangband on-line help system.  Note that the help files 
+     are just text files in a particular format, and that other help files may 
+     be available on the Net.
+
+Identify Symbol (/)
+     Use this command to find out what a character represents.  For instance, 
+     by pressing "/.", you will learn that the "." symbol stands for a floor 
+     spot.
+
+     There are three special symbols you can use with the Identify Symbol 
+     command to access specific parts of your monster memory.  Typing Ctrl-A 
+     when asked for a symbol will recall details about all monsters, typing 
+     Ctrl-U will recall details about all unique monsters, and typing Ctrl-N 
+     will recall details about all non-unique monsters.
+
+     If the character stands for a creature, you are asked if you want to 
+     recall details.  If you answer yes, information about the creatures you 
+     have encountered with that symbol is shown in the Recall window if 
+     available, or on the screen if not.  You can also answer "k" to see the 
+     list sorted by number of kills, or "p" to see the list sorted by dungeon 
+     level the monster is normally found on.  Pressing ESCAPE at any point 
+     will exit this command.
+
+Game Version (V)
+        This command will tell you what version of FAangband you are playing.
+
+
+--- Extra Commands ---
+
+Toggle Choice Window (Ctrl-E) 
+     Toggles the display in any sub-windows (if available) which are 
+     displaying your inventory or equipment.
+
+Redraw Screen (Ctrl-R)
+     This command adapts to various changes in global options, and redraws all 
+     of the windows.  It is normally only necessary in abnormal situations, 
+     such as after changing the visual attr/char mappings, or enabling 
+     "graphics" mode.
+
+Load screen dump (left-paren)
+     This command loads a "snap-shot" of the current screen from a file 
+     and displays it on the screen.
+
+Save screen dump (right-paren)
+     This command dumps a "snap-shot" of the current screen to a file 
+     including encoded color information.
+
+Repeat last command (n) or ([)
+     Repeats the previous command, selecting the same objects, spells, etc,
+     you typed.
+
+
+=== Special Keys - Not modified for FAangband ===
+ 
+        Certain special keys may be intercepted by the operating system or
+the host machine, causing unexpected results.  In general, these special keys
+are control keys, and often, you can disable their special effects.
+
+        If you are playing on a UNIX or similar system, then Ctrl-C will
+interrupt Angband.  The second and third interrupt will induce a warning
+bell, and the fourth will induce both a warning bell and a special message,
+since the fifth will quit the game, after killing your character.  Also,
+Ctrl-Z will suspend the game, and return you to the original command shell,
+until you resume the game with the "fg" command.  There is now a compilation
+option to force the game to prevent the "double ctrl-z escape death trick".
+The Ctrl-\ and Ctrl-D and Ctrl-S keys should not be intercepted.
+ 
+        It is often possible to specify "control-keys" without actually
+pressing the control key, by typing a caret ("^") followed by the key.
+This is useful for specifying control-key commands which might be caught
+by the operating system as explained above.
+
+        Pressing backslash ("\") before a command will bypass all keymaps,
+and the next keypress will be interpreted as an "underlying command" key,
+unless it is a caret ("^"), in which case the keypress after that will be
+turned into a control-key and interpreted as a command in the underlying
+angband keyset.  The backslash key is useful for creating macro actions
+which are not affected by any keymap definitions that may be in force, for
+example, the sequence "\" + "." + "6" will always mean "run east", even if
+the "." key has been mapped to a different underlying command.
+
+        The "0" and "^" and "\" keys all have special meaning when entered
+at the command prompt, and there is no "useful" way to specify any of them
+as an "underlying command", which is okay, since they would have no effect.
+
+        For many input requests or queries, the special character ESCAPE
+will abort the command.  The "[y/n]" prompts may be answered with "y" or
+"n", or escape.  The "-more-" message prompts may be cleared (after reading
+the displayed message) by pressing ESCAPE, SPACE, RETURN, LINEFEED, or by
+any keypress, if the "quick_messages" option is turned on.
