@@ -5,3 +5,5 @@ src/Makefile.win_sdl
 config.*
 autom4te.cache/
 aclocal.m4
+changes.txt
+autoconf.h
