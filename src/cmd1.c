@@ -1557,10 +1557,14 @@ void hit_trap(int y, int x)
 	/* trap of alter reality. */
 	else if (nastyness < 50)
 	  {
-	    msg_print("The world changes!");
+	    if (adult_ironman) msg_print("Nothing happens.");
+	    else
+	      {
+	        msg_print("The world changes!");
 	    
-	    /* Leaving */
-	    p_ptr->leaving = TRUE;
+	        /* Leaving */
+	        p_ptr->leaving = TRUE;
+	      }
 	  }
 	
 	/* trap of remold player. */

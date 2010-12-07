@@ -948,7 +948,6 @@ extern int make_dump(char_attr_line *line, int mode)
   object_type *o_ptr;
   int value;
 
-  int tmp1;
   int xthn, xthb, xfos, xsrh;
   int xdis, xdev, xsav, xstl;
   cptr desc;
@@ -1262,14 +1261,10 @@ extern int make_dump(char_attr_line *line, int mode)
       
       
       /* Fighting Skill (with current weapon) */
-      o_ptr = &inventory[INVEN_WIELD];
-      tmp1 = p_ptr->to_h + o_ptr->to_h;
-      xthn = p_ptr->skill_thn + (tmp1 * BTH_PLUS_ADJ);
+      xthn = p_ptr->skill_thn + (show_m_tohit * BTH_PLUS_ADJ);
       
       /* Shooting Skill (with current bow and normal missile) */
-      o_ptr = &inventory[INVEN_BOW];
-      tmp1 = p_ptr->to_h + o_ptr->to_h;
-      xthb = p_ptr->skill_thb + (tmp1 * BTH_PLUS_ADJ);
+      xthb = p_ptr->skill_thb + (show_a_tohit * BTH_PLUS_ADJ);
       
       /* Basic abilities */
       xdis = p_ptr->skill_dis;

@@ -624,8 +624,18 @@ static bool remove_curse_aux(int good)
 	      take_hit(damroll(5, 5), "Failed uncursing");
 
 	      /* Gone */
-	      inven_item_increase(item, -1);
-	      inven_item_optimize(item);
+              if (item >= 0)
+                {
+                   inven_item_increase(item, -1);
+                   inven_item_describe(item);
+                   inven_item_optimize(item);
+                }
+              else
+                {
+                   floor_item_increase(0 - item, -1);
+                   floor_item_describe(0 - item);
+                   floor_item_optimize(0 - item);
+                }
 	      return (FALSE);
 	  }
 
@@ -2028,6 +2038,10 @@ void stair_creation(void)
   if (is_quest(p_ptr->stage) || (!stage_map[p_ptr->stage][DOWN]))
     {
       cave_set_feat(py, px, FEAT_LESS);
+    }
+  else if (!stage_map[p_ptr->stage][UP])
+    {
+      cave_set_feat(py, px, FEAT_MORE);
     }
   else if (rand_int(100) < 50)
     {

@@ -2977,7 +2977,10 @@ int assess_shapechange(int m_idx, monster_type *m_ptr)
       /* Get a possible race */
       shape = get_mon_num((p_ptr->depth + r_ptr->level) / 2 + 1 + 
 			  (p_ptr->depth >= 20 ? 4 : p_ptr->depth / 5));
-      
+
+      /* Sauron's hack */
+      if (!shape && (type == SUMMON_SAURON)) shape = m_ptr->r_idx - 1 - rand_int (3);
+
       /* Temporarily change race */
       tmp_ptr = &r_info[shape];
       temp = m_ptr->orig_idx;

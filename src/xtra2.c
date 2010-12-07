@@ -2410,11 +2410,11 @@ void monster_death(int m_idx)
     build_quest_stairs(y, x, "staircase");
   
   /* ...or a portal for ironmen wilderness games */
-  else if (adult_ironman && !adult_dungeon)
+  else if (adult_ironman && !adult_dungeon && (p_ptr->depth != 100))
     build_quest_stairs(y, x, "portal"); 
   
-  /* or a path out of Nan Dungortheb */
-  else if ((r_ptr->level == 70) && (p_ptr->depth == 70))
+  /* or a path out of Nan Dungortheb for wilderness games*/
+  else if ((r_ptr->level == 70) && (p_ptr->depth == 70) && !adult_dungeon)
     {
       /* Make a path */
       for (y = p_ptr->py; y < DUNGEON_HGT - 2; y++)
@@ -2649,7 +2649,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 	  if (l_ptr->pkills < MAX_SHORT) l_ptr->pkills++;
 
 	  /* Add to score if the first time */
-	  if (l_ptr->pkills == 1) p_ptr->score += new_exp;
+	  if (l_ptr->pkills == 1) p_ptr->score += (check_ability(SP_DIVINE) ? new_exp / 2 : new_exp);
 	  
 	  /* Count kills in all lives */
 	  if (l_ptr->tkills < MAX_SHORT) l_ptr->tkills++;

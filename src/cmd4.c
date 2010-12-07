@@ -181,7 +181,7 @@ static struct
     { "k",              "Kobolds" },
     { "l",              "Lice" },
     { "L",              "Liches" },
-    { "$?!_=.-",        "Mimics" },
+    { "$?!_=.-|*~",     "Mimics" },
     { "m",              "Molds" },
     { "M",              "Mummies" },
     { ",",              "Mushroom Patches" },

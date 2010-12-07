@@ -1990,7 +1990,7 @@ void do_cmd_cast_or_pray(void)
 	case 26:	/* Thrust Away */
 	  {
 	    if (!get_aim_dir(&dir)) return;
-	    fire_bolt_or_beam(beam, GF_FORCE, dir, damroll(6 + (plev / 10), 8));
+	    fire_arc(GF_FORCE, dir, damroll(6 + (plev / 10), 8), (1 + plev / 10), 0);
 	    break;
 	  }
 	case 27:	/* Fire Ball */
@@ -2134,7 +2134,7 @@ void do_cmd_cast_or_pray(void)
 	case 45:	/* Acid Bolt */
 	  {
 	    if (!get_aim_dir(&dir)) return;
-	    fire_bolt_or_beam(beam, GF_ACID, dir, damroll(5+((plev-5)/5), 8));
+	    fire_bolt_or_beam(beam, GF_ACID, dir, damroll(3 + plev / 3, 8));
 	    break;
 	  }
 	case 46:	/* Polymorph Other */
@@ -2187,7 +2187,7 @@ void do_cmd_cast_or_pray(void)
 	  }  
 	case 54:	/* Cacophony */
 	  {
-	    (void)cacophony(plev * 3);
+	    (void)cacophony(plev + damroll(3, plev));
 	    break;
 	  }
 	case 55:	/* Unleash Chaos */
@@ -2199,7 +2199,7 @@ void do_cmd_cast_or_pray(void)
 	case 56:	/* Wall of Force */
 	  {
 	    if (!get_aim_dir(&dir)) return;
-	    fire_arc(GF_FORCE, dir, 80 + 2 * plev, 3 + plev / 15, 60);
+	    fire_arc(GF_FORCE, dir, 4 * plev, 3 + plev / 15, 60);
 	    break;
 	  }
 	case 57: /* Rune of the Elements */
@@ -2483,10 +2483,14 @@ void do_cmd_cast_or_pray(void)
 	  }
 	case 100: /* Alter Reality */
 	  {
-	    msg_print("The world changes!");
+	    if (adult_ironman) msg_print("Nothing happens.");
+	    else
+	      {
+	        msg_print("The world changes!");
 	    
-	    /* Leaving */
-	    p_ptr->leaving = TRUE;
+	        /* Leaving */
+	        p_ptr->leaving = TRUE;
+	      }
 	    
 	    break;
 	  }
@@ -3317,7 +3321,7 @@ void do_cmd_cast_or_pray(void)
 	case 218: /* dark spear */
 	  {
 	    if (!get_aim_dir(&dir)) return;
-	    fire_beam(GF_DARK, dir, 12 + plev);
+	    fire_beam(GF_DARK, dir, 15 + 7 * plev / 4);
 	    break;
 	  }
 	case 219: /* chaos strike */
@@ -3437,7 +3441,7 @@ void do_cmd_cast_or_pray(void)
 	  }
 	case 237: /* dispel life */
 	  {
-	    (void)dispel_living(60 + randint(plev * 2));
+	    (void)dispel_living(60 + damroll(4, plev));
 	    break;
 	  }
 	case 238: /* vampiric drain */
@@ -3484,7 +3488,7 @@ void do_cmd_cast_or_pray(void)
 	      }
 	    break;
 	  }
-	case 244: /* prepare black breath */
+	case 244: /* Assassin spell - prepare black breath */
 	  {
 	    /* Can't have black breath and holy attack 
 	     * (doesn't happen anyway) */
@@ -3569,6 +3573,20 @@ void do_cmd_cast_or_pray(void)
 	case 253:	/* Assassin Spell - Rebalance Weapon */
 	  {
 	    rebalance_weapon();
+	    break;
+	  }
+	case 254:	/* Necro spell - Dark Power */
+	  {
+	    if (p_ptr->csp < p_ptr->msp)
+	      {
+		take_hit(75, "dark power");
+		p_ptr->csp += 3 * plev / 2;
+		p_ptr->csp_frac = 0;
+		if (p_ptr->csp > p_ptr->msp) (p_ptr->csp = p_ptr->msp);
+		msg_print("You feel flow of power.");
+		p_ptr->redraw |= (PR_MANA);
+		p_ptr->window |= (PW_PLAYER_0 | PW_PLAYER_1);
+	      }
 	    break;
 	  }
 	  

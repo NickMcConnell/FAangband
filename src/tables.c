@@ -1375,7 +1375,7 @@ player_magic magic_info[MAX_CLASS] =
 	{  44,	43, 20, 65,  75},	/* Dimension Door */
 	
 	/* Advanced Sorcery (sval 6) */
-	{  45,	15,  6, 55,  20},	/* Acid Bolt */
+	{  45,	15,  8, 55,  20},	/* Acid Bolt */
 	{  46,	20, 10, 55,  25},	/* Polymorph Other */
 	{  47,	25, 10, 85,  20},	/* Earthquake */
 	{  48,	35, 25, 65,  50},	/* Beguiling */
@@ -1388,7 +1388,7 @@ player_magic magic_info[MAX_CLASS] =
 	{  53,	35, 30, 80,  30},	/* Meteor Swarm */
 	{  54,	38, 40, 85,  35},	/* Cacophony */
 	{  55,	42, 35, 85,  40},	/* Unleash Chaos */
-	{  56,	45, 40, 90,  50},	/* Wall of Force */
+	{  56,	45, 40, 80,  50},	/* Wall of Force */
 	
 	/* Book of Runes (sval 8) */
 	
@@ -1519,8 +1519,8 @@ player_magic magic_info[MAX_CLASS] =
 	{ 137,	16,  5, 70,   2},	/* Cure Poison */
 	{  13,	17,  4, 50,   2},	/* Teleport Self */
 	{ 125,	19,  3, 60,   2},	/* Hit and Run */
-	{  19,	21,  2, 40,   2},	/* Magic Disarm */
-	{   5,	23,  4, 70,   3},	/* Stinking Cloud */
+	{  14,	21,  3, 60,   2},	/* Spear of Light */
+	{   5,	23,  3, 60,   3},	/* Stinking Cloud */
 	
 	/* Useful Magic (sval 2) */
 	{  22,	25,  2, 50,   3},	/* Detect Enchantment */
@@ -1756,16 +1756,16 @@ player_magic magic_info[MAX_CLASS] =
 	
 	/* Communion with Nature (sval 1) */
 	{ 137,	 7,  4, 30,   5}, /* Cure poison */
-	{ 138,	 7,  5, 30,   5}, /* frost bolt */
+	{ 138,	 7,  4, 30,   5}, /* frost bolt */
 	{ 139,	 9,  5, 30,   5}, /* sleep creature */
 	{ 140,	 9,  5, 30,   6}, /* frighten creature */
 	{ 141,	11,  5, 30,   6}, /* detect trap/doors */
 	{ 142,	11,  6, 35,   6}, /* cease small life */
-	{ 143,	13,  6, 35,   6}, /* fire bolt */
+	{ 143,	13,  5, 35,   6}, /* fire bolt */
 	{ 145,	13,  9, 44,   7}, /* remove curse */
 	
 	/* Gifts of Nature (sval 2) */
-	{ 146,	15,  8, 45,   7}, /* acid bolt */
+	{ 146,	15,  6, 45,   7}, /* acid bolt */
 	{ 147,	15,  8, 75,   8}, /* teleport monster */
 	{ 148,	17, 10, 45,   8}, /* gravity bolt */
 	{ 149,	17,  5, 45,   8}, /* resist poison */
@@ -1904,7 +1904,7 @@ player_magic magic_info[MAX_CLASS] =
 	{ 241,	34, 12, 50,  40}, /* dispel curse */
 	{ 242,	40, 16, 50,  60}, /* become vampire */
 	{ 243,	40, 22, 50,  60}, /* haste self */
-	{ 244,	44, 40, 70,  90}, /* prepare black breath */
+	{ 254,	44,  0, 70,  90}, /* dark power */
 	
 	/* Necronomicon(sval 8) */
 	{ 245,	31, 24, 45,  30}, /* word of destruction */
@@ -1927,8 +1927,8 @@ player_magic magic_info[MAX_CLASS] =
       
       TV_NECRO_BOOK,  A_INT,  REALM_NECROMANTIC,  3,  300, 1000,
       
-      /* 29 rituals in 4 books. */
-      29, { 0, 9, 9, 17, 17, 23, 23, 23, 29, 29, 29 },
+      /* 30 rituals in 4 books. */
+      30, { 0, 9, 9, 17, 17, 23, 23, 23, 30, 30, 30 },
       
       {
 	{ 193,	 3,  1, 23,   1}, /* detect evil */
@@ -1969,6 +1969,7 @@ player_magic magic_info[MAX_CLASS] =
 	
 	/* Metamorphoses(sval 7) */
 	{  84,	26,  3, 50,  19}, /* Cure Mortal Wounds */
+	{ 244,	30,  6, 50,  21}, /* prepare black breath */
 	{ 226,	33,  8, 50,  23}, /* shadow warping */
 	{ 239,	36, 14, 50,  26}, /* recharging */
 	{ 240,	40, 18, 50,  30}, /* become werewolf */
@@ -2341,7 +2342,7 @@ cptr spell_names[255] =
     "Slip into the Shadows",
     "Bloodwrath",
     "Rebalance Weapon",
-    "(blank)"
+    "Dark Power"
   };
 
 
@@ -2743,7 +2744,7 @@ cptr option_text[OPT_MAX] =
     "birth_thrall",	              /* OPT_birth_thrall */
     "birth_small_device",	      /* OPT_birth_small_device */
     "birth_dungeon",                  /* OPT_birth_dungeon */
-    NULL,
+    "birth_no_artifacts",             /* OPT_birth_no_artifacts*/
     NULL,
     NULL,
     NULL, /*140*/
@@ -2775,7 +2776,8 @@ cptr option_text[OPT_MAX] =
     "adult_thrall",      		/* OPT_adult_thrall */	     
     "adult_small_device",      		/* OPT_adult_small_device */	     
     "adult_dungeon",                    /* OPT_adult_dungeon */
-    NULL,	NULL,	NULL,	NULL,	NULL,
+    "adult_no_artifacts",               /* OPT_adult_no_artifacts*/
+    NULL,	NULL,	NULL,	NULL,
     NULL,	NULL,	NULL,	NULL,	NULL,
     NULL,	NULL,	NULL,	NULL,	NULL,
     NULL,	NULL,	NULL,	NULL,	NULL, /*220*/
@@ -2898,7 +2900,7 @@ cptr option_desc[OPT_MAX] =
     "Birth: Start as a thrall at the gate of Angband  ", /* OPT_birth_thrall */
     "Birth: View and spell distances halved           ", /* OPT_birth_small_device */
     "Birth: Play with no wilderness                   ", /* OPT_birth_dungeon */
-    NULL,	 
+    "Birth: Restrict creation of artifacts            ", /* OPT_birth_no_artifacts */	 
     NULL,
     NULL,
     NULL, /*140*/
@@ -2930,7 +2932,8 @@ cptr option_desc[OPT_MAX] =
     "Adult: Start as a thrall at the gate of Angband  ", /* OPT_adult_thrall */
     "Adult: View and spell distances halved           ",      /* OPT_adult_small_device */
     "Adult: Play with no wilderness",              /* OPT_birth_dungeon */
-    NULL,	NULL,	NULL,	NULL,	NULL,
+    "Adult: Restrict creation of artifacts            ", /*OPT_birth_no_artifacts*/
+    NULL,	NULL,	NULL,	NULL,
     NULL,	NULL,	NULL,	NULL,	NULL,
     NULL,	NULL,	NULL,	NULL,	NULL,
     NULL,	NULL,	NULL,	NULL,	NULL, /*220*/
@@ -3054,7 +3057,7 @@ bool option_norm[OPT_MAX] =
     FALSE,		 /* OPT_birth_thrall */
     FALSE,		 /* OPT_birth_small_device */
     FALSE,	         /* OPT_birth_dungeon */
-    FALSE,	  
+    FALSE,		 /* OPT_birth_no_artifacts */
     FALSE,
     FALSE,
     FALSE, /*140*/
@@ -3083,7 +3086,8 @@ bool option_norm[OPT_MAX] =
     FALSE,	        /* OPT_adult_thrall */  
     FALSE, 	        /* OPT_adult_small_device */  
     FALSE,              /* OPT_adult_dungeon */
-    FALSE,	FALSE,	FALSE,	FALSE,	FALSE,
+    FALSE,		/* OPT_adult_no_artifacts */
+    FALSE,	FALSE,	FALSE,	FALSE,
     FALSE,	FALSE,	FALSE,	FALSE,	FALSE,
     FALSE,	FALSE,	FALSE,	FALSE,	FALSE,
     FALSE,	FALSE,	FALSE,	FALSE,	FALSE, /*220*/
@@ -3218,7 +3222,7 @@ byte option_page[OPT_PAGE_MAX][OPT_PAGE_PER] =
       OPT_birth_small_device,
       OPT_birth_dungeon,
       OPT_birth_no_sell,
-      255,
+      OPT_birth_no_artifacts,
       255,
       255,
       255,

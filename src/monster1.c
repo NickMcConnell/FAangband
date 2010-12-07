@@ -1462,11 +1462,9 @@ static void roff_aux(int r_idx)
   
   /* Collect non-effects */
   vn = 0;
-  if ((flags3 & (RF3_NO_STUN)) || (flags4 & (RF4_BRTH_SOUND)) ||
-      (flags4 & (RF4_BRTH_FORCE))) vp[vn++] = "stunned";
+  if (flags3 & (RF3_NO_STUN)) vp[vn++] = "stunned";
   if (flags3 & (RF3_NO_FEAR)) vp[vn++] = "frightened";
-  if ((flags3 & (RF3_NO_CONF)) || (flags4 & (RF4_BRTH_CONFU)) || 
-      (flags4 & (RF4_BRTH_CHAOS))) vp[vn++] = "confused";
+  if (flags3 & (RF3_NO_CONF)) vp[vn++] = "confused";
   if (flags3 & (RF3_NO_SLEEP)) vp[vn++] = "slept";
   
   /* Describe non-effects */

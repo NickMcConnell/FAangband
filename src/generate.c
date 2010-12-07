@@ -4517,7 +4517,7 @@ static bool build_vault(int y0, int x0, int ymax, int xmax, cptr data,
 	      /* Up stairs (and player location in themed level).  */
 	    case '<':
 	      {
-		cave_set_feat(y, x, FEAT_LESS);
+		if (stage_map[p_ptr->stage][UP]) cave_set_feat(y, x, FEAT_LESS);
 		
 		/* Place player only in themed level, and only once. */
 		if ((p_ptr->themed_level) && (!placed))

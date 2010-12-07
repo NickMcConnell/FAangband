@@ -414,7 +414,17 @@ static sint adjust_dam(long *die_average, object_type *o_ptr,
 		notice_ring = TRUE;
 	      }
 	  }
-	
+          /* temporary elemental brands */
+	  if (p_ptr->special_attack & (ATTACK_ACID)) 
+	    brand[P_BRAND_ACID] = MAX(brand[P_BRAND_ACID],BRAND_BOOST_NORMAL);
+	  if (p_ptr->special_attack & (ATTACK_ELEC)) 
+	    brand[P_BRAND_ELEC] = MAX(brand[P_BRAND_ELEC],BRAND_BOOST_NORMAL);
+	  if (p_ptr->special_attack & (ATTACK_FIRE)) 
+	    brand[P_BRAND_FIRE] = MAX(brand[P_BRAND_FIRE],BRAND_BOOST_NORMAL);
+	  if (p_ptr->special_attack & (ATTACK_COLD)) 
+	    brand[P_BRAND_COLD] = MAX(brand[P_BRAND_COLD],BRAND_BOOST_NORMAL);
+	  if (p_ptr->special_attack & (ATTACK_POIS)) 
+	    brand[P_BRAND_POIS] = MAX(brand[P_BRAND_POIS],BRAND_BOOST_NORMAL);
 	break;
       }
     }
@@ -1273,20 +1283,31 @@ bool py_attack(int y, int x, bool can_push)
       
       /* Stunning. */
       if (bash_quality + p_ptr->lev > randint(200 + r_ptr->level * 4))
-	{
-	  message_format(MSG_HIT, 0, "%^s is stunned.", m_name);
-	  
-	  m_ptr->stunned += rand_int(p_ptr->lev / 5) + 4;
-	  if (m_ptr->stunned > 24) m_ptr->stunned = 24;
+        {
+          if (r_ptr->flags3 & (RF3_NO_STUN))
+            {
+              if (m_ptr->ml) l_ptr->flags3 |= (RF3_NO_STUN);
+            }
+          else
+            {
+              message_format(MSG_HIT, 0, "%^s is stunned.", m_name);
+              m_ptr->stunned += rand_int(p_ptr->lev / 5) + 4;
+              if (m_ptr->stunned > 24) m_ptr->stunned = 24;
+            }
 	}
       
       /* Confusion. */
-      if (bash_quality + p_ptr->lev > randint(300 + r_ptr->level * 6) && 
-	  !(r_ptr->flags3 & (RF3_NO_CONF)))
-	{
-	  message_format(MSG_HIT, 0, "%^s appears confused.", m_name);
-	  
-	  m_ptr->confused += rand_int(p_ptr->lev / 5) + 4;
+      if (bash_quality + p_ptr->lev > randint(300 + r_ptr->level * 6))
+        {
+          if (r_ptr->flags3 & (RF3_NO_CONF))
+            {
+              if (m_ptr->ml) l_ptr->flags3 |= (RF3_NO_CONF);
+            }
+          else
+            {
+              message_format(MSG_HIT, 0, "%^s appears confused.", m_name);
+              m_ptr->confused += rand_int(p_ptr->lev / 5) + 4;
+            }
 	}
       
       /* The player will sometimes stumble. */

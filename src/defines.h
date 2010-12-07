@@ -3320,9 +3320,9 @@
 #define OPT_PAGE_MAX                     6
 #define OPT_PAGE_PER                    20
 #define OPT_birth_start                128
-#define OPT_birth_end                  137
+#define OPT_birth_end                  138
 #define OPT_adult_start                192
-#define OPT_adult_end                  201
+#define OPT_adult_end                  202
 #define OPT_cheat_start                160
 #define OPT_cheat_end                  169
 #define OPT_score_start                224
@@ -3419,6 +3419,7 @@
 #define OPT_birth_thrall                134/*(OPT_BIRTH_START+6)*/
 #define OPT_birth_small_device          135/*(OPT_BIRTH_START+7)*/
 #define OPT_birth_dungeon               136/*(OPT_BIRTH_START+8)*/
+#define OPT_birth_no_artifacts          137/*(OPT_BIRTH_START+9)*/
 
 #define OPT_cheat_peek                  160        /*(OPT_CHEAT+0)*/
 #define OPT_cheat_hear                  161        /*(OPT_CHEAT+1)*/
@@ -3436,6 +3437,7 @@
 #define OPT_adult_thrall                198/*(OPT_ADULT_START+6)*/
 #define OPT_adult_small_device          199/*(OPT_ADULT_START+7)*/
 #define OPT_adult_dungeon               200/*(OPT_ADULT_START+8)*/
+#define OPT_adult_no_artifacts          201/*(OPT_ADULT_START+9)*/
 
 /* xxx xxx */
 #define OPT_score_peek                  224      /*  (OPT_SCORE+0)*/
@@ -3540,7 +3542,9 @@
 #define birth_ironman                   op_ptr->opt[OPT_birth_ironman]     
 #define birth_thrall                    op_ptr->opt[OPT_birth_thrall]     
 #define birth_small_device              op_ptr->opt[OPT_birth_small_device]     
-#define birth_dungeon                   op_ptr->opt[OPT_birth_dungeon]     
+#define birth_dungeon                   op_ptr->opt[OPT_birth_dungeon]
+#define birth_no_artifacts              op_ptr->opt[OPT_birth_no_artifacts]     
+     
 
 #define cheat_peek			op_ptr->opt[OPT_cheat_peek]
 #define cheat_hear			op_ptr->opt[OPT_cheat_hear]	
@@ -3557,7 +3561,8 @@
 #define adult_ironman                   op_ptr->opt[OPT_adult_ironman]     
 #define adult_thrall                    op_ptr->opt[OPT_adult_thrall]    
 #define adult_small_device              op_ptr->opt[OPT_adult_small_device]     
-#define adult_dungeon                   op_ptr->opt[OPT_adult_dungeon]     
+#define adult_dungeon                   op_ptr->opt[OPT_adult_dungeon]
+#define adult_no_artifacts              op_ptr->opt[OPT_adult_no_artifacts]     
 
 #define score_peek			op_ptr->opt[OPT_score_peek]
 #define score_hear			op_ptr->opt[OPT_score_hear]	

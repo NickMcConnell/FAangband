@@ -5626,26 +5626,34 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	   !(r_ptr->flags4 & (RF4_BRTH_SOUND)) &&
 	   !(r_ptr->flags4 & (RF4_BRTH_FORCE)))
     {
-      /* Obvious */
-      if (seen) obvious = TRUE;
-      
-      /* Tone down a bit for uniques */
-      if (r_ptr->flags1 & (RF1_UNIQUE)) do_stun /= 2;
-	
-      /* Get stunned */
-      if (m_ptr->stunned)
-	{
-	  note = " is more dazed.";
-	  tmp = m_ptr->stunned + (do_stun / 2);
-	}
+      if (r_ptr->flags3 & (RF3_NO_STUN))
+        {
+          if (seen) l_ptr->flags3 |= (RF3_NO_STUN);
+        }
       else
-	{
-	  note = " is dazed.";
-	  tmp = do_stun;
-	}
+        {
+        
+          /* Obvious */
+          if (seen) obvious = TRUE;
       
-      /* Apply stun */
-      m_ptr->stunned = (tmp < 200) ? tmp : 200;
+          /* Tone down a bit for uniques */
+          if (r_ptr->flags1 & (RF1_UNIQUE)) do_stun /= 2;
+	
+          /* Get stunned */
+          if (m_ptr->stunned)
+	    {
+	      note = " is more dazed.";
+	      tmp = m_ptr->stunned + (do_stun / 2);
+	    }
+          else
+	    {
+	      note = " is dazed.";
+	      tmp = do_stun;
+	    }
+      
+          /* Apply stun */
+          m_ptr->stunned = (tmp < 200) ? tmp : 200;
+        }
     }
   
   /* Confusion and Chaos breathers (and sleepers) never confuse */
@@ -7409,7 +7417,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
     affect_player = TRUE;
   
   /* Projection will be affecting a monster. */
-  if ((flg & (PROJECT_KILL)) && (cave_m_idx[y][x] > 0))
+  if ((flg & (PROJECT_KILL)) && (cave_m_idx[y][x] > 0) && (cave_m_idx[y][x] != who))
     {
       affect_monster = TRUE;
       m_ptr = &m_list[cave_m_idx[y][x]];

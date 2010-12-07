@@ -282,7 +282,7 @@ char *spell_tips[255] =
   "Melts a wall square to floor.",
   "Minor recharging.",
   "Attempts to put all monster in line of sight to sleep.",
-  "Fires a bolt of force.",
+  "Fires a short-range beam of force.",
   "Fires a ball of fire.",
   "Turns rod, wand, or staff energy into mana.  Rods have little energy.",
   "Attempts to slow a monster down.",
@@ -353,7 +353,7 @@ char *spell_tips[255] =
   "Strong dispel evil, healing, and remove poisoning, fear, stunning, and cuts.",
   "Minor random displacement.",
   "Long-range random displacement.",
-  "Teleports a line of opponents away.",
+  "Teleports an opponent away.",
   "Immediately takes you to the next level up or down.",
   "Recalls you to the town, or to one of your recall points.",
   "Regenerates the level.",	/* 100 - Alter Reality */
@@ -403,7 +403,7 @@ char *spell_tips[255] =
   "Temporary heroism.",
   "Breaks ordinary curses.",
   "Fires a bolt or beam of acid.",
-  "Teleports a line of monsters away.",
+  "Teleports a monster away.",
   "Fires a bolt or beam of gravity.",
   "Temporary opposition to poison.  Cumulative with equipment resistances.",
   "Shakes the nearby area, randomly changing terrain.",	/* 150 - earthquake */
@@ -502,14 +502,15 @@ char *spell_tips[255] =
   "Hastens you temporarily.",
   "Allows you to infect a monster with the Black Breath, which prevents regeneration.",
   "Destroys almost all objects nearby, deletes ordinary monsters, and banishes uniques from the level.",
-  "Teleports a line of monsters away.",
+  "Teleports a monster away.",
   "Attacks all undead in line of sight.",
   "Places all undead in a powerful Statis.",
   "Fires a large darkness ball.",
   "Grants temporary telepathy.",	/* 250 - timed ESP */
   "Renders you almost imperceptible to sleeping monsters and those not normally found deeper than twice your depth.  You become fully visible as soon as you inflict any damage on or steal from a monster.",
   "Hastens you and drives you into a berserk rage.",
-  "Grants any non-artifact throwing weapon perfect balance.  Be careful about using this spell on weapons that have a hidden quality (use the 'I'nspect command)."
+  "Grants any non-artifact throwing weapon perfect balance.  Be careful about using this spell on weapons that have a hidden quality (use the 'I'nspect command).",
+  "Turns 75 hitpoints into mana."
 };
 
 /**
@@ -688,7 +689,9 @@ extern void output_dam(object_type *o_ptr, int mult, const char *against, bool *
   /* Factor in criticals (x 10) */
   chance = p_ptr->skill_thn + p_ptr->dis_to_h;
   if (object_known_p(o_ptr)) chance += o_ptr->to_h;
-  crit = (5 * chance + 4 * chance * 3 + 3 * chance * 12 + 2 * chance * 28);
+  chance = (100 * chance) / (chance + 240);
+  if (check_ability(SP_ARMSMAN)) chance = 100 - (83 * (100 - chance)) / 100;
+  crit = 259 * chance;
   crit /= 1000;
   
   /* Multiply by number of sides */
@@ -746,7 +749,19 @@ extern void display_weapon_damage(object_type *o_ptr)
 			   ? i_ptr->multiple_brand[j] : MULTIPLE_BASE);
 	}
     }
-  
+
+  /* temporary elemental brands */
+  if (p_ptr->special_attack & (ATTACK_ACID)) 
+    brand[P_BRAND_ACID] = MAX(brand[P_BRAND_ACID],BRAND_BOOST_NORMAL);
+  if (p_ptr->special_attack & (ATTACK_ELEC)) 
+    brand[P_BRAND_ELEC] = MAX(brand[P_BRAND_ELEC],BRAND_BOOST_NORMAL);
+  if (p_ptr->special_attack & (ATTACK_FIRE)) 
+    brand[P_BRAND_FIRE] = MAX(brand[P_BRAND_FIRE],BRAND_BOOST_NORMAL);
+  if (p_ptr->special_attack & (ATTACK_COLD)) 
+    brand[P_BRAND_COLD] = MAX(brand[P_BRAND_COLD],BRAND_BOOST_NORMAL);
+  if (p_ptr->special_attack & (ATTACK_POIS)) 
+    brand[P_BRAND_POIS] = MAX(brand[P_BRAND_POIS],BRAND_BOOST_NORMAL);
+
   /* Ok now the hackish stuff, we replace the current weapon with this one */
   object_copy(old_ptr, &inventory[INVEN_WIELD]);
   object_copy(&inventory[INVEN_WIELD], o_ptr);
@@ -836,8 +851,11 @@ extern void output_ammo_dam(object_type *o_ptr, int mult, const char *against,
   chance = p_ptr->skill_thb + p_ptr->dis_to_h;
   if (object_known_p(o_ptr)) chance += o_ptr->to_h;
   if ((!thrown) && (object_known_p(b_ptr))) chance += b_ptr->to_h;
-  crit = (3 * chance + 2 * chance * 5 + chance * 50);
-  crit /= 1800; 
+  if (thrown) chance = chance * 3 / 2;
+  chance = (100 * chance) / (chance + 360);
+  if (check_ability(SP_MARKSMAN)) chance = 100 - (83 * (100 - chance)) / 100;
+  crit = 116 * chance;
+  crit /= 1000; 
 
   /* Increase dice */
   if (thrown && perfect) dice *= 2;
@@ -879,7 +897,27 @@ extern void display_ammo_damage(object_type *o_ptr)
   for (i = 0; i < MAX_P_BRAND; i++)
     brand[i] = (o_ptr->id_other & (OBJECT_ID_BASE_BRAND << i)) 
       ? o_ptr->multiple_brand[i] : MULTIPLE_BASE;
-  
+
+  /* Hack -- paladins (and priests) cannot take advantage of 
+  * temporary elemental brands to rescue their
+  * lousy shooting skill.
+  *
+  * Missle weapons are "kind of" edged, right?
+  */
+  if (!check_ability(SP_BLESS_WEAPON) || (o_ptr->tval > TV_BOLT)) 
+    {
+      if (p_ptr->special_attack & (ATTACK_ACID)) 
+        brand[P_BRAND_ACID] = MAX(brand[P_BRAND_ACID],BRAND_BOOST_NORMAL);
+      if (p_ptr->special_attack & (ATTACK_ELEC)) 
+        brand[P_BRAND_ELEC] = MAX(brand[P_BRAND_ELEC],BRAND_BOOST_NORMAL);
+      if (p_ptr->special_attack & (ATTACK_FIRE)) 
+        brand[P_BRAND_FIRE] = MAX(brand[P_BRAND_FIRE],BRAND_BOOST_NORMAL);
+      if (p_ptr->special_attack & (ATTACK_COLD)) 
+        brand[P_BRAND_COLD] = MAX(brand[P_BRAND_COLD],BRAND_BOOST_NORMAL);
+      if (p_ptr->special_attack & (ATTACK_POIS)) 
+        brand[P_BRAND_POIS] = MAX(brand[P_BRAND_POIS],BRAND_BOOST_NORMAL);
+    }  
+
   /* Check for well-balanced throwing weapons */
   perfect = (o_ptr->id_obj & OF_PERFECT_BALANCE);
   
@@ -1356,13 +1394,13 @@ void object_info_detail(object_type *o_ptr)
 	  if (o_ptr->to_d < 0)
 	    {
 	      text_out_to_screen(TERM_WHITE, "It subtracts ");
-	      text_out_to_screen(TERM_RED, format("%d%% ", -o_ptr->to_d));
+	      text_out_to_screen(TERM_RED, format("%d ", -o_ptr->to_d));
 	      text_out_to_screen(TERM_WHITE, "from your deadliness.  ");
 	    }
 	  else if (o_ptr->to_d > 0)
 	    {
 	      text_out_to_screen(TERM_WHITE, "It adds ");
-	      text_out_to_screen(TERM_GREEN, format("%d%% ", o_ptr->to_d));
+	      text_out_to_screen(TERM_GREEN, format("%d ", o_ptr->to_d));
 	      text_out_to_screen(TERM_WHITE, "to your deadliness.  ");
 	    }
 	}
@@ -3729,7 +3767,7 @@ void spell_info(char *p, int spell_index)
     case 13: sprintf(p, " range %d", 50 + plev * 2); break;
     case 15: sprintf(p, " dam %d", 5 + plev); break;
     case 20: sprintf(p, " range %d", 5 + plev/10); break;
-    case 26: sprintf(p, " dam %dd%d, beam %d%%", 6 + (plev / 10), 8, beam); 
+    case 26: sprintf(p, " dam %dd%d, length %d", 6 + (plev / 10), 8, 1 + (plev / 10)); 
       break;
     case 27: sprintf(p, " dam %d, rad 2", 55 + plev); break;
     case 30: sprintf(p, " dist %d", 45 + (plev/2)); break;
@@ -3738,14 +3776,14 @@ void spell_info(char *p, int spell_index)
     case 36: strcpy(p, " dur 20+d20"); break;
     case 37: sprintf(p, " dur %d+d30", 10+plev); break;
     case 38: strcpy(p, " dur 40"); break;
-    case 45: sprintf(p, " dam %dd8, beam %d%%", (5+((plev-5)/5)), beam); break;
+    case 45: sprintf(p, " dam %dd8, beam %d%%", (3 + plev / 3), beam); break;
     case 49: sprintf(p, " dam %d, rad %d", 5 * plev / 2, plev / 12); break;
     case 51: sprintf(p, " dam %d,%d, rad 3,2", 10 + plev, 2 * plev); break;
     case 52: sprintf(p, " dam %d, rad 3", 3 * plev); break;
     case 53: sprintf(p, " dam %d, rad 1", 80 + plev * 2); break;
-    case 54: sprintf(p, " dam %d", 3 * plev); break;
+    case 54: sprintf(p, " dam %d+3d%d", plev, plev); break;
     case 55: sprintf(p, " dam %d, rad 1", 80 + plev * 2); break;
-    case 56: sprintf(p, " dam %d, rad %d", 80 + 2 * plev, 3 + plev / 15); break;
+    case 56: sprintf(p, " dam %d, rad %d", 4 * plev, 3 + plev / 15); break;
 
       
       /* Piety */
@@ -3838,7 +3876,7 @@ void spell_info(char *p, int spell_index)
     case 215: sprintf(p, " dam %dd8, hurt 1d6", 2 + plev / 3); break;
     case 216: sprintf(p, " dur %d+d20", plev / 2); break;
     case 217: sprintf(p, " dam %d+d%d", 2 * plev, 2 * plev); break;
-    case 218: sprintf(p, " dam %d", 12 + plev); break;
+    case 218: sprintf(p, " dam %d", 15 + 7 * plev / 4); break;
     case 219: sprintf(p, " dam %dd8, beam %d%%", 1 + plev / 2, beam); break;
     case 221: sprintf(p, " dam %d, rad 2", 50 + plev * 2); break;
     case 222: sprintf(p, " dam %d+d%d, hit ~9", 50 + plev * 2, plev); break;
@@ -3849,7 +3887,7 @@ void spell_info(char *p, int spell_index)
     case 233: strcpy(p, " dur 10+d20"); break;
     case 235: sprintf(p, " dam %dd13", 3 * plev / 5); break;
     case 236: sprintf(p, " dam %d, hurt 2d8", 20 + (4 * plev)); break;
-    case 237: sprintf(p, " dam %d+d%d", 60, plev * 2); break;
+    case 237: sprintf(p, " dam %d+4d%d", 60, plev); break;
     case 238: sprintf(p, " dam %dd11, heal %d", plev / 3, 3 * plev); break;
     case 240: strcpy(p, " hurt 2d7"); break;
     case 242: strcpy(p, " hurt 3d6"); break;
@@ -3861,6 +3899,7 @@ void spell_info(char *p, int spell_index)
     case 250: sprintf(p, " dur 30+d40"); break;
     case 251: sprintf(p, " dur 40"); break;
     case 252: sprintf(p, " dur 40"); break;
+    case 254: sprintf(p, " mana %d", 3 * plev / 2); break;
     }
 }
 

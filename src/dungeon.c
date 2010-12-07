@@ -543,7 +543,7 @@ static void process_world(void)
       regen_amount = regen_amount * 2;
     }
   
-  /* Regeneration ability.  A lesser effect on mana in Oangband. */
+  /* Regeneration ability.  A greater effect on mana in FAangband. */
   if (p_ptr->regenerate)
     {
       notice_obj(OF_REGEN, 0);

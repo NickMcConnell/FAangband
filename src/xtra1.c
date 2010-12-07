@@ -3903,6 +3903,9 @@ extern void calc_bonuses(bool inspect)
   /* Limit Skill -- stealth from 0 to 30 */
   if (p_ptr->skill_stl > 30) p_ptr->skill_stl = 30;
   if (p_ptr->skill_stl < 0) p_ptr->skill_stl = 0;
+
+  /* No negative infravision */
+  if (p_ptr->see_infra < 0) p_ptr->see_infra = 0;
   
   /*** Special Saving Throw boosts are calculated after other bonuses ***/
   

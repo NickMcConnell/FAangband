@@ -87,7 +87,7 @@ int act_cost[]=
   600,	/* ACT_RANDOM_REGAIN */
   800,	/* ACT_RANDOM_RESTORE */
   600,	/* ACT_RANDOM_SHIELD */
-  1000,	/* ACT_RANDOM_BRAND_MISSILE */
+  1200,	/* ACT_RANDOM_BRAND_MISSILE */
   800,	/* ACT_RANDOM_SUPER_SHOOTING */
   300,	/* ACT_RANDOM_DETECT_MONSTERS */
   200,	/* ACT_RANDOM_DETECT_EVIL */
@@ -1324,7 +1324,7 @@ static int select_property(int temp_potential, int *property_list,
   int selection = 0;
   int current_value = 0;
 #ifdef _WIN32_WCE
-  int prices[10][10];
+  int prices[10][15];
 #else
   int prices[choices][*max_value + 1];
 #endif
@@ -1527,7 +1527,7 @@ static bool choose_type(object_type *o_ptr)
   if (total == 0) return (FALSE);
 
   /* Get a standard bonus */
-  bonus = MIN((potential / 1000), 1);
+  bonus = MAX((potential / 1000), 1);
     
   /* The main design loop */
   while (!done)
@@ -2139,7 +2139,7 @@ static bool choose_type(object_type *o_ptr)
 	      {
 		int property;
 		int speed[1] = {SPEED};
-		int max_value = 0;
+		int max_value = 14;
 
 		/* This is an exclusive club */
 		if (potential < 3000) break;

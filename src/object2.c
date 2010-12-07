@@ -2081,7 +2081,7 @@ static bool make_artifact_special(object_type *o_ptr)
   int k_idx = 0;
   
   /* No artifacts in the town */
-  if (!p_ptr->depth) return (FALSE);
+  if (!p_ptr->depth || adult_no_artifacts) return (FALSE);
   
   first_pick = rand_int(artifact_special_cnt);
   
@@ -3030,11 +3030,11 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 	    o_ptr->bonus_other[i] -= randint(-e_ptr->bonus_other[i]);
 	}
 
-      /* Assign multiples (same as ego - for now) */
+      /* Assign multiples */
       for (i = 0; i < MAX_P_SLAY; i++)
-	o_ptr->multiple_slay[i] = e_ptr->multiple_slay[i];
+	o_ptr->multiple_slay[i] = MAX(e_ptr->multiple_slay[i], o_ptr->multiple_slay[i]);
       for (i = 0; i < MAX_P_BRAND; i++)
-	o_ptr->multiple_brand[i] = e_ptr->multiple_brand[i];
+	o_ptr->multiple_brand[i] = MAX(e_ptr->multiple_brand[i], o_ptr->multiple_brand[i]);
       
       
       /* Apply extra bonuses or penalties. */
@@ -3401,7 +3401,7 @@ bool make_object(object_type *j_ptr, bool good, bool great, bool exact_kind)
     }
   
   /* Apply magic (allow artifacts) */
-  apply_magic(j_ptr, object_level, TRUE, good, great);
+  apply_magic(j_ptr, object_level, !adult_no_artifacts, good, great);
   
   /* Get the object kind. */
   k_ptr = &k_info[j_ptr->k_idx];
