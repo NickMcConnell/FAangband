@@ -1,5 +1,5 @@
 ************************************************
-***  FAangband 1.1.5  ****  First Age Angband  *
+***  FAangband 1.1.6  ****  First Age Angband  *
 *Beleriand in the days of the War of the Jewels*
 ************************************************
                                                 
@@ -13,7 +13,7 @@ Leon Marrick, Bahman Rabii, Jeff Greene,
 Diego Gonzalez, Andrew Doull, Andi Sidwell,   
 Pete Mack, Si Griffin.                          
                                                 
-FAangband 0.1.0-1.1.5: Copyright (c) 2005-2010  
+FAangband 0.1.0-1.1.6: Copyright (c) 2005-2010  
                       Nick McConnell, Si Griffin
                                                 
 Send comments, etc. to nckmccnnll@yahoo.com.au  

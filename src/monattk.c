@@ -468,7 +468,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 	    (stage_map[p_ptr->stage][STAGE_TYPE] == PLAIN)) ||
 	   ((check_ability(SP_EDAIN)) && 
 	    (stage_map[p_ptr->stage][STAGE_TYPE] == FOREST))) &&
-	  (randint(100) <= p_ptr->evasion_chance))
+	  (randint(100) <= p_ptr->evasion_chance) && (!p_ptr->paralyzed))
 	{
 	  /* Message */
 	  msg_print("You Evade the attack!");

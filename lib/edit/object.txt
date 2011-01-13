@@ -22,7 +22,7 @@
 
 # Version stamp (required)
 
-V:1.1.5
+V:1.1.6
 
 #N: object index: name
 #G: ASCII char used to display the object: color symbol
@@ -1961,7 +1961,7 @@ A:85/3:90/3
 D:An amulet set with an emerald as green as the grass of Valinor.
 
 N:309:Diamond
-G:":d
+G:":W
 I:40:9:0
 W:95:0:3:10000
 A:95/3:100/3
@@ -4921,7 +4921,7 @@ F:INSTA_ART
 # The Necklace of the Dwarves -- see artifact list
 
 N:738:& Necklace~
-G:":d
+G:":W
 I:40:12:0
 W:70:0:3:75000
 F:INSTA_ART

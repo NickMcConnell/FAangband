@@ -1,12 +1,12 @@
 
 ============================= Symbols On Your Map =============================
 
-     Angband and many of its variants allow you to use either ASCII (text) 
-characters or graphics to represent the world around you.  Other variants, 
-including FAangband, are text-only.  Using text characters has the great advan-
-tage of allowing instant on-line identification of any symbol you see.  Type 
-'/', then the character.  Also, you may consult the following tables of symbols, 
-divided into dungeon features, objects, and monsters:
+     Angband and many of its variants, including FAangband, allow you to use
+either ASCII (text) characters or graphics to represent the world around you.
+Using text characters has the great advantage of allowing instant on-line 
+identification of any symbol you see.  Type '/', then the character.  Also, 
+you may consult the following tables of symbols, divided into dungeon features,
+objects, and monsters:
 
 
                                Special
@@ -22,7 +22,7 @@ divided into dungeon features, objects, and monsters:
   '   A broken door                   6   Entrance to Magic Shop
   <   A stair/path to less danger     7   Entrance to the Black Market
   >   A stair/path to greater danger  8   Entrance to your Home
-  .   Water                           9   Entrance to the Bookseller
+  .   Water (blue)                    9   Entrance to the Bookseller
   #   Lava (red)                      0   Entrance to the Travelling Merchant
   .   Grass (green)
   %   Web (yellow)
@@ -52,10 +52,10 @@ divided into dungeon features, objects, and monsters:
                              Monsters
  
             $   Creeping Coins      ,   Mushroom Patch
-            a   Giant Ant           A   Angelic being
+            a   Giant Ant           A   (unused)
             b   Giant Bat           B   Bird
             c   Giant Centipede     C   Canine
-            d   Dragon              D   Ancient Dragon
+            d   Dragon              D   Winged Dragon
             e   Floating Eye        E   Elemental
             f   Feline              F   Dragon Fly
             g   Golem               G   Ghost

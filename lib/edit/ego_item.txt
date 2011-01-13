@@ -26,7 +26,7 @@
 
 # Version stamp (required)
 
-V:1.1.5
+V:1.1.6
 
 #N: ego-item index: name (appended to base object description)
 #X: amount the level feeling is increased by: activation index 

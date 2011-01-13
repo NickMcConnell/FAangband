@@ -19,8 +19,8 @@ deserts full of rock and rubble, and pathless swamps of grass and water.
 a guardian on its deepest level (well, actually there are deeper levels of 
 Angband, but let's not be too ambitious yet).  New specialist abilities become 
 available after defeating your first and second dungeon guardians.  The 
-shallowest levels of the dungeons are 16 (for Amon Rudh), 30 (for Nargothrond 
-and Tol-In-Gaurhoth) and 40 (for Angband).  Nan Dungortheb is not a dungeon, 
+shallowest levels of the dungeons are 16 (for Amon Rudh), 30 (for Nargothrond), 
+40 (for Tol-In-Gaurhoth) and 60 (for Angband).  Nan Dungortheb is not a dungeon, 
 but a spider-ridden valley which can only be descended and not ascended;
 it also has a guardian.
 
@@ -89,8 +89,7 @@ Staircases, Secret Doors, and Traps:
      staircases are guaranteed, but they may be difficult to find.  Staircases 
      may sometimes allow you to ascend or descend more than one level at a 
      time.  Once you leave a level or wilderness area you can never return to 
-     it.  Artifacts will be lost, even unidentified ones if you are not using 
-     the "preserve" startup option.
+     it. Identified artifacts will be lost.
           Many secret doors exist in the dungeon, and may lead to anything 
      from a new section of the dungeon level to an empty closet.  As your 
      familiarity with the dungeon grows, you will know where many secret doors 
@@ -120,11 +119,7 @@ Level Feelings:
           After being on a level for a short while, you will get a 
      message describing it.  The more interesting the 
      choice of adjectives, the more dangerous and lucrative the level is 
-     likely to be.  If you have chosen Preserve mode when creating your 
-     character, you will occasionally get the message "you have a special 
-     feeling about this level", indicating the presence of a monster pit or 
-     nest (sometimes, only at shallow dungeon depths), a vault (more often in 
-     the dungeon), a player ghost, or an artifact.
+     likely to be.
 
 Themed Levels:
           If you are in a dangerous enough area, and have spent a bit of time 

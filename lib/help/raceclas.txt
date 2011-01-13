@@ -160,7 +160,7 @@ for experienced players.
      Dark Elf:
          Dark elves are those who chose to stay among the stars of Middle-
          Earth rather than see the Light of the Trees in Aman.  They are
-         intelligent and wise, but frail and poor with weapons.  However, dark
+         wise and agile, but frail and poor with weapons.  However, dark
          elves are not merely stealthiest of all races, but they never 
          aggravate monsters.  (If they normally would, they suffer a penalty 
          of three to stealth).  The price they pay, though, is an increased
@@ -216,7 +216,7 @@ techniques.  Different classes have access to different specialty abilites
          can a warrior become that he gains permanent protection from fear at 
          level 30, learns to probe for weaknesses (see the help doc 
          "magic.txt") at level 35, can spread attacks out among weaker 
-         monsters at level 40, and regenerates intrinsically at level 45.  A 
+         monsters, and regenerates intrinsically at level 40.  A 
          warrior gets an extra specialty ability at level 1.  He is 
          unchallengable with melee weapons, and is also good with all missile 
          launchers, shooting quickly with bows and crossbows.  His biggest 
@@ -248,9 +248,8 @@ techniques.  Different classes have access to different specialty abilites
          addition, pious characters can fight fairly well, as long as they 
          stay away from archery and edged weapons.  They have average survival 
          skills, but know quite a bit about magical items, and resist magic 
-         very well.  Priests gain +1 to light radius at level 35 and above and 
-         permanent protection against evil at level 50.  They have weak 
-	 pseudo-ID.  Wisdom is a Priest's primary stat.
+         very well.  Priests gain +1 to light radius at level 35.  They have
+         weak pseudo-ID.  Wisdom is a Priest's primary stat.
 
 ***** <Rogue>
      Rogue:
@@ -353,20 +352,20 @@ techniques.  Different classes have access to different specialty abilites
 === Stat Bonus and Hit Point Tables ===
 
                     STR  INT   WIS   DEX   CON   CHR  Hit Dice Home Town
-     Easterling      0    0     0     0     0     0       9    Eriador
-     Green Elf      -1   -1    +1    +2    -1    +1      10    Ossiriand
-     Grey Elf        0    0    +1    +2     0    +2      10    Menegroth
+     Easterling     +1    0     0     0    +1    -1       9    Eriador
+     Green Elf      -1   -1    +2    +2    -1    +2      10    Ossiriand
+     Grey Elf       +1    0    +2    +2     0    +3      10    Menegroth
      Hobbit         -2   -1    +2    +3    +2    +1       7    Gladden Fields
      Petty-Dwarf    -1   +3    -3    +3    -1    -4       8    Ered Luin South
      Dwarf          +2   +1    -2    +1    +2    -1      11    Belegost
      Druadan        +2   -2    +2    -1    +2    -4      11    Ephel Brandir
-     Longbeard      +3   +1    -2    +2    +3     0      12    Khazad Dum
+     Longbeard      +3   +1    -1    +2    +2     0      12    Khazad Dum
      Adan           +1   +1    +3    +1    +3    +1      10    Ephel Brandir
-     High Elf       +1   +3     0    +3    +1    +5      10    Gondolin
+     High Elf       +2   +3     0    +3    +2    +5      10    Gondolin
      Maia           +2   +3    +3    +2    +4    +4      12    Gladden Fields
-     Dark Elf       -2   +2    +2    +1    -1     0       7    Taur-Im-Duinath
-     Ent            +4    0    +2    -3    +3     0      12    Taur-Im-Duinath
-     Beorning        0   -1    +1     0    +1    -1      10    Gladden Fields
+     Dark Elf       -2   -1    +2    +2    -1     1       7    Taur-Im-Duinath
+     Ent            +4   -4    +2    -3    +3     0      12    Taur-Im-Duinath
+     Beorning       +1   -1    +1     0    +1    -1      10    Gladden Fields
 
                    STR   INT   WIS   DEX   CON   CHR  Hit Dice
      Warrior       +5    -2    -2    +2    +2    -1      +9
@@ -375,7 +374,7 @@ techniques.  Different classes have access to different specialty abilites
      Rogue         +2    +1    -2    +3    +1    -5      +5
      Ranger        +2     0    +1    +2    +1    +0      +6
      Paladin       +2    -3    +1     0    +1    +2      +7
-     Druid         -2    -2    +3    +1     0    +1      +0
+     Druid         -2    -2    +3    +1     0    +1      +2
      Necromancer   -2    +3    -2    +1     0    -2      +0
      Assassin      +2    +1    -3    +2    +0    -2      +4
  

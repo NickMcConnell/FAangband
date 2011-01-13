@@ -34,7 +34,7 @@
 
 # Version stamp (required)
 
-V:1.1.5
+V:1.1.6
 
 N:1:2:10:25
 D:You are the illegitimate and unacknowledged child 

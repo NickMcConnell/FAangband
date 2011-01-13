@@ -55,14 +55,14 @@
 /**
  * Current version string - according to FAangband reckoning.
  */
-#define VERSION_STRING	"1.1.5"
+#define VERSION_STRING	"1.1.6"
 
 /*
  * Current FAangband version numbers.
  */
 #define VERSION_MAJOR	1
 #define VERSION_MINOR	1
-#define VERSION_PATCH	5
+#define VERSION_PATCH	6
 
 /**
  * The version_extra space in savefiles is used for encryption, oddly enough...

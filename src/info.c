@@ -597,7 +597,7 @@ char *specialty_tips[TOTAL_SPECIALTIES]=
   "You can efficiently spread your attacks over multiple weak opponents at level 40.",
   "You are adept at fighting with your shield as well as your weapon.",
   "You are skilled in hand to hand combat, and are somewhat talented with slings.",
-  "You are not comfortable with edged melee weapons, unless they have been Blessed.",
+  "You fight better with blessed weapons (Paladin). You are not comfortable with edged melee weapons, unless they have been Blessed (Priest).",
   "",
   "You have a bonus to cause sleep, confusion, and slow.",
   "You have a great understanding of magical devices and can recharge them very reliably.",
@@ -761,6 +761,8 @@ extern void display_weapon_damage(object_type *o_ptr)
     brand[P_BRAND_COLD] = MAX(brand[P_BRAND_COLD],BRAND_BOOST_NORMAL);
   if (p_ptr->special_attack & (ATTACK_POIS)) 
     brand[P_BRAND_POIS] = MAX(brand[P_BRAND_POIS],BRAND_BOOST_NORMAL);
+  if (p_ptr->special_attack & (ATTACK_HOLY)) 
+    slay[P_SLAY_EVIL] = MAX(slay[P_SLAY_EVIL],15);
 
   /* Ok now the hackish stuff, we replace the current weapon with this one */
   object_copy(old_ptr, &inventory[INVEN_WIELD]);
@@ -917,6 +919,8 @@ extern void display_ammo_damage(object_type *o_ptr)
       if (p_ptr->special_attack & (ATTACK_POIS)) 
         brand[P_BRAND_POIS] = MAX(brand[P_BRAND_POIS],BRAND_BOOST_NORMAL);
     }  
+  if (p_ptr->special_attack & (ATTACK_HOLY)) 
+    slay[P_SLAY_EVIL] = MAX(slay[P_SLAY_EVIL],15);
 
   /* Check for well-balanced throwing weapons */
   perfect = (o_ptr->id_obj & OF_PERFECT_BALANCE);

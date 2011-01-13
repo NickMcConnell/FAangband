@@ -8,7 +8,7 @@
 
 # Version stamp required
 
-V:1.1.5
+V:1.1.6
 
 #N: set index:name
 #C: number of items to gain bonus
@@ -28,7 +28,7 @@ P:37:0
 B:SEARCH[4] | SPEED[4] | RES_NETHR[40]
 F:SEEING
 # The Set of Leather Gloves 'Cammithrim'
-P:78:3
+P:78:0
 B:DEX[3] | MAGIC_MASTERY[3] 
 F:SUST_DEX
 
@@ -39,15 +39,15 @@ N:3:Messenger's Arms
 C:3
 D:It is part of the armor left by Turgon for the messenger of Ulmo
 # The Full Plate Armor of Nevrast
-P:27:1
-B:RES_DISEN[40] | SPEED[1]
+P:27:0
+B:RES_DISEN[40] | CON[3] | SPEED[3]
 # The Large Metal Shield of the Swan
-P:46:2
+P:46:0
 B:WIS[2] | CHR[2] 
 F:HOLD_LIFE
 # The Iron Helm of Vinyamar
-P:55:2
-B:CON[2] 
+P:55:0
+B:STR[5] | CHR[5] | CON[5] 
 F:REGEN | TELEPATHY
 
 
@@ -60,8 +60,8 @@ D:It is from the battle gear worn by Turin Turambar while at Nargothrond
 P:56:0
 B:RES_FIRE[100]
 # The Two-Handed Sword 'Gurthang'
-P:110:1
-B:RES_POIS[50] | SPEED[1] 
+P:110:0
+B:RES_POIS[50] | STR[4] | CHR[4] | INFRA[4] | SPEED[4] 
 # The Chain Mail (Dwarven) of the Mormegil
 P:31:0
 B:RES_CONFU[40]
@@ -90,8 +90,8 @@ N:7:Mablung's Items
 C:2
 D:It was borne by Mablung, chief hunter of King Thingol
 # The Hard Leather Cap of Mablung
-P:53:1
-B:RES_CONFU[40] | RES_SOUND[40] | SPEED[1]
+P:53:0
+B:RES_CONFU[40] | RES_SOUND[40] | INT[3] | WIS[3] | SPEED[3]
 # The Spear of Boldog
 P:151:0
 B:STR[3] | SLAY_EVIL[17] | SLAY_ANIMAL[20] | STEALTH[3]

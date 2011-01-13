@@ -107,7 +107,7 @@ Priests, and Rogues.
 Piercing Shot: Archery attacks may skewer multiple targets.  After a
 successful hit, an arrow or crossbow bolt will sometimes continue on; targets
 behind the original are very like to be hit.  Multiple pierces are possible.
-Available to Available to Warriors, Assassins, and Rangers.
+Available to Warriors, Assassins, and Rangers.
 
 Power Siphon: Gain mana when monsters in line of sight cast spells.  Available
 only to Mages.
@@ -127,7 +127,7 @@ damage.  Best with a large shield.  Ineffective when wielding a two-handed
 weapon.  Available to Warriors, Rangers, and Paladins.
 
 Soul Siphon: Grants mana whenever a living monster is slain.  There is a chance
-of taking damage when aborbing too many souls at once.  Available only to
+of taking damage when absorbing too many souls at once.  Available only to
 Necromancers.
 
 Trap Setting: Grants the ability to set monster traps similar to those set by

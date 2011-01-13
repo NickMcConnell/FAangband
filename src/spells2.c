@@ -2559,6 +2559,7 @@ bool el_proof(u32b flag)
 
   /* Proof it */
   o_ptr->flags_obj |= flag;
+  o_ptr->id_obj |= flag;
 
   /* Done */
   return (TRUE);

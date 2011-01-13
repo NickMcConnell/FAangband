@@ -5630,7 +5630,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
         {
           if (seen) l_ptr->flags3 |= (RF3_NO_STUN);
         }
-      else
+      else if (randint(dam) > r_ptr->level) /* Saving throw */
         {
         
           /* Obvious */

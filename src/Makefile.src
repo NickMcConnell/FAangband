@@ -6,7 +6,7 @@
 #
 
 NAME = FAangband
-VERSION = 1.1.5
+VERSION = 1.1.6
 COPYRIGHT = (c) 2005-2010 Nick McConnell and contributors
 
 HEADERS = \

@@ -21,7 +21,7 @@ six.  If a spellbook of the player's realm has no useful spells contained in it,
 it will appear gray in listings and on the main screen.
 
      In FAangband, it is far easier than in Angband to confuse, slow, frighten,
-     turn, or sleep most monsters, and many creatures (including uniques) are vulnerable.  
+turn, or sleep most monsters, and many creatures (including uniques) are vulnerable.  
 With skill and patience, you can badly hinder even formidable opponents.  On 
 the other hand, many monster races have at least one intrinsic immunity, high-
 level monsters are still very resistant, all attacks of this type are chancy, 
@@ -180,7 +180,7 @@ Item based shapeshifts:
 Intrinsic racial shapeshifts:
      Bear-As Beornings gain levels, their Bear form gains increasing bonuses to
             STR, CON, armour class, and combat.  Bears have small INT and CHR
-            penalties, and are poor magic device skills.
+            penalties, and poor magic device skills.
 
 === Warrior special ability:  Pseudo-probing ===
 

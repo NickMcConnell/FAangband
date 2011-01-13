@@ -2220,6 +2220,9 @@ void do_cmd_fire(void)
       if (!cave_project(ny, nx)) break;
       
     }
+
+  /* Copy ID flags */
+  i_ptr->id_other = j_ptr->id_other;
   
   /* Reduce and describe inventory */
   if (item >= 0)
@@ -2683,7 +2686,10 @@ void do_cmd_throw(void)
       /* Stop if it's trees or rubble */
       if (!cave_project(ny, nx)) break;
     }
-  
+
+  /* Copy ID flags */
+  i_ptr->id_other = o_ptr->id_other;
+
   /* Reduce and describe inventory */
   if (item >= 0)
     {

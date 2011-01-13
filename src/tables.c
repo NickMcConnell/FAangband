@@ -3771,7 +3771,7 @@ cptr specialty_names[TOTAL_SPECIALTIES]=
     "Crowd Combat [40]",
     "Strong Shield Bashing",
     "Unarmed Combat",
-    "Edged Weapon Distaste",
+    "Blessed Fighter",
     "",
     "Charms",
     "Magic Device Expertise",

@@ -2532,8 +2532,8 @@ sint add_special_melee_skill (byte pclass, s16b weight, object_type *o_ptr)
 	}
     }
 
-  /* Priest/Paladin penalty for non-blessed edged weapons. */
-  if ((check_ability(SP_BLESS_WEAPON)) && 
+  /* Priest penalty for non-blessed edged weapons. */
+  if ((check_ability(SP_BLESS_WEAPON)) && (check_ability(SP_STRONG_MAGIC)) &&
       ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)) && 
       (!p_ptr->bless_blade))
     {
@@ -2542,6 +2542,10 @@ sint add_special_melee_skill (byte pclass, s16b weight, object_type *o_ptr)
       /* Icky weapon */
       p_ptr->icky_wield = TRUE;
     }
+
+  /* Paladin bonus for blessed weapons. */
+  if ((check_ability(SP_BLESS_WEAPON)) && (!check_ability(SP_STRONG_MAGIC)) && 
+      (p_ptr->bless_blade)) add_skill += 10 + p_ptr->lev / 4;
   
   /* Now, special racial abilities and limitations are 
    * considered.  Most modifiers are relatively small, to 

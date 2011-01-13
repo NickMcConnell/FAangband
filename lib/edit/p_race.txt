@@ -24,7 +24,7 @@
 
 # Version stamp (required)
 
-V:1.1.5
+V:1.1.6
 
 N:0:Easterling
 S:1:0:0:0:1:-1
