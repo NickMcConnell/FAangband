@@ -1,6 +1,6 @@
-/** \file cairo-utils.c
-    \brief Cairo calls for use in Angband ports
-
+/*
+ * File: cairo_utils.c
+ * Purpose: Cairo calls for use in Angband ports
  * (Currently for the Gtk port, but should be reusable.)
  *
  * Copyright (c) 2000-2007 Robert Ruehlmann, Shanoah Alkire
@@ -45,7 +45,7 @@ void c_rect(cairo_t *cr, cairo_rectangle_t r)
 		cairo_rectangle (cr, r.x, r.y, r.width, r.height);
 }
 
-/**
+/*
  * Erase the whole term.
  */
 void cairo_clear(cairo_surface_t *surface, cairo_rectangle_t r, byte c)
@@ -201,7 +201,7 @@ void cairo_draw_from_surface(cairo_t *cr, cairo_surface_t *surface, cairo_rectan
 	}
 }
 
-/**
+/*
  * Main reason for the lengthy header is strictly so we don't rely on the font size and tile size
  * having one particular naming convention in term data. That should probably be standardized
  * across the board, honestly. 
@@ -334,10 +334,7 @@ void draw_text(cairo_surface_t *surface, font_info *font, measurements *actual, 
 	}
 }
 
-/**
- * Experimental - Currently messes up the display if larger then 12 point 
- * Monospace 
- */
+/* Experimental - Currently messes up the display if larger then 12 point Monospace */
 void set_cairo_font_size(cairo_t *cr, font_info *font)
 {
 	double size;

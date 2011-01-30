@@ -1,5 +1,6 @@
-/** \file cairo-utils.h
-    \brief Cairo calls header for use in Angband ports
+/*
+ * File: main-cairo.h
+ * Purpose: Cairo calls header for use in Angband ports
  * (Currently for the Gtk port, but should be reusable.)
  *
  * Copyright (c) 2000-2007 Robert Ruehlmann, Shanoah Alkire
@@ -31,11 +32,6 @@ struct font_info
 {
 	char name[256], family[256];
 	int w,h, descent, size;
-};
-
-struct point
-{
-	int x,y;
 };
 
 struct measurements

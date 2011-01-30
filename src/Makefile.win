@@ -13,7 +13,7 @@
 #
 
 # Executable name and default target
-EXE = FAangband.exe
+EXE = angband.exe
 all: ../$(EXE)
 
 ifneq (,$(findstring \system32,$(PATH)))
@@ -47,7 +47,8 @@ endif
 
 CC = $(CROSS)gcc
 WRES = $(CROSS)windres
-CFLAGS += -Wall -W -std=iso9899:199409 -pedantic -O2 -I.
+WARNINGS = -Wall -Wextra -Wno-unused-parameter
+CFLAGS += $(WARNINGS) -std=c99 -Wdeclaration-after-statement -O2 -I.
 LIBS += -s
 
 ifdef BUILD_ID

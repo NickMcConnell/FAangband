@@ -1,7 +1,3 @@
-/** \file z-file.h
-    \brief Low-level file handling include
-*/
-
 #ifndef INCLUDED_Z_FILE_H
 #define INCLUDED_Z_FILE_H
 
@@ -122,6 +118,13 @@ bool file_newer(const char *first, const char *second);
  */
 ang_file *file_open(const char *buf, file_mode mode, file_type ftype);
 
+
+/**
+ * Platform hook for file_open.  Used to set filetypes.
+ */
+void (*file_open_hook)(const char *path, file_type ftype);        
+
+
 /**
  * Attempt to close the file handle `f`.
  *
@@ -167,7 +170,11 @@ bool file_put(ang_file *f, const char *buf);
  */
 bool file_putf(ang_file *f, const char *fmt, ...);
 
-void x_fprintf(ang_file *f, int encoding, cptr fmt, ...);
+/**
+ * Format and translate a string, then print it out to file.
+ */
+bool x_file_putf(ang_file *f, int encoding, const char *fmt, ...);
+
 
 /** Byte-based IO */
 
@@ -210,6 +217,18 @@ bool file_writec(ang_file *f, byte b);
 
 
 /*** Directory code ***/
+
+/**
+ * Return whether or not a directory exists.
+ */
+bool dir_exists(const char *dirname);
+
+/**
+ * Create's the given directory, creating intermediate directories if
+ * needed and possible. Returns whether or not the directory was created
+ * successfully.
+ */
+bool dir_create(const char *dirname);
 
 /**
  * An opaque file handle for Angband directory handling.

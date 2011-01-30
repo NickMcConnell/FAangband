@@ -1,7 +1,6 @@
-/** \file z-term.h 
-    \brief Term package include
+/* File: z-term.h */
 
- *
+/*
  * Copyright (c) 1997 Ben Harrison
  *
  * This software may be copied and distributed for educational, research,
@@ -13,10 +12,10 @@
 #define INCLUDED_Z_TERM_H
 
 #include "h-basic.h"
+#include "ui-event.h"
 
 
-
-/**
+/*
  * A term_win is a "window" for a Term
  *
  *	- Cursor Useless/Visible codes
@@ -58,50 +57,7 @@ struct term_win
 };
 
 
-/**
- * Event record for general input
- * Note that there are currently no event subtypes.
- */
-
-typedef enum 
-{
-	EVT_NONE		= 0x0,
-	EVT_ESCAPE		= 0x0001,		/* Synonym for KBRD + key = ESCAPE */
-	EVT_KBRD		= 0x0002,		/* keypress */
-	EVT_MOUSE		= 0x0004,		/* mousepress */
-	EVT_BACK		= 0x0008,		/* Up one level in heirarchical menus. */
-	EVT_MOVE		= 0x0010,		/* menu movement */
-	EVT_SELECT		= 0x0020,		/* Menu selection */
-	EVT_BUTTON		= 0x0040,		/* button press */
-	EVT_CMD			= 0x0080,		/* Command key execute */
-	EVT_OK			= 0x0100,		/* Callback successful */
-									/* For example, a command key action. */
-	EVT_REFRESH		= 0x0200,		/* Display refresh */
-	EVT_RESIZE		= 0x0400,		/* Display resize */
-
-	EVT_AGAIN		= 0x4000000,	/* Retry notification */
-	EVT_STOP		= 0x8000000		/* Loop stopped (never handled) */
-
-} event_class;
-
-#ifdef RISCOS
-#define event_type ang_event_type
-#endif
-
-typedef struct event_type event_type;
-
-struct event_type
-{
-	event_class type;
-	byte mousex, mousey;
-	char key; 
-	short index;
-};
-
-#define EVENT_EMPTY		{ EVT_NONE, 0, 0, 0, 0 }
-
-
-/**
+/*
  * An actual "term" structure
  *
  *	- Extra "user" info (used by application)
@@ -229,7 +185,7 @@ struct term
 	byte attr_blank;
 	char char_blank;
 
-	event_type *key_queue;
+	ui_event_data *key_queue;
 
 	u16b key_head;
 	u16b key_tail;
@@ -255,6 +211,9 @@ struct term
 	term_win *tmp;
 	term_win *mem;
 
+        /* Number of times saved */
+        byte saved;
+
 	void (*init_hook)(term *t);
 	void (*nuke_hook)(term *t);
 
@@ -268,11 +227,11 @@ struct term
 
 	errr (*wipe_hook)(int x, int y, int n);
 
-	errr (*text_hook)(int x, int y, int n, byte a, char *s);
+	errr (*text_hook)(int x, int y, int n, byte a, cptr s);
 
 	errr (*pict_hook)(int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp);
 
- 	byte (*xchar_hook)(byte c);
+	byte (*xchar_hook)(byte c);
 };
 
 
@@ -298,66 +257,97 @@ struct term
  *
  * The other actions do not need a "v" code, so "zero" is used.
  */
-#define TERM_XTRA_EVENT	1	/* Process some pending events */
-#define TERM_XTRA_FLUSH 2	/* Flush all pending events */
-#define TERM_XTRA_CLEAR 3	/* Clear the entire window */
-#define TERM_XTRA_SHAPE 4	/* Set cursor shape (optional) */
-#define TERM_XTRA_FROSH 5	/* Flush one row (optional) */
-#define TERM_XTRA_FRESH 6	/* Flush all rows (optional) */
-#define TERM_XTRA_NOISE 7	/* Make a noise (optional) */
-#define TERM_XTRA_SOUND 8	/* Make a sound (optional) SHOULD GO -NRM- */
-#define TERM_XTRA_BORED 9	/* Handle stuff when bored (optional) */
-#define TERM_XTRA_REACT 10	/* React to global changes (optional) */
-#define TERM_XTRA_ALIVE 11	/* Change the "hard" level (optional) */
-#define TERM_XTRA_LEVEL 12	/* Change the "soft" level (optional) */
-#define TERM_XTRA_DELAY 13	/* Delay some milliseconds (optional) */
+#define TERM_XTRA_EVENT    1    /* Process some pending events */
+#define TERM_XTRA_FLUSH 2    /* Flush all pending events */
+#define TERM_XTRA_CLEAR 3    /* Clear the entire window */
+#define TERM_XTRA_SHAPE 4    /* Set cursor shape (optional) */
+#define TERM_XTRA_FROSH 5    /* Flush one row (optional) */
+#define TERM_XTRA_FRESH 6    /* Flush all rows (optional) */
+#define TERM_XTRA_NOISE 7    /* Make a noise (optional) */
+#define TERM_XTRA_BORED 9    /* Handle stuff when bored (optional) */
+#define TERM_XTRA_REACT 10    /* React to global changes (optional) */
+#define TERM_XTRA_ALIVE 11    /* Change the "hard" level (optional) */
+#define TERM_XTRA_LEVEL 12    /* Change the "soft" level (optional) */
+#define TERM_XTRA_DELAY 13    /* Delay some milliseconds (optional) */
 
 
-/**
+/*** Color constants ***/
+
+
+/*
  * Angband "attributes" (with symbols, and base (R,G,B) codes)
  *
  * The "(R,G,B)" codes are given in "fourths" of the "maximal" value,
  * and should "gamma corrected" on most (non-Macintosh) machines.
  */
-#define TERM_DARK       0   /* 'd' */   /* 0,0,0 */
-#define TERM_WHITE      1   /* 'w' */   /* 4,4,4 */
-#define TERM_SLATE      2   /* 's' */   /* 2,2,2 */
-#define TERM_ORANGE     3   /* 'o' */   /* 4,2,0 */
-#define TERM_RED        4   /* 'r' */   /* 3,0,0 */
-#define TERM_GREEN      5   /* 'g' */   /* 0,2,1 */
-#define TERM_BLUE       6   /* 'b' */   /* 0,0,4 */
-#define TERM_UMBER      7   /* 'u' */   /* 2,1,0 */
-#define TERM_L_DARK     8   /* 'D' */   /* 1,1,1 */
-#define TERM_L_WHITE    9   /* 'W' */   /* 3,3,3 */
-#define TERM_VIOLET     10  /* 'v' */   /* 4,0,4 */
-#define TERM_YELLOW     11  /* 'y' */   /* 4,4,0 */
-#define TERM_L_RED      12  /* 'R' */   /* 4,0,0 */
-#define TERM_L_GREEN    13  /* 'G' */   /* 0,4,0 */
-#define TERM_L_BLUE     14  /* 'B' */   /* 0,4,4 */
-#define TERM_L_UMBER    15  /* 'U' */   /* 3,2,1 */
+#define TERM_DARK     0  /* d */    /* 0 0 0 */
+#define TERM_WHITE    1  /* w */    /* 4 4 4 */
+#define TERM_SLATE    2  /* s */    /* 2 2 2 */
+#define TERM_ORANGE   3  /* o */    /* 4 2 0 */
+#define TERM_RED      4  /* r */    /* 3 0 0 */
+#define TERM_GREEN    5  /* g */    /* 0 2 1 */
+#define TERM_BLUE     6  /* b */    /* 0 0 4 */
+#define TERM_UMBER    7  /* u */    /* 2 1 0 */
+#define TERM_L_DARK   8  /* D */    /* 1 1 1 */
+#define TERM_L_WHITE  9  /* W */    /* 3 3 3 */
+#define TERM_L_PURPLE 10 /* P */    /* ? ? ? */
+#define TERM_YELLOW   11 /* y */    /* 4 4 0 */
+#define TERM_L_RED    12 /* R */    /* 4 0 0 */
+#define TERM_L_GREEN  13 /* G */    /* 0 4 0 */
+#define TERM_L_BLUE   14 /* B */    /* 0 4 4 */
+#define TERM_L_UMBER  15 /* U */    /* 3 2 1 */
+
+#define TERM_PURPLE      16    /* p */
+#define TERM_VIOLET      17    /* v */
+#define TERM_TEAL        18    /* t */
+#define TERM_MUD         19    /* m */
+#define TERM_L_YELLOW    20    /* Y */
+#define TERM_MAGENTA     21    /* i */
+#define TERM_L_TEAL      22    /* T */
+#define TERM_L_VIOLET    23    /* V */
+#define TERM_L_PINK      24    /* I */
+#define TERM_MUSTARD     25    /* M */
+#define TERM_BLUE_SLATE  26    /* z */
+#define TERM_DEEP_L_BLUE 27    /* Z */
+
+/* The following allow color 'translations' to support environments with a limited color depth
+ * as well as translate colours to alternates for e.g. menu highlighting. */
+
+#define ATTR_FULL        0    /* full color translation */
+#define ATTR_MONO        1    /* mono color translation */
+#define ATTR_VGA         2    /* 16 color translation */
+#define ATTR_BLIND       3    /* "Blind" color translation */
+#define ATTR_LIGHT       4    /* "Torchlit" color translation */
+#define ATTR_DARK        5    /* "Dark" color translation */
+#define ATTR_HIGH        6    /* "Highlight" color translation */
+#define ATTR_METAL       7    /* "Metallic" color translation */
+#define ATTR_MISC        8    /* "Miscellaneous" color translation - see misc_to_attr */
+
+#define MAX_ATTR        9
 
 /*
  * Maximum number of colours, and number of "basic" Angband colours
  */ 
-#define MAX_COLORS		256
-#define BASIC_COLORS	16
+#define MAX_COLORS        256
+#define BASIC_COLORS    28
 
 
 
 /**** Available Variables ****/
 
 extern term *Term;
-
+extern byte tile_width;
+extern byte tile_height;
+extern bool bigcurs;
+extern bool smlcurs;
 
 /**** Available Functions ****/
 
 extern errr Term_user(int n);
 extern errr Term_xtra(int n, int v);
 
-extern const char seven_bit_translation[128];
-extern char xchar_trans(byte c);
-
 extern void Term_queue_char(term *t, int x, int y, byte a, char c, byte ta, char tc);
+extern void Term_big_queue_char(term *t, int x, int y, byte a, char c, byte a1, char c1);
 extern void Term_queue_chars(int x, int y, int n, byte a, cptr s);
 
 extern errr Term_fresh(void);
@@ -367,6 +357,7 @@ extern errr Term_draw(int x, int y, byte a, char c);
 extern errr Term_addch(byte a, char c);
 extern errr Term_addstr(int n, byte a, cptr s);
 extern errr Term_putch(int x, int y, byte a, char c);
+extern void Term_big_putch(int x, int y, byte a, char c);
 extern errr Term_putstr(int x, int y, int n, byte a, cptr s);
 extern errr Term_erase(int x, int y, int n);
 extern errr Term_clear(void);
@@ -382,8 +373,8 @@ extern errr Term_flush(void);
 extern errr Term_mousepress(int x, int y, char button);
 extern errr Term_keypress(int k);
 extern errr Term_key_push(int k);
-extern errr Term_event_push(const event_type *ke);
-extern errr Term_inkey(event_type *ch, bool wait, bool take);
+extern errr Term_event_push(const ui_event_data *ke);
+extern errr Term_inkey(ui_event_data *ch, bool wait, bool take);
 
 extern errr Term_save(void);
 extern errr Term_load(void);
