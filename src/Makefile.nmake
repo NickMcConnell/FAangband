@@ -3,8 +3,7 @@
 # Debug build:   NMAKE /F Makefile.nmake
 # Release build: NMAKE /F Makefile.nmake RELEASE=1
 
-
-EXE = Angband.exe
+EXE = FAangband.exe
 default: ..\$(EXE)
 exe: $(EXE)
 
@@ -29,14 +28,14 @@ LFLAGS = $(LFLAGS) /debug
 # files
 include Makefile.src
 OBJS = $(ANGFILES) $(ZFILES) main-win.o win\readdib.o
-RES = win\angband.res
+RES = win\$(PROG).res
 
 
 # rules
 .c.o:
 	$(CC) /c /Fo$@ $(CFLAGS) $?
 
-$(RES) : win\angband.rc
+$(RES) : win\$(PROG).rc
 	$(RC) $(RCFLAGS) $**
 
 $(EXE) : $(OBJS) $(RES)

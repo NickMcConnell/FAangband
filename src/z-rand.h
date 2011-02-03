@@ -2,7 +2,7 @@
 #define INCLUDED_Z_RAND_H
 
 #include "h-basic.h"
-#include "defines.h"
+/* #include "defines.h" */
 
 /**
  * A struct representing a strategy for making a dice roll.

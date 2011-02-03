@@ -544,7 +544,7 @@ void object_kind_name(char *buf, size_t max, int k_idx, bool easy_know)
  */
 #define object_desc_int_macro(T,I) do { \
  \
-	sint i = (I); \
+	int i = (I); \
  \
 	/* Negative */ \
 	if (i < 0) \

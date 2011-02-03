@@ -496,7 +496,7 @@ char angband_sound_name[SOUND_MAX][16] =
 /**
  * Array[VIEW_MAX] used by "update_view()"
  */
-sint view_n = 0;
+int view_n = 0;
 u16b *view_g;
 
 /* 
@@ -514,7 +514,7 @@ u32b vinfo_bits_0;
 /*
  * Arrays[TEMP_MAX] used for various things
  */
-sint temp_n = 0;
+int temp_n = 0;
 u16b *temp_g;
 byte *temp_y;
 byte *temp_x;
@@ -978,12 +978,12 @@ bool (*item_tester_hook)(object_type*);
 /**
  * Current "comp" function for ang_sort()
  */
-bool (*ang_sort_comp)(vptr u, vptr v, int a, int b);
+bool (*ang_sort_comp)(void *u, void *v, int a, int b);
 
 /**
  * Current "swap" function for ang_sort()
  */
-void (*ang_sort_swap)(vptr u, vptr v, int a, int b);
+void (*ang_sort_swap)(void *u, void *v, int a, int b);
 
 
 /**

@@ -6,19 +6,19 @@ include Makefile.src
 INCLUDE = $(HDRS) $(INCS)
 OBJECTS = $(ANGFILES) $(ZFILES)
 SRCS    = ${OBJECTS:.o=.c} ${MAINFILES:.o=.c}
-SUBDIRS = gtk monster object player
-PROG    = angband
-CFLAGS += -I. -std=c99 -Wdeclaration-after-statement
+VERSION = `../scripts/version.sh`
+CFLAGS += -DBUILD_ID=${VERSION} -I. -std=c99 -Wdeclaration-after-statement -Wall -Wextra -O0
 
-angband: angband.o $(MAINFILES)
-	$(CC) -o angband angband.o $(MAINFILES) $(LDFLAGS) $(LDADD)
+$(PROG): $(PROG).o $(MAINFILES)
+	$(CC) -o $(PROG) $(PROG).o $(MAINFILES) $(LDFLAGS) $(LDADD)
 	@printf "%10s %-20s\n" LINK $@
 
-angband.o: $(OBJECTS)
+$(PROG).o: $(OBJECTS)
 	$(LD) -r -o $@ $(OBJECTS)
 	@printf "%10s %-20s\n" LINK $@
 
-clean: test-clean
+#clean:: test-clean
+#	-rm $(PROG).o
 
 clean-extra:
 	-rm autoconf.h
@@ -28,5 +28,8 @@ tests:
 
 test-clean:
 	$(MAKE) -C tests clean
+
+splint:
+	splint -f .splintrc ${OBJECTS:.o=.c} main.c main-gcu.c
 
 .PHONY : tests

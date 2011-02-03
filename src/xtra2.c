@@ -3147,7 +3147,7 @@ void ang_sort(vptr u, vptr v, int n)
 /**
  * Extract a direction (or zero) from a character
  */
-sint target_dir(char ch)
+int target_dir(char ch)
 {
   int d = 0;
   
@@ -3216,7 +3216,7 @@ sint target_dir(char ch)
 /**
  * Extract a direction (or zero) from a mousepress
  */
-extern sint mouse_dir(event_type ke, bool locating)
+extern int mouse_dir(event_type ke, bool locating)
 {
   int i, y, x;
 

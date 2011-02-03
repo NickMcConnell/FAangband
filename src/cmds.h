@@ -8,7 +8,7 @@
 /* cmd0.c */
 extern void cmd_init(void);
 extern void process_command(bool no_request);
-extern int click_area(event_type ke);
+extern int click_area(ui_event_type ke);
 extern void do_cmd_show_obj(void);
 extern void do_cmd_handle(void);
 extern void do_cmd_mousepress(void);
@@ -53,8 +53,8 @@ extern void do_cmd_target(void);
 extern void do_cmd_look(void);
 extern void do_cmd_locate(void);
 extern void do_cmd_query_symbol(void);
-extern bool ang_sort_comp_hook(vptr u, vptr v, int a, int b);
-extern void ang_sort_swap_hook(vptr u, vptr v, int a, int b);
+extern bool ang_sort_comp_hook(void *u, void *v, int a, int b);
+extern void ang_sort_swap_hook(void *u, void *v, int a, int b);
 extern void py_steal(int y, int x);
 extern bool py_set_trap(int y, int x);
 extern bool py_modify_trap(int y, int x);

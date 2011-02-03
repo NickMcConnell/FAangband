@@ -13,17 +13,13 @@ CC = gcc
 LD = ld
 OPT ?= -O2
 
-NAME = Angband
-APPNAME = $(NAME).app
-EXE = angband
-
 ARCH = -arch i386 -arch ppc
 WARNINGS = -W -Wall -Wno-unused-parameter -Wno-missing-field-initializers
 JUST_C = -std=c99 -Wdeclaration-after-statement
 OBJ_CFLAGS = -std=c99 -x objective-c -mmacosx-version-min=10.0
 CFLAGS = -I. $(WARNINGS) $(OPT) -DMACH_O_CARBON -DHAVE_MKSTEMP \
 	-DPRIVATE_USER_PATH=\"~/Library/Preferences\" -DUSE_PRIVATE_PATHS \
-	$(ARCH)
+	-fno-stack-protector $(ARCH)
 LIBS = -framework CoreFoundation -framework QuickTime -framework Carbon \
 	-framework Cocoa
 
@@ -46,8 +42,8 @@ ifneq (,$(findstring borg, $(MAKECMDGOALS)))
 CFLAGS += -DALLOW_BORG
 endif
 
-# Check for autoconfig.h; warn on nonexistence
-autoconf= $(shell ls autoconf.h)
+# Check for autoconf.h; do not warn on nonexistence
+autoconf= $(wildcard autoconf.h)
 ifneq ($(autoconf),)
 CFLAGS += -DHAVE_CONFIG_H
 endif
@@ -55,6 +51,9 @@ endif
 
 
 include Makefile.inc
+
+APPNAME = $(NAME).app
+EXE = $(PROG)
 
 BOBJS = borg1.o borg2.o borg3.o borg4.o borg5.o borg6.o borg7.o borg8.o borg9.o
 OBJS = $(BASEOBJS)
@@ -70,7 +69,7 @@ OSX_OBJS = main-crb.o
 $(EXE).o: $(OBJS)
 	$(LD) -r -arch ppc -o $@.ppc $(OBJS)
 	$(LD) -r -arch i386 -o $@.i386 $(OBJS)
-	lipo -arch ppc $@.ppc -arch i386 $@.i386 -create -output angband.o
+	lipo -arch ppc $@.ppc -arch i386 $@.i386 -create -output $(EXE).o
 
 $(EXE): $(EXE).o $(OSX_OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $(EXE) $(EXE).o $(OSX_OBJS) $(LIBS) 
@@ -95,10 +94,10 @@ clean:
 
 main-crb.o : main-crb.c
 	@printf "%10s %-20s (objective-c)\n" CC $<
-	@CC $(CFLAGS) $(OBJ_CFLAGS) -c -o $@ $<
+	@$(CC) $(CFLAGS) $(OBJ_CFLAGS) -c -o $@ $<
 %.o : %.c
 	@printf "%10s %-20s\n" CC $<
-	@CC $(JUST_C) $(CFLAGS) -c -o $@ $<
+	@$(CC) $(JUST_C) $(CFLAGS) -c -o $@ $<
 
 
 main-crb.o: osx/osx_tables.h
@@ -129,8 +128,8 @@ APPRES = $(APPCONT)/Resources
 # of 8x8.png for Vanilla.  Make sure setting dpi to 72, *not* preserving
 # the actual size of image.  When you have them ready, put them in
 # the lib/xtra/graf directory and rebuild.
-ICONFILES = osx/Angband.icns osx/Save.icns osx/Edit.icns osx/Data.icns
-PLIST = osx/Angband.xml
+ICONFILES = osx/$(NAME).icns osx/Save.icns osx/Edit.icns osx/Data.icns
+PLIST = osx/$(NAME).xml
 
 GRAPHSRC=../lib/xtra/graf/
 TILES = $(GRAPHSRC)8x8.png $(GRAPHSRC)8x16.png $(GRAPHSRC)16x16.png $(GRAPHSRC)32x32.png
@@ -193,7 +192,7 @@ PACKAGE_NAME = $(NAME)-$(VERSION)
 dist: install
 	@rm -rf disttemp*
 	mkdir -p disttemp/Docs
-	cp ../readme.txt ../changes.txt disttemp/Docs
+	cp ../changes.txt ../copying.txt ../faq.txt ../readme.txt disttemp/Docs
 	cp -R -p "$(APPBNDL)" disttemp
 	SetFile -a B disttemp/$(APPNAME)
 

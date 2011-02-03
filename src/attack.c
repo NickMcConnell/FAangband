@@ -39,7 +39,7 @@ static bool test_hit_combat(int chance, int ac, int visible, int item1,
   int k, power;
   
   /* Percentile dice */
-  k = rand_int(100);
+  k = randint0(100);
   
   /* Hack -- Instant miss or hit */
   if (k < 10) return (k < 5);
@@ -51,7 +51,7 @@ static bool test_hit_combat(int chance, int ac, int visible, int item1,
   if (chance < 0) chance = 0;
 
   /* Get power */
-  power = rand_int(chance);
+  power = randint0(chance);
 
   /* Just hit tells to_h bonus */
   if (power == ac) 
@@ -88,7 +88,7 @@ static bool test_hit_combat(int chance, int ac, int visible, int item1,
  * vary according to the quality of the hit.  A distinction is made between 
  * visible and invisible monsters.
  */
-static sint critical_melee(int chance, int sleeping_bonus, bool visible, 
+static int critical_melee(int chance, int sleeping_bonus, bool visible, 
 			   char m_name[], const object_type *o_ptr)
 {
   bool vorpal = FALSE;
@@ -101,7 +101,7 @@ static sint critical_melee(int chance, int sleeping_bonus, bool visible,
   int add_dice = 0;	
   
   /* Specialty Ability */
-  if ((visible) && (check_ability(SP_ARMSMAN)) && (rand_int(6) == 0))
+  if ((visible) && (check_ability(SP_ARMSMAN)) && (randint0(6) == 0))
     {
       armsman = TRUE;
     }
@@ -110,9 +110,9 @@ static sint critical_melee(int chance, int sleeping_bonus, bool visible,
   if ((armsman) || (randint(power + 240) <= power))
     {
       /* Determine level of critical hit. */
-      if      (rand_int(40) == 0) add_dice = 5;
-      else if (rand_int(12) == 0) add_dice = 4;
-      else if (rand_int(3)  == 0) add_dice = 3;
+      if      (randint0(40) == 0) add_dice = 5;
+      else if (randint0(12) == 0) add_dice = 4;
+      else if (randint0(3)  == 0) add_dice = 3;
       else                        add_dice = 2;
       
       /* Encourage the player to beat on sleeping monsters. */
@@ -235,7 +235,7 @@ static sint critical_melee(int chance, int sleeping_bonus, bool visible,
  * messages, which vary according to the quality of the hit.  A distinction 
  * is made between visible and invisible monsters.
  */
-static sint critical_shot(int chance, int sleeping_bonus, bool thrown_weapon, 
+static int critical_shot(int chance, int sleeping_bonus, bool thrown_weapon, 
 			  bool visible, char m_name[], object_type *o_ptr)
 {
   char o_name[80];
@@ -252,7 +252,7 @@ static sint critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
   if (thrown_weapon) power = power * 3 / 2;
   
   /* Specialty Ability */
-  if ((visible) && (check_ability(SP_MARKSMAN)) && (rand_int(6) == 0))
+  if ((visible) && (check_ability(SP_MARKSMAN)) && (randint0(6) == 0))
     {
       marksman = TRUE;
     }
@@ -264,8 +264,8 @@ static sint critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
   if (marksman || (randint(power + 360) <= power))
     {
       /* Determine level of critical hit. */
-      if (rand_int(50) == 0) add_dice = 3;
-      else if (rand_int(10) == 0) add_dice = 2;
+      if (randint0(50) == 0) add_dice = 3;
+      else if (randint0(10) == 0) add_dice = 2;
       else add_dice = 1;
       
       /* Encourage the player to throw and shoot things at sleeping monsters */
@@ -344,7 +344,7 @@ static sint critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
  * Players may have temporary magic branding.  Paladins do not get to apply 
  * temporary brands to missiles.  A nasty hack, but necessary. -LM-
  */
-static sint adjust_dam(long *die_average, object_type *o_ptr, 
+static int adjust_dam(long *die_average, object_type *o_ptr, 
 		       monster_type *m_ptr, int item)
 {
   monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -860,8 +860,8 @@ static int get_druid_damage(int plev, char m_name[], int power, int deadliness)
   bool power_strike = FALSE;
   
   /* Specialty Ability */
-  if ((check_ability(SP_MARTIAL_ARTS) && (rand_int(6) == 0))
-      || (check_ability(SP_POWER_STRIKE) && (rand_int(8) == 0)))
+  if ((check_ability(SP_MARTIAL_ARTS) && (randint0(6) == 0))
+      || (check_ability(SP_POWER_STRIKE) && (randint0(8) == 0)))
     {
       power_strike = TRUE;
     }
@@ -890,7 +890,7 @@ static int get_druid_damage(int plev, char m_name[], int power, int deadliness)
   n_chances = 2 + (i / 100);
   
   /* Deal with fractional chances */
-  if (rand_int(100) < (i % 100)) n_chances++;
+  if (randint0(100) < (i % 100)) n_chances++;
   
   /* Loop over number of number of chances */
   for (n=0; n < n_chances; n++)
@@ -924,7 +924,7 @@ static int get_druid_damage(int plev, char m_name[], int power, int deadliness)
   p_ptr->barehand_dam[11] = (u16b)damage;
   
   /* Druids can also confuse monsters. */
-  if ((power_strike && (rand_int(3) != 0)) || (power > rand_int(500) + 25))
+  if ((power_strike && (randint0(3) != 0)) || (power > randint0(500) + 25))
     {
       /* Use the special druid confusion attack. */
       p_ptr->special_attack |= (ATTACK_DRUID_CONFU);
@@ -1212,7 +1212,7 @@ bool py_attack(int y, int x, bool can_push)
     }
   
   /* Try to get in a shield bash. */
-  if (bash_chance > rand_int(240 + r_ptr->level * 9))
+  if (bash_chance > randint0(240 + r_ptr->level * 9))
     {
       message(MSG_HIT, 0, "You get in a shield bash!");
       
@@ -1291,7 +1291,7 @@ bool py_attack(int y, int x, bool can_push)
           else
             {
               message_format(MSG_HIT, 0, "%^s is stunned.", m_name);
-              m_ptr->stunned += rand_int(p_ptr->lev / 5) + 4;
+              m_ptr->stunned += randint0(p_ptr->lev / 5) + 4;
               if (m_ptr->stunned > 24) m_ptr->stunned = 24;
             }
 	}
@@ -1306,7 +1306,7 @@ bool py_attack(int y, int x, bool can_push)
           else
             {
               message_format(MSG_HIT, 0, "%^s appears confused.", m_name);
-              m_ptr->confused += rand_int(p_ptr->lev / 5) + 4;
+              m_ptr->confused += randint0(p_ptr->lev / 5) + 4;
             }
 	}
       
@@ -1424,7 +1424,7 @@ bool py_attack(int y, int x, bool can_push)
 	      
 	      /* Calculate the actual number of sides to each die. */
 	      sides = (temp / 10000) + 
-		(rand_int(10000) < (temp % 10000) ? 1 : 0);
+		(randint0(10000) < (temp % 10000) ? 1 : 0);
 	      
 	      
 	      /* Roll out the damage. */
@@ -1515,7 +1515,7 @@ bool py_attack(int y, int x, bool can_push)
 		  
 		  msg_format("%^s is unaffected.", m_name);
 		}
-	      else if (rand_int(110) < r_ptr->level + randint(10))
+	      else if (randint0(110) < r_ptr->level + randint(10))
 		{
 		  msg_format("%^s is unaffected.", m_name);
 		}
@@ -1526,7 +1526,7 @@ bool py_attack(int y, int x, bool can_push)
 				   m_name);
 		  else message_format(MSG_HIT, 0, "%^s sounds more confused.", 
 				      m_name);
-		  m_ptr->confused += 4 + rand_int(p_ptr->lev) / 12;
+		  m_ptr->confused += 4 + randint0(p_ptr->lev) / 12;
 		}
 	      else
 		{
@@ -1535,7 +1535,7 @@ bool py_attack(int y, int x, bool can_push)
 				   m_name);
 		  else message_format(MSG_HIT, 0, "%^s sounds confused.", 
 				      m_name);
-		  m_ptr->confused += 10 + rand_int(p_ptr->lev) / 5;
+		  m_ptr->confused += 10 + randint0(p_ptr->lev) / 5;
 		}
 	    }
 	  
@@ -1562,7 +1562,7 @@ bool py_attack(int y, int x, bool can_push)
 		  msg_format("%^s is immune!", m_name);
 		}
 	      /* All other monsters get a saving throw. */
-	      else if ((rand_int(160)) < (r_ptr->level + rand_int(60)))
+	      else if ((randint0(160)) < (r_ptr->level + randint0(60)))
 		{
 		  msg_format("%^s wards off your deadly blow.", m_name);
 		}
@@ -1615,7 +1615,7 @@ bool py_attack(int y, int x, bool can_push)
 	  if (p_ptr->special_attack & (ATTACK_CHAOTIC))
 	    {
 	      /* Sometimes do chaotic stuff */
-	      if (rand_int(10) == 0) 
+	      if (randint0(10) == 0) 
 		{
 		  /* May not still be something there to hit */
 		  notice_obj(OF_CHAOTIC, 0);
@@ -1843,7 +1843,7 @@ void do_cmd_fire(void)
   sound(MSG_SHOOT);
   
   /* Missile launchers of Velocity sometimes "supercharge" */
-  if ((o_ptr->name2 == EGO_VELOCITY) && (rand_int(5) == 0))
+  if ((o_ptr->name2 == EGO_VELOCITY) && (randint0(5) == 0))
     {
       /* Learn the to-dam (and maybe ego) */
       notice_other(IF_TO_D, INVEN_BOW + 1);
@@ -1860,7 +1860,7 @@ void do_cmd_fire(void)
     }
   
   /* Missile launchers of Accuracy sometimes "supercharge" */
-  if ((o_ptr->name2 == EGO_ACCURACY) && (rand_int(5) == 0))
+  if ((o_ptr->name2 == EGO_ACCURACY) && (randint0(5) == 0))
     {
       /* Learn the to-hit (and maybe ego) */
       notice_other(IF_TO_H, INVEN_BOW + 1);
@@ -2114,7 +2114,7 @@ void do_cmd_fire(void)
 	  
 	  /* Calculate the actual number of sides to each die. */
 	  sides = (temp / 10000) + 
-	    (rand_int(10000) < (temp % 10000) ? 1 : 0);
+	    (randint0(10000) < (temp % 10000) ? 1 : 0);
 	  
 	  
 	  /* Roll out the damage. */
@@ -2203,7 +2203,7 @@ void do_cmd_fire(void)
 	  
 	  /* Check for piercing */
 	  if ((check_ability(SP_PIERCE_SHOT)) && 
-	      (rand_int(2) == 0) && 
+	      (randint0(2) == 0) && 
 	      ((p_ptr->ammo_tval == TV_ARROW) ||
 	       (p_ptr->ammo_tval == TV_BOLT)))
 	    {
@@ -2636,7 +2636,7 @@ void do_cmd_throw(void)
 	  
 	  /* Calculate the actual number of sides to each die. */
 	  sides = (temp / 10000) + 
-	    (rand_int(10000) < (temp % 10000) ? 1 : 0);
+	    (randint0(10000) < (temp % 10000) ? 1 : 0);
 	  
 	  
 	  /* Roll out the damage. */
