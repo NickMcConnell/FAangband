@@ -118,7 +118,7 @@ enum sval_digging /* tval 20 */
         SV_DWARVEN_SHOVEL = 3,
         SV_PICK = 4,
         SV_ORCISH_PICK = 5,
-        SV_DWARVEN_PICK = 6,
+        SV_DWARVEN_PICK = 6
 };
 
 enum sval_hafted /* tval 21 */
@@ -137,7 +137,7 @@ enum sval_hafted /* tval 21 */
         SV_STORM_HAMMER = 17,
         SV_TWO_HANDED_FLAIL = 18,
         SV_MACE_OF_DISRUPTION = 20,
-        SV_GROND = 50,
+        SV_GROND = 50
 };
 
 enum sval_polearm /* tval 22 */
@@ -156,7 +156,7 @@ enum sval_polearm /* tval 22 */
         SV_BATTLE_AXE = 22,
         SV_GREAT_AXE = 25,
         SV_DART = 28,
-        SV_SCYTHE_OF_SLICING = 30,
+        SV_SCYTHE_OF_SLICING = 30
 };
 
 enum sval_sword /* tval 23 */
@@ -177,7 +177,7 @@ enum sval_sword /* tval 23 */
         SV_BASTARD_SWORD = 21,
         SV_TWO_HANDED_SWORD = 25,
         SV_EXECUTIONERS_SWORD = 28,
-        SV_VALINOREAN_SWORD = 30,
+        SV_VALINOREAN_SWORD = 30
 };
 
 enum sval_boots /* tval 30 */
@@ -186,7 +186,7 @@ enum sval_boots /* tval 30 */
         SV_PAIR_OF_SOFT_LEATHER_BOOTS = 2,
         SV_PAIR_OF_HARD_LEATHER_BOOTS = 3,
         SV_PAIR_OF_METAL_SHOD_BOOTS = 4,
-        SV_PAIR_OF_DWARVEN_BOOTS = 5,
+        SV_PAIR_OF_DWARVEN_BOOTS = 5
 };
 
 enum sval_gloves /* tval 31 */
@@ -194,7 +194,7 @@ enum sval_gloves /* tval 31 */
         SV_SET_OF_LEATHER_GLOVES = 1,
         SV_SET_OF_MAIL_GAUNTLETS = 2,
         SV_SET_OF_STEEL_GAUNTLETS = 3,
-        SV_SET_OF_CESTI = 4,
+        SV_SET_OF_CESTI = 4
 };
 
 enum sval_helm /* tval 32 */
@@ -203,7 +203,7 @@ enum sval_helm /* tval 32 */
         SV_METAL_CAP = 3,
         SV_BARBUT = 4,
         SV_IRON_HELM = 5,
-        SV_STEEL_HELM = 6,
+        SV_STEEL_HELM = 6
 };
 
 enum sval_crown /* tval 33 */
@@ -211,7 +211,7 @@ enum sval_crown /* tval 33 */
         SV_IRON_CROWN = 10,
         SV_SILVER_CROWN = 11,
         SV_JEWEL_ENCRUSTED_CROWN = 12,
-        SV_MORGOTH = 50,
+        SV_MORGOTH = 50
 };
 
 enum sval_shield /* tval 34 */
@@ -223,7 +223,7 @@ enum sval_shield /* tval 34 */
         SV_LARGE_METAL_SHIELD = 5,
         SV_KNIGHTS_SHIELD = 6,
         SV_BODY_SHIELD = 7,
-        SV_SHIELD_OF_DEFLECTION = 10,
+        SV_SHIELD_OF_DEFLECTION = 10
 };
 
 enum sval_cloak /* tval 35 */
@@ -232,7 +232,7 @@ enum sval_cloak /* tval 35 */
         SV_ELVEN_CLOAK = 2,
         SV_SHADOW_CLOAK = 4,
         SV_ETHEREAL_CLOAK = 6,
-        SV_UNLIGHT_CLOAK = 10,
+        SV_UNLIGHT_CLOAK = 10
 };
 
 enum sval_soft_armour /* tval 36 */
@@ -243,7 +243,7 @@ enum sval_soft_armour /* tval 36 */
         SV_SOFT_STUDDED_LEATHER = 5,
         SV_HARD_LEATHER_ARMOUR = 6,
         SV_HARD_STUDDED_LEATHER = 7,
-        SV_LEATHER_SCALE_MAIL = 11,
+        SV_LEATHER_SCALE_MAIL = 11
 };
 
 enum sval_hard_armour /* tval 37 */
@@ -261,7 +261,7 @@ enum sval_hard_armour /* tval 37 */
         SV_RIBBED_PLATE_ARMOUR = 18,
         SV_MITHRIL_CHAIN_MAIL = 20,
         SV_MITHRIL_PLATE_MAIL = 25,
-        SV_ADAMANTITE_PLATE_MAIL = 30,
+        SV_ADAMANTITE_PLATE_MAIL = 30
 };
 
 enum sval_dragon_armour /* tval 38 */
@@ -278,7 +278,7 @@ enum sval_dragon_armour /* tval 38 */
         SV_DRAGON_GOLD = 16,
         SV_DRAGON_CHAOS = 18,
         SV_DRAGON_BALANCE = 20,
-        SV_DRAGON_POWER = 30,
+        SV_DRAGON_POWER = 30
 };
 
 enum sval_light /* tval 39 */
@@ -288,7 +288,7 @@ enum sval_light /* tval 39 */
         SV_LITE_LAMP = 4,
         SV_LITE_PEARL = 5,
         SV_LITE_PALANTIR = 6,
-        SV_LITE_STONE = 15,
+        SV_LITE_STONE = 15
 };
 
 enum sval_amulet /* tval 40 */
@@ -304,7 +304,7 @@ enum sval_amulet /* tval 40 */
         SV_AMULET_EMERALD = 8,
         SV_AMULET_DIAMOND = 9,
         SV_AMULET_NECKLACE = 12,
-        SV_AMULET_ELFSTONE = 14,
+        SV_AMULET_ELFSTONE = 14
 };
 
 enum sval_ring /* tval 45 */
@@ -318,7 +318,7 @@ enum sval_ring /* tval 45 */
         SV_RING_SILVER = 6,
         SV_RING_GOLD = 7,
         SV_RING_ADAMANTITE = 8,
-        SV_RING_MITHRIL = 9,
+        SV_RING_MITHRIL = 9
 };
 
 enum sval_food /* tval 80 */
@@ -351,7 +351,7 @@ enum sval_food /* tval 80 */
         SV_FOOD_PINT_OF_ALE = 38,
         SV_FOOD_PINT_OF_WINE = 39,
         SV_FOOD_ATHELAS = 40,
-        SV_FOOD_BEORNING = 41,
+        SV_FOOD_BEORNING = 41
 };
 
 enum sval_wand /* tval 65 */
@@ -391,7 +391,7 @@ enum sval_wand /* tval 65 */
         SV_WAND_ILKORIN = 40,
         SV_WAND_SARUMAN = 41,
         SV_WAND_UNMAKING = 42,
-        SV_WAND_ULPION = 43,
+        SV_WAND_ULPION = 43
 };
 
 enum sval_staff /* tval 55 */
@@ -486,7 +486,7 @@ enum sval_gold /* tval 100 */
         SV_DIAMONDS = 8,
         SV_EMERALDS = 9,
         SV_MITHRIL = 10,
-        SV_ADAMANTITE = 11,
+        SV_ADAMANTITE = 11
 };
 
 enum sval_scroll /* tval 70 */
@@ -652,3 +652,4 @@ enum sval_potion /* tval 75 */
  */
 #define SV_UNKNOWN			255
 
+#endif

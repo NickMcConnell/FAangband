@@ -70,10 +70,6 @@ extern grouper group_item[];
 extern cptr stat_names[A_MAX];
 extern cptr stat_names_reduced[A_MAX];
 extern cptr window_flag_desc[32];
-extern cptr option_text[OPT_MAX];
-extern cptr option_desc[OPT_MAX];
-extern bool option_norm[OPT_MAX];
-extern byte option_page[OPT_PAGE_MAX][OPT_PAGE_PER];
 extern druid_blows d_blow[NUM_D_BLOWS];
 extern cptr feel_text[FEEL_MAX];
 extern const grouper object_text_order[];
@@ -385,7 +381,7 @@ extern void do_cmd_fire(void);
 extern void do_cmd_throw(void);
 
 /* birth.c */
-extern void player_birth(void);
+extern void player_birth(bool quickstart_allowed);
 
 /* cave.c */
 extern int distance(int y1, int x1, int y2, int x2);
@@ -838,6 +834,9 @@ extern void store_init(void);
 /* util.c */
 extern void text_to_ascii(char *buf, size_t len, cptr str);
 extern void ascii_to_text(char *buf, size_t len, cptr str);
+extern char *find_roman_suffix_start(cptr buf);
+extern int roman_to_int(const char *roman);
+extern int int_to_roman(int n, char *roman, size_t bufsize);
 extern int macro_find_exact(cptr pat);
 extern errr macro_add(cptr pat, cptr act);
 extern errr macro_init(void);
@@ -1000,7 +999,7 @@ extern void panel_center(void);
 extern bool change_panel(int dy, int dx);
 extern void verify_panel(void);
 
-/* squelch.c */
+/* squelch.c 
 extern byte squelch_level[TYPE_MAX];
 int get_autoinscription_index(s16b k_idx);
 const char *get_autoinscription(s16b kind_idx);
@@ -1015,7 +1014,7 @@ bool squelch_hide_item(object_type *o_ptr);
 extern void squelch_drop(void);
 void squelch_items(void);
 extern bool seen_tval(int tval);
-void do_cmd_options_item(void *, cptr);
+void do_cmd_options_item(void *, cptr); */
 
 /*
  * Hack -- conditional (or "bizarre") externs

@@ -107,7 +107,7 @@ static int critical_melee(int chance, int sleeping_bonus, bool visible,
     }
   
   /* Test for critical hit. */
-  if ((armsman) || (randint(power + 240) <= power))
+  if ((armsman) || (randint1(power + 240) <= power))
     {
       /* Determine level of critical hit. */
       if      (randint0(40) == 0) add_dice = 5;
@@ -261,7 +261,7 @@ static int critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
   object_desc(o_name, o_ptr, FALSE, 0);
   
   /* Test for critical hit. */
-  if (marksman || (randint(power + 360) <= power))
+  if (marksman || (randint1(power + 360) <= power))
     {
       /* Determine level of critical hit. */
       if (randint0(50) == 0) add_dice = 3;
@@ -803,7 +803,7 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
     }
   
   /* Hack - Sometimes, a temporary Holy Attack becomes exhusted. */
-  if ((p_ptr->special_attack & (ATTACK_HOLY)) && (randint(20) == 1))
+  if ((p_ptr->special_attack & (ATTACK_HOLY)) && (randint1(20) == 1))
     {
       p_ptr->special_attack &= ~(ATTACK_HOLY);
       msg_print("Your temporary Holy attack has dissipated.");
@@ -896,7 +896,7 @@ static int get_druid_damage(int plev, char m_name[], int power, int deadliness)
   for (n=0; n < n_chances; n++)
     {
       /* Choose a (level restricted) attack */
-      chance = randint(2 * plev / 5);
+      chance = randint1(2 * plev / 5);
       
       /* Keep the best attack */
       if (chance > b_select) b_select = chance;
@@ -1240,7 +1240,7 @@ bool py_attack(int y, int x, bool can_push)
       if (bash_dam > 125) bash_dam = 125;
       
       /* Encourage the player to keep wearing that heavy shield. */
-      if (randint(bash_dam) > 30 + randint(bash_dam / 2)) 
+      if (randint1(bash_dam) > 30 + randint1(bash_dam / 2)) 
 	{
 	  sound(MSG_HIT_HI_SUPERB);
 	  message(MSG_HIT, 0, "WHAMM!");
@@ -1282,7 +1282,7 @@ bool py_attack(int y, int x, bool can_push)
 	}
       
       /* Stunning. */
-      if (bash_quality + p_ptr->lev > randint(200 + r_ptr->level * 4))
+      if (bash_quality + p_ptr->lev > randint1(200 + r_ptr->level * 4))
         {
           if (r_ptr->flags3 & (RF3_NO_STUN))
             {
@@ -1297,7 +1297,7 @@ bool py_attack(int y, int x, bool can_push)
 	}
       
       /* Confusion. */
-      if (bash_quality + p_ptr->lev > randint(300 + r_ptr->level * 6))
+      if (bash_quality + p_ptr->lev > randint1(300 + r_ptr->level * 6))
         {
           if (r_ptr->flags3 & (RF3_NO_CONF))
             {
@@ -1311,9 +1311,9 @@ bool py_attack(int y, int x, bool can_push)
 	}
       
       /* The player will sometimes stumble. */
-      if ((30 + adj_dex_th[p_ptr->stat_ind[A_DEX]] - 128) < randint(60))
+      if ((30 + adj_dex_th[p_ptr->stat_ind[A_DEX]] - 128) < randint1(60))
 	{
-	  blows -= randint(blows);
+	  blows -= randint1(blows);
 	  
 	  message(MSG_GENERIC, 0, "You stumble!");
 	}
@@ -1334,7 +1334,7 @@ bool py_attack(int y, int x, bool can_push)
   if (total_deadliness > 150) total_deadliness = 150;
   
   /* Specialty Ability */
-  if ((check_ability(SP_FAST_ATTACK)) && (randint(8) <= p_ptr->num_blow))
+  if ((check_ability(SP_FAST_ATTACK)) && (randint1(8) <= p_ptr->num_blow))
     {
       blows++;
       bonus_attack = TRUE;
@@ -1515,7 +1515,7 @@ bool py_attack(int y, int x, bool can_push)
 		  
 		  msg_format("%^s is unaffected.", m_name);
 		}
-	      else if (randint0(110) < r_ptr->level + randint(10))
+	      else if (randint0(110) < r_ptr->level + randint1(10))
 		{
 		  msg_format("%^s is unaffected.", m_name);
 		}
@@ -1887,7 +1887,7 @@ void do_cmd_fire(void)
       msg_print("Your missile turns in midair and strikes you!");
       
       /* Calculate damage. */
-      damage = damroll(p_ptr->ammo_mult * i_ptr->dd * randint(2), 
+      damage = damroll(p_ptr->ammo_mult * i_ptr->dd * randint1(2), 
 		       i_ptr->ds * 4);
       if (special_dam)
 	{
@@ -1896,7 +1896,7 @@ void do_cmd_fire(void)
       
       /* Inflict both normal and wound damage. */
       take_hit(damage, "ammo of backbiting");
-      set_cut(randint(damage * 3));
+      set_cut(randint1(damage * 3));
       
       /* That ends that shot! */
       return;
@@ -1960,10 +1960,10 @@ void do_cmd_fire(void)
 	  /* Visual effects */
 	  print_rel(missile_char, missile_attr, y, x);
 	  move_cursor_relative(y, x);
-	  if (fresh_before) Term_fresh();
+	  if (OPT(fresh_before)) Term_fresh();
 	  Term_xtra(TERM_XTRA_DELAY, msec);
 	  lite_spot(y, x);
-	  if (fresh_before) Term_fresh();
+	  if (OPT(fresh_before)) Term_fresh();
 	}
       
       /* Delay anyway for consistency */
@@ -2461,10 +2461,10 @@ void do_cmd_throw(void)
 	  /* Visual effects */
 	  print_rel(missile_char, missile_attr, y, x);
 	  move_cursor_relative(y, x);
-	  if (fresh_before) Term_fresh();
+	  if (OPT(fresh_before)) Term_fresh();
 	  Term_xtra(TERM_XTRA_DELAY, msec);
 	  lite_spot(y, x);
-	  if (fresh_before) Term_fresh();
+	  if (OPT(fresh_before)) Term_fresh();
 	}
       
       /* Delay anyway for consistency */

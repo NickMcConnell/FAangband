@@ -39,6 +39,8 @@
  * other places, to prevent the creation of inconsistant data.
  */
 
+#include "option.h"
+
 
 
 /**** Available Types ****/
@@ -71,6 +73,14 @@ typedef s16b s16b_wid[DUNGEON_WID];
 typedef u16b u16b_stage[NUM_STAGES];
 
 
+
+/** Function hook types **/
+
+/** Function prototype for the UI to provide to create native buttons */
+typedef int (*button_add_f)(const char *, unsigned char);
+
+/** Function prototype for the UI to provide to remove native buttons */
+typedef int (*button_kill_f)(unsigned char);
 
 /**** Available Structs ****/
 
@@ -1335,6 +1345,13 @@ struct player_type
   s16b mana_gain;	/**< Mana gained by special means this turn */
   byte evasion_chance;	/**< Percentage to avoid attacks with evasion */
   byte old_evasion_chance;   /**< Old percentage to avoid attacks with evasion */
+	/* Generation fields (for quick start) */
+	s32b au_birth;          /* Birth gold when option birth_money is false */
+	s16b stat_birth[A_MAX]; /* Birth "natural" stat values */
+	s16b ht_birth;          /* Birth Height */
+	s16b wt_birth;          /* Birth Weight */
+	s16b sc_birth;		/* Birth social class */
+
 };
 
 /** From NPPAngband */

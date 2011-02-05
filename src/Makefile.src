@@ -13,10 +13,13 @@ SUBDIRS = gtk
 
 HEADERS = \
 	angband.h \
+	birth.h \
 	cmds.h \
 	config.h \
 	defines.h \
 	externs.h \
+	game-cmd.h \
+	game-event.h \
 	$(GTKHEADERS) \
 	h-basic.h \
 	h-config.h \
@@ -29,6 +32,13 @@ HEADERS = \
 	randname.h \
 	types.h \
 	ui.h \
+	ui-event.h \
+	ui-birth.h \
+	ui-menu.h \
+	x-char.h \
+	z-bitflag.h \
+	z-msg.h \
+	z-quark.h \
 	z-file.h \
 	z-form.h \
 	z-rand.h \
@@ -41,8 +51,8 @@ GTKHEADERS = \
 	gtk/cairo-utils.h \
 	gtk/main-gtk.h \
 	
-ZFILES = z-file.o z-form.o z-rand.o z-term.o z-type.o \
-         z-util.o z-virt.o
+ZFILES = z-bitflag.o z-file.o z-form.o z-msg.o z-quark.o z-rand.o z-term.o \
+         z-type.o z-util.o z-virt.o z-textblock.o
 MAINFILES = main.o main-crb.o main-gcu.o $(GTKMAINFILES) \
             main-sdl.o main-win.o main-x11.o snd-sdl.o
 
@@ -53,6 +63,7 @@ GTKMAINFILES = \
 ANGFILES = \
 	attack.o \
 	birth.o \
+	button.o \
 	cave.o \
 	cmd0.o \
 	cmd1.o \
@@ -63,6 +74,7 @@ ANGFILES = \
 	cmd6.o \
 	dungeon.o \
 	files.o \
+	game-event.o \
 	generate.o \
 	identify.o \
 	info.o \
@@ -70,6 +82,7 @@ ANGFILES = \
 	init2.o \
 	jewel.o \
 	load.o \
+	macro.o \
 	monattk.o \
 	monmove.o \
 	monster1.o \
@@ -81,15 +94,22 @@ ANGFILES = \
 	randname.o \
 	save.o \
 	score.o \
+	signals.o \
 	spells1.o \
 	spells2.o \
 	squelch.o \
 	store.o \
 	tables.o \
 	ui.o \
+	ui-birth.o \
+	ui-knowledge.o \
+	ui-menu.o \
+	ui-options.o \
+	ui-spell.o \
 	util.o  \
 	variable.o \
 	wizard1.o \
 	wizard2.o \
+	x-char.o \
 	xtra1.o \
 	xtra2.o

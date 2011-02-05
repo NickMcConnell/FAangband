@@ -18,7 +18,6 @@
 
 #include "angband.h"
 #include "button.h"
-#include "types.h"
 
 /*** Variables ***/
 

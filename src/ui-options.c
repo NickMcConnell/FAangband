@@ -22,7 +22,7 @@
 #include "macro.h"
 #include "squelch.h"
 #include "prefs.h"
-#include "object/tvalsval.h"
+#include "tvalsval.h"
 #include "ui-menu.h"
 #include "files.h"
 

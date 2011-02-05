@@ -2485,9 +2485,6 @@ void play_game(bool new_game)
       p_ptr->stage = (adult_thrall ? (adult_dungeon ? 87 : 135) : p_ptr->home);
       p_ptr->depth = stage_map[p_ptr->stage][DEPTH];
       
-      /* Hack -- enter the world */
-      turn = 1;
-      
       /* Read the default options */
       process_pref_file("birth.prf");
       
