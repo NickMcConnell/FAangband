@@ -18,6 +18,7 @@
 
 #include "angband.h"
 #include "cmds.h"
+#include "ui-menu.h"
 
 /**
  * Forward declare
@@ -267,7 +268,7 @@ static void get_extra(void)
       int diff = average - p_ptr->player_hp[i-1];
       
       /* Make adjustments near the end or where necessary */
-      if (i >= (PY_MAX_LEVEL - 6) || rand_int(p_ptr->hitdie * 2) < ABS(diff))
+      if (i >= (PY_MAX_LEVEL - 6) || randint0(p_ptr->hitdie * 2) < ABS(diff))
         {
           /* If previous level's HPs < average, bias for a large gain. */
           if (average > p_ptr->player_hp[i-1])
@@ -278,7 +279,7 @@ static void get_extra(void)
               
               /* Relatively small one otherwise. */
               else
-                j = p_ptr->hitdie - rand_int(p_ptr->hitdie - ABS(diff));
+                j = p_ptr->hitdie - randint0(p_ptr->hitdie - ABS(diff));
             }
           
           /* If previous level's HPs > average, bias for a small gain. */
@@ -290,7 +291,7 @@ static void get_extra(void)
               
               /* Relatively small one otherwise. */
               else
-                j = 1 + rand_int(p_ptr->hitdie - 1 - ABS(diff));
+                j = 1 + randint0(p_ptr->hitdie - 1 - ABS(diff));
             }
           
           /* No bias necessary. */
@@ -424,7 +425,7 @@ bool get_stat(char *buf, int val)
   
   int k = 0;
   
-  event_type ke;
+  ui_event_data ke;
   
   bool changed = FALSE;
   bool done = FALSE;
@@ -1208,7 +1209,7 @@ static bool handler_aux(char cmd, int oid, byte *val, int max, int mask,
     {
       for(;;) 
 	{
-	  oid = rand_int(max);
+	  oid = randint0(max);
 	  *val = oid;
 	  if(mask & (1L << oid)) break;
 	}
@@ -1361,11 +1362,11 @@ static bool mode_handler(char cmd, void *db, int oid)
 
 
 static const menu_iter menu_defs[] = {
-  { 0, 0, 0, display_gender, gender_handler },
-  { 0, 0, 0, display_race, race_handler },
-  { 0, 0, 0, display_class, class_handler },
-  { 0, 0, 0, display_roller, roller_handler },
-  { 0, 0, 0, display_mode, mode_handler },
+  { 0, 0, display_gender, 0, 0 },
+  { 0, 0, display_race, 0, 0 },
+  { 0, 0, display_class, 0, 0 },
+  { 0, 0, display_roller, 0, 0 },
+  { 0, 0, display_mode, 0, 0 },
 };
 
 /** Menu display and selector */
@@ -1443,13 +1444,13 @@ static bool choose_character(void)
 
   while (i < (int)N_ELEMENTS(menu_defs))
     {
-      event_type cx;
+      ui_event_data cx;
       int cursor = *values[i];
       
       menu.flags = MN_DBL_TAP;
       menu.count = limits[i];
       menu.browse_hook = browse[i];
-      menu_init2(&menu, find_menu_skin(MN_SCROLL), &menu_defs[i], regions[i]);
+      menu_init(menu, MN_SKIN_SCROLL, &menu_defs[i], regions[i]);
       
       clear_question();
       Term_putstr(QUESTION_COL, QUESTION_ROW, -1, TERM_YELLOW, hints[2 * i]);
@@ -1605,7 +1606,7 @@ static int player_birth_aux_2(void)
   int cost;
   
   char ch;
-  event_type ke;
+  ui_event_data ke;
   
   char buf[80];
   
@@ -1800,7 +1801,7 @@ static int player_birth_aux_3(bool autoroll)
   bool flag;
   bool prev = FALSE;
   
-  event_type ke;
+  ui_event_data ke;
   char ch;
   
   char b1 = '[';
@@ -2232,7 +2233,7 @@ typedef enum
  */
 static void player_birth_aux(void)
 {
-  event_type ke;
+  ui_event_data ke;
   cptr prompt;
   birth_stages state = BIRTH_QUESTIONS;
 

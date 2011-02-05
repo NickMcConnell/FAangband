@@ -856,7 +856,7 @@ extern int kill_button(unsigned char keypress);
 extern void kill_all_buttons(void);
 extern char anykey(void);
 extern char inkey(void);
-extern ui_event_type inkey_ex(void);
+extern ui_event_data inkey_ex(void);
 extern void bell(cptr reason);
 extern void sound(int val);
 extern errr quarks_init(void);
