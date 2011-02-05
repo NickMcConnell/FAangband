@@ -22,6 +22,7 @@
  */
 
 #include "angband.h"
+#include "squelch.h"
 
 
 
@@ -422,7 +423,7 @@ static byte multi_hued_attr(monster_race *r_ptr)
   
   
   /* Monsters with no ranged attacks can be any color */
-  if (!r_ptr->freq_ranged) return (randint(15));
+  if (!r_ptr->freq_ranged) return (randint1(15));
   
   /* Check breaths */
   for (i = 0; i < 32; i++)
@@ -439,14 +440,14 @@ static byte multi_hued_attr(monster_race *r_ptr)
       if (first_color == 0) continue;
       
       /* Monster can be of any color */
-      if (first_color == 255) return (randint(15));
+      if (first_color == 255) return (randint1(15));
       
       
       /* Increment the number of breaths */
       breaths++;
       
       /* Monsters with lots of breaths may be any color. */
-      if (breaths == 6) return (randint(15));
+      if (breaths == 6) return (randint1(15));
       
       
       /* Always store the first color */
@@ -472,7 +473,7 @@ static byte multi_hued_attr(monster_race *r_ptr)
     }
   
   /* Monsters with no breaths may be of any color. */
-  if (breaths == 0) return (randint(15));
+  if (breaths == 0) return (randint1(15));
   
   /* If monster has one breath, store the second color too. */
   if (breaths == 1)
@@ -482,7 +483,7 @@ static byte multi_hued_attr(monster_race *r_ptr)
     }
   
   /* Pick a color at random */
-  return (allowed_attrs[rand_int(stored_colors)]);
+  return (allowed_attrs[randint0(stored_colors)]);
 }
 
 /**
@@ -498,7 +499,7 @@ static u16b image_monster(void)
   while (1)
     {
       /* Select a random monster */
-      r_ptr = &r_info[rand_int(z_info->r_max)];
+      r_ptr = &r_info[randint0(z_info->r_max)];
       
       /* Skip non-entries */
       if (!r_ptr->name) continue;
@@ -526,7 +527,7 @@ static u16b image_object(void)
   while (1)
     {
       /* Select a random object */
-      k_ptr = &k_info[rand_int(z_info->k_max - 1) + 1];
+      k_ptr = &k_info[randint0(z_info->k_max - 1) + 1];
       
       /* Skip non-entries */
       if (!k_ptr->name) continue;
@@ -549,7 +550,7 @@ static u16b image_object(void)
 static u16b image_random(void)
 {
   /* Normally, assume monsters */
-  if (rand_int(100) < 75)
+  if (randint0(100) < 75)
     {
       return (image_monster());
     }
@@ -803,7 +804,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
       int i;
       
       /* Display a random image, reset count. */
-      image_count = randint(511);
+      image_count = randint1(511);
       i = image_random();
       
       a = PICT_A(i);
@@ -827,13 +828,13 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 	  c = f_ptr->x_char;
 	  
 	  /* Special lighting effects */
-	  if (view_special_lite && ((a == TERM_WHITE) || graf_new))
+	  if (OPT(view_special_lite) && ((a == TERM_WHITE) || graf_new))
 	    {
 	      /* Handle "seen" grids */
 	      if (info & (CAVE_SEEN))
 		{
 		  /* Only lit by "torch" lite */
-		  if (view_yellow_lite && !(info & (CAVE_GLOW)) && 
+		  if (OPT(view_yellow_lite) && !(info & (CAVE_GLOW)) && 
 		      (!is_daylight))
 		    {
 		      if (arg_graphics == GRAPHICS_DAVID_GERVAIS)
@@ -909,7 +910,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 		}
 	      
 	      /* Handle "view_bright_lite" */
-	      else if (view_bright_lite)
+	      else if (OPT(view_bright_lite))
 		{
 		  if (graf_new)
 		    {
@@ -956,13 +957,13 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 	  c = f_ptr->x_char;
 	  
 	  /* Special lighting effects */
-	  if (view_special_lite)
+	  if (OPT(view_special_lite))
 	    {
 	      /* Handle "seen" grids */
 	      if (info & (CAVE_SEEN))
 		{
 		  /* Only lit by "torch" lite */
-		  if (view_yellow_lite && !(info & (CAVE_GLOW))
+		  if (OPT(view_yellow_lite) && !(info & (CAVE_GLOW))
 		      && (a == TERM_WHITE) && (!is_daylight))
 		    {
 		      if (arg_graphics == GRAPHICS_DAVID_GERVAIS)
@@ -1038,7 +1039,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 		}
 	      
 	      /* Handle "view_bright_lite" */
-	      else if (view_bright_lite)
+	      else if (OPT(view_bright_lite))
 		{
 		  if (graf_new)
 		    {
@@ -1087,7 +1088,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 	  c = f_ptr->x_char;
 	  
 	  /* Special lighting effects (walls only) */
-	  if (view_granite_lite && feat_supports_lighting(feat))
+	  if (OPT(view_granite_lite) && feat_supports_lighting(feat))
 	      {
 	      /* Handle "seen" grids */
 	      if (info & (CAVE_SEEN))
@@ -1118,7 +1119,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 		}
 	      
 	      /* Handle "view_bright_lite" */
-	      else if (view_bright_lite)
+	      else if (OPT(view_bright_lite))
 		{
 		  if (graf_new)
 		    {
@@ -1201,7 +1202,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 	  c = object_char(o_ptr);
 	  
 	  /* First marked object */
-	  if (!show_piles) break;
+	  if (!OPT(show_piles)) break;
 	  
 	  /* Special stack symbol */
 	  if (++floor_num > 1)
@@ -1252,7 +1253,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 	    }
 	  
 	  /* Ignore weird codes */
-	  else if (avoid_other)
+	  else if (OPT(avoid_other))
 	    {
 	      /* Use attr */
 	      a = da;
@@ -1318,7 +1319,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
     }
   
   /* Handle "player" */
-  else if ((m_idx < 0) && !(p_ptr->running && hidden_player))
+  else if ((m_idx < 0) && !(p_ptr->running && OPT(hidden_player)))
     {
       monster_race *r_ptr = &r_info[0];
       
@@ -1348,7 +1349,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 	  TERM_VIOLET		-% of HP remaining
       */
       
-      if ((hp_changes_colour) && (arg_graphics == GRAPHICS_NONE))
+      if ((OPT(hp_changes_colour)) && (arg_graphics == GRAPHICS_NONE))
 	{
 	  switch(p_ptr->chp * 10 / p_ptr->mhp)
 	    {
@@ -1382,7 +1383,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
   else if (m_idx < 0)
 #else /* MAP_INFO_MULTIPLE_PLAYERS */
     /* Handle "player" */
-    else if ((m_idx < 0) && !(p_ptr->running && hidden_player))
+    else if ((m_idx < 0) && !(p_ptr->running && OPT(hidden_player)))
 #endif /* MAP_INFO_MULTIPLE_PLAYERS */
       {
 	monster_race *r_ptr = &r_info[0];
@@ -1439,7 +1440,7 @@ void map_info_default(int y, int x, byte *ap, char *cp)
       int i;
       
       /* Display a random image, reset count. */
-      image_count = randint(511);
+      image_count = randint1(511);
       i = image_random();
       
       a = PICT_A(i);
@@ -1463,13 +1464,13 @@ void map_info_default(int y, int x, byte *ap, char *cp)
 	  c = f_ptr->d_char;
 	  
 	  /* Special lighting effects */
-	  if (view_special_lite && (a == TERM_WHITE))
+	  if (OPT(view_special_lite) && (a == TERM_WHITE))
 	    {
 	      /* Handle "seen" grids */
 	      if (info & (CAVE_SEEN))
 		{
 		  /* Only lit by "torch" lite */
-		  if (view_yellow_lite && !(info & (CAVE_GLOW)) && 
+		  if (OPT(view_yellow_lite) && !(info & (CAVE_GLOW)) && 
 		      (!is_daylight))
 		    {
 		      if (o_ptr->k_idx == 733)
@@ -1506,7 +1507,7 @@ void map_info_default(int y, int x, byte *ap, char *cp)
 		}
 	      
 	      /* Handle "view_bright_lite" */
-	      else if (view_bright_lite)
+	      else if (OPT(view_bright_lite))
 		{
 		  /* Use "gray" */
 		  a = TERM_SLATE;
@@ -1545,13 +1546,13 @@ void map_info_default(int y, int x, byte *ap, char *cp)
 	  c = f_ptr->d_char;
 	  
 	  /* Special lighting effects */
-	  if (view_special_lite)
+	  if (OPT(view_special_lite))
 	    {
 	      /* Handle "seen" grids */
 	      if (info & (CAVE_SEEN))
 		{
 		  /* Only lit by "torch" lite */
-		  if (view_yellow_lite && !(info & (CAVE_GLOW))
+		  if (OPT(view_yellow_lite) && !(info & (CAVE_GLOW))
 		      && (a == TERM_WHITE) && (!is_daylight))
 		    {
 		      if (o_ptr->k_idx == 733)
@@ -1588,7 +1589,7 @@ void map_info_default(int y, int x, byte *ap, char *cp)
 		}
 	      
 	      /* Handle "view_bright_lite" */
-	      else if (view_bright_lite)
+	      else if (OPT(view_bright_lite))
 		{
 		  /* Use "gray" */
 		  a = TERM_SLATE;
@@ -1629,7 +1630,7 @@ void map_info_default(int y, int x, byte *ap, char *cp)
 	  c = f_ptr->d_char;
 	  
 	  /* Special lighting effects (walls only) */
-	  if (view_granite_lite && feat_supports_lighting(feat))
+	  if (OPT(view_granite_lite) && feat_supports_lighting(feat))
 	    {
 	      /* Handle "seen" grids */
 	      if (info & (CAVE_SEEN))
@@ -1645,7 +1646,7 @@ void map_info_default(int y, int x, byte *ap, char *cp)
 		}
 	      
 	      /* Handle "view_bright_lite" */
-	      else if (view_bright_lite)
+	      else if (OPT(view_bright_lite))
 		{
 		  /* Use "gray" */
 		  a = TERM_SLATE;
@@ -1708,7 +1709,7 @@ void map_info_default(int y, int x, byte *ap, char *cp)
 	  c = object_char(o_ptr);
 	  
 	  /* First marked object */
-	  if (!show_piles) break;
+	  if (!OPT(show_piles)) break;
 	  
 	  /* Special stack symbol */
 	  if (++floor_num > 1)
@@ -1759,7 +1760,7 @@ void map_info_default(int y, int x, byte *ap, char *cp)
 	    }
 	  
 	  /* Ignore weird codes */
-	  else if (avoid_other)
+	  else if (OPT(avoid_other))
 	    {
 	      /* Use attr */
 	      a = da;
@@ -1825,7 +1826,7 @@ void map_info_default(int y, int x, byte *ap, char *cp)
     }
   
   /* Handle "player" */
-  else if ((m_idx < 0) && !(p_ptr->running && hidden_player))
+  else if ((m_idx < 0) && !(p_ptr->running && OPT(hidden_player)))
     {
       monster_race *r_ptr = &r_info[0];
       
@@ -1855,7 +1856,7 @@ void map_info_default(int y, int x, byte *ap, char *cp)
 	  TERM_VIOLET		-% of HP remaining
       */
       
-      if (hp_changes_colour)
+      if (OPT(hp_changes_colour))
 	{
 	  switch(p_ptr->chp * 10 / p_ptr->mhp)
 	    {
@@ -1889,7 +1890,7 @@ void map_info_default(int y, int x, byte *ap, char *cp)
   else if (m_idx < 0)
 #else /* MAP_INFO_MULTIPLE_PLAYERS */
     /* Handle "player" */
-    else if ((m_idx < 0) && !(p_ptr->running && hidden_player))
+    else if ((m_idx < 0) && !(p_ptr->running && OPT(hidden_player)))
 #endif /* MAP_INFO_MULTIPLE_PLAYERS */
       {
 	monster_race *r_ptr = &r_info[0];
@@ -2272,8 +2273,8 @@ void note_spot(int y, int x)
       if (cave_feat[y][x] <= FEAT_INVIS)
 	{
 	  /* Option -- memorize certain floors */
-	  if (((info & (CAVE_GLOW)) && view_perma_grids) ||
-	      view_torch_grids)
+	  if (((info & (CAVE_GLOW)) && OPT(view_perma_grids)) ||
+	      OPT(view_torch_grids))
 	    {
 	      /* Memorize */
 	      cave_info[y][x] |= (CAVE_MARK);
@@ -2636,7 +2637,7 @@ void display_map(int *cy, int *cx, bool small)
   /* Adjust for town */
   dungeon_hgt = (p_ptr->depth ? DUNGEON_HGT : 2 * DUNGEON_HGT / 3);
   dungeon_wid = (p_ptr->depth ? DUNGEON_WID : 2 * DUNGEON_WID / 3);
-  if (!(p_ptr->depth) && (p_ptr->stage < 151) && (!adult_dungeon)) dungeon_wid = DUNGEON_WID / 2;
+  if (!(p_ptr->depth) && (p_ptr->stage < 151) && (!OPT(adult_dungeon))) dungeon_wid = DUNGEON_WID / 2;
   top_row = (p_ptr->depth ? 0 : DUNGEON_HGT / 3);
   left_col = (p_ptr->depth ? 0 : DUNGEON_WID / 3);
   
@@ -2649,12 +2650,12 @@ void display_map(int *cy, int *cx, bool small)
   
 
   /* Save lighting effects */
-  old_view_special_lite = view_special_lite;
-  old_view_granite_lite = view_granite_lite;
+  old_view_special_lite = OPT(view_special_lite);
+  old_view_granite_lite = OPT(view_granite_lite);
   
   /* Disable lighting effects */
-  view_special_lite = FALSE;
-  view_granite_lite = FALSE;
+  OPT(view_special_lite) = FALSE;
+  OPT(view_granite_lite) = FALSE;
 
   /* Disable tiles for subwindow */
   if (small) 
@@ -2799,8 +2800,8 @@ void display_map(int *cy, int *cx, bool small)
     }
 
   /* Restore lighting effects */
-  view_special_lite = old_view_special_lite;
-  view_granite_lite = old_view_granite_lite;
+  OPT(view_special_lite) = old_view_special_lite;
+  OPT(view_granite_lite) = old_view_granite_lite;
 }
 
 /**
@@ -3705,15 +3706,15 @@ errr vinfo_init(void)
   vinfo_type *queue[VINFO_MAX_GRIDS*2];
 
   /* Set the variables for the grids, bits and slopes actually used */
-  vinfo_grids  = (adult_small_device ? 48 : 161);
-  vinfo_slopes = (adult_small_device ? 36 : 126);
-  vinfo_bits_3 = (adult_small_device ? 0x00000000 : 0x3FFFFFFF);
-  vinfo_bits_2 = (adult_small_device ? 0x00000000 : 0xFFFFFFFF);
-  vinfo_bits_1 = (adult_small_device ? 0x0000000F : 0xFFFFFFFF);
-  vinfo_bits_0 = (adult_small_device ? 0xFFFFFFFF : 0xFFFFFFFF);
+  vinfo_grids  = (OPT(adult_small_device) ? 48 : 161);
+  vinfo_slopes = (OPT(adult_small_device) ? 36 : 126);
+  vinfo_bits_3 = (OPT(adult_small_device) ? 0x00000000 : 0x3FFFFFFF);
+  vinfo_bits_2 = (OPT(adult_small_device) ? 0x00000000 : 0xFFFFFFFF);
+  vinfo_bits_1 = (OPT(adult_small_device) ? 0x0000000F : 0xFFFFFFFF);
+  vinfo_bits_0 = (OPT(adult_small_device) ? 0xFFFFFFFF : 0xFFFFFFFF);
   
   /* Make hack */
-  MAKE(hack, vinfo_hack);
+  hack = ZNEW(vinfo_hack);
   
   
   /* Analyze grids */
@@ -3912,7 +3913,7 @@ errr vinfo_init(void)
   
   
   /* Kill hack */
-  KILL(hack);
+  FREE(hack);
   
   
   /* Success */
@@ -4965,7 +4966,7 @@ void wiz_lite(bool wizard)
 		    }
 		  
 		  /* Normally, memorize floors (see above). */
-		  if (view_perma_grids && !view_torch_grids)
+		  if (OPT(view_perma_grids) && !OPT(view_torch_grids))
 		    {
 		      /* Memorize the grid */
 		      cave_info[yy][xx] |= (CAVE_MARK);
@@ -5053,7 +5054,7 @@ void town_illuminate(bool daytime, bool cave)
 	    cave_info[y][x] &= ~(CAVE_GLOW);
 	    
 	    /* Hack -- Forget grids */
-	    if (view_perma_grids)
+	    if (OPT(view_perma_grids))
 	      {
 		cave_info[y][x] &= ~(CAVE_MARK);
 	      }
@@ -5076,7 +5077,7 @@ void town_illuminate(bool daytime, bool cave)
 	      cave_info[y][x] |= (CAVE_GLOW);
 	      
 	      /* Hack -- Memorize grids */
-	      if (view_perma_grids)
+	      if (OPT(view_perma_grids))
 		{
 		  cave_info[y][x] |= (CAVE_MARK);
 		}
@@ -5089,7 +5090,7 @@ void town_illuminate(bool daytime, bool cave)
 	      cave_info[y][x] &= ~(CAVE_GLOW);
 	      
 	      /* Hack -- Forget grids */
-	      if (view_perma_grids)
+	      if (OPT(view_perma_grids))
 		{
 		  cave_info[y][x] &= ~(CAVE_MARK);
 		}
@@ -5116,7 +5117,7 @@ void town_illuminate(bool daytime, bool cave)
 		  cave_info[yy][xx] |= (CAVE_GLOW);
 		  
 		  /* Hack -- Memorize grids */
-		  if (view_perma_grids)
+		  if (OPT(view_perma_grids))
 		    {
 		      cave_info[yy][xx] |= (CAVE_MARK);
 		    }
@@ -5637,13 +5638,13 @@ void disturb(int stop_search, int unused_flag)
       p_ptr->running = 0;
       
       /* Recenter the panel when running stops */
-      if (center_player && !center_running ) verify_panel();
+      if (OPT(center_player) && !OPT(center_running) ) verify_panel();
       
       /* Calculate torch radius */
       p_ptr->update |= (PU_TORCH);
       
       /* Redraw the player */
-      if (hidden_player)
+      if (OPT(hidden_player))
 	{
 	  int py = p_ptr->py;
 	  int px = p_ptr->px;
@@ -5667,7 +5668,7 @@ void disturb(int stop_search, int unused_flag)
     }
   
   /* Flush the input if requested */
-  if (flush_disturb) flush();
+  if (OPT(flush_disturb)) flush();
 }
 
 

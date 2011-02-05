@@ -19,13 +19,49 @@
 #include "angband.h"
 #include "button.h"
 
+/*** Constants ***/
+
+/**
+ * Maximum number of mouse buttons
+ */
+#define MAX_MOUSE_BUTTONS  20
+
+/**
+ * Maximum length of a mouse button label
+ */
+#define MAX_MOUSE_LABEL 10
+
+
+/*** Types ***/
+
+/**
+ * Mouse button structure
+ */
+typedef struct
+{
+	char label[MAX_MOUSE_LABEL]; /*!< Label on the button */
+	int left;                    /*!< Column containing the left edge of the button */
+	int right;                   /*!< Column containing the right edge of the button */
+	unsigned char key;           /*!< Keypress corresponding to the button */
+} button_mouse;
+
+
+
 /*** Variables ***/
 
+static button_mouse *button_mse;
 static button_mouse *button_backup;
 
 static int button_start;
 static int button_length;
+static int button_num;
 
+
+/*
+ * Hooks for making and unmaking buttons
+ */
+button_add_f button_add_hook;
+button_kill_f button_kill_hook;
 
 
 
@@ -198,11 +234,12 @@ void button_kill_all(void)
 void button_init(button_add_f add, button_kill_f kill)
 {
 	/* Prepare mouse button arrays */
+	button_mse = C_ZNEW(MAX_MOUSE_BUTTONS, button_mouse);
 	button_backup = C_ZNEW(MAX_MOUSE_BUTTONS, button_mouse);
 
 	/* Initialise the hooks */
-	if (!button_add_hook) button_add_hook = add;
-	if (!button_kill_hook) button_kill_hook = kill;
+	button_add_hook = add;
+	button_kill_hook = kill;
 }
 
 

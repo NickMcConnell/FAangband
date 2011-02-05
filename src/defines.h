@@ -101,7 +101,7 @@
  * Number of text rows in each map screen, regardless of tile size
  */
 #define SCREEN_ROWS	(Term->hgt - ROW_MAP  - (panel_extra_rows ? 3 : 1) \
-                          - (bottom_status ? 6 : 0)) 
+                          - (OPT(bottom_status) ? 6 : 0)) 
 
 /**
  * Number of grids in each screen (vertically)
@@ -495,8 +495,8 @@
 #define MAX_RANGE_LGE   20      /* Maximum projection range */
 #define MAX_SIGHT_SML   10      /* Maximum view distance (small devices) */
 #define MAX_RANGE_SML   10      /* Maximum projection range (small devices) */
-#define MAX_SIGHT (adult_small_device ? MAX_SIGHT_SML : MAX_SIGHT_LGE)  
-#define MAX_RANGE (adult_small_device ? MAX_RANGE_SML : MAX_RANGE_LGE)
+#define MAX_SIGHT (OPT(adult_small_device) ? MAX_SIGHT_SML : MAX_SIGHT_LGE)  
+#define MAX_RANGE (OPT(adult_small_device) ? MAX_RANGE_SML : MAX_RANGE_LGE)
 
 
 /**
@@ -689,50 +689,50 @@
  * That leaves a "border" around the "stat" values.
  */
 
-#define ROW_RACE	(bottom_status ? SCREEN_ROWS + 1 : 1)
+#define ROW_RACE	(OPT(bottom_status) ? SCREEN_ROWS + 1 : 1)
 #define COL_RACE	0	/* <race name> */
 
-#define ROW_CLASS	(bottom_status ? SCREEN_ROWS + 2 : 2)
+#define ROW_CLASS	(OPT(bottom_status) ? SCREEN_ROWS + 2 : 2)
 #define COL_CLASS	0	/* <class name> */
 
-#define ROW_TITLE	(bottom_status ? SCREEN_ROWS + 3 : 3)
+#define ROW_TITLE	(OPT(bottom_status) ? SCREEN_ROWS + 3 : 3)
 #define COL_TITLE	0	/* <title> or <mode> */
 
-#define ROW_LEVEL	(bottom_status ? SCREEN_ROWS + 4 : 4)
+#define ROW_LEVEL	(OPT(bottom_status) ? SCREEN_ROWS + 4 : 4)
 #define COL_LEVEL	0	/* "LEVEL xxxxxx" */
 
-#define ROW_EXP		(bottom_status ? SCREEN_ROWS + 5 : 5)
+#define ROW_EXP		(OPT(bottom_status) ? SCREEN_ROWS + 5 : 5)
 #define COL_EXP		0	/* "EXP xxxxxxxx" */
 
-#define ROW_GOLD	(bottom_status ? SCREEN_ROWS + 6 : 6)
+#define ROW_GOLD	(OPT(bottom_status) ? SCREEN_ROWS + 6 : 6)
 #define COL_GOLD	0	/* "AU xxxxxxxxx" */
 
-#define ROW_STAT	(bottom_status ? SCREEN_ROWS + 1 : 8)
-#define COL_STAT	(bottom_status ? 14 : 0)	/* "xxx   xxxxxx" */
+#define ROW_STAT	(OPT(bottom_status) ? SCREEN_ROWS + 1 : 8)
+#define COL_STAT	(OPT(bottom_status) ? 14 : 0)	/* "xxx   xxxxxx" */
 
-#define ROW_SHAPE	(bottom_status ? SCREEN_ROWS + 1 : 14)
-#define COL_SHAPE	(bottom_status ? 28 : 0)    /* "Mouse" (or whatever) */
+#define ROW_SHAPE	(OPT(bottom_status) ? SCREEN_ROWS + 1 : 14)
+#define COL_SHAPE	(OPT(bottom_status) ? 28 : 0)    /* "Mouse" (or whatever) */
 
-#define ROW_AC		(bottom_status ? SCREEN_ROWS + 2 : 15)
-#define COL_AC		(bottom_status ? 28 : 0)	/* "Cur AC xxxxx" */
+#define ROW_AC		(OPT(bottom_status) ? SCREEN_ROWS + 2 : 15)
+#define COL_AC		(OPT(bottom_status) ? 28 : 0)	/* "Cur AC xxxxx" */
 
-#define ROW_HP		(bottom_status ? SCREEN_ROWS + 3 : 16)
-#define COL_HP		(bottom_status ? 28 : 0)	/* "HP xxxxx" */
+#define ROW_HP		(OPT(bottom_status) ? SCREEN_ROWS + 3 : 16)
+#define COL_HP		(OPT(bottom_status) ? 28 : 0)	/* "HP xxxxx" */
 
-#define ROW_SP		(bottom_status ? SCREEN_ROWS + 4 : 17)
-#define COL_SP		(bottom_status ? 28 : 0)	/* "SP xxxxx" */
+#define ROW_SP		(OPT(bottom_status) ? SCREEN_ROWS + 4 : 17)
+#define COL_SP		(OPT(bottom_status) ? 28 : 0)	/* "SP xxxxx" */
 
-#define ROW_INFO	(bottom_status ? SCREEN_ROWS + 5 : 18)
-#define COL_INFO	(bottom_status ? 28 : 0)	/* "xxxxxxxxxxxx"  */
+#define ROW_INFO	(OPT(bottom_status) ? SCREEN_ROWS + 5 : 18)
+#define COL_INFO	(OPT(bottom_status) ? 28 : 0)	/* "xxxxxxxxxxxx"  */
 
-#define ROW_MON_MANA	(bottom_status ? SCREEN_ROWS + 6 : 19)
-#define COL_MON_MANA	(bottom_status ? 28 : 0)	/* "xxxxxxxxxxxx"  */
+#define ROW_MON_MANA	(OPT(bottom_status) ? SCREEN_ROWS + 6 : 19)
+#define COL_MON_MANA	(OPT(bottom_status) ? 28 : 0)	/* "xxxxxxxxxxxx"  */
 
-#define ROW_CUT		(bottom_status ? SCREEN_ROWS + 1 : 21)
-#define COL_CUT		(bottom_status ? 41 : 0)	/* <cut> */
+#define ROW_CUT		(OPT(bottom_status) ? SCREEN_ROWS + 1 : 21)
+#define COL_CUT		(OPT(bottom_status) ? 41 : 0)	/* <cut> */
 
-#define ROW_STUN	(bottom_status ? SCREEN_ROWS + 2 : 22)
-#define COL_STUN	(bottom_status ? 41 : 0)	/* <stun> */
+#define ROW_STUN	(OPT(bottom_status) ? SCREEN_ROWS + 2 : 22)
+#define COL_STUN	(OPT(bottom_status) ? 41 : 0)	/* <stun> */
 
 #define COL_HUNGRY      0       /* "Weak" / "Hungry" / "Full" / "Gorged" */
 
@@ -753,16 +753,16 @@
 #define COL_STUDY       (small_screen ? 34 : 53)      /* "Study" */
 
 #define ROW_MAP		1
-#define COL_MAP		(bottom_status ? 0 : (use_dbltile || use_trptile ? 12 : 13))
+#define COL_MAP		(OPT(bottom_status) ? 0 : (use_dbltile || use_trptile ? 12 : 13))
 
 /* From Unangband */
-#define SIDEBAR_WID	(bottom_status ? 0 : (use_dbltile || use_trptile ? 12 : 13))
+#define SIDEBAR_WID	(OPT(bottom_status) ? 0 : (use_dbltile || use_trptile ? 12 : 13))
 
 /* For mouse buttons */
-#define ROW_STAND       (bottom_status ? SCREEN_ROWS + 3 : 20)
-#define ROW_REPEAT      (bottom_status ? SCREEN_ROWS + 4 : 21)
-#define ROW_RETURN      (bottom_status ? SCREEN_ROWS + 5 : 22)
-#define ROW_ESCAPE      (bottom_status ? SCREEN_ROWS + 6 : 23)
+#define ROW_STAND       (OPT(bottom_status) ? SCREEN_ROWS + 3 : 20)
+#define ROW_REPEAT      (OPT(bottom_status) ? SCREEN_ROWS + 4 : 21)
+#define ROW_RETURN      (OPT(bottom_status) ? SCREEN_ROWS + 5 : 22)
+#define ROW_ESCAPE      (OPT(bottom_status) ? SCREEN_ROWS + 6 : 23)
 
 /*** General index values ***/
 
@@ -3420,16 +3420,6 @@ extern int PlayerUID;
 #define MOUSE_REPEAT 10
 #define MOUSE_RETURN 11
 #define MOUSE_ESCAPE 12
-
-/** 
- * Maximum number of mouse buttons 
- */
-#define MAX_MOUSE_BUTTONS  20
-
-/** 
- * Maximum length of mouse button label 
- */
-#define MAX_MOUSE_LABEL  8
 
 #define SCAN_INSTANT ((u32b) -1)
 #define SCAN_OFF 0

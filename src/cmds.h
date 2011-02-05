@@ -5,13 +5,21 @@
 #ifndef __angband_cmds_h__
 #define __angband_cmds_h__
 
-/* cmd0.c */
+/* cmd-misc.c */
 extern void cmd_init(void);
-//extern void process_command(bool no_request);
-extern int click_area(ui_event_type ke);
+extern int click_area(ui_event_data ke);
 extern void do_cmd_show_obj(void);
 extern void do_cmd_handle(void);
-extern void do_cmd_mousepress(void);
+extern void handle_mousepress(int y, int x);
+extern void do_cmd_wizard(void);
+extern void do_cmd_try_debug(void);
+extern bool do_cmd_try_borg(void);
+extern void do_cmd_quit(void);
+extern void do_cmd_xxx_options(void);
+extern void do_cmd_reshape(void);
+extern void do_cmd_monlist(void);
+extern void do_cmd_itemlist(void);
+extern void do_cmd_unknown(void);
 
 /* cmd2.c */
 extern void do_cmd_move_house(void);

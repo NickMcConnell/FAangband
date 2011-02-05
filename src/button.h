@@ -3,7 +3,6 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
-
 int button_add_text(const char *label, unsigned char keypress);
 int button_add(const char *label, unsigned char keypress);
 void button_backup_all(void);

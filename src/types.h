@@ -1387,11 +1387,3 @@ struct note_info
   char note[80];  /**< Description of the event */
 };
 
-/** Mouse button structure */
-struct mouse_button
-{
-  char label[MAX_MOUSE_LABEL];   /**< Label on the button */
-  int left;               /**< Column containing the left edge of the button */  
-  int right;              /**< Column containing the right edge of the button */
-  unsigned char key;      /**< Keypress corresponding to the button */
-};
