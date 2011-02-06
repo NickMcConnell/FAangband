@@ -20,6 +20,7 @@
  */
 
 #include "angband.h"
+#include "squelch.h"
 
 /** 
  * Move house to the current town
@@ -129,7 +130,7 @@ void do_cmd_go_up(void)
     }
   
   /* Handle ironman */
-  if (adult_ironman)
+  if (OPT(adult_ironman))
     {
       int next = stage_map[p_ptr->stage][2 + (pstair - FEAT_LESS_NORTH)/2];
 
@@ -163,7 +164,7 @@ void do_cmd_go_up(void)
   if (pstair == FEAT_LESS)
     {
       /* Magical portal for dungeon-only games */
-      if (adult_dungeon && (p_ptr->depth != 1) &&
+      if (OPT(adult_dungeon) && (p_ptr->depth != 1) &&
 	  ((stage_map[p_ptr->stage][LOCALITY]) !=
 	   (stage_map[stage_map[p_ptr->stage][UP]][LOCALITY])))
 	{
@@ -194,7 +195,7 @@ void do_cmd_go_up(void)
   else if (pstair == FEAT_LESS_SHAFT)
     {
       /* Magical portal for dungeon-only games */
-      if (adult_dungeon && (p_ptr->depth != 2) &&
+      if (OPT(adult_dungeon) && (p_ptr->depth != 2) &&
 	  ((stage_map[p_ptr->stage][LOCALITY]) !=
 	   (stage_map[stage_map[stage_map[p_ptr->stage][UP]][UP]][LOCALITY])))
 	{
@@ -302,7 +303,7 @@ void do_cmd_go_down(void)
   
   
   /* Handle ironman */
-  if (adult_ironman && !p_ptr->depth && !adult_dungeon)
+  if (OPT(adult_ironman) && !p_ptr->depth && !OPT(adult_dungeon))
     {
       int i, other;
       int next = stage_map[p_ptr->stage][2 + (pstair - FEAT_MORE_NORTH)/2];
@@ -338,7 +339,7 @@ void do_cmd_go_down(void)
       int location;
 
       /* Magical portal for ironman */
-      if (adult_ironman && !stage_map[p_ptr->stage][DOWN] && !adult_dungeon)
+      if (OPT(adult_ironman) && !stage_map[p_ptr->stage][DOWN] && !OPT(adult_dungeon))
 	{
 	  /* Get choice */
 	  if (!jump_menu(p_ptr->depth + 1, &location))
@@ -360,7 +361,7 @@ void do_cmd_go_down(void)
 	}
 
       /* Magical portal for dungeon-only games */
-      if (adult_dungeon && (p_ptr->depth) &&
+      if (OPT(adult_dungeon) && (p_ptr->depth) &&
 	  ((stage_map[p_ptr->stage][LOCALITY]) !=
 	   (stage_map[stage_map[p_ptr->stage][DOWN]][LOCALITY])))
 	{
@@ -394,7 +395,7 @@ void do_cmd_go_down(void)
   else if (pstair == FEAT_MORE_SHAFT)
     {
       /* Magical portal for dungeon-only games */
-      if (adult_dungeon && 
+      if (OPT(adult_dungeon) && 
 	  ((stage_map[p_ptr->stage][LOCALITY]) !=
 	   (stage_map[stage_map[stage_map[p_ptr->stage][DOWN]][DOWN]][LOCALITY])))
 	{
@@ -468,7 +469,7 @@ void do_cmd_go_down(void)
   p_ptr->depth = stage_map[p_ptr->stage][DEPTH];
   
   /* Check for quests */
-  if ((adult_dungeon) && is_quest(p_ptr->stage) && (p_ptr->depth < 100))
+  if (OPT(adult_dungeon) && is_quest(p_ptr->stage) && (p_ptr->depth < 100))
     {
       int i;
       monster_race *r_ptr = NULL;
@@ -589,7 +590,7 @@ static byte get_choice(void)
 {
   byte choice;
   
-  choice = randint(100);
+  choice = randint1(100);
   
   switch (p_ptr->pclass)
     {
@@ -818,8 +819,8 @@ static void chest_death(bool scatter, int y, int x, s16b o_idx)
   o_ptr = &o_list[o_idx];
   
   /* Determine how much to drop. */
-  if (o_ptr->sval >= SV_CHEST_MIN_LARGE) number = 4 + randint(3);
-  else number = 2 + randint(3);
+  if (o_ptr->sval >= SV_CHEST_MIN_LARGE) number = 4 + randint1(3);
+  else number = 2 + randint1(3);
   
   /* Zero pval means empty chest */
   if (!o_ptr->pval) number = 0;
@@ -866,13 +867,13 @@ static void chest_death(bool scatter, int y, int x, s16b o_idx)
 	case TV_BOLT:
 	case TV_ARROW:
 	  {
-	    if (randint(200) < object_level)
+	    if (randint1(200) < object_level)
 	      {
 		obj_success=make_object(i_ptr, TRUE, TRUE, TRUE);
 		break;
 	      }
 	    
-	    else if (randint(40) < object_level)
+	    else if (randint1(40) < object_level)
 	      {
 		obj_success=make_object(i_ptr, TRUE, FALSE, TRUE);
 		break;
@@ -889,7 +890,7 @@ static void chest_death(bool scatter, int y, int x, s16b o_idx)
 	case TV_DRUID_BOOK:
 	case TV_NECRO_BOOK:
 	  {
-	    if (randint(80) < object_level)
+	    if (randint1(80) < object_level)
 	      {
 		obj_success=make_object(i_ptr, TRUE, FALSE, TRUE);
 	      }
@@ -909,7 +910,7 @@ static void chest_death(bool scatter, int y, int x, s16b o_idx)
 	case TV_STAFF:
 	case TV_ROD:
 	  {
-	    if (randint(100) < (object_level - 10) / 2)
+	    if (randint1(100) < (object_level - 10) / 2)
 	      {
 		obj_success=make_object(i_ptr, TRUE, FALSE, TRUE);
 	      }
@@ -941,8 +942,8 @@ static void chest_death(bool scatter, int y, int x, s16b o_idx)
 	  for (i = 0; i < 200; i++)
 	    {
 	      /* Pick a totally random spot. */
-	      y = rand_int(DUNGEON_HGT);
-	      x = rand_int(DUNGEON_WID);
+	      y = randint0(DUNGEON_HGT);
+	      x = randint0(DUNGEON_WID);
 	      
 	      /* Must be an empty floor. */
 	      if (!cave_empty_bold(y, x)) continue;
@@ -1030,7 +1031,7 @@ static void chest_trap(int y, int x, s16b o_idx)
       msg_print("A puff of yellow gas surrounds you!");
       if (!p_ptr->free_act)
 	{
-	  (void)set_paralyzed(p_ptr->paralyzed + 10 + randint(20));
+	  (void)set_paralyzed(p_ptr->paralyzed + 10 + randint1(20));
 	}
       else notice_obj(OF_FREE_ACT, 0);
     }
@@ -1038,7 +1039,7 @@ static void chest_trap(int y, int x, s16b o_idx)
   /* Summon monsters */
   if (trap & (CHEST_SUMMON))
     {
-      int num = 2 + randint(3);
+      int num = 2 + randint1(3);
       msg_print("You are enveloped in a cloud of smoke!");
       sound(MSG_SUM_MONSTER);
       for (i = 0; i < num; i++)
@@ -1070,7 +1071,7 @@ static void chest_trap(int y, int x, s16b o_idx)
   /* Elemental summon. */
   if (trap & (CHEST_E_SUMMON))
     {
-      j = randint(3) + 5;
+      j = randint1(3) + 5;
       msg_print("Elemental beings appear to protect their treasures!");
       for (i = 0; i < j; i++)
 	{
@@ -1083,11 +1084,11 @@ static void chest_trap(int y, int x, s16b o_idx)
     {
       msg_print("A storm of birds swirls around you!");
       
-      j = randint(3) + 3;
+      j = randint1(3) + 3;
       for (i = 0; i < j; i++)
 	(void)fire_meteor(0, GF_FORCE, y, x, o_ptr->pval / 5, 7, TRUE);
       
-      j = randint(5) + o_ptr->pval /5;
+      j = randint1(5) + o_ptr->pval /5;
       for (i = 0; i < j; i++)
 	{
 	  summon_specific(y, x, TRUE, summon_level, SUMMON_BIRD);
@@ -1098,11 +1099,11 @@ static void chest_trap(int y, int x, s16b o_idx)
   if (trap & (CHEST_H_SUMMON))
     {
       /* Summon demons. */
-      if (rand_int(4) == 0)
+      if (randint0(4) == 0)
 	{
 	  msg_print("Demons materialize in clouds of fire and brimstone!");
 	  
-	  j = randint(3) + 2;
+	  j = randint1(3) + 2;
 	  for (i = 0; i < j; i++)
 	    {
 	      (void)fire_meteor(0, GF_FIRE, y, x, 10, 5, TRUE);
@@ -1111,11 +1112,11 @@ static void chest_trap(int y, int x, s16b o_idx)
 	}
       
       /* Summon dragons. */
-      else if (rand_int(3) == 0)
+      else if (randint0(3) == 0)
 	{
 	  msg_print("Draconic forms loom out of the darkness!");
 	  
-	  j = randint(3) + 2;
+	  j = randint1(3) + 2;
 	  for (i = 0; i < j; i++)
 	    {
 	      summon_specific(y, x, FALSE, summon_level, SUMMON_DRAGON);
@@ -1123,11 +1124,11 @@ static void chest_trap(int y, int x, s16b o_idx)
 	}
       
       /* Summon hybrids. */
-      else if (rand_int(2) == 0)
+      else if (randint0(2) == 0)
 	{
 	  msg_print("Creatures strange and twisted assault you!");
 	  
-	  j = randint(5) + 3;
+	  j = randint1(5) + 3;
 	  for (i = 0; i < j; i++)
 	    {
 	      summon_specific(y, x, FALSE, summon_level, SUMMON_HYBRID);
@@ -1139,7 +1140,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 	{
 	  msg_print("Vortices coalesce and wreak destruction!");
 	  
-	  j = randint(3) + 2;
+	  j = randint1(3) + 2;
 	  for (i = 0; i < j; i++)
 	    {
 	      summon_specific(y, x, TRUE, summon_level, SUMMON_VORTEX);
@@ -1154,7 +1155,7 @@ static void chest_trap(int y, int x, s16b o_idx)
       msg_print("Hideous voices bid: 'Let the darkness have thee!'");
       
       /* Determine how many nasty tricks can be played. */
-      nasty_tricks_count = 4 + rand_int(3);
+      nasty_tricks_count = 4 + randint0(3);
       
       /* This is gonna hurt... */
       for (; nasty_tricks_count > 0; nasty_tricks_count--)
@@ -1162,23 +1163,23 @@ static void chest_trap(int y, int x, s16b o_idx)
 	  /* ...but a high saving throw does help a little. */
 	  if (!check_save(2 * o_ptr->pval))
 	    {
-	      if (rand_int(6) == 0) 
+	      if (randint0(6) == 0) 
 		take_hit(damroll(5, 20), "a chest dispel-player trap");
-	      else if (rand_int(5) == 0) (void)set_cut(p_ptr->cut + 200);
-	      else if (rand_int(4) == 0)
+	      else if (randint0(5) == 0) (void)set_cut(p_ptr->cut + 200);
+	      else if (randint0(4) == 0)
 		{
 		  if (!p_ptr->free_act) 
 		    (void)set_paralyzed(p_ptr->paralyzed + 2 + 
-					rand_int(6));
+					randint0(6));
 		  else 
 		    {
-		      (void)set_stun(p_ptr->stun + 10 + rand_int(100));
+		      (void)set_stun(p_ptr->stun + 10 + randint0(100));
 		      notice_obj(OF_FREE_ACT, 0);
 		    }
 
 		}
-	      else if (rand_int(3) == 0) apply_disenchant(0);
-	      else if (rand_int(2) == 0)
+	      else if (randint0(3) == 0) apply_disenchant(0);
+	      else if (randint0(2) == 0)
 		{
 		  (void)do_dec_stat(A_STR);
 		  (void)do_dec_stat(A_DEX);
@@ -1232,7 +1233,7 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
       if (j < 2) j = 2;
       
       /* Success -- May still have traps */
-      if (rand_int(100) < j)
+      if (randint0(100) < j)
 	{
 	  msg_print("You have picked the lock.");
 	  gain_exp(o_ptr->pval);
@@ -1244,7 +1245,7 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
 	{
 	  /* We may continue repeating */
 	  more = TRUE;
-	  if (flush_failure) flush();
+	  if (OPT(flush_failure)) flush();
 	  message(MSG_LOCKPICK_FAIL, 0, "You failed to pick the lock.");
 	}
     }
@@ -1315,7 +1316,7 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
     }
   
   /* Success (get a fair amount of experience) */
-  else if (rand_int(100) < j)
+  else if (randint0(100) < j)
     {
       msg_print("You have disarmed the chest.");
       gain_exp(o_ptr->pval * o_ptr->pval / 10);
@@ -1323,11 +1324,11 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
     }
   
   /* Failure -- Keep trying */
-  else if ((i > 5) && (randint(i) > 5))
+  else if ((i > 5) && (randint1(i) > 5))
     {
       /* We may keep trying */
       more = TRUE;
-      if (flush_failure) flush();
+      if (OPT(flush_failure)) flush();
       msg_print("You failed to disarm the chest.");
     }
   
@@ -1560,7 +1561,7 @@ static bool do_cmd_open_aux(int y, int x)
       if (j < 2) j = 2;
       
       /* Success */
-      if (rand_int(100) < j)
+      if (randint0(100) < j)
 	{
 	  /* Message */
 	  message(MSG_OPENDOOR, 0, "You have picked the lock.");
@@ -1582,7 +1583,7 @@ static bool do_cmd_open_aux(int y, int x)
       else
 	{
 	  /* Failure */
-	  if (flush_failure) flush();
+	  if (OPT(flush_failure)) flush();
 	  
 	  /* Message */
 	  message(MSG_LOCKPICK_FAIL, 0, "You failed to pick the lock.");
@@ -1628,7 +1629,7 @@ void do_cmd_open(void)
   bool more = FALSE;
 
   /* Option: Pick a direction -TNB- */
-  if (easy_open) 
+  if (OPT(easy_open)) 
     {
       int num_doors, num_chests;
       
@@ -1810,7 +1811,7 @@ void do_cmd_close(void)
   bool more = FALSE;
   
   /* Option: Pick a direction -TNB- */
-  if (easy_open)
+  if (OPT(easy_open))
     {
       /* See if there's only one closeable door */
       if (count_feats(&y, &x, is_open, FALSE) == 1)
@@ -1964,7 +1965,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
       else if ((f_ptr->flags & TF_GRANITE) && !(f_ptr->flags & TF_DOOR_ANY))
 	{
 	  /* Tunnel */
-	  if ((p_ptr->skill_dig > 40 + rand_int(1600)) && twall(y, x))
+	  if ((p_ptr->skill_dig > 40 + randint0(1600)) && twall(y, x))
 	    {
 	      msg_print("You have finished the tunnel.");
 	    }
@@ -2000,13 +2001,13 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	  /* Quartz */
 	  if (hard)
 	    {
-	      okay = (p_ptr->skill_dig > 20 + rand_int(800));
+	      okay = (p_ptr->skill_dig > 20 + randint0(800));
 	    }
 	  
 	  /* Magma */
 	  else
 	    {
-	      okay = (p_ptr->skill_dig > 10 + rand_int(400));
+	      okay = (p_ptr->skill_dig > 10 + randint0(400));
 	    }
 	  
 	  /* Success */
@@ -2051,13 +2052,13 @@ static bool do_cmd_tunnel_aux(int y, int x)
       else if (cave_feat[y][x] == FEAT_RUBBLE)
 	{
 	  /* Remove the rubble */
-	  if ((p_ptr->skill_dig > rand_int(200)) && twall(y, x))
+	  if ((p_ptr->skill_dig > randint0(200)) && twall(y, x))
 	    {
 	      /* Message */
 	      msg_print("You have removed the rubble.");
 	      
 	      /* Hack -- place an object */
-	      if (rand_int(100) == 0)
+	      if (randint0(100) == 0)
 		{
 		  /* Create a simple object */
 		  place_object(y, x, FALSE, FALSE, FALSE);
@@ -2083,7 +2084,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
       else if (cave_feat[y][x] == FEAT_SECRET)
 	{
 	  /* Tunnel */
-	  if ((p_ptr->skill_dig > 30 + rand_int(1200)) && twall(y, x))
+	  if ((p_ptr->skill_dig > 30 + randint0(1200)) && twall(y, x))
 	    {
 	      msg_print("You have finished the tunnel.");
 	    }
@@ -2096,7 +2097,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	  more = TRUE;
 	  
 	  /* Occasional Search XXX XXX */
-	  if (rand_int(100) < 25) search();
+	  if (randint0(100) < 25) search();
 	    }
 	}
     }
@@ -2104,7 +2105,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
   else
     {
       /* Tunnel */
-      if ((p_ptr->skill_dig > 30 + rand_int(1200)) && twall(y, x))
+      if ((p_ptr->skill_dig > 30 + randint0(1200)) && twall(y, x))
 	{
 	  msg_print("You have finished the tunnel.");
 	}
@@ -2328,7 +2329,7 @@ static bool do_cmd_disarm_aux(int y, int x)
   if (j < 2) j = 2;
   
   /* Success */
-  if ((power == 0) || (rand_int(100) < j))
+  if ((power == 0) || (randint0(100) < j))
     {
       /* Special message and decrement the count for runes. */
       if (f_ptr->flags & TF_RUNE)
@@ -2359,10 +2360,10 @@ static bool do_cmd_disarm_aux(int y, int x)
     }
   
   /* Failure -- Keep trying */
-  else if ((i > 5) && (randint(i) > 5))
+  else if ((i > 5) && (randint1(i) > 5))
     {
       /* Failure */
-      if (flush_failure) flush();
+      if (OPT(flush_failure)) flush();
       
       /* Message */
       msg_format("You failed to disarm the %s.", name);
@@ -2401,7 +2402,7 @@ void do_cmd_disarm(void)
   bool more = FALSE;
   
   /* Option: Pick a direction -TNB- */
-  if (easy_disarm) 
+  if (OPT(easy_disarm)) 
     {
       int num_traps, num_chests;
       
@@ -2561,13 +2562,13 @@ static bool do_cmd_bash_aux(int y, int x)
   if (temp < 1) temp = 1;
   
   /* Hack -- attempt to bash down the door */
-  if (rand_int(100) < temp)
+  if (randint0(100) < temp)
     {
       /* Message */
       message(MSG_OPENDOOR, 0, "The door crashes open!");
       
       /* Break down the door */
-      if (rand_int(100) < 50)
+      if (randint0(100) < 50)
 	{
 	  cave_set_feat(y, x, FEAT_BROKEN);
 	}
@@ -2586,7 +2587,7 @@ static bool do_cmd_bash_aux(int y, int x)
     }
   
   /* Saving throw against stun */
-  else if (rand_int(100) < adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev)
+  else if (randint0(100) < adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev)
     {
       /* Message */
       msg_print("The door holds firm.");
@@ -2602,7 +2603,7 @@ static bool do_cmd_bash_aux(int y, int x)
       msg_print("You are off-balance.");
       
       /* Hack -- Lose balance ala paralysis */
-      (void)set_paralyzed(p_ptr->paralyzed + 2 + rand_int(2));
+      (void)set_paralyzed(p_ptr->paralyzed + 2 + randint0(2));
     }
   
   /* Result */
@@ -3024,8 +3025,8 @@ static bool do_cmd_walk_test(int y, int x)
       /* Door */
       if (cave_feat[y][x] < FEAT_SECRET)
 	{
-	  /* If easy_open_door option is on, doors are legal. */
-	  if (easy_open) return (TRUE);
+	  /* If OPT(easy_open)_door option is on, doors are legal. */
+	  if (OPT(easy_open)) return (TRUE);
 	  
 	  /* Otherwise, let the player know of the door. */
 	  else msg_print("There is a door in the way!");
@@ -3119,7 +3120,7 @@ static void do_cmd_walk_or_jump(int pickup)
 void do_cmd_walk(void)
 {
   /* Move (usually pickup) */
-  do_cmd_walk_or_jump(always_pickup);
+  do_cmd_walk_or_jump(OPT(always_pickup));
 }
 
 
@@ -3129,7 +3130,7 @@ void do_cmd_walk(void)
 void do_cmd_jump(void)
 {
   /* Move (usually do not pickup) */
-  do_cmd_walk_or_jump(!always_pickup);
+  do_cmd_walk_or_jump(!OPT(always_pickup));
 }
 
 
@@ -3242,7 +3243,7 @@ static void do_cmd_hold_or_stay(int pickup)
     {
       search();
     }
-  else if (0 == rand_int(50 - p_ptr->skill_fos))
+  else if (0 == randint0(50 - p_ptr->skill_fos))
     {
       search();
     }
@@ -3275,7 +3276,7 @@ static void do_cmd_hold_or_stay(int pickup)
 void do_cmd_hold(void)
 {
   /* Hold still (usually pickup) */
-  do_cmd_hold_or_stay(always_pickup);
+  do_cmd_hold_or_stay(OPT(always_pickup));
 }
 
 
@@ -3401,5 +3402,5 @@ void do_cmd_rest(void)
   handle_stuff();
   
   /* Refresh XXX XXX XXX */
-  if (fresh_before) Term_fresh();
+  if (OPT(fresh_before)) Term_fresh();
 }

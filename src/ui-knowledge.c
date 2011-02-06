@@ -98,7 +98,6 @@ static struct
 } monster_group[] =
 {
 	{ (cptr)-1,   "Uniques" },
-	{ "A",        "Angels" },
 	{ "a",        "Ants" },
 	{ "b",        "Bats" },
 	{ "B",        "Birds" },
@@ -114,19 +113,19 @@ static struct
 	{ "g",        "Golems" },
 	{ "H",        "Harpies/Hybrids" },
 	{ "h",        "Hominids (Elves, Dwarves)" },
-	{ "M",        "Hydras" },
 	{ "i",        "Icky Things" },
 	{ "lFI",      "Insects" },
 	{ "j",        "Jellies" },
 	{ "K",        "Killer Beetles" },
 	{ "k",        "Kobolds" },
 	{ "L",        "Lichs" },
-	{ "tp",		  "Men" },
-	{ ".$!?=~_",  "Mimics" },
+	{ ".$!?=~|_*-",  "Mimics" },
 	{ "m",        "Molds" },
+	{ "M",        "Mummies" },
 	{ ",",        "Mushroom Patches" },
 	{ "n",        "Nagas" },
 	{ "o",        "Orcs" },
+	{ "tp",	      "People" },
 	{ "q",        "Quadrupeds" },
 	{ "Q",        "Quylthulgs" },
 	{ "R",        "Reptiles/Amphibians" },
@@ -151,10 +150,10 @@ static struct
  */
 const char *feature_group_text[] =
 {
-	"Floors",
+	"Ground",
 	"Traps",
 	"Doors",
-	"Stairs",
+	"Stairs/Paths",
 	"Walls",
 	"Streamers",
 	"Obstructions",

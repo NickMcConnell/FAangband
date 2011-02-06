@@ -22,6 +22,7 @@
  */
 
 #include "angband.h"
+#include "object.h"
 
 
 /**
@@ -4397,3 +4398,161 @@ extern void remove_set(int s_idx)
   /* Notify */
   if (bonus_removed) msg_print("Item set no longer completed.");
 }
+
+
+/* Determine if an object has charges */
+bool obj_has_charges(const object_type *o_ptr)
+{
+	if (o_ptr->tval != TV_WAND && o_ptr->tval != TV_STAFF) return FALSE;
+
+	if (o_ptr->pval <= 0) return FALSE;
+
+	return TRUE;
+}
+
+/* Determine if an object is zappable */
+bool obj_can_zap(const object_type *o_ptr)
+{
+	/* Any rods not charging? */
+	if (o_ptr->tval == TV_ROD && number_charging(o_ptr) < o_ptr->number)
+		return TRUE;
+
+	return FALSE;
+}
+
+/* Determine if an object is activatable */
+bool obj_is_activatable(const object_type *o_ptr)
+{
+	return object_effect(o_ptr) ? TRUE : FALSE;
+}
+
+/* Determine if an object can be activated now */
+bool obj_can_activate(const object_type *o_ptr)
+{
+	if (obj_is_activatable(o_ptr))
+	{
+		/* Check the recharge */
+		if (!o_ptr->timeout) return TRUE;
+	}
+
+	return FALSE;
+}
+
+bool obj_can_refill(const object_type *o_ptr)
+{
+	bitflag f[OF_SIZE];
+	const object_type *j_ptr = &p_ptr->inventory[INVEN_LIGHT];
+
+	/* Get flags */
+	object_flags(o_ptr, f);
+
+	if (j_ptr->sval == SV_LIGHT_LANTERN)
+	{
+		/* Flasks of oil are okay */
+		if (o_ptr->tval == TV_FLASK) return (TRUE);
+	}
+
+	/* Non-empty, non-everburning sources are okay */
+	if ((o_ptr->tval == TV_LIGHT) &&
+	    (o_ptr->sval == j_ptr->sval) &&
+	    (o_ptr->timeout > 0) &&
+	    !of_has(f, OF_NO_FUEL))
+	{
+		return (TRUE);
+	}
+
+	/* Assume not okay */
+	return (FALSE);
+}
+
+
+bool obj_can_browse(const object_type *o_ptr)
+{
+	return o_ptr->tval == cp_ptr->spell_book;
+}
+
+bool obj_can_cast_from(const object_type *o_ptr)
+{
+	return obj_can_browse(o_ptr) &&
+			spell_book_count_spells(o_ptr, spell_okay_to_cast) > 0;
+}
+
+bool obj_can_study(const object_type *o_ptr)
+{
+	return obj_can_browse(o_ptr) &&
+			spell_book_count_spells(o_ptr, spell_okay_to_study) > 0;
+}
+
+
+/* Can only take off non-cursed items */
+bool obj_can_takeoff(const object_type *o_ptr)
+{
+	return !cursed_p(o_ptr);
+}
+
+/* Can only put on wieldable items */
+bool obj_can_wear(const object_type *o_ptr)
+{
+	return (wield_slot(o_ptr) >= INVEN_WIELD);
+}
+
+/* Can only fire an item with the right tval */
+bool obj_can_fire(const object_type *o_ptr)
+{
+	return o_ptr->tval == p_ptr->state.ammo_tval;
+}
+
+/* Can has inscrip pls */
+bool obj_has_inscrip(const object_type *o_ptr)
+{
+	return (o_ptr->note ? TRUE : FALSE);
+}
+
+/*** Generic utility functions ***/
+
+/*
+ * Return an object's effect.
+ */
+u16b object_effect(const object_type *o_ptr)
+{
+	if (o_ptr->name1)
+		return a_info[o_ptr->name1].effect;
+	else
+		return k_info[o_ptr->k_idx].effect;
+}
+
+/* Get an o_ptr from an item number */
+object_type *object_from_item_idx(int item)
+{
+	if (item >= 0)
+		return &p_ptr->inventory[item];
+	else
+		return &o_list[0 - item];
+}
+
+
+/*
+ * Does the given object need to be aimed?
+ */ 
+bool obj_needs_aim(object_type *o_ptr)
+{
+	int effect;
+
+	/* Figure out effect the object would use */
+	if (o_ptr->name1)
+		effect = a_info[o_ptr->name1].effect;
+	else
+		effect = k_info[o_ptr->k_idx].effect;
+
+	/* If the effect needs aiming, or if the object type needs
+	   aiming, this object needs aiming. */
+	if (effect_aim(effect) || o_ptr->tval == TV_BOLT ||
+			o_ptr->tval == TV_SHOT || o_ptr->tval == TV_ARROW ||
+			o_ptr->tval == TV_WAND ||
+			(o_ptr->tval == TV_ROD && !object_flavor_is_aware(o_ptr)))
+		return TRUE;
+	else
+		return FALSE;
+}
+
+

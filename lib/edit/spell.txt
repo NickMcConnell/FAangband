@@ -1,0 +1,1319 @@
+# File: spell.txt
+
+
+# This file is used to initialize the "spell" information for the Angband game.
+
+# Do not modify this file unless you know exactly what you are doing,
+# unless you wish to risk possible system crashes and broken savefiles.
+
+# The spell indexes are defined in "x-spell.c", and must not be changed
+# or savefile compatibility will be lost.
+
+# Note that several "spell" types may share the same "textual name".
+# For example, the spell "Detect Monsters" appears in both a mage
+# book and a priest book; some curing spells appear in two seperate
+# priest books (and might not even have the exact same effect!)
+
+# === Understanding spell.txt ===
+
+# N: serial number : spell name
+# I: tval : realm : sval : snum
+# I: tval : realm : sval : snum
+# D: description
+
+# 'N' indicates the beginning of an entry. The serial number must
+# increase for each new spell.
+
+# 'I' is for basic information. The tval identifies the type of
+# the book. The sval identifies the book number, and the snum is the 
+# spell number within the book.  The first 'I' line is for full 
+# casters, and the second for half casters.
+
+# 'D' is for description. As many D: lines may be used as are needed
+# to describe the spell. Note that lines will need spaces at their
+# ends or the beginning of the next line to prevent words from running
+# together.
+
+
+# Version stamp (required)
+
+V:1.1.6
+
+N::
+I:9:::
+I:9:::
+D:Fires a bolt of fire.	/* 0 - Fire Bolt */
+
+N::
+I:9:::
+I:9:::
+D:Detects nearby monsters that are not invisible.
+
+N::
+I:9:::
+I:9:::
+D:Random minor displacement.
+
+N::
+I:9:::
+I:9:::
+D:Detects nearby traps, doors, and stairs.
+
+N::
+I:9:::
+I:9:::
+D:Permanently lights up the area lit by your light source or a room.
+
+N::
+I:9:::
+I:9:::
+D:Fires a ball of poison.
+
+N::
+I:9:::
+I:9:::
+D:Reduces cuts and poisoning.
+
+N::
+I:9:::
+I:9:::
+D:Short term increase in saving throw and armour class, and protection from blin
+N::
+I:9:::
+I:9:::
+dness and confusion.
+
+N::
+I:9:::
+I:9:::
+D:Standard identification.
+
+N::
+I:9:::
+I:9:::
+D:Fires a bolt or beam of lightning.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to confuse one monster.	/* 10 - Confuse Monster */
+
+N::
+I:9:::
+I:9:::
+D:Fetches an item from a distance.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to put a monster to sleep.
+
+N::
+I:9:::
+I:9:::
+D:Random major displacement.
+
+N::
+I:9:::
+I:9:::
+D:Fires a line of weak light.  Affects light-hating creatures.
+
+N::
+I:9:::
+I:9:::
+D:Fires a beam of cold.
+
+N::
+I:9:::
+I:9:::
+D:Throws an item using mental strength.
+
+N::
+I:9:::
+I:9:::
+D:Fully feeds you.
+
+N::
+I:9:::
+I:9:::
+D:Detects nearby invisible monsters.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to disarm a trap adjacent to you.
+
+N::
+I:9:::
+I:9:::
+D:Teleports a monster a short distance.	/* 20 - Blink Monster */
+
+N::
+I:9:::
+I:9:::
+D:Removes all poison, cuts and stunning.
+
+N::
+I:9:::
+I:9:::
+D:Detects nearby enchanted objects.
+
+N::
+I:9:::
+I:9:::
+D:Melts a wall square to floor.
+
+N::
+I:9:::
+I:9:::
+D:Minor recharging.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to put all monster in line of sight to sleep.
+
+N::
+I:9:::
+I:9:::
+D:Fires a short-range beam of force.
+
+N::
+I:9:::
+I:9:::
+D:Fires a ball of fire.
+
+N::
+I:9:::
+I:9:::
+D:Turns rod, wand, or staff energy into mana.  Rods have little energy.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to slow a monster down.
+
+N::
+I:9:::
+I:9:::
+D:Teleports an opponent away.	/* 30 - Teleport Other */
+
+N::
+I:9:::
+I:9:::
+D:Temporarily hasten yourself.
+
+N::
+I:9:::
+I:9:::
+D:Puts target creatures in Stasis.  They are completely paralyzed and invulnerable.
+
+N::
+I:9:::
+I:9:::
+D:Recovers mana much more rapidly than normal resting.  Put this spell in a keymap for best results.
+
+N::
+I:9:::
+I:9:::
+D:Temporary opposition to an element.  Cumulative with equipment resistances.
+
+N::
+I:9:::
+I:9:::
+D:Temporarily increases armour class by 50.
+
+N::
+I:9:::
+I:9:::
+D:Temporary opposition to the elements and poison.  Cumulative with equipment resistances.
+
+N::
+I:9:::
+I:9:::
+D:Long-duration haste spell.
+
+N::
+I:9:::
+I:9:::
+D:Greatly increases saving throw and armour class.  Perfect protection from blindness and confusion.
+
+N::
+I:9:::
+I:9:::
+D:Creates a barrier of doors around you.
+
+N::
+I:9:::
+I:9:::
+D:Creates a staircase nearby.  Random choice between up or down, except on quest levels.   /* 40 - Stair Creation */
+
+N::
+I:9:::
+I:9:::
+D:Immediately takes you to an adjacent level.
+
+N::
+I:9:::
+I:9:::
+D:Recalls you to the town, or to one of four recall points.
+
+N::
+I:9:::
+I:9:::
+D:Destroys almost all objects nearby, deletes ordinary monsters, and banishes uniques from the level.
+
+N::
+I:9:::
+I:9:::
+D:Controlled minor displacement.  Hint:  use the 'p' option when you enter targeting mode.
+
+N::
+I:9:::
+I:9:::
+D:Fires a bolt or beam of acid.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to change a monster.
+
+N::
+I:9:::
+I:9:::
+D:Shakes the nearby area, randomly scrambling terrain.
+
+N::
+I:9:::
+I:9:::
+D:Very powerful attempt to confuse, slow, and then sleep all monsters.
+
+N::
+I:9:::
+I:9:::
+D:Fires a ball of light centered on you.
+
+N::
+I:9:::
+I:9:::
+D:Powerful recharging spell.		/* 50 - Major Recharge */
+
+N::
+I:9:::
+I:9:::
+D:Fires a large poison and acid ball.
+
+N::
+I:9:::
+I:9:::
+D:Fires a large ice ball.
+
+N::
+I:9:::
+I:9:::
+D:Fires a small but unresistible magic ball.
+
+N::
+I:9:::
+I:9:::
+D:Hits all monsters in line of sight with a blast of sound.
+
+N::
+I:9:::
+I:9:::
+D:Fires a large chaos ball.
+
+N::
+I:9:::
+I:9:::
+D:Fires an arc of force.
+
+N::
+I:9:::
+I:9:::
+D:Lays a rune which increases (player) or decreases (monster) elemental spells cast from it.  Maximum of four runes.
+
+N::
+I:9:::
+I:9:::
+D:Lays a rune which increases (player) or decreases (monster) the saving throw of one standing on it.  Maximum of four runes.
+
+N::
+I:9:::
+I:9:::
+D:Lays a rune which creates an earthquake when walked on.  Maximum of four runes.
+
+N::
+I:9:::
+I:9:::
+D:Lays a rune which contains a reserve of mana for the player.  Casting on an existing rune will increase the reserve.  Drains mana from monsters walking over it.  One rune only.	/* 60 - Rune of Mana */
+
+N::
+I:9:::
+I:9:::
+D:Lays a rune which monsters cannot pass over or be summoned on until broken.  Maximum of four runes.
+
+N::
+I:9:::
+I:9:::
+D:Lays a rune which increases (player) or decreases (monster) the spell power of one standing on it.  One rune only.
+
+N::
+I:9:::
+I:9:::
+D:Lays a rune which increases (player) or decreases (monster) the speed of one standing on it.  One rune only.
+
+N::
+I:9:::
+I:9:::
+D:Detects all nearby evil monsters, even invisible ones.
+
+N::
+I:9:::
+I:9:::
+D:Reduces cuts and heals you a little.
+
+N::
+I:9:::
+I:9:::
+D:Short-duration bonus to fighting ability and armour class.
+
+N::
+I:9:::
+I:9:::
+D:Removes any fear you currently feel.
+
+N::
+I:9:::
+I:9:::
+D:Permanently lights up the area lit by your light source or a room.
+
+N::
+I:9:::
+I:9:::
+D:Detects all nearby traps.
+
+N::
+I:9:::
+I:9:::
+D:Detects all nearby doors and stairs. /* 70 - Detect Doors/Stairs */
+
+N::
+I:9:::
+I:9:::
+D:Reduces the amount of poison in your system.
+
+N::
+I:9:::
+I:9:::
+D:Reduces cuts and heals you a moderate amount.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to frighten one monster.
+
+N::
+I:9:::
+I:9:::
+D:Random medium-range displacement.
+
+N::
+I:9:::
+I:9:::
+D:Medium-duration bonus to fighting ability and armour class.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to put all monsters next to you to sleep.
+
+N::
+I:9:::
+I:9:::
+D:Fully feeds you.
+
+N::
+I:9:::
+I:9:::
+D:Removes standard curses.
+
+N::
+I:9:::
+I:9:::
+D:Temporary opposition to fire and frost.  Cumulative with equipment resistances.
+
+N::
+I:9:::
+I:9:::
+D:Removes all poison from your body.	/* 80 - Neutralize Poison */
+
+N::
+I:9:::
+I:9:::
+D:Fires an orb of holy force that does extra damage to evil creatures.
+
+N::
+I:9:::
+I:9:::
+D:Temporary see invisible.
+
+N::
+I:9:::
+I:9:::
+D:Temporary protection from lesser evil creatures.
+
+N::
+I:9:::
+I:9:::
+D:Reduces cuts and heals you a large amount.
+
+N::
+I:9:::
+I:9:::
+D:Shakes the nearby area, randomly changing terrain.
+
+N::
+I:9:::
+I:9:::
+D:Maps the local area.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to make all undead monsters in line of sight turn and run.
+
+N::
+I:9:::
+I:9:::
+D:Long-duration bonus to fighting ability and armour class.
+
+N::
+I:9:::
+I:9:::
+D:Dispels all undead in line of sight.
+
+N::
+I:9:::
+I:9:::
+D:A large amount of healing, eliminates cuts and stunning.	/* 90 - Heal */
+
+N::
+I:9:::
+I:9:::
+D:Dispels all evil monsters in line of sight.
+
+N::
+I:9:::
+I:9:::
+D:Temporarily increases armour class by 50.
+
+N::
+I:9:::
+I:9:::
+D:Places a glyph on the floor that monsters cannot pass over or be summoned on until broken.  Max of four glyphs on a level; disarm extras.
+
+N::
+I:9:::
+I:9:::
+D:Strong dispel evil, healing, and remove poisoning, fear, stunning, and cuts.
+
+N::
+I:9:::
+I:9:::
+D:Minor random displacement.
+
+N::
+I:9:::
+I:9:::
+D:Long-range random displacement.
+
+N::
+I:9:::
+I:9:::
+D:Teleports an opponent away.
+
+N::
+I:9:::
+I:9:::
+D:Immediately takes you to the next level up or down.
+
+N::
+I:9:::
+I:9:::
+D:Recalls you to the town, or to one of your recall points.
+
+N::
+I:9:::
+I:9:::
+D:Regenerates the level.	/* 100 - Alter Reality */
+
+N::
+I:9:::
+I:9:::
+D:Detects nearby monsters that are not invisible.
+
+N::
+I:9:::
+I:9:::
+D:Detects all nearby monsters, traps, doors, stairs, gold seams, and objects.
+
+N::
+I:9:::
+I:9:::
+D:Learns about a monster's attributes and resistances.
+
+N::
+I:9:::
+I:9:::
+D:Standard identification of an object.
+
+N::
+I:9:::
+I:9:::
+D:Permanently light up the entire level, except for vaults, and detect everything nearby.
+
+N::
+I:9:::
+I:9:::
+D:Teleports away all evil monsters in line of sight.
+
+N::
+I:9:::
+I:9:::
+D:An extremely strong healing spell.  Removes cuts and stuns.
+
+N::
+I:9:::
+I:9:::
+D:Full *identification* of any object.
+
+N::
+I:9:::
+I:9:::
+D:Restores all stats.
+
+N::
+I:9:::
+I:9:::
+D:Restores experience level.	/* 110 - Remembrance */
+
+N::
+I:9:::
+I:9:::
+D:Destroys all doors next to you.
+
+N::
+I:9:::
+I:9:::
+D:Medium strength recharging spell.
+
+N::
+I:9:::
+I:9:::
+D:Removes both normal and heavy curses.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to disarm an adjacent trap.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to put a monster in stasis or fully bar a door.
+
+N::
+I:9:::
+I:9:::
+D:Adds plusses to Skill and Deadliness to weapons or plusses to armour class to armour.
+
+N::
+I:9:::
+I:9:::
+D:Fires a large ball of light.
+
+N::
+I:9:::
+I:9:::
+D:Fires a beam of holy magic that does extra damage to evil creatures.
+
+N::
+I:9:::
+I:9:::
+D:Destroys almost all objects nearby, deletes ordinary monsters, and banishes uniques from the level.
+
+N::
+I:9:::
+I:9:::
+D:Strikes at the soul of a living monster.	/* 120 - Annihilation */
+
+N::
+I:9:::
+I:9:::
+D:Large ball of light centered on you, healing, and a powerful frighten monsters spell.
+
+N::
+I:9:::
+I:9:::
+D:Select a temporary elemental brand.  More brands become available as you gain levels.  Only one brand is available at a time.  For Paladins, only works on melee weapons.
+
+N::
+I:9:::
+I:9:::
+D:Temporary Slay Evil.  Acts like (and can replace) a standard Slay evil weapon.
+
+N::
+I:9:::
+I:9:::
+D:Heroism, frightens monsters, also a little healing and recovery of courage.
+
+N::
+I:9:::
+I:9:::
+D:The next time you hit or steal from a monster, you will teleport away.
+
+N::
+I:9:::
+I:9:::
+D:Renders you hasted and berserk.
+
+N::
+I:9:::
+I:9:::
+D:Detects nearby objects, treasure and gold seams.
+
+N::
+I:9:::
+I:9:::
+D:Detects all nearby living monsters, even invisible ones.
+
+N::
+I:9:::
+I:9:::
+D:Permanently lights up the area lit by your light source or a room.
+
+N::
+I:9:::
+I:9:::
+D:Fully feeds you.	/* 130 - foraging */
+
+N::
+I:9:::
+I:9:::
+D:Minor random displacement.
+
+N::
+I:9:::
+I:9:::
+D:Reduces the amount of poison in your system.
+
+N::
+I:9:::
+I:9:::
+D:Short-range beam of lightning.
+
+N::
+I:9:::
+I:9:::
+D:Destroys all doors next to you.
+
+N::
+I:9:::
+I:9:::
+D:Melts a wall square to floor.
+
+N::
+I:9:::
+I:9:::
+D:Fires a line of weak light.  Affects light-hating creatures.
+
+N::
+I:9:::
+I:9:::
+D:Removes all poison from your body.
+
+N::
+I:9:::
+I:9:::
+D:Fires a bolt or beam of frost.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to put a monster to sleep.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to frighten a monster.	/* 140 - frighten creature */
+
+N::
+I:9:::
+I:9:::
+D:Detects nearby traps, doors, and stairs.
+
+N::
+I:9:::
+I:9:::
+D:Kills all weak monsters in line of sight; spell has no effect on stronger creatures.
+
+N::
+I:9:::
+I:9:::
+D:Fires a bolt or beam of fire.
+
+N::
+I:9:::
+I:9:::
+D:Temporary heroism.
+
+N::
+I:9:::
+I:9:::
+D:Breaks ordinary curses.
+
+N::
+I:9:::
+I:9:::
+D:Fires a bolt or beam of acid.
+
+N::
+I:9:::
+I:9:::
+D:Teleports a monster away.
+
+N::
+I:9:::
+I:9:::
+D:Fires a bolt or beam of gravity.
+
+N::
+I:9:::
+I:9:::
+D:Temporary opposition to poison.  Cumulative with equipment resistances.
+
+N::
+I:9:::
+I:9:::
+D:Shakes the nearby area, randomly changing terrain.	/* 150 - earthquake */
+
+N::
+I:9:::
+I:9:::
+D:Temporary opposition to fire and cold.  Cumulative with equipment resistances.
+
+N::
+I:9:::
+I:9:::
+D:Detects all nearby monsters, traps, doors, stairs, gold seams, and objects.
+
+N::
+I:9:::
+I:9:::
+D:Recovers from wounds, poison and physical damage far more rapidly than normal resting.  This is a good spell to assign to a keymap.
+
+N::
+I:9:::
+I:9:::
+D:Temporary opposition to acid and electricity.  Cumulative with equipment resistances.
+
+N::
+I:9:::
+I:9:::
+D:Hurts a monster, then attempts to slow and confuse it.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to disarm an adjacent trap.
+
+N::
+I:9:::
+I:9:::
+D:Standard identification of an object.
+
+N::
+I:9:::
+I:9:::
+D:Creates Athelas.
+
+N::
+I:9:::
+I:9:::
+D:Fires a large lightning ball.
+
+N::
+I:9:::
+I:9:::
+D:Fires a very large sound ball.	/* 160 - thunderclap */
+
+N::
+I:9:::
+I:9:::
+D:Turns you into a silent mouse.
+
+N::
+I:9:::
+I:9:::
+D:Turns you into a ferret, most crafty of animals.
+
+N::
+I:9:::
+I:9:::
+D:Turns you into a hound always aware of its surroundings.
+
+N::
+I:9:::
+I:9:::
+D:Turns you into a speedy gazelle.
+
+N::
+I:9:::
+I:9:::
+D:Turns you into a dauntless lion.
+
+N::
+I:9:::
+I:9:::
+D:Detects all nearby evil monsters, even invisible ones.
+
+N::
+I:9:::
+I:9:::
+D:Attempts (strongly) to frighten all monsters in line of sight.
+
+N::
+I:9:::
+I:9:::
+D:Maps the local area.
+
+N::
+I:9:::
+I:9:::
+D:Detects all nearby monsters, traps, doors, and stairs, and grants temporary see invisible.
+
+N::
+I:9:::
+I:9:::
+D:Healing, plus removal of all cuts and poison.	/* 170 - herbal healing */
+
+N::
+I:9:::
+I:9:::
+D:Fires a very large cold ball.
+
+N::
+I:9:::
+I:9:::
+D:Hurls water outwards from yourself in all directions.
+
+N::
+I:9:::
+I:9:::
+D:Fires a very large fire ball and trigger an earthquake.
+
+N::
+I:9:::
+I:9:::
+D:Fires a small, intense plasma ball.
+
+N::
+I:9:::
+I:9:::
+D:Fires a large ball of light centered on yourself.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to slow and sleep all monsters in line of sight.
+
+N::
+I:9:::
+I:9:::
+D:Temporarily increases armour class by 50.
+
+N::
+I:9:::
+I:9:::
+D:Dispels all monsters in line of sight.  Extra damage to evil creatures.
+
+N::
+I:9:::
+I:9:::
+D:Places a glyph on the floor that monsters cannot pass over or be summoned on until broken.
+
+N::
+I:9:::
+I:9:::
+D:Restores all your stats.	/* 180 - song of renewal */
+
+N::
+I:9:::
+I:9:::
+D:Fires a bolt or beam of time.
+
+N::
+I:9:::
+I:9:::
+D:Temporarily hastens you.
+
+N::
+I:9:::
+I:9:::
+D:Recharges a magical item.
+
+N::
+I:9:::
+I:9:::
+D:Turns you into a wise and powerful Elder Ent.   Use potions or spells to protect yourself from fire!
+
+N::
+I:9:::
+I:9:::
+D:Restores your experience.
+
+N::
+I:9:::
+I:9:::
+D:Dispels evil monsters, heals you, blesses you, and removes fear, poisoning, stunning, and cuts.
+
+N::
+I:9:::
+I:9:::
+D:Low-level probing spell that lets you learn about racial type and basic resistances.
+
+N::
+I:9:::
+I:9:::
+D:Hurts any monster on grass or near trees.  Animals take less damage.
+
+N::
+I:9:::
+I:9:::
+D:Encourages trees and grass grow in your line of sight.
+
+N::
+I:9:::
+I:9:::
+D:Makes one object proof against acid and fire attacks.	/* 190 - song of preservation */
+
+N::
+I:9:::
+I:9:::
+D:Creates a small, targetable earthquake.
+
+N::
+I:9:::
+I:9:::
+D:Fires a bolt of nether force.
+
+N::
+I:9:::
+I:9:::
+D:Detects all nearby evil monsters, even invisible ones.
+
+N::
+I:9:::
+I:9:::
+D:Increases the range at which you can see warm-blooded creatures by 3.
+
+N::
+I:9:::
+I:9:::
+D:Removes ordinary curses.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to slow a monster.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to put a monster to sleep.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to frighten a monster.
+
+N::
+I:9:::
+I:9:::
+D:Turns you into a fast-fluttering bat.
+
+N::
+I:9:::
+I:9:::
+D:Destroys all doors next to you.	/* 200 - door destruction */
+
+N::
+I:9:::
+I:9:::
+D:Fires a bolt or beam of darkness.
+
+N::
+I:9:::
+I:9:::
+D:Covers the immediate area with a cloud of poison.  Does not quickly lose strength with distance from the center.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to make all undead monsters in line of sight flee.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to make all evil monsters in line of sight flee.
+
+N::
+I:9:::
+I:9:::
+D:Removes all poison from your system.
+
+N::
+I:9:::
+I:9:::
+D:Attacks all undead creatures in line of sight.
+
+N::
+I:9:::
+I:9:::
+D:Attacks all evil creatures in line of sight.
+
+N::
+I:9:::
+I:9:::
+D:Grants temporary see invisible.
+
+N::
+I:9:::
+I:9:::
+D:Random minor displacement.
+
+N::
+I:9:::
+I:9:::
+D:Detects all nearby traps.	/* 210 - detect traps */
+
+N::
+I:9:::
+I:9:::
+D:Detects all nearby doors.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to put all monsters in line of sight to sleep.
+
+N::
+I:9:::
+I:9:::
+D:Attempts to slow all monsters in line of sight.
+
+N::
+I:9:::
+I:9:::
+D:Detects nearby magical objects.
+
+N::
+I:9:::
+I:9:::
+D:Fires a bolt or beam of life-draining magic.
+
+N::
+I:9:::
+I:9:::
+D:Temporary opposition to poison.  Cumulative with equipment resistances.
+
+N::
+I:9:::
+I:9:::
+D:Attacks all demons in line of sight.
+
+N::
+I:9:::
+I:9:::
+D:Fires a beam of darkness.
+
+N::
+I:9:::
+I:9:::
+D:Fires a heavy bolt of chaos.
+
+N::
+I:9:::
+I:9:::
+D:Deletes all monsters of the symbol you choose from the level.     /* 220 - genocide */
+
+N::
+I:9:::
+I:9:::
+D:Fires a large ball of darkness.
+
+N::
+I:9:::
+I:9:::
+D:Dispels living creatures, attempts to confuse all survivors, and then blankets everything in a cloud of poison.
+
+N::
+I:9:::
+I:9:::
+D:Learns most attributes of all monsters in line of sight.
+
+N::
+I:9:::
+I:9:::
+D:Maps the immediate area.
+
+N::
+I:9:::
+I:9:::
+D:Normal identify spell.
+
+N::
+I:9:::
+I:9:::
+D:Random large-range displacement.
+
+N::
+I:9:::
+I:9:::
+D:Coats any non-ego missile or stack of missiles in deadly poison.
+
+N::
+I:9:::
+I:9:::
+D:Temporary opposition to cold and acid.  Cumulative with equipment resistances.
+
+N::
+I:9:::
+I:9:::
+D:Removes all cuts and stunning.
+
+N::
+I:9:::
+I:9:::
+D:Grants temporary protection from evil.    /* 230 - protection from evil */
+
+N::
+I:9:::
+I:9:::
+D:Temporary increase to armour class and fighting ability.
+
+N::
+I:9:::
+I:9:::
+D:Teleports away all evil monsters in line of sight.
+
+N::
+I:9:::
+I:9:::
+D:Increases armour class by 35 temporarily.
+
+N::
+I:9:::
+I:9:::
+D:Detects all nearby monsters.
+
+N::
+I:9:::
+I:9:::
+D:Fires a nether bolt.
+
+N::
+I:9:::
+I:9:::
+D:Fires a life-draining orb.
+
+N::
+I:9:::
+I:9:::
+D:Attacks all living creatures in line of sight.
+
+N::
+I:9:::
+I:9:::
+D:Fires a life-draining bolt, heals you, and increases your food by a set amount.
+
+N::
+I:9:::
+I:9:::
+D:Medium-strength recharging spell.
+
+N::
+I:9:::
+I:9:::
+D:Turns you into a raging werewolf.	/* 240 - become werewolf */
+
+N::
+I:9:::
+I:9:::
+D:Breaks both normal and heavy curses.
+
+N::
+I:9:::
+I:9:::
+D:Turns you into a fell vampire.
+
+N::
+I:9:::
+I:9:::
+D:Hastens you temporarily.
+
+N::
+I:9:::
+I:9:::
+D:Allows you to infect a monster with the Black Breath, which prevents regeneration.
+
+N::
+I:9:::
+I:9:::
+D:Destroys almost all objects nearby, deletes ordinary monsters, and banishes uniques from the level.
+
+N::
+I:9:::
+I:9:::
+D:Teleports a monster away.
+
+N::
+I:9:::
+I:9:::
+D:Attacks all undead in line of sight.
+
+N::
+I:9:::
+I:9:::
+D:Places all undead in a powerful Statis.
+
+N::
+I:9:::
+I:9:::
+D:Fires a large darkness ball.
+
+N::
+I:9:::
+I:9:::
+D:Grants temporary telepathy.	/* 250 - timed ESP */
+
+N::
+I:9:::
+I:9:::
+D:Renders you almost imperceptible to sleeping monsters and those not normally found deeper than twice your depth.  You become fully visible as soon as you inflict any damage on or steal from a monster.
+
+N::
+I:9:::
+I:9:::
+D:Hastens you and drives you into a berserk rage.
+
+N::
+I:9:::
+I:9:::
+D:Grants any non-artifact throwing weapon perfect balance.  Be careful about using this spell on weapons that have a hidden quality (use the 'I'nspect command).
+
+N::
+I:9:::
+I:9:::
+D:Turns 75 hitpoints into mana.

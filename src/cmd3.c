@@ -21,6 +21,8 @@
  */
 
 #include "angband.h"
+#include "squelch.h"
+#include "ui-menu.h"
 
 
 /**
@@ -121,7 +123,7 @@ void do_cmd_inven(void)
   item_tester_full = FALSE;
   
   /* Insert the total burden and character capacity into a string. */
-  if (use_metric) 
+  if (OPT(use_metric)) 
     sprintf(string,"(Inventory) burden %d.%d kg (%d%% of capacity). Command: ",
 	    make_metric(p_ptr->total_weight) / 10, 
 	    make_metric(p_ptr->total_weight) % 10, 
@@ -184,7 +186,7 @@ void do_cmd_equip(void)
   
   
   /* Insert the total burden and character capacity into a string. */
-  if (use_metric) 
+  if (OPT(use_metric)) 
     sprintf(string, 
 	    "(Equipment) burden %d.%d kg (%d%% of capacity). Command: ",
 	    make_metric(p_ptr->total_weight) / 10, 
@@ -872,7 +874,7 @@ void do_cmd_destroy(void)
   o_ptr->number = old_number;
   
   /* Verify destruction */
-  if (verify_destroy && (verify_destroy_junk || (object_value(o_ptr) >= 1)))
+  if (OPT(verify_destroy) && (OPT(verify_destroy_junk) || (object_value(o_ptr) >= 1)))
     {
       int result;
       
@@ -1477,6 +1479,14 @@ void do_cmd_target(void)
     }
 }
 
+/**
+ * Target closest command
+ */
+void do_cmd_target_closest(void)
+{
+	target_set_closest(TARGET_KILL);
+}
+
 
 
 /**
@@ -1544,7 +1554,7 @@ void do_cmd_locate(void)
       /* Get a direction */
       while (!dir)
 	{
-	  event_type ke = EVENT_EMPTY;
+	  ui_event_data ke = EVENT_EMPTY;
 	  
 	  /* Get a command (or Cancel) */
 	  if (!get_com_ex(out_val, &ke)) break;
@@ -1704,7 +1714,7 @@ static cptr ident_info[] =
  * We use "u" to point to array of monster indexes,
  * and "v" to select the type of sorting to perform on "u".
  */
-bool ang_sort_comp_hook(vptr u, vptr v, int a, int b)
+bool ang_sort_comp_hook(void *u, void *v, int a, int b)
 {
   u16b *who = (u16b*)(u);
   
@@ -1779,7 +1789,7 @@ bool ang_sort_comp_hook(vptr u, vptr v, int a, int b)
  * We use "u" to point to array of monster indexes,
  * and "v" to select the type of sorting to perform.
  */
-void ang_sort_swap_hook(vptr u, vptr v, int a, int b)
+void ang_sort_swap_hook(void *u, void *v, int a, int b)
 {
   u16b *who = (u16b*)(u);
   
@@ -1809,7 +1819,7 @@ void do_cmd_query_symbol(void)
   int i, j, n, r_idx;
   int start = 0, last_level = 0;
   char sym;
-  event_type query = EVENT_EMPTY;
+  ui_event_data query = EVENT_EMPTY;
   char search_str[60] = "";
   char monster_name[80];
   char buf[128];
@@ -1889,7 +1899,7 @@ void do_cmd_query_symbol(void)
        * Even cheat_know does not allow viewing non-existant
        * player ghosts.
        */
-      if ((!cheat_know || (r_ptr->flags2 & (RF2_PLAYER_GHOST))) 
+      if ((!OPT(cheat_know) || (r_ptr->flags2 & (RF2_PLAYER_GHOST))) 
 	  && !l_ptr->sights) 
 	continue;
       
@@ -2195,13 +2205,13 @@ void py_steal(int y, int x)
   theft_protection += number_of_thefts_on_level * 15;
   
   /* Did the theft succeed?  */
-  if (randint(theft_protection) < filching_power) success = TRUE;
+  if (randint1(theft_protection) < filching_power) success = TRUE;
   
   
   /* If the theft succeeded, determine the value of the purse. */
   if (success)
     {
-      purse = (r_ptr->level + 1) + randint(3 * (r_ptr->level + 1) / 2);
+      purse = (r_ptr->level + 1) + randint1(3 * (r_ptr->level + 1) / 2);
       
       /* Uniques are juicy targets. */
       if (r_ptr->flags1 & (RF1_UNIQUE)) purse *= 3;
@@ -2217,13 +2227,13 @@ void py_steal(int y, int x)
       /* Some monster races are far better to steal from than others. */
       if ((r_ptr->d_char == 'D') || (r_ptr->d_char == 'd') || 
 	  (r_ptr->d_char == 'p') || (r_ptr->d_char == 'h')) 
-	purse *= 2 + randint(3) + randint(r_ptr->level / 20);
+	purse *= 2 + randint1(3) + randint1(r_ptr->level / 20);
       else if ((r_ptr->d_char == 'P') || (r_ptr->d_char == 'o') || 
 	       (r_ptr->d_char == 'O') || (r_ptr->d_char == 'T') ||
 	       (r_ptr->d_char == 'n') || (r_ptr->d_char == 'W') ||
 	       (r_ptr->d_char == 'k') || (r_ptr->d_char == 'L') ||
 	       (r_ptr->d_char == 'V') || (r_ptr->d_char == 'y')) 
-	purse *= 1 + randint(3) + randint(r_ptr->level / 30);
+	purse *= 1 + randint1(3) + randint1(r_ptr->level / 30);
       
       /* Pickings are scarce in a land of many thieves. */
       purse = purse * (p_ptr->depth + 5) / (p_ptr->recall[0] + 5);
@@ -2245,7 +2255,7 @@ void py_steal(int y, int x)
     }
   
   /* The victim normally, but not always, wakes up and is aggravated. */
-  if (randint(4) != 1)
+  if (randint1(4) != 1)
     {
       m_ptr->csleep = 0;
       m_ptr->mflag |= (MFLAG_ACTV);
@@ -2255,10 +2265,10 @@ void py_steal(int y, int x)
       m_ptr->hostile = -1;      
       
       /* Occasionally, amuse the player with a message. */
-      if ((randint(5) == 1) && (purse) && (r_ptr->flags2 & (RF2_SMART)))
+      if ((randint1(5) == 1) && (purse) && (r_ptr->flags2 & (RF2_SMART)))
 	{
 	  monster_desc(m_name, m_ptr, 0);
-	  act = desc_victim_outcry[rand_int(20)];
+	  act = desc_victim_outcry[randint0(20)];
 	  msg_format("%^s cries out %s", m_name, act);
 	}
       /* Otherwise, simply explain what happened. */
@@ -2291,7 +2301,7 @@ void py_steal(int y, int x)
       (void) aggravate_monsters(1, TRUE);
     }
   
-  else if ((number_of_thefts_on_level > 2) || (randint(8) == 1))
+  else if ((number_of_thefts_on_level > 2) || (randint1(8) == 1))
     {
       msg_print("You hear hunting parties scouring the area for a notorious burgler.");
       
@@ -2437,7 +2447,7 @@ static char *trap_type[] =
   "Genocide Trap    (removes nearby like monsters)" 
 };
 
-static char trap_tag(menu_type *menu, int oid)
+char trap_tag(menu_type *menu, int oid)
 {
   return I2A(oid);
 }
@@ -2461,7 +2471,7 @@ void trap_display(menu_type *menu, int oid, bool cursor, int row,
 /**
  * Deal with events on the trap menu
  */
-bool trap_action(char cmd, void *db, int oid)
+bool trap_action(menu_type *menu, const ui_event_data *db, int oid)
 {
   u16b *choice = db;
   
@@ -2478,9 +2488,9 @@ bool trap_action(char cmd, void *db, int oid)
 bool trap_menu(void)
 {
   menu_type menu;
-  menu_iter menu_f = { 0, trap_tag, 0, trap_display, trap_action };
+  menu_iter menu_f = { trap_tag, 0, trap_display, trap_action, 0 };
   region area = { (small_screen ? 0 : 15), 1, 48, -1 };
-  event_type evt = { EVT_NONE, 0, 0, 0, 0 };
+  ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
   int cursor = 0;
   
   int num = 0;
@@ -2523,17 +2533,17 @@ bool trap_menu(void)
   menu.cmd_keys = " \n\r";
   menu.count = num;
   menu.menu_data = choice;
-  menu_init2(&menu, find_menu_skin(MN_SCROLL), &menu_f, &area);
+  menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
   
   /* Select an entry */
-  evt = menu_select(&menu, &cursor, 0);
+  evt = menu_select(&menu, 0);
   
   /* Free memory */
   FREE(choice);
   
   /* Load screen */
   screen_load();
-  return ((evt.type != EVT_ESCAPE) && (evt.type != EVT_BACK));
+  return (evt.type != EVT_ESCAPE);
 }
 
 

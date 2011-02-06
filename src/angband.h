@@ -40,9 +40,12 @@
  */
 #include "config.h"
 #include "defines.h"
+#include "game-cmd.h"
 #include "types.h"
 #include "externs.h"
 #include "cmds.h"
+#include "object.h"
+#include "player.h"
 #include "ui.h"
 #include "z-type.h"
 

@@ -231,8 +231,6 @@
 
 
 
-#define MAX_TITLES     60	/* Used with scrolls (min 48) */
-
 
 /**
  * Size of the "fake" array for reading in names of monsters, objects,
@@ -540,6 +538,8 @@
 #define PY_MAX_EXP	99999999L	/* Maximum exp */
 #define PY_MAX_GOLD	99999999L	/* Maximum gold */
 #define PY_MAX_LEVEL	50		/* Maximum level */
+#define PY_MAX_SPELLS   64              /* Maximum number of spells */
+
 
 /*
  * Player "food" crucial values
@@ -1849,6 +1849,7 @@
 #define TARGET_LOOK	0x02
 #define TARGET_OBJ	0x04
 #define TARGET_GRID	0x08
+#define TARGET_QUIET    0x10
 
 
 /*
@@ -1872,6 +1873,7 @@
 #define USE_FLOOR	0x04	/* Allow floor items */
 #define USE_TARGET	0x08	/* Allow targeted floor items */
 #define CAN_SQUELCH	0x10	/* Allow selection of all squelched items */
+#define IS_HARMLESS     0x20	/* Ignore generic warning inscriptions */
 
 /*** Player flags ***/
 

@@ -4362,6 +4362,63 @@ static void load_path(int max, u16b *path, char *c, byte *a)
 }
 
 
+bool target_set_closest(int mode)
+{
+	int y, x, m_idx;
+	monster_type *m_ptr;
+	char m_name[80];
+	bool visibility;
+
+	/* Cancel old target */
+	target_set_monster(0);
+
+	/* Get ready to do targetting */
+	target_set_interactive_prepare(mode);
+
+	/* If nothing was prepared, then return */
+	if (temp_n < 1)
+	{
+		msg_print("No Available Target.");
+		return FALSE;
+	}
+
+	/* Find the first monster in the queue */
+	y = temp_y[0];
+	x = temp_x[0];
+	m_idx = cave_m_idx[y][x];
+	
+	/* Target the monster, if possible */
+	if ((m_idx <= 0) || !target_able(m_idx))
+	{
+		msg_print("No Available Target.");
+		return FALSE;
+	}
+
+	/* Target the monster */
+	m_ptr = &mon_list[m_idx];
+	monster_desc(m_name, sizeof(m_name), m_ptr, 0x00);
+	if (!(mode & TARGET_QUIET))
+		msg_format("%^s is targeted.", m_name);
+	Term_fresh();
+
+	/* Set up target information */
+	monster_race_track(m_ptr->r_idx);
+	health_track(cave_m_idx[y][x]);
+	target_set_monster(m_idx);
+
+	/* Visual cue */
+	Term_get_cursor(&visibility);
+	(void)Term_set_cursor(TRUE);
+	move_cursor_relative(y, x);
+	Term_redraw_section(x, y, x, y);
+
+	/* TODO: what's an appropriate amount of time to spend highlighting */
+	Term_xtra(TERM_XTRA_DELAY, 150);
+	(void)Term_set_cursor(visibility);
+
+	return TRUE;
+}
+
 /**
  * Handle "target" and "look".
  *

@@ -285,10 +285,10 @@ enum sval_light /* tval 39 */
 {
         SV_LITE_TORCH = 0,
         SV_LITE_LANTERN = 1,
-        SV_LITE_LAMP = 4,
-        SV_LITE_PEARL = 5,
-        SV_LITE_PALANTIR = 6,
-        SV_LITE_STONE = 15
+        SV_LAMP = 4,
+        SV_PEARL = 5,
+        SV_PALANTIR = 6,
+        SV_STONE_LORE = 15
 };
 
 enum sval_amulet /* tval 40 */

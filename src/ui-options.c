@@ -1077,6 +1077,38 @@ static void do_cmd_lazymove_delay(const char *name, int row)
 	screen_load();
 }
 
+/** Hack -- hitpoint warning factor */
+void do_cmd_panel_change(void)
+{
+  /* Prompt */
+  prt("Command: Panel Change", 20, 0);
+  add_button("+", '+');      
+  add_button("-", '-');      
+  update_statusline();      
+  
+  /* Get a new value */
+  while (1)
+    {
+      int pdist = (op_ptr->panel_change + 1) * 2;
+      ui_event_data ke;
+      prt(format("Current panel change: %d (%d / %d)",
+                 op_ptr->panel_change, pdist, pdist * 2), 22, 0);
+      prt("New panel change (0-4, +, - or ESC to accept): ", 21, 0);
+
+      ke = inkey_ex();
+      if (ke.key == ESCAPE) break;
+      if (isdigit(ke.key)) op_ptr->panel_change = D2I(ke.key);
+      if (ke.key == '+') op_ptr->panel_change++;
+      if (ke.key == '-') op_ptr->panel_change--;
+      if (op_ptr->panel_change > 4) op_ptr->panel_change = 4;
+      if (op_ptr->panel_change < 0) op_ptr->panel_change = 0;
+    }
+
+  kill_button('+');      
+  kill_button('-');
+  update_statusline();      
+}
+
 
 
 /*
@@ -1670,6 +1702,161 @@ void do_cmd_options_item(const char *title, int row)
 	return;
 }
 
+/**
+ * Autosave options -- textual names
+ */
+static cptr autosave_text[1] =
+{
+  "autosave"
+};
+
+/**
+ * Autosave options -- descriptions
+ */
+static cptr autosave_desc[1] =
+  {
+    "Timed autosave"
+  };
+
+s16b toggle_frequency(s16b current)
+{
+  if (current == 0) return 50;
+  if (current == 50) return 100;
+  if (current == 100) return 250;
+  if (current == 250) return 500;
+  if (current == 500) return 1000;
+  if (current == 1000) return 2500;
+  if (current == 2500) return 5000;
+  if (current == 5000) return 10000;
+  if (current == 10000) return 25000;
+  
+  else return 0;
+}
+
+
+/**
+ * Interact with autosave options.  From Zangband.
+ */
+static void do_cmd_options_autosave(void)
+{
+  ui_event_data ke;
+  
+  int i, k = 0, n = 1;
+  
+  char buf[80];
+  
+  
+  /* Clear screen */
+  Term_clear();
+  
+  /* Interact with the player */
+  while (TRUE)
+    {
+      /* Prompt - return taken out as there's only one option... -NRM- */
+      sprintf(buf, "Autosave options (y/n to set, 'F' for frequency, ESC to accept) ");
+      prt(buf, 0, 0);
+      
+      /* Display the options */
+      for (i = 0; i < n; i++)
+        {
+          byte a = TERM_WHITE;
+          
+          /* Color current option */
+          if (i == k) a = TERM_L_BLUE;
+          
+          /* Display the option text */
+	  if (small_screen)
+	    sprintf(buf, "%-35s: %s",
+		    autosave_text[i],
+		    autosave ? "yes" : "no ");
+	  else
+	    sprintf(buf, "%-48s: %s  (%s)",
+		    autosave_desc[i],
+		    autosave ? "yes" : "no ",
+		    autosave_text[i]);
+          c_prt(a, buf, i + 2, 0);
+          
+          prt(format("Timed autosave frequency: every %d turns", 
+                     autosave_freq), 5, 0);
+        }
+      
+      
+      /* Hilite current option */
+      move_cursor(k + 2, 50);
+
+      add_button("F", 'F');
+      add_button("n", 'n');
+      add_button("y", 'y');
+      update_statusline();
+      
+      /* Get a key */
+      ke = inkey_ex();
+      
+      /* Analyze */
+      switch (ke.key)
+        {
+        case ESCAPE:
+          {
+	    kill_button('F');
+	    kill_button('n');
+	    kill_button('y');
+	    update_statusline();
+            return;
+          }
+          
+        case '-':
+        case '8':
+          {
+            k = (n + k - 1) % n;
+            break;
+          }
+          
+        case ' ':
+        case '\n':
+        case '\r':
+        case '2':
+          {
+            k = (k + 1) % n;
+            break;
+          }
+          
+        case 'y':
+        case 'Y':
+        case '6':
+          {
+            
+            autosave = TRUE;
+            k = (k + 1) % n;
+            break;
+          }
+          
+        case 'n':
+        case 'N':
+        case '4':
+          {
+            autosave = FALSE;
+            k = (k + 1) % n;
+            break;
+          }
+          
+        case 'f':
+        case 'F':
+          {
+            autosave_freq = toggle_frequency(autosave_freq);
+            prt(format("Timed autosave frequency: every %d turns",
+                       autosave_freq), 5, 0);
+            break;
+          }
+          
+        default:
+          {
+            bell("Illegal command for Autosave options!");
+            break;
+          }
+        }
+    }
+}
+
 
 
 /*** Main menu definitions and display ***/
@@ -1688,8 +1875,10 @@ static menu_action option_actions[] =
 	{ 0, 'd', "Set base delay factor", do_cmd_delay },
 	{ 0, 'h', "Set hitpoint warning", do_cmd_hp_warn },
 	{ 0, 'i', "Set movement delay", do_cmd_lazymove_delay },
+	{ 0, 'p', "Set panel change factor", do_cmd_panel_change },
 	{ 0, 'l', "Load a user pref file", options_load_pref_file },
 	{ 0, 'o', "Save options", do_dump_options }, 
+	{ 0, 'x', "Autosave options", do_cmd_options_autosave },
 	{0, 0, 0, 0}, /* Interact with */	
 
 #ifdef ALLOW_MACROS

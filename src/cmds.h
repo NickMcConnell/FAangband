@@ -5,6 +5,15 @@
 #ifndef __angband_cmds_h__
 #define __angband_cmds_h__
 
+void textui_obj_inscribe(object_type *o_ptr, int item);
+void textui_obj_examine(object_type *o_ptr, int item);
+void textui_obj_wield(object_type *o_ptr, int item);
+void textui_cmd_rest(void);
+void textui_cmd_suicide(void);
+void textui_cmd_destroy(void);
+extern void textui_cmd_fire_at_nearest(void);
+extern void textui_cmd_throw(void);
+
 /* cmd-misc.c */
 extern void cmd_init(void);
 extern int click_area(ui_event_data ke);
@@ -58,6 +67,7 @@ extern void do_cmd_uninscribe(void);
 extern void do_cmd_inscribe(void);
 extern void do_cmd_refill(void);
 extern void do_cmd_target(void);
+extern void do_cmd_target_closest(void);
 extern void do_cmd_look(void);
 extern void do_cmd_locate(void);
 extern void do_cmd_query_symbol(void);
@@ -114,6 +124,26 @@ extern void do_cmd_zap_rod(void);
 extern void do_cmd_activate(void);
 extern void do_cmd_bear_shape(void);
 extern void do_cmd_unchange(void);
+
+/* ui-spell.c -- just for now */
+void textui_book_browse(const object_type *o_ptr);
+void textui_spell_browse(void);
+void textui_obj_study(void);
+void textui_obj_cast(void);
+
+/* ui-knowledge.c */
+extern void big_pad(int col, int row, byte a, byte c);
+extern void textui_browse_object_knowledge(void *obj, const char *name);
+extern void textui_knowledge_init(void);
+extern void textui_browse_knowledge(void);
+
+/* Types of item use */
+typedef enum
+{
+	USE_TIMEOUT,
+	USE_CHARGE,
+	USE_SINGLE
+} use_type;
 
 #endif
 

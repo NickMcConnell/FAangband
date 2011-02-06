@@ -2252,6 +2252,75 @@ void do_cmd_fire(void)
 
 
 
+void textui_cmd_fire_at_nearest(void)
+{
+	/* the direction '5' means 'use the target' */
+	int i, dir = 5, item = -1;
+	int bow_sv = inventory[INVEN_BOW].sval;
+	int ammo_tv = 0;
+
+	/* Require a usable launcher */
+	if (!inventory[INVEN_BOW].tval)
+	{
+		msg_print("You have nothing to fire with.");
+		return;
+	}
+
+	/* Get the right ammo type */
+	switch (bow_sv)
+	  {
+	  case SV_SLING: 
+	    {
+	      ammo_tv = TV_SHOT; 
+	      break;
+	    }
+	  case SV_SHORT_BOW:
+	  case SV_LONG_BOW:
+	    {
+	      ammo_tv = TV_ARROW;
+	      break;
+	    }
+	  case SV_LIGHT_XBOW:
+	  case SV_HEAVY_XBOW:
+	    {
+	      ammo_tv = TV_BOLT;
+	      break;
+	    }
+	  }
+
+	/* Find first eligible ammo in the quiver */
+	for (i = INVEN_Q0; i < INVEN_Q9; i++)
+	{
+
+		if (inventory[i].tval != ammo_tv) continue;
+		item = i;
+		break;
+	}
+
+	/* Require usable ammo */
+	if (item < 0)
+	{
+		msg_print("You have no ammunition in the quiver to fire");
+		return;
+	}
+
+	/* Require foe */
+	if (!target_set_closest(TARGET_KILL | TARGET_QUIET))
+		return;
+
+	/* Check for confusion */
+	if (p_ptr->confused)
+	{
+		msg_print("You are confused.");
+		dir = ddd[randint0(8)];
+	}
+
+	/* Fire! */
+	cmd_insert(CMD_FIRE);
+	cmd_set_arg_item(cmd_get_top(), 0, item);
+	cmd_set_arg_target(cmd_get_top(), 1, dir);
+}
+
 /**
  * Throw an object from the pack or floor.
  *
@@ -2713,4 +2782,28 @@ void do_cmd_throw(void)
   
   /* Drop (or break) near that location */
   drop_near(i_ptr, break_chance, y, x);
+}
+
+void textui_cmd_throw(void)
+{
+	int item, dir;
+	cptr q, s;
+
+	/* Get an item */
+	q = "Throw which item? ";
+	s = "You have nothing to throw.";
+	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR))) return;
+
+	if (item >= INVEN_WIELD && item < INVEN_Q0)
+	{
+		msg_print("You cannot throw wielded items.");
+		return;
+	}
+
+	/* Get a direction (or cancel) */
+	if (!get_aim_dir(&dir)) return;
+
+	cmd_insert(CMD_THROW);
+	cmd_set_arg_item(cmd_get_top(), 0, item);
+	cmd_set_arg_target(cmd_get_top(), 1, dir);
 }

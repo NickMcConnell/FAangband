@@ -69,7 +69,27 @@ struct item_command
 
 
 
-/*** Big list of commands ***/
+/* All possible item actions */
+static struct item_command item_actions[] =
+{
+	{ { "Inscribe an object", '{', CMD_INSCRIBE, NULL, NULL },
+	  { "Inscribe which item? ", "You have nothing to inscribe.",
+	    NULL, (USE_EQUIP | USE_INVEN | USE_FLOOR | IS_HARMLESS) },
+	  textui_obj_inscribe, "inscribe", FALSE },
+
+	{ { "Examine an item", 'I', CMD_NULL, NULL, NULL },
+	  { "Examine which item? ", "You have nothing to examine.",
+	    NULL, (USE_EQUIP | USE_INVEN | USE_FLOOR | IS_HARMLESS) },
+	  textui_obj_examine, "examine", FALSE },
+
+	/*** Takeoff/drop/wear ***/
+
+	{ { "Wear/wield an item", 'w', CMD_WIELD, NULL, NULL },
+	  { "Wear/Wield which item? ", "You have nothing you can wear or wield.",
+	    obj_can_wear, (USE_INVEN | USE_FLOOR) },
+	  textui_obj_wield, "wield", FALSE },
+};
+
 
 
 /**
@@ -77,10 +97,10 @@ struct item_command
  */
 static struct generic_command cmd_magic[] =
 {
-  { "Cast a spell",               'm', CMD_NULL, do_cmd_cast_or_pray, NULL },
-  { "Pray a prayer",              'p', CMD_NULL, do_cmd_cast_or_pray, NULL },
-  { "Browse a book",              'b', CMD_NULL, do_cmd_browse, NULL },
-  { "Gain new spells or prayers", 'G', CMD_NULL, do_cmd_study, NULL }
+  { "Cast a spell",    'm', CMD_CAST, textui_obj_cast, player_can_cast },
+  { "Pray a prayer",   'p', CMD_CAST, textui_obj_cast, player_can_cast },
+  { "Browse a book",   'b', CMD_BROWSE_SPELL, textui_spell_browse, NULL },
+  { "Gain new spells", 'G', CMD_STUDY_BOOK, textui_obj_study, player_can_study }
 };
 
 /**
@@ -88,20 +108,22 @@ static struct generic_command cmd_magic[] =
  */
 static struct generic_command cmd_action[] =
 {
-  { "Disarm a trap or chest",             'D', CMD_NULL, do_cmd_disarm, NULL },
-  { "Rest for a while",                   'R', CMD_NULL, do_cmd_rest, NULL },
+  { "Disarm a trap or chest",             'D', CMD_DISARM, NULL, NULL },
+  { "Rest for a while",                   'R', CMD_NULL, textui_cmd_rest, NULL },
   { "Look around",                        'l', CMD_NULL, do_cmd_look, NULL },
   { "Target monster or location",         '*', CMD_NULL, do_cmd_target, NULL },
-  { "Dig a tunnel",                       'T', CMD_NULL, do_cmd_tunnel, NULL },
-  { "Open a door or a chest",             'o', CMD_NULL, do_cmd_open, NULL },
-  { "Close a door",                       'c', CMD_NULL, do_cmd_close, NULL },
-  { "Search for traps/doors",             's', CMD_NULL, do_cmd_search, NULL },
-  { "Alter a grid/set monster trap",      '+', CMD_NULL, do_cmd_alter, NULL },
-  { "Go up staircase",                    '<', CMD_NULL, do_cmd_go_up, NULL },
-  { "Go down staircase",                  '>', CMD_NULL, do_cmd_go_down, NULL },
-  { "Toggle search mode",                 'S', CMD_NULL, do_cmd_toggle_search, NULL },
-  { "Jam a door shut",                    'j', CMD_NULL, do_cmd_spike, NULL },
-  { "Bash a door open",                   'B', CMD_NULL, do_cmd_bash, NULL },
+  { "Target closest monster",             '\'', CMD_NULL, do_cmd_target_closest, NULL },
+  { "Dig a tunnel",                       'T', CMD_TUNNEL, NULL, NULL },
+  { "Open a door or a chest",             'o', CMD_OPEN, NULL, NULL },
+  { "Close a door",                       'c', CMD_CLOSE, NULL, NULL },
+  { "Search for traps/doors",             's', CMD_SEARCH, NULL, NULL },
+  { "Alter a grid/set monster trap",      '+', CMD_ALTER, NULL, NULL },
+  { "Go up staircase",                    '<', CMD_GO_UP, NULL, NULL },
+  { "Go down staircase",                  '>', CMD_GO_DOWN, NULL, NULL },
+  { "Toggle search mode",                 'S', CMD_TOGGLE_SEARCH, NULL, NULL },
+  { "Jam a door shut",                    'j', CMD_JAM, NULL, NULL },
+  { "Bash a door open",                   'B', CMD_BASH, NULL, NULL },
+  { "Fire at nearest target",             'h', CMD_NULL, textui_cmd_fire_at_nearest, NULL },
   { "Racial shapechange/End shapechange", ']', CMD_NULL, do_cmd_reshape, NULL },
   { "Move house",                         'H', CMD_NULL, do_cmd_move_house, NULL } 
 };
@@ -109,18 +131,18 @@ static struct generic_command cmd_action[] =
 /**
  * Item use commands 
  */
-static struct generic_command cmd_item_use[] =
+static struct generic_command cmd_item[] =
 {
-  { "Fire your missile weapon",   'f', CMD_NULL, do_cmd_fire, NULL },
-  { "Throw an item",              'v', CMD_NULL, do_cmd_throw, NULL },
-  { "Read a scroll",              'r', CMD_NULL, do_cmd_read_scroll, NULL },
-  { "Quaff a potion",             'q', CMD_NULL, do_cmd_quaff_potion, NULL },
-  { "Use a staff",                'u', CMD_NULL, do_cmd_use_staff, NULL },
-  { "Aim a wand",                 'a', CMD_NULL, do_cmd_aim_wand, NULL },
-  { "Zap a rod",                  'z', CMD_NULL, do_cmd_zap_rod, NULL },
-  { "Activate an object",         'A', CMD_NULL, do_cmd_activate, NULL },
-  { "Eat some food",              'E', CMD_NULL, do_cmd_eat_food, NULL },
-  { "Fuel your light source",     'F', CMD_NULL, do_cmd_refill, NULL }
+  { "Fire your missile weapon",   'f', CMD_FIRE, NULL, player_can_fire },
+  { "Throw an item",              'v', CMD_THROW, textui_cmd_throw, NULL },
+  { "Read a scroll",              'r', CMD_READ_SCROLL, NULL, NULL },
+  { "Quaff a potion",             'q', CMD_QUAFF, NULL, NULL },
+  { "Use a staff",                'u', CMD_USE_STAFF, NULL, NULL },
+  { "Aim a wand",                 'a', CMD_USE_WAND, NULL, NULL },
+  { "Zap a rod",                  'z', CMD_USE_ROD, NULL, NULL },
+  { "Activate an object",         'A', CMD_ACTIVATE, NULL, NULL },
+  { "Eat some food",              'E', CMD_EAT, NULL, NULL },
+  { "Fuel your light source",     'F', CMD_REFILL, NULL, NULL }
 };
 
 /**
@@ -130,14 +152,14 @@ static struct generic_command cmd_item_manage[]  =
 {
   { "Display equipment listing", 'e', CMD_NULL, do_cmd_equip, NULL },
   { "Display inventory listing", 'i', CMD_NULL, do_cmd_inven, NULL },
-  { "Pick up objects",           'g', CMD_NULL, do_cmd_pickup, NULL },
+  { "Pick up objects",           'g', CMD_PICKUP, NULL, NULL },
   { "Wear/wield an item",        'w', CMD_NULL, do_cmd_wield, NULL },
-  { "Take/unwield off an item",  't', CMD_NULL, do_cmd_takeoff, NULL },
-  { "Drop an item",              'd', CMD_NULL, do_cmd_drop, NULL },
-  { "Destroy an item",           'k', CMD_NULL, do_cmd_destroy, NULL },
+  { "Take off/unwield an item",  't', CMD_TAKEOFF, NULL, NULL },
+  { "Drop an item",              'd', CMD_DROP, NULL, NULL },
+  { "Destroy an item",           'k', CMD_DESTROY, textui_cmd_destroy, NULL },
   { "Examine an item",           'I', CMD_NULL, do_cmd_observe, NULL },
   { "Inscribe an object",        '{', CMD_NULL, do_cmd_inscribe, NULL },
-  { "Uninscribe an object",      '}', CMD_NULL, do_cmd_uninscribe, NULL }
+  { "Uninscribe an object",      '}', CMD_UNINSCRIBE, NULL, NULL }
 };
 
 /**
@@ -152,7 +174,7 @@ static struct generic_command cmd_info[] =
   { "Identify symbol",              '/', CMD_NULL, do_cmd_query_symbol, NULL },
   { "Character description",        'C', CMD_NULL, do_cmd_change_name, NULL },
   { "Interact with options",        '=', CMD_NULL, do_cmd_xxx_options, NULL },
-  { "Check knowledge",              '~', CMD_NULL, do_cmd_knowledge, NULL },
+  { "Check knowledge",              '~', CMD_NULL, textui_browse_knowledge, NULL },
   { "Display visible monster list", '[', CMD_NULL, do_cmd_monlist, NULL },
   { "Display visible item list", KTRL('I'), CMD_NULL, do_cmd_itemlist, NULL },
   { "Repeat level feeling",   KTRL('F'), CMD_NULL, do_cmd_feeling, NULL },
@@ -166,9 +188,9 @@ static struct generic_command cmd_info[] =
  */
 static struct generic_command cmd_util[] =
 {
-  { "Save and don't quit",  KTRL('S'), CMD_NULL, do_cmd_save_game, NULL },
-  { "Save and quit",        KTRL('X'), CMD_NULL, do_cmd_quit, NULL },
-  { "Quit (commit suicide)",      'Q', CMD_NULL, do_cmd_suicide, NULL },
+  { "Save and don't quit",  KTRL('S'), CMD_SAVE, NULL, NULL },
+  { "Save and quit",        KTRL('X'), CMD_QUIT, NULL, NULL },
+  { "Quit (commit suicide)",      'Q', CMD_NULL, textui_cmd_suicide, NULL },
   { "Redraw the screen",    KTRL('R'), CMD_NULL, do_cmd_redraw, NULL },
   { "Load \"screen dump\"",       '(', CMD_NULL, do_cmd_load_screen, NULL },
   { "Save \"screen dump\"",       ')', CMD_NULL, do_cmd_save_screen, NULL }
@@ -181,12 +203,12 @@ static struct generic_command cmd_hidden[] =
 {
   { "Take notes",                      ':', CMD_NULL, do_cmd_note, NULL },
   { "Version info",                    'V', CMD_NULL, do_cmd_version, NULL },
-  { "Enter a store",                   '_', CMD_NULL, do_cmd_store, NULL },
-  { "Toggle windows",            KTRL('E'), CMD_NULL, toggle_inven_equip, NULL }, /* XXX */
-  { "Walk",                            ';', CMD_NULL, do_cmd_walk, NULL },
-  { "Start running",                   '.', CMD_NULL, do_cmd_run, NULL },
-  { "Stand still",                     ',', CMD_NULL, do_cmd_hold, NULL },
-  { "Jump (into a trap)",              '-', CMD_NULL, do_cmd_jump, NULL },
+  { "Enter a store",                   '_', CMD_ENTER_STORE, NULL, NULL },
+  { "Toggle windows",            KTRL('E'), CMD_NULL, toggle_inven_equip, NULL },
+  { "Walk",                            ';', CMD_WALK, NULL, NULL },
+  { "Start running",                   '.', CMD_RUN, NULL, NULL },
+  { "Stand still",                     ',', CMD_HOLD, NULL, NULL },
+  { "Jump (into a trap)",              '-', CMD_JUMP, NULL, NULL },
   { "Display inventory for selection", '|', CMD_NULL, do_cmd_show_obj, NULL },
   { "Toggle wizard mode",        KTRL('W'), CMD_NULL, do_cmd_wizard, NULL },
 
@@ -198,6 +220,7 @@ static struct generic_command cmd_hidden[] =
 #endif
 };
 
+static struct generic_command cmd_item_use[N_ELEMENTS(item_actions)];
 
 
 /**
@@ -212,9 +235,10 @@ typedef struct
 
 static command_list cmds_all[] =
 {
+  { "Use item",        cmd_item_use,    N_ELEMENTS(item_actions) },
   { "Use magic/Pray",  cmd_magic,       N_ELEMENTS(cmd_magic) },
   { "Action commands", cmd_action,      N_ELEMENTS(cmd_action) },
-  { "Use item",        cmd_item_use,    N_ELEMENTS(cmd_item_use) },
+  { "Items",           cmd_item,        N_ELEMENTS(cmd_item) },
   { "Manage items",    cmd_item_manage, N_ELEMENTS(cmd_item_manage) },
   { "Information",     cmd_info,        N_ELEMENTS(cmd_info) },
   { "Utility",         cmd_util,        N_ELEMENTS(cmd_util) },
@@ -320,7 +344,7 @@ static char textui_action_menu_choose(void)
 {
 	region area = { 21, 5, 37, 6 };
 
-	struct generic_command chosen_command = { 0 };
+	struct generic_command chosen_command = { 0, 0, 0, 0, 0 };
 
 	if (!command_menu)
 		command_menu = menu_new(MN_SKIN_SCROLL, &command_menu_iter);
