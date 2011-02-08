@@ -75,6 +75,7 @@ ANGFILES = \
 	cmd-misc.o \
 	dungeon.o \
 	files.o \
+	game-cmd.o \
 	game-event.o \
 	generate.o \
 	identify.o \
@@ -90,19 +91,21 @@ ANGFILES = \
 	monster2.o \
 	object1.o \
 	object2.o \
+	option.o \
 	prefs.o \
 	randart.o \
 	randname.o \
 	save.o \
 	score.o \
 	signals.o \
+	spell.o \
 	spells1.o \
 	spells2.o \
 	squelch.o \
 	store.o \
 	tables.o \
-	ui.o \
 	ui-birth.o \
+	ui.o \
 	ui-knowledge.o \
 	ui-menu.o \
 	ui-options.o \
@@ -112,5 +115,6 @@ ANGFILES = \
 	wizard1.o \
 	wizard2.o \
 	x-char.o \
+	x-spell.o \
 	xtra1.o \
 	xtra2.o
