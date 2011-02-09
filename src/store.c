@@ -2917,7 +2917,7 @@ void get_owner(bool pick)
  * into other commands, normally, we convert "p" (pray) and "m"
  * (cast magic) into "g" (get), and "s" (search) into "d" (drop).
  */
-void do_cmd_store(void)
+void do_cmd_store(cmd_code code, cmd_arg args[])
 {
   int py = p_ptr->py;
   int px = p_ptr->px;

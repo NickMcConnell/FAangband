@@ -1201,7 +1201,7 @@ struct player_type
   s16b command_arg;	/**< Gives argument of current command */
   s16b command_rep;	/**< Gives repetition of current command */
   s16b command_dir;	/**< Gives direction of current command */
-  ui_event_type command_cmd_ex; /**< Gives extra information of current command */
+  ui_event_data command_cmd_ex; /**< Gives extra information of current command */
   s16b command_item;    /**< Gives the item for the next command */
   
   s16b command_see;	/**< See "cmd1.c" */

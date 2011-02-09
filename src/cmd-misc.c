@@ -1,5 +1,25 @@
+/** \file cmd-misc.c 
+    \brief Miscellaneous Commands
+
+ * Code for miscellaneous commands.
+ *
+ * Copyright (c) 2011 Nick McConnell
+ *
+ * This work is free software; you can redistribute it and/or modify it
+ * under the terms of either:
+ *
+ * a) the GNU General Public License as published by the Free Software
+ *    Foundation, version 2, or
+ *
+ * b) the "Angband licence":
+ *    This software may be copied and distributed for educational, research,
+ *    and not for profit purposes provided that this copyright and statement
+ *    are included in all such copies.  Other copyrights may also apply.
+ */
+
 #include "angband.h"
 #include "cmds.h"
+#include "ui-menu.h"
 
 /**
  * Divide up the screen into mousepress regions 
@@ -83,6 +103,76 @@ void get_feats(int *surroundings)
   return;
 }
 
+
+/**
+* Menu functions
+*/
+char comm[22];
+cptr comm_descr[22];
+int poss;
+
+/**
+* Item tag/command key
+*/
+static char show_tag(menu_type *menu, int oid)
+{
+  /* Caution - could be a problem here if KTRL commands were used */
+  return comm[oid];
+}
+
+/**
+* Display an entry on a command menu
+*/
+static void show_display(menu_type *menu, int oid, bool cursor, int row,
+int col, int width)
+{
+  byte attr = (cursor ? TERM_L_BLUE : TERM_WHITE);
+  
+  /* Write the description */
+  Term_putstr(col + 4, row, -1, attr, comm_descr[oid]);
+}
+
+
+/**
+* Handle user input from a command menu
+*/
+static bool show_action(menu_type *menu, ui_event_data *e, int oid)
+{
+  u16b *choice = &menu->menu_data;
+
+  /* Handle enter and mouse */
+  if (e->type == EVT_SELECT)
+    {
+      p_ptr->command_new = comm[oid];
+    }
+  return TRUE;
+}
+
+/**
+* Display a list of commands.
+*/
+void show_cmd_menu(bool object)
+{
+  menu_type menu;
+  menu_iter commands_menu = { show_tag, 0, show_display, show_action, 0 };
+  region area = { 0, (object ? 2 : 1), 20, 0 };
+  
+  ui_event_data evt = EVENT_EMPTY;
+  int cursor = 0;
+  
+  /* Size of menu */
+  area.page_rows = poss + (object ? 1 : 0);
+
+  /* Set up the menu */
+  WIPE(&menu, menu);
+  menu.cmd_keys = "\x8B\x8C\n\r";
+  menu.count = poss;
+  menu.menu_data = comm;
+  menu_init(&menu, MN_SKIN_SCROLL, &commands_menu);
+  
+  /* Select an entry */
+  evt = menu_select(&menu, cursor);
+}
 
 /**
  * Bring up player actions 
@@ -562,7 +652,7 @@ void handle_mousepress(int y, int x)
   int area, i;
   
   /* Exit if the player doesn't want to use the mouse */
-  if (!mouse_buttons) return;
+  if (!OPT(mouse_buttons)) return;
 
   /* Find out where we've clicked */
   area = click_area(p_ptr->command_cmd_ex);
@@ -680,7 +770,7 @@ static bool enter_wizard_mode(void)
 /**
  * Toggle wizard mode
  */
-static void do_cmd_wizard(void)
+extern void do_cmd_wizard(void)
 {
   if(enter_wizard_mode())
     {
@@ -717,7 +807,7 @@ static bool verify_debug_mode(void)
   static int verify = 1;
   
   /* Ask first time, unless the savefile is already in debug mode. */
-  if (verify && verify_special && (!(p_ptr->noscore & 0x0008)))
+  if (verify && OPT(verify_special) && (!(p_ptr->noscore & 0x0008)))
     {
       /* Mention effects */
       msg_print("You are about to use the dangerous, unsupported, debug commands!");
@@ -746,7 +836,7 @@ static bool verify_debug_mode(void)
 /**
  * Verify use of "debug" mode
  */
-static void do_cmd_try_debug(void)
+extern void do_cmd_try_debug(void)
 {
 	/* Ask first time */
 	if (verify_debug_mode())
@@ -766,7 +856,7 @@ static void do_cmd_try_debug(void)
 /**
  * Verify use of "borg" mode
  */
-static bool do_cmd_try_borg(void)
+extern bool do_cmd_try_borg(void)
 {
   /* Ask first time */
   if (!(p_ptr->noscore & NOSCORE_BORG))
@@ -796,7 +886,7 @@ static bool do_cmd_try_borg(void)
 /**
  * Quit the game.
  */
-static void do_cmd_quit(void)
+extern void do_cmd_quit(void)
 {
 	/* Stop playing */
 	p_ptr->playing = FALSE;
@@ -809,7 +899,7 @@ static void do_cmd_quit(void)
 /**
  * Display the options and redraw afterward.
  */
-static void do_cmd_xxx_options(void)
+extern void do_cmd_xxx_options(void)
 {
 	do_cmd_options();
 	do_cmd_redraw();
@@ -819,7 +909,7 @@ static void do_cmd_xxx_options(void)
 /**
  * Display the options and redraw afterward.
  */
-static void do_cmd_reshape(void)
+extern void do_cmd_reshape(void)
 {
 	if ((!SCHANGE) &&
 	    (check_ability(SP_BEARSKIN)))
@@ -833,7 +923,7 @@ static void do_cmd_reshape(void)
 /**
  * Display the main-screen monster list.
  */
-static void do_cmd_monlist(void)
+extern void do_cmd_monlist(void)
 {
 	/* Save the screen and display the list */
 	screen_save();
@@ -850,7 +940,7 @@ static void do_cmd_monlist(void)
 /**
  * Display the main-screen monster list.
  */
-static void do_cmd_itemlist(void)
+extern void do_cmd_itemlist(void)
 {
 	/* Save the screen and display the list */
 	screen_save();
@@ -867,7 +957,7 @@ static void do_cmd_itemlist(void)
 /**
  * Invoked when the command isn't recognised.
  */
-static void do_cmd_unknown(void)
+extern void do_cmd_unknown(void)
 {
 	prt("Type '?' for help.", 0, 0);
 }

@@ -73,6 +73,7 @@ ANGFILES = \
 	cmd5.o \
 	cmd6.o \
 	cmd-misc.o \
+	cmd-obj.o \
 	dungeon.o \
 	files.o \
 	game-cmd.o \

@@ -4399,6 +4399,67 @@ extern void remove_set(int s_idx)
   if (bonus_removed) msg_print("Item set no longer completed.");
 }
 
+/**
+ *Returns the number of times in 1000 that @ will FAIL
+ */
+int get_use_device_chance(const object_type *o_ptr)
+{
+  /* Get the object kind */
+  object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
+  /* Extract the item level */
+  int lev = k_ptr->level;
+  
+  /* Base chance of success */
+  int chance = p_ptr->skill_dev;
+
+  /* Final "probability" */
+  int prob = 10000;
+  
+  /* Confusion hurts skill */
+  if (p_ptr->confused) chance = chance / 2;
+  
+  /* High level objects are harder */
+  chance = chance - ((lev > 50) ? 50 : lev);
+
+  /* Calculate the chance */
+  if (chance < USE_DEVICE)
+    {
+      prob *= 2; 
+      prob /= (USE_DEVICE * (USE_DEVICE + 1 - chance));
+    }
+  else 
+    {
+      prob -= prob * (USE_DEVICE - 1) / chance;
+    }
+  prob /= 10;
+
+	return 1000 - prob;
+}
+
+/* Basic tval testers */
+bool obj_is_staff(const object_type *o_ptr)  { return o_ptr->tval == TV_STAFF; }
+bool obj_is_wand(const object_type *o_ptr)   { return o_ptr->tval == TV_WAND; }
+bool obj_is_rod(const object_type *o_ptr)    { return o_ptr->tval == TV_ROD; }
+bool obj_is_potion(const object_type *o_ptr) { return o_ptr->tval == TV_POTION; }
+bool obj_is_scroll(const object_type *o_ptr) { return o_ptr->tval == TV_SCROLL; }
+bool obj_is_food(const object_type *o_ptr)   { return o_ptr->tval == TV_FOOD; }
+bool obj_is_light(const object_type *o_ptr)   { return o_ptr->tval == TV_LIGHT; }
+bool obj_is_ring(const object_type *o_ptr)   { return o_ptr->tval == TV_RING; }
+
+/**
+ * Determine whether an object is ammo
+ *
+ * \param o_ptr is the object to check
+ */
+bool obj_is_ammo(const object_type *o_ptr)
+{
+  return is_missile((object_type *)o_ptr);
+}
+
+
+
+
 
 /* Determine if an object has charges */
 bool obj_has_charges(const object_type *o_ptr)
@@ -4468,6 +4529,17 @@ bool obj_can_refill(const object_type *o_ptr)
 
 bool obj_can_browse(const object_type *o_ptr)
 {
+  /* Wrong tval */
+  if (mp_ptr->spell_book != o_ptr->tval)
+    return (FALSE);
+
+  /* Book not usable by this class */
+  if ((mp_ptr->book_start_index[o_ptr->sval] == 
+       mp_ptr->book_start_index[o_ptr->sval + 1]))
+  return (FALSE);
+
+  /* Okay then */
+  return (TRUE);
 	return o_ptr->tval == cp_ptr->spell_book;
 }
 
@@ -4555,4 +4627,28 @@ bool obj_needs_aim(object_type *o_ptr)
 		return FALSE;
 }
 
+
+/* 
+ * Check if the given item is available for the player to use. 
+ *
+ * 'mode' defines which areas we should look at, a la scan_items().
+ */
+bool item_is_available(int item, bool (*tester)(const object_type *), int mode)
+{
+	int item_list[ALL_INVEN_TOTAL + MAX_FLOOR_STACK];
+	int item_num;
+	int i;
+
+	item_tester_hook = tester;
+	item_tester_tval = 0;
+	item_num = scan_items(item_list, N_ELEMENTS(item_list), mode);
+
+	for (i = 0; i < item_num; i++)
+	{
+		if (item_list[i] == item)
+			return TRUE;
+	}
+
+	return FALSE;
+}
 

@@ -26,7 +26,7 @@
  * Move house to the current town
  */
 
-void do_cmd_move_house(void)
+void do_cmd_move_house(cmd_code code, cmd_arg args[])
 {
   char buf[80];
   int old_home = 0, new_home = 0, i = 0;
@@ -100,7 +100,7 @@ void do_cmd_move_house(void)
 /**
  * Go to less danger
  */
-void do_cmd_go_up(void)
+void do_cmd_go_up(cmd_code code, cmd_arg args[])
 {
   int py = p_ptr->py;
   int px = p_ptr->px;
@@ -272,7 +272,7 @@ void do_cmd_go_up(void)
 /**
  * Go to greater danger
  */
-void do_cmd_go_down(void)
+void do_cmd_go_down(cmd_code code, cmd_arg args[])
 {
   int py = p_ptr->py;
   int px = p_ptr->px;
@@ -495,7 +495,7 @@ void do_cmd_go_down(void)
 /**
  * Simple command to "search" for one turn
  */
-void do_cmd_search(void)
+void do_cmd_search(cmd_code code, cmd_arg args[])
 {
   /* Allow repeated command */
   if (p_ptr->command_arg)
@@ -521,7 +521,7 @@ void do_cmd_search(void)
 /**
  * Hack -- toggle search mode
  */
-void do_cmd_toggle_search(void)
+void do_cmd_toggle_search(cmd_code code, cmd_arg args[])
 {
   /* Stop searching */
   if (p_ptr->searching)
@@ -1347,7 +1347,7 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
 /**
  * Return TRUE if the given feature is an open door
  */
-static bool is_open(int feat)
+bool is_open(int feat)
 {
   return (feat == FEAT_OPEN);
 }
@@ -1356,7 +1356,7 @@ static bool is_open(int feat)
 /**
  * Return TRUE if the given feature is a closed door
  */
-static bool is_closed(int feat)
+bool is_closed(int feat)
 {
   return ((feat >= FEAT_DOOR_HEAD) &&
 	        (feat <= FEAT_DOOR_TAIL));
@@ -1366,7 +1366,7 @@ static bool is_closed(int feat)
 /**
  * Return TRUE if the given feature is a trap
  */
-static bool is_trap(int feat)
+bool is_trap(int feat)
 {
   return ((feat >= FEAT_TRAP_HEAD) && (feat <= FEAT_TRAP_TAIL));
 }
@@ -1375,7 +1375,7 @@ static bool is_trap(int feat)
 /**
  * Return the number of doors/traps around (or under) the character
  */
-static int count_feats(int *y, int *x, bool (*test)(int feat), bool under)
+int count_feats(int *y, int *x, bool (*test)(int feat), bool under)
 {
   int d;
   int xx, yy;
@@ -1419,7 +1419,7 @@ static int count_feats(int *y, int *x, bool (*test)(int feat), bool under)
  * Return the number of chests around (or under) the character. -TNB-
  * If requested, count only trapped chests.
  */
-extern int count_chests(int *y, int *x, bool trapped)
+int count_chests(int *y, int *x, bool trapped)
 {
   int d, count, o_idx;
   
@@ -1617,7 +1617,7 @@ static bool do_cmd_open_aux(int y, int x)
  *
  * Unlocking a locked door/chest is worth one experience point.
  */
-void do_cmd_open(void)
+void do_cmd_open(cmd_code code, cmd_arg args[])
 {
   int py = p_ptr->py;
   int px = p_ptr->px;
@@ -1801,7 +1801,7 @@ static bool do_cmd_close_aux(int y, int x)
 /**
  * Close an open door.
  */
-void do_cmd_close(void)
+void do_cmd_close(cmd_code code, cmd_arg args[])
 {
   int py = p_ptr->py;
   int px = p_ptr->px;
@@ -2130,7 +2130,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
  * Digging is very difficult without a "digger" weapon, but can be
  * accomplished by strong players using heavy weapons.
  */
-void do_cmd_tunnel(void)
+void do_cmd_tunnel(cmd_code code, cmd_arg args[])
 {
   int py = p_ptr->py;
   int px = p_ptr->px;
@@ -2390,7 +2390,7 @@ static bool do_cmd_disarm_aux(int y, int x)
 /**
  * Disarms a trap, a glyph, or a chest.
  */
-void do_cmd_disarm(void)
+void do_cmd_disarm(cmd_code code, cmd_arg args[])
 {
   int py = p_ptr->py;
   int px = p_ptr->px;
@@ -2625,7 +2625,7 @@ static bool do_cmd_bash_aux(int y, int x)
  *
  * Creatures can also open or bash doors, see elsewhere.
  */
-void do_cmd_bash(void)
+void do_cmd_bash(cmd_code code, cmd_arg args[])
 {
   int py = p_ptr->py;
   int px = p_ptr->px;
@@ -2703,7 +2703,7 @@ void do_cmd_bash(void)
  * The "semantics" of this command must be chosen before the player
  * is confused, and it must be verified against the new grid.
  */
-void do_cmd_alter(void)
+void do_cmd_alter(cmd_code code, cmd_arg args[])
 {
   int py = p_ptr->py;
   int px = p_ptr->px;
@@ -2907,7 +2907,7 @@ bool do_cmd_spike_test(int y, int x)
  *
  * This command may NOT be repeated
  */
-void do_cmd_spike(void)
+void do_cmd_spike(cmd_code code, cmd_arg args[])
 {
   int py = p_ptr->py;
   int px = p_ptr->px;
@@ -3117,7 +3117,7 @@ static void do_cmd_walk_or_jump(int pickup)
 /**
  * Walk into a grid (pick up objects as set by the auto-pickup option)
  */
-void do_cmd_walk(void)
+void do_cmd_walk(cmd_code code, cmd_arg args[])
 {
   /* Move (usually pickup) */
   do_cmd_walk_or_jump(OPT(always_pickup));
@@ -3127,7 +3127,7 @@ void do_cmd_walk(void)
 /**
  * Jump into a grid (flip pickup mode)
  */
-void do_cmd_jump(void)
+void do_cmd_jump(cmd_code code, cmd_arg args[])
 {
   /* Move (usually do not pickup) */
   do_cmd_walk_or_jump(!OPT(always_pickup));
@@ -3139,7 +3139,7 @@ void do_cmd_jump(void)
  *
  * Note that running while confused is not allowed.
  */
-void do_cmd_run(void)
+void do_cmd_run(cmd_code code, cmd_arg args[])
 {
   int py = p_ptr->py;
   int px = p_ptr->px;
@@ -3178,7 +3178,7 @@ void do_cmd_run(void)
  *
  * Note that running while confused is not allowed.
  */
-void do_cmd_pathfind(int y, int x)
+void do_cmd_pathfind(cmd_code code, cmd_arg args[])
 {
   int py = p_ptr->py;
   int px = p_ptr->px;
@@ -3199,7 +3199,7 @@ void do_cmd_pathfind(int y, int x)
       return;
     }
   
-  if (findpath(y, x))
+  if (findpath(args[0].point.y, args[0].point.x))
     {
       p_ptr->running = 1000;
 
@@ -3273,7 +3273,7 @@ static void do_cmd_hold_or_stay(int pickup)
 /**
  * Hold still (usually pickup)
  */
-void do_cmd_hold(void)
+void do_cmd_hold(cmd_code code, cmd_arg args[])
 {
   /* Hold still (usually pickup) */
   do_cmd_hold_or_stay(OPT(always_pickup));
@@ -3283,7 +3283,7 @@ void do_cmd_hold(void)
 /**
  * Pick up objects on the floor beneath you. -LM-
  */
-void do_cmd_pickup(void)
+void do_cmd_pickup(cmd_code code, cmd_arg args[])
 {
   int energy_cost = 1, item;
   
@@ -3318,7 +3318,7 @@ void do_cmd_pickup(void)
 /**
  * Rest (restores hit points and mana and such)
  */
-void do_cmd_rest(void)
+void do_cmd_rest(cmd_code code, cmd_arg args[])
 {
   bool got_string;
 
@@ -3403,4 +3403,9 @@ void do_cmd_rest(void)
   
   /* Refresh XXX XXX XXX */
   if (OPT(fresh_before)) Term_fresh();
+}
+
+void do_cmd_save_game(cmd_code code, cmd_arg args[])
+{
+	save_game();
 }

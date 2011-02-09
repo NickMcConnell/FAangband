@@ -51,7 +51,7 @@ static struct
 	{ CMD_CHOOSE_SEX, { arg_CHOICE }, NULL, FALSE, 0 },
 	{ CMD_CHOOSE_RACE, { arg_CHOICE }, NULL, FALSE, 0 },
 	{ CMD_CHOOSE_CLASS, { arg_CHOICE }, NULL, FALSE, 0 },
- 	{ CMD_FINALIZE_OPTIONS, { arg_CHOICE }, NULL, FALSE },
+ 	{ CMD_FINALIZE_OPTIONS, { arg_CHOICE }, NULL, FALSE, 0 },
 	{ CMD_BUY_STAT, { arg_CHOICE }, NULL, FALSE, 0 },
 	{ CMD_SELL_STAT, { arg_CHOICE }, NULL, FALSE, 0 },
 	{ CMD_RESET_STATS, { arg_CHOICE }, NULL, FALSE, 0 },
@@ -98,10 +98,6 @@ static struct
 	{ CMD_STUDY_SPELL, { arg_CHOICE }, do_cmd_study_spell, FALSE, 0 },
 	{ CMD_STUDY_BOOK, { arg_ITEM }, do_cmd_study_book, FALSE, 0 },
 	{ CMD_CAST, { arg_CHOICE, arg_TARGET }, do_cmd_cast, FALSE, 0 },
-	{ CMD_SELL, { arg_ITEM, arg_NUMBER }, do_cmd_sell, FALSE, 0 },
-	{ CMD_STASH, { arg_ITEM, arg_NUMBER }, do_cmd_stash, FALSE, 0 },
-	{ CMD_BUY, { arg_ITEM, arg_NUMBER }, do_cmd_buy, FALSE, 0 },
-	{ CMD_RETRIEVE, { arg_ITEM, arg_NUMBER }, do_cmd_retrieve, FALSE, 0 },
 	{ CMD_SUICIDE, { arg_NONE }, do_cmd_suicide, FALSE, 0 },
 	{ CMD_SAVE, { arg_NONE }, do_cmd_save_game, FALSE, 0 },
 	{ CMD_QUIT, { arg_NONE }, do_cmd_quit, FALSE, 0 },
@@ -137,23 +133,23 @@ struct item_selector item_selector[] =
 
 	{ CMD_FIRE, "Fire which item? ",
 	  "You have nothing to fire.",
-	  obj_can_fire, (USE_INVEN | USE_EQUIP | USE_FLOOR | QUIVER_TAGS) },
+	  obj_can_fire, (USE_INVEN | USE_EQUIP | USE_FLOOR) },
 
 	{ CMD_USE_STAFF, "Use which staff? ",
 	  "You have no staff to use.",
-	  obj_is_staff, (USE_INVEN | USE_FLOOR | SHOW_FAIL) },
+	  obj_is_staff, (USE_INVEN | USE_FLOOR) },
 
 	{ CMD_USE_WAND, "Aim which wand? ",
 	  "You have no wand to aim.",
-	  obj_is_wand, (USE_INVEN | USE_FLOOR | SHOW_FAIL) },
+	  obj_is_wand, (USE_INVEN | USE_FLOOR) },
 
 	{ CMD_USE_ROD, "Zap which rod? ",
 	  "You have no charged rods to zap.",
-	  obj_is_rod, (USE_INVEN | USE_FLOOR | SHOW_FAIL) },
+	  obj_is_rod, (USE_INVEN | USE_FLOOR) },
 
 	{ CMD_ACTIVATE, "Activate which item? ",
 	  "You have nothing to activate.",
-	  obj_is_activatable, (USE_EQUIP | SHOW_FAIL) },
+	  obj_is_activatable, (USE_EQUIP) },
 
 	{ CMD_EAT, "Eat which item? ",
 	  "You have nothing to eat.",
@@ -404,7 +400,7 @@ void process_command(cmd_context ctx, bool no_request)
 				int item;
 
 				item_tester_hook = is->filter;
-				if (!get_item(&item, is->prompt, is->noop, cmd->command, is->mode))
+				if (!get_item(&item, is->prompt, is->noop, is->mode))
 					return;
 
 				cmd_set_arg_item(cmd, 0, item);
@@ -545,7 +541,7 @@ void process_command(cmd_context ctx, bool no_request)
 			{
 				bool get_target = FALSE;
 
-				if (spell_needs_aim(cp_ptr->spell_book, cmd->arg[0].choice))
+				if (spell_needs_aim(mp_ptr->spell_book, cmd->arg[0].choice))
 				{
 					if (!cmd->arg_present[1])
 						get_target = TRUE;

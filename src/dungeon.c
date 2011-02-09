@@ -393,7 +393,7 @@ static void process_world(void)
   if (bones_selector) was_ghost=TRUE;
 
   /* Check for creature generation, except on themed levels */
-  if ((rand_int(MAX_M_ALLOC_CHANCE) == 0) && (!p_ptr->themed_level))
+  if ((randint0(MAX_M_ALLOC_CHANCE) == 0) && (!p_ptr->themed_level))
     {
       int n;
       
@@ -417,7 +417,7 @@ static void process_world(void)
   if (p_ptr->poisoned)
     {
       /* Take damage */
-      take_hit(randint(p_ptr->poisoned > 300 ? 20 : 
+      take_hit(randint1(p_ptr->poisoned > 300 ? 20 : 
                        (p_ptr->poisoned + 14) / 15), "poison");
     }
   
@@ -524,14 +524,14 @@ static void process_world(void)
       if (p_ptr->food < PY_FOOD_FAINT)
         {
           /* Faint occasionally */
-          if (!p_ptr->paralyzed && (rand_int(100) < 10))
+          if (!p_ptr->paralyzed && (randint0(100) < 10))
             {
               /* Message */
               msg_print("You faint from the lack of food.");
               disturb(1, 0);
               
               /* Hack -- faint (bypass free action) */
-              (void)set_paralyzed(p_ptr->paralyzed + 1 + rand_int(5));
+              (void)set_paralyzed(p_ptr->paralyzed + 1 + randint0(5));
             }
         }
     }
@@ -912,7 +912,7 @@ static void process_world(void)
           /* The light is getting dim */
           else if ((o_ptr->pval < 100) && (!(o_ptr->pval % 10)))
             {
-              if (disturb_minor) disturb(0, 0);
+              if (OPT(disturb_minor)) disturb(0, 0);
               msg_print("Your light is growing faint.");
 	    }
 	}
@@ -933,7 +933,7 @@ static void process_world(void)
       if (hardy) chance = 2;
       else chance = 5;
       
-      if ((rand_int(100) < chance) && (p_ptr->exp > 0))
+      if ((randint0(100) < chance) && (p_ptr->exp > 0))
         {
           p_ptr->exp -= 1 + plev / 5;
           p_ptr->max_exp -= 1 + plev / 5;
@@ -1052,7 +1052,7 @@ static void process_world(void)
   /*** Random curse effects ***/
   
   /* Random teleportation */
-  if ((p_ptr->teleport) && (rand_int(100) < 1))
+  if ((p_ptr->teleport) && (randint0(100) < 1))
     {
       /* Teleport player */
       teleport_player(40,FALSE);
@@ -1062,55 +1062,55 @@ static void process_world(void)
     }
 
   /* Random aggravation (with hasting of awake monsters */
-  if ((p_ptr->rand_aggro) && (rand_int(500) < 1))
+  if ((p_ptr->rand_aggro) && (randint0(500) < 1))
     {
       /* Aggravate, and notice if seen */
       if (aggravate_monsters(1, FALSE)) notice_curse(CF_AGGRO_RAND, 0);
     }
 
   /* Random poisoning */
-  if ((p_ptr->rand_pois) && (rand_int(300) < 1))
+  if ((p_ptr->rand_pois) && (randint0(300) < 1))
     {
       /* Damage player */
-      pois_hit(5 + randint(5));
+      pois_hit(5 + randint1(5));
 
       /* Notice */
       notice_curse(CF_POIS_RAND, 0);
     }
     
   /* Random poison cloud */
-  if ((p_ptr->rand_pois_bad) && (rand_int(300) < 1)) 
+  if ((p_ptr->rand_pois_bad) && (randint0(300) < 1)) 
     {
       /* Weak poison cloud, enough to wake nearby monsters */
       fire_sphere(GF_POIS, 0, 5, 3, 40);
 
       /* Hurt the player */
-      pois_hit(10 + randint(10));
+      pois_hit(10 + randint1(10));
 
       /* Notice */
       notice_curse(CF_POIS_RAND_BAD, 0);
     }
     
   /* Random cuts */
-  if ((p_ptr->rand_cuts) && (rand_int(200) < 1))
+  if ((p_ptr->rand_cuts) && (randint0(200) < 1))
     {
       /* Wound the player, usually notice */
-      if (set_cut(p_ptr->cut + 5 + rand_int(10))) notice_curse(CF_CUT_RAND, 0);
+      if (set_cut(p_ptr->cut + 5 + randint0(10))) notice_curse(CF_CUT_RAND, 0);
     }
 
   /* Random bad cuts */
-  if ((p_ptr->rand_cuts_bad) && (rand_int(200) < 1))
+  if ((p_ptr->rand_cuts_bad) && (randint0(200) < 1))
     {
       /* Wound the player, usually notice */
-      if (set_cut(p_ptr->cut + 20 + rand_int(30))) 
+      if (set_cut(p_ptr->cut + 20 + randint0(30))) 
 	notice_curse(CF_CUT_RAND_BAD, 0);
     }
 
   /* Random hallucination */
-  if ((p_ptr->rand_hallu) && (rand_int(300) < 1))
+  if ((p_ptr->rand_hallu) && (randint0(300) < 1))
     {
       /* Start hallucinating */
-      (void)set_image(p_ptr->image + 10 + randint(10));
+      (void)set_image(p_ptr->image + 10 + randint1(10));
 
       /* Notice */
       notice_curse(CF_HALLU_RAND, 0);
@@ -1125,19 +1125,19 @@ static void process_world(void)
 	  o_ptr = &inventory[i];
 
 	  /* Chance for each item */
-	  if ((o_ptr->flags_curse & CF_DROP_WEAPON) && (rand_int(200) < 1))
+	  if ((o_ptr->flags_curse & CF_DROP_WEAPON) && (randint0(200) < 1))
 	    {
 	      /* Notice */
 	      notice_curse(CF_DROP_WEAPON, i + 1);
 
 	      /* Dropped it */
-	      inven_drop(i, randint(o_ptr->number));
+	      inven_drop(i, randint1(o_ptr->number));
 	    }
 	}
     }
 
   /* Summon demons */
-  if ((p_ptr->attract_demon) && (rand_int(500) < 1))
+  if ((p_ptr->attract_demon) && (randint0(500) < 1))
     {
       /* Message */
       msg_print("You have attracted a demon.");
@@ -1150,7 +1150,7 @@ static void process_world(void)
     }
 
   /* Summon undead */
-  if ((p_ptr->attract_undead) && (rand_int(500) < 1))
+  if ((p_ptr->attract_undead) && (randint0(500) < 1))
     {
       /* Message */
       msg_print("A call goes out beyond the grave.");
@@ -1163,7 +1163,7 @@ static void process_world(void)
     }
 
   /* Random paralysis - nasty! */
-  if (((p_ptr->rand_paral) || (p_ptr->rand_paral_all)) && (rand_int(600) < 1))
+  if (((p_ptr->rand_paral) || (p_ptr->rand_paral_all)) && (randint0(600) < 1))
     {
       /* Paralyzed for 1 turn */
       (void)set_paralyzed(p_ptr->paralyzed + 1);
@@ -1174,7 +1174,7 @@ static void process_world(void)
     }
 
   /* Experience drain */
-  if ((p_ptr->drain_exp) && (rand_int(100) < 1) && (p_ptr->exp > 0))
+  if ((p_ptr->drain_exp) && (randint0(100) < 1) && (p_ptr->exp > 0))
         {
 	  /* Drain */
           p_ptr->exp -= MIN(1 + plev / 5, p_ptr->exp);
@@ -1186,7 +1186,7 @@ static void process_world(void)
         }
 
   /* Mana drain */
-  if ((p_ptr->drain_mana) && (rand_int(100) < 1) && (p_ptr->csp > 0))
+  if ((p_ptr->drain_mana) && (randint0(100) < 1) && (p_ptr->csp > 0))
     {
       /* Drain */
       p_ptr->csp -= MIN(1 + plev / 5, p_ptr->csp);
@@ -1202,14 +1202,14 @@ static void process_world(void)
     }
 
   /* Drain a random stat */  
-  if ((p_ptr->drain_stat) && (rand_int(1000) < 1))
+  if ((p_ptr->drain_stat) && (randint0(1000) < 1))
     {
       /* Drain */
-      if (do_dec_stat(rand_int(A_MAX))) notice_curse(CF_DRAIN_STAT, 0);
+      if (do_dec_stat(randint0(A_MAX))) notice_curse(CF_DRAIN_STAT, 0);
     }
 
   /* Drain charges - code from monster attack */
-  if ((p_ptr->drain_charge) && (rand_int(200) < 1))
+  if ((p_ptr->drain_charge) && (randint0(200) < 1))
     {
       /* Blindly hunt five times for an item. */
       for (j = 0; j < 5; j++)
@@ -1217,7 +1217,7 @@ static void process_world(void)
 	  bool has_charges = FALSE;
 
 	  /* Pick an item */
-	  i = rand_int(INVEN_PACK);
+	  i = randint0(INVEN_PACK);
 	  
 	  /* Obtain the item */
 	  o_ptr = &inventory[i];
@@ -1333,8 +1333,8 @@ static void process_world(void)
       int chance = 40;
       
       /* After sufficient time, can learn about the level */
-      if ((rand_int(80) < p_ptr->skill_srh) &&
-          (rand_int(80) < chance))
+      if ((randint0(80) < p_ptr->skill_srh) &&
+          (randint0(80) < chance))
         {
           /* Now have a feeling */
           do_feeling = TRUE;
@@ -1603,7 +1603,7 @@ static void process_player(void)
     }
   
   /* Handle "abort" */
-  if (!avoid_abort)
+  if (!OPT(avoid_abort))
     {
       /*
        * Originally, with "resting < 0" you could not abort.
@@ -1680,7 +1680,7 @@ static void process_player(void)
       move_cursor_relative(p_ptr->py, p_ptr->px);
       
       /* Refresh (optional) */
-      if (fresh_before) Term_fresh();
+      if (OPT(fresh_before)) Term_fresh();
       
       
       /* Hack -- Pack Overflow */
@@ -1747,7 +1747,7 @@ static void process_player(void)
       if (!p_ptr->command_new) p_ptr->command_see = FALSE;
       
       /* Mega-hack -- show lists */
-      if (show_lists) p_ptr->command_see = TRUE;      
+      if (OPT(show_lists)) p_ptr->command_see = TRUE;      
 
       /* Hack - update visible monster list */
       p_ptr->window |= (PW_MONLIST | PW_ITEMLIST);
@@ -1806,7 +1806,7 @@ static void process_player(void)
           prt("", 0, 0);
           
           /* Process the command */
-          process_command(TRUE);
+          process_command(CMD_GAME, TRUE);
         }
       
       /* Normal command */
@@ -1819,7 +1819,7 @@ static void process_player(void)
           move_cursor_relative(p_ptr->py, p_ptr->px);
           
           /* Process the command */
-          process_command(FALSE);
+          process_command(CMD_GAME, FALSE);
 	  
           /* Mega hack - complete redraw if big graphics */
           if (use_dbltile || use_trptile) 
@@ -1845,7 +1845,7 @@ static void process_player(void)
           
           
           /* Shimmer monsters if needed */
-          if (!avoid_other && shimmer_monsters)
+          if (!OPT(avoid_other) && shimmer_monsters)
             {
               /* Clear the flag */
               shimmer_monsters = FALSE;
@@ -2041,7 +2041,7 @@ static void dungeon(void)
   
   
   /* No stairs from town or if not allowed */
-  if (!p_ptr->depth || !dungeon_stair)
+  if (!p_ptr->depth || !OPT(dungeon_stair))
     {
       p_ptr->create_stair = 0;
     }
@@ -2261,7 +2261,7 @@ static void dungeon(void)
       move_cursor_relative(p_ptr->py, p_ptr->px);
       
       /* Optional fresh */
-      if (fresh_after) Term_fresh();
+      if (OPT(fresh_after)) Term_fresh();
       
       /* Handle "leaving" */
       if (p_ptr->leaving) break;
@@ -2288,7 +2288,7 @@ static void dungeon(void)
       move_cursor_relative(p_ptr->py, p_ptr->px);
       
       /* Optional fresh */
-      if (fresh_after) Term_fresh();
+      if (OPT(fresh_after)) Term_fresh();
       
       /* Handle "leaving" */
       if (p_ptr->leaving) break;
@@ -2313,7 +2313,7 @@ static void dungeon(void)
       move_cursor_relative(p_ptr->py, p_ptr->px);
       
       /* Optional fresh */
-      if (fresh_after) Term_fresh();
+      if (OPT(fresh_after)) Term_fresh();
       
       /* Handle "leaving" */
       if (p_ptr->leaving) break;
@@ -2472,17 +2472,17 @@ void play_game(bool new_game)
       character_dungeon = FALSE;
       
       /* Hack -- seed for flavors */
-      seed_flavor = rand_int(0x10000000);
+      seed_flavor = randint0(0x10000000);
       
       /* Hack -- seed for town layouts -NRM- */
       for (i = 0; i < 10; i++)
-        seed_town[i] = rand_int(0x10000000);
+        seed_town[i] = randint0(0x10000000);
       
       /* Roll up a new character */
-      player_birth();
+      player_birth(p_ptr->ht_birth ? TRUE : FALSE);
       
       /* Start in home town  - or on the stairs to Angband */
-      p_ptr->stage = (adult_thrall ? (adult_dungeon ? 87 : 135) : p_ptr->home);
+      p_ptr->stage = (OPT(adult_thrall) ? (OPT(adult_dungeon) ? 87 : 135) : p_ptr->home);
       p_ptr->depth = stage_map[p_ptr->stage][DEPTH];
       
       /* Read the default options */
@@ -2540,8 +2540,8 @@ void play_game(bool new_game)
   process_some_user_pref_files();
   
   /* Set or clear "rogue_like_commands" if requested */
-  if (arg_force_original) rogue_like_commands = FALSE;
-  if (arg_force_roguelike) rogue_like_commands = TRUE;
+  if (arg_force_original) OPT(rogue_like_commands) = FALSE;
+  if (arg_force_roguelike) OPT(rogue_like_commands) = TRUE;
 
 
   /* React to changes */
@@ -2621,7 +2621,7 @@ void play_game(bool new_game)
       if (p_ptr->playing && p_ptr->is_dead)
 	{
 	  /* Mega-Hack -- Allow player to cheat death */
-	  if ((p_ptr->wizard || cheat_live) && !get_check("Die? "))
+	  if ((p_ptr->wizard || OPT(cheat_live)) && !get_check("Die? "))
 	    {
 	      /* Mark social class, reset age, if needed */
 	      if (p_ptr->sc) p_ptr->sc = p_ptr->age = 0;

@@ -1742,7 +1742,7 @@ static int breakage_chance(object_type *o_ptr)
  * Apply any special attack or class bonuses, and check for death.
  * Drop the missile near the target (or end of path), sometimes breaking it.
  */
-void do_cmd_fire(void)
+void do_cmd_fire(cmd_code code, cmd_arg args[])
 {
   int py = p_ptr->py;
   int px = p_ptr->px;
@@ -2332,7 +2332,7 @@ void textui_cmd_fire_at_nearest(void)
  * It's too annoying to send your nice throwing weapons halfway across the
  * dungeon.
  */
-void do_cmd_throw(void)
+void do_cmd_throw(cmd_code code, cmd_arg args[])
 {
   int py = p_ptr->py;
   int px = p_ptr->px;

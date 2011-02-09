@@ -1,9 +1,17 @@
+#ifndef INCLUDED_CMDS_H
+#define INCLUDED_CMDS_H
+
 /** \file cmds.h 
     \brief Commands include file.
 */
  
-#ifndef __angband_cmds_h__
-#define __angband_cmds_h__
+#include "game-cmd.h"
+
+/* 
+ * Command handlers will take a pointer to the command structure
+ * so that they can access any arguments supplied.
+ */
+typedef void (*cmd_handler_fn)(cmd_code code, cmd_arg args[]);
 
 void textui_obj_inscribe(object_type *o_ptr, int item);
 void textui_obj_examine(object_type *o_ptr, int item);
@@ -11,8 +19,22 @@ void textui_obj_wield(object_type *o_ptr, int item);
 void textui_cmd_rest(void);
 void textui_cmd_suicide(void);
 void textui_cmd_destroy(void);
-extern void textui_cmd_fire_at_nearest(void);
-extern void textui_cmd_throw(void);
+
+/* cmd-obj.c */
+void do_cmd_uninscribe(cmd_code code, cmd_arg args[]);
+void do_cmd_inscribe(cmd_code code, cmd_arg args[]);
+void do_cmd_takeoff(cmd_code code, cmd_arg args[]);
+void do_cmd_wield(cmd_code code, cmd_arg args[]);
+void do_cmd_drop(cmd_code code, cmd_arg args[]);
+void do_cmd_use(cmd_code code, cmd_arg args[]);
+void do_cmd_refill(cmd_code code, cmd_arg args[]);
+void do_cmd_study_spell(cmd_code code, cmd_arg args[]);
+void do_cmd_cast(cmd_code code, cmd_arg args[]);
+void do_cmd_study_book(cmd_code code, cmd_arg args[]);
+
+void textui_obj_inscribe(object_type *o_ptr, int item);
+void textui_obj_examine(object_type *o_ptr, int item);
+void textui_obj_wield(object_type *o_ptr, int item);
 
 /* cmd-misc.c */
 extern void cmd_init(void);
@@ -23,7 +45,7 @@ extern void handle_mousepress(int y, int x);
 extern void do_cmd_wizard(void);
 extern void do_cmd_try_debug(void);
 extern bool do_cmd_try_borg(void);
-extern void do_cmd_quit(void);
+extern void do_cmd_quit(cmd_code code, cmd_arg args[]);
 extern void do_cmd_xxx_options(void);
 extern void do_cmd_reshape(void);
 extern void do_cmd_monlist(void);
@@ -31,41 +53,34 @@ extern void do_cmd_itemlist(void);
 extern void do_cmd_unknown(void);
 
 /* cmd2.c */
-extern void do_cmd_move_house(void);
-extern void do_cmd_go_up(void);
-extern void do_cmd_go_down(void);
-extern void do_cmd_search(void);
-extern void do_cmd_toggle_search(void);
-extern int count_chests(int *y, int *x, bool trapped);
-extern void do_cmd_open(void);
-extern void do_cmd_close(void);
-extern void do_cmd_tunnel(void);
-extern void do_cmd_disarm(void);
-extern void do_cmd_bash(void);
-extern void do_cmd_alter(void);
+extern void do_cmd_move_house(cmd_code code, cmd_arg args[]);
+extern void do_cmd_go_up(cmd_code code, cmd_arg args[]);
+extern void do_cmd_go_down(cmd_code code, cmd_arg args[]);
+extern void do_cmd_search(cmd_code code, cmd_arg args[]);
+extern void do_cmd_toggle_search(cmd_code code, cmd_arg args[]);
+extern void do_cmd_open(cmd_code code, cmd_arg args[]);
+extern void do_cmd_close(cmd_code code, cmd_arg args[]);
+extern void do_cmd_tunnel(cmd_code code, cmd_arg args[]);
+extern void do_cmd_disarm(cmd_code code, cmd_arg args[]);
+extern void do_cmd_bash(cmd_code code, cmd_arg args[]);
+extern void do_cmd_alter(cmd_code code, cmd_arg args[]);
 extern bool do_cmd_spike_test(int y, int x);
-extern void do_cmd_spike(void);
-extern void do_cmd_walk(void);
-extern void do_cmd_jump(void);
-extern void do_cmd_pathfind(int y, int x);
-extern void do_cmd_run(void);
-extern void do_cmd_hold(void);
-extern void do_cmd_pickup(void);
-extern void do_cmd_rest(void);
+extern void do_cmd_spike(cmd_code code, cmd_arg args[]);
+extern void do_cmd_walk(cmd_code code, cmd_arg args[]);
+extern void do_cmd_jump(cmd_code code, cmd_arg args[]);
+extern void do_cmd_run(cmd_code code, cmd_arg args[]);
+extern void do_cmd_pathfind(cmd_code code, cmd_arg args[]);
+extern void do_cmd_hold(cmd_code code, cmd_arg args[]);
+extern void do_cmd_pickup(cmd_code code, cmd_arg args[]);
+extern void do_cmd_rest(cmd_code code, cmd_arg args[]);
 extern bool easy_open_door(int y, int x);
 
 /* cmd3.c */
 extern void do_cmd_floor(void);
 extern void do_cmd_inven(void);
 extern void do_cmd_equip(void);
-extern void do_cmd_wield(void);
-extern void do_cmd_takeoff(void);
-extern void do_cmd_drop(void);
-extern void do_cmd_destroy(void);
+extern void do_cmd_destroy(cmd_code code, cmd_arg args[]);
 extern void do_cmd_observe(void);
-extern void do_cmd_uninscribe(void);
-extern void do_cmd_inscribe(void);
-extern void do_cmd_refill(void);
 extern void do_cmd_target(void);
 extern void do_cmd_target_closest(void);
 extern void do_cmd_look(void);
@@ -136,6 +151,16 @@ extern void big_pad(int col, int row, byte a, byte c);
 extern void textui_browse_object_knowledge(void *obj, const char *name);
 extern void textui_knowledge_init(void);
 extern void textui_browse_knowledge(void);
+
+/* attack.c */
+extern void do_cmd_fire(cmd_code code, cmd_arg args[]);
+extern void textui_cmd_fire_at_nearest(void);
+extern void do_cmd_throw(cmd_code code, cmd_arg args[]);
+extern void textui_cmd_throw(void);
+
+extern void do_cmd_store(cmd_code code, cmd_arg args[]);
+extern void do_cmd_suicide(cmd_code code, cmd_arg args[]);
+extern void do_cmd_save_game(cmd_code code, cmd_arg args[]);
 
 /* Types of item use */
 typedef enum

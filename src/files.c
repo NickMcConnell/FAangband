@@ -970,7 +970,7 @@ extern int make_dump(char_attr_line *line, int mode)
   /* Get the store number of the home */
   if (have_home)
     {
-      if (adult_dungeon) which = NUM_TOWNS_SMALL * 4 + STORE_HOME;
+      if (OPT(adult_dungeon)) which = NUM_TOWNS_SMALL * 4 + STORE_HOME;
       else
 	{
 	  for (k = 0; k < NUM_TOWNS; k++)
@@ -1042,7 +1042,7 @@ extern int make_dump(char_attr_line *line, int mode)
       dump_put_str(TERM_L_BLUE, sp_ptr->title, 11);
       dump_put_str(TERM_WHITE, "Height", 27);
       sprintf(buf1, "%10d", 
-	      (use_metric ? ((int)p_ptr->ht) * 254 / 100 : (int)p_ptr->ht));
+	      (OPT(use_metric) ? ((int)p_ptr->ht) * 254 / 100 : (int)p_ptr->ht));
       dump_put_str(TERM_L_BLUE, buf1, 42);
       red = (p_ptr->stat_cur[1] < p_ptr->stat_max[1]);
       value = p_ptr->stat_use[1];
@@ -1066,7 +1066,7 @@ extern int make_dump(char_attr_line *line, int mode)
       dump_put_str(TERM_L_BLUE, p_name + rp_ptr->name, 11);
       dump_put_str(TERM_WHITE, "Weight", 27);
       sprintf(buf1, "%10d", 
-	      (use_metric ? ((int)p_ptr->wt) * 10 / 22 : (int)p_ptr->wt)); 
+	      (OPT(use_metric) ? ((int)p_ptr->wt) * 10 / 22 : (int)p_ptr->wt)); 
       dump_put_str(TERM_L_BLUE, buf1, 42);
       red = (p_ptr->stat_cur[2] < p_ptr->stat_max[2]);
       value = p_ptr->stat_use[2];
@@ -1311,7 +1311,7 @@ extern int make_dump(char_attr_line *line, int mode)
       dump_put_str(TERM_WHITE, "Searching  :", 27);
       dump_put_str(likert_color, desc, 39);
       
-      if (use_metric)
+      if (OPT(use_metric))
 	sprintf(buf1, "%d meters", p_ptr->see_infra * 3);
       else  
 	sprintf(buf1, "%d feet", p_ptr->see_infra * 10);
@@ -2083,29 +2083,29 @@ extern int make_dump(char_attr_line *line, int mode)
   current_line += 2;
 
   /* Dump options */
-  for (i = OPT_adult_start + 4; i < OPT_adult_end; i++)
+  for (i = OPT_ADULT + 4; i < OPT_SCORE; i++)
     {
-      if (option_desc[i])
+      if (option_desc(i))
 	{
 	  dump_ptr = (char_attr *)&line[current_line];
 	  sprintf(buf, "%-49s: %s (%s)",
-		  option_desc[i],
+		  option_desc(i),
 		  op_ptr->opt[i] ? "yes" : "no ",
-		  option_text[i]);
+		  option_name(i));
 	  dump_put_str(TERM_WHITE, buf, 0);
 	  current_line++;
 	}
     }
 
-  for (i = OPT_score_start; i < OPT_score_end; i++)
+  for (i = OPT_SCORE; i < OPT_MAX; i++)
     {
-      if (option_desc[i])
+      if (option_desc(i))
 	{
 	  dump_ptr = (char_attr *)&line[current_line];
 	  sprintf(buf, "%-49s: %s (%s)",
-		  option_desc[i],
+		  option_desc(i),
 		  op_ptr->opt[i] ? "yes" : "no ",
-		  option_text[i]);
+		  option_name(i));
 	  dump_put_str(TERM_WHITE, buf, 0);
 	  current_line++;
 	}
@@ -2248,7 +2248,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
   int i, k, n;
   int wid, hgt;
   int ret;
-  event_type ke;
+  ui_event_data ke;
   
   /* Number of "real" lines passed by */
   int next = 0;
@@ -2319,7 +2319,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
   lc_buf = malloc(MAX_BUF);
 
   /* Show messages first */
-  if (easy_more) messages_easy(FALSE);
+  if (OPT(easy_more)) messages_easy(FALSE);
 
   /* Record normal screen if it's the first time in */
   if (push_file==0)
@@ -2963,7 +2963,7 @@ void process_player_name(bool sf)
 /**
  * Hack -- commit suicide
  */
-void do_cmd_suicide(void)
+void do_cmd_suicide(cmd_code code, cmd_arg args[])
 {
   int i;
   
@@ -3008,7 +3008,7 @@ void do_cmd_suicide(void)
 /**
  * Save the game
  */
-void do_cmd_save_game(void)
+void save_game(void)
 {
   /* Disturb the player */
   disturb(1, 0);
@@ -3143,7 +3143,7 @@ static void make_bones(void)
   ang_file *fp;
   
   char str[1024];
-  event_type answer;
+  ui_event_data answer;
   byte choice=0;
   
   int i;
@@ -3533,7 +3533,7 @@ static void death_knowledge(void)
   store_type *st_ptr = NULL;
   
   /* Get the store number of the home */
-  if (adult_dungeon) which = NUM_TOWNS_SMALL * 4 + STORE_HOME;
+  if (OPT(adult_dungeon)) which = NUM_TOWNS_SMALL * 4 + STORE_HOME;
   else
     {
       for (i = 0; i < NUM_TOWNS; i++)
@@ -3608,12 +3608,12 @@ static void show_info(void)
   
   store_type *st_ptr;
 
-  event_type ke;
+  ui_event_data ke;
 
   bool done = FALSE;
   
   /* Get the store number of the home */
-  if (adult_dungeon) which = NUM_TOWNS_SMALL * 4 + STORE_HOME;
+  if (OPT(adult_dungeon)) which = NUM_TOWNS_SMALL * 4 + STORE_HOME;
   else
     {
       for (i = 0; i < NUM_TOWNS; i++)
@@ -3837,7 +3837,7 @@ static void kingly(void)
 static void close_game_aux(void)
 {
   int ch, adj = 0;
-  event_type ke;
+  ui_event_data ke;
   
   cptr p, q;
   
@@ -3845,7 +3845,7 @@ static void close_game_aux(void)
   flush();
 
   /* Easy more? */
-  if (easy_more) messages_easy(FALSE);
+  if (OPT(easy_more)) messages_easy(FALSE);
 	
   /* Screen no longer normal */
   normal_screen = FALSE;
@@ -4013,7 +4013,7 @@ static void close_game_aux(void)
  */
 void close_game(void)
 {
-  event_type ke;
+  ui_event_data ke;
   
   /* Handle stuff */
   handle_stuff();
@@ -4046,7 +4046,7 @@ void close_game(void)
   else
     {
       /* Save the game */
-      do_cmd_save_game();
+      save_game();
       
       /* Prompt for scores XXX XXX XXX */
       prt("Press Return (or Escape).", 0, 40);

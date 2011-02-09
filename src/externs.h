@@ -317,7 +317,7 @@ extern char *ANGBAND_DIR_XTRA_HELP;
 
 extern bool item_tester_full;
 extern byte item_tester_tval;
-extern bool (*item_tester_hook)(object_type*);
+extern bool (*item_tester_hook)(const object_type*);
 extern bool (*ang_sort_comp)(void *u, void *v, int a, int b);
 extern void (*ang_sort_swap)(void *u, void *v, int a, int b);
 extern bool (*get_mon_num_hook)(int r_idx);
@@ -377,8 +377,6 @@ extern void (*restore_buttons_hook)(void);
 
 /* attack.c */
 extern bool py_attack(int y, int x, bool can_push);
-extern void do_cmd_fire(void);
-extern void do_cmd_throw(void);
 
 /* birth.c */
 extern void player_birth(bool quickstart_allowed);
@@ -428,6 +426,13 @@ extern void fall_off_cliff(void);
 extern void move_player(int dir, int do_pickup);
 extern void run_step(int dir);
 
+/* cmd2.c */
+/* XXX should probably be moved to cave.c? */
+bool is_open(int feat);
+bool is_closed(int feat);
+bool is_trap(int feat);
+int count_feats(int *y, int *x, bool (*test)(int feat), bool under);
+int count_chests(int *y, int *x, bool trapped);
 
 /* dungeon.c */
 extern void play_game(bool new_game);
@@ -449,9 +454,8 @@ extern bool show_file(cptr name, cptr what, int line, int mode);
 extern void do_cmd_help(void);
 extern void process_player_name(bool sf);
 extern bool get_name(bool sf);
-extern void do_cmd_suicide(void);
-extern void do_cmd_save_game(void);
 extern void display_scores(int from, int to);
+extern void save_game(void);
 extern void close_game(void);
 extern void exit_game_panic(void);
 extern errr get_rnd_line(char *file_name, char *output);
@@ -825,7 +829,6 @@ extern bool destroy_doors_touch(void);
 extern bool sleep_monsters_touch(int dam);
 
 /* store.c */
-extern void do_cmd_store(void);
 extern void store_shuffle(int which);
 extern void store_maint(int which);
 extern void stores_maint(int times);

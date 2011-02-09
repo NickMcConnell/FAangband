@@ -539,6 +539,7 @@
 #define PY_MAX_GOLD	99999999L	/* Maximum gold */
 #define PY_MAX_LEVEL	50		/* Maximum level */
 #define PY_MAX_SPELLS   64              /* Maximum number of spells */
+#define PY_MAX_SPELL_BOOK   12          /* Maximum number of spells per book */
 
 
 /*

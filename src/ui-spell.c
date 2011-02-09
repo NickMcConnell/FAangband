@@ -264,8 +264,36 @@ static int get_spell(const object_type *o_ptr, const char *verb,
 void textui_book_browse(const object_type *o_ptr)
 {
 	menu_type *m;
-	const char *noun = (cp_ptr->spell_book == TV_MAGIC_BOOK ?
-			"spell" : "prayer");
+	char *noun;
+
+	switch (cp_ptr->spell_book)
+	  {
+	  case TV_MAGIC_BOOK:
+	    {
+	      noun = "spell";
+	      break;
+	    }
+	  case TV_PRAYER_BOOK:
+	    {
+	      noun = "prayer";
+	      break;
+	    }
+	  case TV_DRUID_BOOK:
+	    {
+	      noun = "lore";
+	      break;
+	    }
+	  case TV_NECRO_BOOK:
+	    {
+	      noun = "ritual";
+	      break;
+	    }
+	  default:
+	    {
+	      msg_print("You cannot read books!");
+	      return;
+	    }
+	  }
 
 	m = spell_menu_new(o_ptr, spell_okay_to_browse);
 	if (m) {
@@ -333,7 +361,36 @@ void textui_obj_cast(void)
 	int item;
 	int spell;
 
-	cptr verb = ((cp_ptr->spell_book == TV_MAGIC_BOOK) ? "cast" : "recite");
+	cptr verb;
+
+	switch (cp_ptr->spell_book)
+	  {
+	  case TV_MAGIC_BOOK:
+	    {
+	      verb = "cast";
+	      break;
+	    }
+	  case TV_PRAYER_BOOK:
+	    {
+	      verb = "recite";
+	      break;
+	    }
+	  case TV_DRUID_BOOK:
+	    {
+	      verb = "use";
+	      break;
+	    }
+	  case TV_NECRO_BOOK:
+	    {
+	      verb = "perform";
+	      break;
+	    }
+	  default:
+	    {
+	      msg_print("You cannot read books!");
+	      return;
+	    }
+	  }
 
 	item_tester_hook = obj_can_cast_from;
 	if (!get_item(&item, "Cast from which book? ",

@@ -2059,7 +2059,7 @@ void stair_creation(void)
 /**
  * Hook to specify "weapon"
  */
-static bool item_tester_hook_weapon(object_type *o_ptr)
+static bool item_tester_hook_weapon(const object_type *o_ptr)
 {
   switch (o_ptr->tval)
     {
@@ -2083,7 +2083,7 @@ static bool item_tester_hook_weapon(object_type *o_ptr)
 /**
  * Hook to specify "ammunition"
  */
-static bool item_tester_hook_ammo(object_type *o_ptr)
+static bool item_tester_hook_ammo(const object_type *o_ptr)
 {
   switch (o_ptr->tval)
     {
@@ -2102,7 +2102,7 @@ static bool item_tester_hook_ammo(object_type *o_ptr)
 /**
  * Hook to specify "armour"
  */
-static bool item_tester_hook_armour(object_type *o_ptr)
+static bool item_tester_hook_armour(const object_type *o_ptr)
 {
   switch (o_ptr->tval)
     {
@@ -2123,7 +2123,7 @@ static bool item_tester_hook_armour(object_type *o_ptr)
   return (FALSE);
 }
 
-static bool item_tester_unknown(object_type *o_ptr)
+static bool item_tester_unknown(const object_type *o_ptr)
 {
   if (object_known_p(o_ptr))
     return FALSE;
@@ -2131,7 +2131,7 @@ static bool item_tester_unknown(object_type *o_ptr)
     return TRUE;
 }
 
-static bool item_tester_unknown_curse(object_type *o_ptr)
+static bool item_tester_unknown_curse(const object_type *o_ptr)
 {
   if (object_known_p(o_ptr) && (o_ptr->ident & IDENT_KNOW_CURSES))
     return FALSE;
@@ -2140,7 +2140,7 @@ static bool item_tester_unknown_curse(object_type *o_ptr)
 }
 
 
-static bool item_tester_unproofed(object_type *o_ptr)
+static bool item_tester_unproofed(const object_type *o_ptr)
 {
   if (o_ptr->number != 1)
     return FALSE;
@@ -2929,7 +2929,7 @@ bool identify_fully(void)
 /**
  * Hook for "get_item()".  Determine if something is rechargable.
  */
-static bool item_tester_hook_recharge(object_type *o_ptr)
+static bool item_tester_hook_recharge(const object_type *o_ptr)
 {
   /* Recharge staffs */
   if (o_ptr->tval == TV_STAFF) return (TRUE);
