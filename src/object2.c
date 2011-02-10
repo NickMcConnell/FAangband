@@ -25,6 +25,7 @@
  */
 
 #include "angband.h"
+#include "squelch.h"
 
 
 /**
@@ -410,7 +411,7 @@ void compact_objects(int size)
 	      x = m_ptr->fx;
 	      
 	      /* Monsters protect their objects */
-	      if ((rand_int(100) < 90) && !k_ptr->squelch) continue;
+	      if ((randint0(100) < 90) && !k_ptr->squelch) continue;
 	    }
 	  
 	  /* Dungeon */
@@ -432,7 +433,7 @@ void compact_objects(int size)
 	  if (artifact_p(o_ptr) && (cnt < 1000)) chance = 100;
 	  
 	  /* Apply the saving throw */
-	  if (rand_int(100) < chance) continue;
+	  if (randint0(100) < chance) continue;
 	  
 	  /* Delete the object */
 	  delete_object_idx(i);
@@ -650,7 +651,7 @@ s16b get_obj_num(int level)
   if (level > 0)
     {
       /* Occasional boost to allowed level.  Less generous in Oangband. */
-      if (rand_int(GREAT_OBJ) == 0) level += randint(20) + randint(level / 2);
+      if (randint0(GREAT_OBJ) == 0) level += randint1(20) + randint1(level / 2);
     }
   
   
@@ -687,7 +688,7 @@ s16b get_obj_num(int level)
   
   
   /* Pick an object */
-  value = rand_int(total);
+  value = randint0(total);
   
   /* Find the object */
   for (i = 0; i < alloc_kind_size; i++)
@@ -701,7 +702,7 @@ s16b get_obj_num(int level)
   
   
   /* Power boost */
-  p = rand_int(100);
+  p = randint0(100);
   
   /* Hack -- chests should have decent stuff, and chests should themselves 
    * be decent, so we guarantee two more tries for better objects. -LM-
@@ -715,7 +716,7 @@ s16b get_obj_num(int level)
       j = i;
       
       /* Pick an object */
-      value = rand_int(total);
+      value = randint0(total);
       
       /* Find the object */
       for (i = 0; i < alloc_kind_size; i++)
@@ -738,7 +739,7 @@ s16b get_obj_num(int level)
       j = i;
       
       /* Pick an object */
-      value = rand_int(total);
+      value = randint0(total);
       
       /* Find the object */
       for (i = 0; i < alloc_kind_size; i++)
@@ -1615,10 +1616,10 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
     return (FALSE);
   
   /* Hack -- normally require matching "inscriptions" */
-  if (!stack_force_notes && (o_ptr->note != j_ptr->note)) return (FALSE);
+  if (!OPT(stack_force_notes) && (o_ptr->note != j_ptr->note)) return (FALSE);
   
   /* Hack -- normally require matching "discounts" */
-  if (!stack_force_costs && (o_ptr->discount != j_ptr->discount)) 
+  if (!OPT(stack_force_costs) && (o_ptr->discount != j_ptr->discount)) 
     return (FALSE);
   
   
@@ -1852,7 +1853,7 @@ extern s16b m_bonus(int max, int level)
   extra = ((max * level) % MAX_DEPTH);
   
   /* Hack -- simulate floating point computations */
-  if (rand_int(MAX_DEPTH) < extra) bonus++;
+  if (randint0(MAX_DEPTH) < extra) bonus++;
   
   
   /* The "stand" is equal to one quarter of the max */
@@ -1862,7 +1863,7 @@ extern s16b m_bonus(int max, int level)
   extra = (max % 4);
   
   /* Hack -- simulate floating point computations */
-  if (rand_int(4) < extra) stand++;
+  if (randint0(4) < extra) stand++;
   
   
   /* Choose an "interesting" value */
@@ -1983,10 +1984,10 @@ static int make_ego_item(object_type *o_ptr, int power)
   if (level > 0)
     {
       /* Occasional "boost" */
-      if (rand_int(GREAT_EGO) == 0)
+      if (randint0(GREAT_EGO) == 0)
 	{
 	  /* The bizarre calculation again */
-	  level = 1 + (level * MAX_DEPTH / randint(MAX_DEPTH));
+	  level = 1 + (level * MAX_DEPTH / randint1(MAX_DEPTH));
 	}
     }
   
@@ -2042,7 +2043,7 @@ static int make_ego_item(object_type *o_ptr, int power)
   
   
   /* Pick an ego-item */
-  value = rand_int(total);
+  value = randint0(total);
   
   /* Find the object */
   for (i = 0; i < alloc_ego_size; i++)
@@ -2081,9 +2082,9 @@ static bool make_artifact_special(object_type *o_ptr)
   int k_idx = 0;
   
   /* No artifacts in the town */
-  if (!p_ptr->depth || adult_no_artifacts) return (FALSE);
+  if (!p_ptr->depth || OPT(adult_no_artifacts)) return (FALSE);
   
-  first_pick = rand_int(artifact_special_cnt);
+  first_pick = randint0(artifact_special_cnt);
   
   for (i = 0; i < artifact_special_cnt; i++)
     {
@@ -2104,11 +2105,11 @@ static bool make_artifact_special(object_type *o_ptr)
 	  int d = (a_ptr->level - p_ptr->depth) * 2;
 	  
 	  /* Roll for out-of-depth creation */
-	  if (rand_int(d) != 0) continue;
+	  if (randint0(d) != 0) continue;
 	}
       
       /* Artifact "rarity roll" */
-      if (rand_int(a_ptr->rarity) != 0) continue;
+      if (randint0(a_ptr->rarity) != 0) continue;
       
       /* Find the base object */
       k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
@@ -2120,7 +2121,7 @@ static bool make_artifact_special(object_type *o_ptr)
 	  int d = (k_info[k_idx].level - object_level) * 5;
 	  
 	  /* Roll for out-of-depth creation */
-	  if (rand_int(d) != 0) continue;
+	  if (randint0(d) != 0) continue;
 	}
       
       /* Assign the template */
@@ -2179,11 +2180,11 @@ static bool make_artifact(object_type *o_ptr)
 	  int d = (a_ptr->level - p_ptr->depth) * 2;
 	  
 	  /* Roll for out-of-depth creation */
-	  if (rand_int(d) != 0) continue;
+	  if (randint0(d) != 0) continue;
 	}
       
       /* We must make the "rarity roll" */
-      if (rand_int(a_ptr->rarity) != 0) continue;
+      if (randint0(a_ptr->rarity) != 0) continue;
       
       /* Hack -- mark the item as an artifact */
       o_ptr->name1 = choice;
@@ -2206,8 +2207,8 @@ static bool make_artifact(object_type *o_ptr)
  */
 static void a_m_aux_1(object_type *o_ptr, int level, int power)
 {
-  int tohit1 = randint(5) + m_bonus(5, level);
-  int todam1 = randint(5) + m_bonus(5, level);
+  int tohit1 = randint1(5) + m_bonus(5, level);
+  int todam1 = randint1(5) + m_bonus(5, level);
   
   int tohit2 = m_bonus(10, level);
   int todam2 = m_bonus(10, level);
@@ -2239,11 +2240,11 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
       if (power < -1)
 	{
 	  /* Shake it up */
-	  if (rand_int(3) == 0) o_ptr->to_h = 0 - o_ptr->to_h;
-	  if (rand_int(3) == 0) o_ptr->to_d = 0 - o_ptr->to_d;
-	  if (rand_int(2) == 0) o_ptr->to_h -= tohit2;
+	  if (randint0(3) == 0) o_ptr->to_h = 0 - o_ptr->to_h;
+	  if (randint0(3) == 0) o_ptr->to_d = 0 - o_ptr->to_d;
+	  if (randint0(2) == 0) o_ptr->to_h -= tohit2;
 	  else o_ptr->to_h += tohit2;
-	  if (rand_int(2) == 0) o_ptr->to_d -= todam2;
+	  if (randint0(2) == 0) o_ptr->to_d -= todam2;
 	  else o_ptr->to_d += todam2;
 	}
     }
@@ -2258,7 +2259,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 	if (power < -1)
 	  {
 	    /* Hack -- Horrible digging bonus */
-	    o_ptr->bonus_other[P_BONUS_TUNNEL] = 0 - (5 + randint(5));
+	    o_ptr->bonus_other[P_BONUS_TUNNEL] = 0 - (5 + randint1(5));
 	  }
 	
 	/* Bad */
@@ -2317,12 +2318,12 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
   /* Boots and handgear aren't as important to total AC. */
   if ((o_ptr->tval == TV_BOOTS) || (o_ptr->tval == TV_GLOVES))
     {
-      toac1 = randint(3) + m_bonus(4, level);
+      toac1 = randint1(3) + m_bonus(4, level);
       toac2 = m_bonus(8, level);
     }
   else
     {
-      toac1 = randint(5) + m_bonus(5, level);
+      toac1 = randint1(5) + m_bonus(5, level);
       toac2 = m_bonus(10, level);
     }
   
@@ -2365,7 +2366,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 	rating += 20;
 	
 	/* Mention the item */
-	if (cheat_peek) object_mention(o_ptr);
+	if (OPT(cheat_peek)) object_mention(o_ptr);
 	
 	break;
       }
@@ -2405,13 +2406,13 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
 	/* Hack -- Torches -- random fuel */
 	if (o_ptr->sval == SV_LITE_TORCH)
 	  {
-	    if (o_ptr->pval > 0) o_ptr->pval = randint(o_ptr->pval);
+	    if (o_ptr->pval > 0) o_ptr->pval = randint1(o_ptr->pval);
 	  }
 	
 	/* Hack -- Lanterns -- random fuel */
 	if (o_ptr->sval == SV_LITE_LANTERN)
 	  {
-	    if (o_ptr->pval > 0) o_ptr->pval = randint(o_ptr->pval);
+	    if (o_ptr->pval > 0) o_ptr->pval = randint1(o_ptr->pval);
 	  }
 	
 	break;
@@ -2423,7 +2424,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
 	/* The wand or staff gets a number of initial charges equal 
 	 * to between 1/2 (+1) and the full object kind's pval.
 	 */
-	o_ptr->pval = k_ptr->pval / 2 + randint((k_ptr->pval + 1) / 2);
+	o_ptr->pval = k_ptr->pval / 2 + randint1((k_ptr->pval + 1) / 2);
 	break;
       }
       
@@ -2442,7 +2443,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
 	
 	/* ...and never exceeding chest level + 4. */
 	if (o_ptr->pval > k_info[o_ptr->k_idx].level)
-	  o_ptr->pval = k_info[o_ptr->k_idx].level + randint(4);
+	  o_ptr->pval = k_info[o_ptr->k_idx].level + randint1(4);
 	
 	/* Value/difficulty cannot be less than 5. */
 	if (o_ptr->pval < 5) o_ptr->pval = 5;
@@ -2490,13 +2491,13 @@ extern void apply_resistances(object_type *o_ptr, int lev, u32b flags)
     while (roll < 2)
     {
       /* Low resists more likely at low levels */
-      int k = rand_int(128);
+      int k = randint0(128);
       bool low = (k < (128 - lev));
 
-      k = (low ? rand_int(4) : rand_int(10) + 4);
-      o_ptr->percent_res[k] += 10 + rand_int(5) + m_bonus(30, lev);
+      k = (low ? randint0(4) : randint0(10) + 4);
+      o_ptr->percent_res[k] += 10 + randint0(5) + m_bonus(30, lev);
 
-      roll = rand_int(10 - (lev/30));
+      roll = randint0(10 - (lev/30));
     }
   }
 
@@ -2508,23 +2509,23 @@ extern void apply_resistances(object_type *o_ptr, int lev, u32b flags)
     while (roll < 2)
     {
       /* Low resists more likely at low levels */
-      int k = rand_int(128);
+      int k = randint0(128);
       bool low = (k < (128 - lev));
 
-      k = (low ? rand_int(4) : rand_int(10) + 4);
-      o_ptr->percent_res[k] -= 4 + rand_int(8) + m_bonus(10, lev);
+      k = (low ? randint0(4) : randint0(10) + 4);
+      o_ptr->percent_res[k] -= 4 + randint0(8) + m_bonus(10, lev);
 
       /* Twice as many of these */
-      k = rand_int(128);
+      k = randint0(128);
       low = (k < (128 - lev));
-      k = (low ? rand_int(4) : rand_int(10) + 4);
-      o_ptr->percent_res[k] -= 4 + rand_int(8) + m_bonus(10, lev);
+      k = (low ? randint0(4) : randint0(10) + 4);
+      o_ptr->percent_res[k] -= 4 + randint0(8) + m_bonus(10, lev);
 
       /* Occasionally reverse one */
-      if (rand_int(3) == 0) 
+      if (randint0(3) == 0) 
 	o_ptr->percent_res[k] = RES_LEVEL_MAX - o_ptr->percent_res[k];
 
-      roll = rand_int(10 - (lev/30));
+      roll = randint0(10 - (lev/30));
     }
   }
 
@@ -2536,13 +2537,13 @@ extern void apply_resistances(object_type *o_ptr, int lev, u32b flags)
     while (roll < 2)
     {
       /* Low resists more likely at low levels */
-      int k = rand_int(128);
+      int k = randint0(128);
       bool low = (k < (128 - lev));
 
-      k = (low ? rand_int(4) : rand_int(10) + 4);
-      o_ptr->percent_res[k] -= 20 + rand_int(5) + m_bonus(20, lev);
+      k = (low ? randint0(4) : randint0(10) + 4);
+      o_ptr->percent_res[k] -= 20 + randint0(5) + m_bonus(20, lev);
       
-      roll = rand_int(10 - (lev/30));
+      roll = randint0(10 - (lev/30));
     }
   }
 
@@ -2554,10 +2555,10 @@ extern void apply_resistances(object_type *o_ptr, int lev, u32b flags)
     while (roll < 2)
     {
       /* Low resists less likely here */
-      int k = ((rand_int(10) == 0) ? rand_int(4) : rand_int(10) + 4);
-      o_ptr->percent_res[k] -= 30 + rand_int(5) + m_bonus(20, lev);
+      int k = ((randint0(10) == 0) ? randint0(4) : randint0(10) + 4);
+      o_ptr->percent_res[k] -= 30 + randint0(5) + m_bonus(20, lev);
       
-      roll = rand_int(10 - (lev/30));
+      roll = randint0(10 - (lev/30));
     }
   }
 
@@ -2570,10 +2571,10 @@ extern void apply_resistances(object_type *o_ptr, int lev, u32b flags)
       /* Only randomise proper resistances */
       if ((res > 0) && (res < 100))
 	{
-	  if (rand_int(2) == 0) 
-	    o_ptr->percent_res[i] -= rand_int(res >> 2);
+	  if (randint0(2) == 0) 
+	    o_ptr->percent_res[i] -= randint0(res >> 2);
 	  else 
-	    o_ptr->percent_res[i] += rand_int(res >> 2);
+	    o_ptr->percent_res[i] += randint0(res >> 2);
 	}
 
       /* Enforce bounds - no item gets better than 80% resistance */
@@ -2654,23 +2655,23 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
   power = 0;
   
   /* Roll for "good" */
-  if (good || (rand_int(100) < good_percent))
+  if (good || (randint0(100) < good_percent))
     {
       /* Assume "good" */
       power = 1;
       
       /* Roll for "great" */
-      if (great || (rand_int(100) < great_percent)) power = 2;
+      if (great || (randint0(100) < great_percent)) power = 2;
     }
   
   /* Roll for "dubious" */
-  else if ((rand_int(100) < good_percent) && (required_tval == 0))
+  else if ((randint0(100) < good_percent) && (required_tval == 0))
     {
       /* Assume "dubious" */
       power = -1;
       
       /* Roll for "perilous" */
-      if (rand_int(100) < great_percent) power = -2;
+      if (randint0(100) < great_percent) power = -2;
     }
 
   /* Assume no rolls */
@@ -2741,7 +2742,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
       good_item_flag = TRUE;
       
       /* Cheat -- peek at the item */
-      if (cheat_peek) object_mention(o_ptr);
+      if (OPT(cheat_peek)) object_mention(o_ptr);
       
       /* Done */
       return;
@@ -2761,9 +2762,9 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 	int newdicesides = 0;
 	int oldsides = o_ptr->ds;
 	
-	if (rand_int((2 * (o_ptr->dd + 1) * (o_ptr->ds + 1))/((lev/20)+1)) == 0)
+	if (randint0((2 * (o_ptr->dd + 1) * (o_ptr->ds + 1))/((lev/20)+1)) == 0)
 	{
-	  if ((rand_int((o_ptr->dd + 2) * (o_ptr->ds + 2) / 5) == 0) && 
+	  if ((randint0((o_ptr->dd + 2) * (o_ptr->ds + 2) / 5) == 0) && 
 	      (((o_ptr->dd + 1) * o_ptr->ds) < 41))
 	    {
 	      o_ptr->weight = (o_ptr->weight * (o_ptr->dd + 3)) / 
@@ -2777,10 +2778,10 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 	      for (i = 0; i < newdicesides; i++)
 		{
 		  if ((o_ptr->dd * (o_ptr->ds + 1) < 41) && 
-		      (randint(5) != 1)) o_ptr->ds++;
+		      (randint1(5) != 1)) o_ptr->ds++;
 		}
 	      
-	      if (rand_int((o_ptr->dd + 2) * (o_ptr->ds + 2) / 5) == 0)
+	      if (randint0((o_ptr->dd + 2) * (o_ptr->ds + 2) / 5) == 0)
 		{
 		  /* If we get this far have another go at the 
 		     dice missed earlier */
@@ -2789,15 +2790,15 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 		  for (i = 0; i < newdicesides; i++)
 		    {
 		      if ((o_ptr->dd * (o_ptr->ds + 1) < 41) && 
-			  (randint(5) != 1)) o_ptr->ds++;
+			  (randint1(5) != 1)) o_ptr->ds++;
 		    }
 		}
 	      
-	      if (randint(5) == 1)
+	      if (randint1(5) == 1)
 		{
 		  o_ptr->weight = (o_ptr->weight * 4) / 5;
 		}
-	      else if (randint(3) == 1)
+	      else if (randint1(3) == 1)
 		{
 		  o_ptr->weight = (o_ptr->weight * 5) / 4;
 		}
@@ -2812,10 +2813,10 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
     case TV_BOLT:
       {
 	/* Up to two chances to enhance damage dice. SJGU was 3 and +2 to ds */
-	if (randint(6) == 1) 
+	if (randint1(6) == 1) 
 	  {
 	    o_ptr->ds += 1;
-	    if (randint(10) == 1)
+	    if (randint1(10) == 1)
 	      {
 		o_ptr->ds += 1;
 	      }
@@ -2860,7 +2861,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
     case TV_BOOTS:
       {
 	/* Hack - extra chance for perilous armour */
-	if (!power && (rand_int(100) < great_percent)) power = -2;
+	if (!power && (randint0(100) < great_percent)) power = -2;
 
 	if ((power > 1) || (power < -1))
 	  {
@@ -2901,7 +2902,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
       /* 22% of standard items, 44% of ego items */
       j = (o_ptr->name2) ? 4 : 2;
       
-      if (rand_int(9) < j)
+      if (randint0(9) < j)
 	{
 	  o_ptr->flags_obj |= OF_PERFECT_BALANCE;
 	}
@@ -2914,14 +2915,14 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
   if (flags_kind & KF_RAND_SUSTAIN)
     {
       o_ptr->flags_obj |= 
-	(OBJECT_RAND_BASE_SUSTAIN << rand_int(OBJECT_RAND_SIZE_SUSTAIN));
+	(OBJECT_RAND_BASE_SUSTAIN << randint0(OBJECT_RAND_SIZE_SUSTAIN));
     }
 	  
   /* Random power */
   if (flags_kind & KF_RAND_POWER)
     {
       o_ptr->flags_obj |= 
-	(OBJECT_RAND_BASE_POWER << rand_int(OBJECT_RAND_SIZE_POWER));
+	(OBJECT_RAND_BASE_POWER << randint0(OBJECT_RAND_SIZE_POWER));
     }
   
   /* Random curse */
@@ -2933,8 +2934,8 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
       while (another_curse)
 	{
 	  o_ptr->flags_curse |= 
-	    (OBJECT_RAND_BASE_CURSE << rand_int(OBJECT_RAND_SIZE_CURSE));
-	  if (rand_int(10) != 0) another_curse = FALSE;
+	    (OBJECT_RAND_BASE_CURSE << randint0(OBJECT_RAND_SIZE_CURSE));
+	  if (randint0(10) != 0) another_curse = FALSE;
 	}
 
       
@@ -2943,7 +2944,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 	{
 	  o_ptr->flags_curse &= ~(CF_DROP_WEAPON);
 	  o_ptr->flags_curse |= 
-	    (OBJECT_RAND_BASE_CURSE << rand_int(OBJECT_RAND_SIZE_CURSE));
+	    (OBJECT_RAND_BASE_CURSE << randint0(OBJECT_RAND_SIZE_CURSE));
 	}
     }
   
@@ -2993,10 +2994,10 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
       for (i = 0; i < A_MAX; i++)
 	{
 	  if (e_ptr->bonus_stat[i] > 0)
-	    o_ptr->bonus_stat[i] += randint(e_ptr->bonus_stat[i]);
+	    o_ptr->bonus_stat[i] += randint1(e_ptr->bonus_stat[i]);
 	  else if (e_ptr->bonus_stat[i] < 0)
 	    {
-	      o_ptr->bonus_stat[i] -= randint(-e_ptr->bonus_stat[i]);
+	      o_ptr->bonus_stat[i] -= randint1(-e_ptr->bonus_stat[i]);
 	      av += o_ptr->bonus_stat[i];
 	      num++;
 	    }
@@ -3009,11 +3010,11 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
 	  if (num) 
 	    {
 	      av /= num;
-	      chances = (randint(1 - av) + 1 - av) / 2;
+	      chances = (randint1(1 - av) + 1 - av) / 2;
 	      
 	      for (i = 0; i < chances; i++)
 		{
-		  if (randint(3 - av) < (1 - av)) o_ptr->ds++;
+		  if (randint1(3 - av) < (1 - av)) o_ptr->ds++;
 		}
 	    }
 	  /* Mainly for bashing shields */
@@ -3025,9 +3026,9 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
       for (i = 0; i < MAX_P_BONUS; i++)
 	{
 	  if (e_ptr->bonus_other[i] > 0)
-	    o_ptr->bonus_other[i] += randint(e_ptr->bonus_other[i]);
+	    o_ptr->bonus_other[i] += randint1(e_ptr->bonus_other[i]);
 	  else if (e_ptr->bonus_other[i] < 0)
-	    o_ptr->bonus_other[i] -= randint(-e_ptr->bonus_other[i]);
+	    o_ptr->bonus_other[i] -= randint1(-e_ptr->bonus_other[i]);
 	}
 
       /* Assign multiples */
@@ -3039,19 +3040,19 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
       
       /* Apply extra bonuses or penalties. */
       if ((e_ptr->max_to_h > 0) && (e_ptr->max_to_h < 129)) 
-	o_ptr->to_h += randint(e_ptr->max_to_h);
+	o_ptr->to_h += randint1(e_ptr->max_to_h);
       else if (e_ptr->max_to_h > 128)
-	o_ptr->to_h -= randint(e_ptr->max_to_h - 128);
+	o_ptr->to_h -= randint1(e_ptr->max_to_h - 128);
       
       if ((e_ptr->max_to_d > 0) && (e_ptr->max_to_d < 129)) 
-	o_ptr->to_d += randint(e_ptr->max_to_d);
+	o_ptr->to_d += randint1(e_ptr->max_to_d);
       else if (e_ptr->max_to_d > 128)
-	o_ptr->to_d -= randint(e_ptr->max_to_d - 128);
+	o_ptr->to_d -= randint1(e_ptr->max_to_d - 128);
       
       if ((e_ptr->max_to_a > 0) && (e_ptr->max_to_a < 129)) 
-	o_ptr->to_a += randint(e_ptr->max_to_a);
+	o_ptr->to_a += randint1(e_ptr->max_to_a);
       else if (e_ptr->max_to_a > 128)
-	o_ptr->to_a -= randint(e_ptr->max_to_a - 128);
+	o_ptr->to_a -= randint1(e_ptr->max_to_a - 128);
       
       
       /* Extra base armour class */
@@ -3085,8 +3086,8 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
        * stacking qualities.
        */
       {
-	if ((o_ptr->to_h % 2 == 1) && (randint(4) != 1)) o_ptr->to_h++;
-	if ((o_ptr->to_d % 2 == 1) && (randint(4) != 1)) o_ptr->to_d++;
+	if ((o_ptr->to_h % 2 == 1) && (randint1(4) != 1)) o_ptr->to_h++;
+	if ((o_ptr->to_d % 2 == 1) && (randint1(4) != 1)) o_ptr->to_d++;
       }
       
       
@@ -3094,7 +3095,7 @@ void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great)
       rating += e_ptr->rating;
       
       /* Cheat -- describe the item */
-      if (cheat_peek) object_mention(o_ptr);
+      if (OPT(cheat_peek)) object_mention(o_ptr);
       
       /* Done */
       return;
@@ -3306,7 +3307,7 @@ bool make_object(object_type *j_ptr, bool good, bool great, bool exact_kind)
   
   
   /* Generate a special object, or a normal object */
-  if ((rand_int(prob) != 0) || !make_artifact_special(j_ptr))
+  if ((randint0(prob) != 0) || !make_artifact_special(j_ptr))
     {
       int k_idx;
       
@@ -3363,14 +3364,14 @@ bool make_object(object_type *j_ptr, bool good, bool great, bool exact_kind)
        */
       if ((k_ptr->level < object_level / 4) && 
 	  (k_ptr->cost < 1) && 
-	  (randint(3) != 1)) goto try_again;
+	  (randint1(3) != 1)) goto try_again;
       
       /* Sometimes (33% chance) forbid very low-level objects that aren't 
        * worth very much.
        */
       else if ((k_ptr->level < object_level / 4) && 
 	       (k_ptr->cost < object_level - 20) && 
-	       (randint(3) == 1)) goto try_again;
+	       (randint1(3) == 1)) goto try_again;
       
       /* Hack -- If a chest is specifically asked for, almost always 
        * winnow out any not sufficiently high-level.
@@ -3380,8 +3381,8 @@ bool make_object(object_type *j_ptr, bool good, bool great, bool exact_kind)
 	  /* Need to avoid asking for the impossible. */
 	  int tmp = object_level > 100 ? 100 : object_level;
 	  
-	  if ((k_ptr->level < 2 * (tmp + 3) / 4 + randint(tmp / 4)) && 
-	      (randint(10) != 1)) goto try_again;
+	  if ((k_ptr->level < 2 * (tmp + 3) / 4 + randint1(tmp / 4)) && 
+	      (randint1(10) != 1)) goto try_again;
 	}
       
       /* Clear any special object restriction, and prepare the standard 
@@ -3401,7 +3402,7 @@ bool make_object(object_type *j_ptr, bool good, bool great, bool exact_kind)
     }
   
   /* Apply magic (allow artifacts) */
-  apply_magic(j_ptr, object_level, !adult_no_artifacts, good, great);
+  apply_magic(j_ptr, object_level, !OPT(adult_no_artifacts), good, great);
   
   /* Get the object kind. */
   k_ptr = &k_info[j_ptr->k_idx];
@@ -3423,7 +3424,7 @@ bool make_object(object_type *j_ptr, bool good, bool great, bool exact_kind)
       }
     case TV_FOOD:
       {
-	if ((k_ptr->cost < 150) && (randint(2) == 1)) 
+	if ((k_ptr->cost < 150) && (randint1(2) == 1)) 
 	  j_ptr->number = damroll(2, 3);
 	break;
       }
@@ -3432,7 +3433,7 @@ bool make_object(object_type *j_ptr, bool good, bool great, bool exact_kind)
     case TV_POLEARM:
       {
 	if ((k_ptr->flags_obj & OF_THROWING) && (!j_ptr->name1) && 
-	    (randint(2) == 1)) j_ptr->number = damroll(2, 2);
+	    (randint1(2) == 1)) j_ptr->number = damroll(2, 2);
 	break;
       }
     default:
@@ -3448,7 +3449,7 @@ bool make_object(object_type *j_ptr, bool good, bool great, bool exact_kind)
       rating += (k_info[j_ptr->k_idx].level - p_ptr->depth);
       
       /* Cheat -- peek at items */
-      if (cheat_peek) object_mention(j_ptr);
+      if (OPT(cheat_peek)) object_mention(j_ptr);
     }
   
   /* Return */
@@ -3477,10 +3478,10 @@ bool make_gold(object_type *j_ptr)
       first_gold_idx = lookup_kind(TV_GOLD, SV_COPPER);
       
       /* Normal treasure level is between 1/2 and the full object level. */
-      gold_depth = (object_level / 2) + randint((object_level + 1) / 2);
+      gold_depth = (object_level / 2) + randint1((object_level + 1) / 2);
       
       /* Apply "extra" magic. */
-      if (rand_int(GREAT_OBJ) == 0) gold_depth += randint(gold_depth);
+      if (randint0(GREAT_OBJ) == 0) gold_depth += randint1(gold_depth);
       
       /* Find the highest-level legal gold object. */
       for (i = first_gold_idx; i < first_gold_idx + SV_GOLD_MAX; i++)
@@ -3505,10 +3506,10 @@ bool make_gold(object_type *j_ptr)
   
   /* Treasure can be worth between 1/2 and the full maximal value. */
   j_ptr->pval = k_info[treasure].cost / 2 + 
-    randint((k_info[treasure].cost + 1) / 2);
+    randint1((k_info[treasure].cost + 1) / 2);
 
   /* Hack - double for no selling */
-  if (adult_no_sell) j_ptr->pval *= 2;
+  if (OPT(adult_no_sell)) j_ptr->pval *= 2;
   
   /* Success */
   return (TRUE);
@@ -3646,7 +3647,7 @@ void drop_near(object_type *j_ptr, int chance, int y, int x)
   
   
   /* Handle normal "breakage" */
-  if (!artifact_p(j_ptr) && (rand_int(100) < chance))
+  if (!artifact_p(j_ptr) && (randint0(100) < chance))
     {
       /* Message */
       msg_format("The %s disappear%s.",
@@ -3754,7 +3755,7 @@ void drop_near(object_type *j_ptr, int chance, int y, int x)
 	  if (s > bs) bn = 0;
 	  
 	  /* Apply the randomizer to equivalent values */
-	  if ((++bn >= 2) && (rand_int(bn) != 0)) continue;
+	  if ((++bn >= 2) && (randint0(bn) != 0)) continue;
 	  
 	  /* Keep score */
 	  bs = s;
@@ -3796,8 +3797,8 @@ void drop_near(object_type *j_ptr, int chance, int y, int x)
       /* Random locations */
       else
 	{
-	  ty = rand_int(DUNGEON_HGT);
-	  tx = rand_int(DUNGEON_WID);
+	  ty = randint0(DUNGEON_HGT);
+	  tx = randint0(DUNGEON_WID);
 	}
       
       /* Require floor space */
@@ -3976,7 +3977,7 @@ void pick_trap(int y, int x)
   while (!(trap_is_okay))
     {
       /* Pick at random. */
-      feat = FEAT_TRAP_HEAD + rand_int(16);
+      feat = FEAT_TRAP_HEAD + randint0(16);
       
       /* Assume legal until proven otherwise. */
       trap_is_okay = TRUE;
@@ -4006,7 +4007,7 @@ void pick_trap(int y, int x)
 	      trap_is_okay = FALSE;
 	    
 	    /* Trap doors only in dungeons in ironman */
-	    if ((adult_ironman) && (stage_map[p_ptr->stage][STAGE_TYPE] < CAVE))
+	    if (OPT(adult_ironman) && (stage_map[p_ptr->stage][STAGE_TYPE] < CAVE))
 	      trap_is_okay = FALSE;
 	    
 	    break;
@@ -4228,7 +4229,7 @@ void place_closed_door(int y, int x)
   int tmp;
   
   /* Choose an object */
-  tmp = rand_int(400);
+  tmp = randint0(400);
   
   /* Closed doors (300/400) */
   if (tmp < 300)
@@ -4241,14 +4242,14 @@ void place_closed_door(int y, int x)
   else if (tmp < 399)
     {
       /* Create locked door */
-      cave_set_feat(y, x, FEAT_DOOR_HEAD + randint(7));
+      cave_set_feat(y, x, FEAT_DOOR_HEAD + randint1(7));
     }
   
   /* Stuck doors (1/400) */
   else
     {
       /* Create jammed door */
-      cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x08 + rand_int(8));
+      cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x08 + randint0(8));
     }
 }
 
@@ -4261,7 +4262,7 @@ void place_random_door(int y, int x)
   int tmp;
   
   /* Choose an object */
-  tmp = rand_int(1000);
+  tmp = randint0(1000);
   
   /* Open doors (300/1000) */
   if (tmp < 300)

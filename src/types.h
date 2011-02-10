@@ -118,6 +118,7 @@ typedef struct flavor_type flavor_type;
 typedef struct autoinscription autoinscription;
 typedef struct note_info note_info;
 typedef struct mouse_button mouse_button;
+typedef struct color_type color_type;
 
 
 /**** Available structs ****/
@@ -1385,5 +1386,13 @@ struct note_info
   int level;      /**< Character level when the event happened */
   byte type;      /**< Type of event */
   char note[80];  /**< Description of the event */
+};
+
+/** A game color */
+struct color_type
+{
+	char index_char;            /**< Character index:  'r' = red, etc. */
+	char name[32];              /**< Color name */
+	byte color_translate[MAX_ATTR];       /**< Index for various in-game translations */
 };
 

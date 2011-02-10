@@ -1523,7 +1523,7 @@ static bool do_cmd_open_test(int y, int x)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_open_aux(int y, int x)
+extern bool do_cmd_open_aux(int y, int x)
 {
   int i, j;
   
@@ -2286,7 +2286,7 @@ static bool do_cmd_disarm_test(int y, int x)
  *
  * Returns TRUE if repeated commands may continue
  */
-static bool do_cmd_disarm_aux(int y, int x)
+extern bool do_cmd_disarm_aux(int y, int x)
 {
   int i, j, power;
   

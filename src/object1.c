@@ -23,6 +23,7 @@
 
 #include "angband.h"
 #include "object.h"
+#include "ui-menu.h"
 
 
 /**
@@ -120,7 +121,7 @@ static void flavor_assign_random(byte tval)
       if (!flavor_count) quit_fmt("Not enough flavors for tval %d.", tval);
       
       /* Select a flavor */
-      choice = rand_int(flavor_count);
+      choice = randint0(flavor_count);
       
       /* Find and store the flavor */
       for (j = 0; j < z_info->flavor_max; j++)
@@ -226,13 +227,13 @@ void flavor_init(void)
 	      tmp[0] = '\0';
 	      
 	      /* Choose one or two syllables */
-	      s = ((rand_int(100) < 30) ? 1 : 2);
+	      s = ((randint0(100) < 30) ? 1 : 2);
 	      
 	      /* Add a one or two syllable word */
 	      for (q = 0; q < s; q++)
 		{
 		  /* Add the syllable */
-		  strcat(tmp, syllables[rand_int(MAX_SYLLABLES)]);
+		  strcat(tmp, syllables[randint0(MAX_SYLLABLES)]);
 		}
 	      
 	      /* Stop before getting too long */
@@ -765,14 +766,14 @@ static void object_desc_full(char *buf, object_type *o_ptr, int pref, int mode, 
   flavor = (k_ptr->flavor ? TRUE : FALSE);
   
   /* Allow flavors to be hidden when aware */
-  if (aware && !show_flavors) flavor = FALSE;
+  if (aware && !OPT(show_flavors)) flavor = FALSE;
   if (o_ptr->ident & IDENT_STORE) flavor = FALSE;
   
   /* Hack -- mark-to-squelch worthless items XXX */
   if (!k_ptr->everseen && aware)
     {
       k_ptr->everseen = TRUE;
-      if (squelch_worthless && (object_value(o_ptr) == 0))
+      if (OPT(squelch_worthless) && (object_value(o_ptr) == 0))
 	{
 	  k_ptr->squelch = TRUE;
 	  p_ptr->notice |= PN_SQUELCH;
@@ -859,7 +860,7 @@ static void object_desc_full(char *buf, object_type *o_ptr, int pref, int mode, 
 	
 	/* Color the object */
 	modstr = k_name + k_ptr->name;
-	basenm = (show_flavors || !(o_ptr->ident & IDENT_WORN) ? 
+	basenm = (OPT(show_flavors) || !(o_ptr->ident & IDENT_WORN) ? 
 		   "& # Amulet" : "& Amulet");
 
 	/* Get the short description */
@@ -876,7 +877,7 @@ static void object_desc_full(char *buf, object_type *o_ptr, int pref, int mode, 
 	
 	/* Color the object */
 	modstr = (k_name + k_ptr->name);
-	basenm = (show_flavors || !(o_ptr->ident & IDENT_WORN) ? 
+	basenm = (OPT(show_flavors) || !(o_ptr->ident & IDENT_WORN) ? 
 		  "& # Ring" : "& Ring");
 	
 	/* Get the short description */
@@ -1799,7 +1800,7 @@ static void object_desc_full(char *buf, object_type *o_ptr, int pref, int mode, 
   
   
   /* Add squelch marker (maybe dodgy -NRM-) */
-  if (!hide_squelchable && squelch_item_ok(o_ptr))
+  if (!OPT(hide_squelchable) && squelch_item_ok(o_ptr))
     object_desc_str_macro(t, " (squelch)");
 
   /* Truncate overly long descriptions. */
@@ -2308,10 +2309,10 @@ void display_inven(void)
       Term_erase(3+n, i, 255);
       
       /* Display the weight if needed */
-      if (show_weights && o_ptr->weight)
+      if (OPT(show_weights) && o_ptr->weight)
 	{
 	  int wgt = o_ptr->weight * o_ptr->number;
-	  if (use_metric) 
+	  if (OPT(use_metric)) 
 	    sprintf(tmp_val, "%3d.%1d kg", 
 		    make_metric(wgt) / 10, make_metric(wgt) % 10);
 	  else sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
@@ -2397,19 +2398,19 @@ void display_equip(void)
       Term_erase(3+n, i - INVEN_WIELD, 255);
       
       /* Display the slot description (if needed) */
-      if (show_labels)
+      if (OPT(show_labels))
 	{
 	  Term_putstr(61, i - INVEN_WIELD, -1, TERM_WHITE, "<--");
 	  Term_putstr(65, i - INVEN_WIELD, -1, TERM_WHITE, mention_use(i));
 	}
       
       /* Display the weight (if needed) */
-      if (show_weights && o_ptr->weight)
+      if (OPT(show_weights) && o_ptr->weight)
 	{
 	  int wgt = o_ptr->weight * o_ptr->number;
-	  int col = (show_labels ? 52 : 71);
+	  int col = (OPT(show_labels) ? 52 : 71);
 	  
-	  if (use_metric) 
+	  if (OPT(use_metric)) 
 	    sprintf(tmp_val, "%3d.%1d kg", 
 		    make_metric(wgt) / 10, make_metric(wgt) % 10);
 	  else sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
@@ -2459,7 +2460,7 @@ void show_inven(void)
   lim = Term->wid - 3;
   
   /* Require space for weight (if needed) */
-  if (show_weights) lim -= 6;
+  if (OPT(show_weights)) lim -= 6;
   
   /* Hack -- Description must fit on screen */
   if (lim > Term->wid - 1) lim = Term->wid - 1;
@@ -2503,7 +2504,7 @@ void show_inven(void)
       l = strlen(out_desc[k]) + 5;
       
       /* Be sure to account for the weight */
-      if (show_weights) l += 9;
+      if (OPT(show_weights)) l += 9;
       
       /* Maintain the maximum length */
       if (l > len) len = l;
@@ -2546,11 +2547,11 @@ void show_inven(void)
       c_put_str(out_color[j], out_desc[j], j + 1, col + 3);
       
       /* Display the weight if needed */
-      if (show_weights)
+      if (OPT(show_weights))
 	{
 	  int wgt = o_ptr->weight * o_ptr->number;	
 	  
-	  if (use_metric) 
+	  if (OPT(use_metric)) 
 	    sprintf(tmp_val, "%3d.%1d kg", 
 		    make_metric(wgt) / 10, make_metric(wgt) % 10);
 	  else sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
@@ -2638,10 +2639,10 @@ void show_equip(void)
   lim = Term->wid - 3;
   
   /* Require space for labels (if needed) */
-  if (show_labels) lim -= (14 + 2);
+  if (OPT(show_labels)) lim -= (14 + 2);
   
   /* Require space for weight (if needed) */
-  if (show_weights) lim -= 6;
+  if (OPT(show_weights)) lim -= 6;
   
   /* Hack -- Description must fit */
   if (lim > Term->wid) lim = Term->wid;
@@ -2680,10 +2681,10 @@ void show_equip(void)
       l = strlen(out_desc[k]) + (2 + 3);
       
       /* Increase length for labels (if needed) */
-      if (show_labels) l += (14 + 2);
+      if (OPT(show_labels)) l += (14 + 2);
       
       /* Increase length for weight (if needed) */
-      if (show_weights) l += 6;
+      if (OPT(show_weights)) l += 6;
       
       /* Maintain the max-length */
       if (l > len) len = l;
@@ -2728,7 +2729,7 @@ void show_equip(void)
 	}
       
       /* Use labels */
-      if (show_labels)
+      if (OPT(show_labels))
 	{
 	  /* Mention the use */
 	  sprintf(tmp_val, "%-14s: ", mention_use(i));
@@ -2746,11 +2747,11 @@ void show_equip(void)
 	}
       
       /* Display the weight if needed */
-      if (show_weights)
+      if (OPT(show_weights))
 	{
 	  int wgt = o_ptr->weight * o_ptr->number;
 	  
-	  if (use_metric) 
+	  if (OPT(use_metric)) 
 	    sprintf(tmp_val, "%3d.%1d kg", 
 		    make_metric(wgt) / 10, make_metric(wgt) % 10);
 	  else sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
@@ -3083,7 +3084,7 @@ void show_floor(int *floor_list, int floor_num)
   lim = 79 - 3;
   
   /* Require space for weight (if needed) */
-  if (show_weights) lim -= 9;
+  if (OPT(show_weights)) lim -= 9;
   
   /* Display the inventory */
   for (k = 0, i = 0; i < floor_num; i++)
@@ -3112,7 +3113,7 @@ void show_floor(int *floor_list, int floor_num)
       l = strlen(out_desc[k]) + 5;
       
       /* Be sure to account for the weight */
-      if (show_weights) l += 9;
+      if (OPT(show_weights)) l += 9;
       
       /* Maintain the maximum length */
       if (l > len) len = l;
@@ -3148,10 +3149,10 @@ void show_floor(int *floor_list, int floor_num)
       c_put_str(out_color[j], out_desc[j], j + 1, col + 3);
       
       /* Display the weight if needed */
-      if (show_weights)
+      if (OPT(show_weights))
 	{
 	  int wgt = o_ptr->weight * o_ptr->number;
-	  if (use_metric) 
+	  if (OPT(use_metric)) 
 	    sprintf(tmp_val, "%3d.%1d kg", 
 		    make_metric(wgt) / 10, make_metric(wgt) % 10);
 	  else sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
@@ -3429,12 +3430,13 @@ bool get_item_action(char cmd, void *db, int oid)
 bool item_menu(int *cp, cptr pmt, int mode, bool *oops)
 {
   menu_type menu;
-  menu_iter menu_f = { 0, get_item_tag, 0, get_item_display, 
-		       get_item_action };
+  menu_iter menu_f = { get_item_tag, 0, get_item_display, 
+		       get_item_action, 0 };
   region area = { 0, 1, -1, -1 };
-  event_type evt = { EVT_NONE, 0, 0, 0, 0 };
+  ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
   int num_entries;
   bool done;
+  int cursor = 0;
   
   int py = p_ptr->py;
   int px = p_ptr->px;
@@ -3489,7 +3491,7 @@ bool item_menu(int *cp, cptr pmt, int mode, bool *oops)
   item = FALSE;
   
   /* Mega-hack -- show lists */
-  if (show_lists || small_screen) p_ptr->command_see = TRUE;      
+  if (OPT(show_lists) || small_screen) p_ptr->command_see = TRUE;      
   
   /* Full inventory */
   i1 = 0;
@@ -3672,12 +3674,12 @@ bool item_menu(int *cp, cptr pmt, int mode, bool *oops)
   area.page_rows = num_entries + 1;
   area.width = len;
   menu.count = num_entries;
-  menu_init2(&menu, find_menu_skin(MN_SCROLL), &menu_f, &area);
+  menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
 
   /* Play until item selected or refused */
   while (!done)
     {
-      event_type ke0;
+      ui_event_data ke0;
       int ni = 0;
       int ne = 0;
 	      
@@ -3749,7 +3751,7 @@ bool item_menu(int *cp, cptr pmt, int mode, bool *oops)
 	  /* Clear space */
 	  area.page_rows = num_entries + 1;
 	  menu.count = num_entries;
-	  menu_init2(&menu, find_menu_skin(MN_SCROLL), &menu_f, &area);
+	  menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
 	  
 	  refresh = FALSE;
 	}
@@ -3764,8 +3766,7 @@ bool item_menu(int *cp, cptr pmt, int mode, bool *oops)
 	  ;
       else
 	{			      
-	  ke0 = run_event_loop(&(menu.target), 0, &evt);
-	  if (ke0.type != EVT_AGAIN) evt = ke0;
+	  evt = menu_select(&menu, cursor);
 	}
       switch(evt.type) 
 	{
@@ -3800,11 +3801,6 @@ bool item_menu(int *cp, cptr pmt, int mode, bool *oops)
 	case EVT_MOVE:
 	  {
 	    continue;
-	  }
-	  
-	case EVT_BACK:
-	  {
-	    done = TRUE;
 	  }
 	  
 	default:
@@ -3846,7 +3842,7 @@ bool item_menu(int *cp, cptr pmt, int mode, bool *oops)
 	     * is FALSE.
 	     */
 	    /* Hack -- Auto-Select */
-	    if ((!floor_query_flag) && (floor_num == 1))
+	    if (!OPT(floor_query_flag) && (floor_num == 1))
 	      {
 		/* Fall through */
 	      }
@@ -4073,7 +4069,7 @@ bool item_menu(int *cp, cptr pmt, int mode, bool *oops)
   screen_load();
 
   /* Clean up */
-  if (show_choices)
+  if (OPT(show_choices))
     {
       /* Toggle again if needed */
       if (toggle) toggle_inven_equip();
@@ -4086,7 +4082,7 @@ bool item_menu(int *cp, cptr pmt, int mode, bool *oops)
     }
   
   
-  return ((evt.type != EVT_ESCAPE) && (evt.type != EVT_BACK));
+  return (evt.type != EVT_ESCAPE);
 }
 
 /**
@@ -4444,7 +4440,7 @@ bool obj_is_rod(const object_type *o_ptr)    { return o_ptr->tval == TV_ROD; }
 bool obj_is_potion(const object_type *o_ptr) { return o_ptr->tval == TV_POTION; }
 bool obj_is_scroll(const object_type *o_ptr) { return o_ptr->tval == TV_SCROLL; }
 bool obj_is_food(const object_type *o_ptr)   { return o_ptr->tval == TV_FOOD; }
-bool obj_is_light(const object_type *o_ptr)   { return o_ptr->tval == TV_LIGHT; }
+bool obj_is_light(const object_type *o_ptr)   { return o_ptr->tval == TV_LITE; }
 bool obj_is_ring(const object_type *o_ptr)   { return o_ptr->tval == TV_RING; }
 
 /**
@@ -4470,6 +4466,28 @@ bool obj_has_charges(const object_type *o_ptr)
 
 	return TRUE;
 }
+
+int number_charging(const object_type *o_ptr)
+{
+	int num_charging;
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
+	/* A single rod */
+	if (o_ptr->number == 1)
+	  {
+	    if (o_ptr->timeout) return 1;
+	    else return 0;
+	  }
+
+  /* A stack of rods */
+  else if ((o_ptr->number > 1) && (o_ptr->timeout > o_ptr->pval - k_ptr->pval))
+    {
+		  num_charging = (o_ptr->timeout + (k_ptr->pval - 1)) / k_ptr->pval;
+		  if (num_charging > o_ptr->number) num_charging = o_ptr->number;
+      return num_charging;
+    }
+}
+
 
 /* Determine if an object is zappable */
 bool obj_can_zap(const object_type *o_ptr)
@@ -4501,23 +4519,18 @@ bool obj_can_activate(const object_type *o_ptr)
 
 bool obj_can_refill(const object_type *o_ptr)
 {
-	bitflag f[OF_SIZE];
-	const object_type *j_ptr = &p_ptr->inventory[INVEN_LIGHT];
+	const object_type *j_ptr = &inventory[INVEN_LITE];
 
-	/* Get flags */
-	object_flags(o_ptr, f);
-
-	if (j_ptr->sval == SV_LIGHT_LANTERN)
+	if (j_ptr->sval == SV_LITE_LANTERN)
 	{
 		/* Flasks of oil are okay */
 		if (o_ptr->tval == TV_FLASK) return (TRUE);
 	}
 
 	/* Non-empty, non-everburning sources are okay */
-	if ((o_ptr->tval == TV_LIGHT) &&
+	if ((o_ptr->tval == TV_LITE) &&
 	    (o_ptr->sval == j_ptr->sval) &&
-	    (o_ptr->timeout > 0) &&
-	    !of_has(f, OF_NO_FUEL))
+	    (o_ptr->pval > 0))
 	{
 		return (TRUE);
 	}
@@ -4540,7 +4553,6 @@ bool obj_can_browse(const object_type *o_ptr)
 
   /* Okay then */
   return (TRUE);
-	return o_ptr->tval == cp_ptr->spell_book;
 }
 
 bool obj_can_cast_from(const object_type *o_ptr)
@@ -4571,7 +4583,46 @@ bool obj_can_wear(const object_type *o_ptr)
 /* Can only fire an item with the right tval */
 bool obj_can_fire(const object_type *o_ptr)
 {
-	return o_ptr->tval == p_ptr->state.ammo_tval;
+  int ammo_tval;
+
+      switch (inventory[INVEN_BOW].sval)
+	{
+	  /* Sling and ammo */
+	case SV_SLING:
+	  {
+	    ammo_tval = TV_SHOT;
+	    break;
+	  }
+	  
+	  /* Short Bow and Arrow */
+	case SV_SHORT_BOW:
+	  {
+	    ammo_tval = TV_ARROW;
+	    break;
+	  }
+	  
+	  /* Long Bow and Arrow */
+	case SV_LONG_BOW:
+	  {
+	    ammo_tval = TV_ARROW;
+	    break;
+	  }
+	  
+	  /* Light Crossbow and Bolt */
+	case SV_LIGHT_XBOW:
+	  {
+	    ammo_tval = TV_BOLT;
+	    break;
+	  }
+	  
+	  /* Heavy Crossbow and Bolt */
+	case SV_HEAVY_XBOW:
+	  {
+	    ammo_tval = TV_BOLT;
+	    break;
+	  }
+	}
+	return o_ptr->tval == p_ptr->ammo_tval;
 }
 
 /* Can has inscrip pls */
@@ -4584,25 +4635,25 @@ bool obj_has_inscrip(const object_type *o_ptr)
 
 /*
  * Return an object's effect.
- */
+
 u16b object_effect(const object_type *o_ptr)
 {
 	if (o_ptr->name1)
 		return a_info[o_ptr->name1].effect;
 	else
 		return k_info[o_ptr->k_idx].effect;
-}
+} */
 
 /* Get an o_ptr from an item number */
 object_type *object_from_item_idx(int item)
 {
 	if (item >= 0)
-		return &p_ptr->inventory[item];
+		return &inventory[item];
 	else
 		return &o_list[0 - item];
 }
 
-
+#if 0
 /*
  * Does the given object need to be aimed?
  */ 
@@ -4626,7 +4677,7 @@ bool obj_needs_aim(object_type *o_ptr)
 	else
 		return FALSE;
 }
-
+#endif
 
 /* 
  * Check if the given item is available for the player to use. 
@@ -4635,7 +4686,7 @@ bool obj_needs_aim(object_type *o_ptr)
  */
 bool item_is_available(int item, bool (*tester)(const object_type *), int mode)
 {
-	int item_list[ALL_INVEN_TOTAL + MAX_FLOOR_STACK];
+	int item_list[INVEN_TOTAL + MAX_FLOOR_STACK];
 	int item_num;
 	int i;
 

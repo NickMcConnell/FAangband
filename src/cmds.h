@@ -61,6 +61,8 @@ extern void do_cmd_toggle_search(cmd_code code, cmd_arg args[]);
 extern void do_cmd_open(cmd_code code, cmd_arg args[]);
 extern void do_cmd_close(cmd_code code, cmd_arg args[]);
 extern void do_cmd_tunnel(cmd_code code, cmd_arg args[]);
+extern bool do_cmd_open_aux(int y, int x);
+extern bool do_cmd_disarm_aux(int y, int x);
 extern void do_cmd_disarm(cmd_code code, cmd_arg args[]);
 extern void do_cmd_bash(cmd_code code, cmd_arg args[]);
 extern void do_cmd_alter(cmd_code code, cmd_arg args[]);

@@ -33,7 +33,7 @@
  */
 
 #include "angband.h"
-
+#include "squelch.h"
 
 
 
@@ -648,24 +648,32 @@ static errr rd_store(int n)
  */
 static void rd_randomizer(void)
 {
-  int i;
-  
-  u16b tmp16u;
-  
-  /* Tmp */
-  rd_u16b(&tmp16u);
-  
-  /* Place */
-  rd_u16b(&Rand_place);
-  
-  /* State */
-  for (i = 0; i < RAND_DEG; i++)
-    {
-      rd_u32b(&Rand_state[i]);
-    }
-  
-  /* Accept */
-  Rand_quick = FALSE;
+	int i;
+	u32b noop;
+
+	/* current value for the simple RNG */
+	rd_u32b(&Rand_value);
+
+	/* state index */
+	rd_u32b(&state_i);
+
+	/* for safety, make sure state_i < RAND_DEG */
+	state_i = state_i % RAND_DEG;
+    
+	/* RNG variables */
+	rd_u32b(&z0);
+	rd_u32b(&z1);
+	rd_u32b(&z2);
+    
+	/* RNG state */
+	for (i = 0; i < RAND_DEG; i++)
+		rd_u32b(&STATE[i]);
+
+	/* NULL padding */
+	for (i = 0; i < 59 - RAND_DEG; i++)
+		rd_u32b(&noop);
+
+	Rand_quick = FALSE;
 }
 
 
@@ -737,25 +745,20 @@ static void rd_options(void)
       int os = i / 32;
       int ob = i % 32;
       
-      /* Process real entries */
-      if (option_text[i])
+      /* Process saved entries */
+      if (mask[os] & (1L << ob))
 	{
-	  
-	  /* Process saved entries */
-	  if (mask[os] & (1L << ob))
+	  /* Set flag */
+	  if (flag[os] & (1L << ob))
 	    {
-	      /* Set flag */
-	      if (flag[os] & (1L << ob))
-		{
-		  /* Set */
-		  op_ptr->opt[i] = TRUE;
-		}
-	      /* Clear flag */
-	      else
-		{
-		  /* Set */
-		  op_ptr->opt[i] = FALSE;
-		}
+	      /* Set */
+	      op_ptr->opt[i] = TRUE;
+	    }
+	  /* Clear flag */
+	  else
+	    {
+	      /* Set */
+	      op_ptr->opt[i] = FALSE;
 	    }
 	}
     }
@@ -871,7 +874,7 @@ static int convert_saved_names(void)
     {
       name_size += strlen(names[i]) + 1;	/* skip first char */
     }
-  if ((a_base = ralloc(name_size)) == NULL)
+  if ((a_base = mem_alloc(name_size)) == NULL)
     {
       note("Memory allocation error");
       return 1;
@@ -889,7 +892,7 @@ static int convert_saved_names(void)
   
   
   /* Free some of our now unneeded memory. */
-  KILL (a_name);
+  FREE(a_name);
   for (i = ART_MIN_RANDOM; i < MAX_A_IDX; i++)
     {
       free(names[i]);
@@ -1486,7 +1489,7 @@ static errr rd_dungeon(void)
   /*** Basic info ***/
   
   /* Hack - rewrite stage_map if necessary */
-  if (adult_dungeon)
+  if (OPT(adult_dungeon))
     {
       for (i = 0; i < NUM_STAGES; i++)
 	for (n = 0; n < 9; n++)
@@ -2254,7 +2257,7 @@ static errr rd_savefile_new_aux(void)
   /* Otherwise optionally look at the dead one, quickstart */
   else
     {
-      event_type answer;
+      ui_event_data answer;
       
       /* Clear screen */
       Term_clear();

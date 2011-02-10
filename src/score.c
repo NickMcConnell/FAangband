@@ -437,7 +437,7 @@ void enter_score(time_t *death_time)
   int j;
   
   /* Cheaters are not scored */
-  for (j = OPT_score_start; j < OPT_MAX; ++j)
+  for (j = OPT_SCORE; j < OPT_MAX; ++j)
     {
       if (!op_ptr->opt[j]) continue;
       

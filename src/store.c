@@ -24,6 +24,8 @@
 
 #include "angband.h"
 #include "cmds.h"
+#include "squelch.h"
+#include "ui-menu.h"
 
 
 #define MAX_COMMENT_0	6
@@ -43,7 +45,7 @@ static cptr comment_0[MAX_COMMENT_0] =
  */
 static void say_comment_0(void)
 {
-  msg_print(comment_0[rand_int(MAX_COMMENT_0)]);
+  msg_print(comment_0[randint0(MAX_COMMENT_0)]);
 }
 
 
@@ -103,7 +105,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
   if ((value <= 0) && (price > value))
     {
       /* Comment */
-      message(MSG_STORE1, 0, comment_1 [rand_int(MAX_COMMENT_1 )]);
+      message(MSG_STORE1, 0, comment_1 [randint0(MAX_COMMENT_1 )]);
       
       /* Sound */
       sound(MSG_STORE1);
@@ -113,7 +115,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
   else if ((value < guess) && (price > value))
     {
       /* Comment */
-      message(MSG_STORE2, 0, comment_2 [rand_int(MAX_COMMENT_2 )]);
+      message(MSG_STORE2, 0, comment_2 [randint0(MAX_COMMENT_2 )]);
       
       /* Sound */
       sound(MSG_STORE2);
@@ -123,7 +125,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
   else if ((value > guess) && (value < (4 * guess)) && (price < value))
     {
       /* Comment */
-      message(MSG_STORE3, 0, comment_3 [rand_int(MAX_COMMENT_3 )]);
+      message(MSG_STORE3, 0, comment_3 [randint0(MAX_COMMENT_3 )]);
       
       /* Sound */
       sound(MSG_STORE3);
@@ -133,7 +135,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
   else if ((value > guess) && (price < value))
     {
       /* Comment */
-      message(MSG_STORE4, 0, comment_4 [rand_int(MAX_COMMENT_4 )]);
+      message(MSG_STORE4, 0, comment_4 [randint0(MAX_COMMENT_4 )]);
       
       /* Sound */
       sound(MSG_STORE4);
@@ -263,7 +265,7 @@ static int mass_roll(int num, int max)
   int i, t = 0;
   for (i = 0; i < num; i++)
     {
-      t += ((max > 1) ? rand_int(max) : 1);
+      t += ((max > 1) ? randint0(max) : 1);
     }
   return (t);
 }
@@ -302,7 +304,7 @@ static void mass_produce(object_type *o_ptr)
     case TV_POTION:
     case TV_SCROLL:
       {
-	if ((st_ptr->type == 6) && (randint(2) == 1))
+	if ((st_ptr->type == 6) && (randint1(2) == 1))
 	  {
 	    if (cost < 400L) size += mass_roll(15,3);
 	  }
@@ -362,7 +364,7 @@ static void mass_produce(object_type *o_ptr)
     case TV_WAND:
     case TV_STAFF:
       {
-	if ((st_ptr->type == 6) && (randint(3) == 1))
+	if ((st_ptr->type == 6) && (randint1(3) == 1))
 	  {
 	    if (cost < 1601L) size += mass_roll(1, 5);
 	    else if (cost < 3201L) size += mass_roll(1, 3);
@@ -401,19 +403,19 @@ static void mass_produce(object_type *o_ptr)
     {
       discount = 0;
     }
-  else if (rand_int(400 / discount_probability) == 0)
+  else if (randint0(400 / discount_probability) == 0)
     {
       discount = 25;
     }
-  else if (rand_int(2000 / discount_probability) == 0)
+  else if (randint0(2000 / discount_probability) == 0)
     {
       discount = 50;
     }
-  else if (rand_int(4000 / discount_probability) == 0)
+  else if (randint0(4000 / discount_probability) == 0)
     {
       discount = 75;
     }
-  else if (rand_int(6000 / discount_probability) == 0)
+  else if (randint0(6000 / discount_probability) == 0)
     {
       discount = 90;
     }
@@ -1077,16 +1079,16 @@ static void store_delete(void)
   if (st_ptr->stock_num <= 0) return;
   
   /* Pick a random slot */
-  what = rand_int(st_ptr->stock_num);
+  what = randint0(st_ptr->stock_num);
   
   /* Determine how many objects are in the slot */
   num = st_ptr->stock[what].number;
   
   /* Hack -- sometimes, only destroy half the objects */
-  if (rand_int(100) < 50) num = (num + 1) / 2;
+  if (randint0(100) < 50) num = (num + 1) / 2;
   
   /* Hack -- sometimes, only destroy a single object, if not a missile. */
-  if (rand_int(100) < 50)
+  if (randint0(100) < 50)
     { 
       if ((st_ptr->stock[what].tval != TV_BOLT) && 
 	  (st_ptr->stock[what].tval != TV_ARROW) && 
@@ -1139,7 +1141,7 @@ static void store_create(void)
 	  /* Pick a level for object/magic.  Now depends partly 
 	   * on player level.
 	   */
-	  level = 5 + p_ptr->lev / 2 + rand_int(30);
+	  level = 5 + p_ptr->lev / 2 + randint0(30);
 	  
 	  /* Random object kind (biased towards given level) */
 	  k_idx = get_obj_num(level);
@@ -1154,10 +1156,10 @@ static void store_create(void)
 	  int num = st_ptr->table_num;
 
 	  /* Hack -- Pick an object kind to sell */
-	  int i = rand_int(num);
+	  int i = randint0(num);
 
 	  while ((st_ptr->table[i] == 0) || (st_ptr->table[i] > z_info->k_max))
-	    i = rand_int(num);
+	    i = randint0(num);
 
 	  k_idx = st_ptr->table[i];
 	  
@@ -1264,7 +1266,7 @@ static void display_entry(int item)
       maxwid = (small_screen ? 43 : 75);
       
       /* Leave room for weights, if necessary -DRS- */
-      if (show_weights) maxwid -= 10;
+      if (OPT(show_weights)) maxwid -= 10;
       
       /* Describe the object */
       object_desc(o_name, o_ptr, TRUE, 4);
@@ -1277,12 +1279,12 @@ static void display_entry(int item)
       c_put_str(attr, o_name, y, 3);
       
       /* Show weights */
-      if (show_weights)
+      if (OPT(show_weights))
 	{
 	  /* Only show the weight of a single object */
 	  int wgt = o_ptr->weight;
 	  
-	  if (use_metric) 
+	  if (OPT(use_metric)) 
 	    sprintf(out_val, "%3d.%d kg", make_metric(wgt) / 10, 
 		    make_metric(wgt) % 10);
 	  else sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
@@ -1300,7 +1302,7 @@ static void display_entry(int item)
       maxwid = (small_screen ? 33 : 65);
       
       /* Leave room for weights, if necessary -DRS- */
-      if (show_weights) maxwid -= 7;
+      if (OPT(show_weights)) maxwid -= 7;
       
       /* Describe the object (fully) */
       object_desc_store(o_name, o_ptr, TRUE, 4);
@@ -1313,11 +1315,11 @@ static void display_entry(int item)
       c_put_str(attr, o_name, y, 3);
       
       /* Show weights */
-      if (show_weights)
+      if (OPT(show_weights))
 	{
 	  /* Only show the weight of a single object */
 	  int wgt = o_ptr->weight;
-	  if (use_metric) 
+	  if (OPT(use_metric)) 
 	    sprintf(out_val, "%3d.%d kg", make_metric(wgt) / 10, 
 		    make_metric(wgt) % 10);
 	  else sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
@@ -1411,7 +1413,7 @@ static void display_store(void)
       put_str("Item Description", 4, 3);
       
       /* If showing weights, show label */
-      if (show_weights)
+      if (OPT(show_weights))
 	{
 	  put_str("Weight", 4, (small_screen ? 38 : 70));
 	}
@@ -1462,7 +1464,7 @@ static void display_store(void)
       put_str("Item Description", 4, 3);
       
       /* If showing weights, show label */
-      if (show_weights)
+      if (OPT(show_weights))
 	{
 	  put_str("Weight", 4, (small_screen ? 30 : 60));
 	}
@@ -1490,7 +1492,7 @@ static bool get_stock(int *com_val, cptr pmt)
 {
   int item;
   
-  event_type which;
+  ui_event_data which;
   
   char buf[160];
   
@@ -1825,7 +1827,7 @@ static void store_purchase(void)
 	      int i;
 	      
 	      /* Shuffle.  Made retiring more likely. */
-	      if (rand_int(STORE_SHUFFLE) < 5)
+	      if (randint0(STORE_SHUFFLE) < 5)
 		{
 		  /* Message */
 		  msg_print("The shopkeeper retires.");
@@ -2061,7 +2063,7 @@ static void store_sell(void)
       bool aware = FALSE;
       
       /* No selling */
-      if (!adult_no_sell)
+      if (!OPT(adult_no_sell))
 	{
 	  /* Get the price */
 	  price = price_item(i_ptr, ot_ptr->inflate, TRUE) * i_ptr->number;
@@ -2144,7 +2146,7 @@ static void store_sell(void)
       object_desc(o_name, i_ptr, TRUE, 3);
 	  
       /* No selling */
-      if (adult_no_sell)
+      if (OPT(adult_no_sell))
 	{      
 	  /* Describe the result (in message buffer) */
 	  msg_format("You gave over %s (%c).",
@@ -2264,15 +2266,6 @@ static void store_inspect(void)
 }
 
 /**
- * Structure to describe tval/description pairings. 
- */
-typedef struct
-{
-  int tval;
-  const char *desc;
-} tval_desc;
-
-/**
  * First book entry in order_items 
  */
 #define BOOK_START 2
@@ -2364,9 +2357,9 @@ static bool order_item_action(char cmd, void *db, int oid)
 static bool order_menu(int tval, const char *desc)
 {
   menu_type menu;
-  menu_iter menu_f = { 0, 0, 0, order_item_display, order_item_action };
+  menu_iter menu_f = { 0, 0, order_item_display, order_item_action, 0 };
   region area = { 1, 5, -1, -1 };
-  event_type evt = { EVT_NONE, 0, 0, 0, 0 };
+  ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
   int cursor = 0;
   
   int num = 0;
@@ -2440,11 +2433,11 @@ static bool order_menu(int tval, const char *desc)
   menu.cmd_keys = " \n\r";
   menu.count = num;
   menu.menu_data = choice;
-  menu_init2(&menu, find_menu_skin(MN_SCROLL), &menu_f, &area);
+  menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
   
   /* Select an entry */
-  while (evt.key != ESCAPE)
-    evt = menu_select(&menu, &cursor, 0);
+  while (evt.type != EVT_ESCAPE)
+    evt = menu_select(&menu, cursor);
   
   /* Free memory */
   FREE(choice);
@@ -2482,10 +2475,10 @@ static void display_order(menu_type *menu, int oid, bool cursor,
 void store_order(void)
 {
   int i, j = 0, cursor = 0;
-  event_type c = EVENT_EMPTY;
+  ui_event_data c = EVENT_EMPTY;
   const char cmd_keys[] = { ARROW_LEFT, ARROW_RIGHT, '\0' };
   
-  menu_iter menu_f = {0, tag_order, 0, display_order, NULL};
+  menu_iter menu_f = {tag_order, 0, display_order, NULL, 0 };
   menu_type menu;
   int choice[3];
 
@@ -2498,7 +2491,7 @@ void store_order(void)
   menu.cmd_keys = cmd_keys;
   menu.menu_data = choice;
   menu.count = BOOK_START + (mp_ptr->spell_book ? 1 : 0);
-  menu_init2(&menu, find_menu_skin(MN_SCROLL), &menu_f, &SCREEN_REGION);
+  menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
   
   menu_layout(&menu, &SCREEN_REGION);
   
@@ -2506,10 +2499,10 @@ void store_order(void)
   screen_save();
   clear_from(0);
   
-  while (c.key != ESCAPE)
+  while (c.type != EVT_ESCAPE)
     {
       clear_from(0);
-      c = menu_select(&menu, &cursor, 0);
+      c = menu_select(&menu, cursor);
       
       if (c.type == EVT_SELECT)
 	{
@@ -2618,27 +2611,20 @@ static void store_process_command(void)
       
       /*** Inventory Commands ***/
       
-      /* Wear/wield equipment */
     case 'w':
-      {
-	do_cmd_wield();
-	break;
-      }
-      
-      /* Take off equipment */
     case 't':
-      {
-	do_cmd_takeoff();
-	break;
-      }
-      
-      /* Destroy an item */
     case 'k':
-      {
-	do_cmd_destroy();
-	break;
-      }
-      
+    case 'b':
+    case 'I':
+    case '{':
+    case '}':
+    case '~':
+		{
+			Term_key_push(p_ptr->command_cmd);
+			textui_process_command(TRUE);
+			break;
+		}
+
       /* Equipment list */
     case 'e':
       {
@@ -2653,14 +2639,6 @@ static void store_process_command(void)
 	break;
       }
       
-      /* Inspect an object */
-    case 'I':
-      {
-	do_cmd_observe();
-	break;
-      }
-      
-      
       /*** Various commands ***/
       
       /* Look at an object */
@@ -2674,31 +2652,6 @@ static void store_process_command(void)
     case KTRL('E'):
       {
 	toggle_inven_equip();
-	break;
-      }
-      
-      
-      
-      /*** Use various objects ***/
-      
-      /* Browse a book */
-    case 'b':
-      {
-	do_cmd_browse();
-	break;
-      }
-      
-      /* Inscribe an object */
-    case '{':
-      {
-	do_cmd_inscribe();
-	break;
-      }
-      
-      /* Uninscribe an object */
-    case '}':
-      {
-	do_cmd_uninscribe();
 	break;
       }
       
@@ -2791,13 +2744,6 @@ static void store_process_command(void)
 	break;
       }
       
-      /* Check knowledge */
-    case '~':
-      {
-	do_cmd_knowledge();
-	break;
-      }
-      
       /* Load "screen dump" */
     case '(':
       {
@@ -2873,17 +2819,17 @@ void get_owner(bool pick)
       if ((type == STORE_MERCH) || (out_of == 0))
 	{
 	  /* Choose a random owner */
-	  i = rand_int(z_info->p_max);
+	  i = randint0(z_info->p_max);
 	  
 	  /* Try again if necessary*/
-	  while (possible[i] == 0) i = rand_int(z_info->p_max);
+	  while (possible[i] == 0) i = randint0(z_info->p_max);
 	}
 
       /* Choose a legal race */
       else
 	{
 	  /* Get a random value */
-	  j = rand_int(out_of);
+	  j = randint0(out_of);
 	  
 	  /* Look up the race probability */
 	  for (i = 0; i < z_info->p_max; i++)
@@ -3006,7 +2952,7 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
   /* Oops */
   if (which == MAX_STORES)
     {
-      if (adult_dungeon) 
+      if (OPT(adult_dungeon)) 
 	{
 	  if (cave_feat[py][px] == FEAT_SHOP_HEAD + STORE_MERCH) which = 0;
 	  else which = cave_feat[py][px] - FEAT_SHOP_HEAD + 4 * NUM_TOWNS_SMALL;
@@ -3126,7 +3072,7 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 	  /* More commands */
 	  prt(" g) Get/Purchase an item.", 21, 29);
 	  prt(" d) Drop/Sell an item.", 22, 29);
-	  if (rogue_like_commands)
+	  if (OPT(rogue_like_commands))
 	    prt("   x) Look at an item.", 21, 55);
 	  else
 	    prt("   l) Look at an item.", 21, 55);
@@ -3370,7 +3316,7 @@ void store_maint(int which)
   j = st_ptr->stock_num;
   
   /* Sell a few items */
-  j = j - randint(STORE_TURNOVER);
+  j = j - randint1(STORE_TURNOVER);
   
   /* Never keep more than "STORE_MAX_KEEP" slots */
   if (j > STORE_MAX_KEEP) j = STORE_MAX_KEEP;
@@ -3389,7 +3335,7 @@ void store_maint(int which)
   j = st_ptr->stock_num;
   
   /* Buy some more items */
-  j = j + randint(STORE_TURNOVER);
+  j = j + randint1(STORE_TURNOVER);
 
   /* Never keep more than "STORE_MAX_KEEP" slots */
   if (j > STORE_MAX_KEEP) j = STORE_MAX_KEEP;
@@ -3418,7 +3364,7 @@ void stores_maint(int times)
   bool big = FALSE;
   
   /* Message */
-  if (cheat_xtra) msg_print("Updating Shops...");
+  if (OPT(cheat_xtra)) msg_print("Updating Shops...");
   
   /* Do each town in turn */
   for (t = 0; t < NUM_TOWNS; t++)
@@ -3464,20 +3410,20 @@ void stores_maint(int times)
       
       
       /* Sometimes, shuffle the shop-keepers */
-      if (rand_int(STORE_SHUFFLE) == 0)
+      if (randint0(STORE_SHUFFLE) == 0)
 	{
 	  /* Message */
-	  if (cheat_xtra) msg_print("Shuffling a Shopkeeper...");
+	  if (OPT(cheat_xtra)) msg_print("Shuffling a Shopkeeper...");
 	  
 	  /* pick a store randomly. */
-	  n = rand_int(max_stores);
+	  n = randint0(max_stores);
 	  
 	  /* Shuffle the store, if not the home. */
 	  if (n != home) store_shuffle(base + n);
 	}
       
       /* Message */
-      if (cheat_xtra) msg_print("Done.");
+      if (OPT(cheat_xtra)) msg_print("Done.");
     }
 }
 

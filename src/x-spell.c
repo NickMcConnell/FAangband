@@ -479,11 +479,9 @@ bool spell_needs_aim(int tval, int spell)
     case SPELL_STINKING_CLOUD:
     case SPELL_LIGHTNING_BOLT:
     case SPELL_CONFUSE_MONSTER:
-    case SPELL_TELEKINESIS:
     case SPELL_SLEEP_MONSTER:
     case SPELL_SPEAR_OF_LIGHT:
     case SPELL_FROST_BEAM:
-    case SPELL_MAGICAL_THROW:
     case SPELL_MAGIC_DISARM:
     case SPELL_BLINK_MONSTER:
     case SPELL_STONE_TO_MUD:
@@ -552,7 +550,13 @@ bool cast_spell(int tval, int index, int dir)
 	int px = p_ptr->px;
 
 	int plev = p_ptr->lev;
+	bool beam = FALSE;
 
+      /* Hack -- higher chance of "beam" instead of "bolt" for mages 
+       * and necros.
+       */
+      beam = ((check_ability(SP_BEAM)) ? plev : (plev / 2));
+      
       /* Spell Effects.  Spells are mostly listed by realm, each using a 
        * block of 64 spell slots, but there are a certain number of spells 
        * that are used by more than one realm (this allows more neat class-
@@ -564,7 +568,6 @@ bool cast_spell(int tval, int index, int dir)
 	  
 	case 0:	/* Fire Bolt */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_bolt(GF_FIRE, dir,
 		      damroll(4 + plev / 10, 3));
 	    break;
@@ -595,7 +598,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 5:	/* Stinking Cloud */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_ball(GF_POIS, dir, 5 + plev / 3, 2, FALSE);
 	    break;
 	  }
@@ -620,30 +622,27 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 8:	/* Identify */
 	  {
-	    if (!ident_spell()) return;
+	    if (!ident_spell()) return FALSE;
 	    break;
 	  }
 	case 9:	/* Lightning Bolt */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_bolt_or_beam(beam, GF_ELEC, dir, damroll(2+((plev-5)/5), 8));
 	    break;
 	  }
 	case 10:	/* Confuse Monster */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)confuse_monster(dir, plev + 10);
 	    break;
 	  }
 	case 11:        /* Telekinesis */
 	  {
-	    if (!target_set_interactive(TARGET_OBJ)) return;
-	    if (!py_pickup(2, p_ptr->target_row, p_ptr->target_col)) return;
+	    if (!target_set_interactive(TARGET_OBJ)) return FALSE;
+	    if (!py_pickup(2, p_ptr->target_row, p_ptr->target_col)) return FALSE;
 	    break;
 	  }
 	case 12:	/* Sleep Monster */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)sleep_monster(dir, plev + 10);
 	    break;
 	  }
@@ -654,14 +653,12 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 14:	/* Spear of Light */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    msg_print("A line of blue shimmering light appears.");
 	    lite_line(dir);
 	    break;
 	  }
 	case 15:	/* Frost Beam */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_beam(GF_COLD, dir, 5 + plev);
 	    break;
 	  }
@@ -684,13 +681,11 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 19:	/* Magic Disarm */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)disarm_trap(dir);
 	    break;
 	  }
 	case 20:        /* Blink Monster */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)teleport_monster(dir, 5 + (plev/10));
 	    break;
 	  }
@@ -708,13 +703,12 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 23:  /* Stone to Mud */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)wall_to_mud(dir);
 	    break;
 	  }
 	case 24:	/* Minor Recharge */
 	  {
-	    if (!recharge(120)) return;
+	    if (!recharge(120)) return FALSE;
 	    break;
 	  }
 	case 25:	/* Sleep Monsters */
@@ -724,13 +718,11 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 26:	/* Thrust Away */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_arc(GF_FORCE, dir, damroll(6 + (plev / 10), 8), (1 + plev / 10), 0);
 	    break;
 	  }
 	case 27:	/* Fire Ball */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_ball(GF_FIRE, dir, 55 + plev, 2, FALSE);
 	    break;
 	  }
@@ -741,13 +733,11 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 29:	/* Slow Monster */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)slow_monster(dir, plev + 10);
 	    break;
 	  }
 	case 30:	/* Teleport Other */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)teleport_monster(dir, 45 + (plev/2));
 	    break;
 	  }
@@ -765,7 +755,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 32:	/* Hold Monsters */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_ball(GF_HOLD, dir, 0, 2, FALSE);
 	    break;
 	  }
@@ -784,7 +773,7 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 34:	/* Resist Element */
 	  {
-	    if (!choose_ele_resist()) return;
+	    if (!choose_ele_resist()) return FALSE;
 	    break;
 	  }
 	case 35:	/* Shield */
@@ -868,13 +857,11 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 45:	/* Acid Bolt */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_bolt_or_beam(beam, GF_ACID, dir, damroll(3 + plev / 3, 8));
 	    break;
 	  }
 	case 46:	/* Polymorph Other */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)poly_monster(dir);
 	    break;
 	  }
@@ -903,20 +890,17 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 51:	/* Cloud Kill */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_ball(GF_POIS, dir, 10 + plev, 3, FALSE);
 	    fire_ball(GF_ACID, dir, 2 * plev, 2, FALSE);
 	    break;
 	  }
 	case 52:	/* Ice Storm */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_ball(GF_ICE, dir, 3 * plev, 3, FALSE);
 	    break;
 	  }
 	case 53:	/* Meteor Swarm */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_ball(GF_METEOR, dir, 80 + (plev * 2), 1, FALSE);
 	    break;
 	  }  
@@ -927,13 +911,11 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 55:	/* Unleash Chaos */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_ball(GF_CHAOS, dir, 80 + (plev * 2), 3, FALSE);
 	    break;
 	  }
 	case 56:	/* Wall of Force */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_arc(GF_FORCE, dir, 4 * plev, 3 + plev / 15, 60);
 	    break;
 	  }
@@ -1034,7 +1016,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 73: /* Scare Monster */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)fear_monster(dir, (3 * plev / 2) + 10);
 	    break;
 	  }
@@ -1084,7 +1065,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 81: /* Orb of Draining */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_sphere(GF_HOLY_ORB, dir, (damroll(3, 6) + plev / 4 +
 			 (plev / ((check_ability(SP_STRONG_MAGIC)) ? 2 : 4))),
 			((plev < 30) ? 1 : 2), 30);
@@ -1201,7 +1181,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 97: /* Teleport Other */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)teleport_monster(dir, 45 + (plev/3));
 	    break;
 	  }
@@ -1246,7 +1225,7 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 104: /* Perception */
 	  {
-	    if (!ident_spell()) return;
+	    if (!ident_spell()) return FALSE;
 	    break;
 	  }
 	case 105: /* Clairvoyance */
@@ -1296,7 +1275,7 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 112: /* Recharging */
 	  {
-	    if (!recharge(140)) return;
+	    if (!recharge(140)) return FALSE;
 	    break;
 	  }
 	case 113: /* Dispel Curse */
@@ -1307,14 +1286,11 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 114: /* Disarm Trap */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)disarm_trap(dir);
 	    break;
 	  }
 	case 115: /* Holding */
 	  {
-	    if (!get_aim_dir(&dir)) return;
-	    
 	    /* Spell will hold any monster or door in one square. */
 	    fire_ball(GF_HOLD, dir, 0, 0, FALSE);
 	    
@@ -1357,7 +1333,7 @@ bool cast_spell(int tval, int index, int dir)
 		  {
 		    kill_button('w');
 		    kill_button('a');
-		    return;
+		    return FALSE;
 		  }
 	      }
 	    kill_button('w');
@@ -1367,13 +1343,11 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 117: /* Light of Manwe */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_ball(GF_LITE, dir, plev * 2, 3, FALSE);
 	    break;
 	  }
 	case 118: /* Lance of Orome */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_beam(GF_HOLY_ORB, dir, 3 * plev / 2);
 	    break;
 	  }
@@ -1385,7 +1359,6 @@ bool cast_spell(int tval, int index, int dir)
 	  
 	case 120: /* Strike of Mandos */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    drain_life(dir, plev * 3 + randint1(100));
 	    break;
 	  }
@@ -1400,7 +1373,7 @@ bool cast_spell(int tval, int index, int dir)
 	  
 	case 122: /* Paladin Prayer: Elemental Infusion */
 	  {
-	    if (!choose_ele_attack()) return;
+	    if (!choose_ele_attack()) return FALSE;
 	    break;
 	  }
 	case 123: /* Paladin Prayer: Sanctify for Battle */
@@ -1492,7 +1465,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 133:  /* lightning spark */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_arc(GF_ELEC, dir, damroll(2 + (plev/8), 6),(1 + plev / 5), 0);
 	    break;
 	  }
@@ -1503,13 +1475,11 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 135:  /* turn stone to mud */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)wall_to_mud(dir);
 	    break;
 	  }
 	case 136:  /* ray of sunlight */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    msg_print("A ray of golden yellow light appears.");
 	    lite_line(dir);
 	    break;
@@ -1521,19 +1491,16 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 138:  /* frost bolt */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_bolt_or_beam(beam - 10, GF_COLD,dir,damroll(2 + (plev/5), 8));
 	    break;
 	  }
 	case 139:  /* sleep creature */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)sleep_monster(dir, plev + 10);
 	    break;
 	  }
 	case 140:  /* frighten creature */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)fear_monster(dir, plev + 10);
 	    break;
 	  }
@@ -1551,7 +1518,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 143:  /* fire bolt */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_bolt_or_beam(beam - 10, GF_FIRE, dir,
 			      damroll(3 + (plev/5), 8));
 	    break;
@@ -1577,20 +1543,17 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 146:  /* acid bolt */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_bolt_or_beam(beam - 10, GF_ACID, dir,
 			      damroll(5 + (plev/5), 8));
 	    break;
 	  }
 	case 147:  /* teleport monster */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)teleport_monster(dir, 45 + (plev/3));
 	    break;
 	  }
 	case 148:  /* gravity bolt */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_bolt_or_beam(beam - 10, GF_GRAVITY, dir,
 			      damroll(5 + (plev/4), 8));
 	    break;
@@ -1631,7 +1594,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 155:  /* wither foe */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_bolt(GF_HOLY_ORB, dir, damroll(plev / 7, 8));		
 	    (void)confuse_monster(dir, plev + 10);
 	    (void)slow_monster(dir, plev + 10);
@@ -1639,13 +1601,12 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 156:  /* disarm trap */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)disarm_trap(dir);
 	    break;
 	  }
 	case 157:  /* identify */
 	  {
-	    if (!ident_spell()) return;
+	    if (!ident_spell()) return FALSE;
 	    break;
 	  }
 	case 158:  /* create athelas */
@@ -1655,7 +1616,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 159:  /* raging storm */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_ball(GF_ELEC, dir, plev + randint1(60 + plev * 2), 
 		      (1 + plev / 15), FALSE);
 	    break;
@@ -1737,7 +1697,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 171:  /* blizzard */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_ball(GF_COLD, dir, plev + randint1(50 + plev * 2), 
 		      1 + plev / 12, FALSE);
 	    break;
@@ -1759,7 +1718,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 174:  /* molten lightning */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_ball(GF_PLASMA, dir, 
 		      35 + (2 * plev) + randint1(90 + plev * 4), 1, FALSE);
 	    break;
@@ -1822,7 +1780,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 181:  /* Web of Vaire */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_bolt_or_beam(plev * 2, GF_TIME, dir,
 			      damroll(plev / 6, 8));
 	    break;
@@ -1841,7 +1798,7 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 183:  /* Renewal of Vana */
 	  {
-	    if (!recharge(125)) return;
+	    if (!recharge(125)) return FALSE;
 	    break;
 	  }
 	case 184:  /* Servant of Yavanna */
@@ -1868,7 +1825,7 @@ bool cast_spell(int tval, int index, int dir)
 	case 187:  /* Ranger Spell:  Creature Knowledge */
 	  {
 	    msg_print("Target the monster you wish to learn about.");
-	    if (!get_aim_dir(&dir)) return;
+	    if (!get_aim_dir(&dir)) return FALSE;
 	    pseudo_probe();
 	    break;
 	  }
@@ -1886,12 +1843,12 @@ bool cast_spell(int tval, int index, int dir)
 	  {
 	    u32b flags = (OF_ACID_PROOF|OF_FIRE_PROOF);
 
-	    if (!el_proof(flags)) return;
+	    if (!el_proof(flags)) return FALSE;
 	    break;
 	  }
 	case 191: /* Tremor */
 	  {
-	    if (!tremor()) return;
+	    if (!tremor()) return FALSE;
 	    break;
 	  }
 	
@@ -1899,7 +1856,6 @@ bool cast_spell(int tval, int index, int dir)
 	
 	case 192: /* nether bolt */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_bolt(GF_NETHER, dir, damroll(2, 5 + plev / 7));
 	    break;
 	  }
@@ -1921,19 +1877,16 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 196: /* slow monster */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)slow_monster(dir, plev + 5);
 	    break;
 	  }
 	case 197: /* sleep monster */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)sleep_monster(dir, plev + 5);
 	    break;
 	  }
 	case 198: /* horrify */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)fear_monster(dir, plev + 15);
 	    break;
 	  }
@@ -1950,7 +1903,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 201: /* dark bolt */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_bolt_or_beam(beam - 10, GF_DARK, dir, 
 			      damroll((3 + plev / 7), 8));
 	    break;
@@ -2037,7 +1989,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 215: /* death bolt */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    take_hit(damroll(1, 6), "the dark arts");
 	    fire_bolt_or_beam(beam, GF_SPIRIT, dir,
 			      damroll(2 + plev / 3, 8));
@@ -2055,13 +2006,11 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 218: /* dark spear */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_beam(GF_DARK, dir, 15 + 7 * plev / 4);
 	    break;
 	  }
 	case 219: /* chaos strike */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_bolt_or_beam(beam, GF_CHAOS, dir, damroll(1 + plev / 2, 8));
 	    break;
 	  }
@@ -2072,7 +2021,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 221: /* dark ball */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_ball(GF_DARK, dir, 50 + plev * 2, 2, FALSE);
 	    break;
 	  }
@@ -2081,10 +2029,7 @@ bool cast_spell(int tval, int index, int dir)
 	    take_hit(damroll(2, 8), "the stench of Death");
 	    (void)dispel_living(50 + randint1(plev));
 	    confu_monsters(plev + 10);
-	    if (get_aim_dir(&dir))
-	      {
-		fire_sphere(GF_POIS, dir, plev * 2, 5 + plev / 11, 40);
-	      }
+	    fire_sphere(GF_POIS, dir, plev * 2, 5 + plev / 11, 40);
 	    break;
 	  }
 	case 223: /* probing */
@@ -2099,7 +2044,7 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 225: /* identify */
 	  {
-	    if (!ident_spell()) return;
+	    if (!ident_spell()) return FALSE;
 	    break;
 	  }
 	case 226: /* shadow warping */
@@ -2110,7 +2055,7 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 227: /* poison ammo - for assassins only */
 	  {
-	    if (!brand_missile(0, EGO_POISON)) return;
+	    if (!brand_missile(0, EGO_POISON)) return FALSE;
 	    break;
 	  }
 	case 228: /* resist acid and cold */
@@ -2162,14 +2107,12 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 235: /* strike at life */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_bolt(GF_NETHER, dir,
 		      damroll(3 * plev / 5, 13));
 	    break;
 	  }
 	case 236: /* orb of death */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    take_hit(damroll(2, 8), "Death claiming his wages");
 	    fire_sphere(GF_SPIRIT, dir, 20 + (4 * plev), 1, 20);
 	    break;
@@ -2181,7 +2124,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 238: /* vampiric drain */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_bolt(GF_SPIRIT, dir,
 		      damroll(plev / 3, 11));
 	    (void)hp_player(3 * plev);
@@ -2190,7 +2132,7 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 239: /* recharging */
 	  {
-	    if (!recharge(140)) return;
+	    if (!recharge(140)) return FALSE;
 	    break;
 	  }
 	case 240: /* become werewolf */
@@ -2246,7 +2188,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 246: /* teleport away */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    (void)teleport_monster(dir, 45 + (plev/3));
 	    break;
 	  }
@@ -2262,7 +2203,6 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 249: /* darkness storm */
 	  {
-	    if (!get_aim_dir(&dir)) return;
 	    fire_ball(GF_DARK, dir, 11 * plev / 2, plev / 7, FALSE);
 	    break;
 	  }
@@ -2331,4 +2271,10 @@ bool cast_spell(int tval, int index, int dir)
 	    break;
 	  }
 	}
+ 
+ /* Alter shape, if necessary. */
+  if (shape) shapechange(shape);
+  
+	/* Success */
+	return (TRUE);
 }

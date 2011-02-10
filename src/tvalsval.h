@@ -239,9 +239,9 @@ enum sval_soft_armour /* tval 36 */
 {
         SV_FILTHY_RAG = 1,
         SV_ROBE = 2,
-        SV_SOFT_LEATHER_ARMOUR = 4,
+        SV_SOFT_LEATHER_ARMOR = 4,
         SV_SOFT_STUDDED_LEATHER = 5,
-        SV_HARD_LEATHER_ARMOUR = 6,
+        SV_HARD_LEATHER_ARMOR = 6,
         SV_HARD_STUDDED_LEATHER = 7,
         SV_LEATHER_SCALE_MAIL = 11
 };

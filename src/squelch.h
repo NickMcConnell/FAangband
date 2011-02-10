@@ -3,63 +3,134 @@
 #ifndef SQUELCH_H
 #define SQUELCH_H
 
+#define TYPE_MAX 19
 
-/*
- * List of kinds of item, for pseudo-id squelch.
+/**
+ * Names of categories.
  */
-typedef enum
+static const char *type_names[TYPE_MAX] =
 {
-	TYPE_WEAPON_POINTY,
-	TYPE_WEAPON_BLUNT,
-	TYPE_SHOOTER,
-	TYPE_MISSILE_SLING,
-	TYPE_MISSILE_BOW,
-	TYPE_MISSILE_XBOW,
-	TYPE_ARMOR_ROBE,
-	TYPE_ARMOR_BODY,
-	TYPE_ARMOR_CLOAK,
-	TYPE_ARMOR_ELVEN_CLOAK,
-	TYPE_ARMOR_SHIELD,
-	TYPE_ARMOR_HEAD,
-	TYPE_ARMOR_HANDS,
-	TYPE_ARMOR_FEET,
-	TYPE_DIGGER,
-	TYPE_RING,
-	TYPE_AMULET,
-	TYPE_LIGHT,
+  "Swords",
+  "Polearms",
+  "Blunt weapons",
+  "Missile weapons",
+  "Sling ammunition",
+  "Bow ammunition",
+  "Crossbow ammunition",
+  "Soft armor",
+  "Hard armor",
+  "Dragon Scale Mail",
+  "Cloaks",
+  "Shields",
+  "Helms",
+  "Crowns",
+  "Gloves",
+  "Boots",
+  "Diggers",
+  "Rings",
+  "Amulets",
+};
 
-	TYPE_MAX
-} squelch_type_t;
+/**
+ * Mapping of tval -> type 
+ */
+static int tvals[TYPE_MAX] =
+{
+  TV_SWORD, 
+  TV_POLEARM,
+  TV_HAFTED,
+  TV_BOW,
+  TV_SHOT,
+  TV_ARROW,
+  TV_BOLT,
+  TV_SOFT_ARMOR,
+  TV_HARD_ARMOR,
+  TV_DRAG_ARMOR,
+  TV_CLOAK,
+  TV_SHIELD,
+  TV_HELM,
+  TV_CROWN,
+  TV_GLOVES,
+  TV_BOOTS,
+  TV_DIGGING,
+  TV_RING,
+  TV_AMULET
+};
+
+byte squelch_level[TYPE_MAX];
+size_t squelch_size = TYPE_MAX;
 
 
-/*
+/**
  * The different kinds of quality squelch
  */
 enum
 {
-	SQUELCH_NONE,
-	SQUELCH_BAD,
-	SQUELCH_AVERAGE,
-	SQUELCH_GOOD,
-	SQUELCH_EXCELLENT_NO_HI,
-	SQUELCH_EXCELLENT_NO_SPL,
-	SQUELCH_ALL,
+  SQUELCH_NONE,
+  SQUELCH_CURSED,
+  SQUELCH_DUBIOUS,
+  SQUELCH_DUBIOUS_NON,
+  SQUELCH_NON_EGO,
+  SQUELCH_AVERAGE,
+  SQUELCH_GOOD_STRONG,
+  SQUELCH_GOOD_WEAK,
+  SQUELCH_ALL,
+  
+  SQUELCH_MAX
+};
 
-	SQUELCH_MAX
+/**
+ * The names for the various kinds of quality
+ */
+static const char *quality_names[SQUELCH_MAX] =
+{
+  "none",				             /* SQUELCH_NONE */
+  "cursed (objects known to have a curse)",    	     /* SQUELCH_CURSED */
+  "dubious (all dubious items)",                     /* SQUELCH_DUBIOUS */
+  "dubious non-ego (strong pseudo-ID)",              /* SQUELCH_DUBIOUS_NON */
+  "non-ego (all but ego-items - strong pseudo-ID)",  /* SQUELCH_NON_EGO */
+  "average (everything not good or better)",         /* SQUELCH_AVERAGE */
+  "good (strong pseudo-ID or identify)",             /* SQUELCH_GOOD_STRONG */
+  "good (weak pseudo-ID)",		             /* SQUELCH_GOOD_WEAK */
+  "everything except artifacts",	             /* SQUELCH_ALL */
 };
 
 
-/*
- * Squelch flags
+/**
+ * Structure to describe tval/description pairings. 
  */
-#define SQUELCH_IF_AWARE	0x01
-#define SQUELCH_IF_UNAWARE	0x02
+typedef struct
+{
+  int tval;
+  const char *desc;
+} tval_desc;
+
+/**
+ * Categories for sval-dependent squelch. 
+ */
+static tval_desc sval_dependent[] =
+{
+  { TV_STAFF,		"Staffs" },
+  { TV_WAND,		"Wands" },
+  { TV_ROD,		"Rods" },
+  { TV_SCROLL,		"Scrolls" },
+  { TV_POTION,		"Potions" },
+  { TV_FOOD,		"Food" },
+  { TV_MAGIC_BOOK,	"Magic books" },
+  { TV_PRAYER_BOOK,	"Prayer books" },
+  { TV_DRUID_BOOK,	"Stones of Lore" },
+  { TV_NECRO_BOOK,	"Necromantic tomes" },
+  { TV_SPIKE,		"Spikes" },
+  { TV_LITE,		"Lights" },
+  { TV_FLASK,           "Oil" },
+  { TV_SKELETON,        "Skeletons" },
+  { TV_BOTTLE,          "Bottles" },
+  { TV_JUNK,            "Junk" }
+};
 
 
-
-/* squelch.c */
-void squelch_init(void);
-void squelch_birth_init(void);
+/* squelch.c  */
+extern byte squelch_level[TYPE_MAX];
 int get_autoinscription_index(s16b k_idx);
 const char *get_autoinscription(s16b kind_idx);
 int apply_autoinscription(object_type *o_ptr);
@@ -68,23 +139,13 @@ int add_autoinscription(s16b kind, cptr inscription);
 void autoinscribe_ground(void);
 void autoinscribe_pack(void);
 bool squelch_tval(int tval);
-void kind_squelch_clear(object_kind *k_ptr);
-bool kind_is_squelched_aware(const object_kind *k_ptr);
-bool kind_is_squelched_unaware(const object_kind *k_ptr);
-void kind_squelch_when_aware(object_kind *k_ptr);
-void kind_squelch_when_unaware(object_kind *k_ptr);
-bool squelch_item_ok(const object_type *o_ptr);
+extern bool squelch_item_ok(object_type *o_ptr);
 bool squelch_hide_item(object_type *o_ptr);
+extern void squelch_drop(void);
 void squelch_items(void);
-void squelch_drop(void);
-void do_cmd_options_item(const char *title, int row);
-bool squelch_interactive(const object_type *o_ptr);
+extern bool seen_tval(int tval);
+void do_cmd_options_item(void *, cptr);
 
-byte squelch_level_of(const object_type *o_ptr);
-squelch_type_t squelch_type_of(const object_type *o_ptr);
-void object_squelch_flavor_of(const object_type *o_ptr);
 
-extern byte squelch_level[];
-const size_t squelch_size;
 
 #endif /* !SQUELCH_H */

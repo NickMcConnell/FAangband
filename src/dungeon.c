@@ -331,7 +331,7 @@ static void process_world(void)
       if (!(turn % ((s32b) autosave_freq * 10 )))
         {
           is_autosave = TRUE;
-          do_cmd_save_game();
+          save_game();
           is_autosave = FALSE;
           msg_print(NULL);
         }

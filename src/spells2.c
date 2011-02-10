@@ -26,6 +26,8 @@
  */
 
 #include "angband.h"
+#include "ui-menu.h"
+#include "squelch.h"
 
 /* Element to be proofed against in element-proofing */
 static byte el_to_proof = 0;
@@ -307,16 +309,16 @@ bool do_dec_stat(int stat)
     case A_STR: if (p_ptr->sustain_str)
       sust = TRUE; break;
     case A_INT: if ((p_ptr->sustain_int) || 
-		    (clarity && (rand_int(2) != 0)))
+		    (clarity && (randint0(2) != 0)))
       sust = TRUE; break;
     case A_WIS: if ((p_ptr->sustain_wis) || 
-		    (clarity && (rand_int(2) != 0)))
+		    (clarity && (randint0(2) != 0)))
       sust = TRUE; break;
     case A_DEX: if ((p_ptr->sustain_dex) || 
-		    (athletics && (rand_int(2) != 0)))
+		    (athletics && (randint0(2) != 0)))
       sust = TRUE; break;
     case A_CON: if ((p_ptr->sustain_con) || 
-		    (athletics && (rand_int(2) != 0)))
+		    (athletics && (randint0(2) != 0)))
       sust = TRUE; break;
     case A_CHR: if (p_ptr->sustain_chr)
       sust = TRUE; break;}
@@ -542,7 +544,7 @@ static int enchant_table[16] =
 };
 
 
-static bool item_tester_cursed(object_type *o_ptr)
+static bool item_tester_cursed(const object_type *o_ptr)
 {
   if (known_cursed_p(o_ptr) && !(o_ptr->flags_obj & OF_PERMA_CURSE))
     return TRUE;
@@ -615,7 +617,7 @@ static bool remove_curse_aux(int good)
       {
 	/* If fragile, bad things can happen */
 	if ((o_ptr->flags_obj & OF_FRAGILE) && 
-	    (rand_int(100) < destroy_chance - (good ? 10 : 0)))
+	    (randint0(100) < destroy_chance - (good ? 10 : 0)))
 	  {
 	      /* Message */
 	      msg_print("There is a bang and a flash!");
@@ -640,10 +642,10 @@ static bool remove_curse_aux(int good)
 	  }
 
 	/* Try once */
-	if (rand_int(100) < uncurse_chance) curses |= (1L << i);
+	if (randint0(100) < uncurse_chance) curses |= (1L << i);
 
 	/* If good, try again */
-	if (good && (rand_int(100) < uncurse_chance)) curses |= (1L << i);
+	if (good && (randint0(100) < uncurse_chance)) curses |= (1L << i);
       }
       
   /* Uncurse it */
@@ -876,9 +878,9 @@ void recall_display(menu_type *menu, int oid, bool cursor, int row,
 /**
  * Deal with events on the recall menu
  */
-bool recall_action(char cmd, void *db, int oid)
+bool recall_action(menu_type *menu, ui_event_data *e, int oid)
 {
-  u16b *choice = db;
+  u16b *choice = &menu->menu_data;
   
   int idx = choice[oid];
 
@@ -915,12 +917,12 @@ bool recall_action(char cmd, void *db, int oid)
 bool recall_menu(void)
 {
   menu_type menu;
-  menu_iter menu_f = { 0, recall_tag, 0, recall_display, recall_action };
+  menu_iter menu_f = { recall_tag, 0, recall_display, recall_action, 0 };
   region area = { (small_screen ? 0 : 15), 1, 48, -1 };
-  event_type evt = { EVT_NONE, 0, 0, 0, 0 };
+  ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
   int cursor = 0;
   int num_entries;
-  int num_poss = adult_dungeon ? 1 : 4;
+  int num_poss = OPT(adult_dungeon) ? 1 : 4;
   
   size_t i;
   
@@ -967,17 +969,17 @@ bool recall_menu(void)
   menu.cmd_keys = " \n\r";
   menu.count = num_entries;
   menu.menu_data = choice;
-  menu_init2(&menu, find_menu_skin(MN_SCROLL), &menu_f, &area);
+  menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
   
   /* Select an entry */
-  evt = menu_select(&menu, &cursor, 0);
+  evt = menu_select(&menu, cursor);
   
   /* Free memory */
   FREE(choice);
   
   /* Load screen */
   screen_load();
-  return ((evt.type != EVT_ESCAPE) && (evt.type != EVT_BACK));
+  return (evt.type != EVT_ESCAPE);
 }
 
 /**
@@ -990,7 +992,7 @@ bool set_recall(int v)
   
   /* No use until the player has been somewhere */
   if (((p_ptr->stage == p_ptr->home) && (!p_ptr->recall_pt)) || 
-      (!p_ptr->home) || (adult_ironman && !p_ptr->total_winner))
+      (!p_ptr->home) || (OPT(adult_ironman) && !p_ptr->total_winner))
     {
       msg_print("Nothing happens.");
       return(FALSE);
@@ -1029,7 +1031,7 @@ bool set_recall(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Redraw status */
   p_ptr->redraw |= PR_STATUS;
@@ -1058,7 +1060,7 @@ static void animate_detect(int rad)
   int msec = op_ptr->delay_factor * op_ptr->delay_factor;
   
   /* Exit if not desired */
-  if (!show_detect) return;
+  if (!OPT(show_detect)) return;
   
   /* Hack - Needs to last a bit longer to be visible */
   msec *= 6;
@@ -1089,7 +1091,7 @@ static void animate_detect(int rad)
     }
   
   /* Flush the image of detected region */
-  if (fresh_before) Term_fresh();
+  if (OPT(fresh_before)) Term_fresh();
   
   /* Delay (efficiently) */
   Term_xtra(TERM_XTRA_DELAY, msec);
@@ -1117,7 +1119,7 @@ static void animate_detect(int rad)
   move_cursor_relative(py, px);
   
   /* Flush screen back to normal */
-  if (fresh_before) Term_fresh();
+  if (OPT(fresh_before)) Term_fresh();
   
   /* Exit */
   return;
@@ -2043,7 +2045,7 @@ void stair_creation(void)
     {
       cave_set_feat(py, px, FEAT_MORE);
     }
-  else if (rand_int(100) < 50)
+  else if (randint0(100) < 50)
     {
       cave_set_feat(py, px, FEAT_MORE);
     }
@@ -2190,7 +2192,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
   for (i = 0; i < n; i++)
     {
       /* Hack -- Roll for pile resistance */
-      if ((prob > 100) && (rand_int(prob) >= 100)) continue;
+      if ((prob > 100) && (randint0(prob) >= 100)) continue;
       
       /* Enchant to hit */
       if (eflag & (ENCH_TOHIT))
@@ -2201,7 +2203,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 	  
 	  /* Attempt to enchant */
 	  
-	  if ((randint(1000) > chance) && (!a || (rand_int(100) < 50)))
+	  if ((randint1(1000) > chance) && (!a || (randint0(100) < 50)))
 	    {
 	      res = TRUE;
 	      
@@ -2217,7 +2219,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 	  else if (o_ptr->to_d > 15) chance = 1000;
 	  else chance = enchant_table[o_ptr->to_d];
 	  
-	  if ((randint(1000) > chance) && (!a || (rand_int(100) < 50)))
+	  if ((randint1(1000) > chance) && (!a || (randint0(100) < 50)))
 	    {
 	      res = TRUE;
 	      
@@ -2233,7 +2235,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 	  else if (o_ptr->to_a > 15) chance = 1000;
 	  else chance = enchant_table[o_ptr->to_a];
 	  
-	  if ((randint(1000) > chance) && (!a || (rand_int(100) < 50)))
+	  if ((randint1(1000) > chance) && (!a || (randint0(100) < 50)))
 	    {
 	      res = TRUE;
 	      
@@ -2322,7 +2324,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
   if (!okay)
     {
       /* Flush */
-      if (flush_failure) flush();
+      if (OPT(flush_failure)) flush();
       
       /* Message */
       msg_print("The enchantment failed.");
@@ -2384,7 +2386,7 @@ bool brand_missile(int ammo_type, int brand_type)
   if (artifact_p(o_ptr) || ego_item_p(o_ptr))
     {
       /* Flush */
-      if (flush_failure) flush();
+      if (OPT(flush_failure)) flush();
       
       /* Fail */
       msg_print("The ammunition enchantment failed.");
@@ -2398,7 +2400,7 @@ bool brand_missile(int ammo_type, int brand_type)
   
   /* Otherwise choose randomly
    * Hack - Never get poison brand randomly */
-  else choice = rand_int(4) + EGO_ACIDIC;
+  else choice = randint0(4) + EGO_ACIDIC;
   
   switch (choice)
     {
@@ -2452,7 +2454,7 @@ bool brand_missile(int ammo_type, int brand_type)
   identify_object(o_ptr);
   
   /* Enchant */
-  enchant(o_ptr, rand_int(4) + 3, ENCH_TOHIT | ENCH_TODAM);
+  enchant(o_ptr, randint0(4) + 3, ENCH_TOHIT | ENCH_TODAM);
   
   /* Prevent money-making. */
   o_ptr->discount = 80;
@@ -2586,7 +2588,7 @@ bool curse_armor(void)
   object_desc(o_name, o_ptr, FALSE, 3);
   
   /* Attempt a saving throw for artifacts */
-  if (artifact_p(o_ptr) && (rand_int(100) < 50))
+  if (artifact_p(o_ptr) && (randint0(100) < 50))
     {
       /* Cool */
       msg_format("A %s tries to %s, but your %s resists the effects!",
@@ -2605,7 +2607,7 @@ bool curse_armor(void)
       /* Try every curse */
       for (i = 0; i < OBJECT_RAND_SIZE_CURSE; i++)
 	{
-	  if (rand_int(100) < 10)
+	  if (randint0(100) < 10)
 	    {
 	      /* Try once */
 	      o_ptr->flags_curse |= (1L << i);
@@ -2681,7 +2683,7 @@ bool curse_weapon(void)
   object_desc(o_name, o_ptr, FALSE, 3);
   
   /* Attempt a saving throw */
-  if (artifact_p(o_ptr) && (rand_int(100) < 50))
+  if (artifact_p(o_ptr) && (randint0(100) < 50))
     {
       /* Cool */
       msg_format("A %s tries to %s, but your %s resists the effects!",
@@ -2700,7 +2702,7 @@ bool curse_weapon(void)
       /* Try every curse */
       for (i = 0; i < OBJECT_RAND_SIZE_CURSE; i++)
 	{
-	  if (rand_int(100) < 10)
+	  if (randint0(100) < 10)
 	    {
 	      /* Try once */
 	      o_ptr->flags_curse |= (1L << i);
@@ -3020,7 +3022,7 @@ bool recharge(int power)
       
       
       /* Back-fire */
-      if (rand_int(recharge_strength) == 0)
+      if (randint0(recharge_strength) == 0)
 	{
 	  /* Activate the failure code. */
 	  fail = TRUE;
@@ -3057,7 +3059,7 @@ bool recharge(int power)
       
       
       /* Back-fire */
-      if ((recharge_strength < 0) || (rand_int(recharge_strength) == 0))
+      if ((recharge_strength < 0) || (randint0(recharge_strength) == 0))
 	{
 	  /* Activate the failure code. */
 	  fail = TRUE;
@@ -3067,13 +3069,13 @@ bool recharge(int power)
       else
 	{
 	  /* Recharge based on the standard number of charges. */
-	  recharge_amount = randint(1 + k_ptr->pval / 2);
+	  recharge_amount = randint1(1 + k_ptr->pval / 2);
 	  
 	  /* Multiple wands in a stack increase recharging somewhat. */
 	  if ((o_ptr->tval == TV_WAND) && (o_ptr->number > 1))
 	    {
 	      recharge_amount += 
-		(randint(recharge_amount * (o_ptr->number - 1))) / 2;
+		(randint1(recharge_amount * (o_ptr->number - 1))) / 2;
 	      if (recharge_amount < 1) recharge_amount = 1;
 	      if (recharge_amount > 12) recharge_amount = 12;
 	    }
@@ -3134,19 +3136,19 @@ bool recharge(int power)
 	      /* 10% chance to blow up one rod, otherwise draining. */
 	      if (o_ptr->tval == TV_ROD)
 		{
-		  if (randint(10) == 1) fail_type = 2;
+		  if (randint1(10) == 1) fail_type = 2;
 		  else fail_type = 1;
 		}
 	      /* 67% chance to blow up one wand, otherwise draining. */
 	      else if (o_ptr->tval == TV_WAND)
 		{
-		  if (randint(3) != 1) fail_type = 2;
+		  if (randint1(3) != 1) fail_type = 2;
 		  else fail_type = 1;
 		}
 	      /* 50% chance to blow up one staff, otherwise no effect. */
 	      else if (o_ptr->tval == TV_STAFF)
 		{
-		  if (randint(2) == 1) fail_type = 2;
+		  if (randint1(2) == 1) fail_type = 2;
 		  else fail_type = 0;
 		}
 	    }
@@ -3157,13 +3159,13 @@ bool recharge(int power)
 	      /* 33% chance to blow up one rod, otherwise draining. */
 	      if (o_ptr->tval == TV_ROD)
 		{
-		  if (randint(3) == 1) fail_type = 2;
+		  if (randint1(3) == 1) fail_type = 2;
 		  else fail_type = 1;
 		}
 	      /* 20% chance of the entire stack, else destroy one wand. */
 	      else if (o_ptr->tval == TV_WAND)
 		{
-		  if (randint(5) == 1) fail_type = 3;
+		  if (randint1(5) == 1) fail_type = 3;
 		  else fail_type = 2;
 		}
 	      /* Blow up one staff. */
@@ -3233,7 +3235,7 @@ bool recharge(int power)
 	      
 	      /* At least 2 gone, roll for others */
 	      while ((o_ptr->number + num_gone) > 0)
-		if (rand_int(4) == 0) num_gone--;
+		if (randint0(4) == 0) num_gone--;
 
 	      
 	      /* Reduce and describe inventory */
@@ -3391,7 +3393,7 @@ void do_starlight(int burst_number, int dam, bool strong)
       for (j = 0; j < 20; j++)
 	{
 	  /* Pick a (scattered) distance. */
-	  int d = 2 + rand_int(4);
+	  int d = 2 + randint0(4);
 	  
 	  /* Admit failure.  Switch to Plan B. */
 	  if (j == 19)
@@ -3459,7 +3461,7 @@ bool listen_to_natural_creatures(void)
       
       /* Only natural creatures are eligible, and some 
        * don't feel like talking. */
-      if ((r_ptr->flags3 & (RF3_ANIMAL)) && (rand_int(2) == 0))
+      if ((r_ptr->flags3 & (RF3_ANIMAL)) && (randint0(2) == 0))
 	{
 	  /* Learn about their surroundings. */
 	  map_area(m_ptr->fy, m_ptr->fx, FALSE);
@@ -3541,10 +3543,10 @@ void grow_trees_and_grass(bool powerful)
 	if ((cave_m_idx[y][x] > 0) && (!powerful)) continue;
 
 	/* Maybe grow something */
-	if ((rand_int(dist + 2) != 0) && (!powerful)) continue;
+	if ((randint0(dist + 2) != 0) && (!powerful)) continue;
 
 	/* Probably grass, otherwise a tree */
-	if ((rand_int(4) == 0) || powerful)
+	if ((randint0(4) == 0) || powerful)
 	  {
 	    if (p_ptr->depth < 40)
 	      cave_set_feat(y, x, FEAT_TREE);
@@ -3569,7 +3571,7 @@ void unmake(int dir)
   while (repeat)
     {
       /* Pick an effect. */
-      chaotic_effect = (byte)rand_int(18);
+      chaotic_effect = (byte)randint0(18);
       
       switch (chaotic_effect)
 	{
@@ -3583,7 +3585,7 @@ void unmake(int dir)
 	case 6: 
 	case 7:
 	  {
-	    fire_bolt(GF_CHAOS, dir, randint(500));
+	    fire_bolt(GF_CHAOS, dir, randint1(500));
 	    break;
 	  }
 	  /* Chaos balls in every directioon */
@@ -3591,19 +3593,19 @@ void unmake(int dir)
 	case 9:
 	  {
 	    for (i = 0; i < 8; i++) 
-	      fire_ball(GF_CHAOS, ddd[i], randint(400), 2, FALSE);
+	      fire_ball(GF_CHAOS, ddd[i], randint1(400), 2, FALSE);
 	    break;
 	  }
 	  /* Tear up the dungeon. */
 	case 10:
 	  {
-	    destroy_area(p_ptr->py, p_ptr->px, 5 + randint(20), TRUE);
+	    destroy_area(p_ptr->py, p_ptr->px, 5 + randint1(20), TRUE);
 	    break;
 	  }
 	  /* Chaos cloud right on top of the poor caster. */
 	case 11:
 	  {
-	    fire_cloud(GF_CHAOS, 0, randint(400), 6);	
+	    fire_cloud(GF_CHAOS, 0, randint1(400), 6);	
 	    break;
 	  }
 	  /* Chaos spray. */
@@ -3613,24 +3615,24 @@ void unmake(int dir)
 	case 15: 
 	case 16:
 	  {
-	    fire_arc(GF_CHAOS, dir, randint(600), 8, 90);
+	    fire_arc(GF_CHAOS, dir, randint1(600), 8, 90);
 	    break;
 	  }
 	  /* Unmake the caster. */
 	case 17:
 	  {
-	    (void)dec_stat(A_STR, 20, (rand_int(3) == 0));
-	    (void)dec_stat(A_INT, 20, (rand_int(3) == 0));
-	    (void)dec_stat(A_WIS, 20, (rand_int(3) == 0));
-	    (void)dec_stat(A_DEX, 20, (rand_int(3) == 0));
-	    (void)dec_stat(A_CON, 20, (rand_int(3) == 0));
-	    (void)dec_stat(A_CHR, 20, (rand_int(3) == 0));
+	    (void)dec_stat(A_STR, 20, (randint0(3) == 0));
+	    (void)dec_stat(A_INT, 20, (randint0(3) == 0));
+	    (void)dec_stat(A_WIS, 20, (randint0(3) == 0));
+	    (void)dec_stat(A_DEX, 20, (randint0(3) == 0));
+	    (void)dec_stat(A_CON, 20, (randint0(3) == 0));
+	    (void)dec_stat(A_CHR, 20, (randint0(3) == 0));
 	    break;	
 	  }
 	}
       
       /* Chaos, once unleashed, likes to stay... */
-      if (rand_int(4) == 0) repeat = TRUE;
+      if (randint0(4) == 0) repeat = TRUE;
       else repeat = FALSE;
     }
 }
@@ -3654,7 +3656,7 @@ void ele_air_smite(void)
       for (j = 0; j < 20; j++)
 	{
 	  /* Pick a (short) distance. */
-	  int d = randint(3);
+	  int d = randint1(3);
 	  
 	  /* Admit failure.  Switch to Plan B. */
 	  if (j == 19)
@@ -3679,9 +3681,9 @@ void ele_air_smite(void)
 	  else if (j > 3) break;
 	}
       
-      if (rand_int(3) == 0) 
+      if (randint0(3) == 0) 
 	(void)fire_meteor(-1, GF_GRAVITY, y, x, 100, 1, FALSE);
-      else if (rand_int(2) == 0)
+      else if (randint0(2) == 0)
 	(void)fire_meteor(-1, GF_LITE, y, x, 100, 1, FALSE);
       else
 	(void)fire_meteor(-1, GF_ELEC, y, x, 100, 1, FALSE);
@@ -4081,7 +4083,7 @@ bool genocide(void)
       delete_monster_idx(i);
       
       /* Take some damage */
-      take_hit(randint(4), "the strain of casting Genocide");
+      take_hit(randint1(4), "the strain of casting Genocide");
     }
   
   return (TRUE);
@@ -4117,7 +4119,7 @@ bool mass_genocide(void)
       delete_monster_idx(i);
       
       /* Take some damage */
-      take_hit(randint(3), "the strain of casting Mass Genocide");
+      take_hit(randint1(3), "the strain of casting Mass Genocide");
     }
   
   return (TRUE);
@@ -4259,7 +4261,7 @@ void destroy_area(int y1, int x1, int r, bool full)
 	      
 	      
 	      /* Wall (or floor) type */
-	      t = rand_int(200);
+	      t = randint0(200);
 	      
 	      /* Granite */
 	      if (t < 20)
@@ -4299,7 +4301,7 @@ void destroy_area(int y1, int x1, int r, bool full)
       if (!p_ptr->no_blind && !p_resist_good(P_RES_LITE))
 	{
 	  /* Become blind */
-	  (void)set_blind(p_ptr->blind + 10 + randint(10));
+	  (void)set_blind(p_ptr->blind + 10 + randint1(10));
 	}
       else 
 	{
@@ -4411,7 +4413,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 	  if (!dx && !dy) continue;
 	  
 	  /* Skip most grids, less if unstable */
-	  if (rand_int(100) < (75 - (50 * unstable)/total)) continue;
+	  if (randint0(100) < (75 - (50 * unstable)/total)) continue;
 	  
 	  /* Damage this grid */
 	  map[16 + yy - cy][16 + xx - cx] = TRUE;
@@ -4438,7 +4440,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 	  if (map[16 + y - cy][16 + x - cx]) continue;
 	  
 	  /* Count "safe" grids, apply the randomizer */
-	  if ((++sn > 1) && (rand_int(sn) != 0)) continue;
+	  if ((++sn > 1) && (randint0(sn) != 0)) continue;
 	  
 	  /* Save the safe location */
 	  sy = y; sx = x;
@@ -4447,7 +4449,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
       if (stage_map[p_ptr->stage][STAGE_TYPE] == CAVE)
 	{
 	  /* Random message */
-	  switch (randint(3))
+	  switch (randint1(3))
 	    {
 	    case 1:
 	      {
@@ -4470,7 +4472,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
       else
 	{
 	  /* Random message */
-	  switch (randint(3))
+	  switch (randint1(3))
 	    {
 	    case 1:
 	      {
@@ -4504,7 +4506,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
       else
 	{
 	  /* Calculate results */
-	  switch (randint(3))
+	  switch (randint1(3))
 	    {
 	    case 1:
 	      {
@@ -4516,13 +4518,13 @@ void earthquake(int cy, int cx, int r, bool volcano)
 	      {
 		msg_print("You are bashed by rubble!");
 		damage = damroll(10, 4);
-		(void)set_stun(p_ptr->stun + randint(50));
+		(void)set_stun(p_ptr->stun + randint1(50));
 		break;
 	      }
 	    case 3:
 	      {
 		/* Chance of falling */
-		if (abyss > randint(total))
+		if (abyss > randint1(total))
 		  {
 		    fall_off_cliff();
 		  }
@@ -4530,7 +4532,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 		  {
 		    msg_print("You are crushed!");
 		    damage = damroll(10, 8);
-		    (void)set_stun(p_ptr->stun + randint(50));
+		    (void)set_stun(p_ptr->stun + randint1(50));
 		    break;
 		  }
 	      }
@@ -4592,7 +4594,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 			  if (map[16+y-cy][16+x-cx]) continue;
 			  
 			  /* Count "safe" grids, apply the randomizer */
-			  if ((++sn > 1) && (rand_int(sn) != 0)) continue;
+			  if ((++sn > 1) && (randint0(sn) != 0)) continue;
 			  
 			  /* Save the safe grid */
 			  sy = y;
@@ -4693,7 +4695,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 		num_runes_on_level[cave_feat[y][x] - FEAT_RUNE_HEAD]--;
 	      
 	      /* Wall (or floor) type */
-	      t = (floor ? rand_int(120) : 200);
+	      t = (floor ? randint0(120) : 200);
 	      
 	      
 	      /* Granite (rubble if monster is present) */
@@ -4915,7 +4917,7 @@ static void cave_temp_room_lite(void)
 	  if (r_ptr->flags2 & (RF2_SMART)) chance = 100;
 	  
 	  /* Sometimes monsters wake up */
-	  if (m_ptr->csleep && (rand_int(100) < chance))
+	  if (m_ptr->csleep && (randint0(100) < chance))
 	    {
 	      /* Wake up! */
 	      m_ptr->csleep = 0;
@@ -5403,7 +5405,7 @@ bool fire_beam(int typ, int dir, int dam)
  */
 bool fire_bolt_or_beam(int prob, int typ, int dir, int dam)
 {
-  if (rand_int(100) < prob)
+  if (randint0(100) < prob)
     {
       return (fire_beam(typ, dir, dam));
     }
@@ -5433,7 +5435,7 @@ bool drain_life(int dir, int dam)
 bool wall_to_mud(int dir)
 {
   int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
-  return (project_hook(GF_KILL_WALL, dir, 20 + randint(30), flg));
+  return (project_hook(GF_KILL_WALL, dir, 20 + randint1(30), flg));
 }
 
 bool wall_to_mud_hack(int dir, int dam)

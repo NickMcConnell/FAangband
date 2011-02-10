@@ -292,49 +292,131 @@ char *macro_trigger_keycode[2][MAX_MACRO_TRIGGER];
 /**
  * Global table of color definitions (mostly zeros)
  */
-byte angband_color_table[256][4] =
+byte angband_color_table[MAX_COLORS][4] =
 {
-  {0x00, 0x00, 0x00, 0x00},	/* TERM_DARK */
-  {0x00, 0xFF, 0xFF, 0xFF},	/* TERM_WHITE */
-  {0x00, 0x80, 0x80, 0x80},	/* TERM_SLATE */
-  {0x00, 0xFF, 0x80, 0x00},	/* TERM_ORANGE */
-  {0x00, 0xC0, 0x00, 0x00},	/* TERM_RED */
-  {0x00, 0x00, 0x80, 0x40},	/* TERM_GREEN */
-  {0x00, 0x00, 0x40, 0xFF},	/* TERM_BLUE */
-  {0x00, 0x80, 0x40, 0x00},	/* TERM_UMBER */
-  {0x00, 0x60, 0x60, 0x60},	/* TERM_L_DARK */
-  {0x00, 0xC0, 0xC0, 0xC0},	/* TERM_L_WHITE */
-  {0x00, 0xFF, 0x00, 0xFF},	/* TERM_VIOLET */
-  {0x00, 0xFF, 0xFF, 0x00},	/* TERM_YELLOW */
-  {0x00, 0xFF, 0x00, 0x00},	/* TERM_L_RED */
-  {0x00, 0x00, 0xFF, 0x00},	/* TERM_L_GREEN */
-  {0x00, 0x00, 0xFF, 0xFF},	/* TERM_L_BLUE */
-  {0x00, 0xC0, 0x80, 0x40},	/* TERM_L_UMBER */
-
-  /*
-   * Values for shades at compile time, taken from shades.prf
-   * Hack -- TERM_WHITE (Shade 1) comes from font-x11.prf, because
-   * we must ensure that all colors are different.
-   */
-  {0x00, 0x00, 0x00, 0x00},	/* TERM_DARK	(Shade 1) */
-  {0x00, 0xAF, 0xFF, 0xFF},	/* TERM_WHITE 	(Shade 1) */
-  {0x00, 0xA0, 0xA0, 0xA0},	/* TERM_SLATE 	(Shade 1) */
-  {0x00, 0xDC, 0x64, 0x00},	/* TERM_ORANGE 	(Shade 1) */
-  {0x00, 0xF0, 0x00, 0x00},	/* TERM_RED 	(Shade 1) */
-  {0x00, 0x00, 0x70, 0x00},	/* TERM_GREEN 	(Shade 1) */
-  {0x00, 0x00, 0x80, 0xFF},	/* TERM_BLUE 	(Shade 1) */
-  {0x00, 0xC8, 0x64, 0x00},	/* TERM_UMBER 	(Shade 1) */
-  {0x00, 0x78, 0x64, 0x64},	/* TERM_L_DARK 	(Shade 1) */
-  {0x00, 0xE8, 0xD0, 0xC0},	/* TERM_L_WHITE	(Shade 1) */
-  {0x00, 0xA5, 0x00, 0xFF},	/* TERM_VIOLET 	(Shade 1) */
-  {0x00, 0xC8, 0xC8, 0x00},	/* TERM_YELLOW 	(Shade 1) */
-  {0x00, 0xB4, 0x46, 0x32},	/* TERM_L_RED 	(Shade 1) */
-  {0x00, 0x00, 0xDC, 0x64},	/* TERM_L_GREEN (Shade 1) */
-  {0x00, 0x64, 0xAA, 0xC8},	/* TERM_L_BLUE  (Shade 1) */
-  {0x00, 0xC8, 0xAA, 0x46} 	/* TERM_L_UMBER (Shade 1) */
+	{0x00, 0x00, 0x00, 0x00}, /* 0  TERM_DARK */
+	{0x00, 0xff, 0xff, 0xff}, /* 1  TERM_WHITE */
+	{0x00, 0x80, 0x80, 0x80}, /* 2  TERM_SLATE */
+	{0x00, 0xff, 0x80, 0x00}, /* 3  TERM_ORANGE */
+	{0x00, 0xc0, 0x00, 0x00}, /* 4  TERM_RED */
+	{0x00, 0x00, 0x80, 0x40}, /* 5  TERM_GREEN */
+	{0x00, 0x00, 0x40, 0xff}, /* 6  TERM_BLUE */
+	{0x00, 0x80, 0x40, 0x00}, /* 7  TERM_UMBER */
+	{0x00, 0x60, 0x60, 0x60}, /* 8  TERM_L_DARK */
+	{0x00, 0xc0, 0xc0, 0xc0}, /* 9  TERM_L_WHITE */
+	{0x00, 0xff, 0x00, 0xff}, /* 10 TERM_L_PURPLE */
+	{0x00, 0xff, 0xff, 0x00}, /* 11 TERM_YELLOW */
+	{0x00, 0xff, 0x40, 0x40}, /* 12 TERM_L_RED */
+	{0x00, 0x00, 0xff, 0x00}, /* 13 TERM_L_GREEN */
+	{0x00, 0x00, 0xff, 0xff}, /* 14 TERM_L_BLUE */
+	{0x00, 0xc0, 0x80, 0x40}, /* 15 TERM_L_UMBER */
+	{0x00, 0x90, 0x00, 0x90}, /* 16 TERM_PURPLE */
+	{0x00, 0x90, 0x20, 0xff}, /* 17 TERM_VIOLET */
+	{0x00, 0x00, 0xa0, 0xa0}, /* 18 TERM_TEAL */
+	{0x00, 0x6c, 0x6c, 0x30}, /* 19 TERM_MUD */
+	{0x00, 0xff, 0xff, 0x90}, /* 20 TERM_L_YELLOW */
+	{0x00, 0xff, 0x00, 0xa0}, /* 21 TERM_MAGENTA */
+	{0x00, 0x20, 0xff, 0xdc}, /* 22 TERM_L_TEAL */
+	{0x00, 0xb8, 0xa8, 0xff}, /* 23 TERM_L_VIOLET */
+	{0x00, 0xff, 0x80, 0x80}, /* 24 TERM_L_PINK */
+	{0x00, 0xb4, 0xb4, 0x00}, /* 25 TERM_MUSTARD */
+	{0x00, 0xa0, 0xc0, 0xd0}, /* 26 TERM_BLUE_SLATE */
+	{0x00, 0x00, 0xb0, 0xff}, /* 27 TERM_DEEP_L_BLUE */
 };
 
+/**
+ * Global array of color names and translations.
+ */
+color_type color_table[MAX_COLORS] =
+{
+	/* full mono vga blind lighter darker highlight metallic misc */
+	{'d', "Dark", {0, 0, 0, TERM_DARK, TERM_L_DARK, TERM_DARK,
+				   TERM_L_DARK, TERM_L_DARK, TERM_DARK}},
 
+	{'w', "White", {1, 1, 1, TERM_WHITE, TERM_YELLOW, TERM_SLATE,
+					TERM_L_BLUE, TERM_YELLOW, TERM_WHITE}},
+
+	{'s', "Slate", {2, 1, 2, TERM_SLATE, TERM_L_WHITE, TERM_L_DARK,
+					TERM_L_WHITE, TERM_L_WHITE, TERM_SLATE}},
+
+	{'o', "Orange", {3, 1, 3, TERM_L_WHITE, TERM_YELLOW, TERM_SLATE,
+					 TERM_YELLOW, TERM_YELLOW, TERM_ORANGE}},
+
+	{'r', "Red", {4, 1, 4, TERM_SLATE, TERM_L_RED, TERM_SLATE,
+				  TERM_L_RED, TERM_L_RED, TERM_RED}},
+
+	{'g', "Green", {5, 1, 5, TERM_SLATE, TERM_L_GREEN, TERM_SLATE,
+					TERM_L_GREEN, TERM_L_GREEN, TERM_GREEN}},
+
+	{'b', "Blue", {6, 1, 6, TERM_SLATE, TERM_L_BLUE, TERM_SLATE,
+				   TERM_L_BLUE, TERM_L_BLUE, TERM_BLUE}},
+
+	{'u', "Umber", {7, 1, 7, TERM_L_DARK, TERM_L_UMBER, TERM_L_DARK,
+					TERM_L_UMBER, TERM_L_UMBER, TERM_UMBER}},
+
+	{'D', "Light Dark", {8, 1, 8, TERM_L_DARK, TERM_SLATE, TERM_L_DARK,
+						 TERM_SLATE, TERM_SLATE, TERM_L_DARK}},
+
+	{'W', "Light Slate", {9, 1, 9, TERM_L_WHITE, TERM_WHITE, TERM_SLATE,
+						  TERM_WHITE, TERM_WHITE, TERM_SLATE}},
+
+	{'P', "Light Purple", {10, 1, 10, TERM_SLATE, TERM_YELLOW, TERM_SLATE,
+						   TERM_YELLOW, TERM_YELLOW, TERM_L_PURPLE}},
+
+	{'y', "Yellow", {11, 1, 11, TERM_L_WHITE, TERM_L_YELLOW, TERM_L_WHITE,
+					 TERM_WHITE, TERM_WHITE, TERM_YELLOW}},
+
+	{'R', "Light Red", {12, 1, 12, TERM_L_WHITE, TERM_YELLOW, TERM_RED,
+						TERM_YELLOW, TERM_YELLOW, TERM_L_RED}},
+
+	{'G', "Light Green", {13, 1, 13, TERM_L_WHITE, TERM_YELLOW, TERM_GREEN,
+						  TERM_YELLOW, TERM_YELLOW, TERM_L_GREEN}},
+
+	{'B', "Light Blue", {14, 1, 14, TERM_L_WHITE, TERM_YELLOW, TERM_BLUE,
+						 TERM_YELLOW, TERM_YELLOW, TERM_L_BLUE}},
+
+	{'U', "Light Umber", {15, 1, 15, TERM_L_WHITE, TERM_YELLOW, TERM_UMBER,
+						  TERM_YELLOW, TERM_YELLOW, TERM_L_UMBER}},
+
+	/* "new" colors */
+	{'p', "Purple", {16, 1, 10,TERM_SLATE, TERM_L_PURPLE, TERM_SLATE,
+					 TERM_L_PURPLE, TERM_L_PURPLE, TERM_L_PURPLE}},
+
+	{'v', "Violet", {17, 1, 10,TERM_SLATE, TERM_L_PURPLE, TERM_SLATE,
+					 TERM_L_PURPLE, TERM_L_PURPLE, TERM_L_PURPLE}},
+
+	{'t', "Teal", {18, 1, 6, TERM_SLATE, TERM_L_TEAL, TERM_SLATE,
+				   TERM_L_TEAL, TERM_L_TEAL, TERM_L_BLUE}},
+
+	{'m', "Mud", {19, 1, 5, TERM_SLATE, TERM_MUSTARD, TERM_SLATE,
+				  TERM_MUSTARD, TERM_MUSTARD, TERM_UMBER}},
+
+	{'Y', "Light Yellow", {20, 1, 11, TERM_WHITE, TERM_WHITE, TERM_YELLOW,
+						   TERM_WHITE, TERM_WHITE, TERM_L_YELLOW}},
+
+	{'i', "Magenta-Pink", {21, 1, 12, TERM_SLATE, TERM_L_PINK, TERM_RED,
+						   TERM_L_PINK, TERM_L_PINK, TERM_L_PURPLE}},
+
+	{'T', "Light Teal", {22, 1, 14, TERM_L_WHITE, TERM_YELLOW, TERM_TEAL,
+						 TERM_YELLOW, TERM_YELLOW, TERM_L_BLUE}},
+
+	{'V', "Light Violet", {23, 1, 10, TERM_L_WHITE, TERM_YELLOW, TERM_VIOLET,
+						   TERM_YELLOW, TERM_YELLOW, TERM_L_PURPLE}},
+
+	{'I', "Light Pink", {24, 1, 12, TERM_L_WHITE, TERM_YELLOW, TERM_MAGENTA,
+						 TERM_YELLOW, TERM_YELLOW, TERM_L_PURPLE}},
+
+	{'M', "Mustard", {25, 1, 11, TERM_SLATE, TERM_YELLOW, TERM_SLATE,
+					  TERM_YELLOW, TERM_YELLOW, TERM_YELLOW}},
+
+	{'z', "Blue Slate",  {26, 1, 9, TERM_SLATE, TERM_DEEP_L_BLUE, TERM_SLATE,
+						  TERM_DEEP_L_BLUE, TERM_DEEP_L_BLUE, TERM_L_WHITE}},
+
+	{'Z', "Deep Light Blue", {27, 1, 14, TERM_L_WHITE, TERM_L_BLUE, TERM_BLUE_SLATE,
+							  TERM_L_BLUE, TERM_L_BLUE, TERM_L_BLUE}},
+
+	/* Rest to be filled in when the game loads */
+};
 /**
  * Standard sound names (modifiable?)
  */
@@ -1152,8 +1234,8 @@ u16b inscriptions_count = 0;
 /* 
  * Mouse button handling variables
  */
-mouse_button *mse_button;
-mouse_button *backup_button;
+button_mouse *mse_button;
+button_mouse *backup_button;
 int status_end    = 0;
 int depth_start   = 0;
 int button_length = 0;

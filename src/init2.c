@@ -46,6 +46,8 @@
 #include "angband.h"
 #include "init.h"
 #include "cmds.h"
+#include "button.h"
+#include "option.h"
 
 
 /**
@@ -777,8 +779,8 @@ void init_artifacts(void)
       /* Allocate the lists the first time through */
       if (loop == 0)
 	{
-	  C_MAKE(artifact_normal, artifact_normal_cnt, int);
-	  C_MAKE(artifact_special, artifact_special_cnt, int);
+	  artifact_normal = C_ZNEW(artifact_normal_cnt, int);
+	  artifact_special = C_ZNEW(artifact_special_cnt, int);
 	}
     }
 }
@@ -1130,7 +1132,7 @@ errr init_t_info(byte chosen_level)
   /*** Make the header ***/
   
   /* Allocate the "header" */
-  MAKE(t_head, header);
+  t_head = ZNEW(header);
   
   /* Save the "version" */
   t_head->v_major = VERSION_MAJOR;
@@ -1150,11 +1152,11 @@ errr init_t_info(byte chosen_level)
   /*** Make the fake arrays ***/
   
   /* Allocate the "t_info" array */
-  C_MAKE(t_info, t_head->info_num, vault_type);
+  t_info = C_ZNEW(t_head->info_num, vault_type);
   
   /* Hack -- make "fake" arrays */
-  C_MAKE(t_name, FAKE_NAME_SIZE, char);
-  C_MAKE(t_text, FAKE_TEXT_SIZE, char);
+  t_name = C_ZNEW(FAKE_NAME_SIZE, char);
+  t_text = C_ZNEW(FAKE_TEXT_SIZE, char);
   
   
   /*** Load the ascii template file ***/
@@ -1639,7 +1641,7 @@ static void autoinscribe_init(void)
   inscriptions = 0;
   inscriptions_count = 0;
   
-  C_MAKE(inscriptions, AUTOINSCRIPTIONS_MAX, autoinscription);
+  inscriptions = C_ZNEW(AUTOINSCRIPTIONS_MAX, autoinscription);
 }
 
 #define BROKEN 1
@@ -1668,10 +1670,10 @@ static errr init_other(void)
   /*** Prepare grid arrays ***/
   
   /* Array of grids */
-  C_MAKE(view_g, VIEW_MAX, u16b);
+  view_g = C_ZNEW(VIEW_MAX, u16b);
   
   /* Array of grids */
-  C_MAKE(temp_g, TEMP_MAX, u16b);
+  temp_g = C_ZNEW(TEMP_MAX, u16b);
   
   /* Hack -- use some memory twice */
   temp_y = ((byte*)(temp_g)) + 0;
@@ -1680,44 +1682,44 @@ static errr init_other(void)
   /*** Prepare dungeon arrays ***/
   
   /* Padded info array */
-  C_MAKE(cave_info, DUNGEON_HGT, byte_256);
-  C_MAKE(cave_info2, DUNGEON_HGT, byte_256);
+  cave_info = C_ZNEW(DUNGEON_HGT, byte_256);
+  cave_info2 = C_ZNEW(DUNGEON_HGT, byte_256);
   
   /* Feature array */
-  C_MAKE(cave_feat, DUNGEON_HGT, byte_wid);
+  cave_feat = C_ZNEW(DUNGEON_HGT, byte_wid);
 
 	/* Entity arrays */
-  C_MAKE(cave_o_idx, DUNGEON_HGT, s16b_wid);
-  C_MAKE(cave_m_idx, DUNGEON_HGT, s16b_wid);
+  cave_o_idx = C_ZNEW(DUNGEON_HGT, s16b_wid);
+  cave_m_idx = C_ZNEW(DUNGEON_HGT, s16b_wid);
   
   /* Lore */
-  C_MAKE(l_list, z_info->r_max, monster_lore);
+  l_list = C_ZNEW(z_info->r_max, monster_lore);
   
   /* Flow arrays */
-  C_MAKE(cave_cost, DUNGEON_HGT, byte_wid);
-  C_MAKE(cave_when, DUNGEON_HGT, byte_wid);
+  cave_cost = C_ZNEW(DUNGEON_HGT, byte_wid);
+  cave_when = C_ZNEW(DUNGEON_HGT, byte_wid);
   
   
   /*** Prepare entity arrays ***/
   
   /* Objects */
-  C_MAKE(o_list, z_info->o_max, object_type);
+  o_list = C_ZNEW(z_info->o_max, object_type);
   
   /* Monsters */
-  C_MAKE(m_list, z_info->m_max, monster_type);
+  m_list = C_ZNEW(z_info->m_max, monster_type);
   
   /*** Prepare character display arrays ***/
   
   /* Lines of character screen/dump */
-  C_MAKE(dumpline, DUMP_MAX_LINES, char_attr_line);
+  dumpline = C_ZNEW(DUMP_MAX_LINES, char_attr_line);
 
   /* Lines of character subwindows */
-  C_MAKE(pline0, 30, char_attr_line);
-  C_MAKE(pline1, 30, char_attr_line);
+  pline0 = C_ZNEW(30, char_attr_line);
+  pline1 = C_ZNEW(30, char_attr_line);
   
   /*** Prepare mouse button arrays ***/
-  C_MAKE(mse_button, MAX_MOUSE_BUTTONS, mouse_button);
-  C_MAKE(backup_button, MAX_MOUSE_BUTTONS, mouse_button);
+  mse_button = C_ZNEW(MAX_MOUSE_BUTTONS, button_mouse);
+  backup_button = C_ZNEW(MAX_MOUSE_BUTTONS, button_mouse);
 
   /* Initialise the hooks */
   add_button_hook = add_button_text;
@@ -1729,13 +1731,13 @@ static errr init_other(void)
   /*** Prepare quest array ***/
   
   /* Quests */
-  C_MAKE(q_list, MAX_Q_IDX, quest);
+  q_list = C_ZNEW(MAX_Q_IDX, quest);
   
 
   /*** Prepare notes array ***/
   
   /* Notes */
-  C_MAKE(notes, NOTES_MAX_LINES, note_info);
+  notes = C_ZNEW(NOTES_MAX_LINES, note_info);
 
   for (n = 0; n < NOTES_MAX_LINES; n++)
     {
@@ -1745,13 +1747,13 @@ static errr init_other(void)
   /*** Prepare the inventory ***/
   
   /* Allocate it */
-  //C_MAKE(inventory, INVEN_TOTAL, object_type);
+  inventory = C_ZNEW(INVEN_TOTAL, object_type);
   
   
   /*** Prepare the stores ***/
   
   /* Allocate the stores */
-  C_MAKE(store, MAX_STORES, store_type);
+  store = C_ZNEW(MAX_STORES, store_type);
   
   for (n = 0; n < MAX_STORES; n++)
     {
@@ -1765,7 +1767,7 @@ static errr init_other(void)
       st_ptr->stock_size = STORE_INVEN_MAX;
 
       /* Allocate the stock */
-      C_MAKE(st_ptr->stock, st_ptr->stock_size, object_type);
+      st_ptr->stock = C_ZNEW(st_ptr->stock_size, object_type);
       
       /* No table for the black market or home */
       if ((st_ptr->type == STORE_BLACKM) || 
@@ -1778,7 +1780,7 @@ static errr init_other(void)
       st_ptr->table_num = 0;
       
       /* Allocate the stock */
-      C_MAKE(st_ptr->table, st_ptr->table_size, s16b);
+      st_ptr->table = C_ZNEW(st_ptr->table_size, s16b);
       
       /* Scan the choices */
       for (k = 0; k < STORE_CHOICES; k++)
@@ -1824,11 +1826,7 @@ static errr init_other(void)
   /*** Prepare the options ***/
   
   /* Initialize the options */
-  for (i = 0; i < OPT_MAX; i++)
-    {
-      /* Default value */
-      op_ptr->opt[i] = option_norm[i];
-    }
+  option_set_defaults();
   
   /* Initialize the window flags */
   for (n = 0; n < 8; n++)
@@ -1916,7 +1914,7 @@ static errr init_alloc(void)
   /*** Initialize object allocation info ***/
   
   /* Allocate the alloc_kind_table */
-  C_MAKE(alloc_kind_table, alloc_kind_size, alloc_entry);
+  alloc_kind_table = C_ZNEW(alloc_kind_size, alloc_entry);
   
   /* Access the table entry */
   table = alloc_kind_table;
@@ -2002,7 +2000,7 @@ static errr init_alloc(void)
   /*** Initialize monster allocation info ***/
   
   /* Allocate the alloc_race_table */
-  C_MAKE(alloc_race_table, alloc_race_size, alloc_entry);
+  alloc_race_table = C_ZNEW(alloc_race_size, alloc_entry);
   
   /* Access the table entry */
   table = alloc_race_table;
@@ -2081,7 +2079,7 @@ static errr init_alloc(void)
   /*** Initialize ego-item allocation info ***/
   
   /* Allocate the alloc_ego_table */
-  C_MAKE(alloc_ego_table, alloc_ego_size, alloc_entry);
+  alloc_ego_table = C_ZNEW(alloc_ego_size, alloc_entry);
   
   /* Get the table entry */
   table = alloc_ego_table;
@@ -2144,7 +2142,7 @@ static errr init_race_probs(void)
   char buf[1024];
   
   /* Make the array */  
-  C_MAKE(race_prob, 32, u16b_stage);
+  race_prob = C_ZNEW(32, u16b_stage);
 
 #ifdef ALLOW_TEMPLATES
   
@@ -2171,9 +2169,9 @@ static errr init_race_probs(void)
   else
     {
       /*** Prepare temporary adjacency arrays ***/
-      C_MAKE(adjacency, NUM_STAGES, u16b_stage);
-      C_MAKE(stage_path, NUM_STAGES, u16b_stage);
-      C_MAKE(temp_path, NUM_STAGES, u16b_stage);
+      adjacency = C_ZNEW(NUM_STAGES, u16b_stage);
+      stage_path = C_ZNEW(NUM_STAGES, u16b_stage);
+      temp_path = C_ZNEW(NUM_STAGES, u16b_stage);
       
       /* Make the adjacency matrix */
       for (i = 0; i < NUM_STAGES; i++)

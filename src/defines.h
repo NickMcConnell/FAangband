@@ -320,12 +320,6 @@
 #define SMELL_STRENGTH 60
 
 /**
- * OPTION: Maximum number of macros (see "io.c")
- * Default: assume at most 256 macros 
- */
-#define MACRO_MAX	256
-
-/**
  * OPTION: Maximum number of "quarks" (see "io.c")
  * Default: assume at most 512 different inscriptions are used
  */
@@ -539,7 +533,7 @@
 #define PY_MAX_GOLD	99999999L	/* Maximum gold */
 #define PY_MAX_LEVEL	50		/* Maximum level */
 #define PY_MAX_SPELLS   64              /* Maximum number of spells */
-#define PY_MAX_SPELL_BOOK   12          /* Maximum number of spells per book */
+#define SPELLS_PER_BOOK 12              /* Maximum number of spells per book */
 
 
 /*

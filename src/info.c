@@ -24,6 +24,7 @@
  */
 
 #include "angband.h"
+#include "ui-menu.h"
 
 
 
@@ -3638,54 +3639,6 @@ void self_knowledge(bool spoil)
 
 
 
-/**
- * Returns chance of failure for a spell
- */
-s16b spell_chance(int spell)
-{
-  int chance, minfail;
-  
-  magic_type *s_ptr;
-  
-  
-  /* Paranoia -- must be literate */
-  if (!mp_ptr->spell_book) return (100);
-  
-  /* Access the spell */
-  s_ptr = &mp_ptr->info[spell];
-  
-  /* Extract the base spell failure rate */
-  chance = s_ptr->sfail;
-  
-  /* Reduce failure rate by "effective" level adjustment */
-  chance -= 4 * (p_ptr->lev - s_ptr->slevel);
-  
-  /* Reduce failure rate by INT/WIS adjustment */
-  chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[mp_ptr->spell_stat]] - 1);
-  
-  /* Not enough mana to cast */
-  if (s_ptr->smana > p_ptr->csp)
-    {
-      chance += 5 * (s_ptr->smana - p_ptr->csp);
-    }
-  
-  /* Extract the minimum failure rate */
-  minfail = adj_mag_fail[p_ptr->stat_ind[mp_ptr->spell_stat]];
-  
-  /* Minimum failure rate */
-  if (chance < minfail) chance = minfail;
-  
-  /* Stunning makes spells harder (after minfail) */
-  if (p_ptr->stun > 50) chance += 20;
-  else if (p_ptr->stun) chance += 10;
-  
-  /* Always a 5 percent chance of working */
-  if (chance > 95) chance = 95;
-  
-  /* Return the chance */
-  return (chance);
-}
-
 
 
 /**
@@ -4489,7 +4442,7 @@ void view_spec_menu(void)
 {
   menu_type menu;
   menu_iter menu_f = { 0, view_spec_tag, 0, view_spec_display, 0 };
-  event_type evt = { EVT_NONE, 0, 0, 0, 0 };
+  ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
   int cursor = 0;
 
   bool done = FALSE;
@@ -4508,12 +4461,12 @@ void view_spec_menu(void)
   menu.title = buf;
   menu.cmd_keys = " \n\r";
   menu.count = total_known;
-  menu_init2(&menu, find_menu_skin(MN_SCROLL), &menu_f, &SCREEN_REGION);
+  menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
   
   while (!done)
     {
-      evt = menu_select(&menu, &cursor, 0);
-      done = ((evt.type == EVT_ESCAPE) || (evt.type == EVT_BACK));
+      evt = menu_select(&menu, cursor);
+      done = (evt.type == EVT_ESCAPE);
     }
 
   /* Load screen */

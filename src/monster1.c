@@ -224,7 +224,7 @@ static void roff_aux(int r_idx)
   name = (r_name + r_ptr->name);
   
   /* Cheat -- know everything */
-  if ((cheat_know) || (r_ptr->flags2 & (RF2_PLAYER_GHOST)))
+  if (OPT(cheat_know) || (r_ptr->flags2 & (RF2_PLAYER_GHOST)))
     {
       /* XXX XXX XXX */
       
@@ -334,7 +334,7 @@ static void roff_aux(int r_idx)
   if (r_ptr->flags1 & (RF1_UNIQUE)) unique = TRUE;
   
   /* Descriptions */
-  if (show_details)
+  if (OPT(show_details))
     {
       char buf[2048];
       
@@ -404,7 +404,7 @@ static void roff_aux(int r_idx)
   text_out_to_screen(TERM_WHITE, "\n");
   
   /* Require a flag to show kills */
-  if (!(show_details))
+  if (!OPT(show_details))
     {
       /* nothing */
     }
@@ -1547,7 +1547,7 @@ static void roff_aux(int r_idx)
 		  wd_he[msex], act, wd_he[msex]));
       text_out_to_screen(TERM_WHITE, 
 			 format("%d feet.  ", 
-				(adult_small_device ? 5 : 10) * r_ptr->aaf));
+				(OPT(adult_small_device) ? 5 : 10) * r_ptr->aaf));
     }
   
   
@@ -1805,7 +1805,7 @@ static void roff_aux(int r_idx)
   text_out_to_screen(TERM_WHITE, "\n");
   
   /* Cheat -- know everything */
-  if ((cheat_know) || (r_ptr->flags2 & (RF2_PLAYER_GHOST)))
+  if (OPT(cheat_know) || (r_ptr->flags2 & (RF2_PLAYER_GHOST)))
     {
       /* Hack -- restore memory */
       COPY(l_ptr, &save_mem, monster_lore);
@@ -1949,7 +1949,7 @@ static void process_ghost_race(int ghost_race, monster_type *m_ptr)
     case 1:
       {
 	if (r_ptr->freq_ranged) r_ptr->freq_ranged += 3;
-	r_ptr->aaf += (adult_small_device ? 1 : 2);
+	r_ptr->aaf += (OPT(adult_small_device) ? 1 : 2);
 	r_ptr->hdice = 6 * r_ptr->hdice / 7;
 	break;
 	if (r_ptr->flags3 & (RF3_HURT_LITE)) 
@@ -1960,7 +1960,7 @@ static void process_ghost_race(int ghost_race, monster_type *m_ptr)
     case 2:
       {
 	if (r_ptr->freq_ranged) r_ptr->freq_ranged += 5;
-	r_ptr->aaf += (adult_small_device ? 2 : 4);
+	r_ptr->aaf += (OPT(adult_small_device) ? 2 : 4);
 	r_ptr->hdice = 4 * r_ptr->hdice / 5;
 	if (r_ptr->flags3 & (RF3_HURT_LITE)) 
 	  r_ptr->flags3 &= ~(RF3_HURT_LITE);
@@ -2033,7 +2033,7 @@ static void process_ghost_race(int ghost_race, monster_type *m_ptr)
 	r_ptr->ac += r_ptr->level / 10 + 2;
 	
 	if (r_ptr->freq_ranged) r_ptr->freq_ranged += 8;
-	r_ptr->aaf += (adult_small_device ? 2 : 5);
+	r_ptr->aaf += (OPT(adult_small_device) ? 2 : 5);
 	if (r_ptr->flags3 & (RF3_HURT_LITE)) 
 	  r_ptr->flags3 &= ~(RF3_HURT_LITE);
 	break;
@@ -2044,7 +2044,7 @@ static void process_ghost_race(int ghost_race, monster_type *m_ptr)
       {
 	if (r_ptr->freq_ranged) r_ptr->freq_ranged += 5;
 	r_ptr->ac += r_ptr->level / 10 + 5;
-	r_ptr->aaf += (adult_small_device ? 2 : 4);
+	r_ptr->aaf += (OPT(adult_small_device) ? 2 : 4);
 	r_ptr->hdice = 5 * r_ptr->hdice / 4;
 	break;
       }
@@ -2053,7 +2053,7 @@ static void process_ghost_race(int ghost_race, monster_type *m_ptr)
     case 11:
       {
 	if (r_ptr->freq_ranged) r_ptr->freq_ranged += 3;
-	r_ptr->aaf += (adult_small_device ? 1 : 2);
+	r_ptr->aaf += (OPT(adult_small_device) ? 1 : 2);
 	r_ptr->flags2 |= (RF2_INVISIBLE);
 	r_ptr->hdice = 3 * r_ptr->hdice / 4;
 	break;
@@ -2229,7 +2229,7 @@ static void process_ghost_class(int ghost_class, monster_type *m_ptr)
     case 4:
       {
 	if (r_ptr->freq_ranged == 0) r_ptr->freq_ranged = 8;
-	r_ptr->aaf += (adult_small_device ? 2 : 5);
+	r_ptr->aaf += (OPT(adult_small_device) ? 2 : 5);
 	
 	r_ptr->flags4 |= (RF4_ARROW);
 	if ((dun_level > 24) && (r_ptr->freq_ranged)) 
@@ -2474,7 +2474,7 @@ bool prepare_ghost(int r_idx, monster_type *m_ptr, bool from_savefile)
 	}
       else
 	{
-	  backup_file_selector = randint(MAX_DEPTH - 1);
+	  backup_file_selector = randint1(MAX_DEPTH - 1);
 	  sprintf(path, "%s/bone.%03d", ANGBAND_DIR_BONE, 
 		  backup_file_selector);
 	  bones_selector = backup_file_selector;
@@ -2554,7 +2554,7 @@ bool prepare_ghost(int r_idx, monster_type *m_ptr, bool from_savefile)
   
   /* Sanity check. */
   if ((ghost_sex >= MAX_SEXES) || (ghost_class < 0)) 
-    ghost_sex = rand_int(MAX_SEXES);
+    ghost_sex = randint0(MAX_SEXES);
   
   /* And use that number to toggle on either the male or the female flag. */
   if (ghost_sex == 0) r_ptr->flags1 |= (RF1_FEMALE);
@@ -2564,7 +2564,7 @@ bool prepare_ghost(int r_idx, monster_type *m_ptr, bool from_savefile)
   /*** Process race. ***/
   
   /* Sanity check. */
-  if (ghost_race >= z_info->p_max) ghost_race = rand_int(z_info->p_max);
+  if (ghost_race >= z_info->p_max) ghost_race = randint0(z_info->p_max);
   
   /* And use the ghost race to gain some flags. */
   process_ghost_race(ghost_race, m_ptr);
@@ -2573,7 +2573,7 @@ bool prepare_ghost(int r_idx, monster_type *m_ptr, bool from_savefile)
   /*** Process class. ***/
   
   /* Sanity check. */
-  if (ghost_class >= MAX_CLASS) ghost_class = rand_int(MAX_CLASS);
+  if (ghost_class >= MAX_CLASS) ghost_class = randint0(MAX_CLASS);
   
   /* And use the ghost class to gain some flags. */
   process_ghost_class(ghost_class, m_ptr);

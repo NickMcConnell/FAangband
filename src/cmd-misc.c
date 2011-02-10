@@ -687,7 +687,7 @@ void handle_mousepress(int y, int x)
 	    if (p_ptr->confused)
 	      {
 		p_ptr->command_dir = mouse_dir(p_ptr->command_cmd_ex, FALSE);
-		if (p_ptr->command_dir)	do_cmd_walk();
+		if (p_ptr->command_dir)	do_cmd_walk_or_jump(OPT(always_pickup));
 	      }
 	    else
 	      {
@@ -886,7 +886,7 @@ extern bool do_cmd_try_borg(void)
 /**
  * Quit the game.
  */
-extern void do_cmd_quit(void)
+extern void do_cmd_quit(cmd_code code, cmd_arg args[])
 {
 	/* Stop playing */
 	p_ptr->playing = FALSE;

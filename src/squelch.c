@@ -43,129 +43,8 @@
  */
 #include "angband.h"
 #include "cmds.h"
-
-/**
- * Names of categories.
- */
-static const char *type_names[TYPE_MAX] =
-{
-  "Swords",
-  "Polearms",
-  "Blunt weapons",
-  "Missile weapons",
-  "Sling ammunition",
-  "Bow ammunition",
-  "Crossbow ammunition",
-  "Soft armor",
-  "Hard armor",
-  "Dragon Scale Mail",
-  "Cloaks",
-  "Shields",
-  "Helms",
-  "Crowns",
-  "Gloves",
-  "Boots",
-  "Diggers",
-  "Rings",
-  "Amulets",
-};
-
-/**
- * Mapping of tval -> type 
- */
-static int tvals[TYPE_MAX] =
-{
-  TV_SWORD, 
-  TV_POLEARM,
-  TV_HAFTED,
-  TV_BOW,
-  TV_SHOT,
-  TV_ARROW,
-  TV_BOLT,
-  TV_SOFT_ARMOR,
-  TV_HARD_ARMOR,
-  TV_DRAG_ARMOR,
-  TV_CLOAK,
-  TV_SHIELD,
-  TV_HELM,
-  TV_CROWN,
-  TV_GLOVES,
-  TV_BOOTS,
-  TV_DIGGING,
-  TV_RING,
-  TV_AMULET
-};
-
-byte squelch_level[TYPE_MAX];
-size_t squelch_size = TYPE_MAX;
-
-
-/**
- * The different kinds of quality squelch
- */
-enum
-{
-  SQUELCH_NONE,
-  SQUELCH_CURSED,
-  SQUELCH_DUBIOUS,
-  SQUELCH_DUBIOUS_NON,
-  SQUELCH_NON_EGO,
-  SQUELCH_AVERAGE,
-  SQUELCH_GOOD_STRONG,
-  SQUELCH_GOOD_WEAK,
-  SQUELCH_ALL,
-  
-  SQUELCH_MAX
-};
-
-/**
- * The names for the various kinds of quality
- */
-static const char *quality_names[SQUELCH_MAX] =
-{
-  "none",				             /* SQUELCH_NONE */
-  "cursed (objects known to have a curse)",    	     /* SQUELCH_CURSED */
-  "dubious (all dubious items)",                     /* SQUELCH_DUBIOUS */
-  "dubious non-ego (strong pseudo-ID)",              /* SQUELCH_DUBIOUS_NON */
-  "non-ego (all but ego-items - strong pseudo-ID)",  /* SQUELCH_NON_EGO */
-  "average (everything not good or better)",         /* SQUELCH_AVERAGE */
-  "good (strong pseudo-ID or identify)",             /* SQUELCH_GOOD_STRONG */
-  "good (weak pseudo-ID)",		             /* SQUELCH_GOOD_WEAK */
-  "everything except artifacts",	             /* SQUELCH_ALL */
-};
-
-
-/**
- * Structure to describe tval/description pairings. 
- */
-typedef struct
-{
-  int tval;
-  const char *desc;
-} tval_desc;
-
-/**
- * Categories for sval-dependent squelch. 
- */
-static tval_desc sval_dependent[] =
-{
-  { TV_STAFF,		"Staffs" },
-  { TV_WAND,		"Wands" },
-  { TV_ROD,		"Rods" },
-  { TV_SCROLL,		"Scrolls" },
-  { TV_POTION,		"Potions" },
-  { TV_FOOD,		"Food" },
-  { TV_MAGIC_BOOK,	"Magic books" },
-  { TV_PRAYER_BOOK,	"Prayer books" },
-  { TV_DRUID_BOOK,	"Stones of Lore" },
-  { TV_NECRO_BOOK,	"Necromantic tomes" },
-  { TV_SPIKE,		"Spikes" },
-  { TV_LITE,		"Lights" },
-  { TV_FLASK,           "Oil" },
-  { TV_SKELETON,        "Skeletons" },
-  { TV_BOTTLE,          "Bottles" },
-  { TV_JUNK,            "Junk" }
-};
+#include "squelch.h"
+#include "ui-menu.h"
 
 
 /*** Autoinscription stuff ***/
@@ -318,50 +197,6 @@ void autoinscribe_pack(void)
   
   return;
 }
-
-#ifdef _WIN32_WCE
-/**
- * WinCE has no bsearch 
- */
-typedef int (*comp_fn) (const void *, const void *);
-
-void *my_bsearch(const void *key, const void *base, size_t num, size_t size, 
-	       comp_fn my_comp);
-
-
-void *my_bsearch(const void *key, const void *base, size_t num, size_t size,
-	       int (*my_comp)(const void *, const void *))
-{
-  size_t odd_mask, bytes;
-  const char *centre, *high, *low;
-  int comp;
-  
-  odd_mask = ((size ^ (size - 1)) >> 1) + 1;
-  low = base;
-  bytes = num == 0 ? size : size + 1;
-  centre = low + num * size;
-  comp = 0;
-  while (bytes != size) 
-    {
-      if (comp > 0) 
-	{
-	  low = centre;
-	} 
-      else 
-	{
-	  high = centre;
-	}
-      bytes = high - low;
-      centre = low + ((bytes & odd_mask ? bytes - size : bytes) >> 1);
-      comp = my_comp(key, centre);
-      if (comp == 0) 
-	{
-	  return (void *)centre;
-	}
-    }
-  return NULL;
-}
-#endif
 
 
 /*** Squelch code ***/
@@ -542,7 +377,7 @@ extern bool squelch_item_ok(object_type *o_ptr)
  */
 bool squelch_hide_item(object_type *o_ptr)
 {
-  return (hide_squelchable ? squelch_item_ok(o_ptr) : FALSE);
+  return (OPT(hide_squelchable) ? squelch_item_ok(o_ptr) : FALSE);
 }
 
 
@@ -689,6 +524,50 @@ static tval_desc raw_tvals[] =
     {TV_NECRO_BOOK, "Necromantic Tomes"}
 };
 
+#ifdef _WIN32_WCE
+/**
+ * WinCE has no bsearch 
+ */
+typedef int (*comp_fn) (const void *, const void *);
+
+void *my_bsearch(const void *key, const void *base, size_t num, size_t size, 
+	       comp_fn my_comp);
+
+
+void *my_bsearch(const void *key, const void *base, size_t num, size_t size,
+	       int (*my_comp)(const void *, const void *))
+{
+  size_t odd_mask, bytes;
+  const char *centre, *high, *low;
+  int comp;
+  
+  odd_mask = ((size ^ (size - 1)) >> 1) + 1;
+  low = base;
+  bytes = num == 0 ? size : size + 1;
+  centre = low + num * size;
+  comp = 0;
+  while (bytes != size) 
+    {
+      if (comp > 0) 
+	{
+	  low = centre;
+	} 
+      else 
+	{
+	  high = centre;
+	}
+      bytes = high - low;
+      centre = low + ((bytes & odd_mask ? bytes - size : bytes) >> 1);
+      comp = my_comp(key, centre);
+      if (comp == 0) 
+	{
+	  return (void *)centre;
+	}
+    }
+  return NULL;
+}
+#endif
+
 #define NUM_RAW_TVALS (sizeof(raw_tvals) / sizeof(raw_tvals[0]))
 
 typedef struct ego_desc
@@ -723,7 +602,7 @@ static int tval_comp_func(const void *a_ptr, const void *b_ptr)
 int ego_item_name(char *buf, size_t buf_size, ego_desc *d_ptr)
 {
   byte tval_table[EGO_TVALS_MAX], i, n = 0;
-  char *end;
+  int end;
   size_t prefix_size;
   const char *long_name;
   
@@ -756,7 +635,7 @@ int ego_item_name(char *buf, size_t buf_size, ego_desc *d_ptr)
     }
   
   /* Initialize the buffer */
-  end = my_fast_strcat(buf, NULL, "[ ] ", buf_size);
+  end = my_strcat(buf, "[ ] ", buf_size);
   
   /* Concatenate the tval' names */
   for (i = 0; i < n; i++)
@@ -784,15 +663,15 @@ int ego_item_name(char *buf, size_t buf_size, ego_desc *d_ptr)
       /* Append the proper separator first, if any */
       if (i > 0)
 	{
-	  end = my_fast_strcat(buf, end, (i < n - 1) ? ", ": " and ", buf_size);
+	  end += my_strcat(buf, (i < n - 1) ? ", ": " and ", buf_size);
 	}
       
       /* Append the name */
-      end = my_fast_strcat(buf, end, tval_name, buf_size);
+      end += my_strcat(buf, tval_name, buf_size);
     }
   
   /* Append an extra space */
-  end = my_fast_strcat(buf, end, " ", buf_size);
+  end += my_strcat(buf, " ", buf_size);
   
   /* Get the full ego-item name */
   long_name = e_name + e_ptr->name;
@@ -809,10 +688,10 @@ int ego_item_name(char *buf, size_t buf_size, ego_desc *d_ptr)
       my_strcpy(prefix, long_name, prefix_size + 1);
       
       /* Append the prefix */
-      end = my_fast_strcat(buf, end, prefix, buf_size);
+      end += my_strcat(buf, prefix, buf_size);
     }
   /* Set the name to the right length */
-  return (int)(buf - end);
+  return end;
 }
 
 /**
@@ -886,9 +765,9 @@ static void ego_menu(void *unused, const char *also_unused)
   ego_desc *choice;
   
   menu_type menu;
-  menu_iter menu_f = { 0, 0, 0, ego_display, ego_action };
+  menu_iter menu_f = { 0, 0, ego_display, ego_action, 0 };
   region area = { 1, 5, -1, -1 };
-  event_type evt = { EVT_NONE, 0, 0, 0, 0 };
+  ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
   int cursor = 0;
   
   size_t i;
@@ -970,11 +849,11 @@ static void ego_menu(void *unused, const char *also_unused)
   menu.cmd_keys = " \n\r";
   menu.count = max_num;
   menu.menu_data = choice;
-  menu_init2(&menu, find_menu_skin(MN_SCROLL), &menu_f, &area);
+  menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
   
   /* Select an entry */
   while (evt.key != ESCAPE)
-    evt = menu_select(&menu, &cursor, 0);
+    evt = menu_select(&menu, cursor);
   
   /* Free memory */
   FREE(choice);
@@ -1026,7 +905,7 @@ static void quality_subdisplay(menu_type *menu, int oid, bool cursor, int row,
 /**
  * Handle "Enter".  :(
  */
-static bool quality_subaction(char cmd, void *db, int oid)
+static bool quality_subaction(menu_type *menu, ui_event_data *e, int oid)
 {
   return TRUE;
 }
@@ -1038,9 +917,9 @@ static bool quality_subaction(char cmd, void *db, int oid)
 static bool quality_action(char cmd, void *db, int oid)
 {
   menu_type menu;
-  menu_iter menu_f = { 0, 0, 0, quality_subdisplay, quality_subaction };
+  menu_iter menu_f = { 0, 0, quality_subdisplay, quality_subaction, 0 };
   region area = { 24, 1, 44, SQUELCH_MAX };
-  event_type evt;
+  ui_event_data evt;
   int cursor;
   
   /* Display at the right point */
@@ -1057,14 +936,14 @@ static bool quality_action(char cmd, void *db, int oid)
   if ((tvals[oid] == TV_AMULET) || (tvals[oid] == TV_RING))
     menu.count = area.page_rows = SQUELCH_CURSED + 1;
   
-  menu_init2(&menu, find_menu_skin(MN_SCROLL), &menu_f, &area);
+  menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
   window_make(area.col - 2, area.row - 1, area.col + area.width + 2, 
 	      area.row + area.page_rows);
 
-  evt = menu_select(&menu, &cursor, 0);
+  evt = menu_select(&menu, cursor);
   
   /* Set the new value appropriately */
-  if (evt.key != ESCAPE && evt.type != EVT_BACK)
+  if (evt.type != EVT_ESCAPE)
     squelch_level[oid] = cursor;
   
   /* Load and finish */
@@ -1078,9 +957,9 @@ static bool quality_action(char cmd, void *db, int oid)
 static void quality_menu(void *unused, const char *also_unused)
 {
   menu_type menu;
-  menu_iter menu_f = { 0, 0, 0, quality_display, quality_action };
+  menu_iter menu_f = { 0, 0, quality_display, quality_action, 0 };
   region area = { 1, 3, -1, -1 };
-  event_type evt = EVENT_EMPTY;
+  ui_event_data evt = EVENT_EMPTY;
   int cursor = 0;
   
   /* Save screen */
@@ -1097,11 +976,11 @@ static void quality_menu(void *unused, const char *also_unused)
   WIPE(&menu, menu);
   menu.cmd_keys = " \n\r";
   menu.count = TYPE_MAX;
-  menu_init2(&menu, find_menu_skin(MN_SCROLL), &menu_f, &area);
+  menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
   
   /* Select an entry */
-  while (evt.key != ESCAPE)
-    evt = menu_select(&menu, &cursor, 0);
+  while (evt.type != EVT_ESCAPE)
+    evt = menu_select(&menu, cursor);
   
   /* Load screen */
   screen_load();
@@ -1137,12 +1016,12 @@ static void sval_display(menu_type *menu, int oid, bool cursor, int row,
 /**
  * Deal with events on the sval menu
  */
-static bool sval_action(char cmd, void *db, int oid)
+static bool sval_action(menu_type *menu, ui_event_data *e, int oid)
 {
-  u16b *choice = db;
+  u16b *choice = &menu->menu_data;
   
   /* Toggle */
-  if (cmd == '\n' || cmd == '\r' || cmd == '\xff')
+  if (e->type == EVT_SELECT)
     {
       int idx = choice[oid];
       k_info[idx].squelch = !k_info[idx].squelch;
@@ -1164,9 +1043,9 @@ static bool sval_action(char cmd, void *db, int oid)
 static bool sval_menu(int tval, const char *desc)
 {
   menu_type menu;
-  menu_iter menu_f = { 0, 0, 0, sval_display, sval_action };
+  menu_iter menu_f = { 0, 0, sval_display, sval_action, 0 };
   region area = { 1, 5, -1, -1 };
-  event_type evt = { EVT_NONE, 0, 0, 0, 0 };
+  ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
   int cursor = 0;
   
   int num = 0;
@@ -1236,11 +1115,11 @@ static bool sval_menu(int tval, const char *desc)
   menu.cmd_keys = " \n\r";
   menu.count = num;
   menu.menu_data = choice;
-  menu_init2(&menu, find_menu_skin(MN_SCROLL), &menu_f, &area);
+  menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
   
   /* Select an entry */
-  while (evt.key != ESCAPE)
-    evt = menu_select(&menu, &cursor, 0);
+  while (evt.type != EVT_ESCAPE)
+    evt = menu_select(&menu, cursor);
   
   /* Free memory */
   FREE(choice);
@@ -1361,10 +1240,10 @@ static void display_options_item(menu_type *menu, int oid, bool cursor,
 
 static const menu_iter options_item_iter =
 {
-  0,
   tag_options_item,
   valid_options_item,
   display_options_item,
+  NULL, 
   NULL
 };
 
@@ -1375,7 +1254,7 @@ static const menu_iter options_item_iter =
 void do_cmd_options_item(void *unused, cptr title)
 {
   int cursor = 0;
-  event_type c = EVENT_EMPTY;
+  ui_event_data c = EVENT_EMPTY;
   const char cmd_keys[] = { ARROW_LEFT, ARROW_RIGHT, '\0' };
   
   menu_type menu;
@@ -1384,8 +1263,7 @@ void do_cmd_options_item(void *unused, cptr title)
   menu.title = title;
   menu.cmd_keys = cmd_keys;
   menu.count = N_ELEMENTS(sval_dependent) + N_ELEMENTS(extra_item_options) + 1;
-  menu_init2(&menu, find_menu_skin(MN_SCROLL), &options_item_iter, 
-	     &SCREEN_REGION);
+  menu_init(&menu, MN_SKIN_SCROLL, &options_item_iter);
   
   menu_layout(&menu, &SCREEN_REGION);
   
@@ -1393,10 +1271,10 @@ void do_cmd_options_item(void *unused, cptr title)
   screen_save();
   clear_from(0);
   
-  while (c.key != ESCAPE)
+  while (c.type != EVT_ESCAPE)
     {
       clear_from(0);
-      c = menu_select(&menu, &cursor, 0);
+      c = menu_select(&menu, cursor);
       
       if (c.type == EVT_SELECT)
 	{

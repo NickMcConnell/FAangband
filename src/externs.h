@@ -190,6 +190,7 @@ extern char **macro__act;
 extern term *angband_term[TERM_WIN_MAX];
 extern char angband_term_name[TERM_WIN_MAX][16];
 extern byte angband_color_table[256][4];
+extern color_type color_table[MAX_COLORS];
 extern const const char *angband_sound_name[MSG_MAX];
 extern int view_n;
 extern u16b *view_g;
@@ -664,22 +665,6 @@ extern int lookup_sval(int tval, const char *name);
 extern int tval_find_idx(const char *name);
 extern const char *tval_find_name(int tval);
 
-/* prefs.c */
-void autoinsc_dump(ang_file *fff);
-void squelch_dump(ang_file *fff);
-void option_dump(ang_file *fff);
-void macro_dump(ang_file *fff);
-void keymap_dump(ang_file *fff);
-void dump_monsters(ang_file *fff);
-void dump_objects(ang_file *fff);
-void dump_features(ang_file *fff);
-void dump_flavors(ang_file *fff);
-void dump_colors(ang_file *fff);
-bool prefs_save(const char *path, void (*dump)(ang_file *), const char *title);
-s16b tokenize(char *buf, s16b num, char **tokens);
-errr process_pref_file_command(char *buf);
-errr process_pref_file(cptr name);
-
 /* randart.c */
 extern void initialize_random_artifacts(void);
 
@@ -932,6 +917,13 @@ extern byte gamma_table[256];
 extern void build_gamma_table(int gamma);
 #endif /* SUPPORT_GAMMA */
 
+/* x-char.c */
+extern void xchar_trans_hook(char *s, int encoding);
+extern void xstr_trans(char *str, int encoding);
+extern void escape_latin1(char *dest, size_t max, cptr src);
+extern const char seven_bit_translation[128];
+extern char xchar_trans(byte c);
+
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);
 extern s16b modify_stat_value(int value, int amount);
@@ -1002,23 +994,6 @@ extern bool tgt_pt (int *x, int *y);
 extern void panel_center(void);
 extern bool change_panel(int dy, int dx);
 extern void verify_panel(void);
-
-/* squelch.c 
-extern byte squelch_level[TYPE_MAX];
-int get_autoinscription_index(s16b k_idx);
-const char *get_autoinscription(s16b kind_idx);
-int apply_autoinscription(object_type *o_ptr);
-int remove_autoinscription(s16b kind);
-int add_autoinscription(s16b kind, cptr inscription);
-void autoinscribe_ground(void);
-void autoinscribe_pack(void);
-bool squelch_tval(int tval);
-extern bool squelch_item_ok(object_type *o_ptr);
-bool squelch_hide_item(object_type *o_ptr);
-extern void squelch_drop(void);
-void squelch_items(void);
-extern bool seen_tval(int tval);
-void do_cmd_options_item(void *, cptr); */
 
 /*
  * Hack -- conditional (or "bizarre") externs

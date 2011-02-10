@@ -28,13 +28,14 @@
 int spell_collect_from_book(const object_type *o_ptr, int spells[PY_MAX_SPELLS])
 {
 	int i;
+	int start = mp_ptr->book_start_index[o_ptr->sval];
+	int end = mp_ptr->book_start_index[o_ptr->sval + 1];
 	int n_spells = 0;
 
-	for (i = 0; i < SPELLS_PER_BOOK; i++)
+	for (i = start; i < end; i++)
 	{
-		int spell = get_spell_index(o_ptr, i);
-		if (spell >= 0)
-			spells[n_spells++] = spell;
+		int spell = mp_ptr->info[i].index;
+		if (spell >= 0) spells[n_spells++] = spell;
 	}
 
 	return n_spells;
@@ -48,11 +49,13 @@ int spell_book_count_spells(const object_type *o_ptr,
 		bool (*tester)(int spell))
 {
 	int i;
+	int start = mp_ptr->book_start_index[o_ptr->sval];
+	int end = mp_ptr->book_start_index[o_ptr->sval + 1];
 	int n_spells = 0;
 
-	for (i = 0; i < SPELLS_PER_BOOK; i++)
+	for (i = start; i < end; i++)
 	{
-		int spell = get_spell_index(o_ptr, i);
+		int spell =  mp_ptr->info[i].index;
 		if (spell >= 0 && tester(spell))
 			n_spells++;
 	}
@@ -84,7 +87,10 @@ bool spell_okay_list(bool (*spell_test)(int spell),
  */
 bool spell_okay_to_cast(int spell)
 {
-	return (p_ptr->spell_flags[spell] & PY_SPELL_LEARNED);
+  if (spell < 32)
+    return (p_ptr->spell_learned1 & (1L << spell));
+  else
+    return (p_ptr->spell_learned2 & (1L << (spell - 32)));
 }
 
 /**
@@ -93,8 +99,14 @@ bool spell_okay_to_cast(int spell)
 bool spell_okay_to_study(int spell)
 {
 	const magic_type *s_ptr = &mp_ptr->info[spell];
-	return (s_ptr->slevel <= p_ptr->lev) &&
-			!(p_ptr->spell_flags[spell] & PY_SPELL_LEARNED);
+	bool learned = FALSE;
+
+	if (spell < 32)
+	  learned = p_ptr->spell_learned1 & (1L << spell);
+	else
+	  learned = p_ptr->spell_learned2 & (1L << (spell - 32));
+
+	return (s_ptr->slevel <= p_ptr->lev) && !learned;
 }
 
 /**
@@ -107,73 +119,52 @@ bool spell_okay_to_browse(int spell)
 }
 
 
-/*
+/**
  * Returns chance of failure for a spell
  */
 s16b spell_chance(int spell)
 {
-	int chance, minfail;
-
-	const magic_type *s_ptr;
-
-
-	/* Paranoia -- must be literate */
-	if (!cp_ptr->spell_book) return (100);
-
-	/* Get the spell */
-	s_ptr = &mp_ptr->info[spell];
-
-	/* Extract the base spell failure rate */
-	chance = s_ptr->sfail;
-
-	/* Reduce failure rate by "effective" level adjustment */
-	chance -= 3 * (p_ptr->lev - s_ptr->slevel);
-
-	/* Reduce failure rate by INT/WIS adjustment */
-	chance -= adj_mag_stat[p_ptr->state.stat_ind[cp_ptr->spell_stat]];
-
-	/* Not enough mana to cast */
-	if (s_ptr->smana > p_ptr->csp)
-	{
-		chance += 5 * (s_ptr->smana - p_ptr->csp);
-	}
-
-	/* Extract the minimum failure rate */
-	minfail = adj_mag_fail[p_ptr->state.stat_ind[cp_ptr->spell_stat]];
-
-	/* Non mage/priest characters never get better than 5 percent */
-	if (!player_has(PF_ZERO_FAIL) && minfail < 5)
-	{
-		minfail = 5;
-	}
-
-	/* Priest prayer penalty for "edged" weapons (before minfail) */
-	if (p_ptr->state.icky_wield)
-	{
-		chance += 25;
-	}
-
-	/* Fear makes spells harder (before minfail) */
-	/* Note that spells that remove fear have a much lower fail rate than
-	 * surrounding spells, to make sure this doesn't cause mega fail */
-	if (p_ptr->state.afraid) chance += 20;
-
-	/* Minimal and maximal failure rate */
-	if (chance < minfail) chance = minfail;
-	if (chance > 50) chance = 50;
-
-	/* Stunning makes spells harder (after minfail) */
-	if (p_ptr->timed[TMD_STUN] > 50) chance += 25;
-	else if (p_ptr->timed[TMD_STUN]) chance += 15;
-
-	/* Amnesia doubles failure change */
-	if (p_ptr->timed[TMD_AMNESIA]) chance = 50 + chance / 2;
-
-	/* Always a 5 percent chance of working */
-	if (chance > 95) chance = 95;
-
-	/* Return the chance */
-	return (chance);
+  int chance, minfail;
+  
+  magic_type *s_ptr;
+  
+  
+  /* Paranoia -- must be literate */
+  if (!mp_ptr->spell_book) return (100);
+  
+  /* Access the spell */
+  s_ptr = &mp_ptr->info[spell];
+  
+  /* Extract the base spell failure rate */
+  chance = s_ptr->sfail;
+  
+  /* Reduce failure rate by "effective" level adjustment */
+  chance -= 4 * (p_ptr->lev - s_ptr->slevel);
+  
+  /* Reduce failure rate by INT/WIS adjustment */
+  chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[mp_ptr->spell_stat]] - 1);
+  
+  /* Not enough mana to cast */
+  if (s_ptr->smana > p_ptr->csp)
+    {
+      chance += 5 * (s_ptr->smana - p_ptr->csp);
+    }
+  
+  /* Extract the minimum failure rate */
+  minfail = adj_mag_fail[p_ptr->stat_ind[mp_ptr->spell_stat]];
+  
+  /* Minimum failure rate */
+  if (chance < minfail) chance = minfail;
+  
+  /* Stunning makes spells harder (after minfail) */
+  if (p_ptr->stun > 50) chance += 20;
+  else if (p_ptr->stun) chance += 10;
+  
+  /* Always a 5 percent chance of working */
+  if (chance > 95) chance = 95;
+  
+  /* Return the chance */
+  return (chance);
 }
 
 
@@ -183,10 +174,12 @@ bool spell_in_book(int spell, int book)
 {
 	int i;
 	object_type *o_ptr = object_from_item_idx(book);
+	int start = mp_ptr->book_start_index[o_ptr->sval];
+	int end = mp_ptr->book_start_index[o_ptr->sval + 1];
 
-	for (i = 0; i < SPELLS_PER_BOOK; i++)
+	for (i = start; i < end; i++)
 	{
-		if (spell == get_spell_index(o_ptr, i))
+		if (spell == mp_ptr->info[i].index)
 			return TRUE;
 	}
 
@@ -201,6 +194,8 @@ void spell_learn(int spell)
 {
 	int i;
 	cptr p;
+
+	magic_type *s_ptr;
 
   /* Determine magic description. */
   if (mp_ptr->spell_book == TV_MAGIC_BOOK) p = "spell";
@@ -262,6 +257,10 @@ void spell_learn(int spell)
 bool spell_cast(int spell, int dir)
 {
 	int chance;
+	int plev = p_ptr->lev;
+	bool failed = FALSE;
+	int py = p_ptr->py;
+	int px = p_ptr->px;
 
 	/* Get the spell */
 	const magic_type *s_ptr = &mp_ptr->info[spell];	
@@ -279,7 +278,7 @@ bool spell_cast(int spell, int dir)
     {
       failed = TRUE;
       
-      if (flush_failure) flush();
+      if (OPT(flush_failure)) flush();
       if (mp_ptr->spell_book == TV_MAGIC_BOOK) 
 	msg_print("You failed to get the spell off!");
       if (mp_ptr->spell_book == TV_PRAYER_BOOK) 
@@ -293,11 +292,9 @@ bool spell_cast(int spell, int dir)
   /* Process spell */
   else
     {
-      /* Hack -- higher chance of "beam" instead of "bolt" for mages 
-       * and necros.
-       */
-      beam = ((check_ability(SP_BEAM)) ? plev : (plev / 2));
-      
+		/* Cast the spell */
+		if (!cast_spell(mp_ptr->spell_book, spell, dir)) return FALSE;
+
       /* A spell was cast */
       sound(MSG_SPELL);
 
@@ -440,9 +437,6 @@ bool spell_cast(int spell, int dir)
 	  (void)dec_stat(A_CON, 15 + randint1(10), perm);
 	}
     }
-  
-  /* Alter shape, if necessary. */
-  if (shape) shapechange(shape);
   
   
   /* Redraw mana */

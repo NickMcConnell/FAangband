@@ -242,7 +242,7 @@ void compact_monsters(int size)
 	  if (r_ptr->flags1 & (RF1_UNIQUE)) chance = 99;
 	  
 	  /* All monsters get a saving throw */
-	  if (rand_int(100) < chance) continue;
+	  if (randint0(100) < chance) continue;
 	  
 	  /* Delete the monster */
 	  delete_monster_idx(i);
@@ -476,7 +476,7 @@ s16b get_mon_num(int level)
   if (p_ptr->depth != 0)
     {
       /* Occasional boost to maximum level */
-      if (rand_int(NASTY_MON) == 0)
+      if (randint0(NASTY_MON) == 0)
 	{
 	  /* Pick a level bonus */
 	  d = level / 10 + 1;
@@ -485,7 +485,7 @@ s16b get_mon_num(int level)
 	  temp_level += ((d < 5) ? d : 5);
 	  
 	  /* Occasional second boost */
-	  if (rand_int(NASTY_MON) == 0)
+	  if (randint0(NASTY_MON) == 0)
 	    {
 	      /* Pick a level bonus */
 	      d = level / 10 + 1;
@@ -639,7 +639,7 @@ s16b get_mon_num(int level)
     }
   
   /* Pick a monster */
-  value = rand_int(alloc_race_total);
+  value = randint0(alloc_race_total);
   
   /* Find the monster */
   for (i = 0; i < alloc_race_size; i++)
@@ -681,7 +681,7 @@ s16b get_mon_num_quick(int level)
   
   
   /* Pick a monster */
-  value = rand_int(alloc_race_total);
+  value = randint0(alloc_race_total);
   
   /* Find the monster */
   for (i = 0; i < alloc_race_size; i++)
@@ -714,8 +714,8 @@ void display_monlist(void)
   u16b *race_counts, *neutral_counts;
   
   /* Allocate the arrays */
-  C_MAKE(race_counts, z_info->r_max, u16b);
-  C_MAKE(neutral_counts, z_info->r_max, u16b);
+  race_counts = C_ZNEW(z_info->r_max, u16b);
+  neutral_counts = C_ZNEW(z_info->r_max, u16b);
   
   /* Iterate over m_list */
   for (idx = 1; idx < z_info->m_max; idx++)
@@ -1027,7 +1027,7 @@ void monster_desc(char *desc, monster_type *m_ptr, int mode)
 	    {
 	      strcat(desc, race_name);
 	      strcat(desc, " ");
-	      first[0] = my_tolower(name[0]);
+	      first[0] = tolower(name[0]);
 	      first[1] = '\0';
 	      strcat(desc, first);
 	      strcat(desc, name + 1);
@@ -1047,7 +1047,7 @@ void monster_desc(char *desc, monster_type *m_ptr, int mode)
 	    {
 	      strcat(desc, race_name);
 	      strcat(desc, " ");
-	      first[0] = my_tolower(name[0]);
+	      first[0] = tolower(name[0]);
 	      first[1] = '\0';
 	      strcat(desc, first);
 	      strcat(desc, name + 1);
@@ -1399,7 +1399,7 @@ void update_mon(int m_idx, bool full)
 	  if (l_ptr->sights < MAX_SHORT) l_ptr->sights++;
 	  
 	  /* Disturb on appearance */
-	  if (disturb_move && (m_ptr->hostile == -1)) disturb(1, 0);
+	  if (OPT(disturb_move) && (m_ptr->hostile == -1)) disturb(1, 0);
 	  
 	  /* Window stuff */
 	  p_ptr->window |= PW_MONLIST;
@@ -1424,7 +1424,7 @@ void update_mon(int m_idx, bool full)
 	    p_ptr->redraw |= (PR_HEALTH | PR_MON_MANA);
 	  
 	  /* Disturb on disappearance */
-	  if (disturb_move && (m_ptr->hostile == -1)) disturb(1, 0);
+	  if (OPT(disturb_move) && (m_ptr->hostile == -1)) disturb(1, 0);
 	  
 	  /* Window stuff */
 	  p_ptr->window |= PW_MONLIST;
@@ -1443,7 +1443,7 @@ void update_mon(int m_idx, bool full)
 	  m_ptr->mflag |= (MFLAG_VIEW);
 	  
 	  /* Disturb on appearance */
-	  if (disturb_near && (m_ptr->hostile == -1)) disturb(1, 0);
+	  if (OPT(disturb_near) && (m_ptr->hostile == -1)) disturb(1, 0);
 	}
     }
   
@@ -1457,7 +1457,7 @@ void update_mon(int m_idx, bool full)
 	  m_ptr->mflag &= ~(MFLAG_VIEW);
 	  
 	  /* Disturb on disappearance */
-	  if (disturb_near && (m_ptr->hostile == -1)) disturb(1, 0);
+	  if (OPT(disturb_near) && (m_ptr->hostile == -1)) disturb(1, 0);
 	}
     }
 }
@@ -1674,7 +1674,7 @@ void monster_swap(int y1, int x1, int y2, int x2)
       p_ptr->window |= (PW_OVERHEAD);
       
       /* Warn when leaving trap detected region */
-      if (disturb_trap_detect && old_dtrap && !new_dtrap)
+      if (OPT(disturb_trap_detect) && old_dtrap && !new_dtrap)
 	{
 	  /* Disturb to break runs */
 	  msg_print("*Edge of trap detect region!*");
@@ -1937,7 +1937,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
   if (slp && r_ptr->sleep)
     {
       int val = r_ptr->sleep;
-      n_ptr->csleep = ((val * 2) + randint(val * 10));
+      n_ptr->csleep = ((val * 2) + randint1(val * 10));
     }
   else if (!((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2)) &&
 	   (stage_map[p_ptr->stage][STAGE_TYPE] != CAVE) && 
@@ -1998,7 +1998,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
   else
     {
       /* Give a random starting energy */
-      n_ptr->energy = rand_int(50);
+      n_ptr->energy = randint0(50);
     }
 
   /* Set the group leader, if there is one */
@@ -2019,7 +2019,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
       /* Choose a race */
       else
 	{
-	  k = rand_int(race_prob[p_ptr->stage][z_info->p_max - 1]);
+	  k = randint0(race_prob[p_ptr->stage][z_info->p_max - 1]);
 	  
 	  for (i = 0; i < z_info->p_max; i++)
 	    if (race_prob[p_ptr->stage][i] > k) 
@@ -2030,7 +2030,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
 
 	  /* Hack for Estolad themed level - Edain or Druedain */
 	  if (p_ptr->themed_level == THEME_ESTOLAD)
-	    n_ptr->p_race = (rand_int(100) < 50 ? 6 : 8);
+	    n_ptr->p_race = (randint0(100) < 50 ? 6 : 8);
 
 	  /* Set group ID */
 	  n_ptr->group = ++group_id;
@@ -2049,7 +2049,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
       /* Set hostility */
       chance = g_info[(n_ptr->p_race * z_info->p_max) + p_ptr->prace] - 100;
       if (chance < 0) chance = 0;
-      k = rand_int(chance + 20);
+      k = randint0(chance + 20);
       if ((k > 20)  || (stage_map[p_ptr->stage][STAGE_TYPE] == CAVE) ||
 	  (p_ptr->themed_level == THEME_WARLORDS) || 
 	  (cave_info[y][x] & CAVE_ICKY)) 
@@ -2080,7 +2080,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
         (r_ptr->level > p_ptr->depth))
     {
         /* Message */
-        if (cheat_hear) msg_format("Deep Unique (%s).", name);
+        if (OPT(cheat_hear)) msg_format("Deep Unique (%s).", name);
 
         /* Boost rating by twice delta-depth */
         rating += (r_ptr->level - p_ptr->depth) * 2;
@@ -2090,14 +2090,14 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
     else if (r_ptr->flags1 & (RF1_UNIQUE))
     {
         /* Message */
-        if (cheat_hear) msg_format("Unique (%s).", name);
+        if (OPT(cheat_hear)) msg_format("Unique (%s).", name);
     }
 
     /* Deep normal monsters */
     else if (r_ptr->level > p_ptr->depth + 4)
     {
         /* Message */
-        if (cheat_hear) msg_format("Deep Monster (%s).", name);
+        if (OPT(cheat_hear)) msg_format("Deep Monster (%s).", name);
 
         /* Boost rating by a function of delta-depth */
         rating += ((r_ptr->level - p_ptr->depth) * (r_ptr->level - p_ptr->depth)) / 25;
@@ -2138,14 +2138,14 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp,
   if (r_ptr->level > p_ptr->depth)
     {
       reduce = (r_ptr->level - p_ptr->depth) / 2;
-      group_size -= randint(reduce);
+      group_size -= randint1(reduce);
     }
   
   /* Easy monsters, slightly smaller groups  -BR- */
   else if (r_ptr->level < p_ptr->depth)
     {
       reduce = (p_ptr->depth - r_ptr->level) / 6;
-      group_size -= randint(reduce);
+      group_size -= randint1(reduce);
     }
   
   /* Minimum size */
@@ -2254,8 +2254,8 @@ static void place_monster_escort(int y, int x, int leader_idx, bool slp)
   
   
   /* Calculate the number of escorts we want. */
-  if (r_ptr->flags1 & (RF1_ESCORTS)) escort_size = 6 + rand_int(15);
-  else escort_size = 2 + rand_int(7);
+  if (r_ptr->flags1 & (RF1_ESCORTS)) escort_size = 6 + randint0(15);
+  else escort_size = 2 + randint0(7);
   
   
   /* Use the leader's monster type to restrict the escorts. */
@@ -2323,13 +2323,13 @@ static void place_monster_escort(int y, int x, int leader_idx, bool slp)
 	    {
 	      /* Place a group of monsters */
 	      (void)place_monster_group(my, mx, escort_idx, slp, 
-					(s16b)(5 + randint(10)));
+					(s16b)(5 + randint1(10)));
 	    }
 	  else if (r_info[escort_idx].flags1 & (RF1_FRIEND))
 	    {
 	      /* Place a group of monsters */
 	      (void)place_monster_group(my, mx, escort_idx, slp, 
-					(s16b)(1 + randint(2)));
+					(s16b)(1 + randint1(2)));
 	    }
 	}
     }
@@ -2390,7 +2390,7 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp)
   else if (r_ptr->flags1 & (RF1_FRIEND))
     {
       /* Attempt to place a small group */
-      (void)place_monster_group(y, x, r_idx, slp, (s16b)randint(3));
+      (void)place_monster_group(y, x, r_idx, slp, (s16b)randint1(3));
     }
   
   /* Escorts for certain monsters */
@@ -2474,8 +2474,8 @@ bool alloc_monster(int dis, bool slp, bool quick)
   while (TRUE)
     {
       /* Pick a location */
-      y = rand_int(DUNGEON_HGT);
-      x = rand_int(DUNGEON_WID);
+      y = randint0(DUNGEON_HGT);
+      x = randint0(DUNGEON_WID);
 
       /* Require a grid that the monster can exist in. */
       if (!cave_exist_mon(r_ptr, y, x, FALSE)) continue;
@@ -2720,7 +2720,7 @@ bool summon_specific(int y1, int x1, bool scattered, int lev, int type)
       for (i = 0; i < (scattered ? 40 : 20); ++i)
 	{
 	  /* Pick a distance */
-	  if (scattered) d = rand_int(6) + 1 + j;
+	  if (scattered) d = randint0(6) + 1 + j;
 	  else d = (i / 10) + 1 + j;
 	  
 	  /* Pick a location */
@@ -2869,7 +2869,7 @@ int assess_shapechange(int m_idx, monster_type *m_ptr)
       /* Pick a type of summonable monster */
       while (class == 0)
 	{
-	  j = rand_int(32);
+	  j = randint0(32);
 	  class = ((1L << j) & (r_ptr->flags7));
 	  
 	  /* Set the type */
@@ -2979,7 +2979,7 @@ int assess_shapechange(int m_idx, monster_type *m_ptr)
 			  (p_ptr->depth >= 20 ? 4 : p_ptr->depth / 5));
 
       /* Sauron's hack */
-      if (!shape && (type == SUMMON_SAURON)) shape = m_ptr->r_idx - 1 - rand_int (3);
+      if (!shape && (type == SUMMON_SAURON)) shape = m_ptr->r_idx - 1 - randint0 (3);
 
       /* Temporarily change race */
       tmp_ptr = &r_info[shape];
@@ -3218,7 +3218,7 @@ void update_smart_learn(int m_idx, int what)
   if (r_ptr->flags2 & (RF2_STUPID)) return;
   
   /* Not intelligent, only learn sometimes */
-  if (!(r_ptr->flags2 & (RF2_SMART)) && (rand_int(100) < 50)) return;
+  if (!(r_ptr->flags2 & (RF2_SMART)) && (randint0(100) < 50)) return;
   
   /* XXX XXX XXX */
   

@@ -386,6 +386,41 @@ static void get_history(void)
     }
 }
 
+/**
+ * Sets the character's starting level -NRM-
+ */
+
+static void get_level(void)
+{
+
+  /* Check if they're an "advanced race" */
+  if ((rp_ptr->start_lev - 1) && !OPT(adult_thrall) && !OPT(adult_dungeon))
+    {
+      /* Add the experience */
+      p_ptr->exp = player_exp[rp_ptr->start_lev - 2];
+      p_ptr->max_exp = player_exp[rp_ptr->start_lev - 2];
+      
+      /* Set the level */
+      p_ptr->lev = rp_ptr->start_lev;
+      p_ptr->max_lev = rp_ptr->start_lev;
+    }
+  else /* Paranoia */
+    {
+      /* Add the experience */
+      p_ptr->exp = 0;
+      p_ptr->max_exp = 0;
+      
+      /* Set the level */
+      p_ptr->lev = 1;
+      p_ptr->max_lev = 1;
+    }
+
+  /* Set home town */
+  if (OPT(adult_thrall)) p_ptr->home = 0;
+  else if (OPT(adult_dungeon)) p_ptr->home = 1;
+  else p_ptr->home = towns[rp_ptr->hometown];
+}
+
 /*
  * Computes character's age, height, and weight
  */

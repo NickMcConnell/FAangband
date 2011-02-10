@@ -18,6 +18,7 @@
  */
 
 #include "angband.h"
+#include "squelch.h"
 
 
 
@@ -357,20 +358,26 @@ static void wr_store(store_type *st_ptr)
  */
 static errr wr_randomizer(void)
 {
-  int i;
-  
-  /* Zero */
-  wr_u16b(0);
-  
-  /* Place */
-  wr_u16b(Rand_place);
+	int i;
 
-  /* State */
-  for (i = 0; i < RAND_DEG; i++)
-    {
-      wr_u32b(Rand_state[i]);
-    }
-  
+	/* current value for the simple RNG */
+	wr_u32b(Rand_value);
+
+	/* state index */
+	wr_u32b(state_i);
+
+	/* RNG variables */
+	wr_u32b(z0);
+	wr_u32b(z1);
+	wr_u32b(z2);
+
+	/* RNG state */
+	for (i = 0; i < RAND_DEG; i++)
+		wr_u32b(STATE[i]);
+
+	/* NULL padding */
+	for (i = 0; i < 59 - RAND_DEG; i++)
+		wr_u32b(0);
   /* Success */
   return (0);
 }
@@ -431,7 +438,7 @@ static void wr_options(void)
       int ob = i % 32;
       
       /* Process real entries */
-      if (option_text[i])
+      if (!option_name(i))
 	{
 	  /* Set flag */
 	  if (op_ptr->opt[i])
@@ -992,7 +999,7 @@ static bool wr_savefile_new(void)
   
   /* Dump the number of "messages" */
   tmp16u = message_num();
-  if (compress_savefile && (tmp16u > 40)) tmp16u = 40;
+  if (OPT(compress_savefile) && (tmp16u > 40)) tmp16u = 40;
   wr_u16b(tmp16u);
   
   /* Dump the messages (oldest first!) */

@@ -29,6 +29,7 @@ HEADERS = \
 	init.h \
 	jewel.h \
 	main.h \
+	parser.h \
 	randname.h \
 	types.h \
 	ui.h \
@@ -93,6 +94,7 @@ ANGFILES = \
 	object1.o \
 	object2.o \
 	option.o \
+	parser.o \
 	prefs.o \
 	randart.o \
 	randname.o \

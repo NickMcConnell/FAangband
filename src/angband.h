@@ -45,6 +45,7 @@
 #include "externs.h"
 #include "cmds.h"
 #include "object.h"
+#include "parser.h"
 #include "player.h"
 #include "ui.h"
 #include "z-type.h"

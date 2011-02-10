@@ -717,7 +717,7 @@ byte py_pickup(int pickup, int y, int x)
 	  else if (answer == 2)
 	    {
 	      p_ptr->command_item = -floor_o_idx;
-	      do_cmd_destroy();
+	      textui_cmd_destroy();
 	      return (objs_picked_up);
 	    }
 	  /* Otherwise continue */
@@ -2090,7 +2090,7 @@ void move_player(int dir, int do_pickup)
 	  p_ptr->command_arg = 99;
 	}
       
-      do_cmd_disarm();
+      (void) do_cmd_disarm_aux(y, x);
       return;
     }
   
@@ -2138,7 +2138,7 @@ void move_player(int dir, int do_pickup)
 		      p_ptr->command_arg = 99;
 		    }
 		  
-		  do_cmd_open();
+		  (void) do_cmd_open_aux(y, x);
 		  return;
 		}
 	      

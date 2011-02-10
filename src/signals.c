@@ -208,8 +208,8 @@ static void handle_signal_abort(int sig)
 	/* Flush output */
 	Term_fresh();
 
-	/* Panic Save */
-	p_ptr->panic_save = 1;
+	/* Panic Save
+	p_ptr->panic_save = 1; */
 
 	/* Panic save */
 	my_strcpy(p_ptr->died_from, "(panic save)", sizeof(p_ptr->died_from));
