@@ -454,7 +454,7 @@ extern errr file_character(cptr name, char_attr_line *line, int last_line);
 extern bool show_file(cptr name, cptr what, int line, int mode);
 extern void do_cmd_help(void);
 extern void process_player_name(bool sf);
-extern bool get_name(bool sf);
+extern bool get_name(char *buf, size_t buflen);
 extern void display_scores(int from, int to);
 extern void save_game(void);
 extern void close_game(void);

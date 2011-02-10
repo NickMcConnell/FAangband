@@ -927,7 +927,7 @@ static void display_monster(int col, int row, bool cursor, int oid)
 	byte c = r_ptr->x_char;
 
 	/* Display the name */
-	c_prt(attr, r_ptr->name, row, col);
+	c_prt(attr, r_text + r_ptr->name, row, col);
 
 	if ((tile_width > 1) || (tile_height > 1))
 		return;

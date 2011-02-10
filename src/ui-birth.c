@@ -616,7 +616,7 @@ static enum birth_stage roller_command(bool first_call)
    redisplay them all using the standard function. */
 static void point_based_stats(game_event_type type, game_event_data *data, void *user)
 {
-	display_player_stat_info();
+	display_player(0);
 }
 
 /* This is called whenever any of the other miscellaneous stat-dependent things
@@ -624,7 +624,7 @@ static void point_based_stats(game_event_type type, game_event_data *data, void 
    but redisplay everything because it's easier. */
 static void point_based_misc(game_event_type type, game_event_data *data, void *user)
 {
-	display_player_xtra_info();
+	display_player(0);
 }
 
 
