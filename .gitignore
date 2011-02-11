@@ -2,7 +2,8 @@
 .bzrignore
 src/main-wce.c
 src/Makefile.win_sdl
-config.*
+config.log
+config.status
 autom4te.cache/
 aclocal.m4
 changes.txt
