@@ -18,6 +18,7 @@
  *    are included in all such copies.  Other copyrights may also apply.
  */
 #include "angband.h"
+#include "prefs.h"
 #include "ui.h"
 
 
@@ -258,7 +259,9 @@ void do_cmd_change_name(void)
       /* Change name */
       if (ke.key == 'c')
         {
-          get_name(FALSE);
+	  char namebuf[32] = "";
+
+	  (void) get_name(namebuf, sizeof namebuf);
 	  (void) make_dump(dumpline, 2);
         }
       
@@ -1042,7 +1045,7 @@ void do_cmd_save_screen_html(int mode)
   
   /* Recover current graphics settings */
   reset_visuals(TRUE);
-  process_pref_file(file_name);
+  process_pref_file(file_name, TRUE);
   file_delete(file_name);
   do_cmd_redraw();
   

@@ -1737,7 +1737,7 @@ void do_cmd_study_book(cmd_code code, cmd_arg args[])
   
   
 	/* Extract spells */
-	for (i = 0; i < PY_MAX_SPELL_BOOK; i++)
+	for (i = 0; i < SPELLS_PER_BOOK; i++)
 	{
 		int s = get_spell_index(o_ptr, i);
 		
