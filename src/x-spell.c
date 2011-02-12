@@ -287,7 +287,7 @@
 
 cptr get_spell_name(int tval, int spell)
 {
-		return s_info[spell].name;
+		return spell_names[spell];
 }
 
 /**
@@ -299,7 +299,7 @@ cptr get_spell_name(int tval, int spell)
  * functions "do_cmd_cast()" and "do_cmd_pray()" and are up to date 
  * (as of 0.4.0). -LM-
  */
-void get_spell_info(int tval, char *p, int spell, size_t len)
+void get_spell_info(int tval, int spell, char *p, size_t len)
 {
   int plev = p_ptr->lev;
   
@@ -550,6 +550,7 @@ bool cast_spell(int tval, int index, int dir)
 	int px = p_ptr->px;
 
 	int plev = p_ptr->lev;
+	int shape = SHAPE_NORMAL;
 	bool beam = FALSE;
 
       /* Hack -- higher chance of "beam" instead of "bolt" for mages 
@@ -562,7 +563,7 @@ bool cast_spell(int tval, int index, int dir)
        * that are used by more than one realm (this allows more neat class-
        * specific magics)
        */
-      switch (s_ptr->index)
+      switch (index)
 	{
 	  /* Sorcerous Spells */
 	  
@@ -665,7 +666,7 @@ bool cast_spell(int tval, int index, int dir)
 	case 16:        /* Magical Throw */
 	  {
 	    magic_throw = TRUE;
-	    do_cmd_throw();
+	    textui_cmd_throw();
 	    magic_throw = FALSE;
 	    break;
 	  }
@@ -1197,7 +1198,7 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 100: /* Alter Reality */
 	  {
-	    if (adult_ironman) msg_print("Nothing happens.");
+	    if (OPT(adult_ironman)) msg_print("Nothing happens.");
 	    else
 	      {
 	        msg_print("The world changes!");

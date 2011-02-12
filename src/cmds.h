@@ -104,9 +104,6 @@ extern void do_cmd_messages(void);
 extern void ghost_challenge(void);
 extern void do_cmd_options(void);
 extern void do_cmd_pref(void);
-extern void do_cmd_macros(void);
-extern void do_cmd_visuals(void);
-extern void do_cmd_colors(void);
 extern void make_note(char *note, int what_stage, byte note_type, s16b lev);
 extern void do_cmd_note(void);
 extern void do_cmd_version(void);
@@ -120,6 +117,7 @@ extern void do_cmd_knowledge_objects(void *obj, const char *name);
 
 /* cmd5.c */
 extern void shapechange(s16b shape);
+extern bool choose_ele_resist(void);
 extern void create_athelas(void);
 extern void dimen_door(void);
 extern int get_channeling_boost(void);

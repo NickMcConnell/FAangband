@@ -25,6 +25,7 @@
  */
 
 #include "angband.h"
+#include "squelch.h"
 
 
 /**
@@ -808,15 +809,6 @@ extern void update_statusline(void)
       prt_depth();
     }
 
-  /* Print the mouse buttons */
-  if (mouse_buttons)
-    for (j = 0; j < num_buttons; j++)
-      {
-	sprintf(buf,"[%s]", mse_button[j].label);
-	c_put_str(TERM_SLATE, buf, row, 
-		  button_end - mse_button[j].left);
-      }
-
   /* Reposition the cursor */
   if (!bad) (void)Term_gotoxy(x, y);
 }
@@ -828,42 +820,42 @@ static void prt_cut(void)
   
   if (c > 1000)
     {
-      c_put_str(TERM_L_RED, (bottom_status ? "Mtl wnd" : "Mortal wound"), 
+      c_put_str(TERM_L_RED, (OPT(bottom_status) ? "Mtl wnd" : "Mortal wound"), 
 			     ROW_CUT, COL_CUT);
     }
   else if (c > 200)
     {
-      c_put_str(TERM_RED, (bottom_status ? "Dp gash" : "Deep gash   "), 
+      c_put_str(TERM_RED, (OPT(bottom_status) ? "Dp gash" : "Deep gash   "), 
 		ROW_CUT, COL_CUT);
     }
   else if (c > 100)
     {
-      c_put_str(TERM_RED, (bottom_status ? "Svr cut" : "Severe cut  "), 
+      c_put_str(TERM_RED, (OPT(bottom_status) ? "Svr cut" : "Severe cut  "), 
 		ROW_CUT, COL_CUT);
     }
   else if (c > 50)
     {
-      c_put_str(TERM_ORANGE, (bottom_status ? "Nst cut" : "Nasty cut   "), 
+      c_put_str(TERM_ORANGE, (OPT(bottom_status) ? "Nst cut" : "Nasty cut   "), 
 		ROW_CUT, COL_CUT);
     }
   else if (c > 25)
     {
-      c_put_str(TERM_ORANGE, (bottom_status ? "Bad cut" : "Bad cut     "), 
+      c_put_str(TERM_ORANGE, (OPT(bottom_status) ? "Bad cut" : "Bad cut     "), 
 		ROW_CUT, COL_CUT);
     }
   else if (c > 10)
     {
-      c_put_str(TERM_YELLOW, (bottom_status ? "Lgt cut" : "Light cut   "), 
+      c_put_str(TERM_YELLOW, (OPT(bottom_status) ? "Lgt cut" : "Light cut   "), 
 		ROW_CUT, COL_CUT);
     }
   else if (c)
     {
-      c_put_str(TERM_YELLOW, (bottom_status ? "Graze  " : "Graze       "), 
+      c_put_str(TERM_YELLOW, (OPT(bottom_status) ? "Graze  " : "Graze       "), 
 		ROW_CUT, COL_CUT);
     }
   else
     {
-      put_str((bottom_status ? "       " : "            "), ROW_CUT, COL_CUT);
+      put_str((OPT(bottom_status) ? "       " : "            "), ROW_CUT, COL_CUT);
     }
 }
 
@@ -875,22 +867,22 @@ static void prt_stun(void)
   
   if (s > 100)
     {
-      c_put_str(TERM_RED, (bottom_status ? "Knc out" : "Knocked out "), 
+      c_put_str(TERM_RED, (OPT(bottom_status) ? "Knc out" : "Knocked out "), 
 		ROW_STUN, COL_STUN);
     }
   else if (s > 50)
     {
-      c_put_str(TERM_ORANGE, (bottom_status ? "Hvy stn" : "Heavy stun  "), 
+      c_put_str(TERM_ORANGE, (OPT(bottom_status) ? "Hvy stn" : "Heavy stun  "), 
 		ROW_STUN, COL_STUN);
     }
   else if (s)
     {
-      c_put_str(TERM_ORANGE, (bottom_status ? "Stun   " : "Stun        "), 
+      c_put_str(TERM_ORANGE, (OPT(bottom_status) ? "Stun   " : "Stun        "), 
 		ROW_STUN, COL_STUN);
     }
   else
     {
-      put_str((bottom_status ? "       " : "            "), ROW_STUN, COL_STUN);
+      put_str((OPT(bottom_status) ? "       " : "            "), ROW_STUN, COL_STUN);
     }
 }
 
@@ -902,7 +894,7 @@ static void prt_blank(void)
   
   j = (panel_extra_rows ? 2 : 0);
   
-  if ((Term->hgt > (j + 24)) && (!bottom_status))
+  if ((Term->hgt > (j + 24)) && (!OPT(bottom_status)))
     {
       for (i = 23; i < (Term->hgt - 1 - j); i++)
 	{
@@ -2455,7 +2447,7 @@ static void calc_torch(void)
     }
   
   /* Reduce lite when running if requested */
-  if (p_ptr->running && view_reduce_lite)
+  if (p_ptr->running && OPT(view_reduce_lite))
     {
       /* Reduce the lite radius if needed */
       if (p_ptr->cur_lite > 1) p_ptr->cur_lite = 1;
@@ -4427,7 +4419,7 @@ void notice_stuff(void)
   if (p_ptr->notice & PN_SQUELCH)
     {
       p_ptr->notice &= ~(PN_SQUELCH);
-      if (hide_squelchable) squelch_drop();
+      if (OPT(hide_squelchable)) squelch_drop();
     }
 
   /* Combine the pack */
@@ -4628,7 +4620,7 @@ void redraw_stuff(void)
        * using this command when graphics mode is on
        * causes the character to be a black square.
        */
-      if ((hp_changes_colour) && (arg_graphics == GRAPHICS_NONE))
+      if (OPT(hp_changes_colour) && (arg_graphics == GRAPHICS_NONE))
 	{
 	  lite_spot(p_ptr->py, p_ptr->px);
 	}

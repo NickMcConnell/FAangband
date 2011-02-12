@@ -93,6 +93,8 @@ extern cptr short_locality_name[MAX_LOCALITIES];
 extern int towns[10];
 extern int race_town_prob[10][14];
 byte type_of_store[MAX_STORES];
+extern const byte char_tables[256][CHAR_TABLE_SLOTS];
+extern const xchar_type latin1_encode[];
 
 /* variable.c */
 extern const char *copyright;
@@ -109,6 +111,7 @@ extern u32b sf_when;
 extern u16b sf_lives;
 extern u16b sf_saves;
 extern bool arg_fiddle;
+extern bool arg_rebalance;
 extern bool arg_wizard;
 extern bool arg_sound;
 extern bool arg_graphics;
@@ -191,7 +194,7 @@ extern term *angband_term[TERM_WIN_MAX];
 extern char angband_term_name[TERM_WIN_MAX][16];
 extern byte angband_color_table[256][4];
 extern color_type color_table[MAX_COLORS];
-extern const const char *angband_sound_name[MSG_MAX];
+extern const cptr angband_sound_name[MSG_MAX];
 extern int view_n;
 extern u16b *view_g;
 extern int  vinfo_grids;
@@ -234,6 +237,7 @@ extern monster_lore *l_list;
 extern quest *q_list;
 extern note_info *notes;
 extern store_type *store;
+extern cptr** name_sections;
 extern object_type *inventory;
 extern object_type *quiver;
 extern s16b alloc_kind_size;
@@ -319,14 +323,13 @@ extern char *ANGBAND_DIR_XTRA_HELP;
 extern bool item_tester_full;
 extern byte item_tester_tval;
 extern bool (*item_tester_hook)(const object_type*);
-extern bool (*ang_sort_comp)(void *u, void *v, int a, int b);
-extern void (*ang_sort_swap)(void *u, void *v, int a, int b);
 extern bool (*get_mon_num_hook)(int r_idx);
 extern bool (*get_obj_num_hook)(int k_idx);
 extern ang_file *text_out_file;
 extern void (*text_out_hook)(byte a, char *str);
 extern int text_out_wrap;
 extern int text_out_indent;
+extern int text_out_pad;
 extern int dump_row;
 extern ang_file *dump_out_file;
 extern char_attr *dump_ptr;
@@ -436,7 +439,7 @@ int count_feats(int *y, int *x, bool (*test)(int feat), bool under);
 int count_chests(int *y, int *x, bool trapped);
 
 /* dungeon.c */
-extern void play_game(bool new_game);
+extern void play_game(void);
 
 /* files.c */
 extern void html_screenshot(cptr name);
@@ -505,9 +508,9 @@ extern void do_cmd_view_abilities(void);
 extern void init_artifacts(void);
 extern errr init_t_info(byte chosen_level);
 extern void kill_t_info(void);
-extern void init_file_paths(const char *path);
+extern void init_file_paths(const char *configpath, const char *libpath, const char *datapath);
 extern void create_user_dirs(void);
-extern void init_angband(void);
+extern bool init_angband(void);
 extern void cleanup_angband(void);
 
 /* jewel.c */
@@ -530,6 +533,7 @@ extern void process_monsters(byte minimum_energy);
 extern void reset_monsters(void);
 
 /* monster1.c */
+extern void describe_monster(int r_idx, bool spoilers);
 extern void roff_top(int r_idx);
 extern void screen_roff(int r_idx);
 extern void display_roff(int r_idx);
@@ -667,6 +671,9 @@ extern const char *tval_find_name(int tval);
 
 /* randart.c */
 extern void initialize_random_artifacts(void);
+
+/* randname.c */
+extern size_t randname_make(randname_type name_type, size_t min, size_t max, char *word_buf, size_t buflen, const char ***wordlist);
 
 /* save.c */
 extern bool save_player(void);
@@ -870,10 +877,10 @@ extern void prt(cptr str, int row, int col);
 extern void prt_center(cptr str, int row);
 extern void c_roff(byte a, cptr str, byte l_margin, byte r_margin);
 extern void roff(cptr str, byte l_margin, byte r_margin);
-extern void text_out_to_file(byte attr, char *str);
-extern void text_out_to_screen(byte a, char *str);
-extern void text_out(char *str);
-extern void text_out_c(byte a, char *str);
+extern void text_out_to_file(byte attr, cptr str);
+extern void text_out_to_screen(byte a, cptr str);
+extern void text_out(const char *fmt, ...);
+extern void text_out_c(byte a, const char *fmt, ...);
 extern void clear_from(int row);
 extern void dump_put_str(byte attr, const char *str, int col);
 extern void dump_lnum(char *header, s32b num, int col, byte color);
@@ -883,10 +890,8 @@ extern void dump_line_file(char_attr *this_line);
 extern void dump_line_screen(char_attr *this_line);
 extern void dump_line_mem(char_attr *this_line);
 extern void dump_line(char_attr *this_line);
+extern bool askfor_aux_keypress(char *buf, size_t buflen, size_t *curs, size_t *len, char keypress, bool firsttime);
 extern bool askfor_aux(char *buf, size_t len, bool keypress_h(char *, size_t, size_t *, size_t *, char, bool));
-bool get_name_keypress(char *buf, size_t buflen, size_t *curs, size_t *len, 
-		       char keypress, bool firsttime);
-
 extern bool get_string(cptr prompt, char *buf, size_t len);
 extern s16b get_quantity(cptr prompt, int max);
 extern bool get_check(cptr prompt);

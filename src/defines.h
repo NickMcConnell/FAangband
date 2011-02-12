@@ -1,3 +1,6 @@
+#ifndef INCLUDED_DEFINES_H
+#define INCLUDED_DEFINES_H
+
 /** \file defines.h 
     \brief Constant, flag and macro definitions 
 
@@ -430,6 +433,18 @@
 #define MON_SUMMON_ADJ	2	/* Adjust level of summoned creatures */
 #define MON_DRAIN_LIFE	2	/* Percent of player exp drained per hit */
 #define USE_DEVICE      3	/* x> Harder devices x< Easier devices     */
+
+/**
+ * The different types of name make_word can generate 
+ */
+typedef enum 
+{
+  RANDNAME_TOLKIEN = 1,
+  RANDNAME_SCROLL,
+
+  /* End of type marker - not a valid name type */
+  RANDNAME_NUM_TYPES
+} randname_type;
 
 /**
  * Percentage likelihood that monsters will be disturbed by the
@@ -3448,3 +3463,4 @@ extern int PlayerUID;
 /** Max number of items in the itemlist */
 #define MAX_ITEMLIST 256
 
+#endif /* !INCLUDED_DEFINES_H */

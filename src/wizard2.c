@@ -19,6 +19,7 @@
 
 #include "angband.h"
 #include "cmds.h"
+#include "ui-menu.h"
 
 
 #ifdef ALLOW_DEBUG
@@ -1304,7 +1305,7 @@ static void wiz_create_item(void)
   if (i_ptr->tval == TV_GOLD) 
     {
       k_ptr = &k_info[i_ptr->k_idx];
-      i_ptr->pval = k_ptr->cost / 2 + randint((k_ptr->cost + 1) / 2);
+      i_ptr->pval = k_ptr->cost / 2 + randint1((k_ptr->cost + 1) / 2);
     }
   
   /* Drop the object from heaven */
@@ -1420,9 +1421,9 @@ bool jump_action(char cmd, void *db, int oid)
 bool jump_menu(int level, int *location)
 {
   menu_type menu;
-  menu_iter menu_f = { 0, jump_tag, 0, jump_display, jump_action };
+  menu_iter menu_f = { jump_tag, 0, jump_display, jump_action, 0 };
   region area = { (small_screen ? 0 : 15), 1, 48, -1 };
-  event_type evt = { EVT_NONE, 0, 0, 0, 0 };
+  ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
   int cursor = 0, j = 0;
   size_t i;
   u16b *choice;
@@ -1447,10 +1448,10 @@ bool jump_menu(int level, int *location)
   menu.cmd_keys = " \n\r";
   menu.count = j;
   menu.menu_data = choice;
-  menu_init2(&menu, find_menu_skin(MN_SCROLL), &menu_f, &area);
+  menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
   
   /* Select an entry */
-  evt = menu_select(&menu, &cursor, 0);
+  evt = menu_select(&menu, cursor);
 
   /* Set it */
   if (evt.type == EVT_SELECT) *location = place;
@@ -1460,7 +1461,7 @@ bool jump_menu(int level, int *location)
   
   /* Load screen */
   screen_load();
-  return ((evt.type != EVT_ESCAPE) && (evt.type != EVT_BACK));
+  return (evt.type != EVT_ESCAPE);
 }
 
 /**
@@ -1568,7 +1569,7 @@ static void do_cmd_rerate(void)
       /* Collect values */
       for (i = 1; i < PY_MAX_LEVEL; i++)
 	{
-	  p_ptr->player_hp[i] = randint(p_ptr->hitdie);
+	  p_ptr->player_hp[i] = randint1(p_ptr->hitdie);
 	  p_ptr->player_hp[i] += p_ptr->player_hp[i - 1];
 	}
       

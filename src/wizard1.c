@@ -139,7 +139,7 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val,
   
   
   /* Weight */
-  if (use_metric) sprintf(wgt, "%3d.%d", make_metric(i_ptr->weight) / 10, 
+  if (OPT(use_metric)) sprintf(wgt, "%3d.%d", make_metric(i_ptr->weight) / 10, 
 			  make_metric(i_ptr->weight) % 10);
   else sprintf(wgt, "%3d.%d", i_ptr->weight / 10, i_ptr->weight % 10);
   
@@ -799,7 +799,7 @@ static void analyze_misc (object_type *o_ptr, char *misc_desc)
 {
   artifact_type *a_ptr = &a_info[o_ptr->name1];
   
-  if (use_metric) sprintf(misc_desc, "Level %u, Rarity %u, %d.%d kgs, "
+  if (OPT(use_metric)) sprintf(misc_desc, "Level %u, Rarity %u, %d.%d kgs, "
 			  "%ld Gold", a_ptr->level, a_ptr->rarity,
 			  make_metric(a_ptr->weight) / 10, 
 			  make_metric(a_ptr->weight) % 10, (long) a_ptr->cost);
@@ -1131,7 +1131,7 @@ static void spoil_obj_gen(cptr fname)
   
   
   msg_print("This may take a while...");
-  if (!fresh_after) Term_fresh();
+  if (!OPT(fresh_after)) Term_fresh();
   
   
   
@@ -1156,7 +1156,7 @@ static void spoil_obj_gen(cptr fname)
       if (i % 10000 == 0) 
 	{
 	  prt(format("%ld objects created", (long)i), 0, 0);
-	  if (!fresh_after) Term_fresh();
+	  if (!OPT(fresh_after)) Term_fresh();
 	}
       
       
@@ -1325,7 +1325,7 @@ static void spoil_mon_gen(cptr fname)
   
   
   msg_print("This may take a while...");
-  if (!fresh_after) Term_fresh();
+  if (!OPT(fresh_after)) Term_fresh();
   
   /* Initialize monster generation. */
   if (quick) (void)get_mon_num(p_ptr->depth);
@@ -1336,7 +1336,7 @@ static void spoil_mon_gen(cptr fname)
       if (i % 10000 == 0) 
 	{
 	  prt(format("%ld monsters created", (long)i), 0, 0);
-	  if (!fresh_after) Term_fresh();
+	  if (!OPT(fresh_after)) Term_fresh();
 	}
       
       
@@ -1522,7 +1522,7 @@ static void spoil_mon_desc(cptr fname)
   
   
   /* Allocate the "who" array */
-  C_MAKE(who, z_info->r_max, u16b);
+  who = C_ZNEW(z_info->r_max, u16b);
   
   /* Scan the monsters */
   for (i = 1; i < z_info->r_max; i++)
@@ -2431,7 +2431,7 @@ static void spoil_mon_info(cptr fname)
       else spoil_out(" is ever vigilant for");
       
       sprintf(buf, " intruders, which %s may notice from %d feet.  ",
-	      wd_lhe[msex], (adult_small_device ? 5 : 10) * r_ptr->aaf);
+	      wd_lhe[msex], (OPT(adult_small_device) ? 5 : 10) * r_ptr->aaf);
       spoil_out(buf);
       
       i = 0;

@@ -431,7 +431,7 @@ bool res_menu(void)
 /**
  * Choose an elemental resistance
  */
-static bool choose_ele_resist(void)
+extern bool choose_ele_resist(void)
 {
   bool resist = FALSE;
 

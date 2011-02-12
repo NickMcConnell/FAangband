@@ -182,7 +182,7 @@ static bool know_damage(int r_idx, int i)
  * left edge of the screen, on a cleared line, in which the recall is
  * to take place.  One extra blank line is left after the recall.
  */
-static void roff_aux(int r_idx)
+extern void describe_monster(int r_idx, bool spoilers)
 {
   const monster_race *r_ptr;
   monster_lore *l_ptr;
@@ -1895,7 +1895,7 @@ void screen_roff(int r_idx)
   Term_erase(0, 1, 255);
   
   /* Recall monster */
-  roff_aux(r_idx);
+  describe_monster(r_idx, FALSE);
 
   /* Describe monster */
   roff_top(r_idx);
@@ -1922,7 +1922,7 @@ void display_roff(int r_idx)
   Term_gotoxy(0, 1);
   
   /* Recall monster */
-  roff_aux(r_idx);
+  describe_monster(r_idx, FALSE);
   
   /* Describe monster */
   roff_top(r_idx);

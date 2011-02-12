@@ -19,7 +19,7 @@
 
 #include "tvalsval.h"
 #include "game-cmd.h"
-
+#include "spells.h"
 #include "ui.h"
 #include "ui-menu.h"
 
@@ -72,13 +72,19 @@ static void spell_menu_display(menu_type *m, int oid, bool cursor,
 	if (s_ptr->slevel >= 99) {
 		illegible = "(illegible)";
 		attr = TERM_L_DARK;
-	} else if (p_ptr->spell_flags[spell] & PY_SPELL_FORGOTTEN) {
+	} else if ((oid < 32) ?
+	  ((p_ptr->spell_forgotten1 & (1L << oid))) :
+	  ((p_ptr->spell_forgotten2 & (1L << (oid - 32))))) {
 		comment = " forgotten";
 		attr = TERM_YELLOW;
-	} else if (p_ptr->spell_flags[spell] & PY_SPELL_LEARNED) {
-		if (p_ptr->spell_flags[spell] & PY_SPELL_WORKED) {
+	} else if (((oid < 32) ?
+		 (p_ptr->spell_learned1 & (1L << oid)) :
+		 (p_ptr->spell_learned2 & (1L << (oid - 32))))) {
+		if (((oid < 32) ?
+		 (p_ptr->spell_worked1 & (1L << oid)) :
+		 (p_ptr->spell_worked2 & (1L << (oid - 32))))) {
 			/* Get extra info */
-			get_spell_info(cp_ptr->spell_book, spell, help, sizeof(help));
+			get_spell_info(mp_ptr->spell_book, spell, help, sizeof(help));
 			comment = help;
 			attr = TERM_WHITE;
 		} else {
@@ -95,7 +101,7 @@ static void spell_menu_display(menu_type *m, int oid, bool cursor,
 
 	/* Dump the spell --(-- */
 	strnfmt(out, sizeof(out), "%-30s%2d %4d %3d%%%s",
-			get_spell_name(cp_ptr->spell_book, spell),
+			get_spell_name(mp_ptr->spell_book, spell),
 			s_ptr->slevel, s_ptr->smana, spell_chance(spell), comment);
 	c_prt(attr, illegible ? illegible : out, row, col);
 }
@@ -133,7 +139,7 @@ static void spell_menu_browser(int oid, void *data, const region *loc)
 	screen_save();
 
 	Term_gotoxy(loc->col, loc->row + loc->page_rows);
-	text_out("\n%s\n", s_info[(cp_ptr->spell_book == TV_MAGIC_BOOK) ? spell : spell + PY_MAX_SPELLS].text);
+	text_out(format("\n%s\n", spell_tips[spell]));
 
 	/* XXX */
 	text_out_pad = 0;
@@ -245,7 +251,7 @@ static int get_spell(const object_type *o_ptr, const char *verb,
 		bool (*spell_test)(int spell))
 {
 	menu_type *m;
-	const char *noun = (cp_ptr->spell_book == TV_MAGIC_BOOK ?
+	const char *noun = (mp_ptr->spell_book == TV_MAGIC_BOOK ?
 			"spell" : "prayer");
 
 	m = spell_menu_new(o_ptr, spell_test);
@@ -266,7 +272,7 @@ void textui_book_browse(const object_type *o_ptr)
 	menu_type *m;
 	char *noun;
 
-	switch (cp_ptr->spell_book)
+	switch (mp_ptr->spell_book)
 	  {
 	  case TV_MAGIC_BOOK:
 	    {
@@ -314,7 +320,7 @@ void textui_spell_browse(void)
 	item_tester_hook = obj_can_browse;
 	if (!get_item(&item, "Browse which book? ",
 			"You have no books that you can read.",
-			CMD_BROWSE_SPELL, (USE_INVEN | USE_FLOOR | IS_HARMLESS)))
+			(USE_INVEN | USE_FLOOR | IS_HARMLESS)))
 		return;
 
 	/* Track the object kind */
@@ -334,13 +340,13 @@ void textui_obj_study(void)
 	item_tester_hook = obj_can_study;
 	if (!get_item(&item, "Study which book? ",
 			"You have no books that you can read.",
-			CMD_STUDY_BOOK, (USE_INVEN | USE_FLOOR)))
+		      (USE_INVEN | USE_FLOOR)))
 		return;
 
 	track_object(item);
 	handle_stuff();
 
-	if (player_has(PF_CHOOSE_SPELLS)) {
+	if (mp_ptr->spell_book != TV_PRAYER_BOOK) {
 		int spell = get_spell(object_from_item_idx(item),
 				"study", spell_okay_to_study);
 		if (spell >= 0) {
@@ -363,7 +369,7 @@ void textui_obj_cast(void)
 
 	cptr verb;
 
-	switch (cp_ptr->spell_book)
+	switch (mp_ptr->spell_book)
 	  {
 	  case TV_MAGIC_BOOK:
 	    {
@@ -395,7 +401,7 @@ void textui_obj_cast(void)
 	item_tester_hook = obj_can_cast_from;
 	if (!get_item(&item, "Cast from which book? ",
 			"You have no books that you can read.",
-			CMD_CAST, (USE_INVEN | USE_FLOOR)))
+			(USE_INVEN | USE_FLOOR)))
 		return;
 
 	/* Track the object kind */

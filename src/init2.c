@@ -44,11 +44,49 @@
  */
 
 #include "angband.h"
-#include "init.h"
-#include "cmds.h"
 #include "button.h"
+#include "cmds.h"
+#include "game-cmd.h"
+#include "game-event.h"
+#include "init.h"
 #include "option.h"
+#include "parser.h"
+#include "prefs.h"
+#include "squelch.h"
 
+
+struct file_parser {
+	const char *name;
+	struct parser *(*init)(void);
+	errr (*run)(struct parser *p);
+	errr (*finish)(struct parser *p);
+};
+
+static void print_error(struct file_parser *fp, struct parser *p) {
+	struct parser_state s;
+	parser_getstate(p, &s);
+	msg_format("Parse error in %s line %d column %d: %s: %s", fp->name,
+	           s.line, s.col, s.msg, parser_error_str[s.error]);
+	message_flush();
+	quit_fmt("Parse error in %s line %d column %d.", fp->name, s.line, s.col);
+}
+
+errr run_parser(struct file_parser *fp) {
+	struct parser *p = fp->init();
+	errr r;
+	if (!p) {
+		return PARSE_ERROR_GENERIC;
+	}
+	r = fp->run(p);
+	if (r) {
+		print_error(fp, p);
+		return r;
+	}
+	r = fp->finish(p);
+	if (r)
+		print_error(fp, p);
+	return r;
+}
 
 /**
  * Find the default paths to all of our important sub-directories.
@@ -79,7 +117,7 @@
  * this function to be called multiple times, for example, to
  * try several base "path" values until a good one is found.
  */
-void init_file_paths(const char *path)
+void init_file_paths(const char *configpath, const char *libpath, const char *datapath)
 {
 
 #ifdef PRIVATE_USER_PATH
@@ -108,7 +146,7 @@ void init_file_paths(const char *path)
   /*** Prepare the paths ***/
 
   /* Save the main directory */
-  ANGBAND_DIR = string_make(path);
+  ANGBAND_DIR = string_make(libpath);
   
 #ifdef VM
   
@@ -135,12 +173,12 @@ void init_file_paths(const char *path)
   /*** Build the sub-directory names ***/
   
   /* Build path names */
-  ANGBAND_DIR_EDIT = string_make(format("%sedit", path));
-  ANGBAND_DIR_FILE = string_make(format("%sfile", path));
-  ANGBAND_DIR_HELP = string_make(format("%shelp", path));
-  ANGBAND_DIR_INFO = string_make(format("%sinfo", path));
-  ANGBAND_DIR_PREF = string_make(format("%spref", path));
-  ANGBAND_DIR_XTRA = string_make(format("%sxtra", path));
+  ANGBAND_DIR_EDIT = string_make(format("%sedit", configpath));
+  ANGBAND_DIR_FILE = string_make(format("%sfile", libpath));
+  ANGBAND_DIR_HELP = string_make(format("%shelp", libpath));
+  ANGBAND_DIR_INFO = string_make(format("%sinfo", libpath));
+  ANGBAND_DIR_PREF = string_make(format("%spref", configpath));
+  ANGBAND_DIR_XTRA = string_make(format("%sxtra", libpath));
 
   
 
@@ -154,7 +192,7 @@ void init_file_paths(const char *path)
   
 #else /* PRIVATE_USER_PATH */
 
-  ANGBAND_DIR_USER = string_make(format("%suser", path));
+  ANGBAND_DIR_USER = string_make(format("%suser", datapath));
   
 #endif /* PRIVATE_USER_PATH */
 
@@ -180,10 +218,10 @@ void init_file_paths(const char *path)
 #else /* USE_PRIVATE_PATHS */
 
   /* Build pathnames */
-  ANGBAND_DIR_APEX = string_make(format("%sapex", path));
-  ANGBAND_DIR_BONE = string_make(format("%sbone", path));
-  ANGBAND_DIR_DATA = string_make(format("%sdata", path));
-  ANGBAND_DIR_SAVE = string_make(format("%ssave", path));
+  ANGBAND_DIR_APEX = string_make(format("%sapex", datapath));
+  ANGBAND_DIR_BONE = string_make(format("%sbone", datapath));
+  ANGBAND_DIR_DATA = string_make(format("%sdata", datapath));
+  ANGBAND_DIR_SAVE = string_make(format("%ssave", datapath));
 
 #endif /* USE_PRIVATE_PATHS */
   
@@ -221,7 +259,7 @@ void init_file_paths(const char *path)
           
           /* Build a new path name */
           sprintf(tail, "data-%s", next);
-          ANGBAND_DIR_DATA = string_make(path);
+          ANGBAND_DIR_DATA = string_make(datapath);
         }
     }
   
@@ -280,6 +318,53 @@ void create_user_dirs(void)
 #endif /* PRIVATE_USER_PATH */
 
 
+
+/*
+ * Create any missing directories. We create only those dirs which may be
+ * empty (user/, save/, apex/, info/, help/). The others are assumed 
+ * to contain required files and therefore must exist at startup 
+ * (edit/, pref/, file/, xtra/).
+ *
+ * ToDo: Only create the directories when actually writing files.
+ */
+void create_needed_dirs(void)
+{
+	char dirpath[512];
+
+	path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_USER, "");
+	if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
+
+	path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_SAVE, "");
+	if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
+
+	path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_APEX, "");
+	if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
+
+	path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_INFO, "");
+	if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
+
+	path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_HELP, "");
+	if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
+}
+
+errr parse_file(struct parser *p, const char *filename) {
+	char path[1024];
+	char buf[1024];
+	ang_file *fh;
+	errr r = 0;
+
+	path_build(path, sizeof(path), ANGBAND_DIR_EDIT, format("%s.txt", filename));
+	fh = file_open(path, MODE_READ, -1);
+	if (!fh)
+		quit(format("Cannot open '%s.txt'", filename));
+	while (file_getl(fh, buf, sizeof(buf))) {
+		r = parser_parse(p, buf);
+		if (r)
+			break;
+	}
+	file_close(fh);
+	return r;
+}
 
 #ifdef ALLOW_TEMPLATES
 
@@ -1224,6 +1309,85 @@ void kill_t_info(void)
   FREE(t_name);
   FREE(t_text);
 }
+
+
+struct name {
+	struct name *next;
+	char *str;
+};
+
+struct names_parse {
+	unsigned int section;
+	unsigned int nnames[RANDNAME_NUM_TYPES];
+	struct name *names[RANDNAME_NUM_TYPES];
+};
+
+static enum parser_error parse_names_n(struct parser *p) {
+	unsigned int section = parser_getint(p, "section");
+	struct names_parse *s = parser_priv(p);
+	if (s->section >= RANDNAME_NUM_TYPES)
+		return PARSE_ERROR_GENERIC;
+	s->section = section;
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_names_d(struct parser *p) {
+	const char *name = parser_getstr(p, "name");
+	struct names_parse *s = parser_priv(p);
+	struct name *ns = mem_zalloc(sizeof *ns);
+
+	s->nnames[s->section]++;
+	ns->next = s->names[s->section];
+	ns->str = string_make(name);
+	s->names[s->section] = ns;
+	return PARSE_ERROR_NONE;
+}
+
+struct parser *init_parse_names(void) {
+	struct parser *p = parser_new();
+	struct names_parse *n = mem_zalloc(sizeof *n);
+	n->section = 0;
+	parser_setpriv(p, n);
+	parser_reg(p, "N int section", parse_names_n);
+	parser_reg(p, "D str name", parse_names_d);
+	return p;
+}
+
+static errr run_parse_names(struct parser *p) {
+	return parse_file(p, "names");
+}
+
+static errr finish_parse_names(struct parser *p) {
+	int i;
+	unsigned int j;
+	struct names_parse *n = parser_priv(p);
+	struct name *nm;
+	name_sections = mem_zalloc(sizeof(char**) * RANDNAME_NUM_TYPES);
+	for (i = 0; i < RANDNAME_NUM_TYPES; i++) {
+		name_sections[i] = mem_alloc(sizeof(char*) * (n->nnames[i] + 1));
+		for (nm = n->names[i], j = 0; nm && j < n->nnames[i]; nm = nm->next, j++) {
+			name_sections[i][j] = nm->str;
+		}
+		name_sections[i][n->nnames[i]] = NULL;
+		while (n->names[i]) {
+			nm = n->names[i]->next;
+			mem_free(n->names[i]);
+			n->names[i] = nm;
+		}
+	}
+	mem_free(n);
+	parser_destroy(p);
+	return 0;
+}
+
+struct file_parser names_parser = {
+	"names",
+	init_parse_names,
+	run_parse_names,
+	finish_parse_names
+};
+
+
 
 
 /**** Initialize others ***/
@@ -2457,7 +2621,7 @@ static char hack[17] = "dwsorgbuDWvyRGBU";
  * Note that the "graf-xxx.prf" file must be loaded separately,
  * if needed, in the first (?) pass through "TERM_XTRA_REACT".
  */
-void init_angband(void)
+bool init_angband(void)
 {
   ang_file *fd;
   
@@ -2773,6 +2937,10 @@ void init_angband(void)
   note("[Initializing arrays... (owners)]");
   if (init_b_info()) quit("Cannot initialize owners");
   
+	/* Initialise random name data */
+	event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (random names)");
+	if (run_parser(&names_parser)) quit("Can't parse names");
+
   /* Initialize some other arrays */
   note("[Initializing arrays... (other)]");
   if (init_other()) quit("Cannot initialize other stuff");
@@ -2792,13 +2960,35 @@ void init_angband(void)
   note("[Loading basic user pref file...]");
   
   /* Process that file */
-  (void)process_pref_file("pref.prf");
+  (void)process_pref_file("pref.prf", FALSE);
   
   /* Done */
   note("[Initialization complete]");
   
   /* Sneakily init command list */
   cmd_init();
+
+	/* Ask for a "command" until we get one we like. */
+	while (1)
+	{
+		game_command *command_req;
+		int failed = cmd_get(CMD_INIT, &command_req, TRUE);
+
+		if (failed)
+			continue;
+		else if (command_req->command == CMD_QUIT)
+			quit(NULL);
+		else if (command_req->command == CMD_NEWGAME)
+		{
+			event_signal(EVENT_LEAVE_INIT);
+			return TRUE;
+		}
+		else if (command_req->command == CMD_LOADFILE)
+		{
+			event_signal(EVENT_LEAVE_INIT);
+			return FALSE;
+		}
+	}
 }
 
 

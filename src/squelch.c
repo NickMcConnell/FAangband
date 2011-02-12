@@ -1251,7 +1251,7 @@ static const menu_iter options_item_iter =
 /**
  * Display and handle the main squelching menu.
  */
-void do_cmd_options_item(void *unused, cptr title)
+void do_cmd_options_item(const char *name, int row)
 {
   int cursor = 0;
   ui_event_data c = EVENT_EMPTY;
@@ -1260,7 +1260,7 @@ void do_cmd_options_item(void *unused, cptr title)
   menu_type menu;
   
   WIPE(&menu, menu_type);
-  menu.title = title;
+  menu.title = name;
   menu.cmd_keys = cmd_keys;
   menu.count = N_ELEMENTS(sval_dependent) + N_ELEMENTS(extra_item_options) + 1;
   menu_init(&menu, MN_SKIN_SCROLL, &options_item_iter);

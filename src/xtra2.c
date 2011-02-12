@@ -24,6 +24,7 @@
 
 #include "angband.h"
 #include "cmds.h"
+#include "squelch.h"
 
 #ifdef _WIN32_WCE
 #include "angbandcw.h"
@@ -71,7 +72,7 @@ bool set_blind(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Fully update the visuals */
   p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW | PU_MONSTERS);
@@ -134,7 +135,7 @@ bool set_confused(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Redraw the "confused" */
   p_ptr->redraw |= (PR_CONFUSED);
@@ -195,7 +196,7 @@ bool set_poisoned(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Redraw the "poisoned" */
   p_ptr->redraw |= (PR_POISONED);
@@ -245,7 +246,7 @@ bool set_afraid(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Redraw the "afraid" */
   p_ptr->redraw |= (PR_AFRAID);
@@ -294,7 +295,7 @@ bool set_paralyzed(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Redraw the state */
   p_ptr->redraw |= (PR_STATE);
@@ -325,7 +326,7 @@ bool set_image(int v)
     {
       if (!p_ptr->image)
 	{
-	  image_count = randint(511);
+	  image_count = randint1(511);
 	  msg_print("You feel drugged!");
 	  notice = TRUE;
 	}
@@ -336,7 +337,7 @@ bool set_image(int v)
     {
       if (p_ptr->image)
 	{
-	  image_count = randint(0);
+	  image_count = randint1(0);
 	  msg_print("You can see clearly again.");
 	  notice = TRUE;
 	}
@@ -349,7 +350,7 @@ bool set_image(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Redraw map */
   p_ptr->redraw |= (PR_MAP);
@@ -405,7 +406,7 @@ bool set_fast(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -458,7 +459,7 @@ bool set_slow(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -511,7 +512,7 @@ bool set_shield(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -565,7 +566,7 @@ bool set_blessed(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -618,7 +619,7 @@ bool set_hero(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -671,7 +672,7 @@ bool set_shero(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -724,7 +725,7 @@ bool set_protevil(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Redraw status */
   p_ptr->redraw |= PR_STATUS;
@@ -774,7 +775,7 @@ bool set_extra_defences(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -830,7 +831,7 @@ bool set_tim_invis(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -888,7 +889,7 @@ bool set_tim_esp(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -945,7 +946,7 @@ bool set_superstealth(int v, bool message)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if ((disturb_state) && (message)) disturb(0, 0);
+  if (OPT(disturb_state) && (message)) disturb(0, 0);
   
   /* Redraw status */
   p_ptr->redraw |= PR_STATUS;
@@ -1001,7 +1002,7 @@ bool set_tim_infra(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -1057,7 +1058,7 @@ bool set_oppose_acid(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -1110,7 +1111,7 @@ bool set_oppose_elec(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -1166,7 +1167,7 @@ bool set_oppose_fire(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -1219,7 +1220,7 @@ bool set_oppose_cold(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -1272,7 +1273,7 @@ bool set_oppose_pois(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -1392,7 +1393,7 @@ bool set_stun(int v)
 	case 0:
 	  {
 	    msg_print("You are no longer stunned.");
-	    if (disturb_state) disturb(0, 0);
+	    if (OPT(disturb_state)) disturb(0, 0);
 	    break;
 	  }
 	}
@@ -1408,7 +1409,7 @@ bool set_stun(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -1605,7 +1606,7 @@ bool set_cut(int v)
 	case 0:
 	  {
 	    msg_print("You are no longer bleeding.");
-	    if (disturb_state) disturb(0, 0);
+	    if (OPT(disturb_state)) disturb(0, 0);
 	    break;
 	  }
 	}
@@ -1621,7 +1622,7 @@ bool set_cut(int v)
   if (!notice) return (FALSE);
   
   /* Disturb */
-  if (disturb_state) disturb(0, 0);
+  if (OPT(disturb_state)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -1844,7 +1845,7 @@ bool set_food(int v)
   if (!notice) return (FALSE);
   
   /* Disturb, except if going from full to normal. */
-  if ((disturb_state) && (new_aux != 3)) disturb(0, 0);
+  if (OPT(disturb_state) && (new_aux != 3)) disturb(0, 0);
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -2261,8 +2262,8 @@ void monster_death(int m_idx)
     } 
   
   /* Determine how much we can drop */
-  if ((r_ptr->flags1 & (RF1_DROP_60)) && (rand_int(100) < 60)) number++;
-  if ((r_ptr->flags1 & (RF1_DROP_90)) && (rand_int(100) < 90)) number++;
+  if ((r_ptr->flags1 & (RF1_DROP_60)) && (randint0(100) < 60)) number++;
+  if ((r_ptr->flags1 & (RF1_DROP_90)) && (randint0(100) < 90)) number++;
   
   /* Hack -- nothing's more annoying than a chest that doesn't appear. */
   if ((r_ptr->flags1 & (RF1_DROP_CHEST)) && (r_ptr->flags1 & (RF1_DROP_90))) 
@@ -2289,7 +2290,7 @@ void monster_death(int m_idx)
       object_wipe(i_ptr);
       
       /* Make Gold.  Reduced to 30% chance instead of 50%. */
-      if (do_gold && (!do_item || (rand_int(100) < 30)))
+      if (do_gold && (!do_item || (randint0(100) < 30)))
 	{
 	  
 	  /* Make some gold */
@@ -2410,11 +2411,11 @@ void monster_death(int m_idx)
     build_quest_stairs(y, x, "staircase");
   
   /* ...or a portal for ironmen wilderness games */
-  else if (adult_ironman && !adult_dungeon && (p_ptr->depth != 100))
+  else if (OPT(adult_ironman) && !OPT(adult_dungeon) && (p_ptr->depth != 100))
     build_quest_stairs(y, x, "portal"); 
   
   /* or a path out of Nan Dungortheb for wilderness games*/
-  else if ((r_ptr->level == 70) && (p_ptr->depth == 70) && !adult_dungeon)
+  else if ((r_ptr->level == 70) && (p_ptr->depth == 70) && !OPT(adult_dungeon))
     {
       /* Make a path */
       for (y = p_ptr->py; y < DUNGEON_HGT - 2; y++)
@@ -2625,7 +2626,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
        */
       if (r_ptr->flags2 & (RF2_PLAYER_GHOST))
 	{
-	  if (randint(3) != 1)
+	  if (randint1(3) != 1)
 	    {
 	      sprintf(path, "%s/bone.%03d", ANGBAND_DIR_BONE, 
 		      bones_selector);
@@ -2672,7 +2673,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
   /* Mega-Hack -- Pain cancels fear */
   if (m_ptr->monfear && (dam > 0))
     {
-      int tmp = randint(dam);
+      int tmp = randint1(dam);
       
       /* Cure a little fear */
       if (tmp < m_ptr->monfear)
@@ -2707,14 +2708,14 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
        * Run (sometimes) if at 10% or less of max hit points,
        * or (usually) when hit for half its current hit points
        */
-      if ((dam > 0) && ((randint(10) >= percentage) || 
-			((dam >= m_ptr->hp) && (rand_int(100) < 80))))
+      if ((dam > 0) && ((randint1(10) >= percentage) || 
+			((dam >= m_ptr->hp) && (randint0(100) < 80))))
 	{
 	  /* Hack -- note fear */
 	  (*fear) = TRUE;
 	  
 	  /* Hack -- Add some timed fear */
-	  m_ptr->monfear = (randint(10) +
+	  m_ptr->monfear = (randint1(10) +
 			    (((dam >= m_ptr->hp) && (percentage > 7)) ?
 			     20 : ((11 - percentage) * 5)));
 	  
@@ -2741,7 +2742,7 @@ void panel_recalc_bounds(void)
   /* Get size */
   Term_get_size(&wid, &hgt);
   
-  if (hgt > (bottom_status ? 31 : 25)) 
+  if (hgt > (OPT(bottom_status) ? 31 : 25)) 
     {
       panel_extra_rows = TRUE;
     }
@@ -2764,7 +2765,7 @@ bool change_panel(int dy, int dx)
   int y, x;
   int y_min, x_min, y_max, x_max;
 
-  bool small_town = ((p_ptr->stage < 151) && (!adult_dungeon));
+  bool small_town = ((p_ptr->stage < 151) && (!OPT(adult_dungeon)));
   
   /* Apply the motion */
   y = panel_row_min + dy * (SCREEN_HGT / 2);
@@ -2839,7 +2840,7 @@ void verify_panel(void)
   /* Hack - in town */
   if (!p_ptr->depth && !small_screen && (SCREEN_HGT >= (DUNGEON_HGT / 3) - 1) 
       && (((p_ptr->stage < 151) && (SCREEN_WID >= (DUNGEON_WID / 6))) || 
-	  (((p_ptr->stage > 150) || (adult_dungeon)) && 
+	  (((p_ptr->stage > 150) || OPT(adult_dungeon)) && 
 	   (SCREEN_WID >= (DUNGEON_WID / 3)))))
     {
       
@@ -2858,7 +2859,7 @@ void verify_panel(void)
       if (max_pcol_min < 0) max_pcol_min = 0;
       
       /* Center on player */
-      if (center_player && (center_running || !p_ptr->running))
+      if (OPT(center_player) && (OPT(center_running) || !p_ptr->running))
 	{
 	  /* Center vertically */
 	  prow_min = y - SCREEN_HGT / 2;
@@ -2907,7 +2908,7 @@ void verify_panel(void)
 	  y_min = DUNGEON_HGT / 3;
 	  x_min = DUNGEON_WID / 3;
 	  y_max = 2 * DUNGEON_HGT / 3 - SCREEN_HGT;
-	  x_max = ((p_ptr->stage < 151) && (!adult_dungeon)) ? 
+	  x_max = ((p_ptr->stage < 151) && !OPT(adult_dungeon)) ? 
 		   (DUNGEON_WID / 2) - SCREEN_WID
 		   : (2 * DUNGEON_WID / 3) - SCREEN_WID;
       
@@ -2927,7 +2928,7 @@ void verify_panel(void)
   panel_col_min = pcol_min;
   
   /* Hack -- optional disturb on "panel change" */
-  if (disturb_panel && !center_player) disturb(0, 0);
+  if (OPT(disturb_panel) && !OPT(center_player)) disturb(0, 0);
   
   /* Recalculate the boundaries */
   panel_recalc_bounds();
@@ -3082,7 +3083,7 @@ cptr look_mon_host(int m_idx)
  * function hooks to interact with the data, which is given as
  * two pointers, and which may have any user-defined form.
  */
-void ang_sort_aux(vptr u, vptr v, int p, int q)
+void ang_sort_aux(void *u, void *v, int p, int q)
 {
   int z, a, b;
   
@@ -3131,7 +3132,7 @@ void ang_sort_aux(vptr u, vptr v, int p, int q)
  * function hooks to interact with the data, which is given as
  * two pointers, and which may have any user-defined form.
  */
-void ang_sort(vptr u, vptr v, int n)
+void ang_sort(void *u, void *v, int n)
 {
   /* Sort the array */
   ang_sort_aux(u, v, 0, n-1);
@@ -3179,7 +3180,7 @@ int target_dir(char ch)
   else
     {
       /* Roguelike */
-      if (rogue_like_commands)
+      if (OPT(rogue_like_commands))
 	{
 	  mode = KEYMAP_MODE_ROGUE;
 	}
@@ -3216,7 +3217,7 @@ int target_dir(char ch)
 /**
  * Extract a direction (or zero) from a mousepress
  */
-extern int mouse_dir(event_type ke, bool locating)
+extern int mouse_dir(ui_event_data ke, bool locating)
 {
   int i, y, x;
 
@@ -3535,7 +3536,7 @@ void target_set_location(int y, int x)
  * We use "u" and "v" to point to arrays of "x" and "y" positions,
  * and sort the arrays by double-distance to the player.
  */
-static bool ang_sort_comp_distance(vptr u, vptr v, int a, int b)
+static bool ang_sort_comp_distance(void *u, void *v, int a, int b)
 {
   int py = p_ptr->py;
   int px = p_ptr->px;
@@ -3570,7 +3571,7 @@ static bool ang_sort_comp_distance(vptr u, vptr v, int a, int b)
  * We use "u" and "v" to point to arrays of "x" and "y" positions,
  * and sort the arrays by distance to the player.
  */
-static void ang_sort_swap_distance(vptr u, vptr v, int a, int b)
+static void ang_sort_swap_distance(void *u, void *v, int a, int b)
 {
   byte *x = (byte*)(u);
   byte *y = (byte*)(v);
@@ -3716,7 +3717,7 @@ static void target_set_interactive_prepare(int mode)
       for (x = panel_col_min; x <= panel_col_max; x++)
 	{
 	  /* Require line of sight, unless "look" is "expanded" */
-	  if (!expand_look && !player_has_los_bold(y, x)) continue;
+	  if (!OPT(expand_look) && !player_has_los_bold(y, x)) continue;
 	  
 	  /* Require "interesting" contents */
 	  if (!target_set_interactive_accept(y, x)) continue;
@@ -3836,7 +3837,7 @@ void cut_down(char *name)
  *
  * This function must handle blindness/hallucination.
  */
-static event_type target_set_interactive_aux(int y, int x, int mode, cptr info)
+static ui_event_data target_set_interactive_aux(int y, int x, int mode, cptr info)
 {
   s16b this_o_idx, next_o_idx = 0;
   
@@ -3846,7 +3847,7 @@ static event_type target_set_interactive_aux(int y, int x, int mode, cptr info)
   
   int feat;
   
-  event_type query = EVENT_EMPTY;
+  ui_event_data query = EVENT_EMPTY;
   
   char out_val[160];
   
@@ -4066,7 +4067,7 @@ static event_type target_set_interactive_aux(int y, int x, int mode, cptr info)
 	      else
 		{
 		  /* Message */
-		  if (rogue_like_commands) 
+		  if (OPT(rogue_like_commands)) 
 		    sprintf(out_val, "%s%s%sa pile of %d items [x,%s]",
 			    s1, s2, s3, floor_num, info);
 		  else sprintf(out_val, "%s%s%sa pile of %d items [l,%s]",
@@ -4081,12 +4082,12 @@ static event_type target_set_interactive_aux(int y, int x, int mode, cptr info)
 	      
 	      /* Display list of items (query == "el", not "won") */
 	      if ((floor_num > 1) && 
-		  ((rogue_like_commands ? (query.key == 'x') : 
+		  ((OPT(rogue_like_commands) ? (query.key == 'x') : 
 		    (query.key == 'l')) || (query.key == ' ') || 
 		   (query.key == '*') || (query.key == '?')))
 		
 		{
-		  event_type tmp = EVENT_EMPTY;
+		  ui_event_data tmp = EVENT_EMPTY;
 
 		  /* Save screen */
 		  screen_save();
@@ -4395,8 +4396,8 @@ bool target_set_closest(int mode)
 	}
 
 	/* Target the monster */
-	m_ptr = &mon_list[m_idx];
-	monster_desc(m_name, sizeof(m_name), m_ptr, 0x00);
+	m_ptr = &m_list[m_idx];
+	monster_desc(m_name, m_ptr, 0x00);
 	if (!(mode & TARGET_QUIET))
 		msg_format("%^s is targeted.", m_name);
 	Term_fresh();
@@ -4474,7 +4475,7 @@ bool target_set_interactive(int mode)
 
   bool failure_message = FALSE;
 
-  event_type query = EVENT_EMPTY;
+  ui_event_data query = EVENT_EMPTY;
   
   char info[80];
   
@@ -4563,7 +4564,7 @@ bool target_set_interactive(int mode)
 		if (++m == temp_n)
 		  {
 		    m = 0;
-		    if (!expand_list) done = TRUE;
+		    if (!OPT(expand_list)) done = TRUE;
 		  }
 		break;
 	      }
@@ -4573,7 +4574,7 @@ bool target_set_interactive(int mode)
 		if (m-- == 0)
 		  {
 		    m = temp_n - 1;
-		    if (!expand_list) done = TRUE;
+		    if (!OPT(expand_list)) done = TRUE;
 		  }
 		break;
 	      }
@@ -4955,8 +4956,8 @@ void get_closest_los_monster(int n, int y0, int x0, int *ty, int *tx,
   bool use_view = FALSE;
   
   /* Allocate some arrays */
-  C_MAKE(monster_dist, m_max, int);
-  C_MAKE(monster_index, m_max, int);
+  monster_dist = C_ZNEW(m_max, int);
+  monster_index = C_ZNEW(m_max, int);
   
   /* Note that we're looking from the character's grid */
   if ((y0 == p_ptr->py) && (x0 == p_ptr->px)) use_view = TRUE;
@@ -5081,7 +5082,7 @@ bool get_aim_dir(int *dp)
 {
   int dir;
   
-  event_type ke = EVENT_EMPTY;
+  ui_event_data ke = EVENT_EMPTY;
   
   cptr p;
   
@@ -5104,7 +5105,7 @@ bool get_aim_dir(int *dp)
   dir = p_ptr->command_dir;
   
   /* Hack -- auto-target if requested */
-  if (use_old_target && target_okay()) dir = 5;
+  if (OPT(use_old_target) && target_okay()) dir = 5;
   
   /* Make some buttons */
   add_button("*", '*');
@@ -5265,7 +5266,7 @@ bool get_aim_dir(int *dp)
   if (p_ptr->confused)
     {
       /* Random direction */
-      dir = ddd[rand_int(8)];
+      dir = ddd[randint0(8)];
     }
   
   /* Notice confusion */
@@ -5305,7 +5306,7 @@ bool get_rep_dir(int *dp)
 {
   int dir;
   
-  event_type ke = EVENT_EMPTY;
+  ui_event_data ke = EVENT_EMPTY;
   
   cptr p;
   
@@ -5371,10 +5372,10 @@ bool confuse_dir(int *dp)
   if (p_ptr->confused)
     {
       /* Apply confusion XXX XXX XXX */
-      if ((dir == 5) || (rand_int(100) < 75))
+      if ((dir == 5) || (randint0(100) < 75))
 	{
 	  /* Random direction */
-	  dir = ddd[rand_int(8)];
+	  dir = ddd[randint0(8)];
 	}
     }
   

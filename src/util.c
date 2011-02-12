@@ -1022,7 +1022,7 @@ ui_event_data inkey_ex(void)
 	(void)Term_get_cursor(&cursor_state);
 
 	/* Show the cursor if waiting, except sometimes in "command" mode */
-	if (!inkey_scan && (!inkey_flag || OPT(highlight_player) || character_icky))
+	if (!inkey_scan && (!inkey_flag || OPT(hilite_player) || character_icky))
 	{
 		/* Show the cursor */
 		(void)Term_set_cursor(TRUE);
@@ -1267,7 +1267,7 @@ void bell(cptr reason)
 		message_add(reason, MSG_BELL);
 
 		/* Window stuff */
-		p_ptr->redraw |= (PR_MESSAGE);
+		p_ptr->redraw |= (PW_MESSAGE);
 		redraw_stuff();
 	}
 
@@ -1394,7 +1394,7 @@ static void msg_print_aux(u16b type, cptr msg)
 		message_add(msg, type);
 
 	/* Window stuff */
-	p_ptr->redraw |= (PR_MESSAGE);
+	p_ptr->redraw |= (PW_MESSAGE);
 
 	/* Copy it */
 	my_strcpy(buf, msg, sizeof(buf));

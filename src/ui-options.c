@@ -191,6 +191,16 @@ static void do_cmd_options_win(const char *name, int row)
 	u32b new_flags[ANGBAND_TERM_MAX];
 
 
+  u32b old_flag[ANGBAND_TERM_MAX];
+  
+  
+  /* Memorize old flags */
+  for (j = 0; j < ANGBAND_TERM_MAX; j++)
+    {
+      old_flag[j] = op_ptr->window_flag[j];
+    }
+  
+  
 	/* Set new flags to the old values */
 	for (j = 0; j < ANGBAND_TERM_MAX; j++)
 	{
@@ -324,9 +334,29 @@ static void do_cmd_options_win(const char *name, int row)
 		}
 	}
 
-	/* Notice changes */
-	subwindows_set_flags(new_flags, ANGBAND_TERM_MAX);
-
+  /* Notice changes */
+  for (j = 0; j < ANGBAND_TERM_MAX; j++)
+    {
+      term *old = Term;
+      
+      /* Dead window */
+      if (!angband_term[j]) continue;
+      
+      /* Ignore non-changes */
+      if (op_ptr->window_flag[j] == old_flag[j]) continue;
+      
+      /* Activate */
+      Term_activate(angband_term[j]);
+      
+      /* Erase */
+      Term_clear();
+      
+      /* Refresh */
+      Term_fresh();
+      
+      /* Restore */
+      Term_activate(old);
+    }
 	screen_load();
 }
 
@@ -1046,39 +1076,8 @@ static void do_cmd_hp_warn(const char *name, int row)
 }
 
 
-/*
- * Set "lazy-movement" delay
- */
-static void do_cmd_lazymove_delay(const char *name, int row)
-{
-	bool res;
-	char tmp[4] = "";
-
-	strnfmt(tmp, sizeof(tmp), "%i", lazymove_delay);
-
-	screen_save();
-
-	/* Prompt */
-	prt("Command: Movement Delay Factor", 20, 0);
-
-	prt(format("Current movement delay: %d (%d msec)",
-			   lazymove_delay, lazymove_delay * 10), 22, 0);
-	prt("New movement delay: ", 21, 0);
-
-	/* Ask the user for a string */
-	res = askfor_aux(tmp, sizeof(tmp), askfor_aux_numbers);
-
-	/* Process input */
-	if (res)
-	{
-		lazymove_delay = (u16b) strtoul(tmp, NULL, 0);
-	}
-
-	screen_load();
-}
-
 /** Hack -- hitpoint warning factor */
-void do_cmd_panel_change(void)
+void do_cmd_panel_change(const char *name, int row)
 {
   /* Prompt */
   prt("Command: Panel Change", 20, 0);
@@ -1176,532 +1175,6 @@ static void options_load_pref_file(const char *n, int row)
 
 
 
-
-
-/*** Quality-squelch menu ***/
-
-
-typedef struct
-{
-	int enum_val;
-	const char *name;
-} quality_name_struct;
-
-static quality_name_struct quality_choices[TYPE_MAX] =
-{
-	{ TYPE_WEAPON_POINTY,	"Pointy Melee Weapons" },
-	{ TYPE_WEAPON_BLUNT,	"Blunt Melee Weapons" },
-	{ TYPE_SHOOTER,		"Missile weapons" },
-	{ TYPE_MISSILE_SLING,	"Shots and Pebbles" },
-	{ TYPE_MISSILE_BOW,	"Arrows" },
-	{ TYPE_MISSILE_XBOW,	"Bolts" },
-	{ TYPE_ARMOR_ROBE,	"Robes" },
-	{ TYPE_ARMOR_BODY,	"Body Armor" },
-	{ TYPE_ARMOR_CLOAK,	"Cloaks" },
-	{ TYPE_ARMOR_ELVEN_CLOAK,	"Elven Cloaks" },
-	{ TYPE_ARMOR_SHIELD,	"Shields" },
-	{ TYPE_ARMOR_HEAD,	"Headgear" },
-	{ TYPE_ARMOR_HANDS,	"Handgear" },
-	{ TYPE_ARMOR_FEET,	"Footgear" },
-	{ TYPE_DIGGER,		"Diggers" },
-	{ TYPE_RING,		"Rings" },
-	{ TYPE_AMULET,		"Amulets" },
-	{ TYPE_LIGHT, 		"Lights" },
-};
-
-/*
- * The names for the various kinds of quality
- */
-static quality_name_struct quality_values[SQUELCH_MAX] =
-{
-	{ SQUELCH_NONE,		"no squelch" },
-	{ SQUELCH_BAD,		"bad" },
-	{ SQUELCH_AVERAGE,	"average" },
-	{ SQUELCH_GOOD,		"good" },
-	{ SQUELCH_EXCELLENT_NO_HI,	"excellent with no high resists" },
-	{ SQUELCH_EXCELLENT_NO_SPL,	"excellent but not splendid" },
-	{ SQUELCH_ALL,		"everything except artifacts" },
-};
-
-
-/* Structure to describe tval/description pairings. */
-typedef struct
-{
-	int tval;
-	const char *desc;
-} tval_desc;
-
-/* Categories for sval-dependent squelch. */
-static tval_desc sval_dependent[] =
-{
-	{ TV_STAFF,			"Staffs" },
-	{ TV_WAND,			"Wands" },
-	{ TV_ROD,			"Rods" },
-	{ TV_SCROLL,		"Scrolls" },
-	{ TV_POTION,		"Potions" },
-	{ TV_RING,			"Rings" },
-	{ TV_AMULET,		"Amulets" },
-	{ TV_FOOD,			"Food" },
-	{ TV_MAGIC_BOOK,	"Magic books" },
-	{ TV_PRAYER_BOOK,	"Prayer books" },
-	{ TV_SPIKE,			"Spikes" },
-	{ TV_LIGHT,			"Lights" },
-	{ TV_FLASK,			"Flasks of oil" },
-/*	{ TV_DRAG_ARMOR,	"Dragon Mail Armor" }, */
-	{ TV_GOLD,			"Money" },
-};
-
-
-/*
- * menu struct for differentiating aware from unaware squelch
- */
-typedef struct
-{
-	s16b k_idx;
-	object_kind *kind;
-	bool aware;
-} squelch_choice;
-
-/*
- * Ordering function for squelch choices.
- * Aware comes before unaware, and then sort alphabetically.
- */
-static int cmp_squelch(const void *a, const void *b)
-{
-	char bufa[80];
-	char bufb[80];
-	const squelch_choice *x = (squelch_choice *)a;
-	const squelch_choice *y = (squelch_choice *)b;
-
-	if (!x->aware && y->aware)
-		return 1;
-	if (x->aware && !y->aware)
-		return -1;
-
-	object_kind_name(bufa, sizeof(bufa), x->k_idx, x->aware);
-	object_kind_name(bufb, sizeof(bufb), y->k_idx, y->aware);
-
-	return strcmp(bufa, bufb);
-}
-
-/*
- * Display an entry in the menu.
- */
-static void quality_display(menu_type *menu, int oid, bool cursor, int row, int col, int width)
-{
-	const char *name = quality_choices[oid].name;
-
-	byte level = squelch_level[oid];
-	const char *level_name = quality_values[level].name;
-
-	byte attr = (cursor ? TERM_L_BLUE : TERM_WHITE);
-
-
-	c_put_str(attr, format("%-20s : %s", name, level_name), row, col);
-}
-
-
-/*
- * Display the quality squelch subtypes.
- */
-static void quality_subdisplay(menu_type *menu, int oid, bool cursor, int row, int col, int width)
-{
-	const char *name = quality_values[oid].name;
-	byte attr = (cursor ? TERM_L_BLUE : TERM_WHITE);
-
-	c_put_str(attr, name, row, col);
-}
-
-
-/*
- * Handle keypresses.
- */
-static bool quality_action(menu_type *m, const ui_event_data *event, int oid)
-{
-	menu_type menu;
-	menu_iter menu_f = { NULL, NULL, quality_subdisplay, NULL, NULL };
-	region area = { 27, 2, 29, SQUELCH_MAX };
-	ui_event_data evt;
-	int cursor;
-	int count;
-
-	/* Display at the right point */
-	area.row += oid;
-	cursor = squelch_level[oid];
-
-	/* Save */
-	screen_save();
-
-	/* Work out how many options we have */
-	count = SQUELCH_MAX;
-	if ((oid == TYPE_RING) || (oid == TYPE_AMULET))
-		count = area.page_rows = SQUELCH_BAD + 1;
-
-	/* Run menu */
-	menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
-	menu_setpriv(&menu, count, quality_values);
-
-	/* Stop menus from going off the bottom of the screen */
-	if (area.row + menu.count > Term->hgt - 1)
-		area.row += Term->hgt - 1 - area.row - menu.count;
-
-	menu_layout(&menu, &area);
-
-	window_make(area.col - 2, area.row - 1, area.col + area.width + 2, area.row + area.page_rows);
-
-	evt = menu_select(&menu, 0);
-
-	/* Set the new value appropriately */
-	if (evt.type == EVT_SELECT)
-		squelch_level[oid] = menu.cursor;
-
-	/* Load and finish */
-	screen_load();
-	return TRUE;
-}
-
-/*
- * Display quality squelch menu.
- */
-static void quality_menu(void *unused, const char *also_unused)
-{
-	menu_type menu;
-	menu_iter menu_f = { NULL, NULL, quality_display, quality_action, NULL };
-	region area = { 0, 0, 0, 0 };
-
-	/* Save screen */
-	screen_save();
-	clear_from(0);
-
-	/* Set up the menu */
-	menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
-	menu.title = "Quality squelch menu";
-	menu_setpriv(&menu, TYPE_MAX, quality_values);
-	menu_layout(&menu, &area);
-
-	/* Select an entry */
-	menu_select(&menu, 0);
-
-	/* Load screen */
-	screen_load();
-	return;
-}
-
-
-
-/*** Sval-dependent menu ***/
-
-/*
- * Display an entry on the sval menu
- */
-static void squelch_sval_menu_display(menu_type *menu, int oid, bool cursor,
-		int row, int col, int width)
-{
-	char buf[80];
-	const squelch_choice *choice = menu_priv(menu);
-
-	object_kind *kind = choice[oid].kind;
-	bool aware = choice[oid].aware;
-
-	byte attr = curs_attrs[aware][0 != cursor];
-
-	/* Acquire the "name" of object "i" */
-	object_kind_name(buf, sizeof(buf), choice[oid].k_idx, aware);
-
-	/* Print it */
-	c_put_str(attr, format("[ ] %s", buf), row, col);
-	if ((aware && (kind->squelch & SQUELCH_IF_AWARE)) ||
-			(!aware && (kind->squelch & SQUELCH_IF_UNAWARE)))
-		c_put_str(TERM_L_RED, "*", row, col + 1);
-}
-
-
-/*
- * Deal with events on the sval menu
- */
-static bool squelch_sval_menu_action(menu_type *m, const ui_event_data *event,
-		int oid)
-{
-	const squelch_choice *choice = menu_priv(m);
-
-	if (event->type == EVT_SELECT)
-	{
-		object_kind *kind = choice[oid].kind;
-
-		/* Toggle the appropriate flag */
-		if (choice[oid].aware)
-			kind->squelch ^= SQUELCH_IF_AWARE;
-		else
-			kind->squelch ^= SQUELCH_IF_UNAWARE;
-
-		p_ptr->notice |= PN_SQUELCH;
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
-static const menu_iter squelch_sval_menu =
-{
-	NULL,
-	NULL,
-	squelch_sval_menu_display,
-	squelch_sval_menu_action,
-	NULL,
-};
-
-
-/**
- * Collect all tvals in the big squelch_choice array
- */
-static int squelch_collect_kind(int tval, squelch_choice **ch)
-{
-	squelch_choice *choice;
-	int num = 0;
-
-	int i;
-
-	/* Create the array, with entries both for aware and unaware squelch */
-	choice = mem_alloc(2 * z_info->k_max * sizeof *choice);
-
-	for (i = 1; i < z_info->k_max; i++)
-	{
-		object_kind *k_ptr = &k_info[i];
-
-		/* Skip empty objects, unseen objects, and incorrect tvals */
-		if (!k_ptr->name || k_ptr->tval != tval)
-			continue;
-
-		if (!k_ptr->aware)
-		{
-			/* can unaware squelch anything */
-			choice[num].kind = k_ptr;
-			choice[num].k_idx = i;
-			choice[num++].aware = FALSE;
-		}
-
-		if (k_ptr->everseen || k_ptr->tval == TV_GOLD)
-		{
-			/* aware squelch requires everseen */
-			/* do not require awareness for aware squelch, so people can set at game start */
-			choice[num].kind = k_ptr;
-			choice[num].k_idx = i;
-			choice[num++].aware = TRUE;
-		}
-	}
-
-	if (num == 0)
-		mem_free(choice);
-	else
-		*ch = choice;
-
-	return num;
-}
-
-/*
- * Display list of svals to be squelched.
- */
-static bool sval_menu(int tval, const char *desc)
-{
-	menu_type *menu;
-	region area = { 1, 2, -1, -1 };
-
-	squelch_choice *choices;
-
-	int n_choices = squelch_collect_kind(tval, &choices);
-	if (!n_choices)
-		return FALSE;
-
-	/* sort by name in squelch menus except for categories of items that are aware from the start */
-	switch (tval)
-	{
-		case TV_LIGHT:
-		case TV_MAGIC_BOOK:
-		case TV_PRAYER_BOOK:
-		case TV_DRAG_ARMOR:
-		case TV_GOLD:
-			/* leave sorted by sval */
-			break;
-
-		default:
-			/* sort by name */
-			sort(choices, n_choices, sizeof(*choices), cmp_squelch);
-	}
-
-
-	/* Save the screen and clear it */
-	screen_save();
-	clear_from(0);
-
-	/* Help text */
-	prt(format("Squelch the following %s:", desc), 0, 0);
-
-	/* Run menu */
-	menu = menu_new(MN_SKIN_COLUMNS, &squelch_sval_menu);
-	menu_setpriv(menu, n_choices, choices);
-	menu_layout(menu, &area);
-	menu_select(menu, 0);
-
-	/* Free memory */
-	FREE(choices);
-
-	/* Load screen */
-	screen_load();
-	return TRUE;
-}
-
-
-/* Returns TRUE if there's anything to display a menu of */
-static bool seen_tval(int tval)
-{
-	int i;
-
-	for (i = 1; i < z_info->k_max; i++)
-	{
-		object_kind *k_ptr = &k_info[i];
-
-		/* Skip empty objects, unseen objects, and incorrect tvals */
-		if (!k_ptr->name) continue;
-		if (!k_ptr->everseen) continue;
-		if (k_ptr->tval != tval) continue;
-
-		 return TRUE;
-	}
-
-
-	return FALSE;
-}
-
-
-/* Extra options on the "item options" menu */
-struct
-{
-	char tag;
-	const char *name;
-	void (*action)(void *unused, const char *also_unused);
-} extra_item_options[] =
-{
-	{ 'Q', "Quality squelching options", quality_menu },
-	{ '{', "Autoinscription setup", textui_browse_object_knowledge },
-};
-
-static char tag_options_item(menu_type *menu, int oid)
-{
-	size_t line = (size_t) oid;
-
-	if (line < N_ELEMENTS(sval_dependent))
-		return I2A(oid);
-
-	/* Separator - blank line. */
-	if (line == N_ELEMENTS(sval_dependent))
-		return 0;
-
-	line = line - N_ELEMENTS(sval_dependent) - 1;
-
-	if (line < N_ELEMENTS(extra_item_options))
-		return extra_item_options[line].tag;
-
-	return 0;
-}
-
-static int valid_options_item(menu_type *menu, int oid)
-{
-	size_t line = (size_t) oid;
-
-	if (line < N_ELEMENTS(sval_dependent))
-		return 1;
-
-	/* Separator - blank line. */
-	if (line == N_ELEMENTS(sval_dependent))
-		return 0;
-
-	line = line - N_ELEMENTS(sval_dependent) - 1;
-
-	if (line < N_ELEMENTS(extra_item_options))
-		return 1;
-
-	return 0;
-}
-
-static void display_options_item(menu_type *menu, int oid, bool cursor, int row, int col, int width)
-{
-	size_t line = (size_t) oid;
-
-	/* First section of menu - the svals */
-	if (line < N_ELEMENTS(sval_dependent))
-	{
-		bool known = seen_tval(sval_dependent[line].tval);
-		byte attr = curs_attrs[known ? CURS_KNOWN: CURS_UNKNOWN][(int)cursor];
-
-		c_prt(attr, sval_dependent[line].desc, row, col);
-	}
-	/* Second section - the "extra options" */
-	else
-	{
-		byte attr = curs_attrs[CURS_KNOWN][(int)cursor];
-
-		line = line - N_ELEMENTS(sval_dependent) - 1;
-
-		if (line < N_ELEMENTS(extra_item_options))
-			c_prt(attr, extra_item_options[line].name, row, col);
-	}
-}
-
-bool handle_options_item(menu_type *menu, const ui_event_data *event, int oid)
-{
-	if (event->type == EVT_SELECT)
-	{
-		if ((size_t) oid < N_ELEMENTS(sval_dependent))
-		{
-			sval_menu(sval_dependent[oid].tval, sval_dependent[oid].desc);
-		}
-		else
-		{
-			oid = oid - (int)N_ELEMENTS(sval_dependent) - 1;
-			assert((size_t) oid < N_ELEMENTS(extra_item_options));
-			extra_item_options[oid].action(NULL, NULL);
-		}
-
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
-
-static const menu_iter options_item_iter =
-{
-	tag_options_item,
-	valid_options_item,
-	display_options_item,
-	handle_options_item,
-	NULL
-};
-
-
-/*
- * Display and handle the main squelching menu.
- */
-void do_cmd_options_item(const char *title, int row)
-{
-	menu_type menu;
-
-	menu_init(&menu, MN_SKIN_SCROLL, &options_item_iter);
-	menu_setpriv(&menu, N_ELEMENTS(sval_dependent) + N_ELEMENTS(extra_item_options) + 1, NULL);
-
-	menu.title = title;
-	menu_layout(&menu, &SCREEN_REGION);
-
-	screen_save();
-	clear_from(0);
-	menu_select(&menu, 0);
-	screen_load();
-
-	p_ptr->notice |= PN_SQUELCH;
-
-	return;
-}
-
 /**
  * Autosave options -- textual names
  */
@@ -1737,7 +1210,7 @@ s16b toggle_frequency(s16b current)
 /**
  * Interact with autosave options.  From Zangband.
  */
-static void do_cmd_options_autosave(void)
+static void do_cmd_options_autosave(const char *name, int row)
 {
   ui_event_data ke;
   
@@ -1874,7 +1347,6 @@ static menu_action option_actions[] =
 	{ 0, 's', "Item squelch settings", do_cmd_options_item },
 	{ 0, 'd', "Set base delay factor", do_cmd_delay },
 	{ 0, 'h', "Set hitpoint warning", do_cmd_hp_warn },
-	{ 0, 'i', "Set movement delay", do_cmd_lazymove_delay },
 	{ 0, 'p', "Set panel change factor", do_cmd_panel_change },
 	{ 0, 'l', "Load a user pref file", options_load_pref_file },
 	{ 0, 'o', "Save options", do_dump_options }, 
@@ -1908,6 +1380,7 @@ void do_cmd_options(void)
 		option_menu->flags = MN_CASELESS_TAGS;
 	}
 
+
 	screen_save();
 	clear_from(0);
 
@@ -1926,78 +1399,3 @@ void do_cmd_options(void)
 
 
 
-/*
- * Determines whether a tval is eligible for sval-squelch.
- */
-bool squelch_tval(int tval)
-{
-	size_t i;
-
-	/* Only squelch if the tval's allowed */
-	for (i = 0; i < N_ELEMENTS(sval_dependent); i++)
-	{
-		if (tval == sval_dependent[i].tval)
-			return TRUE;
-	}
-
-	return FALSE;
-}
-
-
-
-/*
- * Inquire whether the player wishes to squelch items similar to an object
- *
- * Returns whether the item is now squelched.
- */
-bool squelch_interactive(const object_type *o_ptr)
-{
-	char out_val[70];
-
-	if (squelch_tval(o_ptr->tval))
-	{
-		char sval_name[50];
-
-		/* Obtain plural form without a quantity */
-		object_desc(sval_name, sizeof sval_name, o_ptr,
-					ODESC_BASE | ODESC_PLURAL);
-		/* XXX Eddie while correct in a sense, to squelch all torches on torch of brightness you get the message "Ignore Wooden Torches of Brightness in future? " */
-		strnfmt(out_val, sizeof out_val, "Ignore %s in future? ",
-				sval_name);
-
-		if (!artifact_p(o_ptr) || !object_flavor_is_aware(o_ptr))
-		{
-			if (get_check(out_val))
-			{
-				object_squelch_flavor_of(o_ptr);
-				msg_format("Ignoring %s from now on.", sval_name);
-				return TRUE;
-			}
-		}
-		/* XXX Eddie need to add generalized squelching, e.g. con rings with pval < 3 */
-		if (!object_is_jewelry(o_ptr) || (squelch_level_of(o_ptr) != SQUELCH_BAD))
-			return FALSE;
-	}
-
-	if (object_was_sensed(o_ptr) || object_was_worn(o_ptr) || object_is_known_not_artifact(o_ptr))
-	{
-		byte value = squelch_level_of(o_ptr);
-		int type = squelch_type_of(o_ptr);
-
-/* XXX Eddie on pseudoed cursed artifact, only showed {cursed}, asked to ignore artifacts */
-		if ((value != SQUELCH_MAX) && ((value == SQUELCH_BAD) || !object_is_jewelry(o_ptr)))
-		{
-
-			strnfmt(out_val, sizeof out_val, "Ignore all %s that are %s in future? ",
-				quality_choices[type].name, quality_values[value].name);
-
-			if (get_check(out_val))
-			{
-				squelch_level[type] = value;
-				return TRUE;
-			}
-		}
-
-	}
-	return FALSE;
-}

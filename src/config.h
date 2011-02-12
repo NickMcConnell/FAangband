@@ -286,26 +286,51 @@
 #endif
 
 
+/*** Some really important things you ought to change ***/
+
 /*
- * OPTION: Set the "default" path to the angband "lib" directory.
+ * Defines the default paths to the Angband directories, for ports that use
+ * the main.c file.
  *
- * See "main.c" for usage, and note that this value is only used on
- * certain machines, primarily Unix machines.  If this value is used,
- * it will be over-ridden by the "ANGBAND_PATH" environment variable,
- * if that variable is defined and accessable.  The final slash is
- * optional, but it may eventually be required.
+ * "config path" is for per-installation configurable data, like the game's
+ * edit files and system-wide preferences.
+ *
+ * "lib path" is for static data, like sounds, graphics and fonts.
+ *
+ * "data path" is for variable data, like save files and scores. On single-
+ * user systems, this also includes user preferences and dumps (on multi-
+ * user systems these go under the user's home directory).
+ *
+ * The configure script overrides these values. Check the "--prefix=<dir>"
+ * option of the configure script.
+ *
+ * These values will be over-ridden by the "ANGBAND_PATH" environment
+ * variable, if that variable is defined and accessible.  The final
+ * "slash" is required if the value supplied is in fact a directory.
  *
  * Using the value "./lib/" below tells Angband that, by default,
  * the user will run "angband" from the same directory that contains
  * the "lib" directory.  This is a reasonable (but imperfect) default.
  *
  * If at all possible, you should change this value to refer to the
- * actual location of the "lib" folder, for example, "/tmp/angband/lib/"
- * or "/usr/games/lib/angband/", or "/pkg/angband/lib".
+ * actual location of the folders, for example, "/etc/angband/"
+ * or "/usr/share/angband/", or "/var/games/angband/". In fact, if at all
+ * possible you should use a packaging system which does this for you.
+ *
+ * N.B. The data path is only used if USE_PRIVATE_PATHS is not defined.
+ * The other two are always used. 
  */
-#ifndef DEFAULT_PATH
-# define DEFAULT_PATH "./lib/"
-#endif
+#ifndef DEFAULT_CONFIG_PATH
+# define DEFAULT_CONFIG_PATH "." PATH_SEP "lib" PATH_SEP
+#endif 
+
+#ifndef DEFAULT_LIB_PATH
+# define DEFAULT_LIB_PATH "." PATH_SEP "lib" PATH_SEP
+#endif 
+
+#ifndef DEFAULT_DATA_PATH
+# define DEFAULT_DATA_PATH "." PATH_SEP "lib" PATH_SEP
+#endif 
 
 
 /*

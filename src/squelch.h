@@ -58,7 +58,6 @@ static int tvals[TYPE_MAX] =
 };
 
 byte squelch_level[TYPE_MAX];
-size_t squelch_size = TYPE_MAX;
 
 
 /**
@@ -144,7 +143,7 @@ bool squelch_hide_item(object_type *o_ptr);
 extern void squelch_drop(void);
 void squelch_items(void);
 extern bool seen_tval(int tval);
-void do_cmd_options_item(void *, cptr);
+void do_cmd_options_item(const char *name, int row);
 
 
 

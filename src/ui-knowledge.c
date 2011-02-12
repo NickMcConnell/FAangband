@@ -936,7 +936,7 @@ static void display_monster(int col, int row, bool cursor, int oid)
 	big_pad(66, row, a, c);
 
 	/* Display kills */
-	if (rf_has(r_ptr->flags, RF_UNIQUE))
+	if (r_ptr->flags1 & RF1_UNIQUE)
 		put_str(format("%s", (r_ptr->max_num == 0)?  " dead" : "alive"), row, 70);
 	else
 		put_str(format("%5d", l_ptr->pkills), row, 70);
@@ -965,7 +965,7 @@ static int m_cmp_race(const void *a, const void *b)
 	c = r_a->level - r_b->level;
 	if (c) return c;
 
-	return strcmp(r_a->name, r_b->name);
+	return strcmp(r_text + r_a->name, r_text + r_b->name);
 }
 
 static char *m_xchar(int oid) { return &r_info[default_join[oid].oid].x_char; }
@@ -1009,7 +1009,7 @@ static void mon_summary(int gid, const int *object_list, int n, int top, int row
 	}
 
 	/* Different display for the first item if we've got uniques to show */
-	if (gid == 0 && rf_has((&r_info[default_join[object_list[0]].oid])->flags, RF_UNIQUE))
+	if (gid == 0 && ((&r_info[default_join[object_list[0]].oid])->flags1 & RF1_UNIQUE))
 	{
 		c_prt(TERM_L_BLUE, format("%d known uniques, %d slain.", n, kills),
 					row, col);
@@ -1037,7 +1037,7 @@ static int count_known_monsters(void)
 		if (!OPT(cheat_know) && !l_list[i].sights) continue;
 		if (!r_ptr->name) continue;
 
-		if (rf_has(r_ptr->flags, RF_UNIQUE)) m_count++;
+		if (r_ptr->flags1 & RF1_UNIQUE) m_count++;
 
 		for (j = 1; j < N_ELEMENTS(monster_group) - 1; j++)
 		{
@@ -1070,7 +1070,7 @@ static void do_cmd_knowledge_monsters(const char *name, int row)
 		if (!OPT(cheat_know) && !l_list[i].sights) continue;
 		if (!r_ptr->name) continue;
 
-		if (rf_has(r_ptr->flags, RF_UNIQUE)) m_count++;
+		if (r_ptr->flags1 & RF1_UNIQUE) m_count++;
 
 		for (j = 1; j < N_ELEMENTS(monster_group) - 1; j++)
 		{
@@ -1092,7 +1092,7 @@ static void do_cmd_knowledge_monsters(const char *name, int row)
 		for (j = 0; j < N_ELEMENTS(monster_group)-1; j++)
 		{
 			const char *pat = monster_group[j].chars;
-			if (j == 0 && !rf_has(r_ptr->flags, RF_UNIQUE))
+			if (j == 0 && !(r_ptr->flags1 & RF1_UNIQUE))
 				continue;
 			else if (j > 0 && !strchr(pat, r_ptr->d_char))
 				continue;
@@ -1118,8 +1118,7 @@ static void get_artifact_display_name(char *o_name, size_t namelen, int a_idx)
 	object_type *o_ptr = &object_type_body;
 
 	make_fake_artifact(o_ptr, a_idx);
-	object_desc(o_name, namelen, o_ptr,
-			ODESC_PREFIX | ODESC_BASE | ODESC_SPOIL);
+	object_desc_spoil(o_name, o_ptr, 1, 3);
 }
 
 /*
@@ -1148,8 +1147,8 @@ static object_type *find_artifact(int a_idx)
 
 	for (i = 0; i < INVEN_TOTAL; i++)
 	{
-		if (p_ptr->inventory[i].name1 == a_idx)
-			return &p_ptr->inventory[i];
+		if (inventory[i].name1 == a_idx)
+			return &inventory[i];
 	}
 
 	for (j = 1; j < (FEAT_SHOP_TAIL - FEAT_SHOP_HEAD + 1); j++)
@@ -1169,45 +1168,23 @@ static object_type *find_artifact(int a_idx)
  */
 static void desc_art_fake(int a_idx)
 {
-	object_type *o_ptr;
-	object_type object_type_body = { 0 };
-
-	char header[120];
-
-	textblock *tb;
-	region area = { 0, 0, 0, 0 };
-
-	o_ptr = find_artifact(a_idx);
-
-	/* If it's been lost, make a fake artifact for it */
-	if (!o_ptr)
-	{
-		o_ptr = &object_type_body;
-
-		make_fake_artifact(o_ptr, a_idx);
-		o_ptr->ident |= IDENT_NAME;
-
-		/* Check the history entry, to see if it was fully known before it
-		 * was lost */
-		if (history_is_artifact_known(a_idx))
-		{
-			object_notice_everything(o_ptr);
-		}
-	}
-
-	/* Hack -- Handle stuff */
-	handle_stuff();
-
-	tb = object_info(o_ptr, OINFO_NONE);
-	object_desc(header, sizeof(header), o_ptr, ODESC_PREFIX | ODESC_FULL);
-
-	textui_textblock_show(tb, area, format("%^s", header));
-	textblock_free(tb);
-
-#if 0
-	/* XXX This should be in object_info */
-	if (lost) text_out("\nThis artifact has been lost.");
-#endif
+  object_type *o_ptr;
+  object_type object_type_body;
+  
+  /* Get local object */
+  o_ptr = &object_type_body;
+  
+  /* Wipe the object */
+  object_wipe(o_ptr);
+  
+  /* Make fake artifact */
+  make_fake_artifact(o_ptr, a_idx);
+  o_ptr->ident |= IDENT_KNOWN;
+  
+  /* Hack -- Handle stuff */
+  handle_stuff();
+  
+  object_info_screen(o_ptr, TRUE);
 }
 
 static int a_cmp_tval(const void *a, const void *b)
@@ -1224,7 +1201,7 @@ static int a_cmp_tval(const void *a, const void *b)
 	/* order by */
 	c = a_a->sval - a_b->sval;
 	if (c) return c;
-	return strcmp(a_a->name, a_b->name);
+	return strcmp(a_text + a_a->name, a_text + a_b->name);
 }
 
 static const char *kind_name(int gid) { return object_text_order[gid].name; }
@@ -1241,12 +1218,12 @@ static bool artifact_is_known(int a_idx)
 	if (p_ptr->wizard)
 		return TRUE;
 
-	if (!a_info[a_idx].created)
+	if (!a_info[a_idx].creat_turn)
 		return FALSE;
 
 	/* Check all objects to see if it exists but hasn't been IDed */
 	o_ptr = find_artifact(a_idx);
-	if (o_ptr && !object_is_known_artifact(o_ptr))
+	if (o_ptr && (o_ptr->feel != FEEL_SPECIAL))
 		return FALSE;
 
 	return TRUE;
@@ -1316,7 +1293,7 @@ static void display_ego_item(int col, int row, bool cursor, int oid)
 	byte attr = curs_attrs[0 != (int)e_ptr->everseen][0 != (int)cursor];
 
 	/* Display the name */
-	c_prt(attr, e_ptr->name, row, col);
+	c_prt(attr, e_text + e_ptr->name, row, col);
 }
 
 /*
@@ -1324,17 +1301,67 @@ static void display_ego_item(int col, int row, bool cursor, int oid)
  */
 static void desc_ego_fake(int oid)
 {
-	int e_idx = default_join[oid].oid;
-	struct ego_item *ego = &e_info[e_idx];
+  /* Hack: dereference the join */
+  const char *xtra[] = { "vulnerability", "pair of small resistances", 
+                         "resistance", "high resistance", "sustain", "ability",
+                         "curse" };
+  int num = 0, i;
+  
+  int e_idx = default_join[oid].oid;
+  ego_item_type *e_ptr = &e_info[e_idx];
+  
+  object_type dummy;
+  WIPE(&dummy, dummy);
+  
+  /* Save screen */
+  screen_save();
+  
+  /* Set text_out hook */
+  text_out_hook = text_out_to_screen;
+  
+  /* Dump the name */
+  c_prt(TERM_L_BLUE, format("%s %s", ego_grp_name(default_group(oid)),
+                            e_name + e_ptr->name), 0, 0);
+  
+  /* Begin recall */
+  Term_gotoxy(0, 1);
+  if (e_ptr->text)
+    {
+      int x, y;
+      text_out(e_text + e_ptr->text);
+      Term_locate(&x, &y);
+      Term_gotoxy(0, y+1);
+    }
+  
+  
+  /* Count ego flags */
+  for (i = 0; i < 7; i++)
+    {
+      if (e_ptr->flags_kind & (KF_RAND_RES_NEG << i)) num++;
+    }
 
-	textblock *tb;
-	region area = { 0, 0, 0, 0 };
+  if (num) text_out("It provides ");
 
-	/* List ego flags */
-	tb = object_info_ego(ego);
+  /* List ego flags */
+  for (i = 0; i < 7; i++)
+    {
+      char punct[10];
+      if (e_ptr->flags_kind & (KF_RAND_RES_NEG << i))
+        {
+          if (num > 2) strcpy(punct, ", ");
+          else if (num == 2) strcpy(punct, " and ");
+          else if (num == 1) strcpy(punct, ".");
+          num--;
+          text_out(format("one random %s%s", xtra[i], punct));
+        }
+    }
 
-	textui_textblock_show(tb, area, format("%s %s", ego_grp_name(default_group(oid)), ego->name));
-	textblock_free(tb);
+  
+  Term_flush();
+  
+  (void)inkey_ex();
+  
+  screen_load();
 }
 
 /* TODO? Currently ego items will order by e_idx */
@@ -1348,7 +1375,7 @@ static int e_cmp_tval(const void *a, const void *b)
 	if (c) return c;
 
 	/* Order by */
-	return strcmp(ea->name, eb->name);
+	return strcmp(e_text + ea->name, e_text + eb->name);
 }
 
 /*
@@ -1405,7 +1432,7 @@ static int get_artifact_from_kind(object_kind *k_ptr)
 {
 	int i;
 
-	assert(of_has(k_ptr->flags, OF_INSTA_ART));
+	assert(k_ptr->flags_kind & KF_INSTA_ART);
 
 	/* Look for the corresponding artifact */
 	for (i = 0; i < z_info->a_max; i++)
@@ -1444,7 +1471,7 @@ static void display_object(int col, int row, bool cursor, int oid)
 	byte c = use_flavour ? flavor_info[k_ptr->flavor].x_char : k_ptr->x_char;
 
 	/* Display known artifacts differently */
-	if (of_has(k_ptr->flags, OF_INSTA_ART) && artifact_is_known(get_artifact_from_kind(k_ptr)))
+	if ((k_ptr->flags_kind & KF_INSTA_ART) && artifact_is_known(get_artifact_from_kind(k_ptr)))
 	{
 		get_artifact_display_name(o_name, sizeof(o_name), get_artifact_from_kind(k_ptr));
 	}
@@ -1459,14 +1486,6 @@ static void display_object(int col, int row, bool cursor, int oid)
 
 	/* Display the name */
 	c_prt(attr, o_name, row, col);
-
-	/* Show squelch status */
-	if ((aware && kind_is_squelched_aware(k_ptr)) ||
-		(!aware && kind_is_squelched_unaware(k_ptr)))
-		c_put_str(attr, "Yes", row, 46);
-	else if (aware && OPT(squelch_worthless) && !k_ptr->cost)
-		c_put_str(attr, "Yes*", row, 46);
-
 
 	/* Show autoinscription if around */
 	if (aware && inscrip)
@@ -1495,7 +1514,7 @@ static void desc_obj_fake(int k_idx)
 	region area = { 0, 0, 0, 0 };
 
 	/* Check for known artifacts, display them as artifacts */
-	if (of_has(k_ptr->flags, OF_INSTA_ART) && artifact_is_known(get_artifact_from_kind(k_ptr)))
+	if ((k_ptr->flags_kind & KF_INSTA_ART) && artifact_is_known(get_artifact_from_kind(k_ptr)))
 	{
 		desc_art_fake(get_artifact_from_kind(k_ptr));
 		return;
@@ -1509,22 +1528,19 @@ static void desc_obj_fake(int k_idx)
 	object_wipe(o_ptr);
 
 	/* Create the artifact */
-	object_prep(o_ptr, k_ptr, 0, EXTREMIFY);
+	object_prep(o_ptr, k_idx);
 
 	/* Hack -- its in the store */
 	if (k_info[k_idx].aware) o_ptr->ident |= (IDENT_STORE);
 
 	/* It's fully know */
-	if (!k_info[k_idx].flavor) object_notice_everything(o_ptr);
+	if (!k_info[k_idx].flavor) object_known(o_ptr);
 
 	/* Hack -- Handle stuff */
 	handle_stuff();
 
-	tb = object_info(o_ptr, OINFO_NONE);
-	object_desc(header, sizeof(header), o_ptr, ODESC_PREFIX | ODESC_FULL);
-
-	textui_textblock_show(tb, area, format("%^s", header));
-	textblock_free(tb);
+  /* Describe */
+  object_info_screen(o_ptr, FALSE);
 }
 
 static int o_cmp_tval(const void *a, const void *b)
@@ -1544,7 +1560,7 @@ static int o_cmp_tval(const void *a, const void *b)
 
 	switch (k_a->tval)
 	{
-		case TV_LIGHT:
+		case TV_LITE:
 		case TV_MAGIC_BOOK:
 		case TV_PRAYER_BOOK:
 		case TV_DRAG_ARMOR:
@@ -1553,14 +1569,13 @@ static int o_cmp_tval(const void *a, const void *b)
 
 		default:
 			if (k_a->aware)
-				return strcmp(k_a->name, k_b->name);
+				return strcmp(a_text + k_a->name, a_text + k_b->name);
 
 			/* Then in tried order */
 			c = k_a->tried - k_b->tried;
 			if (c) return -c;
 
-			return strcmp(flavor_info[k_a->flavor].text,
-			              flavor_info[k_b->flavor].text);
+			return strcmp(flavor_text + flavor_info[k_a->flavor].text, flavor_text + flavor_info[k_b->flavor].text);
 	}
 
 	return k_a->sval - k_b->sval;
@@ -1619,29 +1634,8 @@ static void o_xtra_act(char ch, int oid)
 	object_kind *k_ptr = &k_info[oid];
 	s16b idx = get_autoinscription_index(oid);
 
-	/* Toggle squelch */
-	if (squelch_tval(k_ptr->tval) && (ch == 's' || ch == 'S'))
-	{
-		if (k_ptr->aware)
-		{
-			if (kind_is_squelched_aware(k_ptr))
-				kind_squelch_clear(k_ptr);
-			else
-				kind_squelch_when_aware(k_ptr);
-		}
-		else
-		{
-			if (kind_is_squelched_unaware(k_ptr))
-				kind_squelch_clear(k_ptr);
-			else
-				kind_squelch_when_unaware(k_ptr);
-		}
-
-		return;
-	}
-
 	/* Forget it if we've never seen the thing */
-	if (k_ptr->flavor && !k_ptr->aware)
+	if (!k_ptr->everseen)
 		return;
 
 	/* Uninscribe */
@@ -1678,7 +1672,7 @@ static void o_xtra_act(char ch, int oid)
 
 			/* Notice stuff (later) */
 			p_ptr->notice |= (PN_AUTOINSCRIBE);
-			p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
+			p_ptr->redraw |= (PW_INVEN | PW_EQUIP);
 		}
 
 		/* Reload the screen */
@@ -1691,7 +1685,7 @@ static void o_xtra_act(char ch, int oid)
 /*
  * Display known objects
  */
-void textui_browse_object_knowledge(const char *name, int row)
+void textui_browse_object_knowledge(void *obj, const char *name)
 {
 	group_funcs kind_f = {TV_GOLD, FALSE, kind_name, o_cmp_tval, obj2gid, 0};
 	member_funcs obj_f = {display_object, desc_obj_fake, o_xchar, o_xattr, o_xtra_prompt, o_xtra_act, 0};
@@ -1712,7 +1706,7 @@ void textui_browse_object_knowledge(const char *name, int row)
 		 * until it is found.
 		 */
 		if ((k_ptr->everseen || k_ptr->flavor || OPT(cheat_xtra)) &&
-				(!of_has(k_ptr->flags, OF_INSTA_ART) ||
+				(!(k_ptr->flags_kind & KF_INSTA_ART) ||
 				 !artifact_is_known(get_artifact_from_kind(k_ptr))))
 		{
 			int c = obj_group_order[k_info[i].tval];
@@ -1743,7 +1737,7 @@ static void display_feature(int col, int row, bool cursor, int oid )
 	byte attr = curs_attrs[CURS_KNOWN][(int)cursor];
 
 	/* Display the name */
-	c_prt(attr, f_ptr->name, row, col);
+	c_prt(attr, f_text + f_ptr->name, row, col);
 
 	if ((tile_width > 1) || (tile_height > 1)) return;
 
@@ -1765,7 +1759,7 @@ static int f_cmp_fkind(const void *a, const void *b)
 	if (c) return c;
 
 	/* order by feature name */
-	return strcmp(fa->name, fb->name);
+	return strcmp(f_text + fa->name, f_text + fb->name);
 }
 
 static const char *fkind_name(int gid) { return feature_group_text[gid]; }
@@ -1806,21 +1800,9 @@ static void do_cmd_knowledge_features(const char *name, int row)
 
 /* =================== END JOIN DEFINITIONS ================================ */
 
-static void do_cmd_knowledge_store(const char *name, int row)
-{
-	store_knowledge = row - 5;
-	do_cmd_store_knowledge();
-	store_knowledge = STORE_NONE;
-}
-
 static void do_cmd_knowledge_scores(const char *name, int row)
 {
 	show_scores();
-}
-
-static void do_cmd_knowledge_history(const char *name, int row)
-{
-	history_display();
 }
 
 
@@ -1836,16 +1818,7 @@ static menu_action knowledge_actions[] =
 { 0, 0, "Display ego item knowledge", 	   do_cmd_knowledge_ego_items },
 { 0, 0, "Display monster knowledge",  	   do_cmd_knowledge_monsters  },
 { 0, 0, "Display feature knowledge",  	   do_cmd_knowledge_features  },
-{ 0, 0, "Display contents of general store", do_cmd_knowledge_store     },
-{ 0, 0, "Display contents of armourer",      do_cmd_knowledge_store     },
-{ 0, 0, "Display contents of weaponsmith",   do_cmd_knowledge_store     },
-{ 0, 0, "Display contents of temple",   	   do_cmd_knowledge_store     },
-{ 0, 0, "Display contents of alchemist",     do_cmd_knowledge_store     },
-{ 0, 0, "Display contents of magic shop",    do_cmd_knowledge_store     },
-{ 0, 0, "Display contents of black market",  do_cmd_knowledge_store     },
-{ 0, 0, "Display contents of home",   	   do_cmd_knowledge_store     },
 { 0, 0, "Display hall of fame",       	   do_cmd_knowledge_scores    },
-{ 0, 0, "Display character history",  	   do_cmd_knowledge_history   },
 };
 
 static menu_type knowledge_menu;

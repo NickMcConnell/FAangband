@@ -42,13 +42,14 @@
 #include "defines.h"
 #include "game-cmd.h"
 #include "types.h"
-#include "externs.h"
 #include "cmds.h"
 #include "object.h"
 #include "parser.h"
 #include "player.h"
+#include "x-char.h"
 #include "ui.h"
 #include "z-type.h"
+#include "externs.h"
 
 extern void nds_fatal_err(const char *);
 

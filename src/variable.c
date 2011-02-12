@@ -280,12 +280,6 @@ char angband_term_name[TERM_WIN_MAX][16] =
 
 
 
-int max_macrotrigger = 0;
-char *macro_template = NULL;
-char *macro_modifier_chr;
-char *macro_modifier_name[MAX_MACRO_MOD];
-char *macro_trigger_name[MAX_MACRO_TRIGGER];
-char *macro_trigger_keycode[2][MAX_MACRO_TRIGGER];
 
 
 
@@ -420,7 +414,7 @@ color_type color_table[MAX_COLORS] =
 /**
  * Standard sound names (modifiable?)
  */
-char angband_sound_name[SOUND_MAX][16] =
+const cptr angband_sound_name[SOUND_MAX] =
 {
   "",
   "hit",
@@ -720,6 +714,11 @@ note_info *notes;
  * Array[MAX_STORES] of stores
  */
 store_type *store;
+
+/**
+ * Array[RANDNAME_NUM_TYPES][num_names] of random names
+ */
+cptr** name_sections;
 
 /**
  * Array[INVEN_TOTAL] of objects in the player's inventory
@@ -1060,7 +1059,7 @@ bool (*item_tester_hook)(const object_type*);
 /**
  * Current "comp" function for ang_sort()
  */
-bool (*ang_sort_comp)(void *u, void *v, int a, int b);
+bool (*ang_sort_comp)(const void *u, const void *v, int a, int b);
 
 /**
  * Current "swap" function for ang_sort()
@@ -1231,23 +1230,3 @@ autoinscription *inscriptions = 0;
 u16b inscriptions_count = 0;
 
 
-/* 
- * Mouse button handling variables
- */
-button_mouse *mse_button;
-button_mouse *backup_button;
-int status_end    = 0;
-int depth_start   = 0;
-int button_length = 0;
-int num_buttons   = 0;
-int prompt_end = 0;
-bool normal_screen = TRUE;
-
-/* 
- * Hooks for making and unmaking buttons
- */
-int (*add_button_hook)(char *label, unsigned char keypress);
-int (*kill_button_hook)(unsigned char keypress);
-void (*kill_all_buttons_hook)(void);
-void (*backup_buttons_hook)(void);
-void (*restore_buttons_hook)(void);

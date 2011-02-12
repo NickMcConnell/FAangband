@@ -2378,10 +2378,13 @@ static void process_some_user_pref_files(void)
  * we mark successful loading using the "Rand_quick" flag.  This
  * is a hack but it optimizes loading of savefiles.  XXX XXX
  */
-void play_game(bool new_game)
+void play_game(void)
 {
 
   int i;
+
+	/* Initialize */
+	bool new_game = init_angband();
 
   /* No restart */
   game_start = FALSE;
@@ -2431,11 +2434,6 @@ void play_game(bool new_game)
       
       /* The dungeon is not ready */
       character_dungeon = FALSE;
-    }
-  
-  /* Process old character */
-  if (!new_game)
-    {
     }
   
   /* Init RNG */
