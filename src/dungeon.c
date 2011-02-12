@@ -1638,19 +1638,19 @@ static void process_player(void)
   /* Add context-sensitive mouse buttons */
   
   if ((f_ptr->flags & TF_STAIR) && !(feat % 2))
-    add_button("<", '<');
+    button_add("<", '<');
   else 
-    kill_button('<');
+    button_kill('<');
   
   if ((f_ptr->flags & TF_STAIR) && (feat % 2))
-    add_button(">", '>');
+    button_add(">", '>');
   else
-    kill_button('>');
+    button_kill('>');
   
   if (cave_o_idx[p_ptr->py][p_ptr->px] > 0)
-    add_button("g", 'g');
+    button_add("g", 'g');
   else
-    kill_button('g');
+    button_kill('g');
   
   update_statusline();
   
@@ -2131,14 +2131,14 @@ static void dungeon(void)
 
   /* Make basic mouse buttons */
   normal_screen = TRUE;
-  (void) add_button("ESC", ESCAPE);
-  (void) add_button("Ent", '\r');
-  (void) add_button("Spc", ' ');
-  (void) add_button("Rpt", 'n');
-  (void) add_button("Std", ',');
-  (void) add_button("Inv", '|');
-  (void) add_button("Rest", 'R');
-  (void) add_button("Mgc", 'm');
+  (void) button_add("ESC", ESCAPE);
+  (void) button_add("Ent", '\r');
+  (void) button_add("Spc", ' ');
+  (void) button_add("Rpt", 'n');
+  (void) button_add("Std", ',');
+  (void) button_add("Inv", '|');
+  (void) button_add("Rest", 'R');
+  (void) button_add("Mgc", 'm');
   
   /* Redraw buttons */
   p_ptr->redraw |= (PR_BUTTONS);
@@ -2323,14 +2323,14 @@ static void dungeon(void)
     }
 
   /* Kill basic mouse buttons */
-  (void) kill_button(ESCAPE);
-  (void) kill_button('\r');
-  (void) kill_button(' ');
-  (void) kill_button('n');
-  (void) kill_button(',');
-  (void) kill_button('|');
-  (void) kill_button('R');
-  (void) kill_button('m');
+  (void) button_kill(ESCAPE);
+  (void) button_kill('\r');
+  (void) button_kill(' ');
+  (void) button_kill('n');
+  (void) button_kill(',');
+  (void) button_kill('|');
+  (void) button_kill('R');
+  (void) button_kill('m');
   
 }
 

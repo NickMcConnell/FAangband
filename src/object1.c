@@ -3216,29 +3216,29 @@ void item_prompt(int mode, cptr pmt)
       if (!p_ptr->command_see) 
 	{
 	  strcat(out_val, " * to see,");
-	  add_button("*", '*');
+	  button_add("*", '*');
 	}
       
       /* Indicate that equipment items are available */
       if (use_equip) 
 	{
 	  strcat(out_val, " / equip,");
-	  add_button("/", '/');
+	  button_add("/", '/');
 	}
       
       /* Indicate that floor items are available */
       if (f1 <= f2) 
 	{
 	  strcat(out_val, " - floor, . floor top,");
-	  add_button("-", '-');
-	  add_button(".", '.');
+	  button_add("-", '-');
+	  button_add(".", '.');
 	}
       
       /* Indicate that selecting all SQUELCHED items is an option */
       if (can_squelch)
 	{ 
 	  strcat(out_val, " ! for squelched,");
-	  add_button("!", '!');
+	  button_add("!", '!');
 	}
     }
   
@@ -3265,29 +3265,29 @@ void item_prompt(int mode, cptr pmt)
       if (!p_ptr->command_see) 
 	{
 	  strcat(out_val, " * to see,");
-	  add_button("*", '*');
+	  button_add("*", '*');
 	}
       
       /* Append */
       if (use_inven) 
 	{
 	  strcat(out_val, " / inven,");
-	  add_button("/", '/');
+	  button_add("/", '/');
 	}
       
       /* Append */
       if (f1 <= f2) 
 	{
 	  strcat(out_val, " - floor, . floor top,");
-	  add_button("-", '-');
-	  add_button(".", '.');
+	  button_add("-", '-');
+	  button_add(".", '.');
 	}
       
       /* Indicate that selecting all SQUELCHED items is an option */
       if (can_squelch) 
 	{
 	  strcat(out_val, " ! for squelched,");
-	  add_button("!", '!');
+	  button_add("!", '!');
 	}
     }
       
@@ -3311,26 +3311,26 @@ void item_prompt(int mode, cptr pmt)
       if (!p_ptr->command_see) 
 	{
 	  strcat(out_val, " * to see,");
-	  add_button("*", '*');
+	  button_add("*", '*');
 	}
       
       /* Append */
       if (use_inven)
 	{
 	  strcat(out_val, " / inven,");
-	  add_button("/", '/');
+	  button_add("/", '/');
 	}
       else if (use_equip)
 	{
 	  strcat(out_val, " / equip,");
-	  add_button("/", '/');
+	  button_add("/", '/');
 	}
       
       /* Indicate that selecting all SQUELCHED items is an option */
       if (can_squelch) 
 	{
 	  strcat(out_val, " ! for squelched,");
-	  add_button("!", '!');
+	  button_add("!", '!');
 	}
     }
 
@@ -4058,11 +4058,11 @@ bool item_menu(int *cp, cptr pmt, int mode, bool *oops)
     }
   
   /* Kill buttons */
-  kill_button('*');
-  kill_button('/');
-  kill_button('-');
-  kill_button('.');
-  kill_button('!');
+  button_kill('*');
+  button_kill('/');
+  button_kill('-');
+  button_kill('.');
+  button_kill('!');
   update_statusline();
   
   /* Load screen */

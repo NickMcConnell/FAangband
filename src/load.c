@@ -2265,8 +2265,8 @@ static errr rd_savefile_new_aux(void)
       prt("Would you like to see details of your", 15, 0);
       prt("recently dead character? (yes/no)", 16, 0);
       update_statusline();      
-      add_button("Yes", 'y');
-      add_button("No", 'n');
+      button_add("Yes", 'y');
+      button_add("No", 'n');
       calc_bonuses(FALSE);
       update_statusline();      
       
@@ -2275,8 +2275,8 @@ static errr rd_savefile_new_aux(void)
       if ((answer.key == 'Y') || (answer.key == 'y'))
 	{
 	  /* Buttons */
-	  kill_button('y');
-	  kill_button('n');
+	  button_kill('y');
+	  button_kill('n');
 	  update_statusline();
           
 	  /* Display */
@@ -2290,8 +2290,8 @@ static errr rd_savefile_new_aux(void)
       /* Quickstart */
       prt("Would you like to start a new character", 15, 0);
       prt("based on your last character? (yes/no)", 16, 0);
-      add_button("Yes", 'y');
-      add_button("No", 'n');
+      button_add("Yes", 'y');
+      button_add("No", 'n');
       update_statusline();      
       
       answer = inkey_ex();
@@ -2299,8 +2299,8 @@ static errr rd_savefile_new_aux(void)
       if ((answer.key == 'Y') || (answer.key == 'y'))
         {
 	  /* Buttons */
-	  kill_button('y');
-	  kill_button('n');
+	  button_kill('y');
+	  button_kill('n');
 	  update_statusline();
           
 	  /* Set to quickstart */

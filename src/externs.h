@@ -421,6 +421,20 @@ extern void object_kind_track(int k_idx);
 extern void disturb(int stop_search, int unused_flag);
 extern bool is_quest(int stage);
 
+/* charattr.c */
+extern void x_fprintf(ang_file *f, int encoding, cptr fmt, ...);
+extern void dump_put_str(byte attr, const char *str, int col);
+extern void dump_lnum(char *header, s32b num, int col, byte color);
+extern void dump_num(char *header, int num, int col, byte color);
+extern void dump_deci(char *header, int num, int deci, int col, byte color);
+extern void dump_line_file(char_attr *this_line);
+extern void dump_line_screen(char_attr *this_line);
+extern void dump_line_mem(char_attr *this_line);
+extern void dump_line(char_attr *this_line);
+extern int handle_item(void);
+extern int make_metric(int wgt);
+
+
 /* cmd1.c */
 extern void search(void);
 extern void py_pickup_aux(int o_idx);
@@ -882,14 +896,6 @@ extern void text_out_to_screen(byte a, cptr str);
 extern void text_out(const char *fmt, ...);
 extern void text_out_c(byte a, const char *fmt, ...);
 extern void clear_from(int row);
-extern void dump_put_str(byte attr, const char *str, int col);
-extern void dump_lnum(char *header, s32b num, int col, byte color);
-extern void dump_num(char *header, int num, int col, byte color);
-extern void dump_deci(char *header, int num, int deci, int col, byte color);
-extern void dump_line_file(char_attr *this_line);
-extern void dump_line_screen(char_attr *this_line);
-extern void dump_line_mem(char_attr *this_line);
-extern void dump_line(char_attr *this_line);
 extern bool askfor_aux_keypress(char *buf, size_t buflen, size_t *curs, size_t *len, char keypress, bool firsttime);
 extern bool askfor_aux(char *buf, size_t len, bool keypress_h(char *, size_t, size_t *, size_t *, char, bool));
 extern bool get_string(cptr prompt, char *buf, size_t len);
@@ -908,8 +914,6 @@ extern void repeat_push(int what);
 extern bool repeat_pull(int *what);
 extern void repeat_clear(void);
 extern void repeat_check(void);
-extern int handle_item(void);
-extern int make_metric(int wgt);
 extern byte get_angle_to_grid[41][41];
 extern cptr get_ext_color_name(byte ext_color);
 extern int color_text_to_attr(cptr name);

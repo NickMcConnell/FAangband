@@ -958,11 +958,11 @@ void do_cmd_query_symbol(void)
   put_str("Recall details? (k/p/y/n): ", 0, 40);
   backup_buttons();
   kill_all_buttons();
-  add_button("ESC", ESCAPE);
-  add_button("k", 'k');
-  add_button("p", 'p');
-  add_button("y", 'y');
-  add_button("n", 'n');
+  button_add("ESC", ESCAPE);
+  button_add("k", 'k');
+  button_add("p", 'p');
+  button_add("y", 'y');
+  button_add("n", 'n');
   update_statusline();
   
   /* Query */
@@ -997,10 +997,10 @@ void do_cmd_query_symbol(void)
     }
   else
     {
-      kill_button('k');
-      kill_button('p');
-      kill_button('y');
-      add_button("r", 'r');
+      button_kill('k');
+      button_kill('p');
+      button_kill('y');
+      button_add("r", 'r');
     }
   
   /* Sort if needed */
@@ -1073,7 +1073,7 @@ void do_cmd_query_symbol(void)
 	      
 	    }
 
-	  add_button("-", '-');
+	  button_add("-", '-');
 	  update_statusline();
 	  
 	  /* Command */

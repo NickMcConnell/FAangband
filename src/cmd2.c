@@ -3337,14 +3337,14 @@ void do_cmd_rest(cmd_code code, cmd_arg args[])
       strcpy(out_val, "&");
 
       /* Buttons */
-      add_button("*", '*');
-      add_button("$", '$');
+      button_add("*", '*');
+      button_add("$", '$');
       
       /* Ask for duration */
       got_string = get_string(p, out_val, 5); 
 	
-      kill_button('*');
-      kill_button('$');
+      button_kill('*');
+      button_kill('$');
 	
       if (!got_string) return;
 	

@@ -66,6 +66,7 @@ ANGFILES = \
 	birth.o \
 	button.o \
 	cave.o \
+	charattr.o \
 	cmd0.o \
 	cmd1.o \
 	cmd2.o \

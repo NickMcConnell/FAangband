@@ -1308,8 +1308,8 @@ bool cast_spell(int tval, int index, int dir)
 	      msg_print("Would you like to enchant a 'W'eapon or 'A'rmour");
 	    
 	    /* Buttons */
-	    add_button("a", 'a');
-	    add_button("w", 'w');
+	    button_add("a", 'a');
+	    button_add("w", 'w');
 
 	    /* Interact and enchant. */
 	    while(1)
@@ -1332,13 +1332,13 @@ bool cast_spell(int tval, int index, int dir)
 		  }
 		else if (answer == ESCAPE) 
 		  {
-		    kill_button('w');
-		    kill_button('a');
+		    button_kill('w');
+		    button_kill('a');
 		    return FALSE;
 		  }
 	      }
-	    kill_button('w');
-	    kill_button('a');
+	    button_kill('w');
+	    button_kill('a');
 
 	    break;
 	  }

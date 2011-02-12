@@ -24,6 +24,11 @@
  */
 
 #include "angband.h"
+#include "cmds.h"
+#include "game-cmd.h"
+#include "tvalsval.h"
+#include "option.h"
+#include "ui-menu.h"
 
 
 #ifdef CHECK_TIME
@@ -2607,8 +2612,8 @@ bool show_file(cptr name, cptr what, int line, int mode)
       /* Buttons */
       kill_all_buttons();
       normal_screen = FALSE;
-      add_button("ESC", ESCAPE);
-      add_button("?", '?');
+      button_add("ESC", ESCAPE);
+      button_add("?", '?');
       
       /* Prompt -- menu screen */
       if (menu)
@@ -2658,19 +2663,19 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	    }
 
 	  /* More buttons */
-	  add_button("Spc", ' ');
-	  add_button("-", '-');
+	  button_add("Spc", ' ');
+	  button_add("-", '-');
 	}
 
       /* Finish the status line */
       prt(prompt, hgt - 1, 0);
       prompt_end = (small_screen ? 0 : strlen(prompt));
-      if (small_screen) add_button("h", 'h');
-      add_button("/", '/');
-      add_button("!", '!');
-      add_button("=", '=');
-      if (!menu) add_button("#", '#');
-      add_button("%", '%');
+      if (small_screen) button_add("h", 'h');
+      button_add("/", '/');
+      button_add("!", '!');
+      button_add("=", '=');
+      if (!menu) button_add("#", '#');
+      button_add("%", '%');
       update_statusline();
 
       /* Get a keypress */
@@ -3215,8 +3220,8 @@ static void make_bones(void)
 	      prt("Information about your character has been saved", 15, 0);
 	      prt("in a bones file.  Would you like to give the", 16, 0);
 	      prt("ghost a special message or description? (yes/no)", 17, 0);
-	      add_button("Yes", 'y');
-	      add_button("No", 'n');
+	      button_add("Yes", 'y');
+	      button_add("No", 'n');
 	      update_statusline();	
       
 	      answer = inkey_ex();
@@ -3233,11 +3238,11 @@ static void make_bones(void)
 		  prt("((M)essage/(D)escription)", 17, 0);
 
 		  /* Buttons */
-		  kill_button('y');
-		  kill_button('n');
-		  add_button("M", 'M');
-		  add_button("D", 'D');
-		  add_button("ESC", ESCAPE);
+		  button_kill('y');
+		  button_kill('n');
+		  button_add("M", 'M');
+		  button_add("D", 'D');
+		  button_add("ESC", ESCAPE);
 		  update_statusline();
 		  
 		  while(1)
@@ -3642,8 +3647,8 @@ static void show_info(void)
   /* Buttons */
   backup_buttons();
   kill_all_buttons();
-  add_button("ESC", ESCAPE);
-  add_button("Continue", 'q');
+  button_add("ESC", ESCAPE);
+  button_add("Continue", 'q');
   update_statusline();
 
   /* Allow abort at this point */
@@ -3905,13 +3910,13 @@ static void close_game_aux(void)
       
       /* Buttons */
       kill_all_buttons();
-      add_button("ESC", ESCAPE);
-      add_button("x", 'x');
-      add_button("m", 'm');
-      add_button("i", 'i');
-      add_button("t", 't');
-      add_button("c", 'c');
-      add_button("a", 'a');
+      button_add("ESC", ESCAPE);
+      button_add("x", 'x');
+      button_add("m", 'm');
+      button_add("i", 'i');
+      button_add("t", 't');
+      button_add("c", 'c');
+      button_add("a", 'a');
       update_statusline();
 
       /* Query */

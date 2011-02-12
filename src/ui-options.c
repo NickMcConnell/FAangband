@@ -1081,8 +1081,8 @@ void do_cmd_panel_change(const char *name, int row)
 {
   /* Prompt */
   prt("Command: Panel Change", 20, 0);
-  add_button("+", '+');      
-  add_button("-", '-');      
+  button_add("+", '+');      
+  button_add("-", '-');      
   update_statusline();      
   
   /* Get a new value */
@@ -1103,8 +1103,8 @@ void do_cmd_panel_change(const char *name, int row)
       if (op_ptr->panel_change < 0) op_ptr->panel_change = 0;
     }
 
-  kill_button('+');      
-  kill_button('-');
+  button_kill('+');      
+  button_kill('-');
   update_statusline();      
 }
 
@@ -1257,9 +1257,9 @@ static void do_cmd_options_autosave(const char *name, int row)
       /* Hilite current option */
       move_cursor(k + 2, 50);
 
-      add_button("F", 'F');
-      add_button("n", 'n');
-      add_button("y", 'y');
+      button_add("F", 'F');
+      button_add("n", 'n');
+      button_add("y", 'y');
       update_statusline();
       
       /* Get a key */
@@ -1270,9 +1270,9 @@ static void do_cmd_options_autosave(const char *name, int row)
         {
         case ESCAPE:
           {
-	    kill_button('F');
-	    kill_button('n');
-	    kill_button('y');
+	    button_kill('F');
+	    button_kill('n');
+	    button_kill('y');
 	    update_statusline();
             return;
           }

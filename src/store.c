@@ -2403,9 +2403,9 @@ static bool order_menu(int tval, const char *desc)
   clear_from(0);
   
   /* Buttons */
-  add_button("Up", ARROW_UP);
-  add_button("Down", ARROW_DOWN);
-  add_button("Toggle", '\r');
+  button_add("Up", ARROW_UP);
+  button_add("Down", ARROW_DOWN);
+  button_add("Toggle", '\r');
   update_statusline();
   
   /* Output to the screen */
@@ -2446,9 +2446,9 @@ static bool order_menu(int tval, const char *desc)
   screen_load();
 
   /* Buttons */
-  kill_button(ARROW_UP);
-  kill_button(ARROW_DOWN);
-  kill_button('\r');
+  button_kill(ARROW_UP);
+  button_kill(ARROW_DOWN);
+  button_kill('\r');
   update_statusline();
 
   return TRUE;
@@ -3005,13 +3005,13 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
   leave_store = FALSE;
 
   /* Buttons */
-  add_button("g", 'g');
-  add_button("d", 'd');
-  add_button("i", 'i');
-  add_button("l", 'l');
+  button_add("g", 'g');
+  button_add("d", 'd');
+  button_add("i", 'i');
+  button_add("l", 'l');
   if ((st_ptr->type == STORE_MERCH) && 
       (which < MAX_STORES_SMALL * NUM_TOWNS_SMALL))
-    add_button("o", 'o');
+    button_add("o", 'o');
   normal_screen = FALSE;
   prompt_end = 0;
   
@@ -3179,11 +3179,11 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
   
   
   /* Buttons */
-  kill_button('g');
-  kill_button('d');
-  kill_button('i');
-  kill_button('l');
-  kill_button('o');
+  button_kill('g');
+  button_kill('d');
+  button_kill('i');
+  button_kill('l');
+  button_kill('o');
   normal_screen = TRUE;
   update_statusline();
   

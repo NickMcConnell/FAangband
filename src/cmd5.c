@@ -887,8 +887,8 @@ void do_cmd_specialty(void)
   if (p_ptr->new_specialties > 0)
     {
       /* Buttons */
-      add_button("l", 'l');
-      add_button("v", 'v');
+      button_add("l", 'l');
+      button_add("v", 'v');
 
       /* Interact and choose. */
       while(get_com_ex("View abilities or Learn specialty (l/v/ESC)?",
@@ -913,8 +913,8 @@ void do_cmd_specialty(void)
 	  
 	  
 	}
-      kill_button('l');
-      kill_button('v');
+      button_kill('l');
+      button_kill('v');
     }
   
   /* View existing specialties is the only option */

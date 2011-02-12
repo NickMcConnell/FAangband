@@ -223,13 +223,13 @@ void do_cmd_change_name(void)
   /* Adjust the buttons */
   backup_buttons();
   kill_all_buttons();
-  add_button("ESC", ESCAPE);
-  add_button("Spc", ' ');
-  add_button("-", '-');
-  add_button("c", 'c');
-  add_button("f", 'f');
-  add_button("->", ARROW_RIGHT);
-  add_button("<-", ARROW_LEFT);
+  button_add("ESC", ESCAPE);
+  button_add("Spc", ' ');
+  button_add("-", '-');
+  button_add("c", 'c');
+  button_add("f", 'f');
+  button_add("->", ARROW_RIGHT);
+  button_add("<-", ARROW_LEFT);
 
   /* Make the array of lines */
   C_WIPE(dumpline, DUMP_MAX_LINES, char_attr_line);
@@ -417,15 +417,15 @@ void do_cmd_messages(void)
   /* Adjust the buttons */
   backup_buttons();
   kill_all_buttons();
-  add_button("ESC", ESCAPE);
-  add_button("-", '-');
-  add_button("=", '=');
-  add_button("/", '/');
-  add_button("p", 'p');
-  add_button("n", 'n');
-  add_button("+", '+');
-  add_button("->", '6');
-  add_button("<-", '4');
+  button_add("ESC", ESCAPE);
+  button_add("-", '-');
+  button_add("=", '=');
+  button_add("/", '/');
+  button_add("p", 'p');
+  button_add("n", 'n');
+  button_add("+", '+');
+  button_add("->", '6');
+  button_add("<-", '4');
 
   /* Process requests until done */
   while (1)
@@ -1061,9 +1061,9 @@ void do_cmd_save_screen(void)
 {
   ui_event_data ke;
   msg_print("Dump type [(t)ext; (h)tml; (f)orum embedded html]:");
-  add_button("f", 'f');
-  add_button("h", 'h');
-  add_button("t", 't');
+  button_add("f", 'f');
+  button_add("h", 'h');
+  button_add("t", 't');
   update_statusline();
   ke = inkey_ex();
   switch(ke.key) 
@@ -1077,9 +1077,9 @@ void do_cmd_save_screen(void)
     case 'f': do_cmd_save_screen_html(1);
       break;
     }
-  kill_button('f');
-  kill_button('t');
-  kill_button('h');
+  button_kill('f');
+  button_kill('t');
+  button_kill('h');
   update_statusline();
   message_flush();
 }

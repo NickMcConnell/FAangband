@@ -820,9 +820,9 @@ static void ego_menu(void *unused, const char *also_unused)
   clear_from(0);
   
   /* Buttons */
-  add_button("Up", ARROW_UP);
-  add_button("Down", ARROW_DOWN);
-  add_button("Toggle", '\r');
+  button_add("Up", ARROW_UP);
+  button_add("Down", ARROW_DOWN);
+  button_add("Toggle", '\r');
   update_statusline();
   
   /* Output to the screen */
@@ -862,9 +862,9 @@ static void ego_menu(void *unused, const char *also_unused)
   screen_load();
 
   /* Buttons */
-  kill_button(ARROW_UP);
-  kill_button(ARROW_DOWN);
-  kill_button('\r');
+  button_kill(ARROW_UP);
+  button_kill(ARROW_DOWN);
+  button_kill('\r');
   update_statusline();
 
   return;
@@ -1086,9 +1086,9 @@ static bool sval_menu(int tval, const char *desc)
   clear_from(0);
   
   /* Buttons */
-  add_button("Up", ARROW_UP);
-  add_button("Down", ARROW_DOWN);
-  add_button("Toggle", '\r');
+  button_add("Up", ARROW_UP);
+  button_add("Down", ARROW_DOWN);
+  button_add("Toggle", '\r');
   update_statusline();
   
   /* Output to the screen */
@@ -1128,9 +1128,9 @@ static bool sval_menu(int tval, const char *desc)
   screen_load();
 
   /* Buttons */
-  kill_button(ARROW_UP);
-  kill_button(ARROW_DOWN);
-  kill_button('\r');
+  button_kill(ARROW_UP);
+  button_kill(ARROW_DOWN);
+  button_kill('\r');
   update_statusline();
 
   return TRUE;

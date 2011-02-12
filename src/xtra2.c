@@ -5108,10 +5108,10 @@ bool get_aim_dir(int *dp)
   if (OPT(use_old_target) && target_okay()) dir = 5;
   
   /* Make some buttons */
-  add_button("*", '*');
-  add_button(".",'.');
+  button_add("*", '*');
+  button_add(".",'.');
   if (target_okay())
-    add_button("5", '5');
+    button_add("5", '5');
 
   /* Ask until satisfied */
   while (!dir)
@@ -5252,9 +5252,9 @@ bool get_aim_dir(int *dp)
     }
 
   /* Clear buttons */  
-  kill_button('5');
-  kill_button('*');
-  kill_button('.');
+  button_kill('5');
+  button_kill('*');
+  button_kill('.');
 
   /* No direction */
   if (!dir) return (FALSE);
