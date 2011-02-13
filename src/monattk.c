@@ -40,10 +40,10 @@ static int monster_critical(int dice, int sides, int dam)
   if (dam < total * 19 / 20) return (0);
   
   /* Randomize. */
-  if (rand_int(3) == 0) return (0);
+  if (randint0(3) == 0) return (0);
   
   /* Weak blows rarely work */
-  if ((dam < 20) && (dam < randint(100))) return (0);
+  if ((dam < 20) && (dam < randint1(100))) return (0);
   
   /* Perfect damage */
   if (dam == total) max++;
@@ -51,7 +51,7 @@ static int monster_critical(int dice, int sides, int dam)
   /* Super-charge */
   if (dam > 19)
     {
-      while (rand_int(100) < 2) max++;
+      while (randint0(100) < 2) max++;
     }
   
   /* Critical damage */
@@ -80,7 +80,7 @@ static int check_hit(int power, int level, int terrain_bonus, int m_idx)
   monster_type *m_ptr = &m_list[m_idx];
   
   /* Percentile dice */
-  k = rand_int(100);
+  k = randint0(100);
   
   /* Hack -- Always miss or hit */
   if (k < 10) return (k < 5);
@@ -92,7 +92,7 @@ static int check_hit(int power, int level, int terrain_bonus, int m_idx)
   ac = p_ptr->ac + p_ptr->to_a + terrain_bonus;
   
   /* Power and Level compete against Armor */
-  if ((i > 0) && (randint(i) > ((ac * 3) / 4)))
+  if ((i > 0) && (randint1(i) > ((ac * 3) / 4)))
     {
       return (TRUE);
     }
@@ -182,7 +182,7 @@ static void make_request(int m_idx)
       sanity_check++;
       
       /* Select a random object in the pack. */
-      i = rand_int(INVEN_PACK);
+      i = randint0(INVEN_PACK);
       o_ptr = &inventory[i];
       
       /* Skip non-objects */
@@ -236,7 +236,7 @@ static void make_request(int m_idx)
 	  
 	  /* I must offer a fair price, plus some (I'm desperate). */
 	  offer_price = (k_ptr->cost * requested_number) + 
-	    ((5 + randint(5)) * 100L);
+	    ((5 + randint1(5)) * 100L);
 	  
 	  /* Done. */
 	  break;
@@ -468,7 +468,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 	    (stage_map[p_ptr->stage][STAGE_TYPE] == PLAIN)) ||
 	   ((check_ability(SP_EDAIN)) && 
 	    (stage_map[p_ptr->stage][STAGE_TYPE] == FOREST))) &&
-	  (randint(100) <= p_ptr->evasion_chance) && (!p_ptr->paralyzed))
+	  (randint1(100) <= p_ptr->evasion_chance) && (!p_ptr->paralyzed))
 	{
 	  /* Message */
 	  msg_print("You Evade the attack!");
@@ -488,7 +488,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 	  if ((p_ptr->protevil > 0) &&
 	      (r_ptr->flags3 & (RF3_EVIL)) &&
 	      (3 * p_ptr->lev / 2 >= rlev) &&
-	      ((rand_int(100 + p_ptr->lev - 5 * rlev / 4)) > 50))
+	      ((randint0(100 + p_ptr->lev - 5 * rlev / 4)) > 50))
 	    {
 	      /* Remember the Evil-ness */
 	      if (m_ptr->ml)
@@ -644,13 +644,13 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 	      
 	    case RBM_INSULT:
 	      {
-		act = desc_insult[rand_int(8)];
+		act = desc_insult[randint0(8)];
 		break;
 	      }
 	      
 	    case RBM_SNEER:
 	      {
-		act = desc_sneer[rand_int(23)];
+		act = desc_sneer[randint0(23)];
 		break;
 	      }
 	      
@@ -670,7 +670,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 	  if ((r_ptr->level >= 40) && 
 	      (r_ptr->flags3 & (RF3_UNDEAD)) && 
 	      (r_ptr->flags1 & (RF1_UNIQUE)) && 
-	      (randint(250 - r_ptr->level) == 1))
+	      (randint1(250 - r_ptr->level) == 1))
 	    
 	    {
 	      msg_print("Your foe calls upon your soul!");
@@ -680,7 +680,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 	  
 	  else if ((r_ptr->level >= 50) && 
 		   (r_ptr->flags3 & (RF3_UNDEAD)) && 
-		   (randint(500 - r_ptr->level) == 1))
+		   (randint1(500 - r_ptr->level) == 1))
 	    {
 	      msg_print("Your foe calls upon your soul!");
 	      msg_print("You feel the Black Breath slowly draining you of life...");
@@ -766,7 +766,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		for (k = 0; k < 10; k++)
 		  {
 		    /* Pick an item */
-		    i = rand_int(INVEN_PACK);
+		    i = randint0(INVEN_PACK);
 		    
 		    /* Obtain the item */
 		    o_ptr = &inventory[i];
@@ -897,7 +897,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		 * relationship between yours and monster's level.
 		 */
 		if (!p_ptr->paralyzed && 
-		    (rand_int(100) < 
+		    (randint0(100) < 
 		     (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + 
 		      p_ptr->lev - (r_ptr->level / 2))))
 		  {
@@ -905,16 +905,16 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		    msg_print("You quickly protect your money pouch!");
 		    
 		    /* Occasional blink anyway */
-		    if (rand_int(3)) blinked = TRUE;
+		    if (randint0(3)) blinked = TRUE;
 		  }
 		
 		/* Eat gold */
 		else
 		  {
-		    gold = (p_ptr->au / 12) + randint(25);
+		    gold = (p_ptr->au / 12) + randint1(25);
 		    if (gold < 2) gold = 2;
 		    if (gold > 5000) gold = (p_ptr->au / 20) 
-				       + randint(2000);
+				       + randint1(2000);
 		    if (gold > p_ptr->au) gold = p_ptr->au;
 		    p_ptr->au -= gold;
 		    if (gold <= 0)
@@ -958,7 +958,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		 * relationship between yours and monster's level.
 		 */
 		if (!p_ptr->paralyzed && 
-		    (rand_int(100) < 
+		    (randint0(100) < 
 		     (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + 
 		      p_ptr->lev - (r_ptr->level / 2))))
 		  {
@@ -982,7 +982,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		    object_type object_type_body;
 		    
 		    /* Pick an item */
-		    i = rand_int(INVEN_PACK);
+		    i = randint0(INVEN_PACK);
 		    
 		    /* Obtain the item */
 		    o_ptr = &inventory[i];
@@ -1051,7 +1051,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		for (k = 0; k < 10; k++)
 		  {
 		    /* Pick an item from the pack */
-		    i = rand_int(INVEN_PACK);
+		    i = randint0(INVEN_PACK);
 		    
 		    /* Get the item */
 		    o_ptr = &inventory[i];
@@ -1096,7 +1096,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		if ((o_ptr->pval > 0) && (!artifact_p(o_ptr)))
 		  {
 		    /* Reduce fuel */
-		    o_ptr->pval -= (250 + randint(250));
+		    o_ptr->pval -= (250 + randint1(250));
 		    if (o_ptr->pval < 1) o_ptr->pval = 1;
 		    
 		    /* Notice */
@@ -1205,14 +1205,14 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		    if (p_ptr->blind)
 		      {
 			if (set_blind(p_ptr->blind + 6 + 
-				      randint(rlev / 2)))
+				      randint1(rlev / 2)))
 			  {
 			    obvious = TRUE;
 			  }
 		      }
 		    else
 		      {
-			if (set_blind(12 + randint(rlev)))
+			if (set_blind(12 + randint1(rlev)))
 			  {
 			    obvious = TRUE;
 			  }
@@ -1238,14 +1238,14 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		    if (p_ptr->confused)
 		      {
 			if (set_confused(p_ptr->confused + 2 + 
-					 randint(rlev / 2)))
+					 randint1(rlev / 2)))
 			  {
 			    obvious = TRUE;
 			  }
 		      }
 		    else
 		      {
-			if (set_confused(5 + randint(rlev)))
+			if (set_confused(5 + randint1(rlev)))
 			  {
 			    obvious = TRUE;
 			  }
@@ -1282,14 +1282,14 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		    if (p_ptr->afraid)
 		      {
 			if (set_afraid(p_ptr->afraid + 2 + 
-				       randint(rlev / 2)))
+				       randint1(rlev / 2)))
 			  {
 			    obvious = TRUE;
 			  }
 		      }
 		    else
 		      {
-			if (set_afraid(6 + randint(rlev)))
+			if (set_afraid(6 + randint1(rlev)))
 			  {
 			    obvious = TRUE;
 			  }
@@ -1329,14 +1329,14 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		    if (p_ptr->paralyzed)
 		      {
 			if (set_paralyzed(p_ptr->paralyzed + 2 + 
-					  randint(rlev / 6)))
+					  randint1(rlev / 6)))
 			  {
 			    obvious = TRUE;
 			  }
 		      }
 		    else
 		      {
-			if (set_paralyzed(4 + randint(rlev / 2)))
+			if (set_paralyzed(4 + randint1(rlev / 2)))
 			  {
 			    obvious = TRUE;
 			  }
@@ -1458,7 +1458,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		/* Take damage */
 		take_hit(damage, ddesc);
 		
-		if (p_ptr->hold_life && (rand_int(100) < 95))
+		if (p_ptr->hold_life && (randint0(100) < 95))
 		  {
 		    notice_obj(OF_HOLD_LIFE, 0);
 		    msg_print("You keep hold of your life force!");
@@ -1490,7 +1490,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		/* Take damage */
 		take_hit(damage, ddesc);
 		
-		if (p_ptr->hold_life && (rand_int(100) < 90))
+		if (p_ptr->hold_life && (randint0(100) < 90))
 		  {
 		    notice_obj(OF_HOLD_LIFE, 0);
 		    msg_print("You keep hold of your life force!");
@@ -1522,7 +1522,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		/* Take damage */
 		take_hit(damage, ddesc);
 		
-		if (p_ptr->hold_life && (rand_int(100) < 75))
+		if (p_ptr->hold_life && (randint0(100) < 75))
 		  {
 		    notice_obj(OF_HOLD_LIFE, 0);
 		    msg_print("You keep hold of your life force!");
@@ -1554,7 +1554,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		/* Take damage */
 		take_hit(damage, ddesc);
 		
-		if (p_ptr->hold_life && (rand_int(100) < 50))
+		if (p_ptr->hold_life && (randint0(100) < 50))
 		  {
 		    notice_obj(OF_HOLD_LIFE, 0);
 		    msg_print("You keep hold of your life force!");
@@ -1584,7 +1584,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 	  if (do_cut && do_stun)
 	    {
 	      /* Cancel cut */
-	      if (rand_int(100) < 50)
+	      if (randint0(100) < 50)
 		{
 		  do_cut = 0;
 		}
@@ -1608,11 +1608,11 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 	      switch (tmp)
 		{
 		case 0: k = 0; break;
-		case 1: k = randint(5); break;
-		case 2: k = randint(5) + 5; break;
-		case 3: k = randint(20) + 20; break;
-		case 4: k = randint(50) + 50; break;
-		case 5: k = randint(100) + 100; break;
+		case 1: k = randint1(5); break;
+		case 2: k = randint1(5) + 5; break;
+		case 3: k = randint1(20) + 20; break;
+		case 4: k = randint1(50) + 50; break;
+		case 5: k = randint1(100) + 100; break;
 		case 6: k = 300; break;
 		default: k = 500; break;
 		}
@@ -1633,11 +1633,11 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 	      switch (tmp)
 		{
 		case 0: k = 0; break;
-		case 1: k = randint(5); break;
-		case 2: k = randint(8) + 8; break;
-		case 3: k = randint(15) + 15; break;
-		case 4: k = randint(25) + 25; break;
-		case 5: k = randint(35) + 35; break;
+		case 1: k = randint1(5); break;
+		case 2: k = randint1(8) + 8; break;
+		case 3: k = randint1(15) + 15; break;
+		case 4: k = randint1(25) + 25; break;
+		case 5: k = randint1(35) + 35; break;
 		case 6: k = 60; break;
 		default: k = 100; break;
 		}
@@ -1747,7 +1747,7 @@ static int get_dam(int av_dam, int dice)
   if ((av_dam < 6) || (av_dam < dice)) dam = damroll(1, av_dam * 2 - 1);
   else if (av_dam < 12) dam = damroll(2, av_dam - 1);
   else dam = damroll(dice, (av_dam * 2 / dice) - 1) + 
-	 rand_int(((av_dam * 2) % dice) + 1);
+	 randint0(((av_dam * 2) % dice) + 1);
   
   /* Boundary control (to reduce instadeaths). */
   if (av_dam > 9)
@@ -2609,7 +2609,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	  {
 	    if (blind) msg_format("%^s chants powerfully.", m_name);
 	    
-	    if (rand_int(3) != 0)
+	    if (randint0(3) != 0)
 	      {
 		msg_format("%^s invokes a storm of electricity.", m_name);
 		if (spower < 120) rad = 3;
@@ -3459,7 +3459,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	 * Cancel Black Breath sometimes.
 	 * If we don't cure it there will be no further curing.
 	 */
-	if ((m_ptr->black_breath) && (rlev + 20 > rand_int(120)))
+	if ((m_ptr->black_breath) && (rlev + 20 > randint0(120)))
 	  {
 	    /* Cancel Black Breath */
 	    m_ptr->black_breath = 0;
@@ -3686,7 +3686,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	    msg_format("%^s draws psychic energy from you!", m_name);
 	    
 	    /* Drain */
-	    r1 = remove_player_mana((randint(spower) / 20) + 1);
+	    r1 = remove_player_mana((randint1(spower) / 20) + 1);
 	    
 	    /* Redraw mana */
 	    p_ptr->redraw |= (PR_MANA);
@@ -3785,7 +3785,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	    msg_print("Your mind is blasted by psionic energy.");
 	    if (!p_resist_good(P_RES_CONFU))
 	      {
-		(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+		(void)set_confused(p_ptr->confused + randint0(4) + 4);
 	      }
 	    else notice_other(IF_RES_CONFU, 0);
 	    take_hit(damroll(8, 8), ddesc);
@@ -3816,20 +3816,20 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	    take_hit(damroll(12, 15), ddesc);
 	    if (!p_ptr->no_blind)
 	      {
-		(void)set_blind(p_ptr->blind + 8 + rand_int(8));
+		(void)set_blind(p_ptr->blind + 8 + randint0(8));
 	      }
 	    else notice_obj(OF_SEEING, 0);
 	    if (!p_resist_good(P_RES_CONFU))
 	      {
-		(void)set_confused(p_ptr->confused + rand_int(4) + 4);
+		(void)set_confused(p_ptr->confused + randint0(4) + 4);
 	      }
 	    else notice_other(IF_RES_CONFU, 0);
 	    if (!p_ptr->free_act)
 	      {
-		(void)set_paralyzed(p_ptr->paralyzed + rand_int(4) + 4);
+		(void)set_paralyzed(p_ptr->paralyzed + randint0(4) + 4);
 	      }
 	    else notice_obj(OF_FREE_ACT, 0);
-	    (void)set_slow(p_ptr->slow + rand_int(4) + 4);
+	    (void)set_slow(p_ptr->slow + randint0(4) + 4);
 	  }
 	break;
       }
@@ -3872,7 +3872,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	    k = 5;
 	  }
 	
-	if (rand_int(rlev / 2 + 70) < p_ptr->skill_sav)
+	if (randint0(rlev / 2 + 70) < p_ptr->skill_sav)
 	  {
 	    msg_format("You resist the effects%c", (spower < 30 ?  '.' : '!'));
 	  }
@@ -3939,7 +3939,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 		/* If the old monster wasn't racial, we need a race */
 		if (!(r_ptr->flags3 & RF3_RACIAL))
 		  {
-		    temp = rand_int(race_prob[p_ptr->stage][z_info->p_max - 1]);
+		    temp = randint0(race_prob[p_ptr->stage][z_info->p_max - 1]);
 	  
 		    for (k = 0; k < z_info->p_max; k++)
 		      if (race_prob[p_ptr->stage][k] > temp) 
@@ -3980,7 +3980,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	else msg_format("%^s gestures at you, and you suddenly feel hungry.", 
 			m_name);
 	
-	if (randint(100) > p_ptr->skill_sav)
+	if (randint1(100) > p_ptr->skill_sav)
 	  {
 	    /* Reduce food abruptly.  */
 	    (void)set_food(p_ptr->food - (p_ptr->food/3));
@@ -4016,7 +4016,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	  }
 	else
 	  {
-	    (void)set_afraid(p_ptr->afraid + rand_int(3) + 3);
+	    (void)set_afraid(p_ptr->afraid + randint0(3) + 3);
 	  }
 	break;
       }
@@ -4038,7 +4038,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	  }
 	else
 	  {
-	    (void)set_blind(12 + rand_int(4));
+	    (void)set_blind(12 + randint0(4));
 	  }
 	break;
       }
@@ -4061,7 +4061,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	  }
 	else
 	  {
-	    (void)set_confused(p_ptr->confused + rand_int(4) + 4);
+	    (void)set_confused(p_ptr->confused + randint0(4) + 4);
 	  }
 	break;
       }
@@ -4082,7 +4082,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	  }
 	else
 	  {
-	    (void)set_slow(p_ptr->slow + rand_int(6) + 6);
+	    (void)set_slow(p_ptr->slow + randint0(6) + 6);
 	  }
 	break;
       }	
@@ -4104,7 +4104,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	  }
 	else
 	  {
-	    (void)set_paralyzed(p_ptr->paralyzed + rand_int(4) + 4);
+	    (void)set_paralyzed(p_ptr->paralyzed + randint0(4) + 4);
 	  }
 	break;
       }

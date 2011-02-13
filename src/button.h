@@ -31,6 +31,24 @@ typedef struct
 
 
 
+/*** Variables ***/
+
+static button_mouse *button_mse;
+static button_mouse *button_backup;
+
+static int button_start;
+static int button_length;
+static int button_num;
+
+
+/*
+ * Hooks for making and unmaking buttons
+ */
+button_add_f button_add_hook;
+button_kill_f button_kill_hook;
+
+
+
 int button_add_text(const char *label, unsigned char keypress);
 int button_add(const char *label, unsigned char keypress);
 void button_backup_all(void);

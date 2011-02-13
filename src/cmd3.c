@@ -21,6 +21,7 @@
  */
 
 #include "angband.h"
+#include "button.h"
 #include "squelch.h"
 #include "ui-menu.h"
 
@@ -246,8 +247,6 @@ void do_cmd_destroy(cmd_code code, cmd_arg args[])
   
   cptr q, s;
 
-  bool cursed = FALSE;
-  
   /* Do we have an item? */
   if (p_ptr->command_item) 
     {
@@ -292,9 +291,6 @@ void do_cmd_destroy(cmd_code code, cmd_arg args[])
   /* Allow user abort */
   if (amt <= 0) return;
 
-  /* Sticky carry curse stops destruction */
-  if (o_ptr->flags_curse & CF_STICKY_CARRY) cursed = TRUE;
-  
   /* Describe the object */
   old_number = o_ptr->number;
   o_ptr->number = amt;
@@ -421,6 +417,107 @@ void do_cmd_destroy(cmd_code code, cmd_arg args[])
     }
 }
 
+
+void textui_cmd_destroy(void)
+{
+	int item, amt;
+	int old_number;
+
+	object_type *o_ptr;
+
+	object_type obj_to_destroy;
+
+	char result;
+	char o_name[120];
+	char out_val[160];
+
+	cptr q, s;
+
+	/* Get an item */
+	q = "Destroy which item? ";
+	s = "You have nothing to destroy.";
+	if (!get_item(&item, q, s, (USE_INVEN | USE_EQUIP | USE_FLOOR | CAN_SQUELCH))) return;
+
+	/* Deal with squelched items */
+	if (item == ALL_SQUELCHED)
+	{
+		cmd_insert(CMD_DESTROY);
+		cmd_set_arg_item(cmd_get_top(), 0, item);
+		return;
+	}
+	
+	o_ptr = object_from_item_idx(item);
+
+	/* Ask if player would prefer squelching instead of destruction */
+
+	/* Get a quantity */
+	amt = get_quantity(NULL, o_ptr->number);
+	if (amt <= 0) return;
+
+  /* Describe the object */
+  old_number = o_ptr->number;
+  o_ptr->number = amt;
+  object_desc(o_name, o_ptr, TRUE, 3);
+  o_ptr->number = old_number;
+  
+	/* Verify destruction */
+	strnfmt(out_val, sizeof(out_val), "Really destroy %s? ", o_name);
+	
+	result = get_char(out_val, "yns", 3, 'n');
+
+	if (result == 'y')
+	{
+  /* Hack -- Cannot destroy some cursed items */
+  if (o_ptr->flags_curse & CF_STICKY_CARRY)
+    {
+      /* Oops */
+      msg_print("Hmmm, it seems to be cursed.");
+
+      /* Notice */
+      notice_curse(CF_STICKY_CARRY, item + 1);
+      
+      /* Nope */
+      return;
+    }
+  
+		cmd_insert(CMD_DESTROY);
+		cmd_set_arg_item(cmd_get_top(), 0, item);
+		cmd_set_arg_number(cmd_get_top(), 1, amt);
+	}
+	else if (result == 's')
+	    {
+	      object_kind *k_ptr = &k_info[o_ptr->k_idx];
+	      char o_name2[80];
+
+	      /* make a fake object so we can give a proper message */
+	      object_type *i_ptr;
+	      object_type object_type_body;
+
+	      /* Get local object */
+	      i_ptr = &object_type_body;
+
+	      /* Wipe the object */
+	      object_wipe(i_ptr);
+
+	      /* Create the object */
+	      object_prep(i_ptr, o_ptr->k_idx);
+	      
+	      /*make it plural*/
+	      i_ptr->number = 2;
+	      
+	      /*now describe with correct amount*/
+	      object_desc(o_name2, i_ptr, FALSE, 0);
+	      
+	      /*set to squelch*/
+	      k_ptr->squelch = TRUE;
+
+	      /* Message - no good routine for extracting the plain name */
+	      msg_format("All %^s will always be squelched.", o_name2);
+
+	      /* Mark the view to be updated */
+	      p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW);;
+	    }
+}
 
 /**
  * Display specialized object information.  -LM-
@@ -956,8 +1053,8 @@ void do_cmd_query_symbol(void)
   
   /* Prompt */
   put_str("Recall details? (k/p/y/n): ", 0, 40);
-  backup_buttons();
-  kill_all_buttons();
+  button_backup_all();
+  button_kill_all();
   button_add("ESC", ESCAPE);
   button_add("k", 'k');
   button_add("p", 'p');
@@ -989,8 +1086,8 @@ void do_cmd_query_symbol(void)
   /* Catch "escape" */
   if (query.key != 'y') 
     {
-      kill_all_buttons();
-      restore_buttons();
+      button_kill_all();
+      button_restore();
       update_statusline();
       free(who);
       return;
@@ -1119,8 +1216,8 @@ void do_cmd_query_symbol(void)
   /* Re-display the identity */
   prt(buf, 0, 0);
 
-  kill_all_buttons();
-  restore_buttons();
+  button_kill_all();
+  button_restore();
   update_statusline();
   free(who);
 }

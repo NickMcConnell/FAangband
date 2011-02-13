@@ -221,8 +221,8 @@ void do_cmd_change_name(void)
   prompt_end = (small_screen ? 0 : strlen(p) + 1);
   
   /* Adjust the buttons */
-  backup_buttons();
-  kill_all_buttons();
+  button_backup_all();
+  button_kill_all();
   button_add("ESC", ESCAPE);
   button_add("Spc", ' ');
   button_add("-", '-');
@@ -342,7 +342,7 @@ void do_cmd_change_name(void)
   prompt_end = 0;
 
   /* Adjust the buttons */
-  restore_buttons();
+  button_restore();
 
   /* Load screen */
   screen_load();
@@ -393,7 +393,7 @@ void do_cmd_messages(void)
   
   
   /* Total messages */
-  n = message_num();
+  n = messages_num();
   
   /* Start on first message */
   i = 0;
@@ -415,8 +415,8 @@ void do_cmd_messages(void)
   prompt_end = (small_screen ? 0 : strlen(p) + 1);
   
   /* Adjust the buttons */
-  backup_buttons();
-  kill_all_buttons();
+  button_backup_all();
+  button_kill_all();
   button_add("ESC", ESCAPE);
   button_add("-", '-');
   button_add("=", '=');
@@ -614,7 +614,7 @@ void do_cmd_messages(void)
   prompt_end = 0;
 
   /* Adjust the buttons */
-  restore_buttons();
+  button_restore();
 
   /* Load screen */
   screen_load();

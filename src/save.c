@@ -963,7 +963,7 @@ static bool wr_savefile_new(void)
   xor_byte = 0;
   wr_byte(VERSION_PATCH); 
   xor_byte = 0;
-  tmp8u = (byte)rand_int(256);
+  tmp8u = (byte)randint0(256);
   wr_byte(tmp8u);
   
   

@@ -1866,7 +1866,7 @@ extern void roff_top(int r_idx)
   /* Print it */
   Term_addstr(-1, TERM_WHITE, buf);
   
-  if (!use_dbltile && !use_trptile)
+  if ((tile_width < 3) && (tile_height < 2))
     {
       /* Append the "standard" attr/char info */
       Term_addstr(-1, TERM_WHITE, " ('");
@@ -1876,7 +1876,7 @@ extern void roff_top(int r_idx)
       /* Append the "optional" attr/char info */
       Term_addstr(-1, TERM_WHITE, "/('");
       Term_addch(a2, c2);
-      if (use_bigtile && (a2 & 0x80)) Term_addch(255, -1);
+      if ((tile_width == 2) && (a2 & 0x80)) Term_addch(255, -1);
       Term_addstr(-1, TERM_WHITE, "'):");
     }
 }

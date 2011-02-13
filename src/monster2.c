@@ -790,14 +790,14 @@ void display_monlist(void)
 	  n += 6;
       
 	  /* Monster graphic on one line */
-	  if (!(use_dbltile) && !(use_trptile))
+	  if ((tile_width < 3) && (tile_height < 2))
 	    {
 	      /* Append the "optional" attr/char info */
 	      Term_addstr(-1, TERM_WHITE, "/('");
 	      
 	      Term_addch(r_ptr->x_attr, r_ptr->x_char);
 	      
-	      if (use_bigtile)
+	      if (tile_width == 2)
 		{
 		  if (r_ptr->x_attr & 0x80)
 		    Term_addch(255, -1);

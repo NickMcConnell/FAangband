@@ -1822,7 +1822,7 @@ static void process_player(void)
           process_command(CMD_GAME, FALSE);
 	  
           /* Mega hack - complete redraw if big graphics */
-          if (use_dbltile || use_trptile) 
+          if ((tile_width > 1) || (tile_height > 1)) 
             p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA | PR_MAP 
                               | PR_EQUIPPY);
 	  

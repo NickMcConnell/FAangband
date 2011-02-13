@@ -1882,15 +1882,12 @@ static errr init_other(void)
   pline1 = C_ZNEW(30, char_attr_line);
   
   /*** Prepare mouse button arrays ***/
-  mse_button = C_ZNEW(MAX_MOUSE_BUTTONS, button_mouse);
-  backup_button = C_ZNEW(MAX_MOUSE_BUTTONS, button_mouse);
+  button_mse = C_ZNEW(MAX_MOUSE_BUTTONS, button_mouse);
+  button_backup = C_ZNEW(MAX_MOUSE_BUTTONS, button_mouse);
 
   /* Initialise the hooks */
-  add_button_hook = add_button_text;
-  kill_button_hook = kill_button_text;
-  kill_all_buttons_hook = kill_all_buttons_text;
-  backup_buttons_hook = backup_buttons_text;
-  restore_buttons_hook = restore_buttons_text;
+  button_add_hook = button_add_text;
+  button_kill_hook = button_kill_text;
 
   /*** Prepare quest array ***/
   
@@ -2734,7 +2731,7 @@ bool init_angband(void)
             }
 
           /* Place the cursor */
-          move_cursor(y, x);
+          Term_gotoxy(x, y);
           
        }
 
@@ -2873,10 +2870,6 @@ bool init_angband(void)
   /* Close it */
   file_close(fd);
   
-  
-  /* Initialize the menus */
-  /* This must occur before preference files are read */
-  init_cmd4_c();
   
   /*** Initialize some arrays ***/
   
@@ -3039,8 +3032,8 @@ void cleanup_angband(void)
   FREE(pline1);
   
   /* Free the mouse button array */
-  FREE(mse_button);
-  FREE(backup_button);
+  FREE(button_mse);
+  FREE(button_backup);
   
   /* Free the quest list */
   FREE(q_list);

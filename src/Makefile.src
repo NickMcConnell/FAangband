@@ -96,6 +96,7 @@ ANGFILES = \
 	object2.o \
 	option.o \
 	parser.o \
+	play-util.o \
 	prefs.o \
 	randart.o \
 	randname.o \

@@ -1255,7 +1255,7 @@ static void do_cmd_options_autosave(const char *name, int row)
       
       
       /* Hilite current option */
-      move_cursor(k + 2, 50);
+      Term_gotoxy(50, k + 2);
 
       button_add("F", 'F');
       button_add("n", 'n');

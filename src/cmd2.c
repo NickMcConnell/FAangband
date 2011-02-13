@@ -1465,7 +1465,7 @@ int count_chests(int *y, int *x, bool trapped)
 /**
  * Convert an adjacent location to a direction.
  */
-static int coords_to_dir(int y, int x)
+int coords_to_dir(int y, int x)
 {
   int d[3][3] = 
     { 

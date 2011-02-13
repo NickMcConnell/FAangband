@@ -2551,6 +2551,95 @@ bool get_check(cptr prompt)
 	return (TRUE);
 }
 
+/**
+ * Hack - duplication of get_check prompt to give option of setting destroyed
+ * option to squelch.
+ *
+ * 0 - No
+ * 1 = Yes
+ * 2 = third option
+ *
+ * The "prompt" should take the form "Query? "
+ *
+ * Note that "[y/n/{char}]" is appended to the prompt.
+ */
+int get_check_other(cptr prompt, char other)
+{
+  ui_event_data ke = EVENT_EMPTY;
+  char buf[80];
+  char label[4];
+  bool extra = (KTRL(other) == other);
+  
+  int result;
+
+  bool repeat = FALSE;
+  
+  /* Paranoia XXX XXX XXX */
+  message_flush();
+  
+  /* Hack -- Build a "useful" prompt */
+  if (extra)
+    strnfmt(buf, 78, "%.70s [y/n/^%c]", prompt, UN_KTRL(other)); 
+  else
+    strnfmt(buf, 78, "%.70s [y/n/%c] ", prompt, other);
+
+  /* Hack - kill the repeat button */
+  if (button_kill('n')) repeat = TRUE;
+  
+  /* Make some buttons */
+  button_add("y", 'y');
+  button_add("n", 'n');
+  if (extra)
+    strnfmt(label, 4, "^%c", UN_KTRL(other));
+  else
+    strnfmt(label, 4, "%c", other);
+  button_add(label, other);
+
+  /* Prompt for it */
+  prt(buf, 0, 0);
+  
+  /* Get an acceptable answer */
+  while (TRUE)
+    {
+      ke = inkey_ex();
+      if (OPT(quick_messages)) break;
+      if (ke.key == ESCAPE) break;
+      if (strchr("YyNn", ke.key)) break;
+      if (ke.key == toupper(other)) break;
+      if (ke.key == tolower(other)) break;
+      bell("Illegal response to question!");
+    }
+
+  /* Erase the prompt */
+  prt("", 0, 0);
+  
+  /* Kill the buttons */
+  button_kill('y');
+  button_kill('n');
+  button_kill(other);
+
+  /* Hack - restore the repeat button */
+  if (repeat) button_add("Rpt", 'n');
+  update_statusline();
+
+  /* Yes */
+  if ((ke.key == 'Y') || (ke.key == 'y'))
+    result = 1;
+  
+  /* Third option */
+  else if ((ke.key == toupper(other)) || (ke.key == tolower(other)))
+    result = 2;
+  
+  /* Default to no */
+  else
+    result = 0;
+  
+  
+  /* Success */
+  return (result);
+}
+
+
 /* TODO: refactor get_check() in terms of get_char() */
 /*
  * Ask the user to respond with a character. Options is a constant string,

@@ -90,14 +90,12 @@
 /**
  * Number of grids in each panel (vertically)
  */
-#define PANEL_HGT	(use_trptile ? 3 : (use_dbltile ? 5 : 11))
+#define PANEL_HGT	((int)(BLOCK_HGT / tile_height))
 
 /**
  * Number of grids in each panel (horizontally)
  */
-#define PANEL_WID ((use_trptile && use_bigtile) ?  5 : (use_trptile ? 11 : \
-		  ((use_dbltile && use_bigtile) ? 8 : ((use_dbltile || \
-                  use_bigtile) ? 16 : 33))))
+#define PANEL_WID       ((int)(BLOCK_WID / tile_width))
 
 
 /**
@@ -109,15 +107,12 @@
 /**
  * Number of grids in each screen (vertically)
  */
-#define SCREEN_HGT    SCREEN_ROWS / (use_trptile ? 3 : (use_dbltile ? 2 : 1))
+#define SCREEN_HGT    SCREEN_ROWS / (tile_height)
 
 /**
  * Number of grids in each screen (horizontally)
  */
-#define SCREEN_WID	((Term->wid - COL_MAP - 1) / ((use_trptile && \
-                        use_bigtile) ?  6 : (use_trptile ? 3 : \
-			((use_dbltile && use_bigtile) ? 4 :((use_dbltile \
-                        || use_bigtile) ? 2 : 1)))))
+#define SCREEN_WID	((int)((Term->wid - COL_MAP - 1) / tile_width))
 
 /**
  * Number of grids in each dungeon (from top to bottom)
@@ -763,10 +758,10 @@ typedef enum
 #define COL_STUDY       (small_screen ? 34 : 53)      /* "Study" */
 
 #define ROW_MAP		1
-#define COL_MAP		(OPT(bottom_status) ? 0 : (use_dbltile || use_trptile ? 12 : 13))
+#define COL_MAP		(OPT(bottom_status) ? 0 : ((tile_width > 1) ? 12 : 13))
 
 /* From Unangband */
-#define SIDEBAR_WID	(OPT(bottom_status) ? 0 : (use_dbltile || use_trptile ? 12 : 13))
+#define SIDEBAR_WID	(OPT(bottom_status) ? 0 : ((tile_width > 1) ? 12 : 13))
 
 /* For mouse buttons */
 #define ROW_STAND       (OPT(bottom_status) ? SCREEN_ROWS + 3 : 20)
@@ -2932,15 +2927,13 @@ typedef enum
  * Convert a "key event" into a "location" (Y)
  */
 #define KEY_GRID_Y(K) \
-	((int) ((panel_row_min) + ( ((K.mousey) - ROW_MAP)/ \
-		(use_trptile ? 3 : (use_dbltile ? 2 : 1)) )))
+  ((int) (((K.mousey - ROW_MAP) / tile_height) + panel_row_min))
 
 /**
  * Convert a "key event" into a "location" (X)
  */
 #define KEY_GRID_X(K) \
-	((int) ((panel_col_min) + ( ((K.mousex) - COL_MAP) / \
-		((use_trptile ? 3 : (use_dbltile ? 2 : 1)) * (use_bigtile ? 2 : 1)) )))
+	((int) (((K.mousex - COL_MAP) / tile_width) + panel_col_min))
 
 /**
  * Determines if a map location is "meaningful"
@@ -3462,5 +3455,13 @@ extern int PlayerUID;
 
 /** Max number of items in the itemlist */
 #define MAX_ITEMLIST 256
+
+/* MSVC doesn't have va_copy (which is C99) or an alternative, so we'll just
+ * copy the SRC pointer. In other cases we'll use va_copy() as we should. */
+#ifdef _MSC_VER
+#define VA_COPY(DST, SRC) (DST) = (SRC)
+#else
+#define VA_COPY(DST, SRC) va_copy(DST, SRC)
+#endif
 
 #endif /* !INCLUDED_DEFINES_H */

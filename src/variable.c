@@ -107,9 +107,8 @@ s32b do_feeling;		/* Hack -- Level feeling indicator */
 
 int use_graphics;		/* "graphics" mode */
 bool use_graphics_nice;	        /* The 'nice' "graphics" mode is enabled */
-bool use_trptile = FALSE;       /* The triple tile mode is enabled */
-bool use_dbltile = FALSE;       /* The double tile mode is enabled */
-bool use_bigtile = FALSE;       /* The bigtile mode is enabled */
+byte tile_width = 1;            /* Tile width in units of font width */
+byte tile_height = 1;           /* Tile height in units of font height */
 bool small_screen = FALSE;      /* Small screen mode for portables */
 bool use_transparency = FALSE;  /* Use transparent tiles */
 char notes_start[80];           /* Opening line of notes */
@@ -1230,3 +1229,5 @@ autoinscription *inscriptions = 0;
 u16b inscriptions_count = 0;
 
 
+bool normal_screen = TRUE;
+int prompt_end = 0;

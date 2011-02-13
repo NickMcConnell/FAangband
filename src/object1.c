@@ -2602,10 +2602,9 @@ void show_inven(void)
   if (j && (j < 23)) prt("", ++j, col ? col - 2 : col);
 
   /* Hack - delete exact graphics rows */
-  if (use_trptile || use_dbltile)
+  if (tile_height > 1)
     { 
-      tile_hgt = (use_trptile ? 3 : 2);
-      while ((j % tile_hgt) && (j <= SCREEN_ROWS)) 
+      while ((j % tile_height) && (j <= SCREEN_ROWS)) 
 	prt("", ++j, col ? col - 2 : col);
     }
 }
@@ -2766,10 +2765,9 @@ void show_equip(void)
   if (j && (j < 23)) prt("", ++j, col ? col - 2 : col);
 
   /* Hack - delete exact graphics rows */
-  if (use_trptile || use_dbltile)
+  if (tile_height > 1)
     { 
-      tile_hgt = (use_trptile ? 3 : 2);
-      while ((j % tile_hgt) && (j <= SCREEN_ROWS)) 
+      while ((j % tile_height) && (j <= SCREEN_ROWS)) 
 	prt("", ++j, col ? col - 2 : col);
     }
 }
@@ -3164,10 +3162,9 @@ void show_floor(int *floor_list, int floor_num)
   if (j && (j < 23)) prt("", ++j, col ? col - 2 : col);
 
   /* Hack - delete exact graphics rows */
-  if (use_trptile || use_dbltile)
+  if (tile_height > 1)
     { 
-      tile_hgt = (use_trptile ? 3 : 2);
-      while ((j % tile_hgt) && (j <= SCREEN_ROWS)) 
+      while ((j % tile_height) && (j <= SCREEN_ROWS)) 
 	prt("", ++j, col ? col - 2 : col);
     }
 }
@@ -4583,45 +4580,6 @@ bool obj_can_wear(const object_type *o_ptr)
 /* Can only fire an item with the right tval */
 bool obj_can_fire(const object_type *o_ptr)
 {
-  int ammo_tval;
-
-      switch (inventory[INVEN_BOW].sval)
-	{
-	  /* Sling and ammo */
-	case SV_SLING:
-	  {
-	    ammo_tval = TV_SHOT;
-	    break;
-	  }
-	  
-	  /* Short Bow and Arrow */
-	case SV_SHORT_BOW:
-	  {
-	    ammo_tval = TV_ARROW;
-	    break;
-	  }
-	  
-	  /* Long Bow and Arrow */
-	case SV_LONG_BOW:
-	  {
-	    ammo_tval = TV_ARROW;
-	    break;
-	  }
-	  
-	  /* Light Crossbow and Bolt */
-	case SV_LIGHT_XBOW:
-	  {
-	    ammo_tval = TV_BOLT;
-	    break;
-	  }
-	  
-	  /* Heavy Crossbow and Bolt */
-	case SV_HEAVY_XBOW:
-	  {
-	    ammo_tval = TV_BOLT;
-	    break;
-	  }
-	}
 	return o_ptr->tval == p_ptr->ammo_tval;
 }
 
@@ -4701,5 +4659,30 @@ bool item_is_available(int item, bool (*tester)(const object_type *), int mode)
 	}
 
 	return FALSE;
+}
+
+/*
+ * Looks if "inscrip" is present on the given object.
+ */
+unsigned check_for_inscrip(const object_type *o_ptr, const char *inscrip)
+{
+	unsigned i = 0;
+	const char *s;
+
+	if (!o_ptr->note) return 0;
+
+	s = quark_str(o_ptr->note);
+
+	do
+	{
+		s = strstr(s, inscrip);
+		if (!s) break;
+
+		i++;
+		s++;
+	}
+	while (s);
+
+	return i;
 }
 

@@ -2804,7 +2804,7 @@ bool change_panel(int dy, int dx)
       handle_stuff();
 
       /* Redraw for big graphics */
-      if (use_dbltile || use_trptile) redraw_stuff();
+      if ((tile_width > 1) || (tile_height > 1)) redraw_stuff();
       
       /* Success */
       return (TRUE);

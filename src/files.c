@@ -2323,13 +2323,10 @@ bool show_file(cptr name, cptr what, int line, int mode)
   buf2 = malloc(MAX_BUF);
   lc_buf = malloc(MAX_BUF);
 
-  /* Show messages first */
-  if (OPT(easy_more)) messages_easy(FALSE);
-
   /* Record normal screen if it's the first time in */
   if (push_file==0)
   {
-    backup_buttons();
+    button_backup_all();
     old_normal_screen = normal_screen;
   }
  
@@ -2610,7 +2607,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
       
       
       /* Buttons */
-      kill_all_buttons();
+      button_kill_all();
       normal_screen = FALSE;
       button_add("ESC", ESCAPE);
       button_add("?", '?');
@@ -2823,7 +2820,7 @@ free(buf2);
 free(lc_buf);
 
 if (push_file==0)
-restore_buttons();
+button_restore();
 
 return ret;
 
@@ -3094,7 +3091,7 @@ static char *get_personalized_string(byte choice)
   while (1)
     {
       /* Start at beginning of field. */
-      move_cursor(14, 0);
+      Term_gotoxy(0, 14);
       
       /* Get an input */
       (void)askfor_aux(tmp, (small_screen ? 47 : 79), NULL);
@@ -3168,7 +3165,7 @@ static void make_bones(void)
 	      /* Ghost hovers near level of death. */
 	      if (i == 0) level = p_ptr->depth;
 	      else level = p_ptr->depth + 5 - damroll(2, 4);
-	      if (level < 1) level = randint(4);
+	      if (level < 1) level = randint1(4);
 	      
 	      /* XXX XXX XXX "Bones" name */
 	      sprintf(tmp, "bone.%03d", level);
@@ -3276,7 +3273,7 @@ static void make_bones(void)
 		  break;
 		}
 	      
-	      kill_all_buttons();
+	      button_kill_all();
 	      
 	      /* If requested, get the personalized string, and write it and 
 	       * info on how it should be used in the bones file.  Otherwise, 
@@ -3439,7 +3436,7 @@ static void print_tomb(void)
 	    }
 
 	  /* Place the cursor */
-	  move_cursor(y, x);
+	  Term_gotoxy(x, y);
 	  
 	}
       
@@ -3645,8 +3642,8 @@ static void show_info(void)
   prt("Hit any key to see more information (ESC to abort): ", 23, 0);
   
   /* Buttons */
-  backup_buttons();
-  kill_all_buttons();
+  button_backup_all();
+  button_kill_all();
   button_add("ESC", ESCAPE);
   button_add("Continue", 'q');
   update_statusline();
@@ -3849,9 +3846,6 @@ static void close_game_aux(void)
   /* Flush all input keys */
   flush();
 
-  /* Easy more? */
-  if (OPT(easy_more)) messages_easy(FALSE);
-	
   /* Screen no longer normal */
   normal_screen = FALSE;
 
@@ -3909,7 +3903,7 @@ static void close_game_aux(void)
       Term_putstr((small_screen ? 0 : 2), 22, -1, TERM_WHITE, p);
       
       /* Buttons */
-      kill_all_buttons();
+      button_kill_all();
       button_add("ESC", ESCAPE);
       button_add("x", 'x');
       button_add("m", 'm');
@@ -4133,7 +4127,7 @@ errr get_rnd_line(char *file_name, char *output)
   else return (1);
   
   /* choose a random line */
-  line = randint(lines);
+  line = randint1(lines);
   
   for (counter = 0; counter <= line; counter++)
     {
@@ -4176,12 +4170,10 @@ static void write_html_escape_char(ang_file *htm, char c)
 
 bool write_char(int row, int col)
 {
-  if (use_trptile && ((row % 3) || (col % 3) || ((col % 6) && use_bigtile))) 
+  if ((row % tile_height) || (col % tile_width)) 
     return (FALSE);
-  if (use_dbltile && ((row % 2) || (col % 2) || ((col % 4) && use_bigtile))) 
-    return (FALSE);
-  if (use_bigtile && (col % 2)) return (FALSE);
-  return (TRUE);
+  else 
+    return (TRUE);
 }
       
 
@@ -4195,15 +4187,10 @@ static void get_default_tile(int row, int col, byte *a_def, char *c_def)
   
   int wid, hgt;
   int screen_wid, screen_hgt;
-  int x, y, col_factor, row_factor;
+  int x, y;
 
-  col_factor = (use_trptile ? (use_bigtile ? 6 : 3) : 
-		(use_dbltile ? (use_bigtile ? 4 : 2) : 
-		 (use_bigtile ? 2 : 1)));
-  row_factor = (use_trptile ? 3 : (use_dbltile ? 2 : 1));
-  
-  x = (col - COL_MAP)/col_factor + panel_col_min;
-  y = (row - ROW_MAP)/row_factor + panel_row_min;
+  x = (col - COL_MAP)/tile_width + panel_col_min;
+  y = (row - ROW_MAP)/tile_height + panel_row_min;
 
   /* Retrieve current screen size */
   Term_get_size(&wid, &hgt);
@@ -4218,8 +4205,8 @@ static void get_default_tile(int row, int col, byte *a_def, char *c_def)
   
   /* Convert the map display to the default characters */
   if (!character_icky &&
-      ((col - COL_MAP) >= 0) && ((col - COL_MAP) < SCREEN_WID * col_factor) &&
-      ((row - ROW_MAP) >= 0) && ((row - ROW_MAP) < SCREEN_HGT * row_factor))
+      ((col - COL_MAP) >= 0) && ((col - COL_MAP) < SCREEN_WID * tile_width) &&
+      ((row - ROW_MAP) >= 0) && ((row - ROW_MAP) < SCREEN_HGT * tile_height))
     {
       /* Convert dungeon map into default attr/chars */
       if (in_bounds(y, x) && write_char(row - ROW_MAP, col - COL_MAP))

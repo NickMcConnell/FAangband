@@ -108,6 +108,7 @@ void get_feats(int *surroundings)
 * Menu functions
 */
 char comm[22];
+cmd_code comm_code[22];
 cptr comm_descr[22];
 int poss;
 
@@ -143,7 +144,8 @@ static bool show_action(menu_type *menu, ui_event_data *e, int oid)
   /* Handle enter and mouse */
   if (e->type == EVT_SELECT)
     {
-      p_ptr->command_new = comm[oid];
+      cmd_insert(comm_code[oid]);
+      if (comm_code[oid] == CMD_NULL) Term_keypress(comm[oid]);
     }
   return TRUE;
 }
@@ -151,7 +153,7 @@ static bool show_action(menu_type *menu, ui_event_data *e, int oid)
 /**
 * Display a list of commands.
 */
-void show_cmd_menu(bool object)
+bool show_cmd_menu(bool object)
 {
   menu_type menu;
   menu_iter commands_menu = { show_tag, 0, show_display, show_action, 0 };
@@ -172,6 +174,8 @@ void show_cmd_menu(bool object)
   
   /* Select an entry */
   evt = menu_select(&menu, cursor);
+
+  return (evt.type != EVT_ESCAPE);
 }
 
 /**
@@ -179,7 +183,7 @@ void show_cmd_menu(bool object)
  */
 void show_player(void)
 {
-  int i, j, fy, fx, tile_hgt;
+  int i, j, fy, fx;
   int adj_grid[9];
   bool exist_rock_or_web = FALSE;
   bool exist_door = FALSE;
@@ -231,6 +235,7 @@ void show_player(void)
       || (check_ability(SP_STEAL) && exist_monster && (!SCHANGE)))
     {
       comm[poss] = '+';
+      comm_code[poss] = CMD_ALTER;
       comm_descr[poss++] = "Alter";
     }
   
@@ -238,18 +243,21 @@ void show_player(void)
   if (exist_door || exist_rock_or_web)
     {
       comm[poss] = 'T';
+      comm_code[poss] = CMD_TUNNEL;
       comm_descr[poss++] = "Tunnel";
     }
       
   /* Begin Running -- Arg is Max Distance */
   {
     comm[poss] = '.';
+      comm_code[poss] = CMD_RUN;
     comm_descr[poss++] = "Run";
   }
       
   /* Hold still for a turn.  Pickup objects if auto-pickup is true. */
   {
     comm[poss] = ',';
+      comm_code[poss] = CMD_HOLD;
     comm_descr[poss++] = "Stand still";
   }
       
@@ -257,54 +265,63 @@ void show_player(void)
   if (cave_o_idx[p_ptr->py][p_ptr->px])
   {
     comm[poss] = 'g';
+      comm_code[poss] = CMD_PICKUP;
     comm_descr[poss++] = "Pick up";
   }
       
   /* Rest -- Arg is time */
   {
     comm[poss] = 'R';
+      comm_code[poss] = CMD_REST;
     comm_descr[poss++] = "Rest";
   }
       
   /* Search for traps/doors */
   {
     comm[poss] = 's';
+      comm_code[poss] = CMD_SEARCH;
     comm_descr[poss++] = "Search";
   }
       
   /* Look around */
   {
     comm[poss] = 'l';
+      comm_code[poss] = CMD_NULL;
     comm_descr[poss++] = "Look";
   }
       
   /* Scroll the map */
   {
     comm[poss] = 'L';
+      comm_code[poss] = CMD_NULL;
     comm_descr[poss++] = "Scroll map";
   }
       
   /* Show the map */
   {
     comm[poss] = 'M';
+      comm_code[poss] = CMD_NULL;
     comm_descr[poss++] = "Level map";
   }
       
   /* Knowledge */
   {
     comm[poss] = '~';
+      comm_code[poss] = CMD_NULL;
     comm_descr[poss++] = "Knowledge";
   }
       
   /* Options */
   {
     comm[poss] = '=';
+      comm_code[poss] = CMD_NULL;
     comm_descr[poss++] = "Options";
   }
       
   /* Toggle search mode */
   {
     comm[poss] = 'S';
+      comm_code[poss] = CMD_TOGGLE_SEARCH;
     comm_descr[poss++] = "Toggle searching";
   }
       
@@ -314,6 +331,7 @@ void show_player(void)
 				     (!(adj_grid[8] % 2))))
   {
     comm[poss] = '<';
+      comm_code[poss] = CMD_GO_UP;
     comm_descr[poss++] = "Take stair/path";
   }
       
@@ -322,6 +340,7 @@ void show_player(void)
 				     (adj_grid[8] % 2)))
   {
     comm[poss] = '>';
+      comm_code[poss] = CMD_GO_DOWN;
     comm_descr[poss++] = "Take stair/path";
   }
       
@@ -330,6 +349,7 @@ void show_player(void)
       count_chests(&fy, &fx, FALSE))
     {
       comm[poss] = 'o';
+      comm_code[poss] = CMD_OPEN;
       comm_descr[poss++] = "Open";
     }
   
@@ -337,6 +357,7 @@ void show_player(void)
   if (exist_open_door)
     {
       comm[poss] = 'c';
+      comm_code[poss] = CMD_CLOSE;
       comm_descr[poss++] = "Close";
     }
       
@@ -344,6 +365,7 @@ void show_player(void)
   if (exist_door)
     {
       comm[poss] = 'j';
+      comm_code[poss] = CMD_JAM;
       comm_descr[poss++] = "Jam";
     }
       
@@ -351,6 +373,7 @@ void show_player(void)
   if (exist_door)
     {
       comm[poss] = 'B';
+      comm_code[poss] = CMD_BASH;
       comm_descr[poss++] = "Bash";
     }
       
@@ -358,6 +381,7 @@ void show_player(void)
   if (count_chests(&fy, &fx, TRUE) || exist_trap || exist_mtrap)
     {
       comm[poss] = 'D';
+      comm_code[poss] = CMD_DISARM;
       comm_descr[poss++] = "Disarm";
     }
 
@@ -365,6 +389,7 @@ void show_player(void)
   if ((SCHANGE) || (check_ability(SP_BEARSKIN))) 
     {
       comm[poss] = ']';
+      comm_code[poss] = CMD_NULL;
       comm_descr[poss++] = "Shapechange";
     }
       
@@ -375,22 +400,19 @@ void show_player(void)
   put_str("Choose a command, or ESC:", 0, 0); 
   
   /* Hack - delete exact graphics rows */
-  if (use_trptile || use_dbltile)
+  if (tile_height > 1)
     { 
       j = poss + 1;
-      tile_hgt = (use_trptile ? 3 : 2);
-      while ((j % tile_hgt) && (j <= SCREEN_ROWS)) 
+      while ((j % tile_height) && (j <= SCREEN_ROWS)) 
 	prt("", ++j, 0);
     }
 
   /* Get a choice */
-  show_cmd_menu(FALSE);
+  (void) show_cmd_menu(FALSE);
 
   /* Load screen */
   screen_load();
 
-  if (p_ptr->command_new) repeat_push(p_ptr->command_new);
-  
   /* Turn off lists */
   p_ptr->command_see = FALSE;
 
@@ -408,6 +430,7 @@ void do_cmd_show_obj(void)
 
   char o_name[120];
   byte out_color;
+  bool accepted = FALSE;
   
   /* Set to display list */
   p_ptr->command_see = TRUE;
@@ -459,6 +482,7 @@ void do_cmd_show_obj(void)
   if ((wield_slot(o_ptr) >= INVEN_WIELD) && (!SCHANGE) && (item < INVEN_WIELD))
     {
       comm[poss] = 'w';
+      comm_code[poss] = CMD_WIELD;
       comm_descr[poss++] = "Wield";
     }
       
@@ -466,6 +490,7 @@ void do_cmd_show_obj(void)
   if ((item >= INVEN_WIELD) && (item < INVEN_TOTAL) && (!SCHANGE))
     {
       comm[poss] = 't';
+      comm_code[poss] = CMD_TAKEOFF;
       comm_descr[poss++] = "Take off";
     }
       
@@ -473,6 +498,7 @@ void do_cmd_show_obj(void)
   if ((item >= 0) && ((item < INVEN_WIELD) || (!SCHANGE)))
     {
       comm[poss] = 'd';
+      comm_code[poss] = CMD_DROP;
       comm_descr[poss++] = "Drop";
     }
       
@@ -481,18 +507,21 @@ void do_cmd_show_obj(void)
   if (item < INVEN_WIELD)
     {
       comm[poss] = 'k';
+      comm_code[poss] = CMD_DESTROY;
       comm_descr[poss++] = "Destroy";
     }
       
       
   /* Identify an object */
   comm[poss] = 'I';
+      comm_code[poss] = CMD_NULL;
   comm_descr[poss++] = "Inspect";
   
   /* Pick up an object */
   if ((item < 0) && inven_carry_okay(o_ptr))
     {
       comm[poss] = 'g';
+      comm_code[poss] = CMD_PICKUP;
       comm_descr[poss++] = "Pick up";
     }
 
@@ -502,22 +531,27 @@ void do_cmd_show_obj(void)
       if (p_ptr->new_spells)
 	{
 	  comm[poss] = 'G';
+      comm_code[poss] = CMD_STUDY_SPELL;
 	  comm_descr[poss++] = "Gain a spell";
 	}
       comm[poss] = 'b';
+      comm_code[poss] = CMD_BROWSE_SPELL;
       comm_descr[poss++] = "Browse";
       comm[poss] = 'm';
+      comm_code[poss] = CMD_CAST;
       comm_descr[poss++] = "Cast a spell";
     }
 
   /* Inscribe an object */
   comm[poss] =  '{';
+      comm_code[poss] = CMD_INSCRIBE;
   comm_descr[poss++] = "Inscribe";
       
   /* Uninscribe an object */
   if (o_ptr->note)
     {
       comm[poss] = '}';
+      comm_code[poss] = CMD_UNINSCRIBE;
       comm_descr[poss++] = "Uninscribe";
     }
 
@@ -525,6 +559,7 @@ void do_cmd_show_obj(void)
   if ((o_ptr->activation) && (item >= INVEN_WIELD))
     {
       comm[poss] = 'A';
+      comm_code[poss] = CMD_ACTIVATE;
       comm_descr[poss++] = "Activate";
     }
       
@@ -532,6 +567,7 @@ void do_cmd_show_obj(void)
   if (o_ptr->tval == TV_FOOD)
     {
       comm[poss] = 'E';
+      comm_code[poss] = CMD_EAT;
       comm_descr[poss++] = "Eat";
     }
       
@@ -548,6 +584,7 @@ void do_cmd_show_obj(void)
  
 	 {
 	   comm[poss] = 'F';
+      comm_code[poss] = CMD_REFILL;
 	   comm_descr[poss++] = "Refuel";
 	 }
     }
@@ -556,6 +593,7 @@ void do_cmd_show_obj(void)
   if (p_ptr->ammo_tval == o_ptr->tval)
     {
       comm[poss] = 'f';
+      comm_code[poss] = CMD_FIRE;
       comm_descr[poss++] = "Fire";
     }
   
@@ -563,6 +601,7 @@ void do_cmd_show_obj(void)
   if ((item < INVEN_WIELD) || (!SCHANGE))
     {
       comm[poss] = 'v';
+      comm_code[poss] = CMD_THROW;
       comm_descr[poss++] = "Throw";
     }
       
@@ -570,6 +609,7 @@ void do_cmd_show_obj(void)
   if (o_ptr->tval == TV_WAND)
     {
       comm[poss] = 'a';
+      comm_code[poss] = CMD_USE_WAND;
       comm_descr[poss++] = "Aim";
     }
       
@@ -577,6 +617,7 @@ void do_cmd_show_obj(void)
   if (o_ptr->tval == TV_ROD)
     {
       comm[poss] = 'z';
+      comm_code[poss] = CMD_USE_ROD;
       comm_descr[poss++] = "Zap";
     }
       
@@ -584,6 +625,7 @@ void do_cmd_show_obj(void)
   if (o_ptr->tval == TV_POTION)
     {
       comm[poss] = 'q';
+      comm_code[poss] = CMD_QUAFF;
       comm_descr[poss++] = "Quaff";
     }
       
@@ -591,6 +633,7 @@ void do_cmd_show_obj(void)
   if (o_ptr->tval == TV_SCROLL)
     {
       comm[poss] = 'r';
+      comm_code[poss] = CMD_READ_SCROLL;
       comm_descr[poss++] = "Read";
     }
       
@@ -598,6 +641,7 @@ void do_cmd_show_obj(void)
   if (o_ptr->tval == TV_STAFF)
     {
       comm[poss] = 'u';
+      comm_code[poss] = CMD_USE_STAFF;
       comm_descr[poss++] = "Use";
     }
 
@@ -614,30 +658,21 @@ void do_cmd_show_obj(void)
   c_put_str(out_color, o_name, 1, 0);
       
   /* Hack - delete exact graphics rows */
-  if (use_trptile || use_dbltile)
+  if (tile_height > 1)
     { 
       j = poss + 2;
-      tile_hgt = (use_trptile ? 3 : 2);
-      while ((j % tile_hgt) && (j <= SCREEN_ROWS)) 
+      while ((j % tile_height) && (j <= SCREEN_ROWS)) 
 	prt("", ++j, 0);
     }
 
   /* Get a choice */
-  show_cmd_menu(TRUE);
+  accepted = show_cmd_menu(TRUE);
 
   /* Load de screen */
   screen_load();
   
-  if (p_ptr->command_new) repeat_push(p_ptr->command_new);
-  
   /* Now set the item if valid */
-  if (p_ptr->command_new)
-    {
-      p_ptr->command_item = item;
-      
-      /* Hack for first in inventory */
-      if (p_ptr->command_item == 0) p_ptr->command_item += 100;
-    }
+  if (accepted) cmd_set_arg_item(cmd_get_top(), 0, item);
 
   /* Turn off lists */
   p_ptr->command_see = FALSE;
@@ -687,7 +722,11 @@ void handle_mousepress(int y, int x)
 	    if (p_ptr->confused)
 	      {
 		p_ptr->command_dir = mouse_dir(p_ptr->command_cmd_ex, FALSE);
-		if (p_ptr->command_dir)	do_cmd_walk_or_jump(OPT(always_pickup));
+		if (p_ptr->command_dir)
+		  {	
+		    cmd_insert(CMD_WALK);
+		    cmd_set_arg_direction(cmd_get_top(), 0, p_ptr->command_dir);
+		  }
 	      }
 	    else
 	      {

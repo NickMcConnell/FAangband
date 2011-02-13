@@ -3424,3 +3424,194 @@ void run_step(int dir)
   move_player(p_ptr->run_cur_dir, OPT(always_pickup));
 }
 
+/**
+ * Path finding algorithm variables 
+ */
+static int terrain[MAX_PF_RADIUS][MAX_PF_RADIUS];
+static int ox, oy, ex, ey;
+
+bool is_valid_pf(int y, int x)
+{
+  feature_type *f_ptr = NULL;
+  int feat = cave_feat[y][x];
+  
+  /* Hack -- assume unvisited is permitted */
+  if (!(cave_info[y][x] & (CAVE_MARK))) return (TRUE);
+  
+  /* Get mimiced feat */
+  f_ptr = &f_info[f_info[feat].mimic];
+  
+  /* Optionally alter known traps/doors on movement */
+  if ((OPT(easy_open) && (f_ptr->flags & TF_DOOR_CLOSED)) ||
+      (OPT(easy_disarm) && (f_ptr->flags & TF_TRAP)))
+    {
+      return (TRUE);
+    }
+  
+  /* Require moveable space */
+  if (f_ptr->flags & TF_WALL) return (FALSE);
+
+  /* Don't move over lava, web or void */
+  if ((feat == FEAT_LAVA) || (feat == FEAT_WEB) || (feat == FEAT_VOID)) 
+    return (FALSE);
+
+  /* Otherwise good */
+  return (TRUE);
+}
+
+static void fill_terrain_info(void)
+{
+  int i,j;
+  
+  ox = MAX(p_ptr->px - MAX_PF_RADIUS / 2, 0);
+  oy = MAX(p_ptr->py - MAX_PF_RADIUS / 2, 0);
+
+  ex = MIN(p_ptr->px + MAX_PF_RADIUS / 2 - 1, DUNGEON_WID);
+  ey = MIN(p_ptr->py + MAX_PF_RADIUS / 2 - 1, DUNGEON_HGT);
+        
+  for (i = 0; i < MAX_PF_RADIUS * MAX_PF_RADIUS; i++)
+    terrain[0][i] = -1;
+
+  for (j = oy; j < ey; j++)
+    for (i = ox; i < ex; i++)
+      if (is_valid_pf(j, i))
+        terrain[j - oy][i - ox] = MAX_PF_LENGTH;
+  
+  terrain[p_ptr->py - oy][p_ptr->px - ox] = 1;
+}
+
+#define MARK_DISTANCE(c,d) if ((c <= MAX_PF_LENGTH) && (c > d)) \
+                              { c = d; try_again = (TRUE); }
+
+bool findpath(int y, int x)
+{
+  int i, j, k, dir, starty = 0, startx = 0, startdir, start_index;
+  bool try_again;
+  int cur_distance;
+  int findir[] = {1, 4, 7, 8, 9, 6, 3, 2};
+
+  fill_terrain_info();
+
+  terrain[p_ptr->py - oy][p_ptr->px - ox] = 1;
+
+  if ((x >= ox) && (x < ex) && (y >= oy) && (y < ey))
+    {
+      if ((cave_m_idx[y][x] > 0) && (m_list[cave_m_idx[y][x]].ml))
+        {
+          terrain[y - oy][x - ox] = MAX_PF_LENGTH;
+        }
+      /* else if (terrain[y - oy][x - ox] != MAX_PF_LENGTH)
+        {
+        bell("Target blocked");
+        return (FALSE);
+        }*/
+      terrain[y - oy][x - ox] = MAX_PF_LENGTH;
+    }
+  else
+    {
+      bell("Target out of range.");
+      return (FALSE);
+    }
+  
+  if (terrain[y - oy][x - ox] == -1)
+    {
+      bell("Target space forbidden");
+      return (FALSE);
+    }
+  
+  
+  /* 
+   * And now starts the very naive and very 
+   * inefficient pathfinding algorithm
+   */
+  do
+    {
+      try_again = (FALSE);
+      for (j = oy + 1; j < ey - 1; j++)
+        for (i = ox + 1; i < ex - 1; i++)
+          {
+            cur_distance = terrain[j - oy][i - ox] + 1;
+            if ((cur_distance > 0) && (cur_distance < MAX_PF_LENGTH))
+              {
+                for (dir = 1; dir < 10; dir++)
+                  {
+                    if (dir == 5) continue;
+                    MARK_DISTANCE(terrain[j - oy + ddy[dir]][i - ox +ddx[dir]],
+                                  cur_distance);
+                  } 
+              } 
+          } 
+      if (terrain[y - oy][x - ox] < MAX_PF_LENGTH)
+        try_again = (FALSE);
+    } while (try_again);
+  
+  /* Failure */
+  if (terrain[y - oy][x - ox] == MAX_PF_LENGTH)
+    {
+      bell("Target space unreachable.");
+      return (FALSE);
+    }
+
+  /* Success */
+  i = x;
+  j = y;
+  
+  pf_result_index = 0;
+  
+  while ((i != p_ptr->px) || (j != p_ptr->py))
+    {
+      int xdiff = i - p_ptr->px, ydiff = j - p_ptr->py;
+      
+      cur_distance = terrain[j - oy][i - ox] - 1;
+
+      /* Starting direction */
+      if (xdiff < 0) startx = 1;
+      else if (xdiff > 0) startx = -1;
+      else startx = 0;
+
+      if (ydiff < 0) starty = 1;
+      else if (ydiff > 0) starty = -1;
+      else starty = 0;
+
+      for (dir = 1; dir < 10; dir++)
+        if ((ddx[dir] == startx) && (ddy[dir] == starty)) break;
+
+      /* Should never happend */
+      if ((dir % 5) == 0)
+        {
+          bell("Wtf ?");
+          return (FALSE);
+        }
+      
+      for (start_index = 0; findir[start_index % 8] != dir; start_index++) 
+        ;
+
+      for (k = 0; k < 5; k++)
+        {
+          dir = findir[(start_index + k) % 8];
+          if (terrain[j - oy + ddy[dir]][i - ox + ddx[dir]] 
+              == cur_distance)
+            break; 
+          dir = findir[(8 + start_index - k) % 8];
+          if (terrain[j - oy + ddy[dir]][i - ox + ddx[dir]] 
+              == cur_distance)
+            break; 
+        }
+
+      /* Should never happend */
+      if (k == 5)
+        {
+          bell("Heyyy !");
+          return (FALSE);
+        }
+      
+      pf_result[pf_result_index++] = '0' + (char)(10 - dir);
+      i += ddx[dir];
+      j += ddy[dir];
+      starty = 0;
+      startx = 0;
+      startdir = 0;
+    }
+  pf_result_index--;
+  return (TRUE);
+}

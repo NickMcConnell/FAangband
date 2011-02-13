@@ -47,6 +47,26 @@
 #include "ui-menu.h"
 
 
+/*
+ * Reset the player's squelch choices for a new game.
+ */
+void squelch_birth_init(void)
+{
+	int i;
+
+	/* Reset squelch bits */
+	for (i = 0; i < z_info->k_max; i++)
+		k_info[i].squelch = FALSE;
+
+ /* Reset ego squelch */
+  for (i = 0; i < z_info->e_max; i++)
+    e_info[i].squelch = FALSE;
+  
+	/* Clear the squelch bytes */
+	for (i = 0; i < TYPE_MAX; i++)
+		squelch_level[i] = 0;
+}
+
 /*** Autoinscription stuff ***/
 
 /**

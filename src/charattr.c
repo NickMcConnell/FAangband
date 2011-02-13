@@ -234,7 +234,7 @@ int handle_item(void)
   if (item == 100) item = 0;
 
   /* Handle repeat */  
-  repeat_push(item);
+  //repeat_push(item);
 
   /* Reset */
   p_ptr->command_item = 0;

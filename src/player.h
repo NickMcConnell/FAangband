@@ -4,6 +4,7 @@
 #define PLAYER_PLAYER_H
 
 /* spell.c */
+s16b modify_stat_value(int value, int amount);
 int spell_collect_from_book(const object_type *o_ptr, int spells[PY_MAX_SPELLS]);
 int spell_book_count_spells(const object_type *o_ptr, bool (*tester)(int spell));
 bool spell_okay_list(bool (*spell_test)(int spell), const int spells[], int n_spells);

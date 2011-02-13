@@ -418,8 +418,11 @@ extern void scatter(int *yp, int *xp, int y, int x, int d, int m);
 extern void health_track(int m_idx);
 extern void monster_race_track(int r_idx);
 extern void object_kind_track(int k_idx);
+extern void track_object(int item);
+extern void track_object_kind(int k_idx);
 extern void disturb(int stop_search, int unused_flag);
 extern bool is_quest(int stage);
+extern bool dtrap_edge(int y, int x);
 
 /* charattr.c */
 extern void x_fprintf(ang_file *f, int encoding, cptr fmt, ...);
@@ -451,6 +454,7 @@ bool is_closed(int feat);
 bool is_trap(int feat);
 int count_feats(int *y, int *x, bool (*test)(int feat), bool under);
 int count_chests(int *y, int *x, bool trapped);
+int coords_to_dir(int y, int x);
 
 /* dungeon.c */
 extern void play_game(void);
@@ -869,7 +873,7 @@ extern void bell(cptr reason);
 extern void sound(int val);
 extern errr quarks_init(void);
 extern errr quarks_free(void);
-extern bool check_for_inscrip(const object_type *o_ptr, const char *inscrip);
+extern unsigned check_for_inscrip(const object_type *o_ptr, const char *inscrip);
 extern s16b message_num(void);
 extern void message_add(cptr str, u16b type);
 extern void messages_easy(bool command);
@@ -935,7 +939,6 @@ extern char xchar_trans(byte c);
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);
-extern s16b modify_stat_value(int value, int amount);
 extern void update_statusline(void);
 extern void apply_resist(int *player_resist, int item_resist);
 extern void calc_bonuses(bool inspect);

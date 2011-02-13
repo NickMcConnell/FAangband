@@ -22,6 +22,8 @@
  */
 
 #include "angband.h"
+#include "game-event.h"
+#include "game-cmd.h"
 #include "squelch.h"
 
 
@@ -1934,222 +1936,19 @@ void move_cursor_relative(int y, int x)
   /* Location in window */
   vx = kx + COL_MAP;
   
-  if (use_trptile)
-    {
-      vx += (use_bigtile ? 5 : 2) * kx;
-      vy += 2 * ky;
-    }
-  else if (use_dbltile)
-    {
-      vx += (use_bigtile ? 3 : 1) * kx;
-      vy += ky;
-    }
-  else if (use_bigtile) vx += kx;
-  
+	if (tile_width > 1)
+	{
+	        vx += (tile_width - 1) * kx;
+	}
+	if (tile_height > 1)
+	{
+	        vy += (tile_height - 1) * ky;
+	}
+
   /* Go there */
   Term_gotoxy(vx, vy);
 }
 
-
-void big_queue_char(int x, int y, byte a, char c, byte a1, char c1)
-{
-  term *t = angband_term[0];
-
-  /* Avoid warning */
-  (void)c;
-
-  /* Paranoia */
-  if (use_bigtile || use_dbltile || use_trptile)
-    {
-      /* Mega-Hack : Queue dummy char */
-      if (a & 0x80)
-	Term_queue_char(t, x + 1, y, 255, -1, 0, 0);
-      else
-	Term_queue_char(t, x + 1, y, TERM_WHITE, ' ', a1, c1);
-      
-      /* Mega-Hack : Queue more dummy chars */
-      if (use_dbltile || use_trptile)
-	{
-	  if (a & 0x80)
-	    {
-	      if (use_bigtile || use_trptile) 
-		Term_queue_char(t, x + 2, y, 255, -1, 0, 0);
-	      if (use_bigtile) 
-		Term_queue_char(t, x + 3, y, 255, -1, 0, 0);
-	      if (use_bigtile && use_trptile)
-		{
-		  Term_queue_char(t, x + 4, y, 255, -1, 0, 0);
-		  Term_queue_char(t, x + 5, y, 255, -1, 0, 0);
-		}
-	      
-	      Term_queue_char(t, x , y + 1, 255, -1, 0, 0);
-	      Term_queue_char(t, x + 1, y + 1, 255, -1, 0, 0);
-	      
-	      if (use_bigtile || use_trptile) 
-		Term_queue_char(t, x + 2, y + 1, 255, -1, 0, 0);
-	      if (use_bigtile) 
-		Term_queue_char(t, x + 3, y + 1, 255, -1, 0, 0);
-	      if (use_bigtile && use_trptile)
-		{
-		  Term_queue_char(t, x + 4, y + 1, 255, -1, 0, 0);
-		  Term_queue_char(t, x + 5, y + 1, 255, -1, 0, 0);
-		}
-	      
-	      if (use_trptile)
-		{
-		  Term_queue_char(t, x , y + 2, 255, -1, 0, 0);
-		  Term_queue_char(t, x + 1, y + 2, 255, -1, 0, 0);
-		  Term_queue_char(t, x + 2, y + 2, 255, -1, 0, 0);
-		  
-		  if (use_bigtile)
-		    {
-		      Term_queue_char(t, x + 3, y + 2, 255, -1, 0, 0);
-		      Term_queue_char(t, x + 4, y + 2, 255, -1, 0, 0);
-		      Term_queue_char(t, x + 5, y + 2, 255, -1, 0, 0);
-		    }
-		}
-	    }
-	  else
-	    {
-	      if (use_bigtile || use_trptile) 
-		Term_queue_char(t, x + 2, y, TERM_WHITE, ' ', a1, c1);
-	      if (use_bigtile) 
-		Term_queue_char(t, x + 3, y, TERM_WHITE, ' ', a1, c1);
-	      if (use_bigtile && use_trptile)
-		{
-		  Term_queue_char(t, x + 4, y, TERM_WHITE, ' ', a1, c1);
-		  Term_queue_char(t, x + 5, y, TERM_WHITE, ' ', a1, c1);
-		}
-	      
-	      Term_queue_char(t, x , y + 1, TERM_WHITE, ' ', a1, c1);
-	      Term_queue_char(t, x + 1, y + 1, TERM_WHITE, ' ', a1, c1);
-	      
-	      if (use_bigtile || use_trptile) 
-		Term_queue_char(t, x + 2, y + 1, TERM_WHITE, ' ', a1, c1);
-	      if (use_bigtile) 
-		Term_queue_char(t, x + 3, y + 1, TERM_WHITE, ' ', a1, c1);
-	      if (use_bigtile && use_trptile)
-		{
-		  Term_queue_char(t, x + 4, y + 1, TERM_WHITE, ' ', a1, c1);
-		  Term_queue_char(t, x + 5, y + 1, TERM_WHITE, ' ', a1, c1);
-		}
-	      
-	      if (use_trptile)
-		{
-		  Term_queue_char(t, x , y + 2, TERM_WHITE, ' ', a1, c1);
-		  Term_queue_char(t, x + 1, y + 2, TERM_WHITE, ' ', a1, c1);
-		  Term_queue_char(t, x + 2, y + 2, TERM_WHITE, ' ', a1, c1);
-		  
-		  if (use_bigtile)
-		    {
-		      Term_queue_char(t, x + 3, y + 2, TERM_WHITE, ' ', a1, c1);
-		      Term_queue_char(t, x + 4, y + 2, TERM_WHITE, ' ', a1, c1);
-		      Term_queue_char(t, x + 5, y + 2, TERM_WHITE, ' ', a1, c1);
-		    }
-		}
-	    }
-	}
-    }
-}
-
-void big_putch(int x, int y, byte a, char c)
-{
-  /* Avoid warning */
-  (void)c;
-  
-  /* Paranoia */
-  if (use_bigtile || use_dbltile || use_trptile)
-    {
-      /* Mega-Hack : Queue dummy char */
-      if (a & 0x80)
-	Term_putch(x + 1, y, 255, -1);
-      else
-	Term_putch(x + 1, y, TERM_WHITE, ' ');
-      
-      /* Mega-Hack : Queue more dummy chars */
-      if (use_dbltile || use_trptile)
-	{
-	  if (a & 0x80)
-	    {
-	      if (use_bigtile || use_trptile) 
-		Term_putch(x + 2, y, 255, -1);
-	      if (use_bigtile) 
-		Term_putch(x + 3, y, 255, -1);
-	      if (use_bigtile && use_trptile)
-		{
-		  Term_putch(x + 4, y, 255, -1);
-		  Term_putch(x + 5, y, 255, -1);
-		}
-
-	      Term_putch(x , y + 1, 255, -1);
-	      Term_putch(x + 1, y + 1, 255, -1);
-	      
-	      if (use_bigtile || use_trptile) 
-		Term_putch(x + 2, y + 1, 255, -1);
-	      if (use_bigtile) 
-		Term_putch(x + 3, y + 1, 255, -1);
-	      if (use_bigtile && use_trptile)
-		{
-		  Term_putch(x + 4, y + 1, 255, -1);
-		  Term_putch(x + 5, y + 1, 255, -1);
-		}
-	      
-	      if (use_trptile)
-		{
-		  Term_putch(x , y + 2, 255, -1);
-		  Term_putch(x + 1, y + 2, 255, -1);
-		  Term_putch(x + 2, y + 2, 255, -1);
-		  
-		  if (use_bigtile)
-		    {
-		      Term_putch(x + 3, y + 2, 255, -1);
-		      Term_putch(x + 4, y + 2, 255, -1);
-		      Term_putch(x + 5, y + 2, 255, -1);
-		    }
-		}
-	    }
-	  else
-	    {
-	      if (use_bigtile || use_trptile) 
-		Term_putch(x + 2, y, TERM_WHITE, ' ');
-	      if (use_bigtile) 
-		Term_putch(x + 3, y, TERM_WHITE, ' ');
-	      if (use_bigtile && use_trptile)
-		{
-		  Term_putch(x + 4, y, TERM_WHITE, ' ');
-		  Term_putch(x + 5, y, TERM_WHITE, ' ');
-		}
-	      
-	      Term_putch(x , y + 1, TERM_WHITE, ' ');
-	      Term_putch(x + 1, y + 1, TERM_WHITE, ' ');
-	      
-	      if (use_bigtile || use_trptile) 
-		Term_putch(x + 2, y + 1, TERM_WHITE, ' ');
-	      if (use_bigtile) 
-		Term_putch(x + 3, y + 1, TERM_WHITE, ' ');
-	      if (use_bigtile && use_trptile)
-		{
-		  Term_putch(x + 4, y + 1, TERM_WHITE, ' ');
-		  Term_putch(x + 5, y + 1, TERM_WHITE, ' ');
-		}
-	      
-	      if (use_trptile)
-		{
-		  Term_putch(x , y + 2, TERM_WHITE, ' ');
-		  Term_putch(x + 1, y + 2, TERM_WHITE, ' ');
-		  Term_putch(x + 2, y + 2, TERM_WHITE, ' ');
-		  
-		  if (use_bigtile)
-		    {
-		      Term_putch(x + 3, y + 2, TERM_WHITE, ' ');
-		      Term_putch(x + 4, y + 2, TERM_WHITE, ' ');
-		      Term_putch(x + 5, y + 2, TERM_WHITE, ' ');
-		    }
-		}
-	    }
-	}
-    }
-}
 
 
 /**
@@ -2180,31 +1979,17 @@ void print_rel(char c, byte a, int y, int x)
   /* Verify location */
   if (kx >= (unsigned)(SCREEN_WID)) return;
   
-  /* Location in window */
-  vy = ky + ROW_MAP;
+	/* Get right position */
+	vx = COL_MAP + (tile_width * kx);
+	vy = ROW_MAP + (tile_height * ky);
 
-  /* Location in window */
-  vx = kx + COL_MAP;
-
-  if (use_trptile)
-    {
-      vx += (use_bigtile ? 5 : 2) * kx;
-      vy += 2 * ky;
-    }
-  else if (use_dbltile)
-    {
-      vx += (use_bigtile ? 3 : 1) * kx;
-      vy += ky;
-    }
-  else if (use_bigtile) vx += kx;
-  
   /* Hack -- Queue it */
   Term_queue_char(t, vx, vy, a, c, 0, 0);
   
-  if (use_bigtile || use_dbltile || use_trptile)
+  if ((tile_width > 1) || (tile_height > 1))
     {
       /* Mega-Hack : Queue dummy char */
-      big_queue_char(vx, vy, a, c, 0, 0);
+      Term_big_queue_char(Term, vx, vy, a, c, 0, 0);
     }
   
   return;
@@ -2298,61 +2083,7 @@ void note_spot(int y, int x)
  */
 void lite_spot(int y, int x)
 {
-  /* Redraw if on screen */
-  if (panel_contains(y, x) && in_bounds(y, x))
-    {
-      term *t = angband_term[0];
-
-      byte a;
-      char c;
-      
-      unsigned ky, kx;
-      unsigned vy, vx;
-
-      byte ta;
-      char tc;
-      
-      /* Location relative to panel */
-      ky = (unsigned)(y - panel_row_min);
-      
-      /* Verify location */
-      if (ky >= (unsigned)(SCREEN_HGT)) return;
-
-      /* Location relative to panel */
-      kx = (unsigned)(x - panel_col_min);
-
-      /* Verify location */
-      if (kx >= (unsigned)(SCREEN_WID)) return;
-
-      /* Location in window */
-      vy = ky + ROW_MAP;
-
-      /* Location in window */
-      vx = kx + COL_MAP;
-
-      if (use_trptile)
-	{
-	  vx += (use_bigtile ? 5 : 2) * kx;
-	  vy += 2 * ky;
-	}
-      else if (use_dbltile)
-	{
-	  vx += (use_bigtile ? 3 : 1) * kx;
-	  vy += ky;
-	}
-      else if (use_bigtile) vx += kx;
-      
-      /* Examine the grid */
-      map_info(y, x, &a, &c, &ta, &tc);
-      
-      /* Hack -- Queue it */
-      Term_queue_char(t, vx, vy, a, c, ta, tc);
-
-      if (use_bigtile || use_dbltile || use_trptile)
-	{
-	  big_queue_char(vx, vy, a, c, TERM_WHITE, ' ');
-	}
-    }
+	event_signal_point(EVENT_MAP, x, y);
 }
 
 
@@ -2388,24 +2119,19 @@ void prt_map(void)
 	  /* Hack -- Queue it */
 	  Term_queue_char(t, vx, vy, a, c, ta, tc);
 	  
-	  if (use_bigtile || use_dbltile || use_trptile)
+	  if ((tile_width > 1) || (tile_height > 1))
 	    {
-	      big_queue_char(vx, vy, a, c, TERM_WHITE, ' ');
+	      Term_big_queue_char(Term, vx, vy, a, c, TERM_WHITE, ' ');
 	      
-	      if (use_trptile)
-		{
-		  vx += (use_bigtile ? 5 : 2);
-		}
-	      else
-		vx+= ((use_dbltile && use_bigtile) ? 3 : 1);
+				if (tile_width > 1)
+				{
+				        vx += tile_width - 1;
+				}
 	    }
 	}
       
-      if (use_trptile)
-	vy++;
-      
-      if (use_dbltile || use_trptile)
-	vy++;
+		if (tile_height > 1)
+		        vy += tile_height - 1;
     }
 }
 
@@ -2624,9 +2350,8 @@ void display_map(int *cy, int *cx, bool small)
 
   bool old_view_special_lite;
   bool old_view_granite_lite;
-  bool old_bigtile = use_bigtile;
-  bool old_dbltile = use_dbltile;
-  bool old_trptile = use_trptile;
+  int old_tile_height = tile_height;
+  int old_tile_width = tile_width;
 
   monster_race *r_ptr = &r_info[0];
 
@@ -2657,12 +2382,11 @@ void display_map(int *cy, int *cx, bool small)
   OPT(view_special_lite) = FALSE;
   OPT(view_granite_lite) = FALSE;
 
-  /* Disable tiles for subwindow */
+  /* Disable big tiles for subwindow */
   if (small) 
     {
-      use_bigtile = FALSE;
-      use_dbltile = FALSE;
-      use_trptile = FALSE;
+      tile_width = 1;
+      tile_height = 1;
     }
 
   /* Nothing here */
@@ -2715,18 +2439,14 @@ void display_map(int *cy, int *cx, bool small)
 	  row = ((y - top_row) * map_hgt / dungeon_hgt);
 	  col = ((x - left_col) * map_wid / dungeon_wid);
 	  
-	  if (use_trptile)
-	    {
-	      col = col - (col % (use_bigtile ? 6 : 3));
-	      row = row - (row % 3);
-	    }
-	  else if (use_dbltile)
-	    {
-	      col = col & ~(use_bigtile ? 3 : 1);
-	      row = row & ~1;
-	    }
-	  else if (use_bigtile)
-	    col = col & ~1;
+			if (tile_width > 1)
+			{
+			        col = col - (col % tile_width);
+			}
+			if (tile_height > 1)
+			{
+			        row = row - (row % tile_height);
+			}
 	  
 	  /* Get the attr/char at that map location */
 	  if (small) map_info_default(y, x, &ta, &tc);
@@ -2741,9 +2461,9 @@ void display_map(int *cy, int *cx, bool small)
 	      /* Add the character */
 	      Term_putch(col + 1, row + 1, ta, tc);
 	      
-	      if (use_bigtile || use_dbltile || use_trptile)
+	      if ((tile_width > 1) || (tile_height > 1))
 		{
-		  big_putch(col + 1, row + 1, ta, tc);
+		  Term_big_putch(col + 1, row + 1, ta, tc);
 		}
 	      
 	      /* Save priority */
@@ -2757,18 +2477,14 @@ void display_map(int *cy, int *cx, bool small)
   row = ((py - top_row) * map_hgt / dungeon_hgt);
   col = ((px - left_col) * map_wid / dungeon_wid);
   
-  if (use_trptile)
-    {
-      col = col - (col % (use_bigtile ? 6 : 3));
-      row = row - (row % 3);
-    }
-  else if (use_dbltile)
-    {
-      col = col & ~(use_bigtile ? 3 : 1);
-      row = row & ~1;
-    }
-  else if (use_bigtile)
-    col = col & ~1;
+	if (tile_width > 1)
+	{
+	        col = col - (col % tile_width);
+	}
+	if (tile_height > 1)
+	{
+		row = row - (row % tile_height);
+	}
   
   /*** Make sure the player is visible ***/
   
@@ -2781,10 +2497,10 @@ void display_map(int *cy, int *cx, bool small)
   /* Draw the player */
   Term_putch(col + 1, row + 1, ta, tc);
   
-  if (use_bigtile || use_dbltile || use_trptile)
-    {
-      big_putch(col + 1, row + 1, ta, tc);
-    }
+	if ((tile_width > 1) || (tile_height > 1))
+	{
+	        Term_big_putch(col + 1, row + 1, ta, tc);
+	}
   
   /* Return player location */
   if (cy != NULL) (*cy) = row + 1;
@@ -2794,9 +2510,8 @@ void display_map(int *cy, int *cx, bool small)
   /* Restore tiles for subwindow */
   if (small) 
     {
-      use_bigtile = old_bigtile;
-      use_dbltile = old_dbltile;
-      use_trptile = old_trptile;
+      tile_width = old_tile_width;
+      tile_height = old_tile_height;
     }
 
   /* Restore lighting effects */
@@ -3003,7 +2718,7 @@ void do_cmd_view_map(void)
   put_str("Hit any key to continue", hgt - 1, (wid - COL_MAP) / 2);
   
   /* Hilite the player */
-  move_cursor(cy, cx);
+  Term_gotoxy(cx, cy);
   
   /* Get any key */
   (void)inkey_ex();
@@ -5586,13 +5301,18 @@ void monster_race_track(int r_idx)
 /**
  * Hack -- track the given object kind
  */
-void object_kind_track(int k_idx)
+void track_object(int item)
 {
-  /* Save this object ID */
-  p_ptr->object_kind_idx = k_idx;
-  
-  /* Window stuff */
-  p_ptr->window |= (PW_OBJECT);
+	p_ptr->object_idx = item;
+	p_ptr->object_kind_idx = 0;
+	p_ptr->redraw |= (PW_OBJECT);
+}
+
+void track_object_kind(int k_idx)
+{
+	p_ptr->object_idx = 0;
+	p_ptr->object_kind_idx = k_idx;
+	p_ptr->redraw |= (PW_OBJECT);
 }
 
 
