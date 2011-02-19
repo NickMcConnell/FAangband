@@ -52,7 +52,7 @@ void delete_monster_idx(int i)
   r_ptr->cur_num--;
   
   /* Hack -- count the number of "reproducers" */
-  if (r_ptr->flags2 & (RF2_MULTIPLY)) num_repro--;
+  if (rf_has(r_ptr->flags, RF_MULTIPLY)) num_repro--;
   
   /* Hack -- remove target monster */
   if (p_ptr->target_who == i) target_set_monster(0);
@@ -68,7 +68,7 @@ void delete_monster_idx(int i)
    * the monster memory, ensure that it never appears again, clear 
    * its bones file selector and allow the next ghost to speak.
    */
-  if (r_ptr->flags2 & (RF2_PLAYER_GHOST))
+  if (rf_has(r_ptr->flags, RF_PLAYER_GHOST))
     {
       l_ptr->sights = 0;
       l_ptr->deaths = 0;
@@ -236,10 +236,10 @@ void compact_monsters(int size)
 	  chance = 90;
 	  
 	  /* Only compact "Quest" Monsters in emergencies */
-	  if ((r_ptr->flags1 & (RF1_QUESTOR)) && (cnt < 1000)) chance = 100;
+	  if ((rf_has(r_ptr->flags, RF_QUESTOR)) && (cnt < 1000)) chance = 100;
 	  
 	  /* Try not to compact Unique Monsters */
-	  if (r_ptr->flags1 & (RF1_UNIQUE)) chance = 99;
+	  if (rf_has(r_ptr->flags, RF_UNIQUE)) chance = 99;
 	  
 	  /* All monsters get a saving throw */
 	  if (randint0(100) < chance) continue;
@@ -294,7 +294,7 @@ void wipe_m_list(void)
       if (!m_ptr->r_idx) continue;
       
       /* Total Hack -- Clear player ghost information. */
-      if (r_ptr->flags2 & (RF2_PLAYER_GHOST))
+      if (rf_has(r_ptr->flags, RF_PLAYER_GHOST))
 	{
 	  l_ptr->sights = 0;
 	  l_ptr->deaths = 0;
@@ -525,42 +525,42 @@ s16b get_mon_num(int level)
 	  r_ptr = &r_info[r_idx];
 	  
 	  /* Hack -- some monsters are unique */
-	  if ((r_ptr->flags1 & (RF1_UNIQUE)) && 
+	  if ((rf_has(r_ptr->flags, RF_UNIQUE)) && 
 	      (r_ptr->cur_num >= r_ptr->max_num)) continue;
 	  
 	  /* Forced-depth monsters only appear at their level. */
-	  if ((r_ptr->flags1 & (RF1_FORCE_DEPTH)) && 
+	  if ((rf_has(r_ptr->flags, RF_FORCE_DEPTH)) && 
 	      (r_ptr->level != p_ptr->depth)) continue;
 	  
 	  /* Hack - handle dungeon specific -NRM- */
-	  if ((r_ptr->flags2 & (RF2_RUDH)) &&
+	  if ((rf_has(r_ptr->flags, RF_RUDH)) &&
 	      (stage_map[p_ptr->stage][LOCALITY] != AMON_RUDH))
 	    continue;
 	  
-	  if ((r_ptr->flags2 & (RF2_NARGOTHROND)) && 
+	  if ((rf_has(r_ptr->flags, RF_NARGOTHROND)) && 
 	      (stage_map[p_ptr->stage][LOCALITY] != NARGOTHROND))
 	    continue;
 	  
-	  if ((r_ptr->flags2 & (RF2_DUNGORTHEB)) &&
+	  if ((rf_has(r_ptr->flags, RF_DUNGORTHEB)) &&
 	      (stage_map[p_ptr->stage][LOCALITY] != NAN_DUNGORTHEB))
 	    continue;
 	  
-	  if ((r_ptr->flags2 & (RF2_GAURHOTH)) &&
+	  if ((rf_has(r_ptr->flags, RF_GAURHOTH)) &&
 	      (stage_map[p_ptr->stage][LOCALITY] != TOL_IN_GAURHOTH))
 	    continue;
 	  
-	  if ((r_ptr->flags2 & (RF2_ANGBAND)) &&
+	  if ((rf_has(r_ptr->flags, RF_ANGBAND)) &&
 	      (stage_map[p_ptr->stage][LOCALITY] != ANGBAND))
 	    continue;
 	  
 	  /* Hack - dungeon-only monsters */
-	  if ((r_ptr->flags3 & (RF3_DUNGEON)) &&
+	  if ((rf_has(r_ptr->flags, RF_DUNGEON)) &&
 	      (stage_map[p_ptr->stage][STAGE_TYPE] != CAVE))
 	    continue;
       
 	  /* Hack - choose flying monsters for mountaintop */
 	  if ((stage_map[p_ptr->stage][LOCALITY] == MOUNTAIN_TOP) && 
-	      !(r_ptr->flags2 & (RF2_FLYING)))
+	      !(rf_has(r_ptr->flags, RF_FLYING)))
 	    continue;
       
 	  /* Accept */
@@ -582,7 +582,7 @@ s16b get_mon_num(int level)
 	    {
 	      if ((r_ptr->d_char == 'C') || (r_ptr->d_char == 'Z')) 
 		table[i].prob3 *= 4;
-	      else if (r_ptr->flags3 & RF3_UNDEAD)
+	      else if (rf_has(r_ptr->flags, RF_UNDEAD))
 		table[i].prob3 *=2;
 	    }
 
@@ -593,7 +593,7 @@ s16b get_mon_num(int level)
 	      if ((r_ptr->d_char == 'R') || (r_ptr->d_char == 'J') ||
 		  (r_ptr->d_char == 'c')) 
 		table[i].prob3 *= 2;
-	      else if (r_ptr->flags3 & RF3_ANIMAL)
+	      else if (rf_has(r_ptr->flags, RF_ANIMAL))
 		table[i].prob3 /=2;
 	    }
 	  
@@ -602,7 +602,7 @@ s16b get_mon_num(int level)
 	    {
 	      if (r_ptr->d_char == 'R') 
 		table[i].prob3 /= 2;
-	      else if ((r_ptr->flags3 & RF3_ANIMAL) && (r_ptr->d_char != 'Z'))
+	      else if ((rf_has(r_ptr->flags, RF_ANIMAL)) && (r_ptr->d_char != 'Z'))
 		table[i].prob3 *=2;
 	    }
 	  
@@ -919,8 +919,8 @@ void monster_desc(char *desc, monster_type *m_ptr, int mode)
       strcpy(desc, "                         ");
       
       /* Extract the gender (if applicable) */
-      if (r_ptr->flags1 & (RF1_FEMALE)) kind = 0x20;
-      else if (r_ptr->flags1 & (RF1_MALE)) kind = 0x10;
+      if (rf_has(r_ptr->flags, RF_FEMALE)) kind = 0x20;
+      else if (rf_has(r_ptr->flags, RF_MALE)) kind = 0x10;
       
       /* Ignore the gender (if desired) */
       if (!m_ptr || !pron) kind = 0x00;
@@ -972,8 +972,8 @@ void monster_desc(char *desc, monster_type *m_ptr, int mode)
   else if ((mode & 0x02) && (mode & 0x01))
     {
       /* The monster is visible, so use its gender */
-      if (r_ptr->flags1 & (RF1_FEMALE)) strcpy(desc, "herself");
-      else if (r_ptr->flags1 & (RF1_MALE)) strcpy(desc, "himself");
+      if (rf_has(r_ptr->flags, RF_FEMALE)) strcpy(desc, "herself");
+      else if (rf_has(r_ptr->flags, RF_MALE)) strcpy(desc, "himself");
       else strcpy(desc, "itself");
     }
   
@@ -988,7 +988,7 @@ void monster_desc(char *desc, monster_type *m_ptr, int mode)
 	race_name = p_name + p_info[m_ptr->p_race].name;
 	
       /* It could be a player ghost. */
-      if (r_ptr->flags2 & (RF2_PLAYER_GHOST))
+      if (rf_has(r_ptr->flags, RF_PLAYER_GHOST))
 	{
 	  /* Get the ghost name. */
 	  strcpy(desc, ghost_name);
@@ -1002,7 +1002,7 @@ void monster_desc(char *desc, monster_type *m_ptr, int mode)
 	}
       
       /* It could be a Unique */
-      else if (r_ptr->flags1 & (RF1_UNIQUE))
+      else if (rf_has(r_ptr->flags, RF_UNIQUE))
 	{
 	  /* Start with the name (thus nominative and objective) */
 	  strcpy(desc, name);
@@ -1145,9 +1145,9 @@ void lore_treasure(int m_idx, int num_item, int num_gold)
   if (num_gold > l_ptr->drop_gold) l_ptr->drop_gold = num_gold;
   
   /* Hack -- memorize the good/great/chest flags */
-  if (r_ptr->flags1 & (RF1_DROP_GOOD)) l_ptr->flags1 |= (RF1_DROP_GOOD);
-  if (r_ptr->flags1 & (RF1_DROP_GREAT)) l_ptr->flags1 |= (RF1_DROP_GREAT);
-  if (r_ptr->flags1 & (RF1_DROP_CHEST)) l_ptr->flags1 |= (RF1_DROP_CHEST);
+  if (rf_has(r_ptr->flags, RF_DROP_GOOD)) rf_on(l_ptr->flags, RF_DROP_GOOD);
+  if (rf_has(r_ptr->flags, RF_DROP_GREAT)) rf_on(l_ptr->flags, RF_DROP_GREAT);
+  if (rf_has(r_ptr->flags, RF_DROP_CHEST)) rf_on(l_ptr->flags, RF_DROP_CHEST);
   
   /* Update monster recall window */
   if (p_ptr->monster_race_idx == m_ptr->r_idx)
@@ -1278,14 +1278,14 @@ void update_mon(int m_idx, bool full)
       if (p_ptr->telepathy || p_ptr->tim_esp)
 	{
 	  /* Empty mind, no telepathy */
-	  if (r_ptr->flags2 & (RF2_EMPTY_MIND))
+	  if (rf_has(r_ptr->flags, RF_EMPTY_MIND))
 	    {
 	      /* Memorize flags */
-	      l_ptr->flags2 |= (RF2_EMPTY_MIND);
+	      rf_on(l_ptr->flags, RF_EMPTY_MIND);
 	    }
 	  
 	  /* Weird mind, occasional telepathy */
-	  else if (r_ptr->flags2 & (RF2_WEIRD_MIND))
+	  else if (rf_has(r_ptr->flags, RF_WEIRD_MIND))
 	    {
 	      /* Monster is rarely detectable */
 	      if (((turn / 10) % 10) == (m_idx % 10))
@@ -1295,13 +1295,13 @@ void update_mon(int m_idx, bool full)
 		  flag = TRUE;
 		  
 		  /* Memorize flags */
-		  l_ptr->flags2 |= (RF2_WEIRD_MIND);
+		  rf_on(l_ptr->flags, RF_WEIRD_MIND);
 		  
 		  /* Hack -- Memorize mental flags */
-		  if (r_ptr->flags2 & (RF2_SMART)) 
-		    l_ptr->flags2 |= (RF2_SMART);
-		  if (r_ptr->flags2 & (RF2_STUPID)) 
-		    l_ptr->flags2 |= (RF2_STUPID);
+		  if (rf_has(r_ptr->flags, RF_SMART)) 
+		    rf_on(l_ptr->flags, RF_SMART);
+		  if (rf_has(r_ptr->flags, RF_STUPID)) 
+		    rf_on(l_ptr->flags, RF_STUPID);
 		}
 	    }
 	  
@@ -1313,8 +1313,8 @@ void update_mon(int m_idx, bool full)
 	      flag = TRUE;
 	      
 	      /* Hack -- Memorize mental flags */
-	      if (r_ptr->flags2 & (RF2_SMART)) l_ptr->flags2 |= (RF2_SMART);
-	      if (r_ptr->flags2 & (RF2_STUPID)) l_ptr->flags2 |= (RF2_STUPID);
+	      if (rf_has(r_ptr->flags, RF_SMART)) rf_on(l_ptr->flags, RF_SMART);
+	      if (rf_has(r_ptr->flags, RF_STUPID)) rf_on(l_ptr->flags, RF_STUPID);
 	    }
 	}
       
@@ -1328,7 +1328,7 @@ void update_mon(int m_idx, bool full)
 	  if (d <= p_ptr->see_infra)
 	    {
 	      /* Handle "cold blooded" monsters */
-	      if (r_ptr->flags2 & (RF2_COLD_BLOOD))
+	      if (rf_has(r_ptr->flags, RF_COLD_BLOOD))
 		{
 		  /* Take note */
 		  do_cold_blood = TRUE;
@@ -1346,7 +1346,7 @@ void update_mon(int m_idx, bool full)
 	  if (player_can_see_bold(fy, fx))
 	    {
 	      /* Handle "invisible" monsters */
-	      if (r_ptr->flags2 & (RF2_INVISIBLE))
+	      if (rf_has(r_ptr->flags, RF_INVISIBLE))
 		{
 		  /* Take note */
 		  do_invisible = TRUE;
@@ -1372,8 +1372,8 @@ void update_mon(int m_idx, bool full)
 	  if (flag)
 	    {
 	      /* Memorize flags */
-	      if (do_invisible) l_ptr->flags2 |= (RF2_INVISIBLE);
-	      if (do_cold_blood) l_ptr->flags2 |= (RF2_COLD_BLOOD);
+	      if (do_invisible) rf_on(l_ptr->flags, RF_INVISIBLE);
+	      if (do_cold_blood) rf_on(l_ptr->flags, RF_COLD_BLOOD);
 	    }
 	}
     }
@@ -1750,10 +1750,10 @@ s16b monster_place(int y, int x, monster_type *n_ptr)
       r_ptr = &r_info[m_ptr->r_idx];
       
       /* Hack -- Notice new multi-hued monsters */
-      if (r_ptr->flags1 & (RF1_ATTR_MULTI)) shimmer_monsters = TRUE;
+      if (rf_has(r_ptr->flags, RF_ATTR_MULTI)) shimmer_monsters = TRUE;
       
       /* Hack -- Count the number of "reproducers" */
-      if (r_ptr->flags2 & (RF2_MULTIPLY)) num_repro++;
+      if (rf_has(r_ptr->flags, RF_MULTIPLY)) num_repro++;
       
       /* Count racial occurances */
       r_ptr->cur_num++;
@@ -1786,7 +1786,7 @@ static bool get_racial_monster(int r_idx)
 {
   monster_race *r_ptr = &r_info[r_idx];
 
-  if (!(r_ptr->flags3 & (RF3_RACIAL))) return (FALSE);
+  if (!(rf_has(r_ptr->flags, RF_RACIAL))) return (FALSE);
 
   return (TRUE);
 }
@@ -1862,7 +1862,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
   r_ptr = &r_info[r1_idx];
   
   /* No light hating monsters in daytime */
-  if ((r_ptr->flags3 & (RF3_HURT_LITE)) && 	
+  if ((rf_has(r_ptr->flags, RF_HURT_LITE)) && 	
       ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2)) &&
       (stage_map[p_ptr->stage][STAGE_TYPE] != CAVE) &&
       (stage_map[p_ptr->stage][STAGE_TYPE] != VALLEY))
@@ -1879,28 +1879,28 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
   name = (r_name + r_ptr->name);
   
   /* Hack -- "unique" monsters must be "unique" */
-  if ((r_ptr->flags1 & (RF1_UNIQUE)) && (r_ptr->cur_num >= r_ptr->max_num))
+  if ((rf_has(r_ptr->flags, RF_UNIQUE)) && (r_ptr->cur_num >= r_ptr->max_num))
     {
       /* Cannot create */
       return (FALSE);
     }
   
   /* Hack -- only 1 player ghost at a time */
-  if ((r_ptr->flags2 & (RF2_PLAYER_GHOST)) && bones_selector)
+  if ((rf_has(r_ptr->flags, RF_PLAYER_GHOST)) && bones_selector)
     {
       /* Cannot create */
       return (FALSE);
     }
   
   /* Depth monsters may NOT be created out of depth */
-  if ((r_ptr->flags1 & (RF1_FORCE_DEPTH)) && (p_ptr->depth < r_ptr->level))
+  if ((rf_has(r_ptr->flags, RF_FORCE_DEPTH)) && (p_ptr->depth < r_ptr->level))
     {
       /* Cannot create */
       return (FALSE);
     }
   
   /* Monsters only there to be shapechanged into can never be placed */
-  if ((r_ptr->flags2 & (RF2_NO_PLACE)))
+  if ((rf_has(r_ptr->flags, RF_NO_PLACE)))
     {
       /* Cannot create */
       return (FALSE);
@@ -1922,7 +1922,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
    * If the monster is a player ghost, perform various manipulations 
    * on it, and forbid ghost creation if something goes wrong.
    */
-  if (r_ptr->flags2 & (RF2_PLAYER_GHOST))
+  if (rf_has(r_ptr->flags, RF_PLAYER_GHOST))
     {
       if (!prepare_ghost(r_idx, n_ptr, FALSE)) return (FALSE);
       
@@ -1950,7 +1950,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
     n_ptr->csleep = 0;
   
   /* Assign maximal hitpoints */
-  if (r_ptr->flags1 & (RF1_FORCE_MAXHP))
+  if (rf_has(r_ptr->flags, RF_FORCE_MAXHP))
     {
       n_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
     }
@@ -1981,7 +1981,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
   n_ptr->mspeed = r_ptr->speed;
   
   /* Hack -- small racial variety */
-  if (!(r_ptr->flags1 & (RF1_UNIQUE)))
+  if (!(rf_has(r_ptr->flags, RF_UNIQUE)))
     {
       /* Allow some small variation per monster */
       i = extract_energy[r_ptr->speed] / 10;
@@ -1990,7 +1990,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
   
   
   /* Force monster to wait for player */
-  if (r_ptr->flags1 & (RF1_FORCE_SLEEP))
+  if (rf_has(r_ptr->flags, RF_FORCE_SLEEP))
     {
       /* Give a random starting energy */
       n_ptr->energy = 0;
@@ -2005,7 +2005,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
   n_ptr->group_leader = group_leader;
   
   /* Initialize racial monster */
-  if (r_ptr->flags3 & (RF3_RACIAL))
+  if (rf_has(r_ptr->flags, RF_RACIAL))
     {
       int chance, k;
 
@@ -2036,7 +2036,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
 	  n_ptr->group = ++group_id;
 
 	  /* Go into group mode if necessary */
-	  if (r_ptr->flags1 & (RF1_FRIEND | RF1_FRIENDS))
+	  if (rf_has(r_ptr->flags, RF_FRIEND) || rf_has(r_ptr->flags, RF_FRIENDS))
 	    {
 	      group_mode = TRUE;
 	      group_race = n_ptr->p_race;
@@ -2066,7 +2066,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
     }
 
   /* Mark territorial monster's home */
-  if (r_ptr->flags3 & (RF3_TERRITORIAL))
+  if (rf_has(r_ptr->flags, RF_TERRITORIAL))
     {
       n_ptr->y_terr = y;
       n_ptr->x_terr = x;
@@ -2076,7 +2076,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
   if (!monster_place(y, x, n_ptr)) return (FALSE);
   
     /* Deep unique monsters */
-    if ((r_ptr->flags1 & (RF1_UNIQUE)) &&
+    if ((rf_has(r_ptr->flags, RF_UNIQUE)) &&
         (r_ptr->level > p_ptr->depth))
     {
         /* Message */
@@ -2087,7 +2087,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
     }
 
     /* Note any unique monster, even if not out of depth */
-    else if (r_ptr->flags1 & (RF1_UNIQUE))
+    else if (rf_has(r_ptr->flags, RF_UNIQUE))
     {
         /* Message */
         if (OPT(cheat_hear)) msg_format("Unique (%s).", name);
@@ -2223,7 +2223,7 @@ static bool place_monster_okay(int r_idx)
   if (z_ptr->level > r_ptr->level) return (FALSE);
   
   /* Skip unique monsters */
-  if (z_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
+  if (rf_has(z_ptr->flags, RF_UNIQUE)) return (FALSE);
   
   /* Paranoia -- Skip identical monsters */
   if (place_monster_idx == r_idx) return (FALSE);
@@ -2254,7 +2254,7 @@ static void place_monster_escort(int y, int x, int leader_idx, bool slp)
   
   
   /* Calculate the number of escorts we want. */
-  if (r_ptr->flags1 & (RF1_ESCORTS)) escort_size = 6 + randint0(15);
+  if (rf_has(r_ptr->flags, RF_ESCORTS)) escort_size = 6 + randint0(15);
   else escort_size = 2 + randint0(7);
   
   
@@ -2319,13 +2319,13 @@ static void place_monster_escort(int y, int x, int leader_idx, bool slp)
 	  else continue;
 	  
 	  /* Place a group of escorts if needed */
-	  if (r_info[escort_idx].flags1 & (RF1_FRIENDS))
+	  if (rf_has(r_info[escort_idx].flags, RF_FRIENDS))
 	    {
 	      /* Place a group of monsters */
 	      (void)place_monster_group(my, mx, escort_idx, slp, 
 					(s16b)(5 + randint1(10)));
 	    }
-	  else if (r_info[escort_idx].flags1 & (RF1_FRIEND))
+	  else if (rf_has(r_info[escort_idx].flags, RF_FRIEND))
 	    {
 	      /* Place a group of monsters */
 	      (void)place_monster_group(my, mx, escort_idx, slp, 
@@ -2381,20 +2381,20 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp)
   group_leader = cave_m_idx[y][x];  
   
   /* Friends for certain monsters */
-  if (r_ptr->flags1 & (RF1_FRIENDS))
+  if (rf_has(r_ptr->flags, RF_FRIENDS))
     {
       /* Attempt to place a large group */
       (void)place_monster_group(y, x, r_idx, slp, (s16b)damroll(3, 7));
     }
   
-  else if (r_ptr->flags1 & (RF1_FRIEND))
+  else if (rf_has(r_ptr->flags, RF_FRIEND))
     {
       /* Attempt to place a small group */
       (void)place_monster_group(y, x, r_idx, slp, (s16b)randint1(3));
     }
   
   /* Escorts for certain monsters */
-  if ((r_ptr->flags1 & (RF1_ESCORT)) || (r_ptr->flags1 & (RF1_ESCORTS)))
+  if ((rf_has(r_ptr->flags, RF_ESCORT)) || (rf_has(r_ptr->flags, RF_ESCORTS)))
     {
       place_monster_escort(y, x, r_idx, slp);
     }
@@ -2521,10 +2521,10 @@ static bool summon_specific_okay(int r_idx)
   
   
   /* Player ghosts cannot be summoned. */
-  if (r_ptr->flags2 & (RF2_PLAYER_GHOST)) return (FALSE);
+  if (rf_has(r_ptr->flags, RF_PLAYER_GHOST)) return (FALSE);
   
   /* Sauron's forms cannot be summoned. */
-  if ((r_ptr->flags2 & RF2_GAURHOTH) && (r_ptr->flags1 & RF1_FORCE_DEPTH) &&
+  if ((rf_has(r_ptr->flags, RF_GAURHOTH)) && (rf_has(r_ptr->flags, RF_FORCE_DEPTH)) &&
       (summon_specific_type != SUMMON_SAURON)) 
     return (FALSE);
   
@@ -2537,48 +2537,48 @@ static bool summon_specific_okay(int r_idx)
     case SUMMON_KIN:
       {
 	okay = ((r_ptr->d_char == summon_kin_type) &&
-		!(r_ptr->flags1 & (RF1_UNIQUE)));
+		!(rf_has(r_ptr->flags, RF_UNIQUE)));
 	break;
       }
       
     case SUMMON_SAURON:
       {
-	okay =  ((r_ptr->flags2 & RF2_GAURHOTH) && 
-		 (r_ptr->flags1 & RF1_FORCE_DEPTH));
+	okay =  ((rf_has(r_ptr->flags, RF_GAURHOTH)) && 
+		 (rf_has(r_ptr->flags, RF_FORCE_DEPTH)));
 	break;
       }
       
     case SUMMON_ANT:
       {
 	okay = ((r_ptr->d_char == 'a') &&
-		!(r_ptr->flags1 & (RF1_UNIQUE)));
+		!(rf_has(r_ptr->flags, RF_UNIQUE)));
 	break;
       }
       
     case SUMMON_SPIDER:
       {
-	okay = ((r_ptr->d_char == 'S') && !(r_ptr->flags1 & (RF1_UNIQUE)));
+	okay = ((r_ptr->d_char == 'S') && !(rf_has(r_ptr->flags, RF_UNIQUE)));
 	break;
       }
       
     case SUMMON_HOUND:
       {
 	okay = (((r_ptr->d_char == 'C') || (r_ptr->d_char == 'Z')) &&
-		!(r_ptr->flags1 & (RF1_UNIQUE)));
+		!(rf_has(r_ptr->flags, RF_UNIQUE)));
 	break;
       }
       
     case SUMMON_ANIMAL:
       {
-	okay = ((r_ptr->flags3 & (RF3_ANIMAL)) &&
-		!(r_ptr->flags1 & (RF1_UNIQUE)));
+	okay = ((rf_has(r_ptr->flags, RF_ANIMAL)) &&
+		!(rf_has(r_ptr->flags, RF_UNIQUE)));
 	break;
       }
       
     case SUMMON_DRAGON:
       {
-	okay = ((r_ptr->flags3 & (RF3_DRAGON)) &&
-		!(r_ptr->flags1 & (RF1_UNIQUE)));
+	okay = ((rf_has(r_ptr->flags, RF_DRAGON)) &&
+		!(rf_has(r_ptr->flags, RF_UNIQUE)));
 	break;
       }
       
@@ -2590,8 +2590,8 @@ static bool summon_specific_okay(int r_idx)
       
     case SUMMON_DEMON:
       {
-	okay = ((r_ptr->flags3 & (RF3_DEMON)) &&
-		!(r_ptr->flags1 & (RF1_UNIQUE)));
+	okay = ((rf_has(r_ptr->flags, RF_DEMON)) &&
+		!(rf_has(r_ptr->flags, RF_UNIQUE)));
 	break;
       }
       
@@ -2603,8 +2603,8 @@ static bool summon_specific_okay(int r_idx)
       
     case SUMMON_UNDEAD:
       {
-	okay = ((r_ptr->flags3 & (RF3_UNDEAD)) &&
-		!(r_ptr->flags1 & (RF1_UNIQUE)));
+	okay = ((rf_has(r_ptr->flags, RF_UNDEAD)) &&
+		!(rf_has(r_ptr->flags, RF_UNIQUE)));
 	break;
       }
       
@@ -2619,7 +2619,7 @@ static bool summon_specific_okay(int r_idx)
       
     case SUMMON_UNIQUE:
       {
-	if ((r_ptr->flags1 & (RF1_UNIQUE)) != 0) okay = TRUE;
+	if ((rf_has(r_ptr->flags, RF_UNIQUE)) != 0) okay = TRUE;
 	break;
       }
       
@@ -2649,7 +2649,7 @@ static bool summon_specific_okay(int r_idx)
 
     case SUMMON_GOLEM:
       {
-	okay = ((r_ptr->d_char == 'g') && (!(r_ptr->flags3 & RF3_DRAGON)));
+	okay = ((r_ptr->d_char == 'g') && (!(rf_has(r_ptr->flags, RF_DRAGON))));
 	break;
       }
       
@@ -2821,7 +2821,7 @@ bool summon_questor(int y1, int x1)
       monster_race *r_ptr = &r_info[i];
       
       /* Ensure quest monsters */
-      if ((r_ptr->flags1 & (RF1_QUESTOR)) && (r_ptr->cur_num < 1)
+      if ((rf_has(r_ptr->flags, RF_QUESTOR)) && (r_ptr->cur_num < 1)
 	  && (r_ptr->max_num))
 	{
 	  /* Place the questor */
@@ -2859,8 +2859,8 @@ int assess_shapechange(int m_idx, monster_type *m_ptr)
 	}
 
       /* Sauron */
-      if ((r_ptr->flags2 & RF2_GAURHOTH) && 
-	  (r_ptr->flags1 & RF1_FORCE_DEPTH))
+      if ((rf_has(r_ptr->flags, RF_GAURHOTH)) && 
+	  (rf_has(r_ptr->flags, RF_FORCE_DEPTH)))
 	{
 	  type = SUMMON_SAURON;
 	  class = 1;
@@ -2875,86 +2875,86 @@ int assess_shapechange(int m_idx, monster_type *m_ptr)
 	  /* Set the type */
 	  switch(class)
 	    {
-	    case RF7_S_KIN:
+	    case RSF_S_KIN:
 	      {
 		type = SUMMON_KIN;
 		break;
 	      }
 	      
-	    case RF7_S_MONSTER:
-	    case RF7_S_MONSTERS:
+	    case RSF_S_MONSTER:
+	    case RSF_S_MONSTERS:
 	      {
 		type = 0;
 		break;
 	      }
 	      
-	    case RF7_S_ANT:
+	    case RSF_S_ANT:
 	      {
 		type = SUMMON_ANT;
 		break;
 	      }
 	      
-	    case RF7_S_SPIDER:
+	    case RSF_S_SPIDER:
 	      {
 		type = SUMMON_SPIDER;
 		break;
 	      }
 	      
-	    case RF7_S_HOUND:
+	    case RSF_S_HOUND:
 	      {
 		type = SUMMON_HOUND;
 		break;
 	      }
 	      
-	    case RF7_S_ANIMAL:
+	    case RSF_S_ANIMAL:
 	      {
 		type = SUMMON_ANIMAL;
 		break;
 	      }
 	      
-	    case RF7_S_THIEF:
+	    case RSF_S_THIEF:
 	      {
 		type = SUMMON_THIEF;
 		break;
 	      }
 	      
-	    case RF7_S_SWAMP:
+	    case RSF_S_SWAMP:
 	      {
 		type = SUMMON_SWAMP;
 		break;
 	      }
 	      
-	    case RF7_S_DRAGON:
+	    case RSF_S_DRAGON:
 	      {
 		type = SUMMON_DRAGON;
 		break;
 	      }
 	      
-	    case RF7_S_HI_DRAGON:
+	    case RSF_S_HI_DRAGON:
 	      {
 		type = SUMMON_HI_DRAGON;
 		break;
 	      }
 	      
-	    case RF7_S_DEMON:
+	    case RSF_S_DEMON:
 	      {
 		type = SUMMON_DEMON;
 		break;
 	      }
 	      
-	    case RF7_S_HI_DEMON:
+	    case RSF_S_HI_DEMON:
 	      {
 		type = SUMMON_HI_DEMON;
 		break;
 	      }
 	      
-	    case RF7_S_UNDEAD:
+	    case RSF_S_UNDEAD:
 	      {
 		type = SUMMON_UNDEAD;
 		break;
 	      }
 	      
-	    case RF7_S_HI_UNDEAD:
+	    case RSF_S_HI_UNDEAD:
 	      {
 		type = SUMMON_HI_UNDEAD;
 		break;
@@ -3215,10 +3215,10 @@ void update_smart_learn(int m_idx, int what)
   monster_race *r_ptr = &r_info[m_ptr->r_idx];
   
   /* Too stupid to learn anything */
-  if (r_ptr->flags2 & (RF2_STUPID)) return;
+  if (rf_has(r_ptr->flags, RF_STUPID)) return;
   
   /* Not intelligent, only learn sometimes */
-  if (!(r_ptr->flags2 & (RF2_SMART)) && (randint0(100) < 50)) return;
+  if (!(rf_has(r_ptr->flags, RF_SMART)) && (randint0(100) < 50)) return;
   
   /* XXX XXX XXX */
   

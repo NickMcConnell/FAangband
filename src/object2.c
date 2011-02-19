@@ -5722,14 +5722,17 @@ void display_itemlist(void)
       a = object_type_attr(o_ptr->k_idx);
       c = object_type_char(o_ptr->k_idx);
       
+  if ((tile_width < 3) && (tile_height < 2))
+    {
       /* Display the pict */
       Term_putch(cur_x++, line, a, c);
-      if (use_bigtile) Term_putch(cur_x++, line, 255, -1);
+      if (tile_width > 1) Term_putch(cur_x++, line, 255, -1);
       Term_putch(cur_x++, line, TERM_WHITE, ' ');
       
       /* Print and bump line counter */
       c_prt(attr, o_desc, line, cur_x);
       line++;
+    }
     }
   
   if (disp_count != counter)

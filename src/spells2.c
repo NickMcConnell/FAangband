@@ -1654,7 +1654,7 @@ bool detect_monsters_normal(int range, bool show)
       if (distance(py, px, y, x) > range) continue;
       
       /* Detect all non-invisible monsters */
-      if (!(r_ptr->flags2 & (RF2_INVISIBLE)))
+      if (!(rf_has(r_ptr->flags, RF_INVISIBLE)))
 	{
 	  /* Optimize -- Repair flags */
 	  repair_mflag_mark = repair_mflag_show = TRUE;
@@ -1728,10 +1728,10 @@ bool detect_monsters_invis(int range, bool show)
       if (distance(py, px, y, x) > range) continue;
       
       /* Detect invisible monsters */
-      if (r_ptr->flags2 & (RF2_INVISIBLE))
+      if (rf_has(r_ptr->flags, RF_INVISIBLE))
 	{
 	  /* Take note that they are invisible */
-	  l_ptr->flags2 |= (RF2_INVISIBLE);
+	  rf_on(l_ptr->flags, RF_INVISIBLE);
 	  
 	  /* Update monster recall window */
 	  if (p_ptr->monster_race_idx == m_ptr->r_idx)
@@ -1813,10 +1813,10 @@ bool detect_monsters_evil(int range, bool show)
       if (distance(py, px, y, x) > range) continue;
       
       /* Detect evil monsters */
-      if (r_ptr->flags3 & (RF3_EVIL))
+      if (rf_has(r_ptr->flags, RF_EVIL))
 	{
 	  /* Take note that they are evil */
-	  l_ptr->flags3 |= (RF3_EVIL);
+	  rf_on(l_ptr->flags, RF_EVIL);
 	  
 	  /* Update monster recall window */
 	  if (p_ptr->monster_race_idx == m_ptr->r_idx)
@@ -1900,7 +1900,7 @@ bool detect_monsters_living(int range, bool show)
       
       /* Hack -- Detect all living monsters. */
       if ((!strchr("Egv", r_ptr->d_char)) && 
-	  (!(r_ptr->flags3 & (RF3_UNDEAD))))
+	  (!(rf_has(r_ptr->flags, RF_UNDEAD))))
 	{
 	  /* Optimize -- Repair flags */
 	  repair_mflag_mark = repair_mflag_show = TRUE;
@@ -3461,7 +3461,7 @@ bool listen_to_natural_creatures(void)
       
       /* Only natural creatures are eligible, and some 
        * don't feel like talking. */
-      if ((r_ptr->flags3 & (RF3_ANIMAL)) && (randint0(2) == 0))
+      if ((rf_has(r_ptr->flags, RF_ANIMAL)) && (randint0(2) == 0))
 	{
 	  /* Learn about their surroundings. */
 	  map_area(m_ptr->fy, m_ptr->fx, FALSE);
@@ -4071,7 +4071,7 @@ bool genocide(void)
       if (!m_ptr->r_idx) continue;
       
       /* Hack -- Skip Unique Monsters */
-      if (r_ptr->flags1 & (RF1_UNIQUE)) continue;
+      if (rf_has(r_ptr->flags, RF_UNIQUE)) continue;
       
       /* Skip "wrong" monsters */
       if (r_ptr->d_char != typ) continue;
@@ -4107,7 +4107,7 @@ bool mass_genocide(void)
       if (!m_ptr->r_idx) continue;
       
       /* Hack -- Skip unique monsters */
-      if (r_ptr->flags1 & (RF1_UNIQUE)) continue;
+      if (rf_has(r_ptr->flags, RF_UNIQUE)) continue;
       
       /* Skip distant monsters */
       if (m_ptr->cdis > MAX_SIGHT) continue;
@@ -4566,8 +4566,8 @@ void earthquake(int cy, int cx, int r, bool volcano)
 	      monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	      
 	      /* Most monsters cannot co-exist with rock */
-	      if (!(r_ptr->flags2 & (RF2_KILL_WALL)) &&
-		  !(r_ptr->flags2 & (RF2_PASS_WALL)))
+	      if (!(rf_has(r_ptr->flags, RF_KILL_WALL)) &&
+		  !(rf_has(r_ptr->flags, RF_PASS_WALL)))
 		{
 		  char m_name[80];
 
@@ -4575,7 +4575,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 		  sn = 0;
 		  
 		  /* Monster can move to escape the wall */
-		  if (!(r_ptr->flags1 & (RF1_NEVER_MOVE)))
+		  if (!(rf_has(r_ptr->flags, RF_NEVER_MOVE)))
 		    {
 		      /* Look for safety */
 		      for (i = 0; i < 8; i++)
@@ -4754,8 +4754,8 @@ void earthquake(int cy, int cx, int r, bool volcano)
 	      if (t < water * 150)
 		{
 		  /* Monster OK in water */
-		  if ((r_ptr->flags2 & (RF2_FLYING)) ||
-	  	  !((r_ptr->flags4 & (RF4_BRTH_FIRE)) || 
+		  if ((rf_has(r_ptr->flags, RF_FLYING)) ||
+	  	  !((rsf_has(r_ptr->flags, RSF_BRTH_FIRE)) || 
 		    (strchr("uU", r_ptr->d_char)) || 
 		    ((strchr("E", r_ptr->d_char)) && 
 		     ((r_ptr->d_attr == TERM_RED) || 
@@ -4767,9 +4767,9 @@ void earthquake(int cy, int cx, int r, bool volcano)
 	      else if (t < lava * 150)
 		{
 		  /* Monster OK in lava */
-		  if ((r_ptr->flags3 & (RF3_IM_FIRE)) ||
-		      ((r_ptr->flags2 & (RF2_FLYING)) && 
-		       ((r_ptr->flags1 & (RF1_FORCE_MAXHP) ?
+		  if ((rf_has(r_ptr->flags, RF_IM_FIRE)) ||
+		      ((rf_has(r_ptr->flags, RF_FLYING)) && 
+		       ((rf_has(r_ptr->flags, RF_FORCE_MAXHP) ?
 			 (r_ptr->hdice * r_ptr->hside) :
 			 (r_ptr->hdice * (r_ptr->hside + 1) / 2)) > 49)))
 		    
@@ -4782,7 +4782,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 		  if (cave_m_idx[yy][xx] > 0) 
 		    {
 		      /* Flying monsters survive */
-		      if (!(r_ptr->flags2 & (RF2_FLYING)))
+		      if (!(rf_has(r_ptr->flags, RF_FLYING)))
 			{
 			  /* What was that again ? */
 			  char m_name[80];
@@ -4911,10 +4911,10 @@ static void cave_temp_room_lite(void)
 	  monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	  
 	  /* Stupid monsters rarely wake up */
-	  if (r_ptr->flags2 & (RF2_STUPID)) chance = 10;
+	  if (rf_has(r_ptr->flags, RF_STUPID)) chance = 10;
 	  
 	  /* Smart monsters always wake up */
-	  if (r_ptr->flags2 & (RF2_SMART)) chance = 100;
+	  if (rf_has(r_ptr->flags, RF_SMART)) chance = 100;
 	  
 	  /* Sometimes monsters wake up */
 	  if (m_ptr->csleep && (randint0(100) < chance))

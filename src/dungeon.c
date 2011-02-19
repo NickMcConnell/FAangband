@@ -189,10 +189,10 @@ void sun_banish(void)
       if (!m_ptr->r_idx) continue;
       
       /* Hack -- Skip Unique Monsters */
-      if (r_ptr->flags1 & (RF1_UNIQUE)) continue;
+      if (rf_has(r_ptr->flags, RF_UNIQUE)) continue;
       
       /* Skip monsters not hurt by light */
-      if (!(r_ptr->flags3 & (RF3_HURT_LITE))) continue;
+      if (!(rf_has(r_ptr->flags, RF_HURT_LITE))) continue;
       
       /* Banish */
       delete_monster_idx(i);
@@ -1409,19 +1409,14 @@ static void process_player_aux(void)
 {
   static int old_monster_race_idx = 0;
   
-  static u32b old_r_flags1 = 0L;
-  static u32b old_r_flags2 = 0L;
-  static u32b old_r_flags3 = 0L;
-  static u32b old_r_flags4 = 0L;
-  static u32b old_r_flags5 = 0L;
-  static u32b old_r_flags6 = 0L;
+  static bitflag old_r_flags[RF_SIZE] = {0, 0, 0};
+  static bitflag old_rs_flags[RSF_SIZE] = {0, 0, 0, 0};
   
   static byte old_r_blows0 = 0;
   static byte old_r_blows1 = 0;
   static byte old_r_blows2 = 0;
   static byte old_r_blows3 = 0;
   
-  static byte old_r_cast_inate = 0;
   static byte old_r_cast_spell = 0;
   
   
@@ -1433,29 +1428,20 @@ static void process_player_aux(void)
       
       /* Check for change of any kind */
       if ((old_monster_race_idx != p_ptr->monster_race_idx) ||
-          (old_r_flags1 != l_ptr->flags1) ||
-          (old_r_flags2 != l_ptr->flags2) ||
-          (old_r_flags3 != l_ptr->flags3) ||
-          (old_r_flags4 != l_ptr->flags4) ||
-          (old_r_flags5 != l_ptr->flags5) ||
-          (old_r_flags6 != l_ptr->flags6) ||
-          (old_r_blows0 != l_ptr->blows[0]) ||
-          (old_r_blows1 != l_ptr->blows[1]) ||
-          (old_r_blows2 != l_ptr->blows[2]) ||
-          (old_r_blows3 != l_ptr->blows[3]) ||
-          (old_r_cast_inate != l_ptr->cast_inate) ||
-          (old_r_cast_spell != l_ptr->cast_spell))
-        {
+          (!rf_is_equal(old_r_flags, l_ptr->flags)) ||
+	  (!rsf_is_equal(old_rs_flags, l_ptr->spell_flags)) ||
+	  (old_r_blows0 != l_ptr->blows[0]) ||
+	  (old_r_blows1 != l_ptr->blows[1]) ||
+	  (old_r_blows2 != l_ptr->blows[2]) ||
+	  (old_r_blows3 != l_ptr->blows[3]) ||
+	  (old_r_cast_spell != l_ptr->cast_spell))
+	{
           /* Memorize old race */
           old_monster_race_idx = p_ptr->monster_race_idx;
           
           /* Memorize flags */
-          old_r_flags1 = l_ptr->flags1;
-          old_r_flags2 = l_ptr->flags2;
-          old_r_flags3 = l_ptr->flags3;
-          old_r_flags4 = l_ptr->flags4;
-          old_r_flags5 = l_ptr->flags5;
-          old_r_flags6 = l_ptr->flags6;
+          rf_copy(old_r_flags, l_ptr->flags);
+          rsf_copy(old_rs_flags, l_ptr->spell_flags);
           
           /* Memorize blows */
           old_r_blows0 = l_ptr->blows[0];
@@ -1464,7 +1450,6 @@ static void process_player_aux(void)
           old_r_blows3 = l_ptr->blows[3];
           
           /* Memorize castings */
-          old_r_cast_inate = l_ptr->cast_inate;
           old_r_cast_spell = l_ptr->cast_spell;
           
           /* Window stuff */
@@ -1866,7 +1851,7 @@ static void process_player(void)
                   r_ptr = &r_info[m_ptr->r_idx];
                   
                   /* Skip non-multi-hued monsters */
-		  if (!(r_ptr->flags1 & (RF1_ATTR_MULTI))) continue;
+		  if (!(rf_has(r_ptr->flags, RF_ATTR_MULTI))) continue;
 		  
 		  /* Reset the flag */
 		  shimmer_monsters = TRUE;
@@ -1977,6 +1962,97 @@ static void process_player(void)
   
 }
 
+
+
+byte flicker = 0;
+byte color_flicker[MAX_COLORS][3] = 
+{
+	{TERM_DARK, TERM_L_DARK, TERM_L_RED},
+	{TERM_WHITE, TERM_L_WHITE, TERM_L_BLUE},
+	{TERM_SLATE, TERM_WHITE, TERM_L_DARK},
+	{TERM_ORANGE, TERM_YELLOW, TERM_L_RED},
+	{TERM_RED, TERM_L_RED, TERM_L_PINK},
+	{TERM_GREEN, TERM_L_GREEN, TERM_L_TEAL},
+	{TERM_BLUE, TERM_L_BLUE, TERM_SLATE},
+	{TERM_UMBER, TERM_L_UMBER, TERM_MUSTARD},
+	{TERM_L_DARK, TERM_SLATE, TERM_L_VIOLET},
+	{TERM_WHITE, TERM_SLATE, TERM_L_WHITE},
+	{TERM_L_PURPLE, TERM_PURPLE, TERM_L_VIOLET},
+	{TERM_YELLOW, TERM_L_YELLOW, TERM_MUSTARD},
+	{TERM_L_RED, TERM_RED, TERM_L_PINK},
+	{TERM_L_GREEN, TERM_L_TEAL, TERM_GREEN},
+	{TERM_L_BLUE, TERM_DEEP_L_BLUE, TERM_BLUE_SLATE},
+	{TERM_L_UMBER, TERM_UMBER, TERM_MUD},
+	{TERM_PURPLE, TERM_VIOLET, TERM_MAGENTA},
+	{TERM_VIOLET, TERM_L_VIOLET, TERM_MAGENTA},
+	{TERM_TEAL, TERM_L_TEAL, TERM_L_GREEN},
+	{TERM_MUD, TERM_YELLOW, TERM_UMBER},
+	{TERM_L_YELLOW, TERM_WHITE, TERM_L_UMBER},
+	{TERM_MAGENTA, TERM_L_PINK, TERM_L_RED},
+	{TERM_L_TEAL, TERM_L_WHITE, TERM_TEAL},
+	{TERM_L_VIOLET, TERM_L_PURPLE, TERM_VIOLET},
+	{TERM_L_PINK, TERM_L_RED, TERM_L_WHITE},
+	{TERM_MUSTARD, TERM_YELLOW, TERM_UMBER},
+	{TERM_BLUE_SLATE, TERM_BLUE, TERM_SLATE},
+	{TERM_DEEP_L_BLUE, TERM_L_BLUE, TERM_BLUE},
+};
+
+byte get_flicker(byte a)
+{
+	switch(flicker % 3)
+	{
+		case 1: return color_flicker[a][1];
+		case 2: return color_flicker[a][2];
+	}
+	return a;
+}
+
+/**
+ * This animates monsters and/or items as necessary.
+ */
+void do_animation(void)
+{
+	int i;
+
+	for (i = 1; i < m_max; i++)
+	{
+		byte attr;
+		monster_type *m_ptr = &m_list[i];
+		monster_race *r_ptr = &r_info[m_ptr->r_idx];
+
+		if (!m_ptr || !m_ptr->ml)
+			continue;
+		else if (rf_has(r_ptr->flags, RF_ATTR_MULTI))
+			attr = randint1(BASIC_COLORS - 1);
+		else if (rf_has(r_ptr->flags, RF_ATTR_FLICKER))
+			attr = get_flicker(r_ptr->x_attr);
+		else
+			continue;
+
+		m_ptr->attr = attr;
+		p_ptr->redraw |= (PR_MAP | PR_MONLIST);
+	}
+	flicker++;
+}
+
+
+/**
+ * This is used when the user is idle to allow for simple animations.
+ * Currently the only thing it really does is animate shimmering monsters.
+ */
+void idle_update(void)
+{
+	if (!character_dungeon) return;
+
+	if (!OPT(animate_flicker)) return;
+
+	/* Animate and redraw if necessary */
+	do_animation();
+	redraw_stuff();
+
+	/* Refresh the main screen */
+	Term_fresh();
+}
 
 
 /**

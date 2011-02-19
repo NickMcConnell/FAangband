@@ -543,8 +543,11 @@ static void rd_lore(int r_idx)
   rd_byte(&l_ptr->drop_item);
   
   /* Count spells */
-  rd_byte(&l_ptr->cast_inate);
+  rd_byte(&tmp8u);
   rd_byte(&l_ptr->cast_spell);
+
+  /* Spell types merged now */
+  l_ptr->cast_spell += tmp8u;
   
   /* Count blows of each type */
   rd_byte(&l_ptr->blows[0]);
@@ -1743,7 +1746,7 @@ static errr rd_dungeon(void)
       r_ptr = &r_info[r_idx];
       
       /* If a player ghost, some special features need to be added. */
-      if (r_ptr->flags2 & (RF2_PLAYER_GHOST))
+      if (rf_has(r_ptr->flags, RF_PLAYER_GHOST))
 	{
 	  prepare_ghost(n_ptr->r_idx, n_ptr, TRUE);
 	}

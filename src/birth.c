@@ -514,7 +514,7 @@ void player_init(struct player_type *p) {
 	    r_ptr->max_num = 100;
 	    
 	    /* Hack -- Reset the max counter */
-	    if (r_ptr->flags1 & (RF1_UNIQUE)) r_ptr->max_num = 1;
+	    if (rf_has(r_ptr->flags, RF_UNIQUE)) r_ptr->max_num = 1;
 	    
 	    /* Clear player kills */
 	    l_ptr->pkills = 0;

@@ -1022,15 +1022,15 @@ void do_cmd_query_symbol(void)
        * Even cheat_know does not allow viewing non-existant
        * player ghosts.
        */
-      if ((!OPT(cheat_know) || (r_ptr->flags2 & (RF2_PLAYER_GHOST))) 
+      if ((!OPT(cheat_know) || (rf_has(r_ptr->flags, RF_PLAYER_GHOST))) 
 	  && !l_ptr->sights) 
 	continue;
       
       /* Require non-unique monsters if needed */
-      if (norm && (r_ptr->flags1 & (RF1_UNIQUE))) continue;
+      if (norm && (rf_has(r_ptr->flags, RF_UNIQUE))) continue;
       
       /* Require unique monsters if needed */
-      if (uniq && !(r_ptr->flags1 & (RF1_UNIQUE))) continue;
+      if (uniq && !(rf_has(r_ptr->flags, RF_UNIQUE))) continue;
       
       /* Collect "appropriate" monsters */
       if (*search_str)
@@ -1337,15 +1337,15 @@ void py_steal(int y, int x)
       purse = (r_ptr->level + 1) + randint1(3 * (r_ptr->level + 1) / 2);
       
       /* Uniques are juicy targets. */
-      if (r_ptr->flags1 & (RF1_UNIQUE)) purse *= 3;
+      if (rf_has(r_ptr->flags, RF_UNIQUE)) purse *= 3;
       
       /* But some monsters are dirt poor. */
-      if (!((r_ptr->flags1 & (RF1_DROP_60)) || 
-	    (r_ptr->flags1 & (RF1_DROP_90)) || 
-	    (r_ptr->flags1 & (RF1_DROP_1D2)) || 
-	    (r_ptr->flags1 & (RF1_DROP_2D2)) || 
-	    (r_ptr->flags1 & (RF1_DROP_3D2)) || 
-	    (r_ptr->flags1 & (RF1_DROP_4D2)))) purse = 0;
+      if (!(rf_has(r_ptr->flags, RF_DROP_60)) || 
+	    rf_has(r_ptr->flags, RF_DROP_90)) || 
+	    rf_has(r_ptr->flags, RF_DROP_1D2)) || 
+	    rf_has(r_ptr->flags, RF_DROP_2D2)) || 
+	    rf_has(r_ptr->flags, RF_DROP_3D2)) || 
+	    rf_has(r_ptr->flags, RF_DROP_4D2)))) purse = 0;
       
       /* Some monster races are far better to steal from than others. */
       if ((r_ptr->d_char == 'D') || (r_ptr->d_char == 'd') || 
@@ -1388,7 +1388,7 @@ void py_steal(int y, int x)
       m_ptr->hostile = -1;      
       
       /* Occasionally, amuse the player with a message. */
-      if ((randint1(5) == 1) && (purse) && (r_ptr->flags2 & (RF2_SMART)))
+      if ((randint1(5) == 1) && (purse) && (rf_has(r_ptr->flags, RF_SMART)))
 	{
 	  monster_desc(m_name, m_ptr, 0);
 	  act = desc_victim_outcry[randint0(20)];

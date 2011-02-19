@@ -466,11 +466,11 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
     case TV_DIGGING:
       {
 	/* Slay Animal */
-	if ((slay[P_SLAY_ANIMAL] > MULTIPLE_BASE) && (r_ptr->flags3 & (RF3_ANIMAL)))
+	if ((slay[P_SLAY_ANIMAL] > MULTIPLE_BASE) && (rf_has(r_ptr->flags, RF_ANIMAL)))
 	  {
 	    if (m_ptr->ml)
 	      {
-		l_ptr->flags3 |= (RF3_ANIMAL);
+		rf_on(l_ptr->flags, RF_ANIMAL);
 	      }
 	    
 	    if (mul < slay[P_SLAY_ANIMAL]) mul = slay[P_SLAY_ANIMAL];
@@ -489,11 +489,11 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
 	/* Slay Evil */
 	if (((slay[P_SLAY_EVIL] > MULTIPLE_BASE) || 
 	     (p_ptr->special_attack & (ATTACK_HOLY))) &&
-	    (r_ptr->flags3 & (RF3_EVIL)))
+	    (rf_has(r_ptr->flags, RF_EVIL)))
 	  {
 	    if (m_ptr->ml)
 	      {
-		l_ptr->flags3 |= (RF3_EVIL);
+		rf_on(l_ptr->flags, RF_EVIL);
 	      }
 
 	    if (mul < slay[P_SLAY_EVIL]) mul = slay[P_SLAY_EVIL];
@@ -512,11 +512,11 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
 	
 	
 	/* Slay Undead */
-	if ((slay[P_SLAY_UNDEAD] > MULTIPLE_BASE) && (r_ptr->flags3 & (RF3_UNDEAD)))
+	if ((slay[P_SLAY_UNDEAD] > MULTIPLE_BASE) && (rf_has(r_ptr->flags, RF_UNDEAD)))
 	  {
 	    if (m_ptr->ml)
 	      {
-		l_ptr->flags3 |= (RF3_UNDEAD);
+		rf_on(l_ptr->flags, RF_UNDEAD);
 	      }
 	    
 	    if (mul < slay[P_SLAY_UNDEAD]) mul = slay[P_SLAY_UNDEAD];
@@ -533,11 +533,11 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
 	  }
 	
 	/* Slay Demon */
-	if ((slay[P_SLAY_DEMON] > MULTIPLE_BASE) && (r_ptr->flags3 & (RF3_DEMON)))
+	if ((slay[P_SLAY_DEMON] > MULTIPLE_BASE) && (rf_has(r_ptr->flags, RF_DEMON)))
 	  {
 	    if (m_ptr->ml)
 	      {
-		l_ptr->flags3 |= (RF3_DEMON);
+		rf_on(l_ptr->flags, RF_DEMON);
 	      }
 	    
 	    if (mul < slay[P_SLAY_DEMON]) mul = slay[P_SLAY_DEMON];
@@ -554,11 +554,11 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
 	  }
 	
 	/* Slay Orc */
-	if ((slay[P_SLAY_ORC] > MULTIPLE_BASE) && (r_ptr->flags3 & (RF3_ORC)))
+	if ((slay[P_SLAY_ORC] > MULTIPLE_BASE) && (rf_has(r_ptr->flags, RF_ORC)))
 	  {
 	    if (m_ptr->ml)
 	      {
-		l_ptr->flags3 |= (RF3_ORC);
+		rf_on(l_ptr->flags, RF_ORC);
 	      }
 	    
 	    if (mul < slay[P_SLAY_ORC]) mul = slay[P_SLAY_ORC];
@@ -574,11 +574,11 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
 	  }
 	
 	/* Slay Troll */
-	if ((slay[P_SLAY_TROLL] > MULTIPLE_BASE) && (r_ptr->flags3 & (RF3_TROLL)))
+	if ((slay[P_SLAY_TROLL] > MULTIPLE_BASE) && (rf_has(r_ptr->flags, RF_TROLL)))
 	  {
 	    if (m_ptr->ml)
 	      {
-		l_ptr->flags3 |= (RF3_TROLL);
+		rf_on(l_ptr->flags, RF_TROLL);
 	      }
 	    
 	    if (mul < slay[P_SLAY_TROLL]) mul = slay[P_SLAY_TROLL];
@@ -595,11 +595,11 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
 	  }
 	
 	/* Slay Giant */
-	if ((slay[P_SLAY_GIANT] > MULTIPLE_BASE) && (r_ptr->flags3 & (RF3_GIANT)))
+	if ((slay[P_SLAY_GIANT] > MULTIPLE_BASE) && (rf_has(r_ptr->flags, RF_GIANT)))
 	  {
 	    if (m_ptr->ml)
 	      {
-		l_ptr->flags3 |= (RF3_GIANT);
+		rf_on(l_ptr->flags, RF_GIANT);
 	      }
 	    
 	    if (mul < slay[P_SLAY_GIANT]) mul = slay[P_SLAY_GIANT];
@@ -616,11 +616,11 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
 	  }
 	
 	/* Slay Dragon */
-	if ((slay[P_SLAY_DRAGON] > MULTIPLE_BASE) && (r_ptr->flags3 & (RF3_DRAGON)))
+	if ((slay[P_SLAY_DRAGON] > MULTIPLE_BASE) && (rf_has(r_ptr->flags, RF_DRAGON)))
 	  {
 	    if (m_ptr->ml)
 	      {
-		l_ptr->flags3 |= (RF3_DRAGON);
+		rf_on(l_ptr->flags, RF_DRAGON);
 	      }
 	    
 	    if (mul < slay[P_SLAY_DRAGON]) mul = slay[P_SLAY_DRAGON];
@@ -640,11 +640,11 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
 	if (brand[P_BRAND_ACID] > MULTIPLE_BASE)
 	  {
 	    /* Notice immunity */
-	    if (r_ptr->flags3 & (RF3_IM_ACID))
+	    if (rf_has(r_ptr->flags, RF_IM_ACID))
 	      {
 		if (m_ptr->ml)
 		  {
-		    l_ptr->flags3 |= (RF3_IM_ACID);
+		    rf_on(l_ptr->flags, RF_IM_ACID);
 		  }
 	      }
 	    
@@ -669,11 +669,11 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
 	if (brand[P_BRAND_ELEC] > MULTIPLE_BASE)
 	  {
 	    /* Notice immunity */
-	    if (r_ptr->flags3 & (RF3_IM_ELEC))
+	    if (rf_has(r_ptr->flags, RF_IM_ELEC))
 	      {
 		if (m_ptr->ml)
 		  {
-		    l_ptr->flags3 |= (RF3_IM_ELEC);
+		    rf_on(l_ptr->flags, RF_IM_ELEC);
 		  }
 	      }
 	    
@@ -698,11 +698,11 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
 	if (brand[P_BRAND_FIRE] > MULTIPLE_BASE)
 	  {
 	    /* Notice immunity */
-	    if (r_ptr->flags3 & (RF3_IM_FIRE))
+	    if (rf_has(r_ptr->flags, RF_IM_FIRE))
 	      {
 		if (m_ptr->ml)
 		  {
-		    l_ptr->flags3 |= (RF3_IM_FIRE);
+		    rf_on(l_ptr->flags, RF_IM_FIRE);
 		  }
 	      }
 	    
@@ -727,11 +727,11 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
 	if (brand[P_BRAND_COLD] > MULTIPLE_BASE)
 	  {
 	    /* Notice immunity */
-	    if (r_ptr->flags3 & (RF3_IM_COLD))
+	    if (rf_has(r_ptr->flags, RF_IM_COLD))
 	      {
 		if (m_ptr->ml)
 		  {
-		    l_ptr->flags3 |= (RF3_IM_COLD);
+		    rf_on(l_ptr->flags, RF_IM_COLD);
 		  }
 	      }
 	    
@@ -756,11 +756,11 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
 	if (brand[P_BRAND_POIS] > MULTIPLE_BASE)
 	  {
 	    /* Notice immunity */
-	    if (r_ptr->flags3 & (RF3_IM_POIS))
+	    if (rf_has(r_ptr->flags, RF_IM_POIS))
 	      {
 		if (m_ptr->ml)
 		  {
-		    l_ptr->flags3 |= (RF3_IM_POIS);
+		    rf_on(l_ptr->flags, RF_IM_POIS);
 		  }
 	      }
 	    
@@ -785,14 +785,14 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
 	if (check_ability(SP_HOLY_LIGHT))
 	  {
 	    /* +2 or +3 versus Undead and light-sensitive creatures */
-	    if ((r_ptr->flags3 & (RF3_UNDEAD)) || 
-		(r_ptr->flags3 & (RF3_HURT_LITE)))
+	    if ((rf_has(r_ptr->flags, RF_UNDEAD)) || 
+		(rf_has(r_ptr->flags, RF_HURT_LITE)))
 	      {
 		mul += (mul + 10) / 10;
 	      }
 	    
 	    /* +1 or +2 versus other Evil creatures */
-	    else if (r_ptr->flags3 & (RF3_EVIL))
+	    else if (rf_has(r_ptr->flags, RF_EVIL))
 	      {
 		mul += mul / 10;
 	      }
@@ -1284,9 +1284,9 @@ bool py_attack(int y, int x, bool can_push)
       /* Stunning. */
       if (bash_quality + p_ptr->lev > randint1(200 + r_ptr->level * 4))
         {
-          if (r_ptr->flags3 & (RF3_NO_STUN))
+          if (rf_has(r_ptr->flags, RF_NO_STUN))
             {
-              if (m_ptr->ml) l_ptr->flags3 |= (RF3_NO_STUN);
+              if (m_ptr->ml) rf_on(l_ptr->flags, RF_NO_STUN);
             }
           else
             {
@@ -1299,9 +1299,9 @@ bool py_attack(int y, int x, bool can_push)
       /* Confusion. */
       if (bash_quality + p_ptr->lev > randint1(300 + r_ptr->level * 6))
         {
-          if (r_ptr->flags3 & (RF3_NO_CONF))
+          if (rf_has(r_ptr->flags, RF_NO_CONF))
             {
-              if (m_ptr->ml) l_ptr->flags3 |= (RF3_NO_CONF);
+              if (m_ptr->ml) rf_on(l_ptr->flags, RF_NO_CONF);
             }
           else
             {
@@ -1506,11 +1506,11 @@ bool py_attack(int y, int x, bool can_push)
 	      p_ptr->redraw |= PR_STATUS;
 	      
 	      /* Confuse the monster */
-	      if (r_ptr->flags3 & (RF3_NO_CONF))
+	      if (rf_has(r_ptr->flags, RF_NO_CONF))
 		{
 		  if (m_ptr->ml)
 		    {
-		      l_ptr->flags3 |= (RF3_NO_CONF);
+		      rf_on(l_ptr->flags, RF_NO_CONF);
 		    }
 		  
 		  msg_format("%^s is unaffected.", m_name);
@@ -1552,11 +1552,11 @@ bool py_attack(int y, int x, bool can_push)
 	      p_ptr->redraw |= (PR_STATUS);
 	      
 	      /* The undead are immune */
-	      if (r_ptr->flags3 & (RF3_UNDEAD))
+	      if (rf_has(r_ptr->flags, RF_UNDEAD))
 		{
 		  if (m_ptr->ml) /* control for visibility */
 		    {
-		      l_ptr->flags3 |= (RF3_UNDEAD);
+		      rf_on(l_ptr->flags, RF_UNDEAD);
 		    }
 		  
 		  msg_format("%^s is immune!", m_name);
@@ -2056,9 +2056,9 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	    }
 	  
 	  /* Some monsters get "destroyed" */
-	  if ((r_ptr->flags3 & (RF3_DEMON)) ||
-	      (r_ptr->flags3 & (RF3_UNDEAD)) ||
-	      (r_ptr->flags2 & (RF2_STUPID)) ||
+	  if ((rf_has(r_ptr->flags, RF_DEMON)) ||
+	      (rf_has(r_ptr->flags, RF_UNDEAD)) ||
+	      (rf_has(r_ptr->flags, RF_STUPID)) ||
 	      (strchr("Evg", r_ptr->d_char)))
 	    {
 	      /* Special note at death */
@@ -2619,9 +2619,9 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 	    }
 	  
 	  /* Some monsters get "destroyed" */
-	  if ((r_ptr->flags3 & (RF3_DEMON)) ||
-	      (r_ptr->flags3 & (RF3_UNDEAD)) ||
-	      (r_ptr->flags2 & (RF2_STUPID)) ||
+	  if ((rf_has(r_ptr->flags, RF_DEMON)) ||
+	      (rf_has(r_ptr->flags, RF_UNDEAD)) ||
+	      (rf_has(r_ptr->flags, RF_STUPID)) ||
 	      (strchr("Evg", r_ptr->d_char)))
 	    {
 	      /* Special note at death */

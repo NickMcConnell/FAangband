@@ -936,7 +936,7 @@ static void display_monster(int col, int row, bool cursor, int oid)
 	big_pad(66, row, a, c);
 
 	/* Display kills */
-	if (r_ptr->flags1 & RF1_UNIQUE)
+	if (rf_has(r_ptr->flags, RF_UNIQUE))
 		put_str(format("%s", (r_ptr->max_num == 0)?  " dead" : "alive"), row, 70);
 	else
 		put_str(format("%5d", l_ptr->pkills), row, 70);
@@ -1009,7 +1009,7 @@ static void mon_summary(int gid, const int *object_list, int n, int top, int row
 	}
 
 	/* Different display for the first item if we've got uniques to show */
-	if (gid == 0 && ((&r_info[default_join[object_list[0]].oid])->flags1 & RF1_UNIQUE))
+	if (gid == 0 && (rf_has(&r_info[default_join[object_list[0]].oid])->flags1, RF_UNIQUE))
 	{
 		c_prt(TERM_L_BLUE, format("%d known uniques, %d slain.", n, kills),
 					row, col);
@@ -1037,7 +1037,7 @@ static int count_known_monsters(void)
 		if (!OPT(cheat_know) && !l_list[i].sights) continue;
 		if (!r_ptr->name) continue;
 
-		if (r_ptr->flags1 & RF1_UNIQUE) m_count++;
+		if (rf_has(r_ptr->flags, RF_UNIQUE)) m_count++;
 
 		for (j = 1; j < N_ELEMENTS(monster_group) - 1; j++)
 		{
@@ -1070,7 +1070,7 @@ static void do_cmd_knowledge_monsters(const char *name, int row)
 		if (!OPT(cheat_know) && !l_list[i].sights) continue;
 		if (!r_ptr->name) continue;
 
-		if (r_ptr->flags1 & RF1_UNIQUE) m_count++;
+		if (rf_has(r_ptr->flags, RF_UNIQUE)) m_count++;
 
 		for (j = 1; j < N_ELEMENTS(monster_group) - 1; j++)
 		{
@@ -1092,7 +1092,7 @@ static void do_cmd_knowledge_monsters(const char *name, int row)
 		for (j = 0; j < N_ELEMENTS(monster_group)-1; j++)
 		{
 			const char *pat = monster_group[j].chars;
-			if (j == 0 && !(r_ptr->flags1 & RF1_UNIQUE))
+			if (j == 0 && !(rf_has(r_ptr->flags, RF_UNIQUE)))
 				continue;
 			else if (j > 0 && !strchr(pat, r_ptr->d_char))
 				continue;

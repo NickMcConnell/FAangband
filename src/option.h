@@ -109,6 +109,7 @@ extern const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER];
 #define OPT_view_granite_lite		62
 #define OPT_view_special_lite		63
 #define OPT_easy_more                   65
+#define OPT_animate_flicker             66
 #define OPT_show_piles                  67
 #define OPT_hp_changes_colour           68
 #define OPT_show_detect                 69 

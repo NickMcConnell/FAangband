@@ -1497,32 +1497,32 @@ static void pseudo_probe(void)
 		   m_name, approx_hp, approx_mana);
       
       /* Learn some flags.  Chance of omissions. */
-      if ((r_ptr->flags3 & (RF3_ANIMAL)) && (randint0(20) != 1))
-	l_ptr->flags3 |= (RF3_ANIMAL);
-      if ((r_ptr->flags3 & (RF3_EVIL)) && (randint0(10) != 1))
-	l_ptr->flags3 |= (RF3_EVIL);
-      if ((r_ptr->flags3 & (RF3_UNDEAD)) && (randint0(20) != 1))
-	l_ptr->flags3 |= (RF3_UNDEAD);
-      if ((r_ptr->flags3 & (RF3_DEMON)) && (randint0(20) != 1))
-	l_ptr->flags3 |= (RF3_DEMON);
-      if ((r_ptr->flags3 & (RF3_ORC)) && (randint0(20) != 1))
-	l_ptr->flags3 |= (RF3_ORC);
-      if ((r_ptr->flags3 & (RF3_TROLL)) && (randint0(20) != 1))
-	l_ptr->flags3 |= (RF3_TROLL);
-      if ((r_ptr->flags3 & (RF3_GIANT)) && (randint0(10) != 1))
-	l_ptr->flags3 |= (RF3_GIANT);
-      if ((r_ptr->flags3 & (RF3_DRAGON)) && (randint0(20) != 1))
-	l_ptr->flags3 |= (RF3_DRAGON);
-      if ((r_ptr->flags3 & (RF3_IM_ACID)) && (randint0(5) != 1))
-	l_ptr->flags3 |= (RF3_IM_ACID);
-      if ((r_ptr->flags3 & (RF3_IM_ELEC)) && (randint0(5) != 1))
-	l_ptr->flags3 |= (RF3_IM_ELEC);
-      if ((r_ptr->flags3 & (RF3_IM_FIRE)) && (randint0(5) != 1))
-	l_ptr->flags3 |= (RF3_IM_FIRE);
-      if ((r_ptr->flags3 & (RF3_IM_COLD)) && (randint0(5) != 1))
-	l_ptr->flags3 |= (RF3_IM_COLD);
-      if ((r_ptr->flags3 & (RF3_IM_POIS)) && (randint0(5) != 1))
-	l_ptr->flags3 |= (RF3_IM_POIS);
+      if ((rf_has(r_ptr->flags, RF_ANIMAL)) && (randint0(20) != 1))
+	rf_on(l_ptr->flags, RF_ANIMAL);
+      if ((rf_has(r_ptr->flags, RF_EVIL)) && (randint0(10) != 1))
+	rf_on(l_ptr->flags, RF_EVIL);
+      if ((rf_has(r_ptr->flags, RF_UNDEAD)) && (randint0(20) != 1))
+	rf_on(l_ptr->flags, RF_UNDEAD);
+      if ((rf_has(r_ptr->flags, RF_DEMON)) && (randint0(20) != 1))
+	rf_on(l_ptr->flags, RF_DEMON);
+      if ((rf_has(r_ptr->flags, RF_ORC)) && (randint0(20) != 1))
+	rf_on(l_ptr->flags, RF_ORC);
+      if ((rf_has(r_ptr->flags, RF_TROLL)) && (randint0(20) != 1))
+	rf_on(l_ptr->flags, RF_TROLL);
+      if ((rf_has(r_ptr->flags, RF_GIANT)) && (randint0(10) != 1))
+	rf_on(l_ptr->flags, RF_GIANT);
+      if ((rf_has(r_ptr->flags, RF_DRAGON)) && (randint0(20) != 1))
+	rf_on(l_ptr->flags, RF_DRAGON);
+      if ((rf_has(r_ptr->flags, RF_IM_ACID)) && (randint0(5) != 1))
+	rf_on(l_ptr->flags, RF_IM_ACID);
+      if ((rf_has(r_ptr->flags, RF_IM_ELEC)) && (randint0(5) != 1))
+	rf_on(l_ptr->flags, RF_IM_ELEC);
+      if ((rf_has(r_ptr->flags, RF_IM_FIRE)) && (randint0(5) != 1))
+	rf_on(l_ptr->flags, RF_IM_FIRE);
+      if ((rf_has(r_ptr->flags, RF_IM_COLD)) && (randint0(5) != 1))
+	rf_on(l_ptr->flags, RF_IM_COLD);
+      if ((rf_has(r_ptr->flags, RF_IM_POIS)) && (randint0(5) != 1))
+	rf_on(l_ptr->flags, RF_IM_POIS);
       
       /* Confirm success. */
       msg_print("You feel you know more about this monster...");

@@ -1998,7 +1998,7 @@ void fall_off_cliff(void)
 	  for (i = 0; i < z_info->r_max; i++)
 	    {
 	      r_ptr = &r_info[i];
-	      if ((r_ptr->flags1 & RF1_QUESTOR) && 
+	      if ((rf_has(r_ptr->flags, RF_QUESTOR)) && 
 		  (r_ptr->level == p_ptr->depth))
 		break;
 	    }

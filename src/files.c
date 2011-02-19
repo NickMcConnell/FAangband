@@ -2963,51 +2963,6 @@ void process_player_name(bool sf)
 
 
 /**
- * Hack -- commit suicide
- */
-void do_cmd_suicide(cmd_code code, cmd_arg args[])
-{
-  int i;
-  
-  /* Flush input */
-  flush();
-  
-  /* Verify Retirement */
-  if (p_ptr->total_winner)
-    {
-      /* Verify */
-      if (!get_check("Do you want to retire? ")) return;
-    }
-  
-  /* Verify Suicide */
-  else
-    {
-      /* Verify */
-      if (!get_check("Do you really want to suicide? ")) return;
-      
-      /* Special Verification for suicide */
-      prt("Please verify SUICIDE by typing the '@' sign: ", 0, 0);
-      flush();
-      i = inkey();
-      prt("", 0, 0);
-      if (i != '@') return;
-    }
-  
-  /* Commit suicide */
-  p_ptr->is_dead = TRUE;
-  
-  /* Stop playing */
-  p_ptr->playing = FALSE;
-  
-  /* Leaving */
-  p_ptr->leaving = TRUE;
-  
-  /* Cause of death */
-  strcpy(p_ptr->died_from, "Quitting");
-}
-
-
-/**
  * Save the game
  */
 void save_game(void)

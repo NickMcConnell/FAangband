@@ -182,7 +182,7 @@ static void wr_monster(monster_type *m_ptr)
   monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
   /* Special treatment for player ghosts */
-  if (r_ptr->flags2 & (RF2_PLAYER_GHOST))
+  if (rf_has(r_ptr->flags, RF_PLAYER_GHOST))
     wr_s16b(r_ghost);
   else
     wr_s16b(m_ptr->r_idx);
@@ -263,7 +263,7 @@ static void wr_lore(int r_idx)
   wr_byte(l_ptr->drop_item);
   
   /* Count spells */
-  wr_byte(l_ptr->cast_inate);
+  wr_byte(0);
   wr_byte(l_ptr->cast_spell);
   
   /* Count blows of each type */
@@ -998,7 +998,7 @@ static bool wr_savefile_new(void)
   
   
   /* Dump the number of "messages" */
-  tmp16u = message_num();
+  tmp16u = messages_num();
   if (OPT(compress_savefile) && (tmp16u > 40)) tmp16u = 40;
   wr_u16b(tmp16u);
   

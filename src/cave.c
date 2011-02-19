@@ -376,28 +376,28 @@ static byte breath_to_attr[32][2] =
     {  0,  0 },
     {  0,  0 },
     {  0,  0 },
-    {  TERM_SLATE, TERM_L_DARK },       /* RF4_BRTH_ACID */
-    {  TERM_BLUE,  TERM_L_BLUE },       /* RF4_BRTH_ELEC */
-    {  TERM_RED,  TERM_L_RED },         /* RF4_BRTH_FIRE */
-    {  TERM_WHITE,  TERM_L_WHITE },     /* RF4_BRTH_COLD */
-    {  TERM_GREEN,  TERM_L_GREEN },     /* RF4_BRTH_POIS */
-    {  TERM_ORANGE,  TERM_RED },        /* RF4_BRTH_PLAS */
-    {  TERM_YELLOW,  TERM_ORANGE },     /* RF4_BRTH_LITE */
-    {  TERM_L_DARK,  TERM_SLATE },      /* RF4_BRTH_DARK */
-    {  TERM_L_UMBER,  TERM_UMBER },     /* RF4_BRTH_CONFU */
-    {  TERM_YELLOW,  TERM_L_UMBER },    /* RF4_BRTH_SOUND */
-    {  TERM_UMBER,  TERM_L_UMBER },     /* RF4_BRTH_SHARD */
-    {  TERM_L_WHITE,  TERM_SLATE },     /* RF4_BRTH_INER */
-    {  TERM_L_WHITE,  TERM_SLATE },     /* RF4_BRTH_GRAV */
-    {  TERM_UMBER,  TERM_L_UMBER },     /* RF4_BRTH_FORCE */
-    {  TERM_L_RED,  TERM_VIOLET },      /* RF4_BRTH_NEXUS */
-    {  TERM_L_GREEN,  TERM_GREEN },     /* RF4_BRTH_NETHR */
-    {  255,  255 },   /* (any color) */ /* RF4_BRTH_CHAOS */
-    {  TERM_VIOLET,  TERM_VIOLET },     /* RF4_BRTH_DISEN */
-    {  TERM_L_BLUE,  TERM_L_BLUE },     /* RF4_BRTH_TIME */
-    {  TERM_BLUE,     TERM_SLATE },     /* RF4_BRTH_STORM */
-    {  TERM_RED,      TERM_GREEN },     /* RF4_BRTH_DFIRE */
-    {  TERM_WHITE,  TERM_L_WHITE },     /* RF4_BRTH_ICE */
+    {  TERM_SLATE, TERM_L_DARK },       /* RSF_BRTH_ACID */
+    {  TERM_BLUE,  TERM_L_BLUE },       /* RSF_BRTH_ELEC */
+    {  TERM_RED,  TERM_L_RED },         /* RSF_BRTH_FIRE */
+    {  TERM_WHITE,  TERM_L_WHITE },     /* RSF_BRTH_COLD */
+    {  TERM_GREEN,  TERM_L_GREEN },     /* RSF_BRTH_POIS */
+    {  TERM_ORANGE,  TERM_RED },        /* RSF_BRTH_PLAS */
+    {  TERM_YELLOW,  TERM_ORANGE },     /* RSF_BRTH_LITE */
+    {  TERM_L_DARK,  TERM_SLATE },      /* RSF_BRTH_DARK */
+    {  TERM_L_UMBER,  TERM_UMBER },     /* RSF_BRTH_CONFU */
+    {  TERM_YELLOW,  TERM_L_UMBER },    /* RSF_BRTH_SOUND */
+    {  TERM_UMBER,  TERM_L_UMBER },     /* RSF_BRTH_SHARD */
+    {  TERM_L_WHITE,  TERM_SLATE },     /* RSF_BRTH_INER */
+    {  TERM_L_WHITE,  TERM_SLATE },     /* RSF_BRTH_GRAV */
+    {  TERM_UMBER,  TERM_L_UMBER },     /* RSF_BRTH_FORCE */
+    {  TERM_L_RED,  TERM_VIOLET },      /* RSF_BRTH_NEXUS */
+    {  TERM_L_GREEN,  TERM_GREEN },     /* RSF_BRTH_NETHR */
+    {  255,  255 },   /* (any color) */ /* RSF_BRTH_CHAOS */
+    {  TERM_VIOLET,  TERM_VIOLET },     /* RSF_BRTH_DISEN */
+    {  TERM_L_BLUE,  TERM_L_BLUE },     /* RSF_BRTH_TIME */
+    {  TERM_BLUE,     TERM_SLATE },     /* RSF_BRTH_STORM */
+    {  TERM_RED,      TERM_GREEN },     /* RSF_BRTH_DFIRE */
+    {  TERM_WHITE,  TERM_L_WHITE },     /* RSF_BRTH_ICE */
     {  0,  0 },     /*  */
     {  0,  0 }      /*  */
   };
@@ -433,7 +433,7 @@ static byte multi_hued_attr(monster_race *r_ptr)
       bool stored = FALSE;
       
       /* Don't have that breath */
-      if (!(r_ptr->flags4 & (1L << i))) continue;
+      if (!rsf_has(r_ptr->spell_flags, i)) continue;
       
       /* Get the first color of this breath */
       first_color = breath_to_attr[i][0];
@@ -1275,7 +1275,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 	    }
 	  
 	  /* Multi-hued monster */
-	  else if (r_ptr->flags1 & (RF1_ATTR_MULTI))
+	  else if (rf_has(r_ptr->flags, RF_ATTR_MULTI))
 	    {
 	      /* Multi-hued attr */
 	      a = multi_hued_attr(r_ptr);
@@ -1285,7 +1285,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 	    }
 	  
 	  /* Normal monster (not "clear" in any way) */
-	  else if (!(r_ptr->flags1 & (RF1_ATTR_CLEAR | RF1_CHAR_CLEAR)))
+	  else if (!(rf_has(r_ptr->flags, RF_ATTR_CLEAR) || rf_has(r_ptr->flags, RF_CHAR_CLEAR)))
 	    {
 	      /* Use attr */
 	      a = da;
@@ -1305,14 +1305,14 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 	    }
 	  
 	  /* Normal char, Clear attr, monster */
-	  else if (!(r_ptr->flags1 & (RF1_CHAR_CLEAR)))
+	  else if (!(rf_has(r_ptr->flags, RF_CHAR_CLEAR)))
 	    {
 	      /* Normal char */
 	      c = dc;
 	    }
 	  
 	  /* Normal attr, Clear char, monster */
-	  else if (!(r_ptr->flags1 & (RF1_ATTR_CLEAR)))
+	  else if (!(rf_has(r_ptr->flags, RF_ATTR_CLEAR)))
 	    {
 	      /* Normal attr */
 	      a = da;
@@ -1782,7 +1782,7 @@ void map_info_default(int y, int x, byte *ap, char *cp)
 	    }
 	  
 	  /* Multi-hued monster */
-	  else if (r_ptr->flags1 & (RF1_ATTR_MULTI))
+	  else if (rf_has(r_ptr->flags, RF_ATTR_MULTI))
 	    {
 	      /* Multi-hued attr */
 	      a = multi_hued_attr(r_ptr);
@@ -1792,7 +1792,7 @@ void map_info_default(int y, int x, byte *ap, char *cp)
 	    }
 	  
 	  /* Normal monster (not "clear" in any way) */
-	  else if (!(r_ptr->flags1 & (RF1_ATTR_CLEAR | RF1_CHAR_CLEAR)))
+	  else if (!(rf_has(r_ptr->flags, RF_ATTR_CLEAR) || rf_has(r_ptr->flags, RF_CHAR_CLEAR)))
 	    {
 	      /* Use attr */
 	      a = da;
@@ -1812,14 +1812,14 @@ void map_info_default(int y, int x, byte *ap, char *cp)
 	    }
 	  
 	  /* Normal char, Clear attr, monster */
-	  else if (!(r_ptr->flags1 & (RF1_CHAR_CLEAR)))
+	  else if (!(rf_has(r_ptr->flags, RF_CHAR_CLEAR)))
 	    {
 	      /* Normal char */
 	      c = dc;
 	    }
 	  
 	  /* Normal attr, Clear char, monster */
-	  else if (!(r_ptr->flags1 & (RF1_ATTR_CLEAR)))
+	  else if (!(rf_has(r_ptr->flags, RF_ATTR_CLEAR)))
 	    {
 	      /* Normal attr */
 	      a = da;

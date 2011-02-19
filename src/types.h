@@ -437,14 +437,9 @@ struct monster_race
   
   byte freq_ranged;	/**< Ranged attack frequency */
   
-  u32b flags1;		/**< Flags 1 (general) */
-  u32b flags2;		/**< Flags 2 (abilities) */
-  u32b flags3;		/**< Flags 3 (race/resist) */
-  u32b flags4;		/**< Flags 4 (innate/breath) */
-  u32b flags5;		/**< Flags 5 (normal spells) */
-  u32b flags6;		/**< Flags 6 (special spells) */
-  u32b flags7;		/**< Flags 7 (summon spells) */
-  
+	bitflag flags[RF_SIZE];         /* Flags */
+	bitflag spell_flags[RSF_SIZE];  /* Spell flags */
+
   monster_blow blow[4];	/**< Up to four blows per round */
   
   
@@ -493,20 +488,51 @@ struct monster_lore
   byte drop_gold;       /**< Max number of gold dropped at once */
   byte drop_item;       /**< Max number of item dropped at once */
   
-  byte cast_inate;      /**< Max number of inate spells seen */
   byte cast_spell;      /**< Max number of other spells seen */
   
   byte blows[4];        /**< Number of times each blow type was seen */
   
-  u32b flags1;          /**< Observed racial flags */
-  u32b flags2;          /**< Observed racial flags */
-  u32b flags3;          /**< Observed racial flags */
-  u32b flags4;          /**< Observed racial flags */
-  u32b flags5;          /**< Observed racial flags */
-  u32b flags6;          /**< Observed racial flags */
-  u32b flags7;          /**< Observed racial flags */
+	bitflag flags[RF_SIZE]; /* Observed racial flags - a 1 indicates
+	                         * the flag (or lack thereof) is known to
+	                         * the player */
+	bitflag spell_flags[RSF_SIZE];  /* Observed racial spell flags */
 };
 
+/**
+ * Monster spell information
+ *
+ *
+ */
+struct monster_spell
+{
+  byte mana_cost;        /**< monster mana used */
+  byte d_base;           /**< base desirability for AI. */
+  byte d_summ;           /**< desirability for AI per monster level
+			  *   times 0-3 based on damage taken */
+  byte d_hurt;           /**< desirability for AI per monster spell power 
+			  *   times 0-3 based on damage taken */
+  byte d_mana;           /**< desirability for AI per monster spell power
+			  *   times 0-2 based on mana shortage */
+  byte d_esc;            /**< desirability for AI per monster level
+			  *   times 0-3 based on fear, and damage taken */
+  byte d_tact;           /**< desirability for AI per monster level, modified 
+			  *   times 0-3 based on proximity, min_range, and 
+			  *   best_range */
+  byte d_res;            /**< category of 'resistability' checked by monster AI
+			  *   for purposes of desirability. */
+  byte d_range;          /**< % of spell desirability retained for each step 
+			  *   past 'range' */
+  byte spell_range;      /**< Optimal Ranges for various spells. 
+			  *   6 is optimal for Breath Weapons, Beams, and Arcs.
+			  *   3 is optimal for Lash/Spit.
+			  *   0 indicates no range limitation for other spells.
+			  *   
+			  *   This range is considered a preference if d_range 
+			  *   in spell_desire is > 0.
+			  *   It is a hard limit if d_range = 0. */
+  bool is_breath;        /**< It's a breath */
+  bool is_harass;        /**< It's a harassing spell */
+};
 
 
 

@@ -2143,13 +2143,13 @@ void monster_death(int m_idx)
   
   monster_race *r_ptr = &r_info[m_ptr->r_idx];
   
-  bool visible = (m_ptr->ml || (r_ptr->flags1 & (RF1_UNIQUE)));
+  bool visible = (m_ptr->ml || (rf_has(r_ptr->flags, RF_UNIQUE)));
   
-  bool good = (r_ptr->flags1 & (RF1_DROP_GOOD)) ? TRUE : FALSE;
-  bool great = (r_ptr->flags1 & (RF1_DROP_GREAT)) ? TRUE : FALSE;
+  bool good = (rf_has(r_ptr->flags, RF_DROP_GOOD)) ? TRUE : FALSE;
+  bool great = (rf_has(r_ptr->flags, RF_DROP_GREAT)) ? TRUE : FALSE;
   
-  bool do_gold = (!(r_ptr->flags1 & (RF1_ONLY_ITEM)));
-  bool do_item = (!(r_ptr->flags1 & (RF1_ONLY_GOLD)));
+  bool do_gold = (!(rf_has(r_ptr->flags, RF_ONLY_ITEM)));
+  bool do_item = (!(rf_has(r_ptr->flags, RF_ONLY_GOLD)));
   
   int force_coin = get_coin_type(r_ptr);
   
@@ -2204,7 +2204,7 @@ void monster_death(int m_idx)
   
   
   /* Mega-Hack -- drop guardian treasures */
-  if (r_ptr->flags1 & (RF1_DROP_CHOSEN))
+  if (rf_has(r_ptr->flags, RF_DROP_CHOSEN))
     {
       /* Morgoth */
       if (r_ptr->level == 100)
@@ -2262,17 +2262,17 @@ void monster_death(int m_idx)
     } 
   
   /* Determine how much we can drop */
-  if ((r_ptr->flags1 & (RF1_DROP_60)) && (randint0(100) < 60)) number++;
-  if ((r_ptr->flags1 & (RF1_DROP_90)) && (randint0(100) < 90)) number++;
+  if (rf_has(r_ptr->flags, RF_DROP_60) && (randint0(100) < 60)) number++;
+  if (rf_has(r_ptr->flags, RF_DROP_90) && (randint0(100) < 90)) number++;
   
   /* Hack -- nothing's more annoying than a chest that doesn't appear. */
-  if ((r_ptr->flags1 & (RF1_DROP_CHEST)) && (r_ptr->flags1 & (RF1_DROP_90))) 
+  if (rf_has(r_ptr->flags, RF_DROP_CHEST) && rf_has(r_ptr->flags, RF_DROP_90)) 
     number = 1;
   
-  if (r_ptr->flags1 & (RF1_DROP_1D2)) number += damroll(1, 2);
-  if (r_ptr->flags1 & (RF1_DROP_2D2)) number += damroll(2, 2);
-  if (r_ptr->flags1 & (RF1_DROP_3D2)) number += damroll(3, 2);
-  if (r_ptr->flags1 & (RF1_DROP_4D2)) number += damroll(4, 2);
+  if (rf_has(r_ptr->flags, RF_DROP_1D2)) number += damroll(1, 2);
+  if (rf_has(r_ptr->flags, RF_DROP_2D2)) number += damroll(2, 2);
+  if (rf_has(r_ptr->flags, RF_DROP_3D2)) number += damroll(3, 2);
+  if (rf_has(r_ptr->flags, RF_DROP_4D2)) number += damroll(4, 2);
   
   /* Hack -- handle creeping coins */
   coin_type = force_coin;
@@ -2306,7 +2306,7 @@ void monster_death(int m_idx)
 	}
       
       /* Make chest. */
-      else if (r_ptr->flags1 & (RF1_DROP_CHEST))
+      else if (rf_has(r_ptr->flags, RF_DROP_CHEST))
 	{
 	  required_tval = TV_CHEST;
 	  if (make_object(i_ptr, FALSE, FALSE, TRUE)) 
@@ -2358,14 +2358,14 @@ void monster_death(int m_idx)
   
   /* If the player kills a unique, write a note.*/
   
-  if (r_ptr->flags1 & RF1_UNIQUE)
+  if (rf_has(r_ptr->flags, RF_UNIQUE))
     {
       
       char note2[120];
       char real_name[120];
       
       /* write note for player ghosts */
-      if (r_ptr->flags2 & (RF2_PLAYER_GHOST))
+      if (rf_has(r_ptr->flags, RF_PLAYER_GHOST))
 	{
 	  my_strcpy(note2, format("Destroyed %^s, the %^s", ghost_name, 
 				  r_name + r_ptr->name), sizeof (note2));
@@ -2378,9 +2378,9 @@ void monster_death(int m_idx)
 	  monster_desc_race(real_name, sizeof(real_name), m_ptr->r_idx);
 	  
 	  /* Write note */
-	  if ((r_ptr->flags3 & (RF3_DEMON)) ||
-	      (r_ptr->flags3 & (RF3_UNDEAD)) ||
-	      (r_ptr->flags2 & (RF2_STUPID)) ||
+	  if ((rf_has(r_ptr->flags, RF_DEMON)) ||
+	      (rf_has(r_ptr->flags, RF_UNDEAD)) ||
+	      (rf_has(r_ptr->flags, RF_STUPID)) ||
 	      (strchr("Evg", r_ptr->d_char)))
 	    my_strcpy(note2, format("Destroyed %s", real_name), 
 		      sizeof (note2));
@@ -2392,7 +2392,7 @@ void monster_death(int m_idx)
     }
   
   /* Only process "Quest Monsters" */
-  if (!(r_ptr->flags1 & (RF1_QUESTOR))) return;
+  if (!(rf_has(r_ptr->flags, RF_QUESTOR))) return;
   
   
   /* Hack -- Mark quests as complete */
@@ -2403,7 +2403,7 @@ void monster_death(int m_idx)
     }
 
   /* Hack -- Mark Sauron's other forms as dead */
-  if ((r_ptr->level == 85) && (r_ptr->flags1 & (RF1_QUESTOR)))
+  if ((r_ptr->level == 85) && (rf_has(r_ptr->flags, RF_QUESTOR)))
     for (i = 1; i < 4; i++) r_info[m_ptr->r_idx - i].max_num--;
 
   /* Make a staircase for Morgoth */
@@ -2553,9 +2553,9 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
       /* Specialty Ability SOUL_SIPHON */
       if ((check_ability(SP_SOUL_SIPHON)) && 
 	  (p_ptr->csp < p_ptr->msp) && 
-	  (!((r_ptr->flags3 & (RF3_DEMON)) || 
-	     (r_ptr->flags3 & (RF3_UNDEAD)) || 
-	     (r_ptr->flags2 & (RF2_STUPID)))))
+	  (!((rf_has(r_ptr->flags, RF_DEMON)) || 
+	     (rf_has(r_ptr->flags, RF_UNDEAD)) || 
+	     (rf_has(r_ptr->flags, RF_STUPID)))))
 	{
 	  p_ptr->mana_gain += 2 + (m_ptr->maxhp / 30);
 	}
@@ -2576,9 +2576,9 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 	}
       
       /* Death by Physical attack -- non-living monster */
-      else if ((r_ptr->flags3 & (RF3_DEMON)) ||
-	       (r_ptr->flags3 & (RF3_UNDEAD)) ||
-	       (r_ptr->flags2 & (RF2_STUPID)) ||
+      else if ((rf_has(r_ptr->flags, RF_DEMON)) ||
+	       (rf_has(r_ptr->flags, RF_UNDEAD)) ||
+	       (rf_has(r_ptr->flags, RF_STUPID)) ||
 	       (strchr("Evg", r_ptr->d_char)))
 	{
 	  message_format(MSG_KILL, p_ptr->lev, "You have destroyed %s.", 
@@ -2619,12 +2619,12 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
       monster_death(m_idx);
 
       /* When the player kills a Unique, it stays dead */
-      if (r_ptr->flags1 & (RF1_UNIQUE)) r_ptr->max_num--;
+      if (rf_has(r_ptr->flags, RF_UNIQUE)) r_ptr->max_num--;
       
       /* When the player kills a player ghost, the bones file that 
        * it used is (often) deleted.
        */
-      if (r_ptr->flags2 & (RF2_PLAYER_GHOST))
+      if (rf_has(r_ptr->flags, RF_PLAYER_GHOST))
 	{
 	  if (randint1(3) != 1)
 	    {
@@ -2644,7 +2644,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 	}
       
       /* Recall even invisible uniques or winners */
-      if (m_ptr->ml || (r_ptr->flags1 & (RF1_UNIQUE)))
+      if (m_ptr->ml || (rf_has(r_ptr->flags, RF_UNIQUE)))
 	{
 	  /* Count kills this life */
 	  if (l_ptr->pkills < MAX_SHORT) l_ptr->pkills++;
@@ -2697,7 +2697,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
     }
   
   /* Sometimes a monster gets scared by damage */
-  if (!m_ptr->monfear && !(r_ptr->flags3 & (RF3_NO_FEAR)))
+  if (!m_ptr->monfear && !(rf_has(r_ptr->flags, RF_NO_FEAR)))
     {
       int percentage;
       
@@ -2957,8 +2957,8 @@ void look_mon_desc(int m_idx, char *buf, size_t max)
   
   
   /* Determine if the monster is "living" (vs "undead") */
-  if (r_ptr->flags3 & (RF3_UNDEAD)) living = FALSE;
-  if (r_ptr->flags3 & (RF3_DEMON)) living = FALSE;
+  if (rf_has(r_ptr->flags, RF_UNDEAD)) living = FALSE;
+  if (rf_has(r_ptr->flags, RF_DEMON)) living = FALSE;
   if (strchr("Egv", r_ptr->d_char)) living = FALSE;
   
   
@@ -3049,7 +3049,7 @@ cptr look_mon_host(int m_idx)
   monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
   /* Non-racial - irrelevant */
-  if (!(r_ptr->flags3 & RF3_RACIAL))
+  if (!(rf_has(r_ptr->flags, RF_RACIAL)))
     return ("");
   
   /* Hostile monsters */
@@ -3991,8 +3991,8 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode, cptr inf
 	      s1 = "It is ";
 	      
 	      /* Hack -- take account of gender */
-	      if (r_ptr->flags1 & (RF1_FEMALE)) s1 = "She is ";
-	      else if (r_ptr->flags1 & (RF1_MALE)) s1 = "He is ";
+	      if (rf_has(r_ptr->flags, RF_FEMALE)) s1 = "She is ";
+	      else if (rf_has(r_ptr->flags, RF_MALE)) s1 = "He is ";
 	      
 	      /* Use a preposition */
 	      s2 = "carrying ";

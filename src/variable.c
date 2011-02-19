@@ -1103,6 +1103,12 @@ int text_out_indent = 0;
 
 
 /**
+ * Hack -- Padding after wrapping
+ */
+int text_out_pad = 0;
+
+
+/**
  * Hack - the destination row for dump_line_screen.
  */
 int dump_row = 0;

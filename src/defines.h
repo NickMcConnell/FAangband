@@ -686,6 +686,18 @@ typedef enum
 #define REALM_NATURE		3
 #define REALM_NECROMANTIC	4
 
+/* 
+ * Special values for the number of turns to rest, these need to be
+ * negative numbers, as postive numbers are taken to be a turncount,
+ * and zero means "not resting". 
+ */
+enum 
+{
+	REST_COMPLETE = -2,
+	REST_ALL_POINTS = -1,
+	REST_SUNLIGHT = -3
+};
+
 /*** Screen Locations ***/
 
 /*
@@ -2346,6 +2358,78 @@ typedef enum
 #define MFLAG_SHOW	0x40	/* Monster is recently memorized */
 #define MFLAG_MARK	0x80	/* Monster is currently memorized */
 
+enum
+{
+	#define RF(a,b) RF_##a,
+	#include "list-mon-flags.h"
+	#undef RF
+	RF_MAX
+};
+
+#define RF_SIZE                FLAG_SIZE(RF_MAX)
+
+#define rf_has(f, flag)        flag_has_dbg(f, RF_SIZE, flag, #f, #flag)
+#define rf_next(f, flag)       flag_next(f, RF_SIZE, flag)
+#define rf_is_empty(f)         flag_is_empty(f, RF_SIZE)
+#define rf_is_full(f)          flag_is_full(f, RF_SIZE)
+#define rf_is_inter(f1, f2)    flag_is_inter(f1, f2, RF_SIZE)
+#define rf_is_subset(f1, f2)   flag_is_subset(f1, f2, RF_SIZE)
+#define rf_is_equal(f1, f2)    flag_is_equal(f1, f2, RF_SIZE)
+#define rf_on(f, flag)         flag_on_dbg(f, RF_SIZE, flag, #f, #flag)
+#define rf_off(f, flag)        flag_off(f, RF_SIZE, flag)
+#define rf_wipe(f)             flag_wipe(f, RF_SIZE)
+#define rf_setall(f)           flag_setall(f, RF_SIZE)
+#define rf_negate(f)           flag_negate(f, RF_SIZE)
+#define rf_copy(f1, f2)        flag_copy(f1, f2, RF_SIZE)
+#define rf_union(f1, f2)       flag_union(f1, f2, RF_SIZE)
+#define rf_comp_union(f1, f2)  flag_comp_union(f1, f2, RF_SIZE)
+#define rf_inter(f1, f2)       flag_inter(f1, f2, RF_SIZE)
+#define rf_diff(f1, f2)        flag_diff(f1, f2, RF_SIZE)
+
+/* Some flags are obvious */
+#define RF_OBVIOUS_MASK \
+	RF_UNIQUE, RF_QUESTOR, RF_MALE, RF_FEMALE, \
+	RF_FRIEND, RF_FRIENDS, RF_ESCORT, RF_ESCORTS
+
+/* "race" flags */
+#define RF_RACE_MASK \
+	RF_ORC, RF_TROLL, RF_GIANT, RF_DRAGON, \
+	RF_DEMON, RF_UNDEAD, RF_EVIL, RF_ANIMAL, RF_METAL
+
+
+
+/*
+ * Monster spell flags
+ */
+
+enum
+{
+	#define RSF(a,b) RSF_##a,
+	#include "list-mon-spells.h"
+	#undef RSF
+	RSF_MAX
+};
+
+#define RSF_SIZE               FLAG_SIZE(RSF_MAX)
+
+#define rsf_has(f, flag)       flag_has_dbg(f, RSF_SIZE, flag, #f, #flag)
+#define rsf_next(f, flag)      flag_next(f, RSF_SIZE, flag)
+#define rsf_is_empty(f)        flag_is_empty(f, RSF_SIZE)
+#define rsf_is_full(f)         flag_is_full(f, RSF_SIZE)
+#define rsf_is_inter(f1, f2)   flag_is_inter(f1, f2, RSF_SIZE)
+#define rsf_is_subset(f1, f2)  flag_is_subset(f1, f2, RSF_SIZE)
+#define rsf_is_equal(f1, f2)   flag_is_equal(f1, f2, RSF_SIZE)
+#define rsf_on(f, flag)        flag_on_dbg(f, RSF_SIZE, flag, #f, #flag)
+#define rsf_off(f, flag)       flag_off(f, RSF_SIZE, flag)
+#define rsf_wipe(f)            flag_wipe(f, RSF_SIZE)
+#define rsf_setall(f)          flag_setall(f, RSF_SIZE)
+#define rsf_negate(f)          flag_negate(f, RSF_SIZE)
+#define rsf_copy(f1, f2)       flag_copy(f1, f2, RSF_SIZE)
+#define rsf_union(f1, f2)      flag_union(f1, f2, RSF_SIZE)
+#define rsf_comp_union(f1, f2) flag_comp_union(f1, f2, RSF_SIZE)
+#define rsf_inter(f1, f2)      flag_inter(f1, f2, RSF_SIZE)
+#define rsf_diff(f1, f2)       flag_diff(f1, f2, RSF_SIZE)
+
 /*
  * New monster race bit flags
  */
@@ -2618,39 +2702,21 @@ typedef enum
  * Breath attacks.
  * Need special treatment in movement AI.
  */
-#define RF4_BREATH_MASK \
-        (RF4_BRTH_ACID | RF4_BRTH_ELEC | RF4_BRTH_FIRE | RF4_BRTH_COLD | \
-         RF4_BRTH_POIS | RF4_BRTH_PLAS | RF4_BRTH_LITE | RF4_BRTH_DARK | \
-         RF4_BRTH_CONFU | RF4_BRTH_SOUND | RF4_BRTH_SHARD | RF4_BRTH_INER | \
-         RF4_BRTH_GRAV | RF4_BRTH_FORCE | RF4_BRTH_NEXUS | RF4_BRTH_NETHR | \
-         RF4_BRTH_CHAOS | RF4_BRTH_DISEN | RF4_BRTH_TIME | RF4_BRTH_STORM | \
-	 RF4_BRTH_DFIRE | RF4_BRTH_ICE | RF4_BRTH_ALL )
+#define RSF_BREATH_MASK \
+        RSF_BRTH_ACID, RSF_BRTH_ELEC, RSF_BRTH_FIRE, RSF_BRTH_COLD, \
+         RSF_BRTH_POIS, RSF_BRTH_PLAS, RSF_BRTH_LITE, RSF_BRTH_DARK, \
+         RSF_BRTH_CONFU, RSF_BRTH_SOUND, RSF_BRTH_SHARD, RSF_BRTH_INER, \
+         RSF_BRTH_GRAV, RSF_BRTH_FORCE, RSF_BRTH_NEXUS, RSF_BRTH_NETHR, \
+         RSF_BRTH_CHAOS, RSF_BRTH_DISEN, RSF_BRTH_TIME, RSF_BRTH_STORM, \
+	 RSF_BRTH_DFIRE, RSF_BRTH_ICE, RSF_BRTH_ALL 
 
-#define RF5_BREATH_MASK \
-	(0L)
-
-#define RF6_BREATH_MASK \
-	(0L)
-
-#define RF7_BREATH_MASK \
-	(0L)
-
-/*
+/**
  * Harassment (not direct damage) attacks.
  * Need special treatment in AI.
  */
-#define RF4_HARASS_MASK \
-        (RF4_SHRIEK)
-
-#define RF5_HARASS_MASK \
-	(0L)
-
-#define RF6_HARASS_MASK \
-	(RF6_DARKNESS | RF6_TRAPS | RF6_FORGET | RF6_HUNGER | RF6_DRAIN_MANA | \
-         RF6_SCARE | RF6_BLIND | RF6_CONF | RF6_SLOW | RF6_HOLD | RF6_DISPEL)
-
-#define RF7_HARASS_MASK \
-	(0L)
+#define RSF_HARASS_MASK \
+	RSF_DARKNESS, RSF_TRAPS, RSF_FORGET, RSF_HUNGER, RSF_DRAIN_MANA, \
+	  RSF_SCARE, RSF_BLIND, RSF_CONF, RSF_SLOW, RSF_HOLD, RSF_DISPEL
 
 /* Number of times harassment spells get special treatment */
 #define BASE_HARASS 5
@@ -2659,56 +2725,29 @@ typedef enum
  * weaker creatures */
 #define LOW_HARASS 2
 
-/*
+/**
  * Hack -- "bolt" spells that may hurt fellow monsters
  * Need special treatment in AI.
  */
-#define RF4_BOLT_MASK \
-        (RF4_ARROW | RF4_BOLT | RF4_SHOT | RF4_MISSL | RF4_PMISSL | RF4_BOULDER)
+#define RSF_BOLT_MASK \
+  RSF_ARROW, RSF_BOLT, RSF_SHOT, RSF_MISSL, RSF_PMISSL, RSF_BOULDER,	\
+    RSF_BOLT_ACID, RSF_BOLT_ELEC, RSF_BOLT_FIRE, RSF_BOLT_COLD,		\
+    RSF_BOLT_POIS, RSF_BOLT_NETHR, RSF_BOLT_WATER, RSF_BOLT_DARK,	\
+    RSF_BOLT_PLAS, RSF_BOLT_ICE
 
-#define RF5_BOLT_MASK \
-	(RF5_BOLT_ACID | RF5_BOLT_ELEC | RF5_BOLT_FIRE | RF5_BOLT_COLD | \
-	 RF5_BOLT_POIS | RF5_BOLT_NETHR | RF5_BOLT_WATER | RF5_BOLT_DARK | \
-	 RF5_BOLT_PLAS | RF5_BOLT_ICE)
-
-#define RF6_BOLT_MASK \
-   0L
-
-
-#define RF7_BOLT_MASK \
-   0L
-
-/*
+/**
  * Archery attacks
  * Need special treatment in AI.
  */
-#define RF4_ARCHERY_MASK \
-        (RF4_ARROW | RF4_BOLT | RF4_SHOT | RF4_MISSL | RF4_PMISSL | RF4_BOULDER)
+#define RSF_ARCHERY_MASK \
+  RSF_ARROW, RSF_BOLT, RSF_SHOT, RSF_MISSL, RSF_PMISSL, RSF_BOULDER
 
-#define RF5_ARCHERY_MASK \
-	(0L)
-
-#define RF6_ARCHERY_MASK \
-	(0L)
-
-#define RF7_ARCHERY_MASK \
-	(0L)
-
-/*
+/**
  * Spells that can be can without a player in sight
  * Need special treatment in AI.
  */
-#define RF4_NO_PLAYER_MASK \
-        (0L)
-
-#define RF5_NO_PLAYER_MASK \
-        (0L)
-
-#define RF6_NO_PLAYER_MASK \
-        (RF6_HEAL | RF6_ADD_MANA | RF6_TELE_SELF_TO | RF6_CURE)
-
-#define RF7_NO_PLAYER_MASK \
-        (0L)
+#define RSF_NO_PLAYER_MASK \
+  RSF_HEAL, RSF_ADD_MANA, RSF_TELE_SELF_TO, RSF_CURE
 
 
 /* Spell Desire Table Columns */
@@ -2720,6 +2759,7 @@ typedef enum
 #define D_TACT     5
 #define D_RES      6
 #define D_RANGE    7
+#define D_MAX      8
 
 
 

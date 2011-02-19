@@ -55,7 +55,7 @@ static void find_range(monster_type *m_ptr)
   if (m_ptr->monfear) m_ptr->min_range = FLEE_RANGE;
   
   /* Some monsters run when low on mana */
-  else if ((r_ptr->flags2 & (RF2_LOW_MANA_RUN)) && 
+  else if ((rf_has(r_ptr->flags, RF_LOW_MANA_RUN)) && 
 	   (m_ptr->mana < r_ptr->mana / 6)) m_ptr->min_range = FLEE_RANGE;
   
   else
@@ -97,10 +97,10 @@ static void find_range(monster_type *m_ptr)
   if (m_ptr->min_range < FLEE_RANGE)
     {
       /* Creatures that don't move never like to get too close */
-      if (r_ptr->flags1 & (RF1_NEVER_MOVE)) m_ptr->min_range += 3;
+      if (rf_has(r_ptr->flags, RF_NEVER_MOVE)) m_ptr->min_range += 3;
       
       /* Spellcasters that don't stike never like to get too close */
-      if (r_ptr->flags1 & (RF1_NEVER_BLOW)) m_ptr->min_range += 3;
+      if (rf_has(r_ptr->flags, RF_NEVER_BLOW)) m_ptr->min_range += 3;
     }
   
   /* Maximum range to flee to (reduced elsewhere for themed levels */
@@ -115,7 +115,7 @@ static void find_range(monster_type *m_ptr)
   m_ptr->best_range = m_ptr->min_range;
   
   /* Archers are quite happy at a good distance */
-  if (r_ptr->flags2 & (RF2_ARCHER)) m_ptr->best_range += 3;
+  if (rf_has(r_ptr->flags, RF_ARCHER)) m_ptr->best_range += 3;
   
   if (r_ptr->freq_ranged > 24)
     {
@@ -123,12 +123,8 @@ static void find_range(monster_type *m_ptr)
       if (m_ptr->mana > r_ptr->mana / 4) m_ptr->best_range += 3;
       
       /* Breathers like point blank range */
-      if (((r_ptr->flags4 & (RF4_BREATH_MASK)) || 
-	   (r_ptr->flags5 & (RF5_BREATH_MASK)) || 
-	   (r_ptr->flags6 & (RF6_BREATH_MASK)) || 
-	   (r_ptr->flags7 & (RF7_BREATH_MASK))) &&
-	  (m_ptr->best_range < 6) && 
-	  (m_ptr->hp > m_ptr->maxhp / 2))
+      if ((flags_test(r_ptr->spell_flags, RSF_SIZE, RSF_BREATH_MASK, FLAG_END))
+	  && (m_ptr->best_range < 6) && (m_ptr->hp > m_ptr->maxhp / 2))
 	m_ptr->best_range = 6;
     }
 }
@@ -227,7 +223,7 @@ static bool monster_can_smell(monster_type *m_ptr)
   
   /* So are the Nazgul */
   else if ((strchr("W", r_ptr->d_char)) && 
-	   (r_ptr->flags1 & (RF1_UNIQUE)))
+	   (rf_has(r_ptr->flags, RF_UNIQUE)))
     {
       /* Bloodscent! */
       return (TRUE);
@@ -631,6 +627,9 @@ static int find_resist(int m_idx, int spell_lrn)
     }
 }
 
+/* Temporary spell flags */
+static bitflag mon_spells[RSF_SIZE];
+
 
 /**
  * Used to exclude spells which are too expensive for the
@@ -642,104 +641,62 @@ static int find_resist(int m_idx, int spell_lrn)
  *
  * -BR-
  */
-static void remove_expensive_spells(int m_idx, u32b *f4p, u32b *f5p, 
-				    u32b *f6p, u32b *f7p)
+static void remove_expensive_spells(int m_idx)
 {
   monster_type *m_ptr = &m_list[m_idx];
   monster_race *r_ptr = &r_info[m_ptr->r_idx];
-  
+
   int i, max_cost;
-  
-  u32b f4 = (*f4p);
-  u32b f5 = (*f5p);
-  u32b f6 = (*f6p);
-  u32b f7 = (*f7p);
   
   /* Determine maximum amount of mana to be spent */
   /* Smart monsters will usually not blow all their mana on one spell */
-  if (r_ptr->flags2 & (RF2_SMART)) 
+  if (rf_has(r_ptr->flags, RF_SMART)) 
     max_cost= (m_ptr->mana * (4 + randint0(7)))/10;
   
   /* Otherwise spend up to the full current mana */
   else max_cost = m_ptr->mana;
   
   /* check innate spells for mana available */
-  for(i = 0; i < 32; i++)
+  for (i = FLAG_START; i < RSF_MAX; i++)
     {
-      if (mana_cost_RF4[i] > max_cost) f4 &= ~(0x00000001 << i);
+      if (mana_cost[i] > max_cost) 
+	(void) rsf_off(mon_spells, i);
     }
-  
-  /* check normal spells for mana available */
-  for (i = 0; i < 32; i++)
-    {
-      if (mana_cost_RF5[i] > max_cost) f5 &= ~(0x00000001 << i);
-    }
-  
-  /* check other spells for mana available */
-  for (i = 0; i < 32; i++)
-    {
-      if (mana_cost_RF6[i] > max_cost) f6 &= ~(0x00000001 << i);
-    }
-  
-  /* check other spells for mana available */
-  for (i = 0; i < 32; i++)
-    {
-      if (mana_cost_RF7[i] > max_cost) f7 &= ~(0x00000001 << i);
-    }
-  
-  /* Modify the spell list. */
-  (*f4p) = f4;
-  (*f5p) = f5;
-  (*f6p) = f6;
-  (*f7p) = f7;
-  
 }
 
 /**
  * Intellegent monsters use this function to filter away spells
  * which have no benefit.
  */
-static void remove_useless_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, 
-				  u32b *f7p, bool los)
+static void remove_useless_spells(int m_idx, bool los)
 {
   monster_type *m_ptr = &m_list[m_idx];
   monster_race *r_ptr = &r_info[m_ptr->r_idx];
   
-  u32b f4 = (*f4p);
-  u32b f5 = (*f5p);
-  u32b f6 = (*f6p);
-  u32b f7 = (*f7p);
-  
   /* Don't regain mana if full */
-  if (m_ptr->mana >= r_ptr->mana) f6 &= ~(RF6_ADD_MANA);
+  if (m_ptr->mana >= r_ptr->mana) rsf_off(mon_spells, RSF_ADD_MANA);
   
   /* Don't heal if not enough mana to make it useful */
-  if (m_ptr->mana < r_ptr->spell_power/4) f6 &= ~(RF6_HEAL);
+  if (m_ptr->mana < r_ptr->spell_power/4) rsf_off(mon_spells, RSF_HEAL);
   
   /* Don't heal if full */
-  if (m_ptr->hp >= m_ptr->maxhp) f6 &= ~(RF6_HEAL);
+  if (m_ptr->hp >= m_ptr->maxhp) rsf_off(mon_spells, RSF_HEAL);
   
   /* Don't lash if too far or close */
-  if ((m_ptr->cdis > 3) || (m_ptr->cdis < 2)) f4 &= ~(RF4_LASH);
+  if ((m_ptr->cdis > 3) || (m_ptr->cdis < 2)) rsf_off(mon_spells, RSF_LASH);
   
   /* Don't Haste if Hasted */
-  if (m_ptr->mspeed > r_ptr->speed +5) f6 &= ~(RF6_HASTE);
+  if (m_ptr->mspeed > r_ptr->speed +5) rsf_off(mon_spells, RSF_HASTE);
   
   /* Don't cure if not needed */
   if (!((m_ptr->stunned) ||(m_ptr->monfear) || 
 	(m_ptr->mspeed < r_ptr->speed - 5) || (m_ptr->black_breath)))
-    f6 &= ~(RF6_CURE);
+    rsf_off(mon_spells, RSF_CURE);
   
   /* Don't jump in already close, or don't want to be close */
-  if (!(m_ptr->cdis > m_ptr->best_range) && los) f6 &= ~(RF6_TELE_SELF_TO);
-  if (m_ptr->min_range > 5) f6 &= ~(RF6_TELE_SELF_TO);
-  
-  /* Modify the spell list. */
-  (*f4p) = f4;
-  (*f5p) = f5;
-  (*f6p) = f6;
-  (*f7p) = f7;
-  
+  if (!(m_ptr->cdis > m_ptr->best_range) && los) 
+    rsf_off(mon_spells, RSF_TELE_SELF_TO);
+  if (m_ptr->min_range > 5) rsf_off(mon_spells, RSF_TELE_SELF_TO);
 }
 
 /**
@@ -754,41 +711,17 @@ static void remove_useless_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p,
  * Also used in 'choose_attack_spell' to circumvent AI when 
  * casting randomly (random=TRUE), as with dumb monsters.
  */
-static int choose_attack_spell_fast(int m_idx, u32b *f4p, u32b *f5p, 
-				    u32b *f6p, u32b *f7p, bool random)
+static int choose_attack_spell_fast(int m_idx, bool random)
 {
-  int i, num=0;
-  byte spells[128];
+  int i, num = 0;
+  byte spells[32 * RSF_SIZE];
   
-  u32b f4 = (*f4p);
-  u32b f5 = (*f5p);
-  u32b f6 = (*f6p);
-  u32b f7 = (*f7p);
-  
-  /* Extract the "innate" spells */
-  for (i = 0; i < 32; i++)
-    {
-      if (f4 & (1L << i)) spells[num++] = i + 32 * 3;
-    }
-  
-  /* Extract the "attack" spells */
-  for (i = 0; i < 32; i++)
-    {
-      if (f5 & (1L << i)) spells[num++] = i + 32 * 4;
-    }
-  
-  /* Extract the "miscellaneous" spells */
-  for (i = 0; i < 32; i++)
-    {
-      if (f6 & (1L << i)) spells[num++] = i + 32 * 5;
-    }
-  
-  /* Extract the "summon" spells */
-  for (i = 0; i < 32; i++)
-    {
-      if (f7 & (1L << i)) spells[num++] = i + 32 * 6;
-    }
-  
+	/* Extract all spells: "innate", "normal", "bizarre" */
+	for (i = FLAG_START, num = 0; i < RSF_MAX; i++)
+	{
+		if (rsf_has(mon_spells, i)) spells[num++] = i;
+	}
+
   /* Paranoia */
   if (num == 0) return 0;
   
@@ -799,41 +732,20 @@ static int choose_attack_spell_fast(int m_idx, u32b *f4p, u32b *f5p,
        * casting randomly anyway.  */
       if (!(random))
 	{
-	  if (spells[0] < 128)
-	    {
-	      if (find_resist(m_idx, 
-			      spell_desire_RF4[spells[0]-96][D_RES]) == 100) 
+	  if (find_resist(m_idx, spell_desire[spells[0]][D_RES]) == 100) 
 		return(0);
-	    }
-	  else if (spells[0] < 160)
-	    {
-	      if (find_resist(m_idx, 
-			      spell_desire_RF5[spells[0]-128][D_RES]) == 100) 
-		return(0);
-	    }
-	  else if (spells[0] < 192)
-	    {
-	      if (find_resist(m_idx, 
-			      spell_desire_RF6[spells[0]-160][D_RES]) == 100) 
-		return(0);
-	    }
-	  else
-	    {
-	      if (find_resist(m_idx, 
-			      spell_desire_RF7[spells[0]-192][D_RES]) == 100) 
-		return(0);
-	    }
 	}
+	
       
       /* Otherwise cast the one spell */
       else return(spells[0]);
     }
   
-	/* 
-	 * If we aren't allowed to choose at random
-	 * and we have multiple spells left, give up on quick
-	 * selection
-	 */
+  /* 
+   * If we aren't allowed to choose at random
+   * and we have multiple spells left, give up on quick
+   * selection
+   */
   if (!(random)) return(0);
   
   /* Pick at random */
@@ -865,7 +777,7 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
   
   byte *spell_desire;
   
-  u32b f4, f5, f6, f7;
+  //u32b f4, f5, f6, f7;
   
   byte spell_range;
   
@@ -886,11 +798,12 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
   int best_spell = 0, best_spell_rating = 0;
   int cur_spell_rating;
   
-  /* Extract the racial spell flags */
+  /* Extract the racial spell flags
   f4 = r_ptr->flags4;
   f5 = r_ptr->flags5;
   f6 = r_ptr->flags6;
-  f7 = r_ptr->flags7;
+  f7 = r_ptr->flags7;*/
+  rsf_copy(mon_spells, r_ptr->spell_flags);
 
   /* Player is the target */
   if (m_ptr->hostile < 0)
@@ -930,64 +843,55 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
       if (!(path == PROJECT_CLEAR)) return(0);
       
       /* restrict to archery */
-      f4 &= (RF4_ARCHERY_MASK);
-      f5 &= (RF5_ARCHERY_MASK);
-      f6 &= (RF6_ARCHERY_MASK);
-      f7 &= (RF7_ARCHERY_MASK);
+      flags_mask(mon_spells, RSF_SIZE, RSF_ARCHERY_MASK, FLAG_END);
       
       /* choose at random from restricted list */
-      return (choose_attack_spell_fast(m_idx, &f4, &f5, &f6, &f7, TRUE));
+      return (choose_attack_spell_fast(m_idx, TRUE));
     }
   
   /* Remove spells the 'no-brainers'*/
   /* Spells that require LOS */
   if (!los)
     {
-      f4 &= (RF4_NO_PLAYER_MASK);
-      f5 &= (RF5_NO_PLAYER_MASK);
-      f6 &= (RF6_NO_PLAYER_MASK);
-      f7 &= (RF7_NO_PLAYER_MASK);
+      flags_mask(mon_spells, RSF_SIZE, RSF_NO_PLAYER_MASK, FLAG_END);
     }
   else if (path == PROJECT_NOT_CLEAR)
     {
-      f4 &= ~(RF4_BOLT_MASK);
-      f5 &= ~(RF5_BOLT_MASK);
-      f6 &= ~(RF6_BOLT_MASK);
-      f7 &= ~(RF7_BOLT_MASK);
+      flags_clear(mon_spells, RSF_SIZE, RSF_BOLT_MASK, FLAG_END);
     }
   
   /* No spells left */
-  if (!f4 && !f5 && !f6 && !f7) return (0);
+  if (rsf_is_empty(mon_spells)) return (0);
   
   /* Spells we can not afford */
-  remove_expensive_spells(m_idx, &f4, &f5, &f6, &f7);
+  remove_expensive_spells(m_idx);
   
   /* No spells left */
-  if (!f4 && !f5 && !f6 && !f7) return (0);
+  if (rsf_is_empty(mon_spells)) return (0);
   
   /* Stupid monsters choose at random. */
-  if (r_ptr->flags2 & (RF2_STUPID)) 
-    return (choose_attack_spell_fast(m_idx, &f4, &f5, &f6, &f7, TRUE));
+  if (rf_has(r_ptr->flags, RF_STUPID)) 
+    return (choose_attack_spell_fast(m_idx, TRUE));
   
   /* Remove spells that have no benefit
    * Does not include the effects of player resists/immunities */
-  remove_useless_spells(m_idx, &f4, &f5, &f6, &f7, los);
+  remove_useless_spells(m_idx, los);
   
   /* No spells left */
-  if (!f4 && !f5 && !f6 && !f7) return (0);
+  if (rsf_is_empty(mon_spells)) return (0);
   
   /* Sometimes non-dumb monsters cast randomly (though from the
    * restricted list) 
    */
-  if ((r_ptr->flags2 & (RF2_SMART)) && (randint0(10)==0)) rand = TRUE;
-  if ((!(r_ptr->flags2 & (RF2_SMART))) && (randint0(5)==0)) rand = TRUE;
+  if ((rf_has(r_ptr->flags, RF_SMART)) && (randint0(10)==0)) rand = TRUE;
+  if ((!(rf_has(r_ptr->flags, RF_SMART))) && (randint0(5)==0)) rand = TRUE;
   
   /* Try 'fast' selection first.
    * If there is only one spell, choose that spell.
    * If there are multiple spells, choose one randomly if the 'rand' flag is 
    * set. Otherwise fail, and let the AI choose.
    */
-  best_spell = choose_attack_spell_fast(m_idx, &f4, &f5, &f6, &f7, rand);
+  best_spell = choose_attack_spell_fast(m_idx, rand);
   if (best_spell) return (best_spell);
   
   /* If we get this far, we are using the full-up AI.  Calculate
@@ -1023,101 +927,73 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
   breath_maxhp = (m_ptr->maxhp > 2000 ? m_ptr->maxhp : 2000);
   
   /* Cheat if requested, or if a player ghost. */
-  if ((OPT(smart_cheat)) || (r_ptr->flags2 & (RF2_PLAYER_GHOST))) 
+  if ((OPT(smart_cheat)) || (rf_has(r_ptr->flags, RF_PLAYER_GHOST))) 
     update_smart_cheat(m_idx);
   
-  /* The conditionals are written for speed rather than readability
-   * They should probably stay that way. */
-  for (i = 0; i < 128; i++)
+  /* Now check every remaining spell */
+  for (i = FLAG_START; i < RSF_MAX; i++)
     {
+      bitflag temp[RSF_SIZE];
+
       /* Do we even have this spell? */
-      if (i < 32)
-	{
-	  if (!(f4 & (1L << i))) continue;
-	  spell_desire = &spell_desire_RF4[i][0];
-	  spell_range = spell_range_RF4[i];
-	  if (RF4_HARASS_MASK & (1L << (i))) is_harass = TRUE;
-	  else is_harass = FALSE;
-	  if (RF4_BREATH_MASK & (1L << (i))) is_breath = TRUE;
-	  else is_breath = FALSE;
-	}
-      else if (i < 64)
-	{
-	  if (!(f5 & (1L << (i-32)))) continue;
-	  spell_desire = &spell_desire_RF5[i - 32][0];
-	  spell_range = spell_range_RF5[i - 32];
-	  if (RF5_HARASS_MASK & (1L << (i-32))) is_harass = TRUE;
-	  else is_harass = FALSE;
-	  if (RF5_BREATH_MASK & (1L << (i-32))) is_breath = TRUE;
-	  else is_breath = FALSE;
-	}
-      else if (i < 96)
-	{
-	  if (!(f6 & (1L << (i-64)))) continue;
-	  spell_desire = &spell_desire_RF6[i-64][0];
-	  spell_range = spell_range_RF6[i-64];
-	  if (RF6_HARASS_MASK & (1L << (i-64))) is_harass = TRUE;
-	  else is_harass = FALSE;
-	  if (RF6_BREATH_MASK & (1L << (i-64))) is_breath = TRUE;
-	  else is_breath = FALSE;
-	}
-      else
-	{
-	  if (!(f7 & (1L << (i-96)))) continue;
-	  spell_desire = &spell_desire_RF7[i-96][0];
-	  spell_range = spell_range_RF7[i-96];
-	  if (RF7_HARASS_MASK & (1L << (i-96))) is_harass = TRUE;
-	  else is_harass = FALSE;
-	  if (RF7_BREATH_MASK &(1L << (i-96))) is_breath = TRUE;
-	  else is_breath = FALSE;
-	}
-      
+      if (!rsf_has(mon_spells, i)) continue;
+
+      /* Is it a breath? */
+      flags_init(temp, RSF_SIZE, RSF_BREATH_MASK, FLAG_END);
+      is_breath = rsf_has(temp, i);
+
+      /* Is it a harassing spell? */
+      flags_init(temp, RSF_SIZE, RSF_HARASS_MASK, FLAG_END);
+      is_harass = rsf_has(temp, i);
+
       /* Base Desirability */
-      cur_spell_rating = spell_desire[D_BASE];
+      cur_spell_rating = spell_desire[i][D_RES];
       
       /* modified for breath weapons */
       if (is_breath) 
 	cur_spell_rating = (cur_spell_rating * breath_hp) / breath_maxhp;
       
       /* Bonus if want summon and this spell is helpful */
-      if (spell_desire[D_SUMM] && want_summon) 
-	cur_spell_rating += want_summon * spell_desire[D_SUMM];
+      if (spell_desire[i][D_SUMM] && want_summon) 
+	cur_spell_rating += want_summon * spell_desire[i][D_SUMM];
       
       /* Bonus if wounded and this spell is helpful */
-      if (spell_desire[D_HURT] && want_hps) 
-	cur_spell_rating += want_hps * spell_desire[D_HURT];
+      if (spell_desire[i][D_HURT] && want_hps) 
+	cur_spell_rating += want_hps * spell_desire[i][D_HURT];
 		
       /* Bonus if low on mana and this spell is helpful */
-      if (spell_desire[D_MANA] && want_mana) 
-	cur_spell_rating += want_mana * spell_desire[D_MANA];
+      if (spell_desire[i][D_MANA] && want_mana) 
+	cur_spell_rating += want_mana * spell_desire[i][D_MANA];
       
       /* Bonus if want to flee and this spell is helpful */
-      if (spell_desire[D_ESC] && want_escape) 
-	cur_spell_rating += want_escape * spell_desire[D_ESC];
+      if (spell_desire[i][D_ESC] && want_escape) 
+	cur_spell_rating += want_escape * spell_desire[i][D_ESC];
       
       /* Bonus if want a tactical move and this spell is helpful */
-      if (spell_desire[D_TACT] && want_tactic) 
-	cur_spell_rating += want_tactic * spell_desire[D_TACT];
+      if (spell_desire[i][D_TACT] && want_tactic) 
+	cur_spell_rating += want_tactic * spell_desire[i][D_TACT];
       
       /* Penalty if this spell is resisted */
-      if (spell_desire[D_RES]) 
+      if (spell_desire[i][D_RES]) 
 	cur_spell_rating = 
 	  (cur_spell_rating * 
-	   (100 - find_resist(m_idx, spell_desire[D_RES])))/100;
+	   (100 - find_resist(m_idx, spell_desire[i][D_RES])))/100;
       
       /* Penalty for range if attack drops off in power */
       if (spell_range)
 	{
 	  cur_range = m_ptr->cdis;
 	  while (cur_range-- > spell_range) 
-	    cur_spell_rating = (cur_spell_rating * spell_desire[D_RANGE])/100;
+	    cur_spell_rating = 
+	      (cur_spell_rating * spell_desire[i][D_RANGE])/100;
 	}
       
       /* Bonus for harassment spells at first */
-      if (is_harass && m_ptr->harass) cur_spell_rating += 2*cur_spell_rating/3;
+      if (is_harass && m_ptr->harass) 
+	cur_spell_rating += 2*cur_spell_rating/3;
       
       /* Random factor; less random for smart monsters */
-      if (r_ptr->flags2 & (RF2_SMART)) cur_spell_rating *= 16 + randint0(9);
+      if (rf_has(r_ptr->flags, RF_SMART)) cur_spell_rating *= 16 + randint0(9);
       else cur_spell_rating *= 12 + randint0(17);
       
       /* Deflate for testing purposes */
@@ -1127,8 +1003,8 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
       if (cur_spell_rating > best_spell_rating)
 	{
 	  best_spell_rating = cur_spell_rating;
-	  best_spell = i + 96;
-	  is_best_harass = is_harass;
+	  best_spell = i;
+	  is_best_harass = mspell[i].is_harass;
 	}
       
     }
@@ -1141,7 +1017,7 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
 	msg_format("Spell rating: %i.", shape_rate);
   
       /* Shapeshift is best */
-      return(182);
+      return(RSF_SHAPECHANGE);
     }
       
   if (p_ptr->wizard) 
@@ -1194,9 +1070,9 @@ bool cave_exist_mon(monster_race *r_ptr, int y, int x, bool occupied_ok)
        * handle water */
       if (feat == FEAT_WATER)
 	{
-	  if (r_ptr->flags2 & (RF2_FLYING)) return (TRUE);
+	  if (rf_has(r_ptr->flags, RF_FLYING)) return (TRUE);
 	  
-	  if ((r_ptr->flags4 & (RF4_BRTH_FIRE)) || 
+	  if ((rsf_has(r_ptr->flags, RSF_BRTH_FIRE)) || 
 	      (strchr("uU", r_ptr->d_char)) || 
 	      ((strchr("E", r_ptr->d_char)) && 
 	       ((r_ptr->d_attr == TERM_RED) || (r_ptr->d_attr == TERM_L_RED))))
@@ -1211,11 +1087,11 @@ bool cave_exist_mon(monster_race *r_ptr, int y, int x, bool occupied_ok)
       /* Only fiery or strong flying creatures can handle lava */
       if (feat == FEAT_LAVA)
 	{
-	  if (r_ptr->flags3 & (RF3_IM_FIRE)) return (TRUE);
-	  else if (r_ptr->flags2 & (RF2_FLYING))
+	  if (rf_has(r_ptr->flags, RF_IM_FIRE)) return (TRUE);
+	  else if (rf_has(r_ptr->flags, RF_FLYING))
 	    {
 	      /* Get HPs */
-	      int hp = (r_ptr->flags1 & (RF1_FORCE_MAXHP) ?
+	      int hp = (rf_has(r_ptr->flags, RF_FORCE_MAXHP) ?
 			(r_ptr->hdice * r_ptr->hside) :
 			(r_ptr->hdice * (r_ptr->hside + 1) / 2));
 	      
@@ -1229,7 +1105,7 @@ bool cave_exist_mon(monster_race *r_ptr, int y, int x, bool occupied_ok)
       /* Only flying monsters can, well, fly */
       if (feat == FEAT_VOID)
 	{
-	  if (r_ptr->flags2 & (RF2_FLYING))
+	  if (rf_has(r_ptr->flags, RF_FLYING))
 	    return (TRUE);
 	  else
 	    return (FALSE);
@@ -1260,8 +1136,8 @@ bool cave_exist_mon(monster_race *r_ptr, int y, int x, bool occupied_ok)
 	return (FALSE);
       
       /* Otherwise, test by the monster's ability to live in walls. */
-      if ((r_ptr->flags2 & (RF2_PASS_WALL)) || 
-	  (r_ptr->flags2 & (RF2_KILL_WALL))) return (TRUE);
+      if ((rf_has(r_ptr->flags, RF_PASS_WALL)) || 
+	  (rf_has(r_ptr->flags, RF_KILL_WALL))) return (TRUE);
       
       else return (FALSE);
     }
@@ -1304,7 +1180,7 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
   if (cave_m_idx[y][x] < 0)
     {
       /* Monster has no melee blows - character's grid is off-limits. */
-      if (r_ptr->flags1 & (RF1_NEVER_BLOW)) return (0);
+      if (rf_has(r_ptr->flags, RF_NEVER_BLOW)) return (0);
       
       /* Any monster with melee blows can attack the character. */
       else move_chance = 100;
@@ -1317,15 +1193,15 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
       monster_race *nr_ptr = &r_info[n_ptr->r_idx];
       
       /* Kill weaker monsters */
-      if ((r_ptr->flags2 & (RF2_KILL_BODY)) &&
-	  (!(nr_ptr->flags1 & (RF1_UNIQUE))) &&
+      if ((rf_has(r_ptr->flags, RF_KILL_BODY)) &&
+	  (!(nrf_has(r_ptr->flags, RF_UNIQUE))) &&
 	  (r_ptr->mexp > nr_ptr->mexp))
 	{
 	  move_chance = 100;
 	}
       
       /* Push past weaker or similar monsters */
-      else if ((r_ptr->flags2 & (RF2_MOVE_BODY)) && 
+      else if ((rf_has(r_ptr->flags, RF_MOVE_BODY)) && 
 	       (r_ptr->mexp >= nr_ptr->mexp))
 	{
 	  /* It's easier to push past weaker monsters */
@@ -1356,10 +1232,10 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
       if (feat == FEAT_WATER)
 	{
 	  /* Flying monsters can always cross water */
-	  if (r_ptr->flags2 & (RF2_FLYING)) return (move_chance);
+	  if (rf_has(r_ptr->flags, RF_FLYING)) return (move_chance);
 	  
 	  /* Earthbound demons and firebreathers cannot cross water */
-	  if (r_ptr->flags4 & (RF4_BRTH_FIRE)) return (0);
+	  if (rsf_has(r_ptr->flags, RSF_BRTH_FIRE)) return (0);
 	  if (strchr("uU", r_ptr->d_char)) return (0);
 	  
 	  /* "Red" elementals cannot cross water */
@@ -1386,9 +1262,9 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
       if (feat == FEAT_LAVA)
 	{
 	  /* Only fiery or strong flying creatures will cross lava */
-	  if (r_ptr->flags3 & (RF3_IM_FIRE)) return (move_chance);
+	  if (rf_has(r_ptr->flags, RF_IM_FIRE)) return (move_chance);
 	  
-	  if ((r_ptr->flags2 & (RF2_FLYING)) && (m_ptr->hp > 49)) 
+	  if ((rf_has(r_ptr->flags, RF_FLYING)) && (m_ptr->hp > 49)) 
 	    return (move_chance);
 	  
 	  return (0);
@@ -1398,7 +1274,7 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
       if (feat == FEAT_VOID)
 	{	
 	  /* Have to be able to fly */
-	  if (r_ptr->flags2 & (RF2_FLYING)) return (move_chance);
+	  if (rf_has(r_ptr->flags, RF_FLYING)) return (move_chance);
 	  else return (0);
 	}
       
@@ -1419,8 +1295,8 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
     {
       /* Can the monster move easily through walls? */
       bool move_wall = FALSE;
-      if ((r_ptr->flags2 & (RF2_PASS_WALL)) || 
-	  (r_ptr->flags2 & (RF2_KILL_WALL)))
+      if ((rf_has(r_ptr->flags, RF_PASS_WALL)) || 
+	  (rf_has(r_ptr->flags, RF_KILL_WALL)))
 	{
 	  move_wall = TRUE;
 	}
@@ -1445,7 +1321,7 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
 	  int bash_chance = 0;
 	  
 	  /* Monster can open doors */
-	  if (r_ptr->flags2 & (RF2_OPEN_DOOR))
+	  if (rf_has(r_ptr->flags, RF_OPEN_DOOR))
 	    {
 	      /* Closed doors and secret doors */
 	      if ((feat == FEAT_DOOR_HEAD) || (feat == FEAT_SECRET))
@@ -1476,7 +1352,7 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
 		  
 		  /* Calculate unlocking ability (usu. 11 to 200) */
 		  ability = r_ptr->level + 10;
-		  if (r_ptr->flags2 & (RF2_SMART)) ability *= 2;
+		  if (rf_has(r_ptr->flags, RF_SMART)) ability *= 2;
 		  if (strchr("ph", r_ptr->d_char)) 
 		    ability = 3 * ability / 2;
 
@@ -1490,7 +1366,7 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
 	    }
 	  
 	  /* Monster can bash doors */
-	  if (r_ptr->flags2 & (RF2_BASH_DOOR))
+	  if (rf_has(r_ptr->flags, RF_BASH_DOOR))
 	    {
 	      int door_power, bashing_power;
 	      
@@ -1509,8 +1385,8 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
 	       */
 	      bashing_power = 20 + r_ptr->level + m_ptr->hp / 15;
 	      
-	      if ((r_ptr->flags3 & (RF3_GIANT)) || 
-		  (r_ptr->flags3 & (RF3_TROLL)))
+	      if ((rf_has(r_ptr->flags, RF_GIANT)) || 
+		  (rf_has(r_ptr->flags, RF_TROLL)))
 		bashing_power = 3 * bashing_power / 2;
 	      
 	      /*
@@ -1535,8 +1411,8 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
       if (feat == FEAT_RUBBLE)
 	{
 	  /* Some monsters move easily through rubble */
-	  if ((r_ptr->flags2 & (RF2_PASS_WALL)) || 
-	      (r_ptr->flags2 & (RF2_KILL_WALL)))
+	  if ((rf_has(r_ptr->flags, RF_PASS_WALL)) || 
+	      (rf_has(r_ptr->flags, RF_KILL_WALL)))
 	    {
 	      return (move_chance);
 	    }
@@ -1549,12 +1425,12 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
       if ((feat == FEAT_TREE) || (feat == FEAT_TREE2))
 	{
 	  /* Some monsters can pass right through trees */
-	  if (r_ptr->flags2 & (RF2_PASS_WALL))
+	  if (rf_has(r_ptr->flags, RF_PASS_WALL))
 	    return (move_chance);
 	  
 	  /* Some monsters can fly over trees, or know them well */
-	  if ((r_ptr->flags2 & (RF2_FLYING)) || 
-	      (r_ptr->flags3 & (RF3_ANIMAL)))
+	  if ((rf_has(r_ptr->flags, RF_FLYING)) || 
+	      (rf_has(r_ptr->flags, RF_ANIMAL)))
 	    {
 	      return (move_chance);
 	    }
@@ -1618,7 +1494,7 @@ static void get_move_advance(monster_type *m_ptr, int *ty, int *tx)
   monster_race *r_ptr = &r_info[m_ptr->r_idx];
     
   /* Monster can go through rocks - head straight for target */
-  if ((r_ptr->flags2 & (RF2_PASS_WALL)) || (r_ptr->flags2 & (RF2_KILL_WALL)))
+  if ((rf_has(r_ptr->flags, RF_PASS_WALL)) || (rf_has(r_ptr->flags, RF_KILL_WALL)))
     {
       /* Player is the target */
       if (m_ptr->hostile < 0)
@@ -2074,8 +1950,8 @@ static bool get_move_retreat(monster_type *m_ptr, int *ty, int *tx)
   if (!player_has_los_bold(m_ptr->fy, m_ptr->fx))
     {
       /* Monster cannot pass through walls */
-      if (!((r_ptr->flags2 & (RF2_PASS_WALL)) || 
-	    (r_ptr->flags2 & (RF2_KILL_WALL))))
+      if (!((rf_has(r_ptr->flags, RF_PASS_WALL)) || 
+	    (rf_has(r_ptr->flags, RF_KILL_WALL))))
 	{
 	  /* Run away from noise */
 	  if (cave_cost[m_ptr->fy][m_ptr->fx])
@@ -2264,26 +2140,26 @@ static bool get_move(monster_type *m_ptr, int *ty, int *tx, bool *fear,
    * Monsters that cannot move will attack the character if he is 
    * adjacent.
    */
-  if (r_ptr->flags1 & (RF1_NEVER_MOVE))
+  if (rf_has(r_ptr->flags, RF_NEVER_MOVE))
     {
       /* Hack -- memorize lack of moves after a while. */
-      if (!(l_ptr->flags1 & (RF1_NEVER_MOVE)))
+      if (!(rf_has(l_ptr->flags, RF_NEVER_MOVE)))
 	{
 	  if ((m_ptr->ml) && (randint1(20) == 1)) 
-	    l_ptr->flags1 |= (RF1_NEVER_MOVE);
+	    rf_on(l_ptr->flags, RF_NEVER_MOVE);
 	}
       
       /* Is character in range? */
       if (m_ptr->cdis <= 1)
 	{
 	  /* Monster can't melee either (pathetic little creature) */
-	  if (r_ptr->flags1 & (RF1_NEVER_BLOW))
+	  if (rf_has(r_ptr->flags, RF_NEVER_BLOW))
 	    {
 	      /* Hack -- memorize lack of attacks after a while */
-	      if (!(l_ptr->flags1 & (RF1_NEVER_BLOW)))
+	      if (!(rf_has(l_ptr->flags, RF_NEVER_BLOW)))
 		{
 		  if ((m_ptr->ml) && (randint1(10) == 1))
-		    l_ptr->flags1 |= (RF1_NEVER_BLOW);
+		    rf_on(l_ptr->flags, RF_NEVER_BLOW);
 		}
 	      return (FALSE);
 	    }
@@ -2356,13 +2232,13 @@ static bool get_move(monster_type *m_ptr, int *ty, int *tx, bool *fear,
   if ((!*fear) && (m_ptr->cdis <= 1))
     {
       /* Monsters that cannot attack back off. */
-      if (r_ptr->flags1 & (RF1_NEVER_BLOW))
+      if (rf_has(r_ptr->flags, RF_NEVER_BLOW))
 	{
 	  /* Hack -- memorize lack of attacks after a while */
-	  if (!(l_ptr->flags1 & (RF1_NEVER_BLOW)))
+	  if (!(rf_has(l_ptr->flags, RF_NEVER_BLOW)))
 	    {
 	      if ((m_ptr->ml) && (randint1(10) == 1))
-		l_ptr->flags1 |= (RF1_NEVER_BLOW);
+		rf_on(l_ptr->flags, RF_NEVER_BLOW);
 	    }
 	  
 	  /* Back away */
@@ -2380,11 +2256,11 @@ static bool get_move(monster_type *m_ptr, int *ty, int *tx, bool *fear,
   
   
   /* Uninjured animals in packs try to lure the character into the open. */
-  if ((!*fear) && (r_ptr->flags1 & (RF1_FRIENDS)) && 
-      (r_ptr->flags3 & (RF3_ANIMAL))  && 
+  if ((!*fear) && (rf_has(r_ptr->flags, RF_FRIENDS)) && 
+      (rf_has(r_ptr->flags, RF_ANIMAL))  && 
       (m_ptr->hp == m_ptr->maxhp) &&
-      (!((r_ptr->flags2 & (RF2_PASS_WALL)) || 
-	 (r_ptr->flags2 & (RF2_KILL_WALL)))))
+      (!((rf_has(r_ptr->flags, RF_PASS_WALL)) || 
+	 (rf_has(r_ptr->flags, RF_KILL_WALL)))))
     {
       /* Animal has to be willing to melee */
       if (m_ptr->min_range == 1)
@@ -2459,7 +2335,7 @@ static bool get_move(monster_type *m_ptr, int *ty, int *tx, bool *fear,
     }
   
   /* Monster groups try to surround the character. */
-  if ((!*fear) && (r_ptr->flags1 & (RF1_FRIENDS)) && (m_ptr->cdis <= 3))
+  if ((!*fear) && (rf_has(r_ptr->flags, RF_FRIENDS)) && (m_ptr->cdis <= 3))
     {
       start = randint0(8);
       
@@ -2487,8 +2363,8 @@ static bool get_move(monster_type *m_ptr, int *ty, int *tx, bool *fear,
     }
   
   /* Monster can go through rocks - head straight for target */
-  if ((!*fear) && ((r_ptr->flags2 & (RF2_PASS_WALL)) || 
-		   (r_ptr->flags2 & (RF2_KILL_WALL))))
+  if ((!*fear) && ((rf_has(r_ptr->flags, RF_PASS_WALL)) || 
+		   (rf_has(r_ptr->flags, RF_KILL_WALL))))
     {
       *ty = targ_y;
       *tx = targ_x;
@@ -2547,7 +2423,7 @@ static bool get_move(monster_type *m_ptr, int *ty, int *tx, bool *fear,
 	       * It would be odd if monsters that move randomly 
 	       * were to stay still.
 	       */
-	      if (r_ptr->flags1 & (RF1_RAND_50 | RF1_RAND_25))
+	      if (rf_has(r_ptr->flags, RF_RAND_50) || rf_has(r_ptr->flags, RF_RAND_25))
 		{
 		  /* pick a random grid next to the monster */
 		  int i = randint0(8);
@@ -3418,8 +3294,8 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x, bool *death)
   /* Non-flying monsters usually avoid netted traps */
   if (feat == FEAT_MTRAP_NET)
     {
-      if (!(r_ptr->flags2 & (RF2_FLYING)) && (randint0(3) != 0 || 
-					      (RF2_PASS_WALL)))
+      if (!(rf_has(r_ptr->flags, RF_FLYING)) && 
+	  (randint0(3) != 0 || rf_has(r_ptr->flags, RF_PASS_WALL)))
 	{
 	  if (m_ptr->ml) msg_format("%^s avoids your netted trap.", m_name);
 	  trap_hit = FALSE;
@@ -3429,7 +3305,7 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x, bool *death)
   /* Spirit traps only affect insubstantial creatures */
   else if (feat == FEAT_MTRAP_SPIRIT)
     {
-      if (!(r_ptr->flags2 & (RF2_PASS_WALL)))
+      if (!(rf_has(r_ptr->flags, RF_PASS_WALL)))
 	{
 	  if (m_ptr->ml) msg_format("%^s ignores your spirit trap.", m_name);
 	  trap_hit = FALSE;
@@ -3444,7 +3320,7 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x, bool *death)
   /* Lightning traps affect all but ghosts */
   else if (feat == FEAT_MTRAP_ELEC)
     {
-      if ((r_ptr->flags2 & (RF2_PASS_WALL)) && (randint0(4) != 0))
+      if ((rf_has(r_ptr->flags, RF_PASS_WALL)) && (randint0(4) != 0))
 	{
 	  if (m_ptr->ml) msg_format("%^s flies over your trap.", m_name);
 	  trap_hit = FALSE;
@@ -3452,8 +3328,8 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x, bool *death)
     }
   
   /* Other traps seldom affect flying monsters or ghosts. */
-  else if (((r_ptr->flags2 & (RF2_PASS_WALL)) ||
-	    (r_ptr->flags2 & (RF2_FLYING))) &&
+  else if (((rf_has(r_ptr->flags, RF_PASS_WALL)) ||
+	    (rf_has(r_ptr->flags, RF_FLYING))) &&
 	   (randint0(4) != 0))
     {
       if (m_ptr->ml) msg_format("%^s flies over your trap.", m_name);
@@ -3467,7 +3343,7 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x, bool *death)
   if (dis_chance > 215) dis_chance = 215;
   
   /* Smart monsters may attempts to disarm traps which would affect them */
-  if ((trap_hit) && (r_ptr->flags2 & (RF2_SMART)) && 
+  if ((trap_hit) && (rf_has(r_ptr->flags, RF_SMART)) && 
       (randint1(dis_chance) > p_ptr->skill_dis - 15))
     {
       if (m_ptr->ml) msg_format("%^s finds your trap and disarms it.", m_name);
@@ -3501,9 +3377,9 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x, bool *death)
       int n, trap_power;
       
       /* Some monsters get "destroyed" */
-      if ((r_ptr->flags3 & (RF3_DEMON)) ||
-	  (r_ptr->flags3 & (RF3_UNDEAD)) ||
-	  (r_ptr->flags2 & (RF2_STUPID)) ||
+      if ((rf_has(r_ptr->flags, RF_DEMON)) ||
+	  (rf_has(r_ptr->flags, RF_UNDEAD)) ||
+	  (rf_has(r_ptr->flags, RF_STUPID)) ||
 	  (strchr("Evg", r_ptr->d_char)))
 	{
 	  /* Special note at death */
@@ -3573,11 +3449,11 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x, bool *death)
 	  tmp = randint0((3 * trap_power) / 2) - r_ptr->level - 10;
 	  
 	  /* Confuse the monster */
-	  if (r_ptr->flags3 & (RF3_NO_CONF))
+	  if (rf_has(r_ptr->flags, RF_NO_CONF))
 	    {
 	      if (m_ptr->ml)
 		{
-		  l_ptr->flags3 |= (RF3_NO_CONF);
+		  rf_on(l_ptr->flags, RF_NO_CONF);
 		  msg_format("%^s is unaffected.", m_name);
 		}
 	    }
@@ -3674,7 +3550,7 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x, bool *death)
 	      if (!n_ptr->r_idx) continue;
       
 	      /* Hack -- Skip Unique Monsters */
-	      if (r1_ptr->flags1 & (RF1_UNIQUE)) continue;
+	      if (rf_has(r1_ptr->flags, RF_UNIQUE)) continue;
       
 	      /* Skip "wrong" monsters */
 	      if (r1_ptr->d_char != typ) continue;
@@ -3704,7 +3580,7 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x, bool *death)
 	msg_format("%^s flees in terror!", m_name);
       
       /* May become wary if not dumb */
-      if ((!(r_ptr->flags2 & (RF2_STUPID))) &&
+      if ((!(rf_has(r_ptr->flags, RF_STUPID))) &&
 	  ((randint0(4) == 0) || (m_ptr->hp < m_ptr->maxhp / 2))) 
 	m_ptr->mflag |= (MFLAG_WARY);
     }
@@ -3787,7 +3663,7 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
       m_ptr->ty = py;
 
       /* Attack if possible */
-      if (!(r_ptr->flags1 & (RF1_NEVER_BLOW)))
+      if (!(rf_has(r_ptr->flags, RF_NEVER_BLOW)))
 	{
 	  (void)make_attack_normal(m_ptr, ny, nx);
 	}
@@ -3800,7 +3676,7 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
   else
     {
       /* Final sanity check on non-moving monsters */
-      if (r_ptr->flags1 & (RF1_NEVER_MOVE)) do_move = FALSE;
+      if (rf_has(r_ptr->flags, RF_NEVER_MOVE)) do_move = FALSE;
     }
 
   /* Check if the monster is in a web */
@@ -3815,11 +3691,11 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 	;
 
       /* Insubstantial monsters go right through, observably */
-      else if (r_ptr->flags2 & RF2_PASS_WALL)
+      else if (rf_has(r_ptr->flags, RF_PASS_WALL))
 	did_pass_wall = TRUE;
 
       /* If you can destroy a wall, you can destroy a web */
-      else if (r_ptr->flags2 & RF2_KILL_WALL)
+      else if (rf_has(r_ptr->flags, RF_KILL_WALL))
 	{
 	  /* Remove the web */
 	  cave_set_feat(oy, ox, FEAT_FLOOR);
@@ -3848,14 +3724,14 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
   if ((cave_info[ny][nx] & (CAVE_WALL)) && (cave_feat[ny][nx] != FEAT_DUNE))
     {
       /* Monster passes through walls (and doors) */
-      if (r_ptr->flags2 & (RF2_PASS_WALL))
+      if (rf_has(r_ptr->flags, RF_PASS_WALL))
 	{
 	  /* Monster went through a wall */
 	  did_pass_wall = TRUE;
 	}
       
       /* Monster destroys walls (and doors) */
-      else if (r_ptr->flags2 & (RF2_KILL_WALL))
+      else if (rf_has(r_ptr->flags, RF_KILL_WALL))
 	{
 	  /* Monster destroyed a wall */
 	  did_kill_wall = TRUE;
@@ -3978,8 +3854,8 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 	  monster_race *nr_ptr = &r_info[n_ptr->r_idx];
 	  
 	  /* XXX - Kill weaker monsters */
-	  if ((r_ptr->flags2 & (RF2_KILL_BODY)) &&
-	      (!(nr_ptr->flags1 & (RF1_UNIQUE))) &&
+	  if ((rf_has(r_ptr->flags, RF_KILL_BODY)) &&
+	      (!(nrf_has(r_ptr->flags, RF_UNIQUE))) &&
 	      (r_ptr->mexp > nr_ptr->mexp))
 	    {
 	      /* Monster ate another monster */
@@ -4024,7 +3900,7 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 	}
       
       /* Deal with SMASH_WALL */
-      if (r_ptr->flags2 & RF2_SMASH_WALL)
+      if (rf_has(r_ptr->flags, RF_SMASH_WALL))
 	{
 	  int xx, yy;
 	  feature_type *f_ptr;
@@ -4125,7 +4001,7 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
        * scent trail while out of LOS of the character, it will 
        * communicate this to similar monsters.
        */
-      if ((!player_has_los_bold(ny, nx)) && (r_ptr->flags1 & (RF1_FRIENDS)) && 
+      if ((!player_has_los_bold(ny, nx)) && (rf_has(r_ptr->flags, RF_FRIENDS)) && 
 	  (monster_can_smell(m_ptr)) && (get_scent(oy, ox) == -1) && 
 	  (!m_ptr->ty) && (!m_ptr->tx))
 	{
@@ -4176,8 +4052,9 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 	       (OPT(disturb_move) || 
 		(OPT(disturb_near) && 
 		 ((m_ptr->mflag & (MFLAG_VIEW)) ||
-		  ((r_ptr->flags2 & (RF2_PASS_WALL|RF2_KILL_WALL)) && 
-		   (m_ptr->cdis <= 2))))))
+		  (rf_has(r_ptr->flags, RF_PASS_WALL) || 
+		   rf_has(r_ptr->flags, RF_KILL_WALL)) && 
+		  (m_ptr->cdis <= 2))))))
 	{
 	  /* Disturb */
 	  disturb(0, 0);
@@ -4200,10 +4077,11 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 	  if (o_ptr->tval == TV_GOLD) continue;
 	  
 	  /* Take or kill objects on the floor */
-	  if ((r_ptr->flags2 & (RF2_TAKE_ITEM)) ||
-	      (r_ptr->flags2 & (RF2_KILL_ITEM)))
+	  if ((rf_has(r_ptr->flags, RF_TAKE_ITEM)) ||
+	      (rf_has(r_ptr->flags, RF_KILL_ITEM)))
 	    {
-	      u32b flg3 = 0L;
+					bitflag obj_flags[OF_SIZE];
+					bitflag mon_flags[RF_SIZE];
 	      
 	      char m_name[80];
 	      char o_name[120];
@@ -4215,20 +4093,23 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 	      monster_desc(m_name, m_ptr, 0x04);
 	      
 	      /* React to objects that hurt the monster */
-	      if (o_slay(o_ptr, P_SLAY_DRAGON)) flg3 |= (RF3_DRAGON);
-	      if (o_slay(o_ptr, P_SLAY_TROLL)) flg3 |= (RF3_TROLL);
-	      if (o_slay(o_ptr, P_SLAY_GIANT)) flg3 |= (RF3_GIANT);
-	      if (o_slay(o_ptr, P_SLAY_ORC)) flg3 |= (RF3_ORC);
-	      if (o_slay(o_ptr, P_SLAY_DEMON)) flg3 |= (RF3_DEMON);
-	      if (o_slay(o_ptr, P_SLAY_UNDEAD)) flg3 |= (RF3_UNDEAD);
-	      if (o_slay(o_ptr, P_SLAY_ANIMAL)) flg3 |= (RF3_ANIMAL);
-	      if (o_slay(o_ptr, P_SLAY_EVIL)) flg3 |= (RF3_EVIL);
+	      if (of_has(obj_flags, OF_KILL_DRAGON)) rf_on(mon_flags, RF_DRAGON);
+	      if (of_has(obj_flags, OF_KILL_DEMON))  rf_on(mon_flags, RF_DEMON);
+	      if (of_has(obj_flags, OF_KILL_UNDEAD)) rf_on(mon_flags, RF_UNDEAD);
+	      if (of_has(obj_flags, OF_SLAY_DRAGON)) rf_on(mon_flags, RF_DRAGON);
+	      if (of_has(obj_flags, OF_SLAY_TROLL))  rf_on(mon_flags, RF_TROLL);
+	      if (of_has(obj_flags, OF_SLAY_GIANT))  rf_on(mon_flags, RF_GIANT);
+	      if (of_has(obj_flags, OF_SLAY_ORC))    rf_on(mon_flags, RF_ORC);
+	      if (of_has(obj_flags, OF_SLAY_DEMON))  rf_on(mon_flags, RF_DEMON);
+	      if (of_has(obj_flags, OF_SLAY_UNDEAD)) rf_on(mon_flags, RF_UNDEAD);
+	      if (of_has(obj_flags, OF_SLAY_ANIMAL)) rf_on(mon_flags, RF_ANIMAL);
+	      if (of_has(obj_flags, OF_SLAY_EVIL))   rf_on(mon_flags, RF_EVIL);
 	      
 	      /* The object cannot be picked up by the monster */
-	      if (artifact_p(o_ptr) || (r_ptr->flags3 & flg3))
+	      if (artifact_p(o_ptr) || rf_is_inter(r_ptr->flags, mon_flags))
 		{
 		  /* Only give a message for "take_item" */
-		  if (r_ptr->flags2 & (RF2_TAKE_ITEM))
+		  if (rf_has(r_ptr->flags, RF_TAKE_ITEM))
 		    {
 		      /* Take note */
 		      did_take_item = TRUE;
@@ -4245,7 +4126,7 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 		}
 	      
 	      /* Pick up the item */
-	      else if (r_ptr->flags2 & (RF2_TAKE_ITEM))
+	      else if (rf_has(r_ptr->flags, RF_TAKE_ITEM))
 		{
 		  object_type *i_ptr;
 		  object_type object_type_body;
@@ -4306,28 +4187,28 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
   if (m_ptr->ml)
     {
       /* Monster opened a door */
-      if (did_open_door) l_ptr->flags2 |= (RF2_OPEN_DOOR);
+      if (did_open_door) rf_on(l_ptr->flags, RF_OPEN_DOOR);
       
       /* Monster bashed a door */
-      if (did_bash_door) l_ptr->flags2 |= (RF2_BASH_DOOR);
+      if (did_bash_door) rf_on(l_ptr->flags, RF_BASH_DOOR);
       
       /* Monster tried to pick something up */
-      if (did_take_item) l_ptr->flags2 |= (RF2_TAKE_ITEM);
+      if (did_take_item) rf_on(l_ptr->flags, RF_TAKE_ITEM);
       
       /* Monster tried to crush something */
-      if (did_kill_item) l_ptr->flags2 |= (RF2_KILL_ITEM);
+      if (did_kill_item) rf_on(l_ptr->flags, RF_KILL_ITEM);
       
       /* Monster pushed past another monster */
-      if (did_move_body) l_ptr->flags2 |= (RF2_MOVE_BODY);
+      if (did_move_body) rf_on(l_ptr->flags, RF_MOVE_BODY);
       
       /* Monster ate another monster */
-      if (did_kill_body) l_ptr->flags2 |= (RF2_KILL_BODY);
+      if (did_kill_body) rf_on(l_ptr->flags, RF_KILL_BODY);
       
       /* Monster passed through a wall */
-      if (did_pass_wall) l_ptr->flags2 |= (RF2_PASS_WALL);
+      if (did_pass_wall) rf_on(l_ptr->flags, RF_PASS_WALL);
       
       /* Monster destroyed a wall */
-      if (did_kill_wall) l_ptr->flags2 |= (RF2_KILL_WALL);
+      if (did_kill_wall) rf_on(l_ptr->flags, RF_KILL_WALL);
     }
 }
 
@@ -4368,7 +4249,7 @@ static void process_monster(monster_type *m_ptr)
   if (m_ptr->min_range == 0) find_range(m_ptr);
 
   /* Handle territorial monsters */
-  if ((r_ptr->flags3 & RF3_TERRITORIAL) && 
+  if ((rf_has(r_ptr->flags, RF_TERRITORIAL)) && 
       (stage_map[p_ptr->stage][STAGE_TYPE] != CAVE))
     {
       /* Territorial monsters get a direct energy boost when close to home */
@@ -4437,7 +4318,7 @@ static void process_monster(monster_type *m_ptr)
   
   
   /* Attempt to multiply if able to and allowed */
-  if ((r_ptr->flags2 & (RF2_MULTIPLY)) && (num_repro < MAX_REPRO))
+  if ((rf_has(r_ptr->flags, RF_MULTIPLY)) && (num_repro < MAX_REPRO))
     {
       /* Count the adjacent monsters */
       for (k = 0, y = m_ptr->fy - 1; y <= m_ptr->fy + 1; y++)
@@ -4461,7 +4342,7 @@ static void process_monster(monster_type *m_ptr)
 	      /* Take note if visible */
 	      if (m_ptr->ml)
 		{
-		  l_ptr->flags2 |= (RF2_MULTIPLY);
+		  rf_on(l_ptr->flags, RF_MULTIPLY);
 		  
 		  /* Make a sound */
 		  sound(MSG_MULTIPLY);
@@ -4490,7 +4371,7 @@ static void process_monster(monster_type *m_ptr)
   
   
   /* Monsters can speak.  -originally by TY- */
-  if ((r_ptr->flags2 & (RF2_SPEAKING)) && 
+  if ((rf_has(r_ptr->flags, RF_SPEAKING)) && 
       (player_has_los_bold(m_ptr->fy, m_ptr->fx)) && 
       (!m_ptr->monfear) && (randint0(16) == 0))
     {
@@ -4508,7 +4389,7 @@ static void process_monster(monster_type *m_ptr)
     }
   
   /* Player ghosts may have a unique message they can say. */
-  else if ((r_ptr->flags2 & (RF2_PLAYER_GHOST)) && 
+  else if ((rf_has(r_ptr->flags, RF_PLAYER_GHOST)) && 
 	   (player_has_los_bold(m_ptr->fy, m_ptr->fx)) && 
 	   (ghost_string_type == 1) && 
 	   (!ghost_has_spoken) && (randint1(3) == 1))
@@ -4537,7 +4418,7 @@ static void process_monster(monster_type *m_ptr)
   chance = r_ptr->freq_ranged;
   
   /* Are we an unchanged shapeshifter? */
-  if ((r_ptr->flags6 & RF6_SHAPECHANGE) && (!m_ptr->schange))
+  if ((rsf_has(r_ptr->flags, RSF_SHAPECHANGE)) && (!m_ptr->schange))
     shape_rate = assess_shapechange(cave_m_idx[m_ptr->fy][m_ptr->fx], m_ptr);
       
   /* Cannot use ranged attacks beyond maximum range. */
@@ -4558,7 +4439,7 @@ static void process_monster(monster_type *m_ptr)
     }
 
   /* Roll to use ranged attacks failed, but monster is an archer. */
-  if ((choice == 0) && (r_ptr->flags2 & (RF2_ARCHER)) && (!(m_ptr->confused)
+  if ((choice == 0) && (rf_has(r_ptr->flags, RF_ARCHER)) && (!(m_ptr->confused)
 							  && aware))
     {
       /* Pick an archery attack (usually) */
@@ -4574,7 +4455,7 @@ static void process_monster(monster_type *m_ptr)
       make_attack_ranged(m_ptr, choice);
       
       /* Hack - Kill the shapechange */
-      if (choice != 182)
+      if (choice != RSF_SHAPECHANGE)
 	{ 
 	  m_ptr->orig_idx = old_shape;
 	  m_ptr->old_p_race = old_race;
@@ -4595,20 +4476,21 @@ static void process_monster(monster_type *m_ptr)
    * Innate semi-random movement.  Monsters adjacent to the character 
    * can always strike accurately at him (monster isn't confused).
    */
-  if ((r_ptr->flags1 & (RF1_RAND_50 | RF1_RAND_25)) && (m_ptr->cdis > 1))
+  if (rf_has(r_ptr->flags, RF_RAND_50) || rf_has(r_ptr->flags, RF_RAND_25)) 
+    && (m_ptr->cdis > 1))
     {
       int chance = 0;
       
       /* RAND_25 and RAND_50 are cumulative */
-      if (r_ptr->flags1 & (RF1_RAND_25))
+      if (rf_has(r_ptr->flags, RF_RAND_25))
 	{
 	  chance += 25;
-	  if (m_ptr->ml) l_ptr->flags1 |= (RF1_RAND_25);
+	  if (m_ptr->ml) rf_on(l_ptr->flags, RF_RAND_25);
 	}
-      if (r_ptr->flags1 & (RF1_RAND_50))
+	  if (rf_has(r_ptr->flags, RF_RAND_50))
 	{
 	  chance += 50;
-	  if (m_ptr->ml) l_ptr->flags1 |= (RF1_RAND_50);
+	  if (m_ptr->ml) rf_on(l_ptr->flags, RF_RAND_50);
 	}
       
       /* Chance of moving randomly */
@@ -4668,7 +4550,7 @@ static void process_monster(monster_type *m_ptr)
   /*** Find a target to move to ***/
   
   /* Monster is genuinely confused */
-  if ((m_ptr->confused) && (!(r_ptr->flags1 & (RF1_NEVER_MOVE))))
+  if ((m_ptr->confused) && (!(rf_has(r_ptr->flags, RF_NEVER_MOVE))))
     {
       /* Choose any direction except five and zero */
       dir = randint0(8);
@@ -4685,7 +4567,7 @@ static void process_monster(monster_type *m_ptr)
       bool dummy;
       
       /* Is the monster scared? */
-      if ((!(r_ptr->flags1 & (RF1_NEVER_MOVE))) &&
+      if ((!(rf_has(r_ptr->flags, RF_NEVER_MOVE))) &&
 	  ((m_ptr->min_range == FLEE_RANGE) ||
 	   (m_ptr->monfear)))
 	{
@@ -4750,7 +4632,7 @@ static void recover_monster(monster_type *m_ptr, bool regen)
       int d = 1;
       
       /* Sudden emergence.  Uniques get a bonus. */
-      if (50 + r_ptr->level + (r_ptr->flags1 & (RF1_UNIQUE) ? 
+      if (50 + r_ptr->level + (rf_has(r_ptr->flags, RF_UNIQUE) ? 
 			       r_ptr->level / 2 : 0) > randint1(800)) 
 	{
 	  m_ptr->stasis = 0;
@@ -4834,7 +4716,7 @@ static void recover_monster(monster_type *m_ptr, bool regen)
 	  if (!frac) frac = 1;
 	  
 	  /* Some monsters regenerate quickly */
-	  if (r_ptr->flags2 & (RF2_REGENERATE)) frac *= 2;
+	  if (rf_has(r_ptr->flags, RF_REGENERATE)) frac *= 2;
 	  
 	  /* Regenerate */
 	  m_ptr->hp += frac;

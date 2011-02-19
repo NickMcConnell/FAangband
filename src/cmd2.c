@@ -478,7 +478,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
       for (i = 0; i < z_info->r_max; i++)
 	{
 	  r_ptr = &r_info[i];
-	  if ((r_ptr->flags1 & RF1_QUESTOR) && (r_ptr->level == p_ptr->depth))
+	  if ((rf_has(r_ptr->flags, RF_QUESTOR)) && (r_ptr->level == p_ptr->depth))
 	    break;
 	}
 
@@ -1628,6 +1628,8 @@ void do_cmd_open(cmd_code code, cmd_arg args[])
   
   bool more = FALSE;
 
+  dir = args[0].direction;
+
   /* Option: Pick a direction -TNB- */
   if (OPT(easy_open)) 
     {
@@ -1810,6 +1812,8 @@ void do_cmd_close(cmd_code code, cmd_arg args[])
   
   bool more = FALSE;
   
+  dir = args[0].direction;
+
   /* Option: Pick a direction -TNB- */
   if (OPT(easy_open))
     {
@@ -2139,6 +2143,8 @@ void do_cmd_tunnel(cmd_code code, cmd_arg args[])
   
   bool more = FALSE;
   
+  dir = args[0].direction;
+
   /* Deal with webs first */
   if (cave_feat[py][px] == FEAT_WEB)
     {
@@ -2401,6 +2407,8 @@ void do_cmd_disarm(cmd_code code, cmd_arg args[])
   
   bool more = FALSE;
   
+  dir = args[0].direction;
+
   /* Option: Pick a direction -TNB- */
   if (OPT(easy_disarm)) 
     {
@@ -2635,8 +2643,7 @@ void do_cmd_bash(cmd_code code, cmd_arg args[])
   bool more = FALSE;
   
 
-  /* Get a direction (or abort) */
-  if (!get_rep_dir(&dir)) return;
+  dir = args[0].direction;
 
   /* Get location */
   y = py + ddy[dir];
@@ -2717,9 +2724,8 @@ void do_cmd_alter(cmd_code code, cmd_arg args[])
   monster_type *m_ptr;
   feature_type *f_ptr;
   
-  /* Get a direction */
-  if (!get_rep_dir(&dir)) return;
-  
+  dir = args[0].direction;
+
   /* Get location */
   y = py + ddy[dir];
   x = px + ddx[dir];
@@ -2926,9 +2932,8 @@ void do_cmd_spike(cmd_code code, cmd_arg args[])
     }
   
   
-  /* Get a direction (or abort) */
-  if (!get_rep_dir(&dir)) return;
-  
+	dir = args[0].direction;
+
   /* Get location */
   y = py + ddy[dir];
   x = px + ddx[dir];
@@ -3061,15 +3066,12 @@ static bool do_cmd_walk_test(int y, int x)
 /**
  * Helper function for the "walk" and "jump" commands
  */
-static void do_cmd_walk_or_jump(int pickup)
+static void do_cmd_walk_or_jump(int pickup, int dir)
 {
   int py = p_ptr->py;
   int px = p_ptr->px;
   
-  int y, x, dir;
-  
-  /* Get a direction (or abort) */
-  if (!get_rep_dir(&dir)) return;
+  int y, x;
   
   /* Get location */
   y = py + ddy[dir];
@@ -3120,7 +3122,7 @@ static void do_cmd_walk_or_jump(int pickup)
 void do_cmd_walk(cmd_code code, cmd_arg args[])
 {
   /* Move (usually pickup) */
-  do_cmd_walk_or_jump(OPT(always_pickup));
+	do_cmd_walk_or_jump(OPT(always_pickup), args[0].direction);
 }
 
 
@@ -3130,7 +3132,7 @@ void do_cmd_walk(cmd_code code, cmd_arg args[])
 void do_cmd_jump(cmd_code code, cmd_arg args[])
 {
   /* Move (usually do not pickup) */
-  do_cmd_walk_or_jump(!OPT(always_pickup));
+  do_cmd_walk_or_jump(!OPT(always_pickup), args[0].direction);
 }
 
 
@@ -3147,6 +3149,8 @@ void do_cmd_run(cmd_code code, cmd_arg args[])
   int y, x, dir;
   
   
+	dir = args[0].direction;
+
   /* Hack XXX XXX XXX */
   if (p_ptr->confused)
     {
@@ -3315,94 +3319,144 @@ void do_cmd_pickup(cmd_code code, cmd_arg args[])
 }
 
 
-/**
+/*
  * Rest (restores hit points and mana and such)
  */
 void do_cmd_rest(cmd_code code, cmd_arg args[])
 {
-  bool got_string;
+	/* 
+	 * A little sanity checking on the input - only the specified negative 
+	 * values are valid. 
+	 */
+	if ((args[0].choice < 0) &&
+		((args[0].choice != REST_COMPLETE) &&
+		 (args[0].choice != REST_ALL_POINTS) &&
+		 (args[0].choice != REST_SUNLIGHT))) 
+	{
+		return;
+	}
 
-  /* Prompt for time if needed */
-  if (p_ptr->command_arg <= 0)
-    {
-      cptr p;
-      char out_val[80];
-      
-      if (small_screen)
-	p  = "Rest ('*': HP/SP, '&': needed, '$': sun): ";
-      else
-	p  = "Rest (0-9999, '*' for HP/SP, '&' as needed, '$' until sunrise/set): ";
-      
-      /* Default */
-      strcpy(out_val, "&");
+	/* Save the rest code */
+	p_ptr->resting = args[0].choice;
+	
+	/* Truncate overlarge values */
+	if (p_ptr->resting > 9999) p_ptr->resting = 9999;
+	
+	/* Take a turn XXX XXX XXX (?) */
+	p_ptr->energy_use = 100;
 
-      /* Buttons */
-      button_add("*", '*');
-      button_add("$", '$');
-      
-      /* Ask for duration */
-      got_string = get_string(p, out_val, 5); 
-	
-      button_kill('*');
-      button_kill('$');
-	
-      if (!got_string) return;
-	
-      
-      /* Rest until done */
-      if (out_val[0] == '&')
+	/* Cancel searching */
+	p_ptr->searching = FALSE;
+
+	/* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Redraw the state */
+	p_ptr->redraw |= (PR_STATE);
+
+	/* Handle stuff */
+	handle_stuff();
+
+	/* Refresh XXX XXX XXX */
+	Term_fresh();
+}
+
+
+void textui_cmd_rest(void)
+{
+  	/* Prompt for time if needed */
+	if (p_ptr->command_arg <= 0)
 	{
-	  p_ptr->command_arg = (-2);
+		cptr p = "Rest (0-9999, '*' for HP and SP, '&' as needed, '$' until sunrise/set): ";
+
+		char out_val[5] = "& ";
+
+		/* Ask for duration */
+		if (!get_string(p, out_val, sizeof(out_val))) return;
+
+		/* Rest until done */
+		if (out_val[0] == '&')
+		{
+			cmd_insert(CMD_REST);
+			cmd_set_arg_choice(cmd_get_top(), 0, REST_COMPLETE);
+		}
+
+		/* Rest a lot */
+		else if (out_val[0] == '*')
+		{
+			cmd_insert(CMD_REST);
+			cmd_set_arg_choice(cmd_get_top(), 0, REST_ALL_POINTS);
+		}
+
+		/* Rest until sunrise/sunset */
+		else if (out_val[0] == '$')
+		{
+			cmd_insert(CMD_REST);
+			cmd_set_arg_choice(cmd_get_top(), 0, REST_SUNLIGHT);
+		}
+		
+		/* Rest some */
+		else
+		{
+			int turns = atoi(out_val);
+			if (turns <= 0) return;
+			if (turns > 9999) turns = 9999;
+			
+			cmd_insert(CMD_REST);
+			cmd_set_arg_choice(cmd_get_top(), 0, turns);
+		}
 	}
-      
-      /* Rest all night (or day) */
-      else if (out_val[0] == '$')
+}
+
+
+/**
+ * Hack -- commit suicide
+ */
+void do_cmd_suicide(cmd_code code, cmd_arg args[])
+{
+	/* Commit suicide */
+	p_ptr->is_dead = TRUE;
+
+	/* Stop playing */
+	p_ptr->playing = FALSE;
+
+	/* Leaving */
+	p_ptr->leaving = TRUE;
+
+	/* Cause of death */
+	my_strcpy(p_ptr->died_from, "Quitting", sizeof(p_ptr->died_from));
+}
+
+
+void textui_cmd_suicide(void)
+{
+	/* Flush input */
+	flush();
+
+	/* Verify Retirement */
+	if (p_ptr->total_winner)
 	{
-	  p_ptr->command_arg = (-3);
+		/* Verify */
+		if (!get_check("Do you want to retire? ")) return;
 	}
-      
-      /* Rest a lot */
-      else if (out_val[0] == '*')
+
+	/* Verify Suicide */
+	else
 	{
-	  p_ptr->command_arg = (-1);
+		char ch;
+
+		/* Verify */
+		if (!get_check("Do you really want to commit suicide? ")) return;
+
+		/* Special Verification for suicide */
+		prt("Please verify SUICIDE by typing the '@' sign: ", 0, 0);
+		flush();
+		ch = inkey();
+		prt("", 0, 0);
+		if (ch != '@') return;
 	}
-      
-      /* Rest some */
-      else
-	{
-	  p_ptr->command_arg = atoi(out_val);
-	  if (p_ptr->command_arg <= 0) return;
-	}
-    }
-  
-  
-  /* Paranoia */
-  if (p_ptr->command_arg > 9999) p_ptr->command_arg = 9999;
-  
-  
-  /* Take a turn XXX XXX XXX (?) */
-  p_ptr->energy_use = 100;
-  
-  /* Save the rest code */
-  p_ptr->resting = p_ptr->command_arg;
-  
-  /* Cancel the arg */
-  p_ptr->command_arg = 0;
-  
-  /* Cancel searching */
-  p_ptr->searching = FALSE;
-  
-  /* Recalculate bonuses */
-  p_ptr->update |= (PU_BONUS);
-  
-  /* Redraw the state */
-  p_ptr->redraw |= (PR_STATE);
-  
-  /* Handle stuff */
-  handle_stuff();
-  
-  /* Refresh XXX XXX XXX */
-  if (OPT(fresh_before)) Term_fresh();
+
+	cmd_insert(CMD_SUICIDE);
 }
 
 void do_cmd_save_game(cmd_code code, cmd_arg args[])

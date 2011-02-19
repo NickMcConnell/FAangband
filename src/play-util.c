@@ -58,7 +58,7 @@ bool player_can_cast(void)
 		return FALSE;
 	}
 
-	if (p_ptr->blind || no_light())
+	if (p_ptr->blind || no_lite())
 	{
 		msg_print("You cannot see!");
 		return FALSE;

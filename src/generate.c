@@ -325,7 +325,7 @@ static bool allow_unique;
 static char d_char_req[15];
 static byte d_attr_req[4];
 static u32b racial_flag_mask;
-static u32b breath_flag_mask;
+static bitflag breath_flag_mask[RSF_SIZE];
 
 
 
@@ -443,14 +443,13 @@ static bool vault_aux_elemental(int r_idx)
       strstr(r_name + r_ptr->name, "Energy")) return (TRUE);
   
   /* Otherwise, try selecting by breath attacks. */
-  breaths_allowed = (RF4_BRTH_ACID | RF4_BRTH_ELEC |
-		     RF4_BRTH_FIRE | RF4_BRTH_COLD);
+  if (rf_has(r_ptr->spell_flags, RSF_BRTH_ACID) ||
+      rf_has(r_ptr->spell_flags, RSF_BRTH_ELEC) ||
+      rf_has(r_ptr->spell_flags, RSF_BRTH_FIRE) ||
+      rf_has(r_ptr->spell_flags, RSF_BRTH_COLD)) return (TRUE);
   
-  /* Must have at least one of the required breath attacks */
-  if (!(r_ptr->flags4 & breaths_allowed)) return (FALSE);
-  
-  /* Okay */
-  return (TRUE);
+  /* Nope */
+  return (FALSE);
 }
 
 
@@ -473,8 +472,13 @@ static bool mon_select(int r_idx)
 {
   monster_race *r_ptr = &r_info[r_idx];
   bool ok = FALSE;
+  bitflag mon_breath[RSF_SIZE];
   
   
+  /* Require correct breath attack */
+  rsf_copy(mon_breath, r_ptr->spell_flags);
+  flags_mask(mon_breath, RSF_SIZE, RSF_BREATH_MASK, FLAG_END);
+
   /* Special case:  Elemental war themed level. */
   if (p_ptr->themed_level == THEME_ELEMENTAL)
     {
@@ -484,7 +488,7 @@ static bool mon_select(int r_idx)
   /* Special case:  Estolad themed level. */
   if (p_ptr->themed_level == THEME_ESTOLAD)
     {
-      if (!(r_ptr->flags3 & RF3_RACIAL)) return (FALSE);
+      if (!(rf_has(r_ptr->flags, RF_RACIAL))) return (FALSE);
     }
   
   
@@ -497,29 +501,30 @@ static bool mon_select(int r_idx)
   /* Require correct racial type. */
   if (racial_flag_mask)
     {
-      if (!(r_ptr->flags3 & (racial_flag_mask))) return (FALSE);
+      if (!(rf_has(r_ptr->flags, racial_flag_mask))) return (FALSE);
       
       /* Hack -- no invisible undead until deep. */
-      if ((p_ptr->depth < 40) && (r_ptr->flags3 & (RF3_UNDEAD)) && 
-	  (r_ptr->flags2 & (RF2_INVISIBLE))) return (FALSE);
+      if ((p_ptr->depth < 40) && (rf_has(r_ptr->flags, RF_UNDEAD)) && 
+	  (rf_has(r_ptr->flags, RF_INVISIBLE))) return (FALSE);
     }
   
   /* Require that monster breaths be exactly those specified. */
   /* Exception for winged dragons */
-  if (breath_flag_mask)
+  if (!rsf_is_empty(breath_flag_mask))
     {
       /* 'd'ragons */
-      if ((r_ptr->flags4 != breath_flag_mask) && (r_ptr->d_char != 'D')) 
+      if (!rsf_is_equal(mon_breath, breath_flag_mask) && 
+	  (r_ptr->d_char != 'D')) 
 	return (FALSE);
 
       /* Winged 'D'ragons */
       if (r_ptr->d_char == 'D')
 	{
-	  if ((r_ptr->flags4 & breath_flag_mask) != breath_flag_mask) 
+	  if (!rsf_is_subset(mon_breath, breath_flag_mask)) 
 	    return (FALSE);
 
 	  /* Hack - this deals with all current Ds that need excluding */
-	  if (r_ptr->flags4 & RF4_BRTH_SOUND)
+	  if (rsf_has(r_ptr->flags, RSF_BRTH_SOUND))
 	    return (FALSE);
 	}
     }
@@ -536,9 +541,11 @@ static bool mon_select(int r_idx)
       /* Hack -- No multihued dragons allowed in the arcane dragon pit. */
       if ((strchr(d_char_req, 'd') || strchr(d_char_req, 'D')) && 
 	  (d_attr_req[0] == TERM_VIOLET) && 
-	  (r_ptr->flags4 == (RF4_BRTH_ACID | 
-			     RF4_BRTH_ELEC | RF4_BRTH_FIRE | 
-			     RF4_BRTH_COLD | RF4_BRTH_POIS)))
+	  (rf_has(r_ptr->flags, RSF_BRTH_ACID) || 
+	   rf_has(r_ptr->flags, RSF_BRTH_ELEC) ||
+	   rf_has(r_ptr->flags, RSF_BRTH_FIRE) ||
+	   rf_has(r_ptr->flags, RSF_BRTH_COLD) ||
+	   rf_has(r_ptr->flags, RSF_BRTH_POIS)))
 	{
 	  return (FALSE);
 	}
@@ -548,7 +555,7 @@ static bool mon_select(int r_idx)
     }
   
   /* Usually decline unique monsters. */
-  if (r_ptr->flags1 & (RF1_UNIQUE))
+  if (rf_has(r_ptr->flags, RF_UNIQUE))
     {
       if (!allow_unique) return (FALSE);
       else if (randint0(5) != 0) return (FALSE);
@@ -582,7 +589,8 @@ static char *mon_restrict(char symbol, byte depth, bool *ordered,
   allow_unique = unique_ok;
   for (i = 0; i < 10; i++) d_char_req[i] = '\0';
   for (i = 0; i < 4; i++) d_attr_req[i] = 0;
-  racial_flag_mask = 0; breath_flag_mask = 0;
+  racial_flag_mask = 0; 
+  rsf_wipe(breath_flag_mask);
   
   
   /* No symbol, no restrictions. */
@@ -607,7 +615,7 @@ static char *mon_restrict(char symbol, byte depth, bool *ordered,
 	  /* Try for close to depth, accept in-depth if necessary */
 	  if (i < 200)
 	    {
-	      if ((!(r_info[j].flags1 & RF1_UNIQUE)) && 
+	      if ((!rf_has(r_info[j].flags, RF_UNIQUE)) && 
 		  (r_info[j].level != 0) && 
 		  (r_info[j].level <= depth) && 
 		  (ABS(r_info[j].level - p_ptr->depth) < 
@@ -615,7 +623,7 @@ static char *mon_restrict(char symbol, byte depth, bool *ordered,
 	    }
 	  else
 	    {
-	      if ((!(r_info[j].flags1 & RF1_UNIQUE)) && 
+	      if ((!rf_has(r_info[j].flags, RF_UNIQUE)) && 
 		  (r_info[j].level != 0) && 
 		  (r_info[j].level <= depth)) break;
 	    }
@@ -641,7 +649,7 @@ static char *mon_restrict(char symbol, byte depth, bool *ordered,
     case 'A':
       {
 	strcpy(name, "animal");
-	racial_flag_mask = RF3_ANIMAL;
+	racial_flag_mask = RF_ANIMAL;
 	*ordered = FALSE;
 	break;
       }
@@ -817,8 +825,8 @@ static char *mon_restrict(char symbol, byte depth, bool *ordered,
 		j = randint1(z_info->r_max - 1);
 		
 		/* Require a non-unique undead. */
-		if ((r_info[j].flags3 & RF3_UNDEAD) && 
-		    (!(r_info[j].flags1 & RF1_UNIQUE)) && 
+		if (rf_has(r_info[j].flags,  RF_UNDEAD) && 
+		    (!rf_has(r_info[j].flags, RF_UNIQUE)) && 
 		    (strchr("GLWV", r_info[j].d_char)) && 
 		    (ABS(r_info[j].level - p_ptr->depth) < 
 		     1 + (p_ptr->depth / 4)))
@@ -842,7 +850,7 @@ static char *mon_restrict(char symbol, byte depth, bool *ordered,
 	      {
 		/* Accept any undead. */
 		strcpy(name, "undead");
-		racial_flag_mask = RF3_UNDEAD;
+		racial_flag_mask = RF_UNDEAD;
 		*ordered = FALSE;
 	      }
 	  }
@@ -850,7 +858,7 @@ static char *mon_restrict(char symbol, byte depth, bool *ordered,
 	  {
 	    /* No restrictions on symbol. */
 	    strcpy(name, "undead");
-	    racial_flag_mask = RF3_UNDEAD;
+	    racial_flag_mask = RF_UNDEAD;
 	    *ordered = FALSE;
 	  }
 	break;
@@ -873,7 +881,7 @@ static char *mon_restrict(char symbol, byte depth, bool *ordered,
     case 'D':
       {
 	strcpy(d_char_req, "dD");
-	
+
 	/* Dragons usually associate with others of their kind. */
 	if (randint0(6) != 0)
 	  {
@@ -889,50 +897,47 @@ static char *mon_restrict(char symbol, byte depth, bool *ordered,
 	    
 	    if (i < 4)
 	      {
-		breath_flag_mask = (RF4_BRTH_ACID);
+		flags_init(breath_flag_mask, RSF_SIZE, RSF_BRTH_ACID, FLAG_END);
 		strcpy(name, "dragon - acid");
 	      }
 	    else if (i < 8)
 	      {
-		breath_flag_mask = (RF4_BRTH_ELEC);
+		flags_init(breath_flag_mask, RSF_SIZE, RSF_BRTH_ELEC, FLAG_END);
 		strcpy(name, "dragon - electricity");
 	      }
 	    else if (i < 12)
 	      {
-		breath_flag_mask = (RF4_BRTH_FIRE);
+		flags_init(breath_flag_mask, RSF_SIZE, RSF_BRTH_FIRE, FLAG_END);
 		strcpy(name, "dragon - fire");
 	      }
 	    else if (i < 16)
 	      {
-		breath_flag_mask = (RF4_BRTH_COLD);
+		flags_init(breath_flag_mask, RSF_SIZE, RSF_BRTH_COLD, FLAG_END);
 		strcpy(name, "dragon - cold");
 	      }
 	    else if (i < 20)
 	      {
-		breath_flag_mask = (RF4_BRTH_POIS);
+		flags_init(breath_flag_mask, RSF_SIZE, RSF_BRTH_POIS, FLAG_END);
 		strcpy(name, "dragon - poison");
 	      }
 	    else if (i < 24)
 	      {
-		breath_flag_mask = (RF4_BRTH_ACID | 
-				    RF4_BRTH_ELEC | RF4_BRTH_FIRE | 
-				    RF4_BRTH_COLD | RF4_BRTH_POIS);
+		flags_init(breath_flag_mask, RSF_SIZE, RSF_BRTH_ACID, RSF_BRTH_ELEC, RSF_BRTH_FIRE, RSF_BRTH_COLD, RSF_BRTH_POIS, FLAG_END);
 		strcpy(name, "dragon - multihued");
 	      }
 	    else if (i < 26)
 	      {
-		breath_flag_mask = (RF4_BRTH_CONFU);
+		flags_init(breath_flag_mask, RSF_SIZE, RSF_BRTH_CONFU, FLAG_END);
 		strcpy(name, "dragon - confusion");
 	      }
 	    else if (i < 28)
 	      {
-		breath_flag_mask = (RF4_BRTH_SOUND);
+		flags_init(breath_flag_mask, RSF_SIZE, RSF_BRTH_SOUND, FLAG_END);
 		strcpy(name, "dragon - sound");
 	      }
 	    else if (i < 30)
 	      {
-		breath_flag_mask = (RF4_BRTH_LITE | 
-				    RF4_BRTH_DARK);
+		flags_init(breath_flag_mask, RSF_SIZE, RSF_BRTH_LITE, RSF_BRTH_DARK, FLAG_END);
 		strcpy(name, "dragon - ethereal");
 	      }
 	    
@@ -4286,7 +4291,8 @@ static void general_monster_restrictions(void)
   allow_unique = TRUE;
   for (i = 0; i < 10; i++) d_char_req[i] = '\0';
   for (i = 0; i < 4; i++) d_attr_req[i] = 0;
-  racial_flag_mask = 0, breath_flag_mask = 0;
+  racial_flag_mask = 0;
+  rsf_wipe(breath_flag_mask);
   
   /* Assume no restrictions. */
   get_mon_num_hook = NULL;
@@ -4310,13 +4316,13 @@ static void general_monster_restrictions(void)
       }
     case THEME_WILDERNESS:
       {
-	racial_flag_mask = RF3_ANIMAL;
+	racial_flag_mask = RF_ANIMAL;
 	get_mon_num_hook = mon_select;
 	break;
       }
     case THEME_DEMON:
       {
-	racial_flag_mask = RF3_DEMON;
+	racial_flag_mask = RF_DEMON;
 	get_mon_num_hook = mon_select;
 	break;
       }
@@ -4328,7 +4334,7 @@ static void general_monster_restrictions(void)
       }
     case THEME_ESTOLAD:
       {
-	racial_flag_mask = RF3_RACIAL;
+	racial_flag_mask = RF_RACIAL;
 	get_mon_num_hook = mon_select;
 	break;
       }
@@ -4926,7 +4932,8 @@ static bool build_vault(int y0, int x0, int ymax, int xmax, cptr data,
       d_attr_req[1] = 0; 
       d_attr_req[2] = 0; 
       d_attr_req[3] = 0;
-      racial_flag_mask = 0, breath_flag_mask = 0;
+      racial_flag_mask = 0;
+      rsf_wipe(breath_flag_mask);
       
       /* Determine level of monster */
       if      (vault_type == 0)  temp = p_ptr->depth + 3;
@@ -7037,7 +7044,7 @@ static void cave_gen(void)
 	{
 	  monster_race *r_ptr = &r_info[i];
 	  /* Ensure quest monsters */
-	  if ((r_ptr->flags1 & (RF1_QUESTOR)) && 
+	  if ((rf_has(r_ptr->flags, RF_QUESTOR)) && 
 	      (r_ptr->level == p_ptr->depth) && (r_ptr->cur_num < 1))
 	    {
 	      int y, x;

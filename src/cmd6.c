@@ -5152,7 +5152,7 @@ void do_cmd_activate(void)
 	    monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	    if ((distance(targ_y, targ_x, m_ptr->fy, m_ptr->fx) < 7) &&
-		(r_ptr->d_char = 'g') && (!(r_ptr->flags3 & RF3_DRAGON)))
+		(r_ptr->d_char = 'g') && (!(rf_has(r_ptr->flags, RF_DRAGON))))
 	      m_ptr->hostile = p_ptr->target_who;
 	  }
 

@@ -2721,148 +2721,139 @@ const grouper object_text_order [] =
 	{0,			NULL			}
 };
 
-byte mana_cost_RF4[32]=
+/**
+ * Monster mana used 
+ */
+byte mana_cost[RSF_MAX]=
   {
-    1,			/* RF4_SHREIK */
-    0,			/* RF4_LASH */
-    0,			/* RF4_BOULDER */
-    0,			/* RF4_SHOT */
-    0,			/* RF4_ARROW */
-    0,			/* RF4_BOLT */
-    0,			/* RF4_MISSL */
-    0,			/* RF4_PMISSLE */
-    0,			/* RF4_BRTH_ACID */
-    0,			/* RF4_BRTH_ELEC */
-    0,			/* RF4_BRTH_FIRE */
-    0,			/* RF4_BRTH_COLD */
-    0,			/* RF4_BRTH_POIS */
-    0,			/* RF4_BRTH_PLAS */
-    0,			/* RF4_BRTH_LITE */
-    0,			/* RF4_BRTH_DARK */
-    0,			/* RF4_BRTH_CONFU */
-    0,			/* RF4_BRTH_SOUND */
-    0,			/* RF4_BRTH_SHARD */
-    0,			/* RF4_BRTH_INER */
-    0,			/* RF4_BRTH_GRAV */
-    0,			/* RF4_BRTH_FORCE */
-    0,			/* RF4_BRTH_NEXUS */
-    0,			/* RF4_BRTH_NETHR */
-    0,			/* RF4_BRTH_CHAOS */
-    0,			/* RF4_BRTH_DISEN */
-    0,			/* RF4_BRTH_TIME */
-    0,			/* RF4_BRTH_STORM */
-    0,			/* RF4_BRTH_DFIRE */
-    0,			/* RF4_BRTH_ICE */
-    0,			/* RF4_XXX5 */
-    0			/* RF4_XXX6 */
-  };
-
-byte mana_cost_RF5[32]=
-  {
-    4,			/* RF5_BALL_ACID */
-    4,			/* RF5_BALL_ELEC */
-    4,			/* RF5_BALL_FIRE */
-    4,			/* RF5_BALL_COLD */
-    4,			/* RF5_BALL_POIS */
-    5, 			/* RF5_BALL_LITE */
-    5, 			/* RF5_BALL_DARK */
-    6, 			/* RF5_BALL_CONFU */
-    4, 			/* RF5_BALL_SOUND */
-    4, 			/* RF5_BALL_SHARD */
-    5, 			/* RF5_BALL_STORM */
-    6, 			/* RF5_BALL_NETHR */
-    7, 			/* RF5_BALL_CHAOS */
-    5, 			/* RF5_BALL_MANA */
-    0, 			/* RF5_XXX1 */
-    0, 			/* RF5_XXX2 */
-    4, 			/* RF5_BOLT_ACID */
-    4, 			/* RF5_BOLT_ELEC */
-    4, 			/* RF5_BOLT_FIRE */
-    4, 			/* RF5_BOLT_COLD */
-    4, 			/* RF5_BOLT_POIS */
-    4, 			/* RF5_BOLT_PLAS */
-    4, 			/* RF5_BOLT_ICE */
-    5, 			/* RF5_BOLT_WATER */
-    5, 			/* RF5_BOLT_NETHER */
-    4, 			/* RF5_BOLT_DARK */
-    0, 			/* RF5_XXX3 */
-    3, 			/* RF5_BEAM_ELEC */
-    6, 			/* RF5_BEAM_ICE */
-    7, 			/* RF5_BEAM_NETHER */
-    7, 			/* RF5_ARC_HFIRE */
-    5  			/* RF5_ARC_FORCE */
-  };
-
-byte mana_cost_RF6[32]=
-  {
-    6, 			/* RF6_HASTE */
-    0, 			/* RF6_ADD_MANA */
-    0, 			/* RF6_HEAL */
-    3, 			/* RF6_CURE */
-    1, 			/* RF6_BLINK */	
-    6, 			/* RF6_TPORT */
-    0, 			/* RF6_XXX1 */
-    4, 			/* RF6_TELE_SELF_TO */
-    4, 			/* RF6_TELE_TO */
-    8, 			/* RF6_TELE_AWAY */
-    8, 			/* RF6_TELE_LEVEL */
-    0, 			/* RF6_XXX3 */
-    1, 			/* RF6_DARKNESS */
-    2, 			/* RF6_TRAPS */
-    6, 			/* RF6_FORGET */
-    0, 			/* RF6_DRAIN_MANA */
-    5, 			/* RF6_DISPEL */ 
-    0, 			/* RF6_XXX5 */ 
-    3, 			/* RF6_MIND_BLAST */
-    4, 			/* RF6_BRAIN_SMASH */
-    4, 			/* RF6_WOUND */
-    0, 			/* RF6_XXX6 */
-    4, 			/* RF6_SHAPECHANGE */ 
-    0, 			/* RF6_XXX8 */
-    0, 			/* RF6_XXX9 */
-    2, 			/* RF6_HUNGER */ 
-    0, 			/* RF6_XX11 */ 
-    1, 			/* RF6_SCARE */ 
-    3, 			/* RF6_BLIND */ 
-    4, 			/* RF6_CONF */ 
-    5, 			/* RF6_SLOW */ 
-    6  			/* RF6_HOLD */ 
-  };
-
-byte mana_cost_RF7[32]=
-  {
-    12,			/* RF7_S_KIN */ /* Summon - 6 */
-    0, 			/* RF7_XXX1 */
-    0, 			/* RF7_XXX2 */
-    10,			/* RF7_S_MONSTER */ /* Summon - 1 */
-    15,		        /* RF7_S_MONSTERS */ /* Summon - 8 */
-    0,			/* RF7_XXX3 */
-    0, 			/* RF7_XXX4 */
-    0, 			/* RF7_XXX5 */
-    10, 		/* RF7_S_ANT */ /* Summon - 6 */
-    12,			/* RF7_S_SPIDER */ /* Summon - 6 */
-    14,			/* RF7_S_HOUND */ /* Summon - 6 */
-    15,			/* RF7_S_ANIMAL */ /* Summon - 6 */
-    0, 			/* RF7_XXX6 */
-    0, 			/* RF7_XXX7 */
-    15,			/* RF7_S_THIEF */ /* Summon - 6 */
-    15,			/* RF7_S_SWAMP */ /* Summon - 2 */
-    0, 			/* RF7_XXX8 */
-    0, 			/* RF7_XXX9 */
-    0, 			/* RF7_XX10 */
-    0, 			/* RF7_XX11 */
-    14,			/* RF7_S_DRAGON */ /* Summon - 1 */
-    20,			/* RF7_S_HI_DRAGON */ /* Summon - 8 */
-    0, 			/* RF7_XX12 */
-    0, 			/* RF7_XX13 */
-    14,			/* RF7_S_DEMON */ /* Summon - 1 / 2-3 */
-    20,			/* RF7_S_HI_DEMON */ /* Summon - 8 */
-    0, 			/* RF7_XX14 */
-    0, 			/* RF7_XX15 */
-    12,			/* RF7_S_UNDEAD */ /* Summon - 1 */
-    20,			/* RF7_S_HI_UNDEAD */ /* Summon - 8 */
-    20,			/* RF7_S_QUEST */ /* Summon - 8 */
-    20 			/* RF7_S_UNIQUE */ /* Summon - 8 */
+    1,			/* RSF_SHREIK */
+    0,			/* RSF_LASH */
+    0,			/* RSF_BOULDER */
+    0,			/* RSF_SHOT */
+    0,			/* RSF_ARROW */
+    0,			/* RSF_BOLT */
+    0,			/* RSF_MISSL */
+    0,			/* RSF_PMISSL */
+    0,			/* RSF_BRTH_ACID */
+    0,			/* RSF_BRTH_ELEC */
+    0,			/* RSF_BRTH_FIRE */
+    0,			/* RSF_BRTH_COLD */
+    0,			/* RSF_BRTH_POIS */
+    0,			/* RSF_BRTH_PLAS */
+    0,			/* RSF_BRTH_LITE */
+    0,			/* RSF_BRTH_DARK */
+    0,			/* RSF_BRTH_CONFU */
+    0,			/* RSF_BRTH_SOUND */
+    0,			/* RSF_BRTH_SHARD */
+    0,			/* RSF_BRTH_INER */
+    0,			/* RSF_BRTH_GRAV */
+    0,			/* RSF_BRTH_FORCE */
+    0,			/* RSF_BRTH_NEXUS */
+    0,			/* RSF_BRTH_NETHR */
+    0,			/* RSF_BRTH_CHAOS */
+    0,			/* RSF_BRTH_DISEN */
+    0,			/* RSF_BRTH_TIME */
+    0,			/* RSF_BRTH_STORM */
+    0,			/* RSF_BRTH_DFIRE */
+    0,			/* RSF_BRTH_ICE */
+    0,			/* RSF_ALL */
+    0,			/* RSF_XXX1 */
+    4,			/* RSF_BALL_ACID */
+    4,			/* RSF_BALL_ELEC */
+    4,			/* RSF_BALL_FIRE */
+    4,			/* RSF_BALL_COLD */
+    4,			/* RSF_BALL_POIS */
+    5, 			/* RSF_BALL_LITE */
+    5, 			/* RSF_BALL_DARK */
+    6, 			/* RSF_BALL_CONFU */
+    4, 			/* RSF_BALL_SOUND */
+    4, 			/* RSF_BALL_SHARD */
+    5, 			/* RSF_BALL_STORM */
+    6, 			/* RSF_BALL_NETHR */
+    7, 			/* RSF_BALL_CHAOS */
+    5, 			/* RSF_BALL_MANA */
+    0, 			/* RSF_BALL_ALL */
+    0, 			/* RSF_XXX2 */
+    4, 			/* RSF_BOLT_ACID */
+    4, 			/* RSF_BOLT_ELEC */
+    4, 			/* RSF_BOLT_FIRE */
+    4, 			/* RSF_BOLT_COLD */
+    4, 			/* RSF_BOLT_POIS */
+    4, 			/* RSF_BOLT_PLAS */
+    4, 			/* RSF_BOLT_ICE */
+    5, 			/* RSF_BOLT_WATER */
+    5, 			/* RSF_BOLT_NETHER */
+    4, 			/* RSF_BOLT_DARK */
+    0, 			/* RSF_XXX3 */
+    3, 			/* RSF_BEAM_ELEC */
+    6, 			/* RSF_BEAM_ICE */
+    7, 			/* RSF_BEAM_NETHER */
+    7, 			/* RSF_ARC_HFIRE */
+    5, 			/* RSF_ARC_FORCE */
+    6, 			/* RSF_HASTE */
+    0, 			/* RSF_ADD_MANA */
+    0, 			/* RSF_HEAL */
+    3, 			/* RSF_CURE */
+    1, 			/* RSF_BLINK */	
+    6, 			/* RSF_TPORT */
+    0, 			/* RSF_XXX4 */
+    4, 			/* RSF_TELE_SELF_TO */
+    4, 			/* RSF_TELE_TO */
+    8, 			/* RSF_TELE_AWAY */
+    8, 			/* RSF_TELE_LEVEL */
+    0, 			/* RSF_XXX5 */
+    1, 			/* RSF_DARKNESS */
+    2, 			/* RSF_TRAPS */
+    6, 			/* RSF_FORGET */
+    0, 			/* RSF_DRAIN_MANA */
+    5, 			/* RSF_DISPEL */ 
+    0, 			/* RSF_XXX6 */ 
+    3, 			/* RSF_MIND_BLAST */
+    4, 			/* RSF_BRAIN_SMASH */
+    4, 			/* RSF_WOUND */
+    0, 			/* RSF_XXX7 */
+    4, 			/* RSF_SHAPECHANGE */ 
+    0, 			/* RSF_XXX8 */
+    0, 			/* RSF_XXX9 */
+    2, 			/* RSF_HUNGER */ 
+    0, 			/* RSF_XX10 */ 
+    1, 			/* RSF_SCARE */ 
+    3, 			/* RSF_BLIND */ 
+    4, 			/* RSF_CONF */ 
+    5, 			/* RSF_SLOW */ 
+    6, 			/* RSF_HOLD */ 
+    12,			/* RSF_S_KIN */ /* Summon - 6 */
+    0, 			/* RSF_S_XXX1 */
+    0, 			/* RSF_S_XXX2 */
+    10,			/* RSF_S_MONSTER */ /* Summon - 1 */
+    15,		        /* RSF_S_MONSTERS */ /* Summon - 8 */
+    0,			/* RSF_S_XXX3 */
+    0, 			/* RSF_S_XXX4 */
+    0, 			/* RSF_S_XXX5 */
+    10, 		/* RSF_S_ANT */ /* Summon - 6 */
+    12,			/* RSF_S_SPIDER */ /* Summon - 6 */
+    14,			/* RSF_S_HOUND */ /* Summon - 6 */
+    15,			/* RSF_S_ANIMAL */ /* Summon - 6 */
+    0, 			/* RSF_S_XXX6 */
+    0, 			/* RSF_S_XXX7 */
+    15,			/* RSF_S_THIEF */ /* Summon - 6 */
+    15,			/* RSF_S_SWAMP */ /* Summon - 2 */
+    0, 			/* RSF_S_XXX8 */
+    0, 			/* RSF_S_XXX9 */
+    0, 			/* RSF_S_XX10 */
+    0, 			/* RSF_S_XX11 */
+    14,			/* RSF_S_DRAGON */ /* Summon - 1 */
+    20,			/* RSF_S_HI_DRAGON */ /* Summon - 8 */
+    0, 			/* RSF_S_XX12 */
+    0, 			/* RSF_S_XX13 */
+    14,			/* RSF_S_DEMON */ /* Summon - 1 / 2-3 */
+    20,			/* RSF_S_HI_DEMON */ /* Summon - 8 */
+    0, 			/* RSF_S_XX14 */
+    0, 			/* RSF_APPROP */
+    12,			/* RSF_S_UNDEAD */ /* Summon - 1 */
+    20,			/* RSF_S_HI_UNDEAD */ /* Summon - 8 */
+    20,			/* RSF_S_QUEST */ /* Summon - 8 */
+    20 			/* RSF_S_UNIQUE */ /* Summon - 8 */
   };
 
 /**
@@ -2882,156 +2873,144 @@ byte mana_cost_RF7[32]=
  * d_range:    % of spell desirability retained for each step past 'range'
  */
 
-byte spell_desire_RF4[32][8] =
+byte spell_desire[RSF_MAX][D_MAX] =
   {
   /*  d_base   d_hurt   d_esc	 d_res				    */
   /*	 d_summ   d_mana  d_tact	   d_range		    */
-    { 30,  0,   0,   5,	0,   0,	   0	  ,  100}, /* RF4_SHRIEK    */
-    { 40,  0,   0,   5,	0,   0,	   0	  ,    0}, /* RF4_LASH	    */
-    { 40,  0,   0,   5,	0,   0, LRN_ARCH  ,  100}, /* RF4_BOULDER   */
-    { 40,  0,   0,   5,	0,   0, LRN_ARCH  ,  100}, /* RF4_SHOT	    */
-    { 40,  0,   0,   5,	0,   0, LRN_ARCH  ,  100}, /* RF4_ARROW	    */
-    { 40,  0,   0,   5,	0,   0, LRN_ARCH  ,  100}, /* RF4_BOLT	    */
-    { 35,  0,   0,   5,	0,   0, LRN_ARCH  ,  100}, /* RF4_MISSL	    */
-    { 40,  0,   0,   5,	0,   0, LRN_PARCH ,  100}, /* RF4_PMISSL    */
-    { 65,  0,   0,   5,	0,   0, LRN_ACID  ,   90}, /* RF4_BRTH_ACID */
-    { 65,  0,   0,   5,	0,   0, LRN_ELEC  ,   90}, /* RF4_BRTH_ELEC */
-    { 65,  0,   0,   5,	0,   0, LRN_FIRE  ,   90}, /* RF4_BRTH_FIRE */
-    { 65,  0,   0,   5,	0,   0, LRN_COLD  ,   90}, /* RF4_BRTH_COLD */
-    { 65,  0,   0,   5,	0,   0, LRN_POIS  ,   90}, /* RF4_BRTH_POIS */
-    { 65,  0,   0,   5,	0,   0, LRN_PLAS  ,   90}, /* RF4_BRTH_PLAS */
-    { 50,  0,   0,   5,	0,   0, LRN_LITE  ,   90}, /* RF4_BRTH_LITE */
-    { 50,  0,   0,   5,	0,   0, LRN_DARK  ,   90}, /* RF4_BRTH_DARK */
-    { 50,  0,   0,   5,	0,   0, LRN_CONFU ,   90}, /* RF4_BRTH_CONFU*/
-    { 50,  0,   0,   5,	0,   0, LRN_SOUND ,   90}, /* RF4_BRTH_SOUND*/
-    { 50,  0,   0,   5,	0,   0, LRN_SHARD ,   90}, /* RF4_BRTH_SHARD*/
-    { 50,  0,   0,   5,	0,   0,	   0	  ,   90}, /* RF4_BRTH_INER */
-    { 50,  0,   0,   5,	0,   0, LRN_SOUND2,   90}, /* RF4_BRTH_GRAV */
-    { 50,  0,   0,   5,	0,   0, LRN_SOUND2,   90}, /* RF4_BRTH_FORCE*/
-    { 50,  0,   0,   5,	0,   0, LRN_NEXUS ,   90}, /* RF4_BRTH_NEXUS*/
-    { 50,  0,   0,   5,	0,   0, LRN_NETHR ,   90}, /* RF4_BRTH_NETHR*/
-    { 50,  0,   0,   5,	0,   0, LRN_CHAOS ,   90}, /* RF4_BRTH_CHAOS*/
-    { 50,  0,   0,   5,	0,   0, LRN_DISEN ,   90}, /* RF4_BRTH_DISEN*/
-    { 50,  0,   0,   5,	0,   0,	   0	  ,   90}, /* RF4_BRTH_TIME */
-    { 65,  0,   0,   5,	0,   0,	LRN_STORM ,   90}, /* RF4_BRTH_STORM */
-    { 65,  0,   0,   5,	0,   0,	LRN_DFIRE ,   90}, /* RF4_BRTH_DFIRE */
-    { 65,  0,   0,   5,	0,   0,	LRN_ICE	  ,   90}, /* RF4_BRTH_ICE */
-    { 70,  0,   0,   5,	0,   0,	LRN_ALL	  ,  100}, /* RF4_BRTH_ALL */
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100} /* RF4_XXX6 */
-  };
-
-byte spell_desire_RF5[32][8] =
-  {
+    { 30,  0,   0,   5,	0,   0,	   0	  ,  100}, /* RSF_SHRIEK    */
+    { 40,  0,   0,   5,	0,   0,	   0	  ,    0}, /* RSF_LASH	    */
+    { 40,  0,   0,   5,	0,   0, LRN_ARCH  ,  100}, /* RSF_BOULDER   */
+    { 40,  0,   0,   5,	0,   0, LRN_ARCH  ,  100}, /* RSF_SHOT	    */
+    { 40,  0,   0,   5,	0,   0, LRN_ARCH  ,  100}, /* RSF_ARROW	    */
+    { 40,  0,   0,   5,	0,   0, LRN_ARCH  ,  100}, /* RSF_BOLT	    */
+    { 35,  0,   0,   5,	0,   0, LRN_ARCH  ,  100}, /* RSF_MISSL	    */
+    { 40,  0,   0,   5,	0,   0, LRN_PARCH ,  100}, /* RSF_PMISSL    */
+    { 65,  0,   0,   5,	0,   0, LRN_ACID  ,   90}, /* RSF_BRTH_ACID */
+    { 65,  0,   0,   5,	0,   0, LRN_ELEC  ,   90}, /* RSF_BRTH_ELEC */
+    { 65,  0,   0,   5,	0,   0, LRN_FIRE  ,   90}, /* RSF_BRTH_FIRE */
+    { 65,  0,   0,   5,	0,   0, LRN_COLD  ,   90}, /* RSF_BRTH_COLD */
+    { 65,  0,   0,   5,	0,   0, LRN_POIS  ,   90}, /* RSF_BRTH_POIS */
+    { 65,  0,   0,   5,	0,   0, LRN_PLAS  ,   90}, /* RSF_BRTH_PLAS */
+    { 50,  0,   0,   5,	0,   0, LRN_LITE  ,   90}, /* RSF_BRTH_LITE */
+    { 50,  0,   0,   5,	0,   0, LRN_DARK  ,   90}, /* RSF_BRTH_DARK */
+    { 50,  0,   0,   5,	0,   0, LRN_CONFU ,   90}, /* RSF_BRTH_CONFU*/
+    { 50,  0,   0,   5,	0,   0, LRN_SOUND ,   90}, /* RSF_BRTH_SOUND*/
+    { 50,  0,   0,   5,	0,   0, LRN_SHARD ,   90}, /* RSF_BRTH_SHARD*/
+    { 50,  0,   0,   5,	0,   0,	   0	  ,   90}, /* RSF_BRTH_INER */
+    { 50,  0,   0,   5,	0,   0, LRN_SOUND2,   90}, /* RSF_BRTH_GRAV */
+    { 50,  0,   0,   5,	0,   0, LRN_SOUND2,   90}, /* RSF_BRTH_FORCE*/
+    { 50,  0,   0,   5,	0,   0, LRN_NEXUS ,   90}, /* RSF_BRTH_NEXUS*/
+    { 50,  0,   0,   5,	0,   0, LRN_NETHR ,   90}, /* RSF_BRTH_NETHR*/
+    { 50,  0,   0,   5,	0,   0, LRN_CHAOS ,   90}, /* RSF_BRTH_CHAOS*/
+    { 50,  0,   0,   5,	0,   0, LRN_DISEN ,   90}, /* RSF_BRTH_DISEN*/
+    { 50,  0,   0,   5,	0,   0,	   0	  ,   90}, /* RSF_BRTH_TIME */
+    { 65,  0,   0,   5,	0,   0,	LRN_STORM ,   90}, /* RSF_BRTH_STORM */
+    { 65,  0,   0,   5,	0,   0,	LRN_DFIRE ,   90}, /* RSF_BRTH_DFIRE */
+    { 65,  0,   0,   5,	0,   0,	LRN_ICE	  ,   90}, /* RSF_BRTH_ICE */
+    { 70,  0,   0,   5,	0,   0,	LRN_ALL	  ,  100}, /* RSF_BRTH_ALL */
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_XXX1 */
   /*  d_base    d_hurt  d_esc	 d_res				    */
   /*     d_summ	  d_mana  d_tact	   d_range		    */
-    { 50,  0,   0,   0,	0,   0, LRN_ACID  ,  100}, /* RF5_BALL_ACID */
-    { 50,  0,   0,   0,	0,   0, LRN_ELEC  ,  100}, /* RF5_BALL_ELEC */
-    { 50,  0,   0,   0,	0,   0, LRN_FIRE  ,  100}, /* RF5_BALL_FIRE */
-    { 50,  0,   0,   0,	0,   0, LRN_COLD  ,  100}, /* RF5_BALL_COLD */
-    { 50,  0,   0,   0,	0,   0, LRN_POIS  ,  100}, /* RF5_BALL_POIS */
-    { 40,  0,   0,   0,	0,   0, LRN_LITE  ,  100}, /* RF5_BALL_LITE */
-    { 40,  0,   0,   0,	0,   0, LRN_DARK  ,  100}, /* RF5_BALL_DARK */
-    { 40,  0,   0,   0,	0,   0, LRN_CONFU ,  100}, /* RF5_BALL_CONFU*/
-    { 40,  0,   0,   0,	0,   0, LRN_SOUND ,  100}, /* RF5_BALL_SOUND*/
-    { 40,  0,   0,   0,	0,   0, LRN_SHARD ,  100}, /* RF5_BALL_SHARD*/
-    { 40,  0,   0,   0,	0,   0, LRN_STORM ,  100}, /* RF5_BALL_STORM*/
-    { 40,  0,   0,   0,	0,   0, LRN_NETHR ,  100}, /* RF5_BALL_NETHR*/
-    { 40,  0,   0,   0,	0,   0, LRN_CHAOS ,  100}, /* RF5_BALL_CHAOS*/
-    { 40,  0,   0,   0,	0,   0,	   0	  ,  100}, /* RF5_BALL_MANA */
-    { 50,  0,   0,   0,	0,   0,	LRN_ALL	  ,  100}, /* RF5_BALL_ALL */
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RF5_XXX2 */
-    { 40,  0,   0,   0,	0,   0, LRN_ACID  ,  100}, /* RF5_BOLT_ACID */
-    { 40,  0,   0,   0,	0,   0, LRN_ELEC  ,  100}, /* RF5_BOLT_ELEC */
-    { 40,  0,   0,   0,	0,   0, LRN_FIRE  ,  100}, /* RF5_BOLT_FIRE */
-    { 40,  0,   0,   0,	0,   0, LRN_COLD  ,  100}, /* RF5_BOLT_COLD */
-    { 40,  0,   0,   0,	0,   0, LRN_POIS  ,  100}, /* RF5_BOLT_POIS */
-    { 50,  0,   0,   0,	0,   0, LRN_PLAS  ,  100}, /* RF5_BOLT_PLAS */
-    { 50,  0,   0,   0,	0,   0, LRN_ICE	  ,  100}, /* RF5_BOLT_ICE  */
-    { 35,  0,   0,   0,	0,   0, LRN_WATER ,  100}, /* RF5_BOLT_WATER*/
-    { 35,  0,   0,   0,	0,   0, LRN_NETHR ,  100}, /* RF5_BOLT_NETHR*/
-    { 40,  0,   0,   0,	0,   0,	LRN_DARK  ,  100}, /* RF5_BOLT_DARK */
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RF5_XXX3	    */
-    { 50,  0,   0,   0,	0,   0, LRN_ELEC  ,   90}, /* RF5_BEAM_ELEC */
-    { 50,  0,   0,   0,	0,   0, LRN_ICE	  ,   90}, /* RF5_BEAM_ICE  */
-    { 50,  0,   0,   0,	0,   0, LRN_NETHR ,   90}, /* RF5_BEAM_NETHR*/
-    { 50,  0,   0,   0,	0,   0, LRN_FIRE  ,   95}, /* RF5_ARC_HFIRE*/
-    { 40,  0,   0,   0,	0,   0,	   0	  ,   90} /* RF5_ARC_FORCE*/
-  };
-
-byte spell_desire_RF6[32][8] =
-  {
+    { 50,  0,   0,   0,	0,   0, LRN_ACID  ,  100}, /* RSF_BALL_ACID */
+    { 50,  0,   0,   0,	0,   0, LRN_ELEC  ,  100}, /* RSF_BALL_ELEC */
+    { 50,  0,   0,   0,	0,   0, LRN_FIRE  ,  100}, /* RSF_BALL_FIRE */
+    { 50,  0,   0,   0,	0,   0, LRN_COLD  ,  100}, /* RSF_BALL_COLD */
+    { 50,  0,   0,   0,	0,   0, LRN_POIS  ,  100}, /* RSF_BALL_POIS */
+    { 40,  0,   0,   0,	0,   0, LRN_LITE  ,  100}, /* RSF_BALL_LITE */
+    { 40,  0,   0,   0,	0,   0, LRN_DARK  ,  100}, /* RSF_BALL_DARK */
+    { 40,  0,   0,   0,	0,   0, LRN_CONFU ,  100}, /* RSF_BALL_CONFU*/
+    { 40,  0,   0,   0,	0,   0, LRN_SOUND ,  100}, /* RSF_BALL_SOUND*/
+    { 40,  0,   0,   0,	0,   0, LRN_SHARD ,  100}, /* RSF_BALL_SHARD*/
+    { 40,  0,   0,   0,	0,   0, LRN_STORM ,  100}, /* RSF_BALL_STORM*/
+    { 40,  0,   0,   0,	0,   0, LRN_NETHR ,  100}, /* RSF_BALL_NETHR*/
+    { 40,  0,   0,   0,	0,   0, LRN_CHAOS ,  100}, /* RSF_BALL_CHAOS*/
+    { 40,  0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_BALL_MANA */
+    { 50,  0,   0,   0,	0,   0,	LRN_ALL	  ,  100}, /* RSF_BALL_ALL */
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_XXX2 */
+    { 40,  0,   0,   0,	0,   0, LRN_ACID  ,  100}, /* RSF_BOLT_ACID */
+    { 40,  0,   0,   0,	0,   0, LRN_ELEC  ,  100}, /* RSF_BOLT_ELEC */
+    { 40,  0,   0,   0,	0,   0, LRN_FIRE  ,  100}, /* RSF_BOLT_FIRE */
+    { 40,  0,   0,   0,	0,   0, LRN_COLD  ,  100}, /* RSF_BOLT_COLD */
+    { 40,  0,   0,   0,	0,   0, LRN_POIS  ,  100}, /* RSF_BOLT_POIS */
+    { 50,  0,   0,   0,	0,   0, LRN_PLAS  ,  100}, /* RSF_BOLT_PLAS */
+    { 50,  0,   0,   0,	0,   0, LRN_ICE	  ,  100}, /* RSF_BOLT_ICE  */
+    { 35,  0,   0,   0,	0,   0, LRN_WATER ,  100}, /* RSF_BOLT_WATER*/
+    { 35,  0,   0,   0,	0,   0, LRN_NETHR ,  100}, /* RSF_BOLT_NETHR*/
+    { 40,  0,   0,   0,	0,   0,	LRN_DARK  ,  100}, /* RSF_BOLT_DARK */
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_XXX3	    */
+    { 50,  0,   0,   0,	0,   0, LRN_ELEC  ,   90}, /* RSF_BEAM_ELEC */
+    { 50,  0,   0,   0,	0,   0, LRN_ICE	  ,   90}, /* RSF_BEAM_ICE  */
+    { 50,  0,   0,   0,	0,   0, LRN_NETHR ,   90}, /* RSF_BEAM_NETHR*/
+    { 50,  0,   0,   0,	0,   0, LRN_FIRE  ,   95}, /* RSF_ARC_HFIRE*/
+    { 40,  0,   0,   0,	0,   0,	   0	  ,   90},/* RSF_ARC_FORCE*/
   /*  d_base   d_hurt  d_esc	 d_res			                    */
   /*     d_summ	  d_mana   d_tact	       d_range		            */
-    { 50,  0,   0,   0,	0,   0,	   0	      ,  100}, /* RF6_HASTE	    */
-    { 15,  0,   0,   25,0,   0,	   0	      ,  100}, /* RF6_ADD_MANA      */
-    { 10,  0,   20,  0,	0,   0,	   0	      ,  100}, /* RF6_HEAL	    */
-    { 50,  0,   0,   0,	0,   0,	   0	      ,  100}, /* RF6_CURE	    */
-    { 27,  0,   0,   0,	10,  15,   0	      ,  100}, /* RF6_BLINK	    */
-    { 10,  0,   0,   0,	20,  10,   0	      ,  100}, /* RF6_TPORT	    */
-    { 0,   0,   0,   0,	0,   0,	   0	      ,  100}, /* RF6_XXX1	    */
-    { 30,  0,   0,   0,	0,   0,	   0	      ,  100}, /* RF6_TELE_SELF_TO  */
-    { 30,  0,   0,   0,	0,   10,   0	      ,  100}, /* RF6_TELE_TO       */
-    { 10,  0,   0,   0,	20,  10,   0	      ,  100}, /* RF6_TELE_AWAY     */
-    { 10,  0,   0,   0,	20,  10,LRN_NEXUS_SAVE,  100}, /* RF6_TELE_LEVEL    */
-    { 0,   0,   0,   0,	0,   0,	   0	      ,  100}, /* RF6_XXX3	    */
-    { 20,  0,   0,   0,	5,   0,	   0	      ,  100}, /* RF6_DARKNESS      */
-    { 25,  0,   0,   0,	5,   0,	   0	      ,  100}, /* RF6_TRAPS	    */
-    { 25,  0,   0,   0,	5,   0, LRN_SAVE      ,  100}, /* RF6_FORGET        */
-    { 25,  0,   0,   15,0,   0, LRN_MANA      ,  100}, /* RF6_DRAIN_MANA    */
-    { 25,  0,   0,   5,	0,   0,	   0          ,  100}, /* RF6_DISPEL        */
-    { 0,   0,   0,   0,	0,   0,	   0	      ,  100}, /* RF6_XXX5	    */
-    { 30,  0,   0,   0,	0,   0, LRN_SAVE      ,  100}, /* RF6_MIND_BLAST    */
-    { 40,  0,   0,   0,	0,   0, LRN_SAVE      ,  100}, /* RF6_BRAIN_SMASH   */
-    { 40,  0,   0,   0,	0,   0, LRN_SAVE      ,  100}, /* RF6_WOUND	    */
-    { 0,   0,   0,   0,	0,   0,	   0	      ,  100}, /* RF6_XXX6	    */
-    { 30,  0,   0,   0,	0,   0,	   0	      ,  100}, /* RF6_SHAPECHANGE   */
-    { 0,   0,   0,   0,	0,   0,	   0	      ,  100}, /* RF6_XXX8	    */
-    { 0,   0,   0,   0,	0,   0,	   0	      ,  100}, /* RF6_XXX9	    */
-    { 25,  0,   0,   0,	0,   0,	 LRN_SAVE     ,  100}, /* RF6_HUNGER        */
-    { 0,   0,   0,   0,	0,   0,	   0	      ,  100}, /* RF6_XX11	    */
-    { 25,  0,   0,   0,	0,   0, LRN_FEAR_SAVE ,  100}, /* RF6_SCARE	    */
-    { 30,  0,   0,   0,	0,   0, LRN_BLIND_SAVE,  100}, /* RF6_BLIND	    */
-    { 30,  0,   0,   0,	0,   0, LRN_CONFU_SAVE,  100}, /* RF6_CONF	    */
-    { 40,  0,   0,   0,	0,   0, LRN_FREE_SAVE,   100}, /* RF6_SLOW	    */
-    { 35,  0,   0,   0,	0,   0, LRN_FREE_SAVE,   100}  /* RF6_HOLD	    */
-  };
-
-byte spell_desire_RF7[32][8] =
-  {
+    { 50,  0,   0,   0,	0,   0,	   0	      ,  100}, /* RSF_HASTE	    */
+    { 15,  0,   0,   25,0,   0,	   0	      ,  100}, /* RSF_ADD_MANA      */
+    { 10,  0,   20,  0,	0,   0,	   0	      ,  100}, /* RSF_HEAL	    */
+    { 50,  0,   0,   0,	0,   0,	   0	      ,  100}, /* RSF_CURE	    */
+    { 27,  0,   0,   0,	10,  15,   0	      ,  100}, /* RSF_BLINK	    */
+    { 10,  0,   0,   0,	20,  10,   0	      ,  100}, /* RSF_TPORT	    */
+    { 0,   0,   0,   0,	0,   0,	   0	      ,  100}, /* RSF_XXX4	    */
+    { 30,  0,   0,   0,	0,   0,	   0	      ,  100}, /* RSF_TELE_SELF_TO  */
+    { 30,  0,   0,   0,	0,   10,   0	      ,  100}, /* RSF_TELE_TO       */
+    { 10,  0,   0,   0,	20,  10,   0	      ,  100}, /* RSF_TELE_AWAY     */
+    { 10,  0,   0,   0,	20,  10,LRN_NEXUS_SAVE,  100}, /* RSF_TELE_LEVEL    */
+    { 0,   0,   0,   0,	0,   0,	   0	      ,  100}, /* RSF_XXX5	    */
+    { 20,  0,   0,   0,	5,   0,	   0	      ,  100}, /* RSF_DARKNESS      */
+    { 25,  0,   0,   0,	5,   0,	   0	      ,  100}, /* RSF_TRAPS	    */
+    { 25,  0,   0,   0,	5,   0, LRN_SAVE      ,  100}, /* RSF_FORGET        */
+    { 25,  0,   0,   15,0,   0, LRN_MANA      ,  100}, /* RSF_DRAIN_MANA    */
+    { 25,  0,   0,   5,	0,   0,	   0          ,  100}, /* RSF_DISPEL        */
+    { 0,   0,   0,   0,	0,   0,	   0	      ,  100}, /* RSF_XXX6	    */
+    { 30,  0,   0,   0,	0,   0, LRN_SAVE      ,  100}, /* RSF_MIND_BLAST    */
+    { 40,  0,   0,   0,	0,   0, LRN_SAVE      ,  100}, /* RSF_BRAIN_SMASH   */
+    { 40,  0,   0,   0,	0,   0, LRN_SAVE      ,  100}, /* RSF_WOUND	    */
+    { 0,   0,   0,   0,	0,   0,	   0	      ,  100}, /* RSF_XXX7	    */
+    { 30,  0,   0,   0,	0,   0,	   0	      ,  100}, /* RSF_SHAPECHANGE   */
+    { 0,   0,   0,   0,	0,   0,	   0	      ,  100}, /* RSF_XXX8	    */
+    { 0,   0,   0,   0,	0,   0,	   0	      ,  100}, /* RSF_XXX9	    */
+    { 25,  0,   0,   0,	0,   0,	 LRN_SAVE     ,  100}, /* RSF_HUNGER        */
+    { 0,   0,   0,   0,	0,   0,	   0	      ,  100}, /* RSF_XX10	    */
+    { 25,  0,   0,   0,	0,   0, LRN_FEAR_SAVE ,  100}, /* RSF_SCARE	    */
+    { 30,  0,   0,   0,	0,   0, LRN_BLIND_SAVE,  100}, /* RSF_BLIND	    */
+    { 30,  0,   0,   0,	0,   0, LRN_CONFU_SAVE,  100}, /* RSF_CONF	    */
+    { 40,  0,   0,   0,	0,   0, LRN_FREE_SAVE,   100}, /* RSF_SLOW	    */
+    { 35,  0,   0,   0,	0,   0, LRN_FREE_SAVE,   100}, /* RSF_HOLD	    */
 /*   d_base	d_hurt d_esc	 d_res				    */
 /*	   d_summ  d_mana  d_tact	   d_range		    */
-    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RF7_S_KIN	    */
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RF7_XXX1	    */
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RF7_XXX2	    */
-    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RF7_S_MONSTER */
-    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RF7_S_MONSTERS*/
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RF7_XXX3	    */
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RF7_XXX4	    */
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RF7_XXX5	    */
-    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RF7_S_ANT	    */
-    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RF7_S_SPIDER  */
-    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RF7_S_HOUND   */
-    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RF7_S_ANIMAL  */
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RF7_XXX6	    */
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RF7_XXX7	    */
-    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RF7_S_THIEF   */
-    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RF7_S_SWAMP   */
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RF7_XXX8	    */
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RF7_XXX9	    */
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RF7_XX10	    */
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RF7_XX11	    */
-    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RF7_S_DRAGON  */
-    { 0,   17,  0,   0,	0,   0,	   0	  ,  100}, /* RF7_S_HI_DRAGON*/
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RF7_XX12	    */
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RF7_XX13	    */
-    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RF7_S_DEMON   */
-    { 0,   17,  0,   0,	0,   0,	   0	  ,  100}, /* RF7_S_HI_DEMON*/
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RF7_XX14	    */
-    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RF7_XX15	    */
-    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RF7_S_UNDEAD  */
-    { 0,   17,  0,   0,	0,   0,	   0	  ,  100}, /* RF7_S_HI_UNDEAD*/
-    { 0,   20,  0,   0,	0,   0,	   0	  ,  100}, /* RF7_S_QUEST  */
-    { 0,   18,  0,   0,	0,   0,	   0	  ,  100}  /* RF7_S_UNIQUE  */
+    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_KIN	    */
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_XXX1    */
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_XXX2    */
+    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_MONSTER */
+    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_MONSTERS*/
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_XXX3    */
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_XXX4    */
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_XXX5    */
+    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_ANT	    */
+    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_SPIDER  */
+    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_HOUND   */
+    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_ANIMAL  */
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_XXX6    */
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_XXX7    */
+    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_THIEF   */
+    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_SWAMP   */
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_XXX8    */
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_XXX9    */
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_XX10    */
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_XX11    */
+    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_DRAGON  */
+    { 0,   17,  0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_HI_DRAGON*/
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_XX12    */
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_XX13    */
+    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_DEMON   */
+    { 0,   17,  0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_HI_DEMON*/
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_XX14    */
+    { 0,   0,   0,   0,	0,   0,	   0	  ,  100}, /* RSF_APPROP    */
+    { 0,   15,  0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_UNDEAD  */
+    { 0,   17,  0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_HI_UNDEAD*/
+    { 0,   20,  0,   0,	0,   0,	   0	  ,  100}, /* RSF_S_QUEST  */
+    { 0,   18,  0,   0,	0,   0,	   0	  ,  100}  /* RSF_S_UNIQUE  */
 };
 
 /**
@@ -3043,23 +3022,11 @@ byte spell_desire_RF7[32][8] =
  * This range is considered a preference if d_range in spell_desire is > 0.
  * It is a hard limit if d_range = 0.
  */
-byte spell_range_RF4[32] =
+byte spell_range[RSF_MAX] =
   {
-    0,3,0,0,0,0,0,0,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,0,0,0,0,0
-  };
-
-byte spell_range_RF5[32] =
-  {
-    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,6,6,6,6
-  };
-
-byte spell_range_RF6[32] =
-  {
-    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 
-  };
-
-byte spell_range_RF7[32] =
-  {
+    0,3,0,0,0,0,0,0,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,6,6,6,6,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
   };
 
