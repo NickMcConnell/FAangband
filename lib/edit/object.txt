@@ -33,6 +33,7 @@ V:1.1.6
 #P: Base armour class: damage done when wielded or thrown: Bonus to Skill: 
 #   Bonus to Deadliness: Bonus to armour class: Activation index
 #A: All depths/rarities of the item (max of four pairs possible)
+#E: effect when used : recharge time (if applicable)
 #F: All item-specific flags (special qualities).  Some depend on pval.
 #D: The object descripion, used to provide more information when it is 'I'nspected.
 
@@ -51,6 +52,7 @@ I:80:1:500
 W:5:0:1:0
 A:5/3
 F:EASY_KNOW
+E:BLIND1
 D:A small, ground-living fungus that looks about as ugly as it will taste nasty.
 
 N:2:Paranoia
@@ -59,6 +61,7 @@ I:80:2:500
 W:5:0:1:0
 A:5/3
 F:EASY_KNOW
+E:SCARE
 D:A small, ground-living fungus that looks about as ugly as it will taste nasty.
 
 N:3:Confusion
@@ -1930,7 +1933,7 @@ G:":s1
 I:40:4:0
 W:45:0:3:750
 A:45/3:50/3
-D:An amulet featuring a gleaming pearl form the Bay of Balar.
+D:An amulet featuring a gleaming pearl from the Bay of Balar.
 
 N:305:Amethyst
 G:":v1

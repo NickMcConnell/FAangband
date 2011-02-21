@@ -1011,13 +1011,41 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 	if (obj_needs_aim(o_ptr))
 		dir = args[1].direction;
 
+	/* Hack for dragonform */
+	if ((effect >= EF_DRAGON_BLACK) && (effect <= EF_DRAGON_POWER) &&
+	    (p_ptr->schange == SHAPE_WYRM))
+	  dir = TRUE;
+
 	/* Check for use if necessary, and execute the effect */
 	if ((use != USE_CHARGE && use != USE_TIMEOUT) ||
 	    check_devices(o_ptr))
 	{
-	        /* Make a noise! */
-	        sound(snd);
-		level = k_info[o_ptr->k_idx].level;
+		/* Special message for artifacts */
+		if (artifact_p(o_ptr))
+		{
+			message(snd, 0, "You activate it.");
+			if (a_info[o_ptr->name1].effect_msg)
+				activation_message(o_ptr, a_info[o_ptr->name1].effect_msg);
+			level = a_info[o_ptr->name1].level;
+		}
+		else
+		{
+			/* Make a noise! */
+			sound(snd);
+			level = k_info[o_ptr->k_idx].level;
+		}
+
+		/* A bit of a hack to make ID work better.
+			-- Check for "obvious" effects beforehand. */
+		if (effect_obvious(effect)) object_flavor_aware(o_ptr);
+
+		/* Boost damage effects if skill > difficulty */
+		boost = p_ptr->state.skills[SKILL_DEVICE] - level;
+		if (boost < 0) boost = 0;
+
+		/* Do effect */
+		used = effect_do(effect, &ident, was_aware, dir,
+			beam_chance(o_ptr->tval), boost);
 
 		/* Quit if the item wasn't used and no knowledge was gained */
 		if (!used && (was_aware || !ident)) return;
@@ -1025,6 +1053,8 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 
 	/* If the item is a null pointer or has been wiped, be done now */
 	if (!o_ptr || o_ptr->k_idx <= 1) return;
+
+	if (ident) object_notice_effect(o_ptr);
 
 	/* Food feeds the player */
 	if (o_ptr->tval == TV_FOOD || o_ptr->tval == TV_POTION)
