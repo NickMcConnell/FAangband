@@ -535,7 +535,122 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
 	return TRUE;
       }
       
-    case EF_CURE_POISON:
+    case EF_AGGRAVATE:
+      {
+	msg_print("There is a high pitched humming noise.");
+	(void) aggravate_monsters(1, FALSE);
+	*ident = TRUE;
+	return TRUE;
+      }
+      
+    case EF_CURSE_ARMOR:
+      {
+	if (curse_armor()) *ident = TRUE;
+	return TRUE;
+      }
+      
+    case EF_CURSE_WEAPON:
+      {
+	if (curse_weapon()) *ident = TRUE;
+	return TRUE;
+      }
+      
+    case EF_SUMMON3:
+      {
+	sound(MSG_SUM_MONSTER);
+	for (k = 0; k < randint1(3); k++)
+	  {
+	    if (summon_specific(py, px, FALSE, p_ptr->depth, 0))
+	      {
+		*ident = TRUE;
+	      }
+	  }
+	return TRUE;
+      }
+      
+    case EF_SUMMON_UNDEAD:
+      {
+	sound(MSG_SUM_UNDEAD);
+	for (k = 0; k < randint1(3); k++)
+	  {
+	    if (summon_specific(py, px, FALSE, p_ptr->depth, 
+				SUMMON_UNDEAD))
+	      {
+		*ident = TRUE;
+	      }
+		      }
+	return TRUE;
+      }
+      
+    case EF_TRAP_CREATION:
+      {
+	if (trap_creation()) *ident = TRUE;
+	return TRUE;
+      }
+      
+    case EF_DARKNESS:
+      {
+	if (!p_ptr->no_blind)
+	  {
+	    (void)set_blind(p_ptr->blind + 3 + randint1(5));
+	  }
+	else if (object_aware_p(o_ptr)) notice_obj(OF_SEEING, 0);
+	if (unlite_area(10, 3)) *ident = TRUE;
+	return TRUE;
+      }
+      
+    case EF_SLOWNESS:
+      {
+	if (set_slow(p_ptr->slow + randint1(30) + 15)) *ident = TRUE;
+	return TRUE;
+      }
+      
+    case EF_HASTE_MONSTERS:
+      {
+	if (speed_monsters()) *ident = TRUE;
+	return TRUE;
+      }
+      
+    case EF_SUMMON4:
+      {
+	sound(MSG_SUM_MONSTER);
+	for (k = 0; k < randint1(4); k++)
+	  {
+	    if (summon_specific(py, px, FALSE, p_ptr->depth, 0))
+	      {
+		*ident = TRUE;
+	      }
+	  }
+	return TRUE;
+      }
+      
+    case EF_HEAL_MONSTER:
+      {
+	if (heal_monster(dir)) *ident = TRUE;
+	return TRUE;
+      }
+      
+    case EF_HASTE_MONSTER:
+      {
+	if (speed_monster(dir)) *ident = TRUE;
+	return TRUE;
+      }
+      
+    case EF_CLONE_MONSTER:
+      {
+	if (clone_monster(dir)) *ident = TRUE;
+	return TRUE;
+      }
+      
+    case EF_ROUSE_LEVEL:
+      {
+	msg_print("A mighty blast of horns shakes the air, and you hear stirring everwhere!");
+	(void) aggravate_monsters(1, TRUE);
+	*ident = TRUE;
+	return TRUE;
+      }
+      
+     case EF_CURE_POISON:
       {
 	if (set_poisoned(0)) *ident = TRUE;
 	return TRUE;
@@ -559,7 +674,7 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
 	return TRUE;
       }
       
-    case EF_CURE_SERIOUS:
+    case EF_CURE_SMALL:
       {
 	if (hp_player(damroll(4, 8))) *ident = TRUE;
 	return TRUE;
@@ -656,7 +771,7 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
 
 
 
-    case DRINK_GOOD:
+    case EF_DRINK_GOOD:
       {
 	msg_print("You feel less thirsty.");
 	*ident = TRUE;
@@ -735,6 +850,32 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
 	return TRUE;
       }
       
+    case EF_LIFE:
+      {
+	msg_print("You feel life flow through your body!");
+	restore_level();
+	(void)set_poisoned(0);
+	(void)set_blind(0);
+	(void)set_confused(0);
+	(void)set_image(0);
+	(void)set_stun(0);
+	(void)set_cut(0);
+	(void)do_res_stat(A_STR);
+	(void)do_res_stat(A_CON);
+	(void)do_res_stat(A_DEX);
+	(void)do_res_stat(A_WIS);
+	(void)do_res_stat(A_INT);
+	(void)do_res_stat(A_CHR);
+	hp_player(2000);
+	if (p_ptr->black_breath)
+	  {
+	    msg_print("The hold of the Black Breath on you is broken!");
+	  }
+	p_ptr->black_breath = FALSE;
+	*ident = TRUE;
+	return TRUE;
+      }
+      
     case EF_INFRAVISION:
       {
 	if (set_tim_infra(p_ptr->tim_infra + 100 + randint1(100)))
@@ -759,7 +900,7 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
 	return TRUE;
       }
       
-    case EF_SPEED:
+    case EF_SPEED1:
       {
 	if (!p_ptr->fast)
 	  {
@@ -836,32 +977,6 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
 	if (hp_player(30)) *ident = TRUE;
 	if (set_afraid(0)) *ident = TRUE;
 	if (set_shero(p_ptr->shero + randint1(25) + 25)) *ident = TRUE;
-	return TRUE;
-      }
-      
-    case EF_LIFE:
-      {
-	msg_print("You feel life flow through your body!");
-	restore_level();
-	(void)set_poisoned(0);
-	(void)set_blind(0);
-	(void)set_confused(0);
-	(void)set_image(0);
-	(void)set_stun(0);
-	(void)set_cut(0);
-	(void)do_res_stat(A_STR);
-	(void)do_res_stat(A_CON);
-	(void)do_res_stat(A_DEX);
-	(void)do_res_stat(A_WIS);
-	(void)do_res_stat(A_INT);
-	(void)do_res_stat(A_CHR);
-	hp_player(2000);
-	if (p_ptr->black_breath)
-	  {
-	    msg_print("The hold of the Black Breath on you is broken!");
-	  }
-	p_ptr->black_breath = FALSE;
-	*ident = TRUE;
 	return TRUE;
       }
       
@@ -1003,70 +1118,6 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
 	return TRUE;
       }
           
-    case EF_DARKNESS:
-      {
-	if (!p_ptr->no_blind)
-	  {
-	    (void)set_blind(p_ptr->blind + 3 + randint1(5));
-	  }
-	else if (object_aware_p(o_ptr)) notice_obj(OF_SEEING, 0);
-	if (unlite_area(10, 3)) *ident = TRUE;
-	return TRUE;
-      }
-      
-    case EF_AGGRAVATE:
-      {
-	msg_print("There is a high pitched humming noise.");
-	(void) aggravate_monsters(1, FALSE);
-	*ident = TRUE;
-	return TRUE;
-      }
-      
-    case EF_CURSE_ARMOR:
-      {
-	if (curse_armor()) *ident = TRUE;
-	return TRUE;
-      }
-      
-    case EF_CURSE_WEAPON:
-      {
-	if (curse_weapon()) *ident = TRUE;
-	return TRUE;
-      }
-      
-    case EF_SUMMON3:
-      {
-	sound(MSG_SUM_MONSTER);
-	for (k = 0; k < randint1(3); k++)
-	  {
-	    if (summon_specific(py, px, FALSE, p_ptr->depth, 0))
-	      {
-		*ident = TRUE;
-	      }
-	  }
-	return TRUE;
-      }
-      
-    case EF_SUMMON_UNDEAD:
-      {
-	sound(MSG_SUM_UNDEAD);
-	for (k = 0; k < randint1(3); k++)
-	  {
-	    if (summon_specific(py, px, FALSE, p_ptr->depth, 
-				SUMMON_UNDEAD))
-	      {
-		*ident = TRUE;
-	      }
-		      }
-	return TRUE;
-      }
-      
-    case EF_TRAP_CREATION:
-      {
-	if (trap_creation()) *ident = TRUE;
-	return TRUE;
-      }
-      
     case EF_PHASE_DOOR:
       {
 	teleport_player(10, TRUE);
@@ -1150,6 +1201,13 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
 	return TRUE;
       }
       
+    case EF_ENCHANT_ARMOR2:
+      {
+	*ident = TRUE;
+	if (!enchant_spell(0, 0, randint1(3) + 2)) return FALSE;
+	return TRUE;
+      }
+      
     case EF_ENCHANT_TO_HIT:
       {
 	*ident = TRUE;
@@ -1164,20 +1222,6 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
 	return TRUE;
       }
       
-    case EF_RECHARGING2:
-      {
-	*ident = TRUE;
-	if (!recharge(200)) return FALSE;
-	return TRUE;
-      }
-      
-    case EF_ENCHANT_ARMOR2:
-      {
-	*ident = TRUE;
-	if (!enchant_spell(0, 0, randint1(3) + 2)) return FALSE;
-	return TRUE;
-      }
-      
     case EF_ENCHANT_WEAPON:
       {
 	*ident = TRUE;
@@ -1189,6 +1233,13 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
       {
 	*ident = TRUE;
 	if (!recharge(130)) return FALSE;
+	return TRUE;
+      }
+      
+    case EF_RECHARGING2:
+      {
+	*ident = TRUE;
+	if (!recharge(200)) return FALSE;
 	return TRUE;
       }
       
@@ -1385,32 +1436,7 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
 	return TRUE;
       }
     
-    case EF_SLOWNESS:
-      {
-	if (set_slow(p_ptr->slow + randint1(30) + 15)) *ident = TRUE;
-	return TRUE;
-      }
-      
-    case EF_HASTE_MONSTERS:
-      {
-	if (speed_monsters()) *ident = TRUE;
-	return TRUE;
-      }
-      
-    case EF_SUMMON4:
-      {
-	sound(MSG_SUM_MONSTER);
-	for (k = 0; k < randint1(4); k++)
-	  {
-	    if (summon_specific(py, px, FALSE, p_ptr->depth, 0))
-	      {
-		*ident = TRUE;
-	      }
-	  }
-	return TRUE;
-      }
-      
-    case EF_STARLIGHT:
+   case EF_STARLIGHT:
       {
 	/* Message. */
 	if (!p_ptr->blind)
@@ -1471,7 +1497,7 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
 	return TRUE;
       }
           
-    case EF_SPEED:
+    case EF_SPEED2:
       {
 	if (!p_ptr->fast)
 	  {
@@ -1519,13 +1545,6 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
     case EF_EARTHQUAKES:
       {
 	earthquake(py, px, 10, FALSE);
-	*ident = TRUE;
-	return TRUE;
-      }
-      
-    case EF_DESTRUCTION:
-      {
-	destroy_area(py, px, 15, TRUE);
 	*ident = TRUE;
 	return TRUE;
       }
@@ -1622,24 +1641,6 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
 	return TRUE;
       }
     
-    case EF_HEAL_MONSTER:
-      {
-	if (heal_monster(dir)) *ident = TRUE;
-	return TRUE;
-      }
-      
-    case EF_HASTE_MONSTER:
-      {
-	if (speed_monster(dir)) *ident = TRUE;
-	return TRUE;
-      }
-      
-    case EF_CLONE_MONSTER:
-      {
-	if (clone_monster(dir)) *ident = TRUE;
-	return TRUE;
-      }
-      
     case EF_TELEPORT_AWAY2:
       {
 	if (teleport_monster(dir, 55 + (plev/2))) *ident = TRUE;
@@ -2011,15 +2012,6 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
 	*ident = TRUE;
 	return TRUE;
       }
-      
-    case EF_ROUSE_LEVEL:
-      {
-	msg_print("A mighty blast of horns shakes the air, and you hear stirring everwhere!");
-	(void) aggravate_monsters(1, TRUE);
-	*ident = TRUE;
-	return TRUE;
-      }
-      
       
     case EF_DELVING:
       {
@@ -2416,13 +2408,6 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
 	return TRUE;
       }
       
-    case EF_THEODEN:
-      {
-	msg_print("Your axe blade glows black...");
-		drain_life(dir, 120);
-	o_ptr->timeout = 400;
-	return TRUE;
-      }
     case EF_AEGLOS:
       {
 	msg_print("Your spear glows a bright white...");

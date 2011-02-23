@@ -70,6 +70,7 @@ I:80:3:500
 W:5:0:1:0
 A:5/3
 F:EASY_KNOW
+E:CONFUSE1
 D:A small, ground-living fungus that looks about as ugly as it will taste nasty.
 
 N:4:Hallucination
@@ -78,6 +79,7 @@ I:80:4:500
 W:10:0:1:0
 A:10/3
 F:EASY_KNOW
+E:HALLUC
 D:A small, ground-living fungus that looks about as ugly as it will taste nasty.
 
 N:5:Cure Poison
@@ -86,6 +88,7 @@ I:80:12:500
 W:10:0:1:40
 A:10/2
 F:EASY_KNOW
+E:CURE_POISON
 D:A small, ground-living fungus that forms part of any respectable healer's stock.
 
 N:6:Cure Blindness
@@ -94,6 +97,7 @@ I:80:13:500
 W:10:0:1:20
 A:10/2
 F:EASY_KNOW
+E:CURE_BLINDNESS
 D:A small, ground-living fungus that forms part of any respectable healer's stock.
 
 N:7:Cure Paranoia
@@ -102,6 +106,7 @@ I:80:14:500
 W:10:0:1:15
 A:10/2
 F:EASY_KNOW
+E:CURE_PARANOIA
 D:A small, ground-living fungus that forms part of any respectable healer's stock.
 
 N:8:Cure Confusion
@@ -110,6 +115,7 @@ I:80:15:500
 W:10:0:1:20
 A:10/2
 F:EASY_KNOW
+E:CURE_CONFUSION
 D:A small, ground-living fungus that forms part of any respectable healer's stock.
 
 N:9:Weakness
@@ -118,6 +124,7 @@ I:80:6:500
 W:10:0:1:0
 A:10/3
 F:EASY_KNOW
+E:WEAKNESS
 D:A small, ground-living fungus that looks about as ugly as it will taste nasty.
 
 N:10:Unhealth
@@ -126,7 +133,8 @@ I:80:10:500
 W:20:0:1:75
 A:20/2
 P:0:8d7:0:0:0:0
-F:EASY_KNOW  
+F:EASY_KNOW
+E:UNHEALTH  
 D:A small, ground-living fungus.  Not only is it dangerous to eat, but it can 
 D:also poison enemies on contact.
 
@@ -136,6 +144,7 @@ I:80:18:500
 W:22:0:1:350
 A:22/2
 F:EASY_KNOW
+E:RES_CON
 D:It may not look like much, but looks can be deceiving.
 
 N:12:Restoring
@@ -144,6 +153,7 @@ I:80:19:500
 W:22:0:1:1000
 A:22/8:30/4:40/1
 F:EASY_KNOW
+E:RESTORING
 D:A powerful natural remedy for ills of the body and mind.
 
 N:13:Stupidity
@@ -152,6 +162,7 @@ I:80:8:500
 W:15:0:1:0
 A:15/3
 F:EASY_KNOW
+E:STUPIDITY
 D:A small, ground-living fungus that looks about as ugly as it will taste nasty.
 
 N:14:Naivety
@@ -160,6 +171,7 @@ I:80:9:500
 W:15:0:1:0
 A:15/3
 F:EASY_KNOW
+E:NAIVETY
 D:A small, ground-living fungus that looks about as ugly as it will taste nasty.
 
 N:15:Poison
@@ -168,6 +180,7 @@ I:80:0:500
 W:5:0:1:0
 A:5/3
 F:EASY_KNOW
+E:POISON1
 D:A small, ground-living fungus that looks about as ugly as it will taste nasty.
 
 N:16:Sickness
@@ -176,6 +189,7 @@ I:80:7:500
 W:10:0:1:0
 A:10/3
 F:EASY_KNOW
+E:SICKNESS
 D:A small, ground-living fungus that looks about as ugly as it will taste nasty.
 
 N:17:Paralysis
@@ -184,6 +198,7 @@ I:80:5:500
 W:22:0:1:0
 A:22/3
 F:EASY_KNOW
+E:PARALYSE
 D:A small, ground-living fungus that looks about as ugly as it will taste nasty.
 
 N:18:Restore Strength
@@ -192,6 +207,7 @@ I:80:17:500
 W:22:0:1:350
 A:22/2
 F:EASY_KNOW
+E:RES_STR
 D:It may not look like much, but looks can be deceiving.
 
 N:19:Disease
@@ -200,7 +216,8 @@ I:80:11:500
 W:45:0:1:160
 A:45/2
 P:0:8d12:0:0:0:0
-F:EASY_KNOW  
+F:EASY_KNOW
+E:DISEASE  
 D:A small, ground-living fungus.  The toxins this fungus grows for its own 
 D:defence make it dangerous even to touch.  Of course, you are well prepared.
 
@@ -210,6 +227,7 @@ I:80:16:500
 W:15:0:2:50
 A:15/3
 F:EASY_KNOW
+E:CURE_SMALL
 D:A small, ground-living fungus that will heal 4d8 hitpoints.
 
 ## XXX 21 XXX ##
@@ -236,6 +254,7 @@ I:80:35:5000
 W:0:0:10:3
 A:0/1:10/2
 F:EASY_KNOW
+E:FOOD_GOOD
 D:Also known as Cram or Waybread, this nutritious but fairly bland food is 
 D:familiar to anyone contemplating long journeys.
 
@@ -244,6 +263,7 @@ G:,:U
 I:80:32:500
 W:0:0:2:1
 F:EASY_KNOW
+E:FOOD_GOOD
 D:Twice-cooked for good keeping qualities, this lump of bread is as hard as a 
 D:rock and about as tasty.
 
@@ -252,6 +272,7 @@ G:,:u
 I:80:33:1500
 W:0:0:2:2
 F:EASY_KNOW
+E:FOOD_GOOD
 D:A strip of jerked beef that seems never to spoil.
 
 N:32:& Slime Mold~
@@ -260,6 +281,7 @@ I:80:36:2000
 W:1:0:5:2
 A:1/2
 F:EASY_KNOW
+E:FOOD_GOOD
 D:An utterly hideous fungal growth.  It is strangely appealing...
 
 #waybread now fully satisfies the player, instead of increasing the food count.
@@ -269,6 +291,7 @@ I:80:37:0
 W:55:0:3:60
 A:55/3:80/3
 F:EASY_KNOW
+E:FOOD_WAYBREAD
 D:Small golden-brown wafers wrapped in silven leaves.  Made with elvish art, it 
 D:sustains life where nothing else can.
 
@@ -277,6 +300,7 @@ G:,:y
 I:80:38:500
 W:0:0:5:1
 F:EASY_KNOW
+E:FOOD_GOOD
 D:Made from the barley of Eriador, and brewed to golden perfection.
 
 N:35:& Pint~ of Fine Wine
@@ -284,6 +308,7 @@ G:,:r
 I:80:39:1000
 W:0:0:10:2
 F:EASY_KNOW
+E:FOOD_GOOD
 D:A heady wine, almost as good as that served at the Green Dragon at Bywater.
 
 N:36:& Sprig~ of Athelas
@@ -292,6 +317,7 @@ I:80:40:0
 W:25:0:2:450
 A:35/2:60/2
 F:EASY_KNOW
+E:FOOD_ATHELAS
 D:Athelas will break the grip of the Black Breath.
 
 N:37:& Cake~ of the Beornings
@@ -300,6 +326,7 @@ I:80:41:7500
 W:25:0:7:18
 A:25/2:45/2
 F:EASY_KNOW
+E:FOOD_BEORNING
 D:Filled with sugar, fruits, and honey, the cakes of the Beornings are tasty 
 D:indeed.
 
@@ -512,6 +539,7 @@ W:6:0:50:400
 A:6/1
 P:4:1d3:0:0:0:250
 F:LITE | SHOW_MODS
+E:MAGESTAFF
 D:A slender birch staff, enchanted to give light from the tip, which can be 
 D:activated by mages and necromancers to restore a little mana. It can be used 
 D:for attack or defence in an emergency.
@@ -1433,6 +1461,7 @@ A:50/8
 P:30:2d4:-2:0:10:112
 B:RES_ACID[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:DRAGON_BLACK
 D:A suit of utterly black scales, against which no metal or wood can rest.  ~
 
 N:214:Blue Dragon Scale Mail~
@@ -1443,6 +1472,7 @@ A:50/8
 P:30:2d4:-2:0:10:110
 B:RES_ELEC[40] | SPEED[4]
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:DRAGON_BLUE
 D:A suit of scales as blue as sapphires, emitting eerie sparks and coronas as 
 D:you move about in it.  ~
 
@@ -1454,6 +1484,7 @@ A:50/8
 P:30:2d4:-2:0:10:111
 B:RES_COLD[40] | SPEED[4]
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:DRAGON_WHITE
 D:A suit of scales, coldly gleaming in frosty white.  A shiver runs down 
 D:through your spine even as you look at it.  ~
 
@@ -1465,6 +1496,7 @@ A:50/8
 P:30:2d4:-2:0:10:114
 B:RES_FIRE[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:DRAGON_RED
 D:A suit of scales, with all the reds of every fire ever lit.  The scar tissue 
 D:from an old burn aches as you put this armour on.  ~
 
@@ -1476,6 +1508,7 @@ A:60/8
 P:30:2d4:-2:0:10:113
 B:RES_POIS[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:DRAGON_GREEN
 D:A suit of scales, glistening in sickly green, out from which falls the 
 D:skeleton of a rat who touched it and died in agony.  ~
 
@@ -1487,6 +1520,7 @@ A:75/16
 P:30:2d4:-2:0:10:115
 B:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40] | RES_POIS[40] | 
 B:SPEED[4] 
+E:DRAGON_MULTIHUED
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
 D:A suit of scales that throbs with angry energies; it takes all your energy 
 D:to master the Elements fighting an endless war trapped inside.  ~
@@ -1501,6 +1535,7 @@ A:65/12
 P:30:2d4:-2:0:10:121
 B:RES_LITE[40] | RES_DARK[40] | SPEED[4]
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:DRAGON_SHINING
 D:A suit of scales shining like a beacon of Light even as it greedily sucks 
 D:the energy away from everything that glows into Dark insatiate.  ~
 
@@ -1514,6 +1549,7 @@ A:80/12
 P:30:2d4:-2:0:10:119
 B:RES_SOUND[40] | RES_SHARD[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:DRAGON_LAW
 D:A suit of scales in stern blue and silver.  You feel the slightest tremor 
 D:as you touch it, like massed trumpets heard and cyclones felt from afar.  ~
 
@@ -1527,6 +1563,7 @@ A:55/8
 P:30:2d4:-2:0:10:116
 B:RES_CONFU[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:DRAGON_BRONZE
 D:A suit of scales, gleaming in rich engraved bronze.  The more you look at the 
 D:the maze of whorls and lines that close inspection reveal on its surface, 
 D:the less sense you are able to make of them.  ~
@@ -1539,6 +1576,7 @@ A:60/8
 P:30:2d4:-2:0:10:117
 B:RES_SOUND[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:DRAGON_GOLD
 D:A suit of scales in mirror-like gold.  You hear nothing unusual as you 
 D:wear this armour, yet your ears ache as though in the midst of a 
 D:cacophony.  ~
@@ -1553,6 +1591,7 @@ A:75/14
 P:30:2d4:-2:0:10:118
 B:RES_CHAOS[40] | RES_DISEN[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:DRAGON_CHAOS
 D:A suit of scales.  Every shape, in every color imaginable, riot and 
 D:contend upon its surface as you stare in fascination.  ~
 
@@ -1564,6 +1603,7 @@ A:90/14
 P:30:2d4:-2:0:10:120
 B:RES_SOUND[40] | RES_SHARD[40] | RES_CHAOS[40] | RES_DISEN[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:DRAGON_BALANCE
 D:A suit of scales.  Featureless grey to casual inspection, yet a closer look 
 D:reveals patterns within patterns of iridescence that throb with leashed 
 D:energies bound as though by chains of adamant.  ~
@@ -1578,6 +1618,7 @@ B:RES_ACID[40] | RES_FIRE[40] | RES_COLD[40] | RES_ELEC[40] | RES_POIS[40] |
 B:RES_LITE[40] | RES_DARK[40] | RES_NEXUS[40] | RES_NETHR[40] | RES_CHAOS[40] | 
 B:RES_SOUND[40] | RES_SHARD[40] | RES_DISEN[40] | RES_CONFU[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:DRAGON_POWER
 D:A suit with scales of every color, surrounded in a nimbus of perfectly 
 D:untramelled yet inextricably intermingled and utterly mastered powers 
 D:elemental and ethereal.  ~
@@ -2000,6 +2041,7 @@ I:70:0:0
 W:1:0:5:0
 A:1/3
 F:EASY_KNOW
+E:DARKNESS
 D:that robs you of light.
 
 N:321:Aggravate Monster
@@ -2008,6 +2050,7 @@ I:70:1:0
 W:5:0:5:0
 A:5/3
 F:EASY_KNOW
+E:AGGRAVATE
 D:that provokes enemies to seek you out.
 
 N:322:Curse Armour
@@ -2016,6 +2059,7 @@ I:70:2:0
 W:60:0:5:0
 A:60/3
 F:EASY_KNOW
+E:CURSE_ARMOR
 D:that devastates a worn peice of armour.
 
 N:323:Curse Weapon
@@ -2024,6 +2068,7 @@ I:70:3:0
 W:60:0:5:0
 A:60/3
 F:EASY_KNOW
+E:CURSE_WEAPON
 D:that devastates your weapon.
 
 N:324:Summon Monster
@@ -2032,6 +2077,7 @@ I:70:4:0
 W:1:0:5:0
 A:1/3
 F:EASY_KNOW
+E:SUMMON3
 D:that brings unwelcome visitors.
 
 N:325:Summon Undead
@@ -2040,6 +2086,7 @@ I:70:5:0
 W:15:0:5:0
 A:15/3
 F:EASY_KNOW
+E:SUMMON_UNDEAD
 D:that calls dark forces after you.
 
 ## XXX 326 XXX ##
@@ -2050,6 +2097,7 @@ I:70:7:0
 W:10:0:5:0
 A:10/3
 F:EASY_KNOW
+E:TRAP_CREATION
 D:that lays traps to ensare you.
 
 N:328:Phase Door
@@ -2058,6 +2106,7 @@ I:70:8:0
 W:1:0:5:15
 A:1/1
 F:EASY_KNOW
+E:PHASE_DOOR
 D:that teleports you a short distance.
 
 N:329:Teleportation
@@ -2066,6 +2115,7 @@ I:70:9:0
 W:10:0:5:75
 A:10/1:40/2
 F:EASY_KNOW
+E:TELEPORT100
 D:that teleports you a long distance.
 
 N:330:Teleport Level
@@ -2074,6 +2124,7 @@ I:70:10:0
 W:20:0:5:50
 A:20/1
 F:EASY_KNOW
+E:TELEPORT_LEVEL
 D:that sends you up or down one level.
 
 N:331:Word of Recall
@@ -2082,6 +2133,7 @@ I:70:11:0
 W:5:0:5:150
 A:5/1
 F:EASY_KNOW
+E:RECALL
 D:that transports you from the depths to the town and vice versa.
 D:  There is a delay before it takes effect.
 
@@ -2091,6 +2143,7 @@ I:70:12:0
 W:1:0:5:40
 A:1/1:5/1:10/1:30/2
 F:EASY_KNOW
+E:IDENTIFY
 D:that reveals the name and powers of an object.
 
 N:333:Reveal Curses
@@ -2099,6 +2152,7 @@ I:70:13:0
 W:35:0:5:1000
 A:35/1:50/1:65/2:80/2
 F:EASY_KNOW
+E:REVEAL_CURSES
 D:that reveals the name and powers and curses of an object.
 
 N:334:Remove Curse
@@ -2107,6 +2161,7 @@ I:70:14:0
 W:10:0:5:100
 A:10/2
 F:EASY_KNOW
+E:REMOVE_CURSE
 D:that tries to remove the curses from an item.
 
 N:335:*Remove Curse*
@@ -2115,6 +2170,7 @@ I:70:15:0
 W:55:0:5:7000
 A:55/2
 F:EASY_KNOW
+E:REM_CURSE_GOOD
 D:that tries hard to remove the curses from an item.
 
 N:336:Enchant Armour
@@ -2123,6 +2179,7 @@ I:70:16:0
 W:15:0:5:150
 A:5/2:15/2
 F:EASY_KNOW
+E:ENCHAT_ARMOR1
 D:that improves a piece of armour.  It is less likely to succeed on 
 D:strongly enchanted items.
 
@@ -2132,6 +2189,7 @@ I:70:17:0
 W:15:0:5:150
 A:5/2:15/2
 F:EASY_KNOW
+E:ENCHANT_TO_HIT
 D:that makes a weapon more accurate.  It is less likely to succeed on 
 D:strongly enchanted items.
 
@@ -2141,6 +2199,7 @@ I:70:18:0
 W:15:0:5:150
 A:5/2:15/2
 F:EASY_KNOW
+E:ENCHANT_TO_DAM
 D:that makes a weapon more damaging.  It is less likely to succeed on 
 D:strongly enchanted items.
 
@@ -2150,6 +2209,7 @@ I:70:19:0
 W:65:0:5:400
 A:65/2:85/2
 F:EASY_KNOW
+E:RECHARGE2
 D:that recharges a magic item.  It is more likely than lesser scrolls 
 D:to succeed on strong items.
 
@@ -2159,6 +2219,7 @@ I:70:20:0
 W:60:0:5:500
 A:60/1:70/2
 F:EASY_KNOW
+E:ENCHANT_ARMOR
 D:that greatly improves a piece of armour.  It is less likely to 
 D:succeed on strongly enchanted items.
 
@@ -2168,6 +2229,7 @@ I:70:21:0
 W:60:0:5:500
 A:60/1
 F:EASY_KNOW
+E:ENCHANT_WEAPON
 D:that makes a weapon more accurate and damaging.  It is less likely 
 D:to succeed on strongly enchanted items.
 
@@ -2177,6 +2239,7 @@ I:70:22:0
 W:15:0:5:180
 A:15/1:25/1:40/2:60/2
 F:EASY_KNOW
+E:RECHARGE1
 D:that recharges a magic item.  The item may be destroyed, especially 
 D:if it is very strong.
 
@@ -2186,6 +2249,7 @@ I:70:23:0
 W:55:0:5:2000
 A:55/3
 F:EASY_KNOW
+E:BRANDING
 D:that adds significant elemental damage to your ammunition.
 
 N:344:Light
@@ -2194,6 +2258,7 @@ I:70:24:0
 W:0:0:5:15
 A:0/1:5/2
 F:EASY_KNOW
+E:LIGHT
 D:that lights up the area.
 
 N:345:Magic Mapping
