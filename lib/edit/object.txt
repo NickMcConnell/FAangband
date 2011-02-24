@@ -2267,6 +2267,7 @@ I:70:25:0
 W:5:0:5:40
 A:5/1
 F:EASY_KNOW
+E:MAPPING
 D:that reveals the nearby dungeon map.
 
 N:346:Treasure Detection
@@ -2275,6 +2276,7 @@ I:70:26:0
 W:0:0:5:15
 A:0/2
 F:EASY_KNOW
+E:DETECT_GOLD
 D:that reaveals nearby precious metals and gems.
 
 N:347:Object Detection
@@ -2283,6 +2285,7 @@ I:70:27:0
 W:0:0:5:15
 A:0/2
 F:EASY_KNOW
+E:DETECT_ITEM
 D:that reveals nearby objects.
 
 N:348:Trap Detection
@@ -2291,6 +2294,7 @@ I:70:28:0
 W:5:0:5:35
 A:5/1:10/2
 F:EASY_KNOW
+E:DETECT_TRAP
 D:that reveal neary traps.
 
 N:349:Door/Stair Location
@@ -2299,6 +2303,7 @@ I:70:29:0
 W:5:0:5:25
 A:5/1:10/2
 F:EASY_KNOW
+E:DETECT_DOOR
 D:that reveals nearby doors and stairs.
 
 N:350:Detect Invisible
@@ -2307,6 +2312,7 @@ I:70:30:0
 W:1:0:5:15
 A:1/1
 F:EASY_KNOW
+E:DETECT_INVIS
 D:that reveals nearby invisible monsters.
 
 ## XXX 351 XXX ##
@@ -2317,6 +2323,7 @@ I:70:32:0
 W:25:0:5:40
 A:25/2
 F:EASY_KNOW
+E:SATISFY
 D:that sates you completely.
 
 N:353:Blessing
@@ -2325,6 +2332,7 @@ I:70:33:0
 W:1:0:5:20
 A:1/2
 F:EASY_KNOW
+E:BLESSING1
 D:that grants you a brief bonus to combat skills.
 
 N:354:Holy Chant
@@ -2333,6 +2341,7 @@ I:70:34:0
 W:10:0:5:50
 A:10/2
 F:EASY_KNOW
+E:BLESSING2
 D:that grants you a bonus to combat skills.
 
 N:355:Holy Prayer
@@ -2341,6 +2350,7 @@ I:70:35:0
 W:25:0:5:140
 A:25/2
 F:EASY_KNOW
+E:BLESSING3
 D:that grants you a long lasting bonus to combat skills.
 
 N:356:Monster Confusion
@@ -2349,6 +2359,7 @@ I:70:36:0
 W:5:0:5:30
 A:5/2
 F:EASY_KNOW
+E:MONSTER_CONFU
 D:that may confuse the next monster you strike.
 
 N:357:Protection from Evil
@@ -2357,6 +2368,7 @@ I:70:37:0
 W:30:0:5:100
 A:30/2
 F:EASY_KNOW
+E:PROT_FROM_EVIL
 D:that wards of some of the blows of evil enemies.
 
 N:358:Rune of Protection
@@ -2365,6 +2377,7 @@ I:70:38:0
 W:60:0:5:2500
 A:60/2:85/2
 F:EASY_KNOW
+E:RUNE_PROTECT
 D:that creates a place of sanctuary, difficult for enemies to 
 D:penetrate.
 
@@ -2374,6 +2387,7 @@ I:70:39:0
 W:10:0:5:10
 A:10/4
 F:EASY_KNOW
+E:DOOR_DESTRUCT
 D:that vaporizes adjacent doors.
 
 N:360:Frightening
@@ -2382,6 +2396,7 @@ I:70:40:0
 W:10:0:5:100
 A:10/2
 F:EASY_KNOW
+E:FRIGHTENING
 D:that sends a terrifying apparition after a foe.
 
 N:361:*Destruction*
@@ -2390,6 +2405,7 @@ I:70:41:0
 W:50:0:5:750
 A:50/1
 F:EASY_KNOW
+E:DESTRUCTION
 D:that obliterates almost everything nearby.  Unique monsters will 
 D:escape.
 
@@ -2399,6 +2415,7 @@ I:70:42:0
 W:45:0:5:200
 A:45/2
 F:EASY_KNOW
+E:DISPEL_UNDEAD
 D:that withers all undead within line of sight.
 
 ## XXX 363 XXX ##
@@ -2409,6 +2426,7 @@ I:70:44:0
 W:50:0:5:750
 A:50/4
 F:EASY_KNOW
+E:GENOCIDE
 D:that banishes all monsters of a give type from the level.  Unique 
 D:foes are immune, as are those in protected areas.
 
@@ -2418,6 +2436,7 @@ I:70:45:0
 W:60:0:5:1500
 A:60/4
 F:EASY_KNOW
+E_MASS_GENOCIDE
 D:that banishes all nearby monsters from the level.  Unique foes are 
 D:immune, as are those in protected areas.
 
@@ -2427,6 +2446,7 @@ I:70:46:0
 W:25:0:5:40000
 A:25/8
 F:EASY_KNOW
+E:ACQUIREMENT1
 D:that summons a good magic item to you.
 
 N:367:*Acquirement*
@@ -2435,6 +2455,7 @@ I:70:47:0
 W:70:0:5:100000
 A:70/16
 F:EASY_KNOW
+E:ACQUIREMENT2
 D:that summons several good magic items to you.
 
 N:368:Elemental Attacks
@@ -2443,6 +2464,7 @@ I:70:48:0
 W:40:0:5:700
 A:40/2
 F:EASY_KNOW
+E:ELE_ATTACKS
 D:that infuses your blows with elemental power.
 
 N:369:Acidproofing
@@ -2451,6 +2473,7 @@ I:70:49:0
 W:45:0:5:1000
 A:70/4
 F:EASY_KNOW
+E:ACID_PROOF
 D:that makes one object immune to acid attacks.
 
 N:370:Electroproofing
@@ -2459,6 +2482,7 @@ I:70:50:0
 W:45:0:5:1000
 A:70/4
 F:EASY_KNOW
+E:ELEC_PROOF
 D:that makes one object immune to electric attacks.
 
 N:371:Fireproofing
@@ -2467,6 +2491,7 @@ I:70:51:0
 W:45:0:5:1000
 A:70/4
 F:EASY_KNOW
+E:FIRE_PROOF
 D:that makes one object immune to fire attacks.
 
 N:372:Coldproofing
@@ -2475,6 +2500,7 @@ I:70:52:0
 W:45:0:5:1000
 A:70/4
 F:EASY_KNOW
+E:COLD_PROOF
 D:that makes one object immune to cold attacks.
 
 ## XXX 373 XXX ##
@@ -2502,6 +2528,7 @@ W:0:0:4:1
 A:0/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:DRINK_GOOD
 D:that is thirst quenching.
 
 N:381:Apple Juice
@@ -2511,6 +2538,7 @@ W:0:0:4:1
 A:0/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:DRINK_GOOD
 D:that is tasty and full of vitamins.
 
 N:382:Slime Mold Juice
@@ -2520,6 +2548,7 @@ W:0:0:4:2
 A:0/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:DRINK_GOOD
 D:that is marginally drinkable.
 
 ## XXX 383 XXX  The potion with sval 3 will have no color unless it is coded. ##
@@ -2531,6 +2560,7 @@ W:1:0:4:0
 A:1/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:SLOWNESS
 D:that slows you down.
 
 N:385:Salt Water
@@ -2540,6 +2570,7 @@ W:0:0:4:0
 A:0/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:SALT_WATER
 D:that seems unwise to drink.
 
 N:386:Poison
@@ -2549,6 +2580,7 @@ W:3:0:4:0
 A:3/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E_POISON2
 D:that gives off bitter fumes.
 
 N:387:Blindness
@@ -2558,6 +2590,7 @@ W:0:0:4:0
 A:0/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:BLIND2
 D:that is unnaturally opaque.
 
 ## XXX 388 XXX ##
@@ -2569,6 +2602,7 @@ W:0:0:4:0
 A:0/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:CONFUSE2
 D:that swirls in hypnotic patterns.
 
 ## XXX 390 XXX ##
@@ -2580,17 +2614,19 @@ W:0:0:4:0
 A:0/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:SLEEP
 D:that smells like poppies.
 
 ## XXX 392 XXX ##
 
-N:393:Lose Life Force
+N:393:Lose Memories
 G:!:d
 I:75:13:0
 W:10:0:4:0
 A:10/3
 P:0:5d5:0:0:0:0
 F:EASY_KNOW
+E_LOSE_LIFE_FORCE
 D:that weakens your spirit.
 
 ## XXX 394 XXX ##
@@ -2602,6 +2638,7 @@ W:40:0:4:0
 A:40/6
 P:0:8d8:0:0:0:0
 F:EASY_KNOW
+E:RUINATION
 D:of distilled sorrow.
 
 N:396:Weakness
@@ -2611,6 +2648,7 @@ W:3:0:4:0
 A:3/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:DEC_STR
 D:that saps your strength.
 
 N:397:Stupidity
@@ -2620,6 +2658,7 @@ W:20:0:4:0
 A:20/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:DEC_INT
 D:that dulls your mind.
 
 N:398:Naivety
@@ -2629,6 +2668,7 @@ W:20:0:4:0
 A:20/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:DEC_WIS
 D:that breaks down your will.
 
 N:399:Clumsiness
@@ -2638,6 +2678,7 @@ W:5:0:4:0
 A:5/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:DEC_DEX
 D:that attacks your coordination.
 
 N:400:Sickliness
@@ -2647,6 +2688,7 @@ W:10:0:4:0
 A:10/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:DEC_CON
 D:that ravages your body.
 
 N:401:Ugliness
@@ -2656,6 +2698,7 @@ W:20:0:4:0
 A:10/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:DEC_CHR
 D:that scars you form and dulls your charm.
 
 N:402:Detonations
@@ -2665,6 +2708,7 @@ W:60:0:4:15000
 A:80/6
 P:0:22d22:0:0:0:0
 F:EASY_KNOW
+E:DETONATIONS
 D:that you dare not drop.
 
 N:403:Death
@@ -2674,6 +2718,7 @@ W:55:0:4:0
 A:55/4
 P:0:12d12:0:0:0:0
 F:EASY_KNOW
+E:DEATH
 D:drawn from the river of the damned.
 
 N:404:Infra-vision
@@ -2683,15 +2728,17 @@ W:3:0:4:20
 A:3/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:INFRAVISION
 D:that enhances your nightvision for 100 + d100 turns.
 
-N:405:Detect Invisible
+N:405:See Invisible
 G:!:d
 I:75:25:0
 W:3:0:4:50
 A:10/1:18/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:SEE_INVIS
 D:that reveals the unseen for 12 + d12 turns.
 
 N:406:Slow Poison
@@ -2701,6 +2748,7 @@ W:1:0:4:25
 A:1/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:SLOW_POISON
 D:that halves the effects of any poisons in your body.
 
 N:407:Neutralize Poison
@@ -2710,6 +2758,7 @@ W:5:0:4:75
 A:5/1
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:CURE_POISON
 D:that counteracts any poisons in your body.
 
 N:408:Boldness
@@ -2719,6 +2768,7 @@ W:1:0:4:10
 A:1/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:CURE_PARANOIA
 D:that restores your courage.
 
 N:409:Speed
@@ -2728,6 +2778,7 @@ W:1:0:4:150
 A:1/1:35/1:70/1
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:SPEED1
 D:that makes your supernaturally fast for 15 + d20 turns.
 
 N:410:Resist Fire and Cold
@@ -2737,6 +2788,7 @@ W:35:0:4:175
 A:20/2:50/2:70/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:RES_HEAT_COLD
 D:that protects you from extreme temperatures for 20 + d30 turns.
 
 N:411:Resist Acid and Electricity
@@ -2746,6 +2798,7 @@ W:35:0:4:175
 A:20/2:50/2:70/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:RES_ACID_ELEC
 D:that protects you from lightning and acid for 20 + d30 turns.
 
 N:412:Heroism
@@ -2755,6 +2808,7 @@ W:10:0:4:150
 A:10/2:55/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:HEROISM
 D:that makes you fearless and skilled in combat for 25 + d25 turns.
 
 N:413:Berserk Strength
@@ -2764,6 +2818,7 @@ W:20:0:4:175
 A:20/2:70/1
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:BERSERK_STR
 D:that makes you fearless and ferocious in hand to hand combat for 25 + d25 
 D:turns.
 
@@ -2774,6 +2829,7 @@ W:0:0:4:15
 A:0/2:1/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:CURE_LIGHT
 D:that restores 2d10 hitpoints, removes blindness and heals wounds a little.
 
 N:415:Cure Serious Wounds
@@ -2783,6 +2839,7 @@ W:3:0:4:40
 A:3/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:CURE_SERIOUS
 D:that restores 4d10 hitpoints, removes blindness and confusion and heals 
 D:wounds a moderate amount.
 
@@ -2793,6 +2850,7 @@ W:15:0:4:120
 A:15/1
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:CURE_CRITICAL
 D:that restores 6d10 hitpoints, removes blindness, confusion and stunning and 
 D:heals wounds and poison a significant amount.
 
@@ -2803,6 +2861,7 @@ W:25:0:4:300
 A:25/1
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:HEALING3
 D:that restores 300 hitpoints, removes blindness, confusion, stunning and cuts 
 D:and reduces poison greatly.
 
@@ -2813,6 +2872,7 @@ W:60:0:4:2000
 A:60/4
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:HEALING4
 D:that restores 600 hitpoints, and removes blindness, confusion, stunning, cuts 
 D:poison and Black Breath.
 
@@ -2823,6 +2883,7 @@ W:80:0:4:10000
 A:80/6
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:LIFE
 D:that restores 2000 hitpoints, removes blindness, confusion, stunning, 
 D:cuts, poison and Black Breath, and restores all your stats and experience.
 
@@ -2833,6 +2894,7 @@ W:25:0:4:1000
 A:25/8:80/8
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:RESTORE_MANA
 D:that clears your mind and restores you magic power.
 
 N:421:Restore Life Levels
@@ -2842,6 +2904,7 @@ W:48:0:4:400
 A:48/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:RESTORE_EXP
 D:that restores your stolen life force.
 
 N:422:Restore Strength
@@ -2851,6 +2914,7 @@ W:25:0:4:300
 A:25/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:RES_STR
 D:that restores your stolen strength.
 
 N:423:Restore Intelligence
@@ -2860,6 +2924,7 @@ W:25:0:4:300
 A:25/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:RES_INT
 D:that restores your stolen intellect.
 
 N:424:Restore Wisdom
@@ -2869,6 +2934,7 @@ W:25:0:4:300
 A:25/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:RES_WIS
 D:that restores your stolen wisdom.
 
 N:425:Restore Dexterity
@@ -2878,6 +2944,7 @@ W:25:0:4:300
 A:25/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:RES_DEX
 D:that restores your stolen agility.
 
 N:426:Restore Constitution
@@ -2887,6 +2954,7 @@ W:25:0:4:300
 A:25/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:RES_CON
 D:that restores your stolen health.
 
 N:427:Restore Charisma
@@ -2896,6 +2964,7 @@ W:20:0:4:300
 A:20/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:RES_CHR
 D:that restores your stolen charm.
 
 N:428:Strength
@@ -2904,8 +2973,9 @@ I:75:48:0
 W:16:0:4:4000
 A:20/6:30/2:40/2
 P:0:1d1:0:0:0:0
-D:that makes you permanently stronger.
 F:EASY_KNOW | NO_ORDER 
+E:INC_STR
+D:that makes you permanently stronger.
 
 N:429:Intelligence
 G:!:d
@@ -2913,8 +2983,9 @@ I:75:49:0
 W:16:0:4:4000
 A:25/6:35/2:45/2
 P:0:1d1:0:0:0:0
-D:that makes you permanently smarter.
 F:EASY_KNOW | NO_ORDER 
+E:INC_INT
+D:that makes you permanently smarter.
 
 N:430:Wisdom
 G:!:d
@@ -2922,8 +2993,9 @@ I:75:50:0
 W:16:0:4:4000
 A:25/6:35/2:45/2
 P:0:1d1:0:0:0:0
-D:that makes you permanently wiser.
 F:EASY_KNOW | NO_ORDER 
+E:INC_WIS
+D:that makes you permanently wiser.
 
 N:431:Dexterity
 G:!:d
@@ -2931,8 +3003,9 @@ I:75:51:0
 W:16:0:4:4000
 A:20/6:30/2:40/2
 P:0:1d1:0:0:0:0
+F:EASY_KNOW | NO_ORDER 
+E:INC_DEX
 D:that makes you permanently more agile.
-F:NO_ORDER | EASY_KNOW
 
 
 N:432:Constitution
@@ -2941,8 +3014,9 @@ I:75:52:0
 W:16:0:4:4000
 A:20/6:30/2:40/2
 P:0:1d1:0:0:0:0
+F:EASY_KNOW | NO_ORDER 
+E:INC_CON
 D:that makes you permanently more healthy.
-F:NO_ORDER | EASY_KNOW
 
 
 N:433:Charisma
@@ -2951,8 +3025,9 @@ I:75:53:0
 W:12:0:4:1000
 A:5/6:18/2:30/2
 P:0:1d1:0:0:0:0
+F:EASY_KNOW | NO_ORDER 
+E:INC_CHR
 D:that makes you permanently more charming.
-F:NO_ORDER | EASY_KNOW
 
 
 N:434:Resistance
@@ -2962,6 +3037,7 @@ W:70:0:4:1500
 A:70/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:RESIST_ALL
 D:that protects you from the elements.
 
 N:435:Augmentation
@@ -2970,8 +3046,9 @@ I:75:55:0
 W:60:0:4:40000
 A:60/2
 P:0:1d1:0:0:0:0
-D:that improves your mind and body in every way.
 F:EASY_KNOW | NO_ORDER 
+E:AUGMENTATION
+D:that improves your mind and body in every way.
 
 N:436:Enlightenment
 G:!:d
@@ -2980,6 +3057,7 @@ W:30:0:4:1000
 A:30/2:45/2:60/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:ENLIGHTENMENT1
 D:that reveals the entire level to your mind's idea.
 
 N:437:*Enlightenment*
@@ -2988,9 +3066,10 @@ I:75:57:0
 W:70:0:4:60000
 A:70/4
 P:0:1d1:0:0:0:0
+F:EASY_KNOW | NO_ORDER 
+E:ENLIGHTENMENT2
 D:that reveals the level and its secrets, improves your mind, 
 D:identifies your possesions, and gives self knowledge.
-F:EASY_KNOW | NO_ORDER 
 
 N:438:Self Knowledge
 G:!:d
@@ -2999,6 +3078,7 @@ W:40:0:4:2000
 A:40/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:SELF_KNOWLEDGE
 D:that reveals your hidden strengths.
 
 N:439:Experience
@@ -3007,7 +3087,8 @@ I:75:59:0
 W:40:0:4:25000
 A:40/20
 P:0:1d1:0:0:0:0
-F:EASY_KNOW | NO_ORDER 
+F:EASY_KNOW | NO_ORDER
+E:EXPERIENCE 
 D:that enhances your life force.
 
 N:440:Blood Mastery
@@ -3017,6 +3098,7 @@ W:70:0:4:20000
 A:70/5
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:VAMPIRE
 D:that turns you into a Vampire.  It is dangerous to the holy and to 
 D:the guardians of nature.
 
@@ -3026,8 +3108,9 @@ I:75:61:0
 W:26:0:4:6000
 A:30/6:40/2:50/2
 P:0:1d1:0:0:0:0
-D:that makes you permanently very strong.
 F:EASY_KNOW | NO_ORDER 
+E:STAR_INC_STR
+D:that makes you permanently very strong.
 
 N:442:*Intelligence*
 G:!:d
@@ -3035,8 +3118,9 @@ I:75:62:0
 W:26:0:4:6000
 A:35/6:45/2:55/2
 P:0:1d1:0:0:0:0
+F:EASY_KNOW | NO_ORDER 
+E:STAR_INC_INT
 D:that makes you permanently very smart.
-F:NO_ORDER | EASY_KNOW
 
 N:443:*Wisdom*
 G:!:d
@@ -3044,8 +3128,9 @@ I:75:63:0
 W:26:0:4:6000
 A:35/6:45/2:55/2
 P:0:1d1:0:0:0:0
+F:EASY_KNOW | NO_ORDER 
+E:STAR_INC_WIS
 D:that makes you permanently very wise.
-F:NO_ORDER | EASY_KNOW
 
 
 N:444:*Dexterity*
@@ -3054,8 +3139,9 @@ I:75:64:0
 W:26:0:4:6000
 A:30/6:40/2:50/2
 P:0:1d1:0:0:0:0
+F:EASY_KNOW | NO_ORDER 
+E:STAR_INC_DEX
 D:that makes you permanently very agile.
-F:NO_ORDER | EASY_KNOW
 
 
 N:445:*Constitution*
@@ -3064,8 +3150,9 @@ I:75:65:0
 W:26:0:4:6000
 A:30/6:40/2:50/2
 P:0:1d1:0:0:0:0
+F:EASY_KNOW | NO_ORDER 
+E:STAR_INC_CON
 D:that makes you permanently very healthy.
-F:NO_ORDER | EASY_KNOW
 
 
 N:446:*Charisma*
@@ -3074,8 +3161,9 @@ I:75:66:0
 W:22:0:4:1500
 A:15/6:28/2:40/2
 P:0:1d1:0:0:0:0
+F:EASY_KNOW | NO_ORDER 
+E:STAR_INC_CHR
 D:that makes you permanently very charming.
-F:NO_ORDER | EASY_KNOW
 
 
 ## XXX 441 XXX ##
@@ -3116,6 +3204,7 @@ I:65:0:15
 W:3:0:10:0
 A:3/3
 P:0:1d1:0:0:0:0
+E:HEAL_MONSTER
 D:that heals a foe.
 
 N:456:Haste Monster
@@ -3124,6 +3213,7 @@ I:65:1:15
 W:3:0:10:0
 A:3/3
 P:0:1d1:0:0:0:0
+E:HASTE_MONSTER
 D:that energizes a foe.
 
 N:457:Clone Monster
@@ -3132,6 +3222,7 @@ I:65:2:6
 W:15:0:10:0
 A:70/8
 P:0:1d1:0:0:0:0
+E:CLONE_MONSTER
 D:that duplicates most foes.
 
 # Rarer in Oangband, because it is so powerful; now shallower in FAangband
@@ -3141,6 +3232,7 @@ I:65:3:8
 W:25:0:10:1750
 A:25/3
 P:0:1d1:0:0:0:0
+E:TELEPORT_AWAY2
 D:that teleports foes away.
 
 N:459:Disarming
@@ -3149,6 +3241,7 @@ I:65:4:8
 W:30:0:10:700
 A:30/2
 P:0:1d1:0:0:0:0
+E:DISARMING
 D:that disarms an adjacent trap or chest~.
 
 N:460:Door Destruction
@@ -3157,6 +3250,7 @@ I:65:5:18
 W:10:0:10:75
 A:10/2
 P:0:1d1:0:0:0:0
+E:DOOR_DEST
 D:that destroys doors, even hidden ones.
 
 N:461:Stone to Mud
@@ -3165,6 +3259,7 @@ I:65:6:8
 W:10:0:10:300
 A:10/2
 P:0:1d1:0:0:0:0
+E:STONE_TO_MUD
 D:that instantly melts earthen material.
 
 N:462:Light
@@ -3173,6 +3268,7 @@ I:65:7:12
 W:3:0:10:200
 A:3/2
 P:0:1d1:0:0:0:0
+E:LITE
 D:that shoots beams of light~.
 
 N:463:Sleep Monster
@@ -3181,6 +3277,7 @@ I:65:8:12
 W:5:0:10:500
 A:5/2:45/2
 P:0:1d1:0:0:0:0
+E:SLEEP_MONSTER2
 D:that sends a foe to the land of dreams.
 
 N:464:Slow Monster
@@ -3189,6 +3286,7 @@ I:65:9:12
 W:5:0:10:500
 A:5/2:45/2
 P:0:1d1:0:0:0:0
+E:SLOW_MONSTER2
 D:that renders a foe slow and sluggish.
 
 N:465:Confuse Monster
@@ -3197,6 +3295,7 @@ I:65:10:12
 W:5:0:10:500
 A:5/2:45/2
 P:0:1d1:0:0:0:0
+E:CONFUSE_MONSTER
 D:that confuses a foe.
 
 N:466:Scare Monster
@@ -3205,6 +3304,7 @@ I:65:11:12
 W:10:0:10:500
 A:10/3
 P:0:1d1:0:0:0:0
+E:FEAR_MONSTER
 D:that scares a foe.
 
 N:467:Drain Life
@@ -3213,6 +3313,7 @@ I:65:12:5
 W:55:0:10:1500
 A:52/1
 P:0:1d1:0:0:0:0
+E:DRAIN_LIFE1
 D:that sucks the life out of a foe~.
 
 N:468:Polymorph
@@ -3221,6 +3322,7 @@ I:65:13:9
 W:20:0:10:400
 A:20/2
 P:0:1d1:0:0:0:0
+E:POLYMORPH
 D:that strangely alters a monster.
 
 N:469:Stinking Cloud
@@ -3229,6 +3331,7 @@ I:65:14:9
 W:5:0:10:400
 A:5/1
 P:0:1d1:0:0:0:0
+E:STINKING_CLOUD
 D:that launches poisonous clouds~.
 
 N:470:Magic Missile
@@ -3237,6 +3340,7 @@ I:65:15:14
 W:3:0:10:200
 A:3/1
 P:0:1d1:0:0:0:0
+E:MAGIC_MISSILE
 D:that fires magical bolts~.
 
 N:471:Acid Bolts
@@ -3245,6 +3349,7 @@ I:65:16:10
 W:35:0:10:1000
 A:35/1
 P:0:1d1:0:0:0:0
+E:ACID_BOLT1
 D:that launches bolts or beams of acid~.
 
 N:472:Lightning Bolts
@@ -3253,6 +3358,7 @@ I:65:17:11
 W:15:0:10:600
 A:15/1
 P:0:1d1:0:0:0:0
+E:ELEC_BOLT1
 D:that fires bolts or beams of electricity~.
 
 N:473:Fire Bolts
@@ -3261,6 +3367,7 @@ I:65:18:10
 W:40:0:10:1200
 A:40/1
 P:0:1d1:0:0:0:0
+E:FIRE_BOLT1
 D:that shoots bolts or beams of fire~.
 
 N:474:Frost Bolts
@@ -3269,6 +3376,7 @@ I:65:19:11
 W:24:0:10:800
 A:24/1
 P:0:1d1:0:0:0:0
+E:COLD_BOLT1
 D:that fires bolts or beams of frost~.
 
 N:475:Acid Balls
@@ -3278,6 +3386,7 @@ W:60:0:10:2400
 A:60/1
 P:0:1d1:0:0:0:0
 F:ACID_PROOF
+E:ACID_BALL1
 D:that launches balls of noxious acid~.
 
 N:476:Lightning Balls
@@ -3287,6 +3396,7 @@ W:45:0:10:1750
 A:45/1
 P:0:1d1:0:0:0:0
 F:ELEC_PROOF
+E:ELEC_BALL1
 D:that launches lightning balls~.
 
 N:477:Fire Balls
@@ -3296,6 +3406,7 @@ W:65:0:10:2750
 A:65/1
 P:0:1d1:0:0:0:0
 F:FIRE_PROOF
+E:FIRE_BALL1
 D:that launches fiery balls~.
 
 N:478:Cold Balls
@@ -3305,6 +3416,7 @@ W:50:0:10:2100
 A:50/1
 P:0:1d1:0:0:0:0
 F:COLD_PROOF
+E:COLD_BALL1
 D:that launches icy balls~.
 
 N:479:Wonder
@@ -3314,6 +3426,7 @@ W:3:0:10:250
 A:3/1
 P:0:1d1:0:0:0:0
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:WONDER
 D:with many and varied magics.
 
 N:480:Annihilation
@@ -3323,6 +3436,7 @@ W:90:0:10:12000
 A:90/4
 P:0:1d1:0:0:0:0
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:ANNIHILATION
 D:that tears the life force from a foe~.
 
 N:481:Dragon's Flame
@@ -3332,6 +3446,7 @@ W:65:0:10:6000
 A:65/3
 P:0:1d1:0:0:0:0
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:DRAGON_FIRE
 D:that breathes a fire storm~.
 
 N:482:Dragon's Frost
@@ -3341,6 +3456,7 @@ W:65:0:10:6000
 A:65/3
 P:0:1d1:0:0:0:0
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:DRAGON_COLD
 D:that breathes a frost storm~.
 
 N:483:Dragon's Breath
@@ -3350,6 +3466,7 @@ W:70:0:10:7000
 A:85/3
 P:0:1d1:0:0:0:0
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:DRAGON_BREATH
 D:that breathes an elemental storm~.
 
 N:484:Striking
@@ -3359,6 +3476,7 @@ W:65:0:10:3800
 A:65/2
 P:0:1d1:0:0:0:0
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:STRIKING
 D:that pounds a foe with pure force~.
 
 N:485:Storms
@@ -3368,6 +3486,7 @@ W:50:0:10:3000
 A:55/3
 P:0:1d1:0:0:0:0
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+E:STORMS
 D:that unleashes water and lightning balls~.
 
 N:486:Shrapnel
@@ -3376,6 +3495,7 @@ I:65:31:10
 W:20:0:10:800
 A:20/2
 P:0:1d1:0:0:0:0
+E:SHARD_BOLT
 D:that shoots a blast of razor sharp shards~.
 
 ## XXX 487 XXX ##
@@ -3398,6 +3518,7 @@ W:40:0:10:15000
 # A:40/40 TNB
 P:0:1d1:0:0:0:0
 F:INSTA_ART
+E:ILKORIN
 D:
 
 # The Wand of Beguiling -- see artifact list
@@ -3409,6 +3530,7 @@ W:70:0:10:27500
 # A:70/52 TNB
 P:0:1d1:0:0:0:0
 F:INSTA_ART
+E:BEGUILING
 D:
 
 
@@ -3421,6 +3543,7 @@ W:100:0:10:150000
 # A:100/48 TNB
 P:0:1d1:0:0:0:0
 F:INSTA_ART
+E:UNMAKING
 D:
 
 
@@ -3433,6 +3556,7 @@ W:70:0:10:22500
 # A:70/48 TNB
 P:0:1d1:0:0:0:0
 F:INSTA_ART
+E:OSSE
 D:
 
 ## XXX 496 XXX ##
@@ -3453,6 +3577,7 @@ I:55:0:20
 W:5:0:50:0
 A:5/3
 P:0:1d2:0:0:0:0
+E:DARKNESS
 D:that douses the lights in the immediate area.
 
 N:501:Slowness
@@ -3461,6 +3586,7 @@ I:55:1:20
 W:48:0:50:0
 A:48/3
 P:0:1d2:0:0:0:0
+E:SLOWNESS
 D:that temporarily saps your energy.
 
 N:502:Haste Monsters
@@ -3469,6 +3595,7 @@ I:55:2:20
 W:10:0:50:0
 A:10/3
 P:0:1d2:0:0:0:0
+E:HASTE_MONSTERS
 D:that energizes all nearby opponents.
 
 N:503:Summoning
@@ -3477,6 +3604,7 @@ I:55:3:4
 W:50:0:50:0
 A:50/3
 P:0:1d2:0:0:0:0
+E:SUMMON4
 D:that summons more enemies for you to fight.
 
 N:504:Teleportation
@@ -3485,6 +3613,7 @@ I:55:4:10
 W:30:0:50:1500
 A:40/1:70/2
 P:0:1d2:0:0:0:0
+E:TELEPORT100
 D:that can teleport you across the dungeon.
 
 N:505:Perception
@@ -3493,6 +3622,7 @@ I:55:5:20
 W:10:0:50:300
 A:10/1
 P:0:1d2:0:0:0:0
+E:IDENTIFY
 D:that provides basic information about any object.
 
 N:506:Remove Curse
@@ -3501,6 +3631,7 @@ I:55:6:8
 W:40:0:50:500
 A:40/2
 P:0:1d2:0:0:0:0
+E:REMOVE_CURSE
 D:that breaks ordinary curses.
 
 N:507:Starlight
@@ -3509,6 +3640,7 @@ I:55:7:13
 W:35:0:50:1500
 A:35/2:50/2
 P:0:1d2:0:0:0:0
+E:STARLIGHT
 D:that strikes at dark-loving monsters, and blinds those exposed to sudden 
 D:light~.
 
@@ -3518,6 +3650,7 @@ I:55:8:32
 W:5:0:50:250
 A:5/1
 P:0:1d2:0:0:0:0
+E:LITE
 D:that magically illuminates a room or a torch-lit area.
 
 N:509:Dungeon Mapping
@@ -3526,6 +3659,7 @@ I:55:9:18
 W:20:0:50:900
 A:20/1
 P:0:1d2:0:0:0:0
+E:MAPPING
 D:that reveals the walls and terrain of the local area.
 
 N:510:Treasure Location
@@ -3534,6 +3668,7 @@ I:55:10:36
 W:5:0:50:200
 A:5/2
 P:0:1d2:0:0:0:0
+E:DETECT_GOLD
 D:that makes mining very profitable.
 
 N:511:Object Location
@@ -3542,6 +3677,7 @@ I:55:11:36
 W:5:0:50:200
 A:5/1
 P:0:1d2:0:0:0:0
+E:DETECT_ITEM
 D:that reveals objects nearby.
 
 N:512:Trap Location
@@ -3550,6 +3686,7 @@ I:55:12:36
 W:8:0:50:200
 A:8/1
 P:0:1d2:0:0:0:0
+E:DETECT_TRAP
 D:that reveals traps nearby.
 
 N:513:Door/Stair Location
@@ -3558,6 +3695,7 @@ I:55:13:36
 W:8:0:50:300
 A:8/1
 P:0:1d2:0:0:0:0
+E:DETECT_DOOR
 D:that reveals doors and stairs nearby.
 
 N:514:Detect Invisible
@@ -3566,6 +3704,7 @@ I:55:14:36
 W:5:0:50:200
 A:5/1
 P:0:1d2:0:0:0:0
+E:DETECT_INVIS
 D:that reveals monsters unseen by ordinary sight.
 
 N:515:Detect Evil
@@ -3574,6 +3713,7 @@ I:55:15:36
 W:20:0:50:350
 A:20/1
 P:0:1d2:0:0:0:0
+E:DETECT_EVIL
 D:that reveals evil creatures nearby.
 
 N:516:Cure Medium Wounds
@@ -3582,6 +3722,7 @@ I:55:16:18
 W:12:0:50:550
 A:12/1
 P:0:1d2:0:0:0:0
+E:CURE_MEDIUM
 D:that offers immediate first aid~.
 
 N:517:Curing
@@ -3590,6 +3731,7 @@ I:55:17:9
 W:25:0:50:1000
 A:25/2
 P:0:1d2:0:0:0:0
+E:CURING
 D:that removes a variety of specialized ailments.
 
 N:518:Healing
@@ -3598,6 +3740,7 @@ I:55:18:5
 W:70:0:50:5000
 A:70/2
 P:0:1d2:0:0:0:0
+E:HEALING1
 D:that magically heals you~.
 
 N:519:Banish Evil
@@ -3606,6 +3749,7 @@ I:55:19:8
 W:55:0:50:3500
 A:55/2
 P:0:1d2:0:0:0:0
+E:BANISHMENT
 D:that hurls all evil beings far from you.
 
 N:520:Sleep Monsters
@@ -3614,6 +3758,7 @@ I:55:20:16
 W:15:0:50:700
 A:15/2:30/2
 P:0:1d2:0:0:0:0
+E:SLEEP_MONSTERS
 D:that sends nearby foes to the land of dreams.
 
 N:521:Slow Monsters
@@ -3622,6 +3767,7 @@ I:55:21:16
 W:15:0:50:800
 A:15/2:30/2
 P:0:1d2:0:0:0:0
+E:SLOW_MONSTERS
 D:that renders nearby opponents slow and sluggish.
 
 N:522:Speed
@@ -3630,6 +3776,7 @@ I:55:22:8
 W:48:0:50:2000
 A:48/1
 P:0:1d2:0:0:0:0
+E:SPEED2
 D:that hastens you for a time.
 
 N:523:Probing
@@ -3638,6 +3785,7 @@ I:55:23:16
 W:30:0:50:1800
 A:30/2
 P:0:1d2:0:0:0:0
+E:PROBING
 D:that reveals your opponents' hidden strengths and weaknesses.
 
 N:524:Dispel Evil
@@ -3646,6 +3794,7 @@ I:55:24:11
 W:60:0:50:1200
 A:60/1
 P:0:1d2:0:0:0:0
+E:DISPEL_EVIL
 D:that envokes the powers of Good against your foes~.
 
 N:525:Power
@@ -3654,6 +3803,7 @@ I:55:25:6
 W:70:0:50:4000
 A:70/2
 P:0:1d2:0:0:0:0
+E:POWER
 D:that invokes dispelling magics that no creature can resist~.
 
 N:526:Holiness
@@ -3662,6 +3812,7 @@ I:55:26:6
 W:70:0:50:4500
 A:70/2
 P:0:1d2:0:0:0:0
+E:HOLINESS
 D:that rallies powerful magics to aid and protect you against the powers of 
 D:evil~.
 
@@ -3673,6 +3824,7 @@ I:55:28:14
 W:40:0:50:350
 A:40/2
 P:0:1d2:0:0:0:0
+E:EARTHQUAKES
 D:that shakes the dungeon nearby.
 
 N:529:*Destruction*
@@ -3681,6 +3833,7 @@ I:55:29:5
 W:70:0:50:2500
 A:70/1
 P:0:1d2:0:0:0:0
+E:DESTRUCTION
 D:that utterly destroys virtually everything nearby.
 
 N:530:Detection
@@ -3689,6 +3842,7 @@ I:55:30:24
 W:45:0:50:2500
 A:45/1
 P:0:1d2:0:0:0:0
+E:DETECTION
 D:that reveals objects, monsters, and special features.
 
 N:531:Mana Storm
@@ -3697,6 +3851,7 @@ I:55:31:6
 W:90:0:50:7000
 A:90/4
 P:0:1d2:0:0:0:0
+E:MSTORM
 D:that envokes perilous magics upon you and your foes~.
 
 N:532:Starburst
@@ -3705,6 +3860,7 @@ I:55:32:6
 W:80:0:50:6000
 A:80/3
 P:0:1d2:0:0:0:0
+E:STARBURST
 D:that unleashes a storm of pure light upon your foes~.
 
 N:533:Mass Confusion
@@ -3713,6 +3869,7 @@ I:55:33:16
 W:40:0:50:1500
 A:40/2
 P:0:1d2:0:0:0:0
+E:MASS_CONFU
 D:that befuddles all monsters nearby.
 
 ## XXX 534 XXX ##
@@ -3736,6 +3893,7 @@ W:85:0:50:35000
 # A:85/40 TNB
 P:0:1d2:0:0:0:0
 F:INSTA_ART
+E:STARFIRE
 D:
 
 
@@ -3748,6 +3906,7 @@ W:50:0:50:20000
 # A:50/40 TNB
 P:0:1d2:0:0:0:0
 F:INSTA_ART
+E:WINDS
 D:
 
 # The Staff of Holding -- see artifact list
@@ -3759,10 +3918,11 @@ W:85:0:50:30000
 # A:85/48 TNB
 P:0:1d2:0:0:0:0
 F:INSTA_ART
+E:HOLDING
 D:
 
 
-# The Staff of Radagast -- see artifact list
+# The Staff of the Kelvar -- see artifact list
 
 N:543:& Staff~
 G:_:d
@@ -3771,6 +3931,7 @@ W:50:0:50:20000
 # A:50/48 TNB
 P:0:1d2:0:0:0:0
 F:INSTA_ART
+E:KELVAR
 D:
 
 
@@ -3798,6 +3959,7 @@ W:10:0:15:700
 A:10/2:20/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:DETECT_TRAP
 D:that reveals traps.
 
 N:569:Door/Stair Location
@@ -3807,6 +3969,7 @@ W:10:0:15:700
 A:10/2:20/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:DETECT_DOOR
 D:that reveals doors and stairs.
 
 N:570:Perception
@@ -3816,6 +3979,7 @@ W:30:0:15:2000
 A:30/1
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:IDENTIFY
 D:that provides basic information about any object.
 
 N:571:Recall
@@ -3825,6 +3989,7 @@ W:35:0:15:4000
 A:35/4
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:RECALL
 D:that recalls you back to town, or to the deepest spot you've been in the dungeon.
 
 N:572:Illumination
@@ -3834,6 +3999,7 @@ W:10:0:15:800
 A:10/1
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:LIGHT
 D:that magically lights up a room or your immediate surroundings.
 
 N:573:Sense Surroundings
@@ -3843,6 +4009,7 @@ W:40:0:15:3000
 A:40/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:MAPPING
 D:that reveals the local terrain.
 
 ## XXX 574 XXX (only available non-aimed rod svals are 6 and 12) ##
@@ -3854,6 +4021,7 @@ W:45:0:15:4000
 A:45/4
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:PROBING
 D:that reveals the hidden strengths and weaknesses of foes.
 
 N:576:Curing
@@ -3863,6 +4031,7 @@ W:65:0:15:12000
 A:65/6
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:CURING
 D:that removes a variety of specialized ailments.
 
 N:577:Healing
@@ -3872,6 +4041,7 @@ W:80:0:15:25000
 A:80/8
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:HEALING2
 D:that restores your hitpoints~.
 
 N:578:Restoration
@@ -3881,6 +4051,7 @@ W:80:0:15:25000
 A:80/8
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:RESTORATION
 D:that restores the vitality of body and mind.
 
 N:579:Speed
@@ -3890,6 +4061,7 @@ W:90:0:15:50000
 A:90/8
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:SPEED2
 D:that wonderfully hastens you.
 
 ## XXX 580 XXX (only available non-aimed rod svals are 6 and 12) ##
@@ -3901,6 +4073,7 @@ W:65:0:15:3250
 A:65/4
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:TELEPORT_AWAY1
 D:that hurtles a foe far from you.
 
 N:582:Disarming
@@ -3910,6 +4083,7 @@ W:35:0:15:2100
 A:35/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:DISARMING
 D:that provides almost perfect disarming~.
 
 N:583:Light
@@ -3919,6 +4093,7 @@ W:10:0:15:800
 A:10/2:20/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:LITE
 D:that shoots a beam of light~.
 
 N:584:Sleep Monster
@@ -3928,6 +4103,7 @@ W:30:0:15:1500
 A:30/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:SLEEP_MONSTER
 D:that send an opponent to the land of dreams.
 
 N:585:Slow Monster
@@ -3937,6 +4113,7 @@ W:30:0:15:1500
 A:30/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+SLOW_MONSTER
 D:that renders an opponent slow and sluggish.
 
 N:586:Drain Life
@@ -3946,6 +4123,7 @@ W:75:0:15:3600
 A:75/4
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:DRAIN_LIFE2
 D:that sucks the life force from a foe~.
 
 N:587:Polymorph
@@ -3955,6 +4133,7 @@ W:35:0:15:1200
 A:35/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:POLYMORPH
 D:that strangely alters a foe.
 
 N:588:Acid Bolts
@@ -3964,6 +4143,7 @@ W:35:0:15:2700
 A:35/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:ACID_BOLT2
 D:that shoots bolts of acid~.
 
 N:589:Lightning Bolts
@@ -3973,6 +4153,7 @@ W:25:0:15:2000
 A:25/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:ELEC_BOLT2
 D:that shoots electric bolts~.
 
 N:590:Fire Bolts
@@ -3982,6 +4163,7 @@ W:37:0:15:3000
 A:37/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:FIRE_BOLT2
 D:that shoots fire bolts~.
 
 N:591:Frost Bolts
@@ -3991,6 +4173,7 @@ W:31:0:15:2350
 A:31/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:COLD_BOLT2
 D:that shoots frost bolts~.
 
 N:592:Acid Balls
@@ -4000,6 +4183,7 @@ W:60:0:15:5000
 A:60/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:ACID_BALL2
 D:that launches balls of acid~.
 
 N:593:Lightning Balls
@@ -4009,6 +4193,7 @@ W:50:0:15:4000
 A:50/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:ELEC_BALL2
 D:that launches balls of lightning~.
 
 N:594:Fire Balls
@@ -4018,6 +4203,7 @@ W:65:0:15:6000
 A:65/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:FIRE_BALL2
 D:that launches balls of fire~.
 
 N:595:Cold Balls
@@ -4027,6 +4213,7 @@ W:55:0:15:4500
 A:55/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:COLD_BALL2
 D:that launches balls of frost~.
 
 N:596:Lightning Strike
@@ -4037,6 +4224,7 @@ A:74/4
 P:0:1d1:0:0:0:0
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF | 
 F:EASY_KNOW
+E:LIGHTINGSTRIKE
 D:that launches a bolt or beam of chain lightning~.
 
 N:597:Northwinds
@@ -4047,6 +4235,7 @@ A:78/4
 P:0:1d1:0:0:0:0
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF | 
 F:EASY_KNOW
+E:NORTHWINDS
 D:that launches a bolt or beam of killing ice~.
 
 N:598:Dragonfire
@@ -4057,6 +4246,7 @@ A:82/4
 P:0:1d1:0:0:0:0
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF | 
 F:EASY_KNOW
+E:DRAGONFIRE
 D:that launches a bolt or beam of raging fire~.
 
 N:599:Glaurung's Blood
@@ -4067,6 +4257,7 @@ A:86/4
 P:0:1d1:0:0:0:0
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF | 
 F:EASY_KNOW
+E:GLAURUNGS
 D:that launches a bolt or beam of acid as deadly as Glaurung's blood~.
 
 N:600:Aggravate Level
@@ -4076,6 +4267,7 @@ W:30:0:15:0
 A:30/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
+E:ROUSE_LEVEL
 D:Awake! Awake! Fear, Fire, Foes! Awake!  The Horn-call of Buckland rings out, 
 D:and everyone on the level knows where to find you!
 
@@ -4104,6 +4296,7 @@ W:65:0:15:12500
 # A:65/40 TNB
 P:0:1d1:0:0:0:0
 F:INSTA_ART
+E:DELVING
 D:
 
 
@@ -4116,6 +4309,7 @@ W:80:0:15:20000
 # A:80/40 TNB
 P:0:1d1:0:0:0:0
 F:INSTA_ART
+E:SHADOW
 D:
 
 
@@ -4128,6 +4322,7 @@ W:85:0:15:25000
 # A:85/48 TNB
 P:0:1d1:0:0:0:0
 F:INSTA_ART
+E:AIR
 D:
 
 
@@ -4140,6 +4335,7 @@ W:70:0:15:50000
 # A:70/64 TNB
 P:0:1d1:0:0:0:0
 F:INSTA_ART
+E:PORTALS
 D:
 
 

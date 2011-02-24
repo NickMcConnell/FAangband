@@ -34,93 +34,14 @@ static int initial_potential = 0;
 /** Percentage chance for an object to be terrible. */
 #define TERRIBLE_CHANCE		5
 
+/** Multiplier to get activation cost from effect power */
+#define EFFECT_MULT             80
 
-/** Random activations are defined in defines.h. */
-
-int act_cost[]=
-{
-  300,	/* ACT_RANDOM_FIRE1 */
-  400,	/* ACT_RANDOM_FIRE2 */
-  500,	/* ACT_RANDOM_FIRE3 */
-  300,	/* ACT_RANDOM_COLD1 */
-  400,	/* ACT_RANDOM_COLD2 */
-  500,	/* ACT_RANDOM_COLD3 */
-  300,	/* ACT_RANDOM_ACID1 */
-  400,	/* ACT_RANDOM_ACID2 */
-  500,	/* ACT_RANDOM_ACID3 */
-  300,	/* ACT_RANDOM_ELEC1 */
-  400,	/* ACT_RANDOM_ELEC2 */
-  500,	/* ACT_RANDOM_ELEC3 */
-  300,	/* ACT_RANDOM_POIS1 */
-  400,	/* ACT_RANDOM_POIS2 */
-  500,	/* ACT_RANDOM_LIGHT1 */
-  500,	/* ACT_RANDOM_LIGHT2 */
-  500,	/* ACT_RANDOM_DISPEL_UNDEAD */
-  700,	/* ACT_RANDOM_DISPEL_EVIL */
-  600,	/* ACT_RANDOM_SMITE_UNDEAD */
-  600,	/* ACT_RANDOM_SMITE_DEMON */
-  600,	/* ACT_RANDOM_SMITE_DRAGON */
-  400,	/* ACT_RANDOM_HOLY_ORB */
-  300,	/* ACT_RANDOM_BLESS */
-  400,	/* ACT_RANDOM_FRIGHTEN_ALL */
-  400,	/* ACT_RANDOM_HEAL1 */
-  600,	/* ACT_RANDOM_HEAL2 */
-  800,	/* ACT_RANDOM_HEAL3 */
-  600,	/* ACT_RANDOM_CURE */
-  500,	/* ACT_RANDOM_PROT_FROM_EVIL */
-  700,	/* ACT_RANDOM_CHAOS */
-  700,	/* ACT_RANDOM_SHARD_SOUND */
-  600,	/* ACT_RANDOM_NETHR */
-  300,	/* ACT_RANDOM_LINE_LIGHT */
-  400,	/* ACT_RANDOM_STARLIGHT */
-  400,	/* ACT_RANDOM_EARTHQUAKE */
-  500,	/* ACT_RANDOM_IDENTIFY */
-  800,	/* ACT_RANDOM_SPEED */
-  700,	/* ACT_RANDOM_TELEPORT_AWAY */
-  500,	/* ACT_RANDOM_HEROISM */
-  900,	/* ACT_RANDOM_STORM_DANCE */
-  600,	/* ACT_RANDOM_RESIST_ELEMENTS */
-  800,	/* ACT_RANDOM_RESIST_ALL */
-  500,	/* ACT_RANDOM_TELEPORT1 */
-  700,	/* ACT_RANDOM_TELEPORT2 */
-  800,	/* ACT_RANDOM_RECALL */
-  600,	/* ACT_RANDOM_REGAIN */
-  800,	/* ACT_RANDOM_RESTORE */
-  600,	/* ACT_RANDOM_SHIELD */
-  1200,	/* ACT_RANDOM_BRAND_MISSILE */
-  800,	/* ACT_RANDOM_SUPER_SHOOTING */
-  300,	/* ACT_RANDOM_DETECT_MONSTERS */
-  200,	/* ACT_RANDOM_DETECT_EVIL */
-  600,	/* ACT_RANDOM_DETECT_ALL */
-  600,	/* ACT_RANDOM_MAGIC_MAP */
-  400,	/* ACT_RANDOM_DETECT_D_S_T */
-  300,	/* ACT_RANDOM_CONFU_FOE */
-  300,	/* ACT_RANDOM_SLEEP_FOE */
-  300,	/* ACT_RANDOM_TURN_FOE */
-  300,	/* ACT_RANDOM_SLOW_FOE */
-  500,	/* ACT_RANDOM_BANISH_EVIL */
-  300,	/* ACT_RANDOM_DISARM */
-  400,	/* ACT_RANDOM_CONFU_FOES */
-  400,	/* ACT_RANDOM_SLEEP_FOES */
-  400,	/* ACT_RANDOM_TURN_FOES */
-  400,	/* ACT_RANDOM_SLOW_FOES */
-  1300,	/* ACT_POWER_ACID_BLAST */
-  1300,	/* ACT_POWER_CHAIN_LIGHTNING */
-  1400,	/* ACT_POWER_LAVA_POOL */
-  1500,	/* ACT_POWER_ICE_WHIRLPOOL */
-  1500,	/* ACT_POWER_GROW_FOREST */
-  1500,	/* ACT_POWER_RESTORE_AND_ENHANCE */
-  1500,	/* ACT_POWER_ZONE_OF_CHAOS */
-  1400,	/* ACT_POWER_PRESSURE_WAVE */
-  1600,	/* ACT_POWER_ENERGY_DRAIN */
-  1400,	/* ACT_POWER_MASS_STASIS */
-  1300,	/* ACT_POWER_LIGHT_FROM_ABOVE */
-  1200,	/* ACT_POWER_MASS_POLYMORPH */
-  1600,	/* ACT_POWER_GRAVITY_WAVE */
-  1400,	/* ACT_POWER_ENLIST_EARTH */
-  1600  /* ACT_POWER_TELEPORT_ALL */
-};
-
+/** Maximum and minimum effects for random activation from effects.c */
+#define EF_RAND_BASE          EF_RAND_FIRE1
+#define EF_RAND_MAX           EF_RAND_SLOW_FOES
+#define EF_POWER_BASE         EF_ACID_BLAST
+#define EF_POWER_MAX          EF_TELEPORT_ALL
 
 /**
  * Debit an object's account.
@@ -1287,9 +1208,9 @@ static bool get_quality(bool on_credit, int purchase, int value,
 static bool get_activation(bool on_credit, int activation, object_type *o_ptr)
 {
   /* Allocate the activation, if affordable */
-  if (take_money(on_credit, act_cost[activation - ACT_RANDOM_BASE]))
+  if (take_money(on_credit, effect_power(activation) * EFFECT_MULT)
     {
-      o_ptr->activation = activation;
+      o_ptr->effect = activation;
       return (TRUE);
     }
   else return (FALSE);
@@ -1574,11 +1495,11 @@ static bool choose_type(object_type *o_ptr)
 			
 			/* Maybe an activation */
 			if (randint1(5) == 1)
-			  get_activation(TRUE, ACT_RANDOM_BLESS, o_ptr);
+			  get_activation(TRUE, EF_RAND_BLESS, o_ptr);
 			else if (randint1(5) == 1)
-			  get_activation(TRUE, ACT_RANDOM_HEROISM, o_ptr);
+			  get_activation(TRUE, EF_RAND_HEROISM, o_ptr);
 			else if (randint1(5) == 1)
-			  get_activation(TRUE, ACT_RANDOM_PROT_FROM_EVIL, o_ptr);
+			  get_activation(TRUE, EF_RAND_PROT_FROM_EVIL, o_ptr);
 			
 			/* Sometimes vulnerable to dark and/or cold */
 			if (randint1(8) == 1) 
@@ -1596,12 +1517,12 @@ static bool choose_type(object_type *o_ptr)
 			
 			/* Maybe an activation */
 			if (randint1(6) == 1)
-			  get_activation(TRUE, ACT_RANDOM_IDENTIFY, o_ptr);
+			  get_activation(TRUE, EF_RAND_IDENTIFY, o_ptr);
 			else if (randint1(6) == 1)
-			  get_activation(TRUE, ACT_RANDOM_DETECT_MONSTERS, 
+			  get_activation(TRUE, EF_RAND_DETECT_MONSTERS, 
 					 o_ptr);
 			else if (randint1(6) == 1)
-			  get_activation(TRUE, ACT_RANDOM_DETECT_D_S_T, o_ptr);
+			  get_activation(TRUE, EF_RAND_DETECT_D_S_T, o_ptr);
 			
 			/* Sometimes vulnerable to electricity and/or light */
 			if (randint1(8) == 1) 
@@ -1763,7 +1684,7 @@ static bool choose_type(object_type *o_ptr)
 		/* This is an exclusive club */
 		if (potential < 3000) break;
 
-		o_ptr->activation = ACT_AMULET_METAMORPH;
+		o_ptr->effect = EF_AMULET_METAMORPH;
 		potential -= 2000;
 
 		done = TRUE;
@@ -1849,11 +1770,11 @@ static bool choose_type(object_type *o_ptr)
 		/* And an activation */
 		temp = randint1(3);
 		if (temp == 1) 
-		  get_activation(TRUE, ACT_RANDOM_REGAIN, o_ptr);
+		  get_activation(TRUE, EF_RAND_REGAIN, o_ptr);
 		else if (temp == 2) 
-		  get_activation(TRUE, ACT_RANDOM_RESTORE, o_ptr);
+		  get_activation(TRUE, EF_RAND_RESTORE, o_ptr);
 		else 
-		  get_activation(TRUE, ACT_RANDOM_RESIST_ALL, o_ptr);
+		  get_activation(TRUE, EF_RAND_RESIST_ALL, o_ptr);
 
 		done = TRUE;
 		break;
@@ -1892,7 +1813,7 @@ static bool choose_type(object_type *o_ptr)
 		/* Brand, resistance, activation */
 		get_quality(TRUE, BRAND_ACID + element, 4, o_ptr);
 		get_quality(TRUE, RES_ACID + element, 6 - bonus, o_ptr);
-		o_ptr->activation = ACT_RING_ACID + element;
+		o_ptr->effect = EF_RING_ACID + element;
 
 		done = TRUE;
 		break;
@@ -2050,11 +1971,11 @@ static bool choose_type(object_type *o_ptr)
 		  {		
 		    temp = randint1(6);
 		    if (temp == 1) 
-		      get_activation(TRUE, ACT_RANDOM_IDENTIFY, o_ptr);
+		      get_activation(TRUE, EF_RAND_IDENTIFY, o_ptr);
 		    if (temp == 2) 
-		      get_activation(TRUE, ACT_RANDOM_DISARM, o_ptr);
+		      get_activation(TRUE, EF_RAND_DISARM, o_ptr);
 		    if (temp == 3) 
-		      get_activation(TRUE, ACT_RANDOM_RECALL, o_ptr);
+		      get_activation(TRUE, EF_RAND_RECALL, o_ptr);
 		  }
 		
 		done = TRUE;
@@ -2261,23 +2182,21 @@ static bool choose_type(object_type *o_ptr)
 		if (randint1(3) == 1) get_quality(FALSE, SUST_CHR, 0, o_ptr);
 
 		/* And with a powerful activation at a bargain price... */
-		temp = randint0(ACT_POWER_MAX - ACT_POWER_BASE + 1);
+		temp = randint0(EF_POWER_MAX - EF_POWER_BASE + 1);
 
 		/* Hack - summon friendlies needs more work */
-		while (temp == ACT_POWER_ENLIST_EARTH - ACT_POWER_BASE)
-		  temp = randint0(ACT_POWER_MAX - ACT_POWER_BASE + 1);
+		while (temp == EF_ENLIST_EARTH - EF_POWER_BASE)
+		  temp = randint0(EF_POWER_MAX - EF_POWER_BASE + 1);
 
 		if (temp < 4) 
 		  {
-		    get_activation(TRUE, ACT_POWER_BASE + element, o_ptr);
-		    potential += act_cost[ACT_POWER_BASE + element 
-					  - ACT_RANDOM_BASE] / 2;
+		    get_activation(TRUE, EF_POWER_BASE + element, o_ptr);
+		    potential += effect_power(EF_POWER_BASE + element) / 2;
 		  }
 		else 
 		  {
-		    get_activation(TRUE, ACT_POWER_BASE + temp, o_ptr);
-		    potential += act_cost[ACT_POWER_BASE + temp 
-					  - ACT_RANDOM_BASE] / 2;
+		    get_activation(TRUE, EF_POWER_BASE + temp, o_ptr);
+		    potential += effect_power(EF_POWER_BASE + temp) / 2;
 		  }
 
 		/* ...plus help to activate it */
@@ -2452,9 +2371,9 @@ static void add_properties(object_type *o_ptr)
     get_quality(TRUE, ADD_AC, randint1(o_ptr->to_a), o_ptr);
 
   /* Objects without an activation may get one now, if affordable */
-  if ((randint1(3) == 1) && !o_ptr->activation)
-    get_activation(TRUE, randint0(ACT_RANDOM_MAX - ACT_RANDOM_BASE + 1) + 
-		   ACT_RANDOM_BASE, o_ptr);
+  if ((randint1(3) == 1) && !o_ptr->effect)
+    get_activation(TRUE, randint0(EF_RAND_MAX - EF_RAND_BASE + 1) + 
+		   EF_RAND_BASE, o_ptr);
 
   /* Sometimes, also add a new pval-dependant quality.  Infravision 
    * and magical item mastery are not on offer.  
@@ -2609,7 +2528,7 @@ static void j_make_terrible(object_type *o_ptr)
 
   
   /* Greatly decrease the chance for an activation. */
-  if ((o_ptr->activation) && (randint1(3) != 1)) o_ptr->activation = 0;
+  if ((o_ptr->effect) && (randint1(3) != 1)) o_ptr->effect = 0;
   
   
   /* Force the artifact though the gauntlet two or three times. */
@@ -2840,9 +2759,9 @@ static void j_remove_contradictory(object_type *o_ptr)
 	o_ptr->bonus_stat[i] = 6;
     }
   if ((o_ptr->flags_curse & CF_NO_TELEPORT) && 
-      ((o_ptr->activation = ACT_RANDOM_TELEPORT1) || 
-       (o_ptr->activation = ACT_RANDOM_TELEPORT2)))
-    o_ptr->activation = 0;
+      ((o_ptr->effect = EF_RAND_TELEPORT1) || 
+       (o_ptr->effect = EF_RAND_TELEPORT2)))
+    o_ptr->effect = 0;
 
   /* Low resist means object is proof against that element */
   if (o_ptr->percent_res[P_RES_ACID] < RES_LEVEL_BASE) 

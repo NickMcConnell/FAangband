@@ -29,6 +29,7 @@
  */
 
 #include "angband.h"
+#include "effects.h"
 
 /** A global variable whose contents will be bartered to acquire powers. */
 static int potential = 0;
@@ -1130,7 +1131,7 @@ static void initialize_artifact(int a_idx)
   
   a_ptr->level = 0;
   a_ptr->rarity = 0;
-  a_ptr->activation = 0;
+  a_ptr->effect = 0;
   
   /* Default resists, bonuses, multiples */
   for (i = 0; i < MAX_P_RES; i++)
@@ -1252,67 +1253,67 @@ static void initialize_artifact(int a_idx)
 	if (k_ptr->sval == SV_DRAGON_BLACK)
 	  {
 	    power_of_base_object = 750;
-	    base_object_activation = ACT_DRAGON_BLACK;
+	    base_object_activation = EF_DRAGON_BLACK;
 	  }
 	if (k_ptr->sval == SV_DRAGON_BLUE)
 	  {
 	    power_of_base_object = 750;
-	    base_object_activation = ACT_DRAGON_BLUE;
+	    base_object_activation = EF_DRAGON_BLUE;
 	  }
 	if (k_ptr->sval == SV_DRAGON_WHITE)
 	  {
 	    power_of_base_object = 750;
-	    base_object_activation = ACT_DRAGON_WHITE;
+	    base_object_activation = EF_DRAGON_WHITE;
 	  }
 	if (k_ptr->sval == SV_DRAGON_RED)
 	  {
 	    power_of_base_object = 750;
-	    base_object_activation = ACT_DRAGON_RED;
+	    base_object_activation = EF_DRAGON_RED;
 	  }
 	if (k_ptr->sval == SV_DRAGON_GREEN)
 	  {
 	    power_of_base_object = 1000;
-	    base_object_activation = ACT_DRAGON_GREEN;
+	    base_object_activation = EF_DRAGON_GREEN;
 	  }
 	if (k_ptr->sval == SV_DRAGON_MULTIHUED)
 	  {
 	    power_of_base_object = 1500;
-	    base_object_activation = ACT_DRAGON_MULTIHUED;
+	    base_object_activation = EF_DRAGON_MULTIHUED;
 	  }
 	if (k_ptr->sval == SV_DRAGON_SHINING)
 	  {
 	    power_of_base_object = 1000;
-	    base_object_activation = ACT_DRAGON_SHINING;
+	    base_object_activation = EF_DRAGON_SHINING;
 	  }
 	if (k_ptr->sval == SV_DRAGON_LAW)
 	  {
 	    power_of_base_object = 1250;
-	    base_object_activation = ACT_DRAGON_LAW;
+	    base_object_activation = EF_DRAGON_LAW;
 	  }
 	if (k_ptr->sval == SV_DRAGON_BRONZE)
 	  {
 	    power_of_base_object = 750;
-	    base_object_activation = ACT_DRAGON_BRONZE;
+	    base_object_activation = EF_DRAGON_BRONZE;
 	  }
 	if (k_ptr->sval == SV_DRAGON_GOLD)
 	  {
 	    power_of_base_object = 750;
-	    base_object_activation = ACT_DRAGON_GOLD;
+	    base_object_activation = EF_DRAGON_GOLD;
 	  }
 	if (k_ptr->sval == SV_DRAGON_CHAOS)
 	  {
 	    power_of_base_object = 1250;
-	    base_object_activation = ACT_DRAGON_CHAOS;
+	    base_object_activation = EF_DRAGON_CHAOS;
 	  }
 	if (k_ptr->sval == SV_DRAGON_BALANCE)
 	  {
 	    power_of_base_object = 1750;
-	    base_object_activation = ACT_DRAGON_BALANCE;
+	    base_object_activation = EF_DRAGON_BALANCE;
 	  }
 	if (k_ptr->sval == SV_DRAGON_POWER)
 	  {
 	    power_of_base_object = 2250;
-	    base_object_activation = ACT_DRAGON_POWER;
+	    base_object_activation = EF_DRAGON_POWER;
 	  }
 	break;
       }
@@ -1356,7 +1357,7 @@ static void initialize_artifact(int a_idx)
   a_ptr->flags_obj |= (OF_FIRE_PROOF);
   a_ptr->flags_obj |= (OF_COLD_PROOF);
   
-  a_ptr->activation = base_object_activation;
+  a_ptr->effect = base_object_activation;
   
   /* The total potential of an artifact ranges from 1750 to 8750, 
    * biased towards the lesser figure. */
@@ -1501,11 +1502,11 @@ static void choose_basic_theme(int a_idx)
 	    if (randint1(3) != 1)
 	      {
 		if (potential >= 6000) 
-		  a_ptr->activation = ACT_RANDOM_FIRE3;
+		  a_ptr->effect = EF_RAND_FIRE3;
 		else if (potential >= 3000)
-		  a_ptr->activation = ACT_RANDOM_FIRE2;
+		  a_ptr->effect = EF_RAND_FIRE2;
 		else 
-		  a_ptr->activation = ACT_RANDOM_FIRE1;
+		  a_ptr->effect = EF_RAND_FIRE1;
 	      }
 	    /* Brand the weapon with fire. */
 	    get_quality(TRUE, BRAND_FIRE, 7, a_idx);
@@ -1532,11 +1533,11 @@ static void choose_basic_theme(int a_idx)
 	    if (randint1(3) != 1)
 	      {
 		if (potential >= 6000) 
-		  a_ptr->activation = ACT_RANDOM_COLD3;
+		  a_ptr->effect = EF_RAND_COLD3;
 		else if (potential >= 3000)
-		  a_ptr->activation = ACT_RANDOM_COLD2;
+		  a_ptr->effect = EF_RAND_COLD2;
 		else 
-		  a_ptr->activation = ACT_RANDOM_COLD1;
+		  a_ptr->effect = EF_RAND_COLD1;
 	      }
 	    /* Brand the weapon with frost. */
 	    get_quality(TRUE, BRAND_COLD, 7, a_idx);
@@ -1563,11 +1564,11 @@ static void choose_basic_theme(int a_idx)
 	    if (randint1(3) != 1)
 	      {
 		if (potential >= 6000) 
-		  a_ptr->activation = ACT_RANDOM_ACID3;
+		  a_ptr->effect = EF_RAND_ACID3;
 		else if (potential >= 3000)
-		  a_ptr->activation = ACT_RANDOM_ACID2;
+		  a_ptr->effect = EF_RAND_ACID2;
 		else 
-		  a_ptr->activation = ACT_RANDOM_ACID1;
+		  a_ptr->effect = EF_RAND_ACID1;
 	      }
 	    /* Brand the weapon with acid. */
 	    get_quality(TRUE, BRAND_ACID, 7, a_idx);
@@ -1587,11 +1588,11 @@ static void choose_basic_theme(int a_idx)
 	    if (randint1(3) != 1)
 	      {
 		if (potential >= 6000) 
-		  a_ptr->activation = ACT_RANDOM_ELEC3;
+		  a_ptr->effect = EF_RAND_ELEC3;
 		else if (potential >= 3000)
-		  a_ptr->activation = ACT_RANDOM_ELEC2;
+		  a_ptr->effect = EF_RAND_ELEC2;
 		else 
-		  a_ptr->activation = ACT_RANDOM_ELEC1;
+		  a_ptr->effect = EF_RAND_ELEC1;
 	      }
 	    /* Brand the weapon with electricity. */
 	    get_quality(TRUE, BRAND_ELEC, 7, a_idx);
@@ -1611,9 +1612,9 @@ static void choose_basic_theme(int a_idx)
 	    if (randint1(3) != 1)
 	      {	
 		if (potential >= 4500) 
-		  a_ptr->activation = ACT_RANDOM_POIS2;
+		  a_ptr->effect = EF_RAND_POIS2;
 		else 
-		  a_ptr->activation = ACT_RANDOM_POIS1;
+		  a_ptr->effect = EF_RAND_POIS1;
 	      }
 	    /* Brand the weapon with poison. */
 	    get_quality(TRUE, BRAND_POIS, 7, a_idx);
@@ -1642,7 +1643,7 @@ static void choose_basic_theme(int a_idx)
 		  /* Possibly assign an activation for free. */
 		  if (randint1(3) == 1)
 		    {
-		      a_ptr->activation = ACT_RANDOM_REGAIN;
+		      a_ptr->effect = EF_RAND_REGAIN;
 		    }
 		  
 		  /* Grant hold life. */
@@ -1686,7 +1687,7 @@ static void choose_basic_theme(int a_idx)
 	    /* Possibly assign an activation for free. */
 	    if (randint1(3) == 1)
 	      {
-		a_ptr->activation = ACT_RANDOM_RESTORE;
+		a_ptr->effect = EF_RAND_RESTORE;
 	      }
 	    
 	    /* Grant resist nexus. */
@@ -1729,9 +1730,9 @@ static void choose_basic_theme(int a_idx)
 	    if (randint1(3) != 1)
 	      {
 		if (potential < 4500) 
-		  a_ptr->activation = ACT_RANDOM_LIGHT1;
+		  a_ptr->effect = EF_RAND_LIGHT1;
 		else
-		  a_ptr->activation = ACT_RANDOM_LIGHT2;
+		  a_ptr->effect = EF_RAND_LIGHT2;
 	      }
 	    
 	    /* Grant resist light and dark. */
@@ -1827,7 +1828,7 @@ static void choose_basic_theme(int a_idx)
 	    /* Possibly assign an activation for free. */
 	    if ((randint1(3) != 1) && (potential >= 2500))
 	      {
-		a_ptr->activation = ACT_RANDOM_SLOW_FOE;
+		a_ptr->effect = EF_RAND_SLOW_FOE;
 	      }
 	    
 	    /* Provide regenerative powers. */
@@ -1845,7 +1846,7 @@ static void choose_basic_theme(int a_idx)
 	    /* Possibly assign an activation for free. */
 	    if ((randint1(3) != 1) && (potential >= 2500))
 	      {
-		a_ptr->activation = ACT_RANDOM_SLEEP_FOE;
+		a_ptr->effect = EF_RAND_SLEEP_FOE;
 	      }
 	    
 	    /* Provide resistance to blindness. */
@@ -1872,7 +1873,7 @@ static void choose_basic_theme(int a_idx)
 	    /* Possibly assign an activation for free. */
 	    if ((randint1(3) != 1) && (potential >= 2500))
 	      {
-		a_ptr->activation = ACT_RANDOM_TURN_FOE;
+		a_ptr->effect = EF_RAND_TURN_FOE;
 	      }
 	    
 	    /* Provide permanant light. */
@@ -1893,7 +1894,7 @@ static void choose_basic_theme(int a_idx)
 	    /* Possibly assign an activation for free. */
 	    if ((randint1(3) != 1) && (potential >= 2500))
 	      {
-		a_ptr->activation = ACT_RANDOM_CONFU_FOE;
+		a_ptr->effect = EF_RAND_CONFU_FOE;
 	      }
 	    
 	    /* Provide resistance to confusion. */
@@ -1919,7 +1920,7 @@ static void choose_basic_theme(int a_idx)
 	    if (potential >= 4000)
 	      {
 		/* Assign an activation for free. */
-		a_ptr->activation = ACT_RANDOM_CHAOS;
+		a_ptr->effect = EF_RAND_CHAOS;
 		
 		/* Resist chaos and disenchantment. */
 		get_quality(TRUE, RES_CHAOS, 0, a_idx);
@@ -1943,7 +1944,7 @@ static void choose_basic_theme(int a_idx)
 	    if (potential >= 4000)
 	      {
 		/* Assign an activation for free. */
-		a_ptr->activation = ACT_RANDOM_SHARD_SOUND;
+		a_ptr->effect = EF_RAND_SHARD_SOUND;
 		
 		/* Resist shards, sound, and confusion. */
 		get_quality(TRUE, RES_SHARD, 0, a_idx);
@@ -1961,7 +1962,7 @@ static void choose_basic_theme(int a_idx)
 	    /* Possibly assign an activation for free. */
 	    if (randint1(3) != 1)
 	      {
-		a_ptr->activation = ACT_RANDOM_EARTHQUAKE;
+		a_ptr->effect = EF_RAND_EARTHQUAKE;
 	      }
 	    
 	    /* Enhance the damage dice. */
@@ -2001,7 +2002,7 @@ static void choose_basic_theme(int a_idx)
 	    /* Possibly assign an activation for free. */
 	    if (randint1(3) != 1)
 	      {
-		a_ptr->activation = ACT_RANDOM_DETECT_MONSTERS;
+		a_ptr->effect = EF_RAND_DETECT_MONSTERS;
 	      }
 	    /* Naturally, the appropriate slay. */
 	    get_quality(TRUE, SLAY_ANIMAL, 7, a_idx);
@@ -2028,9 +2029,9 @@ static void choose_basic_theme(int a_idx)
 	    if (randint1(3) != 1)
 	      {
 		if (potential >= 3000)
-		  a_ptr->activation = ACT_RANDOM_STARLIGHT;
+		  a_ptr->effect = EF_RAND_STARLIGHT;
 		else
-		  a_ptr->activation = ACT_RANDOM_LINE_LIGHT;
+		  a_ptr->effect = EF_RAND_LINE_LIGHT;
 	      }
 	    /* Naturally, the appropriate slays. */
 	    get_quality(TRUE, SLAY_ORC, (randint1(3) == 1 ? 15 : 10), a_idx);
@@ -2057,9 +2058,9 @@ static void choose_basic_theme(int a_idx)
 	    if ((randint1(3) != 1) && (potential > 2500))
 	      {
 		if (potential < 5000) 
-		  a_ptr->activation = ACT_RANDOM_SMITE_UNDEAD;
+		  a_ptr->effect = EF_RAND_SMITE_UNDEAD;
 		else
-		  a_ptr->activation = ACT_RANDOM_DISPEL_UNDEAD;
+		  a_ptr->effect = EF_RAND_DISPEL_UNDEAD;
 	      }
 	    /* Grant slay undead and see invisible. */
 	    get_quality(TRUE, SLAY_UNDEAD, (randint1(3) == 1 ? 15 : 10), a_idx);
@@ -2082,15 +2083,15 @@ static void choose_basic_theme(int a_idx)
 	    if (randint1(3) != 1)
 	      {
 		if ((potential >= 5000) && (randint1(2) == 1))
-		  a_ptr->activation = ACT_RANDOM_DISPEL_EVIL;
+		  a_ptr->effect = EF_RAND_DISPEL_EVIL;
 		else if (potential >= 5000)
-		  a_ptr->activation = ACT_RANDOM_BANISH_EVIL;
+		  a_ptr->effect = EF_RAND_BANISH_EVIL;
 		else if ((potential >= 3500) && (randint1(3) != 1))
-		  a_ptr->activation = ACT_RANDOM_HOLY_ORB;
+		  a_ptr->effect = EF_RAND_HOLY_ORB;
 		else if (potential >= 2000)
-		  a_ptr->activation = ACT_RANDOM_PROT_FROM_EVIL;
+		  a_ptr->effect = EF_RAND_PROT_FROM_EVIL;
 		else
-		  a_ptr->activation = ACT_RANDOM_DETECT_EVIL;
+		  a_ptr->effect = EF_RAND_DETECT_EVIL;
 	      }
 	    /* Naturally, the appropriate slay. */
 	    get_quality(TRUE, SLAY_EVIL, (randint1(3) == 1 ? 7 : 5), a_idx);
@@ -2117,7 +2118,7 @@ static void choose_basic_theme(int a_idx)
 	    /* Possibly assign an activation for free. */
 	    if ((randint1(3) != 1) && (potential > 2500))
 	      {
-		a_ptr->activation = ACT_RANDOM_SMITE_DEMON;
+		a_ptr->effect = EF_RAND_SMITE_DEMON;
 	      }
 	    /* Naturally, the appropriate slay. */
 	    get_quality(TRUE, SLAY_DEMON, (randint1(3) == 1 ? 15 : 10), a_idx);
@@ -2141,7 +2142,7 @@ static void choose_basic_theme(int a_idx)
 	    /* Possibly assign an activation for free. */
 	    if ((randint1(3) != 1) && (potential > 2500))
 	      {
-		a_ptr->activation = ACT_RANDOM_SMITE_DRAGON;
+		a_ptr->effect = EF_RAND_SMITE_DRAGON;
 	      }
 	    /* Naturally, the appropriate slay. */
 	    get_quality(TRUE, SLAY_DRAGON, (randint1(3) == 1 ? 15 : 10), a_idx);
@@ -2172,9 +2173,9 @@ static void choose_basic_theme(int a_idx)
 	    if (randint1(3) != 1)
 	      {
 		if (potential >= 5000)
-		  a_ptr->activation = ACT_RANDOM_SHIELD;
+		  a_ptr->effect = EF_RAND_SHIELD;
 		else 
-		  a_ptr->activation = ACT_RANDOM_BLESS;
+		  a_ptr->effect = EF_RAND_BLESS;
 	      }
 	    
 	    /* Grant a bonus to armour class. */
@@ -2237,9 +2238,9 @@ static void choose_basic_theme(int a_idx)
 	if (potential > randint1(5000))
 	  {
 	    if (randint1(2) == 1) 
-	      a_ptr->activation = ACT_RANDOM_SUPER_SHOOTING;
+	      a_ptr->effect = EF_RAND_SUPER_SHOOTING;
 	    else 
-	      a_ptr->activation = ACT_RANDOM_BRAND_MISSILE;
+	      a_ptr->effect = EF_RAND_BRAND_MISSILE;
 	  }
 	
 	/* Hack - avoid boring bows. */
@@ -2264,9 +2265,9 @@ static void choose_basic_theme(int a_idx)
 	    if ((randint1(2) == 1) && (potential >= 3000))
 	      {
 		if (potential >= 5500)
-		  a_ptr->activation = ACT_RANDOM_RESIST_ALL;
+		  a_ptr->effect = EF_RAND_RESIST_ALL;
 		else
-		  a_ptr->activation = ACT_RANDOM_RESIST_ELEMENTS;
+		  a_ptr->effect = EF_RAND_RESIST_ELEMENTS;
 	      }
 	    
 	    if (randint1(5) != 1)
@@ -2292,9 +2293,9 @@ static void choose_basic_theme(int a_idx)
 	    if (randint1(3) != 1)
 	      {
 		if (randint1(2) == 1)
-		  a_ptr->activation = ACT_RANDOM_HEAL3;
+		  a_ptr->effect = EF_RAND_HEAL3;
 		else
-		  a_ptr->activation = ACT_RANDOM_REGAIN;
+		  a_ptr->effect = EF_RAND_REGAIN;
 	      }
 	    
 	    /* Resist nether and hold life. */
@@ -2346,7 +2347,7 @@ static void choose_basic_theme(int a_idx)
 	    /* Possibly assign an activation for free. */
 	    if ((randint1(3) == 1) && (potential >= 4000))
 	      {
-		a_ptr->activation = ACT_RANDOM_SHIELD;
+		a_ptr->effect = EF_RAND_SHIELD;
 	      }
 	    
 	    /* Increase both base and magical ac. */
@@ -2379,9 +2380,9 @@ static void choose_basic_theme(int a_idx)
 	    if (randint1(3) != 1)
 	      {
 		if (randint1(2) == 1)
-		  a_ptr->activation = ACT_RANDOM_TELEPORT1;
+		  a_ptr->effect = EF_RAND_TELEPORT1;
 		else
-		  a_ptr->activation = ACT_RANDOM_BLESS;
+		  a_ptr->effect = EF_RAND_BLESS;
 	      }
 	    
 	    /* Resist dark. */
@@ -2416,7 +2417,7 @@ static void choose_basic_theme(int a_idx)
 	    /* Possibly assign an activation for free. */
 	    if (randint1(3) != 1)
 	      {
-		a_ptr->activation = ACT_RANDOM_CURE;
+		a_ptr->effect = EF_RAND_CURE;
 	      }
 	    
 	    /* Resist poison. */
@@ -2439,9 +2440,9 @@ static void choose_basic_theme(int a_idx)
 	    if (randint1(3) != 1)
 	      {
 		if (potential < 4500) 
-		  a_ptr->activation = ACT_RANDOM_LIGHT1;
+		  a_ptr->effect = EF_RAND_LIGHT1;
 		else
-		  a_ptr->activation = ACT_RANDOM_LIGHT2;
+		  a_ptr->effect = EF_RAND_LIGHT2;
 	      }
 	    
 	    /* Grant permanant light. */
@@ -2474,7 +2475,7 @@ static void choose_basic_theme(int a_idx)
 		/* Assign an activation for free. */
 		if (randint1(3) != 1)
 		  {
-		    a_ptr->activation = ACT_RANDOM_FIRE3;
+		    a_ptr->effect = EF_RAND_FIRE3;
 		  }
 		
 		/* Immunity. */
@@ -2493,7 +2494,7 @@ static void choose_basic_theme(int a_idx)
 		/* Assign an activation for free. */
 		if (randint1(3) != 1)
 		  {
-		    a_ptr->activation = ACT_RANDOM_COLD3;
+		    a_ptr->effect = EF_RAND_COLD3;
 		  }
 		
 		/* Immunity. */
@@ -2512,7 +2513,7 @@ static void choose_basic_theme(int a_idx)
 		/* Assign an activation for free. */
 		if (randint1(3) != 1)
 		  {
-		    a_ptr->activation = ACT_RANDOM_ACID3;
+		    a_ptr->effect = EF_RAND_ACID3;
 		  }
 		
 		/* Immunity. */
@@ -2524,7 +2525,7 @@ static void choose_basic_theme(int a_idx)
 		/* Assign an activation for free. */
 		if (randint1(3) != 1)
 		  {
-		    a_ptr->activation = ACT_RANDOM_ELEC3;
+		    a_ptr->effect = EF_RAND_ELEC3;
 		  }
 		
 		/* Immunity. */
@@ -2565,9 +2566,9 @@ static void choose_basic_theme(int a_idx)
 	    if ((randint1(3) == 1) && (potential >= 3000))
 	      {
 		if (potential >= 5500)
-		  a_ptr->activation = ACT_RANDOM_RESIST_ALL;
+		  a_ptr->effect = EF_RAND_RESIST_ALL;
 		else
-		  a_ptr->activation = ACT_RANDOM_RESIST_ELEMENTS;
+		  a_ptr->effect = EF_RAND_RESIST_ELEMENTS;
 	      }
 	    
 	    if (randint1(5) != 1)
@@ -2609,7 +2610,7 @@ static void choose_basic_theme(int a_idx)
 	    /* Possibly assign an activation for free. */
 	    if ((randint1(3) == 1) && (potential >= 4000))
 	      {
-		a_ptr->activation = ACT_RANDOM_SHIELD;
+		a_ptr->effect = EF_RAND_SHIELD;
 	      }
 	    
 	    /* Increase magical ac. */
@@ -2720,11 +2721,11 @@ static void choose_basic_theme(int a_idx)
 	  {
 	    /* Assign an activation,... */
 	    if (potential >= 4000)
-	      a_ptr->activation = ACT_RANDOM_RECALL;
+	      a_ptr->effect = EF_RAND_RECALL;
 	    else if (potential >= 2000)
-	      a_ptr->activation = ACT_RANDOM_TELEPORT2;
+	      a_ptr->effect = EF_RAND_TELEPORT2;
 	    else
-	      a_ptr->activation = ACT_RANDOM_TELEPORT1;
+	      a_ptr->effect = EF_RAND_TELEPORT1;
 	    
 	    /* ...but not for free. */
 	    potential = 2 * potential / 3;
@@ -2750,11 +2751,11 @@ static void choose_basic_theme(int a_idx)
 	    if (randint1(2) == 1)
 	      {
 		if (potential >= 5500)
-		  a_ptr->activation = ACT_RANDOM_HEAL3;
+		  a_ptr->effect = EF_RAND_HEAL3;
 		else if (potential >= 3000)
-		  a_ptr->activation = ACT_RANDOM_HEAL2;
+		  a_ptr->effect = EF_RAND_HEAL2;
 		else
-		  a_ptr->activation = ACT_RANDOM_HEAL1;
+		  a_ptr->effect = EF_RAND_HEAL1;
 	      }
 	    
 	    /* Grant regenerative powers. */
@@ -2768,7 +2769,7 @@ static void choose_basic_theme(int a_idx)
 	  {
 	    /* Possibly assign an activation for free. */
 	    if ((randint1(3) != 1) && (potential >= 2500))
-	      a_ptr->activation = ACT_RANDOM_STORM_DANCE;
+	      a_ptr->effect = EF_RAND_STORM_DANCE;
 	    
 	    /* Grant feather fall. */
 	    get_quality(TRUE, FEATHER, 0, a_idx);
@@ -2781,7 +2782,7 @@ static void choose_basic_theme(int a_idx)
 	  {
 	    /* Possibly assign an activation for free. */
 	    if (randint1(3) != 1)
-	      a_ptr->activation = ACT_RANDOM_DETECT_MONSTERS;
+	      a_ptr->effect = EF_RAND_DETECT_MONSTERS;
 	    
 	    /* Grant regeneration and slow digest. */
 	    get_quality(TRUE, REGEN, 0, a_idx);
@@ -2796,10 +2797,10 @@ static void choose_basic_theme(int a_idx)
 	  }
 	
 	/* Possibly assign a speed activation for free. */
-	if ((randint1(4) == 1) && (a_ptr->activation == 0) && 
+	if ((randint1(4) == 1) && (a_ptr->effect == 0) && 
 	    (potential >= 2000))
 	  {
-	    a_ptr->activation = ACT_RANDOM_SPEED;
+	    a_ptr->effect = EF_RAND_SPEED;
 	  }
 	
 	break;
@@ -2817,7 +2818,7 @@ static void choose_basic_theme(int a_idx)
 	  {
 	    /* Possibly assign an activation for free. */
 	    if (randint1(2) == 1)
-	      a_ptr->activation = ACT_RANDOM_SLEEP_FOES;
+	      a_ptr->effect = EF_RAND_SLEEP_FOES;
 	    
 	    /* Bonus to stealth. */
 	    get_quality(FALSE, STEALTH, randint1(4), a_idx);
@@ -2829,9 +2830,9 @@ static void choose_basic_theme(int a_idx)
 	    if (randint1(2) == 1)
 	      {
 		if (randint1(2) == 1)
-		  a_ptr->activation = ACT_RANDOM_CONFU_FOES;
+		  a_ptr->effect = EF_RAND_CONFU_FOES;
 		else
-		  a_ptr->activation = ACT_RANDOM_TURN_FOES;
+		  a_ptr->effect = EF_RAND_TURN_FOES;
 	      }
 	    
 	  }
@@ -2841,7 +2842,7 @@ static void choose_basic_theme(int a_idx)
 	    /* Possibly assign an activation for free. */
 	    if ((randint1(4) == 1) && (potential >= 3000))
 	      {
-		a_ptr->activation = ACT_RANDOM_SHIELD;
+		a_ptr->effect = EF_RAND_SHIELD;
 	      }
 	    
 	    /* Increase both base and magical ac. */
@@ -2854,9 +2855,9 @@ static void choose_basic_theme(int a_idx)
 	  {
 	    /* Assign an activation for free. */
 	    if (randint1(2) == 1)
-	      a_ptr->activation = ACT_RANDOM_DETECT_MONSTERS;
+	      a_ptr->effect = EF_RAND_DETECT_MONSTERS;
 	    else
-	      a_ptr->activation = ACT_RANDOM_DETECT_EVIL;
+	      a_ptr->effect = EF_RAND_DETECT_EVIL;
 	  }
 	/* ...that is aware of the world around. */
 	else if (selection < 60)
@@ -2865,11 +2866,11 @@ static void choose_basic_theme(int a_idx)
 	    if (randint1(3) != 1)
 	      {
 		if ((potential >= 4000) && (randint1(3) != 1)) 
-		  a_ptr->activation = ACT_RANDOM_DETECT_ALL;
+		  a_ptr->effect = EF_RAND_DETECT_ALL;
 		else if (potential >= 3000) 
-		  a_ptr->activation = ACT_RANDOM_MAGIC_MAP;
+		  a_ptr->effect = EF_RAND_MAGIC_MAP;
 		else 
-		  a_ptr->activation = ACT_RANDOM_DETECT_D_S_T;
+		  a_ptr->effect = EF_RAND_DETECT_D_S_T;
 	      }
 	    
 	    /* Bonus to searching. */
@@ -2880,7 +2881,7 @@ static void choose_basic_theme(int a_idx)
 	  {
 	    /* Possibly assign an activation for free. */
 	    if (randint1(2) == 1)
-	      a_ptr->activation = ACT_RANDOM_SLOW_FOES;
+	      a_ptr->effect = EF_RAND_SLOW_FOES;
 	    
 	    /* Resist chaos, dark, or nether */
 	    temp = randint1(3);
@@ -2930,7 +2931,7 @@ static void choose_basic_theme(int a_idx)
 	  {
 	    /* Possibly assign an activation for free. */
 	    if ((randint1(2) == 1) && (potential >= 4500))
-	      a_ptr->activation = ACT_RANDOM_CURE;
+	      a_ptr->effect = EF_RAND_CURE;
 	    
 	    /* Grant resistance to confusion and sound. */
 	    get_quality(FALSE, RES_CONFU, 0, a_idx);
@@ -2943,9 +2944,9 @@ static void choose_basic_theme(int a_idx)
 	    if (randint1(3) != 1)
 	      {
 		if (potential >= 3750)
-		  a_ptr->activation = ACT_RANDOM_DETECT_ALL;
+		  a_ptr->effect = EF_RAND_DETECT_ALL;
 		else
-		  a_ptr->activation = ACT_RANDOM_DETECT_D_S_T;
+		  a_ptr->effect = EF_RAND_DETECT_D_S_T;
 	      }
 	    
 	    /* Grant resistance to blindness and see invisible. */
@@ -2973,9 +2974,9 @@ static void choose_basic_theme(int a_idx)
 	  {
 	    /* Possibly assign an activation for free. */
 	    if ((potential >= 2500) && (randint1(3) != 1))
-	      a_ptr->activation = ACT_RANDOM_FRIGHTEN_ALL;
+	      a_ptr->effect = EF_RAND_FRIGHTEN_ALL;
 	    else
-	      a_ptr->activation = ACT_RANDOM_HEROISM;
+	      a_ptr->effect = EF_RAND_HEROISM;
 	    
 	    /* No fear. */
 	    get_quality(TRUE, RES_FEAR, 0, a_idx);
@@ -2997,7 +2998,7 @@ static void choose_basic_theme(int a_idx)
 	    if (potential < 2500) break;
 	    
 	    /* Assign an activation for free. */
-	    a_ptr->activation = ACT_RANDOM_IDENTIFY;
+	    a_ptr->effect = EF_RAND_IDENTIFY;
 	  }
 	/* ...which can focus healing magics. */
 	else if (selection < 90)
@@ -3006,11 +3007,11 @@ static void choose_basic_theme(int a_idx)
 	    if (randint1(3) != 1)
 	      {
 		if (potential >= 4000)
-		  a_ptr->activation = ACT_RANDOM_HEAL3;
+		  a_ptr->effect = EF_RAND_HEAL3;
 		else if (potential >= 2500)
-		  a_ptr->activation = ACT_RANDOM_HEAL2;
+		  a_ptr->effect = EF_RAND_HEAL2;
 		else
-		  a_ptr->activation = ACT_RANDOM_HEAL1;
+		  a_ptr->effect = EF_RAND_HEAL1;
 	      }
 	    
 	    /* Grant regeneration. */
@@ -3095,20 +3096,20 @@ static void choose_basic_theme(int a_idx)
 	    if ((potential >= 500) && (randint1(3) != 1))
 	      {
 		if (temp == 1)
-		  a_ptr->activation = ACT_RANDOM_FIRE1;
+		  a_ptr->effect = EF_RAND_FIRE1;
 		if (temp == 2)
-		  a_ptr->activation = ACT_RANDOM_COLD1;
+		  a_ptr->effect = EF_RAND_COLD1;
 		if (temp == 3)
-		  a_ptr->activation = ACT_RANDOM_ACID1;
+		  a_ptr->effect = EF_RAND_ACID1;
 		if (temp == 4)
-		  a_ptr->activation = ACT_RANDOM_ELEC1;
+		  a_ptr->effect = EF_RAND_ELEC1;
 	      }
 	  }
 	/* ...with the cunning of a rogue of legend. */
 	else if (selection < 75)
 	  {
 	    /* Assign an activation for free. */
-	    a_ptr->activation = ACT_RANDOM_DISARM;
+	    a_ptr->effect = EF_RAND_DISARM;
 	    
 	    /* Bonus to stealth. */
 	    get_quality(FALSE, STEALTH, randint1(4), a_idx);
@@ -3136,7 +3137,7 @@ static void choose_basic_theme(int a_idx)
 	    if (potential < 3500) break;
 	    
 	    /* Always grant an activation, but not for free. */
-	    a_ptr->activation = ACT_RANDOM_SUPER_SHOOTING;
+	    a_ptr->effect = EF_RAND_SUPER_SHOOTING;
 	    potential -= 750;
 	    
 	    /* Add equal bonuses to Skill and to Deadliness. */
@@ -3798,7 +3799,7 @@ static void make_terrible(int a_idx)
 
   
   /* Greatly decrease the chance for an activation. */
-  if ((a_ptr->activation) && (randint1(3) != 1)) a_ptr->activation = 0;
+  if ((a_ptr->effect) && (randint1(3) != 1)) a_ptr->effect = 0;
   
   
   /* Force the artifact though the gauntlet two or three times. */
@@ -4069,9 +4070,9 @@ static void remove_contradictory(int a_idx)
 	a_ptr->bonus_stat[i] = 6;
     }
   if ((a_ptr->flags_curse & CF_NO_TELEPORT) && 
-      ((a_ptr->activation = ACT_RANDOM_TELEPORT1) || 
-       (a_ptr->activation = ACT_RANDOM_TELEPORT2)))
-    a_ptr->activation = 0;
+      ((a_ptr->effect = EF_RAND_TELEPORT1) || 
+       (a_ptr->effect = EF_RAND_TELEPORT2)))
+    a_ptr->effect = 0;
 }
 
 
