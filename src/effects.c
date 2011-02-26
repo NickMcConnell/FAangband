@@ -2073,27 +2073,21 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
 
     case EF_GWINDOR:
       {
-	msg_print("The lantern wells with clear light...");
 	lite_area(damroll(2, 15), 3);
-	o_ptr->timeout = randint0(10) + 10;
 	return TRUE;
       }
     case EF_DWARVES:
       {
-	msg_print("The silmaril shows the Light of the Trees...");
 	wiz_lite(FALSE);
 	(void)detect_all(DUNGEON_WID, TRUE);
-	o_ptr->timeout = randint0(200) + 200;
 	return TRUE;
       }
     case EF_ELESSAR:
       {
-	msg_print("The elfstone glows deep green...");
 	msg_print("You feel a warm tingling inside...");
 	(void)hp_player(500);
 	(void)set_cut(0);
 	restore_level();
-	o_ptr->timeout = 500;
 	return TRUE;
       }
     case EF_RAZORBACK:
@@ -2108,7 +2102,6 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
 	    msg_print("You are surrounded by lightning...");
 	    for (i = 0; i < 8; i++) fire_ball(GF_ELEC, ddd[i], 150, 3, FALSE);
 	  }
-	o_ptr->timeout = 200;
 	return TRUE;
       }
     case EF_BLADETURNER:
@@ -2131,219 +2124,164 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
 	    (void)set_oppose_cold(p_ptr->oppose_cold + randint1(50) + 50);
 	    (void)set_oppose_pois(p_ptr->oppose_pois + randint1(50) + 50);
 	  }
-	o_ptr->timeout = 400;
 	return TRUE;
       }
     case EF_SOULKEEPER:
       {
-	msg_print("Your armor glows a bright white...");
 	msg_print("You feel much better...");
 	(void)hp_player(1000);
 	(void)set_cut(0);
-	o_ptr->timeout = 888;
 	return TRUE;
       }
     case EF_ELEMENTS:
       {
-	msg_print("Your shield glows many colours...");
 	(void)set_oppose_acid(p_ptr->oppose_acid + randint1(20) + 20);
 	(void)set_oppose_elec(p_ptr->oppose_elec + randint1(20) + 20);
 	(void)set_oppose_fire(p_ptr->oppose_fire + randint1(20) + 20);
 	(void)set_oppose_cold(p_ptr->oppose_cold + randint1(20) + 20);
-	o_ptr->timeout = 160;
 	return TRUE;
       }
       
     case EF_GIL_GALAD:
       {
-	msg_print("Your shield gleams with blinding light...");
 	fire_sphere(GF_LITE, 0, 75, 6, 20);
 	confu_monsters(3 * plev / 2);
-	o_ptr->timeout = 250;
 	return TRUE;
       }
       
     case EF_NARGOTHROND:
       {
-	msg_print("Your crown glows deep blue...");
 	msg_print("You feel a warm tingling inside...");
 	(void)hp_player(500);
 	(void)set_cut(0);
-	o_ptr->timeout = 500;
 	return TRUE;
       }
       
     case EF_VALINOR:
       {
-	msg_print("Your cloak glows many colours...");
 	(void)set_oppose_acid(p_ptr->oppose_acid + randint1(20) + 20);
 	(void)set_oppose_elec(p_ptr->oppose_elec + randint1(20) + 20);
 	(void)set_oppose_fire(p_ptr->oppose_fire + randint1(20) + 20);
 	(void)set_oppose_cold(p_ptr->oppose_cold + randint1(20) + 20);
 	(void)set_oppose_pois(p_ptr->oppose_pois + randint1(20) + 20);
-	o_ptr->timeout = 200;
 	return TRUE;
       }
     case EF_HOLCOLLETH:
       {
-	msg_print("Your cloak glows deep blue...");
 	sleep_monsters_touch(3 * plev / 2 + 10);
-	o_ptr->timeout = 55;
 	return TRUE;
       }
     case EF_THINGOL:
       {
-	msg_print("Your cloak glows bright yellow...");
 	recharge(180);
-	o_ptr->timeout = 90;
 	return TRUE;
       }
     case EF_MAEGLIN:
       {
-	msg_print("Your gauntlets radiate dark energy...");
-		fire_bolt(GF_SPIRIT, dir, damroll(9, 8));
+	fire_bolt(GF_SPIRIT, dir, damroll(9, 8));
 	take_hit(damroll(1, 6), "the dark arts");
-	o_ptr->timeout = randint0(7) + 7;
 	return TRUE;
       }
     case EF_PAURNIMMEN:
       {
-	msg_print("Your gauntlets are covered in frost...");
 	set_ele_attack(ATTACK_COLD, 50);
-	o_ptr->timeout = randint0(50) + 100;
 	return TRUE;
       }
     case EF_PAURNEN:
       {
-	msg_print("Your gauntlets are covered in acid...");
 	set_ele_attack(ATTACK_ACID, 30);
-	o_ptr->timeout = randint0(50) + 100;
 	return TRUE;
       }
     case EF_DAL:
       {
-	msg_print("Your boots glow deep blue...");
 	(void)set_afraid(0);
 	(void)set_poisoned(0);
-	o_ptr->timeout = 5;
 	return TRUE;
       }
       
     case EF_NARTHANC:
       {
-	msg_print("Your dagger is covered in fire...");
-		fire_bolt(GF_FIRE, dir, damroll(6, 8));
-	o_ptr->timeout = randint0(7) + 7;
+	fire_bolt(GF_FIRE, dir, damroll(6, 8));
 	return TRUE;
       }
     case EF_NIMTHANC:
       {
-	msg_print("Your dagger is covered in frost...");
-		fire_bolt(GF_COLD, dir, damroll(5, 8));
-	o_ptr->timeout = randint0(6) + 6;
+	fire_bolt(GF_COLD, dir, damroll(5, 8));
 	return TRUE;
       }
     case EF_DETHANC:
       {
-	msg_print("Your dagger is covered in sparks...");
-		fire_bolt(GF_ELEC, dir, damroll(4, 8));
-	o_ptr->timeout = randint0(5) + 5;
+	fire_bolt(GF_ELEC, dir, damroll(4, 8));
 	return TRUE;
       }
     case EF_RILIA:
       {
-	msg_print("Your dagger throbs deep green...");
-		fire_ball(GF_POIS, dir, 12, 3, FALSE);
-	o_ptr->timeout = randint0(4) + 4;
+	fire_ball(GF_POIS, dir, 12, 3, FALSE);
 	return TRUE;
       }
     case EF_BELANGIL:
       {
-	msg_print("Your dagger is covered in frost...");
-		fire_ball(GF_COLD, dir, 3 * p_ptr->lev / 2, 2, FALSE);
-	o_ptr->timeout = randint0(5) + 5;
+	fire_ball(GF_COLD, dir, 3 * p_ptr->lev / 2, 2, FALSE);
 	return TRUE;
       }
     case EF_ARANRUTH:
       {
-	msg_print("Your sword glows a pale blue...");
-		fire_bolt(GF_COLD, dir, damroll(12, 8));
-	o_ptr->timeout = 300;
+	fire_bolt(GF_COLD, dir, damroll(12, 8));
 	return TRUE;
       }
     case EF_RINGIL:
       {
-	msg_print("Your sword glows an intense blue-white...");
-		fire_arc(GF_ICE, dir, 250, 10, 40);
-	o_ptr->timeout = 200;
+	fire_arc(GF_ICE, dir, 250, 10, 40);
 	return TRUE;
       }
     case EF_NARSIL:
       {
-	msg_print("Your sword glows an intense red...");
-		fire_ball(GF_FIRE, dir, 150, 2, FALSE);
-	o_ptr->timeout = 200;
+	fire_ball(GF_FIRE, dir, 150, 2, FALSE);
 	return TRUE;
       }
 
     case EF_MANWE:
       {
-	msg_print("Your sword glows pure white...");
-		fire_arc(GF_FORCE, dir, 300, 10, 180);
-	o_ptr->timeout = 200;
+	fire_arc(GF_FORCE, dir, 300, 10, 180);
 	return TRUE;
       }
       
     case EF_AEGLOS:
       {
-	msg_print("Your spear glows a bright white...");
-		fire_ball(GF_COLD, dir, 100, 2, FALSE);
-	o_ptr->timeout = 500;
+	fire_ball(GF_COLD, dir, 100, 2, FALSE);
 	return TRUE;
       }
     case EF_LOTHARANG:
       {
-	msg_print("Your battle axe radiates deep purple...");
 	hp_player(damroll(4, 12));
 	(void)set_cut((p_ptr->cut / 2) - 50);
-	o_ptr->timeout = randint0(3) + 3;
 	return TRUE;
       }
     case EF_ULMO:
       {
-	msg_print("Your trident glows deep red...");
-		teleport_monster(dir, 45 + (plev/3));
-	o_ptr->timeout = 75;
+	teleport_monster(dir, 45 + (plev/3));
 	return TRUE;
       }
     case EF_AVAVIR:
       {
-	msg_print("Your scythe glows soft white...");
 	if (!word_recall(randint0(20) + 15))
-	  return TRUE;
-	o_ptr->timeout = 200;
+	  return FALSE;
 	return TRUE;
       }
     case EF_TOTILA:
       {
-	msg_print("Your flail glows in scintillating colours...");
-		confuse_monster(dir, 3 * plev / 2 + 5);
-	o_ptr->timeout = 15;
+	confuse_monster(dir, 3 * plev / 2 + 5);
 	return TRUE;
       }
       
     case EF_FIRESTAR:
       {
-	msg_print("Your morning star rages in fire...");
-		fire_ball(GF_FIRE, dir, 125, 3, FALSE);
-	o_ptr->timeout = 150;
+	fire_ball(GF_FIRE, dir, 125, 3, FALSE);
 	return TRUE;
       }
     case EF_TURMIL:
       {
-	msg_print("Your hammer glows white...");
 	drain_life(dir, 90);
-	o_ptr->timeout = 70;
 	return TRUE;
       }
       

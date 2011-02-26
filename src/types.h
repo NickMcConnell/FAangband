@@ -195,31 +195,30 @@ struct feature_type
  */
 struct object_kind
 {
-  u32b name;		/**< Name (offset) */
-  u32b text;		/**< Text (offset) */
+  char *name;		/**< Name (offset) */
+  char *text;		/**< Text (offset) */
   
+  struct object_kind *next;
+  u32b kidx;
+
   byte tval;		/**< Object type */
   byte sval;		/**< Object sub type */
+  random_value pval; /**< Power for any flags which need it */
   
-  s16b pval;		/**< Object extra info */
-  
-  s16b to_h;		/**< Bonus to hit */
-  s16b to_d;		/**< Bonus to damage */
-  s16b to_a;		/**< Bonus to armor */
-  
+  random_value to_h; /**< Bonus to hit */
+  random_value to_d; /**< Bonus to damage */
+  random_value to_a; /**< Bonus to armor */
   s16b ac;		/**< Base armor */
   
   byte dd, ds;		/**< Damage dice/sides */
   
   s16b weight;		/**< Weight */
 
-  byte activation;      /**< Activation index (if any) -NRM- */
-  
   s32b cost;		/**< Object "base cost" */
   
-  u32b flags_obj;	/**< New object flags -NRM-*/
-  u32b flags_curse;	/**< New curse flags  -NRM- */
-  u32b flags_kind;      /**< New object_kind flags -NRM- */
+  bitflag flags_obj[OF_MAX];	/**< New object flags -NRM-*/
+  bitflag flags_curse[CF_MAX];	/**< New curse flags  -NRM- */
+  bitflag flags_kind[KF_MAX];      /**< New object_kind flags -NRM- */
   
   int percent_res[MAX_P_RES];      /**< Percentage resists -NRM- */
   int bonus_stat[A_MAX];           /**< Stat bonuses       -NRM- */
@@ -231,8 +230,13 @@ struct object_kind
   byte chance[4];	/**< Allocation chance(s) */
   
   byte level;		/**< Level */
-  byte extra;		/**< Something */
+  u16b effect;         /**< Effect this item produces (effects.c) */
+  random_value time;   /**< Recharge time (rods/activation) */
+  random_value charge; /**< Number of charges (staves/wands) */
   
+  byte gen_mult_prob;      /**< Probability of generating more than one */
+  random_value stack_size; /**< Number to generate */
+
   
   byte d_attr;		/**< Default object attribute */
   char d_char;		/**< Default object character */

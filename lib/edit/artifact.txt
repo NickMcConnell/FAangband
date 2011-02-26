@@ -161,7 +161,6 @@ B:RES_ACID[40] | RES_FIRE[40] | RES_COLD[40] |
 B:RES_POIS[40] | RES_LITE[40] | RES_DARK[40]  
 F:FREE_ACT | LITE | SEE_INVIS | AGGRO_PERM | SHOW_CURSE | PERMA_CURSE
 E:RAZORBACK:200
-M:You are surrounded by lightning...
 D:A massive suit of heavy dragon scales deeply saturated with many colors.  
 D:It throbs with angry energies, and you feel the raw elemental might of 
 D:untamed Lightning as you put it on.
@@ -179,7 +178,6 @@ B:RES_SHARD[40] | RES_NETHR[40] | RES_NEXUS[40] | RES_CHAOS[40] |
 B:RES_DISEN[40] | SPEED[5]
 F:SEEING | HOLD_LIFE | REGEN
 E:BLADETURNER:400 
-M:Your scales glow many colours...
 D:A suit of adamant, set with scales of every color, surrounded in a nimbus 
 D:of perfectly untramelled yet inextricably intermingled and utterly mastered 
 D:powers elemental and ethereal.

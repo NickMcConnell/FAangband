@@ -1101,6 +1101,22 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 		else
 			floor_item_charges(0 - item);
 	}
+	else if (used && use == USE_TIMEOUT)
+	{
+		/* Artifacts use their own special field */
+		if (o_ptr->name1)
+		{
+			const artifact_type *a_ptr = &a_info[o_ptr->name1];
+			if (a_ptr->time)
+			  o_ptr->timeout = randcalc(a_ptr->time, 0, RANDOMISE);
+		}
+		else
+		{
+			const object_kind *k_ptr = &k_info[o_ptr->k_idx];
+			if (k_ptr->time)
+			  o_ptr->timeout += randcalc(k_ptr->time, 0, RANDOMISE);
+		}
+	}
 	else if (used && use == USE_SINGLE)
 	{
 		/* Destroy a potion in the pack */

@@ -24,6 +24,7 @@
 
 #include "angband.h"
 #include "jewel.h"
+#include "effects.h"
 
 /** A global variable whose contents will be bartered to acquire powers. */
 static int potential = 0;
