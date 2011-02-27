@@ -820,13 +820,14 @@ D:It gleams a sickly green, and you dare not hold it above the handle.
 # A Whip of the Balrog.  At least 2d5, and x3 damage to all not immune 
 # to fire, but reduces stealth.  Can also lash out at a distance of two.
 N:77:of the Balrog
-X:30:245
+X:30:0
 T:21:2:2
 W:0:5:0:10000
 C:-20:10:0
 B:STEALTH[-4] | BRAND_FIRE[30] | RES_FIRE[45] 
 F:LITE | XTRA_DICE | HEAVY | FIRE_PROOF
 I:LITE | BRAND_FIRE
+E:BALROG_WHIP
 D:This perilous demon's lash burns redly with the dread fires of Utumno, 
 D:doing triple damage to all monsters not resitant to fire, and 
 D:blazing so brightly as to light your path and disturb nearby foes.

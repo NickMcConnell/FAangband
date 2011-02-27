@@ -270,9 +270,9 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
       
     case EF_BLIND1:
       {
-	if (!p_ptr->no_blind)
+	if (!p_ptr->state.no_blind)
 	  {
-	    if (set_blind(p_ptr->blind + randint0(200) + 200))
+	    if (inc_timed(TMD_BLIND, randint0(200) + 200), TRUE)
 	      {
 		*ident = TRUE;
 	      }
@@ -283,9 +283,9 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
       
     case EF_BLIND2:
       {
-	if (!p_ptr->no_blind)
+	if (!p_ptr->state.no_blind)
 	  {
-	    if (set_blind(p_ptr->blind + randint0(100) + 100))
+	    if (inc_timed(TMD_BLIND, randint0(100) + 100), TRUE)
 	      {
 		*ident = TRUE;
 	      }
@@ -296,9 +296,9 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
       
     case EF_SCARE:
       {
-	if (!p_ptr->no_fear)
+	if (!p_ptr->state.no_fear)
 	  {
-	    if (set_afraid(p_ptr->afraid + randint0(10) + 10))
+	    if (inc_timed(TMD_AFRAID, randint0(10) + 10), TRUE)
 	      {
 		*ident = TRUE;
 	      }
@@ -311,7 +311,7 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
       {
 	if (!p_resist_good(P_RES_CONFU))
 	  {
-	    if (set_confused(p_ptr->confused + randint0(10) + 10))
+	    if (inc_timed(TMD_CONFUSED, randint0(10) + 10), TRUE)
 	      {
 		*ident = TRUE;
 	      }
@@ -328,7 +328,7 @@ bool effect_do(effect_type effect, bool *ident, bool aware, int dir, int beam,
       {
 	if (!p_resist_good(P_RES_CONFU))
 	  {
-	    if (set_confused(p_ptr->confused + randint0(20) + 15))
+	    if (inc_timed(TMD_CONFUSED, randint0(20) + 15), TRUE)
 	      {
 		*ident = TRUE;
 	      }

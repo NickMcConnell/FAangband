@@ -113,6 +113,82 @@ static const char *effect_list[] = {
 	#undef EFFECT
 };
 
+/**
+ * Percentage resists
+ */
+static const char *player_resist_values[] = 
+  {
+    "RES_ACID",
+    "RES_ELEC",
+    "RES_FIRE",
+    "RES_COLD",
+    "RES_POIS",
+    "RES_LITE",
+    "RES_DARK",
+    "RES_CONFU",
+    "RES_SOUND",
+    "RES_SHARD",
+    "RES_NEXUS",
+    "RES_NETHR",
+    "RES_CHAOS",
+    "RES_DISEN"
+  };
+
+/**
+ * Stat bonuses
+ */
+static const char *bonus_stat_values[] =
+  {
+    "STR",
+    "INT",
+    "WIS",
+    "DEX",
+    "CON",
+    "CHR"
+  };
+
+/**
+ * Other bonuses
+ */
+static const char *bonus_other_values[] =
+  {
+    "MAGIC_MASTERY",
+    "STEALTH",
+    "SEARCH",
+    "INFRA",
+    "TUNNEL",
+    "SPEED",
+    "SHOTS",
+    "MIGHT"
+  };
+
+/**
+ * Slays
+ */
+static const char *slay_values[] = 
+  {
+    "SLAY_ANIMAL",
+    "SLAY_EVIL",
+    "SLAY_UNDEAD",
+    "SLAY_DEMON",
+    "SLAY_ORC",
+    "SLAY_TROLL",
+    "SLAY_GIANT",
+    "SLAY_DRAGON"
+  };
+
+/**
+ * Brands
+ */
+static const char *brand_values[] = 
+  {
+    "BRAND_ACID",
+    "BRAND_ELEC",
+    "BRAND_FIRE",
+    "BRAND_COLD",
+    "BRAND_POIS"
+  };
+
 static int lookup_flag(const char **flag_table, const char *flag_name) {
 	int i = FLAG_START;
 
@@ -152,28 +228,34 @@ static u32b grab_one_effect(const char *what) {
 	return 0;
 }
 
-static u32b grab_one_value(const char *what) {
+static u32b grab_value(const char *what, const char *value_type, int *val) {
 	size_t i;
 	char *s;
+	char *t;
 
-	if (sscanf(tmp, "%d to %d", &amin, &amax) != 2)
-		return PARSE_ERROR_GENERIC;
-
-	if (amin > 255 || amax > 255 || amin < 0 || amax < 0)
-		return PARSE_ERROR_OUT_OF_BOUNDS;
-
-	/* Scan activations */
-	for (i = 0; i < N_ELEMENTS(effect_list); i++)
+	/* Parse the string */
+	for (s = what; *s; )
 	{
-		if (streq(what, effect_list[i]))
+	        /* Find the first bracket */
+	        for (t = s; *t && (*t != '['); ++t) /* loop */;
+	  
+		/* Get the value */
+		if (1 != sscanf(t + 1, "%d", val))
+		        return (PARSE_ERROR_INVALID_VALUE);
+
+		/* Terminate the string */
+		*t = '\0';
+	}
+  
+	/* Check the possibilities */
+	for (i = 0; i < N_ELEMENTS(value_type); i++)
+	{
+		if (streq(what, value_type[i]))
 			return i;
 	}
 
-	/* Oops */
-	msg_format("Unknown effect '%s'.", what);
-
-	/* Error */
-	return 0;
+	/* Not found */
+	return (0);
 }
 
 /*
@@ -527,19 +609,42 @@ static enum parser_error parse_k_b(struct parser *p) {
 	struct object_kind *k = parser_priv(p);
 	char *s = string_make(parser_getstr(p, "values"));
 	char *t;
+	int val, which = 0;
 	assert(k);
 
 	t = strtok(s, " |");
 	while (t) {
-	        bool found = FALSE;
-		if (!grab_flag(k->flags_obj, OF_SIZE, object_flags, t)) 
-		        found = TRUE;
-		if (!grab_flag(k->flags_curse, CF_SIZE, curse_flags, t)) 
-		        found = TRUE;
-		if (!grab_flag(k->flags_kind, KF_SIZE, kind_flags, t)) 
-		        found = TRUE;
-		if (!found) break;
-		t = strtok(NULL, " |");
+	        which = grab_value(t, player_resist_values, &val);
+		if (which) {
+		        k->percent_res[which] = RES_LEVEL_BASE - val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, bonus_stat_values, &val);
+		if (which) {
+		        k->bonus_stat[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, bonus_other_values, &val);
+		if (which) {
+		        k->bonus_other[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, slay_values, &val);
+		if (which) {
+		        k->multiple_slay[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, brand_values, &val);
+		if (which) {
+		        k->multiple_brand[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+		break;
 	}
 	mem_free(s);
 	return t ? PARSE_ERROR_INVALID_VALUE : PARSE_ERROR_NONE;
@@ -662,24 +767,6 @@ static enum parser_error parse_a_w(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_a_a(struct parser *p) {
-	struct artifact *a = parser_priv(p);
-	const char *tmp = parser_getstr(p, "minmax");
-	int amin, amax;
-	assert(a);
-
-	a->alloc_prob = parser_getint(p, "common");
-	if (sscanf(tmp, "%d to %d", &amin, &amax) != 2)
-		return PARSE_ERROR_GENERIC;
-
-	if (amin > 255 || amax > 255 || amin < 0 || amax < 0)
-		return PARSE_ERROR_OUT_OF_BOUNDS;
-
-	a->alloc_min = amin;
-	a->alloc_max = amax;
-	return PARSE_ERROR_NONE;
-}
-
 static enum parser_error parse_a_p(struct parser *p) {
 	struct artifact *a = parser_priv(p);
 	struct random hd = parser_getrand(p, "hd");
@@ -706,12 +793,63 @@ static enum parser_error parse_a_f(struct parser *p) {
 
 	t = strtok(s, " |");
 	while (t) {
-		if (grab_flag(a->flags, OF_SIZE, k_info_flags, t))
-			break;
+	        bool found = FALSE;
+		if (!grab_flag(a->flags, OF_SIZE, object_flags, t))
+		        found = TRUE;
+		if (!grab_flag(a->flags_curse, CF_SIZE, curse_flags, t)) 
+		        found = TRUE;
+		if (!grab_flag(a->flags_kind, KF_SIZE, kind_flags, t)) 
+		        found = TRUE;
+		if (!found) break;
 		t = strtok(NULL, " |");
 	}
 	mem_free(s);
 	return t ? PARSE_ERROR_INVALID_FLAG : PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_a_b(struct parser *p) {
+	struct artifact *a = parser_priv(p);
+	char *s = string_make(parser_getstr(p, "values"));
+	char *t;
+	int val, which = 0;
+	assert(a);
+
+	t = strtok(s, " |");
+	while (t) {
+	        which = grab_value(t, player_resist_values, &val);
+		if (which) {
+		        a->percent_res[which] = RES_LEVEL_BASE - val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, bonus_stat_values, &val);
+		if (which) {
+		        a->bonus_stat[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, bonus_other_values, &val);
+		if (which) {
+		        a->bonus_other[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, slay_values, &val);
+		if (which) {
+		        a->multiple_slay[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, brand_values, &val);
+		if (which) {
+		        a->multiple_brand[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+		break;
+	}
+	mem_free(s);
+	return t ? PARSE_ERROR_INVALID_VALUE : PARSE_ERROR_NONE;
 }
 
 static enum parser_error parse_a_e(struct parser *p) {
@@ -748,9 +886,9 @@ struct parser *init_parse_a(void) {
 	parser_reg(p, "N int index str name", parse_a_n);
 	parser_reg(p, "I sym tval sym sval int pval", parse_a_i);
 	parser_reg(p, "W int level int rarity int weight int cost", parse_a_w);
-	parser_reg(p, "A int common str minmax", parse_a_a);
 	parser_reg(p, "P int ac rand hd int to-h int to-d int to-a", parse_a_p);
 	parser_reg(p, "F ?str flags", parse_a_f);
+	parser_reg(p, "B ?str values", parse_a_b);
 	parser_reg(p, "E sym name rand time", parse_a_e);
 	parser_reg(p, "M str text", parse_a_m);
 	parser_reg(p, "D str text", parse_a_d);
@@ -865,6 +1003,14 @@ struct file_parser names_parser = {
 	finish_parse_names
 };
 
+static const char *terrain_flags[] =
+{
+	#define TF(a, b) #a,
+	#include "list-terrain-flags.h"
+	#undef TF
+	NULL
+};
+
 static enum parser_error parse_f_n(struct parser *p) {
 	int idx = parser_getuint(p, "index");
 	const char *name = parser_getstr(p, "name");
@@ -908,52 +1054,6 @@ static enum parser_error parse_f_m(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_f_p(struct parser *p) {
-	unsigned int priority = parser_getuint(p, "priority");
-	struct feature *f = parser_priv(p);
-
-	if (!f)
-		return PARSE_ERROR_MISSING_RECORD_HEADER;
-	f->priority = priority;
-	return PARSE_ERROR_NONE;
-}
-
-static const char *f_info_flags[] =
-{
-	"PWALK",
-	"PPASS",
-	"MWALK",
-	"MPASS",
-	"LOOK",
-	"DIG",
-	"DOOR",
-	"EXIT_UP",
-	"EXIT_DOWN",
-	"PERM",
-	"TRAP",
-	"SHOP",
-	"HIDDEN",
-	"BORING",
-	NULL
-};
-
-static errr grab_one_flag(u32b *flags, cptr names[], cptr what)
-{
-	int i;
-
-	/* Check flags */
-	for (i = 0; i < 32 && names[i]; i++)
-	{
-		if (streq(what, names[i]))
-		{
-			*flags |= (1L << i);
-			return (0);
-		}
-	}
-
-	return (-1);
-}
-
 static enum parser_error parse_f_f(struct parser *p) {
 	char *flags;
 	struct feature *f = parser_priv(p);
@@ -968,7 +1068,7 @@ static enum parser_error parse_f_f(struct parser *p) {
 
 	s = strtok(flags, " |");
 	while (s) {
-		if (grab_one_flag(&f->flags, f_info_flags, s)) {
+	  if (grab_flag(f->flags, TF_SIZE, terrain_flags, s)) {
 			mem_free(s);
 			return PARSE_ERROR_INVALID_FLAG;
 		}
@@ -979,26 +1079,11 @@ static enum parser_error parse_f_f(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_f_x(struct parser *p) {
+static enum parser_error parse_f_d(struct parser *p) {
 	struct feature *f = parser_priv(p);
+	assert(f);
 
-	if (!f)
-		return PARSE_ERROR_MISSING_RECORD_HEADER;
-	f->locked = parser_getint(p, "locked");
-	f->jammed = parser_getint(p, "jammed");
-	f->shopnum = parser_getint(p, "shopnum");
-	f->dig = parser_getint(p, "dig");
-	return PARSE_ERROR_NONE;
-}
-
-static enum parser_error parse_f_e(struct parser *p) {
-	struct feature *f = parser_priv(p);
-
-	if (!f)
-		return PARSE_ERROR_MISSING_RECORD_HEADER;
-	f->effect = grab_one_effect(parser_getstr(p, "effect"));
-	if (!f->effect)
-		return PARSE_ERROR_INVALID_EFFECT;
+	f->text = string_append(f->text, parser_getstr(p, "text"));
 	return PARSE_ERROR_NONE;
 }
 
@@ -1009,10 +1094,8 @@ struct parser *init_parse_f(void) {
 	parser_reg(p, "N uint index str name", parse_f_n);
 	parser_reg(p, "G char glyph sym color", parse_f_g);
 	parser_reg(p, "M uint index", parse_f_m);
-	parser_reg(p, "P uint priority", parse_f_p);
 	parser_reg(p, "F ?str flags", parse_f_f);
-	parser_reg(p, "X int locked int jammed int shopnum int dig", parse_f_x);
-	parser_reg(p, "E str effect", parse_f_e);
+	parser_reg(p, "D str text", parse_f_d);
 	return p;
 }
 
@@ -1165,12 +1248,75 @@ static enum parser_error parse_e_f(struct parser *p) {
 	s = string_make(parser_getstr(p, "flags"));
 	t = strtok(s, " |");
 	while (t) {
-		if (grab_flag(e->flags, OF_SIZE, k_info_flags,t))
-			break;
+	        bool found = FALSE;
+		if (!grab_flag(e->flags, OF_SIZE, object_flags, t))
+		        found = TRUE;
+		if (!grab_flag(e->flags_curse, CF_SIZE, curse_flags, t)) 
+		        found = TRUE;
+		if (!grab_flag(e->flags_kind, KF_SIZE, kind_flags, t)) 
+		        found = TRUE;
+		if (!found) break;
 		t = strtok(NULL, " |");
 	}
 	mem_free(s);
 	return t ? PARSE_ERROR_INVALID_FLAG : PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_e_b(struct parser *p) {
+	struct ego_item *e = parser_priv(p);
+	char *s = string_make(parser_getstr(p, "values"));
+	char *t;
+	int val, which = 0;
+	assert(e);
+
+	t = strtok(s, " |");
+	while (t) {
+	        which = grab_value(t, player_resist_values, &val);
+		if (which) {
+		        e->percent_res[which] = RES_LEVEL_BASE - val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, bonus_stat_values, &val);
+		if (which) {
+		        e->bonus_stat[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, bonus_other_values, &val);
+		if (which) {
+		        e->bonus_other[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, slay_values, &val);
+		if (which) {
+		        e->multiple_slay[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, brand_values, &val);
+		if (which) {
+		        e->multiple_brand[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+		break;
+	}
+	mem_free(s);
+	return t ? PARSE_ERROR_INVALID_VALUE : PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_e_e(struct parser *p) {
+	struct ego_item *e = parser_priv(p);
+	assert(e);
+
+	e->effect = grab_one_effect(parser_getsym(p, "name"));
+	if (parser_hasval(p, "time"))
+		e->time = parser_getrand(p, "time");
+	if (!e->effect)
+		return PARSE_ERROR_GENERIC;
+	return PARSE_ERROR_NONE;
 }
 
 static enum parser_error parse_e_d(struct parser *p) {
@@ -1190,9 +1336,10 @@ struct parser *init_parse_e(void) {
 	parser_reg(p, "W int level int rarity int pad int cost", parse_e_w);
 	parser_reg(p, "X int rating int xtra", parse_e_x);
 	parser_reg(p, "T sym tval int min-sval int max-sval", parse_e_t);
-	parser_reg(p, "C rand th rand td rand ta rand pval", parse_e_c);
-	parser_reg(p, "M int th int td int ta int pval", parse_e_m);
+	parser_reg(p, "C rand th rand td rand ta", parse_e_c);
 	parser_reg(p, "F ?str flags", parse_e_f);
+	parser_reg(p, "B ?str values", parse_e_b);
+	parser_reg(p, "E sym name rand time", parse_e_e);
 	parser_reg(p, "D str text", parse_e_d);
 	return p;
 }
@@ -1279,7 +1426,7 @@ static enum parser_error parse_r_w(struct parser *p) {
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
 	r->level = parser_getint(p, "level");
 	r->rarity = parser_getint(p, "rarity");
-	r->power = parser_getint(p, "power");
+	r->mana = parser_getint(p, "mana");
 	r->mexp = parser_getint(p, "mexp");
 	return PARSE_ERROR_NONE;
 }
@@ -1413,6 +1560,8 @@ static enum parser_error parse_r_s(struct parser *p) {
 			}
 			r->freq_spell = 100 / pct;
 			r->freq_innate = r->freq_spell;
+		} else if (1 == sscanf(s, "POW_%d", &i)) {
+		        r_ptr->spell_power = i;
 		} else {
 			if (grab_flag(r->spell_flags, RSF_SIZE, r_info_spell_flags, s)) {
 				ret = PARSE_ERROR_INVALID_FLAG;
@@ -1434,7 +1583,7 @@ struct parser *init_parse_r(void) {
 	parser_reg(p, "N uint index str name", parse_r_n);
 	parser_reg(p, "G char glyph sym color", parse_r_g);
 	parser_reg(p, "I int speed int hp int aaf int ac int sleep", parse_r_i);
-	parser_reg(p, "W int level int rarity int power int mexp", parse_r_w);
+	parser_reg(p, "W int level int rarity int mana int mexp", parse_r_w);
 	parser_reg(p, "B sym method ?sym effect ?rand damage", parse_r_b);
 	parser_reg(p, "F ?str flags", parse_r_f);
 	parser_reg(p, "D str desc", parse_r_d);
@@ -1631,13 +1780,16 @@ struct parser *init_parse_p(void) {
 	parser_reg(p, "V sym version", ignored);
 	parser_reg(p, "N uint index str name", parse_p_n);
 	parser_reg(p, "S int str int int int wis int dex int con int chr", parse_p_s);
-	parser_reg(p, "R int dis int dev int sav int stl int srh int fos int thm int thb int throw int dig", parse_p_r);
+	parser_reg(p, "R int dis int dev int sav int stl int srh int fos int thn int thb", parse_p_r);
+	parser_reg(p, "M int xdis int xdev int xsav int xstl int xsrh int xfos int xthn int xthb", parse_p_r);
+	parser_reg(p, "E int id int mint int maxt int skde int ac int pval int xtra1 int xtra2", parse_p_e);
 	parser_reg(p, "X int mhp int exp int infra", parse_p_x);
 	parser_reg(p, "I int hist int b-age int m-age", parse_p_i);
 	parser_reg(p, "H int mbht int mmht int fbht int fmht", parse_p_h);
 	parser_reg(p, "W int mbwt int mmwt int fbwt int fmwt", parse_p_w);
 	parser_reg(p, "F ?str flags", parse_p_f);
-	parser_reg(p, "Y ?str flags", parse_p_y);
+	parser_reg(p, "B ?str values", parse_p_y);
+	parser_reg(p, "U ?str flags", parse_p_y);
 	parser_reg(p, "C ?str classes", parse_p_c);
 	return p;
 }

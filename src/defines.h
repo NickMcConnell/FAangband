@@ -644,21 +644,85 @@ typedef enum
  */
 #define MAX_FLOOR_STACK			23
 
+/*** Constants for accessing the player struct ***/
+
+/*
+ * Timed effects
+ */
+enum
+{
+	TMD_FAST = 0, 
+	TMD_SLOW, 
+	TMD_BLIND, 
+	TMD_PARALYZED, 
+	TMD_CONFUSED,
+	TMD_AFRAID, 
+	TMD_IMAGE, 
+	TMD_POISONED, 
+	TMD_CUT, 
+	TMD_STUN, 
+	TMD_PROTEVIL,
+	TMD_INVULN, 
+	TMD_HERO, 
+	TMD_SHERO, 
+	TMD_SHIELD, 
+	TMD_BLESSED, 
+	TMD_SINVIS,
+	TMD_SINFRA, 
+	TMD_TELEPATHY, 
+	TMD_SSTEALTH,
+	TMD_OPP_ACID, 
+	TMD_OPP_ELEC, 
+	TMD_OPP_FIRE, 
+	TMD_OPP_COLD,
+	TMD_OPP_POIS, 
+
+	TMD_MAX
+};
+
+/*
+ * Skill indexes
+ */
+enum
+{
+	SKILL_DISARM,			/* Skill: Disarming */
+	SKILL_DEVICE,			/* Skill: Magic Devices */
+	SKILL_SAVE,				/* Skill: Saving throw */
+	SKILL_STEALTH,			/* Skill: Stealth factor */
+	SKILL_SEARCH,			/* Skill: Searching ability */
+	SKILL_SEARCH_FREQUENCY,	/* Skill: Searching frequency */
+	SKILL_TO_HIT_MELEE,		/* Skill: To hit (normal) */
+	SKILL_TO_HIT_BOW,		/* Skill: To hit (shooting) */
+	SKILL_TO_HIT_THROW,		/* Skill: To hit (throwing) */
+	SKILL_DIGGING,			/* Skill: Digging */
+
+	SKILL_MAX
+};
+
 
 /*
  * Indexes of the various "stats" (hard-coded by savefiles, etc).
  */
-#define A_STR	0
-#define A_INT	1
-#define A_WIS	2
-#define A_DEX	3
-#define A_CON	4
-#define A_CHR	5
+enum
+{
+	A_STR = 0,
+	A_INT,
+	A_WIS,
+	A_DEX,
+	A_CON,
+	A_CHR,
+
+	A_MAX
+};
+
+
 
 /*
- * Total number of stats.
+ * The range of possible indexes into tables based upon stats.
+ * Currently things range from 3 to 18/220 = 40.
  */
-#define A_MAX   6
+#define STAT_RANGE 38
+
 
 /*
  * Player sex constants (hard-coded by save-files, arrays, etc)
@@ -899,26 +963,26 @@ enum
  * Some qualitative checks.
  */
 #define p_resist_pos(X) \
-   (p_ptr->res_list[X] < 100)
+   (p_ptr->state.res_list[X] < 100)
 #define p_resist_good(X) \
-   (p_ptr->res_list[X] <= 80)
+   (p_ptr->state.res_list[X] <= 80)
 #define p_resist_strong(X) \
-   (p_ptr->res_list[X] <= 20)
+   (p_ptr->state.res_list[X] <= 20)
 #define p_immune(X) \
-   (p_ptr->res_list[X] == 0)
+   (p_ptr->state.res_list[X] == 0)
 #define p_vulnerable(X) \
-   (p_ptr->res_list[X] > 100)
+   (p_ptr->state.res_list[X] > 100)
 
 #define k_resist_pos(X) \
-   (p_ptr->dis_res_list[X] < 100)
+   (p_ptr->state.dis_res_list[X] < 100)
 #define k_resist_good(X) \
-   (p_ptr->dis_res_list[X] <= 80)
+   (p_ptr->state.dis_res_list[X] <= 80)
 #define k_resist_strong(X) \
-   (p_ptr->dis_res_list[X] <= 20)
+   (p_ptr->state.dis_res_list[X] <= 20)
 #define k_immune(X) \
-   (p_ptr->dis_res_list[X] == 0)
+   (p_ptr->state.dis_res_list[X] == 0)
 #define k_vulnerable(X) \
-   (p_ptr->dis_res_list[X] > 100)
+   (p_ptr->state.dis_res_list[X] > 100)
 
 #define o_slay_weak(X, Y) \
    (X->multiple_slay[Y] < 10)
@@ -1173,180 +1237,9 @@ enum
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
-/* Lites */
-#define ART_GWINDOR		1
-#define ART_NIMPHELOS		2
-#define ART_AVALLONE		3
-#define ART_STONE_LORE		15
-
-/* Amulets */
-#define ART_CARLAMMAS		4
-#define ART_INGWE		5
-#define ART_DWARVES		6
-#define ART_BOROMIR		7
-#define ART_ELESSAR		8
-
-/* Rings */
-#define ART_BARAHIR		9
-#define ART_TULKAS		10
-
-/* Dragon Scale */
-#define ART_RAZORBACK		22
-#define ART_BLADETURNER		23
-
-/* Hard Armour */
-#define ART_SOULKEEPER		26
-#define ART_ISILDUR		27
-#define ART_ROHIRRIM		28
-#define ART_BELEGENNON		29
-#define ART_CELEBORN		30
-#define ART_ARVEDUI		31
-#define ART_CASPANION		32
-
-/* Soft Armour */
-#define ART_HIMRING		36
-#define ART_HITHLOMIR		37
-#define ART_THALKETTOTH		38
-
-/* Shields */
-#define ART_ELEMENTS		43
-#define ART_THORIN		44
-#define ART_CELEGORM		45
-#define ART_ANARION		46
-#define ART_EARENDIL		47
-#define ART_GIL_GALAD		48
-
-/* Helms and Crowns */
 #define ART_MORGOTH		51
-#define ART_BERUTHIEL		52
-#define ART_THRANDUIL		53
-#define ART_THENGEL		54
-#define ART_VINYAMAR		55
-#define ART_DOR			56
-#define ART_HOLHENNETH		57
-#define ART_GORLIM		58
-
-#define ART_GONDOR		61
-#define ART_NUMENOR		62
-
-/* Cloaks */
-#define ART_VALINOR		66
-#define ART_HOLCOLLETH		67
-#define ART_THINGOL		68
-#define ART_THORONGIL		69
-#define ART_COLANNON		70
-#define ART_LUTHIEN		71
-#define ART_TUOR		72
-#define ART_GLORFINDEL          73
 #define ART_UNGOLIANT           74
-
-/* Gloves */
-#define ART_CAMBELEG		77
-#define ART_CAMMITHRIM		78
-#define ART_EOL			79
-#define ART_PAURNIMMEN		80
-#define ART_PAURAEGEN		81
-#define ART_PAURNEN		82
-#define ART_CAMLOST		83
-#define ART_FINGOLFIN		84
-
-/* Boots */
-#define ART_FEANOR		89
-#define ART_DAL			90
-#define ART_THROR		91
-#define ART_NEVRAST		92
-#define ART_GIMLI		93
-
-/* Swords */
-#define ART_MAEDHROS		97
-#define ART_ANGRIST		98
-#define ART_NARTHANC		99
-#define ART_NIMTHANC		100
-#define ART_DETHANC		101
-#define ART_RILIA		102
-#define ART_BELANGIL		103
-#define ART_CALRIS		104
-#define ART_ARUNRUTH		105
-#define ART_GLAMDRING		106
-#define ART_AEGLIN		107
-#define ART_ORCRIST		108
-#define ART_GURTHANG		109
-#define ART_ZARCUTHRA		110
-#define ART_MORMEGIL		111
-#define ART_GONDRICAM		112
-#define ART_CRISDURIAN		113
-#define ART_AGLARANG		114
-#define ART_RINGIL		115
-#define ART_ANDURIL		116
-#define ART_ANGUIREL		117
-#define ART_ELVAGIL		118
-#define ART_FORASGIL		119
-#define ART_CARETH		120
-#define ART_STING		121
-#define ART_HARADEKKET		122
-#define ART_GILETTAR		123
-#define ART_DOOMCALLER		124
-
-/* Polearms */
-#define ART_THEODEN		133
-#define ART_PAIN		134
-#define ART_OSONDIR		135
-#define ART_TIL			136
-#define ART_AEGLOS		137
-#define ART_OROME		138
-#define ART_NIMLOTH		139
-#define ART_EORLINGAS		140
-#define ART_DURIN		141
-#define ART_EONWE		142
-#define ART_BALLI		143
-#define ART_LOTHARANG		144
-#define ART_MUNDWINE		145
-#define ART_BARUKKHELED		146
-#define ART_WRATH		147
-#define ART_ULMO		148
-#define ART_AVAVIR		149
-
-/* Hafted */
 #define ART_GROND		158
-#define ART_TOTILA		159
-#define ART_THUNDERFIST		160
-#define ART_BLOODSPIKE		161
-#define ART_FIRESTAR		162
-#define ART_TARATOL		163
-#define ART_AULE		164
-#define ART_NAR			165
-#define ART_ERIRIL		166
-#define ART_OLORIN		167
-#define ART_DEATHWREAKER	168
-#define ART_TURMIL		169
-
-/* Bows */
-#define ART_HARAD		178
-#define ART_BELTHRONDING	179
-#define ART_BARD		180
-#define ART_CUBRAGOL		181
-#define ART_BUCKLAND		182
-#define ART_AMROD		183
-#define ART_AMRAS		184
-
-
-/* Non-wearable artifacts that can recharge in the backpack. */
-
-#define ART_STAFF_SARUMAN	149
-#define ART_STAFF_WINDS		150
-#define ART_STAFF_MENELTARMA	151
-#define ART_STAFF_RADAGAST	152
-
-#define ART_WAND_ILKORIN	154
-#define ART_WAND_GANDALF	155
-#define ART_WAND_COMMAND	156
-#define ART_WAND_ULPION		157
-
-#define ART_ROD_DELVING		159
-#define ART_ROD_SHADOW		160
-#define ART_ROD_AIR		161
-#define ART_ROD_PORTALS		162
-
 
 
 

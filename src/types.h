@@ -169,14 +169,16 @@ struct maxima
  */
 struct feature_type
 {
-  u32b name;		/**< Name (offset) */
-  u32b text;		/**< Text (offset) */
+  char *name;		/**< Name  */
+  char *text;		/**< Text  */
   
+  struct feature *next;
+
   byte mimic;		/**< Feature to mimic */
   
   byte extra;		/**< Extra byte (unused) */
   
-  u32b flags;		/**< Bitflags */
+  bitflag flags[TF_SIZE];		/**< Bitflags */
   
   
   byte d_attr;		/**< Default feature attribute */
@@ -262,9 +264,13 @@ struct object_kind
  */
 struct artifact_type
 {
-  u32b name;		/**< Name (offset) */
-  u32b text;		/**< Text (offset) */
+  char *name;		/**< Name (offset) */
+  char *text;		/**< Text (offset) */
   
+  u32b aidx;
+  
+  struct artifact *next;
+
   byte tval;		/**< Artifact type */
   byte sval;		/**< Artifact sub type */
   
@@ -281,9 +287,9 @@ struct artifact_type
   s16b weight;		/**< Weight */
   s32b cost;		/**< Artifact "cost" */
   
-  u32b flags_obj;	/**< New object flags -NRM-*/
-  u32b flags_curse;	/**< New curse flags  -NRM- */
-  u32b flags_kind;      /**< New object kind flags -NRM- */
+  bitflag flags_obj[OF_SIZE];	/**< New object flags -NRM-*/
+  bitflag flags_curse[CF_SIZE];	/**< New curse flags  -NRM- */
+  bitflag flags_kind[KF_SIZE];      /**< New object kind flags -NRM- */
   
   int percent_res[MAX_P_RES];      /**< Percentage resists -NRM- */
   int bonus_stat[A_MAX];           /**< Stat bonuses       -NRM- */
@@ -296,7 +302,7 @@ struct artifact_type
   
   s32b creat_turn;	/**< Turn the artifact was found */
   byte p_level;         /**< Player level when found */
-  byte activation;	/**< Temporary activation index. -LM- */
+  u16b effect;     /**< Artifact activation (see effects.c) */
   
   byte set_no;		/**< Stores the set number of the artifact. 
 			 * 0 if not part of a set -GS- */
@@ -344,8 +350,10 @@ struct set_type
  */
 struct ego_item_type
 {
-  u32b name;			/**< Name (offset) */
-  u32b text;			/**< Text (offset) */
+  struct ego_item *next;
+
+  char *name;			/**< Name */
+  char *text;			/**< Text */
 
   byte rating;		        /**< Rating boost */
   
@@ -358,13 +366,13 @@ struct ego_item_type
   
   s32b cost;			/**< Ego-item "cost" */
   
-  u32b flags_obj;	/**< New object flags -NRM-*/
-  u32b flags_curse;	/**< New curse flags  -NRM- */
-  u32b flags_kind;      /**< New object kind flags -NRM- */
+  bitflag flags_obj[OF_SIZE];	/**< New object flags -NRM-*/
+  bitflag flags_curse[CF_SIZE];	/**< New curse flags  -NRM- */
+  bitflag flags_kind[KF_SIZE];  /**< New object kind flags -NRM- */
 
-  u32b id_curse;	/**< Curse ID flags  */
-  u32b id_obj;	        /**< Object ID flags  */
-  u32b id_other;	/**< Miscellaneous ID flags  */
+  bitflag id_curse[CF_SIZE];	/**< Curse ID flags  */
+  bitflag id_obj[OF_SIZE];      /**< Object ID flags  */
+  bitflag id_other[IF_SIZE];	/**< Miscellaneous ID flags  */
   
   int percent_res[MAX_P_RES];      /**< Percentage resists -NRM- */
   int bonus_stat[A_MAX];           /**< Stat bonuses       -NRM- */
@@ -376,7 +384,7 @@ struct ego_item_type
   byte min_sval[EGO_TVALS_MAX];	/**< Minimum legal sval */
   byte max_sval[EGO_TVALS_MAX];	/**< Maximum legal sval */
 
-  byte activation;              /**< Activation index */  
+  u16b effect;                  /**< Activation index */  
   bool everseen;		/**< Do not spoil squelch menus */
   bool squelch;			/**< Squelch this ego-item */
 };
@@ -624,12 +632,13 @@ struct object_type
   s16b timeout;		/**< Timeout Counter */
 
   byte ident;		/**< ID flags  */
-  u32b id_curse;	/**< Curse ID flags  */
-  u32b id_obj;	        /**< Object ID flags  */
-  u32b id_other;	/**< Miscellaneous ID flags  */
 
-  u32b flags_obj;	/**< New object flags -NRM-*/
-  u32b flags_curse;	/**< New curse flags  -NRM- */
+  bitflag flags_obj[OF_SIZE];	/**< New object flags -NRM-*/
+  bitflag flags_curse[CF_SIZE];	/**< New curse flags  -NRM- */
+
+  bitflag id_curse[CF_SIZE];	/**< Curse ID flags  */
+  bitflag id_obj[OF_SIZE];      /**< Object ID flags  */
+  bitflag id_other[IF_SIZE];	/**< Miscellaneous ID flags  */
   
   int percent_res[MAX_P_RES];      /**< Percentage resists -NRM- */
   int bonus_stat[A_MAX];           /**< Stat bonuses       -NRM- */
@@ -1057,6 +1066,101 @@ struct druid_blows
   s16b ds;		/**< Number of dice sides. */
 };
 
+typedef struct
+{
+  s16b num_blow;	/**< Number of blows */
+  s16b num_fire;	/**< Number of shots */
+  
+  byte ammo_mult;	/**< Ammo multiplier */
+  
+  byte ammo_tval;	/**< Ammo variety */
+  
+  s16b pspeed;		/**< Current speed */
+  
+  s16b stat_use[6];	/**< Current modified stats */
+  s16b stat_top[6];	/**< Maximal modified stats */
+  s16b stat_add[6];	/**< Equipment stat bonuses */
+  s16b stat_ind[6];	/**< Indexes into stat tables */
+  
+   s16b dis_to_h;	/**< Known bonus to hit */
+  s16b dis_to_d;	/**< Known bonus to dam */
+  s16b dis_to_a;	/**< Known bonus to ac */
+  
+  s16b dis_ac;		/**< Known base ac */
+  
+  s16b to_h;		/**< Bonus to hit */
+  s16b to_d;		/**< Bonus to dam */
+  s16b to_a;		/**< Bonus to ac */
+  
+  s16b ac;		/**< Base ac */
+  
+  s16b see_infra;	/**< Infravision range */
+ 
+  s16b skill_dis;	/**< Skill: Disarming */
+  s16b skill_dev;	/**< Skill: Magic Devices */
+  s16b skill_sav;	/**< Skill: Saving throw */
+  s16b skill_stl;	/**< Skill: Stealth factor */
+  s16b skill_srh;	/**< Skill: Searching ability */
+  s16b skill_fos;	/**< Skill: Searching frequency */
+  s16b skill_thn;	/**< Skill: To hit (normal) */
+  s16b skill_thb;	/**< Skill: To hit (shooting) */
+  s16b skill_tht;	/**< Skill: To hit (throwing) */
+  s16b skill_dig;	/**< Skill: Digging */
+  
+  u32b base_wakeup_chance;/**< Derived from stealth.  Revised in Oangband. */
+
+  int res_list[MAX_P_RES]; /**< Resistances and immunities */
+  int dis_res_list[MAX_P_RES]; /**< Known resistances and immunities */
+  
+  bool no_fear;	        /**< Resist fear */
+  bool no_blind;	/**< Resist blindness */
+  
+  bool sustain_str;	/**< Keep strength */
+  bool sustain_int;	/**< Keep intelligence */
+  bool sustain_wis;	/**< Keep wisdom */
+  bool sustain_dex;	/**< Keep dexterity */
+  bool sustain_con;	/**< Keep constitution */
+  bool sustain_chr;	/**< Keep charisma */
+  
+  bool slow_digest;	/**< Slower digestion */
+  bool ffall;		/**< Feather falling */
+  bool lite;		/**< Permanent light */
+  bool regenerate;	/**< Regeneration */
+  bool telepathy;	/**< Telepathy */
+  bool see_inv;		/**< See invisible */
+  bool free_act;	/**< Free action */
+  bool hold_life;	/**< Hold life */
+  bool impact;		/**< Earthquake blows */
+  bool bless_blade;	/**< Blessed blade */
+  bool darkness;        /**< Darkness */
+  bool chaotic;         /**< Chaotic effects */
+
+  bool teleport;	/**< Random teleporting */
+  bool no_teleport;	/**< Teleporting forbidden */
+  bool aggravate;	/**< Aggravate monsters */
+  bool rand_aggro;	/**< Randomly aggravate monsters */
+  bool slow_regen;      /**< Reduced regeneration */
+  bool fear;            /**< Permanent fear */
+  bool fast_digest;     /**< Fast digestion */
+  bool rand_pois;       /**< Random poisoning */
+  bool rand_pois_bad;   /**< Bad random poisoning */
+  bool rand_cuts;       /**< Random cuts */
+  bool rand_cuts_bad;   /**< Bad random cuts */
+  bool rand_hallu;      /**< Random hallucination */
+  bool drop_weapon;     /**< Randomly drop weapon */
+  bool attract_demon;   /**< Randomly summon demons */
+  bool attract_undead;  /**< Randomly summon undead */
+  bool rand_paral;      /**< Random paralysis */
+  bool rand_paral_all;  /**< Random unresistable paralysis */
+  bool drain_exp;	/**< Experience draining */
+  bool drain_mana;	/**< Mana draining */
+  bool drain_stat;	/**< Random stat draining */
+  bool drain_charge;	/**< Random charge draining */
+  bool black_breath;	/**< Major experience draining */
+} player_state;
+  
+  
+  
 
 /**
  * Most of the "player" information goes here.
@@ -1069,7 +1173,7 @@ struct druid_blows
  * which must be saved in the savefile precedes all the information
  * which can be recomputed as needed.
  */
-struct player_type
+typedef struct player
 {
   s16b py;		/**< Player location */
   s16b px;		/**< Player location */
@@ -1079,6 +1183,10 @@ struct player_type
   byte pclass;		/**< Class index */
   byte oops;		/**< Unused */
   
+  const struct player_sex *sex;
+  const struct player_race *race;
+  const struct player_class *class;
+
   byte hitdie;		/**< Hit dice (sides) */
   
   byte schange;		/**< Character's new shape, if any. */
@@ -1114,40 +1222,12 @@ struct player_type
   s16b csp;		/**< Cur mana pts */
   u16b csp_frac;	/**< Cur mana frac (times 2^16) */
   
-  s16b stat_max[6];	/**< Current "maximal" stat values */
-  s16b stat_cur[6];	/**< Current "natural" stat values */
+  s16b stat_max[A_MAX];	/**< Current "maximal" stat values */
+  s16b stat_cur[A_MAX];	/**< Current "natural" stat values */
   u16b barehand_dam[12];/**< Recent barehand damage values */
   
-  s16b fast;		/**< Timed -- Fast */
-  s16b slow;		/**< Timed -- Slow */
-  s16b blind;		/**< Timed -- Blindness */
-  s16b paralyzed;	/**< Timed -- Paralysis */
-  s16b confused;	/**< Timed -- Confusion */
-  s16b afraid;		/**< Timed -- Fear */
-  s16b image;		/**< Timed -- Hallucination */
-  s16b poisoned;	/**< Timed -- Poisoned */
-  s16b cut;		/**< Timed -- Cut */
-  s16b stun;		/**< Timed -- Stun */
-  
-  s16b protevil;	/**< Timed -- Protection from evil */
-  s16b magicdef;	/**< Timed -- Magical Defenses */
-  s16b hero;		/**< Timed -- Heroism */
-  s16b shero;		/**< Timed -- Super Heroism */
-  s16b shield;		/**< Timed -- Shield Spell */
-  s16b blessed;		/**< Timed -- Blessed */
-  s16b tim_invis;	/**< Timed -- See Invisible */
-  s16b tim_infra;	/**< Timed -- Infravision */
-  s16b tim_esp;		/**< Timed -- ESP */
-  s16b superstealth;	/**< Timed -- Complete steath. -LM- */
-  s16b ele_attack;	/**< Timed -- Temporary Elemental attacks -LM- */
-  
-  s16b oppose_acid;	/**< Timed -- oppose acid */
-  s16b oppose_elec;	/**< Timed -- oppose lightning */
-  s16b oppose_fire;	/**< Timed -- oppose heat */
-  s16b oppose_cold;	/**< Timed -- oppose cold */
-  s16b oppose_pois;	/**< Timed -- oppose poison */
-  
-  bool black_breath;	/**< Major experience draining */
+  s16b timed[TMD_MAX];	/* Timed effects */
+  s16b ele_attack;	/**< Timed -- Temporary Elemental attacks -LM- */  
 
   s16b word_recall;	/**< Word of recall counter */
   
@@ -1229,17 +1309,8 @@ struct player_type
   bool run_break_right;	/**< Looking for a break (right) */
   bool run_break_left;	/**< Looking for a break (left) */
   
-  s16b command_cmd;	/**< Gives identity of current command */
   s16b command_arg;	/**< Gives argument of current command */
-  s16b command_rep;	/**< Gives repetition of current command */
-  s16b command_dir;	/**< Gives direction of current command */
-  ui_event_data command_cmd_ex; /**< Gives extra information of current command */
-  s16b command_item;    /**< Gives the item for the next command */
-  
-  s16b command_see;	/**< See "cmd1.c" */
   s16b command_wrk;	/**< See "cmd1.c" */
-  
-  s16b command_new;	/**< Hack -- command chaining XXX XXX */
   
   s16b new_spells;	/**< Number of spells available */
   
@@ -1272,97 +1343,7 @@ struct player_type
   u32b redraw;		/**< Normal Redraws (bit flags) */
   u32b window;		/**< Window Redraws (bit flags) */
   
-  s16b stat_use[6];	/**< Current modified stats */
-  s16b stat_top[6];	/**< Maximal modified stats */
-  
   /*** Extracted fields ***/
-  
-  s16b stat_add[6];	/**< Equipment stat bonuses */
-  s16b stat_ind[6];	/**< Indexes into stat tables */
-  
-  int res_list[MAX_P_RES]; /**< Resistances and immunities */
-  int dis_res_list[MAX_P_RES]; /**< Known resistances and immunities */
-  
-  bool no_fear;	        /**< Resist fear */
-  bool no_blind;	/**< Resist blindness */
-  
-  bool sustain_str;	/**< Keep strength */
-  bool sustain_int;	/**< Keep intelligence */
-  bool sustain_wis;	/**< Keep wisdom */
-  bool sustain_dex;	/**< Keep dexterity */
-  bool sustain_con;	/**< Keep constitution */
-  bool sustain_chr;	/**< Keep charisma */
-  
-  bool slow_digest;	/**< Slower digestion */
-  bool ffall;		/**< Feather falling */
-  bool lite;		/**< Permanent light */
-  bool regenerate;	/**< Regeneration */
-  bool telepathy;	/**< Telepathy */
-  bool see_inv;		/**< See invisible */
-  bool free_act;	/**< Free action */
-  bool hold_life;	/**< Hold life */
-  bool impact;		/**< Earthquake blows */
-  bool bless_blade;	/**< Blessed blade */
-  bool darkness;        /**< Darkness */
-  bool chaotic;         /**< Chaotic effects */
-
-  bool teleport;	/**< Random teleporting */
-  bool no_teleport;	/**< Teleporting forbidden */
-  bool aggravate;	/**< Aggravate monsters */
-  bool rand_aggro;	/**< Randomly aggravate monsters */
-  bool slow_regen;      /**< Reduced regeneration */
-  bool fear;            /**< Permanent fear */
-  bool fast_digest;     /**< Fast digestion */
-  bool rand_pois;       /**< Random poisoning */
-  bool rand_pois_bad;   /**< Bad random poisoning */
-  bool rand_cuts;       /**< Random cuts */
-  bool rand_cuts_bad;   /**< Bad random cuts */
-  bool rand_hallu;      /**< Random hallucination */
-  bool drop_weapon;     /**< Randomly drop weapon */
-  bool attract_demon;   /**< Randomly summon demons */
-  bool attract_undead;  /**< Randomly summon undead */
-  bool rand_paral;      /**< Random paralysis */
-  bool rand_paral_all;  /**< Random unresistable paralysis */
-  bool drain_exp;	/**< Experience draining */
-  bool drain_mana;	/**< Mana draining */
-  bool drain_stat;	/**< Random stat draining */
-  bool drain_charge;	/**< Random charge draining */
-  
-  s16b dis_to_h;	/**< Known bonus to hit */
-  s16b dis_to_d;	/**< Known bonus to dam */
-  s16b dis_to_a;	/**< Known bonus to ac */
-  
-  s16b dis_ac;		/**< Known base ac */
-  
-  s16b to_h;		/**< Bonus to hit */
-  s16b to_d;		/**< Bonus to dam */
-  s16b to_a;		/**< Bonus to ac */
-  
-  s16b ac;		/**< Base ac */
-  
-  s16b see_infra;	/**< Infravision range */
-  
-  s16b skill_dis;	/**< Skill: Disarming */
-  s16b skill_dev;	/**< Skill: Magic Devices */
-  s16b skill_sav;	/**< Skill: Saving throw */
-  s16b skill_stl;	/**< Skill: Stealth factor */
-  s16b skill_srh;	/**< Skill: Searching ability */
-  s16b skill_fos;	/**< Skill: Searching frequency */
-  s16b skill_thn;	/**< Skill: To hit (normal) */
-  s16b skill_thb;	/**< Skill: To hit (shooting) */
-  s16b skill_tht;	/**< Skill: To hit (throwing) */
-  s16b skill_dig;	/**< Skill: Digging */
-  
-  u32b base_wakeup_chance;/**< Derived from stealth.  Revised in Oangband. */
-  
-  s16b num_blow;	/**< Number of blows */
-  s16b num_fire;	/**< Number of shots */
-  
-  byte ammo_mult;	/**< Ammo multiplier */
-  
-  byte ammo_tval;	/**< Ammo variety */
-  
-  s16b pspeed;		/**< Current speed */
   
   byte vulnerability;	/**< Used to make animal packs charge and retreat */
   
@@ -1384,7 +1365,11 @@ struct player_type
 	s16b wt_birth;          /* Birth Weight */
 	s16b sc_birth;		/* Birth social class */
 
-};
+	/* Variable and calculatable player state */
+	player_state	state;
+
+	struct object *inventory;
+} player_type;
 
 /** From NPPAngband */
 
