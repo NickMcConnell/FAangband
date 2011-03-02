@@ -346,27 +346,27 @@ bool res_action(menu_type *menu, const ui_event_data *e, int oid)
     {
     case 0:
       {
-	(void)set_oppose_fire(p_ptr->oppose_fire + randint1(plev) + plev);
+	(void)inc_timed(TMD_OPP_FIRE, randint1(plev) + plev, TRUE);
 	return TRUE;
       }
     case 1:
       {
-	(void)set_oppose_cold(p_ptr->oppose_cold + randint1(plev) + plev);
+	(void)inc_timed(TMD_OPP_COLD, randint1(plev) + plev, TRUE);
 	return TRUE;
       }
     case 2:
       {
-	(void)set_oppose_acid(p_ptr->oppose_acid + randint1(plev) + plev);
+	(void)inc_timed(TMD_OPP_ACID, randint1(plev) + plev, TRUE);
 	return TRUE;
       }
     case 3:
       {
-	(void)set_oppose_elec(p_ptr->oppose_elec + randint1(plev) + plev);
+	(void)inc_timed(TMD_OPP_ELEC, randint1(plev) + plev, TRUE);
 	return TRUE;
       }
     case 4:
       {
-	(void)set_oppose_pois(p_ptr->oppose_pois + randint1(plev) + plev);
+	(void)inc_timed(TMD_OPP_POIS, randint1(plev) + plev, TRUE);
 	return TRUE;
       }
     default:
@@ -500,7 +500,7 @@ void dimen_door(void)
    * distance, and insure that this spell is never certain.
    */
   if (!cave_empty_bold(ny,nx) || (cave_info[ny][nx] & CAVE_ICKY) ||
-     (distance(ny,nx,p_ptr->py,p_ptr->px) > 25) || 
+     (distance(ny, nx, p_ptr->py, p_ptr->px) > 25) || 
       (randint0(p_ptr->lev) == 0))
     {
       msg_print("You fail to exit the astral plane correctly!");

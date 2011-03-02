@@ -1275,7 +1275,7 @@ void update_mon(int m_idx, bool full)
   if (d <= (p_ptr->themed_level ? MAX_SIGHT / 2 : MAX_SIGHT))
     {
       /* Basic telepathy */
-      if (p_ptr->telepathy || p_ptr->tim_esp)
+      if (p_ptr->state.telepathy || p_ptr->timed[TMD_TELEPATHY])
 	{
 	  /* Empty mind, no telepathy */
 	  if (rf_has(r_ptr->flags, RF_EMPTY_MIND))
@@ -1319,13 +1319,13 @@ void update_mon(int m_idx, bool full)
 	}
       
       /* Normal line of sight, and not blind */
-      if (player_has_los_bold(fy, fx) && !p_ptr->blind)
+      if (player_has_los_bold(fy, fx) && !p_ptr->timed[TMD_BLIND])
 	{
 	  bool do_invisible = FALSE;
 	  bool do_cold_blood = FALSE;
 	  
 	  /* Use "infravision" */
-	  if (d <= p_ptr->see_infra)
+	  if (d <= p_ptr->state.see_infra)
 	    {
 	      /* Handle "cold blooded" monsters */
 	      if (rf_has(r_ptr->flags, RF_COLD_BLOOD))
@@ -1352,7 +1352,7 @@ void update_mon(int m_idx, bool full)
 		  do_invisible = TRUE;
 		  
 		  /* See invisible */
-		  if (p_ptr->see_inv)
+		  if (p_ptr->state.see_inv)
 		    {
 		      /* Easy to see */
 		      notice_obj(OF_SEE_INVIS, 0);
@@ -3229,11 +3229,11 @@ void update_smart_learn(int m_idx, int what)
       /* Slow/paralyze attacks learn about free action and saving throws */
     case LRN_FREE_SAVE:
       {
-	if (p_ptr->skill_sav >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
+	if (p_ptr->state.skills[SKILL_SAVE] >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
 	else m_ptr->smart &= ~(SM_GOOD_SAVE);
-	if (p_ptr->skill_sav >= 100) m_ptr->smart |= (SM_PERF_SAVE);
+	if (p_ptr->state.skills[SKILL_SAVE] >= 100) m_ptr->smart |= (SM_PERF_SAVE);
 	else m_ptr->smart &= ~(SM_PERF_SAVE);
-	if (p_ptr->free_act) m_ptr->smart |= (SM_IMM_FREE);
+	if (p_ptr->state.free_act) m_ptr->smart |= (SM_IMM_FREE);
 	else m_ptr->smart &= ~(SM_IMM_FREE);
 	break;
       }
@@ -3307,11 +3307,11 @@ void update_smart_learn(int m_idx, int what)
       /* Fear attacks learn about resist fear and saving throws */
     case LRN_FEAR_SAVE:
       {
-	if (p_ptr->skill_sav >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
+	if (p_ptr->state.skills[SKILL_SAVE] >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
 	else m_ptr->smart &= ~(SM_GOOD_SAVE);
-	if (p_ptr->skill_sav >= 100) m_ptr->smart |= (SM_PERF_SAVE);
+	if (p_ptr->state.skills[SKILL_SAVE] >= 100) m_ptr->smart |= (SM_PERF_SAVE);
 	else m_ptr->smart &= ~(SM_PERF_SAVE);
-	if (p_ptr->no_fear) m_ptr->smart |= (SM_RES_FEAR);
+	if (p_ptr->state.no_fear) m_ptr->smart |= (SM_RES_FEAR);
 	else m_ptr->smart &= ~(SM_RES_FEAR);
 	break;
       }
@@ -3338,7 +3338,7 @@ void update_smart_learn(int m_idx, int what)
        */
     case LRN_BLIND:
       {
-	if (p_ptr->no_blind) m_ptr->smart |= (SM_RES_BLIND);
+	if (p_ptr->state.no_blind) m_ptr->smart |= (SM_RES_BLIND);
 	else m_ptr->smart &= ~(SM_RES_BLIND);
 	break;
       }
@@ -3365,9 +3365,9 @@ void update_smart_learn(int m_idx, int what)
 	else m_ptr->smart &= ~(SM_RES_SOUND);
 	if (p_resist_good(P_RES_CONFU)) m_ptr->smart |= (SM_RES_CONFU);
 	else m_ptr->smart &= ~(SM_RES_CONFU);
-	if (p_ptr->skill_sav >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
+	if (p_ptr->state.skills[SKILL_SAVE] >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
 	else m_ptr->smart &= ~(SM_GOOD_SAVE);
-	if (p_ptr->skill_sav >= 100) m_ptr->smart |= (SM_PERF_SAVE);
+	if (p_ptr->state.skills[SKILL_SAVE] >= 100) m_ptr->smart |= (SM_PERF_SAVE);
 	else m_ptr->smart &= ~(SM_PERF_SAVE);
 	break;
       }
@@ -3418,9 +3418,9 @@ void update_smart_learn(int m_idx, int what)
       /* Some attacks learn only about saving throws (cause wounds, etc) */
     case LRN_SAVE:
       {
-	if (p_ptr->skill_sav >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
+	if (p_ptr->state.skills[SKILL_SAVE] >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
 	else m_ptr->smart &= ~(SM_GOOD_SAVE);
-	if (p_ptr->skill_sav >= 100) m_ptr->smart |= (SM_PERF_SAVE);
+	if (p_ptr->state.skills[SKILL_SAVE] >= 100) m_ptr->smart |= (SM_PERF_SAVE);
 	else m_ptr->smart &= ~(SM_PERF_SAVE);
       }
       
@@ -3527,9 +3527,9 @@ void update_smart_learn(int m_idx, int what)
        */
     case LRN_NEXUS_SAVE:
       {
-	if (p_ptr->skill_sav >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
+	if (p_ptr->state.skills[SKILL_SAVE] >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
 	else m_ptr->smart &= ~(SM_GOOD_SAVE);
-	if (p_ptr->skill_sav >= 100) m_ptr->smart |= (SM_PERF_SAVE);
+	if (p_ptr->state.skills[SKILL_SAVE] >= 100) m_ptr->smart |= (SM_PERF_SAVE);
 	else m_ptr->smart &= ~(SM_PERF_SAVE);
 	if (p_resist_good(P_RES_NEXUS)) m_ptr->smart |= (SM_RES_NEXUS);
 	break;
@@ -3542,11 +3542,11 @@ void update_smart_learn(int m_idx, int what)
        */
     case LRN_BLIND_SAVE:
       {
-	if (p_ptr->skill_sav >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
+	if (p_ptr->state.skills[SKILL_SAVE] >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
 	else m_ptr->smart &= ~(SM_GOOD_SAVE);
-	if (p_ptr->skill_sav >= 100) m_ptr->smart |= (SM_PERF_SAVE);
+	if (p_ptr->state.skills[SKILL_SAVE] >= 100) m_ptr->smart |= (SM_PERF_SAVE);
 	else m_ptr->smart &= ~(SM_PERF_SAVE);
-	if (p_ptr->no_blind) m_ptr->smart |= (SM_RES_BLIND);
+	if (p_ptr->state.no_blind) m_ptr->smart |= (SM_RES_BLIND);
 	break;
       }
       
@@ -3557,9 +3557,9 @@ void update_smart_learn(int m_idx, int what)
        */
     case LRN_CONFU_SAVE:
       {
-	if (p_ptr->skill_sav >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
+	if (p_ptr->state.skills[SKILL_SAVE] >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
 	else m_ptr->smart &= ~(SM_GOOD_SAVE);
-	if (p_ptr->skill_sav >= 100) m_ptr->smart |= (SM_PERF_SAVE);
+	if (p_ptr->state.skills[SKILL_SAVE] >= 100) m_ptr->smart |= (SM_PERF_SAVE);
 	else m_ptr->smart &= ~(SM_PERF_SAVE);
 	if (p_resist_good(P_RES_CONFU)) m_ptr->smart |= (SM_RES_CONFU);
 	else m_ptr->smart &= ~(SM_RES_CONFU);

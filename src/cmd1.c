@@ -38,11 +38,11 @@ void search(void)
   
   
   /* Start with base search ability */
-  chance = p_ptr->skill_srh;
+  chance = p_ptr->state.skills[SKILL_SEARCH];
   
   /* Penalize various conditions */
-  if (p_ptr->blind || no_lite()) chance = chance / 10;
-  if (p_ptr->confused || p_ptr->image) chance = chance / 10;
+  if (p_ptr->timed[TMD_BLIND] || no_lite()) chance = chance / 10;
+  if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC]) chance = chance / 10;
   
   /* Search the nearby grids, which are always in bounds */
   for (y = (py - 1); y <= (py + 1); y++)
@@ -209,7 +209,7 @@ bool quiver_carry(object_type *o_ptr, int o_idx)
   int ammo_num, added_ammo_num;
   int attempted_quiver_slots;
   
-  bool blind = ((p_ptr->blind) || (no_lite()));
+  bool blind = ((p_ptr->timed[TMD_BLIND]) || (no_lite()));
   bool autop;
   int old_num;
   
@@ -638,11 +638,11 @@ byte py_pickup(int pickup, int y, int x)
 	  o_ptr = &o_list[floor_o_idx];
 	  
 	  /* Describe the object.   Less detail if blind. */
-	  if (p_ptr->blind) object_desc(o_name, o_ptr, TRUE, 0);
+	  if (p_ptr->timed[TMD_BLIND]) object_desc(o_name, o_ptr, TRUE, 0);
 	  else object_desc(o_name, o_ptr, TRUE, 3);
 	  
 	  /* Message */
-	  msg_format("You %s %s.", (p_ptr->blind ? "feel" : "see"), o_name);
+	  msg_format("You %s %s.", (p_ptr->timed[TMD_BLIND] ? "feel" : "see"), o_name);
 	}
       
       /* Multiple objects */
@@ -650,7 +650,7 @@ byte py_pickup(int pickup, int y, int x)
 	{
 	  /* Message */
 	  msg_format("You %s a pile of %d items.", 
-		     (p_ptr->blind ? "feel" : "see"), floor_num);
+		     (p_ptr->timed[TMD_BLIND] ? "feel" : "see"), floor_num);
 	}
       
       /* Done */
@@ -667,7 +667,7 @@ byte py_pickup(int pickup, int y, int x)
 	  o_ptr = &o_list[floor_o_idx];
 	  
 	  /* Describe the object.   Less detail if blind. */
-	  if (p_ptr->blind) object_desc(o_name, o_ptr, TRUE, 0);
+	  if (p_ptr->timed[TMD_BLIND]) object_desc(o_name, o_ptr, TRUE, 0);
 	  else object_desc(o_name, o_ptr, TRUE, 3);
 	  
 	  /* Message */
@@ -700,7 +700,7 @@ byte py_pickup(int pickup, int y, int x)
 	  o_ptr = &o_list[floor_o_idx];
 	  
 	  /* Describe the object.   Less detail if blind. */
-	  if (p_ptr->blind) object_desc(o_name, o_ptr, TRUE, 0);
+	  if (p_ptr->timed[TMD_BLIND]) object_desc(o_name, o_ptr, TRUE, 0);
 	  else object_desc(o_name, o_ptr, TRUE, 3);
 	  
 	  /* Build a prompt */
@@ -1015,7 +1015,7 @@ void hit_trap(int y, int x)
 		  }
 		
 		/* cut the player. */
-		(void)set_cut(p_ptr->cut + randint1(dam));
+		(void)inc_timed(TMD_CUT, randint1(dam), TRUE);
 		
 		/* Take the damage. */
 		take_hit(dam, name);
@@ -1049,7 +1049,7 @@ void hit_trap(int y, int x)
 		    msg_print("You are impaled on poisonous spikes!");
 		    
 		    dam = dam * (randint1(6) + 3);
-		    (void)set_cut(p_ptr->cut + randint1(dam));
+		    (void)inc_timed(TMD_CUT, randint1(dam), TRUE);
 		    
 		    was_poisoned = pois_hit(dam);
 		    
@@ -1089,7 +1089,7 @@ void hit_trap(int y, int x)
 		    msg_print("You are impaled!");
 		    
 		    dam = dam * (2 + randint1(4));
-		    (void)set_cut(p_ptr->cut + randint1(dam));
+		    (void)inc_timed(TMD_CUT, randint1(dam), TRUE);
 		  }
 		
 		/* Take the damage */
@@ -1290,11 +1290,11 @@ void hit_trap(int y, int x)
 	if (selection == 1)
 	  {
 	    msg_print("You are surrounded by a black gas!");
-	    if (!p_ptr->no_blind)
+	    if (!p_ptr->state.no_blind)
 	      {
 		Rand_quick = FALSE;
 		
-		(void)set_blind(p_ptr->blind + randint0(30) + 15);
+		(void)inc_timed(TMD_BLIND, randint0(30) + 15, TRUE);
 		
 		Rand_quick = TRUE;
 	      }
@@ -1309,7 +1309,7 @@ void hit_trap(int y, int x)
 	      {
 		Rand_quick = FALSE;
 		
-		(void)set_confused(p_ptr->confused + randint0(20) + 10);
+		(void)inc_timed(TMD_CONFUSED, randint0(20) + 10, TRUE);
 		
 		Rand_quick = TRUE;
 	      }
@@ -1334,7 +1334,7 @@ void hit_trap(int y, int x)
 	    msg_print("You are surrounded by a strange white mist!");
 	    if (!p_ptr->free_act)
 	      {
-		(void)set_paralyzed(p_ptr->paralyzed + randint0(10) + 5);
+		(void)inc_timed(TMD_PARALYZED, randint0(10) + 5, TRUE);
 	      }
 	    else notice_obj(OF_FREE_ACT, 0);
 	  }
@@ -1420,9 +1420,9 @@ void hit_trap(int y, int x)
 	    (void)destroy_level(FALSE);
 	    
 	    /* the player is hard-hit. */
-	    (void)set_confused(p_ptr->confused + randint0(20) + 10);
-	    (void)set_blind(p_ptr->blind + randint0(30) + 15);
-	    (void)set_stun(p_ptr->stun + randint1(50) + 50);
+	    (void)inc_timed(TMD_CONFUSED, randint0(20) + 10, TRUE);
+	    (void)inc_timed(TMD_BLIND, randint0(30) + 15, TRUE);
+	    (void)inc_timed(TMD_STUN, randint1(50) + 50, TRUE);
 	    dam = damroll(15,15);
 	    take_hit(dam, name);
 	  }
@@ -1441,7 +1441,7 @@ void hit_trap(int y, int x)
 	    dam = damroll(2,10);
 	    take_hit(dam, name);
 	    
-	    (void)set_stun(p_ptr->stun + randint1(10) + 10);
+	    (void)inc_timed(TMD_STUN, randint1(10) + 10, TRUE);
 	  }
 	
 	/* a few pebbles. */
@@ -1618,13 +1618,13 @@ void hit_trap(int y, int x)
 	    
 	    if (!p_resist_good(P_RES_CONFU))
 	      {
-		(void)set_confused(p_ptr->confused + randint0(20) + 10);
+		(void)inc_timed(TMD_CONFUSED, randint0(20) + 10, TRUE);
 	      }
 	    else notice_other(IF_RES_CONFU, 0);
 
 	    if (!p_resist_good(P_RES_CHAOS))
 	      {
-		(void)set_image(p_ptr->image + randint1(40));
+		(void)inc_timed(TMD_IMAGE, randint1(40), TRUE);
 	      }
 	    else notice_other(IF_RES_CHAOS, 0);
 	    
@@ -1769,7 +1769,7 @@ void hit_trap(int y, int x)
 		dam = 3 * dam / 2;
 		
 		/* cut the player. */
-		(void)set_cut(p_ptr->cut + randint1(dam));
+		(void)inc_timed(TMD_CUT, randint1(dam), TRUE);
 	      }
 	    
 	    Rand_quick = TRUE;
@@ -1823,7 +1823,7 @@ void hit_trap(int y, int x)
 		dam = 3 * dam / 2;
 		
 		/* stun the player. */
-		(void)set_stun(p_ptr->cut + randint1(dam));
+		(void)inc_timed(TMD_STUN, randint1(dam), TRUE);
 	      }
 	    
 	    Rand_quick = TRUE;
@@ -1860,7 +1860,7 @@ void hit_trap(int y, int x)
 		dam = 3 * dam / 2;
 		
 		/* stun the player. */
-		(void)set_stun(p_ptr->cut + randint1(dam));
+		(void)inc_timed(TMD_STUN, randint1(dam), TRUE);
 	      }
 	    
 	    Rand_quick = TRUE;
@@ -1951,14 +1951,14 @@ void fall_off_cliff(void)
 	{
 	  notice_obj(OF_FEATHER, 0);
 	  dam = damroll(2, 8);
-	  set_stun(p_ptr->stun + damroll(2, 8));
-	  set_cut(p_ptr->cut + damroll(2, 8));
+	  (void)inc_timed(TMD_STUN, damroll(2, 8), TRUE);
+	  (void)inc_timed(TMD_CUT, damroll(2, 8), TRUE);
 	}
       else
 	{
 	  dam = damroll(4, 8);
-	  set_stun(p_ptr->stun + damroll(4, 8));
-	  set_cut(p_ptr->cut + damroll(4, 8));
+	  (void)inc_timed(TMD_STUN, damroll(4, 8), TRUE);
+	  (void)inc_timed(TMD_CUT, damroll(4, 8), TRUE);
 	}
       take_hit(dam, "falling off a precipice");
     }
@@ -1975,14 +1975,14 @@ void fall_off_cliff(void)
 	    {
 	      notice_obj(OF_FEATHER, 0);
 	      dam = damroll(2, 8);
-	      set_stun(p_ptr->stun + damroll(2, 8));
-	      set_cut(p_ptr->cut + damroll(2, 8));
+	      (void)inc_timed(TMD_STUN, damroll(2, 8), TRUE);
+	      (void)inc_timed(TMD_CUT, damroll(2, 8), TRUE);
 	    }
 	  else
 	    {
 	      dam = damroll(4, 8);
-	      set_stun(p_ptr->stun + damroll(4, 8));
-	      set_cut(p_ptr->cut + damroll(4, 8));
+	      (void)inc_timed(TMD_STUN, damroll(4, 8), TRUE);
+	      (void)inc_timed(TMD_CUT, damroll(4, 8), TRUE);
 	    }
 	  take_hit(dam, "falling off a precipice");
 	  if (p_ptr->depth == 70) break;
@@ -2299,7 +2299,7 @@ void move_player(int dir, int do_pickup)
 		  }
 		
 		/* Smart enough to sense trouble. */
-		else if (!p_ptr->blind)
+		else if (!p_ptr->timed[TMD_BLIND])
 		  {
 		    if (!get_check("It's a cliff! Really step off it? "))
 		      {
@@ -2345,18 +2345,18 @@ void move_player(int dir, int do_pickup)
 	      (f_info[cave_feat[p_ptr->py][p_ptr->px]].flags & TF_TREE))
 	    {
 	      if (!(f_info[cave_feat[py][px]].flags & TF_TREE) || 
-		  !(p_ptr->superstealth))
+		  !(p_ptr->timed[TMD_SSTEALTH]))
 		{
-		  set_superstealth(p_ptr->superstealth + 1,FALSE);
+		  (void)inc_timed(TMD_SSTEALTH, 1, FALSE);
 		  p_ptr->update |= (PU_BONUS);
 		}
 	    }
 	  else if ((check_ability(SP_WOODEN)) && 
 		   (f_info[cave_feat[py][px]].flags & TF_TREE))
 	    {
-	      if (p_ptr->superstealth)
+	      if (p_ptr->timed[TMD_SSTEALTH])
 		{
-		  set_superstealth(p_ptr->superstealth - 1,FALSE);
+		  (void)dec_timed(TMD_SSTEALTH, 1, FALSE);
 		  p_ptr->update |= (PU_BONUS);
 		}
 	    }

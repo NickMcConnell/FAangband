@@ -604,19 +604,19 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 6:	/* Reduce Cuts and Poison */
 	  {
-	    (void)set_poisoned(p_ptr->poisoned / 2);
-	    (void)set_cut(p_ptr->cut / 2);
+	    (void)dec_timed(TMD_POISONED, p_ptr->timed[TMD_POISONED] / 2, TRUE);
+	    (void)dec_timed(TMD_CUT, p_ptr->timed[TMD_CUT] / 2, TRUE);
 	    break;
 	  }
 	case 7:	/* Resist Magic */
 	  {
-	    if (!p_ptr->magicdef)
+	    if (!p_ptr->timed[TMD_INVULN])
 	      {
-		(void)set_extra_defences(10 + randint1(5));
+		(void)inc_timed(TMD_INVULN, 10 + randint1(5), TRUE);
 	      }
 	    else
 	      {
-		(void)set_extra_defences(p_ptr->magicdef + randint1(5));
+		(void)inc_timed(TMD_INVULN, randint1(5), TRUE);
 	      }
 	    
 	    break;
@@ -692,9 +692,9 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 21:	/* Cure */
 	  {
-	    (void)set_poisoned(0);
-	    (void)set_cut(0);
-	    (void)set_stun(0);
+	    (void)clear_timed(TMD_POISONED, TRUE);
+	    (void)clear_timed(TMD_CUT, TRUE);
+	    (void)clear_timed(TMD_STUN, TRUE);
 	    break;
 	  }
 	case 22:	/* Detect Enchantment */
@@ -744,13 +744,13 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 31:	/* Haste Self */
 	  {
-	    if (!p_ptr->fast)
+	    if (!p_ptr->timed[TMD_FAST])
 	      {
-		(void)set_fast(randint1(20) + plev);
+		(void)set_timed(TMD_FAST, randint1(20) + plev, TRUE);
 	      }
 	    else
 	      {
-		(void)set_fast(p_ptr->fast + randint1(5));
+		(void)set_timed(TMD_FAST, randint1(5), TRUE);
 	      }
 	    break;
 	  }
@@ -779,46 +779,46 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 35:	/* Shield */
 	  {
-	    if (!p_ptr->shield)
+	    if (!p_ptr->timed[TMD_SHIELD])
 	      {
-		(void)set_shield(p_ptr->shield + randint1(20) + 30);
+		(void)inc_timed(TMD_SHIELD, randint1(20) + 30, TRUE);
 	      }
 	    else
 	      {
-		(void)set_shield(p_ptr->shield + randint1(10) + 15);
+		(void)inc_timed(TMD_SHIELD, randint1(10) + 15, TRUE);
 	      }
 	    break;
 	  }
 	case 36:	/* Resistance */
 	  {
-	    (void)set_oppose_acid(p_ptr->oppose_acid + randint1(20) + 20);
-	    (void)set_oppose_elec(p_ptr->oppose_elec + randint1(20) + 20);
-	    (void)set_oppose_fire(p_ptr->oppose_fire + randint1(20) + 20);
-	    (void)set_oppose_cold(p_ptr->oppose_cold + randint1(20) + 20);
-	    (void)set_oppose_pois(p_ptr->oppose_pois + randint1(20) + 20);
-	    break;
+			int time = randint1(20) + 20;
+			(void)inc_timed(TMD_OPP_ACID, time, TRUE);
+			(void)inc_timed(TMD_OPP_ELEC, time, TRUE);
+			(void)inc_timed(TMD_OPP_FIRE, time, TRUE);
+			(void)inc_timed(TMD_OPP_COLD, time, TRUE);
+			(void)inc_timed(TMD_OPP_POIS, time, TRUE);
 	  }
 	case 37:	/* Essence of Speed */
 	  {
-	    if (!p_ptr->fast)
+	    if (!p_ptr->timed[TMD_FAST])
 	      {
-		(void)set_fast(randint1(30) + 10 + plev);
+		(void)set_timed(TMD_FAST, randint1(30) + 10 + plev, TRUE);
 	      }
 	    else
 	      {
-		(void)set_fast(p_ptr->fast + randint1(10));
+		(void)set_timed(TMD_FAST, randint1(10), TRUE);
 	      }
 	    break;
 	  }
 	case 38:	/* Strengthen Defences */
 	  {
-	    if (!p_ptr->magicdef)
+	    if (!p_ptr->timed[TMD_INVULN])
 	      {
-		(void)set_extra_defences(40);
+		(void)inc_timed(TMD_INVULN, 40, TRUE);
 	      }
 	    else
 	      {
-		(void)set_extra_defences(p_ptr->magicdef + randint1(20));
+		(void)inc_timed(TMD_INVULN, randint1(20), TRUE);
 	      }
 	    
 	    break;
@@ -966,24 +966,24 @@ bool cast_spell(int tval, int index, int dir)
 	case 65: /* Cure Light Wounds */
 	  {
 	    (void)hp_player(damroll(2, plev / 4 + 5));
-	    (void)set_cut(p_ptr->cut - 10);
+	    (void)dec_timed(TMD_CUT, 10, TRUE));
 	    break;
 	  }
 	case 66: /* Bless */
 	  {
-	    if (!p_ptr->blessed)
+	    if (!p_ptr->timed[TMD_BLESSED])
 	      {
-		(void)set_blessed(p_ptr->blessed + randint1(12) + 12);
+		(void)inc_timed(TMD_BLESSED, randint1(12) + 12, TRUE);
 	      }
 	    else
 	      {
-		(void)set_blessed(p_ptr->blessed + randint1(4) + 4);
+		(void)inc_timed(TMD_BLESSED, randint1(4) + 4, TRUE);
 	      }
 	    break;
 	  }
 	case 67: /* Remove Fear */
 	  {
-	    (void)set_afraid(0);
+	    (void)clear_timed(TMD_AFRAID, TRUE);
 	    break;
 	  }
 	case 68: /* Call Light */
@@ -1006,13 +1006,13 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 71: /* Slow Poison */
 	  {
-	    (void)set_poisoned(p_ptr->poisoned / 2);
+	    (void)dec_timed(TMD_POISONED, p_ptr->timed[TMD_POISONED] / 2, TRUE);
 	    break;
 	  }
 	case 72: /* Cure Serious Wounds */
 	  {
 	    (void)hp_player(damroll(4, plev / 4 + 6));
-	    (void)set_cut((p_ptr->cut / 2) - 5);
+	    (void)dec_timed(TMD_CUT, p_ptr->timed[TMD_CUT] + 5, TRUE);
 	    break;
 	  }
 	case 73: /* Scare Monster */
@@ -1027,13 +1027,13 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 75: /* Chant */
 	  {
-	    if (!p_ptr->blessed)
+	    if (!p_ptr->timed[TMD_BLESSED]blessed)
 	      {
-		(void)set_blessed(p_ptr->blessed + randint1(24) + 24);
+		(void)inc_timed(TMD_BLESSED, randint1(24) + 24, TRUE);
 	      }
 	    else
 	      {
-		(void)set_blessed(p_ptr->blessed + randint1(8) + 8);
+		(void)inc_timed(TMD_BLESSED, randint1(8) + 8, TRUE);
 	      }
 	    break;
 	  }
@@ -1055,13 +1055,13 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 79: /* Resist Heat and Cold */
 	  {
-	    (void)set_oppose_fire(p_ptr->oppose_fire + randint1(10) + plev / 2);
-	    (void)set_oppose_cold(p_ptr->oppose_cold + randint1(10) + plev / 2);
+	    (void)inc_timed(TMD_OPP_FIRE, randint1(10) + plev / 2, TRUE);
+	    (void)inc_timed(TMD_OPP_COLD, randint1(10) + plev / 2, TRUE);
 	    break;
 	  }
 	case 80: /* Neutralize Poison */
 	  {
-	    (void)set_poisoned(0);
+	    (void)clear_timed(TMD_POISONED, TRUE);
 	    break;
 	  }
 	case 81: /* Orb of Draining */
@@ -1073,27 +1073,26 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 82: /* Sense Invisible */
 	  {
-	    (void)set_tim_invis(p_ptr->tim_invis + randint1(24) + plev);
+	    (void)inc_timed(TMD_SINVIS, randint1(24) + plev, TRUE);
 	    break;
 	  }
 	case 83: /* Protection from Evil */
 	  {
-	    if (!p_ptr->protevil)
+	    if (!p_ptr->timed[TMD_PROTEVIL])
 	      {
-		(void)set_protevil(p_ptr->protevil + 
-				   randint1(24) + 3 * plev / 2);
+		(void)inc_timed(TMD_PROTEVIL, randint1(24) + 3 * plev / 2, TRUE);
 	      }
 	    else
 	      {
-		(void)set_protevil(p_ptr->protevil + randint1(30));
+		(void)inc_timed(TMD_PROTEVIL, randint1(30), TRUE);
 	      }
 	    break;
 	  }
 	case 84: /* Cure Mortal Wounds */
 	  {
 	    (void)hp_player(damroll(9, plev / 3 + 12));
-	    (void)set_stun(0);
-	    (void)set_cut(0);
+	    (void)clear_timed(TMD_STUN, TRUE);
+	    (void)clear_timed(TMD_CUT, TRUE);
 	    break;
 	  }
 	case 85: /* Earthquake */
@@ -1116,13 +1115,13 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 88: /* Prayer */
 	  {
-	    if (!p_ptr->blessed)
+	    if (!p_ptr->timed[TMD_BLESSED])
 	      {
-		(void)set_blessed(p_ptr->blessed + randint1(48) + 48);
+		(void)inc_timed(TMD_BLESSED, randint1(48) + 48, TRUE);
 	      }
 	    else
 	      {
-		(void)set_blessed(p_ptr->blessed + randint1(12) + 12);
+		(void)inc_timed(TMD_BLESSED, randint1(12) + 12, TRUE);
 	      }
 	    break;
 	  }
@@ -1134,8 +1133,8 @@ bool cast_spell(int tval, int index, int dir)
 	case 90: /* Heal */
 	  {
 	    (void)hp_player(300);
-	    (void)set_stun(0);
-	    (void)set_cut(0);
+	    (void)clear_timed(TMD_STUN, TRUE);
+	    (void)clear_timed(TMD_CUT, TRUE);
 	    break;
 	  }
 	case 91: /* Dispel Evil */
@@ -1145,13 +1144,13 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 92: /* Sacred Shield */
 	  {
-	    if (!p_ptr->shield)
+	    if (!p_ptr->timed[TMD_SHIELD])
 	      {
-		(void)set_shield(p_ptr->shield + randint1(20) + plev / 2);
+		(void)inc_timed(TMD_SHIELD, randint1(20) + plev / 2, TRUE);
 	      }
 	    else
 	      {
-		(void)set_shield(p_ptr->shield + randint1(10) + plev / 4);
+		(void)inc_timed(TMD_SHIELD, randint1(10) + plev / 4, TRUE);
 	      }
 	    break;
 	  }
@@ -1164,10 +1163,10 @@ bool cast_spell(int tval, int index, int dir)
 	  {
 	    (void)dispel_evil(randint1(plev * 4));
 	    (void)hp_player(300);
-	    (void)set_afraid(0);
-	    (void)set_poisoned(p_ptr->poisoned - 200);
-	    (void)set_stun(0);
-	    (void)set_cut(0);
+			(void)clear_timed(TMD_AFRAID, TRUE);
+			(void)dec_timed(TMD_POISONED, 200, TRUE);
+			(void)clear_timed(TMD_STUN, TRUE);
+			(void)clear_timed(TMD_CUT, TRUE);
 	    break;
 	  }
 	case 95: /* Blink */
@@ -1245,8 +1244,8 @@ bool cast_spell(int tval, int index, int dir)
 	case 107: /* Healing */
 	  {
 	    (void)hp_player(700);
-	    (void)set_stun(0);
-	    (void)set_cut(0);
+			(void)clear_timed(TMD_STUN, TRUE);
+			(void)clear_timed(TMD_CUT, TRUE);
 	    break;
 	  }
 	case 108: /* Sacred Knowledge */
@@ -1396,15 +1395,15 @@ bool cast_spell(int tval, int index, int dir)
 	case 124: /* Paladin Prayer: Horn of Wrath */
 	  {
 	    (void)hp_player(20);
-	    if (!p_ptr->hero)
+	    if (!p_ptr->timed[TMD_HERO])
 	      {
-		(void)set_hero(p_ptr->hero + randint1(20) + 20);
+		(void)inc_timed(TMD_HERO, randint1(20) + 20, TRUE);
 	      }
 	    else
 	      {
-		(void)set_hero(p_ptr->hero + randint1(10) + 10);
+		(void)inc_timed(TMD_HERO, randint1(10) + 10, TRUE);
 	      }
-	    (void)set_afraid(0);
+	    (void)clear_timed(TMD_AFRAID, TRUE);
 	    
 	    (void)fear_monsters(plev);
 	    break;
@@ -1422,8 +1421,8 @@ bool cast_spell(int tval, int index, int dir)
 	  {
 	    cptr p = (p_ptr->psex == SEX_FEMALE ? "Daughters" : "Sons");
 	    msg_format("%s of Night rejoice!  It's the Day of Misrule!", p);
-	    (void)set_fast(randint1(30) + 30);
-	    (void)set_shero(p_ptr->shero + randint1(30) + 30);
+	    (void)inc_timed(TMD_FAST, randint1(30) + 30, TRUE);
+	    (void)inc_timed(TMD_SHERO, randint1(30) + 30, TRUE);
 	    break;
 	  }
 	case 127:	/* Rogue Spell: Detect Treasure */
@@ -1461,7 +1460,7 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 132:  /* combat poison */
 	  {
-	    (void)set_poisoned(p_ptr->poisoned / 2);
+	    (void)dec_timed(TMD_POISONED, p_ptr->timed[TMD_POISONED] / 2, TRUE);
 	    break;
 	  }
 	case 133:  /* lightning spark */
@@ -1487,7 +1486,7 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 137:  /* Cure poison */
 	  {
-	    (void)set_poisoned(0);
+			(void)clear_timed(TMD_POISONED, TRUE);
 	    break;
 	  }
 	case 138:  /* frost bolt */
@@ -1526,15 +1525,16 @@ bool cast_spell(int tval, int index, int dir)
 	case 144:  /* heroism */
 	  {
 	    (void)hp_player(20);
-	    if (!p_ptr->hero)
+	    if (!p_ptr->timed[TMD_HERO])
 	      {
-		(void)set_hero(p_ptr->hero + randint1(20) + 20);
+		(void)inc_timed(TMD_HERO, randint1(20) + 20, TRUE);
 	      }
 	    else
 	      {
-		(void)set_hero(p_ptr->hero + randint1(10) + 10);
+		(void)inc_timed(TMD_HERO, randint1(10) + 10, TRUE);
 	      }
-	    (void)set_afraid(0);
+	    (void)clear_timed(TMD_AFRAID, TRUE);
+	    
 	    break;
 	  }
 	case 145:  /* remove curse */
@@ -1561,7 +1561,7 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 149:  /* resist poison */
 	  {
-	    (void)set_oppose_pois(p_ptr->oppose_pois + randint1(20) + 20);
+			(void)inc_timed(TMD_OPP_POIS, randint1(20) + 20, TRUE);
 	    break;
 	  }
 	case 150:  /* earthquake */
@@ -1571,8 +1571,8 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 151:  /* resist fire & cold */
 	  {
-	    (void)set_oppose_fire(p_ptr->oppose_fire + randint1(20) + 20);
-	    (void)set_oppose_cold(p_ptr->oppose_cold + randint1(20) + 20);
+			(void)inc_timed(TMD_OPP_FIRE, randint1(20) + 20, TRUE);
+			(void)inc_timed(TMD_OPP_COLD, randint1(20) + 20, TRUE);
 	    break;
 	  }
 	case 152:  /* detect all */
@@ -1582,15 +1582,15 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 153:  /* natural vitality */
 	  {
-	    (void)set_poisoned((3 * p_ptr->poisoned / 4) - 5);
+	    (void)dec_timed(TMD_POISONED, (3 * p_ptr->timed[TMD_POISONED] / 4) + 5, TRUE);
 	    (void)hp_player(damroll(2, plev / 5));
-	    (void)set_cut(p_ptr->cut - plev / 2);
+	    (void)dec_timed(TMD_CUT, p_ptr->timed[TMD_CUT] + plev / 2, TRUE);
 	    break;
 	  }
 	case 154:  /* resist acid & lightning */
 	  {
-	    (void)set_oppose_acid(p_ptr->oppose_acid + randint1(20) + 20);
-	    (void)set_oppose_elec(p_ptr->oppose_elec + randint1(20) + 20);
+			(void)inc_timed(TMD_OPP_ACID, randint1(20) + 20, TRUE);
+			(void)inc_timed(TMD_OPP_ELEC, randint1(20) + 20, TRUE);
 	    break;
 	  }
 	case 155:  /* wither foe */
@@ -1677,23 +1677,21 @@ bool cast_spell(int tval, int index, int dir)
 	    (void)detect_traps(DETECT_RAD_DEFAULT, FALSE);
 	    (void)detect_doors(DETECT_RAD_DEFAULT, FALSE);
 	    (void)detect_stairs(DETECT_RAD_DEFAULT, FALSE);
-	    if (!p_ptr->tim_invis)
+	    if (!p_ptr->timed[TMD_SINVIS])
 	      {
-		(void)set_tim_invis(p_ptr->tim_invis + 
-				    randint1(24) + 24);
+		(void)inc_timed(TMD_SINVIS, randint1(24) + 24, TRUE);
 	      }
 	    else
 	      {
-		(void)set_tim_invis(p_ptr->tim_invis + 
-				    randint1(12) + 12);
+		(void)inc_timed(TMD_SINVIS, randint1(12) + 12, TRUE);
 	      }
 	    break;
 	  }
 	case 170:  /* herbal healing */
 	  {
 	    (void)hp_player(damroll(25 + plev / 2, 12));
-	    (void)set_cut(0);
-	    (void)set_poisoned(p_ptr->poisoned - 200);
+	    (void)clear_timed(TMD_CUT, TRUE);
+	    (void)dec_timed(TMD_POISONED, 200, TRUE);
 	    break;
 	  }
 	case 171:  /* blizzard */
@@ -1741,13 +1739,13 @@ bool cast_spell(int tval, int index, int dir)
 	case 177:  /* song of protection */
 	  {
 	    msg_print("Your song creates a mystic shield.");
-	    if (!p_ptr->shield)
+	    if (!p_ptr->timed[TMD_SHIELD])
 	      {
-		(void)set_shield(p_ptr->shield + randint1(30) + plev / 2);
+		(void)inc_timed(TMD_SHIELD, randint1(30) + plev / 2, TRUE);
 	      }
 	    else
 	      {
-		(void)set_shield(p_ptr->shield + randint1(15) + plev / 4);
+		(void)inc_timed(TMD_SHIELD, randint1(15) + plev / 4, TRUE);
 	      }
 	    break;
 	  }
@@ -1787,13 +1785,13 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 182:  /* Speed of Nessa */
 	  {
-	    if (!p_ptr->fast)
+	    if (!p_ptr->timed[TMD_FAST])
 	      {
-		(void)set_fast(randint1(10) + plev / 2);
+		(void)set_timed(TMD_FAST, randint1(10) + plev / 2, TRUE);
 	      }
 	    else
 	      {
-		(void)set_fast(p_ptr->fast + randint1(5));
+		(void)set_timed(TMD_FAST, randint1(5));
 	      }
 	    break;
 	  }
@@ -1816,11 +1814,11 @@ bool cast_spell(int tval, int index, int dir)
 	  {
 	    (void)dispel_evil(100);
 	    (void)hp_player(500);
-	    (void)set_blessed(p_ptr->blessed + randint1(100) + 100);
-	    (void)set_afraid(0);
-	    (void)set_poisoned(0);
-	    (void)set_stun(0);
-	    (void)set_cut(0);
+	    (void)inc_timed(TMD_BLESSED, randint1(100) + 100, TRUE);
+			(void)clear_timed(TMD_CUT, TRUE);
+			(void)clear_timed(TMD_AFRAID, TRUE);
+			(void)clear_timed(TMD_POISONED, TRUE);
+			(void)clear_timed(TMD_STUN, TRUE);
 	    break;
 	  }
 	case 187:  /* Ranger Spell:  Creature Knowledge */
@@ -1867,7 +1865,7 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 194: /* enhanced infravision */
 	  {
-	    set_tim_infra(p_ptr->tim_infra + 70 + randint1(70));
+	    inc_timed(TMD_SINFRA, 70 + randint1(70), TRUE);
 	    break;
 	  }
 	case 195: /* break curse */
@@ -1927,7 +1925,7 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 205: /* cure poison */
 	  {
-	    (void)set_poisoned(0);
+	    (void)clear_timed(TMD_POISONED, TRUE);
 	    break;
 	  }
 	case 206: /* dispel undead */
@@ -1942,15 +1940,13 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 208: /* see invisible */
 	  {
-	    if (!p_ptr->tim_invis)
+	    if (!p_ptr->timed[TMD_SINVIS])
 	      {
-		set_tim_invis(p_ptr->tim_invis + 20 + 
-			      randint1(plev / 2));
+		inc_timed(TMD_SINVIS, 20 + randint1(plev / 2), TRUE);
 	      }
 	    else
 	      {
-		set_tim_invis(p_ptr->tim_invis + 10 + 
-			      randint1(plev / 4));
+		inc_timed(TMD_SINVIS, 10 + randint1(plev / 4), TRUE);
 	      }
 	    break;
 	  }
@@ -1997,7 +1993,7 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 216: /* resist poison */
 	  {
-	    (void)set_oppose_pois(p_ptr->oppose_pois + randint1(20) + plev / 2);
+	    (void)inc_timed(TMD_OPP_POIS, randint1(20) + plev / 2, TRUE);
 	    break;
 	  }
 	case 217: /* Exorcise Demons */
@@ -2061,24 +2057,24 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 228: /* resist acid and cold */
 	  {
-	    (void)set_oppose_acid(p_ptr->oppose_pois + randint1(20) + 20);
-	    (void)set_oppose_cold(p_ptr->oppose_cold + randint1(20) + 20);
+	    (void)inc_timed(TMD_OPP_ACID, randint1(20) + 20, TRUE);
+	    (void)inc_timed(TMD_OPP_COLD, randint1(20) + 20, TRUE);
 	    break;
 	  }
 	case 229: /* heal any wound */
 	  {
-	    (void)set_cut(0);
-	    (void)set_stun(0);
+	    (void)clear_timed(TMD_CUT, TRUE);
+	    (void)clear_timed(TMD_STUN, TRUE);
 	    break;
 	  }
 	case 230: /* protection from evil */
 	  {
-	    (void)set_protevil(p_ptr->protevil + plev / 2 + randint1(plev));
+	    (void)inc_timed(TMD_PROTEVIL, plev / 2 + randint1(plev), TRUE);
 	    break;
 	  }
 	case 231: /* black blessing */
 	  {
-	    (void)set_blessed(p_ptr->blessed + randint1(66));
+	    (void)inc_timed(TMD_BLESSED, randint1(66), TRUE);
 	    break;
 	  }
 	case 232: /* banish evil */
@@ -2088,13 +2084,13 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 233: /* shadow barrier */
 	  {
-	    if (!p_ptr->shield)
+	    if (!p_ptr->timed[TMD_SHIELD])
 	      {
-		(void)set_shield(p_ptr->shield + randint1(20) + 10);
+		(void)inc_timed(TMD_SHIELD, randint1(20) + 10, TRUE);
 	      }
 	    else
 	      {
-		(void)set_shield(p_ptr->shield + randint1(10) + 5);
+		(void)inc_timed(TMD_SHIELD, randint1(10) + 5, TRUE);
 	      }
 	    break;
 	  }
@@ -2156,13 +2152,13 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 243: /* haste self */
 	  {
-	    if (!p_ptr->fast)
+	    if (!p_ptr->timed[TMD_FAST])
 	      {
-		(void)set_fast(10 + randint1(20));
+		(void)set_timed(TMD_FAST, 10 + randint1(20), TRUE);
 	      }
 	    else
 	      {
-		(void)set_fast(p_ptr->fast + randint1(5));
+		(void)set_timed(TMD_FAST, randint1(5), TRUE);
 	      }
 	    break;
 	  }
@@ -2209,40 +2205,40 @@ bool cast_spell(int tval, int index, int dir)
 	  }
 	case 250: /* Necro spell - timed ESP */
 	  {
-	    if (!p_ptr->tim_esp)
+	    if (!p_ptr->timed[TMD_TELEPATHY])
 	      {
-		(void)set_tim_esp(30 + randint1(40));
+		(void)inc_timed(TMD_TELEPATHY, 30 + randint1(40), TRUE);
 	      }
 	    else
 	      {
-		(void)set_tim_esp(p_ptr->tim_esp + randint1(30));
+		(void)inc_timed(TMD_TELEPATHY, randint1(30), TRUE);
 	      }
 	    break;
 	  }
 	case 251:	/* Rogue and Assassin Spell - Slip into the Shadows */
 	  {
-	    if (!p_ptr->superstealth)
+	    if (!p_ptr->timed[TMD_SSTEALTH])
 	      {
-		(void)set_superstealth(40,TRUE);
+		(void)inc_timed(TMD_SSTEALTH, 40, TRUE);
 	      }
 	    else
 	      {
-		(void)set_superstealth(p_ptr->superstealth + randint1(20),TRUE);
+		(void)inc_timed(TMD_SSTEALTH, randint1(20), TRUE);
 	      }
 	    break;
 	  }
 	case 252:	/* Assassin spell: Bloodwrath */
 	  {
-	    if (!p_ptr->shero)
+	    if (!p_ptr->timed[TMD_SHERO])
 	      {
-		(void)set_shero(40);
+		(void)inc_timed(TMD_SHERO, 40, TRUE);
 	      }
 	    else
 	      {
-		(void)set_shero(p_ptr->shero + randint1(20));
+		(void)inc_timed(TMD_SHERO, randint1(20), TRUE);
 	      }
 	    
-	    (void)set_fast(40);
+	    (void)set_timed(TMD_FAST, 40, TRUE);
 	    
 	    break;
 	  }

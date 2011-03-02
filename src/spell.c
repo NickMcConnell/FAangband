@@ -157,8 +157,8 @@ s16b spell_chance(int spell)
   if (chance < minfail) chance = minfail;
   
   /* Stunning makes spells harder (after minfail) */
-  if (p_ptr->stun > 50) chance += 20;
-  else if (p_ptr->stun) chance += 10;
+  if (p_ptr->timed[TMD_STUN] > 50) chance += 20;
+  else if (p_ptr->timed[TMD_STUN]) chance += 10;
   
   /* Always a 5 percent chance of working */
   if (chance > 95) chance = 95;
@@ -423,7 +423,7 @@ bool spell_cast(int spell, int dir)
       else msg_print("You faint from the effort!");
       
       /* Hack -- Bypass free action */
-      (void)set_paralyzed(p_ptr->paralyzed + randint1(5 * oops + 1));
+      (void)inc_timed(TMD_PARALYZED, randint1(5 * oops + 1), TRUE);
       
       /* Damage CON (possibly permanently) */
       if (randint0(100) < 50)

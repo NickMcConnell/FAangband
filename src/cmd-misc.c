@@ -193,12 +193,6 @@ void show_player(void)
   bool exist_floor = FALSE;
   bool exist_monster = FALSE;
 
-  /* Set to display list */
-  p_ptr->command_see = TRUE;
-
-  /* No command */
-  p_ptr->command_new = 0;
-
   /* No commands yet */
   poss = 0;
 
@@ -412,10 +406,6 @@ void show_player(void)
 
   /* Load screen */
   screen_load();
-
-  /* Turn off lists */
-  p_ptr->command_see = FALSE;
-
 }    
 
 
@@ -432,15 +422,6 @@ void do_cmd_show_obj(void)
   byte out_color;
   bool accepted = FALSE;
   
-  /* Set to display list */
-  p_ptr->command_see = TRUE;
-
-  /* No item */
-  p_ptr->command_item = 0;
-
-  /* No command */
-  p_ptr->command_new = 0;
-
   /* No restrictions */
   item_tester_tval = 0;
   item_tester_hook = NULL;
@@ -590,7 +571,7 @@ void do_cmd_show_obj(void)
     }
       
   /* Fire an item */
-  if (p_ptr->ammo_tval == o_ptr->tval)
+  if (p_ptr->state.ammo_tval == o_ptr->tval)
     {
       comm[poss] = 'f';
       comm_code[poss] = CMD_FIRE;
@@ -673,10 +654,6 @@ void do_cmd_show_obj(void)
   
   /* Now set the item if valid */
   if (accepted) cmd_set_arg_item(cmd_get_top(), 0, item);
-
-  /* Turn off lists */
-  p_ptr->command_see = FALSE;
-
 }    
 
 /**
@@ -719,7 +696,7 @@ void handle_mousepress(int y, int x)
 	{
 	case MOUSE_MAP:
 	  {
-	    if (p_ptr->confused)
+	    if (p_ptr->timed[TMD_CONFUSED])
 	      {
 		p_ptr->command_dir = mouse_dir(p_ptr->command_cmd_ex, FALSE);
 		if (p_ptr->command_dir)

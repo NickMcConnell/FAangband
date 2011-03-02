@@ -497,19 +497,6 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
  */
 void do_cmd_search(cmd_code code, cmd_arg args[])
 {
-  /* Allow repeated command */
-  if (p_ptr->command_arg)
-    {
-      /* Set repeat count */
-      p_ptr->command_rep = p_ptr->command_arg - 1;
-      
-      /* Redraw the state */
-      p_ptr->redraw |= (PR_STATE);
-      
-      /* Cancel the arg */
-      p_ptr->command_arg = 0;
-    }
-  
   /* Take a turn */
   p_ptr->energy_use = 100;
   
@@ -1029,9 +1016,9 @@ static void chest_trap(int y, int x, s16b o_idx)
   if (trap & (CHEST_PARALYZE))
     {
       msg_print("A puff of yellow gas surrounds you!");
-      if (!p_ptr->free_act)
+      if (!p_ptr->state.free_act)
 	{
-	  (void)set_paralyzed(p_ptr->paralyzed + 10 + randint1(20));
+	  (void)inc_timed[TMD_PARALYZED, 10 + randint1(20));
 	}
       else notice_obj(OF_FREE_ACT, 0);
     }
@@ -1165,15 +1152,14 @@ static void chest_trap(int y, int x, s16b o_idx)
 	    {
 	      if (randint0(6) == 0) 
 		take_hit(damroll(5, 20), "a chest dispel-player trap");
-	      else if (randint0(5) == 0) (void)set_cut(p_ptr->cut + 200);
+	      else if (randint0(5) == 0) (void)inc_timed[TMD_CUT200);
 	      else if (randint0(4) == 0)
 		{
-		  if (!p_ptr->free_act) 
-		    (void)set_paralyzed(p_ptr->paralyzed + 2 + 
-					randint0(6));
+		  if (!p_ptr->state.free_act) 
+		    (void)inc_timed[TMD_PARALYZED, 2 + randint0(6));
 		  else 
 		    {
-		      (void)set_stun(p_ptr->stun + 10 + randint0(100));
+		      (void)inc_timed[TMD_STUN, 10 + randint0(100));
 		      notice_obj(OF_FREE_ACT, 0);
 		    }
 
@@ -1223,8 +1209,8 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
       i = p_ptr->skill_dis;
       
       /* Penalize some conditions */
-      if (p_ptr->blind || no_lite()) i = i / 10;
-      if (p_ptr->confused || p_ptr->image) i = i / 10;
+      if (p_ptr->timed[TMD_BLIND] || no_lite()) i = i / 10;
+      if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC]) i = i / 10;
       
       /* Difficulty rating.  Tweaked to compensate for higher pvals. */
       j = i - 2 * o_ptr->pval / 3;
@@ -1288,8 +1274,8 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
   i = p_ptr->skill_dis;
   
   /* Penalize some conditions */
-  if (p_ptr->blind || no_lite()) i = i / 10;
-  if (p_ptr->confused || p_ptr->image) i = i / 10;
+  if (p_ptr->timed[TMD_BLIND] || no_lite()) i = i / 10;
+  if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC]) i = i / 10;
   
   /* Difficulty rating. */
   j = i - (5 + o_ptr->pval / 2);
@@ -1548,8 +1534,8 @@ extern bool do_cmd_open_aux(int y, int x)
       i = p_ptr->skill_dis;
       
       /* Penalize some conditions */
-      if (p_ptr->blind || no_lite()) i = i / 10;
-      if (p_ptr->confused || p_ptr->image) i = i / 10;
+      if (p_ptr->timed[TMD_BLIND] || no_lite()) i = i / 10;
+      if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC]) i = i / 10;
       
       /* Extract the lock power */
       j = cave_feat[y][x] - FEAT_DOOR_HEAD;
@@ -2315,8 +2301,8 @@ extern bool do_cmd_disarm_aux(int y, int x)
   i = p_ptr->skill_dis;
   
   /* Penalize some conditions */
-  if (p_ptr->blind || no_lite()) i = i / 10;
-  if (p_ptr->confused || p_ptr->image) i = i / 10;
+  if (p_ptr->timed[TMD_BLIND] || no_lite()) i = i / 10;
+  if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC]) i = i / 10;
   
   
   /* Extract trap "power". */
@@ -2611,7 +2597,7 @@ static bool do_cmd_bash_aux(int y, int x)
       msg_print("You are off-balance.");
       
       /* Hack -- Lose balance ala paralysis */
-      (void)set_paralyzed(p_ptr->paralyzed + 2 + randint0(2));
+      (void)inc_timed[TMD_PARALYZED, 2 + randint0(2));
     }
   
   /* Result */
@@ -3152,7 +3138,7 @@ void do_cmd_run(cmd_code code, cmd_arg args[])
 	dir = args[0].direction;
 
   /* Hack XXX XXX XXX */
-  if (p_ptr->confused)
+  if (p_ptr->timed[TMD_CONFUSED])
     {
       msg_print("You are too confused!");
       return;
@@ -3188,7 +3174,7 @@ void do_cmd_pathfind(cmd_code code, cmd_arg args[])
   int px = p_ptr->px;
 
   /* Hack XXX XXX XXX */
-  if (p_ptr->confused)
+  if (p_ptr->timed[TMD_CONFUSED])
     {
       msg_print("You are too confused!");
       return;
@@ -3226,28 +3212,15 @@ static void do_cmd_hold_or_stay(int pickup)
   int px = p_ptr->px;
   
   
-  /* Allow repeated command */
-  if (p_ptr->command_arg)
-    {
-      /* Set repeat count */
-      p_ptr->command_rep = p_ptr->command_arg - 1;
-      
-      /* Redraw the state */
-      p_ptr->redraw |= (PR_STATE);
-      
-      /* Cancel the arg */
-      p_ptr->command_arg = 0;
-    }
-  
   /* Take a turn */
   p_ptr->energy_use = 100;
   
   /* Spontaneous Searching */
-  if (p_ptr->skill_fos >= 50)
+  if (p_ptr->state.skills[SKILL_SEARCH_FREQUENCY] >= 50)
     {
       search();
     }
-  else if (0 == randint0(50 - p_ptr->skill_fos))
+  else if (0 == randint0(50 - p_ptr->state.skills[SKILL_SEARCH_FREQUENCY]))
     {
       search();
     }
@@ -3291,31 +3264,14 @@ void do_cmd_pickup(cmd_code code, cmd_arg args[])
 {
   int energy_cost = 1, item;
   
-  /* Do we have an item? */
-  if (p_ptr->command_item)
-    {
-      /* Get the item */
-      item = handle_item();
-
-      /* Pick it up */
-      py_pickup_aux(0 - item);
-
-      /* Charge some energy. */
-      p_ptr->energy_use = energy_cost;
-    }
-
-  /* Get items */
-  else
-    {
-      /* Pick up floor objects, forcing a menu for multiple objects. */
-      energy_cost = py_pickup(2, p_ptr->py, p_ptr->px) * 10;
-      
-      /* Maximum time expenditure is a full turn. */
-      if (energy_cost > 100) energy_cost = 100;
-      
-      /* Charge this amount of energy. */
-      p_ptr->energy_use = energy_cost;
-    }
+  /* Pick up floor objects, forcing a menu for multiple objects. */
+  energy_cost = py_pickup(2, p_ptr->py, p_ptr->px) * 10;
+  
+  /* Maximum time expenditure is a full turn. */
+  if (energy_cost > 100) energy_cost = 100;
+  
+  /* Charge this amount of energy. */
+  p_ptr->energy_use = energy_cost;
 }
 
 

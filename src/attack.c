@@ -1104,7 +1104,7 @@ bool py_attack(int y, int x, bool can_push)
   monster_desc(m_name, m_ptr, 0);
   
   /* Handle player fear */
-  if (p_ptr->afraid)
+  if (p_ptr->timed[TMD_AFRAID])
     {
       if (m_ptr->ml)
 	{
@@ -1896,7 +1896,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
       
       /* Inflict both normal and wound damage. */
       take_hit(damage, "ammo of backbiting");
-      set_cut(randint1(damage * 3));
+      inc_timed(TMD_CUT, randint1(damage * 3), TRUE);
       
       /* That ends that shot! */
       return;
@@ -2309,7 +2309,7 @@ void textui_cmd_fire_at_nearest(void)
 		return;
 
 	/* Check for confusion */
-	if (p_ptr->confused)
+	if (p_ptr->timed[TMD_CONFUSED])
 	{
 		msg_print("You are confused.");
 		dir = ddd[randint0(8)];

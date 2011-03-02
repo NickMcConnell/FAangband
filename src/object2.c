@@ -3770,7 +3770,7 @@ void drop_near(object_type *j_ptr, int chance, int y, int x)
   /* Message when an object falls under the player or in trees or rubble */
   else if (((cave_feat[by][bx] == FEAT_TREE) || 
 	    (cave_feat[by][bx] == FEAT_TREE2) || 
-	    (cave_feat[by][bx] == FEAT_RUBBLE)) && (!p_ptr->blind))
+	    (cave_feat[by][bx] == FEAT_RUBBLE)) && (!p_ptr->timed[TMD_BLIND]))
     msg_format("The %s disappear%s from view.", o_name, (plural ? "" : "s"));
 }
 

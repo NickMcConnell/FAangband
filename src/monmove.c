@@ -287,10 +287,10 @@ static void update_smart_cheat(int m_idx)
   monster_type *m_ptr = &m_list[m_idx];
   
   /* Know weirdness */
-  if (p_ptr->free_act) m_ptr->smart |= (SM_IMM_FREE);
+  if (p_ptr->state.free_act) m_ptr->smart |= (SM_IMM_FREE);
   if (!p_ptr->msp) m_ptr->smart |= (SM_IMM_MANA);
-  if (p_ptr->skill_sav >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
-  if (p_ptr->skill_sav >= 100) m_ptr->smart |= (SM_PERF_SAVE);
+  if (p_ptr->skills[SKILL_SAVE] >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
+  if (p_ptr->skills[SKILL_SAVE] >= 100) m_ptr->smart |= (SM_PERF_SAVE);
   
   /* Know immunities */
   if (p_immune(P_RES_ACID)) m_ptr->smart |= (SM_IMM_ACID);
@@ -311,10 +311,10 @@ static void update_smart_cheat(int m_idx)
   if (p_resist_good(P_RES_FIRE)) m_ptr->smart |= (SM_RES_FIRE);
   if (p_resist_good(P_RES_COLD)) m_ptr->smart |= (SM_RES_COLD);
   if (p_resist_good(P_RES_POIS)) m_ptr->smart |= (SM_RES_POIS);
-  if (p_ptr->no_fear) m_ptr->smart |= (SM_RES_FEAR);
+  if (p_ptr->state.no_fear) m_ptr->smart |= (SM_RES_FEAR);
   if (p_resist_good(P_RES_LITE)) m_ptr->smart |= (SM_RES_LITE);
   if (p_resist_good(P_RES_DARK)) m_ptr->smart |= (SM_RES_DARK);
-  if (p_ptr->no_blind) m_ptr->smart |= (SM_RES_BLIND);
+  if (p_ptr->state.no_blind) m_ptr->smart |= (SM_RES_BLIND);
   if (p_resist_good(P_RES_CONFU)) m_ptr->smart |= (SM_RES_CONFU);
   if (p_resist_good(P_RES_SOUND)) m_ptr->smart |= (SM_RES_SOUND);
   if (p_resist_good(P_RES_SHARD)) m_ptr->smart |= (SM_RES_SHARD);
@@ -545,7 +545,7 @@ static int find_resist(int m_idx, int spell_lrn)
 	else
 	  {
 	    if (smart & (SM_GOOD_SAVE)) a += 30;
-	    if (p_ptr->afraid) a += 50;
+	    if (p_ptr->timed[TMD_AFRAID]) a += 50;
 	  }
 	return(a);
       }
@@ -558,7 +558,7 @@ static int find_resist(int m_idx, int spell_lrn)
 	else
 	  {
 	    if (smart & (SM_GOOD_SAVE)) a += 30;
-	    if (p_ptr->blind) a += 50;
+	    if (p_ptr->timed[TMD_BLIND]) a += 50;
 	  }
 	return(a);
       }
@@ -571,7 +571,7 @@ static int find_resist(int m_idx, int spell_lrn)
 	else
 	  {
 	    if (smart & (SM_GOOD_SAVE)) a += 30;
-	    if (p_ptr->confused) a += 50;
+	    if (p_ptr->timed[TMD_CONFUSED]) a += 50;
 	  }
 	return(a);
       }
@@ -581,11 +581,11 @@ static int find_resist(int m_idx, int spell_lrn)
 	a=0;
 	if (smart & (SM_IMM_FREE)) a=100;
 	else if (smart & (SM_PERF_SAVE)) a = 100;
-	else if (p_ptr->paralyzed) a = 80;
+	else if (p_ptr->timed[TMD_PARALYZED]) a = 80;
 	else
 	  {
 	    if (smart & (SM_GOOD_SAVE)) a += 30;
-	    if (p_ptr->slow) a += 50;
+	    if (p_ptr->timed[TMD_SLOW]) a += 50;
 	  }
 	return(a);
       }
@@ -3344,7 +3344,7 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x, bool *death)
   
   /* Smart monsters may attempts to disarm traps which would affect them */
   if ((trap_hit) && (rf_has(r_ptr->flags, RF_SMART)) && 
-      (randint1(dis_chance) > p_ptr->skill_dis - 15))
+      (randint1(dis_chance) > p_ptr->skills[SKILL_DISARM] - 15))
     {
       if (m_ptr->ml) msg_format("%^s finds your trap and disarms it.", m_name);
       
@@ -3359,7 +3359,7 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x, bool *death)
   if ((trap_hit) && (m_ptr->mflag & (MFLAG_WARY)))
     {
       /* Check for avoidance */
-      if (randint1(dis_chance) > (p_ptr->skill_dis - 15) / 2)
+      if (randint1(dis_chance) > (p_ptr->skills[SKILL_DISARM] - 15) / 2)
 	{
 	  if (m_ptr->ml) msg_format("%^s avoids your trap.", m_name);
 	  
@@ -3431,7 +3431,7 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x, bool *death)
       if (m_ptr->mflag & (MFLAG_WARY)) trap_power /= 3;
       
       /* Trap 'critical' based on disarming skill (if not wary) */
-      else if (randint1(p_ptr->skill_dis) > 50 + r_ptr->level) 
+      else if (randint1(p_ptr->skills[SKILL_DISARM]) > 50 + r_ptr->level) 
 	trap_power += trap_power / 2;
       
       /* Affect the monster. */
@@ -4356,7 +4356,7 @@ static void process_monster(monster_type *m_ptr)
   
   
   /* Players hidden in shadow are difficult to see. */
-  if ((p_ptr->superstealth) && (!p_ptr->aggravate))
+  if ((p_ptr->timed[TMD_SSTEALTH]) && (!p_ptr->state.aggravate))
     {
       /* Low-level monsters will find it difficult to locate the player. */
       if ((p_ptr->lev * 2 > r_ptr->level) && 
@@ -4734,7 +4734,7 @@ static void recover_monster(monster_type *m_ptr, bool regen)
   if ((m_ptr->csleep) && (m_ptr->cdis <= scan_range))
     {
       /* Aggravated by the player */
-      if (p_ptr->aggravate)
+      if (p_ptr->state.aggravate)
 	{
 	  /* Reset sleep counter */
 	  m_ptr->csleep = 0;

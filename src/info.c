@@ -456,7 +456,7 @@ void display_device_chance(object_type *o_ptr)
   int prob = 10000;
   
   /* Confusion hurts skill */
-  if (p_ptr->confused) chance = chance / 2;
+  if (p_ptr->timed[TMD_CONFUSED]) chance = chance / 2;
   
   /* High level objects are harder */
   chance = chance - ((lev > 50) ? 50 : lev);
@@ -1951,65 +1951,65 @@ void self_knowledge(bool spoil)
       break;
     }
   
-  if (p_ptr->blind)
+  if (p_ptr->timed[TMD_BLIND])
     {
       info[i++] = "You cannot see.";
     }
-  if (p_ptr->confused)
+  if (p_ptr->timed[TMD_CONFUSED])
     {
       info[i++] = "You are confused.";
     }
-  if (p_ptr->afraid)
+  if (p_ptr->timed[TMD_AFRAID])
     {
       info[i++] = "You are terrified.";
     }
-  if (p_ptr->cut)
+  if (p_ptr->timed[TMD_CUT])
     {
       info[i++] = "You are bleeding.";
     }
-  if (p_ptr->stun)
+  if (p_ptr->timed[TMD_STUN])
     {
       info[i++] = "You are stunned.";
     }
-  if (p_ptr->poisoned)
+  if (p_ptr->timed[TMD_POISONED])
     {
       info[i++] = "You are poisoned.";
     }
-  if (p_ptr->image)
+  if (p_ptr->timed[TMD_HALLUC])
     {
       info[i++] = "You are hallucinating.";
     }
   
-  if (p_ptr->aggravate)
+  if (p_ptr->state.aggravate)
     {
       info[i++] = "You aggravate monsters.";
     }
-  if (p_ptr->teleport)
+  if (p_ptr->>state.teleport)
     {
       info[i++] = "Your position is very uncertain.";
     }
   
-  if (p_ptr->blessed)
+  if (p_ptr->timed[TMD_BLESSED])
     {
       info[i++] = "You feel righteous.";
     }
-  if (p_ptr->hero)
+  if (p_ptr->timed[TMD_HERO])
     {
       info[i++] = "You feel heroic.";
     }
-  if (p_ptr->shero)
+  if (p_ptr->timed[TMD_SHERO])
     {
       info[i++] = "You are in a battle rage.";
     }
-  if (p_ptr->protevil)
+  if (p_ptr->timed[TMD_PROTEVIL)
     {
       info[i++] = "You are protected from evil.";
     }
-  if (p_ptr->shield)
+  if (p_ptr->timed[TMD_SHIELD])
     {
       info[i++] = "You are protected by a mystic shield.";
     }
-  if (p_ptr->magicdef)
+  if (p_ptr->timed[TMD_INVULN])
     {
       info[i++] = "You have enhanced protection from the spells of others.";
     }
@@ -2029,16 +2029,16 @@ void self_knowledge(bool spoil)
     {
       info[i++] = "You will soon be recalled.";
     }
-  if (p_ptr->see_infra)
+  if (p_ptr->state.see_infra)
     {
       info[i++] = "Your eyes are sensitive to infrared light.";
     }
   
-  if (p_ptr->slow_digest)
+  if (p_ptr->state.slow_digest)
     {
       info[i++] = "Your appetite is small.";
     }
-  if (p_ptr->ffall)
+  if (p_ptr->state.ffall)
     {
       info[i++] = "You land gently.";
     }
@@ -2046,23 +2046,23 @@ void self_knowledge(bool spoil)
     {
       info[i++] = "You are glowing with light.";
     }
-  if (p_ptr->regenerate)
+  if (p_ptr->state.regenerate)
     {
       info[i++] = "You regenerate quickly.";
     }
-  if (p_ptr->telepathy)
+  if (p_ptr->state.telepathy)
     {
       info[i++] = "You have ESP.";
     }
-  if (p_ptr->see_inv)
+  if (p_ptr->state.see_inv)
     {
       info[i++] = "You can see invisible creatures.";
     }
-  if (p_ptr->free_act)
+  if (p_ptr->state.free_act)
     {
       info[i++] = "You have free action.";
     }
-  if (p_ptr->hold_life)
+  if (p_ptr->state.hold_life)
     {
       info[i++] = "You have a firm hold on your life force.";
     }
@@ -2185,36 +2185,36 @@ void self_knowledge(bool spoil)
   else if (p_vulnerable(P_RES_DISEN)) 
     info[i++] = "You are vulnerable to disenchantment.";
 
-  if (p_ptr->no_fear)
+  if (p_ptr->state.no_fear)
     {
       info[i++] = "You are completely fearless.";
     }
-  if (p_ptr->no_blind)
+  if (p_ptr->state.no_blind)
     {
       info[i++] = "Your eyes are resistant to blindness.";
     }
   
-  if (p_ptr->sustain_str)
+  if (p_ptr->state.sustain_str)
     {
       info[i++] = "Your strength is sustained.";
     }
-  if (p_ptr->sustain_int)
+  if (p_ptr->state.sustain_int)
     {
       info[i++] = "Your intelligence is sustained.";
     }
-  if (p_ptr->sustain_wis)
+  if (p_ptr->state.sustain_wis)
     {
       info[i++] = "Your wisdom is sustained.";
     }
-  if (p_ptr->sustain_con)
+  if (p_ptr->state.sustain_con)
     {
       info[i++] = "Your constitution is sustained.";
     }
-  if (p_ptr->sustain_dex)
+  if (p_ptr->state.sustain_dex)
     {
       info[i++] = "Your dexterity is sustained.";
     }
-  if (p_ptr->sustain_chr)
+  if (p_ptr->state.sustain_chr)
     {
       info[i++] = "Your charisma is sustained.";
     }

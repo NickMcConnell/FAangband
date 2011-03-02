@@ -783,7 +783,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
   
   s16b m_idx;
   
-  s16b image = p_ptr->image;
+  s16b image = p_ptr->timed[TMD_HALLUC];
   
   int floor_num = 0;
   
@@ -882,7 +882,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 		}
 	      
 	      /* Handle "blind" */
-	      else if (p_ptr->blind)
+	      else if (p_ptr->timed[TMD_BLIND])
 		{
 		  if (graf_new)
 		    {
@@ -1011,7 +1011,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 		}
 	      
 	      /* Handle "blind" */
-	      else if (p_ptr->blind)
+	      else if (p_ptr->timed[TMD_BLIND])
 		{
 		  if (graf_new)
 		    {
@@ -1106,7 +1106,7 @@ void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
 		}
 	      
 	      /* Handle "blind" */
-	      else if (p_ptr->blind)
+	      else if (p_ptr->timed[TMD_BLIND])
 		{
 		  if (graf_new)
 		    {
@@ -1423,7 +1423,7 @@ void map_info_default(int y, int x, byte *ap, char *cp)
   
   s16b m_idx;
   
-  s16b image = p_ptr->image;
+  s16b image = p_ptr->timed[TMD_HALLUC];
   
   int floor_num = 0;
   
@@ -1495,7 +1495,7 @@ void map_info_default(int y, int x, byte *ap, char *cp)
 		}
 	      
 	      /* Handle "blind" */
-	      else if (p_ptr->blind)
+	      else if (p_ptr->timed[TMD_BLIND])
 		{
 		  /* Use "dark gray" */
 		  a = TERM_L_DARK;
@@ -1577,7 +1577,7 @@ void map_info_default(int y, int x, byte *ap, char *cp)
 		}
 	      
 	      /* Handle "blind" */
-	      else if (p_ptr->blind)
+	      else if (p_ptr->timed[TMD_BLIND])
 		{
 		  /* Use "dark gray" */
 		  a = TERM_L_DARK;
@@ -1641,7 +1641,7 @@ void map_info_default(int y, int x, byte *ap, char *cp)
 		}
 	      
 	      /* Handle "blind" */
-	      else if (p_ptr->blind)
+	      else if (p_ptr->timed[TMD_BLIND])
 		{
 		  /* Use "dark gray" */
 		  a = TERM_L_DARK;
@@ -4040,7 +4040,7 @@ void update_view(void)
   /*** Step 3 -- Complete the algorithm ***/
   
   /* Handle blindness */
-  if (p_ptr->blind)
+  if (p_ptr->timed[TMD_BLIND])
     {
       /* Process "new" grids */
       for (i = 0; i < fast_view_n; i++)

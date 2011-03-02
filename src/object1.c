@@ -4410,7 +4410,7 @@ int get_use_device_chance(const object_type *o_ptr)
   int prob = 10000;
   
   /* Confusion hurts skill */
-  if (p_ptr->confused) chance = chance / 2;
+  if (p_ptr->timed[TMD_CONFUSED]) chance = chance / 2;
   
   /* High level objects are harder */
   chance = chance - ((lev > 50) ? 50 : lev);

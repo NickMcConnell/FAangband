@@ -58,13 +58,13 @@ bool player_can_cast(void)
 		return FALSE;
 	}
 
-	if (p_ptr->blind || no_lite())
+	if (p_ptr->timed[TMD_BLIND] || no_lite())
 	{
 		msg_print("You cannot see!");
 		return FALSE;
 	}
 
-	if (p_ptr->confused)
+	if (p_ptr->timed[TMD_CONFUSED])
 	{
 		msg_print("You are too confused!");
 		return FALSE;
@@ -92,7 +92,7 @@ bool player_can_study(void)
 /* Determine if the player can read scrolls. */
 bool player_can_read(void)
 {
-	if (p_ptr->blind)
+	if (p_ptr->timed[TMD_BLIND])
 	{
 		msg_print("You can't see anything.");
 		return FALSE;
@@ -104,7 +104,7 @@ bool player_can_read(void)
 		return FALSE;
 	}
 
-	if (p_ptr->confused)
+	if (p_ptr->timed[TMD_CONFUSED])
 	{
 		msg_print("You are too confused to read!");
 		return FALSE;

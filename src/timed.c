@@ -201,10 +201,6 @@ bool inc_timed(int idx, int v, bool notify)
 	/* Check we have a valid effect */
 	if ((idx < 0) || (idx > TMD_MAX)) return FALSE;
 
-	/* Paralysis should be non-cumulative */
-	if (idx == TMD_PARALYZED && p_ptr->timed[TMD_PARALYZED] > 0)
-		return FALSE;
-
 	/* Set v */
 	v = v + p_ptr->timed[idx];
 

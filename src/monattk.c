@@ -468,7 +468,8 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 	    (stage_map[p_ptr->stage][STAGE_TYPE] == PLAIN)) ||
 	   ((check_ability(SP_EDAIN)) && 
 	    (stage_map[p_ptr->stage][STAGE_TYPE] == FOREST))) &&
-	  (randint1(100) <= p_ptr->evasion_chance) && (!p_ptr->paralyzed))
+	  (randint1(100) <= p_ptr->evasion_chance) && 
+	  (!p_ptr->timed[TMD_PARALYZED]))
 	{
 	  /* Message */
 	  msg_print("You Evade the attack!");
@@ -485,7 +486,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 	  
 	  /* Hack -- Apply "protection from evil".  Somewhat modi-
 	   * fied in Oangband. */
-	  if ((p_ptr->protevil > 0) &&
+	  if ((p_ptr->timed[TMD_PROTEVIL] > 0) &&
 	      (rf_has(r_ptr->flags, RF_EVIL)) &&
 	      (3 * p_ptr->lev / 2 >= rlev) &&
 	      ((randint0(100 + p_ptr->lev - 5 * rlev / 4)) > 50))
@@ -675,7 +676,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 	    {
 	      msg_print("Your foe calls upon your soul!");
 	      msg_print("You feel the Black Breath slowly draining you of life...");
-	      p_ptr->black_breath = TRUE;
+	      p_ptr->state.black_breath = TRUE;
 	    }
 	  
 	  else if ((r_ptr->level >= 50) && 
@@ -684,7 +685,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 	    {
 	      msg_print("Your foe calls upon your soul!");
 	      msg_print("You feel the Black Breath slowly draining you of life...");
-	      p_ptr->black_breath = TRUE;
+	      p_ptr->state.black_breath = TRUE;
 	    }
 	  
 	  /* Hack -- assume all attacks are obvious */
@@ -896,7 +897,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		/* Saving throw (unless paralyzed) based on dex and 
 		 * relationship between yours and monster's level.
 		 */
-		if (!p_ptr->paralyzed && 
+		if (!p_ptr->timed[TMD_PARALYZED] && 
 		    (randint0(100) < 
 		     (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + 
 		      p_ptr->lev - (r_ptr->level / 2))))
@@ -957,7 +958,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		/* Saving throw (unless paralyzed) based on dex and 
 		 * relationship between yours and monster's level.
 		 */
-		if (!p_ptr->paralyzed && 
+		if (!p_ptr->timed[TMD_PARALYZED] && 
 		    (randint0(100) < 
 		     (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + 
 		      p_ptr->lev - (r_ptr->level / 2))))
@@ -1100,7 +1101,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		    if (o_ptr->pval < 1) o_ptr->pval = 1;
 		    
 		    /* Notice */
-		    if (!p_ptr->blind)
+		    if (!p_ptr->timed[TMD_BLIND])
 		      {
 			msg_print("Your light dims.");
 			obvious = TRUE;
@@ -1200,19 +1201,18 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		take_hit(damage, ddesc);
 		
 		/* Increase "blind" */
-		if (!p_ptr->no_blind)
+		if (!p_ptr->state.no_blind)
 		  {
-		    if (p_ptr->blind)
+		    if (p_ptr->timed[TMD_BLIND])
 		      {
-			if (set_blind(p_ptr->blind + 6 + 
-				      randint1(rlev / 2)))
+			if (inc_timed(TMD_BLIND, 6 + randint1(rlev / 2)))
 			  {
 			    obvious = TRUE;
 			  }
 		      }
 		    else
 		      {
-			if (set_blind(12 + randint1(rlev)))
+			if (inc_timed(TMD_BLIND, 12 + randint1(rlev), TRUE))
 			  {
 			    obvious = TRUE;
 			  }
@@ -1235,17 +1235,16 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		/* Increase "confused" */
 		if (!p_resist_good(P_RES_CONFU))
 		  {
-		    if (p_ptr->confused)
+		    if (p_ptr->timed[TMD_CONFUSED])
 		      {
-			if (set_confused(p_ptr->confused + 2 + 
-					 randint1(rlev / 2)))
+			if (inc_timed(TMD_CONFUSED, 2 + randint1(rlev / 2), TRUE))
 			  {
 			    obvious = TRUE;
 			  }
 		      }
 		    else
 		      {
-			if (set_confused(5 + randint1(rlev)))
+			if (inc_timed(TMD_CONFUSED, 5 + randint1(rlev), TRUE))
 			  {
 			    obvious = TRUE;
 			  }
@@ -1266,7 +1265,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		take_hit(damage, ddesc);
 		
 		/* Increase "afraid" */
-		if (p_ptr->no_fear)
+		if (p_ptr->state.no_fear)
 		  {
 		    notice_obj(OF_FEARLESS, 0);
 		    msg_print("You stand your ground!");
@@ -1279,17 +1278,16 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		  }
 		else
 		  {
-		    if (p_ptr->afraid)
+		    if (p_ptr->timed[TMD_AFRAID])
 		      {
-			if (set_afraid(p_ptr->afraid + 2 + 
-				       randint1(rlev / 2)))
+			if (inc_timed(TMD_AFRAID, 2 + randint1(rlev / 2), TRUE))
 			  {
 			    obvious = TRUE;
 			  }
 		      }
 		    else
 		      {
-			if (set_afraid(6 + randint1(rlev)))
+			if (inc_timed(TMD_AFRAID, 6 + randint1(rlev), TRUE))
 			  {
 			    obvious = TRUE;
 			  }
@@ -1306,13 +1304,13 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 	    case RBE_PARALYZE:
 	      {
 		/* Hack -- Prevent perma-paralysis via damage */
-		if (p_ptr->paralyzed && (damage < 1)) damage = 1;
+		if (p_ptr->timed[TMD_PARALYZED] && (damage < 1)) damage = 1;
 		
 		/* Take damage */
 		take_hit(damage, ddesc);
 		
 		/* Increase "paralyzed" */
-		if (p_ptr->free_act)
+		if (p_ptr->state.free_act)
 		  {
 		    msg_print("You are unaffected!");
 		    obvious = TRUE;
@@ -1326,17 +1324,16 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		  }
 		else
 		  {
-		    if (p_ptr->paralyzed)
+		    if (p_ptr->timed[TMD_PARALYZED])
 		      {
-			if (set_paralyzed(p_ptr->paralyzed + 2 + 
-					  randint1(rlev / 6)))
+			if (inc_timed(TMD_PARALYZED, 2 + randint1(rlev / 6), TRUE))
 			  {
 			    obvious = TRUE;
 			  }
 		      }
 		    else
 		      {
-			if (set_paralyzed(4 + randint1(rlev / 2)))
+			if (inc_timed(TMD_PARALYZED, 4 + randint1(rlev / 2), TRUE))
 			  {
 			    obvious = TRUE;
 			  }
@@ -1458,7 +1455,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		/* Take damage */
 		take_hit(damage, ddesc);
 		
-		if (p_ptr->hold_life && (randint0(100) < 95))
+		if (p_ptr->state.hold_life && (randint0(100) < 95))
 		  {
 		    notice_obj(OF_HOLD_LIFE, 0);
 		    msg_print("You keep hold of your life force!");
@@ -1467,7 +1464,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		  {
 		    s32b d = damroll(10, 6) + 
 		      (p_ptr->exp/100) * MON_DRAIN_LIFE;
-		    if (p_ptr->hold_life)
+		    if (p_ptr->state.hold_life)
 		      {
 			notice_obj(OF_HOLD_LIFE, 0);
 			msg_print("You feel your life slipping away!");
@@ -1490,7 +1487,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		/* Take damage */
 		take_hit(damage, ddesc);
 		
-		if (p_ptr->hold_life && (randint0(100) < 90))
+		if (p_ptr->state.hold_life && (randint0(100) < 90))
 		  {
 		    notice_obj(OF_HOLD_LIFE, 0);
 		    msg_print("You keep hold of your life force!");
@@ -1499,7 +1496,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		  {
 		    s32b d = damroll(20, 6) + 
 		      (p_ptr->exp/100) * MON_DRAIN_LIFE;
-		    if (p_ptr->hold_life)
+		    if (p_ptr->state.hold_life)
 		      {
 			notice_obj(OF_HOLD_LIFE, 0);
 			msg_print("You feel your life slipping away!");
@@ -1522,7 +1519,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		/* Take damage */
 		take_hit(damage, ddesc);
 		
-		if (p_ptr->hold_life && (randint0(100) < 75))
+		if (p_ptr->state.hold_life && (randint0(100) < 75))
 		  {
 		    notice_obj(OF_HOLD_LIFE, 0);
 		    msg_print("You keep hold of your life force!");
@@ -1531,7 +1528,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		  {
 		    s32b d = damroll(40, 6) + 
 		      (p_ptr->exp/100) * MON_DRAIN_LIFE;
-		    if (p_ptr->hold_life)
+		    if (p_ptr->state.hold_life)
 		      {
 			notice_obj(OF_HOLD_LIFE, 0);
 			msg_print("You feel your life slipping away!");
@@ -1554,7 +1551,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		/* Take damage */
 		take_hit(damage, ddesc);
 		
-		if (p_ptr->hold_life && (randint0(100) < 50))
+		if (p_ptr->state.hold_life && (randint0(100) < 50))
 		  {
 		    notice_obj(OF_HOLD_LIFE, 0);
 		    msg_print("You keep hold of your life force!");
@@ -1563,7 +1560,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		  {
 		    s32b d = damroll(80, 6) + 
 		      (p_ptr->exp/100) * MON_DRAIN_LIFE;
-		    if (p_ptr->hold_life)
+		    if (p_ptr->state.hold_life)
 		      {
 			notice_obj(OF_HOLD_LIFE, 0);
 			msg_print("You feel your life slipping away!");
@@ -1618,7 +1615,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		}
 	      
 	      /* Apply the cut */
-	      if (k) (void)set_cut(p_ptr->cut + k);
+	      if (k) (void)inc_timed(TMD_CUT, k, TRUE);
 	    }
 	  
 	  /* Handle stun.  Reduced in Oangband */
@@ -1643,7 +1640,7 @@ bool make_attack_normal(monster_type *m_ptr, int y, int x)
 		}
 	      
 	      /* Apply the stun */
-	      if (k) (void)set_stun(p_ptr->stun + k);
+	      if (k) (void)inc_timed(TMD_STUN, k, TRUE);
 	    }
 	}
       
@@ -1914,7 +1911,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
   int count = 0;
   
   /* Is the player blind? */
-  bool blind = (p_ptr->blind ? TRUE : FALSE);
+  bool blind = (p_ptr->timed[TMD_BLIND] ? TRUE : FALSE);
   
   /* Can the player see the monster casting the spell? */
   bool seen = (!blind && m_ptr->ml);
@@ -3698,7 +3695,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	    msg_print("Your mind is blasted by psionic energy.");
 	    if (!p_resist_good(P_RES_CONFU))
 	      {
-		(void)set_confused(p_ptr->confused + randint0(4) + 4);
+		(void)inc_timed(TMD_CONFUSED, randint0(4) + 4, TRUE);
 	      }
 	    else notice_other(IF_RES_CONFU, 0);
 	    take_hit(damroll(8, 8), ddesc);
@@ -3726,22 +3723,22 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	  {
 	    msg_print("Your mind is blasted by psionic energy.");
 	    take_hit(damroll(12, 15), ddesc);
-	    if (!p_ptr->no_blind)
+	    if (!p_ptr->state.no_blind)
 	      {
-		(void)set_blind(p_ptr->blind + 8 + randint0(8));
+		(void)inc_timed(TMD_BLIND, 8 + randint0(8), TRUE);
 	      }
 	    else notice_obj(OF_SEEING, 0);
 	    if (!p_resist_good(P_RES_CONFU))
 	      {
-		(void)set_confused(p_ptr->confused + randint0(4) + 4);
+		(void)inc_timed(TMD_CONFUSED, randint0(4) + 4, TRUE);
 	      }
 	    else notice_other(IF_RES_CONFU, 0);
-	    if (!p_ptr->free_act)
+	    if (!p_ptr->state.free_act)
 	      {
-		(void)set_paralyzed(p_ptr->paralyzed + randint0(4) + 4);
+		(void)inc_timed(TMD_PARALYZED, randint0(4) + 4, TRUE);
 	      }
 	    else notice_obj(OF_FREE_ACT, 0);
-	    (void)set_slow(p_ptr->slow + randint0(4) + 4);
+	    (void)inc_timed(TMD_SLOW, randint0(4) + 4, TRUE);
 	  }
 	break;
       }
@@ -3794,11 +3791,11 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	    else take_hit(get_dam(300, 6) + (spower - 75), ddesc);
 	    
 	    /* Cut the player depending on strength of spell. */
-	    if (k == 1) (void)set_cut(p_ptr->cut + 8 + damroll(2, 4));
-	    if (k == 2) (void)set_cut(p_ptr->cut + 23 + damroll(3, 8));
-	    if (k == 3) (void)set_cut(p_ptr->cut + 46 + damroll(4, 12));
-	    if (k == 4) (void)set_cut(p_ptr->cut + 95 + damroll(8, 15));
-	    if (k == 5) (void)set_cut(1200);
+	    if (k == 1) (void)inc_timed(TMD_CUT, 8 + damroll(2, 4), TRUE);
+	    if (k == 2) (void)inc_timed(TMD_CUT, 23 + damroll(3, 8), TRUE);
+	    if (k == 3) (void)inc_timed(TMD_CUT, 46 + damroll(4, 12), TRUE);
+	    if (k == 4) (void)inc_timed(TMD_CUT, 95 + damroll(8, 15), TRUE);
+	    if (k == 5) (void)inc_timed(TMD_CUT, 1200, TRUE);
 	  }
 	break;
       }
@@ -3886,7 +3883,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	else msg_format("%^s gestures at you, and you suddenly feel hungry.", 
 			m_name);
 	
-	if (randint1(100) > p_ptr->skill_sav)
+	if (randint1(100) > p_ptr->skills[SKILL_SAVE])
 	  {
 	    /* Reduce food abruptly.  */
 	    (void)set_food(p_ptr->food - (p_ptr->food/3));
@@ -3909,7 +3906,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	if (blind) 
 	  msg_format("%^s mumbles, and you hear scary noises.", m_name);
 	else msg_format("%^s casts a fearful illusion.", m_name);
-	if (p_ptr->no_fear)
+	if (p_ptr->state.no_fear)
 	  {
 	    notice_obj(OF_FEARLESS, 0);
 	    msg_print("You refuse to be frightened.");
@@ -3920,7 +3917,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	  }
 	else
 	  {
-	    (void)set_afraid(p_ptr->afraid + randint0(3) + 3);
+	    (void)inc_timed(TMD_AFRAID, randint0(3) + 3, TRUE);
 	  }
 	break;
       }
@@ -3930,7 +3927,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	disturb(1, 0);
 	if (blind) msg_format("%^s mumbles.", m_name);
 	else msg_format("%^s casts a spell, burning your eyes!", m_name);
-	if (p_ptr->no_blind)
+	if (p_ptr->state.no_blind)
 	  {
 	    notice_obj(OF_SEEING, 0);
 	    msg_print("You are unaffected!");
@@ -3941,7 +3938,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	  }
 	else
 	  {
-	    (void)set_blind(12 + randint0(4));
+	    (void)inc_timed(TMD_BLIND, 12 + randint0(4), TRUE);
 	  }
 	break;
       }
@@ -3963,7 +3960,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	  }
 	else
 	  {
-	    (void)set_confused(p_ptr->confused + randint0(4) + 4);
+	    (void)inc_timed(TMD_CONFUSED, randint0(4) + 4, TRUE);
 	  }
 	break;
       }
@@ -3972,7 +3969,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
       {
 	disturb(1, 0);
 	msg_format("%^s drains power from your muscles!", m_name);
-	if (p_ptr->free_act)
+	if (p_ptr->state.free_act)
 	  {
 	    msg_print("You are unaffected!");
 	    notice_obj(OF_FREE_ACT, 0);
@@ -3983,7 +3980,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	  }
 	else
 	  {
-	    (void)set_slow(p_ptr->slow + randint0(6) + 6);
+	    (void)inc_timed(TMD_SLOW, randint0(6) + 6, TRUE);
 	  }
 	break;
       }	
@@ -3993,7 +3990,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	disturb(1, 0);
 	if (blind) msg_format("%^s mumbles.", m_name);
 	else msg_format("%^s stares deep into your eyes!", m_name);
-	if (p_ptr->free_act)
+	if (p_ptr->state.free_act)
 	  {
 	    msg_print("You are unaffected!");
 	    notice_obj(OF_FREE_ACT, 0);
@@ -4004,7 +4001,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	  }
 	else
 	  {
-	    (void)set_paralyzed(p_ptr->paralyzed + randint0(4) + 4);
+	    (void)inc_timed(TMD_PARALYZED, randint0(4) + 4, TRUE);
 	  }
 	break;
       }

@@ -104,50 +104,11 @@ static art_tag_t art_tag_lookup(const char *tag)
  */
 void do_cmd_uninscribe(cmd_code code, cmd_arg args[])
 {
-  int item;
-  
-  object_type *o_ptr;
-  
-  cptr q, s;
-  
-  
-  /* Do we have an item? */
-  if (p_ptr->command_item) 
-    {
-      item = handle_item();
-      if (!get_item_allow(item)) return;
-    }
+	object_type *o_ptr = object_from_item_idx(args[0].item);
 
-  /* Get an item */
-  else
-    {
-      q = "Un-inscribe which item? ";
-      s = "You have nothing to un-inscribe.";
-      if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR))) return;
-    }
+	if (obj_has_inscrip(o_ptr))
+		msg_print("Inscription removed.");
 
-  /* Get the item (in the pack) */
-  if (item >= 0)
-    {
-      o_ptr = &inventory[item];
-    }
-  
-  /* Get the item (on the floor) */
-  else
-    {
-      o_ptr = &o_list[0 - item];
-    }
-  
-  /* Nothing to remove */
-  if (!o_ptr->note)
-    {
-      msg_print("That item had no inscription to remove.");
-      return;
-    }
-  
-  /* Message */
-  msg_print("Inscription removed.");
-  
   /* Remove the incription */
   o_ptr->note = 0;
   
@@ -164,73 +125,15 @@ void do_cmd_uninscribe(cmd_code code, cmd_arg args[])
  */
 void do_cmd_inscribe(cmd_code code, cmd_arg args[])
 {
-  int item;
-  
-  object_type *o_ptr;
-  
-  char o_name[120];
-  
-  char tmp[81];
-  
-  cptr q, s;
-  
-  
-  /* Do we have an item? */
-  if (p_ptr->command_item) 
-    {
-      item = handle_item();
-      if (!get_item_allow(item)) return;
-    }
+	object_type *o_ptr = object_from_item_idx(args[0].item);
 
-  /* Get an item */
-  else
-    {
-      q = "Inscribe which item? ";
-      s = "You have nothing to inscribe.";
-      if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR))) return;
-    }
+	o_ptr->note = quark_add(args[1].string);
 
-  /* Get the item (in the pack) */
-  if (item >= 0)
-    {
-      o_ptr = &inventory[item];
-    }
-  
-  /* Get the item (on the floor) */
-  else
-    {
-      o_ptr = &o_list[0 - item];
-    }
-  
-  /* Describe the activity */
-  object_desc(o_name, o_ptr, TRUE, 3);
-  
-  /* Message */
-  msg_format("Inscribing %s.", o_name);
-  msg_print(NULL);
-  
-  /* Start with nothing */
-  strcpy(tmp, "");
-  
-  /* Use old inscription */
-  if (o_ptr->note)
-    {
-      /* Start with the old inscription */
-      strcpy(tmp, quark_str(o_ptr->note));
-    }
-  
-  /* Get a new inscription (possibly empty) */
-  if (get_string("Inscription: ", tmp, 81))
-    {
-      /* Save the inscription */
-      o_ptr->note = quark_add(tmp);
-      
       /* Combine the pack (or the quiver) */
       p_ptr->notice |= (PN_COMBINE | PN_SQUELCH);
       
       /* Window stuff */
       p_ptr->window |= (PW_INVEN | PW_EQUIP);
-    }
 }
 
 void textui_obj_inscribe(object_type *o_ptr, int item)
@@ -286,7 +189,7 @@ void textui_obj_examine(object_type *o_ptr, int item)
  */
 void do_cmd_takeoff(cmd_code code, cmd_arg args[])
 {
-  int item;
+  int item = args[0].item;
   
   object_type *o_ptr;
   
@@ -297,34 +200,6 @@ void do_cmd_takeoff(cmd_code code, cmd_arg args[])
       msg_print("You cannot take off equipment while shapechanged.");
       msg_print("Use the ']' command to return to your normal form.");
       return;
-    }
-  
-  
-  /* Do we have an item? */
-  if (p_ptr->command_item) 
-    {
-      item = handle_item();
-      if (!get_item_allow(item)) return;
-    }
-
-  /* Get an item */
-  else
-    {
-      q = "Take off which item? ";
-      s = "You are not wearing anything to take off.";
-      if (!get_item(&item, q, s, (USE_EQUIP))) return;
-    }
-  
-  /* Get the item (in the pack) */
-  if (item >= 0)
-    {
-      o_ptr = &inventory[item];
-    }
-  
-  /* Get the item (on the floor) */
-  else
-    {
-      o_ptr = &o_list[0 - item];
     }
   
   
@@ -399,33 +274,6 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
   
   /* Restrict the choices */
   item_tester_hook = item_tester_hook_wear;
-  
-  /* Do we have an item? */
-  if (p_ptr->command_item) 
-    {
-      item = handle_item();
-      if (!get_item_allow(item)) return;
-    }
-
-  /* Get an item */
-  else
-    { 
-      q = "Wear/Wield which item? ";
-      s = "You have nothing you can wear or wield.";
-      if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
-    }
-
-  /* Get the item (in the pack) */
-  if (item >= 0)
-    {
-      o_ptr = &inventory[item];
-    }
-  
-  /* Get the item (on the floor) */
-  else
-    {
-      o_ptr = &o_list[0 - item];
-    }
   
   /* Get the object kind */
   k_ptr = &k_info[o_ptr->k_idx];
@@ -771,52 +619,10 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
  */
 void do_cmd_drop(cmd_code code, cmd_arg args[])
 {
-  int item, amt;
+	int item = args[0].item;
+	object_type *o_ptr = object_from_item_idx(item);
+	int amt = args[1].number;
   
-  object_type *o_ptr;
-  
-  cptr q, s;
-  
-  
-  /* Do we have an item? */
-  if (p_ptr->command_item) 
-    {
-      item = handle_item();
-      if (!get_item_allow(item)) return;
-    }
-
-  /* Get an item */
-  else
-    {
-      q = "Drop which item? ";
-      s = "You have nothing to drop.";
-      if (SCHANGE)
-	{
-	  if (!get_item(&item, q, s, (USE_INVEN))) return;
-	}
-      else
-	{
-	  if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN))) return;
-	}
-    }
-  
-  /* Get the item (in the pack) */
-  if (item >= 0)
-    {
-      o_ptr = &inventory[item];
-    }
-  
-  /* Get the item (on the floor) */
-  else
-    {
-      o_ptr = &o_list[0 - item];
-    }
-  
-  /* Get a quantity */
-  amt = get_quantity(NULL, o_ptr->number);
-  
-  /* Allow user abort */
-  if (amt <= 0) return;
   
   /* Hack -- Cannot drop some cursed items */
   if (o_ptr->flags_curse & CF_STICKY_CARRY)
@@ -1177,34 +983,6 @@ static void refill_lamp(void)
   /* Restrict the choices */
   item_tester_hook = item_tester_refill_lantern;
   
-  /* Do we have an item? */
-  if (p_ptr->command_item) 
-    {
-      item = handle_item();
-      if (!get_item_allow(item)) return;
-    }
-
-  /* Get an item */
-  else
-    {
-      q = "Refill with which flask? ";
-      s = "You have no flasks of oil.";
-      if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
-    }
-
-  /* Get the item (in the pack) */
-  if (item >= 0)
-    {
-      o_ptr = &inventory[item];
-    }
-  
-  /* Get the item (on the floor) */
-  else
-    {
-      o_ptr = &o_list[0 - item];
-    }
-  
-  
   /* Access the lantern */
   j_ptr = &inventory[INVEN_LITE];
   
@@ -1281,37 +1059,6 @@ static void refuel_torch(void)
   object_type *j_ptr;
   
   cptr q, s;
-  
-  
-  /* Restrict the choices */
-  item_tester_hook = item_tester_refuel_torch;
-  
-  /* Do we have an item? */
-  if (p_ptr->command_item) 
-    {
-      item = handle_item();
-      if (!get_item_allow(item)) return;
-    }
-
-  /* Get an item */
-  else
-    {
-      q = "Refuel with which torch? ";
-      s = "You have no extra torches.";
-      if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
-    }
-
-  /* Get the item (in the pack) */
-  if (item >= 0)
-    {
-      o_ptr = &inventory[item];
-    }
-  
-  /* Get the item (on the floor) */
-  else
-    {
-      o_ptr = &o_list[0 - item];
-    }
   
   
   /* Access the primary torch */
@@ -1618,7 +1365,7 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
 	{
 	  if (p_ptr->lev < 35) 
 	    msg_print("You do not know how to probe monsters yet.");
-	  else if ((p_ptr->confused) || (p_ptr->image))
+	  else if ((p_ptr->timed[TMD_CONFUSED]) || (p_ptr->timed[TMD_HALLUC]))
 	    msg_print("You feel awfully confused.");
 	  else 
 	    {
@@ -1635,7 +1382,7 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
 	}
   
   /* Require spell ability. */
-  if (!player_can_cast)
+      if (!player_can_cast) return;
 
   /* Determine magic description. */
   if (mp_ptr->spell_book == TV_MAGIC_BOOK) spell_noun = "spell";
@@ -1729,6 +1476,10 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
       if (!get_check("Attempt it anyway? ")) return;
     }
   
+
+				/* Cast a spell */
+				if (spell_cast(spell, dir))
+					p_ptr->energy_use = 100;
   
   
   /* Forget the item_tester_hook */

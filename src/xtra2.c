@@ -1484,7 +1484,7 @@ bool target_able(int m_idx)
   if (!projectable(py, px, m_ptr->fy, m_ptr->fx, 0)) return (FALSE);
   
   /* Hack -- no targeting hallucinations */
-  if (p_ptr->image) return (FALSE);
+  if (p_ptr->timed[TMD_HALLUC]) return (FALSE);
   
   /* Hack -- Never target trappers XXX XXX XXX */
   /* if (CLEAR_ATTR && (CLEAR_CHAR)) return (FALSE); */
@@ -1545,7 +1545,7 @@ bool target_able_obj(int o_idx)
   if (!projectable(py, px, o_ptr->iy, o_ptr->ix, 0)) return (FALSE);
   
   /* Hack -- no targeting hallucinations */
-  if (p_ptr->image) return (FALSE);
+  if (p_ptr->timed[TMD_HALLUC]) return (FALSE);
   
   /* Assume okay */
   return (TRUE);
@@ -1829,7 +1829,7 @@ static bool target_set_interactive_accept(int y, int x)
   
   
   /* Handle hallucination */
-  if (p_ptr->image) return (FALSE);
+  if (p_ptr->timed[TMD_HALLUC]) return (FALSE);
   
   
   /* Visible monsters */
@@ -2052,7 +2052,7 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode, cptr inf
       
       
       /* Hack -- hallucination */
-      if (p_ptr->image)
+      if (p_ptr->timed[TMD_HALLUC])
 	{
 	  cptr name = "something strange";
 	  
@@ -3434,7 +3434,7 @@ bool get_aim_dir(int *dp)
   p_ptr->command_dir = dir;
   
   /* Check for confusion */
-  if (p_ptr->confused)
+  if (p_ptr->timed[TMD_CONFUSED])
     {
       /* Random direction */
       dir = ddd[randint0(8)];
@@ -3540,7 +3540,7 @@ bool confuse_dir(int *dp)
   dir = (*dp);
   
   /* Apply "confusion" */
-  if (p_ptr->confused)
+  if (p_ptr->timed[TMD_CONFUSED])
     {
       /* Apply confusion XXX XXX XXX */
       if ((dir == 5) || (randint0(100) < 75))

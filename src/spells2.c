@@ -306,21 +306,21 @@ bool do_dec_stat(int stat)
   /* Access the "sustain" and specialty skills */
   switch (stat)
     {
-    case A_STR: if (p_ptr->sustain_str)
+    case A_STR: if (p_ptr->state.sustain_str)
       sust = TRUE; break;
-    case A_INT: if ((p_ptr->sustain_int) || 
+    case A_INT: if ((p_ptr->state.sustain_int) || 
 		    (clarity && (randint0(2) != 0)))
       sust = TRUE; break;
-    case A_WIS: if ((p_ptr->sustain_wis) || 
+    case A_WIS: if ((p_ptr->state.sustain_wis) || 
 		    (clarity && (randint0(2) != 0)))
       sust = TRUE; break;
-    case A_DEX: if ((p_ptr->sustain_dex) || 
+    case A_DEX: if ((p_ptr->state.sustain_dex) || 
 		    (athletics && (randint0(2) != 0)))
       sust = TRUE; break;
-    case A_CON: if ((p_ptr->sustain_con) || 
+    case A_CON: if ((p_ptr->state.sustain_con) || 
 		    (athletics && (randint0(2) != 0)))
       sust = TRUE; break;
-    case A_CHR: if (p_ptr->sustain_chr)
+    case A_CHR: if (p_ptr->state.sustain_chr)
       sust = TRUE; break;}
   
   
@@ -4022,7 +4022,7 @@ bool aggravate_monsters(int who, bool the_entire_level)
 		}
 
 	      /* Random equipment aggravation */
-	      else if (p_ptr->rand_aggro)
+	      else if (p_ptr->state.rand_aggro)
 		{
 		  /* Go active */
 		  m_ptr->mflag |= (MFLAG_ACTV);
@@ -4298,10 +4298,10 @@ void destroy_area(int y1, int x1, int r, bool full)
       msg_print("There is a searing blast of light!");
       
       /* Blind the player */
-      if (!p_ptr->no_blind && !p_resist_good(P_RES_LITE))
+      if (!p_ptr->state.no_blind && !p_resist_good(P_RES_LITE))
 	{
 	  /* Become blind */
-	  (void)set_blind(p_ptr->blind + 10 + randint1(10));
+	  (void)inc_timed(TMD_BLIND, 10 + randint1(10), TRUE);
 	}
       else 
 	{
@@ -4518,7 +4518,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 	      {
 		msg_print("You are bashed by rubble!");
 		damage = damroll(10, 4);
-		(void)set_stun(p_ptr->stun + randint1(50));
+		(void)inc_timed(TMD_STUN, randint1(50), TRUE);
 		break;
 	      }
 	    case 3:
@@ -4532,7 +4532,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 		  {
 		    msg_print("You are crushed!");
 		    damage = damroll(10, 8);
-		    (void)set_stun(p_ptr->stun + randint1(50));
+		    (void)inc_timed(TMD_STUN, randint1(50), TRUE);
 		    break;
 		  }
 	      }
@@ -5118,7 +5118,7 @@ bool lite_area(int dam, int rad)
   int flg = PROJECT_GRID | PROJECT_KILL;
   
   /* Hack -- Message */
-  if (!p_ptr->blind)
+  if (!p_ptr->timed[TMD_BLIND])
     {
       msg_print("You are surrounded by a white light.");
     }
@@ -5146,7 +5146,7 @@ bool unlite_area(int dam, int rad)
   int flg = PROJECT_GRID | PROJECT_KILL;
   
   /* Hack -- Message */
-  if (!p_ptr->blind)
+  if (!p_ptr->timed[TMD_BLIND])
     {
       msg_print("Darkness surrounds you.");
     }

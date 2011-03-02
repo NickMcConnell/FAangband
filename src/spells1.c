@@ -521,7 +521,7 @@ void teleport_player(int dis, bool safe)
     }
 
   /* Check for no teleport curse */
-  if ((safe) && (p_ptr->no_teleport))
+  if ((safe) && (p_ptr->state.no_teleport))
     {
       msg_print("Teleportation forbidden!");
       notice_curse(CF_NO_TELEPORT, 0);
@@ -605,14 +605,14 @@ void teleport_player(int dis, bool safe)
 	{
 	  msg_print("You hit a tree!");
 	  take_hit(damroll(2, 8), "being hurtled into a tree");
-	  if (randint0(3) != 0) set_stun(p_ptr->stun + damroll(2, 8));
+	  if (randint0(3) != 0) inc_timed(TMD_STUN, damroll(2, 8), TRUE);
 	}
       else if ((cave_feat[y][x] == FEAT_RUBBLE) && (randint0(2) == 0))
 	{
 	  msg_print("You slam into jagged rock!");
 	  take_hit(damroll(2, 14), "being slammed into rubble");
-	  if (randint0(3) == 0) set_stun(p_ptr->stun + damroll(2, 14));
-	  if (randint0(3) != 0) set_cut(p_ptr->cut + damroll(2, 14) * 2);
+	  if (randint0(3) == 0) inc_timed(TMD_STUN, damroll(2, 14), TRUE);
+	  if (randint0(3) != 0) inc_timed(TMD_CUT, damroll(2, 14) * 2, TRUE);
 	}
       else if (cave_feat[y][x] == FEAT_LAVA)
 	{
@@ -791,7 +791,7 @@ void teleport_player_level(bool friendly)
     }
   
   /* Check for no teleport curse */
-  if ((friendly) && (p_ptr->no_teleport))
+  if ((friendly) && (p_ptr->state.no_teleport))
     {
       msg_print("Teleportation forbidden!");
       notice_curse(CF_NO_TELEPORT, 0);
@@ -1477,7 +1477,7 @@ void add_speed_boost(int value)
 int resist_damage(int dam, byte resist, byte rand_factor)
 {
   /* Base Value */
-  int resist_percentage = 100 - p_ptr->res_list[resist];
+  int resist_percentage = 100 - p_ptr->state.res_list[resist];
   
   /* Randomize if requested */
   /* No randomization of vulnerability */
@@ -2072,7 +2072,7 @@ void elec_dam(int dam, cptr kb_str)
   if (dam > 30)
     {
       if (randint1(dam - 15) > dam / 2)
-	set_stun(p_ptr->stun += (int)randint0(dam > 900 ? 50 : 5 + dam / 20));
+	inc_timed(TMD_STUN, randint0(dam > 900 ? 50 : 5 + dam / 20), TRUE);
     }
   
   /* Take damage */
@@ -2199,18 +2199,18 @@ bool pois_hit(int pois_inc)
       pois_inc -= resist_damage(pois_inc, P_RES_POIS, 0);
       
       /* Poison is not fully cumulative. */
-      if (p_ptr->poisoned)
+      if (p_ptr->timed[TMD_POISONED])
 	{
 	  /* 1/3 to 2/3 pois_inc. */
-	  if (set_poisoned(p_ptr->poisoned + randint1((pois_inc + 2) / 3) + 
-			   (pois_inc / 3)))
+	  if (inc_timed(TMD_POISONED, randint1((pois_inc + 2) / 3) + 
+			(pois_inc / 3), TRUE))
 	    did_harm = TRUE;
 	}
       else 
 	{
 	  /* 1/2 to whole pois_inc, plus 4. */
-	  if (set_poisoned(p_ptr->poisoned + 4 + randint1((pois_inc + 1) / 2) + 
-			   (pois_inc / 2)))
+	  if (inc_timed(TMD_POISONED, 4 + randint1((pois_inc + 1) / 2) + 
+			(pois_inc / 2), TRUE))
 	    did_harm = TRUE;
 	}
     }
@@ -2468,59 +2468,59 @@ int apply_dispel(int power)
 {
   int num_effects = 0;
   
-  if (p_ptr->fast && (!check_save(power)))
+  if (p_ptr->timed[TMD_FAST] && (!check_save(power)))
     {
-      set_fast(0);
+      clear_timed(TMD_FAST, TRUE);
       num_effects += 1;
     }
-  if (p_ptr->protevil && (!check_save(power)))
+  if (p_ptr->timed[TMD_PROTEVIL] && (!check_save(power)))
     {
-      set_protevil(0);
+      clear_timed(TMD_PROTEVIL, TRUE);
       num_effects += 1;
     }
-  if (p_ptr->magicdef && (!check_save(power)))
+  if (p_ptr->timed[TMD_INVULN] && (!check_save(power)))
     {
-      set_extra_defences(0);
+      clear_timed(TMD_INVULN, TRUE);
       num_effects += 1;
     }
-  if (p_ptr->hero && (!check_save(power)))
+  if (p_ptr->timed[TMD_HERO] && (!check_save(power)))
     {
-      set_hero(0);
+      clear_timed(TMD_HERO, TRUE);
       num_effects += 1;
     }
-  if (p_ptr->shero && (!check_save(power)))
+  if (p_ptr->timed[TMD_SHERO] && (!check_save(power)))
     {
-      set_shero(0);
+      clear_timed(TMD_SHERO, TRUE);
       num_effects += 1;
     }
-  if (p_ptr->shield && (!check_save(power)))
+  if (p_ptr->timed[TMD_SHIELD] && (!check_save(power)))
     {
-      set_shield(0);
+      clear_timed(TMD_SHIELD, TRUE);
       num_effects += 1;
     }
-  if (p_ptr->blessed && (!check_save(power)))
+  if (p_ptr->timed[TMD_BLESSED] && (!check_save(power)))
     {
-      set_blessed(0);
+      clear_timed(TMD_BLESSED, TRUE);
       num_effects += 1;
     }
-  if (p_ptr->tim_invis && (!check_save(power)))
+  if (p_ptr->timed[TMD_SINVIS] && (!check_save(power)))
     {
-      set_tim_invis(0);
+      clear_timed(TMD_SINVIS, TRUE);
       num_effects += 1;
     }
-  if (p_ptr->tim_infra && (!check_save(power)))
+  if (p_ptr->timed[TMD_SINFRA] && (!check_save(power)))
     {
-      set_tim_infra(0);
+      clear_timed(TMD_SINFRA, TRUE);
       num_effects += 1;
     }
-  if (p_ptr->tim_esp && (!check_save(power)))
+  if (p_ptr->timed[TMD_TELEPATHY] && (!check_save(power)))
     {
-      set_tim_esp(0);
+      clear_timed(TMD_TELEPATHY, TRUE);
       num_effects += 1;
     }
-  if (p_ptr->superstealth && (!check_save(power)))
+  if (p_ptr->timed[TMD_SSTEALTH] && (!check_save(power)))
     {
-      set_superstealth(0,TRUE);
+      clear_timed(TMD_SSTEALTH, TRUE);
       num_effects += 1;
     }
   if (p_ptr->ele_attack && (!check_save(power)))
@@ -2528,29 +2528,29 @@ int apply_dispel(int power)
       set_ele_attack(0, 0);
       num_effects += 1;
     }
-  if (p_ptr->oppose_acid && (!check_save(power)))
+  if (p_ptr->timed[TMD_OPP_ACID] && (!check_save(power)))
     {
-      set_oppose_acid(0);
+      clear_timed(TMD_OPP_ACID, TRUE);
       num_effects += 1;
     }
-  if (p_ptr->oppose_elec && (!check_save(power)))
+  if (p_ptr->timed[TMD_OPP_ELEC] && (!check_save(power)))
     {
-      set_oppose_elec(0);
+      clear_timed(TMD_OPP_ELEC, TRUE);
       num_effects += 1;
     }
-  if (p_ptr->oppose_fire && (!check_save(power)))
+  if (p_ptr->timed[TMD_OPP_FIRE] && (!check_save(power)))
     {
-      set_oppose_fire(0);
+      clear_timed(TMD_OPP_FIRE, TRUE);
       num_effects += 1;
     }
-  if (p_ptr->oppose_cold && (!check_save(power)))
+  if (p_ptr->timed[TMD_OPP_COLD] && (!check_save(power)))
     {
-      set_oppose_cold(0);
+      clear_timed(TMD_OPP_COLD, TRUE);
       num_effects += 1;
     }
-  if (p_ptr->oppose_pois && (!check_save(power)))
+  if (p_ptr->timed[TMD_OPP_POIS] && (!check_save(power)))
     {
-      set_oppose_pois(0);
+      clear_timed(TMD_OPP_POIS, TRUE);
       num_effects += 1;
     }
   if (p_ptr->word_recall && (!check_save(power)))
@@ -2786,9 +2786,9 @@ static void apply_chaos(void)
 
   /* Always confuse (if no resist) and hallucinate ... */
   if (!p_resist_good(P_RES_CONFU)) 
-    (void)set_confused(p_ptr->confused + randint0(20) + 10);
+    (void)inc_timed(TMD_CONFUSED, randint0(20) + 10, TRUE);
   else notice_other(IF_RES_CONFU, 0);
-  (void)set_image(p_ptr->image + randint1(10));
+  (void)inc_timed(TMD_IMAGE, randint1(10), TRUE);
   
   while (!safe_now)
     {
@@ -2806,12 +2806,12 @@ static void apply_chaos(void)
 	  {
 	    if (!p_resist_good(P_RES_NETHR))
 	      {
-		if (p_ptr->hold_life && (randint0(100) < 75))
+		if (p_ptr->state.hold_life && (randint0(100) < 75))
 	      {
 		notice_obj(OF_HOLD_LIFE, 0);
 		msg_print("You keep hold of your life force!");
 	      }
-		else if (p_ptr->hold_life)
+		else if (p_ptr->state.hold_life)
 		  {
 		    notice_obj(OF_HOLD_LIFE, 0);
 		    msg_print("You feel your life slipping away!");
@@ -2844,18 +2844,18 @@ static void apply_chaos(void)
 	  /* Haste */
 	case 5:
 	  {
-	    if (!p_ptr->fast)
+	    if (!p_ptr->timed[TMD_FAST])
 	      {
-		(void)set_fast(5 + randint1(20));
+		(void)inc_timed(TMD_FAST, 5 + randint1(20), TRUE);
 	      }
 	    break;
 	  }
 	  /* Slow */
 	case 6:
 	  {
-	    if (!p_ptr->slow)
+	    if (!p_ptr->timed[TMD_SLOW])
 	      {
-		(void)set_slow(5 + randint1(20));
+		(void)inc_timed(TMD_SLOW, 5 + randint1(20), TRUE);
 	      }
 	    break;
 	  }
@@ -2893,9 +2893,9 @@ static void apply_chaos(void)
 	  /* Fear */
 	case 10:
 	  {
-	    if (!(p_ptr->no_fear) && !(p_ptr->afraid))
+	    if (!(p_ptr->state.no_fear) && !(p_ptr->timed[TMD_AFRAID]))
 	      {
-		(void) set_afraid(6 + randint1(10));
+		(void) inc_timed(TMD_AFRAID, 6 + randint1(10), TRUE);
 	      }
 
 	    break;
@@ -5879,7 +5879,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
   bool obvious = TRUE;
   
   /* Player blind-ness */
-  bool blind = (p_ptr->blind ? TRUE : FALSE);
+  bool blind = (p_ptr->timed[TMD_BLIND] ? TRUE : FALSE);
   
   /* Player needs a "description" (he is blind) */
   bool fuzzy = FALSE;
@@ -6012,12 +6012,12 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	  }
 	
 	/* Dodging takes alertness, agility, speed, and a light pack. */
-	else if ((!p_ptr->blind) && (!p_ptr->confused) && (!p_ptr->paralyzed))
+	else if ((!p_ptr->timed[TMD_BLIND]) && (!p_ptr->timed[TMD_CONFUSED]) && (!p_ptr->timed[TMD_PARALYZED]))
 	  {
 	    /* Value for dodging should normally be between 18 and 75. */
-	    dodging = 2 * (adj_dex_ta[p_ptr->stat_ind[A_DEX]] - 124) + 
+	    dodging = 2 * (adj_dex_ta[p_ptr->state.stat_ind[A_DEX]] - 124) + 
 	      extract_energy[p_ptr->pspeed] + 
-	      5 * adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100 / 
+	      5 * adj_str_wgt[p_ptr->state.stat_ind[A_STR]] * 100 / 
 	      (p_ptr->total_weight > 300 ? p_ptr->total_weight : 300);
 	    
 	    /* Do we dodge the boulder? */
@@ -6035,8 +6035,8 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	    dam += terrain_adjustment;
 	    
 	    /* Player armor reduces total damage (a little) */
-	    dam -= (dam * ((p_ptr->ac + p_ptr->to_a < 150) ? 
-			   p_ptr->ac + p_ptr->to_a : 150) / 300);
+	    dam -= (dam * ((p_ptr->state.ac + p_ptr->state.to_a < 150) ? 
+			   p_ptr->state.ac + p_ptr->state.to_a : 150) / 300);
 	    
 	    /* Player can be crushed. */
 	    if (randint0(3) == 0)
@@ -6045,7 +6045,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		else msg_print("You are crushed!");
 		
 		/* Be careful not to knock out the player immediately. */
-		(void)set_stun(p_ptr->stun + ((dam / 2 > 50) ? 50 : dam / 2));
+		(void)inc_timed(TMD_STUN, ((dam / 2 > 50) ? 50 : dam / 2), TRUE);
 	      }
 	    else
 	      {
@@ -6079,7 +6079,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	  }
 	
 	/* Test for deflection - Only base armour counts here. */
-	else if ((!self) && (p_ptr->ac > 10 + randint0(r_ptr->level)))
+	else if ((!self) && (p_ptr->state.ac > 10 + randint0(r_ptr->level)))
 	  {
 	    if (fuzzy) msg_print("A missile glances off your armour.");
 	    
@@ -6090,8 +6090,8 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	  }
 	
 	/* Reduce damage if missile did not get deflected. */
-	else dam -= (dam * ((p_ptr->ac + p_ptr->to_a < 150) ? 
-			    p_ptr->ac + p_ptr->to_a : 150) / 250);
+	else dam -= (dam * ((p_ptr->state.ac + p_ptr->state.to_a < 150) ? 
+			    p_ptr->state.ac + p_ptr->state.to_a : 150) / 250);
 	
 	/* We've been hit - check for stunning, wounding. */
 	if (dam)
@@ -6108,7 +6108,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		msg_print("You are stunned.");
 		
 		/* Be careful not to knock out the player immediately. */
-		(void)set_stun(p_ptr->stun + ((dam / 3 > 30) ? 30 : dam / 3));
+		(void)inc_timed(TMD_STUN, ((dam / 3 > 30) ? 30 : dam / 3), TRUE);
 	      }
 	    /* Player can be wounded. */
 	    if (randint0(4) == 0)
@@ -6116,7 +6116,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		msg_print("You have been wounded.");
 		
 		/* Wound the player. */
-		(void)set_cut(p_ptr->cut + (dam / 3 > 30 ? 30 : dam / 3));
+		(void)inc_timed(TMD_CUT, (dam / 3 > 30 ? 30 : dam / 3), TRUE);
 	      }
 	    
 	    /* Take the damage. */
@@ -6148,11 +6148,11 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	  }
 	
 	/* Test for a miss or armour deflection. */
-	else if ((!self) && ((p_ptr->ac + p_ptr->to_a < 150 ? p_ptr->ac + 
-			      p_ptr->to_a : 150) > 
+	else if ((!self) && ((p_ptr->state.ac + p_ptr->state.to_a < 150 ? 
+			      p_ptr->state.ac + p_ptr->state.to_a : 150) > 
 			     randint1((10 + r_ptr->level) * 5)))
 	  {
-	    if ((p_ptr->ac > 9) && (randint0(2) == 0)) 
+	    if ((p_ptr->state.ac > 9) && (randint0(2) == 0)) 
 	      msg_print("The missile glances off your armour.");
 	    else msg_print("The missile misses.");
 	    
@@ -6174,8 +6174,8 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	  }
 	
 	/* Reduce damage if missile did not get deflected. */
-	else dam -= (dam * ((p_ptr->ac + p_ptr->to_a < 150) ? 
-			    p_ptr->ac + p_ptr->to_a : 150) / 250);
+	else dam -= (dam * ((p_ptr->state.ac + p_ptr->state.to_a < 150) ? 
+			    p_ptr->state.ac + p_ptr->state.to_a : 150) / 250);
 	
 	if (dam)
 	  {
@@ -6189,7 +6189,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		msg_print("You have been wounded.");
 		
 		/* Wound the player. */
-		(void)set_cut(p_ptr->cut + (dam / 2 > 50 ? 50 : dam / 2));
+		(void)inc_timed(TMD_CUT, (dam / 2 > 50 ? 50 : dam / 2), TRUE);
 	      }
 	  }
 	
@@ -6223,12 +6223,12 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	  }
 	
 	/* Dodging takes alertness, agility, speed, and a light pack. */
-	else if ((!p_ptr->blind) && (!p_ptr->confused) && (!p_ptr->paralyzed))
+	else if ((!p_ptr->timed[TMD_BLIND]) && (!p_ptr->timed[TMD_CONFUSED]) && (!p_ptr->timed[TMD_PARALYZED]))
 	  {
 	    /* Value for dodging should normally be between 18 and 75. */
-	    dodging = 2 * (adj_dex_ta[p_ptr->stat_ind[A_DEX]] - 124) + 
+	    dodging = 2 * (adj_dex_ta[p_ptr->state.stat_ind[A_DEX]] - 124) + 
 	      extract_energy[p_ptr->pspeed] + 
-	      5 * adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100 / 
+	      5 * adj_str_wgt[p_ptr->state.stat_ind[A_STR]] * 100 / 
 	      (p_ptr->total_weight > 300 ? p_ptr->total_weight : 300);
 	    
 	    /* Do we dodge the missile (not an easy thing to do)? */
@@ -6289,8 +6289,8 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	     */
 	    if (k < 4)
 	      {
-		dam -= (dam * ((p_ptr->ac + p_ptr->to_a < 150) ? 
-			       p_ptr->ac + p_ptr->to_a : 150) / 250);
+		dam -= (dam * ((p_ptr->state.ac + p_ptr->state.to_a < 150) ? 
+			       p_ptr->state.ac + p_ptr->state.to_a : 150) / 250);
 	      }
 	    
 	    /* Ordinary missile. */
@@ -6320,7 +6320,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		pois_hit(dam + 5);
 		
 		/* Then the life draining. */
-		if (p_ptr->hold_life && (randint1(100) > 75))
+		if (p_ptr->state.hold_life && (randint1(100) > 75))
 		  {
 		    notice_obj(OF_HOLD_LIFE, 0);
 		    msg_print("You feel your life slipping away!");
@@ -6364,7 +6364,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		pois_hit(dam + 5);
 		
 		/* Then the life draining. */
-		if (p_ptr->hold_life && (randint1(100) > 75))
+		if (p_ptr->state.hold_life && (randint1(100) > 75))
 		  {
 		    notice_obj(OF_HOLD_LIFE, 0);
 		    msg_print("You feel your life slipping away!");
@@ -6377,14 +6377,14 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		  }
 		
 		/* Then the Black Breath. */
-		if (p_ptr->black_breath == FALSE)
+		if (p_ptr->state.black_breath == FALSE)
 		  {
 		    /* Messages. */
 		    msg_print("Your foe calls upon your soul!");
 		    msg_print(NULL);
 		    msg_print("You feel the Black Breath slowly draining you of life...");
 		  }
-		p_ptr->black_breath = TRUE;
+		p_ptr->state.black_breath = TRUE;
 	      }
 	  }
 	
@@ -6469,7 +6469,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		msg_print("The cold seeps into your bones.");
 		(void)do_dec_stat(A_CON);
 	      }
-	    if ((k == 2) && (dam >= 250) && (!p_ptr->hold_life))
+	    if ((k == 2) && (dam >= 250) && (!p_ptr->state.hold_life))
 	      {
 		msg_print("A deadly chill withers your lifeforce.");
 		lose_exp(200 + (p_ptr->exp/100) * MON_DRAIN_LIFE);
@@ -6478,17 +6478,17 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	    if ((k == 3) && (dam >= 400))
 	      {
 		msg_print("A deadly chill drives daggers into your soul!");
-		if (!p_ptr->free_act)
+		if (!p_ptr->state.free_act)
 		  {
-		    (void)set_paralyzed(p_ptr->paralyzed + randint0(3) + 2);
+		    (void)inc_timed(TMD_PARALYZED, randint0(3) + 2, TRUE);
 		  }
 		else notice_obj(OF_FREE_ACT, 0);
-		if (!p_ptr->no_fear)
+		if (!p_ptr->state.no_fear)
 		  {
-		    (void)set_afraid(p_ptr->afraid + randint0(21) + 10);
+		    (void)inc_timed(TMD_AFRAID, randint0(21) + 10, TRUE);
 		  }
 		else notice_obj(OF_FEARLESS, 0);
-		if (!p_ptr->hold_life)
+		if (!p_ptr->state.hold_life)
 		  {
 		    /* Very serious, but temporary, loss of exp. */
 		    lose_exp(200 + (p_ptr->exp/20) * MON_DRAIN_LIFE);
@@ -6525,18 +6525,18 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	if ((!self) && (rf_has(r_ptr->flags, RF_MORGUL_MAGIC)))
 	  {
 	    /* Paralyzation. */
-	    if (p_ptr->free_act)
+	    if (p_ptr->state.free_act)
 	      notice_obj(OF_FREE_ACT, 0);
 	    else if (!check_save(dam / 2 + 20)) 
 	      {
 		msg_print("The deadly vapor overwhelms you, and you faint away!");
-		(void)set_paralyzed(p_ptr->paralyzed + randint0(3) + 2);
+		(void)inc_timed(TMD_PARALYZED, randint0(3) + 2, TRUE);
 	      }
 	  
 	    
-	    if ((!p_ptr->no_blind) && (!check_save(dam / 2 + 20)))
+	    if ((!p_ptr->state.no_blind) && (!check_save(dam / 2 + 20)))
 	      {
-		(void)set_blind(p_ptr->blind + randint0(17) + 16);
+		(void)inc_timed(TMD_BLIND, randint0(17) + 16, TRUE);
 		msg_print("The deadly vapor blinds you!");
 	      }
 	    else notice_obj(OF_SEEING, 0);
@@ -6571,12 +6571,12 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	if ((!self) && (rf_has(r_ptr->flags, RF_POWERFUL)))
 	  {
 	    /* Paralyzation. */
-	    if (p_ptr->free_act)
+	    if (p_ptr->state.free_act)
 	      notice_obj(OF_FREE_ACT, 0);
 	    else if (!check_save(dam / 2 + 20)) 
 	      {
 		msg_print("The stench overwhelms you, and you faint away!");
-		(void)set_paralyzed(p_ptr->paralyzed + randint0(3) + 2);
+		(void)inc_timed(TMD_PARALYZED, randint0(3) + 2, TRUE);
 	      }
 	    
 	    /* Hallucination */
@@ -6584,7 +6584,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	      notice_other(IF_RES_CHAOS, 0);
 	    else if (!check_save(dam / 2 + 20))
 	      {
-		(void)set_image(p_ptr->image + randint0(17) + 16);
+		(void)inc_timed(TMD_HALLUC, randint0(17) + 16, TRUE);
 		msg_print("The fumes affect your vision!");
 	      }
 	  }
@@ -6604,9 +6604,9 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	dam -= resist_damage(dam, P_RES_DARK, 1);
 	
 	/* Blind the player */
-	if (!blind && !p_ptr->no_blind && !p_resist_good(P_RES_DARK))
+	if (!blind && !p_ptr->state.no_blind && !p_resist_good(P_RES_DARK))
 	  {
-	    (void)set_blind(p_ptr->blind + randint1(5) + 2);
+	    (void)inc_timed(TMD_BLIND, randint1(5) + 2, TRUE);
 	  }
 	else notice_obj(OF_SEEING, 0);
 	take_hit((dam+2) / 3, killer);
@@ -6617,20 +6617,20 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	    msg_print("Visions of hell invade your mind!");
 	    
 	    /* Possible fear, hallucination and confusion. */
-	    if (!p_ptr->no_fear)
+	    if (!p_ptr->state.no_fear)
 	      {
-		(void)set_afraid(p_ptr->afraid + randint1(30) 
-				 + r_ptr->level * 2);
+		(void)inc_timed(TMD_AFRAID, randint1(30) + r_ptr->level * 2, 
+				TRUE);
 	      }
 	    else notice_obj(OF_FEARLESS, 0);
 	    if (!p_resist_good(P_RES_CHAOS))
 	      {
-		(void)set_image(p_ptr->image + randint0(101) + 100);
+		(void)inc_timed(TMD_HALLUC, randint0(101) + 100, TRUE);
 	      }
 	    else notice_other(IF_RES_CHAOS, 0);
 	    if (!p_resist_good(P_RES_CONFU))
 	      {
-		(void)set_confused(p_ptr->confused + randint0(31) + 30);
+		(void)inc_timed(TMD_CONFUSED, randint0(31) + 30, TRUE);
 	      }
 	    else notice_other(IF_RES_CONFU, 0);
 	  }
@@ -6648,12 +6648,12 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	cold_dam(dam, killer);
 	if (!p_resist_good(P_RES_SHARD))
 	  {
-	    (void)set_cut(p_ptr->cut + damroll(5, 8));
+	    (void)inc_timed(TMD_CUT, damroll(5, 8), TRUE);
 	  }
 	else notice_other(IF_RES_SHARD, 0);
 	if (!p_resist_good(P_RES_SOUND))
 	  {
-	    (void)set_stun(p_ptr->stun + randint1(15));
+	    (void)inc_timed(TMD_STUN, randint1(15), TRUE);
 	  }
 	else notice_other(IF_RES_SOUND, 0);
 	break;
@@ -6671,9 +6671,9 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	dam -= resist_damage(dam, P_RES_LITE, 1);
 	
 	/* Apply Blindness */
-	if (!blind && !p_ptr->no_blind  && !p_resist_good(P_RES_LITE))
+	if (!blind && !p_ptr->state.no_blind  && !p_resist_good(P_RES_LITE))
 	  {
-	    (void)set_blind(p_ptr->blind + randint1(5) + ((dam > 40) ? 2 : 0));
+	    (void)inc_timed(TMD_BLIND, randint1(5) + ((dam > 40) ? 2 : 0), TRUE);
 	  }
 	else notice_obj(OF_SEEING, 0);
 	take_hit(dam, killer);
@@ -6692,9 +6692,9 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	dam -= resist_damage(dam, P_RES_DARK, 1);
 	
 	/* Blind the player */
-	if (!blind && !p_ptr->no_blind && !p_resist_good(P_RES_DARK))
+	if (!blind && !p_ptr->state.no_blind && !p_resist_good(P_RES_DARK))
 	  {
-	    (void)set_blind(p_ptr->blind + randint1(5) + 2);
+	    (void)inc_timed(TMD_BLIND, randint1(5) + 2, TRUE);
 	  }
 	else notice_obj(OF_SEEING, 0);
 	take_hit(dam, killer);
@@ -6713,9 +6713,9 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	dam -= resist_damage(dam, P_RES_DARK, 1);
 	
 	/* Blind the player */
-	if (!blind && !p_ptr->no_blind && !p_resist_good(P_RES_DARK))
+	if (!blind && !p_ptr->state.no_blind && !p_resist_good(P_RES_DARK))
 	  {
-	    (void)set_blind(p_ptr->blind + randint1(5) + 2);
+	    (void)inc_timed(TMD_BLIND, randint1(5) + 2, TRUE);
 	  }
 	else notice_obj(OF_SEEING, 0);
 	take_hit(dam, killer);
@@ -6736,18 +6736,16 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	if (randint0(k) > 20)
 	  {
 	    /* Extremely frightening. */
-	    if (!p_ptr->no_fear)
+	    if (!p_ptr->state.no_fear)
 	      {
 		/* Paralyze.  If has free action, max of 1 turn. */
-		if ((!p_ptr->free_act) || randint0(3) == 0)
+		if ((!p_ptr->state.free_act) || randint0(3) == 0)
 		  {
-		    (void)set_paralyzed(p_ptr->paralyzed + 
-					(p_ptr->free_act ? 1 : 
-					 randint0(3) + 2));
+		    (void)inc_timed(TMD_PARALYZED, (p_ptr->state.free_act ? 1 : randint0(3) + 2), TRUE);
 		    
 		    msg_print("You are paralyzed with fear!");
 		  }
-		(void) set_afraid(p_ptr->afraid + randint0(k));
+		(void) inc_timed(TMD_AFRAID, randint0(k), TRUE);
 	      }
 	    else notice_obj(OF_FEARLESS, 0);
 	    
@@ -6767,7 +6765,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	if (randint0(k) > 80)
 	  {
 	    /* Reduce experience. */
-	    if (p_ptr->hold_life)
+	    if (p_ptr->state.hold_life)
 	      {
 		notice_obj(OF_HOLD_LIFE, 0);
 		if (randint1(100) > 75)
@@ -6818,11 +6816,11 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	    /* Dagger bearing the Black Breath (rare). */
 	    msg_print("Out of the uttermost shadow leaps a perilous blade!");
 	    
-	    if (p_ptr->black_breath == FALSE)
+	    if (p_ptr->state.black_breath == FALSE)
 	      {
 		/* Message. */
 		msg_print("You feel the Black Breath slowly draining you of life...");
-		p_ptr->black_breath = TRUE;
+		p_ptr->state.black_breath = TRUE;
 	      }
 	    else
 	      {
@@ -6849,7 +6847,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	
 	if (!p_resist_good(P_RES_CONFU))
 	  {
-	    (void)set_confused(p_ptr->confused + randint1(20) + 10);
+	    (void)inc_timed(TMD_CONFUSED, randint1(20) + 10, TRUE);
 	  }
 	take_hit(dam, killer);
 	break;
@@ -6873,13 +6871,13 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	    if (!p_resist_good(P_RES_CONFU))
 	      {
 		k = (randint1((dam > 400) ? 21 : (1 + dam / 20)));
-		(void)set_confused(p_ptr->confused + k);
+		(void)inc_timed(TMD_CONFUSED, k, TRUE);
 	      }
 	    else notice_other(IF_RES_CONFU, 0);
 	    
 	    /* Stun the player. */
 	    k = (randint1((dam > 90) ? 35 : (dam / 3 + 5)));
-	    (void)set_stun(p_ptr->stun + k);
+	    (void)inc_timed(TMD_STUN, k, TRUE);
 	    
 	    /* Sometimes, paralyze the player briefly. */
 	    if (!check_save(dam))
@@ -6927,7 +6925,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	/* Cut the player */
 	if (!p_resist_good(P_RES_SHARD))
 	  {
-	    (void)set_cut(p_ptr->cut + dam);
+	    (void)inc_timed(TMD_CUT, dam, TRUE);
 	    
 	  }
 	
@@ -6947,7 +6945,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
     case GF_INERTIA:
       {
 	if (fuzzy) msg_print("You are hit by something strange!");
-	(void)set_slow(p_ptr->slow + randint0(5) + (dam >= 100 ? 6 : 4));
+	(void)inc_timed(TMD_SLOW, randint0(5) + (dam >= 100 ? 6 : 4), TRUE);
 	take_hit(dam, killer);
 	break;
       }
@@ -6955,13 +6953,13 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
       /* Gravity -- stunning and slowness. */
     case GF_GRAVITY:
       {
-	(void)set_slow(p_ptr->slow + randint0(3) + dam >= 100 ? 4 : 2);
+	(void)inc_timed(TMD_SLOW, randint0(3) + (dam >= 100 ? 4 : 2), TRUE);
 	
 	/* May Stun */
 	if (!p_resist_good(P_RES_SOUND))
 	  {
 	    int k = (randint1((dam > 90) ? 35 : (dam / 5 + 5)));
-	    (void)set_stun(p_ptr->stun + k);
+	    (void)inc_timed(TMD_STUN, k, TRUE);
 	  }
 	else notice_other(IF_RES_SOUND, 0);
 
@@ -6984,7 +6982,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	/* May Stun */
 	if (!p_resist_good(P_RES_SOUND))
 	  {
-	    (void)set_stun(p_ptr->stun + randint1(20));
+	    (void)inc_timed(TMD_STUN, randint1(20), TRUE);
 	  }
 	else notice_other(IF_RES_SOUND, 0);
 
@@ -7005,13 +7003,13 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	if (fuzzy) msg_print("You are hit by something!");
 	if ((!p_resist_good(P_RES_SOUND)) && (randint0(2) == 0))
 	  {
-	    (void)set_stun(p_ptr->stun + randint1(5 + dam / 10));
+	    (void)inc_timed(TMD_STUN, randint1(5 + dam / 10), TRUE);
 	  }
 	else notice_other(IF_RES_SOUND, 0);
 
 	if ((!p_resist_good(P_RES_CONFU)) && (randint0(2) == 0))
 	  {
-	    (void)set_confused(p_ptr->confused + randint0(4) + 3);
+	    (void)inc_timed(TMD_CONFUSED, randint0(4) + 3, TRUE);
 	  }
 	else notice_other(IF_RES_CONFU, 0);
 
@@ -7060,7 +7058,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	/* Sometimes, confuse the player. */
 	if ((randint0(2) == 0) && (!p_resist_good(P_RES_CONFU)))
 	  {
-	    (void)set_confused(p_ptr->confused + 5 + randint1(dam / 3));
+	    (void)inc_timed(TMD_CONFUSED, 5 + randint1(dam / 3), TRUE);
 	  }
 	else notice_other(IF_RES_CONFU, 0);
 	
@@ -7100,12 +7098,12 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	/* Drain Exp */
 	if (!p_resist_good(P_RES_NETHR))
 	  {
-	    if (p_ptr->hold_life && (randint0(100) < 75))
+	    if (p_ptr->state.hold_life && (randint0(100) < 75))
 	      {
 		notice_obj(OF_HOLD_LIFE, 0);
 		msg_print("You keep hold of your life force!");
 	      }
-	    else if (p_ptr->hold_life)
+	    else if (p_ptr->state.hold_life)
 	      {
 		notice_obj(OF_HOLD_LIFE, 0);
 		msg_print("You feel your life slipping away!");
@@ -7256,29 +7254,29 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	dam -= resist_damage(dam / 14, P_RES_DISEN, 1);
 	
 	/* Apply Blindness */
-	if (!blind && !p_ptr->no_blind  && 
+	if (!blind && !p_ptr->state.no_blind  && 
 	    (!p_resist_good(P_RES_LITE) || !p_resist_good(P_RES_DARK)))
 	  {
-	    (void)set_blind(p_ptr->blind + randint1(2));
+	    (void)inc_timed(TMD_BLIND, randint1(2), TRUE);
 	  }
 	else notice_obj(OF_SEEING, 0);
 	
 	/* Apply Confusion */
 	if (!p_resist_good(P_RES_CONFU))
 	  {
-	    (void)set_confused(p_ptr->confused + randint1(3));
+	    (void)inc_timed(TMD_CONFUSED, randint1(3), TRUE);
 	  }
 	
 	/* Stun the player. */
 	if ((dam / 14 > randint0(30 + dam / 28)) && !p_resist_good(P_RES_SOUND))
 	  {
-	    (void)set_stun(p_ptr->stun + randint1(3));
+	    (void)inc_timed(TMD_STUN, randint1(3), TRUE);
 	  }
 	
 	/* Cut the player */
 	if (!p_resist_good(P_RES_SHARD))
 	  {
-	    (void)set_cut(p_ptr->cut + dam / 14);
+	    (void)inc_timed(TMD_CUT, dam / 14, TRUE);
 	    
 	  }
 	
@@ -7288,12 +7286,12 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	/* Drain Exp */
 	if (!p_resist_good(P_RES_CHAOS) || !p_resist_good(P_RES_NETHR))
 	  {
-	    if (p_ptr->hold_life && (randint0(100) < 75))
+	    if (p_ptr->state.hold_life && (randint0(100) < 75))
 	      {
 		notice_obj(OF_HOLD_LIFE, 0);
 		msg_print("You keep hold of your life force!");
 	      }
-	    else if (p_ptr->hold_life)
+	    else if (p_ptr->state.hold_life)
 	      {
 		notice_obj(OF_HOLD_LIFE, 0);
 		msg_print("You feel your life slipping away!");
@@ -7547,7 +7545,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
       {
 	if (affect_player)
 	  {
-	    if (((p_resist_good(P_RES_NEXUS)) || (p_ptr->ffall)) && 
+	    if (((p_resist_good(P_RES_NEXUS)) || (p_ptr->state.ffall)) && 
 		(randint0(2) == 0))
 	      {
 		notice_obj(OF_FEATHER, 0);
@@ -7601,7 +7599,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	if ((typ == GF_STORM) && (affect_player))
 	  {
 	    /* Sometimes, if no feather fall, throw the player around. */
-	    if ((!p_ptr->ffall) && (randint0(3) != 0) && 
+	    if ((!p_ptr->state.ffall) && (randint0(3) != 0) && 
 		(randint0(dam / 2) > p_ptr->lev))
 	      {
 		msg_print("The wind grabs you, and whirls you around!");
@@ -8027,7 +8025,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
   bool drawn = FALSE;
   
   /* Is the player blind? */
-  bool blind = (p_ptr->blind ? TRUE : FALSE);
+  bool blind = (p_ptr->timed[TMD_BLIND] ? TRUE : FALSE);
   
   /* Number of grids in the "path" */
   int path_n = 0;

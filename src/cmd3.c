@@ -128,37 +128,24 @@ void do_cmd_inven(void)
     sprintf(string,"(Inventory) burden %d.%d kg (%d%% of capacity). Command: ",
 	    make_metric(p_ptr->total_weight) / 10, 
 	    make_metric(p_ptr->total_weight) % 10, 
-	    p_ptr->total_weight / adj_str_wgt[p_ptr->stat_ind[A_STR]]);
+	    p_ptr->total_weight / adj_str_wgt[p_ptr->state.stat_ind[A_STR]]);
   else 
     sprintf(string, 
 	    "(Inventory) burden %d.%d lb (%d%% of capacity). Command: ",
 	    p_ptr->total_weight / 10, p_ptr->total_weight % 10, 
-	    p_ptr->total_weight / adj_str_wgt[p_ptr->stat_ind[A_STR]]);
+	    p_ptr->total_weight / adj_str_wgt[p_ptr->state.stat_ind[A_STR]]);
 
 
   /* Output that string, and prompt for a command. */
   prt(string, 0, 0);
   
-  /* Hack -- Get a new command */
-  p_ptr->command_new = inkey();
-  
+	/* Get a new command */
+	e = inkey_ex();
+	if (!(e.type == EVT_KBRD && e.key == ESCAPE))
+		Term_event_push(&e);
+
   /* Load screen */
   screen_load();
-  
-  
-  /* Hack -- Process "Escape" */
-  if (p_ptr->command_new == ESCAPE)
-    {
-      /* Reset stuff */
-      p_ptr->command_new = 0;
-    }
-  
-  /* Hack -- Process normal keys */
-  else
-    {
-      /* Hack -- Use "display" mode */
-      p_ptr->command_see = TRUE;
-    }
 }
 
 
@@ -203,26 +190,13 @@ void do_cmd_equip(void)
   /* Output that string, and prompt for a command. */
   prt(string, 0, 0);
   
-  /* Hack -- Get a new command */
-  p_ptr->command_new = inkey();
-  
+	/* Get a new command */
+	e = inkey_ex();
+	if (!(e.type == EVT_KBRD && e.key == ESCAPE))
+		Term_event_push(&e);
+
   /* Load screen */
   screen_load();
-  
-  
-  /* Hack -- Process "Escape" */
-  if (p_ptr->command_new == ESCAPE)
-    {
-      /* Reset stuff */
-      p_ptr->command_new = 0;
-    }
-  
-  /* Hack -- Process normal keys */
-  else
-    {
-      /* Enter "display" mode */
-      p_ptr->command_see = TRUE;
-    }
 }
 
 
@@ -247,22 +221,9 @@ void do_cmd_destroy(cmd_code code, cmd_arg args[])
   
   cptr q, s;
 
-  /* Do we have an item? */
-  if (p_ptr->command_item) 
-    {
-      item = handle_item();
-      if (!get_item_allow(item)) return;
-    }
+	item = args[0].item;
+	amt = args[1].number;
 
-  /* Get an item */
-  else
-    {
-      q = "Destroy which item? ";
-      s = "You have nothing to destroy.";
-      if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR | CAN_SQUELCH))) 
-	return;
-    }
-  
   /* Deal with squelched items */
   if (item == ALL_SQUELCHED)
     {
@@ -518,71 +479,6 @@ void textui_cmd_destroy(void)
 	      p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW);;
 	    }
 }
-
-/**
- * Display specialized object information.  -LM-
- *
- * Unidentified:
- *	Weapons and armour -> description of specific object type (dagger, 
- *	  etc.).
- *	Others -> descrtiption only of general object kind (scroll, etc.)
- * Identified or aware:
- *	Artifacts -> artifact-specific description.
- *	Most objects -> description of specific object type.
- *	Scrolls, potions, spellbooks, rings, and amulets -> description	 
- *	  only of general object kind.
- * *Identified*:
- *	All -> description of object type or artifact description, 
- *	  complete listing of attributes and flags.
- *
- * Objects may also be members of a class with known effects.  If so, 
- * extra information about effects when used will appear if the effects 
- * can be quantified.
- *
- * Boolean value "in_store" only takes effect if player is in some store.
- */
-void do_cmd_observe(void)
-{
-  int item;
-
-  object_type *o_ptr;  
-
-  cptr q, s;
-
-  /* Do we have an item? */
-  if (p_ptr->command_item) 
-    {
-      item = handle_item();
-      if (!get_item_allow(item)) return;
-    }
-  
-  /* Get an item */
-  else
-    {
-      q = "Examine which item? ";
-      s = "You have nothing to examine.";
-      if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR))) 
-	return;
-    }
-  
-  /* Get the item (in the pack) */
-  if (item >= 0)
-    {
-      o_ptr = &inventory[item];
-    }
-  
-  /* Get the item (on the floor) */
-  else
-    {
-      o_ptr = &o_list[0 - item];
-    }
-  
-  /* Describe */
-  object_info_screen(o_ptr, FALSE);
-
-}
-
-
 
 /**
  * Target command
@@ -1297,8 +1193,8 @@ void py_steal(int y, int x)
   filching_power = 2 * p_ptr->lev;
   
   /* Penalize some conditions */
-  if (p_ptr->blind || no_lite()) filching_power = filching_power / 10;
-  if (p_ptr->confused || p_ptr->image) filching_power = filching_power / 10;
+  if (p_ptr->timed[TMD_BLIND] || no_lite()) filching_power = filching_power / 10;
+  if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC]) filching_power = filching_power / 10;
   
   /* Determine how much protection the monster has. */
   theft_protection = (7 * (r_ptr->level + 2) / 4);
@@ -1318,12 +1214,12 @@ void py_steal(int y, int x)
   if (m_ptr->csleep) theft_protection = 3 * theft_protection / 5;
   
   /* Special player stealth magics aid stealing, but are lost in the process */
-  if (p_ptr->superstealth)
+  if (p_ptr->timed[TMD_SSTEALTH])
     {
       theft_protection = 3 * theft_protection / 5;
-      set_superstealth(0,TRUE);
+      (void)clear_timed(TMD_SSTEALTH, TRUE);
     }
-
+  
   /* The more you steal on a level, the more wary the monsters. */
   theft_protection += number_of_thefts_on_level * 15;
   
@@ -1341,11 +1237,11 @@ void py_steal(int y, int x)
       
       /* But some monsters are dirt poor. */
       if (!(rf_has(r_ptr->flags, RF_DROP_60)) || 
-	    rf_has(r_ptr->flags, RF_DROP_90)) || 
-	    rf_has(r_ptr->flags, RF_DROP_1D2)) || 
-	    rf_has(r_ptr->flags, RF_DROP_2D2)) || 
-	    rf_has(r_ptr->flags, RF_DROP_3D2)) || 
-	    rf_has(r_ptr->flags, RF_DROP_4D2)))) purse = 0;
+	  rf_has(r_ptr->flags, RF_DROP_90) || 
+	  rf_has(r_ptr->flags, RF_DROP_1D2) || 
+	  rf_has(r_ptr->flags, RF_DROP_2D2) || 
+	  rf_has(r_ptr->flags, RF_DROP_3D2) || 
+	  rf_has(r_ptr->flags, RF_DROP_4D2)) purse = 0;
       
       /* Some monster races are far better to steal from than others. */
       if ((r_ptr->d_char == 'D') || (r_ptr->d_char == 'd') || 
@@ -1403,7 +1299,7 @@ void py_steal(int y, int x)
     }
   
   /* The thief also speeds up, but only for just long enough to escape. */
-  if (!p_ptr->fast) p_ptr->fast += 2;
+  if (!p_ptr->timed[TMD_FAST]) p_ptr->timed[TMD_FAST] += 2;
   
   /* Recalculate bonuses */
   p_ptr->update |= (PU_BONUS);
@@ -1465,13 +1361,13 @@ bool py_set_trap(int y, int x)
   max_traps = 1 + ((p_ptr->lev >= 25) ? 1 : 0) + 
     (check_ability(SP_EXTRA_TRAP) ? 1 : 0);
   
-  if (p_ptr->blind || no_lite())
+  if (p_ptr->timed[TMD_BLIND] || no_lite())
     {
       msg_print("You can not see to set a trap.");
       return FALSE;
     }
   
-  if (p_ptr->confused || p_ptr->image)
+  if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC])
     {
       msg_print("You are too confused.");
       return FALSE;
@@ -1675,13 +1571,13 @@ bool trap_menu(void)
  */
 bool py_modify_trap(int y, int x)
 {
-  if (p_ptr->blind || no_lite())
+  if (p_ptr->timed[TMD_BLIND] || no_lite())
     {
       msg_print("You can not see to modify your trap.");
       return FALSE;
     }
   
-  if (p_ptr->confused || p_ptr->image)
+  if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC])
     {
       msg_print("You are too confused.");
       return FALSE;
