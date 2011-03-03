@@ -138,7 +138,7 @@ extern void output_dam(object_type *o_ptr, int mult, const char *against, bool *
     }
 
   /* Factor in criticals (x 10) */
-  chance = p_ptr->skill_thn + p_ptr->dis_to_h;
+  chance = p_ptr->state.skills[SKILL_TO_HIT_MELEE] + p_ptr->dis_to_h;
   if (object_known_p(o_ptr)) chance += o_ptr->to_h;
   chance = (100 * chance) / (chance + 240);
   if (check_ability(SP_ARMSMAN)) chance = 100 - (83 * (100 - chance)) / 100;
@@ -301,7 +301,7 @@ extern void output_ammo_dam(object_type *o_ptr, int mult, const char *against,
     }
 
   /* Get critical chance (x 10) */
-  chance = p_ptr->skill_thb + p_ptr->dis_to_h;
+  chance = p_ptr->state.skills[SKILL_TO_HIT_BOW] + p_ptr->dis_to_h;
   if (object_known_p(o_ptr)) chance += o_ptr->to_h;
   if ((!thrown) && (object_known_p(b_ptr))) chance += b_ptr->to_h;
   if (thrown) chance = chance * 3 / 2;
@@ -450,7 +450,7 @@ void display_device_chance(object_type *o_ptr)
   int lev = k_ptr->level;
   
   /* Base chance of success */
-  int chance = p_ptr->skill_dev;
+  int chance = p_ptr->state.skills[SKILL_DEVICE];
 
   /* Final probability */
   int prob = 10000;

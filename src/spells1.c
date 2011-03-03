@@ -37,7 +37,7 @@
  */
 bool check_save(int roll)
 {
-  return (randint0(roll) < p_ptr->skill_sav);
+  return (randint0(roll) < p_ptr->state.skills[SKILL_SAVE]);
 }
 
 /**

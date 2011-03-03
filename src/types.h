@@ -879,28 +879,15 @@ struct player_sex
 struct player_race
 {
 
-  u32b name;            /**< Name (offset) */
-  u32b text;            /**< Text (offset) */
+	struct player_race *next;
+	const char *name;
+	
+	unsigned int ridx;
 
   s16b r_adj[6];	/**< Racial stat modifiers */
   
-  s16b r_dis;		/**< base disarming */
-  s16b r_dev;		/**< base magic devices */
-  s16b r_sav;		/**< base saving throw */
-  s16b r_stl;		/**< base stealth */
-  s16b r_srh;		/**< base search ability */
-  s16b r_fos;		/**< base search frequency */
-  s16b r_thn;		/**< base combat (melee) */
-  s16b r_thb;		/**< base combat (missile and throwing) */
-  
-  s16b rx_dis;		/**< extra disarming */
-  s16b rx_dev;		/**< extra magic devices */
-  s16b rx_sav;		/**< extra saving throws */
-  s16b rx_stl;		/**< extra stealth */
-  s16b rx_srh;		/**< extra searching ability */
-  s16b rx_fos;		/**< extra searching frequency */
-  s16b rx_thn;		/**< extra to hit (melee) */
-  s16b rx_thb;		/**< extra to hit (missile and throwing) */
+	s16b r_skills[SKILL_MAX];	/* racial skills */
+	s16b rx_skills[SKILL_MAX];	/* racial extra skills */
   
   s16b re_id;           /**< ego-item index */
   s16b re_mint;         /**< min tval */
@@ -933,8 +920,8 @@ struct player_race
   
   s16b hist;            /**< Starting history index */
   
-  u32b flags_obj;	/**< New object flags -NRM-*/
-  u32b flags_curse;	/**< New curse flags  -NRM- */
+  bitflag flags_obj[OF_MAX];	/**< New object flags -NRM-*/
+  bitflag flags_curse[CF_MAX];	/**< New curse flags  -NRM- */
   
   int percent_res[MAX_P_RES];      /**< Percentage resists -NRM- */
   
@@ -966,23 +953,8 @@ struct player_class
   
   s16b c_adj[A_MAX];	/**< Class stat modifier */
   
-  s16b c_dis;		/**< class disarming */
-  s16b c_dev;		/**< class magic devices */
-  s16b c_sav;		/**< class saving throws */
-  s16b c_stl;		/**< class stealth */
-  s16b c_srh;		/**< class searching ability */
-  s16b c_fos;		/**< class searching frequency */
-  s16b c_thn;		/**< class to hit (melee) */
-  s16b c_thb;		/**< class to hit (missile and throwing) */
-
-  s16b cx_dis;		/**< extra disarming */
-  s16b cx_dev;		/**< extra magic devices */
-  s16b cx_sav;		/**< extra saving throws */
-  s16b cx_stl;		/**< extra stealth */
-  s16b cx_srh;		/**< extra searching ability */
-  s16b cx_fos;		/**< extra searching frequency */
-  s16b cx_thn;		/**< extra to hit (melee) */
-  s16b cx_thb;		/**< extra to hit (missile and throwing) */
+	s16b c_skills[SKILL_MAX];	/* class skills */
+	s16b cx_skills[SKILL_MAX];	/* extra skills */
 
   s16b c_mhp;		/**< Class hit-dice adjustment */
   

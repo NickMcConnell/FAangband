@@ -289,8 +289,8 @@ static void update_smart_cheat(int m_idx)
   /* Know weirdness */
   if (p_ptr->state.free_act) m_ptr->smart |= (SM_IMM_FREE);
   if (!p_ptr->msp) m_ptr->smart |= (SM_IMM_MANA);
-  if (p_ptr->skills[SKILL_SAVE] >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
-  if (p_ptr->skills[SKILL_SAVE] >= 100) m_ptr->smart |= (SM_PERF_SAVE);
+  if (p_ptr->state.skills[SKILL_SAVE] >= 75) m_ptr->smart |= (SM_GOOD_SAVE);
+  if (p_ptr->state.skills[SKILL_SAVE] >= 100) m_ptr->smart |= (SM_PERF_SAVE);
   
   /* Know immunities */
   if (p_immune(P_RES_ACID)) m_ptr->smart |= (SM_IMM_ACID);
@@ -3344,7 +3344,7 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x, bool *death)
   
   /* Smart monsters may attempts to disarm traps which would affect them */
   if ((trap_hit) && (rf_has(r_ptr->flags, RF_SMART)) && 
-      (randint1(dis_chance) > p_ptr->skills[SKILL_DISARM] - 15))
+      (randint1(dis_chance) > p_ptr->state.skills[SKILL_DISARM] - 15))
     {
       if (m_ptr->ml) msg_format("%^s finds your trap and disarms it.", m_name);
       
@@ -3359,7 +3359,7 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x, bool *death)
   if ((trap_hit) && (m_ptr->mflag & (MFLAG_WARY)))
     {
       /* Check for avoidance */
-      if (randint1(dis_chance) > (p_ptr->skills[SKILL_DISARM] - 15) / 2)
+      if (randint1(dis_chance) > (p_ptr->state.skills[SKILL_DISARM] - 15) / 2)
 	{
 	  if (m_ptr->ml) msg_format("%^s avoids your trap.", m_name);
 	  
@@ -3431,7 +3431,7 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x, bool *death)
       if (m_ptr->mflag & (MFLAG_WARY)) trap_power /= 3;
       
       /* Trap 'critical' based on disarming skill (if not wary) */
-      else if (randint1(p_ptr->skills[SKILL_DISARM]) > 50 + r_ptr->level) 
+      else if (randint1(p_ptr->state.skills[SKILL_DISARM]) > 50 + r_ptr->level) 
 	trap_power += trap_power / 2;
       
       /* Affect the monster. */

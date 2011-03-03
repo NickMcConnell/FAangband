@@ -2373,11 +2373,11 @@ void move_player(int dir, int do_pickup)
 	    fall_off_cliff();
 	  
 	  /* Spontaneous Searching */
-	  if (p_ptr->skill_fos > 49)
+	  if (p_ptr->state.skills[SKILL_SEARCH_FREQUENCY] > 49)
 	    {
 	      search();
 	    }
-	  else if (0 == randint0(50 - p_ptr->skill_fos))
+	  else if (0 == randint0(50 - p_ptr->state.skills[SKILL_SEARCH_FREQUENCY]))
 	    {
 	      search();
 	    }

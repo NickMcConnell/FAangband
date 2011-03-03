@@ -3780,7 +3780,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	    k = 5;
 	  }
 	
-	if (randint0(rlev / 2 + 70) < p_ptr->skill_sav)
+	if (randint0(rlev / 2 + 70) < p_ptr->state.skills[SKILL_SAVE])
 	  {
 	    msg_format("You resist the effects%c", (spower < 30 ?  '.' : '!'));
 	  }
@@ -3883,7 +3883,7 @@ bool make_attack_ranged(monster_type *m_ptr, int attack)
 	else msg_format("%^s gestures at you, and you suddenly feel hungry.", 
 			m_name);
 	
-	if (randint1(100) > p_ptr->skills[SKILL_SAVE])
+	if (randint1(100) > p_ptr->state.skills[SKILL_SAVE])
 	  {
 	    /* Reduce food abruptly.  */
 	    (void)set_food(p_ptr->food - (p_ptr->food/3));

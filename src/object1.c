@@ -4404,7 +4404,7 @@ int get_use_device_chance(const object_type *o_ptr)
   int lev = k_ptr->level;
   
   /* Base chance of success */
-  int chance = p_ptr->skill_dev;
+  int chance = p_ptr->state.skills[SKILL_DEVICE];
 
   /* Final "probability" */
   int prob = 10000;

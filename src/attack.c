@@ -1181,7 +1181,7 @@ bool py_attack(int y, int x, bool can_push)
     }
   
   /* Bashing chance depends on melee Skill, Dex, and a class level bonus. */
-  else bash_chance = p_ptr->skill_thn + 
+  else bash_chance = p_ptr->state.skills[SKILL_TO_HIT_MELEE] + 
 	 (adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128 
 	 + ((check_ability(SP_STRONG_BASHES)) ? 
 	    p_ptr->lev : 0);
@@ -1217,7 +1217,7 @@ bool py_attack(int y, int x, bool can_push)
       message(MSG_HIT, 0, "You get in a shield bash!");
       
       /* Calculate attack quality, a mix of momentum and accuracy. */
-      bash_quality = p_ptr->skill_thn + (p_ptr->wt / 8) + 
+      bash_quality = p_ptr->state.skills[SKILL_TO_HIT_MELEE] + (p_ptr->wt / 8) + 
 	(p_ptr->total_weight / 80) + (inventory[INVEN_ARM].weight / 3);
       
       /* Enhanced for shield masters */
@@ -1325,7 +1325,7 @@ bool py_attack(int y, int x, bool can_push)
   
   /* Calculate the attack quality */
   bonus = p_ptr->to_h + o_ptr->to_h;
-  chance = p_ptr->skill_thn + (BTH_PLUS_ADJ * bonus);
+  chance = p_ptr->state.skills[SKILL_TO_HIT_MELEE] + (BTH_PLUS_ADJ * bonus);
   
   /* Calculate deadliness */
   total_deadliness = p_ptr->to_d + o_ptr->to_d;
@@ -1915,7 +1915,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
   
   /* Calculate the quality of the shot */
   bonus = (p_ptr->to_h + o_ptr->to_h + i_ptr->to_h);
-  chance = p_ptr->skill_thb + (BTH_PLUS_ADJ * bonus);
+  chance = p_ptr->state.skills[SKILL_TO_HIT_BOW] + (BTH_PLUS_ADJ * bonus);
   
   /* Sum all the applicable additions to Deadliness. */
   total_deadliness = p_ptr->to_d + o_ptr->to_d + i_ptr->to_d;
@@ -2472,17 +2472,17 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
    */
   if (i_ptr->flags_obj & OF_THROWING) 
     {
-      chance = p_ptr->skill_tht + BTH_PLUS_ADJ * (p_ptr->to_h + i_ptr->to_h);
+      chance = p_ptr->state.skills[SKILL_TO_HIT_THROW] + BTH_PLUS_ADJ * (p_ptr->to_h + i_ptr->to_h);
       total_deadliness = p_ptr->to_d + i_ptr->to_d;
     }
   else 
     {
-      chance = (3 * p_ptr->skill_tht / 2) + (BTH_PLUS_ADJ * i_ptr->to_h);
+      chance = (3 * p_ptr->state.skills[SKILL_TO_HIT_THROW] / 2) + (BTH_PLUS_ADJ * i_ptr->to_h);
       total_deadliness = i_ptr->to_d;
     }
 
   /* Mages become like rogues for this */
-  if (magic_throw) chance += p_ptr->skill_tht;
+  if (magic_throw) chance += p_ptr->state.skills[SKILL_TO_HIT_THROW];
   
   
   /* Take a turn */

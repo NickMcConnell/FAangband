@@ -514,9 +514,9 @@ void get_player_bonus(int *player_bonus)
       }
     case SHAPE_MOUSE:
       {
-	player_bonus[P_BONUS_STEALTH] += (30 + p_ptr->skill_stl) / 2;
+	player_bonus[P_BONUS_STEALTH] += (30 + p_ptr->state.skills[SKILL_STEALTH]) / 2;
 	player_bonus[P_BONUS_INFRA] += 2;
-	player_bonus[P_BONUS_M_MASTERY] -= 3 * p_ptr->skill_dev / 40; 
+	player_bonus[P_BONUS_M_MASTERY] -= 3 * p_ptr->state.skills[SKILL_DEVICE] / 40; 
 	break;
       }
     case SHAPE_FERRET:
@@ -524,24 +524,24 @@ void get_player_bonus(int *player_bonus)
 	player_bonus[P_BONUS_INFRA] += 2;
 	player_bonus[P_BONUS_SPEED] += 2;
 	player_bonus[P_BONUS_SEARCH] += 10;
-	player_bonus[P_BONUS_M_MASTERY] -= p_ptr->skill_dev / 20; 
+	player_bonus[P_BONUS_M_MASTERY] -= p_ptr->state.skills[SKILL_DEVICE] / 20; 
 	break;
       }
     case SHAPE_HOUND:
       {
-	player_bonus[P_BONUS_M_MASTERY] -= p_ptr->skill_dev / 20; 
+	player_bonus[P_BONUS_M_MASTERY] -= p_ptr->state.skills[SKILL_DEVICE] / 20; 
 	player_bonus[P_BONUS_INFRA] += 3;
 	break;
       }
     case SHAPE_GAZELLE:
       {
-	player_bonus[P_BONUS_M_MASTERY] -= p_ptr->skill_dev / 20; 
+	player_bonus[P_BONUS_M_MASTERY] -= p_ptr->state.skills[SKILL_DEVICE] / 20; 
 	player_bonus[P_BONUS_SPEED] += 6;
 	break;
       }
     case SHAPE_LION:
       {
-	player_bonus[P_BONUS_M_MASTERY] -= p_ptr->skill_dev / 20; 
+	player_bonus[P_BONUS_M_MASTERY] -= p_ptr->state.skills[SKILL_DEVICE] / 20; 
 	player_bonus[P_BONUS_SPEED] += 1;
 	break;
       }
@@ -554,12 +554,12 @@ void get_player_bonus(int *player_bonus)
       {
 	player_bonus[P_BONUS_INFRA] += 6;
 	player_bonus[P_BONUS_SPEED] += 5;
-	player_bonus[P_BONUS_M_MASTERY] -= 3 * p_ptr->skill_dev / 40; 
+	player_bonus[P_BONUS_M_MASTERY] -= 3 * p_ptr->state.skills[SKILL_DEVICE] / 40; 
 	break;
       }
     case SHAPE_WEREWOLF:
       {
-	player_bonus[P_BONUS_M_MASTERY] -= p_ptr->skill_dev / 20; 
+	player_bonus[P_BONUS_M_MASTERY] -= p_ptr->state.skills[SKILL_DEVICE] / 20; 
 	player_bonus[P_BONUS_INFRA] += 3;
 	break;	
       }
@@ -1266,18 +1266,18 @@ extern int make_dump(char_attr_line *line, int mode)
       
       
       /* Fighting Skill (with current weapon) */
-      xthn = p_ptr->skill_thn + (show_m_tohit * BTH_PLUS_ADJ);
+      xthn = p_ptr->state.skills[SKILL_TO_HIT_MELEE] + (show_m_tohit * BTH_PLUS_ADJ);
       
       /* Shooting Skill (with current bow and normal missile) */
-      xthb = p_ptr->skill_thb + (show_a_tohit * BTH_PLUS_ADJ);
+      xthb = p_ptr->state.skills[SKILL_TO_HIT_BOW] + (show_a_tohit * BTH_PLUS_ADJ);
       
       /* Basic abilities */
-      xdis = p_ptr->skill_dis;
-      xdev = p_ptr->skill_dev;
-      xsav = p_ptr->skill_sav;
-      xstl = p_ptr->skill_stl;
-      xsrh = p_ptr->skill_srh;
-      xfos = p_ptr->skill_fos;
+      xdis = p_ptr->state.skills[SKILL_DISARM];
+      xdev = p_ptr->state.skills[SKILL_DEVICE];
+      xsav = p_ptr->state.skills[SKILL_SAVE];
+      xstl = p_ptr->state.skills[SKILL_STEALTH];
+      xsrh = p_ptr->state.skills[SKILL_SEARCH];
+      xfos = p_ptr->state.skills[SKILL_SEARCH_FREQUENCY];
       
       
       desc = likert(xthn, 10);

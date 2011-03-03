@@ -1660,8 +1660,36 @@ static enum parser_error parse_p_r(struct parser *p) {
 	r->r_skills[SKILL_SEARCH_FREQUENCY] = parser_getint(p, "fos");
 	r->r_skills[SKILL_TO_HIT_MELEE] = parser_getint(p, "thm");
 	r->r_skills[SKILL_TO_HIT_BOW] = parser_getint(p, "thb");
-	r->r_skills[SKILL_TO_HIT_THROW] = parser_getint(p, "throw");
-	r->r_skills[SKILL_DIGGING] = parser_getint(p, "dig");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_p_m(struct parser *p) {
+	struct player_race *r = parser_priv(p);
+	if (!r)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	r->rx_skills[SKILL_DISARM] = parser_getint(p, "xdis");
+	r->rx_skills[SKILL_DEVICE] = parser_getint(p, "xdev");
+	r->rx_skills[SKILL_SAVE] = parser_getint(p, "xsav");
+	r->rx_skills[SKILL_STEALTH] = parser_getint(p, "xstl");
+	r->rx_skills[SKILL_SEARCH] = parser_getint(p, "xsrh");
+	r->rx_skills[SKILL_SEARCH_FREQUENCY] = parser_getint(p, "xfos");
+	r->rx_skills[SKILL_TO_HIT_MELEE] = parser_getint(p, "xthm");
+	r->rx_skills[SKILL_TO_HIT_BOW] = parser_getint(p, "xthb");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_p_e(struct parser *p) {
+	struct player_race *r = parser_priv(p);
+	if (!r)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	r->re_id = parser_getint(p, "id");
+	r->re_mint = parser_getint(p, "mint");
+	r->re_maxt = parser_getint(p, "maxt");
+	r->re_skde = parser_getint(p, "skde");
+	r->re_ac = parser_getint(p, "ac");
+	r->re_bonus = parser_getint(p, "bonus");
+	r->re_xtra1 = parser_getint(p, "xtra1");
+	r->re_xtra2 = parser_getint(p, "xtra2");
 	return PARSE_ERROR_NONE;
 }
 
@@ -1672,6 +1700,8 @@ static enum parser_error parse_p_x(struct parser *p) {
 	r->r_mhp = parser_getint(p, "mhp");
 	r->r_exp = parser_getint(p, "exp");
 	r->infra = parser_getint(p, "infra");
+	r->start_lev = parser_getint(p, "start_lev");
+	r->hometown = parser_getint(p, "hometown");
 	return PARSE_ERROR_NONE;
 }
 
@@ -1727,6 +1757,51 @@ static enum parser_error parse_p_f(struct parser *p) {
 	return s ? PARSE_ERROR_INVALID_FLAG : PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_p_b(struct parser *p) {
+	struct player_race *r = parser_priv(p);
+	char *s = string_make(parser_getstr(p, "values"));
+	char *t;
+	int val, which = 0;
+	assert(r);
+
+	t = strtok(s, " |");
+	while (t) {
+	        which = grab_value(t, player_resist_values, &val);
+		if (which) {
+		        r->percent_res[which] = RES_LEVEL_BASE - val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, bonus_stat_values, &val);
+		if (which) {
+		        r->bonus_stat[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, bonus_other_values, &val);
+		if (which) {
+		        r->bonus_other[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, slay_values, &val);
+		if (which) {
+		        r->multiple_slay[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, brand_values, &val);
+		if (which) {
+		        r->multiple_brand[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+		break;
+	}
+	mem_free(s);
+	return t ? PARSE_ERROR_INVALID_VALUE : PARSE_ERROR_NONE;
+}
+
 static const char *player_info_flags[] =
 {
 	#define PF(a, b) #a,
@@ -1735,7 +1810,7 @@ static const char *player_info_flags[] =
 	NULL
 };
 
-static enum parser_error parse_p_y(struct parser *p) {
+static enum parser_error parse_p_u(struct parser *p) {
 	struct player_race *r = parser_priv(p);
 	char *flags;
 	char *s;
@@ -1781,15 +1856,15 @@ struct parser *init_parse_p(void) {
 	parser_reg(p, "N uint index str name", parse_p_n);
 	parser_reg(p, "S int str int int int wis int dex int con int chr", parse_p_s);
 	parser_reg(p, "R int dis int dev int sav int stl int srh int fos int thn int thb", parse_p_r);
-	parser_reg(p, "M int xdis int xdev int xsav int xstl int xsrh int xfos int xthn int xthb", parse_p_r);
+	parser_reg(p, "M int xdis int xdev int xsav int xstl int xsrh int xfos int xthn int xthb", parse_p_m);
 	parser_reg(p, "E int id int mint int maxt int skde int ac int pval int xtra1 int xtra2", parse_p_e);
-	parser_reg(p, "X int mhp int exp int infra", parse_p_x);
+	parser_reg(p, "X int mhp int exp int infra int start_lev int hometown", parse_p_x);
 	parser_reg(p, "I int hist int b-age int m-age", parse_p_i);
 	parser_reg(p, "H int mbht int mmht int fbht int fmht", parse_p_h);
 	parser_reg(p, "W int mbwt int mmwt int fbwt int fmwt", parse_p_w);
 	parser_reg(p, "F ?str flags", parse_p_f);
-	parser_reg(p, "B ?str values", parse_p_y);
-	parser_reg(p, "U ?str flags", parse_p_y);
+	parser_reg(p, "B ?str values", parse_p_b);
+	parser_reg(p, "U ?str flags", parse_p_u);
 	parser_reg(p, "C ?str classes", parse_p_c);
 	return p;
 }
@@ -1893,9 +1968,7 @@ static enum parser_error parse_c_i(struct parser *p) {
 	if (!c)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
 	c->c_mhp = parser_getint(p, "mhp");
-	c->c_exp = parser_getint(p, "exp");
 	c->sense_base = parser_getint(p, "sense-base");
-	c->sense_div = parser_getint(p, "sense-div");
 	return PARSE_ERROR_NONE;
 }
 
@@ -2015,13 +2088,12 @@ struct parser *init_parse_c(void) {
 	parser_reg(p, "S int str int int int wis int dex int con int chr", parse_c_s);
 	parser_reg(p, "C int dis int dev int sav int stl int srh int fos int thm int thb int throw int dig", parse_c_c);
 	parser_reg(p, "X int dis int dev int sav int stl int srh int fos int thm int thb int throw int dig", parse_c_x);
-	parser_reg(p, "I int mhp int exp int sense-base int sense-div", parse_c_i);
-	parser_reg(p, "A int max-attacks int min-weight int att-multiply", parse_c_a);
-	parser_reg(p, "M uint book uint stat uint first uint weight", parse_c_m);
-	parser_reg(p, "B uint spell int level int mana int fail int exp", parse_c_b);
+	parser_reg(p, "I int mhp int sense-base", parse_c_i);
+	parser_reg(p, "A int max_1 int max_50 int penalty int max_penalty int bonus int max_bonus", parse_c_a);
 	parser_reg(p, "T str title", parse_c_t);
 	parser_reg(p, "E sym tval sym sval uint min uint max", parse_c_e);
-	parser_reg(p, "F ?str flags", parse_c_f);
+	parser_reg(p, "U ?str flags", parse_c_u);
+	parser_reg(p, "L ?str flags", parse_c_l);
 	return p;
 }
 

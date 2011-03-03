@@ -1206,7 +1206,7 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
       flag = FALSE;
       
       /* Get the "disarm" factor */
-      i = p_ptr->skill_dis;
+      i = p_ptr->state.skills[SKILL_DISARM];
       
       /* Penalize some conditions */
       if (p_ptr->timed[TMD_BLIND] || no_lite()) i = i / 10;
@@ -1271,7 +1271,7 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
   
   
   /* Get the "disarm" factor */
-  i = p_ptr->skill_dis;
+  i = p_ptr->state.skills[SKILL_DISARM];
   
   /* Penalize some conditions */
   if (p_ptr->timed[TMD_BLIND] || no_lite()) i = i / 10;
@@ -1531,7 +1531,7 @@ extern bool do_cmd_open_aux(int y, int x)
   else if (cave_feat[y][x] >= FEAT_DOOR_HEAD + 0x01)
     {
       /* Disarm factor */
-      i = p_ptr->skill_dis;
+      i = p_ptr->state.skills[SKILL_DISARM];
       
       /* Penalize some conditions */
       if (p_ptr->timed[TMD_BLIND] || no_lite()) i = i / 10;
@@ -1955,7 +1955,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
       else if ((f_ptr->flags & TF_GRANITE) && !(f_ptr->flags & TF_DOOR_ANY))
 	{
 	  /* Tunnel */
-	  if ((p_ptr->skill_dig > 40 + randint0(1600)) && twall(y, x))
+	  if ((p_ptr->state.skills[SKILL_DIGGING] > 40 + randint0(1600)) && twall(y, x))
 	    {
 	      msg_print("You have finished the tunnel.");
 	    }
@@ -1991,13 +1991,13 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	  /* Quartz */
 	  if (hard)
 	    {
-	      okay = (p_ptr->skill_dig > 20 + randint0(800));
+	      okay = (p_ptr->state.skills[SKILL_DIGGING] > 20 + randint0(800));
 	    }
 	  
 	  /* Magma */
 	  else
 	    {
-	      okay = (p_ptr->skill_dig > 10 + randint0(400));
+	      okay = (p_ptr->state.skills[SKILL_DIGGING] > 10 + randint0(400));
 	    }
 	  
 	  /* Success */
@@ -2042,7 +2042,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
       else if (cave_feat[y][x] == FEAT_RUBBLE)
 	{
 	  /* Remove the rubble */
-	  if ((p_ptr->skill_dig > randint0(200)) && twall(y, x))
+	  if ((p_ptr->state.skills[SKILL_DIGGING] > randint0(200)) && twall(y, x))
 	    {
 	      /* Message */
 	      msg_print("You have removed the rubble.");
@@ -2074,7 +2074,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
       else if (cave_feat[y][x] == FEAT_SECRET)
 	{
 	  /* Tunnel */
-	  if ((p_ptr->skill_dig > 30 + randint0(1200)) && twall(y, x))
+	  if ((p_ptr->state.skills[SKILL_DIGGING] > 30 + randint0(1200)) && twall(y, x))
 	    {
 	      msg_print("You have finished the tunnel.");
 	    }
@@ -2095,7 +2095,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
   else
     {
       /* Tunnel */
-      if ((p_ptr->skill_dig > 30 + randint0(1200)) && twall(y, x))
+      if ((p_ptr->state.skills[SKILL_DIGGING] > 30 + randint0(1200)) && twall(y, x))
 	{
 	  msg_print("You have finished the tunnel.");
 	}
@@ -2298,7 +2298,7 @@ extern bool do_cmd_disarm_aux(int y, int x)
   name = (f_name + f_ptr->name);
   
   /* Get the "disarm" factor */
-  i = p_ptr->skill_dis;
+  i = p_ptr->state.skills[SKILL_DISARM];
   
   /* Penalize some conditions */
   if (p_ptr->timed[TMD_BLIND] || no_lite()) i = i / 10;
