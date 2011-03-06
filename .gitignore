@@ -1,14 +1,8 @@
 .bzr/
 .bzrignore
-src/main-wce.c
-src/Makefile.win_sdl
 config.log
 config.status
 autom4te.cache/
 aclocal.m4
 changes.txt
 autoconf.h
-src/*.o
-src/.deps
-src/gtk/*.o
-src/faangband
