@@ -1,5 +1,5 @@
 /*
- * File: init2.c
+ * File: init.c
  * Purpose: Various game initialistion routines
  *
  * Copyright (c) 1997 Ben Harrison
@@ -104,6 +104,14 @@ static const char *id_flags[] = {
 	#define IF(a, b) #a,
 	#include "list-identify-flags.h"
 	#undef IF
+	NULL
+};
+
+static const char *player_info_flags[] =
+{
+	#define PF(a, b) #a,
+	#include "list-player-flags.h"
+	#undef PF
 	NULL
 };
 
@@ -426,6 +434,8 @@ static enum parser_error parse_z(struct parser *p) {
 		z->k_max = value;
 	else if (streq(label, "A"))
 		z->a_max = value;
+	else if (streq(label, "X"))
+		z->set_max = value;
 	else if (streq(label, "E"))
 		z->e_max = value;
 	else if (streq(label, "R"))
@@ -487,6 +497,7 @@ static struct file_parser z_parser = {
 
 static enum parser_error parse_k_n(struct parser *p) {
 	int idx = parser_getint(p, "index");
+	int i;
 	const char *name = parser_getstr(p, "name");
 	struct object_kind *h = parser_priv(p);
 
@@ -496,6 +507,18 @@ static enum parser_error parse_k_n(struct parser *p) {
 	parser_setpriv(p, k);
 	k->kidx = idx;
 	k->name = string_make(name);
+
+	/* Initialise values */
+	for (i = 0; i < MAX_P_RES; i++)
+	        k->percent_res[i] = RES_LEVEL_BASE;
+	for (i = 0; i < A_MAX; i++)
+	        k->bonus_stat[i] = BONUS_BASE;
+	for (i = 0; i < MAX_P_BONUS; i++)
+	        k->bonus_other[i] = BONUS_BASE;
+	for (i = 0; i < MAX_P_SLAY; i++)
+	        k->multiple_slay[i] = MULTIPLE_BASE;
+	for (i = 0; i < MAX_P_BRAND; i++)
+	        k->multiple_brand[i] = MULTIPLE_BASE;
 	return PARSE_ERROR_NONE;
 }
 
@@ -731,8 +754,19 @@ static enum parser_error parse_a_n(struct parser *p) {
 	a->name = string_make(name);
 
 	/* Ignore all elements */
-	flags_set(a->flags, OF_SIZE, OF_IGNORE_MASK, FLAG_END);
+	flags_set(a->flags_obj, OF_SIZE, OF_PROOF_MASK, FLAG_END);
 
+	/* Initialise values */
+	for (i = 0; i < MAX_P_RES; i++)
+	        a->percent_res[i] = RES_LEVEL_BASE;
+	for (i = 0; i < A_MAX; i++)
+	        a->bonus_stat[i] = BONUS_BASE;
+	for (i = 0; i < MAX_P_BONUS; i++)
+	        a->bonus_other[i] = BONUS_BASE;
+	for (i = 0; i < MAX_P_SLAY; i++)
+	        a->multiple_slay[i] = MULTIPLE_BASE;
+	for (i = 0; i < MAX_P_BRAND; i++)
+	        a->multiple_brand[i] = MULTIPLE_BASE;
 	return PARSE_ERROR_NONE;
 }
 
@@ -925,6 +959,168 @@ struct file_parser a_parser = {
 	init_parse_a,
 	run_parse_a,
 	finish_parse_a
+};
+
+/* Current set item */
+static int current_item = -1;
+
+static enum parser_error parse_set_n(struct parser *p) {
+	int idx = parser_getint(p, "index");
+	const char *name = parser_getstr(p, "name");
+	struct set_type *h = parser_priv(p);
+
+	struct set_type *set = mem_zalloc(sizeof *set);
+	set->next = h;
+	parser_setpriv(p, a);
+	set->setidx = idx;
+	set->name = string_make(name);
+	current_item = -1;
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_set_d(struct parser *p) {
+	struct set_type *set = parser_priv(p);
+	assert(set);
+
+	set->text = string_append(set->text, parser_getstr(p, "text"));
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_set_p(struct parser *p) {
+	struct artifact *set = parser_priv(p);
+	assert(set);
+
+	set->a_idx = parser_getint(p, "a_idx");
+	current_item++;
+
+	/* Initialise values */
+	for (i = 0; i < MAX_P_RES; i++)
+	        set.set_items[current_item]->percent_res[i] = RES_LEVEL_BASE;
+	for (i = 0; i < A_MAX; i++)
+	        set.set_items[current_item]->bonus_stat[i] = BONUS_BASE;
+	for (i = 0; i < MAX_P_BONUS; i++)
+	        set.set_items[current_item]->bonus_other[i] = BONUS_BASE;
+	for (i = 0; i < MAX_P_SLAY; i++)
+	        set.set_items[current_item]->multiple_slay[i] = MULTIPLE_BASE;
+	for (i = 0; i < MAX_P_BRAND; i++)
+	        set.set_items[current_item]->multiple_brand[i] = MULTIPLE_BASE;
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_set_f(struct parser *p) {
+	struct set_type *set = parser_priv(p);
+	char *s;
+	char *t;
+	assert(set);
+	assert(current_item > -1);
+
+	if (!parser_hasval(p, "flags"))
+		return PARSE_ERROR_NONE;
+	s = string_make(parser_getstr(p, "flags"));
+
+	t = strtok(s, " |");
+	while (t) {
+	        bool found = FALSE;
+		if (!grab_flag(set.set_items[current_item]->flags, OF_SIZE, object_flags, t))
+		        found = TRUE;
+		if (!grab_flag(set.set_items[current_item]->flags_curse, CF_SIZE, curse_flags, t)) 
+		        found = TRUE;
+		if (!found) break;
+		t = strtok(NULL, " |");
+	}
+	mem_free(s);
+	return t ? PARSE_ERROR_INVALID_FLAG : PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_set_b(struct parser *p) {
+	struct set_type *set = parser_priv(p);
+	char *s = string_make(parser_getstr(p, "values"));
+	char *t;
+	int val, which = 0;
+	assert(set);
+	assert(current_item > -1);
+
+	t = strtok(s, " |");
+	while (t) {
+	        which = grab_value(t, player_resist_values, &val);
+		if (which) {
+		        set.set_items[current_item]->percent_res[which] = RES_LEVEL_BASE - val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, bonus_stat_values, &val);
+		if (which) {
+		        set.set_items[current_item]->bonus_stat[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, bonus_other_values, &val);
+		if (which) {
+		        set.set_items[current_item]->bonus_other[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, slay_values, &val);
+		if (which) {
+		        set.set_items[current_item]->multiple_slay[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+	        which = grab_value(t, brand_values, &val);
+		if (which) {
+		        set.set_items[current_item]->multiple_brand[which] = val;
+			t = strtok(NULL, " |");
+			continue;
+		}
+		break;
+	}
+	mem_free(s);
+	return t ? PARSE_ERROR_INVALID_VALUE : PARSE_ERROR_NONE;
+}
+
+struct parser *init_parse_set(void) {
+	struct parser *p = parser_new();
+	parser_setpriv(p, NULL);
+	parser_reg(p, "V sym version", ignored);
+	parser_reg(p, "N int index str name", parse_set_n);
+	parser_reg(p, "D str text", parse_set_d);
+	parser_reg(p, "P uint a_idx", parse_set_p);
+	parser_reg(p, "F ?str flags", parse_set_f);
+	parser_reg(p, "B ?str values", parse_set_b);
+	return p;
+}
+
+static errr run_parse_set(struct parser *p) {
+	return parse_file(p, "set_item");
+}
+
+static errr finish_parse_set(struct parser *p) {
+	struct set_type *set, *n;
+
+	set_info = mem_zalloc(z_info->set_max * sizeof(*set));
+	for (set = parser_priv(p); set; set = set->next) {
+		if (set->setidx >= z_info->set_max)
+			continue;
+		memcpy(&set_info[set->setidx], set, sizeof(*set));
+	}
+
+	set = parser_priv(p);
+	while (set) {
+		n = set->next;
+		mem_free(set);
+		set = n;
+	}
+
+	parser_destroy(p);
+	return 0;
+}
+
+struct file_parser set_parser = {
+	"set_item",
+	init_parse_set,
+	run_parse_set,
+	finish_parse_set
 };
 
 struct name {
@@ -1142,6 +1338,17 @@ static enum parser_error parse_e_n(struct parser *p) {
 	parser_setpriv(p, e);
 	e->eidx = idx;
 	e->name = string_make(name);
+	/* Initialise values */
+	for (i = 0; i < MAX_P_RES; i++)
+	        e->percent_res[i] = RES_LEVEL_BASE;
+	for (i = 0; i < A_MAX; i++)
+	        e->bonus_stat[i] = BONUS_BASE;
+	for (i = 0; i < MAX_P_BONUS; i++)
+	        e->bonus_other[i] = BONUS_BASE;
+	for (i = 0; i < MAX_P_SLAY; i++)
+	        e->multiple_slay[i] = MULTIPLE_BASE;
+	for (i = 0; i < MAX_P_BRAND; i++)
+	        e->multiple_brand[i] = MULTIPLE_BASE;
 	return PARSE_ERROR_NONE;
 }
 
@@ -1802,14 +2009,6 @@ static enum parser_error parse_p_b(struct parser *p) {
 	return t ? PARSE_ERROR_INVALID_VALUE : PARSE_ERROR_NONE;
 }
 
-static const char *player_info_flags[] =
-{
-	#define PF(a, b) #a,
-	#include "list-player-flags.h"
-	#undef PF
-	NULL
-};
-
 static enum parser_error parse_p_u(struct parser *p) {
 	struct player_race *r = parser_priv(p);
 	char *flags;
@@ -1904,10 +2103,16 @@ struct file_parser p_parser = {
 static enum parser_error parse_c_n(struct parser *p) {
 	struct player_class *h = parser_priv(p);
 	struct player_class *c = mem_zalloc(sizeof *c);
+	int i;
 	c->cidx = parser_getuint(p, "index");
 	c->name = string_make(parser_getstr(p, "name"));
 	c->next = h;
 	parser_setpriv(p, c);
+
+	/* Initialise spells */
+	for (i = 0; i < PY_MAX_SPELLS, i++)
+	        c->magic.info[i] = {0, 0, 0, 0, 0};
+
 	return PARSE_ERROR_NONE;
 }
 
@@ -1939,8 +2144,6 @@ static enum parser_error parse_c_c(struct parser *p) {
 	c->c_skills[SKILL_SEARCH_FREQUENCY] = parser_getint(p, "fos");
 	c->c_skills[SKILL_TO_HIT_MELEE] = parser_getint(p, "thm");
 	c->c_skills[SKILL_TO_HIT_BOW] = parser_getint(p, "thb");
-	c->c_skills[SKILL_TO_HIT_THROW] = parser_getint(p, "throw");
-	c->c_skills[SKILL_DIGGING] = parser_getint(p, "dig");
 	return PARSE_ERROR_NONE;
 }
 
@@ -1957,8 +2160,6 @@ static enum parser_error parse_c_x(struct parser *p) {
 	c->x_skills[SKILL_SEARCH_FREQUENCY] = parser_getint(p, "fos");
 	c->x_skills[SKILL_TO_HIT_MELEE] = parser_getint(p, "thm");
 	c->x_skills[SKILL_TO_HIT_BOW] = parser_getint(p, "thb");
-	c->x_skills[SKILL_TO_HIT_THROW] = parser_getint(p, "throw");
-	c->x_skills[SKILL_DIGGING] = parser_getint(p, "dig");
 	return PARSE_ERROR_NONE;
 }
 
@@ -1977,9 +2178,12 @@ static enum parser_error parse_c_a(struct parser *p) {
 
 	if (!c)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
-	c->max_attacks = parser_getint(p, "max-attacks");
-	c->min_weight = parser_getint(p, "min-weight");
-	c->att_multiply = parser_getint(p, "att-multiply");
+	c->max_1 = parser_getint(p, "max_1");
+	c->max_50 = parser_getint(p, "max_50");
+	c->penalty = parser_getint(p, "penalty");
+	c->max_penalty = parser_getint(p, "max_penalty");
+	c->bonus = parser_getint(p, "bonus");
+	c->max_bonus = parser_getint(p, "max_bonus");
 	return PARSE_ERROR_NONE;
 }
 
@@ -1988,10 +2192,30 @@ static enum parser_error parse_c_m(struct parser *p) {
 
 	if (!c)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
-	c->spell_book = parser_getuint(p, "book");
-	c->spell_stat = parser_getuint(p, "stat");
-	c->spell_first = parser_getuint(p, "first");
-	c->spell_weight = parser_getuint(p, "weight");
+	c->magic.spell_book = parser_getuint(p, "book");
+	c->magic.spell_stat = parser_getuint(p, "stat");
+	c->magic.spell_realm = parser_getuint(p, "realm");
+	c->magic.spell_first = parser_getuint(p, "first");
+	c->magic.spell_weight1 = parser_getuint(p, "weight1");
+	c->magic.spell_weight2 = parser_getuint(p, "weight2");
+	c->magic.spell_number = parser_getuint(p, "number");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_c_f(struct parser *p) {
+	struct player_class *c = parser_priv(p);
+
+	if (!c)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	c->magic.book_start_index[0] = parser_getuint(p, "first0");
+	c->magic.book_start_index[1] = parser_getuint(p, "first1");
+	c->magic.book_start_index[2] = parser_getuint(p, "first2");
+	c->magic.book_start_index[3] = parser_getuint(p, "first3");
+	c->magic.book_start_index[4] = parser_getuint(p, "first4");
+	c->magic.book_start_index[5] = parser_getuint(p, "first5");
+	c->magic.book_start_index[6] = parser_getuint(p, "first6");
+	c->magic.book_start_index[7] = parser_getuint(p, "first7");
+	c->magic.book_start_index[8] = parser_getuint(p, "first8");
 	return PARSE_ERROR_NONE;
 }
 
@@ -2004,28 +2228,11 @@ static enum parser_error parse_c_b(struct parser *p) {
 	spell = parser_getuint(p, "spell");
 	if (spell >= PY_MAX_SPELLS)
 		return PARSE_ERROR_OUT_OF_BOUNDS;
-	c->spells.info[spell].slevel = parser_getint(p, "level");
-	c->spells.info[spell].smana = parser_getint(p, "mana");
-	c->spells.info[spell].sfail = parser_getint(p, "fail");
-	c->spells.info[spell].sexp = parser_getint(p, "exp");
-	return PARSE_ERROR_NONE;
-}
-
-static enum parser_error parse_c_t(struct parser *p) {
-	struct player_class *c = parser_priv(p);
-	int i;
-
-	if (!c)
-		return PARSE_ERROR_MISSING_RECORD_HEADER;
-	for (i = 0; i < PY_MAX_LEVEL / 5; i++) {
-		if (!c->title[i]) {
-			c->title[i] = string_make(parser_getstr(p, "title"));
-			break;
-		}
-	}
-
-	if (i >= PY_MAX_LEVEL / 5)
-		return PARSE_ERROR_TOO_MANY_ENTRIES;
+	c->magic.info[spell].index = parser_getint(p, "index");
+	c->magic.info[spell].slevel = parser_getint(p, "level");
+	c->magic.info[spell].smana = parser_getint(p, "mana");
+	c->magic.info[spell].sfail = parser_getint(p, "fail");
+	c->magic.info[spell].sexp = parser_getint(p, "exp");
 	return PARSE_ERROR_NONE;
 }
 
@@ -2059,7 +2266,7 @@ static enum parser_error parse_c_e(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_c_f(struct parser *p) {
+static enum parser_error parse_c_u(struct parser *p) {
 	struct player_class *c = parser_priv(p);
 	char *flags;
 	char *s;
@@ -2080,6 +2287,45 @@ static enum parser_error parse_c_f(struct parser *p) {
 	return s ? PARSE_ERROR_INVALID_FLAG : PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_c_l(struct parser *p) {
+	struct player_class *c = parser_priv(p);
+	char *flags;
+	char *s;
+
+	if (!c)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	if (!parser_hasval(p, "flags"))
+		return PARSE_ERROR_NONE;
+	flags = string_make(parser_getstr(p, "flags"));
+	s = strtok(flags, " |");
+	while (s) {
+		if (grab_flag(c->specialties, PF_SIZE, player_info_flags, s))
+			break;
+		s = strtok(NULL, " |");
+	}
+
+	mem_free(flags);
+	return s ? PARSE_ERROR_INVALID_FLAG : PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_c_t(struct parser *p) {
+	struct player_class *c = parser_priv(p);
+	int i;
+
+	if (!c)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	for (i = 0; i < PY_MAX_LEVEL / 5; i++) {
+		if (!c->title[i]) {
+			c->title[i] = string_make(parser_getstr(p, "title"));
+			break;
+		}
+	}
+
+	if (i >= PY_MAX_LEVEL / 5)
+		return PARSE_ERROR_TOO_MANY_ENTRIES;
+	return PARSE_ERROR_NONE;
+}
+
 struct parser *init_parse_c(void) {
 	struct parser *p = parser_new();
 	parser_setpriv(p, NULL);
@@ -2090,10 +2336,13 @@ struct parser *init_parse_c(void) {
 	parser_reg(p, "X int dis int dev int sav int stl int srh int fos int thm int thb int throw int dig", parse_c_x);
 	parser_reg(p, "I int mhp int sense-base", parse_c_i);
 	parser_reg(p, "A int max_1 int max_50 int penalty int max_penalty int bonus int max_bonus", parse_c_a);
-	parser_reg(p, "T str title", parse_c_t);
+	parser_reg(p, "M uint book uint stat uint realm uint first uint weight1 uint weight2 uint number", parse_c_m);
+	parser_reg(p, "F uint first0 uint first1 uint first2 uint first3 uint first4 uint first5 uint first6 uint first7 uint first8", parse_c_f); 
+	parser_reg(p, "B uint spell uint index int level int mana int fail int exp", parse_c_b);
 	parser_reg(p, "E sym tval sym sval uint min uint max", parse_c_e);
 	parser_reg(p, "U ?str flags", parse_c_u);
 	parser_reg(p, "L ?str flags", parse_c_l);
+	parser_reg(p, "T str title", parse_c_t);
 	return p;
 }
 
@@ -2149,6 +2398,8 @@ static enum parser_error parse_v_x(struct parser *p) {
 	v->rat = parser_getint(p, "rating");
 	v->hgt = parser_getuint(p, "height");
 	v->wid = parser_getuint(p, "width");
+	v->min_lev = parser_getuint(p, "min_lev");
+	v->max_lev = parser_getuint(p, "max_lev");
 
 	/* XXX: huh? These checks were in the original code and I have no idea
 	 * why. */
@@ -2173,7 +2424,7 @@ struct parser *init_parse_v(void) {
 	parser_setpriv(p, NULL);
 	parser_reg(p, "V sym version", ignored);
 	parser_reg(p, "N uint index str name", parse_v_n);
-	parser_reg(p, "X uint type int rating uint height uint width", parse_v_x);
+	parser_reg(p, "X uint type int rating uint height uint width uint min_lev uint max_lev", parse_v_x);
 	parser_reg(p, "D str text", parse_v_d);
 	return p;
 }
@@ -2442,38 +2693,6 @@ static struct file_parser s_parser = {
 	finish_parse_s
 };
 
-/*
- * Initialize the "spell_list" array
- */
-static void init_books(void)
-{
-	byte realm, sval, snum;
-	u16b spell;
-
-	/* Since not all slots in all books are used, initialize to -1 first */
-	for (realm = 0; realm < MAX_REALMS; realm++)
-	{
-		for (sval = 0; sval < BOOKS_PER_REALM; sval++)
-		{
-			for (snum = 0; snum < SPELLS_PER_BOOK; snum++)
-			{
-				spell_list[realm][sval][snum] = -1;
-			}
-		}
-	}
-
-	/* Place each spell in its own book */
-	for (spell = 0; spell < z_info->s_max; spell++)
-	{
-		/* Get the spell */
-		spell_type *s_ptr = &s_info[spell];
-
-		/* Put it in the book */
-		spell_list[s_ptr->realm][s_ptr->sval][s_ptr->snum] = spell;
-	}
-}
-
-
 /* Initialise hints */
 static enum parser_error parse_hint(struct parser *p) {
 	struct hint *h = parser_priv(p);
@@ -2542,7 +2761,6 @@ static errr init_other(void)
 
 	/* Initialize squelch things */
 	autoinscribe_init();
-	squelch_init();
 	textui_knowledge_init();
 
 	/* Initialize the "message" package */
@@ -2600,6 +2818,15 @@ static errr init_other(void)
 	l_list = C_ZNEW(z_info->r_max, monster_lore);
 
 
+	/*** Prepare character display arrays ***/
+	
+	/* Lines of character screen/dump */
+	dumpline = C_ZNEW(DUMP_MAX_LINES, char_attr_line);
+	
+	/* Lines of character subwindows */
+	pline0 = C_ZNEW(30, char_attr_line);
+	pline1 = C_ZNEW(30, char_attr_line);
+  
 	/*** Prepare mouse buttons ***/
 
 	button_init(button_add_text, button_kill_text);
@@ -2672,8 +2899,8 @@ static errr init_alloc(void)
 	/* Size of "alloc_race_table" */
 	alloc_race_size = 0;
 
-	/* Scan the monsters (not the ghost) */
-	for (i = 1; i < z_info->r_max - 1; i++)
+	/* Scan the monsters */
+	for (i = 1; i < z_info->r_max; i++)
 	{
 		/* Get the i'th race */
 		r_ptr = &r_info[i];
@@ -2828,6 +3055,245 @@ static errr init_alloc(void)
 
 
 
+/**
+ * Initialize the racial probability array
+ */
+static errr init_race_probs(void)
+{
+  int i, j, k, n;
+
+  ang_file *fd;
+  
+  ang_file *fpout;
+  
+  /* General buffer */
+  char buf[1024];
+  
+  /* Make the array */  
+  race_prob = C_ZNEW(32, u16b_stage);
+
+  
+  /*** Load the binary image file ***/
+  
+  /* Build the filename */
+  path_build(buf, sizeof(buf), ANGBAND_DIR_USER, "raceprob.raw");
+  
+  /* Attempt to open the "raw" file */
+  fd = file_open(buf, MODE_READ, -1);
+  
+  /* Process existing "raw" file */
+  if (fd)
+    {
+      /* Attempt to parse the "raw" file */
+      /* Read in the array */
+      file_read(fd, (char *)race_prob, 32 * sizeof(u16b_stage));
+      
+      /* Close it */
+      file_close(fd);
+    }
+  
+  /* Do the matrix calculations? */
+  else
+    {
+      /*** Prepare temporary adjacency arrays ***/
+      adjacency = C_ZNEW(NUM_STAGES, u16b_stage);
+      stage_path = C_ZNEW(NUM_STAGES, u16b_stage);
+      temp_path = C_ZNEW(NUM_STAGES, u16b_stage);
+      
+      /* Make the adjacency matrix */
+      for (i = 0; i < NUM_STAGES; i++)
+	{
+	  /* Initialise this row */
+	  for (k = 0; k < NUM_STAGES; k++)
+	    {
+	      adjacency[i][k] = 0;
+	      stage_path[i][k] = 0;
+	      temp_path[i][k] = 0;
+	    }
+	  
+	  /* Add 1s where there's an adjacent stage (not up or down) */
+	  for (k = 2; k < 6; k++)
+	    if (stage_map[i][k] != 0) 
+	      {
+		adjacency[i][stage_map[i][k]] = 1;
+		temp_path[i][stage_map[i][k]] = 1;
+	      }
+	}
+      
+      /* Power it up (squaring 3 times gives eighth power) */
+      for (n = 0; n < 3; n++)
+	{
+	  /* Square */
+	  for (i = 0; i < NUM_STAGES; i++)
+	    for (j = 0; j < NUM_STAGES; j++)
+	      {
+		stage_path[i][j] = 0;
+		for (k = 0; k < NUM_STAGES; k++)
+		  stage_path[i][j] += temp_path[i][k] * temp_path[k][j];
+	      }
+	  
+	  /* Copy it over for the next squaring or final multiply */
+	  for (i = 0; i < NUM_STAGES; i++)
+	    for (j = 0; j < NUM_STAGES; j++)
+	      temp_path[i][j] = stage_path[i][j];
+	  
+	}
+      
+      /* Get the max of length 8 and length 9 paths */
+      for (i = 0; i < NUM_STAGES; i++)
+	for (j = 0; j < NUM_STAGES; j++)
+	  {
+	    /* Multiply to get the length 9s */
+	    stage_path[i][j] = 0;
+	    for (k = 0; k < NUM_STAGES; k++)
+	      stage_path[i][j] += temp_path[i][k] * adjacency[k][j];
+	    
+	    /* Now replace by the length 8s if it's larger */
+	    if (stage_path[i][j] < temp_path[i][j])
+	      stage_path[i][j] = temp_path[i][j];
+	    
+	  }
+
+      /* We now have the maximum of the number of paths of length 8 and the 
+       * number of paths of length 9 (we need to try odd and even length paths,
+       * as using just one leads to anomalies) from any stage to any other,
+       * which we will use as a basis for the racial probability table for 
+       * racially based monsters in any given stage.  For a stage, we give 
+       * every race a 1, then add the number of paths of length 8 from their 
+       * hometown to that stage.  We then turn every row entry into the 
+       * cumulative total of the row to that point.  Whenever a racially based 
+       * monster is called for, we will take a random integer less than the 
+       * last entry of the row for that stage, and proceed along the row, 
+       * allocating the race corresponding to the position where we first 
+       *exceed that integer.
+       */
+
+      for (i = 0; i < NUM_STAGES; i++)
+	{
+	  int prob = 0;
+	  
+	  /* No more than 32 races */
+	  for (j = 0; j < 32; j++)
+	    {
+	      /* Nobody lives nowhere */
+	      if (stage_map[i][LOCALITY] == NOWHERE)
+		{
+		  race_prob[i][j] = 0;
+		  continue;
+		}
+	      
+	      /* Invalid race */
+	      if (j >= z_info->p_max) 
+		{
+		  race_prob[i][j] = 0;
+		  continue;
+		}
+	      
+	      /* Enter the cumulative probability */
+	      prob += 1 + stage_path[towns[p_info[j].hometown]][i];
+	      race_prob[i][j] = prob;
+	    } 
+	}
+      
+      /*** Dump the binary image file ***/
+      
+      /* Build the filename */
+      path_build(buf, sizeof(buf), ANGBAND_DIR_USER, "raceprob.raw");
+      
+      /* Attempt to open the file */
+      fd = file_open(buf, MODE_READ, -1);
+      
+      /* Failure */
+      if (!fd)
+	  {
+	    /* Grab permissions */
+	    safe_setuid_grab();
+	    
+	    /* Create a new file */
+	    fd = file_open(buf, MODE_WRITE, FTYPE_RAW);
+	    
+	    /* Drop permissions */
+	    safe_setuid_drop();
+	    
+	    /* Failure */
+	    if (!fd)
+	      {
+		/* Complain */
+		plog_fmt("Cannot create the '%s' file!", buf);
+		
+		/* Continue */
+		return (0);
+	      }
+	  }
+      
+      /* Close it */
+      file_close(fd);
+      
+      /* Grab permissions */
+      safe_setuid_grab();
+      
+      /* Attempt to create the raw file */
+      fd = file_open(buf, MODE_WRITE, FTYPE_RAW);
+      
+      /* Drop permissions */
+      safe_setuid_drop();
+      
+      /* Failure */
+      if (!fd)
+	{
+	  /* Complain */
+	  plog_fmt("Cannot write the '%s' file!", buf);
+	  
+	  /* Continue */
+	  return (0);
+	}
+      
+      /* Dump to the file */
+      if (fd)
+	{
+	  /* Dump it */
+	  file_write(fd, (cptr)race_prob, 32 * sizeof(u16b_stage));
+
+	  /* Close */
+	  file_close(fd);
+	}
+      /* Free the temporary arrays */
+      FREE(temp_path);
+      FREE(adjacency);
+      FREE(stage_path);
+    }
+  
+  return 0;     
+}      
+    
+
+/**
+ * Hack - identify set item artifacts.
+ *
+ * Go through the list of Set Items and identify all artifacts in each set
+ * as belonging to that set. By GS
+ */
+void update_artifact_sets()
+{
+  byte i;
+  byte j;
+  set_type *set_ptr;
+  set_element *set_el_ptr;
+  artifact *a_ptr;
+  
+  for (i = 0; i < z_info->set_max; i++)
+    {
+      
+      set_ptr = &set_info[i];
+      for (j = 0; j < set_ptr->no_of_items; j++)
+        {
+          set_el_ptr= &set_ptr->set_items[j];
+          a_ptr = &a_info[set_el_ptr->a_idx];
+          a_ptr->set_no = i;
+        }
+    }
+}
+
 /*
  * Hack -- main Angband initialization entry point
  *
@@ -2906,6 +3372,11 @@ bool init_angband(void)
 	event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (artifacts)");
 	if (run_parser(&a_parser)) quit("Cannot initialize artifacts");
 
+	/* Initialize set item info */
+	event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (set items)");
+	if (run_parser(&set_parser)) quit("Cannot initialize set items");
+	update_artifact_sets();
+  
 	/* Initialize feature info */
 	event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (vaults)");
 	if (run_parser(&v_parser)) quit("Cannot initialize vaults");
@@ -2933,10 +3404,6 @@ bool init_angband(void)
 	/* Initialize hint text */
 	event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (hints)");
 	if (run_parser(&hints_parser)) quit("Cannot initialize hints");
-
-	/* Initialize spellbook info */
-	event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (spellbooks)");
-	init_books();
 
 	/* Initialise store stocking data */
 	event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (store stocks)");

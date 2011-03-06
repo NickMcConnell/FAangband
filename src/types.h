@@ -107,7 +107,6 @@ typedef struct magic_type magic_type;
 typedef struct player_magic player_magic;
 typedef struct player_sex player_sex;
 typedef struct player_race player_race;
-typedef struct player_weapon player_weapon;
 typedef struct player_class player_class;
 typedef struct hist_type hist_type;
 typedef struct player_other player_other;
@@ -325,8 +324,8 @@ struct grouper
 struct set_element  
 {
   byte a_idx;		/**< the artifact ID */
-  u32b flags_obj;	/**< New object flags -NRM-*/
-  u32b flags_curse;	/**< New curse flags  -NRM- */
+  bitflag flags_obj[OF_SIZE];	/**< New object flags -NRM-*/
+  bitflag flags_curse[CF_SIZE];	/**< New curse flags  -NRM- */
   
   int percent_res[MAX_P_RES];      /**< Percentage resists -NRM- */
   int bonus_stat[A_MAX];           /**< Stat bonuses       -NRM- */
@@ -338,8 +337,11 @@ struct set_element
 /** Information about items sets -GS- */
 struct set_type 
 {
-  u32b name;			/**< Name (offset) */
-  u32b text;			/**< Text (offset) */
+  struct set_type *next;
+  char *name;			/**< Name */
+  char *text;			/**< Text */
+
+  byte setidx;		/**< the artifact ID */
   byte no_of_items;		/**< The number of items in the set */
   set_element set_items[6];	/**< the artifact no and extra powers. */	
 };
@@ -553,9 +555,11 @@ struct monster_spell
  */
 struct vault_type
 {
-  u32b name;		/**< Name (offset) */
-  u32b text;		/**< Text (offset) */
-  
+	struct vault *next;
+	unsigned int vidx;
+	char *name;
+	char *text;
+
   byte typ;		/**< Vault type */
   
   byte rat;		/**< Vault rating */
@@ -847,7 +851,7 @@ struct magic_type
  *
  * Note that a player with a "spell_book" of "zero" is illiterate.
  */
-struct player_magic
+typedef struct 
 {
   byte spell_book;		/**< Tval of spell books (if any) */
   byte spell_stat;		/**< Stat for spells (if any) */
@@ -856,9 +860,9 @@ struct player_magic
   s16b spell_weight1;	        /**< Max armour weight to avoid mana penalties */
   s16b spell_weight2;	        /**< Additional armour weight to lose all mana */
   byte spell_number;		/**< Total available spells for that class. */
-  byte book_start_index[11];	/**< Index of 1st spell for all books. */
-  magic_type info[64];	        /**< The available spells */
-};
+  byte book_start_index[PY_MAX_BOOKS];	/**< Index of 1st spell for all books. */
+  magic_type info[PY_MAX_SPELLS];	        /**< The available spells */
+} player_magic;
 
 
 
@@ -876,7 +880,7 @@ struct player_sex
 /**
  * Player racial info
  */
-struct player_race
+typedef struct player_race
 {
 
 	struct player_race *next;
@@ -925,32 +929,33 @@ struct player_race
   
   int percent_res[MAX_P_RES];      /**< Percentage resists -NRM- */
   
-  u32b flags_special;   /**< Special Racial Flags */
+	bitflag pflags[PF_SIZE]; /* Race (player) flags */
   
-};
+} player_race;
 
 
 /**
  * Starting equipment entry
  */
-struct start_item
+typedef struct start_item
 {
-  byte tval;	/**< Item's tval */
-  byte sval;	/**< Item's sval */
+	object_kind *kind;
   byte min;	/**< Minimum starting amount */
   byte max;	/**< Maximum starting amount */
-};
+} start_item;
 
 
 /**
  * Player class info
  */
-struct player_class
+typedef struct player_class
 {
-  u32b name;		/**< Name (offset) */
-  
-  u32b title[10];	/**< Type of class */
-  
+	struct player_class *next;
+        const char *name;
+        unsigned int cidx;
+	
+	const char *title[10];    /* Titles - offset */
+	
   s16b c_adj[A_MAX];	/**< Class stat modifier */
   
 	s16b c_skills[SKILL_MAX];	/* class skills */
@@ -960,12 +965,9 @@ struct player_class
   
   u32b sense_base;	/**< Base psuedo-id time */
   
-  u32b flags_special;   /**< Special Class Flags */
+	bitflag pflags[PF_SIZE]; /* Class (player) flags */
+  bitflag specialties[PF_SIZE];   /**< Available Specialty Abilities */
   
-  start_item start_items[MAX_START_ITEMS];   /**< The starting inventory */
-  
-  byte specialties[MAX_SPECIALTIES];   /**< Available Specialty Abilities */
-
   /**< Weapon Info */
   u16b max_1;		/**< Max Weight (decipounds) at level 1 */
   u16b max_50;		/**< Max Weight (decipounds) at level 50 */
@@ -973,21 +975,11 @@ struct player_class
   byte max_penalty;	/**< Max Penalty */
   byte bonus;		/**< Bonus per 10 pounds under */
   byte max_bonus;	/**< Max Bonus */
-};
 
+  start_item start_items[MAX_START_ITEMS];   /**< The starting inventory */
+  player_magic magic;   /**< Class magic details */
 
-/**
- * Player weapon info
- */
-struct player_weapon
-{
-  u16b max_1;		/**< Max Weight (decipounds) at level 1 */
-  u16b max_50;		/**< Max Weight (decipounds) at level 50 */
-  byte penalty;		/**< Penalty per 10 pounds over */
-  byte max_penalty;	/**< Max Penalty */
-  byte bonus;		/**< Bonus per 10 pounds under */
-  byte max_bonus;	/**< Max Bonus */
-};
+} player_class;
 
 
 /**
@@ -995,9 +987,10 @@ struct player_weapon
  */
 struct hist_type
 {
-  u32b unused;          /**< Unused */
-  u32b text;            /**< Text (offset) */
-  
+	struct history *nextp;
+	unsigned int hidx;
+	char *text;
+	
   byte roll;            /**< Frequency of this entry */
   byte chart;           /**< Chart index */
   byte next;            /**< Next chart index */
@@ -1336,9 +1329,10 @@ typedef struct player
 
 /** From NPPAngband */
 
-struct flavor_type
-{
-  u32b text;      /**< Text (offset) */
+typedef struct flavor{
+	char *text;
+	struct flavor *next;
+	unsigned int fidx;
   
   byte tval;      /**< Associated object type */
   byte sval;      /**< Associated object sub-type */
@@ -1348,7 +1342,7 @@ struct flavor_type
   
   byte x_attr;    /**< Desired flavor attribute */
   char x_char;    /**< Desired flavor character */
-};
+} flavor_type;
 
 /** Information for object auto-inscribe */
 struct autoinscription
