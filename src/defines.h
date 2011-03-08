@@ -1996,13 +1996,17 @@ enum
 
 enum
 {
-	#define PF(a,b) PF_##a,
+#define PF(a,b,c) PF_##a,
 	#include "list-player-flags.h"
 	#undef PF
 	PF_MAX
 };
 
 #define PF_SIZE                FLAG_SIZE(PF_MAX)
+#define PF_RACIAL_START		128
+#define PF_CLASS_START		192
+#define PF_NO_SPECIALTY		255
+
 
 #define pf_has(f, flag)        flag_has_dbg(f, PF_SIZE, flag, #f, #flag)
 #define pf_next(f, flag)       flag_next(f, PF_SIZE, flag)
@@ -2022,7 +2026,11 @@ enum
 #define pf_inter(f1, f2)       flag_inter(f1, f2, PF_SIZE)
 #define pf_diff(f1, f2)        flag_diff(f1, f2, PF_SIZE)
 
-#define player_has(flag)       (pf_has(rp_ptr->pflags, (flag)) || pf_has(cp_ptr->pflags, (flag)))
+#define player_race_has(flag)        (pf_has(rp_ptr->pflags, (flag)))
+#define player_class_has(flag)       (pf_has(cp_ptr->pflags, (flag)))
+#define player_class_avail(flag)     (pf_has(cp_ptr->specialties, (flag)))
+#define player_chose(flag)           (pf_has(p_ptr->pflags, (flag)))
+#define player_has(flag)       (pf_has(rp_ptr->pflags, (flag)) || pf_has(cp_ptr->pflags, (flag)) || pf_has(p_ptr->pflags, (flag)))
 
 
 /*** Terrain flags ***/
@@ -2623,127 +2631,6 @@ extern int PlayerUID;
 # undef MESSAGE_BUF
 # define MESSAGE_BUF	4096
 #endif
-
-/**
- * Total number of specialties -CN-
- */
-#define TOTAL_SPECIALTIES 255
- 
-/*
- * Specialty Abilities -BR-
- */
-/* Defense/Armor */
-#define SP_ARMOR_MAST		0	/* Increased Body Armor AC */
-#define SP_SHIELD_MAST		1	/* Increased Shield AC, Deflection, 
-					 * and Bashing */
-#define SP_ARMOR_PROFICIENCY	2	/* Reduced mana penalty for armor */
-#define SP_EVASION		3	/* Chance to dodge attacks */
-#define SP_MAGIC_RESIST		4	/* Improved Saves */
-#define SP_PHASEWALK	        5	/* Save vs Teleport Attacks; 
-					 * Immune to Teleport Level */
-#define SP_UNLIGHT		6	/* Improved Stealth, Res Dark, 
-					 * function w/o light, Reduced Light */
-
-/* Physical Attacks */
-#define SP_ARMSMAN		20	/* Extra Melee Crits */
-#define SP_FAST_ATTACK		21	/* Extra Melee Attacks */
-#define SP_MARKSMAN		22	/* Extra Ranged Crits */
-#define SP_PIERCE_SHOT		23	/* Ranged Attacks Pierce */
-#define SP_MIGHTY_THROW		24	/* Extend Range on Throwing Attacks */
-#define SP_POWER_STRIKE		25	/* More Confusion Attacks and 
-					 * Better Attacks (Druids) */
-#define SP_MARTIAL_ARTS		26	/* Druid-like Unarmed Combat */
-#define SP_MANA_BURN		27	/* Reduce Mana with Melee Criticals */
-#define SP_RAPID_FIRE           28      /* Trade accuracy for more shote */
-
-/* Magic and Mana */
-#define SP_BEGUILE		40	/* More effective monster status 
-					 * attacks */
-#define SP_ENHANCE_MAGIC	41	/* Stronger and Longer Buffs */
-#define SP_FAST_CAST		42	/* Less energy to cast (low level) 
-					 * spells */
-#define SP_POWER_SIPHON		43	/* Gain mana when monsters cast */
-#define SP_HEIGHTEN_MAGIC	44	/* Cast spells at higher 
-					 * effective level */
-#define SP_SOUL_SIPHON		45	/* Gain mana when taking damage */
-#define SP_HARMONY		46	/* Gain hp when casting spells */
-#define SP_CHANNELING		48	/* Spell heightening when close to 
-					 * full mana */
-
-/* Other */
-#define SP_ATHLETICS		60	/* Increase and Partial Sustain 
-					 * Dex/Con */
-#define SP_CLARITY		61	/* Increase and Partial Sustain 
-					 * Int/Wis */
-#define SP_FURY			63	/* Gain energy when taking damage */
-#define SP_MEDITATION		64	/* Faster Mana Regen */
-#define SP_REGENERATION		65	/* Faster HP Regen */
-#define SP_EXTRA_TRAP		66	/* Set more traps at once */
-#define SP_HOLY_LIGHT		67	/* Increased light radius, 
-					 * resist light, damage to undead */
-
-#define SP_NO_SPECIALTY		255
-
-/*
- * Inherent racial abilities
- */
-#define SP_RACIAL_START		128
-#define SP_SWORD_SKILL  	128
-#define SP_POLEARM_SKILL       	129
-#define SP_HAFTED_SKILL  	130
-#define SP_SLING_SKILL  	131
-#define SP_BOW_SKILL  		132
-#define SP_XBOW_SKILL   	133
-#define SP_SWORD_UNSKILL	137
-#define SP_POLEARM_UNSKILL	138
-#define SP_HAFTED_UNSKILL	139
-#define SP_SLING_UNSKILL	140
-#define SP_BOW_UNSKILL		141
-#define SP_XBOW_UNSKILL 	142
-#define SP_HARDY	        146
-#define SP_HUNGRY	        147
-#define SP_DIVINE	        148
-#define SP_SHADOW	        149
-#define SP_WOODEN	        150
-#define SP_BEARSKIN             151
-#define SP_PLAINSMAN            152
-#define SP_ELVEN                153
-#define SP_DWARVEN              154
-#define SP_EDAIN                155
-#define SP_RACIAL_END		159
-
-/*
- * Inherent class abilities
- */
-#define SP_CLASS_START		192
-#define SP_BOW_SPEED_GOOD  	192
-#define SP_BOW_SPEED_GREAT     	193
-#define SP_SLING_SPEED_GOOD  	194
-#define SP_SLING_SPEED_GREAT  	195
-#define SP_XBOW_SPEED_GOOD	196
-#define SP_XBOW_SPEED_GREAT   	197
-#define SP_ASSASSINATE		201
-#define SP_STRONG_SHOOT		202
-#define SP_BACKSTAB		203
-#define SP_SPREAD_ATTACKS	204
-#define SP_STRONG_BASHES	205
-#define SP_UNARMED_COMBAT 	206
-#define SP_BLESS_WEAPON 	207
-#define SP_CHARM		209
-#define SP_DEVICE_EXPERT	210
-#define SP_STRONG_MAGIC	        211
-#define SP_BEAM                 212
-#define SP_LORE                 214
-#define SP_HOLY                 215
-#define SP_RELENTLESS           216
-#define SP_PROBE		217
-#define SP_EVIL	                218
-#define SP_STEAL		219
-#define SP_PSEUDO_ID_HEAVY      220
-#define SP_TRAP	                221
-#define SP_WOODSMAN	        222
-#define SP_XTRA_SPECIALTY	223
-#define SP_CLASS_END		223
 
 /**
  * Max number of terminal windows -CN-
