@@ -486,7 +486,7 @@ extern void squelch_drop(void)
       if (!squelch_item_ok(o_ptr)) continue;
 
       /* Check for curses */
-      if (o_ptr->flags_curse & (CF_STICKY_CARRY)) continue;
+      if (cf_has(o_ptr->flags_curse, CF_STICKY_CARRY)) continue;
       
       /* Check for !d (no drop) inscription */
       if (!check_for_inscrip(o_ptr, "!d") && !check_for_inscrip(o_ptr, "!*"))
@@ -1087,7 +1087,7 @@ static bool sval_menu(int tval, const char *desc)
       if (!k_ptr->name) continue;
       if (!k_ptr->everseen) continue;
       if (k_ptr->tval != tval) continue;
-      if (k_ptr->flags_kind & KF_INSTA_ART) continue;
+      if (kf_has(k_ptr->flags_kind, KF_INSTA_ART)) continue;
 
       /* Add this item to our possibles list */
       choice[num++] = i;

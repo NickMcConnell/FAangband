@@ -1799,12 +1799,8 @@ static void calc_spells(void)
     /* Count the number of spells we know */
     for (j = 0; j < mp_ptr->spell_number; j++) {
 	/* Count known spells */
-	if ((j <
-	     32) ? (p_ptr->spell_learned1 & (1L << j)) : (p_ptr->
-							  spell_learned2 & (1L
-									    <<
-									    (j -
-									     32))))
+	if ((j <  32) ? (p_ptr->spell_learned1 & (1L << j)) : 
+	    (p_ptr->spell_learned2 & (1L << (j - 32))))
 	{
 	    num_known++;
 	}
@@ -1837,8 +1833,8 @@ static void calc_spells(void)
 
 	/* Is it known? */
 	if ((j <
-	     32) ? (p_ptr->spell_learned1 & (1L << j)) : (p_ptr->
-							  spell_learned2 & (1L
+	     32) ? (p_ptr->
+		    spell_learned1 & (1L << j)) : (p_ptr->spell_learned2 & (1L
 									    <<
 									    (j -
 									     32))))
@@ -1889,8 +1885,8 @@ static void calc_spells(void)
 
 	/* Forget it (if learned) */
 	if ((j <
-	     32) ? (p_ptr->spell_learned1 & (1L << j)) : (p_ptr->
-							  spell_learned2 & (1L
+	     32) ? (p_ptr->
+		    spell_learned1 & (1L << j)) : (p_ptr->spell_learned2 & (1L
 									    <<
 									    (j -
 									     32))))
@@ -1945,9 +1941,9 @@ static void calc_spells(void)
 
 	/* First set of spells */
 	if ((j <
-	     32) ? (p_ptr->spell_forgotten1 & (1L << j)) : (p_ptr->
-							    spell_forgotten2 &
-							    (1L << (j - 32)))) {
+	     32) ? (p_ptr->
+		    spell_forgotten1 & (1L << j)) : (p_ptr->spell_forgotten2 &
+						     (1L << (j - 32)))) {
 	    /* No longer forgotten */
 	    if (j < 32) {
 		p_ptr->spell_forgotten1 &= ~(1L << j);
@@ -1986,8 +1982,8 @@ static void calc_spells(void)
 
 	/* Skip spells we already know */
 	if ((j <
-	     32) ? (p_ptr->spell_learned1 & (1L << j)) : (p_ptr->
-							  spell_learned2 & (1L
+	     32) ? (p_ptr->
+		    spell_learned1 & (1L << j)) : (p_ptr->spell_learned2 & (1L
 									    <<
 									    (j -
 									     32))))
@@ -2034,7 +2030,7 @@ static void calc_specialty(void)
     if (p_ptr->quests < 2)	/* -NRM- */
 	questortwo = p_ptr->quests;
     p_ptr->specialties_allowed = 1 + questortwo;
-    if (check_ability(SP_XTRA_SPECIALTY))
+    if (player_has(PF_XTRA_SPECIALTY))
 	p_ptr->specialties_allowed++;
     if (p_ptr->specialties_allowed > MAX_SPECIALTIES)
 	p_ptr->specialties_allowed = MAX_SPECIALTIES;
@@ -2044,7 +2040,7 @@ static void calc_specialty(void)
 
     /* Count the number of specialties we know */
     for (i = 0; i < MAX_SPECIALTIES; i++) {
-	if (p_ptr->specialty_order[i] != SP_NO_SPECIALTY)
+	if (p_ptr->specialty_order[i] != PF_NO_SPECIALTY)
 	    num_known++;
     }
 
@@ -2057,11 +2053,12 @@ static void calc_specialty(void)
 
     /* More specialties are available (or fewer forgotten) */
     if (p_ptr->old_specialties < p_ptr->new_specialties) {
-	if (p_ptr->old_specialties < 0){
+	if (p_ptr->old_specialties < 0) {
 	    msg_print("You have regained specialist abilities.");
 
 	    /* Put forgotten specialties back on the flags */
-	    for (i = MIN(0, p_ptr->new_specialties); i > p_ptr->old_specialties; i--) 
+	    for (i = MIN(0, p_ptr->new_specialties); i > p_ptr->old_specialties;
+		 i--)
 		pf_on(p_ptr->pflags, p_ptr->specialty_order[num_known + i]);
 	}
 
@@ -2074,11 +2071,11 @@ static void calc_specialty(void)
 
     /* Fewer specialties are available (or more forgotten) */
     if (p_ptr->old_specialties > p_ptr->new_specialties) {
-	if (p_ptr->new_specialties < 0){
+	if (p_ptr->new_specialties < 0) {
 	    msg_print("You have lost specialist abilities.");
 
 	    /* Remove forgotten specialties from the flags */
-	    for (i = 0; i > p_ptr->new_specialties; i--) 
+	    for (i = 0; i > p_ptr->new_specialties; i--)
 		pf_off(p_ptr->pflags, p_ptr->specialty_order[num_known - i]);
 	}
 
@@ -2127,7 +2124,7 @@ static void calc_mana(void)
     msp = (adj_mag_mana[p_ptr->stat_ind[mp_ptr->spell_stat]] * levels + 5) / 10;
 
     /* The weak spellcasters get half as much mana (rounded up) in Oangband. */
-    if (!(check_ability(SP_STRONG_MAGIC)))
+    if (!(player_has(PF_STRONG_MAGIC)))
 	msp = (msp + 1) / 2;
 
     /* Hack -- usually add one mana */
@@ -2135,7 +2132,7 @@ static void calc_mana(void)
 	msp++;
 
     /* Modest boost for Clarity ability */
-    if (check_ability(SP_CLARITY))
+    if (player_has(PF_CLARITY))
 	msp += msp / 20;
 
     /* Only mage and Necromancer-type spellcasters are affected by gloves. */
@@ -2147,9 +2144,9 @@ static void calc_mana(void)
 	/* Get the gloves */
 	o_ptr = &inventory[INVEN_HANDS];
 
-	/* Normal gloves hurt mage or necro-type spells.  Now, only Free
-	 * Action or magic mastery stops this effect. */
-	if (o_ptr->k_idx && !(o_ptr->flags_obj & OF_FREE_ACT)
+	/* Normal gloves hurt mage or necro-type spells.  Now, only Free Action 
+	 * or magic mastery stops this effect. */
+	if (o_ptr->k_idx && !of_has(o_ptr->flags_obj, OF_FREE_ACT)
 	    && (o_ptr->bonus_other[P_BONUS_M_MASTERY] <= 0)) {
 	    /* Encumbered */
 	    p_ptr->cumber_glove = TRUE;
@@ -2177,7 +2174,7 @@ static void calc_mana(void)
     penalty_wgt = mp_ptr->spell_weight2;
 
     /* Specialist Ability */
-    if (check_ability(SP_ARMOR_PROFICIENCY)) {
+    if (player_has(PF_ARMOR_PROFICIENCY)) {
 	max_wgt += 50;
 	penalty_wgt += 150;
     }
@@ -2281,7 +2278,7 @@ static void calc_hitpoints(void)
 	mhp = p_ptr->lev + 1;
 
     /* Modest boost for Athletics ability */
-    if (check_ability(SP_ATHLETICS))
+    if (player_has(PF_ATHLETICS))
 	mhp += mhp / 20;
 
     /* New maximum hitpoints */
@@ -2340,22 +2337,22 @@ static void calc_torch(void)
 
     /* Priests and Paladins get a bonus to light radius at level 35 and 45,
      * respectively. */
-    if (check_ability(SP_HOLY)) {
-	/* Hack -- the "strong caster" check here is a hack. What is the
-	 * better option? */
+    if (player_has(PF_HOLY)) {
+	/* Hack -- the "strong caster" check here is a hack. What is the better 
+	 * option? */
 	if ((p_ptr->lev > 44)
-	    || ((p_ptr->lev > 34) && (check_ability(SP_STRONG_MAGIC)))) {
+	    || ((p_ptr->lev > 34) && (player_has(PF_STRONG_MAGIC)))) {
 	    p_ptr->cur_lite += 1;
 	}
     }
 
 
     /* Special ability Holy Light */
-    if (check_ability(SP_HOLY_LIGHT))
+    if (player_has(PF_HOLY_LIGHT))
 	p_ptr->cur_lite++;
 
     /* Special ability Unlight */
-    if (check_ability(SP_UNLIGHT) || p_ptr->state.darkness) {
+    if (player_has(PF_UNLIGHT) || p_ptr->state.darkness) {
 	notice_obj(OF_DARKNESS, 0);
 	p_ptr->cur_lite--;
     }
@@ -2405,9 +2402,9 @@ int add_special_melee_skill(byte pclass, s16b weight, object_type * o_ptr)
 
     /* Druids and Martial Artists love to fight barehanded */
     if (!o_ptr->k_idx) {
-	if (check_ability(SP_UNARMED_COMBAT))
+	if (player_has(PF_UNARMED_COMBAT))
 	    add_skill = 14 + (p_ptr->lev);
-	else if (check_ability(SP_MARTIAL_ARTS))
+	else if (player_has(PF_MARTIAL_ARTS))
 	    add_skill = p_ptr->lev / 2;
     }
 
@@ -2438,7 +2435,7 @@ int add_special_melee_skill(byte pclass, s16b weight, object_type * o_ptr)
     }
 
     /* Priest penalty for non-blessed edged weapons. */
-    if ((check_ability(SP_BLESS_WEAPON)) && (check_ability(SP_STRONG_MAGIC))
+    if ((player_has(PF_BLESS_WEAPON)) && (player_has(PF_STRONG_MAGIC))
 	&& ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
 	&& (!p_ptr->state.bless_blade)) {
 	add_skill -= 10 + p_ptr->lev / 2;
@@ -2448,30 +2445,30 @@ int add_special_melee_skill(byte pclass, s16b weight, object_type * o_ptr)
     }
 
     /* Paladin bonus for blessed weapons. */
-    if ((check_ability(SP_BLESS_WEAPON)) && (!check_ability(SP_STRONG_MAGIC))
+    if ((player_has(PF_BLESS_WEAPON)) && (!player_has(PF_STRONG_MAGIC))
 	&& (p_ptr->state.bless_blade))
 	add_skill += 10 + p_ptr->lev / 4;
 
     /* Now, special racial abilities and limitations are considered.  Most
      * modifiers are relatively small, to keep options open to the player. */
     if (o_ptr->tval == TV_SWORD) {
-	if (check_ability(SP_SWORD_SKILL))
+	if (player_has(PF_SWORD_SKILL))
 	    add_skill += 3 + p_ptr->lev / 7;
-	else if (check_ability(SP_SWORD_UNSKILL))
+	else if (player_has(PF_SWORD_UNSKILL))
 	    add_skill -= 3 + p_ptr->lev / 7;
     }
 
     else if (o_ptr->tval == TV_POLEARM) {
-	if (check_ability(SP_POLEARM_SKILL))
+	if (player_has(PF_POLEARM_SKILL))
 	    add_skill += 3 + p_ptr->lev / 7;
-	else if (check_ability(SP_POLEARM_UNSKILL))
+	else if (player_has(PF_POLEARM_UNSKILL))
 	    add_skill -= 3 + p_ptr->lev / 7;
     }
 
     else if (o_ptr->tval == TV_HAFTED) {
-	if (check_ability(SP_HAFTED_SKILL))
+	if (player_has(PF_HAFTED_SKILL))
 	    add_skill += 3 + p_ptr->lev / 7;
-	else if (check_ability(SP_HAFTED_UNSKILL))
+	else if (player_has(PF_HAFTED_UNSKILL))
 	    add_skill -= 3 + p_ptr->lev / 7;
     }
 
@@ -2486,19 +2483,19 @@ int add_special_missile_skill(byte pclass, s16b weight, object_type * o_ptr)
     int add_skill = 0;
 
     /* Nice bonus for most favored weapons - if no tradeoff */
-    if ((((check_ability(SP_BOW_SPEED_GREAT))
+    if ((((player_has(PF_BOW_SPEED_GREAT))
 	  && (p_ptr->state.ammo_tval == TV_ARROW))
-	 || ((check_ability(SP_SLING_SPEED_GREAT))
+	 || ((player_has(PF_SLING_SPEED_GREAT))
 	     && (p_ptr->state.ammo_tval == TV_SHOT))
-	 || ((check_ability(SP_XBOW_SPEED_GREAT))
+	 || ((player_has(PF_XBOW_SPEED_GREAT))
 	     && (p_ptr->state.ammo_tval == TV_BOLT)))
-	&& (!check_ability(SP_RAPID_FIRE))) {
+	&& (!player_has(PF_RAPID_FIRE))) {
 	/* Big bonus */
 	add_skill = 3 + p_ptr->lev / 4;
     }
 
     /* Hack - Unarmed fighters (i.e. Druids) do a bit better with slings */
-    if ((check_ability(SP_UNARMED_COMBAT)) &
+    if ((player_has(PF_UNARMED_COMBAT)) &
 	(p_ptr->state.ammo_tval == TV_SHOT)) {
 	add_skill = p_ptr->lev / 7;
     }
@@ -2507,19 +2504,19 @@ int add_special_missile_skill(byte pclass, s16b weight, object_type * o_ptr)
      * choice of race can be of some significance. */
 
     if (p_ptr->state.ammo_tval == TV_BOLT) {
-	if (check_ability(SP_XBOW_SKILL))
+	if (player_has(PF_XBOW_SKILL))
 	    add_skill += 3 + p_ptr->lev / 7;
-	else if (check_ability(SP_XBOW_UNSKILL))
+	else if (player_has(PF_XBOW_UNSKILL))
 	    add_skill -= 3 + p_ptr->lev / 7;
     } else if (p_ptr->state.ammo_tval == TV_ARROW) {
-	if (check_ability(SP_BOW_SKILL))
+	if (player_has(PF_BOW_SKILL))
 	    add_skill += 3 + p_ptr->lev / 7;
-	else if (check_ability(SP_BOW_UNSKILL))
+	else if (player_has(PF_BOW_UNSKILL))
 	    add_skill -= 3 + p_ptr->lev / 7;
     } else if (p_ptr->state.ammo_tval == TV_SHOT) {
-	if (check_ability(SP_SLING_SKILL))
+	if (player_has(PF_SLING_SKILL))
 	    add_skill += 3 + p_ptr->lev / 7;
-	else if (check_ability(SP_SLING_UNSKILL))
+	else if (player_has(PF_SLING_UNSKILL))
 	    add_skill -= 3 + p_ptr->lev / 7;
     }
     return (add_skill);
@@ -3129,90 +3126,90 @@ extern void calc_bonuses(bool inspect)
   /*** Analyze player ***/
 
     /* Object flags */
-    if (rp_ptr->flags_obj & (OF_SUSTAIN_STR))
+    if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_STR))
 	p_ptr->state.sustain_str = TRUE;
-    if (rp_ptr->flags_obj & (OF_SUSTAIN_INT))
+    if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_INT))
 	p_ptr->state.sustain_int = TRUE;
-    if (rp_ptr->flags_obj & (OF_SUSTAIN_WIS))
+    if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_WIS))
 	p_ptr->state.sustain_wis = TRUE;
-    if (rp_ptr->flags_obj & (OF_SUSTAIN_DEX))
+    if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_DEX))
 	p_ptr->state.sustain_dex = TRUE;
-    if (rp_ptr->flags_obj & (OF_SUSTAIN_CON))
+    if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_CON))
 	p_ptr->state.sustain_con = TRUE;
-    if (rp_ptr->flags_obj & (OF_SUSTAIN_CHR))
+    if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_CHR))
 	p_ptr->state.sustain_chr = TRUE;
-    if (rp_ptr->flags_obj & (OF_SLOW_DIGEST))
+    if (of_has(rp_ptr->flags_obj, OF_SLOW_DIGEST))
 	p_ptr->state.slow_digest = TRUE;
-    if (rp_ptr->flags_obj & (OF_FEATHER))
+    if (of_has(rp_ptr->flags_obj, OF_FEATHER))
 	p_ptr->state.ffall = TRUE;
-    if (rp_ptr->flags_obj & (OF_LITE))
+    if (of_has(rp_ptr->flags_obj, OF_LITE))
 	p_ptr->state.lite = TRUE;
-    if (rp_ptr->flags_obj & (OF_REGEN))
+    if (of_has(rp_ptr->flags_obj, OF_REGEN))
 	p_ptr->state.regenerate = TRUE;
-    if (rp_ptr->flags_obj & (OF_TELEPATHY))
+    if (of_has(rp_ptr->flags_obj, OF_TELEPATHY))
 	p_ptr->state.telepathy = TRUE;
-    if (rp_ptr->flags_obj & (OF_SEE_INVIS))
+    if (of_has(rp_ptr->flags_obj, OF_SEE_INVIS))
 	p_ptr->state.see_inv = TRUE;
-    if (rp_ptr->flags_obj & (OF_FREE_ACT))
+    if (of_has(rp_ptr->flags_obj, OF_FREE_ACT))
 	p_ptr->state.free_act = TRUE;
-    if (rp_ptr->flags_obj & (OF_HOLD_LIFE))
+    if (of_has(rp_ptr->flags_obj, OF_HOLD_LIFE))
 	p_ptr->state.hold_life = TRUE;
-    if (rp_ptr->flags_obj & (OF_BLESSED))
+    if (of_has(rp_ptr->flags_obj, OF_BLESSED))
 	p_ptr->state.bless_blade = TRUE;
-    if (rp_ptr->flags_obj & (OF_IMPACT))
+    if (of_has(rp_ptr->flags_obj, OF_IMPACT))
 	p_ptr->state.impact = TRUE;
-    if (rp_ptr->flags_obj & (OF_FEARLESS))
+    if (of_has(rp_ptr->flags_obj, OF_FEARLESS))
 	p_ptr->state.no_fear = TRUE;
-    if (rp_ptr->flags_obj & (OF_SEEING))
+    if (of_has(rp_ptr->flags_obj, OF_SEEING))
 	p_ptr->state.no_blind = TRUE;
-    if (rp_ptr->flags_obj & (OF_DARKNESS))
+    if (of_has(rp_ptr->flags_obj, OF_DARKNESS))
 	p_ptr->state.darkness = TRUE;
-    if (rp_ptr->flags_obj & (OF_CHAOTIC))
+    if (of_has(rp_ptr->flags_obj, OF_CHAOTIC))
 	p_ptr->special_attack |= ATTACK_CHAOTIC;
 
 
     /* Curse flags */
-    if (rp_ptr->flags_curse & (CF_TELEPORT))
+    if (cf_has(rp_ptr->flags_curse, OF_TELEPORT))
 	p_ptr->state.teleport = TRUE;
-    if (rp_ptr->flags_curse & (CF_NO_TELEPORT))
+    if (cf_has(rp_ptr->flags_curse, OF_NO_TELEPORT))
 	p_ptr->state.no_teleport = TRUE;
-    if (rp_ptr->flags_curse & (CF_AGGRO_PERM))
+    if (cf_has(rp_ptr->flags_curse, OF_AGGRO_PERM))
 	p_ptr->state.aggravate = TRUE;
-    if (rp_ptr->flags_curse & (CF_AGGRO_RAND))
+    if (cf_has(rp_ptr->flags_curse, OF_AGGRO_RAND))
 	p_ptr->state.rand_aggro = TRUE;
-    if (rp_ptr->flags_curse & (CF_SLOW_REGEN))
+    if (cf_has(rp_ptr->flags_curse, OF_SLOW_REGEN))
 	p_ptr->state.slow_regen = TRUE;
-    if (rp_ptr->flags_curse & (CF_AFRAID))
+    if (cf_has(rp_ptr->flags_curse, OF_AFRAID))
 	p_ptr->state.fear = TRUE;
-    if (rp_ptr->flags_curse & (CF_HUNGRY))
+    if (cf_has(rp_ptr->flags_curse, OF_HUNGRY))
 	p_ptr->state.fast_digest = TRUE;
-    if (rp_ptr->flags_curse & (CF_POIS_RAND))
+    if (cf_has(rp_ptr->flags_curse, OF_POIS_RAND))
 	p_ptr->state.rand_pois = TRUE;
-    if (rp_ptr->flags_curse & (CF_POIS_RAND_BAD))
+    if (cf_has(rp_ptr->flags_curse, OF_POIS_RAND_BAD))
 	p_ptr->state.rand_pois_bad = TRUE;
-    if (rp_ptr->flags_curse & (CF_CUT_RAND))
+    if (cf_has(rp_ptr->flags_curse, OF_CUT_RAND))
 	p_ptr->state.rand_cuts = TRUE;
-    if (rp_ptr->flags_curse & (CF_CUT_RAND_BAD))
+    if (cf_has(rp_ptr->flags_curse, OF_CUT_RAND_BAD))
 	p_ptr->state.rand_cuts_bad = TRUE;
-    if (rp_ptr->flags_curse & (CF_HALLU_RAND))
+    if (cf_has(rp_ptr->flags_curse, OF_HALLU_RAND))
 	p_ptr->state.rand_hallu = TRUE;
-    if (rp_ptr->flags_curse & (CF_DROP_WEAPON))
+    if (cf_has(rp_ptr->flags_curse, OF_DROP_WEAPON))
 	p_ptr->state.drop_weapon = TRUE;
-    if (rp_ptr->flags_curse & (CF_ATTRACT_DEMON))
+    if (cf_has(rp_ptr->flags_curse, OF_ATTRACT_DEMON))
 	p_ptr->state.attract_demon = TRUE;
-    if (rp_ptr->flags_curse & (CF_ATTRACT_UNDEAD))
+    if (cf_has(rp_ptr->flags_curse, OF_ATTRACT_UNDEAD))
 	p_ptr->state.attract_undead = TRUE;
-    if (rp_ptr->flags_curse & (CF_PARALYZE))
+    if (cf_has(rp_ptr->flags_curse, OF_PARALYZE))
 	p_ptr->state.rand_paral = TRUE;
-    if (rp_ptr->flags_curse & (CF_PARALYZE_ALL))
+    if (cf_has(rp_ptr->flags_curse, OF_PARALYZE_ALL))
 	p_ptr->state.rand_paral_all = TRUE;
-    if (rp_ptr->flags_curse & (CF_DRAIN_EXP))
+    if (cf_has(rp_ptr->flags_curse, OF_DRAIN_EXP))
 	p_ptr->state.drain_exp = TRUE;
-    if (rp_ptr->flags_curse & (CF_DRAIN_MANA))
+    if (cf_has(rp_ptr->flags_curse, OF_DRAIN_MANA))
 	p_ptr->state.drain_mana = TRUE;
-    if (rp_ptr->flags_curse & (CF_DRAIN_STAT))
+    if (cf_has(rp_ptr->flags_curse, OF_DRAIN_STAT))
 	p_ptr->state.drain_stat = TRUE;
-    if (rp_ptr->flags_curse & (CF_DRAIN_CHARGE))
+    if (cf_has(rp_ptr->flags_curse, OF_DRAIN_CHARGE))
 	p_ptr->state.drain_charge = TRUE;
 
     /* Resistances */
@@ -3222,7 +3219,7 @@ extern void calc_bonuses(bool inspect)
     }
 
     /* Ent */
-    if (check_ability(SP_WOODEN)) {
+    if (player_has(PF_WOODEN)) {
 	/* Ents dig like maniacs, but only with their hands. */
 	if (!inventory[INVEN_WIELD].k_idx)
 	    p_ptr->state.skills[SKILL_DIGGING] += p_ptr->lev * 10;
@@ -3251,7 +3248,7 @@ extern void calc_bonuses(bool inspect)
     }
 
     /* Warrior. */
-    if (check_ability(SP_RELENTLESS)) {
+    if (player_has(PF_RELENTLESS)) {
 	if (p_ptr->lev >= 30)
 	    p_ptr->state.no_fear = TRUE;
 	if (p_ptr->lev >= 40)
@@ -3259,13 +3256,13 @@ extern void calc_bonuses(bool inspect)
     }
 
     /* Specialty ability Holy Light */
-    if (check_ability(SP_HOLY_LIGHT)) {
+    if (player_has(PF_HOLY_LIGHT)) {
 	apply_resist(&p_ptr->state.res_list[P_RES_LITE], RES_BOOST_NORMAL);
 	apply_resist(&p_ptr->state.dis_res_list[P_RES_LITE], RES_BOOST_NORMAL);
     }
 
     /* Specialty ability Unlight */
-    if (check_ability(SP_UNLIGHT)) {
+    if (player_has(PF_UNLIGHT)) {
 	apply_resist(&p_ptr->state.res_list[P_RES_DARK], RES_BOOST_NORMAL);
 	apply_resist(&p_ptr->state.dis_res_list[P_RES_DARK], RES_BOOST_NORMAL);
     }
@@ -3319,89 +3316,89 @@ extern void calc_bonuses(bool inspect)
 	extra_might += o_ptr->bonus_other[P_BONUS_MIGHT];
 
 	/* Object flags */
-	if (o_ptr->flags_obj & (OF_SUSTAIN_STR))
+	if (of_has(o_ptr->flags_obj, OF_SUSTAIN_STR))
 	    p_ptr->state.sustain_str = TRUE;
-	if (o_ptr->flags_obj & (OF_SUSTAIN_INT))
+	if (of_has(o_ptr->flags_obj, OF_SUSTAIN_INT))
 	    p_ptr->state.sustain_int = TRUE;
-	if (o_ptr->flags_obj & (OF_SUSTAIN_WIS))
+	if (of_has(o_ptr->flags_obj, OF_SUSTAIN_WIS))
 	    p_ptr->state.sustain_wis = TRUE;
-	if (o_ptr->flags_obj & (OF_SUSTAIN_DEX))
+	if (of_has(o_ptr->flags_obj, OF_SUSTAIN_DEX))
 	    p_ptr->state.sustain_dex = TRUE;
-	if (o_ptr->flags_obj & (OF_SUSTAIN_CON))
+	if (of_has(o_ptr->flags_obj, OF_SUSTAIN_CON))
 	    p_ptr->state.sustain_con = TRUE;
-	if (o_ptr->flags_obj & (OF_SUSTAIN_CHR))
+	if (of_has(o_ptr->flags_obj, OF_SUSTAIN_CHR))
 	    p_ptr->state.sustain_chr = TRUE;
-	if (o_ptr->flags_obj & (OF_SLOW_DIGEST))
+	if (of_has(o_ptr->flags_obj, OF_SLOW_DIGEST))
 	    p_ptr->state.slow_digest = TRUE;
-	if (o_ptr->flags_obj & (OF_FEATHER))
+	if (of_has(o_ptr->flags_obj, OF_FEATHER))
 	    p_ptr->state.ffall = TRUE;
-	if (o_ptr->flags_obj & (OF_LITE))
+	if (of_has(o_ptr->flags_obj, OF_LITE))
 	    p_ptr->state.lite = TRUE;
-	if (o_ptr->flags_obj & (OF_REGEN))
+	if (of_has(o_ptr->flags_obj, OF_REGEN))
 	    p_ptr->state.regenerate = TRUE;
-	if (o_ptr->flags_obj & (OF_TELEPATHY))
+	if (of_has(o_ptr->flags_obj, OF_TELEPATHY))
 	    p_ptr->state.telepathy = TRUE;
-	if (o_ptr->flags_obj & (OF_SEE_INVIS))
+	if (of_has(o_ptr->flags_obj, OF_SEE_INVIS))
 	    p_ptr->state.see_inv = TRUE;
-	if (o_ptr->flags_obj & (OF_FREE_ACT))
+	if (of_has(o_ptr->flags_obj, OF_FREE_ACT))
 	    p_ptr->state.free_act = TRUE;
-	if (o_ptr->flags_obj & (OF_HOLD_LIFE))
+	if (of_has(o_ptr->flags_obj, OF_HOLD_LIFE))
 	    p_ptr->state.hold_life = TRUE;
-	if (o_ptr->flags_obj & (OF_FEARLESS))
+	if (of_has(o_ptr->flags_obj, OF_FEARLESS))
 	    p_ptr->state.no_fear = TRUE;
-	if (o_ptr->flags_obj & (OF_SEEING))
+	if (of_has(o_ptr->flags_obj, OF_SEEING))
 	    p_ptr->state.no_blind = TRUE;
-	if (o_ptr->flags_obj & (OF_IMPACT))
+	if (of_has(o_ptr->flags_obj, OF_IMPACT))
 	    p_ptr->state.impact = TRUE;
-	if (o_ptr->flags_obj & (OF_BLESSED))
+	if (of_has(o_ptr->flags_obj, OF_BLESSED))
 	    p_ptr->state.bless_blade = TRUE;
-	if (o_ptr->flags_obj & (OF_DARKNESS))
+	if (of_has(o_ptr->flags_obj, OF_DARKNESS))
 	    p_ptr->state.darkness = TRUE;
-	if (o_ptr->flags_obj & (OF_CHAOTIC))
+	if (of_has(o_ptr->flags_obj, OF_CHAOTIC))
 	    p_ptr->special_attack |= ATTACK_CHAOTIC;
 
 	/* Bad flags */
-	if (o_ptr->flags_curse & (CF_TELEPORT))
+	if (cf_has(o_ptr->flags_curse, CF_TELEPORT))
 	    p_ptr->state.teleport = TRUE;
-	if (o_ptr->flags_curse & (CF_NO_TELEPORT))
+	if (cf_has(o_ptr->flags_curse, CF_NO_TELEPORT))
 	    p_ptr->state.no_teleport = TRUE;
-	if (o_ptr->flags_curse & (CF_AGGRO_PERM))
+	if (cf_has(o_ptr->flags_curse, CF_AGGRO_PERM))
 	    p_ptr->state.aggravate = TRUE;
-	if (o_ptr->flags_curse & (CF_AGGRO_RAND))
+	if (cf_has(o_ptr->flags_curse, CF_AGGRO_RAND))
 	    p_ptr->state.rand_aggro = TRUE;
-	if (o_ptr->flags_curse & (CF_SLOW_REGEN))
+	if (cf_has(o_ptr->flags_curse, CF_SLOW_REGEN))
 	    p_ptr->state.slow_regen = TRUE;
-	if (o_ptr->flags_curse & (CF_AFRAID))
+	if (cf_has(o_ptr->flags_curse, CF_AFRAID))
 	    p_ptr->state.fear = TRUE;
-	if (o_ptr->flags_curse & (CF_HUNGRY))
+	if (cf_has(o_ptr->flags_curse, CF_HUNGRY))
 	    p_ptr->state.fast_digest = TRUE;
-	if (o_ptr->flags_curse & (CF_POIS_RAND))
+	if (cf_has(o_ptr->flags_curse, CF_POIS_RAND))
 	    p_ptr->state.rand_pois = TRUE;
-	if (o_ptr->flags_curse & (CF_POIS_RAND_BAD))
+	if (cf_has(o_ptr->flags_curse, CF_POIS_RAND_BAD))
 	    p_ptr->state.rand_pois_bad = TRUE;
-	if (o_ptr->flags_curse & (CF_CUT_RAND))
+	if (cf_has(o_ptr->flags_curse, CF_CUT_RAND))
 	    p_ptr->state.rand_cuts = TRUE;
-	if (o_ptr->flags_curse & (CF_CUT_RAND_BAD))
+	if (cf_has(o_ptr->flags_curse, CF_CUT_RAND_BAD))
 	    p_ptr->state.rand_cuts_bad = TRUE;
-	if (o_ptr->flags_curse & (CF_HALLU_RAND))
+	if (cf_has(o_ptr->flags_curse, CF_HALLU_RAND))
 	    p_ptr->state.rand_hallu = TRUE;
-	if (o_ptr->flags_curse & (CF_DROP_WEAPON))
+	if (cf_has(o_ptr->flags_curse, CF_DROP_WEAPON))
 	    p_ptr->state.drop_weapon = TRUE;
-	if (o_ptr->flags_curse & (CF_ATTRACT_DEMON))
+	if (cf_has(o_ptr->flags_curse, CF_ATTRACT_DEMON))
 	    p_ptr->state.attract_demon = TRUE;
-	if (o_ptr->flags_curse & (CF_ATTRACT_UNDEAD))
+	if (cf_has(o_ptr->flags_curse, CF_ATTRACT_UNDEAD))
 	    p_ptr->state.attract_undead = TRUE;
-	if (o_ptr->flags_curse & (CF_PARALYZE))
+	if (cf_has(o_ptr->flags_curse, CF_PARALYZE))
 	    p_ptr->state.rand_paral = TRUE;
-	if (o_ptr->flags_curse & (CF_PARALYZE_ALL))
+	if (cf_has(o_ptr->flags_curse, CF_PARALYZE_ALL))
 	    p_ptr->state.rand_paral_all = TRUE;
-	if (o_ptr->flags_curse & (CF_DRAIN_EXP))
+	if (cf_has(o_ptr->flags_curse, CF_DRAIN_EXP))
 	    p_ptr->state.drain_exp = TRUE;
-	if (o_ptr->flags_curse & (CF_DRAIN_MANA))
+	if (cf_has(o_ptr->flags_curse, CF_DRAIN_MANA))
 	    p_ptr->state.drain_mana = TRUE;
-	if (o_ptr->flags_curse & (CF_DRAIN_STAT))
+	if (cf_has(o_ptr->flags_curse, CF_DRAIN_STAT))
 	    p_ptr->state.drain_stat = TRUE;
-	if (o_ptr->flags_curse & (CF_DRAIN_CHARGE))
+	if (cf_has(o_ptr->flags_curse, CF_DRAIN_CHARGE))
 	    p_ptr->state.drain_charge = TRUE;
 
 
@@ -3422,9 +3419,9 @@ extern void calc_bonuses(bool inspect)
 	 */
 	if ((i == INVEN_ARM) && (p_ptr->shield_on_back))
 	    temp_armour = o_ptr->ac / 3;
-	else if ((i == INVEN_ARM) && (check_ability(SP_SHIELD_MAST)))
+	else if ((i == INVEN_ARM) && (player_has(PF_SHIELD_MAST)))
 	    temp_armour = o_ptr->ac * 2;
-	else if ((i == INVEN_BODY) && (check_ability(SP_ARMOR_MAST)))
+	else if ((i == INVEN_BODY) && (player_has(PF_ARMOR_MAST)))
 	    temp_armour = (o_ptr->ac * 5) / 3;
 	else
 	    temp_armour = o_ptr->ac;
@@ -3444,7 +3441,7 @@ extern void calc_bonuses(bool inspect)
 	p_ptr->state.to_a += temp_armour;
 
 	/* Apply the mental bonuses to armor class, if known */
-	if (o_ptr->id_other & IF_TO_A)
+	if (if_has(o_ptr->id_other, IF_TO_A))
 	    p_ptr->state.dis_to_a += temp_armour;
 
 	/* Hack -- do not apply "weapon" bonuses */
@@ -3460,22 +3457,22 @@ extern void calc_bonuses(bool inspect)
 	p_ptr->state.to_d += o_ptr->to_d;
 
 	/* Apply the mental bonuses tp hit/damage, if known */
-	if (o_ptr->id_other & IF_TO_H)
+	if (if_has(o_ptr->id_other, IF_TO_H))
 	    p_ptr->state.dis_to_h += o_ptr->to_h;
-	if (o_ptr->id_other & IF_TO_D)
+	if (if_has(o_ptr->id_other, IF_TO_D))
 	    p_ptr->state.dis_to_d += o_ptr->to_d;
     }
 
     /* Hack -- clear a few flags for certain races. */
 
     /* The dark elf's saving grace */
-    if ((check_ability(SP_SHADOW)) && (p_ptr->state.aggravate)) {
+    if ((player_has(PF_SHADOW)) && (p_ptr->state.aggravate)) {
 	p_ptr->state.skills[SKILL_STEALTH] -= 3;
 	p_ptr->state.aggravate = FALSE;
     }
 
     /* Nothing, but nothing, can make an Ent lightfooted. */
-    if (check_ability(SP_WOODEN))
+    if (player_has(PF_WOODEN))
 	p_ptr->state.ffall = FALSE;
 
 
@@ -3485,19 +3482,19 @@ extern void calc_bonuses(bool inspect)
   /*** (Most) Specialty Abilities ***/
 
     /* Physical stat boost */
-    if (check_ability(SP_ATHLETICS)) {
+    if (player_has(PF_ATHLETICS)) {
 	p_ptr->state.stat_add[A_DEX] += 2;
 	p_ptr->state.stat_add[A_CON] += 2;
     }
 
     /* Mental stat boost */
-    if (check_ability(SP_CLARITY)) {
+    if (player_has(PF_CLARITY)) {
 	p_ptr->state.stat_add[A_INT] += 2;
 	p_ptr->state.stat_add[A_WIS] += 2;
     }
 
     /* Unlight stealth boost */
-    if (check_ability(SP_UNLIGHT)) {
+    if (player_has(PF_UNLIGHT)) {
 	if ((p_ptr->cur_lite <= 0) && (!is_daylight)
 	    && !(cave_info[p_ptr->py][p_ptr->px] & CAVE_GLOW))
 	    p_ptr->state.skills[SKILL_STEALTH] += 6;
@@ -3511,8 +3508,8 @@ extern void calc_bonuses(bool inspect)
     }
 
     /* Speed boost in trees for elven druids and rangers */
-    if ((check_ability(SP_WOODSMAN)) && (check_ability(SP_ELVEN))
-	&& (f_info[cave_feat[p_ptr->py][p_ptr->px]].flags & TF_TREE))
+    if ((player_has(PF_WOODSMAN)) && (player_has(PF_ELVEN))
+	&& tf_has(f_info[cave_feat[p_ptr->py][p_ptr->px]].flags, TF_TREE))
 	p_ptr->pspeed += 3;
 
     /* Speed boost for rune of speed */
@@ -3520,7 +3517,7 @@ extern void calc_bonuses(bool inspect)
 	p_ptr->pspeed += 10;
 
     /* Dwarves are good miners */
-    if (check_ability(SP_DWARVEN))
+    if (player_has(PF_DWARVEN))
 	p_ptr->state.skills[SKILL_DIGGING] += 40;
 
   /*** Handle stats ***/
@@ -3567,12 +3564,12 @@ extern void calc_bonuses(bool inspect)
     p_ptr->evasion_chance = 0;
 
     /* Evasion AC boost */
-    if (check_ability(SP_EVASION)
-	|| ((check_ability(SP_DWARVEN))
+    if (player_has(PF_EVASION)
+	|| ((player_has(PF_DWARVEN))
 	    && (stage_map[p_ptr->stage][STAGE_TYPE] == MOUNTAIN))
-	|| ((check_ability(SP_PLAINSMAN))
+	|| ((player_has(PF_PLAINSMAN))
 	    && (stage_map[p_ptr->stage][STAGE_TYPE] == PLAIN))
-	|| ((check_ability(SP_EDAIN))
+	|| ((player_has(PF_EDAIN))
 	    && (stage_map[p_ptr->stage][STAGE_TYPE] == FOREST))) {
 	int cur_wgt = 0;
 	int evasion_wgt;
@@ -3607,7 +3604,7 @@ extern void calc_bonuses(bool inspect)
   /*** Temporary flags ***/
 
     /* Hack - Temporary bonuses are stronger with Enhance Magic */
-    if (check_ability(SP_ENHANCE_MAGIC))
+    if (player_has(PF_ENHANCE_MAGIC))
 	enhance = TRUE;
 
     /* Temporary resists */
@@ -3685,7 +3682,7 @@ extern void calc_bonuses(bool inspect)
 
     /* Temporary shield.  Added an exception for Necromancers to keep them in
      * line. */
-    if ((p_ptr->timed[TMD_SHIELD]) && (check_ability(SP_EVIL))) {
+    if ((p_ptr->timed[TMD_SHIELD]) && (player_has(PF_EVIL))) {
 	int bonus = ((enhance == TRUE) ? 50 : 35);
 
 	p_ptr->state.to_a += bonus;
@@ -3791,7 +3788,7 @@ extern void calc_bonuses(bool inspect)
     /* Apply "encumbrance" from weight - more in water, except Maiar, flyers */
     if (j > i / 2) {
 	if ((cave_feat[p_ptr->py][p_ptr->px] == FEAT_WATER)
-	    && (!check_ability(SP_DIVINE)) && !(p_ptr->schange == SHAPE_BAT)
+	    && (!player_has(PF_DIVINE)) && !(p_ptr->schange == SHAPE_BAT)
 	    && !(p_ptr->schange == SHAPE_WYRM))
 	    p_ptr->pspeed -= 3 * ((j - (i / 2)) / (i / 10));
 	else
@@ -3913,7 +3910,7 @@ extern void calc_bonuses(bool inspect)
   /*** Special Saving Throw boosts are calculated after other bonuses ***/
 
     /* Specialty magic resistance; gives great saving throws even above 100 */
-    if (check_ability(SP_MAGIC_RESIST)) {
+    if (player_has(PF_MAGIC_RESIST)) {
 	if (p_ptr->state.skills[SKILL_SAVE] <= 80)
 	    p_ptr->state.skills[SKILL_SAVE] +=
 		(100 - p_ptr->state.skills[SKILL_SAVE]) / 2;
@@ -3921,8 +3918,8 @@ extern void calc_bonuses(bool inspect)
 	    p_ptr->state.skills[SKILL_SAVE] += 10;
     }
 
-    /* Heightened magical defenses.  Halves the difference between saving
-     * throw and 100.  */
+    /* Heightened magical defenses.  Halves the difference between saving throw 
+     * and 100.  */
     if (p_ptr->magicdef) {
 	if (p_ptr->state.skills[SKILL_SAVE] <= 100)
 	    p_ptr->state.skills[SKILL_SAVE] +=
@@ -4021,26 +4018,26 @@ extern void calc_bonuses(bool inspect)
 	    p_ptr->state.ammo_mult += extra_might;
 
 	    /* Love your launcher SJGU bonuses reduced */
-	    if (((check_ability(SP_BOW_SPEED_GREAT))
+	    if (((player_has(PF_BOW_SPEED_GREAT))
 		 && (p_ptr->state.ammo_tval == TV_ARROW))
-		|| ((check_ability(SP_SLING_SPEED_GREAT))
+		|| ((player_has(PF_SLING_SPEED_GREAT))
 		    && (p_ptr->state.ammo_tval == TV_SHOT))
-		|| ((check_ability(SP_XBOW_SPEED_GREAT))
+		|| ((player_has(PF_XBOW_SPEED_GREAT))
 		    && (p_ptr->state.ammo_tval == TV_BOLT))) {
 		/* Big bonus... */
 		p_ptr->state.num_fire += 3 * dex_factor / 4;
 
 		/* ...and sometimes even more */
-		if (check_ability(SP_RAPID_FIRE))
+		if (player_has(PF_RAPID_FIRE))
 		    p_ptr->state.num_fire += dex_factor / 4;
 	    }
 
 	    /* Like your launcher */
-	    else if (((check_ability(SP_BOW_SPEED_GOOD))
+	    else if (((player_has(PF_BOW_SPEED_GOOD))
 		      && (p_ptr->state.ammo_tval == TV_ARROW))
-		     || ((check_ability(SP_SLING_SPEED_GOOD))
+		     || ((player_has(PF_SLING_SPEED_GOOD))
 			 && (p_ptr->state.ammo_tval == TV_SHOT))
-		     || ((check_ability(SP_XBOW_SPEED_GOOD))
+		     || ((player_has(PF_XBOW_SPEED_GOOD))
 			 && (p_ptr->state.ammo_tval == TV_BOLT))) {
 		/* Medium bonus */
 		p_ptr->state.num_fire += dex_factor / 2;
@@ -4170,8 +4167,8 @@ extern void calc_bonuses(bool inspect)
 		o_ptr = &inventory[INVEN_WIELD];
 
 		/* Analyze weapon for two-handed-use. */
-		if (o_ptr->flags_obj & (OF_TWO_HANDED_REQ)
-		    || (o_ptr->flags_obj & (OF_TWO_HANDED_DES)
+		if (of_has(o_ptr->flags_obj, OF_TWO_HANDED_REQ)
+		    || (of_has(o_ptr->flags_obj, OF_TWO_HANDED_DES)
 			&& (p_ptr->state.stat_ind[A_STR] <
 			    29 + (o_ptr->weight / 50 >
 				  8 ? 8 : o_ptr->weight / 50)))) {

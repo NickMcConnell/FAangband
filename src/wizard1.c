@@ -250,7 +250,7 @@ static void spoil_obj_desc(cptr fname)
 	  if (k_ptr->tval != group_item[i].tval) continue;
 	  
 	  /* Hack -- Skip instant-artifacts */
-	  if (k_ptr->flags_kind & (KF_INSTA_ART)) continue;
+	  if (kf_has(k_ptr->flags_kind, KF_INSTA_ART)) continue;
 	  
 	  /* Save the index */
 	  who[n++] = k;
@@ -742,8 +742,11 @@ static void analyze_sustains (object_type *o_ptr, cptr *sustain_list)
 
 static void analyze_powers (object_type *o_ptr, cptr *power_list)
 {
-  /* Hack - put perma curse in with curses */
-  u32b flags = o_ptr->flags_obj & ~(OF_PERMA_CURSE);
+    /* Hack - put perma curse in with curses */
+    bitflag flags[OF_SIZE];
+
+    of_copy(flags, o_ptr->flags_obj);
+    flag_off(flags, OF_PERMA_CURSE)
 
   /*
    * Special flags
@@ -778,7 +781,7 @@ static void analyze_curses (object_type *o_ptr, cptr *curse_list)
   /*
    * Artifact lights -- large radius light.
    */
-  if (o_ptr->flags_obj & OF_PERMA_CURSE)
+  if (of_has(o_ptr->flags_obj, OF_PERMA_CURSE))
     {
       *curse_list++ = "Permanently cursed";
     }

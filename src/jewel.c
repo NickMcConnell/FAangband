@@ -447,7 +447,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 300)) 
 	  {
-	    o_ptr->flags_obj |= OF_SUSTAIN_STR;
+	    of_on(o_ptr->flags_obj, OF_SUSTAIN_STR);
 	    return(TRUE);
 	  }
 	break;
@@ -456,7 +456,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 200)) 
 	  {
-	    o_ptr->flags_obj |= OF_SUSTAIN_WIS;
+	    of_on(o_ptr->flags_obj, OF_SUSTAIN_WIS);
 	    return(TRUE);
 	  }
 	break;
@@ -465,7 +465,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 200)) 
 	  {
-	    o_ptr->flags_obj |= OF_SUSTAIN_INT;
+	    of_on(o_ptr->flags_obj, OF_SUSTAIN_INT);
 	    return(TRUE);
 	  }
 	break;
@@ -474,7 +474,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 200)) 
 	  {
-	    o_ptr->flags_obj |= OF_SUSTAIN_DEX;
+	    of_on(o_ptr->flags_obj, OF_SUSTAIN_DEX);
 	    return(TRUE);
 	  }
 	break;
@@ -483,7 +483,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 200)) 
 	  {
-	    o_ptr->flags_obj |= OF_SUSTAIN_CON;
+	    of_on(o_ptr->flags_obj, OF_SUSTAIN_CON);
 	    return(TRUE);
 	  }
 	break;
@@ -492,7 +492,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 20)) 
 	  {
-	    o_ptr->flags_obj |= OF_SUSTAIN_CHR;
+	    of_on(o_ptr->flags_obj, OF_SUSTAIN_CHR);
 	    return(TRUE);
 	  }
 	break;
@@ -501,7 +501,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 300)) 
 	  {
-	    o_ptr->flags_obj |= OF_SLOW_DIGEST;
+	    of_on(o_ptr->flags_obj, OF_SLOW_DIGEST);
 	    return(TRUE);
 	  }
 	break;
@@ -510,7 +510,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 300)) 
 	  {
-	    o_ptr->flags_obj |= OF_FEATHER;
+	    of_on(o_ptr->flags_obj, OF_FEATHER);
 	    return(TRUE);
 	  }
 	break;
@@ -519,7 +519,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 300)) 
 	  {
-	    o_ptr->flags_obj |= OF_LITE;
+	    of_on(o_ptr->flags_obj, OF_LITE);
 	    return(TRUE);
 	  }
 	break;
@@ -528,7 +528,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 500)) 
 	  {
-	    o_ptr->flags_obj |= OF_REGEN;
+	    of_on(o_ptr->flags_obj, OF_REGEN);
 	    return(TRUE);
 	  }
 	break;
@@ -537,7 +537,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 2500)) 
 	  {
-	    o_ptr->flags_obj |= OF_TELEPATHY;
+	    of_on(o_ptr->flags_obj, OF_TELEPATHY);
 	    return(TRUE);
 	  }
 	break;
@@ -546,7 +546,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 700)) 
 	  {
-	    o_ptr->flags_obj |= OF_SEE_INVIS;
+	    of_on(o_ptr->flags_obj, OF_SEE_INVIS);
 	    return(TRUE);
 	  }
 	break;
@@ -555,7 +555,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 700)) 
 	  {
-	    o_ptr->flags_obj |= OF_FREE_ACT;
+	    of_on(o_ptr->flags_obj, OF_FREE_ACT);
 	    return(TRUE);
 	  }
 	break;
@@ -564,7 +564,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 1000)) 
 	  {
-	    o_ptr->flags_obj |= OF_HOLD_LIFE;
+	    of_on(o_ptr->flags_obj, OF_HOLD_LIFE);
 	    return(TRUE);
 	  }
 	break;
@@ -573,7 +573,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 650)) 
 	  {
-	    o_ptr->flags_obj |= OF_SEEING;
+	    of_on(o_ptr->flags_obj, OF_SEEING);
 	    return(TRUE);
 	  }
 	break;
@@ -582,7 +582,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 500)) 
 	  {
-	    o_ptr->flags_obj |= OF_FEARLESS;
+	    of_on(o_ptr->flags_obj, OF_FEARLESS);
 	    return(TRUE);
 	  }
 	break;
@@ -591,7 +591,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 800)) 
 	  {
-	    o_ptr->flags_obj |= OF_DARKNESS;
+	    of_on(o_ptr->flags_obj, OF_DARKNESS);
 	    return(TRUE);
 	  }
 	break;
@@ -600,7 +600,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 100)) 
 	  {
-	    o_ptr->flags_obj |= OF_ELEC_PROOF;
+	    of_on(o_ptr->flags_obj, OF_ELEC_PROOF);
 	    return(TRUE);
 	  }
 	break;
@@ -609,7 +609,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, 1200)) 
 	  {
-	    o_ptr->flags_obj |= OF_CHAOTIC;
+	    of_on(o_ptr->flags_obj, OF_CHAOTIC);
 	    return(TRUE);
 	  }
 	break;
@@ -1003,7 +1003,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -100)) 
 	  {
-	    o_ptr->flags_curse |= CF_TELEPORT;
+	    cf_on(o_ptr->flags_curse, CF_TELEPORT);
 	    return(TRUE);
 	  }
 	break;
@@ -1012,7 +1012,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -500)) 
 	  {
-	    o_ptr->flags_curse |= CF_NO_TELEPORT;
+	    cf_on(o_ptr->flags_curse, CF_NO_TELEPORT);
 	    return(TRUE);
 	  }
 	break;
@@ -1021,7 +1021,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -1000)) 
 	  {
-	    o_ptr->flags_curse |= CF_AGGRO_PERM;
+	    cf_on(o_ptr->flags_curse, CF_AGGRO_PERM);
 	    return(TRUE);
 	  }
 	break;
@@ -1030,7 +1030,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -400)) 
 	  {
-	    o_ptr->flags_curse |= CF_AGGRO_RAND;
+	    cf_on(o_ptr->flags_curse, CF_AGGRO_RAND);
 	    return(TRUE);
 	  }
 	break;
@@ -1039,7 +1039,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -100)) 
 	  {
-	    o_ptr->flags_curse |= CF_SLOW_REGEN;
+	    cf_on(o_ptr->flags_curse, CF_SLOW_REGEN);
 	    return(TRUE);
 	  }
 	break;
@@ -1048,7 +1048,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -300)) 
 	  {
-	    o_ptr->flags_curse |= CF_AFRAID;
+	    cf_on(o_ptr->flags_curse, CF_AFRAID);
 	    return(TRUE);
 	  }
 	break;
@@ -1057,7 +1057,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -100)) 
 	  {
-	    o_ptr->flags_curse |= CF_HUNGRY;
+	    cf_on(o_ptr->flags_curse, CF_HUNGRY);
 	    return(TRUE);
 	  }
 	break;
@@ -1066,7 +1066,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -100)) 
 	  {
-	    o_ptr->flags_curse |= CF_POIS_RAND;
+	    cf_on(o_ptr->flags_curse, CF_POIS_RAND);
 	    return(TRUE);
 	  }
 	break;
@@ -1075,7 +1075,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -300)) 
 	  {
-	    o_ptr->flags_curse |= CF_POIS_RAND_BAD;
+	    cf_on(o_ptr->flags_curse, CF_POIS_RAND_BAD);
 	    return(TRUE);
 	  }
 	break;
@@ -1084,7 +1084,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -100)) 
 	  {
-	    o_ptr->flags_curse |= CF_CUT_RAND;
+	    cf_on(o_ptr->flags_curse, CF_CUT_RAND);
 	    return(TRUE);
 	  }
 	break;
@@ -1093,7 +1093,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -200)) 
 	  {
-	    o_ptr->flags_curse |= CF_CUT_RAND_BAD;
+	    cf_on(o_ptr->flags_curse, CF_CUT_RAND_BAD);
 	    return(TRUE);
 	  }
 	break;
@@ -1102,7 +1102,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -400)) 
 	  {
-	    o_ptr->flags_curse |= CF_HALLU_RAND;
+	    cf_on(o_ptr->flags_curse, CF_HALLU_RAND);
 	    return(TRUE);
 	  }
 	break;
@@ -1111,7 +1111,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -400)) 
 	  {
-	    o_ptr->flags_curse |= CF_ATTRACT_DEMON;
+	    cf_on(o_ptr->flags_curse, CF_ATTRACT_DEMON);
 	    return(TRUE);
 	  }
 	break;
@@ -1120,7 +1120,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -500)) 
 	  {
-	    o_ptr->flags_curse |= CF_ATTRACT_UNDEAD;
+	    cf_on(o_ptr->flags_curse, CF_ATTRACT_UNDEAD);
 	    return(TRUE);
 	  }
 	break;
@@ -1129,7 +1129,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -500)) 
 	  {
-	    o_ptr->flags_curse |= CF_STICKY_CARRY;
+	    cf_on(o_ptr->flags_curse, CF_STICKY_CARRY);
 	    return(TRUE);
 	  }
 	break;
@@ -1138,7 +1138,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -1300)) 
 	  {
-	    o_ptr->flags_curse |= CF_STICKY_WIELD;
+	    cf_on(o_ptr->flags_curse, CF_STICKY_WIELD);
 	    return(TRUE);
 	  }
 	break;
@@ -1147,7 +1147,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -400)) 
 	  {
-	    o_ptr->flags_curse |= CF_PARALYZE;
+	    cf_on(o_ptr->flags_curse, CF_PARALYZE);
 	    return(TRUE);
 	  }
 	break;
@@ -1156,7 +1156,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -1000)) 
 	  {
-	    o_ptr->flags_curse |= CF_PARALYZE_ALL;
+	    cf_on(o_ptr->flags_curse, CF_PARALYZE_ALL);
 	    return(TRUE);
 	  }
 	break;
@@ -1165,7 +1165,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -400)) 
 	  {
-	    o_ptr->flags_curse |= CF_DRAIN_EXP;
+	    cf_on(o_ptr->flags_curse, CF_DRAIN_EXP);
 	    return(TRUE);
 	  }
 	break;
@@ -1174,7 +1174,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -500)) 
 	  {
-	    o_ptr->flags_curse |= CF_DRAIN_MANA;
+	    cf_on(o_ptr->flags_curse, CF_DRAIN_MANA);
 	    return(TRUE);
 	  }
 	break;
@@ -1183,7 +1183,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -800)) 
 	  {
-	    o_ptr->flags_curse |= CF_DRAIN_STAT;
+	    cf_on(o_ptr->flags_curse, CF_DRAIN_STAT);
 	    return(TRUE);
 	  }
 	break;
@@ -1192,7 +1192,7 @@ static bool get_quality(bool on_credit, int purchase, int value,
       {
 	if (take_money(on_credit, -800)) 
 	  {
-	    o_ptr->flags_curse |= CF_DRAIN_CHARGE;
+	    cf_on(o_ptr->flags_curse, CF_DRAIN_CHARGE);
 	    return(TRUE);
 	  }
 	break;
@@ -2316,11 +2316,11 @@ static void add_properties(object_type *o_ptr)
       choice = randint1(5);
       
       /* ...among some tasty options. */
-      if ((choice == 1) && (!(o_ptr->flags_obj & OF_TELEPATHY)))
+      if ((choice == 1) && (!(of_has(o_ptr->flags_obj, OF_TELEPATHY))))
 	{
 	  get_quality(TRUE, TELEPATHY, 0, o_ptr);
 	}
-      if ((choice == 2) && (!(o_ptr->flags_obj & OF_HOLD_LIFE)))
+      if ((choice == 2) && (!(of_has(o_ptr->flags_obj, OF_HOLD_LIFE))))
 	{
 	  get_quality(TRUE, HOLD_LIFE, 0, o_ptr);
 	}
@@ -2328,7 +2328,7 @@ static void add_properties(object_type *o_ptr)
 	{
 	  if (o_ptr->percent_res[P_RES_CONFU] >= RES_LEVEL_BASE)
 	    get_quality(TRUE, RES_CONFU, 0, o_ptr);
-	  if (!(o_ptr->flags_obj & OF_SEEING))
+	  if (!(of_has(o_ptr->flags_obj, OF_SEEING)))
 	    get_quality(TRUE, SEEING, 0, o_ptr);
 	}
       if (choice == 4)
@@ -2446,21 +2446,21 @@ static void add_properties(object_type *o_ptr)
 	  choice = randint1(8);
 	  
 	  /* Collect a miscellanious quality. */
-	  if ((choice == 1) && (!(o_ptr->flags_obj & OF_SLOW_DIGEST)))
+	  if ((choice == 1) && (!(of_has(o_ptr->flags_obj, OF_SLOW_DIGEST))))
 	    get_quality(FALSE, SLOW_DIGEST, 0, o_ptr);
-	  if ((choice == 2) && (!(o_ptr->flags_obj & OF_FEATHER)))
+	  if ((choice == 2) && (!(of_has(o_ptr->flags_obj, OF_FEATHER))))
 	    get_quality(FALSE, FEATHER, 0, o_ptr);
-	  if ((choice == 3) && (!(o_ptr->flags_obj & OF_LITE)))
+	  if ((choice == 3) && (!(of_has(o_ptr->flags_obj, OF_LITE))))
 	    get_quality(FALSE, LITE, 1, o_ptr);
-	  if ((choice == 4) && (!(o_ptr->flags_obj & OF_REGEN)))
+	  if ((choice == 4) && (!(of_has(o_ptr->flags_obj, OF_REGEN))))
 	    get_quality(FALSE, REGEN, 0, o_ptr);
-	  if ((choice == 5) && (!(o_ptr->flags_obj & OF_SEE_INVIS)))
+	  if ((choice == 5) && (!(of_has(o_ptr->flags_obj, OF_SEE_INVIS))))
 	    get_quality(FALSE, SEE_INVIS, 0, o_ptr);
-	  if ((choice == 6) && (!(o_ptr->flags_obj & OF_FREE_ACT)))
+	  if ((choice == 6) && (!(of_has(o_ptr->flags_obj, OF_FREE_ACT))))
 	    get_quality(FALSE, FREE_ACT, 0, o_ptr);
-	  if ((choice == 7) && (!(o_ptr->flags_obj & OF_FEARLESS)))
+	  if ((choice == 7) && (!(of_has(o_ptr->flags_obj, OF_FEARLESS))))
 	    get_quality(FALSE, FEARLESS, 0, o_ptr);
-	  if ((choice == 8) && (!(o_ptr->flags_obj & OF_SEEING)))
+	  if ((choice == 8) && (!(of_has(o_ptr->flags_obj, OF_SEEING))))
 	    get_quality(FALSE, SEEING, 0, o_ptr);
 	}
       
@@ -2480,17 +2480,17 @@ static void add_properties(object_type *o_ptr)
   choice = randint1(6);
   
   if ((choice == 1) && (o_ptr->bonus_stat[A_STR] > 0))
-    o_ptr->flags_obj |= OF_SUSTAIN_STR;
+    of_on(o_ptr->flags_obj, OF_SUSTAIN_STR);
   else if ((choice == 2) && (o_ptr->bonus_stat[A_WIS] > 0))
-    o_ptr->flags_obj |= OF_SUSTAIN_WIS;
+    of_on(o_ptr->flags_obj, OF_SUSTAIN_WIS);
   else if ((choice == 3) && (o_ptr->bonus_stat[A_INT] > 0))
-    o_ptr->flags_obj |= OF_SUSTAIN_INT;
+    of_on(o_ptr->flags_obj, OF_SUSTAIN_INT);
   else if ((choice == 4) && (o_ptr->bonus_stat[A_DEX] > 0))
-    o_ptr->flags_obj |= OF_SUSTAIN_DEX;
+    of_on(o_ptr->flags_obj, OF_SUSTAIN_DEX);
   else if ((choice == 5) && (o_ptr->bonus_stat[A_CON] > 0))
-    o_ptr->flags_obj |= OF_SUSTAIN_CON;
+    of_on(o_ptr->flags_obj, OF_SUSTAIN_CON);
   else if ((choice == 6) && (o_ptr->bonus_stat[A_CHR] > 0))
-    o_ptr->flags_obj |= OF_SUSTAIN_CHR;
+    of_on(o_ptr->flags_obj, OF_SUSTAIN_CHR);
   
   /* Frequently neaten bonuses to Armour Class, Skill, and Deadliness. */
   {
@@ -2646,7 +2646,7 @@ static void j_make_terrible(object_type *o_ptr)
 	      num_curses += randint1(2);
 
 	      /* ...and hard to get rid of */
-	      o_ptr->flags_curse |= CF_STICKY_CARRY;
+	      cf_on(o_ptr->flags_curse, CF_STICKY_CARRY);
 	    }
 	}
       
@@ -2663,7 +2663,7 @@ static void j_make_terrible(object_type *o_ptr)
 	  if (randint1(3) == 1) o_ptr->multiple_slay[P_SLAY_TROLL] = 10;
 	  if (randint1(3) == 1) o_ptr->multiple_slay[P_SLAY_GIANT] = 10;
 	  if (randint1(3) == 1) o_ptr->multiple_slay[P_SLAY_DRAGON] = 10;
-	  if (randint1(3) == 1) o_ptr->flags_obj &= ~(OF_PERFECT_BALANCE);
+	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_PERFECT_BALANCE);
 	  if (randint1(3) == 1) o_ptr->multiple_brand[P_BRAND_POIS] = 10;
 	  if (randint1(3) == 1) o_ptr->multiple_brand[P_BRAND_ACID] = 10;
 	  if (randint1(3) == 1) o_ptr->multiple_brand[P_BRAND_ELEC] = 10;
@@ -2713,16 +2713,16 @@ static void j_make_terrible(object_type *o_ptr)
 	    o_ptr->percent_res[P_RES_DISEN] += 
 	      (2 * (100 - o_ptr->percent_res[P_RES_DISEN]));
 	  
-	  if (randint1(3) == 1) o_ptr->flags_obj &= ~(OF_SLOW_DIGEST);
-	  if (randint1(3) == 1) o_ptr->flags_obj &= ~(OF_FEATHER);
-	  if (randint1(3) == 1) o_ptr->flags_obj &= ~(OF_LITE);
-	  if (randint1(3) == 1) o_ptr->flags_obj &= ~(OF_REGEN);
-	  if (randint1(3) == 1) o_ptr->flags_obj &= ~(OF_TELEPATHY);
-	  if (randint1(3) == 1) o_ptr->flags_obj &= ~(OF_SEE_INVIS);
-	  if (randint1(3) == 1) o_ptr->flags_obj &= ~(OF_FREE_ACT);
-	  if (randint1(3) == 1) o_ptr->flags_obj &= ~(OF_HOLD_LIFE);
-	  if (randint1(3) == 1) o_ptr->flags_obj &= ~(OF_FEARLESS);
-	  if (randint1(3) == 1) o_ptr->flags_obj &= ~(OF_SEEING);
+	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_SLOW_DIGEST);
+	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_FEATHER);
+	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_LITE);
+	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_REGEN);
+	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_TELEPATHY);
+	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_SEE_INVIS);
+	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_FREE_ACT);
+	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_HOLD_LIFE);
+	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_FEARLESS);
+	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_SEEING);
 	}
     }
   
@@ -2742,16 +2742,16 @@ static void j_remove_contradictory(object_type *o_ptr)
 {
   int i;
   
-  if (o_ptr->flags_curse & CF_AGGRO_PERM) 
+  if (cf_has(o_ptr->flags_curse, CF_AGGRO_PERM)) 
     o_ptr->bonus_other[P_BONUS_STEALTH] = 0;
-  if (o_ptr->flags_curse & CF_DRAIN_EXP)  o_ptr->flags_obj &= ~(OF_HOLD_LIFE);
-  if (o_ptr->flags_curse & CF_SLOW_REGEN) o_ptr->flags_obj &= ~(OF_REGEN);
-  if (o_ptr->flags_curse & CF_AFRAID)     o_ptr->flags_obj &= ~(OF_FEARLESS);
-  if (o_ptr->flags_curse & CF_HUNGRY)     o_ptr->flags_obj &= ~(OF_SLOW_DIGEST);
-  if (o_ptr->flags_curse & CF_PARALYZE)   o_ptr->flags_obj &= ~(OF_FREE_ACT);
+  if (cf_has(o_ptr->flags_curse, CF_DRAIN_EXP))  of_off(o_ptr->flags_obj, OF_HOLD_LIFE);
+  if (cf_has(o_ptr->flags_curse, CF_SLOW_REGEN)) of_off(o_ptr->flags_obj, OF_REGEN);
+  if (cf_has(o_ptr->flags_curse, CF_AFRAID))     of_off(o_ptr->flags_obj, OF_FEARLESS);
+  if (cf_has(o_ptr->flags_curse, CF_HUNGRY))     of_off(o_ptr->flags_obj, OF_SLOW_DIGEST);
+  if (cf_has(o_ptr->flags_curse, CF_PARALYZE))   of_off(o_ptr->flags_obj, OF_FREE_ACT);
   for (i = 0; i < A_MAX; i++)
     {
-      if (o_ptr->bonus_stat[i] < 0) o_ptr->flags_obj &= ~(OF_SUSTAIN_STR << i);
+      if (o_ptr->bonus_stat[i] < 0) of_off(o_ptr->flags_obj, OF_SUSTAIN_STR << i);
       if (o_ptr->bonus_stat[i] > 6) o_ptr->bonus_stat[i] = 6;
     }
   for (i = 0; i < MAX_P_BONUS; i++)
@@ -2759,20 +2759,20 @@ static void j_remove_contradictory(object_type *o_ptr)
       if ((o_ptr->bonus_stat[i] > 6) && (i != P_BONUS_SPEED))
 	o_ptr->bonus_stat[i] = 6;
     }
-  if ((o_ptr->flags_curse & CF_NO_TELEPORT) && 
+  if ((cf_has(o_ptr->flags_curse, CF_NO_TELEPORT)) && 
       ((o_ptr->effect = EF_RAND_TELEPORT1) || 
        (o_ptr->effect = EF_RAND_TELEPORT2)))
     o_ptr->effect = 0;
 
   /* Low resist means object is proof against that element */
   if (o_ptr->percent_res[P_RES_ACID] < RES_LEVEL_BASE) 
-    o_ptr->flags_obj |= OF_ACID_PROOF;
+    of_on(o_ptr->flags_obj, OF_ACID_PROOF);
   if (o_ptr->percent_res[P_RES_ELEC] < RES_LEVEL_BASE) 
-    o_ptr->flags_obj |= OF_ELEC_PROOF;
+    of_on(o_ptr->flags_obj, OF_ELEC_PROOF);
   if (o_ptr->percent_res[P_RES_FIRE] < RES_LEVEL_BASE) 
-    o_ptr->flags_obj |= OF_FIRE_PROOF;
+    of_on(o_ptr->flags_obj, OF_FIRE_PROOF);
   if (o_ptr->percent_res[P_RES_COLD] < RES_LEVEL_BASE) 
-    o_ptr->flags_obj |= OF_COLD_PROOF;
+    of_on(o_ptr->flags_obj, OF_COLD_PROOF);
 }
 
 

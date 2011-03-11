@@ -1258,8 +1258,8 @@ typedef struct player {
 
     byte spell_order[64];/**< Spell order */
 
-    u32b id_obj;	/**< "Sensation" object id flags */
-    u32b id_other;	/**< "Sensation" other id flags */
+    u32b id_obj[OF_SIZE];	/**< "Sensation" object id flags */
+    u32b id_other[IF_SIZE];	/**< "Sensation" other id flags */
 
     s16b player_hp[PY_MAX_LEVEL];/**< HP Array */
 

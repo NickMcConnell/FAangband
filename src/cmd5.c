@@ -542,8 +542,8 @@ static void rebalance_weapon(void)
 
 	o_ptr->to_h -= (s16b) (2 + randint0(4));
 	o_ptr->to_d -= (s16b) (2 + randint0(4));
-	o_ptr->flags_curse |=
-	    (OBJECT_RAND_BASE_CURSE << randint0(OBJECT_RAND_SIZE_CURSE));
+	of_on(o_ptr->flags_curse,
+	      (OBJECT_RAND_BASE_CURSE << randint0(OBJECT_RAND_SIZE_CURSE)));
 
 	/* Describe */
 	msg_format("Oh no!  A dreadful black aura surrounds your %s!", o_name);
@@ -555,7 +555,7 @@ static void rebalance_weapon(void)
     /* Rebalance. */
     else {
 	/* Grant perfect balance. */
-	o_ptr->flags_obj |= OF_PERFECT_BALANCE;
+	of_on(o_ptr->flags_obj, OF_PERFECT_BALANCE);
 
 	/* Description */
 	object_desc(o_name, o_ptr, FALSE, 0);
@@ -574,21 +574,19 @@ static void rebalance_weapon(void)
 /*
  * Entries for specialty descriptions
  */
-typedef struct
-{
-	u16b index;          /* Specialty index */
-	const char *name;    /* Specialty name */
-	const char *desc;    /* Specialty description */
+typedef struct {
+    u16b index;			/* Specialty index */
+    const char *name;		/* Specialty name */
+    const char *desc;		/* Specialty description */
 } specialty;
 
 /*
  * Read in the descriptions.
  */
-static const specialty specialties[] =
-{
-	#define PF(x, y, z)    { PF_##x, y, z },
-	#include "list-player-flags.h"
-	#undef PF
+static const specialty specialties[] = {
+#define PF(x, y, z)    { PF_##x, y, z },
+#include "list-player-flags.h"
+#undef PF
 };
 
 /**
@@ -597,8 +595,9 @@ static const specialty specialties[] =
 bool check_ability(int ability)
 {
     /* Check to see if the queried specialty is flagged */
-    if (player_has(ability)) return (TRUE);
-    
+    if (player_has(ability))
+	return (TRUE);
+
     /* Assume false */
     return (FALSE);
 }
@@ -760,7 +759,7 @@ void gain_specialty(void)
     /* Find the next open entry in "specialty_order[]" */
     for (k = 0; k < MAX_SPECIALTIES; k++) {
 	/* Stop at the first empty space */
-	if (p_ptr->specialty_order[k] == SP_NO_SPECIALTY)
+	if (p_ptr->specialty_order[k] == PF_NO_SPECIALTY)
 	    break;
     }
 
@@ -827,10 +826,10 @@ void gain_specialty(void)
  * View specialty code 
  */
 int race_start, class_start, race_other_start;
-int total_known, spec_known, racial_known, class_known; 
+int total_known, spec_known, racial_known, class_known;
 byte racial_list[32];
 byte class_list[32];
-char race_other_desc[1000] ="";
+char race_other_desc[1000] = "";
 
 /**
  * For a string describing the player's intrinsic racial flags.
@@ -838,347 +837,417 @@ char race_other_desc[1000] ="";
 static char *view_abilities_aux(char *desc)
 {
     u32b flags = rp_ptr->flags_obj;
-  
+
     int attr_num, attr_listed, j;
 
     bool res = FALSE, vul = FALSE;
-  
+
     char buf[10] = "";
-  
+
     /* Sustain stats. */
-    if ((flags & (OF_SUSTAIN_STR)) || (flags & (OF_SUSTAIN_INT)) || 
-	(flags & (OF_SUSTAIN_WIS)) || (flags & (OF_SUSTAIN_DEX)) || 
-	(flags & (OF_SUSTAIN_CON)) || (flags & (OF_SUSTAIN_CHR)))
-    {
+    if ((of_has(flags, OF_SUSTAIN_STR)) || (of_has(flags, OF_SUSTAIN_INT))
+	|| (of_has(flags, OF_SUSTAIN_WIS)) || (of_has(flags, OF_SUSTAIN_DEX))
+	|| (of_has(flags, OF_SUSTAIN_CON)) || (of_has(flags, OF_SUSTAIN_CHR))) {
 	/* Clear number of items to list, and items listed. */
 	attr_num = 0;
 	attr_listed = 0;
-      
+
 	/* How many attributes need to be listed? */
-	if (flags & (OF_SUSTAIN_STR)) attr_num++;
-	if (flags & (OF_SUSTAIN_INT)) attr_num++;
-	if (flags & (OF_SUSTAIN_WIS)) attr_num++;
-	if (flags & (OF_SUSTAIN_DEX)) attr_num++;
-	if (flags & (OF_SUSTAIN_CON)) attr_num++;
-	if (flags & (OF_SUSTAIN_CHR)) attr_num++;
-      
-	/* Special case:  sustain all stats */
-	if (attr_num == 6)
-	{
+	if (of_has(flags, OF_SUSTAIN_STR))
+	    attr_num++;
+	if (of_has(flags, OF_SUSTAIN_INT))
+	    attr_num++;
+	if (of_has(flags, OF_SUSTAIN_WIS))
+	    attr_num++;
+	if (of_has(flags, OF_SUSTAIN_DEX))
+	    attr_num++;
+	if (of_has(flags, OF_SUSTAIN_CON))
+	    attr_num++;
+	if (of_has(flags, OF_SUSTAIN_CHR))
+	    attr_num++;
+
+	/* Special case: sustain all stats */
+	if (attr_num == 6) {
 	    strcat(desc, "Your stats are all sustained.  ");
-	}
-	else
-	{
+	} else {
 	    strcat(desc, "Your");
-	  
+
 	    /* Loop for number of attributes in this group. */
-	    for (j = 0; j < 6; j++)
-	    {
+	    for (j = 0; j < 6; j++) {
 		bool list_ok = FALSE;
-	      
-		if ((j == 0) && (flags & (OF_SUSTAIN_STR))) list_ok = TRUE;
-		if ((j == 1) && (flags & (OF_SUSTAIN_INT))) list_ok = TRUE;
-		if ((j == 2) && (flags & (OF_SUSTAIN_WIS))) list_ok = TRUE;
-		if ((j == 3) && (flags & (OF_SUSTAIN_DEX))) list_ok = TRUE;
-		if ((j == 4) && (flags & (OF_SUSTAIN_CON))) list_ok = TRUE;
-		if ((j == 5) && (flags & (OF_SUSTAIN_CHR))) list_ok = TRUE;
-	      
-		if (!list_ok) continue;
-	      
+
+		if ((j == 0) && (of_has(flags, OF_SUSTAIN_STR)))
+		    list_ok = TRUE;
+		if ((j == 1) && (of_has(flags, OF_SUSTAIN_INT)))
+		    list_ok = TRUE;
+		if ((j == 2) && (of_has(flags, OF_SUSTAIN_WIS)))
+		    list_ok = TRUE;
+		if ((j == 3) && (of_has(flags, OF_SUSTAIN_DEX)))
+		    list_ok = TRUE;
+		if ((j == 4) && (of_has(flags, OF_SUSTAIN_CON)))
+		    list_ok = TRUE;
+		if ((j == 5) && (of_has(flags, OF_SUSTAIN_CHR)))
+		    list_ok = TRUE;
+
+		if (!list_ok)
+		    continue;
+
 		/* Listing another attribute. */
 		attr_listed++;
-	      
+
 		/* Commas separate members of a list of more than two. */
-		if ((attr_num > 2) && (attr_listed > 1)) strcat(desc, ",");
-	      
+		if ((attr_num > 2) && (attr_listed > 1))
+		    strcat(desc, ",");
+
 		/* "and" before final member of a list of more than one. */
-		if ((attr_num > 1) && (j != 0))
-		{
-		    if (attr_num == attr_listed) strcat(desc, " and");
+		if ((attr_num > 1) && (j != 0)) {
+		    if (attr_num == attr_listed)
+			strcat(desc, " and");
 		}
-	      
+
 		/* List the attribute description, in its proper place. */
-		if (j == 0) strcat(desc, " strength");
-		if (j == 1) strcat(desc, " intelligence");
-		if (j == 2) strcat(desc, " wisdom");
-		if (j == 3) strcat(desc, " dexterity");
-		if (j == 4) strcat(desc, " constitution");
-		if (j == 5) strcat(desc, " charisma");
+		if (j == 0)
+		    strcat(desc, " strength");
+		if (j == 1)
+		    strcat(desc, " intelligence");
+		if (j == 2)
+		    strcat(desc, " wisdom");
+		if (j == 3)
+		    strcat(desc, " dexterity");
+		if (j == 4)
+		    strcat(desc, " constitution");
+		if (j == 5)
+		    strcat(desc, " charisma");
 	    }
 	}
-      
+
 	/* Pluralize the verb. */
-	if (attr_num > 1) strcat(desc, " are");
-	else strcat(desc, " is");
-      
+	if (attr_num > 1)
+	    strcat(desc, " are");
+	else
+	    strcat(desc, " is");
+
 	/* End sentence.  Go to next line. */
 	strcat(desc, " sustained. ");
     }
-  
+
     /* Clear number of items to list, and items listed. */
     attr_num = 0;
     attr_listed = 0;
-  
+
     /* Elemental immunities. */
     for (j = 0; j < 4; j++)
-	if (rp_ptr->percent_res[j] == RES_BOOST_IMMUNE) attr_num++;
-  
-    if (attr_num > 0)
-    {
+	if (rp_ptr->percent_res[j] == RES_BOOST_IMMUNE)
+	    attr_num++;
+
+    if (attr_num > 0) {
 	strcat(desc, "You are immune to ");
-      
+
 	/* Loop for number of attributes in this group. */
-	for (j = 0; j < 4; j++)
-	{
-	    if (rp_ptr->percent_res[j] > RES_BOOST_IMMUNE) continue;
-	  
+	for (j = 0; j < 4; j++) {
+	    if (rp_ptr->percent_res[j] > RES_BOOST_IMMUNE)
+		continue;
+
 	    /* List the attribute description, in its proper place. */
-	    if (j == 0) strcat(desc, "acid");
-	    if (j == 1) strcat(desc, "electricity");
-	    if (j == 2) strcat(desc, "fire");
-	    if (j == 3) strcat(desc, "frost");
-	    if (attr_num >= 3) strcat(desc, ", ");
-	    if (attr_num == 2) strcat(desc, " and ");
-	    if (attr_num == 1) strcat(desc, ". ");
+	    if (j == 0)
+		strcat(desc, "acid");
+	    if (j == 1)
+		strcat(desc, "electricity");
+	    if (j == 2)
+		strcat(desc, "fire");
+	    if (j == 3)
+		strcat(desc, "frost");
+	    if (attr_num >= 3)
+		strcat(desc, ", ");
+	    if (attr_num == 2)
+		strcat(desc, " and ");
+	    if (attr_num == 1)
+		strcat(desc, ". ");
 	    attr_num--;
 	}
-      
+
 	/* End sentence.  Go to next line. */
 	strcat(desc, ". ");
     }
-  
-  
+
+
     /* Check for resists and vulnerabilities */
-    for (j = 0; j < MAX_P_RES; j++)
-    {
+    for (j = 0; j < MAX_P_RES; j++) {
 	if ((rp_ptr->percent_res[j] < 100) && (rp_ptr->percent_res[j] > 0))
 	    res = TRUE;
 	else if (rp_ptr->percent_res[j] > 100)
 	    vul = TRUE;
     }
-  
-  
+
+
     /* Resistances. */
-    if (res)
-    {
+    if (res) {
 	/* Clear number of items to list, and items listed. */
 	attr_num = 0;
 	attr_listed = 0;
-      
-	for (j = 0; j < MAX_P_RES; j++)
-	{
+
+	for (j = 0; j < MAX_P_RES; j++) {
 	    if ((rp_ptr->percent_res[j] < 100) && (rp_ptr->percent_res[j] > 0))
 		attr_num++;
 	}
-      
+
 	/* How many attributes need to be listed? */
 	strcat(desc, "You resist");
-      
+
 	/* Loop for number of attributes in this group. */
-	for (j = 0; j < MAX_P_RES; j++)
-	{
+	for (j = 0; j < MAX_P_RES; j++) {
 	    bool list_ok = FALSE;
-	  
-	    if ((rp_ptr->percent_res[j] < 100) && 
-		(rp_ptr->percent_res[j] > 0))
+
+	    if ((rp_ptr->percent_res[j] < 100) && (rp_ptr->percent_res[j] > 0))
 		list_ok = TRUE;
-	    if (!list_ok) continue;
-	  
+	    if (!list_ok)
+		continue;
+
 	    /* Listing another attribute. */
 	    attr_listed++;
-	  
+
 	    /* Commas separate members of a list of more than two. */
-	    if ((attr_num > 2) && (attr_listed > 1)) 
+	    if ((attr_num > 2) && (attr_listed > 1))
 		strcat(desc, ",");
-	  
+
 	    /* "and" before final member of a list of more than one. */
-	    if ((attr_num > 1) && (j != 0))
-	    {
-		if (attr_num == attr_listed) 
+	    if ((attr_num > 1) && (j != 0)) {
+		if (attr_num == attr_listed)
 		    strcat(desc, " and");
 	    }
-	  
+
 	    /* List the attribute description, in its proper place. */
-	    if (j == P_RES_ACID) strcat(desc, " acid");
-	    if (j == P_RES_ELEC) strcat(desc, " electricity");
-	    if (j == P_RES_FIRE) strcat(desc, " fire");
-	    if (j == P_RES_COLD) strcat(desc, " frost");
-	    if (j == P_RES_POIS) strcat(desc, " poison");
-	    if (j == P_RES_LITE) strcat(desc, " light");
-	    if (j == P_RES_DARK) strcat(desc, " darkness");
-	    if (j == P_RES_CONFU) strcat(desc, " confusion");
-	    if (j == P_RES_SOUND) strcat(desc, " sound");
-	    if (j == P_RES_SHARD) strcat(desc, " shards");
-	    if (j == P_RES_NEXUS) strcat(desc, " nexus");
-	    if (j == P_RES_NETHR) strcat(desc, " nether");
-	    if (j == P_RES_CHAOS) strcat(desc, " chaos");
-	    if (j == P_RES_DISEN) strcat(desc, " disenchantment");
-		
+	    if (j == P_RES_ACID)
+		strcat(desc, " acid");
+	    if (j == P_RES_ELEC)
+		strcat(desc, " electricity");
+	    if (j == P_RES_FIRE)
+		strcat(desc, " fire");
+	    if (j == P_RES_COLD)
+		strcat(desc, " frost");
+	    if (j == P_RES_POIS)
+		strcat(desc, " poison");
+	    if (j == P_RES_LITE)
+		strcat(desc, " light");
+	    if (j == P_RES_DARK)
+		strcat(desc, " darkness");
+	    if (j == P_RES_CONFU)
+		strcat(desc, " confusion");
+	    if (j == P_RES_SOUND)
+		strcat(desc, " sound");
+	    if (j == P_RES_SHARD)
+		strcat(desc, " shards");
+	    if (j == P_RES_NEXUS)
+		strcat(desc, " nexus");
+	    if (j == P_RES_NETHR)
+		strcat(desc, " nether");
+	    if (j == P_RES_CHAOS)
+		strcat(desc, " chaos");
+	    if (j == P_RES_DISEN)
+		strcat(desc, " disenchantment");
+
 	    sprintf(buf, "(%d%%)", 100 - rp_ptr->percent_res[j]);
 	    strcat(desc, buf);
 	}
-      
+
 	/* End sentence.  Go to next line. */
 	strcat(desc, ". ");
     }
-  
-  
+
+
     /* Vulnerabilities. */
-    if (vul)
-    {
+    if (vul) {
 	/* Clear number of items to list, and items listed. */
 	attr_num = 0;
 	attr_listed = 0;
-      
-	for (j = 0; j < MAX_P_RES; j++)
-	{
+
+	for (j = 0; j < MAX_P_RES; j++) {
 	    if (rp_ptr->percent_res[j] > 100)
 		attr_num++;
 	}
-      
+
 	strcat(desc, "You are vulnerable to");
-      
+
 	/* Loop for number of attributes in this group. */
-	for (j = 0; j < MAX_P_RES; j++)
-	{
+	for (j = 0; j < MAX_P_RES; j++) {
 	    bool list_ok = FALSE;
-	  
+
 	    if (rp_ptr->percent_res[j] > 100)
 		list_ok = TRUE;
-	  
-	    if (!list_ok) continue;
-	  
+
+	    if (!list_ok)
+		continue;
+
 	    /* Listing another attribute. */
 	    attr_listed++;
-	  
+
 	    /* Commas separate members of a list of more than two. */
-	    if ((attr_num > 2) && (attr_listed > 1)) 
+	    if ((attr_num > 2) && (attr_listed > 1))
 		strcat(desc, ",");
-	  
+
 	    /* "and" before final member of a list of more than one. */
-	    if ((attr_num > 1) && (j != 0))
-	    {
-		if (attr_num == attr_listed) 
+	    if ((attr_num > 1) && (j != 0)) {
+		if (attr_num == attr_listed)
 		    strcat(desc, " and");
 	    }
-	  
+
 	    /* List the attribute description, in its proper place. */
-	    if (j == P_RES_ACID) strcat(desc, " acid");
-	    if (j == P_RES_ELEC) strcat(desc, " electricity");
-	    if (j == P_RES_FIRE) strcat(desc, " fire");
-	    if (j == P_RES_COLD) strcat(desc, " frost");
-	    if (j == P_RES_POIS) strcat(desc, " poison");
-	    if (j == P_RES_LITE) strcat(desc, " light");
-	    if (j == P_RES_DARK) strcat(desc, " darkness");
-	    if (j == P_RES_SOUND) strcat(desc, " sound");
-	    if (j == P_RES_SHARD) strcat(desc, " shards");
-	    if (j == P_RES_NEXUS) strcat(desc, " nexus");
-	    if (j == P_RES_NETHR) strcat(desc, " nether");
-	    if (j == P_RES_CHAOS) strcat(desc, " chaos");
-	    if (j == P_RES_DISEN) strcat(desc, " disenchantment");
-	  
+	    if (j == P_RES_ACID)
+		strcat(desc, " acid");
+	    if (j == P_RES_ELEC)
+		strcat(desc, " electricity");
+	    if (j == P_RES_FIRE)
+		strcat(desc, " fire");
+	    if (j == P_RES_COLD)
+		strcat(desc, " frost");
+	    if (j == P_RES_POIS)
+		strcat(desc, " poison");
+	    if (j == P_RES_LITE)
+		strcat(desc, " light");
+	    if (j == P_RES_DARK)
+		strcat(desc, " darkness");
+	    if (j == P_RES_SOUND)
+		strcat(desc, " sound");
+	    if (j == P_RES_SHARD)
+		strcat(desc, " shards");
+	    if (j == P_RES_NEXUS)
+		strcat(desc, " nexus");
+	    if (j == P_RES_NETHR)
+		strcat(desc, " nether");
+	    if (j == P_RES_CHAOS)
+		strcat(desc, " chaos");
+	    if (j == P_RES_DISEN)
+		strcat(desc, " disenchantment");
+
 	    sprintf(buf, "(%d%%)", rp_ptr->percent_res[j] - 100);
 	    strcat(desc, buf);
 	}
-      
+
 	/* End sentence.  Go to next line. */
 	strcat(desc, ". ");
     }
-  
-  
-  
-  
+
+
+
+
     /* Clear a listing variable. */
     attr_num = 0;
-  
+
     /* Special processing for two "survival resists" */
-    if (flags & (OF_FEARLESS)) attr_num++;
-    if (flags & (OF_SEEING)) attr_num++;
-  
-    if (flags & (OF_FEARLESS))
-    {
+    if (of_has(flags, OF_FEARLESS))
+	attr_num++;
+    if (of_has(flags, OF_SEEING))
+	attr_num++;
+
+    if (of_has(flags, OF_FEARLESS)) {
 	strcat(desc, "You are fearless");
-	if (attr_num == 1) strcat(desc, ".  ");
-	else strcat(desc, ", and");
+	if (attr_num == 1)
+	    strcat(desc, ".  ");
+	else
+	    strcat(desc, ", and");
     }
-  
-    if (flags & (OF_SEEING))
-    {
-	if ((attr_num > 1) && (flags & (OF_FEARLESS))) 
+
+    if (of_has(flags, OF_SEEING)) {
+	if ((attr_num > 1) && (of_has(flags, OF_FEARLESS)))
 	    strcat(desc, " can not be blinded.  ");
-	else strcat(desc, "You can not be blinded.  ");
+	else
+	    strcat(desc, "You can not be blinded.  ");
     }
-  
+
     /* Miscellaneous abilities. */
-    if ((flags & (OF_SLOW_DIGEST)) || (flags & (OF_FEATHER)) || 
-	(flags & (OF_LITE)) || (flags & (OF_REGEN)) || 
-	(flags & (OF_TELEPATHY)) || (flags & (OF_SEE_INVIS)) || 
-	(flags & (OF_FREE_ACT)) || (flags & (OF_HOLD_LIFE)))
-    {
+    if ((of_has(flags, OF_SLOW_DIGEST)) || (of_has(flags, OF_FEATHER))
+	|| (of_has(flags, OF_LITE)) || (of_has(flags, OF_REGEN))
+	|| (of_has(flags, OF_TELEPATHY)) || (of_has(flags, OF_SEE_INVIS))
+	|| (of_has(flags, OF_FREE_ACT)) || (of_has(flags, OF_HOLD_LIFE))) {
 	/* Clear number of items to list, and items listed. */
 	attr_num = 0;
 	attr_listed = 0;
-      
+
 	/* How many attributes need to be listed? */
-	if (flags & (OF_SLOW_DIGEST)) attr_num++;
-	if (flags & (OF_FEATHER)) attr_num++;
-	if (flags & (OF_LITE)) attr_num++;
-	if (flags & (OF_REGEN)) attr_num++;
-	if (flags & (OF_TELEPATHY)) attr_num++;
-	if (flags & (OF_SEE_INVIS)) attr_num++;
-	if (flags & (OF_FREE_ACT)) attr_num++;
-	if (flags & (OF_HOLD_LIFE)) attr_num++;
-      
+	if (of_has(flags, OF_SLOW_DIGEST))
+	    attr_num++;
+	if (of_has(flags, OF_FEATHER))
+	    attr_num++;
+	if (of_has(flags, OF_LITE))
+	    attr_num++;
+	if (of_has(flags, OF_REGEN))
+	    attr_num++;
+	if (of_has(flags, OF_TELEPATHY))
+	    attr_num++;
+	if (of_has(flags, OF_SEE_INVIS))
+	    attr_num++;
+	if (of_has(flags, OF_FREE_ACT))
+	    attr_num++;
+	if (of_has(flags, OF_HOLD_LIFE))
+	    attr_num++;
+
 	strcat(desc, "You");
-      
+
 	/* Loop for number of attributes in this group. */
-	for (j = 0; j < 8; j++)
-	{
+	for (j = 0; j < 8; j++) {
 	    bool list_ok = FALSE;
-	  
-	    if ((j == 0) && (flags & (OF_SLOW_DIGEST))) list_ok = TRUE;
-	    if ((j == 1) && (flags & (OF_FEATHER))) list_ok = TRUE;
-	    if ((j == 2) && (flags & (OF_LITE))) list_ok = TRUE;
-	    if ((j == 3) && (flags & (OF_REGEN))) list_ok = TRUE;
-	    if ((j == 4) && (flags & (OF_TELEPATHY))) list_ok = TRUE;
-	    if ((j == 5) && (flags & (OF_SEE_INVIS))) list_ok = TRUE;
-	    if ((j == 6) && (flags & (OF_FREE_ACT))) list_ok = TRUE;
-	    if ((j == 7) && (flags & (OF_HOLD_LIFE)))list_ok = TRUE;
-	  
-	    if (!list_ok) continue;
-	  
+
+	    if ((j == 0) && (of_has(flags, OF_SLOW_DIGEST)))
+		list_ok = TRUE;
+	    if ((j == 1) && (of_has(flags, OF_FEATHER)))
+		list_ok = TRUE;
+	    if ((j == 2) && (of_has(flags, OF_LITE)))
+		list_ok = TRUE;
+	    if ((j == 3) && (of_has(flags, OF_REGEN)))
+		list_ok = TRUE;
+	    if ((j == 4) && (of_has(flags, OF_TELEPATHY)))
+		list_ok = TRUE;
+	    if ((j == 5) && (of_has(flags, OF_SEE_INVIS)))
+		list_ok = TRUE;
+	    if ((j == 6) && (of_has(flags, OF_FREE_ACT)))
+		list_ok = TRUE;
+	    if ((j == 7) && (of_has(flags, OF_HOLD_LIFE)))
+		list_ok = TRUE;
+
+	    if (!list_ok)
+		continue;
+
 	    /* Listing another attribute. */
 	    attr_listed++;
-	  
+
 	    /* Commas separate members of a list of more than two. */
-	    if ((attr_num > 2) && (attr_listed > 1)) strcat(desc, ",");
-	  
+	    if ((attr_num > 2) && (attr_listed > 1))
+		strcat(desc, ",");
+
 	    /* "and" before final member of a list of more than one. */
-	    if ((attr_num > 1) && (j != 0))
-	    {
-		if (attr_num == attr_listed) strcat(desc, " and");
+	    if ((attr_num > 1) && (j != 0)) {
+		if (attr_num == attr_listed)
+		    strcat(desc, " and");
 	    }
-	  
+
 	    /* List the attribute description, in its proper place. */
-	    if (j == 0) strcat(desc, " digest slowly");
-	    if (j == 1) strcat(desc, " falling gently");
-	    if (j == 2) strcat(desc, " glow with permanent light");
-	    if (j == 3) strcat(desc, " regenerative quickly");
-	    if (j == 4) strcat(desc, " have telepathic powers");
-	    if (j == 5) strcat(desc, " can see invisible monsters");
-	    if (j == 6) strcat(desc, " are immune to paralysis");
-	    if (j == 7) strcat(desc, " are resistant to life draining");
+	    if (j == 0)
+		strcat(desc, " digest slowly");
+	    if (j == 1)
+		strcat(desc, " falling gently");
+	    if (j == 2)
+		strcat(desc, " glow with permanent light");
+	    if (j == 3)
+		strcat(desc, " regenerative quickly");
+	    if (j == 4)
+		strcat(desc, " have telepathic powers");
+	    if (j == 5)
+		strcat(desc, " can see invisible monsters");
+	    if (j == 6)
+		strcat(desc, " are immune to paralysis");
+	    if (j == 7)
+		strcat(desc, " are resistant to life draining");
 	}
-      
+
 	/* End sentence.  Go to next line. */
 	strcat(desc, ".");
     }
-  
-    return(desc);
-  
+
+    return (desc);
+
 }
 
-static char view_spec_tag(menu_type *menu, int oid)
+static char view_spec_tag(menu_type * menu, int oid)
 {
     return I2A(oid);
 }
@@ -1186,33 +1255,28 @@ static char view_spec_tag(menu_type *menu, int oid)
 /**
  * Display an entry on the gain specialty menu
  */
-void view_spec_display(menu_type *menu, int oid, bool cursor, int row, 
-		       int col, int width)
+void view_spec_display(menu_type * menu, int oid, bool cursor, int row, int col,
+		       int width)
 {
     int x, y;
     char buf[80];
     byte color;
 
-    if (oid < class_start)
-    {
-	sprintf(buf, "Specialty Ability: %s", 
+    if (oid < class_start) {
+	sprintf(buf, "Specialty Ability: %s",
 		specialties[p_ptr->specialty_order[oid]].name);
 	color = cursor ? TERM_L_GREEN : TERM_GREEN;
-    }
-    else if (oid < race_start)
-    {
-	sprintf(buf, "Class: %s", 
-		specialties[SP_CLASS_START + class_list[oid - class_start]].name);
+    } else if (oid < race_start) {
+	sprintf(buf, "Class: %s",
+		specialties[PF_CLASS_START +
+			    class_list[oid - class_start]].name);
 	color = cursor ? TERM_L_UMBER : TERM_UMBER;
-    }
-    else if (oid < race_other_start)
-    {
-	sprintf(buf, "Racial: %s", 
-		specialties[SP_RACIAL_START + racial_list[oid - race_start]].name);
+    } else if (oid < race_other_start) {
+	sprintf(buf, "Racial: %s",
+		specialties[PF_RACIAL_START +
+			    racial_list[oid - race_start]].name);
 	color = cursor ? TERM_YELLOW : TERM_ORANGE;
-    }
-    else
-    {
+    } else {
 	sprintf(buf, "Racial: Other");
 	color = cursor ? TERM_YELLOW : TERM_ORANGE;
     }
@@ -1220,26 +1284,26 @@ void view_spec_display(menu_type *menu, int oid, bool cursor, int row,
     c_put_str(color, buf, row, col);
 
     /* Help text */
-    if (cursor)
-    {
+    if (cursor) {
 	/* Locate the cursor */
 	Term_locate(&x, &y);
-  
+
 	/* Move the cursor */
 	Term_gotoxy(3, total_known + 2);
-	text_out_indent = 3; 
-	if (oid < class_start) 
-	    text_out_to_screen(TERM_L_BLUE, 
+	text_out_indent = 3;
+	if (oid < class_start)
+	    text_out_to_screen(TERM_L_BLUE,
 			       specialties[p_ptr->specialty_order[oid]].desc);
-	else if (oid < race_start) 
-	    text_out_to_screen(TERM_L_BLUE, 
-			       specialties[SP_CLASS_START + 
-					      class_list[oid - class_start]].desc);
-	else if (oid < race_other_start) 
-	    text_out_to_screen(TERM_L_BLUE, 
-			       specialties[SP_RACIAL_START + 
-					      racial_list[oid - race_start]].desc);
-	else text_out_to_screen(TERM_L_BLUE, race_other_desc);
+	else if (oid < race_start)
+	    text_out_to_screen(TERM_L_BLUE,
+			       specialties[PF_CLASS_START +
+					   class_list[oid - class_start]].desc);
+	else if (oid < race_other_start)
+	    text_out_to_screen(TERM_L_BLUE,
+			       specialties[PF_RACIAL_START +
+					   racial_list[oid - race_start]].desc);
+	else
+	    text_out_to_screen(TERM_L_BLUE, race_other_desc);
 
 	/* Restore */
 	Term_gotoxy(x, y);
@@ -1258,25 +1322,24 @@ void view_spec_menu(void)
     int cursor = 0;
 
     bool done = FALSE;
-  
+
     char buf[80];
 
     /* Save the screen and clear it */
     screen_save();
-  
+
     /* Prompt choices */
     sprintf(buf, "Race, class, and specialties abilities (%c-%c, ESC=exit): ",
 	    I2A(0), I2A(total_known - 1));
-  
+
     /* Set up the menu */
     WIPE(&menu, menu);
     menu.title = buf;
     menu.cmd_keys = " \n\r";
     menu.count = total_known;
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
-  
-    while (!done)
-    {
+
+    while (!done) {
 	evt = menu_select(&menu, cursor);
 	done = (evt.type == EVT_ESCAPE);
     }
@@ -1296,57 +1359,52 @@ void view_specialties(void)
     int i;
 
     /* Count the number of specialties we know */
-    for (i = 0, spec_known = 0; i < MAX_SPECIALTIES; i++)
-    {
-	if (p_ptr->specialty_order[i] != SP_NO_SPECIALTY) spec_known++;
+    for (i = 0, spec_known = 0; i < MAX_SPECIALTIES; i++) {
+	if (p_ptr->specialty_order[i] != PF_NO_SPECIALTY)
+	    spec_known++;
     }
-  
+
     total_known = spec_known;
-  
+
     /* Count the number of class powers we have */
-    for (i = PF_CLASS_START, class_known = 0; i < PF_MAX; i++)
-    {
-	if (player_class_has(i))
-	{
+    for (i = PF_CLASS_START, class_known = 0; i < PF_MAX; i++) {
+	if (player_class_has(i)) {
 	    class_list[class_known++] = i;
 	}
     }
-  
+
     total_known += class_known;
-  
+
     /* Count the number of racial powers we have */
-    for (i = PF_RACE_START, racial_known = 0; i < PF_CLASS_START; i++)
-    {
-	if (player_race_has(i))
-	{
+    for (i = PF_RACE_START, racial_known = 0; i < PF_CLASS_START; i++) {
+	if (player_race_has(i)) {
 	    racial_list[racial_known++] = i;
 	}
     }
-  
+
     total_known += racial_known;
-  
+
     /* Standard racial flags */
-    if (rp_ptr->flags_obj | rp_ptr->flags_curse)
-    {
+    if (rp_ptr->flags_obj | rp_ptr->flags_curse) {
 	total_known++;
 	view_abilities_aux(race_other_desc);
     }
-  
+
     class_start = spec_known;
     race_start = spec_known + class_known;
     race_other_start = spec_known + class_known + racial_known;
-  
+
     /* Buttons */
     normal_screen = FALSE;
     update_statusline();
-  
+
     /* View choices until user exits */
     view_spec_menu();
-  
+
     /* Buttons */
     normal_screen = TRUE;
     update_statusline();
-  
+
     /* exit */
     return;
 }
@@ -1398,4 +1456,3 @@ void do_cmd_specialty(void)
 
     return;
 }
-
