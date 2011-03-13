@@ -638,7 +638,7 @@ static bool key_confirm_command(unsigned char c)
 		char verify_inscrip[] = "^*";
 		unsigned n;
 
-		object_type *o_ptr = &inventory[i];
+		object_type *o_ptr = &p_ptr->inventory[i];
 		if (!o_ptr->k_idx) continue;
 
 		/* Set up string to look for, e.g. "^d" */

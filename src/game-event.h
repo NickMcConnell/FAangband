@@ -15,8 +15,10 @@ typedef enum game_event_type
 	EVENT_PLAYERLEVEL,	/* Player's level has changed */
 	EVENT_PLAYERTITLE,	/* Player's title has changed */
 	EVENT_GOLD,		/* Player's gold amount. */
+	EVENT_MONSTERMANA,	/* Observed monster's mana level. */
 	EVENT_MONSTERHEALTH,	/* Observed monster's health level. */
 	EVENT_DUNGEONLEVEL,	/* Dungeon depth */
+	EVENT_SHAPECHANGE,	/* Player's shape */
 	EVENT_PLAYERSPEED,	/* Player's speed */
 	EVENT_RACE_CLASS,	/* Race or Class */
 	EVENT_STUDYSTATUS,	/* "Study" availability */

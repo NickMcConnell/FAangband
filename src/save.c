@@ -1159,7 +1159,7 @@ static bool wr_savefile_new(void)
   /* Write the inventory */
   for (i = 0; i < INVEN_TOTAL; i++)
     {
-      object_type *o_ptr = &inventory[i];
+      object_type *o_ptr = &p_ptr->inventory[i];
       
       /* Skip non-objects */
       if (!o_ptr->k_idx) continue;
@@ -1349,7 +1349,7 @@ void check_item_sets(void)
   for (j = INVEN_WIELD;j <= INVEN_FEET;j++)
     {
       object_type *o_ptr;
-      o_ptr = &inventory[j];
+      o_ptr = &p_ptr->inventory[j];
       
       /* Is it an artifact? */
       if (o_ptr->name1)

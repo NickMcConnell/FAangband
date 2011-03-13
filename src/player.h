@@ -3,6 +3,16 @@
 #ifndef PLAYER_PLAYER_H
 #define PLAYER_PLAYER_H
 
+/* play-calcs.c */
+extern const byte adj_dex_dis[STAT_RANGE];
+extern const byte adj_dex_ta[STAT_RANGE];
+extern const byte adj_str_td[STAT_RANGE];
+extern const byte adj_dex_th[STAT_RANGE];
+extern const byte adj_str_wgt[STAT_RANGE];
+extern const byte adj_str_hold[STAT_RANGE];
+extern const byte adj_str_blow[STAT_RANGE];
+
+
 /* spell.c */
 s16b modify_stat_value(int value, int amount);
 int spell_collect_from_book(const object_type *o_ptr, int spells[PY_MAX_SPELLS]);
@@ -23,7 +33,7 @@ bool dec_timed(int idx, int v, bool notify);
 bool clear_timed(int idx, bool notify);
 bool set_food(int v);
 
-/* util.c */
+/* play-util.c */
 bool player_can_cast(void);
 bool player_can_study(void);
 bool player_can_read(void);

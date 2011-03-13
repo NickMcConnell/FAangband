@@ -56,16 +56,15 @@
 	bool save_target_set;
 
 #define TARGET_PRESERVE \
-	if ((dir == 5) && target_okay() && p_ptr->target_who) \
+    if ((dir == 5) && target_okay() && target_get_monster())	\
 	{ \
-		save_target_y = p_ptr->target_row; \
-		save_target_x = p_ptr->target_col; \
+	    target_get(&save_target_x, &save_target_y); \
 		save_target_set = TRUE; \
 	} \
 	else save_target_set = FALSE;
 
 #define TARGET_RESTORE \
-	if (save_target_set && !p_ptr->target_set) \
+    if (save_target_set && !target_is_set())				\
 		target_set_location(save_target_y, save_target_x);
 
 /*
@@ -971,7 +970,6 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir, int beam,
 		p_ptr->csp_frac = 0;
 		msg_print("Your magical powers are completely restored!");
 		p_ptr->redraw |= (PR_MANA);
-		p_ptr->window |= (PW_PLAYER_0 | PW_PLAYER_1);
 		*ident = TRUE;
 	    }
 	    return TRUE;
@@ -2074,9 +2072,11 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir, int beam,
 
     case EF_DELVING:
 	{
+	    int ty, tx;
+	    target_get(&tx, &ty);
+
 	    /* Aimed at oneself, this rod creates a room. */
-	    if ((dir == 5) && (p_ptr->target_row == p_ptr->py)
-		&& (p_ptr->target_col == p_ptr->px)) {
+	    if ((dir == 5) && (ty == p_ptr->py)	&& (tx == p_ptr->px)) {
 		/* Lots of damage to creatures of stone. */
 		fire_sphere(GF_KILL_WALL, 0, 300, 4, 20);
 	    }
@@ -3480,20 +3480,21 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir, int beam,
     case EF_ENLIST_EARTH:
 	{
 	    int m_idx, targ_y, targ_x, group;
+	    int targ = target_get_monster();
 
 	    msg_print("You call on the Earth to bring forth allies!");
 
 	    /* Must target a monster */
 	    if (!get_aim_dir(&dir))
 		return FALSE;
-	    if (p_ptr->target_who <= 0) {
+	    if (targ <= 0) {
 		msg_print("You must target a monster.");
 		return FALSE;
 	    }
 
-	    targ_y = m_list[p_ptr->target_who].fy;
-	    targ_x = m_list[p_ptr->target_who].fx;
-	    group = m_list[p_ptr->target_who].group;
+	    targ_y = m_list[targ].fy;
+	    targ_x = m_list[targ].fx;
+	    group = m_list[targ].group;
 
 	    /* Summon golems */
 	    summon_specific(targ_y, targ_x, FALSE, p_ptr->depth, SUMMON_GOLEM);
@@ -3506,7 +3507,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir, int beam,
 		if ((distance(targ_y, targ_x, m_ptr->fy, m_ptr->fx) < 7)
 		    && (r_ptr->d_char = 'g')
 		    && (!(rf_has(r_ptr->flags, RF_DRAGON))))
-		    m_ptr->hostile = p_ptr->target_who;
+		    m_ptr->hostile = targ;
 	    }
 
 	    o_ptr->timeout = 3000;
@@ -3542,7 +3543,6 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir, int beam,
 		}
 		msg_print("Magical power flows from your staff.");
 		p_ptr->redraw |= (PR_MANA);
-		p_ptr->window |= (PW_PLAYER_0 | PW_PLAYER_1);
 		o_ptr->timeout = randint0(10) + 15;
 	    }
 	    return TRUE;

@@ -1632,7 +1632,7 @@ static int find_inven(object_type * o_ptr)
 
     /* Similar slot? */
     for (j = 0; j < INVEN_PACK; j++) {
-	object_type *j_ptr = &inventory[j];
+	object_type *j_ptr = &p_ptr->inventory[j];
 
 	/* Skip non-objects */
 	if (!j_ptr->k_idx)
@@ -1810,10 +1810,10 @@ static void store_purchase(void)
 
 	    /* Hack -- Apply autoinscriptions if we become aware of the object */
 	    if (!aware)
-		apply_autoinscription(&inventory[item_new]);
+		apply_autoinscription(&p_ptr->inventory[item_new]);
 
 	    /* Describe the final result */
-	    object_desc(o_name, &inventory[item_new], TRUE, 3);
+	    object_desc(o_name, &p_ptr->inventory[item_new], TRUE, 3);
 
 	    /* Message */
 	    msg_format("You have %s (%c).", o_name, index_to_label(item_new));
@@ -1901,7 +1901,7 @@ static void store_purchase(void)
 	item_new = inven_carry(i_ptr);
 
 	/* Describe just the result */
-	object_desc(o_name, &inventory[item_new], TRUE, 3);
+	object_desc(o_name, &p_ptr->inventory[item_new], TRUE, 3);
 
 	/* Message */
 	msg_format("You have %s (%c).", o_name, index_to_label(item_new));
@@ -1981,7 +1981,7 @@ static void store_sell(void)
 
     /* Get the item (in the pack) */
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
     /* Get the item (on the floor) */
@@ -2107,8 +2107,8 @@ static void store_sell(void)
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1);
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 
 	/* Get local object */
 	i_ptr = &object_type_body;
@@ -3057,10 +3057,10 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 	handle_stuff();
 
 	/* Pack Overflow XXX XXX XXX */
-	if (inventory[INVEN_PACK].k_idx) {
+	if (p_ptr->inventory[INVEN_PACK].k_idx) {
 	    int item = INVEN_PACK;
 
-	    object_type *o_ptr = &inventory[item];
+	    object_type *o_ptr = &p_ptr->inventory[item];
 
 	    /* Hack -- Flee from the store */
 	    if (st_ptr->type != STORE_HOME) {
@@ -3176,9 +3176,6 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 
     /* Redraw map */
     p_ptr->redraw |= (PR_MAP);
-
-    /* Window stuff */
-    p_ptr->window |= (PW_OVERHEAD);
 }
 
 /**

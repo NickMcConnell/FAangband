@@ -64,9 +64,6 @@ static void regenhp(int percent)
     if (old_chp != p_ptr->chp) {
 	/* Redraw */
 	p_ptr->redraw |= (PR_HP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_PLAYER_0 | PW_PLAYER_1);
     }
 }
 
@@ -105,9 +102,6 @@ static void regenmana(int percent)
     if (old_csp != p_ptr->csp) {
 	/* Redraw */
 	p_ptr->redraw |= (PR_MANA);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_PLAYER_0 | PW_PLAYER_1);
     }
 }
 
@@ -590,18 +584,20 @@ static void process_world(void)
     }
 
     /* Timed temporary elemental brands. -LM- */
-    if ((p_ptr->ele_attack) && (!extend_magic)) {
-	p_ptr->ele_attack--;
-
-	/* Clear all temporary elemental brands. */
-	if (!p_ptr->ele_attack)
-	    set_ele_attack(0, 0);
-
-	/* Redraw the state */
-	p_ptr->redraw |= (PR_STATUS);
-
-	/* Handle stuff */
-	handle_stuff();
+    if ((p_ptr->timed[TMD_ATT_ACID]) && (!extend_magic)) {
+	(void) dec_timed(TMD_ATT_ACID, 1, FALSE);
+    }
+    if ((p_ptr->timed[TMD_ATT_ELEC]) && (!extend_magic)) {
+	(void) dec_timed(TMD_ATT_ELEC, 1, FALSE);
+    }
+    if ((p_ptr->timed[TMD_ATT_FIRE]) && (!extend_magic)) {
+	(void) dec_timed(TMD_ATT_FIRE, 1, FALSE);
+    }
+    if ((p_ptr->timed[TMD_ATT_COLD]) && (!extend_magic)) {
+	(void) dec_timed(TMD_ATT_COLD, 1, FALSE);
+    }
+    if ((p_ptr->timed[TMD_ATT_COLD]) && (!extend_magic)) {
+	(void) dec_timed(TMD_ATT_COLD, 1, FALSE);
     }
 
     /* Timed infra-vision */
@@ -774,7 +770,7 @@ static void process_world(void)
 
 	/* check all equipment for the Black Breath flag. */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
-	    o_ptr = &inventory[i];
+	    o_ptr = &p_ptr->inventory[i];
 
 	    /* Skip non-objects */
 	    if (!o_ptr->k_idx)
@@ -837,8 +833,7 @@ static void process_world(void)
 
 	    /* Hack -- notice interesting fuel steps */
 	    if ((o_ptr->pval < 100) || (!(o_ptr->pval % 100))) {
-		/* Window stuff */
-		p_ptr->window |= (PW_EQUIP);
+		p_ptr->redraw |= (PR_EQUIP);
 	    }
 
 	    /* Hack -- Special treatment when blind */
@@ -888,7 +883,7 @@ static void process_world(void)
     /* Process equipment */
     for (j = 0, i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 	/* Get the object */
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	/* Skip non-objects */
 	if (!o_ptr->k_idx)
@@ -909,15 +904,15 @@ static void process_world(void)
 
     /* Notice changes */
     if (j) {
-	/* Window stuff */
-	p_ptr->window |= (PW_EQUIP);
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_EQUIP);
     }
 
     /* Recharge rods.  Rods now use timeout to control charging status, and
      * each charging rod in a stack decreases the stack's timeout by one per
      * turn. -LM- */
     for (j = 0, i = 0; i < INVEN_PACK; i++) {
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 	k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Skip non-objects */
@@ -962,8 +957,8 @@ static void process_world(void)
 	/* Combine pack */
 	p_ptr->notice |= (PN_COMBINE);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN);
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_INVEN);
     }
 
   /*** Process Objects ***/
@@ -1128,9 +1123,6 @@ static void process_world(void)
 
 	/* Redraw mana */
 	p_ptr->redraw |= (PR_MANA);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_PLAYER_0 | PW_PLAYER_1);
     }
 
     /* Drain a random stat */
@@ -1187,9 +1179,6 @@ static void process_world(void)
 
 		    /* Combine / Reorder the pack */
 		    p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-		    /* Window stuff */
-		    p_ptr->window |= (PW_INVEN);
 
 		    /* Not more than one inventory slot affected. */
 		    break;
@@ -1372,11 +1361,11 @@ static void process_player_aux(void)
 	    /* Memorize castings */
 	    old_r_cast_spell = l_ptr->cast_spell;
 
-	    /* Window stuff */
-	    p_ptr->window |= (PW_MONSTER);
+	    /* Redraw stuff */
+	    p_ptr->redraw |= (PP_MONSTER);
 
 	    /* Window stuff */
-	    window_stuff();
+	    redraw_stuff();
 	}
     }
 }
@@ -1576,7 +1565,7 @@ static void process_player(void)
 
 
 	/* Hack -- Pack Overflow */
-	if (inventory[INVEN_PACK - p_ptr->pack_size_reduce].k_idx) {
+	if (p_ptr->inventory[INVEN_PACK - p_ptr->pack_size_reduce].k_idx) {
 	    int item;
 
 	    for (item = INVEN_PACK;
@@ -1586,7 +1575,7 @@ static void process_player(void)
 		object_type *o_ptr;
 
 		/* Access the slot to be dropped */
-		o_ptr = &inventory[item];
+		o_ptr = &p_ptr->inventory[item];
 
 		/* Skip non-objects */
 		if (!o_ptr->k_idx)
@@ -1646,7 +1635,7 @@ static void process_player(void)
 	    p_ptr->command_see = TRUE;
 
 	/* Hack - update visible monster list */
-	p_ptr->window |= (PW_MONLIST | PW_ITEMLIST);
+	p_ptr->redraw |= (PR_MONLIST | PR_ITEMLIST);
 
 	/* Assume free turn */
 	p_ptr->energy_use = 0;
@@ -1713,8 +1702,7 @@ static void process_player(void)
 
 	    /* Mega hack - complete redraw if big graphics */
 	    if ((tile_width > 1) || (tile_height > 1))
-		p_ptr->redraw |=
-		    (PR_WIPE | PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY);
+		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY);
 
 	}
 
@@ -1989,7 +1977,8 @@ void idle_update(void)
  *
  * This function will not exit until the level is completed,
  * the user dies, or the game is terminated.
- */ static void dungeon(void)
+ */ 
+static void dungeon(void)
 {
     int py = p_ptr->py;
     int px = p_ptr->px;
@@ -2101,20 +2090,14 @@ void idle_update(void)
     /* Redraw dungeon */
     p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 
-    /* Window stuff */
-    p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1);
+    /* Redraw stuff */
+    p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 
-    /* Window stuff */
-    p_ptr->window |= (PW_MONSTER);
-
-    /* Window stuff */
-    p_ptr->window |= (PW_OVERHEAD | PW_MONLIST | PW_ITEMLIST);
+    /* Redraw stuff */
+    p_ptr->redraw |= (PR_MONSTER | PR_MONLIST | PR_ITEMLIST);
 
     /* Redraw stuff */
     redraw_stuff();
-
-    /* Redraw stuff */
-    window_stuff();
 
     update_stuff();
 
@@ -2131,14 +2114,14 @@ void idle_update(void)
 
     /* Make basic mouse buttons */
     normal_screen = TRUE;
-    (void) button_add("ESC", ESCAPE);
-    (void) button_add("Ent", '\r');
-    (void) button_add("Spc", ' ');
-    (void) button_add("Rpt", 'n');
-    (void) button_add("Std", ',');
-    (void) button_add("Inv", '|');
-    (void) button_add("Rest", 'R');
-    (void) button_add("Mgc", 'm');
+    (void) button_add("[ESC]", ESCAPE);
+    (void) button_add("[Ent]", '\r');
+    (void) button_add("[Spc]", ' ');
+    (void) button_add("[Rpt]", 'n');
+    (void) button_add("[Std]", ',');
+    (void) button_add("[Inv]", '|');
+    (void) button_add("[Rest]", 'R');
+    (void) button_add("[Mgc]", 'm');
 
     /* Redraw buttons */
     p_ptr->redraw |= (PR_BUTTONS);
@@ -2533,14 +2516,12 @@ static void process_some_user_pref_files(void)
     /* Initialize the artifact allocation lists */
     init_artifacts();
 
-    /* Window stuff */
-    p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1);
+	/* Tell the UI we've started. */
+	event_signal(EVENT_ENTER_GAME);
 
-    /* Window stuff */
-    p_ptr->window |= (PW_MONSTER);
-
-    /* Window stuff */
-    window_stuff();
+    /* Redraw stuff */
+    p_ptr->redraw |= (PR_INVEN | PR_EQUIP | PR_MESSAGE | PR_MONSTER);
+    redraw_stuff();
 
     /* Hack - load prefs properly */
     reset_visuals(TRUE);

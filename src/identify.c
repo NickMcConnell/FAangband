@@ -186,15 +186,15 @@ bool has_ego_properties(object_type * o_ptr)
 	return FALSE;
 
     /* A curse matches */
-    if (e_ptr->id_curse & o_ptr->id_curse)
+    if cf_is_inter(e_ptr->id_curse, o_ptr->id_curse)
 	return TRUE;
 
     /* An object flag matches */
-    if (e_ptr->id_obj & o_ptr->id_obj)
+    if of_is_inter(e_ptr->id_obj, o_ptr->id_obj)
 	return TRUE;
 
     /* Another property matches */
-    if (e_ptr->id_other & o_ptr->id_other)
+    if if_is_inter(e_ptr->id_other, o_ptr->id_other)
 	return TRUE;
 
     /* Nothing */
@@ -209,7 +209,7 @@ void label_as_ego(object_type * o_ptr, int item)
 {
     char o_name[120];
     int j;
-    u32b temp_flag;
+    int temp_flag;
     ego_item_type *e_ptr = &e_info[o_ptr->name2];
 
     /* All ego object flags now known */
@@ -221,21 +221,21 @@ void label_as_ego(object_type * o_ptr, int item)
 
     /* Know all ego resists */
     for (j = 0; j < MAX_P_RES; j++) {
-	temp_flag = OBJECT_ID_BASE_RESIST << j;
+	temp_flag = OBJECT_ID_BASE_RESIST + j;
 	if (e_ptr->percent_res[j] != RES_LEVEL_BASE)
 	    if_on(o_ptr->id_other, temp_flag);
     }
 
     /* Know all ego slays */
     for (j = 0; j < MAX_P_SLAY; j++) {
-	temp_flag = OBJECT_ID_BASE_SLAY << j;
+	temp_flag = OBJECT_ID_BASE_SLAY + j;
 	if (e_ptr->multiple_slay[j] != MULTIPLE_BASE)
 	    if_on(o_ptr->id_other, temp_flag);
     }
 
     /* Know all ego brands */
     for (j = 0; j < MAX_P_BRAND; j++) {
-	temp_flag = OBJECT_ID_BASE_BRAND << j;
+	temp_flag = OBJECT_ID_BASE_BRAND + j;
 	if (e_ptr->multiple_brand[j] != MULTIPLE_BASE)
 	    if_on(o_ptr->id_other, temp_flag);
     }
@@ -243,8 +243,8 @@ void label_as_ego(object_type * o_ptr, int item)
     /* Combine / Reorder the pack (later) */
     p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-    /* Window stuff */
-    p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1);
+    /* Redraw stuff */
+    p_ptr->redraw |= (PR_INVEN | PR_EQUIP | PR_BASIC | PR_EXTRA);
 
     /* Handle stuff */
     handle_stuff();
@@ -267,30 +267,23 @@ void label_as_ego(object_type * o_ptr, int item)
 void flags_other(object_type * o_ptr, bitmap *allflags)
 {
     int j;
-    u32b temp_flag;
 
     if_wipe(all_flags);
 
     /* Resists */
-    for (j = 0; j < MAX_P_RES; j++) {
-	temp_flag = OBJECT_ID_BASE_RESIST << j;
+    for (j = 0; j < MAX_P_RES; j++) 
 	if (o_ptr->percent_res[j] != RES_LEVEL_BASE)
-	    if_on(all_flags, temp_flag);
-    }
-
+	    if_on(all_flags, OBJECT_ID_BASE_RESIST + j);
+    
     /* Slays */
-    for (j = 0; j < MAX_P_SLAY; j++) {
-	temp_flag = OBJECT_ID_BASE_SLAY << j;
+    for (j = 0; j < MAX_P_SLAY; j++) 
 	if (o_ptr->multiple_slay[j] != MULTIPLE_BASE)
-	    if_on(all_flags, temp_flag);
-    }
+	    if_on(all_flags, OBJECT_ID_BASE_SLAY + j);
     
     /* Brands */
-    for (j = 0; j < MAX_P_BRAND; j++) {
-	temp_flag = OBJECT_ID_BASE_BRAND << j;
+    for (j = 0; j < MAX_P_BRAND; j++) 
 	if (o_ptr->multiple_brand[j] != MULTIPLE_BASE)
-	    if_on(all_flags, temp_flag);
-    }
+	    if_on(all_flags, OBJECT_ID_BASE_BRAND + j);
 
     /* Others */
     if ((o_ptr->to_h) || is_weapon(o_ptr) || of_has(o_ptr->flags_obj, OF_SHOW_MODS))
@@ -371,7 +364,7 @@ bool known_really(object_type * o_ptr)
 /**
  * Notice random effect curses
  */
-void notice_curse(u32b curse_flag, int item)
+void notice_curse(int curse_flag, int item)
 {
     object_type *o_ptr;
     int i;
@@ -379,14 +372,14 @@ void notice_curse(u32b curse_flag, int item)
 
     if (item) {
 	if (item > 0)
-	    o_ptr = &inventory[item - 1];
+	    o_ptr = &p_ptr->inventory[item - 1];
 	else
 	    o_ptr = &o_list[0 - item];
 
 	already_ego = has_ego_properties(o_ptr);
 
 	if (cf_has(o_ptr->flags_curse, curse_flag)) {
-	    cf_on(o_ptr->id_curse curse_flag);
+	    cf_on(o_ptr->id_curse, curse_flag);
 	    o_ptr->ident |= IDENT_CURSED;
 
 	    /* Ego item? */
@@ -401,7 +394,7 @@ void notice_curse(u32b curse_flag, int item)
     }
 
     for (i = INVEN_WIELD; i <= INVEN_FEET; i++) {
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	already_ego = has_ego_properties(o_ptr);
 
@@ -425,7 +418,7 @@ void notice_curse(u32b curse_flag, int item)
 /**
  * Notice object flags
  */
-void notice_obj(u32b obj_flag, int item)
+void notice_obj(int obj_flag, int item)
 {
     object_type *o_ptr;
     int i;
@@ -433,7 +426,7 @@ void notice_obj(u32b obj_flag, int item)
 
     if (item) {
 	if (item > 0)
-	    o_ptr = &inventory[item - 1];
+	    o_ptr = &p_ptr->inventory[item - 1];
 	else
 	    o_ptr = &o_list[0 - item];
 
@@ -460,7 +453,7 @@ void notice_obj(u32b obj_flag, int item)
     }
 
     for (i = INVEN_WIELD; i <= INVEN_FEET; i++) {
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	already_ego = has_ego_properties(o_ptr);
 
@@ -485,16 +478,15 @@ void notice_obj(u32b obj_flag, int item)
 /**
  * Notice other properties
  */
-void notice_other(bitmap other_flag, int item)
+void notice_other(int other_flag, int item)
 {
     int i, j;
-    bitmap temp_flag;
     bool already_ego = FALSE;
     object_type *o_ptr;
 
     if (item) {
 	if (item > 0)
-	    o_ptr = &inventory[item - 1];
+	    o_ptr = &p_ptr->inventory[item - 1];
 	else
 	    o_ptr = &o_list[0 - item];
 
@@ -502,50 +494,48 @@ void notice_other(bitmap other_flag, int item)
 
 	/* Resists */
 	for (j = 0; j < MAX_P_RES; j++) {
-	    temp_flag = OBJECT_ID_BASE_RESIST << j;
+	    if (other_flag != OBJECT_ID_BASE_RESIST + j) continue;
 	    if (o_ptr->percent_res[j] != RES_LEVEL_BASE) {
-		if_on(o_ptr->id_other, (temp_flag & other_flag));
+		if_on(o_ptr->id_other, other_flag);
 		if (((item - 1) == INVEN_RIGHT) || ((item - 1) == INVEN_LEFT)
 		    || ((item - 1) == INVEN_NECK)) {
-		    if_on(p_ptr->id_other, (temp_flag & other_flag));
+		    if_on(p_ptr->id_other, other_flag);
 		}
 	    }
 	}
 
 	/* Slays */
 	for (j = 0; j < MAX_P_SLAY; j++) {
-	    temp_flag = OBJECT_ID_BASE_SLAY << j;
+	    if (other_flag != OBJECT_ID_BASE_SLAY + j) continue;
 	    if (o_ptr->multiple_slay[j] != MULTIPLE_BASE) {
-		if_on(o_ptr->id_other, (temp_flag & other_flag));
+		if_on(o_ptr->id_other, other_flag);
 		if (((item - 1) == INVEN_RIGHT) || ((item - 1) == INVEN_LEFT)
 		    || ((item - 1) == INVEN_NECK)) {
-		    if_on(p_ptr->id_other, (temp_flag & other_flag));
+		    if_on(p_ptr->id_other, other_flag);
 		}
 	    }
 	}
 
 	/* Brands */
 	for (j = 0; j < MAX_P_BRAND; j++) {
-	    temp_flag = OBJECT_ID_BASE_BRAND << j;
+	    if (other_flag != OBJECT_ID_BASE_BRAND + j) continue;
 	    if (o_ptr->multiple_brand[j] != MULTIPLE_BASE) {
-		if_on(o_ptr->id_other, (temp_flag & other_flag));
+		if_on(o_ptr->id_other, other_flag);
 		if (((item - 1) == INVEN_RIGHT) || ((item - 1) == INVEN_LEFT)
 		    || ((item - 1) == INVEN_NECK)) {
-		    if_on(p_ptr->id_other, (temp_flag & other_flag));
+		    if_on(p_ptr->id_other, other_flag);
 		}
 	    }
 	}
 
 	/* Others */
-	if ((if_has(other_flag, IF_TO_H))
-	    && ((o_ptr->to_h) || is_weapon(o_ptr)))
+	if (if_has(other_flag, IF_TO_H) && ((o_ptr->to_h) || is_weapon(o_ptr)))
 	    if_on(o_ptr->id_other, IF_TO_H);
-	if ((if_has(other_flag, IF_TO_D))
-	    && ((o_ptr->to_d) || is_weapon(o_ptr)))
+	if (if_has(other_flag, IF_TO_D) && ((o_ptr->to_d) || is_weapon(o_ptr)))
 	    if_on(o_ptr->id_other, IF_TO_D);
-	if ((if_has(other_flag, IF_TO_A)) && ((o_ptr->ac) || is_armour(o_ptr)))
+	if (if_has(other_flag, IF_TO_A) && ((o_ptr->ac) || is_armour(o_ptr)))
 	    if_on(o_ptr->id_other, IF_TO_A);
-	if ((if_has(other_flag, IF_AC)) && ((o_ptr->ac) || is_armour(o_ptr)))
+	if (if_has(other_flag, IF_AC) && ((o_ptr->ac) || is_armour(o_ptr)))
 	    if_on(o_ptr->id_other, IF_AC);
 	if (if_has(other_flag, IF_DD_DS))
 	    if_on(o_ptr->id_other, IF_DD_DS);
@@ -562,56 +552,54 @@ void notice_other(bitmap other_flag, int item)
     }
 
     for (i = INVEN_WIELD; i <= INVEN_FEET; i++) {
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	already_ego = has_ego_properties(o_ptr);
 
 	/* Resists */
 	for (j = 0; j < MAX_P_RES; j++) {
-	    temp_flag = OBJECT_ID_BASE_RESIST << j;
+	    if (other_flag != OBJECT_ID_BASE_RESIST + j) continue;
 	    if (o_ptr->percent_res[j] != RES_LEVEL_BASE) {
-		if_on(o_ptr->id_other, (temp_flag & other_flag));
+		if_on(o_ptr->id_other, other_flag);
 		if ((j == INVEN_RIGHT) || (j == INVEN_LEFT)
 		    || (j == INVEN_NECK)) {
-		    if_on(p_ptr->id_other, (temp_flag & other_flag));
+		    if_on(o_ptr->id_other, other_flag);
 		}
 	    }
 	}
 
 	/* Slays */
 	for (j = 0; j < MAX_P_SLAY; j++) {
-	    temp_flag = OBJECT_ID_BASE_SLAY << j;
+	    if (other_flag != OBJECT_ID_BASE_SLAY + j) continue;
 	    if (o_ptr->multiple_slay[j] != MULTIPLE_BASE) {
-		if_on(o_ptr->id_other, (temp_flag & other_flag));
+		if_on(o_ptr->id_other, other_flag);
 		if ((j == INVEN_RIGHT) || (j == INVEN_LEFT)
 		    || (j == INVEN_NECK)) {
-		    if_on(p_ptr->id_other, (temp_flag & other_flag));
+		    if_on(o_ptr->id_other, other_flag);
 		}
 	    }
 	}
 
 	/* Brands */
 	for (j = 0; j < MAX_P_BRAND; j++) {
-	    temp_flag = OBJECT_ID_BASE_BRAND << j;
+	    if (other_flag != OBJECT_ID_BASE_BRAND + j) continue;
 	    if (o_ptr->multiple_brand[j] != MULTIPLE_BASE) {
-		if_on(o_ptr->id_other, (temp_flag & other_flag));
+		if_on(o_ptr->id_other, other_flag);
 		if ((j == INVEN_RIGHT) || (j == INVEN_LEFT)
 		    || (j == INVEN_NECK)) {
-		    if_on(p_ptr->id_other, (temp_flag & other_flag));
+		    if_on(o_ptr->id_other, other_flag);
 		}
 	    }
 	}
 
 	/* Others */
-	if ((if_has(other_flag, IF_TO_H))
-	    && ((o_ptr->to_h) || is_weapon(o_ptr)))
+	if (if_has(other_flag, IF_TO_H) && ((o_ptr->to_h) || is_weapon(o_ptr)))
 	    if_on(o_ptr->id_other, IF_TO_H);
-	if ((if_has(other_flag, IF_TO_D))
-	    && ((o_ptr->to_d) || is_weapon(o_ptr)))
+	if (if_has(other_flag, IF_TO_D) && ((o_ptr->to_d) || is_weapon(o_ptr)))
 	    if_on(o_ptr->id_other, IF_TO_D);
-	if ((if_has(other_flag, IF_TO_A)) && ((o_ptr->ac) || is_armour(o_ptr)))
+	if (if_has(other_flag, IF_TO_A) && ((o_ptr->ac) || is_armour(o_ptr)))
 	    if_on(o_ptr->id_other, IF_TO_A);
-	if ((if_has(other_flag, IF_AC)) && ((o_ptr->ac) || is_armour(o_ptr)))
+	if (if_has(other_flag, IF_AC) && ((o_ptr->ac) || is_armour(o_ptr)))
 	    if_on(o_ptr->id_other, IF_AC);
 	if (if_has(other_flag, IF_DD_DS))
 	    if_on(o_ptr->id_other, IF_DD_DS);

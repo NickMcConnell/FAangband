@@ -481,8 +481,7 @@ void dimen_door(void)
 	return;
 
     /* grab the target coords. */
-    ny = p_ptr->target_row;
-    nx = p_ptr->target_col;
+    target_get(&nx, &ny);
 
     /* Test for empty floor, forbid vaults or too large a distance, and insure
      * that this spell is never certain. */
@@ -513,7 +512,7 @@ static void rebalance_weapon(void)
     char o_name[120];
 
     /* Select the wielded melee weapon */
-    o_ptr = &inventory[INVEN_WIELD];
+    o_ptr = &p_ptr->inventory[INVEN_WIELD];
 
     /* Nothing to rebalance */
     if (!o_ptr->k_idx) {
@@ -542,8 +541,7 @@ static void rebalance_weapon(void)
 
 	o_ptr->to_h -= (s16b) (2 + randint0(4));
 	o_ptr->to_d -= (s16b) (2 + randint0(4));
-	of_on(o_ptr->flags_curse,
-	      (OBJECT_RAND_BASE_CURSE << randint0(OBJECT_RAND_SIZE_CURSE)));
+	of_on(o_ptr->flags_curse, FLAG_START + randint0(CF_MAX));
 
 	/* Describe */
 	msg_format("Oh no!  A dreadful black aura surrounds your %s!", o_name);

@@ -1364,8 +1364,8 @@ static void choose_basic_theme(int a_idx)
 
     /* Possibly make very powerful artifacts cursed. */
     if ((potential > 6000) && (potential > randint1(30000)))
-	cf_on(a_ptr->flags_curse,
-	      (OBJECT_RAND_BASE_CURSE << randint0(OBJECT_RAND_SIZE_CURSE)));
+	cf_on(a_ptr->flags_curse, FLAG_START + randint0(CF_MAX));
+
     /* Frequently (but not always) assign a basic theme to the artifact. */
     selection = randint0(100);
     switch (k_ptr->tval) {
@@ -3105,7 +3105,7 @@ static void haggle_till_done(int a_idx)
 	if (choice == 3) {
 	    if (a_ptr->percent_res[P_RES_CONFU] >= RES_LEVEL_BASE)
 		get_quality(TRUE, RES_CONFU, 0, a_idx);
-	    if (!(of_has(a_ptr->flags_obj, OF_SEEING)))
+	    if (!of_has(a_ptr->flags_obj, OF_SEEING))
 		get_quality(TRUE, RES_BLIND, 0, a_idx);
 	}
 	if (choice == 4) {
@@ -3825,8 +3825,7 @@ static void make_terrible(int a_idx)
 	a_ptr->cost = 0;
     /* Apply curses. */
     for (i = 0; i < num_curses; i++)
-	cf_on(a_ptr->flags_curse,
-	      (OBJECT_RAND_BASE_CURSE << randint0(OBJECT_RAND_SIZE_CURSE)));
+	cf_on(a_ptr->flags_curse, FLAG_START + randint0(CF_MAX));
 }
 
 
@@ -3854,7 +3853,7 @@ static void remove_contradictory(int a_idx)
 	of_off(a_ptr->flags_obj, OF_FREE_ACT);
     for (i = 0; i < A_MAX; i++) {
 	if (a_ptr->bonus_stat[i] < 0)
-	    of_off(a_ptr->flags_obj, OF_SUSTAIN_STR << i);
+	    of_off(a_ptr->flags_obj, OF_SUSTAIN_STR + i);
 	if (a_ptr->bonus_stat[i] > 6)
 	    a_ptr->bonus_stat[i] = 6;
     }

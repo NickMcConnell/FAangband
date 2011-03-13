@@ -216,27 +216,27 @@ extern void display_weapon_damage(object_type * o_ptr)
 
     /* Extract the slays and brands */
     for (j = 0; j < MAX_P_SLAY; j++)
-	slay[j] = (o_ptr->id_other & (OBJECT_ID_BASE_SLAY << j))
+	slay[j] = (if_has(o_ptr->id_other, OBJECT_ID_BASE_SLAY + j))
 	    ? o_ptr->multiple_slay[j] : MULTIPLE_BASE;
     for (j = 0; j < MAX_P_BRAND; j++)
-	brand[j] = (o_ptr->id_other & (OBJECT_ID_BASE_BRAND << j))
+	brand[j] = (if_has(o_ptr->id_other, OBJECT_ID_BASE_BRAND + j))
 	    ? o_ptr->multiple_brand[j] : MULTIPLE_BASE;
 
     /* Check rings for additional brands (slays) */
     for (i = 0; i < 2; i++) {
-	i_ptr = &inventory[INVEN_LEFT + i];
+	i_ptr = &p_ptr->inventory[INVEN_LEFT + i];
 
 	/* If wearing a ring */
 	if (i_ptr->k_idx) {
 	    /* Pick up any brands (and slays!) */
 	    for (j = 0; j < MAX_P_SLAY; j++)
 		slay[j] =
-		    MAX(slay[j], (i_ptr->id_other & (OBJECT_ID_BASE_SLAY << j))
+		    MAX(slay[j], (if_has(i_ptr->id_other, OBJECT_ID_BASE_SLAY + j))
 			? i_ptr->multiple_slay[j] : MULTIPLE_BASE);
 	    for (j = 0; j < MAX_P_BRAND; j++)
 		brand[j] =
 		    MAX(brand[j],
-			(i_ptr->id_other & (OBJECT_ID_BASE_BRAND << j))
+			(if_has(i_ptr->id_other, OBJECT_ID_BASE_BRAND + j))
 			? i_ptr->multiple_brand[j] : MULTIPLE_BASE);
 	}
     }
@@ -256,8 +256,8 @@ extern void display_weapon_damage(object_type * o_ptr)
 	slay[P_SLAY_EVIL] = MAX(slay[P_SLAY_EVIL], 15);
 
     /* Ok now the hackish stuff, we replace the current weapon with this one */
-    object_copy(old_ptr, &inventory[INVEN_WIELD]);
-    object_copy(&inventory[INVEN_WIELD], o_ptr);
+    object_copy(old_ptr, &p_ptr->inventory[INVEN_WIELD]);
+    object_copy(&p_ptr->inventory[INVEN_WIELD], o_ptr);
     calc_bonuses(TRUE);
     show_m_tohit = p_ptr->dis_to_h;
     if (if_has(o_ptr->id_other, IF_TO_H))
@@ -291,7 +291,7 @@ extern void display_weapon_damage(object_type * o_ptr)
     text_out_to_screen(TERM_WHITE, ". ");
 
     /* get our weapon back */
-    object_copy(&inventory[INVEN_WIELD], old_ptr);
+    object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
     calc_bonuses(TRUE);
 }
 
@@ -301,7 +301,7 @@ extern void display_weapon_damage(object_type * o_ptr)
 extern void output_ammo_dam(object_type * o_ptr, int mult, const char *against,
 			    bool * first, bool perfect)
 {
-    object_type *b_ptr = &inventory[INVEN_BOW];
+    object_type *b_ptr = &p_ptr->inventory[INVEN_BOW];
 
     int dam, die_average, add = 0, i, deadliness, crit, chance, dice =
 	o_ptr->dd;
@@ -397,10 +397,10 @@ extern void display_ammo_damage(object_type * o_ptr)
 
     /* Extract the slays and brands */
     for (i = 0; i < MAX_P_SLAY; i++)
-	slay[i] = (o_ptr->id_other & (OBJECT_ID_BASE_SLAY << i))
+	slay[i] = (if_has(o_ptr->id_other, OBJECT_ID_BASE_SLAY + i))
 	    ? o_ptr->multiple_slay[i] : MULTIPLE_BASE;
     for (i = 0; i < MAX_P_BRAND; i++)
-	brand[i] = (o_ptr->id_other & (OBJECT_ID_BASE_BRAND << i))
+	brand[i] = (if_has(o_ptr->id_other, OBJECT_ID_BASE_BRAND + i))
 	    ? o_ptr->multiple_brand[i] : MULTIPLE_BASE;
 
     /* Hack -- paladins (and priests) cannot take advantage of * temporary
@@ -446,19 +446,19 @@ extern void display_ammo_damage(object_type * o_ptr)
 	text_out_to_screen(TERM_WHITE, ". ");
     } else if (p_ptr->ammo_tval == o_ptr->tval) {
 	/* Check launcher for additional brands (slays) */
-	i_ptr = &inventory[INVEN_BOW];
+	i_ptr = &p_ptr->inventory[INVEN_BOW];
 
 	/* If wielding a launcher - sanity check */
 	if (i_ptr->k_idx) {
 	    /* Pick up any brands (and slays!) */
 	    for (i = 0; i < MAX_P_SLAY; i++)
 		slay[i] =
-		    MAX(slay[i], (i_ptr->id_other & (OBJECT_ID_BASE_SLAY << i))
+		    MAX(slay[i], (if_has(i_ptr->id_other, OBJECT_ID_BASE_SLAY + i))
 			? i_ptr->multiple_slay[i] : MULTIPLE_BASE);
 	    for (i = 0; i < MAX_P_BRAND; i++)
 		brand[i] =
 		    MAX(brand[i],
-			(i_ptr->id_other & (OBJECT_ID_BASE_BRAND << i))
+			(if_has(i_ptr->id_other, OBJECT_ID_BASE_BRAND + i))
 			? i_ptr->multiple_brand[i] : MULTIPLE_BASE);
 	}
 
@@ -953,7 +953,7 @@ void object_info_detail(object_type * o_ptr)
 
 	    /* Loop for number of attributes in this group. */
 	    for (j = 0; j < A_MAX; j++) {
-		if (!(o_ptr->id_obj & (OF_SUSTAIN_STR << j)))
+		if (!of_has(o_ptr->id_obj, OF_SUSTAIN_STR + j))
 		    continue;
 		text_out_to_screen(TERM_L_GREEN, statname[j]);
 		if (attr_num >= 3)
@@ -1006,7 +1006,7 @@ void object_info_detail(object_type * o_ptr)
 
     /* Slays. */
     for (j = 0; j < MAX_P_SLAY; j++)
-	if (o_ptr->id_other & (OBJECT_ID_BASE_SLAY << j)) {
+	if (if_has(o_ptr->id_other, OBJECT_ID_BASE_SLAY + j)) {
 	    attr_num++;
 
 	    /* Hack for great banes */
@@ -1033,7 +1033,7 @@ void object_info_detail(object_type * o_ptr)
 	text_out_to_screen(TERM_WHITE, "It slays ");
 
 	for (j = 0; j < MAX_P_SLAY; j++) {
-	    if (!(o_ptr->id_other & (OBJECT_ID_BASE_SLAY << j)))
+	    if (!(if_has(o_ptr->id_other, OBJECT_ID_BASE_SLAY + j)))
 		continue;
 	    if ((j == 0) && (o_ptr->multiple_slay[j] > SLAY_BOOST_MINOR))
 		continue;
@@ -1058,7 +1058,7 @@ void object_info_detail(object_type * o_ptr)
 	text_out_to_screen(TERM_WHITE, "It is a great bane of ");
 
 	for (j = 0; j < MAX_P_SLAY; j++) {
-	    if (!(o_ptr->id_other & (OBJECT_ID_BASE_SLAY << j)))
+	    if (!(if_has(o_ptr->id_other, OBJECT_ID_BASE_SLAY + j)))
 		continue;
 	    if ((j == 0) && (o_ptr->multiple_slay[j] <= SLAY_BOOST_MINOR))
 		continue;
@@ -1082,7 +1082,7 @@ void object_info_detail(object_type * o_ptr)
 
     /* Elemental and poison brands. */
     for (j = 0; j < MAX_P_BRAND; j++)
-	if (o_ptr->id_other & (OBJECT_ID_BASE_BRAND << j))
+	if (if_has(o_ptr->id_other, OBJECT_ID_BASE_BRAND + j))
 	    attr_num++;
 
     if (attr_num > 0) {
@@ -1091,7 +1091,7 @@ void object_info_detail(object_type * o_ptr)
 	text_out_to_screen(TERM_WHITE, "It does extra damage from ");
 
 	for (j = 0; j < MAX_P_BRAND; j++) {
-	    if (!(o_ptr->id_other & (OBJECT_ID_BASE_BRAND << j)))
+	    if (!(if_has(o_ptr->id_other, OBJECT_ID_BASE_BRAND + j)))
 		continue;
 	    text_out_to_screen(attr, brand[j]);
 	    if (attr_num >= 3)
@@ -1118,7 +1118,7 @@ void object_info_detail(object_type * o_ptr)
     /* Elemental immunities. */
     for (j = 0; j < 4; j++)
 	if ((o_ptr->percent_res[j] == RES_BOOST_IMMUNE)
-	    && (o_ptr->id_other & (OBJECT_ID_BASE_RESIST << j)))
+	    && (if_has(o_ptr->id_other, OBJECT_ID_BASE_RESIST + j)))
 	    attr_num++;
 
     if (attr_num > 0) {
@@ -1130,7 +1130,7 @@ void object_info_detail(object_type * o_ptr)
 	for (j = 0; j < 4; j++) {
 	    if (o_ptr->percent_res[j] > RES_BOOST_IMMUNE)
 		continue;
-	    if (!(o_ptr->id_other & (OBJECT_ID_BASE_RESIST << j)))
+	    if (!(if_has(o_ptr->id_other, OBJECT_ID_BASE_RESIST + j)))
 		continue;
 
 	    /* List the attribute description, in its proper place. */
@@ -1159,10 +1159,10 @@ void object_info_detail(object_type * o_ptr)
     for (j = 0; j < MAX_P_RES; j++) {
 	if ((j != P_RES_CONFU) && (o_ptr->percent_res[j] < 100)
 	    && (o_ptr->percent_res[j] > 0)
-	    && (o_ptr->id_other & (OBJECT_ID_BASE_RESIST << j)))
+	    && (if_has(o_ptr->id_other, OBJECT_ID_BASE_RESIST + j)))
 	    res = TRUE;
 	else if ((j != P_RES_CONFU) && (o_ptr->percent_res[j] > 100)
-		 && (o_ptr->id_other & (OBJECT_ID_BASE_RESIST << j)))
+		 && (if_has(o_ptr->id_other, OBJECT_ID_BASE_RESIST + j)))
 	    vul = TRUE;
     }
 
@@ -1176,7 +1176,7 @@ void object_info_detail(object_type * o_ptr)
 	for (j = 0; j < MAX_P_RES; j++) {
 	    if ((j != P_RES_CONFU) && (o_ptr->percent_res[j] < 100)
 		&& (o_ptr->percent_res[j] > 0)
-		&& (o_ptr->id_other & (OBJECT_ID_BASE_RESIST << j)))
+		&& (if_has(o_ptr->id_other, OBJECT_ID_BASE_RESIST + j)))
 		attr_num++;
 	}
 
@@ -1191,7 +1191,7 @@ void object_info_detail(object_type * o_ptr)
 
 	    if (j == P_RES_CONFU)
 		continue;
-	    if (!(o_ptr->id_other & (OBJECT_ID_BASE_RESIST << j)))
+	    if (!(if_has(o_ptr->id_other, OBJECT_ID_BASE_RESIST + j)))
 		continue;
 
 	    if ((o_ptr->percent_res[j] < 100) && (o_ptr->percent_res[j] > 0))
@@ -1257,7 +1257,7 @@ void object_info_detail(object_type * o_ptr)
 
 	for (j = 0; j < MAX_P_RES; j++) {
 	    if ((j != P_RES_CONFU) && (o_ptr->percent_res[j] > 100)
-		&& (o_ptr->id_other & (OBJECT_ID_BASE_RESIST << j)))
+		&& (if_has(o_ptr->id_other, OBJECT_ID_BASE_RESIST + j)))
 		attr_num++;
 	}
 
@@ -1271,7 +1271,7 @@ void object_info_detail(object_type * o_ptr)
 
 	    if (j == P_RES_CONFU)
 		continue;
-	    if (!(o_ptr->id_other & (OBJECT_ID_BASE_RESIST << j)))
+	    if (!(if_has(o_ptr->id_other, OBJECT_ID_BASE_RESIST + j)))
 		continue;
 
 	    if (o_ptr->percent_res[j] > 100)
@@ -1826,7 +1826,7 @@ void object_info_screen(object_type * o_ptr, bool fake)
 
     /* Hack - make sure the object is really in the store */
     for (i = 0; i < INVEN_TOTAL; i++)
-	if (o_ptr == &inventory[i])
+	if (o_ptr == &p_ptr->inventory[i])
 	    in_store = FALSE;
 
     /* Create and output a status message (hack - not in stores). */
@@ -2043,7 +2043,7 @@ void self_knowledge(bool spoil)
 
     /* Acquire item flags from equipment */
     for (k = INVEN_WIELD; k < INVEN_SUBTOTAL; k++) {
-	o_ptr = &inventory[k];
+	o_ptr = &p_ptr->inventory[k];
 
 	/* Skip non-objects */
 	if (!o_ptr->k_idx)

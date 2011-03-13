@@ -870,9 +870,11 @@ bool cast_spell(int tval, int index, int dir)
 	}
     case 11:			/* Telekinesis */
 	{
+	    int ty, tx;
+	    target_get(&tx, &ty);
 	    if (!target_set_interactive(TARGET_OBJ))
 		return FALSE;
-	    if (!py_pickup(2, p_ptr->target_row, p_ptr->target_col))
+	    if (!py_pickup(2, ty, tx))
 		return FALSE;
 	    break;
 	}
@@ -1001,7 +1003,6 @@ bool cast_spell(int tval, int index, int dir)
 		    (p_ptr->csp = p_ptr->msp);
 		msg_print("You feel your head clear a little.");
 		p_ptr->redraw |= (PR_MANA);
-		p_ptr->window |= (PW_PLAYER_0 | PW_PLAYER_1);
 	    }
 	    break;
 	}
@@ -2437,7 +2438,6 @@ bool cast_spell(int tval, int index, int dir)
 		    (p_ptr->csp = p_ptr->msp);
 		msg_print("You feel flow of power.");
 		p_ptr->redraw |= (PR_MANA);
-		p_ptr->window |= (PW_PLAYER_0 | PW_PLAYER_1);
 	    }
 	    break;
 	}

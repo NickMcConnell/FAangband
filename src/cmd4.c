@@ -76,11 +76,6 @@ void do_cmd_redraw(void)
   /* Redraw everything */
   p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY | PR_BUTTONS);
   
-  /* Window stuff */
-  p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1 |
-                    PW_MESSAGE | PW_OVERHEAD | PW_MONSTER | PW_OBJECT |
-                    PW_MONLIST | PW_ITEMLIST);
-  
   /* Clear screen */
   Term_clear();
 
@@ -122,9 +117,9 @@ void resize_map(void)
   if (!character_dungeon) return;
   
   /* Mega-Hack -- no panel yet */
-  panel_row_min = 0;
+  Term->offset_y = 0;
   panel_row_max = 0;
-  panel_col_min = 0;
+  Term->offset_x = 0;
   panel_col_max = 0;
   
   if (character_dungeon)
@@ -151,7 +146,7 @@ void resize_map(void)
   p_ptr->update |= (PU_MONSTERS);
   
   /* Redraw everything */
-  p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY);
+  p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY);
   
   /* Hack -- update */
   handle_stuff();
@@ -176,14 +171,6 @@ void redraw_window(void)
   
   /* Hack -- react to changes */
   Term_xtra(TERM_XTRA_REACT, 0);
-  
-  /* Window stuff */
-  p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER_0 | 
-                    PW_PLAYER_1);
-  
-  /* Window stuff */
-  p_ptr->window |= (PW_MESSAGE | PW_OVERHEAD | PW_DUNGEON | PW_MONSTER | 
-                    PW_OBJECT);
   
   /* Hack -- update */
   handle_stuff();

@@ -51,8 +51,8 @@ static void do_cmd_wiz_hack_ben(void)
     case 's':
 	{
 	    /* Update map */
-	    for (y = panel_row_min; y <= panel_row_max; y++) {
-		for (x = panel_col_min; x <= panel_col_max; x++) {
+	    for (y = Term->offset_y; y <= Term->offset_y + SCREEN_HGT; y++) {
+		for (x = Term->offset_x; x <= Term->offset_x + SCREEN_WID; x++) {
 		    byte a;
 
 		    int age = get_scent(y, x);
@@ -117,8 +117,8 @@ static void do_cmd_wiz_hack_ben(void)
 
 	    if ((cmd == 'D') || (cmd == 'd')) {
 		/* Update map */
-		for (y = panel_row_min; y <= panel_row_max; y++) {
-		    for (x = panel_col_min; x <= panel_col_max; x++) {
+		for (y = Term->offset_y; y <= Term->offset_y + SCREEN_HGT; y++) {
+		    for (x = Term->offset_x; x <= Term->offset_x + SCREEN_WID; x++) {
 			int lowest_cost = cave_cost[y][x];
 			int dir = -1;
 			int cost;
@@ -188,8 +188,8 @@ static void do_cmd_wiz_hack_ben(void)
 			j = i;
 
 		    /* Update map */
-		    for (y = panel_row_min; y <= panel_row_max; y++) {
-			for (x = panel_col_min; x <= panel_col_max; x++) {
+		    for (y = Term->offset_y; y <= Term->offset_y + SCREEN_HGT; y++) {
+			for (x = Term->offset_x; x <= Term->offset_x + SCREEN_WID; x++) {
 			    byte a = TERM_YELLOW;
 
 			    /* Display proper cost */
@@ -289,8 +289,7 @@ static void do_cmd_wiz_bamf(void)
 	return;
 
     /* grab the target coords. */
-    ny = p_ptr->target_row;
-    nx = p_ptr->target_col;
+    target_get(&nx, &ny);
 
     /* Test for passable terrain. */
     if (!cave_passable_bold(ny, nx)) {
@@ -918,8 +917,8 @@ static void wiz_reroll_item(object_type * o_ptr)
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1);
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
     }
 }
 
@@ -1154,7 +1153,7 @@ static void do_cmd_wiz_play(void)
 
     /* Get the item (in the pack) */
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
     /* Get the item (on the floor) */
@@ -1231,8 +1230,8 @@ static void do_cmd_wiz_play(void)
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1);
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
     }
 
     /* Ignore change */
@@ -1572,9 +1571,6 @@ static void do_cmd_rerate(void)
     p_ptr->update |= (PU_HP);
     p_ptr->redraw |= (PR_HP);
 
-    /* Window stuff */
-    p_ptr->window |= (PW_PLAYER_0 | PW_PLAYER_1);
-
     /* Handle stuff */
     handle_stuff();
 
@@ -1847,8 +1843,8 @@ static void do_cmd_wiz_query(void)
     }
 
     /* Scan map */
-    for (y = panel_row_min; y <= panel_row_max; y++) {
-	for (x = panel_col_min; x <= panel_col_max; x++) {
+    for (y = Term->offset_y; y <= Term->offset_y + SCREEN_HGT; y++) {
+	for (x = Term->offset_x; x <= Term->offset_x + SCREEN_WID; x++) {
 	    byte a = TERM_RED;
 
 	    /* Given mask, show only those grids */

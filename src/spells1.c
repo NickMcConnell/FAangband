@@ -1531,9 +1531,6 @@ void take_hit(int dam, cptr kb_str)
     /* Display the hitpoints */
     p_ptr->redraw |= (PR_HP);
 
-    /* Window stuff */
-    p_ptr->window |= (PW_PLAYER_0 | PW_PLAYER_1);
-
     /* Dead player */
     if (p_ptr->chp < 0) {
 	/* Sound */
@@ -1841,7 +1838,7 @@ static int inven_damage(inven_func typ, int perc)
 
     /* Scan through the slots backwards */
     for (i = 0; i < INVEN_PACK; i++) {
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	/* Skip non-objects */
 	if (!o_ptr->k_idx)
@@ -1943,22 +1940,22 @@ static int minus_ac(int dam)
     /* Pick a (possibly empty) equipment slot */
     switch (randint1(6)) {
     case 1:
-	o_ptr = &inventory[INVEN_BODY];
+	o_ptr = &p_ptr->inventory[INVEN_BODY];
 	break;
     case 2:
-	o_ptr = &inventory[INVEN_ARM];
+	o_ptr = &p_ptr->inventory[INVEN_ARM];
 	break;
     case 3:
-	o_ptr = &inventory[INVEN_OUTER];
+	o_ptr = &p_ptr->inventory[INVEN_OUTER];
 	break;
     case 4:
-	o_ptr = &inventory[INVEN_HANDS];
+	o_ptr = &p_ptr->inventory[INVEN_HANDS];
 	break;
     case 5:
-	o_ptr = &inventory[INVEN_HEAD];
+	o_ptr = &p_ptr->inventory[INVEN_HEAD];
 	break;
     case 6:
-	o_ptr = &inventory[INVEN_FEET];
+	o_ptr = &p_ptr->inventory[INVEN_FEET];
 	break;
     }
 
@@ -1991,8 +1988,8 @@ static int minus_ac(int dam)
     /* Calculate bonuses */
     p_ptr->update |= (PU_BONUS);
 
-    /* Window stuff */
-    p_ptr->window |= (PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1);
+    /* Redraw stuff */
+    p_ptr->redraw |= (PR_EQUIP);
 
     /* Item was damaged */
     return (TRUE);
@@ -2524,8 +2521,24 @@ int apply_dispel(int power)
 	clear_timed(TMD_SSTEALTH, TRUE);
 	num_effects += 1;
     }
-    if (p_ptr->ele_attack && (!check_save(power))) {
-	set_ele_attack(0, 0);
+    if (p_ptr->timed[TMD_ATT_ACID] && (!check_save(power))) {
+	clear_timed(TMD_ATT_ACID, TRUE);
+	num_effects += 1;
+    }
+    if (p_ptr->timed[TMD_ATT_ELEC] && (!check_save(power))) {
+	clear_timed(TMD_ATT_ELEC, TRUE);
+	num_effects += 1;
+    }
+    if (p_ptr->timed[TMD_ATT_FIRE] && (!check_save(power))) {
+	clear_timed(TMD_ATT_FIRE, TRUE);
+	num_effects += 1;
+    }
+    if (p_ptr->timed[TMD_ATT_COLD] && (!check_save(power))) {
+	clear_timed(TMD_ATT_COLD, TRUE);
+	num_effects += 1;
+    }
+    if (p_ptr->timed[TMD_ATT_POIS] && (!check_save(power))) {
+	clear_timed(TMD_ATT_POIS, TRUE);
 	num_effects += 1;
     }
     if (p_ptr->timed[TMD_OPP_ACID] && (!check_save(power))) {
@@ -2646,7 +2659,7 @@ bool apply_disenchant(int dam)
     }
 
     /* Get the item */
-    o_ptr = &inventory[t];
+    o_ptr = &p_ptr->inventory[t];
 
     /* No item, nothing happens */
     if (!o_ptr->k_idx)
@@ -2700,8 +2713,8 @@ bool apply_disenchant(int dam)
     /* Recalculate bonuses */
     p_ptr->update |= (PU_BONUS);
 
-    /* Window stuff */
-    p_ptr->window |= (PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1);
+    /* Redraw stuff */
+    p_ptr->redraw |= (PR_EQUIP);
 
     /* Notice */
     return (TRUE);
@@ -3600,7 +3613,7 @@ static bool project_o(int who, int y, int x, int dam, int typ)
 			    i_ptr = &object_type_body;
 
 			    /* Copy the object */
-			    object_copy(i_ptr, &inventory[i]);
+			    object_copy(i_ptr, &p_ptr->inventory[i]);
 
 			    /* Place the copy there. */
 			    drop_near(i_ptr, -1, oy, ox);
@@ -5753,8 +5766,8 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
     /* Update monster recall window */
     if (p_ptr->monster_race_idx == m_ptr->r_idx) {
-	/* Window stuff */
-	p_ptr->window |= (PW_MONSTER);
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_MONSTER);
     }
 
 
@@ -6108,8 +6121,8 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	    }
 
 	    /* Test for a deflection. */
-	    else if ((inventory[INVEN_ARM].k_idx) && (!p_ptr->shield_on_back)
-		     && (inventory[INVEN_ARM].ac +
+	    else if ((p_ptr->inventory[INVEN_ARM].k_idx) && (!p_ptr->shield_on_back)
+		     && (p_ptr->inventory[INVEN_ARM].ac +
 			 (player_has(PF_SHIELD_MAST) ? 3 : 0) >
 			 randint0(MAX_SHIELD_BASE_AC * 4))) {
 		msg_print("The missile ricochets off your shield.");
@@ -6827,8 +6840,8 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	    dam += terrain_adjustment;
 
 	    /* Test for partial shield protection. */
-	    if ((inventory[INVEN_ARM].k_idx) && (!p_ptr->shield_on_back)
-		&& (inventory[INVEN_ARM].ac +
+	    if ((p_ptr->inventory[INVEN_ARM].k_idx) && (!p_ptr->shield_on_back)
+		&& (p_ptr->inventory[INVEN_ARM].ac +
 		    (player_has(PF_SHIELD_MAST) ? 3 : 0) >
 		    randint0(MAX_SHIELD_BASE_AC * 2))) {
 		dam *= 6;
@@ -7733,8 +7746,8 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 
 	/* Update monster recall window */
 	if (p_ptr->monster_race_idx == m_ptr->r_idx) {
-	    /* Window stuff */
-	    p_ptr->window |= (PW_MONSTER);
+	    /* Redraw stuff */
+	    p_ptr->redraw |= (PR_MONSTER);
 	}
     }
 

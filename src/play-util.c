@@ -116,7 +116,7 @@ bool player_can_read(void)
 /* Determine if the player can fire with the bow */
 bool player_can_fire(void)
 {
-	object_type *o_ptr = &inventory[INVEN_BOW];
+	object_type *o_ptr = &p_ptr->inventory[INVEN_BOW];
 
 	/* Require a usable launcher */
 	if (!o_ptr->tval || !p_ptr->ammo_tval)

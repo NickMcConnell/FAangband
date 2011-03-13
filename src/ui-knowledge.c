@@ -1173,8 +1173,8 @@ static object_type *find_artifact(int a_idx)
     }
 
     for (i = 0; i < INVEN_TOTAL; i++) {
-	if (inventory[i].name1 == a_idx)
-	    return &inventory[i];
+	if (p_ptr->inventory[i].name1 == a_idx)
+	    return &p_ptr->inventory[i];
     }
 
     for (j = 1; j < (FEAT_SHOP_TAIL - FEAT_SHOP_HEAD + 1); j++) {
@@ -1373,7 +1373,7 @@ static void desc_ego_fake(int oid)
 
     /* Count ego flags */
     for (i = 0; i < 7; i++) {
-	if (kf_has(e_ptr->flags_kind, (KF_RAND_RES_NEG << i)))
+	if (kf_has(e_ptr->flags_kind, KF_RAND_RES_NEG + i))
 	    num++;
     }
 
@@ -1383,7 +1383,7 @@ static void desc_ego_fake(int oid)
     /* List ego flags */
     for (i = 0; i < 7; i++) {
 	char punct[10];
-	if (kf_has(e_ptr->flags_kind, (KF_RAND_RES_NEG << i))) {
+	if (kf_has(e_ptr->flags_kind, KF_RAND_RES_NEG + i)) {
 	    if (num > 2)
 		strcpy(punct, ", ");
 	    else if (num == 2)
@@ -1716,7 +1716,7 @@ static void o_xtra_act(char ch, int oid)
 
 	    /* Notice stuff (later) */
 	    p_ptr->notice |= (PN_AUTOINSCRIBE);
-	    p_ptr->redraw |= (PW_INVEN | PW_EQUIP);
+	    p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 	}
 
 	/* Reload the screen */

@@ -174,7 +174,7 @@ void delete_object_idx(int o_idx)
     o_cnt--;
 
     /* Update item list */
-    p_ptr->window |= PW_ITEMLIST;
+    p_ptr->redraw |= PR_ITEMLIST;
 }
 
 
@@ -215,7 +215,7 @@ void delete_object(int y, int x)
     lite_spot(y, x);
 
     /* Update item list */
-    p_ptr->window |= PW_ITEMLIST;
+    p_ptr->redraw |= PR_ITEMLIST;
 }
 
 
@@ -326,9 +326,6 @@ void compact_objects(int size)
 
 	/* Redraw map */
 	p_ptr->redraw |= (PR_MAP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
     }
 
 
@@ -443,7 +440,7 @@ void compact_objects(int size)
     }
 
     /* Update item list */
-    p_ptr->window |= PW_ITEMLIST;
+    p_ptr->redraw |= PR_ITEMLIST;
 }
 
 
@@ -2485,7 +2482,7 @@ static void a_m_aux_4(object_type * o_ptr, int level, int power)
  * Apply slightly randomised percentage resistances -NRM-
  * Also add element proofing flags where appropriate
  */
-extern void apply_resistances(object_type * o_ptr, int lev, u32b flags)
+extern void apply_resistances(object_type * o_ptr, int lev, bitflag *flags)
 {
     int i, res = 0;
 
@@ -2645,7 +2642,9 @@ void apply_magic(object_type * o_ptr, int lev, bool okay, bool good, bool great)
 
     object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
-    u32b flags_kind = k_ptr->flags_kind;
+    bitflag flags_kind[KF_SIZE];
+
+    kf_copy(flags_kind, k_ptr->flags_kind);
 
     /* Maximum "level" for various things */
     if (lev > MAX_DEPTH - 1)
@@ -2740,8 +2739,8 @@ void apply_magic(object_type * o_ptr, int lev, bool okay, bool good, bool great)
 	for (i = 0; i < MAX_P_BRAND; i++)
 	    o_ptr->multiple_brand[i] = a_ptr->multiple_brand[i];
 
-	o_ptr->flags_obj = a_ptr->flags_obj;
-	o_ptr->flags_curse = a_ptr->flags_curse;
+	of_copy(o_ptr->flags_obj, a_ptr->flags_obj);
+	cf_copy(o_ptr->flags_curse, a_ptr->flags_curse);
 
 	/* Mark where it was found */
 	o_ptr->found = p_ptr->stage;
@@ -2919,18 +2918,16 @@ void apply_magic(object_type * o_ptr, int lev, bool okay, bool good, bool great)
 
     /* Kind flags */
     if (o_ptr->name2)
-	flags_kind |= e_info[o_ptr->name2].flags_kind;
+	kf_union(flags_kind, e_ptr->flags_kind);
 
     /* Random sustain */
     if (kf_has(flags_kind, KF_RAND_SUSTAIN)) {
-	of_on(o_ptr->flags_obj,
-	      (OBJECT_RAND_BASE_SUSTAIN << randint0(OBJECT_RAND_SIZE_SUSTAIN)));
+	of_on(o_ptr->flags_obj, OBJECT_RAND_BASE_SUSTAIN + randint0(OBJECT_RAND_SIZE_SUSTAIN)));
     }
 
     /* Random power */
     if (kf_has(flags_kind, KF_RAND_POWER)) {
-	of_on(o_ptr->flags_obj,
-	      (OBJECT_RAND_BASE_POWER << randint0(OBJECT_RAND_SIZE_POWER)));
+	of_on(o_ptr->flags_obj, OBJECT_RAND_BASE_POWER + randint0(OBJECT_RAND_SIZE_POWER)));
     }
 
     /* Random curse */
@@ -2939,8 +2936,7 @@ void apply_magic(object_type * o_ptr, int lev, bool okay, bool good, bool great)
 
 	/* Mostly only one curse */
 	while (another_curse) {
-	    cf_on(o_ptr->flags_curse,
-		  (OBJECT_RAND_BASE_CURSE << randint0(OBJECT_RAND_SIZE_CURSE)));
+	    cf_on(o_ptr->flags_curse, FLAG_START + randint0(CF_MAX));
 	    if (randint0(10) != 0)
 		another_curse = FALSE;
 	}
@@ -2950,8 +2946,7 @@ void apply_magic(object_type * o_ptr, int lev, bool okay, bool good, bool great)
 	while (cf_has(o_ptr->flags_curse, CF_DROP_WEAPON)
 	       && (o_ptr->tval > TV_SWORD)) {
 	    cf_off(o_ptr->flags_curse, CF_DROP_WEAPON);
-	    cf_on(o_ptr->flags_curse,
-		  (OBJECT_RAND_BASE_CURSE << randint0(OBJECT_RAND_SIZE_CURSE)));
+	    cf_on(o_ptr->flags_curse, FLAG_START + randint0(CF_MAX));
 	}
     }
 
@@ -3609,7 +3604,7 @@ s16b floor_carry(int y, int x, object_type * j_ptr)
 	lite_spot(y, x);
 
 	/* Redo item list */
-	p_ptr->window |= PW_ITEMLIST;
+	p_ptr->rrdraw |= PR_ITEMLIST;
     }
 
     /* Result */
@@ -4336,7 +4331,7 @@ void place_random_door(int y, int x)
  */
 void inven_item_charges(int item)
 {
-    object_type *o_ptr = &inventory[item];
+    object_type *o_ptr = &p_ptr->inventory[item];
 
     /* Require staff/wand */
     if ((o_ptr->tval != TV_STAFF) && (o_ptr->tval != TV_WAND))
@@ -4365,7 +4360,7 @@ void inven_item_charges(int item)
  */
 void inven_item_describe(int item)
 {
-    object_type *o_ptr = &inventory[item];
+    object_type *o_ptr = &p_ptr->inventory[item];
 
     char o_name[120];
 
@@ -4392,7 +4387,7 @@ void inven_item_describe(int item)
  */
 void inven_item_increase(int item, int num)
 {
-    object_type *o_ptr = &inventory[item];
+    object_type *o_ptr = &p_ptr->inventory[item];
 
     /* Apply */
     num += o_ptr->number;
@@ -4423,8 +4418,8 @@ void inven_item_increase(int item, int num)
 	/* Combine the pack */
 	p_ptr->notice |= (PN_COMBINE);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
     }
 }
 
@@ -4434,7 +4429,7 @@ void inven_item_increase(int item, int num)
  */
 void inven_item_optimize(int item)
 {
-    object_type *o_ptr = &inventory[item];
+    object_type *o_ptr = &p_ptr->inventory[item];
 
     /* Only optimize real items */
     if (!o_ptr->k_idx)
@@ -4454,14 +4449,14 @@ void inven_item_optimize(int item)
 	/* Slide everything down */
 	for (i = item; i < INVEN_PACK; i++) {
 	    /* Hack -- slide object */
-	    (void) COPY(&inventory[i], &inventory[i + 1], object_type);
+	    (void) COPY(&p_ptr->inventory[i], &p_ptr->inventory[i + 1], object_type);
 	}
 
 	/* Hack -- wipe hole */
-	(void) WIPE(&inventory[i], object_type);
+	(void) WIPE(&p_ptr->inventory[i], object_type);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN);
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_INVEN);
     }
 
     /* The item is being wielded */
@@ -4470,7 +4465,7 @@ void inven_item_optimize(int item)
 	p_ptr->equip_cnt--;
 
 	/* Erase the empty slot */
-	object_wipe(&inventory[item]);
+	object_wipe(&p_ptr->inventory[item]);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -4482,7 +4477,7 @@ void inven_item_optimize(int item)
 	p_ptr->update |= (PU_MANA);
 
 	/* Window stuff */
-	p_ptr->window |= (PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1);
+	p_ptr->redraw |= (PR_EQUIP);
     }
 }
 
@@ -4594,7 +4589,7 @@ bool inven_carry_okay(object_type * o_ptr)
 
     /* Similar slot? */
     for (j = 0; j < INVEN_PACK - p_ptr->pack_size_reduce; j++) {
-	object_type *j_ptr = &inventory[j];
+	object_type *j_ptr = &p_ptr->inventory[j];
 
 	/* Skip non-objects */
 	if (!j_ptr->k_idx)
@@ -4637,7 +4632,7 @@ s16b inven_carry(object_type * o_ptr)
 
     /* Check for combining */
     for (j = 0; j < INVEN_PACK; j++) {
-	j_ptr = &inventory[j];
+	j_ptr = &p_ptr->inventory[j];
 
 	/* Skip non-objects */
 	if (!j_ptr->k_idx)
@@ -4657,8 +4652,8 @@ s16b inven_carry(object_type * o_ptr)
 	    /* Recalculate bonuses */
 	    p_ptr->update |= (PU_BONUS);
 
-	    /* Window stuff */
-	    p_ptr->window |= (PW_INVEN);
+	    /* Redraw stuff */
+	    p_ptr->redraw |= (PR_INVEN);
 
 	    /* Success */
 	    return (j);
@@ -4673,7 +4668,7 @@ s16b inven_carry(object_type * o_ptr)
 
     /* Find an empty slot */
     for (j = 0; j <= INVEN_PACK; j++) {
-	j_ptr = &inventory[j];
+	j_ptr = &p_ptr->inventory[j];
 
 	/* Use it if found */
 	if (!j_ptr->k_idx)
@@ -4695,7 +4690,7 @@ s16b inven_carry(object_type * o_ptr)
 
 	/* Scan every occupied slot */
 	for (j = 0; j < INVEN_PACK; j++) {
-	    j_ptr = &inventory[j];
+	    j_ptr = &p_ptr->inventory[j];
 
 	    /* Use empty slots */
 	    if (!j_ptr->k_idx)
@@ -4749,19 +4744,19 @@ s16b inven_carry(object_type * o_ptr)
 	/* Slide objects */
 	for (k = n; k >= i; k--) {
 	    /* Hack -- Slide the item */
-	    object_copy(&inventory[k + 1], &inventory[k]);
+	    object_copy(&p_ptr->inventory[k + 1], &p_ptr->inventory[k]);
 	}
 
 	/* Wipe the empty slot */
-	object_wipe(&inventory[i]);
+	object_wipe(&p_ptr->inventory[i]);
     }
 
 
     /* Copy the item */
-    object_copy(&inventory[i], o_ptr);
+    object_copy(&p_ptr->inventory[i], o_ptr);
 
     /* Access new object */
-    j_ptr = &inventory[i];
+    j_ptr = &p_ptr->inventory[i];
 
     /* Forget stack */
     j_ptr->next_o_idx = 0;
@@ -4787,8 +4782,8 @@ s16b inven_carry(object_type * o_ptr)
     /* Combine and Reorder pack */
     p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-    /* Window stuff */
-    p_ptr->window |= (PW_INVEN);
+    /* Redraw stuff */
+    p_ptr->redraw |= (PR_INVEN);
 
     /* Return the slot */
     return (i);
@@ -4822,7 +4817,7 @@ s16b inven_takeoff(int item, int amt)
 
 
     /* Get the item to take off */
-    o_ptr = &inventory[item];
+    o_ptr = &p_ptr->inventory[item];
 
     /* Paranoia */
     if (amt <= 0)
@@ -4919,7 +4914,7 @@ void inven_drop(int item, int amt)
 
 
     /* Access original object */
-    o_ptr = &inventory[item];
+    o_ptr = &p_ptr->inventory[item];
 
     /* Error check */
     if (amt <= 0)
@@ -4936,7 +4931,7 @@ void inven_drop(int item, int amt)
 	item = inven_takeoff(item, amt);
 
 	/* Access original object */
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
 
@@ -4987,7 +4982,7 @@ void combine_pack(void)
     /* Combine the pack (backwards) */
     for (i = INVEN_PACK; i > 0; i--) {
 	/* Get the item */
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	/* Skip empty items */
 	if (!o_ptr->k_idx)
@@ -4996,7 +4991,7 @@ void combine_pack(void)
 	/* Scan the items above that item */
 	for (j = 0; j < i; j++) {
 	    /* Get the item */
-	    j_ptr = &inventory[j];
+	    j_ptr = &p_ptr->inventory[j];
 
 	    /* Skip empty items */
 	    if (!j_ptr->k_idx)
@@ -5016,14 +5011,14 @@ void combine_pack(void)
 		/* Slide everything down */
 		for (k = i; k < INVEN_PACK; k++) {
 		    /* Hack -- slide object */
-		    COPY(&inventory[k], &inventory[k + 1], object_type);
+		    COPY(&p_ptr->inventory[k], &p_ptr->inventory[k + 1], object_type);
 		}
 
 		/* Hack -- wipe hole */
-		object_wipe(&inventory[k]);
+		object_wipe(&p_ptr->inventory[k]);
 
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN);
+		/* Redraw stuff */
+		p_ptr->redraw |= (PR_INVEN);
 
 		/* Done */
 		break;
@@ -5065,7 +5060,7 @@ void reorder_pack(void)
 	    break;
 
 	/* Get the item */
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	/* Skip empty slots */
 	if (!o_ptr->k_idx)
@@ -5077,7 +5072,7 @@ void reorder_pack(void)
 	/* Scan every occupied slot */
 	for (j = 0; j < INVEN_PACK; j++) {
 	    /* Get the item already there */
-	    j_ptr = &inventory[j];
+	    j_ptr = &p_ptr->inventory[j];
 
 	    /* Use empty slots */
 	    if (!j_ptr->k_idx)
@@ -5136,19 +5131,19 @@ void reorder_pack(void)
 	i_ptr = &object_type_body;
 
 	/* Save a copy of the moving item */
-	object_copy(i_ptr, &inventory[i]);
+	object_copy(i_ptr, &p_ptr->inventory[i]);
 
 	/* Slide the objects */
 	for (k = i; k > j; k--) {
 	    /* Slide the item */
-	    object_copy(&inventory[k], &inventory[k - 1]);
+	    object_copy(&p_ptr->inventory[k], &p_ptr->inventory[k - 1]);
 	}
 
 	/* Insert the moving item */
-	object_copy(&inventory[j], i_ptr);
+	object_copy(&p_ptr->inventory[j], i_ptr);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN);
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_INVEN);
     }
 
     /* Message */
@@ -5169,7 +5164,7 @@ int quiver_count(void)
     /* Scan the slots */
     for (i = INVEN_Q0; i <= INVEN_Q9; i++) {
 	/* Get the item */
-	object_type *i_ptr = &inventory[i];
+	object_type *i_ptr = &p_ptr->inventory[i];
 
 	/* Ignore empty. */
 	if (!i_ptr->k_idx)
@@ -5232,7 +5227,7 @@ int process_quiver(int num_new, object_type * o_ptr)
     /* Combine the quiver (backwards) */
     for (i = INVEN_Q9; i > INVEN_Q0; i--) {
 	/* Get the item */
-	i_ptr = &inventory[i];
+	i_ptr = &p_ptr->inventory[i];
 
 	/* Skip empty items */
 	if (!i_ptr->k_idx)
@@ -5241,7 +5236,7 @@ int process_quiver(int num_new, object_type * o_ptr)
 	/* Scan the items above that item */
 	for (j = INVEN_Q0; j < i; j++) {
 	    /* Get the item */
-	    j_ptr = &inventory[j];
+	    j_ptr = &p_ptr->inventory[j];
 
 	    /* Skip empty items */
 	    if (!j_ptr->k_idx)
@@ -5261,14 +5256,14 @@ int process_quiver(int num_new, object_type * o_ptr)
 		/* Slide everything down */
 		for (k = i; k < INVEN_Q9; k++) {
 		    /* Hack -- slide object */
-		    (void) COPY(&inventory[k], &inventory[k + 1], object_type);
+		    (void) COPY(&p_ptr->inventory[k], &p_ptr->inventory[k + 1], object_type);
 		}
 
 		/* Hack -- wipe hole */
-		object_wipe(&inventory[k]);
+		object_wipe(&p_ptr->inventory[k]);
 
-		/* Window stuff */
-		p_ptr->window |= (PW_EQUIP);
+		/* Redraw stuff */
+		p_ptr->redraw |= (PR_EQUIP);
 
 		/* Done */
 		break;
@@ -5282,7 +5277,7 @@ int process_quiver(int num_new, object_type * o_ptr)
 	/* Search for available slots. */
 	for (i = INVEN_Q0; i <= INVEN_Q9; i++) {
 	    /* Get the item */
-	    i_ptr = &inventory[i];
+	    i_ptr = &p_ptr->inventory[i];
 
 	    /* Accept empty slot */
 	    if (!i_ptr->k_idx) {
@@ -5302,7 +5297,7 @@ int process_quiver(int num_new, object_type * o_ptr)
 
 	/* TEMPORARILY put the new ammo in the quiver for sorting. */
 	if (temp_slot) {
-	    object_copy(&inventory[slot], o_ptr);
+	    object_copy(&p_ptr->inventory[slot], o_ptr);
 	}
 
     }
@@ -5310,7 +5305,7 @@ int process_quiver(int num_new, object_type * o_ptr)
     /* Re-order the quiver (forwards) */
     for (i = INVEN_Q0; i <= INVEN_Q9; i++) {
 	/* Get the item */
-	i_ptr = &inventory[i];
+	i_ptr = &p_ptr->inventory[i];
 
 	/* Skip empty slots */
 	if (!i_ptr->k_idx)
@@ -5322,7 +5317,7 @@ int process_quiver(int num_new, object_type * o_ptr)
 	/* Scan every occupied slot */
 	for (j = INVEN_Q0; j <= INVEN_Q9; j++) {
 	    /* Get the item already there */
-	    j_ptr = &inventory[j];
+	    j_ptr = &p_ptr->inventory[j];
 
 	    /* Use empty slots */
 	    if (!j_ptr->k_idx)
@@ -5373,7 +5368,7 @@ int process_quiver(int num_new, object_type * o_ptr)
 	j_ptr = &object_type_body;
 
 	/* Save a copy of the moving item */
-	object_copy(j_ptr, &inventory[i]);
+	object_copy(j_ptr, &p_ptr->inventory[i]);
 
 	/* Keep track of 'new' item */
 	if (slot == i) {
@@ -5384,7 +5379,7 @@ int process_quiver(int num_new, object_type * o_ptr)
 	/* Slide the objects */
 	for (k = i; k > j;) {
 	    /* Slide the item */
-	    object_copy(&inventory[k], &inventory[k - 1]);
+	    object_copy(&p_ptr->inventory[k], &p_ptr->inventory[k - 1]);
 
 	    /* Keep track of 'new' item */
 	    if ((slot == k - 1) && (!track))
@@ -5398,15 +5393,15 @@ int process_quiver(int num_new, object_type * o_ptr)
 	track = FALSE;
 
 	/* Insert the moving item */
-	object_copy(&inventory[j], j_ptr);
+	object_copy(&p_ptr->inventory[j], j_ptr);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
     }
 
     /* Remove temporary ammo.  Will be added for real later. */
     if (temp_slot)
-	object_wipe(&inventory[slot]);
+	object_wipe(&p_ptr->inventory[slot]);
 
     /* Calculate backpack reduction */
     find_quiver_size();

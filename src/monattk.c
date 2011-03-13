@@ -189,7 +189,7 @@ static void make_request(int m_idx)
 
 	/* Select a random object in the pack. */
 	i = randint0(INVEN_PACK);
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	/* Skip non-objects */
 	if (!o_ptr->k_idx)
@@ -263,7 +263,7 @@ static void make_request(int m_idx)
 
     if (requested_slot) {
 	/* Get the object. */
-	o_ptr = &inventory[requested_slot];
+	o_ptr = &p_ptr->inventory[requested_slot];
 
 	/* Acquire the item name. */
 	object_desc(o_name, o_ptr, FALSE, 3);
@@ -907,8 +907,8 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 				/* Combine / Reorder the pack */
 				p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-				/* Window stuff */
-				p_ptr->window |= (PW_INVEN);
+				/* Redraw stuff */
+				p_ptr->redraw |= (PR_INVEN);
 
 				/* not more than one inventory slot effected. */
 				break;
@@ -969,9 +969,6 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 			/* Redraw gold */
 			p_ptr->redraw |= (PR_GOLD);
 
-			/* Window stuff */
-			p_ptr->window |= (PW_PLAYER_0 | PW_PLAYER_1);
-
 			/* Blink away */
 			blinked = TRUE;
 		    }
@@ -1016,7 +1013,7 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 			i = randint0(INVEN_PACK);
 
 			/* Obtain the item */
-			o_ptr = &inventory[i];
+			o_ptr = &p_ptr->inventory[i];
 
 			/* Skip non-objects */
 			if (!o_ptr->k_idx)
@@ -1121,7 +1118,7 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 		    take_hit(damage, ddesc);
 
 		    /* Access the lite */
-		    o_ptr = &inventory[INVEN_LITE];
+		    o_ptr = &p_ptr->inventory[INVEN_LITE];
 
 		    /* Drain fuel */
 		    if ((o_ptr->pval > 0) && (!artifact_p(o_ptr))) {
@@ -1136,8 +1133,8 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 			    obvious = TRUE;
 			}
 
-			/* Window stuff */
-			p_ptr->window |= (PW_EQUIP);
+			/* Redraw stuff */
+			p_ptr->redraw |= (PR_EQUIP);
 		    }
 
 		    break;
@@ -3698,9 +3695,6 @@ bool make_attack_ranged(monster_type * m_ptr, int attack)
 
 		/* Redraw mana */
 		p_ptr->redraw |= (PR_MANA);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_PLAYER_0 | PW_PLAYER_1);
 
 		/* Replenish monster mana */
 		if (m_ptr->mana < r_ptr->mana) {

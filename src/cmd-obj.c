@@ -123,9 +123,6 @@ void do_cmd_uninscribe(cmd_code code, cmd_arg args[])
 
     /* Combine the pack (or the quiver) */
     p_ptr->notice |= (PN_COMBINE | PN_SQUELCH);
-
-    /* Window stuff */
-    p_ptr->window |= (PW_INVEN | PW_EQUIP);
 }
 
 
@@ -140,9 +137,6 @@ void do_cmd_inscribe(cmd_code code, cmd_arg args[])
 
     /* Combine the pack (or the quiver) */
     p_ptr->notice |= (PN_COMBINE | PN_SQUELCH);
-
-    /* Window stuff */
-    p_ptr->window |= (PW_INVEN | PW_EQUIP);
 }
 
 void textui_obj_inscribe(object_type * o_ptr, int item)
@@ -259,7 +253,7 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
 
     object_type *i_ptr;
 
-    object_type *l_ptr = &inventory[INVEN_LITE];
+    object_type *l_ptr = &p_ptr->inventory[INVEN_LITE];
 
     object_type object_type_body;
 
@@ -293,8 +287,8 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
     slot = wield_slot(o_ptr);
 
     /* Ask for ring to replace */
-    if ((o_ptr->tval == TV_RING) && inventory[INVEN_LEFT].k_idx
-	&& inventory[INVEN_RIGHT].k_idx) {
+    if ((o_ptr->tval == TV_RING) && p_ptr->inventory[INVEN_LEFT].k_idx
+	&& p_ptr->inventory[INVEN_RIGHT].k_idx) {
 	/* Restrict the choices */
 	item_tester_tval = TV_RING;
 
@@ -322,7 +316,7 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
 
     /* Prevent wielding into a cursed slot */
     if (slot < INVEN_Q0) {
-	object_type *i_ptr = &inventory[slot];
+	object_type *i_ptr = &p_ptr->inventory[slot];
 
 	if (cf_has(i_ptr->flags_curse, CF_STICKY_WIELD)) {
 	    /* Describe it */
@@ -420,7 +414,7 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
     }
 
     /* Access the wield slot */
-    o_ptr = &inventory[slot];
+    o_ptr = &p_ptr->inventory[slot];
 
 
     /* Handle existing item. */
@@ -452,7 +446,7 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
      * to wield a weapon that is usually wielded with both hands one-handed
      * (normally requires 18/140 to 18/160 STR), the character will
      * automatically carry any equipped shield on his back. -LM- */
-    if ((slot == INVEN_WIELD) && (inventory[INVEN_ARM].k_idx)) {
+    if ((slot == INVEN_WIELD) && (p_ptr->inventory[INVEN_ARM].k_idx)) {
 	if ((of_has(o_ptr->flags_obj, OF_TWO_HANDED_REQ))
 	    || ((of_has(o_ptr->flags_obj, OF_TWO_HANDED_DES))
 		&& (p_ptr->stat_ind[A_STR] <
@@ -465,9 +459,9 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
 
     /* A character using both hands to wield his melee weapon will use his
      * back to carry an equipped shield. -LM- */
-    if ((slot == INVEN_ARM) && (inventory[INVEN_WIELD].k_idx)) {
+    if ((slot == INVEN_ARM) && (p_ptr->inventory[INVEN_WIELD].k_idx)) {
 	/* Access the wield slot */
-	i_ptr = &inventory[INVEN_WIELD];
+	i_ptr = &p_ptr->inventory[INVEN_WIELD];
 
 	if ((of_has(i_ptr->flags_obj, OF_TWO_HANDED_REQ))
 	    || ((of_has(i_ptr->flags_obj, OF_TWO_HANDED_DES))
@@ -589,10 +583,6 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
 
     /* Recalculate mana */
     p_ptr->update |= (PU_MANA);
-
-    /* Window stuff */
-    p_ptr->window |=
-	(PW_INVEN | PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1 | PW_ITEMLIST);
 }
 
 
@@ -647,7 +637,7 @@ void textui_obj_wield(object_type * o_ptr, int item)
     /* Usually if the slot is taken we'll just replace the item in the slot,
      * but in some cases we need to ask the user which slot they actually want
      * to replace */
-    if (inventory[slot].k_idx) {
+    if (p_ptr->inventory[slot].k_idx) {
 	if (o_ptr->tval == TV_RING) {
 	    cptr q = "Replace which ring? ";
 	    cptr s = "Error in obj_wield, please report";
@@ -656,7 +646,7 @@ void textui_obj_wield(object_type * o_ptr, int item)
 		return;
 	}
 
-	if (is_missile(o_ptr) && !object_similar(&inventory[slot], o_ptr)) {
+	if (is_missile(o_ptr) && !object_similar(&p_ptr->inventory[slot], o_ptr)) {
 	    cptr q = "Replace which ammunition? ";
 	    cptr s = "Error in obj_wield, please report";
 	    item_tester_hook = obj_is_ammo;
@@ -831,7 +821,6 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 
     /* Mark as tried and redisplay */
     p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-    p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_OBJECT);
 
     /* 
      * If the player becomes aware of the item's function, then mark it as
@@ -932,7 +921,7 @@ static void refill_lamp(void)
     item_tester_hook = item_tester_refill_lantern;
 
     /* Access the lantern */
-    j_ptr = &inventory[INVEN_LITE];
+    j_ptr = &p_ptr->inventory[INVEN_LITE];
 
     /* Refuel */
     j_ptr->pval += o_ptr->pval;
@@ -953,9 +942,6 @@ static void refill_lamp(void)
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN);
     }
 
     /* Decrease the item (from the pack) */
@@ -1006,7 +992,7 @@ static void refuel_torch(void)
 
 
     /* Access the primary torch */
-    j_ptr = &inventory[INVEN_LITE];
+    j_ptr = &p_ptr->inventory[INVEN_LITE];
 
     /* Refuel */
     j_ptr->pval += o_ptr->pval + 5;
@@ -1047,7 +1033,7 @@ static void refuel_torch(void)
 
 void do_cmd_refill(cmd_code code, cmd_arg args[])
 {
-    object_type *j_ptr = &inventory[INVEN_LITE];
+    object_type *j_ptr = &p_ptr->inventory[INVEN_LITE];
 
     int item = args[0].item;
     object_type *o_ptr = object_from_item_idx(item);
@@ -1187,7 +1173,7 @@ static void pseudo_probe(void)
     char m_name[80];
 
     /* Acquire the target monster */
-    int m_idx = p_ptr->target_who;
+    int m_idx = target_get_monster();
     monster_type *m_ptr = &m_list[m_idx];
     monster_race *r_ptr = &r_info[m_ptr->r_idx];
     monster_lore *l_ptr = &l_list[m_ptr->r_idx];
@@ -1197,7 +1183,7 @@ static void pseudo_probe(void)
 
 
     /* If no target monster, fail. */
-    if (p_ptr->target_who < 1) {
+    if (m_idx < 1) {
 	msg_print("You must actually target a monster.");
 	return;
     }
@@ -1256,8 +1242,7 @@ static void pseudo_probe(void)
 
 	/* Update monster recall window */
 	if (p_ptr->monster_race_idx == m_ptr->r_idx) {
-	    /* Window stuff */
-	    p_ptr->window |= (PW_MONSTER);
+	    event_signal(EVENT_MONSTERTARGET);
 	}
     }
 }
@@ -1387,7 +1372,7 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
 
     /* Get the item (in the pack) */
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
     /* Get the item (on the floor) */

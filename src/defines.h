@@ -101,18 +101,21 @@
 /**
  * Number of text rows in each map screen, regardless of tile size
  */
-#define SCREEN_ROWS	(Term->hgt - ROW_MAP  - (panel_extra_rows ? 3 : 1) \
+#define SCREEN_ROWS	(Term->hgt - ROW_MAP  - 1) \
                           - (OPT(bottom_status) ? 6 : 0)) 
 
 /**
  * Number of grids in each screen (vertically)
  */
-#define SCREEN_HGT    SCREEN_ROWS / (tile_height)
+#define SCREEN_HGT    ((int) (SCREEN_ROWS / tile_height))
 
 /**
  * Number of grids in each screen (horizontally)
  */
 #define SCREEN_WID	((int)((Term->wid - COL_MAP - 1) / tile_width))
+
+#define ROW_MAP			1
+#define COL_MAP			13
 
 /**
  * Number of grids in each dungeon (from top to bottom)
@@ -677,6 +680,11 @@ enum
 	TMD_OPP_FIRE, 
 	TMD_OPP_COLD,
 	TMD_OPP_POIS, 
+	TMD_ATT_ACID,
+	TMD_ATT_ELEC,
+	TMD_ATT_FIRE,
+	TMD_ATT_COLD,
+	TMD_ATT_POIS,
 
 	TMD_MAX
 };
@@ -762,89 +770,6 @@ enum
 	REST_ALL_POINTS = -1,
 	REST_SUNLIGHT = -3
 };
-
-/*** Screen Locations ***/
-
-/*
- * Some screen locations for various display routines
- * Currently, row 7 is the only "blank" rows.
- * That leaves a "border" around the "stat" values.
- */
-
-#define ROW_RACE	(OPT(bottom_status) ? SCREEN_ROWS + 1 : 1)
-#define COL_RACE	0	/* <race name> */
-
-#define ROW_CLASS	(OPT(bottom_status) ? SCREEN_ROWS + 2 : 2)
-#define COL_CLASS	0	/* <class name> */
-
-#define ROW_TITLE	(OPT(bottom_status) ? SCREEN_ROWS + 3 : 3)
-#define COL_TITLE	0	/* <title> or <mode> */
-
-#define ROW_LEVEL	(OPT(bottom_status) ? SCREEN_ROWS + 4 : 4)
-#define COL_LEVEL	0	/* "LEVEL xxxxxx" */
-
-#define ROW_EXP		(OPT(bottom_status) ? SCREEN_ROWS + 5 : 5)
-#define COL_EXP		0	/* "EXP xxxxxxxx" */
-
-#define ROW_GOLD	(OPT(bottom_status) ? SCREEN_ROWS + 6 : 6)
-#define COL_GOLD	0	/* "AU xxxxxxxxx" */
-
-#define ROW_STAT	(OPT(bottom_status) ? SCREEN_ROWS + 1 : 8)
-#define COL_STAT	(OPT(bottom_status) ? 14 : 0)	/* "xxx   xxxxxx" */
-
-#define ROW_SHAPE	(OPT(bottom_status) ? SCREEN_ROWS + 1 : 14)
-#define COL_SHAPE	(OPT(bottom_status) ? 28 : 0)    /* "Mouse" (or whatever) */
-
-#define ROW_AC		(OPT(bottom_status) ? SCREEN_ROWS + 2 : 15)
-#define COL_AC		(OPT(bottom_status) ? 28 : 0)	/* "Cur AC xxxxx" */
-
-#define ROW_HP		(OPT(bottom_status) ? SCREEN_ROWS + 3 : 16)
-#define COL_HP		(OPT(bottom_status) ? 28 : 0)	/* "HP xxxxx" */
-
-#define ROW_SP		(OPT(bottom_status) ? SCREEN_ROWS + 4 : 17)
-#define COL_SP		(OPT(bottom_status) ? 28 : 0)	/* "SP xxxxx" */
-
-#define ROW_INFO	(OPT(bottom_status) ? SCREEN_ROWS + 5 : 18)
-#define COL_INFO	(OPT(bottom_status) ? 28 : 0)	/* "xxxxxxxxxxxx"  */
-
-#define ROW_MON_MANA	(OPT(bottom_status) ? SCREEN_ROWS + 6 : 19)
-#define COL_MON_MANA	(OPT(bottom_status) ? 28 : 0)	/* "xxxxxxxxxxxx"  */
-
-#define ROW_CUT		(OPT(bottom_status) ? SCREEN_ROWS + 1 : 21)
-#define COL_CUT		(OPT(bottom_status) ? 41 : 0)	/* <cut> */
-
-#define ROW_STUN	(OPT(bottom_status) ? SCREEN_ROWS + 2 : 22)
-#define COL_STUN	(OPT(bottom_status) ? 41 : 0)	/* <stun> */
-
-#define COL_HUNGRY      0       /* "Weak" / "Hungry" / "Full" / "Gorged" */
-
-#define COL_BLIND       (small_screen ? 7 : 6)      /* "Blind" */
-
-#define COL_CONFUSED    (small_screen ? 10 : 12)      /* "Confused" */
-
-#define COL_AFRAID      (small_screen ? 13 : 16)      /* "Afraid" */
-
-#define COL_POISONED	(small_screen ? 16 : 22)      /* "Poisoned" */
-
-#define COL_STATE       (small_screen ? 19 : 27)      /* <state> */
-
-#define COL_SPEED       (small_screen ? 24 : 38)      /* "Slow (-NN)" or "Fast (+NN)" */
-
-#define COL_DTRAP       (small_screen ? 32 : 47)      /* "DTrap" */
-
-#define COL_STUDY       (small_screen ? 34 : 53)      /* "Study" */
-
-#define ROW_MAP		1
-#define COL_MAP		(OPT(bottom_status) ? 0 : ((tile_width > 1) ? 12 : 13))
-
-/* From Unangband */
-#define SIDEBAR_WID	(OPT(bottom_status) ? 0 : ((tile_width > 1) ? 12 : 13))
-
-/* For mouse buttons */
-#define ROW_STAND       (OPT(bottom_status) ? SCREEN_ROWS + 3 : 20)
-#define ROW_REPEAT      (OPT(bottom_status) ? SCREEN_ROWS + 4 : 21)
-#define ROW_RETURN      (OPT(bottom_status) ? SCREEN_ROWS + 5 : 22)
-#define ROW_ESCAPE      (OPT(bottom_status) ? SCREEN_ROWS + 6 : 23)
 
 /*** General index values ***/
 
@@ -1634,26 +1559,35 @@ enum
 #define PR_DEPTH	0x00000200L	/* Display Depth */
 #define PR_SHAPE	0x00000400L	/* Display Shape.  -LM- */
 #define PR_HEALTH	0x00000800L	/* Display Health Bar */
-#define PR_CUT		0x00001000L	/* Display Extra (Cut) */
-#define PR_STUN		0x00002000L	/* Display Extra (Stun) */
-#define PR_HUNGER	0x00004000L	/* Display Extra (Hunger) */
-#define PR_EQUIPPY      0x00008000L     /* Display equippy chars */
-#define PR_BLIND	0x00010000L	/* Display Extra (Blind) */
-#define PR_CONFUSED	0x00020000L	/* Display Extra (Confused) */
-#define PR_AFRAID	0x00040000L	/* Display Extra (Afraid) */
-#define PR_POISONED	0x00080000L	/* Display Extra (Poisoned) */
+#define PR_INVEN	0x00001000L /* Display inven/equip */
+#define PR_EQUIP	0x00002000L /* Display equip/inven */
+#define PR_MESSAGE	0x00004000L /* Display messages */
+#define PR_MONSTER	0x00008000L /* Display monster recall */
+#define PR_OBJECT	0x00010000L /* Display object recall */
+#define PR_MONLIST	0x00010000L /* Display monster list */
+
+#define PR_BUTTONS      0x00040000L     /* Display mouse buttons */
+#define PR_ITEMLIST     0x00080000L /* Display item list */
 #define PR_STATE	0x00100000L	/* Display Extra (State) */
 #define PR_SPEED	0x00200000L	/* Display Extra (Speed) */
 #define PR_STUDY	0x00400000L	/* Display Extra (Study) */
 #define PR_DTRAP        0x00800000L     /* Display Extra (DTrap) */
-#define PR_EXTRA	0x01000000L	/* Display Extra Info */
-#define PR_BASIC	0x02000000L	/* Display Basic Info */
+
 #define PR_MON_MANA	0x04000000L	/* Display Mana Bar */
 #define PR_MAP		0x08000000L	/* Display Map */
 #define PR_WIPE         0x10000000L     /* Hack -- Total Redraw */
-#define PR_BUTTONS      0x20000000L     /* Display mouse buttons */
-/* xxx (many) */
+
 #define PR_STATUS	0x80000000L /* Display extra status messages */
+
+/* Display Basic Info */
+#define PR_BASIC \
+	(PR_MISC | PR_TITLE | PR_STATS | PR_LEV |\
+	 PR_EXP | PR_GOLD | PR_ARMOR | PR_HP |\
+	 PR_MANA | PR_DEPTH | PR_HEALTH | PR_SPEED)
+
+/* Display Extra Info */
+#define PR_EXTRA \
+	(PR_STATUS | PR_STATE | PR_STUDY)
 
 /*
  * Bit flags for the "p_ptr->window" variable (etc)
@@ -1973,14 +1907,12 @@ enum
  * Random object kind flag info (base flag value)
  */
 #define OBJECT_RAND_BASE_SUSTAIN	OF_SUSTAIN_STR
-#define OBJECT_RAND_BASE_CURSE	        CF_TELEPORT
 #define OBJECT_RAND_BASE_POWER		OF_SLOW_DIGEST
 
 /*
  * Random object kind flag info (number of flags)
  */
 #define OBJECT_RAND_SIZE_SUSTAIN	6
-#define OBJECT_RAND_SIZE_CURSE	        23
 #define OBJECT_RAND_SIZE_POWER		10
 
 /* 
@@ -2152,6 +2084,16 @@ enum
 #define rsf_diff(f1, f2)       flag_diff(f1, f2, RSF_SIZE)
 
 /**
+ * Summons
+ * Needed for shapechanging
+ */
+#define RSF_SUMMON_MASK \
+    RSF_S_KIN, RSF_S_MONSTER, RSF_S_MONSTERS, RSF_S_ANT, RSF_S_SPIDER, \
+	RSF_S_HOUND, RSF_S_ANIMAL, RSF_S_THIEF, RSF_S_SWAMP, RSF_S_DRAGON, \
+	RSF_S_HI_DRAGON, RSF_S_DEMON, RSF_S_HI_DEMON, RSF_S_APPROP, \
+	RSF_S_UNDEAD, RSF_S_HI_UNDEAD, RSF_S_QUEST, RSF_S_UNIQUE
+
+/**
  * Breath attacks.
  * Need special treatment in movement AI.
  */
@@ -2223,13 +2165,6 @@ enum
  * Hack -- The main "screen"
  */
 #define term_screen	(angband_term[0])
-
-/**
- * Hack -- random number generation
- */
-#define randint(M) \
-	(rand_int(M) + 1)
-
 
 /**
  * Determine if a given inventory item is "aware"
@@ -2379,6 +2314,13 @@ enum
 
 
 /**
+ * Some monster types are different.
+ */
+#define monster_is_unusual(R) \
+	(flags_test((R)->flags, RF_SIZE, RF_DEMON, RF_UNDEAD, RF_STUPID, FLAG_END) || \
+	strchr("Evg", (R)->d_char))
+
+/**
  * Convert an "attr"/"char" pair into a "pict" (P)
  */
 #define PICT(A,C) \
@@ -2420,13 +2362,13 @@ enum
  * Convert a "key event" into a "location" (Y)
  */
 #define KEY_GRID_Y(K) \
-  ((int) (((K.mousey - ROW_MAP) / tile_height) + panel_row_min))
+  ((int) (((K.mousey - ROW_MAP) / tile_height) + Term->offset_y))
 
 /**
  * Convert a "key event" into a "location" (X)
  */
 #define KEY_GRID_X(K) \
-	((int) (((K.mousex - COL_MAP) / tile_width) + panel_col_min))
+	((int) (((K.mousex - COL_MAP) / tile_width) + Term->offset_x))
 
 /**
  * Determines if a map location is "meaningful"
@@ -2451,8 +2393,8 @@ enum
  * Pre-storing this into a cave_info flag would be nice.  XXX XXX
  */
 #define panel_contains(Y,X) \
-  (((Y) >= panel_row_min) && ((Y) <= panel_row_max) && \
-   ((X) >= panel_col_min) && ((X) <= panel_col_max))
+	(((unsigned)((Y) - Term->offset_y) < (unsigned)(SCREEN_HGT)) && \
+	 ((unsigned)((X) - Term->offset_x) < (unsigned)(SCREEN_WID)))
 
 /**
  * Determine if a "legal" grid is a "floor" grid
@@ -2597,17 +2539,6 @@ extern int PlayerUID;
 
 
 
-/* Color code identifiers for messages */
-
-/*** Sound constants ***/
-
-
-/*
- * Mega-Hack -- some primitive sound support (see "main-win.c")
- *
- * Some "sound" constants for "Term_xtra(TERM_XTRA_SOUND, val)"
- */
-
 /*** Hack ***/
 
 /*
@@ -2617,20 +2548,6 @@ extern int PlayerUID;
 #define MAX_MACRO_MOD 12
 
 
-
-/*
- * Hack -- attempt to reduce various values
- */
-#ifdef ANGBAND_LITE
-# undef MACRO_MAX
-# define MACRO_MAX	128
-# undef QUARK_MAX
-# define QUARK_MAX	128
-# undef MESSAGE_MAX
-# define MESSAGE_MAX	128
-# undef MESSAGE_BUF
-# define MESSAGE_BUF	4096
-#endif
 
 /**
  * Max number of terminal windows -CN-
@@ -2735,41 +2652,6 @@ extern int PlayerUID;
 #define UP                     6
 #define DOWN                   7
 #define STAGE_TYPE             8
-
-/*    Colour stuff from NPP      */
-
-/** 
- * Get the index of a shaded color in angband_color_table.
- * base_color must be between 0 and 15. These are the TERM_* constants.
- * shade must be between 0 and 7 (8 shades supported, 0 is the base color).
- * 16 shades could be supported but the values returned are in the range 0-127
- * to avoid clashes with graphic or big_tile modes (bit 0x80 is reserved)
- * All shades will look like the base color in 16 color ports.
- */
-#define MAKE_EXTENDED_COLOR(base_color, shade) \
-((((shade) << 4) | ((base_color) & 0x0F)) & 0x7F)
-
-/**
- * Get the base color of a given extended color (shade).
- * Values returned are in the range 0-15 (TERM_*). See above.
- */
-#define GET_BASE_COLOR(ext_color) ((ext_color) & 0x0F)
-
-/**
- * Get the shade number of a given extended color.
- * Values returned are in the range 0-7. See above.
- */
-#define GET_SHADE(ext_color) (((ext_color) >> 4) & 0x07)
-
-/**
- * Number of base colors. These are the TERM_* constants
- */
-#define MAX_BASE_COLORS 16
-
-/**
- * Number of shades, including the shade 0 (base colors)
- */
-#define MAX_SHADES 8
 
 /**
  * Maximum size around the player to consider in the pathfinder

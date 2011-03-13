@@ -164,16 +164,6 @@ bool fake_monochrome;	        /* Use fake monochrome for effects */
 
 
 /*
- * Dungeon size info
- */
-
-s16b max_panel_rows, max_panel_cols;
-s16b panel_row_min, panel_row_max;
-s16b panel_col_min, panel_col_max;
-s16b panel_col_prt, panel_row_prt;
-bool panel_extra_rows=FALSE;
-
-/*
  * Player info
  */
 int player_uid;
@@ -718,12 +708,6 @@ store_type *store;
  * Array[RANDNAME_NUM_TYPES][num_names] of random names
  */
 cptr** name_sections;
-
-/**
- * Array[INVEN_TOTAL] of objects in the player's inventory
- */
-object_type *inventory;
-
 
 /**
  * The size of "alloc_kind_table" (at most z_info->k_max * 4)

@@ -442,8 +442,5 @@ bool spell_cast(int spell, int dir)
     /* Redraw mana */
     p_ptr->redraw |= (PR_MANA);
 
-    /* Window stuff */
-    p_ptr->window |= (PW_PLAYER_0 | PW_PLAYER_1);
-
     return TRUE;
 }

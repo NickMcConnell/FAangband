@@ -1426,7 +1426,7 @@ static void object_desc_full(char *buf, object_type * o_ptr, int pref, int mode,
 	else if (show_armour) {
 	    /* Hack - Special case to make it clear what wearing a shield on
 	     * the back does to its protective value. -LM- */
-	    if ((p_ptr->shield_on_back) && (o_ptr == &inventory[INVEN_ARM])) {
+	    if ((p_ptr->shield_on_back) && (o_ptr == &p_ptr->inventory[INVEN_ARM])) {
 		object_desc_chr_macro(t, ' ');
 		object_desc_chr_macro(t, b1);
 		if (if_has(o_ptr->id_other, IF_AC)) {
@@ -1900,7 +1900,7 @@ s16b label_to_inven(int c)
 	return (-1);
 
     /* Empty slots can never be chosen */
-    if (!inventory[i].k_idx)
+    if (!p_ptr->inventory[i].k_idx)
 	return (-1);
 
     /* Return the index */
@@ -1924,7 +1924,7 @@ s16b label_to_equip(int c)
 	return (-1);
 
     /* Empty slots can never be chosen */
-    if (!inventory[i].k_idx)
+    if (!p_ptr->inventory[i].k_idx)
 	return (-1);
 
     /* Return the index */
@@ -1956,7 +1956,7 @@ s16b wield_slot(object_type * o_ptr)
     case TV_RING:
 	{
 	    /* Use the right hand first */
-	    if (!inventory[INVEN_RIGHT].k_idx)
+	    if (!p_ptr->inventory[INVEN_RIGHT].k_idx)
 		return (INVEN_RIGHT);
 
 	    /* Use the left hand for swapping (by default) */
@@ -2093,7 +2093,7 @@ cptr mention_use(int i)
     /* Hack -- Heavy weapon */
     if (i == INVEN_WIELD) {
 	object_type *o_ptr;
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 	if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10) {
 	    p = "Just lifting";
 	}
@@ -2102,7 +2102,7 @@ cptr mention_use(int i)
     /* Hack -- Heavy bow */
     if (i == INVEN_BOW) {
 	object_type *o_ptr;
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 	if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10) {
 	    p = "Just holding";
 	}
@@ -2185,7 +2185,7 @@ cptr describe_use(int i)
     /* Hack -- Heavy weapon */
     if (i == INVEN_WIELD) {
 	object_type *o_ptr;
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 	if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10) {
 	    p = "just lifting";
 	}
@@ -2194,7 +2194,7 @@ cptr describe_use(int i)
     /* Hack -- Heavy bow */
     if (i == INVEN_BOW) {
 	object_type *o_ptr;
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 	if (adj_str_hold[p_ptr->stat_ind[A_STR]] < o_ptr->weight / 10) {
 	    p = "just holding";
 	}
@@ -2262,7 +2262,7 @@ void display_inven(void)
 
     /* Find the "final" slot */
     for (i = 0; i < INVEN_PACK; i++) {
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	/* Skip non-objects */
 	if (!o_ptr->k_idx)
@@ -2275,7 +2275,7 @@ void display_inven(void)
     /* Display the pack */
     for (i = 0; i < z; i++) {
 	/* Examine the item */
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	/* Start with an empty "index" */
 	tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
@@ -2345,7 +2345,7 @@ void display_equip(void)
     /* Display the equipment */
     for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 	/* Examine the item */
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	/* Hack -- never show empty quiver slots. */
 	if ((!o_ptr->k_idx) && (i >= INVEN_Q0) && (i <= INVEN_Q9)) {
@@ -2461,7 +2461,7 @@ void show_inven(void)
 
     /* Find the "final" slot */
     for (i = 0; i < INVEN_PACK; i++) {
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	/* Skip non-objects */
 	if (!o_ptr->k_idx)
@@ -2473,7 +2473,7 @@ void show_inven(void)
 
     /* Display the inventory */
     for (k = 0, i = 0; i < z; i++) {
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	/* Is this item acceptable? */
 	if (!item_tester_okay(o_ptr))
@@ -2523,7 +2523,7 @@ void show_inven(void)
 	i = out_index[j];
 
 	/* Get the item */
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	/* Clear the line */
 	prt("", j + 1, col ? col - 2 : col);
@@ -2644,7 +2644,7 @@ void show_equip(void)
 
     /* Scan the equipment list */
     for (k = 0, i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	/* Hack -- never show empty quiver slots. */
 	if ((!o_ptr->k_idx) && (i >= INVEN_Q0) && (i <= INVEN_Q9)) {
@@ -2704,7 +2704,7 @@ void show_equip(void)
 	i = out_index[j];
 
 	/* Get the item */
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	/* Clear the line */
 	prt("", j + 1, col ? col - 2 : col);
@@ -2773,43 +2773,6 @@ void show_equip(void)
 
 
 /**
- * Flip "inven" and "equip" in any sub-windows
- */
-void toggle_inven_equip(void)
-{
-    int j;
-
-    /* Scan windows */
-    for (j = 0; j < TERM_WIN_MAX; j++) {
-	/* Unused */
-	if (!angband_term[j])
-	    continue;
-
-	/* Flip inven to equip */
-	if (op_ptr->window_flag[j] & (PW_INVEN)) {
-	    /* Flip flags */
-	    op_ptr->window_flag[j] &= ~(PW_INVEN);
-	    op_ptr->window_flag[j] |= (PW_EQUIP);
-
-	    /* Window stuff */
-	    p_ptr->window |= (PW_EQUIP);
-	}
-
-	/* Flip inven to equip */
-	else if (op_ptr->window_flag[j] & (PW_EQUIP)) {
-	    /* Flip flags */
-	    op_ptr->window_flag[j] &= ~(PW_EQUIP);
-	    op_ptr->window_flag[j] |= (PW_INVEN);
-
-	    /* Window stuff */
-	    p_ptr->window |= (PW_INVEN);
-	}
-    }
-}
-
-
-
-/**
  * Verify the choice of an item.
  *
  * The item can be negative to mean "item on floor".
@@ -2824,7 +2787,7 @@ bool verify_item(cptr prompt, int item)
 
     /* Inventory */
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
     /* Floor */
@@ -2856,7 +2819,7 @@ extern bool get_item_allow(int item)
 
     /* Inventory */
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
     /* Floor */
@@ -2901,7 +2864,7 @@ static bool get_item_okay(int item)
 
     /* Inventory */
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
     /* Floor */
@@ -2936,7 +2899,7 @@ static int get_tag(int *cp, char tag)
 
     /* Check every object */
     for (i = start; i < INVEN_TOTAL; ++i) {
-	object_type *o_ptr = &inventory[i];
+	object_type *o_ptr = &p_ptr->inventory[i];
 
 	/* Skip non-objects */
 	if (!o_ptr->k_idx)
@@ -3364,11 +3327,11 @@ void get_item_display(menu_type * menu, int oid, bool cursor, int row, int col,
 
     /* Get the object - hack to abort if invalid */
     if (p_ptr->command_wrk == (USE_INVEN)) {
-	o_ptr = &inventory[idx];
+	o_ptr = &p_ptr->inventory[idx];
 	if (!get_item_okay(idx))
 	    return;
     } else if (p_ptr->command_wrk == (USE_EQUIP)) {
-	o_ptr = &inventory[idx];
+	o_ptr = &p_ptr->inventory[idx];
 	if (!get_item_okay(idx))
 	    return;
     } else {
@@ -3420,6 +3383,7 @@ bool item_menu(int *cp, cptr pmt, int mode, bool * oops)
 
     int py = p_ptr->py;
     int px = p_ptr->px;
+    int ty, tx;
 
     int j, k = 0;
     bool item;
@@ -3451,10 +3415,11 @@ bool item_menu(int *cp, cptr pmt, int mode, bool * oops)
     msg_print(NULL);
 
     /* Set target for telekinesis */
+    target_get(&tx, &ty);
     if (mode & (USE_TARGET)) {
-	if (p_ptr->target_row && p_ptr->target_col) {
-	    py = p_ptr->target_row;
-	    px = p_ptr->target_col;
+	if (ty && tx) {
+	    py = ty;
+	    px = tx;
 	} else {
 	    return FALSE;
 	}
@@ -3571,7 +3536,7 @@ bool item_menu(int *cp, cptr pmt, int mode, bool * oops)
     }
 
     /* Assume we'll be looking at something */
-    p_ptr->window |= (PW_INVEN | PW_EQUIP);
+    p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 
     /* Hack -- Start on equipment if requested */
     if ((mode == (USE_EQUIP)) && use_equip) {
@@ -3679,10 +3644,10 @@ bool item_menu(int *cp, cptr pmt, int mode, bool * oops)
 	}
 
 	/* Update */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 
 	/* Redraw windows */
-	window_stuff();
+	redraw_stuff();
 
 	/* Change the display if needed */
 	if (refresh) {
@@ -4015,7 +3980,7 @@ bool item_menu(int *cp, cptr pmt, int mode, bool * oops)
 	    toggle_inven_equip();
 
 	/* Update */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 
 	/* Window stuff */
 	window_stuff();
@@ -4192,7 +4157,7 @@ extern bool check_set(byte s_idx)
     set_type *s_ptr = &s_info[s_idx];;
 
     for (i = INVEN_WIELD; i <= INVEN_FEET; i++) {
-	object_type *o_ptr = &inventory[i];
+	object_type *o_ptr = &p_ptr->inventory[i];
 	if (o_ptr->name1) {
 	    artifact_type *a_ptr = &a_info[o_ptr->name1];
 	    if (a_ptr->set_no == s_idx) {
@@ -4216,7 +4181,7 @@ extern void apply_set(int s_idx)
     byte i, j, k;
 
     for (i = INVEN_WIELD; i <= INVEN_FEET; i++) {
-	object_type *o_ptr = &inventory[i];
+	object_type *o_ptr = &p_ptr->inventory[i];
 
 	/* Is it an artifact? */
 	if (o_ptr->name1) {
@@ -4283,7 +4248,7 @@ extern void remove_set(int s_idx)
     byte i, j, k;
 
     for (i = INVEN_WIELD; i <= INVEN_FEET; i++) {
-	object_type *o_ptr = &inventory[i];
+	object_type *o_ptr = &p_ptr->inventory[i];
 
 	/* Is it an artifact? */
 	if (o_ptr->name1) {
@@ -4487,7 +4452,7 @@ bool obj_can_activate(const object_type * o_ptr)
 
 bool obj_can_refill(const object_type * o_ptr)
 {
-    const object_type *j_ptr = &inventory[INVEN_LITE];
+    const object_type *j_ptr = &p_ptr->inventory[INVEN_LITE];
 
     if (j_ptr->sval == SV_LITE_LANTERN) {
 	/* Flasks of oil are okay */
@@ -4575,7 +4540,7 @@ u16b object_effect(const object_type *o_ptr)
 object_type *object_from_item_idx(int item)
 {
     if (item >= 0)
-	return &inventory[item];
+	return &p_ptr->inventory[item];
     else
 	return &o_list[0 - item];
 }

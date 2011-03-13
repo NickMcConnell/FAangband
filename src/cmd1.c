@@ -159,7 +159,7 @@ static bool auto_pickup_check(object_type * o_ptr, bool check_pack)
 
 	/* Look for similar and inscribed */
 	for (j = 0; j < INVEN_PACK - p_ptr->pack_size_reduce; j++) {
-	    object_type *j_ptr = &inventory[j];
+	    object_type *j_ptr = &p_ptr->inventory[j];
 
 	    /* Skip non-objects */
 	    if (!j_ptr->k_idx)
@@ -251,7 +251,7 @@ bool quiver_carry(object_type * o_ptr, int o_idx)
 	bool flag = FALSE;
 
 	/* Get object in that slot. */
-	i_ptr = &inventory[i];
+	i_ptr = &p_ptr->inventory[i];
 
 	/* Allow auto-pickup to empty slots */
 	if ((!i_ptr->k_idx) && (autop)) {
@@ -287,7 +287,7 @@ bool quiver_carry(object_type * o_ptr, int o_idx)
 	    p_ptr->total_weight += i_ptr->weight * (i_ptr->number - old_num);
 
 	    /* Get the object again */
-	    o_ptr = &inventory[i];
+	    o_ptr = &p_ptr->inventory[i];
 
 	    /* Describe the object */
 	    if (blind)
@@ -309,9 +309,6 @@ bool quiver_carry(object_type * o_ptr, int o_idx)
 
 	    /* Reorder the quiver */
 	    p_ptr->notice |= (PN_COMBINE);
-
-	    /* Window stuff */
-	    p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1);
 
 	    /* Redraw equippy chars */
 	    p_ptr->redraw |= (PR_EQUIPPY);
@@ -340,7 +337,7 @@ static bool auto_pickup_okay(object_type * o_ptr)
     /* Pickup things that match the inventory */
     if (OPT(pickup_inven))
 	for (j = 0; j < INVEN_PACK - p_ptr->pack_size_reduce; j++) {
-	    object_type *j_ptr = &inventory[j];
+	    object_type *j_ptr = &p_ptr->inventory[j];
 
 	    /* Skip non-objects */
 	    if (!j_ptr->k_idx)
@@ -382,7 +379,7 @@ extern void py_pickup_aux(int o_idx)
 
     char o_name[120];
     object_type *o_ptr;
-    object_type *i_ptr = &inventory[INVEN_LITE];
+    object_type *i_ptr = &p_ptr->inventory[INVEN_LITE];
     bitflag f[OF_SIZE], obvious_mask[OF_SIZE];
 
     o_ptr = &o_list[o_idx];
@@ -394,7 +391,7 @@ extern void py_pickup_aux(int o_idx)
     slot = inven_carry(o_ptr);
 
     /* Get the object again */
-    o_ptr = &inventory[slot];
+    o_ptr = &p_ptr->inventory[slot];
 
     /* Set squelch status */
     p_ptr->notice |= PN_SQUELCH;
@@ -449,9 +446,6 @@ extern void py_pickup_aux(int o_idx)
 
     /* Recalculate the bonuses */
     p_ptr->update |= (PU_BONUS);
-
-    /* Window stuff */
-    p_ptr->window |= (PW_EQUIP | PW_INVEN | PW_ITEMLIST);
 
     /* Describe the object */
     object_desc(o_name, o_ptr, TRUE, 3);
@@ -553,9 +547,6 @@ byte py_pickup(int pickup, int y, int x)
 
 		/* Redraw gold */
 		p_ptr->redraw |= (PR_GOLD);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_PLAYER_0 | PW_PLAYER_1);
 
 		/* Delete the gold */
 		delete_object_idx(this_o_idx);
@@ -1414,7 +1405,7 @@ void hit_trap(int y, int x)
 		    i = randint0(INVEN_PACK - p_ptr->pack_size_reduce);
 
 		    /* Obtain the item */
-		    o_ptr = &inventory[i];
+		    o_ptr = &p_ptr->inventory[i];
 
 		    /* use "num" to decide if a item can be uncharged.  By
 		     * default, assume it can't. */
@@ -1454,9 +1445,6 @@ void hit_trap(int y, int x)
 
 			    /* Combine / Reorder the pack */
 			    p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-			    /* Window stuff */
-			    p_ptr->window |= (PW_INVEN);
 
 			    /* not more than one inventory slot effected. */
 			    break;

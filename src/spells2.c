@@ -51,9 +51,6 @@ bool hp_player(int num)
 	/* Redraw */
 	p_ptr->redraw |= (PR_HP);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_PLAYER_0 | PW_PLAYER_1);
-
 	/* Heal 0-4 */
 	if (num < 5) {
 	    msg_print("You feel a little better.");
@@ -323,7 +320,7 @@ bool do_dec_stat(int stat)
 		   desc_stat_neg[stat]);
 
 	/* Notice effect */
-	notice_obj((OBJECT_RAND_BASE_SUSTAIN << stat), 0);
+	notice_obj(OBJECT_RAND_BASE_SUSTAIN + stat, 0);
 	return (TRUE);
     }
 
@@ -419,8 +416,9 @@ void identify_object(object_type * o_ptr)
 	e_info[o_ptr->name2].everseen = TRUE;
 
     /* Get sensation ID (id_other is already done by the notice_other call) */
-    if ((o_ptr == &inventory[INVEN_LEFT]) || (o_ptr == &inventory[INVEN_RIGHT])
-	|| (o_ptr == &inventory[INVEN_NECK]))
+    if ((o_ptr == &p_ptr->inventory[INVEN_LEFT])
+	|| (o_ptr == &p_ptr->inventory[INVEN_RIGHT])
+	|| (o_ptr == &p_ptr->inventory[INVEN_NECK]))
 	p_ptr->id_obj |= o_ptr->id_obj;
 
     /* Check for known curses */
@@ -494,7 +492,7 @@ void identify_pack(void)
 
     /* Simply identify and know every item */
     for (i = 0; i < INVEN_TOTAL; i++) {
-	object_type *o_ptr = &inventory[i];
+	object_type *o_ptr = &p_ptr->inventory[i];
 
 	/* Skip non-objects */
 	if (!o_ptr->k_idx)
@@ -510,8 +508,8 @@ void identify_pack(void)
     /* Combine / Reorder the pack (later) */
     p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-    /* Window stuff */
-    p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1);
+    /* Redraw stuff */
+    p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 }
 
 
@@ -582,7 +580,7 @@ static bool remove_curse_aux(int good)
 
     /* Get the item (in the pack) */
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
     /* Get the item (on the floor) */
@@ -597,8 +595,9 @@ static bool remove_curse_aux(int good)
     }
 
     /* Try every curse, even unknown ones */
-    for (i = 0; i < OBJECT_RAND_SIZE_CURSE; i++)
-	if (o_ptr->flags_curse & (1L << i)) {
+    for (i = cf_next(o_ptr->flags_curse, FLAG_START); i != FLAGS_END;
+	 i = cf_next(o_ptr->flags_curse, i + 1))
+	if (cf_has(o_ptr->flags_curse, i)) {
 	    /* If fragile, bad things can happen */
 	    if ((of_has(o_ptr->flags_obj, OF_FRAGILE))
 		&& (randint0(100) < destroy_chance - (good ? 10 : 0))) {
@@ -623,11 +622,11 @@ static bool remove_curse_aux(int good)
 
 	    /* Try once */
 	    if (randint0(100) < uncurse_chance)
-		cf_on(curses, (1L << i));
+		cf_on(curses, i);
 
 	    /* If good, try again */
 	    if (good && (randint0(100) < uncurse_chance))
-		cf_on(curses, (1L << i));
+		cf_on(curses, i);
 	}
 
     /* Uncurse it */
@@ -636,7 +635,7 @@ static bool remove_curse_aux(int good)
     cf_inter(o_ptr->id_curse, curses);
 
     /* May not be cursed any more */
-    if (!o_ptr->id_curse)
+    if (cf_is_empty(o_ptr->id_curse))
 	o_ptr->ident &= ~(IDENT_CURSED);
 
     /* Fragile now */
@@ -645,7 +644,7 @@ static bool remove_curse_aux(int good)
 
     /* Known objects get free curse notification now */
     if (object_known_p(o_ptr)) {
-	if (o_ptr->flags_curse)
+	if (!cf_is_empty(o_ptr->flags_curse))
 	    o_ptr->ident |= IDENT_CURSED;
 	else
 	    o_ptr->ident |= (IDENT_UNCURSED | IDENT_KNOW_CURSES);
@@ -684,8 +683,8 @@ static bool remove_curse_aux(int good)
     /* Recalculate the bonuses */
     p_ptr->update |= (PU_BONUS);
 
-    /* Window stuff */
-    p_ptr->window |= (PW_EQUIP | PW_INVEN);
+    /* Redraw stuff */
+    p_ptr->redraw |= (PR_EQUIP | PR_INVEN);
 
     /* Return "something uncursed" */
     return (curses ? TRUE : FALSE);
@@ -1698,8 +1697,8 @@ bool detect_monsters_invis(int range, bool show)
 
 	    /* Update monster recall window */
 	    if (p_ptr->monster_race_idx == m_ptr->r_idx) {
-		/* Window stuff */
-		p_ptr->window |= (PW_MONSTER);
+		/* Redraw stuff */
+		p_ptr->redraw |= (PR_MONSTER);
 	    }
 
 	    /* Optimize -- Repair flags */
@@ -1785,8 +1784,8 @@ bool detect_monsters_evil(int range, bool show)
 
 	    /* Update monster recall window */
 	    if (p_ptr->monster_race_idx == m_ptr->r_idx) {
-		/* Window stuff */
-		p_ptr->window |= (PW_MONSTER);
+		/* Redraw stuff */
+		p_ptr->redraw |= (PR_MONSTER);
 	    }
 
 	    /* Optimize -- Repair flags */
@@ -2216,8 +2215,8 @@ bool enchant(object_type * o_ptr, int n, int eflag)
     /* Combine / Reorder the pack (later) */
     p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-    /* Window stuff */
-    p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1);
+    /* Redraw stuff */
+    p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 
     /* Success */
     return (TRUE);
@@ -2260,7 +2259,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 
     /* Get the item (in the pack) */
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
     /* Get the item (on the floor) */
@@ -2335,7 +2334,7 @@ bool brand_missile(int ammo_type, int brand_type)
 	return (FALSE);
 
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
     /* Get the item (on the floor) */
@@ -2435,58 +2434,62 @@ void set_ele_attack(u32b attack_type, int duration)
     /* Clear all elemental attacks (only one is allowed at a time). */
     if ((p_ptr->special_attack & (ATTACK_ACID)) && (attack_type != ATTACK_ACID)) {
 	p_ptr->special_attack &= ~(ATTACK_ACID);
-	msg_print("Your temporary acidic brand fades away.");
+	clear_timed(TMD_ATT_ACID);
     }
     if ((p_ptr->special_attack & (ATTACK_ELEC)) && (attack_type != ATTACK_ELEC)) {
 	p_ptr->special_attack &= ~(ATTACK_ELEC);
-	msg_print("Your temporary electrical brand fades away.");
+	clear_timed(TMD_ATT_ELEC);
     }
     if ((p_ptr->special_attack & (ATTACK_FIRE)) && (attack_type != ATTACK_FIRE)) {
 	p_ptr->special_attack &= ~(ATTACK_FIRE);
-	msg_print("Your temporary fiery brand fades away.");
+	clear_timed(TMD_ATT_FIRE);
     }
     if ((p_ptr->special_attack & (ATTACK_COLD)) && (attack_type != ATTACK_COLD)) {
 	p_ptr->special_attack &= ~(ATTACK_COLD);
-	msg_print("Your temporary frost brand fades away.");
+	clear_timed(TMD_ATT_COLD);
     }
     if ((p_ptr->special_attack & (ATTACK_POIS)) && (attack_type != ATTACK_POIS)) {
 	p_ptr->special_attack &= ~(ATTACK_POIS);
-	msg_print("Your temporary poison brand fades away.");
+	clear_timed(TMD_ATT_POIS);
     }
 
     if ((duration) && (attack_type)) {
+
+	int type;
+
 	/* Set attack type. */
 	p_ptr->special_attack |= (attack_type);
 
+	switch (attack_type) {
+	case ATTACK_ACID:{
+		type = TMD_ATT_ACID;
+		break;
+	    }
+	case ATTACK_ELEC:{
+		type = TMD_ATT_ELEC;
+		break;
+	    }
+	case ATTACK_FIRE:{
+		type = TMD_ATT_FIRE;
+		break;
+	    }
+	case ATTACK_COLD:{
+		type = TMD_ATT_COLD;
+		break;
+	    }
+	case ATTACK_POIS:{
+		type = TMD_ATT_POIS;
+		break;
+	    }
+	default:{
+		return;
+	    }
+	}
+
 	/* Set duration. */
-	p_ptr->ele_attack = duration;
+	inc_timed(type, duration, TRUE);
 
-	/* Message. */
-	msg_format("For a while, the blows you deal will %s",
-		   ((attack_type ==
-		     ATTACK_ACID) ? "melt with acid!" : ((attack_type ==
-							  ATTACK_ELEC) ?
-							 "shock your foes!"
-							 : ((attack_type ==
-							     ATTACK_FIRE) ?
-							    "burn with fire!"
-							    : ((attack_type ==
-								ATTACK_COLD) ?
-							       "chill to the bone!"
-							       : ((attack_type
-								   ==
-								   ATTACK_POIS)
-								  ?
-								  "poison your enemies!"
-								  :
-								  "do nothing special."))))));
     }
-
-    /* Redraw the state */
-    p_ptr->redraw |= (PR_STATUS);
-
-    /* Handle stuff */
-    handle_stuff();
 }
 
 /**
@@ -2517,7 +2520,7 @@ bool el_proof(u32b flag)
 
     /* Get the item (in the pack) */
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
     /* Get the item (on the floor) */
@@ -2545,7 +2548,7 @@ bool curse_armor(void)
     int slot = INVEN_BODY;
 
     /* Curse the body armor */
-    o_ptr = &inventory[INVEN_BODY];
+    o_ptr = &p_ptr->inventory[INVEN_BODY];
 
     /* Nothing to curse */
     if (!o_ptr->k_idx)
@@ -2570,16 +2573,18 @@ bool curse_armor(void)
 	msg_format("A terrible black aura blasts your %s!", o_name);
 
 	/* Try every curse */
-	for (i = 0; i < OBJECT_RAND_SIZE_CURSE; i++) {
+	for (i = FLAG_START; i < CF_MAX; i++) {
 	    if (randint0(100) < 10) {
 		/* Try once */
-		o_ptr->flags_curse |= (1L << i);
+		(void) cf_on(o_ptr->flags_curse, i);
 	    }
 	}
 
 	/* Hack - no sticky curses on permacursed things */
-	if (of_has(o_ptr->flags_obj, OF_PERMA_CURSE))
-	    o_ptr->flags_curse &= ~(CF_STICKY_WIELD | CF_STICKY_CARRY);
+	if (of_has(o_ptr->flags_obj, OF_PERMA_CURSE)) {
+	    (void) cf_off(o_ptr->flags_curse, CF_STICKY_WIELD);
+	    (void) cf_off(o_ptr->flags_curse, CF_STICKY_CARRY);
+	}
 
 	/* Not uncursed */
 	o_ptr->ident &= ~(IDENT_UNCURSED | IDENT_KNOW_CURSES);
@@ -2615,8 +2620,8 @@ bool curse_armor(void)
 	/* Recalculate mana */
 	p_ptr->update |= (PU_MANA);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1);
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
     }
 
     return (TRUE);
@@ -2635,7 +2640,7 @@ bool curse_weapon(void)
     int slot = INVEN_WIELD;
 
     /* Curse the weapon */
-    o_ptr = &inventory[INVEN_WIELD];
+    o_ptr = &p_ptr->inventory[INVEN_WIELD];
 
     /* Nothing to curse */
     if (!o_ptr->k_idx)
@@ -2661,16 +2666,18 @@ bool curse_weapon(void)
 	msg_format("A terrible black aura blasts your %s!", o_name);
 
 	/* Try every curse */
-	for (i = 0; i < OBJECT_RAND_SIZE_CURSE; i++) {
+	for (i = FLAG_START; i < CF_MAX; i++) {
 	    if (randint0(100) < 10) {
 		/* Try once */
-		o_ptr->flags_curse |= (1L << i);
+		(void) cf_on(o_ptr->flags_curse, i);
 	    }
 	}
 
 	/* Hack - no sticky curses on permacursed things */
-	if (of_has(o_ptr->flags_obj, OF_PERMA_CURSE))
-	    o_ptr->flags_curse &= ~(CF_STICKY_WIELD | CF_STICKY_CARRY);
+	if (of_has(o_ptr->flags_obj, OF_PERMA_CURSE)) {
+	    (void) cf_off(o_ptr->flags_curse, CF_STICKY_WIELD);
+	    (void) cf_off(o_ptr->flags_curse, CF_STICKY_CARRY);
+	}
 
 	/* Not uncursed */
 	o_ptr->ident &= ~(IDENT_UNCURSED | IDENT_KNOW_CURSES);
@@ -2706,8 +2713,8 @@ bool curse_weapon(void)
 	/* Recalculate mana */
 	p_ptr->update |= (PU_MANA);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1);
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_INVEN | PR_EQUIP1);
     }
 
     /* Notice */
@@ -2745,7 +2752,7 @@ bool ident_spell(void)
 
     /* Get the item (in the pack) */
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
     /* Get the item (on the floor) */
@@ -2762,8 +2769,8 @@ bool ident_spell(void)
     /* Combine / Reorder the pack (later) */
     p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-    /* Window stuff */
-    p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1);
+    /* Redraw stuff */
+    p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 
     /* Handle stuff */
     handle_stuff();
@@ -2836,7 +2843,7 @@ bool identify_fully(void)
 
     /* Get the item (in the pack) */
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
     /* Get the item (on the floor) */
@@ -2862,8 +2869,8 @@ bool identify_fully(void)
     /* Combine / Reorder the pack (later) */
     p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-    /* Window stuff */
-    p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER_0 | PW_PLAYER_1);
+    /* Redraw stuff */
+    p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 
     /* Handle stuff */
     handle_stuff();
@@ -2945,7 +2952,7 @@ bool recharge(int power)
 
     /* Get the item (in the pack) */
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
     /* Get the item (on the floor) */
@@ -3193,8 +3200,8 @@ bool recharge(int power)
     /* Combine / Reorder the pack (later) */
     p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-    /* Window stuff */
-    p_ptr->window |= (PW_INVEN);
+    /* Redraw stuff */
+    p_ptr->redraw |= (PR_INVEN);
 
     /* Something was done */
     return (TRUE);
@@ -3226,7 +3233,7 @@ void tap_magical_energy(void)
 
     /* Get the item (in the pack) */
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
     /* Get the item (on the floor) */
@@ -3281,8 +3288,8 @@ void tap_magical_energy(void)
 	    /* Combine / Reorder the pack (later) */
 	    p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	    /* Window stuff */
-	    p_ptr->window |= (PW_INVEN);
+	    /* Redraw stuff */
+	    p_ptr->redraw |= (PR_INVEN);
 
 	    /* Increase mana. */
 	    p_ptr->csp += energy / 12;
@@ -3293,7 +3300,6 @@ void tap_magical_energy(void)
 	    msg_print("You feel your head clear.");
 
 	    p_ptr->redraw |= (PR_MANA);
-	    p_ptr->window |= (PW_PLAYER_0 | PW_PLAYER_1);
 	}
 
 	/* Player is a smart cookie. */
@@ -4244,9 +4250,6 @@ void destroy_area(int y1, int x1, int r, bool full)
 
     /* Redraw map */
     p_ptr->redraw |= (PR_MAP);
-
-    /* Window stuff */
-    p_ptr->window |= (PW_OVERHEAD);
 }
 
 
@@ -4727,18 +4730,15 @@ void earthquake(int cy, int cx, int r, bool volcano)
 
     /* Update the health and mana bars */
     p_ptr->redraw |= (PR_HEALTH | PR_MON_MANA);
-
-    /* Window stuff */
-    p_ptr->window |= (PW_OVERHEAD);
 }
 
-/** 
+/**
  * Small targetable earthquake
  */
 bool tremor(void)
 {
-    int ny;
-    int nx;
+    int ny, ty;
+    int nx, tx;
     bool okay = FALSE;
     bool valid_grid = FALSE;
 
@@ -4749,8 +4749,9 @@ bool tremor(void)
 	    return (FALSE);
 
 	/* grab the target coords. */
-	ny = p_ptr->target_row;
-	nx = p_ptr->target_col;
+	target_get(&tx, &ty);
+	ny = ty;
+	nx = tx;
 
 	/* Test for empty floor and line of sight, forbid vaults */
 	if (cave_empty_bold(ny, nx) && !(cave_info[ny][nx] & CAVE_ICKY)
@@ -5094,10 +5095,8 @@ bool fire_ball(int typ, int dir, int dam, int rad, bool jump)
 
     /* Hack -- Use an actual "target" */
     if ((dir == 5) && target_okay()) {
+	target_get(&tx, &ty);
 	flg &= ~(PROJECT_STOP);
-
-	ty = p_ptr->target_row;
-	tx = p_ptr->target_col;
     }
 
     /* Analyze the "dir" and the "target".  Hurt items on floor. */
@@ -5129,10 +5128,8 @@ bool fire_sphere(int typ, int dir, int dam, int rad, byte diameter_of_source)
 
     /* Hack -- Use an actual "target" */
     if ((dir == 5) && target_okay()) {
+	target_get(&tx, &ty);
 	flg &= ~(PROJECT_STOP);
-
-	ty = p_ptr->target_row;
-	tx = p_ptr->target_col;
     }
 
     /* Analyze the "dir" and the "target".  Hurt items on floor. */
@@ -5160,10 +5157,8 @@ bool fire_cloud(int typ, int dir, int dam, int rad)
 
     /* Hack -- Use an actual "target" */
     if ((dir == 5) && target_okay()) {
+	target_get(&tx, &ty);
 	flg &= ~(PROJECT_STOP);
-
-	ty = p_ptr->target_row;
-	tx = p_ptr->target_col;
     }
 
     /* Analyze the "dir" and the "target".  Hurt items on floor. */
@@ -5231,10 +5226,8 @@ bool fire_arc(int typ, int dir, int dam, int rad, int degrees_of_arc)
 
     /* Hack -- Use an actual "target" */
     if ((dir == 5) && target_okay()) {
+	target_get(&tx, &ty);
 	flg &= ~(PROJECT_STOP);
-
-	ty = p_ptr->target_row;
-	tx = p_ptr->target_col;
     }
 
     /* Calculate the effective diameter of the energy source, if necessary. */
@@ -5276,10 +5269,8 @@ static bool project_hook(int typ, int dir, int dam, int flg)
     tx = px + ddx[dir];
 
     /* Hack -- Use an actual "target" */
-    if ((dir == 5) && target_okay()) {
-	ty = p_ptr->target_row;
-	tx = p_ptr->target_col;
-    }
+    if ((dir == 5) && target_okay())
+	target_get(&tx, &ty);
 
     /* Analyze the "dir" and the "target", do NOT explode */
     return (project(-1, 0, ty, tx, dam, typ, flg, 0, 0));

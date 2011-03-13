@@ -755,7 +755,7 @@ void map_info(int y, int x, byte * ap, char *cp, byte * tap, char *tcp)
 
     feature_type *f_ptr;
 
-    object_type *o_ptr = &inventory[INVEN_LITE];
+    object_type *o_ptr = &p_ptr->inventory[INVEN_LITE];
 
     s16b this_o_idx, next_o_idx = 0;
 
@@ -1293,7 +1293,7 @@ void map_info_default(int y, int x, byte * ap, char *cp)
 
     feature_type *f_ptr;
 
-    object_type *o_ptr = &inventory[INVEN_LITE];
+    object_type *o_ptr = &p_ptr->inventory[INVEN_LITE];
 
     s16b this_o_idx, next_o_idx = 0;
 
@@ -1741,14 +1741,14 @@ void move_cursor_relative(int y, int x)
     unsigned vy, vx;
 
     /* Location relative to panel */
-    ky = (unsigned) (y - panel_row_min);
+    ky = (unsigned) (y - Term->offset_y);
 
     /* Verify location */
     if (ky >= (unsigned) (SCREEN_HGT))
 	return;
 
     /* Location relative to panel */
-    kx = (unsigned) (x - panel_col_min);
+    kx = (unsigned) (x - Term->offset_x);
 
     /* Verify location */
     if (kx >= (unsigned) (SCREEN_WID))
@@ -1790,14 +1790,14 @@ void print_rel(char c, byte a, int y, int x)
     unsigned vy, vx;
 
     /* Location relative to panel */
-    ky = (unsigned) (y - panel_row_min);
+    ky = (unsigned) (y - Term->offset_y);
 
     /* Verify location */
     if (ky >= (unsigned) (SCREEN_HGT))
 	return;
 
     /* Location relative to panel */
-    kx = (unsigned) (x - panel_col_min);
+    kx = (unsigned) (x - Term->offset_x);
 
     /* Verify location */
     if (kx >= (unsigned) (SCREEN_WID))
@@ -1921,12 +1921,12 @@ void prt_map(void)
     int ty, tx;
 
     /* Assume screen */
-    ty = panel_row_min + SCREEN_HGT;
-    tx = panel_col_min + SCREEN_WID;
+    ty = Term->offset_y + SCREEN_HGT;
+    tx = Term->offset_x + SCREEN_WID;
 
     /* Dump the map */
-    for (y = panel_row_min, vy = ROW_MAP; y < ty; vy++, y++) {
-	for (x = panel_col_min, vx = COL_MAP; x < tx; vx++, x++) {
+    for (y = Term->offset_y, vy = ROW_MAP; y < ty; vy++, y++) {
+	for (x = Term->offset_x, vx = COL_MAP; x < tx; vx++, x++) {
 	    /* Check bounds */
 	    if (!in_bounds(y, x))
 		continue;
@@ -4349,9 +4349,6 @@ void map_area(int y, int x, bool extended)
 
     /* Redraw map */
     p_ptr->redraw |= (PR_MAP);
-
-    /* Window stuff */
-    p_ptr->window |= (PW_OVERHEAD);
 }
 
 
@@ -4444,9 +4441,6 @@ void wiz_lite(bool wizard)
 
     /* Redraw map */
     p_ptr->redraw |= (PR_MAP);
-
-    /* Window stuff */
-    p_ptr->window |= (PW_OVERHEAD | PW_MONLIST | PW_ITEMLIST);
 }
 
 
@@ -4489,9 +4483,6 @@ void wiz_dark(void)
 
     /* Redraw map */
     p_ptr->redraw |= (PR_MAP);
-
-    /* Window stuff */
-    p_ptr->window |= (PW_OVERHEAD | PW_MONLIST | PW_ITEMLIST);
 }
 
 
@@ -4581,9 +4572,6 @@ void town_illuminate(bool daytime, bool cave)
 
     /* Redraw map */
     p_ptr->redraw |= (PR_MAP);
-
-    /* Window stuff */
-    p_ptr->window |= (PW_OVERHEAD | PW_MONLIST | PW_ITEMLIST);
 }
 
 
@@ -5020,9 +5008,6 @@ void monster_race_track(int r_idx)
 {
     /* Save this monster ID */
     p_ptr->monster_race_idx = r_idx;
-
-    /* Window stuff */
-    p_ptr->window |= (PW_MONSTER);
 }
 
 
@@ -5034,14 +5019,14 @@ void track_object(int item)
 {
     p_ptr->object_idx = item;
     p_ptr->object_kind_idx = 0;
-    p_ptr->redraw |= (PW_OBJECT);
+    p_ptr->redraw |= (PR_OBJECT);
 }
 
 void track_object_kind(int k_idx)
 {
     p_ptr->object_idx = 0;
     p_ptr->object_kind_idx = k_idx;
-    p_ptr->redraw |= (PW_OBJECT);
+    p_ptr->redraw |= (PR_OBJECT);
 }
 
 

@@ -42,7 +42,7 @@ void do_cmd_inven_new(void)
 
     /* Find the "final" slot */
     for (i = 0; i < INVEN_PACK; i++) {
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	/* Skip non-objects */
 	if (!o_ptr->k_idx)
@@ -235,7 +235,7 @@ void do_cmd_destroy(cmd_code code, cmd_arg args[])
 
     /* Get the item (in the pack) */
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
     /* Get the item (on the floor) */
@@ -335,9 +335,6 @@ void do_cmd_destroy(cmd_code code, cmd_arg args[])
 
 	/* Combine the pack */
 	p_ptr->notice |= (PN_COMBINE);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
 	/* Done */
 	return;
@@ -526,8 +523,8 @@ void do_cmd_locate(void)
 
 
     /* Start at current panel */
-    y2 = y1 = panel_row_min;
-    x2 = x1 = panel_col_min;
+    y2 = y1 = Term->offset_y;
+    x2 = x1 = Term->offset_x;
 
     /* Show panels until done */
     while (1) {
@@ -588,8 +585,8 @@ void do_cmd_locate(void)
 
 	/* Apply the motion */
 	if (change_panel(ddy[dir], ddx[dir])) {
-	    y2 = panel_row_min;
-	    x2 = panel_col_min;
+	    y2 = Term->offset_y;
+	    x2 = Term->offset_x;
 	}
     }
 
@@ -602,9 +599,6 @@ void do_cmd_locate(void)
 
     /* Redraw map */
     p_ptr->redraw |= (PR_MAP);
-
-    /* Window stuff */
-    p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
     /* Handle stuff */
     handle_stuff();

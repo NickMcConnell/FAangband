@@ -1378,7 +1378,7 @@ static errr rd_inventory(void)
       if (n >= INVEN_WIELD)
 	{
 	  /* Copy object */
-	  object_copy(&inventory[n], i_ptr);
+	  object_copy(&p_ptr->inventory[n], i_ptr);
 	  
 	  /* Add the weight */
 	  p_ptr->total_weight += (i_ptr->number * i_ptr->weight);
@@ -1387,11 +1387,11 @@ static errr rd_inventory(void)
 	  p_ptr->equip_cnt++;
 
 	  /* Mark as worn for old savefiles */
-	  if (older_than(1, 1, 0)) inventory[n].ident |= IDENT_WORN;
+	  if (older_than(1, 1, 0)) p_ptr->inventory[n].ident |= IDENT_WORN;
 
 	  /* Notice dice and other obvious stuff */
 	  notice_other(IF_DD_DS, n + 1);
-	  inventory[n].id_obj |= ((inventory[n].flags_obj) & OF_OBVIOUS_MASK);
+	  p_ptr->inventory[n].id_obj |= ((p_ptr->inventory[n].flags_obj) & OF_OBVIOUS_MASK);
 	}
       
       /* Warning -- backpack is full */
@@ -1411,7 +1411,7 @@ static errr rd_inventory(void)
 	  n = slot++;
 	  
 	  /* Copy object */
-	  object_copy(&inventory[n], i_ptr);
+	  object_copy(&p_ptr->inventory[n], i_ptr);
 	  
 	  /* Add the weight */
 	  p_ptr->total_weight += (i_ptr->number * i_ptr->weight);
@@ -1421,7 +1421,7 @@ static errr rd_inventory(void)
 
 	  /* Notice dice and other obvious stuff */
 	  notice_other(IF_DD_DS, n + 1);
-	  inventory[n].id_obj |= ((inventory[n].flags_obj) & OF_OBVIOUS_MASK);
+	  p_ptr->inventory[n].id_obj |= ((p_ptr->inventory[n].flags_obj) & OF_OBVIOUS_MASK);
 	}
     }
   

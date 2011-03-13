@@ -2728,8 +2728,7 @@ static void j_make_terrible(object_type *o_ptr)
   
   /* Apply curses. */
   for (i = 0; i < num_curses; i++)
-    o_ptr->flags_curse 
-      |= (OBJECT_RAND_BASE_CURSE << randint0(OBJECT_RAND_SIZE_CURSE));
+      cf_on(o_ptr->flags_curse, FLAG_START + randint0(CF_MAX));
 }
 
 
@@ -2751,7 +2750,7 @@ static void j_remove_contradictory(object_type *o_ptr)
   if (cf_has(o_ptr->flags_curse, CF_PARALYZE))   of_off(o_ptr->flags_obj, OF_FREE_ACT);
   for (i = 0; i < A_MAX; i++)
     {
-      if (o_ptr->bonus_stat[i] < 0) of_off(o_ptr->flags_obj, OF_SUSTAIN_STR << i);
+      if (o_ptr->bonus_stat[i] < 0) of_off(o_ptr->flags_obj, OF_SUSTAIN_STR + i);
       if (o_ptr->bonus_stat[i] > 6) o_ptr->bonus_stat[i] = 6;
     }
   for (i = 0; i < MAX_P_BONUS; i++)

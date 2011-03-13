@@ -428,7 +428,7 @@ void do_cmd_show_obj(void)
 
     /* Got it */
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
     /* Get the item (on the floor) */
@@ -538,7 +538,7 @@ void do_cmd_show_obj(void)
 
     if ((item < INVEN_WIELD)
 	&& ((o_ptr->tval == TV_LITE) || (o_ptr->tval == TV_FLASK))) {
-	object_type *o1_ptr = &inventory[INVEN_LITE];
+	object_type *o1_ptr = &p_ptr->inventory[INVEN_LITE];
 
 	if (((o1_ptr->sval == SV_LITE_LANTERN)
 	     && ((o_ptr->tval == TV_FLASK)

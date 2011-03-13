@@ -1266,8 +1266,8 @@ void bell(cptr reason)
 	{
 		message_add(reason, MSG_BELL);
 
-		/* Window stuff */
-		p_ptr->redraw |= (PW_MESSAGE);
+		/* Redraw stuff */
+		p_ptr->redraw |= (PR_MESSAGE);
 		redraw_stuff();
 	}
 
@@ -1393,8 +1393,8 @@ static void msg_print_aux(u16b type, cptr msg)
 	if (character_generated && !(p_ptr->is_dead))
 		message_add(msg, type);
 
-	/* Window stuff */
-	p_ptr->redraw |= (PW_MESSAGE);
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_MESSAGE);
 
 	/* Copy it */
 	my_strcpy(buf, msg, sizeof(buf));

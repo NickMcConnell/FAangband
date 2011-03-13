@@ -330,7 +330,7 @@ void player_flags(bitflag * flags)
 	}
     case SHAPE_WYRM:
 	{
-	    object_type *o_ptr = &inventory[INVEN_BODY];
+	    object_type *o_ptr = &p_ptr->inventory[INVEN_BODY];
 
 	    /* Paranoia */
 	    if (o_ptr->tval != TV_DRAG_ARMOR)
@@ -466,7 +466,7 @@ void get_player_resists(int *player_resists)
 	}
     case SHAPE_WYRM:
 	{
-	    object_type *o_ptr = &inventory[INVEN_BODY];
+	    object_type *o_ptr = &p_ptr->inventory[INVEN_BODY];
 
 	    /* Paranoia */
 	    if (o_ptr->tval != TV_DRAG_ARMOR)
@@ -803,7 +803,7 @@ void display_player_sml(void)
     /* Process equipment */
     for (i = INVEN_WIELD; i < INVEN_SUBTOTAL; i++) {
 	/* Access object */
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	/* Initialize color based of sign of pval. */
 	for (j = 0; j < A_MAX; j++) {
@@ -838,7 +838,7 @@ void display_player_sml(void)
 	    }
 
 	    /* Sustain */
-	    if (of_has(o_ptr->id_obj, (OF_SUSTAIN_STR << j))) {
+	    if (of_has(o_ptr->id_obj, OF_SUSTAIN_STR + j)) {
 		/* Dark green, "s" if no stat bonus. */
 		a = TERM_GREEN;
 		if (c == '.')
@@ -1161,13 +1161,13 @@ extern int make_dump(char_attr_line * line, int mode)
 
 	/* Get the bonuses to hit/dam */
 
-	o_ptr = &inventory[INVEN_WIELD];
+	o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	if (if_has(o_ptr->id_other, IF_TO_H))
 	    show_m_tohit += o_ptr->to_h;
 	if (if_has(o_ptr->id_other, IF_TO_D))
 	    show_m_todam += o_ptr->to_d;
 
-	o_ptr = &inventory[INVEN_BOW];
+	o_ptr = &p_ptr->inventory[INVEN_BOW];
 	if (if_has(o_ptr->id_other, IF_TO_H))
 	    show_a_tohit += o_ptr->to_h;
 	if (if_has(o_ptr->id_other, IF_TO_D))
@@ -1233,7 +1233,7 @@ extern int make_dump(char_attr_line * line, int mode)
 
 	dump_ptr = (char_attr *) & line[current_line];
 	/* Show damage per blow if no weapon wielded */
-	if (!inventory[INVEN_WIELD].k_idx) {
+	if (!p_ptr->inventory[INVEN_WIELD].k_idx) {
 	    int sum = 0;
 
 	    for (i = 0; i < 12; i++)
@@ -1436,11 +1436,11 @@ extern int make_dump(char_attr_line * line, int mode)
 		object_type *o_ptr;
 
 		/* Object */
-		o_ptr = &inventory[i];
+		o_ptr = &p_ptr->inventory[i];
 
 		/* Check flags */
 		if ((o_ptr->k_idx)
-		    && (o_ptr->id_other & (OBJECT_ID_BASE_RESIST << r))) {
+		    && if_has(o_ptr->id_other, OBJECT_ID_BASE_RESIST + r)) {
 		    if (o_ptr->percent_res[r] == RES_LEVEL_MIN)
 			dump_put_str(resist_colour(o_ptr->percent_res[r]), "*",
 				     n);
@@ -1508,7 +1508,7 @@ extern int make_dump(char_attr_line * line, int mode)
 		object_type *o_ptr;
 
 		/* Object */
-		o_ptr = &inventory[i];
+		o_ptr = &p_ptr->inventory[i];
 
 		/* Check flags */
 		if ((o_ptr->k_idx) && (o_ptr->id_obj & flag)) {
@@ -1558,7 +1558,7 @@ extern int make_dump(char_attr_line * line, int mode)
 		object_type *o_ptr;
 
 		/* Object */
-		o_ptr = &inventory[i];
+		o_ptr = &p_ptr->inventory[i];
 
 		/* Check flags */
 		if (o_ptr->bonus_other[y] != BONUS_BASE) {
@@ -1718,7 +1718,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	    col = 42 + j - INVEN_WIELD;
 
 	    /* Access object */
-	    o_ptr = &inventory[j];
+	    o_ptr = &p_ptr->inventory[j];
 
 	    /* Initialize color based of sign of bonus. */
 	    a = TERM_SLATE;
@@ -1751,7 +1751,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	    }
 
 	    /* Sustain */
-	    if (of_has(o_ptr->flags_obj, (OF_SUSTAIN_STR << i))) {
+	    if (of_has(o_ptr->flags_obj, OF_SUSTAIN_STR + i)) {
 		/* Dark green, "s" if no stat bonus. */
 		a = TERM_GREEN;
 		if (c == '.')
@@ -1798,7 +1798,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 	    if (i == INVEN_BLANK) {
 		for (j = 0; j < 10; j++) {
-		    object_desc(o_name, &inventory[i + j + 1], TRUE, 4);
+		    object_desc(o_name, &p_ptr->inventory[i + j + 1], TRUE, 4);
 		    if (!streq(o_name, "(nothing)"))
 			quiver_empty = FALSE;
 		}
@@ -1812,11 +1812,11 @@ extern int make_dump(char_attr_line * line, int mode)
 
 	    else {
 		dump_ptr = (char_attr *) & line[current_line];
-		object_desc(o_name, &inventory[i], TRUE, 4);
+		object_desc(o_name, &p_ptr->inventory[i], TRUE, 4);
 		if (streq(o_name, "(nothing)"))
 		    continue;
 		sprintf(buf, "%c%s %s", index_to_label(i), paren, o_name);
-		dump_put_str(proc_list_color_hack(&inventory[i]), buf, 0);
+		dump_put_str(proc_list_color_hack(&p_ptr->inventory[i]), buf, 0);
 		current_line++;
 	    }
 	}
@@ -1828,13 +1828,13 @@ extern int make_dump(char_attr_line * line, int mode)
     dump_put_str(TERM_WHITE, "[Character Inventory]", 2);
     current_line += 2;
     for (i = 0; i < INVEN_PACK; i++) {
-	if (!inventory[i].k_idx)
+	if (!p_ptr->inventory[i].k_idx)
 	    break;
 
 	dump_ptr = (char_attr *) & line[current_line];
-	object_desc(o_name, &inventory[i], TRUE, 4);
+	object_desc(o_name, &p_ptr->inventory[i], TRUE, 4);
 	sprintf(buf, "%c%s %s", index_to_label(i), paren, o_name);
-	dump_put_str(proc_list_color_hack(&inventory[i]), buf, 0);
+	dump_put_str(proc_list_color_hack(&p_ptr->inventory[i]), buf, 0);
 	current_line++;
 
     }
@@ -3433,7 +3433,7 @@ static void death_knowledge(void)
 
     /* Hack -- Know everything in the inven/equip */
     for (i = 0; i < INVEN_TOTAL; i++) {
-	o_ptr = &inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
 	/* Skip non-objects */
 	if (!o_ptr->k_idx)
@@ -3628,7 +3628,7 @@ static void death_examine(void)
 
     /* Get the item (in the pack) */
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     }
 
     /* Get the item (on the floor) */
@@ -4056,8 +4056,8 @@ static void get_default_tile(int row, int col, byte * a_def, char *c_def)
     int screen_wid, screen_hgt;
     int x, y;
 
-    x = (col - COL_MAP) / tile_width + panel_col_min;
-    y = (row - ROW_MAP) / tile_height + panel_row_min;
+    x = (col - COL_MAP) / tile_width + Term->offset_x;
+    y = (row - ROW_MAP) / tile_height + Term->offset_y;
 
     /* Retrieve current screen size */
     Term_get_size(&wid, &hgt);

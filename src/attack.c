@@ -355,7 +355,7 @@ static int adjust_dam(long *die_average, object_type * o_ptr,
     case TV_BOLT:
 	{
 	    /* Check launcher for additional brands (slays) */
-	    i_ptr = &inventory[INVEN_BOW];
+	    i_ptr = &p_ptr->inventory[INVEN_BOW];
 
 	    /* If wielding a launcher - sanity check */
 	    if (i_ptr->k_idx) {
@@ -377,7 +377,7 @@ static int adjust_dam(long *die_average, object_type * o_ptr,
 	{
 	    for (j = 0; j < 2; j++) {
 		/* Check rings for additional brands (slays) */
-		i_ptr = &inventory[INVEN_LEFT + j];
+		i_ptr = &p_ptr->inventory[INVEN_LEFT + j];
 
 		/* If wearing a ring */
 		if (i_ptr->k_idx) {
@@ -1105,7 +1105,7 @@ bool py_attack(int y, int x, bool can_push)
   /**** The monster bashing code. -LM-  ****/
 
     /* No shield on arm, no bash.  */
-    if ((!inventory[INVEN_ARM].k_idx) || (p_ptr->shield_on_back)) {
+    if ((!p_ptr->inventory[INVEN_ARM].k_idx) || (p_ptr->shield_on_back)) {
 	bash_chance = 0;
     }
 
@@ -1135,16 +1135,19 @@ bool py_attack(int y, int x, bool can_push)
 
     /* Players bash more often when they see a real need. */
     /* Unarmed and unskilled */
-    if ((!(inventory[INVEN_WIELD].k_idx)) && (bash_chance)
+    if ((!(p_ptr->inventory[INVEN_WIELD].k_idx)) && (bash_chance)
 	&& (!(player_has(PF_UNARMED_COMBAT)))
 	&& (!(player_has(PF_MARTIAL_ARTS)))) {
 	bash_chance *= 4;
     }
 
     /* ... or armed with a puny weapon */
-    if ((inventory[INVEN_WIELD].k_idx) && (bash_chance)
-	&& ((inventory[INVEN_WIELD].dd * inventory[INVEN_WIELD].ds * blows)
-	    < (inventory[INVEN_ARM].dd * inventory[INVEN_ARM].ds * 3))) {
+    if ((p_ptr->inventory[INVEN_WIELD].k_idx) && (bash_chance)
+	&&
+	((p_ptr->inventory[INVEN_WIELD].dd * p_ptr->inventory[INVEN_WIELD].ds *
+	  blows)
+	 < (p_ptr->inventory[INVEN_ARM].dd * p_ptr->inventory[INVEN_ARM].ds *
+	    3))) {
 	bash_chance *= 2;
     }
 
@@ -1155,14 +1158,17 @@ bool py_attack(int y, int x, bool can_push)
 	/* Calculate attack quality, a mix of momentum and accuracy. */
 	bash_quality =
 	    p_ptr->state.skills[SKILL_TO_HIT_MELEE] + (p_ptr->wt / 8) +
-	    (p_ptr->total_weight / 80) + (inventory[INVEN_ARM].weight / 3);
+	    (p_ptr->total_weight / 80) +
+	    (p_ptr->inventory[INVEN_ARM].weight / 3);
 
 	/* Enhanced for shield masters */
 	if (player_has(PF_SHIELD_MAST))
-	    bash_quality += inventory[INVEN_ARM].weight / 5;
+	    bash_quality += p_ptr->inventory[INVEN_ARM].weight / 5;
 
 	/* Calculate damage.  Big shields are deadly. */
-	bash_dam = damroll(inventory[INVEN_ARM].dd, inventory[INVEN_ARM].ds);
+	bash_dam =
+	    damroll(p_ptr->inventory[INVEN_ARM].dd,
+		    p_ptr->inventory[INVEN_ARM].ds);
 
 	/* Notice dice */
 	notice_other(IF_DD_DS, INVEN_ARM + 1);
@@ -1250,7 +1256,7 @@ bool py_attack(int y, int x, bool can_push)
 
 
     /* Get the weapon */
-    o_ptr = &inventory[INVEN_WIELD];
+    o_ptr = &p_ptr->inventory[INVEN_WIELD];
 
     /* Calculate the attack quality */
     bonus = p_ptr->to_h + o_ptr->to_h;
@@ -1689,7 +1695,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
     int msec = op_ptr->delay_factor * op_ptr->delay_factor;
 
     /* Get the "bow" (if any) */
-    o_ptr = &inventory[INVEN_BOW];
+    o_ptr = &p_ptr->inventory[INVEN_BOW];
 
     /* Require a usable launcher */
     if (!o_ptr->tval || !p_ptr->ammo_tval) {
@@ -1717,7 +1723,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 
     /* Access the item (if in the pack) */
     if (item >= 0) {
-	j_ptr = &inventory[item];
+	j_ptr = &p_ptr->inventory[item];
     } else {
 	j_ptr = &o_list[0 - item];
     }
@@ -1830,10 +1836,8 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
     tx = px + 99 * ddx[dir];
 
     /* Check for "target request" */
-    if ((dir == 5) && target_okay()) {
-	tx = p_ptr->target_col;
-	ty = p_ptr->target_row;
-    }
+    if ((dir == 5) && target_okay()) 
+	target_get(&tx, &ty);
 
     /* Calculate the path */
     path_n = project_path(path_g, tdis, py, px, ty, tx, PROJECT_THRU);
@@ -2146,11 +2150,11 @@ void textui_cmd_fire_at_nearest(void)
 {
     /* the direction '5' means 'use the target' */
     int i, dir = 5, item = -1;
-    int bow_sv = inventory[INVEN_BOW].sval;
+    int bow_sv = p_ptr->inventory[INVEN_BOW].sval;
     int ammo_tv = 0;
 
     /* Require a usable launcher */
-    if (!inventory[INVEN_BOW].tval) {
+    if (!p_ptr->inventory[INVEN_BOW].tval) {
 	msg_print("You have nothing to fire with.");
 	return;
     }
@@ -2179,7 +2183,7 @@ void textui_cmd_fire_at_nearest(void)
     /* Find first eligible ammo in the quiver */
     for (i = INVEN_Q0; i < INVEN_Q9; i++) {
 
-	if (inventory[i].tval != ammo_tv)
+	if (p_ptr->inventory[i].tval != ammo_tv)
 	    continue;
 	item = i;
 	break;
@@ -2273,7 +2277,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 
     /* Access the item (if in the pack) */
     if (item >= 0) {
-	o_ptr = &inventory[item];
+	o_ptr = &p_ptr->inventory[item];
     } else {
 	o_ptr = &o_list[0 - item];
     }
@@ -2384,10 +2388,8 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
     tx = px + 99 * ddx[dir];
 
     /* Check for "target request" */
-    if ((dir == 5) && target_okay()) {
-	tx = p_ptr->target_col;
-	ty = p_ptr->target_row;
-    }
+    if ((dir == 5) && target_okay()) 
+	target_get(&tx, &ty);
 
     /* Calculate the path */
     path_n = project_path(path_g, tdis, py, px, ty, tx, 0);

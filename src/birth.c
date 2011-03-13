@@ -66,8 +66,8 @@ typedef struct birther /* lovely */ birther;	/* sometimes we think she's a
  */
 struct birther {
     byte sex;
-    byte race;
-    byte class;
+    const struct player_race *race;
+    const struct player_class *class;
 
     s16b age;
     s16b wt;
@@ -78,7 +78,7 @@ struct birther {
 
     s16b stat[A_MAX];
 
-    char history[4][60];
+    char *history;
 };
 
 
@@ -106,9 +106,7 @@ static void save_roller_data(birther * player)
     }
 
     /* Save the history */
-    for (i = 0; i < 4; i++)
-	my_strcpy(player->history[i], p_ptr->history[i],
-		  sizeof(player->history[i]));
+    player->history = p_ptr->history;
 }
 
 
@@ -153,10 +151,7 @@ static void load_roller_data(birther * player, birther * prev_player)
     }
 
     /* Load the history */
-    for (i = 0; i < 4; i++)
-	my_strcpy(p_ptr->history[i], player->history[i],
-		  sizeof(p_ptr->history[i]));
-
+    p_ptr->history = player->history;
 
 	/*** Save the current data if the caller is interested in it. ***/
     if (prev_player)
@@ -459,8 +454,8 @@ void player_init(struct player_type *p)
 {
     int i;
 
-    if (inventory)
-	mem_free(inventory);
+    if (p->inventory)
+	mem_free(p->inventory);
 
     /* Wipe the player */
     (void) WIPE(p, struct player_type);
@@ -548,7 +543,7 @@ void player_init(struct player_type *p)
 	notes[i].turn = 0;
     }
 
-    inventory = C_ZNEW(INVEN_TOTAL, struct object_type);
+    p->inventory = C_ZNEW(INVEN_TOTAL, struct object_type);
 
     /* First turn. */
     turn = 1;
@@ -639,7 +634,7 @@ static void object_upgrade(object_type * o_ptr)
 /**
  * Try to wield everything wieldable in the inventory.
  */
-static void wield_all(void)
+static void wield_all(struct player *p)
 {
     object_type *o_ptr;
     object_type *i_ptr;
@@ -650,7 +645,7 @@ static void wield_all(void)
 
     /* Scan through the slots backwards */
     for (item = INVEN_PACK - 1; item >= 0; item--) {
-	o_ptr = &inventory[item];
+	o_ptr = &p->inventory[item];
 
 	/* Skip non-objects */
 	if (!o_ptr->k_idx)
@@ -660,7 +655,7 @@ static void wield_all(void)
 	slot = wield_slot(o_ptr);
 	if (slot < INVEN_WIELD)
 	    continue;
-	if (inventory[slot].k_idx)
+	if (p->inventory[slot].k_idx)
 	    continue;
 
 	/* Get local object */
@@ -685,16 +680,16 @@ static void wield_all(void)
 	}
 
 	/* Get the wield slot */
-	o_ptr = &inventory[slot];
+	o_ptr = &p->inventory[slot];
 
 	/* Wear the new stuff */
 	object_copy(o_ptr, i_ptr);
 
 	/* Increase the weight */
-	p_ptr->total_weight += i_ptr->weight;
+	p->total_weight += i_ptr->weight;
 
 	/* Increment the equip counter by hand */
-	p_ptr->equip_cnt++;
+	p->equip_cnt++;
     }
 
     return;
@@ -705,7 +700,7 @@ static void wield_all(void)
  *
  * Having an item makes the player "aware" of its purpose.
  */
-static void player_outfit(void)
+static void player_outfit(struct player *p)
 {
     int i;
     const start_item *e_ptr;
@@ -770,7 +765,7 @@ static void player_outfit(void)
 	    object_aware(i_ptr);
 	    object_known(i_ptr);
 	    apply_autoinscription(i_ptr);
-	    (void) inven_carry(i_ptr);
+	    (void) inven_carry(p, i_ptr);
 	    k_info[k_idx].everseen = TRUE;
 	}
     }
@@ -784,7 +779,7 @@ static void player_outfit(void)
 	object_aware(i_ptr);
 	object_known(i_ptr);
 	apply_autoinscription(i_ptr);
-	(void) inven_carry(i_ptr);
+	(void) inven_carry(p, i_ptr);
 	k_info[i_ptr->k_idx].everseen = TRUE;
 
 	/* Detection */
@@ -792,7 +787,7 @@ static void player_outfit(void)
 	object_aware(i_ptr);
 	object_known(i_ptr);
 	apply_autoinscription(i_ptr);
-	(void) inven_carry(i_ptr);
+	(void) inven_carry(p, i_ptr);
 	k_info[i_ptr->k_idx].everseen = TRUE;
 
 	/* Mapping */
@@ -800,7 +795,7 @@ static void player_outfit(void)
 	object_aware(i_ptr);
 	object_known(i_ptr);
 	apply_autoinscription(i_ptr);
-	(void) inven_carry(i_ptr);
+	(void) inven_carry(p, i_ptr);
 	k_info[i_ptr->k_idx].everseen = TRUE;
 
 	/* Destruction */
@@ -809,7 +804,7 @@ static void player_outfit(void)
 	object_aware(i_ptr);
 	object_known(i_ptr);
 	apply_autoinscription(i_ptr);
-	(void) inven_carry(i_ptr);
+	(void) inven_carry(p, i_ptr);
 	k_info[i_ptr->k_idx].everseen = TRUE;
 
 	/* Identify */
@@ -818,12 +813,12 @@ static void player_outfit(void)
 	object_aware(i_ptr);
 	object_known(i_ptr);
 	apply_autoinscription(i_ptr);
-	(void) inven_carry(i_ptr);
+	(void) inven_carry(p, i_ptr);
 	k_info[i_ptr->k_idx].everseen = TRUE;
     }
 
     /* Now try wielding everything */
-    wield_all();
+    wield_all(p);
 }
 
 /*
@@ -1378,7 +1373,7 @@ void player_birth(bool quickstart_allowed)
     }
 
     /* Hack -- outfit the player */
-    player_outfit();
+    player_outfit(p_ptr);
 
     /* Set map, quests */
     if (OPT(adult_dungeon)) {

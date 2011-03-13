@@ -85,38 +85,13 @@ typedef int (*button_kill_f) (unsigned char);
 /**** Available Structs ****/
 
 typedef struct char_attr char_attr;
-typedef struct maxima maxima;
-typedef struct feature_type feature_type;
-typedef struct object_kind object_kind;
-typedef struct artifact_type artifact_type;
-typedef struct set_type set_type;
-typedef struct grouper grouper;
-typedef struct set_element set_element;
-typedef struct ego_item_type ego_item_type;
-typedef struct monster_blow monster_blow;
-typedef struct monster_race monster_race;
-typedef struct monster_lore monster_lore;
-typedef struct vault_type vault_type;
-typedef struct object_type object_type;
-typedef struct monster_type monster_type;
 typedef struct alloc_entry alloc_entry;
 typedef struct quest quest;
 typedef struct owner_type owner_type;
 typedef struct store_type store_type;
-typedef struct magic_type magic_type;
-typedef struct player_magic player_magic;
-typedef struct player_sex player_sex;
-typedef struct player_race player_race;
-typedef struct player_class player_class;
-typedef struct hist_type hist_type;
-typedef struct player_other player_other;
 typedef struct druid_blows druid_blows;
-typedef struct player_type player_type;
-typedef struct start_item start_item;
-typedef struct flavor_type flavor_type;
 typedef struct autoinscription autoinscription;
-typedef struct note_info note_info;
-typedef struct mouse_button mouse_button;
+typedef struct history_info history_info;
 typedef struct color_type color_type;
 
 
@@ -139,7 +114,7 @@ typedef char_attr char_attr_line[MAX_C_A_LEN];
  * Information about maximal indices of certain arrays
  * Actually, these are not the maxima, but the maxima plus one
  */
-struct maxima {
+typedef struct maxima {
     u32b fake_text_size;
     u32b fake_name_size;
 
@@ -158,13 +133,13 @@ struct maxima {
 
     u16b o_max;		/**< Max size for "o_list[]" */
     u16b m_max;		/**< Max size for "mon_list[]" */
-};
+} maxima;
 
 
 /**
  * Information about terrain "features"
  */
-struct feature_type {
+typedef struct feature {
     char *name;		/**< Name  */
     char *text;		/**< Text  */
 
@@ -183,7 +158,7 @@ struct feature_type {
 
     byte x_attr;	/**< Desired feature attribute */
     char x_char;	/**< Desired feature character */
-};
+} feature_type;
 
 
 /**
@@ -191,7 +166,7 @@ struct feature_type {
  *
  * Only "aware", "tried", and "known" are saved in the savefile.
  */
-struct object_kind {
+typedef struct object_kind {
     char *name;		/**< Name (offset) */
     char *text;		/**< Text (offset) */
 
@@ -200,15 +175,11 @@ struct object_kind {
 
     byte tval;		/**< Object type */
     byte sval;		/**< Object sub type */
-    random_value pval;
-		     /**< Power for any flags which need it */
+    random_value pval;   /**< Power for any flags which need it */
 
-    random_value to_h;
-		     /**< Bonus to hit */
-    random_value to_d;
-		     /**< Bonus to damage */
-    random_value to_a;
-		     /**< Bonus to armor */
+    random_value to_h;     /**< Bonus to hit */
+    random_value to_d;     /**< Bonus to damage */
+    random_value to_a;   /**< Bonus to armor */
     s16b ac;		/**< Base armor */
 
     byte dd, ds;	/**< Damage dice/sides */
@@ -217,44 +188,36 @@ struct object_kind {
 
     s32b cost;		/**< Object "base cost" */
 
-    bitflag flags_obj[OF_MAX];
-				/**< New object flags -NRM-*/
-    bitflag flags_curse[CF_MAX];
-				/**< New curse flags  -NRM- */
+    bitflag flags_obj[OF_MAX];	/**< New object flags -NRM-*/
+    bitflag flags_curse[CF_MAX]; /**< New curse flags  -NRM- */
     bitflag flags_kind[KF_MAX];	   /**< New object_kind flags -NRM- */
 
     int percent_res[MAX_P_RES];	   /**< Percentage resists -NRM- */
     int bonus_stat[A_MAX];	   /**< Stat bonuses       -NRM- */
-    int bonus_other[MAX_P_BONUS];
-				   /**< Other bonuses      -NRM- */
-    int multiple_slay[MAX_P_SLAY];
-				   /**< Slay multiples     -NRM- */
-    int multiple_brand[MAX_P_BRAND];
-				   /**< Brand multiples    -NRM- */
-
-    byte locale[4];	/**< Allocation level(s) */
-    byte chance[4];	/**< Allocation chance(s) */
-
-    byte level;		/**< Level */
-    u16b effect;       /**< Effect this item produces (effects.c) */
-    random_value time;
-		       /**< Recharge time (rods/activation) */
-    random_value charge;
-		       /**< Number of charges (staves/wands) */
-
-    byte gen_mult_prob;	   /**< Probability of generating more than one */
-    random_value stack_size;
-			   /**< Number to generate */
-
+    int bonus_other[MAX_P_BONUS];  /**< Other bonuses      -NRM- */
+    int multiple_slay[MAX_P_SLAY];  /**< Slay multiples     -NRM- */
+    int multiple_brand[MAX_P_BRAND];  /**< Brand multiples    -NRM- */
 
     byte d_attr;	/**< Default object attribute */
     char d_char;	/**< Default object character */
 
+    byte locale[4];	/**< Allocation level(s) */
+    byte chance[4];	/**< Allocation chance(s) */
+    byte level;		/**< Level */
+
+    u16b effect;       /**< Effect this item produces (effects.c) */
+    random_value time;	       /**< Recharge time (rods/activation) */
+    random_value charge;	       /**< Number of charges (staves/wands) */
+
+    byte gen_mult_prob;	   /**< Probability of generating more than one */
+    random_value stack_size;  /**< Number to generate */
+
+    u16b flavor;	/**< Special object flavor (or zero) */
 
     byte x_attr;	/**< Desired object attribute */
     char x_char;	/**< Desired object character */
 
-    u16b flavor;	/**< Special object flavor (or zero) */
+    u16b note;     /**< Autoinscription quark number */
 
     bool easy_know;	/**< This object is always known (if aware) */
     bool aware;		/**< The player is "aware" of the item's effects */
@@ -263,14 +226,14 @@ struct object_kind {
 			/**< Item's effects when used are known. -LM- */
     bool squelch;
     bool everseen;		/**< Used to despoilify squelch menus */
-};
+} object_kind;
 
 
 
 /**
  * Information about "artifacts".
  */
-struct artifact_type {
+typedef struct artifact_type {
     char *name;		/**< Name (offset) */
     char *text;		/**< Text (offset) */
 
@@ -280,13 +243,11 @@ struct artifact_type {
 
     byte tval;		/**< Artifact type */
     byte sval;		/**< Artifact sub type */
-
     s16b pval;		/**< Artifact extra info */
 
     s16b to_h;		/**< Bonus to hit */
     s16b to_d;		/**< Bonus to damage */
     s16b to_a;		/**< Bonus to armor */
-
     s16b ac;		/**< Base armor */
 
     byte dd, ds;	/**< Damage when hits */
@@ -294,47 +255,44 @@ struct artifact_type {
     s16b weight;	/**< Weight */
     s32b cost;		/**< Artifact "cost" */
 
-    bitflag flags_obj[OF_SIZE];
-				/**< New object flags -NRM-*/
-    bitflag flags_curse[CF_SIZE];
-				/**< New curse flags  -NRM- */
+    bitflag flags_obj[OF_SIZE];		/**< New object flags -NRM-*/
+    bitflag flags_curse[CF_SIZE];	/**< New curse flags  -NRM- */
     bitflag flags_kind[KF_SIZE];    /**< New object kind flags -NRM- */
 
     int percent_res[MAX_P_RES];	   /**< Percentage resists -NRM- */
     int bonus_stat[A_MAX];	   /**< Stat bonuses       -NRM- */
-    int bonus_other[MAX_P_BONUS];
-				   /**< Other bonuses      -NRM- */
-    int multiple_slay[MAX_P_SLAY];
-				   /**< Slay multiples     -NRM- */
-    int multiple_brand[MAX_P_BRAND];
-				   /**< Brand multiples    -NRM- */
+    int bonus_other[MAX_P_BONUS];	   /**< Other bonuses      -NRM- */
+    int multiple_slay[MAX_P_SLAY];	   /**< Slay multiples     -NRM- */
+    int multiple_brand[MAX_P_BRAND];	   /**< Brand multiples    -NRM- */
 
     byte level;		/**< Artifact level */
     byte rarity;	/**< Artifact rarity */
 
     s32b creat_turn;	/**< Turn the artifact was found */
     byte p_level;	/**< Player level when found */
-    u16b effect;
-		   /**< Artifact activation (see effects.c) */
+    u16b effect;     /**< Artifact activation (see effects.c) */
+    char *effect_msg;
+
+    random_value time;  /**< Recharge time (if appropriate) */
 
     byte set_no;	/**< Stores the set number of the artifact. 
 			 * 0 if not part of a set -GS- */
     bool set_bonus;	/**< Is the item set, is the bonus currently applied? */
-};
+} artifact_type;
 
 
 /**
  *
  */
-struct grouper {
+typedef struct {
     byte tval;
-    cptr name;
-};
+    const char * name;
+} grouper;
 
 /* Item sets */
 
 /** Information about an item in a set -GS- */
-struct set_element {
+typedef struct set_element {
     byte a_idx;		/**< the artifact ID */
     bitflag flags_obj[OF_SIZE];
 				/**< New object flags -NRM-*/
@@ -349,10 +307,10 @@ struct set_element {
 				   /**< Slay multiples     -NRM- */
     int multiple_brand[MAX_P_BRAND];
 				   /**< Brand multiples    -NRM- */
-};
+} set_element;
 
 /** Information about items sets -GS- */
-struct set_type {
+typedef struct set_type {
     struct set_type *next;
     char *name;			/**< Name */
     char *text;			/**< Text */
@@ -361,62 +319,52 @@ struct set_type {
     byte no_of_items;		/**< The number of items in the set */
     set_element set_items[6];
 				/**< the artifact no and extra powers. */
-};
+} set_type;
 
 
 /**
  * Information about "ego-items".
  */
-struct ego_item_type {
+typedef struct ego_item {
     struct ego_item *next;
 
     char *name;			/**< Name */
     char *text;			/**< Text */
 
-    byte rating;		/**< Rating boost */
+    u32b eidx;
+
+    s32b cost;			/**< Ego-item "cost" */
+
+    bitflag flags_obj[OF_SIZE];	 /**< New object flags -NRM-*/
+    bitflag flags_curse[CF_SIZE]; 	/**< New curse flags  -NRM- */
+    bitflag flags_kind[KF_SIZE];	/**< New object kind flags -NRM- */
+
+    bitflag id_curse[CF_SIZE];	/**< Curse ID flags  */
+    bitflag id_obj[OF_SIZE];	/**< Object ID flags  */
+    bitflag id_other[IF_SIZE]; /**< Miscellaneous ID flags  */
+
+    int percent_res[MAX_P_RES];	   /**< Percentage resists -NRM- */
+    int bonus_stat[A_MAX];	   /**< Stat bonuses       -NRM- */
+    int bonus_other[MAX_P_BONUS];   /**< Other bonuses      -NRM- */
+    int multiple_slay[MAX_P_SLAY];   /**< Slay multiples     -NRM- */
+    int multiple_brand[MAX_P_BRAND];  /**< Brand multiples    -NRM- */
 
     byte level;			/**< Minimum level */
     byte rarity;		/**< Object rarity */
+    byte rating;		/**< Rating boost */
+
+    byte tval[EGO_TVALS_MAX];	/**< Legal tval */
+    byte min_sval[EGO_TVALS_MAX];/**< Minimum legal sval */
+    byte max_sval[EGO_TVALS_MAX];/**< Maximum legal sval */
 
     byte max_to_h;		/**< Maximum to-hit bonus */
     byte max_to_d;		/**< Maximum to-dam bonus */
     byte max_to_a;		/**< Maximum to-ac bonus */
 
-    s32b cost;			/**< Ego-item "cost" */
-
-    bitflag flags_obj[OF_SIZE];
-				/**< New object flags -NRM-*/
-    bitflag flags_curse[CF_SIZE];
-				/**< New curse flags  -NRM- */
-    bitflag flags_kind[KF_SIZE];
-				/**< New object kind flags -NRM- */
-
-    bitflag id_curse[CF_SIZE];
-				/**< Curse ID flags  */
-    bitflag id_obj[OF_SIZE];	/**< Object ID flags  */
-    bitflag id_other[IF_SIZE];
-				/**< Miscellaneous ID flags  */
-
-    int percent_res[MAX_P_RES];	   /**< Percentage resists -NRM- */
-    int bonus_stat[A_MAX];	   /**< Stat bonuses       -NRM- */
-    int bonus_other[MAX_P_BONUS];
-				   /**< Other bonuses      -NRM- */
-    int multiple_slay[MAX_P_SLAY];
-				   /**< Slay multiples     -NRM- */
-    int multiple_brand[MAX_P_BRAND];
-				   /**< Brand multiples    -NRM- */
-
-    byte tval[EGO_TVALS_MAX];
-				/**< Legal tval */
-    byte min_sval[EGO_TVALS_MAX];
-				/**< Minimum legal sval */
-    byte max_sval[EGO_TVALS_MAX];
-				/**< Maximum legal sval */
-
     u16b effect;		/**< Activation index */
     bool everseen;		/**< Do not spoil squelch menus */
     bool squelch;		/**< Squelch this ego-item */
-};
+} ego_item_type;
 
 
 
@@ -429,12 +377,12 @@ struct ego_item_type {
  *	- Damage Dice
  *	- Damage Sides
  */
-struct monster_blow {
+typedef struct {
     byte method;
     byte effect;
     byte d_dice;
     byte d_side;
-};
+} monster_blow;
 
 
 
@@ -457,7 +405,7 @@ struct monster_blow {
  * monster recall (no knowledge of spells, etc).  All of the "recall"
  * fields have a special prefix to aid in searching for them.
  */
-struct monster_race {
+typedef struct monster_race {
     u32b name;		/**< Name (offset) */
     u32b text;		/**< Text (offset) */
 
@@ -474,14 +422,12 @@ struct monster_race {
 
     byte mana;		/**< max mana */
 
-    byte freq_ranged;
-			/**< Ranged attack frequency */
+    byte freq_ranged;	/**< Ranged attack frequency */
 
     bitflag flags[RF_SIZE];	/* Flags */
     bitflag spell_flags[RSF_SIZE];	/* Spell flags */
 
-    monster_blow blow[4];
-			/**< Up to four blows per round */
+    monster_blow blow[4];/**< Up to four blows per round */
 
 
     byte level;		/**< Level of creature */
@@ -502,7 +448,7 @@ struct monster_race {
 
     byte spell_power;
 
-};
+} monster_race;
 
 /**
  * Monster "lore" information
@@ -512,7 +458,7 @@ struct monster_race {
  * monster recall (no knowledge of spells, etc). XXX XXX XXX
  *
  */
-struct monster_lore {
+typedef struct {
     s16b sights;	/**< Count sightings of this monster */
     s16b deaths;	/**< Count deaths from this monster */
 
@@ -530,55 +476,19 @@ struct monster_lore {
 
     byte cast_spell;	/**< Max number of other spells seen */
 
-    byte blows[4];	/**< Number of times each blow type was seen */
+    byte blows[MONSTER_BLOW_MAX];/**< Number of times each blow type was seen */
 
     bitflag flags[RF_SIZE];	/* Observed racial flags - a 1 indicates the
 				 * flag (or lack thereof) is known to the
 				 * player */
     bitflag spell_flags[RSF_SIZE];	/* Observed racial spell flags */
-};
-
-/**
- * Monster spell information
- *
- *
- */
-struct monster_spell {
-    byte mana_cost;	 /**< monster mana used */
-    byte d_base;	 /**< base desirability for AI. */
-    byte d_summ;	 /**< desirability for AI per monster level
-			  *   times 0-3 based on damage taken */
-    byte d_hurt;	 /**< desirability for AI per monster spell power 
-			  *   times 0-3 based on damage taken */
-    byte d_mana;	 /**< desirability for AI per monster spell power
-			  *   times 0-2 based on mana shortage */
-    byte d_esc;		 /**< desirability for AI per monster level
-			  *   times 0-3 based on fear, and damage taken */
-    byte d_tact;	 /**< desirability for AI per monster level, modified 
-			  *   times 0-3 based on proximity, min_range, and 
-			  *   best_range */
-    byte d_res;		 /**< category of 'resistability' checked by monster AI
-			  *   for purposes of desirability. */
-    byte d_range;	 /**< % of spell desirability retained for each step 
-			  *   past 'range' */
-    byte spell_range;	 /**< Optimal Ranges for various spells. 
-			  *   6 is optimal for Breath Weapons, Beams, and Arcs.
-			  *   3 is optimal for Lash/Spit.
-			  *   0 indicates no range limitation for other spells.
-			  *   
-			  *   This range is considered a preference if d_range 
-			  *   in spell_desire is > 0.
-			  *   It is a hard limit if d_range = 0. */
-    bool is_breath;	 /**< It's a breath */
-    bool is_harass;	 /**< It's a harassing spell */
-};
-
+} monster_lore;
 
 
 /**
  * Information about "vault generation"
  */
-struct vault_type {
+typedef struct vault_type {
     struct vault *next;
     unsigned int vidx;
     char *name;
@@ -593,7 +503,7 @@ struct vault_type {
 
     byte min_lev;	/**< Minimum allowable level, if specified. */
     byte max_lev;	/**< Maximum allowable level, if specified. */
-};
+} vault_type;
 
 
 
@@ -627,8 +537,9 @@ struct vault_type {
  * The "held_m_idx" field is used to indicate which monster, if any,
  * is holding the object.  Objects being held have "ix=0" and "iy=0".
  */
-struct object_type {
+typedef struct object {
     s16b k_idx;		/**< Kind index (zero if "dead") */
+    struct object_kind *kind;
 
     byte iy;		/**< Y-position on map, or zero */
     byte ix;		/**< X-position on map, or zero */
@@ -640,46 +551,38 @@ struct object_type {
 
     byte discount;	/**< Discount (if any) */
 
-    byte number;	/**< Number of items */
-
     s16b weight;	/**< Item weight */
 
     byte name1;		/**< Artifact type, if any */
     byte name2;		/**< Ego-Item type, if any */
 
-    byte activation;	/**< Activation indicator */
+    byte effect;	/**< Activation indicator */
+
+    s16b ac;		/**< Normal AC */
     s16b to_h;		/**< Plusses to hit */
     s16b to_d;		/**< Plusses to damage */
     s16b to_a;		/**< Plusses to AC */
-
-    s16b ac;		/**< Normal AC */
 
     byte dd, ds;	/**< Damage dice/sides */
 
     s16b timeout;	/**< Timeout Counter */
 
-    byte ident;		/**< ID flags  */
+    bitflag flags_obj[OF_SIZE];		/**< New object flags -NRM-*/
+    bitflag flags_curse[CF_SIZE];	/**< New curse flags  -NRM- */
 
-    bitflag flags_obj[OF_SIZE];
-				/**< New object flags -NRM-*/
-    bitflag flags_curse[CF_SIZE];
-				/**< New curse flags  -NRM- */
-
-    bitflag id_curse[CF_SIZE];
-				/**< Curse ID flags  */
+    bitflag id_curse[CF_SIZE];	/**< Curse ID flags  */
     bitflag id_obj[OF_SIZE];	/**< Object ID flags  */
-    bitflag id_other[IF_SIZE];
-				/**< Miscellaneous ID flags  */
+    bitflag id_other[IF_SIZE];	/**< Miscellaneous ID flags  */
 
     int percent_res[MAX_P_RES];	   /**< Percentage resists -NRM- */
     int bonus_stat[A_MAX];	   /**< Stat bonuses       -NRM- */
-    int bonus_other[MAX_P_BONUS];
-				   /**< Other bonuses      -NRM- */
-    int multiple_slay[MAX_P_SLAY];
-				   /**< Slay multiples     -NRM- */
-    int multiple_brand[MAX_P_BRAND];
-				   /**< Brand multiples    -NRM- */
+    int bonus_other[MAX_P_BONUS];   /**< Other bonuses      -NRM- */
+    int multiple_slay[MAX_P_SLAY];  /**< Slay multiples     -NRM- */
+    int multiple_brand[MAX_P_BRAND];  /**< Brand multiples    -NRM- */
 
+    byte ident;		/**< ID flags  */
+
+    byte number;	/**< Number of items */
     byte marked;	/**< Object is marked */
 
     byte feel;		/**< Feeling index */
@@ -689,7 +592,7 @@ struct object_type {
     s16b next_o_idx;	/**< Next object in stack (if any) */
 
     s16b held_m_idx;	/**< Monster holding us (if any) */
-};
+} object_type;
 
 
 
@@ -701,7 +604,7 @@ struct object_type {
  * The "hold_o_idx" field points to the first object of a stack
  * of objects (if any) being carried by the monster (see above).
  */
-struct monster_type {
+typedef struct {
     s16b r_idx;		/**< Monster race index */
     s16b orig_idx;	 /**< Original race of shapechanged monster */
 
@@ -761,7 +664,7 @@ struct monster_type {
     u16b y_terr;	/**< Home for territorial monsters */
     u16b x_terr;
 
-};
+} monster_type;
 
 
 
@@ -802,15 +705,11 @@ struct alloc_entry {
  * actually scan the dead unique list to see what quests are left.
  */
 struct quest {
-    int stage;
-		/**< Stage quest monster will appear */
-    int r_idx;
-		/**< Monster race */
+    int stage;		/**< Stage quest monster will appear */
+    int r_idx;		/**< Monster race */
 
-    int cur_num;
-		/**< Number killed (unused) */
-    int max_num;
-		/**< Number required (unused) */
+    int cur_num;	/**< Number killed (unused) */
+    int max_num;	/**< Number required (unused) */
 };
 
 
@@ -868,13 +767,13 @@ struct store_type {
  * Spell information.  Index only controls effects; position in spellbook 
  * is controlled by values in the array "book_start_index".
  */
-struct magic_type {
+typedef struct{
     byte index;		/**< The internal spell index. */
     byte slevel;	/**< Required level (to learn) */
     byte smana;		/**< Required mana (to cast) */
     byte sfail;		/**< Base chance of failure */
     byte sexp;		/**< Encoded experience bonus */
-};
+} magic_type;
 
 
 /**
@@ -900,11 +799,11 @@ typedef struct {
 /**
  * Player sex info
  */
-struct player_sex {
+typedef struct player_sex {
     cptr title;		/**< Type of sex */
 
     cptr winner;	/**< Name of winner */
-};
+} player_sex;
 
 
 /**
@@ -968,10 +867,8 @@ typedef struct player_race {
  */
 typedef struct start_item {
     object_kind *kind;
-    byte min;
-		/**< Minimum starting amount */
-    byte max;
-		/**< Maximum starting amount */
+    byte min;	/**< Minimum starting amount */
+    byte max;	/**< Maximum starting amount */
 } start_item;
 
 
@@ -1017,7 +914,7 @@ typedef struct player_class {
 /**
  * Player background information
  */
-struct history {
+typedef struct history {
     struct history *nextp;
     unsigned int hidx;
     char *text;
@@ -1026,7 +923,7 @@ struct history {
     byte chart;		/**< Chart index */
     byte next;		/**< Next chart index */
     byte bonus;		/**< Social Class Bonus + 50 */
-};
+} hist_type;
 
 
 
@@ -1035,7 +932,7 @@ struct history {
  *
  * This information is retained across player lives
  */
-struct player_other {
+typedef struct {
     char full_name[32];	/**< Full name */
     char base_name[32];	/**< Base name */
 
@@ -1048,7 +945,7 @@ struct player_other {
     s16b delay_factor;	/**< Delay factor (0 to 9) */
 
     s16b panel_change;	/**< Panel change factor (0 to 4) */
-};
+} player_other;
 
 
 /** Druid blows. -LM- */
@@ -1291,13 +1188,6 @@ typedef struct player {
     s16b equip_cnt;	/**< Number of items in equipment */
     s16b pack_size_reduce;	/**< Amount of space the quiver uses up. */
 
-    s16b target_set;	/**< Target flag */
-    s16b target_who;	/**< Target identity (monster) */
-    s16b target_what;
-			/**< Target identity (object) */
-    s16b target_row;	/**< Target location */
-    s16b target_col;	/**< Target location */
-
     s16b health_who;	/**< Health bar trackee */
 
     s16b monster_race_idx;		/**< Monster race trackee */
@@ -1392,15 +1282,11 @@ typedef struct flavor {
     byte tval;	  /**< Associated object type */
     byte sval;	  /**< Associated object sub-type */
 
-    byte d_attr;
-		  /**< Default flavor attribute */
-    char d_char;
-		  /**< Default flavor character */
+    byte d_attr;  /**< Default flavor attribute */
+    char d_char;  /**< Default flavor character */
 
-    byte x_attr;
-		  /**< Desired flavor attribute */
-    char x_char;
-		  /**< Desired flavor character */
+    byte x_attr;  /**< Desired flavor attribute */
+    char x_char;  /**< Desired flavor character */
 } flavor_type;
 
 /** Information for object auto-inscribe */
@@ -1409,18 +1295,54 @@ struct autoinscription {
     s16b inscription_idx;
 };
 
-/** Record of an event for the notes file */
-struct note_info {
-    s32b turn;	  /**< Turn the event took place */
-    int place;	  /**< Stage the event took place */
-    int level;	  /**< Character level when the event happened */
-    byte type;	  /**< Type of event */
-    char note[80];  /**< Description of the event */
+struct history_info
+{
+    u16b type;		/**< Kind of history item */
+    s16b place;		/**< Place when this item was recorded */
+    s16b clev;		/**< Character level when this item was recorded */
+    byte a_idx;		/**< Artifact this item relates to */
+    s32b turn;		/**< Turn this item was recorded on */
+    char event[80];	/**< The text of the item */
 };
 
-/** A game color */
+
+enum grid_light_level
+{
+	LIGHT_TORCH,
+	LIGHT_GLOW,
+	LIGHT_DARK
+};
+
+typedef struct
+{
+	u32b m_idx;		/* Monster index */
+	u32b f_idx;		/* Feature index */
+	u32b first_k_idx;	/* The "Kind" of the first item on the grid */
+	bool multiple_objects;	/* Is there more than one item there? */
+
+	enum grid_light_level lighting; /* Light level */
+	bool in_view; /* TRUE when the player can currently see the grid. */
+	bool is_player;
+	bool hallucinate;
+	bool trapborder;
+} grid_data;
+
+
+/**
+ * A game color 
+ */
 struct color_type {
     char index_char;		    /**< Character index:  'r' = red, etc. */
     char name[32];		    /**< Color name */
     byte color_translate[MAX_ATTR]; /**< Index for various in-game translations */
 };
+
+/**
+ * A hint.
+ */
+struct hint
+{
+        char *hint;
+        struct hint *next;
+};
+
