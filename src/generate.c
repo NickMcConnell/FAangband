@@ -1261,6 +1261,96 @@ static void place_random_stairs(int y, int x)
 
 
 /**
+ * Place a secret door at the given location
+ */
+void place_secret_door(int y, int x)
+{
+    /* Create secret door */
+    cave_set_feat(y, x, FEAT_SECRET);
+}
+
+
+/**
+ * Place an unlocked door at the given location
+ */
+void place_unlocked_door(int y, int x)
+{
+    /* Create secret door */
+    cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x00);
+}
+
+
+/**
+ * Place a random type of closed door at the given location.
+ */
+void place_closed_door(int y, int x)
+{
+    int tmp;
+
+    /* Choose an object */
+    tmp = randint0(400);
+
+    /* Closed doors (300/400) */
+    if (tmp < 300) {
+	/* Create closed door */
+	cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x00);
+    }
+
+    /* Locked doors (99/400) */
+    else if (tmp < 399) {
+	/* Create locked door */
+	cave_set_feat(y, x, FEAT_DOOR_HEAD + randint1(7));
+    }
+
+    /* Stuck doors (1/400) */
+    else {
+	/* Create jammed door */
+	cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x08 + randint0(8));
+    }
+}
+
+
+/**
+ * Place a random type of door at the given location.
+ */
+void place_random_door(int y, int x)
+{
+    int tmp;
+
+    /* Choose an object */
+    tmp = randint0(1000);
+
+    /* Open doors (300/1000) */
+    if (tmp < 300) {
+	/* Create open door */
+	cave_set_feat(y, x, FEAT_OPEN);
+    }
+
+    /* Broken doors (100/1000) */
+    else if (tmp < 400) {
+	/* Create broken door */
+	cave_set_feat(y, x, FEAT_BROKEN);
+    }
+
+    /* Secret doors (200/1000) */
+    else if (tmp < 600) {
+	/* Create secret door */
+	cave_set_feat(y, x, FEAT_SECRET);
+    }
+
+    /* Closed, locked, or stuck doors (400/1000) */
+    else {
+	/* Create closed door */
+	place_closed_door(y, x);
+    }
+}
+
+
+
+
+
+
+/**
  * Places some staircases near walls
  */
 static void alloc_stairs(int feat, int num, int walls)
