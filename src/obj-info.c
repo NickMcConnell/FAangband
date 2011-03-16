@@ -34,6 +34,15 @@ typedef struct
 } flag_type;
 
 
+/*
+ * Describes a colour-name pair.
+ */
+typedef struct
+{
+	byte attr;
+	const char *name;
+} property_type;
+
 
 /*** Utility code ***/
 
@@ -77,22 +86,66 @@ static size_t info_collect(textblock *tb, const flag_type list[], size_t max,
 
 /*** Big fat data tables ***/
 
-static const flag_type pval_flags[] =
-{
-	{ OF_STR,     "strength" },
-	{ OF_INT,     "intelligence" },
-	{ OF_WIS,     "wisdom" },
-	{ OF_DEX,     "dexterity" },
-	{ OF_CON,     "constitution" },
-	{ OF_CHR,     "charisma" },
-	{ OF_STEALTH, "stealth" },
-	{ OF_INFRA,   "infravision" },
-	{ OF_TUNNEL,  "tunneling" },
-	{ OF_SPEED,   "speed" },
-	{ OF_BLOWS,   "attack speed" },
-	{ OF_SHOTS,   "shooting speed" },
-	{ OF_MIGHT,   "shooting power" },
+static const char *statname[] = 
+{ 
+    "strength", 
+    "intelligence", 
+    "wisdom",
+    "dexterity", 
+    "constitution", 
+    "charisma"
 };
+
+static const char *othername[] = 
+{ 
+    "magic mastery", 
+    "stealth", 
+    "searching",
+    "infravision", 
+    "tunnelling", 
+    "speed",
+    "shooting speed", 
+    "shooting power"
+};
+
+static const char *slayee[] = 
+{ 
+    "animals", 
+    "evil creatures", 
+    "undead", 
+    "demons",
+    "orcs", 
+    "trolls", 
+    "giants", 
+    "dragons"
+};
+
+static const char *brand[] = 
+{ 
+    "acid", 
+    "lightning", 
+    "fire", 
+    "cold", 
+    "poison" 
+};
+
+static const property_type resists[]= 
+{
+    { TERM_SLATE, " acid"},
+    { TERM_BLUE, " electricity"},
+    { TERM_RED, " fire"},
+    { TERM_L_WHITE, " frost"},
+    { TERM_GREEN, " poison"},
+    { TERM_ORANGE, " light"},
+    { TERM_L_DARK, " darkness"},
+    { TERM_YELLOW, " sound"},
+    { TERM_UMBER, " shards"},
+    { TERM_L_RED, " nexus"},
+    { TERM_L_GREEN, " nether"},
+    { TERM_VIOLET, " chaos"},
+    { TERM_VIOLET, " disenchantment"},
+}
+
 
 static const flag_type immunity_flags[] =
 {
@@ -261,45 +314,58 @@ static bool describe_curses(textblock *tb, const object_type *o_ptr,
  * Describe stat modifications.
  */
 static bool describe_stats(textblock *tb, const object_type *o_ptr,
-		const bitflag flags[OF_SIZE], oinfo_detail_t mode)
+		oinfo_detail_t mode)
 {
-	cptr descs[N_ELEMENTS(pval_flags)];
-	size_t count;
-	bool full = mode & OINFO_FULL;
-	bool dummy = mode & OINFO_DUMMY;
+    int j, min = 0, max = 0, count = 0;
+    bool full = mode & OINFO_FULL;
+    bool dummy = mode & OINFO_DUMMY;
 
-	if (!o_ptr->pval && !dummy)
-		return FALSE;
-
-	count = info_collect(tb, pval_flags, N_ELEMENTS(pval_flags), flags, descs);
-
-	if (count)
-	{
-		if ((object_pval_is_visible(o_ptr) || full) && !dummy)
-			textblock_append_c(tb, (o_ptr->pval > 0) ? TERM_L_GREEN : TERM_RED,
-					"%+i ", o_ptr->pval);
-		else
-			textblock_append(tb, "Affects your ");
-
-		info_out_list(tb, descs, count);
+    if (((o_ptr->ident) & IDENT_WORN) || dummy || full) {
+	for (j = 0; j < A_MAX; j++) {
+	    if (o_ptr->bonus_stat[j] != 0)
+		count++;
+	    if (o_ptr->bonus_stat[j] < min)
+		min = o_ptr->bonus_stat[j];
+	    if (o_ptr->bonus_stat[j] > max)
+		max = o_ptr->bonus_stat[j];
 	}
+    }
 
-	if (of_has(flags, OF_SEARCH))
-	{
-		if ((object_pval_is_visible(o_ptr) || full) && !dummy)
-		{
-			textblock_append_c(tb, (o_ptr->pval > 0) ? TERM_L_GREEN : TERM_RED,
-				"%+i%% ", o_ptr->pval * 5);
-			textblock_append(tb, "to searching.\n");
-		}
-		else if (count)
-			textblock_append(tb, "Also affects your searching skill.\n");
-		else
-			textblock_append(tb, "Affects your searching skill.\n");
+    if (count > 0) {
+	byte attr = (o_ptr->bonus_stat[A_STR] > 0 ? TERM_L_GREEN : TERM_ORANGE);
+
+	textblock_append(tb, "It gives ");
+	if (dummy) textblock_append(tb, "up to ");
+
+	/* Special case: all stats */
+	if (min == max) 
+	    textblock_append_c(tb, attr, "%d to all your stats", min);
+
+	/* Some stats */
+	else {
+	    for (j = 0; j < A_MAX; j++) {
+		if (o_ptr->bonus_stat[j] == 0)
+		    continue;
+		attr = (o_ptr->bonus_stat[j] > 0 ? TERM_L_GREEN : TERM_ORANGE);
+		textblock_append_c(tb, attr, "%d ", o_ptr->bonus_stat[j]);
+		textblock_append(tb, "to your ");
+		textblock_append_c(tb, attr, statname[j]);
+		if (count >= 3)
+		    textblock_append(TERM_WHITE, ", ");
+		if (count == 2)
+		    textblock_append(TERM_WHITE, " and ");
+		if (count == 1)
+		    textblock_append(TERM_WHITE, ". ");
+		count--;
+	    }
 	}
 
 	return TRUE;
+    }
+	
+    return FALSE;
 }
+
 
 
 /*
@@ -1287,7 +1353,7 @@ static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
 	}
 
 	if (describe_curses(tb, o_ptr, flags)) something = TRUE;
-	if (describe_stats(tb, o_ptr, flags, mode)) something = TRUE;
+	if (describe_stats(tb, o_ptr, mode)) something = TRUE;
 	if (describe_slays(tb, flags, o_ptr->tval)) something = TRUE;
 	if (describe_immune(tb, flags)) something = TRUE;
 	if (describe_ignores(tb, flags)) something = TRUE;
