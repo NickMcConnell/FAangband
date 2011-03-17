@@ -1192,23 +1192,40 @@ static object_type *find_artifact(int a_idx)
  */
 static void desc_art_fake(int a_idx)
 {
-    object_type *o_ptr;
-    object_type object_type_body;
+	object_type *o_ptr;
+	object_type object_type_body = { 0 };
 
-    /* Get local object */
-    o_ptr = &object_type_body;
+	char header[120];
 
-    /* Wipe the object */
-    object_wipe(o_ptr);
+	textblock *tb;
+	region area = { 0, 0, 0, 0 };
 
-    /* Make fake artifact */
-    make_fake_artifact(o_ptr, a_idx);
-    o_ptr->ident |= IDENT_KNOWN;
+	o_ptr = find_artifact(a_idx);
 
-    /* Hack -- Handle stuff */
-    handle_stuff();
+	/* If it's been lost, make a fake artifact for it */
+	if (!o_ptr)
+	{
+		o_ptr = &object_type_body;
 
-    object_info_screen(o_ptr, TRUE);
+		make_fake_artifact(o_ptr, a_idx);
+		o_ptr->ident |= IDENT_NAME;
+
+		/* Check the history entry, to see if it was fully known before it
+		 * was lost */
+		if (history_is_artifact_known(a_idx))
+		{
+			object_notice_everything(o_ptr);
+		}
+	}
+
+	/* Hack -- Handle stuff */
+	handle_stuff();
+
+	tb = object_info(o_ptr, OINFO_NONE);
+	object_desc(header, sizeof(header), o_ptr, ODESC_PREFIX | ODESC_FULL);
+
+	textui_textblock_show(tb, area, format("%^s", header));
+	textblock_free(tb);
 }
 
 static int a_cmp_tval(const void *a, const void *b)
@@ -1337,70 +1354,17 @@ static void display_ego_item(int col, int row, bool cursor, int oid)
  */
 static void desc_ego_fake(int oid)
 {
-    /* Hack: dereference the join */
-    const char *xtra[] = { "vulnerability", "pair of small resistances",
-	"resistance", "high resistance", "sustain", "ability",
-	"curse"
-    };
-    int num = 0, i;
-
     int e_idx = default_join[oid].oid;
     ego_item_type *e_ptr = &e_info[e_idx];
 
-    object_type dummy;
-    WIPE(&dummy, dummy);
+	textblock *tb;
+	region area = { 0, 0, 0, 0 };
 
-    /* Save screen */
-    screen_save();
+	/* List ego flags */
+	tb = object_info_ego(ego);
 
-    /* Set text_out hook */
-    text_out_hook = text_out_to_screen;
-
-    /* Dump the name */
-    c_prt(TERM_L_BLUE,
-	  format("%s %s", ego_grp_name(default_group(oid)),
-		 e_name + e_ptr->name), 0, 0);
-
-    /* Begin recall */
-    Term_gotoxy(0, 1);
-    if (e_ptr->text) {
-	int x, y;
-	text_out(e_text + e_ptr->text);
-	Term_locate(&x, &y);
-	Term_gotoxy(0, y + 1);
-    }
-
-
-    /* Count ego flags */
-    for (i = 0; i < 7; i++) {
-	if (kf_has(e_ptr->flags_kind, KF_RAND_RES_NEG + i))
-	    num++;
-    }
-
-    if (num)
-	text_out("It provides ");
-
-    /* List ego flags */
-    for (i = 0; i < 7; i++) {
-	char punct[10];
-	if (kf_has(e_ptr->flags_kind, KF_RAND_RES_NEG + i)) {
-	    if (num > 2)
-		strcpy(punct, ", ");
-	    else if (num == 2)
-		strcpy(punct, " and ");
-	    else if (num == 1)
-		strcpy(punct, ".");
-	    num--;
-	    text_out(format("one random %s%s", xtra[i], punct));
-	}
-    }
-
-
-    Term_flush();
-
-    (void) inkey_ex();
-
-    screen_load();
+	textui_textblock_show(tb, area, format("%s %s", ego_grp_name(default_group(oid)), ego->name));
+	textblock_free(tb);
 }
 
 /* TODO? Currently ego items will order by e_idx */

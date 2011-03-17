@@ -147,77 +147,68 @@ static const property_type resists[]=
 }
 
 
-static const flag_type immunity_flags[] =
-{
-	{ OF_IM_ACID, "acid" },
-	{ OF_IM_ELEC, "lightning" },
-	{ OF_IM_FIRE, "fire" },
-	{ OF_IM_COLD, "cold" },
-};
-
-static const flag_type vuln_flags[] =
-{
-	{ OF_VULN_ACID, "acid" },
-	{ OF_VULN_ELEC, "electricity" },
-	{ OF_VULN_FIRE, "fire" },
-	{ OF_VULN_COLD, "cold" },
-};
-
-static const flag_type resist_flags[] =
-{
-	{ OF_RES_ACID,  "acid" },
-	{ OF_RES_ELEC,  "lightning" },
-	{ OF_RES_FIRE,  "fire" },
-	{ OF_RES_COLD,  "cold" },
-	{ OF_RES_POIS,  "poison" },
-	{ OF_RES_FEAR,  "fear" },
-	{ OF_RES_LIGHT, "light" },
-	{ OF_RES_DARK,  "dark" },
-	{ OF_RES_BLIND, "blindness" },
-	{ OF_RES_CONFU, "confusion" },
-	{ OF_RES_SOUND, "sound" },
-	{ OF_RES_SHARD, "shards" },
-	{ OF_RES_NEXUS, "nexus"  },
-	{ OF_RES_NETHR, "nether" },
-	{ OF_RES_CHAOS, "chaos" },
-	{ OF_RES_DISEN, "disenchantment" },
-};
-
 static const flag_type ignore_flags[] =
 {
-	{ OF_IGNORE_ACID, "acid" },
-	{ OF_IGNORE_ELEC, "electricity" },
-	{ OF_IGNORE_FIRE, "fire" },
-	{ OF_IGNORE_COLD, "cold" },
+	{ OF_ACID_PROOF, "acid" },
+	{ OF_ELEC_PROOF, "electricity" },
+	{ OF_FIRE_PROOF, "fire" },
+	{ OF_COLD_PROOF, "cold" },
 };
 
 static const flag_type sustain_flags[] =
 {
-	{ OF_SUST_STR, "strength" },
-	{ OF_SUST_INT, "intelligence" },
-	{ OF_SUST_WIS, "wisdom" },
-	{ OF_SUST_DEX, "dexterity" },
-	{ OF_SUST_CON, "constitution" },
-	{ OF_SUST_CHR, "charisma" },
+	{ OF_SUSTAIN_STR, "strength" },
+	{ OF_SUSTAIN_INT, "intelligence" },
+	{ OF_SUSTAIN_WIS, "wisdom" },
+	{ OF_SUSTAIN_DEX, "dexterity" },
+	{ OF_SUSTAIN_CON, "constitution" },
+	{ OF_SUSTAIN_CHR, "charisma" },
 };
 
 static const flag_type misc_flags[] =
 {
-	{ OF_BLESSED, "Blessed by the gods" },
-	{ OF_SLOW_DIGEST, "Slows your metabolism" },
-	{ OF_IMPAIR_HP, "Impairs hitpoint recovery" },
-	{ OF_IMPAIR_MANA, "Impairs mana recovery" },
-	{ OF_AFRAID, "Makes you afraid of melee, and worse at shooting and casting spells" },
-	{ OF_FEATHER, "Feather Falling" },
-	{ OF_REGEN, "Speeds regeneration" },
-	{ OF_FREE_ACT, "Prevents paralysis" },
-	{ OF_HOLD_LIFE, "Sustains your life force" },
-	{ OF_TELEPATHY, "Grants telepathy" },
-	{ OF_SEE_INVIS, "Grants the ability to see invisible things" },
-	{ OF_AGGRAVATE, "Aggravates creatures nearby" },
-	{ OF_DRAIN_EXP, "Drains experience" },
-	{ OF_TELEPORT, "Induces random teleportation" },
+    { OF_LITE,               "provides permanent light" },
+    { OF_TWO_HANDED_REQ,     "requires two hands to wield" },
+    { OF_TWO_HANDED_DES,     "may need two hands to wield" },
+    { OF_IMPACT,             "induces earthquakes" },
+    { OF_DARKNESS,           "allows you to see in the dark" },
+    { OF_CHAOTIC,            "causes chaotic effects" },
+    { OF_BLESSED,            "Blessed by the gods" },
+    { OF_SLOW_DIGEST,        "Slows your metabolism" },
+    { OF_FEATHER,            "Feather Falling" },
+    { OF_REGEN,              "Speeds regeneration" },
+    { OF_FREE_ACT,           "Prevents paralysis" },
+    { OF_HOLD_LIFE,          "Sustains your life force" },
+    { OF_TELEPATHY,          "Grants telepathy" },
+    { OF_SEE_INVIS,          "Grants the ability to see invisible things" },
 };
+
+static const flag_type curses[] =
+{
+    { CF_TELEPORT,        "induces random teleportation" },
+    { CF_NO_TELEPORT,     "prevents teleportation" },
+    { CF_AGGRO_PERM,      "aggravates nearby creatures" },
+    { CF_AGGRO_RAND,      "occasionally greatly aggravates nearby creatures" },
+    { CF_SLOW_REGEN,      "slows your regeneration" },
+    { CF_AFRAID,          "makes you afraid" },
+    { CF_HUNGRY,          "speeds your digestion" },
+    { CF_POIS_RAND,       "occasionally poisons you" },
+    { CF_POIS_RAND_BAD,   "randomly envelops you in poison" },
+    { CF_CUT_RAND,        "occasionally cuts you" },
+    { CF_CUT_RAND_BAD,    "will suddenly cause deep wounds" },
+    { CF_HALLU_RAND,      "sometimes makes you hallucinate" },
+    { CF_DROP_WEAPON,     "will suddenly leap from your grasp" },
+    { CF_ATTRACT_DEMON,   "makes demons suddenly appear nearby" },
+    { CF_ATTRACT_UNDEAD,  "calls the undead from their slumber" },
+    { CF_STICKY_CARRY,    "cannot be dropped from your pack" },
+    { CF_STICKY_WIELD,    "sticks to you if wielded" },
+    { CF_PARALYZE,        "will briefly paralyze you" },
+    { CF_PARALYZE_ALL,    "can paralyze you even if you feel immune" },
+    { CF_DRAIN_EXP,       "drains experience" },
+    { CF_DRAIN_MANA,      "drains mana" },
+    { CF_DRAIN_STAT,      "will sometimes lower a stat" },
+    { CF_DRAIN_CHARGE,    "will take energy from your magic devices" },
+}
 
 
 /** Slays **/
@@ -319,6 +310,7 @@ static bool describe_stats(textblock *tb, const object_type *o_ptr,
     int j, min = 0, max = 0, count = 0;
     bool full = mode & OINFO_FULL;
     bool dummy = mode & OINFO_DUMMY;
+    bool terse = mode & OINFO_TERSE;
 
     if (((o_ptr->ident) & IDENT_WORN) || dummy || full) {
 	for (j = 0; j < A_MAX; j++) {
@@ -334,8 +326,10 @@ static bool describe_stats(textblock *tb, const object_type *o_ptr,
     if (count > 0) {
 	byte attr = (o_ptr->bonus_stat[A_STR] > 0 ? TERM_L_GREEN : TERM_ORANGE);
 
-	textblock_append(tb, "It gives ");
-	if (dummy) textblock_append(tb, "up to ");
+	if (!terse) {	
+	    textblock_append(tb, "It gives ");
+	    if (dummy) textblock_append(tb, "up to ");
+	}
 
 	/* Special case: all stats */
 	if (min == max) 
@@ -350,12 +344,12 @@ static bool describe_stats(textblock *tb, const object_type *o_ptr,
 		textblock_append_c(tb, attr, "%d ", o_ptr->bonus_stat[j]);
 		textblock_append(tb, "to your ");
 		textblock_append_c(tb, attr, statname[j]);
-		if (count >= 3)
-		    textblock_append(TERM_WHITE, ", ");
-		if (count == 2)
-		    textblock_append(TERM_WHITE, " and ");
+		if (count >= (terse ? 2 : 3))
+		    textblock_append(tb, ", ");
+		if ((count == 2) && !terse)
+		    textblock_append(tb, " and ");
 		if (count == 1)
-		    textblock_append(TERM_WHITE, ". ");
+		    textblock_append(tb, ". ");
 		count--;
 	    }
 	}
@@ -371,46 +365,164 @@ static bool describe_stats(textblock *tb, const object_type *o_ptr,
 /*
  * Describe immunities granted by an object.
  */
-static bool describe_immune(textblock *tb, const bitflag flags[OF_SIZE])
+static bool describe_immune(textblock *tb, object_type *o_ptr, 
+			    oinfo_detail_t mode)
 {
-	const char *i_descs[N_ELEMENTS(immunity_flags)];
-	const char *r_descs[N_ELEMENTS(resist_flags)];
-	const char *v_descs[N_ELEMENTS(vuln_flags)];
-	size_t count;
+    int res = 0, imm = 0, vul = 0, spec = 0, j;
 
-	bool prev = FALSE;
+    bool full = mode & OINFO_FULL;
+    bool dummy = mode & OINFO_DUMMY;
+    bool terse = mode & OINFO_TERSE;
+    bool prev = FALSE;
+    bool fear = of_has(o_ptr->flags_obj, OF_FEARLESS) && 
+	(of_has(o_ptr->id_obj, OF_FEARLESS) || full);
+    bool blind = of_has(o_ptr->flags_obj, OF_SEEING) && 
+	(of_has(o_ptr->id_obj, OF_SEEING) || full);
+    bool conf = (if_has(o_ptr->id_other, IF_RES_CONFU) || full) &&
+	(o_ptr->percent_res[P_RES_CONFU] < RES_LEVEL_BASE);
 
-	/* Immunities */
-	count = info_collect(tb, immunity_flags, N_ELEMENTS(immunity_flags),
-			flags, i_descs);
-	if (count)
-	{
-		textblock_append(tb, "Provides immunity to ");
-		info_out_list(tb, i_descs, count);
-		prev = TRUE;
+    /* Check for resists and vulnerabilities */
+    for (j = 0; j < MAX_P_RES; j++) {
+	if (!if_has(o_ptr->id_other, OBJECT_ID_BASE_RESIST + j)  && !full) 
+	    continue;
+	if (o_ptr->percent_res[j] == OBJ_BOOST_IMMUNE) 
+	    imm++;
+	else if (o_ptr->percent_res[j] < RES_LEVEL_BASE) {
+	    if (j == P_RES_CONFU) spec++;
+	    else res++;
+	}
+	else if (o_ptr->percent_res[j] > RES_LEVEL_BASE)
+	    vul++;
+    }
+    if (fear) spec++;
+    if (blind) spec++;
+    if (conf) spec++;
+
+    /* Immunities */
+    if (imm) {
+	textblock_append(tb, "Provides ");
+	textblock_append_c(tb, TERM_BLUE, "immunity ");
+	textblock_append(tb, "to ");
+
+	/* Loop for number of attributes in this group. */
+	for (j = 0; j < 4; j++) {
+	    if (o_ptr->percent_res[j] > RES_BOOST_IMMUNE)
+		continue;
+	    if (!if_has(o_ptr->id_other, OBJECT_ID_BASE_RESIST + j)  && !full)
+		continue;
+
+	    /* List the attribute description, in its proper place. */
+	    textblock_append_c(tb, resists[j].attr, resists[j].name);
+	    if (imm >= (terse ? 2 : 3))
+		textblock_append(tb, ", ");
+	    if ((imm == 2) && !terse)
+		textblock_append(tb, " and ");
+	    imm--;
 	}
 
-	/* Resistances */
-	count = info_collect(tb, resist_flags, N_ELEMENTS(resist_flags),
-			flags, r_descs);
-	if (count)
-	{
-		textblock_append(tb, "Provides resistance to ");
-		info_out_list(tb, r_descs, count);
-		prev = TRUE;
+	/* End sentence. */
+	text_out_to_screen(TERM_WHITE, ". ");
+	prev = TRUE;
+    }
+
+    /* Resistances */
+    if (res) {
+	textblock_append(tb, "Provides ");
+	textblock_append_c(tb, TERM_L_BLUE, "resistance ");
+	textblock_append(tb, "to ");
+
+	/* Loop for number of attributes in this group. */
+	for (j = 0; j < P_RES_MAX; j++) {
+	    if (o_ptr->percent_res[j] >= RES_LEVEL_BASE)
+		continue;
+	    if (o_ptr->percent_res[j] == RES_BOOST_IMMUNE)
+		continue;
+	    if (!if_has(o_ptr->id_other, OBJECT_ID_BASE_RESIST + j)  && !full)
+		continue;
+	    if (j == P_RES_CONFU)
+		continue;
+
+	    /* List the attribute description, in its proper place. */
+	    textblock_append_c(tb, resists[j].attr, resists[j].name);
+	    textblock_append(tb, "(");
+	    if (dummy) textblock_append(tb, "about ");
+	    textblock_append(tb, "%d%%)", RES_LEVEL_BASE - o_ptr->percent_res[j]);
+	    if (res >= (terse ? 2 : 3))
+		textblock_append(tb, ", ");
+	    if ((res == 2) && !terse)
+		textblock_append(tb, " and ");
+	    res--;
 	}
 
-	/* Vulnerabilities */
-	count = info_collect(tb, vuln_flags, N_ELEMENTS(vuln_flags),
-			flags, v_descs);
-	if (count)
-	{
-		textblock_append(tb, "Makes you vulnerable to ");
-		info_out_list(tb, v_descs, count);
-		prev = TRUE;
+	/* End sentence. */
+	text_out_to_screen(TERM_WHITE, ". ");
+	prev = TRUE;
+    }
+
+    /* Special processing for the three "survival resists" */
+    if (spec) {
+	if (fear) {
+	    textblock_append(tb, "It renders you fearless");
+	    textblock_append(tb, (spec == 1) ? ".  " : ", and");
 	}
 
-	return prev;
+	if (blind) {
+	    if ((spec > 1) && fear)
+		textblock_append(tb, " provides resistance to blindness");
+	    else
+		textblock_append(tb, "It provides resistance to blindness");
+	    
+	    if (conf)
+		textblock_append(tb, " and");
+	    else
+		textblock_append(tb, ".  ");
+	}
+
+	if (conf) {
+	    if ((spec > 1) && !blind)
+		textblock_append(tb, " provides resistance to");
+	    else if (spec == 1)
+		textblock_append(tb, "It provides resistance to");
+	    textblock_append_c(tb, " confusion");
+	    textblock_append(tb, "(");
+	    if (dummy) textblock_append(tb, "about ");
+	    textblock_append(tb, "%d%%).", RES_LEVEL_BASE - o_ptr->percent_res[P_RES_CONFU]);
+		prev = TRUE;
+	    } 
+	}
+    }
+
+    /* Vulnerabilities */
+    if (vul) {
+	textblock_append(tb, "Makes you ");
+	textblock_append_c(tb, TERM_ORANGE, "vulnerable ");
+	textblock_append(tb, "to ");
+
+	/* Loop for number of attributes in this group. */
+	for (j = 0; j < P_RES_MAX; j++) {
+	    if (o_ptr->percent_res[j] <= RES_LEVEL_BASE)
+		continue;
+	    if (!if_has(o_ptr->id_other, OBJECT_ID_BASE_RESIST + j))
+		continue;
+
+	    /* List the attribute description, in its proper place. */
+	    textblock_append_c(tb, resists[j].attr, resists[j].name);
+	    textblock_append(tb, "(");
+	    if (dummy) textblock_append(tb, "about ");
+	    textblock_append(tb, "%d%%)", o_ptr->percent_res[j] - RES_LEVEL_BASE);
+	    if (vul >= (terse ? 2 : 3))
+		textblock_append(tb, ", ");
+	    if ((vul == 2) && !terse)
+		textblock_append(tb, " and ");
+	    vul--;
+	}
+
+	/* End sentence. */
+	text_out_to_screen(TERM_WHITE, ". ");
+	prev = TRUE;
+    }
+
+    return prev;
 }
 
 
@@ -996,74 +1108,69 @@ static bool describe_digger(textblock *tb, const object_type *o_ptr,
 static bool describe_food(textblock *tb, const object_type *o_ptr,
 		bool subjective, bool full)
 {
-	/* Describe boring bits */
-	if ((o_ptr->tval == TV_FOOD || o_ptr->tval == TV_POTION) &&
-		o_ptr->pval)
-	{
-		/* Sometimes adjust for player speed */
-		int multiplier = extract_energy[p_ptr->state.speed];
-		if (!subjective) multiplier = 10;
+    /* Describe boring bits */
+    if ((o_ptr->tval == TV_FOOD || o_ptr->tval == TV_POTION) &&
+	o_ptr->pval)
+    {
+	/* Sometimes adjust for player speed */
+	int multiplier = extract_energy[p_ptr->state.speed];
+	if (!subjective) multiplier = 10;
 
-		if (object_is_known(o_ptr) || full) {
-			textblock_append(tb, "Nourishes for around ");
-			textblock_append_c(tb, TERM_L_GREEN, "%d", (o_ptr->pval / 2) *
-				multiplier / 10);
-			textblock_append(tb, " turns.\n");
-		} else {
-			textblock_append(tb, "Provides some nourishment.\n");
-		}
-
-		return TRUE;
+	if (object_is_known(o_ptr) || full) {
+	    textblock_append(tb, "Nourishes for around ");
+	    textblock_append_c(tb, TERM_L_GREEN, "%d", (o_ptr->pval / 2) *
+			       multiplier / 10);
+	    textblock_append(tb, " turns.\n");
+	} else {
+	    textblock_append(tb, "Provides some nourishment.\n");
 	}
 
-	return FALSE;
+	return TRUE;
+    }
+
+    return FALSE;
 }
 
 
 /*
  * Describe things that look like lights.
  */
-static bool describe_light(textblock *tb, const object_type *o_ptr,
-		const bitflag flags[OF_SIZE], bool terse)
+static bool describe_light(textblock *tb, const object_type *o_ptr, bool terse)
 {
-	int rad = 0;
+    int rad = 0;
 
-	bool artifact = artifact_p(o_ptr);
-	bool no_fuel = of_has(flags, OF_NO_FUEL) ? TRUE : FALSE;
-	bool is_light = (o_ptr->tval == TV_LIGHT) ? TRUE : FALSE;
+    bool artifact = artifact_p(o_ptr);
+    bool is_light = (o_ptr->tval == TV_LITE) ? TRUE : FALSE;
 
-	if (o_ptr->tval != TV_LIGHT && !of_has(flags, OF_LIGHT))
-		return FALSE;
+    if (o_ptr->tval != TV_LITE && !of_has(o_ptr->flags, OF_LIGHT))
+	return FALSE;
 
-	/* Work out radius */
-	if (artifact && is_light)
-		rad = 3;
-	else if (is_light)
-		rad = 2;
-	if (of_has(flags, OF_LIGHT))
-		rad++;
+    /* Work out radius */
+    if (artifact && is_light)
+	rad = 3;
+    else if (is_light)
+	rad = 2;
+    if (of_has(flags, OF_LIGHT))
+	rad++;
 
-	/* Describe here */
-	textblock_append(tb, "Radius ");
-	textblock_append_c(tb, TERM_L_GREEN, format("%d", rad));
-	if (no_fuel && !artifact)
-		textblock_append(tb, " light.  No fuel required.");
-	else if (is_light && o_ptr->sval == SV_LIGHT_TORCH)
-		textblock_append(tb, " light, reduced when running out of fuel.");
-	else
-		textblock_append(tb, " light.");
+    /* Describe here */
+    if (!terse) textblock_append(tb, "It provides radius ");
+    else textblock_append(tb, "Radius ");
+    textblock_append_c(tb, TERM_L_GREEN, format("%d", rad));
+    if (artifact) textblock_append(tb, " light forever.");
+    else textblock_append(tb, " light.");
 
-	if (!terse && is_light && !no_fuel)
-	{
-		const char *name = (o_ptr->sval == SV_LIGHT_TORCH) ? "torches" : "lanterns";
-		int turns = (o_ptr->sval == SV_LIGHT_TORCH) ? FUEL_TORCH : FUEL_LAMP;
+    if (!terse && is_light && !artifact)
+    {
+	const char *name = (o_ptr->sval == SV_LIGHT_TORCH) ? "torches" : "lanterns";
+	int turns = (o_ptr->sval == SV_LIGHT_TORCH) ? FUEL_TORCH : FUEL_LAMP;
 
-		textblock_append(tb, "  Refills other %s up to %d turns of fuel.", name, turns);
-	}
+	textblock_append(tb, "  Refills other %s up to %d turns of fuel.", name, turns);
+    }
 
-	textblock_append(tb, "\n");
+    textblock_append(tb, "\n");
 
-	return TRUE;
+    return TRUE;
 }
 
 
@@ -1197,127 +1304,139 @@ static bool describe_effect(textblock *tb, const object_type *o_ptr, bool full,
 
 bool describe_origin(textblock *tb, const object_type *o_ptr)
 {
-	char origin_text[80];
+    char origin_text[80];
 
-	if (o_ptr->origin_depth)
-		strnfmt(origin_text, sizeof(origin_text), "%d feet (level %d)",
-		        o_ptr->origin_depth * 50, o_ptr->origin_depth);
+    if (stage_map[o_ptr->origin_stage][DEPTH])
+	strnfmt(origin_text, sizeof(origin_text), "%s Level %d",
+		locality_name[stage_map[p_ptr->origin_stage][LOCALITY]], 
+		stage_map[o_ptr->origin_stage][DEPTH]);
+    else
+	strnfmt(origin_text, sizeof(origin_text), "%s %s",
+		locality_name[stage_map[p_ptr->origin_stage][LOCALITY]], 
+		"Town");
+
+    switch (o_ptr->origin)
+    {
+    case ORIGIN_NONE:
+    case ORIGIN_MIXED:
+	return FALSE;
+
+    case ORIGIN_BIRTH:
+	textblock_append(tb, "An inheritance from your family.\n");
+	break;
+
+    case ORIGIN_STORE:
+	textblock_append(tb, "Bought from a store.\n");
+	break;
+
+    case ORIGIN_FLOOR:
+	textblock_append(tb, "Found lying on the ground in %s.\n", origin_text);
+	break;
+
+    case ORIGIN_DROP:
+    {
+	const char *name = r_info[o_ptr->origin_xtra].name;
+
+	textblock_append(tb, "Dropped by ");
+
+	if (rf_has(r_info[o_ptr->origin_xtra].flags, RF_UNIQUE))
+	    textblock_append(tb, "%s", name);
 	else
-		my_strcpy(origin_text, "town", sizeof(origin_text));
+	    textblock_append(tb, "%s%s", is_a_vowel(name[0]) ? "an " : "a ", 
+			     name);
 
-	switch (o_ptr->origin)
-	{
-		case ORIGIN_NONE:
-		case ORIGIN_MIXED:
-			return FALSE;
+	textblock_append(tb, " in %s.\n", origin_text);
+	break;
+    }
 
-		case ORIGIN_BIRTH:
-			textblock_append(tb, "An inheritance from your family.\n");
-			break;
+    case ORIGIN_DROP_UNKNOWN:
+	textblock_append(tb, "Dropped by an unknown monster in %s.\n",
+			 origin_text);
+	break;
 
-		case ORIGIN_STORE:
-			textblock_append(tb, "Bought from a store.\n");
-			break;
+    case ORIGIN_ACQUIRE:
+	textblock_append(tb, "Conjured forth by magic in %s.\n", origin_text);
+	break;
 
-		case ORIGIN_FLOOR:
-			textblock_append(tb, "Found lying on the floor %s %s.\n",
-			         (o_ptr->origin_depth ? "at" : "in"),
-			         origin_text);
- 			break;
+    case ORIGIN_CHEAT:
+	textblock_append(tb, "Created by debug option.\n");
+	break;
 
-		case ORIGIN_DROP:
-		{
-			const char *name = r_info[o_ptr->origin_xtra].name;
+    case ORIGIN_CHEST:
+	textblock_append(tb, "Found in a chest from %s.\n",
+			 origin_text);
+	break;
+    }
 
-			textblock_append(tb, "Dropped by ");
+    textblock_append(tb, "\n");
 
-			if (rf_has(r_info[o_ptr->origin_xtra].flags, RF_UNIQUE))
-				textblock_append(tb, "%s", name);
-			else
-				textblock_append(tb, "%s%s",
-						is_a_vowel(name[0]) ? "an " : "a ", name);
-
-			textblock_append(tb, " %s %s.\n",
-					(o_ptr->origin_depth ? "at" : "in"),
-					origin_text);
- 			break;
-		}
-
-		case ORIGIN_DROP_UNKNOWN:
-			textblock_append(tb, "Dropped by an unknown monster %s %s.\n",
-					(o_ptr->origin_depth ? "at" : "in"),
-					origin_text);
-			break;
-
-		case ORIGIN_ACQUIRE:
-			textblock_append(tb, "Conjured forth by magic %s %s.\n",
-					(o_ptr->origin_depth ? "at" : "in"),
-					origin_text);
- 			break;
-
-		case ORIGIN_CHEAT:
-			textblock_append(tb, "Created by debug option.\n");
- 			break;
-
-		case ORIGIN_CHEST:
-			textblock_append(tb, "Found in a chest from %s.\n",
-			         origin_text);
-			break;
-	}
-
-	textblock_append(tb, "\n");
-
-	return TRUE;
+    return TRUE;
 }
 
 static void describe_flavor_text(textblock *tb, const object_type *o_ptr)
 {
-	/* Display the known artifact description */
-	if (!OPT(adult_randarts) && o_ptr->name1 &&
-			object_is_known(o_ptr) && a_info[o_ptr->name1].text)
+    /* Display the known artifact description */
+    if (o_ptr->name1 &&	object_is_known(o_ptr) && a_info[o_ptr->name1].text)
+    {
+	textblock_append(tb, "%s\n\n", a_info[o_ptr->name1].text);
+    }
+
+    /* Display the known object description */
+    else if (object_flavor_is_aware(o_ptr) || object_is_known(o_ptr))
+    {
+	bool did_desc = FALSE;
+
+	if (k_info[o_ptr->k_idx].text)
 	{
-		textblock_append(tb, "%s\n\n", a_info[o_ptr->name1].text);
+	    textblock_append(tb, "%s", k_info[o_ptr->k_idx].text);
+	    did_desc = TRUE;
 	}
 
-	/* Display the known object description */
-	else if (object_flavor_is_aware(o_ptr) || object_is_known(o_ptr))
+	/* Display an additional ego-item description */
+	if (object_ego_is_visible(o_ptr) && e_info[o_ptr->name2].text)
 	{
-		bool did_desc = FALSE;
-
-		if (k_info[o_ptr->k_idx].text)
-		{
-			textblock_append(tb, "%s", k_info[o_ptr->k_idx].text);
-			did_desc = TRUE;
-		}
-
-		/* Display an additional ego-item description */
-		if (object_ego_is_visible(o_ptr) && e_info[o_ptr->name2].text)
-		{
-			if (did_desc) textblock_append(tb, "  ");
-			textblock_append(tb, "%s\n\n", e_info[o_ptr->name2].text);
-		}
-		else if (did_desc)
-		{
-			textblock_append(tb, "\n\n");
-		}
+	    if (did_desc) textblock_append(tb, "  ");
+	    textblock_append(tb, "%s\n\n", e_info[o_ptr->name2].text);
 	}
+	else if (did_desc)
+	{
+	    textblock_append(tb, "\n\n");
+	}
+    }
 }
 
 
 bool describe_ego(textblock *tb, const object_type *o_ptr)
 {
-	struct ego_item *ego = &e_info[o_ptr->name2];
+    struct ego_item *ego = &e_info[o_ptr->name2];
+    int num = 0, i;
 
-	if (ego->name && ego->xtra)
-	{
-		const char *xtra[] = { "sustain", "higher resistance", "ability" };
-		textblock_append(tb, "It provides one random %s.  ",
-				xtra[ego->xtra - 1]);
+    /* Count ego flags */
+    for (i = 0; i < 7; i++) {
+	if (kf_has(ego->flags_kind, KF_RAND_RES_NEG + i))
+	    num++;
+    }
 
-		return TRUE;
+    if (num)
+    {
+	const char *xtra[] = { "vulnerability", "pair of small resistances",
+			       "resistance", "high resistance", "sustain", 
+			       "ability", "curse"
+	};
+	const char *punct[] = { ", ", ".", " and " };
+	textblock_append(tb, "It provides ");
+	for (i = 0; i < 7; i++) {
+	    if (kf_has(ego->flags_kind, KF_RAND_RES_NEG + i)) {
+		textblock_append(tb, "one random %s%s", xtra[i], 
+				 (num > 2) ? punct[0] : punct[num]);
+		num--;
+	    }
 	}
 
-	return FALSE;
+	return TRUE;
+    }
+
+    return FALSE;
 }
 
 
@@ -1355,7 +1474,7 @@ static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
 	if (describe_curses(tb, o_ptr, flags)) something = TRUE;
 	if (describe_stats(tb, o_ptr, mode)) something = TRUE;
 	if (describe_slays(tb, flags, o_ptr->tval)) something = TRUE;
-	if (describe_immune(tb, flags)) something = TRUE;
+	if (describe_immune(tb, o_ptr, mode)) something = TRUE;
 	if (describe_ignores(tb, flags)) something = TRUE;
 	if (describe_sustains(tb, flags)) something = TRUE;
 	if (describe_misc_magic(tb, flags)) something = TRUE;

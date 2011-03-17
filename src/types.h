@@ -556,17 +556,6 @@ typedef struct object {
     byte name1;		/**< Artifact type, if any */
     byte name2;		/**< Ego-Item type, if any */
 
-    byte effect;	/**< Activation indicator */
-
-    s16b ac;		/**< Normal AC */
-    s16b to_h;		/**< Plusses to hit */
-    s16b to_d;		/**< Plusses to damage */
-    s16b to_a;		/**< Plusses to AC */
-
-    byte dd, ds;	/**< Damage dice/sides */
-
-    s16b timeout;	/**< Timeout Counter */
-
     bitflag flags_obj[OF_SIZE];		/**< New object flags -NRM-*/
     bitflag flags_curse[CF_SIZE];	/**< New curse flags  -NRM- */
 
@@ -581,17 +570,31 @@ typedef struct object {
     int multiple_brand[MAX_P_BRAND];  /**< Brand multiples    -NRM- */
 
     byte ident;		/**< ID flags  */
+    byte effect;	/**< Activation indicator */
+
+    s16b ac;		/**< Normal AC */
+    s16b to_h;		/**< Plusses to hit */
+    s16b to_d;		/**< Plusses to damage */
+    s16b to_a;		/**< Plusses to AC */
+
+    byte dd, ds;	/**< Damage dice/sides */
+
+    s16b timeout;	/**< Timeout Counter */
+
 
     byte number;	/**< Number of items */
     byte marked;	/**< Object is marked */
 
     byte feel;		/**< Feeling index */
-    u16b note;		/**< Inscription index */
-    u32b found;		/**< Where the object was found */
 
     s16b next_o_idx;	/**< Next object in stack (if any) */
-
     s16b held_m_idx;	/**< Monster holding us (if any) */
+
+    byte origin;        /* How this item was found */
+    byte origin_stage;  /* Where the item was found */
+    u16b origin_xtra;   /* Extra information about origin */
+    
+    quark_t note;		/**< Inscription index */
 } object_type;
 
 
