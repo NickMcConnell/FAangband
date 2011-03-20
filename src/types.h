@@ -274,6 +274,7 @@ typedef struct artifact_type {
     char *effect_msg;
 
     random_value time;  /**< Recharge time (if appropriate) */
+    random_value charge;	       /**< Number of charges (staves/wands) */
 
     byte set_no;	/**< Stores the set number of the artifact. 
 			 * 0 if not part of a set -GS- */
@@ -294,19 +295,14 @@ typedef struct {
 /** Information about an item in a set -GS- */
 typedef struct set_element {
     byte a_idx;		/**< the artifact ID */
-    bitflag flags_obj[OF_SIZE];
-				/**< New object flags -NRM-*/
-    bitflag flags_curse[CF_SIZE];
-				/**< New curse flags  -NRM- */
+    bitflag flags_obj[OF_SIZE];	/**< New object flags -NRM-*/
+    bitflag flags_curse[CF_SIZE];/**< New curse flags  -NRM- */
 
     int percent_res[MAX_P_RES];	   /**< Percentage resists -NRM- */
     int bonus_stat[A_MAX];	   /**< Stat bonuses       -NRM- */
-    int bonus_other[MAX_P_BONUS];
-				   /**< Other bonuses      -NRM- */
-    int multiple_slay[MAX_P_SLAY];
-				   /**< Slay multiples     -NRM- */
-    int multiple_brand[MAX_P_BRAND];
-				   /**< Brand multiples    -NRM- */
+    int bonus_other[MAX_P_BONUS];  /**< Other bonuses      -NRM- */
+    int multiple_slay[MAX_P_SLAY];  /**< Slay multiples     -NRM- */
+    int multiple_brand[MAX_P_BRAND];  /**< Brand multiples    -NRM- */
 } set_element;
 
 /** Information about items sets -GS- */
@@ -317,8 +313,7 @@ typedef struct set_type {
 
     byte setidx;	/**< the artifact ID */
     byte no_of_items;		/**< The number of items in the set */
-    set_element set_items[6];
-				/**< the artifact no and extra powers. */
+    set_element set_items[6];	/**< the artifact no and extra powers. */
 } set_type;
 
 
@@ -360,6 +355,8 @@ typedef struct ego_item {
     byte max_to_h;		/**< Maximum to-hit bonus */
     byte max_to_d;		/**< Maximum to-dam bonus */
     byte max_to_a;		/**< Maximum to-ac bonus */
+
+    random_value time;	       /**< Recharge time (rods/activation) */
 
     u16b effect;		/**< Activation index */
     bool everseen;		/**< Do not spoil squelch menus */
@@ -580,6 +577,7 @@ typedef struct object {
     byte dd, ds;	/**< Damage dice/sides */
 
     s16b timeout;	/**< Timeout Counter */
+    random_value time;	       /**< Recharge time (rods/activation) */
 
 
     byte number;	/**< Number of items */
@@ -996,7 +994,13 @@ typedef struct {
 
     s16b skills[SKILL_MAX];	/**< Skills */
 
+    byte evasion_chance;/**< Percentage to avoid attacks with evasion */
     u32b base_wakeup_chance; /**< Derived from stealth.  Revised in Oangband. */
+
+    bool shield_on_back;/**< Player carrying a shield on his back. -LM- */
+    bool heavy_wield;	/**< Heavy weapon */
+    bool heavy_shoot;	/**< Heavy shooter */
+    bool icky_wield;	/**< Icky weapon */
 
     int res_list[MAX_P_RES];   /**< Resistances and immunities */
     int dis_res_list[MAX_P_RES];   /**< Known resistances and immunities */
@@ -1215,16 +1219,6 @@ typedef struct player {
 
     s16b new_spells;	/**< Number of spells available */
 
-    s16b old_spells;
-
-    bool old_cumber_armor;
-    bool old_cumber_glove;
-    bool old_shield_on_back;
-
-    bool old_heavy_wield;
-    bool old_heavy_shoot;
-    bool old_icky_wield;
-
     s16b old_lite;	/**< Old radius of lite (if any) */
     s16b old_view;	/**< Old radius of view (if any) */
 
@@ -1232,10 +1226,6 @@ typedef struct player {
 
     bool cumber_armor;	/**< Mana draining armor */
     bool cumber_glove;	/**< Mana draining gloves */
-    bool shield_on_back;/**< Player carrying a shield on his back. -LM- */
-    bool heavy_wield;	/**< Heavy weapon */
-    bool heavy_shoot;	/**< Heavy shooter */
-    bool icky_wield;	/**< Icky weapon */
 
     s16b cur_lite;	/**< Radius of lite (if any) */
 
@@ -1260,8 +1250,6 @@ typedef struct player {
     s16b heighten_power;
 			/**< Magic Intensity boost from casting (Hghtn Magic) */
     s16b mana_gain;	/**< Mana gained by special means this turn */
-    byte evasion_chance;/**< Percentage to avoid attacks with evasion */
-    byte old_evasion_chance;/**< Old percentage to avoid attacks with evasion */
     /* Generation fields (for quick start) */
     s32b au_birth;		/* Birth gold when option birth_money is false */
     s16b stat_birth[A_MAX];	/* Birth "natural" stat values */

@@ -204,7 +204,11 @@ bool set_timed(int idx, int v, bool notify)
     if (idx == TMD_SPRINT && v == 0)
 	inc_timed(TMD_SLOW, 100, TRUE);
 
-
+    /* Hack - deal with special_attack - should be changed */
+    if ((idx >= TMD_ATT_ACID) && (idx <= TMD_ATT_POIS) && (v == 0)) 
+	p_ptr->special_attack &=  ~(ATTACK_ACID | ATTACK_ELEC | ATTACK_FIRE | 
+				    ATTACK_COLD | ATTACK_POIS );
+    
     /* Nothing to notice */
     if (!notify)
 	return FALSE;

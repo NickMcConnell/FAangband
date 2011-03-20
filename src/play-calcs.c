@@ -26,8 +26,7 @@
 /**
  * Stat Table (INT/WIS) -- Number of half-spells per level
  */
-byte adj_mag_study[STAT_RANGE] =
-  {
+byte adj_mag_study[STAT_RANGE] =  {
     0	/* 3 */,
     0	/* 4 */,
     0	/* 5 */,
@@ -764,6 +763,8 @@ static void calc_spells(void)
 
     magic_type *s_ptr;
 
+    s16b old_spells;
+
     cptr p = "";
 
 
@@ -778,6 +779,9 @@ static void calc_spells(void)
     /* Hack -- handle "xtra" mode */
     if (character_xtra)
 	return;
+
+    /* Save the new_spells value */
+    old_spells = p_ptr->new_spells;
 
     /* Determine magic description. */
     if (mp_ptr->spell_book == TV_MAGIC_BOOK)
@@ -1009,7 +1013,7 @@ static void calc_spells(void)
 	p_ptr->new_spells = k;
 
     /* Spell count changed */
-    if (p_ptr->old_spells != p_ptr->new_spells) {
+    if (old_spells != p_ptr->new_spells) {
 	/* Message if needed */
 	if (p_ptr->new_spells) {
 	    /* Message */
@@ -1018,11 +1022,8 @@ static void calc_spells(void)
 			&& (mp_ptr->spell_book != TV_DRUID_BOOK)) ? "s" : "");
 	}
 
-	/* Save the new_spells value */
-	p_ptr->old_spells = p_ptr->new_spells;
-
 	/* Redraw Study Status */
-	p_ptr->redraw |= (PR_STUDY);
+	p_ptr->redraw |= (PR_STUDY | PR_OBJECT);
     }
 }
 
@@ -1113,6 +1114,8 @@ static void calc_mana(void)
 
     object_type *o_ptr;
 
+    bool old_cumber_glove = p_ptr->cumber_glove;
+    bool old_cumber_armor = p_ptr->cumber_armor;
 
     /* Hack -- Must possess some magical realm. */
     if (!mp_ptr->spell_realm)
@@ -1231,30 +1234,24 @@ static void calc_mana(void)
 
 
     /* Take note when "glove state" changes */
-    if (p_ptr->old_cumber_glove != p_ptr->cumber_glove) {
+    if (old_cumber_glove != p_ptr->cumber_glove) {
 	/* Message */
 	if (p_ptr->cumber_glove) {
 	    msg_print("Your covered hands feel unsuitable for spellcasting.");
 	} else {
 	    msg_print("Your hands feel more suitable for spellcasting.");
 	}
-
-	/* Save it */
-	p_ptr->old_cumber_glove = p_ptr->cumber_glove;
     }
 
 
     /* Take note when "armor state" changes */
-    if (p_ptr->old_cumber_armor != p_ptr->cumber_armor) {
+    if (old_cumber_armor != p_ptr->cumber_armor) {
 	/* Message */
 	if (p_ptr->cumber_armor) {
 	    msg_print("The weight of your armor encumbers your movement.");
 	} else {
 	    msg_print("You feel able to move more freely.");
 	}
-
-	/* Save it */
-	p_ptr->old_cumber_armor = p_ptr->cumber_armor;
     }
 }
 
@@ -1312,6 +1309,8 @@ static void calc_torch(void)
 {
     object_type *o_ptr = &p_ptr->inventory[INVEN_LITE];
 
+    s16b old_lite = p_ptr->cur_lite;
+
     /* Assume no light */
     p_ptr->cur_lite = 0;
 
@@ -1349,7 +1348,6 @@ static void calc_torch(void)
 	}
     }
 
-
     /* Special ability Holy Light */
     if (player_has(PF_HOLY_LIGHT))
 	p_ptr->cur_lite++;
@@ -1367,13 +1365,14 @@ static void calc_torch(void)
 	    p_ptr->cur_lite = 1;
     }
 
+    /* Vampire shape */
+    if ((p_ptr->schange == SHAPE_VAMPIRE) && (p_ptr->cur_lite >= 3)
+	p_ptr->cur_lite = 2;
+
     /* Notice changes in the "lite radius" */
-    if (p_ptr->old_lite != p_ptr->cur_lite) {
+    if (old_lite != p_ptr->cur_lite) {
 	/* Update the visuals */
 	p_ptr->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
-
-	/* Remember the old lite */
-	p_ptr->old_lite = p_ptr->cur_lite;
     }
 }
 
@@ -1382,12 +1381,12 @@ static void calc_torch(void)
 /**
  * Computes current weight limit.
  */
-static int weight_limit(void)
+static int weight_limit(player_state *state)
 {
     int i;
 
     /* Weight limit based only on strength */
-    i = adj_str_wgt[p_ptr->state.stat_ind[A_STR]] * 100;
+    i = adj_str_wgt[state->stat_ind[A_STR]] * 100;
 
     /* Return the result */
     return (i);
@@ -1398,7 +1397,8 @@ static int weight_limit(void)
  * a large, heavy weapon - training that many classes simply do not have the
  * time or inclination for.  -LM- 
  */
-int add_special_melee_skill(byte pclass, s16b weight, object_type * o_ptr)
+int add_special_melee_skill(player_state *state, s16b weight, 
+			    const object_type * o_ptr)
 {
     int add_skill = 0;
     int max_weight = 0;
@@ -1440,16 +1440,16 @@ int add_special_melee_skill(byte pclass, s16b weight, object_type * o_ptr)
     /* Priest penalty for non-blessed edged weapons. */
     if ((player_has(PF_BLESS_WEAPON)) && (player_has(PF_STRONG_MAGIC))
 	&& ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
-	&& (!p_ptr->state.bless_blade)) {
+	&& (!state->bless_blade)) {
 	add_skill -= 10 + p_ptr->lev / 2;
 
 	/* Icky weapon */
-	p_ptr->icky_wield = TRUE;
+	state->icky_wield = TRUE;
     }
 
     /* Paladin bonus for blessed weapons. */
     if ((player_has(PF_BLESS_WEAPON)) && (!player_has(PF_STRONG_MAGIC))
-	&& (p_ptr->state.bless_blade))
+	&& (state->bless_blade))
 	add_skill += 10 + p_ptr->lev / 4;
 
     /* Now, special racial abilities and limitations are considered.  Most
@@ -1481,17 +1481,18 @@ int add_special_melee_skill(byte pclass, s16b weight, object_type * o_ptr)
 /** Calculate all class and race-based bonuses and 
  * penalties to missile Skill 
  */
-int add_special_missile_skill(byte pclass, s16b weight, object_type * o_ptr)
+int add_special_missile_skill(player_state *state, s16b weight, 
+			      const object_type * o_ptr)
 {
     int add_skill = 0;
 
     /* Nice bonus for most favored weapons - if no tradeoff */
     if ((((player_has(PF_BOW_SPEED_GREAT))
-	  && (p_ptr->state.ammo_tval == TV_ARROW))
+	  && (state->ammo_tval == TV_ARROW))
 	 || ((player_has(PF_SLING_SPEED_GREAT))
-	     && (p_ptr->state.ammo_tval == TV_SHOT))
+	     && (state->ammo_tval == TV_SHOT))
 	 || ((player_has(PF_XBOW_SPEED_GREAT))
-	     && (p_ptr->state.ammo_tval == TV_BOLT)))
+	     && (state->ammo_tval == TV_BOLT)))
 	&& (!player_has(PF_RAPID_FIRE))) {
 	/* Big bonus */
 	add_skill = 3 + p_ptr->lev / 4;
@@ -1499,24 +1500,24 @@ int add_special_missile_skill(byte pclass, s16b weight, object_type * o_ptr)
 
     /* Hack - Unarmed fighters (i.e. Druids) do a bit better with slings */
     if ((player_has(PF_UNARMED_COMBAT)) &
-	(p_ptr->state.ammo_tval == TV_SHOT)) {
+	(state->ammo_tval == TV_SHOT)) {
 	add_skill = p_ptr->lev / 7;
     }
 
     /* Now, special racial abilities and limitations are considered.  The
      * choice of race can be of some significance. */
 
-    if (p_ptr->state.ammo_tval == TV_BOLT) {
+    if (state->ammo_tval == TV_BOLT) {
 	if (player_has(PF_XBOW_SKILL))
 	    add_skill += 3 + p_ptr->lev / 7;
 	else if (player_has(PF_XBOW_UNSKILL))
 	    add_skill -= 3 + p_ptr->lev / 7;
-    } else if (p_ptr->state.ammo_tval == TV_ARROW) {
+    } else if (state->ammo_tval == TV_ARROW) {
 	if (player_has(PF_BOW_SKILL))
 	    add_skill += 3 + p_ptr->lev / 7;
 	else if (player_has(PF_BOW_UNSKILL))
 	    add_skill -= 3 + p_ptr->lev / 7;
-    } else if (p_ptr->state.ammo_tval == TV_SHOT) {
+    } else if (state->ammo_tval == TV_SHOT) {
 	if (player_has(PF_SLING_SKILL))
 	    add_skill += 3 + p_ptr->lev / 7;
 	else if (player_has(PF_SLING_UNSKILL))
@@ -1531,20 +1532,20 @@ int add_special_missile_skill(byte pclass, s16b weight, object_type * o_ptr)
  *
  * These now represent what percentage of damage the player takes -NRM-
  */
-static void resistance_limits(void)
+static void resistance_limits(player_state *state)
 {
     int i;
 
     /* Check all extremes */
     for (i = 0; i < MAX_P_RES; i++) {
-	if (p_ptr->state.res_list[i] > RES_LEVEL_MAX)
-	    p_ptr->state.res_list[i] = RES_LEVEL_MAX;
-	if (p_ptr->state.res_list[i] < RES_LEVEL_MIN)
-	    p_ptr->state.res_list[i] = RES_LEVEL_MIN;
-	if (p_ptr->state.dis_res_list[i] > RES_LEVEL_MAX)
-	    p_ptr->state.dis_res_list[i] = RES_LEVEL_MAX;
-	if (p_ptr->state.dis_res_list[i] < RES_LEVEL_MIN)
-	    p_ptr->state.dis_res_list[i] = RES_LEVEL_MIN;
+	if (state->res_list[i] > RES_LEVEL_MAX)
+	    state->res_list[i] = RES_LEVEL_MAX;
+	if (state->res_list[i] < RES_LEVEL_MIN)
+	    state->res_list[i] = RES_LEVEL_MIN;
+	if (state->dis_res_list[i] > RES_LEVEL_MAX)
+	    state->dis_res_list[i] = RES_LEVEL_MAX;
+	if (state->dis_res_list[i] < RES_LEVEL_MIN)
+	    state->dis_res_list[i] = RES_LEVEL_MIN;
     }
 }
 
@@ -1561,103 +1562,103 @@ extern void apply_resist(int *player_resist, int item_resist)
 /** Applies vital statistic changes from a shapeshift 
  * to the player.
 */
-static void shape_change_stat(void)
+static void shape_change_stat(player_state *state)
 {
     switch (p_ptr->schange) {
     case SHAPE_NORMAL:
 	break;
     case SHAPE_MOUSE:
 	{
-	    p_ptr->state.stat_add[A_STR] -= 2;
-	    p_ptr->state.stat_add[A_INT] -= 7;
-	    p_ptr->state.stat_add[A_CON] -= 1;
-	    p_ptr->state.stat_add[A_CHR] -= 5;
+	    state->stat_add[A_STR] -= 2;
+	    state->stat_add[A_INT] -= 7;
+	    state->stat_add[A_CON] -= 1;
+	    state->stat_add[A_CHR] -= 5;
 	    break;
 	}
     case SHAPE_FERRET:
 	{
-	    p_ptr->state.stat_add[A_DEX] += 4;
-	    p_ptr->state.stat_add[A_CHR] -= 2;
+	    state->stat_add[A_DEX] += 4;
+	    state->stat_add[A_CHR] -= 2;
 	    break;
 	}
     case SHAPE_HOUND:
 	{
-	    p_ptr->state.stat_add[A_CON] += 2;
-	    p_ptr->state.stat_add[A_INT] -= 2;
-	    p_ptr->state.stat_add[A_CHR] -= 2;
+	    state->stat_add[A_CON] += 2;
+	    state->stat_add[A_INT] -= 2;
+	    state->stat_add[A_CHR] -= 2;
 	    break;
 	}
     case SHAPE_GAZELLE:
 	{
-	    p_ptr->state.stat_add[A_STR] -= 2;
-	    p_ptr->state.stat_add[A_DEX] += 2;
-	    p_ptr->state.stat_add[A_CON] -= 1;
-	    p_ptr->state.stat_add[A_WIS] -= 2;
+	    state->stat_add[A_STR] -= 2;
+	    state->stat_add[A_DEX] += 2;
+	    state->stat_add[A_CON] -= 1;
+	    state->stat_add[A_WIS] -= 2;
 	    break;
 	}
     case SHAPE_LION:
 	{
-	    p_ptr->state.stat_add[A_STR] += 3;
-	    p_ptr->state.stat_add[A_CHR] -= 4;
-	    p_ptr->state.stat_add[A_WIS] -= 2;
-	    p_ptr->state.stat_add[A_INT] -= 2;
+	    state->stat_add[A_STR] += 3;
+	    state->stat_add[A_CHR] -= 4;
+	    state->stat_add[A_WIS] -= 2;
+	    state->stat_add[A_INT] -= 2;
 	    break;
 	}
     case SHAPE_ENT:
 	{
-	    p_ptr->state.stat_add[A_STR] += 4;
-	    p_ptr->state.stat_add[A_WIS] += 1;
-	    p_ptr->state.stat_add[A_DEX] -= 5;
-	    p_ptr->state.stat_add[A_CON] += 4;
-	    p_ptr->state.stat_add[A_CHR] -= 1;
+	    state->stat_add[A_STR] += 4;
+	    state->stat_add[A_WIS] += 1;
+	    state->stat_add[A_DEX] -= 5;
+	    state->stat_add[A_CON] += 4;
+	    state->stat_add[A_CHR] -= 1;
 	    break;
 	}
     case SHAPE_BAT:
 	{
-	    p_ptr->state.stat_add[A_STR] -= 1;
-	    p_ptr->state.stat_add[A_WIS] -= 2;
-	    p_ptr->state.stat_add[A_INT] -= 2;
-	    p_ptr->state.stat_add[A_CHR] -= 2;
+	    state->stat_add[A_STR] -= 1;
+	    state->stat_add[A_WIS] -= 2;
+	    state->stat_add[A_INT] -= 2;
+	    state->stat_add[A_CHR] -= 2;
 	    break;
 	}
     case SHAPE_WEREWOLF:
 	{
-	    p_ptr->state.stat_add[A_STR] += 2;
-	    p_ptr->state.stat_add[A_CHR] -= 5;
-	    p_ptr->state.stat_add[A_INT] -= 2;
+	    state->stat_add[A_STR] += 2;
+	    state->stat_add[A_CHR] -= 5;
+	    state->stat_add[A_INT] -= 2;
 	    break;
 	}
     case SHAPE_VAMPIRE:
 	{
-	    p_ptr->state.stat_add[A_STR] += 2;
-	    p_ptr->state.stat_add[A_CON] += 1;
-	    p_ptr->state.stat_add[A_INT] += 2;
-	    p_ptr->state.stat_add[A_CHR] -= 3;
+	    state->stat_add[A_STR] += 2;
+	    state->stat_add[A_CON] += 1;
+	    state->stat_add[A_INT] += 2;
+	    state->stat_add[A_CHR] -= 3;
 	    break;
 	}
     case SHAPE_WYRM:
 	{
-	    p_ptr->state.stat_add[A_STR] += 2;
-	    p_ptr->state.stat_add[A_CON] += 1;
-	    p_ptr->state.stat_add[A_WIS] += 1;
-	    p_ptr->state.stat_add[A_INT] += 1;
-	    p_ptr->state.stat_add[A_DEX] -= 1;
-	    p_ptr->state.stat_add[A_CHR] -= 1;
+	    state->stat_add[A_STR] += 2;
+	    state->stat_add[A_CON] += 1;
+	    state->stat_add[A_WIS] += 1;
+	    state->stat_add[A_INT] += 1;
+	    state->stat_add[A_DEX] -= 1;
+	    state->stat_add[A_CHR] -= 1;
 	    break;
 	}
     case SHAPE_BEAR:
 	{
-	    p_ptr->state.stat_add[A_STR] += 1;
+	    state->stat_add[A_STR] += 1;
 	    if (p_ptr->lev >= 10)
-		p_ptr->state.stat_add[A_STR] += 1;
+		state->stat_add[A_STR] += 1;
 	    if (p_ptr->lev >= 20)
-		p_ptr->state.stat_add[A_CON] += 1;
+		state->stat_add[A_CON] += 1;
 	    if (p_ptr->lev >= 30)
-		p_ptr->state.stat_add[A_CON] += 1;
+		state->stat_add[A_CON] += 1;
 	    if (p_ptr->lev >= 40)
-		p_ptr->state.stat_add[A_STR] += 1;
-	    p_ptr->state.stat_add[A_INT] -= 1;
-	    p_ptr->state.stat_add[A_CHR] -= 1;
+		state->stat_add[A_STR] += 1;
+	    state->stat_add[A_INT] -= 1;
+	    state->stat_add[A_CHR] -= 1;
 	    break;
 	}
     }
@@ -1669,7 +1670,7 @@ static void shape_change_stat(void)
  * (opposition to the elements for example) must be hacked into the timing of 
  * player states in  dungeon.c.  -LM-
  */
-static void shape_change_main(void)
+static void shape_change_main(player_state *state)
 {
     object_type *o_ptr;
     switch (p_ptr->schange) {
@@ -1677,168 +1678,166 @@ static void shape_change_main(void)
 	break;
     case SHAPE_MOUSE:
 	{
-	    p_ptr->state.skills[SKILL_STEALTH] =
-		(30 + p_ptr->state.skills[SKILL_STEALTH]) / 2;
-	    p_ptr->state.see_infra += 2;
-	    p_ptr->state.aggravate = FALSE;
-	    p_ptr->state.to_a -= 5;
-	    p_ptr->state.dis_to_a -= 5;
-	    p_ptr->state.to_h -= 15;
-	    p_ptr->state.dis_to_h -= 15;
-	    p_ptr->state.to_d -= 25;
-	    p_ptr->state.dis_to_d -= 25;
-	    p_ptr->state.skills[SKILL_DEVICE] /= 4;
-	    p_ptr->state.skills[SKILL_TO_HIT_BOW] -= 30;
-	    p_ptr->state.skills[SKILL_TO_HIT_THROW] -= 30;
+	    state->skills[SKILL_STEALTH] =
+		(30 + state->skills[SKILL_STEALTH]) / 2;
+	    state->see_infra += 2;
+	    state->aggravate = FALSE;
+	    state->to_a -= 5;
+	    state->dis_to_a -= 5;
+	    state->to_h -= 15;
+	    state->dis_to_h -= 15;
+	    state->to_d -= 25;
+	    state->dis_to_d -= 25;
+	    state->skills[SKILL_DEVICE] /= 4;
+	    state->skills[SKILL_TO_HIT_BOW] -= 30;
+	    state->skills[SKILL_TO_HIT_THROW] -= 30;
 	    break;
 	}
     case SHAPE_FERRET:
 	{
-	    p_ptr->state.see_infra += 2;
-	    p_ptr->state.regenerate = TRUE;
-	    p_ptr->state.to_d -= 10;
-	    p_ptr->state.dis_to_d -= 10;
-	    p_ptr->pspeed += 2;
-	    p_ptr->state.skills[SKILL_SEARCH_FREQUENCY] += 10;
-	    p_ptr->state.skills[SKILL_SEARCH] += 10;
-	    p_ptr->state.skills[SKILL_DEVICE] /= 2;
-	    p_ptr->state.skills[SKILL_TO_HIT_BOW] -= 30;
-	    p_ptr->state.skills[SKILL_TO_HIT_THROW] -= 30;
+	    state->see_infra += 2;
+	    state->regenerate = TRUE;
+	    state->to_d -= 10;
+	    state->dis_to_d -= 10;
+	    state->pspeed += 2;
+	    state->skills[SKILL_SEARCH_FREQUENCY] += 10;
+	    state->skills[SKILL_SEARCH] += 10;
+	    state->skills[SKILL_DEVICE] /= 2;
+	    state->skills[SKILL_TO_HIT_BOW] -= 30;
+	    state->skills[SKILL_TO_HIT_THROW] -= 30;
 	    break;
 	}
     case SHAPE_HOUND:
 	{
-	    p_ptr->state.see_infra += 3;
-	    p_ptr->state.telepathy = TRUE;
-	    p_ptr->state.skills[SKILL_DEVICE] /= 2;
-	    p_ptr->state.skills[SKILL_TO_HIT_BOW] -= 30;
-	    p_ptr->state.skills[SKILL_TO_HIT_THROW] -= 30;
+	    state->see_infra += 3;
+	    state->telepathy = TRUE;
+	    state->skills[SKILL_DEVICE] /= 2;
+	    state->skills[SKILL_TO_HIT_BOW] -= 30;
+	    state->skills[SKILL_TO_HIT_THROW] -= 30;
 	    break;
 	}
     case SHAPE_GAZELLE:
 	{
-	    p_ptr->state.to_a += 5;
-	    p_ptr->state.dis_to_a += 5;
-	    p_ptr->state.to_d -= 5;
-	    p_ptr->state.dis_to_d -= 5;
-	    p_ptr->pspeed += 6;
-	    p_ptr->state.skills[SKILL_DEVICE] /= 2;
-	    p_ptr->state.skills[SKILL_TO_HIT_BOW] -= 30;
-	    p_ptr->state.skills[SKILL_TO_HIT_THROW] -= 30;
+	    state->to_a += 5;
+	    state->dis_to_a += 5;
+	    state->to_d -= 5;
+	    state->dis_to_d -= 5;
+	    state->pspeed += 6;
+	    state->skills[SKILL_DEVICE] /= 2;
+	    state->skills[SKILL_TO_HIT_BOW] -= 30;
+	    state->skills[SKILL_TO_HIT_THROW] -= 30;
 	    break;
 	}
     case SHAPE_LION:
 	{
-	    p_ptr->state.no_fear = TRUE;
-	    p_ptr->state.regenerate = TRUE;
-	    p_ptr->state.to_a += 5;
-	    p_ptr->state.dis_to_a += 5;
-	    p_ptr->state.to_h += 10;
-	    p_ptr->state.dis_to_h += 10;
-	    p_ptr->state.to_d += 15;
-	    p_ptr->state.dis_to_d += 15;
-	    p_ptr->pspeed += 1;
-	    p_ptr->state.skills[SKILL_DEVICE] /= 2;
-	    p_ptr->state.skills[SKILL_TO_HIT_BOW] -= 30;
-	    p_ptr->state.skills[SKILL_TO_HIT_THROW] -= 30;
+	    state->no_fear = TRUE;
+	    state->regenerate = TRUE;
+	    state->to_a += 5;
+	    state->dis_to_a += 5;
+	    state->to_h += 10;
+	    state->dis_to_h += 10;
+	    state->to_d += 15;
+	    state->dis_to_d += 15;
+	    state->pspeed += 1;
+	    state->skills[SKILL_DEVICE] /= 2;
+	    state->skills[SKILL_TO_HIT_BOW] -= 30;
+	    state->skills[SKILL_TO_HIT_THROW] -= 30;
 	    break;
 	}
     case SHAPE_ENT:
 	{
-	    apply_resist(&p_ptr->state.res_list[P_RES_COLD], RES_BOOST_NORMAL);
-	    apply_resist(&p_ptr->state.dis_res_list[P_RES_COLD],
+	    apply_resist(&state->res_list[P_RES_COLD], RES_BOOST_NORMAL);
+	    apply_resist(&state->dis_res_list[P_RES_COLD],
 			 RES_BOOST_NORMAL);
-	    apply_resist(&p_ptr->state.res_list[P_RES_POIS], RES_BOOST_NORMAL);
-	    apply_resist(&p_ptr->state.dis_res_list[P_RES_POIS],
+	    apply_resist(&state->res_list[P_RES_POIS], RES_BOOST_NORMAL);
+	    apply_resist(&state->dis_res_list[P_RES_POIS],
 			 RES_BOOST_NORMAL);
-	    apply_resist(&p_ptr->state.res_list[P_RES_FIRE], RES_CUT_MINOR);
-	    apply_resist(&p_ptr->state.dis_res_list[P_RES_FIRE], RES_CUT_MINOR);
-	    if (p_ptr->state.res_list[P_RES_FIRE] < RES_CAP_MODERATE)
-		p_ptr->state.res_list[P_RES_FIRE] = RES_CAP_MODERATE;
-	    if (p_ptr->state.dis_res_list[P_RES_FIRE] < RES_CAP_MODERATE)
-		p_ptr->state.dis_res_list[P_RES_FIRE] = RES_CAP_MODERATE;
-	    p_ptr->state.no_fear = TRUE;
-	    p_ptr->state.see_inv = TRUE;
-	    p_ptr->state.free_act = TRUE;
-	    p_ptr->state.ffall = FALSE;
-	    p_ptr->state.to_d += 10;
-	    p_ptr->state.dis_to_d += 10;
-	    p_ptr->state.skills[SKILL_DIGGING] += 150;
-	    p_ptr->state.skills[SKILL_TO_HIT_BOW] -= 30;
-	    p_ptr->state.skills[SKILL_TO_HIT_THROW] -= 30;
+	    apply_resist(&state->res_list[P_RES_FIRE], RES_CUT_MINOR);
+	    apply_resist(&state->dis_res_list[P_RES_FIRE], RES_CUT_MINOR);
+	    if (state->res_list[P_RES_FIRE] < RES_CAP_MODERATE)
+		state->res_list[P_RES_FIRE] = RES_CAP_MODERATE;
+	    if (state->dis_res_list[P_RES_FIRE] < RES_CAP_MODERATE)
+		state->dis_res_list[P_RES_FIRE] = RES_CAP_MODERATE;
+	    state->no_fear = TRUE;
+	    state->see_inv = TRUE;
+	    state->free_act = TRUE;
+	    state->ffall = FALSE;
+	    state->to_d += 10;
+	    state->dis_to_d += 10;
+	    state->skills[SKILL_DIGGING] += 150;
+	    state->skills[SKILL_TO_HIT_BOW] -= 30;
+	    state->skills[SKILL_TO_HIT_THROW] -= 30;
 	    break;
 	}
     case SHAPE_BAT:
 	{
-	    p_ptr->state.see_infra += 6;
-	    p_ptr->state.no_blind = TRUE;
-	    p_ptr->state.ffall = TRUE;
-	    p_ptr->state.to_h -= 5;
-	    p_ptr->state.dis_to_h -= 5;
-	    p_ptr->state.to_d -= 15;
-	    p_ptr->state.dis_to_d -= 15;
-	    p_ptr->pspeed += 5;
-	    p_ptr->state.skills[SKILL_DEVICE] /= 4;
-	    p_ptr->state.skills[SKILL_TO_HIT_BOW] -= 30;
-	    p_ptr->state.skills[SKILL_TO_HIT_THROW] -= 30;
+	    state->see_infra += 6;
+	    state->no_blind = TRUE;
+	    state->ffall = TRUE;
+	    state->to_h -= 5;
+	    state->dis_to_h -= 5;
+	    state->to_d -= 15;
+	    state->dis_to_d -= 15;
+	    state->pspeed += 5;
+	    state->skills[SKILL_DEVICE] /= 4;
+	    state->skills[SKILL_TO_HIT_BOW] -= 30;
+	    state->skills[SKILL_TO_HIT_THROW] -= 30;
 	    break;
 	}
     case SHAPE_WEREWOLF:
 	{
-	    p_ptr->state.see_infra += 3;
-	    p_ptr->state.regenerate = TRUE;
-	    p_ptr->state.aggravate = TRUE;
-	    p_ptr->state.to_a += 5;
-	    p_ptr->state.dis_to_a += 5;
-	    p_ptr->state.to_h += 20;
-	    p_ptr->state.dis_to_h += 20;
-	    p_ptr->state.to_d += 20;
-	    p_ptr->state.dis_to_d += 20;
-	    p_ptr->state.skills[SKILL_DEVICE] /= 2;
-	    p_ptr->state.skills[SKILL_TO_HIT_BOW] -= 30;
-	    p_ptr->state.skills[SKILL_TO_HIT_THROW] -= 30;
+	    state->see_infra += 3;
+	    state->regenerate = TRUE;
+	    state->aggravate = TRUE;
+	    state->to_a += 5;
+	    state->dis_to_a += 5;
+	    state->to_h += 20;
+	    state->dis_to_h += 20;
+	    state->to_d += 20;
+	    state->dis_to_d += 20;
+	    state->skills[SKILL_DEVICE] /= 2;
+	    state->skills[SKILL_TO_HIT_BOW] -= 30;
+	    state->skills[SKILL_TO_HIT_THROW] -= 30;
 	    break;
 	}
     case SHAPE_VAMPIRE:
 	{
-	    p_ptr->state.see_infra += 3;
-	    if (p_ptr->cur_lite >= 3)
-		p_ptr->cur_lite = 2;
-	    p_ptr->state.see_inv = TRUE;
-	    p_ptr->state.hold_life = TRUE;
-	    apply_resist(&p_ptr->state.res_list[P_RES_COLD], RES_BOOST_NORMAL);
-	    apply_resist(&p_ptr->state.dis_res_list[P_RES_COLD],
+	    state->see_infra += 3;
+	    state->see_inv = TRUE;
+	    state->hold_life = TRUE;
+	    apply_resist(&state->res_list[P_RES_COLD], RES_BOOST_NORMAL);
+	    apply_resist(&state->dis_res_list[P_RES_COLD],
 			 RES_BOOST_NORMAL);
-	    apply_resist(&p_ptr->state.res_list[P_RES_LITE], RES_CUT_MINOR);
-	    apply_resist(&p_ptr->state.dis_res_list[P_RES_LITE], RES_CUT_MINOR);
-	    if (p_ptr->state.res_list[P_RES_LITE] < RES_CAP_EXTREME)
-		p_ptr->state.res_list[P_RES_LITE] = RES_CAP_EXTREME;
-	    if (p_ptr->state.dis_res_list[P_RES_LITE] < RES_CAP_EXTREME)
-		p_ptr->state.dis_res_list[P_RES_LITE] = RES_CAP_EXTREME;
-	    p_ptr->state.regenerate = TRUE;
-	    p_ptr->state.to_a += 5;
-	    p_ptr->state.dis_to_a += 5;
-	    p_ptr->state.to_h += 5;
-	    p_ptr->state.dis_to_h += 5;
-	    p_ptr->state.to_d += 5;
-	    p_ptr->state.dis_to_d += 5;
-	    p_ptr->state.skills[SKILL_STEALTH] += 1;
-	    p_ptr->state.skills[SKILL_DEVICE] += 30;
-	    p_ptr->state.skills[SKILL_TO_HIT_BOW] -= 10;
-	    p_ptr->state.skills[SKILL_TO_HIT_THROW] -= 10;
+	    apply_resist(&state->res_list[P_RES_LITE], RES_CUT_MINOR);
+	    apply_resist(&state->dis_res_list[P_RES_LITE], RES_CUT_MINOR);
+	    if (state->res_list[P_RES_LITE] < RES_CAP_EXTREME)
+		state->res_list[P_RES_LITE] = RES_CAP_EXTREME;
+	    if (state->dis_res_list[P_RES_LITE] < RES_CAP_EXTREME)
+		state->dis_res_list[P_RES_LITE] = RES_CAP_EXTREME;
+	    state->regenerate = TRUE;
+	    state->to_a += 5;
+	    state->dis_to_a += 5;
+	    state->to_h += 5;
+	    state->dis_to_h += 5;
+	    state->to_d += 5;
+	    state->dis_to_d += 5;
+	    state->skills[SKILL_STEALTH] += 1;
+	    state->skills[SKILL_DEVICE] += 30;
+	    state->skills[SKILL_TO_HIT_BOW] -= 10;
+	    state->skills[SKILL_TO_HIT_THROW] -= 10;
 	    break;
 	}
     case SHAPE_WYRM:
 	{
 	    o_ptr = &p_ptr->inventory[INVEN_BODY];
-	    p_ptr->state.to_a += 10;
-	    p_ptr->state.dis_to_a += 10;
-	    p_ptr->state.to_d += 5;
-	    p_ptr->state.dis_to_d += 5;
-	    p_ptr->state.skills[SKILL_STEALTH] -= 3;
-	    p_ptr->state.skills[SKILL_DEVICE] += 10;
-	    p_ptr->state.skills[SKILL_TO_HIT_BOW] -= 30;
-	    p_ptr->state.skills[SKILL_TO_HIT_THROW] -= 30;
+	    state->to_a += 10;
+	    state->dis_to_a += 10;
+	    state->to_d += 5;
+	    state->dis_to_d += 5;
+	    state->skills[SKILL_STEALTH] -= 3;
+	    state->skills[SKILL_DEVICE] += 10;
+	    state->skills[SKILL_TO_HIT_BOW] -= 30;
+	    state->skills[SKILL_TO_HIT_THROW] -= 30;
 
 	    /* 
 	     * Apply an extra bonus power depending on the type
@@ -1847,47 +1846,47 @@ static void shape_change_main(void)
 	    if (o_ptr->tval == TV_DRAG_ARMOR) {
 		/* Elemental DSM -> immunity */
 		if (o_ptr->sval == SV_DRAGON_BLACK) {
-		    apply_resist(&p_ptr->state.res_list[P_RES_ACID],
+		    apply_resist(&state->res_list[P_RES_ACID],
 				 RES_BOOST_IMMUNE);
-		    apply_resist(&p_ptr->state.dis_res_list[P_RES_ACID],
+		    apply_resist(&state->dis_res_list[P_RES_ACID],
 				 RES_BOOST_IMMUNE);
 		} else if (o_ptr->sval == SV_DRAGON_BLUE) {
-		    apply_resist(&p_ptr->state.res_list[P_RES_ELEC],
+		    apply_resist(&state->res_list[P_RES_ELEC],
 				 RES_BOOST_IMMUNE);
-		    apply_resist(&p_ptr->state.dis_res_list[P_RES_ELEC],
+		    apply_resist(&state->dis_res_list[P_RES_ELEC],
 				 RES_BOOST_IMMUNE);
 		} else if (o_ptr->sval == SV_DRAGON_WHITE) {
-		    apply_resist(&p_ptr->state.res_list[P_RES_COLD],
+		    apply_resist(&state->res_list[P_RES_COLD],
 				 RES_BOOST_IMMUNE);
-		    apply_resist(&p_ptr->state.dis_res_list[P_RES_COLD],
+		    apply_resist(&state->dis_res_list[P_RES_COLD],
 				 RES_BOOST_IMMUNE);
 		} else if (o_ptr->sval == SV_DRAGON_RED) {
-		    apply_resist(&p_ptr->state.res_list[P_RES_FIRE],
+		    apply_resist(&state->res_list[P_RES_FIRE],
 				 RES_BOOST_IMMUNE);
-		    apply_resist(&p_ptr->state.dis_res_list[P_RES_FIRE],
+		    apply_resist(&state->dis_res_list[P_RES_FIRE],
 				 RES_BOOST_IMMUNE);
 		} else if (o_ptr->sval == SV_DRAGON_GREEN) {
-		    apply_resist(&p_ptr->state.res_list[P_RES_POIS],
+		    apply_resist(&state->res_list[P_RES_POIS],
 				 RES_BOOST_IMMUNE);
-		    apply_resist(&p_ptr->state.dis_res_list[P_RES_POIS],
+		    apply_resist(&state->dis_res_list[P_RES_POIS],
 				 RES_BOOST_IMMUNE);
 		}
 
 		/* Shining DSM -> SI */
 		else if (o_ptr->sval == SV_DRAGON_SHINING)
-		    p_ptr->state.see_inv = TRUE;
+		    state->see_inv = TRUE;
 
 		/* Law/Chaos DSM -> hold life */
 		else if (o_ptr->sval == SV_DRAGON_LAW)
-		    p_ptr->state.hold_life = TRUE;
+		    state->hold_life = TRUE;
 		else if (o_ptr->sval == SV_DRAGON_CHAOS)
-		    p_ptr->state.hold_life = TRUE;
+		    state->hold_life = TRUE;
 
 		/* Bronze/Gold DSM -> FA */
 		else if (o_ptr->sval == SV_DRAGON_BRONZE)
-		    p_ptr->state.free_act = TRUE;
+		    state->free_act = TRUE;
 		else if (o_ptr->sval == SV_DRAGON_GOLD)
-		    p_ptr->state.free_act = TRUE;
+		    state->free_act = TRUE;
 
 		/* Multihued, Balance and Power don't need any help */
 	    }
@@ -1895,35 +1894,35 @@ static void shape_change_main(void)
 	}
     case SHAPE_BEAR:
 	{
-	    p_ptr->state.to_a += 5;
-	    p_ptr->state.dis_to_a += 5;
-	    p_ptr->state.to_h += 5;
-	    p_ptr->state.dis_to_h += 5;
+	    state->to_a += 5;
+	    state->dis_to_a += 5;
+	    state->to_h += 5;
+	    state->dis_to_h += 5;
 	    if (p_ptr->lev >= 10) {
-		p_ptr->state.to_d += 5;
-		p_ptr->state.dis_to_d += 5;
+		state->to_d += 5;
+		state->dis_to_d += 5;
 	    }
 	    if (p_ptr->lev >= 20) {
-		p_ptr->state.to_d += 5;
-		p_ptr->state.dis_to_d += 5;
+		state->to_d += 5;
+		state->dis_to_d += 5;
 	    }
 	    if (p_ptr->lev >= 30) {
-		p_ptr->state.to_a += 10;
-		p_ptr->state.dis_to_a += 10;
+		state->to_a += 10;
+		state->dis_to_a += 10;
 	    }
 	    if (p_ptr->lev >= 40) {
-		p_ptr->state.to_h += 5;
-		p_ptr->state.dis_to_h += 5;
+		state->to_h += 5;
+		state->dis_to_h += 5;
 	    }
-	    p_ptr->state.skills[SKILL_DEVICE] /= 2;
-	    p_ptr->state.skills[SKILL_TO_HIT_BOW] -= 30;
-	    p_ptr->state.skills[SKILL_TO_HIT_THROW] -= 30;
+	    state->skills[SKILL_DEVICE] /= 2;
+	    state->skills[SKILL_TO_HIT_BOW] -= 30;
+	    state->skills[SKILL_TO_HIT_THROW] -= 30;
 	    break;
 	}
     }
 
     /* End shape bonuses; do bounds check on resistance levels */
-    resistance_limits();
+    resistance_limits(state);
 }
 
 
@@ -1956,322 +1955,272 @@ static void shape_change_main(void)
  *
  * This function induces various "status" messages.
  */
-extern void calc_bonuses(bool inspect)
+extern void calc_bonuses(object_type inventory[], player_state *state, 
+			 bool inspect)
 {
     int i, j, hold;
 
-    int old_speed;
-
-    int old_stealth;
-
-    int old_see_infra;
-    int old_telepathy;
-    int old_see_inv;
-
     int temp_armour;
 
-    int old_dis_ac;
-    int old_dis_to_a;
-
-    int extra_shots;
-    int extra_might;
-
-    int old_stat_top[A_MAX];
-    int old_stat_use[A_MAX];
-    int old_stat_ind[A_MAX];
+    int extra_shots = 0;
+    int extra_might = 0;
 
     bool enhance = FALSE;
 
     object_type *o_ptr;
 
-  /*** Memorize ***/
-
-
-    /* Save the old speed */
-    old_speed = p_ptr->pspeed;
-
-    /* Save the old stealth */
-    old_stealth = p_ptr->state.skills[SKILL_STEALTH];
-
-    /* Save the old vision stuff */
-    old_telepathy = p_ptr->state.telepathy;
-    old_see_inv = p_ptr->state.see_inv;
-    old_see_infra = p_ptr->state.see_infra;
-
-    /* Save the old armor class */
-    old_dis_ac = p_ptr->state.dis_ac;
-    old_dis_to_a = p_ptr->state.dis_to_a;
-
-    /* Save the old stats */
-    for (i = 0; i < A_MAX; i++) {
-	old_stat_top[i] = p_ptr->state.stat_top[i];
-	old_stat_use[i] = p_ptr->state.stat_use[i];
-	old_stat_ind[i] = p_ptr->state.stat_ind[i];
-    }
-
-
-    /* Hack - If the player's usage of his shield changes, we must recalculate
-     * various things. */
-  calc_again:
-
-
   /*** Reset ***/
 
     /* Reset player speed */
-    p_ptr->pspeed = 110;
+    state->pspeed = 110;
 
     /* Reset "blow" info */
-    p_ptr->state.num_blow = 1;
+    state->num_blow = 1;
 
     /* Reset "fire" info */
-    p_ptr->state.num_fire = 0;
-    p_ptr->state.ammo_mult = 0;
-    p_ptr->state.ammo_tval = 0;
-    extra_shots = 0;
-    extra_might = 0;
+    state->num_fire = 0;
+    state->ammo_mult = 0;
+    state->ammo_tval = 0;
 
     /* Clear the stat modifiers */
     for (i = 0; i < A_MAX; i++)
-	p_ptr->state.stat_add[i] = 0;
+	state->stat_add[i] = 0;
 
     /* Clear the Displayed/Real armor class */
-    p_ptr->state.dis_ac = p_ptr->state.ac = 0;
+    state->dis_ac = state->ac = 0;
 
     /* Clear the Displayed/Real Bonuses */
-    p_ptr->state.dis_to_h = p_ptr->state.to_h = 0;
-    p_ptr->state.dis_to_d = p_ptr->state.to_d = 0;
-    p_ptr->state.dis_to_a = p_ptr->state.to_a = 0;
+    state->dis_to_h = state->to_h = 0;
+    state->dis_to_d = state->to_d = 0;
+    state->dis_to_a = state->to_a = 0;
 
     /* Clear all the flags */
-    p_ptr->state.teleport = FALSE;
-    p_ptr->state.no_teleport = FALSE;
-    p_ptr->state.aggravate = FALSE;
-    p_ptr->state.rand_aggro = FALSE;
-    p_ptr->state.slow_regen = FALSE;
-    p_ptr->state.fear = FALSE;
-    p_ptr->state.fast_digest = FALSE;
-    p_ptr->state.rand_pois = FALSE;
-    p_ptr->state.rand_pois_bad = FALSE;
-    p_ptr->state.rand_cuts = FALSE;
-    p_ptr->state.rand_cuts_bad = FALSE;
-    p_ptr->state.rand_hallu = FALSE;
-    p_ptr->state.drop_weapon = FALSE;
-    p_ptr->state.attract_demon = FALSE;
-    p_ptr->state.attract_undead = FALSE;
-    p_ptr->state.rand_paral = FALSE;
-    p_ptr->state.rand_paral_all = FALSE;
-    p_ptr->state.drain_exp = FALSE;
-    p_ptr->state.drain_mana = FALSE;
-    p_ptr->state.drain_stat = FALSE;
-    p_ptr->state.drain_charge = FALSE;
-    p_ptr->state.bless_blade = FALSE;
-    p_ptr->state.impact = FALSE;
-    p_ptr->state.see_inv = FALSE;
-    p_ptr->state.free_act = FALSE;
-    p_ptr->state.slow_digest = FALSE;
-    p_ptr->state.regenerate = FALSE;
-    p_ptr->state.ffall = FALSE;
-    p_ptr->state.hold_life = FALSE;
-    p_ptr->state.telepathy = FALSE;
-    p_ptr->state.lite = FALSE;
-    p_ptr->state.sustain_str = FALSE;
-    p_ptr->state.sustain_int = FALSE;
-    p_ptr->state.sustain_wis = FALSE;
-    p_ptr->state.sustain_con = FALSE;
-    p_ptr->state.sustain_dex = FALSE;
-    p_ptr->state.sustain_chr = FALSE;
-    p_ptr->state.no_fear = FALSE;
-    p_ptr->state.no_blind = FALSE;
-    p_ptr->state.darkness = FALSE;
-    p_ptr->special_attack &= ~(ATTACK_CHAOTIC);
+    state->teleport = FALSE;
+    state->no_teleport = FALSE;
+    state->aggravate = FALSE;
+    state->rand_aggro = FALSE;
+    state->slow_regen = FALSE;
+    state->fear = FALSE;
+    state->fast_digest = FALSE;
+    state->rand_pois = FALSE;
+    state->rand_pois_bad = FALSE;
+    state->rand_cuts = FALSE;
+    state->rand_cuts_bad = FALSE;
+    state->rand_hallu = FALSE;
+    state->drop_weapon = FALSE;
+    state->attract_demon = FALSE;
+    state->attract_undead = FALSE;
+    state->rand_paral = FALSE;
+    state->rand_paral_all = FALSE;
+    state->drain_exp = FALSE;
+    state->drain_mana = FALSE;
+    state->drain_stat = FALSE;
+    state->drain_charge = FALSE;
+    state->bless_blade = FALSE;
+    state->impact = FALSE;
+    state->see_inv = FALSE;
+    state->free_act = FALSE;
+    state->slow_digest = FALSE;
+    state->regenerate = FALSE;
+    state->ffall = FALSE;
+    state->hold_life = FALSE;
+    state->telepathy = FALSE;
+    state->lite = FALSE;
+    state->sustain_str = FALSE;
+    state->sustain_int = FALSE;
+    state->sustain_wis = FALSE;
+    state->sustain_con = FALSE;
+    state->sustain_dex = FALSE;
+    state->sustain_chr = FALSE;
+    state->no_fear = FALSE;
+    state->no_blind = FALSE;
+    state->darkness = FALSE;
 
     for (i = 0; i < MAX_P_RES; i++) {
-	p_ptr->state.res_list[i] = RES_LEVEL_BASE;
-	p_ptr->state.dis_res_list[i] = RES_LEVEL_BASE;
+	state->res_list[i] = RES_LEVEL_BASE;
+	state->dis_res_list[i] = RES_LEVEL_BASE;
     }
 
 
   /*** Extract race/class info ***/
 
     /* Base infravision (purely racial) */
-    p_ptr->state.see_infra = rp_ptr->infra;
+    state->see_infra = rp_ptr->infra;
 
     /* Base skill -- disarming */
-    p_ptr->state.skills[SKILL_DISARM] = rp_ptr->r_dis + cp_ptr->c_dis;
+    state->skills[SKILL_DISARM] = rp_ptr->r_dis + cp_ptr->c_dis;
 
     /* Base skill -- magic devices */
-    p_ptr->state.skills[SKILL_DEVICE] = rp_ptr->r_dev + cp_ptr->c_dev;
+    state->skills[SKILL_DEVICE] = rp_ptr->r_dev + cp_ptr->c_dev;
 
     /* Base skill -- saving throw */
-    p_ptr->state.skills[SKILL_SAVE] = rp_ptr->r_sav + cp_ptr->c_sav;
+    state->skills[SKILL_SAVE] = rp_ptr->r_sav + cp_ptr->c_sav;
 
     /* Base skill -- stealth */
-    p_ptr->state.skills[SKILL_STEALTH] = rp_ptr->r_stl + cp_ptr->c_stl;
+    state->skills[SKILL_STEALTH] = rp_ptr->r_stl + cp_ptr->c_stl;
 
     /* Base skill -- searching ability */
-    p_ptr->state.skills[SKILL_SEARCH] = rp_ptr->r_srh + cp_ptr->c_srh;
+    state->skills[SKILL_SEARCH] = rp_ptr->r_srh + cp_ptr->c_srh;
 
     /* Base skill -- searching frequency */
-    p_ptr->state.skills[SKILL_SEARCH_FREQUENCY] = rp_ptr->r_fos + cp_ptr->c_fos;
+    state->skills[SKILL_SEARCH_FREQUENCY] = rp_ptr->r_fos + cp_ptr->c_fos;
 
     /* Base skill -- combat (melee) */
-    p_ptr->state.skills[SKILL_TO_HIT_MELEE] = rp_ptr->r_thn + cp_ptr->c_thn;
+    state->skills[SKILL_TO_HIT_MELEE] = rp_ptr->r_thn + cp_ptr->c_thn;
 
     /* Base skill -- combat (shooting) */
-    p_ptr->state.skills[SKILL_TO_HIT_BOW] = rp_ptr->r_thb + cp_ptr->c_thb;
+    state->skills[SKILL_TO_HIT_BOW] = rp_ptr->r_thb + cp_ptr->c_thb;
 
     /* Base skill -- combat (throwing) */
-    p_ptr->state.skills[SKILL_TO_HIT_THROW] = rp_ptr->r_thb + cp_ptr->c_thb;
+    state->skills[SKILL_TO_HIT_THROW] = rp_ptr->r_thb + cp_ptr->c_thb;
 
     /* Base skill -- digging */
-    p_ptr->state.skills[SKILL_DIGGING] = 0;
+    state->skills[SKILL_DIGGING] = 0;
 
   /*** Analyze player ***/
 
     /* Object flags */
     if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_STR))
-	p_ptr->state.sustain_str = TRUE;
+	state->sustain_str = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_INT))
-	p_ptr->state.sustain_int = TRUE;
+	state->sustain_int = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_WIS))
-	p_ptr->state.sustain_wis = TRUE;
+	state->sustain_wis = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_DEX))
-	p_ptr->state.sustain_dex = TRUE;
+	state->sustain_dex = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_CON))
-	p_ptr->state.sustain_con = TRUE;
+	state->sustain_con = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_CHR))
-	p_ptr->state.sustain_chr = TRUE;
+	state->sustain_chr = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_SLOW_DIGEST))
-	p_ptr->state.slow_digest = TRUE;
+	state->slow_digest = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_FEATHER))
-	p_ptr->state.ffall = TRUE;
+	state->ffall = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_LITE))
-	p_ptr->state.lite = TRUE;
+	state->lite = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_REGEN))
-	p_ptr->state.regenerate = TRUE;
+	state->regenerate = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_TELEPATHY))
-	p_ptr->state.telepathy = TRUE;
+	state->telepathy = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_SEE_INVIS))
-	p_ptr->state.see_inv = TRUE;
+	state->see_inv = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_FREE_ACT))
-	p_ptr->state.free_act = TRUE;
+	state->free_act = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_HOLD_LIFE))
-	p_ptr->state.hold_life = TRUE;
+	state->hold_life = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_BLESSED))
-	p_ptr->state.bless_blade = TRUE;
+	state->bless_blade = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_IMPACT))
-	p_ptr->state.impact = TRUE;
+	state->impact = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_FEARLESS))
-	p_ptr->state.no_fear = TRUE;
+	state->no_fear = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_SEEING))
-	p_ptr->state.no_blind = TRUE;
+	state->no_blind = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_DARKNESS))
-	p_ptr->state.darkness = TRUE;
-    if (of_has(rp_ptr->flags_obj, OF_CHAOTIC))
-	p_ptr->special_attack |= ATTACK_CHAOTIC;
+	state->darkness = TRUE;
 
 
     /* Curse flags */
     if (cf_has(rp_ptr->flags_curse, OF_TELEPORT))
-	p_ptr->state.teleport = TRUE;
+	state->teleport = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_NO_TELEPORT))
-	p_ptr->state.no_teleport = TRUE;
+	state->no_teleport = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_AGGRO_PERM))
-	p_ptr->state.aggravate = TRUE;
+	state->aggravate = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_AGGRO_RAND))
-	p_ptr->state.rand_aggro = TRUE;
+	state->rand_aggro = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_SLOW_REGEN))
-	p_ptr->state.slow_regen = TRUE;
+	state->slow_regen = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_AFRAID))
-	p_ptr->state.fear = TRUE;
+	state->fear = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_HUNGRY))
-	p_ptr->state.fast_digest = TRUE;
+	state->fast_digest = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_POIS_RAND))
-	p_ptr->state.rand_pois = TRUE;
+	state->rand_pois = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_POIS_RAND_BAD))
-	p_ptr->state.rand_pois_bad = TRUE;
+	state->rand_pois_bad = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_CUT_RAND))
-	p_ptr->state.rand_cuts = TRUE;
+	state->rand_cuts = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_CUT_RAND_BAD))
-	p_ptr->state.rand_cuts_bad = TRUE;
+	state->rand_cuts_bad = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_HALLU_RAND))
-	p_ptr->state.rand_hallu = TRUE;
+	state->rand_hallu = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_DROP_WEAPON))
-	p_ptr->state.drop_weapon = TRUE;
+	state->drop_weapon = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_ATTRACT_DEMON))
-	p_ptr->state.attract_demon = TRUE;
+	state->attract_demon = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_ATTRACT_UNDEAD))
-	p_ptr->state.attract_undead = TRUE;
+	state->attract_undead = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_PARALYZE))
-	p_ptr->state.rand_paral = TRUE;
+	state->rand_paral = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_PARALYZE_ALL))
-	p_ptr->state.rand_paral_all = TRUE;
+	state->rand_paral_all = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_DRAIN_EXP))
-	p_ptr->state.drain_exp = TRUE;
+	state->drain_exp = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_DRAIN_MANA))
-	p_ptr->state.drain_mana = TRUE;
+	state->drain_mana = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_DRAIN_STAT))
-	p_ptr->state.drain_stat = TRUE;
+	state->drain_stat = TRUE;
     if (cf_has(rp_ptr->flags_curse, OF_DRAIN_CHARGE))
-	p_ptr->state.drain_charge = TRUE;
+	state->drain_charge = TRUE;
 
     /* Resistances */
     for (i = 0; i < MAX_P_RES; i++) {
-	p_ptr->state.res_list[i] = rp_ptr->percent_res[i];
-	p_ptr->state.dis_res_list[i] = rp_ptr->percent_res[i];
+	state->res_list[i] = rp_ptr->percent_res[i];
+	state->dis_res_list[i] = rp_ptr->percent_res[i];
     }
 
     /* Ent */
     if (player_has(PF_WOODEN)) {
 	/* Ents dig like maniacs, but only with their hands. */
 	if (!p_ptr->inventory[INVEN_WIELD].k_idx)
-	    p_ptr->state.skills[SKILL_DIGGING] += p_ptr->lev * 10;
+	    state->skills[SKILL_DIGGING] += p_ptr->lev * 10;
 
 	/* Ents get tougher and stronger as they age, but lose dexterity. */
 	if (p_ptr->lev > 25)
-	    p_ptr->state.stat_add[A_STR]++;
+	    state->stat_add[A_STR]++;
 	if (p_ptr->lev > 40)
-	    p_ptr->state.stat_add[A_STR]++;
+	    state->stat_add[A_STR]++;
 	if (p_ptr->lev > 45)
-	    p_ptr->state.stat_add[A_STR]++;
+	    state->stat_add[A_STR]++;
 
 	if (p_ptr->lev > 25)
-	    p_ptr->state.stat_add[A_DEX]--;
+	    state->stat_add[A_DEX]--;
 	if (p_ptr->lev > 40)
-	    p_ptr->state.stat_add[A_DEX]--;
+	    state->stat_add[A_DEX]--;
 	if (p_ptr->lev > 45)
-	    p_ptr->state.stat_add[A_DEX]--;
+	    state->stat_add[A_DEX]--;
 
 	if (p_ptr->lev > 25)
-	    p_ptr->state.stat_add[A_CON]++;
+	    state->stat_add[A_CON]++;
 	if (p_ptr->lev > 40)
-	    p_ptr->state.stat_add[A_CON]++;
+	    state->stat_add[A_CON]++;
 	if (p_ptr->lev > 45)
-	    p_ptr->state.stat_add[A_CON]++;
+	    state->stat_add[A_CON]++;
     }
 
     /* Warrior. */
     if (player_has(PF_RELENTLESS)) {
 	if (p_ptr->lev >= 30)
-	    p_ptr->state.no_fear = TRUE;
+	    state->no_fear = TRUE;
 	if (p_ptr->lev >= 40)
-	    p_ptr->state.regenerate = TRUE;
+	    state->regenerate = TRUE;
     }
 
     /* Specialty ability Holy Light */
     if (player_has(PF_HOLY_LIGHT)) {
-	apply_resist(&p_ptr->state.res_list[P_RES_LITE], RES_BOOST_NORMAL);
-	apply_resist(&p_ptr->state.dis_res_list[P_RES_LITE], RES_BOOST_NORMAL);
+	apply_resist(&state->res_list[P_RES_LITE], RES_BOOST_NORMAL);
+	apply_resist(&state->dis_res_list[P_RES_LITE], RES_BOOST_NORMAL);
     }
 
     /* Specialty ability Unlight */
     if (player_has(PF_UNLIGHT)) {
-	apply_resist(&p_ptr->state.res_list[P_RES_DARK], RES_BOOST_NORMAL);
-	apply_resist(&p_ptr->state.dis_res_list[P_RES_DARK], RES_BOOST_NORMAL);
+	apply_resist(&state->res_list[P_RES_DARK], RES_BOOST_NORMAL);
+	apply_resist(&state->dis_res_list[P_RES_DARK], RES_BOOST_NORMAL);
     }
 
     /* End inherent resistances; do bounds check on resistance levels */
-    resistance_limits();
+    resistance_limits(state);
 
   /*** Analyze equipment ***/
 
@@ -2285,31 +2234,31 @@ extern void calc_bonuses(bool inspect)
 
 	/* Affect stats */
 	for (j = 0; j < A_MAX; j++)
-	    p_ptr->state.stat_add[j] += o_ptr->bonus_stat[j];
+	    state->stat_add[j] += o_ptr->bonus_stat[j];
 
 	/* Affect stealth */
-	p_ptr->state.skills[SKILL_STEALTH] +=
+	state->skills[SKILL_STEALTH] +=
 	    o_ptr->bonus_other[P_BONUS_STEALTH];
 
 	/* Affect searching ability (factor of five) */
-	p_ptr->state.skills[SKILL_SEARCH] +=
+	state->skills[SKILL_SEARCH] +=
 	    (o_ptr->bonus_other[P_BONUS_SEARCH] * 5);
 
 	/* Affect searching frequency (factor of five) */
-	p_ptr->state.skills[SKILL_SEARCH_FREQUENCY] +=
+	state->skills[SKILL_SEARCH_FREQUENCY] +=
 	    (o_ptr->bonus_other[P_BONUS_SEARCH] * 5);
 
 	/* Affect infravision */
-	p_ptr->state.see_infra += o_ptr->bonus_other[P_BONUS_INFRA];
+	state->see_infra += o_ptr->bonus_other[P_BONUS_INFRA];
 
 	/* Affect digging (factor of 20) */
-	p_ptr->state.skills[SKILL_DIGGING] +=
+	state->skills[SKILL_DIGGING] +=
 	    (o_ptr->bonus_other[P_BONUS_TUNNEL] * 20);
 
 	/* Affect speed */
-	p_ptr->pspeed += o_ptr->bonus_other[P_BONUS_SPEED];
+	state->pspeed += o_ptr->bonus_other[P_BONUS_SPEED];
 
-	p_ptr->state.skills[SKILL_DEVICE] +=
+	state->skills[SKILL_DEVICE] +=
 	    10 * o_ptr->bonus_other[P_BONUS_M_MASTERY];
 
 	/* Affect shots.  Altered in Oangband. */
@@ -2320,107 +2269,105 @@ extern void calc_bonuses(bool inspect)
 
 	/* Object flags */
 	if (of_has(o_ptr->flags_obj, OF_SUSTAIN_STR))
-	    p_ptr->state.sustain_str = TRUE;
+	    state->sustain_str = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_SUSTAIN_INT))
-	    p_ptr->state.sustain_int = TRUE;
+	    state->sustain_int = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_SUSTAIN_WIS))
-	    p_ptr->state.sustain_wis = TRUE;
+	    state->sustain_wis = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_SUSTAIN_DEX))
-	    p_ptr->state.sustain_dex = TRUE;
+	    state->sustain_dex = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_SUSTAIN_CON))
-	    p_ptr->state.sustain_con = TRUE;
+	    state->sustain_con = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_SUSTAIN_CHR))
-	    p_ptr->state.sustain_chr = TRUE;
+	    state->sustain_chr = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_SLOW_DIGEST))
-	    p_ptr->state.slow_digest = TRUE;
+	    state->slow_digest = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_FEATHER))
-	    p_ptr->state.ffall = TRUE;
+	    state->ffall = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_LITE))
-	    p_ptr->state.lite = TRUE;
+	    state->lite = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_REGEN))
-	    p_ptr->state.regenerate = TRUE;
+	    state->regenerate = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_TELEPATHY))
-	    p_ptr->state.telepathy = TRUE;
+	    state->telepathy = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_SEE_INVIS))
-	    p_ptr->state.see_inv = TRUE;
+	    state->see_inv = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_FREE_ACT))
-	    p_ptr->state.free_act = TRUE;
+	    state->free_act = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_HOLD_LIFE))
-	    p_ptr->state.hold_life = TRUE;
+	    state->hold_life = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_FEARLESS))
-	    p_ptr->state.no_fear = TRUE;
+	    state->no_fear = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_SEEING))
-	    p_ptr->state.no_blind = TRUE;
+	    state->no_blind = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_IMPACT))
-	    p_ptr->state.impact = TRUE;
+	    state->impact = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_BLESSED))
-	    p_ptr->state.bless_blade = TRUE;
+	    state->bless_blade = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_DARKNESS))
-	    p_ptr->state.darkness = TRUE;
-	if (of_has(o_ptr->flags_obj, OF_CHAOTIC))
-	    p_ptr->special_attack |= ATTACK_CHAOTIC;
+	    state->darkness = TRUE;
 
 	/* Bad flags */
 	if (cf_has(o_ptr->flags_curse, CF_TELEPORT))
-	    p_ptr->state.teleport = TRUE;
+	    state->teleport = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_NO_TELEPORT))
-	    p_ptr->state.no_teleport = TRUE;
+	    state->no_teleport = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_AGGRO_PERM))
-	    p_ptr->state.aggravate = TRUE;
+	    state->aggravate = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_AGGRO_RAND))
-	    p_ptr->state.rand_aggro = TRUE;
+	    state->rand_aggro = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_SLOW_REGEN))
-	    p_ptr->state.slow_regen = TRUE;
+	    state->slow_regen = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_AFRAID))
-	    p_ptr->state.fear = TRUE;
+	    state->fear = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_HUNGRY))
-	    p_ptr->state.fast_digest = TRUE;
+	    state->fast_digest = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_POIS_RAND))
-	    p_ptr->state.rand_pois = TRUE;
+	    state->rand_pois = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_POIS_RAND_BAD))
-	    p_ptr->state.rand_pois_bad = TRUE;
+	    state->rand_pois_bad = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_CUT_RAND))
-	    p_ptr->state.rand_cuts = TRUE;
+	    state->rand_cuts = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_CUT_RAND_BAD))
-	    p_ptr->state.rand_cuts_bad = TRUE;
+	    state->rand_cuts_bad = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_HALLU_RAND))
-	    p_ptr->state.rand_hallu = TRUE;
+	    state->rand_hallu = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_DROP_WEAPON))
-	    p_ptr->state.drop_weapon = TRUE;
+	    state->drop_weapon = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_ATTRACT_DEMON))
-	    p_ptr->state.attract_demon = TRUE;
+	    state->attract_demon = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_ATTRACT_UNDEAD))
-	    p_ptr->state.attract_undead = TRUE;
+	    state->attract_undead = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_PARALYZE))
-	    p_ptr->state.rand_paral = TRUE;
+	    state->rand_paral = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_PARALYZE_ALL))
-	    p_ptr->state.rand_paral_all = TRUE;
+	    state->rand_paral_all = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_DRAIN_EXP))
-	    p_ptr->state.drain_exp = TRUE;
+	    state->drain_exp = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_DRAIN_MANA))
-	    p_ptr->state.drain_mana = TRUE;
+	    state->drain_mana = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_DRAIN_STAT))
-	    p_ptr->state.drain_stat = TRUE;
+	    state->drain_stat = TRUE;
 	if (cf_has(o_ptr->flags_curse, CF_DRAIN_CHARGE))
-	    p_ptr->state.drain_charge = TRUE;
+	    state->drain_charge = TRUE;
 
 
 	for (j = 0; j < MAX_P_RES; j++)
-	    apply_resist(&p_ptr->state.res_list[j], o_ptr->percent_res[j]);
+	    apply_resist(&state->res_list[j], o_ptr->percent_res[j]);
 
 	/* Known resistance and immunity flags */
 	for (j = 0; j < MAX_P_RES; j++)
 	    if (if_has(o_ptr->id_other, OBJECT_ID_BASE_RESIST + j))
-		apply_resist(&p_ptr->state.dis_res_list[j],
+		apply_resist(&state->dis_res_list[j],
 			     o_ptr->percent_res[j]);
 	/* End item resistances; do bounds check on resistance levels */
-	resistance_limits();
+	resistance_limits(state);
 
 	/* 
 	 * Modify the base armor class.   Shields worn on back are penalized. 
 	 * Shield and Armor masters benefit.
 	 */
-	if ((i == INVEN_ARM) && (p_ptr->shield_on_back))
+	if ((i == INVEN_ARM) && (state->shield_on_back))
 	    temp_armour = o_ptr->ac / 3;
 	else if ((i == INVEN_ARM) && (player_has(PF_SHIELD_MAST)))
 	    temp_armour = o_ptr->ac * 2;
@@ -2429,23 +2376,23 @@ extern void calc_bonuses(bool inspect)
 	else
 	    temp_armour = o_ptr->ac;
 
-	p_ptr->state.ac += temp_armour;
+	state->ac += temp_armour;
 
 	/* The base armor class is always known */
-	p_ptr->state.dis_ac += temp_armour;
+	state->dis_ac += temp_armour;
 
 	/* Apply the bonuses to armor class.  Shields worn on back are
 	 * penalized. */
-	if ((p_ptr->state.shield_on_back) && (i == INVEN_ARM))
+	if ((state->shield_on_back) && (i == INVEN_ARM))
 	    temp_armour = o_ptr->to_a / 2;
 	else
 	    temp_armour = o_ptr->to_a;
 
-	p_ptr->state.to_a += temp_armour;
+	state->to_a += temp_armour;
 
 	/* Apply the mental bonuses to armor class, if known */
 	if (if_has(o_ptr->id_other, IF_TO_A))
-	    p_ptr->state.dis_to_a += temp_armour;
+	    state->dis_to_a += temp_armour;
 
 	/* Hack -- do not apply "weapon" bonuses */
 	if (i == INVEN_WIELD)
@@ -2456,72 +2403,72 @@ extern void calc_bonuses(bool inspect)
 	    continue;
 
 	/* Apply the bonuses to hit/damage */
-	p_ptr->state.to_h += o_ptr->to_h;
-	p_ptr->state.to_d += o_ptr->to_d;
+	state->to_h += o_ptr->to_h;
+	state->to_d += o_ptr->to_d;
 
 	/* Apply the mental bonuses tp hit/damage, if known */
 	if (if_has(o_ptr->id_other, IF_TO_H))
-	    p_ptr->state.dis_to_h += o_ptr->to_h;
+	    state->dis_to_h += o_ptr->to_h;
 	if (if_has(o_ptr->id_other, IF_TO_D))
-	    p_ptr->state.dis_to_d += o_ptr->to_d;
+	    state->dis_to_d += o_ptr->to_d;
     }
 
     /* Hack -- clear a few flags for certain races. */
 
     /* The dark elf's saving grace */
-    if ((player_has(PF_SHADOW)) && (p_ptr->state.aggravate)) {
-	p_ptr->state.skills[SKILL_STEALTH] -= 3;
-	p_ptr->state.aggravate = FALSE;
+    if ((player_has(PF_SHADOW)) && (state->aggravate)) {
+	state->skills[SKILL_STEALTH] -= 3;
+	state->aggravate = FALSE;
     }
 
     /* Nothing, but nothing, can make an Ent lightfooted. */
     if (player_has(PF_WOODEN))
-	p_ptr->state.ffall = FALSE;
+	state->ffall = FALSE;
 
 
   /*** Analyze shapechanges - statistics only ***/
-    shape_change_stat();
+    shape_change_stat(state);
 
   /*** (Most) Specialty Abilities ***/
 
     /* Physical stat boost */
     if (player_has(PF_ATHLETICS)) {
-	p_ptr->state.stat_add[A_DEX] += 2;
-	p_ptr->state.stat_add[A_CON] += 2;
+	state->stat_add[A_DEX] += 2;
+	state->stat_add[A_CON] += 2;
     }
 
     /* Mental stat boost */
     if (player_has(PF_CLARITY)) {
-	p_ptr->state.stat_add[A_INT] += 2;
-	p_ptr->state.stat_add[A_WIS] += 2;
+	state->stat_add[A_INT] += 2;
+	state->stat_add[A_WIS] += 2;
     }
 
     /* Unlight stealth boost */
     if (player_has(PF_UNLIGHT)) {
 	if ((p_ptr->cur_lite <= 0) && (!is_daylight)
 	    && !(cave_info[p_ptr->py][p_ptr->px] & CAVE_GLOW))
-	    p_ptr->state.skills[SKILL_STEALTH] += 6;
+	    state->skills[SKILL_STEALTH] += 6;
 	else
-	    p_ptr->state.skills[SKILL_STEALTH] += 3;
+	    state->skills[SKILL_STEALTH] += 3;
     }
 
     /* Speed Boost (Fury, Phasewalk) */
     if (p_ptr->speed_boost) {
-	p_ptr->pspeed += (p_ptr->speed_boost + 5) / 10;
+	state->pspeed += (p_ptr->speed_boost + 5) / 10;
     }
 
     /* Speed boost in trees for elven druids and rangers */
     if ((player_has(PF_WOODSMAN)) && (player_has(PF_ELVEN))
 	&& tf_has(f_info[cave_feat[p_ptr->py][p_ptr->px]].flags, TF_TREE))
-	p_ptr->pspeed += 3;
+	state->pspeed += 3;
 
     /* Speed boost for rune of speed */
     if (cave_feat[p_ptr->py][p_ptr->px] == FEAT_RUNE_SPEED)
-	p_ptr->pspeed += 10;
+	state->pspeed += 10;
 
     /* Dwarves are good miners */
     if (player_has(PF_DWARVEN))
-	p_ptr->state.skills[SKILL_DIGGING] += 40;
+	state->skills[SKILL_DIGGING] += 40;
 
   /*** Handle stats ***/
 
@@ -2530,7 +2477,7 @@ extern void calc_bonuses(bool inspect)
 	int add, top, use, ind;
 
 	/* Extract modifier */
-	add = p_ptr->state.stat_add[i];
+	add = state->stat_add[i];
 
 	/* Modify the stats for race/class */
 	add += (rp_ptr->r_adj[i] + cp_ptr->c_adj[i]);
@@ -2539,13 +2486,13 @@ extern void calc_bonuses(bool inspect)
 	top = modify_stat_value(p_ptr->stat_max[i], add);
 
 	/* Save the new value */
-	p_ptr->state.stat_top[i] = top;
+	state->stat_top[i] = top;
 
 	/* Extract the new "stat_use" value for the stat */
 	use = modify_stat_value(p_ptr->stat_cur[i], add);
 
 	/* Save the new value */
-	p_ptr->state.stat_use[i] = use;
+	state->stat_use[i] = use;
 
 	/* Values: 3, 4, ..., 17 */
 	if (use <= 18)
@@ -2560,11 +2507,11 @@ extern void calc_bonuses(bool inspect)
 	    ind = (37);
 
 	/* Save the new index */
-	p_ptr->state.stat_ind[i] = ind;
+	state->stat_ind[i] = ind;
     }
 
     /* Assume no evasion */
-    p_ptr->evasion_chance = 0;
+    state->evasion_chance = 0;
 
     /* Evasion AC boost */
     if (player_has(PF_EVASION)
@@ -2590,16 +2537,16 @@ extern void calc_bonuses(bool inspect)
 	evasion_wgt = 150 + (3 * p_ptr->lev);
 
 	/* Highest bonus we can get at this level */
-	max_bonus = adj_dex_evas[p_ptr->state.stat_ind[A_DEX]];
+	max_bonus = adj_dex_evas[state->stat_ind[A_DEX]];
 
 	/* Do we get the max bonus? */
 	if (cur_wgt <= ((6 * evasion_wgt) / 10)) {
-	    p_ptr->evasion_chance = max_bonus;
+	    state->evasion_chance = max_bonus;
 	}
 
 	/* Do we get any bonus? */
 	else if (cur_wgt <= evasion_wgt) {
-	    p_ptr->evasion_chance = max_bonus / 2;
+	    state->evasion_chance = max_bonus / 2;
 	}
     }
 
@@ -2611,65 +2558,65 @@ extern void calc_bonuses(bool inspect)
 	enhance = TRUE;
 
     /* Temporary resists */
-    if (p_ptr->state.oppose_acid) {
+    if (state->oppose_acid) {
 	int bonus = RES_BOOST_GREAT;
 	if (enhance)
 	    apply_resist(&bonus, RES_BOOST_MINOR);
-	apply_resist(&p_ptr->state.res_list[P_RES_ACID], bonus);
-	apply_resist(&p_ptr->state.dis_res_list[P_RES_ACID], bonus);
+	apply_resist(&state->res_list[P_RES_ACID], bonus);
+	apply_resist(&state->dis_res_list[P_RES_ACID], bonus);
     }
-    if (p_ptr->state.oppose_fire) {
+    if (state->oppose_fire) {
 	int bonus = RES_BOOST_GREAT;
 	if (enhance)
 	    apply_resist(&bonus, RES_BOOST_MINOR);
-	apply_resist(&p_ptr->state.res_list[P_RES_FIRE], bonus);
-	apply_resist(&p_ptr->state.dis_res_list[P_RES_FIRE], bonus);
+	apply_resist(&state->res_list[P_RES_FIRE], bonus);
+	apply_resist(&state->dis_res_list[P_RES_FIRE], bonus);
     }
-    if (p_ptr->state.oppose_cold) {
+    if (state->oppose_cold) {
 	int bonus = RES_BOOST_GREAT;
 	if (enhance)
 	    apply_resist(&bonus, RES_BOOST_MINOR);
-	apply_resist(&p_ptr->state.res_list[P_RES_COLD], bonus);
-	apply_resist(&p_ptr->state.dis_res_list[P_RES_COLD], bonus);
+	apply_resist(&state->res_list[P_RES_COLD], bonus);
+	apply_resist(&state->dis_res_list[P_RES_COLD], bonus);
     }
-    if (p_ptr->state.oppose_elec) {
+    if (state->oppose_elec) {
 	int bonus = RES_BOOST_GREAT;
 	if (enhance)
 	    apply_resist(&bonus, RES_BOOST_MINOR);
-	apply_resist(&p_ptr->state.res_list[P_RES_ELEC], bonus);
-	apply_resist(&p_ptr->state.dis_res_list[P_RES_ELEC], bonus);
+	apply_resist(&state->res_list[P_RES_ELEC], bonus);
+	apply_resist(&state->dis_res_list[P_RES_ELEC], bonus);
     }
-    if (p_ptr->state.oppose_pois) {
+    if (state->oppose_pois) {
 	int bonus = RES_BOOST_GREAT;
 	if (enhance)
 	    apply_resist(&bonus, RES_BOOST_MINOR);
-	apply_resist(&p_ptr->state.res_list[P_RES_POIS], bonus);
-	apply_resist(&p_ptr->state.dis_res_list[P_RES_POIS], bonus);
+	apply_resist(&state->res_list[P_RES_POIS], bonus);
+	apply_resist(&state->dis_res_list[P_RES_POIS], bonus);
     }
 
     /* Apply temporary "stun".  */
     if (p_ptr->timed[TMD_STUN] > 50) {
-	p_ptr->state.to_h -= 20;
-	p_ptr->state.dis_to_h -= 20;
-	p_ptr->state.to_d -= 20;
-	p_ptr->state.dis_to_d -= 20;
+	state->to_h -= 20;
+	state->dis_to_h -= 20;
+	state->to_d -= 20;
+	state->dis_to_d -= 20;
     } else if (p_ptr->timed[TMD_STUN]) {
-	p_ptr->state.to_h -= 5;
-	p_ptr->state.dis_to_h -= 5;
-	p_ptr->state.to_d -= 5;
-	p_ptr->state.dis_to_d -= 5;
+	state->to_h -= 5;
+	state->dis_to_h -= 5;
+	state->to_d -= 5;
+	state->dis_to_d -= 5;
     }
 
     /* Heightened magical defenses.  Saving Throw effect added later */
     if (p_ptr->timed[TMD_INVULN]) {
 	int bonus = ((enhance == TRUE) ? 35 : 25);
 
-	p_ptr->state.to_a += bonus;
-	p_ptr->state.dis_to_a += bonus;
+	state->to_a += bonus;
+	state->dis_to_a += bonus;
 
-	apply_resist(&p_ptr->state.res_list[P_RES_CONFU], RES_BOOST_NORMAL);
-	apply_resist(&p_ptr->state.dis_res_list[P_RES_CONFU], RES_BOOST_NORMAL);
-	p_ptr->state.no_blind = TRUE;
+	apply_resist(&state->res_list[P_RES_CONFU], RES_BOOST_NORMAL);
+	apply_resist(&state->dis_res_list[P_RES_CONFU], RES_BOOST_NORMAL);
+	state->no_blind = TRUE;
     }
 
     /* Temporary blessing */
@@ -2677,10 +2624,10 @@ extern void calc_bonuses(bool inspect)
 	int bonus1 = ((enhance == TRUE) ? 10 : 5);
 	int bonus2 = ((enhance == TRUE) ? 15 : 10);
 
-	p_ptr->state.to_a += bonus1;
-	p_ptr->state.dis_to_a += bonus1;
-	p_ptr->state.to_h += bonus2;
-	p_ptr->state.dis_to_h += bonus2;
+	state->to_a += bonus1;
+	state->dis_to_a += bonus1;
+	state->to_h += bonus2;
+	state->dis_to_h += bonus2;
     }
 
     /* Temporary shield.  Added an exception for Necromancers to keep them in
@@ -2688,13 +2635,13 @@ extern void calc_bonuses(bool inspect)
     if ((p_ptr->timed[TMD_SHIELD]) && (player_has(PF_EVIL))) {
 	int bonus = ((enhance == TRUE) ? 50 : 35);
 
-	p_ptr->state.to_a += bonus;
-	p_ptr->state.dis_to_a += bonus;
+	state->to_a += bonus;
+	state->dis_to_a += bonus;
     } else if (p_ptr->timed[TMD_SHIELD]) {
 	int bonus = ((enhance == TRUE) ? 65 : 50);
 
-	p_ptr->state.to_a += bonus;
-	p_ptr->state.dis_to_a += bonus;
+	state->to_a += bonus;
+	state->dis_to_a += bonus;
     }
 
     /* Temporary "Hero".  Now also increases Deadliness. */
@@ -2702,10 +2649,10 @@ extern void calc_bonuses(bool inspect)
 	int bonus1 = ((enhance == TRUE) ? 15 : 10);
 	int bonus2 = ((enhance == TRUE) ? 10 : 5);
 
-	p_ptr->state.to_h += bonus1;
-	p_ptr->state.dis_to_h += bonus1;
-	p_ptr->state.to_d += bonus2;
-	p_ptr->state.dis_to_d += bonus2;
+	state->to_h += bonus1;
+	state->dis_to_h += bonus1;
+	state->to_d += bonus2;
+	state->dis_to_d += bonus2;
     }
 
     /* Temporary "Berserk".  Now also increases Deadliness. */
@@ -2714,40 +2661,40 @@ extern void calc_bonuses(bool inspect)
 	int bonus2 = ((enhance == TRUE) ? 20 : 15);
 	int bonus3 = ((enhance == TRUE) ? 15 : 10);
 
-	p_ptr->state.to_h += bonus1;
-	p_ptr->state.dis_to_h += bonus1;
-	p_ptr->state.to_d += bonus2;
-	p_ptr->state.dis_to_d += bonus2;
-	p_ptr->state.to_a -= bonus3;
-	p_ptr->state.dis_to_a -= bonus3;
+	state->to_h += bonus1;
+	state->dis_to_h += bonus1;
+	state->to_d += bonus2;
+	state->dis_to_d += bonus2;
+	state->to_a -= bonus3;
+	state->dis_to_a -= bonus3;
 
 	/* but berserkers make *lousy* archers. */
-	p_ptr->state.skills[SKILL_TO_HIT_BOW] -= 20;
-	p_ptr->state.skills[SKILL_TO_HIT_THROW] -= 20;
+	state->skills[SKILL_TO_HIT_BOW] -= 20;
+	state->skills[SKILL_TO_HIT_THROW] -= 20;
     }
 
     /* Temporary "fast" */
     if (p_ptr->timed[TMD_FAST]) {
 	int bonus = ((enhance == TRUE) ? 13 : 10);
 
-	p_ptr->pspeed += bonus;
+	state->pspeed += bonus;
     }
 
     /* Temporary "slow" */
     if (p_ptr->timed[TMD_SLOW]) {
-	p_ptr->pspeed -= 10;
+	state->pspeed -= 10;
     }
 
     /* Temporary see invisible */
     if (p_ptr->timed[TMD_SINVIS]) {
-	p_ptr->state.see_inv = TRUE;
+	state->see_inv = TRUE;
     }
 
     /* Temporary infravision boost.  More useful now. */
     if (p_ptr->timed[TMD_SINFRA]) {
 	int bonus = ((enhance == TRUE) ? 5 : 3);
 
-	p_ptr->state.see_infra = p_ptr->state.see_infra + bonus;
+	state->see_infra = state->see_infra + bonus;
     }
 
 
@@ -2755,30 +2702,30 @@ extern void calc_bonuses(bool inspect)
 
     /* Hack -- Hero/Shero -> Res fear */
     if (p_ptr->timed[TMD_HERO] || p_ptr->timed[TMD_SGERO]) {
-	p_ptr->state.no_fear = TRUE;
+	state->no_fear = TRUE;
     }
 
     /* Clear contradictory flags */
-    if (p_ptr->state.no_fear)
-	p_ptr->state.fear = FALSE;
-    if (p_ptr->state.fast_digest && p_ptr->state.slow_digest) {
-	p_ptr->state.fast_digest = FALSE;
-	p_ptr->state.slow_digest = FALSE;
+    if (state->no_fear)
+	state->fear = FALSE;
+    if (state->fast_digest && state->slow_digest) {
+	state->fast_digest = FALSE;
+	state->slow_digest = FALSE;
     }
 
     if (p_resist_strong(P_RES_POIS)) {
-	p_ptr->state.rand_pois = FALSE;
-	p_ptr->state.rand_pois_bad = FALSE;
+	state->rand_pois = FALSE;
+	state->rand_pois_bad = FALSE;
     }
 
     if (p_resist_good(P_RES_CHAOS))
-	p_ptr->state.rand_hallu = FALSE;
+	state->rand_hallu = FALSE;
 
-    if (p_ptr->state.free_act)
-	p_ptr->state.rand_paral = FALSE;
+    if (state->free_act)
+	state->rand_paral = FALSE;
 
     /* End normal temporary bonuses; do bounds check on resistance levels */
-    resistance_limits();
+    resistance_limits(state);
 
   /*** Analyze weight ***/
 
@@ -2786,163 +2733,163 @@ extern void calc_bonuses(bool inspect)
     j = p_ptr->total_weight;
 
     /* Extract the "weight limit" (in tenth pounds) */
-    i = weight_limit();
+    i = weight_limit(state);
 
     /* Apply "encumbrance" from weight - more in water, except Maiar, flyers */
     if (j > i / 2) {
 	if ((cave_feat[p_ptr->py][p_ptr->px] == FEAT_WATER)
 	    && (!player_has(PF_DIVINE)) && !(p_ptr->schange == SHAPE_BAT)
 	    && !(p_ptr->schange == SHAPE_WYRM))
-	    p_ptr->pspeed -= 3 * ((j - (i / 2)) / (i / 10));
+	    state->pspeed -= 3 * ((j - (i / 2)) / (i / 10));
 	else
-	    p_ptr->pspeed -= ((j - (i / 2)) / (i / 10));
+	    state->pspeed -= ((j - (i / 2)) / (i / 10));
     }
 
     /* Bloating slows the player down (a little) */
     if (p_ptr->food >= PY_FOOD_MAX)
-	p_ptr->pspeed -= 10;
+	state->pspeed -= 10;
 
     /* Searching slows the player down */
     if (p_ptr->searching)
-	p_ptr->pspeed -= 10;
+	state->pspeed -= 10;
 
     /* Sanity check on extreme speeds */
-    if (p_ptr->pspeed < 0)
-	p_ptr->pspeed = 0;
-    if (p_ptr->pspeed > 199)
-	p_ptr->pspeed = 199;
+    if (state->pspeed < 0)
+	state->pspeed = 0;
+    if (state->pspeed > 199)
+	state->pspeed = 199;
 
   /*** Apply modifier bonuses ***/
 
     /* Actual Modifier Bonuses (Un-inflate stat bonuses) */
-    p_ptr->state.to_a +=
-	((int) (adj_dex_ta[p_ptr->state.stat_ind[A_DEX]]) - 128);
-    p_ptr->state.to_d +=
-	((int) (adj_str_td[p_ptr->state.stat_ind[A_STR]]) - 128);
-    p_ptr->state.to_h +=
-	((int) (adj_dex_th[p_ptr->state.stat_ind[A_DEX]]) - 128);
+    state->to_a +=
+	((int) (adj_dex_ta[state->stat_ind[A_DEX]]) - 128);
+    state->to_d +=
+	((int) (adj_str_td[state->stat_ind[A_STR]]) - 128);
+    state->to_h +=
+	((int) (adj_dex_th[state->stat_ind[A_DEX]]) - 128);
 
     /* Displayed Modifier Bonuses (Un-inflate stat bonuses) */
-    p_ptr->state.dis_to_a +=
-	((int) (adj_dex_ta[p_ptr->state.stat_ind[A_DEX]]) - 128);
-    p_ptr->state.dis_to_d +=
-	((int) (adj_str_td[p_ptr->state.stat_ind[A_STR]]) - 128);
-    p_ptr->state.dis_to_h +=
-	((int) (adj_dex_th[p_ptr->state.stat_ind[A_DEX]]) - 128);
+    state->dis_to_a +=
+	((int) (adj_dex_ta[state->stat_ind[A_DEX]]) - 128);
+    state->dis_to_d +=
+	((int) (adj_str_td[state->stat_ind[A_STR]]) - 128);
+    state->dis_to_h +=
+	((int) (adj_dex_th[state->stat_ind[A_DEX]]) - 128);
 
 
   /*** Modify skills ***/
 
     /* Affect Skill -- stealth (bonus one) */
-    p_ptr->state.skills[SKILL_STEALTH] += 1;
+    state->skills[SKILL_STEALTH] += 1;
 
     /* Affect Skill -- disarming (DEX and INT) */
-    p_ptr->state.skills[SKILL_DISARM] +=
-	adj_dex_dis[p_ptr->state.stat_ind[A_DEX]];
-    p_ptr->state.skills[SKILL_DISARM] +=
-	adj_int_dis[p_ptr->state.stat_ind[A_INT]];
+    state->skills[SKILL_DISARM] +=
+	adj_dex_dis[state->stat_ind[A_DEX]];
+    state->skills[SKILL_DISARM] +=
+	adj_int_dis[state->stat_ind[A_INT]];
 
     /* Affect Skill -- magic devices (INT) */
-    p_ptr->state.skills[SKILL_DEVICE] +=
-	adj_int_dev[p_ptr->state.stat_ind[A_INT]];
+    state->skills[SKILL_DEVICE] +=
+	adj_int_dev[state->stat_ind[A_INT]];
 
     /* Affect Skill -- saving throw (WIS) */
-    p_ptr->state.skills[SKILL_SAVE] +=
-	adj_wis_sav[p_ptr->state.stat_ind[A_WIS]];
+    state->skills[SKILL_SAVE] +=
+	adj_wis_sav[state->stat_ind[A_WIS]];
 
     /* Affect Skill -- digging (STR) */
-    p_ptr->state.skills[SKILL_DIGGING] +=
-	adj_str_dig[p_ptr->state.stat_ind[A_STR]];
+    state->skills[SKILL_DIGGING] +=
+	adj_str_dig[state->stat_ind[A_STR]];
 
     /* Affect Skill -- disarming (Level, by Class and Race) */
-    p_ptr->state.skills[SKILL_DISARM] += (cp_ptr->cx_dis * p_ptr->lev / 50);
-    p_ptr->state.skills[SKILL_DISARM] += (rp_ptr->rx_dis * p_ptr->lev / 50);
+    state->skills[SKILL_DISARM] += (cp_ptr->cx_dis * p_ptr->lev / 50);
+    state->skills[SKILL_DISARM] += (rp_ptr->rx_dis * p_ptr->lev / 50);
 
     /* Affect Skill -- magic devices (Level, by Class and Race) */
-    p_ptr->state.skills[SKILL_DEVICE] += (cp_ptr->cx_dev * p_ptr->lev / 50);
-    p_ptr->state.skills[SKILL_DEVICE] += (rp_ptr->rx_dev * p_ptr->lev / 50);
+    state->skills[SKILL_DEVICE] += (cp_ptr->cx_dev * p_ptr->lev / 50);
+    state->skills[SKILL_DEVICE] += (rp_ptr->rx_dev * p_ptr->lev / 50);
 
     /* Affect Skill -- saving throw (Level, by Class and Race) */
-    p_ptr->state.skills[SKILL_SAVE] += (cp_ptr->cx_sav * p_ptr->lev / 50);
-    p_ptr->state.skills[SKILL_SAVE] += (rp_ptr->rx_sav * p_ptr->lev / 50);
+    state->skills[SKILL_SAVE] += (cp_ptr->cx_sav * p_ptr->lev / 50);
+    state->skills[SKILL_SAVE] += (rp_ptr->rx_sav * p_ptr->lev / 50);
 
     /* Affect Skill -- stealth (Level, by Class and Race) */
-    p_ptr->state.skills[SKILL_STEALTH] += (cp_ptr->cx_stl * p_ptr->lev / 50);
-    p_ptr->state.skills[SKILL_STEALTH] += (rp_ptr->rx_stl * p_ptr->lev / 50);
+    state->skills[SKILL_STEALTH] += (cp_ptr->cx_stl * p_ptr->lev / 50);
+    state->skills[SKILL_STEALTH] += (rp_ptr->rx_stl * p_ptr->lev / 50);
 
     /* Affect Skill -- search ability (Level, by Class and Race) */
-    p_ptr->state.skills[SKILL_SEARCH] += (cp_ptr->cx_srh * p_ptr->lev / 50);
-    p_ptr->state.skills[SKILL_SEARCH] += (rp_ptr->rx_srh * p_ptr->lev / 50);
+    state->skills[SKILL_SEARCH] += (cp_ptr->cx_srh * p_ptr->lev / 50);
+    state->skills[SKILL_SEARCH] += (rp_ptr->rx_srh * p_ptr->lev / 50);
 
     /* Affect Skill -- search frequency (Level, by Class and Race) */
-    p_ptr->state.skills[SKILL_SEARCH_FREQUENCY] +=
+    state->skills[SKILL_SEARCH_FREQUENCY] +=
 	(cp_ptr->cx_fos * p_ptr->lev / 50);
-    p_ptr->state.skills[SKILL_SEARCH_FREQUENCY] +=
+    state->skills[SKILL_SEARCH_FREQUENCY] +=
 	(rp_ptr->rx_fos * p_ptr->lev / 50);
 
     /* Affect Skill -- combat (melee) (Level, by Class and Race) */
-    p_ptr->state.skills[SKILL_TO_HIT_MELEE] +=
+    state->skills[SKILL_TO_HIT_MELEE] +=
 	(cp_ptr->cx_thn * p_ptr->lev / 50);
-    p_ptr->state.skills[SKILL_TO_HIT_MELEE] +=
+    state->skills[SKILL_TO_HIT_MELEE] +=
 	(rp_ptr->rx_thn * p_ptr->lev / 50);
 
     /* Affect Skill -- combat (shooting) (Level, by Class and Race) */
-    p_ptr->state.skills[SKILL_TO_HIT_BOW] += (cp_ptr->cx_thb * p_ptr->lev / 50);
-    p_ptr->state.skills[SKILL_TO_HIT_BOW] += (rp_ptr->rx_thb * p_ptr->lev / 50);
+    state->skills[SKILL_TO_HIT_BOW] += (cp_ptr->cx_thb * p_ptr->lev / 50);
+    state->skills[SKILL_TO_HIT_BOW] += (rp_ptr->rx_thb * p_ptr->lev / 50);
 
     /* Affect Skill -- combat (throwing) (Level, by Class and Race) */
-    p_ptr->state.skills[SKILL_TO_HIT_THROW] +=
+    state->skills[SKILL_TO_HIT_THROW] +=
 	(cp_ptr->cx_thb * p_ptr->lev / 50);
-    p_ptr->state.skills[SKILL_TO_HIT_THROW] +=
+    state->skills[SKILL_TO_HIT_THROW] +=
 	(rp_ptr->rx_thb * p_ptr->lev / 50);
 
     /* Limit Skill -- digging from 1 up */
-    if (p_ptr->state.skills[SKILL_DIGGING] < 1)
-	p_ptr->state.skills[SKILL_DIGGING] = 1;
+    if (state->skills[SKILL_DIGGING] < 1)
+	state->skills[SKILL_DIGGING] = 1;
 
     /* Limit Skill -- stealth from 0 to 30 */
-    if (p_ptr->state.skills[SKILL_STEALTH] > 30)
-	p_ptr->state.skills[SKILL_STEALTH] = 30;
-    if (p_ptr->state.skills[SKILL_STEALTH] < 0)
-	p_ptr->state.skills[SKILL_STEALTH] = 0;
+    if (state->skills[SKILL_STEALTH] > 30)
+	state->skills[SKILL_STEALTH] = 30;
+    if (state->skills[SKILL_STEALTH] < 0)
+	state->skills[SKILL_STEALTH] = 0;
 
     /* No negative infravision */
-    if (p_ptr->state.see_infra < 0)
-	p_ptr->state.see_infra = 0;
+    if (state->see_infra < 0)
+	state->see_infra = 0;
 
   /*** Special Saving Throw boosts are calculated after other bonuses ***/
 
     /* Specialty magic resistance; gives great saving throws even above 100 */
     if (player_has(PF_MAGIC_RESIST)) {
-	if (p_ptr->state.skills[SKILL_SAVE] <= 80)
-	    p_ptr->state.skills[SKILL_SAVE] +=
-		(100 - p_ptr->state.skills[SKILL_SAVE]) / 2;
+	if (state->skills[SKILL_SAVE] <= 80)
+	    state->skills[SKILL_SAVE] +=
+		(100 - state->skills[SKILL_SAVE]) / 2;
 	else
-	    p_ptr->state.skills[SKILL_SAVE] += 10;
+	    state->skills[SKILL_SAVE] += 10;
     }
 
     /* Heightened magical defenses.  Halves the difference between saving throw 
      * and 100.  */
-    if (p_ptr->magicdef) {
-	if (p_ptr->state.skills[SKILL_SAVE] <= 100)
-	    p_ptr->state.skills[SKILL_SAVE] +=
-		(100 - p_ptr->state.skills[SKILL_SAVE]) / 2;
+    if (state->timed[TMD_INVULN]) {
+	if (state->skills[SKILL_SAVE] <= 100)
+	    state->skills[SKILL_SAVE] +=
+		(100 - state->skills[SKILL_SAVE]) / 2;
     }
 
     /* Rune of Magical Defence */
     if (cave_feat[p_ptr->py][p_ptr->px] == FEAT_RUNE_MAGDEF) {
-	if (p_ptr->state.skills[SKILL_SAVE] <= 100)
-	    p_ptr->state.skills[SKILL_SAVE] +=
-		(100 - p_ptr->state.skills[SKILL_SAVE]) / 2;
+	if (state->skills[SKILL_SAVE] <= 100)
+	    state->skills[SKILL_SAVE] +=
+		(100 - state->skills[SKILL_SAVE]) / 2;
     }
 
 
   /*** Analyze shapechanges - everything but statistics ***/
-    shape_change_main();
+    shape_change_main(state);
 
 
     /* Obtain the "hold" value */
-    hold = adj_str_hold[p_ptr->state.stat_ind[A_STR]];
+    hold = adj_str_hold[state->stat_ind[A_STR]];
 
   /*** Analyze current bow ***/
 
@@ -2950,25 +2897,25 @@ extern void calc_bonuses(bool inspect)
     o_ptr = &p_ptr->inventory[INVEN_BOW];
 
     /* Assume not heavy */
-    p_ptr->heavy_shoot = FALSE;
+    state->heavy_shoot = FALSE;
 
     /* It is hard to carry a heavy bow */
     if (hold < o_ptr->weight / 10) {
 	/* Hard to wield a heavy bow */
-	p_ptr->state.to_h += 2 * (hold - o_ptr->weight / 10);
-	p_ptr->state.dis_to_h += 2 * (hold - o_ptr->weight / 10);
+	state->to_h += 2 * (hold - o_ptr->weight / 10);
+	state->dis_to_h += 2 * (hold - o_ptr->weight / 10);
 
 	/* Heavy Bow */
-	p_ptr->heavy_shoot = TRUE;
+	state->heavy_shoot = TRUE;
     }
 
     /* Analyze launcher */
     if (o_ptr->k_idx) {
 	/* Get to shoot */
-	p_ptr->state.num_fire = 10;
+	state->num_fire = 10;
 
 	/* Launcher multiplier is now simply their damage dice. */
-	p_ptr->state.ammo_mult = o_ptr->dd;
+	state->ammo_mult = o_ptr->dd;
 
 
 	/* Analyze the launcher */
@@ -2976,80 +2923,80 @@ extern void calc_bonuses(bool inspect)
 	    /* Sling and ammo */
 	case SV_SLING:
 	    {
-		p_ptr->state.ammo_tval = TV_SHOT;
+		state->ammo_tval = TV_SHOT;
 		break;
 	    }
 
 	    /* Short Bow and Arrow */
 	case SV_SHORT_BOW:
 	    {
-		p_ptr->state.ammo_tval = TV_ARROW;
+		state->ammo_tval = TV_ARROW;
 		break;
 	    }
 
 	    /* Long Bow and Arrow */
 	case SV_LONG_BOW:
 	    {
-		p_ptr->state.ammo_tval = TV_ARROW;
+		state->ammo_tval = TV_ARROW;
 		break;
 	    }
 
 	    /* Light Crossbow and Bolt */
 	case SV_LIGHT_XBOW:
 	    {
-		p_ptr->state.ammo_tval = TV_BOLT;
+		state->ammo_tval = TV_BOLT;
 		break;
 	    }
 
 	    /* Heavy Crossbow and Bolt */
 	case SV_HEAVY_XBOW:
 	    {
-		p_ptr->state.ammo_tval = TV_BOLT;
+		state->ammo_tval = TV_BOLT;
 		break;
 	    }
 	}
 
 	/* Apply special flags */
-	if (o_ptr->k_idx && !p_ptr->heavy_shoot) {
+	if (o_ptr->k_idx && !state->heavy_shoot) {
 	    /* Dex factor for shot speed */
-	    int dex_factor = (adj_dex_shots[p_ptr->state.stat_ind[A_DEX]]);
+	    int dex_factor = (adj_dex_shots[state->stat_ind[A_DEX]]);
 
 	    /* Extra shots */
-	    p_ptr->state.num_fire += extra_shots * 10;
+	    state->num_fire += extra_shots * 10;
 
 	    /* Extra might */
-	    p_ptr->state.ammo_mult += extra_might;
+	    state->ammo_mult += extra_might;
 
 	    /* Love your launcher SJGU bonuses reduced */
 	    if (((player_has(PF_BOW_SPEED_GREAT))
-		 && (p_ptr->state.ammo_tval == TV_ARROW))
+		 && (state->ammo_tval == TV_ARROW))
 		|| ((player_has(PF_SLING_SPEED_GREAT))
-		    && (p_ptr->state.ammo_tval == TV_SHOT))
+		    && (state->ammo_tval == TV_SHOT))
 		|| ((player_has(PF_XBOW_SPEED_GREAT))
-		    && (p_ptr->state.ammo_tval == TV_BOLT))) {
+		    && (state->ammo_tval == TV_BOLT))) {
 		/* Big bonus... */
-		p_ptr->state.num_fire += 3 * dex_factor / 4;
+		state->num_fire += 3 * dex_factor / 4;
 
 		/* ...and sometimes even more */
 		if (player_has(PF_RAPID_FIRE))
-		    p_ptr->state.num_fire += dex_factor / 4;
+		    state->num_fire += dex_factor / 4;
 	    }
 
 	    /* Like your launcher */
 	    else if (((player_has(PF_BOW_SPEED_GOOD))
-		      && (p_ptr->state.ammo_tval == TV_ARROW))
+		      && (state->ammo_tval == TV_ARROW))
 		     || ((player_has(PF_SLING_SPEED_GOOD))
-			 && (p_ptr->state.ammo_tval == TV_SHOT))
+			 && (state->ammo_tval == TV_SHOT))
 		     || ((player_has(PF_XBOW_SPEED_GOOD))
-			 && (p_ptr->state.ammo_tval == TV_BOLT))) {
+			 && (state->ammo_tval == TV_BOLT))) {
 		/* Medium bonus */
-		p_ptr->state.num_fire += dex_factor / 2;
+		state->num_fire += dex_factor / 2;
 	    }
 
 	    /* Minimal bonus */
 	    else {
 		/* Small bonus */
-		p_ptr->state.num_fire += dex_factor / 4;
+		state->num_fire += dex_factor / 4;
 	    }
 
 
@@ -3058,13 +3005,13 @@ extern void calc_bonuses(bool inspect)
 	}
 
 	/* Require at least one shot per round in real terms */
-	if (p_ptr->state.num_fire < 10)
-	    p_ptr->state.num_fire = 10;
+	if (state->num_fire < 10)
+	    state->num_fire = 10;
     }
 
     /* Add all class and race-specific adjustments to missile Skill. */
-    p_ptr->state.skills[SKILL_TO_HIT_BOW] +=
-	add_special_missile_skill(p_ptr->pclass, o_ptr->weight, o_ptr);
+    state->skills[SKILL_TO_HIT_BOW] +=
+	add_special_missile_skill(state, o_ptr->weight, o_ptr);
 
 
   /*** Analyze weapon ***/
@@ -3073,26 +3020,26 @@ extern void calc_bonuses(bool inspect)
     o_ptr = &p_ptr->inventory[INVEN_WIELD];
 
     /* Assume that the player is not a Priest wielding an edged weapon. */
-    p_ptr->icky_wield = FALSE;
+    state->icky_wield = FALSE;
 
     /* Assume the weapon is not too heavy */
-    p_ptr->heavy_wield = FALSE;
+    state->heavy_wield = FALSE;
 
     /* Inflict heavy weapon penalties. */
     if (hold < o_ptr->weight / 10) {
 	/* Hard to wield a heavy weapon */
-	p_ptr->state.to_h += 2 * (hold - o_ptr->weight / 10);
-	p_ptr->state.dis_to_h += 2 * (hold - o_ptr->weight / 10);
+	state->to_h += 2 * (hold - o_ptr->weight / 10);
+	state->dis_to_h += 2 * (hold - o_ptr->weight / 10);
 
 	/* Heavy weapon */
-	p_ptr->heavy_wield = TRUE;
+	state->heavy_wield = TRUE;
 
 	/* The player gets to swing a heavy weapon only once. */
-	p_ptr->state.num_blow = 1;
+	state->num_blow = 1;
     }
 
     /* Normal weapons */
-    if (o_ptr->k_idx && !p_ptr->heavy_wield) {
+    if (o_ptr->k_idx && !state->heavy_wield) {
 	int str_index, dex_index;
 
 	int effective_weight = 0, mul = 6;
@@ -3103,7 +3050,7 @@ extern void calc_bonuses(bool inspect)
 
 	/* Compare strength and weapon weight. */
 	str_index =
-	    mul * adj_str_blow[p_ptr->state.stat_ind[A_STR]] / effective_weight;
+	    mul * adj_str_blow[state->stat_ind[A_STR]] / effective_weight;
 
 	/* Maximal value */
 	if (str_index > 11)
@@ -3111,7 +3058,7 @@ extern void calc_bonuses(bool inspect)
 
 
 	/* Index by dexterity */
-	dex_index = (adj_dex_blow[p_ptr->state.stat_ind[A_DEX]]);
+	dex_index = (adj_dex_blow[state->stat_ind[A_DEX]]);
 
 	/* Maximal value */
 	if (dex_index > 11)
@@ -3119,25 +3066,42 @@ extern void calc_bonuses(bool inspect)
 
 
 	/* Use the blows table */
-	p_ptr->state.num_blow = blows_table[str_index][dex_index];
+	state->num_blow = blows_table[str_index][dex_index];
 
 	/* Paranoia - require at least one blow */
-	if (p_ptr->state.num_blow < 1)
-	    p_ptr->state.num_blow = 1;
+	if (state->num_blow < 1)
+	    state->num_blow = 1;
 
 
 	/* Boost digging skill by weapon weight */
-	p_ptr->state.skills[SKILL_DIGGING] += (o_ptr->weight / 10);
+	state->skills[SKILL_DIGGING] += (o_ptr->weight / 10);
     }
 
     /* Everyone gets 2 to 4 blows if not wielding a weapon. */
     else if (!o_ptr->k_idx)
-	p_ptr->state.num_blow = 2 + (p_ptr->lev / 20);
+	state->num_blow = 2 + (p_ptr->lev / 20);
 
 
     /* Add all other class and race-specific adjustments to melee Skill. */
-    p_ptr->state.skills[SKILL_TO_HIT_MELEE] +=
-	add_special_melee_skill(p_ptr->pclass, o_ptr->weight, o_ptr);
+    state->skills[SKILL_TO_HIT_MELEE] +=
+	add_special_melee_skill(state, o_ptr->weight, o_ptr);
+
+}
+
+/*
+ * Calculate bonuses, and print various things on changes.
+ */
+static void update_bonuses(void)
+{
+	int i;
+
+	player_state *state = &p_ptr->state;
+	player_state old = p_ptr->state;
+
+
+	/*** Calculate bonuses ***/
+
+	calc_bonuses(p_ptr->inventory, &p_ptr->state, FALSE);
 
 
   /*** Notice changes ***/
@@ -3145,19 +3109,19 @@ extern void calc_bonuses(bool inspect)
     /* Analyze stats */
     for (i = 0; i < A_MAX; i++) {
 	/* Notice changes */
-	if (p_ptr->state.stat_top[i] != old_stat_top[i]) {
+	if (state->stat_top[i] != old->stat_top[i]) {
 	    /* Redisplay the stats later */
 	    p_ptr->redraw |= (PR_STATS);
 	}
 
 	/* Notice changes */
-	if (p_ptr->state.stat_use[i] != old_stat_use[i]) {
+	if (state->stat_use[i] != old->stat_use[i]) {
 	    /* Redisplay the stats later */
 	    p_ptr->redraw |= (PR_STATS);
 	}
 
 	/* Notice changes */
-	if (p_ptr->state.stat_ind[i] != old_stat_ind[i]) {
+	if (state->stat_ind[i] != old->stat_ind[i]) {
 	    /* Change in STR may affect how shields are used. */
 	    if ((i == A_STR) && (p_ptr->inventory[INVEN_ARM].k_idx)) {
 		/* Access the wield slot */
@@ -3166,20 +3130,20 @@ extern void calc_bonuses(bool inspect)
 		/* Analyze weapon for two-handed-use. */
 		if (of_has(o_ptr->flags_obj, OF_TWO_HANDED_REQ)
 		    || (of_has(o_ptr->flags_obj, OF_TWO_HANDED_DES)
-			&& (p_ptr->state.stat_ind[A_STR] <
+			&& (state->stat_ind[A_STR] <
 			    29 + (o_ptr->weight / 50 >
 				  8 ? 8 : o_ptr->weight / 50)))) {
-		    p_ptr->shield_on_back = TRUE;
+		    state->shield_on_back = TRUE;
 
 		} else
-		    p_ptr->state.shield_on_back = FALSE;
+		    state->shield_on_back = FALSE;
 
 		/* Hack - recalculate bonuses again. */
-		if (p_ptr->state.old_shield_on_back !=
-		    p_ptr->state.shield_on_back) {
+		if (state->old->shield_on_back !=
+		    state->shield_on_back) {
 		    /* do not check strength again */
-		    old_stat_ind[i] = p_ptr->state.stat_ind[i];
-		    goto calc_again;
+		    old->stat_ind[i] = state->stat_ind[i];
+		    calc_bonuses(p_ptr->inventory, &p_ptr->state, FALSE);
 		}
 	    }
 
@@ -3205,53 +3169,53 @@ extern void calc_bonuses(bool inspect)
     }
 
     /* Hack -- Telepathy Change */
-    if (p_ptr->state.telepathy != old_telepathy) {
+    if (state->telepathy != old->telepathy) {
 	/* Update monster visibility */
 	p_ptr->update |= (PU_MONSTERS);
     }
 
     /* Hack -- See Invis Change */
-    if (p_ptr->state.see_inv != old_see_inv) {
+    if (state->see_inv != old->see_inv) {
 	/* Update monster visibility */
 	p_ptr->update |= (PU_MONSTERS);
     }
 
     /* Hack -- See Invis Change */
-    if (p_ptr->state.see_infra != old_see_infra) {
+    if (state->see_infra != old->see_infra) {
 	/* Update monster visibility */
 	p_ptr->update |= (PU_MONSTERS);
     }
 
     /* Redraw speed (if needed) */
-    if (p_ptr->pspeed != old_speed) {
+    if (state->pspeed != old->pspeed) {
 	/* Redraw speed */
 	p_ptr->redraw |= (PR_SPEED);
     }
 
     /* Recalculate stealth when needed */
-    if (p_ptr->state.skills[SKILL_STEALTH] != old_stealth) {
+    if (state->skills[SKILL_STEALTH] != old->stealth) {
 	/* Assume character is extremely noisy. */
-	p_ptr->base_wakeup_chance = 100 * WAKEUP_ADJ;
+	state->base_wakeup_chance = 100 * WAKEUP_ADJ;
 
 	/* For every increase in stealth past 0, multiply wakeup chance by 0.8 */
-	for (i = 0; i < p_ptr->state.skills[SKILL_STEALTH]; i++) {
-	    p_ptr->base_wakeup_chance = 4 * p_ptr->base_wakeup_chance / 5;
+	for (i = 0; i < state->skills[SKILL_STEALTH]; i++) {
+	    state->base_wakeup_chance = 4 * state->base_wakeup_chance / 5;
 
 	    /* Always make at least some innate noise */
-	    if (p_ptr->base_wakeup_chance < 100) {
-		p_ptr->base_wakeup_chance = 100;
+	    if (state->base_wakeup_chance < 100) {
+		state->base_wakeup_chance = 100;
 		break;
 	    }
 	}
     }
 
     /* Big Hack - make sure base_wakeup_chance has ever been set */
-    if (p_ptr->base_wakeup_chance == 0)
-	p_ptr->base_wakeup_chance = 100 * WAKEUP_ADJ;
+    if (state->base_wakeup_chance == 0)
+	state->base_wakeup_chance = 100 * WAKEUP_ADJ;
 
     /* Redraw armor (if needed) */
-    if ((p_ptr->state.dis_ac != old_dis_ac)
-	|| (p_ptr->state.dis_to_a != old_dis_to_a)) {
+    if ((state->dis_ac != old->dis_ac)
+	|| (state->dis_to_a != old->dis_to_a)) {
 	/* Redraw */
 	p_ptr->redraw |= (PR_ARMOR);
     }
@@ -3261,28 +3225,28 @@ extern void calc_bonuses(bool inspect)
 	return;
 
     /* Take note when player moves his shield on and off his back. */
-    if (p_ptr->evasion_chance != p_ptr->old_evasion_chance) {
+    if (state->evasion_chance != old->evasion_chance) {
 	/* Messages */
-	if (!p_ptr->old_evasion_chance) {
+	if (!old->evasion_chance) {
 	    msg_print("You are able to Evade attacks.");
-	} else if (!p_ptr->evasion_chance) {
+	} else if (!state->evasion_chance) {
 	    msg_print("You are no longer able to Evade attacks");
 	}
 	/* Mega-Hack - Mask out small changes */
-	else if (p_ptr->evasion_chance > (p_ptr->old_evasion_chance + 5)) {
+	else if (state->evasion_chance > (old->evasion_chance + 5)) {
 	    msg_print("You are better able to Evade attacks.");
-	} else if ((p_ptr->evasion_chance + 5) < p_ptr->old_evasion_chance) {
+	} else if ((state->evasion_chance + 5) < old->evasion_chance) {
 	    msg_print("You are less able to Evade attacks.");
 	}
 
 	/* Save it */
-	p_ptr->old_evasion_chance = p_ptr->evasion_chance;
+	old->evasion_chance = state->evasion_chance;
     }
 
     /* Take note when "heavy bow" changes */
-    if (p_ptr->old_heavy_shoot != p_ptr->heavy_shoot) {
+    if (old->heavy_shoot != state->heavy_shoot) {
 	/* Message */
-	if (p_ptr->heavy_shoot) {
+	if (state->heavy_shoot) {
 	    msg_print("You have trouble wielding such a heavy bow.");
 	} else if (p_ptr->inventory[INVEN_BOW].k_idx) {
 	    msg_print("You have no trouble wielding your bow.");
@@ -3291,13 +3255,13 @@ extern void calc_bonuses(bool inspect)
 	}
 
 	/* Save it */
-	p_ptr->old_heavy_shoot = p_ptr->heavy_shoot;
+	old->heavy_shoot = state->heavy_shoot;
     }
 
     /* Take note when "heavy weapon" changes */
-    if (p_ptr->old_heavy_wield != p_ptr->heavy_wield) {
+    if (old->heavy_wield != state->heavy_wield) {
 	/* Message */
-	if (p_ptr->heavy_wield) {
+	if (state->heavy_wield) {
 	    msg_print("You have trouble wielding such a heavy weapon.");
 	} else if (p_ptr->inventory[INVEN_WIELD].k_idx) {
 	    msg_print("You have no trouble wielding your weapon.");
@@ -3306,13 +3270,13 @@ extern void calc_bonuses(bool inspect)
 	}
 
 	/* Save it */
-	p_ptr->old_heavy_wield = p_ptr->heavy_wield;
+	old->heavy_wield = state->heavy_wield;
     }
 
     /* Take note when "illegal weapon" changes */
-    if (p_ptr->old_icky_wield != p_ptr->icky_wield) {
+    if (old->icky_wield != state->icky_wield) {
 	/* Message */
-	if (p_ptr->icky_wield) {
+	if (state->icky_wield) {
 	    msg_print("You do not feel comfortable with your weapon.");
 	} else if (p_ptr->inventory[INVEN_WIELD].k_idx) {
 	    notice_obj(OF_BLESSED, INVEN_WIELD + 1);
@@ -3322,13 +3286,13 @@ extern void calc_bonuses(bool inspect)
 	}
 
 	/* Save it */
-	p_ptr->old_icky_wield = p_ptr->icky_wield;
+	old->icky_wield = state->icky_wield;
     }
 
     /* Take note when player moves his shield on and off his back. */
-    if (p_ptr->old_shield_on_back != p_ptr->shield_on_back) {
+    if (old->shield_on_back != state->shield_on_back) {
 	/* Messages */
-	if (p_ptr->shield_on_back) {
+	if (state->shield_on_back) {
 	    msg_print("You are carrying your shield on your back.");
 	} else if (p_ptr->inventory[INVEN_ARM].k_idx) {
 	    msg_print("You are carrying your shield in your hand.");
@@ -3337,7 +3301,7 @@ extern void calc_bonuses(bool inspect)
 	/* No message for players no longer carrying a shield. */
 
 	/* Save it */
-	p_ptr->old_shield_on_back = p_ptr->shield_on_back;
+	old->shield_on_back = state->shield_on_back;
     }
 
     /* Hack - force redraw if stuff has changed */

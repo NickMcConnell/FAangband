@@ -5958,7 +5958,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		     && (stage_map[p_ptr->stage][STAGE_TYPE] == PLAIN))
 		 || ((player_has(PF_EDAIN))
 		     && (stage_map[p_ptr->stage][STAGE_TYPE] == FOREST)))
-		&& (randint1(75) <= p_ptr->evasion_chance)) {
+		&& (randint1(75) <= p_ptr->state.evasion_chance)) {
 		/* Message */
 		msg_print("You Evade the boulder!");
 		dam = 0;
@@ -6027,7 +6027,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		     && (stage_map[p_ptr->stage][STAGE_TYPE] == PLAIN))
 		 || ((player_has(PF_EDAIN))
 		     && (stage_map[p_ptr->stage][STAGE_TYPE] == FOREST)))
-		&& (randint1(75) <= p_ptr->evasion_chance)) {
+		&& (randint1(75) <= p_ptr->state.evasion_chance)) {
 		/* Message */
 		msg_print("You Evade the missile!");
 		dam = 0;
@@ -6099,7 +6099,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		     && (stage_map[p_ptr->stage][STAGE_TYPE] == PLAIN))
 		 || ((player_has(PF_EDAIN))
 		     && (stage_map[p_ptr->stage][STAGE_TYPE] == FOREST)))
-		&& (randint1(75) <= p_ptr->evasion_chance)) {
+		&& (randint1(75) <= p_ptr->state.evasion_chance)) {
 		/* Message */
 		msg_print("You Evade the missile!");
 		dam = 0;
@@ -6121,7 +6121,8 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	    }
 
 	    /* Test for a deflection. */
-	    else if ((p_ptr->inventory[INVEN_ARM].k_idx) && (!p_ptr->shield_on_back)
+	    else if ((p_ptr->inventory[INVEN_ARM].k_idx) && 
+		     (!p_ptr->state.shield_on_back)
 		     && (p_ptr->inventory[INVEN_ARM].ac +
 			 (player_has(PF_SHIELD_MAST) ? 3 : 0) >
 			 randint0(MAX_SHIELD_BASE_AC * 4))) {
@@ -6176,7 +6177,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		     && (stage_map[p_ptr->stage][STAGE_TYPE] == PLAIN))
 		 || ((player_has(PF_EDAIN))
 		     && (stage_map[p_ptr->stage][STAGE_TYPE] == FOREST)))
-		&& (randint1(75) <= p_ptr->evasion_chance)) {
+		&& (randint1(75) <= p_ptr->state.evasion_chance)) {
 		/* Message */
 		msg_print("You Evade the missile!");
 		dam = 0;
@@ -6840,7 +6841,8 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	    dam += terrain_adjustment;
 
 	    /* Test for partial shield protection. */
-	    if ((p_ptr->inventory[INVEN_ARM].k_idx) && (!p_ptr->shield_on_back)
+	    if ((p_ptr->inventory[INVEN_ARM].k_idx) && 
+		(!p_ptr->state.shield_on_back)
 		&& (p_ptr->inventory[INVEN_ARM].ac +
 		    (player_has(PF_SHIELD_MAST) ? 3 : 0) >
 		    randint0(MAX_SHIELD_BASE_AC * 2))) {

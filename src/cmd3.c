@@ -1161,7 +1161,7 @@ void py_steal(int y, int x)
 
     /* Determine how much protection the monster has. */
     theft_protection = (7 * (r_ptr->level + 2) / 4);
-    theft_protection += (m_ptr->mspeed - p_ptr->pspeed);
+    theft_protection += (m_ptr->mspeed - p_ptr->state.pspeed);
     if (theft_protection < 1)
 	theft_protection = 1;
 

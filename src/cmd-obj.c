@@ -222,7 +222,7 @@ void do_cmd_takeoff(cmd_code code, cmd_arg args[])
 
     /* Ensure that the shield hand is used, if a shield is available. */
     if (item == INVEN_WIELD)
-	p_ptr->shield_on_back = FALSE;
+	p_ptr->state.shield_on_back = FALSE;
 
     /* Take off the item */
     (void) inven_takeoff(item, 255);
@@ -452,9 +452,9 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
 		&& (p_ptr->stat_ind[A_STR] <
 		    29 +
 		    ((o_ptr->weight / 50 > 8) ? 8 : (o_ptr->weight / 50))))) {
-	    p_ptr->shield_on_back = TRUE;
+	    p_ptr->state.shield_on_back = TRUE;
 	} else
-	    p_ptr->shield_on_back = FALSE;
+	    p_ptr->state.shield_on_back = FALSE;
     }
 
     /* A character using both hands to wield his melee weapon will use his
@@ -467,9 +467,9 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
 	    || ((of_has(i_ptr->flags_obj, OF_TWO_HANDED_DES))
 		&& (p_ptr->stat_ind[A_STR] <
 		    29 + (i_ptr->weight / 50 > 8 ? 8 : i_ptr->weight / 50)))) {
-	    p_ptr->shield_on_back = TRUE;
+	    p_ptr->state.shield_on_back = TRUE;
 	} else
-	    p_ptr->shield_on_back = FALSE;
+	    p_ptr->state.shield_on_back = FALSE;
 
     }
 
@@ -621,7 +621,7 @@ void do_cmd_drop(cmd_code code, cmd_arg args[])
 
     /* Ensure that the shield hand is used, if a shield is available. */
     if (item == INVEN_WIELD)
-	p_ptr->shield_on_back = FALSE;
+	p_ptr->state.shield_on_back = FALSE;
 
     /* Take a partial turn */
     p_ptr->energy_use = 50;

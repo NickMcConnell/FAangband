@@ -401,6 +401,40 @@ s16b label_to_equip(int c)
 }
 
 
+/*
+ * Hack -- determine if an item is "wearable" (or a missile)
+ */
+bool wearable_p(const object_type *o_ptr)
+{
+	/* Valid "tval" codes */
+	switch (o_ptr->tval)
+	{
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+		case TV_BOW:
+		case TV_DIGGING:
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_SWORD:
+		case TV_BOOTS:
+		case TV_GLOVES:
+		case TV_HELM:
+		case TV_CROWN:
+		case TV_SHIELD:
+		case TV_CLOAK:
+		case TV_SOFT_ARMOR:
+		case TV_HARD_ARMOR:
+		case TV_DRAG_ARMOR:
+		case TV_LIGHT:
+		case TV_AMULET:
+		case TV_RING: return (TRUE);
+	}
+
+	/* Nope */
+	return (FALSE);
+}
+
 /**
  * Determine which equipment slot (if any) an item likes. The slot might (or
  * might not) be open, but it is a slot which the object could be equipped in.
@@ -571,7 +605,7 @@ cptr describe_use(int i)
 	p = "wearing on your back";
 	break;
     case INVEN_ARM:{
-	if (p_ptr->shield_on_back)
+	if (p_ptr->state.shield_on_back)
 	    p = "carrying on your back";
 	else
 	    p = "wearing on your arm";
@@ -3716,17 +3750,19 @@ int process_quiver(int num_new, object_type * o_ptr)
  */
 int get_use_device_chance(const object_type * o_ptr)
 {
-    /* Get the object kind */
-    object_kind *k_ptr = &k_info[o_ptr->k_idx];
-
-    /* Extract the item level */
-    int lev = k_ptr->level;
+    int lev;
 
     /* Base chance of success */
     int chance = p_ptr->state.skills[SKILL_DEVICE];
 
     /* Final "probability" */
     int prob = 10000;
+
+    /* Extract the item level, which is the difficulty rating */
+    if (artifact_p(o_ptr))
+	lev = a_info[o_ptr->name1].level;
+    else
+	lev = k_info[o_ptr->k_idx].level;
 
     /* Confusion hurts skill */
     if (p_ptr->timed[TMD_CONFUSED])

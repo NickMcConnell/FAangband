@@ -1009,6 +1009,8 @@ bool py_attack(int y, int x, bool can_push)
 
     bool did_burn = FALSE;
 
+    bool chaotic = FALSE;
+
     /* Get the monster */
     m_ptr = &m_list[cave_m_idx[y][x]];
     r_ptr = &r_info[m_ptr->r_idx];
@@ -1105,7 +1107,7 @@ bool py_attack(int y, int x, bool can_push)
   /**** The monster bashing code. -LM-  ****/
 
     /* No shield on arm, no bash.  */
-    if ((!p_ptr->inventory[INVEN_ARM].k_idx) || (p_ptr->shield_on_back)) {
+    if ((!p_ptr->inventory[INVEN_ARM].k_idx) || (p_ptr->state.shield_on_back)) {
 	bash_chance = 0;
     }
 
@@ -1209,8 +1211,8 @@ bool py_attack(int y, int x, bool can_push)
 		/* Mega-Hack - base bonus value on energy used this round */
 		/* value = 15 * (energy_use/100) * (10/energy per turn) */
 		boost_value =
-		    (3 * p_ptr->energy_use) / (extract_energy[p_ptr->pspeed] *
-					       2);
+		    (3 * p_ptr->energy_use) / 
+		    (extract_energy[p_ptr->state.pspeed] * 2);
 
 		/* Minimum boost */
 		boost_value = ((boost_value > 0) ? boost_value : 1);
@@ -1274,6 +1276,10 @@ bool py_attack(int y, int x, bool can_push)
 	blows++;
 	bonus_attack = TRUE;
     }
+
+    /* Check for chaotic */
+    if (of_has(o_ptr->flags_obj, OF_CHAOTIC))
+	chaotic = TRUE;
 
     /* Attack once for each legal blow */
     while (num++ < blows) {
@@ -1513,7 +1519,7 @@ bool py_attack(int y, int x, bool can_push)
 		    /* value = 15 * (energy_use/100) * (10/energy per turn) */
 		    boost_value =
 			(3 * p_ptr->energy_use) /
-			(extract_energy[p_ptr->pspeed] * 2);
+			(extract_energy[p_ptr->state.pspeed] * 2);
 
 		    /* Minimum boost */
 		    boost_value = ((boost_value > 0) ? boost_value : 1);
@@ -1526,7 +1532,7 @@ bool py_attack(int y, int x, bool can_push)
 	    }
 
 	    /* Chaotic attack. */
-	    if (p_ptr->special_attack & (ATTACK_CHAOTIC)) {
+	    if (chaotic) {
 		/* Sometimes do chaotic stuff */
 		if (randint0(10) == 0) {
 		    /* May not still be something there to hit */
@@ -1557,7 +1563,7 @@ bool py_attack(int y, int x, bool can_push)
 	/* Mega-Hack - base bonus value on energy used this round */
 	/* value = 15 * (energy_use/100) * (10/energy per turn) */
 	boost_value =
-	    (3 * p_ptr->energy_use) / (extract_energy[p_ptr->pspeed] * 2);
+	    (3 * p_ptr->energy_use) / (extract_energy[p_ptr->state.pspeed] * 2);
 
 	/* Minimum boost */
 	boost_value = ((boost_value > 0) ? boost_value : 1);

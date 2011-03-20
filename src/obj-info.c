@@ -120,7 +120,7 @@ static const char *slayee[] =
     "dragons"
 };
 
-static const char *brand[] = 
+static const char *brandee[] = 
 { 
     "acid", 
     "lightning", 
@@ -167,12 +167,10 @@ static const flag_type sustain_flags[] =
 
 static const flag_type misc_flags[] =
 {
-    { OF_LITE,               "provides permanent light" },
-    { OF_TWO_HANDED_REQ,     "requires two hands to wield" },
-    { OF_TWO_HANDED_DES,     "may need two hands to wield" },
-    { OF_IMPACT,             "induces earthquakes" },
-    { OF_DARKNESS,           "allows you to see in the dark" },
-    { OF_CHAOTIC,            "causes chaotic effects" },
+    { OF_LITE,               "Provides permanent light" },
+    { OF_IMPACT,             "Induces earthquakes" },
+    { OF_DARKNESS,           "Allows you to see in the dark" },
+    { OF_CHAOTIC,            "Causes chaotic effects" },
     { OF_BLESSED,            "Blessed by the gods" },
     { OF_SLOW_DIGEST,        "Slows your metabolism" },
     { OF_FEATHER,            "Feather Falling" },
@@ -185,119 +183,125 @@ static const flag_type misc_flags[] =
 
 static const flag_type curses[] =
 {
-    { CF_TELEPORT,        "induces random teleportation" },
-    { CF_NO_TELEPORT,     "prevents teleportation" },
-    { CF_AGGRO_PERM,      "aggravates nearby creatures" },
-    { CF_AGGRO_RAND,      "occasionally greatly aggravates nearby creatures" },
-    { CF_SLOW_REGEN,      "slows your regeneration" },
-    { CF_AFRAID,          "makes you afraid" },
-    { CF_HUNGRY,          "speeds your digestion" },
-    { CF_POIS_RAND,       "occasionally poisons you" },
-    { CF_POIS_RAND_BAD,   "randomly envelops you in poison" },
-    { CF_CUT_RAND,        "occasionally cuts you" },
-    { CF_CUT_RAND_BAD,    "will suddenly cause deep wounds" },
-    { CF_HALLU_RAND,      "sometimes makes you hallucinate" },
-    { CF_DROP_WEAPON,     "will suddenly leap from your grasp" },
-    { CF_ATTRACT_DEMON,   "makes demons suddenly appear nearby" },
-    { CF_ATTRACT_UNDEAD,  "calls the undead from their slumber" },
-    { CF_STICKY_CARRY,    "cannot be dropped from your pack" },
-    { CF_STICKY_WIELD,    "sticks to you if wielded" },
-    { CF_PARALYZE,        "will briefly paralyze you" },
-    { CF_PARALYZE_ALL,    "can paralyze you even if you feel immune" },
-    { CF_DRAIN_EXP,       "drains experience" },
-    { CF_DRAIN_MANA,      "drains mana" },
-    { CF_DRAIN_STAT,      "will sometimes lower a stat" },
-    { CF_DRAIN_CHARGE,    "will take energy from your magic devices" },
+    { CF_TELEPORT,        "Induces random teleportation" },
+    { CF_NO_TELEPORT,     "Prevents teleportation" },
+    { CF_AGGRO_PERM,      "Aggravates nearby creatures" },
+    { CF_AGGRO_RAND,      "Occasionally greatly aggravates nearby creatures" },
+    { CF_SLOW_REGEN,      "Slows your regeneration" },
+    { CF_AFRAID,          "Makes you afraid" },
+    { CF_HUNGRY,          "Speeds your digestion" },
+    { CF_POIS_RAND,       "Occasionally poisons you" },
+    { CF_POIS_RAND_BAD,   "Randomly envelops you in poison" },
+    { CF_CUT_RAND,        "Occasionally cuts you" },
+    { CF_CUT_RAND_BAD,    "Will suddenly cause deep wounds" },
+    { CF_HALLU_RAND,      "Sometimes makes you hallucinate" },
+    { CF_DROP_WEAPON,     "Will suddenly leap from your grasp" },
+    { CF_ATTRACT_DEMON,   "Makes demons suddenly appear nearby" },
+    { CF_ATTRACT_UNDEAD,  "Calls the undead from their slumber" },
+    { CF_STICKY_CARRY,    "Cannot be dropped from your pack" },
+    { CF_STICKY_WIELD,    "Sticks to you if wielded" },
+    { CF_PARALYZE,        "Will briefly paralyze you" },
+    { CF_PARALYZE_ALL,    "Can paralyze you even if you feel immune" },
+    { CF_DRAIN_EXP,       "Drains experience" },
+    { CF_DRAIN_MANA,      "Drains mana" },
+    { CF_DRAIN_STAT,      "Will sometimes lower a stat" },
+    { CF_DRAIN_CHARGE,    "Will take energy from your magic devices" },
 }
 
 
-/** Slays **/
-/*
- * Entries in this table should be in ascending order of multiplier, to
- * ensure that the highest one takes precedence
- * object flag, vulnerable flag, resist flag, multiplier, ranged verb,
- * melee verb, verb describing what the thing branded does when it is active,
- * description of affected creatures, brand
+
+/**
+ * General information about classes of objects. -LM-
+ * 
+ * Index is tval.
  */
-const slay_t slay_table[] =
-{
-	{ OF_SLAY_ANIMAL, RF_ANIMAL, FLAG_END,   2,
-	  "pierces",  "smite",   "glows",      "animals", NULL },
-	{ OF_SLAY_EVIL,   RF_EVIL,   FLAG_END,   2,
-	  "pierces",  "smite",   "glows",      "evil creatures", NULL },
-	{ OF_SLAY_UNDEAD, RF_UNDEAD, FLAG_END,   3,
-	  "pierces",  "smite",   "glows",      "undead", NULL },
-	{ OF_SLAY_DEMON,  RF_DEMON,  FLAG_END,   3,
-	  "pierces",  "smite",   "glows",      "demons", NULL },
-	{ OF_SLAY_ORC,    RF_ORC,    FLAG_END,   3,
-	  "pierces",  "smite",   "glows",      "orcs", NULL },
-	{ OF_SLAY_TROLL,  RF_TROLL,  FLAG_END,   3,
-	  "pierces",  "smite",   "glows",      "trolls", NULL },
-	{ OF_SLAY_GIANT,  RF_GIANT,  FLAG_END,   3,
-	  "pierces",  "smite",   "glows",      "giants", NULL },
-	{ OF_SLAY_DRAGON, RF_DRAGON, FLAG_END,   3,
-	  "pierces",  "smite",   "glows",      "dragons", NULL },
-	{ OF_BRAND_ACID,  FLAG_END,  RF_IM_ACID, 3,
-	  "corrodes", "corrode", "spits",      "creatures not resistant to acid", "acid" },
-	{ OF_BRAND_ELEC,  FLAG_END,  RF_IM_ELEC, 3,
-	  "zaps",     "zap",     "crackles",   "creatures not resistant to electricity", "lightning" },
-	{ OF_BRAND_FIRE,  FLAG_END,  RF_IM_FIRE, 3,
-	  "burns",    "burn",    "flares",     "creatures not resistant to fire", "flames" },
-	{ OF_BRAND_COLD,  FLAG_END,  RF_IM_COLD, 3,
-	  "freezes" , "freeze",  "grows cold", "creatures not resistant to cold", "frost" },
-	{ OF_BRAND_POIS,  FLAG_END,  RF_IM_POIS, 3,
-	  "poisons",  "poison",  "seethes",    "creatures not resistant to poison", "venom" },
-	{ OF_KILL_DRAGON, RF_DRAGON, FLAG_END,   5, 
-	 "deeply pierces",  "fiercely smite", "glows brightly", "dragons", NULL },
-	{ OF_KILL_DEMON,  RF_DEMON,  FLAG_END,   5,
-	  "deeply pierces", "fiercely smite", "glows brightly", "demons", NULL },
-	{ OF_KILL_UNDEAD, RF_UNDEAD, FLAG_END,   5,
-	  "deeply pierces", "fiercely smite", "glows brightly", "undead", NULL },
-	{ FLAG_END,       FLAG_END,  FLAG_END,   0, NULL, NULL, NULL, NULL, NULL }
+char *obj_class_info[101] = {
+    "", "", "", "", "",
+    "", "",
+    "Chests may have some really good treasures hidden inside, but can be perilous to open...",
+    "", "",
+
+    "", "", "", "", "",
+    "", "Sling ammo.", "Bow ammo.", "Crossbow ammo.",
+    "Missile launchers allow you to inflict damage from a distance without using magic.",
+
+    "Diggers, especially heavy ones, are invaluable for forced entry and escape and can make a lucky miner rich.",
+    "Hafted weapons rely on blunt force to inflict damage.  Since they spill relatively little blood, priests much prefer to carry one.",
+    "Pole-mounted weapons are often cumbersome and may require two hands to wield, but some offer both a high degree of protection and powerful attacks.",
+    "The effectiveness of edged weapons depends on keen edges and sharp points.  They tend to be quite light and are easy to use, but some may not deal enough damage for your liking.",
+    "",
+    "", "", "", "", "",
+
+    "Footwear protects the feet only, but some rare items of this type have magics to render them fleet, light, or steady.",
+    "Your hands would benefit from protection too, but most magic users need to keep their fingers unencumbered or magically supple.",
+    "Many a blow will be struck upon your head, and protection here will certainly be helpful.  Some rare items may protect and enhance your mind.",
+    "Many a blow will be struck upon your head, and protection here will certainly be helpful.  Some rare items may protect and enhance your mind.",
+    "Shields can be worn on your arm, or on your back if you need both hands to use your weapon.  So protective can a shield be that it can reduce damage as much or more than body armour, and you can perhaps deflect physical missiles (even shards) or take advantage of opportunities to bash your foe if you have one on your arm.",
+    "Experienced adventurers wrap a cloak around their body.  Some rare items of this type may allow you to slip silently around less alert enemies.",
+    "Some kind of body protection will become a necessity as you face ever more dangerous opponents; rare items of this type may hold many and varied protective magics.",
+    "Some kind of body protection will become a necessity as you face ever more dangerous opponents; rare items of this type may hold many and varied protective magics.",
+    "Armour made of dragon scales is rare indeed, and powerful dragon magics allow you to sometimes breathe even as great dragons do.",
+    "An adventurer who cannot see is jackal food.  The further away your illumination ends, the greater your chance to ready yourself for desperate combat.",
+
+    "Amulets slip around your neck, and almost all have magics wondrous or perilous bound inside.",
+    "", "", "", "",
+    "You may wear a ring upon each of your two ring fingers, and benefit or suffer from the magics it contains.",
+    "", "", "", "",
+
+    "", "", "", "", "",
+    "Staffs are heavy, and take up plenty of space in your backpack, but can hold a lot of sometimes powerful spells that affect large areas.  Staffs recharge easily and well.",
+    "", "", "", "",
+
+    "", "", "", "", "",
+    "Wands hold a variety of spells, useful both in combat and for exploration.  Bolt spells in wands often beam, and ball spells affect large areas.  Once its charges are exhausted, a wand is useless until recharged.",
+    "The magics stored in rods never run out, given enough time between uses to recover.  Rods can do a lot of damage, but they affect only small areas.  Bolt spells in rods seldom or never beam.",
+    "", "", "",
+
+    "One will often find sheets of parchment with magic spells.  They are easy to read, and are a warrior or paladin's best chance at making use of magic.",
+    "", "", "", "",
+    "Healers, alchemists, and sages create potions in vast quantities, and store them in small flasks of clear glass or gleaming crystal.  Once quaffed, a potion is guaranteed to work, but not every strange liquid was mixed for your benefit...",
+    "", "", "", "",
+
+    "Deep in the murky dungeons strange mushrooms grow, and monsters rout about sealed packets of food that their owners will never need again.",
+    "", "", "", "",
+    "", "", "", "", "",
+
+    "A manual of sorcerous magics, bound in fine linen dyed deep red.",
+    "A shining gospel of piety in flawless white and gold.",
+    "A runed stone with earthly and natural magics chiseled in brown and rich greens.",
+    "A black tome of necromantic rituals, with shadows lying deep around it.",
+    "",
+    "", "", "", "", "",
+
+    "Small valuables and coins."
 };
 
-/*
- * Slays which are in some sense duplicates. *Slay* dragon supercedes slay
- * dragon, for example.
- */
-const struct {
-	u16b minor;
-	u16b major;
-} slay_dups[] =
-{
-	{ OF_SLAY_DRAGON, OF_KILL_DRAGON },
-	{ OF_SLAY_DEMON, OF_KILL_DEMON },
-	{ OF_SLAY_UNDEAD, OF_KILL_UNDEAD },
-};
-
-
-/*
- * Helper function to externalise N_ELEMENTS(slay_table), which itself is not
- * available outside this compilation unit
- */
-size_t num_slays(void)
-{
-	return N_ELEMENTS(slay_table);
-}
 
 /*** Code that makes use of the data tables ***/
 
 /*
  * Describe an item's curses.
  */
-static bool describe_curses(textblock *tb, const object_type *o_ptr,
-		const bitflag flags[OF_SIZE])
+static bool describe_curses(textblock *tb, const object_type *o_ptr)
 {
-	if (of_has(flags, OF_PERMA_CURSE))
-		textblock_append_c(tb, TERM_L_RED, "Permanently cursed.\n");
-	else if (of_has(flags, OF_HEAVY_CURSE))
-		textblock_append_c(tb, TERM_L_RED, "Heavily cursed.\n");
-	else if (of_has(flags, OF_LIGHT_CURSE))
-		textblock_append_c(tb, TERM_L_RED, "Cursed.\n");
-	else
-		return FALSE;
+    size_t i;
+    bool printed = FALSE;
+    bool full = mode & OINFO_FULL;
 
-	return TRUE;
+    for (i = 0; i < N_ELEMENTS(curses); i++)
+    {
+	if (cf_has(full ? o_ptr->flags_curse : o_ptr->id_curse, curses[i].flag))
+	{
+	    if (!printed) textblock_append(tb, "Curses:  ");
+	    textblock_append(tb, "%s.  ", curses[i].name);
+	    printed = TRUE;
+	}
+    }
+
+    if (printed)
+	textblock_append(tb, "\n");
+
+    return printed;
 }
 
 
@@ -333,7 +337,7 @@ static bool describe_stats(textblock *tb, const object_type *o_ptr,
 
 	/* Special case: all stats */
 	if (min == max) 
-	    textblock_append_c(tb, attr, "%d to all your stats", min);
+	    textblock_append_c(tb, attr, "%d to all your stats.", min);
 
 	/* Some stats */
 	else {
@@ -342,7 +346,7 @@ static bool describe_stats(textblock *tb, const object_type *o_ptr,
 		    continue;
 		attr = (o_ptr->bonus_stat[j] > 0 ? TERM_L_GREEN : TERM_ORANGE);
 		textblock_append_c(tb, attr, "%d ", o_ptr->bonus_stat[j]);
-		textblock_append(tb, "to your ");
+		if (!terse) textblock_append(tb, "to your ");
 		textblock_append_c(tb, attr, statname[j]);
 		if (count >= (terse ? 2 : 3))
 		    textblock_append(tb, ", ");
@@ -354,12 +358,207 @@ static bool describe_stats(textblock *tb, const object_type *o_ptr,
 	    }
 	}
 
+	textblock_append(tb, "\n");
 	return TRUE;
     }
 	
     return FALSE;
 }
 
+
+
+/*
+ * Describe other bonuses.
+ */
+static bool describe_bonus(textblock *tb, const object_type *o_ptr,
+		oinfo_detail_t mode)
+{
+    int j, count = 0;
+    bool full = mode & OINFO_FULL;
+    bool dummy = mode & OINFO_DUMMY;
+    bool terse = mode & OINFO_TERSE;
+
+    if (((o_ptr->ident) & IDENT_WORN) || dummy || full) {
+	for (j = 0; j < MAX_P_BONUS; j++) {
+	    if (o_ptr->bonus_other[j] != 0)
+		count++;
+	}
+    }
+
+    if (count > 0) {
+	byte attr = (o_ptr->bonus_other[0] > 0 ? TERM_L_GREEN : TERM_ORANGE);
+
+	if (!terse) {	
+	    textblock_append(tb, "It gives ");
+	    if (dummy) textblock_append(tb, "up to ");
+	}
+
+	/* Bonuses */
+	else {
+	    for (j = 0; j < MAX_P_BONUS; j++) {
+		if (o_ptr->bonus_other[j] == 0)
+		    continue;
+		attr = (o_ptr->bonus_other[j] > 0 ? TERM_L_GREEN : TERM_ORANGE);
+		textblock_append_c(tb, attr, "%d ", o_ptr->bonus_other[j]);
+		if (!terse) textblock_append(tb, "to your ");
+		textblock_append_c(tb, attr, othername[j]);
+		if (count >= (terse ? 2 : 3))
+		    textblock_append(tb, ", ");
+		if ((count == 2) && !terse)
+		    textblock_append(tb, " and ");
+		if (count == 1)
+		    textblock_append(tb, ". ");
+		count--;
+	    }
+	}
+
+	textblock_append(tb, "\n");
+	return TRUE;
+    }
+	
+    return FALSE;
+}
+
+
+/*
+ * Describe slays.
+ */
+static bool describe_slays(textblock *tb, const object_type *o_ptr,
+		oinfo_detail_t mode)
+{
+    int j, slay = 0, kill = 0;
+    bool full = mode & OINFO_FULL;
+    bool terse = mode & OINFO_TERSE;
+    byte attr = TERM_RED;
+
+    for (j = 0; j < MAX_P_SLAY; j++)
+	if (if_has(o_ptr->id_other, OBJECT_ID_BASE_SLAY + j) || 
+	    (full && (o_ptr->multiple_slay[j] > MULTIPLE_BASE))) {
+	    slay++;
+
+	    /* Hack for great banes */
+	    if ((j == P_SLAY_ANIMAL)
+		&& (o_ptr->multiple_slay[j] > SLAY_BOOST_MINOR)) {
+		slay--;
+		kill++;
+	    }
+	    if ((j == P_SLAY_EVIL)
+		&& (o_ptr->multiple_slay[j] > SLAY_BOOST_SMALL)) {
+		slay--;
+		kill++;
+	    }
+	    if ((j > P_SLAY_EVIL)
+		&& (o_ptr->multiple_slay[j] > SLAY_BOOST_NORMAL)) {
+		slay--;
+		kill++;
+	    }
+	}
+
+    if (!slay && !kill) return FALSE;
+
+    if (slay > 0) {
+	textblock_append(tb, "It slays ");
+
+	/* Slays */
+	for (j = 0; j < MAX_P_SLAY; j++) {
+	    if (!if_has(o_ptr->id_other, OBJECT_ID_BASE_SLAY + j) || 
+		!(full && (o_ptr->multiple_slay[j] > MULTIPLE_BASE)))
+		continue;
+	    if ((j == P_SLAY_ANIMAL) && 
+		(o_ptr->multiple_slay[j] > SLAY_BOOST_MINOR))
+		continue;
+	    if ((j == P_SLAY_EVIL) && 
+		(o_ptr->multiple_slay[j] > SLAY_BOOST_SMALL))
+		continue;
+	    if ((j > P_SLAY_EVIL) && 
+		(o_ptr->multiple_slay[j] > SLAY_BOOST_NORMAL))
+		continue;
+	    textblock_append_c(tb, attr, slayee[j]);
+	    if (slay >= 3)
+		textblock_append(tb, ", ");
+	    if (slay == 2)
+		textblock_append(tb, " and ");
+	    if (slay == 1)
+		textblock_append(tb, ". ");
+	    slay--;
+	}
+    }
+    
+    if (kill > 0) {
+	if (terse) textblock_append(tb, "Great bane of ");
+	else textblock_append(tb, "It is a great bane of ");
+
+	/* Great banes */
+	for (j = 0; j < MAX_P_SLAY; j++) {
+	    if (!if_has(o_ptr->id_other, OBJECT_ID_BASE_SLAY + j) || 
+		!(full && (o_ptr->multiple_slay[j] > MULTIPLE_BASE))) 
+		continue;
+	    if ((j == P_SLAY_ANIMAL) && 
+		(o_ptr->multiple_slay[j] <= SLAY_BOOST_MINOR))
+		continue;
+	    if ((j == P_SLAY_EVIL) && 
+		(o_ptr->multiple_slay[j] <= SLAY_BOOST_SMALL))
+		continue;
+	    if ((j > P_SLAY_EVIL) && 
+		(o_ptr->multiple_slay[j] <= SLAY_BOOST_NORMAL))
+		continue;
+	    textblock_append_c(tb, attr, slayee[j]);
+	    if (slay >= 3)
+		textblock_append(tb, ", ");
+	    if (slay == 2)
+		textblock_append(tb, " and ");
+	    if (slay == 1)
+		textblock_append(tb, ". ");
+	    slay--;
+	}
+    }
+    
+    textblock_append(tb, "\n");
+    return TRUE;
+}
+
+
+/*
+ * Describe brands.
+ */
+static bool describe_brands(textblock *tb, const object_type *o_ptr,
+		oinfo_detail_t mode)
+{
+    int j, brand = 0;
+    bool full = mode & OINFO_FULL;
+    bool terse = mode & OINFO_TERSE;
+    byte attr = TERM_L_UMBER;
+
+    for (j = 0; j < MAX_P_BRAND; j++)
+	if (if_has(o_ptr->id_other, OBJECT_ID_BASE_BRAND + j) || 
+	    (full && (o_ptr->multiple_brand[j] > MULTIPLE_BASE))) 
+	    brand++;
+    
+    if (brand > 0) {
+	if (terse) textblock_append(tb, "Branded with ");
+	else textblock_append(tb, "It does extra damage from ");
+
+	/* Slays */
+	for (j = 0; j < MAX_P_SLAY; j++) {
+	    if (!if_has(o_ptr->id_other, OBJECT_ID_BASE_BRAND + j) || 
+		!(full && (o_ptr->multiple_brand[j] > MULTIPLE_BASE)))
+		continue;
+	    textblock_append_c(tb, attr, brandee[j]);
+	    if (brand >= 3)
+		textblock_append(tb, ", ");
+	    if (brand == 2)
+		textblock_append(tb, " and ");
+	    if (brand == 1)
+		textblock_append(tb, ". ");
+	    brand--;
+	}
+    
+	textblock_append(tb, "\n");
+	return TRUE;
+    }
+
+    return FALSE;
+}
 
 
 /*
@@ -529,492 +728,472 @@ static bool describe_immune(textblock *tb, object_type *o_ptr,
 /*
  * Describe 'ignores' of an object.
  */
-static bool describe_ignores(textblock *tb, const bitflag flags[OF_SIZE])
+static bool describe_ignores(textblock *tb, const object_type *o_ptr, 
+			      oinfo_detail_t mode)
 {
-	const char *descs[N_ELEMENTS(ignore_flags)];
-	size_t count = info_collect(tb, ignore_flags, N_ELEMENTS(ignore_flags),
-			flags, descs);
-
-	if (!count)
-		return FALSE;
-
-	textblock_append(tb, "Cannot be harmed by ");
-	info_out_list(tb, descs, count);
-
-	return TRUE;
+    bool full = mode & OINFO_FULL;
+    const char *descs[N_ELEMENTS(ignore_flags)];
+    size_t count = info_collect(tb, ignore_flags, N_ELEMENTS(ignore_flags),
+				full ? o_ptr->flags_obj : o_ptr->flags_id, 
+				descs);
+    
+    if (!count)
+	return FALSE;
+    
+    textblock_append(tb, "Cannot be harmed by ");
+    info_out_list(tb, descs, count);
+    
+    return TRUE;
 }
 
 
 /*
  * Describe stat sustains.
  */
-static bool describe_sustains(textblock *tb, const bitflag flags[OF_SIZE])
+static bool describe_sustains(textblock *tb, const object_type *o_ptr, 
+			      oinfo_detail_t mode)
 {
-	const char *descs[N_ELEMENTS(sustain_flags)];
-	size_t count = info_collect(tb, sustain_flags, N_ELEMENTS(sustain_flags),
-			flags, descs);
 
-	if (!count)
-		return FALSE;
+    bool full = mode & OINFO_FULL;
+    const char *descs[N_ELEMENTS(sustain_flags)];
+    size_t count = info_collect(tb, sustain_flags, N_ELEMENTS(sustain_flags),
+				full ? o_ptr->flags_obj : o_ptr->flags_id, 
+				descs);
 
+    if (!count)
+	return FALSE;
+
+    if (count == 6) textblock_append(tb, "It sustains all your stats. ");
+    else {
 	textblock_append(tb, "Sustains ");
 	info_out_list(tb, descs, count);
+    }
 
-	return TRUE;
+    return TRUE;
 }
 
 
 /*
  * Describe miscellaneous powers.
  */
-static bool describe_misc_magic(textblock *tb, const bitflag flags[OF_SIZE])
+static bool describe_misc_magic(textblock *tb, const object_type *o_ptr)
 {
-	size_t i;
-	bool printed = FALSE;
+    size_t i;
+    bool printed = FALSE;
 
-	for (i = 0; i < N_ELEMENTS(misc_flags); i++)
+    for (i = 0; i < N_ELEMENTS(misc_flags); i++)
+    {
+	if (of_has(full ? o_ptr->flags_obj : o_ptr->flags_id, misc_flags[i].flag))
 	{
-		if (of_has(flags, misc_flags[i].flag))
-		{
-			textblock_append(tb, "%s.  ", misc_flags[i].name);
-			printed = TRUE;
-		}
+	    if (!printed) textblock_append(tb, "Powers:  ");
+	    textblock_append(tb, "%s.  ", misc_flags[i].name);
+	    printed = TRUE;
 	}
+    }
 
-	if (printed)
-		textblock_append(tb, "\n");
+    if (printed)
+	textblock_append(tb, "\n");
 
-	return printed;
+    return printed;
 }
 
 
-/*
- * Describe slays and brands on weapons
+#define CHECK_FIRST(txt, first) \
+    if ((first)) { (first) = FALSE; textblock_append(tb, (txt)); }	\
+  else textblock_append(tb, ", ");
+
+/**
+ * Display the damage done with a multiplier
  */
-static bool describe_slays(textblock *tb, const bitflag flags[OF_SIZE],
-		int tval)
+static void output_dam(player_state *state, object_type * o_ptr, int mult, 
+		       const char *against, bool * first, oinfo_detail_t mode)
 {
-	bool printed = FALSE;
+    int dam, die_average, add = 0, i, deadliness, crit, chance;
+    bool full = mode & OINFO_FULL;
 
-	const char *slay_descs[N_ELEMENTS(slay_table)];
-	const char *kill_descs[N_ELEMENTS(slay_table)];
-	const char *brand_descs[N_ELEMENTS(slay_table)];
-	const slay_t *s_ptr;
-	bitflag slay_mask[OF_SIZE], kill_mask[OF_SIZE], brand_mask[OF_SIZE];
+    /* Average damage for one standard side (x10) */
+    die_average = (10 * (o_ptr->ds + 1)) / 2;
 
-	size_t x = 0;
-	size_t y = 0;
-	size_t z = 0;
+    /* Multiply by slay or brand (x10) */
+    die_average *= mult;
 
-	bool fulldesc;
+    /* Record the addend */
+    if (mult > MULTIPLE_BASE)
+	add = (mult - MULTIPLE_BASE);
 
-	flags_init(slay_mask, OF_SIZE, OF_SLAY_MASK, FLAG_END);
-	flags_init(kill_mask, OF_SIZE, OF_KILL_MASK, FLAG_END);
-	flags_init(brand_mask, OF_SIZE, OF_BRAND_MASK, FLAG_END);
-
-	if (tval == TV_SWORD || tval == TV_HAFTED || tval == TV_POLEARM ||
-			tval == TV_DIGGING || tval == TV_BOW || tval == TV_SHOT ||
-			tval == TV_ARROW || tval == TV_BOLT || tval == TV_FLASK)
-		fulldesc = FALSE;
+    /* Multiply by deadliness (x100) */
+    deadliness = state->dis_to_d;
+    if (if_has(o_ptr->id_other, IF_TO_D) || full)
+	deadliness += o_ptr->to_d;
+    if (deadliness > 150)
+	deadliness = 150;
+    if (deadliness < -150)
+	deadliness = -150;
+    if (deadliness >= 0)
+	die_average *= (100 + deadliness_conversion[deadliness]);
+    else {
+	i = deadliness_conversion[ABS(deadliness)];
+	if (i >= 100)
+	    die_average = 0;
 	else
-		fulldesc = TRUE;
+	    die_average *= (100 - i);
+    }
 
-	for (s_ptr = slay_table; s_ptr->slay_flag; s_ptr++)
-	{
-		if (!of_has(flags, s_ptr->slay_flag)) continue;
+    /* Factor in criticals (x 10) */
+    chance = state->skills[SKILL_TO_HIT_MELEE] + state->dis_to_h;
+    if (object_known_p(o_ptr))
+	chance += o_ptr->to_h;
+    chance = (100 * chance) / (chance + 240);
+    if (player_has(PF_ARMSMAN))
+	chance = 100 - (83 * (100 - chance)) / 100;
+    crit = 259 * chance;
+    crit /= 1000;
 
-		if (of_has(slay_mask, s_ptr->slay_flag))
-			slay_descs[x++] = s_ptr->desc;
-		else if (of_has(kill_mask, s_ptr->slay_flag))
-			kill_descs[y++] = s_ptr->desc;
-		else if (of_has(brand_mask, s_ptr->slay_flag))
-			brand_descs[z++] = s_ptr->brand;
-	}
+    /* Multiply by number of sides */
+    dam = die_average * (o_ptr->dd * 10 + crit);
 
-	/* Slays */
-	if (x)
-	{
-		if (fulldesc)
-			textblock_append(tb, "It causes your melee attacks to slay ");
-		else
-			textblock_append(tb, "Slays ");
-		info_out_list(tb, slay_descs, x);
-		printed = TRUE;
-	}
-
-	/* Kills */
-	if (y)
-	{
-		if (fulldesc)
-			textblock_append(tb, "It causes your melee attacks to *slay* ");
-		else
-			textblock_append(tb, "*Slays* ");
-		info_out_list(tb, kill_descs, y);
-		printed = TRUE;
-	}
-
-	/* Brands */
-	if (z)
-	{
-		if (fulldesc)
-			textblock_append(tb, "It brands your melee attacks with ");
-		else
-			textblock_append(tb, "Branded with ");
-		info_out_list(tb, brand_descs, z);
-		printed = TRUE;
-	}
-
-	return printed;
+    CHECK_FIRST("", *first);
+    if ((dam > 50000) || (add > 0))
+	textblock_append_c(tb, TERM_L_GREEN, "%d", add + dam / 100000));
+    else
+	textblock_append_c(tb, TERM_L_RED, "0");
+    textblock_append(tb, " against %s", against));
 }
 
-
-
-/*
- * list[] and mult[] must be > 16 in size
+/**
+ * Outputs the damage we do/would do with the weapon
  */
-static int collect_slays(const char *desc[], int mult[], bitflag *flags)
+static bool describe_weapon_damage(textblock *tb, const object_type *o_ptr,
+				   oinfo_detail_t mode)
 {
-	int cnt = 0;
-	u16b i;
-	const slay_t *s_ptr;
+    object_type forge, *old_ptr = &forge;
+    object_type *i_ptr;
+    int i, j;
 
-	/* Remove "duplicate" flags e.g. *slay* and slay the same
-	 * monster type
-	 */
-	for (i = 0; i < N_ELEMENTS(slay_dups); i++) {
-		if (of_has(flags, slay_dups[i].minor) &&
-				of_has(flags, slay_dups[i].major)) {
-			of_off(flags, slay_dups[i].minor);
-		}
+    bool full = mode & OINFO_FULL;
+    bool dummy = mode & OINFO_DUMMY;
+    bool terse = mode & OINFO_TERSE;
+    bool first = TRUE;
+    int show_m_tohit;
+    int brand[MAX_P_BRAND], slay[MAX_P_SLAY];
+
+    player_state state;
+    object_type inven[INVEN_TOTAL];
+
+    /* Abort if we've nothing to say */
+    if (mode & OINFO_DUMMY) return FALSE;
+
+    /* Extract the slays and brands */
+    for (j = 0; j < MAX_P_SLAY; j++)
+	slay[j] = (if_has(o_ptr->id_other, OBJECT_ID_BASE_SLAY + j) || full)
+	    ? o_ptr->multiple_slay[j] : MULTIPLE_BASE;
+    for (j = 0; j < MAX_P_BRAND; j++)
+	brand[j] = (if_has(o_ptr->id_other, OBJECT_ID_BASE_BRAND + j) || full)
+	    ? o_ptr->multiple_brand[j] : MULTIPLE_BASE;
+
+    /* Check rings for additional brands (slays) */
+    for (i = 0; i < 2; i++) {
+	i_ptr = &p_ptr->inventory[INVEN_LEFT + i];
+
+	/* If wearing a ring */
+	if (i_ptr->k_idx) {
+	    /* Pick up any brands (and slays!) */
+	    for (j = 0; j < MAX_P_SLAY; j++)
+		slay[j] =
+		    MAX(slay[j], ((if_has(i_ptr->id_other, OBJECT_ID_BASE_SLAY + j) || full)
+				  ? i_ptr->multiple_slay[j] : MULTIPLE_BASE));
+	    for (j = 0; j < MAX_P_BRAND; j++)
+		brand[j] =
+		    MAX(brand[j], ((if_has(i_ptr->id_other, OBJECT_ID_BASE_BRAND + j) || full)
+				   ? i_ptr->multiple_brand[j] : MULTIPLE_BASE);
+			}
 	}
+    }
 
-	/* Collect slays */
-	for (s_ptr = slay_table; s_ptr->slay_flag; s_ptr++) {
-		if (of_has(flags, s_ptr->slay_flag)) {
-			mult[cnt] = s_ptr->mult;
-			desc[cnt++] = s_ptr->desc;
-		}
+    /* temporary elemental brands */
+    if (p_ptr->special_attack & (ATTACK_ACID))
+	brand[P_BRAND_ACID] = MAX(brand[P_BRAND_ACID], BRAND_BOOST_NORMAL);
+    if (p_ptr->special_attack & (ATTACK_ELEC))
+	brand[P_BRAND_ELEC] = MAX(brand[P_BRAND_ELEC], BRAND_BOOST_NORMAL);
+    if (p_ptr->special_attack & (ATTACK_FIRE))
+	brand[P_BRAND_FIRE] = MAX(brand[P_BRAND_FIRE], BRAND_BOOST_NORMAL);
+    if (p_ptr->special_attack & (ATTACK_COLD))
+	brand[P_BRAND_COLD] = MAX(brand[P_BRAND_COLD], BRAND_BOOST_NORMAL);
+    if (p_ptr->special_attack & (ATTACK_POIS))
+	brand[P_BRAND_POIS] = MAX(brand[P_BRAND_POIS], BRAND_BOOST_NORMAL);
+    if (p_ptr->special_attack & (ATTACK_HOLY))
+	slay[P_SLAY_EVIL] = MAX(slay[P_SLAY_EVIL], SLAY_BOOST_SMALL);
+
+    /*
+     * Get the player's hypothetical state, were they to be
+     * wielding this item.
+     */
+    memcpy(inven, p_ptr->inventory, INVEN_TOTAL * sizeof(object_type));
+    inven[INVEN_WIELD] = *o_ptr;
+
+    calc_bonuses(inven, &state, TRUE);
+
+    show_m_tohit = state->dis_to_h;
+    if (if_has(o_ptr->id_other, IF_TO_H) || full)
+	show_m_tohit += o_ptr->to_h;
+
+    if (terse) {
+	textblock_append_c(tb, TERM_L_GREEN, "%d ", state->num_blow);
+	textblock_append(tb, "blow%s av. dam. ", (state->num_blow) ? "s" : "");
+    } else {
+	textblock_append(tb, "\nWielding it you would have ");
+	textblock_append_c(tb, TERM_L_GREEN, "%d ", state->num_blow);
+	textblock_append(tb, "blow%s and do an average damage per blow of ",
+			 (state->num_blow) ? "s" : "");
+    }
+
+    for (i = 0; i < MAX_P_SLAY; i++) {
+	if (slay[i] > MULTIPLE_BASE)
+	    output_dam(&state, o_ptr, slay[i], slayee[i], &first);
+    }
+
+    for (i = 0; i < MAX_P_BRAND; i++) {
+	if (brand[i] > MULTIPLE_BASE) {
+	    char buf[40];
+
+	    strnfmt(buf, sizeof(buf), "non %s resistant creatures", brandee[i]);
+	    output_dam(&state, o_ptr, brand[i], buf, &first);
 	}
+    }
 
-	return cnt;
+    output_dam(&state, o_ptr, MULTIPLE_BASE,
+	       (first) ? "all monsters" : "other monsters", &first);
+
+    if (terse) {
+	textblock_append(tb, ".  + ");
+	textblock_append_c(tb, TERM_L_GREEN, "%d", show_m_tohit);
+	textblock_append(tb, " to skill. ");
+    } else {
+	textblock_append(tb, ".  Your + to Skill would be ");
+	textblock_append_c(tb, TERM_L_GREEN, "%d", show_m_tohit);
+	textblock_append(tb, ". ");
+    }
+
+    return TRUE;
 }
 
 
-
-/*
- * Account for criticals in the calculation of melee prowess
- *
- * Note -- This relies on the criticals being an affine function
- * of previous damage, since we are used to transform the mean
- * of a roll.
- *
- * Also note -- rounding error makes this not completely accurate
- * (but for the big crit weapons like Grond an odd point of damage
- * won't be missed)
- *
- * This code written according to the KISS principle.  650 adds
- * are cheaper than a FOV call and get the job done fine.
+/**
+ * Display the ammo damage done with a multiplier
  */
-static void calculate_melee_crits(player_state *state, int weight,
-		int plus, int *mult, int *add, int *div)
+static void output_ammo_dam(player_state *state, object_type * o_ptr, int mult,
+			    const char *against, bool * first, bool perfect,
+			    oinfo_detail_t mode)
 {
-	int k, to_crit = weight + 5*(state->to_h + plus) + 3*p_ptr->lev;
-	to_crit = MIN(5000, MAX(0, to_crit));
+    object_type *b_ptr = &p_ptr->inventory[INVEN_BOW];
 
-	*mult = *add = 0;
+    int dam, die_average, add = 0, i, deadliness, crit, chance, dice =
+	o_ptr->dd;
 
-	for (k = weight; k < weight + 650; k++)
-	{
-		if (k <  400) { *mult += 4; *add += 10; continue; }
-		if (k <  700) { *mult += 4; *add += 20; continue; }
-		if (k <  900) { *mult += 6; *add += 30; continue; }
-		if (k < 1300) { *mult += 6; *add += 40; continue; }
-		                *mult += 7; *add += 50;
-	}
+    /* Throwing weapon, or launched missile? */
+    bool thrown = !is_missile(o_ptr);
+    bool full = mode & OINFO_FULL;
 
-	/*
-	 * Scale the output down to a more reasonable size, to prevent
-	 * integer overflow downstream.
-	 */
-	*mult = 100 + to_crit*(*mult - 1300)/(50*1300);
-	*add  = *add * to_crit / (500*50);
-	*div  = 100;
+    /* Average damage for one standard side (x10) */
+    die_average = (10 * (o_ptr->ds + 1)) / 2;
+
+    /* Apply the launcher multiplier. */
+    if (!thrown)
+	die_average *= p_ptr->ammo_mult;
+
+    /* Multiply by slay or brand (x10) */
+    die_average *= mult;
+
+    /* Record the addend */
+    if (mult > 10)
+	add = (mult - 10);
+
+    /* Multiply by deadliness (x100) */
+    deadliness = state->dis_to_d;
+    if (if_has(o_ptr->id_other, IF_TO_D) || full)
+	deadliness += o_ptr->to_d;
+    if (if_has(b_ptr->id_other, IF_TO_D) || full)
+	deadliness += b_ptr->to_d;
+    if (deadliness > 150)
+	deadliness = 150;
+    if (deadliness < -150)
+	deadliness = -150;
+    if (deadliness >= 0)
+	die_average *= (100 + deadliness_conversion[deadliness]);
+    else {
+	i = deadliness_conversion[ABS(deadliness)];
+	if (i >= 100)
+	    die_average = 0;
+	else
+	    die_average *= (100 - i);
+    }
+
+    /* Get critical chance (x 10) */
+    chance = state->skills[SKILL_TO_HIT_BOW] + state->dis_to_h;
+    if (if_has(o_ptr->id_other, IF_TO_H) || full)
+	chance += o_ptr->to_h;
+    if ((!thrown) && (if_has(b_ptr->id_other, IF_TO_H) || full))
+	chance += b_ptr->to_h;
+    if (thrown)
+	chance = chance * 3 / 2;
+    chance = (100 * chance) / (chance + 360);
+    if (player_has(PF_MARKSMAN))
+	chance = 100 - (83 * (100 - chance)) / 100;
+    crit = 116 * chance;
+    crit /= 1000;
+
+    /* Increase dice */
+    if (thrown && perfect)
+	dice *= 2;
+    dice = dice * 10 + crit;
+    if (thrown)
+	dice *= 2 + p_ptr->lev / 12;
+
+    /* Multiply by number of sides */
+    dam = die_average * dice;
+
+    CHECK_FIRST("", *first);
+    if ((dam > 50000) || (add > 0))
+	textblock_append_c(tb, TERM_L_GREEN, "%d", add + dam / 100000));
+    else
+	textblock_append_c(tb, TERM_L_RED, "0");
+    textblock_append(tb, " against %s", against);
 }
 
-/*
- * Missile crits follow the same approach as melee crits.
+/**
+ * Outputs the damage we do/would do with the current bow and this ammo
  */
-static void calculate_missile_crits(player_state *state, int weight,
-		int plus, int *mult, int *add, int *div)
+static bool describe_ammo_damage(textblock *tb, const object_type * o_ptr,
+				oinfo_detail_t mode)
 {
-	int k, to_crit = weight + 4*(state->to_h + plus) + 2*p_ptr->lev;
-	to_crit = MIN(5000, MAX(0, to_crit));
+    int i;
+    object_type *i_ptr;
 
-	*mult = *add = 0;
+    bool full = mode & OINFO_FULL;
+    bool dummy = mode & OINFO_DUMMY;
+    bool terse = mode & OINFO_TERSE;
+    bool first = TRUE;
+    bool perfect = (of_has(o_ptr->id_obj, OF_PERFECT_BALANCE) ||
+		    (of_has(o_ptr->flags_obj, OF_PERFECT_BALANCE) && full));
 
-	for (k = weight; k < weight + 500; k++)
-	{
-		if (k <  500) { *mult += 2; *add +=  5; continue; }
-		if (k < 1000) { *mult += 2; *add += 10; continue; }
-		                *mult += 3; *add += 15;
+    int brand[MAX_P_BRAND], slay[MAX_P_SLAY];
+
+    /* Extract the slays and brands */
+    for (i = 0; i < MAX_P_SLAY; i++)
+	slay[i] = (if_has(o_ptr->id_other, OBJECT_ID_BASE_SLAY + i) || full)
+	    ? o_ptr->multiple_slay[i] : MULTIPLE_BASE;
+    for (i = 0; i < MAX_P_BRAND; i++)
+	brand[i] = (if_has(o_ptr->id_other, OBJECT_ID_BASE_BRAND + i) || full)
+	    ? o_ptr->multiple_brand[i] : MULTIPLE_BASE;
+
+    /* Hack -- paladins (and priests) cannot take advantage of temporary
+     * elemental brands to rescue their lousy shooting skill. Missile
+     * weapons are "kind of" edged, right? */
+    if (!player_has(PF_BLESS_WEAPON) || (o_ptr->tval > TV_BOLT)) {
+	if (p_ptr->special_attack & (ATTACK_ACID))
+	    brand[P_BRAND_ACID] = MAX(brand[P_BRAND_ACID], BRAND_BOOST_NORMAL);
+	if (p_ptr->special_attack & (ATTACK_ELEC))
+	    brand[P_BRAND_ELEC] = MAX(brand[P_BRAND_ELEC], BRAND_BOOST_NORMAL);
+	if (p_ptr->special_attack & (ATTACK_FIRE))
+	    brand[P_BRAND_FIRE] = MAX(brand[P_BRAND_FIRE], BRAND_BOOST_NORMAL);
+	if (p_ptr->special_attack & (ATTACK_COLD))
+	    brand[P_BRAND_COLD] = MAX(brand[P_BRAND_COLD], BRAND_BOOST_NORMAL);
+	if (p_ptr->special_attack & (ATTACK_POIS))
+	    brand[P_BRAND_POIS] = MAX(brand[P_BRAND_POIS], BRAND_BOOST_NORMAL);
+    }
+    if (p_ptr->special_attack & (ATTACK_HOLY))
+	slay[P_SLAY_EVIL] = MAX(slay[P_SLAY_EVIL], 15);
+
+    if (o_ptr->tval > TV_BOLT) {
+	if (terse)
+	    textblock_append(tb, "Av. throwing dam. ");
+	else
+	    textblock_append(tb, "Throwing it you would do an average damage of ");
+	for (i = 0; i < MAX_P_SLAY; i++)
+	    if (slay[i] > MULTIPLE_BASE)
+		output_ammo_dam(&p_ptr->state, o_ptr, slay[i], slayee[i], &first, perfect);
+
+	for (i = 0; i < MAX_P_BRAND; i++)
+	    if (brand[i] > MULTIPLE_BASE) {
+		char buf[40];
+
+		strnfmt(buf, sizeof(buf), "non %s resistant creatures",
+			brandee[i]);
+		output_ammo_dam(&p_ptr->state, o_ptr, brand[i], buf, &first, perfect);
+	    }
+
+	output_ammo_dam(&p_ptr->state, o_ptr, MULTIPLE_BASE, 
+			(first) ? "all monsters" : "other monsters", &first,
+			perfect);
+	textblock_append(tb, ". ");
+
+	return TRUE;
+    } else if (p_ptr->state.ammo_tval == o_ptr->tval) {
+	/* Check launcher for additional brands (slays) */
+	i_ptr = &p_ptr->inventory[INVEN_BOW];
+
+	/* If wielding a launcher - sanity check */
+	if (i_ptr->k_idx) {
+	    /* Pick up any brands (and slays!) */
+	    for (i = 0; i < MAX_P_SLAY; i++)
+		slay[i] =
+		    MAX(slay[i], (if_has(i_ptr->id_other, OBJECT_ID_BASE_SLAY + i) || full)
+			? i_ptr->multiple_slay[i] : MULTIPLE_BASE);
+	    for (i = 0; i < MAX_P_BRAND; i++)
+		brand[i] =
+		    MAX(brand[i], (if_has(i_ptr->id_other, OBJECT_ID_BASE_BRAND + i) || full)
+			? i_ptr->multiple_brand[i] : MULTIPLE_BASE);
 	}
 
-	*mult = 100 + to_crit*(*mult - 500)/(500*50);
-	*add  = *add * to_crit / (500*50);
-	*div  = 100;
+	if (terse)
+	    textblock_append(tb, "Av shooting dam. ");
+	else
+	    textblock_append(tb, "\nUsing it with your current launcher you would do an average damage per shot of ");
+
+	for (i = 0; i < MAX_P_SLAY; i++)
+	    if (slay[i] > MULTIPLE_BASE)
+		output_ammo_dam(&p_ptr->state, o_ptr, slay[i], slayee[i], &first, perfect);
+
+	for (i = 0; i < MAX_P_BRAND; i++)
+	    if (brand[i] > MULTIPLE_BASE) {
+		char buf[40];
+
+		strnfmt(buf, sizeof(buf), "non %s resistant creatures",
+			brandee[i]);
+		output_ammo_dam(&p_ptr->state, o_ptr, brand[i], buf, &first, perfect);
+	    }
+
+	output_ammo_dam(&p_ptr->state, o_ptr, MULTIPLE_BASE,
+			(first) ? "all monsters" : "other monsters", &first,
+			perfect);
+	textblock_append(tb, ". ");
+
+	return TRUE;
+    } else if (!terse){
+	textblock_append(tb, "\nYou cannot use this missile with your current launcher. ");
+
+	return TRUE;
+
+    }
+    return FALSE;
+
 }
 
-/*
- * Describe combat advantages.
- */
 static bool describe_combat(textblock *tb, const object_type *o_ptr,
 		oinfo_detail_t mode)
 {
-	bool full = mode & OINFO_FULL;
+    bool combat = FALSE;
 
-	const char *desc[16];
-	int i;
-	int mult[16];
-	int cnt, dam, total_dam, plus = 0;
-	int xtra_postcrit = 0, xtra_precrit = 0;
-	int crit_mult, crit_div, crit_add;
-	int str_plus, dex_plus, old_blows = 0, new_blows, extra_blows;
-	int str_done = -1;
-	object_type *j_ptr = &p_ptr->inventory[INVEN_BOW];
+    /* Print melee damage info */
+    if ((k_ptr->tval == TV_SWORD) || (k_ptr->tval == TV_POLEARM)
+	|| (k_ptr->tval == TV_HAFTED) || (k_ptr->tval == TV_DIGGING))
+	combat = describe_weapon_damage(o_ptr);
 
-	bitflag f[OF_SIZE];
-	bitflag tmp_f[OF_SIZE];
+    /* Print range damage info */
+    if (is_missile(o_ptr) || of_has(o_ptr->flags_obj, OF_THROWING))
+	combat = combat || describe_ammo_damage(o_ptr);
 
-	bool weapon = (wield_slot(o_ptr) == INVEN_WIELD);
-	bool ammo   = (p_ptr->state.ammo_tval == o_ptr->tval) &&
-	              (j_ptr->k_idx);
-	int multiplier = 1;
-
-	/* Abort if we've nothing to say */
-	if (mode & OINFO_DUMMY) return FALSE;
-
-	if (!weapon && !ammo)
-	{
-		/* Potions can have special text */
-		if (o_ptr->tval != TV_POTION ||
-				o_ptr->dd == 0 || o_ptr->ds == 0 ||
-				!object_flavor_is_aware(o_ptr))
-			return FALSE;
-
-		textblock_append(tb, "It can be thrown at creatures with damaging effect.\n");
-		return TRUE;
-	}
-
-	if (full)
-		object_flags(o_ptr, f);
-	else
-		object_flags_known(o_ptr, f);
-
-	textblock_append_c(tb, TERM_L_WHITE, "Combat info:\n");
-
-	if (weapon)
-	{
-		/*
-		 * Get the player's hypothetical state, were they to be
-		 * wielding this item.
-		 */
-		player_state state;
-		int dex_plus_bound;
-		int str_plus_bound;
-
-		object_type inven[INVEN_TOTAL];
-
-		memcpy(inven, p_ptr->inventory, INVEN_TOTAL * sizeof(object_type));
-		inven[INVEN_WIELD] = *o_ptr;
-
-		if (full) object_know_all_flags(&inven[INVEN_WIELD]);
-
-		calc_bonuses(inven, &state, TRUE);
-		dex_plus_bound = STAT_RANGE - state.stat_ind[A_DEX];
-		str_plus_bound = STAT_RANGE - state.stat_ind[A_STR];
-
-		dam = ((o_ptr->ds + 1) * o_ptr->dd * 5);
-
-		xtra_postcrit = state.dis_to_d * 10;
-		if (object_attack_plusses_are_visible(o_ptr))
-		{
-			xtra_precrit += o_ptr->to_d * 10;
-			plus += o_ptr->to_h;
-		}
-
-		calculate_melee_crits(&state, o_ptr->weight, plus,
-				&crit_mult, &crit_add, &crit_div);
-
-		/* Warn about heavy weapons */
-		if (adj_str_hold[state.stat_ind[A_STR]] < o_ptr->weight / 10)
-			textblock_append_c(tb, TERM_L_RED, "You are too weak to use this weapon.\n");
-
-		textblock_append_c(tb, TERM_L_GREEN, "%d.%d ",
-				state.num_blow / 100, (state.num_blow / 10) % 10);
-		textblock_append(tb, "blow%s/round.\n",
-				(state.num_blow > 100) ? "s" : "");
-
-		/* Check to see if extra STR or DEX would yield extra blows */
-		old_blows = state.num_blow;
-		extra_blows = 0;
-
-		/* First we need to look for extra blows on other items, as
-		 * state does not track these */
-		for (i = INVEN_BOW; i < INVEN_TOTAL; i++)
-		{
-			object_flags_known(&p_ptr->inventory[i], tmp_f);
-
-			if (of_has(tmp_f, OF_BLOWS))
-				extra_blows += p_ptr->inventory[i].pval;
-		}
-
-		/* Then we add blows from the weapon being examined */
-		if (of_has(f, OF_BLOWS)) extra_blows += o_ptr->pval;
-
-		/* Then we check for extra "real" blows */
-		for (dex_plus = 0; dex_plus < dex_plus_bound; dex_plus++)
-		{
-			for (str_plus = 0; str_plus < str_plus_bound; str_plus++)
-	        {
-				state.stat_ind[A_STR] += str_plus;
-				state.stat_ind[A_DEX] += dex_plus;
-				new_blows = calc_blows(o_ptr, &state, extra_blows);
-
-				/* Test to make sure that this extra blow is a
-				 * new str/dex combination, not a repeat
-				 */
-				if (new_blows > old_blows &&
-					(str_plus < str_done ||
-					str_done == -1))
-				{
-					textblock_append(tb, "With an additional %d strength and %d dex you would get %d.%d blows\n",
-						str_plus, dex_plus, (new_blows / 100),
-						(new_blows / 10) % 10);
-					state.stat_ind[A_STR] -= str_plus;
-					state.stat_ind[A_DEX] -= dex_plus;
-					str_done = str_plus;
-					break;
-				}
-
-				state.stat_ind[A_STR] -= str_plus;
-				state.stat_ind[A_DEX] -= dex_plus;
-			}
-		}
-	}
-	else
-	{
-		int tdis = 6 + 2 * p_ptr->state.ammo_mult;
-
-		if (object_attack_plusses_are_visible(o_ptr))
-			plus += o_ptr->to_h;
-
-		calculate_missile_crits(&p_ptr->state, o_ptr->weight, plus,
-				&crit_mult, &crit_add, &crit_div);
-
-		/* Calculate damage */
-		dam = ((o_ptr->ds + 1) * o_ptr->dd * 5);
-
-		if (object_attack_plusses_are_visible(o_ptr))
-			dam += (o_ptr->to_d * 10);
-		if (object_attack_plusses_are_visible(j_ptr))
-			dam += (j_ptr->to_d * 10);
-
-		/* Apply brands/slays from the shooter to the ammo, but only if known
-		 * Note that this is not dependent on mode, so that viewing shop-held
-		 * ammo (fully known) does not leak information about launcher */
-		object_flags_known(j_ptr, tmp_f);
-		of_union(f, tmp_f);
-
-		textblock_append(tb, "Hits targets up to ");
-		textblock_append_c(tb, TERM_L_GREEN, format("%d", tdis * 10));
-		textblock_append(tb, " feet away.\n");
-	}
-
-	/* Collect slays */
-	/* Melee weapons get slays and brands from other items now */
-	if (weapon)
-	{
-		bool nonweap = FALSE;
-
-		for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
-		{
-			object_flags_known(&p_ptr->inventory[i], tmp_f);
-
-			flags_mask(tmp_f, OF_SIZE, OF_ALL_SLAY_MASK, FLAG_END);
-
-			if (of_union(f, tmp_f))
-				nonweap = TRUE;
-		}
-
-		if (nonweap)
-			textblock_append(tb, "This weapon may benefit from one or more off-weapon brands or slays.\n");
-	}
-
-	textblock_append(tb, "Average damage/round: ");
-
-	if (ammo) multiplier = p_ptr->state.ammo_mult;
-
-	cnt = collect_slays(desc, mult, f);
-	for (i = 0; i < cnt; i++)
-	{
-		int melee_adj_mult = ammo ? 0 : 1; /* ammo mult adds fully, melee mult is times 1, so adds 1 less */
-		/* Include bonus damage and slay in stated average */
-		total_dam = dam * (multiplier + mult[i] - melee_adj_mult) + xtra_precrit;
-		total_dam = (total_dam * crit_mult + crit_add) / crit_div;
-		total_dam += xtra_postcrit;
-		if (weapon) 
-			total_dam = (total_dam * old_blows) / 100;
-		else
-			total_dam *= p_ptr->state.num_fire;
-		
-
-		if (total_dam <= 0)
-			textblock_append_c(tb, TERM_L_RED, "%d", 0);
-		else if (total_dam % 10)
-			textblock_append_c(tb, TERM_L_GREEN, "%d.%d",
-					total_dam / 10, total_dam % 10);
-		else
-			textblock_append_c(tb, TERM_L_GREEN, "%d", total_dam / 10);
-
-
-		textblock_append(tb, " vs. %s, ", desc[i]);
-	}
-
-	if (cnt) textblock_append(tb, "and ");
-
-	/* Include bonus damage in stated average */
-	total_dam = dam * multiplier + xtra_precrit;
-	total_dam = (total_dam * crit_mult + crit_add) / crit_div;
-	total_dam += xtra_postcrit;
-	if (weapon)
-		total_dam = (total_dam * old_blows) / 100;
-	else
-		total_dam *= p_ptr->state.num_fire;
-
-	if (total_dam <= 0)
-		textblock_append_c(tb, TERM_L_RED, "%d", 0);
-	else if (total_dam % 10)
-		textblock_append_c(tb, TERM_L_GREEN, "%d.%d",
-				total_dam / 10, total_dam % 10);
-	else
-		textblock_append_c(tb, TERM_L_GREEN, "%d", total_dam / 10);
-
-	if (cnt) textblock_append(tb, " vs. others");
-	textblock_append(tb, ".\n");
-
-	/* Note the impact flag */
-	if (of_has(f, OF_IMPACT))
-		textblock_append(tb, "Sometimes creates earthquakes on impact.\n");
-
-	/* Add breakage chance */
-	if (ammo)
-	{
-		textblock_append_c(tb, TERM_L_GREEN, "%d%%", breakage_chance(o_ptr));
-		textblock_append(tb, " chance of breaking upon contact.\n");
-	}
-
-	/* You always have something to say... */
-	return TRUE;
+    return combat;
 }
 
 /*
@@ -1023,85 +1202,79 @@ static bool describe_combat(textblock *tb, const object_type *o_ptr,
 static bool describe_digger(textblock *tb, const object_type *o_ptr,
 		oinfo_detail_t mode)
 {
-	bool full = mode & OINFO_FULL;
+    bool full = mode & OINFO_FULL;
 
-	player_state st;
+    player_state st;
 
-	object_type inven[INVEN_TOTAL];
+    object_type inven[INVEN_TOTAL];
 
-	int sl = wield_slot(o_ptr);
-	int i;
+    int sl = wield_slot(o_ptr);
+    int i;
 
-	bitflag f[OF_SIZE];
+    int chances[4]; /* These are out of 1600 */
+    static const char *names[4] = { "rubble", "magma veins", "quartz veins", "granite" };
 
-	int chances[4]; /* These are out of 1600 */
-	static const char *names[4] = { "rubble", "magma veins", "quartz veins", "granite" };
+    /* abort if we are a dummy object */
+    if (mode & OINFO_DUMMY) return FALSE;
 
-	/* abort if we are a dummy object */
-	if (mode & OINFO_DUMMY) return FALSE;
+    if (sl < 0 || (sl != INVEN_WIELD && 
+		   (o_ptr->bonus_other[P_BONUS_TUNNEL] == 0)))
+	return FALSE;
 
-	if (full)
-		object_flags(o_ptr, f);
-	else
-		object_flags_known(o_ptr, f);
+    memcpy(inven, p_ptr->inventory, INVEN_TOTAL * sizeof(object_type));
 
-	if (sl < 0 || (sl != INVEN_WIELD && !of_has(f, OF_TUNNEL)))
-		return FALSE;
+    /*
+     * Hack -- if we examine a ring that is worn on the right finger,
+     * we shouldn't put a copy of it on the left finger before calculating
+     * digging skills.
+     */
+    if (o_ptr != &p_ptr->inventory[INVEN_RIGHT])
+	inven[sl] = *o_ptr;
 
-	memcpy(inven, p_ptr->inventory, INVEN_TOTAL * sizeof(object_type));
+    calc_bonuses(inven, &st, TRUE);
 
-	/*
-	 * Hack -- if we examine a ring that is worn on the right finger,
-	 * we shouldn't put a copy of it on the left finger before calculating
-	 * digging skills.
-	 */
-	if (o_ptr != &p_ptr->inventory[INVEN_RIGHT])
-		inven[sl] = *o_ptr;
+    chances[0] = st.skills[SKILL_DIGGING] * 8;
+    chances[1] = (st.skills[SKILL_DIGGING] - 10) * 4;
+    chances[2] = (st.skills[SKILL_DIGGING] - 20) * 2;
+    chances[3] = (st.skills[SKILL_DIGGING] - 40) * 1;
 
-	calc_bonuses(inven, &st, TRUE);
+    for (i = 0; i < 4; i++)
+    {
+	int chance = MAX(0, MIN(1600, chances[i]));
+	int decis = chance ? (16000 / chance) : 0;
 
-	chances[0] = st.skills[SKILL_DIGGING] * 8;
-	chances[1] = (st.skills[SKILL_DIGGING] - 10) * 4;
-	chances[2] = (st.skills[SKILL_DIGGING] - 20) * 2;
-	chances[3] = (st.skills[SKILL_DIGGING] - 40) * 1;
-
-	for (i = 0; i < 4; i++)
-	{
-		int chance = MAX(0, MIN(1600, chances[i]));
-		int decis = chance ? (16000 / chance) : 0;
-
-		if (i == 0 && chance > 0) {
-			if (sl == INVEN_WIELD)
-				textblock_append(tb, "Clears ");
-			else
-				textblock_append(tb, "With this item, your current weapon clears ");
-		}
-
-		if (i == 3 || (i != 0 && chance == 0))
-			textblock_append(tb, "and ");
-
-		if (chance == 0) {
-			textblock_append_c(tb, TERM_L_RED, "doesn't affect ");
-			textblock_append(tb, "%s.\n", names[i]);
-			break;
-		}
-
-		textblock_append(tb, "%s in ", names[i]);
-
-		if (chance == 1600) {
-			textblock_append_c(tb, TERM_L_GREEN, "1 ");
-		} else if (decis < 100) {
-			textblock_append_c(tb, TERM_GREEN, "%d.%d ", decis/10, decis%10);
-		} else {
-			textblock_append_c(tb, (decis < 1000) ? TERM_YELLOW : TERM_RED,
-			           "%d ", (decis+5)/10);
-		}
-
-		textblock_append(tb, "turn%s%s", decis == 10 ? "" : "s",
-				(i == 3) ? ".\n" : ", ");
+	if (i == 0 && chance > 0) {
+	    if (sl == INVEN_WIELD)
+		textblock_append(tb, "Clears ");
+	    else
+		textblock_append(tb, "With this item, your current weapon clears ");
 	}
 
-	return TRUE;
+	if (i == 3 || (i != 0 && chance == 0))
+	    textblock_append(tb, "and ");
+
+	if (chance == 0) {
+	    textblock_append_c(tb, TERM_L_RED, "doesn't affect ");
+	    textblock_append(tb, "%s.\n", names[i]);
+	    break;
+	}
+
+	textblock_append(tb, "%s in ", names[i]);
+
+	if (chance == 1600) {
+	    textblock_append_c(tb, TERM_L_GREEN, "1 ");
+	} else if (decis < 100) {
+	    textblock_append_c(tb, TERM_GREEN, "%d.%d ", decis/10, decis%10);
+	} else {
+	    textblock_append_c(tb, (decis < 1000) ? TERM_YELLOW : TERM_RED,
+			       "%d ", (decis+5)/10);
+	}
+
+	textblock_append(tb, "turn%s%s", decis == 10 ? "" : "s",
+			 (i == 3) ? ".\n" : ", ");
+    }
+
+    return TRUE;
 }
 
 
@@ -1178,127 +1351,124 @@ static bool describe_light(textblock *tb, const object_type *o_ptr, bool terse)
 /*
  * Describe an object's effect, if any.
  */
-static bool describe_effect(textblock *tb, const object_type *o_ptr, bool full,
-		bool only_artifacts, bool subjective)
+static bool describe_effect(textblock *tb, const object_type *o_ptr, 
+			    oinfo_detail_t mode)
 {
-	const object_kind *k_ptr = &k_info[o_ptr->k_idx];
-	const char *desc;
-	random_value timeout = {0, 0, 0, 0};
+    const object_kind *k_ptr = &k_info[o_ptr->k_idx];
+    const char *desc;
+    random_value timeout = {0, 0, 0, 0};
+    bool full = mode & OINFO_FULL;
+    bool subjective = mode & OINFO_SUBJ;
+    bool terse = mode & OINFO_TERSE;
 
-	int effect = 0, fail;
+    int effect = 0, fail;
 
-	if (o_ptr->name1)
-	{
-		const artifact_type *a_ptr = &a_info[o_ptr->name1];
-
-		if (object_effect_is_known(o_ptr) || full)
-		{
-			effect = a_ptr->effect;
-			timeout = a_ptr->time;
-		}
-		else if (object_effect(o_ptr))
-		{
-			textblock_append(tb, "It can be activated.\n");
-			return TRUE;
-		}
+    if (wearable_p(o_ptr)) {
+	/* Wearable + effect <=> activates */
+	if ((o_ptr->ident & IDENT_WORN) || full) {
+	    effect = o_ptr->effect;
+	    timeout = o_ptr->time;
 	}
-	else
+	else if (object_effect(o_ptr))
 	{
-		/* Sometimes only print artifact activation info */
-		if (only_artifacts == TRUE) return FALSE;
+	    textblock_append(tb, "It can be activated.\n");
+	    return TRUE;
+	}
+    }
+    else {
+	/* Sometimes only print activation info */
+	if (terse) return FALSE;
 
-		if (object_effect_is_known(o_ptr) || full)
-		{
-			effect = k_ptr->effect;
-			timeout = k_ptr->time;
-		}
-		else if (object_effect(o_ptr) != 0)
-		{
-			if (effect_aim(k_ptr->effect))
-				textblock_append(tb, "It can be aimed.\n");
-			else if (o_ptr->tval == TV_FOOD)
-				textblock_append(tb, "It can be eaten.\n");
-			else if (o_ptr->tval == TV_POTION)
-				textblock_append(tb, "It can be drunk.\n");
-			else if (o_ptr->tval == TV_SCROLL)
-				textblock_append(tb, "It can be read.\n");
-			else textblock_append(tb, "It can be activated.\n");
+	if (object_aware_p(o_ptr) || k_ptr->easy_know || full) {
+	    effect = o_ptr->effect;
+	    timeout = o_ptr->time;
+	}
+	else if (object_effect(o_ptr)) {
+	    if (effect_aim(k_ptr->effect))
+		textblock_append(tb, "It can be aimed.\n");
+	    else if (o_ptr->tval == TV_FOOD)
+		textblock_append(tb, "It can be eaten.\n");
+	    else if (o_ptr->tval == TV_POTION)
+		textblock_append(tb, "It can be drunk.\n");
+	    else if (o_ptr->tval == TV_SCROLL)
+		textblock_append(tb, "It can be read.\n");
+	    else textblock_append(tb, "It can be activated.\n");
 
-			return TRUE;
-		}
+	    return TRUE;
+	}
+    }
+
+    /* Forget it without an effect */
+    if (!effect) return FALSE;
+
+    /* Obtain the description */
+    desc = effect_desc(effect);
+    if (!desc) return FALSE;
+
+    if (effect_aim(effect))
+	textblock_append(tb, "When aimed, it ");
+    else if (o_ptr->tval == TV_FOOD)
+	textblock_append(tb, "When eaten, it ");
+    else if (o_ptr->tval == TV_POTION)
+	textblock_append(tb, "When drunk, it ");
+    else if (o_ptr->tval == TV_SCROLL)
+	textblock_append(tb, "When read, it ");
+    else
+	textblock_append(tb, "When activated, it ");
+
+    /* Print a colourised description */
+    do
+    {
+	if (isdigit((unsigned char) *desc))
+	    textblock_append_c(tb, TERM_L_GREEN, "%c", *desc);
+	else
+	    textblock_append(tb, "%c", *desc);
+    } while (*desc++);
+
+    textblock_append(tb, ".\n");
+
+    if (randcalc(timeout, 0, MAXIMISE) > 0)
+    {
+	int min_time, max_time;
+
+	/* Sometimes adjust for player speed */
+	int multiplier = extract_energy[p_ptr->state.speed];
+	if (!subjective) multiplier = 10;
+
+	textblock_append(tb, "Takes ");
+
+	/* Correct for player speed */
+	min_time = randcalc(timeout, 0, MINIMISE) * multiplier / 10;
+	max_time = randcalc(timeout, 0, MAXIMISE) * multiplier / 10;
+
+	textblock_append_c(tb, TERM_L_GREEN, "%d", min_time);
+
+	if (min_time != max_time)
+	{
+	    textblock_append(tb, " to ");
+	    textblock_append_c(tb, TERM_L_GREEN, "%d", max_time);
 	}
 
-	/* Forget it without an effect */
-	if (!effect) return FALSE;
-
-	/* Obtain the description */
-	desc = effect_desc(effect);
-	if (!desc) return FALSE;
-
-	if (effect_aim(effect))
-		textblock_append(tb, "When aimed, it ");
-	else if (o_ptr->tval == TV_FOOD)
-		textblock_append(tb, "When eaten, it ");
-	else if (o_ptr->tval == TV_POTION)
-		textblock_append(tb, "When drunk, it ");
-	else if (o_ptr->tval == TV_SCROLL)
-	    textblock_append(tb, "When read, it ");
-	else
-	    textblock_append(tb, "When activated, it ");
-
-	/* Print a colourised description */
-	do
-	{
-		if (isdigit((unsigned char) *desc))
-			textblock_append_c(tb, TERM_L_GREEN, "%c", *desc);
-		else
-			textblock_append(tb, "%c", *desc);
-	} while (*desc++);
+	textblock_append(tb, " turns to recharge");
+	if (subjective && p_ptr->state.speed != 110)
+	    textblock_append(tb, " at your current speed");
 
 	textblock_append(tb, ".\n");
+    }
 
-	if (randcalc(timeout, 0, MAXIMISE) > 0)
-	{
-		int min_time, max_time;
-
-		/* Sometimes adjust for player speed */
-		int multiplier = extract_energy[p_ptr->state.speed];
-		if (!subjective) multiplier = 10;
-
-		textblock_append(tb, "Takes ");
-
-		/* Correct for player speed */
-		min_time = randcalc(timeout, 0, MINIMISE) * multiplier / 10;
-		max_time = randcalc(timeout, 0, MAXIMISE) * multiplier / 10;
-
-		textblock_append_c(tb, TERM_L_GREEN, "%d", min_time);
-
-		if (min_time != max_time)
-		{
-			textblock_append(tb, " to ");
-			textblock_append_c(tb, TERM_L_GREEN, "%d", max_time);
-		}
-
-		textblock_append(tb, " turns to recharge");
-		if (subjective && p_ptr->state.speed != 110)
-			textblock_append(tb, " at your current speed");
-
-		textblock_append(tb, ".\n");
-	}
-
-	if (!subjective || o_ptr->tval == TV_FOOD || o_ptr->tval == TV_POTION ||
-		o_ptr->tval == TV_SCROLL)
-	{
-		return TRUE;
-	}
-	else
-	{
-		fail = get_use_device_chance(o_ptr);
-		textblock_append(tb, "Your chance of success is %d.%d%%\n", (1000 - fail) /
-			10, (1000 - fail) % 10);
-	}
-
+    if (!subjective || o_ptr->tval == TV_FOOD || o_ptr->tval == TV_POTION ||
+	o_ptr->tval == TV_SCROLL)
+    {
 	return TRUE;
+    }
+    else
+    {
+	fail = get_use_device_chance(o_ptr);
+	textblock_append(tb, "Your chance of success is %d.%d%%\n", (1000 - fail) /
+			 10, (1000 - fail) % 10);
+    }
+
+    return TRUE;
 }
 
 
@@ -1440,6 +1610,34 @@ bool describe_ego(textblock *tb, const object_type *o_ptr)
 }
 
 
+bool describe_set(textblock *tb, const object_type *o_ptr, 
+			    oinfo_detail_t mode)
+{
+    bool full = mode & OINFO_FULL;
+    
+    if (!full && !object_known_p(o_ptr)) return FALSE;
+    if (!o_ptr->name1) return FALSE;
+    else {
+	artifact_type *a_ptr = &a_info[o_ptr->name1];
+	
+	/* Is it a set item? */
+	if (a_ptr->set_no) {
+	    set_type *s_ptr = &s_info[a_ptr->set_no];
+	    
+	    /* Description */
+	    textblock_append(tb, "\n");
+	    textblock_append_c(tb, TERM_BLUE, s_ptr->text);
+	    
+	    /* End sentence */
+	    textblock_append_c(tb, TERM_BLUE, ".");
+	}
+	else return FALSE;
+    }
+    
+    return TRUE;
+}
+
+
 /*
  * Output object information
  */
@@ -1456,32 +1654,23 @@ static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
 
 	textblock *tb = textblock_new();
 
-	/* Grab the object flags */
-	if (full)
-		object_flags(o_ptr, flags);
-	else
-		object_flags_known(o_ptr, flags);
-
 	if (subjective) describe_origin(tb, o_ptr);
 	if (!terse) describe_flavor_text(tb, o_ptr);
 
-	if (!full && !known)
-	{
-		textblock_append(tb, "You do not know the full extent of this item's powers.\n");
-		something = TRUE;
-	}
-
-	if (describe_curses(tb, o_ptr, flags)) something = TRUE;
+	if (describe_set(tb, o_ptr, mode)) something = TRUE;
 	if (describe_stats(tb, o_ptr, mode)) something = TRUE;
-	if (describe_slays(tb, flags, o_ptr->tval)) something = TRUE;
+	if (describe_bonus(tb, o_ptr, mode)) something = TRUE;
+	if (describe_slays(tb, o_ptr, mode)) something = TRUE;
+	if (describe_brands(tb, o_ptr, mode)) something = TRUE;
 	if (describe_immune(tb, o_ptr, mode)) something = TRUE;
-	if (describe_ignores(tb, flags)) something = TRUE;
-	if (describe_sustains(tb, flags)) something = TRUE;
-	if (describe_misc_magic(tb, flags)) something = TRUE;
+	if (describe_sustains(tb, o_ptr, mode)) something = TRUE;
+	if (describe_misc_magic(tb, o_ptr)) something = TRUE;
+	if (describe_curses(tb, o_ptr)) something = TRUE;
 	if (ego && describe_ego(tb, o_ptr)) something = TRUE;
+	if (describe_ignores(tb, o_ptr, mode)) something = TRUE;
 	if (something) textblock_append(tb, "\n");
 
-	if (describe_effect(tb, o_ptr, full, terse, subjective))
+	if (describe_effect(tb, o_ptr, mode))
 	{
 		something = TRUE;
 		textblock_append(tb, "\n");
@@ -1498,8 +1687,8 @@ static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
 	if (!terse && subjective && describe_digger(tb, o_ptr, mode)) something = TRUE;
 
 	if (!something)
-		textblock_append(tb, "\n\nThis item does not seem to possess any special abilities.");
-
+		textblock_append(tb, "\n");
+	if (!terse && !dummy) textblock_append(tb, obj_class_info[o_ptr->tval]);
 	return tb;
 }
 
@@ -1540,7 +1729,18 @@ textblock *object_info_ego(struct ego_item *ego)
 	obj.tval = kind->tval;
 	obj.sval = kind->sval;
 	obj.name2 = ego->eidx;
-	of_union(obj.flags, ego->flags);
+	of_union(obj.flags_obj, ego->flags_obj);
+	of_union(obj.flags_curse, ego->flags_curse);
+	for (i = 0; i < MAX_P_RES; i++) 
+	    obj.percent_res[i] = e_ptr->percent_res[i];
+	for (i = 0; i < A_MAX; i++) 
+	    obj.bonus_stat[i] = e_ptr->bonus_stat[i];
+	for (i = 0; i < MAX_P_BONUS; i++) 
+	    obj.bonus_other[i] = e_ptr->bonus_other[i];
+	for (i = 0; i < MAX_P_SLAY; i++)
+	    obj.multiple_slay[i] = e_ptr->multiple_slay[i];
+	for (i = 0; i < MAX_P_BRAND; i++)
+	    obj.multiple_brand[i] = e_ptr->multiple_brand[i];
 
 	return object_info_out(&obj, OINFO_FULL | OINFO_EGO | OINFO_DUMMY);
 }

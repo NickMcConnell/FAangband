@@ -698,7 +698,7 @@ W:55:35:25:40000
 P:3:1d1:0:0:15:53
 B:MAGIC_MASTERY[3] | RES_ELEC[40] | RES_DARK[50] 
 F:FREE_ACT | FEATHER
-E:MAEGLIN:7+D7 
+E:MAEGLIN:7+d7 
 M:Your gauntlets radiate dark energy...
 D:The iron-shod gauntlets of Maeglin son of Eol, tingling with magics 
 D:that he could channel in battle.

@@ -2162,7 +2162,7 @@ static void store_sell(void)
 	inven_item_optimize(item);
 
 	if (item == INVEN_WIELD)
-	    p_ptr->shield_on_back = FALSE;
+	    p_ptr->state.shield_on_back = FALSE;
 
 
 	/* Handle stuff */
@@ -2194,7 +2194,7 @@ static void store_sell(void)
 	inven_item_optimize(item);
 
 	if (item == INVEN_WIELD)
-	    p_ptr->shield_on_back = FALSE;
+	    p_ptr->state.shield_on_back = FALSE;
 
 
 	/* Handle stuff */

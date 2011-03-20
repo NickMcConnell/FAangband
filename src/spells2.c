@@ -2434,23 +2434,23 @@ void set_ele_attack(u32b attack_type, int duration)
     /* Clear all elemental attacks (only one is allowed at a time). */
     if ((p_ptr->special_attack & (ATTACK_ACID)) && (attack_type != ATTACK_ACID)) {
 	p_ptr->special_attack &= ~(ATTACK_ACID);
-	clear_timed(TMD_ATT_ACID);
+	clear_timed(TMD_ATT_ACID, TRUE);
     }
     if ((p_ptr->special_attack & (ATTACK_ELEC)) && (attack_type != ATTACK_ELEC)) {
 	p_ptr->special_attack &= ~(ATTACK_ELEC);
-	clear_timed(TMD_ATT_ELEC);
+	clear_timed(TMD_ATT_ELEC, TRUE);
     }
     if ((p_ptr->special_attack & (ATTACK_FIRE)) && (attack_type != ATTACK_FIRE)) {
 	p_ptr->special_attack &= ~(ATTACK_FIRE);
-	clear_timed(TMD_ATT_FIRE);
+	clear_timed(TMD_ATT_FIRE, TRUE);
     }
     if ((p_ptr->special_attack & (ATTACK_COLD)) && (attack_type != ATTACK_COLD)) {
 	p_ptr->special_attack &= ~(ATTACK_COLD);
-	clear_timed(TMD_ATT_COLD);
+	clear_timed(TMD_ATT_COLD, TRUE);
     }
     if ((p_ptr->special_attack & (ATTACK_POIS)) && (attack_type != ATTACK_POIS)) {
 	p_ptr->special_attack &= ~(ATTACK_POIS);
-	clear_timed(TMD_ATT_POIS);
+	clear_timed(TMD_ATT_POIS, TRUE);
     }
 
     if ((duration) && (attack_type)) {

@@ -632,7 +632,8 @@ static size_t obj_desc_combat(const object_type * o_ptr, char *buf, size_t max,
 
     /* Show armor bonuses */
     if (obj_desc_show_armor(o_ptr)){
-	bool back = p_ptr->shield_on_back && (wield_slot(o_ptr) == INVEN_ARM);
+	bool back = p_ptr->state.shield_on_back && 
+	    (wield_slot(o_ptr) == INVEN_ARM);
 	int ac, to_a;
 	
 	ac = back ? o_ptr->ac / 3 : o_ptr->ac;

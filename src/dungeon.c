@@ -420,7 +420,7 @@ static void process_world(void)
 	/* Every 100 game turns */
 	if (!(turn % 100)) {
 	    /* Basic digestion rate based on speed */
-	    i = extract_energy[p_ptr->pspeed] * 2;
+	    i = extract_energy[p_ptr->state.pspeed] * 2;
 
 	    /* Regeneration takes more food */
 	    if (p_ptr->state.regenerate)
@@ -2190,7 +2190,7 @@ static void dungeon(void)
       /*** Apply energy ***/
 
 	/* Give the player some energy */
-	p_ptr->energy += extract_energy[p_ptr->pspeed];
+	p_ptr->energy += extract_energy[p_ptr->state.pspeed];
 
 	/* Give the player the first move in a new level */
 	if (just_arrived) {

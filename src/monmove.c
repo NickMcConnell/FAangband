@@ -112,7 +112,8 @@ static void find_range(monster_type * m_ptr)
 
     /* Nearby monsters that cannot run away will not become run unless
      * completely afraid */
-    else if ((m_ptr->cdis < TURN_RANGE) && (m_ptr->mspeed < p_ptr->pspeed))
+    else if ((m_ptr->cdis < TURN_RANGE) && 
+	     (m_ptr->mspeed < p_ptr->state.pspeed))
 	m_ptr->min_range = 1;
 
     /* Now find prefered range */
@@ -2305,7 +2306,7 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
     if (*fear) {
 	/* The character is too close to avoid, and faster than we are */
 	if ((!m_ptr->monfear) && (m_ptr->cdis < TURN_RANGE)
-	    && (p_ptr->pspeed > m_ptr->mspeed)) {
+	    && (p_ptr->state.pspeed > m_ptr->mspeed)) {
 	    /* Recalculate range */
 	    find_range(m_ptr);
 

@@ -1116,7 +1116,7 @@ void apply_magic(object_type * o_ptr, int lev, bool okay, bool good, bool great)
 	o_ptr->found = p_ptr->stage;
 
 	/* Transfer the activation information. */
-	o_ptr->activation = a_ptr->activation;
+	o_ptr->effect = a_ptr->effect;
 
 	/* Mega-Hack -- increase the rating */
 	rating += 15;
@@ -1356,6 +1356,9 @@ void apply_magic(object_type * o_ptr, int lev, bool okay, bool good, bool great)
 	/* Get flags */
 	o_ptr->flags_obj |= e_ptr->flags_obj;
 	o_ptr->flags_curse |= e_ptr->flags_curse;
+
+	/* Get activation */
+	if (e_ptr->effect) o_ptr->effect = e_ptr->effect;
 
 	/* Assign bonuses (random between base and ego) */
 	for (i = 0; i < A_MAX; i++) {
