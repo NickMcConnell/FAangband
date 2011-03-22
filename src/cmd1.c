@@ -390,19 +390,29 @@ extern void py_pickup_aux(int o_idx)
     /* Carry the object */
     slot = inven_carry(o_ptr);
 
+	/* Handle errors (paranoia) */
+	if (slot < 0) return;
+
+	/* If we have picked up ammo which matches something in the quiver, note
+	 * that it so that we can wield it later (and suppress pick up message) */
+	if (obj_is_ammo(o_ptr)) 
+	{
+		int i;
+		for (i = QUIVER_START; i < QUIVER_END; i++) 
+		{
+			if (!p_ptr->inventory[i].k_idx) continue;
+			if (!object_similar(&p_ptr->inventory[i], o_ptr,
+				OSTACK_QUIVER)) continue;
+			quiver_slot = i;
+			break;
+		}
+	}
+
     /* Get the object again */
     o_ptr = &p_ptr->inventory[slot];
 
     /* Set squelch status */
     p_ptr->notice |= PN_SQUELCH;
-
-    /* Hack - set the turn found for artifacts */
-    if (o_ptr->name1) {
-	if (a_info[o_ptr->name1].creat_turn < 2) {
-	    a_info[o_ptr->name1].creat_turn = turn;
-	    a_info[o_ptr->name1].p_level = p_ptr->lev;
-	}
-    }
 
     /* Stone of Lore gives id on pickup */
     if (!object_known_p(o_ptr)) {
@@ -431,6 +441,10 @@ extern void py_pickup_aux(int o_idx)
 	}
     }
 
+    /* Log artifacts if found */
+    if (artifact_p(o_ptr))
+	history_add_artifact(o_ptr->name1, object_is_known(o_ptr), TRUE);
+
     /* Notice dice and other obvious stuff */
     notice_other(IF_DD_DS, slot + 1);
     (void) of_inter(f, obvious_mask);
@@ -447,14 +461,22 @@ extern void py_pickup_aux(int o_idx)
     /* Recalculate the bonuses */
     p_ptr->update |= (PU_BONUS);
 
-    /* Describe the object */
-    object_desc(o_name, o_ptr, TRUE, 3);
+    /* Optionally, display a message */
+    if (!quiver_slot)
+    {
+	/* Describe the object */
+	object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
 
-    /* Message */
-    msg_format("You have %s (%c).", o_name, index_to_label(slot));
+	/* Message */
+	msg_format("You have %s (%c).", o_name, index_to_label(slot));
+    }
+
 
     /* Delete the object */
     delete_object_idx(o_idx);
+
+	/* If we have a quiver slot that this ammo matches, use it */
+	if (quiver_slot) wield_item(o_ptr, slot, quiver_slot);
 }
 
 

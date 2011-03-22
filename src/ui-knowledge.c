@@ -1214,7 +1214,7 @@ static void desc_art_fake(int a_idx)
 		 * was lost */
 		if (history_is_artifact_known(a_idx))
 		{
-			object_notice_everything(o_ptr);
+			o_ptr->ident |= IDENT_KNOWN;
 		}
 	}
 
@@ -1832,6 +1832,11 @@ static void do_cmd_knowledge_scores(const char *name, int row)
     show_scores();
 }
 
+static void do_cmd_knowledge_history(const char *name, int row)
+{
+	history_display();
+}
+
 
 
 
@@ -1845,6 +1850,7 @@ static menu_action knowledge_actions[] = {
     {0, 0, "Display monster knowledge", do_cmd_knowledge_monsters},
     {0, 0, "Display feature knowledge", do_cmd_knowledge_features},
     {0, 0, "Display hall of fame", do_cmd_knowledge_scores},
+    { 0, 0, "Display character history",     do_cmd_knowledge_history   },
 };
 
 static menu_type knowledge_menu;

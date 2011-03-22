@@ -1107,16 +1107,20 @@ static bool black_market_crap(object_type * o_ptr)
 static void store_delete(void)
 {
     int what, num;
+	object_type *o_ptr;
 
     /* Paranoia */
     if (st_ptr->stock_num <= 0)
 	return;
 
+    /* Get the object */
+    o_ptr = &st_ptr->stock[what];
+
     /* Pick a random slot */
     what = randint0(st_ptr->stock_num);
 
     /* Determine how many objects are in the slot */
-    num = st_ptr->stock[what].number;
+    num = o_ptr->number;
 
     /* Hack -- sometimes, only destroy half the objects */
     if (randint0(100) < 50)
@@ -1124,19 +1128,23 @@ static void store_delete(void)
 
     /* Hack -- sometimes, only destroy a single object, if not a missile. */
     if (randint0(100) < 50) {
-	if ((st_ptr->stock[what].tval != TV_BOLT)
-	    && (st_ptr->stock[what].tval != TV_ARROW)
-	    && (st_ptr->stock[what].tval != TV_SHOT))
+	if ((o_ptr->tval != TV_BOLT)
+	    && (o_ptr->tval != TV_ARROW)
+	    && (o_ptr->tval != TV_SHOT))
 	    num = 1;
     }
 
     /* Hack -- decrement the maximum timeouts and total charges of rods/wands. */
-    if ((st_ptr->stock[what].tval == TV_ROD)
-	|| (st_ptr->stock[what].tval == TV_WAND)) {
-	st_ptr->stock[what].pval -=
-	    num * st_ptr->stock[what].pval / st_ptr->stock[what].number;
+    if ((o_ptr->.tval == TV_ROD)
+	|| (o_ptr->tval == TV_WAND)) {
+	o_ptr->pval -=
+	    num * o_ptr->pval / o_ptr->number;
 
     }
+
+    /* Is the item an artifact? Mark it as lost if the player has it in history list */
+    if (artifact_p(o_ptr))
+	history_lose_artifact(o_ptr->name1);
 
     /* Actually destroy (part of) the object */
     store_item_increase(what, -num);
@@ -2103,6 +2111,10 @@ static void store_sell(void)
 	/* Apply an autoiscription if any left */
 	if ((amt < o_ptr->number) && (!aware))
 	    apply_autoinscription(o_ptr);
+
+	/* Update the auto-history if selling an artifact that was previously un-IDed. (Ouch!) */
+	if (artifact_p(o_ptr))
+	    history_add_artifact(o_ptr->name1, TRUE, TRUE);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);

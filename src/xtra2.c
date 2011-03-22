@@ -131,11 +131,9 @@ void check_experience(void)
 
 	    char buf[120];
 
-	    /* Build the message */
-	    sprintf(buf, "Reached level %d", p_ptr->lev);
-
-	    /* Write message */
-	    make_note(buf, p_ptr->stage, NOTE_LEVEL, p_ptr->lev);
+	    /* Log level updates */
+	    strnfmt(buf, sizeof(buf), "Reached level %d", p_ptr->lev);
+	    history_add(buf, HISTORY_GAIN_LEVEL, 0);
 
 	}
 

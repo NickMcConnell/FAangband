@@ -3470,6 +3470,8 @@ static void death_knowledge(void)
 	}
     }
 
+	history_unmask_unknown();
+
     /* Hack -- Recalculate bonuses */
     p_ptr->update |= (PU_BONUS);
 
@@ -3708,6 +3710,41 @@ static void kingly(void)
     /* Wait for response */
     pause_line(23);
 }
+
+/*
+ * Menu command: view character history.
+ */
+static void death_history(const char *title, int row)
+{
+	history_display();
+}
+
+/*
+ * Menu command: allow spoiler generation (mainly for randarts).
+ */
+static void death_spoilers(const char *title, int row)
+{
+	do_cmd_spoilers();
+}
+
+/*
+ * Menu structures for the death menu. Note that Quit must always be the
+ * last option, due to a hard-coded check in death_screen
+ */
+static menu_type *death_menu;
+static menu_action death_actions[] =
+{
+	{ 0, 'i', "Information",   death_info      },
+	{ 0, 'm', "Messages",      death_messages  },
+	{ 0, 'f', "File dump",     death_file      },
+	{ 0, 'v', "View scores",   death_scores    },
+	{ 0, 'x', "Examine items", death_examine   },
+	{ 0, 'h', "History",       death_history   },
+	{ 0, 's', "Spoilers",      death_spoilers  },
+	{ 0, 'q', "Quit",          NULL            },
+};
+
+
 
 /**
  * Handle character death

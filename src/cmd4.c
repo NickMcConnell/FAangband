@@ -633,73 +633,25 @@ void do_cmd_pref(void)
  */
 void do_cmd_note(void)
 {
-  make_note("", p_ptr->stage, NOTE_PLAYER, p_ptr->lev);
+	char tmp[80];
+
+	/* Default */
+	my_strcpy(tmp, "", sizeof(tmp));
+
+	/* Input */
+	if (!get_string("Note: ", tmp, 80)) return;
+
+	/* Ignore empty notes */
+	if (!tmp[0] || (tmp[0] == ' ')) return;
+
+	/* Add the note to the message recall */
+	msg_format("Note: %s", tmp);
+
+	/* Add a history entry */
+	history_add(tmp, HISTORY_USER_INPUT, 0);
 }
   
   
-/**
- * Note something in the message recall or character notes file.  Lifted
- * from NPPangband, patch originally by Chris Kern.
- *
- * Updated for FA 030 -NRM-
- */
-void make_note(char *note, int what_stage, byte note_type, s16b lev)
-{
-  char buf[80];
-  
-  int i, num = 0;
-  
-  /* Default */
-  strcpy(buf, "");
-  
-  /* If a note is passed, use that, otherwise accept user input. */
-  if (streq(note, ""))
-    {
-      if (!get_string("Note: ", buf, 70)) return;
-    }
-  
-  else my_strcpy(buf, note, sizeof(buf));
-  
-  /* Ignore empty notes */
-  if (!buf[0] || (buf[0] == ' ')) return;
-  
-  /* Find out how many notes already */
-  while (notes[num].turn != 0) num++;
-
-  /* Handle too many notes (unlikely) */
-  if (num > NOTES_MAX_LINES - 5)
-    {
-      /* Move everything 10 back */
-      for (i = 10; i < num; i++)
-	notes[num - 10] = notes[num];
-
-      /* Delete the last 10 */
-      for (i = num; i < num + 10; i++)
-	notes[num - 10].turn = 0; 
-
-      /* Paranoia - recalculate */
-      num = 0;
-      while (notes[num].turn != 0) num++;
-    }
-
-  /* Search backward */
-  if (num > 0)
-    while (turn < notes[num - 1].turn)
-      {
-	/* Move the last entry down */
-	notes[num] = notes[num - 1];
-	num--;
-      }
-
-  /* Should be in the right place */
-  notes[num].turn = turn;
-  notes[num].place = what_stage;
-  notes[num].level = (int)lev;
-  notes[num].type = note_type;
-  my_strcpy(notes[num].note, buf, sizeof(notes[num].note));
-      
-}
-
 
 /**
  * Mention the current version

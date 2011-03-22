@@ -1348,6 +1348,9 @@ void player_birth(bool quickstart_allowed)
     (void) strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
 #endif
 
+    /* Clear old messages, add new starting message */
+    history_clear();
+
     /* Record the start for notes */
     sprintf(notes_start, "Began the quest to kill Morgoth on %s\n", long_day);
 

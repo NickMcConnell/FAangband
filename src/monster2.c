@@ -4083,39 +4083,6 @@ void monster_death(int m_idx)
     p_ptr->redraw |= (PR_MONLIST | PR_ITEMLIST);
 
 
-    /* If the player kills a unique, write a note. */
-
-    if (rf_has(r_ptr->flags, RF_UNIQUE)) {
-
-	char note2[120];
-	char real_name[120];
-
-	/* write note for player ghosts */
-	if (rf_has(r_ptr->flags, RF_PLAYER_GHOST)) {
-	    my_strcpy(note2,
-		      format("Destroyed %^s, the %^s", ghost_name,
-			     r_name + r_ptr->name), sizeof(note2));
-	}
-
-	/* All other uniques */
-	else {
-	    /* Get the monster's real name for the notes file */
-	    monster_desc_race(real_name, sizeof(real_name), m_ptr->r_idx);
-
-	    /* Write note */
-	    if ((rf_has(r_ptr->flags, RF_DEMON))
-		|| (rf_has(r_ptr->flags, RF_UNDEAD))
-		|| (rf_has(r_ptr->flags, RF_STUPID))
-		|| (strchr("Evg", r_ptr->d_char)))
-		my_strcpy(note2, format("Destroyed %s", real_name),
-			  sizeof(note2));
-	    else
-		my_strcpy(note2, format("Killed %s", real_name), sizeof(note2));
-	}
-
-	make_note(note2, p_ptr->stage, NOTE_UNIQUE, p_ptr->lev);
-    }
-
     /* Only process "Quest Monsters" */
     if (!(rf_has(r_ptr->flags, RF_QUESTOR)))
 	return;
@@ -4337,8 +4304,36 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, cptr note)
 	monster_death(m_idx);
 
 	/* When the player kills a Unique, it stays dead */
-	if (rf_has(r_ptr->flags, RF_UNIQUE))
+	if (rf_has(r_ptr->flags, RF_UNIQUE)) {
+	    char note[120];
+	    char real_name[120];
+
 	    r_ptr->max_num--;
+
+	    /* write note for player ghosts */
+	    if (rf_has(r_ptr->flags, RF_PLAYER_GHOST)) {
+		my_strcpy(note2,
+			  format("Destroyed %^s, the %^s", ghost_name,
+				 r_name + r_ptr->name), sizeof(note2));
+	    }
+
+	    /* All other uniques */
+	    else {
+		/* Get the monster's real name for the notes file */
+		monster_desc_race(real_name, sizeof(real_name), m_ptr->r_idx);
+
+		/* Write note */
+		if (monster_is_unusual(r_ptr))
+		    my_strcpy(note, format("Destroyed %s", real_name),
+			      sizeof(note2));
+		else
+		    my_strcpy(note, format("Killed %s", real_name), sizeof(note));
+	    }
+
+	    history_add(note, HISTORY_SLAY_UNIQUE, 0);
+	}
+
+
 
 	/* When the player kills a player ghost, the bones file that it used
 	 * is (often) deleted. */

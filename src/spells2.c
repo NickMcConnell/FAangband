@@ -436,42 +436,9 @@ void identify_object(object_type * o_ptr)
     if (!item_dubious(o_ptr, FALSE) && was_dubious)
 	o_ptr->ident |= IDENT_CURSED;
 
-    /* If artifact, write a note if applicable */
-    if ((o_ptr->name1) && (o_ptr->found)) {
-	int artifact_stage, lev;
-	char note[120];
-	char shorter_desc[120];
-	s32b real_turn = turn;
-
-	/* Get a shorter description to fit the notes file */
-	object_desc(shorter_desc, o_ptr, TRUE, 0);
-
-	/* Build note and write */
-	sprintf(note, "Found %s", shorter_desc);
-
-	/* Record the depth where the artifact was created */
-	artifact_stage = o_ptr->found;
-
-	/* Hack - record the turn when the artifact was first picked up or
-	 * wielded by the player.  This may result in out of order entries in
-	 * the notes file, which really should be re-ordered */
-	turn = a_info[o_ptr->name1].creat_turn;
-	if (turn < 2)
-	    turn = real_turn;
-	lev = (int) a_info[o_ptr->name1].p_level;
-	if (lev == 0)
-	    lev = (int) p_ptr->lev;
-	make_note(note, artifact_stage, NOTE_ARTIFACT, (s16b) lev);
-	turn = real_turn;
-
-	/* 
-	 * Mark item creation depth 0, which will indicate the artifact
-	 * has been previously identified.  This prevents an artifact
-	 * from showing up on the notes list twice if the artifact had
-	 * been previously identified.  JG
-	 */
-	o_ptr->found = 0;
-    }
+	/* Log artifacts to the history list. */
+	if (artifact_p(o_ptr))
+		history_add_artifact(o_ptr->name1, TRUE, TRUE);
 
     /* If the object is flavored, also make all items of that type, except for
      * variable rings and amulets, fully known. */
