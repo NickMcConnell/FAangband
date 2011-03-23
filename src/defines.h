@@ -546,9 +546,16 @@ typedef enum
 #define PY_MAX_GOLD	99999999L	/* Maximum gold */
 #define PY_MAX_LEVEL	50		/* Maximum level */
 #define PY_MAX_SPELLS   64              /* Maximum number of spells */
-#define PY_MAX_BOOKS    9               /* Maximum number of spellbooks */
+#define PY_MAX_BOOKS    11              /* Maximum number of spellbooks */
 #define SPELLS_PER_BOOK 12              /* Maximum number of spells per book */
 
+
+/*
+ * Flags for player_type.spell_flags[]
+ */
+#define PY_SPELL_LEARNED    0x01 /* Spell has been learned */
+#define PY_SPELL_WORKED     0x02 /* Spell has been successfully tried */
+#define PY_SPELL_FORGOTTEN  0x04 /* Spell has been forgotten */
 
 /*
  * Player "food" crucial values

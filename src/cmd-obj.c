@@ -79,29 +79,6 @@ static int check_devices(object_type * o_ptr)
 }
 
 
-typedef enum {
-    ART_TAG_NONE,
-    ART_TAG_NAME,
-    ART_TAG_KIND,
-    ART_TAG_VERB,
-    ART_TAG_VERB_IS
-} art_tag_t;
-
-static art_tag_t art_tag_lookup(const char *tag)
-{
-    if (strncmp(tag, "name", 4) == 0)
-	return ART_TAG_NAME;
-    else if (strncmp(tag, "kind", 4) == 0)
-	return ART_TAG_KIND;
-    else if (strncmp(tag, "s", 1) == 0)
-	return ART_TAG_VERB;
-    else if (strncmp(tag, "is", 2) == 0)
-	return ART_TAG_VERB_IS;
-    else
-	return ART_TAG_NONE;
-}
-
-
 
 /*** Inscriptions ***/
 
@@ -774,10 +751,10 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
     /* Check for use if necessary, and execute the effect */
     if ((use != USE_CHARGE && use != USE_TIMEOUT) || check_devices(o_ptr)) {
 	/* Special message for artifacts */
-	if (artifact_p(o_ptr)) {
+	if (artifact_p(o_ptr) && wearable_p(o_ptr)) {
 	    message(snd, 0, "You activate it.");
 	    if (a_info[o_ptr->name1].effect_msg)
-		activation_message(o_ptr, a_info[o_ptr->name1].effect_msg);
+		msg_print(a_info[o_ptr->name1].effect_msg);
 	    level = a_info[o_ptr->name1].level;
 	} else {
 	    /* Make a noise! */
@@ -785,20 +762,8 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 	    level = k_info[o_ptr->k_idx].level;
 	}
 
-	/* A bit of a hack to make ID work better. -- Check for "obvious"
-	 * effects beforehand. */
-	if (effect_obvious(effect))
-	    object_flavor_aware(o_ptr);
-
-	/* Boost damage effects if skill > difficulty */
-	boost = p_ptr->state.skills[SKILL_DEVICE] - level;
-	if (boost < 0)
-	    boost = 0;
-
 	/* Do effect */
-	used =
-	    effect_do(effect, &ident, was_aware, dir, beam_chance(o_ptr->tval),
-		      boost);
+	used = effect_do(effect, &ident, was_aware, dir);
 
 	/* Quit if the item wasn't used and no knowledge was gained */
 	if (!used && (was_aware || !ident))
@@ -1247,6 +1212,25 @@ static void pseudo_probe(void)
     }
 }
 
+/* Magic description data structure */
+typedef struct
+{
+    int book_tval;
+    const char *spell_noun;
+    const char *book_noun;
+    const char *verb;
+} magic_desc;
+
+/* List of magic descriptions */
+const magic_desc magic_word[] = 
+{
+    {TV_MAGIC_BOOK,   "spell",        "magic book", "cast"},
+    {TV_PRAYER_BOOK,  "prayer",       "holy book",  "pray"},
+    {TV_DRUID_BOOK,   "druidic lore", "stone",      "use"},
+    {TV_NECRO_BOOK,   "ritual",       "tome",       "perform"},
+};
+
+
 /**
  * Cast a spell or pray a prayer.
  */
@@ -1257,22 +1241,16 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
 
     int item_list[INVEN_TOTAL + MAX_FLOOR_STACK];
     int item_num;
-    int i;
+    int i, m = 0;
 
     int chance, beam, item;
     s16b shape = 0;
-
-    bool failed = FALSE;
 
     int plev = p_ptr->lev;
 
     object_type *o_ptr;
 
     magic_type *s_ptr;
-
-    cptr spell_noun = "";
-    cptr book_noun = "";
-    cptr verb = "";
 
     cptr q = "";
     cptr s = "";
@@ -1303,35 +1281,9 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
 	return;
 
     /* Determine magic description. */
-    if (mp_ptr->spell_book == TV_MAGIC_BOOK)
-	spell_noun = "spell";
-    if (mp_ptr->spell_book == TV_PRAYER_BOOK)
-	spell_noun = "prayer";
-    if (mp_ptr->spell_book == TV_DRUID_BOOK)
-	spell_noun = "druidic lore";
-    if (mp_ptr->spell_book == TV_NECRO_BOOK)
-	spell_noun = "ritual";
-
-    /* Determine spellbook description. */
-    if (mp_ptr->spell_book == TV_MAGIC_BOOK)
-	book_noun = "magic book";
-    if (mp_ptr->spell_book == TV_PRAYER_BOOK)
-	book_noun = "holy book";
-    if (mp_ptr->spell_book == TV_DRUID_BOOK)
-	book_noun = "stone";
-    if (mp_ptr->spell_book == TV_NECRO_BOOK)
-	book_noun = "tome";
-
-    /* Determine method description. */
-    if (mp_ptr->spell_book == TV_MAGIC_BOOK)
-	verb = "cast";
-    if (mp_ptr->spell_book == TV_PRAYER_BOOK)
-	verb = "pray";
-    if (mp_ptr->spell_book == TV_DRUID_BOOK)
-	verb = "use";
-    if (mp_ptr->spell_book == TV_NECRO_BOOK)
-	verb = "perform";
-
+    for (i = 0; i < N_ELEMENTS(magic_word); i++)
+	if (magic_word[i].book_tval == mp_ptr->spell_book)
+	    m = i;
 
     /* Restrict choices to spell books of the player's realm. */
     item_tester_hook = obj_can_browse;
@@ -1339,80 +1291,67 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
 	scan_items(item_list, N_ELEMENTS(item_list), (USE_INVEN | USE_FLOOR));
 
 
-    /* Do we have an item? */
-    if (p_ptr->command_item) {
-	item = handle_item();
-	if (!get_item_allow(item))
-	    return;
-    }
+    /* Check through all available books */
+    for (i = 0; i < item_num; i++)
+    {
+	if (spell_in_book(spell, item_list[i]))
+	{
+	    if (spell_okay_to_cast(spell))
+	    {
+		/* Get the spell */
+		const magic_type *s_ptr = &mp_ptr->info[spell];	
+				
+		/* Verify "dangerous" spells */
+		if (s_ptr->smana > p_ptr->csp)
+		{
+		    /* Warning */
+		    msg_format("You do not have enough mana to %s this %s.", 
+			       magic_word[m].verb, magic_word[m].spell_noun);
+					
+		    /* Flush input */
+		    flush();
+					
+		    /* Verify */
+		    if (!get_check("Attempt it anyway? ")) return;
+		}
 
-    /* Get a realm-flavored description. */
-    else {
-	if (mp_ptr->spell_book == TV_MAGIC_BOOK) {
-	    q = "Use which magic book? ";
-	    s = "You have no magic books that you can use.";
+		/* Cast a spell */
+		if (spell_cast(spell, dir)){
+		    /* Take a turn */
+		    p_ptr->energy_use = 100;
+		    
+		    /* Reduced for fast casters */
+		    if (player_has(PF_FAST_CAST)) {
+			int level_difference = p_ptr->lev - s_ptr->slevel;
+			
+			p_ptr->energy_use -= 5 + (level_difference / 2);
+			
+			/* Increased bonus for really easy spells */
+			if (level_difference > 25)
+			    p_ptr->energy_use -= (level_difference - 25);
+		    }
+		    
+		    /* Give Credit for Heighten Magic */
+		    if (player_has(PF_HEIGHTEN_MAGIC))
+			add_heighten_power(20);
+		    
+		    /* Paranioa */
+		    if (p_ptr->energy_use < 50)
+			p_ptr->energy_use = 50;
+		}
+		else
+		{
+		    /* Spell is present, but player incapable. */
+		    msg_format("You cannot %s that %s.", magic_word[m].verb, 
+			       magic_word[m].spell_noun);
+		}
+
+		return;
+	    }
 	}
-	if (mp_ptr->spell_book == TV_PRAYER_BOOK) {
-	    q = "Use which holy book? ";
-	    s = "You have no holy books that you can use.";
-	}
-	if (mp_ptr->spell_book == TV_DRUID_BOOK) {
-	    q = "Use which stone of lore? ";
-	    s = "You have no stones that you can use.";
-	}
-	if (mp_ptr->spell_book == TV_NECRO_BOOK) {
-	    q = "Use which tome? ";
-	    s = "You have no tomes that you can use.";
-	}
 
-	/* Get an item */
-	if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR)))
-	    return;
     }
-
-    /* Get the item (in the pack) */
-    if (item >= 0) {
-	o_ptr = &p_ptr->inventory[item];
-    }
-
-    /* Get the item (on the floor) */
-    else {
-	o_ptr = &o_list[0 - item];
-    }
-
-    /* Track the object kind */
-    object_kind_track(o_ptr->k_idx);
-
-    /* Hack -- Handle stuff */
-    handle_stuff();
-
-
-    /* Access the spell */
-    s_ptr = &mp_ptr->info[spell];
-
-
-    /* Verify "dangerous" spells */
-    if (s_ptr->smana > p_ptr->csp) {
-	/* Warning */
-	msg_format("You do not have enough mana to %s this %s.", verb,
-		   spell_noun);
-
-	/* Verify */
-	if (!get_check("Attempt it anyway? "))
-	    return;
-    }
-
-
-    /* Cast a spell */
-    if (spell_cast(spell, dir))
-	p_ptr->energy_use = 100;
-
-
-    /* Forget the item_tester_hook */
-    item_tester_hook = NULL;
-
 }
-
 
 /**
  * Study a book to gain a new spell/prayer

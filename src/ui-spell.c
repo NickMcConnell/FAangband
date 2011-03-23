@@ -56,54 +56,48 @@ static int spell_menu_valid(menu_type *m, int oid)
  * Display a row of the spell menu
  */
 static void spell_menu_display(menu_type *m, int oid, bool cursor,
-		int row, int col, int wid)
+			       int row, int col, int wid)
 {
-	struct spell_menu_data *d = menu_priv(m);
-	int spell = d->spells[oid];
-	const magic_type *s_ptr = &mp_ptr->info[spell];
+    struct spell_menu_data *d = menu_priv(m);
+    int spell = d->spells[oid];
+    const magic_type *s_ptr = &mp_ptr->info[spell];
 
-	char help[30];
-	char out[80];
+    char help[30];
+    char out[80];
 
-	int attr;
-	const char *illegible = NULL;
-	const char *comment = NULL;
+    int attr;
+    const char *illegible = NULL;
+    const char *comment = NULL;
 
-	if (s_ptr->slevel >= 99) {
-		illegible = "(illegible)";
-		attr = TERM_L_DARK;
-	} else if ((oid < 32) ?
-	  ((p_ptr->spell_forgotten1 & (1L << oid))) :
-	  ((p_ptr->spell_forgotten2 & (1L << (oid - 32))))) {
-		comment = " forgotten";
-		attr = TERM_YELLOW;
-	} else if (((oid < 32) ?
-		 (p_ptr->spell_learned1 & (1L << oid)) :
-		 (p_ptr->spell_learned2 & (1L << (oid - 32))))) {
-		if (((oid < 32) ?
-		 (p_ptr->spell_worked1 & (1L << oid)) :
-		 (p_ptr->spell_worked2 & (1L << (oid - 32))))) {
-			/* Get extra info */
-			get_spell_info(mp_ptr->spell_book, spell, help, sizeof(help));
-			comment = help;
-			attr = TERM_WHITE;
-		} else {
-			comment = " untried";
-			attr = TERM_L_GREEN;
-		}
-	} else if (s_ptr->slevel <= p_ptr->lev) {
-		comment = " unknown";
-		attr = TERM_L_BLUE;
+    if (s_ptr->slevel >= 99) {
+	illegible = "(illegible)";
+	attr = TERM_L_DARK;
+    } else if (p_ptr->spell_flags[spell] & PY_SPELL_FORGOTTEN) {
+	comment = " forgotten";
+	attr = TERM_YELLOW;
+    } else if (p_ptr->spell_flags[spell] & PY_SPELL_LEARNED) {
+	if (p_ptr->spell_flags[spell] & PY_SPELL_WORKED) {
+	    /* Get extra info */
+	    get_spell_info(mp_ptr->spell_book, spell, help, sizeof(help));
+	    comment = help;
+	    attr = TERM_WHITE;
 	} else {
-		comment = " difficult";
-		attr = TERM_RED;
+	    comment = " untried";
+	    attr = TERM_L_GREEN;
 	}
+    } else if (s_ptr->slevel <= p_ptr->lev) {
+	comment = " unknown";
+	attr = TERM_L_BLUE;
+    } else {
+	comment = " difficult";
+	attr = TERM_RED;
+    }
 
-	/* Dump the spell --(-- */
-	strnfmt(out, sizeof(out), "%-30s%2d %4d %3d%%%s",
-			get_spell_name(mp_ptr->spell_book, spell),
-			s_ptr->slevel, s_ptr->smana, spell_chance(spell), comment);
-	c_prt(attr, illegible ? illegible : out, row, col);
+    /* Dump the spell --(-- */
+    strnfmt(out, sizeof(out), "%-30s%2d %4d %3d%%%s",
+	    get_spell_name(mp_ptr->spell_book, spell),
+	    s_ptr->slevel, s_ptr->smana, spell_chance(spell), comment);
+    c_prt(attr, illegible ? illegible : out, row, col);
 }
 
 /**
@@ -111,14 +105,14 @@ static void spell_menu_display(menu_type *m, int oid, bool cursor,
  */
 static bool spell_menu_handler(menu_type *m, const ui_event_data *e, int oid)
 {
-	struct spell_menu_data *d = menu_priv(m);
+    struct spell_menu_data *d = menu_priv(m);
 
-	if (e->type == EVT_SELECT) {
-		d->selected_spell = d->spells[oid];
-		return d->browse ? TRUE : FALSE;
-	}
+    if (e->type == EVT_SELECT) {
+	d->selected_spell = d->spells[oid];
+	return d->browse ? TRUE : FALSE;
+    }
 
-	return TRUE;
+    return TRUE;
 }
 
 /**
@@ -126,78 +120,78 @@ static bool spell_menu_handler(menu_type *m, const ui_event_data *e, int oid)
  */
 static void spell_menu_browser(int oid, void *data, const region *loc)
 {
-	struct spell_menu_data *d = data;
-	int spell = d->spells[oid];
+    struct spell_menu_data *d = data;
+    int spell = d->spells[oid];
 
-	/* Redirect output to the screen */
-	text_out_hook = text_out_to_screen;
-	text_out_wrap = 0;
-	text_out_indent = loc->col - 1;
-	text_out_pad = 1;
+    /* Redirect output to the screen */
+    text_out_hook = text_out_to_screen;
+    text_out_wrap = 0;
+    text_out_indent = loc->col - 1;
+    text_out_pad = 1;
 
-	screen_load();
-	screen_save();
+    screen_load();
+    screen_save();
 
-	Term_gotoxy(loc->col, loc->row + loc->page_rows);
-	text_out(format("\n%s\n", spell_tips[spell]));
+    Term_gotoxy(loc->col, loc->row + loc->page_rows);
+    text_out(format("\n%s\n", spell_tips[spell]));
 
-	/* XXX */
-	text_out_pad = 0;
-	text_out_indent = 0;
+    /* XXX */
+    text_out_pad = 0;
+    text_out_indent = 0;
 }
 
 static const menu_iter spell_menu_iter = {
-	NULL,	/* get_tag = NULL, just use lowercase selections */
-	spell_menu_valid,
-	spell_menu_display,
-	spell_menu_handler,
-	NULL	/* no resize hook */
+    NULL,	/* get_tag = NULL, just use lowercase selections */
+    spell_menu_valid,
+    spell_menu_display,
+    spell_menu_handler,
+    NULL	/* no resize hook */
 };
 
 /** Create and initialise a spell menu, given an object and a validity hook */
 static menu_type *spell_menu_new(const object_type *o_ptr,
 		bool (*is_valid)(int spell))
 {
-	menu_type *m = menu_new(MN_SKIN_SCROLL, &spell_menu_iter);
-	struct spell_menu_data *d = mem_alloc(sizeof *d);
+    menu_type *m = menu_new(MN_SKIN_SCROLL, &spell_menu_iter);
+    struct spell_menu_data *d = mem_alloc(sizeof *d);
 
-	region loc = { -60, 1, 60, -99 };
+    region loc = { -60, 1, 60, -99 };
 
-	/* collect spells from object */
-	d->n_spells = spell_collect_from_book(o_ptr, d->spells);
-	if (d->n_spells == 0 || !spell_okay_list(is_valid, d->spells, d->n_spells))
-	{
-		mem_free(m);
-		mem_free(d);
-		return NULL;
-	}
+    /* collect spells from object */
+    d->n_spells = spell_collect_from_book(o_ptr, d->spells);
+    if (d->n_spells == 0 || !spell_okay_list(is_valid, d->spells, d->n_spells))
+    {
+	mem_free(m);
+	mem_free(d);
+	return NULL;
+    }
 
-	/* copy across private data */
-	d->is_valid = is_valid;
-	d->selected_spell = -1;
-	d->browse = FALSE;
+    /* copy across private data */
+    d->is_valid = is_valid;
+    d->selected_spell = -1;
+    d->browse = FALSE;
 
-	menu_setpriv(m, d->n_spells, d);
+    menu_setpriv(m, d->n_spells, d);
 
-	/* set flags */
-	m->header = "Name                             Lv Mana Fail Info";
-	m->flags = MN_CASELESS_TAGS;
-	m->selections = lower_case;
-	m->browse_hook = spell_menu_browser;
+    /* set flags */
+    m->header = "Name                             Lv Mana Fail Info";
+    m->flags = MN_CASELESS_TAGS;
+    m->selections = lower_case;
+    m->browse_hook = spell_menu_browser;
 
-	/* set size */
-	loc.page_rows = d->n_spells + 1;
-	menu_layout(m, &loc);
+    /* set size */
+    loc.page_rows = d->n_spells + 1;
+    menu_layout(m, &loc);
 
-	return m;
+    return m;
 }
 
 /** Clean up a spell menu instance */
 static void spell_menu_destroy(menu_type *m)
 {
-	struct spell_menu_data *d = menu_priv(m);
-	mem_free(d);
-	mem_free(m);
+    struct spell_menu_data *d = menu_priv(m);
+    mem_free(d);
+    mem_free(m);
 }
 
 /**
@@ -205,20 +199,20 @@ static void spell_menu_destroy(menu_type *m)
  */
 static int spell_menu_select(menu_type *m, const char *noun, const char *verb)
 {
-	struct spell_menu_data *d = menu_priv(m);
+    struct spell_menu_data *d = menu_priv(m);
 
-	screen_save();
+    screen_save();
 
-	region_erase_bordered(&m->active);
-	prt(format("%^s which %s? ", verb, noun), 0, 0);
+    region_erase_bordered(&m->active);
+    prt(format("%^s which %s? ", verb, noun), 0, 0);
 
-	screen_save();
-	menu_select(m, 0);
-	screen_load();
+    screen_save();
+    menu_select(m, 0);
+    screen_load();
 
-	screen_load();
+    screen_load();
 
-	return d->selected_spell;
+    return d->selected_spell;
 }
 
 /**
@@ -226,19 +220,19 @@ static int spell_menu_select(menu_type *m, const char *noun, const char *verb)
  */
 static void spell_menu_browse(menu_type *m, const char *noun)
 {
-	struct spell_menu_data *d = menu_priv(m);
+    struct spell_menu_data *d = menu_priv(m);
 
-	screen_save();
+    screen_save();
 
-	region_erase_bordered(&m->active);
-	prt(format("Browsing %ss.  Press Escape to exit.", noun), 0, 0);
+    region_erase_bordered(&m->active);
+    prt(format("Browsing %ss.  Press Escape to exit.", noun), 0, 0);
 
-	screen_save();
-	d->browse = TRUE;
-	menu_select(m, 0);
-	screen_load();
+    screen_save();
+    d->browse = TRUE;
+    menu_select(m, 0);
+    screen_load();
 
-	screen_load();
+    screen_load();
 }
 
 
@@ -250,18 +244,45 @@ static void spell_menu_browse(menu_type *m, const char *noun)
 static int get_spell(const object_type *o_ptr, const char *verb,
 		bool (*spell_test)(int spell))
 {
-	menu_type *m;
-	const char *noun = (mp_ptr->spell_book == TV_MAGIC_BOOK ?
-			"spell" : "prayer");
+    menu_type *m;
+    const char *noun;
 
-	m = spell_menu_new(o_ptr, spell_test);
-	if (m) {
-		int spell = spell_menu_select(m, noun, verb);
-		spell_menu_destroy(m);
-		return spell;
-	}
+    switch (mp_ptr->spell_book)
+    {
+    case TV_MAGIC_BOOK:
+    {
+	noun = "spell";
+	break;
+    }
+    case TV_PRAYER_BOOK:
+    {
+	noun = "prayer";
+	break;
+    }
+    case TV_DRUID_BOOK:
+    {
+	noun = "lore";
+	break;
+    }
+    case TV_NECRO_BOOK:
+    {
+	noun = "ritual";
+	break;
+    }
+    default:
+    {
+	msg_print("You cannot read books!");
+	return;
+    }
+    }
+    m = spell_menu_new(o_ptr, spell_test);
+    if (m) {
+	int spell = spell_menu_select(m, noun, verb);
+	spell_menu_destroy(m);
+	return spell;
+    }
 
-	return -1;
+    return -1;
 }
 
 /**
@@ -269,45 +290,45 @@ static int get_spell(const object_type *o_ptr, const char *verb,
  */
 void textui_book_browse(const object_type *o_ptr)
 {
-	menu_type *m;
-	char *noun;
+    menu_type *m;
+    char *noun;
 
-	switch (mp_ptr->spell_book)
-	  {
-	  case TV_MAGIC_BOOK:
-	    {
-	      noun = "spell";
-	      break;
-	    }
-	  case TV_PRAYER_BOOK:
-	    {
-	      noun = "prayer";
-	      break;
-	    }
-	  case TV_DRUID_BOOK:
-	    {
-	      noun = "lore";
-	      break;
-	    }
-	  case TV_NECRO_BOOK:
-	    {
-	      noun = "ritual";
-	      break;
-	    }
-	  default:
-	    {
-	      msg_print("You cannot read books!");
-	      return;
-	    }
-	  }
+    switch (mp_ptr->spell_book)
+    {
+    case TV_MAGIC_BOOK:
+    {
+	noun = "spell";
+	break;
+    }
+    case TV_PRAYER_BOOK:
+    {
+	noun = "prayer";
+	break;
+    }
+    case TV_DRUID_BOOK:
+    {
+	noun = "lore";
+	break;
+    }
+    case TV_NECRO_BOOK:
+    {
+	noun = "ritual";
+	break;
+    }
+    default:
+    {
+	msg_print("You cannot read books!");
+	return;
+    }
+    }
 
-	m = spell_menu_new(o_ptr, spell_okay_to_browse);
-	if (m) {
-		spell_menu_browse(m, noun);
-		spell_menu_destroy(m);
-	} else {
-		msg_print("You cannot browse that.");
-	}
+    m = spell_menu_new(o_ptr, spell_okay_to_browse);
+    if (m) {
+	spell_menu_browse(m, noun);
+	spell_menu_destroy(m);
+    } else {
+	msg_print("You cannot browse that.");
+    }
 }
 
 /**
@@ -315,19 +336,53 @@ void textui_book_browse(const object_type *o_ptr)
  */
 void textui_spell_browse(void)
 {
-	int item;
+    int item;
 
-	item_tester_hook = obj_can_browse;
-	if (!get_item(&item, "Browse which book? ",
-			"You have no books that you can read.",
-			(USE_INVEN | USE_FLOOR | IS_HARMLESS)))
-		return;
+    cptr q = "";
+    cptr s = "";
 
-	/* Track the object kind */
-	track_object(item);
-	handle_stuff();
+    switch (mp_ptr->spell_book)
+    {
+    case TV_MAGIC_BOOK:
+    {
+	q = "Browse which magic book? ";
+	s = "You have no magic books that you can read.";
+	break;
+    }
+    case TV_PRAYER_BOOK:
+    {
+	q = "Browse which holy book? ";
+	s = "You have no holy books that you can read.";
+	break;
+    }
+    case TV_DRUID_BOOK:
+    {
+	q = "Browse which stone of lore? ";
+	s = "You have no stones that you can read.";
+	break;
+    }
+    case TV_NECRO_BOOK:
+    {
+	q = "Browse which tome? ";
+	s = "You have no tomes that you can read.";
+	break;
+    }
+    default:
+    {
+	msg_print("You cannot read books!");
+	return;
+    }
+    }
 
-	textui_book_browse(object_from_item_idx(item));
+    item_tester_hook = obj_can_browse;
+    if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR | IS_HARMLESS)))
+	return;
+
+    /* Track the object kind */
+    track_object(item);
+    handle_stuff();
+
+    textui_book_browse(object_from_item_idx(item));
 }
 
 /**
@@ -335,28 +390,61 @@ void textui_spell_browse(void)
  */
 void textui_obj_study(void)
 {
-	int item;
+    int item;
+    cptr q = "";
+    cptr s = "";
 
-	item_tester_hook = obj_can_study;
-	if (!get_item(&item, "Study which book? ",
-			"You have no books that you can read.",
-		      (USE_INVEN | USE_FLOOR)))
-		return;
+    switch (mp_ptr->spell_book)
+    {
+    case TV_MAGIC_BOOK:
+    {
+	q = "Study which magic book? ";
+	s = "You have no magic books that you can study.";
+	break;
+    }
+    case TV_PRAYER_BOOK:
+    {
+	q = "Study which holy book? ";
+	s = "You have no holy books that you can study.";
+	break;
+    }
+    case TV_DRUID_BOOK:
+    {
+	q = "Study which stone of lore? ";
+	s = "You have no stones that you can study.";
+	break;
+    }
+    case TV_NECRO_BOOK:
+    {
+	q = "Study which tome? ";
+	s = "You have no tomes that you can study.";
+	break;
+    }
+    default:
+    {
+	msg_print("You cannot read books!");
+	return;
+    }
+    }
 
-	track_object(item);
-	handle_stuff();
+    item_tester_hook = obj_can_study;
+    if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR)))
+	return;
 
-	if (mp_ptr->spell_book != TV_PRAYER_BOOK) {
-		int spell = get_spell(object_from_item_idx(item),
-				"study", spell_okay_to_study);
-		if (spell >= 0) {
-			cmd_insert(CMD_STUDY_SPELL);
-			cmd_set_arg_choice(cmd_get_top(), 0, spell);
-		}
-	} else {
-		cmd_insert(CMD_STUDY_BOOK);
-		cmd_set_arg_item(cmd_get_top(), 0, item);
+    track_object(item);
+    handle_stuff();
+
+    if (mp_ptr->spell_book != TV_PRAYER_BOOK) {
+	int spell = get_spell(object_from_item_idx(item),
+			      "study", spell_okay_to_study);
+	if (spell >= 0) {
+	    cmd_insert(CMD_STUDY_SPELL);
+	    cmd_set_arg_choice(cmd_get_top(), 0, spell);
 	}
+    } else {
+	cmd_insert(CMD_STUDY_BOOK);
+	cmd_set_arg_item(cmd_get_top(), 0, item);
+    }
 }
 
 /**
@@ -364,53 +452,61 @@ void textui_obj_study(void)
  */
 void textui_obj_cast(void)
 {
-	int item;
-	int spell;
+    int item;
+    int spell;
 
-	cptr verb;
+    cptr verb;
+    cptr q = "";
+    cptr s = "";
 
-	switch (mp_ptr->spell_book)
-	  {
-	  case TV_MAGIC_BOOK:
-	    {
-	      verb = "cast";
-	      break;
-	    }
-	  case TV_PRAYER_BOOK:
-	    {
-	      verb = "recite";
-	      break;
-	    }
-	  case TV_DRUID_BOOK:
-	    {
-	      verb = "use";
-	      break;
-	    }
-	  case TV_NECRO_BOOK:
-	    {
-	      verb = "perform";
-	      break;
-	    }
-	  default:
-	    {
-	      msg_print("You cannot read books!");
-	      return;
-	    }
-	  }
+    switch (mp_ptr->spell_book)
+    {
+    case TV_MAGIC_BOOK:
+    {
+	verb = "cast";
+	q = "Use which magic book? ";
+	s = "You have no magic books that you can use.";
+	break;
+    }
+    case TV_PRAYER_BOOK:
+    {
+	verb = "recite";
+	q = "Use which holy book? ";
+	s = "You have no holy books that you can use.";
+	break;
+    }
+    case TV_DRUID_BOOK:
+    {
+	verb = "use";
+	q = "Use which stone of lore? ";
+	s = "You have no stones that you can use.";
+	break;
+    }
+    case TV_NECRO_BOOK:
+    {
+	verb = "perform";
+	q = "Use which tome? ";
+	s = "You have no tomes that you can use.";
+	break;
+    }
+    default:
+    {
+	msg_print("You cannot read books!");
+	return;
+    }
+    }
 
-	item_tester_hook = obj_can_cast_from;
-	if (!get_item(&item, "Cast from which book? ",
-			"You have no books that you can read.",
-			(USE_INVEN | USE_FLOOR)))
-		return;
+    item_tester_hook = obj_can_cast_from;
+    if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR)))
+	return;
 
-	/* Track the object kind */
-	track_object(item);
+    /* Track the object kind */
+    track_object(item);
 
-	/* Ask for a spell */
-	spell = get_spell(object_from_item_idx(item), verb, spell_okay_to_cast);
-	if (spell >= 0) {
-		cmd_insert(CMD_CAST);
-		cmd_set_arg_choice(cmd_get_top(), 0, spell);
-	}
+    /* Ask for a spell */
+    spell = get_spell(object_from_item_idx(item), verb, spell_okay_to_cast);
+    if (spell >= 0) {
+	cmd_insert(CMD_CAST);
+	cmd_set_arg_choice(cmd_get_top(), 0, spell);
+    }
 }

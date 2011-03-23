@@ -2041,8 +2041,10 @@ bool cast_spell(int tval, int index, int dir)
 	{
 	    u32b flags = (OF_ACID_PROOF | OF_FIRE_PROOF);
 
-	    if (!el_proof(OF_ACID_PROOF)) return FALSE;
-	    if (!el_proof(OF_FIRE_PROOF)) return FALSE;
+	    if (!el_proof(OF_ACID_PROOF))
+		return FALSE;
+	    if (!el_proof(OF_FIRE_PROOF))
+		return FALSE;
 	    break;
 	}
     case 191:			/* Tremor */
@@ -2456,3 +2458,4 @@ bool cast_spell(int tval, int index, int dir)
 	/* Success */
 	return (TRUE);
     }
+}

@@ -86,10 +86,7 @@ bool spell_okay_list(bool(*spell_test) (int spell), const int spells[],
  */
 bool spell_okay_to_cast(int spell)
 {
-    if (spell < 32)
-	return (p_ptr->spell_learned1 & (1L << spell));
-    else
-	return (p_ptr->spell_learned2 & (1L << (spell - 32)));
+	return (p_ptr->spell_flags[spell] & PY_SPELL_LEARNED);
 }
 
 /**
@@ -98,14 +95,8 @@ bool spell_okay_to_cast(int spell)
 bool spell_okay_to_study(int spell)
 {
     const magic_type *s_ptr = &mp_ptr->info[spell];
-    bool learned = FALSE;
-
-    if (spell < 32)
-	learned = p_ptr->spell_learned1 & (1L << spell);
-    else
-	learned = p_ptr->spell_learned2 & (1L << (spell - 32));
-
-    return (s_ptr->slevel <= p_ptr->lev) && !learned;
+    return (s_ptr->slevel <= p_ptr->lev) &&
+	!(p_ptr->spell_flags[spell] & PY_SPELL_LEARNED);
 }
 
 /**
@@ -142,7 +133,7 @@ s16b spell_chance(int spell)
     chance -= 4 * (p_ptr->lev - s_ptr->slevel);
 
     /* Reduce failure rate by INT/WIS adjustment */
-    chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[mp_ptr->spell_stat]] - 1);
+    chance -= 3 * (adj_mag_stat[p_ptr->state.stat_ind[mp_ptr->spell_stat]] - 1);
 
     /* Not enough mana to cast */
     if (s_ptr->smana > p_ptr->csp) {
@@ -210,21 +201,17 @@ void spell_learn(int spell)
 	p = "ritual";
 
     /* Learn the spell */
-    if (spell < 32) {
-	p_ptr->spell_learned1 |= (1L << spell);
-    } else {
-	p_ptr->spell_learned2 |= (1L << (spell - 32));
-    }
-
+    p_ptr->spell_flags[spell] |= PY_SPELL_LEARNED;
+    
     /* Find the next open entry in "spell_order[]" */
-    for (i = 0; i < 64; i++) {
+    for (i = 0; i < PY_MAX_SPELLS; i++) {
 	/* Stop at the first empty space */
 	if (p_ptr->spell_order[i] == 99)
 	    break;
     }
 
     /* Add the spell to the known list */
-    p_ptr->spell_order[i++] = spell;
+    p_ptr->spell_order[i] = spell;
 
     /* Access the spell */
     s_ptr = &mp_ptr->info[spell];
@@ -247,11 +234,8 @@ void spell_learn(int spell)
 		    && (!mp_ptr->spell_book != TV_DRUID_BOOK)) ? "s" : "");
     }
 
-    /* Save the new_spells value */
-    p_ptr->old_spells = p_ptr->new_spells;
-
     /* Redraw Study Status */
-    p_ptr->redraw |= (PR_STUDY);
+    p_ptr->redraw |= (PR_STUDY | PR_OBJECT);
 }
 
 
@@ -302,51 +286,20 @@ bool spell_cast(int spell, int dir)
 	sound(MSG_SPELL);
 
 
-
-
 	/* A spell was cast or a prayer prayed */
-	if (!
-	    ((spell <
-	      32) ? (p_ptr->spell_worked1 & (1L << spell)) : (p_ptr->
-							      spell_worked2 &
-							      (1L <<
-							       (spell -
-								32))))) {
+	if (!(p_ptr->spell_flags[spell] & PY_SPELL_WORKED)){
 	    int e = s_ptr->sexp;
 
-	    /* The spell or prayer worked */
-	    if (spell < 32) {
-		p_ptr->spell_worked1 |= (1L << spell);
-	    } else {
-		p_ptr->spell_worked2 |= (1L << (spell - 32));
-	    }
+	    /* The spell worked */
+	    p_ptr->spell_flags[spell] |= PY_SPELL_WORKED;
 
 	    /* Gain experience */
 	    gain_exp(e * s_ptr->slevel);
+	    
+	    /* Redraw object recall */
+	    p_ptr->redraw |= (PR_OBJECT);
 	}
     }
-
-    /* Take a turn */
-    p_ptr->energy_use = 100;
-
-    /* Reduced for fast casters */
-    if (player_has(PF_FAST_CAST)) {
-	int level_difference = p_ptr->lev - s_ptr->slevel;
-
-	p_ptr->energy_use -= 5 + (level_difference / 2);
-
-	/* Increased bonus for really easy spells */
-	if (level_difference > 25)
-	    p_ptr->energy_use -= (level_difference - 25);
-    }
-
-    /* Give Credit for Heighten Magic */
-    if (player_has(PF_HEIGHTEN_MAGIC))
-	add_heighten_power(20);
-
-    /* Paranioa */
-    if (p_ptr->energy_use < 50)
-	p_ptr->energy_use = 50;
 
     /* Hack - simplify rune of mana calculations by fully draining the rune
      * first */

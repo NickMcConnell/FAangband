@@ -1153,14 +1153,8 @@ typedef struct player {
     u32b themed_level_appeared;	/* Flags indicating which themed levels have
 				 * already appeared. -LM- */
 
-    u32b spell_learned1;/**< Spell flags */
-    u32b spell_learned2;/**< Spell flags */
-    u32b spell_worked1;	/**< Spell flags */
-    u32b spell_worked2;	/**< Spell flags */
-    u32b spell_forgotten1;/**< Spell flags */
-    u32b spell_forgotten2;/**< Spell flags */
-
-    byte spell_order[64];/**< Spell order */
+    byte spell_flags[PY_MAX_SPELLS]; /* Spell flags */
+    byte spell_order[PY_MAX_SPELLS];	/* Spell order */
 
     u32b id_obj[OF_SIZE];	/**< "Sensation" object id flags */
     u32b id_other[IF_SIZE];	/**< "Sensation" other id flags */

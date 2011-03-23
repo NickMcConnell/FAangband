@@ -260,8 +260,7 @@ bool effect_wonder(int dir, int die, int beam)
  * Boost is the extent to which skill surpasses difficulty, used as % boost. It
  * ranges from 0 to 138.
  */
-bool effect_do(effect_type effect, bool * ident, bool aware, int dir, int beam,
-	       int boost)
+bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 {
     int py = p_ptr->py;
     int px = p_ptr->px;
