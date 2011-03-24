@@ -54,7 +54,7 @@ bool player_can_cast(void)
 {
 	if (!mp_ptr->spell_book)
 	{
-		msg_print("You cannot pray or produce magics.");
+		msg_print("You cannot produce magics.");
 		return FALSE;
 	}
 
@@ -81,7 +81,7 @@ bool player_can_study(void)
 
 	if (!p_ptr->new_spells)
 	{
-		cptr p = ((mp_ptr->spell_book == TV_MAGIC_BOOK) ? "spell" : "prayer");
+		cptr p = magic_desc[mp_ptr->spell_realm][SPELL_NOUN];
 		msg_format("You cannot learn any new %ss!", p);
 		return FALSE;
 	}
@@ -119,7 +119,7 @@ bool player_can_fire(void)
 	object_type *o_ptr = &p_ptr->inventory[INVEN_BOW];
 
 	/* Require a usable launcher */
-	if (!o_ptr->tval || !p_ptr->ammo_tval)
+	if (!o_ptr->tval || !p_ptr->state.ammo_tval)
 	{
 		msg_print("You have nothing to fire with.");
 		return FALSE;

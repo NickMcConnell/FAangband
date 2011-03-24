@@ -190,16 +190,6 @@ void spell_learn(int spell)
 
     magic_type *s_ptr;
 
-    /* Determine magic description. */
-    if (mp_ptr->spell_book == TV_MAGIC_BOOK)
-	p = "spell";
-    if (mp_ptr->spell_book == TV_PRAYER_BOOK)
-	p = "prayer";
-    if (mp_ptr->spell_book == TV_DRUID_BOOK)
-	p = "druidic lore";
-    if (mp_ptr->spell_book == TV_NECRO_BOOK)
-	p = "ritual";
-
     /* Learn the spell */
     p_ptr->spell_flags[spell] |= PY_SPELL_LEARNED;
     
@@ -217,7 +207,8 @@ void spell_learn(int spell)
     s_ptr = &mp_ptr->info[spell];
 
     /* Mention the result */
-    message_format(MSG_STUDY, 0, "You have learned the %s of %s.", p,
+    message_format(MSG_STUDY, 0, "You have learned the %s of %s.", 
+		   magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
 		   spell_names[s_ptr->index]);
 
     /* Sound */
@@ -229,7 +220,8 @@ void spell_learn(int spell)
     /* Message if needed */
     if (p_ptr->new_spells) {
 	/* Message */
-	msg_format("You can learn %d more %s%s.", p_ptr->new_spells, p,
+	msg_format("You can learn %d more %s%s.", p_ptr->new_spells,
+		   magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
 		   ((p_ptr->new_spells != 1)
 		    && (!mp_ptr->spell_book != TV_DRUID_BOOK)) ? "s" : "");
     }
@@ -266,14 +258,7 @@ bool spell_cast(int spell, int dir)
 
 	if (OPT(flush_failure))
 	    flush();
-	if (mp_ptr->spell_book == TV_MAGIC_BOOK)
-	    msg_print("You failed to get the spell off!");
-	if (mp_ptr->spell_book == TV_PRAYER_BOOK)
-	    msg_print("You lost your concentration!");
-	if (mp_ptr->spell_book == TV_DRUID_BOOK)
-	    msg_print("You lost your concentration!");
-	if (mp_ptr->spell_book == TV_NECRO_BOOK)
-	    msg_print("You perform the ritual incorrectly!");
+	msg_print(magic_desc[mp_ptr->spell_realm][SPELL_FAIL]);
     }
 
     /* Process spell */
@@ -371,7 +356,7 @@ bool spell_cast(int spell, int dir)
 	p_ptr->csp_frac = 0;
 
 	/* Message */
-	if (mp_ptr->spell_book == TV_NECRO_BOOK)
+	if (mp_ptr->spell_realm == REALM_NECROMANTIC)
 	    msg_print("You collapse after the ritual!");
 	else
 	    msg_print("You faint from the effort!");

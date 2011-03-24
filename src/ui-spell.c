@@ -31,13 +31,13 @@
  * Spell menu data struct
  */
 struct spell_menu_data {
-	int spells[PY_MAX_SPELLS];
-	int n_spells;
+    int spells[PY_MAX_SPELLS];
+    int n_spells;
+    int book_sval;
+    bool browse;
+    bool (*is_valid)(int spell);
 
-	bool browse;
-	bool (*is_valid)(int spell);
-
-	int selected_spell;
+    int selected_spell;
 };
 
 
@@ -46,10 +46,10 @@ struct spell_menu_data {
  */
 static int spell_menu_valid(menu_type *m, int oid)
 {
-	struct spell_menu_data *d = menu_priv(m);
-	int *spells = d->spells;
+    struct spell_menu_data *d = menu_priv(m);
+    int *spells = d->spells;
 
-	return d->is_valid(spells[oid]);
+    return d->is_valid(spells[oid]);
 }
 
 /**
@@ -65,34 +65,61 @@ static void spell_menu_display(menu_type *m, int oid, bool cursor,
     char help[30];
     char out[80];
 
-    int attr;
-    const char *illegible = NULL;
+    int attr_name, attr_extra, attr_book;
+    int tval = mp_ptr->spell_book;
     const char *comment = NULL;
 
-    if (s_ptr->slevel >= 99) {
-	illegible = "(illegible)";
-	attr = TERM_L_DARK;
-    } else if (p_ptr->spell_flags[spell] & PY_SPELL_FORGOTTEN) {
-	comment = " forgotten";
-	attr = TERM_YELLOW;
-    } else if (p_ptr->spell_flags[spell] & PY_SPELL_LEARNED) {
-	if (p_ptr->spell_flags[spell] & PY_SPELL_WORKED) {
-	    /* Get extra info */
-	    get_spell_info(mp_ptr->spell_book, spell, help, sizeof(help));
-	    comment = help;
-	    attr = TERM_WHITE;
-	} else {
-	    comment = " untried";
-	    attr = TERM_L_GREEN;
-	}
-    } else if (s_ptr->slevel <= p_ptr->lev) {
-	comment = " unknown";
-	attr = TERM_L_BLUE;
-    } else {
-	comment = " difficult";
-	attr = TERM_RED;
+    /* Choose appropriate spellbook color. */
+    if (tval == TV_MAGIC_BOOK) 
+    {
+	if (d->book_sval < SV_BOOK_MIN_GOOD) attr_book = TERM_L_RED;
+	else attr_book = TERM_RED;
     }
-
+    else if (tval == TV_PRAYER_BOOK) 
+    {
+	if (d->book_sval < SV_BOOK_MIN_GOOD) attr_book = TERM_L_BLUE;
+	else attr_book = TERM_BLUE;
+    }
+    else if (tval == TV_DRUID_BOOK) 
+    {
+	if (d->book_sval < SV_BOOK_MIN_GOOD) attr_book = TERM_L_GREEN;
+	else attr_book = TERM_GREEN;
+    }
+    else if (tval == TV_NECRO_BOOK) 
+    {
+	if (d->book_sval < SV_BOOK_MIN_GOOD) attr_book = TERM_L_DARK;
+	else attr_book = TERM_VIOLET;
+    }
+    else attr_book = TERM_WHITE;
+  
+    if (p_ptr->spell_flags[spell] & PY_SPELL_FORGOTTEN) {
+	comment = " forgotten";
+	attr_name = TERM_L_WHITE;
+	attr_extra = TERM_L_WHITE;
+    } 
+   else if (p_ptr->spell_flags[spell] & PY_SPELL_LEARNED) {
+       if (p_ptr->spell_flags[spell] & PY_SPELL_WORKED) {
+	   /* Get extra info */
+	   get_spell_info(mp_ptr->spell_book, spell, help, sizeof(help));
+	   comment = help;
+	   attr_name = attr_book;
+	   attr_extra = TERM_L_BLUE;
+	} 
+       else {
+	   comment = " untried";
+	   attr_name = TERM_WHITE;
+	   attr_extra = TERM_WHITE;
+       }
+   } 
+   else {
+       comment = " unknown";
+       attr_extra = TERM_L_WHITE;
+       if (s_ptr->slevel <= p_ptr->lev) 
+	   attr_name = TERM_WHITE;
+       else 
+	   attr = TERM_RED;
+   }
+   
     /* Dump the spell --(-- */
     strnfmt(out, sizeof(out), "%-30s%2d %4d %3d%%%s",
 	    get_spell_name(mp_ptr->spell_book, spell),
@@ -170,6 +197,7 @@ static menu_type *spell_menu_new(const object_type *o_ptr,
     d->is_valid = is_valid;
     d->selected_spell = -1;
     d->browse = FALSE;
+    d->book_sval = o_ptr->sval;
 
     menu_setpriv(m, d->n_spells, d);
 
@@ -247,34 +275,8 @@ static int get_spell(const object_type *o_ptr, const char *verb,
     menu_type *m;
     const char *noun;
 
-    switch (mp_ptr->spell_book)
-    {
-    case TV_MAGIC_BOOK:
-    {
-	noun = "spell";
-	break;
-    }
-    case TV_PRAYER_BOOK:
-    {
-	noun = "prayer";
-	break;
-    }
-    case TV_DRUID_BOOK:
-    {
-	noun = "lore";
-	break;
-    }
-    case TV_NECRO_BOOK:
-    {
-	noun = "ritual";
-	break;
-    }
-    default:
-    {
-	msg_print("You cannot read books!");
-	return;
-    }
-    }
+    noun = magic_desc[mp_ptr->spell_realm][SPELL_NOUN];
+
     m = spell_menu_new(o_ptr, spell_test);
     if (m) {
 	int spell = spell_menu_select(m, noun, verb);
@@ -291,40 +293,10 @@ static int get_spell(const object_type *o_ptr, const char *verb,
 void textui_book_browse(const object_type *o_ptr)
 {
     menu_type *m;
-    char *noun;
-
-    switch (mp_ptr->spell_book)
-    {
-    case TV_MAGIC_BOOK:
-    {
-	noun = "spell";
-	break;
-    }
-    case TV_PRAYER_BOOK:
-    {
-	noun = "prayer";
-	break;
-    }
-    case TV_DRUID_BOOK:
-    {
-	noun = "lore";
-	break;
-    }
-    case TV_NECRO_BOOK:
-    {
-	noun = "ritual";
-	break;
-    }
-    default:
-    {
-	msg_print("You cannot read books!");
-	return;
-    }
-    }
 
     m = spell_menu_new(o_ptr, spell_okay_to_browse);
     if (m) {
-	spell_menu_browse(m, noun);
+	spell_menu_browse(m, magic_desc[mp_ptr->spell_realm][SPELL_NOUN]);
 	spell_menu_destroy(m);
     } else {
 	msg_print("You cannot browse that.");
@@ -338,41 +310,18 @@ void textui_spell_browse(void)
 {
     int item;
 
-    cptr q = "";
-    cptr s = "";
+    char q[80];
+    char s[80];
 
-    switch (mp_ptr->spell_book)
-    {
-    case TV_MAGIC_BOOK:
-    {
-	q = "Browse which magic book? ";
-	s = "You have no magic books that you can read.";
-	break;
-    }
-    case TV_PRAYER_BOOK:
-    {
-	q = "Browse which holy book? ";
-	s = "You have no holy books that you can read.";
-	break;
-    }
-    case TV_DRUID_BOOK:
-    {
-	q = "Browse which stone of lore? ";
-	s = "You have no stones that you can read.";
-	break;
-    }
-    case TV_NECRO_BOOK:
-    {
-	q = "Browse which tome? ";
-	s = "You have no tomes that you can read.";
-	break;
-    }
-    default:
-    {
+    if (mp_ptr->spell_realm == REALM_NONE) {
 	msg_print("You cannot read books!");
 	return;
     }
-    }
+
+    strnfmt(q, sizeof(q), "Browse which %s?", 
+	    magic_desc[mp_ptr->spell_realm][BOOK_NOUN]);
+    strnfmt(s, sizeof(s), " You have no %ss that you can read.", 
+	    magic_desc[mp_ptr->spell_realm][BOOK_LACK]);
 
     item_tester_hook = obj_can_browse;
     if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR | IS_HARMLESS)))
@@ -391,41 +340,18 @@ void textui_spell_browse(void)
 void textui_obj_study(void)
 {
     int item;
-    cptr q = "";
-    cptr s = "";
+    char q[80];
+    char s[80];
 
-    switch (mp_ptr->spell_book)
-    {
-    case TV_MAGIC_BOOK:
-    {
-	q = "Study which magic book? ";
-	s = "You have no magic books that you can study.";
-	break;
-    }
-    case TV_PRAYER_BOOK:
-    {
-	q = "Study which holy book? ";
-	s = "You have no holy books that you can study.";
-	break;
-    }
-    case TV_DRUID_BOOK:
-    {
-	q = "Study which stone of lore? ";
-	s = "You have no stones that you can study.";
-	break;
-    }
-    case TV_NECRO_BOOK:
-    {
-	q = "Study which tome? ";
-	s = "You have no tomes that you can study.";
-	break;
-    }
-    default:
-    {
+    if (mp_ptr->spell_realm == REALM_NONE) {
 	msg_print("You cannot read books!");
 	return;
     }
-    }
+
+    strnfmt(q, sizeof(q), "Study which %s?", 
+	    magic_desc[mp_ptr->spell_realm][BOOK_NOUN]);
+    strnfmt(s, sizeof(s), " You have no %ss that you can study.", 
+	    magic_desc[mp_ptr->spell_realm][BOOK_LACK]);
 
     item_tester_hook = obj_can_study;
     if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR)))
@@ -456,45 +382,18 @@ void textui_obj_cast(void)
     int spell;
 
     cptr verb;
-    cptr q = "";
-    cptr s = "";
+    char q[80];
+    char s[80];
 
-    switch (mp_ptr->spell_book)
-    {
-    case TV_MAGIC_BOOK:
-    {
-	verb = "cast";
-	q = "Use which magic book? ";
-	s = "You have no magic books that you can use.";
-	break;
-    }
-    case TV_PRAYER_BOOK:
-    {
-	verb = "recite";
-	q = "Use which holy book? ";
-	s = "You have no holy books that you can use.";
-	break;
-    }
-    case TV_DRUID_BOOK:
-    {
-	verb = "use";
-	q = "Use which stone of lore? ";
-	s = "You have no stones that you can use.";
-	break;
-    }
-    case TV_NECRO_BOOK:
-    {
-	verb = "perform";
-	q = "Use which tome? ";
-	s = "You have no tomes that you can use.";
-	break;
-    }
-    default:
-    {
+    if (mp_ptr->spell_realm == REALM_NONE) {
 	msg_print("You cannot read books!");
 	return;
     }
-    }
+
+    strnfmt(q, sizeof(q), "Use which %s?", 
+	    magic_desc[mp_ptr->spell_realm][BOOK_NOUN]);
+    strnfmt(s, sizeof(s), " You have no %ss that you can use.", 
+	    magic_desc[mp_ptr->spell_realm][BOOK_LACK]);
 
     item_tester_hook = obj_can_cast_from;
     if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR)))

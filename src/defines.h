@@ -204,21 +204,10 @@
 #define MAX_SEXES            2
 
 /**
- * Maximum number of player "class" types (see "table.c", etc)
- */
-#define MAX_CLASS            9
-
-/**
  * Maximum amount of starting equipment
  */
 #define MAX_START_ITEMS	4
 #define STARTING_GOLD 600
-
-/**
- * Maximum number of magical realms (see "table.c", etc)
- * Taken from Sangband.
- */
-#define MAX_REALM            4
 
 /**
  * Maximum number of specialty abilities for a single character
@@ -749,22 +738,44 @@ enum
 /*
  * Player class constants (hard-coded by save-files, arrays, etc)
  */
-#define CLASS_WARRIOR	0
-#define CLASS_MAGE	1
-#define CLASS_PRIEST	2
-#define CLASS_ROGUE	3
-#define CLASS_RANGER	4
-#define CLASS_PALADIN	5
-#define CLASS_DRUID	6
-#define CLASS_NECRO	7
-#define CLASS_ASSASSIN	8
+enum
+{
+    CLASS_WARRIOR = 0,
+    CLASS_MAGE,	
+    CLASS_PRIEST,	
+    CLASS_ROGUE,	
+    CLASS_RANGER,	
+    CLASS_PALADIN,	
+    CLASS_DRUID,	
+    CLASS_NECRO,	
+    CLASS_ASSASSIN,
+
+    CLASS_MAX
+};	
 
 /* Different realms here.  From Sangband */
-#define REALM_NONE		0
-#define REALM_SORCERY		1
-#define REALM_PIETY		2
-#define REALM_NATURE		3
-#define REALM_NECROMANTIC	4
+enum
+{
+    REALM_NONE = 0,
+    REALM_SORCERY,		
+    REALM_PIETY,		
+    REALM_NATURE,		
+    REALM_NECROMANTIC,
+
+    REALM_MAX
+};	
+
+/* Values for accessing the magic description array */
+enum
+{
+    SPELL_NOUN = 0,
+    SPELL_VERB,
+    SPELL_FAIL,
+    BOOK_NOUN,
+    BOOK_LACK,
+
+    MD_MAX
+};
 
 /* 
  * Special values for the number of turns to rest, these need to be

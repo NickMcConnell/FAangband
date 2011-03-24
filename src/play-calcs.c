@@ -765,9 +765,6 @@ static void calc_spells(void)
 
     s16b old_spells;
 
-    cptr p = "";
-
-
     /* Hack -- must be literate */
     if (!mp_ptr->spell_book)
 	return;
@@ -782,16 +779,6 @@ static void calc_spells(void)
 
     /* Save the new_spells value */
     old_spells = p_ptr->new_spells;
-
-    /* Determine magic description. */
-    if (mp_ptr->spell_book == TV_MAGIC_BOOK)
-	p = "spell";
-    if (mp_ptr->spell_book == TV_PRAYER_BOOK)
-	p = "prayer";
-    if (mp_ptr->spell_book == TV_DRUID_BOOK)
-	p = "druidic lore";
-    if (mp_ptr->spell_book == TV_NECRO_BOOK)
-	p = "ritual";
 
     /* Determine the number of spells allowed */
     levels = p_ptr->lev - mp_ptr->spell_first + 1;
@@ -816,8 +803,7 @@ static void calc_spells(void)
     /* Count the number of spells we know */
     for (j = 0; j < mp_ptr->spell_number; j++) {
 	/* Count known spells */
-	if ((j <  32) ? (p_ptr->spell_learned1 & (1L << j)) : 
-	    (p_ptr->spell_learned2 & (1L << (j - 32))))
+	if (p_ptr->spell_flags[j] & PY_SPELL_LEARNED)
 	{
 	    num_known++;
 	}
@@ -829,11 +815,7 @@ static void calc_spells(void)
 
 
     /* Forget spells which are too hard */
-    for (i = 63; i >= 0; i--) {
-	/* Efficiency -- all done */
-	if (!p_ptr->spell_learned1 && !p_ptr->spell_learned2)
-	    break;
-
+    for (i = PY_MAX_SPELLS; i >= 0; i--) {
 	/* Access the spell */
 	j = p_ptr->spell_order[i];
 
@@ -849,27 +831,19 @@ static void calc_spells(void)
 	    continue;
 
 	/* Is it known? */
-	if ((j < 32) ? (p_ptr->spell_learned1 & (1L << j)) : 
-	    (p_ptr->spell_learned2 & (1L << (j - 32))))
+	if (p_ptr->spell_flags[j] & PY_SPELL_LEARNED)
 	{
 	    /* Mark as forgotten */
-	    if (j < 32) {
-		p_ptr->spell_forgotten1 |= (1L << j);
-	    } else {
-		p_ptr->spell_forgotten2 |= (1L << (j - 32));
-	    }
-
+	    p_ptr->spell_flags[j] |= PY_SPELL_FORGOTTEN;
+	    
 	    /* No longer known */
-	    if (j < 32) {
-		p_ptr->spell_learned1 &= ~(1L << j);
-	    } else {
-		p_ptr->spell_learned2 &= ~(1L << (j - 32));
-	    }
-
+	    p_ptr->spell_flags[j] &= ~PY_SPELL_LEARNED;
+	    
 	    /* Message */
-	    msg_format("You have forgotten the %s of %s.", p,
+	    msg_format("You have forgotten the %s of %s.", 
+		       magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
 		       spell_names[s_ptr->index]);
-
+	    
 	    /* One more can be learned */
 	    p_ptr->new_spells++;
 	}
@@ -877,13 +851,9 @@ static void calc_spells(void)
 
 
     /* Forget spells if we know too many spells */
-    for (i = 63; i >= 0; i--) {
+    for (i = PY_MAX_SPELLS; i >= 0; i--) {
 	/* Stop when possible */
 	if (p_ptr->new_spells >= 0)
-	    break;
-
-	/* Efficiency -- all done */
-	if (!p_ptr->spell_learned1 && !p_ptr->spell_learned2)
 	    break;
 
 	/* Get the (i+1)th spell learned */
@@ -897,29 +867,17 @@ static void calc_spells(void)
 	s_ptr = &mp_ptr->info[j];
 
 	/* Forget it (if learned) */
-	if ((j <
-	     32) ? (p_ptr->
-		    spell_learned1 & (1L << j)) : (p_ptr->spell_learned2 & (1L
-									    <<
-									    (j -
-									     32))))
+	if (p_ptr->spell_flags[j] & PY_SPELL_LEARNED)
 	{
 	    /* Mark as forgotten */
-	    if (j < 32) {
-		p_ptr->spell_forgotten1 |= (1L << j);
-	    } else {
-		p_ptr->spell_forgotten2 |= (1L << (j - 32));
-	    }
-
+	    p_ptr->spell_flags[j] |= PY_SPELL_FORGOTTEN;
+	    
 	    /* No longer known */
-	    if (j < 32) {
-		p_ptr->spell_learned1 &= ~(1L << j);
-	    } else {
-		p_ptr->spell_learned2 &= ~(1L << (j - 32));
-	    }
+	    p_ptr->spell_flags[j] &= ~PY_SPELL_LEARNED;
 
 	    /* Message */
-	    msg_format("You have forgotten the %s of %s.", p,
+	    msg_format("You have forgotten the %s of %s.",
+		       magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
 		       spell_names[s_ptr->index]);
 
 	    /* One more can be learned */
@@ -929,13 +887,9 @@ static void calc_spells(void)
 
 
     /* Check for spells to remember */
-    for (i = 0; i < 64; i++) {
+    for (i = 0; i < PY_MAX_SPELLS; i++) {
 	/* None left to remember */
 	if (p_ptr->new_spells <= 0)
-	    break;
-
-	/* Efficiency -- all done */
-	if (!p_ptr->spell_forgotten1 && !p_ptr->spell_forgotten2)
 	    break;
 
 	/* Get the next spell we learned */
@@ -953,23 +907,12 @@ static void calc_spells(void)
 	    continue;
 
 	/* First set of spells */
-	if ((j <
-	     32) ? (p_ptr->
-		    spell_forgotten1 & (1L << j)) : (p_ptr->spell_forgotten2 &
-						     (1L << (j - 32)))) {
+	if (p_ptr->spell_flags[j] & PY_SPELL_FORGOTTEN) {
 	    /* No longer forgotten */
-	    if (j < 32) {
-		p_ptr->spell_forgotten1 &= ~(1L << j);
-	    } else {
-		p_ptr->spell_forgotten2 &= ~(1L << (j - 32));
-	    }
-
+	    p_ptr->spell_flags[j] &= ~PY_SPELL_FORGOTTEN;
+	    
 	    /* Known once more */
-	    if (j < 32) {
-		p_ptr->spell_learned1 |= (1L << j);
-	    } else {
-		p_ptr->spell_learned2 |= (1L << (j - 32));
-	    }
+	    p_ptr->spell_flags[j] |= PY_SPELL_LEARNED;
 
 	    /* Message */
 	    msg_format("You have remembered the %s of %s.", p,
@@ -994,12 +937,7 @@ static void calc_spells(void)
 	    continue;
 
 	/* Skip spells we already know */
-	if ((j <
-	     32) ? (p_ptr->
-		    spell_learned1 & (1L << j)) : (p_ptr->spell_learned2 & (1L
-									    <<
-									    (j -
-									     32))))
+	if (p_ptr->spell_flags[j] & PY_SPELL_LEARNED)
 	{
 	    continue;
 	}
@@ -1017,7 +955,8 @@ static void calc_spells(void)
 	/* Message if needed */
 	if (p_ptr->new_spells) {
 	    /* Message */
-	    msg_format("You can learn %d more %s%s.", p_ptr->new_spells, p,
+	    msg_format("You can learn %d more %s%s.", p_ptr->new_spells,
+		       magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
 		       ((p_ptr->new_spells != 1)
 			&& (mp_ptr->spell_book != TV_DRUID_BOOK)) ? "s" : "");
 	}
@@ -1366,7 +1305,7 @@ static void calc_torch(void)
     }
 
     /* Vampire shape */
-    if ((p_ptr->schange == SHAPE_VAMPIRE) && (p_ptr->cur_lite >= 3)
+    if ((p_ptr->schange == SHAPE_VAMPIRE) && (p_ptr->cur_lite >= 3))
 	p_ptr->cur_lite = 2;
 
     /* Notice changes in the "lite radius" */

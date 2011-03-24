@@ -1063,7 +1063,8 @@ void do_cmd_study_spell(cmd_code code, cmd_arg args[])
 		p_ptr->energy_use = 100;
 	    } else {
 		/* Spell is present, but player incapable. */
-		msg_format("You cannot learn that spell.");
+		msg_format("You cannot learn that %s.",
+		    magic_desc[mp_ptr->spell_realm][SPELL_NOUN]);
 	    }
 
 	    return;
@@ -1212,25 +1213,6 @@ static void pseudo_probe(void)
     }
 }
 
-/* Magic description data structure */
-typedef struct
-{
-    int book_tval;
-    const char *spell_noun;
-    const char *book_noun;
-    const char *verb;
-} magic_desc;
-
-/* List of magic descriptions */
-const magic_desc magic_word[] = 
-{
-    {TV_MAGIC_BOOK,   "spell",        "magic book", "cast"},
-    {TV_PRAYER_BOOK,  "prayer",       "holy book",  "pray"},
-    {TV_DRUID_BOOK,   "druidic lore", "stone",      "use"},
-    {TV_NECRO_BOOK,   "ritual",       "tome",       "perform"},
-};
-
-
 /**
  * Cast a spell or pray a prayer.
  */
@@ -1280,11 +1262,6 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
     if (!player_can_cast)
 	return;
 
-    /* Determine magic description. */
-    for (i = 0; i < N_ELEMENTS(magic_word); i++)
-	if (magic_word[i].book_tval == mp_ptr->spell_book)
-	    m = i;
-
     /* Restrict choices to spell books of the player's realm. */
     item_tester_hook = obj_can_browse;
     item_num =
@@ -1306,7 +1283,8 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
 		{
 		    /* Warning */
 		    msg_format("You do not have enough mana to %s this %s.", 
-			       magic_word[m].verb, magic_word[m].spell_noun);
+			       magic_desc[mp_ptr->spell_realm][SPELL_VERB], 
+			       magic_desc[mp_ptr->spell_realm][SPELL_NOUN]); 
 					
 		    /* Flush input */
 		    flush();
@@ -1342,8 +1320,9 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
 		else
 		{
 		    /* Spell is present, but player incapable. */
-		    msg_format("You cannot %s that %s.", magic_word[m].verb, 
-			       magic_word[m].spell_noun);
+		    msg_format("You cannot %s that %s.", 
+			       magic_desc[mp_ptr->spell_realm][SPELL_VERB], 
+			       magic_desc[mp_ptr->spell_realm][SPELL_NOUN]); 
 		}
 
 		return;
@@ -1364,9 +1343,6 @@ void do_cmd_study_book(cmd_code code, cmd_arg args[])
     int spell = -1;
     int i, k = 0;
 
-    cptr p = "";
-    cptr r = "";
-
     /* Check the player can study at all atm */
     if (!player_can_study())
 	return;
@@ -1376,27 +1352,6 @@ void do_cmd_study_book(cmd_code code, cmd_arg args[])
 	msg_format("That item is not within your reach.");
 	return;
     }
-
-    /* Determine magic description. */
-    if (mp_ptr->spell_book == TV_MAGIC_BOOK)
-	p = "spell";
-    if (mp_ptr->spell_book == TV_PRAYER_BOOK)
-	p = "prayer";
-    if (mp_ptr->spell_book == TV_DRUID_BOOK)
-	p = "druidic lore";
-    if (mp_ptr->spell_book == TV_NECRO_BOOK)
-	p = "ritual";
-
-    /* Determine spellbook description. */
-    if (mp_ptr->spell_book == TV_MAGIC_BOOK)
-	r = "magic book";
-    if (mp_ptr->spell_book == TV_PRAYER_BOOK)
-	r = "holy book";
-    if (mp_ptr->spell_book == TV_DRUID_BOOK)
-	r = "stone";
-    if (mp_ptr->spell_book == TV_NECRO_BOOK)
-	r = "tome";
-
 
     /* Track the object kind */
     object_kind_track(o_ptr->k_idx);
@@ -1426,8 +1381,10 @@ void do_cmd_study_book(cmd_code code, cmd_arg args[])
     /* Nothing to study */
     if (spell < 0) {
 	/* Message */
-	msg_format("You cannot learn any %s%s that %s.", p,
-		   (mp_ptr->spell_book == TV_DRUID_BOOK) ? " from" : "s in", r);
+	msg_format("You cannot learn any %s%s that %s.", 
+		   magic_desc[mp->ptr->spell_realm][SPELL_NOUN],
+		   (mp_ptr->spell_realm == REALM_NATURE) ? " from" : "s in", 
+		   magic_desc[mp->ptr->spell_realm][BOOK_NOUN]);
 
 	/* Abort */
 	return;

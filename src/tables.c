@@ -751,6 +751,19 @@ druid_blows d_blow[NUM_D_BLOWS] =
     { "stormwind chop",	 10,22 }
   };
 
+const char *magic_desc[REALM_MAX][MD_MAX] = 
+{
+    {"","","","",""},
+    {"spell",        "cast",     "You failed to get the spell off!",
+     "magic book", "magic book"},
+    {"prayer",       "pray",     "You lost your concentration!",
+     "holy book",  "holy book"},
+    {"druidic lore", "use",     "You lost your concentration!",
+     "stone",      "stone of lore"},
+    {"ritual",       "perform", "You perform the ritual incorrectly!",
+     "tome",       "tome"},
+};
+
 cptr feel_text[FEEL_MAX] =
   {
     NULL,	 /* FEEL_NONE */
