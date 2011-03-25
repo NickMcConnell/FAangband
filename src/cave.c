@@ -311,23 +311,16 @@ bool no_lite(void)
  */
 bool cave_valid_bold(int y, int x)
 {
-    s16b this_o_idx, next_o_idx = 0;
+    object_type *o_ptr;
     feature_type *f_ptr = &f_info[cave_feat[y][x]];
-
+    
     /* Forbid perma-grids */
     if (tf_has(f_ptr->flags, TF_PERMANENT))
 	return (FALSE);
-
+    
     /* Check objects */
-    for (this_o_idx = cave_o_idx[y][x]; this_o_idx; this_o_idx = next_o_idx) {
-	object_type *o_ptr;
-
-	/* Acquire object */
-	o_ptr = &o_list[this_o_idx];
-
-	/* Acquire next object */
-	next_o_idx = o_ptr->next_o_idx;
-
+    for (o_ptr = get_first_object(y, x); o_ptr; o_ptr = get_next_object(o_ptr))
+    {
 	/* Forbid artifact grids */
 	if (artifact_p(o_ptr))
 	    return (FALSE);
@@ -471,7 +464,7 @@ static byte multi_hued_attr(monster_race * r_ptr)
 /**
  * Hack -- Hallucinatory monster
  */
-static u16b image_monster(void)
+static u16b hallucinatory_monster(void)
 {
     monster_race *r_ptr;
 
@@ -499,7 +492,7 @@ static u16b image_monster(void)
 /**
  * Hack -- Hallucinatory object
  */
-static u16b image_object(void)
+static u16b hallucinatory_object(void)
 {
     object_kind *k_ptr;
 
@@ -530,16 +523,16 @@ static u16b image_object(void)
 /**
  * Hack -- Random hallucination
  */
-static u16b image_random(void)
+static u16b hallucinatory_random(void)
 {
     /* Normally, assume monsters */
     if (randint0(100) < 75) {
-	return (image_monster());
+	return (hallucinatory_monster());
     }
 
     /* Otherwise, assume objects */
     else {
-	return (image_object());
+	return (hallucinatory_object());
     }
 }
 
@@ -550,6 +543,15 @@ static u16b image_random(void)
  */
 bool feat_supports_lighting(byte feat)
 {
+    /* Pseudo graphics don't support lighting */
+    if (use_graphics == GRAPHICS_PSEUDO) return FALSE;
+
+    if ((use_graphics != GRAPHICS_DAVID_GERVAIS) &&
+	(feat >= FEAT_TRAP_HEAD) && (feat <= FEAT_TRAP_TAIL))
+    {
+	return TRUE;
+    }
+
     if ((feat >= FEAT_LAVA) && (feat <= FEAT_WEB))
 	return TRUE;
 
@@ -576,1204 +578,776 @@ bool feat_supports_lighting(byte feat)
 }
 
 
-/**
- * Extract the attr/char to display at the given (legal) map location
+/*
+ * Translate text colours.
  *
- * Note that this function, since it is called by "lite_spot()" which
- * is called by "update_view()", is a major efficiency concern.
+ * This translates a color based on the attribute. We use this to set terrain to
+ * be lighter or darker, make metallic monsters shimmer, highlight text under the
+ * mouse, and reduce the colours on mono colour or 16 colour terms to the correct
+ * colour space.
  *
- * Basically, we examine each "layer" of the world (terrain, objects,
- * monsters/players), from the bottom up, extracting a new attr/char
- * if necessary at each layer, and defaulting to "darkness".  This is
- * not the fastest method, but it is very simple, and it is about as
- * fast as it could be for grids which contain no "marked" objects or
- * "visible" monsters.
+ * TODO: Honour the attribute for the term (full color, mono, 16 color) but ensure
+ * that e.g. the lighter version of yellow becomes white in a 16 color term, but
+ * light yellow in a full colour term.
+ */
+byte get_color(byte a, int attr, int n)
+{
+    /* Accept any graphical attr (high bit set) */
+    if (a & (0x80)) return (a);
+
+    /* TODO: Honour the attribute for the term (full color, mono, 16 color) */
+    if (!attr) return(a);
+
+    /* Translate the color N times */
+    while (n > 0)
+    {
+	a = color_table[a].color_translate[attr];
+	n--;
+    }
+	
+    /* Return the modified color */
+    return (a);
+}
+
+
+/*
+ * This function modifies the attr/char pair for an empty floor space
+ * to reflect the various lighting options available.
  *
- * We apply the effects of hallucination during each layer.  Objects will
- * always appear as random "objects", monsters will always appear as random
- * "monsters", and normal grids occasionally appear as random "monsters" or
- * "objects", but note that these random "monsters" and "objects" are really
- * just "colored ascii symbols" (which may look silly on some machines).
+ * For text, this means changing the colouring for OPT(view_yellow_light) or
+ * OPT(view_bright_light), and for graphics it means modifying the char to
+ * use a different tile in the tileset.  These modifications are different
+ * for different sets, depending on the tiles available, and their position 
+ * in the set.
+ */
+static void special_lighting_floor(byte *a, char *c, enum grid_light_level lighting, bool in_view)
+{
+    /* The floor starts off "lit" - i.e. rendered in white or the default 
+     * tile. */
+
+    if (lighting == LIGHT_TORCH && OPT(view_yellow_light))
+    {
+	/* 
+	 * OPT(view_yellow_light) distinguishes between torchlit and 
+	 * permanently-lit areas 
+	 */
+	switch (use_graphics)
+	{
+	case GRAPHICS_NONE:
+	case GRAPHICS_PSEUDO:
+	    /* Use "yellow" */
+	    if (*a == TERM_WHITE) *a = TERM_YELLOW;
+	    break;
+	case GRAPHICS_ADAM_BOLT:
+	case GRAPHICS_NOMAD:
+	    *c += 2;
+	    break;
+	case GRAPHICS_DAVID_GERVAIS:
+	    *c -= 1;
+	    break;
+	}
+    }
+    else if (lighting == LIGHT_DARK)
+    {
+	/* Use a dark tile */
+	switch (use_graphics)
+	{
+	case GRAPHICS_NONE:
+	case GRAPHICS_PSEUDO:
+	    /* Use "dark gray" */
+	    if (*a == TERM_WHITE) *a = TERM_L_DARK;
+	    if (*a == TERM_GREEN) *a = TERM_L_DARK;
+	    break;
+	case GRAPHICS_ADAM_BOLT:
+	case GRAPHICS_NOMAD:
+	case GRAPHICS_DAVID_GERVAIS:
+	    *c += 1;
+	    break;
+	}
+    }
+    else
+    {
+	/* 
+	 * OPT(view_bright_light) makes tiles that aren't in the "eyeline" 
+	 * of the player show up dimmer than those that are.
+	 */
+	if (OPT(view_bright_light) && !in_view)
+	{
+	    switch (use_graphics)
+	    {
+	    case GRAPHICS_NONE:
+	    case GRAPHICS_PSEUDO:
+		/* Use "gray" */
+		if (*a == TERM_WHITE) *a = TERM_SLATE;
+		else if (*a == TERM_L_GREEN) *a = TERM_GREEN;
+		break;
+	    case GRAPHICS_ADAM_BOLT:
+	    case GRAPHICS_NOMAD:
+	    case GRAPHICS_DAVID_GERVAIS:
+		*c += 1;
+		break;
+	    }
+	}
+    }
+}
+
+/*
+ * This function modifies the attr/char pair for a wall (or other "interesting"
+ * grids to show them as more-or-less lit.  Note that how walls are drawn 
+ * isn't directly related to how they are lit - walls are always "lit".
+ * The lighting effects we use are as a visual cue to emphasise blindness 
+ * and to show field-of-view (OPT(view_bright_light)).
  *
- * The hallucination functions avoid taking any pointers to local variables
- * because some compilers refuse to use registers for any local variables
- * whose address is taken anywhere in the function.
+ * For text, we change the attr and for graphics we modify the char to
+ * use a different tile in the tileset.  These modifications are different
+ * for different sets, depending on the tiles available, and their position 
+ * in the set.
+ */
+static void special_wall_display(byte *a, char *c, bool in_view, int feat)
+{
+    /* Grids currently in view are left alone, rendered as "white" */
+    if (in_view) return;
+
+    /* When blind, we make walls and other "white" things dark */
+    if (p_ptr->timed[TMD_BLIND])
+    {
+	switch (use_graphics)
+	{
+	case GRAPHICS_NONE:
+	case GRAPHICS_PSEUDO:
+	    /* Use "dark gray" */
+	    if (*a == TERM_WHITE) *a = TERM_L_DARK;
+	    break;
+	case GRAPHICS_ADAM_BOLT:
+	case GRAPHICS_NOMAD:
+	case GRAPHICS_DAVID_GERVAIS:
+	    if (feat_supports_lighting(feat)) *c += 1;
+	    break;
+	}
+    }
+
+    /* Handle "OPT(view_bright_light)" by dimming walls not "in view" */
+    else if (OPT(view_bright_light))
+    {
+	switch (use_graphics)
+	{
+	case GRAPHICS_NONE:
+	case GRAPHICS_PSEUDO:
+	    /* Use "gray" */
+	    if (*a == TERM_WHITE) *a = TERM_SLATE;
+	    break;
+	case GRAPHICS_ADAM_BOLT:
+	case GRAPHICS_NOMAD:
+	case GRAPHICS_DAVID_GERVAIS:
+	    if (feat_supports_lighting(feat)) *c += 1;
+	    break;
+	}
+    }
+    else
+    {
+	/* Use a brightly lit tile */
+	switch (use_graphics)
+	{
+	case GRAPHICS_ADAM_BOLT:
+	case GRAPHICS_NOMAD:
+	    if (feat_supports_lighting(feat)) *c += 2;
+	    break;
+	case GRAPHICS_DAVID_GERVAIS:
+	    if (feat_supports_lighting(feat)) *c -= 1;
+	    break;
+	}
+    }
+}
+
+
+/* 
+ * Checks if a square is at the (inner) edge of a trap detect area 
+ */ 
+bool dtrap_edge(int y, int x) 
+{ 
+    /* Check if the square is a dtrap in the first place */ 
+    if (!cave_info2[y][x] & CAVE2_DTRAP) return FALSE; 
+
+    /* Check for non-dtrap adjacent grids */ 
+    if (in_bounds_fully(y + 1, x    ) && 
+	(!cave_info2[y + 1][x    ] & CAVE2_DTRAP)) return TRUE; 
+    if (in_bounds_fully(y    , x + 1) && 
+	(!cave_info2[y    ][x + 1] & CAVE2_DTRAP)) return TRUE; 
+    if (in_bounds_fully(y - 1, x    ) && 
+	(!cave_info2[y - 1][x    ] & CAVE2_DTRAP)) return TRUE; 
+    if (in_bounds_fully(y    , x - 1) && 
+	(!cave_info2[y    ][x - 1] & CAVE2_DTRAP)) return TRUE; 
+
+    return FALSE; 
+} 
+
+
+/*
+ * This function takes a pointer to a grid info struct describing the 
+ * contents of a grid location (as obtained through the function map_info)
+ * and fills in the character and attr pairs for display.
  *
- * As an optimization, we can handle the "player" grid as a special case.
+ * ap and cp are filled with the attr/char pair for the monster, object or 
+ * floor tile that is at the "top" of the grid (monsters covering objects, 
+ * which cover floor, assuming all are present).
  *
- * Note that the memorization of "objects" and "monsters" is not related
- * to the memorization of "terrain".  This allows the player to memorize
- * the terrain of a grid without memorizing any objects in that grid, and
- * to detect monsters without detecting anything about the terrain of the
- * grid containing the monster.
+ * tap and tcp are filled with the attr/char pair for the floor, regardless
+ * of what is on it.  This can be used by graphical displays with
+ * transparency to place an object onto a floor tile, is desired.
  *
- * The fact that all interesting "objects" and "terrain features" are
- * memorized as soon as they become visible for the first time means
- * that we only have to check the "CAVE_SEEN" flag for "boring" grids.
+ * Any lighting effects are also applied to these pairs, clear monsters allow
+ * the underlying colour or feature to show through (ATTR_CLEAR and
+ * CHAR_CLEAR), multi-hued colour-changing (ATTR_MULTI) is applied, and so on.
+ * Technically, the flag "CHAR_MULTI" is supposed to indicate that a monster 
+ * looks strange when examined, but this flag is currently ignored.
  *
- * Note that bizarre things must be done when the "attr" and/or "char"
- * codes have the "high-bit" set, since these values are used to encode
- * various "special" pictures in some versions, and certain situations,
- * such as "multi-hued" or "clear" monsters, cause the attr/char codes
- * to be "scrambled" in various ways.
+ * NOTES:
+ * This is called pretty frequently, whenever a grid on the map display
+ * needs updating, so don't overcomplicate it.
  *
- * Note that the "zero" entry in the feature/object/monster arrays are
+ * The "zero" entry in the feature/object/monster arrays are
  * used to provide "special" attr/char codes, with "monster zero" being
  * used for the player attr/char, "object zero" being used for the "pile"
  * attr/char, and "feature zero" being used for the "darkness" attr/char.
  *
- * Note that eventually we may want to use the "&" symbol for embedded
- * treasure, and use the "*" symbol to indicate multiple objects, but
- * currently, we simply use the attr/char of the first "marked" object
- * in the stack, if any, and so "object zero" is unused.  XXX XXX XXX
- *
- * Note the assumption that doing "x_ptr = &x_info[x]" plus a few of
- * "x_ptr->xxx", is quicker than "x_info[x].xxx", even if "x" is a fixed
- * constant.  If this is incorrect then a lot of code should be changed.
- *
- *
- * Some comments on the "terrain" layer...
- *
- * Note that "boring" grids (floors, invisible traps, and any illegal grids)
- * are very different from "interesting" grids (all other terrain features),
- * and the two types of grids are handled completely separately.  The most
- * important distinction is that "boring" grids may or may not be memorized
- * when they are first encountered, and so we must use the "CAVE_SEEN" flag
- * to see if they are "see-able".
- *
- *
- * Some comments on the "terrain" layer (boring grids)...
- *
- * Note that "boring" grids are always drawn using the picture for "empty
- * floors", which is stored in "f_info[FEAT_FLOOR]".  Sometimes, special
- * lighting effects may cause this picture to be modified.
- *
- * Note that "invisible traps" are always displayed exactly like "empty
- * floors", which prevents various forms of "cheating", with no loss of
- * efficiency.  There are still a few ways to "guess" where traps may be
- * located, for example, objects will never fall into a grid containing
- * an invisible trap.  XXX XXX
- *
- * To determine if a "boring" grid should be displayed, we simply check to
- * see if it is either memorized ("CAVE_MARK"), or currently "see-able" by
- * the player ("CAVE_SEEN").  Note that "CAVE_SEEN" is now maintained by the
- * "update_view()" function.
- *
- * Note the "special lighting effects" which can be activated for "boring"
- * grids using the "view_special_lite" option, causing certain such grids
- * to be displayed using special colors (if they are normally "white").
- * If the grid is "see-able" by the player, we will use the normal "white"
- * (except that, if the "view_yellow_lite" option is set, and the grid
- * is *only* "see-able" because of the player's torch, then we will use
- * "yellow"), else if the player is "blind", we will use "dark gray",
- * else if the grid is not "illuminated", we will use "dark gray", else
- * if the "view_bright_lite" option is set, we will use "slate" (gray),
- * else we will use the normal "white".
- *
- *
- * Some comments on the "terrain" layer (non-boring grids)...
- *
- * Note the use of the "mimic" field in the "terrain feature" processing,
- * which allows any feature to "pretend" to be another feature.  This is
- * used to "hide" secret doors, and to make all "doors" appear the same,
- * and all "walls" appear the same, and "hidden" treasure stay hidden.
- * Note that it is possible to use this field to make a feature "look"
- * like a floor, but the "view_special_lite" flag only affects actual
- * "boring" grids.
- *
- * Since "interesting" grids are always memorized as soon as they become
- * "see-able" by the player ("CAVE_SEEN"), such a grid only needs to be
- * displayed if it is memorized ("CAVE_MARK").  Most "interesting" grids
- * are in fact non-memorized, non-see-able, wall grids, so the fact that
- * we do not have to check the "CAVE_SEEN" flag adds some efficiency, at
- * the cost of *forcing* the memorization of all "interesting" grids when
- * they are first seen.  Since the "CAVE_SEEN" flag is now maintained by
- * the "update_view()" function, this efficiency is not as significant as
- * it was in previous versions, and could perhaps be removed.
- *
- * Note the "special lighting effects" which can be activated for "wall"
- * grids using the "view_granite_lite" option, causing certain such grids
- * to be displayed using special colors (if they are normally "white").
- * If the grid is "see-able" by the player, we will use the normal "white"
- * else if the player is "blind", we will use "dark gray", else if the
- * "view_bright_lite" option is set, we will use "slate" (gray), else we
- * will use the normal "white".
- *
- * Note that "wall" grids are more complicated than "boring" grids, due to
- * the fact that "CAVE_GLOW" for a "wall" grid means that the grid *might*
- * be glowing, depending on where the player is standing in relation to the
- * wall.  In particular, the wall of an illuminated room should look just
- * like any other (dark) wall unless the player is actually inside the room.
- *
- * Thus, we do not support as many visual special effects for "wall" grids
- * as we do for "boring" grids, since many of them would give the player
- * information about the "CAVE_GLOW" flag of the wall grid, in particular,
- * it would allow the player to notice the walls of illuminated rooms from
- * a dark hallway that happened to run beside the room.
- *
- *
- * Some comments on the "object" layer...
- *
- * Currently, we do nothing with multi-hued objects, because there are
- * not any.  If there were, they would have to set "shimmer_objects"
- * when they were created, and then new "shimmer" code in "dungeon.c"
- * would have to be created handle the "shimmer" effect, and the code
- * in "cave.c" would have to be updated to create the shimmer effect.
- * This did not seem worth the effort.  XXX XXX
- *
- *
- * Some comments on the "monster"/"player" layer...
- *
- * Note that monsters can have some "special" flags, including "ATTR_MULTI",
- * which means their color changes, and "ATTR_CLEAR", which means they take
- * the color of whatever is under them, and "CHAR_CLEAR", which means that
- * they take the symbol of whatever is under them.  Technically, the flag
- * "CHAR_MULTI" is supposed to indicate that a monster looks strange when
- * examined, but this flag is currently ignored.  All of these flags are
- * ignored if the "avoid_other" option is set, since checking for these
- * conditions is expensive (and annoying) on some systems.
- *
- * Normally, players could be handled just like monsters, except that the
- * concept of the "torch lite" of others player would add complications.
- * For efficiency, however, we handle the (only) player first, since the
- * "player" symbol always "pre-empts" any other facts about the grid.
- *
- * The "hidden_player" efficiency option, which only makes sense with a
- * single player, allows the player symbol to be hidden while running.
- *
- * ToDo: The transformations for tile colors, or brightness for the 16x16
+ * TODO:
+ * The transformations for tile colors, or brightness for the 16x16
  * tiles should be handled differently.  One possibility would be to
  * extend feature_type with attr/char definitions for the different states.
+ * This will probably be done outside of the current text->graphics mappings
+ * though.
  */
-void map_info(int y, int x, byte * ap, char *cp, byte * tap, char *tcp)
+void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 {
-    byte a;
-    char c;
+	byte a;
+	char c;
+	
+	feature_type *f_ptr = &f_info[g->f_idx];
 
-    byte feat;
-    byte info;
+	/* Normal attr and char */
+	a = f_ptr->x_attr;
+	c = f_ptr->x_char;
 
-    feature_type *f_ptr;
+	/* Check for trap detection boundaries */
+	if (g->trapborder && (g->f_idx == FEAT_FLOOR || g->f_idx == FEAT_GRASS)
+	    && (use_graphics == GRAPHICS_NONE || use_graphics == GRAPHICS_PSEUDO))
+	    a = TERM_L_GREEN;
 
-    object_type *o_ptr = &p_ptr->inventory[INVEN_LITE];
+	/* Special lighting effects */
+	if ((f_ptr->flags & TF_FLOOR) && OPT(view_special_light))
+		special_lighting_floor(&a, &c, g->lighting, g->in_view);
 
-    s16b this_o_idx, next_o_idx = 0;
+	/* Special lighting effects (walls only) */
+	if ((f_ptr->flags & TF_WALL) && OPT(view_granite_light)) 
+		special_wall_display(&a, &c, g->in_view, g->f_idx);
+		
+	/* Save the terrain info for the transparency effects */
+	(*tap) = a;
+	(*tcp) = c;
 
-    s16b m_idx;
 
-    s16b image = p_ptr->timed[TMD_HALLUC];
-
-    int floor_num = 0;
-
-    /* Hack -- Assume that "new" means "Adam Bolt Tiles" (or DG - NRM) */
-    bool graf_new = (use_graphics && (streq(ANGBAND_GRAF, "new")
-				      || streq(ANGBAND_GRAF, "david")));
-
-    /* Monster/Player */
-    m_idx = cave_m_idx[y][x];
-
-    /* Feature */
-    feat = cave_feat[y][x];
-
-    /* Cave flags */
-    info = cave_info[y][x];
-
-    /* Hack -- rare random hallucination on non-outer walls */
-    if (image && (feat < FEAT_PERM_SOLID) && (image_count-- <= 0)) {
-	int i;
-
-	/* Display a random image, reset count. */
-	image_count = randint1(511);
-	i = image_random();
-
-	a = PICT_A(i);
-	c = PICT_C(i);
-    }
-
-    /* Boring grids (floors, etc) */
-    else if (feat <= FEAT_INVIS) {
-	/* Memorized (or seen) floor */
-	if ((info & (CAVE_MARK)) || (info & (CAVE_SEEN))) {
-	    /* Get the floor feature */
-	    f_ptr = &f_info[FEAT_FLOOR];
-
-	    /* Normal attr */
-	    a = f_ptr->x_attr;
-
-	    /* Normal char */
-	    c = f_ptr->x_char;
-
-	    /* Special lighting effects */
-	    if (OPT(view_special_lite) && ((a == TERM_WHITE) || graf_new)) {
-		/* Handle "seen" grids */
-		if (info & (CAVE_SEEN)) {
-		    /* Only lit by "torch" lite */
-		    if (OPT(view_yellow_lite) && !(info & (CAVE_GLOW))
-			&& (!is_daylight)) {
-			if (arg_graphics == GRAPHICS_DAVID_GERVAIS)
-			    if ((player_has(PF_UNLIGHT) || p_ptr->darkness)
-				&& (p_ptr->cur_lite <= 0)) {
-				/* "Dark radius" */
-			    } else {
-				c -= 1;
-			} else if (graf_new) {
-			    if ((player_has(PF_UNLIGHT) || p_ptr->darkness)
-				&& (p_ptr->cur_lite <= 0)) {
-				/* "Dark radius" */
-			    } else {
-				/* Use a brightly lit tile */
-				c += 2;
-			    }
-			} else if (o_ptr->k_idx == 733) {
-			    /* Hack for Lamp of Gwindor */
-			    a = TERM_L_BLUE;
-			} else
-			    if ((player_has(PF_UNLIGHT) || p_ptr->darkness)
-				&& (p_ptr->cur_lite <= 0)) {
-			    /* "Dark radius" */
-			    a = TERM_L_DARK;
-			} else {
-			    /* Use "yellow" */
-			    a = TERM_YELLOW;
+	/* If there's an object, deal with that. */
+	if (g->first_k_idx)
+	{
+		if (g->hallucinate)
+		{
+			/* Just pick a random object to display. */
+			int i = hallucinatory_object();
+			
+			a = PICT_A(i);
+			c = PICT_C(i);
+		}
+		else
+		{
+			object_kind *k_ptr = &k_info[g->first_k_idx];
+			
+			/* Normal attr and char */
+			a = object_kind_attr(g->first_k_idx);
+			c = object_kind_char(g->first_k_idx);
+			
+			if (OPT(show_piles) && g->multiple_objects)
+			{
+				/* Get the "pile" feature instead */
+				k_ptr = &k_info[0];
+				
+				a = k_ptr->x_attr;
+				c = k_ptr->x_char;
 			}
-		    }
 		}
-
-		/* Handle "blind" */
-		else if (p_ptr->timed[TMD_BLIND]) {
-		    if (graf_new) {
-			/* Use a dark tile */
-			c += 1;
-		    } else {
-			/* Use "dark gray" */
-			a = TERM_L_DARK;
-		    }
-		}
-
-		/* Handle "dark" grids */
-		else if (!(info & (CAVE_GLOW))) {
-		    if (graf_new) {
-			/* Use a dark tile */
-			c += 1;
-		    } else {
-			/* Use "dark gray" */
-			a = TERM_L_DARK;
-		    }
-		}
-
-		/* Handle "view_bright_lite" */
-		else if (OPT(view_bright_lite)) {
-		    if (graf_new) {
-			/* Use a dark tile */
-			c += 1;
-		    } else {
-			/* Use "gray" */
-			a = TERM_SLATE;
-		    }
-		}
-	    }
 	}
 
-	/* Unknown */
-	else {
-	    /* Get the darkness feature */
-	    f_ptr = &f_info[FEAT_NONE];
+	/* If there's a monster */
+	if (g->m_idx > 0)
+	{
+		if (g->hallucinate)
+		{
+			/* Just pick a random monster to display. */
+			int i = hallucinatory_monster();
+			
+			a = PICT_A(i);
+			c = PICT_C(i);
+		}
+		else
+		{
+			monster_type *m_ptr = &mon_list[g->m_idx];
+			monster_race *r_ptr = &r_info[m_ptr->r_idx];
+				
+			byte da;
+			char dc;
+			
+			/* Desired attr & char */
+			da = r_ptr->x_attr;
+			dc = r_ptr->x_char;
 
-	    /* Normal attr */
-	    a = f_ptr->x_attr;
-
-	    /* Normal char */
-	    c = f_ptr->x_char;
-	}
-    }
-
-    /* Special terrain (trees etc) */
-    else if (feat >= FEAT_MIN_SPECIAL) {
-	/* Memorized (or seen) floor */
-	if ((info & (CAVE_MARK)) || (info & (CAVE_SEEN))) {
-	    /* Get the floor feature */
-	    f_ptr = &f_info[feat];
-
-	    /* Normal attr */
-	    a = f_ptr->x_attr;
-
-	    /* Normal char */
-	    c = f_ptr->x_char;
-
-	    /* Special lighting effects */
-	    if (OPT(view_special_lite)) {
-		/* Handle "seen" grids */
-		if (info & (CAVE_SEEN)) {
-		    /* Only lit by "torch" lite */
-		    if (OPT(view_yellow_lite) && !(info & (CAVE_GLOW))
-			&& (a == TERM_WHITE) && (!is_daylight)) {
-			if (arg_graphics == GRAPHICS_DAVID_GERVAIS)
-			    if ((player_has(PF_UNLIGHT) || p_ptr->darkness)
-				&& (p_ptr->cur_lite <= 0)) {
-				/* "Dark radius" */
-			    } else {
-				c -= 1;
-			} else if (graf_new) {
-			    if ((player_has(PF_UNLIGHT) || p_ptr->darkness)
-				&& (p_ptr->cur_lite <= 0)) {
-				/* "Dark radius" */
-			    } else {
-				/* Use a brightly lit tile */
-				c += 2;
-			    }
-			} else if (o_ptr->k_idx == 733) {
-			    /* Hack for Lamp of Gwindor */
-			    a = TERM_L_BLUE;
-			} else
-			    if ((player_has(PF_UNLIGHT) || p_ptr->darkness)
-				&& (p_ptr->cur_lite <= 0)) {
-			    /* "Dark radius" */
-			    a = TERM_L_DARK;
-			} else {
-			    /* Use "yellow" */
-			    a = TERM_YELLOW;
+			/* Special attr/char codes */
+			if ((da & 0x80) && (dc & 0x80))
+			{
+				/* Use attr */
+				a = da;
+				
+				/* Use char */
+				c = dc;
 			}
-		    }
-		}
+			
+			/* Multi-hued monster */
+			else if (rf_has(r_ptr->flags, RF_ATTR_MULTI) ||
+					 rf_has(r_ptr->flags, RF_ATTR_FLICKER))
+			{
+				/* Multi-hued attr */
+				a = m_ptr->attr ? m_ptr->attr : 1;
+				
+				/* Normal char */
+				c = dc;
+			}
+			
+			/* Normal monster (not "clear" in any way) */
+			else if (!flags_test(r_ptr->flags, RF_SIZE,
+				RF_ATTR_CLEAR, RF_CHAR_CLEAR, FLAG_END))
+			{
+				/* Use attr */
+				a = da;
 
-		/* Handle "blind" */
-		else if (p_ptr->timed[TMD_BLIND]) {
-		    if (graf_new) {
-			/* Use a dark tile */
-			c += 1;
-		    } else {
-			/* Use "dark gray" */
-			a = TERM_L_DARK;
-		    }
-		}
+				/* Desired attr & char */
+				da = r_ptr->x_attr;
+				dc = r_ptr->x_char;
+				
+				/* Use char */
+				c = dc;
+			}
+			
+			/* Hack -- Bizarre grid under monster */
+			else if ((a & 0x80) || (c & 0x80))
+			{
+				/* Use attr */
+				a = da;
+				
+				/* Use char */
+				c = dc;
+			}
+			
+			/* Normal char, Clear attr, monster */
+			else if (!rf_has(r_ptr->flags, RF_CHAR_CLEAR))
+			{
+				/* Normal char */
+				c = dc;
+			}
+				
+			/* Normal attr, Clear char, monster */
+			else if (!rf_has(r_ptr->flags, RF_ATTR_CLEAR))
+			{
+				/* Normal attr */
+				a = da;
+			}
 
-		/* Handle "dark" grids */
-		else if (!(info & (CAVE_GLOW))) {
-		    if (graf_new) {
-			/* Use a dark tile */
-			c += 1;
-		    } else {
-			/* Use "dark gray" */
-			a = TERM_L_DARK;
-		    }
+			/* Store the drawing attr so we can use it elsewhere */
+			m_ptr->attr = a;
 		}
-
-		/* Handle "view_bright_lite" */
-		else if (OPT(view_bright_lite)) {
-		    if (graf_new) {
-			/* Use a dark tile */
-			c += 1;
-		    } else {
-			/* Use "gray" */
-			a = TERM_SLATE;
-		    }
-		}
-	    }
 	}
 
-	/* Unknown */
-	else {
-	    /* Get the darkness feature */
-	    f_ptr = &f_info[FEAT_NONE];
+	/* Handle "player" */
+	else if (g->is_player)
+	{
+		monster_race *r_ptr = &r_info[0];
 
-	    /* Normal attr */
-	    a = f_ptr->x_attr;
-
-	    /* Normal char */
-	    c = f_ptr->x_char;
-	}
-    }
-
-    /* Interesting grids (non-floors) */
-    else {
-	/* Memorized grids */
-	if (info & (CAVE_MARK)) {
-	    /* Apply "mimic" field */
-	    feat = f_info[feat].mimic;
-
-	    /* Get the feature */
-	    f_ptr = &f_info[feat];
-
-	    /* Normal attr */
-	    a = f_ptr->x_attr;
-
-	    /* Normal char */
-	    c = f_ptr->x_char;
-
-	    /* Special lighting effects (walls only) */
-	    if (OPT(view_granite_lite) && feat_supports_lighting(feat)) {
-		/* Handle "seen" grids */
-		if (info & (CAVE_SEEN)) {
-		    if (graf_new) {
-			/* Use a lit tile */
-		    } else {
-			/* Use "white" */
-		    }
+		/* Get the "player" attr */
+		a = r_ptr->x_attr;
+		if ((OPT(hp_changes_color)) && (arg_graphics == GRAPHICS_NONE))
+		{
+			switch(p_ptr->chp * 10 / p_ptr->mhp)
+			{
+				case 10:
+				case  9: 
+				{
+					a = TERM_WHITE; 
+					break;
+				}
+				case  8:
+				case  7:
+				{
+					a = TERM_YELLOW;
+					break;
+				}
+				case  6:
+				case  5:
+				{
+					a = TERM_ORANGE;
+					break;
+				}
+				case  4:
+				case  3:
+				{
+					a = TERM_L_RED;
+					break;
+				}
+				case  2:
+				case  1:
+				case  0:
+				{
+					a = TERM_RED;
+					break;
+				}
+				default:
+				{
+					a = TERM_WHITE;
+					break;
+				}
+			}
 		}
 
-		/* Handle "blind" */
-		else if (p_ptr->timed[TMD_BLIND]) {
-		    if (graf_new) {
-			/* Use a dark tile */
-			c += 1;
-		    } else {
-			/* Use "dark gray" */
-			a = TERM_L_DARK;
-		    }
-		}
-
-		/* Handle "view_bright_lite" */
-		else if (OPT(view_bright_lite)) {
-		    if (graf_new) {
-			/* Use a lit tile */
-			c += 1;
-		    } else {
-			/* Use "gray" */
-			a = TERM_SLATE;
-		    }
-		} else {
-		    if (graf_new) {
-			/* Use a brightly lit tile */
-			c += 2;
-		    } else {
-			/* Use "white" */
-		    }
-		}
-	    }
+		/* Get the "player" char */
+		c = r_ptr->x_char;
 	}
 
-	/* Unknown */
-	else {
-	    /* Get the darkness feature */
-	    f_ptr = &f_info[FEAT_NONE];
-
-	    /* Normal attr */
-	    a = f_ptr->x_attr;
-
-	    /* Normal char */
-	    c = f_ptr->x_char;
-	}
-    }
-
-    /* Save the terrain info for the transparency effects */
-    (*tap) = a;
-    (*tcp) = c;
-
-    /* Objects */
-    for (this_o_idx = cave_o_idx[y][x]; this_o_idx; this_o_idx = next_o_idx) {
-	object_type *o_ptr;
-
-	/* Hack to not display objects in trees */
-	if ((cave_feat[y][x] == FEAT_TREE) || (cave_feat[y][x] == FEAT_TREE2)
-	    || (cave_feat[y][x] == FEAT_RUBBLE))
-	    break;
-
-	/* Get the object */
-	o_ptr = &o_list[this_o_idx];
-
-	/* Get the next object */
-	next_o_idx = o_ptr->next_o_idx;
-
-	/* Memorized objects */
-	if (o_ptr->marked && !squelch_hide_item(o_ptr)) {
-	    /* Hack -- object hallucination */
-	    if (image) {
-		int i = image_object();
-
-		a = PICT_A(i);
-		c = PICT_C(i);
-
-		break;
-	    }
-
-	    /* Normal attr */
-	    a = object_attr(o_ptr);
-
-	    /* Normal char */
-	    c = object_char(o_ptr);
-
-	    /* First marked object */
-	    if (!OPT(show_piles))
-		break;
-
-	    /* Special stack symbol */
-	    if (++floor_num > 1) {
-		object_kind *k_ptr;
-
-		/* Get the "pile" feature */
-		k_ptr = &k_info[0];
-
-		/* Normal attr */
-		a = k_ptr->x_attr;
-
-		/* Normal char */
-		c = k_ptr->x_char;
-
-		break;
-	    }
-	}
-    }
-
-
-    /* Monsters */
-    if (m_idx > 0) {
-	monster_type *m_ptr = &m_list[m_idx];
-
-	/* Visible monster */
-	if (m_ptr->ml) {
-	    monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-	    byte da;
-	    char dc;
-
-	    /* Desired attr */
-	    da = r_ptr->x_attr;
-
-	    /* Desired char */
-	    dc = r_ptr->x_char;
-
-	    /* Hack -- monster hallucination */
-	    if (image) {
-		int i = image_monster();
-
-		a = PICT_A(i);
-		c = PICT_C(i);
-	    }
-
-	    /* Ignore weird codes */
-	    else if (OPT(avoid_other)) {
-		/* Use attr */
-		a = da;
-
-		/* Use char */
-		c = dc;
-	    }
-
-	    /* Special attr/char codes */
-	    else if ((da & 0x80) && (dc & 0x80)) {
-		/* Use attr */
-		a = da;
-
-		/* Use char */
-		c = dc;
-	    }
-
-	    /* Multi-hued monster */
-	    else if (rf_has(r_ptr->flags, RF_ATTR_MULTI)) {
-		/* Multi-hued attr */
-		a = multi_hued_attr(r_ptr);
-
-		/* Normal char */
-		c = dc;
-	    }
-
-	    /* Normal monster (not "clear" in any way) */
-	    else if (!(rf_has(r_ptr->flags, RF_ATTR_CLEAR)
-		       || rf_has(r_ptr->flags, RF_CHAR_CLEAR))) {
-		/* Use attr */
-		a = da;
-
-		/* Use char */
-		c = dc;
-	    }
-
-	    /* Hack -- Bizarre grid under monster */
-	    else if ((a & 0x80) || (c & 0x80)) {
-		/* Use attr */
-		a = da;
-
-		/* Use char */
-		c = dc;
-	    }
-
-	    /* Normal char, Clear attr, monster */
-	    else if (!(rf_has(r_ptr->flags, RF_CHAR_CLEAR))) {
-		/* Normal char */
-		c = dc;
-	    }
-
-	    /* Normal attr, Clear char, monster */
-	    else if (!(rf_has(r_ptr->flags, RF_ATTR_CLEAR))) {
-		/* Normal attr */
-		a = da;
-	    }
-	}
-    }
-
-    /* Handle "player" */
-    else if ((m_idx < 0) && !(p_ptr->running && OPT(hidden_player))) {
-	monster_race *r_ptr = &r_info[0];
-
-	/* Get the "player" attr */
-	/* DSV: I've chosen the following sequence of colors to indicate the
-	 * player's current HP.  There are colors are left over, but I left
-	 * them in this comment for easy reference, in the likely case that I
-	 * decide to change the order of color changes. TERM_WHITE 90-100% of
-	 * HP remaining TERM_YELLOW 70- 89% of HP remaining TERM_ORANGE 50- 69% 
-	 * of HP remaining TERM_L_RED 30- 49% of HP remaining TERM_RED 0- 29%
-	 * of HP remaining TERM_SLATE _% of HP remaining TERM_UMBER _% of HP
-	 * remaining TERM_L_UMBER _% of HP remaining TERM_BLUE -% of HP
-	 * remaining TERM_L_BLUE -% of HP remaining TERM_GREEN -% of HP
-	 * remaining TERM_L_GREEN -% of HP remaining TERM_DARK -% of HP
-	 * remaining TERM_L_DARK -% of HP remaining TERM_L_WHITE -% of HP
-	 * remaining TERM_VIOLET -% of HP remaining */
-
-	if ((OPT(hp_changes_colour)) && (arg_graphics == GRAPHICS_NONE)) {
-	    switch (p_ptr->chp * 10 / p_ptr->mhp) {
-	    case 10:
-	    case 9:
-		a = TERM_WHITE;
-		break;
-	    case 8:
-	    case 7:
-		a = TERM_YELLOW;
-		break;
-	    case 6:
-	    case 5:
-		a = TERM_ORANGE;
-		break;
-	    case 4:
-	    case 3:
-		a = TERM_L_RED;
-		break;
-	    case 2:
-	    case 1:
-	    case 0:
-		a = TERM_RED;
-		break;
-	    default:
-		a = TERM_WHITE;
-		break;
-	    }
-
-	    /* if ((a == TERM_WHITE) && (player_has(PF_UNLIGHT)) &&
-	     * (p_ptr->cur_lite <= 0)) a = TERM_L_DARK; */
-	}
-
-	else
-	    a = r_ptr->x_attr;
-
-	/* Get the "player" char */
-	c = r_ptr->x_char;
-    }
-#ifdef MAP_INFO_MULTIPLE_PLAYERS
-    /* Players */
-    else if (m_idx < 0)
-#else				/* MAP_INFO_MULTIPLE_PLAYERS */
-    /* Handle "player" */
-    else if ((m_idx < 0) && !(p_ptr->running && OPT(hidden_player)))
-#endif				/* MAP_INFO_MULTIPLE_PLAYERS */
-    {
-	monster_race *r_ptr = &r_info[0];
-
-	/* Get the "player" attr */
-	a = r_ptr->x_attr;
-
-	/* Get the "player" char */
-	c = r_ptr->x_char;
-    }
-
-    /* Result */
-    (*ap) = a;
-    (*cp) = c;
+	/* Result */
+	(*ap) = a;
+	(*cp) = c;	
 }
 
-/**
- * Repeat of map_info for use in screendumps.  A hack from NPP, but if Jeff
- * can't do better than this, I don't have a hope -NRM-
+/*
+ * This function takes a grid location (x, y) and extracts information the
+ * player is allowed to know about it, filling in the grid_data structure
+ * passed in 'g'.
+ *
+ * The information filled in is as follows:
+ *  - g->f_idx is filled in with the terrain's feature type, or FEAT_NONE
+ *    if the player doesn't know anything about the grid.  The function
+ *    makes use of the "mimic" field in terrain in order to allow one
+ *    feature to look like another (hiding secret doors, invisible traps,
+ *    etc).  This will return the terrain type the player "Knows" about,
+ *    not necessarily the real terrain.
+ *  - g->m_idx is set to the monster index, or 0 if there is none (or the
+ *    player doesn't know it).
+ *  - g->first_k_idx is set to the index of the first object in a grid
+ *    that the player knows (and cares, as per OPT(hide_squelchable)) about,
+ *    or zero for no object in the grid.
+ *  - g->muliple_objects is TRUE if there is more than one object in the
+ *    grid that the player knows and cares about (to facilitate any special
+ *    floor stack symbol that might be used).
+ *  - g->in_view is TRUE if the player can currently see the grid - this can
+ *    be used to indicate field-of-view, such as through the OPT(view_bright_light)
+ *    option.
+ *  - g->lighting is set to indicate the lighting level for the grid:
+ *    LIGHT_DARK for unlit grids, LIGHT_TORCH for those lit by the player's
+ *    light source, and LIGHT_GLOW for inherently light grids (lit rooms, etc).
+ *    Note that lighting is always LIGHT_GLOW for known "interesting" grids
+ *    like walls.
+ *  - g->is_player is TRUE if the player is on the given grid.
+ *  - g->hallucinate is TRUE if the player is hallucinating something "strange"
+ *    for this grid - this should pick a random monster to show if the m_idx
+ *    is non-zero, and a random object if first_k_idx is non-zero.
+ *       
+ * NOTES:
+ * This is called pretty frequently, whenever a grid on the map display
+ * needs updating, so don't overcomplicate it.
+ *
+ * Terrain is remembered separately from objects and monsters, so can be
+ * shown even when the player can't "see" it.  This leads to things like
+ * doors out of the player's view still change from closed to open and so on.
+ *
+ * TODO:
+ * Hallucination is currently disabled (it was a display-level hack before,
+ * and we need it to be a knowledge-level hack).  The idea is that objects
+ * may turn into different objects, monsters into different monsters, and
+ * terrain may be objects, monsters, or stay the same.
  */
-
-void map_info_default(int y, int x, byte * ap, char *cp)
+void map_info(unsigned y, unsigned x, grid_data *g)
 {
-    byte a;
-    char c;
+    object_type *o_ptr;
+    byte info, info2;
 
-    byte feat;
-    byte info;
+    assert(x < DUNGEON_WID);
+    assert(y < DUNGEON_HGT);
 
-    feature_type *f_ptr;
-
-    object_type *o_ptr = &p_ptr->inventory[INVEN_LITE];
-
-    s16b this_o_idx, next_o_idx = 0;
-
-    s16b m_idx;
-
-    s16b image = p_ptr->timed[TMD_HALLUC];
-
-    int floor_num = 0;
-
-    /* Monster/Player */
-    m_idx = cave_m_idx[y][x];
-
-    /* Feature */
-    feat = cave_feat[y][x];
-
-    /* Cave flags */
     info = cave_info[y][x];
+    info2 = cave_info2[y][x];
+	
+    /* Default "clear" values, others will be set later where appropriate. */
+    g->first_k_idx = 0;
+    g->multiple_objects = FALSE;
+    g->lighting = LIGHT_GLOW;
 
-    /* Hack -- rare random hallucination on non-outer walls */
-    if (image && (feat < FEAT_PERM_SOLID) && (image_count-- <= 0)) {
-	int i;
+    /* Set things we can work out right now */
+    g->f_idx = cave_feat[y][x];
+    g->in_view = (info & CAVE_SEEN) ? TRUE : FALSE;
+    g->is_player = (cave_m_idx[y][x] < 0) ? TRUE : FALSE;
+    g->m_idx = (g->is_player) ? 0 : cave_m_idx[y][x];
+    g->hallucinate = p_ptr->timed[TMD_IMAGE] ? TRUE : FALSE;
+    g->trapborder = (dtrap_edge(y, x)) ? TRUE : FALSE;
 
-	/* Display a random image, reset count. */
-	image_count = randint1(511);
-	i = image_random();
-
-	a = PICT_A(i);
-	c = PICT_C(i);
-    }
-
-    /* Boring grids (floors, etc) */
-    else if (feat <= FEAT_INVIS) {
-	/* Memorized (or seen) floor */
-	if ((info & (CAVE_MARK)) || (info & (CAVE_SEEN))) {
+    /* If the grid is memorised or can currently be seen */
+    if ((info & CAVE_MARK) || (info & CAVE_SEEN))
+    {
+	/* Apply "mimic" field */
+	g->f_idx = f_info[g->f_idx].mimic;
+			
+	/* Boring grids (floors, etc) */
+	if (g->f_idx <= FEAT_INVIS)
+	{
 	    /* Get the floor feature */
-	    f_ptr = &f_info[FEAT_FLOOR];
+	    g->f_idx = FEAT_FLOOR;
 
-	    /* Normal attr */
-	    a = f_ptr->d_attr;
-
-	    /* Normal char */
-	    c = f_ptr->d_char;
-
-	    /* Special lighting effects */
-	    if (OPT(view_special_lite) && (a == TERM_WHITE)) {
-		/* Handle "seen" grids */
-		if (info & (CAVE_SEEN)) {
-		    /* Only lit by "torch" lite */
-		    if (OPT(view_yellow_lite) && !(info & (CAVE_GLOW))
-			&& (!is_daylight)) {
-			if (o_ptr->k_idx == 733) {
-			    /* Hack for Lamp of Gwindor */
-			    a = TERM_L_BLUE;
-			} else
-			    if ((player_has(PF_UNLIGHT) || p_ptr->darkness)
-				&& (p_ptr->cur_lite <= 0)) {
-			    /* "Dark radius" */
-			    a = TERM_L_DARK;
-			} else {
-			    /* Use "yellow" */
-			    a = TERM_YELLOW;
-			}
-		    }
-		}
-
-		/* Handle "blind" */
-		else if (p_ptr->timed[TMD_BLIND]) {
-		    /* Use "dark gray" */
-		    a = TERM_L_DARK;
-		}
-
-		/* Handle "dark" grids */
-		else if (!(info & (CAVE_GLOW))) {
-		    /* Use "dark gray" */
-		    a = TERM_L_DARK;
-		}
-
-		/* Handle "view_bright_lite" */
-		else if (OPT(view_bright_lite)) {
-		    /* Use "gray" */
-		    a = TERM_SLATE;
-		}
+	    /* Handle currently visible grids */
+	    if (info & CAVE_SEEN)
+	    {
+		/* Only lit by "torch" light */
+		if (info & CAVE_GLOW)
+		    g->lighting = LIGHT_GLOW;
+		else
+		    g->lighting = LIGHT_TORCH;
 	    }
-	}
 
-	/* Unknown */
-	else {
-	    /* Get the darkness feature */
-	    f_ptr = &f_info[FEAT_NONE];
-
-	    /* Normal attr */
-	    a = f_ptr->d_attr;
-
-	    /* Normal char */
-	    c = f_ptr->d_char;
+	    /* Handle "dark" grids and "blindness" */
+	    else if (p_ptr->timed[TMD_BLIND] || !(info & CAVE_GLOW))
+		g->lighting = LIGHT_DARK;
 	}
     }
-
-    /* Special terrain (trees etc) */
-    else if ((feat >= FEAT_LAVA) && (feat <= FEAT_WEB)) {
-	/* Memorized (or seen) floor */
-	if ((info & (CAVE_MARK)) || (info & (CAVE_SEEN))) {
-	    /* Get the floor feature */
-	    f_ptr = &f_info[feat];
-
-	    /* Normal attr */
-	    a = f_ptr->d_attr;
-
-	    /* Normal char */
-	    c = f_ptr->d_char;
-
-	    /* Special lighting effects */
-	    if (OPT(view_special_lite)) {
-		/* Handle "seen" grids */
-		if (info & (CAVE_SEEN)) {
-		    /* Only lit by "torch" lite */
-		    if (OPT(view_yellow_lite) && !(info & (CAVE_GLOW))
-			&& (a == TERM_WHITE) && (!is_daylight)) {
-			if (o_ptr->k_idx == 733) {
-			    /* Hack for Lamp of Gwindor */
-			    a = TERM_L_BLUE;
-			} else
-			    if ((player_has(PF_UNLIGHT) || p_ptr->darkness)
-				&& (p_ptr->cur_lite <= 0)) {
-			    /* "Dark radius" */
-			    a = TERM_L_DARK;
-			} else {
-			    /* Use "yellow" */
-			    a = TERM_YELLOW;
-			}
-		    }
-		}
-
-		/* Handle "blind" */
-		else if (p_ptr->timed[TMD_BLIND]) {
-		    /* Use "dark gray" */
-		    a = TERM_L_DARK;
-		}
-
-		/* Handle "dark" grids */
-		else if (!(info & (CAVE_GLOW))) {
-		    /* Use "dark gray" */
-		    a = TERM_L_DARK;
-		}
-
-		/* Handle "view_bright_lite" */
-		else if (OPT(view_bright_lite)) {
-		    /* Use "gray" */
-		    a = TERM_SLATE;
-		}
-	    }
-	}
-
-	/* Unknown */
-	else {
-	    /* Get the darkness feature */
-	    f_ptr = &f_info[FEAT_NONE];
-
-	    /* Normal attr */
-	    a = f_ptr->d_attr;
-
-	    /* Normal char */
-	    c = f_ptr->d_char;
-	}
+    /* Unknown */
+    else
+    {
+	g->f_idx = FEAT_NONE;
     }
+       
 
-    /* Interesting grids (non-floors) */
-    else {
-	/* Memorized grids */
-	if (info & (CAVE_MARK)) {
-	    /* Apply "mimic" field */
-	    feat = f_info[feat].mimic;
-
-	    /* Get the feature */
-	    f_ptr = &f_info[feat];
-
-	    /* Normal attr */
-	    a = f_ptr->d_attr;
-
-	    /* Normal char */
-	    c = f_ptr->d_char;
-
-	    /* Special lighting effects (walls only) */
-	    if (OPT(view_granite_lite) && feat_supports_lighting(feat)) {
-		/* Handle "seen" grids */
-		if (info & (CAVE_SEEN)) {
-		    /* Use "white" */
-		}
-
-		/* Handle "blind" */
-		else if (p_ptr->timed[TMD_BLIND]) {
-		    /* Use "dark gray" */
-		    a = TERM_L_DARK;
-		}
-
-		/* Handle "view_bright_lite" */
-		else if (OPT(view_bright_lite)) {
-		    /* Use "gray" */
-		    a = TERM_SLATE;
-		} else {
-		    /* Use "white" */
-		}
-	    }
-	}
-
-	/* Unknown */
-	else {
-	    /* Get the darkness feature */
-	    f_ptr = &f_info[FEAT_NONE];
-
-	    /* Normal attr */
-	    a = f_ptr->d_attr;
-
-	    /* Normal char */
-	    c = f_ptr->d_char;
-	}
-    }
 
     /* Objects */
-    for (this_o_idx = cave_o_idx[y][x]; this_o_idx; this_o_idx = next_o_idx) {
-	object_type *o_ptr;
-
-	/* Hack to not display objects in trees */
-	if ((cave_feat[y][x] == FEAT_TREE) || (cave_feat[y][x] == FEAT_TREE2)
-	    || (cave_feat[y][x] == FEAT_RUBBLE))
-	    break;
-
-	/* Get the object */
-	o_ptr = &o_list[this_o_idx];
-
-	/* Get the next object */
-	next_o_idx = o_ptr->next_o_idx;
-
+    for (o_ptr = get_first_object(y, x); o_ptr; o_ptr = get_next_object(o_ptr))
+    {
 	/* Memorized objects */
-	if (o_ptr->marked) {
-	    /* Hack -- object hallucination */
-	    if (image) {
-		int i = image_object();
-
-		a = PICT_A(i);
-		c = PICT_C(i);
-
-		break;
+	if (o_ptr->marked && !squelch_hide_item(o_ptr))
+	{
+	    /* First item found */
+	    if (g->first_k_idx == 0)
+	    {
+		g->first_k_idx = o_ptr->k_idx;
 	    }
+	    else
+	    {
+		g->multiple_objects = TRUE;
 
-	    /* Normal attr */
-	    a = object_attr(o_ptr);
-
-	    /* Normal char */
-	    c = object_char(o_ptr);
-
-	    /* First marked object */
-	    if (!OPT(show_piles))
-		break;
-
-	    /* Special stack symbol */
-	    if (++floor_num > 1) {
-		object_kind *k_ptr;
-
-		/* Get the "pile" feature */
-		k_ptr = &k_info[0];
-
-		/* Normal attr */
-		a = k_ptr->d_attr;
-
-		/* Normal char */
-		c = k_ptr->d_char;
-
+		/* And we know all we need to know. */
 		break;
 	    }
 	}
     }
-
 
     /* Monsters */
-    if (m_idx > 0) {
-	monster_type *m_ptr = &m_list[m_idx];
-
-	/* Visible monster */
-	if (m_ptr->ml) {
-	    monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-	    byte da;
-	    char dc;
-
-	    /* Desired attr */
-	    da = r_ptr->d_attr;
-
-	    /* Desired char */
-	    dc = r_ptr->d_char;
-
-	    /* Hack -- monster hallucination */
-	    if (image) {
-		int i = image_monster();
-
-		a = PICT_A(i);
-		c = PICT_C(i);
-	    }
-
-	    /* Ignore weird codes */
-	    else if (OPT(avoid_other)) {
-		/* Use attr */
-		a = da;
-
-		/* Use char */
-		c = dc;
-	    }
-
-	    /* Special attr/char codes */
-	    else if ((da & 0x80) && (dc & 0x80)) {
-		/* Use attr */
-		a = da;
-
-		/* Use char */
-		c = dc;
-	    }
-
-	    /* Multi-hued monster */
-	    else if (rf_has(r_ptr->flags, RF_ATTR_MULTI)) {
-		/* Multi-hued attr */
-		a = multi_hued_attr(r_ptr);
-
-		/* Normal char */
-		c = dc;
-	    }
-
-	    /* Normal monster (not "clear" in any way) */
-	    else if (!(rf_has(r_ptr->flags, RF_ATTR_CLEAR)
-		       || rf_has(r_ptr->flags, RF_CHAR_CLEAR))) {
-		/* Use attr */
-		a = da;
-
-		/* Use char */
-		c = dc;
-	    }
-
-	    /* Hack -- Bizarre grid under monster */
-	    else if ((a & 0x80) || (c & 0x80)) {
-		/* Use attr */
-		a = da;
-
-		/* Use char */
-		c = dc;
-	    }
-
-	    /* Normal char, Clear attr, monster */
-	    else if (!(rf_has(r_ptr->flags, RF_CHAR_CLEAR))) {
-		/* Normal char */
-		c = dc;
-	    }
-
-	    /* Normal attr, Clear char, monster */
-	    else if (!(rf_has(r_ptr->flags, RF_ATTR_CLEAR))) {
-		/* Normal attr */
-		a = da;
-	    }
-	}
-    }
-
-    /* Handle "player" */
-    else if ((m_idx < 0) && !(p_ptr->running && OPT(hidden_player))) {
-	monster_race *r_ptr = &r_info[0];
-
-	/* Get the "player" attr */
-	/* DSV: I've chosen the following sequence of colors to indicate the
-	 * player's current HP.  There are colors are left over, but I left
-	 * them in this comment for easy reference, in the likely case that I
-	 * decide to change the order of color changes. TERM_WHITE 90-100% of
-	 * HP remaining TERM_YELLOW 70- 89% of HP remaining TERM_ORANGE 50- 69% 
-	 * of HP remaining TERM_L_RED 30- 49% of HP remaining TERM_RED 0- 29%
-	 * of HP remaining TERM_SLATE _% of HP remaining TERM_UMBER _% of HP
-	 * remaining TERM_L_UMBER _% of HP remaining TERM_BLUE -% of HP
-	 * remaining TERM_L_BLUE -% of HP remaining TERM_GREEN -% of HP
-	 * remaining TERM_L_GREEN -% of HP remaining TERM_DARK -% of HP
-	 * remaining TERM_L_DARK -% of HP remaining TERM_L_WHITE -% of HP
-	 * remaining TERM_VIOLET -% of HP remaining */
-
-	if (OPT(hp_changes_colour)) {
-	    switch (p_ptr->chp * 10 / p_ptr->mhp) {
-	    case 10:
-	    case 9:
-		a = TERM_WHITE;
-		break;
-	    case 8:
-	    case 7:
-		a = TERM_YELLOW;
-		break;
-	    case 6:
-	    case 5:
-		a = TERM_ORANGE;
-		break;
-	    case 4:
-	    case 3:
-		a = TERM_L_RED;
-		break;
-	    case 2:
-	    case 1:
-	    case 0:
-		a = TERM_RED;
-		break;
-	    default:
-		a = TERM_WHITE;
-		break;
-	    }
-
-	    /* if ((a == TERM_WHITE) && (player_has(PF_UNLIGHT)) &&
-	     * (p_ptr->cur_lite <= 0)) a = TERM_L_DARK; */
-	}
-
-	else
-	    a = r_ptr->d_attr;
-
-	/* Get the "player" char */
-	c = r_ptr->d_char;
-    }
-#ifdef MAP_INFO_MULTIPLE_PLAYERS
-    /* Players */
-    else if (m_idx < 0)
-#else				/* MAP_INFO_MULTIPLE_PLAYERS */
-    /* Handle "player" */
-    else if ((m_idx < 0) && !(p_ptr->running && OPT(hidden_player)))
-#endif				/* MAP_INFO_MULTIPLE_PLAYERS */
+    if (g->m_idx > 0)
     {
-	monster_race *r_ptr = &r_info[0];
+	/* If the monster isn't "visible", make sure we don't list it.*/
+	monster_type *m_ptr = &mon_list[g->m_idx];
+	if (!m_ptr->ml) g->m_idx = 0;
 
-	/* Get the "player" attr */
-	a = r_ptr->d_attr;
-
-	/* Get the "player" char */
-	c = r_ptr->d_char;
     }
 
-    /* Result */
-    (*ap) = a;
-    (*cp) = c;
+    /* Rare random hallucination on non-outer walls */
+    if (g->hallucinate && g->m_idx == 0 && g->first_k_idx == 0)
+    {
+	if (one_in_(256) && (g->f_idx < FEAT_PERM_SOLID))
+	{
+	    /* Normally, make an imaginary monster */
+	    if (randint0(100) < 75)
+	    {
+		g->m_idx = 1;
+	    }
+	    /* Otherwise, an imaginary object */
+	    else
+	    {
+		g->first_k_idx = 1;
+	    }
+	}
+	else
+	{
+	    g->hallucinate = FALSE;
+	}
+    }
+
+    assert(g->f_idx <= FEAT_PERM_SOLID);
+    assert(g->m_idx < (u32b) mon_max);
+    assert(g->first_k_idx < z_info->k_max);
+    /* All other g fields are 'flags', mostly booleans. */
 }
 
-/**
+
+
+/*
+ * Move the cursor to a given map location.
+ */
+static void move_cursor_relative_map(int y, int x)
+{
+	int ky, kx;
+
+	term *old;
+
+	int j;
+
+	/* Scan windows */
+	for (j = 0; j < ANGBAND_TERM_MAX; j++)
+	{
+		term *t = angband_term[j];
+
+		/* No window */
+		if (!t) continue;
+
+		/* No relevant flags */
+		if (!(op_ptr->window_flag[j] & (PW_MAP))) continue;
+
+		/* Location relative to panel */
+		ky = y - t->offset_y;
+
+		if (tile_height > 1)
+		{
+		        ky = tile_height * ky;
+		}
+
+		/* Verify location */
+		if ((ky < 0) || (ky >= t->hgt)) continue;
+
+		/* Location relative to panel */
+		kx = x - t->offset_x;
+
+		if (tile_width > 1)
+		{
+		        kx = tile_width * kx;
+		}
+
+		/* Verify location */
+		if ((kx < 0) || (kx >= t->wid)) continue;
+
+		/* Go there */
+		old = Term;
+		Term_activate(t);
+		(void)Term_gotoxy(kx, ky);
+		Term_activate(old);
+	}
+}
+
+/*
  * Move the cursor to a given map location.
  *
+ * The main screen will always be at least 24x80 in size.
  */
 void move_cursor_relative(int y, int x)
 {
-    unsigned ky, kx;
-    unsigned vy, vx;
+	int ky, kx;
+	int vy, vx;
 
-    /* Location relative to panel */
-    ky = (unsigned) (y - Term->offset_y);
+	/* Move the cursor on map sub-windows */
+	move_cursor_relative_map(y, x);
 
-    /* Verify location */
-    if (ky >= (unsigned) (SCREEN_HGT))
-	return;
+	/* Location relative to panel */
+	ky = y - Term->offset_y;
 
-    /* Location relative to panel */
-    kx = (unsigned) (x - Term->offset_x);
+	/* Verify location */
+	if ((ky < 0) || (ky >= SCREEN_HGT)) return;
 
-    /* Verify location */
-    if (kx >= (unsigned) (SCREEN_WID))
-	return;
+	/* Location relative to panel */
+	kx = x - Term->offset_x;
 
-    /* Location in window */
-    vy = ky + ROW_MAP;
+	/* Verify location */
+	if ((kx < 0) || (kx >= SCREEN_WID)) return;
 
-    /* Location in window */
-    vx = kx + COL_MAP;
+	/* Location in window */
+	vy = ky + ROW_MAP;
 
-    if (tile_width > 1) {
-	vx += (tile_width - 1) * kx;
-    }
-    if (tile_height > 1) {
-	vy += (tile_height - 1) * ky;
-    }
+	/* Location in window */
+	vx = kx + COL_MAP;
 
-    /* Go there */
-    Term_gotoxy(vx, vy);
+	if (tile_width > 1)
+	{
+	        vx += (tile_width - 1) * kx;
+	}
+	if (tile_height > 1)
+	{
+	        vy += (tile_height - 1) * ky;
+	}
+
+	/* Go there */
+	(void)Term_gotoxy(vx, vy);
+}
+
+
+/*
+ * Display an attr/char pair at the given map location
+ *
+ * Note the inline use of "panel_contains()" for efficiency.
+ *
+ * Note the use of "Term_queue_char()" for efficiency.
+ */
+static void print_rel_map(char c, byte a, int y, int x)
+{
+	int ky, kx;
+
+	int j;
+
+	/* Scan windows */
+	for (j = 0; j < ANGBAND_TERM_MAX; j++)
+	{
+		term *t = angband_term[j];
+
+		/* No window */
+		if (!t) continue;
+
+		/* No relevant flags */
+		if (!(op_ptr->window_flag[j] & (PW_MAP))) continue;
+
+		/* Location relative to panel */
+		ky = y - t->offset_y;
+
+		if (tile_height > 1)
+		{
+		        ky = tile_height * ky;
+			if (ky + 1 >= t->hgt) continue;
+		}
+
+		/* Verify location */
+		if ((ky < 0) || (ky >= t->hgt)) continue;
+
+		/* Location relative to panel */
+		kx = x - t->offset_x;
+
+		if (tile_width > 1)
+		{
+		        kx = tile_width * kx;
+			if (kx + 1 >= t->wid) continue;
+		}
+
+		/* Verify location */
+		if ((kx < 0) || (kx >= t->wid)) continue;
+
+		/* Hack -- Queue it */
+		Term_queue_char(t, kx, ky, a, c, 0, 0);
+
+		if ((tile_width > 1) || (tile_height > 1))
+		{
+		        /* Mega-Hack : Queue dummy chars */
+		        Term_big_queue_char(Term, kx, ky, a, c, 0, 0);
+		}
+	}
 }
 
 
 
-/**
+/*
  * Display an attr/char pair at the given map location
  *
  * Note the inline use of "panel_contains()" for efficiency.
@@ -1784,41 +1358,40 @@ void move_cursor_relative(int y, int x)
  */
 void print_rel(char c, byte a, int y, int x)
 {
-    term *t = angband_term[0];
+	int ky, kx;
+	int vy, vx;
 
-    unsigned ky, kx;
-    unsigned vy, vx;
+	/* Print on map sub-windows */
+	print_rel_map(c, a, y, x);
 
-    /* Location relative to panel */
-    ky = (unsigned) (y - Term->offset_y);
+	/* Location relative to panel */
+	ky = y - Term->offset_y;
 
-    /* Verify location */
-    if (ky >= (unsigned) (SCREEN_HGT))
-	return;
+	/* Verify location */
+	if ((ky < 0) || (ky >= SCREEN_HGT)) return;
 
-    /* Location relative to panel */
-    kx = (unsigned) (x - Term->offset_x);
+	/* Location relative to panel */
+	kx = x - Term->offset_x;
 
-    /* Verify location */
-    if (kx >= (unsigned) (SCREEN_WID))
-	return;
+	/* Verify location */
+	if ((kx < 0) || (kx >= SCREEN_WID)) return;
 
-    /* Get right position */
-    vx = COL_MAP + (tile_width * kx);
-    vy = ROW_MAP + (tile_height * ky);
+	/* Get right position */
+	vx = COL_MAP + (tile_width * kx);
+	vy = ROW_MAP + (tile_height * ky);
 
-    /* Hack -- Queue it */
-    Term_queue_char(t, vx, vy, a, c, 0, 0);
+	/* Hack -- Queue it */
+	Term_queue_char(Term, vx, vy, a, c, 0, 0);
 
-    if ((tile_width > 1) || (tile_height > 1)) {
-	/* Mega-Hack : Queue dummy char */
-	Term_big_queue_char(Term, vx, vy, a, c, 0, 0);
-    }
-
-    return;
+	if ((tile_width > 1) || (tile_height > 1))
+	{
+	        /* Mega-Hack : Queue dummy chars */
+	        Term_big_queue_char(Term, vx, vy, a, c, 0, 0);
+	}
+  
 }
 
-/**
+/*
  * Memorize interesting viewable object/features in the given grid
  *
  * This function should only be called on "legal" grids.
@@ -1849,50 +1422,49 @@ void print_rel(char c, byte a, int y, int x)
  */
 void note_spot(int y, int x)
 {
-    byte info;
+	byte info;
 
-    s16b this_o_idx, next_o_idx = 0;
+	object_type *o_ptr;
 
+	/* Get cave info */
+	info = cave_info[y][x];
 
-    /* Get cave info */
-    info = cave_info[y][x];
-
-    /* Require "seen" flag */
-    if (!(info & (CAVE_SEEN)))
-	return;
+	/* Require "seen" flag */
+	if (!(info & (CAVE_SEEN))) return;
 
 
-    /* Hack -- memorize objects */
-    for (this_o_idx = cave_o_idx[y][x]; this_o_idx; this_o_idx = next_o_idx) {
-	object_type *o_ptr = &o_list[this_o_idx];
-
-	/* Acquire next object */
-	next_o_idx = o_ptr->next_o_idx;
-
-	/* Memorize objects */
-	o_ptr->marked = TRUE;
-    }
-
-
-    /* Hack -- memorize grids */
-    if (!(info & (CAVE_MARK))) {
-	/* Memorize some "boring" grids */
-	if (cave_feat[y][x] <= FEAT_INVIS) {
-	    /* Option -- memorize certain floors */
-	    if (((info & (CAVE_GLOW)) && OPT(view_perma_grids))
-		|| OPT(view_torch_grids)) {
-		/* Memorize */
-		cave_info[y][x] |= (CAVE_MARK);
-	    }
+	/* Hack -- memorize objects */
+	for (o_ptr = get_first_object(y, x); o_ptr; o_ptr = get_next_object(o_ptr))
+	{
+		/* Memorize objects */
+		o_ptr->marked = TRUE;
 	}
 
-	/* Memorize all "interesting" grids */
-	else {
-	    /* Memorize */
-	    cave_info[y][x] |= (CAVE_MARK);
+
+	/* Hack -- memorize grids */
+	if (!(info & (CAVE_MARK)))
+	{
+		/* Memorize some "boring" grids */
+		if (cave_feat[y][x] <= FEAT_INVIS)
+		{
+			/* Option -- memorize certain floors */
+			if (((info & (CAVE_GLOW)) && OPT(view_perma_grids)) ||
+			    OPT(view_torch_grids))
+			{
+				/* Memorize */
+				cave_info[y][x] |= (CAVE_MARK);
+			}
+		}
+
+		/* Memorize all "interesting" grids */
+		else
+		{
+			/* Memorize */
+			cave_info[y][x] |= (CAVE_MARK);
+		}
 	}
-    }
 }
+
 
 
 /**
@@ -1907,48 +1479,119 @@ void lite_spot(int y, int x)
 
 
 
+static void prt_map_aux(void)
+{
+	byte a;
+	char c;
+	byte ta;
+	char tc;
+	grid_data g;
+
+	int y, x;
+	int vy, vx;
+	int ty, tx;
+
+	int j;
+
+	/* Scan windows */
+	for (j = 0; j < ANGBAND_TERM_MAX; j++)
+	{
+		term *t = angband_term[j];
+
+		/* No window */
+		if (!t) continue;
+
+		/* No relevant flags */
+		if (!(op_ptr->window_flag[j] & (PW_MAP))) continue;
+
+		/* Assume screen */
+		ty = t->offset_y + (t->hgt / tile_height);
+		tx = t->offset_x + (t->wid / tile_width);
+
+		/* Dump the map */
+		for (y = t->offset_y, vy = 0; y < ty; vy++, y++)
+		{
+		        if (vy + tile_height - 1 >= t->hgt) continue;
+			for (x = t->offset_x, vx = 0; x < tx; vx++, x++)
+			{
+				/* Check bounds */
+				if (!in_bounds(y, x)) continue;
+
+				if (vx + tile_width - 1 >= t->wid) continue;
+
+				/* Determine what is there */
+				map_info(y, x, &g);
+				grid_data_as_text(&g, &a, &c, &ta, &tc);
+				Term_queue_char(t, vx, vy, a, c, ta, tc);
+
+				if ((tile_width > 1) || (tile_height > 1))
+				{
+					/* Mega-Hack : Queue dummy chars */
+					Term_big_queue_char(t, vx, vy, 255, -1, 0, 0);
+				}
+			}
+		}
+	}
+}
+
+
+
+/*
+ * Redraw (on the screen) the current map panel
+ *
+ * Note the inline use of "light_spot()" for efficiency.
+ *
+ * The main screen will always be at least 24x80 in size.
+ */
 void prt_map(void)
 {
-    term *t = angband_term[0];
+	byte a;
+	char c;
+	byte ta;
+	char tc;
+	grid_data g;
 
-    byte a;
-    char c;
-    byte ta;
-    char tc;
+	int y, x;
+	int vy, vx;
+	int ty, tx;
 
-    int y, x;
-    int vy, vx;
-    int ty, tx;
+	/* Redraw map sub-windows */
+	prt_map_aux();
 
-    /* Assume screen */
-    ty = Term->offset_y + SCREEN_HGT;
-    tx = Term->offset_x + SCREEN_WID;
+	/* Assume screen */
+	ty = Term->offset_y + SCREEN_HGT;
+	tx = Term->offset_x + SCREEN_WID;
 
-    /* Dump the map */
-    for (y = Term->offset_y, vy = ROW_MAP; y < ty; vy++, y++) {
-	for (x = Term->offset_x, vx = COL_MAP; x < tx; vx++, x++) {
-	    /* Check bounds */
-	    if (!in_bounds(y, x))
-		continue;
+	/* Dump the map */
+	for (y = Term->offset_y, vy = ROW_MAP; y < ty; vy++, y++)
+	{
+		for (x = Term->offset_x, vx = COL_MAP; x < tx; vx++, x++)
+		{
+			/* Check bounds */
+			if (!in_bounds(y, x)) continue;
 
-	    /* Determine what is there */
-	    map_info(y, x, &a, &c, &ta, &tc);
+			/* Determine what is there */
+			map_info(y, x, &g);
+			grid_data_as_text(&g, &a, &c, &ta, &tc);
 
-	    /* Hack -- Queue it */
-	    Term_queue_char(t, vx, vy, a, c, ta, tc);
+			/* Hack -- Queue it */
+			Term_queue_char(Term, vx, vy, a, c, ta, tc);
 
-	    if ((tile_width > 1) || (tile_height > 1)) {
-		Term_big_queue_char(Term, vx, vy, a, c, TERM_WHITE, ' ');
-
-		if (tile_width > 1) {
-		    vx += tile_width - 1;
+			if ((tile_width > 1) || (tile_height > 1))
+			{
+			        Term_big_queue_char(Term, vx, vy, a, c, TERM_WHITE, ' ');
+	      
+				if (tile_width > 1)
+				{
+				        vx += tile_width - 1;
+				}
+			}
 		}
-	    }
+      
+		if (tile_height > 1)
+		        vy += tile_height - 1;
+      
 	}
-
-	if (tile_height > 1)
-	    vy += tile_height - 1;
-    }
 }
 
 
@@ -2097,32 +1740,6 @@ static byte priority(byte a, char c)
 }
 
 
-#if 0
-/*
- * Tunnels are important.  (Whist bare floor is not.)
- */
-static int priority_tunnel(int y, int x)
-{
-    int i, count = 0;
-    int yy, xx;
-
-    /* Count number of floors around square */
-    for (i = 1; i < 10; i++) {
-	yy = y + ddy[i];
-	xx = x + ddx[i];
-
-	if ((in_bounds(yy, xx)) && (cave_feat[yy][xx] < FEAT_MAGMA))
-	    count++;
-    }
-
-    /* Three or less floor squares - Important */
-    if (count < 4)
-	return (19);
-
-    /* Not important. */
-    return (0);
-}
-#endif
 
 /**
  * Display a "small-scale" map of the dungeon in the active Term
@@ -2142,7 +1759,7 @@ static int priority_tunnel(int y, int x)
  * wilderness.  cx and cy return the position of the player on the
  * possibly shifted map.
  */
-void display_map(int *cy, int *cx, bool small)
+void display_map(int *cy, int *cx)
 {
     int py = p_ptr->py;
     int px = p_ptr->px;
@@ -2152,13 +1769,10 @@ void display_map(int *cy, int *cx, bool small)
     int row, col;
 
     int x, y;
+    grid_data g;
 
     byte ta;
     char tc;
-
-    byte sa;
-    char sc;
-
 
     byte tp;
 
@@ -2203,12 +1817,6 @@ void display_map(int *cy, int *cx, bool small)
     OPT(view_special_lite) = FALSE;
     OPT(view_granite_lite) = FALSE;
 
-    /* Disable big tiles for subwindow */
-    if (small) {
-	tile_width = 1;
-	tile_height = 1;
-    }
-
     /* Nothing here */
     ta = TERM_WHITE;
     tc = ' ';
@@ -2221,31 +1829,8 @@ void display_map(int *cy, int *cx, bool small)
 	}
     }
 
-    /* Clear the screen (but don't force a redraw) */
-    clear_from(0);
-
-    /* Corners */
-    x = map_wid + 1;
-    y = map_hgt + 1;
-
-    /* Draw the corners */
-    Term_putch(0, 0, ta, '+');
-    Term_putch(x, 0, ta, '+');
-    Term_putch(0, y, ta, '+');
-    Term_putch(x, y, ta, '+');
-
-    /* Draw the horizontal edges */
-    for (x = 1; x <= map_wid; x++) {
-	Term_putch(x, 0, ta, '-');
-	Term_putch(x, y, ta, '-');
-    }
-
-    /* Draw the vertical edges */
-    for (y = 1; y <= map_hgt; y++) {
-	Term_putch(0, y, ta, '|');
-	Term_putch(x, y, ta, '|');
-    }
-
+    /* Draw a box around the edge of the term */
+    window_make(0, 0, map_wid + 1, map_hgt + 1);
 
     /* Analyze the actual map */
     for (y = top_row; y < dungeon_hgt; y++) {
@@ -2261,10 +1846,8 @@ void display_map(int *cy, int *cx, bool small)
 	    }
 
 	    /* Get the attr/char at that map location */
-	    if (small)
-		map_info_default(y, x, &ta, &tc);
-	    else
-		map_info(y, x, &ta, &tc, &sa, &sc);
+	    map_info(y, x, &g);
+	    grid_data_as_text(&g, &ta, &tc, &ta, &tc);
 
 	    /* Get the priority of that attr/char */
 	    tp = priority(ta, tc);
@@ -2299,10 +1882,10 @@ void display_map(int *cy, int *cx, bool small)
   /*** Make sure the player is visible ***/
 
     /* Get the "player" attr */
-    ta = (small ? r_ptr->d_attr : r_ptr->x_attr);
+    ta = r_ptr->x_attr;
 
     /* Get the "player" char */
-    tc = (small ? r_ptr->d_char : r_ptr->x_char);
+    tc = r_ptr->x_char;
 
     /* Draw the player */
     Term_putch(col + 1, row + 1, ta, tc);
@@ -2317,12 +1900,6 @@ void display_map(int *cy, int *cx, bool small)
     if (cx != NULL)
 	(*cx) = col + 1;
 
-
-    /* Restore tiles for subwindow */
-    if (small) {
-	tile_width = old_tile_width;
-	tile_height = old_tile_height;
-    }
 
     /* Restore lighting effects */
     OPT(view_special_lite) = old_view_special_lite;
@@ -3123,36 +2700,18 @@ struct vinfo_hack {
 
 
 
-/**
- * Sorting hook -- comp function -- array of long's (see below)
- *
- * We use "u" to point to an array of long integers.
- */
-static bool ang_sort_comp_hook_longs(void *u, void *v, int a, int b)
+static int cmp_longs(const void *a, const void *b)
 {
-    long *x = (long *) (u);
+	long x = *(const long *)a;
+	long y = *(const long *)b;
 
-    return (x[a] <= x[b]);
+	if (x < y)
+		return -1;
+	if (x > y)
+		return 1;
+
+	return 0;
 }
-
-
-/**
- * Sorting hook -- comp function -- array of long's (see below)
- *
- * We use "u" to point to an array of long integers.
- */
-static void ang_sort_swap_hook_longs(void *u, void *v, int a, int b)
-{
-    long *x = (long *) (u);
-
-    long temp;
-
-    /* Swap */
-    temp = x[a];
-    x[a] = x[b];
-    x[b] = temp;
-}
-
 
 
 /**
@@ -3289,14 +2848,7 @@ errr vinfo_init(void)
     }
 
 
-    /* Sort slopes numerically */
-    ang_sort_comp = ang_sort_comp_hook_longs;
-
-    /* Sort slopes numerically */
-    ang_sort_swap = ang_sort_swap_hook_longs;
-
-    /* Sort the (unique) slopes */
-    ang_sort(hack->slopes, NULL, hack->num_slopes);
+    sort(hack->slopes, hack->num_slopes, sizeof(*hack->slopes), cmp_longs);
 
 
 
@@ -3737,26 +3289,11 @@ void update_view(void)
 			    int xx =
 				(x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
 
-#ifdef UPDATE_VIEW_COMPLEX_WALL_ILLUMINATION
-
-			    /* Check for "complex" illumination */
-			    if ((!(cave_info[yy][xx] & (CAVE_WALL))
-				 && (cave_info[yy][xx] & (CAVE_GLOW)))
-				|| (!(cave_info[y][xx] & (CAVE_WALL))
-				    && (cave_info[y][xx] & (CAVE_GLOW)))
-				|| (!(cave_info[yy][x] & (CAVE_WALL))
-				    && (cave_info[yy][x] & (CAVE_GLOW)))) {
-				/* Mark as seen */
-				info |= (CAVE_SEEN);
-			    }
-#else				/* UPDATE_VIEW_COMPLEX_WALL_ILLUMINATION */
-
 			    /* Check for "simple" illumination */
 			    if (cave_info[yy][xx] & (CAVE_GLOW)) {
 				/* Mark as seen */
 				info |= (CAVE_SEEN);
 			    }
-#endif				/* UPDATE_VIEW_COMPLEX_WALL_ILLUMINATION */
 
 			}
 
@@ -4439,8 +3976,8 @@ void wiz_lite(bool wizard)
     /* Fully update the visuals */
     p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW | PU_MONSTERS);
 
-    /* Redraw map */
-    p_ptr->redraw |= (PR_MAP);
+    /* Redraw whole map, monster list */
+    p_ptr->redraw |= (PR_MAP | PR_MONLIST | PR_ITEMLIST);
 }
 
 
@@ -4481,8 +4018,8 @@ void wiz_dark(void)
     /* Fully update the visuals */
     p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW | PU_MONSTERS);
 
-    /* Redraw map */
-    p_ptr->redraw |= (PR_MAP);
+    /* Redraw whole map, monster list */
+    p_ptr->redraw |= (PR_MAP | PR_MONLIST | PR_ITEMLIST);
 }
 
 
@@ -4570,8 +4107,8 @@ void town_illuminate(bool daytime, bool cave)
     /* Fully update the visuals */
     p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW | PU_MONSTERS);
 
-    /* Redraw map */
-    p_ptr->redraw |= (PR_MAP);
+    /* Redraw map, monster list */
+    p_ptr->redraw |= (PR_MAP | PR_MONLIST | PR_ITEMLIST);
 }
 
 
@@ -5008,6 +4545,9 @@ void monster_race_track(int r_idx)
 {
     /* Save this monster ID */
     p_ptr->monster_race_idx = r_idx;
+
+	/* Window stuff */
+	p_ptr->redraw |= (PR_MONSTER);
 }
 
 
@@ -5042,17 +4582,11 @@ void track_object_kind(int k_idx)
  */
 void disturb(int stop_search, int unused_flag)
 {
-    /* Cancel auto-commands */
-    /* p_ptr->command_new = 0; */
+	/* Unused parameter */
+	(void)unused_flag;
 
-    /* Cancel repeated commands */
-    if (p_ptr->command_rep) {
-	/* Cancel */
-	p_ptr->command_rep = 0;
-
-	/* Redraw the state (later) */
-	p_ptr->redraw |= (PR_STATE);
-    }
+	/* Cancel repeated commands */
+	cmd_cancel_repeat();
 
     /* Cancel Resting */
     if (p_ptr->resting) {

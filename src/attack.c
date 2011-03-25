@@ -1704,39 +1704,31 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
     o_ptr = &p_ptr->inventory[INVEN_BOW];
 
     /* Require a usable launcher */
-    if (!o_ptr->tval || !p_ptr->ammo_tval) {
+    if (!o_ptr->tval || !p_ptr->state.ammo_tval) {
 	msg_print("You have nothing to fire with.");
 	return;
     }
 
-    /* Require proper missile */
-    item_tester_tval = p_ptr->ammo_tval;
+    /* Get item to fire and direction to fire in. */
+    item = args[0].item;
+    dir = args[1].direction;
 
-    /* Do we have an item? */
-    if (p_ptr->command_item) {
-	item = handle_item();
-	if (!get_item_allow(item))
-	    return;
-    }
-
-    /* Get an item */
-    else {
-	q = "Fire which item? ";
-	s = "You have nothing to fire.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_EQUIP | USE_FLOOR)))
-	    return;
-    }
-
-    /* Access the item (if in the pack) */
-    if (item >= 0) {
-	j_ptr = &p_ptr->inventory[item];
-    } else {
-	j_ptr = &o_list[0 - item];
-    }
-
-    /* Get a direction (or cancel) */
-    if (!get_aim_dir(&dir))
+    /* Check the item being fired is usable by the player. */
+    if (!item_is_available(item, NULL, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
+    {
+	msg_format("That item is not within your reach.");
 	return;
+    }
+
+    /* Get the object for the ammo */
+    j_ptr = object_from_item_idx(item);
+
+    /* Check the ammo can be used with the launcher */
+    if (j_ptr->tval != p_ptr->state.ammo_tval)
+    {
+	msg_format("That ammo cannot be fired by your current weapon.");
+	return;
+    }
 
     /* Get local object */
     i_ptr = &object_type_body;
@@ -1816,7 +1808,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
     }
 
     /* Describe the object */
-    object_desc(o_name, i_ptr, FALSE, 3);
+    object_desc(o_name, sizeof(o_name), i_ptr, ODESC_FULL | ODESC_SINGULAR);
 
     /* Find the color and symbol for the object for throwing */
     missile_attr = object_attr(i_ptr);
@@ -1824,7 +1816,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 
 
     /* Base range (XXX - this formula is a little weird) */
-    tdis = 10 + 5 * p_ptr->ammo_mult;
+    tdis = 10 + 5 * p_ptr->state.ammo_mult;
 
     /* Calculate the quality of the shot */
     bonus = (p_ptr->to_h + o_ptr->to_h + i_ptr->to_h);
@@ -2144,10 +2136,6 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 
     /* Drop (or break) near that location */
     drop_near(i_ptr, break_chance, y, x);
-
-    /* Forget the item_tester_tval restriction */
-    item_tester_tval = 0;
-
 }
 
 
@@ -2187,8 +2175,8 @@ void textui_cmd_fire_at_nearest(void)
     }
 
     /* Find first eligible ammo in the quiver */
-    for (i = INVEN_Q0; i < INVEN_Q9; i++) {
-
+    for (i = QUIVER_START; i < QUIVER_END; i++)
+    {
 	if (p_ptr->inventory[i].tval != ammo_tv)
 	    continue;
 	item = i;
@@ -2266,27 +2254,26 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 
     int msec = op_ptr->delay_factor * op_ptr->delay_factor;
 
-    /* Do we have an item? */
-    if (p_ptr->command_item) {
-	item = handle_item();
-	if (!get_item_allow(item))
-	    return;
+    /* Get item to throw and direction in which to throw it. */
+    item = args[0].item;
+    dir = args[1].direction;
+
+    /* Make sure the player isn't throwing wielded items */
+    if (item >= INVEN_WIELD && item < QUIVER_START)
+    {
+	msg_print("You have cannot throw wielded items.");
+	return;
     }
 
-    /* Get an item */
-    else {
-	q = "Throw which item? ";
-	s = "You have nothing to throw.";
-	if (!get_item(&item, q, s, (USE_INVEN | USE_EQUIP | USE_FLOOR)))
-	    return;
+    /* Check the item being thrown is usable by the player. */
+    if (!item_is_available(item, NULL, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
+    {
+	msg_format("That item is not within your reach.");
+	return;
     }
 
-    /* Access the item (if in the pack) */
-    if (item >= 0) {
-	o_ptr = &p_ptr->inventory[item];
-    } else {
-	o_ptr = &o_list[0 - item];
-    }
+    /* Get the object */
+    o_ptr = object_from_item_idx(item);
 
     /* Can't unwield cursed items this way! */
     if ((item > INVEN_PACK) && (item < INVEN_BLANK)
@@ -2311,13 +2298,6 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 	/* Nope */
 	return;
     }
-
-
-
-    /* Get a direction (or cancel) */
-    if (!get_aim_dir(&dir))
-	return;
-
 
     /* Get local object */
     i_ptr = &object_type_body;
@@ -2679,10 +2659,10 @@ void textui_cmd_throw(void)
     /* Get an item */
     q = "Throw which item? ";
     s = "You have nothing to throw.";
-    if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
+    if (!get_item(&item, q, s, CMD_THROW, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
 	return;
 
-    if (item >= INVEN_WIELD && item < INVEN_Q0) {
+    if (item >= INVEN_WIELD && item < QUIVER_START) {
 	msg_print("You cannot throw wielded items.");
 	return;
     }

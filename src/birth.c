@@ -78,7 +78,7 @@ struct birther {
 
     s16b stat[A_MAX];
 
-    char *history;
+    char history[250];
 };
 
 
@@ -106,7 +106,7 @@ static void save_roller_data(birther * player)
     }
 
     /* Save the history */
-    player->history = p_ptr->history;
+    my_strcpy(player->history, p_ptr->history, sizeof(player->history));
 }
 
 
@@ -151,7 +151,7 @@ static void load_roller_data(birther * player, birther * prev_player)
     }
 
     /* Load the history */
-    p_ptr->history = player->history;
+    my_strcpy(p_ptr->history, player->history, sizeof(p_ptr->history));
 
 	/*** Save the current data if the caller is interested in it. ***/
     if (prev_player)
@@ -317,7 +317,7 @@ static void get_history(void)
 	    i++;
 
 	/* Get the textual history */
-	strcat(buf, (h_text + h_info[i].text));
+	my_strcat(p_ptr->history, h_info[i].text, sizeof(p_ptr->history));
 
 	/* Add in the social class */
 	social_class += (int) (h_info[i].bonus) - 50;
@@ -338,89 +338,42 @@ static void get_history(void)
     p_ptr->sc = social_class;
 
 
-    /* Skip leading spaces */
-    for (s = buf; *s == ' '; s++)	/* loop */
-	;
-
-    /* Get apparent length */
-    n = strlen(s);
-
-    /* Kill trailing spaces */
-    while ((n > 0) && (s[n - 1] == ' '))
-	s[--n] = '\0';
-
-
-    /* Start at first line */
-    i = 0;
-
-    /* Collect the history */
-    while (TRUE) {
-	/* Extract remaining length */
-	n = strlen(s);
-
-	/* All done */
-	if (n < 60) {
-	    /* Save one line of history */
-	    strcpy(p_ptr->history[i++], s);
-
-	    /* All done */
-	    break;
-	}
-
-	/* Find a reasonable break-point */
-	for (n = 60; ((n > 0) && (s[n - 1] != ' ')); n--)	/* loop */
-	    ;
-
-	/* Save next location */
-	t = s + n;
-
-	/* Wipe trailing spaces */
-	while ((n > 0) && (s[n - 1] == ' '))
-	    s[--n] = '\0';
-
-	/* Save one line of history */
-	strcpy(p_ptr->history[i++], s);
-
-	/* Start next line */
-	for (s = t; *s == ' '; s++)	/* loop */
-	    ;
-    }
 }
 
 /**
  * Sets the character's starting level -NRM-
  */
 
-static void get_level(void)
+static void get_level(player *p)
 {
 
     /* Check if they're an "advanced race" */
     if ((rp_ptr->start_lev - 1) && !OPT(adult_thrall) && !OPT(adult_dungeon)) {
 	/* Add the experience */
-	p_ptr->exp = player_exp[rp_ptr->start_lev - 2];
-	p_ptr->max_exp = player_exp[rp_ptr->start_lev - 2];
+	p->exp = player_exp[rp_ptr->start_lev - 2];
+	p->max_exp = player_exp[rp_ptr->start_lev - 2];
 
 	/* Set the level */
-	p_ptr->lev = rp_ptr->start_lev;
-	p_ptr->max_lev = rp_ptr->start_lev;
+	p->lev = rp_ptr->start_lev;
+	p->max_lev = rp_ptr->start_lev;
     } else {			/* Paranoia */
 
 	/* Add the experience */
-	p_ptr->exp = 0;
-	p_ptr->max_exp = 0;
+	p->exp = 0;
+	p->max_exp = 0;
 
 	/* Set the level */
-	p_ptr->lev = 1;
-	p_ptr->max_lev = 1;
+	p->lev = 1;
+	p->max_lev = 1;
     }
 
     /* Set home town */
     if (OPT(adult_thrall))
-	p_ptr->home = 0;
+	p->home = 0;
     else if (OPT(adult_dungeon))
-	p_ptr->home = 1;
+	p->home = 1;
     else
-	p_ptr->home = towns[rp_ptr->hometown];
+	p->home = towns[rp_ptr->hometown];
 }
 
 /*
@@ -463,8 +416,8 @@ void player_init(struct player_type *p)
     /* Start with no artifacts made yet */
     for (i = 0; z_info && i < z_info->a_max; i++) {
 	artifact_type *a_ptr = &a_info[i];
-	a_ptr->creat_turn = 0;
-	a_ptr->p_level = 0;
+	a_ptr->created = FALSE;
+	a_ptr->seen = FALSE;
     }
 
 
@@ -531,17 +484,12 @@ void player_init(struct player_type *p)
 	p_ptr->specialty_order[i] = PF_NO_SPECIALTY;
 
     /* None of the spells have been learned yet */
-    for (i = 0; i < 64; i++)
+    for (i = 0; i < PY_MAX_SPELLS; i++)
 	p_ptr->spell_order[i] = 99;
 
     /* Player has no sensation ID knowledge */
     p_ptr->id_obj = 0L;
     p_ptr->id_other = 0L;
-
-    /* Wipe the notes */
-    for (i = 0; i < NOTES_MAX_LINES; i++) {
-	notes[i].turn = 0;
-    }
 
     p->inventory = C_ZNEW(INVEN_TOTAL, struct object_type);
 
@@ -642,42 +590,47 @@ static void wield_all(struct player *p)
 
     int slot;
     int item;
+    int num;
+    bool is_ammo;
 
     /* Scan through the slots backwards */
-    for (item = INVEN_PACK - 1; item >= 0; item--) {
+    for (item = INVEN_PACK - 1; item >= 0; item--)
+    {
 	o_ptr = &p->inventory[item];
+	is_ammo = obj_is_ammo(o_ptr);
 
 	/* Skip non-objects */
-	if (!o_ptr->k_idx)
-	    continue;
+	if (!o_ptr->k_idx) continue;
 
-	/* Make sure we can wield it and there's nothing else in that slot */
+	/* Make sure we can wield it */
 	slot = wield_slot(o_ptr);
-	if (slot < INVEN_WIELD)
-	    continue;
-	if (p->inventory[slot].k_idx)
-	    continue;
+	if (slot < INVEN_WIELD) continue;
+	i_ptr = &p->inventory[slot];
+
+	/* Make sure that there's an available slot */
+	if (is_ammo)
+	{
+	    if (i_ptr->k_idx && !object_similar(o_ptr, i_ptr, OSTACK_PACK)) 
+		continue;
+	}
+	else
+	{
+	    if (i_ptr->k_idx) continue;
+	}
+
+	/* Figure out how much of the item we'll be wielding */
+	num = is_ammo ? o_ptr->number : 1;
 
 	/* Get local object */
 	i_ptr = &object_type_body;
 	object_copy(i_ptr, o_ptr);
 
-	/* Modify quantity (except for ammo) */
-	if ((i_ptr->tval != TV_SHOT) && (i_ptr->tval != TV_ARROW)
-	    && (i_ptr->tval != TV_BOLT))
-	    i_ptr->number = 1;
+	/* Modify quantity */
+	i_ptr->number = num;
 
 	/* Decrease the item (from the pack) */
-	if (item >= 0) {
-	    inven_item_increase(item, 0 - i_ptr->number);
-	    inven_item_optimize(item);
-	}
-
-	/* Decrease the item (from the floor) */
-	else {
-	    floor_item_increase(0 - item, 0 - i_ptr->number);
-	    floor_item_optimize(0 - item);
-	}
+	inven_item_increase(item, -num);
+	inven_item_optimize(item);
 
 	/* Get the wield slot */
 	o_ptr = &p->inventory[slot];
@@ -686,11 +639,13 @@ static void wield_all(struct player *p)
 	object_copy(o_ptr, i_ptr);
 
 	/* Increase the weight */
-	p->total_weight += i_ptr->weight;
+	p->total_weight += i_ptr->weight * i_ptr->number;
 
 	/* Increment the equip counter by hand */
 	p->equip_cnt++;
     }
+
+    save_quiver_size(p);
 
     return;
 }
@@ -707,6 +662,40 @@ static void player_outfit(struct player *p)
     object_type *i_ptr;
     object_type object_type_body;
 
+
+    /* Hack -- Give the player his equipment */
+    for (i = 0; i < MAX_START_ITEMS; i++) {
+	/* Access the item */
+	e_ptr = &(cp_ptr->start_items[i]);
+
+	/* Get local object */
+	i_ptr = &object_type_body;
+
+	/* Hack -- Give the player an object */
+	if (e_ptr->tval > 0) {
+	    /* Get the object_kind */
+	    int k_idx = lookup_kind(e_ptr->tval, e_ptr->sval);
+
+	    /* Valid item? */
+	    if (!k_idx)
+		continue;
+
+	    /* Prepare the item */
+	    object_prep(i_ptr, k_idx);
+	    i_ptr->number = (byte) rand_range(e_ptr->min, e_ptr->max);
+	    i_ptr->origin = ORIGIN_BIRTH;
+
+	    /* Nasty hack for "advanced" races -NRM- */
+	    if ((!OPT(adult_thrall)) && (!OPT(adult_dungeon)))
+		object_upgrade(i_ptr);
+
+	    object_aware(i_ptr);
+	    object_known(i_ptr);
+	    apply_autoinscription(i_ptr);
+	    (void) inven_carry(p, i_ptr);
+	    k_info[k_idx].everseen = TRUE;
+	}
+    }
 
     /* Get local object */
     i_ptr = &object_type_body;
@@ -736,39 +725,6 @@ static void player_outfit(struct player *p)
     apply_autoinscription(i_ptr);
     (void) inven_carry(i_ptr);
     k_info[i_ptr->k_idx].everseen = TRUE;
-
-    /* Hack -- Give the player his equipment */
-    for (i = 0; i < MAX_START_ITEMS; i++) {
-	/* Access the item */
-	e_ptr = &(cp_ptr->start_items[i]);
-
-	/* Get local object */
-	i_ptr = &object_type_body;
-
-	/* Hack -- Give the player an object */
-	if (e_ptr->tval > 0) {
-	    /* Get the object_kind */
-	    int k_idx = lookup_kind(e_ptr->tval, e_ptr->sval);
-
-	    /* Valid item? */
-	    if (!k_idx)
-		continue;
-
-	    /* Prepare the item */
-	    object_prep(i_ptr, k_idx);
-	    i_ptr->number = (byte) rand_range(e_ptr->min, e_ptr->max);
-
-	    /* Nasty hack for "advanced" races -NRM- */
-	    if ((!OPT(adult_thrall)) && (!OPT(adult_dungeon)))
-		object_upgrade(i_ptr);
-
-	    object_aware(i_ptr);
-	    object_known(i_ptr);
-	    apply_autoinscription(i_ptr);
-	    (void) inven_carry(p, i_ptr);
-	    k_info[k_idx].everseen = TRUE;
-	}
-    }
 
     /* Dungeon gear for escaping thralls */
     if (OPT(adult_thrall)) {
@@ -1101,8 +1057,8 @@ void player_generate(struct player_type *p, player_sex * s,
     mp_ptr = &magic_info[p->pclass];
     rp_ptr = r;
 
-    /* Level 1 */
-    p->max_lev = p->lev = 1;
+    /* Level */
+    get_level(p);
 
     /* Hitdice */
     p->hitdie = rp_ptr->r_mhp + cp_ptr->c_mhp;
@@ -1375,9 +1331,6 @@ void player_birth(bool quickstart_allowed)
 	message_flush();
     }
 
-    /* Hack -- outfit the player */
-    player_outfit(p_ptr);
-
     /* Set map, quests */
     if (OPT(adult_dungeon)) {
 	for (i = 0; i < NUM_STAGES; i++)
@@ -1400,6 +1353,9 @@ void player_birth(bool quickstart_allowed)
 	q_list[4].stage = 101;
     }
 
+
+    /* Outfit the player, if they can sell the stuff */
+    if (!OPT(adult_no_selling)) player_outfit(p_ptr);
 
     /* Initialize shops */
     store_init();

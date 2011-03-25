@@ -268,8 +268,8 @@ typedef struct artifact_type {
     byte level;		/**< Artifact level */
     byte rarity;	/**< Artifact rarity */
 
-    s32b creat_turn;	/**< Turn the artifact was found */
-    byte p_level;	/**< Player level when found */
+    bool created;	/**< Whether this artifact has been created */
+    bool seen;	/**< Whether this artifact has been seen as an artifact */
     u16b effect;     /**< Artifact activation (see effects.c) */
     char *effect_msg;
 
