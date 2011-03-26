@@ -192,181 +192,17 @@ static bool auto_pickup_check(object_type * o_ptr, bool check_pack)
     return (FALSE);
 }
 
-/**
- * Automatically carry ammunition and throwing weapons in the quiver,
- * if it is inscribed with "=g", or it matches something already in
- * the quiver.
- */
-bool quiver_carry(object_type * o_ptr, int o_idx)
-{
-    int i;
-
-    bool throwing;
-
-    int ammo_num, added_ammo_num;
-    int attempted_quiver_slots;
-
-    bool blind = ((p_ptr->timed[TMD_BLIND]) || (no_light()));
-    bool autop;
-    int old_num;
-
-    object_type *i_ptr;
-
-
-    /* Must be ammo or throwing weapon. */
-    if ((!is_missile(o_ptr)) && !of_has(o_ptr->flags_obj, OF_THROWING)) {
-	return (FALSE);
-    }
-
-    /* Throwing weapon? */
-    throwing = ((of_has(o_ptr->flags_obj, OF_THROWING) && (!is_missile(o_ptr)))
-		? TRUE : FALSE);
-
-    /* Count number of missiles in the quiver slots. */
-    ammo_num = quiver_count();
-
-    /* Check for autopickup */
-    autop = auto_pickup_check(o_ptr, FALSE);
-
-    /* No missiles to combine with and no autopickup. */
-    if (!ammo_num && !autop)
-	return (FALSE);
-
-    /* Effective added count */
-    added_ammo_num =
-	(throwing ? o_ptr->number * THROWER_AMMO_FACTOR : o_ptr->number);
-
-    /* How many quiver slots would be needed */
-    attempted_quiver_slots = ((ammo_num + added_ammo_num + 98) / 99);
-
-    /* Is there room, given normal inventory? */
-    if (attempted_quiver_slots + p_ptr->inven_cnt > INVEN_PACK) {
-	return (FALSE);
-    }
-
-
-    /* Check quiver for similar objects or empty space. */
-    for (i = INVEN_Q0; i <= INVEN_Q9; i++) {
-	/* Assume no carry */
-	bool flag = FALSE;
-
-	/* Get object in that slot. */
-	i_ptr = &p_ptr->inventory[i];
-
-	/* Allow auto-pickup to empty slots */
-	if ((!i_ptr->k_idx) && (autop)) {
-	    /* Nothing there */
-	    old_num = 0;
-
-	    /* Wield it */
-	    object_copy(i_ptr, o_ptr);
-
-	    flag = TRUE;
-	}
-
-	/* Look for similar */
-	else if (object_similar(i_ptr, o_ptr)) {
-	    /* How many did we have before? */
-	    old_num = i_ptr->number;
-
-	    /* Don't absorb unless there is space for all of it */
-	    if ((old_num + o_ptr->number) > 99)
-		return (FALSE);
-
-	    /* Absorb floor object. */
-	    object_absorb(i_ptr, o_ptr);
-
-	    flag = TRUE;
-	}
-
-	/* We want to carry it */
-	if (flag) {
-	    char o_name[120];
-
-	    /* Increase carried weight */
-	    p_ptr->total_weight += i_ptr->weight * (i_ptr->number - old_num);
-
-	    /* Get the object again */
-	    o_ptr = &p_ptr->inventory[i];
-
-	    /* Describe the object */
-	    if (blind)
-		object_desc(o_name, o_ptr, TRUE, 0);
-	    else
-		object_desc(o_name, o_ptr, TRUE, 3);
-
-	    /* Message */
-	    msg_format("You have %s (%c).", o_name, index_to_label(i));
-
-	    /* Delete the object */
-	    delete_object_idx(o_idx);
-
-	    /* Recalculate quiver size */
-	    find_quiver_size();
-
-	    /* Recalculate bonuses */
-	    p_ptr->update |= (PU_BONUS);
-
-	    /* Reorder the quiver */
-	    p_ptr->notice |= (PN_COMBINE);
-
-	    /* Redraw equippy chars */
-	    p_ptr->redraw |= (PR_EQUIPPY);
-
-	    return (TRUE);
-	}
-    }
-
-    /* Didn't find a slot with similar objects, or an empty slot. */
-    return (FALSE);
-}
-
 
 /**
  * Return TRUE if the given object can be automatically picked up
  */
 static bool auto_pickup_okay(object_type * o_ptr)
 {
-    cptr s;
-    int j;
+	if (!inven_carry_okay(o_ptr)) return FALSE;
+	if (OPT(pickup_always) || check_for_inscrip(o_ptr, "=g")) return TRUE;
+	if (OPT(pickup_inven) && inven_stack_okay(o_ptr)) return TRUE;
 
-    /* Can't pick up if no room */
-    if (!inven_carry_okay(o_ptr))
 	return FALSE;
-
-    /* Pickup things that match the inventory */
-    if (OPT(pickup_inven))
-	for (j = 0; j < INVEN_PACK - p_ptr->pack_size_reduce; j++) {
-	    object_type *j_ptr = &p_ptr->inventory[j];
-
-	    /* Skip non-objects */
-	    if (!j_ptr->k_idx)
-		continue;
-
-	    /* Check if the two items can be combined */
-	    if (object_similar(j_ptr, o_ptr))
-		return (TRUE);
-	}
-
-    /* No inscription */
-    if (!o_ptr->note)
-	return (FALSE);
-
-    /* Find a '=' */
-    s = strchr(quark_str(o_ptr->note), '=');
-
-    /* Process preventions */
-    while (s) {
-	/* =g ('g'et) means auto pickup */
-	if (s[1] == 'g')
-	    return (TRUE);
-
-	/* Find another '=' */
-	s = strchr(s + 1, '=');
-    }
-
-    /* Don't auto pickup */
-    return (FALSE);
 }
 
 
@@ -375,14 +211,13 @@ static bool auto_pickup_okay(object_type * o_ptr)
  */
 extern void py_pickup_aux(int o_idx)
 {
-    int slot;
+    int slot, quiver_slot = 0;
 
     char o_name[120];
-    object_type *o_ptr;
+    object_type *o_ptr = &o_list[o_idx];
     object_type *i_ptr = &p_ptr->inventory[INVEN_LIGHT];
     bitflag f[OF_SIZE], obvious_mask[OF_SIZE];
 
-    o_ptr = &o_list[o_idx];
 
     flags_init(obvious_mask, OF_SIZE, OF_OBVIOUS_MASK, FLAG_END);
     of_copy(f, o_ptr->flags_obj);
@@ -390,23 +225,23 @@ extern void py_pickup_aux(int o_idx)
     /* Carry the object */
     slot = inven_carry(o_ptr);
 
-	/* Handle errors (paranoia) */
-	if (slot < 0) return;
+    /* Handle errors (paranoia) */
+    if (slot < 0) return;
 
-	/* If we have picked up ammo which matches something in the quiver, note
-	 * that it so that we can wield it later (and suppress pick up message) */
-	if (obj_is_ammo(o_ptr)) 
+    /* If we have picked up ammo which matches something in the quiver, note
+     * that it so that we can wield it later (and suppress pick up message) */
+    if (obj_is_ammo(o_ptr)) 
+    {
+	int i;
+	for (i = QUIVER_START; i < QUIVER_END; i++) 
 	{
-		int i;
-		for (i = QUIVER_START; i < QUIVER_END; i++) 
-		{
-			if (!p_ptr->inventory[i].k_idx) continue;
-			if (!object_similar(&p_ptr->inventory[i], o_ptr,
+	    if (!p_ptr->inventory[i].k_idx) continue;
+	    if (!object_similar(&p_ptr->inventory[i], o_ptr,
 				OSTACK_QUIVER)) continue;
-			quiver_slot = i;
-			break;
-		}
+	    quiver_slot = i;
+	    break;
 	}
+    }
 
     /* Get the object again */
     o_ptr = &p_ptr->inventory[slot];

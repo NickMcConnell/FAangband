@@ -26,90 +26,17 @@
 #include "ui-menu.h"
 
 
-/**
- * Display inventory - new - not quite ready
- */
-void do_cmd_inven_new(void)
-{
-    int i, k, z = 0, col, len = 3;
-
-    char tmp_val[80];
-
-    object_type *o_ptr;
-
-    /* Count number of missiles in the quiver slots. */
-    int ammo_num = quiver_count();
-
-    /* Find the "final" slot */
-    for (i = 0; i < INVEN_PACK; i++) {
-	o_ptr = &p_ptr->inventory[i];
-
-	/* Skip non-objects */
-	if (!o_ptr->k_idx)
-	    continue;
-
-	/* Track */
-	z = i + 1;
-    }
-
-    /* 
-     * Add notes about slots used by the quiver, if we have space, want 
-     * to show all slots, and have items in the quiver.
-     */
-
-    /* Find the column to start in */
-    if (len > Term->wid - 4)
-	col = 0;
-    else if ((Term->wid - len) / 2 < 12)
-	col = (Term->wid - len) / 2;
-    else
-	col = 12;
-
-    if ((p_ptr->pack_size_reduce)
-	&& (z <= (INVEN_PACK - p_ptr->pack_size_reduce))) {
-	/* Insert a blank dividing line, if we have the space. */
-	if (z <= ((INVEN_PACK - 1) - p_ptr->pack_size_reduce)) {
-	    z++;
-	    prt("", z, col ? col - 2 : col);
-	}
-
-	for (i = 1; i <= p_ptr->pack_size_reduce; i++) {
-	    /* Go to next line. */
-	    z++;
-	    prt("", z, col ? col - 2 : col);
-
-	    /* Determine index, print it out. */
-	    sprintf(tmp_val, "%c)", index_to_label(INVEN_PACK - i));
-	    put_str(tmp_val, z, col);
-
-	    /* Note amount of ammo */
-	    k = (ammo_num > 99) ? 99 : ammo_num;
-
-	    /* Hack -- use "(Ready Ammunition)" as a description. */
-	    c_put_str(TERM_BLUE, format("(Ready Ammunition) [%2d]", k), z,
-		      col + 3);
-
-	    /* Reduce ammo count */
-	    ammo_num -= k;
-	}
-    }
-
-    do_cmd_show_obj();
-}
-
-
-
 
 /**
  * Display inventory
  */
 void do_cmd_inven(void)
 {
-    char string[80];
+    ui_event_data e;
+    int diff = weight_remaining();
 
     /* Note that we are in "inventory" mode. */
     p_ptr->command_wrk = (USE_INVEN);
-
 
     /* Save screen */
     screen_save();
@@ -118,29 +45,17 @@ void do_cmd_inven(void)
     item_tester_full = TRUE;
 
     /* Display the inventory */
-    show_inven();
+    show_inven(OLIST_WEIGHT | OLIST_QUIVER);
 
     /* Hack -- hide empty slots */
     item_tester_full = FALSE;
 
     /* Insert the total burden and character capacity into a string. */
-    if (OPT(use_metric))
-	sprintf(string,
-		"(Inventory) burden %d.%d kg (%d%% of capacity). Command: ",
-		make_metric(p_ptr->total_weight) / 10,
-		make_metric(p_ptr->total_weight) % 10,
-		p_ptr->total_weight /
-		adj_str_wgt[p_ptr->state.stat_ind[A_STR]]);
-    else
-	sprintf(string,
-		"(Inventory) burden %d.%d lb (%d%% of capacity). Command: ",
-		p_ptr->total_weight / 10, p_ptr->total_weight % 10,
-		p_ptr->total_weight /
-		adj_str_wgt[p_ptr->state.stat_ind[A_STR]]);
+    prt(format("(Inventory) Burden %d.%d lb (%d.%d lb %s). Command: ",
+	       p_ptr->total_weight / 10, p_ptr->total_weight % 10,
+	       abs(diff) / 10, abs(diff) % 10,
+	       (diff < 0 ? "overweight" : "remaining")), 0, 0);
 
-
-    /* Output that string, and prompt for a command. */
-    prt(string, 0, 0);
 
     /* Get a new command */
     e = inkey_ex();
@@ -157,11 +72,10 @@ void do_cmd_inven(void)
  */
 void do_cmd_equip(void)
 {
-    char string[80];
+    ui_event_data e;
 
     /* Note that we are in "equipment" mode */
     p_ptr->command_wrk = (USE_EQUIP);
-
 
     /* Save screen */
     screen_save();
@@ -170,28 +84,13 @@ void do_cmd_equip(void)
     item_tester_full = TRUE;
 
     /* Display the equipment */
-    show_equip();
+    show_equip(OLIST_WEIGHT);
 
     /* Hack -- undo the hack above */
     item_tester_full = FALSE;
 
-
-    /* Insert the total burden and character capacity into a string. */
-    if (OPT(use_metric))
-	sprintf(string,
-		"(Equipment) burden %d.%d kg (%d%% of capacity). Command: ",
-		make_metric(p_ptr->total_weight) / 10,
-		make_metric(p_ptr->total_weight) % 10,
-		p_ptr->total_weight / adj_str_wgt[p_ptr->stat_ind[A_STR]]);
-    else
-	sprintf(string,
-		"(Equipment) burden %d.%d lb (%d%% of capacity). Command: ",
-		p_ptr->total_weight / 10, p_ptr->total_weight % 10,
-		p_ptr->total_weight / adj_str_wgt[p_ptr->stat_ind[A_STR]]);
-
-
-    /* Output that string, and prompt for a command. */
-    prt(string, 0, 0);
+    /* Prompt for a command */
+    prt("(Equipment) Command: ", 0, 0);
 
     /* Get a new command */
     e = inkey_ex();
@@ -203,6 +102,223 @@ void do_cmd_equip(void)
 }
 
 
+bool need_two_hands(const object_type *o_ptr)
+{
+    int str_adjust = (o_ptr->weight / 50 > 8) ? 8 : (o_ptr->weight / 50);
+
+    if (of_has(o_ptr->flags_obj, OF_TWO_HANDED_REQ)) 
+	return TRUE;
+    
+    if (of_has(o_ptr->flags_obj, OF_TWO_HANDED_DES) && 
+	(p_ptr->stat_ind[A_STR] < 29 + str_adjust))
+	return TRUE;
+
+    return FALSE;
+}
+
+/**
+ * Wield or wear a single item from the pack or floor
+ */
+void wield_item(object_type *o_ptr, int item, int slot)
+{
+    object_type *l_ptr = &p_ptr->inventory[INVEN_LIGHT];
+    object_type object_type_body;
+    object_type *i_ptr = &object_type_body;
+
+    cptr fmt;
+    char o_name[80];
+
+    bool combine_quiver = FALSE;
+    int num = 1;
+
+    /* If we are stacking things in the quiver */
+    if (obj_is_quiver_obj(o_ptr))
+    {
+	num = o_ptr->number;
+	combine_quiver = object_similar(o_ptr, &p_ptr->inventory[slot],
+					OSTACK_QUIVER);
+    }
+
+    /* Take a turn */
+    p_ptr->energy_use = 100;
+
+    /* Obtain local object */
+    object_copy(i_ptr, o_ptr);
+
+    /* Modify quantity */
+    i_ptr->number = num;
+
+    /* Decrease the item (from the pack) */
+    if (item >= 0)
+    {
+	inven_item_increase(item, -num);
+	inven_item_optimize(item);
+    }
+
+    /* Decrease the item (from the floor) */
+    else
+    {
+	floor_item_increase(0 - item, -num);
+	floor_item_optimize(0 - item);
+    }
+
+    /* Get the wield slot */
+    o_ptr = &p_ptr->inventory[slot];
+
+    if (combine_quiver)
+    {
+	/* Add the new ammo to the already-quiver-ed stuff */
+	object_absorb(o_ptr, i_ptr);
+    }
+    else 
+    {
+	/* Take off existing item */
+	if (o_ptr->k_idx)
+	    (void)inven_takeoff(slot, 255);
+
+	/* If we are wielding ammo we may need to "open" the slot by shifting
+	 * later ammo up the quiver; this is because we already called the
+	 * inven_item_optimize() function. */
+	if (slot >= QUIVER_START)
+	    open_quiver_slot(slot);
+	
+	/* Wear the new stuff */
+	object_copy(o_ptr, i_ptr);
+
+	/* Increment the equip counter by hand */
+	p_ptr->equip_cnt++;
+    }
+
+    /* Increase the weight */
+    p_ptr->total_weight += i_ptr->weight * num;
+
+    /* If he wields a weapon that requires two hands, or hasn't the strength
+     * to wield a weapon that is usually wielded with both hands one-handed
+     * (normally requires 18/140 to 18/160 STR), the character will
+     * automatically carry any equipped shield on his back. -LM- */
+    if ((slot == INVEN_WIELD) && (p_ptr->inventory[INVEN_ARM].k_idx)) {
+	if (needs_two_hands(o_ptr))
+	    p_ptr->state.shield_on_back = TRUE;
+	else
+	    p_ptr->state.shield_on_back = FALSE;
+    }
+
+    /* A character using both hands to wield his melee weapon will use his
+     * back to carry an equipped shield. -LM- */
+    if ((slot == INVEN_ARM) && (p_ptr->inventory[INVEN_WIELD].k_idx)) {
+	/* Access the wield slot */
+	object_type *o = &p_ptr->inventory[INVEN_WIELD];
+
+	if (needs_two_hands(o)) 
+	    p_ptr->state.shield_on_back = TRUE;
+	else
+	    p_ptr->state.shield_on_back = FALSE;
+    }
+
+    /* Set item handling -GS- and checking turn found for artifacts -NRM- */
+    if (o_ptr->name1) {
+
+	/* Is the artifact a set item? */
+	artifact_type *a_ptr = &a_info[o_ptr->name1];
+	if (a_ptr->set_no != 0) {
+	    /* 
+	     * The object is part of a set. Check to see if rest of
+	     * set is equiped.
+	     */
+	    if (check_set(a_ptr->set_no)) {
+		/* add bonuses */
+		apply_set(a_ptr->set_no);
+	    }
+	}
+    }
+    
+    /* Wielding off the floor will id if holding the Stone of Lore */
+    if (item < 0) {
+	if ((!object_known_p(o_ptr)) && (l_ptr->sval == SV_STONE_LORE))
+	    identify_object(o_ptr);
+	
+	/* And we autoinscribe here too */
+	apply_autoinscription(o_ptr);
+    }
+
+    /* Notice dice, AC, jewellery sensation ID and other obvious stuff */
+    notice_other((IF_DD_DS | IF_AC), slot + 1);
+    (void) of_inter(f, obvious_mask);
+    of_union(o_ptr->id_obj, f);
+    if (is_armour(o_ptr) && k_ptr->to_h)
+	notice_other(IF_TO_H, slot + 1);
+    if ((slot == INVEN_RIGHT) || (slot == INVEN_LEFT) || (slot == INVEN_NECK)) {
+	notice_obj(p_ptr->id_obj, slot + 1);
+	notice_other(p_ptr->id_other, slot + 1);
+    }
+
+    /* Average things are average */
+    if ((o_ptr->feel == FEEL_AVERAGE) && (is_weapon(o_ptr) || is_armour(o_ptr)))
+	notice_other((IF_AC | IF_TO_A | IF_TO_H | IF_TO_D), slot + 1);
+
+    /* Object has been worn */
+    o_ptr->ident |= IDENT_WORN;
+
+    /* Where is the item now */
+    if (slot == INVEN_WIELD)
+	fmt = "You are wielding %s (%c).";
+    else if (slot == INVEN_BOW)
+	fmt = "You are shooting with %s (%c).";
+    else if (slot == INVEN_LIGHT)
+	fmt = "Your light source is %s (%c).";
+    else if (combine_quiver)
+	fmt = "You combine %s in your quiver (%c).";
+    else if (slot >= QUIVER_START && slot < QUIVER_END)
+	fmt = "You add %s to your quiver (%c).";
+    else
+	fmt = "You are wearing %s (%c).";
+
+    /* Describe the result */
+    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
+
+    /* Message */
+    message_format(MSG_WIELD, 0, fmt, o_name, index_to_label(slot));
+
+    if (!object_known_p(o_ptr)) {
+	int feel;
+	bool heavy = FALSE;
+
+	heavy = (player_has(PF_PSEUDO_ID_HEAVY));
+
+	/* Check for a feeling */
+	feel = (heavy ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
+
+	if (!(o_ptr->feel == feel)) {
+	    /* Get an object description */
+	    object_desc(o_name, o_ptr, FALSE, 0);
+
+	    msg_format("You feel the %s (%c) you are %s %s %s...", o_name,
+		       index_to_label(slot), describe_use(slot),
+		       ((o_ptr->number == 1) ? "is" : "are"), feel_text[feel]);
+
+	    /* We have "felt" it */
+	    o_ptr->ident |= (IDENT_SENSE);
+
+	    /* Inscribe it textually */
+	    o_ptr->feel = feel;
+
+	    /* Set squelch flag as appropriate */
+	    p_ptr->notice |= PN_SQUELCH;
+	}
+    }
+
+    /* Save quiver size */
+    save_quiver_size(p_ptr);
+
+    /* See if we have to overflow the pack */
+    pack_overflow();
+
+    /* Recalculate bonuses, torch, mana */
+    p_ptr->notice |= PN_SORT_QUIVER;
+    p_ptr->update |= (PU_BONUS | PU_TORCH | PU_MANA);
+    p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
+}
+
 
 
 /**
@@ -213,16 +329,12 @@ void do_cmd_equip(void)
 void do_cmd_destroy(cmd_code code, cmd_arg args[])
 {
     int item, amt;
-    int old_number;
 
     object_type *o_ptr;
-    object_kind *k_ptr;
+
+    object_type destroyed_obj;
 
     char o_name[120];
-
-    char out_val[160];
-
-    cptr q, s;
 
     item = args[0].item;
     amt = args[1].number;
@@ -233,91 +345,31 @@ void do_cmd_destroy(cmd_code code, cmd_arg args[])
 	return;
     }
 
-    /* Get the item (in the pack) */
-    if (item >= 0) {
-	o_ptr = &p_ptr->inventory[item];
-    }
-
-    /* Get the item (on the floor) */
-    else {
-	o_ptr = &o_list[0 - item];
-    }
-
-    /* Get the object kind. */
-    k_ptr = &k_info[o_ptr->k_idx];
-
-    /* Get a quantity */
-    amt = get_quantity(NULL, o_ptr->number);
-
-    /* Allow user abort */
-    if (amt <= 0)
+    if (!item_is_available(item, NULL, USE_INVEN | USE_EQUIP | USE_FLOOR))
+    {
+	msg_print("You do not have that item to destroy it.");
 	return;
-
-    /* Describe the object */
-    old_number = o_ptr->number;
-    o_ptr->number = amt;
-    object_desc(o_name, o_ptr, TRUE, 3);
-    o_ptr->number = old_number;
-
-    /* Verify destruction */
-    if (OPT(verify_destroy)
-	&& (OPT(verify_destroy_junk) || (object_value(o_ptr) >= 1))) {
-	int result;
-
-	/* Prompt */
-	sprintf(out_val, "Really destroy %s? ", o_name);
-
-	/* Give squelch as an option for aware objects */
-	if (object_aware_p(o_ptr)
-	    && ((k_info[o_ptr->k_idx].tval < TV_SHOT)
-		|| (k_info[o_ptr->k_idx].tval > TV_DRAG_ARMOR))
-	    && !kf_has(k_info[o_ptr->k_idx].flags_kind, KF_INSTA_ART)) {
-
-	    result = get_check_other(out_val, 's');
-
-	    /* returned "no" */
-	    if (!result)
-		return;
-
-	    /* return of 2 sets item to squelch */
-	    else if (result == 2) {
-		object_kind *k_ptr = &k_info[o_ptr->k_idx];
-		char o_name2[80];
-
-		/* make a fake object so we can give a proper message */
-		object_type *i_ptr;
-		object_type object_type_body;
-
-		/* Get local object */
-		i_ptr = &object_type_body;
-
-		/* Wipe the object */
-		object_wipe(i_ptr);
-
-		/* Create the object */
-		object_prep(i_ptr, o_ptr->k_idx);
-
-		/* make it plural */
-		i_ptr->number = 2;
-
-		/* now describe with correct amount */
-		object_desc(o_name2, i_ptr, FALSE, 0);
-
-		/* set to squelch */
-		k_ptr->squelch = TRUE;
-
-		/* Message - no good routine for extracting the plain name */
-		msg_format("All %^s will always be squelched.", o_name2);
-
-		/* Mark the view to be updated */
-		p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW);;
-	    }
-	}
-
-	/* Unaware object, simple yes/no prompt */
-	else if (!get_check(out_val))
-	    return;
     }
+
+    o_ptr = object_from_item_idx(item);
+
+    /* Hack -- Cannot destroy some cursed items */
+    if (cf_has(o_ptr->flags_curse, CF_STICKY_CARRY) || 
+	cf_has(o_ptr->flags_curse, CF_STICKY_WIELD)) {
+	/* Oops */
+	msg_print("Hmmm, it seems to be cursed.");
+
+	/* Notice */
+	notice_curse(CF_STICKY_CARRY, item + 1);
+
+	/* Nope */
+	return;
+    }
+
+    /* Describe the destroyed object by taking a copy with the right "amt" */
+    object_copy_amt(&destroyed_obj, o_ptr, amt);
+    object_desc(o_name, sizeof(o_name), &destroyed_obj,
+		ODESC_PREFIX | ODESC_FULL);
 
     /* Artifacts cannot be destroyed */
     if (artifact_p(o_ptr)) {
@@ -337,18 +389,6 @@ void do_cmd_destroy(cmd_code code, cmd_arg args[])
 	p_ptr->notice |= (PN_COMBINE);
 
 	/* Done */
-	return;
-    }
-
-    /* Hack -- Cannot destroy some cursed items */
-    if (cf_has(o_ptr->flags_curse, CF_STICKY_CARRY)) {
-	/* Oops */
-	msg_print("Hmmm, it seems to be cursed.");
-
-	/* Notice */
-	notice_curse(CF_STICKY_CARRY, item + 1);
-
-	/* Nope */
 	return;
     }
 
@@ -392,8 +432,8 @@ void textui_cmd_destroy(void)
     /* Get an item */
     q = "Destroy which item? ";
     s = "You have nothing to destroy.";
-    if (!get_item
-	(&item, q, s, (USE_INVEN | USE_EQUIP | USE_FLOOR | CAN_SQUELCH)))
+    if (!get_item(&item, q, s, CMD_DESTROY, 
+		  (USE_INVEN | USE_EQUIP | USE_FLOOR | CAN_SQUELCH)))
 	return;
 
     /* Deal with squelched items */
@@ -412,64 +452,56 @@ void textui_cmd_destroy(void)
     if (amt <= 0)
 	return;
 
-    /* Describe the object */
-    old_number = o_ptr->number;
-    o_ptr->number = amt;
-    object_desc(o_name, o_ptr, TRUE, 3);
-    o_ptr->number = old_number;
+    /* Describe the destroyed object by taking a copy with the right "amt" */
+    object_copy_amt(&obj_to_destroy, o_ptr, amt);
+    object_desc(o_name, sizeof(o_name), &obj_to_destroy,
+		ODESC_PREFIX | ODESC_FULL);
 
     /* Verify destruction */
-    strnfmt(out_val, sizeof(out_val), "Really destroy %s? ", o_name);
+    if (OPT(verify_destroy)
+	&& (OPT(verify_destroy_junk) || (object_value(o_ptr) >= 1))) {
+	/* Verify destruction */
+	strnfmt(out_val, sizeof(out_val), "Really destroy %s? ", o_name);
 
-    result = get_char(out_val, "yns", 3, 'n');
+	result = get_char(out_val, "yns", 3, 'n');
 
-    if (result == 'y') {
-	/* Hack -- Cannot destroy some cursed items */
-	if (cf_has(o_ptr->flags_curse, CF_STICKY_CARRY)) {
-	    /* Oops */
-	    msg_print("Hmmm, it seems to be cursed.");
+	if (result == 'y') {
+	    cmd_insert(CMD_DESTROY);
+	    cmd_set_arg_item(cmd_get_top(), 0, item);
+	    cmd_set_arg_number(cmd_get_top(), 1, amt);
+	} 
+	else if (result == 's') {
+	    object_kind *k_ptr = &k_info[o_ptr->k_idx];
+	    char o_name2[80];
 
-	    /* Notice */
-	    notice_curse(CF_STICKY_CARRY, item + 1);
+	    /* make a fake object so we can give a proper message */
+	    object_type *i_ptr;
+	    object_type object_type_body;
 
-	    /* Nope */
-	    return;
+	    /* Get local object */
+	    i_ptr = &object_type_body;
+
+	    /* Wipe the object */
+	    object_wipe(i_ptr);
+
+	    /* Create the object */
+	    object_prep(i_ptr, o_ptr->k_idx);
+
+	    /* make it plural */
+	    i_ptr->number = 2;
+
+	    /* now describe with correct amount */
+	    object_desc(o_name2, i_ptr, FALSE, 0);
+
+	    /* set to squelch */
+	    k_ptr->squelch = TRUE;
+
+	    /* Message - no good routine for extracting the plain name */
+	    msg_format("All %^s will always be squelched.", o_name2);
+
+	    /* Mark the view to be updated */
+	    p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW);;
 	}
-
-	cmd_insert(CMD_DESTROY);
-	cmd_set_arg_item(cmd_get_top(), 0, item);
-	cmd_set_arg_number(cmd_get_top(), 1, amt);
-    } else if (result == 's') {
-	object_kind *k_ptr = &k_info[o_ptr->k_idx];
-	char o_name2[80];
-
-	/* make a fake object so we can give a proper message */
-	object_type *i_ptr;
-	object_type object_type_body;
-
-	/* Get local object */
-	i_ptr = &object_type_body;
-
-	/* Wipe the object */
-	object_wipe(i_ptr);
-
-	/* Create the object */
-	object_prep(i_ptr, o_ptr->k_idx);
-
-	/* make it plural */
-	i_ptr->number = 2;
-
-	/* now describe with correct amount */
-	object_desc(o_name2, i_ptr, FALSE, 0);
-
-	/* set to squelch */
-	k_ptr->squelch = TRUE;
-
-	/* Message - no good routine for extracting the plain name */
-	msg_format("All %^s will always be squelched.", o_name2);
-
-	/* Mark the view to be updated */
-	p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW);;
     }
 }
 
@@ -479,7 +511,7 @@ void textui_cmd_destroy(void)
 void do_cmd_target(void)
 {
     /* Target set */
-    if (target_set_interactive(TARGET_KILL)) {
+    if (target_set_interactive(TARGET_KILL, -1, -1)) {
 	msg_print("Target Selected.");
     }
 
@@ -505,7 +537,7 @@ void do_cmd_target_closest(void)
 void do_cmd_look(void)
 {
     /* Look around */
-    if (target_set_interactive(TARGET_LOOK)) {
+    if (target_set_interactive(TARGET_LOOK, -1, -1)) {
 	msg_print("Target Selected.");
     }
 }
@@ -543,15 +575,8 @@ void do_cmd_locate(void)
 	}
 
 	/* Prepare to ask which way to look */
-	if (small_screen)
-	    sprintf(out_val,
-		    "Sector [%d(%02d),%d(%02d)], %s yours.  Dir or ESC?",
-		    y2 / (SCREEN_HGT / 2), y2 % (SCREEN_HGT / 2),
-		    x2 / (SCREEN_WID / 2), x2 % (SCREEN_WID / 2), tmp_val);
-
-	else
-	    sprintf(out_val,
-		    "Map sector [%d(%02d),%d(%02d)], which is%s your sector.  Direction or ESC?",
+	sprintf(out_val,
+		"Map sector [%d(%02d),%d(%02d)], which is%s your sector.  Direction or ESC?",
 		    y2 / (SCREEN_HGT / 2), y2 % (SCREEN_HGT / 2),
 		    x2 / (SCREEN_WID / 2), x2 % (SCREEN_WID / 2), tmp_val);
 
@@ -560,23 +585,16 @@ void do_cmd_locate(void)
 
 	/* Get a direction */
 	while (!dir) {
-	    ui_event_data ke = EVENT_EMPTY;
+	    char command;
 
 	    /* Get a command (or Cancel) */
-	    if (!get_com_ex(out_val, &ke))
-		break;
+	    if (!get_com(out_val, &command)) break;
 
-	    /* Extract the action (if any) */
-	    if (ke.key == '\xff') {
-		if (!ke.mousey)
-		    break;
-		dir = mouse_dir(ke, TRUE);
-	    } else
-		dir = target_dir(ke.key);
+	    /* Extract direction */
+	    dir = target_dir(command);
 
 	    /* Error */
-	    if (!dir)
-		bell(NULL);
+	    if (!dir) bell("Illegal direction for locate!");
 	}
 
 	/* No direction */
@@ -584,24 +602,15 @@ void do_cmd_locate(void)
 	    break;
 
 	/* Apply the motion */
-	if (change_panel(ddy[dir], ddx[dir])) {
-	    y2 = Term->offset_y;
-	    x2 = Term->offset_x;
-	}
+	change_panel(dir);
+
+	/* Handle stuff */
+	handle_stuff();
     }
 
 
     /* Recenter the map around the player */
     verify_panel();
-
-    /* Update stuff */
-    p_ptr->update |= (PU_MONSTERS);
-
-    /* Redraw map */
-    p_ptr->redraw |= (PR_MAP);
-
-    /* Handle stuff */
-    handle_stuff();
 }
 
 
@@ -711,104 +720,55 @@ static cptr ident_info[] = {
 
 
 
-/**
- * Sorting hook -- Comp function -- see below
- *
- * We use "u" to point to array of monster indexes,
- * and "v" to select the type of sorting to perform on "u".
- */
-bool ang_sort_comp_hook(void *u, void *v, int a, int b)
+
+static int cmp_mexp(const void *a, const void *b)
 {
-    u16b *who = (u16b *) (u);
-
-    u16b *why = (u16b *) (v);
-
-    int w1 = who[a];
-    int w2 = who[b];
-
-    int z1, z2;
-
-
-    /* Sort by player kills */
-    if (*why >= 4) {
-	/* Extract player kills */
-	z1 = l_list[w1].pkills;
-	z2 = l_list[w2].pkills;
-
-	/* Compare player kills */
-	if (z1 < z2)
-	    return (TRUE);
-	if (z1 > z2)
-	    return (FALSE);
-    }
-
-
-    /* Sort by total kills */
-    if (*why >= 3) {
-	/* Extract total kills */
-	z1 = l_list[w1].tkills;
-	z2 = l_list[w2].tkills;
-
-	/* Compare total kills */
-	if (z1 < z2)
-	    return (TRUE);
-	if (z1 > z2)
-	    return (FALSE);
-    }
-
-
-    /* Sort by monster level */
-    if (*why >= 2) {
-	/* Extract levels */
-	z1 = r_info[w1].level;
-	z2 = r_info[w2].level;
-
-	/* Compare levels */
-	if (z1 < z2)
-	    return (TRUE);
-	if (z1 > z2)
-	    return (FALSE);
-    }
-
-
-    /* Sort by monster experience */
-    if (*why >= 1) {
-	/* Extract experience */
-	z1 = r_info[w1].mexp;
-	z2 = r_info[w2].mexp;
-
-	/* Compare experience */
-	if (z1 < z2)
-	    return (TRUE);
-	if (z1 > z2)
-	    return (FALSE);
-    }
-
-
-    /* Compare indexes */
-    return (w1 <= w2);
+	u16b ia = *(const u16b *)a;
+	u16b ib = *(const u16b *)b;
+	if (r_info[ia].mexp < r_info[ib].mexp)
+		return -1;
+	if (r_info[ia].mexp > r_info[ib].mexp)
+		return 1;
+	return (a < b ? -1 : (a > b ? 1 : 0));
 }
 
-
-/**
- * Sorting hook -- Swap function -- see below
- *
- * We use "u" to point to array of monster indexes,
- * and "v" to select the type of sorting to perform.
- */
-void ang_sort_swap_hook(void *u, void *v, int a, int b)
+static int cmp_level(const void *a, const void *b)
 {
-    u16b *who = (u16b *) (u);
-
-    u16b holder;
-
-    /* Swap */
-    holder = who[a];
-    who[a] = who[b];
-    who[b] = holder;
+	u16b ia = *(const u16b *)a;
+	u16b ib = *(const u16b *)b;
+	if (r_info[ia].level < r_info[ib].level)
+		return -1;
+	if (r_info[ia].level > r_info[ib].level)
+		return 1;
+	return cmp_mexp(a, b);
 }
 
+static int cmp_tkill(const void *a, const void *b)
+{
+	u16b ia = *(const u16b *)a;
+	u16b ib = *(const u16b *)b;
+	if (l_list[ia].tkills < l_list[ib].tkills)
+		return -1;
+	if (l_list[ia].tkills > l_list[ib].tkills)
+		return 1;
+	return cmp_level(a, b);
+}
 
+static int cmp_pkill(const void *a, const void *b)
+{
+	u16b ia = *(const u16b *)a;
+	u16b ib = *(const u16b *)b;
+	if (l_list[ia].pkills < l_list[ib].pkills)
+		return -1;
+	if (l_list[ia].pkills > l_list[ib].pkills)
+		return 1;
+	return cmp_tkill(a, b);
+}
+
+int cmp_monsters(const void *a, const void *b)
+{
+	return cmp_level(a, b);
+}
 
 /**
  * Identify a character, allow recall of monsters
@@ -839,14 +799,12 @@ void do_cmd_query_symbol(void)
     bool recall = FALSE;
 
     u16b why = 0;
-    u16b *who = malloc(z_info->r_max * sizeof(*who));
+    u16b *who;
 
     /* Get a character, or abort */
-    if (!get_com("Enter character to be identified: ", &sym)) {
-	free(who);
+    if (!get_com("Enter character to be identified: ", &sym)) 
 	return;
-    }
-
+ 
     /* Find that character info, and describe it */
     for (i = 0; ident_info[i]; ++i) {
 	if (sym == ident_info[i][0])
@@ -863,16 +821,17 @@ void do_cmd_query_symbol(void)
     } else if (sym == KTRL('N')) {
 	all = norm = TRUE;
 	strcpy(buf, "Non-unique monster list.");
-    } else if (sym == KTRL('F')) {
-	if (!get_string
-	    ("Substring to search: ", search_str, sizeof(search_str))) {
+    } else if (sym == KTRL('F'))
+    {
+	if (!get_string("Substring to search: ", search_str, 
+			sizeof(search_str)))
+	{
 	    free(who);
 	    return;
 	}
-
-	for (sp = search_str; *sp; sp++)
-	    *sp = tolower(*sp);
-
+      
+	for(sp = search_str; *sp; sp++) *sp = tolower(*sp);
+      
 	sprintf(buf, "Monsters matching '%s'", search_str);
 	all = FALSE;
     } else if (ident_info[i]) {
@@ -884,6 +843,8 @@ void do_cmd_query_symbol(void)
     /* Display the result */
     prt(buf, 0, 0);
 
+    /* Allocate the "who" array */
+    who = C_ZNEW(z_info->r_max, u16b);
 
     /* Collect matching monsters */
     for (n = 0, i = 1; i < z_info->r_max; i++) {
@@ -919,21 +880,20 @@ void do_cmd_query_symbol(void)
 
     /* Nothing to recall */
     if (!n) {
-	free(who);
+	FREE(who);
 	return;
     }
 
 
+    /* Buttons */
+    button_add("[y]", 'y');
+    button_add("[k]", 'k');
+    /* Don't collide with the repeat button */
+    button_add("[n]", 'q'); 
+    redraw_stuff();
+
     /* Prompt */
-    put_str("Recall details? (k/p/y/n): ", 0, 40);
-    button_backup_all();
-    button_kill_all();
-    button_add("ESC", ESCAPE);
-    button_add("k", 'k');
-    button_add("p", 'p');
-    button_add("y", 'y');
-    button_add("n", 'n');
-    update_statusline();
+    put_str("Recall details? (y/k/n): ", 0, 40);
 
     /* Query */
     query = inkey_ex();
@@ -941,62 +901,41 @@ void do_cmd_query_symbol(void)
     /* Restore */
     prt(buf, 0, 0);
 
+    /* Buttons */
+    button_kill('y');
+    button_kill('k');
+    button_kill('q');
+    redraw_stuff();
 
-    /* Sort by kills (and level) */
-    if (query.key == 'k') {
-	why = 4;
-	query.key = 'y';
+    /* Interpret the response */
+    if (query.key == 'k')
+    {
+	/* Sort by kills (and level) */
+	sort(who, n, sizeof(*who), cmp_pkill);
     }
-
-    /* Sort by level */
-    if (query.key == 'p') {
-	why = 2;
-	query.key = 'y';
+    else if (query.key == 'y' || query.key == 'p')
+    {
+	/* Sort by level; accept 'p' as legacy */
+	sort(who, n, sizeof(*who), cmp_level);
     }
+    else
+    {
+	/* Any unsupported response is "nope, no history please" */
+	
+	/* XXX XXX Free the "who" array */
+	FREE(who);
 
-    /* Catch "escape" */
-    if (query.key != 'y') {
-	button_kill_all();
-	button_restore();
-	update_statusline();
-	free(who);
 	return;
-    } else {
-	button_kill('k');
-	button_kill('p');
-	button_kill('y');
-	button_add("r", 'r');
     }
 
-    /* Sort if needed */
-    if (why) {
-	/* Select the sort method */
-	ang_sort_comp = ang_sort_comp_hook;
-	ang_sort_swap = ang_sort_swap_hook;
+    /* Start at the end */
+    i = n - 1;
 
-	/* Sort the array */
-	ang_sort(who, &why, n);
-    }
-
-
-    /* Start at the current level */
-    i = 0;
-
-    /* 
-     * Find the monster whose level is the closest to the 
-     * current depth, without being greater than it.
-     */
-    for (j = 0; j < n; j++) {
-	monster_race *r_ptr = &r_info[who[j]];
-
-	if ((r_ptr->level <= p_ptr->depth) && (r_ptr->level >= last_level)) {
-	    start = j;
-	    last_level = r_ptr->level;
-	}
-    }
-
-    /* Start at the chosen monster. */
-    i = start;
+    /* Button */
+    button_add("[r]", 'r');
+    button_add("[-]", '-');
+    button_add("[+]", '+');
+    redraw_stuff();
 
     /* Scan the monster memory */
     while (TRUE) {
@@ -1072,494 +1011,23 @@ void do_cmd_query_symbol(void)
     }
 
 
+    /* Button */
+    button_kill('r');
+    button_kill('-');
+    button_kill('+');
+    redraw_stuff();
+
     /* Re-display the identity */
     prt(buf, 0, 0);
 
-    button_kill_all();
-    button_restore();
-    update_statusline();
-    free(who);
+    /* Free the "who" array */
+    FREE(who);
 }
 
-
-
-/**
- * Hack -- possible victim outcry. -LM- 
- */
-static cptr desc_victim_outcry[] = {
-    "'My money, where's my money?'",
-    "'Thief! Thief! Thief! Baggins! We hates it forever!'",
-    "'Tell me, have you seen a purse wandering around?'",
-    "'Thieves, Fire, Murder!'",
-    "''Ere, 'oo are you?'",
-    "'Hey, look what I've copped!'",
-    "'How dare you!'",
-    "'Help yourself again, thief, there is plenty and to spare!'",
-    "'All the world detests a thief.'",
-    "'Catch me this thief!'",
-    "'Hi! Ho! Robbery!'",
-    "'My gold, my precious gold!'",
-    "'My gold is costly, thief!'",
-    "'Your blood for my gold?  Agreed!'",
-    "'I scrimp, I save, and now it's gone!'",
-    "'Robbers like you are part of the problem!'",
-    "'Banditti!  This place is just not safe anymore!'",
-    "'Ruined!  I'm ruined!'",
-    "'Where, where is the common decency?'",
-    "'Your knavish tricks end here and now!'",
-};
-
-
-
-/**
- * Rogues may steal gold from monsters.  The monster needs to have 
- * something to steal (it must drop some form of loot), and should 
- * preferably be asleep.  Humanoids and dragons are a rogue's favorite
- * targets.  Steal too often on a level, and monsters will be more wary, 
- * and the hue and cry will be eventually be raised.  Having every 
- * monster on the level awake and aggravated is not pleasant. -LM-
- */
-void py_steal(int y, int x)
+/* Centers the map on the player */
+void do_cmd_center_map(void)
 {
-    cptr act = NULL;
-
-    monster_type *m_ptr = &m_list[cave_m_idx[y][x]];
-    monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-    char m_name[80];
-
-    int i;
-    int effect, theft_protection;
-    int filching_power = 0;
-    int purse = 0;
-
-    bool thief = FALSE;
-    bool success = FALSE;
-
-    /* Check intent */
-    if ((m_ptr->hostile != -1)
-	&& !get_check("Do you want to steal from this being?")) {
-	py_attack(y, x, FALSE);
-	return;
-    }
-
-    /* Hard limit on theft. */
-    if (number_of_thefts_on_level > 4) {
-	msg_print
-	    ("Everyone is keeping a lookout for you.  You can steal nothing here.");
-	return;
-    }
-
-    /* Determine the cunning of the thief. */
-    filching_power = 2 * p_ptr->lev;
-
-    /* Penalize some conditions */
-    if (p_ptr->timed[TMD_BLIND] || no_light())
-	filching_power = filching_power / 10;
-    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC])
-	filching_power = filching_power / 10;
-
-    /* Determine how much protection the monster has. */
-    theft_protection = (7 * (r_ptr->level + 2) / 4);
-    theft_protection += (m_ptr->mspeed - p_ptr->state.pspeed);
-    if (theft_protection < 1)
-	theft_protection = 1;
-
-    /* Send a thief to catch a thief. */
-    for (i = 0; i < 4; i++) {
-	/* Extract infomation about the blow effect */
-	effect = r_ptr->blow[i].effect;
-	if (effect == RBE_EAT_GOLD)
-	    thief = TRUE;
-	if (effect == RBE_EAT_ITEM)
-	    thief = TRUE;
-    }
-    if (thief)
-	theft_protection += 30;
-
-    if (m_ptr->csleep)
-	theft_protection = 3 * theft_protection / 5;
-
-    /* Special player stealth magics aid stealing, but are lost in the process */
-    if (p_ptr->timed[TMD_SSTEALTH]) {
-	theft_protection = 3 * theft_protection / 5;
-	(void) clear_timed(TMD_SSTEALTH, TRUE);
-    }
-
-    /* The more you steal on a level, the more wary the monsters. */
-    theft_protection += number_of_thefts_on_level * 15;
-
-    /* Did the theft succeed? */
-    if (randint1(theft_protection) < filching_power)
-	success = TRUE;
-
-
-    /* If the theft succeeded, determine the value of the purse. */
-    if (success) {
-	purse = (r_ptr->level + 1) + randint1(3 * (r_ptr->level + 1) / 2);
-
-	/* Uniques are juicy targets. */
-	if (rf_has(r_ptr->flags, RF_UNIQUE))
-	    purse *= 3;
-
-	/* But some monsters are dirt poor. */
-	if (!(rf_has(r_ptr->flags, RF_DROP_60))
-	    || rf_has(r_ptr->flags, RF_DROP_90)
-	    || rf_has(r_ptr->flags, RF_DROP_1D2)
-	    || rf_has(r_ptr->flags, RF_DROP_2D2)
-	    || rf_has(r_ptr->flags, RF_DROP_3D2)
-	    || rf_has(r_ptr->flags, RF_DROP_4D2))
-	    purse = 0;
-
-	/* Some monster races are far better to steal from than others. */
-	if ((r_ptr->d_char == 'D') || (r_ptr->d_char == 'd')
-	    || (r_ptr->d_char == 'p') || (r_ptr->d_char == 'h'))
-	    purse *= 2 + randint1(3) + randint1(r_ptr->level / 20);
-	else if ((r_ptr->d_char == 'P') || (r_ptr->d_char == 'o')
-		 || (r_ptr->d_char == 'O') || (r_ptr->d_char == 'T')
-		 || (r_ptr->d_char == 'n') || (r_ptr->d_char == 'W')
-		 || (r_ptr->d_char == 'k') || (r_ptr->d_char == 'L')
-		 || (r_ptr->d_char == 'V') || (r_ptr->d_char == 'y'))
-	    purse *= 1 + randint1(3) + randint1(r_ptr->level / 30);
-
-	/* Pickings are scarce in a land of many thieves. */
-	purse = purse * (p_ptr->depth + 5) / (p_ptr->recall[0] + 5);
-
-	/* Increase player gold. */
-	p_ptr->au += purse;
-
-	/* Limit to avoid buffer overflow */
-	if (p_ptr->au > PY_MAX_GOLD)
-	    p_ptr->au = PY_MAX_GOLD;
-
-	/* Redraw gold */
-	p_ptr->redraw |= (PR_GOLD);
-
-	/* Announce the good news. */
-	if (purse)
-	    msg_format("You burgle %d gold.", purse);
-
-	/* Pockets are empty. */
-	else
-	    msg_print("You burgle only dust.");
-    }
-
-    /* The victim normally, but not always, wakes up and is aggravated. */
-    if (randint1(4) != 1) {
-	m_ptr->csleep = 0;
-	m_ptr->mflag |= (MFLAG_ACTV);
-	if (m_ptr->mspeed < r_ptr->speed + 3)
-	    m_ptr->mspeed += 10;
-
-	/* Become hostile */
-	m_ptr->hostile = -1;
-
-	/* Occasionally, amuse the player with a message. */
-	if ((randint1(5) == 1) && (purse) && (rf_has(r_ptr->flags, RF_SMART))) {
-	    monster_desc(m_name, m_ptr, 0);
-	    act = desc_victim_outcry[randint0(20)];
-	    msg_format("%^s cries out %s", m_name, act);
-	}
-	/* Otherwise, simply explain what happened. */
-	else {
-	    monster_desc(m_name, m_ptr, 0);
-	    msg_format("You have aroused %s.", m_name);
-	}
-    }
-
-    /* The thief also speeds up, but only for just long enough to escape. */
-    if (!p_ptr->timed[TMD_FAST])
-	p_ptr->timed[TMD_FAST] += 2;
-
-    /* Recalculate bonuses */
-    p_ptr->update |= (PU_BONUS);
-
-    /* Handle stuff */
-    handle_stuff();
-
-
-    /* Increment the number of thefts, and possibly raise the hue and cry. */
-    number_of_thefts_on_level++;
-
-    if (number_of_thefts_on_level > 4) {
-	/* Notify the player of the trouble he's in. */
-	msg_print("All the level is in an uproar over your misdeeds!");
-
-	/* Aggravate and speed up all monsters on level. */
-	(void) aggravate_monsters(1, TRUE);
-    }
-
-    else if ((number_of_thefts_on_level > 2) || (randint1(8) == 1)) {
-	msg_print
-	    ("You hear hunting parties scouring the area for a notorious burgler.");
-
-	/* Aggravate monsters nearby. */
-	(void) aggravate_monsters(1, FALSE);
-    }
-
-    /* Rogue "Hit and Run" attack. */
-    if (p_ptr->special_attack & (ATTACK_FLEE)) {
-	/* Cancel the fleeing spell */
-	p_ptr->special_attack &= ~(ATTACK_FLEE);
-
-	/* Message */
-	msg_print("You escape into the shadows!");
-
-	/* Teleport. */
-	teleport_player(6 + p_ptr->lev / 5, TRUE);
-
-	/* Redraw the state */
-	p_ptr->redraw |= (PR_STATUS);
-    }
+	center_panel();
 }
 
 
-/**
- * Rogues may set traps.  Only one such trap may exist at any one time, 
- * but an old trap can be disarmed to free up equipment for a new trap.
- * -LM-
- */
-bool py_set_trap(int y, int x)
-{
-    int max_traps;
-    s16b this_o_idx, next_o_idx = 0;
-    object_type *o_ptr;
-    bool destroy_message = FALSE;
-
-    max_traps =
-	1 + ((p_ptr->lev >= 25) ? 1 : 0) +
-	(player_has(PF_EXTRA_TRAP) ? 1 : 0);
-
-    if (p_ptr->timed[TMD_BLIND] || no_light()) {
-	msg_print("You can not see to set a trap.");
-	return FALSE;
-    }
-
-    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC]) {
-	msg_print("You are too confused.");
-	return FALSE;
-    }
-
-    /* Paranoia -- Forbid more than max_traps being set. */
-    if (num_trap_on_level >= max_traps) {
-	msg_print
-	    ("You must disarm your existing trap to free up your equipment.");
-	return FALSE;
-    }
-
-    /* No setting traps while shapeshifted */
-    if (SCHANGE) {
-	msg_print("You can not set traps while shapechanged.");
-	msg_print("Use the ']' command to return to your normal form.");
-	return FALSE;
-    }
-
-    /* Scan all objects in the grid */
-    for (this_o_idx = cave_o_idx[y][x]; this_o_idx; this_o_idx = next_o_idx) {
-	/* Acquire object */
-	o_ptr = &o_list[this_o_idx];
-
-	/* Acquire next object */
-	next_o_idx = o_ptr->next_o_idx;
-
-	/* Artifact */
-	if (o_ptr->name1) {
-	    msg_print("There is an indestructible object here.");
-	    return FALSE;
-	}
-
-	/* Visible object to be destroyed */
-	if (!squelch_hide_item(o_ptr))
-	    destroy_message = TRUE;
-    }
-
-    /* Verify */
-    if (cave_o_idx[y][x]) {
-	if (destroy_message)
-	    if (!get_check("Destroy all items and set a trap?"))
-		return FALSE;
-
-	for (this_o_idx = cave_o_idx[y][x]; this_o_idx; this_o_idx = next_o_idx) {
-	    /* Acquire object */
-	    o_ptr = &o_list[this_o_idx];
-
-	    /* Acquire next object */
-	    next_o_idx = o_ptr->next_o_idx;
-
-	    /* Delete the object */
-	    delete_object_idx(this_o_idx);
-	}
-
-	/* Redraw */
-	light_spot(y, x);
-    }
-
-    /* Set the trap, and draw it. */
-    cave_set_feat(y, x, FEAT_MTRAP_BASE);
-
-    /* Notify the player. */
-    msg_print("You set a monster trap.");
-
-    /* Increment the number of monster traps. */
-    num_trap_on_level++;
-
-    /* A trap has been set */
-    return TRUE;
-}
-
-/**
- * Trap coordinates 
- */
-static int trap_y = 0;
-static int trap_x = 0;
-
-static char *trap_type[] = {
-    "Sturdy Trap      (less likely to break)",
-    "Netted Trap      (effective versus flyers)",
-    "Confusion Trap   (confuses monsters)",
-    "Poison Gas Trap  (creates a toxic cloud)",
-    "Spirit Trap      (effective versus spirits)",
-    "Lightning Trap   (shoots a lightning bolt)",
-    "Explosive Trap   (causes area damage)",
-    "Portal Trap      (teleports monsters)",
-    "Stasis Trap      (freezes time for a monster)",
-    "Drain Life Trap  (hurts living monsters)",
-    "Unmagic Trap     (damages and reduces mana)",
-    "Dispelling Trap  (hurts all monsters in sight)",
-    "Genocide Trap    (removes nearby like monsters)"
-};
-
-char trap_tag(menu_type * menu, int oid)
-{
-    return I2A(oid);
-}
-
-/**
- * Display an entry on the sval menu
- */
-void trap_display(menu_type * menu, int oid, bool cursor, int row, int col,
-		  int width)
-{
-    const u16b *choice = menu->menu_data;
-    int idx = choice[oid];
-
-    byte attr = (cursor ? TERM_L_BLUE : TERM_WHITE);
-
-
-    /* Print it */
-    c_put_str(attr, format("%s", trap_type[idx]), row, col);
-}
-
-/**
- * Deal with events on the trap menu
- */
-bool trap_action(menu_type * menu, const ui_event_data * db, int oid)
-{
-    u16b *choice = db;
-
-    int idx = choice[oid];
-    cave_set_feat(trap_y, trap_x, FEAT_MTRAP_BASE + 1 + idx);
-
-    return TRUE;
-}
-
-
-/**
- * Display list of monster traps.
- */
-bool trap_menu(void)
-{
-    menu_type menu;
-    menu_iter menu_f = { trap_tag, 0, trap_display, trap_action, 0 };
-    region area = { (small_screen ? 0 : 15), 1, 48, -1 };
-    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
-    int cursor = 0;
-
-    int num = 0;
-    size_t i;
-
-    u16b *choice;
-
-    /* See how many traps available */
-    if (player_has(PF_EXTRA_TRAP))
-	num = 1 + (p_ptr->lev / 4);
-    else
-	num = 1 + (p_ptr->lev / 6);
-
-    /* Create the array */
-    choice = C_ZNEW(num, u16b);
-
-    /* Obvious */
-    for (i = 0; i < num; i++) {
-	choice[i] = i;
-    }
-
-    /* Clear space */
-    area.page_rows = num + 2;
-
-    /* Return here if there are no traps */
-    if (!num) {
-	FREE(choice);
-	return FALSE;
-    }
-
-
-    /* Save the screen and clear it */
-    screen_save();
-
-    /* Help text */
-
-    /* Set up the menu */
-    WIPE(&menu, menu);
-    menu.title = "Choose an advanced monster trap (ESC to cancel):";
-    menu.cmd_keys = " \n\r";
-    menu.count = num;
-    menu.menu_data = choice;
-    menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
-
-    /* Select an entry */
-    evt = menu_select(&menu, 0);
-
-    /* Free memory */
-    FREE(choice);
-
-    /* Load screen */
-    screen_load();
-    return (evt.type != EVT_ESCAPE);
-}
-
-
-/** 
- * Turn a basic monster trap into an advanced one -BR-
- */
-bool py_modify_trap(int y, int x)
-{
-    if (p_ptr->timed[TMD_BLIND] || no_light()) {
-	msg_print("You can not see to modify your trap.");
-	return FALSE;
-    }
-
-    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC]) {
-	msg_print("You are too confused.");
-	return FALSE;
-    }
-
-    /* No setting traps while shapeshifted */
-    if (SCHANGE) {
-	msg_print("You can not set traps while shapechanged.");
-	msg_print("Use the ']' command to return to your normal form.");
-	return FALSE;
-    }
-
-    trap_y = y;
-    trap_x = x;
-
-    /* get choice */
-    if (trap_menu()) {
-	/* Notify the player. */
-	msg_print("You modify the monster trap.");
-    }
-
-    /* Trap was modified */
-    return TRUE;
-}

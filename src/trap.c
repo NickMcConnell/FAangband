@@ -1303,3 +1303,483 @@ void hit_trap(int y, int x)
     Rand_quick = FALSE;
 }
 
+/**
+ * Hack -- possible victim outcry. -LM- 
+ */
+static cptr desc_victim_outcry[] = {
+    "'My money, where's my money?'",
+    "'Thief! Thief! Thief! Baggins! We hates it forever!'",
+    "'Tell me, have you seen a purse wandering around?'",
+    "'Thieves, Fire, Murder!'",
+    "''Ere, 'oo are you?'",
+    "'Hey, look what I've copped!'",
+    "'How dare you!'",
+    "'Help yourself again, thief, there is plenty and to spare!'",
+    "'All the world detests a thief.'",
+    "'Catch me this thief!'",
+    "'Hi! Ho! Robbery!'",
+    "'My gold, my precious gold!'",
+    "'My gold is costly, thief!'",
+    "'Your blood for my gold?  Agreed!'",
+    "'I scrimp, I save, and now it's gone!'",
+    "'Robbers like you are part of the problem!'",
+    "'Banditti!  This place is just not safe anymore!'",
+    "'Ruined!  I'm ruined!'",
+    "'Where, where is the common decency?'",
+    "'Your knavish tricks end here and now!'",
+};
+
+
+
+/**
+ * Rogues may steal gold from monsters.  The monster needs to have 
+ * something to steal (it must drop some form of loot), and should 
+ * preferably be asleep.  Humanoids and dragons are a rogue's favorite
+ * targets.  Steal too often on a level, and monsters will be more wary, 
+ * and the hue and cry will be eventually be raised.  Having every 
+ * monster on the level awake and aggravated is not pleasant. -LM-
+ */
+void py_steal(int y, int x)
+{
+    cptr act = NULL;
+
+    monster_type *m_ptr = &m_list[cave_m_idx[y][x]];
+    monster_race *r_ptr = &r_info[m_ptr->r_idx];
+
+    char m_name[80];
+
+    int i;
+    int effect, theft_protection;
+    int filching_power = 0;
+    int purse = 0;
+
+    bool thief = FALSE;
+    bool success = FALSE;
+
+    /* Check intent */
+    if ((m_ptr->hostile != -1)
+	&& !get_check("Do you want to steal from this being?")) {
+	py_attack(y, x, FALSE);
+	return;
+    }
+
+    /* Hard limit on theft. */
+    if (number_of_thefts_on_level > 4) {
+	msg_print
+	    ("Everyone is keeping a lookout for you.  You can steal nothing here.");
+	return;
+    }
+
+    /* Determine the cunning of the thief. */
+    filching_power = 2 * p_ptr->lev;
+
+    /* Penalize some conditions */
+    if (p_ptr->timed[TMD_BLIND] || no_light())
+	filching_power = filching_power / 10;
+    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC])
+	filching_power = filching_power / 10;
+
+    /* Determine how much protection the monster has. */
+    theft_protection = (7 * (r_ptr->level + 2) / 4);
+    theft_protection += (m_ptr->mspeed - p_ptr->state.pspeed);
+    if (theft_protection < 1)
+	theft_protection = 1;
+
+    /* Send a thief to catch a thief. */
+    for (i = 0; i < 4; i++) {
+	/* Extract infomation about the blow effect */
+	effect = r_ptr->blow[i].effect;
+	if (effect == RBE_EAT_GOLD)
+	    thief = TRUE;
+	if (effect == RBE_EAT_ITEM)
+	    thief = TRUE;
+    }
+    if (thief)
+	theft_protection += 30;
+
+    if (m_ptr->csleep)
+	theft_protection = 3 * theft_protection / 5;
+
+    /* Special player stealth magics aid stealing, but are lost in the process */
+    if (p_ptr->timed[TMD_SSTEALTH]) {
+	theft_protection = 3 * theft_protection / 5;
+	(void) clear_timed(TMD_SSTEALTH, TRUE);
+    }
+
+    /* The more you steal on a level, the more wary the monsters. */
+    theft_protection += number_of_thefts_on_level * 15;
+
+    /* Did the theft succeed? */
+    if (randint1(theft_protection) < filching_power)
+	success = TRUE;
+
+
+    /* If the theft succeeded, determine the value of the purse. */
+    if (success) {
+	purse = (r_ptr->level + 1) + randint1(3 * (r_ptr->level + 1) / 2);
+
+	/* Uniques are juicy targets. */
+	if (rf_has(r_ptr->flags, RF_UNIQUE))
+	    purse *= 3;
+
+	/* But some monsters are dirt poor. */
+	if (!(rf_has(r_ptr->flags, RF_DROP_60))
+	    || rf_has(r_ptr->flags, RF_DROP_90)
+	    || rf_has(r_ptr->flags, RF_DROP_1D2)
+	    || rf_has(r_ptr->flags, RF_DROP_2D2)
+	    || rf_has(r_ptr->flags, RF_DROP_3D2)
+	    || rf_has(r_ptr->flags, RF_DROP_4D2))
+	    purse = 0;
+
+	/* Some monster races are far better to steal from than others. */
+	if ((r_ptr->d_char == 'D') || (r_ptr->d_char == 'd')
+	    || (r_ptr->d_char == 'p') || (r_ptr->d_char == 'h'))
+	    purse *= 2 + randint1(3) + randint1(r_ptr->level / 20);
+	else if ((r_ptr->d_char == 'P') || (r_ptr->d_char == 'o')
+		 || (r_ptr->d_char == 'O') || (r_ptr->d_char == 'T')
+		 || (r_ptr->d_char == 'n') || (r_ptr->d_char == 'W')
+		 || (r_ptr->d_char == 'k') || (r_ptr->d_char == 'L')
+		 || (r_ptr->d_char == 'V') || (r_ptr->d_char == 'y'))
+	    purse *= 1 + randint1(3) + randint1(r_ptr->level / 30);
+
+	/* Pickings are scarce in a land of many thieves. */
+	purse = purse * (p_ptr->depth + 5) / (p_ptr->recall[0] + 5);
+
+	/* Increase player gold. */
+	p_ptr->au += purse;
+
+	/* Limit to avoid buffer overflow */
+	if (p_ptr->au > PY_MAX_GOLD)
+	    p_ptr->au = PY_MAX_GOLD;
+
+	/* Redraw gold */
+	p_ptr->redraw |= (PR_GOLD);
+
+	/* Announce the good news. */
+	if (purse)
+	    msg_format("You burgle %d gold.", purse);
+
+	/* Pockets are empty. */
+	else
+	    msg_print("You burgle only dust.");
+    }
+
+    /* The victim normally, but not always, wakes up and is aggravated. */
+    if (randint1(4) != 1) {
+	m_ptr->csleep = 0;
+	m_ptr->mflag |= (MFLAG_ACTV);
+	if (m_ptr->mspeed < r_ptr->speed + 3)
+	    m_ptr->mspeed += 10;
+
+	/* Become hostile */
+	m_ptr->hostile = -1;
+
+	/* Occasionally, amuse the player with a message. */
+	if ((randint1(5) == 1) && (purse) && (rf_has(r_ptr->flags, RF_SMART))) {
+	    monster_desc(m_name, m_ptr, 0);
+	    act = desc_victim_outcry[randint0(20)];
+	    msg_format("%^s cries out %s", m_name, act);
+	}
+	/* Otherwise, simply explain what happened. */
+	else {
+	    monster_desc(m_name, m_ptr, 0);
+	    msg_format("You have aroused %s.", m_name);
+	}
+    }
+
+    /* The thief also speeds up, but only for just long enough to escape. */
+    if (!p_ptr->timed[TMD_FAST])
+	p_ptr->timed[TMD_FAST] += 2;
+
+    /* Recalculate bonuses */
+    p_ptr->update |= (PU_BONUS);
+
+    /* Handle stuff */
+    handle_stuff();
+
+
+    /* Increment the number of thefts, and possibly raise the hue and cry. */
+    number_of_thefts_on_level++;
+
+    if (number_of_thefts_on_level > 4) {
+	/* Notify the player of the trouble he's in. */
+	msg_print("All the level is in an uproar over your misdeeds!");
+
+	/* Aggravate and speed up all monsters on level. */
+	(void) aggravate_monsters(1, TRUE);
+    }
+
+    else if ((number_of_thefts_on_level > 2) || (randint1(8) == 1)) {
+	msg_print
+	    ("You hear hunting parties scouring the area for a notorious burgler.");
+
+	/* Aggravate monsters nearby. */
+	(void) aggravate_monsters(1, FALSE);
+    }
+
+    /* Rogue "Hit and Run" attack. */
+    if (p_ptr->special_attack & (ATTACK_FLEE)) {
+	/* Cancel the fleeing spell */
+	p_ptr->special_attack &= ~(ATTACK_FLEE);
+
+	/* Message */
+	msg_print("You escape into the shadows!");
+
+	/* Teleport. */
+	teleport_player(6 + p_ptr->lev / 5, TRUE);
+
+	/* Redraw the state */
+	p_ptr->redraw |= (PR_STATUS);
+    }
+}
+
+
+/**
+ * Rogues may set traps.  Only one such trap may exist at any one time, 
+ * but an old trap can be disarmed to free up equipment for a new trap.
+ * -LM-
+ */
+bool py_set_trap(int y, int x)
+{
+    int max_traps;
+    s16b this_o_idx, next_o_idx = 0;
+    object_type *o_ptr;
+    bool destroy_message = FALSE;
+
+    max_traps =
+	1 + ((p_ptr->lev >= 25) ? 1 : 0) +
+	(player_has(PF_EXTRA_TRAP) ? 1 : 0);
+
+    if (p_ptr->timed[TMD_BLIND] || no_light()) {
+	msg_print("You can not see to set a trap.");
+	return FALSE;
+    }
+
+    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC]) {
+	msg_print("You are too confused.");
+	return FALSE;
+    }
+
+    /* Paranoia -- Forbid more than max_traps being set. */
+    if (num_trap_on_level >= max_traps) {
+	msg_print
+	    ("You must disarm your existing trap to free up your equipment.");
+	return FALSE;
+    }
+
+    /* No setting traps while shapeshifted */
+    if (SCHANGE) {
+	msg_print("You can not set traps while shapechanged.");
+	msg_print("Use the ']' command to return to your normal form.");
+	return FALSE;
+    }
+
+    /* Scan all objects in the grid */
+    for (this_o_idx = cave_o_idx[y][x]; this_o_idx; this_o_idx = next_o_idx) {
+	/* Acquire object */
+	o_ptr = &o_list[this_o_idx];
+
+	/* Acquire next object */
+	next_o_idx = o_ptr->next_o_idx;
+
+	/* Artifact */
+	if (o_ptr->name1) {
+	    msg_print("There is an indestructible object here.");
+	    return FALSE;
+	}
+
+	/* Visible object to be destroyed */
+	if (!squelch_hide_item(o_ptr))
+	    destroy_message = TRUE;
+    }
+
+    /* Verify */
+    if (cave_o_idx[y][x]) {
+	if (destroy_message)
+	    if (!get_check("Destroy all items and set a trap?"))
+		return FALSE;
+
+	for (this_o_idx = cave_o_idx[y][x]; this_o_idx; this_o_idx = next_o_idx) {
+	    /* Acquire object */
+	    o_ptr = &o_list[this_o_idx];
+
+	    /* Acquire next object */
+	    next_o_idx = o_ptr->next_o_idx;
+
+	    /* Delete the object */
+	    delete_object_idx(this_o_idx);
+	}
+
+	/* Redraw */
+	light_spot(y, x);
+    }
+
+    /* Set the trap, and draw it. */
+    cave_set_feat(y, x, FEAT_MTRAP_BASE);
+
+    /* Notify the player. */
+    msg_print("You set a monster trap.");
+
+    /* Increment the number of monster traps. */
+    num_trap_on_level++;
+
+    /* A trap has been set */
+    return TRUE;
+}
+
+/**
+ * Trap coordinates 
+ */
+static int trap_y = 0;
+static int trap_x = 0;
+
+static char *trap_type[] = {
+    "Sturdy Trap      (less likely to break)",
+    "Netted Trap      (effective versus flyers)",
+    "Confusion Trap   (confuses monsters)",
+    "Poison Gas Trap  (creates a toxic cloud)",
+    "Spirit Trap      (effective versus spirits)",
+    "Lightning Trap   (shoots a lightning bolt)",
+    "Explosive Trap   (causes area damage)",
+    "Portal Trap      (teleports monsters)",
+    "Stasis Trap      (freezes time for a monster)",
+    "Drain Life Trap  (hurts living monsters)",
+    "Unmagic Trap     (damages and reduces mana)",
+    "Dispelling Trap  (hurts all monsters in sight)",
+    "Genocide Trap    (removes nearby like monsters)"
+};
+
+char trap_tag(menu_type * menu, int oid)
+{
+    return I2A(oid);
+}
+
+/**
+ * Display an entry on the sval menu
+ */
+void trap_display(menu_type * menu, int oid, bool cursor, int row, int col,
+		  int width)
+{
+    const u16b *choice = menu->menu_data;
+    int idx = choice[oid];
+
+    byte attr = (cursor ? TERM_L_BLUE : TERM_WHITE);
+
+
+    /* Print it */
+    c_put_str(attr, format("%s", trap_type[idx]), row, col);
+}
+
+/**
+ * Deal with events on the trap menu
+ */
+bool trap_action(menu_type * menu, const ui_event_data * db, int oid)
+{
+    u16b *choice = db;
+
+    int idx = choice[oid];
+    cave_set_feat(trap_y, trap_x, FEAT_MTRAP_BASE + 1 + idx);
+
+    return TRUE;
+}
+
+
+/**
+ * Display list of monster traps.
+ */
+bool trap_menu(void)
+{
+    menu_type menu;
+    menu_iter menu_f = { trap_tag, 0, trap_display, trap_action, 0 };
+    region area = { (small_screen ? 0 : 15), 1, 48, -1 };
+    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+    int cursor = 0;
+
+    int num = 0;
+    size_t i;
+
+    u16b *choice;
+
+    /* See how many traps available */
+    if (player_has(PF_EXTRA_TRAP))
+	num = 1 + (p_ptr->lev / 4);
+    else
+	num = 1 + (p_ptr->lev / 6);
+
+    /* Create the array */
+    choice = C_ZNEW(num, u16b);
+
+    /* Obvious */
+    for (i = 0; i < num; i++) {
+	choice[i] = i;
+    }
+
+    /* Clear space */
+    area.page_rows = num + 2;
+
+    /* Return here if there are no traps */
+    if (!num) {
+	FREE(choice);
+	return FALSE;
+    }
+
+
+    /* Save the screen and clear it */
+    screen_save();
+
+    /* Help text */
+
+    /* Set up the menu */
+    WIPE(&menu, menu);
+    menu.title = "Choose an advanced monster trap (ESC to cancel):";
+    menu.cmd_keys = " \n\r";
+    menu.count = num;
+    menu.menu_data = choice;
+    menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+
+    /* Select an entry */
+    evt = menu_select(&menu, 0);
+
+    /* Free memory */
+    FREE(choice);
+
+    /* Load screen */
+    screen_load();
+    return (evt.type != EVT_ESCAPE);
+}
+
+
+/** 
+ * Turn a basic monster trap into an advanced one -BR-
+ */
+bool py_modify_trap(int y, int x)
+{
+    if (p_ptr->timed[TMD_BLIND] || no_light()) {
+	msg_print("You can not see to modify your trap.");
+	return FALSE;
+    }
+
+    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC]) {
+	msg_print("You are too confused.");
+	return FALSE;
+    }
+
+    /* No setting traps while shapeshifted */
+    if (SCHANGE) {
+	msg_print("You can not set traps while shapechanged.");
+	msg_print("Use the ']' command to return to your normal form.");
+	return FALSE;
+    }
+
+    trap_y = y;
+    trap_x = x;
+
+    /* get choice */
+    if (trap_menu()) {
+	/* Notify the player. */
+	msg_print("You modify the monster trap.");
+    }
+
+    /* Trap was modified */
+    return TRUE;
+}

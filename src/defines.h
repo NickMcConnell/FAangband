@@ -581,6 +581,11 @@ typedef enum
  */
 #define INVEN_PACK		23 
 
+/**
+ * Like the previous but takes into account the (variably full quiver).
+ */
+#define INVEN_MAX_PACK  (INVEN_PACK - p_ptr->quiver_slots)
+
 /*
  * Indexes used for various "equipment" slots (hard-coded by savefiles, etc).
  */
@@ -597,31 +602,30 @@ typedef enum
 #define INVEN_HANDS     34
 #define INVEN_FEET      35
 
-#define INVEN_SUBTOTAL	36
-#define INVEN_BLANK     36	/* Blank separator line. */
+#define INVEN_TOTAL	36
 
-/* 10 quiver slots */
-#define INVEN_Q0        37
-#define INVEN_Q1        38
-#define INVEN_Q2        39
-#define INVEN_Q3        40
-#define INVEN_Q4        41
-#define INVEN_Q5        42
-#define INVEN_Q6        43
-#define INVEN_Q7        44
-#define INVEN_Q8        45
-#define INVEN_Q9        46
+/**
+ *Quiver
+ */
+#define QUIVER_START 37
+#define QUIVER_SIZE  10
+#define QUIVER_END   47
 
-/** 
+/**
  * Each throwing weapon in the "quiver" takes up the space of this
  * many pieces of ammo. 
  */
 #define THROWER_AMMO_FACTOR 5
 
 /**
+ * The number of ammo equivalents per quiver slot
+ */
+#define QUIVER_SLOT_SIZE    99
+
+/**
  * Total number of inventory slots (hard-coded to be <= 47).
  */
-#define INVEN_TOTAL	47
+#define ALL_INVEN_TOTAL	47
 
 /**
  * Special 'Item' Identifier corresponding to all Squelched items.

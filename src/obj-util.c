@@ -489,7 +489,7 @@ s16b wield_slot(const object_type * o_ptr)
     case TV_BOLT:
     case TV_ARROW:
     case TV_SHOT:
-	    return (INVEN_Q0);
+	    return  wield_slot_ammo(o_ptr);
     }
 
     /* No slot available */
@@ -505,6 +505,8 @@ bool slot_can_wield_item(int slot, const object_type * o_ptr)
     if (o_ptr->tval == TV_RING)
 	return (slot == INVEN_LEFT || slot == INVEN_RIGHT) ? TRUE : FALSE;
     else if (obj_is_ammo(o_ptr))
+	return (slot >= QUIVER_START && slot < QUIVER_END) ? TRUE : FALSE;
+    else if (of_has(o_ptr->flags, OF_THROWING))
 	return (slot >= QUIVER_START && slot < QUIVER_END) ? TRUE : FALSE;
     else
 	return (wield_slot(o_ptr) == slot) ? TRUE : FALSE;
@@ -2767,6 +2769,164 @@ void inven_item_increase(int item, int num)
 
 
 /**
+ * Save the size of the quiver.
+ */
+void save_quiver_size(struct player *p)
+{
+	int i, count = 0;
+	for (i = QUIVER_START; i < QUIVER_END; i++)
+	    if (p->inventory[i].k_idx) {
+		if (is_missile(&p->inventory[i]))
+		    count += p->inventory[i].number;
+		else {
+		    int equiv = p->inventory[i].number * THROWER_AMMO_FACTOR;
+		    count += equiv;
+		    if ((QUIVER_SLOT_SIZE - equiv) < THROWER_AMMO_FACTOR)
+			count += QUIVER_SLOT_SIZE - equiv;
+		}
+	    }
+
+	p->quiver_size = count;
+	p->quiver_slots = (count + QUIVER_SLOT_SIZE - 1) / QUIVER_SLOT_SIZE;
+	p->quiver_remainder = count % QUIVER_SLOT_SIZE;
+}
+
+
+/**
+ * Compare ammunition from slots (0-9); used for sorting.
+ *
+ * \returns -1 if slot1 should come first, 1 if slot2 should come first, or 0.
+ */
+int compare_ammo(int slot1, int slot2)
+{
+	/* Right now there is no sorting criteria */
+	return 0;
+}
+
+/**
+ * Swap ammunition between quiver slots (0-9).
+ */
+void swap_quiver_slots(int slot1, int slot2)
+{
+	int i = slot1 + QUIVER_START;
+	int j = slot2 + QUIVER_START;
+	object_type o;
+
+	object_copy(&o, &p_ptr->inventory[i]);
+	object_copy(&p_ptr->inventory[i], &p_ptr->inventory[j]);
+	object_copy(&p_ptr->inventory[j], &o);
+}
+
+/**
+ * Sorts the quiver--ammunition inscribed with @fN prefers to end up in quiver
+ * slot N.
+ */
+void sort_quiver(void)
+{
+    /* Ammo slots go from 0-9; these indices correspond to the range of
+     * (QUIVER_START) - (QUIVER_END-1) in inventory[].
+     */
+    bool locked[QUIVER_SIZE] = {FALSE, FALSE, FALSE, FALSE, FALSE,
+				FALSE, FALSE, FALSE, FALSE, FALSE};
+    int desired[QUIVER_SIZE] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+    int i, j, k;
+    object_type *o_ptr;
+
+    /* Here we figure out which slots have inscribed ammo, and whether that
+     * ammo is already in the slot it "wants" to be in or not.
+     */
+    for (i=0; i < QUIVER_SIZE; i++)
+    {
+	j = QUIVER_START + i;
+	o_ptr = &p_ptr->inventory[j];
+
+	/* Skip this slot if it doesn't have ammo */
+	if (!o_ptr->k_idx) continue;
+
+	/* Figure out which slot this ammo prefers, if any */
+	k = get_inscribed_ammo_slot(o_ptr);
+	if (!k) continue;
+
+	k -= QUIVER_START;
+	if (k == i) locked[i] = TRUE;
+	if (desired[k] < 0) desired[k] = i;
+    }
+
+    /* For items which had a preference that was not fulfilled, we will swap
+     * them into the slot as long as it isn't already locked.
+     */
+    for (i=0; i < QUIVER_SIZE; i++)
+    {
+	if (locked[i] || desired[i] < 0) continue;
+
+	/* item in slot 'desired[i]' desires to be in slot 'i' */
+	swap_quiver_slots(desired[i], i);
+	locked[i] = TRUE;
+    }
+
+    /* Now we need to compact ammo which isn't in a preferrred slot towards the
+     * "front" of the quiver */
+    for (i=0; i < QUIVER_SIZE; i++)
+    {
+	/* If the slot isn't empty, skip it */
+	if (p_ptr->inventory[QUIVER_START + i].k_idx) continue;
+
+	/* Start from the end and find an unlocked item to put here. */
+	for (j=QUIVER_SIZE - 1; j > i; j--)
+	{
+	    if (!p_ptr->inventory[QUIVER_START + j].k_idx || locked[j]) continue;
+	    swap_quiver_slots(i, j);
+	    break;
+	}
+    }
+
+    /* Now we will sort all other ammo using a simple insertion sort */
+    for (i=0; i < QUIVER_SIZE; i++)
+    {
+	k = i;
+	if (!locked[k])
+	    for (j = i + 1; j < QUIVER_SIZE; j++)
+		if (!locked[j] && compare_ammo(k, j) > 0)
+		    swap_quiver_slots(j, k);
+    }
+}
+
+/*
+ * Shifts ammo at or above the item slot towards the end of the quiver, making
+ * room for a new piece of ammo.
+ */
+void open_quiver_slot(int slot)
+{
+    int i, pref;
+    int dest = QUIVER_END - 1;
+
+    /* This should only be used on ammunition */
+    if (slot < QUIVER_START) return;
+
+    /* Quiver is full */
+    if (p_ptr->inventory[QUIVER_END - 1].k_idx) return;
+
+    /* Find the first open quiver slot */
+    while (p_ptr->inventory[dest].k_idx) dest++;
+
+    /* Swap things with the space one higher (essentially moving the open space
+     * towards our goal slot. */
+    for (i = dest - 1; i >= slot; i--)
+    {
+	/* If we have an item with an inscribed location (and it's in */
+	/* that location) then we won't move it. */
+	pref = get_inscribed_ammo_slot(&p_ptr->inventory[i]);
+	if (i != slot && pref && pref == i) continue;
+
+	/* Copy the item up and wipe the old slot */
+	COPY(&p_ptr->inventory[dest], &p_ptr->inventory[i], object_type);
+	dest = i;
+	object_wipe(&p_ptr->inventory[dest]);
+    }
+}
+
+
+/**
  * Erase an inventory slot if it has no more items
  */
 void inven_item_optimize(int item)
@@ -4503,6 +4663,21 @@ bool obj_is_ammo(const object_type * o_ptr)
     }
 }
 
+/**
+ * Determine whether an object goes in the quiver
+ *
+ * \param o_ptr is the object to check
+ */
+bool obj_is_quiver_obj(const object_type * o_ptr)
+{
+    if (of_has(o_ptr->flags_obj, OF_THROWING))
+	return TRUE;
+    if (obj_is_ammo(o_ptr))
+	return TRUE;
+    
+    return FALSE;
+}
+
 /* Determine if an object has charges */
 bool obj_has_charges(const object_type * o_ptr)
 {
@@ -4584,7 +4759,11 @@ bool obj_can_study(const object_type * o_ptr)
 /* Can only take off non-cursed items */
 bool obj_can_takeoff(const object_type * o_ptr)
 {
-    return !cf_has(o_ptr->flags_curse, CF_STICKY_WIELD);
+    if (cf_has(o_ptr->flags_curse, CF_STICKY_WIELD)) {
+	notice_curse(CF_STICKY_WIELD, item + 1);
+	return FALSE;
+    }
+    return TRUE;
 }
 
 /* Can only put on wieldable items */

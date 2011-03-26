@@ -98,8 +98,8 @@ void do_cmd_uninscribe(cmd_code code, cmd_arg args[])
     /* Remove the incription */
     o_ptr->note = 0;
 
-    /* Combine the pack (or the quiver) */
-    p_ptr->notice |= (PN_COMBINE | PN_SQUELCH);
+    p_ptr->notice |= (PN_COMBINE | PN_SQUELCH | PN_SORT_QUIVER);
+    p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 }
 
 
@@ -112,8 +112,8 @@ void do_cmd_inscribe(cmd_code code, cmd_arg args[])
 
     o_ptr->note = quark_add(args[1].string);
 
-    /* Combine the pack (or the quiver) */
-    p_ptr->notice |= (PN_COMBINE | PN_SQUELCH);
+    p_ptr->notice |= (PN_COMBINE | PN_SQUELCH | PN_SORT_QUIVER);
+    p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 }
 
 void textui_obj_inscribe(object_type * o_ptr, int item)
@@ -121,8 +121,7 @@ void textui_obj_inscribe(object_type * o_ptr, int item)
     char o_name[80];
     char tmp[80] = "";
 
-    // object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
-    object_desc(o_name, o_ptr, TRUE, 3);
+    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
     msg_format("Inscribing %s.", o_name);
     message_flush();
 
@@ -149,13 +148,11 @@ void textui_obj_examine(object_type * o_ptr, int item)
 
     track_object(item);
 
-    // tb = object_info(o_ptr, OINFO_NONE);
-    /* Describe */
-    object_info_screen(o_ptr, FALSE);
-    // object_desc(header, sizeof(header), o_ptr, ODESC_PREFIX | ODESC_FULL);
+    tb = object_info(o_ptr, OINFO_NONE);
+    object_desc(header, sizeof(header), o_ptr, ODESC_PREFIX | ODESC_FULL);
 
-    // textui_textblock_show(tb, area, format("%^s", header));
-    // textblock_free(tb);
+    textui_textblock_show(tb, area, format("%^s", header));
+    textblock_free(tb);
 }
 
 
@@ -170,80 +167,44 @@ void do_cmd_takeoff(cmd_code code, cmd_arg args[])
 {
     int item = args[0].item;
 
-    object_type *o_ptr;
-
-    cptr q, s;
-
     if (SCHANGE) {
 	msg_print("You cannot take off equipment while shapechanged.");
 	msg_print("Use the ']' command to return to your normal form.");
 	return;
     }
 
-
-    /* Item is cursed */
-    if (cf_has(o_ptr->flags_curse, CF_STICKY_WIELD)) {
-	/* Oops */
-	msg_print("Hmmm, it seems to be cursed.");
-
-	/* Notice */
-	notice_curse(CF_STICKY_WIELD, item + 1);
-
-	/* Nope */
+    if (!item_is_available(item, NULL, USE_EQUIP))
+    {
+	msg_print("You are not wielding that item.");
 	return;
     }
 
-
-    /* Take a partial turn */
-    p_ptr->energy_use = 50;
+    if (!obj_can_takeoff(object_from_item_idx(item)))
+    {
+	msg_print("You cannot take off that item.");
+	return;
+    }
 
     /* Ensure that the shield hand is used, if a shield is available. */
     if (item == INVEN_WIELD)
 	p_ptr->state.shield_on_back = FALSE;
 
-    /* Take off the item */
-    (void) inven_takeoff(item, 255);
+    (void)inven_takeoff(item, 255);
+    pack_overflow();
+    p_ptr->energy_use = 50;
 }
 
-
-/**
- * The "wearable" tester
- */
-static bool item_tester_hook_wear(const object_type * o_ptr)
-{
-    /* Check for a usable slot */
-    if (wield_slot((object_type *) o_ptr) >= INVEN_WIELD)
-	return (TRUE);
-
-    /* Assume not wearable */
-    return (FALSE);
-}
-
-/**
- * Wield or wear a single item from the pack or floor, if not shapechanged.
- */
+/* Wield or wear an item */
 void do_cmd_wield(cmd_code code, cmd_arg args[])
 {
-    int item, slot, num;
+    object_type *equip_o_ptr;
+    char o_name[80];
 
-    object_type *o_ptr;
+    unsigned n;
 
-    object_type *i_ptr;
-
-    object_type *l_ptr = &p_ptr->inventory[INVEN_LIGHT];
-
-    object_type object_type_body;
-
-    object_kind *k_ptr;
-
-    cptr act;
-
-    cptr q, s;
-
-    char o_name[120];
-
-    bool throwing;
-    bitflag f[OF_SIZE], obvious_mask[OF_SIZE];
+    int item = args[0].item;
+    int slot = args[1].number;
+    object_type *o_ptr = object_from_item_idx(item);
 
     if (SCHANGE) {
 	msg_print("You cannot wield equipment while shapechanged.");
@@ -251,315 +212,58 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
 	return;
     }
 
-    /* Restrict the choices */
-    item_tester_hook = item_tester_hook_wear;
-
-    /* Get the object kind */
-    k_ptr = &k_info[o_ptr->k_idx];
-
-    /* Throwing weapon or ammo? */
-    throwing = ((of_has(o_ptr->flags_obj, OF_THROWING)) ? TRUE : FALSE);
-
-    /* Check the slot */
-    slot = wield_slot(o_ptr);
-
-    /* Ask for ring to replace */
-    if ((o_ptr->tval == TV_RING) && p_ptr->inventory[INVEN_LEFT].k_idx
-	&& p_ptr->inventory[INVEN_RIGHT].k_idx) {
-	/* Restrict the choices */
-	item_tester_tval = TV_RING;
-
-	/* Choose a ring from the equipment only */
-	q = "Replace which ring? ";
-	s = "Oops.";
-	if (!get_item(&slot, q, s, USE_EQUIP))
-	    return;
+    if (!item_is_available(item, NULL, USE_INVEN | USE_FLOOR))
+    {
+	msg_print("You do not have that item to wield.");
+	return;
     }
 
-    flags_init(obvious_mask, OF_SIZE, OF_OBVIOUS_MASK, FLAG_END);
-    of_copy(f, o_ptr->flags_obj);
-    
-    /* Ask where to put a throwing weapon */
-    if (((o_ptr->tval == TV_DIGGING) || (o_ptr->tval == TV_HAFTED)
-	 || (o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))
-	&& throwing) {
-	/* Stick it in the belt? */
-	if (get_check("Equip in throwing belt?"))
-	    slot = INVEN_Q0;
+    /* Check the slot */
+    if (!slot_can_wield_item(slot, o_ptr))
+    {
+	msg_print("You cannot wield that item there.");
+	return;
+    }
 
-	/* Flush */
-	msg_print(NULL);
+    equip_o_ptr = &p_ptr->inventory[slot];
+
+    /* If the slot is open, wield and be done */
+    if (!equip_o_ptr->k_idx) 
+    {
+	wield_item(o_ptr, item, slot);
+	return;
+    }
+
+    /* If the slot is in the quiver and objects can be combined */
+    if (obj_is_quiver_obj(equip_o_ptr) && 
+	object_similar(equip_o_ptr, o_ptr, OSTACK_QUIVER))
+    {
+	wield_item(o_ptr, item, slot);
+	return;
     }
 
     /* Prevent wielding into a cursed slot */
-    if (slot < INVEN_Q0) {
-	object_type *i_ptr = &p_ptr->inventory[slot];
-
-	if (cf_has(i_ptr->flags_curse, CF_STICKY_WIELD)) {
-	    /* Describe it */
-	    object_desc(o_name, i_ptr, FALSE, 0);
-
-	    /* Message */
-	    msg_format("The %s you are %s appears to be cursed.", o_name,
-		       describe_use(slot));
-
-	    /* Notice */
-	    notice_curse(CF_STICKY_WIELD, slot + 1);
-
-	    /* Cancel the command */
-	    return;
-	}
+    if (cf_has(equip_o_ptr->flags_curse, CF_STICKY_WIELD))
+    {
+	object_desc(o_name, sizeof(o_name), equip_o_ptr, ODESC_BASE);
+	msg_format("The %s you are %s appears to be cursed.", o_name,
+		   describe_use(slot));
+	return;
     }
 
-    /* Take a turn */
-    p_ptr->energy_use = 100;
-
-    /* Get local object */
-    i_ptr = &object_type_body;
-
-    /* Obtain local object */
-    object_copy(i_ptr, o_ptr);
-
-
-    /* Usually, we wear or wield only one item. */
-    num = 1;
-
-    /* Ammo goes in quiver slots, which have special rules. */
-    if (slot == INVEN_Q0) {
-	int ammo_num = 0;
-	int added_ammo_num;
-	int attempted_quiver_slots;
-
-	/* Get a quantity */
-	num = get_quantity(NULL, o_ptr->number);
-
-	/* Cancel */
-	if (!num)
-	    return;
-
-	/* Count number of missiles in the quiver slots. */
-	ammo_num = quiver_count();
-
-	/* Effective added count */
-	added_ammo_num = (throwing ? num * THROWER_AMMO_FACTOR : num);
-
-	/* 
-	 * If the ammo now being added will make the quiver take up another
-	 * backpack slot, and there are none available, refuse to wield
-	 * the new ammo.
-	 */
-
-	/* How many quiver slots would be needed */
-	/* Rebate one if the equip action would free a space */
-	attempted_quiver_slots =
-	    ((ammo_num + added_ammo_num + 98) / 99) -
-	    (((item >= 0) && (num == o_ptr->number)) ? 1 : 0);
-
-	/* Is there room, given normal inventory? */
-	if ((attempted_quiver_slots + p_ptr->inven_cnt) > INVEN_PACK) {
-	    msg_print("Your quiver needs more backpack space.");
-	    return;
-	}
-
-	/* Find a slot that can hold more ammo. */
-	slot = process_quiver(num, o_ptr);
-
-	if (!slot) {
-	    /* No space. */
-	    msg_print("Your quiver is full.");
-	    return;
-	}
-
-	/* Quiver will be reorganized (again) later. */
-	p_ptr->notice |= (PN_COMBINE);
+    /* "!t" checks for taking off */
+    n = check_for_inscrip(equip_o_ptr, "!t");
+    while (n--)
+    {
+	/* Prompt */
+	object_desc(o_name, sizeof(o_name), equip_o_ptr,
+		    ODESC_PREFIX | ODESC_FULL);
+		
+	/* Forget it */
+	if (!get_check(format("Really take off %s? ", o_name))) return;
     }
 
-    /* Modify quantity */
-    i_ptr->number = num;
-
-
-    /* Decrease the item (from the pack) */
-    if (item >= 0) {
-	inven_item_increase(item, -num);
-	inven_item_optimize(item);
-    }
-
-    /* Decrease the item (from the floor) */
-    else {
-	floor_item_increase(0 - item, -num);
-	floor_item_optimize(0 - item);
-    }
-
-    /* Access the wield slot */
-    o_ptr = &p_ptr->inventory[slot];
-
-
-    /* Handle existing item. */
-    if (o_ptr->k_idx) {
-	/* Take off existing item, unless in the quiver. */
-	if ((slot < INVEN_Q0) || (slot > INVEN_Q9)) {
-	    (void) inven_takeoff(slot, 255);
-	}
-
-	/* Combine existing ammo with new. */
-	else {
-	    p_ptr->equip_cnt--;
-	    p_ptr->total_weight -= o_ptr->weight * o_ptr->number;
-	    i_ptr->number += o_ptr->number;
-	}
-    }
-
-    /* Wear the new stuff */
-    object_copy(o_ptr, i_ptr);
-
-    /* Increase the weight */
-    p_ptr->total_weight += i_ptr->weight * i_ptr->number;
-
-    /* Increment the equip counter by hand */
-    p_ptr->equip_cnt++;
-
-
-    /* If he wields a weapon that requires two hands, or hasn't the strength
-     * to wield a weapon that is usually wielded with both hands one-handed
-     * (normally requires 18/140 to 18/160 STR), the character will
-     * automatically carry any equipped shield on his back. -LM- */
-    if ((slot == INVEN_WIELD) && (p_ptr->inventory[INVEN_ARM].k_idx)) {
-	if ((of_has(o_ptr->flags_obj, OF_TWO_HANDED_REQ))
-	    || ((of_has(o_ptr->flags_obj, OF_TWO_HANDED_DES))
-		&& (p_ptr->stat_ind[A_STR] <
-		    29 +
-		    ((o_ptr->weight / 50 > 8) ? 8 : (o_ptr->weight / 50))))) {
-	    p_ptr->state.shield_on_back = TRUE;
-	} else
-	    p_ptr->state.shield_on_back = FALSE;
-    }
-
-    /* A character using both hands to wield his melee weapon will use his
-     * back to carry an equipped shield. -LM- */
-    if ((slot == INVEN_ARM) && (p_ptr->inventory[INVEN_WIELD].k_idx)) {
-	/* Access the wield slot */
-	i_ptr = &p_ptr->inventory[INVEN_WIELD];
-
-	if ((of_has(i_ptr->flags_obj, OF_TWO_HANDED_REQ))
-	    || ((of_has(i_ptr->flags_obj, OF_TWO_HANDED_DES))
-		&& (p_ptr->stat_ind[A_STR] <
-		    29 + (i_ptr->weight / 50 > 8 ? 8 : i_ptr->weight / 50)))) {
-	    p_ptr->state.shield_on_back = TRUE;
-	} else
-	    p_ptr->state.shield_on_back = FALSE;
-
-    }
-
-    /* Set item handling -GS- and checking turn found for artifacts -NRM- */
-    if (o_ptr->name1) {
-
-	/* Is the artifact a set item? */
-	artifact_type *a_ptr = &a_info[o_ptr->name1];
-	if (a_ptr->set_no != 0) {
-	    /* 
-	     * The object is part of a set. Check to see if rest of
-	     * set is equiped.
-	     */
-	    if (check_set(a_ptr->set_no)) {
-		/* add bonuses */
-		apply_set(a_ptr->set_no);
-	    }
-	}
-
-	/* Have we registered this as found before ? */
-	if (a_info[o_ptr->name1].creat_turn < 2) {
-	    a_info[o_ptr->name1].creat_turn = turn;
-	    a_info[o_ptr->name1].p_level = p_ptr->lev;
-	}
-    }
-
-    /* Wielding off the floor will id if holding the Stone of Lore */
-
-    if (item < 0) {
-	if ((!object_known_p(o_ptr)) && (l_ptr->sval == SV_STONE_LORE))
-	    identify_object(o_ptr);
-
-	/* And we autoinscribe here too */
-	apply_autoinscription(o_ptr);
-
-	/* And notice dice and AC */
-
-    }
-
-    /* Where is the item now */
-    if (slot == INVEN_WIELD) {
-	act = "You are wielding";
-    } else if (slot == INVEN_BOW) {
-	act = "You are shooting with";
-    } else if (slot == INVEN_LIGHT) {
-	act = "Your light source is";
-    } else if ((slot < INVEN_Q0) || (slot > INVEN_Q9)) {
-	act = "You are wearing";
-    } else {
-	act = "You have readied";
-    }
-
-    /* Notice dice, AC, jewellery sensation ID and other obvious stuff */
-    notice_other((IF_DD_DS | IF_AC), slot + 1);
-    (void) of_inter(f, obvious_mask);
-    of_union(o_ptr->id_obj, f);
-    if (is_armour(o_ptr) && k_ptr->to_h)
-	notice_other(IF_TO_H, slot + 1);
-    if ((slot == INVEN_RIGHT) || (slot == INVEN_LEFT) || (slot == INVEN_NECK)) {
-	notice_obj(p_ptr->id_obj, slot + 1);
-	notice_other(p_ptr->id_other, slot + 1);
-    }
-
-    /* Average things are average */
-    if ((o_ptr->feel == FEEL_AVERAGE) && (is_weapon(o_ptr) || is_armour(o_ptr)))
-	notice_other((IF_AC | IF_TO_A | IF_TO_H | IF_TO_D), slot + 1);
-
-    /* Object has been worn */
-    o_ptr->ident |= IDENT_WORN;
-
-    /* Describe the result */
-    object_desc(o_name, o_ptr, TRUE, 3);
-
-    /* Message */
-    sound(MSG_WIELD);
-    msg_format("%s %s (%c).", act, o_name, index_to_label(slot));
-
-    if (!object_known_p(o_ptr)) {
-	int feel;
-	bool heavy = FALSE;
-
-	heavy = (player_has(PF_PSEUDO_ID_HEAVY));
-
-	/* Check for a feeling */
-	feel = (heavy ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
-
-	if (!(o_ptr->feel == feel)) {
-	    /* Get an object description */
-	    object_desc(o_name, o_ptr, FALSE, 0);
-
-	    msg_format("You feel the %s (%c) you are %s %s %s...", o_name,
-		       index_to_label(slot), describe_use(slot),
-		       ((o_ptr->number == 1) ? "is" : "are"), feel_text[feel]);
-
-	    /* We have "felt" it */
-	    o_ptr->ident |= (IDENT_SENSE);
-
-	    /* Inscribe it textually */
-	    o_ptr->feel = feel;
-
-	    /* Set squelch flag as appropriate */
-	    p_ptr->notice |= PN_SQUELCH;
-	}
-    }
-
-    /* Recalculate bonuses */
-    p_ptr->update |= (PU_BONUS);
-
-    /* Recalculate torch */
-    p_ptr->update |= (PU_TORCH);
-
-    /* Recalculate mana */
-    p_ptr->update |= (PU_MANA);
+    wield_item(o_ptr, item, slot);
 }
 
 
@@ -572,6 +276,12 @@ void do_cmd_drop(cmd_code code, cmd_arg args[])
     object_type *o_ptr = object_from_item_idx(item);
     int amt = args[1].number;
 
+
+    if (!item_is_available(item, NULL, USE_INVEN | USE_EQUIP))
+    {
+	msg_print("You do not have that item to drop it.");
+	return;
+    }
 
     /* Hack -- Cannot drop some cursed items */
     if (cf_has(o_ptr->flags_curse, CF_STICKY_CARRY)) {
@@ -619,15 +329,16 @@ void textui_obj_wield(object_type * o_ptr, int item)
 	    cptr q = "Replace which ring? ";
 	    cptr s = "Error in obj_wield, please report";
 	    item_tester_hook = obj_is_ring;
-	    if (!get_item(&slot, q, s, USE_EQUIP))
+	    if (!get_item(&slot, q, s, CMD_WIELD, USE_EQUIP))
 		return;
 	}
 
-	if (is_missile(o_ptr) && !object_similar(&p_ptr->inventory[slot], o_ptr)) {
-	    cptr q = "Replace which ammunition? ";
+	if ((is_missile(o_ptr) || of_has(o_ptr->flags_obj, OF_THROWING)) 
+	    && !object_similar(&p_ptr->inventory[slot], o_ptr, OSTACK_QUIVER)) {
+	    cptr q = "Replace which quiver item? ";
 	    cptr s = "Error in obj_wield, please report";
-	    item_tester_hook = obj_is_ammo;
-	    if (!get_item(&slot, q, s, USE_EQUIP))
+	    item_tester_hook = obj_is_quiver_obj;
+	    if (!get_item(&slot, q, s, CMD_WIELD, USE_EQUIP))
 		return;
 	}
     }
