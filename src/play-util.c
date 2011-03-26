@@ -52,25 +52,30 @@ s16b modify_stat_value(int value, int amount)
 /* Is the player capable of casting a spell? */
 bool player_can_cast(void)
 {
-	if (!mp_ptr->spell_book)
-	{
-		msg_print("You cannot produce magics.");
-		return FALSE;
+    if (player_has(PF_PROBE)) {
+	if (p_ptr->lev < 35) {
+	    msg_print("You do not know how to probe monsters yet.");
+	    return FALSE;
 	}
-
-	if (p_ptr->timed[TMD_BLIND] || no_light())
-	{
-		msg_print("You cannot see!");
-		return FALSE;
+	else if ((p_ptr->timed[TMD_CONFUSED]) || (p_ptr->timed[TMD_HALLUC])) {
+	    msg_print("You feel awfully confused.");
+	    return FALSE;
 	}
+    }
 
-	if (p_ptr->timed[TMD_CONFUSED])
-	{
-		msg_print("You are too confused!");
-		return FALSE;
-	}
-
-	return TRUE;
+    if (p_ptr->timed[TMD_BLIND] || no_light())
+    {
+	msg_print("You cannot see!");
+	return FALSE;
+    }
+    
+    if (p_ptr->timed[TMD_CONFUSED])
+    {
+	msg_print("You are too confused!");
+	return FALSE;
+    }
+    
+    return TRUE;
 }
 
 /* Is the player capable of studying? */

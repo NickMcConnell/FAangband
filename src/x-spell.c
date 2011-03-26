@@ -217,7 +217,7 @@
 #define LORE_CREATURE_KNOWLEDGE                 187
 #define LORE_NATURES_VENGEANCE                  188
 #define LORE_SONG_OF_GROWTH                     189
-#define LORE_SONG_OF_PRESEERVATION              190
+#define LORE_SONG_OF_PRESERVATION               190
 #define LORE_TREMOR                             191
 #define RITUAL_NETHER_BOLT                      192
 #define RITUAL_DETECT_EVIL                      193
@@ -2037,7 +2037,7 @@ bool cast_spell(int tval, int index, int dir)
 	    grow_trees_and_grass(FALSE);
 	    break;
 	}
-    case LORE_SONG_OF_PRESEERVATION:
+    case LORE_SONG_OF_PRESERVATION:
 	{
 	    u32b flags = (OF_ACID_PROOF | OF_FIRE_PROOF);
 

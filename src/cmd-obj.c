@@ -1238,29 +1238,24 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
     cptr s = "";
 
 
+    /* Require spell ability. */
+    if (!player_can_cast())
+	return;
+
     /* Warriors will eventually learn to pseudo-probe monsters. */
     if (player_has(PF_PROBE)) {
-	if (p_ptr->lev < 35)
-	    msg_print("You do not know how to probe monsters yet.");
-	else if ((p_ptr->timed[TMD_CONFUSED]) || (p_ptr->timed[TMD_HALLUC]))
-	    msg_print("You feel awfully confused.");
-	else {
-	    /* Get a target. */
-	    msg_print("Target a monster to probe.");
-	    if (!get_aim_dir(&dir))
-		return;
-
-	    /* Low-level probe spell. */
-	    pseudo_probe();
-
-	    /* Take a turn */
-	    p_ptr->energy_use = 100;
-	}
-    }
-
-    /* Require spell ability. */
-    if (!player_can_cast)
+	/* Get a target. */
+	msg_print("Target a monster to probe.");
+	if (!get_aim_dir(&dir))
+	    return;
+	
+	/* Low-level probe spell. */
+	pseudo_probe();
+	
+	/* Take a turn */
+	p_ptr->energy_use = 100;
 	return;
+    }
 
     /* Restrict choices to spell books of the player's realm. */
     item_tester_hook = obj_can_browse;
