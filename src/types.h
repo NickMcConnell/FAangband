@@ -1024,7 +1024,7 @@ typedef struct {
     bool slow_digest;
 			/**< Slower digestion */
     bool ffall;		/**< Feather falling */
-    bool lite;		/**< Permanent light */
+    bool light;		/**< Permanent light */
     bool regenerate;	/**< Regeneration */
     bool telepathy;	/**< Telepathy */
     bool see_inv;	/**< See invisible */
@@ -1213,7 +1213,7 @@ typedef struct player {
 
     s16b new_spells;	/**< Number of spells available */
 
-    s16b old_lite;	/**< Old radius of lite (if any) */
+    s16b old_light;	/**< Old radius of light (if any) */
     s16b old_view;	/**< Old radius of view (if any) */
 
     s16b old_food_aux;	/**< Old value of food */
@@ -1221,7 +1221,7 @@ typedef struct player {
     bool cumber_armor;	/**< Mana draining armor */
     bool cumber_glove;	/**< Mana draining gloves */
 
-    s16b cur_lite;	/**< Radius of lite (if any) */
+    s16b cur_light;	/**< Radius of light (if any) */
 
     u32b notice;	/**< Special Updates (bit flags) */
     u32b update;	/**< Pending Updates (bit flags) */

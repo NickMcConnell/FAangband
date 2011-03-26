@@ -1299,9 +1299,9 @@ static byte spell_color(int type)
 	return (TERM_WHITE);
 
 
-    case GF_LITE_WEAK:
+    case GF_LIGHT_WEAK:
 	return (TERM_ORANGE);
-    case GF_LITE:
+    case GF_LIGHT:
 	return (TERM_ORANGE);
     case GF_DARK_WEAK:
 	return (TERM_L_DARK);
@@ -1693,7 +1693,7 @@ static bool hates_fire(object_type * o_ptr)
     /* Analyze the type */
     switch (o_ptr->tval) {
 	/* Wearable */
-    case TV_LITE:
+    case TV_LIGHT:
     case TV_ARROW:
     case TV_BOW:
     case TV_HAFTED:
@@ -3249,8 +3249,8 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 	}
 
 	/* Light up the grid */
-    case GF_LITE_WEAK:
-    case GF_LITE:
+    case GF_LIGHT_WEAK:
+    case GF_LIGHT:
 	{
 	    /* Turn on the light */
 	    cave_info[y][x] |= (CAVE_GLOW);
@@ -3583,7 +3583,7 @@ static bool project_o(int who, int y, int x, int dam, int typ)
 		delete_object_idx(this_o_idx);
 
 		/* Redraw */
-		lite_spot(y, x);
+		light_spot(y, x);
 	    }
 
 	    /* Chaos effect */
@@ -3657,7 +3657,7 @@ static bool project_o(int who, int y, int x, int dam, int typ)
 		delete_object_idx(this_o_idx);
 
 		/* Redraw */
-		lite_spot(y, x);
+		light_spot(y, x);
 	    }
 	}
     }
@@ -4160,20 +4160,20 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	}
 
 	/* Light, but only hurts susceptible creatures */
-    case GF_LITE_WEAK:
+    case GF_LIGHT_WEAK:
 	{
 	    /* Slightly affected by terrain. */
 	    dam += terrain_adjustment / 2;
 
 	    /* Hurt by light */
-	    if (rf_has(r_ptr->flags, RF_HURT_LITE)) {
+	    if (rf_has(r_ptr->flags, RF_HURT_LIGHT)) {
 		/* Obvious effect */
 		if (seen)
 		    obvious = TRUE;
 
 		/* Memorize the effects */
 		if (seen)
-		    rf_on(l_ptr->flags, RF_HURT_LITE);
+		    rf_on(l_ptr->flags, RF_HURT_LIGHT);
 
 		/* Special effect */
 		note = " cringes from the light!";
@@ -4189,7 +4189,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	    /* Holy Light gives a chance to scare targets */
 	    if ((who < 0)
 		&& ((rf_has(r_ptr->flags, RF_UNDEAD))
-		    || (rf_has(r_ptr->flags, RF_HURT_LITE))
+		    || (rf_has(r_ptr->flags, RF_HURT_LIGHT))
 		    || (rf_has(r_ptr->flags, RF_EVIL)))
 		&& (player_has(PF_HOLY_LIGHT)) & (randint1(5) == 1)) {
 		if (rf_has(r_ptr->flags, RF_UNIQUE))
@@ -4212,20 +4212,20 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	}
 
 	/* Light -- opposite of Dark */
-    case GF_LITE:
+    case GF_LIGHT:
 	{
 	    /* Slightly affected by terrain. */
 	    dam += terrain_adjustment / 2;
 
 	    if (seen)
 		obvious = TRUE;
-	    if (rsf_has(r_ptr->flags, RSF_BRTH_LITE)) {
+	    if (rsf_has(r_ptr->flags, RSF_BRTH_LIGHT)) {
 		note = " resists.";
 		dam *= 3;
 		dam /= 14 + randint0(3);
-	    } else if (rf_has(r_ptr->flags, RF_HURT_LITE)) {
+	    } else if (rf_has(r_ptr->flags, RF_HURT_LIGHT)) {
 		if (seen)
-		    rf_on(l_ptr->flags, RF_HURT_LITE);
+		    rf_on(l_ptr->flags, RF_HURT_LIGHT);
 		note = " cringes from the light!";
 		note_dies = " shrivels away in the light!";
 		dam = 3 * dam / 2;
@@ -4234,7 +4234,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	    /* Holy Light gives a chance to scare targets */
 	    if ((who < 0)
 		&& ((rf_has(r_ptr->flags, RF_UNDEAD))
-		    || (rf_has(r_ptr->flags, RF_HURT_LITE))
+		    || (rf_has(r_ptr->flags, RF_HURT_LIGHT))
 		    || (rf_has(r_ptr->flags, RF_EVIL)))
 		&& (player_has(PF_HOLY_LIGHT)) & (randint1(3) == 1)) {
 		if (rf_has(r_ptr->flags, RF_UNIQUE))
@@ -4257,7 +4257,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	}
 
 
-	/* Dark -- opposite of Lite */
+	/* Dark -- opposite of Light */
     case GF_DARK:
     case GF_MORGUL_DARK:
 	{
@@ -5761,7 +5761,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
     update_mon(cave_m_idx[y][x], FALSE);
 
     /* Redraw the monster grid */
-    lite_spot(y, x);
+    light_spot(y, x);
 
 
     /* Update monster recall window */
@@ -5917,7 +5917,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
     /* Hack - Darkness protects those who serve it. */
     if (((cave_info[p_ptr->py][p_ptr->px] & (CAVE_GLOW)) == 0) && (!is_daylight)
-	&& (p_ptr->cur_lite <= 0) && (player_has(PF_UNLIGHT)))
+	&& (p_ptr->cur_light <= 0) && (player_has(PF_UNLIGHT)))
 	terrain_adjustment -= dam / 4;
 
     /* If the player is blind, be more descriptive */
@@ -6596,8 +6596,8 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	    break;
 	}
 
-	/* Lite -- blinding */
-    case GF_LITE:
+	/* Light -- blinding */
+    case GF_LIGHT:
 	{
 	    /* Slightly affected by terrain. */
 	    dam += terrain_adjustment / 2;
@@ -6606,10 +6606,10 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		msg_print("You are hit by something!");
 
 	    /* Resist Damage */
-	    dam -= resist_damage(dam, P_RES_LITE, 1);
+	    dam -= resist_damage(dam, P_RES_LIGHT, 1);
 
 	    /* Apply Blindness */
-	    if (!blind && !p_ptr->state.no_blind && !p_resist_good(P_RES_LITE)) {
+	    if (!blind && !p_ptr->state.no_blind && !p_resist_good(P_RES_LIGHT)) {
 		(void) inc_timed(TMD_BLIND, randint1(5) + ((dam > 40) ? 2 : 0),
 				 TRUE);
 	    } else
@@ -7195,7 +7195,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	    dam -= 5 * dam / 14;
 
 	    /* Resist Damage */
-	    dam -= resist_damage(dam / 14, P_RES_LITE, 1);
+	    dam -= resist_damage(dam / 14, P_RES_LIGHT, 1);
 	    dam -= resist_damage(dam / 14, P_RES_DARK, 1);
 	    dam -= resist_damage(dam / 14, P_RES_CONFU, 1);
 	    dam -= resist_damage(dam / 14, P_RES_SOUND, 1);
@@ -7207,7 +7207,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 
 	    /* Apply Blindness */
 	    if (!blind && !p_ptr->state.no_blind
-		&& (!p_resist_good(P_RES_LITE) || !p_resist_good(P_RES_DARK))) {
+		&& (!p_resist_good(P_RES_LIGHT) || !p_resist_good(P_RES_DARK))) {
 		(void) inc_timed(TMD_BLIND, randint1(2), TRUE);
 	    } else
 		notice_obj(OF_SEEING, 0);
@@ -7744,7 +7744,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	update_mon(cave_m_idx[y][x], FALSE);
 
 	/* Redraw the monster grid */
-	lite_spot(y, x);
+	light_spot(y, x);
 
 	/* Update monster recall window */
 	if (p_ptr->monster_race_idx == m_ptr->r_idx) {
@@ -8119,7 +8119,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 			if ((op_ptr->delay_factor) || (OPT(fresh_before)))
 			    Term_fresh();
 			Term_xtra(TERM_XTRA_DELAY, msec);
-			lite_spot(y, x);
+			light_spot(y, x);
 			if ((op_ptr->delay_factor) || (OPT(fresh_before)))
 			    Term_fresh();
 
@@ -8410,7 +8410,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 
 		/* Hack -- Erase if needed */
 		if (panel_contains(y, x) && player_has_los_bold(y, x)) {
-		    lite_spot(y, x);
+		    light_spot(y, x);
 		}
 	    }
 

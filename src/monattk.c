@@ -198,9 +198,9 @@ static void make_request(int m_idx)
 	/* Skip anything that isn't a torch, flask of oil, food ration, or
 	 * scroll of recall. */
 	switch (o_ptr->tval) {
-	case TV_LITE:
+	case TV_LIGHT:
 	    {
-		if (o_ptr->sval == SV_LITE_TORCH)
+		if (o_ptr->sval == SV_LIGHT_TORCH)
 		    requested_slot = i;
 		break;
 	    }
@@ -395,7 +395,7 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
      * Hack -- darkness protects those who serve it.
      */
     if (((cave_info[p_ptr->py][p_ptr->px] & (CAVE_GLOW)) == 0)
-	&& (p_ptr->cur_lite <= 0) && (!is_daylight)
+	&& (p_ptr->cur_light <= 0) && (!is_daylight)
 	&& player_has(PF_UNLIGHT))
 	terrain_bonus += ac / 8 + 10;
 
@@ -459,7 +459,7 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 	case RBE_EAT_FOOD:
 	    power = 5;
 	    break;
-	case RBE_EAT_LITE:
+	case RBE_EAT_LIGHT:
 	    power = 5;
 	    break;
 	case RBE_ACID:
@@ -1112,13 +1112,13 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 		    break;
 		}
 	    
-	    case RBE_EAT_LITE:
+	    case RBE_EAT_LIGHT:
 		{
 		    /* Take damage */
 		    take_hit(damage, ddesc);
 
-		    /* Access the lite */
-		    o_ptr = &p_ptr->inventory[INVEN_LITE];
+		    /* Access the light */
+		    o_ptr = &p_ptr->inventory[INVEN_LIGHT];
 
 		    /* Drain fuel */
 		    if ((o_ptr->pval > 0) && (!artifact_p(o_ptr))) {
@@ -2342,7 +2342,7 @@ bool make_attack_ranged(monster_type * m_ptr, int attack)
 	    break;
 	}
 
-    case RSF_BRTH_LITE:
+    case RSF_BRTH_LIGHT:
 	{
 	    disturb(1, 0);
 	    sound(MSG_BR_LIGHT);
@@ -2350,7 +2350,7 @@ bool make_attack_ranged(monster_type * m_ptr, int attack)
 		msg_format("%^s breathes.", m_name);
 	    else
 		msg_format("%^s breathes light.", m_name);
-	    mon_arc(m_idx, GF_LITE, TRUE,
+	    mon_arc(m_idx, GF_LIGHT, TRUE,
 		    ((3 * m_ptr->hp / 10) > 500 ? 500 : (3 * m_ptr->hp / 10)),
 		    0, (rf_has(r_ptr->flags, RF_POWERFUL) ? 40 : 20));
 	    break;
@@ -2768,7 +2768,7 @@ bool make_attack_ranged(monster_type * m_ptr, int attack)
 	    break;
 	}
 
-    case RSF_BALL_LITE:
+    case RSF_BALL_LIGHT:
 	{
 	    disturb(1, 0);
 	    if (spower < 20) {
@@ -2790,7 +2790,7 @@ bool make_attack_ranged(monster_type * m_ptr, int attack)
 		    msg_format("%^s invokes a starburst.", m_name);
 		rad = 3;
 	    }
-	    mon_ball(m_idx, GF_LITE, get_dam(3 * spower, 12), rad);
+	    mon_ball(m_idx, GF_LIGHT, get_dam(3 * spower, 12), rad);
 	    break;
 	}
 
@@ -3650,7 +3650,7 @@ bool make_attack_ranged(monster_type * m_ptr, int attack)
 		msg_format("%^s mumbles.", m_name);
 	    else
 		msg_format("%^s gestures in shadow.", m_name);
-	    (void) unlite_area(0, 3);
+	    (void) unlight_area(0, 3);
 	    break;
 	}
 

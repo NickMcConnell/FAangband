@@ -281,10 +281,10 @@ static void mass_produce(object_type * o_ptr)
 
     /* Analyze the type */
     switch (o_ptr->tval) {
-	/* Food, Flasks, and Lites */
+	/* Food, Flasks, and Lights */
     case TV_FOOD:
     case TV_FLASK:
-    case TV_LITE:
+    case TV_LIGHT:
 	{
 	    if (cost < 6L)
 		size += mass_roll(3, 5);
@@ -645,7 +645,7 @@ static bool store_will_buy(object_type * o_ptr)
 	    /* Analyze the type */
 	    switch (o_ptr->tval) {
 	    case TV_FOOD:
-	    case TV_LITE:
+	    case TV_LIGHT:
 	    case TV_FLASK:
 	    case TV_SPIKE:
 	    case TV_SHOT:
@@ -1217,11 +1217,11 @@ static void store_create(void)
 	/* Apply some "low-level" magic (no artifacts) */
 	apply_magic(i_ptr, level, FALSE, FALSE, FALSE);
 
-	/* Hack -- Charge lite's */
-	if (i_ptr->tval == TV_LITE) {
-	    if (i_ptr->sval == SV_LITE_TORCH)
+	/* Hack -- Charge light's */
+	if (i_ptr->tval == TV_LIGHT) {
+	    if (i_ptr->sval == SV_LIGHT_TORCH)
 		i_ptr->pval = FUEL_TORCH / 2;
-	    if (i_ptr->sval == SV_LITE_LANTERN)
+	    if (i_ptr->sval == SV_LIGHT_LANTERN)
 		i_ptr->pval = FUEL_LAMP / 2;
 	}
 

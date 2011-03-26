@@ -141,7 +141,7 @@ int value_check_aux1(object_type * o_ptr)
 	return FEEL_NONE;
 
     /* No pseudo for lights */
-    if (slot == INVEN_LITE)
+    if (slot == INVEN_LIGHT)
 	return FEEL_NONE;
 
     /* Artifacts */
@@ -197,7 +197,7 @@ int value_check_aux2(object_type * o_ptr)
 	return FEEL_NONE;
 
     /* No pseudo for lights */
-    if (slot == INVEN_LITE)
+    if (slot == INVEN_LIGHT)
 	return FEEL_NONE;
 
     /* Dubious items (all of them) */

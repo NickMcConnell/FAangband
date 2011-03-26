@@ -826,7 +826,7 @@ bool cast_spell(int tval, int index, int dir)
 	}
     case SPELL_LIGHT_AREA:
 	{
-	    (void) lite_area(damroll(2, 1 + (plev / 5)), (plev / 10) + 1);
+	    (void) light_area(damroll(2, 1 + (plev / 5)), (plev / 10) + 1);
 	    break;
 	}
     case SPELL_STINKING_CLOUD:
@@ -891,7 +891,7 @@ bool cast_spell(int tval, int index, int dir)
     case SPELL_SPEAR_OF_LIGHT:
 	{
 	    msg_print("A line of blue shimmering light appears.");
-	    lite_line(dir);
+	    light_line(dir);
 	    break;
 	}
     case SPELL_FROST_BEAM:
@@ -1106,7 +1106,7 @@ bool cast_spell(int tval, int index, int dir)
 	}
     case SPELL_STARBURST:
 	{
-	    fire_sphere(GF_LITE, 0, 5 * plev / 2, plev / 12, 20);
+	    fire_sphere(GF_LIGHT, 0, 5 * plev / 2, plev / 12, 20);
 	    break;
 	}
     case SPELL_MAJOR_RECHARGE:
@@ -1210,7 +1210,7 @@ bool cast_spell(int tval, int index, int dir)
 	}
     case PRAYER_CALL_LIGHT:
 	{
-	    (void) lite_area(damroll(2, 1 + (plev / 3)), (plev / 10) + 1);
+	    (void) light_area(damroll(2, 1 + (plev / 3)), (plev / 10) + 1);
 	    break;
 	}
     case PRAYER_FIND_TRAPS:
@@ -1444,7 +1444,7 @@ bool cast_spell(int tval, int index, int dir)
 	}
     case PRAYER_CLAIRVOYANCE:
 	{
-	    wiz_lite(FALSE);
+	    wiz_light(FALSE);
 	    break;
 	}
     case PRAYER_BANISHMENT:
@@ -1550,7 +1550,7 @@ bool cast_spell(int tval, int index, int dir)
 	}
     case PRAYER_LIGHT_OF_MANWE:
 	{
-	    fire_ball(GF_LITE, dir, plev * 2, 3, FALSE);
+	    fire_ball(GF_LIGHT, dir, plev * 2, 3, FALSE);
 	    break;
 	}
     case PRAYER_LANCE_OF_OROME:
@@ -1572,7 +1572,7 @@ bool cast_spell(int tval, int index, int dir)
     case PRAYER_CALL_ON_VARDA:
 	{
 	    msg_print("Gilthoniel A Elbereth!");
-	    fire_sphere(GF_LITE, 0, plev * 5, plev / 7 + 2, 20);
+	    fire_sphere(GF_LIGHT, 0, plev * 5, plev / 7 + 2, 20);
 	    (void) fear_monsters(plev * 2);
 	    (void) hp_player(500);
 	    break;
@@ -1648,7 +1648,7 @@ bool cast_spell(int tval, int index, int dir)
 	}
     case LORE_CALL_LIGHT:
 	{
-	    (void) lite_area(damroll(2, 1 + (plev / 4)), (plev / 10) + 1);
+	    (void) light_area(damroll(2, 1 + (plev / 4)), (plev / 10) + 1);
 	    break;
 	}
     case LORE_FORAGING:
@@ -1686,7 +1686,7 @@ bool cast_spell(int tval, int index, int dir)
     case LORE_RAY_OF_SUNLIGHT:
 	{
 	    msg_print("A ray of golden yellow light appears.");
-	    lite_line(dir);
+	    light_line(dir);
 	    break;
 	}
     case LORE_CURE_POISON:
@@ -1927,7 +1927,7 @@ bool cast_spell(int tval, int index, int dir)
     case LORE_STARBURST:
 	{
 	    msg_print("Light bright beyond enduring dazzles your foes!");
-	    fire_sphere(GF_LITE, 0, 40 + (3 * plev / 2) + randint1(plev * 3),
+	    fire_sphere(GF_LIGHT, 0, 40 + (3 * plev / 2) + randint1(plev * 3),
 			plev / 10, 20);
 	    break;
 	}

@@ -923,7 +923,7 @@ extern void describe_monster(int r_idx, bool spoilers)
     if (rsf_has(mon_spells, RSF_BRTH_PLAS))
 	vp[vn++] = "plasma";
 
-    if (rsf_has(mon_spells, RSF_BRTH_LITE))
+    if (rsf_has(mon_spells, RSF_BRTH_LIGHT))
 	vp[vn++] = "light";
     if (rsf_has(mon_spells, RSF_BRTH_DARK)) {
 	if (rf_has(mon_flags, RF_MORGUL_MAGIC))
@@ -1053,7 +1053,7 @@ extern void describe_monster(int r_idx, bool spoilers)
 		vp[vn++] = "produce storms of poison";
 	}
     }
-    if (rsf_has(mon_spells, RSF_BALL_LITE)) {
+    if (rsf_has(mon_spells, RSF_BALL_LIGHT)) {
 	if (spower < 15)
 	    vp[vn++] = "produce spheres of light";
 	else if (spower < 70)
@@ -1496,7 +1496,7 @@ extern void describe_monster(int r_idx, bool spoilers)
     vn = 0;
     if (rf_has(mon_flags, RF_HURT_ROCK))
 	vp[vn++] = "rock remover";
-    if (rf_has(mon_flags, RF_HURT_LITE))
+    if (rf_has(mon_flags, RF_HURT_LIGHT))
 	vp[vn++] = "bright light";
     if (rf_has(mon_flags, RF_HURT_FIRE))
 	vp[vn++] = "fire";
@@ -1572,7 +1572,7 @@ extern void describe_monster(int r_idx, bool spoilers)
     /* Neatness: mention some borderline high-level resistances only if others 
      * have already been. */
     vn = 0;
-    if (rsf_has(mon_spells, RSF_BRTH_LITE))
+    if (rsf_has(mon_spells, RSF_BRTH_LIGHT))
 	vp[vn++] = "light";
     if ((rsf_has(mon_spells, RSF_BRTH_DARK))
 	|| (rf_has(mon_flags, RF_MORGUL_MAGIC))
@@ -1940,7 +1940,7 @@ extern void describe_monster(int r_idx, bool spoilers)
 	case RBE_EAT_FOOD:
 	    q = "eat your food";
 	    break;
-	case RBE_EAT_LITE:
+	case RBE_EAT_LIGHT:
 	    q = "absorb light";
 	    break;
 	case RBE_ACID:
@@ -2209,8 +2209,8 @@ static void process_ghost_race(int ghost_race, monster_type * m_ptr)
 	    r_ptr->aaf += (OPT(adult_small_device) ? 1 : 2);
 	    r_ptr->hdice = 6 * r_ptr->hdice / 7;
 	    break;
-	    if (rf_has(r_ptr->flags, RF_HURT_LITE))
-		rf_off(r_ptr->flags, RF_HURT_LITE);
+	    if (rf_has(r_ptr->flags, RF_HURT_LIGHT))
+		rf_off(r_ptr->flags, RF_HURT_LIGHT);
 	    break;
 	}
 	/* Grey Elf */
@@ -2220,8 +2220,8 @@ static void process_ghost_race(int ghost_race, monster_type * m_ptr)
 		r_ptr->freq_ranged += 5;
 	    r_ptr->aaf += (OPT(adult_small_device) ? 2 : 4);
 	    r_ptr->hdice = 4 * r_ptr->hdice / 5;
-	    if (rf_has(r_ptr->flags, RF_HURT_LITE))
-		rf_off(r_ptr->flags, RF_HURT_LITE);
+	    if (rf_has(r_ptr->flags, RF_HURT_LIGHT))
+		rf_off(r_ptr->flags, RF_HURT_LIGHT);
 	    break;
 	}
 	/* Hobbit */
@@ -2293,8 +2293,8 @@ static void process_ghost_race(int ghost_race, monster_type * m_ptr)
 	    if (r_ptr->freq_ranged)
 		r_ptr->freq_ranged += 8;
 	    r_ptr->aaf += (OPT(adult_small_device) ? 2 : 5);
-	    if (rf_has(r_ptr->flags, RF_HURT_LITE))
-		rf_off(r_ptr->flags, RF_HURT_LITE);
+	    if (rf_has(r_ptr->flags, RF_HURT_LIGHT))
+		rf_off(r_ptr->flags, RF_HURT_LIGHT);
 	    break;
 	}
 
@@ -2439,7 +2439,7 @@ static void process_ghost_class(int ghost_class, monster_type * m_ptr)
 
 	    rsf_on(r_ptr->spell_flags, RSF_WOUND);
 	    if (dun_level > 34)
-		rsf_on(r_ptr->spell_flags, RSF_BALL_LITE);
+		rsf_on(r_ptr->spell_flags, RSF_BALL_LIGHT);
 	    if (dun_level > 64)
 		rsf_on(r_ptr->spell_flags, RSF_BEAM_NETHR);
 
@@ -2559,7 +2559,7 @@ static void process_ghost_class(int ghost_class, monster_type * m_ptr)
 		rsf_off(r_ptr->flags, RSF_BOLT);
 
 	    if (dun_level > 59)
-		rsf_on(r_ptr->spell_flags, RSF_BALL_LITE);
+		rsf_on(r_ptr->spell_flags, RSF_BALL_LIGHT);
 
 	    rsf_on(r_ptr->spell_flags, RSF_SHRIEK);
 	    rsf_on(r_ptr->spell_flags, RSF_SCARE);

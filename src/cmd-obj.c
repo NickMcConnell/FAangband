@@ -230,7 +230,7 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
 
     object_type *i_ptr;
 
-    object_type *l_ptr = &p_ptr->inventory[INVEN_LITE];
+    object_type *l_ptr = &p_ptr->inventory[INVEN_LIGHT];
 
     object_type object_type_body;
 
@@ -491,7 +491,7 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
 	act = "You are wielding";
     } else if (slot == INVEN_BOW) {
 	act = "You are shooting with";
-    } else if (slot == INVEN_LITE) {
+    } else if (slot == INVEN_LIGHT) {
 	act = "Your light source is";
     } else if ((slot < INVEN_Q0) || (slot > INVEN_Q9)) {
 	act = "You are wearing";
@@ -858,7 +858,7 @@ static bool item_tester_refill_lantern(const object_type * o_ptr)
 	return (TRUE);
 
     /* Non-empty lanterns are okay */
-    if ((o_ptr->tval == TV_LITE) && (o_ptr->sval == SV_LITE_LANTERN)
+    if ((o_ptr->tval == TV_LIGHT) && (o_ptr->sval == SV_LIGHT_LANTERN)
 	&& (o_ptr->pval > 0)) {
 	return (TRUE);
     }
@@ -886,7 +886,7 @@ static void refill_lamp(void)
     item_tester_hook = item_tester_refill_lantern;
 
     /* Access the lantern */
-    j_ptr = &p_ptr->inventory[INVEN_LITE];
+    j_ptr = &p_ptr->inventory[INVEN_LIGHT];
 
     /* Refuel */
     j_ptr->pval += o_ptr->pval;
@@ -901,7 +901,7 @@ static void refill_lamp(void)
     }
 
     /* Use fuel from a lantern */
-    if (o_ptr->sval == SV_LITE_LANTERN) {
+    if (o_ptr->sval == SV_LIGHT_LANTERN) {
 	/* No more fuel */
 	o_ptr->pval = 0;
 
@@ -935,7 +935,7 @@ static void refill_lamp(void)
 static bool item_tester_refuel_torch(const object_type * o_ptr)
 {
     /* Torches are okay */
-    if ((o_ptr->tval == TV_LITE) && (o_ptr->sval == SV_LITE_TORCH))
+    if ((o_ptr->tval == TV_LIGHT) && (o_ptr->sval == SV_LIGHT_TORCH))
 	return (TRUE);
 
     /* Assume not okay */
@@ -957,7 +957,7 @@ static void refuel_torch(void)
 
 
     /* Access the primary torch */
-    j_ptr = &p_ptr->inventory[INVEN_LITE];
+    j_ptr = &p_ptr->inventory[INVEN_LIGHT];
 
     /* Refuel */
     j_ptr->pval += o_ptr->pval + 5;
@@ -998,7 +998,7 @@ static void refuel_torch(void)
 
 void do_cmd_refill(cmd_code code, cmd_arg args[])
 {
-    object_type *j_ptr = &p_ptr->inventory[INVEN_LITE];
+    object_type *j_ptr = &p_ptr->inventory[INVEN_LIGHT];
 
     int item = args[0].item;
     object_type *o_ptr = object_from_item_idx(item);
@@ -1008,17 +1008,17 @@ void do_cmd_refill(cmd_code code, cmd_arg args[])
 	return;
     }
 
-    if (j_ptr->tval != TV_LITE) {
+    if (j_ptr->tval != TV_LIGHT) {
 	msg_print("You are not wielding a light.");
 	return;
     }
 
     /* It's a lamp */
-    else if (j_ptr->sval == SV_LITE_LANTERN)
+    else if (j_ptr->sval == SV_LIGHT_LANTERN)
 	refill_lamp();
 
     /* It's a torch */
-    else if (j_ptr->sval == SV_LITE_TORCH)
+    else if (j_ptr->sval == SV_LIGHT_TORCH)
 	refuel_torch();
 
     else {

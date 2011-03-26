@@ -290,7 +290,7 @@ bool los(int y1, int x1, int y2, int x2)
  * Players with the UNLIGHT ability don't need light and always
  * return false.
  */
-bool no_lite(void)
+bool no_light(void)
 {
     int py = p_ptr->py;
     int px = p_ptr->px;
@@ -353,7 +353,7 @@ static byte breath_to_attr[32][2] = {
     {TERM_WHITE, TERM_L_WHITE},	/* RSF_BRTH_COLD */
     {TERM_GREEN, TERM_L_GREEN},	/* RSF_BRTH_POIS */
     {TERM_ORANGE, TERM_RED},	/* RSF_BRTH_PLAS */
-    {TERM_YELLOW, TERM_ORANGE},	/* RSF_BRTH_LITE */
+    {TERM_YELLOW, TERM_ORANGE},	/* RSF_BRTH_LIGHT */
     {TERM_L_DARK, TERM_SLATE},	/* RSF_BRTH_DARK */
     {TERM_L_UMBER, TERM_UMBER},	/* RSF_BRTH_CONFU */
     {TERM_YELLOW, TERM_L_UMBER},	/* RSF_BRTH_SOUND */
@@ -623,7 +623,7 @@ byte get_color(byte a, int attr, int n)
 static void special_lighting_floor(byte *a, char *c, enum grid_light_level lighting, bool in_view)
 {
     /* Huge hack for Lamp of Gwindor */
-    bool lamp = (p_ptr->inventory[INVEN_LITE].k_idx == 733);
+    bool lamp = (p_ptr->inventory[INVEN_LIGHT].k_idx == 733);
 
     /* The floor starts off "lit" - i.e. rendered in white or the default 
      * tile. */
@@ -635,7 +635,7 @@ static void special_lighting_floor(byte *a, char *c, enum grid_light_level light
 	 * permanently-lit areas 
 	 */
 	if ((check_ability(SP_UNLIGHT) || p_ptr->darkness) && 
-	    (p_ptr->cur_lite <= 0))
+	    (p_ptr->cur_light <= 0))
 	{
 	    /* "Dark radius" */
 	    
@@ -1486,7 +1486,7 @@ void note_spot(int y, int x)
  *
  * This function should only be called on "legal" grids
  */
-void lite_spot(int y, int x)
+void light_spot(int y, int x)
 {
     event_signal_point(EVENT_MAP, x, y);
 }
@@ -1793,8 +1793,8 @@ void display_map(int *cy, int *cx)
     /* Large array on the stack */
     byte mp[DUNGEON_HGT][DUNGEON_WID];
 
-    bool old_view_special_lite;
-    bool old_view_granite_lite;
+    bool old_view_special_light;
+    bool old_view_granite_light;
     int old_tile_height = tile_height;
     int old_tile_width = tile_width;
 
@@ -1824,12 +1824,12 @@ void display_map(int *cy, int *cx)
 
 
     /* Save lighting effects */
-    old_view_special_lite = OPT(view_special_lite);
-    old_view_granite_lite = OPT(view_granite_lite);
+    old_view_special_light = OPT(view_special_light);
+    old_view_granite_light = OPT(view_granite_light);
 
     /* Disable lighting effects */
-    OPT(view_special_lite) = FALSE;
-    OPT(view_granite_lite) = FALSE;
+    OPT(view_special_light) = FALSE;
+    OPT(view_granite_light) = FALSE;
 
     /* Nothing here */
     ta = TERM_WHITE;
@@ -1916,8 +1916,8 @@ void display_map(int *cy, int *cx)
 
 
     /* Restore lighting effects */
-    OPT(view_special_lite) = old_view_special_lite;
-    OPT(view_granite_lite) = old_view_granite_lite;
+    OPT(view_special_light) = old_view_special_light;
+    OPT(view_granite_light) = old_view_granite_light;
 }
 
 /**
@@ -2112,7 +2112,7 @@ void do_cmd_view_map(void)
     /* Wait for it */
     put_str("Hit any key to continue", hgt - 1, (wid - COL_MAP) / 2);
 
-    /* Hilite the player */
+    /* Hilight the player */
     Term_gotoxy(cx, cy);
 
     /* Get any key */
@@ -2413,7 +2413,7 @@ void do_cmd_view_map(void)
  * become slower in some situations if it did.
  *<pre>
  *	 Rad=0	   Rad=1      Rad=2	   Rad=3         
- *	No-Lite	 Torch,etc   Lantern	 Artifacts         
+ *	No-Light	 Torch,etc   Lantern	 Artifacts         
  *    
  *					    333         
  *			       333	   43334         
@@ -3026,12 +3026,12 @@ void forget_view(void)
 	/* Clear "CAVE_VIEW" and "CAVE_SEEN" flags */
 	fast_cave_info[g] &= ~(CAVE_VIEW | CAVE_SEEN);
 
-	/* Only lite the spot if is on the panel (can change due to resizing */
+	/* Only light the spot if is on the panel (can change due to resizing */
 	if (!panel_contains(y, x))
 	    continue;
 
 	/* Redraw */
-	lite_spot(y, x);
+	light_spot(y, x);
     }
 
     /* None left */
@@ -3152,13 +3152,7 @@ void update_view(void)
     byte info;
 
 
-    /* Hack - redetermine daylight */
-    is_daylight = (((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
-		   && (stage_map[p_ptr->stage][STAGE_TYPE] != CAVE)
-		   && (stage_map[p_ptr->stage][STAGE_TYPE] != VALLEY)
-		   && ((p_ptr->stage < 151) || (p_ptr->stage > 153)));
-
-  /*** Step 0 -- Begin ***/
+    /*** Step 0 -- Begin ***/
 
     /* Save the old "view" grids for later */
     for (i = 0; i < fast_view_n; i++) {
@@ -3191,10 +3185,10 @@ void update_view(void)
     if (is_daylight)
 	radius = DUNGEON_WID;
     else if ((player_has(PF_UNLIGHT) || p_ptr->darkness)
-	     && (p_ptr->cur_lite <= 0))
+	     && (p_ptr->cur_light <= 0))
 	radius = 2;
     else
-	radius = p_ptr->cur_lite;
+	radius = p_ptr->cur_light;
 
     /* Handle real light */
     if (radius > 0)
@@ -3395,7 +3389,7 @@ void update_view(void)
 	    note_spot(y, x);
 
 	    /* Redraw */
-	    lite_spot(y, x);
+	    light_spot(y, x);
 	}
     }
 
@@ -3422,7 +3416,7 @@ void update_view(void)
 	    x = GRID_X(g);
 
 	    /* Redraw */
-	    lite_spot(y, x);
+	    light_spot(y, x);
 	}
     }
 
@@ -3924,7 +3918,7 @@ void map_area(int y, int x, bool extended)
  * since this would prevent the use of "view_torch_grids" as a method to
  * keep track of what grids have been observed directly.
  */
-void wiz_lite(bool wizard)
+void wiz_light(bool wizard)
 {
     int i, y, x;
 
@@ -3962,7 +3956,7 @@ void wiz_lite(bool wizard)
 		    int yy = y + ddy_ddd[i];
 		    int xx = x + ddx_ddd[i];
 
-		    /* Perma-lite the grid */
+		    /* Perma-light the grid */
 		    cave_info[yy][xx] |= (CAVE_GLOW);
 
 		    /* Skip non-wall vault features if not a wizard. */
@@ -4153,7 +4147,7 @@ void cave_set_feat(int y, int x, int feat)
 	note_spot(y, x);
 
 	/* Redraw */
-	lite_spot(y, x);
+	light_spot(y, x);
     }
 }
 
@@ -4629,7 +4623,7 @@ void disturb(int stop_search, int unused_flag)
 	    int px = p_ptr->px;
 
 	    /* Redraw player */
-	    lite_spot(py, px);
+	    light_spot(py, px);
 	}
     }
 

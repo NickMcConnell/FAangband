@@ -221,7 +221,7 @@ bool lay_rune(int type)
 	    }
 
 	    /* Redraw */
-	    lite_spot(py, px);
+	    light_spot(py, px);
 	}
     }
 
@@ -1053,7 +1053,7 @@ static void animate_detect(int rad)
 
 	    /* Hack -- Erase only if needed */
 	    if (panel_contains(y, x)) {
-		lite_spot(y, x);
+		light_spot(y, x);
 	    }
 	}
     }
@@ -1111,7 +1111,7 @@ bool detect_traps(int range, bool show)
 		    cave_info[y][x] |= (CAVE_MARK);
 
 		    /* Redraw */
-		    lite_spot(y, x);
+		    light_spot(y, x);
 
 		    /* increment number found */
 		    num++;
@@ -1179,7 +1179,7 @@ bool detect_doors(int range, bool show)
 		    cave_info[y][x] |= (CAVE_MARK);
 
 		    /* Redraw */
-		    lite_spot(y, x);
+		    light_spot(y, x);
 
 		    /* increment number found */
 		    num++;
@@ -1239,7 +1239,7 @@ bool detect_stairs(int range, bool show)
 		    cave_info[y][x] |= (CAVE_MARK);
 
 		    /* Redraw */
-		    lite_spot(y, x);
+		    light_spot(y, x);
 
 		    /* increment number found */
 		    num++;
@@ -1301,7 +1301,7 @@ bool detect_treasure(int range, bool show)
 		    cave_info[y][x] |= (CAVE_MARK);
 
 		    /* Redraw */
-		    lite_spot(y, x);
+		    light_spot(y, x);
 
 		    /* increment number found */
 		    num++;
@@ -1371,7 +1371,7 @@ bool detect_objects_gold(int range, bool show)
 	    o_ptr->marked = TRUE;
 
 	    /* Redraw */
-	    lite_spot(y, x);
+	    light_spot(y, x);
 
 	    /* increment number found */
 	    num++;
@@ -1437,7 +1437,7 @@ bool detect_objects_normal(int range, bool show)
 	    o_ptr->marked = TRUE;
 
 	    /* Redraw */
-	    lite_spot(y, x);
+	    light_spot(y, x);
 
 	    /* increment number found */
 	    if (!squelch_hide_item(o_ptr))
@@ -1520,7 +1520,7 @@ bool detect_objects_magic(int range, bool show)
 	    o_ptr->marked = TRUE;
 
 	    /* Redraw */
-	    lite_spot(y, x);
+	    light_spot(y, x);
 
 	    /* increment number found */
 	    if (!squelch_hide_item(o_ptr))
@@ -3325,8 +3325,8 @@ void do_starlight(int burst_number, int dam, bool strong)
 	    fire_meteor(-1, GF_CONFUSION, y, x, dam, strong ? 1 : 0, FALSE);
 
 	/* The actual burst of light. */
-	fire_meteor(-1, GF_LITE_WEAK, y, x, dam, strong ? 2 : 1, FALSE);
-	fire_meteor(-1, GF_LITE, y, x, dam, strong ? 1 : 0, FALSE);
+	fire_meteor(-1, GF_LIGHT_WEAK, y, x, dam, strong ? 2 : 1, FALSE);
+	fire_meteor(-1, GF_LIGHT, y, x, dam, strong ? 1 : 0, FALSE);
 
 
 	/* Hack - assume that the player's square is typical of the area, and
@@ -3402,7 +3402,7 @@ bool listen_to_natural_creatures(void)
 		cave_info[y][x] |= (CAVE_MARK);
 
 		/* Redraw */
-		lite_spot(y, x);
+		light_spot(y, x);
 	    }
 	}
     }
@@ -3587,7 +3587,7 @@ void ele_air_smite(void)
 	if (randint0(3) == 0)
 	    (void) fire_meteor(-1, GF_GRAVITY, y, x, 100, 1, FALSE);
 	else if (randint0(2) == 0)
-	    (void) fire_meteor(-1, GF_LITE, y, x, 100, 1, FALSE);
+	    (void) fire_meteor(-1, GF_LIGHT, y, x, 100, 1, FALSE);
 	else
 	    (void) fire_meteor(-1, GF_ELEC, y, x, 100, 1, FALSE);
 
@@ -3819,7 +3819,7 @@ bool dispel_living(int dam)
  */
 bool dispel_light_hating(int dam)
 {
-    return (project_hack(GF_LITE_WEAK, dam));
+    return (project_hack(GF_LIGHT_WEAK, dam));
 }
 
 /** 
@@ -4202,11 +4202,11 @@ void destroy_area(int y1, int x1, int r, bool full)
 	msg_print("There is a searing blast of light!");
 
 	/* Blind the player */
-	if (!p_ptr->state.no_blind && !p_resist_good(P_RES_LITE)) {
+	if (!p_ptr->state.no_blind && !p_resist_good(P_RES_LIGHT)) {
 	    /* Become blind */
 	    (void) inc_timed(TMD_BLIND, 10 + randint1(10), TRUE);
 	} else {
-	    notice_other(IF_RES_LITE, 0);
+	    notice_other(IF_RES_LIGHT, 0);
 	    notice_obj(OF_SEEING, 0);
 	}
     }
@@ -4736,9 +4736,9 @@ bool tremor(void)
 /**
  * This routine clears the entire "temp" set.
  *
- * This routine will Perma-Lite all "temp" grids.
+ * This routine will Perma-Light all "temp" grids.
  *
- * This routine is used (only) by "lite_room()"
+ * This routine is used (only) by "light_room()"
  *
  * Dark grids are illuminated.
  *
@@ -4748,7 +4748,7 @@ bool tremor(void)
  * NORMAL monsters wake up 1/4 the time when illuminated
  * STUPID monsters wake up 1/10 the time when illuminated
  */
-static void cave_temp_room_lite(void)
+static void cave_temp_room_light(void)
 {
     int i;
 
@@ -4760,7 +4760,7 @@ static void cave_temp_room_lite(void)
 	/* No longer in the array */
 	cave_info[y][x] &= ~(CAVE_TEMP);
 
-	/* Perma-Lite */
+	/* Perma-Light */
 	cave_info[y][x] |= (CAVE_GLOW);
     }
 
@@ -4776,7 +4776,7 @@ static void cave_temp_room_lite(void)
 	int x = temp_x[i];
 
 	/* Redraw the grid */
-	lite_spot(y, x);
+	light_spot(y, x);
 
 	/* Process affected monsters */
 	if (cave_m_idx[y][x] > 0) {
@@ -4828,9 +4828,9 @@ static void cave_temp_room_lite(void)
  *
  * In addition, some of these grids will be "unmarked".
  *
- * This routine is used (only) by "unlite_room()"
+ * This routine is used (only) by "unlight_room()"
  */
-static void cave_temp_room_unlite(void)
+static void cave_temp_room_unlight(void)
 {
     int i;
 
@@ -4864,7 +4864,7 @@ static void cave_temp_room_unlite(void)
 	int x = temp_x[i];
 
 	/* Redraw the grid */
-	lite_spot(y, x);
+	light_spot(y, x);
     }
 
     /* None left */
@@ -4910,7 +4910,7 @@ static void cave_temp_room_aux(int y, int x)
 /**
  * Illuminate any room containing the given location.
  */
-void lite_room(int y1, int x1)
+void light_room(int y1, int x1)
 {
     int i, x, y;
     feature_type *f_ptr = NULL;
@@ -4940,15 +4940,15 @@ void lite_room(int y1, int x1)
 	cave_temp_room_aux(y + 1, x - 1);
     }
 
-    /* Now, lite them all up at once */
-    cave_temp_room_lite();
+    /* Now, light them all up at once */
+    cave_temp_room_light();
 }
 
 
 /**
  * Darken all rooms containing the given location
  */
-void unlite_room(int y1, int x1)
+void unlight_room(int y1, int x1)
 {
     int i, x, y;
 
@@ -4977,7 +4977,7 @@ void unlite_room(int y1, int x1)
     }
 
     /* Now, darken them all at once */
-    cave_temp_room_unlite();
+    cave_temp_room_unlight();
 }
 
 
@@ -4986,7 +4986,7 @@ void unlite_room(int y1, int x1)
  * Hack -- call light around the player
  * Affect all monsters in the projection radius
  */
-bool lite_area(int dam, int rad)
+bool light_area(int dam, int rad)
 {
     int py = p_ptr->py;
     int px = p_ptr->px;
@@ -4999,10 +4999,10 @@ bool lite_area(int dam, int rad)
     }
 
     /* Hook into the "project()" function */
-    (void) project(-1, rad, py, px, dam, GF_LITE_WEAK, flg, 0, 0);
+    (void) project(-1, rad, py, px, dam, GF_LIGHT_WEAK, flg, 0, 0);
 
-    /* Lite up the room */
-    lite_room(py, px);
+    /* Light up the room */
+    light_room(py, px);
 
     /* Assume seen */
     return (TRUE);
@@ -5013,7 +5013,7 @@ bool lite_area(int dam, int rad)
  * Hack -- call darkness around the player
  * Affect all monsters in the projection radius
  */
-bool unlite_area(int dam, int rad)
+bool unlight_area(int dam, int rad)
 {
     int py = p_ptr->py;
     int px = p_ptr->px;
@@ -5028,8 +5028,8 @@ bool unlite_area(int dam, int rad)
     /* Hook into the "project()" function */
     (void) project(-1, rad, py, px, dam, GF_DARK_WEAK, flg, 0, 0);
 
-    /* Lite up the room */
-    unlite_room(py, px);
+    /* Light up the room */
+    unlight_room(py, px);
 
     /* Assume seen */
     return (TRUE);
@@ -5283,10 +5283,10 @@ bool fire_bolt_or_beam(int prob, int typ, int dir, int dam)
  * Some of the old functions
  */
 
-bool lite_line(int dir)
+bool light_line(int dir)
 {
     int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_KILL;
-    return (project_hook(GF_LITE_WEAK, dir, damroll(4, 5), flg));
+    return (project_hook(GF_LIGHT_WEAK, dir, damroll(4, 5), flg));
 }
 
 bool drain_life(int dir, int dam)

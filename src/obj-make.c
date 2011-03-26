@@ -792,16 +792,16 @@ static void a_m_aux_4(object_type * o_ptr, int level, int power)
 
     /* Apply magic (good or bad) according to type */
     switch (o_ptr->tval) {
-    case TV_LITE:
+    case TV_LIGHT:
 	{
 	    /* Hack -- Torches -- random fuel */
-	    if (o_ptr->sval == SV_LITE_TORCH) {
+	    if (o_ptr->sval == SV_LIGHT_TORCH) {
 		if (o_ptr->pval > 0)
 		    o_ptr->pval = randint1(o_ptr->pval);
 	    }
 
 	    /* Hack -- Lanterns -- random fuel */
-	    if (o_ptr->sval == SV_LITE_LANTERN) {
+	    if (o_ptr->sval == SV_LIGHT_LANTERN) {
 		if (o_ptr->pval > 0)
 		    o_ptr->pval = randint1(o_ptr->pval);
 	    }
@@ -979,7 +979,7 @@ extern void apply_resistances(object_type * o_ptr, int lev, bitflag *flags)
  *
  * This includes not only rolling for random bonuses, but also putting the
  * finishing touches on ego-items and artifacts, giving charges to wands and
- * staffs, giving fuel to lites, and placing traps on chests.
+ * staffs, giving fuel to lights, and placing traps on chests.
  *
  * In particular, note that "Instant Artifacts", if "created" by an external
  * routine, must pass through this function to complete the actual creation.

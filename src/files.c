@@ -417,7 +417,7 @@ void player_weakness_dis(bitflag * flags)
 	}
     case SHAPE_VAMPIRE:
 	{
-	    of_on(flags, OF_LITE);
+	    of_on(flags, OF_LIGHT);
 	    break;
 	}
     }
@@ -461,7 +461,7 @@ void get_player_resists(int *player_resists)
     case SHAPE_VAMPIRE:
 	{
 	    apply_resist(&player_resists[P_RES_COLD], RES_BOOST_NORMAL);
-	    apply_resist(&player_resists[P_RES_LITE], RES_CUT_MINOR);
+	    apply_resist(&player_resists[P_RES_LIGHT], RES_CUT_MINOR);
 	    break;
 	}
     case SHAPE_WYRM:
@@ -600,7 +600,7 @@ static u32b display_player_powers[10] = {
 
     OF_SLOW_DIGEST,
     OF_FEATHER,
-    OF_LITE,
+    OF_LIGHT,
     OF_REGEN,
     OF_TELEPATHY,
     OF_SEE_INVIS,
@@ -620,7 +620,7 @@ static cptr display_player_resist_names[2][7] = {
      "Fire:",			/* P_RES_FIRE */
      "Cold:",			/* P_RES_COLD */
      "Pois:",			/* P_RES_POIS */
-     "Lite:",			/* P_RES_LITE */
+     "Lght:",			/* P_RES_LIGHT */
      "Dark:"			/* P_RES_DARK */
      },
 
@@ -639,7 +639,7 @@ static cptr display_player_resist_names[2][7] = {
 static cptr display_player_power_names[10] = {
     "S.Dig:",			/* OF_SLOW_DIGEST */
     "Feath:",			/* OF_FEATHER */
-    "PLite:",			/* OF_LITE */
+    "PLght:",			/* OF_LIGHT */
     "Regen:",			/* OF_REGEN */
     "Telep:",			/* OF_TELEPATHY */
     "Invis:",			/* OF_SEE_INVIS */
@@ -2523,7 +2523,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	    /* Reset line */
 	    line_finished = FALSE;
 
-	    /* Hilite "shower" */
+	    /* Hilight "shower" */
 	    if (shower[0]) {
 		cptr str = lc_buf;
 

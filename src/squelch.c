@@ -528,7 +528,7 @@ static tval_desc raw_tvals[] =
     {TV_SOFT_ARMOR, "Soft Armor"},
     {TV_HARD_ARMOR, "Hard Armor"},
     {TV_DRAG_ARMOR, "DSMails"},
-    {TV_LITE, "Lights"},
+    {TV_LIGHT, "Lights"},
     {TV_AMULET, "Amulets"},
     {TV_RING, "Rings"},
     {TV_STAFF, "Staves"},

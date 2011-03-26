@@ -90,7 +90,7 @@ extern const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER];
 #define OPT_xchars_to_file              46
 #define OPT_smart_cheat			47
 
-#define OPT_view_reduce_lite		48
+#define OPT_view_reduce_light		48
 #define OPT_hidden_player		49
 #define OPT_avoid_abort			50
 #define OPT_avoid_other			51
@@ -103,11 +103,11 @@ extern const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER];
 #define OPT_center_running		57
 
 #define OPT_compress_savefile		58
-#define OPT_hilite_player		59
-#define OPT_view_yellow_lite		60
-#define OPT_view_bright_lite		61
-#define OPT_view_granite_lite		62
-#define OPT_view_special_lite		63
+#define OPT_hilight_player		59
+#define OPT_view_yellow_light		60
+#define OPT_view_bright_light		61
+#define OPT_view_granite_light		62
+#define OPT_view_special_light		63
 #define OPT_easy_more                   65
 #define OPT_animate_flicker             66
 #define OPT_show_piles                  67

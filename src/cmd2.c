@@ -1285,7 +1285,7 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
 	i = p_ptr->state.skills[SKILL_DISARM];
 
 	/* Penalize some conditions */
-	if (p_ptr->timed[TMD_BLIND] || no_lite())
+	if (p_ptr->timed[TMD_BLIND] || no_light())
 	    i = i / 10;
 	if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC])
 	    i = i / 10;
@@ -1351,7 +1351,7 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
     i = p_ptr->state.skills[SKILL_DISARM];
 
     /* Penalize some conditions */
-    if (p_ptr->timed[TMD_BLIND] || no_lite())
+    if (p_ptr->timed[TMD_BLIND] || no_light())
 	i = i / 10;
     if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC])
 	i = i / 10;
@@ -1608,7 +1608,7 @@ extern bool do_cmd_open_aux(int y, int x)
 	i = p_ptr->state.skills[SKILL_DISARM];
 
 	/* Penalize some conditions */
-	if (p_ptr->timed[TMD_BLIND] || no_lite())
+	if (p_ptr->timed[TMD_BLIND] || no_light())
 	    i = i / 10;
 	if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC])
 	    i = i / 10;
@@ -2345,7 +2345,7 @@ extern bool do_cmd_disarm_aux(int y, int x)
     i = p_ptr->state.skills[SKILL_DISARM];
 
     /* Penalize some conditions */
-    if (p_ptr->timed[TMD_BLIND] || no_lite())
+    if (p_ptr->timed[TMD_BLIND] || no_light())
 	i = i / 10;
     if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC])
 	i = i / 10;

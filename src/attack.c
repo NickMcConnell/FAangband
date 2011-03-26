@@ -735,7 +735,7 @@ static int adjust_dam(long *die_average, object_type * o_ptr,
 	    if (player_has(PF_HOLY_LIGHT)) {
 		/* +2 or +3 versus Undead and light-sensitive creatures */
 		if ((rf_has(r_ptr->flags, RF_UNDEAD))
-		    || (rf_has(r_ptr->flags, RF_HURT_LITE))) {
+		    || (rf_has(r_ptr->flags, RF_HURT_LIGHT))) {
 		    mul += (mul + 10) / 10;
 		}
 
@@ -1614,7 +1614,7 @@ static int breakage_chance(object_type * o_ptr)
 	}
 
 	/* Often break */
-    case TV_LITE:
+    case TV_LIGHT:
     case TV_SCROLL:
     case TV_SKELETON:
 	{
@@ -1864,7 +1864,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	    if (OPT(fresh_before))
 		Term_fresh();
 	    Term_xtra(TERM_XTRA_DELAY, msec);
-	    lite_spot(y, x);
+	    light_spot(y, x);
 	    if (OPT(fresh_before))
 		Term_fresh();
 	}
@@ -2405,7 +2405,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 	    if (OPT(fresh_before))
 		Term_fresh();
 	    Term_xtra(TERM_XTRA_DELAY, msec);
-	    lite_spot(y, x);
+	    light_spot(y, x);
 	    if (OPT(fresh_before))
 		Term_fresh();
 	}

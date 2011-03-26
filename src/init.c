@@ -131,7 +131,7 @@ static const char *player_resist_values[] =
     "RES_FIRE",
     "RES_COLD",
     "RES_POIS",
-    "RES_LITE",
+    "RES_LIGHT",
     "RES_DARK",
     "RES_CONFU",
     "RES_SOUND",

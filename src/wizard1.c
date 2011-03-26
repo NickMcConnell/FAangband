@@ -317,7 +317,7 @@ static grouper group_artifact[] =
   { TV_GLOVES,	"Gloves" },
   { TV_BOOTS,	"Boots" },
   
-  { TV_LITE,	"Light Sources" },
+  { TV_LIGHT,	"Light Sources" },
   { TV_AMULET,	"Amulets" },
   { TV_RING,	"Rings" },
 
@@ -451,7 +451,7 @@ static flag_desc flags_obj_desc[] =
   { OF_PERFECT_BALANCE,   "Well-balanced" },
   { OF_SLOW_DIGEST,	  "Slow Digestion" },
   { OF_FEATHER,	          "Feather Falling" },
-  { OF_LITE,		  "Permanent Light" },
+  { OF_LIGHT,		  "Permanent Light" },
   { OF_REGEN,		  "Regeneration" },
   { OF_TELEPATHY,	  "ESP" },
   { OF_SEE_INVIS,	  "See Invisible" },
@@ -757,7 +757,7 @@ static void analyze_powers (object_type *o_ptr, cptr *power_list)
   /*
    * Artifact lights -- large radius light.
    */
-  if ((o_ptr->tval == TV_LITE) && artifact_p(o_ptr))
+  if ((o_ptr->tval == TV_LIGHT) && artifact_p(o_ptr))
     {
       *power_list++ = "Permanent Light(3)";
     }
@@ -1975,7 +1975,7 @@ static void spoil_mon_info(cptr fname)
       if (rsf_has(r_ptr->flags, RSF_BRTH_COLD))	vp[vn++] = "frost";
       if (rsf_has(r_ptr->flags, RSF_BRTH_POIS))	vp[vn++] = "poison";
       if (rsf_has(r_ptr->flags, RSF_BRTH_PLAS))	vp[vn++] = "plasma";
-      if (rsf_has(r_ptr->flags, RSF_BRTH_LITE))	vp[vn++] = "light";
+      if (rsf_has(r_ptr->flags, RSF_BRTH_LIGHT))	vp[vn++] = "light";
       if (rsf_has(r_ptr->flags, RSF_BRTH_DARK))
 	{
 	  if (rf_has(r_ptr->flags, RF_MORGUL_MAGIC)) vp[vn++] = "Night";
@@ -2069,7 +2069,7 @@ static void spoil_mon_info(cptr fname)
 	      else vp[vn++] = "produce storms of poison";
 	    }
 	}
-      if (rsf_has(r_ptr->flags, RSF_BALL_LITE))
+      if (rsf_has(r_ptr->flags, RSF_BALL_LIGHT))
 	{
 	  if (spower < 15) vp[vn++] = "produce spheres of light";
 	  else if (spower < 70) vp[vn++] = "produce explosions of light";
@@ -2319,7 +2319,7 @@ static void spoil_mon_info(cptr fname)
       /* Collect susceptibilities */
       vn = 0;
       if (rf_has(r_ptr->flags, RF_HURT_ROCK)) vp[vn++] = "rock remover";
-      if (rf_has(r_ptr->flags, RF_HURT_LITE)) vp[vn++] = "bright light";
+      if (rf_has(r_ptr->flags, RF_HURT_LIGHT)) vp[vn++] = "bright light";
       if (rf_has(r_ptr->flags, RF_HURT_FIRE)) vp[vn++] = "fire";
       if (rf_has(r_ptr->flags, RF_HURT_COLD)) vp[vn++] = "cold";
       
@@ -2359,7 +2359,7 @@ static void spoil_mon_info(cptr fname)
       
       /* Collect resistances */
       vn = 0;
-      if (rsf_has(r_ptr->flags, RSF_BRTH_LITE)) vp[vn++] = "light";
+      if (rsf_has(r_ptr->flags, RSF_BRTH_LIGHT)) vp[vn++] = "light";
       if ((rsf_has(r_ptr->flags, RSF_BRTH_DARK)) || 
 	  (rf_has(r_ptr->flags, RF_MORGUL_MAGIC)) || 
 	  (rf_has(r_ptr->flags, RF_ORC))) vp[vn++] = "darkness";
@@ -2563,7 +2563,7 @@ static void spoil_mon_info(cptr fname)
 	    case RBE_EAT_GOLD:	q = "steal gold"; break;
 	    case RBE_EAT_ITEM:	q = "steal items"; break;
 	    case RBE_EAT_FOOD:	q = "eat your food"; break;
-	    case RBE_EAT_LITE:	q = "absorb light"; break;
+	    case RBE_EAT_LIGHT:	q = "absorb light"; break;
 	    case RBE_ACID:	q = "shoot acid"; break;
 	    case RBE_ELEC:	q = "electrify"; break;
 	    case RBE_FIRE:	q = "burn"; break;

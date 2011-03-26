@@ -717,7 +717,7 @@ static void player_outfit(struct player *p)
     i_ptr = &object_type_body;
 
     /* Hack -- Give the player some torches */
-    object_prep(i_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
+    object_prep(i_ptr, lookup_kind(TV_LIGHT, SV_LIGHT_TORCH));
     i_ptr->number = (byte) rand_range(3, 7);
     i_ptr->pval = rand_range(3, 7) * 500;
     object_aware(i_ptr);

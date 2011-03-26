@@ -665,7 +665,7 @@ static size_t obj_desc_light(const object_type * o_ptr, char *buf, size_t max,
     object_flags(o_ptr, f);
 
     /* Fuelled light sources get number of remaining turns appended */
-    if ((o_ptr->tval == TV_LITE) && !artifact_p(o_ptr))
+    if ((o_ptr->tval == TV_LIGHT) && !artifact_p(o_ptr))
 	strnfcat(buf, max, &end, " (%d turns)", o_ptr->timeout);
 
     return end;
@@ -903,7 +903,7 @@ size_t object_desc(char *buf, size_t max, const object_type * o_ptr,
     if (mode & ODESC_COMBAT) {
 	if (o_ptr->tval == TV_CHEST)
 	    end = obj_desc_chest(o_ptr, buf, max, end);
-	else if (o_ptr->tval == TV_LITE)
+	else if (o_ptr->tval == TV_LIGHT)
 	    end = obj_desc_light(o_ptr, buf, max, end);
 
 	end = obj_desc_combat(o_ptr, buf, max, end, spoil);

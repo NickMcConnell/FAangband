@@ -101,7 +101,6 @@ s16b monster_level;		/* Current monster creation level */
 char summon_kin_type;		/* Hack -- See summon_specific() */
 
 s32b turn;			/* Current game turn */
-bool is_daylight;               /* If there is natural light */
 
 s32b do_feeling;		/* Hack -- Level feeling indicator */
 

@@ -41,7 +41,7 @@ void search(void)
     chance = p_ptr->state.skills[SKILL_SEARCH];
 
     /* Penalize various conditions */
-    if (p_ptr->timed[TMD_BLIND] || no_lite())
+    if (p_ptr->timed[TMD_BLIND] || no_light())
 	chance = chance / 10;
     if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC])
 	chance = chance / 10;
@@ -206,7 +206,7 @@ bool quiver_carry(object_type * o_ptr, int o_idx)
     int ammo_num, added_ammo_num;
     int attempted_quiver_slots;
 
-    bool blind = ((p_ptr->timed[TMD_BLIND]) || (no_lite()));
+    bool blind = ((p_ptr->timed[TMD_BLIND]) || (no_light()));
     bool autop;
     int old_num;
 
@@ -379,7 +379,7 @@ extern void py_pickup_aux(int o_idx)
 
     char o_name[120];
     object_type *o_ptr;
-    object_type *i_ptr = &p_ptr->inventory[INVEN_LITE];
+    object_type *i_ptr = &p_ptr->inventory[INVEN_LIGHT];
     bitflag f[OF_SIZE], obvious_mask[OF_SIZE];
 
     o_ptr = &o_list[o_idx];
@@ -974,14 +974,14 @@ void move_player(int dir, int do_pickup)
 	    if (cave_feat[y][x] < FEAT_SECRET) {
 		message(MSG_HITWALL, 0, "You feel a door blocking your way.");
 		cave_info[y][x] |= (CAVE_MARK);
-		lite_spot(y, x);
+		light_spot(y, x);
 	    }
 
 	    /* Wall (or secret door) */
 	    else {
 		message(MSG_HITWALL, 0, "You feel a wall blocking your way.");
 		cave_info[y][x] |= (CAVE_MARK);
-		lite_spot(y, x);
+		light_spot(y, x);
 	    }
 	}
 

@@ -914,7 +914,7 @@ static char *mon_restrict(char symbol, byte depth, bool * ordered,
 			       FLAG_END);
 		    strcpy(name, "dragon - sound");
 		} else if (i < 30) {
-		    flags_init(breath_flag_mask, RSF_SIZE, RSF_BRTH_LITE,
+		    flags_init(breath_flag_mask, RSF_SIZE, RSF_BRTH_LIGHT,
 			       RSF_BRTH_DARK, FLAG_END);
 		    strcpy(name, "dragon - ethereal");
 		}

@@ -537,15 +537,15 @@ void do_cmd_show_obj(void)
     }
 
     if ((item < INVEN_WIELD)
-	&& ((o_ptr->tval == TV_LITE) || (o_ptr->tval == TV_FLASK))) {
-	object_type *o1_ptr = &p_ptr->inventory[INVEN_LITE];
+	&& ((o_ptr->tval == TV_LIGHT) || (o_ptr->tval == TV_FLASK))) {
+	object_type *o1_ptr = &p_ptr->inventory[INVEN_LIGHT];
 
-	if (((o1_ptr->sval == SV_LITE_LANTERN)
+	if (((o1_ptr->sval == SV_LIGHT_LANTERN)
 	     && ((o_ptr->tval == TV_FLASK)
-		 || ((o_ptr->tval == TV_LITE)
-		     && (o_ptr->sval == SV_LITE_LANTERN))))
-	    || ((o1_ptr->sval == SV_LITE_TORCH) && (o_ptr->tval == TV_LITE)
-		&& (o_ptr->sval == SV_LITE_TORCH)))
+		 || ((o_ptr->tval == TV_LIGHT)
+		     && (o_ptr->sval == SV_LIGHT_LANTERN))))
+	    || ((o1_ptr->sval == SV_LIGHT_TORCH) && (o_ptr->tval == TV_LIGHT)
+		&& (o_ptr->sval == SV_LIGHT_TORCH)))
 	{
 	    comm[poss] = 'F';
 	    comm_code[poss] = CMD_REFILL;

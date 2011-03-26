@@ -650,7 +650,7 @@ grouper group_item[] =
     { TV_CHEST,		"Chests" },
     
     { TV_SPIKE,		"Various" },
-    { TV_LITE,		  NULL },
+    { TV_LIGHT,		  NULL },
     { TV_FLASK,		  NULL },
     { TV_JUNK,		  NULL },
     { TV_BOTTLE,	  NULL },
@@ -797,7 +797,7 @@ const grouper object_text_order [] =
 	{TV_SOFT_ARMOR,		"Soft Armor"	},
 	{TV_RING,		"Ring"			},
 	{TV_AMULET,		"Amulet"		},
-	{TV_LITE,		"Lite"			},
+	{TV_LIGHT,		"Light"			},
 	{TV_POTION,		"Potion"		},
 	{TV_SCROLL,		"Scroll"		},
 	{TV_WAND,		"Wand"			},
@@ -834,7 +834,7 @@ byte mana_cost[RSF_MAX]=
     0,			/* RSF_BRTH_COLD */
     0,			/* RSF_BRTH_POIS */
     0,			/* RSF_BRTH_PLAS */
-    0,			/* RSF_BRTH_LITE */
+    0,			/* RSF_BRTH_LIGHT */
     0,			/* RSF_BRTH_DARK */
     0,			/* RSF_BRTH_CONFU */
     0,			/* RSF_BRTH_SOUND */
@@ -857,7 +857,7 @@ byte mana_cost[RSF_MAX]=
     4,			/* RSF_BALL_FIRE */
     4,			/* RSF_BALL_COLD */
     4,			/* RSF_BALL_POIS */
-    5, 			/* RSF_BALL_LITE */
+    5, 			/* RSF_BALL_LIGHT */
     5, 			/* RSF_BALL_DARK */
     6, 			/* RSF_BALL_CONFU */
     4, 			/* RSF_BALL_SOUND */
@@ -985,7 +985,7 @@ byte spell_desire[RSF_MAX][D_MAX] =
     { 65,  0,   0,   5,	0,   0, LRN_COLD  ,   90}, /* RSF_BRTH_COLD */
     { 65,  0,   0,   5,	0,   0, LRN_POIS  ,   90}, /* RSF_BRTH_POIS */
     { 65,  0,   0,   5,	0,   0, LRN_PLAS  ,   90}, /* RSF_BRTH_PLAS */
-    { 50,  0,   0,   5,	0,   0, LRN_LITE  ,   90}, /* RSF_BRTH_LITE */
+    { 50,  0,   0,   5,	0,   0, LRN_LIGHT  ,   90}, /* RSF_BRTH_LIGHT */
     { 50,  0,   0,   5,	0,   0, LRN_DARK  ,   90}, /* RSF_BRTH_DARK */
     { 50,  0,   0,   5,	0,   0, LRN_CONFU ,   90}, /* RSF_BRTH_CONFU*/
     { 50,  0,   0,   5,	0,   0, LRN_SOUND ,   90}, /* RSF_BRTH_SOUND*/
@@ -1010,7 +1010,7 @@ byte spell_desire[RSF_MAX][D_MAX] =
     { 50,  0,   0,   0,	0,   0, LRN_FIRE  ,  100}, /* RSF_BALL_FIRE */
     { 50,  0,   0,   0,	0,   0, LRN_COLD  ,  100}, /* RSF_BALL_COLD */
     { 50,  0,   0,   0,	0,   0, LRN_POIS  ,  100}, /* RSF_BALL_POIS */
-    { 40,  0,   0,   0,	0,   0, LRN_LITE  ,  100}, /* RSF_BALL_LITE */
+    { 40,  0,   0,   0,	0,   0, LRN_LIGHT  ,  100}, /* RSF_BALL_LIGHT */
     { 40,  0,   0,   0,	0,   0, LRN_DARK  ,  100}, /* RSF_BALL_DARK */
     { 40,  0,   0,   0,	0,   0, LRN_CONFU ,  100}, /* RSF_BALL_CONFU*/
     { 40,  0,   0,   0,	0,   0, LRN_SOUND ,  100}, /* RSF_BALL_SOUND*/

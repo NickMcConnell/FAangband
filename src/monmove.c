@@ -336,8 +336,8 @@ static void update_smart_cheat(int m_idx)
 	m_ptr->smart |= (SM_RES_POIS);
     if (p_ptr->state.no_fear)
 	m_ptr->smart |= (SM_RES_FEAR);
-    if (p_resist_good(P_RES_LITE))
-	m_ptr->smart |= (SM_RES_LITE);
+    if (p_resist_good(P_RES_LIGHT))
+	m_ptr->smart |= (SM_RES_LIGHT);
     if (p_resist_good(P_RES_DARK))
 	m_ptr->smart |= (SM_RES_DARK);
     if (p_ptr->state.no_blind)
@@ -512,9 +512,9 @@ static int find_resist(int m_idx, int spell_lrn)
 	    return (a);
 	}
 	/* Light Spells */
-    case LRN_LITE:
+    case LRN_LIGHT:
 	{
-	    if (smart & (SM_RES_LITE))
+	    if (smart & (SM_RES_LIGHT))
 		return (30);
 	    else
 		return (0);
@@ -734,7 +734,7 @@ static int find_resist(int m_idx, int spell_lrn)
 	    accumulate += find_resist(m_idx, LRN_ELEC);
 	    accumulate += find_resist(m_idx, LRN_COLD);
 	    accumulate += find_resist(m_idx, LRN_POIS);
-	    accumulate += find_resist(m_idx, LRN_LITE);
+	    accumulate += find_resist(m_idx, LRN_LIGHT);
 	    accumulate += find_resist(m_idx, LRN_DARK);
 	    accumulate += find_resist(m_idx, LRN_CONFU);
 	    accumulate += find_resist(m_idx, LRN_SOUND);

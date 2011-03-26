@@ -115,7 +115,7 @@ static char *names[500];
 #define RES_COLD		55
 #define RES_POIS		56
 #define RES_FEAR		57
-#define RES_LITE		58
+#define RES_LIGHT		58
 #define RES_DARK		59
 #define RES_BLIND		60
 #define RES_CONFU		61
@@ -128,7 +128,7 @@ static char *names[500];
 
 #define SLOW_DIGEST		70
 #define FEATHER	 		71
-#define LITE			72
+#define LIGHT			72
 #define REGEN			73
 #define TELEPATHY		74
 #define SEE_INVIS		75
@@ -148,7 +148,7 @@ static char *names[500];
 #define VUL_FIRE		102
 #define VUL_COLD		103
 #define VUL_POIS		104
-#define VUL_LITE		105
+#define VUL_LIGHT		105
 #define VUL_DARK		106
 #define VUL_CONFU		107
 #define VUL_SOUND		108
@@ -567,11 +567,11 @@ static bool get_quality(bool on_credit, int purchase, int value, int a_idx)
 	    }
 	    break;
 	}
-    case RES_LITE:
+    case RES_LIGHT:
 	{
 	    choice = randint0(6);
 	    if (take_money(on_credit, 750 - 60 * choice)) {
-		a_ptr->percent_res[P_RES_LITE] = 40 + 5 * choice;
+		a_ptr->percent_res[P_RES_LIGHT] = 40 + 5 * choice;
 		return (TRUE);
 	    }
 	    break;
@@ -672,10 +672,10 @@ static bool get_quality(bool on_credit, int purchase, int value, int a_idx)
 	    }
 	    break;
 	}
-    case LITE:
+    case LIGHT:
 	{
 	    if (take_money(on_credit, 500)) {
-		of_on(a_ptr->flags_obj, OF_LITE);
+		of_on(a_ptr->flags_obj, OF_LIGHT);
 		return (TRUE);
 	    }
 	    break;
@@ -904,13 +904,13 @@ static bool get_quality(bool on_credit, int purchase, int value, int a_idx)
 	    }
 	    break;
 	}
-    case VUL_LITE:
+    case VUL_LIGHT:
 	{
-	    if (a_ptr->percent_res[P_RES_LITE] < RES_LEVEL_BASE)
+	    if (a_ptr->percent_res[P_RES_LIGHT] < RES_LEVEL_BASE)
 		return (FALSE);
 	    choice = randint0(6);
 	    if (take_money(on_credit, 0 - 60 * choice)) {
-		a_ptr->percent_res[P_RES_LITE] = RES_LEVEL_BASE + 5 * choice;
+		a_ptr->percent_res[P_RES_LIGHT] = RES_LEVEL_BASE + 5 * choice;
 		return (TRUE);
 	    }
 	    break;
@@ -1607,7 +1607,7 @@ static void choose_basic_theme(int a_idx)
 		}
 
 		/* Grant resist light and dark. */
-		get_quality(TRUE, RES_LITE, 0, a_idx);
+		get_quality(TRUE, RES_LIGHT, 0, a_idx);
 		get_quality(TRUE, RES_DARK, 0, a_idx);
 		/* Possibly resist blindness. */
 		if (randint1(2) == 1)
@@ -1722,7 +1722,7 @@ static void choose_basic_theme(int a_idx)
 		    get_quality(FALSE, MAGIC_MASTERY, randint0(4), a_idx);
 		/* Sometimes vulnerable to light or dark */
 		if (randint1(8) == 1)
-		    get_quality(FALSE, VUL_LITE, 0, a_idx);
+		    get_quality(FALSE, VUL_LIGHT, 0, a_idx);
 		else if (randint1(8) == 1)
 		    get_quality(FALSE, VUL_DARK, 0, a_idx);
 		/* ...but sight can bring fear */
@@ -1741,7 +1741,7 @@ static void choose_basic_theme(int a_idx)
 		}
 
 		/* Provide permanant light. */
-		get_quality(FALSE, LITE, 0, a_idx);
+		get_quality(FALSE, LIGHT, 0, a_idx);
 		/* Bless the weapon. */
 		get_quality(TRUE, BLESSED, 0, a_idx);
 		/* Bonus to wisdom. */
@@ -1765,7 +1765,7 @@ static void choose_basic_theme(int a_idx)
 		get_quality(FALSE, ADD_INT, randint1(4), a_idx);
 		/* Sometimes vulnerable to light */
 		if (randint1(5) == 1)
-		    get_quality(FALSE, VUL_LITE, 0, a_idx);
+		    get_quality(FALSE, VUL_LIGHT, 0, a_idx);
 		/* Comes at a cost */
 		if (randint1(3) == 1) {
 		    cf_on(a_ptr->flags_curse, CF_DRAIN_EXP);
@@ -1926,7 +1926,7 @@ static void choose_basic_theme(int a_idx)
 		get_quality(FALSE, ADD_WIS, randint1(4), a_idx);
 		/* Sometimes vulnerable to light */
 		if (randint1(5) == 1)
-		    get_quality(FALSE, VUL_LITE, 0, a_idx);
+		    get_quality(FALSE, VUL_LIGHT, 0, a_idx);
 	    }
 
 	    /* ...that evil creatures everywhere flee from. */
@@ -2277,9 +2277,9 @@ static void choose_basic_theme(int a_idx)
 		}
 
 		/* Grant permanant light. */
-		get_quality(TRUE, LITE, 1, a_idx);
+		get_quality(TRUE, LIGHT, 1, a_idx);
 		/* And resistance to light. */
-		get_quality(TRUE, RES_LITE, 0, a_idx);
+		get_quality(TRUE, RES_LIGHT, 0, a_idx);
 		/* Collect a suite of basic resists. */
 		if (randint1(5) < 3)
 		    get_quality(TRUE, RES_ACID, 0, a_idx);
@@ -2425,7 +2425,7 @@ static void choose_basic_theme(int a_idx)
 	    else if (selection < 55) {
 
 		/* Grant resistance to light and dark. */
-		get_quality(TRUE, RES_LITE, 0, a_idx);
+		get_quality(TRUE, RES_LIGHT, 0, a_idx);
 		get_quality(TRUE, RES_DARK, 0, a_idx);
 	    }
 
@@ -3062,8 +3062,8 @@ static void haggle_till_done(int a_idx)
 	    && (a_ptr->percent_res[P_RES_POIS] == RES_LEVEL_BASE))
 	    get_quality(TRUE, VUL_POIS, 0, a_idx);
 	if ((choice == 6)
-	    && (a_ptr->percent_res[P_RES_LITE] == RES_LEVEL_BASE))
-	    get_quality(TRUE, VUL_LITE, 0, a_idx);
+	    && (a_ptr->percent_res[P_RES_LIGHT] == RES_LEVEL_BASE))
+	    get_quality(TRUE, VUL_LIGHT, 0, a_idx);
 	if ((choice == 7)
 	    && (a_ptr->percent_res[P_RES_DARK] == RES_LEVEL_BASE))
 	    get_quality(TRUE, VUL_DARK, 0, a_idx);
@@ -3292,8 +3292,8 @@ static void haggle_till_done(int a_idx)
 		    get_quality(FALSE, SLOW_DIGEST, 0, a_idx);
 		if ((choice == 2) && (!(of_has(a_ptr->flags_obj, OF_FEATHER))))
 		    get_quality(FALSE, FEATHER, 0, a_idx);
-		if ((choice == 3) && (!(of_has(a_ptr->flags_obj, OF_LITE))))
-		    get_quality(FALSE, LITE, 1, a_idx);
+		if ((choice == 3) && (!(of_has(a_ptr->flags_obj, OF_LIGHT))))
+		    get_quality(FALSE, LIGHT, 1, a_idx);
 		if ((choice == 4) && (!(of_has(a_ptr->flags_obj, OF_REGEN))))
 		    get_quality(FALSE, REGEN, 0, a_idx);
 		if ((choice == 5) && (!(of_has(a_ptr->flags_obj, OF_SEE_INVIS))))
@@ -3322,8 +3322,8 @@ static void haggle_till_done(int a_idx)
 		    && (!(a_ptr->percent_res[P_RES_ELEC] == RES_LEVEL_BASE)))
 		    get_quality(FALSE, RES_ELEC, 0, a_idx);
 		if ((choice == 5)
-		    && (!(a_ptr->percent_res[P_RES_LITE] == RES_LEVEL_BASE)))
-		    get_quality(FALSE, RES_LITE, 0, a_idx);
+		    && (!(a_ptr->percent_res[P_RES_LIGHT] == RES_LEVEL_BASE)))
+		    get_quality(FALSE, RES_LIGHT, 0, a_idx);
 		if ((choice == 6)
 		    && (!(a_ptr->percent_res[P_RES_DARK] == RES_LEVEL_BASE)))
 		    get_quality(FALSE, RES_DARK, 0, a_idx);
@@ -3366,8 +3366,8 @@ static void haggle_till_done(int a_idx)
 		get_quality(FALSE, SLOW_DIGEST, 0, a_idx);
 	    if ((choice == 2) && (!(of_has(a_ptr->flags_obj, OF_FEATHER))))
 		get_quality(FALSE, FEATHER, 0, a_idx);
-	    if ((choice == 3) && (!(of_has(a_ptr->flags_obj, OF_LITE))))
-		get_quality(FALSE, LITE, 1, a_idx);
+	    if ((choice == 3) && (!(of_has(a_ptr->flags_obj, OF_LIGHT))))
+		get_quality(FALSE, LIGHT, 1, a_idx);
 	    if ((choice == 4) && (!(of_has(a_ptr->flags_obj, OF_REGEN))))
 		get_quality(FALSE, REGEN, 0, a_idx);
 	    if ((choice == 5) && (!(of_has(a_ptr->flags_obj, OF_SEE_INVIS))))
@@ -3394,8 +3394,8 @@ static void haggle_till_done(int a_idx)
 		    && (!(a_ptr->percent_res[P_RES_ELEC] == RES_LEVEL_BASE)))
 		    get_quality(FALSE, RES_ELEC, 0, a_idx);
 		if ((choice == 5)
-		    && (!(a_ptr->percent_res[P_RES_LITE] == RES_LEVEL_BASE)))
-		    get_quality(FALSE, RES_LITE, 0, a_idx);
+		    && (!(a_ptr->percent_res[P_RES_LIGHT] == RES_LEVEL_BASE)))
+		    get_quality(FALSE, RES_LIGHT, 0, a_idx);
 		if ((choice == 6)
 		    && (!(a_ptr->percent_res[P_RES_DARK] == RES_LEVEL_BASE)))
 		    get_quality(FALSE, RES_DARK, 0, a_idx);
@@ -3448,8 +3448,8 @@ static void haggle_till_done(int a_idx)
 		&& (!(a_ptr->percent_res[P_RES_ELEC] == RES_LEVEL_BASE)))
 		get_quality(TRUE, RES_ELEC, 0, a_idx);
 	    if ((choice == 5)
-		&& (!(a_ptr->percent_res[P_RES_LITE] == RES_LEVEL_BASE)))
-		get_quality(TRUE, RES_LITE, 0, a_idx);
+		&& (!(a_ptr->percent_res[P_RES_LIGHT] == RES_LEVEL_BASE)))
+		get_quality(TRUE, RES_LIGHT, 0, a_idx);
 	    if ((choice == 6)
 		&& (!(a_ptr->percent_res[P_RES_DARK] == RES_LEVEL_BASE)))
 		get_quality(TRUE, RES_DARK, 0, a_idx);
@@ -3477,8 +3477,8 @@ static void haggle_till_done(int a_idx)
 		    get_quality(FALSE, SLOW_DIGEST, 0, a_idx);
 		if ((choice == 2) && (!(of_has(a_ptr->flags_obj, OF_FEATHER))))
 		    get_quality(FALSE, FEATHER, 0, a_idx);
-		if ((choice == 3) && (!(of_has(a_ptr->flags_obj, OF_LITE))))
-		    get_quality(FALSE, LITE, 1, a_idx);
+		if ((choice == 3) && (!(of_has(a_ptr->flags_obj, OF_LIGHT))))
+		    get_quality(FALSE, LIGHT, 1, a_idx);
 		if ((choice == 4) && (!(of_has(a_ptr->flags_obj, OF_REGEN))))
 		    get_quality(FALSE, REGEN, 0, a_idx);
 		if ((choice == 5) && (!(of_has(a_ptr->flags_obj, OF_SEE_INVIS))))
@@ -3768,8 +3768,8 @@ static void make_terrible(int a_idx)
 		a_ptr->percent_res[P_RES_POIS] +=
 		    (2 * (100 - a_ptr->percent_res[P_RES_POIS]));
 	    if (randint1(3) == 1)
-		a_ptr->percent_res[P_RES_LITE] +=
-		    (2 * (100 - a_ptr->percent_res[P_RES_LITE]));
+		a_ptr->percent_res[P_RES_LIGHT] +=
+		    (2 * (100 - a_ptr->percent_res[P_RES_LIGHT]));
 	    if (randint1(3) == 1)
 		a_ptr->percent_res[P_RES_DARK] +=
 		    (2 * (100 - a_ptr->percent_res[P_RES_DARK]));
@@ -3799,7 +3799,7 @@ static void make_terrible(int a_idx)
 	    if (randint1(3) == 1)
 		of_off(a_ptr->flags_obj, OF_FEATHER);
 	    if (randint1(3) == 1)
-		of_off(a_ptr->flags_obj, OF_LITE);
+		of_off(a_ptr->flags_obj, OF_LIGHT);
 	    if (randint1(3) == 1)
 		of_off(a_ptr->flags_obj, OF_REGEN);
 	    if (randint1(3) == 1)

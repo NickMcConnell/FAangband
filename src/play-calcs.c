@@ -1242,38 +1242,38 @@ static void calc_hitpoints(void)
 
 
 /**
- * Extract and set the current "lite radius"
+ * Extract and set the current "light radius"
  */
 static void calc_torch(void)
 {
-    object_type *o_ptr = &p_ptr->inventory[INVEN_LITE];
+    object_type *o_ptr = &p_ptr->inventory[INVEN_LIGHT];
 
-    s16b old_lite = p_ptr->cur_lite;
+    s16b old_light = p_ptr->cur_light;
 
     /* Assume no light */
-    p_ptr->cur_lite = 0;
+    p_ptr->cur_light = 0;
 
     /* Player is glowing */
-    if (p_ptr->lite) {
-	notice_obj(OF_LITE, 0);
-	p_ptr->cur_lite += 1;
+    if (p_ptr->light) {
+	notice_obj(OF_LIGHT, 0);
+	p_ptr->cur_light += 1;
     }
 
-    /* Examine actual lites */
-    if (o_ptr->tval == TV_LITE) {
+    /* Examine actual lights */
+    if (o_ptr->tval == TV_LIGHT) {
 	/* Torches (with fuel) provide some light */
-	if ((o_ptr->sval == SV_LITE_TORCH) && (o_ptr->pval > 0)) {
-	    p_ptr->cur_lite += 1;
+	if ((o_ptr->sval == SV_LIGHT_TORCH) && (o_ptr->pval > 0)) {
+	    p_ptr->cur_light += 1;
 	}
 
 	/* Lanterns (with fuel) provide more light */
-	if ((o_ptr->sval == SV_LITE_LANTERN) && (o_ptr->pval > 0)) {
-	    p_ptr->cur_lite += 2;
+	if ((o_ptr->sval == SV_LIGHT_LANTERN) && (o_ptr->pval > 0)) {
+	    p_ptr->cur_light += 2;
 	}
 
-	/* Artifact Lites provide permanent, bright, light */
+	/* Artifact Lights provide permanent, bright, light */
 	if (artifact_p(o_ptr))
-	    p_ptr->cur_lite += 3;
+	    p_ptr->cur_light += 3;
     }
 
     /* Priests and Paladins get a bonus to light radius at level 35 and 45,
@@ -1283,33 +1283,33 @@ static void calc_torch(void)
 	 * option? */
 	if ((p_ptr->lev > 44)
 	    || ((p_ptr->lev > 34) && (player_has(PF_STRONG_MAGIC)))) {
-	    p_ptr->cur_lite += 1;
+	    p_ptr->cur_light += 1;
 	}
     }
 
     /* Special ability Holy Light */
     if (player_has(PF_HOLY_LIGHT))
-	p_ptr->cur_lite++;
+	p_ptr->cur_light++;
 
     /* Special ability Unlight */
     if (player_has(PF_UNLIGHT) || p_ptr->state.darkness) {
 	notice_obj(OF_DARKNESS, 0);
-	p_ptr->cur_lite--;
+	p_ptr->cur_light--;
     }
 
-    /* Reduce lite when running if requested */
-    if (p_ptr->running && OPT(view_reduce_lite)) {
-	/* Reduce the lite radius if needed */
-	if (p_ptr->cur_lite > 1)
-	    p_ptr->cur_lite = 1;
+    /* Reduce light when running if requested */
+    if (p_ptr->running && OPT(view_reduce_light)) {
+	/* Reduce the light radius if needed */
+	if (p_ptr->cur_light > 1)
+	    p_ptr->cur_light = 1;
     }
 
     /* Vampire shape */
-    if ((p_ptr->schange == SHAPE_VAMPIRE) && (p_ptr->cur_lite >= 3))
-	p_ptr->cur_lite = 2;
+    if ((p_ptr->schange == SHAPE_VAMPIRE) && (p_ptr->cur_light >= 3))
+	p_ptr->cur_light = 2;
 
-    /* Notice changes in the "lite radius" */
-    if (old_lite != p_ptr->cur_lite) {
+    /* Notice changes in the "light radius" */
+    if (old_light != p_ptr->cur_light) {
 	/* Update the visuals */
 	p_ptr->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
     }
@@ -1747,12 +1747,12 @@ static void shape_change_main(player_state *state)
 	    apply_resist(&state->res_list[P_RES_COLD], RES_BOOST_NORMAL);
 	    apply_resist(&state->dis_res_list[P_RES_COLD],
 			 RES_BOOST_NORMAL);
-	    apply_resist(&state->res_list[P_RES_LITE], RES_CUT_MINOR);
-	    apply_resist(&state->dis_res_list[P_RES_LITE], RES_CUT_MINOR);
-	    if (state->res_list[P_RES_LITE] < RES_CAP_EXTREME)
-		state->res_list[P_RES_LITE] = RES_CAP_EXTREME;
-	    if (state->dis_res_list[P_RES_LITE] < RES_CAP_EXTREME)
-		state->dis_res_list[P_RES_LITE] = RES_CAP_EXTREME;
+	    apply_resist(&state->res_list[P_RES_LIGHT], RES_CUT_MINOR);
+	    apply_resist(&state->dis_res_list[P_RES_LIGHT], RES_CUT_MINOR);
+	    if (state->res_list[P_RES_LIGHT] < RES_CAP_EXTREME)
+		state->res_list[P_RES_LIGHT] = RES_CAP_EXTREME;
+	    if (state->dis_res_list[P_RES_LIGHT] < RES_CAP_EXTREME)
+		state->dis_res_list[P_RES_LIGHT] = RES_CAP_EXTREME;
 	    state->regenerate = TRUE;
 	    state->to_a += 5;
 	    state->dis_to_a += 5;
@@ -1964,7 +1964,7 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
     state->ffall = FALSE;
     state->hold_life = FALSE;
     state->telepathy = FALSE;
-    state->lite = FALSE;
+    state->light = FALSE;
     state->sustain_str = FALSE;
     state->sustain_int = FALSE;
     state->sustain_wis = FALSE;
@@ -2035,8 +2035,8 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
 	state->slow_digest = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_FEATHER))
 	state->ffall = TRUE;
-    if (of_has(rp_ptr->flags_obj, OF_LITE))
-	state->lite = TRUE;
+    if (of_has(rp_ptr->flags_obj, OF_LIGHT))
+	state->light = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_REGEN))
 	state->regenerate = TRUE;
     if (of_has(rp_ptr->flags_obj, OF_TELEPATHY))
@@ -2148,8 +2148,8 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
 
     /* Specialty ability Holy Light */
     if (player_has(PF_HOLY_LIGHT)) {
-	apply_resist(&state->res_list[P_RES_LITE], RES_BOOST_NORMAL);
-	apply_resist(&state->dis_res_list[P_RES_LITE], RES_BOOST_NORMAL);
+	apply_resist(&state->res_list[P_RES_LIGHT], RES_BOOST_NORMAL);
+	apply_resist(&state->dis_res_list[P_RES_LIGHT], RES_BOOST_NORMAL);
     }
 
     /* Specialty ability Unlight */
@@ -2223,8 +2223,8 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
 	    state->slow_digest = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_FEATHER))
 	    state->ffall = TRUE;
-	if (of_has(o_ptr->flags_obj, OF_LITE))
-	    state->lite = TRUE;
+	if (of_has(o_ptr->flags_obj, OF_LIGHT))
+	    state->light = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_REGEN))
 	    state->regenerate = TRUE;
 	if (of_has(o_ptr->flags_obj, OF_TELEPATHY))
@@ -2384,7 +2384,7 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
 
     /* Unlight stealth boost */
     if (player_has(PF_UNLIGHT)) {
-	if ((p_ptr->cur_lite <= 0) && (!is_daylight)
+	if ((p_ptr->cur_light <= 0) && (!is_daylight)
 	    && !(cave_info[p_ptr->py][p_ptr->px] & CAVE_GLOW))
 	    state->skills[SKILL_STEALTH] += 6;
 	else

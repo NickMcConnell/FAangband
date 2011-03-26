@@ -589,7 +589,7 @@ typedef enum
 #define INVEN_LEFT      26
 #define INVEN_RIGHT     27
 #define INVEN_NECK      28
-#define INVEN_LITE      29
+#define INVEN_LIGHT      29
 #define INVEN_BODY      30
 #define INVEN_OUTER     31
 #define INVEN_ARM       32
@@ -826,7 +826,7 @@ enum
 #define P_RES_FIRE		2
 #define P_RES_COLD		3
 #define P_RES_POIS		4
-#define P_RES_LITE		5
+#define P_RES_LIGHT		5
 #define P_RES_DARK		6
 #define P_RES_CONFU		7
 #define P_RES_SOUND		8
@@ -959,8 +959,8 @@ enum
 #define GF_ICE          15
 #define GF_DRAGONFIRE   16     
 
-#define GF_LITE_WEAK	20	/* Light and darkness */
-#define GF_LITE         21
+#define GF_LIGHT_WEAK	20	/* Light and darkness */
+#define GF_LIGHT         21
 #define GF_DARK_WEAK	23
 #define GF_DARK         24
 #define GF_MORGUL_DARK	25
@@ -1030,7 +1030,7 @@ enum
 #define LRN_COLD	19
 #define LRN_POIS	20
 #define LRN_FEAR_SAVE	21
-#define LRN_LITE	22
+#define LRN_LIGHT	22
 #define LRN_DARK	23
 #define LRN_BLIND	24
 #define LRN_CONFU	25
@@ -1229,7 +1229,7 @@ enum
 #define EGO_LORDLINESS		29
 #define EGO_SEEING		30
 #define EGO_SERENITY		31	/* Changed in Oangband. */
-#define EGO_LITE		32
+#define EGO_LIGHT		32
 #define EGO_TELEPATHY		33
 #define EGO_REGENERATION	34
 #define EGO_TELEPORTATION	35
@@ -1418,7 +1418,7 @@ enum
 #define RBE_EAT_GOLD	5
 #define RBE_EAT_ITEM	6
 #define RBE_EAT_FOOD	7
-#define RBE_EAT_LITE	8
+#define RBE_EAT_LIGHT	8
 #define RBE_ACID	9
 #define RBE_ELEC	10
 #define RBE_FIRE	11
@@ -1769,7 +1769,7 @@ enum
 #define SM_RES_COLD		0x00080000
 #define SM_RES_POIS		0x00100000
 #define SM_RES_FEAR		0x00200000
-#define SM_RES_LITE		0x00400000
+#define SM_RES_LIGHT		0x00400000
 #define SM_RES_DARK		0x00800000
 #define SM_RES_BLIND	        0x01000000
 #define SM_RES_CONFU	        0x02000000
@@ -2116,7 +2116,7 @@ enum
  */
 #define RSF_BREATH_MASK \
         RSF_BRTH_ACID, RSF_BRTH_ELEC, RSF_BRTH_FIRE, RSF_BRTH_COLD, \
-         RSF_BRTH_POIS, RSF_BRTH_PLAS, RSF_BRTH_LITE, RSF_BRTH_DARK, \
+         RSF_BRTH_POIS, RSF_BRTH_PLAS, RSF_BRTH_LIGHT, RSF_BRTH_DARK, \
          RSF_BRTH_CONFU, RSF_BRTH_SOUND, RSF_BRTH_SHARD, RSF_BRTH_INER, \
          RSF_BRTH_GRAV, RSF_BRTH_FORCE, RSF_BRTH_NEXUS, RSF_BRTH_NETHR, \
          RSF_BRTH_CHAOS, RSF_BRTH_DISEN, RSF_BRTH_TIME, RSF_BRTH_STORM, \
@@ -2543,6 +2543,23 @@ enum
  */
 #define player_can_see_bold(Y,X) \
 	((cave_info[Y][X] & (CAVE_SEEN)) != 0)
+
+
+/**
+ * Is the player outside?
+ */
+#define outside \
+    ((stage_map[p_ptr->stage][STAGE_TYPE] != CAVE)     \
+     && (stage_map[p_ptr->stage][STAGE_TYPE] != VALLEY) \
+     && ((p_ptr->stage < 151) || (p_ptr->stage > 153)))
+
+
+
+/**
+ * Is the player in daylight?
+ */
+#define is_daylight = (((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2)) \
+		       && outside)
 
 
 /*

@@ -1254,7 +1254,7 @@ static void do_cmd_options_autosave(const char *name, int row)
         }
       
       
-      /* Hilite current option */
+      /* Hilight current option */
       Term_gotoxy(50, k + 2);
 
       button_add("F", 'F');

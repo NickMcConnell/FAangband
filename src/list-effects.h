@@ -176,7 +176,7 @@ EFFECT(TELEPORT_AWAY2, TRUE,   12,	"teleports a target monster away (distance: 5
 EFFECT(DISARMING,      TRUE,   6,	"destroys an adjacent trap, failure sets off the trap (success chance: 95%); adjacent doors are found and unlocked")
 EFFECT(DOOR_DEST,      TRUE,   4,	"destroys an adjacent door")
 EFFECT(STONE_TO_MUD,   TRUE,   6,	"turns rock into mud")
-EFFECT(LITE,           TRUE,   6,	"lights up part of the dungeon in a straight line (damage: 4 - 20)")
+EFFECT(LIGHT,          TRUE,   6,	"lights up part of the dungeon in a straight line (damage: 4 - 20)")
 EFFECT(SLEEP_MONSTER2, TRUE,   3,	"attempts to induce magical sleep in a single monster")
 EFFECT(SLOW_MONSTER2,  TRUE,   3,	"attempts to magically slow a single monster")
 EFFECT(CONFUSE_MONSTER, TRUE,  3,	"confuses a target monster")

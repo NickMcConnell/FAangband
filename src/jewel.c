@@ -515,11 +515,11 @@ static bool get_quality(bool on_credit, int purchase, int value,
 	  }
 	break;
       }
-    case LITE:
+    case LIGHT:
       {
 	if (take_money(on_credit, 300)) 
 	  {
-	    of_on(o_ptr->flags_obj, OF_LITE);
+	    of_on(o_ptr->flags_obj, OF_LIGHT);
 	    return(TRUE);
 	  }
 	break;
@@ -710,14 +710,14 @@ static bool get_quality(bool on_credit, int purchase, int value,
 	  }
 	break;
       }
-    case RES_LITE:
+    case RES_LIGHT:
       {
-	current = (o_ptr->percent_res[P_RES_LITE] / 5) - 8;
+	current = (o_ptr->percent_res[P_RES_LIGHT] / 5) - 8;
 	if (current <= 0) return (FALSE);
 	if (!value) value = randint0(MIN(current, 8));
 	if (take_money(on_credit, 60 * (current - value))) 
 	  {
-	    o_ptr->percent_res[P_RES_LITE] = 40 + 5 * value;
+	    o_ptr->percent_res[P_RES_LIGHT] = 40 + 5 * value;
 	    return(TRUE);
 	  }
 	break;
@@ -873,13 +873,13 @@ static bool get_quality(bool on_credit, int purchase, int value,
 	  }
 	break;
       }
-    case VUL_LITE:
+    case VUL_LIGHT:
       {
-	if (o_ptr->percent_res[P_RES_LITE] < RES_LEVEL_BASE) return(FALSE);
+	if (o_ptr->percent_res[P_RES_LIGHT] < RES_LEVEL_BASE) return(FALSE);
 	if (!value) value = randint1(6);
 	if (take_money(on_credit, 0 - 60 * value)) 
 	  {
-	    o_ptr->percent_res[P_RES_LITE] = RES_LEVEL_BASE + 5 * value;
+	    o_ptr->percent_res[P_RES_LIGHT] = RES_LEVEL_BASE + 5 * value;
 	    return(TRUE);
 	  }
 	break;
@@ -1529,7 +1529,7 @@ static bool choose_type(object_type *o_ptr)
 			if (randint1(8) == 1) 
 			  get_quality(FALSE, VUL_ELEC, 0, o_ptr);
 			if (randint1(8) == 1) 
-			  get_quality(FALSE, VUL_LITE, 0, o_ptr);
+			  get_quality(FALSE, VUL_LIGHT, 0, o_ptr);
 		      }
 		    
 		    /* Remaining 20% just get charisma */
@@ -1668,7 +1668,7 @@ static bool choose_type(object_type *o_ptr)
 		get_quality(TRUE, DARKNESS, 0, o_ptr);
 		get_quality(TRUE, STEALTH, randint0(bonus), o_ptr);
 		get_quality(TRUE, RES_DARK, 6 - randint0(bonus), o_ptr);
-		get_quality(TRUE, VUL_LITE, 5 - randint0(bonus), o_ptr);
+		get_quality(TRUE, VUL_LIGHT, 5 - randint0(bonus), o_ptr);
 
 		/* Maybe some infravision and perception */
 		if (randint1(4) == 1) 
@@ -1954,7 +1954,7 @@ static bool choose_type(object_type *o_ptr)
 	      {
 		int property;
 		int max_value = 5;
-		int utility[5] = {SEARCH, SLOW_DIGEST, FEATHER, LITE, REGEN};
+		int utility[5] = {SEARCH, SLOW_DIGEST, FEATHER, LIGHT, REGEN};
 		int tries = randint1(bonus + 2);
 
 		/* Pick a few properties */
@@ -2047,7 +2047,7 @@ static bool choose_type(object_type *o_ptr)
 
 		/* Power of seeing */
 		get_quality(TRUE, SEEING, 0, o_ptr);
-		get_quality(TRUE, RES_LITE, 0, o_ptr);
+		get_quality(TRUE, RES_LIGHT, 0, o_ptr);
 		get_quality(TRUE, RES_DARK, 0, o_ptr);
 
 		/* Maybe see invisible, if affordable */
@@ -2419,8 +2419,8 @@ static void add_properties(object_type *o_ptr)
 	  (o_ptr->percent_res[P_RES_ELEC] == RES_LEVEL_BASE))
 	get_quality(TRUE, RES_ELEC, 0, o_ptr);
       if ((choice == 5) && 
-	  (o_ptr->percent_res[P_RES_LITE] == RES_LEVEL_BASE))
-	get_quality(TRUE, RES_LITE, 0, o_ptr);
+	  (o_ptr->percent_res[P_RES_LIGHT] == RES_LEVEL_BASE))
+	get_quality(TRUE, RES_LIGHT, 0, o_ptr);
       if ((choice == 6) && 
 	  (o_ptr->percent_res[P_RES_DARK] == RES_LEVEL_BASE))
 	get_quality(TRUE, RES_DARK, 0, o_ptr);
@@ -2450,8 +2450,8 @@ static void add_properties(object_type *o_ptr)
 	    get_quality(FALSE, SLOW_DIGEST, 0, o_ptr);
 	  if ((choice == 2) && (!(of_has(o_ptr->flags_obj, OF_FEATHER))))
 	    get_quality(FALSE, FEATHER, 0, o_ptr);
-	  if ((choice == 3) && (!(of_has(o_ptr->flags_obj, OF_LITE))))
-	    get_quality(FALSE, LITE, 1, o_ptr);
+	  if ((choice == 3) && (!(of_has(o_ptr->flags_obj, OF_LIGHT))))
+	    get_quality(FALSE, LIGHT, 1, o_ptr);
 	  if ((choice == 4) && (!(of_has(o_ptr->flags_obj, OF_REGEN))))
 	    get_quality(FALSE, REGEN, 0, o_ptr);
 	  if ((choice == 5) && (!(of_has(o_ptr->flags_obj, OF_SEE_INVIS))))
@@ -2686,8 +2686,8 @@ static void j_make_terrible(object_type *o_ptr)
 	    o_ptr->percent_res[P_RES_POIS] += 
 	      (2 * (100 - o_ptr->percent_res[P_RES_POIS]));
 	  if (randint1(3) == 1) 
-	    o_ptr->percent_res[P_RES_LITE] += 
-	      (2 * (100 - o_ptr->percent_res[P_RES_LITE]));
+	    o_ptr->percent_res[P_RES_LIGHT] += 
+	      (2 * (100 - o_ptr->percent_res[P_RES_LIGHT]));
 	  if (randint1(3) == 1) 
 	    o_ptr->percent_res[P_RES_DARK] += 
 	      (2 * (100 - o_ptr->percent_res[P_RES_DARK]));
@@ -2715,7 +2715,7 @@ static void j_make_terrible(object_type *o_ptr)
 	  
 	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_SLOW_DIGEST);
 	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_FEATHER);
-	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_LITE);
+	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_LIGHT);
 	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_REGEN);
 	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_TELEPATHY);
 	  if (randint1(3) == 1) of_off(o_ptr->flags_obj, OF_SEE_INVIS);

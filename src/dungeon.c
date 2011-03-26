@@ -177,7 +177,7 @@ void sun_banish(void)
 	    continue;
 
 	/* Skip monsters not hurt by light */
-	if (!(rf_has(r_ptr->flags, RF_HURT_LITE)))
+	if (!(rf_has(r_ptr->flags, RF_HURT_LIGHT)))
 	    continue;
 
 	/* Banish */
@@ -252,7 +252,7 @@ static void process_world(void)
     bool hardy = (player_has(PF_HARDY));
 
     bool dawn;
-
+    
     /* Every 10 game turns */
     if (turn % 10)
 	return;
@@ -311,16 +311,8 @@ static void process_world(void)
 
     /*** Handle the "outside" (stores and sunshine) ***/
 
-    /* Determine daylight */
-    is_daylight = (((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
-		   && (stage_map[p_ptr->stage][STAGE_TYPE] != CAVE)
-		   && (stage_map[p_ptr->stage][STAGE_TYPE] != VALLEY)
-		   && ((p_ptr->stage < 151) || (p_ptr->stage > 153)));
-
     /* While not in cave, including cave towns */
-    if ((stage_map[p_ptr->stage][STAGE_TYPE] != CAVE)
-	&& (stage_map[p_ptr->stage][STAGE_TYPE] != VALLEY)
-	&& ((p_ptr->stage < 151) || (p_ptr->stage > 153))) {
+    if (outside) {
 	/* Hack -- Daybreak/Nightfall outside */
 	if (!(turn % ((10L * TOWN_DAWN) / 2))) {
 	    /* Check for dawn */
@@ -822,10 +814,10 @@ static void process_world(void)
   /*** Process Light ***/
 
     /* Check for light being wielded */
-    o_ptr = &p_ptr->inventory[INVEN_LITE];
+    o_ptr = &p_ptr->inventory[INVEN_LIGHT];
 
-    /* Burn some fuel in the current lite */
-    if (o_ptr->tval == TV_LITE) {
+    /* Burn some fuel in the current light */
+    if (o_ptr->tval == TV_LIGHT) {
 	/* Hack -- Use some fuel (except on artifacts) */
 	if (!artifact_p(o_ptr) && (o_ptr->pval > 0) && (!is_daylight)) {
 	    /* Decrease life-span */
@@ -1750,7 +1742,7 @@ static void process_player(void)
 		    shimmer_monsters = TRUE;
 
 		    /* Redraw regardless */
-		    lite_spot(m_ptr->fy, m_ptr->fx);
+		    light_spot(m_ptr->fy, m_ptr->fx);
 		}
 	    }
 
@@ -2246,7 +2238,7 @@ static void dungeon(void)
 	if (p_ptr->window)
 	    window_stuff();
 
-	/* Hack -- Hilite the player */
+	/* Hack -- Hilight the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
 
 	/* Optional fresh */
@@ -2279,7 +2271,7 @@ static void dungeon(void)
 	if (p_ptr->window)
 	    window_stuff();
 
-	/* Hack -- Hilite the player */
+	/* Hack -- Hilight the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
 
 	/* Optional fresh */
@@ -2310,7 +2302,7 @@ static void dungeon(void)
 	if (p_ptr->window)
 	    window_stuff();
 
-	/* Hack -- Hilite the player */
+	/* Hack -- Hilight the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
 
 	/* Optional fresh */

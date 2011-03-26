@@ -462,8 +462,8 @@ s16b wield_slot(const object_type * o_ptr)
     case TV_AMULET:
 	return (INVEN_NECK);
 
-    case TV_LITE:
-	return (INVEN_LITE);
+    case TV_LIGHT:
+	return (INVEN_LIGHT);
 
     case TV_DRAG_ARMOR:
     case TV_HARD_ARMOR:
@@ -539,7 +539,7 @@ const char *mention_use(int slot)
 	return "On right hand";
     case INVEN_NECK:
 	return "Around neck";
-    case INVEN_LITE:
+    case INVEN_LIGHT:
 	return "Light source";
     case INVEN_BODY:
 	return "On body";
@@ -595,7 +595,7 @@ cptr describe_use(int i)
     case INVEN_NECK:
 	p = "wearing around your neck";
 	break;
-    case INVEN_LITE:
+    case INVEN_LIGHT:
 	p = "using to light the way";
 	break;
     case INVEN_BODY:
@@ -892,7 +892,7 @@ void delete_object_idx(int o_idx)
 	x = j_ptr->ix;
 
 	/* Visual update */
-	lite_spot(y, x);
+	light_spot(y, x);
     }
 
     /* Wipe the object */
@@ -935,7 +935,7 @@ void delete_object(int y, int x)
     /* Objects are gone */ cave_o_idx[y][x] = 0;
 
     /* Visual update */
-    lite_spot(y, x);
+    light_spot(y, x);
 }
 
 
@@ -1466,7 +1466,7 @@ static s32b object_value_real(object_type * o_ptr)
     case TV_SOFT_ARMOR:
     case TV_HARD_ARMOR:
     case TV_DRAG_ARMOR:
-    case TV_LITE:
+    case TV_LIGHT:
     case TV_AMULET:
     case TV_RING:
 	{
@@ -1487,9 +1487,9 @@ static s32b object_value_real(object_type * o_ptr)
 	    if (if_has(o_ptr->id_other, IF_RES_POIS))
 		value +=
 		    (RES_LEVEL_BASE - o_ptr->percent_res[P_RES_POIS]) * 120L;
-	    if (if_has(o_ptr->id_other, IF_RES_LITE))
+	    if (if_has(o_ptr->id_other, IF_RES_LIGHT))
 		value +=
-		    (RES_LEVEL_BASE - o_ptr->percent_res[P_RES_LITE]) * 60L;
+		    (RES_LEVEL_BASE - o_ptr->percent_res[P_RES_LIGHT]) * 60L;
 	    if (if_has(o_ptr->id_other, IF_RES_DARK))
 		value +=
 		    (RES_LEVEL_BASE - o_ptr->percent_res[P_RES_DARK]) * 60L;
@@ -1646,7 +1646,7 @@ static s32b object_value_real(object_type * o_ptr)
 		value += 700L;
 	    if (of_has(o_ptr->id_obj, OF_FEARLESS))
 		value += 500L;
-	    if (of_has(o_ptr->id_obj, OF_LITE))
+	    if (of_has(o_ptr->id_obj, OF_LIGHT))
 		value += 300L;
 	    if (of_has(o_ptr->id_obj, OF_BLESSED))
 		value += 1000L;
@@ -2106,12 +2106,12 @@ bool object_similar(const object_type * o_ptr, const object_type * j_ptr,
 		return (FALSE);
 
 	    /* Hack - Never stack recharging wearables ... */
-	    if ((o_ptr->timeout || j_ptr->timeout) && (o_ptr->tval != TV_LITE))
+	    if ((o_ptr->timeout || j_ptr->timeout) && (o_ptr->tval != TV_LIGHT))
 		return FALSE;
 
 	    /* ... and lights must have same amount of fuel */
 	    else if ((o_ptr->timeout != j_ptr->timeout)
-		     && (o_ptr->tval == TV_LITE))
+		     && (o_ptr->tval == TV_LIGHT))
 		return FALSE;
 
 	    /* Probably okay */
@@ -2395,7 +2395,7 @@ s16b floor_carry(int y, int x, object_type * j_ptr)
 	note_spot(y, x);
 
 	/* Redraw */
-	lite_spot(y, x);
+	light_spot(y, x);
     }
 
     /* Result */
@@ -3047,7 +3047,7 @@ extern s16b inven_carry(struct player *p, struct object *o)
 		break;
 
 	    /* Lights sort by decreasing fuel */
-	    if (o->tval == TV_LITE) {
+	    if (o->tval == TV_LIGHT) {
 		if (o->pval > j_ptr->pval)
 		    break;
 		if (o->pval < j_ptr->pval)
@@ -3167,7 +3167,7 @@ s16b inven_takeoff(int item, int amt)
     }
 
     /* Took off light */
-    else if (item == INVEN_LITE) {
+    else if (item == INVEN_LIGHT) {
 	act = "You were holding";
     }
 
@@ -3431,7 +3431,7 @@ void reorder_pack(void)
 		break;
 
 	    /* Lights sort by decreasing fuel */
-	    if (o_ptr->tval == TV_LITE) {
+	    if (o_ptr->tval == TV_LIGHT) {
 		if (o_ptr->pval > j_ptr->pval)
 		    break;
 		if (o_ptr->pval < j_ptr->pval)
@@ -4552,14 +4552,14 @@ bool obj_can_activate(const object_type * o_ptr)
 
 bool obj_can_refill(const object_type * o_ptr)
 {
-    const object_type *j_ptr = &p_ptr->inventory[INVEN_LITE];
+    const object_type *j_ptr = &p_ptr->inventory[INVEN_LIGHT];
 
     /* Other lights of the same type are OK */
-    if ((o_ptr->tval == TV_LITE) && (o_ptr->sval == j_ptr->sval))
+    if ((o_ptr->tval == TV_LIGHT) && (o_ptr->sval == j_ptr->sval))
 	    return (TRUE);
     }
 
-    if (j_ptr->sval == SV_LITE_LANTERN) {
+    if (j_ptr->sval == SV_LIGHT_LANTERN) {
 	/* Flasks of oil are okay */
 	if (o_ptr->tval == TV_FLASK)
 	    return (TRUE);

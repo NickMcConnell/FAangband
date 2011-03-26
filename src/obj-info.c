@@ -167,7 +167,7 @@ static const flag_type sustain_flags[] =
 
 static const flag_type misc_flags[] =
 {
-    { OF_LITE,               "Provides permanent light" },
+    { OF_LIGHT,               "Provides permanent light" },
     { OF_IMPACT,             "Induces earthquakes" },
     { OF_DARKNESS,           "Allows you to see in the dark" },
     { OF_CHAOTIC,            "Causes chaotic effects" },
@@ -1313,9 +1313,9 @@ static bool describe_light(textblock *tb, const object_type *o_ptr, bool terse)
     int rad = 0;
 
     bool artifact = artifact_p(o_ptr);
-    bool is_light = (o_ptr->tval == TV_LITE) ? TRUE : FALSE;
+    bool is_light = (o_ptr->tval == TV_LIGHT) ? TRUE : FALSE;
 
-    if (o_ptr->tval != TV_LITE && !of_has(o_ptr->flags, OF_LIGHT))
+    if (o_ptr->tval != TV_LIGHT && !of_has(o_ptr->flags, OF_LIGHT))
 	return FALSE;
 
     /* Work out radius */

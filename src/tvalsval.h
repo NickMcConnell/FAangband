@@ -49,7 +49,7 @@
 #define TV_HARD_ARMOR   37	/* Hard Armor */
 #define TV_DRAG_ARMOR	38	/* Dragon Scale Mail */
 
-#define TV_LITE         39	/* Lites (including Specials) */
+#define TV_LIGHT         39	/* Lights (including Specials) */
 #define TV_AMULET       40	/* Amulets (including Specials) */
 #define TV_RING         45	/* Rings (including Specials) */
 #define TV_STAFF        55	/* Staffs */
@@ -283,8 +283,8 @@ enum sval_dragon_armour /* tval 38 */
 
 enum sval_light /* tval 39 */
 {
-        SV_LITE_TORCH = 0,
-        SV_LITE_LANTERN = 1,
+        SV_LIGHT_TORCH = 0,
+        SV_LIGHT_LANTERN = 1,
         SV_LAMP = 4,
         SV_PEARL = 5,
         SV_PALANTIR = 6,
@@ -363,7 +363,7 @@ enum sval_wand /* tval 65 */
         SV_WAND_DISARMING = 4,
         SV_WAND_DOOR_DEST = 5,
         SV_WAND_STONE_TO_MUD = 6,
-        SV_WAND_LITE = 7,
+        SV_WAND_LIGHT = 7,
         SV_WAND_SLEEP_MONSTER = 8,
         SV_WAND_SLOW_MONSTER = 9,
         SV_WAND_CONFUSE_MONSTER = 10,
@@ -404,7 +404,7 @@ enum sval_staff /* tval 55 */
         SV_STAFF_IDENTIFY = 5,
         SV_STAFF_REMOVE_CURSE = 6,
         SV_STAFF_STARLIGHT = 7,
-        SV_STAFF_LITE = 8,
+        SV_STAFF_LIGHT = 8,
         SV_STAFF_MAPPING = 9,
         SV_STAFF_DETECT_GOLD = 10,
         SV_STAFF_DETECT_ITEM = 11,
@@ -450,7 +450,7 @@ enum sval_rod /* tval 66 */
         SV_ROD_SPEED = 11,
         SV_ROD_TELEPORT_AWAY = 13,
         SV_ROD_DISARMING = 14,
-        SV_ROD_LITE = 15,
+        SV_ROD_LIGHT = 15,
         SV_ROD_SLEEP_MONSTER = 16,
         SV_ROD_SLOW_MONSTER = 17,
         SV_ROD_DRAIN_LIFE = 18,

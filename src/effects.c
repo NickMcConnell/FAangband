@@ -560,7 +560,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		(void) inc_timed(TMD_BLIND, 3 + randint1(5), TRUE);
 	    } else if (object_aware_p(o_ptr))
 		notice_obj(OF_SEEING, 0);
-	    if (unlite_area(10, 3))
+	    if (unlight_area(10, 3))
 		*ident = TRUE;
 	    return TRUE;
 	}
@@ -1027,7 +1027,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_ENLIGHTENMENT1:
 	{
 	    msg_print("An image of your surroundings forms in your mind...");
-	    wiz_lite(FALSE);
+	    wiz_light(FALSE);
 	    *ident = TRUE;
 	    return TRUE;
 	}
@@ -1037,7 +1037,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    /* Hack - 'show' effected region only with the first detect */
 	    msg_print("You begin to feel more enlightened...");
 	    msg_print(NULL);
-	    wiz_lite(TRUE);
+	    wiz_light(TRUE);
 	    (void) do_inc_stat(A_INT, TRUE);
 	    (void) do_inc_stat(A_WIS, TRUE);
 	    (void) detect_traps(DETECT_RAD_DEFAULT, TRUE);
@@ -1241,7 +1241,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_LIGHT:
 	{
-	    if (lite_area(damroll(2, 8), 2))
+	    if (light_area(damroll(2, 8), 2))
 		*ident = TRUE;
 	    return TRUE;
 	}
@@ -1605,7 +1605,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_STARBURST:
 	{
 	    msg_print("Light bright beyond enduring dazzles your foes!");
-	    fire_sphere(GF_LITE, 0, randint1(67) + 100, 5, 20);
+	    fire_sphere(GF_LIGHT, 0, randint1(67) + 100, 5, 20);
 	    *ident = TRUE;
 	    return TRUE;
 	}
@@ -1701,10 +1701,10 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    return TRUE;
 	}
 
-    case EF_LITE:
+    case EF_LIGHT:
 	{
 	    msg_print("A line of blue shimmering light appears.");
-	    lite_line(dir);
+	    light_line(dir);
 	    *ident = TRUE;
 	    return TRUE;
 	}
@@ -2129,12 +2129,12 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_GWINDOR:
 	{
-	    lite_area(damroll(2, 15), 3);
+	    light_area(damroll(2, 15), 3);
 	    return TRUE;
 	}
     case EF_DWARVES:
 	{
-	    wiz_lite(FALSE);
+	    wiz_light(FALSE);
 	    (void) detect_all(DUNGEON_WID, TRUE);
 	    return TRUE;
 	}
@@ -2195,7 +2195,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_GIL_GALAD:
 	{
-	    fire_sphere(GF_LITE, 0, 75, 6, 20);
+	    fire_sphere(GF_LIGHT, 0, 75, 6, 20);
 	    confu_monsters(3 * plev / 2);
 	    return TRUE;
 	}
@@ -2454,7 +2454,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		sound(((chance == 0 ? MSG_BR_LIGHT : MSG_BR_DARK)));
 		msg_format("You breathe %s.",
 			   ((chance == 0 ? "light" : "darkness")));
-		fire_arc((chance == 0 ? GF_LITE : GF_DARK), dir,
+		fire_arc((chance == 0 ? GF_LIGHT : GF_DARK), dir,
 			 (plev / 10 + 1) * 50, 10, 40);
 	    }
 	    o_ptr->timeout = randint0(50) + 50;
@@ -2740,7 +2740,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_RAND_LIGHT1:
 	{
 	    msg_print("You throw a radiant sphere...");
-	    TARGET_PRESERVE fire_ball(GF_LITE, dir, 50, 0, FALSE);
+	    TARGET_PRESERVE fire_ball(GF_LIGHT, dir, 50, 0, FALSE);
 	    TARGET_RESTORE fire_ball(GF_CONFUSION, dir, 10, 0, FALSE);
 	    o_ptr->timeout = 250;
 	    return TRUE;
@@ -2899,7 +2899,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_RAND_LINE_LIGHT:
 	{
 	    msg_print("A line of shimmering yellow light appears.");
-	    lite_line(dir);
+	    light_line(dir);
 	    o_ptr->timeout = 6 + randint1(6);
 	    return TRUE;
 	}
@@ -2907,7 +2907,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	{
 	    msg_print("Light radiates outward in all directions.");
 	    for (k = 0; k < 8; k++)
-		lite_line(ddd[k]);
+		light_line(ddd[k]);
 	    o_ptr->timeout = 8 + randint1(8);
 	    return TRUE;
 	}
@@ -3454,7 +3454,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 			continue;
 
 		    /* Hit it */
-		    (void) fire_meteor(-1, GF_LITE, y, x, 100, 1, FALSE);
+		    (void) fire_meteor(-1, GF_LIGHT, y, x, 100, 1, FALSE);
 		}
 
 	    o_ptr->timeout = 1500;

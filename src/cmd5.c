@@ -1025,7 +1025,7 @@ static char *view_abilities_aux(char *desc)
 		strcat(desc, " frost");
 	    if (j == P_RES_POIS)
 		strcat(desc, " poison");
-	    if (j == P_RES_LITE)
+	    if (j == P_RES_LIGHT)
 		strcat(desc, " light");
 	    if (j == P_RES_DARK)
 		strcat(desc, " darkness");
@@ -1100,7 +1100,7 @@ static char *view_abilities_aux(char *desc)
 		strcat(desc, " frost");
 	    if (j == P_RES_POIS)
 		strcat(desc, " poison");
-	    if (j == P_RES_LITE)
+	    if (j == P_RES_LIGHT)
 		strcat(desc, " light");
 	    if (j == P_RES_DARK)
 		strcat(desc, " darkness");
@@ -1154,7 +1154,7 @@ static char *view_abilities_aux(char *desc)
 
     /* Miscellaneous abilities. */
     if ((of_has(flags, OF_SLOW_DIGEST)) || (of_has(flags, OF_FEATHER))
-	|| (of_has(flags, OF_LITE)) || (of_has(flags, OF_REGEN))
+	|| (of_has(flags, OF_LIGHT)) || (of_has(flags, OF_REGEN))
 	|| (of_has(flags, OF_TELEPATHY)) || (of_has(flags, OF_SEE_INVIS))
 	|| (of_has(flags, OF_FREE_ACT)) || (of_has(flags, OF_HOLD_LIFE))) {
 	/* Clear number of items to list, and items listed. */
@@ -1166,7 +1166,7 @@ static char *view_abilities_aux(char *desc)
 	    attr_num++;
 	if (of_has(flags, OF_FEATHER))
 	    attr_num++;
-	if (of_has(flags, OF_LITE))
+	if (of_has(flags, OF_LIGHT))
 	    attr_num++;
 	if (of_has(flags, OF_REGEN))
 	    attr_num++;
@@ -1189,7 +1189,7 @@ static char *view_abilities_aux(char *desc)
 		list_ok = TRUE;
 	    if ((j == 1) && (of_has(flags, OF_FEATHER)))
 		list_ok = TRUE;
-	    if ((j == 2) && (of_has(flags, OF_LITE)))
+	    if ((j == 2) && (of_has(flags, OF_LIGHT)))
 		list_ok = TRUE;
 	    if ((j == 3) && (of_has(flags, OF_REGEN)))
 		list_ok = TRUE;

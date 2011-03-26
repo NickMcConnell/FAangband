@@ -559,7 +559,7 @@ static tval_desc tvals[] = {
     {TV_SOFT_ARMOR, "Soft Armor", TRUE},
     {TV_RING, "Ring", TRUE},
     {TV_AMULET, "Amulet", TRUE},
-    {TV_LITE, "Light", TRUE},
+    {TV_LIGHT, "Light", TRUE},
     {TV_POTION, "Potion", FALSE},
     {TV_SCROLL, "Scroll", FALSE},
     {TV_WAND, "Wand", TRUE},
@@ -2104,7 +2104,7 @@ void do_cmd_debug(void)
 	/* Fully wizard Light the Level */
     case 'w':
 	{
-	    wiz_lite(TRUE);
+	    wiz_light(TRUE);
 	    break;
 	}
 

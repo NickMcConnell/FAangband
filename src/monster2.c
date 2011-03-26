@@ -105,7 +105,7 @@ void delete_monster_idx(int i)
 
 
     /* Visual update */
-    lite_spot(y, x);
+    light_spot(y, x);
 }
 
 
@@ -1429,7 +1429,7 @@ void update_mon(int m_idx, bool full)
 	    m_ptr->ml = TRUE;
 
 	    /* Draw the monster */
-	    lite_spot(fy, fx);
+	    light_spot(fy, fx);
 
 	    /* Update health bar as needed */
 	    if (p_ptr->health_who == m_idx)
@@ -1457,7 +1457,7 @@ void update_mon(int m_idx, bool full)
 	    m_ptr->ml = FALSE;
 
 	    /* Erase the monster */
-	    lite_spot(fy, fx);
+	    light_spot(fy, fx);
 
 	    /* Update health bar as needed */
 	    if (p_ptr->health_who == m_idx)
@@ -1715,8 +1715,8 @@ void monster_swap(int y1, int x1, int y2, int x2)
     }
 
     /* Redraw */
-    lite_spot(y1, x1);
-    lite_spot(y2, x2);
+    light_spot(y1, x1);
+    light_spot(y2, x2);
 }
 
 
@@ -1900,7 +1900,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
     r_ptr = &r_info[r1_idx];
 
     /* No light hating monsters in daytime */
-    if ((rf_has(r_ptr->flags, RF_HURT_LITE))
+    if ((rf_has(r_ptr->flags, RF_HURT_LIGHT))
 	&& ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
 	&& (stage_map[p_ptr->stage][STAGE_TYPE] != CAVE)
 	&& (stage_map[p_ptr->stage][STAGE_TYPE] != VALLEY))
@@ -3403,12 +3403,12 @@ void update_smart_learn(int m_idx, int what)
 	}
 
 	/* Light attacks learn about light and blindness resistance */
-    case LRN_LITE:
+    case LRN_LIGHT:
 	{
-	    if (p_resist_good(P_RES_LITE))
-		m_ptr->smart |= (SM_RES_LITE);
+	    if (p_resist_good(P_RES_LIGHT))
+		m_ptr->smart |= (SM_RES_LIGHT);
 	    else
-		m_ptr->smart &= ~(SM_RES_LITE);
+		m_ptr->smart &= ~(SM_RES_LIGHT);
 	    break;
 	}
 
@@ -3757,7 +3757,7 @@ void update_smart_learn(int m_idx, int what)
 	    update_smart_learn(m_idx, LRN_ELEC);
 	    update_smart_learn(m_idx, LRN_COLD);
 	    update_smart_learn(m_idx, LRN_POIS);
-	    update_smart_learn(m_idx, LRN_LITE);
+	    update_smart_learn(m_idx, LRN_LIGHT);
 	    update_smart_learn(m_idx, LRN_DARK);
 	    update_smart_learn(m_idx, LRN_CONFU);
 	    update_smart_learn(m_idx, LRN_SOUND);

@@ -1154,7 +1154,7 @@ void py_steal(int y, int x)
     filching_power = 2 * p_ptr->lev;
 
     /* Penalize some conditions */
-    if (p_ptr->timed[TMD_BLIND] || no_lite())
+    if (p_ptr->timed[TMD_BLIND] || no_light())
 	filching_power = filching_power / 10;
     if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC])
 	filching_power = filching_power / 10;
@@ -1330,7 +1330,7 @@ bool py_set_trap(int y, int x)
 	1 + ((p_ptr->lev >= 25) ? 1 : 0) +
 	(player_has(PF_EXTRA_TRAP) ? 1 : 0);
 
-    if (p_ptr->timed[TMD_BLIND] || no_lite()) {
+    if (p_ptr->timed[TMD_BLIND] || no_light()) {
 	msg_print("You can not see to set a trap.");
 	return FALSE;
     }
@@ -1391,7 +1391,7 @@ bool py_set_trap(int y, int x)
 	}
 
 	/* Redraw */
-	lite_spot(y, x);
+	light_spot(y, x);
     }
 
     /* Set the trap, and draw it. */
@@ -1534,7 +1534,7 @@ bool trap_menu(void)
  */
 bool py_modify_trap(int y, int x)
 {
-    if (p_ptr->timed[TMD_BLIND] || no_lite()) {
+    if (p_ptr->timed[TMD_BLIND] || no_light()) {
 	msg_print("You can not see to modify your trap.");
 	return FALSE;
     }
