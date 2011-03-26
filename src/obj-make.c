@@ -243,8 +243,9 @@ void object_prep(object_type * o_ptr, int k_idx)
     o_ptr->dd = k_ptr->dd;
     o_ptr->ds = k_ptr->ds;
 
-    /* Default effect */
+    /* Default effect and time */
     o_ptr->effect = k_ptr->effect;
+    o_ptr->time = k_ptr->time;
 
     /* Default flags */
     o_ptr->flags_obj = k_ptr->flags_obj;
@@ -1117,6 +1118,7 @@ void apply_magic(object_type * o_ptr, int lev, bool okay, bool good, bool great)
 
 	/* Transfer the activation information. */
 	o_ptr->effect = a_ptr->effect;
+	o_ptr->time = a_ptr->time;
 
 	/* Mega-Hack -- increase the rating */
 	rating += 15;
@@ -1359,6 +1361,7 @@ void apply_magic(object_type * o_ptr, int lev, bool okay, bool good, bool great)
 
 	/* Get activation */
 	if (e_ptr->effect) o_ptr->effect = e_ptr->effect;
+	if (e_ptr->time) o_ptr->time = e_ptr->time;
 
 	/* Assign bonuses (random between base and ego) */
 	for (i = 0; i < A_MAX; i++) {

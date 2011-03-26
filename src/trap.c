@@ -921,7 +921,8 @@ void hit_trap(int y, int x)
 
 			/* case of charged rods. */
 			if ((o_ptr->tval == TV_ROD)
-			    && (o_ptr->timeout < (o_ptr->pval * o_ptr->number)))
+			    && (o_ptr->timeout < randcalc(o_ptr->time, 0, 
+							  MINIMISE)))
 			    num = 1;
 
 
@@ -935,8 +936,7 @@ void hit_trap(int y, int x)
 				o_ptr->pval = 0;
 
 			    if (o_ptr->tval == TV_ROD)
-				o_ptr->timeout =
-				    o_ptr->pval * o_ptr->number * 2;
+				o_ptr->timeout = randcalc(o_ptr->time, 0, RANDOMISE) * o_ptr->number * 2;
 
 
 			    /* Combine / Reorder the pack */

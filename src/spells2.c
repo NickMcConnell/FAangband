@@ -3112,8 +3112,6 @@ bool recharge(int power)
 		    msg_format("Wild magic consumes your %s!", o_name);
 
 		/* Reduce rod stack maximum timeout, drain wands. */
-		if (o_ptr->tval == TV_ROD)
-		    o_ptr->pval -= k_ptr->pval;
 		if (o_ptr->tval == TV_WAND)
 		    o_ptr->pval = 0;
 

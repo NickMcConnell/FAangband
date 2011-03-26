@@ -827,7 +827,7 @@ C:-20:10:0
 B:STEALTH[-4] | BRAND_FIRE[30] | RES_FIRE[45] 
 F:LITE | XTRA_DICE | HEAVY | FIRE_PROOF
 I:LITE | BRAND_FIRE
-E:BALROG_WHIP
+E:BALROG_WHIP:0
 D:This perilous demon's lash burns redly with the dread fires of Utumno, 
 D:doing triple damage to all monsters not resitant to fire, and 
 D:blazing so brightly as to light your path and disturb nearby foes.

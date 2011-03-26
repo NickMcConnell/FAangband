@@ -147,6 +147,102 @@ static void recharged_notice(object_type * o_ptr)
     }
 }
 
+/*
+ * Recharge activatable objects in the player's equipment
+ * and rods in the inventory and on the ground.
+ */
+static void recharge_objects(void)
+{
+	int i;
+
+	bool charged = FALSE, discharged_stack;
+
+	object_type *o_ptr;
+	object_kind *k_ptr;
+
+	/*** Recharge equipment ***/
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	{
+		/* Get the object */
+		o_ptr = &p_ptr->inventory[i];
+
+		/* Skip non-objects */
+		if (!o_ptr->k_idx) continue;
+
+		/* Recharge activatable objects */
+		if (recharge_timeout(o_ptr))
+		{
+			charged = TRUE;
+
+			/* Message if an item recharged */
+			recharged_notice(o_ptr, TRUE);
+		}
+	}
+
+	/* Notice changes */
+	if (charged)
+	{
+		/* Window stuff */
+		p_ptr->redraw |= (PR_EQUIP);
+	}
+
+	charged = FALSE;
+
+	/*** Recharge the inventory ***/
+	for (i = 0; i < INVEN_PACK; i++)
+	{
+		o_ptr = &p_ptr->inventory[i];
+		k_ptr = &k_info[o_ptr->k_idx];
+
+		/* Skip non-objects */
+		if (!o_ptr->k_idx) continue;
+
+		discharged_stack = (number_charging(o_ptr) == o_ptr->number) ? TRUE : FALSE;
+
+		/* Recharge rods, and update if any rods are recharged */
+		if (o_ptr->tval == TV_ROD && recharge_timeout(o_ptr))
+		{
+			charged = TRUE;
+
+			/* Entire stack is recharged */
+			if (o_ptr->timeout == 0)
+			{
+				recharged_notice(o_ptr, TRUE);
+			}
+
+			/* Previously exhausted stack has acquired a charge */
+			else if (discharged_stack)
+			{
+				recharged_notice(o_ptr, FALSE);
+			}
+		}
+	}
+
+	/* Notice changes */
+	if (charged)
+	{
+		/* Combine pack */
+		p_ptr->notice |= (PN_COMBINE);
+
+		/* Redraw stuff */
+		p_ptr->redraw |= (PR_INVEN);
+	}
+
+	/*** Recharge the ground ***/
+	for (i = 1; i < o_max; i++)
+	{
+		/* Get the object */
+		o_ptr = &o_list[i];
+
+		/* Skip dead objects */
+		if (!o_ptr->k_idx) continue;
+
+		/* Recharge rods on the ground */
+		if (o_ptr->tval == TV_ROD)
+			recharge_timeout(o_ptr);
+	}
+}
+
 /**
  * Remove light-sensitive monsters from sunlt areas
  */
@@ -854,7 +950,7 @@ static void process_world(void)
     p_ptr->update |= (PU_TORCH);
 
 
-  /*** Process Inventory ***/
+    /*** Process Inventory ***/
 
     /* Handle experience draining.  In Oangband, the effect is worse,
      * especially for high-level characters.  As per Tolkein, hobbits are
@@ -872,108 +968,9 @@ static void process_world(void)
 	}
     }
 
-    /* Process equipment */
-    for (j = 0, i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
-	/* Get the object */
-	o_ptr = &p_ptr->inventory[i];
+    /* Recharge activatable objects and rods */
+    recharge_objects();
 
-	/* Skip non-objects */
-	if (!o_ptr->k_idx)
-	    continue;
-
-	/* Recharge activatable objects */
-	if (o_ptr->timeout > 0) {
-	    /* Recharge */
-	    o_ptr->timeout--;
-
-	    /* Notice changes, provide message if object is inscribed. */
-	    if (!(o_ptr->timeout)) {
-		recharged_notice(o_ptr);
-		j++;
-	    }
-	}
-    }
-
-    /* Notice changes */
-    if (j) {
-	/* Redraw stuff */
-	p_ptr->redraw |= (PR_EQUIP);
-    }
-
-    /* Recharge rods.  Rods now use timeout to control charging status, and
-     * each charging rod in a stack decreases the stack's timeout by one per
-     * turn. -LM- */
-    for (j = 0, i = 0; i < INVEN_PACK; i++) {
-	o_ptr = &p_ptr->inventory[i];
-	k_ptr = &k_info[o_ptr->k_idx];
-
-	/* Skip non-objects */
-	if (!o_ptr->k_idx)
-	    continue;
-
-	/* Examine all charging rods or stacks of charging rods. */
-	if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout)) {
-
-	    /* Some rods should never get discharged at all */
-	    if (!k_ptr->pval)
-		temp = o_ptr->timeout;
-
-	    /* Determine how many rods are charging. */
-	    else {
-		temp = (o_ptr->timeout + (k_ptr->pval - 1)) / k_ptr->pval;
-		if (temp > o_ptr->number)
-		    temp = o_ptr->number;
-	    }
-
-	    /* Decrease timeout by that number. */
-	    o_ptr->timeout -= temp;
-
-	    /* Boundary control. */
-	    if (o_ptr->timeout < 0)
-		o_ptr->timeout = 0;
-
-	    /* Update if any rods are recharged */
-	    if (temp > (o_ptr->timeout + (k_ptr->pval - 1)) / k_ptr->pval) {
-		/* Update window */
-		j++;
-		/* Message if whole stack is recharged, if inscribed */
-		if (!(o_ptr->timeout))
-		    recharged_notice(o_ptr);
-	    }
-	}
-    }
-
-
-    /* Notice changes */
-    if (j) {
-	/* Combine pack */
-	p_ptr->notice |= (PN_COMBINE);
-
-	/* Redraw stuff */
-	p_ptr->redraw |= (PR_INVEN);
-    }
-
-  /*** Process Objects ***/
-
-    /* Process objects */
-    for (i = 1; i < o_max; i++) {
-	/* Access object */
-	o_ptr = &o_list[i];
-
-	/* Skip dead objects */
-	if (!o_ptr->k_idx)
-	    continue;
-
-	/* Recharge rods on the ground.  No messages. */
-	if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout)) {
-	    /* Charge it */
-	    o_ptr->timeout -= o_ptr->number;
-
-	    /* Boundary control. */
-	    if (o_ptr->timeout < 0)
-		o_ptr->timeout = 0;
-	}
-    }
 
 
   /*** Random curse effects ***/
@@ -1150,7 +1147,8 @@ static void process_world(void)
 		    has_charges = TRUE;
 
 		/* case of (at least partially) charged rods. */
-		if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout < o_ptr->pval))
+		if ((o_ptr->tval == TV_ROD) && 
+		    (o_ptr->timeout < randcalc(o_ptr->time, 0, MINIMISE)))
 		    has_charges = TRUE;
 
 		if (has_charges) {
@@ -1166,7 +1164,7 @@ static void process_world(void)
 
 		    /* New-style rods. */
 		    if (o_ptr->tval == TV_ROD)
-			o_ptr->timeout = o_ptr->pval;
+			o_ptr->timeout = randcalc(o_ptr->time, 0, RANDOMISE);
 
 
 		    /* Combine / Reorder the pack */

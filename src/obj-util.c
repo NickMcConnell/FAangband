@@ -3849,15 +3849,8 @@ void reduce_charges(object_type * o_ptr, int amt)
 int number_charging(const object_type * o_ptr)
 {
     int charge_time, num_charging;
-    random_value timeout;
 
-    /* Artifacts have a special timeout */
-    if (o_ptr->name1)
-	timeout = a_info[o_ptr->name1].time;
-    else
-	timeout = k_info[o_ptr->k_idx].time;
-
-    charge_time = randcalc(timeout, 0, AVERAGE);
+    charge_time = randcalc(o_ptr->time, 0, AVERAGE);
 
     /* Item has no timeout */
     if (charge_time <= 0)

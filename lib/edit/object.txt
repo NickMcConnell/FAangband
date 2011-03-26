@@ -539,7 +539,7 @@ W:6:0:50:400
 A:6/1
 P:4:1d3:0:0:0:250
 F:LITE | SHOW_MODS
-E:MAGESTAFF
+E:MAGESTAFF:15+d10
 D:A slender birch staff, enchanted to give light from the tip, which can be 
 D:activated by mages and necromancers to restore a little mana. It can be used 
 D:for attack or defence in an emergency.
@@ -3954,266 +3954,266 @@ D:
 
 N:568:Trap Location
 G:-:d
-I:66:0:40
+I:66:0:0
 W:10:0:15:700
 A:10/2:20/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:DETECT_TRAP
+E:DETECT_TRAP:40
 D:that reveals traps.
 
 N:569:Door/Stair Location
 G:-:d
-I:66:1:40
+I:66:1:0
 W:10:0:15:700
 A:10/2:20/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:DETECT_DOOR
+E:DETECT_DOOR:40
 D:that reveals doors and stairs.
 
 N:570:Perception
 G:-:d
-I:66:2:10
+I:66:2:0
 W:30:0:15:2000
 A:30/1
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:IDENTIFY
+E:IDENTIFY:10
 D:that provides basic information about any object.
 
 N:571:Recall
 G:-:d
-I:66:3:70
+I:66:3:0
 W:35:0:15:4000
 A:35/4
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:RECALL
+E:RECALL:70
 D:that recalls you back to town, or to the deepest spot you've been in the dungeon.
 
 N:572:Illumination
 G:-:d
-I:66:4:20
+I:66:4:0
 W:10:0:15:800
 A:10/1
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:LIGHT
+E:LIGHT:20
 D:that magically lights up a room or your immediate surroundings.
 
 N:573:Sense Surroundings
 G:-:d
-I:66:5:80
+I:66:5:0
 W:40:0:15:3000
 A:40/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:MAPPING
+E:MAPPING:80
 D:that reveals the local terrain.
 
 ## XXX 574 XXX (only available non-aimed rod svals are 6 and 12) ##
 
 N:575:Probing
 G:-:d
-I:66:7:40
+I:66:7:0
 W:45:0:15:4000
 A:45/4
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:PROBING
+E:PROBING:40
 D:that reveals the hidden strengths and weaknesses of foes.
 
 N:576:Curing
 G:-:d
-I:66:8:700
+I:66:8:0
 W:65:0:15:12000
 A:65/6
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:CURING
+E:CURING:700
 D:that removes a variety of specialized ailments.
 
 N:577:Healing
 G:-:d
-I:66:9:700
+I:66:9:0
 W:80:0:15:25000
 A:80/8
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:HEALING2
+E:HEALING2:700
 D:that restores your hitpoints~.
 
 N:578:Restoration
 G:-:d
-I:66:10:950
+I:66:10:0
 W:80:0:15:25000
 A:80/8
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:RESTORATION
+E:RESTORATION:950
 D:that restores the vitality of body and mind.
 
 N:579:Speed
 G:-:d
-I:66:11:120
+I:66:11:0
 W:90:0:15:50000
 A:90/8
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:SPEED2
+E:SPEED2:120
 D:that wonderfully hastens you.
 
 ## XXX 580 XXX (only available non-aimed rod svals are 6 and 12) ##
 
 N:581:Teleport Away
 G:-:d
-I:66:13:40
+I:66:13:0
 W:65:0:15:3250
 A:65/4
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:TELEPORT_AWAY1
+E:TELEPORT_AWAY1:40
 D:that hurtles a foe far from you.
 
 N:582:Disarming
 G:-:d
-I:66:14:25
+I:66:14:0
 W:35:0:15:2100
 A:35/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:DISARMING
+E:DISARMING:25
 D:that provides almost perfect disarming~.
 
 N:583:Light
 G:-:d
-I:66:15:24
+I:66:15:0
 W:10:0:15:800
 A:10/2:20/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:LITE
+E:LITE:24
 D:that shoots a beam of light~.
 
 N:584:Sleep Monster
 G:-:d
-I:66:16:25
+I:66:16:0
 W:30:0:15:1500
 A:30/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:SLEEP_MONSTER
+E:SLEEP_MONSTER:25
 D:that send an opponent to the land of dreams.
 
 N:585:Slow Monster
 G:-:d
-I:66:17:25
+I:66:17:0
 W:30:0:15:1500
 A:30/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-SLOW_MONSTER
+SLOW_MONSTER:25
 D:that renders an opponent slow and sluggish.
 
 N:586:Drain Life
 G:-:d
-I:66:18:20
+I:66:18:0
 W:75:0:15:3600
 A:75/4
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:DRAIN_LIFE2
+E:DRAIN_LIFE2:20
 D:that sucks the life force from a foe~.
 
 N:587:Polymorph
 G:-:d
-I:66:19:25
+I:66:19:0
 W:35:0:15:1200
 A:35/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:POLYMORPH
+E:POLYMORPH:25
 D:that strangely alters a foe.
 
 N:588:Acid Bolts
 G:-:d
-I:66:20:18
+I:66:20:0
 W:35:0:15:2700
 A:35/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:ACID_BOLT2
+E:ACID_BOLT2:18
 D:that shoots bolts of acid~.
 
 N:589:Lightning Bolts
 G:-:d
-I:66:21:14
+I:66:21:0
 W:25:0:15:2000
 A:25/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:ELEC_BOLT2
+E:ELEC_BOLT2:14
 D:that shoots electric bolts~.
 
 N:590:Fire Bolts
 G:-:d
-I:66:22:20
+I:66:22:0
 W:37:0:15:3000
 A:37/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:FIRE_BOLT2
+E:FIRE_BOLT2:20
 D:that shoots fire bolts~.
 
 N:591:Frost Bolts
 G:-:d
-I:66:23:16
+I:66:23:0
 W:31:0:15:2350
 A:31/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:COLD_BOLT2
+E:COLD_BOLT2:16
 D:that shoots frost bolts~.
 
 N:592:Acid Balls
 G:-:d
-I:66:24:32
+I:66:24:0
 W:60:0:15:5000
 A:60/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:ACID_BALL2
+E:ACID_BALL2:32
 D:that launches balls of acid~.
 
 N:593:Lightning Balls
 G:-:d
-I:66:25:26
+I:66:25:0
 W:50:0:15:4000
 A:50/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:ELEC_BALL2
+E:ELEC_BALL2:26
 D:that launches balls of lightning~.
 
 N:594:Fire Balls
 G:-:d
-I:66:26:34
+I:66:26:0
 W:65:0:15:6000
 A:65/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:FIRE_BALL2
+E:FIRE_BALL2:34
 D:that launches balls of fire~.
 
 N:595:Cold Balls
 G:-:d
-I:66:27:30
+I:66:27:0
 W:55:0:15:4500
 A:55/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:COLD_BALL2
+E:COLD_BALL2:30
 D:that launches balls of frost~.
 
 N:596:Lightning Strike
@@ -4224,50 +4224,50 @@ A:74/4
 P:0:1d1:0:0:0:0
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF | 
 F:EASY_KNOW
-E:LIGHTINGSTRIKE
+E:LIGHTINGSTRIKE:29
 D:that launches a bolt or beam of chain lightning~.
 
 N:597:Northwinds
 G:-:d
-I:66:29:32
+I:66:29:0
 W:78:0:15:15000
 A:78/4
 P:0:1d1:0:0:0:0
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF | 
 F:EASY_KNOW
-E:NORTHWINDS
+E:NORTHWINDS:32
 D:that launches a bolt or beam of killing ice~.
 
 N:598:Dragonfire
 G:-:d
-I:66:30:35
+I:66:30:0
 W:82:0:15:17500
 A:82/4
 P:0:1d1:0:0:0:0
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF | 
 F:EASY_KNOW
-E:DRAGONFIRE
+E:DRAGONFIRE:35
 D:that launches a bolt or beam of raging fire~.
 
 N:599:Glaurung's Blood
 G:-:d
-I:66:31:38
+I:66:31:0
 W:86:0:15:20000
 A:86/4
 P:0:1d1:0:0:0:0
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF | 
 F:EASY_KNOW
-E:GLAURUNGS
+E:GLAURUNGS:38
 D:that launches a bolt or beam of acid as deadly as Glaurung's blood~.
 
 N:600:Aggravate Level
 G:-:d
-I:66:32:40
+I:66:32:0
 W:30:0:15:0
 A:30/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:ROUSE_LEVEL
+E:ROUSE_LEVEL:40
 D:Awake! Awake! Fear, Fire, Foes! Awake!  The Horn-call of Buckland rings out, 
 D:and everyone on the level knows where to find you!
 
@@ -4296,7 +4296,6 @@ W:65:0:15:12500
 # A:65/40 TNB
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-E:DELVING
 D:
 
 
@@ -4304,12 +4303,11 @@ D:
 
 N:609:& Rod~
 G:-:d
-I:66:41:300
+I:66:41:0
 W:80:0:15:20000
 # A:80/40 TNB
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-E:SHADOW
 D:
 
 
@@ -4317,12 +4315,11 @@ D:
 
 N:610:& Rod~
 G:-:d
-I:66:42:75
+I:66:42:0
 W:85:0:15:25000
 # A:85/48 TNB
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-E:AIR
 D:
 
 
@@ -4330,12 +4327,11 @@ D:
 
 N:611:& Rod~
 G:-:d
-I:66:43:40
+I:66:43:0
 W:70:0:15:50000
 # A:70/64 TNB
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-E:PORTALS
 D:
 
 
