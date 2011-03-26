@@ -622,6 +622,9 @@ byte get_color(byte a, int attr, int n)
  */
 static void special_lighting_floor(byte *a, char *c, enum grid_light_level lighting, bool in_view)
 {
+    /* Huge hack for Lamp of Gwindor */
+    bool lamp = (p_ptr->inventory[INVEN_LITE].k_idx == 733);
+
     /* The floor starts off "lit" - i.e. rendered in white or the default 
      * tile. */
 
@@ -631,12 +634,20 @@ static void special_lighting_floor(byte *a, char *c, enum grid_light_level light
 	 * OPT(view_yellow_light) distinguishes between torchlit and 
 	 * permanently-lit areas 
 	 */
-	switch (use_graphics)
+	if ((check_ability(SP_UNLIGHT) || p_ptr->darkness) && 
+	    (p_ptr->cur_lite <= 0))
+	{
+	    /* "Dark radius" */
+	    
+	}
+ 	else switch (use_graphics)
 	{
 	case GRAPHICS_NONE:
 	case GRAPHICS_PSEUDO:
 	    /* Use "yellow" */
-	    if (*a == TERM_WHITE) *a = TERM_YELLOW;
+	    if (*a == TERM_WHITE) {
+		if (lamp) *a = TERM_L_BLUE;
+		else *a = TERM_YELLOW;
 	    break;
 	case GRAPHICS_ADAM_BOLT:
 	case GRAPHICS_NOMAD:
@@ -857,6 +868,11 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 			a = PICT_A(i);
 			c = PICT_C(i);
 		}
+		/* Hack to not display objects in trees */
+		else if ((cave_feat[y][x] == FEAT_TREE) || 
+			 (cave_feat[y][x] == FEAT_TREE2) || 
+			 (cave_feat[y][x] == FEAT_RUBBLE)) ;
+              
 		else
 		{
 			object_kind *k_ptr = &k_info[g->first_k_idx];
@@ -914,7 +930,7 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 					 rf_has(r_ptr->flags, RF_ATTR_FLICKER))
 			{
 				/* Multi-hued attr */
-				a = m_ptr->attr ? m_ptr->attr : 1;
+			    a = multi_hued_attr(r_ptr);
 				
 				/* Normal char */
 				c = dc;
@@ -1074,6 +1090,7 @@ void map_info(unsigned y, unsigned x, grid_data *g)
 {
     object_type *o_ptr;
     byte info, info2;
+    feature_type *f_ptr = &f_info[g->f_idx];
 
     assert(x < DUNGEON_WID);
     assert(y < DUNGEON_HGT);
@@ -1098,14 +1115,11 @@ void map_info(unsigned y, unsigned x, grid_data *g)
     if ((info & CAVE_MARK) || (info & CAVE_SEEN))
     {
 	/* Apply "mimic" field */
-	g->f_idx = f_info[g->f_idx].mimic;
+	g->f_idx = f_ptr->mimic;
 			
 	/* Boring grids (floors, etc) */
-	if (g->f_idx <= FEAT_INVIS)
+	if ((g->f_idx == FEAT_FLOOR) || (g->f_idx == FEAT_GRASS))
 	{
-	    /* Get the floor feature */
-	    g->f_idx = FEAT_FLOOR;
-
 	    /* Handle currently visible grids */
 	    if (info & CAVE_SEEN)
 	    {
@@ -1181,8 +1195,8 @@ void map_info(unsigned y, unsigned x, grid_data *g)
 	}
     }
 
-    assert(g->f_idx <= FEAT_PERM_SOLID);
-    assert(g->m_idx < (u32b) mon_max);
+    assert(g->f_idx <= FEAT_DUNE);
+    assert(g->m_idx < (u32b) m_max);
     assert(g->first_k_idx < z_info->k_max);
     /* All other g fields are 'flags', mostly booleans. */
 }
