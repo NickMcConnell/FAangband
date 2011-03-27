@@ -406,33 +406,78 @@ s16b label_to_equip(int c)
  */
 bool wearable_p(const object_type *o_ptr)
 {
-	/* Valid "tval" codes */
-	switch (o_ptr->tval)
+    /* Valid "tval" codes */
+    switch (o_ptr->tval)
+    {
+    case TV_SHOT:
+    case TV_ARROW:
+    case TV_BOLT:
+    case TV_BOW:
+    case TV_DIGGING:
+    case TV_HAFTED:
+    case TV_POLEARM:
+    case TV_SWORD:
+    case TV_BOOTS:
+    case TV_GLOVES:
+    case TV_HELM:
+    case TV_CROWN:
+    case TV_SHIELD:
+    case TV_CLOAK:
+    case TV_SOFT_ARMOR:
+    case TV_HARD_ARMOR:
+    case TV_DRAG_ARMOR:
+    case TV_LIGHT:
+    case TV_AMULET:
+    case TV_RING: return (TRUE);
+    }
+
+    /* Nope */
+    return (FALSE);
+}
+
+int get_inscribed_ammo_slot(const object_type *o_ptr)
+{
+    char *s;
+    if (!o_ptr->note) return 0;
+    s = strchr(quark_str(o_ptr->note), 'f');
+    if (!s || s[1] < '0' || s[1] > '9') return 0;
+
+    return QUIVER_START + (s[1] - '0');
+}
+
+/**
+ * Used by wield_slot() to find an appopriate slot for ammo. See wield_slot()
+ * for information on what this returns.
+ */
+s16b wield_slot_ammo(const object_type *o_ptr)
+{
+    s16b i, open = 0;
+
+    /* If the ammo is inscribed with a slot number, we'll try to put it in */
+    /* that slot, if possible. */
+    i = get_inscribed_ammo_slot(o_ptr);
+    if (i && !p_ptr->inventory[i].k_idx) return i;
+
+    for (i = QUIVER_START; i < QUIVER_END; i++)
+    {
+	if (!p_ptr->inventory[i].k_idx)
 	{
-		case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-		case TV_BOW:
-		case TV_DIGGING:
-		case TV_HAFTED:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_HELM:
-		case TV_CROWN:
-		case TV_SHIELD:
-		case TV_CLOAK:
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_DRAG_ARMOR:
-		case TV_LIGHT:
-		case TV_AMULET:
-		case TV_RING: return (TRUE);
+	    /* Save the open slot if we haven't found one already */
+	    if (!open) open = i;
+	    continue;
 	}
 
-	/* Nope */
-	return (FALSE);
+	/* If ammo is cursed we can't stack it */
+	if (cf_has(p_ptr->inventory[i].flags_curse, CF_STICKY_WIELD))
+	    continue;
+
+	/* If they are stackable, we'll use this slot for sure */
+	if (object_similar(&p_ptr->inventory[i], o_ptr,
+			   OSTACK_QUIVER)) return i;
+    }
+
+    /* If not absorbed, return an open slot (or QUIVER_START if no room) */
+    return open ? open : QUIVER_START;
 }
 
 /**
@@ -520,53 +565,43 @@ const char *mention_use(int slot)
 {
     switch (slot) {
     case INVEN_WIELD:
-	{
-	    if (adj_str_hold[p_ptr->state.stat_ind[A_STR]] <
-		p_ptr->inventory[slot].weight / 10)
-		return "Just lifting";
-	    else
-		return "Wielding";
-	}
+    {
+	if (adj_str_hold[p_ptr->state.stat_ind[A_STR]] <
+	    p_ptr->inventory[slot].weight / 10)
+	    return "Just lifting";
+	else
+	    return "Wielding";
+    }
     case INVEN_BOW:{
-	    if (adj_str_hold[p_ptr->state.stat_ind[A_STR]] <
-		p_ptr->inventory[slot].weight / 10)
-		return "Just holding";
-	    else
-		return "Shooting";
-	}
+	if (adj_str_hold[p_ptr->state.stat_ind[A_STR]] <
+	    p_ptr->inventory[slot].weight / 10)
+	    return "Just holding";
+	else
+	    return "Shooting";
+    }
 
-    case INVEN_LEFT:
-	return "On left hand";
-    case INVEN_RIGHT:
-	return "On right hand";
-    case INVEN_NECK:
-	return "Around neck";
-    case INVEN_LIGHT:
-	return "Light source";
-    case INVEN_BODY:
-	return "On body";
-    case INVEN_OUTER:
-	return "About body";
-    case INVEN_ARM:
-	return "On arm";
-    case INVEN_HEAD:
-	return "On head";
-    case INVEN_HANDS:
-	return "On hands";
-    case INVEN_FEET:
-	return "On feet";
+    case INVEN_LEFT:	return "On left hand";
+    case INVEN_RIGHT:	return "On right hand";
+    case INVEN_NECK:	return "Around neck";
+    case INVEN_LIGHT:	return "Light source";
+    case INVEN_BODY:	return "On body";
+    case INVEN_OUTER:	return "About body";
+    case INVEN_ARM:	return "On arm";
+    case INVEN_HEAD:	return "On head";
+    case INVEN_HANDS:	return "On hands";
+    case INVEN_FEET:	return "On feet";
 
-    case INVEN_Q0:
-    case INVEN_Q1:
-    case INVEN_Q2:
-    case INVEN_Q3:
-    case INVEN_Q4:
-    case INVEN_Q5:
-    case INVEN_Q6:
-    case INVEN_Q7:
-    case INVEN_Q8:
-    case INVEN_Q9:
-	return "In quiver";
+
+    case QUIVER_START + 0: return "In quiver [f0]";
+    case QUIVER_START + 1: return "In quiver [f1]";
+    case QUIVER_START + 2: return "In quiver [f2]";
+    case QUIVER_START + 3: return "In quiver [f3]";
+    case QUIVER_START + 4: return "In quiver [f4]";
+    case QUIVER_START + 5: return "In quiver [f5]";
+    case QUIVER_START + 6: return "In quiver [f6]";
+    case QUIVER_START + 7: return "In quiver [f7]";
+    case QUIVER_START + 8: return "In quiver [f8]";
+    case QUIVER_START + 9: return "In quiver [f9]";
     }
     
     return "In pack";
@@ -582,29 +617,21 @@ cptr describe_use(int i)
     cptr p;
 
     switch (i) {
-    case INVEN_WIELD:
-	p = "attacking monsters with";
+    case INVEN_WIELD:	p = "attacking monsters with";
 	break;
-    case INVEN_BOW:
-	p = "shooting missiles with";
+    case INVEN_BOW:	p = "shooting missiles with";
 	break;
-    case INVEN_LEFT:
-	p = "wearing on your left hand";
+    case INVEN_LEFT:	p = "wearing on your left hand";
 	break;
-    case INVEN_RIGHT:
-	p = "wearing on your right hand";
+    case INVEN_RIGHT:	p = "wearing on your right hand";
 	break;
-    case INVEN_NECK:
-	p = "wearing around your neck";
+    case INVEN_NECK:	p = "wearing around your neck";
 	break;
-    case INVEN_LIGHT:
-	p = "using to light the way";
+    case INVEN_LIGHT:	p = "using to light the way";
 	break;
-    case INVEN_BODY:
-	p = "wearing on your body";
+    case INVEN_BODY:	p = "wearing on your body";
 	break;
-    case INVEN_OUTER:
-	p = "wearing on your back";
+    case INVEN_OUTER:	p = "wearing on your back";
 	break;
     case INVEN_ARM:{
 	if (p_ptr->state.shield_on_back)
@@ -613,25 +640,22 @@ cptr describe_use(int i)
 	    p = "wearing on your arm";
 	break;
     }
-    case INVEN_HEAD:
-	p = "wearing on your head";
+    case INVEN_HEAD:	p = "wearing on your head";
 	break;
-    case INVEN_HANDS:
-	p = "wearing on your hands";
+    case INVEN_HANDS:	p = "wearing on your hands";
 	break;
-    case INVEN_FEET:
-	p = "wearing on your feet";
+    case INVEN_FEET:	p = "wearing on your feet";
 	break;
-    case INVEN_Q0:
-    case INVEN_Q1:
-    case INVEN_Q2:
-    case INVEN_Q3:
-    case INVEN_Q4:
-    case INVEN_Q5:
-    case INVEN_Q6:
-    case INVEN_Q7:
-    case INVEN_Q8:
-    case INVEN_Q9:
+    case QUIVER_START + 0:
+    case QUIVER_START + 1:
+    case QUIVER_START + 2:
+    case QUIVER_START + 3:
+    case QUIVER_START + 4:
+    case QUIVER_START + 5:
+    case QUIVER_START + 6:
+    case QUIVER_START + 7:
+    case QUIVER_START + 8:
+    case QUIVER_START + 9:
 	{
 	    p = "have in your quiver";
 	    break;
@@ -2799,8 +2823,14 @@ void save_quiver_size(struct player *p)
  */
 int compare_ammo(int slot1, int slot2)
 {
-	/* Right now there is no sorting criteria */
-	return 0;
+    object_type *o1 = &p_ptr->inventory[slot1 + QUIVER_START];
+    object_type *o2 = &p_ptr->inventory[slot2 + QUIVER_START];
+    bool throw1 = !is_missile(o1);
+    bool throw2 = !is_missile(o2);
+
+    if (throw1 && !throw2) return (-1);
+    else if (!throw1 && throw2) return (1);
+    else return 0;
 }
 
 /**
@@ -3063,26 +3093,52 @@ void floor_item_charges(int item)
  */
 bool inven_carry_okay(object_type * o_ptr)
 {
-    int j;
-
     /* Empty slot? */
-    if (p_ptr->inven_cnt < INVEN_PACK - p_ptr->pack_size_reduce)
-	return (TRUE);
+    if (p_ptr->inven_cnt < INVEN_MAX_PACK) return TRUE;
 
-    /* Similar slot? */
-    for (j = 0; j < INVEN_PACK - p_ptr->pack_size_reduce; j++) {
-	object_type *j_ptr = &p_ptr->inventory[j];
-
-	/* Skip non-objects */
-	if (!j_ptr->k_idx)
-	    continue;
-
-	/* Check if the two items can be combined */
-	if (object_similar(j_ptr, o_ptr))
-	    return (TRUE);
-    }
+    /* Check if it can stack */
+    if (inven_stack_okay(o_ptr)) return TRUE;
 
     /* Nope */
+    return (FALSE);
+}
+
+
+/*
+ * Check to see if an item is stackable in the inventory
+ */
+bool inven_stack_okay(const object_type *o_ptr)
+{
+    /* Similar slot? */
+    int j;
+
+    /* If our pack is full and we're adding too many missiles, there won't be
+     * enough room in the quiver, so don't check it. */
+    int limit;
+
+    if (!pack_is_full())
+	/* The pack has more room */
+	limit = ALL_INVEN_TOTAL;
+    else if (p_ptr->quiver_remainder == 0)
+	/* Quiver already maxed out */
+	limit = INVEN_PACK;
+    else if (p_ptr->quiver_remainder + o_ptr->number > 99)
+	/* Too much new ammo */
+	limit = INVEN_PACK;
+    else
+	limit = ALL_INVEN_TOTAL;
+
+    for (j = 0; j < limit; j++)
+    {
+	object_type *j_ptr = &p_ptr->inventory[j];
+
+	/* Skip equipped items and non-objects */
+	if (j >= INVEN_PACK && j < QUIVER_START) continue;
+	if (!j_ptr->k_idx) continue;
+
+	/* Check if the two items can be combined */
+	if (object_similar(j_ptr, o_ptr, OSTACK_PACK)) return (TRUE);
+    }
     return (FALSE);
 }
 
@@ -3139,16 +3195,19 @@ extern s16b inven_carry(struct player *p, struct object *o)
 	    /* Redraw stuff */
 	    p->redraw |= (PR_INVEN);
 
+	    /* Save quiver size */
+	    save_quiver_size(p);
+
 	    /* Success */
 	    return (j);
 	}
     }
-    /* Paranoia */ if (p->inven_cnt > INVEN_PACK)
+    /* Paranoia */ if (p->inven_cnt > INVEN_MAX_PACK)
 	return (-1);
 
 
     /* Find an empty slot */
-    for (j = 0; j <= INVEN_PACK; j++) {
+    for (j = 0; j <= INVEN_MAX_PACK; j++) {
 	j_ptr = &p->inventory[j];
 
 	/* Use it if found */
@@ -3160,7 +3219,7 @@ extern s16b inven_carry(struct player *p, struct object *o)
     i = j;
 
     /* Reorder the pack */
-    if (i < INVEN_PACK) {
+    if (i < INVEN_MAX_PACK) {
 	s32b o_value, j_value;
 
 	/* Get the "value" of the item */
@@ -3251,6 +3310,9 @@ extern s16b inven_carry(struct player *p, struct object *o)
     p->notice |= (PN_COMBINE | PN_REORDER);
     p->redraw |= (PR_INVEN);
 
+    /* Save quiver size */
+    save_quiver_size(p);
+
     /* Return the slot */
     return (i);
 }
@@ -3329,12 +3391,6 @@ s16b inven_takeoff(int item, int amt)
     /* Took off light */
     else if (item == INVEN_LIGHT) {
 	act = "You were holding";
-    }
-
-    /* Removed something from the quiver slots */
-    else if ((item >= INVEN_Q0) && (item <= INVEN_Q9)) {
-	act = "You removed";
-	act2 = " from your quiver";
     }
 
     /* Took off something */
@@ -3643,267 +3699,6 @@ void reorder_pack(void)
 }
 
 
-/**
- * Count number of missiles in the quiver slots.
- */
-int quiver_count(void)
-{
-    int i;
-    int ammo_num = 0;
-
-    /* Scan the slots */
-    for (i = INVEN_Q0; i <= INVEN_Q9; i++) {
-	/* Get the item */
-	object_type *i_ptr = &p_ptr->inventory[i];
-
-	/* Ignore empty. */
-	if (!i_ptr->k_idx)
-	    continue;
-
-	/* Tally up thrown weapons and missiles. */
-	if (of_has(i_ptr->flags_obj, OF_THROWING) && (!is_missile(i_ptr))
-	    && (i_ptr->tval <= TV_SWORD))
-	    ammo_num += i_ptr->number * THROWER_AMMO_FACTOR;
-	else
-	    ammo_num += i_ptr->number;
-    }
-
-    /* Return */
-    return (ammo_num);
-}
-
-
-/**
- * Calculate and apply the reduction in pack size due to use of the
- * Quiver.
- */
-void find_quiver_size(void)
-{
-    int ammo_num = quiver_count();
-
-    /* Every 99 missile-equivalents in the quiver takes up one backpack slot. */
-    p_ptr->pack_size_reduce =
-	(ammo_num + MAX_STACK_SIZE - 2) / (MAX_STACK_SIZE - 1);
-}
-
-/**
- * Update (combine and sort ammo in) the quiver.  If requested, find 
- * the right slot to put new ammo in, make it available, and return it.
- *
- * Items marked with inscriptions of the form "@ [any letter or none] 
- * [any digit]" ("@f4", "@4", etc.) will be placed in the slot the 
- * digit corresponds to.  Everything else will be sorted around them.
- */
-int process_quiver(int num_new, object_type * o_ptr)
-{
-    int i, j, k;
-
-    int slot = 0;
-
-    s32b i_value;
-    s32b j_value;
-
-    object_type *i_ptr;
-    object_type *j_ptr;
-
-    object_type object_type_body;
-
-    bool flag = FALSE;
-
-    bool track = FALSE;
-
-    bool temp_slot = FALSE;
-
-    /* Combine the quiver (backwards) */
-    for (i = INVEN_Q9; i > INVEN_Q0; i--) {
-	/* Get the item */
-	i_ptr = &p_ptr->inventory[i];
-
-	/* Skip empty items */
-	if (!i_ptr->k_idx)
-	    continue;
-
-	/* Scan the items above that item */
-	for (j = INVEN_Q0; j < i; j++) {
-	    /* Get the item */
-	    j_ptr = &p_ptr->inventory[j];
-
-	    /* Skip empty items */
-	    if (!j_ptr->k_idx)
-		continue;
-
-	    /* Can we drop "i_ptr" onto "j_ptr"? */
-	    if (object_similar(j_ptr, i_ptr)) {
-		/* Take note */
-		flag = TRUE;
-
-		/* Add together the item counts */
-		object_absorb(j_ptr, i_ptr);
-
-		/* One object is gone */
-		p_ptr->equip_cnt--;
-
-		/* Slide everything down */
-		for (k = i; k < INVEN_Q9; k++) {
-		    /* Hack -- slide object */
-		    (void) COPY(&p_ptr->inventory[k], &p_ptr->inventory[k + 1], object_type);
-		}
-
-		/* Hack -- wipe hole */
-		object_wipe(&p_ptr->inventory[k]);
-
-		/* Redraw stuff */
-		p_ptr->redraw |= (PR_EQUIP);
-
-		/* Done */
-		break;
-	    }
-	}
-    }
-
-    /* If requested, find a slot for new ammo. */
-    if (num_new) {
-
-	/* Search for available slots. */
-	for (i = INVEN_Q0; i <= INVEN_Q9; i++) {
-	    /* Get the item */
-	    i_ptr = &p_ptr->inventory[i];
-
-	    /* Accept empty slot */
-	    if (!i_ptr->k_idx) {
-		slot = i;
-		temp_slot = TRUE;
-		continue;
-	    }
-
-	    /* Accept slot that has space to absorb more */
-	    if ((object_similar(o_ptr, i_ptr))
-		&& ((num_new + i_ptr->number) < 100)) {
-		slot = i;
-		temp_slot = FALSE;
-		break;
-	    }
-	}
-
-	/* TEMPORARILY put the new ammo in the quiver for sorting. */
-	if (temp_slot) {
-	    object_copy(&p_ptr->inventory[slot], o_ptr);
-	}
-
-    }
-
-    /* Re-order the quiver (forwards) */
-    for (i = INVEN_Q0; i <= INVEN_Q9; i++) {
-	/* Get the item */
-	i_ptr = &p_ptr->inventory[i];
-
-	/* Skip empty slots */
-	if (!i_ptr->k_idx)
-	    continue;
-
-	/* Get the "value" of the item */
-	i_value = object_value(i_ptr);
-
-	/* Scan every occupied slot */
-	for (j = INVEN_Q0; j <= INVEN_Q9; j++) {
-	    /* Get the item already there */
-	    j_ptr = &p_ptr->inventory[j];
-
-	    /* Use empty slots */
-	    if (!j_ptr->k_idx)
-		break;
-
-	    /* Objects sort by decreasing type */
-	    if (i_ptr->tval > j_ptr->tval)
-		break;
-	    if (i_ptr->tval < j_ptr->tval)
-		continue;
-
-	    /* Non-aware (flavored) items always come last */
-	    if (!object_aware_p(i_ptr))
-		continue;
-	    if (!object_aware_p(j_ptr))
-		break;
-
-	    /* Objects sort by increasing sval */
-	    if (i_ptr->sval < j_ptr->sval)
-		break;
-	    if (i_ptr->sval > j_ptr->sval)
-		continue;
-
-	    /* Unidentified objects always come last */
-	    if (!object_known_p(i_ptr))
-		continue;
-	    if (!object_known_p(j_ptr))
-		break;
-
-	    /* Determine the "value" of the pack item */
-	    j_value = object_value(j_ptr);
-
-	    /* Objects sort by decreasing value */
-	    if (i_value > j_value)
-		break;
-	    if (i_value < j_value)
-		continue;
-	}
-
-	/* Never move down */
-	if (j >= i)
-	    continue;
-
-	/* Take note */
-	flag = TRUE;
-
-	/* Get local object */
-	j_ptr = &object_type_body;
-
-	/* Save a copy of the moving item */
-	object_copy(j_ptr, &p_ptr->inventory[i]);
-
-	/* Keep track of 'new' item */
-	if (slot == i) {
-	    slot = j;
-	    track = TRUE;
-	}
-
-	/* Slide the objects */
-	for (k = i; k > j;) {
-	    /* Slide the item */
-	    object_copy(&p_ptr->inventory[k], &p_ptr->inventory[k - 1]);
-
-	    /* Keep track of 'new' item */
-	    if ((slot == k - 1) && (!track))
-		slot = k;
-
-	    /* Move down to the next alterable slot. */
-	    k -= 1;
-	}
-
-	/* Helper for tracking 'new' ammo */
-	track = FALSE;
-
-	/* Insert the moving item */
-	object_copy(&p_ptr->inventory[j], j_ptr);
-
-	/* Redraw stuff */
-	p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
-    }
-
-    /* Remove temporary ammo.  Will be added for real later. */
-    if (temp_slot)
-	object_wipe(&p_ptr->inventory[slot]);
-
-    /* Calculate backpack reduction */
-    find_quiver_size();
-
-    /* Message */
-    if ((!num_new) && (flag))
-	msg_print("You reorganize your quiver.");
-
-    return (slot);
-
-}
-
 
 /**
  *Returns the number of times in 1000 that @ will FAIL
@@ -3943,7 +3738,7 @@ int get_use_device_chance(const object_type * o_ptr)
     return 1000 - prob;
 }
 
-/*
+/**
  * Distribute charges of rods, staves, or wands.
  *
  * o_ptr = source item
@@ -4096,8 +3891,8 @@ int lookup_kind(int tval, int sval)
 	if ((k_ptr->tval == tval) && (k_ptr->sval == sval))
 	    return (k);
     }
-    /* Failure */ msg_format("No object (%s,%d)", tval_find_name(tval), tval,
-			     sval);
+    /* Failure */ 
+    msg_format("No object (%s,%d)", tval_find_name(tval), tval, sval);
     return 0;
 }
 
@@ -4171,8 +3966,8 @@ static const grouper tval_names[] = {
     { TV_FOOD,	"food"},
     { TV_MAGIC_BOOK, "magic book"},
     { TV_PRAYER_BOOK, "prayer book"},
-    { TV_DRUID_BOOK, "stones of lore"},
-    { TV_NECRO_BOOK, "necromantic tomes"},
+    { TV_DRUID_BOOK, "stone of lore"},
+    { TV_NECRO_BOOK, "necromantic tome"},
     { TV_GOLD,	"gold"},
 
 };
@@ -4369,9 +4164,7 @@ void display_object_idx_recall(s16b item)
  */
 void display_object_kind_recall(s16b k_idx)
 {
-    object_type object = {
-	0
-    };
+    object_type object = { 0 };
     object_prep(&object, &k_info[k_idx], 0, EXTREMIFY);
     if (k_info[k_idx].aware)
 	object.ident |= IDENT_STORE;

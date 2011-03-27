@@ -27,15 +27,16 @@
 /**
  * Search for hidden things
  */
-void search(void)
+bool search(bool verbose)
 {
     int py = p_ptr->py;
     int px = p_ptr->px;
 
     int y, x, chance;
 
-    s16b this_o_idx, next_o_idx = 0;
+    bool found = FALSE;
 
+    object_type *o_ptr;
 
     /* Start with base search ability */
     chance = p_ptr->state.skills[SKILL_SEARCH];
@@ -46,6 +47,20 @@ void search(void)
     if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC])
 	chance = chance / 10;
 
+    /* Prevent fruitless searches */
+    if (chance <= 0)
+    {
+	if (verbose)
+	{
+	    msg_print("You can't make out your surroundings well enough to search.");
+
+	    /* Cancel repeat */
+	    disturb(0, 0);
+	}
+
+	return FALSE;
+    }
+
     /* Search the nearby grids, which are always in bounds */
     for (y = (py - 1); y <= (py + 1); y++) {
 	for (x = (px - 1); x <= (px + 1); x++) {
@@ -55,6 +70,8 @@ void search(void)
 	    if (randint0(100) < chance) {
 		/* Invisible trap */
 		if (tf_has(f_ptr->flags, TF_TRAP_INVIS)) {
+		    found = TRUE;
+
 		    /* Pick a trap */
 		    pick_trap(y, x);
 
@@ -67,6 +84,8 @@ void search(void)
 
 		/* Secret door */
 		if (cave_feat[y][x] == FEAT_SECRET) {
+		    found = TRUE;
+
 		    /* Message */
 		    msg_print("You have found a secret door.");
 
@@ -78,19 +97,15 @@ void search(void)
 		}
 
 		/* Scan all objects in the grid */
-		for (this_o_idx = cave_o_idx[y][x]; this_o_idx;
-		     this_o_idx = next_o_idx) {
-		    object_type *o_ptr;
-
-		    /* Acquire object */
-		    o_ptr = &o_list[this_o_idx];
-
-		    /* Acquire next object */
-		    next_o_idx = o_ptr->next_o_idx;
-
+		for (o_ptr = get_first_object(y, x); o_ptr; 
+		     o_ptr = get_next_object(o_ptr)) 
+		{
 		    /* Skip non-chests */
 		    if (o_ptr->tval != TV_CHEST)
 			continue;
+
+		    /* Skip disarmed chests */
+		    if (o_ptr->pval <= 0) continue;
 
 		    /* Skip non-trapped chests */
 		    if (!chest_traps[o_ptr->pval])
@@ -98,6 +113,8 @@ void search(void)
 
 		    /* Identify once */
 		    if (!object_known_p(o_ptr)) {
+			found = TRUE;
+
 			/* Message */
 			msg_print("You have discovered a trap on the chest!");
 
@@ -111,6 +128,15 @@ void search(void)
 	    }
 	}
     }
+    if (verbose && !found)
+    {
+	if (chance >= 100)
+	    msg_print("There are no secrets here.");
+	else
+	    msg_print("You found nothing.");
+    }
+
+    return TRUE;
 }
 
 
@@ -1050,16 +1076,15 @@ void move_player(int dir, int do_pickup)
 
 	    /* Spontaneous Searching */
 	    if (p_ptr->state.skills[SKILL_SEARCH_FREQUENCY] > 49) {
-		search();
-	    } else if (0 ==
-		       randint0(50 -
-				p_ptr->state.skills[SKILL_SEARCH_FREQUENCY])) {
-		search();
+		(void) search(FALSE);
+	    } else if (0 == randint0(50 - p_ptr->state.skills[SKILL_SEARCH_FREQUENCY])) 
+	    {
+		(void) search(FALSE);
 	    }
 
 	    /* Continuous Searching */
 	    if (p_ptr->searching) {
-		search();
+		(void) search(FALSE);
 	    }
 
 	    /* Handle "objects".  Do not use extra energy for objects picked

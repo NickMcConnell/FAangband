@@ -466,11 +466,9 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
  */
 void do_cmd_search(cmd_code code, cmd_arg args[])
 {
-    /* Take a turn */
-    p_ptr->energy_use = 100;
-
-    /* Search */
-    search();
+    /* Only take a turn if attempted */
+    if (search(TRUE))
+	p_ptr->energy_use = 100;
 }
 
 
@@ -2138,7 +2136,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 
 		/* Occasional Search XXX XXX */
 		if (randint0(100) < 25)
-		    search();
+		    (void) search(FALSE);
 	    }
 	}
     }
@@ -3237,14 +3235,15 @@ static void do_cmd_hold_or_stay(int pickup)
 
     /* Spontaneous Searching */
     if (p_ptr->state.skills[SKILL_SEARCH_FREQUENCY] >= 50) {
-	search();
-    } else if (0 == randint0(50 - p_ptr->state.skills[SKILL_SEARCH_FREQUENCY])) {
-	search();
+	(void) search(FALSE);
+    } 
+    else if (0 == randint0(50 - p_ptr->state.skills[SKILL_SEARCH_FREQUENCY])) {
+	(void) search(FALSE);
     }
 
     /* Continuous Searching */
     if (p_ptr->searching) {
-	search();
+	(void) search(FALSE);
     }
 
     /* Handle "objects".  Do not charge extra energy for objects picked up. */

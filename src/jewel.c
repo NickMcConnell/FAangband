@@ -1272,7 +1272,7 @@ static int select_property(int temp_potential, int *property_list,
 	else prices[i][j] = TOO_MUCH;
 
 	/* If the copy hasn't changed, the property was already there */
-	if (object_similar(o_ptr, i_ptr)) prices[i][j] = 0;
+	if (object_similar(o_ptr, i_ptr, OSTACK_NONE)) prices[i][j] = 0;
       }
 
   /* Initialise best */

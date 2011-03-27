@@ -465,95 +465,6 @@ static s16b label_to_store(int c)
 
 
 
-/**
- * Determine if a store object can "absorb" another object
- *
- * See "object_similar()" for the same function for the "player"
- */
-static bool store_object_similar(object_type * o_ptr, object_type * j_ptr)
-{
-    int i;
-
-    /* Hack -- Identical items cannot be stacked */
-    if (o_ptr == j_ptr)
-	return (FALSE);
-
-    /* Different objects cannot be stacked */
-    if (o_ptr->k_idx != j_ptr->k_idx)
-	return (FALSE);
-
-    /* Different charges (etc) cannot be stacked, unless wands or rods. */
-    if ((o_ptr->pval != j_ptr->pval) && (o_ptr->tval != TV_WAND)
-	&& (o_ptr->tval != TV_ROD))
-	return (FALSE);
-
-    /* Require many identical values */
-    if (o_ptr->to_h != j_ptr->to_h)
-	return (FALSE);
-    if (o_ptr->to_d != j_ptr->to_d)
-	return (FALSE);
-    if (o_ptr->to_a != j_ptr->to_a)
-	return (FALSE);
-
-    /* Require identical "artifact" names */
-    if (o_ptr->name1 != j_ptr->name1)
-	return (FALSE);
-
-    /* Require identical "ego-item" names */
-    if (o_ptr->name2 != j_ptr->name2)
-	return (FALSE);
-
-    /* Require identical activation */
-    if (o_ptr->activation != j_ptr->activation)
-	return (FALSE);
-
-    /* Hack -- Never stack recharging items */
-    if (o_ptr->timeout || j_ptr->timeout)
-	return (FALSE);
-
-    /* Require many identical values */
-    if (o_ptr->ac != j_ptr->ac)
-	return (FALSE);
-    if (o_ptr->dd != j_ptr->dd)
-	return (FALSE);
-    if (o_ptr->ds != j_ptr->ds)
-	return (FALSE);
-
-    /* Require matching resists etc */
-    for (i = 0; i < MAX_P_RES; i++)
-	if (o_ptr->percent_res[i] != j_ptr->percent_res[i])
-	    return (FALSE);
-    for (i = 0; i < A_MAX; i++)
-	if (o_ptr->bonus_stat[i] != j_ptr->bonus_stat[i])
-	    return (FALSE);
-    for (i = 0; i < MAX_P_BONUS; i++)
-	if (o_ptr->bonus_other[i] != j_ptr->bonus_other[i])
-	    return (FALSE);
-    for (i = 0; i < MAX_P_SLAY; i++)
-	if (o_ptr->multiple_slay[i] != j_ptr->multiple_slay[i])
-	    return (FALSE);
-    for (i = 0; i < MAX_P_BRAND; i++)
-	if (o_ptr->multiple_brand[i] != j_ptr->multiple_brand[i])
-	    return (FALSE);
-
-    /* Require matching flags */
-    if (o_ptr->flags_obj != j_ptr->flags_obj)
-	return (FALSE);
-    if (o_ptr->flags_curse != j_ptr->flags_curse)
-	return (FALSE);
-
-    /* Hack -- Never stack chests */
-    if (o_ptr->tval == TV_CHEST)
-	return (FALSE);
-
-    /* Require matching discounts */
-    if (o_ptr->discount != j_ptr->discount)
-	return (FALSE);
-
-    /* They match, so they must be similar */
-    return (TRUE);
-}
-
 
 /**
  * Allow a store object to absorb another object
@@ -601,7 +512,7 @@ static bool store_check_num(object_type * o_ptr)
 	    j_ptr = &st_ptr->stock[i];
 
 	    /* Can the new object be combined with the old one? */
-	    if (object_similar(j_ptr, o_ptr))
+	    if (object_similar(j_ptr, o_ptr, OSTACK_PACK))
 		return (TRUE);
 	}
     }
@@ -614,7 +525,7 @@ static bool store_check_num(object_type * o_ptr)
 	    j_ptr = &st_ptr->stock[i];
 
 	    /* Can the new object be combined with the old one? */
-	    if (store_object_similar(j_ptr, o_ptr))
+	    if (object_similar(j_ptr, o_ptr, OSTACK_STORE))
 		return (TRUE);
 	}
     }
@@ -810,7 +721,7 @@ static int home_carry(object_type * o_ptr)
 	j_ptr = &st_ptr->stock[slot];
 
 	/* The home acts just like the player */
-	if (object_similar(j_ptr, o_ptr)) {
+	if (object_similar(j_ptr, o_ptr, OSTACK_PACK)) {
 	    /* Save the new number of items */
 	    object_absorb(j_ptr, o_ptr);
 
@@ -937,7 +848,7 @@ static int store_carry(object_type * o_ptr)
 	j_ptr = &st_ptr->stock[slot];
 
 	/* Can the existing items be incremented? */
-	if (store_object_similar(j_ptr, o_ptr)) {
+	if (object_similar(j_ptr, o_ptr, OSTACK_STORE)) {
 	    /* Hack -- extra items disappear */
 	    store_object_absorb(j_ptr, o_ptr);
 
@@ -1651,7 +1562,7 @@ static int find_inven(object_type * o_ptr)
 	    continue;
 
 	/* Check if the two items can be combined */
-	if (object_similar(j_ptr, o_ptr))
+	if (object_similar(j_ptr, o_ptr, OSTACK_PACK))
 	    return j_ptr->number;
     }
 

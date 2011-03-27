@@ -1549,7 +1549,7 @@ s16b monster_carry(int m_idx, object_type * j_ptr)
 	next_o_idx = o_ptr->next_o_idx;
 
 	/* Check for combination */
-	if (object_similar(o_ptr, j_ptr)) {
+	if (object_similar(o_ptr, j_ptr, OSTACK_MONSTER)) {
 	    /* Combine the items */
 	    object_absorb(o_ptr, j_ptr);
 
