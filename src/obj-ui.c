@@ -823,7 +823,7 @@ bool item_menu(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 
     bool use_inven = ((mode & USE_INVEN) ? TRUE : FALSE);
     bool use_equip = ((mode & USE_EQUIP) ? TRUE : FALSE);
-    bool use_floor = ((mode & USE_FLOOR) ? TRUE : FALSE);
+    bool use_floor = ((mode & (USE_FLOOR | USE_TARGET)) ? TRUE : FALSE);
     bool use_quiver = ((mode & QUIVER_TAGS) ? TRUE : FALSE);
     bool can_squelch = ((mode & CAN_SQUELCH) ? TRUE : FALSE);
     bool is_harmless = ((mode & IS_HARMLESS) ? TRUE : FALSE);
@@ -850,7 +850,14 @@ bool item_menu(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
     /* Paranoia XXX XXX XXX */
     message_flush();
 
-
+    /* Set target for telekinesis */
+    if (mode & (USE_TARGET))
+    {
+	target_get(&px, &py);
+	if (!(px && py))
+	    return FALSE;
+    }
+    
     /* Not done */
     done = FALSE;
 

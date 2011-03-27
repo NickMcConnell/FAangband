@@ -140,83 +140,125 @@ bool search(bool verbose)
 }
 
 
-/**
- * Return TRUE if the given object is inscribed with "=g".
- *
- * Alternatively, also return TRUE if any similar item in the
- * backpack is marked "=g".
+/*** Pickup ***/
+
+/*
+ * Pickup all gold at the player's current location.
  */
-static bool auto_pickup_check(object_type * o_ptr, bool check_pack)
+static void py_pickup_gold(void)
 {
-    cptr s;
+    int py = p_ptr->py;
+    int px = p_ptr->px;
 
-    /* Check inscription */
-    if (o_ptr->note) {
-	/* Find a '=' */
-	s = strchr(quark_str(o_ptr->note), '=');
+    s32b total_gold = 0L;
+    byte *treasure;
 
-	/* Process preventions */
-	while (s) {
-	    /* =g ('g'et) means auto pickup */
-	    if (s[1] == 'g')
-		return (TRUE);
+    s16b this_o_idx, next_o_idx = 0;
 
-	    /* Find another '=' */
-	    s = strchr(s + 1, '=');
-	}
+    object_type *o_ptr;
 
-	/* Throwing weapons and ammo need no extra inscription */
-	s = strchr(quark_str(o_ptr->note), '@');
+    int sound_msg;
+    bool verbal = FALSE;
 
-	/* Process preventions */
-	while (s) {
-	    /* =g ('g'et) means auto pickup */
-	    if ((s[1] == 'f') || (s[1] == 'v'))
-		return (TRUE);
+    /* Allocate an array of ordinary gold objects */
+    treasure = C_ZNEW(SV_GOLD_MAX, byte);
 
-	    /* Find another '=' */
-	    s = strchr(s + 1, '=');
-	}
+
+    /* Pick up all the ordinary gold objects */
+    for (this_o_idx = cave_o_idx[py][px]; this_o_idx; this_o_idx = next_o_idx)
+    {
+	/* Get the object */
+	o_ptr = &o_list[this_o_idx];
+
+	/* Get the next object */
+	next_o_idx = o_ptr->next_o_idx;
+
+	/* Ignore if not legal treasure */
+	if ((o_ptr->tval != TV_GOLD) ||
+	    (o_ptr->sval >= SV_GOLD_MAX)) continue;
+
+	/* Note that we have this kind of treasure */
+	treasure[o_ptr->sval]++;
+
+	/* Remember whether feedback message is in order */
+	if (!squelch_item_ok(o_ptr))
+	    verbal = TRUE;
+
+	/* Increment total value */
+	total_gold += (s32b)o_ptr->pval;
+
+	/* Delete the gold */
+	delete_object_idx(this_o_idx);
     }
 
-    /* Optionally, check the backpack */
-    if (check_pack) {
-	int j;
+    /* Pick up the gold, if present */
+    if (total_gold)
+    {
+	char buf[1024];
+	char tmp[80];
+	int i, count, total, k_idx;
 
-	/* Look for similar and inscribed */
-	for (j = 0; j < INVEN_PACK - p_ptr->pack_size_reduce; j++) {
-	    object_type *j_ptr = &p_ptr->inventory[j];
+	/* Build a message */
+	(void)strnfmt(buf, sizeof(buf), "You have found %ld gold pieces worth of ", (long)total_gold);
 
-	    /* Skip non-objects */
-	    if (!j_ptr->k_idx)
-		continue;
-
-	    /* The two items must be able to combine */
-	    if (!object_similar(j_ptr, o_ptr))
-		continue;
-
-	    /* The backpack item must be inscribed */
-	    if (!j_ptr->note)
-		continue;
-
-	    /* Find a '=' */
-	    s = strchr(quark_str(j_ptr->note), '=');
-
-	    /* Process preventions */
-	    while (s) {
-		/* =g ('g'et) means auto pickup */
-		if (s[1] == 'g')
-		    return (TRUE);
-
-		/* Find another '=' */
-		s = strchr(s + 1, '=');
-	    }
+	/* Count the types of treasure present */
+	for (total = 0, i = 0; i < SV_GOLD_MAX; i++)
+	{
+	    if (treasure[i]) total++;
 	}
+
+	/* List the treasure types */
+	for (count = 0, i = 0; i < SV_GOLD_MAX; i++)
+	{
+	    /* Skip if no treasure of this type */
+	    if (!treasure[i]) continue;
+
+	    /* Get this object index */
+	    k_idx = lookup_kind(TV_GOLD, i);
+
+	    /* Skip past errors  XXX */
+	    if (k_idx <= 0) continue;
+
+	    /* Get the object name */
+	    object_kind_name(tmp, sizeof tmp, k_idx, TRUE);
+
+	    /* Build up the pickup string */
+	    my_strcat(buf, tmp, sizeof(buf));
+
+	    /* Added another kind of treasure */
+	    count++;
+
+	    /* Add a comma if necessary */
+	    if ((total > 2) && (count < total)) my_strcat(buf, ",", sizeof(buf));
+
+	    /* Add an "and" if necessary */
+	    if ((total >= 2) && (count == total-1)) my_strcat(buf, " and", sizeof(buf));
+
+	    /* Add a space or period if necessary */
+	    if (count < total) my_strcat(buf, " ", sizeof(buf));
+	    else               my_strcat(buf, ".", sizeof(buf));
+	}
+
+	/* Determine which sound to play */
+	if      (total_gold < 200) sound_msg = MSG_MONEY1;
+	else if (total_gold < 600) sound_msg = MSG_MONEY2;
+	else                       sound_msg = MSG_MONEY3;
+
+	/* Display the message */
+	if (verbal)
+	    message(sound_msg, 0, buf);
+
+	/* Add gold to purse */
+	p_ptr->au += total_gold;
+
+	/* Redraw gold */
+	p_ptr->redraw |= (PR_GOLD);
     }
 
-    /* Don't auto pickup */
-    return (FALSE);
+    /* Free the gold array */
+    FREE(treasure);
 }
+
 
 
 /**
@@ -235,7 +277,7 @@ static bool auto_pickup_okay(object_type * o_ptr)
 /**
  * Carry an object and delete it.
  */
-extern void py_pickup_aux(int o_idx)
+extern void py_pickup_aux(int o_idx, bool msg)
 {
     int slot, quiver_slot = 0;
 
@@ -256,7 +298,7 @@ extern void py_pickup_aux(int o_idx)
 
     /* If we have picked up ammo which matches something in the quiver, note
      * that it so that we can wield it later (and suppress pick up message) */
-    if (obj_is_ammo(o_ptr)) 
+    if (obj_is_quiver_obj(o_ptr)) 
     {
 	int i;
 	for (i = QUIVER_START; i < QUIVER_END; i++) 
@@ -323,7 +365,7 @@ extern void py_pickup_aux(int o_idx)
     p_ptr->update |= (PU_BONUS);
 
     /* Optionally, display a message */
-    if (!quiver_slot)
+    if (msg && !quiver_slot)
     {
 	/* Describe the object */
 	object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
@@ -336,8 +378,8 @@ extern void py_pickup_aux(int o_idx)
     /* Delete the object */
     delete_object_idx(o_idx);
 
-	/* If we have a quiver slot that this ammo matches, use it */
-	if (quiver_slot) wield_item(o_ptr, slot, quiver_slot);
+    /* If we have a quiver slot that this item matches, use it */
+    if (quiver_slot) wield_item(o_ptr, slot, quiver_slot);
 }
 
 
@@ -381,26 +423,27 @@ byte py_pickup(int pickup, int y, int x)
     /* Objects picked up.  Used to determine time cost of command. */
     byte objs_picked_up = 0;
 
-    int floor_num = 0, floor_list[24], floor_o_idx = 0;
+    size_t floor_num = 0;
+    int floor_list[MAX_FLOOR_STACK + 1], floor_o_idx = 0;
 
     int can_pickup = 0;
     bool call_function_again = FALSE;
+    bool blind = ((p_ptr->timed[TMD_BLIND]) || (no_light()));
     bool do_ask = TRUE;
-    bool telekinesis;
+    bool msg = TRUE;
+    bool telekinesis = (!(y == p_ptr->py) || !(x == p_ptr->px));
 
-    /* Set telekinesis flag */
-    telekinesis = (!(y == p_ptr->py) || !(x == p_ptr->px));
+    /* Nothing to pick up -- return */
+    if (!cave_o_idx[y][x]) return (0);
+
+    /* Always pickup gold, effortlessly */
+    if (!telekinesis) py_pickup_gold();
 
     /* Scan the pile of objects */
     for (this_o_idx = cave_o_idx[y][x]; this_o_idx; this_o_idx = next_o_idx) {
-	object_type *o_ptr;
-	bool menu_flag = FALSE;
 
 	/* Access the object */
 	o_ptr = &o_list[this_o_idx];
-
-	/* Describe the object */
-	object_desc(o_name, o_ptr, TRUE, 3);
 
 	/* Access the next object */
 	next_o_idx = o_ptr->next_o_idx;
@@ -415,247 +458,180 @@ byte py_pickup(int pickup, int y, int x)
 	    /* Hack -- disturb */
 	    disturb(0, 0);
 
-	    /* Pick up gold */
-	    if (o_ptr->tval == TV_GOLD) {
-		/* Message */
-		msg_format("You have found %ld gold pieces worth of %s.",
-			   (long) o_ptr->pval, o_name);
-
-		/* Collect the gold */
-		p_ptr->au += o_ptr->pval;
-
-		/* Limit to avoid buffer overflow */
-		if (p_ptr->au > PY_MAX_GOLD)
-		    p_ptr->au = PY_MAX_GOLD;
-
-		/* Redraw gold */
-		p_ptr->redraw |= (PR_GOLD);
-
-		/* Delete the gold */
-		delete_object_idx(this_o_idx);
-
-		/* Check the next object */
-		continue;
-	    }
-
-	    /* Automatically pick up objects like those in the quiver. */
-	    if (quiver_carry(o_ptr, this_o_idx))
-		continue;
-
 	    /* Automatically pick up some items */
-	    if (inven_carry_okay(o_ptr) && auto_pickup_okay(o_ptr)) {
+	    if (auto_pickup_okay(o_ptr)) {
 		/* Pick up the object */
-		py_pickup_aux(this_o_idx);
+		py_pickup_aux(this_o_idx, TRUE);
+		objs_picked_up++;
 
 		/* Check the next object */
 		continue;
 	    }
-
-	    /* Pick up objects automatically, without menus, if pickup is
-	     * allowed and menus are not forced, auto-pickup is on, and
-	     * query_floor is off. */
-	    else if ((pickup == 1) && (OPT(always_pickup))
-		     && (!OPT(carry_query_flag))) {
-		/* If backpack is not full, carry the item. */
-		if (inven_carry_okay(o_ptr)) {
-		    /* Pick up the object */
-		    py_pickup_aux(this_o_idx);
-		}
-
-		/* Otherwise, add one to the number of floor objects. */
-		else {
-		    /* Count non-gold objects that remain on the floor. */
-		    floor_num++;
-
-		    /* Remember this index */
-		    floor_o_idx = this_o_idx;
-		}
-
-	    }
-	    /* Otherwise, activate the menu system.  */
-	    else
-		menu_flag = TRUE;
 	}
 
 	/* Tally objects and store them in an array. */
-	if (telekinesis || menu_flag) {
-	    /* Remember this object index */
-	    floor_list[floor_num] = this_o_idx;
-
-	    /* Count non-gold objects that remain on the floor. */
-	    floor_num++;
-
-	    /* Remember this index */
-	    floor_o_idx = this_o_idx;
-
-	    /* Tally objects that can be picked up. */
-	    if (inven_carry_okay(o_ptr)) {
-		can_pickup++;
-	    }
-	}
+	
+	/* Remember this object index */
+	floor_list[floor_num] = this_o_idx;
+	
+	/* Count non-gold objects that remain on the floor. */
+	floor_num++;
+	
+	/* Tally objects that can be picked up.*/
+	if (inven_carry_okay(o_ptr))
+	    can_pickup++;
     }
 
     /* There are no non-gold objects */
     if (!floor_num)
 	return (objs_picked_up);
 
+    /* Get hold of the last floor index */
+    floor_o_idx = floor_list[floor_num - 1];
 
-    /* Mention the objects or stack, if player is not picking them up. */
-    if (!pickup) {
+    /* Mention the objects if player is not picking them up. */
+    if (pickup == 0 || !(can_pickup || telekinesis))
+    {
+	const char *p = "see";
+
 	/* One object */
-	if (floor_num == 1) {
-	    /* Access the object */
+	if (floor_num == 1)
+	{
+	    if (!can_pickup)	p = "have no room for";
+	    else if (blind)     p = "feel";
+
+	    /* Get the object */
 	    o_ptr = &o_list[floor_o_idx];
 
 	    /* Describe the object.  Less detail if blind. */
-	    if (p_ptr->timed[TMD_BLIND])
-		object_desc(o_name, o_ptr, TRUE, 0);
+	    if (blind)
+		object_desc(o_name, sizeof(o_name), o_ptr,
+			    ODESC_PREFIX | ODESC_BASE);
 	    else
-		object_desc(o_name, o_ptr, TRUE, 3);
+		object_desc(o_name, sizeof(o_name), o_ptr,
+			    ODESC_PREFIX | ODESC_FULL);
 
 	    /* Message */
-	    msg_format("You %s %s.", (p_ptr->timed[TMD_BLIND] ? "feel" : "see"),
-		       o_name);
+	    message_flush();
+	    msg_format("You %s %s.", p, o_name);
 	}
+	else
+	{
+	    /* Optionally, display more information about floor items */
+	    if (OPT(pickup_detail))
+	    {
+		ui_event_data e;
 
-	/* Multiple objects */
-	else {
-	    /* Message */
-	    msg_format("You %s a pile of %d items.",
-		       (p_ptr->timed[TMD_BLIND] ? "feel" : "see"), floor_num);
-	}
+		if (!can_pickup)	p = "have no room for the following objects";
+		else if (blind)     p = "feel something on the floor";
 
-	/* Done */
-	return (objs_picked_up);
-    }
+		/* Scan all marked objects in the grid */
+		floor_num = scan_floor(floor_list, N_ELEMENTS(floor_list), py, px, 0x03);
 
-    /* The player has no room for anything on the floor. */
-    else if (!(can_pickup || telekinesis)) {
-	/* One object */
-	if (floor_num == 1) {
-	    /* Access the object */
-	    o_ptr = &o_list[floor_o_idx];
+		/* Save screen */
+		screen_save();
 
-	    /* Describe the object.  Less detail if blind. */
-	    if (p_ptr->timed[TMD_BLIND])
-		object_desc(o_name, o_ptr, TRUE, 0);
-	    else
-		object_desc(o_name, o_ptr, TRUE, 3);
+		/* Display objects on the floor */
+		show_floor(floor_list, floor_num, (OLIST_WEIGHT));
 
-	    /* Message */
-	    msg_format("You have no room for %s.", o_name);
-	}
+		/* Display prompt */
+		prt(format("You %s: ", p), 0, 0);
 
-	/* Multiple objects */
-	else {
-	    /* Message */
-	    msg_print("You have no room for any of the objects on the floor.");
-	}
+		/* Move cursor back to character, if needed */
+		if (OPT(highlight_player)) move_cursor_relative(p_ptr->py, p_ptr->px);
 
-	/* Done */
-	return (objs_picked_up);
-    }
+		/* Wait for it.  Use key as next command. */
+		e = inkey_ex();
+		Term_event_push(&e);
 
-    /* Simple display of a single object, if menus for single objects are not
-     * forced. */
-    else if ((floor_num == 1) && (pickup != 3) && (!telekinesis)) {
-	/* Hack -- query every object */
-	if (OPT(carry_query_flag)) {
-	    char out_val[160];
-	    int answer = 0;
-
-	    /* Access the object */
-	    o_ptr = &o_list[floor_o_idx];
-
-	    /* Describe the object.  Less detail if blind. */
-	    if (p_ptr->timed[TMD_BLIND])
-		object_desc(o_name, o_ptr, TRUE, 0);
-	    else
-		object_desc(o_name, o_ptr, TRUE, 3);
-
-	    /* Build a prompt */
-	    (void) sprintf(out_val, "Pick up %s? ", o_name);
-
-	    /* Ask the user to confirm */
-	    answer = get_check_other(out_val, (OPT(rogue_like_commands)
-					       ? KTRL('D') : 'k'));
-	    if (answer == 0) {
-		/* Done */
-		return (objs_picked_up);
-	    } else if (answer == 2) {
-		p_ptr->command_item = -floor_o_idx;
-		textui_cmd_destroy();
-		return (objs_picked_up);
+		/* Restore screen */
+		screen_load();
 	    }
-	    /* Otherwise continue */
+
+	    /* Show less detail */
+	    else
+	    {
+		message_flush();
+
+		if (!can_pickup)
+		    msg_print("You have no room for any of the items on the floor.");
+		else
+		    msg_format("You %s a pile of %d items.", (blind ? "feel" : "see"), floor_num);
+	    }
 	}
 
-	/* Don't ask */
-	do_ask = FALSE;
-
-	/* Remember the object to pick up */
-	this_o_idx = floor_o_idx;
+	/* Done */
+	return (objs_picked_up);
     }
 
-    /* Display a list if no other query took precedence. */
-    else {
-	cptr q, s;
+    /* We can pick up objects.  Menus are not requested (yet). */
+    if (pickup == 1)
+    {
+	/* Scan floor (again) */
+	floor_num = scan_floor(floor_list, N_ELEMENTS(floor_list), py, px, 
+			       0x03);
 
+	/* Use a menu interface for multiple objects, or get single objects */
+	if (floor_num > 1)
+	    pickup = 2;
+	else
+	    this_o_idx = floor_o_idx;
+    }
+
+
+    /* Display a list if requested. */
+    if (pickup == 2)
+    {
+	cptr q, s;
 	int item;
 
 	/* Get an object or exit. */
-	q = "Get which item? ";
+	q = "Get which item?";
 	s = "You see nothing there.";
 
 	/* Telekinesis */
 	if (telekinesis) {
-	    /* Don't restrict the choices */
-	    item_tester_hook = NULL;
+	    item_tester_hook = inven_carry_okay;
 
-	    if (get_item(&item, q, s, (USE_TARGET))) {
-		this_o_idx = 0 - item;
-	    } else {
+	    if (!get_item(&item, q, s, CMD_PICKUP, USE_TARGET))
 		return (objs_picked_up);
-	    }
+
+	    this_o_idx = 0 - item;
 	}
-	/* Ordinary pickup */
 	else {
 	    /* Restrict the choices */
 	    item_tester_hook = inven_carry_okay;
 
-	    if (get_item(&item, q, s, (USE_FLOOR))) {
-		this_o_idx = 0 - item;
-		call_function_again = TRUE;
-	    } else {
+	    if (!get_item(&item, q, s, CMD_PICKUP, USE_FLOOR))
 		return (objs_picked_up);
-	    }
+
+	    this_o_idx = 0 - item;
+	    call_function_again = TRUE;
 	}
+
+	/* With a list, we do not need explicit pickup messages */
+	msg = FALSE;
     }
 
-    /* Into quiver via telekinesis if possible */
-    if (telekinesis) {
-	/* Access the object */
-	o_ptr = &o_list[this_o_idx];
-
-	if (quiver_carry(o_ptr, this_o_idx))
-	    return (1);
-    }
-
-    /* Regular pickup or telekinesis with pack not full */
-    if (can_pickup) {
-	/* Pick up the object */
-	py_pickup_aux(this_o_idx);
-    }
-    /* Telekinesis with pack full */
-    else {
-	/* Access the object */
-	o_ptr = &o_list[this_o_idx];
-
-	/* Drop it */
-	drop_near(o_ptr, -1, p_ptr->py, p_ptr->px);
-
-	/* Delete the old object */
-	delete_object_idx(this_o_idx);
+    /* Pick up object, if legal */
+    if (this_o_idx)
+    {
+	/* Regular pickup or telekinesis with pack not full */
+	if (can_pickup) {
+	    /* Pick up the object */
+	    py_pickup_aux(this_o_idx);
+	}
+	/* Telekinesis with pack full */
+	else {
+	    /* Access the object */
+	    o_ptr = &o_list[this_o_idx];
+	    
+	    /* Drop it */
+	    drop_near(o_ptr, -1, p_ptr->py, p_ptr->px);
+	    
+	    /* Delete the old object */
+	    delete_object_idx(this_o_idx);
+	}
     }
 
     /* Indicate an object picked up. */
