@@ -2691,16 +2691,6 @@ extern int PlayerUID;
 #define DOWN                   7
 #define STAGE_TYPE             8
 
-/**
- * Maximum size around the player to consider in the pathfinder
- */
-#define MAX_PF_RADIUS 50
-
-/**
- * Maximum distance to consider in the pathfinder
- */
-#define MAX_PF_LENGTH 250
-
 /*
  * Mouse click region names
  */

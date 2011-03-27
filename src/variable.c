@@ -1199,12 +1199,6 @@ int mana_reserve = 0;
 /** XXX Mega-Hack - See main-win.c */
 bool angband_keymap_flag = TRUE;
 
-/* Path finding variables
- *
- */
-char pf_result[MAX_PF_LENGTH];
-int pf_result_index;
-
 /**
  * Sound hook (for playing FX).
  */
