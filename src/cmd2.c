@@ -1230,12 +1230,12 @@ static void chest_trap(int y, int x, s16b o_idx)
 		if (randint0(6) == 0)
 		    take_hit(damroll(5, 20), "a chest dispel-player trap");
 		else if (randint0(5) == 0)
-		    (void) inc_timed[TMD_CUT200);
+		    (void) inc_timed(TMD_CUT, 200));
 		else if (randint0(4) == 0) {
 		    if (!p_ptr->state.free_act)
-			(void) inc_timed[TMD_PARALYZED, 2 + randint0(6));
+			(void) inc_timed(TMD_PARALYZED, 2 + randint0(6));
 		    else {
-			(void) inc_timed[TMD_STUN, 10 + randint0(100));
+			(void) inc_timed(TMD_STUN, 10 + randint0(100));
 			notice_obj(OF_FREE_ACT, 0);
 		    }
 
@@ -1297,7 +1297,7 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
 
 	/* Success -- May still have traps */
 	if (randint0(100) < j) {
-	    msg_print("You have picked the lock.");
+	    message(MSG_LOCKPICK, 0, "You have picked the lock.");
 	    gain_exp(o_ptr->pval);
 	    flag = TRUE;
 	}
@@ -1322,6 +1322,9 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
 
 	/* Squelch chest if autosquelch calls for it */
 	p_ptr->notice |= PN_SQUELCH;
+
+	/* Redraw chest, to be on the safe side (it may have been squelched) */
+	light_spot(y, x);
     }
 
     /* Result */
@@ -1528,21 +1531,7 @@ int count_chests(int *y, int *x, bool trapped)
  */
 int coords_to_dir(int y, int x)
 {
-    int d[3][3] = {
-	{7, 4, 1},
-	{8, 5, 2},
-	{9, 6, 3}
-    };
-    int dy, dx;
-
-    dy = y - p_ptr->py;
-    dx = x - p_ptr->px;
-
-    /* Paranoia */
-    if (ABS(dx) > 1 || ABS(dy) > 1)
-	return (0);
-
-    return d[dx + 1][dy + 1];
+    return (motion_dir(p_ptr->py, p_ptr->px, y, x));
 }
 
 
@@ -1624,16 +1613,13 @@ extern bool do_cmd_open_aux(int y, int x)
 	/* Success */
 	if (randint0(100) < j) {
 	    /* Message */
-	    message(MSG_OPENDOOR, 0, "You have picked the lock.");
+	    message(MSG_LOCKPICK, 0, "You have picked the lock.");
 
 	    /* Open the door */
 	    cave_set_feat(y, x, FEAT_OPEN);
 
 	    /* Update the visuals */
 	    p_ptr->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
-
-	    /* Sound */
-	    sound(MSG_OPENDOOR);
 
 	    /* Experience */
 	    gain_exp(1);
@@ -1689,26 +1675,6 @@ void do_cmd_open(cmd_code code, cmd_arg args[])
 
     dir = args[0].direction;
 
-    /* Option: Pick a direction -TNB- */
-    if (OPT(easy_open)) {
-	int num_doors, num_chests;
-
-	/* Count closed doors */
-	num_doors = count_feats(&y, &x, is_closed, FALSE);
-
-	/* Count chests (locked) */
-	num_chests = count_chests(&y, &x, FALSE);
-
-	/* See if there's only one target */
-	if ((num_doors + num_chests) == 1) {
-	    p_ptr->command_dir = coords_to_dir(y, x);
-	}
-    }
-
-    /* Get a direction (or abort) */
-    if (!get_rep_dir(&dir))
-	return;
-
     /* Get location */
     y = py + ddy[dir];
     x = px + ddx[dir];
@@ -1718,7 +1684,11 @@ void do_cmd_open(cmd_code code, cmd_arg args[])
 
     /* Verify legality */
     if (!o_idx && !do_cmd_open_test(y, x))
+    {
+	/* Cancel repeat */
+	disturb(0, 0);
 	return;
+    }
 
     /* Take a turn */
     p_ptr->energy_use = 100;
@@ -1856,30 +1826,15 @@ static bool do_cmd_close_aux(int y, int x)
  */
 void do_cmd_close(cmd_code code, cmd_arg args[])
 {
-    int py = p_ptr->py;
-    int px = p_ptr->px;
-
     int y, x, dir;
 
     bool more = FALSE;
 
     dir = args[0].direction;
 
-    /* Option: Pick a direction -TNB- */
-    if (OPT(easy_open)) {
-	/* See if there's only one closeable door */
-	if (count_feats(&y, &x, is_open, FALSE) == 1) {
-	    p_ptr->command_dir = coords_to_dir(y, x);
-	}
-    }
-
-    /* Get a direction (or abort) */
-    if (!get_rep_dir(&dir))
-	return;
-
     /* Get location */
-    y = py + ddy[dir];
-    x = px + ddx[dir];
+    y = p_ptr->py + ddy[dir];
+    x = p_ptr->px + ddx[dir];
 
 
     /* Verify legality */
@@ -1893,22 +1848,10 @@ void do_cmd_close(cmd_code code, cmd_arg args[])
     /* Apply confusion */
     if (confuse_dir(&dir)) {
 	/* Get location */
-	y = py + ddy[dir];
-	x = px + ddx[dir];
+	y = p_ptr->py + ddy[dir];
+	x = p_ptr->px + ddx[dir];
     }
 
-
-    /* Allow repeated command */
-    if (p_ptr->command_arg) {
-	/* Set repeat count */
-	p_ptr->command_rep = p_ptr->command_arg - 1;
-
-	/* Redraw the state */
-	p_ptr->redraw |= (PR_STATE);
-
-	/* Cancel the arg */
-	p_ptr->command_arg = 0;
-    }
 
     /* Close door */
     more = do_cmd_close_aux(y, x);
@@ -2169,34 +2112,15 @@ static bool do_cmd_tunnel_aux(int y, int x)
  */
 void do_cmd_tunnel(cmd_code code, cmd_arg args[])
 {
-    int py = p_ptr->py;
-    int px = p_ptr->px;
-
     int y, x, dir;
 
     bool more = FALSE;
 
     dir = args[0].direction;
 
-    /* Deal with webs first */
-    if (cave_feat[py][px] == FEAT_WEB) {
-	msg_print("You clear the web.");
-	cave_set_feat(py, px, FEAT_FLOOR);
-
-	/* Take a turn */
-	p_ptr->energy_use = 100;
-
-	/* Done */
-	return;
-    }
-
-    /* Get a direction (or abort) */
-    if (!get_rep_dir(&dir))
-	return;
-
     /* Get location */
-    y = py + ddy[dir];
-    x = px + ddx[dir];
+    y = p_ptr->py + ddy[dir];
+    x = p_ptr->px + ddx[dir];
 
     /* Deal with webs first */
     if (cave_feat[y][x] == FEAT_WEB) {
@@ -2206,8 +2130,8 @@ void do_cmd_tunnel(cmd_code code, cmd_arg args[])
 	/* Apply confusion */
 	if (confuse_dir(&dir)) {
 	    /* Get location */
-	    y = py + ddy[dir];
-	    x = px + ddx[dir];
+	    y = p_ptr->py + ddy[dir];
+	    x = p_ptr->px + ddx[dir];
 	}
 
 	/* Monster */
@@ -2241,21 +2165,8 @@ void do_cmd_tunnel(cmd_code code, cmd_arg args[])
     /* Apply confusion */
     if (confuse_dir(&dir)) {
 	/* Get location */
-	y = py + ddy[dir];
-	x = px + ddx[dir];
-    }
-
-
-    /* Allow repeated command */
-    if (p_ptr->command_arg) {
-	/* Set repeat count */
-	p_ptr->command_rep = p_ptr->command_arg - 1;
-
-	/* Redraw the state */
-	p_ptr->redraw |= (PR_STATE);
-
-	/* Cancel the arg */
-	p_ptr->command_arg = 0;
+	y = p_ptr->py + ddy[dir];
+	x = p_ptr->px + ddx[dir];
     }
 
     /* Monster */
@@ -2337,7 +2248,7 @@ extern bool do_cmd_disarm_aux(int y, int x)
 
 
     /* Access trap or glyph name */
-    name = (f_name + f_ptr->name);
+    name = f_info[cave_feat[y][x]].name;
 
     /* Get the "disarm" factor */
     i = p_ptr->state.skills[SKILL_DISARM];
@@ -2377,7 +2288,7 @@ extern bool do_cmd_disarm_aux(int y, int x)
 
 	/* Normal message otherwise */
 	else
-	    msg_format("You have disarmed the %s.", name);
+	    message_format(MSG_DISARM, 0, "You have disarmed the %s.", name);
 
 	/* If a Rogue's monster trap, decrement the trap count. */
 	if (tf_has(f_ptr->flags, TF_M_TRAP))
@@ -2429,9 +2340,6 @@ extern bool do_cmd_disarm_aux(int y, int x)
  */
 void do_cmd_disarm(cmd_code code, cmd_arg args[])
 {
-    int py = p_ptr->py;
-    int px = p_ptr->px;
-
     int y, x, dir;
 
     s16b o_idx;
@@ -2440,31 +2348,9 @@ void do_cmd_disarm(cmd_code code, cmd_arg args[])
 
     dir = args[0].direction;
 
-    /* Option: Pick a direction -TNB- */
-    if (OPT(easy_disarm)) {
-	int num_traps, num_chests;
-
-	/* Count visible traps */
-	num_traps = count_feats(&y, &x, is_trap, TRUE);
-
-	/* Count chests (trapped) */
-	num_chests = count_chests(&y, &x, TRUE);
-
-	/* See if there's only one target */
-	if (num_traps || num_chests) {
-	    if (num_traps + num_chests <= 1)
-		p_ptr->command_dir = coords_to_dir(y, x);
-	}
-
-    }
-
-    /* Get a direction (or abort) */
-    if (!get_rep_dir(&dir))
-	return;
-
     /* Get location */
-    y = py + ddy[dir];
-    x = px + ddx[dir];
+    y = p_ptr->py + ddy[dir];
+    x = p_ptr->px + ddx[dir];
 
     /* Check for chests */
     o_idx = chest_check(y, x);
@@ -2472,7 +2358,11 @@ void do_cmd_disarm(cmd_code code, cmd_arg args[])
 
     /* Verify legality */
     if (!o_idx && !do_cmd_disarm_test(y, x))
+    {
+	/* Cancel repeat */
+	disturb(0, 0);
 	return;
+    }
 
 
     /* Take a turn */
@@ -2481,24 +2371,11 @@ void do_cmd_disarm(cmd_code code, cmd_arg args[])
     /* Apply confusion */
     if (confuse_dir(&dir)) {
 	/* Get location */
-	y = py + ddy[dir];
-	x = px + ddx[dir];
+	y = p_ptr->py + ddy[dir];
+	x = p_ptr->px + ddx[dir];
 
 	/* Check for chests */
 	o_idx = chest_check(y, x);
-    }
-
-
-    /* Allow repeated command */
-    if (p_ptr->command_arg) {
-	/* Set repeat count */
-	p_ptr->command_rep = p_ptr->command_arg - 1;
-
-	/* Redraw the state */
-	p_ptr->redraw |= (PR_STATE);
-
-	/* Cancel the arg */
-	p_ptr->command_arg = 0;
     }
 
     /* Monster */
@@ -2599,9 +2476,6 @@ static bool do_cmd_bash_aux(int y, int x)
 
     /* Hack -- attempt to bash down the door */
     if (randint0(100) < temp) {
-	/* Message */
-	message(MSG_OPENDOOR, 0, "The door crashes open!");
-
 	/* Break down the door */
 	if (randint0(100) < 50) {
 	    cave_set_feat(y, x, FEAT_BROKEN);
@@ -2612,8 +2486,8 @@ static bool do_cmd_bash_aux(int y, int x)
 	    cave_set_feat(y, x, FEAT_OPEN);
 	}
 
-	/* Sound */
-	sound(MSG_OPENDOOR);
+	/* Message */
+	message(MSG_OPENDOOR, 0, "The door crashes open!");
 
 	/* Update the visuals */
 	p_ptr->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
@@ -2634,7 +2508,7 @@ static bool do_cmd_bash_aux(int y, int x)
 	msg_print("You are off-balance.");
 
 	/* Hack -- Lose balance ala paralysis */
-	(void) inc_timed[TMD_PARALYZED, 2 + randint0(2));
+	(void) inc_timed[TMD_PARALYZED, 2 + randint0(2), TRUE);
     }
 
     /* Result */
@@ -2658,24 +2532,23 @@ static bool do_cmd_bash_aux(int y, int x)
  */
 void do_cmd_bash(cmd_code code, cmd_arg args[])
 {
-    int py = p_ptr->py;
-    int px = p_ptr->px;
-
     int y, x, dir;
-
     bool more = FALSE;
-
 
     dir = args[0].direction;
 
     /* Get location */
-    y = py + ddy[dir];
-    x = px + ddx[dir];
+    y = p_ptr->py + ddy[dir];
+    x = p_ptr->px + ddx[dir];
 
 
     /* Verify legality */
     if (!do_cmd_bash_test(y, x))
+    {
+	/* Cancel repeat */
+	disturb(0, 0);
 	return;
+    }
 
 
     /* Take a turn */
@@ -2684,35 +2557,26 @@ void do_cmd_bash(cmd_code code, cmd_arg args[])
     /* Apply confusion */
     if (confuse_dir(&dir)) {
 	/* Get location */
-	y = py + ddy[dir];
-	x = px + ddx[dir];
+	y = p_ptr->py + ddy[dir];
+	x = p_ptr->px + ddx[dir];
     }
 
 
-    /* Allow repeated command */
-    if (p_ptr->command_arg) {
-	/* Set repeat count */
-	p_ptr->command_rep = p_ptr->command_arg - 1;
-
-	/* Redraw the state */
-	p_ptr->redraw |= (PR_STATE);
-
-	/* Cancel the arg */
-	p_ptr->command_arg = 0;
-    }
-
-    /* Monster */
+   /* Monster */
     if (cave_m_idx[y][x] > 0) {
 	/* Message */
 	msg_print("There is a monster in the way!");
 
 	/* Attack */
 	if (py_attack(y, x, TRUE))
-	    return;
     }
 
-    /* Bash the door */
-    more = do_cmd_bash_aux(y, x);
+    /* Door */
+    else
+    {
+	/* Bash the door */
+	more = do_cmd_bash_aux(y, x);
+    }
 
     /* Cancel repeat unless told not to */
     if (!more)
@@ -2733,12 +2597,9 @@ void do_cmd_bash(cmd_code code, cmd_arg args[])
  * The "semantics" of this command must be chosen before the player
  * is confused, and it must be verified against the new grid.
  */
-void do_cmd_alter(cmd_code code, cmd_arg args[])
+void do_cmd_alter(int dir)
 {
-    int py = p_ptr->py;
-    int px = p_ptr->px;
-
-    int y, x, dir;
+    int y, x;
 
     int feat;
 
@@ -2750,8 +2611,8 @@ void do_cmd_alter(cmd_code code, cmd_arg args[])
     dir = args[0].direction;
 
     /* Get location */
-    y = py + ddy[dir];
-    x = px + ddx[dir];
+    y = p_ptr->py + ddy[dir];
+    x = p_ptr->px + ddx[dir];
 
 
     /* Original feature */
@@ -2766,21 +2627,8 @@ void do_cmd_alter(cmd_code code, cmd_arg args[])
     /* Apply confusion */
     if (confuse_dir(&dir)) {
 	/* Get location */
-	y = py + ddy[dir];
-	x = px + ddx[dir];
-    }
-
-
-    /* Allow repeated command */
-    if (p_ptr->command_arg) {
-	/* Set repeat count */
-	p_ptr->command_rep = p_ptr->command_arg - 1;
-
-	/* Redraw the state */
-	p_ptr->redraw |= (PR_STATE);
-
-	/* Cancel the arg */
-	p_ptr->command_arg = 0;
+	y = p_ptr->py + ddy[dir];
+	x = p_ptr->px + ddx[dir];
     }
 
     /* If a monster is present, and visible, Rogues may steal from it.
@@ -2857,6 +2705,11 @@ void do_cmd_alter(cmd_code code, cmd_arg args[])
 	disturb(0, 0);
 }
 
+void do_cmd_alter(cmd_code code, cmd_arg args[])
+{
+	do_cmd_alter_aux(args[0].direction);
+}
+
 
 /**
  * Find the index of some "spikes", if possible.
@@ -2927,11 +2780,9 @@ bool do_cmd_spike_test(int y, int x)
  */
 void do_cmd_spike(cmd_code code, cmd_arg args[])
 {
-    int py = p_ptr->py;
-    int px = p_ptr->px;
-
     int y, x, dir, item = 0;
 
+    dir = args[0].direction;
 
     /* Get a spike */
     if (!get_spike(&item)) {
@@ -2942,12 +2793,9 @@ void do_cmd_spike(cmd_code code, cmd_arg args[])
 	return;
     }
 
-
-    dir = args[0].direction;
-
     /* Get location */
-    y = py + ddy[dir];
-    x = px + ddx[dir];
+    y = p_ptr->py + ddy[dir];
+    x = p_ptr->px + ddx[dir];
 
 
     /* Verify legality */
@@ -2961,8 +2809,8 @@ void do_cmd_spike(cmd_code code, cmd_arg args[])
     /* Confuse direction */
     if (confuse_dir(&dir)) {
 	/* Get location */
-	y = py + ddy[dir];
-	x = px + ddx[dir];
+	y = p_ptr->py + ddy[dir];
+	x = p_ptr->px + ddx[dir];
     }
 
 
@@ -3060,6 +2908,9 @@ static bool do_cmd_walk_test(int y, int x)
 	    }
 	}
 
+	/* Cancel repeat */
+	disturb(0, 0);
+
 	/* Nope */
 	return (FALSE);
     }
@@ -3070,18 +2921,15 @@ static bool do_cmd_walk_test(int y, int x)
 
 
 /**
- * Helper function for the "walk" and "jump" commands
+ * Walk into a grid (pick up objects as set by the auto-pickup option)
  */
-static void do_cmd_walk_or_jump(int pickup, int dir)
+void do_cmd_walk(cmd_code code, cmd_arg args[])
 {
-    int py = p_ptr->py;
-    int px = p_ptr->px;
-
-    int y, x;
+    int y, x, dir;
 
     /* Get location */
-    y = py + ddy[dir];
-    x = px + ddx[dir];
+    y = p_ptr->py + ddy[dir];
+    x = p_ptr->px + ddx[dir];
 
 
     /* Verify legality */
@@ -3095,8 +2943,8 @@ static void do_cmd_walk_or_jump(int pickup, int dir)
     /* Confuse direction */
     if (confuse_dir(&dir)) {
 	/* Get location */
-	y = py + ddy[dir];
-	x = px + ddx[dir];
+	y =p_ptr-> py + ddy[dir];
+	x = p_ptr->px + ddx[dir];
     }
 
 
@@ -3104,31 +2952,8 @@ static void do_cmd_walk_or_jump(int pickup, int dir)
     if (!do_cmd_walk_test(y, x))
 	return;
 
-
-    /* Allow repeated command */
-    if (p_ptr->command_arg) {
-	/* Set repeat count */
-	p_ptr->command_rep = p_ptr->command_arg - 1;
-
-	/* Redraw the state */
-	p_ptr->redraw |= (PR_STATE);
-
-	/* Cancel the arg */
-	p_ptr->command_arg = 0;
-    }
-
     /* Move the player */
     move_player(dir, pickup);
-}
-
-
-/**
- * Walk into a grid (pick up objects as set by the auto-pickup option)
- */
-void do_cmd_walk(cmd_code code, cmd_arg args[])
-{
-    /* Move (usually pickup) */
-    do_cmd_walk_or_jump(OPT(always_pickup), args[0].direction);
 }
 
 
@@ -3137,8 +2962,16 @@ void do_cmd_walk(cmd_code code, cmd_arg args[])
  */
 void do_cmd_jump(cmd_code code, cmd_arg args[])
 {
-    /* Move (usually do not pickup) */
-    do_cmd_walk_or_jump(!OPT(always_pickup), args[0].direction);
+    bool old_easy_disarm;
+
+    /* OPT(easy_alter) can be turned off (don't disarm traps) */
+    old_easy_disarm = OPT(easy_disarm);
+    OPT(easy_disarm) = FALSE;
+
+    do_cmd_walk(code, args);
+
+    /* Restore OPT(easy_alter) */
+    OPT(easy_disarm) = old_easy_disarm;
 }
 
 
@@ -3149,11 +2982,7 @@ void do_cmd_jump(cmd_code code, cmd_arg args[])
  */
 void do_cmd_run(cmd_code code, cmd_arg args[])
 {
-    int py = p_ptr->py;
-    int px = p_ptr->px;
-
     int y, x, dir;
-
 
     dir = args[0].direction;
 
@@ -3169,8 +2998,8 @@ void do_cmd_run(cmd_code code, cmd_arg args[])
 	return;
 
     /* Get location */
-    y = py + ddy[dir];
-    x = px + ddx[dir];
+    y = p_ptr->py + ddy[dir];
+    x = p_ptr->px + ddx[dir];
 
 
     /* Verify legality */
@@ -3191,9 +3020,6 @@ void do_cmd_run(cmd_code code, cmd_arg args[])
  */
 void do_cmd_pathfind(cmd_code code, cmd_arg args[])
 {
-    int py = p_ptr->py;
-    int px = p_ptr->px;
-
     /* Hack XXX XXX XXX */
     if (p_ptr->timed[TMD_CONFUSED]) {
 	msg_print("You are too confused!");
@@ -3201,7 +3027,7 @@ void do_cmd_pathfind(cmd_code code, cmd_arg args[])
     }
 
     /* Hack -- handle stuck players */
-    if (cave_feat[py][px] == FEAT_WEB) {
+    if (cave_feat[p_ptr->py][p_ptr->px] == FEAT_WEB) {
 	/* Tell the player */
 	msg_print("You are stuck!");
 
@@ -3210,10 +3036,8 @@ void do_cmd_pathfind(cmd_code code, cmd_arg args[])
 
     if (findpath(args[0].point.y, args[0].point.x)) {
 	p_ptr->running = 1000;
-
 	/* Calculate torch radius */
 	p_ptr->update |= (PU_TORCH);
-
 	p_ptr->running_withpathfind = TRUE;
 	run_step(0);
     }
@@ -3250,13 +3074,15 @@ static void do_cmd_hold_or_stay(int pickup)
     (void) py_pickup(pickup, p_ptr->py, p_ptr->px);
 
     /* Hack -- enter a store if we are on one */
-    if ((cave_feat[py][px] >= FEAT_SHOP_HEAD)
-	&& (cave_feat[py][px] <= FEAT_SHOP_TAIL)) {
+    if ((cave_feat[p_ptr->py][p_ptr->px] >= FEAT_SHOP_HEAD)
+	&& (cave_feat[p_ptr->py][p_ptr->px] <= FEAT_SHOP_TAIL)) {
 	/* Disturb */
 	disturb(0, 0);
 
-	/* Hack -- enter store */
-	p_ptr->command_new = '_';
+	cmd_insert(CMD_ENTER_STORE);
+
+	/* Free turn XXX XXX XXX */
+	p_ptr->energy_use = 0;
     }
 }
 
@@ -3276,7 +3102,7 @@ void do_cmd_hold(cmd_code code, cmd_arg args[])
  */
 void do_cmd_pickup(cmd_code code, cmd_arg args[])
 {
-    int energy_cost = 1, item;
+    int energy_cost;
 
     /* Pick up floor objects, forcing a menu for multiple objects. */
     energy_cost = py_pickup(2, p_ptr->py, p_ptr->px) * 10;
