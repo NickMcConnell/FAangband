@@ -1295,7 +1295,7 @@ static void wiz_create_item(void)
     }
 
     /* Drop the object from heaven */
-    drop_near(i_ptr, -1, py, px);
+    drop_near(i_ptr, -1, py, px, TRUE);
 
     /* All done */
     msg_print("Allocated.");
@@ -1707,7 +1707,7 @@ static void wiz_create_artifact(void)
     }
 
     /* Drop the artifact from heaven */
-    drop_near(o_ptr, -1, p_ptr->py, p_ptr->px);
+    drop_near(o_ptr, -1, p_ptr->py, p_ptr->px, TRUE);
 
     /* All done */
     msg_print("Allocated.");

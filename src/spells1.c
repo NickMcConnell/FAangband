@@ -1113,7 +1113,7 @@ bool chaotic_effects(monster_type * m_ptr)
 		delete_object_idx(this_o_idx);
 
 		/* Drop it */
-		drop_near(i_ptr, -1, my, mx);
+		drop_near(i_ptr, -1, my, mx, TRUE);
 	    }
 
 	    /* Forget objects */
@@ -3616,7 +3616,7 @@ static bool project_o(int who, int y, int x, int dam, int typ)
 			    object_copy(i_ptr, &p_ptr->inventory[i]);
 
 			    /* Place the copy there. */
-			    drop_near(i_ptr, -1, oy, ox);
+			    drop_near(i_ptr, -1, oy, ox, TRUE);
 
 			    /* Message */
 			    msg_format("The %s vanishes", o_name);

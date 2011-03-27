@@ -1180,7 +1180,7 @@ void hit_trap(int y, int x)
 	    object_prep(o_ptr, lookup_kind(tval, sval));
 	    object_aware(o_ptr);
 	    object_known(o_ptr);
-	    drop_near(o_ptr, -1, y, x);
+	    drop_near(o_ptr, -1, y, x, TRUE);
 
 	    break;
 	}

@@ -465,7 +465,7 @@ void create_athelas(void)
 
     object_aware(i_ptr);
     object_known(i_ptr);
-    drop_near(i_ptr, -1, py, px);
+    drop_near(i_ptr, -1, py, px, TRUE);
 }
 
 

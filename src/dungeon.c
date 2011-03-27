@@ -1590,7 +1590,7 @@ static void process_player(void)
 		msg_format("You drop %s (%c).", o_name, index_to_label(item));
 
 		/* Drop it (carefully) near the player */
-		drop_near(o_ptr, 0, p_ptr->py, p_ptr->px);
+		drop_near(o_ptr, 0, p_ptr->py, p_ptr->px, FALSE);
 
 		/* Modify, Describe, Optimize */
 		inven_item_increase(item, -255);

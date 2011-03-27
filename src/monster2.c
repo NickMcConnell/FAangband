@@ -3928,7 +3928,7 @@ void monster_death(int m_idx)
 	delete_object_idx(this_o_idx);
 
 	/* Drop it */
-	drop_near(i_ptr, -1, y, x);
+	drop_near(i_ptr, -1, y, x, TRUE);
     }
 
     /* Forget objects */
@@ -3952,7 +3952,7 @@ void monster_death(int m_idx)
 	    apply_magic(i_ptr, -1, TRUE, TRUE, TRUE);
 
 	    /* Drop it in the dungeon */
-	    drop_near(i_ptr, -1, y, x);
+	    drop_near(i_ptr, -1, y, x, TRUE);
 
 
 	    /* Get local object */
@@ -3968,7 +3968,7 @@ void monster_death(int m_idx)
 	    apply_magic(i_ptr, -1, TRUE, TRUE, TRUE);
 
 	    /* Drop it in the dungeon */
-	    drop_near(i_ptr, -1, y, x);
+	    drop_near(i_ptr, -1, y, x, TRUE);
 	}
 
 	/* Ungoliant */
@@ -3986,7 +3986,7 @@ void monster_death(int m_idx)
 	    apply_magic(i_ptr, -1, TRUE, TRUE, TRUE);
 
 	    /* Drop it in the dungeon */
-	    drop_near(i_ptr, -1, y, x);
+	    drop_near(i_ptr, -1, y, x, TRUE);
 	}
     }
 
@@ -4033,7 +4033,7 @@ void monster_death(int m_idx)
 		dump_gold++;
 
 		/* Drop it in the dungeon */
-		drop_near(i_ptr, -1, y, x);
+		drop_near(i_ptr, -1, y, x, TRUE);
 	    }
 	}
 
@@ -4046,7 +4046,7 @@ void monster_death(int m_idx)
 		dump_item++;
 
 		/* Drop it in the dungeon */
-		drop_near(i_ptr, -1, y, x);
+		drop_near(i_ptr, -1, y, x, TRUE);
 	    }
 	    required_tval = 0;
 	}
@@ -4060,7 +4060,7 @@ void monster_death(int m_idx)
 		dump_item++;
 
 		/* Drop it in the dungeon */
-		drop_near(i_ptr, -1, y, x);
+		drop_near(i_ptr, -1, y, x, TRUE);
 	    }
 	}
 

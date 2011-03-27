@@ -627,7 +627,7 @@ byte py_pickup(int pickup, int y, int x)
 	    o_ptr = &o_list[this_o_idx];
 	    
 	    /* Drop it */
-	    drop_near(o_ptr, -1, p_ptr->py, p_ptr->px);
+	    drop_near(o_ptr, -1, p_ptr->py, p_ptr->px, TRUE);
 	    
 	    /* Delete the old object */
 	    delete_object_idx(this_o_idx);

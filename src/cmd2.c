@@ -1038,7 +1038,7 @@ static void chest_death(bool scatter, int y, int x, s16b o_idx)
 
 		/* Place the object there. */
 		if (obj_success)
-		    drop_near(i_ptr, -1, y, x);
+		    drop_near(i_ptr, -1, y, x, TRUE);
 
 		/* Done. */
 		break;
@@ -1046,7 +1046,7 @@ static void chest_death(bool scatter, int y, int x, s16b o_idx)
 	}
 	/* Normally, drop object near the chest. */
 	else if (obj_success)
-	    drop_near(i_ptr, -1, y, x);
+	    drop_near(i_ptr, -1, y, x, TRUE);
     }
 
     /* Clear this global variable, to avoid messing up object generation. */
