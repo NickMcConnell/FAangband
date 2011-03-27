@@ -153,94 +153,94 @@ static void recharged_notice(object_type * o_ptr)
  */
 static void recharge_objects(void)
 {
-	int i;
+    int i;
 
-	bool charged = FALSE, discharged_stack;
+    bool charged = FALSE, discharged_stack;
 
-	object_type *o_ptr;
-	object_kind *k_ptr;
+    object_type *o_ptr;
+    object_kind *k_ptr;
 
-	/*** Recharge equipment ***/
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+    /*** Recharge equipment ***/
+    for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+    {
+	/* Get the object */
+	o_ptr = &p_ptr->inventory[i];
+
+	/* Skip non-objects */
+	if (!o_ptr->k_idx) continue;
+
+	/* Recharge activatable objects */
+	if (recharge_timeout(o_ptr))
 	{
-		/* Get the object */
-		o_ptr = &p_ptr->inventory[i];
+	    charged = TRUE;
 
-		/* Skip non-objects */
-		if (!o_ptr->k_idx) continue;
-
-		/* Recharge activatable objects */
-		if (recharge_timeout(o_ptr))
-		{
-			charged = TRUE;
-
-			/* Message if an item recharged */
-			recharged_notice(o_ptr, TRUE);
-		}
+	    /* Message if an item recharged */
+	    recharged_notice(o_ptr, TRUE);
 	}
+    }
 
-	/* Notice changes */
-	if (charged)
+    /* Notice changes */
+    if (charged)
+    {
+	/* Window stuff */
+	p_ptr->redraw |= (PR_EQUIP);
+    }
+
+    charged = FALSE;
+
+    /*** Recharge the inventory ***/
+    for (i = 0; i < INVEN_PACK; i++)
+    {
+	o_ptr = &p_ptr->inventory[i];
+	k_ptr = &k_info[o_ptr->k_idx];
+
+	/* Skip non-objects */
+	if (!o_ptr->k_idx) continue;
+
+	discharged_stack = (number_charging(o_ptr) == o_ptr->number) ? TRUE : FALSE;
+
+	/* Recharge rods, and update if any rods are recharged */
+	if (o_ptr->tval == TV_ROD && recharge_timeout(o_ptr))
 	{
-		/* Window stuff */
-		p_ptr->redraw |= (PR_EQUIP);
+	    charged = TRUE;
+
+	    /* Entire stack is recharged */
+	    if (o_ptr->timeout == 0)
+	    {
+		recharged_notice(o_ptr, TRUE);
+	    }
+
+	    /* Previously exhausted stack has acquired a charge */
+	    else if (discharged_stack)
+	    {
+		recharged_notice(o_ptr, FALSE);
+	    }
 	}
+    }
 
-	charged = FALSE;
+    /* Notice changes */
+    if (charged)
+    {
+	/* Combine pack */
+	p_ptr->notice |= (PN_COMBINE);
 
-	/*** Recharge the inventory ***/
-	for (i = 0; i < INVEN_PACK; i++)
-	{
-		o_ptr = &p_ptr->inventory[i];
-		k_ptr = &k_info[o_ptr->k_idx];
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_INVEN);
+    }
 
-		/* Skip non-objects */
-		if (!o_ptr->k_idx) continue;
+    /*** Recharge the ground ***/
+    for (i = 1; i < o_max; i++)
+    {
+	/* Get the object */
+	o_ptr = &o_list[i];
 
-		discharged_stack = (number_charging(o_ptr) == o_ptr->number) ? TRUE : FALSE;
+	/* Skip dead objects */
+	if (!o_ptr->k_idx) continue;
 
-		/* Recharge rods, and update if any rods are recharged */
-		if (o_ptr->tval == TV_ROD && recharge_timeout(o_ptr))
-		{
-			charged = TRUE;
-
-			/* Entire stack is recharged */
-			if (o_ptr->timeout == 0)
-			{
-				recharged_notice(o_ptr, TRUE);
-			}
-
-			/* Previously exhausted stack has acquired a charge */
-			else if (discharged_stack)
-			{
-				recharged_notice(o_ptr, FALSE);
-			}
-		}
-	}
-
-	/* Notice changes */
-	if (charged)
-	{
-		/* Combine pack */
-		p_ptr->notice |= (PN_COMBINE);
-
-		/* Redraw stuff */
-		p_ptr->redraw |= (PR_INVEN);
-	}
-
-	/*** Recharge the ground ***/
-	for (i = 1; i < o_max; i++)
-	{
-		/* Get the object */
-		o_ptr = &o_list[i];
-
-		/* Skip dead objects */
-		if (!o_ptr->k_idx) continue;
-
-		/* Recharge rods on the ground */
-		if (o_ptr->tval == TV_ROD)
-			recharge_timeout(o_ptr);
-	}
+	/* Recharge rods on the ground */
+	if (o_ptr->tval == TV_ROD)
+	    recharge_timeout(o_ptr);
+    }
 }
 
 /**
@@ -349,6 +349,8 @@ static void process_world(void)
 
     bool dawn;
     
+    /*** Check the Time ***/
+
     /* Every 10 game turns */
     if (turn % 10)
 	return;
@@ -362,38 +364,6 @@ static void process_world(void)
     if ((player_has(PF_ENHANCE_MAGIC))
 	&& ((turn / 10) % EXTEND_MAGIC_FRACTION))
 	extend_magic = TRUE;
-
-    /*** Check the Time ***/
-
-    if (!(turn % 1000)) {
-	/* Check time */
-	if (0 != check_time()) {
-	    /* Warning */
-	    if (closing_flag <= 2) {
-		/* Disturb */
-		disturb(0, 0);
-
-		/* Count warnings */
-		closing_flag++;
-
-		/* Message */
-		msg_print("The gates to ANGBAND are closing...");
-		msg_print("Please finish up and/or save your game.");
-	    }
-
-	    /* Slam the gate */
-	    else {
-		/* Message */
-		msg_print("The gates to ANGBAND are now closed.");
-
-		/* Stop playing */
-		p_ptr->playing = FALSE;
-
-		/* Leaving */
-		p_ptr->leaving = TRUE;
-	    }
-	}
-    }
 
     /*** Attempt timed autosave.  From Zangband. ***/
     if (autosave && autosave_freq) {
@@ -764,22 +734,22 @@ static void process_world(void)
 	(void) dec_timed(TMD_SHERO, 1, FALSE);
     }
 
-/* Blessed */
+    /* Blessed */
     if ((p_ptr->timed[TMD_BLESSED]) && (!extend_magic)) {
 	(void) dec_timed(TMD_BLESSED, 1, FALSE);
     }
 
-/* Shield */
+    /* Shield */
     if ((p_ptr->timed[TMD_SHIELD]) && (!extend_magic)) {
 	(void) dec_timed(TMD_SHIELD, 1, FALSE);
     }
 
-/* Oppose Cold. */
+    /* Oppose Cold. */
     if ((p_ptr->timed[TMD_OPP_COLD]) && (!extend_magic)) {
 	(void) dec_timed(TMD_OPP_COLD, 1, FALSE);
     }
 
-/* Oppose Acid. */
+    /* Oppose Acid. */
     if ((p_ptr->timed[TMD_OPP_ACID]) && (!extend_magic)) {
 	(void) dec_timed(TMD_OPP_ACID, 1, FALSE);
     }
@@ -953,7 +923,7 @@ static void process_world(void)
     /*** Process Inventory ***/
 
     /* Handle experience draining.  In Oangband, the effect is worse,
-     * especially for high-level characters.  As per Tolkein, hobbits are
+     * especially for high-level characters.  As per Tolkien, hobbits are
      * resistant. */
     if (p_ptr->state.black_breath) {
 	if (hardy)
@@ -1249,54 +1219,6 @@ static void process_world(void)
 }
 
 
-
-
-#ifdef ALLOW_BORG
-
-/**
- * Verify use of "borg" mode
- */
-static bool verify_borg_mode(void)
-{
-    static int verify = 1;
-
-    /* Ask first time */
-    if (verify && verify_special) {
-	/* Mention effects */
-	msg_print
-	    ("You are about to use the dangerous, unsupported, borg commands!");
-	msg_print
-	    ("Your machine may crash, and your savefile may become corrupted!");
-	msg_print(NULL);
-
-	/* Verify request */
-	if (!get_check("Are you sure you want to use the borg commands? ")) {
-	    return (FALSE);
-	}
-    }
-
-    /* Verified */
-    verify = 0;
-
-    /* Mark savefile */
-    p_ptr->noscore |= 0x0010;
-
-    /* Okay */
-    return (TRUE);
-}
-
-
-/**
- * Hack -- Declare the Borg Routines
- */
-extern void do_cmd_borg(void);
-
-#endif
-
-
-
-
-
 /**
  * Hack -- helper function for "process_player()"
  *
@@ -1306,12 +1228,8 @@ static void process_player_aux(void)
 {
     static int old_monster_race_idx = 0;
 
-    static bitflag old_r_flags[RF_SIZE] = {
-	0, 0, 0
-    };
-    static bitflag old_rs_flags[RSF_SIZE] = {
-	0, 0, 0, 0
-    };
+    static bitflag old_r_flags[RF_SIZE] = { 0, 0, 0 };
+    static bitflag old_rs_flags[RSF_SIZE] = { 0, 0, 0, 0 };
 
     static byte old_r_blows0 = 0;
     static byte old_r_blows1 = 0;
@@ -1505,17 +1423,17 @@ static void process_player(void)
     /* Add context-sensitive mouse buttons */
 
     if (tf_has(f_ptr->flags, TF_STAIR) && !(feat % 2))
-	button_add("<", '<');
+	button_add("[<]", '<');
     else
 	button_kill('<');
 
     if (tf_has(f_ptr->flags, TF_STAIR) && (feat % 2))
-	button_add(">", '>');
+	button_add("[>]", '>');
     else
 	button_kill('>');
 
     if (cave_o_idx[p_ptr->py][p_ptr->px] > 0)
-	button_add("g", 'g');
+	button_add("[g]", 'g');
     else
 	button_kill('g');
 
@@ -1541,11 +1459,6 @@ static void process_player(void)
 	if (p_ptr->redraw)
 	    redraw_stuff();
 
-	/* Redraw stuff (if needed) */
-	if (p_ptr->window)
-	    window_stuff();
-
-
 	/* Place the cursor on the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
 
@@ -1555,77 +1468,7 @@ static void process_player(void)
 
 
 	/* Hack -- Pack Overflow */
-	if (p_ptr->inventory[INVEN_PACK - p_ptr->pack_size_reduce].k_idx) {
-	    int item;
-
-	    for (item = INVEN_PACK;
-		 item >= INVEN_PACK - p_ptr->pack_size_reduce; item--) {
-		char o_name[120];
-
-		object_type *o_ptr;
-
-		/* Access the slot to be dropped */
-		o_ptr = &p_ptr->inventory[item];
-
-		/* Skip non-objects */
-		if (!o_ptr->k_idx)
-		    continue;
-
-		/* Skip non-droppables */
-		if (cf_has(o_ptr->flags_curse, CF_STICKY_CARRY)) {
-		    notice_curse(CF_STICKY_CARRY, item + 1);
-		    continue;
-		}
-
-		/* Disturbing */
-		disturb(0, 0);
-
-		/* Warning */
-		msg_print("Your pack overflows!");
-
-		/* Describe */
-		object_desc(o_name, o_ptr, TRUE, 3);
-
-		/* Message */
-		msg_format("You drop %s (%c).", o_name, index_to_label(item));
-
-		/* Drop it (carefully) near the player */
-		drop_near(o_ptr, 0, p_ptr->py, p_ptr->px, FALSE);
-
-		/* Modify, Describe, Optimize */
-		inven_item_increase(item, -255);
-		inven_item_describe(item);
-		inven_item_optimize(item);
-
-		/* Notice stuff (if needed) */
-		if (p_ptr->notice)
-		    notice_stuff();
-
-		/* Update stuff (if needed) */
-		if (p_ptr->update)
-		    update_stuff();
-
-		/* Redraw stuff (if needed) */
-		if (p_ptr->redraw)
-		    redraw_stuff();
-
-		/* Window stuff (if needed) */
-		if (p_ptr->window)
-		    window_stuff();
-	    }
-	}
-
-
-	/* Hack -- cancel "lurking browse mode" */
-	if (!p_ptr->command_new)
-	    p_ptr->command_see = FALSE;
-
-	/* Mega-hack -- show lists */
-	if (OPT(show_lists))
-	    p_ptr->command_see = TRUE;
-
-	/* Hack - update visible monster list */
-	p_ptr->redraw |= (PR_MONLIST | PR_ITEMLIST);
+	pack_overflow();
 
 	/* Assume free turn */
 	p_ptr->energy_use = 0;
@@ -1635,6 +1478,16 @@ static void process_player(void)
 	if ((p_ptr->timed[TMD_PARALYZED]) || (p_ptr->timed[TMD_STUN] >= 100)) {
 	    /* Take a turn */
 	    p_ptr->energy_use = 100;
+	}
+
+	/* Picking up objects */
+	else if (p_ptr->notice & PN_PICKUP)
+	{
+	    /* Recursively call the pickup function, use energy */
+	    p_ptr->energy_use = py_pickup(0) * 10;
+	    if (p_ptr->energy_use > 100)
+		p_ptr->energy_use = 100;
+	    p_ptr->notice &= ~(PN_PICKUP);
 	}
 
 	/* Resting */
@@ -1650,6 +1503,9 @@ static void process_player(void)
 
 	    /* Take a turn */
 	    p_ptr->energy_use = 100;
+
+	    /* Increment the resting counter */
+	    p_ptr->resting_turn++;
 	}
 
 	/* Running */
@@ -1659,16 +1515,8 @@ static void process_player(void)
 	}
 
 	/* Repeated command */
-	else if (p_ptr->command_rep) {
-	    /* Count this execution */
-	    p_ptr->command_rep--;
-
-	    /* Redraw the state */
-	    p_ptr->redraw |= (PR_STATE);
-
-	    /* Redraw stuff */
-	    /* redraw_stuff(); */
-
+	else if (cmd_get_nrepeats() > 0)
+		{
 	    /* Hack -- Assume messages were seen */
 	    msg_flag = FALSE;
 
@@ -1692,7 +1540,7 @@ static void process_player(void)
 
 	    /* Mega hack - complete redraw if big graphics */
 	    if ((tile_width > 1) || (tile_height > 1))
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY);
+		p_ptr->redraw |= (PR_MAP);
 
 	}
 
@@ -1799,6 +1647,9 @@ static void process_player(void)
 		m_ptr->mflag &= ~(MFLAG_SHOW);
 	    }
 	}
+	/* HACK: This will redraw the itemlist too frequently, but I'm don't
+	   know all the individual places it should go. */
+	p_ptr->redraw |= PR_ITEMLIST;
     }
     while (!p_ptr->energy_use && !p_ptr->leaving);
 
@@ -1844,63 +1695,34 @@ static void process_player(void)
 
 byte flicker = 0;
 byte color_flicker[MAX_COLORS][3] = {
-    {
-     TERM_DARK, TERM_L_DARK, TERM_L_RED}
-    , {
-       TERM_WHITE, TERM_L_WHITE, TERM_L_BLUE}
-    , {
-       TERM_SLATE, TERM_WHITE, TERM_L_DARK}
-    , {
-       TERM_ORANGE, TERM_YELLOW, TERM_L_RED}
-    , {
-       TERM_RED, TERM_L_RED, TERM_L_PINK}
-    , {
-       TERM_GREEN, TERM_L_GREEN, TERM_L_TEAL}
-    , {
-       TERM_BLUE, TERM_L_BLUE, TERM_SLATE}
-    , {
-       TERM_UMBER, TERM_L_UMBER, TERM_MUSTARD}
-    , {
-       TERM_L_DARK, TERM_SLATE, TERM_L_VIOLET}
-    , {
-       TERM_WHITE, TERM_SLATE, TERM_L_WHITE}
-    , {
-       TERM_L_PURPLE, TERM_PURPLE, TERM_L_VIOLET}
-    , {
-       TERM_YELLOW, TERM_L_YELLOW, TERM_MUSTARD}
-    , {
-       TERM_L_RED, TERM_RED, TERM_L_PINK}
-    , {
-       TERM_L_GREEN, TERM_L_TEAL, TERM_GREEN}
-    , {
-       TERM_L_BLUE, TERM_DEEP_L_BLUE, TERM_BLUE_SLATE}
-    , {
-       TERM_L_UMBER, TERM_UMBER, TERM_MUD}
-    , {
-       TERM_PURPLE, TERM_VIOLET, TERM_MAGENTA}
-    , {
-       TERM_VIOLET, TERM_L_VIOLET, TERM_MAGENTA}
-    , {
-       TERM_TEAL, TERM_L_TEAL, TERM_L_GREEN}
-    , {
-       TERM_MUD, TERM_YELLOW, TERM_UMBER}
-    , {
-       TERM_L_YELLOW, TERM_WHITE, TERM_L_UMBER}
-    , {
-       TERM_MAGENTA, TERM_L_PINK, TERM_L_RED}
-    , {
-       TERM_L_TEAL, TERM_L_WHITE, TERM_TEAL}
-    , {
-       TERM_L_VIOLET, TERM_L_PURPLE, TERM_VIOLET}
-    , {
-       TERM_L_PINK, TERM_L_RED, TERM_L_WHITE}
-    , {
-       TERM_MUSTARD, TERM_YELLOW, TERM_UMBER}
-    , {
-       TERM_BLUE_SLATE, TERM_BLUE, TERM_SLATE}
-    , {
-       TERM_DEEP_L_BLUE, TERM_L_BLUE, TERM_BLUE}
-    ,
+    {TERM_DARK, TERM_L_DARK, TERM_L_RED},
+    {TERM_WHITE, TERM_L_WHITE, TERM_L_BLUE},
+    {TERM_SLATE, TERM_WHITE, TERM_L_DARK},
+    {TERM_ORANGE, TERM_YELLOW, TERM_L_RED},
+    {TERM_RED, TERM_L_RED, TERM_L_PINK},
+    {TERM_GREEN, TERM_L_GREEN, TERM_L_TEAL},
+    {TERM_BLUE, TERM_L_BLUE, TERM_SLATE},
+    {TERM_UMBER, TERM_L_UMBER, TERM_MUSTARD},
+    {TERM_L_DARK, TERM_SLATE, TERM_L_VIOLET},
+    {TERM_WHITE, TERM_SLATE, TERM_L_WHITE},
+    {TERM_L_PURPLE, TERM_PURPLE, TERM_L_VIOLET},
+    {TERM_YELLOW, TERM_L_YELLOW, TERM_MUSTARD},
+    {TERM_L_RED, TERM_RED, TERM_L_PINK},
+    {TERM_L_GREEN, TERM_L_TEAL, TERM_GREEN},
+    {TERM_L_BLUE, TERM_DEEP_L_BLUE, TERM_BLUE_SLATE},
+    {TERM_L_UMBER, TERM_UMBER, TERM_MUD},
+    {TERM_PURPLE, TERM_VIOLET, TERM_MAGENTA},
+    {TERM_VIOLET, TERM_L_VIOLET, TERM_MAGENTA},
+    {TERM_TEAL, TERM_L_TEAL, TERM_L_GREEN},
+    {TERM_MUD, TERM_YELLOW, TERM_UMBER},
+    {TERM_L_YELLOW, TERM_WHITE, TERM_L_UMBER},
+    {TERM_MAGENTA, TERM_L_PINK, TERM_L_RED},
+    {TERM_L_TEAL, TERM_L_WHITE, TERM_TEAL},
+    {TERM_L_VIOLET, TERM_L_PURPLE, TERM_VIOLET},
+    {TERM_L_PINK, TERM_L_RED, TERM_L_WHITE},
+    {TERM_MUSTARD, TERM_YELLOW, TERM_UMBER},
+    {TERM_BLUE_SLATE, TERM_BLUE, TERM_SLATE},
+    {TERM_DEEP_L_BLUE, TERM_L_BLUE, TERM_BLUE},
 };
 
 byte get_flicker(byte a)
@@ -1975,16 +1797,16 @@ static void dungeon(void)
 
     bool just_arrived = TRUE;
 
+    /* Hack -- enforce illegal panel */
+    Term->offset_y = DUNGEON_HGT;
+    Term->offset_x = DUNGEON_WID;
+
     /* Not leaving */
     p_ptr->leaving = FALSE;
 
 
     /* Reset the "command" vars */
-    p_ptr->command_cmd = 0;
-    p_ptr->command_new = 0;
-    p_ptr->command_rep = 0;
     p_ptr->command_arg = 0;
-    p_ptr->command_dir = 0;
 
 
     /* Cancel the target */
@@ -2086,10 +1908,11 @@ static void dungeon(void)
     /* Redraw stuff */
     p_ptr->redraw |= (PR_MONSTER | PR_MONLIST | PR_ITEMLIST);
 
+    /* Update stuff */
+    update_stuff();
+
     /* Redraw stuff */
     redraw_stuff();
-
-    update_stuff();
 
 
     /* Hack -- Decrease "xtra" depth */
@@ -2100,7 +1923,7 @@ static void dungeon(void)
     p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS | PU_SPECIALTY);
 
     /* Combine / Reorder the pack */
-    p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+    p_ptr->notice |= (PN_COMBINE | PN_REORDER | PN_SORT_QUIVER);
 
     /* Make basic mouse buttons */
     normal_screen = TRUE;
@@ -2109,9 +1932,6 @@ static void dungeon(void)
     (void) button_add("[Spc]", ' ');
     (void) button_add("[Rpt]", 'n');
     (void) button_add("[Std]", ',');
-    (void) button_add("[Inv]", '|');
-    (void) button_add("[Rest]", 'R');
-    (void) button_add("[Mgc]", 'm');
 
     /* Redraw buttons */
     p_ptr->redraw |= (PR_BUTTONS);
@@ -2124,9 +1944,6 @@ static void dungeon(void)
 
     /* Redraw stuff */
     redraw_stuff();
-
-    /* Window stuff */
-    window_stuff();
 
     /* Refresh */
     Term_fresh();
@@ -2160,24 +1977,20 @@ static void dungeon(void)
     /* Main loop */
     while (TRUE) {
 	/* Hack -- Compact the monster list occasionally */
-	if (m_cnt + 32 > z_info->m_max)
-	    compact_monsters(64);
+	if (m_cnt + 32 > z_info->m_max) compact_monsters(64);
 
 	/* Hack -- Compress the monster list occasionally */
-	if (m_cnt + 32 < m_max)
-	    compact_monsters(0);
+	if (m_cnt + 32 < m_max) compact_monsters(0);
 
 
 	/* Hack -- Compact the object list occasionally */
-	if (o_cnt + 32 > z_info->o_max)
-	    compact_objects(64);
+	if (o_cnt + 32 > z_info->o_max) compact_objects(64);
 
 	/* Hack -- Compress the object list occasionally */
-	if (o_cnt + 32 < o_max)
-	    compact_objects(0);
+	if (o_cnt + 32 < o_max) compact_objects(0);
 
 
-      /*** Apply energy ***/
+	/*** Apply energy ***/
 
 	/* Give the player some energy */
 	p_ptr->energy += extract_energy[p_ptr->state.pspeed];
@@ -2210,6 +2023,9 @@ static void dungeon(void)
 
 	/* Can the player move? */
 	while (p_ptr->energy >= 100 && !p_ptr->leaving) {
+	    /* Do any necessary animations */
+	    do_animation(); 
+
 	    /* Process monster with even more energy first */
 	    process_monsters((byte) (p_ptr->energy + 1));
 
@@ -2221,31 +2037,22 @@ static void dungeon(void)
 	}
 
 	/* Notice stuff */
-	if (p_ptr->notice)
-	    notice_stuff();
+	if (p_ptr->notice) notice_stuff();
 
 	/* Update stuff */
-	if (p_ptr->update)
-	    update_stuff();
+	if (p_ptr->update) update_stuff();
 
 	/* Redraw stuff */
-	if (p_ptr->redraw)
-	    redraw_stuff();
-
-	/* Redraw stuff */
-	if (p_ptr->window)
-	    window_stuff();
+	if (p_ptr->redraw) redraw_stuff();
 
 	/* Hack -- Hilight the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
 
 	/* Optional fresh */
-	if (OPT(fresh_after))
-	    Term_fresh();
+	if (OPT(fresh_after)) Term_fresh();
 
 	/* Handle "leaving" */
-	if (p_ptr->leaving)
-	    break;
+	if (p_ptr->leaving) break;
 
 	/* Process monsters */
 	process_monsters(0);
@@ -2254,62 +2061,44 @@ static void dungeon(void)
 	reset_monsters();
 
 	/* Notice stuff */
-	if (p_ptr->notice)
-	    notice_stuff();
+	if (p_ptr->notice) notice_stuff();
 
 	/* Update stuff */
-	if (p_ptr->update)
-	    update_stuff();
+	if (p_ptr->update) update_stuff();
 
 	/* Redraw stuff */
-	if (p_ptr->redraw)
-	    redraw_stuff();
-
-	/* Redraw stuff */
-	if (p_ptr->window)
-	    window_stuff();
+	if (p_ptr->redraw) redraw_stuff();
 
 	/* Hack -- Hilight the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
 
 	/* Optional fresh */
-	if (OPT(fresh_after))
-	    Term_fresh();
+	if (OPT(fresh_after)) Term_fresh();
 
 	/* Handle "leaving" */
-	if (p_ptr->leaving)
-	    break;
+	if (p_ptr->leaving) break;
 
 
 	/* Process the world */
 	process_world();
 
 	/* Notice stuff */
-	if (p_ptr->notice)
-	    notice_stuff();
+	if (p_ptr->notice) notice_stuff();
 
 	/* Update stuff */
-	if (p_ptr->update)
-	    update_stuff();
+	if (p_ptr->update) update_stuff();
 
 	/* Redraw stuff */
-	if (p_ptr->redraw)
-	    redraw_stuff();
-
-	/* Window stuff */
-	if (p_ptr->window)
-	    window_stuff();
+	if (p_ptr->redraw) redraw_stuff();
 
 	/* Hack -- Hilight the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
 
 	/* Optional fresh */
-	if (OPT(fresh_after))
-	    Term_fresh();
+	if (OPT(fresh_after)) Term_fresh();
 
 	/* Handle "leaving" */
-	if (p_ptr->leaving)
-	    break;
+	if (p_ptr->leaving) break;
 
 	/* Count game turns */
 	turn++;
@@ -2321,10 +2110,6 @@ static void dungeon(void)
     (void) button_kill(' ');
     (void) button_kill('n');
     (void) button_kill(',');
-    (void) button_kill('|');
-    (void) button_kill('R');
-    (void) button_kill('m');
-
 }
 
 
@@ -2340,13 +2125,13 @@ static void process_some_user_pref_files(void)
     (void) process_pref_file("user.prf");
 
     /* Access the "race" pref file */
-    sprintf(buf, "%s.prf", p_name + rp_ptr->name);
+    sprintf(buf, "%s.prf", rp_ptr->name);
 
     /* Process that file */
     process_pref_file(buf);
 
     /* Access the "class" pref file */
-    sprintf(buf, "%s.prf", c_name + cp_ptr->name);
+    sprintf(buf, "%s.prf", cp_ptr->name);
 
     /* Process that file */
     process_pref_file(buf);
@@ -2369,41 +2154,36 @@ static void process_some_user_pref_files(void)
  * and so we only initialize it if we were unable to load it, and
  * we mark successful loading using the "Rand_quick" flag.  This
  * is a hack but it optimizes loading of savefiles.  XXX XXX
- */ void play_game(void)
+ */ 
+void play_game(void)
 {
+     bool existing_dead_save = FALSE;
 
     int i;
 
     /* Initialize */
     bool new_game = init_angband();
 
-    /* No restart */
-    game_start = FALSE;
-
     /* Hack -- Increase "icky" depth */
     character_icky++;
 
 
     /* Verify main term */
-    if (!angband_term[0]) {
+    if (!term_screen) {
 	quit("main window does not exist");
     }
 
     /* Make sure main term is active */
-    Term_activate(angband_term[0]);
+    Term_activate(term_screen);
 
     /* Verify minimum size */
-    if ((Term->hgt < (small_screen ? 12 : 24))
-	|| (Term->wid < (small_screen ? 32 : 80))) {
+    if ((Term->hgt < 24) || (Term->wid < 80)) {
 	quit("main window is too small");
     }
 
 
     /* Hack -- turn off the cursor */
-    (void) Term_set_cursor(0);
-
-    /* Quickstart */
-    character_quickstart = FALSE;
+    (void) Term_set_cursor(FALSE);
 
     /* Attempt to load */
     if (!load_player()) {
