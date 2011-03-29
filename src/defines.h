@@ -55,23 +55,24 @@
  * Name of the version/variant
  */
 #define VERSION_NAME "FAangband"
+#define SAVEFILE_NAME  "FAAN"
 
 
 /**
  * Current version string - according to FAangband reckoning.
  */
-#define VERSION_STRING	"1.1.6"
+#ifdef BUILD_ID
+#define VERSION_STRING	"1.2.0 (" BUILD_ID ")"
+#else
+# define VERSION_STRING "1.2.0"
+#endif
 
 /*
  * Current FAangband version numbers.
  */
 #define VERSION_MAJOR	1
-#define VERSION_MINOR	1
-#define VERSION_PATCH	6
-
-/**
- * The version_extra space in savefiles is used for encryption, oddly enough...
- */
+#define VERSION_MINOR	2
+#define VERSION_PATCH	0
 #define VERSION_EXTRA	0
 
 /**
