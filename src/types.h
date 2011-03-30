@@ -188,9 +188,9 @@ typedef struct object_kind {
 
     s32b cost;		/**< Object "base cost" */
 
-    bitflag flags_obj[OF_MAX];	/**< New object flags -NRM-*/
-    bitflag flags_curse[CF_MAX]; /**< New curse flags  -NRM- */
-    bitflag flags_kind[KF_MAX];	   /**< New object_kind flags -NRM- */
+    bitflag flags_obj[OF_SIZE];	/**< New object flags -NRM-*/
+    bitflag flags_curse[CF_SIZE]; /**< New curse flags  -NRM- */
+    bitflag flags_kind[KF_SIZE];	   /**< New object_kind flags -NRM- */
 
     int percent_res[MAX_P_RES];	   /**< Percentage resists -NRM- */
     int bonus_stat[A_MAX];	   /**< Stat bonuses       -NRM- */
@@ -424,7 +424,7 @@ typedef struct monster_race {
     bitflag flags[RF_SIZE];	/* Flags */
     bitflag spell_flags[RSF_SIZE];	/* Spell flags */
 
-    monster_blow blow[4];/**< Up to four blows per round */
+    monster_blow blow[MONSTER_BLOW_MAX];/**< Up to four blows per round */
 
 
     byte level;		/**< Level of creature */
@@ -817,7 +817,7 @@ typedef struct player_race {
 
     unsigned int ridx;
 
-    s16b r_adj[6];	/**< Racial stat modifiers */
+    s16b r_adj[A_MAX];	/**< Racial stat modifiers */
 
     s16b r_skills[SKILL_MAX];	/* racial skills */
     s16b rx_skills[SKILL_MAX];	/* racial extra skills */
@@ -939,7 +939,7 @@ typedef struct {
 
     bool opt[OPT_MAX];	/**< Options */
 
-    u32b window_flag[8];/**< Window flags */
+    u32b window_flag[ANGBAND_TERM_MAX];/**< Window flags */
 
     s16b hitpoint_warn;	/**< Hitpoint warning (0 to 9) */
 
@@ -969,13 +969,13 @@ typedef struct {
 
     s16b pspeed;	/**< Current speed */
 
-    s16b stat_use[6];
+    s16b stat_use[A_MAX];
 			/**< Current modified stats */
-    s16b stat_top[6];
+    s16b stat_top[A_MAX];
 			/**< Maximal modified stats */
-    s16b stat_add[6];
+    s16b stat_add[A_MAX];
 			/**< Equipment stat bonuses */
-    s16b stat_ind[6];
+    s16b stat_ind[A_MAX];
 			/**< Indexes into stat tables */
 
     s16b dis_to_h;	/**< Known bonus to hit */
@@ -1162,7 +1162,7 @@ typedef struct player {
     s16b player_hp[PY_MAX_LEVEL];/**< HP Array */
 
     char died_from[80];	/**< Cause of death */
-    char history[4][60];/**< Initial history */
+    char history[250];/**< Initial history */
 
     u16b quests;	/**< Number of quests finished */
     u16b total_winner;	/**< Total winner */

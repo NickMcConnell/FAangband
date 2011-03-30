@@ -19,81 +19,9 @@
 
 #include "angband.h"
 #include "squelch.h"
-
-
-
-
-/**
- * Some "local" parameters, used to help write savefiles
- */
-
-static ang_file	*fff;		/* Current save "file" */
-
-static byte	xor_byte;	/* Simple encryption */
-
-static u32b	v_stamp = 0L;	/* A simple "checksum" on the actual values */
-static u32b	x_stamp = 0L;	/* A simple "checksum" on the encoded bytes */
-
-
-
-/**
- * These functions place information into a savefile a byte at a time
- */
-
-static void sf_put(byte v)
-{
-  /* Encode the value, write a character */
-  xor_byte ^= v;
-  (void)file_writec(fff, xor_byte);
-  
-  /* Maintain the checksum info */
-  v_stamp += v;
-  x_stamp += xor_byte;
-}
-
-static void wr_byte(byte v)
-{
-  sf_put(v);
-}
-
-static void wr_u16b(u16b v)
-{
-  sf_put((byte)(v & 0xFF));
-  sf_put((byte)((v >> 8) & 0xFF));
-}
-
-static void wr_s16b(s16b v)
-{
-  wr_u16b((u16b)v);
-}
-
-static void wr_u32b(u32b v)
-{
-  sf_put((byte)(v & 0xFF));
-  sf_put((byte)((v >> 8) & 0xFF));
-  sf_put((byte)((v >> 16) & 0xFF));
-  sf_put((byte)((v >> 24) & 0xFF));
-}
-
-static void wr_s32b(s32b v)
-{
-  wr_u32b((u32b)v);
-}
-
-static void wr_string(cptr str)
-{
-  while (*str)
-    {
-      wr_byte(*str);
-      str++;
-    }
-  wr_byte(*str);
-}
-
-
-/*
- * These functions write info in larger logical records
- */
+#include "history.h"
+#include "option.h"
+#include "savefile.h"
 
 
 /**
@@ -101,75 +29,84 @@ static void wr_string(cptr str)
  */
 static void wr_item(object_type *o_ptr)
 {
-  int i;
+    int i;
 
-  wr_s16b(o_ptr->k_idx);
-  
-  /* Location */
-  wr_byte(o_ptr->iy);
-  wr_byte(o_ptr->ix);
-  
-  wr_byte(o_ptr->tval);
-  wr_byte(o_ptr->sval);
-  wr_s16b(o_ptr->pval);
-  
-  wr_byte(o_ptr->discount);
-  wr_byte(o_ptr->number);
-  wr_s16b(o_ptr->weight);
-  
-  wr_byte(o_ptr->name1);
-  wr_byte(o_ptr->name2);
-  wr_s16b(o_ptr->timeout);
-  
-  wr_s16b(o_ptr->to_h);
-  wr_s16b(o_ptr->to_d);
-  wr_s16b(o_ptr->to_a);
-  wr_s16b(o_ptr->ac);
-  wr_byte(o_ptr->dd);
-  wr_byte(o_ptr->ds);
-  
-  wr_byte(o_ptr->ident);
-  
-  wr_byte(o_ptr->marked);
-  
-  wr_u32b(o_ptr->flags_obj);	/* New object flags -NRM- */
-  wr_u32b(o_ptr->flags_curse);	/* New curse flags  -NRM- */
-  wr_u32b(o_ptr->id_curse);	/* New curse id  -NRM- */
-  wr_u32b(o_ptr->id_obj);	/* New object flags id  -NRM- */
-  wr_u32b(o_ptr->id_other);	/* New object other id  -NRM- */
+    wr_byte(ITEM_VERSION);
 
-  /* Resists, bonuses, multiples -NRM- */
-  for (i = 0; i < MAX_P_RES; i++)
-    wr_byte(o_ptr->percent_res[i]);
-  for (i = 0; i < A_MAX; i++)
-    wr_byte(o_ptr->bonus_stat[i]);
-  for (i = 0; i < MAX_P_BONUS; i++)
-    wr_byte(o_ptr->bonus_other[i]);
-  for (i = 0; i < MAX_P_SLAY; i++)
-    wr_byte(o_ptr->multiple_slay[i]);
-  for (i = 0; i < MAX_P_BRAND; i++)
-    wr_byte(o_ptr->multiple_brand[i]);
+    wr_s16b(o_ptr->k_idx);
+  
+    /* Location */
+    wr_byte(o_ptr->iy);
+    wr_byte(o_ptr->ix);
+  
+    wr_byte(o_ptr->tval);
+    wr_byte(o_ptr->sval);
+    wr_s16b(o_ptr->pval);
+  
+    wr_byte(o_ptr->discount);
+    wr_byte(o_ptr->number);
+    wr_s16b(o_ptr->weight);
+  
+    wr_byte(o_ptr->name1);
+    wr_byte(o_ptr->name2);
+    wr_s16b(o_ptr->timeout);
+  
+    wr_s16b(o_ptr->to_h);
+    wr_s16b(o_ptr->to_d);
+    wr_s16b(o_ptr->to_a);
+    wr_s16b(o_ptr->ac);
+    wr_byte(o_ptr->dd);
+    wr_byte(o_ptr->ds);
+  
+    wr_byte(o_ptr->ident);
+  
+    wr_byte(o_ptr->marked);
+  
+    wr_byte(o_ptr->origin);
+    wr_byte(o_ptr->origin_depth);
+    wr_u16b(o_ptr->origin_xtra);
 
-  /* Where found */
-  wr_u32b(o_ptr->found);
+    /* Flags */
+    for (i = 0; i < OF_SIZE; i++)
+	wr_byte(o_ptr->flags_obj[i]);
+    for (i = 0; i < CF_SIZE; i++)
+	wr_byte(o_ptr->flags_curse[i]);
+    for (i = 0; i < CF_SIZE; i++)
+	wr_byte(o_ptr->id_curse[i]);
+    for (i = 0; i < OF_SIZE; i++)
+	wr_byte(o_ptr->id_obj[i]);
+    for (i = 0; i < IF_SIZE; i++)
+	wr_byte(o_ptr->id_other[i]);
+
+    /* Resists, bonuses, multiples -NRM- */
+    for (i = 0; i < MAX_P_RES; i++)
+	wr_byte(o_ptr->percent_res[i]);
+    for (i = 0; i < A_MAX; i++)
+	wr_byte(o_ptr->bonus_stat[i]);
+    for (i = 0; i < MAX_P_BONUS; i++)
+	wr_byte(o_ptr->bonus_other[i]);
+    for (i = 0; i < MAX_P_SLAY; i++)
+	wr_byte(o_ptr->multiple_slay[i]);
+    for (i = 0; i < MAX_P_BRAND; i++)
+	wr_byte(o_ptr->multiple_brand[i]);
+
+    /* Held by monster index */
+    wr_s16b(o_ptr->held_m_idx);
   
-  /* Held by monster index */
-  wr_s16b(o_ptr->held_m_idx);
+    /* Activation */
+    wr_byte(o_ptr->effect);
   
-  /* Activation */
-  wr_byte(o_ptr->activation);
+    /* Feeling */
+    wr_byte(o_ptr->feel);
   
-  /* Feeling */
-  wr_byte(o_ptr->feel);
-  
-  /* Save the inscription (if any) */
-  if (o_ptr->note)
+    /* Save the inscription (if any) */
+    if (o_ptr->note)
     {
-      wr_string(quark_str(o_ptr->note));
+	wr_string(quark_str(o_ptr->note));
     }
-  else
+    else
     {
-      wr_string("");
+	wr_string("");
     }
 }
   
@@ -179,313 +116,464 @@ static void wr_item(object_type *o_ptr)
  */
 static void wr_monster(monster_type *m_ptr)
 {
-  monster_race *r_ptr = &r_info[m_ptr->r_idx];
+    monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-  /* Special treatment for player ghosts */
-  if (rf_has(r_ptr->flags, RF_PLAYER_GHOST))
-    wr_s16b(r_ghost);
-  else
-    wr_s16b(m_ptr->r_idx);
+    /* Special treatment for player ghosts */
+    if (rf_has(r_ptr->flags, RF_PLAYER_GHOST))
+	wr_s16b(r_ghost);
+    else
+	wr_s16b(m_ptr->r_idx);
 
-  wr_byte(m_ptr->fy);
-  wr_byte(m_ptr->fx);
-  wr_s16b(m_ptr->hp);
-  wr_s16b(m_ptr->maxhp);
-  wr_s16b(m_ptr->csleep);
-  wr_byte(m_ptr->mspeed);
-  wr_byte(m_ptr->energy);
-  wr_byte(m_ptr->stunned);
-  wr_byte(m_ptr->confused);
-  wr_byte(m_ptr->monfear);
-  wr_byte(m_ptr->stasis);
+    wr_byte(m_ptr->fy);
+    wr_byte(m_ptr->fx);
+    wr_s16b(m_ptr->hp);
+    wr_s16b(m_ptr->maxhp);
+    wr_s16b(m_ptr->csleep);
+    wr_byte(m_ptr->mspeed);
+    wr_byte(m_ptr->energy);
+    wr_byte(m_ptr->stunned);
+    wr_byte(m_ptr->confused);
+    wr_byte(m_ptr->monfear);
+    wr_byte(m_ptr->stasis);
   
-  wr_byte(m_ptr->black_breath);
+    wr_byte(m_ptr->black_breath);
   
-  wr_u32b(m_ptr->smart); /* Flags for 'smart-learn' */
+    wr_u32b(m_ptr->smart); /* Flags for 'smart-learn' */
   
-  /* Dummy writes for features soon to be implemented */
-  wr_byte(0);   
+    /* Dummy writes for features soon to be implemented */
+    wr_byte(0);   
 
-  /* Shapechange counter */
-  wr_byte(m_ptr->schange);
+    /* Shapechange counter */
+    wr_byte(m_ptr->schange);
 
-  /* Original form of shapechanger */      
-  wr_s16b(m_ptr->orig_idx);	 
+    /* Original form of shapechanger */      
+    wr_s16b(m_ptr->orig_idx);	 
   
-  /* Extra desire to cast harassment spells */
-  wr_byte(m_ptr->harass);
+    /* Extra desire to cast harassment spells */
+    wr_byte(m_ptr->harass);
   
-  /* Current Mana */   
-  wr_byte(m_ptr->mana);    
+    /* Current Mana */   
+    wr_byte(m_ptr->mana);    
   
-  /* Racial type */
-  wr_byte(m_ptr->p_race);
-  wr_byte(m_ptr->old_p_race);
+    /* Racial type */
+    wr_byte(m_ptr->p_race);
+    wr_byte(m_ptr->old_p_race);
 
-  /* AI info */
-  wr_s16b(m_ptr->hostile);
-  wr_u16b(m_ptr->group);
-  wr_u16b(m_ptr->group_leader);
+    /* AI info */
+    wr_s16b(m_ptr->hostile);
+    wr_u16b(m_ptr->group);
+    wr_u16b(m_ptr->group_leader);
 
-  /* Territorial info */
-  wr_u16b(m_ptr->y_terr);
-  wr_u16b(m_ptr->x_terr);
+    /* Territorial info */
+    wr_u16b(m_ptr->y_terr);
+    wr_u16b(m_ptr->x_terr);
           
-  /* Spare */
-  wr_s16b(0); 
+    /* Spare */
+    wr_s16b(0); 
 }
-
-
-/**
- * Write a "lore" record
- */
-static void wr_lore(int r_idx)
-{
-  monster_race *r_ptr = &r_info[r_idx];
-  monster_lore *l_ptr = &l_list[r_idx];
-  
-  /* Count sights/deaths/kills */
-  wr_s16b(l_ptr->sights);
-  wr_s16b(l_ptr->deaths);
-  wr_s16b(l_ptr->pkills);
-  wr_s16b(l_ptr->tkills);
-  
-  /* Count wakes and ignores */
-  wr_byte(l_ptr->wake);
-  wr_byte(l_ptr->ignore);
-  
-  /* Extra stuff */
-  wr_byte(l_ptr->xtra1);
-  wr_byte(l_ptr->xtra2);
-  
-  /* Count drops */
-  wr_byte(l_ptr->drop_gold);
-  wr_byte(l_ptr->drop_item);
-  
-  /* Count spells */
-  wr_byte(0);
-  wr_byte(l_ptr->cast_spell);
-  
-  /* Count blows of each type */
-  wr_byte(l_ptr->blows[0]);
-  wr_byte(l_ptr->blows[1]);
-  wr_byte(l_ptr->blows[2]);
-  wr_byte(l_ptr->blows[3]);
-  
-  /* Memorize flags */
-  wr_u32b(l_ptr->flags1);
-  wr_u32b(l_ptr->flags2);
-  wr_u32b(l_ptr->flags3);
-  wr_u32b(l_ptr->flags4);
-  wr_u32b(l_ptr->flags5);
-  wr_u32b(l_ptr->flags6);
-  
-  
-  /* Monster limit per level */
-  wr_byte(r_ptr->max_num);
-  wr_byte(0);
-  wr_byte(0);
-  wr_byte(0);
-}
-
-
-/**
- * Write an "xtra" record.  Records knowledge of object kinds.
- */
-static void wr_xtra(int k_idx)
-{
-  byte tmp8u = 0;
-  
-  object_kind *k_ptr = &k_info[k_idx];
-  
-  if (k_ptr->aware) tmp8u |= 0x01;
-  if (k_ptr->tried) tmp8u |= 0x02;
-  if (k_ptr->known_effect) tmp8u |= 0x04;
-  if (k_ptr->squelch) tmp8u |= 0x08;
-  
-  wr_byte(tmp8u);
-
-  tmp8u = 0;
-  if (k_ptr->everseen) tmp8u |= 0x01;
-  wr_byte(tmp8u);
-}
-
-
-/**
- * Write a "store" record
- */
-static void wr_store(store_type *st_ptr)
-{
-  int j;
-  
-  /* Save the "open" counter */
-  wr_u32b(st_ptr->store_open);
-  
-  /* Save the "insults" */
-  wr_s16b(st_ptr->insult_cur);
-  
-  /* Save the current owner*/
-  wr_byte(st_ptr->owner);
-  
-  /* Save the stock size */
-  wr_byte((byte)st_ptr->stock_num);
-  
-  /* Save the "haggle" info */
-  wr_s16b(st_ptr->good_buy);
-  wr_s16b(st_ptr->bad_buy);
-  
-  /* Save the stock */
-  for (j = 0; j < st_ptr->stock_num; j++)
-    {
-      /* Save each item in stock */
-      wr_item(&st_ptr->stock[j]);
-    }
-
-  /* Save the ordered stock */
-  if (st_ptr->type == STORE_MERCH)
-    
-    /* Look at the ordered slots */
-      for (j = 24; j < 32; j++)
-	{
-	  /* Save the table entry */
-	  wr_s16b(st_ptr->table[j]);
-	}
-}
-
 
 /**
  * Write RNG state
  */
-static errr wr_randomizer(void)
+wr_randomizer(void)
 {
-	int i;
+    int i;
 
-	/* current value for the simple RNG */
-	wr_u32b(Rand_value);
+    /* current value for the simple RNG */
+    wr_u32b(Rand_value);
 
-	/* state index */
-	wr_u32b(state_i);
+    /* state index */
+    wr_u32b(state_i);
 
-	/* RNG variables */
-	wr_u32b(z0);
-	wr_u32b(z1);
-	wr_u32b(z2);
+    /* RNG variables */
+    wr_u32b(z0);
+    wr_u32b(z1);
+    wr_u32b(z2);
 
-	/* RNG state */
-	for (i = 0; i < RAND_DEG; i++)
-		wr_u32b(STATE[i]);
+    /* RNG state */
+    for (i = 0; i < RAND_DEG; i++)
+	wr_u32b(STATE[i]);
 
-	/* NULL padding */
-	for (i = 0; i < 59 - RAND_DEG; i++)
-		wr_u32b(0);
-  /* Success */
-  return (0);
+    /* NULL padding */
+    for (i = 0; i < 59 - RAND_DEG; i++)
+	wr_u32b(0);
 }
 
 
 /**
  * Write the "options"
  */
-static void wr_options(void)
+void wr_options(void)
 {
-  int i, k;
+    int i, k;
   
-  u32b flag[8];
-  u32b mask[8];
-  
-  
-  /*** Oops ***/
-  
-  /* Once contained options.  Reduced from four to three and 1/4 
-   * longints in Oangband. */
-  for (i = 0; i < 3; i++) wr_u32b(0L);
-  wr_byte(0);
+    u32b flag[8];
+    u32b mask[8];
   
   
-  /*** Timed Autosave (inspired by Zangband) ***/
-  wr_byte(autosave);
-  wr_s16b(autosave_freq);
+    /*** Oops ***/
+  
+    /* Once contained options.  Reduced from four to three and 1/4 
+     * longints in Oangband. */
+    for (i = 0; i < 3; i++) wr_u32b(0L);
+    wr_byte(0);
   
   
-  /*** Special Options ***/
-  
-  /* Write "delay_factor" */
-  wr_byte((byte)op_ptr->delay_factor);
-  
-  /* Write "hitpoint_warn" */
-  wr_byte((byte)op_ptr->hitpoint_warn);
-  
-  /* Write "panel_change" */
-  wr_byte((byte)op_ptr->panel_change);
-  
-  /* Unused */
-  wr_byte(0);
+    /*** Timed Autosave (inspired by Zangband) ***/
+    wr_byte(autosave);
+    wr_s16b(autosave_freq);
   
   
-  /*** Normal options ***/
+    /*** Special Options ***/
   
-  /* Reset */
-  for (i = 0; i < 8; i++)
+    /* Write "delay_factor" */
+    wr_byte((byte)op_ptr->delay_factor);
+  
+    /* Write "hitpoint_warn" */
+    wr_byte((byte)op_ptr->hitpoint_warn);
+  
+    /* Write "panel_change" */
+    wr_byte((byte)op_ptr->panel_change);
+  
+    /* Unused */
+    wr_byte(0);
+  
+  
+    /*** Normal options ***/
+  
+    /* Reset */
+    for (i = 0; i < 8; i++)
     {
-      flag[i] = 0L;
-      mask[i] = 0L;
+	flag[i] = 0L;
+	mask[i] = 0L;
     }
   
-  /* Analyze the options */
-  for (i = 0; i < OPT_MAX; i++)
+    /* Analyze the options */
+    for (i = 0; i < OPT_MAX; i++)
     {
-      int os = i / 32;
-      int ob = i % 32;
+	int os = i / 32;
+	int ob = i % 32;
       
-      /* Process real entries */
-      if (!option_name(i))
+	/* Process real entries */
+	if (!option_name(i))
 	{
-	  /* Set flag */
-	  if (op_ptr->opt[i])
+	    /* Set flag */
+	    if (op_ptr->opt[i])
 	    {
-	      /* Set */
-	      flag[os] |= (1L << ob);
+		/* Set */
+		flag[os] |= (1L << ob);
 	    }
 	  
-	  /* Set mask */
-	  mask[os] |= (1L << ob);
+	    /* Set mask */
+	    mask[os] |= (1L << ob);
 	}
     }
   
-  /* Dump the flags */
-  for (i = 0; i < 8; i++) wr_u32b(flag[i]);
+    /* Dump the flags */
+    for (i = 0; i < 8; i++) wr_u32b(flag[i]);
   
-  /* Dump the masks */
-  for (i = 0; i < 8; i++) wr_u32b(mask[i]);
+    /* Dump the masks */
+    for (i = 0; i < 8; i++) wr_u32b(mask[i]);
   
   
-  /*** Window options ***/
+    /*** Window options ***/
   
-  /* Reset */
-  for (i = 0; i < 8; i++)
+    /* Reset */
+    for (i = 0; i < 8; i++)
     {
-      /* Flags */
-      flag[i] = op_ptr->window_flag[i];
+	/* Flags */
+	flag[i] = op_ptr->window_flag[i];
       
-      /* Mask */
-      mask[i] = 0L;
+	/* Mask */
+	mask[i] = 0L;
       
-      /* Build the mask */
-      for (k = 0; k < 32; k++)
+	/* Build the mask */
+	for (k = 0; k < 32; k++)
 	{
-	  /* Set mask */
-	  if (window_flag_desc[k])
+	    /* Set mask */
+	    if (window_flag_desc[k])
 	    {
-	      mask[i] |= (1L << k);
+		mask[i] |= (1L << k);
 	    }
 	}
     }
   
-  /* Dump the flags */
-  for (i = 0; i < 8; i++) wr_u32b(flag[i]);
+    /* Dump the flags */
+    for (i = 0; i < 8; i++) wr_u32b(flag[i]);
   
-  /* Dump the masks */
-  for (i = 0; i < 8; i++) wr_u32b(mask[i]);
+    /* Dump the masks */
+    for (i = 0; i < 8; i++) wr_u32b(mask[i]);
+}
+
+
+void wr_messages(void)
+{
+	s16b i;
+	u16b num;
+
+	num = messages_num();
+	if (num > 80) num = 80;
+	wr_u16b(num);
+
+	/* Dump the messages (oldest first!) */
+	for (i = num - 1; i >= 0; i--)
+	{
+		wr_string(message_str(i));
+		wr_u16b(message_type(i));
+	}
+}
+
+
+/**
+ * Write the monster memory, including flag sizes
+ */
+void wr_monster_memory(void)
+{
+    size_t i;
+    int r_idx;
+
+    wr_u16b(z_info->r_max);
+    wr_byte(RF_SIZE);
+    wr_byte(RSF_SIZE);
+    for (r_idx = 0; r_idx < z_info->r_max; r_idx++)
+    {
+	monster_race *r_ptr = &r_info[r_idx];
+	monster_lore *l_ptr = &l_list[r_idx];
+  
+	/* Count sights/deaths/kills */
+	wr_s16b(l_ptr->sights);
+	wr_s16b(l_ptr->deaths);
+	wr_s16b(l_ptr->pkills);
+	wr_s16b(l_ptr->tkills);
+  
+	/* Count wakes and ignores */
+	wr_byte(l_ptr->wake);
+	wr_byte(l_ptr->ignore);
+  
+	/* Extra stuff */
+	wr_byte(l_ptr->xtra1);
+	wr_byte(l_ptr->xtra2);
+  
+	/* Count drops */
+	wr_byte(l_ptr->drop_gold);
+	wr_byte(l_ptr->drop_item);
+  
+	/* Count spells */
+	wr_byte(l_ptr->cast_spell);
+  
+	/* Count blows of each type */
+	for (i = 0; i < MONSTER_BLOW_MAX; i++)
+	    wr_byte(l_ptr->blows[i]);
+  
+	/* Memorize flags */
+	for (i = 0; i < RF_SIZE; i++)
+	    wr_byte(l_ptr->flags[i]);
+	for (i = 0; i < RSF_SIZE; i++)
+	    wr_byte(l_ptr->spell_flags[i]);
+
+  
+  
+	/* Monster limit per level */
+	wr_byte(r_ptr->max_num);
+	wr_byte(0);
+	wr_byte(0);
+	wr_byte(0);
+    }
+}
+
+
+/**
+ * Write object memory, including flag sizes and other constants.
+ */
+static void wr_object_memory(void)
+{
+    int k_idx;
+
+    wr_u16b(z_info->k_max);
+    wr_byte(OF_SIZE);
+    wr_byte(CF_SIZE);
+    wr_byte(IF_SIZE);
+    wr_byte(MAX_P_RES);
+    wr_byte(A_MAX);
+    wr_byte(MAX_P_BONUS);
+    wr_byte(MAX_P_SLAY);
+    wr_byte(MAX_P_BRAND);
+    for (k_idx = 0; k_idx < z_info->k_max; k_idx++)
+    {
+	byte tmp8u = 0;
+  
+	object_kind *k_ptr = &k_info[k_idx];
+  
+	if (k_ptr->aware) tmp8u |= 0x01;
+	if (k_ptr->tried) tmp8u |= 0x02;
+	if (k_ptr->known_effect) tmp8u |= 0x04;
+	if (k_ptr->squelch) tmp8u |= 0x08;
+  
+	wr_byte(tmp8u);
+
+	tmp8u = 0;
+	if (k_ptr->everseen) tmp8u |= 0x01;
+	wr_byte(tmp8u);
+    }
+}
+
+
+void wr_quests(void)
+{
+    int i;
+    u16b tmp16u;
+
+    /* Hack -- Dump the quests */
+    tmp16u = MAX_Q_IDX;
+    wr_u16b(tmp16u);
+    for (i = 0; i < tmp16u; i++)
+    {
+	wr_u16b((u16b)q_list[i].stage);
+	wr_byte(0);
+	wr_byte(0);
+    }
+}
+
+
+void wr_artifacts(void)
+{
+	int i;
+	u16b tmp16u;
+
+  /* Record the total number of artifacts. */
+  tmp16u = z_info->a_max;
+  wr_u16b(tmp16u);
+  
+  /* Record the number of random artifacts. */
+  tmp16u = z_info->a_max - ART_MIN_RANDOM;
+  wr_u16b(tmp16u);
+  
+  
+  /* As the least bad of various possible options considered, Oangband now 
+   * saves all random artifact data in savefiles.  This requires (44 * 40) 
+   * = 1760 extra bytes in the savefile, which does not seem unreasonable.
+   */
+  /* Write the artifact info. */
+  for (i = 0; i < z_info->a_max; i++)
+    {
+      artifact_type *a_ptr = &a_info[i];
+      
+      /* Most regular artifact info is stored in a_info.raw. */
+      if (i < ART_MIN_RANDOM)
+	{
+	  wr_s32b(a_ptr->creat_turn);
+	  wr_byte(a_ptr->p_level);
+	  /* Store set completion info */
+	  wr_byte(a_ptr->set_bonus ? 1 : 0);
+	}
+      /* But random artifacts are specific to each player. */
+      else
+	{
+	  wr_u16b(a_ptr->name);
+	  wr_u16b(a_ptr->text);
+	  
+	  wr_byte(a_ptr->tval);
+	  wr_byte(a_ptr->sval);
+	  wr_u16b(a_ptr->pval);
+	  
+	  wr_u16b(a_ptr->to_h);
+	  wr_u16b(a_ptr->to_d);
+	  wr_u16b(a_ptr->to_a);
+	  
+	  wr_byte(a_ptr->dd);
+	  wr_byte(a_ptr->ds);
+	  
+	  wr_u16b(a_ptr->ac);
+	  wr_u16b(a_ptr->weight);
+	  
+	  wr_u32b(a_ptr->cost);
+	  
+	  wr_u32b(a_ptr->flags_obj);
+	  wr_u32b(a_ptr->flags_curse);
+	  wr_u32b(a_ptr->flags_kind);
+	  
+	  wr_byte(a_ptr->level);
+	  wr_byte(a_ptr->rarity);
+	  
+	  wr_s32b(a_ptr->creat_turn);
+	  wr_byte(a_ptr->p_level);
+	  wr_byte(a_ptr->activation);
+
+	  /* Resists, bonuses, multiples -NRM- */
+	  for (j = 0; j < MAX_P_RES; j++)
+	    wr_byte(a_ptr->percent_res[j]);
+	  for (j = 0; j < A_MAX; j++)
+	    wr_byte(a_ptr->bonus_stat[j]);
+	  for (j = 0; j < MAX_P_BONUS; j++)
+	    wr_byte(a_ptr->bonus_other[j]);
+	  for (j = 0; j < MAX_P_SLAY; j++)
+	    wr_byte(a_ptr->multiple_slay[j]);
+	  for (j = 0; j < MAX_P_BRAND; j++)
+	    wr_byte(a_ptr->multiple_brand[j]);
+	  
+	  /* Add some filler space for later expansion. */
+	  wr_u32b(0);
+	}
+    }
+  
+  /* Note down how many random artifacts have names.  In Oangband 0.5.0 
+   * there are 40 random artifact names.
+   */
+  wr_u16b(z_info->a_max - ART_MIN_RANDOM);
+  
+  /* Write the list of random artifact names. */
+  for (i = ART_MIN_RANDOM; i < z_info->a_max; i++)
+    {
+      artifact_type *a_ptr = &a_info[i];
+      wr_string(format("%s", a_name + a_ptr->name));
+    }
+}
+/**
+ * Write a "store" record
+ */
+static void wr_stores(void)
+{
+    int i;
+
+    wr_u16b(MAX_STORES);
+    for (i = 0; i < MAX_STORES; i++)
+    {
+	const store_type *st_ptr = &store[i];
+	int j;
+  
+	/* Save the "open" counter */
+	wr_u32b(st_ptr->store_open);
+  
+	/* Save the "insults" */
+	wr_s16b(st_ptr->insult_cur);
+  
+	/* Save the current owner*/
+	wr_byte(st_ptr->owner);
+  
+	/* Save the stock size */
+	wr_byte((byte)st_ptr->stock_num);
+  
+	/* Save the "haggle" info */
+	wr_s16b(st_ptr->good_buy);
+	wr_s16b(st_ptr->bad_buy);
+  
+	/* Save the stock */
+	for (j = 0; j < st_ptr->stock_num; j++)
+	{
+	    /* Save each item in stock */
+	    wr_item(&st_ptr->stock[j]);
+	}
+
+	/* Save the ordered stock */
+	if (st_ptr->type == STORE_MERCH)
+    
+	    /* Look at the ordered slots */
+	    for (j = 24; j < 32; j++)
+	    {
+		/* Save the table entry */
+		wr_s16b(st_ptr->table[j]);
+	    }
+    }
 }
 
 
@@ -494,13 +582,13 @@ static void wr_options(void)
  */
 static void wr_ghost(void)
 {
-  int i;
+    int i;
   
-  /* Name */
-  wr_string("Broken Ghost");
+    /* Name */
+    wr_string("Broken Ghost");
   
-  /* Hack -- stupid data */
-  for (i = 0; i < 60; i++) wr_byte(0);
+    /* Hack -- stupid data */
+    for (i = 0; i < 60; i++) wr_byte(0);
 }
 
 
@@ -509,228 +597,183 @@ static void wr_ghost(void)
  */
 static void wr_squelch(void)
 {
-  int i;
+    int i;
   
-  /* Write number of squelch bytes */
-  wr_byte(TYPE_MAX);
-  for (i = 0; i < TYPE_MAX; i++)
-    wr_byte(squelch_level[i]);
+    /* Write number of squelch bytes */
+    wr_byte(TYPE_MAX);
+    for (i = 0; i < TYPE_MAX; i++)
+	wr_byte(squelch_level[i]);
   
-  /* Write ego-item squelch bits */
-  wr_u16b(z_info->e_max);
-  for (i = 0; i < z_info->e_max; i++)
+    /* Write ego-item squelch bits */
+    wr_u16b(z_info->e_max);
+    for (i = 0; i < z_info->e_max; i++)
     {
-      byte flags = 0;
+	byte flags = 0;
       
-      /* Figure out and write the everseen flag */
-      if (e_info[i].squelch) flags |= 0x01;
-      if (e_info[i].everseen) flags |= 0x02;
-      wr_byte(flags);
+	/* Figure out and write the everseen flag */
+	if (e_info[i].squelch) flags |= 0x01;
+	if (e_info[i].everseen) flags |= 0x02;
+	wr_byte(flags);
     }
   
-  /* Write the current number of auto-inscriptions */
-  wr_u16b(inscriptions_count);
+    /* Write the current number of auto-inscriptions */
+    wr_u16b(inscriptions_count);
   
-  /* Write the autoinscriptions array */
-  for (i = 0; i < inscriptions_count; i++)
+    /* Write the autoinscriptions array */
+    for (i = 0; i < inscriptions_count; i++)
     {
-      wr_s16b(inscriptions[i].kind_idx);
-      wr_string(quark_str(inscriptions[i].inscription_idx));
+	wr_s16b(inscriptions[i].kind_idx);
+	wr_string(quark_str(inscriptions[i].inscription_idx));
     }
   
-  return;
+    return;
 }
+
 
 
 /**
- * Write some "extra" info
+ * Write some player info
  */
-static void wr_extra(void)
+static void wr_player(void)
 {
-  int i;
+    int i;
   
-  wr_string(op_ptr->full_name);
+    wr_string(op_ptr->full_name);
   
-  wr_string(p_ptr->died_from);
+    wr_string(p_ptr->died_from);
   
-  for (i = 0; i < 4; i++)
-    {
-      wr_string(p_ptr->history[i]);
-    }
+    wr_string(p_ptr->history);
   
-  /* Race/Class/Gender/Spells */
-  wr_byte(p_ptr->prace);
-  wr_byte(p_ptr->pclass);
-  wr_byte(p_ptr->psex);
-  wr_byte(0);	/* oops */
+    /* Race/Class/Gender/Spells */
+    wr_byte(p_ptr->prace);
+    wr_byte(p_ptr->pclass);
+    wr_byte(p_ptr->psex);
+    wr_byte(op_ptr->name_suffix);
   
-  wr_byte(p_ptr->hitdie);
-  wr_byte(0);
+    wr_byte(p_ptr->hitdie);
+    wr_byte(0);
   
-  wr_s16b(p_ptr->age);
-  wr_s16b(p_ptr->ht);
-  wr_s16b(p_ptr->wt);
+    wr_s16b(p_ptr->age);
+    wr_s16b(p_ptr->ht);
+    wr_s16b(p_ptr->wt);
   
   
-  /* Dump the stats (maximum and current) */
-  for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_max[i]);
-  for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_cur[i]);
+    /* Dump the stats (maximum and current) */
+    for (i = 0; i < A_MAX; ++i) wr_s16b(p_ptr->stat_max[i]);
+    for (i = 0; i < A_MAX; ++i) wr_s16b(p_ptr->stat_cur[i]);
+    for (i = 0; i < A_MAX; ++i) wr_s16b(p_ptr->stat_birth[i]);
+	
+    wr_s16b(p_ptr->ht_birth);
+    wr_s16b(p_ptr->wt_birth);
+    wr_s16b(p_ptr->sc_birth);
+    wr_u32b(p_ptr->au_birth);
+
+    /* Druid damage */
+    for (i = 0; i < 12; ++i) wr_u16b(p_ptr->barehand_dam[i]);
   
-  /* Ignore the transient stats */
-  for (i = 0; i < 12; ++i) wr_u16b(p_ptr->barehand_dam[i]);
+    wr_u32b(p_ptr->au);
   
-  wr_u32b(p_ptr->au);
+    wr_u32b(p_ptr->max_exp);
+    wr_u32b(p_ptr->exp);
+    wr_u16b(p_ptr->exp_frac);
+    wr_s16b(p_ptr->lev);
+    wr_s16b(p_ptr->home);
   
-  wr_u32b(p_ptr->max_exp);
-  wr_u32b(p_ptr->exp);
-  wr_u16b(p_ptr->exp_frac);
-  wr_s16b(p_ptr->lev);
-  wr_s16b(p_ptr->home);
+    wr_s16b(p_ptr->mhp);
+    wr_s16b(p_ptr->chp);
+    wr_u16b(p_ptr->chp_frac);
   
-  wr_s16b(p_ptr->mhp);
-  wr_s16b(p_ptr->chp);
-  wr_u16b(p_ptr->chp_frac);
+    wr_s16b(p_ptr->msp);
+    wr_s16b(p_ptr->csp);
+    wr_u16b(p_ptr->csp_frac);
   
-  wr_s16b(p_ptr->msp);
-  wr_s16b(p_ptr->csp);
-  wr_u16b(p_ptr->csp_frac);
+    /* Max Player and Dungeon Levels */
+    wr_s16b(p_ptr->max_lev);
+    for (i = 0; i < 4; i++) wr_s16b(p_ptr->recall[i]);
+    wr_s16b(p_ptr->recall_pt);
   
-  /* Max Player and Dungeon Levels */
-  wr_s16b(p_ptr->max_lev);
-  for (i = 0; i < 4; i++) wr_s16b(p_ptr->recall[i]);
-  wr_s16b(p_ptr->recall_pt);
+    /* More info */
+    wr_s16b(p_ptr->speed_boost);	/* Specialty Fury */
+    wr_s16b(p_ptr->heighten_power);	/* Specialty Heighten Magic */
+    wr_s16b(0);	/* oops */
+    wr_s16b(0);	/* oops */
+    wr_s16b(p_ptr->sc);
+    wr_s16b(0);	/* oops */
   
-  /* More info */
-  wr_s16b(p_ptr->speed_boost);	/* Specialty Fury */
-  wr_s16b(p_ptr->heighten_power);	/* Specialty Heighten Magic */
-  wr_s16b(0);	/* oops */
-  wr_s16b(0);	/* oops */
-  wr_s16b(p_ptr->sc);
-  wr_s16b(0);	/* oops */
+    wr_s16b(p_ptr->food);
+    wr_s16b(p_ptr->energy);
+    wr_s16b(p_ptr->word_recall);
+    wr_s16b(p_ptr->state.see_infra);
+    wr_s16b(p_ptr->tim_infra);
+
+    /* Find the number of timed effects */
+    wr_byte(TMD_MAX);
+
+    /* Read all the effects, in a loop */
+    for (i = 0; i < TMD_MAX; i++)
+	wr_s16b(p_ptr->timed[i]);
+
   
-  wr_s16b(0);		/* old "rest" */
-  wr_s16b(p_ptr->blind);
-  wr_s16b(p_ptr->paralyzed);
-  wr_s16b(p_ptr->confused);
-  wr_s16b(p_ptr->food);
-  wr_s16b(0);	/* old "food_digested" */
-  wr_s16b(0);	/* old "protection" */
-  wr_s16b(p_ptr->energy);
-  wr_s16b(p_ptr->fast);
-  wr_s16b(p_ptr->slow);
-  wr_s16b(p_ptr->afraid);
-  wr_s16b(p_ptr->cut);
-  wr_s16b(p_ptr->stun);
-  wr_s16b(p_ptr->poisoned);
-  wr_s16b(p_ptr->image);
-  wr_s16b(p_ptr->protevil);
-  wr_s16b(p_ptr->magicdef);
-  wr_s16b(p_ptr->hero);
-  wr_s16b(p_ptr->shero);
-  wr_s16b(p_ptr->shield);
-  wr_s16b(p_ptr->blessed);
-  wr_s16b(p_ptr->tim_invis);
-  wr_s16b(p_ptr->tim_esp);
-  wr_s16b(p_ptr->superstealth);
-  wr_s16b(p_ptr->ele_attack);
-  wr_s16b(p_ptr->word_recall);
-  wr_s16b(p_ptr->see_infra);
-  wr_s16b(p_ptr->tim_infra);
-  wr_s16b(p_ptr->oppose_fire);
-  wr_s16b(p_ptr->oppose_cold);
-  wr_s16b(p_ptr->oppose_acid);
-  wr_s16b(p_ptr->oppose_elec);
-  wr_s16b(p_ptr->oppose_pois);
+    wr_u32b(p_ptr->special_attack); /* Attack modifier flags. */
+    wr_byte(0);	/* oops */
+    wr_byte(0);	/* oops */
+    wr_byte(p_ptr->black_breath);	/* Now used to store Black Breath. */
+    wr_byte(p_ptr->searching);
+    wr_byte(0);	/* formerly maximize */
+    wr_byte(0);	/* formerly preserve */
+    wr_byte(p_ptr->schange); /* Now used to store shapechange. */
   
-  wr_u32b(p_ptr->special_attack); /* Attack modifier flags. */
-  wr_byte(0);	/* oops */
-  wr_byte(0);	/* oops */
-  wr_byte(p_ptr->black_breath);	/* Now used to store Black Breath. */
-  wr_byte(p_ptr->searching);
-  wr_byte(0);	/* formerly maximize */
-  wr_byte(0);	/* formerly preserve */
-  wr_byte(p_ptr->schange); /* Now used to store shapechange. */
+    /* Store the bones file selector, if the player is not dead. -LM- */
+    if (!(p_ptr->is_dead)) wr_byte(bones_selector);
+    else wr_byte(0);
   
-  /* Store the bones file selector, if the player is not dead. -LM- */
-  if (!(p_ptr->is_dead)) wr_byte(bones_selector);
-  else wr_byte(0);
+    /* Store the number of thefts on the level. -LM- */
+    wr_byte(number_of_thefts_on_level);
   
-  /* Store the number of thefts on the level. -LM- */
-  wr_byte(number_of_thefts_on_level);
+    /* Store number of monster traps on this level. -LM- */
+    wr_byte(num_trap_on_level);
   
-  /* Store number of monster traps on this level. -LM- */
-  wr_byte(num_trap_on_level);
+    /* Store number of runes on this level, mana reserve for rune of mana. */
+    wr_byte(MAX_RUNE);
+    for (i = 0; i < MAX_RUNE; i++)
+	wr_byte(num_runes_on_level[i]);
+    wr_byte((byte)mana_reserve);
   
-  /* Store number of runes on this level, mana reserve for rune of mana. */
-  for (i = 0; i < MAX_RUNE; i++)
-    wr_byte(num_runes_on_level[i]);
-  wr_byte((byte)mana_reserve);
+    wr_byte(p_ptr->themed_level); /* Stores the current themed level. -LM- */
   
-  wr_byte(p_ptr->themed_level); /* Stores the current themed level. -LM- */
+    /* Stores what themed levels have already appeared. -LM- */
+    wr_u32b(p_ptr->themed_level_appeared);
   
-  /* Stores what themed levels have already appeared. -LM- */
-  wr_u32b(p_ptr->themed_level_appeared);
+    /* Specialty abilties */
+    for (i = 0; i < 10; i++) wr_byte(p_ptr->specialty_order[i]);
   
-  /* Squelch */
-  wr_squelch();
+    /* Ignore some flags */
+    wr_s16b(0L);	/* oops */
   
-  /* Specialty abilties */
-  for (i = 0; i < 10; i++) wr_byte(p_ptr->specialty_order[i]);
-  
-  /* Ignore some flags */
-  wr_s16b(0L);	/* oops */
-  
-  /* Write the "object seeds" */
-  wr_u32b(seed_flavor);
-  for (i = 0; i < 10; i++) wr_u32b(seed_town[i]);
+    /* Write the "object seeds" */
+    wr_u32b(seed_flavor);
+    for (i = 0; i < 10; i++) wr_u32b(seed_town[i]);
   
   
-  /* Special stuff */
-  wr_u16b(p_ptr->quests);
-  wr_u32b(p_ptr->score);
-  wr_u16b(p_ptr->total_winner);
-  wr_u16b(p_ptr->noscore);
+    /* Special stuff */
+    wr_u16b(p_ptr->quests);
+    wr_u32b(p_ptr->score);
+    wr_u16b(p_ptr->total_winner);
+    wr_u16b(p_ptr->noscore);
   
   
-  /* Write death */
-  wr_byte(p_ptr->is_dead);
+    /* Write death */
+    wr_byte(p_ptr->is_dead);
   
-  /* Write feeling */
-  wr_byte((byte)feeling);
+    /* Write feeling */
+    wr_byte((byte)feeling);
   
-  /* Turn of last "feeling" */
-  wr_s32b(do_feeling);
+    /* Turn of last "feeling" */
+    wr_s32b(do_feeling);
   
-  /* Current turn */
-  wr_s32b(turn);
+    /* Current turn */
+    wr_s32b(turn);
 }
-
-/**
- * Write the notes into the savefile. Every savefile has at least NOTES_MARK.
- */
-static void wr_notes(void)
-{
-  int i = 0;
-
-  wr_string(notes_start);
-
-  /* Count the entries */
-  while (notes[i].turn) i++;
-  wr_s32b(i);
-
-  /* Write the entries */
-  i = 0;
-  while (notes[i].turn)
-    {
-      wr_s32b(notes[i].turn);
-      wr_s32b(notes[i].place);
-      wr_s32b((s32b)notes[i].level);
-      wr_byte(notes[i].type);
-      wr_string(notes[i].note);
-      i++;
-    }
-}
-
 
 
 /**
@@ -744,181 +787,215 @@ static void wr_notes(void)
  */
 static void wr_dungeon(void)
 {
-  int i, y, x;
+    int i, y, x;
   
-  byte tmp8u;
+    byte tmp8u;
   
-  byte count;
-  byte prev_char;
-  
-  
-  /*** Basic info ***/
-  
-  /* Dungeon specific info follows */
-  wr_u16b(p_ptr->stage);
-  wr_u16b(p_ptr->last_stage);
-  wr_u16b(p_ptr->py);
-  wr_u16b(p_ptr->px);
-  wr_u16b(DUNGEON_HGT);
-  wr_u16b(DUNGEON_WID);
-  wr_u16b(0);
-  wr_u16b(0);
+    byte count;
+    byte prev_char;
   
   
-  /*** Simple "Run-Length-Encoding" of cave ***/
+    if (p_ptr->is_dead)
+	return;
+
+    /*** Basic info ***/
   
-  /* Note that this will induce two wasted bytes */
-  count = 0;
-  prev_char = 0;
+    /* Dungeon specific info follows */
+    wr_u16b(p_ptr->stage);
+    wr_u16b(p_ptr->last_stage);
+    wr_u16b(p_ptr->py);
+    wr_u16b(p_ptr->px);
+    wr_u16b(DUNGEON_HGT);
+    wr_u16b(DUNGEON_WID);
+    wr_u16b(0);
+    wr_u16b(0);
   
-  /* Dump the cave */
-  for (y = 0; y < DUNGEON_HGT; y++)
+  
+    /*** Simple "Run-Length-Encoding" of cave ***/
+  
+    /* Note that this will induce two wasted bytes */
+    count = 0;
+    prev_char = 0;
+  
+    /* Dump the cave */
+    for (y = 0; y < DUNGEON_HGT; y++)
     {
-      for (x = 0; x < DUNGEON_WID; x++)
+	for (x = 0; x < DUNGEON_WID; x++)
 	{
-	  /* Extract the important cave_info flags */
-	  tmp8u = (cave_info[y][x] & (IMPORTANT_FLAGS));
+	    /* Extract the important cave_info flags */
+	    tmp8u = (cave_info[y][x] & (IMPORTANT_FLAGS));
 	  
-	  /* If the run is broken, or too full, flush it */
-	  if ((tmp8u != prev_char) || (count == MAX_UCHAR))
+	    /* If the run is broken, or too full, flush it */
+	    if ((tmp8u != prev_char) || (count == MAX_UCHAR))
 	    {
-	      wr_byte((byte)count);
-	      wr_byte((byte)prev_char);
-	      prev_char = tmp8u;
-	      count = 1;
+		wr_byte((byte)count);
+		wr_byte((byte)prev_char);
+		prev_char = tmp8u;
+		count = 1;
 	    }
 	  
-	  /* Continue the run */
-	  else
+	    /* Continue the run */
+	    else
 	    {
-	      count++;
+		count++;
 	    }
 	}
     }
   
-  /* Flush the data (if any) */
-  if (count)
+    /* Flush the data (if any) */
+    if (count)
     {
-      wr_byte((byte)count);
-      wr_byte((byte)prev_char);
+	wr_byte((byte)count);
+	wr_byte((byte)prev_char);
     }
   
-  /* Note that this will induce two wasted bytes */
-  count = 0;
-  prev_char = 0;
+    /* Note that this will induce two wasted bytes */
+    count = 0;
+    prev_char = 0;
   
-  /* Dump the cave */
-  for (y = 0; y < DUNGEON_HGT; y++)
+    /* Dump the cave */
+    for (y = 0; y < DUNGEON_HGT; y++)
     {
-      for (x = 0; x < DUNGEON_WID; x++)
+	for (x = 0; x < DUNGEON_WID; x++)
 	{
-	  /*  Keep all the information from info2 */
-	  tmp8u = cave_info2[y][x];
+	    /*  Keep all the information from info2 */
+	    tmp8u = cave_info2[y][x];
 	  
-	  /* If the run is broken, or too full, flush it */
-	  if ((tmp8u != prev_char) || (count == MAX_UCHAR))
+	    /* If the run is broken, or too full, flush it */
+	    if ((tmp8u != prev_char) || (count == MAX_UCHAR))
 	    {
-	      wr_byte((byte)count);
-	      wr_byte((byte)prev_char);
-	      prev_char = tmp8u;
-	      count = 1;
+		wr_byte((byte)count);
+		wr_byte((byte)prev_char);
+		prev_char = tmp8u;
+		count = 1;
 	    }
 	  
-	  /* Continue the run */
-	  else
+	    /* Continue the run */
+	    else
 	    {
-	      count++;
+		count++;
 	    }
 	}
     }
   
-  /* Flush the data (if any) */
-  if (count)
+    /* Flush the data (if any) */
+    if (count)
     {
-      wr_byte((byte)count);
-      wr_byte((byte)prev_char);
+	wr_byte((byte)count);
+	wr_byte((byte)prev_char);
     }
   
   
-  /*** Simple "Run-Length-Encoding" of cave ***/
+    /*** Simple "Run-Length-Encoding" of cave ***/
   
-  /* Note that this will induce two wasted bytes */
-  count = 0;
-  prev_char = 0;
+    /* Note that this will induce two wasted bytes */
+    count = 0;
+    prev_char = 0;
   
-  /* Dump the cave */
-  for (y = 0; y < DUNGEON_HGT; y++)
+    /* Dump the cave */
+    for (y = 0; y < DUNGEON_HGT; y++)
     {
-      for (x = 0; x < DUNGEON_WID; x++)
+	for (x = 0; x < DUNGEON_WID; x++)
 	{
-	  /* Extract a byte */
-	  tmp8u = cave_feat[y][x];
+	    /* Extract a byte */
+	    tmp8u = cave_feat[y][x];
 	  
-	  /* If the run is broken, or too full, flush it */
-	  if ((tmp8u != prev_char) || (count == MAX_UCHAR))
+	    /* If the run is broken, or too full, flush it */
+	    if ((tmp8u != prev_char) || (count == MAX_UCHAR))
 	    {
-	      wr_byte((byte)count);
-	      wr_byte((byte)prev_char);
-	      prev_char = tmp8u;
-	      count = 1;
+		wr_byte((byte)count);
+		wr_byte((byte)prev_char);
+		prev_char = tmp8u;
+		count = 1;
 	    }
 	  
-	  /* Continue the run */
-	  else
+	    /* Continue the run */
+	    else
 	    {
-	      count++;
+		count++;
 	    }
 	}
     }
   
-  /* Flush the data (if any) */
-  if (count)
+    /* Flush the data (if any) */
+    if (count)
     {
-      wr_byte((byte)count);
-      wr_byte((byte)prev_char);
+	wr_byte((byte)count);
+	wr_byte((byte)prev_char);
     }
   
   
-  /*** Compact ***/
+    /*** Compact ***/
   
-  /* Compact the objects */
-  compact_objects(0);
+    /* Compact the objects */
+    compact_objects(0);
   
-  /* Compact the monsters */
-  compact_monsters(0);
+    /* Compact the monsters */
+    compact_monsters(0);
+}
   
+/*** Dump objects ***/
   
-  /*** Dump objects ***/
+void wr_objects(void)
+{
+    int i;
+
+    if (p_ptr->is_dead)
+	return;
+	
+    /* Total objects */
+    wr_u16b(o_max);
   
-  /* Total objects */
-  wr_u16b(o_max);
-  
-  /* Dump the objects */
-  for (i = 1; i < o_max; i++)
+    /* Dump the objects */
+    for (i = 1; i < o_max; i++)
     {
-      object_type *o_ptr = &o_list[i];
+	object_type *o_ptr = &o_list[i];
       
-      /* Dump it */
-      wr_item(o_ptr);
+	/* Dump it */
+	wr_item(o_ptr);
     }
+}
   
   
-  /*** Dump the monsters ***/
+/*** Dump the monsters ***/
   
-  /* Total monsters */
-  wr_u16b(m_max);
+void wr_monsters(void)
+{
+    int i;
+
+    if (p_ptr->is_dead)
+	return;
+
+    /* Total monsters */
+    wr_u16b(m_max);
   
-  /* Dump the monsters */
-  for (i = 1; i < m_max; i++)
+    /* Dump the monsters */
+    for (i = 1; i < m_max; i++)
     {
-      monster_type *m_ptr = &m_list[i];
+	monster_type *m_ptr = &m_list[i];
       
-      /* Dump it */
-      wr_monster(m_ptr);
+	/* Dump it */
+	wr_monster(m_ptr);
     }
 }
 
 
+void wr_history(void)
+{
+	size_t i;
+	u32b tmp32u = history_get_num();
+
+	wr_u32b(tmp32u);
+	for (i = 0; i < tmp32u; i++)
+	{
+		wr_u16b(history_list[i].type);
+		wr_s32b(history_list[i].turn);
+		wr_s16b(history_list[i].dlev);
+		wr_s16b(history_list[i].clev);
+		wr_byte(history_list[i].a_idx);
+		wr_string(history_list[i].event);
+	}
+}
 
 /**
  * Actually write a save-file
@@ -1032,94 +1109,6 @@ static bool wr_savefile_new(void)
       wr_byte(0);
     }
   
-  
-  /* Record the total number of artifacts. */
-  tmp16u = z_info->a_max;
-  wr_u16b(tmp16u);
-  
-  /* Record the number of random artifacts. */
-  tmp16u = z_info->a_max - ART_MIN_RANDOM;
-  wr_u16b(tmp16u);
-  
-  
-  /* As the least bad of various possible options considered, Oangband now 
-   * saves all random artifact data in savefiles.  This requires (44 * 40) 
-   * = 1760 extra bytes in the savefile, which does not seem unreasonable.
-   */
-  /* Write the artifact info. */
-  for (i = 0; i < z_info->a_max; i++)
-    {
-      artifact_type *a_ptr = &a_info[i];
-      
-      /* Most regular artifact info is stored in a_info.raw. */
-      if (i < ART_MIN_RANDOM)
-	{
-	  wr_s32b(a_ptr->creat_turn);
-	  wr_byte(a_ptr->p_level);
-	  /* Store set completion info */
-	  wr_byte(a_ptr->set_bonus ? 1 : 0);
-	}
-      /* But random artifacts are specific to each player. */
-      else
-	{
-	  wr_u16b(a_ptr->name);
-	  wr_u16b(a_ptr->text);
-	  
-	  wr_byte(a_ptr->tval);
-	  wr_byte(a_ptr->sval);
-	  wr_u16b(a_ptr->pval);
-	  
-	  wr_u16b(a_ptr->to_h);
-	  wr_u16b(a_ptr->to_d);
-	  wr_u16b(a_ptr->to_a);
-	  
-	  wr_byte(a_ptr->dd);
-	  wr_byte(a_ptr->ds);
-	  
-	  wr_u16b(a_ptr->ac);
-	  wr_u16b(a_ptr->weight);
-	  
-	  wr_u32b(a_ptr->cost);
-	  
-	  wr_u32b(a_ptr->flags_obj);
-	  wr_u32b(a_ptr->flags_curse);
-	  wr_u32b(a_ptr->flags_kind);
-	  
-	  wr_byte(a_ptr->level);
-	  wr_byte(a_ptr->rarity);
-	  
-	  wr_s32b(a_ptr->creat_turn);
-	  wr_byte(a_ptr->p_level);
-	  wr_byte(a_ptr->activation);
-
-	  /* Resists, bonuses, multiples -NRM- */
-	  for (j = 0; j < MAX_P_RES; j++)
-	    wr_byte(a_ptr->percent_res[j]);
-	  for (j = 0; j < A_MAX; j++)
-	    wr_byte(a_ptr->bonus_stat[j]);
-	  for (j = 0; j < MAX_P_BONUS; j++)
-	    wr_byte(a_ptr->bonus_other[j]);
-	  for (j = 0; j < MAX_P_SLAY; j++)
-	    wr_byte(a_ptr->multiple_slay[j]);
-	  for (j = 0; j < MAX_P_BRAND; j++)
-	    wr_byte(a_ptr->multiple_brand[j]);
-	  
-	  /* Add some filler space for later expansion. */
-	  wr_u32b(0);
-	}
-    }
-  
-  /* Note down how many random artifacts have names.  In Oangband 0.5.0 
-   * there are 40 random artifact names.
-   */
-  wr_u16b(z_info->a_max - ART_MIN_RANDOM);
-  
-  /* Write the list of random artifact names. */
-  for (i = ART_MIN_RANDOM; i < z_info->a_max; i++)
-    {
-      artifact_type *a_ptr = &a_info[i];
-      wr_string(format("%s", a_name + a_ptr->name));
-    }
   
   
   /* Write the "extra" information */
