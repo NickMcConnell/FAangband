@@ -278,6 +278,11 @@
 
 
 /**
+ * Number of recall points the player can set
+ */
+#define MAX_RECALL_PTS   4
+
+/**
  * Number of stages.  The relationship between individual stages is defined
  * in the stage_map array in tables.c.     -NRM-
  */
