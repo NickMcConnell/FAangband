@@ -157,7 +157,6 @@ static struct generic_command cmd_item_manage[]  =
   { "Take off/unwield an item",  't', CMD_TAKEOFF, NULL, NULL },
   { "Drop an item",              'd', CMD_DROP, NULL, NULL },
   { "Destroy an item",           'k', CMD_DESTROY, textui_cmd_destroy, NULL },
-  { "Examine an item",           'I', CMD_NULL, do_cmd_observe, NULL },
   { "Inscribe an object",        '{', CMD_NULL, do_cmd_inscribe, NULL },
   { "Uninscribe an object",      '}', CMD_UNINSCRIBE, NULL, NULL }
 };

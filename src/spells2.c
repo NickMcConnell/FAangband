@@ -1241,67 +1241,6 @@ bool restore_level(void)
 }
 
 
-void do_cmd_bear_shape(void)
-{
-    /* Sanity */
-    if ((SCHANGE) || (!player_has(PF_BEARSKIN)))
-	return;
-
-    /* Confirm */
-    if (!get_check("Assume the form of a bear? "))
-	return;
-
-    /* Change */
-    shapechange(SHAPE_BEAR);
-
-    /* Use some energy */
-    p_ptr->energy_use = 100;
-}
-
-
-/**
- * Stop doing a shapechange.  From Sangband.
- */
-void do_cmd_unchange(void)
-{
-    if (!SCHANGE) {
-	msg_print("You aren't in another form right now.");
-	return;
-    }
-
-    /* Confirm */
-    if (!get_check("Really return to normal? "))
-	return;
-
-    /* Return to normal form */
-    shapechange(SHAPE_NORMAL);
-
-    /* Hack - refund mana (2/3 mana when shapeshifted). */
-    if (p_ptr->csp > 0) {
-	/* Hack - Recalculate mana now, even though we will */
-	/* update it fully, to ensure the refund to current */
-	/* mana doesn't get cleared */
-	p_ptr->msp *= 3;
-	p_ptr->msp /= 2;
-
-	/* Refund current mana - removed, as mana is not reduced in the other
-	 * shapechange p_ptr->csp *= 3; p_ptr->csp /= 2; if (p_ptr->csp >
-	 * p_ptr->msp) p_ptr->csp = p_ptr->msp; */
-
-	/* Display mana later */
-	p_ptr->redraw |= (PR_MANA);
-    }
-
-    /* Recalculate mana. */
-    p_ptr->update |= (PU_MANA);
-
-    /* Show or hide shapechange on main window. */
-    p_ptr->redraw |= (PR_SHAPE);
-
-    /* Use some energy */
-    p_ptr->energy_use = 100;
-}
-
 
 /**
  * Forget everything

@@ -2445,13 +2445,10 @@ static bool leave_store = FALSE;
  * which is needed to prevent the "redraw" from affecting
  * the display of the store.  XXX XXX XXX
  */
-static void store_process_command(void)
+static void store_process_command(ui_event_data ke)
 {
-    /* Handle repeating the last command */
-    repeat_check();
-
     /* Parse the command */
-    switch (p_ptr->command_cmd) {
+    switch (ke.key) {
 	/* Leave */
     case ESCAPE:
 	{
@@ -2778,6 +2775,8 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 
     bool found = FALSE;
 
+    ui_event_data ke;
+
     feature_type *f_ptr = &f_info[cave_feat[py][px]];
 
     /* Verify a store */
@@ -2968,10 +2967,13 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 	}
 
 	/* Get a command */
-	request_command();
-
+	ke = inkey_ex();
+	
+	/* Hack -- erase the message line. */
+	prt("", 0, 0);
+  
 	/* Process the command */
-	store_process_command();
+	store_process_command(ke);
 
 	/* Notice stuff */
 	notice_stuff();

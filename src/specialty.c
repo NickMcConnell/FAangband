@@ -48,19 +48,6 @@ static const specialty specialties[] = {
 };
 
 /**
- * Check if we have a specialty ability -BR-
- */
-bool check_ability(int ability)
-{
-    /* Check to see if the queried specialty is flagged */
-    if (player_has(ability))
-	return (TRUE);
-
-    /* Assume false */
-    return (FALSE);
-}
-
-/**
  * Check if we can gain a specialty ability -BR-
  */
 bool check_specialty_gain(int specialty)

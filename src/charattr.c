@@ -29,23 +29,23 @@
  */
 void x_fprintf(ang_file *f, int encoding, cptr fmt, ...)
 {
-        va_list vp;
+    va_list vp;
 
-        char buf[1024];
+    char buf[1024];
 
-        /* Begin the Varargs Stuff */
-        va_start(vp, fmt);
+    /* Begin the Varargs Stuff */
+    va_start(vp, fmt);
 
-        /* Format the args, save the length */
-        (void)vstrnfmt(buf, sizeof(buf), fmt, vp);
+    /* Format the args, save the length */
+    (void)vstrnfmt(buf, sizeof(buf), fmt, vp);
 
-        /* End the Varargs Stuff */
-        va_end(vp);
+    /* End the Varargs Stuff */
+    va_end(vp);
 
-        /* Translate */
-        xstr_trans(buf, encoding);
+    /* Translate */
+    xstr_trans(buf, encoding);
 
-        file_put(f, buf);
+    file_put(f, buf);
 }
 
 /**
@@ -59,46 +59,46 @@ void x_fprintf(ang_file *f, int encoding, cptr fmt, ...)
  */
 void dump_put_str(byte attr, const char *str, int col)
 {
-  int i = 0;
-  char *s;
-  char buf[1024];
-  bool finished = FALSE;
+    int i = 0;
+    char *s;
+    char buf[1024];
+    bool finished = FALSE;
 
-  /* Find the start point */
-  while ((i != col) && (i < MAX_C_A_LEN))
+    /* Find the start point */
+    while ((i != col) && (i < MAX_C_A_LEN))
     {
-      if (dump_ptr[i].pchar == '\0') finished = TRUE;
-      if (finished) 
+	if (dump_ptr[i].pchar == '\0') finished = TRUE;
+	if (finished) 
         {
-          dump_ptr[i].pchar = ' ';
-          dump_ptr[i].pattr = TERM_WHITE;
+	    dump_ptr[i].pchar = ' ';
+	    dump_ptr[i].pattr = TERM_WHITE;
         }
-      i++;
+	i++;
     }
   
-  /* Copy to a rewriteable string */
-  my_strcpy(buf, str, 1024);
+    /* Copy to a rewriteable string */
+    my_strcpy(buf, str, 1024);
 
-  /* Hack - translate if we do that */
-  if (Term->xchar_hook)
-    xstr_trans(buf, (Term->xchar_hook(128) == 128));
+    /* Hack - translate if we do that */
+    if (Term->xchar_hook)
+	xstr_trans(buf, (Term->xchar_hook(128) == 128));
 
-  /* Current location within "buf" */
-  s = buf;
+    /* Current location within "buf" */
+    s = buf;
 
-  /* Write the characters */
-  while ((*s != '\0') && (i < MAX_C_A_LEN))
+    /* Write the characters */
+    while ((*s != '\0') && (i < MAX_C_A_LEN))
     {
-      dump_ptr[i].pattr = attr;
-      dump_ptr[i++].pchar = *s++;
+	dump_ptr[i].pattr = attr;
+	dump_ptr[i++].pchar = *s++;
     }
 
-  /* Paranoia */
-  if (i >= MAX_C_A_LEN)
-    i--;
+    /* Paranoia */
+    if (i >= MAX_C_A_LEN)
+	i--;
 
-  /* Terminate */
-  dump_ptr[i].pchar = '\0';
+    /* Terminate */
+    dump_ptr[i].pchar = '\0';
 }
 
 /**
@@ -107,12 +107,12 @@ void dump_put_str(byte attr, const char *str, int col)
  */
 void dump_lnum(char *header, s32b num, int col, byte color)
 {
-  int len = strlen(header);
-  char out_val[32];
+    int len = strlen(header);
+    char out_val[32];
 
-  dump_put_str(TERM_WHITE, header, col);
-  sprintf(out_val, "%9ld", (long)num);
-  dump_put_str(color, out_val, col + len);
+    dump_put_str(TERM_WHITE, header, col);
+    sprintf(out_val, "%9ld", (long)num);
+    dump_put_str(color, out_val, col + len);
 }
 
 /**
@@ -120,11 +120,11 @@ void dump_lnum(char *header, s32b num, int col, byte color)
  */
 void dump_num(char *header, int num, int col, byte color)
 {
-  int len = strlen(header);
-  char out_val[32];
-  dump_put_str(TERM_WHITE, header, col);
-  sprintf(out_val, "%6ld", (long)num);
-  dump_put_str(color, out_val, col + len);
+    int len = strlen(header);
+    char out_val[32];
+    dump_put_str(TERM_WHITE, header, col);
+    sprintf(out_val, "%6ld", (long)num);
+    dump_put_str(color, out_val, col + len);
 }
 
 /**
@@ -132,15 +132,15 @@ void dump_num(char *header, int num, int col, byte color)
  */
 void dump_deci(char *header, int num, int deci, int col, byte color)
 {
-  int len = strlen(header);
-  char out_val[32];
-  dump_put_str(TERM_WHITE, header, col);
-  sprintf(out_val, "%6ld", (long)num);
-  dump_put_str(color, out_val, col + len);
-  sprintf(out_val, ".");
-  dump_put_str(color, out_val, col + len + 6);
-  sprintf(out_val, "%8ld", (long)deci);
-  dump_put_str(color, &out_val[7], col + len + 7);
+    int len = strlen(header);
+    char out_val[32];
+    dump_put_str(TERM_WHITE, header, col);
+    sprintf(out_val, "%6ld", (long)num);
+    dump_put_str(color, out_val, col + len);
+    sprintf(out_val, ".");
+    dump_put_str(color, out_val, col + len + 6);
+    sprintf(out_val, "%8ld", (long)deci);
+    dump_put_str(color, &out_val[7], col + len + 7);
 }
 
 
@@ -149,34 +149,34 @@ void dump_deci(char *header, int num, int deci, int col, byte color)
  */
 void dump_line_file(char_attr *this_line)
 {
-  int x = 0;
-  char_attr xa = this_line[0];
-  byte (*old_xchar_hook)(byte c) = Term->xchar_hook;
-  char buf[2];
+    int x = 0;
+    char_attr xa = this_line[0];
+    byte (*old_xchar_hook)(byte c) = Term->xchar_hook;
+    char buf[2];
 
-  /* We use either ascii or system-specific encoding */
-  int encoding = OPT(xchars_to_file) ? SYSTEM_SPECIFIC : ASCII;
+    /* We use either ascii or system-specific encoding */
+    int encoding = OPT(xchars_to_file) ? SYSTEM_SPECIFIC : ASCII;
 
-  /* Display the requested encoding -- ASCII or system-specific */
-  if (!OPT(xchars_to_file)) Term->xchar_hook = NULL;
+    /* Display the requested encoding -- ASCII or system-specific */
+    if (!OPT(xchars_to_file)) Term->xchar_hook = NULL;
 
-  /* Dump the line */
-  while (xa.pchar != '\0')
+    /* Dump the line */
+    while (xa.pchar != '\0')
     {
-      /* Add the char/attr */
-      x_fprintf(dump_out_file, encoding, "%c", xa.pchar);
+	/* Add the char/attr */
+	x_fprintf(dump_out_file, encoding, "%c", xa.pchar);
 
-      /* Advance */
-      xa = this_line[++x];
+	/* Advance */
+	xa = this_line[++x];
     }
 
-  /* Return to standard display */
-  Term->xchar_hook = old_xchar_hook;
+    /* Return to standard display */
+    Term->xchar_hook = old_xchar_hook;
 
-  /* Terminate the line */
-  buf[0] = '\n';
-  buf[1] = '\0';
-  file_put(dump_out_file, buf);
+    /* Terminate the line */
+    buf[0] = '\n';
+    buf[1] = '\0';
+    file_put(dump_out_file, buf);
 }
 
 /**
@@ -184,24 +184,24 @@ void dump_line_file(char_attr *this_line)
  */
 void dump_line_screen(char_attr *this_line)
 {
-  int x = 0;
-  char_attr xa = this_line[0];
+    int x = 0;
+    char_attr xa = this_line[0];
 
-  /* Erase the row */
-  Term_erase(0, dump_row, 255);
+    /* Erase the row */
+    Term_erase(0, dump_row, 255);
 
-  /* Dump the line */
-  while (xa.pchar != '\0')
+    /* Dump the line */
+    while (xa.pchar != '\0')
     {
-      /* Add the char/attr */
-      Term_addch(xa.pattr, xa.pchar);
+	/* Add the char/attr */
+	Term_addch(xa.pattr, xa.pchar);
 
-      /* Advance */
-      xa = this_line[++x];
+	/* Advance */
+	xa = this_line[++x];
     }
 
-  /* Next row */
-  dump_row++;
+    /* Next row */
+    dump_row++;
 }
 
 /**
@@ -209,7 +209,7 @@ void dump_line_screen(char_attr *this_line)
  */
 void dump_line_mem(char_attr *this_line)
 {
-  dump_ptr = this_line;
+    dump_ptr = this_line;
 }
 
 /**
@@ -217,31 +217,7 @@ void dump_line_mem(char_attr *this_line)
  */
 void dump_line(char_attr *this_line)
 {
-  dump_line_hook(this_line);
-}
-
-
-
-/**
- * Deal with pre-selected items from the item menu
- */
-int handle_item(void)
-{
-  int item;
-
-  /* Set the item */
-  item = p_ptr->command_item;
-  if (item == 100) item = 0;
-
-  /* Handle repeat */  
-  //repeat_push(item);
-
-  /* Reset */
-  p_ptr->command_item = 0;
-  p_ptr->command_new = 0;
-
-  /* Done */
-  return(item);
+    dump_line_hook(this_line);
 }
 
 
@@ -251,12 +227,12 @@ int handle_item(void)
  */
 int make_metric(int wgt)
 {
-  int metric_wgt;
+    int metric_wgt;
   
-  /* Convert to metric values, using normal rounding. */
-  metric_wgt = wgt * 10 / 22;
-  if ((wgt * 10) % 22 > 10) metric_wgt++;
+    /* Convert to metric values, using normal rounding. */
+    metric_wgt = wgt * 10 / 22;
+    if ((wgt * 10) % 22 > 10) metric_wgt++;
   
-  return metric_wgt;
+    return metric_wgt;
 }
 

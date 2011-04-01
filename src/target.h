@@ -4,9 +4,11 @@
 #define TARGET_H
 
 bool target_able(int m_idx);
+bool target_able_obj(int o_idx);
 bool target_okay(void);
 bool target_set_closest(int mode);
 void target_set_monster(int m_idx);
+void target_set_object(int o_idx);
 void target_set_location(int y, int x);
 bool target_set_interactive(int mode, int x, int y);
 bool get_aim_dir(int *dp);

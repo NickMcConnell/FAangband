@@ -634,7 +634,7 @@ static void special_lighting_floor(byte *a, char *c, enum grid_light_level light
 	 * OPT(view_yellow_light) distinguishes between torchlit and 
 	 * permanently-lit areas 
 	 */
-	if ((check_ability(SP_UNLIGHT) || p_ptr->darkness) && 
+	if ((player_has(SP_UNLIGHT) || p_ptr->darkness) && 
 	    (p_ptr->cur_light <= 0))
 	{
 	    /* "Dark radius" */

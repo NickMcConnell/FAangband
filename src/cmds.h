@@ -29,6 +29,7 @@ void do_cmd_drop(cmd_code code, cmd_arg args[]);
 void do_cmd_use(cmd_code code, cmd_arg args[]);
 void do_cmd_refill(cmd_code code, cmd_arg args[]);
 void do_cmd_study_spell(cmd_code code, cmd_arg args[]);
+extern int get_channeling_boost(void);
 void do_cmd_cast(cmd_code code, cmd_arg args[]);
 void do_cmd_study_book(cmd_code code, cmd_arg args[]);
 
@@ -78,18 +79,14 @@ extern void do_cmd_rest(cmd_code code, cmd_arg args[]);
 extern bool easy_open_door(int y, int x);
 
 /* cmd3.c */
-extern void do_cmd_floor(void);
 extern void do_cmd_inven(void);
 extern void do_cmd_equip(void);
 extern void do_cmd_destroy(cmd_code code, cmd_arg args[]);
-extern void do_cmd_observe(void);
 extern void do_cmd_target(void);
 extern void do_cmd_target_closest(void);
 extern void do_cmd_look(void);
 extern void do_cmd_locate(void);
 extern void do_cmd_query_symbol(void);
-extern bool ang_sort_comp_hook(void *u, void *v, int a, int b);
-extern void ang_sort_swap_hook(void *u, void *v, int a, int b);
 extern void py_steal(int y, int x);
 extern bool py_set_trap(int y, int x);
 extern bool py_modify_trap(int y, int x);
@@ -115,30 +112,8 @@ extern void init_cmd4_c(void);
 extern void do_cmd_time(void);
 extern void do_cmd_knowledge_objects(void *obj, const char *name);
 
-/* cmd5.c */
-extern void shapechange(s16b shape);
-extern bool choose_ele_resist(void);
-extern void create_athelas(void);
-extern void dimen_door(void);
-extern int get_channeling_boost(void);
-extern void do_cmd_browse(void);
-extern void do_cmd_study(void);
-extern void do_cmd_cast_or_pray(void);
-extern bool check_ability(int ability);
-extern bool check_ability_specialty(int ability);
-extern bool check_specialty_gain(int specialty);
+/* specialty.c */
 extern void do_cmd_specialty(void);
-
-/* cmd6.c */
-extern void do_cmd_eat_food(void);
-extern void do_cmd_quaff_potion(void);
-extern void do_cmd_read_scroll(void);
-extern void do_cmd_use_staff(void);
-extern void do_cmd_aim_wand(void);
-extern void do_cmd_zap_rod(void);
-extern void do_cmd_activate(void);
-extern void do_cmd_bear_shape(void);
-extern void do_cmd_unchange(void);
 
 /* ui-spell.c -- just for now */
 void textui_book_browse(const object_type *o_ptr);

@@ -35,26 +35,6 @@ static olist_detail_t olist_mode = 0;
 
 
 
-/**
- * Get the inventory color for an object.
- *
- * Hack - set the listing color of a spellbook with no useable spells 
- * to grey -LM-
- */
-byte proc_list_color_hack(object_type * o_ptr)
-{
-    /* Hack -- Spellbooks with no useable spells are grey. */
-    if ((mp_ptr->spell_book == o_ptr->tval)
-	&& (mp_ptr->book_start_index[o_ptr->sval] ==
-	    mp_ptr->book_start_index[o_ptr->sval + 1])) {
-	return (TERM_SLATE);
-    }
-
-    /* Otherwise, get the color normally. */
-    else
-	return tval_to_attr[o_ptr->tval % N_ELEMENTS(tval_to_attr)];
-}
-
 /*
  * Display an object.  Each object may be prefixed with a label.
  * Used by show_inven(), show_equip(), and show_floor().  Mode flags are

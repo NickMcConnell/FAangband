@@ -5153,10 +5153,8 @@ void reset_monsters(void)
 	/* Monster is ready to go again */
 	m_ptr->moved = FALSE;
     }
-    /* Clear the current noise after it is used to wake up monsters */ if (turn
-									   %
-									   10 ==
-									   0) {
+    /* Clear the current noise after it is used to wake up monsters */ 
+    if (turn % 10 == 0) {
 	total_wakeup_chance = 0L;
 	add_wakeup_chance = 0;
     }

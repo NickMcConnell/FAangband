@@ -1985,7 +1985,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
 
     /* Assign maximal hitpoints */
     if (rf_has(r_ptr->flags, RF_FORCE_MAXHP)) {
-	n_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
+	n_ptr->maxhp = r_ptr->hdice * r_ptr->hside;
     } else {
 	n_ptr->maxhp = damroll(r_ptr->hdice, r_ptr->hside);
     }
