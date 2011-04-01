@@ -691,6 +691,8 @@ static void wr_squelch(void)
 
 void wr_misc(void)
 {
+    int i;
+
     /* Write the "object seeds" */
     wr_u32b(seed_flavor);
     wr_byte(NUM_TOWNS);
@@ -726,9 +728,6 @@ void wr_player_hp(void)
     wr_u16b(PY_MAX_LEVEL);
     for (i = 0; i < PY_MAX_LEVEL; i++)
 	wr_s16b(p_ptr->player_hp[i]);
-
-    /* Expansion */
-    wr_u32b(0);
 }
   
   
