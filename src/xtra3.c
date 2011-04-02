@@ -24,8 +24,8 @@
 #include "files.h"
 #include "game-event.h"
 #include "game-cmd.h"
-#include "monster/monster.h"
-#include "object/tvalsval.h"
+#include "monster.h"
+#include "tvalsval.h"
 #include "textui.h"
 #include "ui-birth.h"
 

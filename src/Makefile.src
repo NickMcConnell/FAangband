@@ -14,23 +14,48 @@ SUBDIRS = gtk
 HEADERS = \
 	angband.h \
 	birth.h \
+	 \
+	button.h \
+	cave.h \
 	cmds.h \
 	config.h \
 	defines.h \
+	effects.h \
 	externs.h \
+	files.h \
 	game-cmd.h \
 	game-event.h \
 	$(GTKHEADERS) \
 	h-basic.h \
-	h-config.h \
-	h-define.h \
-	h-system.h \
-	h-type.h \
+	history.h \
 	init.h \
 	jewel.h \
+	list-blow-effects.h \
+	list-blow-methods.h \
+	list-curse-flags.h \
+	list-effects.h \
+	list-identify-flags.h \
+	list-kind-flags.h \
+	list-mon-flags.h \
+	list-mon-spells.h \
+	list-object-flags.h \
+	list-player-flags.h \
+	list-terrain-flags.h \
 	main.h \
+	macro.h \
+	monster.h \
+	object.h \
+	option.h \
 	parser.h \
-	randname.h \
+	player.h \
+	prefs.h \
+	savefile.h \
+	spells.h \
+	squelch.h \
+	target.h \
+	textui.h \
+	trap.h \
+	tvalsval.h \
 	types.h \
 	ui.h \
 	ui-event.h \
@@ -38,12 +63,14 @@ HEADERS = \
 	ui-menu.h \
 	x-char.h \
 	z-bitflag.h \
+	z-debug.h \
 	z-msg.h \
 	z-quark.h \
 	z-file.h \
 	z-form.h \
 	z-rand.h \
 	z-term.h \
+	z-textblock.h \
 	z-type.h \
 	z-util.h \
 	z-virt.h
@@ -72,43 +99,51 @@ ANGFILES = \
 	cmd2.o \
 	cmd3.o \
 	cmd4.o \
-	cmd5.o \
-	cmd6.o \
 	cmd-misc.o \
 	cmd-obj.o \
 	dungeon.o \
+	effects.o \
 	files.o \
 	game-cmd.o \
 	game-event.o \
 	generate.o \
+	history.o \
 	identify.o \
-	info.o \
-	init1.o \
-	init2.o \
+	init.o \
 	jewel.o \
 	load.o \
+	load-old.o \
 	macro.o \
 	monattk.o \
 	monmove.o \
 	monster1.o \
 	monster2.o \
-	object1.o \
-	object2.o \
+	obj-desc.o \
+	obj-info.o \
+	obj-make.o \
+	obj-ui.o \
+	obj-util.o \
 	option.o \
 	parser.o \
+	pathfind.o \
+	play-calcs.o \
+	play-spell.o \
+	play-timed.o \
 	play-util.o \
 	prefs.o \
 	randart.o \
 	randname.o \
 	save.o \
+	savefile.o \
 	score.o \
 	signals.o \
-	spell.o \
+	specialty.o \
 	spells1.o \
 	spells2.o \
 	squelch.o \
 	store.o \
 	tables.o \
+	target.o \
 	ui-birth.o \
 	ui.o \
 	ui-knowledge.o \
@@ -121,5 +156,5 @@ ANGFILES = \
 	wizard2.o \
 	x-char.o \
 	x-spell.o \
-	xtra1.o \
-	xtra2.o
+	xtra2.o \
+	xtra3.o

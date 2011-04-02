@@ -18,7 +18,6 @@
  */
 
 #include "angband.h"
-#include "attack.h"
 #include "effects.h"
 #include "cmds.h"
 #include "tvalsval.h"
