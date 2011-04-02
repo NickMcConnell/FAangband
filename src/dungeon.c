@@ -29,6 +29,74 @@
 
 
 /**
+ * This routine separates all the normal and special artifacts into
+ * separate lists for easy allocation later.
+ */
+void init_artifacts(void)
+{
+  int loop;
+  
+  /* First: count. Second: build lists */
+  for (loop = 0; loop <= 1; loop++)
+    {
+      int a_idx;
+      
+      artifact_normal_cnt = 0;
+      artifact_special_cnt = 0;
+      
+      /* Check every artifact (including randoms) */
+      for (a_idx = 1; a_idx < z_info->a_max; a_idx++)
+        {
+          /* Access this artifact */
+          artifact_type *a_ptr = &a_info[a_idx];
+          
+          /* Require "real" artifacts */
+          if (!a_ptr->name) continue;
+          
+          /* This is a "special" artifact */
+          if ((a_idx < ART_MIN_NORMAL) ||
+              (a_ptr->tval == TV_AMULET) ||
+              (a_ptr->tval == TV_RING) ||
+              (a_ptr->tval == TV_ROD) ||
+              (a_ptr->tval == TV_STAFF) ||
+              (a_ptr->tval == TV_WAND))
+            {
+              if (loop == 1)
+                {
+                  artifact_special[artifact_special_cnt] = a_idx;
+                }
+              
+              /* Count the special artifacts */
+              artifact_special_cnt++;
+            }
+          
+          /*
+           * This is a "normal" artifact. Notice we must skip
+           * Morgoth's Crown and Hammer.
+           */
+          else if (!(a_ptr->flags_kind & KF_INSTA_ART))
+            {
+              if (loop == 1)
+                {
+                  artifact_normal[artifact_normal_cnt] = a_idx;
+                }
+              
+              /* Count the normal artifacts */
+              artifact_normal_cnt++;
+            }
+        }
+      
+      /* Allocate the lists the first time through */
+      if (loop == 0)
+        {
+          C_MAKE(artifact_normal, artifact_normal_cnt, int);
+          C_MAKE(artifact_special, artifact_special_cnt, int);
+        }
+    }
+}
+
+
+/**
  * Regenerate hit points
  */
 static void regenhp(int percent)
@@ -2298,13 +2366,6 @@ void play_game(void)
 
     /* Process some user pref files */
     process_some_user_pref_files();
-
-    /* Set or clear "rogue_like_commands" if requested */
-    if (arg_force_original)
-	OPT(rogue_like_commands) = FALSE;
-    if (arg_force_roguelike)
-	OPT(rogue_like_commands) = TRUE;
-
 
     /* React to changes */
     Term_xtra(TERM_XTRA_REACT, 0);

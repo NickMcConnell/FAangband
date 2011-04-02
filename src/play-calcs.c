@@ -761,7 +761,7 @@ static void calc_spells(void)
     int i, j, k, levels;
     int num_allowed, num_known;
 
-    magic_type *s_ptr;
+    magic_type *mt_ptr;
 
     s16b old_spells;
 
@@ -824,10 +824,10 @@ static void calc_spells(void)
 	    continue;
 
 	/* Get the spell */
-	s_ptr = &mp_ptr->info[j];
+	mt_ptr = &mp_ptr->info[j];
 
 	/* Skip spells we are allowed to know */
-	if (s_ptr->slevel <= p_ptr->lev)
+	if (mt_ptr->slevel <= p_ptr->lev)
 	    continue;
 
 	/* Is it known? */
@@ -842,7 +842,7 @@ static void calc_spells(void)
 	    /* Message */
 	    msg_format("You have forgotten the %s of %s.", 
 		       magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
-		       spell_names[s_ptr->index]);
+		       get_spell_name(mt_ptr->index));
 	    
 	    /* One more can be learned */
 	    p_ptr->new_spells++;
@@ -864,7 +864,7 @@ static void calc_spells(void)
 	    continue;
 
 	/* Get the spell */
-	s_ptr = &mp_ptr->info[j];
+	mt_ptr = &mp_ptr->info[j];
 
 	/* Forget it (if learned) */
 	if (p_ptr->spell_flags[j] & PY_SPELL_LEARNED)
@@ -878,7 +878,7 @@ static void calc_spells(void)
 	    /* Message */
 	    msg_format("You have forgotten the %s of %s.",
 		       magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
-		       spell_names[s_ptr->index]);
+		       get_spell_name(mt_ptr->index));
 
 	    /* One more can be learned */
 	    p_ptr->new_spells++;
@@ -900,10 +900,10 @@ static void calc_spells(void)
 	    break;
 
 	/* Access the spell */
-	s_ptr = &mp_ptr->info[j];
+	mt_ptr = &mp_ptr->info[j];
 
 	/* Skip spells we cannot remember */
-	if (s_ptr->slevel > p_ptr->lev)
+	if (mt_ptr->slevel > p_ptr->lev)
 	    continue;
 
 	/* First set of spells */
@@ -916,7 +916,7 @@ static void calc_spells(void)
 
 	    /* Message */
 	    msg_format("You have remembered the %s of %s.", p,
-		       spell_names[s_ptr->index]);
+		       get_spell_name(mt_ptr->index));
 
 	    /* One less can be learned */
 	    p_ptr->new_spells--;
@@ -930,10 +930,10 @@ static void calc_spells(void)
     /* Count spells that can be learned */
     for (j = 0; j < mp_ptr->spell_number; j++) {
 	/* Access the spell */
-	s_ptr = &mp_ptr->info[j];
+	mt_ptr = &mp_ptr->info[j];
 
 	/* Skip spells we cannot remember */
-	if (s_ptr->slevel > p_ptr->lev)
+	if (mt_ptr->slevel > p_ptr->lev)
 	    continue;
 
 	/* Skip spells we already know */

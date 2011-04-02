@@ -2778,7 +2778,7 @@ static void j_remove_contradictory(object_type *o_ptr)
 /** 
  * Design a ring or amulet.
  */
-extern bool design_ring_or_amulet(object_type *o_ptr, int lev)
+bool design_ring_or_amulet(object_type *o_ptr, int lev)
 {
   /* Assign it a potential. */
   allocate_potential(o_ptr, lev);

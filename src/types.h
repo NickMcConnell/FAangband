@@ -403,8 +403,8 @@ typedef struct {
  * fields have a special prefix to aid in searching for them.
  */
 typedef struct monster_race {
-    u32b name;		/**< Name (offset) */
-    u32b text;		/**< Text (offset) */
+    char *name;		/**< Name (offset) */
+    char *text;		/**< Text (offset) */
 
     byte hdice;		/**< Creatures hit dice count */
     byte hside;		/**< Creatures hit dice sides */
@@ -762,6 +762,17 @@ struct store_type {
 
 
 
+
+
+/**
+ * And here's the structure for the "fixed" spell information
+ */
+struct spell {
+	struct spell *next;
+	unsigned int sidx;
+	char *name;
+	char *text;
+};
 
 
 /**

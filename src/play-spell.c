@@ -94,8 +94,8 @@ bool spell_okay_to_cast(int spell)
  */
 bool spell_okay_to_study(int spell)
 {
-    const magic_type *s_ptr = &mp_ptr->info[spell];
-    return (s_ptr->slevel <= p_ptr->lev) &&
+    const magic_type *mt_ptr = &mp_ptr->info[spell];
+    return (mt_ptr->slevel <= p_ptr->lev) &&
 	!(p_ptr->spell_flags[spell] & PY_SPELL_LEARNED);
 }
 
@@ -104,8 +104,8 @@ bool spell_okay_to_study(int spell)
  */
 bool spell_okay_to_browse(int spell)
 {
-    const magic_type *s_ptr = &mp_ptr->info[spell];
-    return (s_ptr->slevel < 99);
+    const magic_type *mt_ptr = &mp_ptr->info[spell];
+    return (mt_ptr->slevel < 99);
 }
 
 
@@ -116,7 +116,7 @@ s16b spell_chance(int spell)
 {
     int chance, minfail;
 
-    magic_type *s_ptr;
+    magic_type *mt_ptr;
 
 
     /* Paranoia -- must be literate */
@@ -124,20 +124,20 @@ s16b spell_chance(int spell)
 	return (100);
 
     /* Access the spell */
-    s_ptr = &mp_ptr->info[spell];
+    mt_ptr = &mp_ptr->info[spell];
 
     /* Extract the base spell failure rate */
-    chance = s_ptr->sfail;
+    chance = mt_ptr->sfail;
 
     /* Reduce failure rate by "effective" level adjustment */
-    chance -= 4 * (p_ptr->lev - s_ptr->slevel);
+    chance -= 4 * (p_ptr->lev - mt_ptr->slevel);
 
     /* Reduce failure rate by INT/WIS adjustment */
     chance -= 3 * (adj_mag_stat[p_ptr->state.stat_ind[mp_ptr->spell_stat]] - 1);
 
     /* Not enough mana to cast */
-    if (s_ptr->smana > p_ptr->csp) {
-	chance += 5 * (s_ptr->smana - p_ptr->csp);
+    if (mt_ptr->smana > p_ptr->csp) {
+	chance += 5 * (mt_ptr->smana - p_ptr->csp);
     }
 
     /* Extract the minimum failure rate */
@@ -188,7 +188,7 @@ void spell_learn(int spell)
     int i;
     cptr p;
 
-    magic_type *s_ptr;
+    magic_type *mt_ptr;
 
     /* Learn the spell */
     p_ptr->spell_flags[spell] |= PY_SPELL_LEARNED;
@@ -204,12 +204,12 @@ void spell_learn(int spell)
     p_ptr->spell_order[i] = spell;
 
     /* Access the spell */
-    s_ptr = &mp_ptr->info[spell];
+    mt_ptr = &mp_ptr->info[spell];
 
     /* Mention the result */
     message_format(MSG_STUDY, 0, "You have learned the %s of %s.", 
 		   magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
-		   spell_names[s_ptr->index]);
+		   get_spell_name(mt_ptr->index));
 
     /* Sound */
     sound(MSG_STUDY);
@@ -241,7 +241,7 @@ bool spell_cast(int spell, int dir)
     int px = p_ptr->px;
 
     /* Get the spell */
-    const magic_type *s_ptr = &mp_ptr->info[spell];
+    const magic_type *mt_ptr = &mp_ptr->info[spell];
 
     /* Spell failure chance */
     chance = spell_chance(spell);
@@ -273,13 +273,13 @@ bool spell_cast(int spell, int dir)
 
 	/* A spell was cast or a prayer prayed */
 	if (!(p_ptr->spell_flags[spell] & PY_SPELL_WORKED)){
-	    int e = s_ptr->sexp;
+	    int e = mt_ptr->sexp;
 
 	    /* The spell worked */
 	    p_ptr->spell_flags[spell] |= PY_SPELL_WORKED;
 
 	    /* Gain experience */
-	    gain_exp(e * s_ptr->slevel);
+	    gain_exp(e * mt_ptr->slevel);
 	    
 	    /* Redraw object recall */
 	    p_ptr->redraw |= (PR_OBJECT);
@@ -288,14 +288,14 @@ bool spell_cast(int spell, int dir)
 
     /* Hack - simplify rune of mana calculations by fully draining the rune
      * first */
-    if ((cave_feat[py][px] == FEAT_RUNE_MANA) && (mana_reserve <= s_ptr->smana)
-	&& (s_ptr->index != 60)) {
+    if ((cave_feat[py][px] == FEAT_RUNE_MANA) && (mana_reserve <= mt_ptr->smana)
+	&& (mt_ptr->index != 60)) {
 	p_ptr->csp += mana_reserve;
 	mana_reserve = 0;
     }
 
     /* Rune of mana can take less mana than specified */
-    if (s_ptr->index == 60) {
+    if (mt_ptr->index == 60) {
 	/* Standard mana amount */
 	int mana = 40;
 
@@ -319,21 +319,21 @@ bool spell_cast(int spell, int dir)
 
     /* Use mana from a rune if possible */
     else if ((cave_feat[py][px] == FEAT_RUNE_MANA)
-	     && (mana_reserve > s_ptr->smana)) {
-	mana_reserve -= s_ptr->smana;
+	     && (mana_reserve > mt_ptr->smana)) {
+	mana_reserve -= mt_ptr->smana;
     }
 
     /* Sufficient mana */
-    else if (s_ptr->smana <= p_ptr->csp) {
+    else if (mt_ptr->smana <= p_ptr->csp) {
 	/* Use some mana */
-	p_ptr->csp -= s_ptr->smana;
+	p_ptr->csp -= mt_ptr->smana;
 
 	/* Specialty ability Harmony */
 	if ((failed == FALSE) & (player_has(PF_HARMONY))) {
 	    int frac, boost;
 
 	    /* Percentage of max hp to be regained */
-	    frac = 3 + (s_ptr->smana / 3);
+	    frac = 3 + (mt_ptr->smana / 3);
 
 	    /* Cap at 10 % */
 	    if (frac > 10)
@@ -349,7 +349,7 @@ bool spell_cast(int spell, int dir)
 
     /* Over-exert the player */
     else {
-	int oops = s_ptr->smana - p_ptr->csp;
+	int oops = mt_ptr->smana - p_ptr->csp;
 
 	/* No mana left */
 	p_ptr->csp = 0;

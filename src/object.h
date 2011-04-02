@@ -95,8 +95,103 @@ typedef enum
 
 /*** Functions ***/
 
+/* identify.c */
+bool item_dubious(const object_type *o_ptr, bool unknown);
+int value_check_aux1(object_type *o_ptr);
+/* SJGU */
+int value_check_aux2(object_type *o_ptr);
+bool has_ego_properties(object_type *o_ptr);
+u32b flags_other(object_type *o_ptr);
+void notice_curse(u32b curse_flag, int item);
+void notice_obj(u32b obj_flag, int item);
+void notice_other(u32b other_flag, int item);
+void object_known(object_type *o_ptr);
+void object_aware(object_type *o_ptr);
+void object_tried(object_type *o_ptr);
+
+/* jewel.c */
+bool design_ring_or_amulet(object_type *o_ptr, int lev);
+
+/* obj-desc.c */
+void object_kind_name(char *buf, size_t max, int k_idx, bool easy_know);
+size_t object_desc(char *buf, size_t max, const object_type *o_ptr, odesc_detail_t mode);
+
+/* obj-info.c */
+textblock *object_info(const object_type *o_ptr, oinfo_detail_t mode);
+textblock *object_info_ego(struct ego_item *ego);
+void object_info_spoil(ang_file *f, const object_type *o_ptr, int wrap);
+void object_info_chardump(ang_file *f, const object_type *o_ptr, int indent, int wrap);
+
+/* obj-make.c */
+s16b get_obj_num(int level);
+void object_prep(object_type *o_ptr, int k_idx);
+void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great);
+bool make_object(object_type *j_ptr, bool good, bool great, bool exact_kind);
+bool make_gold(object_type *j_ptr);
+void place_object(int y, int x, bool good, bool great, bool exact_kind);
+void place_gold(int y, int x);
+
 /* obj-util.c */
-/* Basic tval testers */
+object_kind *objkind_get(int tval, int sval);
+void flavor_init(void);
+byte proc_list_color_hack(object_type *o_ptr);
+void reset_visuals(bool prefs);
+char index_to_label(int i);
+s16b label_to_inven(int c);
+s16b label_to_equip(int c);
+bool wearable_p(const object_type *o_ptr);
+s16b wield_slot(object_type *o_ptr);
+cptr mention_use(int i);
+cptr describe_use(int i);
+bool item_tester_okay(object_type *o_ptr);
+bool scan_floor(int *items, int *item_num, int y, int x, int mode);
+void excise_object_idx(int o_idx);
+void delete_object_idx(int o_idx);
+void delete_object(int y, int x);
+void compact_objects(int size);
+void wipe_o_list(void);
+s16b o_pop(void);
+object_type *get_first_object(int y, int x);
+object_type *get_next_object(const object_type *o_ptr);
+s32b object_value(object_type *o_ptr);
+bool object_similar(object_type *o_ptr, object_type *j_ptr);
+void object_absorb(object_type *o_ptr, object_type *j_ptr);
+void object_wipe(object_type *o_ptr);
+void object_copy(object_type *o_ptr, object_type *j_ptr);
+void object_copy_amt(object_type *o_ptr, object_type *j_ptr, int amt);
+s16b floor_carry(int y, int x, object_type *j_ptr);
+void drop_near(object_type *j_ptr, int chance, int y, int x);
+void acquirement(int y1, int x1, int num, bool great);
+void inven_item_charges(int item);
+void inven_item_describe(int item);
+void inven_item_increase(int item, int num);
+void save_quiver_size(struct player *p);
+void inven_item_optimize(int item);
+void floor_item_charges(int item);
+void floor_item_describe(int item);
+void floor_item_increase(int item, int num);
+void floor_item_optimize(int item);
+bool inven_carry_okay(object_type *o_ptr);
+s16b inven_carry(object_type *o_ptr);
+bool inven_stack_okay(const object_type *o_ptr);
+s16b inven_takeoff(int item, int amt);
+void inven_drop(int item, int amt);
+void combine_pack(void);
+void reorder_pack(void);
+void open_quiver_slot(int slot);
+void sort_quiver(void);
+int get_use_device_chance(const object_type *o_ptr);
+void distribute_charges(object_type *o_ptr, object_type *q_ptr, int amt);
+void reduce_charges(object_type *o_ptr, int amt);
+bool item_is_available(int item, bool (*tester)(const object_type *), int mode);
+unsigned check_for_inscrip(const object_type *o_ptr, const char *inscrip);
+s16b lookup_kind(int tval, int sval);
+bool lookup_reverse(s16b k_idx, int *tval, int *sval);
+int lookup_name(int tval, const char *name);
+int lookup_artifact_name(const char *name);
+int lookup_sval(int tval, const char *name);
+int tval_find_idx(const char *name);
+const char *tval_find_name(int tval);
 bool obj_is_staff(const object_type *o_ptr);
 bool obj_is_wand(const object_type *o_ptr);
 bool obj_is_rod(const object_type *o_ptr);
@@ -107,8 +202,6 @@ bool obj_is_light(const object_type *o_ptr);
 bool obj_is_ring(const object_type *o_ptr);
 bool obj_is_ammo(const object_type *o_ptr);
 bool obj_is_quiver_obj(const object_type * o_ptr);
-
-int get_use_device_chance(const object_type *o_ptr);
 bool obj_has_charges(const object_type *o_ptr);
 bool obj_can_zap(const object_type *o_ptr);
 bool obj_is_activatable(const object_type *o_ptr);
@@ -124,106 +217,22 @@ bool obj_has_inscrip(const object_type *o_ptr);
 u16b object_effect(const object_type *o_ptr);
 object_type *object_from_item_idx(int item);
 bool obj_needs_aim(object_type *o_ptr);
+bool get_item_okay(int item);
+int scan_items(int *item_list, size_t item_list_max, int mode);
 bool item_is_available(int item, bool (*tester)(const object_type *), int mode);
-extern unsigned check_for_inscrip(const object_type *o_ptr, const char *inscrip);
+void display_itemlist(void);
+void display_object_idx_recall(s16b o_idx);
+void display_object_kind_recall(s16b k_idx);
+bool check_set(byte s_idx);
+void apply_set(int s_idx);
+void remove_set(int s_idx);
+void pack_overflow(void);
 
 /* obj-ui.c */
-extern void show_inven(olist_detail_t mode);
-extern void show_equip(olist_detail_t mode);
-extern void show_floor(int *floor_list, int floor_num, olist_detail_t mode);
-extern bool verify_item(cptr prompt, int item);
-extern bool get_item(int *cp, cptr pmt, cptr str, int mode);
-
-/* object1.c */
-extern void flavor_init(void);
-extern byte proc_list_color_hack(object_type *o_ptr);
-extern void reset_visuals(bool prefs);
-extern void object_kind_name(char *buf, size_t max, int k_idx, bool easy_know);
-extern void object_desc(char *buf, object_type *o_ptr, int pref, int mode);
-extern void object_desc_spoil(char *buf, object_type *o_ptr, int pref, 
-                              int mode);
-extern void object_desc_store(char *buf, object_type *o_ptr, int pref, 
-                              int mode);
-extern void strip_name(char *buf, int k_idx, bool easy_know);
-extern char index_to_label(int i);
-extern s16b label_to_inven(int c);
-extern s16b label_to_equip(int c);
-extern s16b wield_slot(object_type *o_ptr);
-extern cptr mention_use(int i);
-extern cptr describe_use(int i);
-extern bool item_tester_okay(object_type *o_ptr);
-extern void toggle_inven_equip(void);
-extern bool verify_item(cptr prompt, int item);
-extern bool get_item_allow(int item);
-extern bool scan_floor(int *items, int *item_num, int y, int x, int mode);
-extern bool get_item_floor(int *cp, cptr pmt, cptr str, int mode);
-extern char *object_adj(int tval, int sval);
-extern bool check_set(byte s_idx);
-extern void apply_set(int s_idx);
-extern void remove_set(int s_idx);
-
-/* object2.c */
-extern void excise_object_idx(int o_idx);
-extern void delete_object_idx(int o_idx);
-extern void delete_object(int y, int x);
-extern void compact_objects(int size);
-extern void wipe_o_list(void);
-extern s16b o_pop(void);
-extern errr get_obj_num_prep(void);
-extern s16b get_obj_num(int level);
-extern void object_known(object_type *o_ptr);
-extern void object_aware(object_type *o_ptr);
-extern void object_tried(object_type *o_ptr);
-extern s32b object_value(object_type *o_ptr);
-extern void distribute_charges(object_type *o_ptr, object_type *q_ptr, 
-                               int amt);
-extern void reduce_charges(object_type *o_ptr, int amt);
-extern bool object_similar(object_type *o_ptr, object_type *j_ptr);
-extern void object_absorb(object_type *o_ptr, object_type *j_ptr);
-extern s16b lookup_kind(int tval, int sval);
-extern void object_wipe(object_type *o_ptr);
-extern void object_copy(object_type *o_ptr, object_type *j_ptr);
-extern void object_prep(object_type *o_ptr, int k_idx);
-extern s16b m_bonus(int max, int level);
-extern void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, 
-                        bool great);
-extern bool make_object(object_type *j_ptr, bool good, bool great, 
-                        bool exact_kind);
-extern bool make_gold(object_type *j_ptr);
-extern s16b floor_carry(int y, int x, object_type *j_ptr);
-extern void drop_near(object_type *j_ptr, int chance, int y, int x);
-extern void acquirement(int y1, int x1, int num, bool great);
-extern void place_object(int y, int x, bool good, bool great, bool exact_kind);
-extern void place_gold(int y, int x);
-extern void pick_trap(int y, int x);
-extern void place_trap(int y, int x);
-extern void inven_item_charges(int item);
-extern void inven_item_describe(int item);
-extern void inven_item_increase(int item, int num);
-extern void inven_item_optimize(int item);
-extern void floor_item_charges(int item);
-extern void floor_item_describe(int item);
-extern void floor_item_increase(int item, int num);
-extern void floor_item_optimize(int item);
-extern bool inven_carry_okay(object_type *o_ptr);
-extern s16b inven_carry(object_type *o_ptr);
-extern s16b inven_takeoff(int item, int amt);
-extern void inven_drop(int item, int amt);
-extern void combine_pack(void);
-extern void reorder_pack(void);
-extern int quiver_count(void);
-extern void find_quiver_size(void);
-extern int process_quiver(int num_new, object_type *o_ptr);
-extern void display_koff(int k_idx);
-extern void place_secret_door(int y, int x);
-extern void place_unlocked_door(int y, int x);
-extern void place_closed_door(int y, int x);
-extern void place_random_door(int y, int x);
-extern bool lookup_reverse(s16b k_idx, int *tval, int *sval);
-extern int lookup_name(int tval, const char *name);
-extern int lookup_artifact_name(const char *name);
-extern int lookup_sval(int tval, const char *name);
-extern int tval_find_idx(const char *name);
-extern const char *tval_find_name(int tval);
+void show_inven(olist_detail_t mode);
+void show_equip(olist_detail_t mode);
+void show_floor(int *floor_list, int floor_num, olist_detail_t mode);
+bool verify_item(cptr prompt, int item);
+bool get_item(int *cp, cptr pmt, cptr str, int mode);
 
 #endif /* !INCLUDED_OBJECT_H */

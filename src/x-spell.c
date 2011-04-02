@@ -285,9 +285,9 @@
 
 
 
-cptr get_spell_name(int tval, int spell)
+cptr get_spell_name(int spell)
 {
-    return spell_names[spell];
+    return s_info[spell].name;
 }
 
 /**

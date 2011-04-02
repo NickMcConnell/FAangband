@@ -1146,7 +1146,8 @@ static void get_artifact_display_name(char *o_name, size_t namelen, int a_idx)
     object_type *o_ptr = &object_type_body;
 
     make_fake_artifact(o_ptr, a_idx);
-    object_desc_spoil(o_name, o_ptr, 1, 3);
+    object_desc(o_name, namelen, o_ptr,	
+		ODESC_PREFIX | ODESC_BASE | ODESC_SPOIL);
 }
 
 /*
@@ -1543,7 +1544,11 @@ static void desc_obj_fake(int k_idx)
     handle_stuff();
 
     /* Describe */
-    object_info_screen(o_ptr, FALSE);
+    tb = object_info(o_ptr, OINFO_NONE);
+    object_desc(header, sizeof(header), o_ptr, ODESC_PREFIX | ODESC_FULL);
+    
+    textui_textblock_show(tb, area, format("%^s", header));
+    textblock_free(tb);
 }
 
 static int o_cmp_tval(const void *a, const void *b)

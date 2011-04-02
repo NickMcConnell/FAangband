@@ -1047,16 +1047,6 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    (void) detect_objects_gold(DETECT_RAD_DEFAULT, FALSE);
 	    (void) detect_objects_normal(DETECT_RAD_DEFAULT, FALSE);
 	    *identify_pack();
-	    self_knowledge(TRUE);
-	    *ident = TRUE;
-	    return TRUE;
-	}
-
-    case EF_SELF_KNOWLEDGE:
-	{
-	    msg_print("You begin to know yourself a little better...");
-	    msg_print(NULL);
-	    self_knowledge(TRUE);
 	    *ident = TRUE;
 	    return TRUE;
 	}

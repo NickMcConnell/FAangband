@@ -484,16 +484,13 @@ static errr rd_savefile_new_aux(void)
   
     /* Read RNG state */
     rd_randomizer();
-    if (arg_fiddle) note("Loaded Randomizer Info");
   
   
     /* Then the options */
     rd_options();
-    if (arg_fiddle) note("Loaded Option Flags");
   
     /* Then the "messages" */
     rd_messages();
-    if (arg_fiddle) note("Loaded Messages");
   
     /* Monster Memory */
     rd_u16b(&tmp16u);
@@ -521,7 +518,6 @@ static errr rd_savefile_new_aux(void)
 	l_ptr = &l_list[j];
       
     }
-    if (arg_fiddle) note("Loaded Monster Memory");
   
   
     /* Hack - kill player */

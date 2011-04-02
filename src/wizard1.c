@@ -55,6 +55,8 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val,
   object_type *i_ptr;
   object_type object_type_body;
   
+  /* Hack */
+  size_t buf_len = 80;
   
   /* Get local object */
   i_ptr = &object_type_body;
@@ -87,7 +89,7 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val,
   
   
   /* Description (too brief) */
-  object_desc_store(buf, i_ptr, FALSE, 0);
+  object_desc(buf, buf_len, i_ptr, ODESC_BASE | ODESC_SPOIL);
   
   
   /* Misc info */
@@ -639,7 +641,8 @@ static cptr *spoiler_frac_aux(const int *values, const int base,
 static void analyze_general (object_type *o_ptr, char *desc_x_ptr)
 {
   /* Get a "useful" description of the object */
-  object_desc_store(desc_x_ptr, o_ptr, TRUE, 1);
+    object_desc(desc_x_ptr, sizeof(desc_x_ptr), o_ptr,
+		ODESC_PREFIX | ODESC_COMBAT | ODESC_SPOIL);
 }
 
 /**
@@ -821,9 +824,9 @@ static void object_analyze(object_type *o_ptr, obj_desc_list *desc_x_ptr)
   artifact_type *a_ptr = &a_info[o_ptr->name1];
   
   /* Oangband requires that activations be transferred to the object. */
-  if (a_ptr->activation)
+  if (a_ptr->effect)
     {
-      o_ptr->activation = a_ptr->activation;
+      o_ptr->effect = a_ptr->effect;
     }
   
   analyze_general(o_ptr, desc_x_ptr->description);
@@ -845,8 +848,6 @@ static void object_analyze(object_type *o_ptr, obj_desc_list *desc_x_ptr)
   analyze_curses(o_ptr, desc_x_ptr->curses);
   
   analyze_misc(o_ptr, desc_x_ptr->misc_desc);
-  
-  desc_x_ptr->activation = item_activation(o_ptr);
 }
 
 

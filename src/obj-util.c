@@ -3160,7 +3160,7 @@ bool inven_stack_okay(const object_type *o_ptr)
  * Note that this code must remove any location/stack information
  * from the object once it is placed into the inventory.
  */
-extern s16b inven_carry(struct player *p, struct object *o)
+s16b inven_carry(struct player *p, struct object *o)
 {
     int i, j, k;
     int n = -1;
@@ -4783,31 +4783,31 @@ void pack_overflow(void)
 /**
  * Determin if a given Set of artifacts is being used by the player.
  */
-extern bool check_set(byte s_idx)
+bool check_set(byte set_idx)
 {
     byte count = 0;
     byte i;
-    set_type *s_ptr = &s_info[s_idx];;
+    set_type *set_ptr = &set_info[set_idx];;
 
     for (i = INVEN_WIELD; i <= INVEN_FEET; i++) {
 	object_type *o_ptr = &p_ptr->inventory[i];
 	if (o_ptr->name1) {
 	    artifact_type *a_ptr = &a_info[o_ptr->name1];
-	    if (a_ptr->set_no == s_idx) {
+	    if (a_ptr->set_no == set_idx) {
 		count++;
 	    }
 	}
     }
 
-    return (count >= s_ptr->no_of_items);
+    return (count >= set_ptr->no_of_items);
 }
 
 /**
  * Apply bonuses for complete artifact sets.
  */
-extern void apply_set(int s_idx)
+void apply_set(int set_idx)
 {
-    set_type *s_ptr = &s_info[s_idx];
+    set_type *set_ptr = &set_info[set_idx];
 
     bool bonus_applied = FALSE;
 
@@ -4821,12 +4821,12 @@ extern void apply_set(int s_idx)
 	    artifact_type *a_ptr = &a_info[o_ptr->name1];
 
 	    /* Is it in the correct set? */
-	    if (a_ptr->set_no == s_idx) {
+	    if (a_ptr->set_no == set_idx) {
 
 		/* Loop through set elements */
-		for (j = 0; j < (s_ptr->no_of_items); j++) {
+		for (j = 0; j < (set_ptr->no_of_items); j++) {
 
-		    set_element *se_ptr = &s_ptr->set_items[j];
+		    set_element *se_ptr = &set_ptr->set_items[j];
 
 		    /* Correct Element? */
 		    if (se_ptr->a_idx == o_ptr->name1) {
@@ -4872,9 +4872,9 @@ extern void apply_set(int s_idx)
 /**
  * Remove bonuses for no-longer-complete artifact sets.
  */
-extern void remove_set(int s_idx)
+void remove_set(int set_idx)
 {
-    set_type *s_ptr = &s_info[s_idx];
+    set_type *set_ptr = &set_info[set_idx];
 
     bool bonus_removed = FALSE;
 
@@ -4888,12 +4888,12 @@ extern void remove_set(int s_idx)
 	    artifact_type *a_ptr = &a_info[o_ptr->name1];
 
 	    /* Is it in the correct set? */
-	    if (a_ptr->set_no == s_idx) {
+	    if (a_ptr->set_no == set_idx) {
 
 		/* Loop through set elements */
-		for (j = 0; j < (s_ptr->no_of_items); j++) {
+		for (j = 0; j < (set_ptr->no_of_items); j++) {
 
-		    set_element *se_ptr = &s_ptr->set_items[j];
+		    set_element *se_ptr = &set_ptr->set_items[j];
 
 		    /* Correct Element? */
 		    if (se_ptr->a_idx == o_ptr->name1) {

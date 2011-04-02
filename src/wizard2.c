@@ -485,7 +485,8 @@ static void wiz_display_item(object_type * o_ptr)
     Term_clear();
 
     /* Describe fully */
-    object_desc_store(buf, o_ptr, TRUE, 3);
+    object_desc(buf, sizeof(buf), o_ptr,
+		ODESC_PREFIX | ODESC_FULL | ODESC_SPOIL);
     prt(buf, 2, j);
 
     prt(format
@@ -761,7 +762,7 @@ static int wiz_create_itemtype(bool artifact)
 		ch = head[num / 20] + (num % 20);
 
 		/* Acquire the "name" of object "i" */
-		strip_name(buf, i, TRUE);
+		my_strcpy(buf, sizeof(buf), k_ptr->name);
 
 		/* Print it */
 		prt(format("[%c] %s", ch, buf), row, col);
@@ -2015,13 +2016,6 @@ void do_cmd_debug(void)
     case 'j':
 	{
 	    do_cmd_wiz_jump();
-	    break;
-	}
-
-	/* Self-Knowledge */
-    case 'k':
-	{
-	    self_knowledge(TRUE);
 	    break;
 	}
 

@@ -160,7 +160,7 @@ static void spell_menu_browser(int oid, void *data, const region *loc)
     screen_save();
 
     Term_gotoxy(loc->col, loc->row + loc->page_rows);
-    text_out(format("\n%s\n", spell_tips[spell]));
+    text_out(format("\n%s\n", s_info[spell].text));
 
     /* XXX */
     text_out_pad = 0;

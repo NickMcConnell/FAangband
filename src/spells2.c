@@ -3275,6 +3275,11 @@ bool identify_fully(void)
 
     cptr q, s;
 
+    char header[120];
+
+    textblock *tb;
+    region area = { 0, 0, 0, 0 };
+
     /* Only un-*id*'ed items */
     item_tester_hook = item_tester_unknown_curse;
 
@@ -3306,8 +3311,15 @@ bool identify_fully(void)
     if (!o_ptr->flags_curse) {
 	o_ptr->ident |= IDENT_UNCURSED;
 	msg_print("This item has no curses.");
-    } else
-	object_info_screen(o_ptr, FALSE);
+    } 
+    else {
+	tb = object_info(o_ptr, OINFO_FULL);
+	object_desc(header, sizeof(header), o_ptr, ODESC_PREFIX | ODESC_FULL);
+
+	textui_textblock_show(tb, area, header);
+	textblock_free(tb);
+
+    }
 
     /* Recalculate bonuses */
     p_ptr->update |= (PU_BONUS);

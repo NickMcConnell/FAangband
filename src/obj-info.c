@@ -1622,11 +1622,11 @@ bool describe_set(textblock *tb, const object_type *o_ptr,
 	
 	/* Is it a set item? */
 	if (a_ptr->set_no) {
-	    set_type *s_ptr = &s_info[a_ptr->set_no];
+	    set_type *set_ptr = &set_info[a_ptr->set_no];
 	    
 	    /* Description */
 	    textblock_append(tb, "\n");
-	    textblock_append_c(tb, TERM_BLUE, s_ptr->text);
+	    textblock_append_c(tb, TERM_BLUE, set_ptr->text);
 	    
 	    /* End sentence */
 	    textblock_append_c(tb, TERM_BLUE, ".");

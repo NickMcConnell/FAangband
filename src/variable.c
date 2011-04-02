@@ -58,31 +58,18 @@ byte sf_extra;		/* Savefile's "version_extra". Used for enryption */
 
 
 /*
- * Savefile information
- */
-u32b sf_xtra;			/* Operating system info */
-u32b sf_when;			/* Time when savefile created */
-u16b sf_lives;			/* Number of past "lives" with this file */
-u16b sf_saves;			/* Number of "saves" during this life */
-
-/*
  * Run-time arguments
  */
-bool arg_fiddle;		/* Command arg -- Request fiddle mode */
 bool arg_wizard;		/* Command arg -- Request wizard mode */
-bool arg_sound;			/* Command arg -- Request special sounds */
+bool arg_rebalance;
 bool arg_graphics;		/* Command arg -- Request graphics mode */
 bool arg_graphics_nice;	        /* Command arg -- Request nice graphics mode */
-bool arg_monochrome;		/* Command arg -- Request monochrome mode */
-bool arg_force_original;	/* Command arg -- Request original keyset */
-bool arg_force_roguelike;	/* Command arg -- Request roguelike keyset */
 
 /*
  * Various things
  */
 
 bool game_start;                /* Restart after death? */
-bool character_quickstart;      /* The character is based on the last one */
 bool character_generated;	/* The character exists */
 bool character_dungeon;		/* The character has a dungeon */
 bool character_loaded;		/* The character was loaded from a savefile */
@@ -108,12 +95,8 @@ int use_graphics;		/* "graphics" mode */
 bool use_graphics_nice;	        /* The 'nice' "graphics" mode is enabled */
 byte tile_width = 1;            /* Tile width in units of font width */
 byte tile_height = 1;           /* Tile height in units of font height */
-bool small_screen = FALSE;      /* Small screen mode for portables */
 bool use_transparency = FALSE;  /* Use transparent tiles */
 char notes_start[80];           /* Opening line of notes */
-
-int image_count;  		/* Grids until next random image    */
-                  		/* Optimizes the hallucination code */
 
 s16b signal_count;		/* Hack -- Count interupts */
 
@@ -144,23 +127,11 @@ s16b m_cnt = 0;			/* Number of live monsters */
 u16b group_id = 1;              /* Number of group IDs allocated */    
 
 /*
- * Height of dungeon map on screen.
- * Moved to defines.h -NRM-
-s16b SCREEN_HGT = 22;
-s16b SCREEN_WID = 66; */
-
-/*
  * Dungeon variables
  */
 
 s16b feeling;			/* Most recent feeling */
 s16b rating;			/* Level's current rating */
-bool good_item_flag;	        /* True if "Artifact" on this level */
-
-bool closing_flag;		/* Dungeon is closing */
-
-bool fake_monochrome;	        /* Use fake monochrome for effects */
-
 
 /*
  * Player info
@@ -174,75 +145,6 @@ int player_egid;
  * Buffer to hold the current savefile name
  */
 char savefile[1024];
-
-
-/**
- * Number of active macros.
- */
-s16b macro__num;
-
-/**
- * Array of macro patterns [MACRO_MAX]
- */
-char **macro__pat;
-
-/**
- * Array of macro actions [MACRO_MAX]
- */
-char **macro__act;
-
-
-/**
- * The number of quarks (first quark is NULL)
- */
-s16b quark__num = 1;
-
-/**
- * The array[QUARK_MAX] of pointers to the quarks
- */
-char **quark__str;
-
-
-/**
- * The next "free" index to use
- */
-u16b message__next;
-
-/**
- * The index of the oldest message (none yet)
- */
-u16b message__last;
-
-/**
- * The next "free" offset
- */
-u16b message__head;
-
-/**
- * The offset to the oldest used char (none yet)
- */
-u16b message__tail;
-
-/**
- * The array[MESSAGE_MAX] of offsets, by index
- */
-u16b *message__ptr;
-
-/**
- * The array[MESSAGE_BUF] of chars, by offset
- */
-char *message__buf;
-
-/**
- * The array[MESSAGE_MAX] of u16b for the types of messages
- */
-u16b *message__type;
-
-
-/**
- * Table of colors associated to message-types
- */
-byte message__color[MSG_MAX];
 
 
 /**
@@ -311,94 +213,96 @@ byte angband_color_table[MAX_COLORS][4] =
  */
 color_type color_table[MAX_COLORS] =
 {
-	/* full mono vga blind lighter darker highlight metallic misc */
-	{'d', "Dark", {0, 0, 0, TERM_DARK, TERM_L_DARK, TERM_DARK,
-				   TERM_L_DARK, TERM_L_DARK, TERM_DARK}},
+    /* full mono vga blind lighter darker highlight metallic misc */
+    {'d', "Dark", {0, 0, 0, TERM_DARK, TERM_L_DARK, TERM_DARK,
+		   TERM_L_DARK, TERM_L_DARK, TERM_DARK}},
 
-	{'w', "White", {1, 1, 1, TERM_WHITE, TERM_YELLOW, TERM_SLATE,
-					TERM_L_BLUE, TERM_YELLOW, TERM_WHITE}},
+    {'w', "White", {1, 1, 1, TERM_WHITE, TERM_YELLOW, TERM_SLATE,
+		    TERM_L_BLUE, TERM_YELLOW, TERM_WHITE}},
 
-	{'s', "Slate", {2, 1, 2, TERM_SLATE, TERM_L_WHITE, TERM_L_DARK,
-					TERM_L_WHITE, TERM_L_WHITE, TERM_SLATE}},
+    {'s', "Slate", {2, 1, 2, TERM_SLATE, TERM_L_WHITE, TERM_L_DARK,
+		    TERM_L_WHITE, TERM_L_WHITE, TERM_SLATE}},
 
-	{'o', "Orange", {3, 1, 3, TERM_L_WHITE, TERM_YELLOW, TERM_SLATE,
-					 TERM_YELLOW, TERM_YELLOW, TERM_ORANGE}},
+    {'o', "Orange", {3, 1, 3, TERM_L_WHITE, TERM_YELLOW, TERM_SLATE,
+		     TERM_YELLOW, TERM_YELLOW, TERM_ORANGE}},
 
-	{'r', "Red", {4, 1, 4, TERM_SLATE, TERM_L_RED, TERM_SLATE,
-				  TERM_L_RED, TERM_L_RED, TERM_RED}},
+    {'r', "Red", {4, 1, 4, TERM_SLATE, TERM_L_RED, TERM_SLATE,
+		  TERM_L_RED, TERM_L_RED, TERM_RED}},
 
-	{'g', "Green", {5, 1, 5, TERM_SLATE, TERM_L_GREEN, TERM_SLATE,
-					TERM_L_GREEN, TERM_L_GREEN, TERM_GREEN}},
+    {'g', "Green", {5, 1, 5, TERM_SLATE, TERM_L_GREEN, TERM_SLATE,
+		    TERM_L_GREEN, TERM_L_GREEN, TERM_GREEN}},
 
-	{'b', "Blue", {6, 1, 6, TERM_SLATE, TERM_L_BLUE, TERM_SLATE,
-				   TERM_L_BLUE, TERM_L_BLUE, TERM_BLUE}},
+    {'b', "Blue", {6, 1, 6, TERM_SLATE, TERM_L_BLUE, TERM_SLATE,
+		   TERM_L_BLUE, TERM_L_BLUE, TERM_BLUE}},
 
-	{'u', "Umber", {7, 1, 7, TERM_L_DARK, TERM_L_UMBER, TERM_L_DARK,
-					TERM_L_UMBER, TERM_L_UMBER, TERM_UMBER}},
+    {'u', "Umber", {7, 1, 7, TERM_L_DARK, TERM_L_UMBER, TERM_L_DARK,
+		    TERM_L_UMBER, TERM_L_UMBER, TERM_UMBER}},
 
-	{'D', "Light Dark", {8, 1, 8, TERM_L_DARK, TERM_SLATE, TERM_L_DARK,
-						 TERM_SLATE, TERM_SLATE, TERM_L_DARK}},
+    {'D', "Light Dark", {8, 1, 8, TERM_L_DARK, TERM_SLATE, TERM_L_DARK,
+			 TERM_SLATE, TERM_SLATE, TERM_L_DARK}},
 
-	{'W', "Light Slate", {9, 1, 9, TERM_L_WHITE, TERM_WHITE, TERM_SLATE,
-						  TERM_WHITE, TERM_WHITE, TERM_SLATE}},
+    {'W', "Light Slate", {9, 1, 9, TERM_L_WHITE, TERM_WHITE, TERM_SLATE,
+			  TERM_WHITE, TERM_WHITE, TERM_SLATE}},
 
-	{'P', "Light Purple", {10, 1, 10, TERM_SLATE, TERM_YELLOW, TERM_SLATE,
-						   TERM_YELLOW, TERM_YELLOW, TERM_L_PURPLE}},
+    {'P', "Light Purple", {10, 1, 10, TERM_SLATE, TERM_YELLOW, TERM_SLATE,
+			   TERM_YELLOW, TERM_YELLOW, TERM_L_PURPLE}},
 
-	{'y', "Yellow", {11, 1, 11, TERM_L_WHITE, TERM_L_YELLOW, TERM_L_WHITE,
-					 TERM_WHITE, TERM_WHITE, TERM_YELLOW}},
+    {'y', "Yellow", {11, 1, 11, TERM_L_WHITE, TERM_L_YELLOW, TERM_L_WHITE,
+		     TERM_WHITE, TERM_WHITE, TERM_YELLOW}},
 
-	{'R', "Light Red", {12, 1, 12, TERM_L_WHITE, TERM_YELLOW, TERM_RED,
-						TERM_YELLOW, TERM_YELLOW, TERM_L_RED}},
+    {'R', "Light Red", {12, 1, 12, TERM_L_WHITE, TERM_YELLOW, TERM_RED,
+			TERM_YELLOW, TERM_YELLOW, TERM_L_RED}},
 
-	{'G', "Light Green", {13, 1, 13, TERM_L_WHITE, TERM_YELLOW, TERM_GREEN,
-						  TERM_YELLOW, TERM_YELLOW, TERM_L_GREEN}},
+    {'G', "Light Green", {13, 1, 13, TERM_L_WHITE, TERM_YELLOW, TERM_GREEN,
+			  TERM_YELLOW, TERM_YELLOW, TERM_L_GREEN}},
 
-	{'B', "Light Blue", {14, 1, 14, TERM_L_WHITE, TERM_YELLOW, TERM_BLUE,
-						 TERM_YELLOW, TERM_YELLOW, TERM_L_BLUE}},
+    {'B', "Light Blue", {14, 1, 14, TERM_L_WHITE, TERM_YELLOW, TERM_BLUE,
+			 TERM_YELLOW, TERM_YELLOW, TERM_L_BLUE}},
 
-	{'U', "Light Umber", {15, 1, 15, TERM_L_WHITE, TERM_YELLOW, TERM_UMBER,
-						  TERM_YELLOW, TERM_YELLOW, TERM_L_UMBER}},
+    {'U', "Light Umber", {15, 1, 15, TERM_L_WHITE, TERM_YELLOW, TERM_UMBER,
+			  TERM_YELLOW, TERM_YELLOW, TERM_L_UMBER}},
 
-	/* "new" colors */
-	{'p', "Purple", {16, 1, 10,TERM_SLATE, TERM_L_PURPLE, TERM_SLATE,
-					 TERM_L_PURPLE, TERM_L_PURPLE, TERM_L_PURPLE}},
+    /* "new" colors */
+    {'p', "Purple", {16, 1, 10,TERM_SLATE, TERM_L_PURPLE, TERM_SLATE,
+		     TERM_L_PURPLE, TERM_L_PURPLE, TERM_L_PURPLE}},
 
-	{'v', "Violet", {17, 1, 10,TERM_SLATE, TERM_L_PURPLE, TERM_SLATE,
-					 TERM_L_PURPLE, TERM_L_PURPLE, TERM_L_PURPLE}},
+    {'v', "Violet", {17, 1, 10,TERM_SLATE, TERM_L_PURPLE, TERM_SLATE,
+		     TERM_L_PURPLE, TERM_L_PURPLE, TERM_L_PURPLE}},
 
-	{'t', "Teal", {18, 1, 6, TERM_SLATE, TERM_L_TEAL, TERM_SLATE,
-				   TERM_L_TEAL, TERM_L_TEAL, TERM_L_BLUE}},
+    {'t', "Teal", {18, 1, 6, TERM_SLATE, TERM_L_TEAL, TERM_SLATE,
+		   TERM_L_TEAL, TERM_L_TEAL, TERM_L_BLUE}},
 
-	{'m', "Mud", {19, 1, 5, TERM_SLATE, TERM_MUSTARD, TERM_SLATE,
-				  TERM_MUSTARD, TERM_MUSTARD, TERM_UMBER}},
+    {'m', "Mud", {19, 1, 5, TERM_SLATE, TERM_MUSTARD, TERM_SLATE,
+		  TERM_MUSTARD, TERM_MUSTARD, TERM_UMBER}},
 
-	{'Y', "Light Yellow", {20, 1, 11, TERM_WHITE, TERM_WHITE, TERM_YELLOW,
-						   TERM_WHITE, TERM_WHITE, TERM_L_YELLOW}},
+    {'Y', "Light Yellow", {20, 1, 11, TERM_WHITE, TERM_WHITE, TERM_YELLOW,
+			   TERM_WHITE, TERM_WHITE, TERM_L_YELLOW}},
 
-	{'i', "Magenta-Pink", {21, 1, 12, TERM_SLATE, TERM_L_PINK, TERM_RED,
-						   TERM_L_PINK, TERM_L_PINK, TERM_L_PURPLE}},
+    {'i', "Magenta-Pink", {21, 1, 12, TERM_SLATE, TERM_L_PINK, TERM_RED,
+			   TERM_L_PINK, TERM_L_PINK, TERM_L_PURPLE}},
 
-	{'T', "Light Teal", {22, 1, 14, TERM_L_WHITE, TERM_YELLOW, TERM_TEAL,
-						 TERM_YELLOW, TERM_YELLOW, TERM_L_BLUE}},
+    {'T', "Light Teal", {22, 1, 14, TERM_L_WHITE, TERM_YELLOW, TERM_TEAL,
+			 TERM_YELLOW, TERM_YELLOW, TERM_L_BLUE}},
 
-	{'V', "Light Violet", {23, 1, 10, TERM_L_WHITE, TERM_YELLOW, TERM_VIOLET,
-						   TERM_YELLOW, TERM_YELLOW, TERM_L_PURPLE}},
+    {'V', "Light Violet", {23, 1, 10, TERM_L_WHITE, TERM_YELLOW, TERM_VIOLET,
+			   TERM_YELLOW, TERM_YELLOW, TERM_L_PURPLE}},
 
-	{'I', "Light Pink", {24, 1, 12, TERM_L_WHITE, TERM_YELLOW, TERM_MAGENTA,
-						 TERM_YELLOW, TERM_YELLOW, TERM_L_PURPLE}},
+    {'I', "Light Pink", {24, 1, 12, TERM_L_WHITE, TERM_YELLOW, TERM_MAGENTA,
+			 TERM_YELLOW, TERM_YELLOW, TERM_L_PURPLE}},
 
-	{'M', "Mustard", {25, 1, 11, TERM_SLATE, TERM_YELLOW, TERM_SLATE,
-					  TERM_YELLOW, TERM_YELLOW, TERM_YELLOW}},
+    {'M', "Mustard", {25, 1, 11, TERM_SLATE, TERM_YELLOW, TERM_SLATE,
+		      TERM_YELLOW, TERM_YELLOW, TERM_YELLOW}},
 
-	{'z', "Blue Slate",  {26, 1, 9, TERM_SLATE, TERM_DEEP_L_BLUE, TERM_SLATE,
-						  TERM_DEEP_L_BLUE, TERM_DEEP_L_BLUE, TERM_L_WHITE}},
+    {'z', "Blue Slate",  {26, 1, 9, TERM_SLATE, TERM_DEEP_L_BLUE, TERM_SLATE,
+			  TERM_DEEP_L_BLUE, TERM_DEEP_L_BLUE, TERM_L_WHITE}},
 
-	{'Z', "Deep Light Blue", {27, 1, 14, TERM_L_WHITE, TERM_L_BLUE, TERM_BLUE_SLATE,
-							  TERM_L_BLUE, TERM_L_BLUE, TERM_L_BLUE}},
+    {'Z', "Deep Light Blue", {27, 1, 14, TERM_L_WHITE, TERM_L_BLUE, 
+			      TERM_BLUE_SLATE, TERM_L_BLUE, TERM_L_BLUE, 
+			      TERM_L_BLUE}},
 
-	/* Rest to be filled in when the game loads */
+    /* Rest to be filled in when the game loads */
 };
+
 /**
  * Standard sound names (modifiable?)
  */
@@ -693,12 +597,6 @@ monster_lore *l_list;
 quest *q_list;
 
 /**
- * Hack -- Array[NOTES_MAX_LINES] of note records
- */
-note_info *notes;
-
-
-/**
  * Array[MAX_STORES] of stores
  */
 store_type *store;
@@ -823,85 +721,68 @@ maxima *z_info;
  * The vault generation arrays
  */
 vault_type *v_info;
-char *v_name;
-char *v_text;
 
 /**
  * The themed level generation arrays. -LM-
  */
 vault_type *t_info;
-char *t_name;
-char *t_text;
 
 /**
  * The terrain feature arrays
  */
 feature_type *f_info;
-char *f_name;
-char *f_text;
 
 /**
  * The object kind arrays
  */
 object_kind *k_info;
-char *k_name;
-char *k_text;
 
 /**
  * The artifact arrays
  */
 artifact_type *a_info;
-char *a_name;
-char *a_text;
 
 /**
  * The set item arrays
  */
-set_type *s_info;
-char *s_name;
-char *s_text;
+set_type *set_info;
 
 /**
  * The ego-item arrays
  */
 ego_item_type *e_info;
-char *e_name;
-char *e_text;
 
 /**
  * The monster race arrays
  */
 monster_race *r_info;
-char *r_name;
-char *r_text;
 
 /**
  * The player race arrays
  */
 player_race *p_info;
-char *p_name;
-char *p_text;
 
 
 /**
  * The player class arrays
  */
 player_class *c_info;
-char *c_name;
-char *c_text;
 
 
 /**
  * The player history arrays
  */
 hist_type *h_info;
-char *h_text;
 
 /**
  * The shop owner arrays
  */
 owner_type *b_info;
-char *b_name;
+
+/**
+ * The spell arrays
+ */
+spell_type *s_info;
 
 /**
  * The racial price adjustment arrays
@@ -913,8 +794,6 @@ byte *g_info;
  * The object flavor arrays
  */
 flavor_type *flavor_info;
-char *flavor_name;
-char *flavor_text;
 
 
 /**
@@ -1194,6 +1073,13 @@ byte number_of_thefts_on_level;
 byte num_trap_on_level;
 byte num_runes_on_level[MAX_RUNE];
 int mana_reserve = 0;
+
+/**
+ * Artifact counting variables and arrays
+ */
+int *artifact_normal, *artifact_special;
+int artifact_normal_cnt, artifact_special_cnt;
+
 
 
 /** XXX Mega-Hack - See main-win.c */

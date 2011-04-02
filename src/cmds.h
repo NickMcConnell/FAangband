@@ -87,9 +87,6 @@ extern void do_cmd_target_closest(void);
 extern void do_cmd_look(void);
 extern void do_cmd_locate(void);
 extern void do_cmd_query_symbol(void);
-extern void py_steal(int y, int x);
-extern bool py_set_trap(int y, int x);
-extern bool py_modify_trap(int y, int x);
 
 /* cmd4.c */
 extern void do_cmd_redraw(void);

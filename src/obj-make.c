@@ -275,7 +275,7 @@ static void object_mention(object_type * o_ptr)
     char o_name[120];
 
     /* Describe */
-    object_desc_store(o_name, o_ptr, FALSE, 0);
+    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE | ODESC_SPOIL);
 
     /* Artifact */
     if (artifact_p(o_ptr)) {
@@ -853,7 +853,7 @@ static void a_m_aux_4(object_type * o_ptr, int level, int power)
  * Apply slightly randomised percentage resistances -NRM-
  * Also add element proofing flags where appropriate
  */
-extern void apply_resistances(object_type * o_ptr, int lev, bitflag *flags)
+void apply_resistances(object_type * o_ptr, int lev, bitflag *flags)
 {
     int i, res = 0;
 

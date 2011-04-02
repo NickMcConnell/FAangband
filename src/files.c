@@ -3611,51 +3611,28 @@ static void show_info(void)
 static void death_examine(void)
 {
     int item;
-
-    object_type *o_ptr;
-
-    char o_name[80];
-
     cptr q, s;
 
-
-    /* Start out in "display" mode */
-    p_ptr->command_see = TRUE;
 
     /* Get an item */
     q = "Examine which item? ";
     s = "You have nothing to examine.";
-    if (!get_item(&item, q, s, (USE_INVEN | USE_EQUIP)))
-	return;
 
-    /* Get the item (in the pack) */
-    if (item >= 0) {
-	o_ptr = &p_ptr->inventory[item];
+    while (get_item(&item, q, s, 0, (USE_INVEN | USE_EQUIP | IS_HARMLESS)))
+    {
+	char header[120];
+
+	textblock *tb;
+	region area = { 0, 0, 0, 0 };
+
+	object_type *o_ptr = &p_ptr->inventory[item];
+
+	tb = object_info(o_ptr, OINFO_FULL);
+	object_desc(header, sizeof(header), o_ptr, ODESC_PREFIX | ODESC_FULL);
+
+	textui_textblock_show(tb, area, format("%^s", header));
+	textblock_free(tb);
     }
-
-    /* Get the item (on the floor) */
-    else {
-	o_ptr = &o_list[0 - item];
-    }
-
-    /* Aware and Known */
-    object_aware(o_ptr);
-    object_known(o_ptr);
-
-    /* Fully known */
-    o_ptr->id_curse = o_ptr->flags_curse;
-
-    /* Description */
-    object_desc(o_name, o_ptr, TRUE, 3);
-
-    /* Save screen */
-    screen_save();
-
-    /* Examine the item. */
-    object_info_screen(o_ptr, FALSE);
-
-    /* Load screen */
-    screen_load();
 }
 
 /**

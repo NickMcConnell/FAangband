@@ -1192,6 +1192,7 @@ static void display_entry(int item)
     int y;
     object_type *o_ptr;
     s32b x;
+	odesc_detail_t desc = ODESC_PREFIX;
 
     char o_name[120];
     char out_val[160];
@@ -1225,7 +1226,8 @@ static void display_entry(int item)
 	    maxwid -= 10;
 
 	/* Describe the object */
-	object_desc(o_name, o_ptr, TRUE, 4);
+	desc = ODESC_FULL;
+	object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | desc);
 	o_name[maxwid] = '\0';
 
 	/* Acquire inventory color.  Apply spellbook hack. */
@@ -1261,7 +1263,8 @@ static void display_entry(int item)
 	    maxwid -= 7;
 
 	/* Describe the object (fully) */
-	object_desc_store(o_name, o_ptr, TRUE, 4);
+	desc = ODESC_FULL | ODESC_STORE;
+	object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | desc);
 	o_name[maxwid] = '\0';
 
 	/* Acquire inventory color.  Apply spellbook hack. */
@@ -1518,7 +1521,8 @@ static bool get_stock(int *com_val, cptr pmt)
 	/* Shop */
 	else {
 	    /* Describe */
-	    object_desc_store(o_name, o_ptr, TRUE, 3);
+	    object_desc(o_name, sizeof(o_name), o_ptr, 
+			ODESC_PREFIX | ODESC_FULL);
 	}
 
 	/* Prompt */
@@ -1672,7 +1676,7 @@ static void store_purchase(void)
     /* Attempt to buy it */
     if (st_ptr->type != STORE_HOME) {
 	/* Describe the object (fully) */
-	object_desc_store(o_name, i_ptr, TRUE, 3);
+	object_desc(o_name, sizeof(o_name), i_ptr, ODESC_PREFIX | ODESC_FULL);
 
 	/* Haggle for a final price */
 	price = price_item(i_ptr, ot_ptr->inflate, FALSE) * i_ptr->number;
@@ -2148,7 +2152,10 @@ static void store_inspect(void)
     object_type *o_ptr;
 
     char out_val[160];
+    char header[120];
 
+    textblock *tb;
+    region area = { 0, 0, 0, 0 };
 
     /* Empty? */
     if (st_ptr->stock_num <= 0) {
@@ -2169,8 +2176,13 @@ static void store_inspect(void)
     /* Get the actual item */
     o_ptr = &st_ptr->stock[item];
 
-    /* Examine the item. */
-    object_info_screen(o_ptr, FALSE);
+    /* Show full info in most stores, but normal info in player home */
+    tb = object_info(o_ptr, (st_ptr->type != STORE_HOME) ? 
+		     OINFO_FULL : OINFO_NONE);
+    object_desc(header, sizeof(header), o_ptr, ODESC_PREFIX | ODESC_FULL);
+
+    textui_textblock_show(tb, area, header);
+    textblock_free(tb);
 }
 
 /**

@@ -105,7 +105,6 @@ EFFECT(STAR_INC_CHR,   FALSE,  INHIBIT_POWER,	"restores and increases your chari
 EFFECT(AUGMENTATION,   FALSE,  INHIBIT_POWER,	"restores and increases all your stats")
 EFFECT(ENLIGHTENMENT1, FALSE,  22,	"completely lights up and magically maps the level")
 EFFECT(ENLIGHTENMENT2, FALSE,  INHIBIT_POWER,	"increases your intelligence and wisdom, detects and maps everything in the surrounding area, and identifies all items in your pack")
-EFFECT(SELF_KNOWLEDGE, FALSE,  5,	"tells you about yourself")
 EFFECT(EXPERIENCE,     FALSE,  INHIBIT_POWER,	"grants half your current experience points, to a maximum of 100,000")
 EFFECT(VAMPIRE,        FALSE,  5,	"changes you into a vampire, dealing 3d6 damage; holy and natural casters do not change and take 10d6 damage")
 EFFECT(PHASE_DOOR,     FALSE,  5,	"teleports you randomly up to 10 squares away")

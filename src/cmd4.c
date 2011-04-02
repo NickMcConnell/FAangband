@@ -118,9 +118,7 @@ void resize_map(void)
   
   /* Mega-Hack -- no panel yet */
   Term->offset_y = 0;
-  panel_row_max = 0;
   Term->offset_x = 0;
-  panel_col_max = 0;
   
   if (character_dungeon)
     {
