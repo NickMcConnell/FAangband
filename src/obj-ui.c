@@ -1137,7 +1137,7 @@ bool item_menu(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 	    }
 
 	    /* There is only one item */
-	    if (!OPT(floor_query_flag) && (floor_num == 1)) {
+	    if (OPT(pickup_single) && (floor_num == 1)) {
 		/* Fall through */
 	    } else {
 		p_ptr->command_wrk = (USE_FLOOR);

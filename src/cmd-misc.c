@@ -22,54 +22,6 @@
 #include "ui-menu.h"
 
 /**
- * Divide up the screen into mousepress regions 
- */
-
-int click_area(ui_event_data ke)
-{
-
-    if ((ke.mousey) && (ke.mousex > COL_MAP)
-	&& (ke.mousey <
-	    Term->hgt - (panel_extra_rows ? 2 : 0) -
-	    (OPT(bottom_status) ? 6 : 0) - 1))
-	return MOUSE_MAP;
-    else if ((ke.mousey >= ROW_RACE) && (ke.mousey < ROW_RACE + 6)
-	     && (ke.mousex < 12))
-	return MOUSE_CHAR;
-    else if ((ke.mousey == ROW_HP) && (ke.mousex > COL_HP)
-	     && (ke.mousex < COL_HP + 12))
-	return MOUSE_HP;
-    else if ((ke.mousey == ROW_SP) && (ke.mousex > COL_SP)
-	     && (ke.mousex < COL_SP + 12))
-	return MOUSE_SP;
-    else if ((ke.mousey == Term->hgt - 1) && (ke.mousex >= COL_STUDY)
-	     && (ke.mousex < COL_STUDY + 5))
-	return MOUSE_STUDY;
-    else if (!ke.mousey)
-	return MOUSE_MESSAGE;
-    else if ((ke.mousey == Term->hgt - 1)
-	     && (ke.mousex > Term->wid - (small_screen ? 8 : 21)))
-	return MOUSE_PLACE;
-    else if ((ke.mousey >= ROW_STAT) && (ke.mousey < ROW_STAT + 6)
-	     && (ke.mousex >= COL_STAT) && (ke.mousex < COL_STAT + 12))
-	return MOUSE_OBJECTS;
-    else if ((ke.mousey == ROW_STAND) && (ke.mousex >= COL_CUT)
-	     && (ke.mousex < COL_CUT + (OPT(bottom_status) ? 6 : 7)))
-	return MOUSE_STAND;
-    else if ((ke.mousey == ROW_REPEAT) && (ke.mousex >= COL_CUT)
-	     && (ke.mousex < COL_CUT + (OPT(bottom_status) ? 6 : 8)))
-	return MOUSE_REPEAT;
-    else if ((ke.mousey == ROW_RETURN) && (ke.mousex >= COL_CUT)
-	     && (ke.mousex < COL_CUT + (OPT(bottom_status) ? 6 : 8)))
-	return MOUSE_RETURN;
-    else if ((ke.mousey == ROW_ESCAPE) && (ke.mousex >= COL_CUT)
-	     && (ke.mousex < COL_CUT + 5))
-	return MOUSE_ESCAPE;
-    else
-	return MOUSE_NULL;
-}
-
-/**
  * Return the features around (or under) the character
  */
 void get_feats(int *surroundings)
@@ -791,7 +743,7 @@ static bool verify_debug_mode(void)
     static int verify = 1;
 
     /* Ask first time, unless the savefile is already in debug mode. */
-    if (verify && OPT(verify_special) && (!(p_ptr->noscore & 0x0008))) {
+    if (verify && (!(p_ptr->noscore & 0x0008))) {
 	/* Mention effects */
 	msg_print
 	    ("You are about to use the dangerous, unsupported, debug commands!");

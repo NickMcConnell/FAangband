@@ -130,6 +130,7 @@ static tval_desc sval_dependent[] =
 
 /* squelch.c  */
 extern byte squelch_level[TYPE_MAX];
+void squelch_birth_init(void);
 int get_autoinscription_index(s16b k_idx);
 const char *get_autoinscription(s16b kind_idx);
 int apply_autoinscription(object_type *o_ptr);

@@ -1376,7 +1376,7 @@ void py_steal(int y, int x)
     /* Penalize some conditions */
     if (p_ptr->timed[TMD_BLIND] || no_light())
 	filching_power = filching_power / 10;
-    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC])
+    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_IMAGE])
 	filching_power = filching_power / 10;
 
     /* Determine how much protection the monster has. */
@@ -1555,7 +1555,7 @@ bool py_set_trap(int y, int x)
 	return FALSE;
     }
 
-    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC]) {
+    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_IMAGE]) {
 	msg_print("You are too confused.");
 	return FALSE;
     }
@@ -1759,7 +1759,7 @@ bool py_modify_trap(int y, int x)
 	return FALSE;
     }
 
-    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC]) {
+    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_IMAGE]) {
 	msg_print("You are too confused.");
 	return FALSE;
     }

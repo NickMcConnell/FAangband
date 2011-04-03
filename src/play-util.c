@@ -57,7 +57,7 @@ bool player_can_cast(void)
 	    msg_print("You do not know how to probe monsters yet.");
 	    return FALSE;
 	}
-	else if ((p_ptr->timed[TMD_CONFUSED]) || (p_ptr->timed[TMD_HALLUC])) {
+	else if ((p_ptr->timed[TMD_CONFUSED]) || (p_ptr->timed[TMD_IMAGE])) {
 	    msg_print("You feel awfully confused.");
 	    return FALSE;
 	}

@@ -54,7 +54,7 @@ extern void do_cmd_itemlist(void);
 extern void do_cmd_unknown(void);
 
 /* cmd2.c */
-extern void do_cmd_move_house(cmd_code code, cmd_arg args[]);
+extern void do_cmd_move_house(void);
 extern void do_cmd_go_up(cmd_code code, cmd_arg args[]);
 extern void do_cmd_go_down(cmd_code code, cmd_arg args[]);
 extern void do_cmd_search(cmd_code code, cmd_arg args[]);
@@ -81,6 +81,7 @@ extern bool easy_open_door(int y, int x);
 /* cmd3.c */
 extern void do_cmd_inven(void);
 extern void do_cmd_equip(void);
+void wield_item(object_type *o_ptr, int item, int slot);
 extern void do_cmd_destroy(cmd_code code, cmd_arg args[]);
 extern void do_cmd_target(void);
 extern void do_cmd_target_closest(void);

@@ -14,8 +14,8 @@ void option_set_defaults(void);
 /*
  * Information for "do_cmd_options()".
  */
-#define OPT_PAGE_MAX				6
-#define OPT_PAGE_PER				20
+#define OPT_PAGE_MAX				5
+#define OPT_PAGE_PER				16
 
 /* The option data structures */
 extern const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER];
@@ -40,84 +40,56 @@ extern const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER];
 /*
  * Indexes
  */
-#define OPT_rogue_like_commands		0
-#define OPT_quick_messages		1
-#define OPT_floor_query_flag		2
-#define OPT_carry_query_flag		3
-#define OPT_use_old_target		4
-#define OPT_always_pickup		5
-#define OPT_always_repeat		6
-#define OPT_squelch_worthless		7
-#define OPT_stack_force_notes		8
-#define OPT_stack_force_costs		9
-#define OPT_show_labels			10
-#define OPT_show_weights		11
-#define OPT_show_choices		12
-#define OPT_show_details		13
-#define OPT_use_metric			14
-#define OPT_show_flavors		15
+#define OPT_use_sound   		0
+#define OPT_rogue_like_commands		1
+#define OPT_use_old_target		2
+#define OPT_pickup_always		3
+#define OPT_pickup_inven		4
+#define OPT_pickup_detail		5
+#define OPT_pickup_single		6
+#define OPT_hide_squelchable		7
+#define OPT_squelch_worthless		8
+#define OPT_easy_open			9
+#define OPT_easy_disarm 		10
+#define OPT_show_lists                  11
+#define OPT_show_menus                  12
+#define OPT_mouse_movement              13
+#define OPT_mouse_buttons               14
+#define OPT_xchars_to_file              15
 
-#define OPT_run_ignore_stairs		16
-#define OPT_run_ignore_doors		17
-#define OPT_run_cut_corners		18
-#define OPT_run_use_corners		19
-#define OPT_disturb_move		20
-#define OPT_disturb_near		21
-#define OPT_disturb_panel		22
-#define OPT_disturb_state		23
-#define OPT_disturb_minor		24
-#define OPT_disturb_other		25
-#define OPT_alert_hitpoint		26
-#define OPT_alert_failure		27
-#define OPT_verify_destroy		28
-#define OPT_verify_special		29
-#define OPT_ring_bell			30
-#define OPT_verify_destroy_junk		31
-#define OPT_pickup_inven		32
-#define OPT_auto_scum			33
-#define OPT_easy_open			34
-#define OPT_easy_disarm 		35
-#define OPT_expand_look			36
-#define OPT_expand_list			37
-#define OPT_view_perma_grids	 	38
-#define OPT_view_torch_grids		39
-#define OPT_auto_more			40
-#define OPT_dungeon_stair		41
-#define OPT_strong_squelch              42
-#define OPT_bottom_status               43
-#define OPT_mouse_buttons               44
-#define OPT_show_menus                  45
-#define OPT_xchars_to_file              46
-#define OPT_smart_cheat			47
+#define OPT_hp_changes_colour           16
+#define OPT_hilight_player		17
+#define OPT_center_player		18
+#define OPT_show_piles                  19
+#define OPT_show_flavors		20
+#define OPT_show_labels			21
+#define OPT_show_weights		22
+#define OPT_show_detect 		23
+#define OPT_view_yellow_light		24
+#define OPT_view_bright_light		25
+#define OPT_view_granite_light		26
+#define OPT_view_special_light		27
+#define OPT_view_perma_grids	 	28
+#define OPT_view_torch_grids		29
+#define OPT_animate_flicker             30
 
-#define OPT_view_reduce_light		48
-#define OPT_hidden_player		49
-#define OPT_avoid_abort			50
-#define OPT_avoid_other			51
-#define OPT_flush_failure		52
-#define OPT_flush_disturb		53
-#define OPT_center_player		54
-#define OPT_fresh_before		55
-#define OPT_fresh_after			56
 
-#define OPT_center_running		57
-
-#define OPT_compress_savefile		58
-#define OPT_hilight_player		59
-#define OPT_view_yellow_light		60
-#define OPT_view_bright_light		61
-#define OPT_view_granite_light		62
-#define OPT_view_special_light		63
-#define OPT_easy_more                   65
-#define OPT_animate_flicker             66
-#define OPT_show_piles                  67
-#define OPT_hp_changes_colour           68
-#define OPT_show_detect                 69 
-#define OPT_disturb_trap_detect         70 
-#define OPT_show_lists                  71
-#define OPT_hide_squelchable		72
-#define OPT_auto_squelch		73
-#define OPT_use_sound   		74
+#define OPT_run_ignore_stairs		32
+#define OPT_run_ignore_doors		33
+#define OPT_run_cut_corners		34
+#define OPT_run_use_corners		35
+#define OPT_disturb_move		36
+#define OPT_disturb_near		37
+#define OPT_disturb_panel		38
+#define OPT_disturb_detect              39 
+#define OPT_disturb_state		40
+#define OPT_quick_messages		41
+#define OPT_verify_destroy		42
+#define OPT_ring_bell			43
+#define OPT_auto_more			44
+#define OPT_flush_failure		45
+#define OPT_flush_disturb		46
+#define OPT_notify_recharge		47
 
 #define OPT_birth_point_based           (OPT_BIRTH+0)
 #define OPT_birth_auto_roller           (OPT_BIRTH+1)

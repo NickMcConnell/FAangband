@@ -25,6 +25,14 @@
 
 
 #include "angband.h"
+#include "cave.h"
+#include "cmds.h"
+#include "game-cmd.h"
+#include "monster.h"
+#include "object.h"
+#include "tvalsval.h"
+#include "spells.h"
+#include "target.h"
 
 
 /**
@@ -245,7 +253,7 @@ static int critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
     }
 
     /* Obtain an item description */
-    object_desc(o_name, o_ptr, FALSE, 0);
+    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_FULL | ODESC_SINGULAR);
 
     /* Test for critical hit. */
     if (marksman || (randint1(power + 360) <= power)) {
@@ -979,7 +987,7 @@ bool py_attack(int y, int x, bool can_push)
 
     /* blow count */
     int num = 0;
-    int blows = p_ptr->num_blow;
+    int blows = p_ptr->state.num_blow;
 
     /* Bonus to attack if monster is sleeping. */
     int sleeping_bonus = 0;
@@ -1125,7 +1133,7 @@ bool py_attack(int y, int x, bool can_push)
     else
 	bash_chance =
 	    p_ptr->state.skills[SKILL_TO_HIT_MELEE] +
-	    (adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128 +
+	    (adj_dex_th[p_ptr->state.stat_ind[A_DEX]]) - 128 +
 	    ((player_has(PF_STRONG_BASHES)) ? p_ptr->lev : 0);
 
     /* Spell casters don't bash much - except for those who like the "blunt"
@@ -1179,7 +1187,7 @@ bool py_attack(int y, int x, bool can_push)
 	bash_dam *= bash_quality / 20 + p_ptr->lev / 7;
 
 	/* Strength bonus. */
-	bash_dam += (adj_str_td[p_ptr->stat_ind[A_STR]] - 128);
+	bash_dam += (adj_str_td[p_ptr->state.stat_ind[A_STR]] - 128);
 
 	/* Paranoia. */
 	if (bash_dam > 125)
@@ -1249,7 +1257,7 @@ bool py_attack(int y, int x, bool can_push)
 	}
 
 	/* The player will sometimes stumble. */
-	if ((30 + adj_dex_th[p_ptr->stat_ind[A_DEX]] - 128) < randint1(60)) {
+	if ((30 + adj_dex_th[p_ptr->state.stat_ind[A_DEX]] - 128) < randint1(60)) {
 	    blows -= randint1(blows);
 
 	    message(MSG_GENERIC, 0, "You stumble!");
@@ -1261,18 +1269,18 @@ bool py_attack(int y, int x, bool can_push)
     o_ptr = &p_ptr->inventory[INVEN_WIELD];
 
     /* Calculate the attack quality */
-    bonus = p_ptr->to_h + o_ptr->to_h;
+    bonus = p_ptr->state.to_h + o_ptr->to_h;
     chance = p_ptr->state.skills[SKILL_TO_HIT_MELEE] + (BTH_PLUS_ADJ * bonus);
 
     /* Calculate deadliness */
-    total_deadliness = p_ptr->to_d + o_ptr->to_d;
+    total_deadliness = p_ptr->state.to_d + o_ptr->to_d;
 
     /* Paranoia.  Ensure legal table access. */
     if (total_deadliness > 150)
 	total_deadliness = 150;
 
     /* Specialty Ability */
-    if ((player_has(PF_FAST_ATTACK)) && (randint1(8) <= p_ptr->num_blow)) {
+    if ((player_has(PF_FAST_ATTACK)) && (randint1(8) <= p_ptr->state.num_blow)) {
 	blows++;
 	bonus_attack = TRUE;
     }
@@ -1304,11 +1312,11 @@ bool py_attack(int y, int x, bool can_push)
 		/* Hack -- Rogues and Assassins are silent melee killers. */
 		if ((player_has(PF_BACKSTAB))
 		    || (player_has(PF_ASSASSINATE)))
-		    add_wakeup_chance = p_ptr->base_wakeup_chance / 4 + 500;
+		    add_wakeup_chance = p_ptr->state.base_wakeup_chance / 4 + 500;
 
 		/* Otherwise, make the standard amount of noise. */
 		else
-		    add_wakeup_chance = p_ptr->base_wakeup_chance / 2 + 1000;
+		    add_wakeup_chance = p_ptr->state.base_wakeup_chance / 2 + 1000;
 	    }
 
 
@@ -1389,7 +1397,7 @@ bool py_attack(int y, int x, bool can_push)
 					 chance + sleeping_bonus,
 					 total_deadliness);
 		} else {
-		    damage = 1 + ((int) (adj_str_td[p_ptr->stat_ind[A_STR]])
+		    damage = 1 + ((int) (adj_str_td[p_ptr->state.stat_ind[A_STR]])
 				  - 128);
 		    message_format(MSG_HIT, 0, "You punch %s.", m_name);
 		}
@@ -1400,7 +1408,7 @@ bool py_attack(int y, int x, bool can_push)
 		damage = 0;
 
 	    /* Hack -- check for earthquake. */
-	    if (p_ptr->impact && (damage > 49)) {
+	    if (p_ptr->state.impact && (damage > 49)) {
 		notice_obj(OF_IMPACT, INVEN_WIELD + 1);
 		do_quake = TRUE;
 	    }
@@ -1696,9 +1704,9 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
     int path_n = 0;
     u16b path_g[256];
 
-    cptr q, s;
-
     int msec = op_ptr->delay_factor * op_ptr->delay_factor;
+
+    (void) code;
 
     /* Get the "bow" (if any) */
     o_ptr = &p_ptr->inventory[INVEN_BOW];
@@ -1740,7 +1748,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
     i_ptr->number = 1;
 
     /* Take a (partial) turn */
-    p_ptr->energy_use = (1000 / p_ptr->num_fire);
+    p_ptr->energy_use = (1000 / p_ptr->state.num_fire);
 
     /* Sound */
     sound(MSG_SHOOT);
@@ -1750,7 +1758,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	/* Learn the to-dam (and maybe ego) */
 	notice_other(IF_TO_D, INVEN_BOW + 1);
 
-	object_desc(o_name, o_ptr, FALSE, 0);
+	object_desc(o_name, sizeof(o_name), o_ptr, ODESC_FULL | ODESC_SINGULAR);
 
 	/* Set special damage */
 	special_dam = TRUE;
@@ -1768,7 +1776,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	/* Learn the to-hit (and maybe ego) */
 	notice_other(IF_TO_H, INVEN_BOW + 1);
 
-	object_desc(o_name, o_ptr, FALSE, 0);
+	object_desc(o_name, sizeof(o_name), o_ptr, ODESC_FULL | ODESC_SINGULAR);
 
 	/* Set special accuracy */
 	special_hit = TRUE;
@@ -1794,7 +1802,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 
 	/* Calculate damage. */
 	damage =
-	    damroll(p_ptr->ammo_mult * i_ptr->dd * randint1(2), i_ptr->ds * 4);
+	    damroll(p_ptr->state.ammo_mult * i_ptr->dd * randint1(2), i_ptr->ds * 4);
 	if (special_dam) {
 	    damage += 15;
 	}
@@ -1819,11 +1827,11 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
     tdis = 10 + 5 * p_ptr->state.ammo_mult;
 
     /* Calculate the quality of the shot */
-    bonus = (p_ptr->to_h + o_ptr->to_h + i_ptr->to_h);
+    bonus = (p_ptr->state.to_h + o_ptr->to_h + i_ptr->to_h);
     chance = p_ptr->state.skills[SKILL_TO_HIT_BOW] + (BTH_PLUS_ADJ * bonus);
 
     /* Sum all the applicable additions to Deadliness. */
-    total_deadliness = p_ptr->to_d + o_ptr->to_d + i_ptr->to_d;
+    total_deadliness = p_ptr->state.to_d + o_ptr->to_d + i_ptr->to_d;
 
     /* Start at the player */
     y = py;
@@ -1835,7 +1843,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 
     /* Check for "target request" */
     if ((dir == 5) && target_okay()) 
-	target_get(&tx, &ty);
+	target_get((s16b *)&tx, (s16b *)&ty);
 
     /* Calculate the path */
     path_n = project_path(path_g, tdis, py, px, ty, tx, PROJECT_THRU);
@@ -1861,12 +1869,12 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	    /* Visual effects */
 	    print_rel(missile_char, missile_attr, y, x);
 	    move_cursor_relative(y, x);
-	    if (OPT(fresh_before))
-		Term_fresh();
+	    Term_fresh();
+	    if (p_ptr->redraw) redraw_stuff();
 	    Term_xtra(TERM_XTRA_DELAY, msec);
 	    light_spot(y, x);
-	    if (OPT(fresh_before))
-		Term_fresh();
+	    Term_fresh();
+	    if (p_ptr->redraw) redraw_stuff();
 	}
 
 	/* Delay anyway for consistency */
@@ -1971,9 +1979,9 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	    /* Make some noise.  Hack -- Assassins are silent missile weapon
 	     * killers. */
 	    if (player_has(PF_ASSASSINATE))
-		add_wakeup_chance = p_ptr->base_wakeup_chance / 4 + 600;
+		add_wakeup_chance = p_ptr->state.base_wakeup_chance / 4 + 600;
 	    else
-		add_wakeup_chance = p_ptr->base_wakeup_chance / 3 + 1200;
+		add_wakeup_chance = p_ptr->state.base_wakeup_chance / 3 + 1200;
 
 
 	    /* Hack -- Track this monster race, if monster is visible */
@@ -2004,7 +2012,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	    die_average = (10 * (i_ptr->ds + 1)) / 2;
 
 	    /* Apply the launcher multiplier. */
-	    die_average *= p_ptr->ammo_mult;
+	    die_average *= p_ptr->state.ammo_mult;
 
 	    /* Adjust the average for slays and brands. (10x inflation) */
 	    add = adjust_dam(&die_average, i_ptr, m_ptr, item);
@@ -2055,14 +2063,14 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	    if (player_has(PF_STRONG_SHOOT)) {
 		/* Increase damage directly (to avoid excessive total damage by 
 		 * granting too high a Deadliness). */
-		if (p_ptr->ammo_tval == TV_SHOT) {
+		if (p_ptr->state.ammo_tval == TV_SHOT) {
 
 		    damage += p_ptr->lev / 2;
 		}
-		if (p_ptr->ammo_tval == TV_ARROW) {
+		if (p_ptr->state.ammo_tval == TV_ARROW) {
 		    damage += 2 * p_ptr->lev / 5;
 		}
-		if (p_ptr->ammo_tval == TV_BOLT) {
+		if (p_ptr->state.ammo_tval == TV_BOLT) {
 		    damage += p_ptr->lev / 3;
 		}
 	    }
@@ -2097,8 +2105,8 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 
 	    /* Check for piercing */
 	    if ((player_has(PF_PIERCE_SHOT)) && (randint0(2) == 0)
-		&& ((p_ptr->ammo_tval == TV_ARROW)
-		    || (p_ptr->ammo_tval == TV_BOLT))) {
+		&& ((p_ptr->state.ammo_tval == TV_ARROW)
+		    || (p_ptr->state.ammo_tval == TV_BOLT))) {
 		msg_print("Pierce!");
 		did_pierce = TRUE;
 		continue;
@@ -2116,7 +2124,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
     }
 
     /* Copy ID flags */
-    i_ptr->id_other = j_ptr->id_other;
+    if_copy(i_ptr->id_other, j_ptr->id_other);
 
     /* Reduce and describe inventory */
     if (item >= 0) {
@@ -2250,9 +2258,9 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
     int path_n = 0;
     u16b path_g[256];
 
-    cptr q, s;
-
     int msec = op_ptr->delay_factor * op_ptr->delay_factor;
+
+    (void) code;
 
     /* Get item to throw and direction in which to throw it. */
     item = args[0].item;
@@ -2276,7 +2284,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
     o_ptr = object_from_item_idx(item);
 
     /* Can't unwield cursed items this way! */
-    if ((item > INVEN_PACK) && (item < INVEN_BLANK)
+    if ((item > INVEN_PACK) && (item < QUIVER_START)
 	&& (cf_has(o_ptr->flags_curse, CF_STICKY_WIELD))) {
 	/* Oops */
 	msg_print("Hmmm, it seems to be cursed.");
@@ -2312,7 +2320,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
     i_ptr->number = 1;
 
     /* Description */
-    object_desc(o_name, i_ptr, FALSE, 3);
+    object_desc(o_name, sizeof(o_name), i_ptr, ODESC_FULL | ODESC_SINGULAR);
 
     /* Get the color and symbol of the thrown object */
     missile_attr = object_attr(i_ptr);
@@ -2329,7 +2337,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
     stat = (magic_throw ? A_INT : A_STR);
 
     /* Distance -- Reward strength or intelligence, penalize weight */
-    tdis = (adj_str_blow[p_ptr->stat_ind[stat]] + 20) * mul / div;
+    tdis = (adj_str_blow[p_ptr->state.stat_ind[stat]] + 20) * mul / div;
 
     /* Max distance of 10 */
     if (tdis > 10)
@@ -2347,8 +2355,8 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
     if (of_has(i_ptr->flags_obj, OF_THROWING)) {
 	chance =
 	    p_ptr->state.skills[SKILL_TO_HIT_THROW] +
-	    BTH_PLUS_ADJ * (p_ptr->to_h + i_ptr->to_h);
-	total_deadliness = p_ptr->to_d + i_ptr->to_d;
+	    BTH_PLUS_ADJ * (p_ptr->state.to_h + i_ptr->to_h);
+	total_deadliness = p_ptr->state.to_d + i_ptr->to_d;
     } else {
 	chance =
 	    (3 * p_ptr->state.skills[SKILL_TO_HIT_THROW] / 2) +
@@ -2375,7 +2383,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 
     /* Check for "target request" */
     if ((dir == 5) && target_okay()) 
-	target_get(&tx, &ty);
+	target_get((s16b *)&tx, (s16b *)&ty);
 
     /* Calculate the path */
     path_n = project_path(path_g, tdis, py, px, ty, tx, 0);
@@ -2402,12 +2410,12 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 	    /* Visual effects */
 	    print_rel(missile_char, missile_attr, y, x);
 	    move_cursor_relative(y, x);
-	    if (OPT(fresh_before))
-		Term_fresh();
+	    Term_fresh();
+	    if (p_ptr->redraw) redraw_stuff();
 	    Term_xtra(TERM_XTRA_DELAY, msec);
 	    light_spot(y, x);
-	    if (OPT(fresh_before))
-		Term_fresh();
+	    Term_fresh();
+	    if (p_ptr->redraw) redraw_stuff();
 	}
 
 	/* Delay anyway for consistency */
@@ -2502,9 +2510,9 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 	    /* Make some noise.  Hack -- Assassins are silent missile weapon
 	     * killers. */
 	    if (player_has(PF_ASSASSINATE))
-		add_wakeup_chance = p_ptr->base_wakeup_chance / 4 + 300;
+		add_wakeup_chance = p_ptr->state.base_wakeup_chance / 4 + 300;
 	    else
-		add_wakeup_chance = p_ptr->base_wakeup_chance / 3 + 1200;
+		add_wakeup_chance = p_ptr->state.base_wakeup_chance / 3 + 1200;
 
 
 	    /* Hack -- Track this monster race, if critter is visible */
@@ -2623,7 +2631,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
     }
 
     /* Copy ID flags */
-    i_ptr->id_other = o_ptr->id_other;
+    if_copy(i_ptr->id_other, o_ptr->id_other);
 
     /* Reduce and describe inventory */
     if (item >= 0) {

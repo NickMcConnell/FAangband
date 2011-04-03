@@ -285,7 +285,7 @@ static int summon_possible(int y1, int x1)
 
 /**
  * Fully update monster's knowledge of the player.
- * Used by player ghost (and all monsters with smart_cheat).
+ * Used by player ghost (and all monsters with birth_ai_cheat).
  */
 static void update_smart_cheat(int m_idx)
 {
@@ -1068,7 +1068,7 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
     breath_maxhp = (m_ptr->maxhp > 2000 ? m_ptr->maxhp : 2000);
 
     /* Cheat if requested, or if a player ghost. */
-    if ((OPT(smart_cheat)) || (rf_has(r_ptr->flags, RF_PLAYER_GHOST)))
+    if (OPT(adult_ai_cheat) || (rf_has(r_ptr->flags, RF_PLAYER_GHOST)))
 	update_smart_cheat(m_idx);
 
     /* Now check every remaining spell */
@@ -3780,9 +3780,8 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 		    /* Message */
 		    msg_print("You hear a door burst open!");
 
-		    /* Disturb (sometimes) */
-		    if (OPT(disturb_minor))
-			disturb(0, 0);
+		    /* Disturb */
+		    disturb(0, 0);
 		}
 
 		/* The door was bashed open */
@@ -3795,16 +3794,11 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 		    cave_set_feat(ny, nx, FEAT_OPEN);
 
 		/* Handle viewable doors */
-		if (cave_info[ny][nx] & (CAVE_SEEN)) {
-		    /* Always disturb */
-		    disturb(0, 0);
-
+		if (cave_info[ny][nx] & (CAVE_SEEN)) 
 		    do_view = TRUE;
-		}
-
-		/* Optional disturb for non-viewable doors */
-		else if (OPT(disturb_minor))
-		    disturb(0, 0);
+		
+		/* Disturb */
+		disturb(0, 0);
 	    }
 
 	    /* Monster opens the door */

@@ -21,6 +21,7 @@
 #include "files.h"
 #include "game-event.h"
 #include "game-cmd.h"
+#include "history.h"
 #include "tvalsval.h"
 #include "squelch.h"
 #include "ui-menu.h"
@@ -66,8 +67,8 @@ typedef struct birther /* lovely */ birther;	/* sometimes we think she's a
  */
 struct birther {
     byte sex;
-    const struct player_race *race;
-    const struct player_class *class;
+    byte race;
+    byte class;
 
     s16b age;
     s16b wt;
@@ -281,17 +282,12 @@ static void get_bonuses(void)
  */
 static void get_history(void)
 {
-    int i, n, chart, roll, social_class;
-
-    char *s, *t;
+    int i, chart, roll, social_class;
 
     char buf[240];
 
-
-
     /* Clear the previous history strings */
-    for (i = 0; i < 4; i++)
-	p_ptr->history[i][0] = '\0';
+    p_ptr->history[0] = '\0';
 
 
     /* Clear the history text */
@@ -344,7 +340,7 @@ static void get_history(void)
  * Sets the character's starting level -NRM-
  */
 
-static void get_level(player *p)
+static void get_level(struct player *p)
 {
 
     /* Check if they're an "advanced race" */
@@ -403,7 +399,7 @@ static void get_ahw(void)
 
 
 
-void player_init(struct player_type *p)
+void player_init(struct player *p)
 {
     int i;
 
@@ -411,7 +407,7 @@ void player_init(struct player_type *p)
 	mem_free(p->inventory);
 
     /* Wipe the player */
-    (void) WIPE(p, struct player_type);
+    (void) WIPE(p, struct player);
 
     /* Start with no artifacts made yet */
     for (i = 0; z_info && i < z_info->a_max; i++) {
@@ -487,11 +483,7 @@ void player_init(struct player_type *p)
     for (i = 0; i < PY_MAX_SPELLS; i++)
 	p_ptr->spell_order[i] = 99;
 
-    /* Player has no sensation ID knowledge */
-    p_ptr->id_obj = 0L;
-    p_ptr->id_other = 0L;
-
-    p->inventory = C_ZNEW(INVEN_TOTAL, struct object_type);
+    p->inventory = C_ZNEW(INVEN_TOTAL, struct object);
 
     /* First turn. */
     turn = 1;
@@ -554,8 +546,8 @@ static void object_upgrade(object_type * o_ptr)
 	    }
 
 	    /* Get flags */
-	    o_ptr->flags_obj |= e_ptr->flags_obj;
-	    o_ptr->flags_curse |= e_ptr->flags_curse;
+	    of_union(o_ptr->flags_obj, e_ptr->flags_obj);
+	    cf_union(o_ptr->flags_curse, e_ptr->flags_curse);
 
 	    for (i = 0; i < MAX_P_RES; i++) {
 		/* Get the resistance value */
@@ -672,16 +664,9 @@ static void player_outfit(struct player *p)
 	i_ptr = &object_type_body;
 
 	/* Hack -- Give the player an object */
-	if (e_ptr->tval > 0) {
-	    /* Get the object_kind */
-	    int k_idx = lookup_kind(e_ptr->tval, e_ptr->sval);
-
-	    /* Valid item? */
-	    if (!k_idx)
-		continue;
-
+	if (e_ptr->kind) {
 	    /* Prepare the item */
-	    object_prep(i_ptr, k_idx);
+	    object_prep(i_ptr, e_ptr->kind->kidx);
 	    i_ptr->number = (byte) rand_range(e_ptr->min, e_ptr->max);
 	    i_ptr->origin = ORIGIN_BIRTH;
 
@@ -693,7 +678,7 @@ static void player_outfit(struct player *p)
 	    object_known(i_ptr);
 	    apply_autoinscription(i_ptr);
 	    (void) inven_carry(p, i_ptr);
-	    k_info[k_idx].everseen = TRUE;
+	    e_ptr->kind->everseen = TRUE;
 	}
     }
 
@@ -709,8 +694,8 @@ static void player_outfit(struct player *p)
     object_aware(i_ptr);
     object_known(i_ptr);
     apply_autoinscription(i_ptr);
-    (void) inven_carry(i_ptr);
-    k_info[i_ptr->k_idx].everseen = TRUE;
+    (void) inven_carry(p, i_ptr);
+	    e_ptr->kind->everseen = TRUE;
 
 
     /* Get local object */
@@ -723,8 +708,8 @@ static void player_outfit(struct player *p)
     object_aware(i_ptr);
     object_known(i_ptr);
     apply_autoinscription(i_ptr);
-    (void) inven_carry(i_ptr);
-    k_info[i_ptr->k_idx].everseen = TRUE;
+    (void) inven_carry(p, i_ptr);
+	    e_ptr->kind->everseen = TRUE;
 
     /* Dungeon gear for escaping thralls */
     if (OPT(adult_thrall)) {
@@ -736,7 +721,7 @@ static void player_outfit(struct player *p)
 	object_known(i_ptr);
 	apply_autoinscription(i_ptr);
 	(void) inven_carry(p, i_ptr);
-	k_info[i_ptr->k_idx].everseen = TRUE;
+	    e_ptr->kind->everseen = TRUE;
 
 	/* Detection */
 	object_prep(i_ptr, lookup_kind(TV_STAFF, SV_STAFF_DETECTION));
@@ -744,7 +729,7 @@ static void player_outfit(struct player *p)
 	object_known(i_ptr);
 	apply_autoinscription(i_ptr);
 	(void) inven_carry(p, i_ptr);
-	k_info[i_ptr->k_idx].everseen = TRUE;
+	    e_ptr->kind->everseen = TRUE;
 
 	/* Mapping */
 	object_prep(i_ptr, lookup_kind(TV_ROD, SV_ROD_MAPPING));
@@ -752,7 +737,7 @@ static void player_outfit(struct player *p)
 	object_known(i_ptr);
 	apply_autoinscription(i_ptr);
 	(void) inven_carry(p, i_ptr);
-	k_info[i_ptr->k_idx].everseen = TRUE;
+	    e_ptr->kind->everseen = TRUE;
 
 	/* Destruction */
 	object_prep(i_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_DESTRUCTION));
@@ -761,7 +746,7 @@ static void player_outfit(struct player *p)
 	object_known(i_ptr);
 	apply_autoinscription(i_ptr);
 	(void) inven_carry(p, i_ptr);
-	k_info[i_ptr->k_idx].everseen = TRUE;
+	    e_ptr->kind->everseen = TRUE;
 
 	/* Identify */
 	object_prep(i_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_IDENTIFY));
@@ -770,7 +755,7 @@ static void player_outfit(struct player *p)
 	object_known(i_ptr);
 	apply_autoinscription(i_ptr);
 	(void) inven_carry(p, i_ptr);
-	k_info[i_ptr->k_idx].everseen = TRUE;
+	    e_ptr->kind->everseen = TRUE;
     }
 
     /* Now try wielding everything */
@@ -934,7 +919,7 @@ static void generate_stats(int stats[A_MAX], int points_spent[A_MAX],
 	    /* Try and buy adj DEX of 18/10 */
 	case 1:
 	    {
-		if (!maxed[A_DEX] && p_ptr->stat_top[A_DEX] < 18 + 10) {
+		if (!maxed[A_DEX] && p_ptr->state.stat_top[A_DEX] < 18 + 10) {
 		    if (!buy_stat(A_DEX, stats, points_spent, points_left))
 			maxed[A_DEX] = TRUE;
 		} else {
@@ -947,7 +932,7 @@ static void generate_stats(int stats[A_MAX], int points_spent[A_MAX],
 	    /* If we can't get 18/10 dex, sell it back. */
 	case 2:
 	    {
-		if (p_ptr->stat_top[A_DEX] < 18 + 10) {
+		if (p_ptr->state.stat_top[A_DEX] < 18 + 10) {
 		    while (stats[A_DEX] > 10)
 			sell_stat(A_DEX, stats, points_spent, points_left);
 
@@ -1042,7 +1027,7 @@ static void generate_stats(int stats[A_MAX], int points_spent[A_MAX],
  * This fleshes out a full player based on the choices currently made,
  * and so is called whenever things like race or class are chosen.
  */
-void player_generate(struct player_type *p, player_sex * s,
+void player_generate(struct player *p, player_sex * s,
 		     struct player_race *r, player_class * c)
 {
     if (!s)
@@ -1054,7 +1039,7 @@ void player_generate(struct player_type *p, player_sex * s,
 
     sp_ptr = s;
     cp_ptr = c;
-    mp_ptr = &magic_info[p->pclass];
+    mp_ptr = &cp_ptr->magic;
     rp_ptr = r;
 
     /* Level */
@@ -1324,13 +1309,6 @@ void player_birth(bool quickstart_allowed)
     message_add(" ", MSG_GENERIC);
 
 
-    /* Hack - don't display above for easy_more */
-    if (OPT(easy_more)) {
-	/* Arcane weirdness */
-	msg_print(" ");
-	message_flush();
-    }
-
     /* Set map, quests */
     if (OPT(adult_dungeon)) {
 	for (i = 0; i < NUM_STAGES; i++)
@@ -1355,7 +1333,7 @@ void player_birth(bool quickstart_allowed)
 
 
     /* Outfit the player, if they can sell the stuff */
-    if (!OPT(adult_no_selling)) player_outfit(p_ptr);
+    if (!OPT(adult_no_sell)) player_outfit(p_ptr);
 
     /* Initialize shops */
     store_init();

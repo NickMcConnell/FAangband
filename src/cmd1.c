@@ -21,8 +21,15 @@
  */
 
 #include "angband.h"
+#include "cave.h"
+#include "cmds.h"
+#include "history.h"
+#include "monster.h"
+#include "tvalsval.h"
+#include "object.h"
+#include "spells.h"
 #include "squelch.h"
-
+#include "trap.h"
 
 /**
  * Search for hidden things
@@ -44,7 +51,7 @@ bool search(bool verbose)
     /* Penalize various conditions */
     if (p_ptr->timed[TMD_BLIND] || no_light())
 	chance = chance / 10;
-    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC])
+    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_IMAGE])
 	chance = chance / 10;
 
     /* Prevent fruitless searches */
@@ -291,7 +298,7 @@ extern void py_pickup_aux(int o_idx, bool msg)
     of_copy(f, o_ptr->flags_obj);
     
     /* Carry the object */
-    slot = inven_carry(o_ptr);
+    slot = inven_carry(p_ptr, o_ptr);
 
     /* Handle errors (paranoia) */
     if (slot < 0) return;
@@ -789,13 +796,12 @@ void move_player(int dir, int do_pickup)
     /* Option to disarm a visible trap. -TNB- */
     /* Hack - Rogues can walk over their own trap - BR */
     if (OPT(easy_disarm) && (cave_feat[y][x] >= FEAT_TRAP_HEAD)
-	&& (cave_feat[y][x] <= FEAT_TRAP_TAIL)) {
-	/* Optional auto-repeat. */
-	if (OPT(always_repeat) && (p_ptr->command_arg <= 0)) {
-	    /* Repeat 99 times */
-	    p_ptr->command_arg = 99;
-	}
-
+	&& (cave_feat[y][x] <= FEAT_TRAP_TAIL)) 
+    {
+	/* Auto-repeat if not already repeating */
+	if (cmd_get_nrepeats() == 0)
+	    cmd_set_repeat(99);
+	
 	(void) do_cmd_disarm_aux(y, x);
 	return;
     }
@@ -828,12 +834,10 @@ void move_player(int dir, int do_pickup)
 	    if (cave_feat[y][x] < FEAT_SECRET) {
 		/* Option to automatically open doors. -TNB- */
 		if (OPT(easy_open)) {
-		    /* Optional auto-repeat. */
-		    if (OPT(always_repeat) && (p_ptr->command_arg <= 0)) {
-			/* Repeat 99 times */
-			p_ptr->command_arg = 99;
-		    }
-
+		    /* Auto-repeat if not already repeating */
+		    if (cmd_get_nrepeats() == 0)
+			cmd_set_repeat(99);
+	
 		    (void) do_cmd_open_aux(y, x);
 		    return;
 		}

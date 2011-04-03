@@ -1241,11 +1241,7 @@ static void display_entry(int item)
 	    /* Only show the weight of a single object */
 	    int wgt = o_ptr->weight;
 
-	    if (OPT(use_metric))
-		sprintf(out_val, "%3d.%d kg", make_metric(wgt) / 10,
-			make_metric(wgt) % 10);
-	    else
-		sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
+	    sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
 
 	    put_str(out_val, y, (small_screen ? 30 : 67));
 	}
@@ -1277,11 +1273,7 @@ static void display_entry(int item)
 	if (OPT(show_weights)) {
 	    /* Only show the weight of a single object */
 	    int wgt = o_ptr->weight;
-	    if (OPT(use_metric))
-		sprintf(out_val, "%3d.%d kg", make_metric(wgt) / 10,
-			make_metric(wgt) % 10);
-	    else
-		sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
+	    sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
 	    put_str(out_val, y, (small_screen ? 30 : 61));
 	}
 
@@ -1729,7 +1721,7 @@ static void store_purchase(void)
 	    i_ptr->note = 0;
 
 	    /* Give it to the player */
-	    item_new = inven_carry(i_ptr);
+	    item_new = inven_carry(p_ptr, i_ptr);
 
 	    /* Hack -- Apply autoinscriptions if we become aware of the object */
 	    if (!aware)
@@ -1821,7 +1813,7 @@ static void store_purchase(void)
 	distribute_charges(o_ptr, i_ptr, amt);
 
 	/* Give it to the player */
-	item_new = inven_carry(i_ptr);
+	item_new = inven_carry(p_ptr, i_ptr);
 
 	/* Describe just the result */
 	object_desc(o_name, &p_ptr->inventory[item_new], TRUE, 3);

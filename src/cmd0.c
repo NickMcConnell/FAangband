@@ -15,9 +15,13 @@
  *    are included in all such copies.  Other copyrights may also apply.
  */
 #include "angband.h"
+#include "cave.h"
 #include "cmds.h"
-#include "ui-menu.h"
+#include "files.h"
 #include "game-cmd.h"
+#include "macro.h"
+#include "monster.h"
+#include "ui-menu.h"
 
 
 /**
@@ -153,11 +157,9 @@ static struct generic_command cmd_item_manage[]  =
   { "Display equipment listing", 'e', CMD_NULL, do_cmd_equip, NULL },
   { "Display inventory listing", 'i', CMD_NULL, do_cmd_inven, NULL },
   { "Pick up objects",           'g', CMD_PICKUP, NULL, NULL },
-  { "Wear/wield an item",        'w', CMD_NULL, do_cmd_wield, NULL },
   { "Take off/unwield an item",  't', CMD_TAKEOFF, NULL, NULL },
   { "Drop an item",              'd', CMD_DROP, NULL, NULL },
   { "Destroy an item",           'k', CMD_DESTROY, textui_cmd_destroy, NULL },
-  { "Inscribe an object",        '{', CMD_NULL, do_cmd_inscribe, NULL },
   { "Uninscribe an object",      '}', CMD_UNINSCRIBE, NULL, NULL }
 };
 
@@ -323,6 +325,8 @@ static bool cmd_list_action(menu_type *m, const ui_event_data *event, int oid)
 static void cmd_list_entry(menu_type *menu, int oid, bool cursor, int row, int col, int width)
 {
 	byte attr = (cursor ? TERM_L_BLUE : TERM_WHITE);
+	(void) menu;
+	(void) width;
 	Term_putstr(col, row, -1, attr, cmds_all[oid].name);
 }
 
@@ -688,7 +692,8 @@ static bool textui_process_key(unsigned char c)
 			item_tester_hook = act->selector.filter;
 
 			if (!get_item(&item, act->selector.prompt,
-					act->selector.noop, act->selector.mode))
+				      act->selector.noop, command->cmd, 
+				      act->selector.mode))
 				return TRUE;
 
 			/* Execute the item command */
@@ -720,6 +725,7 @@ void textui_process_command(bool no_request)
 	bool done = TRUE;
 	ui_event_data e;
 
+	(void) no_request;
 	/* Reset argument before getting command */
 	p_ptr->command_arg = 0;
 	e = textui_get_command();

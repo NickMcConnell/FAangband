@@ -1297,13 +1297,6 @@ static void calc_torch(void)
 	p_ptr->cur_light--;
     }
 
-    /* Reduce light when running if requested */
-    if (p_ptr->running && OPT(view_reduce_light)) {
-	/* Reduce the light radius if needed */
-	if (p_ptr->cur_light > 1)
-	    p_ptr->cur_light = 1;
-    }
-
     /* Vampire shape */
     if ((p_ptr->schange == SHAPE_VAMPIRE) && (p_ptr->cur_light >= 3))
 	p_ptr->cur_light = 2;

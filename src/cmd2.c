@@ -26,7 +26,7 @@
  * Move house to the current town
  */
 
-void do_cmd_move_house(cmd_code code, cmd_arg args[])
+void do_cmd_move_house(void)
 {
     char buf[80];
     int old_home = 0, new_home = 0, i = 0;
@@ -1285,7 +1285,7 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
 	/* Penalize some conditions */
 	if (p_ptr->timed[TMD_BLIND] || no_light())
 	    i = i / 10;
-	if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC])
+	if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_IMAGE])
 	    i = i / 10;
 
 	/* Difficulty rating.  Tweaked to compensate for higher pvals. */
@@ -1354,7 +1354,7 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
     /* Penalize some conditions */
     if (p_ptr->timed[TMD_BLIND] || no_light())
 	i = i / 10;
-    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC])
+    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_IMAGE])
 	i = i / 10;
 
     /* Difficulty rating. */
@@ -1597,7 +1597,7 @@ extern bool do_cmd_open_aux(int y, int x)
 	/* Penalize some conditions */
 	if (p_ptr->timed[TMD_BLIND] || no_light())
 	    i = i / 10;
-	if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC])
+	if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_IMAGE])
 	    i = i / 10;
 
 	/* Extract the lock power */
@@ -2256,7 +2256,7 @@ extern bool do_cmd_disarm_aux(int y, int x)
     /* Penalize some conditions */
     if (p_ptr->timed[TMD_BLIND] || no_light())
 	i = i / 10;
-    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_HALLUC])
+    if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_IMAGE])
 	i = i / 10;
 
 
@@ -3093,7 +3093,7 @@ static void do_cmd_hold_or_stay(int pickup)
 void do_cmd_hold(cmd_code code, cmd_arg args[])
 {
     /* Hold still (usually pickup) */
-    do_cmd_hold_or_stay(OPT(always_pickup));
+    do_cmd_hold_or_stay(OPT(pickup_always));
 }
 
 

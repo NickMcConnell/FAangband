@@ -247,9 +247,6 @@ void wield_item(object_type *o_ptr, int item, int slot)
     of_union(o_ptr->id_obj, f);
     if (is_armour(o_ptr) && k_ptr->to_h)
 	notice_other(IF_TO_H, slot + 1);
-    if ((slot == INVEN_RIGHT) || (slot == INVEN_LEFT) || (slot == INVEN_NECK)) {
-	notice_obj(p_ptr->id_obj, slot + 1);
-	notice_other(p_ptr->id_other, slot + 1);
     }
 
     /* Average things are average */
@@ -458,8 +455,7 @@ void textui_cmd_destroy(void)
 		ODESC_PREFIX | ODESC_FULL);
 
     /* Verify destruction */
-    if (OPT(verify_destroy)
-	&& (OPT(verify_destroy_junk) || (object_value(o_ptr) >= 1))) {
+    if (OPT(verify_destroy)) {
 	/* Verify destruction */
 	strnfmt(out_val, sizeof(out_val), "Really destroy %s? ", o_name);
 

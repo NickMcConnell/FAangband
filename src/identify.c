@@ -499,12 +499,6 @@ void notice_obj(int obj_flag, int item)
 	/* Add properties */
 	of_on(o_ptr->id_obj, obj_flag);
 
-	/* Get sensation based jewellery knowledge */
-	if (((item - 1) == INVEN_RIGHT) || ((item - 1) == INVEN_LEFT)
-	    || ((item - 1) == INVEN_NECK)) {
-	    of_on(p_ptr->id_obj, obj_flag));
-	}
-
 	/* Ego item? */
 	if (already_ego != has_ego_properties(o_ptr))
 	    label_as_ego(o_ptr, item);
@@ -523,11 +517,6 @@ void notice_obj(int obj_flag, int item)
 
 	/* Add properties */
 	of_on(o_ptr->id_obj, obj_flag);
-
-	/* Get sensation based jewellery knowledge */
-	if ((i == INVEN_RIGHT) || (i == INVEN_LEFT) || (i == INVEN_NECK)) {
-	    of_on(p_ptr->id_obj, obj_flag));
-	}
 
 	/* Ego item? */
 	if (already_ego != has_ego_properties(o_ptr))
@@ -561,9 +550,6 @@ void notice_other(int other_flag, int item)
 	    if (other_flag != OBJECT_ID_BASE_RESIST + j) continue;
 	    if (o_ptr->percent_res[j] != RES_LEVEL_BASE) {
 		if_on(o_ptr->id_other, other_flag);
-		if (((item - 1) == INVEN_RIGHT) || ((item - 1) == INVEN_LEFT)
-		    || ((item - 1) == INVEN_NECK)) {
-		    if_on(p_ptr->id_other, other_flag);
 		}
 	    }
 	}
@@ -573,9 +559,6 @@ void notice_other(int other_flag, int item)
 	    if (other_flag != OBJECT_ID_BASE_SLAY + j) continue;
 	    if (o_ptr->multiple_slay[j] != MULTIPLE_BASE) {
 		if_on(o_ptr->id_other, other_flag);
-		if (((item - 1) == INVEN_RIGHT) || ((item - 1) == INVEN_LEFT)
-		    || ((item - 1) == INVEN_NECK)) {
-		    if_on(p_ptr->id_other, other_flag);
 		}
 	    }
 	}
@@ -585,9 +568,6 @@ void notice_other(int other_flag, int item)
 	    if (other_flag != OBJECT_ID_BASE_BRAND + j) continue;
 	    if (o_ptr->multiple_brand[j] != MULTIPLE_BASE) {
 		if_on(o_ptr->id_other, other_flag);
-		if (((item - 1) == INVEN_RIGHT) || ((item - 1) == INVEN_LEFT)
-		    || ((item - 1) == INVEN_NECK)) {
-		    if_on(p_ptr->id_other, other_flag);
 		}
 	    }
 	}

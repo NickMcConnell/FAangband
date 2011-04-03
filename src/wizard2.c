@@ -1337,7 +1337,7 @@ static void do_cmd_wiz_cure_all(void)
     (void) clear_timed(TMD_POISONED, TRUE);
     (void) clear_timed(TMD_AFRAID, TRUE);
     (void) clear_timed(TMD_PARALYZED, TRUE);
-    (void) clear_timed(TMD_HALLUC, TRUE);
+    (void) clear_timed(TMD_IMAGE, TRUE);
     (void) clear_timed(TMD_STUN, TRUE);
     (void) clear_timed(TMD_CUT, TRUE);
     (void) clear_timed(TMD_SLOW, TRUE);

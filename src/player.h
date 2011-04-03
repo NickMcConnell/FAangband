@@ -12,7 +12,7 @@ extern const byte adj_str_wgt[STAT_RANGE];
 extern const byte adj_str_hold[STAT_RANGE];
 extern const byte adj_str_blow[STAT_RANGE];
 
-extern void apply_resist(int *player_resist, int item_resist)
+extern void apply_resist(int *player_resist, int item_resist);
 void calc_bonuses(object_type inventory[], player_state *state, bool id_only);
 int calc_blows(const object_type *o_ptr, player_state *state, int extra_blows);
 void notice_stuff(void);

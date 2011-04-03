@@ -1596,7 +1596,7 @@ void take_hit(int dam, cptr kb_str)
     /* Hitpoint warning */
     if (p_ptr->chp < warning) {
 	/* Hack -- bell on first notice */
-	if (OPT(alert_hitpoint) && (old_chp > warning)) {
+	if (old_chp > warning) {
 	    bell("Low hitpoint warning!");
 	}
 
@@ -6526,7 +6526,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		if (p_resist_good(P_RES_CHAOS))
 		    notice_other(IF_RES_CHAOS, 0);
 		else if (!check_save(dam / 2 + 20)) {
-		    (void) inc_timed(TMD_HALLUC, randint0(17) + 16, TRUE);
+		    (void) inc_timed(TMD_IMAGE, randint0(17) + 16, TRUE);
 		    msg_print("The fumes affect your vision!");
 		}
 	    }
@@ -6564,7 +6564,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		} else
 		    notice_obj(OF_FEARLESS, 0);
 		if (!p_resist_good(P_RES_CHAOS)) {
-		    (void) inc_timed(TMD_HALLUC, randint0(101) + 100, TRUE);
+		    (void) inc_timed(TMD_IMAGE, randint0(101) + 100, TRUE);
 		} else
 		    notice_other(IF_RES_CHAOS, 0);
 		if (!p_resist_good(P_RES_CONFU)) {
@@ -7883,9 +7883,6 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
  *
  * Usage and graphics notes:
  *
- * If the option "fresh_before" is on, or the delay factor is anything other 
- * than zero, bolt and explosion pictures will be momentarily shown on screen.
- *
  * Only 256 grids can be affected per projection, limiting the effective 
  * radius of standard ball attacks to nine units (diameter nineteen).  Arcs 
  * can have larger radii; an arc capable of going out to range 20 should not 
@@ -8116,12 +8113,12 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 			/* Visual effects */
 			print_rel(c, a, y, x);
 			move_cursor_relative(y, x);
-			if ((op_ptr->delay_factor) || (OPT(fresh_before)))
-			    Term_fresh();
+			Term_fresh();
+			if (p_ptr->redraw) redraw_stuff();
 			Term_xtra(TERM_XTRA_DELAY, msec);
 			light_spot(y, x);
-			if ((op_ptr->delay_factor) || (OPT(fresh_before)))
-			    Term_fresh();
+			Term_fresh();
+			if (p_ptr->redraw) redraw_stuff();
 
 			/* Display "beam" grids */
 			if (flg & (PROJECT_BEAM)) {
@@ -8378,8 +8375,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 	    /* New radius is about to be drawn */
 	    if (i == grids) {
 		/* Flush each radius seperately */
-		if ((op_ptr->delay_factor) || (OPT(fresh_before)))
-		    Term_fresh();
+		Term_fresh();
+		if (p_ptr->redraw) redraw_stuff();
 
 		/* Delay (efficiently) */
 		if (visual || drawn) {
@@ -8390,9 +8387,9 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 	    /* Hack - repeat to avoid using uninitialised array element */
 	    else if (gd[i + 1] > gd[i]) {
 		/* Flush each radius seperately */
-		if ((op_ptr->delay_factor) || (OPT(fresh_before)))
-		    Term_fresh();
-
+		Term_fresh();
+		if (p_ptr->redraw) redraw_stuff();
+		
 		/* Delay (efficiently) */
 		if (visual || drawn) {
 		    Term_xtra(TERM_XTRA_DELAY, msec);
@@ -8418,8 +8415,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 	    move_cursor_relative(y0, x0);
 
 	    /* Flush the explosion */
-	    if ((op_ptr->delay_factor) || (OPT(fresh_before)))
-		Term_fresh();
+	    Term_fresh();
+	    if (p_ptr->redraw) redraw_stuff();
 	}
     }
 

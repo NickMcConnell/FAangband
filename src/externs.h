@@ -165,7 +165,6 @@ extern object_type *o_list;
 extern monster_type *m_list;
 extern monster_lore *l_list;
 extern quest *q_list;
-extern note_info *notes;
 extern store_type *store;
 extern cptr** name_sections;
 extern object_type *inventory;
@@ -264,8 +263,6 @@ extern int mana_reserve;
 extern int *artifact_normal, *artifact_special;
 extern int artifact_normal_cnt, artifact_special_cnt;
 extern bool angband_keymap_flag;
-extern char pf_result[MAX_PF_LENGTH];
-extern int pf_result_index;
 extern void (*sound_hook)(int);
 extern autoinscription *inscriptions;
 extern u16b inscriptions_count;
@@ -295,7 +292,7 @@ extern int make_metric(int wgt);
 
 
 /* cmd1.c */
-extern void search(void);
+bool search(bool verbose);
 extern byte py_pickup(int pickup, int y, int x);
 extern void fall_off_cliff(void);
 extern void move_player(int dir, int do_pickup);

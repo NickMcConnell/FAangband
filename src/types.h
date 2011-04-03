@@ -87,6 +87,7 @@ typedef int (*button_kill_f) (unsigned char);
 typedef struct char_attr char_attr;
 typedef struct alloc_entry alloc_entry;
 typedef struct quest quest;
+typedef struct spell spell_type;
 typedef struct owner_type owner_type;
 typedef struct store_type store_type;
 typedef struct druid_blows druid_blows;
@@ -219,7 +220,6 @@ typedef struct object_kind {
 
     u16b note;     /**< Autoinscription quark number */
 
-    bool easy_know;	/**< This object is always known (if aware) */
     bool aware;		/**< The player is "aware" of the item's effects */
     bool tried;		/**< The player has "tried" one of the items */
     bool known_effect;
@@ -637,7 +637,9 @@ typedef struct {
 
     s16b hold_o_idx;	/**< Object being held (if any) */
 
-    u32b smart;									      /**< Field for "smart_learn" *//**< Now saved */
+    byte attr;  /* attr last used for drawing monster */
+
+    u32b smart;	      /**< Field for "smart_learn" *//**< Now saved */
 
     byte ty;		/**< Monster target */
     byte tx;
@@ -705,7 +707,8 @@ struct alloc_entry {
  * the concept of quest monsters to specific unique monsters, and to
  * actually scan the dead unique list to see what quests are left.
  */
-struct quest {
+struct quest 
+{
     int stage;		/**< Stage quest monster will appear */
     int r_idx;		/**< Monster race */
 
@@ -1166,9 +1169,6 @@ typedef struct player {
 
     byte spell_flags[PY_MAX_SPELLS]; /* Spell flags */
     byte spell_order[PY_MAX_SPELLS];	/* Spell order */
-
-    u32b id_obj[OF_SIZE];	/**< "Sensation" object id flags */
-    u32b id_other[IF_SIZE];	/**< "Sensation" other id flags */
 
     s16b player_hp[PY_MAX_LEVEL];/**< HP Array */
 

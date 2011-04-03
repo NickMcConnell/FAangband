@@ -1729,6 +1729,9 @@ s16b player_place(int y, int x)
     if (cave_m_idx[y][x] != 0)
 	return (0);
 
+    /* No stairs if we don't do that */
+    if (OPT(adult_no_stairs) && !p_ptr->themed_level)
+	cave_set_feat(y, x, FEAT_FLOOR);
 
     /* Save player location */
     p_ptr->py = y;

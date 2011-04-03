@@ -226,6 +226,7 @@ extern void describe_monster(int r_idx, bool spoilers)
 
     int vn = 0;
     char *vp[64];
+    char buf[2048];
 
     monster_lore save_mem;
 
@@ -363,56 +364,17 @@ extern void describe_monster(int r_idx, bool spoilers)
 	unique = TRUE;
 
     /* Descriptions */
-    if (OPT(show_details)) {
-	char buf[2048];
 
-#ifdef DELAY_LOAD_R_TEXT
+    my_strcpy(buf, sizeof(buf), r_text);
 
-	ang_file *fd;
+    /* Hack - translate if we do that */
+    if (Term->xchar_hook)
+	xstr_trans(buf, (Term->xchar_hook(128) == 128));
 
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_DATA, "r_info.raw");
-
-	/* Open the "raw" file */
-	fd = file_open(buf, MODE_READ, FTYPE_RAW);
-
-	/* Use file */
-	if (fd) {
-	    u32b pos;
-
-	    /* Starting position */
-	    pos = r_ptr->text;
-
-	    /* Additional offsets */
-	    pos += r_head->head_size;
-	    pos += r_head->info_size;
-	    pos += r_head->name_size;
-
-	    /* Seek */
-	    file_seek(fd, pos);
-
-	    /* Read a chunk of data */
-	    file_read(fd, buf, 2048);
-
-	    /* Close it */
-	    file_close(fd);
-	}
-#else
-
-	/* Simple method */
-	strcpy(buf, r_text + r_ptr->text);
-
-#endif
-
-	/* Hack - translate if we do that */
-	if (Term->xchar_hook)
-	    xstr_trans(buf, (Term->xchar_hook(128) == 128));
-
-	/* Dump it */
-	text_out_indent = 0;
-	text_out_to_screen(TERM_L_BLUE, buf);
-	text_out_to_screen(TERM_WHITE, "  ");
-    }
+    /* Dump it */
+    text_out_indent = 0;
+    text_out_to_screen(TERM_L_BLUE, buf);
+    text_out_to_screen(TERM_WHITE, "  ");
 
     /* Player ghosts may have unique descriptions. */
     if ((rf_has(r_ptr->flags, RF_PLAYER_GHOST)) && (ghost_string_type == 2))
@@ -427,11 +389,6 @@ extern void describe_monster(int r_idx, bool spoilers)
 
     /* New paragraph. */
     text_out_to_screen(TERM_WHITE, "\n");
-
-    /* Require a flag to show kills */
-    if (!OPT(show_details)) {
-	/* nothing */
-    }
 
     /* Treat uniques differently */
     else if (unique) {

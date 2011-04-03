@@ -1062,9 +1062,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	dump_put_str(TERM_WHITE, "Sex     : ", 1);
 	dump_put_str(TERM_L_BLUE, sp_ptr->title, 11);
 	dump_put_str(TERM_WHITE, "Height", 27);
-	sprintf(buf1, "%10d",
-		(OPT(use_metric) ? ((int) p_ptr->ht) * 254 /
-		 100 : (int) p_ptr->ht));
+	sprintf(buf1, "%10d", (int) p_ptr->ht);
 	dump_put_str(TERM_L_BLUE, buf1, 42);
 	red = (p_ptr->stat_cur[1] < p_ptr->stat_max[1]);
 	value = p_ptr->stat_use[1];
@@ -1085,9 +1083,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	dump_put_str(TERM_WHITE, "Race    : ", 1);
 	dump_put_str(TERM_L_BLUE, p_name + rp_ptr->name, 11);
 	dump_put_str(TERM_WHITE, "Weight", 27);
-	sprintf(buf1, "%10d",
-		(OPT(use_metric) ? ((int) p_ptr->wt) * 10 /
-		 22 : (int) p_ptr->wt));
+	sprintf(buf1, "%10d", (int) p_ptr->wt);
 	dump_put_str(TERM_L_BLUE, buf1, 42);
 	red = (p_ptr->stat_cur[2] < p_ptr->stat_max[2]);
 	value = p_ptr->stat_use[2];
@@ -1328,10 +1324,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	dump_put_str(TERM_WHITE, "Searching  :", 27);
 	dump_put_str(likert_color, desc, 39);
 
-	if (OPT(use_metric))
-	    sprintf(buf1, "%d meters", p_ptr->see_infra * 3);
-	else
-	    sprintf(buf1, "%d feet", p_ptr->see_infra * 10);
+sprintf(buf1, "%d feet", p_ptr->see_infra * 10);
 	dump_put_str(TERM_WHITE, "Infravision:", 53);
 	dump_put_str(TERM_WHITE, buf1, 65);
 	current_line += 2;

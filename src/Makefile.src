@@ -30,17 +30,6 @@ HEADERS = \
 	history.h \
 	init.h \
 	jewel.h \
-	list-blow-effects.h \
-	list-blow-methods.h \
-	list-curse-flags.h \
-	list-effects.h \
-	list-identify-flags.h \
-	list-kind-flags.h \
-	list-mon-flags.h \
-	list-mon-spells.h \
-	list-object-flags.h \
-	list-player-flags.h \
-	list-terrain-flags.h \
 	main.h \
 	macro.h \
 	monster.h \

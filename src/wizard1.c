@@ -141,9 +141,7 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val,
   
   
   /* Weight */
-  if (OPT(use_metric)) sprintf(wgt, "%3d.%d", make_metric(i_ptr->weight) / 10, 
-			  make_metric(i_ptr->weight) % 10);
-  else sprintf(wgt, "%3d.%d", i_ptr->weight / 10, i_ptr->weight % 10);
+  sprintf(wgt, "%3d.%d", i_ptr->weight / 10, i_ptr->weight % 10);
   
 }
 
@@ -805,14 +803,9 @@ static void analyze_misc (object_type *o_ptr, char *misc_desc)
 {
   artifact_type *a_ptr = &a_info[o_ptr->name1];
   
-  if (OPT(use_metric)) sprintf(misc_desc, "Level %u, Rarity %u, %d.%d kgs, "
-			  "%ld Gold", a_ptr->level, a_ptr->rarity,
-			  make_metric(a_ptr->weight) / 10, 
-			  make_metric(a_ptr->weight) % 10, (long) a_ptr->cost);
-  
-  else sprintf(misc_desc, "Level %u, Rarity %u, %d.%d lbs, "
-	       "%ld Gold", a_ptr->level, a_ptr->rarity,
-	       a_ptr->weight / 10, a_ptr->weight % 10, (long) a_ptr->cost);
+  sprintf(misc_desc, "Level %u, Rarity %u, %d.%d lbs, %ld Gold", a_ptr->level, 
+	  a_ptr->rarity,  a_ptr->weight / 10, a_ptr->weight % 10, 
+	  (long) a_ptr->cost);
 }
 
 /**
@@ -1135,9 +1128,6 @@ static void spoil_obj_gen(cptr fname)
   
   
   msg_print("This may take a while...");
-  if (!OPT(fresh_after)) Term_fresh();
-  
-  
   
   file_putf(fff, "Object Generation Spoiler for FAangband Version %d.%d.%d\n",
 	  VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
@@ -1160,7 +1150,6 @@ static void spoil_obj_gen(cptr fname)
       if (i % 10000 == 0) 
 	{
 	  prt(format("%ld objects created", (long)i), 0, 0);
-	  if (!OPT(fresh_after)) Term_fresh();
 	}
       
       
@@ -1329,7 +1318,6 @@ static void spoil_mon_gen(cptr fname)
   
   
   msg_print("This may take a while...");
-  if (!OPT(fresh_after)) Term_fresh();
   
   /* Initialize monster generation. */
   if (quick) (void)get_mon_num(p_ptr->depth);
@@ -1340,7 +1328,6 @@ static void spoil_mon_gen(cptr fname)
       if (i % 10000 == 0) 
 	{
 	  prt(format("%ld monsters created", (long)i), 0, 0);
-	  if (!OPT(fresh_after)) Term_fresh();
 	}
       
       

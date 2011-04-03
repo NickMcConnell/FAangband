@@ -667,12 +667,12 @@ static void process_world(void)
     /*** Timeout Various Things ***/
 
     /* Hack -- Hallucinating */
-    if (p_ptr->timed[TMD_HALLUC]) {
+    if (p_ptr->timed[TMD_IMAGE]) {
 	/* Maiar recover quickly from anything. */
 	if (divine)
-	    (void) dec_timed(TMD_HALLUC, 2, FALSE);
+	    (void) dec_timed(TMD_IMAGE, 2, FALSE);
 	else
-	    (void) dec_timed(TMD_HALLUC, 1, FALSE);
+	    (void) dec_timed(TMD_IMAGE, 1, FALSE);
     }
 
     /* Blindness */
@@ -977,8 +977,7 @@ static void process_world(void)
 
 	    /* The light is getting dim */
 	    else if ((o_ptr->pval < 100) && (!(o_ptr->pval % 10))) {
-		if (OPT(disturb_minor))
-		    disturb(0, 0);
+		disturb(0, 0);
 		msg_print("Your light is growing faint.");
 	    }
 	}
@@ -1067,7 +1066,7 @@ static void process_world(void)
     /* Random hallucination */
     if ((p_ptr->state.rand_hallu) && (randint0(300) < 1)) {
 	/* Start hallucinating */
-	(void) inc_timed(TMD_HALLUC, 10 + randint1(10), TRUE);
+	(void) inc_timed(TMD_IMAGE, 10 + randint1(10), TRUE);
 
 	/* Notice */
 	notice_curse(CF_HALLU_RAND, 0);
@@ -1441,7 +1440,7 @@ static void process_player(void)
 		&& !p_ptr->timed[TMD_POISONED] && !p_ptr->timed[TMD_AFRAID]
 		&& !p_ptr->timed[TMD_STUN] && !p_ptr->timed[TMD_CUT]
 		&& !p_ptr->timed[TMD_SLOW] && !p_ptr->timed[TMD_PARALYZED]
-		&& !p_ptr->timed[TMD_HALLUC] && !p_ptr->word_recall) {
+		&& !p_ptr->timed[TMD_IMAGE] && !p_ptr->word_recall) {
 		disturb(0, 0);
 	    }
 	}
@@ -1459,32 +1458,22 @@ static void process_player(void)
 	}
     }
 
-    /* Handle "abort" */
-    if (!OPT(avoid_abort)) {
-	/* 
-	 * Originally, with "resting < 0" you could not abort.
-	 * In "resting && !(resting & 0x0F)":
-	 *     -1 & 0x0F == 15
-	 *     -2 & 0x0F == 16
-	 */
+    /* Check for "player abort" */
+    if (p_ptr->running || cmd_get_nrepeats() > 0
+	|| (p_ptr->resting && !((turn * 10) % 0x0F))) {
+	/* Do not wait */
+	inkey_scan = SCAN_INSTANT;
 
-	/* Check for "player abort" */
-	if (p_ptr->running || cmd_get_nrepeats() > 0
-	    || (p_ptr->resting && !((turn * 10) % 0x0F))) {
-	    /* Do not wait */
-	    inkey_scan = SCAN_INSTANT;
+	/* Check for a key */
+	if (anykey()) {
+	    /* Flush input */
+	    flush();
 
-	    /* Check for a key */
-	    if (anykey()) {
-		/* Flush input */
-		flush();
+	    /* Disturb */
+	    disturb(0, 0);
 
-		/* Disturb */
-		disturb(0, 0);
-
-		/* Hack -- Show a Message */
-		msg_print("Cancelled.");
-	    }
+	    /* Hack -- Show a Message */
+	    msg_print("Cancelled.");
 	}
     }
 
@@ -1531,8 +1520,7 @@ static void process_player(void)
 	move_cursor_relative(p_ptr->py, p_ptr->px);
 
 	/* Refresh (optional) */
-	if (OPT(fresh_before))
-	    Term_fresh();
+	Term_fresh();
 
 
 	/* Hack -- Pack Overflow */
@@ -1624,12 +1612,12 @@ static void process_player(void)
 
 
 	    /* Hack -- constant hallucination */
-	    if (p_ptr->timed[TMD_HALLUC])
+	    if (p_ptr->timed[TMD_IMAGE])
 		p_ptr->redraw |= (PR_MAP);
 
 
 	    /* Shimmer monsters if needed */
-	    if (!OPT(avoid_other) && shimmer_monsters) {
+	    if (shimmer_monsters) {
 		/* Clear the flag */
 		shimmer_monsters = FALSE;
 
@@ -1913,7 +1901,7 @@ static void dungeon(void)
 
 
     /* No stairs from town or if not allowed */
-    if (!p_ptr->depth || !OPT(dungeon_stair)) {
+    if (!p_ptr->depth || OPT(adult_no_stairs)) {
 	p_ptr->create_stair = 0;
     }
 
@@ -2116,8 +2104,8 @@ static void dungeon(void)
 	/* Hack -- Hilight the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
 
-	/* Optional fresh */
-	if (OPT(fresh_after)) Term_fresh();
+	/* Refresh */
+	Term_fresh();
 
 	/* Handle "leaving" */
 	if (p_ptr->leaving) break;
@@ -2140,8 +2128,8 @@ static void dungeon(void)
 	/* Hack -- Hilight the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
 
-	/* Optional fresh */
-	if (OPT(fresh_after)) Term_fresh();
+	/* Refresh */
+	Term_fresh();
 
 	/* Handle "leaving" */
 	if (p_ptr->leaving) break;
@@ -2162,8 +2150,8 @@ static void dungeon(void)
 	/* Hack -- Hilight the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
 
-	/* Optional fresh */
-	if (OPT(fresh_after)) Term_fresh();
+	/* Refresh */
+	Term_fresh();
 
 	/* Handle "leaving" */
 	if (p_ptr->leaving) break;

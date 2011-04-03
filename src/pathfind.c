@@ -1111,6 +1111,6 @@ void run_step(int dir)
     p_ptr->energy_use = 100;
 
     /* Move the player, using the "pickup" flag */
-    move_player(p_ptr->run_cur_dir, OPT(always_pickup));
+    move_player(p_ptr->run_cur_dir, OPT(pickup_always));
 }
 

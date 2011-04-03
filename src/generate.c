@@ -1155,7 +1155,7 @@ static void new_player_spot(void)
 		continue;
 
 	    /* If character starts on stairs, ... */
-	    if (OPT(dungeon_stair)) {
+	    if (!OPT(adult_no_stairs)) {
 		/* Accept stairs going the right way or floors. */
 		if (p_ptr->create_stair) {
 		    /* Accept correct stairs */
@@ -6632,11 +6632,6 @@ static bool build_themed_level(void)
     /* Give the player something to read. */
     msg_print("Please wait.  This may take a little while.");
 
-    /* Display the message */
-    if (!OPT(fresh_after))
-	Term_fresh();
-
-
     /* Indicate that the player is on the selected themed level. */
     p_ptr->themed_level = choice;
 
@@ -10374,7 +10369,7 @@ void generate_cave(void)
 	}
 
 	/* Mega-Hack -- "auto-scum" */
-	if (OPT(auto_scum) && (num < 100) && !(p_ptr->themed_level)) {
+	if (OPT(adult_auto_scum) && (num < 100) && !(p_ptr->themed_level)) {
 	    int fudge = (no_vault()? 3 : 0);
 
 	    /* Require "goodness" */

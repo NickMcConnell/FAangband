@@ -22,8 +22,10 @@
  */
 
 #include "angband.h"
+#include "cave.h"
 #include "game-event.h"
 #include "game-cmd.h"
+#include "option.h"
 #include "squelch.h"
 
 
@@ -295,7 +297,7 @@ bool no_light(void)
     int py = p_ptr->py;
     int px = p_ptr->px;
 
-    if (player_has(PF_UNLIGHT) || p_ptr->darkness)
+    if (player_has(PF_UNLIGHT) || p_ptr->state.darkness)
 	return (FALSE);
 
     return (!player_can_see_bold(py, px));
@@ -634,30 +636,32 @@ static void special_lighting_floor(byte *a, char *c, enum grid_light_level light
 	 * OPT(view_yellow_light) distinguishes between torchlit and 
 	 * permanently-lit areas 
 	 */
-	if ((player_has(SP_UNLIGHT) || p_ptr->darkness) && 
+	if ((player_has(PF_UNLIGHT) || p_ptr->state.darkness) && 
 	    (p_ptr->cur_light <= 0))
 	{
 	    /* "Dark radius" */
 	    
 	}
  	else switch (use_graphics)
-	{
-	case GRAPHICS_NONE:
-	case GRAPHICS_PSEUDO:
-	    /* Use "yellow" */
-	    if (*a == TERM_WHITE) {
-		if (lamp) *a = TERM_L_BLUE;
-		else *a = TERM_YELLOW;
-	    break;
-	case GRAPHICS_ADAM_BOLT:
-	case GRAPHICS_NOMAD:
-	    *c += 2;
-	    break;
-	case GRAPHICS_DAVID_GERVAIS:
-	    *c -= 1;
-	    break;
-	}
+	     {
+	     case GRAPHICS_NONE:
+	     case GRAPHICS_PSEUDO:
+		 /* Use "yellow" */
+		 if (*a == TERM_WHITE) {
+		     if (lamp) *a = TERM_L_BLUE;
+		     else *a = TERM_YELLOW;
+		     break;
+		 }
+		 case GRAPHICS_ADAM_BOLT:
+		 case GRAPHICS_NOMAD:
+		     *c += 2;
+		     break;
+		 case GRAPHICS_DAVID_GERVAIS:
+		     *c -= 1;
+		     break;
+	     }
     }
+    
     else if (lighting == LIGHT_DARK)
     {
 	/* Use a dark tile */
@@ -845,11 +849,11 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 	    a = TERM_L_GREEN;
 
 	/* Special lighting effects */
-	if ((f_ptr->flags & TF_FLOOR) && OPT(view_special_light))
+	if (tf_has(f_ptr->flags, TF_FLOOR) && OPT(view_special_light))
 		special_lighting_floor(&a, &c, g->lighting, g->in_view);
 
 	/* Special lighting effects (walls only) */
-	if ((f_ptr->flags & TF_WALL) && OPT(view_granite_light)) 
+	if (tf_has(f_ptr->flags, TF_WALL) && OPT(view_granite_light)) 
 		special_wall_display(&a, &c, g->in_view, g->f_idx);
 		
 	/* Save the terrain info for the transparency effects */
@@ -869,9 +873,9 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 			c = PICT_C(i);
 		}
 		/* Hack to not display objects in trees */
-		else if ((cave_feat[y][x] == FEAT_TREE) || 
-			 (cave_feat[y][x] == FEAT_TREE2) || 
-			 (cave_feat[y][x] == FEAT_RUBBLE)) ;
+		else if ((g->f_idx == FEAT_TREE) || 
+			 (g->f_idx == FEAT_TREE2) || 
+			 (g->f_idx == FEAT_RUBBLE)) ;
               
 		else
 		{
@@ -905,7 +909,7 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 		}
 		else
 		{
-			monster_type *m_ptr = &mon_list[g->m_idx];
+			monster_type *m_ptr = &m_list[g->m_idx];
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 				
 			byte da;
@@ -987,7 +991,7 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 
 		/* Get the "player" attr */
 		a = r_ptr->x_attr;
-		if ((OPT(hp_changes_color)) && (arg_graphics == GRAPHICS_NONE))
+		if ((OPT(hp_changes_colour)) && (arg_graphics == GRAPHICS_NONE))
 		{
 			switch(p_ptr->chp * 10 / p_ptr->mhp)
 			{
@@ -1168,7 +1172,7 @@ void map_info(unsigned y, unsigned x, grid_data *g)
     if (g->m_idx > 0)
     {
 	/* If the monster isn't "visible", make sure we don't list it.*/
-	monster_type *m_ptr = &mon_list[g->m_idx];
+	monster_type *m_ptr = &m_list[g->m_idx];
 	if (!m_ptr->ml) g->m_idx = 0;
 
     }
@@ -1795,8 +1799,6 @@ void display_map(int *cy, int *cx)
 
     bool old_view_special_light;
     bool old_view_granite_light;
-    int old_tile_height = tile_height;
-    int old_tile_width = tile_width;
 
     monster_race *r_ptr = &r_info[0];
 
@@ -2107,7 +2109,7 @@ void do_cmd_view_map(void)
     Term_clear();
 
     /* Display the map */
-    display_map(&cy, &cx, FALSE);
+    display_map(&cy, &cx);
 
     /* Wait for it */
     put_str("Hit any key to continue", hgt - 1, (wid - COL_MAP) / 2);
@@ -3184,7 +3186,7 @@ void update_view(void)
     /* Extract "radius" value */
     if (is_daylight)
 	radius = DUNGEON_WID;
-    else if ((player_has(PF_UNLIGHT) || p_ptr->darkness)
+    else if ((player_has(PF_UNLIGHT) || p_ptr->state.darkness)
 	     && (p_ptr->cur_light <= 0))
 	radius = 2;
     else
@@ -4611,20 +4613,11 @@ void disturb(int stop_search, int unused_flag)
 	p_ptr->running = 0;
 
 	/* Recenter the panel when running stops */
-	if (OPT(center_player) && !OPT(center_running))
+	if (OPT(center_player))
 	    verify_panel();
 
 	/* Calculate torch radius */
 	p_ptr->update |= (PU_TORCH);
-
-	/* Redraw the player */
-	if (OPT(hidden_player)) {
-	    int py = p_ptr->py;
-	    int px = p_ptr->px;
-
-	    /* Redraw player */
-	    light_spot(py, px);
-	}
     }
 
     /* Cancel searching if requested */

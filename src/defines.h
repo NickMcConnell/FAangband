@@ -102,8 +102,7 @@
 /**
  * Number of text rows in each map screen, regardless of tile size
  */
-#define SCREEN_ROWS	(Term->hgt - ROW_MAP  - 1) \
-                          - (OPT(bottom_status) ? 6 : 0)) 
+#define SCREEN_ROWS	(Term->hgt - ROW_MAP  - 1) 
 
 /**
  * Number of grids in each screen (vertically)
@@ -348,6 +347,7 @@
 #define GRAPHICS_ADAM_BOLT      2
 #define GRAPHICS_DAVID_GERVAIS  3
 #define GRAPHICS_PSEUDO         4
+#define GRAPHICS_NOMAD          5
 
 
 /**
@@ -1189,6 +1189,24 @@ enum
 #define FEAT_TREE2_INVIS        0x79  
 #define FEAT_DUNE               0x7a
 
+/*** Object origin kinds ***/
+
+enum
+{
+	ORIGIN_NONE = 0,
+	ORIGIN_MIXED,
+	ORIGIN_BIRTH,
+	ORIGIN_STORE,
+	ORIGIN_FLOOR,
+	ORIGIN_DROP,
+	ORIGIN_DROP_UNKNOWN,
+	ORIGIN_ACQUIRE,
+	ORIGIN_CHEAT,
+	ORIGIN_CHEST
+};
+
+
+
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
 #define ART_MORGOTH		51
@@ -1624,8 +1642,8 @@ enum
 #define PW_EQUIP	0x00000002L	/* Display equip/inven */
 #define PW_PLAYER_0	0x00000004L	/* Display player (basic) */
 #define PW_PLAYER_1	0x00000008L	/* Display player (extra) */
-#define PW_SPELL        0x00000010L     /* Display spell list */
-#define PW_STUFF        0x00000020L     /* Display spell list */
+#define PW_PLAYER_2     0x00000010L     /* Display player (compact) */
+#define PW_MAP          0x00000020L     /* Display dungeon map */
 #define PW_MESSAGE	0x00000040L	/* Display messages */
 #define PW_OVERHEAD	0x00000080L	/* Display overhead view */
 #define PW_MONSTER	0x00000100L	/* Display monster recall */
@@ -1955,7 +1973,7 @@ enum
 
 enum
 {
-#define PF(a,b,c) PF_##a,
+#define PF(a,b,c) PF_##a
 	#include "list-player-flags.h"
 	#undef PF
 	PF_MAX
@@ -2213,8 +2231,10 @@ enum
  */
 #define object_known_p(T) \
 	(((T)->ident & (IDENT_KNOWN)) || \
-	 (k_info[(T)->k_idx].easy_know && k_info[(T)->k_idx].aware))
+	 (kf_has(k_info[(T)->k_idx].flags_kind, KF_EASY_KNOW) \
+	  && k_info[(T)->k_idx].aware))
 
+#define object_is_known object_known_p
 
 /**
  * Object is a missile
@@ -2247,11 +2267,30 @@ enum
  *
  * Identified scrolls should use their own tile.
  */
-#define use_flavor_glyph(T) \
-	((k_info[(T)->k_idx].flavor) && \
-	 !((k_info[(T)->k_idx].tval == TV_SCROLL) && object_aware_p(T) \
-             && arg_graphics))
+#define use_flavor_glyph(K) \
+	((k_info[(K)].flavor) && \
+	 !((k_info[(K)].tval == TV_SCROLL) && k_info[(K)].aware))
 
+
+/**
+ * Return the "attr" for a given item kind.
+ * Use "flavor" if available.
+ * Default to user definitions.
+ */
+#define object_kind_attr(K) \
+	(use_flavor_glyph(K) ? \
+	 (flavor_info[k_info[(K)].flavor].x_attr) : \
+	 (k_info[(K)].x_attr))
+
+/**
+ * Return the "char" for a given item kind.
+ * Use "flavor" if available.
+ * Default to user definitions.
+ */
+#define object_kind_char(K) \
+	(use_flavor_glyph(K) ? \
+	 (flavor_info[k_info[(K)].flavor].x_char) : \
+	 (k_info[(K)].x_char))
 
 /**
  * Return the "attr" for a given item.
@@ -2259,20 +2298,7 @@ enum
  * Default to user definitions.
  */
 #define object_attr(T) \
-	(use_flavor_glyph(T) ? \
-	 (flavor_info[k_info[(T)->k_idx].flavor].x_attr) : \
-	 (k_info[(T)->k_idx].x_attr))
-
-
-/**
- * Return the "attr" for a k_idx.
- * Use "flavor" if available.
- * Default to user definitions.
- */
-#define object_type_attr(T) \
-	((k_info[T].flavor) ? \
-	 (flavor_info[k_info[T].flavor].x_attr) : \
-	 (k_info[T].x_attr))
+	(object_kind_attr((T)->k_idx))
 
 /**
  * Return the "char" for a given item.
@@ -2280,9 +2306,8 @@ enum
  * Default to user definitions.
  */
 #define object_char(T) \
-	(use_flavor_glyph(T) ? \
-	 (flavor_info[k_info[(T)->k_idx].flavor].x_char) : \
-	 (k_info[(T)->k_idx].x_char))
+	(object_kind_char((T)->k_idx))
+
 
 /**
  * Return the "attr" for a given item.
@@ -2305,17 +2330,6 @@ enum
 	 (k_info[(T)->k_idx].d_char))
 
 /**
- * Return the "char" for a k_idx.
- * Use "flavor" if available.
- * Default to user definitions.
- */
-#define object_type_char(T) \
-	((k_info[T].flavor) ? \
-	 (flavor_info[k_info[T].flavor].x_char) : \
-	 (k_info[T].x_char))
-
-
-/**
  * Artifacts use the "name1" field
  */
 #define artifact_p(T) \
@@ -2331,13 +2345,13 @@ enum
  * Cursed items.
  */
 #define cursed_p(T) \
-  ((T)->flags_curse ? TRUE : FALSE)
+    (!(cf_is_empty((T)->flags_curse) ? TRUE : FALSE)
 
 /**
  * Known cursed items.
  */
 #define known_cursed_p(T) \
-  (((T)->id_curse) || ((T)->ident & IDENT_CURSED) ? TRUE : FALSE)
+    (!(cf_is_empty((T)->id_curse)) || ((T)->ident & IDENT_CURSED) ? TRUE : FALSE)
 
 
 /**
@@ -2552,24 +2566,23 @@ enum
  * Note the use of comparison to zero to force a "boolean" result
  */
 #define player_can_see_bold(Y,X) \
-	((cave_info[Y][X] & (CAVE_SEEN)) != 0)
+    ((cave_info[Y][X] & (CAVE_SEEN)) != 0)
 
 
 /**
  * Is the player outside?
  */
 #define outside \
-    ((stage_map[p_ptr->stage][STAGE_TYPE] != CAVE)     \
+    ((stage_map[p_ptr->stage][STAGE_TYPE] != CAVE)	\
      && (stage_map[p_ptr->stage][STAGE_TYPE] != VALLEY) \
-     && ((p_ptr->stage < 151) || (p_ptr->stage > 153)))
+       && ((p_ptr->stage < 151) || (p_ptr->stage > 153)))
 
-
-
+			 
 /**
  * Is the player in daylight?
  */
-#define is_daylight = (((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2)) \
-		       && outside)
+#define is_daylight  (((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2)) \
+			&& outside) 
 
 
 /*

@@ -213,7 +213,7 @@ bool target_able_obj(int o_idx)
 	return (FALSE);
 
     /* Hack -- no targeting hallucinations */
-    if (p_ptr->timed[TMD_HALLUC])
+    if (p_ptr->timed[TMD_IMAGE])
 	return (FALSE);
 
     /* Assume okay */
@@ -1515,8 +1515,6 @@ bool target_set_interactive(int mode, int x, int y)
 		    {
 			if (++m == temp_n) {
 			    m = 0;
-			    if (!OPT(expand_list))
-				done = TRUE;
 			}
 
 			break;

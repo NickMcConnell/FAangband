@@ -478,11 +478,8 @@ void dimen_door(void)
     int ny;
     int nx;
     bool okay;
-    bool old_expand_look = OPT(expand_look);
 
-    OPT(expand_look) = TRUE;
     okay = target_set_interactive(TARGET_LOOK | TARGET_GRID);
-    OPT(expand_look) = old_expand_look;
     if (!okay)
 	return;
 
@@ -1513,8 +1510,8 @@ static void animate_detect(int rad)
     }
 
     /* Flush the image of detected region */
-    if (OPT(fresh_before))
-	Term_fresh();
+    Term_fresh();
+    if (p_ptr->redraw) redraw_stuff();
 
     /* Delay (efficiently) */
     Term_xtra(TERM_XTRA_DELAY, msec);
@@ -1541,8 +1538,8 @@ static void animate_detect(int rad)
     move_cursor_relative(py, px);
 
     /* Flush screen back to normal */
-    if (OPT(fresh_before))
-	Term_fresh();
+    Term_fresh();
+    if (p_ptr->redraw) redraw_stuff();
 
     /* Exit */
     return;
