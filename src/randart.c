@@ -3865,6 +3865,9 @@ static void remove_contradictory(int a_idx)
 	&& ((a_ptr->effect = EF_RAND_TELEPORT1)
 	    || (a_ptr->effect = EF_RAND_TELEPORT2)))
 	a_ptr->effect = 0;
+
+    /* Add effect timeout */
+    effect_time(a_ptr->effect, a_ptr->time);
 }
 
 
@@ -4067,13 +4070,15 @@ static void name_artifact(int a_idx)
  */
 static void design_random_artifact(int a_idx)
 {
-
     /* Initialize the artifact, and assign it a potential. */
     initialize_artifact(a_idx);
+
     /* Assign a theme to the artifact. */
     choose_basic_theme(a_idx);
+
     /* Add extra qualities until done. */
     haggle_till_done(a_idx);
+
     /* Decide if the artifact is to be terrible. */
     if (TERRIBLE_CHANCE > randint0(100)) {
 
@@ -4083,7 +4088,8 @@ static void design_random_artifact(int a_idx)
 
     /* Remove contradictory powers. */
     remove_contradictory(a_idx);
-    /* Find or make a name for the artifact, and place into a temporary array. */
+
+    /* Find or make a name for the artifact, and place into a temporary array */
     name_artifact(a_idx);
 }
 

@@ -1461,7 +1461,7 @@ A:50/8
 P:30:2d4:-2:0:10:112
 B:RES_ACID[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
-E:DRAGON_BLACK
+E:DRAGON_BLACK:50+d50
 D:A suit of utterly black scales, against which no metal or wood can rest.  ~
 
 N:214:Blue Dragon Scale Mail~
@@ -1472,7 +1472,7 @@ A:50/8
 P:30:2d4:-2:0:10:110
 B:RES_ELEC[40] | SPEED[4]
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
-E:DRAGON_BLUE
+E:DRAGON_BLUE:50+d50
 D:A suit of scales as blue as sapphires, emitting eerie sparks and coronas as 
 D:you move about in it.  ~
 
@@ -1484,7 +1484,7 @@ A:50/8
 P:30:2d4:-2:0:10:111
 B:RES_COLD[40] | SPEED[4]
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
-E:DRAGON_WHITE
+E:DRAGON_WHITE:50+d50
 D:A suit of scales, coldly gleaming in frosty white.  A shiver runs down 
 D:through your spine even as you look at it.  ~
 
@@ -1496,7 +1496,7 @@ A:50/8
 P:30:2d4:-2:0:10:114
 B:RES_FIRE[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
-E:DRAGON_RED
+E:DRAGON_RED:50+d50
 D:A suit of scales, with all the reds of every fire ever lit.  The scar tissue 
 D:from an old burn aches as you put this armour on.  ~
 
@@ -1508,7 +1508,7 @@ A:60/8
 P:30:2d4:-2:0:10:113
 B:RES_POIS[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
-E:DRAGON_GREEN
+E:DRAGON_GREEN:50+d50
 D:A suit of scales, glistening in sickly green, out from which falls the 
 D:skeleton of a rat who touched it and died in agony.  ~
 
@@ -1520,7 +1520,7 @@ A:75/16
 P:30:2d4:-2:0:10:115
 B:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40] | RES_POIS[40] | 
 B:SPEED[4] 
-E:DRAGON_MULTIHUED
+E:DRAGON_MULTIHUED:50+d50
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
 D:A suit of scales that throbs with angry energies; it takes all your energy 
 D:to master the Elements fighting an endless war trapped inside.  ~
@@ -1535,7 +1535,7 @@ A:65/12
 P:30:2d4:-2:0:10:121
 B:RES_LITE[40] | RES_DARK[40] | SPEED[4]
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
-E:DRAGON_SHINING
+E:DRAGON_SHINING:50+d50
 D:A suit of scales shining like a beacon of Light even as it greedily sucks 
 D:the energy away from everything that glows into Dark insatiate.  ~
 
@@ -1549,7 +1549,7 @@ A:80/12
 P:30:2d4:-2:0:10:119
 B:RES_SOUND[40] | RES_SHARD[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
-E:DRAGON_LAW
+E:DRAGON_LAW:50+d50
 D:A suit of scales in stern blue and silver.  You feel the slightest tremor 
 D:as you touch it, like massed trumpets heard and cyclones felt from afar.  ~
 
@@ -1563,7 +1563,7 @@ A:55/8
 P:30:2d4:-2:0:10:116
 B:RES_CONFU[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
-E:DRAGON_BRONZE
+E:DRAGON_BRONZE:50+d50
 D:A suit of scales, gleaming in rich engraved bronze.  The more you look at the 
 D:the maze of whorls and lines that close inspection reveal on its surface, 
 D:the less sense you are able to make of them.  ~
@@ -1576,7 +1576,7 @@ A:60/8
 P:30:2d4:-2:0:10:117
 B:RES_SOUND[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
-E:DRAGON_GOLD
+E:DRAGON_GOLD:50+d50
 D:A suit of scales in mirror-like gold.  You hear nothing unusual as you 
 D:wear this armour, yet your ears ache as though in the midst of a 
 D:cacophony.  ~
@@ -1591,7 +1591,7 @@ A:75/14
 P:30:2d4:-2:0:10:118
 B:RES_CHAOS[40] | RES_DISEN[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
-E:DRAGON_CHAOS
+E:DRAGON_CHAOS:50+d50
 D:A suit of scales.  Every shape, in every color imaginable, riot and 
 D:contend upon its surface as you stare in fascination.  ~
 
@@ -1603,7 +1603,7 @@ A:90/14
 P:30:2d4:-2:0:10:120
 B:RES_SOUND[40] | RES_SHARD[40] | RES_CHAOS[40] | RES_DISEN[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
-E:DRAGON_BALANCE
+E:DRAGON_BALANCE:50+d50
 D:A suit of scales.  Featureless grey to casual inspection, yet a closer look 
 D:reveals patterns within patterns of iridescence that throb with leashed 
 D:energies bound as though by chains of adamant.  ~
@@ -1618,7 +1618,7 @@ B:RES_ACID[40] | RES_FIRE[40] | RES_COLD[40] | RES_ELEC[40] | RES_POIS[40] |
 B:RES_LITE[40] | RES_DARK[40] | RES_NEXUS[40] | RES_NETHR[40] | RES_CHAOS[40] | 
 B:RES_SOUND[40] | RES_SHARD[40] | RES_DISEN[40] | RES_CONFU[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
-E:DRAGON_POWER
+E:DRAGON_POWER:50+d50
 D:A suit with scales of every color, surrounded in a nimbus of perfectly 
 D:untramelled yet inextricably intermingled and utterly mastered powers 
 D:elemental and ethereal.  ~
@@ -2560,7 +2560,7 @@ W:1:0:4:0
 A:1/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:SLOWNESS
+E:SLOWNESS1
 D:that slows you down.
 
 N:385:Salt Water
@@ -3268,7 +3268,7 @@ I:65:7:12
 W:3:0:10:200
 A:3/2
 P:0:1d1:0:0:0:0
-E:LITE
+E:LIGHT_LINE
 D:that shoots beams of light~.
 
 N:463:Sleep Monster
@@ -3586,7 +3586,7 @@ I:55:1:20
 W:48:0:50:0
 A:48/3
 P:0:1d2:0:0:0:0
-E:SLOWNESS
+E:SLOWNESS2
 D:that temporarily saps your energy.
 
 N:502:Haste Monsters
@@ -3650,7 +3650,7 @@ I:55:8:32
 W:5:0:50:250
 A:5/1
 P:0:1d2:0:0:0:0
-E:LITE
+E:LIGHT
 D:that magically illuminates a room or a torch-lit area.
 
 N:509:Dungeon Mapping
@@ -4093,7 +4093,7 @@ W:10:0:15:800
 A:10/2:20/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:LITE:24
+E:LIGHT_LINE:24
 D:that shoots a beam of light~.
 
 N:584:Sleep Monster

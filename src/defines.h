@@ -61,11 +61,12 @@
 /**
  * Current version string - according to FAangband reckoning.
  */
+#define VERSION_STRING "1.2.0"
+/*
 #ifdef BUILD_ID
 #define VERSION_STRING	"1.2.0 (" BUILD_ID ")"
-#else
-# define VERSION_STRING "1.2.0"
 #endif
+*/
 
 /*
  * Current FAangband version numbers.
@@ -349,6 +350,23 @@
 #define GRAPHICS_PSEUDO         4
 #define GRAPHICS_NOMAD          5
 
+
+/* player_type.noscore flags */
+#define NOSCORE_WIZARD		0x0002
+#define NOSCORE_DEBUG		0x0008
+#define NOSCORE_BORG		0x0010
+
+/* History message types */
+#define HISTORY_PLAYER_BIRTH     0x0001	/* Player was born */
+#define HISTORY_ARTIFACT_UNKNOWN 0x0002	/* Player found but not IDd an artifact */
+#define HISTORY_ARTIFACT_KNOWN   0x0004	/* Player has IDed an artifact */
+#define HISTORY_ARTIFACT_LOST    0x0008	/* Player had an artifact and lost it */
+#define HISTORY_PLAYER_DEATH     0x0010	/* Player has been slain */
+#define HISTORY_SLAY_UNIQUE      0x0020	/* Player has slain a unique monster */
+#define HISTORY_USER_INPUT       0x0040	/* User-added note */
+#define HISTORY_SAVEFILE_IMPORT  0x0080	/* Added when an older version savefile is imported */
+#define HISTORY_GAIN_LEVEL       0x0100	/* Player gained a level */
+#define HISTORY_GENERIC          0x0200	/* Anything else not covered here (unused) */
 
 /**
  * List of commands that will be auto-repeated
@@ -1567,6 +1585,7 @@ enum
 #define PN_AUTOINSCRIBE	0x00000004L	/* Autoinscribe items */
 #define PN_PICKUP       0x00000008L	/* Pick stuff up */
 #define PN_SQUELCH      0x00000010L	/* Squelch stuff */
+#define PN_SORT_QUIVER  0x00000020L     /* Sort the quiver */
 /* xxx (many) */
 
 
@@ -1610,7 +1629,7 @@ enum
 #define PR_MESSAGE	0x00004000L /* Display messages */
 #define PR_MONSTER	0x00008000L /* Display monster recall */
 #define PR_OBJECT	0x00010000L /* Display object recall */
-#define PR_MONLIST	0x00010000L /* Display monster list */
+#define PR_MONLIST	0x00020000L /* Display monster list */
 
 #define PR_BUTTONS      0x00040000L     /* Display mouse buttons */
 #define PR_ITEMLIST     0x00080000L /* Display item list */

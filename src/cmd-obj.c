@@ -18,10 +18,14 @@
  */
 
 #include "angband.h"
+#include "cave.h"
 #include "cmds.h"
 #include "effects.h"
 #include "game-cmd.h"
+#include "game-event.h"
+#include "monster.h"
 #include "object.h"
+#include "target.h"
 #include "tvalsval.h"
 #include "spells.h"
 #include "squelch.h"
@@ -485,9 +489,6 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
     if (!o_ptr || o_ptr->k_idx <= 1)
 	return;
 
-    if (ident)
-	object_notice_effect(o_ptr);
-
     /* Food feeds the player */
     if (o_ptr->tval == TV_FOOD || o_ptr->tval == TV_POTION)
 	(void) set_food(p_ptr->food + o_ptr->pval);
@@ -529,7 +530,7 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 	else
 	    floor_item_charges(0 - item);
     } else if (used && use == USE_TIMEOUT) {
-	if (o_ptr->time)
+	if (o_ptr->time.base)
 	    o_ptr->timeout += randcalc(o_ptr->time, 0, RANDOMISE);
     } else if (used && use == USE_SINGLE) {
 	/* Destroy a potion in the pack */
@@ -1080,9 +1081,9 @@ void do_cmd_study_book(cmd_code code, cmd_arg args[])
     if (spell < 0) {
 	/* Message */
 	msg_format("You cannot learn any %s%s that %s.", 
-		   magic_desc[mp->ptr->spell_realm][SPELL_NOUN],
+		   magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
 		   (mp_ptr->spell_realm == REALM_NATURE) ? " from" : "s in", 
-		   magic_desc[mp->ptr->spell_realm][BOOK_NOUN]);
+		   magic_desc[mp_ptr->spell_realm][BOOK_NOUN]);
 
 	/* Abort */
 	return;

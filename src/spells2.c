@@ -1010,7 +1010,7 @@ void identify_pack(void)
     p_ptr->update |= (PU_BONUS);
 
     /* Combine / Reorder the pack (later) */
-    p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+    p_ptr->notice |= (PN_COMBINE | PN_REORDER | PN_SORT_QUIVER);
 
     /* Redraw stuff */
     p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
@@ -2656,7 +2656,7 @@ bool enchant(object_type * o_ptr, int n, int eflag)
     p_ptr->update |= (PU_BONUS);
 
     /* Combine / Reorder the pack (later) */
-    p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+    p_ptr->notice |= (PN_COMBINE | PN_REORDER | PN_SORT_QUIVER);
 
     /* Redraw stuff */
     p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
@@ -3210,7 +3210,7 @@ bool ident_spell(void)
     p_ptr->update |= (PU_BONUS);
 
     /* Combine / Reorder the pack (later) */
-    p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+    p_ptr->notice |= (PN_COMBINE | PN_REORDER | PN_SORT_QUIVER);
 
     /* Redraw stuff */
     p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
@@ -3322,7 +3322,7 @@ bool identify_fully(void)
     p_ptr->update |= (PU_BONUS);
 
     /* Combine / Reorder the pack (later) */
-    p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+    p_ptr->notice |= (PN_COMBINE | PN_REORDER | PN_SORT_QUIVER);
 
     /* Redraw stuff */
     p_ptr->redraw |= (PR_INVEN | PR_EQUIP);

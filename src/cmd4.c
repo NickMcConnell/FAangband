@@ -18,6 +18,10 @@
  *    are included in all such copies.  Other copyrights may also apply.
  */
 #include "angband.h"
+#include "button.h"
+#include "cave.h"
+#include "files.h"
+#include "history.h"
 #include "prefs.h"
 #include "ui.h"
 
@@ -74,7 +78,9 @@ void do_cmd_redraw(void)
   p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW | PU_MONSTERS);
   
   /* Redraw everything */
-  p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY | PR_BUTTONS);
+  p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP | PR_INVEN | PR_EQUIP |
+		    PR_MESSAGE | PR_MONSTER | PR_OBJECT |
+		    PR_MONLIST | PR_ITEMLIST);
   
   /* Clear screen */
   Term_clear();
@@ -107,54 +113,6 @@ void do_cmd_redraw(void)
     }
 }
 
-
-/**
- * Map resizing whenever the main term changes size
- */
-void resize_map(void)
-{
-  /* Only if the dungeon exists */
-  if (!character_dungeon) return;
-  
-  /* Mega-Hack -- no panel yet */
-  Term->offset_y = 0;
-  Term->offset_x = 0;
-  
-  if (character_dungeon)
-    {
-      verify_panel();
-    }
-  
-  /* Combine and Reorder the pack (later) */
-  p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-  
-  /* Update torch */
-  p_ptr->update |= (PU_TORCH);
-  
-  /* Update stuff */
-  p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
-  
-  /* Forget view */
-  p_ptr->update |= (PU_FORGET_VIEW);
-  
-  /* Update view */
-  p_ptr->update |= (PU_UPDATE_VIEW);
-  
-  /* Update monsters */
-  p_ptr->update |= (PU_MONSTERS);
-  
-  /* Redraw everything */
-  p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIPPY);
-  
-  /* Hack -- update */
-  handle_stuff();
-  
-  /* Redraw */
-  Term_redraw();
-  
-  /* Refresh */
-  Term_fresh();
-}
 
 /**
  * Redraw a term when it is resized
@@ -193,18 +151,12 @@ void do_cmd_change_name(void)
 
   cptr p;
 
-  bool old_normal_screen = normal_screen;
-  
   /* Prompt */
   p = "['c' change name, 'f' to file, scroll, or ESC]";
   
   /* Save screen */
   screen_save();
 
-  /* Not normal */
-  normal_screen = FALSE;
-  prompt_end = (small_screen ? 0 : strlen(p) + 1);
-  
   /* Adjust the buttons */
   button_backup_all();
   button_kill_all();
@@ -215,6 +167,7 @@ void do_cmd_change_name(void)
   button_add("f", 'f');
   button_add("->", ARROW_RIGHT);
   button_add("<-", ARROW_LEFT);
+  p_ptr->redraw |= PR_BUTTONS;
 
   /* Make the array of lines */
   C_WIPE(dumpline, DUMP_MAX_LINES, char_attr_line);
@@ -226,15 +179,14 @@ void do_cmd_change_name(void)
       /* Display the player */
       display_dump(dumpline, top_line, top_line + Term->hgt - 1, col);
 
+      redraw_stuff();
+
       /* Clear the bottom line */
       prt("", Term->hgt - 1, 0);
       
       /* Prompt */
       Term_putstr(0, Term->hgt - 1, -1, TERM_WHITE, p);
      
-      /* Draw the buttons */
-      update_statusline();
- 
       /* Query */
       ke = inkey_ex();
       
@@ -322,10 +274,6 @@ void do_cmd_change_name(void)
       message_flush();
     }
 
-  /* Normal again */
-  normal_screen = old_normal_screen;
-  prompt_end = 0;
-
   /* Adjust the buttons */
   button_restore();
 
@@ -395,10 +343,6 @@ void do_cmd_messages(void)
   /* Save screen */
   screen_save();
   
-  /* Not normal */
-  normal_screen = FALSE;
-  prompt_end = (small_screen ? 0 : strlen(p) + 1);
-  
   /* Adjust the buttons */
   button_backup_all();
   button_kill_all();
@@ -411,6 +355,7 @@ void do_cmd_messages(void)
   button_add("+", '+');
   button_add("->", '6');
   button_add("<-", '4');
+  p_ptr->redraw |= (PR_BUTTONS);
 
   /* Process requests until done */
   while (1)
@@ -455,7 +400,7 @@ void do_cmd_messages(void)
       
       /* Display prompt (not very informative) */
       prt(p, hgt - 1, 0);
-      update_statusline();
+      redraw_stuff();
       
       /* Get a command */
       ke = inkey_ex();
@@ -594,10 +539,6 @@ void do_cmd_messages(void)
       if (i == j) bell(NULL);
     }
   
-  /* Normal again */
-  normal_screen = TRUE;
-  prompt_end = 0;
-
   /* Adjust the buttons */
   button_restore();
 
@@ -631,22 +572,22 @@ void do_cmd_pref(void)
  */
 void do_cmd_note(void)
 {
-	char tmp[80];
+    char tmp[80];
 
-	/* Default */
-	my_strcpy(tmp, "", sizeof(tmp));
+    /* Default */
+    my_strcpy(tmp, "", sizeof(tmp));
 
-	/* Input */
-	if (!get_string("Note: ", tmp, 80)) return;
+    /* Input */
+    if (!get_string("Note: ", tmp, 80)) return;
 
-	/* Ignore empty notes */
-	if (!tmp[0] || (tmp[0] == ' ')) return;
+    /* Ignore empty notes */
+    if (!tmp[0] || (tmp[0] == ' ')) return;
 
-	/* Add the note to the message recall */
-	msg_format("Note: %s", tmp);
+    /* Add the note to the message recall */
+    msg_format("Note: %s", tmp);
 
-	/* Add a history entry */
-	history_add(tmp, HISTORY_USER_INPUT, 0);
+    /* Add a history entry */
+    history_add(tmp, HISTORY_USER_INPUT, 0);
 }
   
   
@@ -656,9 +597,9 @@ void do_cmd_note(void)
  */
 void do_cmd_version(void)
 {
-  /* Silly message */
-  msg_format("You are playing %s %s.  Type '?' for more info.",
-	     VERSION_NAME, VERSION_STRING);
+    /* Silly message */
+    msg_format("You are playing %s %s.  Type '?' for more info.",
+	       VERSION_NAME, VERSION_STRING);
 }
 
 
@@ -740,10 +681,10 @@ static cptr do_cmd_challenge_text[14] =
  */
 void ghost_challenge(void)
 {
-  monster_race *r_ptr = &r_info[r_ghost];
-  
-  msg_format("%^s, the %^s %s", ghost_name, r_name + r_ptr->name, 
-             do_cmd_challenge_text[randint0(14)]);
+    monster_race *r_ptr = &r_info[r_ghost];
+    
+    msg_format("%^s, the %^s %s", ghost_name, r_ptr->name, 
+	       do_cmd_challenge_text[randint0(14)]);
 }
 
 
@@ -942,52 +883,52 @@ void do_cmd_save_screen_text(void)
  */
 void do_cmd_save_screen_html(int mode)
 {
-  size_t i;
+    size_t i;
   
-  ang_file *fff;
-  char file_name[1024];
-  char tmp_val[256];
+    ang_file *fff;
+    char file_name[1024];
+    char tmp_val[256];
   
-  typedef void (*dump_func)(ang_file *);
-  dump_func dump_visuals [] = 
-    { dump_monsters, dump_features, dump_objects, dump_flavors, dump_colors };
+    typedef void (*dump_func)(ang_file *);
+    dump_func dump_visuals [] = 
+	{ dump_monsters, dump_features, dump_objects, dump_flavors, dump_colors };
   
-  /* Ask for a file */
-  if (mode == 0) my_strcpy(tmp_val, "dump.html", sizeof(tmp_val));
-  else my_strcpy(tmp_val, "dump.txt", sizeof(tmp_val));
-  if (!get_string("File: ", tmp_val, sizeof(tmp_val))) return;
+    /* Ask for a file */
+    if (mode == 0) my_strcpy(tmp_val, "dump.html", sizeof(tmp_val));
+    else my_strcpy(tmp_val, "dump.txt", sizeof(tmp_val));
+    if (!get_string("File: ", tmp_val, sizeof(tmp_val))) return;
   
-  /* Save current preferences */
-  path_build(file_name, 1024, ANGBAND_DIR_USER, "dump.prf");
-  fff = file_open(file_name, MODE_WRITE, (mode == 0 ? FTYPE_HTML : FTYPE_TEXT));
+    /* Save current preferences */
+    path_build(file_name, 1024, ANGBAND_DIR_USER, "dump.prf");
+    fff = file_open(file_name, MODE_WRITE, (mode == 0 ? FTYPE_HTML : FTYPE_TEXT));
   
-  /* Check for failure */
-  if (!fff)
+    /* Check for failure */
+    if (!fff)
     {
-      msg_print("Screen dump failed.");
-      message_flush();
-      return;
+	msg_print("Screen dump failed.");
+	message_flush();
+	return;
     }
   
-  /* Dump all the visuals */
-  for (i = 0; i < N_ELEMENTS(dump_visuals); i++)
-    dump_visuals[i](fff);
+    /* Dump all the visuals */
+    for (i = 0; i < N_ELEMENTS(dump_visuals); i++)
+	dump_visuals[i](fff);
   
-  file_close(fff);
+    file_close(fff);
   
-  /* Dump the screen with raw character attributes */
-  reset_visuals(FALSE);
-  do_cmd_redraw();
-  html_screenshot(tmp_val);
+    /* Dump the screen with raw character attributes */
+    reset_visuals(FALSE);
+    do_cmd_redraw();
+    html_screenshot(tmp_val);
   
-  /* Recover current graphics settings */
-  reset_visuals(TRUE);
-  process_pref_file(file_name, TRUE);
-  file_delete(file_name);
-  do_cmd_redraw();
+    /* Recover current graphics settings */
+    reset_visuals(TRUE);
+    process_pref_file(file_name, TRUE);
+    file_delete(file_name);
+    do_cmd_redraw();
   
-  msg_print("HTML screen dump saved.");
-  message_flush();
+    msg_print("HTML screen dump saved.");
+    message_flush();
 }
 
 
@@ -996,29 +937,27 @@ void do_cmd_save_screen_html(int mode)
  */
 void do_cmd_save_screen(void)
 {
-  ui_event_data ke;
-  msg_print("Dump type [(t)ext; (h)tml; (f)orum embedded html]:");
-  button_add("f", 'f');
-  button_add("h", 'h');
-  button_add("t", 't');
-  update_statusline();
-  ke = inkey_ex();
-  switch(ke.key) 
+    ui_event_data ke;
+    msg_print("Dump type [(t)ext; (h)tml; (f)orum embedded html]:");
+    button_add("f", 'f');
+    button_add("h", 'h');
+    button_add("t", 't');
+    ke = inkey_ex();
+    switch(ke.key) 
     {
     case ESCAPE:
-      break;
+	break;
     case 't': do_cmd_save_screen_text();
-      break;
+	break;
     case 'h': do_cmd_save_screen_html(0);
-      break;
+	break;
     case 'f': do_cmd_save_screen_html(1);
-      break;
+	break;
     }
-  button_kill('f');
-  button_kill('t');
-  button_kill('h');
-  update_statusline();
-  message_flush();
+    button_kill('f');
+    button_kill('t');
+    button_kill('h');
+    message_flush();
 }
 
 /**

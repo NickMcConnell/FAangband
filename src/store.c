@@ -1702,7 +1702,7 @@ static void store_purchase(void)
 	    object_aware(i_ptr);
 
 	    /* Combine / Reorder the pack (later) */
-	    p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+	    p_ptr->notice |= (PN_COMBINE | PN_REORDER | PN_SORT_QUIVER);
 
 	    /* The object no longer belongs to the store */
 	    i_ptr->ident &= ~(IDENT_STORE);
@@ -2024,7 +2024,7 @@ static void store_sell(void)
 	    history_add_artifact(o_ptr->name1, TRUE, TRUE);
 
 	/* Combine / Reorder the pack (later) */
-	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER | PN_SORT_QUIVER);
 
 	/* Redraw stuff */
 	p_ptr->redraw |= (PR_INVEN | PR_EQUIP);

@@ -7,6 +7,9 @@
 /** Maximum number of scroll titles generated */
 #define MAX_TITLES     60
 
+/* Power calculation */
+#define INHIBIT_POWER       20000
+
 struct player;
 
 /*** Constants ***/
@@ -141,10 +144,11 @@ s16b label_to_inven(int c);
 s16b label_to_equip(int c);
 bool wearable_p(const object_type *o_ptr);
 s16b wield_slot(object_type *o_ptr);
-cptr mention_use(int i);
+bool slot_can_wield_item(int slot, const object_type *o_ptr);
+const char *mention_use(int slot);
 cptr describe_use(int i);
-bool item_tester_okay(object_type *o_ptr);
-bool scan_floor(int *items, int *item_num, int y, int x, int mode);
+bool item_tester_okay(const object_type *o_ptr);
+bool scan_floor(int *items, int max_size, int y, int x, int mode);
 void excise_object_idx(int o_idx);
 void delete_object_idx(int o_idx);
 void delete_object(int y, int x);
@@ -171,7 +175,7 @@ void floor_item_charges(int item);
 void floor_item_describe(int item);
 void floor_item_increase(int item, int num);
 void floor_item_optimize(int item);
-bool inven_carry_okay(object_type *o_ptr);
+bool inven_carry_okay(const object_type *o_ptr);
 s16b inven_carry(struct player *p, struct object *o);
 bool inven_stack_okay(const object_type *o_ptr);
 s16b inven_takeoff(int item, int amt);
@@ -183,7 +187,8 @@ void sort_quiver(void);
 int get_use_device_chance(const object_type *o_ptr);
 void distribute_charges(object_type *o_ptr, object_type *q_ptr, int amt);
 void reduce_charges(object_type *o_ptr, int amt);
-bool item_is_available(int item, bool (*tester)(const object_type *), int mode);
+int number_charging(const object_type *o_ptr);
+bool recharge_timeout(object_type *o_ptr);
 unsigned check_for_inscrip(const object_type *o_ptr, const char *inscrip);
 s16b lookup_kind(int tval, int sval);
 bool lookup_reverse(s16b k_idx, int *tval, int *sval);

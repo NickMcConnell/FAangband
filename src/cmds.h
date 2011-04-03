@@ -91,7 +91,6 @@ extern void do_cmd_query_symbol(void);
 
 /* cmd4.c */
 extern void do_cmd_redraw(void);
-extern void resize_map(void);
 extern void redraw_window(void);
 extern void do_cmd_change_name(void);
 extern void do_cmd_message_one(void);

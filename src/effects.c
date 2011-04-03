@@ -21,7 +21,12 @@
  */
 
 #include "angband.h"
+#include "cave.h"
 #include "effects.h"
+#include "monster.h"
+#include "object.h"
+#include "spells.h"
+#include "target.h"
 
 
 /**
@@ -52,7 +57,7 @@
  */
 
 #define TARGET_DECLARE \
-	int save_target_y = 0, save_target_x = 0; \
+	s16b save_target_y = 0, save_target_x = 0; \
 	bool save_target_set;
 
 #define TARGET_PRESERVE \
@@ -116,13 +121,15 @@ typedef struct {
     bool aim;			/* Whether the effect requires aiming */
     u16b power;			/* Power rating for obj-power.c */
     const char *desc;		/* Effect description */
+    int base;                   /* Effect timeout base */
+    int sides;                  /* Effect timeout sides */
 } info_entry;
 
 /*
  * Useful things about effects.
  */
 static const info_entry effects[] = {
-#define EFFECT(x, y, r, z)    { EF_##x, y, r, z },
+#define EFFECT(x, y, r, z, w, v)    { EF_##x, y, r, z, w, v },
 #include "list-effects.h"
 #undef EFFECT
 };
@@ -163,13 +170,28 @@ bool effect_obvious(effect_type effect)
     return FALSE;
 }
 
+bool effect_time(effect_type effect, random_value *time)
+{
+    if (effect < 1 || effect > EF_MAX)
+	return FALSE;
+
+    if (effects[effect].base == 0)
+	return FALSE;
+
+    (*time).base = effects[effect].base;
+    (*time).dice = (effects[effect].sides == 0 ? 0 : 1);
+    (*time).sides = effects[effect].sides;
+    (*time).m_bonus = 0;
+
+    return TRUE;
+}
 
 /**
  * The "wonder" effect.
  *
  * Returns TRUE if the effect is evident.
  */
-bool effect_wonder(int dir, int die, int beam)
+bool effect_wonder(int dir, int die)
 {
 /* This spell should become more useful (more
    controlled) as the player gains experience levels.
@@ -199,53 +221,53 @@ bool effect_wonder(int dir, int die, int beam)
 	visible = poly_monster(dir);
     else if (die < 36)
 	visible =
-	    fire_bolt_or_beam(beam - 10, GF_MISSILE, dir,
+	    fire_bolt_or_beam(10, GF_MISSILE, dir,
 			      damroll(3 + ((plev - 1) / 5), 4));
     else if (die < 41)
-	visible = confuse_monster(dir, plev, FALSE);
+	visible = confuse_monster(dir, plev);
     else if (die < 46)
-	visible = fire_ball(GF_POIS, dir, 20 + (plev / 2), 3);
+	visible = fire_ball(GF_POIS, dir, 20 + (plev / 2), 3, TRUE);
     else if (die < 51)
 	visible = light_line(dir);
     else if (die < 56)
 	visible = fire_beam(GF_ELEC, dir, damroll(3 + ((plev - 5) / 6), 6));
     else if (die < 61)
 	visible =
-	    fire_bolt_or_beam(beam - 10, GF_COLD, dir,
+	    fire_bolt_or_beam(10, GF_COLD, dir,
 			      damroll(5 + ((plev - 5) / 4), 8));
     else if (die < 66)
 	visible =
-	    fire_bolt_or_beam(beam, GF_ACID, dir,
+	    fire_bolt_or_beam(10, GF_ACID, dir,
 			      damroll(6 + ((plev - 5) / 4), 8));
     else if (die < 71)
 	visible =
-	    fire_bolt_or_beam(beam, GF_FIRE, dir,
+	    fire_bolt_or_beam(10, GF_FIRE, dir,
 			      damroll(8 + ((plev - 5) / 4), 8));
     else if (die < 76)
 	visible = drain_life(dir, 75);
     else if (die < 81)
-	visible = fire_ball(GF_ELEC, dir, 30 + plev / 2, 2);
+	visible = fire_ball(GF_ELEC, dir, 30 + plev / 2, 2, TRUE);
     else if (die < 86)
-	visible = fire_ball(GF_ACID, dir, 40 + plev, 2);
+	visible = fire_ball(GF_ACID, dir, 40 + plev, 2, TRUE);
     else if (die < 91)
-	visible = fire_ball(GF_ICE, dir, 70 + plev, 3);
+	visible = fire_ball(GF_ICE, dir, 70 + plev, 3, TRUE);
     else if (die < 96)
-	visible = fire_ball(GF_FIRE, dir, 80 + plev, 3);
+	visible = fire_ball(GF_FIRE, dir, 80 + plev, 3, TRUE);
     /* above 100 'visible' is already true */
     else if (die < 101)
 	drain_life(dir, 100 + plev);
     else if (die < 104)
-	earthquake(py, px, 12);
+	earthquake(py, px, 12, FALSE);
     else if (die < 106)
 	destroy_area(py, px, 15, TRUE);
     else if (die < 108)
-	banishment();
+	genocide();
     else if (die < 110)
 	dispel_monsters(120);
     else {			/* RARE */
 
 	dispel_monsters(150);
-	slow_monsters();
+	slow_monsters(50);
 	sleep_monsters(TRUE);
 	hp_player(300);
     }
@@ -264,12 +286,16 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 {
     int py = p_ptr->py;
     int px = p_ptr->px;
-    int dam, chance;
+    int plev = p_ptr->lev;
+    int chance, k;
 
-    /* ?? Object level */
-    lev = k_info[o_ptr->k_idx].level;
+    if (effect < 1 || effect > EF_MAX)
+    {
+	msg_print("Bad effect passed to do_effect().  Please report this bug.");
+	return FALSE;
+    }
 
-    /* Analyze the food */
+    /* Analyze the effect */
     switch (effect) {
     case EF_POISON1:
 	{
@@ -291,7 +317,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		if (inc_timed(TMD_BLIND, randint0(200) + 200, TRUE)) {
 		    *ident = TRUE;
 		}
-	    } else if (object_aware_p(o_ptr))
+	    } else if (aware)
 		notice_obj(OF_SEEING, 0);
 	    return TRUE;
 	}
@@ -302,7 +328,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		if (inc_timed(TMD_BLIND, randint0(100) + 100, TRUE)) {
 		    *ident = TRUE;
 		}
-	    } else if (object_aware_p(o_ptr))
+	    } else if (aware)
 		notice_obj(OF_SEEING, 0);
 	    return TRUE;
 	}
@@ -313,7 +339,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		if (inc_timed(TMD_AFRAID, randint0(10) + 10, TRUE)) {
 		    *ident = TRUE;
 		}
-	    } else if (object_aware_p(o_ptr))
+	    } else if (aware)
 		notice_obj(OF_FEARLESS, 0);
 	    return TRUE;
 	}
@@ -436,7 +462,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    return TRUE;
 	}
 
-    case EF_SLOWNESS:
+    case EF_SLOWNESS1:
 	{
 	    if (inc_timed(TMD_SLOW, randint1(25) + 15, TRUE))
 		*ident = TRUE;
@@ -558,14 +584,14 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	{
 	    if (!p_ptr->state.no_blind) {
 		(void) inc_timed(TMD_BLIND, 3 + randint1(5), TRUE);
-	    } else if (object_aware_p(o_ptr))
+	    } else if (aware)
 		notice_obj(OF_SEEING, 0);
 	    if (unlight_area(10, 3))
 		*ident = TRUE;
 	    return TRUE;
 	}
 
-    case EF_SLOWNESS:
+    case EF_SLOWNESS2:
 	{
 	    if (inc_timed(TMD_SLOW, randint1(30) + 15, TRUE))
 		*ident = TRUE;
@@ -988,7 +1014,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_INC_CON:
     case EF_INC_CHR:
 	{
-	    int stat = effect - EF_GAIN_STR;
+	    int stat = effect - EF_INC_STR;
 	    if (do_inc_stat(stat, FALSE))
 		*ident = TRUE;
 	    return TRUE;
@@ -1046,7 +1072,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    (void) detect_treasure(DETECT_RAD_DEFAULT, FALSE);
 	    (void) detect_objects_gold(DETECT_RAD_DEFAULT, FALSE);
 	    (void) detect_objects_normal(DETECT_RAD_DEFAULT, FALSE);
-	    *identify_pack();
+	    identify_pack();
 	    *ident = TRUE;
 	    return TRUE;
 	}
@@ -1125,6 +1151,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	}
 
     case EF_IDENTIFY:
+    case EF_RAND_IDENTIFY:
 	{
 	    *ident = TRUE;
 	    if (!ident_spell())
@@ -1135,12 +1162,13 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_REVEAL_CURSES:
 	{
 	    *ident = TRUE;
-	    if (!*identify_fully())
+	    if (!identify_fully())
 		return FALSE;
 	    return TRUE;
 	}
 
     case EF_BRANDING:
+    case EF_RAND_BRAND_MISSILE:
 	{
 	    *ident = TRUE;
 	    if (!brand_missile(0, 0))
@@ -1411,7 +1439,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	}
     case EF_ACID_PROOF:
 	{
-	    proof_flag = OF_ACID_PROOF;
+	    u32b proof_flag = OF_ACID_PROOF;
 	    *ident = TRUE;
 	    if (!el_proof(proof_flag))
 		return FALSE;
@@ -1420,7 +1448,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_ELEC_PROOF:
 	{
-	    proof_flag = OF_ELEC_PROOF;
+	    u32b proof_flag = OF_ELEC_PROOF;
 	    *ident = TRUE;
 	    if (!el_proof(proof_flag))
 		return FALSE;
@@ -1429,7 +1457,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_FIRE_PROOF:
 	{
-	    proof_flag = OF_FIRE_PROOF;
+	    u32b proof_flag = OF_FIRE_PROOF;
 	    *ident = TRUE;
 	    if (!el_proof(proof_flag))
 		return FALSE;
@@ -1438,7 +1466,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_COLD_PROOF:
 	{
-	    proof_flag = OF_COLD_PROOF;
+	    u32b proof_flag = OF_COLD_PROOF;
 	    *ident = TRUE;
 	    if (!el_proof(proof_flag))
 		return FALSE;
@@ -1691,7 +1719,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    return TRUE;
 	}
 
-    case EF_LIGHT:
+    case EF_LIGHT_LINE:
 	{
 	    msg_print("A line of blue shimmering light appears.");
 	    light_line(dir);
@@ -1813,7 +1841,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_WONDER:
 	{
-	    if (effect_wonder(dir, randint1(100) + p_ptr->lev / 5, beam))
+	    if (effect_wonder(dir, randint1(100) + p_ptr->lev / 5))
 		*ident = TRUE;
 	    return TRUE;
 	}
@@ -1882,6 +1910,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_ILKORIN:
 	{
+	    TARGET_DECLARE
 	    msg_print("Deadly venom spurts and steams from your wand.");
 	    TARGET_PRESERVE fire_bolt(GF_POIS, dir, damroll(plev / 2, 11));
 	    TARGET_RESTORE fire_cloud(GF_POIS, dir, 30, 6);
@@ -2061,7 +2090,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_DELVING:
 	{
-	    int ty, tx;
+	    s16b ty, tx;
 	    target_get(&tx, &ty);
 
 	    /* Aimed at oneself, this rod creates a room. */
@@ -2143,8 +2172,8 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		shapechange(SHAPE_WYRM);
 	    } else {
 		msg_print("You are surrounded by lightning...");
-		for (i = 0; i < 8; i++)
-		    fire_ball(GF_ELEC, ddd[i], 150, 3, FALSE);
+		for (k = 0; k < 8; k++)
+		    fire_ball(GF_ELEC, ddd[k], 150, 3, FALSE);
 	    }
 	    return TRUE;
 	}
@@ -2235,8 +2264,8 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	}
     case EF_DAL:
 	{
-	    (void) set_afraid(0);
-	    (void) set_poisoned(0);
+	    (void) clear_timed(TMD_AFRAID, TRUE);
+	    (void) clear_timed(TMD_POISONED, TRUE);
 	    return TRUE;
 	}
 
@@ -2337,7 +2366,6 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		msg_print("You breathe acid.");
 		fire_arc(GF_ACID, dir, (plev / 10 + 1) * 45, 10, 40);
 	    }
-	    o_ptr->timeout = randint0(50) + 50;
 	    return TRUE;
 	}
     case EF_DRAGON_BLUE:
@@ -2350,7 +2378,6 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		msg_print("You breathe lightning.");
 		fire_arc(GF_ELEC, dir, (plev / 10 + 1) * 40, 10, 40);
 	    }
-	    o_ptr->timeout = randint0(50) + 50;
 	    return TRUE;
 	}
     case EF_DRAGON_WHITE:
@@ -2362,7 +2389,6 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		msg_print("You breathe frost.");
 		fire_arc(GF_COLD, dir, (plev / 10 + 1) * 45, 10, 40);
 	    }
-	    o_ptr->timeout = randint0(50) + 50;
 	    return TRUE;
 	}
     case EF_DRAGON_RED:
@@ -2375,7 +2401,6 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		msg_print("You breathe fire.");
 		fire_arc(GF_FIRE, dir, (plev / 10 + 1) * 50, 10, 40);
 	    }
-	    o_ptr->timeout = randint0(50) + 50;
 	    return TRUE;
 	}
     case EF_DRAGON_GREEN:
@@ -2388,7 +2413,6 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		msg_print("You breathe poison gas.");
 		fire_arc(GF_POIS, dir, (plev / 10 + 1) * 45, 10, 40);
 	    }
-	    o_ptr->timeout = randint0(50) + 50;
 	    return TRUE;
 	}
     case EF_DRAGON_MULTIHUED:
@@ -2412,26 +2436,17 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    } else {
 		chance = randint0(5);
 		sound(mh[chance].sound);
-		msg_format("You breathe %s.",
-			   ((chance ==
-			     1) ? "lightning" : ((chance ==
-						  2) ? "frost" : ((chance ==
-								   3) ? "acid"
-								  : ((chance ==
-								      4) ?
-								     "poison gas"
-								     :
-								     "fire")))));
-		fire_arc(((chance ==
-			   1) ? GF_ELEC : ((chance ==
-					    2) ? GF_COLD : ((chance ==
-							     3) ? GF_ACID
-							    : ((chance ==
-								4) ? GF_POIS :
-							       GF_FIRE)))), dir,
-			 (plev / 10 + 1) * 60, 10, 40);
+		msg_format("You breathe %s.", 
+			   ((chance == 1) ? "lightning" : 
+			    ((chance == 2) ? "frost" : 
+			     ((chance == 3) ? "acid" : 
+			      ((chance == 4) ? "poison gas" : "fire")))));
+		fire_arc(((chance == 1) ? GF_ELEC : 
+			  ((chance == 2) ? GF_COLD : 
+			   ((chance == 3) ? GF_ACID : 
+			    ((chance == 4) ? GF_POIS : GF_FIRE)))), 
+			 dir, (plev / 10 + 1) * 60, 10, 40);
 	    }
-	    o_ptr->timeout = randint0(50) + 50;
 	    return TRUE;
 	}
     case EF_DRAGON_SHINING:
@@ -2447,7 +2462,6 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		fire_arc((chance == 0 ? GF_LIGHT : GF_DARK), dir,
 			 (plev / 10 + 1) * 50, 10, 40);
 	    }
-	    o_ptr->timeout = randint0(50) + 50;
 	    return TRUE;
 	}
     case EF_DRAGON_LAW:
@@ -2463,7 +2477,6 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		fire_arc((chance == 1 ? GF_SOUND : GF_SHARD), dir,
 			 (plev / 10 + 1) * 60, 10, 40);
 	    }
-	    o_ptr->timeout = randint0(50) + 50;
 	    return TRUE;
 	}
     case EF_DRAGON_BRONZE:
@@ -2476,7 +2489,6 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		msg_print("You breathe confusion.");
 		fire_arc(GF_CONFUSION, dir, (plev / 10 + 1) * 40, 10, 40);
 	    }
-	    o_ptr->timeout = randint0(50) + 50;
 	    return TRUE;
 	}
     case EF_DRAGON_GOLD:
@@ -2489,7 +2501,6 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		msg_print("You breathe sound.");
 		fire_arc(GF_SOUND, dir, (plev / 10 + 1) * 40, 10, 40);
 	    }
-	    o_ptr->timeout = randint0(50) + 50;
 	    return TRUE;
 	}
     case EF_DRAGON_CHAOS:
@@ -2505,7 +2516,6 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		fire_arc((chance == 1 ? GF_CHAOS : GF_DISENCHANT), dir,
 			 (plev / 10 + 1) * 55, 10, 40);
 	    }
-	    o_ptr->timeout = randint0(50) + 50;
 	    return TRUE;
 	}
     case EF_DRAGON_BALANCE:
@@ -2515,31 +2525,18 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		shapechange(SHAPE_WYRM);
 	    } else {
 		chance = randint0(4);
-		sound(((chance ==
-			1) ? MSG_BR_CHAOS : ((chance ==
-					      2) ? MSG_BR_DISENCHANT : ((chance
-									 ==
-									 3) ?
-									MSG_BR_SOUND
-									:
-									MSG_BR_SHARDS))));
+		sound(((chance == 1) ? MSG_BR_CHAOS : 
+		       ((chance == 2) ? MSG_BR_DISENCHANT : 
+			((chance == 3) ? MSG_BR_SOUND :	MSG_BR_SHARDS))));
 		msg_format("You breathe %s.",
-			   ((chance ==
-			     1) ? "chaos" : ((chance ==
-					      2) ? "disenchantment" : ((chance
-									==
-									3) ?
-								       "sound" :
-								       "shards"))));
-		fire_arc(((chance ==
-			   1) ? GF_CHAOS : ((chance ==
-					     2) ? GF_DISENCHANT : ((chance ==
-								    3) ?
-								   GF_SOUND :
-								   GF_SHARD))),
+			   ((chance == 1) ? "chaos" : 
+			    ((chance == 2) ? "disenchantment" : 
+			     ((chance == 3) ? "sound" : "shards"))));
+		fire_arc(((chance == 1) ? GF_CHAOS : 
+			  ((chance == 2) ? GF_DISENCHANT : 
+			   ((chance == 3) ? GF_SOUND : GF_SHARD))),
 			 dir, (plev / 10 + 1) * 65, 10, 40);
 	    }
-	    o_ptr->timeout = randint0(50) + 50;
 	    return TRUE;
 	}
     case EF_DRAGON_POWER:
@@ -2552,7 +2549,6 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		msg_print("You breathe the elements.");
 		fire_arc(GF_ALL, dir, (plev / 10 + 1) * 75, 10, 40);
 	    }
-	    o_ptr->timeout = randint0(50) + 50;
 	    return TRUE;
 	}
 
@@ -2561,35 +2557,30 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	{
 	    fire_ball(GF_ACID, dir, 45 + 3 * plev / 2, 3, FALSE);
 	    (void) inc_timed(TMD_OPP_ACID, randint1(20) + 20, TRUE);
-	    o_ptr->timeout = randint0(100) + 50;
 	    return TRUE;
 	}
     case EF_RING_ELEC:
 	{
 	    fire_ball(GF_ELEC, dir, 45 + 3 * plev / 2, 3, FALSE);
 	    (void) inc_timed(TMD_OPP_ELEC, randint1(20) + 20, TRUE);
-	    o_ptr->timeout = randint0(100) + 50;
 	    return TRUE;
 	}
     case EF_RING_FIRE:
 	{
 	    fire_ball(GF_FIRE, dir, 45 + 3 * plev / 2, 3, FALSE);
 	    (void) inc_timed(TMD_OPP_FIRE, randint1(20) + 20, TRUE);
-	    o_ptr->timeout = randint0(100) + 50;
 	    return TRUE;
 	}
     case EF_RING_COLD:
 	{
 	    fire_ball(GF_COLD, dir, 45 + 3 * plev / 2, 3, FALSE);
 	    (void) inc_timed(TMD_OPP_COLD, randint1(20) + 20, TRUE);
-	    o_ptr->timeout = randint0(100) + 50;
 	    return TRUE;
 	}
     case EF_RING_POIS:
 	{
 	    fire_ball(GF_POIS, dir, 45 + 3 * plev / 2, 3, FALSE);
 	    (void) inc_timed(TMD_OPP_POIS, randint1(20) + 20, TRUE);
-	    o_ptr->timeout = randint0(100) + 50;
 	    return TRUE;
 	}
 
@@ -2598,7 +2589,6 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_AMULET_ESCAPING:
 	{
 	    teleport_player(40, TRUE);
-	    o_ptr->timeout = randint0(40) + 40;
 	    return TRUE;
 	}
 
@@ -2610,940 +2600,863 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
 	    msg_print("You become a fierce Lion.");
 	    shapechange(SHAPE_LION);
-	    o_ptr->timeout = 200;
 	    return TRUE;
 	}
 
     case EF_AMULET_METAMORPH:
-	{
-	    /* Already changed */
-	    if (p_ptr->schange)
-		return TRUE;
-
-	    shapechange(randint1(MAX_SHAPE));
-	    o_ptr->timeout = 300;
+    {
+	/* Already changed */
+	if (p_ptr->schange)
 	    return TRUE;
-	}
+
+	shapechange(randint1(MAX_SHAPE));
+	return TRUE;
+    }
 
 
-	/* Activations for random artifacts, and available for use elsewhere. */
+    /* Activations for random artifacts, and available for use elsewhere. */
     case EF_RAND_FIRE1:
-	{
-	    msg_print("You launch a bolt of fire.");
-	    fire_bolt(GF_FIRE, dir, damroll(3 + plev / 8, 8));
-	    o_ptr->timeout = randint0(7) + 7;
-	    return TRUE;
-	}
+    {
+	msg_print("You launch a bolt of fire.");
+	fire_bolt(GF_FIRE, dir, damroll(3 + plev / 8, 8));
+	return TRUE;
+    }
     case EF_RAND_FIRE2:
-	{
-	    msg_print("You feel a sphere of fire form between your hands.");
-	    fire_sphere(GF_FIRE, dir, 90, 1, 20);
-	    o_ptr->timeout = 250;
-	    return TRUE;
-	}
+    {
+	msg_print("You feel a sphere of fire form between your hands.");
+	fire_sphere(GF_FIRE, dir, 90, 1, 20);
+	return TRUE;
+    }
     case EF_RAND_FIRE3:
-	{
-	    msg_print("The fires of Anor rise in wrath!");
-	    fire_sphere(GF_FIRE, 0, 150, 5, 20);
-	    o_ptr->timeout = 600;
-	    return TRUE;
-	}
+    {
+	msg_print("The fires of Anor rise in wrath!");
+	fire_sphere(GF_FIRE, 0, 150, 5, 20);
+	return TRUE;
+    }
     case EF_RAND_COLD1:
-	{
-	    msg_print("You launch a bolt of frost.");
-	    fire_bolt(GF_COLD, dir, damroll(3 + plev / 8, 8));
-	    o_ptr->timeout = randint0(7) + 7;
-	    return TRUE;
-	}
+    {
+	msg_print("You launch a bolt of frost.");
+	fire_bolt(GF_COLD, dir, damroll(3 + plev / 8, 8));
+	return TRUE;
+    }
     case EF_RAND_COLD2:
-	{
-	    msg_print("You hurl a sphere of killing frost.");
-	    fire_sphere(GF_COLD, dir, 90, 1, 20);
-	    o_ptr->timeout = 250;
-	    return TRUE;
-	}
+    {
+	msg_print("You hurl a sphere of killing frost.");
+	fire_sphere(GF_COLD, dir, 90, 1, 20);
+	return TRUE;
+    }
     case EF_RAND_COLD3:
-	{
-	    msg_print("A wild Northland frost storms uncontrollably!");
-	    fire_sphere(GF_COLD, 0, 150, 5, 20);
-	    o_ptr->timeout = 600;
-	    return TRUE;
-	}
+    {
+	msg_print("A wild Northland frost storms uncontrollably!");
+	fire_sphere(GF_COLD, 0, 150, 5, 20);
+	return TRUE;
+    }
     case EF_RAND_ACID1:
-	{
-	    msg_print("You launch a bolt of acid.");
-	    fire_bolt(GF_ACID, dir, damroll(3 + plev / 8, 8));
-	    o_ptr->timeout = randint0(7) + 7;
-	    return TRUE;
-	}
+    {
+	msg_print("You launch a bolt of acid.");
+	fire_bolt(GF_ACID, dir, damroll(3 + plev / 8, 8));
+	return TRUE;
+    }
     case EF_RAND_ACID2:
-	{
-	    msg_print("A sphere of deadly acid forms upon your hand.");
-	    fire_sphere(GF_ACID, dir, 90, 1, 20);
-	    o_ptr->timeout = 250;
-	    return TRUE;
-	}
+    {
+	msg_print("A sphere of deadly acid forms upon your hand.");
+	fire_sphere(GF_ACID, dir, 90, 1, 20);
+	return TRUE;
+    }
     case EF_RAND_ACID3:
-	{
-	    msg_print("A tornado of acid melts armour and flesh!");
-	    fire_sphere(GF_ACID, 0, 160, 3, 20);
-	    o_ptr->timeout = 600;
-	    return TRUE;
-	}
+    {
+	msg_print("A tornado of acid melts armour and flesh!");
+	fire_sphere(GF_ACID, 0, 160, 3, 20);
+	return TRUE;
+    }
     case EF_RAND_ELEC1:
-	{
-	    msg_print("You launch a bolt of electricity.");
-	    fire_bolt(GF_ELEC, dir, damroll(3 + plev / 8, 8));
-	    o_ptr->timeout = randint0(7) + 7;
-	    return TRUE;
-	}
+    {
+	msg_print("You launch a bolt of electricity.");
+	fire_bolt(GF_ELEC, dir, damroll(3 + plev / 8, 8));
+	return TRUE;
+    }
     case EF_RAND_ELEC2:
-	{
-	    msg_print("You summon ball lightning to your aid.");
-	    fire_sphere(GF_ELEC, dir, 90, 1, 20);
-	    o_ptr->timeout = 250;
-	    return TRUE;
-	}
+    {
+	msg_print("You summon ball lightning to your aid.");
+	fire_sphere(GF_ELEC, dir, 90, 1, 20);
+	return TRUE;
+    }
     case EF_RAND_ELEC3:
-	{
-	    msg_print("A massive stroke of lightning smites the ground!");
-	    fire_sphere(GF_ELEC, 0, 130, 2, 20);
-	    msg_print("Boom!");
-	    fire_sphere(GF_SOUND, 0, 25, 9, 20);
-	    o_ptr->timeout = 600;
-	    return TRUE;
-	}
+    {
+	msg_print("A massive stroke of lightning smites the ground!");
+	fire_sphere(GF_ELEC, 0, 130, 2, 20);
+	msg_print("Boom!");
+	fire_sphere(GF_SOUND, 0, 25, 9, 20);
+	return TRUE;
+    }
     case EF_RAND_POIS1:
-	{
-	    msg_print("You launch a poison dart.");
-	    fire_bolt(GF_POIS, dir, damroll(3 + plev / 10, 8));
-	    o_ptr->timeout = randint0(22) + 22;
-	    return TRUE;
-	}
+    {
+	msg_print("You launch a poison dart.");
+	fire_bolt(GF_POIS, dir, damroll(3 + plev / 10, 8));
+	return TRUE;
+    }
     case EF_RAND_POIS2:
-	{
-	    msg_print("Deadly gases blanket the area.");
-	    fire_sphere(GF_POIS, 0, 110, 9, 30);
-	    o_ptr->timeout = 300;
-	    return TRUE;
-	}
+    {
+	msg_print("Deadly gases blanket the area.");
+	fire_sphere(GF_POIS, 0, 110, 9, 30);
+	return TRUE;
+    }
     case EF_RAND_LIGHT1:
-	{
-	    msg_print("You throw a radiant sphere...");
-	    TARGET_PRESERVE fire_ball(GF_LIGHT, dir, 50, 0, FALSE);
-	    TARGET_RESTORE fire_ball(GF_CONFUSION, dir, 10, 0, FALSE);
-	    o_ptr->timeout = 250;
-	    return TRUE;
-	}
+    {
+	TARGET_DECLARE
+	msg_print("You throw a radiant sphere...");
+	TARGET_PRESERVE fire_ball(GF_LIGHT, dir, 50, 0, FALSE);
+	TARGET_RESTORE fire_ball(GF_CONFUSION, dir, 10, 0, FALSE);
+	return TRUE;
+    }
     case EF_RAND_LIGHT2:
-	{
-	    msg_print("You bathe the area in radiant light!");
-	    dispel_light_hating(175);
-	    o_ptr->timeout = 600;
-	    return TRUE;
-	}
+    {
+	msg_print("You bathe the area in radiant light!");
+	dispel_light_hating(175);
+	return TRUE;
+    }
     case EF_RAND_DISPEL_UNDEAD:
-	{
-	    msg_print("A tide of life surrounds you!");
-	    (void) dispel_undead(100);
-	    o_ptr->timeout = 300;
-	    return TRUE;
-	}
+    {
+	msg_print("A tide of life surrounds you!");
+	(void) dispel_undead(100);
+	return TRUE;
+    }
     case EF_RAND_DISPEL_EVIL:
-	{
-	    msg_print("A wave of goodness washes over you...");
-	    (void) dispel_evil(100);
+    {
+	msg_print("A wave of goodness washes over you...");
+	(void) dispel_evil(100);
 
-	    if (player_has(PF_EVIL)) {
-		msg_print("Your black soul is hit!");
-		take_hit(25, "struck down by Good");
-	    }
-	    o_ptr->timeout = 400;
-	    return TRUE;
+	if (player_has(PF_EVIL)) {
+	    msg_print("Your black soul is hit!");
+	    take_hit(25, "struck down by Good");
 	}
+	return TRUE;
+    }
     case EF_RAND_SMITE_UNDEAD:
-	{
-	    msg_print("Spells to dispel an undead antagonist surround you...");
-	    dispel_an_undead(dir, damroll(plev / 4, 33));
-	    o_ptr->timeout = 200;
-	    return TRUE;
-	}
+    {
+	msg_print("Spells to dispel an undead antagonist surround you...");
+	dispel_an_undead(dir, damroll(plev / 4, 33));
+	return TRUE;
+    }
     case EF_RAND_SMITE_DEMON:
-	{
-	    msg_print("Spells to dispel a demonic adversary surround you...");
-	    dispel_a_demon(dir, damroll(plev / 4, 33));
-	    o_ptr->timeout = 200;
-	    return TRUE;
-	}
+    {
+	msg_print("Spells to dispel a demonic adversary surround you...");
+	dispel_a_demon(dir, damroll(plev / 4, 33));
+	return TRUE;
+    }
     case EF_RAND_SMITE_DRAGON:
-	{
-	    msg_print("Spells to dispel a dragonic foe surround you...");
-	    dispel_a_dragon(dir, damroll(plev / 4, 33));
-	    o_ptr->timeout = 200;
-	    return TRUE;
-	}
+    {
+	msg_print("Spells to dispel a dragonic foe surround you...");
+	dispel_a_dragon(dir, damroll(plev / 4, 33));
+	return TRUE;
+    }
     case EF_RAND_HOLY_ORB:
-	{
-	    msg_print("A cleansing ball materializes on your fingertips.");
-	    fire_sphere(GF_HOLY_ORB, dir, 60, 1, 20);
-	    o_ptr->timeout = 175;
-	    return TRUE;
-	}
+    {
+	msg_print("A cleansing ball materializes on your fingertips.");
+	fire_sphere(GF_HOLY_ORB, dir, 60, 1, 20);
+	return TRUE;
+    }
     case EF_RAND_BLESS:
-	{
-	    msg_print("You feel blessed for battle.");
-	    if (!p_ptr->timed[TMD_BLESSED]) {
-		(void) inc_timed(TMD_BLESSED, randint1(24) + 24, TRUE);
-	    } else {
-		(void) inc_timed(TMD_BLESSED, randint1(12) + 12, TRUE);
-	    }
-	    o_ptr->timeout = 200;
-	    return TRUE;
+    {
+	msg_print("You feel blessed for battle.");
+	if (!p_ptr->timed[TMD_BLESSED]) {
+	    (void) inc_timed(TMD_BLESSED, randint1(24) + 24, TRUE);
+	} else {
+	    (void) inc_timed(TMD_BLESSED, randint1(12) + 12, TRUE);
 	}
+	return TRUE;
+    }
     case EF_RAND_FRIGHTEN_ALL:
-	{
-	    msg_print("You reveal yourself in wrath; your enemies tremble!");
-	    (void) fear_monsters((3 * plev / 2) + 5);
-	    o_ptr->timeout = randint0(120) + 120;
-	    return TRUE;
-	}
+    {
+	msg_print("You reveal yourself in wrath; your enemies tremble!");
+	(void) fear_monsters((3 * plev / 2) + 5);
+	return TRUE;
+    }
     case EF_RAND_HEAL1:
-	{
-	    (void) hp_player(damroll(5, 20));
-	    (void) dec_timed(TMD_CUT, 5, TRUE);
-	    (void) dec_timed(TMD_POISONED, 5, TRUE);
-	    o_ptr->timeout = 85;
-	    return TRUE;
-	}
+    {
+	(void) hp_player(damroll(5, 20));
+	(void) dec_timed(TMD_CUT, 5, TRUE);
+	(void) dec_timed(TMD_POISONED, 5, TRUE);
+	return TRUE;
+    }
     case EF_RAND_HEAL2:
-	{
-	    (void) hp_player(damroll(7, 40));
-	    (void) dec_timed(TMD_CUT, p_ptr->timed[TMD_CUT] / 2 + 5, TRUE);
-	    (void) dec_timed(TMD_POISONED, p_ptr->timed[TMD_POISONED] / 2 + 5,
-			     TRUE);
-	    o_ptr->timeout = 225;
-	    return TRUE;
-	}
+    {
+	(void) hp_player(damroll(7, 40));
+	(void) dec_timed(TMD_CUT, p_ptr->timed[TMD_CUT] / 2 + 5, TRUE);
+	(void) dec_timed(TMD_POISONED, p_ptr->timed[TMD_POISONED] / 2 + 5,
+			 TRUE);
+	return TRUE;
+    }
     case EF_RAND_HEAL3:
-	{
-	    (void) hp_player(damroll(10, 60));
-	    (void) clear_timed(TMD_CUT, TRUE);
-	    (void) clear_timed(TMD_POISONED, TRUE);
-	    o_ptr->timeout = 500;
-	    return TRUE;
-	}
+    {
+	(void) hp_player(damroll(10, 60));
+	(void) clear_timed(TMD_CUT, TRUE);
+	(void) clear_timed(TMD_POISONED, TRUE);
+	return TRUE;
+    }
     case EF_RAND_CURE:
-	{
-	    msg_print("Tender hands massage your hurts away.");
-	    (void) clear_timed(TMD_BLIND, TRUE);
-	    (void) clear_timed(TMD_POISONED, TRUE);
-	    (void) clear_timed(TMD_CONFUSED, TRUE);
-	    (void) clear_timed(TMD_STUN, TRUE);
-	    (void) clear_timed(TMD_CUT, TRUE);
-	    (void) do_res_stat(A_CON);
-	    o_ptr->timeout = 500;
-	    return TRUE;
-	}
+    {
+	msg_print("Tender hands massage your hurts away.");
+	(void) clear_timed(TMD_BLIND, TRUE);
+	(void) clear_timed(TMD_POISONED, TRUE);
+	(void) clear_timed(TMD_CONFUSED, TRUE);
+	(void) clear_timed(TMD_STUN, TRUE);
+	(void) clear_timed(TMD_CUT, TRUE);
+	(void) do_res_stat(A_CON);
+	return TRUE;
+    }
     case EF_RAND_PROT_FROM_EVIL:
-	{
-	    msg_print("A shrill wail surrounds you.");
+    {
+	msg_print("A shrill wail surrounds you.");
 
-	    if (!p_ptr->timed[TMD_PROTEVIL]) {
-		(void) inc_timed(TMD_PROTEVIL, randint1(24) + 24, TRUE);
-	    } else {
-		(void) inc_timed(TMD_PROTEVIL, randint1(30), TRUE);
-	    }
-	    msg_print("You feel somewhat safer.");
-	    o_ptr->timeout = 250;
-	    return TRUE;
+	if (!p_ptr->timed[TMD_PROTEVIL]) {
+	    (void) inc_timed(TMD_PROTEVIL, randint1(24) + 24, TRUE);
+	} else {
+	    (void) inc_timed(TMD_PROTEVIL, randint1(30), TRUE);
 	}
+	msg_print("You feel somewhat safer.");
+	return TRUE;
+    }
     case EF_RAND_CHAOS:
-	{
-	    msg_print("You unleash the powers of Unmaking!");
-	    fire_ball(GF_CHAOS, dir, randint1(320), 2, FALSE);
-	    o_ptr->timeout = 600;
-	    return TRUE;
-	}
+    {
+	msg_print("You unleash the powers of Unmaking!");
+	fire_ball(GF_CHAOS, dir, randint1(320), 2, FALSE);
+	return TRUE;
+    }
     case EF_RAND_SHARD_SOUND:
-	{
-	    msg_print("You invoke the powers of Law...");
-	    if (randint1(2) == 1) {
-		msg_print
-		    ("...and razor-sharp obsidian chips hail upon your foes!");
-		fire_ball(GF_SHARD, dir, 150, 4, FALSE);
-	    } else {
-		msg_format("...and an awful cacophony shakes %s!",
-			   locality_name[stage_map[p_ptr->stage][LOCALITY]]);
-		fire_ball(GF_SOUND, dir, 150, 4, FALSE);
-	    }
-	    o_ptr->timeout = 600;
-	    return TRUE;
-	}
-    case EF_RAND_NETHR:
-	{
-	    msg_print("You cast a gleaming orb of midnight hue!");
-	    fire_sphere(GF_NETHER, dir, 100, 1, 20);
-	    o_ptr->timeout = 400;
-	    return TRUE;
-	}
-    case EF_RAND_LINE_LIGHT:
-	{
-	    msg_print("A line of shimmering yellow light appears.");
-	    light_line(dir);
-	    o_ptr->timeout = 6 + randint1(6);
-	    return TRUE;
-	}
-    case EF_RAND_STARLIGHT:
-	{
-	    msg_print("Light radiates outward in all directions.");
-	    for (k = 0; k < 8; k++)
-		light_line(ddd[k]);
-	    o_ptr->timeout = 8 + randint1(8);
-	    return TRUE;
-	}
-    case EF_RAND_EARTHQUAKE:
-	{
-	    msg_print("You strike the floor, and the earth crumbles!");
-	    earthquake(p_ptr->py, p_ptr->px, 10, FALSE);
-	    o_ptr->timeout = 40 + randint1(40);
-	    return TRUE;
-	}
-    case EF_RAND_SPEED:
-	{
-	    msg_print("All around you move with dreamlike slowness.");
-	    if (!p_ptr->timed[TMD_FAST]) {
-		(void) set_timed(TMD_FAST, randint1(20) + 20, FALSE);
-	    } else {
-		(void) set_timed(TMD_FAST, 5, FALSE);
-	    }
-	    o_ptr->timeout = randint0(120) + 120;
-	    return TRUE;
-	}
-    case EF_RAND_TELEPORT_AWAY:
-	{
-	    msg_print("You weave a pattern of rejection and denial.");
-	    (void) teleport_monster(dir, 55 + (plev / 2));
-	    o_ptr->timeout = 110;
-	    return TRUE;
-	}
-    case EF_RAND_HEROISM:
-	{
-	    msg_print("A thrilling battle song awakes the warrior within you!");
-	    (void) hp_player(10);
-	    (void) clear_timed(TMD_AFRAID, TRUE);
-	    (void) inc_timed(TMD_HERO, randint1(25) + 25, TRUE);
-	    o_ptr->timeout = 200;
-	    return TRUE;
-	}
-    case EF_RAND_STORM_DANCE:
-	{
-	    msg_print("Wild music plays, and you dance up a storm...");
-	    fire_sphere(GF_SOUND, 0, 24, 8, 20);
-	    fire_sphere(GF_SHARD, 0, 32, 8, 20);
-	    fire_sphere(GF_CONFUSION, 0, 8, 8, 20);
-
-	    if (randint1(2) == 1) {
-		msg_print("Your wild movements exhaust you!");
-		take_hit(damroll(1, 12), "danced to death");
-	    }
-	    o_ptr->timeout = 300;
-	    return TRUE;
-	}
-    case EF_RAND_RESIST_ELEMENTS:
-	{
-	    msg_print("Quadricolored magics swirl around you protectingly.");
-	    (void) inc_timed(TMD_OPP_ACID, randint1(20) + 20, TRUE);
-	    (void) inc_timed(TMD_OPP_ELEC, randint1(20) + 20, TRUE);
-	    (void) inc_timed(TMD_OPP_FIRE, randint1(20) + 20, TRUE);
-	    (void) inc_timed(TMD_OPP_COLD, randint1(20) + 20, TRUE);
-	    o_ptr->timeout = 400;
-	    return TRUE;
-	}
-    case EF_RAND_RESIST_ALL:
-	{
-	    msg_print("Penticolored magics swirl around you protectingly.");
-	    (void) inc_timed(TMD_OPP_ACID, randint1(20) + 20, TRUE);
-	    (void) inc_timed(TMD_OPP_ELEC, randint1(20) + 20, TRUE);
-	    (void) inc_timed(TMD_OPP_FIRE, randint1(20) + 20, TRUE);
-	    (void) inc_timed(TMD_OPP_COLD, randint1(20) + 20, TRUE);
-	    (void) inc_timed(TMD_OPP_POIS, randint1(20) + 20, TRUE);
-	    o_ptr->timeout = 400;
-	    return TRUE;
-	}
-    case EF_RAND_TELEPORT1:
-	{
-	    msg_print("You pass through a transparent gateway...");
-	    teleport_player(30, TRUE);
-	    o_ptr->timeout = 10 + randint1(10);
-	    return TRUE;
-	}
-    case EF_RAND_TELEPORT2:
-	{
-	    msg_print("Time and space twist about you...");
-	    teleport_player(200, TRUE);
-	    o_ptr->timeout = 80;
-	    return TRUE;
-	}
-    case EF_RAND_RECALL:
-	{
-	    if (!word_recall(randint0(20) + 15))
-		return TRUE;
-	    o_ptr->timeout = 350;
-	    return TRUE;
-	}
-    case EF_RAND_REGAIN:
-	{
-	    msg_print("Surrounded by darkness, you envoke light and beauty.");
-	    msg_print("Your spirit regains its natural vitality.");
-
-	    (void) restore_level();
-	    o_ptr->timeout = 800;
-	    return TRUE;
-	}
-    case EF_RAND_RESTORE:
-	{
+    {
+	msg_print("You invoke the powers of Law...");
+	if (randint1(2) == 1) {
 	    msg_print
-		("A multicolored mist surounds you, restoring body and mind.");
-	    (void) do_res_stat(A_STR);
-	    (void) do_res_stat(A_INT);
-	    (void) do_res_stat(A_WIS);
-	    (void) do_res_stat(A_DEX);
-	    (void) do_res_stat(A_CON);
-	    (void) do_res_stat(A_CHR);
-	    o_ptr->timeout = 800;
-	    return TRUE;
+		("...and razor-sharp obsidian chips hail upon your foes!");
+	    fire_ball(GF_SHARD, dir, 150, 4, FALSE);
+	} else {
+	    msg_format("...and an awful cacophony shakes %s!",
+		       locality_name[stage_map[p_ptr->stage][LOCALITY]]);
+	    fire_ball(GF_SOUND, dir, 150, 4, FALSE);
 	}
+	return TRUE;
+    }
+    case EF_RAND_NETHR:
+    {
+	msg_print("You cast a gleaming orb of midnight hue!");
+	fire_sphere(GF_NETHER, dir, 100, 1, 20);
+	return TRUE;
+    }
+    case EF_RAND_LINE_LIGHT:
+    {
+	msg_print("A line of shimmering yellow light appears.");
+	light_line(dir);
+	return TRUE;
+    }
+    case EF_RAND_STARLIGHT:
+    {
+	msg_print("Light radiates outward in all directions.");
+	for (k = 0; k < 8; k++)
+	    light_line(ddd[k]);
+	return TRUE;
+    }
+    case EF_RAND_EARTHQUAKE:
+    {
+	msg_print("You strike the floor, and the earth crumbles!");
+	earthquake(p_ptr->py, p_ptr->px, 10, FALSE);
+	return TRUE;
+    }
+    case EF_RAND_SPEED:
+    {
+	msg_print("All around you move with dreamlike slowness.");
+	if (!p_ptr->timed[TMD_FAST]) {
+	    (void) set_timed(TMD_FAST, randint1(20) + 20, FALSE);
+	} else {
+	    (void) set_timed(TMD_FAST, 5, FALSE);
+	}
+	return TRUE;
+    }
+    case EF_RAND_TELEPORT_AWAY:
+    {
+	msg_print("You weave a pattern of rejection and denial.");
+	(void) teleport_monster(dir, 55 + (plev / 2));
+	return TRUE;
+    }
+    case EF_RAND_HEROISM:
+    {
+	msg_print("A thrilling battle song awakes the warrior within you!");
+	(void) hp_player(10);
+	(void) clear_timed(TMD_AFRAID, TRUE);
+	(void) inc_timed(TMD_HERO, randint1(25) + 25, TRUE);
+	return TRUE;
+    }
+    case EF_RAND_STORM_DANCE:
+    {
+	msg_print("Wild music plays, and you dance up a storm...");
+	fire_sphere(GF_SOUND, 0, 24, 8, 20);
+	fire_sphere(GF_SHARD, 0, 32, 8, 20);
+	fire_sphere(GF_CONFUSION, 0, 8, 8, 20);
+
+	if (randint1(2) == 1) {
+	    msg_print("Your wild movements exhaust you!");
+	    take_hit(damroll(1, 12), "danced to death");
+	}
+	return TRUE;
+    }
+    case EF_RAND_RESIST_ELEMENTS:
+    {
+	msg_print("Quadricolored magics swirl around you protectingly.");
+	(void) inc_timed(TMD_OPP_ACID, randint1(20) + 20, TRUE);
+	(void) inc_timed(TMD_OPP_ELEC, randint1(20) + 20, TRUE);
+	(void) inc_timed(TMD_OPP_FIRE, randint1(20) + 20, TRUE);
+	(void) inc_timed(TMD_OPP_COLD, randint1(20) + 20, TRUE);
+	return TRUE;
+    }
+    case EF_RAND_RESIST_ALL:
+    {
+	msg_print("Penticolored magics swirl around you protectingly.");
+	(void) inc_timed(TMD_OPP_ACID, randint1(20) + 20, TRUE);
+	(void) inc_timed(TMD_OPP_ELEC, randint1(20) + 20, TRUE);
+	(void) inc_timed(TMD_OPP_FIRE, randint1(20) + 20, TRUE);
+	(void) inc_timed(TMD_OPP_COLD, randint1(20) + 20, TRUE);
+	(void) inc_timed(TMD_OPP_POIS, randint1(20) + 20, TRUE);
+	return TRUE;
+    }
+    case EF_RAND_TELEPORT1:
+    {
+	msg_print("You pass through a transparent gateway...");
+	teleport_player(30, TRUE);
+	return TRUE;
+    }
+    case EF_RAND_TELEPORT2:
+    {
+	msg_print("Time and space twist about you...");
+	teleport_player(200, TRUE);
+	return TRUE;
+    }
+    case EF_RAND_RECALL:
+    {
+	if (!word_recall(randint0(20) + 15))
+	    return TRUE;
+	return TRUE;
+    }
+    case EF_RAND_REGAIN:
+    {
+	msg_print("Surrounded by darkness, you envoke light and beauty.");
+	msg_print("Your spirit regains its natural vitality.");
+
+	(void) restore_level();
+	return TRUE;
+    }
+    case EF_RAND_RESTORE:
+    {
+	msg_print
+	    ("A multicolored mist surounds you, restoring body and mind.");
+	(void) do_res_stat(A_STR);
+	(void) do_res_stat(A_INT);
+	(void) do_res_stat(A_WIS);
+	(void) do_res_stat(A_DEX);
+	(void) do_res_stat(A_CON);
+	(void) do_res_stat(A_CHR);
+	return TRUE;
+    }
     case EF_RAND_SHIELD:
-	{
-	    msg_print("Magics coalesce to form a shimmering barrier.");
-	    if (!p_ptr->timed[TMD_SHIELD]) {
-		(void) inc_timed(TMD_SHIELD, randint1(25) + 25, TRUE);
-	    } else {
-		(void) inc_timed(TMD_SHIELD, randint1(15) + 15, TRUE);
-	    }
-	    o_ptr->timeout = 400;
-	    return TRUE;
+    {
+	msg_print("Magics coalesce to form a shimmering barrier.");
+	if (!p_ptr->timed[TMD_SHIELD]) {
+	    (void) inc_timed(TMD_SHIELD, randint1(25) + 25, TRUE);
+	} else {
+	    (void) inc_timed(TMD_SHIELD, randint1(15) + 15, TRUE);
 	}
+	return TRUE;
+    }
 
     case EF_RAND_SUPER_SHOOTING:
-	{
-	    /* Get the correct name for the missile, if possible. */
-	    missile_name = "missile";
-	    if ((o_ptr->sval == SV_LIGHT_XBOW)
-		|| (o_ptr->sval == SV_HEAVY_XBOW))
-		missile_name = "bolt";
-	    if ((o_ptr->sval == SV_LONG_BOW) || (o_ptr->sval == SV_LONG_BOW))
-		missile_name = "arrow";
-	    if (o_ptr->sval == SV_SLING)
-		missile_name = "shot";
+    {
+	char *missile_name;
+	object_type *o_ptr = &p_ptr->inventory[INVEN_BOW];
 
-	    msg_format
-		("The %s you have ready to hand gleams with deadly power.",
-		 missile_name);
-	    p_ptr->special_attack |= (ATTACK_SUPERSHOT);
-	    o_ptr->timeout = 200 + randint1(200);
+	/* Get the correct name for the missile, if possible. */
+	missile_name = "missile";
+	if ((o_ptr->sval == SV_LIGHT_XBOW)
+	    || (o_ptr->sval == SV_HEAVY_XBOW))
+	    missile_name = "bolt";
+	if ((o_ptr->sval == SV_LONG_BOW) || (o_ptr->sval == SV_LONG_BOW))
+	    missile_name = "arrow";
+	if (o_ptr->sval == SV_SLING)
+	    missile_name = "shot";
 
-	    /* Redraw the state */
-	    p_ptr->redraw |= (PR_STATUS);
+	msg_format
+	    ("The %s you have ready to hand gleams with deadly power.",
+	     missile_name);
+	p_ptr->special_attack |= (ATTACK_SUPERSHOT);
+	    
+	/* Redraw the state */
+	p_ptr->redraw |= (PR_STATUS);
 
-	    return TRUE;
-	}
+	return TRUE;
+    }
     case EF_RAND_DETECT_MONSTERS:
-	{
-	    msg_print("You search for monsters.");
-	    (void) detect_monsters_normal(DETECT_RAD_DEFAULT, TRUE);
-	    o_ptr->timeout = 4 + randint1(4);
-	    return TRUE;
-	}
+    {
+	msg_print("You search for monsters.");
+	(void) detect_monsters_normal(DETECT_RAD_DEFAULT, TRUE);
+	return TRUE;
+    }
     case EF_RAND_DETECT_EVIL:
-	{
-	    msg_print("You hunt for evil creatures...");
-	    (void) detect_monsters_evil(DETECT_RAD_DEFAULT, TRUE);
-	    o_ptr->timeout = 4 + randint1(4);
-	    return TRUE;
-	}
+    {
+	msg_print("You hunt for evil creatures...");
+	(void) detect_monsters_evil(DETECT_RAD_DEFAULT, TRUE);
+	return TRUE;
+    }
     case EF_RAND_DETECT_ALL:
-	{
-	    msg_print("You sense the area around you.");
-	    detect_all(DETECT_RAD_DEFAULT, TRUE);
-	    o_ptr->timeout = 30 + randint1(30);
-	    return TRUE;
-	}
+    {
+	msg_print("You sense the area around you.");
+	detect_all(DETECT_RAD_DEFAULT, TRUE);
+	return TRUE;
+    }
     case EF_RAND_MAGIC_MAP:
-	{
-	    msg_print
-		("A mental image of your surroundings is fixed in your mind.");
-	    map_area(0, 0, FALSE);
-	    o_ptr->timeout = 30 + randint1(30);
-	    return TRUE;
-	}
+    {
+	msg_print
+	    ("A mental image of your surroundings is fixed in your mind.");
+	map_area(0, 0, FALSE);
+	return TRUE;
+    }
     case EF_RAND_DETECT_D_S_T:
-	{
-	    /* Hack - 'show' effected region only with the first detect */
-	    msg_print("The secrets of traps and doors are revealed.");
-	    (void) detect_traps(DETECT_RAD_DEFAULT, TRUE);
-	    (void) detect_doors(DETECT_RAD_DEFAULT, FALSE);
-	    (void) detect_stairs(DETECT_RAD_DEFAULT, FALSE);
-	    o_ptr->timeout = 10 + randint1(10);
-	    return TRUE;
-	}
+    {
+	/* Hack - 'show' effected region only with the first detect */
+	msg_print("The secrets of traps and doors are revealed.");
+	(void) detect_traps(DETECT_RAD_DEFAULT, TRUE);
+	(void) detect_doors(DETECT_RAD_DEFAULT, FALSE);
+	(void) detect_stairs(DETECT_RAD_DEFAULT, FALSE);
+	return TRUE;
+    }
     case EF_RAND_CONFU_FOE:
-	{
-	    msg_print("You chant runes of confusing...");
-	    if (confuse_monster(dir, 5 * plev / 3))
-		msg_print("...which utterly baffle your foe!");
-	    o_ptr->timeout = 250;
-	    return TRUE;
-	}
+    {
+	msg_print("You chant runes of confusing...");
+	if (confuse_monster(dir, 5 * plev / 3))
+	    msg_print("...which utterly baffle your foe!");
+	return TRUE;
+    }
     case EF_RAND_SLEEP_FOE:
-	{
-	    msg_print("A fine dust appears in your hand, and you throw it...");
-	    if (sleep_monster(dir, 5 * plev / 3))
-		msg_print("...sending a foe to the realm of dreams!");
-	    o_ptr->timeout = 250;
-	    return TRUE;
-	}
+    {
+	msg_print("A fine dust appears in your hand, and you throw it...");
+	if (sleep_monster(dir, 5 * plev / 3))
+	    msg_print("...sending a foe to the realm of dreams!");
+	return TRUE;
+    }
     case EF_RAND_TURN_FOE:
-	{
-	    msg_print("You lock eyes with an enemy...");
-	    if (fear_monster(dir, 5 * plev / 3))
-		msg_print("...and break his courage!");
-	    o_ptr->timeout = 250;
-	    return TRUE;
-	}
+    {
+	msg_print("You lock eyes with an enemy...");
+	if (fear_monster(dir, 5 * plev / 3))
+	    msg_print("...and break his courage!");
+	return TRUE;
+    }
     case EF_RAND_SLOW_FOE:
-	{
-	    msg_print("You focus on the mind of an opponent...");
-	    if (slow_monster(dir, 5 * plev / 3))
-		msg_print("...and sap his strength!");
-	    o_ptr->timeout = 250;
-	    return TRUE;
-	}
+    {
+	msg_print("You focus on the mind of an opponent...");
+	if (slow_monster(dir, 5 * plev / 3))
+	    msg_print("...and sap his strength!");
+	return TRUE;
+    }
     case EF_RAND_BANISH_EVIL:
-	{
-	    msg_print("A mighty hand drives your foes from you!");
-	    (void) banish_evil(80);
-	    o_ptr->timeout = 400;
-	    return TRUE;
-	}
+    {
+	msg_print("A mighty hand drives your foes from you!");
+	(void) banish_evil(80);
+	return TRUE;
+    }
     case EF_RAND_DISARM:
-	{
-	    msg_print("You feel skilled hands guiding your disarming.");
-	    (void) disarm_trap(dir);
-	    o_ptr->timeout = 7 + randint1(7);
-	    return TRUE;
-	}
+    {
+	msg_print("You feel skilled hands guiding your disarming.");
+	(void) disarm_trap(dir);
+	return TRUE;
+    }
     case EF_RAND_CONFU_FOES:
-	{
-	    msg_print("You intone a bewildering hex...");
-	    if (confu_monsters(3 * plev / 2))
-		msg_print("...which utterly baffles your foes!");
-	    o_ptr->timeout = 300;
-	    return TRUE;
-	}
+    {
+	msg_print("You intone a bewildering hex...");
+	if (confu_monsters(3 * plev / 2))
+	    msg_print("...which utterly baffles your foes!");
+	return TRUE;
+    }
     case EF_RAND_SLEEP_FOES:
-	{
-	    msg_print("Soft, soothing music washes over you..");
-	    if (sleep_monsters(3 * plev / 2))
-		msg_print("...and sends your enemies to sleep!");
-	    o_ptr->timeout = 300;
-	    return TRUE;
-	}
+    {
+	msg_print("Soft, soothing music washes over you..");
+	if (sleep_monsters(3 * plev / 2))
+	    msg_print("...and sends your enemies to sleep!");
+	return TRUE;
+    }
     case EF_RAND_TURN_FOES:
-	{
-	    msg_print("You reveal yourself in wrath; your enemies tremble!");
-	    (void) fear_monsters(3 * plev / 2);
-	    o_ptr->timeout = 300;
-	    return TRUE;
-	}
+    {
+	msg_print("You reveal yourself in wrath; your enemies tremble!");
+	(void) fear_monsters(3 * plev / 2);
+	return TRUE;
+    }
     case EF_RAND_SLOW_FOES:
-	{
-	    msg_print("An opaque cloud blankets the area...");
-	    if (slow_monsters(3 * plev / 2))
-		msg_print
-		    ("...and dissipates, along with your opponents' strength!");
-	    else
-		msg_print("...and dissipates without effect.");
-	    o_ptr->timeout = 300;
-	    return TRUE;
-	}
+    {
+	msg_print("An opaque cloud blankets the area...");
+	if (slow_monsters(3 * plev / 2))
+	    msg_print
+		("...and dissipates, along with your opponents' strength!");
+	else
+	    msg_print("...and dissipates without effect.");
+	return TRUE;
+    }
 
-	/* Activations for rings of power */
+    /* Activations for rings of power */
     case EF_ACID_BLAST:
-	{
-	    /* Acid, confusion, fear */
-	    msg_print("A blast of corrosion strikes your foes!");
-	    fire_sphere(GF_ACID, 0, randint1(100) + 100, 5, 20);
-	    (void) confu_monsters(100);
-	    (void) fear_monsters(100);
+    {
+	/* Acid, confusion, fear */
+	msg_print("A blast of corrosion strikes your foes!");
+	fire_sphere(GF_ACID, 0, randint1(100) + 100, 5, 20);
+	(void) confu_monsters(100);
+	(void) fear_monsters(100);
 
-	    o_ptr->timeout = 1500;
-	    return TRUE;
-	}
+	return TRUE;
+    }
     case EF_CHAIN_LIGHTNING:
-	{
-	    int strikes = 2 + randint1(10);
-	    int y, x, target;
-	    int targ_y, targ_x;
-	    int cur_y = p_ptr->py, cur_x = p_ptr->px, cur_mon = -1;
-	    int flag = PROJECT_STOP | PROJECT_KILL;
-	    int avail_mon[100], avail_mon_num;
+    {
+	int strikes = 2 + randint1(10);
+	int y, x, target;
+	int targ_y, targ_x;
+	int cur_y = p_ptr->py, cur_x = p_ptr->px, cur_mon = -1;
+	int flag = PROJECT_STOP | PROJECT_KILL;
+	int avail_mon[100], avail_mon_num;
 
-	    msg_print("The lightning of Manwe leaps from your hands!");
+	msg_print("The lightning of Manwe leaps from your hands!");
 
-	    /* Initialise */
-	    for (i = 0; i < 100; i++)
-		avail_mon[i] = 0;
-	    targ_y = cur_y;
-	    targ_x = cur_x;
+	/* Initialise */
+	for (k = 0; k < 100; k++)
+	    avail_mon[k] = 0;
+	targ_y = cur_y;
+	targ_x = cur_x;
 
-	    /* Start striking */
-	    for (i = 0; i < strikes; i++) {
-		/* No targets yet */
-		avail_mon_num = 0;
+	/* Start striking */
+	for (k = 0; k < strikes; k++) {
+	    /* No targets yet */
+	    avail_mon_num = 0;
 
-		/* Find something in range */
-		for (y = cur_y - 5; y <= cur_y + 5; y++)
-		    for (x = cur_x - 5; x <= cur_x + 5; x++) {
-			int dist = distance(cur_y, cur_x, y, x);
-
-			/* Skip distant grids */
-			if (dist > 5)
-			    continue;
-
-			/* Skip grids that are out of bounds */
-			if (!in_bounds_fully(y, x))
-			    continue;
-
-			/* Skip grids that are not projectable */
-			if (projectable(cur_y, cur_x, y, x, flag) !=
-			    PROJECT_CLEAR)
-			    continue;
-
-			/* Skip grids with no monster (including player) */
-			if (!cave_m_idx[y][x])
-			    continue;
-
-			/* Record the monster */
-			avail_mon[avail_mon_num++] = cave_m_idx[y][x];
-		    }
-
-		/* Maybe we're at a dead end */
-		if (!avail_mon_num)
-		    return TRUE;
-
-		/* Pick a target... */
-		target = randint0(avail_mon_num);
-		if (avail_mon[target] == -1) {
-		    targ_y = p_ptr->py;
-		    targ_x = p_ptr->px;
-		} else {
-		    targ_y = m_list[avail_mon[target]].fy;
-		    targ_x = m_list[avail_mon[target]].fx;
-		}
-
-		/* Paranoia */
-		if (!cave_m_idx[targ_y][targ_x])
-		    return TRUE;
-
-		/* ...and hit it */
-		project(cur_mon, 1, targ_y, targ_x, damroll(30, 4), GF_ELEC,
-			flag, 0, 0);
-
-		/* Set current monster (may be dead) */
-		cur_y = targ_y;
-		cur_x = targ_x;
-		cur_mon = avail_mon[target];
-	    }
-
-	    o_ptr->timeout = 2000;
-	    return TRUE;
-	}
-    case EF_LAVA_POOL:
-	{
-	    int y, x;
-	    int py = p_ptr->py, px = p_ptr->px;
-
-	    msg_print("Lava wells around you!");
-
-	    /* Everything in range */
-	    for (y = py - 7; y <= py + 7; y++)
-		for (x = px - 7; x <= px + 7; x++) {
-		    int dist = distance(py, px, y, x);
-		    feature_type *f_ptr = &f_info[cave_feat[y][x]];
+	    /* Find something in range */
+	    for (y = cur_y - 5; y <= cur_y + 5; y++)
+		for (x = cur_x - 5; x <= cur_x + 5; x++) {
+		    int dist = distance(cur_y, cur_x, y, x);
 
 		    /* Skip distant grids */
-		    if (dist > 7)
+		    if (dist > 5)
 			continue;
 
 		    /* Skip grids that are out of bounds */
 		    if (!in_bounds_fully(y, x))
 			continue;
 
-		    /* Skip grids that are permanent */
-		    if (tf_has(f_ptr->flags, TF_PERMANENT))
+		    /* Skip grids that are not projectable */
+		    if (projectable(cur_y, cur_x, y, x, flag) != PROJECT_CLEAR)
 			continue;
 
-		    /* Skip grids in vaults */
-		    if (cave_info[y][x] & CAVE_ICKY)
+		    /* Skip grids with no monster (including player) */
+		    if (!cave_m_idx[y][x])
 			continue;
 
-		    /* Lava now */
-		    cave_set_feat(y, x, FEAT_LAVA);
+		    /* Record the monster */
+		    avail_mon[avail_mon_num++] = cave_m_idx[y][x];
 		}
 
-	    o_ptr->timeout = 2000;
-	    return TRUE;
+	    /* Maybe we're at a dead end */
+	    if (!avail_mon_num)
+		return TRUE;
+
+	    /* Pick a target... */
+	    target = randint0(avail_mon_num);
+	    if (avail_mon[target] == -1) {
+		targ_y = p_ptr->py;
+		targ_x = p_ptr->px;
+	    } else {
+		targ_y = m_list[avail_mon[target]].fy;
+		targ_x = m_list[avail_mon[target]].fx;
+	    }
+
+	    /* Paranoia */
+	    if (!cave_m_idx[targ_y][targ_x])
+		return TRUE;
+
+	    /* ...and hit it */
+	    project(cur_mon, 1, targ_y, targ_x, damroll(30, 4), GF_ELEC,
+		    flag, 0, 0);
+
+	    /* Set current monster (may be dead) */
+	    cur_y = targ_y;
+	    cur_x = targ_x;
+	    cur_mon = avail_mon[target];
 	}
+
+	return TRUE;
+    }
+    case EF_LAVA_POOL:
+    {
+	int y, x;
+	int py = p_ptr->py, px = p_ptr->px;
+
+	msg_print("Lava wells around you!");
+
+	/* Everything in range */
+	for (y = py - 7; y <= py + 7; y++)
+	    for (x = px - 7; x <= px + 7; x++) {
+		int dist = distance(py, px, y, x);
+		feature_type *f_ptr = &f_info[cave_feat[y][x]];
+
+		/* Skip distant grids */
+		if (dist > 7)
+		    continue;
+
+		/* Skip grids that are out of bounds */
+		if (!in_bounds_fully(y, x))
+		    continue;
+
+		/* Skip grids that are permanent */
+		if (tf_has(f_ptr->flags, TF_PERMANENT))
+		    continue;
+
+		/* Skip grids in vaults */
+		if (cave_info[y][x] & CAVE_ICKY)
+		    continue;
+
+		/* Lava now */
+		cave_set_feat(y, x, FEAT_LAVA);
+	    }
+
+	return TRUE;
+    }
     case EF_ICE_WHIRLPOOL:
-	{
-	    /* Unleash a whirlpool. */
-	    msg_print("A howling vortex of ice rises in wrath around you.");
-	    fire_sphere(GF_ICE, 0, randint1(100) + 100, 5, 10);
+    {
+	/* Unleash a whirlpool. */
+	msg_print("A howling vortex of ice rises in wrath around you.");
+	fire_sphere(GF_ICE, 0, randint1(100) + 100, 5, 10);
 
-	    /* Whisk around and slow the nearby monsters. */
-	    fire_ball(GF_AWAY_ALL, 0, 12, 6, FALSE);
-	    slow_monsters(50);
+	/* Whisk around and slow the nearby monsters. */
+	fire_ball(GF_AWAY_ALL, 0, 12, 6, FALSE);
+	slow_monsters(50);
 
-	    o_ptr->timeout = 1000;
-	    return TRUE;
-	}
+	return TRUE;
+    }
     case EF_GROW_FOREST:
-	{
-	    msg_print("A leafy forest surrounds you!");
-	    grow_trees_and_grass(TRUE);
-	    o_ptr->timeout = 2000;
-	    return TRUE;
-	}
+    {
+	msg_print("A leafy forest surrounds you!");
+	grow_trees_and_grass(TRUE);
+	return TRUE;
+    }
     case EF_RESTORE_AND_ENHANCE:
-	{
-	    msg_print("You feel life flow through your body!");
-	    restore_level();
-	    (void) clear_timed(TMD_POISONED, TRUE);
-	    (void) clear_timed(TMD_BLIND, TRUE);
-	    (void) clear_timed(TMD_CONFUSED, TRUE);
-	    (void) clear_timed(TMD_IMAGE, TRUE);
-	    (void) clear_timed(TMD_STUN, TRUE);
-	    (void) clear_timed(TMD_CUT, TRUE);
-	    (void) do_res_stat(A_STR);
-	    (void) do_res_stat(A_CON);
-	    (void) do_res_stat(A_DEX);
-	    (void) do_res_stat(A_WIS);
-	    (void) do_res_stat(A_INT);
-	    (void) do_res_stat(A_CHR);
-	    hp_player(2000);
-	    if (p_ptr->state.black_breath) {
-		msg_print("The hold of the Black Breath on you is broken!");
-	    }
-	    p_ptr->state.black_breath = FALSE;
-	    (void) clear_timed(TMD_AFRAID, TRUE);
-	    (void) inc_timed(TMD_HERO, randint1(25) + 25, TRUE);
-	    (void) inc_timed(TMD_SHERO, randint1(25) + 25, TRUE);
-	    (void) inc_timed(TMD_BLESSED, randint1(25) + 25, TRUE);
-	    (void) inc_timed(TMD_PROTEVIL, randint1(25) + 25, TRUE);
-	    o_ptr->timeout = 3000;
-	    return TRUE;
+    {
+	msg_print("You feel life flow through your body!");
+	restore_level();
+	(void) clear_timed(TMD_POISONED, TRUE);
+	(void) clear_timed(TMD_BLIND, TRUE);
+	(void) clear_timed(TMD_CONFUSED, TRUE);
+	(void) clear_timed(TMD_IMAGE, TRUE);
+	(void) clear_timed(TMD_STUN, TRUE);
+	(void) clear_timed(TMD_CUT, TRUE);
+	(void) do_res_stat(A_STR);
+	(void) do_res_stat(A_CON);
+	(void) do_res_stat(A_DEX);
+	(void) do_res_stat(A_WIS);
+	(void) do_res_stat(A_INT);
+	(void) do_res_stat(A_CHR);
+	hp_player(2000);
+	if (p_ptr->state.black_breath) {
+	    msg_print("The hold of the Black Breath on you is broken!");
 	}
+	p_ptr->state.black_breath = FALSE;
+	(void) clear_timed(TMD_AFRAID, TRUE);
+	(void) inc_timed(TMD_HERO, randint1(25) + 25, TRUE);
+	(void) inc_timed(TMD_SHERO, randint1(25) + 25, TRUE);
+	(void) inc_timed(TMD_BLESSED, randint1(25) + 25, TRUE);
+	(void) inc_timed(TMD_PROTEVIL, randint1(25) + 25, TRUE);
+	return TRUE;
+    }
     case EF_ZONE_OF_CHAOS:
-	{
-	    int y, x;
-	    int py = p_ptr->py, px = p_ptr->px;
+    {
+	int y, x;
+	int py = p_ptr->py, px = p_ptr->px;
 
-	    msg_print("The forces of chaos surround you!");
+	msg_print("The forces of chaos surround you!");
 
-	    /* Everything in range */
-	    for (y = py - 10; y <= py + 10; y++)
-		for (x = px - 10; x <= px + 10; x++) {
-		    int dist = distance(py, px, y, x);
+	/* Everything in range */
+	for (y = py - 10; y <= py + 10; y++)
+	    for (x = px - 10; x <= px + 10; x++) {
+		int dist = distance(py, px, y, x);
 
-		    /* Skip distant grids */
-		    if (dist > 10)
-			continue;
+		/* Skip distant grids */
+		if (dist > 10)
+		    continue;
 
-		    /* 20% chance */
-		    if (randint1(5) == 1)
-			continue;
+		/* 20% chance */
+		if (randint1(5) == 1)
+		    continue;
 
-		    /* Hit it */
-		    (void) fire_meteor(-1, GF_CHAOS, y, x, 50, 0, FALSE);
-		}
+		/* Hit it */
+		(void) fire_meteor(-1, GF_CHAOS, y, x, 50, 0, FALSE);
+	    }
 
-	    o_ptr->timeout = 3000;
-	    return TRUE;
-	}
+	return TRUE;
+    }
     case EF_PRESSURE_WAVE:
-	{
-	    msg_print("Your foes are thrown backward!");
-	    fire_ball(GF_FORCE, 0, 50, 20, FALSE);
+    {
+	msg_print("Your foes are thrown backward!");
+	fire_ball(GF_FORCE, 0, 50, 20, FALSE);
 
-	    o_ptr->timeout = 1500;
-	    return TRUE;
-	}
+	return TRUE;
+    }
     case EF_ENERGY_DRAIN:
-	{
-	    int y, x;
-	    int py = p_ptr->py, px = p_ptr->px;
-	    monster_type *m_ptr;
+    {
+	int y, x;
+	int py = p_ptr->py, px = p_ptr->px;
+	monster_type *m_ptr;
 
-	    msg_print
-		("Your foes slow, and you seem to have an eternity to act...");
+	msg_print
+	    ("Your foes slow, and you seem to have an eternity to act...");
 
-	    /* Everything in range */
-	    for (y = py - 5; y <= py + 5; y++)
-		for (x = px - 5; x <= px + 5; x++) {
-		    int dist = distance(py, px, y, x);
+	/* Everything in range */
+	for (y = py - 5; y <= py + 5; y++)
+	    for (x = px - 5; x <= px + 5; x++) {
+		int dist = distance(py, px, y, x);
 
-		    /* Skip distant grids */
-		    if (dist > 5)
-			continue;
+		/* Skip distant grids */
+		if (dist > 5)
+		    continue;
 
-		    /* Skip grids with no monster */
-		    if (cave_m_idx[y][x] <= 0)
-			continue;
+		/* Skip grids with no monster */
+		if (cave_m_idx[y][x] <= 0)
+		    continue;
 
-		    /* Skip grids without LOS */
-		    if (!player_has_los_bold(y, x))
-			continue;
+		/* Skip grids without LOS */
+		if (!player_has_los_bold(y, x))
+		    continue;
 
-		    /* Get the monster */
-		    m_ptr = &m_list[cave_m_idx[y][x]];
+		/* Get the monster */
+		m_ptr = &m_list[cave_m_idx[y][x]];
 
-		    /* Take the energy */
-		    p_ptr->energy += m_ptr->energy;
-		    m_ptr->energy = 0;
-		}
+		/* Take the energy */
+		p_ptr->energy += m_ptr->energy;
+		m_ptr->energy = 0;
+	    }
 
-	    o_ptr->timeout = 3000;
-	    return TRUE;
-	}
+	return TRUE;
+    }
     case EF_MASS_STASIS:
-	{
-	    msg_print("You command your foes to be still!");
-	    hold_all();
-	    o_ptr->timeout = 1000;
-	    return TRUE;
-	}
+    {
+	msg_print("You command your foes to be still!");
+	hold_all();
+	return TRUE;
+    }
     case EF_LIGHT_FROM_ABOVE:
-	{
-	    int y, x;
-	    int py = p_ptr->py, px = p_ptr->px;
+    {
+	int y, x;
+	int py = p_ptr->py, px = p_ptr->px;
 
-	    msg_print("The light of the Valar shines from above!");
+	msg_print("The light of the Valar shines from above!");
 
-	    /* Everything in range */
-	    for (y = py - 10; y <= py + 10; y++)
-		for (x = px - 10; x <= px + 10; x++) {
-		    int dist = distance(py, px, y, x);
+	/* Everything in range */
+	for (y = py - 10; y <= py + 10; y++)
+	    for (x = px - 10; x <= px + 10; x++) {
+		int dist = distance(py, px, y, x);
 
-		    /* Skip distant grids */
-		    if (dist > 10)
-			continue;
+		/* Skip distant grids */
+		if (dist > 10)
+		    continue;
 
-		    /* Skip grids with no monster */
-		    if (cave_m_idx[y][x] <= 0)
-			continue;
+		/* Skip grids with no monster */
+		if (cave_m_idx[y][x] <= 0)
+		    continue;
 
-		    /* Hit it */
-		    (void) fire_meteor(-1, GF_LIGHT, y, x, 100, 1, FALSE);
-		}
+		/* Hit it */
+		(void) fire_meteor(-1, GF_LIGHT, y, x, 100, 1, FALSE);
+	    }
 
-	    o_ptr->timeout = 1500;
-	    return TRUE;
-	}
+	return TRUE;
+    }
     case EF_MASS_POLYMORPH:
-	{
-	    msg_print("Reality warps...");
-	    poly_all(p_ptr->depth);
+    {
+	msg_print("Reality warps...");
+	poly_all(p_ptr->depth);
 
-	    o_ptr->timeout = 2500;
-	    return TRUE;
-	}
+	return TRUE;
+    }
     case EF_GRAVITY_WAVE:
-	{
-	    msg_print("Gravity crushes, then releases, your foes!");
-	    fire_ball(GF_GRAVITY, 0, 100, 20, FALSE);
+    {
+	msg_print("Gravity crushes, then releases, your foes!");
+	fire_ball(GF_GRAVITY, 0, 100, 20, FALSE);
 
-	    o_ptr->timeout = 2000;
-	    return TRUE;
-	}
+	return TRUE;
+    }
     case EF_ENLIST_EARTH:
-	{
-	    int m_idx, targ_y, targ_x, group;
-	    int targ = target_get_monster();
+    {
+	int m_idx, targ_y, targ_x, group;
+	int targ = target_get_monster();
 
-	    msg_print("You call on the Earth to bring forth allies!");
+	msg_print("You call on the Earth to bring forth allies!");
 
-	    /* Must target a monster */
-	    if (!get_aim_dir(&dir))
-		return FALSE;
-	    if (targ <= 0) {
-		msg_print("You must target a monster.");
-		return FALSE;
-	    }
-
-	    targ_y = m_list[targ].fy;
-	    targ_x = m_list[targ].fx;
-	    group = m_list[targ].group;
-
-	    /* Summon golems */
-	    summon_specific(targ_y, targ_x, FALSE, p_ptr->depth, SUMMON_GOLEM);
-
-	    /* Hack - make all local golems hostile to the target */
-	    for (m_idx = 0; m_idx < z_info->m_max; m_idx++) {
-		monster_type *m_ptr = &m_list[m_idx];
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-		if ((distance(targ_y, targ_x, m_ptr->fy, m_ptr->fx) < 7)
-		    && (r_ptr->d_char = 'g')
-		    && (!(rf_has(r_ptr->flags, RF_DRAGON))))
-		    m_ptr->hostile = targ;
-	    }
-
-	    o_ptr->timeout = 3000;
-	    return TRUE;
+	/* Must target a monster */
+	if (!get_aim_dir(&dir))
+	    return FALSE;
+	if (targ <= 0) {
+	    msg_print("You must target a monster.");
+	    return FALSE;
 	}
+
+	targ_y = m_list[targ].fy;
+	targ_x = m_list[targ].fx;
+	group = m_list[targ].group;
+
+	/* Summon golems */
+	summon_specific(targ_y, targ_x, FALSE, p_ptr->depth, SUMMON_GOLEM);
+
+	/* Hack - make all local golems hostile to the target */
+	for (m_idx = 0; m_idx < z_info->m_max; m_idx++) {
+	    monster_type *m_ptr = &m_list[m_idx];
+	    monster_race *r_ptr = &r_info[m_ptr->r_idx];
+
+	    if ((distance(targ_y, targ_x, m_ptr->fy, m_ptr->fx) < 7)
+		&& (r_ptr->d_char = 'g')
+		&& (!(rf_has(r_ptr->flags, RF_DRAGON))))
+		m_ptr->hostile = targ;
+	}
+
+	return TRUE;
+    }
     case EF_TELEPORT_ALL:
-	{
-	    teleport_all(80);
-	    o_ptr->timeout = 2000;
-	    return TRUE;
-	}
+    {
+	teleport_all(80);
+	return TRUE;
+    }
 
 
 
-	/* Activations for ego-items. */
+    /* Activations for ego-items. */
     case EF_BALROG_WHIP:
-	{
-	    /* A crude way to simulate a long-range melee blow... */
-	    msg_print("You lash out at a nearby foe.");
-	    fire_arc(GF_FIRE, dir, damroll(o_ptr->dd, o_ptr->ds), 2, 0);
-	    o_ptr->timeout = 0;
-	    return TRUE;
-	}
+    {
+	object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
 
-	/* Activation for magestaffs */
+	/* A crude way to simulate a long-range melee blow... */
+	msg_print("You lash out at a nearby foe.");
+	fire_arc(GF_FIRE, dir, damroll(o_ptr->dd, o_ptr->ds), 2, 0);
+	return TRUE;
+    }
+
+    /* Activation for magestaffs */
     case EF_MAGESTAFF:
-	{
-	    if (p_ptr->csp < p_ptr->msp) {
-		p_ptr->csp += 10;
-		if (p_ptr->csp > p_ptr->msp) {
-		    p_ptr->csp = p_ptr->msp;
-		    p_ptr->csp_frac = 0;
-		}
-		msg_print("Magical power flows from your staff.");
-		p_ptr->redraw |= (PR_MANA);
-		o_ptr->timeout = randint0(10) + 15;
+    {
+	if (p_ptr->csp < p_ptr->msp) {
+	    p_ptr->csp += 10;
+	    if (p_ptr->csp > p_ptr->msp) {
+		p_ptr->csp = p_ptr->msp;
+		p_ptr->csp_frac = 0;
 	    }
-	    return TRUE;
+	    msg_print("Magical power flows from your staff.");
+	    p_ptr->redraw |= (PR_MANA);
 	}
+	return TRUE;
+    }
 
 
 
     default:
-	{
-	    /* Mistake */
-	    msg_print("Oops.  Effect type unrecognized.");
-	    return FALSE;
-	}
+    {
+	/* Mistake */
+	msg_print("Oops.  Effect type unrecognized.");
+	return FALSE;
+    }
     }
 }

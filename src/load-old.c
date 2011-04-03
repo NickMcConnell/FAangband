@@ -406,15 +406,6 @@ static void rd_options(void)
 }
 
 
-
-
-
-
-
-
-
-
-
 /**
  * Read the saved messages
  */
@@ -470,8 +461,8 @@ static errr rd_savefile_new_aux(void)
 	msg_print(NULL);
     }
 
-    if (!get_check("Load your monster memory and then start a new character?"))
-	return (99);
+    if (!get_check("Load your monster and object memory and then start a new character?"))
+	return (-1);
   
     /* Strip the Angband version bytes */
     strip_bytes(4);
@@ -499,7 +490,7 @@ static errr rd_savefile_new_aux(void)
     if (tmp16u > z_info->r_max)
     {
 	note(format("Too many (%u) monster races!", tmp16u));
-	return (21);
+	return (-1);
     }
   
     /* Read the available records */
@@ -519,6 +510,42 @@ static errr rd_savefile_new_aux(void)
       
     }
   
+    /* Object Memory */
+    rd_u16b(&tmp16u);
+  
+    /* Incompatible save files */
+    if (tmp16u > z_info->k_max)
+    {
+	note(format("Too many (%u) object kinds!", tmp16u));
+	return (-1);
+    }
+  
+    /* Read the object memory */
+    for (i = 0; i < tmp16u; i++)
+    {
+	byte tmp8u;
+	int obj_index;
+      
+	object_kind *k_ptr;
+      
+	/* Object indexes changed in Oangband 0.3.6.  Convert old to new. */
+	obj_index = i;
+      
+      
+	/* Obtain the "kind" template */
+	k_ptr = &k_info[obj_index];
+      
+	rd_byte(&tmp8u);
+      
+	k_ptr->aware = (tmp8u & 0x01) ? TRUE: FALSE;
+	k_ptr->tried = (tmp8u & 0x02) ? TRUE: FALSE;
+	k_ptr->known_effect = (tmp8u & 0x04) ? TRUE: FALSE;
+	k_ptr->squelch = (tmp8u & 0x08) ? TRUE: FALSE;
+
+	rd_byte(&tmp8u);
+        
+	k_ptr->everseen = (tmp8u & 0x01) ? TRUE: FALSE;
+    }
   
     /* Hack - kill player */
     p_ptr->chp = -1;
@@ -531,9 +558,9 @@ static errr rd_savefile_new_aux(void)
 /**
  * Actually read the savefile
  */
-errr rd_savefile_old(void)
+int rd_savefile_old(void)
 {
-    errr err;
+    int err;
   
     /* The savefile is a binary file */
     safe_setuid_grab();

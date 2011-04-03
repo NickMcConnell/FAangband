@@ -19,6 +19,8 @@
 
 #include "angband.h"
 #include "cmds.h"
+#include "monster.h"
+#include "spells.h"
 #include "ui-menu.h"
 
 /**
@@ -92,10 +94,8 @@ static void show_display(menu_type * menu, int oid, bool cursor, int row,
 /**
 * Handle user input from a command menu
 */
-static bool show_action(menu_type * menu, ui_event_data * e, int oid)
+static bool show_action(menu_type * menu, const ui_event_data * e, int oid)
 {
-    u16b *choice = &menu->menu_data;
-
     /* Handle enter and mouse */
     if (e->type == EVT_SELECT) {
 	cmd_insert(comm_code[oid]);
@@ -375,7 +375,7 @@ void do_cmd_show_obj(void)
     /* See what's available */
     q = "Pick an item to use:";
     s = "You have no items to hand.";
-    if (!get_item(&item, q, s, (USE_INVEN | USE_EQUIP | USE_FLOOR)))
+    if (!get_item(&item, q, s, CMD_NULL, (USE_INVEN | USE_EQUIP | USE_FLOOR)))
 	return;
 
     /* Got it */
@@ -396,7 +396,7 @@ void do_cmd_show_obj(void)
     poss = 0;
 
     /* Describe the object */
-    object_desc(o_name, o_ptr, TRUE, 4);
+    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_FULL);
 
     /* Hack -- enforce max length */
     o_name[Term->wid - 3] = '\0';
@@ -475,7 +475,7 @@ void do_cmd_show_obj(void)
     }
 
     /* Activate equipment */
-    if ((o_ptr->activation) && (item >= INVEN_WIELD)) {
+    if ((o_ptr->effect) && (item >= INVEN_WIELD)) {
 	comm[poss] = 'A';
 	comm_code[poss] = CMD_ACTIVATE;
 	comm_descr[poss++] = "Activate";
@@ -582,98 +582,6 @@ void do_cmd_show_obj(void)
     /* Now set the item if valid */
     if (accepted)
 	cmd_set_arg_item(cmd_get_top(), 0, item);
-}
-
-/**
- * Mouse commands in general play - mostly just mimics a keypress
- */
-void handle_mousepress(int y, int x)
-{
-    int area, i;
-
-    /* Exit if the player doesn't want to use the mouse */
-    if (!OPT(mouse_buttons))
-	return;
-
-    /* Find out where we've clicked */
-    area = click_area(p_ptr->command_cmd_ex);
-
-    /* Hack - cancel the item testers */
-    item_tester_tval = 0;
-    item_tester_hook = NULL;
-
-    /* Click on player -NRM- */
-    if ((p_ptr->py == y) && (p_ptr->px == x)) {
-	show_player();
-    }
-
-    /* Click next to player */
-    else if ((ABS(p_ptr->py - y) <= 1) && (ABS(p_ptr->px - x) <= 1)) {
-	/* Get the direction */
-	for (i = 0; i < 10; i++)
-	    if ((ddx[i] == (x - p_ptr->px)) && (ddy[i] == (y - p_ptr->py)))
-		break;
-
-	/* Take it */
-	Term_keypress(I2D(i));
-    }
-
-    else {
-	switch (area) {
-	case MOUSE_MAP:
-	    {
-		if (p_ptr->timed[TMD_CONFUSED]) {
-		    p_ptr->command_dir =
-			mouse_dir(p_ptr->command_cmd_ex, FALSE);
-		    if (p_ptr->command_dir) {
-			cmd_insert(CMD_WALK);
-			cmd_set_arg_direction(cmd_get_top(), 0,
-					      p_ptr->command_dir);
-		    }
-		} else {
-		    do_cmd_pathfind(y, x);
-		}
-		break;
-	    }
-	case MOUSE_CHAR:
-	    {
-		Term_keypress('C');
-		break;
-	    }
-	case MOUSE_HP:
-	    {
-		Term_keypress('R');
-		break;
-	    }
-	case MOUSE_SP:
-	    {
-		Term_keypress('m');
-		break;
-	    }
-	case MOUSE_MESSAGE:
-	    {
-		Term_keypress(KTRL('P'));
-		break;
-	    }
-	case MOUSE_PLACE:
-	    {
-		if (p_ptr->depth)
-		    Term_keypress(KTRL('F'));
-		else
-		    Term_keypress('H');
-		break;
-	    }
-	case MOUSE_OBJECTS:
-	    {
-		do_cmd_show_obj();
-		break;
-	    }
-	default:
-	    {
-		bell("Illegal mouse area!");
-	    }
-	}
-    }
 }
 
 

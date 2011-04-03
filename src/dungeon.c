@@ -23,8 +23,17 @@
  */
 
 #include "angband.h"
-#include "z-file.h"
+#include "button.h"
+#include "cave.h"
 #include "cmds.h"
+#include "files.h"
+#include "game-event.h"
+#include "init.h"
+#include "monster.h"
+#include "tvalsval.h"
+#include "prefs.h"
+#include "spells.h"
+#include "target.h"
 
 
 
@@ -74,7 +83,7 @@ void init_artifacts(void)
            * This is a "normal" artifact. Notice we must skip
            * Morgoth's Crown and Hammer.
            */
-          else if (!(a_ptr->flags_kind & KF_INSTA_ART))
+          else if (!kf_has(a_ptr->flags_kind, KF_INSTA_ART))
             {
               if (loop == 1)
                 {
@@ -89,8 +98,8 @@ void init_artifacts(void)
       /* Allocate the lists the first time through */
       if (loop == 0)
         {
-          C_MAKE(artifact_normal, artifact_normal_cnt, int);
-          C_MAKE(artifact_special, artifact_special_cnt, int);
+          artifact_normal = C_ZNEW(artifact_normal_cnt, int);
+          artifact_special = C_ZNEW(artifact_special_cnt, int);
         }
     }
 }
@@ -177,42 +186,61 @@ static void regenmana(int percent)
  * If player has inscribed the object with "!!", let him know when it's 
  * recharged. -LM-
  */
-static void recharged_notice(object_type * o_ptr)
+static void recharged_notice(const object_type * o_ptr, bool all)
 {
     char o_name[120];
 
     cptr s;
 
-    /* No inscription */
-    if (!o_ptr->note)
-	return;
+    bool notify = FALSE;
 
-    /* Find a '!' */
-    s = strchr(quark_str(o_ptr->note), '!');
-
-    /* Process notification request. */
-    while (s) {
-	/* Find another '!' */
-	if (s[1] == '!') {
-	    /* Describe (briefly) */
-	    object_desc(o_name, o_ptr, FALSE, 0);
-
-	    /* Notify the player */
-	    if (o_ptr->number > 1)
-		msg_format("Your %s are recharged.", o_name);
-	    else
-		msg_format("Your %s is recharged.", o_name);
-
-	    /* Disturb the player */
-	    disturb(0, 0);
-
-	    /* Done. */
-	    return;
-	}
-
-	/* Keep looking for '!'s */
-	s = strchr(s + 1, '!');
+    if (OPT(notify_recharge))
+    {
+	notify = TRUE;
     }
+    else if (o_ptr->note)
+    {
+	/* Find a '!' */
+	s = strchr(quark_str(o_ptr->note), '!');
+
+	/* Process notification request */
+	while (s)
+	{
+	    /* Find another '!' */
+	    if (s[1] == '!')
+	    {
+		notify = TRUE;
+		break;
+	    }
+
+	    /* Keep looking for '!'s */
+	    s = strchr(s + 1, '!');
+	}
+    }
+
+    if (!notify) return;
+
+    /* Describe (briefly) */
+    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
+
+    /* Disturb the player */
+    disturb(0, 0);
+
+    /* Notify the player */
+    if (o_ptr->number > 1)
+    {
+	if (all) msg_format("Your %s have recharged.", o_name);
+	else msg_format("One of your %s has recharged.", o_name);
+    }
+
+    /* Artifacts */
+    else if (o_ptr->name1)
+    {
+	msg_format("The %s has recharged.", o_name);
+    }
+
+    /* Single, non-artifact items */
+    else msg_format("Your %s has recharged.", o_name);
 }
 
 /*
@@ -401,7 +429,7 @@ static void play_ambient_sound(void)
  */
 static void process_world(void)
 {
-    int i, j, temp;
+    int i, j;
 
     int regen_amount, mana_regen_amount, chance;
     int plev = p_ptr->lev;
@@ -752,7 +780,7 @@ static void process_world(void)
     }
 
     /* Afraid */
-    if (p_ptr->timed[TMD_AFRAID] && !(p_ptr->fear)) {
+    if (p_ptr->timed[TMD_AFRAID] && !(p_ptr->state.fear)) {
 	/* Maiar recover quickly from anything. */
 	if (divine)
 	    (void) dec_timed(TMD_AFRAID, 2, FALSE);
@@ -842,7 +870,7 @@ static void process_world(void)
 
     /* Poison */
     if (p_ptr->timed[TMD_POISONED]) {
-	int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + 1);
+	int adjust = (adj_con_fix[p_ptr->state.stat_ind[A_CON]] + 1);
 
 	/* Hobbits are sturdy. */
 	if (hardy)
@@ -858,7 +886,7 @@ static void process_world(void)
 
     /* Stun */
     if (p_ptr->timed[TMD_STUN]) {
-	int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + 1);
+	int adjust = (adj_con_fix[p_ptr->state.stat_ind[A_CON]] + 1);
 
 	/* Maiar recover quickly from anything. */
 	if (divine)
@@ -870,7 +898,7 @@ static void process_world(void)
 
     /* Cut */
     if (p_ptr->timed[TMD_CUT]) {
-	int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + 1);
+	int adjust = (adj_con_fix[p_ptr->state.stat_ind[A_CON]] + 1);
 
 	/* Hobbits are sturdy. */
 	if (hardy)
@@ -1052,14 +1080,14 @@ static void process_world(void)
     /* Random cuts */
     if ((p_ptr->state.rand_cuts) && (randint0(200) < 1)) {
 	/* Wound the player, usually notice */
-	if (inc_timed(TMD_CUT, 5 + randint0(10)))
+	if (inc_timed(TMD_CUT, 5 + randint0(10), TRUE))
 	    notice_curse(CF_CUT_RAND, 0);
     }
 
     /* Random bad cuts */
     if ((p_ptr->state.rand_cuts_bad) && (randint0(200) < 1)) {
 	/* Wound the player, usually notice */
-	if (inc_timed(TMD_CUT, 20 + randint0(30)))
+	if (inc_timed(TMD_CUT, 20 + randint0(30), TRUE))
 	    notice_curse(CF_CUT_RAND_BAD, 0);
     }
 
@@ -1268,7 +1296,7 @@ static void process_world(void)
 	int chance = 40;
 
 	/* After sufficient time, can learn about the level */
-	if ((randint0(80) < p_ptr->skill[SKILL_SEARCH])
+	if ((randint0(80) < p_ptr->state.skills[SKILL_SEARCH])
 	    && (randint0(80) < chance)) {
 	    /* Now have a feeling */
 	    do_feeling = TRUE;
@@ -1337,7 +1365,7 @@ static void process_player_aux(void)
 	    old_r_cast_spell = l_ptr->cast_spell;
 
 	    /* Redraw stuff */
-	    p_ptr->redraw |= (PP_MONSTER);
+	    p_ptr->redraw |= (PR_MONSTER);
 
 	    /* Window stuff */
 	    redraw_stuff();
@@ -1415,7 +1443,7 @@ static void process_player(void)
 {
     int i;
 
-    int temp_wakeup_chance;
+    u32b temp_wakeup_chance;
 
     byte feat = cave_feat[p_ptr->py][p_ptr->px];
     feature_type *f_ptr = &f_info[feat];
@@ -1494,8 +1522,6 @@ static void process_player(void)
     else
 	button_kill('g');
 
-    update_statusline();
-
 
   /*** Hack - handle special mana gain ***/
     special_mana_gain();
@@ -1540,7 +1566,7 @@ static void process_player(void)
 	else if (p_ptr->notice & PN_PICKUP)
 	{
 	    /* Recursively call the pickup function, use energy */
-	    p_ptr->energy_use = py_pickup(0) * 10;
+	    p_ptr->energy_use = py_pickup(0, p_ptr->py, p_ptr->px) * 10;
 	    if (p_ptr->energy_use > 100)
 		p_ptr->energy_use = 100;
 	    p_ptr->notice &= ~(PN_PICKUP);
@@ -1559,9 +1585,6 @@ static void process_player(void)
 
 	    /* Take a turn */
 	    p_ptr->energy_use = 100;
-
-	    /* Increment the resting counter */
-	    p_ptr->resting_turn++;
 	}
 
 	/* Running */
@@ -1714,7 +1737,7 @@ static void process_player(void)
      * Use the amount of extra (directed) noise the player has made 
      * this turn to calculate the total amount of ambiant noise.
      */
-    temp_wakeup_chance = p_ptr->base_wakeup_chance + add_wakeup_chance;
+    temp_wakeup_chance = p_ptr->state.base_wakeup_chance + add_wakeup_chance;
 
     /* People don't make much noise when resting. */
     if (p_ptr->resting)
@@ -1982,7 +2005,6 @@ static void dungeon(void)
     p_ptr->notice |= (PN_COMBINE | PN_REORDER | PN_SORT_QUIVER);
 
     /* Make basic mouse buttons */
-    normal_screen = TRUE;
     (void) button_add("[ESC]", ESCAPE);
     (void) button_add("[Ent]", '\r');
     (void) button_add("[Spc]", ' ');
@@ -2178,25 +2200,25 @@ static void process_some_user_pref_files(void)
     char buf[128];
 
     /* Process the "user.prf" file */
-    (void) process_pref_file("user.prf");
+    (void) process_pref_file("user.prf", TRUE);
 
     /* Access the "race" pref file */
     sprintf(buf, "%s.prf", rp_ptr->name);
 
     /* Process that file */
-    process_pref_file(buf);
+    process_pref_file(buf, TRUE);
 
     /* Access the "class" pref file */
     sprintf(buf, "%s.prf", cp_ptr->name);
 
     /* Process that file */
-    process_pref_file(buf);
+    process_pref_file(buf, TRUE);
 
     /* Process the "PLAYER.prf" file */
     sprintf(buf, "%s.prf", op_ptr->base_name);
 
     /* Process the "PLAYER.prf" file */
-    (void) process_pref_file(buf);
+    (void) process_pref_file(buf, TRUE);
 }
 
 /**
@@ -2213,7 +2235,7 @@ static void process_some_user_pref_files(void)
  */ 
 void play_game(void)
 {
-     bool existing_dead_save = FALSE;
+    bool existing_dead_save = FALSE;
 
     int i;
 
@@ -2241,17 +2263,34 @@ void play_game(void)
     /* Hack -- turn off the cursor */
     (void) Term_set_cursor(FALSE);
 
-    /* Attempt to load */
-    if (!load_player()) {
-	/* Oops */
-	quit("broken savefile");
+    /*** Try to load the savefile ***/
+
+    p_ptr->is_dead = TRUE;
+
+    if (savefile[0] && file_exists(savefile))
+    {
+	bool ok = old_load();
+	if (!ok) quit("broken savefile");
+
+	if (p_ptr->is_dead && arg_wizard)
+	{
+	    p_ptr->is_dead = FALSE;
+	    p_ptr->noscore |= NOSCORE_WIZARD;
+	}
+
+	else if (p_ptr->is_dead)
+	{
+	    existing_dead_save = TRUE;
+	}
+    }
+    else
+    {
+	existing_dead_save = TRUE;
     }
 
-    /* Nothing loaded */
-    if (!character_loaded) {
-	/* Reset RNG when dead-character savefile is loaded */
-	Rand_quick = TRUE;
-
+    /* No living character loaded */
+    if (p_ptr->is_dead)
+    {
 	/* Make new player */
 	new_game = TRUE;
 
@@ -2259,6 +2298,10 @@ void play_game(void)
 	character_dungeon = FALSE;
     }
 
+    /* Hack -- Default base_name */
+    if (!op_ptr->base_name[0])
+	my_strcpy(op_ptr->base_name, "PLAYER", sizeof(op_ptr->base_name));
+ 
     /* Init RNG */
     if (Rand_quick) {
 	u32b seed;
@@ -2306,7 +2349,7 @@ void play_game(void)
 	p_ptr->depth = stage_map[p_ptr->stage][DEPTH];
 
 	/* Read the default options */
-	process_pref_file("birth.prf");
+	process_pref_file("birth.prf", TRUE);
 
     }
 
@@ -2320,14 +2363,20 @@ void play_game(void)
 	process_player_name(TRUE);
     }
 
+    /* Stop the player being quite so dead */
+    p_ptr->is_dead = FALSE;
+
     /* Flash a message */
     prt("Please wait...", 0, 0);
+
+    /* Allow big cursor */
+    smlcurs = FALSE;
 
     /* Flush the message */
     Term_fresh();
 
 
-  /*** Prepare "vinfo" array ***/
+    /*** Prepare "vinfo" array ***/
 
     /* Used by "update_view()" - need birth options set as of FAangband 0.3.4 */
     (void) vinfo_init();
@@ -2342,15 +2391,12 @@ void play_game(void)
     /* Initialize the artifact allocation lists */
     init_artifacts();
 
-	/* Tell the UI we've started. */
-	event_signal(EVENT_ENTER_GAME);
+    /* Tell the UI we've started. */
+    event_signal(EVENT_ENTER_GAME);
 
     /* Redraw stuff */
     p_ptr->redraw |= (PR_INVEN | PR_EQUIP | PR_MESSAGE | PR_MONSTER);
     redraw_stuff();
-
-    /* Hack - load prefs properly */
-    reset_visuals(TRUE);
 
     /* Process some user pref files */
     process_some_user_pref_files();
@@ -2379,20 +2425,13 @@ void play_game(void)
     if (p_ptr->chp < 0)
 	p_ptr->is_dead = TRUE;
 
-    /* Verify the (possibly resized) panel */
-    verify_panel();
-
-    /* Update some stuff not stored in the savefile any more */
-    p_ptr->update |= (PU_UPDATE_VIEW);
-
-    /* Update stuff */
-    update_stuff();
-
     /* Process */
     while (TRUE) {
+	/* Play ambient sound on change of level. */
+	play_ambient_sound();
+
 	/* Process the level */
 	dungeon();
-
 
 	/* Notice stuff */
 	if (p_ptr->notice)
@@ -2405,11 +2444,6 @@ void play_game(void)
 	/* Redraw stuff */
 	if (p_ptr->redraw)
 	    redraw_stuff();
-
-	/* Window stuff */
-	if (p_ptr->window)
-	    window_stuff();
-
 
 	/* Cancel the target */
 	target_set_monster(0);
@@ -2426,9 +2460,9 @@ void play_game(void)
 	if (!p_ptr->playing && !p_ptr->is_dead)
 	    break;
 
-	/* Erase the old cave */
-	wipe_o_list();
-	wipe_m_list();
+	/* Erase the old cave
+	   wipe_o_list();
+	   wipe_m_list(); */
 
 	/* XXX XXX XXX */
 	msg_print(NULL);
@@ -2445,7 +2479,7 @@ void play_game(void)
 		p_ptr->age++;
 
 		/* Mark savefile */
-		p_ptr->noscore |= 0x0001;
+		p_ptr->noscore |= NOSCORE_WIZARD;
 
 		/* Message */
 		msg_print("You invoke wizard mode and cheat death.");
@@ -2480,7 +2514,7 @@ void play_game(void)
 		if (p_ptr->word_recall) {
 		    /* Message */
 		    msg_print("A tension leaves the air around you...");
-		    msg_print(NULL);
+		    message_flush();
 
 		    /* Hack -- Prevent recall */
 		    p_ptr->word_recall = 0;
@@ -2507,6 +2541,12 @@ void play_game(void)
 	/* Make a new level */
 	generate_cave();
     }
+
+    /* Disallow big cursor */
+    smlcurs = TRUE;
+
+    /* Tell the UI we're done with the game state */
+    event_signal(EVENT_LEAVE_GAME);
 
     /* Close stuff */
     close_game();

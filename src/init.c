@@ -115,7 +115,7 @@ static const char *player_info_flags[] =
 };
 
 static const char *effect_list[] = {
-#define EFFECT(x, y, r, z)    #x,
+#define EFFECT(x, y, r, z, w, v)    #x,
 #include "list-effects.h"
 #undef EFFECT
 };
@@ -2777,12 +2777,6 @@ static errr init_other(void)
     /* Flow arrays */
     cave_cost = C_ZNEW(DUNGEON_HGT, byte_wid);
     cave_when = C_ZNEW(DUNGEON_HGT, byte_wid);
-
-
-    /*** Prepare "vinfo" array ***/
-
-    /* Used by "update_view()" */
-    (void)vinfo_init();
 
 
     /*** Prepare entity arrays ***/

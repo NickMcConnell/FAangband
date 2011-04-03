@@ -20,7 +20,12 @@
  */
 
 #include "angband.h"
+#include "cave.h"
+#include "files.h"
+#include "monster.h"
+#include "spells.h"
 #include "squelch.h"
+#include "trap.h"
 
 /** 
  * Move house to the current town
@@ -452,7 +457,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 	}
 
 	/* Give the info */
-	msg_format("This level is home to %s.", r_name + r_ptr->name);
+	msg_format("This level is home to %s.", r_ptr->name);
     }
 
     /* Leaving */
@@ -1114,7 +1119,7 @@ static void chest_trap(int y, int x, s16b o_idx)
     if (trap & (CHEST_PARALYZE)) {
 	msg_print("A puff of yellow gas surrounds you!");
 	if (!p_ptr->state.free_act) {
-	    (void) inc_timed[TMD_PARALYZED, 10 + randint1(20));
+	    (void) inc_timed(TMD_PARALYZED, 10 + randint1(20), TRUE);
 	} else
 	    notice_obj(OF_FREE_ACT, 0);
     }
@@ -1230,12 +1235,12 @@ static void chest_trap(int y, int x, s16b o_idx)
 		if (randint0(6) == 0)
 		    take_hit(damroll(5, 20), "a chest dispel-player trap");
 		else if (randint0(5) == 0)
-		    (void) inc_timed(TMD_CUT, 200));
+		    (void) inc_timed(TMD_CUT, 200, TRUE);
 		else if (randint0(4) == 0) {
 		    if (!p_ptr->state.free_act)
-			(void) inc_timed(TMD_PARALYZED, 2 + randint0(6));
+			(void) inc_timed(TMD_PARALYZED, 2 + randint0(6), TRUE);
 		    else {
-			(void) inc_timed(TMD_STUN, 10 + randint0(100));
+			(void) inc_timed(TMD_STUN, 10 + randint0(100), TRUE);
 			notice_obj(OF_FREE_ACT, 0);
 		    }
 
@@ -1703,18 +1708,6 @@ void do_cmd_open(cmd_code code, cmd_arg args[])
 	o_idx = chest_check(y, x);
     }
 
-
-    /* Allow repeated command */
-    if (p_ptr->command_arg) {
-	/* Set repeat count */
-	p_ptr->command_rep = p_ptr->command_arg - 1;
-
-	/* Redraw the state */
-	p_ptr->redraw |= (PR_STATE);
-
-	/* Cancel the arg */
-	p_ptr->command_arg = 0;
-    }
 
     /* Monster */
     if (cave_m_idx[y][x] > 0) {
@@ -2462,7 +2455,7 @@ static bool do_cmd_bash_aux(int y, int x)
 
     /* Hack -- Bash power based on strength */
     /* (Ranges from 14 to 40 to 90 to 110) */
-    bash = 10 + adj_str_hold[p_ptr->stat_ind[A_STR]];
+    bash = 10 + adj_str_hold[p_ptr->state.stat_ind[A_STR]];
 
     /* Extract door power */
     temp = ((cave_feat[y][x] - FEAT_DOOR_HEAD) & 0x07);
@@ -2494,7 +2487,9 @@ static bool do_cmd_bash_aux(int y, int x)
     }
 
     /* Saving throw against stun */
-    else if (randint0(100) < adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev) {
+    else if (randint0(100) < adj_dex_safe[p_ptr->state.stat_ind[A_DEX]] + 
+	     p_ptr->lev) 
+    {
 	/* Message */
 	msg_print("The door holds firm.");
 
@@ -2508,7 +2503,7 @@ static bool do_cmd_bash_aux(int y, int x)
 	msg_print("You are off-balance.");
 
 	/* Hack -- Lose balance ala paralysis */
-	(void) inc_timed[TMD_PARALYZED, 2 + randint0(2), TRUE);
+	(void) inc_timed(TMD_PARALYZED, 2 + randint0(2), TRUE);
     }
 
     /* Result */
@@ -2562,13 +2557,15 @@ void do_cmd_bash(cmd_code code, cmd_arg args[])
     }
 
 
-   /* Monster */
-    if (cave_m_idx[y][x] > 0) {
+    /* Monster */
+    if (cave_m_idx[y][x] > 0) 
+    {
 	/* Message */
 	msg_print("There is a monster in the way!");
-
+	
 	/* Attack */
 	if (py_attack(y, x, TRUE))
+	    return;
     }
 
     /* Door */
@@ -2597,7 +2594,7 @@ void do_cmd_bash(cmd_code code, cmd_arg args[])
  * The "semantics" of this command must be chosen before the player
  * is confused, and it must be verified against the new grid.
  */
-void do_cmd_alter(int dir)
+void do_cmd_alter_aux(int dir)
 {
     int y, x;
 
@@ -2607,8 +2604,6 @@ void do_cmd_alter(int dir)
 
     monster_type *m_ptr;
     feature_type *f_ptr;
-
-    dir = args[0].direction;
 
     /* Get location */
     y = p_ptr->py + ddy[dir];
@@ -2649,7 +2644,7 @@ void do_cmd_alter(int dir)
      */
     else if ((player_has(PF_TRAP)) && (cave_trappable_bold(y, x))) {
 	/* Make sure not to repeat */
-	p_ptr->command_rep = 0;
+	cmd_set_repeat(0);
 
 	if (!py_set_trap(y, x))
 	    return;
@@ -2953,7 +2948,7 @@ void do_cmd_walk(cmd_code code, cmd_arg args[])
 	return;
 
     /* Move the player */
-    move_player(dir, pickup);
+    move_player(dir);
 }
 
 
@@ -3050,10 +3045,6 @@ void do_cmd_pathfind(cmd_code code, cmd_arg args[])
  */
 static void do_cmd_hold_or_stay(int pickup)
 {
-    int py = p_ptr->py;
-    int px = p_ptr->px;
-
-
     /* Take a turn */
     p_ptr->energy_use = 100;
 

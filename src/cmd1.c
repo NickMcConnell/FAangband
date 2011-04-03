@@ -436,7 +436,6 @@ byte py_pickup(int pickup, int y, int x)
     int can_pickup = 0;
     bool call_function_again = FALSE;
     bool blind = ((p_ptr->timed[TMD_BLIND]) || (no_light()));
-    bool do_ask = TRUE;
     bool msg = TRUE;
     bool telekinesis = (!(y == p_ptr->py) || !(x == p_ptr->px));
 
@@ -533,7 +532,7 @@ byte py_pickup(int pickup, int y, int x)
 		else if (blind)     p = "feel something on the floor";
 
 		/* Scan all marked objects in the grid */
-		floor_num = scan_floor(floor_list, N_ELEMENTS(floor_list), py, px, 0x03);
+		floor_num = scan_floor(floor_list, N_ELEMENTS(floor_list), y, x, 0x03);
 
 		/* Save screen */
 		screen_save();
@@ -575,8 +574,7 @@ byte py_pickup(int pickup, int y, int x)
     if (pickup == 1)
     {
 	/* Scan floor (again) */
-	floor_num = scan_floor(floor_list, N_ELEMENTS(floor_list), py, px, 
-			       0x03);
+	floor_num = scan_floor(floor_list, N_ELEMENTS(floor_list), y, x, 0x03);
 
 	/* Use a menu interface for multiple objects, or get single objects */
 	if (floor_num > 1)
@@ -626,7 +624,7 @@ byte py_pickup(int pickup, int y, int x)
 	/* Regular pickup or telekinesis with pack not full */
 	if (can_pickup) {
 	    /* Pick up the object */
-	    py_pickup_aux(this_o_idx);
+	    py_pickup_aux(this_o_idx, msg);
 	}
 	/* Telekinesis with pack full */
 	else {
@@ -676,7 +674,7 @@ void fall_off_cliff(void)
 	stage_map[p_ptr->stage][UP] = 0;
 	stage_map[256][DEPTH] = 0;
 
-	if (p_ptr->ffall) {
+	if (p_ptr->state.ffall) {
 	    notice_obj(OF_FEATHER, 0);
 	    dam = damroll(2, 8);
 	    (void) inc_timed(TMD_STUN, damroll(2, 8), TRUE);
@@ -695,7 +693,7 @@ void fall_off_cliff(void)
 	for (i = 0; i < 1; i = randint0(3)) {
 	    p_ptr->stage = stage_map[p_ptr->stage][SOUTH];
 	    p_ptr->depth++;
-	    if (p_ptr->ffall) {
+	    if (p_ptr->state.ffall) {
 		notice_obj(OF_FEATHER, 0);
 		dam = damroll(2, 8);
 		(void) inc_timed(TMD_STUN, damroll(2, 8), TRUE);
@@ -725,7 +723,7 @@ void fall_off_cliff(void)
 	    }
 
 	    /* Announce */
-	    msg_format("This level is home to %s.", r_name + r_ptr->name);
+	    msg_format("This level is home to %s.", r_ptr->name);
 	}
 
     }
@@ -743,7 +741,7 @@ void fall_off_cliff(void)
  * Note that this routine handles monsters in the destination grid,
  * and also handles attempting to move into walls/doors/etc.
  */
-void move_player(int dir, int do_pickup)
+void move_player(int dir)
 {
     int py = p_ptr->py;
     int px = p_ptr->px;
@@ -776,8 +774,8 @@ void move_player(int dir, int do_pickup)
 
     /* It takes some dexterity, or failing that, strength, to get out of pits. */
     if (cave_feat[p_ptr->py][p_ptr->px] == (FEAT_TRAP_HEAD + 0x01)) {
-	str_escape = adj_dex_dis[p_ptr->stat_ind[A_STR]];
-	dex_escape = adj_dex_dis[p_ptr->stat_ind[A_DEX]];
+	str_escape = adj_dex_dis[p_ptr->state.stat_ind[A_STR]];
+	dex_escape = adj_dex_dis[p_ptr->state.stat_ind[A_DEX]];
 
 	/* First attempt to leap out of the pit, */
 	if ((dex_escape + 1) * 2 < randint1(16)) {
@@ -878,11 +876,6 @@ void move_player(int dir, int do_pickup)
 		    can_move = TRUE;
 		else {
 		    player_is_crossing = dir;
-
-		    /* Automate 2nd movement command, if not disturbed. */
-		    p_ptr->command_cmd = 59;
-		    p_ptr->command_rep = 1;
-		    p_ptr->command_dir = dir;
 		}
 
 		break;
@@ -906,11 +899,6 @@ void move_player(int dir, int do_pickup)
 		    can_move = TRUE;
 		else {
 		    player_is_crossing = dir;
-
-		    /* Automate 2nd movement command, if not disturbed. */
-		    p_ptr->command_cmd = 59;
-		    p_ptr->command_rep = 1;
-		    p_ptr->command_dir = dir;
 		}
 
 		break;
@@ -957,7 +945,7 @@ void move_player(int dir, int do_pickup)
 		    can_move = TRUE;
 
 		    /* Feather fall makes one lightfooted. */
-		    if (p_ptr->ffall) {
+		    if (p_ptr->state.ffall) {
 			notice_obj(OF_FEATHER, 0);
 			temp = 49 + randint1(51);
 		    } else

@@ -1686,6 +1686,7 @@ static bool choose_type(object_type *o_ptr)
 		if (potential < 3000) break;
 
 		o_ptr->effect = EF_AMULET_METAMORPH;
+		o_ptr->time = {300, 0, 0, 0};
 		potential -= 2000;
 
 		done = TRUE;
@@ -1815,6 +1816,7 @@ static bool choose_type(object_type *o_ptr)
 		get_quality(TRUE, BRAND_ACID + element, 4, o_ptr);
 		get_quality(TRUE, RES_ACID + element, 6 - bonus, o_ptr);
 		o_ptr->effect = EF_RING_ACID + element;
+		o_ptr->time = {50, 1, 100, 0};
 
 		done = TRUE;
 		break;
@@ -2774,8 +2776,7 @@ static void j_remove_contradictory(object_type *o_ptr)
     of_on(o_ptr->flags_obj, OF_COLD_PROOF);
 }
 
-
-/** 
+/**
  * Design a ring or amulet.
  */
 bool design_ring_or_amulet(object_type *o_ptr, int lev)
@@ -2798,6 +2799,9 @@ bool design_ring_or_amulet(object_type *o_ptr, int lev)
   
   /* Remove contradictory powers. */
   j_remove_contradictory(o_ptr);
+
+  /* Add effect timeout */
+  effect_time(o_ptr->effect, o_ptr->time);
 
   return TRUE;
 }

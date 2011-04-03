@@ -58,7 +58,7 @@ extern const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER];
 #define OPT_xchars_to_file              15
 
 #define OPT_hp_changes_colour           16
-#define OPT_hilight_player		17
+#define OPT_highlight_player		17
 #define OPT_center_player		18
 #define OPT_show_piles                  19
 #define OPT_show_flavors		20
@@ -101,6 +101,9 @@ extern const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER];
 #define OPT_birth_small_device          (OPT_BIRTH+7)
 #define OPT_birth_dungeon               (OPT_BIRTH+8)
 #define OPT_birth_no_artifacts          (OPT_BIRTH+9)
+#define OPT_birth_no_stairs             (OPT_BIRTH+10)
+#define OPT_birth_ai_cheat              (OPT_BIRTH+11)
+#define OPT_birth_auto_scum             (OPT_BIRTH+12)
 
 #define OPT_cheat_peek                  (OPT_CHEAT+0)
 #define OPT_cheat_hear                  (OPT_CHEAT+1)
@@ -119,6 +122,9 @@ extern const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER];
 #define OPT_adult_small_device          (OPT_ADULT+7)
 #define OPT_adult_dungeon               (OPT_ADULT+8)
 #define OPT_adult_no_artifacts          (OPT_ADULT+9)
+#define OPT_adult_no_stairs             (OPT_ADULT+10)
+#define OPT_adult_ai_cheat              (OPT_ADULT+11)
+#define OPT_adult_auto_scum             (OPT_ADULT+12)
 
 #define OPT_score_peek                  (OPT_SCORE+0)
 #define OPT_score_hear                  (OPT_SCORE+1)

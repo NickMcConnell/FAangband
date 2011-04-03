@@ -22,7 +22,12 @@
 
 #include "angband.h"
 #include "button.h"
+#include "cave.h"
+#include "monster.h"
+#include "player.h"
+#include "spells.h"
 #include "squelch.h"
+#include "target.h"
 #include "ui-menu.h"
 
 
@@ -102,7 +107,7 @@ void do_cmd_equip(void)
 }
 
 
-bool need_two_hands(const object_type *o_ptr)
+bool needs_two_hands(const object_type *o_ptr)
 {
     int str_adjust = (o_ptr->weight / 50 > 8) ? 8 : (o_ptr->weight / 50);
 
@@ -110,7 +115,7 @@ bool need_two_hands(const object_type *o_ptr)
 	return TRUE;
     
     if (of_has(o_ptr->flags_obj, OF_TWO_HANDED_DES) && 
-	(p_ptr->stat_ind[A_STR] < 29 + str_adjust))
+	(p_ptr->state.stat_ind[A_STR] < 29 + str_adjust))
 	return TRUE;
 
     return FALSE;
@@ -130,6 +135,10 @@ void wield_item(object_type *o_ptr, int item, int slot)
 
     bool combine_quiver = FALSE;
     int num = 1;
+
+    bitflag f[OF_SIZE];
+
+    flags_init(f, OF_SIZE, OF_OBVIOUS_MASK, FLAG_END);
 
     /* If we are stacking things in the quiver */
     if (obj_is_quiver_obj(o_ptr))
@@ -243,11 +252,10 @@ void wield_item(object_type *o_ptr, int item, int slot)
 
     /* Notice dice, AC, jewellery sensation ID and other obvious stuff */
     notice_other((IF_DD_DS | IF_AC), slot + 1);
-    (void) of_inter(f, obvious_mask);
     of_union(o_ptr->id_obj, f);
-    if (is_armour(o_ptr) && k_ptr->to_h)
+    if (is_armour(o_ptr) && (k_info[o_ptr->k_idx].to_h.base))
 	notice_other(IF_TO_H, slot + 1);
-    }
+
 
     /* Average things are average */
     if ((o_ptr->feel == FEEL_AVERAGE) && (is_weapon(o_ptr) || is_armour(o_ptr)))
@@ -287,7 +295,7 @@ void wield_item(object_type *o_ptr, int item, int slot)
 
 	if (!(o_ptr->feel == feel)) {
 	    /* Get an object description */
-	    object_desc(o_name, o_ptr, FALSE, 0);
+	    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 
 	    msg_format("You feel the %s (%c) you are %s %s %s...", o_name,
 		       index_to_label(slot), describe_use(slot),
@@ -486,8 +494,9 @@ void textui_cmd_destroy(void)
 	    /* make it plural */
 	    i_ptr->number = 2;
 
-	    /* now describe with correct amount */
-	    object_desc(o_name2, i_ptr, FALSE, 0);
+	    /* Obtain plural form without a quantity */
+	    object_desc(o_name2, sizeof o_name2, o_ptr,
+			ODESC_BASE | ODESC_PLURAL);
 
 	    /* set to squelch */
 	    k_ptr->squelch = TRUE;
@@ -559,15 +568,12 @@ void do_cmd_locate(void)
 	/* Describe the location */
 	if ((y2 == y1) && (x2 == x1)) {
 	    tmp_val[0] = '\0';
-	} else {
-	    if (small_screen)
-		sprintf(tmp_val, " %s%s of",
-			((y2 < y1) ? "N" : (y2 > y1) ? "S" : ""),
-			((x2 < x1) ? "W" : (x2 > x1) ? "E" : ""));
-	    else
-		sprintf(tmp_val, "%s%s of",
-			((y2 < y1) ? " North" : (y2 > y1) ? " South" : ""),
-			((x2 < x1) ? " West" : (x2 > x1) ? " East" : ""));
+	} 
+	else 
+	{
+	    sprintf(tmp_val, "%s%s of",
+		    ((y2 < y1) ? " North" : (y2 > y1) ? " South" : ""),
+		    ((x2 < x1) ? " West" : (x2 > x1) ? " East" : ""));
 	}
 
 	/* Prepare to ask which way to look */
@@ -575,6 +581,15 @@ void do_cmd_locate(void)
 		"Map sector [%d(%02d),%d(%02d)], which is%s your sector.  Direction or ESC?",
 		    y2 / (SCREEN_HGT / 2), y2 % (SCREEN_HGT / 2),
 		    x2 / (SCREEN_WID / 2), x2 % (SCREEN_WID / 2), tmp_val);
+
+	/* More detail */
+	if (OPT(center_player))
+	{
+	    strnfmt(out_val, sizeof(out_val),
+		    "Map sector [%d(%02d),%d(%02d)], which is%s your sector.  Direction?",
+		    (y2 / PANEL_HGT), (y2 % PANEL_HGT),
+		    (x2 / PANEL_WID), (x2 % PANEL_WID), tmp_val);
+	}
 
 	/* Assume no direction */
 	dir = 0;
@@ -822,7 +837,6 @@ void do_cmd_query_symbol(void)
 	if (!get_string("Substring to search: ", search_str, 
 			sizeof(search_str)))
 	{
-	    free(who);
 	    return;
 	}
       
@@ -863,7 +877,7 @@ void do_cmd_query_symbol(void)
 
 	/* Collect "appropriate" monsters */
 	if (*search_str) {
-	    strncpy(monster_name, r_name + r_ptr->name, sizeof monster_name);
+	    strncpy(monster_name, r_ptr->name, sizeof monster_name);
 	    for (sp = monster_name; *sp; sp++)
 		*sp = tolower(*sp);
 	    if (strstr(monster_name, search_str))
@@ -968,7 +982,6 @@ void do_cmd_query_symbol(void)
 	    }
 
 	    button_add("-", '-');
-	    update_statusline();
 
 	    /* Command */
 	    query = inkey_ex();

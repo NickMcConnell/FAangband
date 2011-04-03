@@ -1324,6 +1324,20 @@ static int weight_limit(player_state *state)
     return (i);
 }
 
+/*
+ * Computes weight remaining before burdened.
+ */
+int weight_remaining()
+{
+    int i;
+
+    /* Weight limit based only on strength */
+    i = 60 * adj_str_wgt[p_ptr->state.stat_ind[A_STR]] - p_ptr->total_weight - 1;
+
+    /* Return the result */
+    return (i);
+}
+
 /** Calculate all class-based bonuses and penalties to melee Skill.  Oangband
  * recognizes that it takes a great deal of training to get critical hits with
  * a large, heavy weapon - training that many classes simply do not have the
@@ -3278,6 +3292,13 @@ void notice_stuff(void)
     if (p_ptr->notice & (PN_REORDER)) {
 	p_ptr->notice &= ~(PN_REORDER);
 	reorder_pack();
+    }
+
+    /* Sort the quiver */
+    if (p_ptr->notice & PN_SORT_QUIVER)
+    {
+	p_ptr->notice &= ~(PN_SORT_QUIVER);
+	sort_quiver();
     }
 }
 

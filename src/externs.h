@@ -113,7 +113,7 @@ extern s16b o_cnt;
 extern s16b m_max;
 extern s16b m_cnt;
 extern u16b group_id;
-extern s16b feeling;
+extern u16b feeling;
 extern s32b do_feeling;
 extern s16b rating;
 extern int player_uid;
@@ -295,7 +295,7 @@ extern int make_metric(int wgt);
 bool search(bool verbose);
 extern byte py_pickup(int pickup, int y, int x);
 extern void fall_off_cliff(void);
-extern void move_player(int dir, int do_pickup);
+extern void move_player(int dir);
 
 /* cmd2.c */
 /* XXX should probably be moved to cave.c? */
@@ -317,7 +317,7 @@ extern void destroy_level(bool new_level);
 extern void generate_cave(void);
 
 /* load.c */
-extern errr rd_savefile_old(void);
+extern bool old_load(void);
 
 /* monattk.c */
 extern bool make_attack_normal(monster_type *m_ptr, int y, int x);
@@ -414,12 +414,13 @@ extern char xchar_trans(byte c);
 extern void check_experience(void);
 extern void gain_exp(s32b amount);
 extern void lose_exp(s32b amount);
+bool word_recall(int v);
 int motion_dir(int y1, int x1, int y2, int x2);
 extern int target_dir(char ch);
 extern bool get_rep_dir(int *dp);
 extern bool confuse_dir(int *dp);
 extern void center_panel(void);
-extern bool change_panel(int dy, int dx);
+extern bool change_panel(int dir);
 extern void verify_panel(void);
 
 /* xtra3.c */
