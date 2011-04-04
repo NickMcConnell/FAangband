@@ -154,7 +154,7 @@ bool history_lose_artifact(byte a_idx)
  *
  * Return TRUE on success.
  */
-bool history_add_full(u16b type, byte a_idx, s16b dlev, s16b clev, s32b turn, const char *text)
+bool history_add_full(u16b type, byte a_idx, s16b place, s16b clev, s32b turn, const char *text)
 {
 	/* Allocate the history list if needed */
 	if (!history_list)
@@ -166,7 +166,7 @@ bool history_add_full(u16b type, byte a_idx, s16b dlev, s16b clev, s32b turn, co
 
 	/* History list exists and is not full.  Add an entry at the current counter location. */
 	history_list[history_ctr].type = type;
-	history_list[history_ctr].dlev = dlev;
+	history_list[history_ctr].place = place;
 	history_list[history_ctr].clev = clev;
 	history_list[history_ctr].a_idx = a_idx;
 	history_list[history_ctr].turn = turn;
@@ -331,21 +331,33 @@ static size_t last_printable_item(void)
 
 static void print_history_header(void)
 {
-	char buf[80];
+    char buf[80];
 
-	/* Print the header (character name and title) */
-	strnfmt(buf, sizeof(buf), "%s the %s %s",
-	        op_ptr->full_name,
-	        rp_ptr->name,
-	        cp_ptr->name);
+    /* Print the header (character name and title) */
+    strnfmt(buf, sizeof(buf), "%s the %s %s", op_ptr->full_name,
+	    rp_ptr->name, cp_ptr->name);
 
-	c_put_str(TERM_WHITE, buf, 0, 0);
-	c_put_str(TERM_WHITE, "============================================================", 1, 0);
-	c_put_str(TERM_WHITE, "                   CHAR.  ", 2, 0);
-	c_put_str(TERM_WHITE, "|   TURN  | DEPTH |LEVEL| EVENT", 3, 0);
-	c_put_str(TERM_WHITE, "============================================================", 4, 0);
+    c_put_str(TERM_WHITE, buf, 0, 0);
+    c_put_str(TERM_WHITE, "============================================================", 1, 0);
+    c_put_str(TERM_WHITE, "CHAR.", 2, 34);
+    c_put_str(TERM_WHITE, "|   TURN  |      LOCATION        |LEVEL| EVENT",
+	      3, 0);
+    c_put_str(TERM_WHITE, "============================================================", 4, 0);
 }
 
+static void history_get_place(char *place, int i)
+{
+    int region = stage_map[history_list[i].place][LOCALITY];
+    int lev = stage_map[history_list[i].place][DEPTH];
+
+    /* Get the location name */
+    if (lev)
+	strnfmt(place, sizeof(place), "%15s%4d ", locality_name[region], lev);
+    else if ((region != UNDERWORLD) && (region != MOUNTAIN_TOP))
+	strnfmt(place, sizeof(place), "%15s Town", locality_name[region]);
+    else
+	strnfmt(place, sizeof(place), "%15s     ", locality_name[region]);
+}
 
 /* Handles all of the display functionality for the history list. */
 void history_display(void)
@@ -375,13 +387,18 @@ void history_display(void)
 		row = 0;
 		for (i = first_item; row <= page_size && i < history_ctr; i++)
 		{
+		    char location[30];
+
 			/* Skip messages about artifacts not yet IDed. */
 			if (history_masked(i))
 				continue;
 
-			strnfmt(buf, sizeof(buf), "%10d%7d\'%5d   %s",
+			/* Get location name */
+			history_get_place(location, i);
+
+			strnfmt(buf, sizeof(buf), "%10d%22s%5d    %s",
 				history_list[i].turn,
-				history_list[i].dlev * 50,
+				location,
 				history_list[i].clev,
 				history_list[i].event);
 
@@ -441,38 +458,145 @@ void history_display(void)
 	return;
 }
 
+/**
+ * Get a history entry colour
+ */
+byte history_colour(u16b type)
+{
+    if      (type & HISTORY_PLAYER_BIRTH)   return TERM_L_UMBER;
+    else if (type & HISTORY_PLAYER_DEATH)   return TERM_VIOLET;
+    else if (type & HISTORY_GAIN_SPECIALTY) return TERM_RED;
+    else if (type & HISTORY_GAIN_LEVEL)     return TERM_YELLOW;
+    else if (type & HISTORY_SLAY_UNIQUE)    return TERM_UMBER;
+    else if (type & HISTORY_MOVE_HOUSE)     return TERM_GREEN;
+    else if (type & HISTORY_ARTIFACT_LOST)  return TERM_BLUE;
+    else if (type & HISTORY_ARTIFACT_KNOWN) return TERM_L_BLUE;
+    else if (type & HISTORY_USER_INPUT)     return TERM_WHITE;
+    else return TERM_WHITE;
+}
+
 
 /* Dump character history to a file, which we assume is already open. */
-void dump_history(ang_file *file)
+void dump_history(bool *dead)
 {
-	size_t i;
-	char buf[90];
+    size_t i;
+    char buf[90];
+    
+    /* Dump notes */
+    for (i = 0; i < (last_printable_item() + 1); i++)
+    {
+	int length, length_info;
+	char info_note[43];
+	char place[32];
+	byte attr = history_colour(history_list[i].type);
 
-	/* We use either ascii or system-specific encoding */
- 	int encoding = OPT(xchars_to_file) ? SYSTEM_SPECIFIC : ASCII;
+	/* Skip not-yet-IDd artifacts */
+	if (history_masked(i)) continue;
 
-        file_putf(file, "============================================================\n");
-        file_putf(file, "                   CHAR.\n");
-        file_putf(file, "|   TURN  | DEPTH |LEVEL| EVENT\n");
-        file_putf(file, "============================================================\n");
-
-	for (i = 0; i < (last_printable_item() + 1); i++)
-	{
-		/* Skip not-yet-IDd artifacts */
-		if (history_masked(i)) continue;
-
-                strnfmt(buf, sizeof(buf), "%10d%7d\'%5d   %s",
-                                history_list[i].turn,
-                                history_list[i].dlev * 50,
-                                history_list[i].clev,
-                                history_list[i].event);
-
-                if (history_list[i].type & HISTORY_ARTIFACT_LOST)
-                                my_strcat(buf, " (LOST)", sizeof(buf));
-
-		x_file_putf(file, encoding, "%s", buf);
-		file_put(file, "\n");
+	/* Divider before death */
+	if ((history_list[i].type & HISTORY_PLAYER_DEATH) && !(*dead)) {
+	    *dead = TRUE;
+	    dump_put_str(TERM_WHITE, "============================================================", 0);
+	    current_line++;
+	    dump_ptr = (char_attr *) & line[current_line];
 	}
 
-	return;
+	/* Get the note */
+	strnfmt(buf, sizeof(buf), "%s", history_list[i].event);
+
+	if (history_list[i].type & HISTORY_ARTIFACT_LOST)
+	    my_strcat(buf, " (LOST)", sizeof(buf));
+
+	/* Get the location name */
+	history_get_place(place, i);
+	
+	/* Make preliminary part of note */
+	strnfmt(info_note, sizeof(info_note), "%10d%22s%5d    ",
+		history_list[i].turn, place, history_list[i].clev);
+
+	/* Write the info note */
+	dump_put_str(TERM_WHITE, info_note, 0);
+
+	/* Get the length of the history_list */
+	length_info = strlen(info_note);
+	length = strlen(buf);
+
+	/* Break up long notes */
+	if ((length + length_info) > LINEWRAP) {
+	    bool keep_going = TRUE;
+	    int startpoint = 0;
+	    int endpoint, n;
+
+	    while (keep_going) {
+		/* Don't print more than the set linewrap amount */
+		endpoint = startpoint + LINEWRAP - strlen(info_note) + 1;
+
+		/* Find a breaking point */
+		while (TRUE) {
+		    /* Are we at the end of the line? */
+		    if (endpoint >= length) {
+			/* Print to the end */
+			endpoint = length;
+			keep_going = FALSE;
+			break;
+		    }
+
+		    /* Mark the most recent space or dash in the string */
+		    else if ((buf[endpoint] == ' ') || (buf[endpoint] == '-'))
+			break;
+
+		    /* No spaces in the line, so break in the middle of text */
+		    else if (endpoint == startpoint) {
+			endpoint =
+			    startpoint + LINEWRAP - strlen(info_note) + 1;
+			break;
+		    }
+
+		    /* check previous char */
+		    endpoint--;
+		}
+
+		/* Make a continued note if applicable */
+		if (startpoint)
+		    dump_put_str(TERM_WHITE,
+				 "   continued...                           ",
+				 0);
+
+		/* Write that line */
+		for (n = startpoint; n <= endpoint; n++) {
+		    char ch;
+		    char buf1[5];
+
+		    /* Ensure the character is printable */
+		    ch = (isprint(buf[n]) ? buf[n] : ' ');
+
+		    /* Write out the character */
+		    sprintf(buf1, "%c", ch);
+		    dump_put_str(attr, buf1, 
+				 strlen(info_note) + n - startpoint);
+
+		}
+
+		/* Break the line */
+		current_line++;
+		dump_ptr = (char_attr *) & line[current_line];
+
+		/* Prepare for the next line */
+		startpoint = endpoint + 1;
+
+	    }
+	}
+
+	/* Add note to buffer */
+	else {
+	    /* Print the note */
+	    dump_put_str(attr, buf, strlen(info_note));
+
+	    /* Break the line */
+	    current_line++;
+	    dump_ptr = (char_attr *) & line[current_line];
+	}
+    }
+    
+    return;
 }

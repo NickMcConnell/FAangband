@@ -222,17 +222,3 @@ void dump_line(char_attr *this_line)
 
 
 
-/**
- * Convert an input from tenths of a pound to tenths of a kilogram. -LM-
- */
-int make_metric(int wgt)
-{
-    int metric_wgt;
-  
-    /* Convert to metric values, using normal rounding. */
-    metric_wgt = wgt * 10 / 22;
-    if ((wgt * 10) % 22 > 10) metric_wgt++;
-  
-    return metric_wgt;
-}
-

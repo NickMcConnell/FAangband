@@ -17,10 +17,12 @@
  */
 
 #include "angband.h"
+#include "cave.h"
 #include "cmds.h"
 #include "game-cmd.h"
 #include "object.h"
 #include "spells.h"
+#include "target.h"
 
 errr (*cmd_get_hook)(cmd_context c, bool wait);
 
@@ -400,7 +402,8 @@ void process_command(cmd_context ctx, bool no_request)
 		int item;
 
 		item_tester_hook = is->filter;
-		if (!get_item(&item, is->prompt, is->noop, is->mode))
+		if (!get_item(&item, is->prompt, is->noop, cmd->command, 
+			      is->mode))
 		    return;
 
 		cmd_set_arg_item(cmd, 0, item);
@@ -465,9 +468,9 @@ void process_command(cmd_context ctx, bool no_request)
 	case CMD_TUNNEL:
 	{
 	    /* Deal with webs */
-	    if (cave_feat[py][px] == FEAT_WEB) {
+	    if (cave_feat[p_ptr->py][p_ptr->px] == FEAT_WEB) {
 		msg_print("You clear the web.");
-		cave_set_feat(py, px, FEAT_FLOOR);
+		cave_set_feat(p_ptr->py, p_ptr->px, FEAT_FLOOR);
 
 		disturb(0, 0);
 

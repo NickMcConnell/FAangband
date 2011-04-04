@@ -24,6 +24,11 @@
  */
 
 #include "angband.h"
+#include "cave.h"
+#include "files.h"
+#include "monster.h"
+#include "trap.h"
+#include "tvalsval.h"
 
 
 
@@ -421,7 +426,6 @@ bool no_vault(void)
  */
 static bool vault_aux_elemental(int r_idx)
 {
-    u32b breaths_allowed;
     monster_race *r_ptr = &r_info[r_idx];
 
 
@@ -430,13 +434,13 @@ static bool vault_aux_elemental(int r_idx)
 	return (TRUE);
 
     /* Certain names are a givaway. */
-    if (strstr(r_name + r_ptr->name, "Fire")
-	|| strstr(r_name + r_ptr->name, "Hell")
-	|| strstr(r_name + r_ptr->name, "Frost")
-	|| strstr(r_name + r_ptr->name, "Cold")
-	|| strstr(r_name + r_ptr->name, "Acid")
-	|| strstr(r_name + r_ptr->name, "Water")
-	|| strstr(r_name + r_ptr->name, "Energy"))
+    if (strstr(r_ptr->name, "Fire")
+	|| strstr(r_ptr->name, "Hell")
+	|| strstr(r_ptr->name, "Frost")
+	|| strstr(r_ptr->name, "Cold")
+	|| strstr(r_ptr->name, "Acid")
+	|| strstr(r_ptr->name, "Water")
+	|| strstr(r_ptr->name, "Energy"))
 	return (TRUE);
 
     /* Otherwise, try selecting by breath attacks. */
@@ -3720,10 +3724,6 @@ static bool build_type5(void)
     /* Increase the level rating */
     rating += 10;
 
-    /* Sometimes cause a special feeling - removed in FA0.2.2 -NRM- if
-     * ((randint1(50) >= p_ptr->depth) && (randint0(2) == 0)) { good_item_flag
-     * = TRUE; } */
-
     /* Success */
     return (TRUE);
 }
@@ -4271,10 +4271,6 @@ static bool build_type6(void)
 
     /* Increase the level rating */
     rating += 10;
-
-    /* (Sometimes) Cause a "special feeling". removed in FA0.2.2 -NRM- if
-     * ((randint1(50) >= p_ptr->depth) && (randint0(2) == 0)) { good_item_flag
-     * = TRUE; } */
 
     /* Success. */
     return (TRUE);
@@ -5056,7 +5052,7 @@ static bool build_type7(void)
 
     /* Build the vault (sometimes lit, not icky, type 7) */
     if (!build_vault
-	(y, x, v_ptr->hgt, v_ptr->wid, v_text + v_ptr->text,
+	(y, x, v_ptr->hgt, v_ptr->wid, v_ptr->text,
 	 (p_ptr->depth < randint0(37)), FALSE, 7)) {
 	free(v_idx);
 	return (FALSE);
@@ -5109,7 +5105,7 @@ static bool build_type8(void)
 
     /* Build the vault (never lit, icky, type 8) */
     if (!build_vault
-	(y, x, v_ptr->hgt, v_ptr->wid, v_text + v_ptr->text, FALSE, TRUE, 8)) {
+	(y, x, v_ptr->hgt, v_ptr->wid, v_ptr->text, FALSE, TRUE, 8)) {
 	free(v_idx);
 	return (FALSE);
     }
@@ -5163,7 +5159,7 @@ static bool build_type9(void)
 
     /* Build the vault (never lit, icky, type 9) */
     if (!build_vault
-	(y, x, v_ptr->hgt, v_ptr->wid, v_text + v_ptr->text, FALSE, TRUE, 9)) {
+	(y, x, v_ptr->hgt, v_ptr->wid, v_ptr->text, FALSE, TRUE, 9)) {
 	free(v_idx);
 	return (FALSE);
     }
@@ -6636,7 +6632,7 @@ static bool build_themed_level(void)
     p_ptr->themed_level = choice;
 
     /* Build the themed level. */
-    if (!build_vault(0, 0, 66, 198, t_text + t_ptr->text, FALSE, FALSE, 0)) {
+    if (!build_vault(0, 0, 66, 198, t_ptr->text, FALSE, FALSE, 0)) {
 	/* Oops.  We're /not/ on a themed level. */
 	p_ptr->themed_level = 0;
 
@@ -7529,7 +7525,7 @@ int make_formation(int y, int x, int base_feat1, int base_feat2, int *feat,
 	if (good_place) {
 	    /* Build the "vault" (never lit, icky) */
 	    if (!build_vault
-		(y, x, v_ptr->hgt, v_ptr->wid, v_text + v_ptr->text, FALSE,
+		(y, x, v_ptr->hgt, v_ptr->wid, v_ptr->text, FALSE,
 		 TRUE, wild_type)) {
 		free(all_feat);
 		free(v_idx);
@@ -7541,7 +7537,7 @@ int make_formation(int y, int x, int base_feat1, int base_feat2, int *feat,
 
 	    /* Message */
 	    if (OPT(cheat_room))
-		msg_format("%s. ", v_name + v_ptr->name);
+		msg_format("%s. ", v_ptr->name);
 
 	    /* One less to make */
 	    wild_vaults--;
@@ -9525,7 +9521,7 @@ bool place_web(int type)
 
     /* Build the vault (never lit, not icky unless full size) */
     if (!build_vault
-	(y, x, v_ptr->hgt, v_ptr->wid, v_text + v_ptr->text, FALSE,
+	(y, x, v_ptr->hgt, v_ptr->wid, v_ptr->text, FALSE,
 	 (type == 13), type)) {
 	free(v_idx);
 	return (FALSE);
@@ -10225,9 +10221,6 @@ void generate_cave(void)
 
 	/* Reset the object generation level */
 	object_level = p_ptr->depth;
-
-	/* Nothing special here yet */
-	good_item_flag = FALSE;
 
 	/* Nothing good here yet */
 	rating = 0;

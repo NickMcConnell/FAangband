@@ -90,12 +90,14 @@ ANGFILES = \
 	cmd4.o \
 	cmd-misc.o \
 	cmd-obj.o \
+	death.o \
 	dungeon.o \
 	effects.o \
 	files.o \
 	game-cmd.o \
 	game-event.o \
 	generate.o \
+	gen-themed.o \
 	history.o \
 	identify.o \
 	init.o \

@@ -3,7 +3,7 @@
 #ifndef FILES_H
 #define FILES_H
 
-extern void html_screenshot(cptr name);
+extern void html_screenshot(cptr name, int mode);
 extern void safe_setuid_drop(void);
 extern void safe_setuid_grab(void);
 extern s16b tokenize(char *buf, s16b num, char **tokens);

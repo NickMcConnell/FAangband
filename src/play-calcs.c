@@ -2171,7 +2171,7 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
   /*** Analyze equipment ***/
 
     /* Scan the equipment */
-    for (i = INVEN_WIELD; i < INVEN_SUBTOTAL; i++) {
+    for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 	o_ptr = &p_ptr->inventory[i];
 
 	/* Skip non-objects */

@@ -306,6 +306,9 @@ int count_feats(int *y, int *x, bool (*test)(int feat), bool under);
 int count_chests(int *y, int *x, bool trapped);
 int coords_to_dir(int y, int x);
 
+/* death.c */
+void death_screen(void);
+
 /* dungeon.c */
 extern void play_game(void);
 extern void idle_update(void);
@@ -315,6 +318,11 @@ extern void place_unlocked_door(int y, int x);
 extern void place_closed_door(int y, int x);
 extern void destroy_level(bool new_level);
 extern void generate_cave(void);
+
+/* gen-themed.c */
+errr init_t_info(byte chosen_level);
+void kill_t_info(void);
+
 
 /* load.c */
 extern bool old_load(void);
@@ -343,6 +351,9 @@ extern void initialize_random_artifacts(void);
 
 /* randname.c */
 extern size_t randname_make(randname_type name_type, size_t min, size_t max, char *word_buf, size_t buflen, const char ***wordlist);
+
+/* save.c */
+extern bool old_save(void);
 
 /* score.c */
 extern void enter_score(time_t *death_time);

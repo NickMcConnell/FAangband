@@ -358,15 +358,15 @@
 
 /* History message types */
 #define HISTORY_PLAYER_BIRTH     0x0001	/* Player was born */
-#define HISTORY_ARTIFACT_UNKNOWN 0x0002	/* Player found but not IDd an artifact */
+#define HISTORY_ARTIFACT_UNKNOWN 0x0002	/* Player found unknown artifact */
 #define HISTORY_ARTIFACT_KNOWN   0x0004	/* Player has IDed an artifact */
 #define HISTORY_ARTIFACT_LOST    0x0008	/* Player had an artifact and lost it */
 #define HISTORY_PLAYER_DEATH     0x0010	/* Player has been slain */
 #define HISTORY_SLAY_UNIQUE      0x0020	/* Player has slain a unique monster */
 #define HISTORY_USER_INPUT       0x0040	/* User-added note */
-#define HISTORY_SAVEFILE_IMPORT  0x0080	/* Added when an older version savefile is imported */
+#define HISTORY_MOVE_HOUSE       0x0080	/* PLayer moved house */
 #define HISTORY_GAIN_LEVEL       0x0100	/* Player gained a level */
-#define HISTORY_GENERIC          0x0200	/* Anything else not covered here (unused) */
+#define HISTORY_GAIN_SPECIALTY   0x0200	/* Player gained a specialty */
 
 /**
  * List of commands that will be auto-repeated
