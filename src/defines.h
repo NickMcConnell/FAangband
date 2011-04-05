@@ -220,23 +220,6 @@
  */
 #define CLASS_SPECIALTIES      15
 
-
-
-
-/**
- * Size of the "fake" array for reading in names of monsters, objects,
- * artifacts, store-owners, player-races, ...
- */
-#define FAKE_NAME_SIZE 20480
-
-
-/**
- * Size of the "fake" array for reading in the descriptions of monsters,
- * vaults, and the player-histories
- */
-#define FAKE_TEXT_SIZE 61440
-
-
 /*
  * Hack -- first normal and random artifact in the artifact list.  
  * All of the artifacts with indexes from 1 to 22 are special (lights, 
@@ -394,7 +377,7 @@
 
 
 
-/*** Oangband Themed Levels ***/
+/*** FAangband Themed Levels ***/
 
 /**
  * No current theme (player is on a normal level)

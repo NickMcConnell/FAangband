@@ -441,6 +441,8 @@ static enum parser_error parse_z(struct parser *p) {
 	z->r_max = value;
     else if (streq(label, "V"))
 	z->v_max = value;
+    else if (streq(label, "W"))
+	z->t_max = value;
     else if (streq(label, "P"))
 	z->p_max = value;
     else if (streq(label, "C"))
@@ -457,6 +459,8 @@ static enum parser_error parse_z(struct parser *p) {
 	z->m_max = value;
     else if (streq(label, "L"))
 	z->flavor_max = value;
+    else if (streq(label, "X"))
+	z->set_max = value;
     else if (streq(label, "N"))
 	z->fake_name_size = value;
     else if (streq(label, "T"))
@@ -2460,6 +2464,77 @@ struct file_parser v_parser = {
     finish_parse_v
 };
 
+static enum parser_error parse_t_n(struct parser *p) {
+    struct vault *h = parser_priv(p);
+    struct vault *v = mem_zalloc(sizeof *v);
+
+    v->vidx = parser_getuint(p, "index");
+    v->name = string_make(parser_getstr(p, "name"));
+    v->next = h;
+    parser_setpriv(p, v);
+    return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_t_m(struct parser *p) {
+    struct vault *v = parser_priv(p);
+
+    if (!v)
+	return PARSE_ERROR_MISSING_RECORD_HEADER;
+    v->message = string_make(parser_getstr(p, "feel"));
+    return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_t_d(struct parser *p) {
+    struct vault *v = parser_priv(p);
+
+    if (!v)
+	return PARSE_ERROR_MISSING_RECORD_HEADER;
+    v->text = string_append(v->text, parser_getstr(p, "text"));
+    return PARSE_ERROR_NONE;
+}
+
+struct parser *init_parse_t(void) {
+    struct parser *p = parser_new();
+    parser_setpriv(p, NULL);
+    parser_reg(p, "V sym version", ignored);
+    parser_reg(p, "N uint index str name", parse_t_n);
+    parser_reg(p, "M str feel", parse_t_m);
+    parser_reg(p, "D str text", parse_t_d);
+    return p;
+}
+
+static errr run_parse_t(struct parser *p) {
+    return parse_file(p, "themed");
+}
+
+static errr finish_parse_t(struct parser *p) {
+    struct vault *v, *n;
+
+    t_info = mem_zalloc(sizeof(*v) * z_info->t_max);
+    for (v = parser_priv(p); v; v = v->next) {
+	if (v->vidx >= z_info->t_max)
+	    continue;
+	memcpy(&t_info[v->vidx], v, sizeof(*v));
+    }
+
+    v = parser_priv(p);
+    while (v) {
+	n = v->next;
+	mem_free(v);
+	v = n;
+    }
+
+    parser_destroy(p);
+    return 0;
+}
+
+struct file_parser t_parser = {
+    "themed",
+    init_parse_t,
+    run_parse_t,
+    finish_parse_t
+};
+
 static enum parser_error parse_h_n(struct parser *p) {
     struct history *oh = parser_priv(p);
     struct history *h = mem_zalloc(sizeof *h);
@@ -3396,9 +3471,13 @@ bool init_angband(void)
     if (run_parser(&set_parser)) quit("Cannot initialize set items");
     update_artifact_sets();
   
-    /* Initialize feature info */
+    /* Initialize vault info */
     event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (vaults)");
     if (run_parser(&v_parser)) quit("Cannot initialize vaults");
+
+    /* Initialize themed level info */
+    event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (themed)");
+    if (run_parser(&t_parser)) quit("Cannot initialize themed levels");
 
     /* Initialize history info */
     event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (histories)");

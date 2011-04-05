@@ -6614,13 +6614,6 @@ static bool build_themed_level(void)
 	    return (FALSE);
     }
 
-    /* 
-     * Initialize the info arrays for the chosen themed level only.  Do 
-     * not build the themed level if forbidden, or if an error occurs.
-     */
-    if (init_t_info(choice))
-	return (FALSE);
-
     /* Access the chosen themed level */
     t_ptr = &t_info[choice];
 
@@ -6639,6 +6632,9 @@ static bool build_themed_level(void)
 	return (FALSE);
     }
 
+    /* Get feeling text */
+    my_strcpy(themed_feeling, sizeof(themed_feeling), v_ptr->message);
+
     /* Indicate that this theme is built, and should not appear again. */
     p_ptr->themed_level_appeared |= (1L << (choice - 1));
 
@@ -6647,9 +6643,6 @@ static bool build_themed_level(void)
 
     /* Update the level indicator */
     p_ptr->redraw |= (PR_DEPTH);
-
-    /* Kill the themed level arrays */
-    kill_t_info();
 
     /* Success. */
     return (TRUE);

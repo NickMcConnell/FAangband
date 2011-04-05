@@ -31,6 +31,9 @@ M:R:800
 # Maximum number of vaults
 M:V:300
 
+# Maximum number of themed levels
+M:W:32
+
 # Maximum number of player races - changes required if this exceeds 32
 M:P:14
 
