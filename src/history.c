@@ -27,7 +27,8 @@
 #define HISTORY_BIRTH_SIZE  10
 #define HISTORY_MAX 5000
 
-
+/* max length of history output lines */
+#define LINEWRAP        75
 
 /* The historical list for the character */
 history_info *history_list;
@@ -477,7 +478,7 @@ byte history_colour(u16b type)
 
 
 /* Dump character history to a file, which we assume is already open. */
-void dump_history(bool *dead)
+void dump_history(char_attr_line *line, int *curr_line, bool *dead)
 {
     size_t i;
     char buf[90];
@@ -497,8 +498,8 @@ void dump_history(bool *dead)
 	if ((history_list[i].type & HISTORY_PLAYER_DEATH) && !(*dead)) {
 	    *dead = TRUE;
 	    dump_put_str(TERM_WHITE, "============================================================", 0);
-	    current_line++;
-	    dump_ptr = (char_attr *) & line[current_line];
+	    (*curr_line)++;
+	    dump_ptr = (char_attr *) & line[*curr_line];
 	}
 
 	/* Get the note */
@@ -578,8 +579,8 @@ void dump_history(bool *dead)
 		}
 
 		/* Break the line */
-		current_line++;
-		dump_ptr = (char_attr *) & line[current_line];
+		(*curr_line)++;
+		dump_ptr = (char_attr *) & line[*curr_line];
 
 		/* Prepare for the next line */
 		startpoint = endpoint + 1;
@@ -593,8 +594,8 @@ void dump_history(bool *dead)
 	    dump_put_str(attr, buf, strlen(info_note));
 
 	    /* Break the line */
-	    current_line++;
-	    dump_ptr = (char_attr *) & line[current_line];
+	    (*curr_line)++;
+	    dump_ptr = (char_attr *) & line[*curr_line];
 	}
     }
     

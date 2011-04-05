@@ -6633,7 +6633,7 @@ static bool build_themed_level(void)
     }
 
     /* Get feeling text */
-    my_strcpy(themed_feeling, sizeof(themed_feeling), v_ptr->message);
+    my_strcpy(themed_feeling, sizeof(themed_feeling), t_ptr->message);
 
     /* Indicate that this theme is built, and should not appear again. */
     p_ptr->themed_level_appeared |= (1L << (choice - 1));

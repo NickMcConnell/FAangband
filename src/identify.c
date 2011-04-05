@@ -19,7 +19,48 @@
  */
 
 #include "angband.h"
+#include "history.h"
+#include "object.h"
+#include "spells.h"
 
+
+/**
+ * Copy all the id_other flags an object is going to get to allflags
+ */
+void flags_other(object_type *o_ptr, bitflag *all_flags)
+{
+    int j;
+
+    if_wipe(all_flags);
+
+    /* Resists */
+    for (j = 0; j < MAX_P_RES; j++) 
+	if (o_ptr->percent_res[j] != RES_LEVEL_BASE)
+	    if_on(all_flags, OBJECT_ID_BASE_RESIST + j);
+    
+    /* Slays */
+    for (j = 0; j < MAX_P_SLAY; j++) 
+	if (o_ptr->multiple_slay[j] != MULTIPLE_BASE)
+	    if_on(all_flags, OBJECT_ID_BASE_SLAY + j);
+    
+    /* Brands */
+    for (j = 0; j < MAX_P_BRAND; j++) 
+	if (o_ptr->multiple_brand[j] != MULTIPLE_BASE)
+	    if_on(all_flags, OBJECT_ID_BASE_BRAND + j);
+
+    /* Others */
+    if ((o_ptr->to_h) || is_weapon(o_ptr) || of_has(o_ptr->flags_obj, OF_SHOW_MODS))
+	if_on(all_flags, IF_TO_H);
+    if ((o_ptr->to_d) || is_weapon(o_ptr) || of_has(o_ptr->flags_obj, OF_SHOW_MODS))
+	if_on(all_flags, IF_TO_D);
+    if ((o_ptr->to_a) || is_armour(o_ptr))
+	if_on(all_flags, IF_TO_A);
+    if ((o_ptr->ac) || is_armour(o_ptr)) {
+	if_on(all_flags, IF_AC);
+	if_on(all_flags, IF_TO_A);
+    }
+    if_on(all_flags, IF_DD_DS);
+}
 
 /**
  * Known is true when the "attributes" of an object are "known".
@@ -57,8 +98,8 @@ void object_known(object_type * o_ptr)
     }
 
     /* Get all the id flags */
-    o_ptr->id_obj = o_ptr->flags_obj;
-    o_ptr->id_other = flags_other(o_ptr);
+    of_copy(o_ptr->id_obj, o_ptr->flags_obj);
+    flags_other(o_ptr, o_ptr->id_other);
 }
 
 
@@ -111,7 +152,7 @@ bool item_dubious(const object_type * o_ptr, bool unknown)
 	    return TRUE;
 
     /* To skill, to deadliness, to AC */
-    if (o_ptr->to_h + o_ptr->to_d < k_ptr->to_h)
+    if (o_ptr->to_h + o_ptr->to_d < k_ptr->to_h.base)
 	return TRUE;
     if (o_ptr->to_a < 0)
 	return TRUE;
@@ -250,15 +291,15 @@ bool has_ego_properties(object_type * o_ptr)
 	return FALSE;
 
     /* A curse matches */
-    if cf_is_inter(e_ptr->id_curse, o_ptr->id_curse)
+    if (cf_is_inter(e_ptr->id_curse, o_ptr->id_curse))
 	return TRUE;
 
     /* An object flag matches */
-    if of_is_inter(e_ptr->id_obj, o_ptr->id_obj)
+    if (of_is_inter(e_ptr->id_obj, o_ptr->id_obj))
 	return TRUE;
 
     /* Another property matches */
-    if if_is_inter(e_ptr->id_other, o_ptr->id_other)
+    if (if_is_inter(e_ptr->id_other, o_ptr->id_other))
 	return TRUE;
 
     /* Nothing */
@@ -314,7 +355,7 @@ void label_as_ego(object_type * o_ptr, int item)
     handle_stuff();
 
     /* Description */
-    object_desc(o_name, o_ptr, TRUE, 3);
+    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
 
     /* Describe */
     if (item - 1 >= INVEN_WIELD) {
@@ -323,44 +364,6 @@ void label_as_ego(object_type * o_ptr, int item)
     } else if (item - 1 >= 0) {
 	msg_format("In your pack: %s (%c).", o_name, index_to_label(item));
     }
-}
-
-/**
- * Show all the id_other flags an object is going to get
- */
-void flags_other(object_type * o_ptr, bitmap *allflags)
-{
-    int j;
-
-    if_wipe(all_flags);
-
-    /* Resists */
-    for (j = 0; j < MAX_P_RES; j++) 
-	if (o_ptr->percent_res[j] != RES_LEVEL_BASE)
-	    if_on(all_flags, OBJECT_ID_BASE_RESIST + j);
-    
-    /* Slays */
-    for (j = 0; j < MAX_P_SLAY; j++) 
-	if (o_ptr->multiple_slay[j] != MULTIPLE_BASE)
-	    if_on(all_flags, OBJECT_ID_BASE_SLAY + j);
-    
-    /* Brands */
-    for (j = 0; j < MAX_P_BRAND; j++) 
-	if (o_ptr->multiple_brand[j] != MULTIPLE_BASE)
-	    if_on(all_flags, OBJECT_ID_BASE_BRAND + j);
-
-    /* Others */
-    if ((o_ptr->to_h) || is_weapon(o_ptr) || of_has(o_ptr->flags_obj, OF_SHOW_MODS))
-	if_on(all_flags, IF_TO_H);
-    if ((o_ptr->to_d) || is_weapon(o_ptr) || of_has(o_ptr->flags_obj, OF_SHOW_MODS))
-	if_on(all_flags, IF_TO_D);
-    if ((o_ptr->to_a) || is_armour(o_ptr))
-	if_on(all_flags, IF_TO_A);
-    if ((o_ptr->ac) || is_armour(o_ptr)) {
-	if_on(all_flags, IF_AC);
-	if_on(all_flags, IF_TO_A);
-    }
-    if_on(all_flags, IF_DD_DS);
 }
 
 /**
@@ -465,7 +468,7 @@ void notice_curse(int curse_flag, int item)
 	/* Look for curses */
 	if (cf_has(o_ptr->flags_curse, curse_flag)) {
 	    /* Found one */
-	    cf_on(o_ptr->id_curse curse_flag);
+	    cf_on(o_ptr->id_curse, curse_flag);
 	    o_ptr->ident |= IDENT_CURSED;
 
 	    /* Ego item? */
@@ -542,64 +545,62 @@ void notice_other(int other_flag, int item)
 	    o_ptr = &p_ptr->inventory[item - 1];
 	else
 	    o_ptr = &o_list[0 - item];
-
+	
 	already_ego = has_ego_properties(o_ptr);
-
+	
 	/* Resists */
 	for (j = 0; j < MAX_P_RES; j++) {
 	    if (other_flag != OBJECT_ID_BASE_RESIST + j) continue;
 	    if (o_ptr->percent_res[j] != RES_LEVEL_BASE) {
 		if_on(o_ptr->id_other, other_flag);
-		}
 	    }
 	}
-
+	
 	/* Slays */
 	for (j = 0; j < MAX_P_SLAY; j++) {
 	    if (other_flag != OBJECT_ID_BASE_SLAY + j) continue;
 	    if (o_ptr->multiple_slay[j] != MULTIPLE_BASE) {
 		if_on(o_ptr->id_other, other_flag);
-		}
 	    }
 	}
+
 
 	/* Brands */
 	for (j = 0; j < MAX_P_BRAND; j++) {
 	    if (other_flag != OBJECT_ID_BASE_BRAND + j) continue;
 	    if (o_ptr->multiple_brand[j] != MULTIPLE_BASE) {
 		if_on(o_ptr->id_other, other_flag);
-		}
 	    }
 	}
-
+	
 	/* Others */
-	if (if_has(other_flag, IF_TO_H) && ((o_ptr->to_h) || is_weapon(o_ptr)))
+	if ((other_flag == IF_TO_H) && ((o_ptr->to_h) || is_weapon(o_ptr)))
 	    if_on(o_ptr->id_other, IF_TO_H);
-	if (if_has(other_flag, IF_TO_D) && ((o_ptr->to_d) || is_weapon(o_ptr)))
+	if ((other_flag == IF_TO_D) && ((o_ptr->to_d) || is_weapon(o_ptr)))
 	    if_on(o_ptr->id_other, IF_TO_D);
-	if (if_has(other_flag, IF_TO_A) && ((o_ptr->ac) || is_armour(o_ptr)))
+	if ((other_flag == IF_TO_A) && ((o_ptr->ac) || is_armour(o_ptr)))
 	    if_on(o_ptr->id_other, IF_TO_A);
-	if (if_has(other_flag, IF_AC) && ((o_ptr->ac) || is_armour(o_ptr)))
+	if ((other_flag == IF_AC) && ((o_ptr->ac) || is_armour(o_ptr)))
 	    if_on(o_ptr->id_other, IF_AC);
-	if (if_has(other_flag, IF_DD_DS))
+	if ((other_flag == IF_DD_DS))
 	    if_on(o_ptr->id_other, IF_DD_DS);
-
+	
 	/* Ego item? */
 	if (already_ego != has_ego_properties(o_ptr))
 	    label_as_ego(o_ptr, item);
-
+	
 	/* Fully identified now? */
 	if (known_really(o_ptr))
 	    identify_object(o_ptr);
-
+	
 	return;
     }
-
+    
     for (i = INVEN_WIELD; i <= INVEN_FEET; i++) {
 	o_ptr = &p_ptr->inventory[i];
-
+	
 	already_ego = has_ego_properties(o_ptr);
-
+	
 	/* Resists */
 	for (j = 0; j < MAX_P_RES; j++) {
 	    if (other_flag != OBJECT_ID_BASE_RESIST + j) continue;
@@ -623,7 +624,7 @@ void notice_other(int other_flag, int item)
 		}
 	    }
 	}
-
+	
 	/* Brands */
 	for (j = 0; j < MAX_P_BRAND; j++) {
 	    if (other_flag != OBJECT_ID_BASE_BRAND + j) continue;
@@ -637,15 +638,15 @@ void notice_other(int other_flag, int item)
 	}
 
 	/* Others */
-	if (if_has(other_flag, IF_TO_H) && ((o_ptr->to_h) || is_weapon(o_ptr)))
+	if ((other_flag == IF_TO_H) && ((o_ptr->to_h) || is_weapon(o_ptr)))
 	    if_on(o_ptr->id_other, IF_TO_H);
-	if (if_has(other_flag, IF_TO_D) && ((o_ptr->to_d) || is_weapon(o_ptr)))
+	if ((other_flag == IF_TO_D) && ((o_ptr->to_d) || is_weapon(o_ptr)))
 	    if_on(o_ptr->id_other, IF_TO_D);
-	if (if_has(other_flag, IF_TO_A) && ((o_ptr->ac) || is_armour(o_ptr)))
+	if ((other_flag == IF_TO_A) && ((o_ptr->ac) || is_armour(o_ptr)))
 	    if_on(o_ptr->id_other, IF_TO_A);
-	if (if_has(other_flag, IF_AC) && ((o_ptr->ac) || is_armour(o_ptr)))
+	if ((other_flag == IF_AC) && ((o_ptr->ac) || is_armour(o_ptr)))
 	    if_on(o_ptr->id_other, IF_AC);
-	if (if_has(other_flag, IF_DD_DS))
+	if ((other_flag == IF_DD_DS))
 	    if_on(o_ptr->id_other, IF_DD_DS);
 
 	/* Ego item? */

@@ -226,6 +226,7 @@ extern char *ANGBAND_DIR_XTRA_FONT;
 extern char *ANGBAND_DIR_XTRA_GRAF;
 extern char *ANGBAND_DIR_XTRA_SOUND;
 extern char *ANGBAND_DIR_XTRA_HELP;
+extern char *ANGBAND_DIR_XTRA_ICON;
 
 extern bool item_tester_full;
 extern byte item_tester_tval;

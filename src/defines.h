@@ -2347,7 +2347,7 @@ enum
  * Cursed items.
  */
 #define cursed_p(T) \
-    (!(cf_is_empty((T)->flags_curse) ? TRUE : FALSE)
+    (!cf_is_empty((T)->flags_curse) ? TRUE : FALSE)
 
 /**
  * Known cursed items.
@@ -2616,28 +2616,7 @@ extern int PlayerUID;
 /**
  * Max number of lines of notes
  */
-#define DUMP_MAX_LINES 500
-
-/**
- * Max number of lines of notes
- */
-#define NOTES_MAX_LINES 300
-
-/* 
- * Notes types - defined to be the colour they appear for efficiency
- */
-#define NOTE_ARTIFACT   TERM_L_BLUE
-#define NOTE_MOVE       TERM_BLUE
-#define NOTE_LEVEL      TERM_YELLOW
-#define NOTE_SPECIALTY  TERM_RED
-#define NOTE_UNIQUE     TERM_UMBER
-#define NOTE_PLAYER     TERM_WHITE
-#define NOTE_DEATH      TERM_VIOLET
-
-/**
- * Special note used to mark the end of the notes section in the savefile
- */
-#define NOTES_MARK "@@@@@@@ No more notes @@@@@@@"
+#define DUMP_MAX_LINES 5000
 
 /** Number of localities */
 

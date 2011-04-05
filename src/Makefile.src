@@ -97,7 +97,6 @@ ANGFILES = \
 	game-cmd.o \
 	game-event.o \
 	generate.o \
-	gen-themed.o \
 	history.o \
 	identify.o \
 	init.o \

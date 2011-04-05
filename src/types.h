@@ -145,6 +145,7 @@ typedef struct maxima {
 typedef struct feature {
     char *name;		/**< Name  */
     char *text;		/**< Text  */
+    int fidx;
 
     struct feature *next;
 
@@ -235,7 +236,7 @@ typedef struct object_kind {
 /**
  * Information about "artifacts".
  */
-typedef struct artifact_type {
+typedef struct artifact {
     char *name;		/**< Name (offset) */
     char *text;		/**< Text (offset) */
 
@@ -313,7 +314,7 @@ typedef struct set_type {
     char *name;			/**< Name */
     char *text;			/**< Text */
 
-    byte setidx;	/**< the artifact ID */
+    byte setidx;	        /**< the set ID */
     byte no_of_items;		/**< The number of items in the set */
     set_element set_items[6];	/**< the artifact no and extra powers. */
 } set_type;
@@ -405,6 +406,8 @@ typedef struct {
  * fields have a special prefix to aid in searching for them.
  */
 typedef struct monster_race {
+    struct monster_race *next;
+    unsigned int ridx;
     char *name;		/**< Name (offset) */
     char *text;		/**< Text (offset) */
 
@@ -487,7 +490,7 @@ typedef struct {
 /**
  * Information about "vault generation"
  */
-typedef struct vault_type {
+typedef struct vault {
     struct vault *next;
     unsigned int vidx;
     char *name;

@@ -251,7 +251,8 @@ void wield_item(object_type *o_ptr, int item, int slot)
     }
 
     /* Notice dice, AC, jewellery sensation ID and other obvious stuff */
-    notice_other((IF_DD_DS | IF_AC), slot + 1);
+    notice_other(IF_AC, slot + 1);
+    notice_other(IF_DD_DS, slot + 1);
     of_union(o_ptr->id_obj, f);
     if (is_armour(o_ptr) && (k_info[o_ptr->k_idx].to_h.base))
 	notice_other(IF_TO_H, slot + 1);
@@ -259,7 +260,12 @@ void wield_item(object_type *o_ptr, int item, int slot)
 
     /* Average things are average */
     if ((o_ptr->feel == FEEL_AVERAGE) && (is_weapon(o_ptr) || is_armour(o_ptr)))
-	notice_other((IF_AC | IF_TO_A | IF_TO_H | IF_TO_D), slot + 1);
+    {
+	notice_other(IF_AC, slot + 1);
+	notice_other(IF_TO_A, slot + 1);
+	notice_other(IF_TO_H, slot + 1);
+	notice_other(IF_TO_D, slot + 1);
+    }
 
     /* Object has been worn */
     o_ptr->ident |= IDENT_WORN;

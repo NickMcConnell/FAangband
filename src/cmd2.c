@@ -89,7 +89,7 @@ void do_cmd_move_house(void)
 	sprintf(buf, "Moved house to %s.", town);
 
 	/* Write message */
-	make_note(buf, p_ptr->stage, NOTE_MOVE, p_ptr->lev);
+	history_add(buf, HISTORY_MOVE_HOUSE, 0);
 
     } else
 	msg_print("You can only move to another town!");

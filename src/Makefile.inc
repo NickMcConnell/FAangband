@@ -154,13 +154,6 @@ depgen:
  ui-event.h z-file.h z-bitflag.h z-quark.h z-msg.h config.h game-cmd.h \
  types.h option.h cmds.h object.h z-textblock.h parser.h player.h \
  x-char.h ui.h z-type.h externs.h cave.h files.h monster.h trap.h
-./gen-themed.o: gen-themed.c angband.h h-basic.h z-util.h z-virt.h z-form.h \
- z-rand.h defines.h tvalsval.h list-object-flags.h list-curse-flags.h \
- list-kind-flags.h list-identify-flags.h list-player-flags.h \
- list-terrain-flags.h list-mon-flags.h list-mon-spells.h z-term.h \
- ui-event.h z-file.h z-bitflag.h z-quark.h z-msg.h config.h game-cmd.h \
- types.h option.h cmds.h object.h z-textblock.h parser.h player.h \
- x-char.h ui.h z-type.h externs.h
 ./history.o: history.c angband.h h-basic.h z-util.h z-virt.h z-form.h \
  z-rand.h defines.h tvalsval.h list-object-flags.h list-curse-flags.h \
  list-kind-flags.h list-identify-flags.h list-player-flags.h \

@@ -944,9 +944,6 @@ byte resist_colour(int resist_value)
 }
 
 
-/** Max length of note output */
-#define LINEWRAP        75
-
 /** 
  * Make a char_attr array of character information for file dump or screen
  * reading.  Mode 0 and 1 show 24 lines of player info for minor windows.
@@ -1890,7 +1887,7 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
     dump_ptr = (char_attr *) & line[current_line];
 
     /* Dump notes */
-    dump_history(&dead);
+    dump_history(line, &current_line, &dead);
     dump_put_str(TERM_WHITE,
 		 "============================================================",
 		 0);

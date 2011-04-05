@@ -26,11 +26,6 @@
 #include "ui.h"
 
 
-/* max length of note output */
-#define LINEWRAP        75
-
-
-
 /**
  * Hack -- redraw the screen
  *
@@ -919,7 +914,7 @@ void do_cmd_save_screen_html(int mode)
     /* Dump the screen with raw character attributes */
     reset_visuals(FALSE);
     do_cmd_redraw();
-    html_screenshot(tmp_val);
+    html_screenshot(tmp_val, mode);
   
     /* Recover current graphics settings */
     reset_visuals(TRUE);
