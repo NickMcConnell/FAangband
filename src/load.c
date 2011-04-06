@@ -105,9 +105,9 @@ static int rd_item(object_type *o_ptr)
   
     rd_byte(&o_ptr->marked);
   
-    rd_byte(o_ptr->origin);
-    rd_byte(o_ptr->origin_depth);
-    rd_u16b(o_ptr->origin_xtra);
+    rd_byte(&o_ptr->origin);
+    rd_byte(&o_ptr->origin_stage);
+    rd_u16b(&o_ptr->origin_xtra);
 
     /* Flags */
     for (i = 0; i < of_size; i++)
@@ -488,7 +488,7 @@ int rd_monster_memory(u32b version)
     }
 	
     /* Monster blows */
-    rd_byte(&rsf_size);
+    rd_byte(&monster_blow_max);
 	
     /* Incompatible save files */
     if (monster_blow_max > MONSTER_BLOW_MAX)
@@ -655,7 +655,7 @@ int rd_object_memory(u32b version)
     {
 	byte tmp8u;
 	u32b tmp32u;
-	object_kind *k_ptr = &k_info[obj_index];
+	object_kind *k_ptr = &k_info[i];
       
 	rd_byte(&tmp8u);
       
@@ -678,6 +678,7 @@ int rd_object_memory(u32b version)
 int rd_quests(u32b version)
 {
     int i;
+    byte tmp8u;
     u16b tmp16u;
 	
     /* Load the Quests */
@@ -698,6 +699,8 @@ int rd_quests(u32b version)
 	rd_byte(&tmp8u);
 	rd_byte(&tmp8u);
     }
+
+    return 0;
 }
 
 int rd_artifacts(u32b version)
@@ -750,7 +753,7 @@ int rd_artifacts(u32b version)
   for (i = art_min_random; i < total_artifacts; i++)
   {
       rd_string(buf, sizeof(buf));
-      if (buf[0]) my_strcpy(a_ptr->name, buf, sizeof(buf));
+      if (buf[0]) my_strcpy(a_info[i].name, buf, sizeof(buf));
 
       rd_byte(&tmp8u);
       a_info[i].tval = tmp8u;
@@ -780,11 +783,11 @@ int rd_artifacts(u32b version)
       a_info[i].cost = tmp32u;
 	  
       for (i = 0; i < of_size; i++) {
-	  rd_byte(tmp8u);
+	  rd_byte(&tmp8u);
 	  a_info[i].flags_obj[i] = tmp8u;
       }
       for (i = 0; i < cf_size; i++) {
-	  rd_byte(tmp8u);
+	  rd_byte(&tmp8u);
 	  a_info[i].flags_curse[i] = tmp8u;
       }
 
@@ -803,16 +806,16 @@ int rd_artifacts(u32b version)
       rd_u16b(&base);
       rd_u16b(&dice);
       rd_u16b(&sides);
-      a_ptr->time.base = base;
-      a_ptr->time.dice = dice;
-      a_ptr->time.sides = sides;
+      a_info[i].time.base = base;
+      a_info[i].time.dice = dice;
+      a_info[i].time.sides = sides;
 
       rd_u16b(&base);
       rd_u16b(&dice);
       rd_u16b(&sides);
-      a_ptr->charge.base = base;
-      a_ptr->charge.dice = dice;
-      a_ptr->charge.sides = sides;
+      a_info[i].charge.base = base;
+      a_info[i].charge.dice = dice;
+      a_info[i].charge.sides = sides;
 
       for (k = 0; k < max_p_res; k++)
       {
@@ -845,6 +848,8 @@ int rd_artifacts(u32b version)
       /* Extra space. */
       rd_u32b(&tmp32u);
   }
+
+  return 0;
 }  
   
   
@@ -853,10 +858,11 @@ int rd_artifacts(u32b version)
  */
 int rd_player(u32b version)
 {
-    int i, max_recall_pts, tmd_max, max_rune, max_specialties;
+    int i;
+
+    byte max_recall_pts, tmd_max, max_rune, max_specialties;
   
     byte tmp8u;
-    u16b tmp16u;
     u32b tmp32u;
   
     rd_string(op_ptr->full_name, sizeof(op_ptr->full_name));
@@ -888,7 +894,7 @@ int rd_player(u32b version)
     }
     cp_ptr = &c_info[p_ptr->pclass];
     p_ptr->class = cp_ptr;
-    mp_ptr = &magic_info[p_ptr->pclass];
+    mp_ptr = &cp_ptr->magic;
 
     /* Player gender */
     rd_byte(&p_ptr->psex);
@@ -937,7 +943,7 @@ int rd_player(u32b version)
     rd_u16b(&p_ptr->csp_frac);
   
     rd_s16b(&p_ptr->max_lev);
-    rd_byte(max_recall_pts);
+    rd_byte(&max_recall_pts);
     for (i = 0; i < max_recall_pts; i++)	
 	rd_s16b(&p_ptr->recall[i]);
     rd_s16b(&p_ptr->recall_pt);
@@ -1050,7 +1056,7 @@ int rd_player(u32b version)
     /* What themed levels have already appeared? */
     rd_u32b(&p_ptr->themed_level_appeared);
 
-    rd_byte(max_specialties);
+    rd_byte(&max_specialties);
     /* Specialty Abilities -BR- */
     for (i = 0; i < max_specialties; i++) 
 	rd_byte(&p_ptr->specialty_order[i]);
@@ -1061,6 +1067,8 @@ int rd_player(u32b version)
     /* Expansion */
     rd_u32b(&tmp32u);
     rd_u32b(&tmp32u);
+
+    return 0;
 }
 
 /**
@@ -1331,7 +1339,9 @@ int rd_inventory(u32b version)
  */
 int rd_store(u32b version)
 {
-    byte tmp8u, num, max_stores, store_inven_max, store_choices;
+    int i;
+    byte num, max_stores, store_inven_max, store_choices;
+
   
     /* Read the stores */
     rd_byte(&max_stores);
@@ -1355,7 +1365,7 @@ int rd_store(u32b version)
 	return (-1);
     }
 
-    for (i = 0; i < tmp16u; i++)
+    for (i = 0; i < max_stores; i++)
     {
 	store_type *st_ptr = &store[i];
 	int j;
@@ -1404,10 +1414,10 @@ int rd_store(u32b version)
 		rd_s16b(&st_ptr->table[j]);
 	    }
 	}
-	
-	/* Success */
-	return (0);
     }
+	
+    /* Success */
+    return (0);
 }
 
 
@@ -1433,8 +1443,6 @@ int rd_dungeon(u32b version)
     byte count;
     byte tmp8u;
     u16b tmp16u;
-  
-    u16b limit;
   
   
     /*** Basic info ***/
@@ -1627,7 +1635,9 @@ int rd_objects(u32b version)
     {
 	object_type *i_ptr;
 	object_type object_type_body;
-      
+
+	s16b o_idx;
+	object_type *o_ptr;
       
 	/* Acquire place */
 	i_ptr = &object_type_body;
@@ -1766,7 +1776,7 @@ int rd_monsters(u32b version)
 	}
 
 	/* Get the monster */
-	m_ptr = &mon_list[o_ptr->held_m_idx];
+	m_ptr = &m_list[o_ptr->held_m_idx];
 
 	/* Link the object to the pile */
 	o_ptr->next_o_idx = m_ptr->hold_o_idx;
@@ -1794,7 +1804,8 @@ int rd_ghost(u32b version)
   
     /* Strip old data */
     strip_bytes(60);
-  
+
+    return 0;  
 }
 
 

@@ -454,7 +454,7 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
 		char m_name[80];
 
 		/* Extract monster name */
-		monster_desc(m_name, m_ptr, 0);
+		monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 		/* There it goes... */
 		msg_format("%s falls over the cliff!", m_name);
@@ -923,7 +923,7 @@ bool chaotic_effects(monster_type * m_ptr)
     char m_name[80];
 
     /* Extract monster name (or "it") */
-    monster_desc(m_name, m_ptr, 0);
+    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
     /* Spin the wheel... */
     effect = randint1(14);
@@ -3808,7 +3808,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
     }
 
     /* Get the monster name (BEFORE polymorphing) */
-    monster_desc(m_name, m_ptr, 0);
+    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
     /* Monsters in stasis are invulnerable. -LM- */
     if (m_ptr->stasis) {
@@ -5933,10 +5933,10 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	r_ptr = &r_info[m_ptr->r_idx];
 
 	/* Get the monster name */
-	monster_desc(m_name, m_ptr, 0);
+	monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 	/* Get the monster's real name */
-	monster_desc(killer, m_ptr, 0x88);
+	monster_desc(killer, sizeof(killer), m_ptr, 0x88);
     }
 
     /* Default 'killer' for self inflicted damage */
@@ -6327,14 +6327,14 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		    }
 
 		    /* Then the Black Breath. */
-		    if (p_ptr->state.black_breath == FALSE) {
+		    if (p_ptr->black_breath == FALSE) {
 			/* Messages. */
 			msg_print("Your foe calls upon your soul!");
 			msg_print(NULL);
 			msg_print
 			    ("You feel the Black Breath slowly draining you of life...");
 		    }
-		    p_ptr->state.black_breath = TRUE;
+		    p_ptr->black_breath = TRUE;
 		}
 	    }
 
@@ -6748,11 +6748,11 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		msg_print
 		    ("Out of the uttermost shadow leaps a perilous blade!");
 
-		if (p_ptr->state.black_breath == FALSE) {
+		if (p_ptr->black_breath == FALSE) {
 		    /* Message. */
 		    msg_print
 			("You feel the Black Breath slowly draining you of life...");
-		    p_ptr->state.black_breath = TRUE;
+		    p_ptr->black_breath = TRUE;
 		} else {
 		    msg_print
 			("You feel the Black Breath sucking away your lifeforce!");
@@ -7369,7 +7369,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	l_ptr = &l_list[m_ptr->r_idx];
 
 	/* Get the monster name */
-	monster_desc(m_name, m_ptr, 0);
+	monster_desc(m_name, sizeof(m_name), m_ptr, 0);
     }
 
     if (affect_player) {

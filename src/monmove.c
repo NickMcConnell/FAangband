@@ -26,7 +26,11 @@
  */
 
 #include "angband.h"
-
+#include "cave.h"
+#include "files.h"
+#include "monster.h" 
+#include "spells.h"
+#include "squelch.h"
 
 /**
  * Monsters will run up to 25 grids away
@@ -908,12 +912,6 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
     monster_type *m_ptr = &m_list[m_idx];
     monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-    byte *spell_desire;
-
-    // u32b f4, f5, f6, f7;
-
-    byte spell_range;
-
     bool rand = FALSE;
 
     bool los = TRUE;
@@ -1121,9 +1119,9 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
 		 (100 - find_resist(m_idx, spell_desire[i][D_RES]))) / 100;
 
 	/* Penalty for range if attack drops off in power */
-	if (spell_range) {
+	if (spell_range[i]) {
 	    cur_range = m_ptr->cdis;
-	    while (cur_range-- > spell_range)
+	    while (cur_range-- > spell_range[i])
 		cur_spell_rating =
 		    (cur_spell_rating * spell_desire[i][D_RANGE]) / 100;
 	}
@@ -1145,7 +1143,7 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
 	if (cur_spell_rating > best_spell_rating) {
 	    best_spell_rating = cur_spell_rating;
 	    best_spell = i;
-	    is_best_harass = mspell[i].is_harass;
+	    is_best_harass = is_harass;
 	}
 
     }
@@ -1346,7 +1344,7 @@ static int cave_passable_mon(monster_type * m_ptr, int y, int x, bool * bash)
 
 	/* Kill weaker monsters */
 	if ((rf_has(r_ptr->flags, RF_KILL_BODY))
-	    && (!(nrf_has(r_ptr->flags, RF_UNIQUE)))
+	    && (!(rf_has(r_ptr->flags, RF_UNIQUE)))
 	    && (r_ptr->mexp > nr_ptr->mexp)) {
 	    move_chance = 100;
 	}
@@ -2169,7 +2167,7 @@ static bool get_move_retreat(monster_type * m_ptr, int *ty, int *tx)
 		char m_name[80];
 
 		/* Get the monster name */
-		monster_desc(m_name, m_ptr, 0);
+		monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 		/* Dump a message */
 		msg_format("%^s turns to fight!", m_name);
@@ -2734,7 +2732,7 @@ static void make_confused_move(monster_type * m_ptr, int y, int x)
 
 
     /* Get the monster name/poss */
-    monster_desc(m_name, m_ptr, 0);
+    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 
     /* Feature is a wall */
@@ -3220,7 +3218,7 @@ static bool make_move(monster_type * m_ptr, int *ty, int *tx, bool fear,
 	    char m_name[80];
 
 	    /* Get the monster name */
-	    monster_desc(m_name, m_ptr, 0);
+	    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 	    /* Dump a message */
 	    msg_format("%^s turns to fight!", m_name);
@@ -3328,7 +3326,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x, bool * death)
 	return;
 
     /* Get "the monster" or "it" */
-    monster_desc(m_name, m_ptr, 0);
+    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
     /* Non-flying monsters usually avoid netted traps */
     if (feat == FEAT_MTRAP_NET) {
@@ -3866,7 +3864,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 
 	    /* XXX - Kill weaker monsters */
 	    if ((rf_has(r_ptr->flags, RF_KILL_BODY))
-		&& (!(nrf_has(r_ptr->flags, RF_UNIQUE)))
+		&& (!(rf_has(r_ptr->flags, RF_UNIQUE)))
 		&& (r_ptr->mexp > nr_ptr->mexp)) {
 		/* Monster ate another monster */
 		did_kill_body = TRUE;
@@ -3962,7 +3960,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	    char m_name[80];
 
 	    /* Get the monster name */
-	    monster_desc(m_name, m_ptr, 0);
+	    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 	    /* Get a saving throw */
 	    if (randint0(400) < 2 * r_ptr->level) {
@@ -3982,7 +3980,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	    char m_name[80];
 
 	    /* Get the monster name */
-	    monster_desc(m_name, m_ptr, 0);
+	    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 	    /* Can only drain what we have */
 	    if (drain > m_ptr->mana)
@@ -4056,12 +4054,12 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 
 	/* Possible disturb */
 	else if (m_ptr->ml && (m_ptr->hostile == -1)
-		 && (OPT(disturb_move)
-		     || (OPT(disturb_near)
-			 && ((m_ptr->mflag & (MFLAG_VIEW))
-			     || (rf_has(r_ptr->flags, RF_PASS_WALL)
-				 || rf_has(r_ptr->flags, RF_KILL_WALL))
-			     && (m_ptr->cdis <= 2))))) {
+		 && (OPT(disturb_move) || 
+		     (OPT(disturb_near) && 
+		      ((m_ptr->mflag & (MFLAG_VIEW))
+		       || (rf_has(r_ptr->flags, RF_PASS_WALL)
+			   || rf_has(r_ptr->flags, RF_KILL_WALL))
+		       && (m_ptr->cdis <= 2))))) {
 	    /* Disturb */
 	    disturb(0, 0);
 	}
@@ -4085,40 +4083,34 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	    /* Take or kill objects on the floor */
 	    if ((rf_has(r_ptr->flags, RF_TAKE_ITEM))
 		|| (rf_has(r_ptr->flags, RF_KILL_ITEM))) {
-		bitflag obj_flags[OF_SIZE];
 		bitflag mon_flags[RF_SIZE];
 
 		char m_name[80];
 		char o_name[120];
 
 		/* Acquire the object name */
-		object_desc(o_name, o_ptr, TRUE, 3);
+		object_desc(o_name, sizeof(o_name), o_ptr,
+			    ODESC_PREFIX | ODESC_FULL);
 
 		/* Acquire the monster name */
-		monster_desc(m_name, m_ptr, 0x04);
+		monster_desc(m_name, sizeof(m_name), m_ptr, 0x04);
 
 		/* React to objects that hurt the monster */
-		if (of_has(obj_flags, OF_KILL_DRAGON))
+		if (o_slay(o_ptr, P_SLAY_DRAGON))
 		    rf_on(mon_flags, RF_DRAGON);
-		if (of_has(obj_flags, OF_KILL_DEMON))
-		    rf_on(mon_flags, RF_DEMON);
-		if (of_has(obj_flags, OF_KILL_UNDEAD))
-		    rf_on(mon_flags, RF_UNDEAD);
-		if (of_has(obj_flags, OF_SLAY_DRAGON))
-		    rf_on(mon_flags, RF_DRAGON);
-		if (of_has(obj_flags, OF_SLAY_TROLL))
+		if (o_slay(o_ptr, P_SLAY_TROLL))
 		    rf_on(mon_flags, RF_TROLL);
-		if (of_has(obj_flags, OF_SLAY_GIANT))
+		if (o_slay(o_ptr, P_SLAY_GIANT))
 		    rf_on(mon_flags, RF_GIANT);
-		if (of_has(obj_flags, OF_SLAY_ORC))
+		if (o_slay(o_ptr, P_SLAY_ORC))
 		    rf_on(mon_flags, RF_ORC);
-		if (of_has(obj_flags, OF_SLAY_DEMON))
+		if (o_slay(o_ptr, P_SLAY_DEMON))
 		    rf_on(mon_flags, RF_DEMON);
-		if (of_has(obj_flags, OF_SLAY_UNDEAD))
+		if (o_slay(o_ptr, P_SLAY_UNDEAD))
 		    rf_on(mon_flags, RF_UNDEAD);
-		if (of_has(obj_flags, OF_SLAY_ANIMAL))
+		if (o_slay(o_ptr, P_SLAY_ANIMAL))
 		    rf_on(mon_flags, RF_ANIMAL);
-		if (of_has(obj_flags, OF_SLAY_EVIL))
+		if (o_slay(o_ptr, P_SLAY_EVIL))
 		    rf_on(mon_flags, RF_EVIL);
 
 		/* The object cannot be picked up by the monster */
@@ -4395,7 +4387,7 @@ static void process_monster(monster_type * m_ptr)
 
 	/* Acquire the monster name/poss */
 	if (m_ptr->ml)
-	    monster_desc(m_name, m_ptr, 0);
+	    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 	/* Default name */
 	else
@@ -4416,7 +4408,7 @@ static void process_monster(monster_type * m_ptr)
 	 * Acquire the monster name/poss.  The player ghost will 
 	 * always be identified, to heighten the effect.
 	 */
-	monster_desc(m_name, m_ptr, 0);
+	monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 	msg_format("%^s says: '%s'", m_name, ghost_string);
 	ghost_has_spoken = TRUE;
@@ -4661,8 +4653,8 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 	    char m_poss[80];
 
 	    /* Acquire the monster name/poss */
-	    monster_desc(m_name, m_ptr, 0);
-	    monster_desc(m_poss, m_ptr, 0x22);
+	    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
+	    monster_desc(m_poss, sizeof(m_name), m_ptr, 0x22);
 
 	    /* Dump a message */
 	    msg_format("%^s emerges from a Holding spell.", m_name);
@@ -4688,7 +4680,7 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 	    char m_name[80];
 
 	    /* Acquire the monster name */
-	    monster_desc(m_name, m_ptr, 0);
+	    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 	    /* Dump a message */
 	    msg_format("%^s recovers from the Black Breath.", m_name);
@@ -4758,7 +4750,7 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 		char m_name[80];
 
 		/* Acquire the monster name */
-		monster_desc(m_name, m_ptr, 0);
+		monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 		/* Dump a message */
 		msg_format("%^s wakes up.", m_name);
@@ -4797,7 +4789,7 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 		    char m_name[80];
 
 		    /* Acquire the monster name */
-		    monster_desc(m_name, m_ptr, 0);
+		    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 		    /* Dump a message */
 		    msg_format("%^s wakes up.", m_name);
@@ -4833,7 +4825,7 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 		    char m_name[80];
 
 		    /* Acquire the monster name */
-		    monster_desc(m_name, m_ptr, 0);
+		    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 		    /* Warning */
 		    msg_format("%^s stirs.", m_name);
@@ -4850,7 +4842,7 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 		    char m_name[80];
 
 		    /* Acquire the monster name */
-		    monster_desc(m_name, m_ptr, 0);
+		    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 		    /* Dump a message */
 		    msg_format("%^s wakes up.", m_name);
@@ -4890,7 +4882,7 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 		char m_name[80];
 
 		/* Acquire the monster name */
-		monster_desc(m_name, m_ptr, 0);
+		monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 		/* Dump a message */
 		msg_format("%^s is no longer stunned.", m_name);
@@ -4919,7 +4911,7 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 		char m_name[80];
 
 		/* Acquire the monster name */
-		monster_desc(m_name, m_ptr, 0);
+		monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 		/* Dump a message */
 		msg_format("%^s is no longer confused.", m_name);
@@ -4948,7 +4940,7 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 		char m_name[80];
 
 		/* Acquire the monster name */
-		monster_desc(m_name, m_ptr, 0);
+		monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 		/* Dump a message */
 		msg_format("%^s shimmers and changes!", m_name);
@@ -4991,8 +4983,8 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 		char m_poss[80];
 
 		/* Acquire the monster name/poss */
-		monster_desc(m_name, m_ptr, 0);
-		monster_desc(m_poss, m_ptr, 0x22);
+		monster_desc(m_name, sizeof(m_name), m_ptr, 0);
+		monster_desc(m_poss, sizeof(m_name), m_ptr, 0x22);
 
 		/* Dump a message */
 		msg_format("%^s recovers %s courage.", m_name, m_poss);
@@ -5022,7 +5014,7 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 		char m_name[80];
 
 		/* Acquire the monster name */
-		monster_desc(m_name, m_ptr, 0);
+		monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 		/* Message. */
 		msg_format("%s is no longer slowed.", m_name);
@@ -5038,7 +5030,7 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 		char m_name[80];
 
 		/* Acquire the monster name */
-		monster_desc(m_name, m_ptr, 0);
+		monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 		/* Message. */
 		msg_format("%s is no longer hasted.", m_name);

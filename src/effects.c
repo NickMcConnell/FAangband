@@ -718,10 +718,10 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    (void) clear_timed(TMD_POISONED, TRUE);
 	    (void) clear_timed(TMD_STUN, TRUE);
 	    (void) clear_timed(TMD_CUT, TRUE);
-	    if (p_ptr->state.black_breath) {
+	    if (p_ptr->black_breath) {
 		msg_print("The hold of the Black Breath on you is broken!");
 	    }
-	    p_ptr->state.black_breath = FALSE;
+	    p_ptr->black_breath = FALSE;
 	    *ident = TRUE;
 	    return TRUE;
 	}
@@ -857,11 +857,11 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		*ident = TRUE;
 	    if (clear_timed(TMD_CUT, TRUE))
 		*ident = TRUE;
-	    if (p_ptr->state.black_breath) {
+	    if (p_ptr->black_breath) {
 		msg_print("The hold of the Black Breath on you is broken!");
 		*ident = TRUE;
 	    }
-	    p_ptr->state.black_breath = FALSE;
+	    p_ptr->black_breath = FALSE;
 	    return TRUE;
 	}
 
@@ -882,10 +882,10 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    (void) do_res_stat(A_INT);
 	    (void) do_res_stat(A_CHR);
 	    hp_player(2000);
-	    if (p_ptr->state.black_breath) {
+	    if (p_ptr->black_breath) {
 		msg_print("The hold of the Black Breath on you is broken!");
 	    }
-	    p_ptr->state.black_breath = FALSE;
+	    p_ptr->black_breath = FALSE;
 	    *ident = TRUE;
 	    return TRUE;
 	}
@@ -3255,10 +3255,10 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	(void) do_res_stat(A_INT);
 	(void) do_res_stat(A_CHR);
 	hp_player(2000);
-	if (p_ptr->state.black_breath) {
+	if (p_ptr->black_breath) {
 	    msg_print("The hold of the Black Breath on you is broken!");
 	}
-	p_ptr->state.black_breath = FALSE;
+	p_ptr->black_breath = FALSE;
 	(void) clear_timed(TMD_AFRAID, TRUE);
 	(void) inc_timed(TMD_HERO, randint1(25) + 25, TRUE);
 	(void) inc_timed(TMD_SHERO, randint1(25) + 25, TRUE);

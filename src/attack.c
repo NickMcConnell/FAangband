@@ -1027,7 +1027,7 @@ bool py_attack(int y, int x, bool can_push)
     /* Just push past town monsters */
     if ((m_ptr->hostile != -1) && can_push) {
 	/* Get monster name (or "something") */
-	monster_desc(m_name, m_ptr, 0);
+	monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 	/* Message */
 	msg_format("You push past %s.", m_name);
@@ -1063,7 +1063,7 @@ bool py_attack(int y, int x, bool can_push)
 	health_track(cave_m_idx[y][x]);
 
     /* Extract monster name (or "it") */
-    monster_desc(m_name, m_ptr, 0);
+    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
     /* Handle player fear */
     if (p_ptr->timed[TMD_AFRAID]) {
@@ -1915,7 +1915,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	    hit_body = TRUE;
 
 	    /* Get "the monster" or "it" */
-	    monster_desc(m_name, m_ptr, 0);
+	    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 	    /* 2nd hit on a pierce is easier */
 	    if (did_pierce)
@@ -2481,7 +2481,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 
 
 	    /* Get "the monster" or "it" */
-	    monster_desc(m_name, m_ptr, 0);
+	    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 
 	    /* Note the collision */

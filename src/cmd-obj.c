@@ -576,22 +576,8 @@ static bool item_tester_refill_lantern(const object_type * o_ptr)
 /**
  * Refill the players lamp (from the pack or floor)
  */
-static void refill_lamp(void)
+static void refill_lamp(object_type *j_ptr, object_type *o_ptr, int item)
 {
-    int item;
-
-    object_type *o_ptr;
-    object_type *j_ptr;
-
-    cptr q, s;
-
-
-    /* Restrict the choices */
-    item_tester_hook = item_tester_refill_lantern;
-
-    /* Access the lantern */
-    j_ptr = &p_ptr->inventory[INVEN_LIGHT];
-
     /* Refuel */
     j_ptr->pval += o_ptr->pval;
 
@@ -629,6 +615,9 @@ static void refill_lamp(void)
 
     /* Recalculate torch */
     p_ptr->update |= (PU_TORCH);
+
+    /* Redraw stuff */
+    p_ptr->redraw |= (PR_EQUIP);
 }
 
 
@@ -650,16 +639,8 @@ static bool item_tester_refuel_torch(const object_type * o_ptr)
 /**
  * Refuel the players torch (from the pack or floor)
  */
-static void refuel_torch(void)
+static void refuel_torch(object_type *j_ptr, object_type *o_ptr, int item)
 {
-    int item;
-
-    object_type *o_ptr;
-    object_type *j_ptr;
-
-    cptr q, s;
-
-
     /* Access the primary torch */
     j_ptr = &p_ptr->inventory[INVEN_LIGHT];
 
@@ -696,6 +677,9 @@ static void refuel_torch(void)
 
     /* Recalculate torch */
     p_ptr->update |= (PU_TORCH);
+
+    /* Redraw stuff */
+    p_ptr->redraw |= (PR_EQUIP);
 }
 
 
@@ -719,11 +703,11 @@ void do_cmd_refill(cmd_code code, cmd_arg args[])
 
     /* It's a lamp */
     else if (j_ptr->sval == SV_LIGHT_LANTERN)
-	refill_lamp();
+	refill_lamp(j_ptr, o_ptr, item);
 
     /* It's a torch */
     else if (j_ptr->sval == SV_LIGHT_TORCH)
-	refuel_torch();
+	refuel_torch(j_ptr, o_ptr, item);
 
     else {
 	msg_print("Your light cannot be refilled.");
@@ -860,7 +844,7 @@ static void pseudo_probe(void)
 
     else {
 	/* Get "the monster" or "something" */
-	monster_desc(m_name, m_ptr, 0x04);
+	monster_desc(m_name, sizeof(m_name), m_ptr, 0x04);
 
 	/* Approximate monster HPs */
 	approx_hp =

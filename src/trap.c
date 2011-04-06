@@ -1476,13 +1476,13 @@ void py_steal(int y, int x)
 
 	/* Occasionally, amuse the player with a message. */
 	if ((randint1(5) == 1) && (purse) && (rf_has(r_ptr->flags, RF_SMART))) {
-	    monster_desc(m_name, m_ptr, 0);
+	    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 	    act = desc_victim_outcry[randint0(20)];
 	    msg_format("%^s cries out %s", m_name, act);
 	}
 	/* Otherwise, simply explain what happened. */
 	else {
-	    monster_desc(m_name, m_ptr, 0);
+	    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 	    msg_format("You have aroused %s.", m_name);
 	}
     }

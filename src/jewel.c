@@ -1208,14 +1208,16 @@ static bool get_quality(bool on_credit, int purchase, int value,
  */
 static bool get_activation(bool on_credit, int activation, object_type *o_ptr)
 {
-  /* Allocate the activation, if affordable */
-  if (take_money(on_credit, effect_power(activation) * EFFECT_MULT)
+    /* Allocate the activation, if affordable */
+    if (take_money(on_credit, effect_power(activation) * EFFECT_MULT))
     {
-      o_ptr->effect = activation;
-      return (TRUE);
+	o_ptr->effect = activation;
+	return (TRUE);
     }
-  else return (FALSE);
+    else 
+	return (FALSE);
 }
+
 
 
 
@@ -1681,17 +1683,17 @@ static bool choose_type(object_type *o_ptr)
 	      }
 	    case EGO_AMULET_METAMORPH:
 	      /* min potential 2000 */
-	      {
+	    {
 		/* This is an exclusive club */
 		if (potential < 3000) break;
-
+		
 		o_ptr->effect = EF_AMULET_METAMORPH;
-		o_ptr->time = {300, 0, 0, 0};
+		o_ptr->time.base = 300;
 		potential -= 2000;
-
+		
 		done = TRUE;
 		break;
-	      }
+	    }
 	    case EGO_AMULET_SUSTENANCE:
 	      /* min potential  50 */
 	      {
@@ -1816,7 +1818,9 @@ static bool choose_type(object_type *o_ptr)
 		get_quality(TRUE, BRAND_ACID + element, 4, o_ptr);
 		get_quality(TRUE, RES_ACID + element, 6 - bonus, o_ptr);
 		o_ptr->effect = EF_RING_ACID + element;
-		o_ptr->time = {50, 1, 100, 0};
+		o_ptr->time.base = 50;
+		o_ptr->time.dice = 1; 
+		o_ptr->time.sides = 100;
 
 		done = TRUE;
 		break;
@@ -2801,7 +2805,7 @@ bool design_ring_or_amulet(object_type *o_ptr, int lev)
   j_remove_contradictory(o_ptr);
 
   /* Add effect timeout */
-  effect_time(o_ptr->effect, o_ptr->time);
+  effect_time(o_ptr->effect, &o_ptr->time);
 
   return TRUE;
 }

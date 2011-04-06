@@ -966,6 +966,8 @@ typedef struct {
     s16b delay_factor;	/**< Delay factor (0 to 9) */
 
     s16b panel_change;	/**< Panel change factor (0 to 4) */
+	
+    byte name_suffix;	/* numeric suffix for player name */
 } player_other;
 
 
@@ -1086,8 +1088,6 @@ typedef struct {
     bool drain_stat;	/**< Random stat draining */
     bool drain_charge;
 			/**< Random charge draining */
-    bool black_breath;
-			/**< Major experience draining */
 } player_state;
 
 
@@ -1159,6 +1159,8 @@ typedef struct player {
     s16b timed[TMD_MAX];/**< Timed effects */
     s16b ele_attack;	/**< Timed -- Temporary Elemental attacks -LM- */
 
+    bool black_breath;
+			/**< Major experience draining */
     s16b word_recall;
 			/**< Word of recall counter */
 

@@ -2217,7 +2217,7 @@ void object_absorb(object_type * o_ptr, const object_type * j_ptr)
     }
 
     if ((o_ptr->origin != j_ptr->origin)
-	|| (o_ptr->origin_depth != j_ptr->origin_depth)
+	|| (o_ptr->origin_stage != j_ptr->origin_stage)
 	|| (o_ptr->origin_xtra != j_ptr->origin_xtra)) {
 	int act = 2;
 
@@ -2241,7 +2241,7 @@ void object_absorb(object_type * o_ptr, const object_type * j_ptr)
 	case 1:
 	    {
 		o_ptr->origin = j_ptr->origin;
-		o_ptr->origin_depth = j_ptr->origin_depth;
+		o_ptr->origin_stage = j_ptr->origin_stage;
 		o_ptr->origin_xtra = j_ptr->origin_xtra;
 	    }
 
@@ -2686,7 +2686,7 @@ void acquirement(int y1, int x1, int level, int num, bool great)
 	if (!make_object(i_ptr, TRUE, great, FALSE))
 	    continue;
 	i_ptr->origin = ORIGIN_ACQUIRE;
-	i_ptr->origin_depth = p_ptr->depth;
+	i_ptr->origin_stage = p_ptr->stage;
 
 	/* Drop the object */
 	drop_near(i_ptr, 0, y1, x1, TRUE);

@@ -212,7 +212,7 @@ extern void describe_monster(int r_idx, bool spoilers)
     int m, n, r;
 
     char *p, *q;
-    char *name;
+    char name[80];
 
     int msex = 0;
 
@@ -235,7 +235,7 @@ extern void describe_monster(int r_idx, bool spoilers)
     l_ptr = &l_list[r_idx];
 
     /* Get the monster name */
-    name = (r_name + r_ptr->name);
+    my_strcpy(name, r_ptr->name, sizeof(name));
 
     /* Cheat -- know everything */
     if (OPT(cheat_know) || (rf_has(r_ptr->flags, RF_PLAYER_GHOST))) {
@@ -365,7 +365,7 @@ extern void describe_monster(int r_idx, bool spoilers)
 
     /* Descriptions */
 
-    my_strcpy(buf, sizeof(buf), r_text);
+    my_strcpy(buf, r_ptr->text, sizeof(buf));
 
     /* Hack - translate if we do that */
     if (Term->xchar_hook)
@@ -391,7 +391,7 @@ extern void describe_monster(int r_idx, bool spoilers)
     text_out_to_screen(TERM_WHITE, "\n");
 
     /* Treat uniques differently */
-    else if (unique) {
+    if (unique) {
 	/* Hack -- Determine if the unique is "dead" */
 	bool dead = (r_ptr->max_num == 0) ? TRUE : FALSE;
 
@@ -1205,10 +1205,10 @@ extern void describe_monster(int r_idx, bool spoilers)
     m = vn;
 
     /* Summons are described somewhat differently. */
-    if (flags7) {
+    if (flags_test(mon_spells, RSF_SIZE, RSF_SUMMON_MASK, FLAG_END)) {
 	/* Summons */
 	if (rsf_has(mon_spells, RSF_S_KIN)) {
-	    if (rf_has(r_ptr->flags, RF_UNIQUE))
+	    if (rf_has(r_ptr->spell_flags, RF_UNIQUE))
 		vp[vn++] = "its minions";
 	    else
 		vp[vn++] = "similar monsters";
@@ -1558,7 +1558,7 @@ extern void describe_monster(int r_idx, bool spoilers)
 		|| (rf_has(mon_flags, RF_IM_FIRE)))) || prefix(name, "Plasma"))
 	vp[vn++] = "plasma";
 
-    if ((rf_has(mon_flags, RF_RES_NEXU)) || prefix(name, "Nexus")
+    if ((rf_has(mon_flags, RF_RES_NEXUS)) || prefix(name, "Nexus")
 	|| (rsf_has(mon_spells, RSF_BRTH_NEXUS)))
 	vp[vn++] = "nexus";
     if ((rf_has(mon_flags, RF_UNDEAD)) || (rf_has(mon_flags, RF_RES_NETH))
@@ -2072,7 +2072,7 @@ extern void roff_top(int r_idx)
     }
 
     /* For all other monsters, dump the racial name. */
-    my_strcat(buf, (r_name + r_ptr->name), sizeof(buf));
+    my_strcat(buf, r_ptr->name, sizeof(buf));
 
     /* Hack - translate if we do that */
     if (Term->xchar_hook)
@@ -2905,8 +2905,8 @@ bool prepare_ghost(int r_idx, monster_type * m_ptr, bool from_savefile)
   /*** Process class. ***/
 
     /* Sanity check. */
-    if (ghost_class >= MAX_CLASS)
-	ghost_class = randint0(MAX_CLASS);
+    if (ghost_class >= CLASS_MAX)
+	ghost_class = randint0(CLASS_MAX);
 
     /* And use the ghost class to gain some flags. */
     process_ghost_class(ghost_class, m_ptr);
@@ -2917,9 +2917,6 @@ bool prepare_ghost(int r_idx, monster_type * m_ptr, bool from_savefile)
 
     /* Hack -- increase the level feeling */
     rating += 10;
-
-    /* A ghost makes the level special */
-    good_item_flag = TRUE;
 
     /* Hack - Player ghosts are "seen" whenever generated, to conform with
      * previous practice. */

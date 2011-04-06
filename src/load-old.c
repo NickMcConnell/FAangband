@@ -124,12 +124,6 @@ static void rd_u32b(u32b *ip)
     (*ip) |= ((u32b)(sf_get()) << 24);
 }
 
-static void rd_s32b(s32b *ip)
-{
-    rd_u32b((u32b*)ip);
-}
-
-
 /**
  * Hack -- read a string
  */
@@ -181,6 +175,7 @@ static void strip_bytes(int n)
  */
 static void rd_lore(int r_idx)
 {
+    size_t i;
     byte tmp8u;
   
     monster_race *r_ptr = &r_info[r_idx];
@@ -348,25 +343,20 @@ static void rd_options(void)
 	int os = i / 32;
 	int ob = i % 32;
       
-	/* Process real entries */
-	if (option_text[i])
+	/* Process saved entries */
+	if (mask[os] & (1L << ob))
 	{
-	  
-	    /* Process saved entries */
-	    if (mask[os] & (1L << ob))
+	    /* Set flag */
+	    if (flag[os] & (1L << ob))
 	    {
-		/* Set flag */
-		if (flag[os] & (1L << ob))
-		{
-		    /* Set */
-		    op_ptr->opt[i] = TRUE;
-		}
-		/* Clear flag */
-		else
-		{
-		    /* Set */
-		    op_ptr->opt[i] = FALSE;
-		}
+		/* Set */
+		op_ptr->opt[i] = TRUE;
+	    }
+	    /* Clear flag */
+	    else
+	    {
+		/* Set */
+		op_ptr->opt[i] = FALSE;
 	    }
 	}
     }
@@ -441,17 +431,9 @@ static void rd_messages(void)
  */
 static errr rd_savefile_new_aux(void)
 {
-    int i, j, k;
+    int i, j;
   
-    int total_artifacts = 0;
-    int random_artifacts = 0;
-  
-    bool need_random_artifacts = FALSE;
-  
-    byte tmp8u;
-    u16b num, tmp16u;
-    u32b tmp32u;
-    s32b tmp32s;
+    u16b tmp16u;
   
     /* Mention the savefile version if not current */
     if (older_than(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH))

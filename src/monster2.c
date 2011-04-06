@@ -22,7 +22,11 @@
  */
 
 #include "angband.h"
-
+#include "cave.h"
+#include "history.h"
+#include "monster.h"
+#include "player.h"
+#include "target.h"
 
 
 /**
@@ -754,7 +758,7 @@ void display_monlist(void)
 	r_ptr = &r_info[m_ptr->r_idx];
 
 	/* Get the monster name */
-	m_name = r_name + r_ptr->name;
+	m_name = r_ptr->name;
 
 	/* Obtain the length of the description */
 	n = strlen(m_name);
@@ -897,13 +901,13 @@ void display_monlist(void)
  *   - 0x22 --> Possessive, genderized if visable ("his") or "its"
  *   - 0x23 --> Reflexive, genderized if visable ("himself") or "itself"
  */
-void monster_desc(char *desc, monster_type * m_ptr, int mode)
+void monster_desc(char *desc, size_t max, monster_type * m_ptr, int mode)
 {
     cptr res;
 
     monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-    cptr name = (r_name + r_ptr->name);
+    cptr name = r_ptr->name;
     char undead_name[40] = "oops";
 
     bool seen, pron;
@@ -919,9 +923,6 @@ void monster_desc(char *desc, monster_type * m_ptr, int mode)
     if (!seen || pron) {
 	/* an encoding of the monster "sex" */
 	int kind = 0x00;
-
-	/* Clear the description. */
-	strcpy(desc, "                         ");
 
 	/* Extract the gender (if applicable) */
 	if (rf_has(r_ptr->flags, RF_FEMALE))
@@ -1019,7 +1020,7 @@ void monster_desc(char *desc, monster_type * m_ptr, int mode)
 	}
 
 	/* Copy the result */
-	strcpy(desc, res);
+	my_strcpy(desc, res, max);
     }
 
 
@@ -1027,11 +1028,11 @@ void monster_desc(char *desc, monster_type * m_ptr, int mode)
     else if ((mode & 0x02) && (mode & 0x01)) {
 	/* The monster is visible, so use its gender */
 	if (rf_has(r_ptr->flags, RF_FEMALE))
-	    strcpy(desc, "herself");
+	    my_strcpy(desc, "herself", max);
 	else if (rf_has(r_ptr->flags, RF_MALE))
-	    strcpy(desc, "himself");
+	    my_strcpy(desc, "himself", max);
 	else
-	    strcpy(desc, "itself");
+	    my_strcpy(desc, "itself", max);
     }
 
 
@@ -1041,25 +1042,25 @@ void monster_desc(char *desc, monster_type * m_ptr, int mode)
 
 	/* Get a racial prefix if necessary */
 	if (m_ptr->p_race != NON_RACIAL)
-	    race_name = p_name + p_info[m_ptr->p_race].name;
+	    race_name = p_info[m_ptr->p_race].name;
 
 	/* It could be a player ghost. */
 	if (rf_has(r_ptr->flags, RF_PLAYER_GHOST)) {
 	    /* Get the ghost name. */
-	    strcpy(desc, ghost_name);
+	    my_strcpy(desc, ghost_name, max);
 
 	    /* Get the undead name. */
-	    strcpy(undead_name, r_name + r_ptr->name);
+	    my_strcpy(undead_name, r_ptr->name, max);
 
 	    /* Build the ghost name. */
-	    strcat(desc, ", the ");
-	    strcat(desc, undead_name);
+	    my_strcat(desc, ", the ", max);
+	    my_strcat(desc, undead_name, max);
 	}
 
 	/* It could be a Unique */
 	else if (rf_has(r_ptr->flags, RF_UNIQUE)) {
 	    /* Start with the name (thus nominative and objective) */
-	    strcpy(desc, name);
+	    my_strcpy(desc, name, max);
 	}
 
 	/* It could be an indefinite monster */
@@ -1075,18 +1076,18 @@ void monster_desc(char *desc, monster_type * m_ptr, int mode)
 	    /* XXX Check plurality for "some" */
 
 	    /* Indefinite monsters need an indefinite article */
-	    strcpy(desc, vowel ? "an " : "a ");
+	    my_strcpy(desc, vowel ? "an " : "a ", max);
 
 	    /* Hack - no capital if there's a race name first */
 	    if (race_name) {
-		strcat(desc, race_name);
-		strcat(desc, " ");
+		my_strcat(desc, race_name, max);
+		my_strcat(desc, " ", max);
 		first[0] = tolower(name[0]);
 		first[1] = '\0';
-		strcat(desc, first);
-		strcat(desc, name + 1);
+		my_strcat(desc, first, max);
+		my_strcat(desc, name + 1, max);
 	    } else
-		strcat(desc, name);
+		my_strcat(desc, name, max);
 	}
 
 	/* It could be a normal, definite, monster */
@@ -1094,17 +1095,17 @@ void monster_desc(char *desc, monster_type * m_ptr, int mode)
 	    char first[2];
 
 	    /* Definite monsters need a definite article */
-	    strcpy(desc, "the ");
+	    my_strcpy(desc, "the ", max);
 	    /* Hack - no capital if there's a race name first */
 	    if (race_name) {
-		strcat(desc, race_name);
-		strcat(desc, " ");
+		my_strcat(desc, race_name, max);
+		my_strcat(desc, " ", max);
 		first[0] = tolower(name[0]);
 		first[1] = '\0';
-		strcat(desc, first);
-		strcat(desc, name + 1);
+		my_strcat(desc, first, max);
+		my_strcat(desc, name + 1, max);
 	    } else
-		strcat(desc, name);
+		my_strcat(desc, name, max);
 	}
 
 	/* Handle the Possessive as a special afterthought */
@@ -1112,13 +1113,13 @@ void monster_desc(char *desc, monster_type * m_ptr, int mode)
 	    /* XXX Check for trailing "s" */
 
 	    /* Simply append "apostrophe" and "s" */
-	    strcat(desc, "'s");
+	    my_strcat(desc, "'s", max);
 	}
 
 	/* Mention "offscreen" monsters XXX XXX */
 	if (!panel_contains(m_ptr->fy, m_ptr->fx)) {
 	    /* Append special notation */
-	    strcat(desc, " (offscreen)");
+	    my_strcat(desc, " (offscreen)", max);
 	}
     }
 }
@@ -1140,10 +1141,8 @@ void monster_desc_race(char *desc, size_t max, int r_idx)
 {
     monster_race *r_ptr = &r_info[r_idx];
 
-    cptr name = (r_name + r_ptr->name);
-
     /* Write the name */
-    my_strcpy(desc, name, max);
+    my_strcpy(desc, r_ptr->name, max);
 }
 
 
@@ -1158,9 +1157,7 @@ void lore_do_probe(int m_idx)
     monster_lore *l_ptr = &l_list[m_ptr->r_idx];
 
     /* Hack -- Memorize some flags */
-    l_ptr->flags1 = r_ptr->flags1;
-    l_ptr->flags2 = r_ptr->flags2;
-    l_ptr->flags3 = r_ptr->flags3;
+    rf_copy(l_ptr->flags, r_ptr->flags);
 
     /* Update monster recall window */
     if (p_ptr->monster_race_idx == m_ptr->r_idx) {
@@ -1707,9 +1704,8 @@ void monster_swap(int y1, int x1, int y2, int x2)
 	p_ptr->redraw |= PR_MAP;
 
 	/* Warn when leaving trap detected region */
-	if (OPT(disturb_trap_detect) && old_dtrap && !new_dtrap) {
+	if (OPT(disturb_detect) && old_dtrap && !new_dtrap) {
 	    /* Disturb to break runs */
-	    msg_print("*Edge of trap detect region!*");
 	    disturb(0, 0);
 	}
     }
@@ -1919,7 +1915,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
 	return (FALSE);
 
     /* Name */
-    name = (r_name + r_ptr->name);
+    name = r_ptr->name;
 
     /* Hack -- "unique" monsters must be "unique" */
     if ((rf_has(r_ptr->flags, RF_UNIQUE)) && (r_ptr->cur_num >= r_ptr->max_num)) {
@@ -2914,7 +2910,7 @@ int assess_shapechange(int m_idx, monster_type * m_ptr)
 	else {
 	    /* Count possibilities */
 	    for (j = rsf_next(summons, FLAG_START); j != FLAG_END;
-		 flag = rsf_next(summons, j + 1))
+		 j = rsf_next(summons, j + 1))
 		poss++;
 
 	    /* Pick one */
@@ -3154,7 +3150,7 @@ void message_pain(int m_idx, int dam)
 
 
     /* Get the monster name */
-    monster_desc(m_name, m_ptr, 0);
+    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
     /* Notice non-damage */
     if (dam == 0) {
@@ -3783,7 +3779,7 @@ void update_smart_learn(int m_idx, int what)
  */
 static int get_coin_type(monster_race * r_ptr)
 {
-    cptr name = (r_name + r_ptr->name);
+    cptr name = r_ptr->name;
 
     /* Analyze "coin" monsters */
     if (r_ptr->d_char == '$') {
@@ -4198,8 +4194,8 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, cptr note)
     m_ptr->mflag |= (MFLAG_ACTV);
 
     /* Hack - Cancel any special player stealth magics. */
-    if (p_ptr->superstealth) {
-	set_superstealth(0, TRUE);
+    if (p_ptr->timed[TMD_SSTEALTH]) {
+	clear_timed(TMD_SSTEALTH, TRUE);
     }
 
     /* Complex message. Moved from melee and archery, now allows spell and
@@ -4223,10 +4219,10 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, cptr note)
 		m_ptr->orig_idx = m_ptr->r_idx;
 
 	    /* Extract monster name */
-	    monster_desc(m_name, m_ptr, 0);
+	    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 	    /* Get the monster possessive */
-	    monster_desc(m_poss, m_ptr, 0x22);
+	    monster_desc(m_poss, sizeof(m_name), m_ptr, 0x22);
 
 	    /* Do the change */
 	    m_ptr->r_idx = m_ptr->orig_idx;
@@ -4240,7 +4236,7 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, cptr note)
 	}
 
 	/* Extract monster name */
-	monster_desc(m_name, m_ptr, 0);
+	monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 	/* Make a sound */
 	sound(MSG_KILL);
@@ -4315,9 +4311,9 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, cptr note)
 
 	    /* write note for player ghosts */
 	    if (rf_has(r_ptr->flags, RF_PLAYER_GHOST)) {
-		my_strcpy(note2,
+		my_strcpy(note,
 			  format("Destroyed %^s, the %^s", ghost_name,
-				 r_name + r_ptr->name), sizeof(note2));
+				 r_ptr->name), sizeof(note));
 	    }
 
 	    /* All other uniques */
@@ -4328,7 +4324,7 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, cptr note)
 		/* Write note */
 		if (monster_is_unusual(r_ptr))
 		    my_strcpy(note, format("Destroyed %s", real_name),
-			      sizeof(note2));
+			      sizeof(note));
 		else
 		    my_strcpy(note, format("Killed %s", real_name), sizeof(note));
 	    }

@@ -61,7 +61,7 @@ static void wr_item(object_type *o_ptr)
     wr_byte(o_ptr->marked);
   
     wr_byte(o_ptr->origin);
-    wr_byte(o_ptr->origin_depth);
+    wr_byte(o_ptr->origin_stage);
     wr_u16b(o_ptr->origin_xtra);
 
     /* Flags */

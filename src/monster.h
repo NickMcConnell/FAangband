@@ -21,7 +21,7 @@ extern s16b get_mon_num(int level);
 extern s16b get_mon_num_quick(int level);
 extern void display_monlist(void);
 extern void display_itemlist(void);
-extern void monster_desc(char *desc, monster_type *m_ptr, int mode);
+extern void monster_desc(char *desc, size_t max, monster_type *m_ptr, int mode);
 extern void monster_desc_race(char *desc, size_t max, int r_idx);
 extern void lore_do_probe(int m_idx);
 extern void lore_treasure(int m_idx, int num_item, int num_gold);

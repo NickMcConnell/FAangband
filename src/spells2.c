@@ -4553,7 +4553,7 @@ bool probing(void)
 		msg_print("Probing...");
 
 	    /* Get "the monster" or "something" */
-	    monster_desc(m_name, m_ptr, 0x04);
+	    monster_desc(m_name, sizeof(m_name), m_ptr, 0x04);
 
 	    /* Describe the monster */
 	    if (!(r_ptr->mana))
@@ -4977,7 +4977,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 		    }
 
 		    /* Describe the monster */
-		    monster_desc(m_name, m_ptr, 0);
+		    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 		    /* Scream in pain */
 		    msg_format("%^s wails out in pain!", m_name);
@@ -5154,7 +5154,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 			    char m_name[80];
 
 			    /* Extract monster name */
-			    monster_desc(m_name, m_ptr, 0);
+			    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 			    /* There it goes... */
 			    msg_format("%s falls into the dark!", m_name);
@@ -5292,7 +5292,7 @@ static void cave_temp_room_light(void)
 		    char m_name[80];
 
 		    /* Acquire the monster name */
-		    monster_desc(m_name, m_ptr, 0);
+		    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 		    /* Dump a message */
 		    msg_format("%^s wakes up.", m_name);

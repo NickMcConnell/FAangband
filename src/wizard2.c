@@ -1341,7 +1341,7 @@ static void do_cmd_wiz_cure_all(void)
     (void) clear_timed(TMD_STUN, TRUE);
     (void) clear_timed(TMD_CUT, TRUE);
     (void) clear_timed(TMD_SLOW, TRUE);
-    p_ptr->state.black_breath = FALSE;
+    p_ptr->black_breath = FALSE;
 
     /* No longer hungry */
     (void) set_food(PY_FOOD_MAX - 1);

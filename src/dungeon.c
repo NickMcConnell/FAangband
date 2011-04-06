@@ -919,7 +919,7 @@ static void process_world(void)
     /* Every 500 turns, warn about any Black Breath not gotten from an equipped 
      * object, and stop any resting. -LM-
      */
-    if (!(turn % 5000) && (p_ptr->state.black_breath)) {
+    if (!(turn % 5000) && (p_ptr->black_breath)) {
 	bool be_silent = FALSE;
 
 	/* check all equipment for the Black Breath flag. */
@@ -1020,7 +1020,7 @@ static void process_world(void)
     /* Handle experience draining.  In Oangband, the effect is worse,
      * especially for high-level characters.  As per Tolkien, hobbits are
      * resistant. */
-    if (p_ptr->state.black_breath) {
+    if (p_ptr->black_breath) {
 	if (hardy)
 	    chance = 2;
 	else
@@ -2505,7 +2505,7 @@ void play_game(void)
 		(void) clear_timed(TMD_CUT, TRUE);
 		(void) clear_timed(TMD_AFRAID, TRUE);
 		(void) clear_timed(TMD_PARALYZED, TRUE);
-		p_ptr->state.black_breath = FALSE;
+		p_ptr->black_breath = FALSE;
 
 		/* Hack -- Prevent starvation */
 		(void) set_food(PY_FOOD_MAX - 1);
