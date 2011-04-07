@@ -143,7 +143,7 @@ static const property_type resists[]=
     { TERM_L_GREEN, " nether"},
     { TERM_VIOLET, " chaos"},
     { TERM_VIOLET, " disenchantment"},
-}
+};
 
 
 static const flag_type ignore_flags[] =
@@ -205,7 +205,7 @@ static const flag_type curses[] =
     { CF_DRAIN_MANA,      "Drains mana" },
     { CF_DRAIN_STAT,      "Will sometimes lower a stat" },
     { CF_DRAIN_CHARGE,    "Will take energy from your magic devices" },
-}
+};
 
 
 
@@ -281,7 +281,8 @@ char *obj_class_info[101] = {
 /*
  * Describe an item's curses.
  */
-static bool describe_curses(textblock *tb, const object_type *o_ptr)
+static bool describe_curses(textblock *tb, const object_type *o_ptr,
+			    oinfo_detail_t mode)
 {
     size_t i;
     bool printed = FALSE;
@@ -563,7 +564,7 @@ static bool describe_brands(textblock *tb, const object_type *o_ptr,
 /*
  * Describe immunities granted by an object.
  */
-static bool describe_immune(textblock *tb, object_type *o_ptr, 
+static bool describe_immune(textblock *tb, const object_type *o_ptr, 
 			    oinfo_detail_t mode)
 {
     int res = 0, imm = 0, vul = 0, spec = 0, j;
@@ -583,7 +584,7 @@ static bool describe_immune(textblock *tb, object_type *o_ptr,
     for (j = 0; j < MAX_P_RES; j++) {
 	if (!if_has(o_ptr->id_other, OBJECT_ID_BASE_RESIST + j)  && !full) 
 	    continue;
-	if (o_ptr->percent_res[j] == OBJ_BOOST_IMMUNE) 
+	if (o_ptr->percent_res[j] == RES_BOOST_IMMUNE) 
 	    imm++;
 	else if (o_ptr->percent_res[j] < RES_LEVEL_BASE) {
 	    if (j == P_RES_CONFU) spec++;
@@ -630,7 +631,7 @@ static bool describe_immune(textblock *tb, object_type *o_ptr,
 	textblock_append(tb, "to ");
 
 	/* Loop for number of attributes in this group. */
-	for (j = 0; j < P_RES_MAX; j++) {
+	for (j = 0; j < MAX_P_RES; j++) {
 	    if (o_ptr->percent_res[j] >= RES_LEVEL_BASE)
 		continue;
 	    if (o_ptr->percent_res[j] == RES_BOOST_IMMUNE)
@@ -653,7 +654,7 @@ static bool describe_immune(textblock *tb, object_type *o_ptr,
 	}
 
 	/* End sentence. */
-	text_out_to_screen(TERM_WHITE, ". ");
+	textblock_append(tb, ". ");
 	prev = TRUE;
     }
 
@@ -681,14 +682,15 @@ static bool describe_immune(textblock *tb, object_type *o_ptr,
 		textblock_append(tb, " provides resistance to");
 	    else if (spec == 1)
 		textblock_append(tb, "It provides resistance to");
-	    textblock_append_c(tb, " confusion");
+	    textblock_append_c(tb, TERM_L_UMBER, " confusion");
 	    textblock_append(tb, "(");
 	    if (dummy) textblock_append(tb, "about ");
-	    textblock_append(tb, "%d%%).", RES_LEVEL_BASE - o_ptr->percent_res[P_RES_CONFU]);
-		prev = TRUE;
-	    } 
-	}
+	    textblock_append(tb, "%d%%).", RES_LEVEL_BASE - 
+			     o_ptr->percent_res[P_RES_CONFU]);
+	    prev = TRUE;
+	} 
     }
+
 
     /* Vulnerabilities */
     if (vul) {
@@ -697,7 +699,7 @@ static bool describe_immune(textblock *tb, object_type *o_ptr,
 	textblock_append(tb, "to ");
 
 	/* Loop for number of attributes in this group. */
-	for (j = 0; j < P_RES_MAX; j++) {
+	for (j = 0; j < MAX_P_RES; j++) {
 	    if (o_ptr->percent_res[j] <= RES_LEVEL_BASE)
 		continue;
 	    if (!if_has(o_ptr->id_other, OBJECT_ID_BASE_RESIST + j))
@@ -733,7 +735,7 @@ static bool describe_ignores(textblock *tb, const object_type *o_ptr,
     bool full = mode & OINFO_FULL;
     const char *descs[N_ELEMENTS(ignore_flags)];
     size_t count = info_collect(tb, ignore_flags, N_ELEMENTS(ignore_flags),
-				full ? o_ptr->flags_obj : o_ptr->flags_id, 
+				full ? o_ptr->flags_obj : o_ptr->id_obj, 
 				descs);
     
     if (!count)
@@ -756,7 +758,7 @@ static bool describe_sustains(textblock *tb, const object_type *o_ptr,
     bool full = mode & OINFO_FULL;
     const char *descs[N_ELEMENTS(sustain_flags)];
     size_t count = info_collect(tb, sustain_flags, N_ELEMENTS(sustain_flags),
-				full ? o_ptr->flags_obj : o_ptr->flags_id, 
+				full ? o_ptr->flags_obj : o_ptr->id_obj, 
 				descs);
 
     if (!count)
@@ -775,14 +777,16 @@ static bool describe_sustains(textblock *tb, const object_type *o_ptr,
 /*
  * Describe miscellaneous powers.
  */
-static bool describe_misc_magic(textblock *tb, const object_type *o_ptr)
+static bool describe_misc_magic(textblock *tb, const object_type *o_ptr, 
+			      oinfo_detail_t mode)
 {
+    bool full = mode & OINFO_FULL;
     size_t i;
     bool printed = FALSE;
 
     for (i = 0; i < N_ELEMENTS(misc_flags); i++)
     {
-	if (of_has(full ? o_ptr->flags_obj : o_ptr->flags_id, misc_flags[i].flag))
+	if (of_has(full ? o_ptr->flags_obj : o_ptr->id_obj, misc_flags[i].flag))
 	{
 	    if (!printed) textblock_append(tb, "Powers:  ");
 	    textblock_append(tb, "%s.  ", misc_flags[i].name);
@@ -804,8 +808,10 @@ static bool describe_misc_magic(textblock *tb, const object_type *o_ptr)
 /**
  * Display the damage done with a multiplier
  */
-static void output_dam(player_state *state, object_type * o_ptr, int mult, 
-		       const char *against, bool * first, oinfo_detail_t mode)
+static void output_dam(textblock *tb, player_state *state, 
+		       const object_type * o_ptr, int mult, 
+		       const char *against, bool * first, 
+		       oinfo_detail_t mode)
 {
     int dam, die_average, add = 0, i, deadliness, crit, chance;
     bool full = mode & OINFO_FULL;
@@ -850,13 +856,13 @@ static void output_dam(player_state *state, object_type * o_ptr, int mult,
 
     /* Multiply by number of sides */
     dam = die_average * (o_ptr->dd * 10 + crit);
-
+    
     CHECK_FIRST("", *first);
     if ((dam > 50000) || (add > 0))
-	textblock_append_c(tb, TERM_L_GREEN, "%d", add + dam / 100000));
+	textblock_append_c(tb, TERM_L_GREEN, "%d", add + dam / 100000);
     else
 	textblock_append_c(tb, TERM_L_RED, "0");
-    textblock_append(tb, " against %s", against));
+    textblock_append(tb, " against %s", against);
 }
 
 /**
@@ -898,14 +904,13 @@ static bool describe_weapon_damage(textblock *tb, const object_type *o_ptr,
 	if (i_ptr->k_idx) {
 	    /* Pick up any brands (and slays!) */
 	    for (j = 0; j < MAX_P_SLAY; j++)
-		slay[j] =
-		    MAX(slay[j], ((if_has(i_ptr->id_other, OBJECT_ID_BASE_SLAY + j) || full)
-				  ? i_ptr->multiple_slay[j] : MULTIPLE_BASE));
+		slay[j] = MAX(slay[j], ((if_has(i_ptr->id_other, OBJECT_ID_BASE_SLAY + j) || full)
+					? i_ptr->multiple_slay[j] : MULTIPLE_BASE));
 	    for (j = 0; j < MAX_P_BRAND; j++)
 		brand[j] =
 		    MAX(brand[j], ((if_has(i_ptr->id_other, OBJECT_ID_BASE_BRAND + j) || full)
-				   ? i_ptr->multiple_brand[j] : MULTIPLE_BASE);
-			}
+				   ? i_ptr->multiple_brand[j] : MULTIPLE_BASE));
+			
 	}
     }
 
@@ -932,23 +937,23 @@ static bool describe_weapon_damage(textblock *tb, const object_type *o_ptr,
 
     calc_bonuses(inven, &state, TRUE);
 
-    show_m_tohit = state->dis_to_h;
+    show_m_tohit = state.dis_to_h;
     if (if_has(o_ptr->id_other, IF_TO_H) || full)
 	show_m_tohit += o_ptr->to_h;
 
     if (terse) {
-	textblock_append_c(tb, TERM_L_GREEN, "%d ", state->num_blow);
-	textblock_append(tb, "blow%s av. dam. ", (state->num_blow) ? "s" : "");
+	textblock_append_c(tb, TERM_L_GREEN, "%d ", state.num_blow);
+	textblock_append(tb, "blow%s av. dam. ", (state.num_blow) ? "s" : "");
     } else {
 	textblock_append(tb, "\nWielding it you would have ");
-	textblock_append_c(tb, TERM_L_GREEN, "%d ", state->num_blow);
+	textblock_append_c(tb, TERM_L_GREEN, "%d ", state.num_blow);
 	textblock_append(tb, "blow%s and do an average damage per blow of ",
-			 (state->num_blow) ? "s" : "");
+			 (state.num_blow) ? "s" : "");
     }
 
     for (i = 0; i < MAX_P_SLAY; i++) {
 	if (slay[i] > MULTIPLE_BASE)
-	    output_dam(&state, o_ptr, slay[i], slayee[i], &first);
+	    output_dam(tb, &state, o_ptr, slay[i], slayee[i], &first, mode);
     }
 
     for (i = 0; i < MAX_P_BRAND; i++) {
@@ -956,12 +961,12 @@ static bool describe_weapon_damage(textblock *tb, const object_type *o_ptr,
 	    char buf[40];
 
 	    strnfmt(buf, sizeof(buf), "non %s resistant creatures", brandee[i]);
-	    output_dam(&state, o_ptr, brand[i], buf, &first);
+	    output_dam(tb, &state, o_ptr, brand[i], buf, &first, mode);
 	}
     }
 
-    output_dam(&state, o_ptr, MULTIPLE_BASE,
-	       (first) ? "all monsters" : "other monsters", &first);
+    output_dam(tb, &state, o_ptr, MULTIPLE_BASE,
+	       (first) ? "all monsters" : "other monsters", &first, mode);
 
     if (terse) {
 	textblock_append(tb, ".  + ");
@@ -980,7 +985,8 @@ static bool describe_weapon_damage(textblock *tb, const object_type *o_ptr,
 /**
  * Display the ammo damage done with a multiplier
  */
-static void output_ammo_dam(player_state *state, object_type * o_ptr, int mult,
+static void output_ammo_dam(textblock *tb, player_state *state, 
+			    const object_type * o_ptr, int mult,
 			    const char *against, bool * first, bool perfect,
 			    oinfo_detail_t mode)
 {
@@ -998,7 +1004,7 @@ static void output_ammo_dam(player_state *state, object_type * o_ptr, int mult,
 
     /* Apply the launcher multiplier. */
     if (!thrown)
-	die_average *= p_ptr->ammo_mult;
+	die_average *= p_ptr->state.ammo_mult;
 
     /* Multiply by slay or brand (x10) */
     die_average *= mult;
@@ -1053,7 +1059,7 @@ static void output_ammo_dam(player_state *state, object_type * o_ptr, int mult,
 
     CHECK_FIRST("", *first);
     if ((dam > 50000) || (add > 0))
-	textblock_append_c(tb, TERM_L_GREEN, "%d", add + dam / 100000));
+	textblock_append_c(tb, TERM_L_GREEN, "%d", add + dam / 100000);
     else
 	textblock_append_c(tb, TERM_L_RED, "0");
     textblock_append(tb, " against %s", against);
@@ -1110,7 +1116,8 @@ static bool describe_ammo_damage(textblock *tb, const object_type * o_ptr,
 	    textblock_append(tb, "Throwing it you would do an average damage of ");
 	for (i = 0; i < MAX_P_SLAY; i++)
 	    if (slay[i] > MULTIPLE_BASE)
-		output_ammo_dam(&p_ptr->state, o_ptr, slay[i], slayee[i], &first, perfect);
+		output_ammo_dam(tb, &p_ptr->state, o_ptr, slay[i], slayee[i], 
+				&first, perfect, mode);
 
 	for (i = 0; i < MAX_P_BRAND; i++)
 	    if (brand[i] > MULTIPLE_BASE) {
@@ -1118,12 +1125,13 @@ static bool describe_ammo_damage(textblock *tb, const object_type * o_ptr,
 
 		strnfmt(buf, sizeof(buf), "non %s resistant creatures",
 			brandee[i]);
-		output_ammo_dam(&p_ptr->state, o_ptr, brand[i], buf, &first, perfect);
+		output_ammo_dam(tb, &p_ptr->state, o_ptr, brand[i], buf, 
+				&first, perfect, mode);
 	    }
 
-	output_ammo_dam(&p_ptr->state, o_ptr, MULTIPLE_BASE, 
+	output_ammo_dam(tb, &p_ptr->state, o_ptr, MULTIPLE_BASE, 
 			(first) ? "all monsters" : "other monsters", &first,
-			perfect);
+			perfect, mode);
 	textblock_append(tb, ". ");
 
 	return TRUE;
@@ -1151,7 +1159,8 @@ static bool describe_ammo_damage(textblock *tb, const object_type * o_ptr,
 
 	for (i = 0; i < MAX_P_SLAY; i++)
 	    if (slay[i] > MULTIPLE_BASE)
-		output_ammo_dam(&p_ptr->state, o_ptr, slay[i], slayee[i], &first, perfect);
+		output_ammo_dam(tb, &p_ptr->state, o_ptr, slay[i], slayee[i], 
+				&first, perfect, mode);
 
 	for (i = 0; i < MAX_P_BRAND; i++)
 	    if (brand[i] > MULTIPLE_BASE) {
@@ -1159,12 +1168,13 @@ static bool describe_ammo_damage(textblock *tb, const object_type * o_ptr,
 
 		strnfmt(buf, sizeof(buf), "non %s resistant creatures",
 			brandee[i]);
-		output_ammo_dam(&p_ptr->state, o_ptr, brand[i], buf, &first, perfect);
+		output_ammo_dam(tb, &p_ptr->state, o_ptr, brand[i], buf, 
+				&first, perfect, mode);
 	    }
 
-	output_ammo_dam(&p_ptr->state, o_ptr, MULTIPLE_BASE,
+	output_ammo_dam(tb, &p_ptr->state, o_ptr, MULTIPLE_BASE,
 			(first) ? "all monsters" : "other monsters", &first,
-			perfect);
+			perfect, mode);
 	textblock_append(tb, ". ");
 
 	return TRUE;
@@ -1184,13 +1194,13 @@ static bool describe_combat(textblock *tb, const object_type *o_ptr,
     bool combat = FALSE;
 
     /* Print melee damage info */
-    if ((k_ptr->tval == TV_SWORD) || (k_ptr->tval == TV_POLEARM)
-	|| (k_ptr->tval == TV_HAFTED) || (k_ptr->tval == TV_DIGGING))
-	combat = describe_weapon_damage(o_ptr);
+    if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)
+	|| (o_ptr->tval == TV_HAFTED) || (o_ptr->tval == TV_DIGGING))
+	combat = describe_weapon_damage(tb, o_ptr, mode);
 
     /* Print range damage info */
     if (is_missile(o_ptr) || of_has(o_ptr->flags_obj, OF_THROWING))
-	combat = combat || describe_ammo_damage(o_ptr);
+	combat = combat || describe_ammo_damage(tb, o_ptr, mode);
 
     return combat;
 }
@@ -1285,10 +1295,10 @@ static bool describe_food(textblock *tb, const object_type *o_ptr,
 	o_ptr->pval)
     {
 	/* Sometimes adjust for player speed */
-	int multiplier = extract_energy[p_ptr->state.speed];
+	int multiplier = extract_energy[p_ptr->state.pspeed];
 	if (!subjective) multiplier = 10;
 
-	if (object_is_known(o_ptr) || full) {
+	if (object_known_p(o_ptr) || full) {
 	    textblock_append(tb, "Nourishes for around ");
 	    textblock_append_c(tb, TERM_L_GREEN, "%d", (o_ptr->pval / 2) *
 			       multiplier / 10);
@@ -1314,7 +1324,7 @@ static bool describe_light(textblock *tb, const object_type *o_ptr, bool terse)
     bool artifact = artifact_p(o_ptr);
     bool is_light = (o_ptr->tval == TV_LIGHT) ? TRUE : FALSE;
 
-    if (o_ptr->tval != TV_LIGHT && !of_has(o_ptr->flags, OF_LIGHT))
+    if (o_ptr->tval != TV_LIGHT && !of_has(o_ptr->flags_obj, OF_LIGHT))
 	return FALSE;
 
     /* Work out radius */
@@ -1322,7 +1332,7 @@ static bool describe_light(textblock *tb, const object_type *o_ptr, bool terse)
 	rad = 3;
     else if (is_light)
 	rad = 2;
-    if (of_has(flags, OF_LIGHT))
+    if (of_has(o_ptr->flags_obj, OF_LIGHT))
 	rad++;
 
     /* Describe here */
@@ -1432,7 +1442,7 @@ static bool describe_effect(textblock *tb, const object_type *o_ptr,
 	int min_time, max_time;
 
 	/* Sometimes adjust for player speed */
-	int multiplier = extract_energy[p_ptr->state.speed];
+	int multiplier = extract_energy[p_ptr->state.pspeed];
 	if (!subjective) multiplier = 10;
 
 	textblock_append(tb, "Takes ");
@@ -1450,7 +1460,7 @@ static bool describe_effect(textblock *tb, const object_type *o_ptr,
 	}
 
 	textblock_append(tb, " turns to recharge");
-	if (subjective && p_ptr->state.speed != 110)
+	if (subjective && p_ptr->state.pspeed != 110)
 	    textblock_append(tb, " at your current speed");
 
 	textblock_append(tb, ".\n");
@@ -1478,11 +1488,11 @@ bool describe_origin(textblock *tb, const object_type *o_ptr)
 
     if (stage_map[o_ptr->origin_stage][DEPTH])
 	strnfmt(origin_text, sizeof(origin_text), "%s Level %d",
-		locality_name[stage_map[p_ptr->origin_stage][LOCALITY]], 
+		locality_name[stage_map[o_ptr->origin_stage][LOCALITY]], 
 		stage_map[o_ptr->origin_stage][DEPTH]);
     else
 	strnfmt(origin_text, sizeof(origin_text), "%s %s",
-		locality_name[stage_map[p_ptr->origin_stage][LOCALITY]], 
+		locality_name[stage_map[o_ptr->origin_stage][LOCALITY]], 
 		"Town");
 
     switch (o_ptr->origin)
@@ -1546,13 +1556,13 @@ bool describe_origin(textblock *tb, const object_type *o_ptr)
 static void describe_flavor_text(textblock *tb, const object_type *o_ptr)
 {
     /* Display the known artifact description */
-    if (o_ptr->name1 &&	object_is_known(o_ptr) && a_info[o_ptr->name1].text)
+    if (o_ptr->name1 &&	object_known_p(o_ptr) && a_info[o_ptr->name1].text)
     {
 	textblock_append(tb, "%s\n\n", a_info[o_ptr->name1].text);
     }
 
     /* Display the known object description */
-    else if (object_flavor_is_aware(o_ptr) || object_is_known(o_ptr))
+    else if (object_aware_p(o_ptr) || object_known_p(o_ptr))
     {
 	bool did_desc = FALSE;
 
@@ -1563,7 +1573,7 @@ static void describe_flavor_text(textblock *tb, const object_type *o_ptr)
 	}
 
 	/* Display an additional ego-item description */
-	if (object_ego_is_visible(o_ptr) && e_info[o_ptr->name2].text)
+	if (has_ego_properties(o_ptr) && e_info[o_ptr->name2].text)
 	{
 	    if (did_desc) textblock_append(tb, "  ");
 	    textblock_append(tb, "%s\n\n", e_info[o_ptr->name2].text);
@@ -1645,12 +1655,13 @@ static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
 {
 	bitflag flags[OF_SIZE];
 	bool something = FALSE;
-	bool known = object_is_known(o_ptr);
+	bool known = object_known_p(o_ptr);
 
 	bool full = mode & OINFO_FULL;
 	bool terse = mode & OINFO_TERSE;
 	bool subjective = mode & OINFO_SUBJ;
 	bool ego = mode & OINFO_EGO;
+	bool dummy = mode & OINFO_DUMMY;
 
 	textblock *tb = textblock_new();
 
@@ -1664,8 +1675,8 @@ static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
 	if (describe_brands(tb, o_ptr, mode)) something = TRUE;
 	if (describe_immune(tb, o_ptr, mode)) something = TRUE;
 	if (describe_sustains(tb, o_ptr, mode)) something = TRUE;
-	if (describe_misc_magic(tb, o_ptr)) something = TRUE;
-	if (describe_curses(tb, o_ptr)) something = TRUE;
+	if (describe_misc_magic(tb, o_ptr, mode)) something = TRUE;
+	if (describe_curses(tb, o_ptr, mode)) something = TRUE;
 	if (ego && describe_ego(tb, o_ptr)) something = TRUE;
 	if (describe_ignores(tb, o_ptr, mode)) something = TRUE;
 	if (something) textblock_append(tb, "\n");
@@ -1683,7 +1694,7 @@ static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
 	}
 
 	if (!terse && describe_food(tb, o_ptr, subjective, full)) something = TRUE;
-	if (describe_light(tb, o_ptr, flags, terse)) something = TRUE;
+	if (describe_light(tb, o_ptr, terse)) something = TRUE;
 	if (!terse && subjective && describe_digger(tb, o_ptr, mode)) something = TRUE;
 
 	if (!something)
@@ -1732,15 +1743,15 @@ textblock *object_info_ego(struct ego_item *ego)
 	of_union(obj.flags_obj, ego->flags_obj);
 	of_union(obj.flags_curse, ego->flags_curse);
 	for (i = 0; i < MAX_P_RES; i++) 
-	    obj.percent_res[i] = e_ptr->percent_res[i];
+	    obj.percent_res[i] = ego->percent_res[i];
 	for (i = 0; i < A_MAX; i++) 
-	    obj.bonus_stat[i] = e_ptr->bonus_stat[i];
+	    obj.bonus_stat[i] = ego->bonus_stat[i];
 	for (i = 0; i < MAX_P_BONUS; i++) 
-	    obj.bonus_other[i] = e_ptr->bonus_other[i];
+	    obj.bonus_other[i] = ego->bonus_other[i];
 	for (i = 0; i < MAX_P_SLAY; i++)
-	    obj.multiple_slay[i] = e_ptr->multiple_slay[i];
+	    obj.multiple_slay[i] = ego->multiple_slay[i];
 	for (i = 0; i < MAX_P_BRAND; i++)
-	    obj.multiple_brand[i] = e_ptr->multiple_brand[i];
+	    obj.multiple_brand[i] = ego->multiple_brand[i];
 
 	return object_info_out(&obj, OINFO_FULL | OINFO_EGO | OINFO_DUMMY);
 }

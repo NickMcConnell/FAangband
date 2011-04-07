@@ -2704,7 +2704,7 @@ void acquirement(int y1, int x1, int level, int num, bool great)
 	return;
 
     /* Require known item */
-    if (!object_is_known(o_ptr))
+    if (!object_known_p(o_ptr))
 	return;
 
     /* Print a message */
@@ -2720,7 +2720,7 @@ void acquirement(int y1, int x1, int level, int num, bool great)
 
     char o_name[80];
 
-    if (artifact_p(o_ptr) && object_is_known(o_ptr)) {
+    if (artifact_p(o_ptr) && object_known_p(o_ptr)) {
 	/* Get a description */
 	object_desc(o_name, sizeof(o_name), o_ptr, ODESC_FULL);
 
@@ -3012,7 +3012,7 @@ void floor_item_charges(int item)
 	return;
 
     /* Require known item */
-    if (!object_is_known(o_ptr))
+    if (!object_known_p(o_ptr))
 	return;
 
     /* Print a message */
@@ -3235,9 +3235,9 @@ s16b inven_carry(struct player *p, struct object *o)
 		continue;
 
 	    /* Non-aware (flavored) items always come last */
-	    if (!object_flavor_is_aware(o))
+	    if (!object_aware_p(o))
 		continue;
-	    if (!object_flavor_is_aware(j_ptr))
+	    if (!object_aware_p(j_ptr))
 		break;
 
 	    /* Objects sort by increasing sval */
@@ -3247,9 +3247,9 @@ s16b inven_carry(struct player *p, struct object *o)
 		continue;
 
 	    /* Unidentified objects always come last */
-	    if (!object_is_known(o))
+	    if (!object_known_p(o))
 		continue;
-	    if (!object_is_known(j_ptr))
+	    if (!object_known_p(j_ptr))
 		break;
 
 	    /* Lights sort by decreasing fuel */
@@ -3616,9 +3616,9 @@ void reorder_pack(void)
 		continue;
 
 	    /* Non-aware (flavored) items always come last */
-	    if (!object_flavor_is_aware(o_ptr))
+	    if (!object_aware_p(o_ptr))
 		continue;
-	    if (!object_flavor_is_aware(j_ptr))
+	    if (!object_aware_p(j_ptr))
 		break;
 
 	    /* Objects sort by increasing sval */
@@ -3628,9 +3628,9 @@ void reorder_pack(void)
 		continue;
 
 	    /* Unidentified objects always come last */
-	    if (!object_is_known(o_ptr))
+	    if (!object_known_p(o_ptr))
 		continue;
-	    if (!object_is_known(j_ptr))
+	    if (!object_known_p(j_ptr))
 		break;
 
 	    /* Lights sort by decreasing fuel */
@@ -4093,19 +4093,20 @@ static int compare_types(const object_type * o1, const object_type * o2)
  */ static int compare_items(const object_type * o1, const object_type * o2)
 {
     /* known artifacts will sort first */
-    if (object_is_known_artifact(o1) && object_is_known_artifact(o2))
+    if (object_known_p(o1) && object_known_p(o2) && artifact_p(o1) && 
+	artifact_p(o2))
 	return compare_types(o1, o2);
-    if (object_is_known_artifact(o1))
+    if (object_known_p(o1) && artifact_p(o1))
 	return -1;
-    if (object_is_known_artifact(o2))
+    if (object_known_p(o2) && artifact_p(o2))
 	return 1;
 
     /* unknown objects will sort next */
-    if (!object_flavor_is_aware(o1) && !object_flavor_is_aware(o2))
+    if (!object_aware_p(o1) && !object_aware_p(o2))
 	return compare_types(o1, o2);
-    if (!object_flavor_is_aware(o1))
+    if (!object_aware_p(o1))
 	return -1;
-    if (!object_flavor_is_aware(o2))
+    if (!object_aware_p(o2))
 	return 1;
 
     /* if only one of them is worthless, the other comes first */
@@ -4325,10 +4326,10 @@ void display_itemlist(void)
 	/* Note that the number of items actually displayed */
 	disp_count++;
 
-	if (artifact_p(o_ptr) && object_is_known(o_ptr))
+	if (artifact_p(o_ptr) && object_known_p(o_ptr))
 	    /* known artifact */
 	    attr = TERM_VIOLET;
-	else if (!object_flavor_is_aware(o_ptr))
+	else if (!object_aware_p(o_ptr))
 	    /* unaware of kind */
 	    attr = TERM_RED;
 	else if (object_is_worthless(o_ptr))
@@ -4596,7 +4597,7 @@ bool obj_needs_aim(object_type * o_ptr)
      * object needs aiming. */
     if (effect_aim(effect) || o_ptr->tval == TV_BOLT || o_ptr->tval == TV_SHOT
 	|| o_ptr->tval == TV_ARROW || o_ptr->tval == TV_WAND
-	|| (o_ptr->tval == TV_ROD && !object_flavor_is_aware(o_ptr)))
+	|| (o_ptr->tval == TV_ROD && !object_aware_p(o_ptr)))
 	return TRUE;
     else
 	return FALSE;

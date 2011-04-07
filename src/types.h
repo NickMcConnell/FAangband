@@ -1273,6 +1273,11 @@ typedef struct player {
     /* Variable and calculatable player state */
     player_state state;
 
+    /* "cached" quiver statistics*/
+    u16b quiver_size;
+    u16b quiver_slots;
+    u16b quiver_remainder;
+
     struct object *inventory;
 } player_type;
 

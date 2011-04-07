@@ -1556,6 +1556,9 @@ enum
 #define USE_TARGET	0x08	/* Allow targeted floor items */
 #define CAN_SQUELCH	0x10	/* Allow selection of all squelched items */
 #define IS_HARMLESS     0x20	/* Ignore generic warning inscriptions */
+#define SHOW_PRICES     0x40	/* Show item prices in item lists */
+#define SHOW_FAIL       0x80 	/* Show device failure in item lists */
+#define QUIVER_TAGS     0x100  /* 0-9 are quiver slots when selecting */
 
 /*** Player flags ***/
 

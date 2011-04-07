@@ -103,7 +103,7 @@ bool item_dubious(const object_type *o_ptr, bool unknown);
 int value_check_aux1(object_type *o_ptr);
 /* SJGU */
 int value_check_aux2(object_type *o_ptr);
-bool has_ego_properties(object_type *o_ptr);
+bool has_ego_properties(const object_type *o_ptr);
 void notice_curse(int curse_flag, int item);
 void notice_obj(int obj_flag, int item);
 void notice_other(int other_flag, int item);
@@ -142,7 +142,7 @@ char index_to_label(int i);
 s16b label_to_inven(int c);
 s16b label_to_equip(int c);
 bool wearable_p(const object_type *o_ptr);
-s16b wield_slot(object_type *o_ptr);
+s16b wield_slot(const object_type *o_ptr);
 bool slot_can_wield_item(int slot, const object_type *o_ptr);
 const char *mention_use(int slot);
 cptr describe_use(int i);
@@ -237,7 +237,7 @@ void pack_overflow(void);
 /* obj-ui.c */
 void show_inven(olist_detail_t mode);
 void show_equip(olist_detail_t mode);
-void show_floor(int *floor_list, int floor_num, olist_detail_t mode);
+void show_floor(const int *floor_list, int floor_num, olist_detail_t mode);
 bool verify_item(cptr prompt, int item);
 bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode);
 

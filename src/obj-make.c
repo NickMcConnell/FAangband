@@ -225,7 +225,7 @@ void object_prep(object_type * o_ptr, int k_idx)
     o_ptr->sval = k_ptr->sval;
 
     /* Default "pval" */
-    o_ptr->pval = k_ptr->pval;
+    o_ptr->pval = randcalc(k_ptr->pval, k_ptr->level, RANDOMISE);
 
     /* Default number */
     o_ptr->number = 1;
@@ -234,9 +234,9 @@ void object_prep(object_type * o_ptr, int k_idx)
     o_ptr->weight = k_ptr->weight;
 
     /* Default magic */
-    o_ptr->to_h = k_ptr->to_h;
-    o_ptr->to_d = k_ptr->to_d;
-    o_ptr->to_a = k_ptr->to_a;
+    o_ptr->to_h = randcalc(k_ptr->to_h, k_ptr->level, RANDOMISE);
+    o_ptr->to_d = randcalc(k_ptr->to_d, k_ptr->level, RANDOMISE);
+    o_ptr->to_a = randcalc(k_ptr->to_a, k_ptr->level, RANDOMISE);
 
     /* Default power */
     o_ptr->ac = k_ptr->ac;
@@ -248,8 +248,8 @@ void object_prep(object_type * o_ptr, int k_idx)
     o_ptr->time = k_ptr->time;
 
     /* Default flags */
-    o_ptr->flags_obj = k_ptr->flags_obj;
-    o_ptr->flags_curse = k_ptr->flags_curse;
+    of_copy(o_ptr->flags_obj, k_ptr->flags_obj);
+    cf_copy(o_ptr->flags_curse, k_ptr->flags_curse);
 
     /* Default resists, bonuses, multiples */
     for (i = 0; i < MAX_P_RES; i++)
@@ -262,9 +262,6 @@ void object_prep(object_type * o_ptr, int k_idx)
 	o_ptr->multiple_slay[i] = k_ptr->multiple_slay[i];
     for (i = 0; i < MAX_P_BRAND; i++)
 	o_ptr->multiple_brand[i] = k_ptr->multiple_brand[i];
-
-    /* Not found anywhere yet */
-    o_ptr->found = 0;
 }
 
 /**
@@ -490,7 +487,7 @@ static bool make_artifact_special(object_type * o_ptr)
 	    continue;
 
 	/* Cannot make an artifact twice */
-	if (a_ptr->creat_turn)
+	if (a_ptr->created)
 	    continue;
 
 	/* Enforce minimum "depth" (loosely) */
@@ -565,7 +562,7 @@ static bool make_artifact(object_type * o_ptr)
 	    continue;
 
 	/* Cannot make an artifact twice */
-	if (a_ptr->creat_turn)
+	if (a_ptr->created)
 	    continue;
 
 	/* Must have the correct fields */
@@ -813,16 +810,17 @@ static void a_m_aux_4(object_type * o_ptr, int level, int power)
     case TV_WAND:
     case TV_STAFF:
 	{
+	    int temp_pval = randcalc(k_ptr->pval, level, RANDOMISE);
 	    /* The wand or staff gets a number of initial charges equal to
 	     * between 1/2 (+1) and the full object kind's pval. */
-	    o_ptr->pval = k_ptr->pval / 2 + randint1((k_ptr->pval + 1) / 2);
+	    o_ptr->pval = temp_pval / 2 + randint1((temp_pval + 1) / 2);
 	    break;
 	}
 
     case TV_ROD:
 	{
 	    /* Transfer the pval. */
-	    o_ptr->pval = k_ptr->pval;
+	    o_ptr->pval = randcalc(k_ptr->pval, level, RANDOMISE);
 	    break;
 	}
 
@@ -1087,7 +1085,7 @@ void apply_magic(object_type * o_ptr, int lev, bool okay, bool good, bool great)
 	artifact_type *a_ptr = &a_info[o_ptr->name1];
 
 	/* Hack -- Mark the artifact as "created" */
-	a_ptr->creat_turn = 1;
+	a_ptr->created = TRUE;
 
 	/* Extract the other fields */
 	o_ptr->pval = a_ptr->pval;
@@ -1113,9 +1111,6 @@ void apply_magic(object_type * o_ptr, int lev, bool okay, bool good, bool great)
 	of_copy(o_ptr->flags_obj, a_ptr->flags_obj);
 	cf_copy(o_ptr->flags_curse, a_ptr->flags_curse);
 
-	/* Mark where it was found */
-	o_ptr->found = p_ptr->stage;
-
 	/* Transfer the activation information. */
 	o_ptr->effect = a_ptr->effect;
 	o_ptr->time = a_ptr->time;
@@ -1125,9 +1120,6 @@ void apply_magic(object_type * o_ptr, int lev, bool okay, bool good, bool great)
 
 	/* Mega-Hack -- increase the rating again */
 	rating += a_ptr->cost / 2000;
-
-	/* Set the good item flag */
-	good_item_flag = TRUE;
 
 	/* Cheat -- peek at the item */
 	if (OPT(cheat_peek))
@@ -1290,16 +1282,16 @@ void apply_magic(object_type * o_ptr, int lev, bool okay, bool good, bool great)
 
     /* Kind flags */
     if (o_ptr->name2)
-	kf_union(flags_kind, e_ptr->flags_kind);
+	kf_union(flags_kind, e_info[o_ptr->name2].flags_kind);
 
     /* Random sustain */
     if (kf_has(flags_kind, KF_RAND_SUSTAIN)) {
-	of_on(o_ptr->flags_obj, OBJECT_RAND_BASE_SUSTAIN + randint0(OBJECT_RAND_SIZE_SUSTAIN)));
+	of_on(o_ptr->flags_obj, OBJECT_RAND_BASE_SUSTAIN + randint0(OBJECT_RAND_SIZE_SUSTAIN));
     }
 
     /* Random power */
     if (kf_has(flags_kind, KF_RAND_POWER)) {
-	of_on(o_ptr->flags_obj, OBJECT_RAND_BASE_POWER + randint0(OBJECT_RAND_SIZE_POWER)));
+	of_on(o_ptr->flags_obj, OBJECT_RAND_BASE_POWER + randint0(OBJECT_RAND_SIZE_POWER));
     }
 
     /* Random curse */
@@ -1356,12 +1348,18 @@ void apply_magic(object_type * o_ptr, int lev, bool okay, bool good, bool great)
 	int av = 0, num = 0, chances;
 
 	/* Get flags */
-	o_ptr->flags_obj |= e_ptr->flags_obj;
-	o_ptr->flags_curse |= e_ptr->flags_curse;
+	of_union(o_ptr->flags_obj, e_ptr->flags_obj);
+	cf_union(o_ptr->flags_curse, e_ptr->flags_curse);
 
 	/* Get activation */
 	if (e_ptr->effect) o_ptr->effect = e_ptr->effect;
-	if (e_ptr->time) o_ptr->time = e_ptr->time;
+	if ((e_ptr->time.base != 0) ||  (e_ptr->time.dice != 0))
+	{
+	    o_ptr->time.base = e_ptr->time.base;
+	    o_ptr->time.dice = e_ptr->time.dice;
+	    o_ptr->time.sides = e_ptr->time.sides;
+	    o_ptr->time.m_bonus = e_ptr->time.m_bonus;
+	}
 
 	/* Assign bonuses (random between base and ego) */
 	for (i = 0; i < A_MAX; i++) {
@@ -1508,7 +1506,7 @@ static bool kind_is_good(int k_idx)
     case TV_HELM:
     case TV_CROWN:
 	{
-	    if (k_ptr->to_a < 0)
+	    if (k_ptr->to_a.base < 0)
 		return (FALSE);
 	    return (TRUE);
 	}
@@ -1519,9 +1517,9 @@ static bool kind_is_good(int k_idx)
     case TV_HAFTED:
     case TV_POLEARM:
 	{
-	    if (k_ptr->to_h < 0)
+	    if (k_ptr->to_h.base < 0)
 		return (FALSE);
-	    if (k_ptr->to_d < 0)
+	    if (k_ptr->to_d.base < 0)
 		return (FALSE);
 	    return (TRUE);
 	}
@@ -1941,7 +1939,7 @@ void place_object(int y, int x, bool good, bool great, bool exact_kind)
 	/* Give it to the floor */
 	if (!floor_carry(y, x, i_ptr)) {
 	    /* Hack -- Preserve artifacts */
-	    a_info[i_ptr->name1].creat_turn = 0;
+	    a_info[i_ptr->name1].created = FALSE;
 	}
     }
 

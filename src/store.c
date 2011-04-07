@@ -189,7 +189,7 @@ static byte owner[MAX_STORES] =
  * Racial adjustments run from 85 to 130.
  * Greed adjustments run from 102 to 210.
  */
-static s32b price_item(object_type * o_ptr, int greed, bool flip)
+s32b price_item(object_type * o_ptr, int greed, bool flip)
 {
     int racial_factor, charisma_factor;
     s32b offer_adjustment, price, purse;

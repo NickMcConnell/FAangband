@@ -242,7 +242,7 @@ bool squelch_tval(int tval)
 /**
  * Determines if an object is eligable for squelching.
  */
-extern bool squelch_item_ok(object_type *o_ptr)
+extern bool squelch_item_ok(const object_type *o_ptr)
 {
   size_t i;
   int num = -1;

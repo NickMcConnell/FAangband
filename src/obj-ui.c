@@ -18,8 +18,10 @@
 
 #include "angband.h"
 #include "button.h"
-#include "tvalsval.h"
 #include "cmds.h"
+#include "target.h"
+#include "tvalsval.h"
+#include "ui-menu.h"
 
 /* Variables for item display and selection */
 int i1, i2;
@@ -29,7 +31,7 @@ char labels[50][80];
 object_type *objects[50];
 int indices[50];
 int num_obj;
-static bool show_list = OPT(show_lists) ? TRUE : FALSE;
+static bool show_list;
 static olist_detail_t olist_mode = 0;
 
 
@@ -41,7 +43,7 @@ static olist_detail_t olist_mode = 0;
  * documented in object.h
  */
 static void show_obj(int onum, size_t max_len, char label[80],
-			  object_type *object, olist_detail_t mode)
+			  const object_type *object, olist_detail_t mode)
 {
     int row = 0, col = 0;
     int ex_width = 0, ex_offset, ex_offset_ctr;
@@ -209,6 +211,7 @@ static void build_obj_list(int first, int last, const int *floor_list,
 
 	/* Special labels for equipment */
 	if (first){
+	    char tmp_val[80];
 
 	    /* Show full slot labels */
 	    if (OPT(show_labels) && first)
@@ -235,7 +238,7 @@ static void build_obj_list(int first, int last, const int *floor_list,
 /* Get the maximum object name length.  Only makes sense after building the 
  * object list
  */
-static int get_max_len(size_t *max_len)
+static void get_max_len(size_t *max_len)
 {
     int i;
     char o_name[80];
@@ -251,7 +254,7 @@ static int get_max_len(size_t *max_len)
 
 	/* Max length of label + object name */
 	object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
-	max_len = MAX(max_len, strlen(labels[i]) + strlen(o_name));
+	*max_len = MAX(*max_len, strlen(labels[i]) + strlen(o_name));
     }
 }
 
@@ -276,7 +279,7 @@ static void show_obj_list(int num_obj, olist_detail_t mode)
     if (in_term)
 	max_len = 40;
 
-    get_max_len(max_len);
+    get_max_len(&max_len);
 
     /* Width of extra fields */
     if (mode & OLIST_WEIGHT)
@@ -735,13 +738,13 @@ void item_prompt(int mode, cptr pmt)
 /**
  * Display an entry on the item menu
  */
-void get_item_display(menu_type * menu, int oid, bool cursor, int row, int col,
+void get_item_display(menu_type *menu, int oid, bool cursor, int row, int col,
 		      int width)
 {
     const object_type **choice = menu->menu_data;
     size_t max_len = 0;
 
-    object_type *o_ptr = choice[oid];
+    const object_type *o_ptr = choice[oid];
 
     int curs_col, ex_width = 0;
 
@@ -762,7 +765,7 @@ void get_item_display(menu_type * menu, int oid, bool cursor, int row, int col,
     if (curs_col < 5) curs_col = 2;
     
     /* Get max length */
-    get_max_len(max_len);
+    get_max_len(&max_len);
 
     /* Print it */
     show_obj(oid, max_len, labels[oid], o_ptr, olist_mode);
@@ -775,7 +778,7 @@ void get_item_display(menu_type * menu, int oid, bool cursor, int row, int col,
 /**
  * Deal with events on the get_item menu
  */
-bool get_item_action(char cmd, void *db, int oid)
+bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
 {
     return TRUE;
 }
@@ -783,10 +786,10 @@ bool get_item_action(char cmd, void *db, int oid)
 /**
  * Display list items to choose from
  */
-bool item_menu(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
+bool item_menu(int *cp, cptr pmt, cmd_code cmd, int mode, bool *oops)
 {
-    int py = p_ptr->py;
-    int px = p_ptr->px;
+    s16b py = p_ptr->py;
+    s16b px = p_ptr->px;
     unsigned char cmdkey = cmd_lookup_key(cmd);
 
     menu_type menu;
@@ -798,8 +801,6 @@ bool item_menu(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
     size_t max_len = 0;
 
     bool done, item;
-
-    bool oops = FALSE;
 
     bool use_inven = ((mode & USE_INVEN) ? TRUE : FALSE);
     bool use_equip = ((mode & USE_EQUIP) ? TRUE : FALSE);
@@ -826,6 +827,8 @@ bool item_menu(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 	olist_mode |= (OLIST_WEIGHT);
     if (mode & SHOW_PRICES)
 	olist_mode |= (OLIST_PRICE);
+
+    show_list  = OPT(show_lists) ? TRUE : FALSE; 
 
     /* Paranoia XXX XXX XXX */
     message_flush();
@@ -908,7 +911,7 @@ bool item_menu(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
     /* Require at least one legal choice */
     if (!allow_inven && !allow_equip && !allow_floor) {
 	/* Oops */
-	oops = TRUE;
+	*oops = TRUE;
 	done = TRUE;
     }
 
@@ -963,9 +966,9 @@ bool item_menu(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
     menu.cmd_keys = "\n\r";
     menu.menu_data = indices;
     menu.count = show_list ? num_obj : 0;
-    get_max_len(max_len);
+    get_max_len(&max_len);
     area.page_rows = menu.count + 1;
-    area.width = len;
+    area.width = max_len;
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
 
 
@@ -1018,9 +1021,9 @@ bool item_menu(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 
 	    /* Redo menu */
 	    menu.count = show_list ? num_obj : 0;
-	    get_max_len(max_len);
+	    get_max_len(&max_len);
 	    area.page_rows = menu.count + 1;
-	    area.width = len;
+	    area.width = max_len;
 
 	    refresh = FALSE;
 	}
@@ -1052,9 +1055,9 @@ bool item_menu(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 	{
 	    int *tmp = (int *) menu.menu_data;
 	    if (p_ptr->command_wrk == (USE_FLOOR))
-		k = 0 - tmp[evt.index];
+		k = 0 - tmp[which.index];
 	    else
-		k = tmp[evt.index];
+		k = tmp[which.index];
 
 	    /* Paranoia */
 	    if (!get_item_okay(k))
@@ -1372,7 +1375,7 @@ bool item_menu(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
  * Note that only "acceptable" floor objects get indexes, so between two
  * commands, the indexes of floor objects may change.  XXX XXX XXX
  */
-bool get_item(int *cp, cptr pmt, cptr str, int mode)
+bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 {
     bool done, item;
 
@@ -1390,14 +1393,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
     *cp = 0;
 
     /* Go to menu */
-    item = item_menu(cp, pmt, mode, &oops);
-
-    /* Check validity */
-    if (item)
-	if (!get_item_allow(*cp)) {
-	    item = FALSE;
-	    msg_print(NULL);
-	}
+    item = item_menu(cp, pmt, cmd, mode, &oops);
 
     /* Forget the item_tester_tval restriction */
     item_tester_tval = 0;

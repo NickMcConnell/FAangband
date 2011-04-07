@@ -13,12 +13,11 @@
  */
 typedef void (*cmd_handler_fn)(cmd_code code, cmd_arg args[]);
 
-void textui_obj_inscribe(object_type *o_ptr, int item);
-void textui_obj_examine(object_type *o_ptr, int item);
-void textui_obj_wield(object_type *o_ptr, int item);
-void textui_cmd_rest(void);
-void textui_cmd_suicide(void);
-void textui_cmd_destroy(void);
+
+/* cmd0.c */
+extern void cmd_init(void);
+unsigned char cmd_lookup_key(cmd_code cmd);
+cmd_code cmd_lookup(unsigned char key);
 
 /* cmd-obj.c */
 void do_cmd_uninscribe(cmd_code code, cmd_arg args[]);
@@ -78,11 +77,15 @@ extern void do_cmd_pickup(cmd_code code, cmd_arg args[]);
 extern void do_cmd_rest(cmd_code code, cmd_arg args[]);
 extern bool easy_open_door(int y, int x);
 
+void textui_cmd_rest(void);
+void textui_cmd_suicide(void);
+
 /* cmd3.c */
 extern void do_cmd_inven(void);
 extern void do_cmd_equip(void);
 void wield_item(object_type *o_ptr, int item, int slot);
 extern void do_cmd_destroy(cmd_code code, cmd_arg args[]);
+void textui_cmd_destroy(void);
 extern void do_cmd_target(void);
 extern void do_cmd_target_closest(void);
 extern void do_cmd_look(void);

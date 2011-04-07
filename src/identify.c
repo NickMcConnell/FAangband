@@ -274,7 +274,7 @@ int value_check_aux2(object_type * o_ptr)
 /**
  * Determine if an item has the properties to be an ego item
  */
-bool has_ego_properties(object_type * o_ptr)
+bool has_ego_properties(const object_type * o_ptr)
 {
     ego_item_type *e_ptr = &e_info[o_ptr->name2];
 

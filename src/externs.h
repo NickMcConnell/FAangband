@@ -362,6 +362,7 @@ extern void show_scores(void);
 extern void predict_score(void);
 
 /* store.c */
+s32b price_item(object_type * o_ptr, int greed, bool flip);
 extern void store_shuffle(int which);
 extern void store_maint(int which);
 extern void stores_maint(int times);
