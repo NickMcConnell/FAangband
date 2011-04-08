@@ -26,8 +26,15 @@
  */
 
 #include "angband.h"
-#include "ui-menu.h"
+#include "cave.h"
+#include "history.h"
+#include "monster.h"
+#include "player.h"
+#include "spells.h"
 #include "squelch.h"
+#include "target.h"
+#include "trap.h"
+#include "ui-menu.h"
 
 /* Element to be proofed against in element-proofing */
 static byte el_to_proof = 0;

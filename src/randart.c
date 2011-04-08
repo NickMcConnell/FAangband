@@ -30,6 +30,7 @@
 
 #include "angband.h"
 #include "effects.h"
+#include "files.h"
 
 /** A global variable whose contents will be bartered to acquire powers. */
 static int potential = 0;
@@ -1036,8 +1037,8 @@ static void initialize_artifact(int a_idx)
     a_ptr->ds = 0;
     a_ptr->weight = 0;
     a_ptr->cost = 0;
-    a_ptr->flags_obj = 0;
-    a_ptr->flags_curse = 0;
+    of_wipe(a_ptr->flags_obj);
+    cf_wipe(a_ptr->flags_curse);
     a_ptr->level = 0;
     a_ptr->rarity = 0;
     a_ptr->effect = 0;
@@ -1214,17 +1215,17 @@ static void initialize_artifact(int a_idx)
      * * * * scratch, and assigned a special sval. -NRM- */
     a_ptr->tval = k_ptr->tval;
     a_ptr->sval = k_ptr->sval;
-    a_ptr->to_h = k_ptr->to_h / 2;
-    a_ptr->to_d = k_ptr->to_d / 2;
-    a_ptr->to_a = k_ptr->to_a / 2;
+    a_ptr->to_h = k_ptr->to_h.base / 2;
+    a_ptr->to_d = k_ptr->to_d.base / 2;
+    a_ptr->to_a = k_ptr->to_a.base / 2;
     a_ptr->ac = k_ptr->ac;
     a_ptr->dd = k_ptr->dd;
     a_ptr->ds = k_ptr->ds;
     if (k_ptr->cost > 4999)
 	a_ptr->cost = k_ptr->cost;
     a_ptr->weight = k_ptr->weight;
-    a_ptr->flags_obj = k_ptr->flags_obj;
-    a_ptr->flags_curse = k_ptr->flags_curse;
+    of_copy(a_ptr->flags_obj, k_ptr->flags_obj);
+    cf_copy(a_ptr->flags_curse, k_ptr->flags_curse);
     for (i = 0; i < MAX_P_RES; i++)
 	a_ptr->percent_res[i] = k_ptr->percent_res[i];
     for (i = 0; i < A_MAX; i++)
@@ -3867,7 +3868,7 @@ static void remove_contradictory(int a_idx)
 	a_ptr->effect = 0;
 
     /* Add effect timeout */
-    effect_time(a_ptr->effect, a_ptr->time);
+    effect_time(a_ptr->effect, &a_ptr->time);
 }
 
 
@@ -4095,49 +4096,6 @@ static void design_random_artifact(int a_idx)
 
 
 /**
- * Fill in the temporary array of artifact names, and then convert it into 
- * an a_name structure.  Adapted from Greg Wooledge's random artifacts.
- */
-static int convert_names(void)
-{
-    size_t name_size;
-    char *a_base;
-    char *a_next;
-    int i;
-    /* Add the permanent artifact names to the temporary array. */
-    for (i = 0; i < ART_MIN_RANDOM; i++) {
-	artifact_type *a_ptr = &a_info[i];
-	names[i] = a_name + a_ptr->name;
-    }
-
-    /* Convert our names array into an a_name structure for later use. */
-    name_size = 1;
-    for (i = 0; i < z_info->a_max; i++) {
-	name_size += strlen(names[i]) + 1;	/* skip first char */
-    }
-    if ((a_base = mem_alloc(name_size)) == NULL) {
-	msg_format("Memory allocation error");
-	return 1;
-    }
-    a_next = a_base + 1;	/* skip first char */
-    for (i = 0; i < z_info->a_max; i++) {
-	strcpy(a_next, names[i]);
-	if (a_info[i].tval > 0)	/* skip * * unused! */
-	    a_info[i].name = a_next - a_base;
-	a_next += strlen(names[i]) + 1;
-    }
-
-    /* Free some of our now unneeded memory. */
-    FREE(a_name);
-    for (i = ART_MIN_RANDOM; i < z_info->a_max; i++) {
-	free(names[i]);
-    }
-    a_name = a_base;
-    return 0;
-}
-
-
-/**
  * Initialize all the random artifacts in the artifact array.  This function 
  * is only called when a player is born.  Because various sub-functions use 
  * player information, it must be called after the player has been generated 
@@ -4157,11 +4115,4 @@ void initialize_random_artifacts(void)
 	/* Design the artifact, storing information as we go along. */
 	design_random_artifact(a_idx);
     }
-
-    /* The new names we created while artifacts were being rolled up need to be 
-     * added to the a_name structure. */
-    err = convert_names();
-    /* Complain if naming fails. */
-    if (err)
-	msg_print("Warning - random artifact naming failed!");
 }

@@ -315,15 +315,12 @@ extern void play_game(void);
 extern void idle_update(void);
 
 /* generate.c */
+extern int level_hgt;
+extern int level_wid;
 extern void place_unlocked_door(int y, int x);
 extern void place_closed_door(int y, int x);
 extern void destroy_level(bool new_level);
 extern void generate_cave(void);
-
-/* gen-themed.c */
-errr init_t_info(byte chosen_level);
-void kill_t_info(void);
-
 
 /* load.c */
 extern bool old_load(void);
@@ -435,6 +432,7 @@ extern bool confuse_dir(int *dp);
 extern void center_panel(void);
 extern bool change_panel(int dir);
 extern void verify_panel(void);
+void town_adjust(int *dungeon_hgt, int *dungeon_wid);
 
 /* xtra3.c */
 extern void cnv_stat(int val, char *out_val);

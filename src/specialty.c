@@ -1,11 +1,9 @@
-/** \file cmd5.c 
+/** \file specialty.c 
     \brief Commands, part 5
 
-    * Warrior probing.  Selection, browsing, learning, and casting of spells 
-    * and prayers.  Includes definitions of all specialties.  Shape-
-    * shifting and making Athelas.
+    * Player specialties.
     *
-    * Copyright (c) 1997-2009 Ben Harrison, James E. Wilson, Robert A. Koeneke,
+    * Copyright (c) 1997-2011 Ben Harrison, James E. Wilson, Robert A. Koeneke,
     * Leon Marrick, Bahman Rabii, Nick McConnell
     *
     * This work is free software; you can redistribute it and/or modify it
@@ -21,6 +19,8 @@
     */
 
 #include "angband.h"
+#include "button.h"
+#include "history.h"
 #include "ui-menu.h"
 
 
@@ -42,7 +42,7 @@ typedef struct {
  * Read in the descriptions.
  */
 static const specialty specialties[] = {
-#define PF(x, y, z)    { PF_##x, y, z },
+#define PF(x, y, z)    { PF_##x, y, z }
 #include "list-player-flags.h"
 #undef PF
 };
@@ -64,6 +64,8 @@ bool check_specialty_gain(int specialty)
     /* Is it allowed for this class? */
     if (player_class_avail(specialty))
 	return (TRUE);
+
+    return FALSE;
 }
 
 /**
@@ -112,8 +114,6 @@ void gain_spec_display(menu_type * menu, int oid, bool cursor, int row, int col,
  */
 bool gain_spec_action(menu_type * menu, const ui_event_data * e, int oid)
 {
-    u16b *choice = &menu->menu_data;
-
     return TRUE;
 }
 
@@ -149,8 +149,6 @@ bool gain_spec_menu(int *pick)
     /* We are out of specialties - should never happen */
     if (!num) {
 	msg_print("No specialties available.");
-	normal_screen = TRUE;
-	update_statusline();
 	screen_load();
 	return FALSE;
     }
@@ -159,13 +157,9 @@ bool gain_spec_menu(int *pick)
     screen_save();
 
     /* Prompt choices */
-    if (small_screen)
-	sprintf(buf, "(Specialties: %c-%c, ESC) Gain which (%d left)? ", I2A(0),
-		I2A(num - 1), p_ptr->new_specialties);
-    else
-	sprintf(buf,
-		"(Specialties: %c-%c, ESC=exit) Gain which specialty (%d available)? ",
-		I2A(0), I2A(num - 1), p_ptr->new_specialties);
+    sprintf(buf,
+	    "(Specialties: %c-%c, ESC=exit) Gain which specialty (%d available)? ",
+	    I2A(0), I2A(num - 1), p_ptr->new_specialties);
 
     /* Set up the menu */
     WIPE(&menu, menu);
@@ -222,10 +216,6 @@ void gain_specialty(void)
 	}
     }
 
-    /* Buttons */
-    normal_screen = FALSE;
-    prompt_end = 0;
-
     /* Make one choice */
     if (gain_spec_menu(&pick)) {
 	char buf[120];
@@ -248,7 +238,7 @@ void gain_specialty(void)
 		specialties[choices[pick]].name);
 
 	/* Write a note */
-	make_note(buf, p_ptr->stage, NOTE_SPECIALTY, p_ptr->lev);
+	history_add(buf, HISTORY_GAIN_SPECIALTY, 0);
 
 	/* Update some stuff */
 	p_ptr->update |=
@@ -257,10 +247,6 @@ void gain_specialty(void)
 	/* Redraw Study Status */
 	p_ptr->redraw |= (PR_STUDY);
     }
-
-    /* Buttons */
-    normal_screen = TRUE;
-    update_statusline();
 
     /* exit */
     return;
@@ -281,13 +267,15 @@ char race_other_desc[1000] = "";
  */
 static char *view_abilities_aux(char *desc)
 {
-    u32b flags = rp_ptr->flags_obj;
+    bitflag flags[OF_SIZE];
 
     int attr_num, attr_listed, j;
 
     bool res = FALSE, vul = FALSE;
 
     char buf[10] = "";
+
+    of_copy(flags, rp_ptr->flags_obj);
 
     /* Sustain stats. */
     if ((of_has(flags, OF_SUSTAIN_STR)) || (of_has(flags, OF_SUSTAIN_INT))
@@ -692,7 +680,7 @@ static char *view_abilities_aux(char *desc)
 
 }
 
-static char view_spec_tag(menu_type * menu, int oid)
+static char view_spec_tag(menu_type *menu, int oid)
 {
     return I2A(oid);
 }
@@ -700,7 +688,7 @@ static char view_spec_tag(menu_type * menu, int oid)
 /**
  * Display an entry on the gain specialty menu
  */
-void view_spec_display(menu_type * menu, int oid, bool cursor, int row, int col,
+void view_spec_display(menu_type *menu, int oid, bool cursor, int row, int col,
 		       int width)
 {
     int x, y;
@@ -762,7 +750,7 @@ void view_spec_display(menu_type * menu, int oid, bool cursor, int row, int col,
 void view_spec_menu(void)
 {
     menu_type menu;
-    menu_iter menu_f = { 0, view_spec_tag, 0, view_spec_display, 0 };
+    menu_iter menu_f = { view_spec_tag, 0, view_spec_display, 0, 0 };
     ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
     int cursor = 0;
 
@@ -821,7 +809,7 @@ void view_specialties(void)
     total_known += class_known;
 
     /* Count the number of racial powers we have */
-    for (i = PF_RACE_START, racial_known = 0; i < PF_CLASS_START; i++) {
+    for (i = PF_RACIAL_START, racial_known = 0; i < PF_CLASS_START; i++) {
 	if (player_race_has(i)) {
 	    racial_list[racial_known++] = i;
 	}
@@ -830,7 +818,8 @@ void view_specialties(void)
     total_known += racial_known;
 
     /* Standard racial flags */
-    if (rp_ptr->flags_obj | rp_ptr->flags_curse) {
+    if (!pf_is_empty(rp_ptr->flags_obj) || !pf_is_empty(rp_ptr->flags_curse)) 
+    {
 	total_known++;
 	view_abilities_aux(race_other_desc);
     }
@@ -839,16 +828,8 @@ void view_specialties(void)
     race_start = spec_known + class_known;
     race_other_start = spec_known + class_known + racial_known;
 
-    /* Buttons */
-    normal_screen = FALSE;
-    update_statusline();
-
     /* View choices until user exits */
     view_spec_menu();
-
-    /* Buttons */
-    normal_screen = TRUE;
-    update_statusline();
 
     /* exit */
     return;

@@ -648,6 +648,11 @@ typedef enum
 
 
 /**
+ * An item's pval (for charges, amount of gold, etc) is limited to s16b
+ */
+#define MAX_PVAL  32767
+
+/**
  * Maximum number of objects allowed in a single dungeon grid.
  *
  * The main-screen has a minimum size of 24 rows, so we can always

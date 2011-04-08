@@ -79,7 +79,7 @@ static void flavor_assign_random(byte tval)
 	    continue;
 
 	/* HACK - Ordinary food is "boring" */
-	if ((tval == TV_FOOD) && (k_info[i].sval < SV_FOOD_MIN_SHROOM))
+	if ((tval == TV_FOOD) && (k_info[i].sval > SV_FOOD_MIN_FOOD))
 	    continue;
 
 	if (!flavor_count)
@@ -333,15 +333,12 @@ void reset_visuals(bool load_prefs)
  * Convert an inventory index into a one character label.
  *
  * Note that the label does NOT distinguish inven/equip.
- */ char index_to_label(int i)
+ */ 
+char index_to_label(int i)
 {
     /* Indexes for "inven" are easy */
     if (i < INVEN_WIELD)
 	return (I2A(i));
-
-    /* Indexes for quiver slots are no longer numeric */
-    if ((i >= INVEN_Q0) && (i <= INVEN_Q9))
-	return (I2A(A2I('n') + i - INVEN_Q0));
 
     /* Indexes for "equip" are offset */
     return (I2A(i - INVEN_WIELD));
@@ -351,7 +348,8 @@ void reset_visuals(bool load_prefs)
  * Convert a label into the index of an item in the "inven".
  *
  * Return "-1" if the label does not indicate a real item.
- */ s16b label_to_inven(int c)
+ */ 
+s16b label_to_inven(int c)
 {
     int i;
 
@@ -384,7 +382,7 @@ s16b label_to_equip(int c)
     i = (islower((unsigned char) c) ? A2I(c) : -1) + INVEN_WIELD;
 
     /* Verify the index */
-    if ((i < INVEN_WIELD) || (i >= INVEN_TOTAL) || (i == INVEN_BLANK))
+    if ((i < INVEN_WIELD) || (i >= ALL_INVEN_TOTAL) || (i == INVEN_TOTAL))
 	return (-1);
 
     /* Empty slots can never be chosen */
@@ -546,7 +544,7 @@ bool slot_can_wield_item(int slot, const object_type * o_ptr)
 	return (slot == INVEN_LEFT || slot == INVEN_RIGHT) ? TRUE : FALSE;
     else if (obj_is_ammo(o_ptr))
 	return (slot >= QUIVER_START && slot < QUIVER_END) ? TRUE : FALSE;
-    else if (of_has(o_ptr->flags, OF_THROWING))
+    else if (of_has(o_ptr->flags_obj, OF_THROWING))
 	return (slot >= QUIVER_START && slot < QUIVER_END) ? TRUE : FALSE;
     else
 	return (wield_slot(o_ptr) == slot) ? TRUE : FALSE;
@@ -1120,7 +1118,7 @@ void compact_objects(int size)
 		monster_type *m_ptr;
 
 		/* Get the monster */
-		m_ptr = &mon_list[o_ptr->held_m_idx];
+		m_ptr = &m_list[o_ptr->held_m_idx];
 
 		/* Get the location */
 		y = m_ptr->fy;
@@ -1189,7 +1187,8 @@ static void mention_preserve(const object_type * o_ptr)
  * we know we are clearing every object.  Technically, we only
  * clear those fields for grids/monsters containing objects,
  * and we clear it once for every such object.
- */ void wipe_o_list(void)
+ */ 
+void wipe_o_list(void)
 {
     int i;
 
@@ -1204,7 +1203,7 @@ static void mention_preserve(const object_type * o_ptr)
 	/* Hack -- Preserve unknown artifacts */
 	if (artifact_p(o_ptr) && !object_known_p(o_ptr)) {
 	    /* Mega-Hack -- Preserve the artifact */
-	    a_info[o_ptr->name1].creat_turn = 0;
+	    a_info[o_ptr->name1].created = FALSE;
 	}
 
 	/* Monster */
@@ -1212,7 +1211,7 @@ static void mention_preserve(const object_type * o_ptr)
 	    monster_type *m_ptr;
 
 	    /* Monster */
-	    m_ptr = &mon_list[o_ptr->held_m_idx];
+	    m_ptr = &m_list[o_ptr->held_m_idx];
 
 	    /* Hack -- see above */
 	    m_ptr->hold_o_idx = 0;
@@ -1791,17 +1790,19 @@ static s32b object_value_real(object_type * o_ptr)
 	/* Wands/Staffs */
     case TV_WAND:
 	{
+	    int temp_pval = randcalc(k_ptr->pval, k_ptr->level, RANDOMISE);
 	    /* Pay extra for charges, depending on standard number of charges.
 	     * Handle new-style wands correctly. */
-	    value += (value * o_ptr->pval / o_ptr->number / (k_ptr->pval * 2));
+	    value += (value * o_ptr->pval / o_ptr->number / (temp_pval * 2));
 
 	    /* Done */
 	    break;
 	}
     case TV_STAFF:
 	{
-	    /* Pay extra for charges, depending on standard number of charges. */
-	    value += (value * o_ptr->pval / (k_ptr->pval * 2));
+	    /* Pay extra for charges, depending on standard number of charges */
+	    int temp_pval = randcalc(k_ptr->pval, k_ptr->level, RANDOMISE);
+	    value += (value * o_ptr->pval / (temp_pval * 2));
 
 	    /* Done */
 	    break;
@@ -1837,7 +1838,7 @@ static s32b object_value_real(object_type * o_ptr)
 	    /* If it differs from the object kind's base armour Skill penalty
 	     * (this penalty must be in the range +0 to -12), give a debit or
 	     * credit for any modification to Skill. -LM- */
-	    if (((o_ptr->to_h != k_ptr->to_h) || (o_ptr->to_h < -12)
+	    if (((o_ptr->to_h != k_ptr->to_h.base) || (o_ptr->to_h < -12)
 		 || (o_ptr->to_h > 0)) && (if_has(o_ptr->id_other, IF_TO_H)))
 		value += (o_ptr->to_h * 100L);
 
@@ -1954,7 +1955,7 @@ static s32b object_value_real(object_type * o_ptr)
  * Note that discounted items stay discounted forever, even if
  * the discount is "forgotten" by the player via memory loss.
  */
-s32b object_value(object_type * o_ptr)
+s32b object_value(const object_type * o_ptr)
 {
     s32b value;
 
@@ -2209,7 +2210,8 @@ void object_absorb(object_type * o_ptr, const object_type * j_ptr)
 	o_ptr->timeout += j_ptr->timeout;
     }
 
-    /* Hack -- if wands or staves are stacking, combine the charges *//* If gold is stacking combine the amount */
+    /* Hack -- if wands or staves are stacking, combine the charges */
+    /* If gold is stacking combine the amount */
     if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF
 	|| o_ptr->tval == TV_GOLD) {
 	int total = o_ptr->pval + j_ptr->pval;
@@ -2221,10 +2223,11 @@ void object_absorb(object_type * o_ptr, const object_type * j_ptr)
 	|| (o_ptr->origin_xtra != j_ptr->origin_xtra)) {
 	int act = 2;
 
-	if ((o_ptr->origin == ORIGIN_DROP) && (o_ptr->origin == j_ptr->origin)) {
+	if ((o_ptr->origin == ORIGIN_DROP) && (o_ptr->origin == j_ptr->origin))
+	{
 	    monster_race *r_ptr = &r_info[o_ptr->origin_xtra];
 	    monster_race *s_ptr = &r_info[j_ptr->origin_xtra];
-
+	    
 	    bool r_uniq = rf_has(r_ptr->flags, RF_UNIQUE) ? TRUE : FALSE;
 	    bool s_uniq = rf_has(s_ptr->flags, RF_UNIQUE) ? TRUE : FALSE;
 
@@ -2239,17 +2242,17 @@ void object_absorb(object_type * o_ptr, const object_type * j_ptr)
 	switch (act) {
 	    /* Overwrite with j_ptr */
 	case 1:
-	    {
-		o_ptr->origin = j_ptr->origin;
-		o_ptr->origin_stage = j_ptr->origin_stage;
-		o_ptr->origin_xtra = j_ptr->origin_xtra;
-	    }
-
-	    /* Set as "mixed" */
+	{
+	    o_ptr->origin = j_ptr->origin;
+	    o_ptr->origin_stage = j_ptr->origin_stage;
+	    o_ptr->origin_xtra = j_ptr->origin_xtra;
+	}
+	
+	/* Set as "mixed" */
 	case 2:
-	    {
-		o_ptr->origin = ORIGIN_MIXED;
-	    }
+	{
+	    o_ptr->origin = ORIGIN_MIXED;
+	}
 	}
     }
 }
@@ -2534,10 +2537,6 @@ void drop_near(object_type * j_ptr, int chance, int y, int x, bool verbose)
 	    if (!comb)
 		k++;
 
-	    /* Option -- disallow stacking */
-	    if (OPT(adult_no_stacking) && (k > 1))
-		continue;
-
 	    /* Paranoia? */
 	    if ((k + n) > MAX_FLOOR_STACK
 		&& !floor_get_idx_oldest_squelched(ty, tx))
@@ -2669,7 +2668,7 @@ void drop_near(object_type * j_ptr, int chance, int y, int x, bool verbose)
 /*
  * Scatter some "great" objects near the player
  */
-void acquirement(int y1, int x1, int level, int num, bool great)
+void acquirement(int y1, int x1, int num, bool great)
 {
     object_type *i_ptr;
     object_type object_type_body;
@@ -3078,7 +3077,7 @@ void floor_item_charges(int item)
 /**
  * Check if we have space for an item in the pack without overflow
  */
-bool inven_carry_okay(object_type * o_ptr)
+bool inven_carry_okay(const object_type * o_ptr)
 {
     /* Empty slot? */
     if (p_ptr->inven_cnt < INVEN_MAX_PACK) return TRUE;
@@ -4153,7 +4152,7 @@ void display_object_idx_recall(s16b item)
 void display_object_kind_recall(s16b k_idx)
 {
     object_type object = { 0 };
-    object_prep(&object, &k_info[k_idx], 0, EXTREMIFY);
+    object_prep(&object, k_idx);
     if (k_info[k_idx].aware)
 	object.ident |= IDENT_STORE;
 
@@ -4505,9 +4504,8 @@ bool obj_can_refill(const object_type * o_ptr)
 
     /* Other lights of the same type are OK */
     if ((o_ptr->tval == TV_LIGHT) && (o_ptr->sval == j_ptr->sval))
-	    return (TRUE);
-    }
-
+	return (TRUE);
+    
     if (j_ptr->sval == SV_LIGHT_LANTERN) {
 	/* Flasks of oil are okay */
 	if (o_ptr->tval == TV_FLASK)
@@ -4541,7 +4539,7 @@ bool obj_can_study(const object_type * o_ptr)
 bool obj_can_takeoff(const object_type * o_ptr)
 {
     if (cf_has(o_ptr->flags_curse, CF_STICKY_WIELD)) {
-	notice_curse(CF_STICKY_WIELD, item + 1);
+	notice_curse(CF_STICKY_WIELD, wield_slot(o_ptr) + 1);
 	return FALSE;
     }
     return TRUE;
@@ -4821,8 +4819,8 @@ void apply_set(int set_idx)
 
 			/* Bonus already applied? */
 			if (!(a_ptr->set_bonus)) {
-			    o_ptr->flags_obj |= se_ptr->flags_obj;
-			    o_ptr->flags_curse |= se_ptr->flags_curse;
+			    of_union(o_ptr->flags_obj, se_ptr->flags_obj);
+			    cf_union(o_ptr->flags_curse, se_ptr->flags_curse);
 			    for (k = 0; k < MAX_P_RES; k++)
 				if (se_ptr->percent_res[k] != RES_LEVEL_BASE)
 				    o_ptr->percent_res[k] =
@@ -4888,8 +4886,8 @@ void remove_set(int set_idx)
 
 			/* Is the bonus really there? */
 			if (a_ptr->set_bonus) {
-			    o_ptr->flags_obj &= ~se_ptr->flags_obj;
-			    o_ptr->flags_curse &= ~se_ptr->flags_curse;
+			    of_diff(o_ptr->flags_obj, se_ptr->flags_obj);
+			    cf_diff(o_ptr->flags_curse, se_ptr->flags_curse);
 			    a_ptr->set_bonus = FALSE;
 			    for (k = 0; k < MAX_P_RES; k++)
 				o_ptr->percent_res[k] = a_ptr->percent_res[k];

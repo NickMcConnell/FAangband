@@ -20,6 +20,7 @@
 #include "angband.h"
 #include "squelch.h"
 #include "history.h"
+#include "monster.h"
 #include "option.h"
 #include "savefile.h"
 
@@ -29,7 +30,7 @@
  */
 static void wr_item(object_type *o_ptr)
 {
-    int i;
+    size_t i;
 
     wr_s16b(o_ptr->k_idx);
   
@@ -182,7 +183,7 @@ static void wr_monster(monster_type *m_ptr)
 /**
  * Write RNG state
  */
-wr_randomizer(void)
+void wr_randomizer(void)
 {
     int i;
 
@@ -385,7 +386,7 @@ void wr_monster_memory(void)
 /**
  * Write object memory, including flag sizes and other constants.
  */
-static void wr_object_memory(void)
+void wr_object_memory(void)
 {
     int k_idx;
 
@@ -440,7 +441,7 @@ void wr_quests(void)
 
 void wr_artifacts(void)
 {
-    int i;
+    size_t i;
     u16b tmp16u;
 
     /* Record the total number of artifacts. */
@@ -470,6 +471,7 @@ void wr_artifacts(void)
     for (i = ART_MIN_RANDOM; i < z_info->a_max; i++)
     {
 	artifact_type *a_ptr = &a_info[i];
+	int j;
 
 	wr_string(format("%s", a_ptr->name));
 	
@@ -528,7 +530,7 @@ void wr_artifacts(void)
 /**
  * Write some player info
  */
-static void wr_player(void)
+void wr_player(void)
 {
     int i;
   
@@ -651,7 +653,7 @@ static void wr_player(void)
 /**
  * Write autoinscribe & squelch item-quality submenu to the savefile
  */
-static void wr_squelch(void)
+void wr_squelch(void)
 {
     int i;
   
@@ -783,7 +785,7 @@ void wr_inventory(void)
 /**
  * Write a "store" record
  */
-static void wr_stores(void)
+void wr_stores(void)
 {
     int i;
 
@@ -843,9 +845,9 @@ static void wr_stores(void)
 /**
  * Write the current dungeon
  */
-static void wr_dungeon(void)
+void wr_dungeon(void)
 {
-    int i, y, x;
+    int y, x;
   
     byte tmp8u;
   
@@ -1047,7 +1049,7 @@ void wr_monsters(void)
 /**
  * Hack -- Write the "ghost" info
  */
-static void wr_ghost(void)
+void wr_ghost(void)
 {
     int i;
   
@@ -1070,7 +1072,7 @@ void wr_history(void)
 	{
 		wr_u16b(history_list[i].type);
 		wr_s32b(history_list[i].turn);
-		wr_s16b(history_list[i].dlev);
+		wr_s16b(history_list[i].place);
 		wr_s16b(history_list[i].clev);
 		wr_byte(history_list[i].a_idx);
 		wr_string(history_list[i].event);

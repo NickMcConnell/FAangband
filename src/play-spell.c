@@ -141,7 +141,7 @@ s16b spell_chance(int spell)
     }
 
     /* Extract the minimum failure rate */
-    minfail = adj_mag_fail[p_ptr->stat_ind[mp_ptr->spell_stat]];
+    minfail = adj_mag_fail[p_ptr->state.stat_ind[mp_ptr->spell_stat]];
 
     /* Minimum failure rate */
     if (chance < minfail)
@@ -186,7 +186,6 @@ bool spell_in_book(int spell, int book)
 void spell_learn(int spell)
 {
     int i;
-    cptr p;
 
     magic_type *mt_ptr;
 

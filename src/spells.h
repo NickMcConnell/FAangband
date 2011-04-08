@@ -146,7 +146,7 @@ extern bool sleep_monsters_touch(int dam);
 
 /* x-spell.c */
 extern int get_spell_index(const object_type *o_ptr, int index);
-extern cptr get_spell_name(int tval, int index);
+extern cptr get_spell_name(int index);
 extern void get_spell_info(int tval, int index, char *buf, size_t len);
 extern bool cast_spell(int tval, int index, int dir);
 extern bool spell_needs_aim(int tval, int spell);

@@ -161,15 +161,17 @@ bool set_timed(int idx, int v, bool notify)
 	return set_cut(v);
 
     /* Don't mention some effects. */
-    if (idx == TMD_OPP_ACID && p_ptr->state.immune_acid)
+    if (idx == TMD_OPP_ACID && 
+	(p_ptr->state.res_list[P_RES_ACID] == RES_BOOST_IMMUNE))
 	notify = FALSE;
-    else if (idx == TMD_OPP_ELEC && p_ptr->state.immune_elec)
+    else if (idx == TMD_OPP_ELEC && 
+	(p_ptr->state.res_list[P_RES_ELEC] == RES_BOOST_IMMUNE))
 	notify = FALSE;
-    else if (idx == TMD_OPP_FIRE && p_ptr->state.immune_fire)
+    else if (idx == TMD_OPP_FIRE && 
+	(p_ptr->state.res_list[P_RES_FIRE] == RES_BOOST_IMMUNE))
 	notify = FALSE;
-    else if (idx == TMD_OPP_COLD && p_ptr->state.immune_cold)
-	notify = FALSE;
-    else if (idx == TMD_OPP_CONF && p_ptr->state.resist_confu)
+    else if (idx == TMD_OPP_COLD && 
+	(p_ptr->state.res_list[P_RES_COLD] == RES_BOOST_IMMUNE))
 	notify = FALSE;
 
     /* Find the effect */
@@ -199,10 +201,6 @@ bool set_timed(int idx, int v, bool notify)
 
     /* Use the value */
     p_ptr->timed[idx] = v;
-
-    /* Sort out the sprint effect */
-    if (idx == TMD_SPRINT && v == 0)
-	inc_timed(TMD_SLOW, 100, TRUE);
 
     /* Hack - deal with special_attack - should be changed */
     if ((idx >= TMD_ATT_ACID) && (idx <= TMD_ATT_POIS) && (v == 0)) 

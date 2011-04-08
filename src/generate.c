@@ -149,6 +149,17 @@
 #define HIGHLAND_TREE_CHANCE 30
 
 /**
+ * Height and width for the currently generated level
+ *
+ * This differs from DUNGEON_HGT (and dungeon_hgt) in that it bounds the part
+ * of the level that might actually contain open squares. It will vary from
+ * level to level, unlike the constant.
+ */
+int level_hgt  = DUNGEON_HGT;
+int level_wid  = DUNGEON_WID;
+
+
+/**
  * Simple structure to hold a map location
  */
 
@@ -6633,7 +6644,7 @@ static bool build_themed_level(void)
     }
 
     /* Get feeling text */
-    my_strcpy(themed_feeling, sizeof(themed_feeling), t_ptr->message);
+    my_strcpy(themed_feeling, t_ptr->message, sizeof(themed_feeling));
 
     /* Indicate that this theme is built, and should not appear again. */
     p_ptr->themed_level_appeared |= (1L << (choice - 1));

@@ -27,7 +27,13 @@
  */
 
 #include "angband.h"
-
+#include "cave.h"
+#include "history.h"
+#include "monster.h"
+#include "object.h"
+#include "player.h"
+#include "spells.h"
+#include "trap.h"
 
 
 /**
@@ -421,7 +427,7 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
 
 	if (cave_feat[y][x] == FEAT_WATER) {
 	    if ((strchr("uU", r_ptr->d_char))
-		|| ((rsf_has(r_ptr->flags, RSF_BRTH_FIRE))
+		|| ((rsf_has(r_ptr->spell_flags, RSF_BRTH_FIRE))
 		    && (!(rf_has(r_ptr->flags, RF_FLYING))))) {
 		note_dies = " is drowned.";
 
@@ -1581,13 +1587,13 @@ void take_hit(int dam, cptr kb_str)
 	sprintf(buf, "Killed by %s.", p_ptr->died_from);
 
 	/* Write message */
-	make_note(buf, p_ptr->stage, NOTE_DEATH, p_ptr->lev);
+	history_add(buf, HISTORY_PLAYER_DEATH, 0);
 
 	/* date and time */
 	sprintf(buf, "Killed on %s.", long_day);
 
 	/* Write message */
-	make_note(buf, p_ptr->stage, NOTE_DEATH, p_ptr->lev);
+	history_add(buf, HISTORY_PLAYER_DEATH, 0);
 
 	/* Dead */
 	return;
@@ -1867,16 +1873,13 @@ static int inven_damage(inven_func typ, int perc)
 	    /* Some casualities */
 	    if (amt) {
 		/* Get a description */
-		object_desc(o_name, o_ptr, FALSE, 3);
+		object_desc(o_name, sizeof(o_name), o_ptr, ODESC_FULL);
 
 		/* Message */
 		msg_format("%sour %s (%c) %s destroyed!",
 			   ((o_ptr->number >
-			     1) ? ((amt == o_ptr->number) ? "All of y" : (amt >
-									  1 ?
-									  "Some of y"
-									  :
-									  "One of y"))
+			     1) ? ((amt == o_ptr->number) ? "All of y" : 
+				   (amt > 1 ? "Some of y" : "One of y"))
 			    : "Y"), o_name, index_to_label(i),
 			   ((amt > 1) ? "were" : "was"));
 
@@ -1969,7 +1972,7 @@ static int minus_ac(int dam)
 
 
     /* Describe */
-    object_desc(o_name, o_ptr, FALSE, 0);
+    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 
     /* Object resists */
     if (of_has(o_ptr->flags_obj, OF_ACID_PROOF)) {
@@ -2674,8 +2677,7 @@ bool apply_disenchant(int dam)
 
 
     /* Describe the object */
-    object_desc(o_name, o_ptr, FALSE, 0);
-
+    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 
     /* Artifacts have a 70% chance to resist */
     if (artifact_p(o_ptr) && (randint0(100) < 70)) {
@@ -3560,7 +3562,7 @@ static bool project_o(int who, int y, int x, int dam, int typ)
 	    /* Effect "observed" */
 	    if (o_ptr->marked) {
 		obvious = TRUE;
-		object_desc(o_name, o_ptr, FALSE, 0);
+		object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 	    }
 
 	    /* Artifacts, and other objects, get to resist */
@@ -3793,7 +3795,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
     m_ptr = &m_list[cave_m_idx[y][x]];
     r_ptr = &r_info[m_ptr->r_idx];
     l_ptr = &l_list[m_ptr->r_idx];
-    name = (r_name + r_ptr->name);
+    name = r_ptr->name;
     if (m_ptr->ml)
 	seen = TRUE;
 
@@ -3856,7 +3858,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	/* Monsters can duck behind rubble, or take only partial damage. */
     case FEAT_RUBBLE:
 	{
-	    if ((randint0(4) == 0) && (!rf_has(r_ptr->flags1, RF_NEVER_MOVE))
+	    if ((randint0(4) == 0) && (!rf_has(r_ptr->flags, RF_NEVER_MOVE))
 		&& (!m_ptr->csleep)) {
 		msg_format("%^s ducks behind a boulder!", m_name);
 		return (FALSE);
@@ -4078,7 +4080,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 	    if (seen)
 		obvious = TRUE;
-	    if (prefix(name, "Plasma") || (rsf_has(r_ptr->flags, RSF_BRTH_PLAS))
+	    if (prefix(name, "Plasma") || (rsf_has(r_ptr->spell_flags, RSF_BRTH_PLAS))
 		|| (rf_has(r_ptr->flags, RF_RES_PLAS))) {
 		note = " resists a lot.";
 		dam *= 3;
@@ -4123,7 +4125,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 	    if (seen)
 		obvious = TRUE;
-	    if (rsf_has(r_ptr->flags, RSF_BRTH_DFIRE)) {
+	    if (rsf_has(r_ptr->spell_flags, RSF_BRTH_DFIRE)) {
 		note = " resists a lot.";
 		dam *= 3;
 		dam /= 14 + randint0(3);
@@ -4219,7 +4221,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 	    if (seen)
 		obvious = TRUE;
-	    if (rsf_has(r_ptr->flags, RSF_BRTH_LIGHT)) {
+	    if (rsf_has(r_ptr->spell_flags, RSF_BRTH_LIGHT)) {
 		note = " resists.";
 		dam *= 3;
 		dam /= 14 + randint0(3);
@@ -4266,7 +4268,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 	    if (seen)
 		obvious = TRUE;
-	    if (rsf_has(r_ptr->flags, RSF_BRTH_DARK)) {
+	    if (rsf_has(r_ptr->spell_flags, RSF_BRTH_DARK)) {
 		note = " resists.";
 		dam *= 3;
 		dam /= 14 + randint0(3);
@@ -4297,7 +4299,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	    if (seen)
 		obvious = TRUE;
 	    do_conf = randint1(dam > 240 ? 15 : dam / 16);
-	    if (rsf_has(r_ptr->flags, RSF_BRTH_CONFU)) {
+	    if (rsf_has(r_ptr->spell_flags, RSF_BRTH_CONFU)) {
 		note = " resists.";
 		dam *= 3;
 		dam /= 14 + randint0(3);
@@ -4320,7 +4322,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 	    do_stun = randint1(dam > 240 ? 30 : dam / 8);
 
-	    if (rsf_has(r_ptr->flags, RSF_BRTH_SOUND)) {
+	    if (rsf_has(r_ptr->spell_flags, RSF_BRTH_SOUND)) {
 		note = " resists.";
 		dam *= 3;
 		dam /= 14 + randint0(3);
@@ -4336,7 +4338,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 	    if (seen)
 		obvious = TRUE;
-	    if (rsf_has(r_ptr->flags, RSF_BRTH_SHARD)) {
+	    if (rsf_has(r_ptr->spell_flags, RSF_BRTH_SHARD)) {
 		note = " resists.";
 		dam *= 3;
 		dam /= 14 + randint0(3);
@@ -4352,7 +4354,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 	    if (seen)
 		obvious = TRUE;
-	    if (rsf_has(r_ptr->flags, RSF_BRTH_INER)) {
+	    if (rsf_has(r_ptr->spell_flags, RSF_BRTH_INER)) {
 		note = " resists.";
 		dam *= 3;
 		dam /= 14 + randint0(3);
@@ -4365,7 +4367,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	{
 	    if (seen)
 		obvious = TRUE;
-	    if (rsf_has(r_ptr->flags, RSF_BRTH_GRAV)) {
+	    if (rsf_has(r_ptr->spell_flags, RSF_BRTH_GRAV)) {
 		note = " resists.";
 		dam *= 3;
 		dam /= 14 + randint0(3);
@@ -4386,7 +4388,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	    if (seen)
 		obvious = TRUE;
 	    do_stun = randint1(dam > 240 ? 20 : dam / 12);
-	    if (rsf_has(r_ptr->flags, RSF_BRTH_FORCE)) {
+	    if (rsf_has(r_ptr->spell_flags, RSF_BRTH_FORCE)) {
 		note = " resists.";
 		dam *= 3;
 		dam /= 14 + randint0(3);
@@ -4466,8 +4468,8 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	{
 	    if (seen)
 		obvious = TRUE;
-	    if ((rf_has(r_ptr->flags, RF_RES_NEXU))
-		|| (rsf_has(r_ptr->flags, RSF_BRTH_NEXUS))
+	    if ((rf_has(r_ptr->flags, RF_RES_NEXUS))
+		|| (rsf_has(r_ptr->spell_flags, RSF_BRTH_NEXUS))
 		|| prefix(name, "Nexus")) {
 		note = " resists.";
 		dam *= 3;
@@ -4494,7 +4496,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 		if (seen)
 		    rf_on(l_ptr->flags, RF_UNDEAD);
 	    } else if ((rf_has(r_ptr->flags, RF_RES_NETH))
-		       || (rsf_has(r_ptr->flags, RSF_BRTH_NETHR))) {
+		       || (rsf_has(r_ptr->spell_flags, RSF_BRTH_NETHR))) {
 		note = " resists.";
 		dam *= 3;
 		dam /= 14 + randint0(3);
@@ -4515,7 +4517,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 	    if (seen)
 		obvious = TRUE;
-	    if (rsf_has(r_ptr->flags, RSF_BRTH_CHAOS)) {
+	    if (rsf_has(r_ptr->spell_flags, RSF_BRTH_CHAOS)) {
 		note = " resists.";
 		dam *= 3;
 		dam /= 14 + randint0(3);
@@ -4533,7 +4535,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	    if (seen)
 		obvious = TRUE;
 	    if ((rf_has(r_ptr->flags, RF_RES_DISE))
-		|| (rsf_has(r_ptr->flags, RSF_BRTH_DISEN))
+		|| (rsf_has(r_ptr->spell_flags, RSF_BRTH_DISEN))
 		|| prefix(name, "Disen")) {
 		note = " resists.";
 		dam *= 3;
@@ -4552,7 +4554,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	{
 	    if (seen)
 		obvious = TRUE;
-	    if (rsf_has(r_ptr->flags, RSF_BRTH_TIME)) {
+	    if (rsf_has(r_ptr->spell_flags, RSF_BRTH_TIME)) {
 		note = " resists.";
 		dam *= 3;
 		dam /= 14 + randint0(3);
@@ -4584,11 +4586,14 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	    do_stun = randint1(dam / 100);
 
 	    /* Elemental breathers resist; all breathers resist a little */
-	    if (rsf_has(r_ptr->flags, RSF_BRTH_ALL)) {
+	    if (rsf_has(r_ptr->spell_flags, RSF_BRTH_ALL)) {
 		note = " resists.";
 		dam *= 3;
 		dam /= 14 + randint0(3);
-	    } else if (rsf_has(r_ptr->flags, RSF_BREATH_MASK)) {
+	    } 
+	    else if (flags_test(r_ptr->spell_flags, RSF_SIZE, RSF_BREATH_MASK,
+				FLAG_END)) 
+	    {
 		dam *= 13;
 		dam /= 14 + randint0(3);
 	    }
@@ -5589,8 +5594,8 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
     }
 
     /* Sound and Impact breathers never stun */
-    else if (do_stun && !(rsf_has(r_ptr->flags, RSF_BRTH_SOUND))
-	     && !(rsf_has(r_ptr->flags, RSF_BRTH_FORCE))) {
+    else if (do_stun && !(rsf_has(r_ptr->spell_flags, RSF_BRTH_SOUND))
+	     && !(rsf_has(r_ptr->spell_flags, RSF_BRTH_FORCE))) {
 	if (rf_has(r_ptr->flags, RF_NO_STUN)) {
 	    if (seen)
 		rf_on(l_ptr->flags, RF_NO_STUN);
@@ -5620,8 +5625,8 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
     /* Confusion and Chaos breathers (and sleepers) never confuse */
     else if (do_conf && !(rf_has(r_ptr->flags, RF_NO_CONF))
-	     && !(rsf_has(r_ptr->flags, RSF_BRTH_CONFU))
-	     && !(rsf_has(r_ptr->flags, RSF_BRTH_CHAOS))) {
+	     && !(rsf_has(r_ptr->spell_flags, RSF_BRTH_CONFU))
+	     && !(rsf_has(r_ptr->spell_flags, RSF_BRTH_CHAOS))) {
 	/* Obvious */
 	if (seen)
 	    obvious = TRUE;
@@ -5785,7 +5790,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
      * causing damage, and the player was the source of the spell, make noise.
      * -LM- */
     else if ((project_m_n == 1) && (who <= 0) && (dam))
-	add_wakeup_chance = p_ptr->base_wakeup_chance / 2 + 2500;
+	add_wakeup_chance = p_ptr->state.base_wakeup_chance / 2 + 2500;
 
     /* Return "Anything seen?" */
     return (obvious);
@@ -5970,7 +5975,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		/* Value for dodging should normally be between 18 and 75. */
 		dodging =
 		    2 * (adj_dex_ta[p_ptr->state.stat_ind[A_DEX]] - 124) +
-		    extract_energy[p_ptr->pspeed] +
+		    extract_energy[p_ptr->state.pspeed] +
 		    5 * adj_str_wgt[p_ptr->state.stat_ind[A_STR]] * 100 /
 		    (p_ptr->total_weight > 300 ? p_ptr->total_weight : 300);
 
@@ -6189,7 +6194,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		/* Value for dodging should normally be between 18 and 75. */
 		dodging =
 		    2 * (adj_dex_ta[p_ptr->state.stat_ind[A_DEX]] - 124) +
-		    extract_energy[p_ptr->pspeed] +
+		    extract_energy[p_ptr->state.pspeed] +
 		    5 * adj_str_wgt[p_ptr->state.stat_ind[A_STR]] * 100 /
 		    (p_ptr->total_weight > 300 ? p_ptr->total_weight : 300);
 
@@ -7378,7 +7383,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 
     if (affect_monster) {
 	/* Obtain monster name */
-	name = (r_name + r_ptr->name);
+	name = r_ptr->name;
 
 	/* Get monster information */
 	l_ptr = &l_list[m_ptr->r_idx];
@@ -7492,7 +7497,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	    }
 
 	    if (affect_monster) {
-		if (rsf_has(r_ptr->flags, RSF_BRTH_GRAV))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_GRAV))
 		    do_dist = 0;
 		else
 		    do_dist = 10;
@@ -7507,7 +7512,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
     case GF_FORCE:
 	{
 	    /* Force breathers are immune. */
-	    if ((affect_monster) && (rsf_has(r_ptr->flags, RSF_BRTH_FORCE)))
+	    if ((affect_monster) && (rsf_has(r_ptr->spell_flags, RSF_BRTH_FORCE)))
 		break;
 
 	    if ((affect_monster) || (affect_player)) {
@@ -7541,7 +7546,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 
 	    if ((typ == GF_STORM) && (affect_monster)) {
 		/* Gravity breathers are immune. */
-		if (rsf_has(r_ptr->flags, RSF_BRTH_GRAV))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_GRAV))
 		    do_dist = 0;
 
 		/* Big monsters are immune, if the caster is a monster. */
@@ -7593,7 +7598,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	    }
 
 	    if (affect_monster) {
-		if (!((rsf_has(r_ptr->flags, RSF_BRTH_NEXUS))
+		if (!((rsf_has(r_ptr->spell_flags, RSF_BRTH_NEXUS))
 		      || prefix(name, "Nexus"))) {
 		    do_dist = 2 + dam / 5;
 		}
@@ -7612,7 +7617,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	    }
 
 	    if (affect_monster) {
-		if (!((rsf_has(r_ptr->flags, RSF_BRTH_CHAOS))
+		if (!((rsf_has(r_ptr->spell_flags, RSF_BRTH_CHAOS))
 		      || prefix(name, "Chaos"))) {
 		    /* Have fun */
 		    if (randint0(5) == 0)
@@ -7651,7 +7656,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	    }
 
 	    if ((affect_monster) && (randint0(10) == 0)) {
-		if (!((rsf_has(r_ptr->flags, RSF_BRTH_NEXUS))
+		if (!((rsf_has(r_ptr->spell_flags, RSF_BRTH_NEXUS))
 		      || prefix(name, "Nexus"))) {
 		    do_dist = 2 + dam / 70;
 		}

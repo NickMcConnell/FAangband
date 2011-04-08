@@ -366,7 +366,7 @@ void dump_objects(ang_file *fff)
 	for (i = 1; i < z_info->k_max; i++)
 	{
 		object_kind *k_ptr = &k_info[i];
-		const char *name = k_text + k_ptr->name;
+		const char *name = k_ptr->name;
 
 		if (!name) continue;
 		if (name[0] == '&' && name[1] == ' ')
@@ -678,9 +678,9 @@ static const char *process_pref_file_expr(char **sp, char *fp)
 			else if (streq(b+1, "GRAF"))
 				v = ANGBAND_GRAF;
 			else if (streq(b+1, "RACE"))
-				v = p_text + rp_ptr->name;
+				v = rp_ptr->name;
 			else if (streq(b+1, "CLASS"))
-				v = c_text + cp_ptr->name;
+				v = cp_ptr->name;
 			else if (streq(b+1, "PLAYER"))
 				v = op_ptr->base_name;
 			else if (streq(b+1, "VERSION"))
