@@ -16,13 +16,21 @@
  *    are included in all such copies.  Other copyrights may also apply.
  */
 
+#include "angband.h"
+#include "cave.h"
+#include "monster.h"
+#include "spells.h"
+#include "squelch.h"
+#include "trap.h"
+#include "ui-menu.h"
+
 /**
  * Hack -- instantiate a trap
  *
  * This function has been altered in Oangband to (in a hard-coded fashion) 
  * control trap level. -LM-
  */
-void pick_trap(int y, int x)
+extern void pick_trap(int y, int x)
 {
     int feat = 0;
     feature_type *f_ptr = &f_info[cave_feat[y][x]];
@@ -244,7 +252,7 @@ void pick_trap(int y, int x)
  * when they are "discovered" (by detecting them or setting them off),
  * the trap is "instantiated" as a visible, "typed", trap.
  */
-void place_trap(int y, int x)
+extern void place_trap(int y, int x)
 {
     int d, grass = 0, floor = 0;
 
@@ -307,7 +315,7 @@ static int check_trap_hit(int power)
 	hit = (k < 5);
 
     /* Total armor */
-    ac = p_ptr->ac + p_ptr->to_a;
+    ac = p_ptr->state.ac + p_ptr->state.to_a;
 
     /* Power competes against Armor */
     if ((power > 0) && (randint1(power) >= (ac * 3 / 4)))
@@ -329,7 +337,7 @@ static int check_trap_hit(int power)
  * To allow a trap to choose one of a variety of effects consistantly, 
  * the quick RNG is often used, and xy coordinates input as a seed value. 
  */
-void hit_trap(int y, int x)
+extern void hit_trap(int y, int x)
 {
     int i, j, k, num;
     int dam = 0;
@@ -338,7 +346,7 @@ void hit_trap(int y, int x)
 
     feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
-    cptr name = f_name + f_ptr->name;
+    cptr name = f_ptr->name;
 
     /* Use the "simple" RNG to insure that traps are consistant. */
     Rand_quick = TRUE;
@@ -368,7 +376,7 @@ void hit_trap(int y, int x)
 
 
 	    msg_print("You fall through a trap door!");
-	    if (p_ptr->ffall) {
+	    if (p_ptr->state.ffall) {
 		notice_obj(OF_FEATHER, 0);
 		msg_print("You float gently down to the next level.");
 	    } else {
@@ -420,7 +428,7 @@ void hit_trap(int y, int x)
 	    if ((nastyness > 80) && (randint1(3) != 3)) {
 		msg_print("You fall into a pit of daggers!");
 
-		if (p_ptr->ffall) {
+		if (p_ptr->state.ffall) {
 		    notice_obj(OF_FEATHER, 0);
 		    msg_print("You float gently to the floor of the pit.");
 		    msg_print("You carefully avoid setting off the daggers.");
@@ -488,7 +496,7 @@ void hit_trap(int y, int x)
 	    else if ((nastyness > 55) && (randint1(3) != 3)) {
 		msg_print("You fall into a spiked pit!");
 
-		if (p_ptr->ffall) {
+		if (p_ptr->state.ffall) {
 		    notice_obj(OF_FEATHER, 0);
 		    msg_print("You float gently to the floor of the pit.");
 		    msg_print("You carefully avoid touching the spikes.");
@@ -526,7 +534,7 @@ void hit_trap(int y, int x)
 	    else if ((nastyness > 30) && (randint1(3) != 3)) {
 		msg_print("You fall into a spiked pit!");
 
-		if (p_ptr->ffall) {
+		if (p_ptr->state.ffall) {
 		    notice_obj(OF_FEATHER, 0);
 		    msg_print("You float gently to the floor of the pit.");
 		    msg_print("You carefully avoid touching the spikes.");
@@ -556,7 +564,7 @@ void hit_trap(int y, int x)
 	    /* ordinary pit in all other cases. */
 	    else {
 		msg_print("You fall into a pit!");
-		if (p_ptr->ffall) {
+		if (p_ptr->state.ffall) {
 		    notice_obj(OF_FEATHER, 0);
 		    msg_print("You float gently to the bottom of the pit.");
 		} else {
@@ -757,7 +765,7 @@ void hit_trap(int y, int x)
 	    /* sleeping trap. */
 	    if (selection == 4) {
 		msg_print("You are surrounded by a strange white mist!");
-		if (!p_ptr->free_act) {
+		if (!p_ptr->state.free_act) {
 		    (void) inc_timed(TMD_PARALYZED, randint0(10) + 5, TRUE);
 		} else
 		    notice_obj(OF_FREE_ACT, 0);
@@ -1339,7 +1347,7 @@ static cptr desc_victim_outcry[] = {
  * and the hue and cry will be eventually be raised.  Having every 
  * monster on the level awake and aggravated is not pleasant. -LM-
  */
-void py_steal(int y, int x)
+extern void py_steal(int y, int x)
 {
     cptr act = NULL;
 
@@ -1539,7 +1547,7 @@ void py_steal(int y, int x)
  * but an old trap can be disarmed to free up equipment for a new trap.
  * -LM-
  */
-bool py_set_trap(int y, int x)
+extern bool py_set_trap(int y, int x)
 {
     int max_traps;
     s16b this_o_idx, next_o_idx = 0;
@@ -1673,9 +1681,9 @@ void trap_display(menu_type * menu, int oid, bool cursor, int row, int col,
 /**
  * Deal with events on the trap menu
  */
-bool trap_action(menu_type * menu, const ui_event_data * db, int oid)
+bool trap_action(menu_type *menu, const ui_event_data *db, int oid)
 {
-    u16b *choice = db;
+    u16b *choice = menu->menu_data;
 
     int idx = choice[oid];
     cave_set_feat(trap_y, trap_x, FEAT_MTRAP_BASE + 1 + idx);
@@ -1691,7 +1699,7 @@ bool trap_menu(void)
 {
     menu_type menu;
     menu_iter menu_f = { trap_tag, 0, trap_display, trap_action, 0 };
-    region area = { (small_screen ? 0 : 15), 1, 48, -1 };
+    region area = { 15, 1, 48, -1 };
     ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
     int cursor = 0;
 
@@ -1752,7 +1760,7 @@ bool trap_menu(void)
 /** 
  * Turn a basic monster trap into an advanced one -BR-
  */
-bool py_modify_trap(int y, int x)
+extern bool py_modify_trap(int y, int x)
 {
     if (p_ptr->timed[TMD_BLIND] || no_light()) {
 	msg_print("You can not see to modify your trap.");

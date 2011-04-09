@@ -187,8 +187,7 @@ static void prt_exp(int row, int col)
 
     /* Calculate XP for next level */
     if (!lev50)
-	xp = (long) (player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L) -
-	    p_ptr->exp;
+	xp = (long) (player_exp[p_ptr->lev - 1] ) - p_ptr->exp;
 
     /* Format XP */
     strnfmt(out_val, sizeof(out_val), "%8ld", (long) xp);
@@ -410,8 +409,8 @@ byte monster_health_attr(void)
 	attr = TERM_DARK;
 
     /* Tracking an unseen, hallucinatory, or dead monster */
-    else if ((!mon_list[p_ptr->health_who].ml) || (p_ptr->timed[TMD_IMAGE])
-	     || (mon_list[p_ptr->health_who].hp < 0)) {
+    else if ((!m_list[p_ptr->health_who].ml) || (p_ptr->timed[TMD_IMAGE])
+	     || (m_list[p_ptr->health_who].hp < 0)) {
 	/* The monster health is "unknown" */
 	attr = TERM_WHITE;
     }
@@ -419,7 +418,7 @@ byte monster_health_attr(void)
     else {
 	int pct;
 
-	monster_type *m_ptr = &mon_list[p_ptr->health_who];
+	monster_type *m_ptr = &m_list[p_ptr->health_who];
 
 	/* Default to almost dead */
 	attr = TERM_RED;
@@ -483,8 +482,8 @@ byte monster_mana_attr(void)
 	attr = TERM_DARK;
 
     /* Tracking an unseen, hallucinatory, or dead monster */
-    else if ((!mon_list[p_ptr->health_who].ml) || (p_ptr->timed[TMD_IMAGE])
-	     || (mon_list[p_ptr->health_who].hp < 0)) {
+    else if ((!m_list[p_ptr->health_who].ml) || (p_ptr->timed[TMD_IMAGE])
+	     || (m_list[p_ptr->health_who].hp < 0)) {
 	/* The monster health is "unknown" */
 	attr = TERM_WHITE;
     }
@@ -492,7 +491,7 @@ byte monster_mana_attr(void)
     else {
 	int pct;
 
-	monster_type *m_ptr = &mon_list[p_ptr->health_who];
+	monster_type *m_ptr = &m_list[p_ptr->health_who];
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	/* Default to out of mana */
@@ -544,9 +543,9 @@ static void prt_health(int row, int col)
     }
 
     /* Tracking an unseen, hallucinatory, or dead monster */
-    else if ((!mon_list[p_ptr->health_who].ml) ||	/* Unseen */
+    else if ((!m_list[p_ptr->health_who].ml) ||	/* Unseen */
 	     (p_ptr->timed[TMD_IMAGE]) ||	/* Hallucination */
-	     (mon_list[p_ptr->health_who].hp < 0)) {	/* Dead (?) */
+	     (m_list[p_ptr->health_who].hp < 0)) {	/* Dead (?) */
 	/* The monster health is "unknown" */
 	Term_putstr(col, row, 12, attr, "[----------]");
     }
@@ -555,7 +554,7 @@ static void prt_health(int row, int col)
     else {
 	int pct, len;
 
-	monster_type *m_ptr = &mon_list[p_ptr->health_who];
+	monster_type *m_ptr = &m_list[p_ptr->health_who];
 
 	/* Extract the "percent" of health */
 	pct = 100L * m_ptr->hp / m_ptr->maxhp;
@@ -595,9 +594,9 @@ static void prt_mana(int row, int col)
     }
 
     /* Tracking an unseen, hallucinatory, or dead monster */
-    else if ((!mon_list[p_ptr->health_who].ml) ||	/* Unseen */
+    else if ((!m_list[p_ptr->health_who].ml) ||	/* Unseen */
 	     (p_ptr->timed[TMD_IMAGE]) ||	/* Hallucination */
-	     (mon_list[p_ptr->health_who].hp < 0)) {	/* Dead (?) */
+	     (m_list[p_ptr->health_who].hp < 0)) {	/* Dead (?) */
 	/* The monster mana is "unknown" */
 	Term_putstr(col, row, 12, attr, "[----------]");
     }
@@ -606,7 +605,7 @@ static void prt_mana(int row, int col)
     else {
 	int pct, len;
 
-	monster_type *m_ptr = &mon_list[p_ptr->health_who];
+	monster_type *m_ptr = &m_list[p_ptr->health_who];
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	/* no mana, stop here */
@@ -636,7 +635,7 @@ static void prt_mana(int row, int col)
  */
 static void prt_speed(int row, int col)
 {
-    int i = p_ptr->state.speed;
+    int i = p_ptr->state.pspeed;
 
     byte attr = TERM_WHITE;
     const char *type = NULL;
@@ -855,7 +854,7 @@ static void hp_colour_change(game_event_type type, game_event_data * data,
      * using this command when graphics mode is on
      * causes the character to be a black square.
      */
-    if ((OPT(hp_changes_color)) && (arg_graphics == GRAPHICS_NONE)) {
+    if ((OPT(hp_changes_colour)) && (arg_graphics == GRAPHICS_NONE)) {
 	light_spot(p_ptr->py, p_ptr->px);
     }
 }
@@ -924,7 +923,7 @@ static const struct state_info effects[] = {
     {TMD_BLESSED, S("Blssd"), TERM_L_GREEN},
     {TMD_SINVIS, S("SInvis"), TERM_L_GREEN},
     {TMD_SINFRA, S("Infra"), TERM_L_GREEN},
-    {TMD_SSTELTH, S("Hidden"), TERM_L_DARK},
+    {TMD_SSTEALTH, S("Hidden"), TERM_L_DARK},
     {TMD_OPP_ACID, S("RAcid"), TERM_SLATE},
     {TMD_OPP_ELEC, S("RElec"), TERM_BLUE},
     {TMD_OPP_FIRE, S("RFire"), TERM_RED},
@@ -938,9 +937,9 @@ static const struct state_info effects[] = {
 };
 
 /* For other special attack effects */
-static const struct state_info attack_type[] = {
-    {ATTACK_CONFU, S("AttConf"), TERM_UMBER},
-    {ATTACK_BLKBREATH, S("AttEvil"), TERM_L_DARK},
+static const struct state_info attacks[] = {
+    {ATTACK_CONFUSE, S("AttConf"), TERM_UMBER},
+    {ATTACK_BLKBRTH, S("AttEvil"), TERM_L_DARK},
     {ATTACK_FLEE, S("HitRun"), TERM_BLUE},
     {ATTACK_SUPERSHOT, S("SpShot"), TERM_WHITE},
     {ATTACK_HOLY, S("AttHoly"), TERM_WHITE}

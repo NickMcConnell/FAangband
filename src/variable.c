@@ -89,7 +89,7 @@ char summon_kin_type;		/* Hack -- See summon_specific() */
 
 s32b turn;			/* Current game turn */
 
-s32b do_feeling;		/* Hack -- Level feeling indicator */
+bool do_feeling = FALSE;	/* Hack -- Level feeling indicator */
 
 int use_graphics;		/* "graphics" mode */
 bool use_graphics_nice;	        /* The 'nice' "graphics" mode is enabled */
@@ -796,6 +796,11 @@ byte *g_info;
 flavor_type *flavor_info;
 
 
+/*
+ * The hints array
+ */
+struct hint *hints;
+
 /**
  * Hack -- The special Angband "System Suffix"
  * This variable is used to choose an appropriate "pref-xxx" file
@@ -1098,6 +1103,8 @@ void (*sound_hook)(int sound);
 autoinscription *inscriptions = 0;
 u16b inscriptions_count = 0;
 
+/* Delay in centiseconds before moving to allow another keypress */
+/* Zero means normal instant movement. */
+u16b lazymove_delay = 0;
 
-bool normal_screen = TRUE;
-int prompt_end = 0;
+

@@ -267,6 +267,74 @@ static int see_nothing(int dir, int y, int x)
 
 
 
+/*
+ * Calculates and returns the angle to the target or in the given
+ * direction.
+ *
+ * Note:  If a compass direction is supplied, we ignore any target.
+ * Note:  We supply the angle divided by 2.
+ */
+int get_angle_to_target(int y0, int x0, int y1, int x1, int dir)
+{
+	int ny, nx;
+	int dist_conv;
+
+	/* No valid compass direction given */
+	if ((dir == 0) || (dir == 5) || (dir > 9))
+	{
+		/* Check for a valid target */
+		if ((y1) && (x1))
+		{
+			/* Get absolute distance between source and target */
+			int dy = ABS(y1 - y0);
+			int dx = ABS(x1 - x0);
+
+			/* Calculate distance conversion factor */
+			if ((dy > 20) || (dx > 20))
+			{
+				/* Must shrink the distance to avoid illegal table access */
+				if (dy > dx) dist_conv = 1 + (10 * dy / 20);
+				else         dist_conv = 1 + (10 * dx / 20);
+			}
+			else
+			{
+				dist_conv = 10;
+			}
+			/* Convert and reorient grid for table access */
+			ny = 20 + 10 * (y1 - y0) / dist_conv;
+			nx = 20 + 10 * (x1 - x0) / dist_conv;
+
+			/* Illegal table access is bad */
+			if ((ny < 0) || (ny > 40) || (nx < 0) || (nx > 40))
+			{
+				/* Note error */
+				return (-1);
+			}
+		}
+
+		/* No compass direction and no target --> note error */
+		else
+		{
+			return (-1);
+		}
+	}
+
+	/* We have a valid compass direction */
+	else
+	{
+		/* Step in that direction a bunch of times, get target */
+		y1 = y0 + (ddy_ddd[dir] * 10);
+		x1 = x0 + (ddx_ddd[dir] * 10);
+
+		/* Convert to table grids */
+		ny = 20 + (y1 - y0);
+		nx = 20 + (x1 - x0);
+	}
+
+	/* Get angle to target. */
+	return (get_angle_to_grid[ny][nx]);
+}
+
 /**
  * The running algorithm  -CJS-
  *

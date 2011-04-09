@@ -822,7 +822,7 @@ static void warrior_probe_desc(void)
  * and receive (slightly incomplete) infomation about racial type, 
  * basic resistances, and HPs. -LM-
  */
-static void pseudo_probe(void)
+void pseudo_probe(void)
 {
     char m_name[80];
 
@@ -1016,7 +1016,7 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
 }
 
 /**
- * Study a book to gain a new spell/prayer
+ * Study a book to gain a new prayer
  */
 void do_cmd_study_book(cmd_code code, cmd_arg args[])
 {
@@ -1035,13 +1035,6 @@ void do_cmd_study_book(cmd_code code, cmd_arg args[])
 	msg_format("That item is not within your reach.");
 	return;
     }
-
-    /* Track the object kind */
-    object_kind_track(o_ptr->k_idx);
-
-    /* Hack -- Handle stuff */
-    handle_stuff();
-
 
     /* Extract spells */
     for (i = 0; i < SPELLS_PER_BOOK; i++) {

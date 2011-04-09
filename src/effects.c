@@ -1439,7 +1439,8 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	}
     case EF_ACID_PROOF:
 	{
-	    u32b proof_flag = OF_ACID_PROOF;
+	    bitflag proof_flag[OF_SIZE];
+	    of_on(proof_flag, OF_ACID_PROOF);
 	    *ident = TRUE;
 	    if (!el_proof(proof_flag))
 		return FALSE;
@@ -1448,7 +1449,8 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_ELEC_PROOF:
 	{
-	    u32b proof_flag = OF_ELEC_PROOF;
+	    bitflag proof_flag[OF_SIZE];
+	    of_on(proof_flag, OF_ELEC_PROOF);
 	    *ident = TRUE;
 	    if (!el_proof(proof_flag))
 		return FALSE;
@@ -1457,7 +1459,8 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_FIRE_PROOF:
 	{
-	    u32b proof_flag = OF_FIRE_PROOF;
+	    bitflag proof_flag[OF_SIZE];
+	    of_on(proof_flag, OF_FIRE_PROOF);
 	    *ident = TRUE;
 	    if (!el_proof(proof_flag))
 		return FALSE;
@@ -1466,7 +1469,8 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_COLD_PROOF:
 	{
-	    u32b proof_flag = OF_COLD_PROOF;
+	    bitflag proof_flag[OF_SIZE];
+	    of_on(proof_flag, OF_COLD_PROOF);
 	    *ident = TRUE;
 	    if (!el_proof(proof_flag))
 		return FALSE;

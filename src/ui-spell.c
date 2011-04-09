@@ -117,14 +117,14 @@ static void spell_menu_display(menu_type *m, int oid, bool cursor,
        if (s_ptr->slevel <= p_ptr->lev) 
 	   attr_name = TERM_WHITE;
        else 
-	   attr = TERM_RED;
+	   attr_name = TERM_RED;
    }
    
     /* Dump the spell --(-- */
-    strnfmt(out, sizeof(out), "%-30s%2d %4d %3d%%%s",
-	    get_spell_name(mp_ptr->spell_book, spell),
-	    s_ptr->slevel, s_ptr->smana, spell_chance(spell), comment);
-    c_prt(attr, illegible ? illegible : out, row, col);
+    c_put_str(attr_name, format("%-30s", get_spell_name(spell)), row, col);
+    put_str(format("%2d %4d %3d%%", s_ptr->slevel, 
+		   s_ptr->smana, spell_chance(spell)), row, col + 30);
+    c_put_str(attr_extra, format("%s", comment), row, col + 42);
 }
 
 /**
@@ -324,7 +324,8 @@ void textui_spell_browse(void)
 	    magic_desc[mp_ptr->spell_realm][BOOK_LACK]);
 
     item_tester_hook = obj_can_browse;
-    if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR | IS_HARMLESS)))
+    if (!get_item(&item, q, s, CMD_BROWSE_SPELL, 
+		  (USE_INVEN | USE_FLOOR | IS_HARMLESS)))
 	return;
 
     /* Track the object kind */
@@ -354,7 +355,7 @@ void textui_obj_study(void)
 	    magic_desc[mp_ptr->spell_realm][BOOK_LACK]);
 
     item_tester_hook = obj_can_study;
-    if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR)))
+    if (!get_item(&item, q, s, CMD_STUDY_BOOK, (USE_INVEN | USE_FLOOR)))
 	return;
 
     track_object(item);
@@ -396,7 +397,7 @@ void textui_obj_cast(void)
 	    magic_desc[mp_ptr->spell_realm][BOOK_LACK]);
 
     item_tester_hook = obj_can_cast_from;
-    if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR)))
+    if (!get_item(&item, q, s, CMD_CAST, (USE_INVEN | USE_FLOOR)))
 	return;
 
     /* Track the object kind */

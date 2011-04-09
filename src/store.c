@@ -23,8 +23,13 @@
  */
 
 #include "angband.h"
+#include "button.h"
+#include "cave.h"
 #include "cmds.h"
+#include "files.h"
+#include "history.h"
 #include "squelch.h"
+#include "textui.h"
 #include "ui-menu.h"
 
 
@@ -209,7 +214,7 @@ s32b price_item(object_type * o_ptr, int greed, bool flip)
 	racial_factor = 100;
 
     /* Add in the charisma factor */
-    charisma_factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
+    charisma_factor = adj_chr_gold[p_ptr->state.stat_ind[A_CHR]];
 
     /* Shop is buying */
     if (flip) {
@@ -425,7 +430,7 @@ static void mass_produce(object_type * o_ptr)
 
     /* Hack -- rod/wands share the timeout/charges */
     if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND)) {
-	o_ptr->pval = o_ptr->number * k_info[o_ptr->k_idx].pval;
+	o_ptr->pval = o_ptr->number * k_info[o_ptr->k_idx].pval.base;
     }
 }
 
@@ -542,7 +547,7 @@ static bool store_check_num(object_type * o_ptr)
  *
  * Note that a shop-keeper must refuse to buy "worthless" objects
  */
-static bool store_will_buy(object_type * o_ptr)
+static bool store_will_buy(const object_type * o_ptr)
 {
     /* Hack -- The Home is simple */
     if (st_ptr->type == STORE_HOME)
@@ -1045,8 +1050,8 @@ static void store_delete(void)
 	    num = 1;
     }
 
-    /* Hack -- decrement the maximum timeouts and total charges of rods/wands. */
-    if ((o_ptr->.tval == TV_ROD)
+    /* Hack -- decrement the maximum timeouts and total charges of rods/wands */
+    if ((o_ptr->tval == TV_ROD)
 	|| (o_ptr->tval == TV_WAND)) {
 	o_ptr->pval -=
 	    num * o_ptr->pval / o_ptr->number;
@@ -1144,7 +1149,7 @@ static void store_create(void)
 
 	/* Shown curses are shown */
 	if (of_has(i_ptr->flags_obj, OF_SHOW_CURSE))
-	    i_ptr->id_curse = i_ptr->flags_curse;
+	    if_copy(i_ptr->id_curse, i_ptr->flags_curse);
 
 	/* Mega-Hack -- no chests in stores */
 	if (i_ptr->tval == TV_CHEST)
@@ -1219,7 +1224,7 @@ static void display_entry(int item)
     if (st_ptr->type == STORE_HOME) {
 	byte attr;
 
-	maxwid = (small_screen ? 43 : 75);
+	maxwid = 75;
 
 	/* Leave room for weights, if necessary -DRS- */
 	if (OPT(show_weights))
@@ -1243,7 +1248,7 @@ static void display_entry(int item)
 
 	    sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
 
-	    put_str(out_val, y, (small_screen ? 30 : 67));
+	    put_str(out_val, y, 67);
 	}
     }
 
@@ -1252,7 +1257,7 @@ static void display_entry(int item)
 	byte attr;
 
 	/* Must leave room for the "price" */
-	maxwid = (small_screen ? 33 : 65);
+	maxwid = 65;
 
 	/* Leave room for weights, if necessary -DRS- */
 	if (OPT(show_weights))
@@ -1274,7 +1279,7 @@ static void display_entry(int item)
 	    /* Only show the weight of a single object */
 	    int wgt = o_ptr->weight;
 	    sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
-	    put_str(out_val, y, (small_screen ? 30 : 61));
+	    put_str(out_val, y, 61);
 	}
 
 	/* Extract the price */
@@ -1286,7 +1291,7 @@ static void display_entry(int item)
 	else
 	    sprintf(out_val, "%9ld  ", (long) x);
 
-	put_str(out_val, y, (small_screen ? 35 : 67));
+	put_str(out_val, y, 67);
 
 
     }
@@ -1337,10 +1342,10 @@ static void store_prt_gold(void)
 {
     char out_val[64];
 
-    prt("Gold Remaining: ", 18, (small_screen ? 21 : 53));
+    prt("Gold Remaining: ", 18, 53);
 
     sprintf(out_val, "%9ld", (long) p_ptr->au);
-    prt(out_val, 18, (small_screen ? 35 : 67));
+    prt(out_val, 18, 67);
 }
 
 
@@ -1358,61 +1363,43 @@ static void display_store(void)
     /* The "Home" is special */
     if (st_ptr->type == STORE_HOME) {
 	/* Put the owner name */
-	put_str("Your Home", 2, (small_screen ? 15 : 30));
+	put_str("Your Home", 2, 30);
 
 	/* Label the object descriptions */
 	put_str("Item Description", 4, 3);
 
 	/* If showing weights, show label */
 	if (OPT(show_weights)) {
-	    put_str("Weight", 4, (small_screen ? 38 : 70));
+	    put_str("Weight", 4, 70);
 	}
     }
 
     /* Normal stores */
     else {
 
-	cptr store_name = (f_name + f_info[FEAT_SHOP_HEAD + st_ptr->type].name);
-	cptr owner_name = &(b_name[ot_ptr->owner_name]);
-	cptr race_name = p_name + p_info[ot_ptr->owner_race].name;
+	cptr store_name = f_info[FEAT_SHOP_HEAD + st_ptr->type].name;
+	cptr owner_name = ot_ptr->owner_name;
+	cptr race_name = p_info[ot_ptr->owner_race].name;
 
 
 	/* Put the owner name and race */
-	if (small_screen) {
-	    sprintf(buf, "%s ", owner_name);
-	    buf[15] = '\0';
-	    put_str(buf, 2, 0);
-	    sprintf(buf, " (%s)", race_name);
-	    buf[11] = ')';
-	    buf[12] = '\0';
-	    put_str(buf, 2, 15);
-	} else {
-	    sprintf(buf, "%s (%s)", owner_name, race_name);
-	    put_str(buf, 2, 10);
-	}
-
+	sprintf(buf, "%s (%s)", owner_name, race_name);
+	put_str(buf, 2, 10);
+	
 	/* Show the max price in the store (above prices) */
-	if (small_screen) {
-	    sprintf(buf, " %s", store_name);
-	    prt(buf, 2, 27);
-	    buf[13] = '\0';
-	    sprintf(buf, " (%ld)", (long) (ot_ptr->max_cost));
-	    prt(buf, 2, 40);
-	} else {
-	    sprintf(buf, "%s (%ld)", store_name, (long) (ot_ptr->max_cost));
-	    prt(buf, 2, 50);
-	}
-
+	sprintf(buf, "%s (%ld)", store_name, (long) (ot_ptr->max_cost));
+	prt(buf, 2, 50);
+	
 	/* Label the object descriptions */
 	put_str("Item Description", 4, 3);
 
 	/* If showing weights, show label */
 	if (OPT(show_weights)) {
-	    put_str("Weight", 4, (small_screen ? 30 : 60));
+	    put_str("Weight", 4, 60);
 	}
 
 	/* Label the asking price (in stores) */
-	put_str("Price", 4, (small_screen ? 39 : 71));
+	put_str("Price", 4, 71);
 
     }
 
@@ -1444,18 +1431,6 @@ static bool get_stock(int *com_val, cptr pmt)
 
     object_type *o_ptr;
 
-    /* Get the item index */
-    if (repeat_pull(com_val)) {
-	/* Verify the item */
-	if ((*com_val >= 0) && (*com_val <= (st_ptr->stock_num - 1))) {
-	    /* Success */
-	    return (TRUE);
-	}
-
-	/* Invalid repeat - reset it */
-	else
-	    repeat_clear();
-    }
     /* Assume failure */
     *com_val = (-1);
 
@@ -1507,7 +1482,8 @@ static bool get_stock(int *com_val, cptr pmt)
 	/* Home */
 	if (st_ptr->type == STORE_HOME) {
 	    /* Describe */
-	    object_desc(o_name, o_ptr, TRUE, 3);
+	    object_desc(o_name, sizeof(o_name), o_ptr, 
+			ODESC_PREFIX | ODESC_FULL);
 	}
 
 	/* Shop */
@@ -1530,8 +1506,6 @@ static bool get_stock(int *com_val, cptr pmt)
 
     /* Save item */
     (*com_val) = item;
-
-    repeat_push(*com_val);
 
     /* Success */
     return (TRUE);
@@ -1708,7 +1682,8 @@ static void store_purchase(void)
 	    i_ptr->ident &= ~(IDENT_STORE);
 
 	    /* Describe the transaction */
-	    object_desc(o_name, i_ptr, TRUE, 3);
+	    object_desc(o_name, sizeof(o_name), i_ptr, 
+			ODESC_PREFIX | ODESC_FULL);
 
 	    /* Message */
 	    msg_format("You bought %s (%c) for %ld gold.", o_name,
@@ -1728,7 +1703,8 @@ static void store_purchase(void)
 		apply_autoinscription(&p_ptr->inventory[item_new]);
 
 	    /* Describe the final result */
-	    object_desc(o_name, &p_ptr->inventory[item_new], TRUE, 3);
+	    object_desc(o_name, sizeof(o_name), &p_ptr->inventory[item_new], 
+			ODESC_PREFIX | ODESC_FULL);
 
 	    /* Message */
 	    msg_format("You have %s (%c).", o_name, index_to_label(item_new));
@@ -1816,7 +1792,8 @@ static void store_purchase(void)
 	item_new = inven_carry(p_ptr, i_ptr);
 
 	/* Describe just the result */
-	object_desc(o_name, &p_ptr->inventory[item_new], TRUE, 3);
+	object_desc(o_name, sizeof(o_name), &p_ptr->inventory[item_new], 
+		    ODESC_PREFIX | ODESC_FULL);
 
 	/* Message */
 	msg_format("You have %s (%c).", o_name, index_to_label(item_new));
@@ -1891,7 +1868,7 @@ static void store_sell(void)
 
     /* Get an item */
     s = "You have nothing that I want.";
-    if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
+    if (!get_item(&item, q, s, CMD_DROP, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
 	return;
 
     /* Get the item (in the pack) */
@@ -1951,7 +1928,7 @@ static void store_sell(void)
     }
 
     /* Get a full description */
-    object_desc(o_name, i_ptr, TRUE, 3);
+    object_desc(o_name, sizeof(o_name), i_ptr, ODESC_PREFIX | ODESC_FULL);
 
     /* Is there room in the store (or the home?) */
     if ((!store_check_num(i_ptr)) && (st_ptr->type != STORE_MERCH)) {
@@ -2043,7 +2020,7 @@ static void store_sell(void)
 
 	/* Shown curses are shown */
 	if (of_has(i_ptr->flags_obj, OF_SHOW_CURSE))
-	    i_ptr->id_curse = i_ptr->flags_curse;
+	    cf_copy(i_ptr->id_curse, i_ptr->flags_curse);
 
 	/* Hack -- If a rod or wand, let the shopkeeper know just how many
 	 * charges he really paid for. */
@@ -2055,7 +2032,7 @@ static void store_sell(void)
 	value = object_value(i_ptr) * i_ptr->number;
 
 	/* Get the description all over again */
-	object_desc(o_name, i_ptr, TRUE, 3);
+	object_desc(o_name, sizeof(o_name), i_ptr, ODESC_PREFIX | ODESC_FULL);
 
 	/* No selling */
 	if (OPT(adult_no_sell)) {
@@ -2226,13 +2203,14 @@ static void order_item_display(menu_type * menu, int oid, bool cursor, int row,
 /**
  * Deal with events on the sval menu
  */
-static bool order_item_action(char cmd, void *db, int oid)
+static bool order_item_action(menu_type *menu, const ui_event_data *ev, int oid)
 {
-    u16b *choice = db;
+    u16b *choice = menu->menu_data;
     int i, avail;
 
     /* Toggle */
-    if (cmd == '\n' || cmd == '\r' || cmd == '\xff') {
+    if (ev->type == EVT_SELECT) 
+    {
 	int idx = choice[oid];
 
 	/* Check to see if ordered or not */
@@ -2323,7 +2301,6 @@ static bool order_menu(int tval, const char *desc)
     button_add("Up", ARROW_UP);
     button_add("Down", ARROW_DOWN);
     button_add("Toggle", '\r');
-    update_statusline();
 
     /* Output to the screen */
     text_out_hook = text_out_to_screen;
@@ -2366,7 +2343,6 @@ static bool order_menu(int tval, const char *desc)
     button_kill(ARROW_UP);
     button_kill(ARROW_DOWN);
     button_kill('\r');
-    update_statusline();
 
     return TRUE;
 }
@@ -2391,7 +2367,8 @@ static void display_order(menu_type * menu, int oid, bool cursor, int row,
  */
 void store_order(void)
 {
-    int i, j = 0, cursor = 0;
+    size_t i;
+    int j = 0, cursor = 0;
     ui_event_data c = EVENT_EMPTY;
     const char cmd_keys[] = { ARROW_LEFT, ARROW_RIGHT, '\0' };
 
@@ -2530,7 +2507,7 @@ static void store_process_command(ui_event_data ke)
     case '}':
     case '~':
 	{
-	    Term_key_push(p_ptr->command_cmd);
+	    Term_key_push(ke.key);
 	    textui_process_command(TRUE);
 	    break;
 	}
@@ -2876,13 +2853,6 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
     /* No command argument */
     p_ptr->command_arg = 0;
 
-    /* No repeated command */
-    p_ptr->command_rep = 0;
-
-    /* No automatic command */
-    p_ptr->command_new = 0;
-
-
     /* Save the store number */
     store_num = which;
 
@@ -2907,8 +2877,6 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
     if ((st_ptr->type == STORE_MERCH)
 	&& (which < MAX_STORES_SMALL * NUM_TOWNS_SMALL))
 	button_add("o", 'o');
-    normal_screen = FALSE;
-    prompt_end = 0;
 
     /* Interact with player */
     while (!leave_store) {
@@ -2916,60 +2884,36 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 	prt("", 1, 0);
 
 	/* Hack -- Check the charisma */
-	tmp_chr = p_ptr->stat_use[A_CHR];
+	tmp_chr = p_ptr->state.stat_use[A_CHR];
 
 	/* Clear */
 	clear_from(20);
-	update_statusline();
 
 	/* Basic commands */
-	if (small_screen) {
-	    /* Prompt */
-	    prt("You may: ", 20, 0);
-
-	    /* Commands */
-	    prt(" RET) Continue", 20, 18);
-	    prt("   i) inven", 20, 36);
-	    prt(" ESC) Exit ", 21, 0);
-
-	    /* Browse if necessary */
-	    if (st_ptr->stock_num > 12) {
-		prt(" SPACE) Next page", 22, 0);
-	    }
-
-	    /* More commands */
-	    prt(" g) Get/Purchase", 21, 20);
-	    prt(" d) Drop/Sell", 22, 20);
-	    prt("   l) Look ", 21, 36);
-	    if ((st_ptr->type == STORE_MERCH)
-		&& (which < MAX_STORES_SMALL * NUM_TOWNS_SMALL))
-		prt("   o) Order ", 22, 36);
-	} else {
-	    /* Prompt */
-	    prt("You may: ", 20, 0);
-
-	    /* Commands */
-	    prt(" RET) Continue", 20, 27);
-	    prt("   i) Player inventory", 20, 55);
-	    prt(" ESC) Exit from Building.", 21, 0);
-
-	    /* Browse if necessary */
-	    if (st_ptr->stock_num > 12) {
-		prt(" SPACE) Next page of stock", 22, 0);
-	    }
-
-	    /* More commands */
-	    prt(" g) Get/Purchase an item.", 21, 29);
-	    prt(" d) Drop/Sell an item.", 22, 29);
-	    if (OPT(rogue_like_commands))
-		prt("   x) Look at an item.", 21, 55);
-	    else
-		prt("   l) Look at an item.", 21, 55);
-	    if ((st_ptr->type == STORE_MERCH)
-		&& (which < MAX_STORES_SMALL * NUM_TOWNS_SMALL))
-		prt("   o) Order an item.", 21, 55);
+	/* Prompt */
+	prt("You may: ", 20, 0);
+	
+	/* Commands */
+	prt(" RET) Continue", 20, 27);
+	prt("   i) Player inventory", 20, 55);
+	prt(" ESC) Exit from Building.", 21, 0);
+	
+	/* Browse if necessary */
+	if (st_ptr->stock_num > 12) {
+	    prt(" SPACE) Next page of stock", 22, 0);
 	}
-
+	
+	/* More commands */
+	prt(" g) Get/Purchase an item.", 21, 29);
+	prt(" d) Drop/Sell an item.", 22, 29);
+	if (OPT(rogue_like_commands))
+	    prt("   x) Look at an item.", 21, 55);
+	else
+	    prt("   l) Look at an item.", 21, 55);
+	if ((st_ptr->type == STORE_MERCH)
+	    && (which < MAX_STORES_SMALL * NUM_TOWNS_SMALL))
+	    prt("   o) Order an item.", 21, 55);
+    
 	/* Get a command */
 	ke = inkey_ex();
 	
@@ -3029,7 +2973,8 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 		object_copy(i_ptr, o_ptr);
 
 		/* Describe it */
-		object_desc(o_name, i_ptr, TRUE, 3);
+		object_desc(o_name, sizeof(o_name), i_ptr,
+			    ODESC_PREFIX | ODESC_FULL);
 
 		/* Message */
 		msg_format("You drop %s (%c).", o_name, index_to_label(item));
@@ -3054,7 +2999,7 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 	}
 
 	/* Hack -- Handle charisma changes */
-	if (tmp_chr != p_ptr->stat_use[A_CHR]) {
+	if (tmp_chr != p_ptr->state.stat_use[A_CHR]) {
 	    /* Redisplay wares */
 	    display_inventory();
 	}
@@ -3071,19 +3016,9 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
     button_kill('i');
     button_kill('l');
     button_kill('o');
-    normal_screen = TRUE;
-    update_statusline();
 
     /* Free turn XXX XXX XXX */
     p_ptr->energy_use = 0;
-
-
-    /* Hack -- Cancel automatic command */
-    p_ptr->command_new = 0;
-
-    /* Hack -- Cancel "see" mode */
-    p_ptr->command_see = FALSE;
-
 
     /* Flush messages XXX XXX XXX */
     msg_print(NULL);

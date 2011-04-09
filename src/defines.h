@@ -1503,6 +1503,7 @@ enum
  *   HIDE:  Hack -- disable "visual" feedback from projection
  *   CHCK:  Note occupied grids, but do not stop at them.
  */
+#define PROJECT_NONE    0x0000
 #define PROJECT_JUMP	0x0001
 #define PROJECT_BEAM	0x0002
 #define PROJECT_SAFE    0x0004

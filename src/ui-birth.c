@@ -659,8 +659,7 @@ static void point_based_start(void)
 	Term_clear();
 
 	/* Display the player */
-	display_player_xtra_info();
-	display_player_stat_info();
+	display_player(0);
 
 	prt(prompt, Term->hgt - 1, Term->wid / 2 - strlen(prompt) / 2);
 

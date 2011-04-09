@@ -17,7 +17,11 @@
  */
 
 #include "angband.h"
+#include "button.h"
+#include "cave.h"
+#include "cmds.h"
 #include "effects.h"
+#include "target.h"
 #include "tvalsval.h"
 #include "spells.h"
 
@@ -284,6 +288,15 @@
 #define RITUAL_DARK_POWER                       254
 
 
+
+int get_spell_index(const object_type *o_ptr, int index)
+{
+    int spell = mp_ptr->book_start_index[o_ptr->sval] + index;
+    if (spell > mp_ptr->book_start_index[o_ptr->sval + 1])
+	return -1;
+
+    return mp_ptr->info[spell].index;
+}
 
 cptr get_spell_name(int spell)
 {
@@ -870,9 +883,9 @@ bool cast_spell(int tval, int index, int dir)
 	}
     case SPELL_TELEKINESIS:
 	{
-	    int ty, tx;
+	    s16b ty, tx;
 	    target_get(&tx, &ty);
-	    if (!target_set_interactive(TARGET_OBJ))
+	    if (!target_set_interactive(TARGET_OBJ, -1, -1))
 		return FALSE;
 	    if (!py_pickup(2, ty, tx))
 		return FALSE;
@@ -1249,7 +1262,7 @@ bool cast_spell(int tval, int index, int dir)
 	}
     case PRAYER_CHANT:
 	{
-	    if (!p_ptr->timed[TMD_BLESSED] blessed) {
+	    if (!p_ptr->timed[TMD_BLESSED]) {
 		(void) inc_timed(TMD_BLESSED, randint1(24) + 24, TRUE);
 	    } else {
 		(void) inc_timed(TMD_BLESSED, randint1(8) + 8, TRUE);
@@ -1515,10 +1528,7 @@ bool cast_spell(int tval, int index, int dir)
 	    char answer;
 
 	    /* Query */
-	    if (small_screen)
-		msg_print("Enchant a 'W'eapon or 'A'rmour");
-	    else
-		msg_print("Would you like to enchant a 'W'eapon or 'A'rmour");
+	    msg_print("Would you like to enchant a 'W'eapon or 'A'rmour");
 
 	    /* Buttons */
 	    button_add("a", 'a');
@@ -1988,7 +1998,7 @@ bool cast_spell(int tval, int index, int dir)
 	    if (!p_ptr->timed[TMD_FAST]) {
 		(void) set_timed(TMD_FAST, randint1(10) + plev / 2, TRUE);
 	    } else {
-		(void) set_timed(TMD_FAST, randint1(5));
+		(void) set_timed(TMD_FAST, randint1(5), TRUE);
 	    }
 	    break;
 	}
@@ -2039,11 +2049,11 @@ bool cast_spell(int tval, int index, int dir)
 	}
     case LORE_SONG_OF_PRESERVATION:
 	{
-	    u32b flags = (OF_ACID_PROOF | OF_FIRE_PROOF);
+	    bitflag flags[OF_SIZE];
+	    of_on(flags, OF_ACID_PROOF);
+	    of_on(flags, OF_FIRE_PROOF);
 
-	    if (!el_proof(OF_ACID_PROOF))
-		return FALSE;
-	    if (!el_proof(OF_FIRE_PROOF))
+	    if (!el_proof(flags))
 		return FALSE;
 	    break;
 	}
@@ -2404,7 +2414,6 @@ bool cast_spell(int tval, int index, int dir)
 	    break;
 	}
     case RITUAL_SLIP_INTO_THE_SHADOWS:
-				 * Shadows */
 	{
 	    if (!p_ptr->timed[TMD_SSTEALTH]) {
 		(void) inc_timed(TMD_SSTEALTH, 40, TRUE);

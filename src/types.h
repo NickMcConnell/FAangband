@@ -729,7 +729,9 @@ struct quest
  * A store owner
  */
 struct owner_type {
-    u32b owner_name;	/**< Name */
+    struct owner_type *next;
+    int bidx;
+    char *owner_name;	/**< Name */
     u32b unused;	/**< Currently unused */
 
     s16b max_cost;	/**< Purse limit */

@@ -18,7 +18,12 @@
  */
 
 #include "angband.h"
+#include "cave.h"
 #include "cmds.h"
+#include "files.h"
+#include "monster.h"
+#include "spells.h"
+#include "target.h"
 #include "ui-menu.h"
 
 
@@ -252,24 +257,20 @@ static void do_cmd_wiz_hack_ben(void)
 
 
 /**
- * Output a long int in binary format.
+ * Output part of a bitflag set in binary format.
  */
-static void prt_binary(u32b flags, int row, int col)
+static void prt_binary(const bitflag *flags, int offset, int row, int col, 
+		       char ch, int num)
 {
-    int i;
-    u32b bitmask;
-
+    int flag;
+    
     /* Scan the flags */
-    for (i = bitmask = 1; i <= 32; i++, bitmask *= 2) {
-	/* Dump set bits */
-	if (flags & bitmask) {
-	    Term_putch(col++, row, TERM_BLUE, '*');
-	}
-
-	/* Dump unset bits */
-	else {
+    for (flag = FLAG_START + offset; flag < FLAG_START + offset + num; flag++)
+    {
+	if (of_has(flags, flag))
+	    Term_putch(col++, row, TERM_BLUE, ch);
+	else
 	    Term_putch(col++, row, TERM_WHITE, '-');
-	}
     }
 }
 
@@ -281,11 +282,11 @@ static void prt_binary(u32b flags, int row, int col)
 static void do_cmd_wiz_bamf(void)
 {
     /* target starts at player. */
-    int ny = 0;
-    int nx = 0;
+    s16b ny = 0;
+    s16b nx = 0;
 
     /* Use the targeting function. */
-    if (!target_set_interactive(TARGET_LOOK))
+    if (!target_set_interactive(TARGET_LOOK, -1, -1))
 	return;
 
     /* grab the target coords. */
@@ -514,14 +515,14 @@ static void wiz_display_item(object_type * o_ptr)
     prt("tbsiwdcc  re   s  ttbiaefc   f..", 13, j);
     prt("hatnieohsfessfhefphhlmcliosspr..", 14, j);
     prt("rlrtsxnadfgpialerlrdspppppmcca..", 15, j);
-    prt_binary(o_ptr->flags_obj, 16, j);
+    prt_binary(o_ptr->flags_obj, 0, 16, j, '*', 32);
 
     prt("+------------CURSES------------+", 17, j);
     prt("	n r    b b       b             ", 18, j);
     prt("ttaasahppcuhdaassppdddd.........", 19, j);
     prt("eeggrfuooutawduttaaxssc.........", 20, j);
     prt("llggerniitrlemncwrrppth.........", 21, j);
-    prt_binary(o_ptr->flags_curse, 22, j);
+    prt_binary(o_ptr->flags_curse, 0, 22, j, '*', 32);
     prt("Resists, bonuses and slays coming soon...", 23, j);
 }
 
@@ -614,7 +615,7 @@ static void get_art_name(char *buf, int a_idx)
     o_ptr->ident |= IDENT_KNOWN;
 
     /* Create the artifact description */
-    object_desc(buf, o_ptr, FALSE, FALSE);
+    object_desc(buf, sizeof(buf), o_ptr, ODESC_FULL | ODESC_SINGULAR);
 }
 
 
@@ -762,7 +763,7 @@ static int wiz_create_itemtype(bool artifact)
 		ch = head[num / 20] + (num % 20);
 
 		/* Acquire the "name" of object "i" */
-		my_strcpy(buf, sizeof(buf), k_ptr->name);
+		my_strcpy(buf, k_ptr->name, sizeof(buf));
 
 		/* Print it */
 		prt(format("[%c] %s", ch, buf), row, col);
@@ -957,7 +958,7 @@ static void wiz_statistics(object_type * o_ptr)
 
     /* Mega-Hack -- allow multiple artifacts XXX XXX XXX */
     if (artifact_p(o_ptr))
-	a_info[o_ptr->name1].creat_turn = 0;
+	a_info[o_ptr->name1].created = FALSE;
 
 
     /* Interact */
@@ -1031,7 +1032,7 @@ static void wiz_statistics(object_type * o_ptr)
 
 	    /* Mega-Hack -- allow multiple artifacts XXX XXX XXX */
 	    if (artifact_p(i_ptr))
-		a_info[i_ptr->name1].creat_turn = 0;
+		a_info[i_ptr->name1].created = FALSE;
 
 
 	    /* Test for the same tval and sval. */
@@ -1077,7 +1078,7 @@ static void wiz_statistics(object_type * o_ptr)
 
     /* Hack -- Normally only make a single artifact */
     if (artifact_p(o_ptr))
-	a_info[o_ptr->name1].creat_turn = 1;
+	a_info[o_ptr->name1].created = TRUE;
 }
 
 
@@ -1149,7 +1150,7 @@ static void do_cmd_wiz_play(void)
     /* Get an item */
     q = "Play with which object? ";
     s = "You have nothing to play with.";
-    if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
+    if (!get_item(&item, q, s, 0, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
 	return;
 
     /* Get the item (in the pack) */
@@ -1369,7 +1370,7 @@ static char jump_tag(menu_type * menu, int oid)
 /**
  * Display an entry on the jump menu
  */
-void jump_display(menu_type * menu, int oid, bool cursor, int row, int col,
+void jump_display(menu_type *menu, int oid, bool cursor, int row, int col,
 		  int width)
 {
     const u16b *choice = menu->menu_data;
@@ -1383,13 +1384,13 @@ void jump_display(menu_type * menu, int oid, bool cursor, int row, int col,
 /**
  * Deal with events on the jump menu
  */
-bool jump_action(char cmd, void *db, int oid)
+bool jump_action(menu_type *menu, const ui_event_data *evt, int oid)
 {
-    u16b *choice = db;
+    u16b *choice = menu->menu_data;
 
     int idx = choice[oid];
 
-    if ((cmd == '\r') || (cmd == '\n') || (cmd == '\xff')) {
+    if (evt->type == EVT_SELECT) {
 	place = idx;
 	/* Accept request */
 	msg_format("You jump to %s level %d.",
@@ -1409,7 +1410,7 @@ bool jump_menu(int level, int *location)
 {
     menu_type menu;
     menu_iter menu_f = { jump_tag, 0, jump_display, jump_action, 0 };
-    region area = { (small_screen ? 0 : 15), 1, 48, -1 };
+    region area = { 15, 1, 48, -1 };
     ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
     int cursor = 0, j = 0;
     size_t i;
@@ -1687,8 +1688,8 @@ static void wiz_create_artifact(void)
     o_ptr->to_d = a_ptr->to_d;
     o_ptr->weight = a_ptr->weight;
 
-    o_ptr->flags_obj = a_ptr->flags_obj;
-    o_ptr->flags_curse = a_ptr->flags_curse;
+    of_copy(o_ptr->flags_obj, a_ptr->flags_obj);
+    cf_copy(o_ptr->flags_curse, a_ptr->flags_curse);
 
     for (i = 0; i < MAX_P_RES; i++)
 	o_ptr->percent_res[i] = a_ptr->percent_res[i];
@@ -1703,8 +1704,8 @@ static void wiz_create_artifact(void)
 
 
     /* Transfer the activation information. */
-    if (a_ptr->activation) {
-	o_ptr->activation = a_ptr->activation;
+    if (a_ptr->effect) {
+	o_ptr->effect = a_ptr->effect;
     }
 
     /* Drop the artifact from heaven */

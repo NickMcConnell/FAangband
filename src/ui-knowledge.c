@@ -18,8 +18,11 @@
  */
 
 #include "angband.h"
-#include "tvalsval.h"
+#include "cave.h"
+#include "history.h"
+#include "monster.h"
 #include "squelch.h"
+#include "tvalsval.h"
 #include "ui.h"
 #include "ui-menu.h"
 
@@ -935,7 +938,7 @@ static void display_monster(int col, int row, bool cursor, int oid)
     byte c = r_ptr->x_char;
 
     /* Display the name */
-    c_prt(attr, r_text + r_ptr->name, row, col);
+    c_prt(attr, r_ptr->name, row, col);
 
     if ((tile_width > 1) || (tile_height > 1))
 	return;
@@ -975,7 +978,7 @@ static int m_cmp_race(const void *a, const void *b)
     if (c)
 	return c;
 
-    return strcmp(r_text + r_a->name, r_text + r_b->name);
+    return strcmp(r_a->name, r_b->name);
 }
 
 static char *m_xchar(int oid)
@@ -1031,8 +1034,8 @@ static void mon_summary(int gid, const int *object_list, int n, int top,
 
     /* Different display for the first item if we've got uniques to show */
     if (gid == 0
-	&& (rf_has(&r_info[default_join[object_list[0]].oid])->flags1,
-	    RF_UNIQUE)) {
+	&& (rf_has((&r_info[default_join[object_list[0]].oid])->flags,
+		   RF_UNIQUE))) {
 	c_prt(TERM_L_BLUE, format("%d known uniques, %d slain.", n, kills), row,
 	      col);
     } else {
@@ -1209,10 +1212,9 @@ static void desc_art_fake(int a_idx)
 		o_ptr = &object_type_body;
 
 		make_fake_artifact(o_ptr, a_idx);
-		o_ptr->ident |= IDENT_NAME;
 
-		/* Check the history entry, to see if it was fully known before it
-		 * was lost */
+		/* Check the history entry, to see if it was fully known 
+		 * before it was lost */
 		if (history_is_artifact_known(a_idx))
 		{
 			o_ptr->ident |= IDENT_KNOWN;
@@ -1245,7 +1247,7 @@ static int a_cmp_tval(const void *a, const void *b)
     c = a_a->sval - a_b->sval;
     if (c)
 	return c;
-    return strcmp(a_text + a_a->name, a_text + a_b->name);
+    return strcmp(a_a->name, a_b->name);
 }
 
 static const char *kind_name(int gid)
@@ -1269,7 +1271,7 @@ static bool artifact_is_known(int a_idx)
     if (p_ptr->wizard)
 	return TRUE;
 
-    if (!a_info[a_idx].creat_turn)
+    if (!a_info[a_idx].created)
 	return FALSE;
 
     /* Check all objects to see if it exists but hasn't been IDed */
@@ -1347,7 +1349,7 @@ static void display_ego_item(int col, int row, bool cursor, int oid)
     byte attr = curs_attrs[0 != (int) e_ptr->everseen][0 != (int) cursor];
 
     /* Display the name */
-    c_prt(attr, e_text + e_ptr->name, row, col);
+    c_prt(attr, e_ptr->name, row, col);
 }
 
 /*
@@ -1356,7 +1358,7 @@ static void display_ego_item(int col, int row, bool cursor, int oid)
 static void desc_ego_fake(int oid)
 {
     int e_idx = default_join[oid].oid;
-    ego_item_type *e_ptr = &e_info[e_idx];
+    ego_item_type *ego = &e_info[e_idx];
 
 	textblock *tb;
 	region area = { 0, 0, 0, 0 };
@@ -1381,7 +1383,7 @@ static int e_cmp_tval(const void *a, const void *b)
 	return c;
 
     /* Order by */
-    return strcmp(e_text + ea->name, e_text + eb->name);
+    return strcmp(ea->name, eb->name);
 }
 
 /*
@@ -1578,15 +1580,15 @@ static int o_cmp_tval(const void *a, const void *b)
 
     default:
 	if (k_a->aware)
-	    return strcmp(a_text + k_a->name, a_text + k_b->name);
+	    return strcmp(k_a->name, k_b->name);
 
 	/* Then in tried order */
 	c = k_a->tried - k_b->tried;
 	if (c)
 	    return -c;
 
-	return strcmp(flavor_text + flavor_info[k_a->flavor].text,
-		      flavor_text + flavor_info[k_b->flavor].text);
+	return strcmp(flavor_info[k_a->flavor].text,
+		      flavor_info[k_b->flavor].text);
     }
 
     return k_a->sval - k_b->sval;
@@ -1751,7 +1753,7 @@ static void display_feature(int col, int row, bool cursor, int oid)
     byte attr = curs_attrs[CURS_KNOWN][(int) cursor];
 
     /* Display the name */
-    c_prt(attr, f_text + f_ptr->name, row, col);
+    c_prt(attr, f_ptr->name, row, col);
 
     if ((tile_width > 1) || (tile_height > 1))
 	return;
@@ -1775,7 +1777,7 @@ static int f_cmp_fkind(const void *a, const void *b)
 	return c;
 
     /* order by feature name */
-    return strcmp(f_text + fa->name, f_text + fb->name);
+    return strcmp(fa->name, fb->name);
 }
 
 static const char *fkind_name(int gid)

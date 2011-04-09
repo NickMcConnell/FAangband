@@ -235,8 +235,8 @@ void wr_options(void)
     /* Write "panel_change" */
     wr_byte((byte)op_ptr->panel_change);
   
-    /* Unused */
-    wr_byte(0);
+    /* Write lazymove delay */
+    wr_u16b(lazymove_delay);
   
   
     /*** Normal options ***/
@@ -715,7 +715,7 @@ void wr_misc(void)
     wr_byte((byte)feeling);
   
     /* Turn of last "feeling" */
-    wr_s32b(do_feeling);
+    wr_byte(do_feeling);
   
     /* Current turn */
     wr_s32b(turn);

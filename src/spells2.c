@@ -37,7 +37,7 @@
 #include "ui-menu.h"
 
 /* Element to be proofed against in element-proofing */
-static byte el_to_proof = 0;
+static bitflag *el_to_proof = NULL;
 
 /**
  * Alter player's shape.  Taken from Sangband.
@@ -191,7 +191,7 @@ void el_display(menu_type * menu, int oid, bool cursor, int row, int col,
  */
 bool el_action(menu_type * menu, const ui_event_data * e, int oid)
 {
-    u16b *choice = &menu->menu_data;
+    u16b *choice = menu->menu_data;
 
     /* Choose */
     if (e->type == EVT_SELECT) {
@@ -222,12 +222,12 @@ bool el_menu(void)
 {
     menu_type menu;
     menu_iter menu_f = { el_tag, 0, el_display, el_action, 0 };
-    region area = { (small_screen ? 0 : 15), 1, 48, -1 };
+    region area = { 15, 1, 48, -1 };
     ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
     int cursor = 0;
 
     int num = 0;
-    size_t i;
+    int i;
 
     u16b *choice;
 
@@ -280,7 +280,7 @@ bool el_menu(void)
 /**
  * Choose a paladin elemental attack. -LM-
  */
-static bool choose_ele_attack(void)
+bool choose_ele_attack(void)
 {
     bool brand = FALSE;
 
@@ -337,7 +337,7 @@ void res_display(menu_type * menu, int oid, bool cursor, int row, int col,
  */
 bool res_action(menu_type * menu, const ui_event_data * e, int oid)
 {
-    u16b *choice = &menu->menu_data;
+    u16b *choice = menu->menu_data;
     int plev = p_ptr->lev;
 
     /* Choose */
@@ -384,7 +384,7 @@ bool res_menu(void)
 {
     menu_type menu;
     menu_iter menu_f = { res_tag, 0, res_display, res_action, 0 };
-    region area = { (small_screen ? 0 : 15), 1, 48, -1 };
+    region area = { 15, 1, 48, -1 };
     ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
     int cursor = 0;
 
@@ -482,11 +482,11 @@ void create_athelas(void)
  */
 void dimen_door(void)
 {
-    int ny;
-    int nx;
+    s16b ny;
+    s16b nx;
     bool okay;
 
-    okay = target_set_interactive(TARGET_LOOK | TARGET_GRID);
+    okay = target_set_interactive(TARGET_LOOK | TARGET_GRID, -1, -1);
     if (!okay)
 	return;
 
@@ -516,7 +516,7 @@ void dimen_door(void)
  * therefore high-level, and curses weapons on failure.  Do not give Assas-
  * sins "Break Curse". -LM-
  */
-static void rebalance_weapon(void)
+void rebalance_weapon(void)
 {
     object_type *o_ptr;
     char o_name[120];
@@ -536,7 +536,8 @@ static void rebalance_weapon(void)
     }
 
     /* Not a throwing weapon. */
-    if (!(o_ptr->flags_obj & OF_THROWING)) {
+    if (!of_has(o_ptr->flags_obj, OF_THROWING)) 
+    {
 	msg_print
 	    ("The melee weapon you are wielding is not designed for throwing.");
 	return;
@@ -545,7 +546,7 @@ static void rebalance_weapon(void)
     /* 20% chance to curse weapon. */
     else if (randint1(5) == 1) {
 	/* Description */
-	object_desc(o_name, o_ptr, FALSE, 0);
+	object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 
 	/* Light curse and lower to_h and to_d by 2 to 5 each. */
 
@@ -566,7 +567,7 @@ static void rebalance_weapon(void)
 	of_on(o_ptr->flags_obj, OF_PERFECT_BALANCE);
 
 	/* Description */
-	object_desc(o_name, o_ptr, FALSE, 0);
+	object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 
 	/* Describe */
 	msg_format("Your %s gleams steel blue!", o_name);
@@ -959,18 +960,12 @@ void identify_object(object_type * o_ptr)
     if (o_ptr->name2)
 	e_info[o_ptr->name2].everseen = TRUE;
 
-    /* Get sensation ID (id_other is already done by the notice_other call) */
-    if ((o_ptr == &p_ptr->inventory[INVEN_LEFT])
-	|| (o_ptr == &p_ptr->inventory[INVEN_RIGHT])
-	|| (o_ptr == &p_ptr->inventory[INVEN_NECK]))
-	p_ptr->id_obj |= o_ptr->id_obj;
-
     /* Check for known curses */
     if ((of_has(o_ptr->flags_obj, OF_SHOW_CURSE))
 	|| (artifact_p(o_ptr) && (o_ptr->name1 < ART_MIN_RANDOM))) {
-	o_ptr->id_curse = o_ptr->flags_curse;
+	of_copy(o_ptr->id_curse, o_ptr->flags_curse);
 	o_ptr->ident |= IDENT_KNOW_CURSES;
-	if (o_ptr->flags_curse)
+	if (!cf_is_empty(o_ptr->flags_curse))
 	    o_ptr->ident |= IDENT_CURSED;
 	else
 	    o_ptr->ident |= IDENT_UNCURSED;
@@ -1086,7 +1081,7 @@ static bool remove_curse_aux(int good)
     /* Get an item.  */
     q = "Attempt to uncurse which item? ";
     s = "You have no curses which can be removed.";
-    if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
+    if (!get_item(&item, q, s, CMD_NULL, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
 	return (FALSE);
 
     /* Get the item (in the pack) */
@@ -1106,7 +1101,7 @@ static bool remove_curse_aux(int good)
     }
 
     /* Try every curse, even unknown ones */
-    for (i = cf_next(o_ptr->flags_curse, FLAG_START); i != FLAGS_END;
+    for (i = cf_next(o_ptr->flags_curse, FLAG_START); i != FLAG_END;
 	 i = cf_next(o_ptr->flags_curse, i + 1))
 	if (cf_has(o_ptr->flags_curse, i)) {
 	    /* If fragile, bad things can happen */
@@ -1174,7 +1169,7 @@ static bool remove_curse_aux(int good)
 	/* Redo feeling */
 	if (!(o_ptr->feel == feel)) {
 	    /* Get an object description */
-	    object_desc(o_name, o_ptr, FALSE, 0);
+	    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 
 	    msg_format("You feel the %s (%c) you are %s %s now %s...", o_name,
 		       index_to_label(slot), describe_use(slot),
@@ -1198,7 +1193,7 @@ static bool remove_curse_aux(int good)
     p_ptr->redraw |= (PR_EQUIP | PR_INVEN);
 
     /* Return "something uncursed" */
-    return (curses ? TRUE : FALSE);
+    return (cf_is_empty(curses) ? FALSE : TRUE);
 }
 
 
@@ -1267,7 +1262,7 @@ bool inward = FALSE;
 /* the number of available points */
 int num_points = 0;
 
-static char recall_tag(menu_type * menu, int oid)
+static char recall_tag(menu_type *menu, int oid)
 {
     return I2A(oid);
 }
@@ -1275,7 +1270,7 @@ static char recall_tag(menu_type * menu, int oid)
 /**
  * Display an entry on the recall menu
  */
-void recall_display(menu_type * menu, int oid, bool cursor, int row, int col,
+void recall_display(menu_type *menu, int oid, bool cursor, int row, int col,
 		    int width)
 {
     const u16b *choice = menu->menu_data;
@@ -1305,9 +1300,9 @@ void recall_display(menu_type * menu, int oid, bool cursor, int row, int col,
 /**
  * Deal with events on the recall menu
  */
-bool recall_action(menu_type * menu, ui_event_data * e, int oid)
+bool recall_action(menu_type *menu, const ui_event_data *e, int oid)
 {
-    u16b *choice = &menu->menu_data;
+    u16b *choice = menu->menu_data;
 
     int idx = choice[oid];
 
@@ -1343,13 +1338,13 @@ bool recall_menu(void)
 {
     menu_type menu;
     menu_iter menu_f = { recall_tag, 0, recall_display, recall_action, 0 };
-    region area = { (small_screen ? 0 : 15), 1, 48, -1 };
+    region area = { 15, 1, 48, -1 };
     ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
     int cursor = 0;
     int num_entries;
     int num_poss = OPT(adult_dungeon) ? 1 : 4;
 
-    size_t i;
+    int i;
 
     u16b *choice;
 
@@ -2555,7 +2550,7 @@ static bool item_tester_unproofed(const object_type * o_ptr)
 {
     if (o_ptr->number != 1)
 	return FALSE;
-    if (o_ptr->flags_obj & el_to_proof)
+    if (of_is_subset(o_ptr->flags_obj, el_to_proof))
 	return FALSE;
     else
 	return TRUE;
@@ -2704,7 +2699,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
     /* Get an item */
     q = "Enchant which item? ";
     s = "You have nothing to enchant.";
-    if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
+    if (!get_item(&item, q, s, CMD_NULL, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
 	return (FALSE);
 
     /* Get the item (in the pack) */
@@ -2719,7 +2714,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 
 
     /* Description */
-    object_desc(o_name, o_ptr, FALSE, 0);
+    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 
     /* Describe */
     msg_format("%s %s glow%s brightly!", ((item >= 0) ? "Your" : "The"), o_name,
@@ -2777,7 +2772,7 @@ bool brand_missile(int ammo_type, int brand_type)
     /* Get an item */
     q = "Enchant which ammunition? ";
     s = "You have no ammunition to brand.";
-    status = get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR));
+    status = get_item(&item, q, s, 0, (USE_EQUIP | USE_INVEN | USE_FLOOR));
 
     /* Hack - if failed, return, but only after resetting the ammo hack */
     if (!status)
@@ -2945,7 +2940,7 @@ void set_ele_attack(u32b attack_type, int duration)
 /**
  * Proof an object against an element
  */
-bool el_proof(u32b flag)
+bool el_proof(bitflag *flag)
 {
     object_type *o_ptr;
 
@@ -2954,7 +2949,7 @@ bool el_proof(u32b flag)
     cptr q, s;
 
     /* Set the element */
-    el_to_proof = flag;
+    of_copy(el_to_proof, flag);
 
     /* Only unproofed items */
     item_tester_hook = item_tester_unproofed;
@@ -2965,7 +2960,7 @@ bool el_proof(u32b flag)
     /* Get an item */
     q = "Proof which single item? ";
     s = "You have no single item to proof.";
-    if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
+    if (!get_item(&item, q, s, 0, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
 	return (FALSE);
 
     /* Get the item (in the pack) */
@@ -2979,8 +2974,8 @@ bool el_proof(u32b flag)
     }
 
     /* Proof it */
-    o_ptr->flags_obj |= flag;
-    o_ptr->id_obj |= flag;
+    of_union(o_ptr->flags_obj, flag);
+    of_union(o_ptr->id_obj, flag);
 
     /* Done */
     return (TRUE);
@@ -3005,7 +3000,7 @@ bool curse_armor(void)
 	return (FALSE);
 
     /* Describe */
-    object_desc(o_name, o_ptr, FALSE, 3);
+    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_FULL);
 
     /* Attempt a saving throw for artifacts */
     if (artifact_p(o_ptr) && (randint0(100) < 50)) {
@@ -3048,7 +3043,7 @@ bool curse_armor(void)
 	/* Redo feeling */
 	if (!(o_ptr->feel == feel)) {
 	    /* Get an object description */
-	    object_desc(o_name, o_ptr, FALSE, 0);
+	    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 
 	    msg_format("You feel the %s (%c) you are %s %s now %s...", o_name,
 		       index_to_label(slot), describe_use(slot),
@@ -3098,7 +3093,7 @@ bool curse_weapon(void)
 
 
     /* Describe */
-    object_desc(o_name, o_ptr, FALSE, 3);
+    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_FULL);
 
     /* Attempt a saving throw */
     if (artifact_p(o_ptr) && (randint0(100) < 50)) {
@@ -3141,7 +3136,7 @@ bool curse_weapon(void)
 	/* Redo feeling */
 	if (!(o_ptr->feel == feel)) {
 	    /* Get an object description */
-	    object_desc(o_name, o_ptr, FALSE, 0);
+	    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 
 	    msg_format("You feel the %s (%c) you are %s %s now %s...", o_name,
 		       index_to_label(slot), describe_use(slot),
@@ -3164,7 +3159,7 @@ bool curse_weapon(void)
 	p_ptr->update |= (PU_MANA);
 
 	/* Redraw stuff */
-	p_ptr->redraw |= (PR_INVEN | PR_EQUIP1);
+	p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
     }
 
     /* Notice */
@@ -3197,7 +3192,7 @@ bool ident_spell(void)
     /* Get an item.  */
     q = "Identify which item? ";
     s = "You have nothing to identify.";
-    if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
+    if (!get_item(&item, q, s, 0, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
 	return (FALSE);
 
     /* Get the item (in the pack) */
@@ -3226,7 +3221,7 @@ bool ident_spell(void)
     handle_stuff();
 
     /* Description */
-    object_desc(o_name, o_ptr, TRUE, 3);
+    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
 
     /* Possibly play a sound depending on object quality. */
     if (o_ptr->name1 != 0) {
@@ -3293,7 +3288,7 @@ bool identify_fully(void)
     /* Get an item.  */
     q = "Reveal curses on which item? ";
     s = "You have nothing to reveal curses on.";
-    if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
+    if (!get_item(&item, q, s, 0, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
 	return (FALSE);
 
     /* Get the item (in the pack) */
@@ -3310,9 +3305,9 @@ bool identify_fully(void)
     identify_object(o_ptr);
 
     /* Know the curses */
-    o_ptr->id_curse = o_ptr->flags_curse;
+    cf_copy(o_ptr->id_curse, o_ptr->flags_curse);
     o_ptr->ident |= IDENT_KNOW_CURSES;
-    if (!o_ptr->flags_curse) {
+    if (cf_is_empty(o_ptr->flags_curse)) {
 	o_ptr->ident |= IDENT_UNCURSED;
 	msg_print("This item has no curses.");
     } 
@@ -3409,7 +3404,7 @@ bool recharge(int power)
     /* Get an item */
     q = "Recharge which item? ";
     s = "You have nothing to recharge.";
-    if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR)))
+    if (!get_item(&item, q, s, 0, (USE_INVEN | USE_FLOOR)))
 	return (FALSE);
 
     /* Get the item (in the pack) */
@@ -3477,7 +3472,8 @@ bool recharge(int power)
 	/* If the spell didn't backfire, recharge the wand or staff. */
 	else {
 	    /* Recharge based on the standard number of charges. */
-	    recharge_amount = randint1(1 + k_ptr->pval / 2);
+	    recharge_amount = 
+		randint1(1 + randcalc(k_ptr->pval, lev, RANDOMISE) / 2);
 
 	    /* Multiple wands in a stack increase recharging somewhat. */
 	    if ((o_ptr->tval == TV_WAND) && (o_ptr->number > 1)) {
@@ -3501,8 +3497,8 @@ bool recharge(int power)
 	    o_ptr->pval += recharge_amount;
 
 	    /* Hack - Artifacts have a maximum # of charges. */
-	    if (artifact_p(o_ptr) && (o_ptr->pval > k_ptr->pval))
-		o_ptr->pval = k_ptr->pval;
+	    if (artifact_p(o_ptr) && (o_ptr->pval > k_ptr->pval.base))
+		o_ptr->pval = k_ptr->pval.base;
 
 	    /* Hack -- we no longer "know" the item */
 	    o_ptr->ident &= ~(IDENT_KNOWN);
@@ -3517,7 +3513,8 @@ bool recharge(int power)
     if (fail) {
 	/* Artifacts are never destroyed. */
 	if (artifact_p(o_ptr)) {
-	    object_desc(o_name, o_ptr, TRUE, 0);
+	    object_desc(o_name, sizeof(o_name), o_ptr,
+			ODESC_PREFIX | ODESC_BASE);
 	    msg_format("The recharging backfires - %s is completely drained!",
 		       o_name);
 
@@ -3530,7 +3527,7 @@ bool recharge(int power)
 		o_ptr->pval = 0;
 	} else {
 	    /* Get the object description */
-	    object_desc(o_name, o_ptr, FALSE, 0);
+	    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 
 	  /*** Determine Seriousness of Failure ***/
 
@@ -3688,7 +3685,7 @@ void tap_magical_energy(void)
     /* Get an item */
     q = "Drain charges from which item? ";
     s = "You have nothing to drain charges from.";
-    if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR)))
+    if (!get_item(&item, q, s, 0, (USE_INVEN | USE_FLOOR)))
 	return;
 
     /* Get the item (in the pack) */
@@ -5197,14 +5194,14 @@ void earthquake(int cy, int cx, int r, bool volcano)
  */
 bool tremor(void)
 {
-    int ny, ty;
-    int nx, tx;
+    int ny, nx;
+    s16b ty, tx;
     bool okay = FALSE;
     bool valid_grid = FALSE;
 
     /* Choose the epicentre */
     while (!valid_grid) {
-	okay = target_set_interactive(TARGET_LOOK | TARGET_GRID);
+	okay = target_set_interactive(TARGET_LOOK | TARGET_GRID, -1, -1);
 	if (!okay)
 	    return (FALSE);
 
@@ -5542,7 +5539,7 @@ bool fire_ball(int typ, int dir, int dam, int rad, bool jump)
     int py = p_ptr->py;
     int px = p_ptr->px;
 
-    int ty, tx;
+    s16b ty, tx;
 
     int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
@@ -5578,7 +5575,7 @@ bool fire_sphere(int typ, int dir, int dam, int rad, byte diameter_of_source)
     int py = p_ptr->py;
     int px = p_ptr->px;
 
-    int ty, tx;
+    s16b ty, tx;
 
     int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
@@ -5605,7 +5602,7 @@ bool fire_cloud(int typ, int dir, int dam, int rad)
     int py = p_ptr->py;
     int px = p_ptr->px;
 
-    int ty, tx;
+    s16b ty, tx;
 
     int flg =
 	PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL |
@@ -5670,7 +5667,7 @@ bool fire_arc(int typ, int dir, int dam, int rad, int degrees_of_arc)
     /* Diameter of source of energy is normally, but not always, 20. */
     int diameter_of_source = 20;
 
-    int ty, tx;
+    s16b ty, tx;
 
     int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_ARC;
 
@@ -5719,7 +5716,7 @@ static bool project_hook(int typ, int dir, int dam, int flg)
     int py = p_ptr->py;
     int px = p_ptr->px;
 
-    int ty, tx;
+    s16b ty, tx;
 
     /* Pass through the target if needed */
     flg |= (PROJECT_THRU);

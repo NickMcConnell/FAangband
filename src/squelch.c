@@ -42,6 +42,7 @@
  *    are included in all such copies.  Other copyrights may also apply.
  */
 #include "angband.h"
+#include "button.h"
 #include "cmds.h"
 #include "squelch.h"
 #include "ui-menu.h"
@@ -119,7 +120,8 @@ int apply_autoinscription(object_type *o_ptr)
     return 0;
   
   /* Get an object description */
-  object_desc(o_name, o_ptr, TRUE, 3);
+  object_desc(o_name, sizeof(o_name), o_ptr,
+	      ODESC_PREFIX | ODESC_FULL);
   
   if (note[0] != 0)
     o_ptr->note = quark_add(note);
@@ -416,7 +418,8 @@ void squelch_items(void)
   
   /* Set the hook and scan the floor */
   item_tester_hook = squelch_item_ok;
-  (void)scan_floor(floor_list, &floor_num, p_ptr->py, p_ptr->px, 0x01);
+  floor_num = scan_floor(floor_list, N_ELEMENTS(floor_list), p_ptr->py, 
+			 p_ptr->px, 0x01);
   
   if (floor_num)
     {
@@ -694,7 +697,7 @@ int ego_item_name(char *buf, size_t buf_size, ego_desc *d_ptr)
   end += my_strcat(buf, " ", buf_size);
   
   /* Get the full ego-item name */
-  long_name = e_name + e_ptr->name;
+  long_name = e_ptr->name;
   
   /* Get the length of the common prefix, if any */
   prefix_size = (d_ptr->short_name - long_name);
@@ -759,12 +762,12 @@ static void ego_display(menu_type *menu, int oid, bool cursor, int row,
 /**
  * Deal with events on the sval menu
  */
-static bool ego_action(char cmd, void *db, int oid)
+static bool ego_action(menu_type *menu, const ui_event_data *event, int oid)
 {
-  ego_desc *choice = db;
+  ego_desc *choice = menu->menu_data;
   
   /* Toggle */
-  if (cmd == '\n' || cmd == '\r' || cmd == '\xff')
+  if (event->type == EVT_SELECT)
     {
       ego_item_type *e_ptr = &e_info[choice[oid].e_idx];
       e_ptr->squelch = !e_ptr->squelch;
@@ -790,7 +793,7 @@ static void ego_menu(void *unused, const char *also_unused)
   ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
   int cursor = 0;
   
-  size_t i;
+  int i;
   
   
   /* Hack - Used to sort the tval table for the first time */
@@ -819,7 +822,7 @@ static void ego_menu(void *unused, const char *also_unused)
       
       /* Append the index */
       choice[max_num].e_idx = idx;
-      choice[max_num].short_name = strip_ego_name(e_name + e_ptr->name);
+      choice[max_num].short_name = strip_ego_name(e_ptr->name);
       
       ++max_num;
     }
@@ -843,7 +846,6 @@ static void ego_menu(void *unused, const char *also_unused)
   button_add("Up", ARROW_UP);
   button_add("Down", ARROW_DOWN);
   button_add("Toggle", '\r');
-  update_statusline();
   
   /* Output to the screen */
   text_out_hook = text_out_to_screen;
@@ -885,7 +887,6 @@ static void ego_menu(void *unused, const char *also_unused)
   button_kill(ARROW_UP);
   button_kill(ARROW_DOWN);
   button_kill('\r');
-  update_statusline();
 
   return;
 }
@@ -925,7 +926,7 @@ static void quality_subdisplay(menu_type *menu, int oid, bool cursor, int row,
 /**
  * Handle "Enter".  :(
  */
-static bool quality_subaction(menu_type *menu, ui_event_data *e, int oid)
+static bool quality_subaction(menu_type *menu, const ui_event_data *e, int oid)
 {
   return TRUE;
 }
@@ -934,7 +935,7 @@ static bool quality_subaction(menu_type *menu, ui_event_data *e, int oid)
 /**
  * Handle keypresses.
  */
-static bool quality_action(char cmd, void *db, int oid)
+static bool quality_action(menu_type *menu1, const ui_event_data *ev, int oid)
 {
   menu_type menu;
   menu_iter menu_f = { 0, 0, quality_subdisplay, quality_subaction, 0 };
@@ -1036,9 +1037,9 @@ static void sval_display(menu_type *menu, int oid, bool cursor, int row,
 /**
  * Deal with events on the sval menu
  */
-static bool sval_action(menu_type *menu, ui_event_data *e, int oid)
+static bool sval_action(menu_type *menu, const ui_event_data *e, int oid)
 {
-  u16b *choice = &menu->menu_data;
+  u16b *choice = menu->menu_data;
   
   /* Toggle */
   if (e->type == EVT_SELECT)
@@ -1109,7 +1110,6 @@ static bool sval_menu(int tval, const char *desc)
   button_add("Up", ARROW_UP);
   button_add("Down", ARROW_DOWN);
   button_add("Toggle", '\r');
-  update_statusline();
   
   /* Output to the screen */
   text_out_hook = text_out_to_screen;
@@ -1151,7 +1151,6 @@ static bool sval_menu(int tval, const char *desc)
   button_kill(ARROW_UP);
   button_kill(ARROW_DOWN);
   button_kill('\r');
-  update_statusline();
 
   return TRUE;
 }
@@ -1191,7 +1190,7 @@ struct
   {
     { 'Q', "Quality squelching options", quality_menu },
     { 'E', "Ego squelching options", ego_menu },
-    { '{', "Autoinscription setup", do_cmd_knowledge_objects },
+    { '{', "Autoinscription setup", textui_browse_object_knowledge },
   };
 
 static char tag_options_item(menu_type *menu, int oid)
@@ -1318,4 +1317,5 @@ void do_cmd_options_item(const char *name, int row)
   p_ptr->notice |= PN_SQUELCH;
 
   return;
+
 }

@@ -798,7 +798,7 @@ void display_player_sml(void)
 	}
 
 	/* Obtain the current stat (modified) */
-	cnv_stat(p_ptr->state.stat_use[i], buf);
+	cnv_stat(p_ptr->state.stat_use[i], buf, sizeof(buf));
 
 	/* Display the current stat (modified) */
 	c_put_str(TERM_L_GREEN, buf, 4 + i, 8);
@@ -1046,9 +1046,9 @@ extern int make_dump(char_attr_line * line, int mode)
 	dump_put_str(TERM_L_BLUE, buf1, 42);
 	red = (p_ptr->stat_cur[0] < p_ptr->stat_max[0]);
 	value = p_ptr->state.stat_use[0];
-	cnv_stat(value, buf1);
+	cnv_stat(value, buf1, sizeof(buf1));
 	value = p_ptr->state.stat_top[0];
-	cnv_stat(value, buf2);
+	cnv_stat(value, buf2, sizeof(buf2));
 	dump_put_str(TERM_WHITE, (red ? "Str" : "STR"), 53);
 	dump_put_str(TERM_WHITE, ((p_ptr->stat_cur[0] == 18 + 100) ? "!" : " "),
 		     56);
@@ -1067,9 +1067,9 @@ extern int make_dump(char_attr_line * line, int mode)
 	dump_put_str(TERM_L_BLUE, buf1, 42);
 	red = (p_ptr->stat_cur[1] < p_ptr->stat_max[1]);
 	value = p_ptr->state.stat_use[1];
-	cnv_stat(value, buf1);
+	cnv_stat(value, buf1, sizeof(buf1));
 	value = p_ptr->state.stat_top[1];
-	cnv_stat(value, buf2);
+	cnv_stat(value, buf2, sizeof(buf2));
 	dump_put_str(TERM_WHITE, (red ? "Int" : "INT"), 53);
 	dump_put_str(TERM_WHITE, ((p_ptr->stat_cur[1] == 18 + 100) ? "!" : " "),
 		     56);
@@ -1088,9 +1088,9 @@ extern int make_dump(char_attr_line * line, int mode)
 	dump_put_str(TERM_L_BLUE, buf1, 42);
 	red = (p_ptr->stat_cur[2] < p_ptr->stat_max[2]);
 	value = p_ptr->state.stat_use[2];
-	cnv_stat(value, buf1);
+	cnv_stat(value, buf1, sizeof(buf1));
 	value = p_ptr->state.stat_top[2];
-	cnv_stat(value, buf2);
+	cnv_stat(value, buf2, sizeof(buf2));
 	dump_put_str(TERM_WHITE, (red ? "Wis" : "WIS"), 53);
 	dump_put_str(TERM_WHITE, ((p_ptr->stat_cur[2] == 18 + 100) ? "!" : " "),
 		     56);
@@ -1109,9 +1109,9 @@ extern int make_dump(char_attr_line * line, int mode)
 	dump_put_str(TERM_L_BLUE, buf1, 42);
 	red = (p_ptr->stat_cur[3] < p_ptr->stat_max[3]);
 	value = p_ptr->state.stat_use[3];
-	cnv_stat(value, buf1);
+	cnv_stat(value, buf1, sizeof(buf1));
 	value = p_ptr->state.stat_top[3];
-	cnv_stat(value, buf2);
+	cnv_stat(value, buf2, sizeof(buf2));
 	dump_put_str(TERM_WHITE, (red ? "Dex" : "DEX"), 53);
 	dump_put_str(TERM_WHITE, ((p_ptr->stat_cur[3] == 18 + 100) ? "!" : " "),
 		     56);
@@ -1127,9 +1127,9 @@ extern int make_dump(char_attr_line * line, int mode)
 	    dump_put_str(TERM_VIOLET, "***WINNER***", 0);
 	red = (p_ptr->stat_cur[4] < p_ptr->stat_max[4]);
 	value = p_ptr->state.stat_use[4];
-	cnv_stat(value, buf1);
+	cnv_stat(value, buf1, sizeof(buf1));
 	value = p_ptr->state.stat_top[4];
-	cnv_stat(value, buf2);
+	cnv_stat(value, buf2, sizeof(buf2));
 	dump_put_str(TERM_WHITE, (red ? "Con" : "CON"), 53);
 	dump_put_str(TERM_WHITE, ((p_ptr->stat_cur[4] == 18 + 100) ? "!" : " "),
 		     56);
@@ -1143,9 +1143,9 @@ extern int make_dump(char_attr_line * line, int mode)
 	dump_ptr = (char_attr *) & line[current_line];
 	red = (p_ptr->stat_cur[5] < p_ptr->stat_max[5]);
 	value = p_ptr->state.stat_use[5];
-	cnv_stat(value, buf1);
+	cnv_stat(value, buf1, sizeof(buf1));
 	value = p_ptr->state.stat_top[5];
-	cnv_stat(value, buf2);
+	cnv_stat(value, buf2, sizeof(buf2));
 	dump_put_str(TERM_WHITE, (red ? "Chr" : "CHR"), 53);
 	dump_put_str(TERM_WHITE, ((p_ptr->stat_cur[5] == 18 + 100) ? "!" : " "),
 		     56);
@@ -1684,7 +1684,7 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 	dump_put_str(TERM_WHITE, stat_names_reduced[i], 0);
 
 	/* Internal "natural" maximum value */
-	cnv_stat(p_ptr->stat_max[i], buf);
+	cnv_stat(p_ptr->stat_max[i], buf, sizeof(buf));
 	dump_put_str(TERM_BLUE, buf, 5);
 
 	/* Race, class, and equipment modifiers */
@@ -1696,12 +1696,12 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 	dump_put_str(TERM_L_BLUE, buf, 20);
 
 	/* Resulting "modified" maximum value */
-	cnv_stat(p_ptr->state.stat_top[i], buf);
+	cnv_stat(p_ptr->state.stat_top[i], buf, sizeof(buf));
 	dump_put_str(TERM_L_GREEN, buf, 24);
 
 	/* Only display stat_use if not maximal */
 	if (p_ptr->state.stat_use[i] < p_ptr->state.stat_top[i]) {
-	    cnv_stat(p_ptr->state.stat_use[i], buf);
+	    cnv_stat(p_ptr->state.stat_use[i], buf, sizeof(buf));
 	    dump_put_str(TERM_YELLOW, buf, 31);
 	}
 

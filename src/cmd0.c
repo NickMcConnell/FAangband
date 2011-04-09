@@ -616,7 +616,21 @@ static void textui_process_click(ui_event_data e)
 	if (!in_bounds_fully(y, x)) return;
 
 	/* XXX show context menu here */
-	handle_mousepress(y, x);
+	if ((p_ptr->py == y) && (p_ptr->px == x))
+		textui_cmd_rest();
+
+	else /* if (e.mousebutton == 1) */
+	{
+		if (p_ptr->timed[TMD_CONFUSED])
+		{
+			cmd_insert(CMD_WALK);
+		}
+		else
+		{
+			cmd_insert(CMD_PATHFIND);
+			cmd_set_arg_point(cmd_get_top(), 0, y, x);
+		}
+	}
 
 #if 0
 	else if (e.mousebutton == 2)

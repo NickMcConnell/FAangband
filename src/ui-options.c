@@ -18,6 +18,7 @@
  *    are included in all such copies.  Other copyrights may also apply.
  */
 #include "angband.h"
+#include "button.h"
 #include "cmds.h"
 #include "macro.h"
 #include "squelch.h"
@@ -1083,7 +1084,6 @@ void do_cmd_panel_change(const char *name, int row)
   prt("Command: Panel Change", 20, 0);
   button_add("+", '+');      
   button_add("-", '-');      
-  update_statusline();      
   
   /* Get a new value */
   while (1)
@@ -1105,7 +1105,39 @@ void do_cmd_panel_change(const char *name, int row)
 
   button_kill('+');      
   button_kill('-');
-  update_statusline();      
+}
+
+
+
+/**
+ * Set "lazy-movement" delay
+ */
+static void do_cmd_lazymove_delay(const char *name, int row)
+{
+	bool res;
+	char tmp[4] = "";
+
+	strnfmt(tmp, sizeof(tmp), "%i", lazymove_delay);
+
+	screen_save();
+
+	/* Prompt */
+	prt("Command: Movement Delay Factor", 20, 0);
+
+	prt(format("Current movement delay: %d (%d msec)",
+			   lazymove_delay, lazymove_delay * 10), 22, 0);
+	prt("New movement delay: ", 21, 0);
+
+	/* Ask the user for a string */
+	res = askfor_aux(tmp, sizeof(tmp), askfor_aux_numbers);
+
+	/* Process input */
+	if (res)
+	{
+		lazymove_delay = (u16b) strtoul(tmp, NULL, 0);
+	}
+
+	screen_load();
 }
 
 
@@ -1238,15 +1270,8 @@ static void do_cmd_options_autosave(const char *name, int row)
           if (i == k) a = TERM_L_BLUE;
           
           /* Display the option text */
-	  if (small_screen)
-	    sprintf(buf, "%-35s: %s",
-		    autosave_text[i],
-		    autosave ? "yes" : "no ");
-	  else
-	    sprintf(buf, "%-48s: %s  (%s)",
-		    autosave_desc[i],
-		    autosave ? "yes" : "no ",
-		    autosave_text[i]);
+	  sprintf(buf, "%-48s: %s  (%s)", autosave_desc[i],
+		  autosave ? "yes" : "no ", autosave_text[i]);
           c_prt(a, buf, i + 2, 0);
           
           prt(format("Timed autosave frequency: every %d turns", 
@@ -1260,7 +1285,6 @@ static void do_cmd_options_autosave(const char *name, int row)
       button_add("F", 'F');
       button_add("n", 'n');
       button_add("y", 'y');
-      update_statusline();
       
       /* Get a key */
       ke = inkey_ex();
@@ -1273,7 +1297,6 @@ static void do_cmd_options_autosave(const char *name, int row)
 	    button_kill('F');
 	    button_kill('n');
 	    button_kill('y');
-	    update_statusline();
             return;
           }
           
@@ -1348,6 +1371,7 @@ static menu_action option_actions[] =
 	{ 0, 'd', "Set base delay factor", do_cmd_delay },
 	{ 0, 'h', "Set hitpoint warning", do_cmd_hp_warn },
 	{ 0, 'p', "Set panel change factor", do_cmd_panel_change },
+	{ 0, 'i', "Set movement delay", do_cmd_lazymove_delay },
 	{ 0, 'l', "Load a user pref file", options_load_pref_file },
 	{ 0, 'o', "Save options", do_dump_options }, 
 	{ 0, 'x', "Autosave options", do_cmd_options_autosave },

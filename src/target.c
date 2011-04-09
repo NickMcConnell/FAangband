@@ -51,7 +51,7 @@ s16b target_x, target_y;
  */
 static void look_mon_desc(char *buf, size_t max, int m_idx)
 {
-    monster_type *m_ptr = &mon_list[m_idx];
+    monster_type *m_ptr = &m_list[m_idx];
     monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
     bool living = TRUE;
@@ -131,7 +131,7 @@ bool target_able(int m_idx)
 	return (FALSE);
 
     /* Get monster */
-    m_ptr = &mon_list[m_idx];
+    m_ptr = &m_list[m_idx];
 
     /* Monster must be alive */
     if (!m_ptr->r_idx)
@@ -243,7 +243,7 @@ bool target_okay(void)
 
 	/* Accept reasonable targets */
 	if (target_able(m_idx)) {
-	    monster_type *m_ptr = &mon_list[m_idx];
+	    monster_type *m_ptr = &m_list[m_idx];
 
 	    /* Get the monster location */
 	    target_y = m_ptr->fy;
@@ -283,7 +283,7 @@ void target_set_monster(int m_idx)
 {
     /* Acceptable target */
     if ((m_idx > 0) && target_able(m_idx)) {
-	monster_type *m_ptr = &mon_list[m_idx];
+	monster_type *m_ptr = &m_list[m_idx];
 
 	/* Save target info */
 	target_set = TRUE;
@@ -485,7 +485,7 @@ static bool target_set_interactive_accept(int y, int x)
 
     /* Visible monsters */
     if (cave_m_idx[y][x] > 0) {
-	monster_type *m_ptr = &mon_list[cave_m_idx[y][x]];
+	monster_type *m_ptr = &m_list[cave_m_idx[y][x]];
 
 	/* Visible monsters */
 	if (m_ptr->ml)
@@ -742,7 +742,7 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 {
     s16b this_o_idx = 0, next_o_idx = 0;
 
-    cptr s1, s2, s3;
+    cptr s1, s2, s3, s4, s5;
 
     bool boring;
 
@@ -812,7 +812,7 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 
 	/* Actual monsters */
 	if (cave_m_idx[y][x] > 0) {
-	    monster_type *m_ptr = &mon_list[cave_m_idx[y][x]];
+	    monster_type *m_ptr = &m_list[cave_m_idx[y][x]];
 	    monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	    /* Visible */
@@ -1315,7 +1315,7 @@ bool target_set_closest(int mode)
     }
 
     /* Target the monster */
-    m_ptr = &mon_list[m_idx];
+    m_ptr = &m_list[m_idx];
     monster_desc(m_name, sizeof(m_name), m_ptr, 0x00);
     if (!(mode & TARGET_QUIET))
 	msg_format("%^s is targeted.", m_name);
@@ -1820,8 +1820,13 @@ bool target_set_interactive(int mode, int x, int y)
 
 	    /* Handle "direction" */
 	    if (d) {
-		int dungeon_hgt = (p_ptr->depth == 0) ? TOWN_HGT : DUNGEON_HGT;
-		int dungeon_wid = (p_ptr->depth == 0) ? TOWN_WID : DUNGEON_WID;
+		int dungeon_hgt = DUNGEON_HGT;
+		int dungeon_wid = DUNGEON_WID;
+		int dy = ddy[d];
+		int dx = ddx[d];
+
+		/* Adjust for town */
+		if (p_ptr->depth == 0) town_adjust(&dungeon_hgt, &dungeon_wid);
 
 		/* Hack to stop looking outside town walls */
 		if (!p_ptr->depth) {
@@ -1832,8 +1837,8 @@ bool target_set_interactive(int mode, int x, int y)
 		}
 
 		/* Move */
-		x += ddx[d];
-		y += ddy[d];
+		x += dx;
+		y += dy;
 
 		/* Slide into legality */
 		if (x >= dungeon_wid - 1)

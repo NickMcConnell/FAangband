@@ -665,7 +665,6 @@ static void death_info(const char *title, int row)
 
 	    /* Caption */
 	    prt(format("Your home contains (page %d): -more-", k + 1), 0, 0);
-	    update_statusline();
 
 	    /* Wait for it */
 	    ke = inkey_ex();

@@ -313,6 +313,8 @@ int rd_options(u32b version)
   
     byte b;
   
+    u16b tmp16u;
+
     u32b flag[8];
     u32b mask[8];
   
@@ -337,9 +339,10 @@ int rd_options(u32b version)
     /* Read "panel_change" */
     rd_byte(&b); 
     op_ptr->panel_change = b;
-  
-    /* Unused */
-    rd_byte(&b);
+
+    /* Read lazymove delay */  
+    rd_u16b(&tmp16u);
+    lazymove_delay = (tmp16u < 1000) ? tmp16u : 0;
   
     /*** Normal Options ***/
   
@@ -1165,7 +1168,8 @@ int rd_misc(u32b version)
 	feeling = tmp8u;
 
 	/* Turn of last "feeling" */
-	rd_s32b(&old_turn);
+	rd_byte(&tmp8u);
+	do_feeling = tmp8u ? TRUE : FALSE;
 
 	/* Current turn */
 	rd_s32b(&turn);
@@ -1337,7 +1341,7 @@ int rd_inventory(u32b version)
 /**
  * Read a store
  */
-int rd_store(u32b version)
+int rd_stores(u32b version)
 {
     int i;
     byte num, max_stores, store_inven_max, store_choices;

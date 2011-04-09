@@ -1659,7 +1659,7 @@ void prt(cptr str, int row, int col)
  * This function will correctly handle any width up to the maximum legal
  * value of 256, though it works best for a standard 80 character width.
  */
-void text_out_to_screen(byte a, cptr str)
+void text_out_to_screen(byte a, char *str)
 {
 	int x, y;
 
@@ -1789,7 +1789,7 @@ void text_out_to_screen(byte a, cptr str)
  * You must be careful to end all file output with a newline character
  * to "flush" the stored line position.
  */
-void text_out_to_file(byte a, cptr str)
+void text_out_to_file(byte a, char *str)
 {
 	cptr s;
 	char buf[1024];
@@ -2621,7 +2621,6 @@ int get_check_other(cptr prompt, char other)
 
   /* Hack - restore the repeat button */
   if (repeat) button_add("Rpt", 'n');
-  update_statusline();
 
   /* Yes */
   if ((ke.key == 'Y') || (ke.key == 'y'))

@@ -1,3 +1,7 @@
+#ifndef INCLUDED_EXTERNS_H
+#define INCLUDED_EXTERNS_H
+
+
 /** \file externs.h 
     \brief Variable and function definitions.
  
@@ -113,8 +117,8 @@ extern s16b o_cnt;
 extern s16b m_max;
 extern s16b m_cnt;
 extern u16b group_id;
-extern u16b feeling;
-extern s32b do_feeling;
+extern s16b feeling;
+extern bool do_feeling;
 extern s16b rating;
 extern int player_uid;
 extern int player_euid;
@@ -388,8 +392,8 @@ extern void c_put_str(byte attr, cptr str, int row, int col);
 extern void put_str(cptr str, int row, int col);
 extern void c_prt(byte attr, cptr str, int row, int col);
 extern void prt(cptr str, int row, int col);
-extern void text_out_to_file(byte attr, cptr str);
-extern void text_out_to_screen(byte a, cptr str);
+extern void text_out_to_file(byte attr, char *str);
+extern void text_out_to_screen(byte a, char *str);
 extern void text_out(const char *fmt, ...);
 extern void text_out_c(byte a, const char *fmt, ...);
 extern void text_out_e(const char *fmt, ...);
@@ -432,10 +436,11 @@ extern bool confuse_dir(int *dp);
 extern void center_panel(void);
 extern bool change_panel(int dir);
 extern void verify_panel(void);
+bool modify_panel(term *t, int wy, int wx);
 void town_adjust(int *dungeon_hgt, int *dungeon_wid);
 
 /* xtra3.c */
-extern void cnv_stat(int val, char *out_val);
+void cnv_stat(int val, char *out_val, size_t out_len);
 byte player_hp_attr(void);
 byte player_sp_attr(void);
 byte monster_health_attr(void);
@@ -466,4 +471,9 @@ extern void do_cmd_spoilers(void);
 #endif /* ALLOW_SPOILERS */
 
 bool make_fake_artifact(object_type *o_ptr, int name1);
+
+extern u16b lazymove_delay;
+
+
+#endif /* !INCLUDED_EXTERNS_H */
 

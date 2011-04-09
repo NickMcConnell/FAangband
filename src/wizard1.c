@@ -21,6 +21,7 @@
 
 #include "angband.h"
 #include "cmds.h"
+#include "monster.h"
 
 #ifdef ALLOW_SPOILERS
 
@@ -340,7 +341,7 @@ typedef struct flag_desc flag_desc;
 
 struct flag_desc
 {
-  const u32b flag;
+  const int flag;
   const char *const desc;
 };
 
@@ -579,7 +580,7 @@ static void spoiler_underline(cptr str)
  * The possibly updated description pointer is returned.
  */
 
-static cptr *spoiler_flag_aux(const u32b art_flags, 
+static cptr *spoiler_flag_aux(const bitflag *art_flags, 
 			      const flag_desc *flag_x_ptr,
 			      cptr *desc_x_ptr, const int n_elmnts)
 {
@@ -587,7 +588,7 @@ static cptr *spoiler_flag_aux(const u32b art_flags,
   
   for (i = 0; i < n_elmnts; ++i)
     {
-      if (art_flags & flag_x_ptr[i].flag)
+	if (of_has(art_flags, flag_x_ptr[i].flag))
 	{
 	  *desc_x_ptr++ = flag_x_ptr[i].desc;
 	}
@@ -713,26 +714,33 @@ static void analyze_resist (object_type *o_ptr, cptr *resist_list)
 
 static void analyze_sustains (object_type *o_ptr, cptr *sustain_list)
 {
-  const u32b all_sustains = (OF_SUSTAIN_STR | OF_SUSTAIN_INT | OF_SUSTAIN_WIS |
-			     OF_SUSTAIN_DEX | OF_SUSTAIN_CON | OF_SUSTAIN_CHR);
+    bitflag all_sustains[OF_SIZE];
+
+    of_wipe(all_sustains);
+    of_on(all_sustains, OF_SUSTAIN_STR);
+    of_on(all_sustains, OF_SUSTAIN_INT); 
+    of_on(all_sustains, OF_SUSTAIN_WIS); 
+    of_on(all_sustains, OF_SUSTAIN_DEX); 
+    of_on(all_sustains, OF_SUSTAIN_CON); 
+    of_on(all_sustains, OF_SUSTAIN_CHR);
   
   
-  /* Simplify things if an item sustains all stats */
-  if ((o_ptr->flags_obj & all_sustains) == all_sustains)
+    /* Simplify things if an item sustains all stats */
+    if (of_is_subset(o_ptr->flags_obj, all_sustains))
     {
-      *sustain_list++ = "All stats";
+	*sustain_list++ = "All stats";
     }
   
-  /* Should we bother? */
-  else if ((o_ptr->flags_obj & all_sustains))
+    /* Should we bother? */
+    else if (of_is_inter(o_ptr->flags_obj, all_sustains))
     {
-      sustain_list = spoiler_flag_aux(o_ptr->flags_obj, sustain_flags_desc, 
-				      sustain_list, 
-				      N_ELEMENTS(sustain_flags_desc));
+	sustain_list = spoiler_flag_aux(o_ptr->flags_obj, sustain_flags_desc, 
+					sustain_list, 
+					N_ELEMENTS(sustain_flags_desc));
     }
   
-  /* Terminate the description list */
-  *sustain_list = NULL;
+    /* Terminate the description list */
+    *sustain_list = NULL;
 }
 
 
@@ -745,26 +753,26 @@ static void analyze_powers (object_type *o_ptr, cptr *power_list)
 {
     /* Hack - put perma curse in with curses */
     bitflag flags[OF_SIZE];
-
+    
     of_copy(flags, o_ptr->flags_obj);
-    flag_off(flags, OF_PERMA_CURSE)
-
-  /*
-   * Special flags
-   */
-  power_list = spoiler_flag_aux(flags, flags_obj_desc, power_list,
-			       N_ELEMENTS(flags_obj_desc));
-  
-  /*
-   * Artifact lights -- large radius light.
-   */
-  if ((o_ptr->tval == TV_LIGHT) && artifact_p(o_ptr))
+    of_off(flags, OF_PERMA_CURSE);
+    
+    /*
+     * Special flags
+     */
+    power_list = spoiler_flag_aux(flags, flags_obj_desc, power_list,
+				  N_ELEMENTS(flags_obj_desc));
+    
+    /*
+     * Artifact lights -- large radius light.
+     */
+    if ((o_ptr->tval == TV_LIGHT) && artifact_p(o_ptr))
     {
-      *power_list++ = "Permanent Light(3)";
+	*power_list++ = "Permanent Light(3)";
     }
-  
-  /* Terminate the description list */
-  *power_list = NULL;
+    
+    /* Terminate the description list */
+    *power_list = NULL;
 }
 
 /**
@@ -1032,59 +1040,59 @@ static void spoiler_print_art(obj_desc_list *art_ptr)
  */
 bool make_fake_artifact(object_type *o_ptr, int name1)
 {
-  int i;
+    int i;
   
-  artifact_type *a_ptr = &a_info[name1];
+    artifact_type *a_ptr = &a_info[name1];
   
   
-  /* Ignore "empty" artifacts */
-  if (!a_ptr->name) return FALSE;
+    /* Ignore "empty" artifacts */
+    if (!a_ptr->name) return FALSE;
   
-  /* Acquire the "kind" index */
-  i = lookup_kind(a_ptr->tval, a_ptr->sval);
+    /* Acquire the "kind" index */
+    i = lookup_kind(a_ptr->tval, a_ptr->sval);
   
-  /* Oops */
-  if (!i) return (FALSE);
+    /* Oops */
+    if (!i) return (FALSE);
   
-  /* Create the artifact */
-  object_prep(o_ptr, i);
+    /* Create the artifact */
+    object_prep(o_ptr, i);
   
-  /* Save the name */
-  o_ptr->name1 = name1;
+    /* Save the name */
+    o_ptr->name1 = name1;
   
-  /* Extract the fields */
-  o_ptr->pval = a_ptr->pval;
-  o_ptr->ac = a_ptr->ac;
-  o_ptr->dd = a_ptr->dd;
-  o_ptr->ds = a_ptr->ds;
-  o_ptr->to_a = a_ptr->to_a;
-  o_ptr->to_h = a_ptr->to_h;
-  o_ptr->to_d = a_ptr->to_d;
-  o_ptr->weight = a_ptr->weight;
+    /* Extract the fields */
+    o_ptr->pval = a_ptr->pval;
+    o_ptr->ac = a_ptr->ac;
+    o_ptr->dd = a_ptr->dd;
+    o_ptr->ds = a_ptr->ds;
+    o_ptr->to_a = a_ptr->to_a;
+    o_ptr->to_h = a_ptr->to_h;
+    o_ptr->to_d = a_ptr->to_d;
+    o_ptr->weight = a_ptr->weight;
 
-  for (i = 0; i < MAX_P_RES; i++)
-    o_ptr->percent_res[i] = a_ptr->percent_res[i];
-  for (i = 0; i < A_MAX; i++)
-    o_ptr->bonus_stat[i] = a_ptr->bonus_stat[i];
-  for (i = 0; i < MAX_P_BONUS; i++)
-    o_ptr->bonus_other[i] = a_ptr->bonus_other[i];
-  for (i = 0; i < MAX_P_SLAY; i++)
-    o_ptr->multiple_slay[i] = a_ptr->multiple_slay[i];
-  for (i = 0; i < MAX_P_BRAND; i++)
-    o_ptr->multiple_brand[i] = a_ptr->multiple_brand[i];
+    for (i = 0; i < MAX_P_RES; i++)
+	o_ptr->percent_res[i] = a_ptr->percent_res[i];
+    for (i = 0; i < A_MAX; i++)
+	o_ptr->bonus_stat[i] = a_ptr->bonus_stat[i];
+    for (i = 0; i < MAX_P_BONUS; i++)
+	o_ptr->bonus_other[i] = a_ptr->bonus_other[i];
+    for (i = 0; i < MAX_P_SLAY; i++)
+	o_ptr->multiple_slay[i] = a_ptr->multiple_slay[i];
+    for (i = 0; i < MAX_P_BRAND; i++)
+	o_ptr->multiple_brand[i] = a_ptr->multiple_brand[i];
   
-  o_ptr->flags_obj = a_ptr->flags_obj;
-  o_ptr->flags_obj = a_ptr->flags_curse;
+    of_copy(o_ptr->flags_obj, a_ptr->flags_obj);
+    cf_copy(o_ptr->flags_curse, a_ptr->flags_curse);
       
-  /* Transfer the activation information. */
-  if (a_ptr->activation)
+    /* Transfer the activation information. */
+    if (a_ptr->effect)
     {
-      o_ptr->activation = a_ptr->activation;
+	o_ptr->effect = a_ptr->effect;
     }
   
    
-  /* Success */
-  return (TRUE);
+    /* Success */
+    return (TRUE);
 }
 
 
@@ -1175,7 +1183,7 @@ static void spoil_obj_gen(cptr fname)
       depth[k_info[i_ptr->k_idx].level] += 1L;
       
       /* Mega-Hack -- allow multiple artifacts XXX XXX XXX */
-      if (artifact_p(i_ptr)) a_info[i_ptr->name1].creat_turn = 0;
+      if (artifact_p(i_ptr)) a_info[i_ptr->name1].created = FALSE;
     }
   
   /* Print to file. */
@@ -1192,7 +1200,7 @@ static void spoil_obj_gen(cptr fname)
 	{
 	  object_kind *k_ptr = &k_info[i];
 	  char *t;
-	  cptr str = (k_name + k_ptr->name);
+	  cptr str = k_ptr->name;
 	  
 	  if (strlen(str) == 0) continue;
 	  
@@ -1351,7 +1359,7 @@ static void spoil_mon_gen(cptr fname)
     {
       monster_race *r_ptr = &r_info[i];
       
-      cptr name = (r_name + r_ptr->name);
+      cptr name = r_ptr->name;
       
       if (monster[i])
 	{
@@ -1524,19 +1532,15 @@ static void spoil_mon_desc(cptr fname)
       if (r_ptr->name) who[n++] = i;
     }
   
-  /* Select the sort method */
-  ang_sort_comp = ang_sort_comp_hook;
-  ang_sort_swap = ang_sort_swap_hook;
-  
   /* Sort the array by dungeon depth of monsters */
-  ang_sort(who, &why, n);
-  
+  sort(who, n, sizeof(*who), cmp_monsters);
+
   /* Scan again */
   for (i = 0; i < n; i++)
     {
       monster_race *r_ptr = &r_info[who[i]];
       
-      cptr name = (r_name + r_ptr->name);
+      cptr name = r_ptr->name;
       
       /* Get the "name" */
       if (rf_has(r_ptr->flags, RF_QUESTOR))
@@ -1711,7 +1715,6 @@ static void spoil_mon_info(cptr fname)
   bool breath, magic, sin;
   cptr p, q;
   cptr vp[64];
-  u32b flags1, flags2, flags3, flags4, flags5, flags6, flags7;
 
   int spower;
   
@@ -1745,19 +1748,12 @@ static void spoil_mon_info(cptr fname)
       monster_race *r_ptr = &r_info[n];
       
       /* Extract the flags */
-      flags1 = r_ptr->flags1;
-      flags2 = r_ptr->flags2;
-      flags3 = r_ptr->flags3;
-      flags4 = r_ptr->flags4;
-      flags5 = r_ptr->flags5;
-      flags6 = r_ptr->flags6;
-      flags7 = r_ptr->flags7;
       breath = FALSE;
       magic = FALSE;
       spower = r_ptr->spell_power;
       
       /* Get the monster name */
-      name = (r_name + r_ptr->name);
+      name = r_ptr->name;
       
       /* Extract a gender (if applicable) */
       if (rf_has(r_ptr->flags, RF_FEMALE)) msex = 2;
@@ -1780,7 +1776,7 @@ static void spoil_mon_info(cptr fname)
 	}
       
       /* Name */
-      sprintf(buf, "%s  (", (r_name + r_ptr->name));	/* ---)--- */
+      sprintf(buf, "%s  (", r_ptr->name);	/* ---)--- */
       spoil_out(buf);
       
       /* Color */
@@ -1839,7 +1835,7 @@ static void spoil_mon_info(cptr fname)
       
       
       /* Describe */
-      spoil_out(r_text + r_ptr->text);
+      spoil_out(r_ptr->text);
       spoil_out("  ");
       
       
@@ -2365,7 +2361,7 @@ static void spoil_mon_info(cptr fname)
 	  ((vn) && ((rf_has(r_ptr->flags, RF_IM_ELEC)) || (rf_has(r_ptr->flags, RF_IM_FIRE)))) || 
 	  prefix(name, "Plasma")) vp[vn++] = "plasma";
       
-      if ((rf_has(r_ptr->flags, RF_RES_NEXU)) || prefix(name, "Nexus") || 
+      if ((rf_has(r_ptr->flags, RF_RES_NEXUS)) || prefix(name, "Nexus") || 
 	  (rsf_has(r_ptr->flags, RSF_BRTH_NEXUS))) vp[vn++] = "nexus";
       if ((rf_has(r_ptr->flags, RF_UNDEAD)) || (rf_has(r_ptr->flags, RF_RES_NETH)) || 
 	  (rsf_has(r_ptr->flags, RSF_BRTH_NETHR))) vp[vn++] = "nether";

@@ -23,8 +23,12 @@
  */
 
 #include "angband.h"
+#include "cave.h"
 #include "cmds.h"
+#include "history.h"
+#include "spells.h"
 #include "squelch.h"
+#include "target.h"
 
 #ifdef _WIN32_WCE
 #include "angbandcw.h"

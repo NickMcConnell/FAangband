@@ -14,7 +14,6 @@ SUBDIRS = gtk
 HEADERS = \
 	angband.h \
 	birth.h \
-	 \
 	button.h \
 	cave.h \
 	cmds.h \
@@ -133,6 +132,7 @@ ANGFILES = \
 	squelch.o \
 	store.o \
 	tables.o \
+	trap.o \
 	target.o \
 	ui-birth.o \
 	ui.o \

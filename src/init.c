@@ -1817,6 +1817,73 @@ struct file_parser r_parser = {
     finish_parse_r
 };
 
+static enum parser_error parse_b_n(struct parser *p) {
+    struct owner_type *h = parser_priv(p);
+    struct owner_type *b = mem_alloc(sizeof *b);
+    int i;
+    memset(b, 0, sizeof(*b));
+    b->next = h;
+    i = parser_getuint(p, "shop");
+    b->bidx = parser_getuint(p, "index");
+    b->owner_name = string_make(parser_getstr(p, "name"));
+    parser_setpriv(p, b);
+    return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_b_i(struct parser *p) {
+    struct owner_type *b = parser_priv(p);
+
+    if (!b)
+	return PARSE_ERROR_MISSING_RECORD_HEADER;
+    b->owner_race = parser_getint(p, "race");
+    b->max_cost = parser_getint(p, "gld");
+    b->inflate = parser_getint(p, "inf");
+    return PARSE_ERROR_NONE;
+}
+
+struct parser *init_parse_b(void) {
+    struct parser *p = parser_new();
+    parser_setpriv(p, NULL);
+
+    parser_reg(p, "V sym version", ignored);
+    parser_reg(p, "N uint shop uint index str name", parse_b_n);
+    parser_reg(p, "I int race int gld int inf", parse_b_i);
+    return p;
+}
+
+static errr run_parse_b(struct parser *p) {
+    return parse_file(p, "shop_own");
+}
+
+static errr finish_parse_b(struct parser *p) {
+    struct owner_type *b, *n;
+    int i;
+
+    b_info = mem_zalloc(sizeof(*b) * MAX_STORES * z_info->b_max);
+    for (b = parser_priv(p); b; b = b->next) {
+	if (b->bidx >= MAX_STORES * z_info->b_max)
+	    continue;
+	memcpy(&b_info[b->bidx], b, sizeof(*b));
+    }
+
+    b = parser_priv(p);
+    while (b) {
+	n = b->next;
+	mem_free(b);
+	b = n;
+    }
+
+    parser_destroy(p);
+    return 0;
+}
+
+struct file_parser b_parser = {
+    "shop_own",
+    init_parse_b,
+    run_parse_b,
+    finish_parse_b
+};
+
 static enum parser_error parse_p_n(struct parser *p) {
     struct player_race *h = parser_priv(p);
     struct player_race *r = mem_zalloc(sizeof *r);

@@ -20,6 +20,7 @@ unsigned char cmd_lookup_key(cmd_code cmd);
 cmd_code cmd_lookup(unsigned char key);
 
 /* cmd-obj.c */
+void pseudo_probe(void);
 void do_cmd_uninscribe(cmd_code code, cmd_arg args[]);
 void do_cmd_inscribe(cmd_code code, cmd_arg args[]);
 void do_cmd_takeoff(cmd_code code, cmd_arg args[]);
@@ -91,6 +92,7 @@ extern void do_cmd_target_closest(void);
 extern void do_cmd_look(void);
 extern void do_cmd_locate(void);
 extern void do_cmd_query_symbol(void);
+extern int cmp_monsters(const void *a, const void *b);
 
 /* cmd4.c */
 extern void do_cmd_redraw(void);
