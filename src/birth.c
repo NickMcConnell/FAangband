@@ -284,14 +284,8 @@ static void get_history(void)
 {
     int i, chart, roll, social_class;
 
-    char buf[240];
-
     /* Clear the previous history strings */
     p_ptr->history[0] = '\0';
-
-
-    /* Clear the history text */
-    buf[0] = '\0';
 
     /* Initial social class */
     social_class = randint1(4);
@@ -477,13 +471,13 @@ void player_init(struct player *p)
 
     /* Clear Specialty Abilities */
     for (i = 0; i < MAX_SPECIALTIES; i++)
-	p_ptr->specialty_order[i] = PF_NO_SPECIALTY;
+	p->specialty_order[i] = PF_NO_SPECIALTY;
 
     /* None of the spells have been learned yet */
     for (i = 0; i < PY_MAX_SPELLS; i++)
-	p_ptr->spell_order[i] = 99;
+	p->spell_order[i] = 99;
 
-    p->inventory = C_ZNEW(INVEN_TOTAL, struct object);
+    p->inventory = C_ZNEW(ALL_INVEN_TOTAL, struct object);
 
     /* First turn. */
     turn = 1;
@@ -650,7 +644,7 @@ static void wield_all(struct player *p)
 static void player_outfit(struct player *p)
 {
     int i;
-    const start_item *e_ptr;
+    start_item *e_ptr;
     object_type *i_ptr;
     object_type object_type_body;
 
@@ -695,7 +689,7 @@ static void player_outfit(struct player *p)
     object_known(i_ptr);
     apply_autoinscription(i_ptr);
     (void) inven_carry(p, i_ptr);
-	    e_ptr->kind.everseen = TRUE;
+    i_ptr->kind->everseen = TRUE;
 
 
     /* Get local object */
@@ -709,7 +703,7 @@ static void player_outfit(struct player *p)
     object_known(i_ptr);
     apply_autoinscription(i_ptr);
     (void) inven_carry(p, i_ptr);
-	    e_ptr->kind->everseen = TRUE;
+    i_ptr->kind->everseen = TRUE;
 
     /* Dungeon gear for escaping thralls */
     if (OPT(adult_thrall)) {
@@ -721,7 +715,7 @@ static void player_outfit(struct player *p)
 	object_known(i_ptr);
 	apply_autoinscription(i_ptr);
 	(void) inven_carry(p, i_ptr);
-	    e_ptr->kind->everseen = TRUE;
+	i_ptr->kind->everseen = TRUE;
 
 	/* Detection */
 	object_prep(i_ptr, lookup_kind(TV_STAFF, SV_STAFF_DETECTION));
@@ -729,7 +723,7 @@ static void player_outfit(struct player *p)
 	object_known(i_ptr);
 	apply_autoinscription(i_ptr);
 	(void) inven_carry(p, i_ptr);
-	    e_ptr->kind->everseen = TRUE;
+	i_ptr->kind->everseen = TRUE;
 
 	/* Mapping */
 	object_prep(i_ptr, lookup_kind(TV_ROD, SV_ROD_MAPPING));
@@ -737,7 +731,7 @@ static void player_outfit(struct player *p)
 	object_known(i_ptr);
 	apply_autoinscription(i_ptr);
 	(void) inven_carry(p, i_ptr);
-	    e_ptr->kind->everseen = TRUE;
+	i_ptr->kind->everseen = TRUE;
 
 	/* Destruction */
 	object_prep(i_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_DESTRUCTION));
@@ -746,7 +740,7 @@ static void player_outfit(struct player *p)
 	object_known(i_ptr);
 	apply_autoinscription(i_ptr);
 	(void) inven_carry(p, i_ptr);
-	    e_ptr->kind->everseen = TRUE;
+	i_ptr->kind->everseen = TRUE;
 
 	/* Identify */
 	object_prep(i_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_IDENTIFY));
@@ -755,7 +749,7 @@ static void player_outfit(struct player *p)
 	object_known(i_ptr);
 	apply_autoinscription(i_ptr);
 	(void) inven_carry(p, i_ptr);
-	    e_ptr->kind->everseen = TRUE;
+	i_ptr->kind->everseen = TRUE;
     }
 
     /* Now try wielding everything */

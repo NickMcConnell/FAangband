@@ -217,8 +217,9 @@ void object_prep(object_type * o_ptr, int k_idx)
     /* Clear the record */
     (void) WIPE(o_ptr, object_type);
 
-    /* Save the kind index */
+    /* Save the kind  */
     o_ptr->k_idx = k_idx;
+    o_ptr->kind = k_ptr;
 
     /* Efficiency -- tval/sval */
     o_ptr->tval = k_ptr->tval;
