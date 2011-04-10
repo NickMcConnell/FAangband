@@ -12,8 +12,8 @@ V:1.1.6
 
 #N: set index:name
 #C: number of items to gain bonus
-#D: set describtion
-#P: artifact index:pval change
+#D: set description
+#P: artifact index
 #F: flags added
 
 # Holy Fire Set
@@ -24,13 +24,13 @@ N:2:Shadow Ward
 C:2
 D:It is one of the Shadow Ward items
 # The Soft Leather Armour 'Hithlomir'
-P:37:0
+P:37
 B:SEARCH[4] | SPEED[4] | RES_NETHR[40]
 F:SEEING
 # The Set of Leather Gloves 'Cammithrim'
-P:78:0
+P:78
 B:DEX[3] | MAGIC_MASTERY[3] 
-F:SUST_DEX
+F:SUSTAIN_DEX
 
 
 # Vinyamar Set
@@ -39,14 +39,14 @@ N:3:Messenger's Arms
 C:3
 D:It is part of the armor left by Turgon for the messenger of Ulmo
 # The Full Plate Armor of Nevrast
-P:27:0
+P:27
 B:RES_DISEN[40] | CON[3] | SPEED[3]
 # The Large Metal Shield of the Swan
-P:46:0
+P:46
 B:WIS[2] | CHR[2] 
 F:HOLD_LIFE
 # The Iron Helm of Vinyamar
-P:55:0
+P:55
 B:STR[5] | CHR[5] | CON[5] 
 F:REGEN | TELEPATHY
 
@@ -57,15 +57,15 @@ N:4:The Mormegil's Armor
 C:3
 D:It is from the battle gear worn by Turin Turambar while at Nargothrond
 # The Steel Helm of Dor-L['o]min
-P:56:0
+P:56
 B:RES_FIRE[100]
 # The Two-Handed Sword 'Gurthang'
-P:110:0
+P:110
 B:RES_POIS[50] | STR[4] | CHR[4] | INFRA[4] | SPEED[4] 
 # The Chain Mail (Dwarven) of the Mormegil
-P:31:0
+P:31
 B:RES_CONFU[40]
-F:SUST_STR | SUST_DEX | SUST_CON 
+F:SUSTAIN_STR | SUSTAIN_DEX | SUSTAIN_CON 
 
 # Gil-Galad's Set
 
@@ -73,11 +73,11 @@ N:5:Gil-Galad's Battle Gear
 C:2
 D:It is one of Gil-Galad's items
 # The Shield of Deflection of Gil-Galad
-P:48:0
+P:48
 B:RES_FIRE[35] | RES_COLD[35] | RES_POIS[35] | DEX[3]
-F:SUST_DEX 
+F:SUSTAIN_DEX 
 # The Spear 'Aeglos'
-P:137:0
+P:137
 B:SLAY_TROLL[25] | SLAY_EVIL[17] | SLAY_GIANT[25] | SLAY_ORC[25] | 
 B:SLAY_DEMON[25] | RES_DARK[35] | SPEED[4] 
 
@@ -90,8 +90,8 @@ N:7:Mablung's Items
 C:2
 D:It was borne by Mablung, chief hunter of King Thingol
 # The Hard Leather Cap of Mablung
-P:53:0
+P:53
 B:RES_CONFU[40] | RES_SOUND[40] | INT[3] | WIS[3] | SPEED[3]
 # The Spear of Boldog
-P:151:0
+P:151
 B:STR[3] | SLAY_EVIL[17] | SLAY_ANIMAL[20] | STEALTH[3]

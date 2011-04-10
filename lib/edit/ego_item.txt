@@ -85,8 +85,8 @@ X:5
 W:0:10:0:100000
 T:37:20:30
 C:0:0:15
-B:CHR[4] | RES_LITE[30]
-F:ATTRACT_DEMON | ATTRACT_UNDEAD | LITE | REGEN | XTRA_TO_A | 
+B:CHR[4] | RES_LIGHT[30]
+F:ATTRACT_DEMON | ATTRACT_UNDEAD | LIGHT | REGEN | XTRA_TO_A | 
 F:SHOW_CURSE | PERMA_CURSE | FIRE_PROOF 
 I:REGEN | ATTRACT_DEMON | ATTRACT_UNDEAD 
 D:Lovingly crafted of the finest materials, this is more a work of art than a 
@@ -104,7 +104,7 @@ T:37:0:99
 F:RAND_RES_NEG | RAND_CURSE | 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF 
 I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
-I:RES_POIS | RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_POIS | RES_LIGHT | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
 I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN | 
 I:TELEPORT | AGGRO_PERM | AGGRO_RAND | AFRAID | HUNGRY | POIS_RAND_BAD |
 I:CUT_RAND_BAD | STICKY_CARRY | STICKY_WIELD | PARALYZE | PARALYZE_ALL | 
@@ -121,7 +121,7 @@ T:38:0:99
 F:RAND_RES | 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
 I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
-I:RES_POIS | RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_POIS | RES_LIGHT | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
 I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN 
 D:It grants at least one resistance, and cannot be harmed by elemental attacks.
 
@@ -136,7 +136,7 @@ B:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40]
 F:RAND_RES_XTRA | 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
 I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
-I:RES_POIS | RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_POIS | RES_LIGHT | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
 I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN 
 D:Made in the smithies of Beleriand, this armour resists the elements and 
 D:at least one other attack, cannot be harmed by the elements, and conceals 
@@ -162,12 +162,12 @@ W:0:12:0:10000
 C:0:0:10
 T:36:2:2
 B:RES_ACID[45] | RES_ELEC[45] | RES_FIRE[45] | RES_COLD[45] 
-F:SUST_STR | SUST_DEX | SUST_CON | SUST_INT | SUST_WIS | SUST_CHR | 
+F:SUSTAIN_STR | SUSTAIN_DEX | SUSTAIN_CON | SUSTAIN_INT | SUSTAIN_WIS | SUSTAIN_CHR | 
 F:HOLD_LIFE | RAND_RES_XTRA |
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF 
-I:SUST_STR | SUST_DEX | SUST_CON | SUST_INT | SUST_WIS | SUST_CHR | 
+I:SUSTAIN_STR | SUSTAIN_DEX | SUSTAIN_CON | SUSTAIN_INT | SUSTAIN_WIS | SUSTAIN_CHR | 
 I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
-I:RES_POIS | RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_POIS | RES_LIGHT | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
 I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN | HOLD_LIFE 
 D:The great sorcerers of old wore light mantles that protected against the 
 D:elements and at least one other attack, stat-draining, and experience loss.  
@@ -224,7 +224,7 @@ T:34:0:99
 F:RAND_RES_NEG | RAND_CURSE | 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
 I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
-I:RES_POIS | RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_POIS | RES_LIGHT | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
 I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN | 
 I:TELEPORT | NO_TELEPORT | AGGRO_PERM | AGGRO_RAND | SLOW_REGEN | AFRAID | 
 I:HUNGRY | POIS_RAND | POIS_RAND_BAD | CUT_RAND | CUT_RAND_BAD | HALLU_RAND | 
@@ -246,8 +246,8 @@ X:10
 W:0:10:0:1000
 C:0:0:5
 T:34:0:99
-B:RES_LITE[35] | RES_DARK[35]
-I:RES_LITE | RES_DARK 
+B:RES_LIGHT[35] | RES_DARK[35]
+I:RES_LIGHT | RES_DARK 
 D:It grants resistance to light and darkness.
 
 N:22:of Elvenkind
@@ -259,7 +259,7 @@ B:STEALTH[3] |
 B:RES_ACID[35] | RES_ELEC[35] | RES_FIRE[35] | RES_COLD[35] 
 F:RAND_RES_XTRA | ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
 I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
-I:RES_POIS | RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_POIS | RES_LIGHT | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
 I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN 
 D:Made in the smithies of Beleriand, this shield resists the elements and 
 D:at least one other attack, cannot be harmed by the elements, and conceals 
@@ -270,10 +270,10 @@ X:25
 W:30:25:0:2000
 C:0:0:15
 T:34:0:99
-F:SUST_STR | SUST_DEX | SUST_CON |
+F:SUSTAIN_STR | SUSTAIN_DEX | SUSTAIN_CON |
 F:RAND_RES | RAND_RES_XTRA | RAND_RES_SML |
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
-I:SUST_STR | SUST_DEX | SUST_CON |
+I:SUSTAIN_STR | SUSTAIN_DEX | SUSTAIN_CON |
 D:A powerful shield that preserves your physical nature as 
 D:well as offering protection from a variety of attacks.
 
@@ -284,7 +284,7 @@ X:11
 W:0:12:0:500
 T:32:0:99
 B:INT[2] 
-F:SUST_INT 
+F:SUSTAIN_INT 
 I:AC
 D:It increases and sustains your intelligence.
 
@@ -293,7 +293,7 @@ X:11
 W:0:12:0:500
 T:32:0:99
 B:WIS[2] 
-F:SUST_WIS
+F:SUSTAIN_WIS
 I:AC
 D:It increases and sustains your wisdom.
 
@@ -302,7 +302,7 @@ X:4
 W:0:12:0:1000
 T:32:0:99
 B:CHR[4] 
-F:SUST_CHR
+F:SUSTAIN_CHR
 I:AC
 D:It increases and sustains your charisma.
 
@@ -311,10 +311,10 @@ X:17
 W:0:24:0:1500
 T:33:0:99
 B:INT[3] | RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40]  
-F:SUST_INT | RAND_POWER | ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+F:SUSTAIN_INT | RAND_POWER | ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
 I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | SLOW_DIGEST | 
 I:FEATHER | REGEN | TELEPATHY | SEE_INVIS | FREE_ACT | HOLD_LIFE | 
-I:SEEING | FEARLESS | LITE 
+I:SEEING | FEARLESS | LIGHT 
 D:It increases and sustains your intelligence, resists the four basic 
 D:elements, and cannot be harmed by elemental attacks.  You may benefit 
 D:greatly from the one hidden power it contains.
@@ -324,8 +324,8 @@ X:20
 W:0:24:0:1000
 T:33:0:99
 B:STR[3] | DEX[3] | CON[3] 
-F:SUST_STR | SUST_DEX | SUST_CON | FREE_ACT
-I:SUST_STR | SUST_DEX | SUST_CON | FREE_ACT
+F:SUSTAIN_STR | SUSTAIN_DEX | SUSTAIN_CON | FREE_ACT
+I:SUSTAIN_STR | SUSTAIN_DEX | SUSTAIN_CON | FREE_ACT
 D:This warrior's crown increases and sustains strength, dexterity, and 
 D:constitution, and protects against paralysis.
 
@@ -334,10 +334,10 @@ X:17
 W:0:12:0:1000
 T:33:0:99
 B:WIS[3] | CHR[3] 
-F:SUST_WIS | SUST_CHR | RAND_POWER 
-I:SUST_WIS | SUST_CHR | SLOW_DIGEST | 
+F:SUSTAIN_WIS | SUSTAIN_CHR | RAND_POWER 
+I:SUSTAIN_WIS | SUSTAIN_CHR | SLOW_DIGEST | 
 I:FEATHER | REGEN | TELEPATHY | SEE_INVIS | FREE_ACT | HOLD_LIFE | 
-I:SEEING | FEARLESS | LITE 
+I:SEEING | FEARLESS | LIGHT 
 D:This paladin's crown increases and sustains wisdom and charisma. 
 D:You may benefit greatly from the one hidden power it contains.
 
@@ -367,9 +367,9 @@ N:32:of Light
 X:6
 W:0:8:0:500
 T:32:0:99
-B:RES_LITE[45]
-F:LITE 
-I:RES_LITE | LITE 
+B:RES_LIGHT[45]
+F:LIGHT 
+I:RES_LIGHT | LIGHT 
 D:This helm shines so brightly as to light the way for the wearer, and offers 
 D:resistance to light.
 
@@ -439,7 +439,7 @@ C:0:0:10
 T:35:0:99
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF | RAND_RES_SML 
 I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS | 
-I:RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_LIGHT | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
 I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN 
 D:It offers enhanced ordinary protection and some resistance, and cannot be 
 D:harmed by elemental attacks.
@@ -460,7 +460,7 @@ T:35:0:99
 B:STEALTH[3] 
 F:RAND_RES_XTRA | ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
 I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS | 
-I:RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_LIGHT | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
 I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN 
 D:Made in the Blessed Realm far to the west, these highly magical garments 
 D:are seldom seen and highly valued.  They increase stealth, have at least one 
@@ -486,7 +486,7 @@ T:35:0:99
 F:AGGRO_PERM | STICKY_WIELD | RAND_RES_NEG | SHOW_MODS
 I:AGGRO_PERM | STICKY_WIELD |
 I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS | 
-I:RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
+I:RES_LIGHT | RES_DARK | RES_CONFU | RES_SOUND | RES_SHARD | 
 I:RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN 
 D:You feel horribly naked and defenceless, and wonder how you'll get 
 D:this accursed clock off your back.
@@ -668,7 +668,7 @@ T:23:0:99
 B:WIS[4] | SLAY_EVIL[15] | SLAY_UNDEAD[20] | SLAY_DEMON[20] 
 F:SEE_INVIS | BLESSED | RAND_SUSTAIN 
 I:SLAY_EVIL | SLAY_UNDEAD | SLAY_DEMON | SEE_INVIS | 
-I:SUST_STR | SUST_DEX | SUST_CON | SUST_INT | SUST_WIS | SUST_CHR  
+I:SUSTAIN_STR | SUSTAIN_DEX | SUSTAIN_CON | SUSTAIN_INT | SUSTAIN_WIS | SUSTAIN_CHR  
 D:The sanctified weapon of Priests and Paladins, it slays evil, demons, and 
 D:the undead, increases wisdom and sustains a random stat, can be wielded by 
 D:pious characters comfortably, grants sight beyond sight, and boosts armour 
@@ -686,7 +686,7 @@ F:FREE_ACT | SEE_INVIS | FEATHER | REGEN | RAND_SUSTAIN |
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
 I:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
 I:FREE_ACT | SEE_INVIS | FEATHER | REGEN |  
-I:SUST_STR | SUST_DEX | SUST_CON | SUST_INT | SUST_WIS | SUST_CHR  
+I:SUSTAIN_STR | SUSTAIN_DEX | SUSTAIN_CON | SUSTAIN_INT | SUSTAIN_WIS | SUSTAIN_CHR  
 D:Strong friend in peril, this weapon enhances stealth, resists all four 
 D:basic elements and cannot be damaged by them, grants see invisible and 
 D:protection from paralysis, increases armour class, boosts regeneration 
@@ -704,7 +704,7 @@ W:0:20:0:5000
 B:WIS[3] 
 F:BLESSED | RAND_POWER
 I:FEATHER | REGEN | TELEPATHY | SEE_INVIS | FREE_ACT | HOLD_LIFE | 
-I:SEEING | FEARLESS | LITE | SLOW_DIGEST 
+I:SEEING | FEARLESS | LIGHT | SLOW_DIGEST 
 D:A priestly weapon that increases wisdom and bears a hidden power.
 
 N:67:of Gondolin
@@ -716,9 +716,9 @@ W:20:20:0:15000
 C:7:7:0
 B:SLAY_DEMON[20] | SLAY_ORC[20] | SLAY_TROLL[20] | SLAY_DRAGON[20] |
 B:RES_DARK[40] 
-F:LITE | SEE_INVIS | FREE_ACT | RAND_POWER | 
+F:LIGHT | SEE_INVIS | FREE_ACT | RAND_POWER | 
 F:ACID_PROOF | FIRE_PROOF 
-I:LITE | SEE_INVIS | RES_DARK 
+I:LIGHT | SEE_INVIS | RES_DARK 
 D:A weapon crafted for the defence of the Hidden Kingdom, it is deadly to the 
 D:invading hordes of orcs, trolls, dragons and demons from Angband.  It gives 
 D:its bearer resistance to dark, permanent light, the ability to see those 
@@ -747,8 +747,8 @@ T:22:0:99
 T:23:0:99
 W:0:20:0:6000
 B:TUNNEL[2] | SPEED[2] | STR[2] 
-F:LITE | XTRA_DICE | LIGHT 
-I:LITE
+F:LIGHT | XTRA_DICE | LIGHT 
+I:LIGHT
 D:Cunningly designed by the dwarves of Nogrod, this weapon will aid swift 
 D:movement underground.  It glows permanently, and increases the wielder's 
 D:strength, speed and tunnelling ability.
@@ -825,8 +825,8 @@ T:21:2:2
 W:0:5:0:10000
 C:-20:10:0
 B:STEALTH[-4] | BRAND_FIRE[30] | RES_FIRE[45] 
-F:LITE | XTRA_DICE | HEAVY | FIRE_PROOF
-I:LITE | BRAND_FIRE
+F:LIGHT | XTRA_DICE | HEAVY | FIRE_PROOF
+I:LIGHT | BRAND_FIRE
 E:BALROG_WHIP:0
 D:This perilous demon's lash burns redly with the dread fires of Utumno, 
 D:doing triple damage to all monsters not resitant to fire, and 
@@ -1055,10 +1055,10 @@ W:10:15:0:-3000
 C:-10:+5:0
 F:SEE_INVIS | HOLD_LIFE | RAND_CURSE | XTRA_SIDES | XTRA_TO_D | RAND_POWER 
 B:RES_NETHR[50] | RES_COLD[20] | RES_POIS[20] | RES_FIRE[-30] | 
-B:RES_LITE[-15] | CON[-4] | DEX[-4] | STEALTH[-4] | 
+B:RES_LIGHT[-15] | CON[-4] | DEX[-4] | STEALTH[-4] | 
 B:BRAND_COLD[17] | BRAND_POIS[17] 
 I:SEE_INVIS | HOLD_LIFE | RES_NETHR | RES_COLD | RES_POIS | RES_FIRE | 
-I:RES_LITE | BRAND_COLD | BRAND_POIS 
+I:RES_LIGHT | BRAND_COLD | BRAND_POIS 
 D:A weapon of despair, that draws you ever deeper into the realm 
 D:of the undead.
 
@@ -1093,7 +1093,7 @@ C:10:10:0
 B:DEX[2] | MIGHT[1] | STEALTH[2] 
 F:ACID_PROOF | FIRE_PROOF | RAND_POWER 
 I:FEATHER | REGEN | TELEPATHY | SEE_INVIS | FREE_ACT | HOLD_LIFE | 
-I:SEEING | FEARLESS | LITE | SLOW_DIGEST 
+I:SEEING | FEARLESS | LIGHT | SLOW_DIGEST 
 D:A bow of the Green Elves of the Land of the Seven Rivers.  It's wielder 
 D:will find extra power in its shots, and will have greater stealth and 
 D:dexterity.
@@ -1319,7 +1319,7 @@ D:A ring that guarantees your freedom to move.
 N:132:of Arcane Resistance
 T:45:0:99
 W:0:4:0:0
-I:RES_POIS | RES_LITE | RES_DARK | RES_CONFU | RES_SOUND | 
+I:RES_POIS | RES_LIGHT | RES_DARK | RES_CONFU | RES_SOUND | 
 I:RES_SHARD | RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN 
 D:This ring protects you from at least one high element.
 
@@ -1345,7 +1345,7 @@ D:This ring grabs you and reduces your abilities.
 N:136:of the Dawn
 T:45:0:99
 W:0:4:0:0
-I:RES_LITE | RES_DARK | SEEING
+I:RES_LIGHT | RES_DARK | SEEING
 D:A ring that calls a truce around you between the powers of Dark and Light.
 
 N:137:of Speed
@@ -1413,7 +1413,7 @@ D:destiny.
 N:165:of the Shadows
 T:40:0:99
 W:0:4:0:0
-I:DARKNESS | RES_LITE | RES_DARK
+I:DARKNESS | RES_LIGHT | RES_DARK
 D:As you don this amulet you feel yourself at one with the night.
 
 N:166:of Metamorphosis
@@ -1426,7 +1426,7 @@ D:it is not a power that lesser beings can easily control.
 N:167:of Sustenance
 T:40:0:99
 W:0:4:0:0
-I:SUST_STR | SUST_INT | SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR 
+I:SUSTAIN_STR | SUSTAIN_INT | SUSTAIN_WIS | SUSTAIN_DEX | SUSTAIN_CON | SUSTAIN_CHR 
 D:This amulet will help to ward off attacks that would reduce your potency.
 
 N:168:of Trickery

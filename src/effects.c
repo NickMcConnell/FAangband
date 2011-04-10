@@ -711,7 +711,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    return TRUE;
 	}
 
-    case EF_ATHELAS:
+    case EF_FOOD_ATHELAS:
 	{
 	    msg_print
 		("A fresh, clean essence rises, driving away wounds and poison.");
@@ -726,7 +726,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    return TRUE;
 	}
 
-    case EF_BEORNING:
+    case EF_FOOD_BEORNING:
 	{
 	    msg_print("The cakes of the Beornings are tasty.");
 	    (void) hp_player(damroll(5, 8));
@@ -742,7 +742,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	}
 
 	/* Waybread is always fully satisfying. */
-    case EF_WAYBREAD:
+    case EF_FOOD_WAYBREAD:
 	{
 	    msg_print("That tastes good.");
 	    (void) set_food(PY_FOOD_MAX - 1);

@@ -7,6 +7,7 @@
  */
 
 /*  symbol     descr */
+TF(NONE,        "")
 TF(LOS,        "LOS passes through this")
 TF(PROJECT,    "Projections can pass through this")
 TF(PASSABLE,   "Can be passed through by all creatures")

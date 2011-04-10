@@ -3172,7 +3172,12 @@ void store_maint(int which)
 
     /* Acquire some new items */
     while (st_ptr->stock_num < j)
+    {
+	static int giveup = 0;
 	store_create();
+	giveup++;
+	if (giveup > 100) break;
+    }
 
 
     /* Hack -- Restore the rating */

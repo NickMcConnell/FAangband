@@ -695,7 +695,7 @@ static void player_outfit(struct player *p)
     object_known(i_ptr);
     apply_autoinscription(i_ptr);
     (void) inven_carry(p, i_ptr);
-	    e_ptr->kind->everseen = TRUE;
+	    e_ptr->kind.everseen = TRUE;
 
 
     /* Get local object */

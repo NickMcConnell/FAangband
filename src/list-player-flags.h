@@ -7,6 +7,7 @@
  */
 
 /* symbol            descr */
+PF(NONE, "", ""), 
 PF(ARMOR_MAST,"Armor Mastery","Increases the effects of body armor."),
     PF(SHIELD_MAST,"Shield Mastery","Improves shield AC, chance of shield deflection, and damage from shield bashes."),
 PF(ARMOR_PROFICIENCY, "Armor Proficiency", "Reduces mana penalties for armor use."),

@@ -7,6 +7,7 @@
  */
 
 /* symbol       message */
+KF(NONE,"")
 KF(RAND_RES_NEG,"")
 KF(RAND_RES_SML,"")
 KF(RAND_RES,"")

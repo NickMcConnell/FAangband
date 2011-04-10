@@ -958,6 +958,6 @@ D:spells.
 # Apply the flags of a terrain type to all terrain types which mimic it.
 # (we may want to reconsider this at some point)
 #
-!:Verify Terrain
+#!:Verify Terrain
 
 

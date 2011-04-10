@@ -7,6 +7,7 @@
  */
 
 /* symbol       message */
+IF(NONE,"")
 IF(RES_ACID,"")
 IF(RES_ELEC,"")
 IF(RES_FIRE,"")

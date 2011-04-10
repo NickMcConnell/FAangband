@@ -134,7 +134,7 @@ W:20:0:1:75
 A:20/2
 P:0:8d7:0:0:0:0
 F:EASY_KNOW
-E:UNHEALTH  
+E:UNHEALTH
 D:A small, ground-living fungus.  Not only is it dangerous to eat, but it can 
 D:also poison enemies on contact.
 
@@ -217,7 +217,7 @@ W:45:0:1:160
 A:45/2
 P:0:8d12:0:0:0:0
 F:EASY_KNOW
-E:DISEASE  
+E:DISEASE
 D:A small, ground-living fungus.  The toxins this fungus grows for its own 
 D:defence make it dangerous even to touch.  Of course, you are well prepared.
 
@@ -538,7 +538,7 @@ I:21:1:0
 W:6:0:50:400
 A:6/1
 P:4:1d3:0:0:0:250
-F:LITE | SHOW_MODS
+F:LIGHT | SHOW_MODS
 E:MAGESTAFF:15+d10
 D:A slender birch staff, enchanted to give light from the tip, which can be 
 D:activated by mages and necromancers to restore a little mana. It can be used 
@@ -1533,7 +1533,7 @@ I:38:10:0
 W:65:0:200:45000
 A:65/12
 P:30:2d4:-2:0:10:121
-B:RES_LITE[40] | RES_DARK[40] | SPEED[4]
+B:RES_LIGHT[40] | RES_DARK[40] | SPEED[4]
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
 E:DRAGON_SHINING:50+d50
 D:A suit of scales shining like a beacon of Light even as it greedily sucks 
@@ -1615,8 +1615,9 @@ W:105:0:200:300000
 A:105/36
 P:40:2d4:-3:0:15:122
 B:RES_ACID[40] | RES_FIRE[40] | RES_COLD[40] | RES_ELEC[40] | RES_POIS[40] | 
-B:RES_LITE[40] | RES_DARK[40] | RES_NEXUS[40] | RES_NETHR[40] | RES_CHAOS[40] | 
-B:RES_SOUND[40] | RES_SHARD[40] | RES_DISEN[40] | RES_CONFU[40] | SPEED[4] 
+B:RES_LIGHT[40] | RES_DARK[40] | RES_NEXUS[40] | RES_NETHR[40] | 
+B:RES_CHAOS[40] | RES_SOUND[40] | RES_SHARD[40] | RES_DISEN[40] | 
+B:RES_CONFU[40] | SPEED[4] 
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
 E:DRAGON_POWER:50+d50
 D:A suit with scales of every color, surrounded in a nimbus of perfectly 
@@ -2179,7 +2180,7 @@ I:70:16:0
 W:15:0:5:150
 A:5/2:15/2
 F:EASY_KNOW
-E:ENCHAT_ARMOR1
+E:ENCHANT_ARMOR1
 D:that improves a piece of armour.  It is less likely to succeed on 
 D:strongly enchanted items.
 
@@ -2209,7 +2210,7 @@ I:70:19:0
 W:65:0:5:400
 A:65/2:85/2
 F:EASY_KNOW
-E:RECHARGE2
+E:RECHARGING2
 D:that recharges a magic item.  It is more likely than lesser scrolls 
 D:to succeed on strong items.
 
@@ -2219,7 +2220,7 @@ I:70:20:0
 W:60:0:5:500
 A:60/1:70/2
 F:EASY_KNOW
-E:ENCHANT_ARMOR
+E:ENCHANT_ARMOR2
 D:that greatly improves a piece of armour.  It is less likely to 
 D:succeed on strongly enchanted items.
 
@@ -2239,7 +2240,7 @@ I:70:22:0
 W:15:0:5:180
 A:15/1:25/1:40/2:60/2
 F:EASY_KNOW
-E:RECHARGE1
+E:RECHARGING1
 D:that recharges a magic item.  The item may be destroyed, especially 
 D:if it is very strong.
 
@@ -2323,7 +2324,7 @@ I:70:32:0
 W:25:0:5:40
 A:25/2
 F:EASY_KNOW
-E:SATISFY
+E:SATISFY_HUNGER
 D:that sates you completely.
 
 N:353:Blessing
@@ -2436,7 +2437,7 @@ I:70:45:0
 W:60:0:5:1500
 A:60/4
 F:EASY_KNOW
-E_MASS_GENOCIDE
+E:MASS_GENOCIDE
 D:that banishes all nearby monsters from the level.  Unique foes are 
 D:immune, as are those in protected areas.
 
@@ -2580,7 +2581,7 @@ W:3:0:4:0
 A:3/3
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E_POISON2
+E:POISON2
 D:that gives off bitter fumes.
 
 N:387:Blindness
@@ -2626,7 +2627,7 @@ W:10:0:4:0
 A:10/3
 P:0:5d5:0:0:0:0
 F:EASY_KNOW
-E_LOSE_LIFE_FORCE
+E:LOSE_MEMORIES
 D:that weakens your spirit.
 
 ## XXX 394 XXX ##
@@ -3071,15 +3072,15 @@ E:ENLIGHTENMENT2
 D:that reveals the level and its secrets, improves your mind, 
 D:identifies your possesions, and gives self knowledge.
 
-N:438:Self Knowledge
-G:!:d
-I:75:58:0
-W:40:0:4:2000
-A:40/2
-P:0:1d1:0:0:0:0
-F:EASY_KNOW
-E:SELF_KNOWLEDGE
-D:that reveals your hidden strengths.
+#N:438:Self Knowledge
+#G:!:d
+#I:75:58:0
+#W:40:0:4:2000
+#A:40/2
+#P:0:1d1:0:0:0:0
+#F:EASY_KNOW
+#E:SELF_KNOWLEDGE
+#D:that reveals your hidden strengths.
 
 N:439:Experience
 G:!:d
@@ -3088,7 +3089,7 @@ W:40:0:4:25000
 A:40/20
 P:0:1d1:0:0:0:0
 F:EASY_KNOW | NO_ORDER
-E:EXPERIENCE 
+E:EXPERIENCE
 D:that enhances your life force.
 
 N:440:Blood Mastery
@@ -3519,7 +3520,7 @@ W:40:0:10:15000
 P:0:1d1:0:0:0:0
 F:INSTA_ART
 E:ILKORIN
-D:
+#D:
 
 # The Wand of Beguiling -- see artifact list
 
@@ -3531,7 +3532,7 @@ W:70:0:10:27500
 P:0:1d1:0:0:0:0
 F:INSTA_ART
 E:BEGUILING
-D:
+#D:
 
 
 # The Wand of Unmaking -- see artifact list
@@ -3544,7 +3545,7 @@ W:100:0:10:150000
 P:0:1d1:0:0:0:0
 F:INSTA_ART
 E:UNMAKING
-D:
+#D:
 
 
 # The Wand of Osse -- see artifact list
@@ -3557,7 +3558,7 @@ W:70:0:10:22500
 P:0:1d1:0:0:0:0
 F:INSTA_ART
 E:OSSE
-D:
+#D:
 
 ## XXX 496 XXX ##
 
@@ -3894,7 +3895,7 @@ W:85:0:50:35000
 P:0:1d2:0:0:0:0
 F:INSTA_ART
 E:STARFIRE
-D:
+#D:
 
 
 # The Staff of Winds -- see artifact list
@@ -3907,7 +3908,7 @@ W:50:0:50:20000
 P:0:1d2:0:0:0:0
 F:INSTA_ART
 E:WINDS
-D:
+#D:
 
 # The Staff of Holding -- see artifact list
 
@@ -3919,7 +3920,7 @@ W:85:0:50:30000
 P:0:1d2:0:0:0:0
 F:INSTA_ART
 E:HOLDING
-D:
+#D:
 
 
 # The Staff of the Kelvar -- see artifact list
@@ -3932,7 +3933,7 @@ W:50:0:50:20000
 P:0:1d2:0:0:0:0
 F:INSTA_ART
 E:KELVAR
-D:
+#D:
 
 
 
@@ -4103,7 +4104,7 @@ W:30:0:15:1500
 A:30/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-E:SLEEP_MONSTER:25
+E:SLEEP_MONSTER1:25
 D:that send an opponent to the land of dreams.
 
 N:585:Slow Monster
@@ -4113,7 +4114,7 @@ W:30:0:15:1500
 A:30/2
 P:0:1d1:0:0:0:0
 F:EASY_KNOW
-SLOW_MONSTER:25
+E:SLOW_MONSTER1:25
 D:that renders an opponent slow and sluggish.
 
 N:586:Drain Life
@@ -4296,7 +4297,7 @@ W:65:0:15:12500
 # A:65/40 TNB
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-D:
+#D:
 
 
 # The Rod 'Mantle of Shadow' -- see artifact list
@@ -4308,7 +4309,7 @@ W:80:0:15:20000
 # A:80/40 TNB
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-D:
+#D:
 
 
 # The Rod of Air -- see artifact list
@@ -4320,7 +4321,7 @@ W:85:0:15:25000
 # A:85/48 TNB
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-D:
+#D:
 
 
 # The Rod of Portals -- see artifact list
@@ -4332,7 +4333,7 @@ W:70:0:15:50000
 # A:70/64 TNB
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-D:
+#D:
 
 
 ## XXX 612 XXX ##

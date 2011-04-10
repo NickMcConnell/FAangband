@@ -124,6 +124,7 @@ static const char *effect_list[] = {
  */
 static const char *player_resist_values[] = 
 {
+    "NULL",
     "RES_ACID",
     "RES_ELEC",
     "RES_FIRE",
@@ -145,6 +146,7 @@ static const char *player_resist_values[] =
  */
 static const char *bonus_stat_values[] =
 {
+    "NULL",
     "STR",
     "INT",
     "WIS",
@@ -158,6 +160,7 @@ static const char *bonus_stat_values[] =
  */
 static const char *bonus_other_values[] =
 {
+    "NULL",
     "MAGIC_MASTERY",
     "STEALTH",
     "SEARCH",
@@ -173,6 +176,7 @@ static const char *bonus_other_values[] =
  */
 static const char *slay_values[] = 
 {
+    "NULL",
     "SLAY_ANIMAL",
     "SLAY_EVIL",
     "SLAY_UNDEAD",
@@ -188,6 +192,7 @@ static const char *slay_values[] =
  */
 static const char *brand_values[] = 
 {
+    "NULL",
     "BRAND_ACID",
     "BRAND_ELEC",
     "BRAND_FIRE",
@@ -234,14 +239,15 @@ static u32b grab_one_effect(const char *what) {
     return 0;
 }
 
-static u32b grab_value(const char *what, const char **value_type, int *val) {
+u32b grab_value(const char *what, const char **value_type, int num, int *val) {
     size_t i;
-    char *s;
+    char s[80];
     char *t;
 
+    my_strcpy(s, what, strlen(what));
     /* Parse the string */
-    for (s = what; *s; )
-    {
+    //for (; *s; )
+    //{
 	/* Find the first bracket */
 	for (t = s; *t && (*t != '['); ++t) /* loop */;
 	  
@@ -251,12 +257,12 @@ static u32b grab_value(const char *what, const char **value_type, int *val) {
 
 	/* Terminate the string */
 	*t = '\0';
-    }
+	//}
   
     /* Check the possibilities */
-    for (i = 0; i < N_ELEMENTS(value_type); i++)
+    for (i = 0; i < num; i++)
     {
-	if (streq(what, value_type[i]))
+	if (streq(s, value_type[i]))
 	    return i;
     }
 
@@ -639,31 +645,34 @@ static enum parser_error parse_k_b(struct parser *p) {
 
     t = strtok(s, " |");
     while (t) {
-	which = grab_value(t, player_resist_values, &val);
+	which = grab_value(t, player_resist_values, 
+			   N_ELEMENTS(player_resist_values), &val);
 	if (which) {
 	    k->percent_res[which] = RES_LEVEL_BASE - val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
-	which = grab_value(t, bonus_stat_values, &val);
+	which = grab_value(t, bonus_stat_values, 
+			   N_ELEMENTS(bonus_stat_values), &val);
 	if (which) {
 	    k->bonus_stat[which] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
-	which = grab_value(t, bonus_other_values, &val);
+	which = grab_value(t, bonus_other_values, 
+			   N_ELEMENTS(bonus_other_values), &val);
 	if (which) {
 	    k->bonus_other[which] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
-	which = grab_value(t, slay_values, &val);
+	which = grab_value(t, slay_values, N_ELEMENTS(slay_values), &val);
 	if (which) {
 	    k->multiple_slay[which] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
-	which = grab_value(t, brand_values, &val);
+	which = grab_value(t, brand_values, N_ELEMENTS(brand_values), &val);
 	if (which) {
 	    k->multiple_brand[which] = val;
 	    t = strtok(NULL, " |");
@@ -853,31 +862,36 @@ static enum parser_error parse_a_b(struct parser *p) {
 
     t = strtok(s, " |");
     while (t) {
-	which = grab_value(t, player_resist_values, &val);
+	which = grab_value(t, player_resist_values, 
+			   N_ELEMENTS(player_resist_values), &val);
 	if (which) {
 	    a->percent_res[which] = RES_LEVEL_BASE - val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
-	which = grab_value(t, bonus_stat_values, &val);
+	which = grab_value(t, bonus_stat_values, 
+			   N_ELEMENTS(bonus_stat_values), &val);
 	if (which) {
 	    a->bonus_stat[which] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
-	which = grab_value(t, bonus_other_values, &val);
+	which = grab_value(t, bonus_other_values, 
+			   N_ELEMENTS(bonus_other_values), &val);
 	if (which) {
 	    a->bonus_other[which] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
-	which = grab_value(t, slay_values, &val);
+	which = grab_value(t, slay_values, 
+			   N_ELEMENTS(slay_values), &val);
 	if (which) {
 	    a->multiple_slay[which] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
-	which = grab_value(t, brand_values, &val);
+	which = grab_value(t, brand_values, 
+			   N_ELEMENTS(brand_values), &val);
 	if (which) {
 	    a->multiple_brand[which] = val;
 	    t = strtok(NULL, " |");
@@ -982,6 +996,14 @@ static enum parser_error parse_set_n(struct parser *p) {
     return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_set_c(struct parser *p) {
+    struct set_type *set = parser_priv(p);
+    assert(set);
+
+    set->no_of_items = parser_getint(p, "num");
+    return PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_set_d(struct parser *p) {
     struct set_type *set = parser_priv(p);
     assert(set);
@@ -1047,31 +1069,36 @@ static enum parser_error parse_set_b(struct parser *p) {
 
     t = strtok(s, " |");
     while (t) {
-	which = grab_value(t, player_resist_values, &val);
+	which = grab_value(t, player_resist_values, 
+			   N_ELEMENTS(player_resist_values), &val);
 	if (which) {
 	    set->set_items[current_item].percent_res[which] = RES_LEVEL_BASE - val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
-	which = grab_value(t, bonus_stat_values, &val);
+	which = grab_value(t, bonus_stat_values, 
+			   N_ELEMENTS(bonus_stat_values), &val);
 	if (which) {
 	    set->set_items[current_item].bonus_stat[which] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
-	which = grab_value(t, bonus_other_values, &val);
+	which = grab_value(t, bonus_other_values, 
+			   N_ELEMENTS(bonus_other_values), &val);
 	if (which) {
 	    set->set_items[current_item].bonus_other[which] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
-	which = grab_value(t, slay_values, &val);
+	which = grab_value(t, slay_values, 
+			   N_ELEMENTS(slay_values), &val);
 	if (which) {
 	    set->set_items[current_item].multiple_slay[which] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
-	which = grab_value(t, brand_values, &val);
+	which = grab_value(t, brand_values, 
+			   N_ELEMENTS(brand_values), &val);
 	if (which) {
 	    set->set_items[current_item].multiple_brand[which] = val;
 	    t = strtok(NULL, " |");
@@ -1088,8 +1115,9 @@ struct parser *init_parse_set(void) {
     parser_setpriv(p, NULL);
     parser_reg(p, "V sym version", ignored);
     parser_reg(p, "N int index str name", parse_set_n);
+    parser_reg(p, "C int num", parse_set_c);
     parser_reg(p, "D str text", parse_set_d);
-    parser_reg(p, "P uint a_idx", parse_set_p);
+    parser_reg(p, "P int a_idx", parse_set_p);
     parser_reg(p, "F ?str flags", parse_set_f);
     parser_reg(p, "B ?str values", parse_set_b);
     return p;
@@ -1453,6 +1481,32 @@ static enum parser_error parse_e_f(struct parser *p) {
     return t ? PARSE_ERROR_INVALID_FLAG : PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_e_i(struct parser *p) {
+    struct ego_item *e = parser_priv(p);
+    char *s;
+    char *t;
+
+    if (!e)
+	return PARSE_ERROR_MISSING_RECORD_HEADER;
+    if (!parser_hasval(p, "flags"))
+	return PARSE_ERROR_NONE;
+    s = string_make(parser_getstr(p, "flags"));
+    t = strtok(s, " |");
+    while (t) {
+	bool found = FALSE;
+	if (!grab_flag(e->id_obj, OF_SIZE, object_flags, t))
+	    found = TRUE;
+	if (!grab_flag(e->id_curse, CF_SIZE, curse_flags, t)) 
+	    found = TRUE;
+	if (!grab_flag(e->id_other, IF_SIZE, id_flags, t)) 
+	    found = TRUE;
+	if (!found) break;
+	t = strtok(NULL, " |");
+    }
+    mem_free(s);
+    return t ? PARSE_ERROR_INVALID_FLAG : PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_e_b(struct parser *p) {
     struct ego_item *e = parser_priv(p);
     char *s = string_make(parser_getstr(p, "values"));
@@ -1462,31 +1516,36 @@ static enum parser_error parse_e_b(struct parser *p) {
 
     t = strtok(s, " |");
     while (t) {
-	which = grab_value(t, player_resist_values, &val);
+	which = grab_value(t, player_resist_values, 
+			   N_ELEMENTS(player_resist_values), &val);
 	if (which) {
 	    e->percent_res[which] = RES_LEVEL_BASE - val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
-	which = grab_value(t, bonus_stat_values, &val);
+	which = grab_value(t, bonus_stat_values, 
+			   N_ELEMENTS(bonus_stat_values), &val);
 	if (which) {
 	    e->bonus_stat[which] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
-	which = grab_value(t, bonus_other_values, &val);
+	which = grab_value(t, bonus_other_values, 
+			   N_ELEMENTS(bonus_other_values), &val);
 	if (which) {
 	    e->bonus_other[which] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
-	which = grab_value(t, slay_values, &val);
+	which = grab_value(t, slay_values, 
+			   N_ELEMENTS(slay_values), &val);
 	if (which) {
 	    e->multiple_slay[which] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
-	which = grab_value(t, brand_values, &val);
+	which = grab_value(t, brand_values, 
+			   N_ELEMENTS(brand_values), &val);
 	if (which) {
 	    e->multiple_brand[which] = val;
 	    t = strtok(NULL, " |");
@@ -1527,8 +1586,9 @@ struct parser *init_parse_e(void) {
     parser_reg(p, "W int level int rarity int pad int cost", parse_e_w);
     parser_reg(p, "X int rating", parse_e_x);
     parser_reg(p, "T sym tval int min-sval int max-sval", parse_e_t);
-    parser_reg(p, "C rand th rand td rand ta", parse_e_c);
+    parser_reg(p, "C int th int td int ta", parse_e_c);
     parser_reg(p, "F ?str flags", parse_e_f);
+    parser_reg(p, "I ?str flags", parse_e_i);
     parser_reg(p, "B ?str values", parse_e_b);
     parser_reg(p, "E sym name rand time", parse_e_e);
     parser_reg(p, "D str text", parse_e_d);
@@ -1775,7 +1835,7 @@ struct parser *init_parse_r(void) {
     parser_reg(p, "V sym version", ignored);
     parser_reg(p, "N uint index str name", parse_r_n);
     parser_reg(p, "G char glyph sym color", parse_r_g);
-    parser_reg(p, "I int speed int hp int aaf int ac int sleep", parse_r_i);
+    parser_reg(p, "I int speed rand hp int aaf int ac int sleep", parse_r_i);
     parser_reg(p, "W int level int rarity int mana int mexp", parse_r_w);
     parser_reg(p, "B sym method ?sym effect ?rand damage", parse_r_b);
     parser_reg(p, "F ?str flags", parse_r_f);
@@ -1857,13 +1917,14 @@ static errr run_parse_b(struct parser *p) {
 
 static errr finish_parse_b(struct parser *p) {
     struct owner_type *b, *n;
-    int i;
+    int i = MAX_STORE_TYPES - 1;
 
-    b_info = mem_zalloc(sizeof(*b) * MAX_STORES * z_info->b_max);
+    b_info = mem_zalloc(sizeof(*b) * MAX_STORE_TYPES * z_info->b_max);
     for (b = parser_priv(p); b; b = b->next) {
-	if (b->bidx >= MAX_STORES * z_info->b_max)
+	if (b->bidx + i * z_info->b_max >= MAX_STORE_TYPES * z_info->b_max)
 	    continue;
-	memcpy(&b_info[b->bidx], b, sizeof(*b));
+	memcpy(&b_info[b->bidx + i * z_info->b_max], b, sizeof(*b));
+	if (b->bidx == 0) i--;
     }
 
     b = parser_priv(p);
@@ -1918,7 +1979,7 @@ static enum parser_error parse_p_r(struct parser *p) {
     r->r_skills[SKILL_STEALTH] = parser_getint(p, "stl");
     r->r_skills[SKILL_SEARCH] = parser_getint(p, "srh");
     r->r_skills[SKILL_SEARCH_FREQUENCY] = parser_getint(p, "fos");
-    r->r_skills[SKILL_TO_HIT_MELEE] = parser_getint(p, "thm");
+    r->r_skills[SKILL_TO_HIT_MELEE] = parser_getint(p, "thn");
     r->r_skills[SKILL_TO_HIT_BOW] = parser_getint(p, "thb");
     return PARSE_ERROR_NONE;
 }
@@ -1933,7 +1994,7 @@ static enum parser_error parse_p_m(struct parser *p) {
     r->rx_skills[SKILL_STEALTH] = parser_getint(p, "xstl");
     r->rx_skills[SKILL_SEARCH] = parser_getint(p, "xsrh");
     r->rx_skills[SKILL_SEARCH_FREQUENCY] = parser_getint(p, "xfos");
-    r->rx_skills[SKILL_TO_HIT_MELEE] = parser_getint(p, "xthm");
+    r->rx_skills[SKILL_TO_HIT_MELEE] = parser_getint(p, "xthn");
     r->rx_skills[SKILL_TO_HIT_BOW] = parser_getint(p, "xthb");
     return PARSE_ERROR_NONE;
 }
@@ -2007,7 +2068,7 @@ static enum parser_error parse_p_f(struct parser *p) {
     flags = string_make(parser_getstr(p, "flags"));
     s = strtok(flags, " |");
     while (s) {
-	if (grab_flag(r->flags_obj, OF_SIZE, player_info_flags, s))
+	if (grab_flag(r->flags_obj, OF_SIZE, object_flags, s))
 	    break;
 	s = strtok(NULL, " |");
     }
@@ -2024,7 +2085,8 @@ static enum parser_error parse_p_b(struct parser *p) {
 
     t = strtok(s, " |");
     while (t) {
-	which = grab_value(t, player_resist_values, &val);
+	which = grab_value(t, player_resist_values, 
+			   N_ELEMENTS(player_resist_values), &val);
 	if (which) {
 	    r->percent_res[which] = RES_LEVEL_BASE - val;
 	    t = strtok(NULL, " |");
@@ -2083,7 +2145,7 @@ struct parser *init_parse_p(void) {
     parser_reg(p, "S int str int int int wis int dex int con int chr", parse_p_s);
     parser_reg(p, "R int dis int dev int sav int stl int srh int fos int thn int thb", parse_p_r);
     parser_reg(p, "M int xdis int xdev int xsav int xstl int xsrh int xfos int xthn int xthb", parse_p_m);
-    parser_reg(p, "E int id int mint int maxt int skde int ac int pval", parse_p_e);
+    parser_reg(p, "E int id int mint int maxt int skde int ac int bonus", parse_p_e);
     parser_reg(p, "X int mhp int diff int infra int start_lev int hometown", parse_p_x);
     parser_reg(p, "I int hist int b-age int m-age", parse_p_i);
     parser_reg(p, "H int mbht int mmht int fbht int fmht", parse_p_h);
@@ -2261,8 +2323,8 @@ static enum parser_error parse_c_b(struct parser *p) {
     spell = parser_getuint(p, "spell");
     if (spell >= PY_MAX_SPELLS)
 	return PARSE_ERROR_OUT_OF_BOUNDS;
-    c->magic.info[spell].index = parser_getint(p, "index");
-    c->magic.info[spell].slevel = parser_getint(p, "level");
+    c->magic.info[spell].index = parser_getuint(p, "index");
+    c->magic.info[spell].slevel = parser_getuint(p, "level");
     c->magic.info[spell].smana = parser_getint(p, "mana");
     c->magic.info[spell].sfail = parser_getint(p, "fail");
     c->magic.info[spell].sexp = parser_getint(p, "exp");
@@ -2365,13 +2427,13 @@ struct parser *init_parse_c(void) {
     parser_reg(p, "V sym version", ignored);
     parser_reg(p, "N uint index str name", parse_c_n);
     parser_reg(p, "S int str int int int wis int dex int con int chr", parse_c_s);
-    parser_reg(p, "C int dis int dev int sav int stl int srh int fos int thm int thb int throw int dig", parse_c_c);
-    parser_reg(p, "X int dis int dev int sav int stl int srh int fos int thm int thb int throw int dig", parse_c_x);
+    parser_reg(p, "C int dis int dev int sav int stl int srh int fos int thm int thb", parse_c_c);
+    parser_reg(p, "X int dis int dev int sav int stl int srh int fos int thm int thb", parse_c_x);
     parser_reg(p, "I int mhp int sense-base", parse_c_i);
     parser_reg(p, "A int max_1 int max_50 int penalty int max_penalty int bonus int max_bonus", parse_c_a);
     parser_reg(p, "M uint book uint stat uint realm uint first uint weight1 uint weight2 uint number", parse_c_m);
     parser_reg(p, "F uint first0 uint first1 uint first2 uint first3 uint first4 uint first5 uint first6 uint first7 uint first8", parse_c_f); 
-    parser_reg(p, "B uint spell uint index int level int mana int fail int exp", parse_c_b);
+    parser_reg(p, "B uint spell uint index uint level int mana int fail int exp", parse_c_b);
     parser_reg(p, "E sym tval sym sval uint min uint max", parse_c_e);
     parser_reg(p, "U ?str flags", parse_c_u);
     parser_reg(p, "L ?str flags", parse_c_l);
@@ -2816,6 +2878,406 @@ static struct file_parser hints_parser = {
 };
 
 
+/**
+ * Hack -- Objects sold in the stores -- by tval/sval pair.
+ * Note code for initializing the stores, below.
+ */
+static byte store_table[MAX_STORE_TYPES][STORE_CHOICES][2] =
+{
+  {
+    /* General Store. */
+    
+    { TV_FOOD, SV_FOOD_RATION },
+    { TV_FOOD, SV_FOOD_RATION },
+    { TV_FOOD, SV_FOOD_RATION },
+    { TV_FOOD, SV_FOOD_RATION },
+    { TV_FOOD, SV_FOOD_BISCUIT },
+    { TV_FOOD, SV_FOOD_BISCUIT },
+    { TV_FOOD, SV_FOOD_JERKY },
+    { TV_FOOD, SV_FOOD_JERKY },
+    
+    { TV_FOOD, SV_FOOD_PINT_OF_WINE },
+    { TV_FOOD, SV_FOOD_PINT_OF_ALE },
+    { TV_LIGHT, SV_LIGHT_TORCH },
+    { TV_LIGHT, SV_LIGHT_TORCH },
+    { TV_LIGHT, SV_LIGHT_TORCH },
+    { TV_LIGHT, SV_LIGHT_TORCH },
+    { TV_LIGHT, SV_LIGHT_LANTERN },
+    { TV_LIGHT, SV_LIGHT_LANTERN },
+    
+    { TV_FLASK, 0 },
+    { TV_FLASK, 0 },
+    { TV_FLASK, 0 },
+    { TV_FLASK, 0 },
+    { TV_FLASK, 0 },
+    { TV_FLASK, 0 },
+    { TV_SPIKE, 0 },
+    { TV_SPIKE, 0 },
+    
+    { TV_SHOT, SV_AMMO_NORMAL },
+    { TV_ARROW, SV_AMMO_NORMAL },
+    { TV_BOLT, SV_AMMO_NORMAL },
+    { TV_DIGGING, SV_SHOVEL },
+    { TV_DIGGING, SV_PICK },
+    { TV_CLOAK, SV_CLOAK },
+    { TV_CLOAK, SV_CLOAK },
+    { TV_CLOAK, SV_CLOAK }
+  },
+  
+  {
+    /* Armoury */
+    
+    { TV_BOOTS, SV_PAIR_OF_SOFT_LEATHER_BOOTS },
+    { TV_BOOTS, SV_PAIR_OF_SOFT_LEATHER_BOOTS },
+    { TV_BOOTS, SV_PAIR_OF_HARD_LEATHER_BOOTS },
+    { TV_BOOTS, SV_PAIR_OF_HARD_LEATHER_BOOTS },
+    { TV_HELM, SV_HARD_LEATHER_CAP },
+    { TV_HELM, SV_HARD_LEATHER_CAP },
+    { TV_HELM, SV_METAL_CAP },
+    { TV_HELM, SV_IRON_HELM },
+    
+    { TV_SOFT_ARMOR, SV_ROBE },
+    { TV_SOFT_ARMOR, SV_ROBE },
+    { TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
+    { TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
+    { TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR },
+    { TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR },
+    { TV_SOFT_ARMOR, SV_HARD_STUDDED_LEATHER },
+    { TV_SOFT_ARMOR, SV_HARD_STUDDED_LEATHER },
+    
+    { TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL },
+    { TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL },
+    { TV_HARD_ARMOR, SV_METAL_SCALE_MAIL },
+    { TV_HARD_ARMOR, SV_CHAIN_MAIL },
+    { TV_HARD_ARMOR, SV_DOUBLE_CHAIN_MAIL },
+    { TV_HARD_ARMOR, SV_AUGMENTED_CHAIN_MAIL },
+    { TV_HARD_ARMOR, SV_BAR_CHAIN_MAIL },
+    { TV_HARD_ARMOR, SV_DOUBLE_CHAIN_MAIL },
+    
+    { TV_HARD_ARMOR, SV_METAL_BRIGANDINE_ARMOUR },
+    { TV_GLOVES, SV_SET_OF_LEATHER_GLOVES },
+    { TV_GLOVES, SV_SET_OF_LEATHER_GLOVES },
+    { TV_GLOVES, SV_SET_OF_MAIL_GAUNTLETS },
+    { TV_SHIELD, SV_WICKER_SHIELD },
+    { TV_SHIELD, SV_SMALL_LEATHER_SHIELD },
+    { TV_SHIELD, SV_LARGE_LEATHER_SHIELD },
+    { TV_SHIELD, SV_SMALL_METAL_SHIELD }
+  },
+  
+  {
+    /* Weaponsmith */
+    
+    { TV_SWORD, SV_DAGGER },
+    { TV_SWORD, SV_DAGGER },
+    { TV_SWORD, SV_MAIN_GAUCHE },
+    { TV_SWORD, SV_RAPIER },
+    { TV_SWORD, SV_SMALL_SWORD },
+    { TV_SWORD, SV_SHORT_SWORD },
+    { TV_SWORD, SV_SABRE },
+    { TV_SWORD, SV_CUTLASS },
+    
+    { TV_SWORD, SV_BROAD_SWORD },
+    { TV_SWORD, SV_LONG_SWORD },
+    { TV_SWORD, SV_SCIMITAR },
+    { TV_SWORD, SV_KATANA },
+    { TV_SWORD, SV_BASTARD_SWORD },
+    { TV_SWORD, SV_TWO_HANDED_SWORD },
+    { TV_POLEARM, SV_SPEAR },
+    { TV_POLEARM, SV_TRIDENT },
+    
+    { TV_POLEARM, SV_PIKE },
+    { TV_POLEARM, SV_BEAKED_AXE },
+    { TV_POLEARM, SV_BROAD_AXE },
+    { TV_POLEARM, SV_DART },
+    { TV_POLEARM, SV_BATTLE_AXE },
+    { TV_BOW, SV_SLING },
+    { TV_BOW, SV_SLING },
+    { TV_BOW, SV_SHORT_BOW },
+    
+    { TV_BOW, SV_LONG_BOW },
+    { TV_BOW, SV_LIGHT_XBOW },
+    { TV_SHOT, SV_AMMO_NORMAL },
+    { TV_SHOT, SV_AMMO_NORMAL },
+    { TV_ARROW, SV_AMMO_NORMAL },
+    { TV_ARROW, SV_AMMO_NORMAL },
+    { TV_BOLT, SV_AMMO_NORMAL },
+    { TV_BOLT, SV_AMMO_NORMAL },
+  },
+  
+  {
+    /* Temple. */
+    
+    { TV_HAFTED, SV_WHIP },
+    { TV_HAFTED, SV_QUARTERSTAFF },
+    { TV_HAFTED, SV_MACE },
+    { TV_HAFTED, SV_MACE },
+    { TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL },
+    { TV_HAFTED, SV_WAR_HAMMER },
+    { TV_HAFTED, SV_WAR_HAMMER },
+    { TV_HAFTED, SV_MORNING_STAR },
+    
+    { TV_HAFTED, SV_FLAIL },
+    { TV_HAFTED, SV_FLAIL },
+    { TV_HAFTED, SV_LEAD_FILLED_MACE },
+    { TV_SCROLL, SV_SCROLL_REMOVE_CURSE },
+    { TV_SCROLL, SV_SCROLL_BLESSING },
+    { TV_SCROLL, SV_SCROLL_HOLY_CHANT },
+    { TV_POTION, SV_POTION_BOLDNESS },
+    { TV_POTION, SV_POTION_HEROISM },
+    
+    { TV_POTION, SV_POTION_CURE_LIGHT },
+    { TV_SCROLL, SV_SCROLL_RECHARGING },
+    { TV_POTION, SV_POTION_RESIST_ACID_ELEC },
+    { TV_POTION, SV_POTION_CURE_CRITICAL },
+    { TV_POTION, SV_POTION_CURE_POISON },
+    { TV_POTION, SV_POTION_SLOW_POISON },
+    { TV_POTION, SV_POTION_RESIST_HEAT_COLD },
+    { TV_POTION, SV_POTION_RESTORE_EXP },
+    
+    { TV_POTION, SV_POTION_CURE_LIGHT },
+    { TV_POTION, SV_POTION_CURE_SERIOUS },
+    { TV_POTION, SV_POTION_CURE_SERIOUS },
+    { TV_POTION, SV_POTION_CURE_CRITICAL },
+    { TV_POTION, SV_POTION_CURE_CRITICAL },
+    { TV_POTION, SV_POTION_RESTORE_EXP },
+    { TV_POTION, SV_POTION_RESTORE_EXP },
+    { TV_POTION, SV_POTION_RESTORE_EXP }
+  },
+  
+  {
+    /* Alchemy shop.  All the general-purpose scrolls and potions. */
+    
+    { TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_HIT },
+    { TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_DAM },
+    { TV_SCROLL, SV_SCROLL_ENCHANT_ARMOR },
+    { TV_SCROLL, SV_SCROLL_TELEPORT },
+    { TV_SCROLL, SV_SCROLL_TELEPORT_LEVEL },
+    { TV_SCROLL, SV_SCROLL_IDENTIFY },
+    { TV_SCROLL, SV_SCROLL_IDENTIFY },
+    { TV_SCROLL, SV_SCROLL_LIGHT },
+    
+    { TV_SCROLL, SV_SCROLL_PHASE_DOOR },
+    { TV_SCROLL, SV_SCROLL_PHASE_DOOR },
+    { TV_SCROLL, SV_SCROLL_PHASE_DOOR },
+    { TV_SCROLL, SV_SCROLL_MONSTER_CONFUSION },
+    { TV_SCROLL, SV_SCROLL_MAPPING },
+    { TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+    { TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+    { TV_SCROLL, SV_SCROLL_DETECT_TRAP },
+    
+    { TV_SCROLL, SV_SCROLL_DETECT_DOOR },
+    { TV_SCROLL, SV_SCROLL_DETECT_INVIS },
+    { TV_SCROLL, SV_SCROLL_RECHARGING },
+    { TV_SCROLL, SV_SCROLL_SATISFY_HUNGER },
+    { TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+    { TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+    { TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+    { TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+    
+    { TV_SCROLL, SV_SCROLL_DISPEL_UNDEAD },
+    { TV_POTION, SV_POTION_HEROISM },
+    { TV_POTION, SV_POTION_RES_STR },
+    { TV_POTION, SV_POTION_RES_INT },
+    { TV_POTION, SV_POTION_RES_WIS },
+    { TV_POTION, SV_POTION_RES_DEX },
+    { TV_POTION, SV_POTION_RES_CON },
+    { TV_POTION, SV_POTION_RES_CHR }
+  },
+  
+  {
+    /* Magic-User store. */
+    
+    { TV_WAND, SV_WAND_STONE_TO_MUD },
+    { TV_WAND, SV_WAND_LIGHT },
+    { TV_WAND, SV_WAND_DISARMING },
+    { TV_STAFF, SV_STAFF_DETECT_TRAP },
+    { TV_STAFF, SV_STAFF_DETECT_TRAP },
+    { TV_STAFF, SV_STAFF_DETECT_DOOR },
+    { TV_WAND, SV_WAND_SLOW_MONSTER },
+    { TV_WAND, SV_WAND_CONFUSE_MONSTER },
+    
+    { TV_WAND, SV_WAND_SLEEP_MONSTER },
+    { TV_WAND, SV_WAND_MAGIC_MISSILE },
+    { TV_WAND, SV_WAND_STINKING_CLOUD },
+    { TV_RING, SV_RING_PEWTER },
+    { TV_AMULET, SV_AMULET_MALACHITE },
+    { TV_WAND, SV_WAND_MAGIC_MISSILE },
+    { TV_STAFF, SV_STAFF_DETECT_TRAP },
+    { TV_STAFF, SV_STAFF_DETECT_DOOR },
+    
+    { TV_STAFF, SV_STAFF_DETECT_GOLD },
+    { TV_STAFF, SV_STAFF_DETECT_ITEM },
+    { TV_STAFF, SV_STAFF_DETECT_INVIS },
+    { TV_STAFF, SV_STAFF_DETECT_EVIL },
+    { TV_STAFF, SV_STAFF_TELEPORTATION },
+    { TV_STAFF, SV_STAFF_TELEPORTATION },
+    { TV_STAFF, SV_STAFF_IDENTIFY },
+    { TV_STAFF, SV_STAFF_IDENTIFY },
+    
+    { TV_WAND, SV_WAND_DOOR_DEST },
+    { TV_WAND, SV_WAND_STONE_TO_MUD },
+    { TV_WAND, SV_WAND_STINKING_CLOUD },
+    { TV_WAND, SV_WAND_POLYMORPH },
+    { TV_STAFF, SV_STAFF_LIGHT },
+    { TV_STAFF, SV_STAFF_MAPPING },
+    { TV_ROD, SV_ROD_DETECT_TRAP },
+    { TV_ROD, SV_ROD_DETECT_DOOR }
+  },
+  
+  {
+    /* Black Market (unused) */
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 }
+  },
+  
+  {
+    /* Home (unused) */
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 }
+  },
+  
+  {
+    /* Bookseller. */
+    
+    { TV_MAGIC_BOOK, 0 },
+    { TV_MAGIC_BOOK, 0 },
+    { TV_MAGIC_BOOK, 0 },
+    { TV_MAGIC_BOOK, 1 },
+    { TV_MAGIC_BOOK, 1 },
+    { TV_MAGIC_BOOK, 2 },
+    { TV_MAGIC_BOOK, 2 },
+    { TV_MAGIC_BOOK, 3 },
+    
+    { TV_PRAYER_BOOK, 0 },
+    { TV_PRAYER_BOOK, 0 },
+    { TV_PRAYER_BOOK, 0 },
+    { TV_PRAYER_BOOK, 1 },
+    { TV_PRAYER_BOOK, 1 },
+    { TV_PRAYER_BOOK, 2 },
+    { TV_PRAYER_BOOK, 2 },
+    { TV_PRAYER_BOOK, 3 },
+    
+    { TV_DRUID_BOOK, 0 },
+    { TV_DRUID_BOOK, 0 },
+    { TV_DRUID_BOOK, 0 },
+    { TV_DRUID_BOOK, 1 },
+    { TV_DRUID_BOOK, 1 },
+    { TV_DRUID_BOOK, 2 },
+    { TV_DRUID_BOOK, 2 },
+    { TV_DRUID_BOOK, 3 },
+    
+    { TV_NECRO_BOOK, 0 },
+    { TV_NECRO_BOOK, 0 },
+    { TV_NECRO_BOOK, 0 },
+    { TV_NECRO_BOOK, 1 },
+    { TV_NECRO_BOOK, 1 },
+    { TV_NECRO_BOOK, 2 },
+    { TV_NECRO_BOOK, 2 },
+    { TV_NECRO_BOOK, 3 }
+  },
+
+  {
+    /* Travelling Merchant. */
+    
+    { TV_FOOD, SV_FOOD_RATION },
+    { TV_FOOD, SV_FOOD_RATION },
+    { TV_FOOD, SV_FOOD_BISCUIT },
+    { TV_FOOD, SV_FOOD_JERKY },
+    { TV_FOOD, SV_FOOD_PINT_OF_WINE },
+    { TV_FOOD, SV_FOOD_PINT_OF_ALE },
+    { TV_LIGHT, SV_LIGHT_TORCH },
+    { TV_LIGHT, SV_LIGHT_LANTERN },
+
+    { TV_FLASK, 0 },
+    { TV_FLASK, 0 },
+    { TV_SHOT, SV_AMMO_NORMAL },
+    { TV_ARROW, SV_AMMO_NORMAL },
+    { TV_BOLT, SV_AMMO_NORMAL },
+    { TV_DIGGING, SV_SHOVEL },
+    { TV_DIGGING, SV_PICK },
+    { TV_BOW, SV_SLING},
+
+    { TV_CLOAK, SV_CLOAK },
+    { TV_CLOAK, SV_CLOAK },
+    { TV_SOFT_ARMOR, SV_ROBE},
+    { TV_GLOVES, SV_SET_OF_LEATHER_GLOVES },
+    { TV_BOOTS, SV_PAIR_OF_SOFT_LEATHER_BOOTS },
+    { TV_HELM, SV_HARD_LEATHER_CAP },
+    { TV_SHIELD, SV_WICKER_SHIELD },
+    { TV_SWORD, SV_SHORT_SWORD },
+
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+    { 0, 0 },
+  }  
+
+};
+
 /*** Initialize others ***/
 
 static void autoinscribe_init(void)
@@ -2835,7 +3297,7 @@ static void autoinscribe_init(void)
  */
 static errr init_other(void)
 {
-    int i;
+    int i, k, n;
 
 
     /*** Prepare the various "bizarre" arrays ***/
@@ -2925,7 +3387,73 @@ static errr init_other(void)
     p_ptr->inventory = C_ZNEW(ALL_INVEN_TOTAL, object_type);
 
 
+  /*** Prepare the stores ***/
+  
+  /* Allocate the stores */
+  store = C_ZNEW(MAX_STORES, store_type);
+  
+  for (n = 0; n < MAX_STORES; n++)
+    {
+      /* Access the store */
+      store_type *st_ptr = &store[n];
+      
+      /* Set the type */
+      st_ptr->type = type_of_store[n];
+      
+      /* Assume full stock */
+      st_ptr->stock_size = STORE_INVEN_MAX;
 
+      /* Allocate the stock */
+      st_ptr->stock = C_ZNEW(st_ptr->stock_size, object_type);
+      
+      /* No table for the black market or home */
+      if ((st_ptr->type == STORE_BLACKM) || 
+          (st_ptr->type == STORE_HOME)) continue;
+      
+      /* Assume full table */
+      st_ptr->table_size = STORE_CHOICES;
+
+      /* Nothing there yet */
+      st_ptr->table_num = 0;
+      
+      /* Allocate the stock */
+      st_ptr->table = C_ZNEW(st_ptr->table_size, s16b);
+      
+      /* Scan the choices */
+      for (k = 0; k < STORE_CHOICES; k++)
+        {
+          int k_idx;
+          int tv, sv;
+          
+          /* Cut short for the merchant */
+          if ((st_ptr->type == STORE_MERCH) && (k >= STORE_CHOICES - 8))
+            {
+              st_ptr->table[st_ptr->table_num++] = 0;
+              continue;
+            }     
+          
+          /* Extract the tval/sval codes */
+          tv = store_table[st_ptr->type][k][0];
+          sv = store_table[st_ptr->type][k][1];
+          
+          /* Look for it */
+          for (k_idx = 1; k_idx < z_info->k_max; k_idx++)
+            {
+              object_kind *k_ptr = &k_info[k_idx];
+              
+              /* Found a match */
+              if ((k_ptr->tval == tv) && (k_ptr->sval == sv)) break;
+            }
+          
+          /* Catch errors */
+          if (k_idx == z_info->k_max) continue;
+          
+          /* Add that item index to the table */
+          st_ptr->table[st_ptr->table_num++] = k_idx;
+        }
+    }
+  
+ 
     /*** Prepare the options ***/
     option_set_defaults();
 
@@ -2955,6 +3483,8 @@ static errr init_alloc(void)
 {
     int i, j;
 
+  object_kind *k_ptr;
+  
     monster_race *r_ptr;
 
     ego_item_type *e_ptr;
@@ -2966,6 +3496,37 @@ static errr init_alloc(void)
     s16b aux[MAX_DEPTH];
 
 
+  /*** Analyze object allocation info ***/
+  
+  /* Clear the "aux" array */
+  (void)C_WIPE(aux, MAX_DEPTH, s16b);
+  
+  /* Clear the "num" array */
+  (void)C_WIPE(num, MAX_DEPTH, s16b);
+  
+  /* Size of "alloc_kind_table" */
+  alloc_kind_size = 0;
+  
+  /* Scan the objects */
+  for (i = 1; i < z_info->k_max; i++)
+    {
+      k_ptr = &k_info[i];
+      
+      /* Scan allocation pairs */
+      for (j = 0; j < 4; j++)
+        {
+          /* Count the "legal" entries */
+          if (k_ptr->chance[j])
+            {
+              /* Count the entries */
+              alloc_kind_size++;
+              
+              /* Group by level */
+              num[k_ptr->locale[j]]++;
+            }
+        }
+    }
+  
     /*** Initialize object allocation info ***/
 
     /* Allocate the alloc_kind_table */
@@ -3513,6 +4074,10 @@ bool init_angband(void)
     event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (histories)");
     if (run_parser(&h_parser)) quit("Cannot initialize histories");
 
+    /* Initialize store info */
+    event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (stores)");
+    if (run_parser(&b_parser)) quit("Cannot initialize stores");
+
     /* Initialize race info */
     event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (races)");
     if (run_parser(&p_parser)) quit("Cannot initialize races");
@@ -3533,10 +4098,6 @@ bool init_angband(void)
     event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (hints)");
     if (run_parser(&hints_parser)) quit("Cannot initialize hints");
 
-    /* Initialise store stocking data */
-    event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (store stocks)");
-    store_init();
-
     /* Initialise random name data */
     event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (random names)");
     if (run_parser(&names_parser)) quit("Can't parse names");
@@ -3544,6 +4105,10 @@ bool init_angband(void)
     /* Initialize some other arrays */
     event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (other)");
     if (init_other()) quit("Cannot initialize other stuff");
+
+    /* Initialise store stocking data */
+    event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (store stocks)");
+    store_init();
 
     /* Initialize some other arrays */
     event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (alloc)");
