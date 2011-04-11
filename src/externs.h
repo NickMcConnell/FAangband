@@ -63,6 +63,7 @@ extern byte type_of_store[MAX_STORES];
 extern const byte char_tables[256][CHAR_TABLE_SLOTS];
 extern const xchar_type latin1_encode[];
 extern byte get_angle_to_grid[41][41];
+extern const byte g_info[196];
 
 /* variable.c */
 extern const char *copyright;
@@ -206,7 +207,6 @@ extern player_race *p_info;
 extern player_class *c_info;
 extern owner_type *b_info;
 extern spell_type *s_info;
-extern byte *g_info;
 extern flavor_type *flavor_info;
 extern struct hint *hints;
 

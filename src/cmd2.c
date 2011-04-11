@@ -2922,6 +2922,8 @@ void do_cmd_walk(cmd_code code, cmd_arg args[])
 {
     int y, x, dir;
 
+    dir = args[0].direction;
+
     /* Get location */
     y = p_ptr->py + ddy[dir];
     x = p_ptr->px + ddx[dir];

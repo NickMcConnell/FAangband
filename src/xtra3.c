@@ -585,7 +585,7 @@ static void prt_health(int row, int col)
  */
 static void prt_mana(int row, int col)
 {
-    byte attr = monster_mana_attr();
+    byte attr = TERM_SLATE;
 
     /* Not tracking */
     if (!p_ptr->health_who) {
@@ -615,6 +615,8 @@ static void prt_mana(int row, int col)
 
 	    return;
 	}
+
+	attr = monster_mana_attr();
 
 	/* Extract the "percent" of mana */
 	pct = 100L * m_ptr->mana / r_ptr->mana;

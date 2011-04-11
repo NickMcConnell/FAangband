@@ -785,12 +785,6 @@ owner_type *b_info;
 spell_type *s_info;
 
 /**
- * The racial price adjustment arrays
- */
-byte *g_info;
-
-
-/**
  * The object flavor arrays
  */
 flavor_type *flavor_info;
