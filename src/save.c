@@ -491,10 +491,10 @@ void wr_artifacts(void)
 	  
 	wr_u32b(a_ptr->cost);
 	  
-	for (i = 0; i < OF_SIZE; i++)
-	    wr_byte(a_ptr->flags_obj[i]);
-	for (i = 0; i < CF_SIZE; i++)
-	    wr_byte(a_ptr->flags_curse[i]);
+	for (j = 0; j < OF_SIZE; j++)
+	    wr_byte(a_ptr->flags_obj[j]);
+	for (j = 0; j < CF_SIZE; j++)
+	    wr_byte(a_ptr->flags_curse[j]);
 	  
 	wr_byte(a_ptr->level);
 	wr_byte(a_ptr->rarity);

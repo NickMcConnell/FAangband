@@ -4062,7 +4062,7 @@ static void name_artifact(int a_idx)
     }
 
     /* Insert whatever name is created or found into the temporary array. */
-    names[a_idx] = my_strdup(buf);
+    a_info[a_idx].name = string_make(word);
 }
 
 

@@ -4114,6 +4114,10 @@ bool init_angband(void)
     event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (alloc)");
     if (init_alloc()) quit("Cannot initialize alloc stuff");
 
+    /* Initialize some other arrays */
+    event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (race_probs)");
+    if (init_race_probs()) quit("Cannot initialize race probs");
+
     /*** Load default user pref files ***/
 
     /* Initialize feature info */

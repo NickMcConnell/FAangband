@@ -682,20 +682,20 @@ int rd_quests(u32b version)
 {
     int i;
     byte tmp8u;
-    u16b tmp16u;
+    u16b tmp16u, num_quests;
 	
     /* Load the Quests */
-    rd_u16b(&tmp16u);
+    rd_u16b(&num_quests);
   
     /* Incompatible save files */
-    if (tmp16u > MAX_Q_IDX)
+    if (num_quests > MAX_Q_IDX)
     {
-	note(format("Too many (%u) quests!", tmp16u));
+	note(format("Too many (%u) quests!", num_quests));
 	return (-1);
     }
   
     /* Load the Quests */
-    for (i = 0; i < tmp16u; i++)
+    for (i = 0; i < num_quests; i++)
     {
 	rd_u16b(&tmp16u);
 	q_list[i].stage = tmp16u;
@@ -756,8 +756,8 @@ int rd_artifacts(u32b version)
   for (i = art_min_random; i < total_artifacts; i++)
   {
       rd_string(buf, sizeof(buf));
-      if (buf[0]) my_strcpy(a_info[i].name, buf, sizeof(buf));
-
+      if (buf[0]) //my_strcpy(a_info[i].name, buf, sizeof(buf));
+	  a_info[i].name = string_make(buf);
       rd_byte(&tmp8u);
       a_info[i].tval = tmp8u;
       rd_byte(&tmp8u);
@@ -785,13 +785,13 @@ int rd_artifacts(u32b version)
       rd_u32b(&tmp32u);
       a_info[i].cost = tmp32u;
 	  
-      for (i = 0; i < of_size; i++) {
+      for (k = 0; k < of_size; k++) {
 	  rd_byte(&tmp8u);
-	  a_info[i].flags_obj[i] = tmp8u;
+	  a_info[i].flags_obj[k] = tmp8u;
       }
-      for (i = 0; i < cf_size; i++) {
+      for (k = 0; k < cf_size; k++) {
 	  rd_byte(&tmp8u);
-	  a_info[i].flags_curse[i] = tmp8u;
+	  a_info[i].flags_curse[k] = tmp8u;
       }
 
       rd_byte(&tmp8u);
@@ -1373,6 +1373,7 @@ int rd_stores(u32b version)
     {
 	store_type *st_ptr = &store[i];
 	int j;
+	u32b tmp32u;
 
 	/* Read the basic info */
 	rd_s32b(&st_ptr->store_open);
@@ -1418,6 +1419,10 @@ int rd_stores(u32b version)
 		rd_s16b(&st_ptr->table[j]);
 	    }
 	}
+
+	/* Expansion */
+	rd_u32b(&tmp32u);
+	
     }
 	
     /* Success */
