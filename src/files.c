@@ -987,7 +987,7 @@ extern int make_dump(char_attr_line * line, int mode)
     int player_resists[MAX_P_RES];
     int player_bonus[MAX_P_BONUS];
 
-    bitflag *player_flags_obj;
+    bitflag player_flags_obj[OF_SIZE];
 
     int current_line = 0;
 
@@ -1792,9 +1792,9 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 	for (i = INVEN_WIELD; i < ALL_INVEN_TOTAL; i++) {
 	    if (i == INVEN_TOTAL) {
 		for (j = 0; j < 10; j++) {
-		object_desc(o_name, sizeof(o_name), 
-			    &p_ptr->inventory[i + j + 1],
-			    ODESC_PREFIX | ODESC_FULL);
+		    object_desc(o_name, sizeof(o_name), 
+				&p_ptr->inventory[i + j + 1],
+				ODESC_PREFIX | ODESC_FULL);
 		    if (!streq(o_name, "(nothing)"))
 			quiver_empty = FALSE;
 		}
@@ -1809,7 +1809,7 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 	    else {
 		dump_ptr = (char_attr *) & line[current_line];
 		object_desc(o_name, sizeof(o_name), 
-			    &p_ptr->inventory[i + j + 1],
+			    &p_ptr->inventory[i],
 			    ODESC_PREFIX | ODESC_FULL);
 		if (streq(o_name, "(nothing)"))
 		    continue;

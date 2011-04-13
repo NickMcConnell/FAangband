@@ -48,6 +48,58 @@
 #include "ui-menu.h"
 
 
+typedef struct
+{
+    int enum_val;
+    const char *name;
+} quality_name_struct;
+
+/**
+ * Names of categories.
+ * Mapping of tval -> type 
+ */
+static quality_name_struct quality_choices[TYPE_MAX] = 
+{
+    { TV_SWORD, "Swords" }, 
+    { TV_POLEARM,"Polearms"  },
+    { TV_HAFTED,"Blunt weapons"  },
+    { TV_BOW, "Missile weapons" },
+    { TV_SHOT, "Sling ammunition" },
+    { TV_ARROW,"Bow ammunition"  },
+    { TV_BOLT,"Crossbow ammunition"  },
+    { TV_SOFT_ARMOR, "Soft armor" },
+    { TV_HARD_ARMOR,"Hard armor"  },
+    { TV_DRAG_ARMOR, "Dragon Scale Mail" },
+    { TV_CLOAK,"Cloaks"  },
+    { TV_SHIELD, "Shields" },
+    { TV_HELM, "Helms" },
+    { TV_CROWN, "Crowns" },
+    { TV_GLOVES, "Gloves" },
+    { TV_BOOTS,"Boots"  },
+    { TV_DIGGING,"Diggers"  },
+    { TV_RING, "Rings" },
+    { TV_AMULET, "Amulets" },
+};
+
+byte squelch_level[TYPE_MAX];
+
+
+/**
+ * The names for the various kinds of quality
+ */
+static quality_name_struct quality_values[SQUELCH_MAX] =
+{
+    { SQUELCH_NONE,"none" },	
+    { SQUELCH_CURSED,"cursed (objects known to have a curse)" }, 
+    { SQUELCH_DUBIOUS,"dubious (all dubious items)" },     
+    { SQUELCH_DUBIOUS_NON,"dubious non-ego (strong pseudo-ID)" },   
+    { SQUELCH_NON_EGO,"non-ego (all but ego-items - strong pseudo-ID)" }, 
+    { SQUELCH_AVERAGE,"average (everything not good or better)" },     
+    { SQUELCH_GOOD_STRONG,"good (strong pseudo-ID or identify)" },    
+    { SQUELCH_GOOD_WEAK,"good (weak pseudo-ID)" },
+    { SQUELCH_ALL,"everything except artifacts" },	
+};
+
 /*
  * Reset the player's squelch choices for a new game.
  */
@@ -288,9 +340,9 @@ extern bool squelch_item_ok(const object_type *o_ptr)
   
   
   /* Find the appropriate squelch group */
-  for (i = 0; i < N_ELEMENTS(tvals); i++)
+  for (i = 0; i < N_ELEMENTS(quality_choices); i++)
     {
-      if (tvals[i] == o_ptr->tval)
+      if (quality_choices[i].enum_val == o_ptr->tval)
 	{
 	  num = i;
 	  break;
@@ -899,10 +951,10 @@ static void ego_menu(void *unused, const char *also_unused)
 static void quality_display(menu_type *menu, int oid, bool cursor, int row, 
 			    int col, int width)
 {
-  const char *name = type_names[oid];
-  
+  const char *name = quality_choices[oid].name;
+ 
   byte level = squelch_level[oid];
-  const char *level_name = quality_names[level];
+  const char *level_name = quality_values[level].name;
   
   byte attr = (cursor ? TERM_L_BLUE : TERM_WHITE);
   
@@ -917,7 +969,7 @@ static void quality_display(menu_type *menu, int oid, bool cursor, int row,
 static void quality_subdisplay(menu_type *menu, int oid, bool cursor, int row, 
 			       int col, int width)
 {
-  const char *name = quality_names[oid];
+  const char *name = quality_values[oid].name;
   byte attr = (cursor ? TERM_L_BLUE : TERM_WHITE);
   
   c_put_str(attr, name, row, col);
@@ -925,11 +977,11 @@ static void quality_subdisplay(menu_type *menu, int oid, bool cursor, int row,
 
 /**
  * Handle "Enter".  :(
- */
+
 static bool quality_subaction(menu_type *menu, const ui_event_data *e, int oid)
 {
   return TRUE;
-}
+} */
 
 
 /**
@@ -937,39 +989,47 @@ static bool quality_subaction(menu_type *menu, const ui_event_data *e, int oid)
  */
 static bool quality_action(menu_type *menu1, const ui_event_data *ev, int oid)
 {
-  menu_type menu;
-  menu_iter menu_f = { 0, 0, quality_subdisplay, quality_subaction, 0 };
-  region area = { 24, 1, 44, SQUELCH_MAX };
-  ui_event_data evt;
-  int cursor;
+    menu_type menu;
+    menu_iter menu_f = { 0, 0, quality_subdisplay, 0, 0 };
+    region area = { 24, 1, 44, SQUELCH_MAX };
+    ui_event_data evt;
+    int cursor;
+    int count;
   
-  /* Display at the right point */
-  area.row += oid;
-  cursor = squelch_level[oid];
+    /* Display at the right point */
+    area.row += oid;
+    cursor = squelch_level[oid];
   
-  /* Save */
-  screen_save();
+    /* Save */
+    screen_save();
   
-  /* Run menu */
-  WIPE(&menu, menu);
-  menu.cmd_keys = "\n\r";
-  menu.count = SQUELCH_MAX;
-  if ((tvals[oid] == TV_AMULET) || (tvals[oid] == TV_RING))
-    menu.count = area.page_rows = SQUELCH_CURSED + 1;
+    /* Run menu */
+    count = SQUELCH_MAX;
+    if ((quality_choices[oid].enum_val == TV_AMULET) || 
+	(quality_choices[oid].enum_val == TV_RING))
+	count = area.page_rows = SQUELCH_CURSED + 1;
   
-  menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
-  window_make(area.col - 2, area.row - 1, area.col + area.width + 2, 
-	      area.row + area.page_rows);
+    menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+    menu_setpriv(&menu, count, quality_values);
 
-  evt = menu_select(&menu, cursor);
+    /* Stop menus from going off the bottom of the screen */
+    if (area.row + menu.count > Term->hgt - 1)
+	area.row += Term->hgt - 1 - area.row - menu.count;
+
+    menu_layout(&menu, &area);
+
+    window_make(area.col - 2, area.row - 1, area.col + area.width + 2, 
+		area.row + area.page_rows);
+
+    evt = menu_select(&menu, 0);
   
-  /* Set the new value appropriately */
-  if (evt.type != EVT_ESCAPE)
-    squelch_level[oid] = cursor;
+    /* Set the new value appropriately */
+    if (evt.type == EVT_SELECT)
+	squelch_level[oid] = menu.cursor;
   
-  /* Load and finish */
-  screen_load();
-  return TRUE;
+    /* Load and finish */
+    screen_load();
+    return TRUE;
 }
 
 /**
@@ -980,8 +1040,6 @@ static void quality_menu(void *unused, const char *also_unused)
   menu_type menu;
   menu_iter menu_f = { 0, 0, quality_display, quality_action, 0 };
   region area = { 1, 3, -1, -1 };
-  ui_event_data evt = EVENT_EMPTY;
-  int cursor = 0;
   
   /* Save screen */
   screen_save();
@@ -994,14 +1052,13 @@ static void quality_menu(void *unused, const char *also_unused)
   text_out_to_screen(TERM_L_RED, "Use the movement keys to navigate, and Enter to change settings.");
   
   /* Set up the menu */
-  WIPE(&menu, menu);
-  menu.cmd_keys = " \n\r";
-  menu.count = TYPE_MAX;
   menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+  menu.title = "Quality squelch menu";
+  menu_setpriv(&menu, TYPE_MAX, quality_values);
+  menu_layout(&menu, &area);
   
   /* Select an entry */
-  while (evt.type != EVT_ESCAPE)
-    evt = menu_select(&menu, cursor);
+  menu_select(&menu, 0);
   
   /* Load screen */
   screen_load();
@@ -1063,7 +1120,7 @@ static bool sval_action(menu_type *menu, const ui_event_data *e, int oid)
  */
 static bool sval_menu(int tval, const char *desc)
 {
-  menu_type menu;
+  menu_type *menu;
   menu_iter menu_f = { 0, 0, sval_display, sval_action, 0 };
   region area = { 1, 5, -1, -1 };
   ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
@@ -1130,16 +1187,21 @@ static bool sval_menu(int tval, const char *desc)
   
   text_out_indent = 0;
   
-  /* Set up the menu */
+	/* Run menu */
+	menu = menu_new(MN_SKIN_COLUMNS, &menu_f);
+	menu_setpriv(menu, num, choice);
+	menu_layout(menu, &area);
+	menu_select(menu, 0);
+  /* Set up the menu 
   WIPE(&menu, menu);
   menu.cmd_keys = " \n\r";
   menu.count = num;
   menu.menu_data = choice;
-  menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+  menu_init(&menu, MN_SKIN_SCROLL, &menu_f);*/
   
-  /* Select an entry */
+  /* Select an entry 
   while (evt.type != EVT_ESCAPE)
-    evt = menu_select(&menu, cursor);
+    evt = menu_select(&menu, cursor);*/
   
   /* Free memory */
   FREE(choice);
@@ -1257,12 +1319,33 @@ static void display_options_item(menu_type *menu, int oid, bool cursor,
 }
 
 
+bool handle_options_item(menu_type *menu, const ui_event_data *event, int oid)
+{
+	if (event->type == EVT_SELECT)
+	{
+		if ((size_t) oid < N_ELEMENTS(sval_dependent))
+		{
+			sval_menu(sval_dependent[oid].tval, sval_dependent[oid].desc);
+		}
+		else
+		{
+			oid = oid - (int)N_ELEMENTS(sval_dependent) - 1;
+			assert((size_t) oid < N_ELEMENTS(extra_item_options));
+			extra_item_options[oid].action(NULL, NULL);
+		}
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static const menu_iter options_item_iter =
 {
   tag_options_item,
   valid_options_item,
   display_options_item,
-  NULL, 
+  handle_options_item,
   NULL
 };
 
@@ -1272,25 +1355,23 @@ static const menu_iter options_item_iter =
  */
 void do_cmd_options_item(const char *name, int row)
 {
-  int cursor = 0;
-  ui_event_data c = EVENT_EMPTY;
   const char cmd_keys[] = { ARROW_LEFT, ARROW_RIGHT, '\0' };
   
   menu_type menu;
   
-  WIPE(&menu, menu_type);
-  menu.title = name;
-  menu.cmd_keys = cmd_keys;
+  //menu.cmd_keys = cmd_keys;
   menu.count = N_ELEMENTS(sval_dependent) + N_ELEMENTS(extra_item_options) + 1;
   menu_init(&menu, MN_SKIN_SCROLL, &options_item_iter);
+  menu_setpriv(&menu, N_ELEMENTS(sval_dependent) + N_ELEMENTS(extra_item_options) + 1, NULL);
   
+  menu.title = name;
   menu_layout(&menu, &SCREEN_REGION);
   
   /* Save and clear screen */
   screen_save();
   clear_from(0);
   
-  while (c.type != EVT_ESCAPE)
+/*  while (c.type != EVT_ESCAPE)
     {
       clear_from(0);
       c = menu_select(&menu, cursor);
@@ -1308,8 +1389,9 @@ void do_cmd_options_item(const char *name, int row)
 		extra_item_options[cursor].action(NULL, NULL);
 	    }
 	}
-    }
+	} */
   
+  menu_select(&menu, 0);
   /* Load screen */
   screen_load();
 

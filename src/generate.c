@@ -9814,8 +9814,8 @@ static void build_store(int n, int yy, int xx, int stage)
 {
     int y, x, y0, x0, y1, x1, y2, x2, tmp;
 
-    int qy = DUNGEON_HGT / 3;
-    int qx = DUNGEON_WID / 3;
+    int qy = 1;
+    int qx = 1;
 
 
     /* Find the "center" of the store */
@@ -9978,8 +9978,8 @@ static void town_gen_hack(void)
 	/* Place the stairs */
 	while (TRUE) {
 	    /* Pick a location at least "three" from the outer walls */
-	    y = qy + rand_range(3, DUNGEON_HGT / 3 - 4);
-	    x = qx + rand_range(3, DUNGEON_WID / 3 - 4);
+	    y = 1 + rand_range(3, DUNGEON_HGT / 3 - 4);
+	    x = 1 + rand_range(3, DUNGEON_WID / 3 - 4);
 
 	    /* Require a "naked" floor grid */
 	    if (cave_naked_bold(y, x))
@@ -10007,35 +10007,35 @@ static void town_gen_hack(void)
 		place = TRUE;
 
 	    /* Pick a location at least "three" from the corners */
-	    y = (DUNGEON_HGT / 3) + rand_range(3, qy - 4);
-	    x = (DUNGEON_WID / 3) + rand_range(3, qx - 4);
+	    y = 1 + rand_range(3, qy - 4);
+	    x = 1 + rand_range(3, qx - 4);
 
 	    /* Shove it to the wall, place the path */
 	    switch (n) {
 	    case NORTH:
 		{
-		    y = (DUNGEON_HGT / 3) + 1;
+		    y = 1 + 1;
 		    if (stage_map[stage][n])
 			cave_set_feat(y, x, FEAT_MORE_NORTH);
 		    break;
 		}
 	    case EAST:
 		{
-		    x = (DUNGEON_WID / 3) + qx - 2;
+		    x = 1 + qx - 2;
 		    if (stage_map[stage][n])
 			cave_set_feat(y, x, FEAT_MORE_EAST);
 		    break;
 		}
 	    case SOUTH:
 		{
-		    y = (DUNGEON_HGT / 3) + qy - 2;
+		    y = 1 + qy - 2;
 		    if (stage_map[stage][n])
 			cave_set_feat(y, x, FEAT_MORE_SOUTH);
 		    break;
 		}
 	    case WEST:
 		{
-		    x = (DUNGEON_WID / 3) + 1;
+		    x = 1 + 1;
 		    if (stage_map[stage][n])
 			cave_set_feat(y, x, FEAT_MORE_WEST);
 		}
@@ -10081,9 +10081,9 @@ static void town_gen(void)
     int residents;
     int stage = p_ptr->stage;
 
-    int qy = DUNGEON_HGT / 3;
-    int qx = DUNGEON_WID / 3;
-    int width = qx;
+    int qy = 1;
+    int qx = 1;
+    int width = DUNGEON_WID / 3;
 
     bool daytime;
     bool dummy;
@@ -10095,7 +10095,7 @@ static void town_gen(void)
 
     /* Hack - smaller for minor towns */
     if ((stage < 151) && (!OPT(adult_dungeon)))
-	width = qx / 2;
+	width /= 2;
 
 
     /* Day time */

@@ -130,6 +130,8 @@ bool gain_spec_menu(int *pick)
     ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
     int cursor = 0;
 
+    region loc = { -60, 1, 60, -99 };
+
     int choices[255];
 
     bool done = FALSE;
@@ -168,6 +170,7 @@ bool gain_spec_menu(int *pick)
     menu.count = num;
     menu.menu_data = choices;
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+    menu_layout(&menu, &SCREEN_REGION);
 
     while (!done) {
 	evt = menu_select(&menu, cursor);
