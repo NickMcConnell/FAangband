@@ -1984,15 +1984,21 @@ enum
 
 enum
 {
-#define PF(a,b,c) PF_##a
+#define PF(a, b, c, d) PF_##a
 	#include "list-player-flags.h"
 	#undef PF
 	PF_MAX
 };
 
 #define PF_SIZE                FLAG_SIZE(PF_MAX)
-#define PF_RACIAL_START		128
-#define PF_CLASS_START		192
+
+enum
+{
+    PLAYER_FLAG_SPECIAL,
+    PLAYER_FLAG_RACE,
+    PLAYER_FLAG_CLASS
+};
+
 #define PF_NO_SPECIALTY		255
 
 

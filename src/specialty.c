@@ -27,25 +27,27 @@
 
 
 
-/*** Code for dealing with specialty abilities ***/
+/*** Code for dealing with specialty, race and class abilities ***/
 
 /*
- * Entries for specialty descriptions
+ * Entries for player ability descriptions
  */
 typedef struct {
     u16b index;			/* Specialty index */
     const char *name;		/* Specialty name */
     const char *desc;		/* Specialty description */
-} specialty;
+    int type;                   /* Specialty type */
+} ability;
 
 /*
  * Read in the descriptions.
  */
-static const specialty specialties[] = {
-#define PF(x, y, z)    { PF_##x, y, z }
+static const ability abilities[] = {
+#define PF(x, y, z, w)    { PF_##x, y, z, w }
 #include "list-player-flags.h"
 #undef PF
 };
+
 
 /**
  * Check if we can gain a specialty ability -BR-
@@ -62,7 +64,8 @@ bool check_specialty_gain(int specialty)
     }
 
     /* Is it allowed for this class? */
-    if (player_class_avail(specialty))
+    if (pf_has(cp_ptr->specialties, specialty) &&
+	(abilities[specialty].type == PLAYER_FLAG_SPECIAL))
 	return (TRUE);
 
     return FALSE;
@@ -71,8 +74,6 @@ bool check_specialty_gain(int specialty)
 /**
  * Gain specialty code 
  */
-int num;
-
 
 static char gain_spec_tag(menu_type * menu, int oid)
 {
@@ -92,7 +93,7 @@ void gain_spec_display(menu_type * menu, int oid, bool cursor, int row, int col,
     byte attr = (cursor ? TERM_L_GREEN : TERM_GREEN);
 
     /* Print it */
-    c_put_str(attr, specialties[idx].name, row, col);
+    c_put_str(attr, abilities[idx].name, row, col);
 
     /* Help text */
     if (cursor) {
@@ -100,9 +101,9 @@ void gain_spec_display(menu_type * menu, int oid, bool cursor, int row, int col,
 	Term_locate(&x, &y);
 
 	/* Move the cursor */
-	Term_gotoxy(3, num + 2);
+	Term_gotoxy(3, menu->count + 2);
 	text_out_indent = 3;
-	text_out_to_screen(TERM_L_BLUE, specialties[choices[oid]].desc);
+	text_out_to_screen(TERM_L_BLUE, abilities[choices[oid]].desc);
 
 	/* Restore */
 	Term_gotoxy(x, y);
@@ -133,7 +134,7 @@ bool gain_spec_menu(int *pick)
     region loc = { -60, 1, 60, -99 };
 
     int choices[255];
-
+    int num = 0;
     bool done = FALSE;
 
     size_t i;
@@ -141,7 +142,7 @@ bool gain_spec_menu(int *pick)
     char buf[80];
 
     /* Find the learnable specialties */
-    for (num = 0, i = 0; i < 255; i++) {
+    for (num = 0, i = 0; i < PF_MAX; i++) {
 	if (check_specialty_gain(i)) {
 	    choices[num] = i;
 	    num++;
@@ -164,16 +165,13 @@ bool gain_spec_menu(int *pick)
 	    I2A(0), I2A(num - 1), p_ptr->new_specialties);
 
     /* Set up the menu */
-    WIPE(&menu, menu);
-    menu.title = buf;
-    menu.cmd_keys = "\n\r";
-    menu.count = num;
-    menu.menu_data = choices;
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+    menu.title = buf;
+    menu_setpriv(&menu, num, choices);
     menu_layout(&menu, &SCREEN_REGION);
 
     while (!done) {
-	evt = menu_select(&menu, cursor);
+	evt = menu_select(&menu, 0);
 	done = (evt.type == EVT_ESCAPE);
 	if (evt.type == EVT_SELECT)
 	    done = get_check("Are you sure? ");
@@ -211,14 +209,6 @@ void gain_specialty(void)
 	return;
     }
 
-    /* Find the learnable specialties */
-    for (num = 0, i = 0; i < PF_MAX; i++) {
-	if (check_specialty_gain(i)) {
-	    choices[num] = i;
-	    num++;
-	}
-    }
-
     /* Make one choice */
     if (gain_spec_menu(&pick)) {
 	char buf[120];
@@ -238,7 +228,7 @@ void gain_specialty(void)
 
 	/* Specialty taken */
 	sprintf(buf, "Gained the %s specialty.",
-		specialties[choices[pick]].name);
+		abilities[choices[pick]].name);
 
 	/* Write a note */
 	history_add(buf, HISTORY_GAIN_SPECIALTY, 0);
@@ -259,10 +249,8 @@ void gain_specialty(void)
 /*
  * View specialty code 
  */
-int race_start, class_start, race_other_start;
-int total_known, spec_known, racial_known, class_known;
-byte racial_list[32];
-byte class_list[32];
+int spec_known;
+ability spec_list[32];
 char race_other_desc[1000] = "";
 
 /**
@@ -697,25 +685,35 @@ void view_spec_display(menu_type *menu, int oid, bool cursor, int row, int col,
     int x, y;
     char buf[80];
     byte color;
+    ability *choices = menu->menu_data;
 
-    if (oid < class_start) {
-	sprintf(buf, "Specialty Ability: %s",
-		specialties[p_ptr->specialty_order[oid]].name);
+    switch (choices[oid].type)
+    {
+    case PLAYER_FLAG_SPECIAL:
+    {
+	sprintf(buf, "Specialty Ability: %s", choices[oid].name);
 	color = cursor ? TERM_L_GREEN : TERM_GREEN;
-    } else if (oid < race_start) {
-	sprintf(buf, "Class: %s",
-		specialties[PF_CLASS_START +
-			    class_list[oid - class_start]].name);
+	break;
+    } 
+    case PLAYER_FLAG_CLASS: 
+    {
+	sprintf(buf, "Class: %s", choices[oid].name);
 	color = cursor ? TERM_L_UMBER : TERM_UMBER;
-    } else if (oid < race_other_start) {
-	sprintf(buf, "Racial: %s",
-		specialties[PF_RACIAL_START +
-			    racial_list[oid - race_start]].name);
+	break;
+    } 
+    case PLAYER_FLAG_RACE: 
+    {
+	sprintf(buf, "Racial: %s", choices[oid].name);
 	color = cursor ? TERM_YELLOW : TERM_ORANGE;
-    } else {
+	break;
+    } 
+    default:
+    {
 	sprintf(buf, "Racial: Other");
 	color = cursor ? TERM_YELLOW : TERM_ORANGE;
     }
+    }
+
     /* Print it */
     c_put_str(color, buf, row, col);
 
@@ -725,21 +723,9 @@ void view_spec_display(menu_type *menu, int oid, bool cursor, int row, int col,
 	Term_locate(&x, &y);
 
 	/* Move the cursor */
-	Term_gotoxy(3, total_known + 2);
+	Term_gotoxy(3, menu->count + 2);
 	text_out_indent = 3;
-	if (oid < class_start)
-	    text_out_to_screen(TERM_L_BLUE,
-			       specialties[p_ptr->specialty_order[oid]].desc);
-	else if (oid < race_start)
-	    text_out_to_screen(TERM_L_BLUE,
-			       specialties[PF_CLASS_START +
-					   class_list[oid - class_start]].desc);
-	else if (oid < race_other_start)
-	    text_out_to_screen(TERM_L_BLUE,
-			       specialties[PF_RACIAL_START +
-					   racial_list[oid - race_start]].desc);
-	else
-	    text_out_to_screen(TERM_L_BLUE, race_other_desc);
+	text_out_to_screen(TERM_L_BLUE, (char *)choices[oid].desc);
 
 	/* Restore */
 	Term_gotoxy(x, y);
@@ -766,14 +752,14 @@ void view_spec_menu(void)
 
     /* Prompt choices */
     sprintf(buf, "Race, class, and specialties abilities (%c-%c, ESC=exit): ",
-	    I2A(0), I2A(total_known - 1));
+	    I2A(0), I2A(spec_known - 1));
 
     /* Set up the menu */
-    WIPE(&menu, menu);
     menu.title = buf;
-    menu.cmd_keys = " \n\r";
-    menu.count = total_known;
+    menu.count = spec_known;
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+    menu_setpriv(&menu, spec_known, spec_list);
+    menu_layout(&menu, &SCREEN_REGION);
 
     while (!done) {
 	evt = menu_select(&menu, cursor);
@@ -797,39 +783,25 @@ void view_specialties(void)
     /* Count the number of specialties we know */
     for (i = 0, spec_known = 0; i < MAX_SPECIALTIES; i++) {
 	if (p_ptr->specialty_order[i] != PF_NO_SPECIALTY)
-	    spec_known++;
+	    spec_list[spec_known++] = abilities[i];
     }
 
-    total_known = spec_known;
-
-    /* Count the number of class powers we have */
-    for (i = PF_CLASS_START, class_known = 0; i < PF_MAX; i++) {
-	if (player_class_has(i)) {
-	    class_list[class_known++] = i;
+    /* Count the number of race and class powers we have */
+    for (i = 0; i < PF_MAX; i++) {
+	if (player_class_has(i) || player_race_has(i)) {
+	    spec_list[spec_known++] = abilities[i];
 	}
     }
-
-    total_known += class_known;
-
-    /* Count the number of racial powers we have */
-    for (i = PF_RACIAL_START, racial_known = 0; i < PF_CLASS_START; i++) {
-	if (player_race_has(i)) {
-	    racial_list[racial_known++] = i;
-	}
-    }
-
-    total_known += racial_known;
 
     /* Standard racial flags */
     if (!pf_is_empty(rp_ptr->flags_obj) || !pf_is_empty(rp_ptr->flags_curse)) 
     {
-	total_known++;
-	view_abilities_aux(race_other_desc);
+	spec_list[spec_known].index = PF_MAX;
+	spec_list[spec_known].name = "";
+	view_abilities_aux(spec_list[spec_known].desc);
+	spec_list[spec_known++].type = PF_MAX;
+	//view_abilities_aux(race_other_desc);
     }
-
-    class_start = spec_known;
-    race_start = spec_known + class_known;
-    race_other_start = spec_known + class_known + racial_known;
 
     /* View choices until user exits */
     view_spec_menu();

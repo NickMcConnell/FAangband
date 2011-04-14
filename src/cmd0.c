@@ -400,6 +400,19 @@ void cmd_init(void)
 			converted_list[commands[i].key].command = &commands[i];
 	}
 
+	/* Fill in item actions */
+	for (j = 0; j < N_ELEMENTS(item_actions); j++)
+	{
+		struct item_command *act = &item_actions[j];
+		unsigned char key = act->base.key;
+
+		converted_list[key].command = &act->base;
+		converted_list[key].is_object = TRUE;
+		converted_list[key].item = act;
+
+		/* Also update the action menus */
+		memcpy(&cmd_item_use[j], &act->base, sizeof(cmd_item_use[0]));
+	}
 }
 
 unsigned char cmd_lookup_key(cmd_code cmd)

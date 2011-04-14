@@ -107,7 +107,7 @@ static const char *id_flags[] = {
 };
 
 static const char *player_info_flags[] = {
-#define PF(a, b, c) #a
+#define PF(a, b, c, d) #a
 #include "list-player-flags.h"
 #undef PF
     NULL
