@@ -50,6 +50,15 @@ static const ability abilities[] = {
 
 
 /**
+ * Specialty menu data struct
+ */
+struct spec_menu_data {
+	int specialties[CLASS_SPECIALTIES];
+	int spec_known;
+	int selected_spec;
+};
+
+/**
  * Check if we can gain a specialty ability -BR-
  */
 bool check_specialty_gain(int specialty)
@@ -86,8 +95,9 @@ static char gain_spec_tag(menu_type * menu, int oid)
 void gain_spec_display(menu_type * menu, int oid, bool cursor, int row, int col,
 		       int width)
 {
-    const int *choices = menu->menu_data;
-    int idx = choices[oid];
+    //const int *choices = menu->menu_data;
+    struct spec_menu_data *d = menu_priv(menu);
+    int idx = d->specialties[oid];
     int x, y;
 
     byte attr = (cursor ? TERM_L_GREEN : TERM_GREEN);
@@ -96,18 +106,18 @@ void gain_spec_display(menu_type * menu, int oid, bool cursor, int row, int col,
     c_put_str(attr, abilities[idx].name, row, col);
 
     /* Help text */
-    if (cursor) {
+    //if (cursor) {
 	/* Locate the cursor */
-	Term_locate(&x, &y);
+//	Term_locate(&x, &y);
 
 	/* Move the cursor */
-	Term_gotoxy(3, menu->count + 2);
-	text_out_indent = 3;
-	text_out_to_screen(TERM_L_BLUE, abilities[choices[oid]].desc);
+//	Term_gotoxy(3, menu->count + 2);
+//	text_out_indent = 3;
+//	text_out_to_screen(TERM_L_BLUE, abilities[choices[oid]].desc);
 
 	/* Restore */
-	Term_gotoxy(x, y);
-    }
+//	Term_gotoxy(x, y);
+    //  }
 }
 
 /**
@@ -115,9 +125,48 @@ void gain_spec_display(menu_type * menu, int oid, bool cursor, int row, int col,
  */
 bool gain_spec_action(menu_type * menu, const ui_event_data * e, int oid)
 {
+    struct spec_menu_data *d = menu_priv(menu);
+    static int i;
+    if (oid) i = oid;
+
+    if (e->type == EVT_SELECT)
+	//if ((e->type == EVT_SELECT) || ((e->type == EVT_KBRD) && 
+	//			    (strchr(menu->cmd_keys, e->key))))
+    {
+	d->selected_spec = d->specialties[i];
+	return FALSE;
+    }
+
     return TRUE;
 }
 
+
+/**
+ * Show spell long description when browsing
+ */
+static void  gain_spec_menu_browser(int oid, void *data, const region *loc)
+{
+    struct spec_menu_data *d = data;
+    //int *choices = data;
+	//int spell = d->spells[oid];
+
+	/* Redirect output to the screen */
+	text_out_hook = text_out_to_screen;
+	text_out_wrap = 0;
+	text_out_indent = loc->col - 1;
+	text_out_pad = 1;
+
+	//screen_load();
+	//screen_save();
+
+        clear_from(loc->row + loc->page_rows);
+	Term_gotoxy(loc->col, loc->row + loc->page_rows);
+	text_out_to_screen(TERM_L_BLUE, abilities[d->specialties[oid]].desc);
+
+	/* XXX */
+	text_out_pad = 0;
+	text_out_indent = 0;
+}
 
 /**
  * Display list available specialties.
@@ -129,12 +178,13 @@ bool gain_spec_menu(int *pick)
 	gain_spec_action, 0
     };
     ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+    struct spec_menu_data *d = mem_alloc(sizeof *d);
     int cursor = 0;
 
-    region loc = { -60, 1, 60, -99 };
+    region loc = { 0, 0, 70, -99 };
 
     int choices[255];
-    int num = 0;
+    //int num = 0;
     bool done = FALSE;
 
     size_t i;
@@ -142,15 +192,16 @@ bool gain_spec_menu(int *pick)
     char buf[80];
 
     /* Find the learnable specialties */
-    for (num = 0, i = 0; i < PF_MAX; i++) {
+    d->spec_known = 0;
+    for (i = 0; i < PF_MAX; i++) {
 	if (check_specialty_gain(i)) {
-	    choices[num] = i;
-	    num++;
+	    d->specialties[d->spec_known] = i;
+	    d->spec_known++;
 	}
     }
 
     /* We are out of specialties - should never happen */
-    if (!num) {
+    if (!d->spec_known) {
 	msg_print("No specialties available.");
 	screen_load();
 	return FALSE;
@@ -158,27 +209,35 @@ bool gain_spec_menu(int *pick)
 
     /* Save the screen and clear it */
     screen_save();
+    clear_from(0);
 
     /* Prompt choices */
     sprintf(buf,
 	    "(Specialties: %c-%c, ESC=exit) Gain which specialty (%d available)? ",
-	    I2A(0), I2A(num - 1), p_ptr->new_specialties);
+	    I2A(0), I2A(d->spec_known - 1), p_ptr->new_specialties);
 
     /* Set up the menu */
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
     menu.title = buf;
-    menu_setpriv(&menu, num, choices);
-    menu_layout(&menu, &SCREEN_REGION);
+    //menu.cmd_keys = " \n\r";
+    //menu_setpriv(&menu, num, choices);
+    menu_setpriv(&menu, d->spec_known, d);
+    loc.page_rows = d->spec_known + 2;
+    menu.browse_hook = gain_spec_menu_browser;
+    menu.flags = MN_DBL_TAP;
+    region_erase_bordered(&loc);
+    menu_layout(&menu, &loc);
 
     while (!done) {
-	evt = menu_select(&menu, 0);
+	evt = menu_select(&menu, EVT_SELECT);
+	//evt = menu_select(&menu, cursor);
 	done = (evt.type == EVT_ESCAPE);
-	if (evt.type == EVT_SELECT)
+	if (!done && (d->selected_spec))
 	    done = get_check("Are you sure? ");
     }
 
-    if (evt.type == EVT_SELECT)
-	*pick = evt.index;
+    if (evt.type != EVT_ESCAPE)
+	*pick = d->selected_spec;
 
     /* Load screen */
     screen_load();
@@ -214,10 +273,10 @@ void gain_specialty(void)
 	char buf[120];
 
 	/* Add new specialty */
-	p_ptr->specialty_order[k] = choices[pick];
+	p_ptr->specialty_order[k] = pick;
 
 	/* Add it to the player flags */
-	pf_on(p_ptr->pflags, choices[pick]);
+	pf_on(p_ptr->pflags, pick);
 
 	/* Increment next available slot */
 	k++;
@@ -228,7 +287,7 @@ void gain_specialty(void)
 
 	/* Specialty taken */
 	sprintf(buf, "Gained the %s specialty.",
-		abilities[choices[pick]].name);
+		abilities[pick].name);
 
 	/* Write a note */
 	history_add(buf, HISTORY_GAIN_SPECIALTY, 0);
@@ -256,11 +315,12 @@ char race_other_desc[1000] = "";
 /**
  * For a string describing the player's intrinsic racial flags.
  */
-static char *view_abilities_aux(char *desc)
+static void view_abilities_aux(char *desc)
 {
     bitflag flags[OF_SIZE];
 
     int attr_num, attr_listed, j;
+    int max = 100;
 
     bool res = FALSE, vul = FALSE;
 
@@ -292,9 +352,9 @@ static char *view_abilities_aux(char *desc)
 
 	/* Special case: sustain all stats */
 	if (attr_num == 6) {
-	    strcat(desc, "Your stats are all sustained.  ");
+	    my_strcat(desc, "Your stats are all sustained.  ", max);
 	} else {
-	    strcat(desc, "Your");
+	    my_strcat(desc, "Your", max);
 
 	    /* Loop for number of attributes in this group. */
 	    for (j = 0; j < 6; j++) {
@@ -321,38 +381,38 @@ static char *view_abilities_aux(char *desc)
 
 		/* Commas separate members of a list of more than two. */
 		if ((attr_num > 2) && (attr_listed > 1))
-		    strcat(desc, ",");
+		    my_strcat(desc, ",", max);
 
 		/* "and" before final member of a list of more than one. */
 		if ((attr_num > 1) && (j != 0)) {
 		    if (attr_num == attr_listed)
-			strcat(desc, " and");
+			my_strcat(desc, " and", max);
 		}
 
 		/* List the attribute description, in its proper place. */
 		if (j == 0)
-		    strcat(desc, " strength");
+		    my_strcat(desc, " strength", max);
 		if (j == 1)
-		    strcat(desc, " intelligence");
+		    my_strcat(desc, " intelligence", max);
 		if (j == 2)
-		    strcat(desc, " wisdom");
+		    my_strcat(desc, " wisdom", max);
 		if (j == 3)
-		    strcat(desc, " dexterity");
+		    my_strcat(desc, " dexterity", max);
 		if (j == 4)
-		    strcat(desc, " constitution");
+		    my_strcat(desc, " constitution", max);
 		if (j == 5)
-		    strcat(desc, " charisma");
+		    my_strcat(desc, " charisma", max);
 	    }
 	}
 
 	/* Pluralize the verb. */
 	if (attr_num > 1)
-	    strcat(desc, " are");
+	    my_strcat(desc, " are", max);
 	else
-	    strcat(desc, " is");
+	    my_strcat(desc, " is", max);
 
 	/* End sentence.  Go to next line. */
-	strcat(desc, " sustained. ");
+	my_strcat(desc, " sustained. ", max);
     }
 
     /* Clear number of items to list, and items listed. */
@@ -365,7 +425,7 @@ static char *view_abilities_aux(char *desc)
 	    attr_num++;
 
     if (attr_num > 0) {
-	strcat(desc, "You are immune to ");
+	my_strcat(desc, "You are immune to ", max);
 
 	/* Loop for number of attributes in this group. */
 	for (j = 0; j < 4; j++) {
@@ -374,24 +434,24 @@ static char *view_abilities_aux(char *desc)
 
 	    /* List the attribute description, in its proper place. */
 	    if (j == 0)
-		strcat(desc, "acid");
+		my_strcat(desc, "acid", max);
 	    if (j == 1)
-		strcat(desc, "electricity");
+		my_strcat(desc, "electricity", max);
 	    if (j == 2)
-		strcat(desc, "fire");
+		my_strcat(desc, "fire", max);
 	    if (j == 3)
-		strcat(desc, "frost");
+		my_strcat(desc, "frost", max);
 	    if (attr_num >= 3)
-		strcat(desc, ", ");
+		my_strcat(desc, ", ", max);
 	    if (attr_num == 2)
-		strcat(desc, " and ");
+		my_strcat(desc, " and ", max);
 	    if (attr_num == 1)
-		strcat(desc, ". ");
+		my_strcat(desc, ". ", max);
 	    attr_num--;
 	}
 
 	/* End sentence.  Go to next line. */
-	strcat(desc, ". ");
+	my_strcat(desc, ". ", max);
     }
 
 
@@ -416,7 +476,7 @@ static char *view_abilities_aux(char *desc)
 	}
 
 	/* How many attributes need to be listed? */
-	strcat(desc, "You resist");
+	my_strcat(desc, "You resist", max);
 
 	/* Loop for number of attributes in this group. */
 	for (j = 0; j < MAX_P_RES; j++) {
@@ -432,50 +492,50 @@ static char *view_abilities_aux(char *desc)
 
 	    /* Commas separate members of a list of more than two. */
 	    if ((attr_num > 2) && (attr_listed > 1))
-		strcat(desc, ",");
+		my_strcat(desc, ",", max);
 
 	    /* "and" before final member of a list of more than one. */
 	    if ((attr_num > 1) && (j != 0)) {
 		if (attr_num == attr_listed)
-		    strcat(desc, " and");
+		    my_strcat(desc, " and", max);
 	    }
 
 	    /* List the attribute description, in its proper place. */
 	    if (j == P_RES_ACID)
-		strcat(desc, " acid");
+		my_strcat(desc, " acid", max);
 	    if (j == P_RES_ELEC)
-		strcat(desc, " electricity");
+		my_strcat(desc, " electricity", max);
 	    if (j == P_RES_FIRE)
-		strcat(desc, " fire");
+		my_strcat(desc, " fire", max);
 	    if (j == P_RES_COLD)
-		strcat(desc, " frost");
+		my_strcat(desc, " frost", max);
 	    if (j == P_RES_POIS)
-		strcat(desc, " poison");
+		my_strcat(desc, " poison", max);
 	    if (j == P_RES_LIGHT)
-		strcat(desc, " light");
+		my_strcat(desc, " light", max);
 	    if (j == P_RES_DARK)
-		strcat(desc, " darkness");
+		my_strcat(desc, " darkness", max);
 	    if (j == P_RES_CONFU)
-		strcat(desc, " confusion");
+		my_strcat(desc, " confusion", max);
 	    if (j == P_RES_SOUND)
-		strcat(desc, " sound");
+		my_strcat(desc, " sound", max);
 	    if (j == P_RES_SHARD)
-		strcat(desc, " shards");
+		my_strcat(desc, " shards", max);
 	    if (j == P_RES_NEXUS)
-		strcat(desc, " nexus");
+		my_strcat(desc, " nexus", max);
 	    if (j == P_RES_NETHR)
-		strcat(desc, " nether");
+		my_strcat(desc, " nether", max);
 	    if (j == P_RES_CHAOS)
-		strcat(desc, " chaos");
+		my_strcat(desc, " chaos", max);
 	    if (j == P_RES_DISEN)
-		strcat(desc, " disenchantment");
+		my_strcat(desc, " disenchantment", max);
 
 	    sprintf(buf, "(%d%%)", 100 - rp_ptr->percent_res[j]);
-	    strcat(desc, buf);
+	    my_strcat(desc, buf, max);
 	}
 
 	/* End sentence.  Go to next line. */
-	strcat(desc, ". ");
+	my_strcat(desc, ". ", max);
     }
 
 
@@ -490,7 +550,7 @@ static char *view_abilities_aux(char *desc)
 		attr_num++;
 	}
 
-	strcat(desc, "You are vulnerable to");
+	my_strcat(desc, "You are vulnerable to", max);
 
 	/* Loop for number of attributes in this group. */
 	for (j = 0; j < MAX_P_RES; j++) {
@@ -507,48 +567,48 @@ static char *view_abilities_aux(char *desc)
 
 	    /* Commas separate members of a list of more than two. */
 	    if ((attr_num > 2) && (attr_listed > 1))
-		strcat(desc, ",");
+		my_strcat(desc, ",", max);
 
 	    /* "and" before final member of a list of more than one. */
 	    if ((attr_num > 1) && (j != 0)) {
 		if (attr_num == attr_listed)
-		    strcat(desc, " and");
+		    my_strcat(desc, " and", max);
 	    }
 
 	    /* List the attribute description, in its proper place. */
 	    if (j == P_RES_ACID)
-		strcat(desc, " acid");
+		my_strcat(desc, " acid", max);
 	    if (j == P_RES_ELEC)
-		strcat(desc, " electricity");
+		my_strcat(desc, " electricity", max);
 	    if (j == P_RES_FIRE)
-		strcat(desc, " fire");
+		my_strcat(desc, " fire", max);
 	    if (j == P_RES_COLD)
-		strcat(desc, " frost");
+		my_strcat(desc, " frost", max);
 	    if (j == P_RES_POIS)
-		strcat(desc, " poison");
+		my_strcat(desc, " poison", max);
 	    if (j == P_RES_LIGHT)
-		strcat(desc, " light");
+		my_strcat(desc, " light", max);
 	    if (j == P_RES_DARK)
-		strcat(desc, " darkness");
+		my_strcat(desc, " darkness", max);
 	    if (j == P_RES_SOUND)
-		strcat(desc, " sound");
+		my_strcat(desc, " sound", max);
 	    if (j == P_RES_SHARD)
-		strcat(desc, " shards");
+		my_strcat(desc, " shards", max);
 	    if (j == P_RES_NEXUS)
-		strcat(desc, " nexus");
+		my_strcat(desc, " nexus", max);
 	    if (j == P_RES_NETHR)
-		strcat(desc, " nether");
+		my_strcat(desc, " nether", max);
 	    if (j == P_RES_CHAOS)
-		strcat(desc, " chaos");
+		my_strcat(desc, " chaos", max);
 	    if (j == P_RES_DISEN)
-		strcat(desc, " disenchantment");
+		my_strcat(desc, " disenchantment", max);
 
 	    sprintf(buf, "(%d%%)", rp_ptr->percent_res[j] - 100);
-	    strcat(desc, buf);
+	    my_strcat(desc, buf, max);
 	}
 
 	/* End sentence.  Go to next line. */
-	strcat(desc, ". ");
+	my_strcat(desc, ". ", max);
     }
 
 
@@ -564,18 +624,18 @@ static char *view_abilities_aux(char *desc)
 	attr_num++;
 
     if (of_has(flags, OF_FEARLESS)) {
-	strcat(desc, "You are fearless");
+	my_strcat(desc, "You are fearless", max);
 	if (attr_num == 1)
-	    strcat(desc, ".  ");
+	    my_strcat(desc, ".  ", max);
 	else
-	    strcat(desc, ", and");
+	    my_strcat(desc, ", and", max);
     }
 
     if (of_has(flags, OF_SEEING)) {
 	if ((attr_num > 1) && (of_has(flags, OF_FEARLESS)))
-	    strcat(desc, " can not be blinded.  ");
+	    my_strcat(desc, " can not be blinded.  ", max);
 	else
-	    strcat(desc, "You can not be blinded.  ");
+	    my_strcat(desc, "You can not be blinded.  ", max);
     }
 
     /* Miscellaneous abilities. */
@@ -605,7 +665,7 @@ static char *view_abilities_aux(char *desc)
 	if (of_has(flags, OF_HOLD_LIFE))
 	    attr_num++;
 
-	strcat(desc, "You");
+	my_strcat(desc, "You", max);
 
 	/* Loop for number of attributes in this group. */
 	for (j = 0; j < 8; j++) {
@@ -636,38 +696,38 @@ static char *view_abilities_aux(char *desc)
 
 	    /* Commas separate members of a list of more than two. */
 	    if ((attr_num > 2) && (attr_listed > 1))
-		strcat(desc, ",");
+		my_strcat(desc, ",", max);
 
 	    /* "and" before final member of a list of more than one. */
 	    if ((attr_num > 1) && (j != 0)) {
 		if (attr_num == attr_listed)
-		    strcat(desc, " and");
+		    my_strcat(desc, " and", max);
 	    }
 
 	    /* List the attribute description, in its proper place. */
 	    if (j == 0)
-		strcat(desc, " digest slowly");
+		my_strcat(desc, " digest slowly", max);
 	    if (j == 1)
-		strcat(desc, " falling gently");
+		my_strcat(desc, " falling gently", max);
 	    if (j == 2)
-		strcat(desc, " glow with permanent light");
+		my_strcat(desc, " glow with permanent light", max);
 	    if (j == 3)
-		strcat(desc, " regenerative quickly");
+		my_strcat(desc, " regenerative quickly", max);
 	    if (j == 4)
-		strcat(desc, " have telepathic powers");
+		my_strcat(desc, " have telepathic powers", max);
 	    if (j == 5)
-		strcat(desc, " can see invisible monsters");
+		my_strcat(desc, " can see invisible monsters", max);
 	    if (j == 6)
-		strcat(desc, " are immune to paralysis");
+		my_strcat(desc, " are immune to paralysis", max);
 	    if (j == 7)
-		strcat(desc, " are resistant to life draining");
+		my_strcat(desc, " are resistant to life draining", max);
 	}
 
 	/* End sentence.  Go to next line. */
-	strcat(desc, ".");
+	my_strcat(desc, ".", max);
     }
 
-    return (desc);
+    //return (desc);
 
 }
 
@@ -718,20 +778,55 @@ void view_spec_display(menu_type *menu, int oid, bool cursor, int row, int col,
     c_put_str(color, buf, row, col);
 
     /* Help text */
-    if (cursor) {
+    //if (cursor) {
 	/* Locate the cursor */
-	Term_locate(&x, &y);
+	//Term_locate(&x, &y);
 
 	/* Move the cursor */
-	Term_gotoxy(3, menu->count + 2);
-	text_out_indent = 3;
-	text_out_to_screen(TERM_L_BLUE, (char *)choices[oid].desc);
+	//Term_gotoxy(3, menu->count + 2);
+	//text_out_indent = 3;
+	//if (choices[oid].index == PF_MAX)
+    //text_out_to_screen(TERM_L_BLUE, race_other_desc);
+    //else
+//	    text_out_to_screen(TERM_L_BLUE, (char *)choices[oid].desc);
 
 	/* Restore */
-	Term_gotoxy(x, y);
-    }
+//	Term_gotoxy(x, y);
+    //  }
 }
 
+
+/**
+ * Show specialty long description when browsing
+ */
+static void view_spec_menu_browser(int oid, void *data, const region *loc)
+{
+	ability *choices = data;
+	//int spell = d->spells[oid];
+
+	/* Redirect output to the screen */
+	text_out_hook = text_out_to_screen;
+	text_out_wrap = 0;
+	text_out_indent = loc->col - 1;
+	text_out_pad = 1;
+
+	//screen_load();
+	//region_erase_bordered(&loc);
+	//screen_save();
+
+	//Term_gotoxy(loc->col, loc->row + loc->page_rows - 1);
+	//text_out_to_screen(TERM_WHITE, "                                                         ");
+	clear_from(loc->row + loc->page_rows);
+	Term_gotoxy(loc->col, loc->row + loc->page_rows);
+	if (choices[oid].index == PF_MAX)
+	    text_out_c(TERM_L_BLUE, "\n%s\n", race_other_desc);
+	else
+	    text_out_c(TERM_L_BLUE, "\n%s\n", (char *)choices[oid].desc);
+
+	/* XXX */
+	text_out_pad = 0;
+	text_out_indent = 0;
+}
 
 /**
  * Display list available specialties.
@@ -741,10 +836,10 @@ void view_spec_menu(void)
     menu_type menu;
     menu_iter menu_f = { view_spec_tag, 0, view_spec_display, 0, 0 };
     ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
-    int cursor = 0;
 
     bool done = FALSE;
 
+    region loc = { 0, 0, 70, -99 };
     char buf[80];
 
     /* Save the screen and clear it */
@@ -755,16 +850,21 @@ void view_spec_menu(void)
 	    I2A(0), I2A(spec_known - 1));
 
     /* Set up the menu */
-    menu.title = buf;
-    menu.count = spec_known;
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+    menu.header = buf;
+    //menu.count = spec_known;
     menu_setpriv(&menu, spec_known, spec_list);
-    menu_layout(&menu, &SCREEN_REGION);
+    loc.page_rows = spec_known + 1;
+    menu.flags = MN_DBL_TAP;
+    menu.browse_hook = view_spec_menu_browser;
+    region_erase_bordered(&loc);
+    menu_layout(&menu, &loc);
 
-    while (!done) {
-	evt = menu_select(&menu, cursor);
-	done = (evt.type == EVT_ESCAPE);
-    }
+    //while (!done) {
+    //evt = menu_select(&menu, 0);
+    menu_select(&menu, 0);
+//	done = (evt.type == EVT_ESCAPE);
+    //  }
 
     /* Load screen */
     screen_load();
@@ -783,24 +883,31 @@ void view_specialties(void)
     /* Count the number of specialties we know */
     for (i = 0, spec_known = 0; i < MAX_SPECIALTIES; i++) {
 	if (p_ptr->specialty_order[i] != PF_NO_SPECIALTY)
-	    spec_list[spec_known++] = abilities[i];
+	    spec_list[spec_known++] = abilities[p_ptr->specialty_order[i]];
     }
 
-    /* Count the number of race and class powers we have */
+    /* Count the number of class powers we have */
     for (i = 0; i < PF_MAX; i++) {
-	if (player_class_has(i) || player_race_has(i)) {
+	if (player_class_has(i)) {
+	    spec_list[spec_known++] = abilities[i];
+	}
+    }
+
+    /* Count the number of race powers we have */
+    for (i = 0; i < PF_MAX; i++) {
+	if (player_race_has(i)) {
 	    spec_list[spec_known++] = abilities[i];
 	}
     }
 
     /* Standard racial flags */
-    if (!pf_is_empty(rp_ptr->flags_obj) || !pf_is_empty(rp_ptr->flags_curse)) 
+    if (!of_is_empty(rp_ptr->flags_obj) || !cf_is_empty(rp_ptr->flags_curse)) 
     {
 	spec_list[spec_known].index = PF_MAX;
 	spec_list[spec_known].name = "";
-	view_abilities_aux(spec_list[spec_known].desc);
+	spec_list[spec_known].desc = "";
+	view_abilities_aux(race_other_desc);
 	spec_list[spec_known++].type = PF_MAX;
-	//view_abilities_aux(race_other_desc);
     }
 
     /* View choices until user exits */

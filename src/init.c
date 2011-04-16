@@ -1948,6 +1948,11 @@ struct file_parser b_parser = {
 static enum parser_error parse_p_n(struct parser *p) {
     struct player_race *h = parser_priv(p);
     struct player_race *r = mem_zalloc(sizeof *r);
+    int i;
+
+    /* Initialise values */
+    for (i = 0; i < MAX_P_RES; i++)
+	r->percent_res[i] = RES_LEVEL_BASE;
 
     r->next = h;
     r->ridx = parser_getuint(p, "index");
