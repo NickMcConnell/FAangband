@@ -2144,8 +2144,8 @@ bool object_similar(const object_type * o_ptr, const object_type * j_ptr,
     default:
 	{
 	    /* Require knowledge */
-	    if (!object_known_p(o_ptr) || !object_known_p(j_ptr))
-		return (FALSE);
+	    //if (!object_known_p(o_ptr) || !object_known_p(j_ptr))
+	    //return (FALSE);
 
 	    /* Probably okay */
 	    break;

@@ -1454,6 +1454,10 @@ int rd_dungeon(u32b version)
     u16b tmp16u;
   
   
+    /* Only if the player's alive */
+    if (p_ptr->is_dead)
+	return 0;
+
     /*** Basic info ***/
   
     /* Hack - rewrite stage_map if necessary */
@@ -1808,6 +1812,10 @@ int rd_ghost(u32b version)
 {
     char buf[64];
   
+    /* Only if the player's alive */
+    if (p_ptr->is_dead)
+	return 0;	
+
     /* Strip name */
     rd_string(buf, 64);
   
