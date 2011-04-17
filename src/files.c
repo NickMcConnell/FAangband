@@ -1017,7 +1017,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	st_ptr = &store[which];
     }
 
-    dump_ptr = (char_attr *) & line[current_line];
+    dump_ptr = (char_attr *) &line[current_line];
 
     /* Hack - skip all this for mode 1 */
     if (mode != 1) {
@@ -1036,7 +1036,7 @@ extern int make_dump(char_attr_line * line, int mode)
 
 	current_line++;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 
 	/* Name, Sex, Race, Class */
 	dump_put_str(TERM_WHITE, "Name    : ", 1);
@@ -1059,7 +1059,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	    dump_put_str(TERM_L_GREEN, buf1, 61);
 	current_line++;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	dump_put_str(TERM_WHITE, "Sex     : ", 1);
 	dump_put_str(TERM_L_BLUE, sp_ptr->title, 11);
 	dump_put_str(TERM_WHITE, "Height", 27);
@@ -1080,7 +1080,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	    dump_put_str(TERM_L_GREEN, buf1, 61);
 	current_line++;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	dump_put_str(TERM_WHITE, "Race    : ", 1);
 	dump_put_str(TERM_L_BLUE, rp_ptr->name, 11);
 	dump_put_str(TERM_WHITE, "Weight", 27);
@@ -1101,7 +1101,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	    dump_put_str(TERM_L_GREEN, buf1, 61);
 	current_line++;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	dump_put_str(TERM_WHITE, "Class   : ", 1);
 	dump_put_str(TERM_L_BLUE, cp_ptr->name, 11);
 	dump_put_str(TERM_WHITE, "Social Class", 27);
@@ -1122,7 +1122,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	    dump_put_str(TERM_L_GREEN, buf1, 61);
 	current_line++;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	if (p_ptr->total_winner)
 	    dump_put_str(TERM_VIOLET, "***WINNER***", 0);
 	red = (p_ptr->stat_cur[4] < p_ptr->stat_max[4]);
@@ -1140,7 +1140,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	    dump_put_str(TERM_L_GREEN, buf1, 61);
 	current_line++;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	red = (p_ptr->stat_cur[5] < p_ptr->stat_max[5]);
 	value = p_ptr->state.stat_use[5];
 	cnv_stat(value, buf1, sizeof(buf1));
@@ -1170,7 +1170,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	if (if_has(o_ptr->id_other, IF_TO_D))
 	    show_a_todam += o_ptr->to_d;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	dump_num("Max Hit Points   ", p_ptr->mhp, 1, TERM_L_GREEN);
 	if (p_ptr->lev >= p_ptr->max_lev)
 	    dump_num("Level            ", (int) p_ptr->lev, 27, TERM_L_GREEN);
@@ -1179,7 +1179,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	dump_num("Max SP (Mana)    ", p_ptr->msp, 53, TERM_L_GREEN);
 	current_line++;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	if (p_ptr->chp >= p_ptr->mhp)
 	    dump_num("Cur Hit Points   ", p_ptr->chp, 1, TERM_L_GREEN);
 	else if (p_ptr->chp > (p_ptr->mhp * op_ptr->hitpoint_warn) / 10)
@@ -1198,11 +1198,11 @@ extern int make_dump(char_attr_line * line, int mode)
 	    dump_num("Cur SP (Mana)    ", p_ptr->csp, 53, TERM_RED);
 	current_line++;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	dump_lnum("Max Exp       ", p_ptr->max_exp, 27, TERM_L_GREEN);
 	current_line++;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	dump_put_str(TERM_WHITE, "(Fighting)", 8);
 	if (p_ptr->lev >= PY_MAX_LEVEL) {
 	    dump_put_str(TERM_WHITE, "Exp to Adv.   ", 27);
@@ -1213,14 +1213,14 @@ extern int make_dump(char_attr_line * line, int mode)
 	dump_put_str(TERM_WHITE, "(Shooting)", 60);
 	current_line++;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	dump_num("Blows/Round      ", p_ptr->state.num_blow, 1, TERM_L_BLUE);
 	dump_lnum("Gold          ", p_ptr->au, 27, TERM_L_GREEN);
 	dump_deci("Shots/Round    ", p_ptr->state.num_fire / 10, p_ptr->state.num_fire % 10,
 		  53, TERM_L_BLUE);
 	current_line++;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	dump_num("+ to Skill       ", show_m_tohit, 1, TERM_L_BLUE);
 	dump_put_str(TERM_WHITE, "Score", 27);
 	sprintf(buf1, "%12d", (int) p_ptr->score);
@@ -1228,7 +1228,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	dump_num("+ to Skill       ", show_a_tohit, 53, TERM_L_BLUE);
 	current_line++;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	/* Show damage per blow if no weapon wielded */
 	if (!p_ptr->inventory[INVEN_WIELD].k_idx) {
 	    int sum = 0;
@@ -1260,13 +1260,13 @@ extern int make_dump(char_attr_line * line, int mode)
 		     53, TERM_L_BLUE);
 
 	current_line++;
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	dump_put_str(TERM_WHITE, "Game Turn", 27);
 	sprintf(buf1, "%12d", (int) turn);
 	dump_put_str(TERM_L_GREEN, buf1, 38);
 	current_line += 2;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	dump_put_str(TERM_WHITE, "(Character Abilities)", 28);
 
 
@@ -1302,7 +1302,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	dump_put_str(likert_color, desc, 65);
 	current_line++;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	desc = likert(xthb, 10);
 	dump_put_str(TERM_WHITE, "Bows/Throw :", 1);
 	dump_put_str(likert_color, desc, 13);
@@ -1316,7 +1316,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	dump_put_str(likert_color, desc, 65);
 	current_line++;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	desc = likert(xsav, 7);
 	dump_put_str(TERM_WHITE, "SavingThrow:", 1);
 	dump_put_str(likert_color, desc, 13);
@@ -1332,14 +1332,13 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 
 
 	/* Display history */
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	dump_put_str(TERM_WHITE, "(Character Background)", 28);
 
-	for (i = 0; i < 4; i++) {
-	    current_line++;
-	    dump_ptr = (char_attr *) & line[current_line];
-	    dump_put_str(TERM_WHITE, p_ptr->history, 10);
-	}
+	current_line++;
+	dump_ptr = (char_attr *) &line[current_line];
+	text_out_dump(TERM_WHITE, p_ptr->history, &line, &current_line, 10, 60);
+	
 
 	/* End of mode 0 */
 	if (mode == 0)
@@ -1348,12 +1347,12 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 	current_line += 2;
 
 	/* Current, recent and recall points */
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	dump_put_str(TERM_WHITE, "[Recent locations]", 2);
 	current_line += 2;
 
 	/* Current, previous */
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	dump_put_str(TERM_WHITE, "Current Location :", 1);
 	sprintf(buf, "%s Level %d",
 		locality_name[stage_map[p_ptr->stage][LOCALITY]], p_ptr->depth);
@@ -1361,7 +1360,7 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 	current_line++;
 
 	if (p_ptr->last_stage != 0) {
-	    dump_ptr = (char_attr *) & line[current_line];
+	    dump_ptr = (char_attr *) &line[current_line];
 	    dump_put_str(TERM_WHITE, "Previous Location:", 1);
 	    sprintf(buf, "%s Level %d",
 		    locality_name[stage_map[p_ptr->last_stage][LOCALITY]],
@@ -1374,7 +1373,7 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 	for (i = 0; i < 4; i++) {
 	    if (p_ptr->recall[i] == 0)
 		continue;
-	    dump_ptr = (char_attr *) & line[current_line];
+	    dump_ptr = (char_attr *) &line[current_line];
 	    sprintf(buf, "Recall Point %d   :", i + 1);
 	    dump_put_str(TERM_WHITE, buf, 1);
 	    sprintf(buf, "%s Level %d",
@@ -1387,7 +1386,7 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 
 	/* Heading */
 	current_line++;
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	dump_put_str(TERM_WHITE, "[Resistances, Powers and Bonuses]", 2);
 	current_line += 2;
     }
@@ -1398,12 +1397,12 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 
 	/* Hack - clear all the lines */
 	for (i = 0; i < 25; i++) {
-	    dump_ptr = (char_attr *) & line[i];
+	    dump_ptr = (char_attr *) &line[i];
 	    dump_put_str(TERM_WHITE, "", 0);
 	}
     }
 
-    dump_ptr = (char_attr *) & line[current_line];
+    dump_ptr = (char_attr *) &line[current_line];
 
     /* Header */
     dump_put_str(TERM_WHITE, "abcdefghijkl@            abcdefghijkl@", 6);
@@ -1413,7 +1412,7 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
     get_player_resists(player_resists);
 
     for (y = 0; y < 7; y++) {
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 
 	for (x = 0; x < 2; x++) {
 	    int r = y + 7 * x;
@@ -1473,7 +1472,7 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
     /* Skip the gap for mode 1 */
     if (mode != 1) {
 	current_line++;
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 
 	/* Header */
 	dump_put_str(TERM_WHITE, "abcdefghijkl@            abcdefghijkl@", 6);
@@ -1485,7 +1484,7 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 	byte a = TERM_WHITE;
 	char c;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 
 	for (x = 0; x < 2; x++) {
 	    /* Extract flag */
@@ -1641,13 +1640,13 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 
 	/* Dump specialties if any */
 	if (p_ptr->specialty_order[0] != PF_NO_SPECIALTY) {
-	    dump_ptr = (char_attr *) & line[current_line];
+	    dump_ptr = (char_attr *) &line[current_line];
 	    dump_put_str(TERM_WHITE, "[Specialty Abilities]", 2);
 	    current_line += 2;
 
 	    for (i = 0; i < 10; i++) {
 		if (p_ptr->specialty_order[i] != PF_NO_SPECIALTY) {
-		    dump_ptr = (char_attr *) & line[current_line];
+		    dump_ptr = (char_attr *) &line[current_line];
 		    sprintf(buf, "%s %s",
 			    specialty_names[p_ptr->specialty_order[i]],
 			    (i >=
@@ -1659,12 +1658,12 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 	    current_line += 2;
 	}
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	dump_put_str(TERM_WHITE, "[Stat Breakdown]", 2);
 	current_line += 2;
     }
 
-    dump_ptr = (char_attr *) & line[current_line];
+    dump_ptr = (char_attr *) &line[current_line];
 
 
     /* Print out the labels for the columns */
@@ -1678,7 +1677,7 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 
     /* Display the stats */
     for (i = 0; i < A_MAX; i++) {
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 
 	/* Reduced name of stat */
 	dump_put_str(TERM_WHITE, stat_names_reduced[i], 0);
@@ -1769,14 +1768,14 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 
     /* If dead, dump last messages -- Prfnoff */
     if (p_ptr->is_dead) {
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	i = messages_num();
 	if (i > 15)
 	    i = 15;
 	dump_put_str(TERM_WHITE, "[Last Messages]", 2);
 	current_line += 2;
 	while (i-- > 0) {
-	    dump_ptr = (char_attr *) & line[current_line];
+	    dump_ptr = (char_attr *) &line[current_line];
 	    sprintf(buf, "> %s", message_str((s16b) i));
 	    dump_put_str(TERM_WHITE, buf, 0);
 	    current_line++;
@@ -1786,7 +1785,7 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 
     /* Dump the equipment */
     if (p_ptr->equip_cnt) {
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	dump_put_str(TERM_WHITE, "[Character Equipment]", 2);
 	current_line += 2;
 	for (i = INVEN_WIELD; i < ALL_INVEN_TOTAL; i++) {
@@ -1800,14 +1799,14 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 		}
 		if (!quiver_empty) {
 		    current_line++;
-		    dump_ptr = (char_attr *) & line[current_line];
+		    dump_ptr = (char_attr *) &line[current_line];
 		    dump_put_str(TERM_WHITE, "[Quiver]", 9);
 		    current_line++;
 		}
 	    }
 
 	    else {
-		dump_ptr = (char_attr *) & line[current_line];
+		dump_ptr = (char_attr *) &line[current_line];
 		object_desc(o_name, sizeof(o_name), 
 			    &p_ptr->inventory[i],
 			    ODESC_PREFIX | ODESC_FULL);
@@ -1822,14 +1821,14 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
     }
 
     /* Dump the inventory */
-    dump_ptr = (char_attr *) & line[current_line];
+    dump_ptr = (char_attr *) &line[current_line];
     dump_put_str(TERM_WHITE, "[Character Inventory]", 2);
     current_line += 2;
     for (i = 0; i < INVEN_PACK; i++) {
 	if (!p_ptr->inventory[i].k_idx)
 	    break;
 
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
 	object_desc(o_name, sizeof(o_name), &p_ptr->inventory[i + j + 1],
 		    ODESC_PREFIX | ODESC_FULL);
 	sprintf(buf, "%c%s %s", index_to_label(i), paren, o_name);
@@ -1842,7 +1841,7 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
     /* Dump the Home -- if anything there */
     if (have_home) {
 	if (st_ptr->stock_num) {
-	    dump_ptr = (char_attr *) & line[current_line];
+	    dump_ptr = (char_attr *) &line[current_line];
 
 	    /* Header */
 	    dump_put_str(TERM_WHITE, "[Home Inventory]", 2);
@@ -1850,7 +1849,7 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 
 	    /* Dump all available items */
 	    for (i = 0; i < st_ptr->stock_num; i++) {
-		dump_ptr = (char_attr *) & line[current_line];
+		dump_ptr = (char_attr *) &line[current_line];
 		object_desc(o_name, sizeof(o_name), &st_ptr->stock[i],
 			    ODESC_PREFIX | ODESC_FULL);
 		sprintf(buf, "%c) %s", I2A(i), o_name);
@@ -1864,27 +1863,27 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
     }
 
     /* Add in "character start" information */
-    dump_ptr = (char_attr *) & line[current_line];
+    dump_ptr = (char_attr *) &line[current_line];
     sprintf(buf, "%s the %s %s", op_ptr->full_name, rp_ptr->name, cp_ptr->name);
     dump_put_str(TERM_WHITE, buf, 0);
     current_line++;
-    dump_ptr = (char_attr *) & line[current_line];
+    dump_ptr = (char_attr *) &line[current_line];
     dump_put_str(TERM_WHITE, notes_start, 0);
     current_line++;
-    dump_ptr = (char_attr *) & line[current_line];
+    dump_ptr = (char_attr *) &line[current_line];
     dump_put_str(TERM_WHITE, "============================================================", 0);
     current_line++;
-    dump_ptr = (char_attr *) & line[current_line];
+    dump_ptr = (char_attr *) &line[current_line];
     dump_put_str(TERM_WHITE, "CHAR.", 34);
     current_line++;
-    dump_ptr = (char_attr *) & line[current_line];
+    dump_ptr = (char_attr *) &line[current_line];
     dump_put_str(TERM_WHITE, "|   TURN  |      LOCATION        |LEVEL| EVENT",
 		 0);
     current_line++;
-    dump_ptr = (char_attr *) & line[current_line];
+    dump_ptr = (char_attr *) &line[current_line];
     dump_put_str(TERM_WHITE, "============================================================", 0);
     current_line++;
-    dump_ptr = (char_attr *) & line[current_line];
+    dump_ptr = (char_attr *) &line[current_line];
 
     /* Dump notes */
     dump_history(line, &current_line, &dead);
@@ -1892,7 +1891,7 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 		 "============================================================",
 		 0);
     current_line++;
-    dump_ptr = (char_attr *) & line[current_line];
+    dump_ptr = (char_attr *) &line[current_line];
 
     /* Fake note */
     if (!dead) {
@@ -1921,25 +1920,25 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 	dump_put_str(TERM_VIOLET, "Still alive", strlen(info_note));
 
 	current_line++;
-	dump_ptr = (char_attr *) & line[current_line];
+	dump_ptr = (char_attr *) &line[current_line];
     }
     dump_put_str(TERM_WHITE,
 		 "============================================================",
 		 0);
     current_line++;
-    dump_ptr = (char_attr *) & line[current_line];
+    dump_ptr = (char_attr *) &line[current_line];
 
 
     /* Dump options */
     current_line++;
-    dump_ptr = (char_attr *) & line[current_line];
+    dump_ptr = (char_attr *) &line[current_line];
     dump_put_str(TERM_WHITE, "[Options]", 2);
     current_line += 2;
 
     /* Dump options */
     for (i = OPT_ADULT + 4; i < OPT_SCORE; i++) {
 	if (option_desc(i)) {
-	    dump_ptr = (char_attr *) & line[current_line];
+	    dump_ptr = (char_attr *) &line[current_line];
 	    sprintf(buf, "%-49s: %s (%s)", option_desc(i),
 		    op_ptr->opt[i] ? "yes" : "no ", option_name(i));
 	    dump_put_str(TERM_WHITE, buf, 0);
@@ -1949,7 +1948,7 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 
     for (i = OPT_SCORE; i < OPT_MAX; i++) {
 	if (option_desc(i)) {
-	    dump_ptr = (char_attr *) & line[current_line];
+	    dump_ptr = (char_attr *) &line[current_line];
 	    sprintf(buf, "%-49s: %s (%s)", option_desc(i),
 		    op_ptr->opt[i] ? "yes" : "no ", option_name(i));
 	    dump_put_str(TERM_WHITE, buf, 0);
@@ -1978,7 +1977,7 @@ void display_dump(char_attr_line * line, int top_line, int bottom_line, int col)
 
     /* Dump the lines */
     for (i = top_line; i < bottom_line; i++) {
-	shifted_line = (char_attr *) & line[i];
+	shifted_line = (char_attr *) &line[i];
 	shifted_line += col;
 	dump_line(shifted_line);
     }
@@ -2033,7 +2032,7 @@ errr file_character(cptr name, char_attr_line * line, int last_line)
 
     /* Dump the lines */
     for (i = 0; i < last_line; i++) {
-	dump_ptr = (char_attr *) & line[i];
+	dump_ptr = (char_attr *) &line[i];
 	dump_line(dump_ptr);
     }
 

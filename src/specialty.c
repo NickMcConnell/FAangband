@@ -95,7 +95,6 @@ static char gain_spec_tag(menu_type * menu, int oid)
 void gain_spec_display(menu_type * menu, int oid, bool cursor, int row, int col,
 		       int width)
 {
-    //const int *choices = menu->menu_data;
     struct spec_menu_data *d = menu_priv(menu);
     int idx = d->specialties[oid];
     int x, y;
@@ -105,19 +104,6 @@ void gain_spec_display(menu_type * menu, int oid, bool cursor, int row, int col,
     /* Print it */
     c_put_str(attr, abilities[idx].name, row, col);
 
-    /* Help text */
-    //if (cursor) {
-	/* Locate the cursor */
-//	Term_locate(&x, &y);
-
-	/* Move the cursor */
-//	Term_gotoxy(3, menu->count + 2);
-//	text_out_indent = 3;
-//	text_out_to_screen(TERM_L_BLUE, abilities[choices[oid]].desc);
-
-	/* Restore */
-//	Term_gotoxy(x, y);
-    //  }
 }
 
 /**
@@ -130,8 +116,6 @@ bool gain_spec_action(menu_type * menu, const ui_event_data * e, int oid)
     if (oid) i = oid;
 
     if (e->type == EVT_SELECT)
-	//if ((e->type == EVT_SELECT) || ((e->type == EVT_KBRD) && 
-	//			    (strchr(menu->cmd_keys, e->key))))
     {
 	d->selected_spec = d->specialties[i];
 	return FALSE;
@@ -147,25 +131,21 @@ bool gain_spec_action(menu_type * menu, const ui_event_data * e, int oid)
 static void  gain_spec_menu_browser(int oid, void *data, const region *loc)
 {
     struct spec_menu_data *d = data;
-    //int *choices = data;
-	//int spell = d->spells[oid];
-
-	/* Redirect output to the screen */
-	text_out_hook = text_out_to_screen;
-	text_out_wrap = 0;
-	text_out_indent = loc->col - 1;
-	text_out_pad = 1;
-
-	//screen_load();
-	//screen_save();
-
-        clear_from(loc->row + loc->page_rows);
-	Term_gotoxy(loc->col, loc->row + loc->page_rows);
-	text_out_to_screen(TERM_L_BLUE, abilities[d->specialties[oid]].desc);
-
-	/* XXX */
-	text_out_pad = 0;
-	text_out_indent = 0;
+    
+    /* Redirect output to the screen */
+    text_out_hook = text_out_to_screen;
+    text_out_wrap = 0;
+    text_out_indent = loc->col - 1;
+    text_out_pad = 1;
+    
+    
+    clear_from(loc->row + loc->page_rows);
+    Term_gotoxy(loc->col, loc->row + loc->page_rows);
+    text_out_to_screen(TERM_L_BLUE, abilities[d->specialties[oid]].desc);
+    
+    /* XXX */
+    text_out_pad = 0;
+    text_out_indent = 0;
 }
 
 /**
@@ -175,8 +155,7 @@ bool gain_spec_menu(int *pick)
 {
     menu_type menu;
     menu_iter menu_f = { gain_spec_tag, 0, gain_spec_display,
-	gain_spec_action, 0
-    };
+			 gain_spec_action, 0 };
     ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
     struct spec_menu_data *d = mem_alloc(sizeof *d);
     int cursor = 0;
@@ -184,7 +163,6 @@ bool gain_spec_menu(int *pick)
     region loc = { 0, 0, 70, -99 };
 
     int choices[255];
-    //int num = 0;
     bool done = FALSE;
 
     size_t i;
@@ -219,8 +197,6 @@ bool gain_spec_menu(int *pick)
     /* Set up the menu */
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
     menu.title = buf;
-    //menu.cmd_keys = " \n\r";
-    //menu_setpriv(&menu, num, choices);
     menu_setpriv(&menu, d->spec_known, d);
     loc.page_rows = d->spec_known + 2;
     menu.browse_hook = gain_spec_menu_browser;
@@ -230,7 +206,6 @@ bool gain_spec_menu(int *pick)
 
     while (!done) {
 	evt = menu_select(&menu, EVT_SELECT);
-	//evt = menu_select(&menu, cursor);
 	done = (evt.type == EVT_ESCAPE);
 	if (!done && (d->selected_spec))
 	    done = get_check("Are you sure? ");
@@ -727,8 +702,6 @@ static void view_abilities_aux(char *desc)
 	my_strcat(desc, ".", max);
     }
 
-    //return (desc);
-
 }
 
 static char view_spec_tag(menu_type *menu, int oid)
@@ -777,22 +750,6 @@ void view_spec_display(menu_type *menu, int oid, bool cursor, int row, int col,
     /* Print it */
     c_put_str(color, buf, row, col);
 
-    /* Help text */
-    //if (cursor) {
-	/* Locate the cursor */
-	//Term_locate(&x, &y);
-
-	/* Move the cursor */
-	//Term_gotoxy(3, menu->count + 2);
-	//text_out_indent = 3;
-	//if (choices[oid].index == PF_MAX)
-    //text_out_to_screen(TERM_L_BLUE, race_other_desc);
-    //else
-//	    text_out_to_screen(TERM_L_BLUE, (char *)choices[oid].desc);
-
-	/* Restore */
-//	Term_gotoxy(x, y);
-    //  }
 }
 
 
@@ -802,7 +759,6 @@ void view_spec_display(menu_type *menu, int oid, bool cursor, int row, int col,
 static void view_spec_menu_browser(int oid, void *data, const region *loc)
 {
 	ability *choices = data;
-	//int spell = d->spells[oid];
 
 	/* Redirect output to the screen */
 	text_out_hook = text_out_to_screen;
@@ -810,12 +766,6 @@ static void view_spec_menu_browser(int oid, void *data, const region *loc)
 	text_out_indent = loc->col - 1;
 	text_out_pad = 1;
 
-	//screen_load();
-	//region_erase_bordered(&loc);
-	//screen_save();
-
-	//Term_gotoxy(loc->col, loc->row + loc->page_rows - 1);
-	//text_out_to_screen(TERM_WHITE, "                                                         ");
 	clear_from(loc->row + loc->page_rows);
 	Term_gotoxy(loc->col, loc->row + loc->page_rows);
 	if (choices[oid].index == PF_MAX)
@@ -852,7 +802,6 @@ void view_spec_menu(void)
     /* Set up the menu */
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
     menu.header = buf;
-    //menu.count = spec_known;
     menu_setpriv(&menu, spec_known, spec_list);
     loc.page_rows = spec_known + 1;
     menu.flags = MN_DBL_TAP;
@@ -860,11 +809,7 @@ void view_spec_menu(void)
     region_erase_bordered(&loc);
     menu_layout(&menu, &loc);
 
-    //while (!done) {
-    //evt = menu_select(&menu, 0);
     menu_select(&menu, 0);
-//	done = (evt.type == EVT_ESCAPE);
-    //  }
 
     /* Load screen */
     screen_load();

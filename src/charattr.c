@@ -1,20 +1,20 @@
 /** \file charattr.c 
     \brief New character dump display
 
- * Copyright (c) 2009 Nick McConnell, Andi Sidwell, 
- * Ben Harrison, James E. Wilson, Robert A. Koeneke
- *
- * This work is free software; you can redistribute it and/or modify it
- * under the terms of either:
- *
- * a) the GNU General Public License as published by the Free Software
- *    Foundation, version 2, or
- *
- * b) the "Angband licence":
- *    This software may be copied and distributed for educational, research,
- *    and not for profit purposes provided that this copyright and statement
- *    are included in all such copies.  Other copyrights may also apply.
- */
+    * Copyright (c) 2009 Nick McConnell, Andi Sidwell, 
+    * Ben Harrison, James E. Wilson, Robert A. Koeneke
+    *
+    * This work is free software; you can redistribute it and/or modify it
+    * under the terms of either:
+    *
+    * a) the GNU General Public License as published by the Free Software
+    *    Foundation, version 2, or
+    *
+    * b) the "Angband licence":
+    *    This software may be copied and distributed for educational, research,
+    *    and not for profit purposes provided that this copyright and statement
+    *    are included in all such copies.  Other copyrights may also apply.
+    */
 
 #include "angband.h"
 #include "cmds.h"
@@ -222,3 +222,162 @@ void dump_line(char_attr *this_line)
 
 
 
+/**
+ * Convert an input from tenths of a pound to tenths of a kilogram. -LM-
+ */
+int make_metric(int wgt)
+{
+    int metric_wgt;
+  
+    /* Convert to metric values, using normal rounding. */
+    metric_wgt = wgt * 10 / 22;
+    if ((wgt * 10) % 22 > 10) metric_wgt++;
+  
+    return metric_wgt;
+}
+
+/*
+ * Write text to the given file and apply line-wrapping.
+ *
+ * Hook function for text_out(). Make sure that text_out_file points
+ * to an open text-file.
+ *
+ * Long lines will be wrapped at text_out_wrap, or at column 75 if that
+ * is not set; or at a newline character.  Note that punctuation can
+ * sometimes be placed one column beyond the wrap limit.
+ *
+ * You must be careful to end all file output with a newline character
+ * to "flush" the stored line position.
+ */
+void text_out_dump(byte a, char *str, char_attr_line **line, int *current_line, 
+		   int indent, int wrap)
+{
+    cptr s;
+    char buf[1024];
+
+    /* Current position on the line */
+    int pos = 0;
+
+    /* We use either ascii or system-specific encoding */
+    int encoding = OPT(xchars_to_file) ? SYSTEM_SPECIFIC : ASCII;
+
+    char_attr_line *lline = *line;
+
+    /* Copy to a rewriteable string */
+    my_strcpy(buf, str, 1024);
+
+    /* Translate it to 7-bit ASCII or system-specific format */
+    xstr_trans(buf, encoding);
+
+    /* Current location within "buf" */
+    s = buf;
+
+    /* Process the string */
+    while (*s)
+    {
+	char ch;
+	int n = 0;
+	int len = wrap - pos;
+	int l_space = -1;
+
+	/* If we are at the start of the line... */
+	if (pos == 0)
+	{
+	    int i;
+
+	    /* Output the indent */
+	    for (i = 0; i < indent; i++)
+	    {
+		//file_writec(text_out_file, ' ');
+		dump_put_str(TERM_WHITE, " ", pos);
+		pos++;
+	    }
+	}
+
+	/* Find length of line up to next newline or end-of-string */
+	while ((n < len) && !((s[n] == '\n') || (s[n] == '\0')))
+	{
+	    /* Mark the most recent space in the string */
+	    if (s[n] == ' ') l_space = n;
+
+	    /* Increment */
+	    n++;
+	}
+
+	/* If we have encountered no spaces */
+	if ((l_space == -1) && (n == len))
+	{
+	    /* If we are at the start of a new line */
+	    if (pos == indent)
+	    {
+		len = n;
+	    }
+	    /* HACK - Output punctuation at the end of the line */
+	    else if ((s[0] == ' ') || (s[0] == ',') || (s[0] == '.'))
+	    {
+		len = 1;
+	    }
+	    else
+	    {
+		/* Begin a new line */
+		(*current_line)++;
+		dump_ptr = (char_attr *) &lline[*current_line];
+		//file_writec(text_out_file, '\n');
+
+		/* Reset */
+		pos = 0;
+
+		continue;
+	    }
+	}
+	else
+	{
+	    /* Wrap at the newline */
+	    if ((s[n] == '\n') || (s[n] == '\0')) len = n;
+
+	    /* Wrap at the last space */
+	    else len = l_space;
+	}
+
+	/* Write that line to dump */
+	for (n = 0; n < len; n++)
+	{
+	    /* Ensure the character is printable */
+	    ch = (my_isprint((unsigned char) s[n]) ? s[n] : ' ');
+
+	    /* Write out the character */
+	    //file_writec(text_out_file, ch);
+	    dump_put_str(a, format("%c",ch), pos);
+
+	    /* Increment */
+	    pos++;
+	}
+
+	/* Move 's' past the stuff we've written */
+	s += len;
+
+	/* Begin a new line */
+	(*current_line)++;
+	dump_ptr = (char_attr *) &lline[*current_line];
+		
+
+	/* If we are at the end of the string, end */
+	if (*s == '\0') 
+	    return;
+		
+	/* Begin a new line */
+	if (*s == '\n') {
+	    (*current_line)++;
+	    dump_ptr = (char_attr *) &lline[*current_line];
+	}
+
+	/* Reset */
+	pos = 0;
+
+	/* Skip whitespace */
+	while (*s == ' ') s++;
+    }
+
+    /* We are done */
+    return;
+}
