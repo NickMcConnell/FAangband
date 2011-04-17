@@ -1761,10 +1761,11 @@ textblock *object_info_ego(struct ego_item *ego)
 /**
  * Provide information on an item suitable for writing to the character dump - keep it brief.
  */
-void object_info_chardump(ang_file *f, const object_type *o_ptr, int indent, int wrap)
+void object_info_chardump(const object_type *o_ptr, char_attr_line **line, 
+			  int *current_line, int indent, int wrap)
 {
 	textblock *tb = object_info_out(o_ptr, OINFO_TERSE | OINFO_SUBJ);
-	textblock_to_file(tb, f, indent, wrap);
+	textblock_dump(tb, line, current_line, indent, wrap);
 	textblock_free(tb);
 }
 

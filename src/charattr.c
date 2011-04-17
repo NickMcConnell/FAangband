@@ -381,3 +381,31 @@ void text_out_dump(byte a, char *str, char_attr_line **line, int *current_line,
     /* We are done */
     return;
 }
+
+void textblock_dump(textblock *tb, char_attr_line **line, int *current_line, 
+		   int indent, int wrap)
+{
+    const char *text = textblock_text(tb);
+    const byte *attrs = textblock_attrs(tb);
+    
+    size_t *line_starts = NULL, *line_lengths = NULL;
+    size_t n_lines;
+    
+    char_attr_line *lline = *line;
+
+    int i,j;
+
+    n_lines = textblock_calculate_lines(tb, &line_starts, &line_lengths, 
+					wrap - indent);
+    
+    for (i = 0; i < n_lines; i++) {
+	for (j = 0; j < line_lengths[i]; j++) {
+	    dump_put_str(attrs[line_starts[i] + j], 
+			 format("%c",text[line_starts[i] + j]),
+			 j + indent);
+	}
+	(*current_line)++;
+	dump_ptr = (char_attr *) &lline[*current_line];
+    }
+    
+}

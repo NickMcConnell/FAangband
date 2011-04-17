@@ -1815,6 +1815,10 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 		sprintf(buf, "%c%s %s", index_to_label(i), paren, o_name);
 		dump_put_str(proc_list_color_hack(&p_ptr->inventory[i]), buf, 0);
 		current_line++;
+	dump_ptr = (char_attr *) &line[current_line];
+	object_info_chardump(&p_ptr->inventory[i], &line, &current_line, 5, 75);
+	current_line++;
+
 	    }
 	}
 	current_line += 2;
@@ -1829,10 +1833,13 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 	    break;
 
 	dump_ptr = (char_attr *) &line[current_line];
-	object_desc(o_name, sizeof(o_name), &p_ptr->inventory[i + j + 1],
+	object_desc(o_name, sizeof(o_name), &p_ptr->inventory[i],
 		    ODESC_PREFIX | ODESC_FULL);
 	sprintf(buf, "%c%s %s", index_to_label(i), paren, o_name);
 	dump_put_str(proc_list_color_hack(&p_ptr->inventory[i]), buf, 0);
+	current_line++;
+	dump_ptr = (char_attr *) &line[current_line];
+	object_info_chardump(&p_ptr->inventory[i], &line, &current_line, 5, 75);
 	current_line++;
 
     }
@@ -1854,6 +1861,9 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 			    ODESC_PREFIX | ODESC_FULL);
 		sprintf(buf, "%c) %s", I2A(i), o_name);
 		dump_put_str(proc_list_color_hack(&st_ptr->stock[i]), buf, 0);
+		current_line++;
+		dump_ptr = (char_attr *) &line[current_line];
+		object_info_chardump(&st_ptr->stock[i], &line, &current_line, 5, 75);
 		current_line++;
 	    }
 

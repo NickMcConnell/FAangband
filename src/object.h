@@ -122,7 +122,8 @@ size_t object_desc(char *buf, size_t max, const object_type *o_ptr, odesc_detail
 textblock *object_info(const object_type *o_ptr, oinfo_detail_t mode);
 textblock *object_info_ego(struct ego_item *ego);
 void object_info_spoil(ang_file *f, const object_type *o_ptr, int wrap);
-void object_info_chardump(ang_file *f, const object_type *o_ptr, int indent, int wrap);
+void object_info_chardump(const object_type *o_ptr, char_attr_line **line, 
+			  int *current_line, int indent, int wrap);
 
 /* obj-make.c */
 s16b get_obj_num(int level);

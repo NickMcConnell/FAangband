@@ -251,6 +251,8 @@ extern char_attr_line *pline0;
 extern char_attr_line *pline1;
 void text_out_dump(byte a, char *str, char_attr_line **line, 
 		   int *current_line, int indent, int wrap);
+void textblock_dump(textblock *tb, char_attr_line **line, int *current_line, 
+		    int indent, int wrap);
 extern char themed_feeling[80];
 extern byte required_tval;
 extern byte bones_selector;
