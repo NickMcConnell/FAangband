@@ -663,7 +663,7 @@ static size_t obj_desc_light(const object_type * o_ptr, char *buf, size_t max,
 {
     /* Fuelled light sources get number of remaining turns appended */
     if ((o_ptr->tval == TV_LIGHT) && !artifact_p(o_ptr))
-	strnfcat(buf, max, &end, " (%d turns)", o_ptr->timeout);
+	strnfcat(buf, max, &end, " (%d turns)", o_ptr->pval);
 
     return end;
 }

@@ -24,12 +24,16 @@
 #include "ui-menu.h"
 
 /* Variables for item display and selection */
+struct object_menu_data {
+    char label[80];
+    object_type *object;
+    int index;
+};
+
 int i1, i2;
 int e1, e2;
 int f1, f2;
-char labels[50][80];
-object_type *objects[50];
-int indices[50];
+struct object_menu_data items[50];
 int num_obj;
 static bool show_list;
 static olist_detail_t olist_mode = 0;
@@ -154,9 +158,9 @@ static void build_obj_list(int first, int last, const int *floor_list,
     /* Clear the existing contents */
     for (i = 0; i < 50; i++)
     {
-	objects[i] = NULL;
-	indices[i] = 0;
-	my_strcpy(labels[i], "", sizeof(labels[i]));
+	items[i].object = NULL;
+	items[i].index = 0;
+	my_strcpy(items[i].label, "", sizeof(items[i].label));
     }
 
     /* Leave top line clear for inventory subwindow */
@@ -186,8 +190,8 @@ static void build_obj_list(int first, int last, const int *floor_list,
 	    /* Add a spacer between equipment and quiver */
 	    if (num_obj > 0 && need_spacer)
 	    {
-		my_strcpy(labels[num_obj], "", sizeof(labels[num_obj]));
-		objects[num_obj] = NULL;
+		my_strcpy(items[num_obj].label, "", sizeof(items[num_obj].label));
+		items[num_obj].object = NULL;
 		num_obj++;
 	    }
 
@@ -199,12 +203,13 @@ static void build_obj_list(int first, int last, const int *floor_list,
 	 */
 	if (((o_ptr->tval == TV_GOLD) && (mode & OLIST_GOLD)) ||
 	    item_tester_okay(o_ptr)) 
-	    strnfmt(labels[num_obj], sizeof(labels[num_obj]), "%c) ", 
+	    strnfmt(items[num_obj].label, sizeof(items[num_obj].label), "%c) ", 
 		    index_to_label(i));
 		
 	/* Unacceptable carried items are still displayed in term windows */
 	else if ((in_term) && (!floor_list))
-	    my_strcpy(labels[num_obj], "   ", sizeof(labels[num_obj]));
+	    my_strcpy(items[num_obj].label, "   ", 
+		      sizeof(items[num_obj].label));
 
 	/* Unacceptable items are skipped in the main window */
 	else continue;
@@ -217,20 +222,22 @@ static void build_obj_list(int first, int last, const int *floor_list,
 	    if (OPT(show_labels) && first)
 	    {
 		strnfmt(tmp_val, sizeof(tmp_val), "%-14s: ", mention_use(i));
-		my_strcat(labels[num_obj], tmp_val, sizeof(labels[num_obj]));
+		my_strcat(items[num_obj].label, tmp_val, 
+			  sizeof(items[num_obj].label));
 	    }
 
 	    /* Otherwise only show short quiver labels */
 	    else if (i >= QUIVER_START)
 	    {
 		strnfmt(tmp_val, sizeof(tmp_val), "[f%d]: ", i - QUIVER_START);
-		my_strcat(labels[num_obj], tmp_val, sizeof(labels[num_obj]));
+		my_strcat(items[num_obj].label, tmp_val, 
+			  sizeof(items[num_obj].label));
 	    }
 	}
 
 	/* Save the object */
-	objects[num_obj] = o_ptr;
-	indices[num_obj] = i;
+	items[num_obj].object = o_ptr;
+	items[num_obj].index = i;
 	num_obj++;
     }
 }
@@ -246,7 +253,7 @@ static void get_max_len(size_t *max_len)
 
     /* Calculate name offset and max name length */
     for (i = 0; i < num_obj; i++) {
-	o_ptr = objects[i];
+	o_ptr = items[i].object;
 
 	/* Null objects are used to skip lines, or display only a label */
 	if (o_ptr == NULL)
@@ -254,7 +261,7 @@ static void get_max_len(size_t *max_len)
 
 	/* Max length of label + object name */
 	object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
-	*max_len = MAX(*max_len, strlen(labels[i]) + strlen(o_name));
+	*max_len = MAX(*max_len, strlen(items[i].label) + strlen(o_name) + 10);
     }
 }
 
@@ -308,10 +315,10 @@ static void show_obj_list(int num_obj, olist_detail_t mode)
 
     /* Output the list */
     for (i = 0; i < num_obj; i++) {
-	o_ptr = objects[i];
+	o_ptr = items[i].object;
 
 	/* Display each line */
-	show_obj(i, max_len, labels[i], o_ptr, mode);
+	show_obj(i, max_len, items[i].label, o_ptr, mode);
     }
 
     /* For the inventory: print the quiver count */
@@ -372,12 +379,12 @@ void show_inven(olist_detail_t mode)
 
     /* Include burden for term windows */
     if (in_term) {
-	strnfmt(labels[0], sizeof(labels[0]),
+	strnfmt(items[0].label, sizeof(items[0].label),
 		"Burden %d.%d lb (%d.%d lb %s) ", p_ptr->total_weight / 10,
 		p_ptr->total_weight % 10, abs(diff) / 10, abs(diff) % 10,
 		(diff < 0 ? "overweight" : "remaining"));
 
-	objects[0] = NULL;
+	items[0].object = NULL;
     }
 
     /* Find the last occupied inventory slot */
@@ -741,10 +748,10 @@ void item_prompt(int mode, cptr pmt)
 void get_item_display(menu_type *menu, int oid, bool cursor, int row, int col,
 		      int width)
 {
-    const object_type **choice = menu->menu_data;
+    struct object_menu_data *choice = menu_priv(menu);
     size_t max_len = 0;
 
-    const object_type *o_ptr = choice[oid];
+    const object_type *o_ptr = choice[oid].object;
 
     int curs_col, ex_width = 0;
 
@@ -768,7 +775,7 @@ void get_item_display(menu_type *menu, int oid, bool cursor, int row, int col,
     get_max_len(&max_len);
 
     /* Print it */
-    show_obj(oid, max_len, labels[oid], o_ptr, olist_mode);
+    show_obj(oid, max_len, items[oid].label, o_ptr, olist_mode);
 
     /* Print cursor */
     if (cursor)
@@ -818,6 +825,7 @@ bool item_menu(int *cp, cptr pmt, cmd_code cmd, int mode, bool *oops)
 
     int floor_list[MAX_FLOOR_STACK];
     int floor_num;
+    struct object_menu_data *tmp;
 
 
     /* Object list display modes */
@@ -963,13 +971,15 @@ bool item_menu(int *cp, cptr pmt, cmd_code cmd, int mode, bool *oops)
 
     /* Set up the menu */
     WIPE(&menu, menu);
+    menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
     menu.cmd_keys = "\n\r";
-    menu.menu_data = indices;
-    menu.count = show_list ? num_obj : 0;
+    //menu.menu_data = &items[1];
+    menu_setpriv(&menu, show_list ? num_obj - 1: 0, &items[1]);
+    //menu.count = show_list ? num_obj - 1: 0;
     get_max_len(&max_len);
     area.page_rows = menu.count + 1;
     area.width = max_len;
-    menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+    menu_layout(&menu, &area);
 
 
     /* Repeat until done */
@@ -1053,11 +1063,11 @@ bool item_menu(int *cp, cptr pmt, cmd_code cmd, int mode, bool *oops)
 
 	case EVT_SELECT:
 	{
-	    int *tmp = (int *) menu.menu_data;
+	    tmp = (struct object_menu_data *) menu.menu_data;
 	    if (p_ptr->command_wrk == (USE_FLOOR))
-		k = 0 - tmp[which.index];
+		k = 0 - tmp[which.index].index;
 	    else
-		k = tmp[which.index];
+		k = tmp[which.index].index;
 
 	    /* Paranoia */
 	    if (!get_item_okay(k))
