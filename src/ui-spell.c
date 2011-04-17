@@ -382,7 +382,7 @@ void textui_obj_cast(void)
     int item;
     int spell;
 
-    cptr verb;
+    cptr verb = magic_desc[mp_ptr->spell_realm][SPELL_VERB];
     char q[80];
     char s[80];
 
