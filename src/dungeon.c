@@ -1924,7 +1924,7 @@ static void dungeon(void)
 
 
     /* No stairs from town or if not allowed */
-    if (!p_ptr->depth || OPT(adult_no_stairs)) {
+    if (p_ptr->depth && OPT(adult_no_stairs)) {
 	p_ptr->create_stair = 0;
     }
 

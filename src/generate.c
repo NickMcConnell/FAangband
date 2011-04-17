@@ -1170,7 +1170,7 @@ static void new_player_spot(void)
 		continue;
 
 	    /* If character starts on stairs, ... */
-	    if (!OPT(adult_no_stairs)) {
+	    if (!OPT(adult_no_stairs) || !p_ptr->depth) {
 		/* Accept stairs going the right way or floors. */
 		if (p_ptr->create_stair) {
 		    /* Accept correct stairs */
