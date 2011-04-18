@@ -2458,13 +2458,13 @@ bool cast_spell(int tval, int index, int dir)
 	    msg_print("Undefined Spell");
 	    break;
 	}
-
-
-	/* Alter shape, if necessary. */
-	if (shape)
-	    shapechange(shape);
-
-	/* Success */
-	return (TRUE);
     }
+
+    /* Alter shape, if necessary. */
+    if (shape)
+	shapechange(shape);
+    
+    /* Success */
+    return (TRUE);
+    
 }

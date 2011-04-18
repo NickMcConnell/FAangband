@@ -212,6 +212,7 @@ static struct generic_command cmd_hidden[] =
   { "Jump (into a trap)",              '-', CMD_JUMP, NULL, NULL },
   { "Display inventory for selection", '|', CMD_NULL, do_cmd_show_obj, NULL },
   { "Toggle wizard mode",        KTRL('W'), CMD_NULL, do_cmd_wizard, NULL },
+  { "Repeat previous command",  KTRL('V'), CMD_REPEAT, NULL, NULL },
 
 #ifdef ALLOW_DEBUG
   { "Debug mode commands",       KTRL('A'), CMD_NULL, do_cmd_try_debug, NULL },
