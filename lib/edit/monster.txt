@@ -520,7 +520,7 @@ F:ANIMAL | TERRITORIAL
 D:An armoured lizard with a powerful bite.
 
 N:49:Cave spider
-G:S:D
+G:S:p
 I:120:2d4:8:14:80
 W:2:2:0:4
 B:BITE:HURT:1d4
@@ -706,7 +706,7 @@ F:NO_CONF | NO_SLEEP | NO_FEAR
 D:Yum!  It looks quite tasty.
 
 N:67:Green ooze
-G:j:g1
+G:j:t
 I:120:3d3:8:12:80
 W:3:2:0:3
 B:CRAWL:ACID:1d3
@@ -922,7 +922,7 @@ F:EMPTY_MIND
 D:A smallish, slimy, icky, nasty creature.
 
 N:88:Blue ooze
-G:j:b1
+G:j:Z
 I:110:2d5:8:11:80
 W:5:1:0:7
 B:CRAWL:COLD:1d4
@@ -1067,7 +1067,7 @@ F:ANIMAL
 D:It screeches as it attacks.
 
 N:102:Night lizard
-G:R:D
+G:R:b
 I:110:4d8:14:16:50
 W:6:2:0:18
 B:BITE:HURT:1d6
@@ -1109,7 +1109,7 @@ F:NO_CONF | NO_SLEEP | NO_FEAR
 D:A strange brown growth on the ground.
 
 N:106:Purple mushroom patch
-G:,:v
+G:,:P
 I:110:1d1:2:1:0
 W:6:2:0:18
 B:SPORE:LOSE_CON:1d2
@@ -1182,7 +1182,7 @@ S:HEAL | SCARE | WOUND
 D:He may be tripping over his priestly robes, but he has friends.
 
 N:113:Giant pink ant
-G:a:R
+G:a:I
 I:110:3d7:12:13:40
 W:7:2:0:22
 B:BITE:HURT:1d4
@@ -1204,7 +1204,7 @@ D:A crook-beaked bird with bedraggled black feathers.  It mocks you, and you
 D:realise that its scorn can kill.
 
 N:115:Giant pink frog
-G:R:R
+G:R:I
 I:110:3d9:12:16:50
 W:7:1:0:16
 B:BITE:LOSE_STR:2d4
@@ -1235,7 +1235,7 @@ F:IM_ACID
 D:A smallish, slimy, icky, acidic creature.
 
 N:118:Pink jelly
-G:j:R
+G:j:I
 I:110:20d8:2:4:99
 W:7:1:0:26
 B:TOUCH:LOSE_STR:1d5
@@ -1258,7 +1258,7 @@ S:DRAIN_MANA
 D:A disembodied eye, crackling with magic.
 
 N:120:Pink naga
-G:n:R
+G:n:I
 I:110:8d8:20:28:120
 W:7:1:0:34
 B:CRUSH:HURT:1d10
@@ -1512,7 +1512,7 @@ S:DRAIN_MANA
 D:A strange, slimy, icky creature.
 
 N:143:Yeti
-G:Y:b
+G:Y:w
 I:110:10d12:20:24:10
 W:9:3:0:26
 B:CLAW:HURT:1d3
@@ -1574,7 +1574,7 @@ I:110:1d1:0:0:0
 W:0:0:0:0
 
 N:152:Petty-Dwarven Rogue
-G:h:b1
+G:h:Z
 I:120:6d9:20:20:2
 W:10:2:38:23
 B:HIT:EAT_GOLD:1d3
@@ -1902,7 +1902,7 @@ D:A large and muscled wolf from the northern wastes.  Its breath is cold and
 D:icy and its fur coated in frost.
 
 N:183:Grape jelly
-G:j:v
+G:j:P
 I:110:8d37:2:1:99
 W:12:3:0:60
 B:TOUCH:EXP_10
@@ -2071,7 +2071,7 @@ D:A strange, slimy, icky creature, with rudimentary intelligence,
 D:but evil cunning.  It hungers for food, and you look tasty.
 
 N:200:Water spirit
-G:E:s
+G:E:b
 I:120:8d9:12:15:40
 W:14:1:0:30
 B:HIT:HURT:2d4
