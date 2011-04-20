@@ -10165,6 +10165,51 @@ static void town_gen(void)
 
 
 /**
+ * Clear the dungeon, ready for generation to begin.
+ */
+static void clear_cave(void)
+{
+	int x, y;
+
+	wipe_o_list();
+	wipe_m_list();
+
+	/* Clear flags and flow information. */
+	for (y = 0; y < DUNGEON_HGT; y++)
+	{
+		for (x = 0; x < DUNGEON_WID; x++)
+		{
+			/* No features */
+			cave_feat[y][x] = 0;
+
+			/* No flags */
+			cave_info[y][x] = 0;
+			cave_info2[y][x] = 0;
+
+			/* No flow */
+			cave_cost[y][x] = 0;
+			cave_when[y][x] = 0;
+
+			/* Clear any left-over monsters (should be none) and the player. */
+			cave_m_idx[y][x] = 0;
+		}
+	}
+
+	/* Mega-Hack -- no player in dungeon yet */
+	p_ptr->px = p_ptr->py = 0;
+
+	/* Hack -- illegal panel */
+	Term->offset_y = DUNGEON_HGT;
+	Term->offset_x = DUNGEON_WID;
+
+
+	/* Nothing good here yet */
+	rating = 0;
+}
+
+
+
+/**
  * Generate a random dungeon level
  *
  * Hack -- regenerate any "overflow" levels
@@ -10179,6 +10224,8 @@ static void town_gen(void)
 void generate_cave(void)
 {
     int y, x, num;
+
+    clear_cave();
 
     /* The dungeon is not ready */
     character_dungeon = FALSE;
