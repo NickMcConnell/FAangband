@@ -221,7 +221,7 @@ D:A falling branch could be random, or an act of an enemy, animal or vegetable.
 # 0x1B --> visible trap -- falling tree branch
 
 N:27:falling branch
-G:^:g1
+G:^:t
 F:PASSABLE | OBJECT | TREE | INTERESTING | TRAP 
 D:A falling branch could be random, or an act of an enemy, animal or vegetable.
 
@@ -887,7 +887,7 @@ D:ranged, or magical attacks.  Trees can burn.
 # 0x73 --> special feature -- highland trees
 
 N:115:highland trees
-G:+:g1
+G:+:t
 F:PASSABLE | OBJECT | TREE 
 D:Slows down characters not familiar with druidic techniques, and all 
 D:non-natural monsters that neither fly nor pass through rock.  Ends LOS, 
@@ -939,7 +939,7 @@ D:A tree which can hurt.
 # 0x79 --> special feature -- trapped tree
 
 N:121:invisible trap
-G:+:g1
+G:+:t
 M:115
 F:PASSABLE | TRAP_INVIS | TREE 
 D:A tree which can hurt.

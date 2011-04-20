@@ -1726,7 +1726,7 @@ s16b player_place(int y, int x)
 	return (0);
 
     /* No stairs if we don't do that */
-    if (OPT(adult_no_stairs) && !p_ptr->themed_level)
+    if (OPT(adult_no_stairs) && !p_ptr->themed_level && p_ptr->depth)
 	cave_set_feat(y, x, FEAT_FLOOR);
 
     /* Save player location */

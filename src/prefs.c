@@ -718,10 +718,10 @@ static enum parser_error parse_prefs_expr(struct parser *p)
 	/* Parse the expr */
 	v = process_pref_file_expr(&expr, &f);
 
-	string_free(str);
-
 	/* Set flag */
 	d->bypass = streq(v, "0");
+
+	string_free(str);
 
 	return PARSE_ERROR_NONE;
 }
@@ -1201,6 +1201,7 @@ errr process_pref_file_command(const char *s)
 {
 	struct parser *p = init_parse_prefs();
 	errr e = parser_parse(p, s);
+	mem_free(parser_priv(p));
 	parser_destroy(p);
 	return e;
 }
@@ -1261,6 +1262,7 @@ bool process_pref_file(const char *name, bool quiet)
 		}
 
 		file_close(f);
+		mem_free(parser_priv(p));
 		parser_destroy(p);
 	}
 
