@@ -312,7 +312,7 @@ E:FOOD_GOOD
 D:A heady wine, almost as good as that served at the Green Dragon at Bywater.
 
 N:36:& Sprig~ of Athelas
-G:,:g1
+G:,:g
 I:80:40:0
 W:25:0:2:450
 A:35/2:60/2
@@ -321,7 +321,7 @@ E:FOOD_ATHELAS
 D:Athelas will break the grip of the Black Breath.
 
 N:37:& Cake~ of the Beornings
-G:,:U1
+G:,:M
 I:80:41:7500
 W:25:0:7:18
 A:25/2:45/2
@@ -906,7 +906,7 @@ F:SHOW_MODS
 D:The traditional hunter's weapon, this light bow is easily drawn.
 
 N:131:& Long Bow~
-G:}:U1
+G:}:M
 I:19:13:0
 W:18:0:40:350
 A:18/1:50/2
@@ -930,7 +930,7 @@ D:A mechanical bow made of wood, it is cocked to augment the strength
 D:of its wielder.
 
 N:135:& Heavy Crossbow~
-G:}:s1
+G:}:m
 I:19:24:0
 W:45:0:200:300
 A:45/1:70/2
@@ -1454,7 +1454,7 @@ D:An exquisite suit of nearly impenetrable adamantite.
 ##### Armour -- Dragon Scale Mail #####
 
 N:213:Black Dragon Scale Mail~
-G:[:s1
+G:[:D
 I:38:1:0
 W:50:0:200:30000
 A:50/8
@@ -1556,7 +1556,7 @@ D:as you touch it, like massed trumpets heard and cyclones felt from afar.  ~
 ## XXX 223 XXX ##
 
 N:224:Bronze Dragon Scale Mail~
-G:[:U1
+G:[:U
 I:38:14:0
 W:55:0:200:30000
 A:55/8
@@ -1716,7 +1716,7 @@ D:A massive set of hand sheathings, bound with steel and thrice-cured leather.
 ##### Armour - Shields #####
 
 N:244:& Wicker Shield~
-G:):U1
+G:):M
 I:34:1:0
 W:1:0:30:25
 A:1/1
@@ -1767,7 +1767,7 @@ D:A kite-shaped shield with rounded corners that covers the wearer from chest
 D:to toe, emblazoned with heraldic symbols.
 
 N:250:& Body Shield~
-G:):U
+G:):m
 I:34:7:0
 W:55:0:200:300
 A:55/2
@@ -1780,7 +1780,7 @@ D:almost completely covers the wearer.
 ## XXX 252 XXX ##
 
 N:253:& Shield~ of Deflection
-G:[:B
+G:):B
 I:34:10:0
 W:70:0:80:4000
 A:70/5
@@ -1809,14 +1809,14 @@ D:all hurt and harm from you.
 ##### Rings #####
 
 N:260:Steel
-G:=:s1
+G:=:W
 I:45:0:0
 W:5:0:2:20
 A:5/3:10/3
 D:A shining steel ring.
 
 N:261:Pewter
-G:=:D1
+G:=:s
 I:45:1:0
 W:15:0:2:50
 A:15/3:20/3
@@ -1830,28 +1830,28 @@ A:25/3:30/3
 D:A ring made from the black metal of the Dark Elf.
 
 N:263:Brass
-G:=:U1
+G:=:M
 I:45:3:0
 W:35:0:2:100
 A:35/3:40/3
 D:A ring of polished brass.
 
 N:264:Bronze
-G:=:u
+G:=:U
 I:45:4:0
 W:45:0:2:120
 A:45/3:50/3
 D:A ring crafted of deep burnished bronze.
 
 N:265:Copper
-G:=:u1
+G:=:u
 I:45:5:0
 W:55:0:2:300
 A:55/3:60/3
 D:A circle of beaten copper.
 
 N:266:Silver
-G:=:W
+G:=:w
 I:45:6:0
 W:65:0:2:700
 A:65/3:70/3
@@ -1950,7 +1950,7 @@ A:5/3:10/3
 D:A necklet of deep red chalcedony.
 
 N:301:Malachite
-G:":g1
+G:":t
 I:40:1:0
 W:15:0:3:120
 A:15/3:20/3
@@ -1964,21 +1964,21 @@ A:25/3:30/3
 D:A fiery opal set in silver filigree.
 
 N:303:Garnet
-G:":r
+G:":p
 I:40:3:0
 W:35:0:3:400
 A:35/3:40/3
 D:A necklace with a chain of rich garnets.
 
 N:304:Pearl
-G:":s1
+G:":W
 I:40:4:0
 W:45:0:3:750
 A:45/3:50/3
 D:An amulet featuring a gleaming pearl from the Bay of Balar.
 
 N:305:Amethyst
-G:":v1
+G:":v
 I:40:5:0
 W:55:0:3:1000
 A:55/3:60/3
@@ -1992,7 +1992,7 @@ A:65/3:70/3
 D:A pure blue sapphire on a golden chain.
 
 N:307:Ruby
-G:":r1
+G:":R
 I:40:7:0
 W:75:0:3:2500
 A:75/3:80/3
@@ -2006,7 +2006,7 @@ A:85/3:90/3
 D:An amulet set with an emerald as green as the grass of Valinor.
 
 N:309:Diamond
-G:":W
+G:":w
 I:40:9:0
 W:95:0:3:10000
 A:95/3:100/3
@@ -4397,7 +4397,7 @@ P:0:2d6:0:0:0:0
 D:A formidable chest, with room for several items.
 
 N:622:& Small Jeweled chest~
-G:~:v
+G:~:P
 I:7:4:0
 W:85:0:350:7000
 A:85/7
@@ -4405,7 +4405,7 @@ P:0:2d4:0:0:0:0
 D:A magnificent chest, with room for a few items.
 
 N:623:& Large Jeweled chest~
-G:~:v
+G:~:P
 I:7:8:0
 W:95:0:650:9000
 A:95/10
@@ -4431,7 +4431,7 @@ D:A small pointed metal bar, suitable for wedging under doors to slow down
 D:pursuit.
 
 N:627:& Wooden Torch~
-G:~:U1
+G:~:M
 I:39:0:4000
 W:1:0:30:2
 A:1/2
@@ -4865,7 +4865,7 @@ D:A stone of the greatest natural lore for Druids.
 #### Magic Books - Necromancy ####
 
 N:680:[Beginner's Curses]
-G:?:D
+G:?:v
 I:93:0:0
 W:5:0:30:25
 A:5/2
@@ -4874,7 +4874,7 @@ F:EASY_KNOW
 D:A tome of simple curses for Necromancers and Assassins.
 
 N:681:[Dark Initiation]
-G:?:D
+G:?:v
 I:93:1:0
 W:10:0:30:100
 A:10/2
@@ -4883,7 +4883,7 @@ F:EASY_KNOW
 D:A tome of curses for Necromancers.
 
 N:682:[Blood Novitiate]
-G:?:D
+G:?:v
 I:93:2:0
 W:20:0:30:400
 A:20/2
@@ -4892,7 +4892,7 @@ F:EASY_KNOW
 D:A tome of curses for Necromancers and Assassins.
 
 N:683:[Frightful Realms]
-G:?:D
+G:?:v
 I:93:3:0
 W:30:0:30:1000
 A:30/2
@@ -4901,7 +4901,7 @@ F:EASY_KNOW
 D:A tome of fell curses for Necromancers.
 
 N:684:[Mysteries of Utumno]
-G:?:v
+G:?:P
 I:93:4:0
 W:45:0:30:5000
 A:45/2
@@ -4911,7 +4911,7 @@ F:EASY_KNOW
 D:A tome of dark secrets for Necromancers and Assassins.
 
 N:685:[Unholy Protection]
-G:?:v
+G:?:P
 I:93:5:0
 W:55:0:30:10000
 A:55/2
@@ -4921,7 +4921,7 @@ F:EASY_KNOW
 D:A tome of evil gifts for Necromancers.
 
 N:686:[Life Force Mastery]
-G:?:v
+G:?:P
 I:93:6:0
 W:70:0:30:30000
 A:70/2
@@ -4931,7 +4931,7 @@ F:EASY_KNOW
 D:A tome of twisted power for Necromancers.
 
 N:687:[Metamorphoses]
-G:?:v
+G:?:P
 I:93:7:0
 W:85:0:30:50000
 A:85/2
@@ -4941,7 +4941,7 @@ F:EASY_KNOW
 D:A corrupting tome for Necromancers and Assassins.
 
 N:688:[Necronomicon]
-G:?:v
+G:?:P
 I:93:8:0
 W:95:0:30:100000
 A:95/2
@@ -4994,7 +4994,7 @@ W:5:0:0:60
 D:These coins should be worth something.
 
 N:702:garnets
-G:$:r
+G:$:v
 I:100:3:0
 W:10:0:0:90
 D:Precious gems.
@@ -5169,7 +5169,7 @@ F:INSTA_ART
 # The Palantir of Avallone -- see artifact list
 
 N:735:& Palant['i]r~
-G:~:D1
+G:~:D
 I:39:6:0
 W:90:0:5:60000
 P:0:1d1:0:0:0:0
