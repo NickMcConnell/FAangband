@@ -648,33 +648,33 @@ static enum parser_error parse_k_b(struct parser *p) {
 	which = grab_value(t, player_resist_values, 
 			   N_ELEMENTS(player_resist_values), &val);
 	if (which) {
-	    k->percent_res[which] = RES_LEVEL_BASE - val;
+	    k->percent_res[which - 1] = RES_LEVEL_BASE - val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
 	which = grab_value(t, bonus_stat_values, 
 			   N_ELEMENTS(bonus_stat_values), &val);
 	if (which) {
-	    k->bonus_stat[which] = val;
+	    k->bonus_stat[which - 1] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
 	which = grab_value(t, bonus_other_values, 
 			   N_ELEMENTS(bonus_other_values), &val);
 	if (which) {
-	    k->bonus_other[which] = val;
+	    k->bonus_other[which - 1] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
 	which = grab_value(t, slay_values, N_ELEMENTS(slay_values), &val);
 	if (which) {
-	    k->multiple_slay[which] = val;
+	    k->multiple_slay[which - 1] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
 	which = grab_value(t, brand_values, N_ELEMENTS(brand_values), &val);
 	if (which) {
-	    k->multiple_brand[which] = val;
+	    k->multiple_brand[which - 1] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
@@ -865,35 +865,35 @@ static enum parser_error parse_a_b(struct parser *p) {
 	which = grab_value(t, player_resist_values, 
 			   N_ELEMENTS(player_resist_values), &val);
 	if (which) {
-	    a->percent_res[which] = RES_LEVEL_BASE - val;
+	    a->percent_res[which - 1] = RES_LEVEL_BASE - val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
 	which = grab_value(t, bonus_stat_values, 
 			   N_ELEMENTS(bonus_stat_values), &val);
 	if (which) {
-	    a->bonus_stat[which] = val;
+	    a->bonus_stat[which - 1] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
 	which = grab_value(t, bonus_other_values, 
 			   N_ELEMENTS(bonus_other_values), &val);
 	if (which) {
-	    a->bonus_other[which] = val;
+	    a->bonus_other[which - 1] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
 	which = grab_value(t, slay_values, 
 			   N_ELEMENTS(slay_values), &val);
 	if (which) {
-	    a->multiple_slay[which] = val;
+	    a->multiple_slay[which - 1] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
 	which = grab_value(t, brand_values, 
 			   N_ELEMENTS(brand_values), &val);
 	if (which) {
-	    a->multiple_brand[which] = val;
+	    a->multiple_brand[which - 1] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
@@ -1072,35 +1072,35 @@ static enum parser_error parse_set_b(struct parser *p) {
 	which = grab_value(t, player_resist_values, 
 			   N_ELEMENTS(player_resist_values), &val);
 	if (which) {
-	    set->set_items[current_item].percent_res[which] = RES_LEVEL_BASE - val;
+	    set->set_items[current_item].percent_res[which - 1] = RES_LEVEL_BASE - val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
 	which = grab_value(t, bonus_stat_values, 
 			   N_ELEMENTS(bonus_stat_values), &val);
 	if (which) {
-	    set->set_items[current_item].bonus_stat[which] = val;
+	    set->set_items[current_item].bonus_stat[which - 1] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
 	which = grab_value(t, bonus_other_values, 
 			   N_ELEMENTS(bonus_other_values), &val);
 	if (which) {
-	    set->set_items[current_item].bonus_other[which] = val;
+	    set->set_items[current_item].bonus_other[which - 1] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
 	which = grab_value(t, slay_values, 
 			   N_ELEMENTS(slay_values), &val);
 	if (which) {
-	    set->set_items[current_item].multiple_slay[which] = val;
+	    set->set_items[current_item].multiple_slay[which - 1] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
 	which = grab_value(t, brand_values, 
 			   N_ELEMENTS(brand_values), &val);
 	if (which) {
-	    set->set_items[current_item].multiple_brand[which] = val;
+	    set->set_items[current_item].multiple_brand[which - 1] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
@@ -1519,35 +1519,35 @@ static enum parser_error parse_e_b(struct parser *p) {
 	which = grab_value(t, player_resist_values, 
 			   N_ELEMENTS(player_resist_values), &val);
 	if (which) {
-	    e->percent_res[which] = RES_LEVEL_BASE - val;
+	    e->percent_res[which - 1] = RES_LEVEL_BASE - val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
 	which = grab_value(t, bonus_stat_values, 
 			   N_ELEMENTS(bonus_stat_values), &val);
 	if (which) {
-	    e->bonus_stat[which] = val;
+	    e->bonus_stat[which - 1] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
 	which = grab_value(t, bonus_other_values, 
 			   N_ELEMENTS(bonus_other_values), &val);
 	if (which) {
-	    e->bonus_other[which] = val;
+	    e->bonus_other[which - 1] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
 	which = grab_value(t, slay_values, 
 			   N_ELEMENTS(slay_values), &val);
 	if (which) {
-	    e->multiple_slay[which] = val;
+	    e->multiple_slay[which - 1] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
 	which = grab_value(t, brand_values, 
 			   N_ELEMENTS(brand_values), &val);
 	if (which) {
-	    e->multiple_brand[which] = val;
+	    e->multiple_brand[which - 1] = val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}

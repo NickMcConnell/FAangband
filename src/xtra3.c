@@ -495,7 +495,7 @@ byte monster_mana_attr(void)
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	/* Default to out of mana */
-	byte attr = TERM_RED;
+	attr = TERM_RED;
 
 
 	/* Extract the "percent" of health */
