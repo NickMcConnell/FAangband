@@ -435,6 +435,16 @@ static errr rd_savefile_new_aux(void)
   
     u16b tmp16u;
   
+    byte sf_major = 0;
+    byte sf_minor = 0;
+    byte sf_patch = 0;
+    byte sf_extra = 0;
+
+    file_read(fff, (char*)&sf_major, 1);
+    file_read(fff, (char*)&sf_minor, 1);
+    file_read(fff, (char*)&sf_patch, 1);
+    file_read(fff, (char*)&sf_extra, 1);
+  
     /* Mention the savefile version if not current */
     if (older_than(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH))
     {
@@ -447,7 +457,7 @@ static errr rd_savefile_new_aux(void)
 	return (-1);
   
     /* Strip the Angband version bytes */
-    strip_bytes(4);
+    //strip_bytes(4);
   
     /* Hack -- decrypt */
     xor_byte = sf_extra;
@@ -529,9 +539,10 @@ static errr rd_savefile_new_aux(void)
 	k_ptr->everseen = (tmp8u & 0x01) ? TRUE: FALSE;
     }
   
-    /* Hack - kill player */
+    /* Hack - kill player, allow load */
     p_ptr->chp = -1;
     p_ptr->is_dead = TRUE;
+    turn = 1;
 
     return 0;
 }

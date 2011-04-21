@@ -255,18 +255,18 @@ void wr_options(void)
 	int ob = i % 32;
       
 	/* Process real entries */
-	if (!option_name(i))
+	if (!option_name(i)) continue;
+	
+	/* Set flag */
+	if (op_ptr->opt[i])
 	{
-	    /* Set flag */
-	    if (op_ptr->opt[i])
-	    {
-		/* Set */
-		flag[os] |= (1L << ob);
-	    }
-	  
-	    /* Set mask */
-	    mask[os] |= (1L << ob);
+	    /* Set */
+	    flag[os] |= (1L << ob);
 	}
+	  
+	/* Set mask */
+	mask[os] |= (1L << ob);
+	
     }
   
     /* Dump the flags */

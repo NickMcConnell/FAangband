@@ -106,6 +106,8 @@ static const char *obj_desc_get_modstr(const object_type * o_ptr)
 
     case TV_MAGIC_BOOK:
     case TV_PRAYER_BOOK:
+    case TV_DRUID_BOOK:
+    case TV_NECRO_BOOK:
 	return k_ptr->name;
     }
 
