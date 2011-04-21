@@ -35,6 +35,7 @@ int e1, e2;
 int f1, f2;
 struct object_menu_data items[50];
 int num_obj;
+static int offset = 0;
 static bool show_list;
 static olist_detail_t olist_mode = 0;
 
@@ -155,6 +156,8 @@ static void build_obj_list(int first, int last, const int *floor_list,
     object_type *o_ptr;
     bool in_term = (mode & OLIST_WINDOW) ? TRUE : FALSE;
 
+    offset = 0;
+
     /* Clear the existing contents */
     for (i = 0; i < 50; i++)
     {
@@ -164,7 +167,11 @@ static void build_obj_list(int first, int last, const int *floor_list,
     }
 
     /* Leave top line clear for inventory subwindow */
-    if (!first && !floor_list && in_term) num_obj = 1;
+    if (!first && !floor_list && in_term) {
+	num_obj = 1;
+	offset = 1;
+    }
+
     else num_obj = 0;
 
     for (i = first; i < last; i++)
@@ -314,7 +321,7 @@ static void show_obj_list(int num_obj, olist_detail_t mode)
     ex_offset = MIN(max_len, (size_t) (Term->wid - 1 - ex_width - col));
 
     /* Output the list */
-    for (i = 0; i < num_obj; i++) {
+    for (i = offset; i < num_obj; i++) {
 	o_ptr = items[i].object;
 
 	/* Display each line */

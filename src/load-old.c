@@ -393,6 +393,9 @@ static void rd_options(void)
 	}
     }
   
+    /* Set up the subwindows */
+    subwindows_set_flags(flag, ANGBAND_TERM_MAX);
+
 }
 
 

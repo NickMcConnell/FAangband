@@ -182,183 +182,187 @@ static void option_toggle_menu(const char *name, int page)
  */
 static void do_cmd_options_win(const char *name, int row)
 {
-	int i, j, d;
+    int i, j, d;
 
-	int y = 0;
-	int x = 0;
+    int y = 0;
+    int x = 0;
 
-	ui_event_data ke;
+    ui_event_data ke;
 
-	u32b new_flags[ANGBAND_TERM_MAX];
+    u32b new_flags[ANGBAND_TERM_MAX];
 
 
-  u32b old_flag[ANGBAND_TERM_MAX];
+    u32b old_flag[ANGBAND_TERM_MAX];
   
   
-  /* Memorize old flags */
-  for (j = 0; j < ANGBAND_TERM_MAX; j++)
+    /* Memorize old flags */
+    for (j = 0; j < ANGBAND_TERM_MAX; j++)
     {
-      old_flag[j] = op_ptr->window_flag[j];
+	old_flag[j] = op_ptr->window_flag[j];
     }
   
   
-	/* Set new flags to the old values */
+    /* Set new flags to the old values */
+    for (j = 0; j < ANGBAND_TERM_MAX; j++)
+    {
+	new_flags[j] = op_ptr->window_flag[j];
+    }
+
+
+    /* Clear screen */
+    screen_save();
+    clear_from(0);
+
+    /* Interact */
+    while (1)
+    {
+	/* Prompt */
+	prt("Window flags (<dir> to move, 't'/Enter to toggle, or ESC)", 0, 0);
+
+	/* Display the windows */
 	for (j = 0; j < ANGBAND_TERM_MAX; j++)
 	{
-		new_flags[j] = op_ptr->window_flag[j];
+	    byte a = TERM_WHITE;
+
+	    cptr s = angband_term_name[j];
+
+	    /* Use color */
+	    if (j == x) a = TERM_L_BLUE;
+
+	    /* Window name, staggered, centered */
+	    Term_putstr(35 + j * 5 - strlen(s) / 2, 2 + j % 2, -1, a, s);
 	}
 
-
-	/* Clear screen */
-	screen_save();
-	clear_from(0);
-
-	/* Interact */
-	while (1)
+	/* Display the options */
+	for (i = 0; i < PW_MAX_FLAGS; i++)
 	{
-		/* Prompt */
-		prt("Window flags (<dir> to move, 't'/Enter to toggle, or ESC)", 0, 0);
+	    byte a = TERM_WHITE;
 
-		/* Display the windows */
-		for (j = 0; j < ANGBAND_TERM_MAX; j++)
-		{
-			byte a = TERM_WHITE;
+	    cptr str = window_flag_desc[i];
 
-			cptr s = angband_term_name[j];
+	    /* Use color */
+	    if (i == y) a = TERM_L_BLUE;
 
-			/* Use color */
-			if (j == x) a = TERM_L_BLUE;
+	    /* Unused option */
+	    if (!str) str = "(Unused option)";
 
-			/* Window name, staggered, centered */
-			Term_putstr(35 + j * 5 - strlen(s) / 2, 2 + j % 2, -1, a, s);
-		}
+	    /* Flag name */
+	    Term_putstr(0, i + 5, -1, a, str);
 
-		/* Display the options */
-		for (i = 0; i < PW_MAX_FLAGS; i++)
-		{
-			byte a = TERM_WHITE;
+	    /* Display the windows */
+	    for (j = 0; j < ANGBAND_TERM_MAX; j++)
+	    {
+		char c = '.';
 
-			cptr str = window_flag_desc[i];
+		a = TERM_WHITE;
 
-			/* Use color */
-			if (i == y) a = TERM_L_BLUE;
+		/* Use color */
+		if ((i == y) && (j == x)) a = TERM_L_BLUE;
 
-			/* Unused option */
-			if (!str) str = "(Unused option)";
+		/* Active flag */
+		if (new_flags[j] & (1L << i)) c = 'X';
 
-			/* Flag name */
-			Term_putstr(0, i + 5, -1, a, str);
-
-			/* Display the windows */
-			for (j = 0; j < ANGBAND_TERM_MAX; j++)
-			{
-				char c = '.';
-
-				a = TERM_WHITE;
-
-				/* Use color */
-				if ((i == y) && (j == x)) a = TERM_L_BLUE;
-
-				/* Active flag */
-				if (new_flags[j] & (1L << i)) c = 'X';
-
-				/* Flag value */
-				Term_putch(35 + j * 5, i + 5, a, c);
-			}
-		}
-
-		/* Place Cursor */
-		Term_gotoxy(35 + x * 5, y + 5);
-
-		/* Get key */
-		ke = inkey_ex();
-
-		/* Allow escape */
-		if ((ke.key == ESCAPE) || (ke.key == 'q')) break;
-
-		/* Mouse interaction */
-		if (ke.type == EVT_MOUSE)
-		{
-			int choicey = ke.mousey - 5;
-			int choicex = (ke.mousex - 35)/5;
-
-			if ((choicey >= 0) && (choicey < PW_MAX_FLAGS)
-				&& (choicex > 0) && (choicex < ANGBAND_TERM_MAX)
-				&& !(ke.mousex % 5))
-			{
-				y = choicey;
-				x = (ke.mousex - 35)/5;
-			}
-		}
-
-		/* Toggle */
-		else if ((ke.key == '5') || (ke.key == 't') ||
-				(ke.key == '\n') || (ke.key == '\r') ||
-				(ke.type == EVT_MOUSE))
-		{
-			/* Hack -- ignore the main window */
-			if (x == 0)
-			{
-				bell("Cannot set main window flags!");
-			}
-
-			/* Toggle flag (off) */
-			else if (new_flags[x] & (1L << y))
-			{
-				new_flags[x] &= ~(1L << y);
-			}
-
-			/* Toggle flag (on) */
-			else
-			{
-				new_flags[x] |= (1L << y);
-			}
-
-			/* Continue */
-			continue;
-		}
-
-		/* Extract direction */
-		d = target_dir(ke.key);
-
-		/* Move */
-		if (d != 0)
-		{
-			x = (x + ddx[d] + 8) % ANGBAND_TERM_MAX;
-			y = (y + ddy[d] + 16) % PW_MAX_FLAGS;
-		}
-
-		/* Oops */
-		else
-		{
-			bell("Illegal command for window options!");
-		}
+		/* Flag value */
+		Term_putch(35 + j * 5, i + 5, a, c);
+	    }
 	}
 
-  /* Notice changes */
-  for (j = 0; j < ANGBAND_TERM_MAX; j++)
-    {
-      term *old = Term;
-      
-      /* Dead window */
-      if (!angband_term[j]) continue;
-      
-      /* Ignore non-changes */
-      if (op_ptr->window_flag[j] == old_flag[j]) continue;
-      
-      /* Activate */
-      Term_activate(angband_term[j]);
-      
-      /* Erase */
-      Term_clear();
-      
-      /* Refresh */
-      Term_fresh();
-      
-      /* Restore */
-      Term_activate(old);
+	/* Place Cursor */
+	Term_gotoxy(35 + x * 5, y + 5);
+
+	/* Get key */
+	ke = inkey_ex();
+
+	/* Allow escape */
+	if ((ke.key == ESCAPE) || (ke.key == 'q')) break;
+
+	/* Mouse interaction */
+	if (ke.type == EVT_MOUSE)
+	{
+	    int choicey = ke.mousey - 5;
+	    int choicex = (ke.mousex - 35)/5;
+
+	    if ((choicey >= 0) && (choicey < PW_MAX_FLAGS)
+		&& (choicex > 0) && (choicex < ANGBAND_TERM_MAX)
+		&& !(ke.mousex % 5))
+	    {
+		y = choicey;
+		x = (ke.mousex - 35)/5;
+	    }
+	}
+
+	/* Toggle */
+	else if ((ke.key == '5') || (ke.key == 't') ||
+		 (ke.key == '\n') || (ke.key == '\r') ||
+		 (ke.type == EVT_MOUSE))
+	{
+	    /* Hack -- ignore the main window */
+	    if (x == 0)
+	    {
+		bell("Cannot set main window flags!");
+	    }
+
+	    /* Toggle flag (off) */
+	    else if (new_flags[x] & (1L << y))
+	    {
+		new_flags[x] &= ~(1L << y);
+	    }
+
+	    /* Toggle flag (on) */
+	    else
+	    {
+		new_flags[x] |= (1L << y);
+	    }
+
+	    /* Continue */
+	    continue;
+	}
+
+	/* Extract direction */
+	d = target_dir(ke.key);
+
+	/* Move */
+	if (d != 0)
+	{
+	    x = (x + ddx[d] + 8) % ANGBAND_TERM_MAX;
+	    y = (y + ddy[d] + 16) % PW_MAX_FLAGS;
+	}
+
+	/* Oops */
+	else
+	{
+	    bell("Illegal command for window options!");
+	}
     }
-	screen_load();
+#if 0
+    /* Notice changes */
+    for (j = 0; j < ANGBAND_TERM_MAX; j++)
+    {
+	term *old = Term;
+      
+	/* Dead window */
+	if (!angband_term[j]) continue;
+      
+	/* Ignore non-changes */
+	if (op_ptr->window_flag[j] == old_flag[j]) continue;
+      
+	/* Activate */
+	Term_activate(angband_term[j]);
+      
+	/* Erase */
+	Term_clear();
+      
+	/* Refresh */
+	Term_fresh();
+      
+	/* Restore */
+	Term_activate(old);
+    }
+#endif
+    /* Notice changes */
+    subwindows_set_flags(new_flags, ANGBAND_TERM_MAX);
+
+    screen_load();
 }
 
 

@@ -394,6 +394,12 @@ int rd_options(u32b version)
 	    /* Process valid flags */
 	    if (window_flag_desc[i])
 	    {
+				/* Blank invalid flags */
+				if (!(mask[n] & (1L << i)))
+				{
+					flag[n] &= ~(1L << i);
+				}
+#if 0
 		/* Process valid flags */
 		if (mask[n] & (1L << i))
 		{
@@ -404,10 +410,14 @@ int rd_options(u32b version)
 			op_ptr->window_flag[n] |= (1L << i);
 		    }
 		}
+#endif
 	    }
 	}
     }
   
+
+    /* Set up the subwindows */
+    subwindows_set_flags(flag, ANGBAND_TERM_MAX);
 
     /* Success */
     return (0);
