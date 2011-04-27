@@ -386,7 +386,8 @@ static size_t obj_desc_name(char *buf, size_t max, size_t end,
 	strnfcat(buf, max, &end, " %s", e_info[o_ptr->name2].name);
     
     else if (aware && !artifact_p(o_ptr)
-	     && (k_ptr->flavor || k_ptr->tval == TV_SCROLL))
+	     && (k_ptr->flavor || k_ptr->tval == TV_SCROLL)
+	     && ((k_ptr->tval != TV_FOOD) || (k_ptr->sval < SV_FOOD_MIN_FOOD)))
 	strnfcat(buf, max, &end, " of %s", k_ptr->name);
     
     return end;
@@ -405,6 +406,8 @@ static bool obj_desc_show_to_hit(const object_type * o_ptr)
 
     if (o_ptr->to_h && ((if_has(o_ptr->id_other, IF_TO_H)) || k_ptr->to_h.base))
 	return TRUE;
+
+    return FALSE;
 }
 
 /*
@@ -420,6 +423,8 @@ static bool obj_desc_show_to_dam(const object_type * o_ptr)
 
     if (o_ptr->to_d && ((if_has(o_ptr->id_other, IF_TO_D)) || k_ptr->to_d.base))
 	return TRUE;
+
+    return FALSE;
 }
 
 /*
