@@ -27,16 +27,21 @@
 /* Variables for item display and selection */
 struct object_menu_data {
     char label[80];
+    char key;
     object_type *object;
     int index;
 };
 
+cptr prompt;
 int i1, i2;
 int e1, e2;
 int f1, f2;
+int floor_list[MAX_FLOOR_STACK];
 struct object_menu_data items[50];
 int num_obj;
+int item_mode;
 static int offset = 0;
+static bool need_spacer;
 static char selection;
 static bool show_list;
 static olist_detail_t olist_mode = 0;
@@ -162,6 +167,7 @@ static void build_obj_list(int first, int last, const int *floor_list,
     object_type *o_ptr;
     bool in_term = (mode & OLIST_WINDOW) ? TRUE : FALSE;
 
+    need_spacer = FALSE;
     offset = 0;
     num_obj = 0;
 
@@ -170,6 +176,7 @@ static void build_obj_list(int first, int last, const int *floor_list,
     {
 	items[i].object = NULL;
 	items[i].index = 0;
+	items[i].key = '\0';
 	my_strcpy(items[i].label, "", sizeof(items[i].label));
     }
 
@@ -188,22 +195,12 @@ static void build_obj_list(int first, int last, const int *floor_list,
 	if ((i == INVEN_TOTAL) && (first))
 	{
 	    int j;
-	    bool need_spacer = FALSE;
-			
+	    
 	    /* Scan the rest of the items for acceptable entries */
 	    for (j = i; j < last; j++)
 	    {
 		o_ptr = &p_ptr->inventory[j];
 		if (item_tester_okay(o_ptr)) need_spacer = TRUE;
-	    }
-
-	    /* Add a spacer between equipment and quiver */
-	    if (num_obj > 0 && need_spacer)
-	    {
-		my_strcpy(items[num_obj].label, "", 
-			  sizeof(items[num_obj].label));
-		items[num_obj].object = NULL;
-		num_obj++;
 	    }
 
 	    continue;
@@ -249,6 +246,7 @@ static void build_obj_list(int first, int last, const int *floor_list,
 	/* Save the object */
 	items[num_obj].object = o_ptr;
 	items[num_obj].index = i;
+	items[num_obj].key = (items[num_obj].label)[0];
 	num_obj++;
     }
 }
@@ -341,11 +339,13 @@ static void show_obj_list(int num_obj, u32b display, olist_detail_t mode)
     ex_offset = MIN(max_len, (size_t) (Term->wid - 1 - ex_width - col));
 
     /* Output the list */
-    for (i = 0; i < num_obj; i++) {
+    for (i = 0; i < num_obj; i++) 
+    {
+	int sp = (i >= INVEN_TOTAL) && need_spacer ? 1 : 0;
 	o_ptr = items[i].object;
 
 	/* Display each line */
-	show_obj(i, max_len, items[i].label, o_ptr, FALSE, mode);
+	show_obj(i + sp, max_len, items[i].label, o_ptr, FALSE, mode);
     }
 
     /* For the inventory: print the quiver count */
@@ -442,9 +442,9 @@ void show_equip(olist_detail_t mode)
     object_type *o_ptr;
 
     /* Find the last equipment slot to display */
-    for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+    for (i = INVEN_WIELD; i < ALL_INVEN_TOTAL; i++) {
 	o_ptr = &p_ptr->inventory[i];
-	if (i < INVEN_TOTAL || o_ptr->k_idx)
+	if (i < ALL_INVEN_TOTAL || o_ptr->k_idx)
 	    last_slot = i;
     }
 
@@ -618,14 +618,14 @@ static int get_tag(int *cp, char tag, cmd_code cmd, bool quiver_tags)
 /**
  * Make the correct prompt for items, handle mouse buttons
  */
-void item_prompt(int mode, cptr pmt)
+void item_prompt(int mode)
 {
     char tmp_val[160];
     char out_val[160];
 
     bool use_inven = ((mode & USE_INVEN) ? TRUE : FALSE);
     bool use_equip = ((mode & USE_EQUIP) ? TRUE : FALSE);
-    bool can_squelch = ((mode & CAN_SQUELCH) ? TRUE : FALSE);
+    bool can_squelch = ((mode & CAN_SQUELCH) && !show_list ? TRUE : FALSE);
     bool allow_floor = (f1 <= f2);
 
 
@@ -755,7 +755,7 @@ void item_prompt(int mode, cptr pmt)
     my_strcat(out_val, " ESC", sizeof(out_val));
 
     /* Build the prompt */
-    strnfmt(tmp_val, sizeof(tmp_val), "(%s) %s", out_val, pmt);
+    strnfmt(tmp_val, sizeof(tmp_val), "(%s) %s", out_val, prompt);
 
     /* Show the prompt */
     prt(tmp_val, 0, 0);
@@ -801,27 +801,78 @@ void get_item_display(menu_type *menu, int oid, bool cursor, int row, int col,
 bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
 {
     bool done = FALSE;
+    bool refresh = FALSE;
     struct object_menu_data *choice = menu_priv(menu);
-    int k;
-
-    while (!done)
-    {
-	if (p_ptr->command_wrk == (USE_FLOOR))
-	    k = 0 - choice[oid].index;
-	else
-	    k = choice[oid].index;
-	
-	/* Paranoia */
-	if (!get_item_okay(k))
-	    continue;
-	
-	done = TRUE;
-    }
+    char key = event->key;
 
     if (event->type == EVT_SELECT)
     {
-	selection = (choice[oid].label)[0];
+	selection = choice[oid].key;
 	return FALSE;
+    }
+
+    if (event->type == EVT_KBRD)
+    {
+	if (event->key == '/')
+	{
+	    /* Toggle to inventory */
+	    if ((item_mode & USE_INVEN) && (p_ptr->command_wrk != USE_INVEN)) 
+	    {
+		p_ptr->command_wrk = USE_INVEN;
+		build_obj_list(0, i2, NULL, olist_mode);
+		refresh = TRUE;
+	    }
+	    
+	    /* Toggle to equipment */
+	    else if ((item_mode & USE_EQUIP) && 
+		     (p_ptr->command_wrk != USE_EQUIP)) 
+	    {
+		p_ptr->command_wrk = USE_EQUIP;
+		build_obj_list(INVEN_WIELD, e2, NULL, olist_mode);
+		refresh = TRUE;
+	    }
+	    
+	    /* No toggle allowed */
+	    else 
+	    {
+		bell("Cannot switch item selector!");
+	    }
+	}
+
+	else if (event->key == '-')
+	{
+	    /* No toggle allowed */
+	    if (f1 > f2) {
+		bell("Cannot select floor!");
+	    }
+	    /* Toggle to floor */
+	    else 
+	    {
+		p_ptr->command_wrk = (USE_FLOOR);
+		build_obj_list(0, f2, floor_list, olist_mode);
+		refresh = TRUE;
+	    }
+	}
+
+	if (refresh)
+	{
+	    /* Load screen */
+	    screen_load();
+	    
+	    /* Save screen */
+	    screen_save();
+	    
+	    /* Show the prompt */
+	    item_prompt(item_mode);
+	    
+	    redraw_stuff();
+	    
+	    menu_setpriv(menu, num_obj, items);
+	    menu_refresh(menu);
+	}
+	
+	return FALSE;
+
     }
 
     return TRUE;
@@ -830,7 +881,7 @@ bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
 /**
  * Display list items to choose from
  */
-bool item_menu(int *cp)
+ui_event_data item_menu(void)
 {
     menu_type menu;
     menu_iter menu_f = {0, 0, get_item_display, get_item_action, 0 };
@@ -841,25 +892,28 @@ bool item_menu(int *cp)
 
     bool item = FALSE;
 
+    int i;
+
     /* Set up the menu */
     WIPE(&menu, menu);
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
     menu_setpriv(&menu, num_obj, items);
+    menu.selections = "abcdefghijklmnopqrstuvwxyz0123456789";
+    menu.cmd_keys = "/-";
     get_max_len(&max_len);
     area.page_rows = menu.count + 1;
     area.width = max_len;
-    area.col = Term->wid - 1 - max_len - 10;
+    area.col = Term->wid - 1 - max_len;
     menu_layout(&menu, &area);
-    evt = menu_select(&menu, EVT_SELECT);
+    evt = menu_select(&menu, 0);
 
     if (evt.type != EVT_ESCAPE)
     {
-	item = TRUE;
-	(*cp) = selection;
+	evt.key = selection;
     }
 
     /* Result */
-    return (item);
+    return (evt);
 }
 
 
@@ -936,9 +990,11 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
     bool allow_equip = FALSE;
     bool allow_floor = FALSE;
 
-    int floor_list[MAX_FLOOR_STACK];
     int floor_num;
     ui_event_data which;
+    
+    prompt = pmt;
+    item_mode = mode;
 
     /* Paranoia XXX XXX XXX */
     msg_print(NULL);
@@ -1039,37 +1095,37 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 	/* Hack -- Start on equipment if requested */
 	if ((p_ptr->command_wrk == USE_EQUIP) && use_equip){
 	    p_ptr->command_wrk = USE_EQUIP;
-	    build_obj_list(INVEN_WIELD, e2, NULL, mode);
+	    build_obj_list(INVEN_WIELD, e2, NULL, olist_mode);
 	}
 
 	/* If we are using the quiver then start on equipment */
 	else if (use_quiver){
 	    p_ptr->command_wrk = USE_EQUIP;
-	    build_obj_list(INVEN_WIELD, e2, NULL, mode);
+	    build_obj_list(INVEN_WIELD, e2, NULL, olist_mode);
 	}
 
 	/* Use inventory if allowed */
 	else if (use_inven){
 	    p_ptr->command_wrk = USE_INVEN;
-	    build_obj_list(0, i2, NULL, mode);
+	    build_obj_list(0, i2, NULL, olist_mode);
 	}
 
 	/* Use equipment if allowed */
 	else if (use_equip){
 	    p_ptr->command_wrk = USE_EQUIP;
-	    build_obj_list(INVEN_WIELD, e2, NULL, mode);
+	    build_obj_list(INVEN_WIELD, e2, NULL, olist_mode);
 	}
 
 	/* Use floor if allowed */
 	else if (use_floor){
 	    p_ptr->command_wrk = USE_FLOOR;
-	    build_obj_list(0, f2, floor_list, mode);
+	    build_obj_list(0, f2, floor_list, olist_mode);
 	}
 
 	/* Hack -- Use (empty) inventory */
 	else {
 	    p_ptr->command_wrk = USE_INVEN;
-	    build_obj_list(0, i2, NULL, mode);
+	    build_obj_list(0, i2, NULL, olist_mode);
 	}
     }
 
@@ -1081,7 +1137,7 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 
     /* Repeat until done */
     while (!done) {
-	bool refresh = FALSE;
+	static bool refresh;
 	int ni = 0;
 	int ne = 0;
 
@@ -1120,9 +1176,9 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 	if (refresh) {
 	    /* Rebuild object list */
 	    if (p_ptr->command_wrk == USE_INVEN) 
-		build_obj_list(0, i2, NULL, mode);
+		build_obj_list(0, i2, NULL, olist_mode);
 	    else if (p_ptr->command_wrk == USE_EQUIP) 
-		build_obj_list(INVEN_WIELD, e2, NULL, mode);
+		build_obj_list(INVEN_WIELD, e2, NULL, olist_mode);
 	    else 
 		build_obj_list(0, f2, floor_list, mode);
 
@@ -1130,15 +1186,17 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 	}
 
 	/* Show the prompt */
-	item_prompt(mode, pmt);
+	item_prompt(mode);
 
 	redraw_stuff();
 
 	/* Menu if requested */
-	if (show_list) item = item_menu(cp);
-
-	/* May already have a choice */
-	if (item) which.key = *cp;
+	if (show_list) 
+	{
+	    which = item_menu();
+	    if (which.type == EVT_ESCAPE)
+		which.key = ESCAPE;
+	}
 
 	/* Get a key */
 	else which = inkey_ex();
@@ -1156,27 +1214,15 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 	    case '?':
 	    case ' ':
 	    {
-		if (!OPT(show_lists)) {
-		    /* Hide the list */
-		    if (show_list) 
-		    {
-			/* Flip flag */
-			show_list = FALSE;
-
-			/* Load screen */
-			screen_load();
-		    }
-
-		    /* Show the list */
-		    else 
-		    {
-			/* Save screen */
-			screen_save();
-
-			/* Flip flag */
-			show_list = TRUE;
-		    }
+		if (!OPT(show_lists)) 
+		{
+		    /* Save screen */
+		    screen_save();
+		    
+		    /* Flip flag */
+		    show_list = TRUE;
 		}
+		
 		refresh = TRUE;
 		break;
 	    }
