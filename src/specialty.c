@@ -20,6 +20,7 @@
 
 #include "angband.h"
 #include "button.h"
+#include "cave.h"
 #include "history.h"
 #include "ui-menu.h"
 
@@ -725,30 +726,30 @@ void view_spec_display(menu_type *menu, int oid, bool cursor, int row, int col,
     case PLAYER_FLAG_SPECIAL:
     {
 	sprintf(buf, "Specialty Ability: %s", choices[oid].name);
-	color = cursor ? TERM_L_GREEN : TERM_GREEN;
+	color = TERM_GREEN;
 	break;
     } 
     case PLAYER_FLAG_CLASS: 
     {
 	sprintf(buf, "Class: %s", choices[oid].name);
-	color = cursor ? TERM_L_UMBER : TERM_UMBER;
+	color = TERM_UMBER;
 	break;
     } 
     case PLAYER_FLAG_RACE: 
     {
 	sprintf(buf, "Racial: %s", choices[oid].name);
-	color = cursor ? TERM_YELLOW : TERM_ORANGE;
+	color = TERM_ORANGE;
 	break;
     } 
     default:
     {
 	sprintf(buf, "Racial: Other");
-	color = cursor ? TERM_YELLOW : TERM_ORANGE;
+	color = TERM_ORANGE;
     }
     }
 
     /* Print it */
-    c_put_str(color, buf, row, col);
+    c_put_str(cursor ? get_color(color, ATTR_HIGH, 1) : color, buf, row, col);
 
 }
 
