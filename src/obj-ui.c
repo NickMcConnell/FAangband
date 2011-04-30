@@ -18,6 +18,7 @@
 
 #include "angband.h"
 #include "button.h"
+#include "cave.h"
 #include "cmds.h"
 #include "target.h"
 #include "tvalsval.h"
@@ -49,22 +50,23 @@ static olist_detail_t olist_mode = 0;
  * documented in object.h
  */
 static void show_obj(int onum, size_t max_len, char label[80],
-			  const object_type *object, olist_detail_t mode)
+		     const object_type *object, bool cursor,
+		     olist_detail_t mode)
 {
     int row = 0, col = 0;
     int ex_width = 0, ex_offset, ex_offset_ctr;
 
     object_type *o_ptr = object;
-    char o_name[80];
+    char o_name[160];
     char tmp_val[80];
 
     bool in_term;
     byte attr = proc_list_color_hack(o_ptr);
 
-    in_term = (mode & OLIST_WINDOW) ? TRUE : FALSE;
+    /* Highlight */
+    if (cursor) attr = get_color(attr, ATTR_HIGH, 1);
 
-    if (in_term)
-	max_len = 40;
+    in_term = (mode & OLIST_WINDOW) ? TRUE : FALSE;
 
     /* Object name */
     object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
@@ -81,7 +83,7 @@ static void show_obj(int onum, size_t max_len, char label[80],
     if (in_term) 
     {
 	/* Term window */
-	row = 0;
+	row = offset;
 	col = 0;
     } 
     else 
@@ -118,7 +120,7 @@ static void show_obj(int onum, size_t max_len, char label[80],
 	}
 
 	/* Object name */
-	c_put_str(attr, o_name, row + onum, col + 2 + strlen(label));
+	c_put_str(attr, o_name, row + onum, col + strlen(label));
 
 	/* Extra fields */
 	ex_offset_ctr = ex_offset;
@@ -172,14 +174,10 @@ static void build_obj_list(int first, int last, const int *floor_list,
     }
 
     /* Leave top line clear for inventory subwindow */
-    if (!first && !floor_list && in_term) {
-	//num_obj = 1;
+    if (!first && !floor_list && in_term) 
 	offset = 1;
-    }
-
-    //else num_obj = 0;
-
-    for (i = first; i < last; i++)
+    
+    for (i = first; i <= last; i++)
     {
 	if (floor_list)
 	    o_ptr = &o_list[floor_list[i]];
@@ -202,7 +200,8 @@ static void build_obj_list(int first, int last, const int *floor_list,
 	    /* Add a spacer between equipment and quiver */
 	    if (num_obj > 0 && need_spacer)
 	    {
-		my_strcpy(items[num_obj].label, "", sizeof(items[num_obj].label));
+		my_strcpy(items[num_obj].label, "", 
+			  sizeof(items[num_obj].label));
 		items[num_obj].object = NULL;
 		num_obj++;
 	    }
@@ -231,7 +230,7 @@ static void build_obj_list(int first, int last, const int *floor_list,
 	    char tmp_val[80];
 
 	    /* Show full slot labels */
-	    if (OPT(show_labels) && first)
+	    if (OPT(show_labels))
 	    {
 		strnfmt(tmp_val, sizeof(tmp_val), "%-14s: ", mention_use(i));
 		my_strcat(items[num_obj].label, tmp_val, 
@@ -260,7 +259,8 @@ static void build_obj_list(int first, int last, const int *floor_list,
 static void get_max_len(size_t *max_len)
 {
     int i;
-    char o_name[80];
+    size_t max = 0;
+    char o_name[160];
     object_type *o_ptr;
 
     /* Calculate name offset and max name length */
@@ -273,8 +273,11 @@ static void get_max_len(size_t *max_len)
 
 	/* Max length of label + object name */
 	object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
-	*max_len = MAX(*max_len, strlen(items[i].label) + strlen(o_name) + 10);
+	max = MAX(max, strlen(items[i].label) + strlen(o_name));
     }
+
+    /* Enforce external maximum */
+    *max_len = MIN(*max_len, max);
 }
 
 /*
@@ -282,11 +285,11 @@ static void get_max_len(size_t *max_len)
  * Used by show_inven(), show_equip(), and show_floor().  Mode flags are
  * documented in object.h
  */
-static void show_obj_list(int num_obj, olist_detail_t mode)
+static void show_obj_list(int num_obj, u32b display, olist_detail_t mode)
 {
     int i, row = 0, col = 0;
-    size_t max_len = 0;
-    int ex_width = 0, ex_offset, ex_offset_ctr;
+    size_t max_len = Term->wid - 1;
+    int ex_width = 0, ex_offset;
 
     object_type *o_ptr;
     char tmp_val[80];
@@ -295,10 +298,22 @@ static void show_obj_list(int num_obj, olist_detail_t mode)
 
     in_term = (mode & OLIST_WINDOW) ? TRUE : FALSE;
 
-    if (in_term)
-	max_len = 40;
-
     get_max_len(&max_len);
+
+    /* Check for window size restrictions */
+    if (in_term)
+    {
+	/* Scan windows */
+	for (i = 0; i < ANGBAND_TERM_MAX; i++) {
+	    /* Unused */
+	    if (!angband_term[i])
+		continue;
+	
+	    /* Count windows displaying inven */
+	    if (op_ptr->window_flag[i] & display)
+		max_len = MIN(max_len, angband_term[i]->wid);
+	}
+    }	
 
     /* Width of extra fields */
     if (mode & OLIST_WEIGHT)
@@ -330,7 +345,7 @@ static void show_obj_list(int num_obj, olist_detail_t mode)
 	o_ptr = items[i].object;
 
 	/* Display each line */
-	show_obj(i, max_len, items[i].label, o_ptr, mode);
+	show_obj(i, max_len, items[i].label, o_ptr, FALSE, mode);
     }
 
     /* For the inventory: print the quiver count */
@@ -364,7 +379,7 @@ static void show_obj_list(int num_obj, olist_detail_t mode)
     /* Clear term windows */
     if (in_term) {
 	for (; i < Term->hgt; i++) {
-	    prt("", row + i, MAX(col - 2, 0));
+	    prt("", row + i + offset, MAX(col - 2, 0));
 	}
     }
 
@@ -385,18 +400,19 @@ void show_inven(olist_detail_t mode)
     int i, last_slot = 0;
     int diff = weight_remaining();
 
+    char header[80];
+
     object_type *o_ptr;
 
     bool in_term = (mode & OLIST_WINDOW) ? TRUE : FALSE;
 
     /* Include burden for term windows */
     if (in_term) {
-	strnfmt(items[0].label, sizeof(items[0].label),
+	strnfmt(header, sizeof(header),
 		"Burden %d.%d lb (%d.%d lb %s) ", p_ptr->total_weight / 10,
 		p_ptr->total_weight % 10, abs(diff) / 10, abs(diff) % 10,
 		(diff < 0 ? "overweight" : "remaining"));
-
-	items[0].object = NULL;
+	put_str(header, 0, 0);
     }
 
     /* Find the last occupied inventory slot */
@@ -410,7 +426,7 @@ void show_inven(olist_detail_t mode)
     build_obj_list(0, last_slot, NULL, mode);
 
     /* Display the object list */
-    show_obj_list(num_obj, mode);
+    show_obj_list(num_obj, PW_INVEN, mode);
 }
 
 
@@ -425,10 +441,6 @@ void show_equip(olist_detail_t mode)
 
     object_type *o_ptr;
 
-    char tmp_val[80];
-
-    bool in_term = (mode & OLIST_WINDOW) ? TRUE : FALSE;
-
     /* Find the last equipment slot to display */
     for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 	o_ptr = &p_ptr->inventory[i];
@@ -440,7 +452,7 @@ void show_equip(olist_detail_t mode)
     build_obj_list(INVEN_WIELD, last_slot, NULL, mode);
 
     /* Display the object list */
-    show_obj_list(num_obj, mode);
+    show_obj_list(num_obj, PW_EQUIP, mode);
 }
 
 
@@ -451,8 +463,6 @@ void show_equip(olist_detail_t mode)
  */
 void show_floor(const int *floor_list, int floor_num, olist_detail_t mode)
 {
-    object_type *o_ptr;
-
     if (floor_num > MAX_FLOOR_STACK)
 	floor_num = MAX_FLOOR_STACK;
 
@@ -460,7 +470,7 @@ void show_floor(const int *floor_list, int floor_num, olist_detail_t mode)
     build_obj_list(0, floor_num - 1, floor_list, mode);
 
     /* Display the object list */
-    show_obj_list(num_obj, mode);
+    show_obj_list(num_obj, 0, mode);
 }
 
 
@@ -761,11 +771,11 @@ void get_item_display(menu_type *menu, int oid, bool cursor, int row, int col,
 		      int width)
 {
     struct object_menu_data *choice = menu_priv(menu);
-    size_t max_len = 0;
+    size_t max_len = Term->wid - 1;
 
     const object_type *o_ptr = choice[oid].object;
 
-    int curs_col, ex_width = 0;
+    int ex_width = 0;
 
     /* Do we even have a menu? */
     if (!show_list) return;
@@ -782,16 +792,7 @@ void get_item_display(menu_type *menu, int oid, bool cursor, int row, int col,
     get_max_len(&max_len);
 
     /* Print it */
-    show_obj(oid, max_len, items[oid].label, o_ptr, olist_mode);
-
-    /* Determine cursor column */
-    curs_col = Term->wid - 1 - max_len - ex_width;
-
-    if (curs_col < 5) curs_col = 2;
-    
-    /* Print cursor */
-    if (cursor)
-	c_put_str(TERM_L_BLUE, ">>", row, curs_col);
+    show_obj(oid, max_len, items[oid].label, o_ptr, cursor, olist_mode);
 }
 
 /**
@@ -805,11 +806,10 @@ bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
 
     while (!done)
     {
-	//tmp = (struct object_menu_data *) &menu->menu_data;
 	if (p_ptr->command_wrk == (USE_FLOOR))
-	    k = 0 - choice[event->index].index;
+	    k = 0 - choice[oid].index;
 	else
-	    k = choice[event->index].index;
+	    k = choice[oid].index;
 	
 	/* Paranoia */
 	if (!get_item_okay(k))
@@ -820,7 +820,7 @@ bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
 
     if (event->type == EVT_SELECT)
     {
-	selection = (choice[event->index].label)[0];
+	selection = (choice[oid].label)[0];
 	return FALSE;
     }
 
@@ -830,26 +830,21 @@ bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
 /**
  * Display list items to choose from
  */
-bool item_menu(int *cp, int mode)
+bool item_menu(int *cp)
 {
     menu_type menu;
     menu_iter menu_f = {0, 0, get_item_display, get_item_action, 0 };
     region area = { 20, 1, -1, -2 };
     ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
 
-    size_t max_len = 0;
+    size_t max_len = Term->wid - 1;
 
-    //bool done = FALSE;
     bool item = FALSE;
-
 
     /* Set up the menu */
     WIPE(&menu, menu);
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
-    //menu.cmd_keys = "\n\r";
-    //menu.menu_data = &items[1];
     menu_setpriv(&menu, num_obj, items);
-    //menu.count = show_list ? num_obj - 1: 0;
     get_max_len(&max_len);
     area.page_rows = menu.count + 1;
     area.width = max_len;
@@ -857,56 +852,6 @@ bool item_menu(int *cp, int mode)
     menu_layout(&menu, &area);
     evt = menu_select(&menu, EVT_SELECT);
 
-#if 0
-	menu_refresh(&menu);
-
-	redraw_stuff();
-
-	switch (which.type) {
-	case EVT_KBRD:
-	{
-	    break;
-	}
-
-	case ESCAPE:
-	{
-	    done = TRUE;
-	    continue;
-	}
-
-	case EVT_SELECT:
-	{
-	    tmp = (struct object_menu_data *) menu.menu_data;
-	    if (p_ptr->command_wrk == (USE_FLOOR))
-		k = 0 - tmp[which.index].index;
-	    else
-		k = tmp[which.index].index;
-
-	    /* Paranoia */
-	    if (!get_item_okay(k))
-		continue;
-
-	    (*cp) = k;
-	    done = TRUE;
-	    item = TRUE;
-	    continue;
-	}
-
-	case EVT_MOVE:
-	{
-	    continue;
-	}
-
-	default:
-	{
-	    continue;
-	}
-	}
-
-
-    /* Load screen */
-    screen_load();
-#endif
     if (evt.type != EVT_ESCAPE)
     {
 	item = TRUE;
@@ -993,7 +938,6 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 
     int floor_list[MAX_FLOOR_STACK];
     int floor_num;
-    struct object_menu_data *tmp;
     ui_event_data which;
 
     /* Paranoia XXX XXX XXX */
@@ -1191,7 +1135,7 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 	redraw_stuff();
 
 	/* Menu if requested */
-	if (show_list) item = item_menu(cp, mode);
+	if (show_list) item = item_menu(cp);
 
 	/* May already have a choice */
 	if (item) which.key = *cp;
