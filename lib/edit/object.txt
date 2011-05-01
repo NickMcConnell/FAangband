@@ -4431,7 +4431,7 @@ D:A small pointed metal bar, suitable for wedging under doors to slow down
 D:pursuit.
 
 N:627:& Wooden Torch~
-G:~:M
+G:~:y
 I:39:0:4000
 W:1:0:30:2
 A:1/2
@@ -4440,7 +4440,7 @@ F:EASY_KNOW
 D:A wooden firebrand well wrapped in oil-soaked rags.
 
 N:628:& Brass Lantern~
-G:~:U
+G:~:Y
 I:39:1:7500
 W:3:0:50:35
 A:3/2
@@ -4449,7 +4449,7 @@ F:EASY_KNOW
 D:The standard portable light source; it requires oil to operate.
 
 N:629:& Flask~ of oil
-G:!:y
+G:!:Y
 I:77:0:7500
 W:1:0:10:3
 A:1/2

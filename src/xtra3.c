@@ -1890,6 +1890,10 @@ static void splashscreen_note(game_event_type type, game_event_data * data,
     Term_fresh();
 }
 
+/**
+ * Encode the screen colors for the opening screen
+ */
+static char hack[29] = "dwsorgbuDWPyRGBUpvtmYiTVIMzZ";
 static void show_splashscreen(game_event_type type, game_event_data * data,
 			      void *user)
 {
@@ -1909,34 +1913,182 @@ static void show_splashscreen(game_event_type type, game_event_data * data,
     }
 
 
-	/*** Display the "news" file ***/
+    /*** Display the splashscreen  ***/
 
     Term_clear();
 
+    /* Build the filename */
+    path_build(buf, 1024, ANGBAND_DIR_FILE, "splash.txt");
+  
     /* Open the News file */
-    path_build(buf, sizeof(buf), ANGBAND_DIR_FILE, "news.txt");
-    fp = file_open(buf, MODE_READ, -1);
-
-    text_out_hook = text_out_to_screen;
-
+    fp = file_open(buf, MODE_READ, FTYPE_TEXT);
+  
     /* Dump */
-    if (fp) {
-	/* Dump the file to the screen */
-	while (file_getl(fp, buf, sizeof(buf))) {
-	    char *version_marker = strstr(buf, "$VERSION");
-	    if (version_marker) {
-		ptrdiff_t pos = version_marker - buf;
-		strnfmt(version_marker, sizeof(buf) - pos, "%-8s",
-			VERSION_STRING);
-	    }
+    if (fp)
+    {
+	int i, y, x;
+      
+	byte a = 0;
+	char c = ' ';
+      
+	bool okay = TRUE;
+      
+	int len;
+ 
+	/* Load the screen */
+	for (y = 0; okay; y++)
+        {
+	    /* Get a line of data */
+	    if (!file_getl(fp, buf, 1024)) okay = FALSE;
+      
+	    /* Stop on blank line */
+	    if (!buf[0]) break;
+          
+	    /* Get the width */
+	    len = strlen(buf);
+          
+	    /* XXX Restrict to current screen size */
+	    if (len >= Term->wid) len = Term->wid;
+          
+	    /* Show each row */
+	    for (x = 0; x < len; x++)
+            {
+		/* Put the attr/char */
+		Term_draw(x, y, TERM_WHITE, buf[x]);
+            }
+        }
+      
+	/* Load the screen */
+	for (y = 0; okay; y++)
+        {
+	    /* Get a line of data */
+	    if (!file_getl(fp, buf, 1024)) okay = FALSE;
+          
+	    /* Stop on blank line */
+	    if (!buf[0]) break;
+          
+	    /* Get the width */
+	    len = strlen(buf);
+          
+	    /* XXX Restrict to current screen size */
+	    if (len >= Term->wid) len = Term->wid;
+          
+	    /* Show each row */
+	    for (x = 0; x < len; x++)
+            {
+		/* Get the attr/char */
+		(void)(Term_what(x, y, &a, &c));
+              
+		/* Look up the attr */
+		for (i = 0; i < 28; i++)
+                {
+		    /* Use attr matches */
+		    if (hack[i] == buf[x]) a = i;
+                }
+              
+		/* Put the attr/char */
+		Term_draw(x, y, a, c);
+            }
 
-	    text_out_e("%s", buf);
-	    text_out("\n");
+	    /* Place the cursor */
+	    Term_gotoxy(x, y);
+          
 	}
 
+	/* Close it */
 	file_close(fp);
     }
+  
+    /* Flush it */
+    Term_fresh();
 
+    /* Get any key */
+    (void)inkey_ex();
+  
+    /*** Display the "news" file ***/
+  
+    /* Clear screen */
+    Term_clear();
+  
+    /* Build the filename */
+    path_build(buf, 1024, ANGBAND_DIR_FILE, "news.txt");
+  
+    /* Open the News file */
+    fp = file_open(buf, MODE_READ, FTYPE_TEXT);
+  
+    /* Dump */
+    if (fp)
+    {
+	int i, y, x;
+      
+	byte a = 0;
+	char c = ' ';
+      
+	bool okay = TRUE;
+      
+	int len;
+      
+      
+	/* Load the screen */
+	for (y = 0; okay; y++)
+        {
+	    /* Get a line of data */
+	    if (!file_getl(fp, buf, 1024)) okay = FALSE;
+          
+	    /* Stop on blank line */
+	    if (!buf[0]) break;
+          
+	    /* Get the width */
+	    len = strlen(buf);
+          
+	    /* XXX Restrict to current screen size */
+	    if (len >= Term->wid) len = Term->wid;
+          
+	    /* Show each row */
+	    for (x = 0; x < len; x++)
+            {
+		/* Put the attr/char */
+		Term_draw(x, y, TERM_WHITE, buf[x]);
+            }
+        }
+      
+	/* Load the screen */
+	for (y = 0; okay; y++)
+        {
+	    /* Get a line of data */
+	    if (!file_getl(fp, buf, 1024)) okay = FALSE;
+          
+	    /* Stop on blank line */
+	    if (!buf[0]) break;
+          
+	    /* Get the width */
+	    len = strlen(buf);
+          
+	    /* XXX Restrict to current screen size */
+	    if (len >= Term->wid) len = Term->wid;
+          
+	    /* Show each row */
+	    for (x = 0; x < len; x++)
+            {
+		/* Get the attr/char */
+		(void)(Term_what(x, y, &a, &c));
+              
+		/* Look up the attr */
+		for (i = 0; i < 28; i++)
+                {
+		    /* Use attr matches */
+		    if (hack[i] == buf[x]) a = i;
+                }
+              
+		/* Put the attr/char */
+		Term_draw(x, y, a, c);
+            }
+        }
+      
+      	/* Close it */
+	file_close(fp);
+    }
+  
     /* Flush it */
     Term_fresh();
 }

@@ -1,45 +1,47 @@
-                                  /%%%%%%%\                                    
-                               /@%%%%%@%%%%%@\                                 
-                             /@@@@@%%%%%%%@@@@@\                               
-                            @@@@@@@@@@@@@@@@@@@@@                              
-                           %%%@@@@@@@@@@@@@@@@@%%%                             
-                          %%%%%@@@@@@###@@@@@@%%%%%                            
-                          %%@%%@@@@@#####@@@@@%%@%%                            
-                          %%%%%@@@@@@###@@@@@@%%%%%                            
-                           %%%@@@@@@@@@@@@@@@@@%%%                             
-                            @@@@@@@@@@@@@@@@@@@@@                              
-                             \@@@@@%%%%%%%@@@@@/                               
-                               \@%%%%%@%%%%%@/                                 
-                                  \%%%%%%%/                                    
-                                                                               
-               @@@@@@@    @@                   |                |              
-               @@        @@@@                  |                |              
-               @@@@@    @@  @@    /\  |/\  /\| |/\   /\  |/\  /\|              
-               @@      @@@@@@@@  (  ) | | (  | |  ) (  ) | | (  |              
-               @@     @@      @@  \/\ | |  \/| |\/   \/\ | |  \/|              
+                                  ---------                                    
+                                /   * # *   \                                   
+                              /*#*    *    *#*\                                
+                             /*###*       *###*\                              
+                            /####\##--#--##/####\                             
+                           /  *####/#####\####*  \                            
+                          | *   *#/###@###\#*   * |                           
+                          | #*   (###@@@###)   *# |                           
+                          | *   *#\###@###/#*   * |                           
+                           \  *####\#####/####*  /                            
+                            \####/##--#--##\####/                             
+                             \*###*       *###*/                             
+                              \*#*    *    *#*/                                
+                                \   * # *   /                                   
+                                  ---------                                    
+                 _____     _                   |                |              
+                 |  __|   / \                  |                |              
+                 | |_    / _ \    /\  |/\  /\| |/\   /\  |/\  /\|              
+                 | __|  / ___ \  (  ) | | (  | |  ) (  ) | | (  |              
+                 |_|   /_/   \_\  \/\ | |  \/| |\/   \/\ | |  \/|              
                                              |                                 
                                            _/                                  
                            [Press any key to continue]                         
 
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwDDDDDDDDDwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwrbDDDDDSDDDDDbrwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwrbSSSsDDDDDDDsSSSbrwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwbSSSSSSbbyyybbSSSSSSbwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwDDDySSgbyyyyyyybgSSyDDDwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwDDDDDgbyyyyouoyyyybgDDDDDwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwDDSDDDbyyyouuuoyyybDDDSDDwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwDDDDDgbyyyyouoyyyybgDDDDDwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwDDDySSgbyyyyyyybgSSyDDDwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwbSSSSSSbbyyybbSSSSSSbwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwrbSSSsDDDDDDDsSSSbrwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwrbDDDDDSDDDDDbrwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwDDDDDDDDDwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwRRRRRRRwwwwRRwwwwwwwwwwwwwwwwwwwbwwwwwwwwwwwwwwwwbwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwRRwwwwwwwwRRRRwwwwwwwwwwwwwwwwwwbwwwwwwwwwwwwwwwwbwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwRRRRRwwwwRRwwRRwwwwbbwwbbbwwbbbwbbbwwwbbwwbbbwwbbbwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwRRwwwwwwRRRRRRRRwwbwwbwbwbwbwwbwbwwbwbwwbwbwbwbwwbwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwRRwwwwwRRwwwwwwRRwwbbbwbwbwwbbbwbbbwwwbbbwbwbwwbbbwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwbwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwbbwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwDDYDSDYDwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwrbYDDDDSDDDDYbrwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwrbSSgDDDDDDDgSSbrwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwbSSSggYbbybbYggSSSbwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwDDYSSggbyyyyybggSSYDDwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwDYDDDgYbyyyoyyybYgDDDYDwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwDSSDDDbyyyouoyyybDDDSSDwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwDYDDDgYbyyyoyyybYgDDDYDwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwDDYSSggbyyyyybggSSYDDwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwbSSSggYbbybbYggSSSbwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwrbSSgDDDDDDDgSSbrwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwrbYDDDDSDDDDYbrwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwDDYDSDYDwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwZZZZZwwwwwZwwwwwwwwwwwwwwwwwwwYwwwwwwwwwwwwwwwwYwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwZZZZZZwwwZZZwwwwwwwwwwwwwwwwwwYwwwwwwwwwwwwwwwwYwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwZZZZwwwwZZZZZwwwwYYwwYYYwwYYYwYYYwwwYYwwYYYwwYYYwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwZZZZZwwZZZZZZZwwYwwYwYwYwYwwYwYwwYwYwwYwYwYwYwwYwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwZZZwwwZZZwwwZZZwwYYYwYwYwwYYYwYYYwwwYYYwYwYwwYYYwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwYwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwYYwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
