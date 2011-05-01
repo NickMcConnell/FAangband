@@ -159,7 +159,7 @@ static menu_type sex_menu, race_menu, class_menu, roller_menu;
 #define RACE_COL        14
 #define RACE_AUX_COL    29
 #define CLASS_COL       29
-#define CLASS_AUX_COL   50
+#define CLASS_AUX_COL   48
 
 static region gender_region = {SEX_COL, TABLE_ROW, 15, -2};
 static region race_region = {RACE_COL, TABLE_ROW, 15, -2};
@@ -219,7 +219,7 @@ static void race_help(int i, void *db, const region *l)
 	text_out_e("Hit die: %d\n", p_info[i].r_mhp);
 	if (!OPT(adult_dungeon))
 	  {
-	    text_out_e("Difficulty: Level %d", p_info[i].difficulty);
+	    text_out_e("Difficulty: Level %d\n", p_info[i].difficulty);
       
 	    /* Color code difficulty factor */
 	    if (p_info[i].difficulty < 3) color = TERM_GREEN;
@@ -250,7 +250,7 @@ static void class_help(int i, void *db, const region *l)
 		text_out_e("%s%+d\n", stat_names_reduced[j], c_info[i].c_adj[j]); 
 	}
 
-	text_out_e("Hit die: %d\n", c_info[i].c_mhp);   
+	text_out_e("Hit die: %d\n\n\n", c_info[i].c_mhp);   
 	
 	/* Reset text_out() indentation */
 	text_out_indent = 0;
@@ -608,7 +608,7 @@ static enum birth_stage roller_command(bool first_call)
  * ------------------------------------------------------------------------ */
 
 /* The locations of the "costs" area on the birth screen. */
-#define COSTS_ROW 2
+#define COSTS_ROW 1
 #define COSTS_COL (42 + 32)
 #define TOTAL_COL (42 + 19)
 
@@ -616,7 +616,6 @@ static enum birth_stage roller_command(bool first_call)
    redisplay them all using the standard function. */
 static void point_based_stats(game_event_type type, game_event_data *data, void *user)
 {
-	display_player(0);
 }
 
 /* This is called whenever any of the other miscellaneous stat-dependent things
@@ -624,7 +623,6 @@ static void point_based_stats(game_event_type type, game_event_data *data, void 
    but redisplay everything because it's easier. */
 static void point_based_misc(game_event_type type, game_event_data *data, void *user)
 {
-	display_player(0);
 }
 
 
@@ -637,18 +635,28 @@ static void point_based_points(game_event_type type, game_event_data *data, void
 	int sum = 0;
 	int *stats = data->birthstats.stats;
 
+	display_player(0);
+	dump_line_hook = dump_line_screen;
+
 	/* Display the costs header */
-	put_str("Cost", COSTS_ROW - 1, COSTS_COL);
+	dump_row = COSTS_ROW - 1;
+	dump_ptr = (char_attr *) &pline0[COSTS_ROW - 1];
+	dump_put_str(TERM_WHITE, "Cost", COSTS_COL);
+	dump_line(dump_ptr);
 	
 	/* Display the costs */
 	for (i = 0; i < A_MAX; i++)
 	{
 		/* Display cost */
-		put_str(format("%4d", stats[i]), COSTS_ROW + i, COSTS_COL);
+	    dump_ptr = (char_attr *) &pline0[i + COSTS_ROW];
+	    dump_put_str(TERM_WHITE, format("%4d", stats[i]), COSTS_COL);
 		sum += stats[i];
+	dump_line(dump_ptr);
 	}
 	
-	put_str(format("Total Cost: %2d/%2d", sum, data->birthstats.remaining + sum), COSTS_ROW + A_MAX, TOTAL_COL);
+	dump_ptr = (char_attr *) &pline0[A_MAX + COSTS_ROW];
+	dump_put_str(TERM_WHITE, format("Total Cost: %2d/%2d", sum, data->birthstats.remaining + sum), TOTAL_COL);
+	dump_line(dump_ptr);
 }
 
 static void point_based_start(void)
