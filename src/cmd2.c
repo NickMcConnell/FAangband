@@ -2990,10 +2990,6 @@ void do_cmd_run(cmd_code code, cmd_arg args[])
     }
 
 
-    /* Get a direction (or abort) */
-    if (!get_rep_dir(&dir))
-	return;
-
     /* Get location */
     y = p_ptr->py + ddy[dir];
     x = p_ptr->px + ddx[dir];
