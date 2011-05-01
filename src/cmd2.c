@@ -2938,9 +2938,10 @@ void do_cmd_walk(cmd_code code, cmd_arg args[])
     p_ptr->energy_use = 100;
 
     /* Confuse direction */
-    if (confuse_dir(&dir)) {
+    if (confuse_dir(&dir)) 
+    {
 	/* Get location */
-	y =p_ptr-> py + ddy[dir];
+	y = p_ptr-> py + ddy[dir];
 	x = p_ptr->px + ddx[dir];
     }
 

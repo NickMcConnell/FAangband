@@ -96,6 +96,7 @@ static void show_obj(int onum, size_t max_len, char label[80],
 	/* Main window */
 	row = 1;
 	col = Term->wid - 3 - max_len - ex_width;
+	col = MIN(col, 20);
 
 	if (col < 3)
 	    col = 0;
@@ -330,6 +331,7 @@ static void show_obj_list(int num_obj, u32b display, olist_detail_t mode)
 	/* Main window */
 	row = 1;
 	col = Term->wid - 1 - max_len - ex_width;
+	col = MIN(col, 20);
 
 	if (col < 3)
 	    col = 0;
@@ -903,7 +905,7 @@ ui_event_data item_menu(void)
     get_max_len(&max_len);
     area.page_rows = menu.count + 1;
     area.width = max_len;
-    area.col = Term->wid - 1 - max_len;
+    area.col = MIN(Term->wid - 1 - max_len, 20);
     menu_layout(&menu, &area);
     evt = menu_select(&menu, 0);
 

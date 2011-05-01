@@ -772,7 +772,7 @@ void move_player(int dir)
 	    return;
     }
 
-    /* It takes some dexterity, or failing that, strength, to get out of pits. */
+    /* It takes some dexterity, or failing that strength, to get out of pits */
     if (cave_feat[p_ptr->py][p_ptr->px] == (FEAT_TRAP_HEAD + 0x01)) {
 	str_escape = adj_dex_dis[p_ptr->state.stat_ind[A_STR]];
 	dex_escape = adj_dex_dis[p_ptr->state.stat_ind[A_DEX]];
@@ -855,11 +855,9 @@ void move_player(int dir)
     }
 
     /* Normal movement */
-    else {
-	/* Sound XXX XXX XXX */
-	/* sound(MSG_WALK); */
-
-      /*** Handle traversable terrain.  ***/
+    else 
+    {
+	/*** Handle traversable terrain.  ***/
 	switch (cave_feat[y][x]) {
 	case FEAT_RUBBLE:
 	    {
@@ -874,9 +872,9 @@ void move_player(int dir)
 
 		else if (player_is_crossing == dir)
 		    can_move = TRUE;
-		else {
+		else 
 		    player_is_crossing = dir;
-		}
+		
 
 		break;
 	    }
@@ -897,10 +895,9 @@ void move_player(int dir)
 		/* Allow movement only if partway through already. */
 		else if (player_is_crossing == dir)
 		    can_move = TRUE;
-		else {
+		else 
 		    player_is_crossing = dir;
-		}
-
+		
 		break;
 	    }
 	case FEAT_WATER:	/* Water now slows rather than stopping -NRM- */
