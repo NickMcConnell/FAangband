@@ -298,9 +298,9 @@ int get_spell_index(const object_type *o_ptr, int index)
     return mp_ptr->info[spell].index;
 }
 
-cptr get_spell_name(int spell)
+cptr get_spell_name(int sindex)
 {
-    return s_info[spell].name;
+    return s_info[sindex].name;
 }
 
 /**
@@ -312,7 +312,7 @@ cptr get_spell_name(int spell)
  * functions "do_cmd_cast()" and "do_cmd_pray()" and are up to date 
  * (as of 0.4.0). -LM-
  */
-void get_spell_info(int tval, int spell, char *p, size_t len)
+void get_spell_info(int tval, int sindex, char *p, size_t len)
 {
     int plev = p_ptr->lev;
 
@@ -332,7 +332,7 @@ void get_spell_info(int tval, int spell, char *p, size_t len)
     strcpy(p, "");
 
     /* Analyze the spell */
-    switch (spell) {
+    switch (sindex) {
 	/* Sorcery */
 
     case SPELL_FIRE_BOLT:
@@ -726,7 +726,9 @@ void get_spell_info(int tval, int spell, char *p, size_t len)
 
 bool spell_needs_aim(int tval, int spell)
 {
-    switch (spell) {
+    const magic_type *mt_ptr = &mp_ptr->info[spell];
+
+    switch (mt_ptr->index) {
     case SPELL_FIRE_BOLT:
     case SPELL_STINKING_CLOUD:
     case SPELL_LIGHTNING_BOLT:
@@ -796,7 +798,7 @@ bool spell_needs_aim(int tval, int spell)
 }
 
 
-bool cast_spell(int tval, int index, int dir)
+bool cast_spell(int tval, int sindex, int dir)
 {
     int py = p_ptr->py;
     int px = p_ptr->px;
@@ -811,7 +813,7 @@ bool cast_spell(int tval, int index, int dir)
     /* Spell Effects.  Spells are mostly listed by realm, each using a block of 
      * 64 spell slots, but there are a certain number of spells that are used
      * by more than one realm (this allows more neat class- specific magics) */
-    switch (index) {
+    switch (sindex) {
 	/* Sorcerous Spells */
 
     case SPELL_FIRE_BOLT:

@@ -121,7 +121,7 @@ static void spell_menu_display(menu_type *m, int oid, bool cursor,
    }
    
     /* Dump the spell --(-- */
-    c_put_str(attr_name, format("%-30s", get_spell_name(spell)), row, col);
+    c_put_str(attr_name, format("%-30s", get_spell_name(s_ptr->index)), row, col);
     put_str(format("%2d %4d %3d%%", s_ptr->slevel, 
 		   s_ptr->smana, spell_chance(spell)), row, col + 30);
     c_put_str(attr_extra, format("%s", comment), row, col + 42);
@@ -149,6 +149,7 @@ static void spell_menu_browser(int oid, void *data, const region *loc)
 {
     struct spell_menu_data *d = data;
     int spell = d->spells[oid];
+    const magic_type *s_ptr = &mp_ptr->info[spell];
 
     /* Redirect output to the screen */
     text_out_hook = text_out_to_screen;
@@ -160,7 +161,7 @@ static void spell_menu_browser(int oid, void *data, const region *loc)
     screen_save();
 
     Term_gotoxy(loc->col, loc->row + loc->page_rows);
-    text_out(format("\n%s\n", s_info[spell].text));
+    text_out(format("\n%s\n", s_info[s_ptr->index].text));
 
     /* XXX */
     text_out_pad = 0;
@@ -274,13 +275,16 @@ static int get_spell(const object_type *o_ptr, const char *verb,
 {
     menu_type *m;
     const char *noun;
+    //const magic_type *s_ptr;
 
     noun = magic_desc[mp_ptr->spell_realm][SPELL_NOUN];
 
     m = spell_menu_new(o_ptr, spell_test);
     if (m) {
 	int spell = spell_menu_select(m, noun, verb);
+	//s_ptr = &mp_ptr->info[spell];
 	spell_menu_destroy(m);
+	//return s_ptr->index;
 	return spell;
     }
 
