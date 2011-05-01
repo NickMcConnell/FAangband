@@ -871,10 +871,15 @@ void move_player(int dir)
 		    can_move = TRUE;
 
 		else if (player_is_crossing == dir)
+		{
 		    can_move = TRUE;
+		    player_is_crossing = 0;
+		}
 		else 
+		{
 		    player_is_crossing = dir;
-		
+		    cmd_insert(CMD_WALK);
+		}
 
 		break;
 	    }
@@ -894,9 +899,15 @@ void move_player(int dir)
 
 		/* Allow movement only if partway through already. */
 		else if (player_is_crossing == dir)
+		{
 		    can_move = TRUE;
+		    player_is_crossing = 0;
+		}
 		else 
+		{
 		    player_is_crossing = dir;
+		    cmd_insert(CMD_WALK);
+		}
 		
 		break;
 	    }

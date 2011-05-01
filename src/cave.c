@@ -4592,12 +4592,15 @@ void track_object_kind(int k_idx)
  */
 void disturb(int stop_search, int unused_flag)
 {
-	/* Unused parameter */
-	(void)unused_flag;
+    /* Unused parameter */
+    (void)unused_flag;
 
-	/* Cancel repeated commands */
-	cmd_cancel_repeat();
+    /* Cancel repeated commands */
+    cmd_cancel_repeat();
 
+    /* Cancel automatic movement */
+    if (player_is_crossing) cancel_crossing = TRUE;
+    
     /* Cancel Resting */
     if (p_ptr->resting) {
 	/* Cancel */

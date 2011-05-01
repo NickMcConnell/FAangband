@@ -1,26 +1,26 @@
 /** \file dungeon.c 
     \brief Turn-by-turn processing
 
- * Char & monster regeneration, town and dungeon management,
- * all timed character, monster, and object states, entry into Wizard, 
- * debug, and borg mode, definitions of user commands, process player, 
- * the basic function for interacting with the dungeon (including what 
- * happens when a wizard cheats death).
- *
- * Copyright (c) 1997-2009 Nick McConnell, Ben Harrison, James E. Wilson, 
- * Robert A. Koeneke
- *
- * This work is free software; you can redistribute it and/or modify it
- * under the terms of either:
- *
- * a) the GNU General Public License as published by the Free Software
- *    Foundation, version 2, or
- *
- * b) the "Angband licence":
- *    This software may be copied and distributed for educational, research,
- *    and not for profit purposes provided that this copyright and statement
- *    are included in all such copies.  Other copyrights may also apply.
- */
+    * Char & monster regeneration, town and dungeon management,
+    * all timed character, monster, and object states, entry into Wizard, 
+    * debug, and borg mode, definitions of user commands, process player, 
+    * the basic function for interacting with the dungeon (including what 
+    * happens when a wizard cheats death).
+    *
+    * Copyright (c) 1997-2009 Nick McConnell, Ben Harrison, James E. Wilson, 
+    * Robert A. Koeneke
+    *
+    * This work is free software; you can redistribute it and/or modify it
+    * under the terms of either:
+    *
+    * a) the GNU General Public License as published by the Free Software
+    *    Foundation, version 2, or
+    *
+    * b) the "Angband licence":
+    *    This software may be copied and distributed for educational, research,
+    *    and not for profit purposes provided that this copyright and statement
+    *    are included in all such copies.  Other copyrights may also apply.
+    */
 
 #include "angband.h"
 #include "button.h"
@@ -43,63 +43,63 @@
  */
 void init_artifacts(void)
 {
-  int loop;
+    int loop;
   
-  /* First: count. Second: build lists */
-  for (loop = 0; loop <= 1; loop++)
+    /* First: count. Second: build lists */
+    for (loop = 0; loop <= 1; loop++)
     {
-      int a_idx;
+	int a_idx;
       
-      artifact_normal_cnt = 0;
-      artifact_special_cnt = 0;
+	artifact_normal_cnt = 0;
+	artifact_special_cnt = 0;
       
-      /* Check every artifact (including randoms) */
-      for (a_idx = 1; a_idx < z_info->a_max; a_idx++)
+	/* Check every artifact (including randoms) */
+	for (a_idx = 1; a_idx < z_info->a_max; a_idx++)
         {
-          /* Access this artifact */
-          artifact_type *a_ptr = &a_info[a_idx];
+	    /* Access this artifact */
+	    artifact_type *a_ptr = &a_info[a_idx];
           
-          /* Require "real" artifacts */
-          if (!a_ptr->name) continue;
+	    /* Require "real" artifacts */
+	    if (!a_ptr->name) continue;
           
-          /* This is a "special" artifact */
-          if ((a_idx < ART_MIN_NORMAL) ||
-              (a_ptr->tval == TV_AMULET) ||
-              (a_ptr->tval == TV_RING) ||
-              (a_ptr->tval == TV_ROD) ||
-              (a_ptr->tval == TV_STAFF) ||
-              (a_ptr->tval == TV_WAND))
+	    /* This is a "special" artifact */
+	    if ((a_idx < ART_MIN_NORMAL) ||
+		(a_ptr->tval == TV_AMULET) ||
+		(a_ptr->tval == TV_RING) ||
+		(a_ptr->tval == TV_ROD) ||
+		(a_ptr->tval == TV_STAFF) ||
+		(a_ptr->tval == TV_WAND))
             {
-              if (loop == 1)
+		if (loop == 1)
                 {
-                  artifact_special[artifact_special_cnt] = a_idx;
+		    artifact_special[artifact_special_cnt] = a_idx;
                 }
               
-              /* Count the special artifacts */
-              artifact_special_cnt++;
+		/* Count the special artifacts */
+		artifact_special_cnt++;
             }
           
-          /*
-           * This is a "normal" artifact. Notice we must skip
-           * Morgoth's Crown and Hammer.
-           */
-          else if (!kf_has(a_ptr->flags_kind, KF_INSTA_ART))
+	    /*
+	     * This is a "normal" artifact. Notice we must skip
+	     * Morgoth's Crown and Hammer.
+	     */
+	    else if (!kf_has(a_ptr->flags_kind, KF_INSTA_ART))
             {
-              if (loop == 1)
+		if (loop == 1)
                 {
-                  artifact_normal[artifact_normal_cnt] = a_idx;
+		    artifact_normal[artifact_normal_cnt] = a_idx;
                 }
               
-              /* Count the normal artifacts */
-              artifact_normal_cnt++;
+		/* Count the normal artifacts */
+		artifact_normal_cnt++;
             }
         }
       
-      /* Allocate the lists the first time through */
-      if (loop == 0)
+	/* Allocate the lists the first time through */
+	if (loop == 0)
         {
-          artifact_normal = C_ZNEW(artifact_normal_cnt, int);
-          artifact_special = C_ZNEW(artifact_special_cnt, int);
+	    artifact_normal = C_ZNEW(artifact_normal_cnt, int);
+	    artifact_special = C_ZNEW(artifact_special_cnt, int);
         }
     }
 }
@@ -293,7 +293,8 @@ static void recharge_objects(void)
 	/* Skip non-objects */
 	if (!o_ptr->k_idx) continue;
 
-	discharged_stack = (number_charging(o_ptr) == o_ptr->number) ? TRUE : FALSE;
+	discharged_stack = (number_charging(o_ptr) == o_ptr->number) 
+	    ? TRUE : FALSE;
 
 	/* Recharge rods, and update if any rods are recharged */
 	if (o_ptr->tval == TV_ROD && recharge_timeout(o_ptr))
@@ -866,7 +867,7 @@ static void process_world(void)
     }
 
 
-  /*** Poison and Stun and Cut ***/
+    /*** Poison and Stun and Cut ***/
 
     /* Poison */
     if (p_ptr->timed[TMD_POISONED]) {
@@ -973,7 +974,7 @@ static void process_world(void)
 	p_ptr->update |= (PU_BONUS);
     }
 
-  /*** Process Light ***/
+    /*** Process Light ***/
 
     /* Check for light being wielded */
     o_ptr = &p_ptr->inventory[INVEN_LIGHT];
@@ -1038,7 +1039,7 @@ static void process_world(void)
 
 
 
-  /*** Random curse effects ***/
+    /*** Random curse effects ***/
 
     /* Random teleportation */
     if ((p_ptr->state.teleport) && (randint0(100) < 1)) {
@@ -1107,7 +1108,9 @@ static void process_world(void)
 	    o_ptr = &p_ptr->inventory[i];
 
 	    /* Chance for each item */
-	    if ((cf_has(o_ptr->flags_curse, CF_DROP_WEAPON)) && (randint0(200) < 1)) {
+	    if ((cf_has(o_ptr->flags_curse, CF_DROP_WEAPON)) && 
+		(randint0(200) < 1)) 
+	    {
 		/* Notice */
 		notice_curse(CF_DROP_WEAPON, i + 1);
 
@@ -1448,7 +1451,7 @@ static void process_player(void)
     byte feat = cave_feat[p_ptr->py][p_ptr->px];
     feature_type *f_ptr = &f_info[feat];
 
-  /*** Check for interupts ***/
+    /*** Check for interupts ***/
 
     /* Complete resting */
     if (p_ptr->resting < 0) {
@@ -1523,10 +1526,10 @@ static void process_player(void)
 	button_kill('g');
 
 
-  /*** Hack - handle special mana gain ***/
+    /*** Hack - handle special mana gain ***/
     special_mana_gain();
 
-  /*** Handle actual user input ***/
+    /*** Handle actual user input ***/
 
     /* Repeat until energy is reduced */
     do {
@@ -1595,7 +1598,7 @@ static void process_player(void)
 
 	/* Repeated command */
 	else if (cmd_get_nrepeats() > 0)
-		{
+	{
 	    /* Hack -- Assume messages were seen */
 	    msg_flag = FALSE;
 
@@ -1623,10 +1626,10 @@ static void process_player(void)
 
 	}
 
-      /*** Hack - handle special mana gain ***/
+	/*** Hack - handle special mana gain ***/
 	special_mana_gain();
 
-      /*** Clean up ***/
+	/*** Clean up ***/
 
 	/* Significant */
 	if (p_ptr->energy_use) {
@@ -2044,7 +2047,7 @@ static void dungeon(void)
     total_wakeup_chance = 0;
     add_wakeup_chance = 0;
 
-  /*** Process this dungeon level ***/
+    /*** Process this dungeon level ***/
 
     /* Reset the monster generation level */
     monster_level = p_ptr->depth;

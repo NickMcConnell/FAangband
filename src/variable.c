@@ -1061,6 +1061,8 @@ s16b autosave_freq;			/* Autosave frequency */
  * direction is he headed?  Monsters are handled more simply:  They have 
  * a 33% or 50% chance of walking through. -LM-
  */
+bool cancel_crossing;
+
 byte player_is_crossing;
 
 

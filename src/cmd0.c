@@ -767,6 +767,9 @@ void textui_process_command(bool no_request)
     else if (e.type == EVT_KBRD)
 	done = textui_process_key(e.key);
 
+    /* Hack! */
+    if ((e.type == EVT_KBRD) && isdigit(e.key)) return;
+
     if (!done)
 	do_cmd_unknown();
 }
