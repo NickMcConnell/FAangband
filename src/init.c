@@ -4112,8 +4112,8 @@ bool init_angband(void)
     if (init_other()) quit("Cannot initialize other stuff");
 
     /* Initialise store stocking data */
-    event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (store stocks)");
-    store_init();
+    //event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (store stocks)");
+    //store_init();
 
     /* Initialize some other arrays */
     event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (alloc)");

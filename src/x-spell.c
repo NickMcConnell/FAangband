@@ -295,7 +295,8 @@ int get_spell_index(const object_type *o_ptr, int index)
     if (spell > mp_ptr->book_start_index[o_ptr->sval + 1])
 	return -1;
 
-    return mp_ptr->info[spell].index;
+    //return mp_ptr->info[spell].index;
+    return spell;
 }
 
 cptr get_spell_name(int sindex)
