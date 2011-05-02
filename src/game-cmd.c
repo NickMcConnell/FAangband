@@ -127,7 +127,7 @@ struct item_selector item_selector[] =
 
     { CMD_TAKEOFF, "Take off which item? ",
       "You are not wearing anything you can take off.",
-      obj_can_takeoff, USE_EQUIP },
+      obj_think_can_takeoff, USE_EQUIP },
 
     { CMD_DROP, "Drop which item? ",
       "You have nothing to drop.",

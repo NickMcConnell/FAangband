@@ -4537,10 +4537,24 @@ bool obj_can_study(const object_type * o_ptr)
 /* Can only take off non-cursed items */
 bool obj_can_takeoff(const object_type * o_ptr)
 {
-    if (cf_has(o_ptr->flags_curse, CF_STICKY_WIELD)) {
-	notice_curse(CF_STICKY_WIELD, wield_slot(o_ptr) + 1);
+    if (cf_has(o_ptr->flags_curse, CF_STICKY_WIELD)) 
+    {
+	int i;
+
+	for (i = INVEN_WIELD; i < ALL_INVEN_TOTAL; i++)
+	    if (o_ptr == &p_ptr->inventory[i]) break;
+
+	notice_curse(CF_STICKY_WIELD, i + 1);
 	return FALSE;
     }
+    return TRUE;
+}
+
+bool obj_think_can_takeoff(const object_type * o_ptr)
+{
+    if (cf_has(o_ptr->id_curse, CF_STICKY_WIELD)) 
+	return FALSE;
+    
     return TRUE;
 }
 
