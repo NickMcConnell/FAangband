@@ -1373,7 +1373,7 @@ static char jump_tag(menu_type * menu, int oid)
 void jump_display(menu_type *menu, int oid, bool cursor, int row, int col,
 		  int width)
 {
-    const u16b *choice = menu->menu_data;
+    const u16b *choice = menu_priv(menu);
 
     byte attr = (cursor ? TERM_L_BLUE : TERM_WHITE);
 
@@ -1386,20 +1386,22 @@ void jump_display(menu_type *menu, int oid, bool cursor, int row, int col,
  */
 bool jump_action(menu_type *menu, const ui_event_data *evt, int oid)
 {
-    u16b *choice = menu->menu_data;
+    u16b *choice = menu_priv(menu);
 
     int idx = choice[oid];
 
-    if (evt->type == EVT_SELECT) {
+    if (evt->type == EVT_SELECT) 
+    {
 	place = idx;
 	/* Accept request */
 	msg_format("You jump to %s level %d.",
 		   locality_name[stage_map[place][LOCALITY]],
 		   stage_map[place][DEPTH]);
-    } else
-	return FALSE;
+    } 
+    else
+	return TRUE;
 
-    return TRUE;
+    return FALSE;
 }
 
 
@@ -1441,9 +1443,10 @@ bool jump_menu(int level, int *location)
     WIPE(&menu, menu);
     menu.title = "Which region do you want to be transported to?";
     menu.cmd_keys = " \n\r";
-    menu.count = j;
-    menu.menu_data = choice;
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+    //menu.count = j;
+    //menu.menu_data = choice;
+    menu_setpriv(&menu, j, choice);
     menu_layout(&menu, &area);
 
     /* Select an entry */
