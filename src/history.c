@@ -346,18 +346,21 @@ static void print_history_header(void)
     c_put_str(TERM_WHITE, "============================================================", 4, 0);
 }
 
-static void history_get_place(char *place, int i)
+static void history_get_place(char *place, size_t len, int i)
 {
     int region = stage_map[history_list[i].place][LOCALITY];
     int lev = stage_map[history_list[i].place][DEPTH];
+    char buf[30];
 
     /* Get the location name */
     if (lev)
-	strnfmt(place, sizeof(place), "%15s%4d ", locality_name[region], lev);
+	strnfmt(buf, sizeof(buf), "%15s%4d ", locality_name[region], lev);
     else if ((region != UNDERWORLD) && (region != MOUNTAIN_TOP))
-	strnfmt(place, sizeof(place), "%15s Town", locality_name[region]);
+	strnfmt(buf, sizeof(buf), "%15s Town", locality_name[region]);
     else
-	strnfmt(place, sizeof(place), "%15s     ", locality_name[region]);
+	strnfmt(buf, sizeof(buf), "%15s     ", locality_name[region]);
+
+    my_strcpy(place, buf, len);
 }
 
 /* Handles all of the display functionality for the history list. */
@@ -395,7 +398,7 @@ void history_display(void)
 				continue;
 
 			/* Get location name */
-			history_get_place(location, i);
+			history_get_place(location, sizeof(location), i);
 
 			strnfmt(buf, sizeof(buf), "%10d%22s%5d    %s",
 				history_list[i].turn,
@@ -509,7 +512,7 @@ void dump_history(char_attr_line *line, int *curr_line, bool *dead)
 	    my_strcat(buf, " (LOST)", sizeof(buf));
 
 	/* Get the location name */
-	history_get_place(place, i);
+	history_get_place(place, sizeof(place), i);
 	
 	/* Make preliminary part of note */
 	strnfmt(info_note, sizeof(info_note), "%10d%22s%5d    ",

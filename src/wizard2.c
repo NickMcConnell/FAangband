@@ -1416,6 +1416,13 @@ bool jump_menu(int level, int *location)
     size_t i;
     u16b *choice;
 
+    /* Dungeon only is easy */
+    if (OPT(adult_dungeon))
+    {
+	*location = level + 1;
+	return TRUE;
+    }
+
     /* Create the array */
     choice = C_ZNEW(15, u16b);
 
@@ -1437,6 +1444,7 @@ bool jump_menu(int level, int *location)
     menu.count = j;
     menu.menu_data = choice;
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+    menu_layout(&menu, &area);
 
     /* Select an entry */
     evt = menu_select(&menu, cursor);
