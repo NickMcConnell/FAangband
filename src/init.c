@@ -245,19 +245,16 @@ u32b grab_value(const char *what, const char **value_type, int num, int *val) {
     char *t;
 
     my_strcpy(s, what, strlen(what));
-    /* Parse the string */
-    //for (; *s; )
-    //{
-	/* Find the first bracket */
-	for (t = s; *t && (*t != '['); ++t) /* loop */;
-	  
-	/* Get the value */
-	if (1 != sscanf(t + 1, "%d", val))
-	    return (PARSE_ERROR_INVALID_VALUE);
 
-	/* Terminate the string */
-	*t = '\0';
-	//}
+    /* Find the first bracket */
+    for (t = s; *t && (*t != '['); ++t) /* loop */;
+    
+    /* Get the value */
+    if (1 != sscanf(t + 1, "%d", val))
+	return (PARSE_ERROR_INVALID_VALUE);
+    
+    /* Terminate the string */
+    *t = '\0';
   
     /* Check the possibilities */
     for (i = 0; i < num; i++)
@@ -4111,10 +4108,11 @@ bool init_angband(void)
     event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (other)");
     if (init_other()) quit("Cannot initialize other stuff");
 
+#if 0
     /* Initialise store stocking data */
-    //event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (store stocks)");
-    //store_init();
-
+    event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (store stocks)");
+    store_init();
+#endif
     /* Initialize some other arrays */
     event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (alloc)");
     if (init_alloc()) quit("Cannot initialize alloc stuff");

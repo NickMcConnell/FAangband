@@ -34,7 +34,6 @@ int spell_collect_from_book(const object_type * o_ptr,
     int n_spells = 0;
 
     for (i = start; i < end; i++) {
-	//int spell = mp_ptr->info[i].index;
 	int spell = i;
 	if (spell >= 0)
 	    spells[n_spells++] = spell;
@@ -166,16 +165,12 @@ s16b spell_chance(int spell)
 /* Check if the given spell is in the given book. */
 bool spell_in_book(int spell, int book)
 {
-    //int i;
     object_type *o_ptr = object_from_item_idx(book);
     int start = mp_ptr->book_start_index[o_ptr->sval];
     int end = mp_ptr->book_start_index[o_ptr->sval + 1];
 
     if ((spell >= start) && (spell < end))
-    //for (i = start; i < end; i++) {
-//	if (spell == mp_ptr->info[i].index)
 	return TRUE;
-    //  }
 
     return FALSE;
 }
@@ -265,7 +260,6 @@ bool spell_cast(int spell, int dir)
     else {
 	/* Cast the spell */
 	if (!cast_spell(mp_ptr->spell_book, mt_ptr->index, dir))
-	    //if (!cast_spell(mp_ptr->spell_book, spell, dir))
 	    return FALSE;
 
 	/* A spell was cast */

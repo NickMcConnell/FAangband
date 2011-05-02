@@ -288,7 +288,6 @@ void text_out_dump(byte a, char *str, char_attr_line **line, int *current_line,
 	    /* Output the indent */
 	    for (i = 0; i < indent; i++)
 	    {
-		//file_writec(text_out_file, ' ');
 		dump_put_str(TERM_WHITE, " ", pos);
 		pos++;
 	    }
@@ -322,7 +321,6 @@ void text_out_dump(byte a, char *str, char_attr_line **line, int *current_line,
 		/* Begin a new line */
 		(*current_line)++;
 		dump_ptr = (char_attr *) &lline[*current_line];
-		//file_writec(text_out_file, '\n');
 
 		/* Reset */
 		pos = 0;
@@ -346,7 +344,6 @@ void text_out_dump(byte a, char *str, char_attr_line **line, int *current_line,
 	    ch = (my_isprint((unsigned char) s[n]) ? s[n] : ' ');
 
 	    /* Write out the character */
-	    //file_writec(text_out_file, ch);
 	    dump_put_str(a, format("%c",ch), pos);
 
 	    /* Increment */

@@ -275,16 +275,13 @@ static int get_spell(const object_type *o_ptr, const char *verb,
 {
     menu_type *m;
     const char *noun;
-    //const magic_type *s_ptr;
 
     noun = magic_desc[mp_ptr->spell_realm][SPELL_NOUN];
 
     m = spell_menu_new(o_ptr, spell_test);
     if (m) {
 	int spell = spell_menu_select(m, noun, verb);
-	//s_ptr = &mp_ptr->info[spell];
 	spell_menu_destroy(m);
-	//return s_ptr->index;
 	return spell;
     }
 
