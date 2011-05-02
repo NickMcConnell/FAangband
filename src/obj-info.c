@@ -1741,7 +1741,7 @@ textblock *object_info_ego(struct ego_item *ego)
 	obj.sval = kind->sval;
 	obj.name2 = ego->eidx;
 	of_union(obj.flags_obj, ego->flags_obj);
-	of_union(obj.flags_curse, ego->flags_curse);
+	cf_union(obj.flags_curse, ego->flags_curse);
 	for (i = 0; i < MAX_P_RES; i++) 
 	    obj.percent_res[i] = ego->percent_res[i];
 	for (i = 0; i < A_MAX; i++) 

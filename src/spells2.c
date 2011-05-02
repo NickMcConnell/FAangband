@@ -552,7 +552,7 @@ void rebalance_weapon(void)
 
 	o_ptr->to_h -= (s16b) (2 + randint0(4));
 	o_ptr->to_d -= (s16b) (2 + randint0(4));
-	of_on(o_ptr->flags_curse, FLAG_START + randint0(CF_MAX));
+	cf_on(o_ptr->flags_curse, FLAG_START + randint0(CF_MAX));
 
 	/* Describe */
 	msg_format("Oh no!  A dreadful black aura surrounds your %s!", o_name);
@@ -943,7 +943,7 @@ void identify_object(object_type * o_ptr)
     /* Get the object kind. */
     k_ptr = &k_info[o_ptr->k_idx];
 
-    /* See what we thougth of it before */
+    /* See what we thought of it before */
     if ((o_ptr->feel == FEEL_PERILOUS) || (o_ptr->feel == FEEL_DUBIOUS_WEAK)
 	|| (o_ptr->feel == FEEL_DUBIOUS_STRONG))
 	was_dubious = TRUE;
@@ -963,7 +963,7 @@ void identify_object(object_type * o_ptr)
     /* Check for known curses */
     if ((of_has(o_ptr->flags_obj, OF_SHOW_CURSE))
 	|| (artifact_p(o_ptr) && (o_ptr->name1 < ART_MIN_RANDOM))) {
-	of_copy(o_ptr->id_curse, o_ptr->flags_curse);
+	cf_copy(o_ptr->id_curse, o_ptr->flags_curse);
 	o_ptr->ident |= IDENT_KNOW_CURSES;
 	if (!cf_is_empty(o_ptr->flags_curse))
 	    o_ptr->ident |= IDENT_CURSED;
@@ -975,9 +975,9 @@ void identify_object(object_type * o_ptr)
     if (!item_dubious(o_ptr, FALSE) && was_dubious)
 	o_ptr->ident |= IDENT_CURSED;
 
-	/* Log artifacts to the history list. */
-	if (artifact_p(o_ptr))
-		history_add_artifact(o_ptr->name1, TRUE, TRUE);
+    /* Log artifacts to the history list. */
+    if (artifact_p(o_ptr))
+	history_add_artifact(o_ptr->name1, TRUE, TRUE);
 
     /* If the object is flavored, also make all items of that type, except for
      * variable rings and amulets, fully known. */

@@ -1149,7 +1149,7 @@ static void store_create(void)
 
 	/* Shown curses are shown */
 	if (of_has(i_ptr->flags_obj, OF_SHOW_CURSE))
-	    if_copy(i_ptr->id_curse, i_ptr->flags_curse);
+	    cf_copy(i_ptr->id_curse, i_ptr->flags_curse);
 
 	/* Mega-Hack -- no chests in stores */
 	if (i_ptr->tval == TV_CHEST)

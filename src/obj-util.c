@@ -2023,7 +2023,7 @@ bool object_similar(const object_type * o_ptr, const object_type * j_ptr,
     /* Different flags don't stack */
     if (!of_is_equal(o_ptr->flags_obj, j_ptr->flags_obj))
 	return FALSE;
-    if (!of_is_equal(o_ptr->flags_curse, j_ptr->flags_curse))
+    if (!cf_is_equal(o_ptr->flags_curse, j_ptr->flags_curse))
 	return FALSE;
 
     /* Require identical resists, etc */
@@ -2190,8 +2190,8 @@ void object_absorb(object_type * o_ptr, const object_type * j_ptr)
     /* Blend all knowledge */
     o_ptr->ident |= (j_ptr->ident & ~IDENT_EMPTY);
     of_union(o_ptr->id_obj, j_ptr->id_obj);
-    of_union(o_ptr->id_curse, j_ptr->id_curse);
-    of_union(o_ptr->id_other, j_ptr->id_other);
+    cf_union(o_ptr->id_curse, j_ptr->id_curse);
+    if_union(o_ptr->id_other, j_ptr->id_other);
 
     /* Hack -- Blend "notes" */
     if (j_ptr->note != 0)
