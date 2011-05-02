@@ -3529,6 +3529,17 @@ static errr init_alloc(void)
         }
     }
   
+  /* Collect the level indexes */
+  for (i = 1; i < MAX_DEPTH; i++)
+  {
+      /* Group by level */
+      num[i] += num[i-1];
+  }
+  
+  /* Paranoia */
+  if (!num[0]) quit("No town objects!");
+  
+  
     /*** Initialize object allocation info ***/
 
     /* Allocate the alloc_kind_table */

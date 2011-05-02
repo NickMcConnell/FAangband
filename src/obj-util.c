@@ -1328,7 +1328,7 @@ object_type *get_next_object(const object_type * o_ptr)
  * Return the "value" of an "unknown" item
  * Make a guess at the value of non-aware items
  */
-static s32b object_value_base(object_type * o_ptr)
+static s32b object_value_base(const object_type *o_ptr)
 {
     object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -1437,7 +1437,7 @@ static s32b object_value_base(object_type * o_ptr)
  *
  * Now reworked to handle all item properties -NRM-
  */
-static s32b object_value_real(object_type * o_ptr)
+static s32b object_value_real(const object_type *o_ptr)
 {
     int i;
 
@@ -3324,7 +3324,6 @@ s16b inven_takeoff(int item, int amt)
     object_type object_type_body;
 
     cptr act;
-    cptr act2 = "";
 
     char o_name[80];
 
