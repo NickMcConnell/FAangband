@@ -1133,11 +1133,13 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 
 	    /* Display a message */
 	    if (p_ptr->wizard) {
-		strnfmt(out_val, sizeof(out_val), "%s%s%s%s, %s (%d:%d).", s1,
-			s2, s3, name, s4, s5, coords, y, x);
-	    } else {
-		strnfmt(out_val, sizeof(out_val), "%s%s%s%s, %s.", s1, s2, s3,
-			name, s4, s5, coords);
+		strnfmt(out_val, sizeof(out_val), "%s%s%s%s%s%s, %s (%d:%d).", 
+			s1, s2, s3, name, s4, s5, coords, y, x);
+	    } 
+	    else 
+	    {
+		strnfmt(out_val, sizeof(out_val), "%s%s%s%s%s%s, %s.", s1, s2, 
+			s3, name, s4, s5, coords);
 	    }
 
 	    prt(out_val, 0, 0);
