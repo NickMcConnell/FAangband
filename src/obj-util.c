@@ -2811,8 +2811,8 @@ int compare_ammo(int slot1, int slot2)
 {
     object_type *o1 = &p_ptr->inventory[slot1 + QUIVER_START];
     object_type *o2 = &p_ptr->inventory[slot2 + QUIVER_START];
-    bool throw1 = !is_missile(o1);
-    bool throw2 = !is_missile(o2);
+    bool throw1 = !is_missile(o1) && o1->kind;
+    bool throw2 = !is_missile(o2) && o2->kind;
 
     if (throw1 && !throw2) return (-1);
     else if (!throw1 && throw2) return (1);
