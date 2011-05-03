@@ -286,7 +286,7 @@ static void get_max_len(size_t *max_len)
  */
 static void show_obj_list(int num_obj, u32b display, olist_detail_t mode)
 {
-    int i, row = 0, col = 0;
+    int i, row = 0, col = 0, sp = 0;
     size_t max_len = Term->wid - 1;
     int ex_width = 0, ex_offset;
 
@@ -343,17 +343,24 @@ static void show_obj_list(int num_obj, u32b display, olist_detail_t mode)
     /* Output the list */
     for (i = 0; i < num_obj; i++) 
     {
-	int sp = (i >= INVEN_TOTAL) && need_spacer ? 1 : 0;
 	o_ptr = items[i].object;
 
 	/* Display each line */
 	show_obj(i + sp, max_len, items[i].label, o_ptr, FALSE, mode);
+	if (items[i].key == 'l') 
+	{
+	    sp = 1;
+	    prt("", i + sp + 1, MAX(col - 2, 0));
+	}
     }
 
     /* For the inventory: print the quiver count */
     if (mode & OLIST_QUIVER)
     {
 	int count, j;
+
+	/* Adjust for subwindow */
+	int skip = (in_term) ? 1 : 0;
 
 	/* Quiver may take multiple lines */
 	for(j = 0; j < p_ptr->quiver_slots; j++, i++)
@@ -365,29 +372,29 @@ static void show_obj_list(int num_obj, u32b display, olist_detail_t mode)
 		count = 99;
 
 	    /* Clear the line */
-	    prt("", row + i, MAX(col - 2, 0));
+	    prt("", row + i + skip, MAX(col - 2, 0));
 
 	    /* Print the (disabled) label */
 	    strnfmt(tmp_val, sizeof(tmp_val), "%c) ", index_to_label(i));
-	    c_put_str(TERM_SLATE, tmp_val, row + i, col);
+	    c_put_str(TERM_SLATE, tmp_val, row + i + skip, col);
 
 	    /* Print the count */
 	    strnfmt(tmp_val, sizeof(tmp_val), "in Quiver: %d missile%s", count,
 		    count == 1 ? "" : "s");
-	    c_put_str(TERM_L_UMBER, tmp_val, row + i, col + 3);
+	    c_put_str(TERM_L_UMBER, tmp_val, row + i + skip, col + 3);
 	}
     }
 
     /* Clear term windows */
     if (in_term) {
 	for (; i < Term->hgt; i++) {
-	    prt("", row + i + offset, MAX(col - 2, 0));
+	    prt("", row + i + offset + sp, MAX(col - 2, 0));
 	}
     }
 
     /* Print a drop shadow for the main window if necessary */
     else if (i > 0 && row + i < 24) {
-	prt("", row + i, MAX(col - 2, 0));
+	prt("", row + i + sp, MAX(col - 2, 0));
     }
 }
 
@@ -446,7 +453,7 @@ void show_equip(olist_detail_t mode)
     /* Find the last equipment slot to display */
     for (i = INVEN_WIELD; i < ALL_INVEN_TOTAL; i++) {
 	o_ptr = &p_ptr->inventory[i];
-	if (i < ALL_INVEN_TOTAL || o_ptr->k_idx)
+	if (i < ALL_INVEN_TOTAL && o_ptr->k_idx)
 	    last_slot = i;
     }
 
