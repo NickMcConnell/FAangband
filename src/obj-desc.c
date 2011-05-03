@@ -94,8 +94,6 @@ static const char *obj_desc_get_modstr(const object_type * o_ptr)
     object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
     switch (o_ptr->tval) {
-    case TV_AMULET:
-    case TV_RING:
     case TV_STAFF:
     case TV_WAND:
     case TV_ROD:
@@ -104,6 +102,8 @@ static const char *obj_desc_get_modstr(const object_type * o_ptr)
     case TV_SCROLL:
 	return flavor_info[k_ptr->flavor].text;
 
+    case TV_AMULET:
+    case TV_RING:
     case TV_MAGIC_BOOK:
     case TV_PRAYER_BOOK:
     case TV_DRUID_BOOK:
@@ -118,7 +118,7 @@ static const char *obj_desc_get_basename(const object_type * o_ptr, bool aware)
 {
     object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
-    bool show_flavor = k_ptr->flavor ? TRUE : FALSE;
+    bool show_flavor = (k_ptr->flavor || is_jewellery(o_ptr)) ? TRUE : FALSE;
 
 
     if (o_ptr->ident & IDENT_STORE)
