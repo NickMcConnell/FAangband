@@ -533,7 +533,7 @@ static void wiz_display_item(object_type * o_ptr)
 */
 typedef struct tval_desc {
     int tval;
-    cptr desc;
+    const char *desc;
     bool can_be_artifact;
 
 } tval_desc;
@@ -559,7 +559,7 @@ static tval_desc tvals[] = {
     {TV_DRAG_ARMOR, "Dragon Scale Mail", TRUE},
     {TV_HARD_ARMOR, "Hard Armor", TRUE},
     {TV_SOFT_ARMOR, "Soft Armor", TRUE},
-    {TV_RING, "Ring", TRUE},
+    {TV_RING, "Ring", FALSE},
     {TV_AMULET, "Amulet", TRUE},
     {TV_LIGHT, "Light", TRUE},
     {TV_POTION, "Potion", FALSE},
@@ -576,8 +576,7 @@ static tval_desc tvals[] = {
     {TV_CHEST, "Chest", FALSE},
     {TV_FOOD, "Food", FALSE},
     {TV_FLASK, "Flask", FALSE},
-    {TV_GOLD, "treasure", FALSE},
-    {0, NULL, FALSE}
+    {TV_GOLD, "treasure", FALSE}
 };
 
 
@@ -586,7 +585,7 @@ static tval_desc tvals[] = {
  */
 static void get_art_name(char *buf, int a_idx)
 {
-    int i;
+    int i, len;
     object_type localObject;
     object_type *o_ptr;
     artifact_type *a_ptr = &a_info[a_idx];
@@ -615,10 +614,286 @@ static void get_art_name(char *buf, int a_idx)
     o_ptr->ident |= IDENT_KNOWN;
 
     /* Create the artifact description */
-    object_desc(buf, sizeof(buf), o_ptr, ODESC_FULL | ODESC_SINGULAR);
+    object_desc(buf, 60, o_ptr, ODESC_SINGULAR | ODESC_SPOIL);
+}
+
+static const region wiz_create_item_area = { 0, 0, 0, 0 };
+
+/** Object kind selection */
+void wiz_create_item_subdisplay(menu_type *m, int oid, bool cursor,
+		int row, int col, int width)
+{
+	int *choices = menu_priv(m);
+	char buf[80];
+
+	/* Heh */
+	if (m->title[2] == 'a')
+	{
+	    object_kind_name(buf, sizeof buf, choices[oid], TRUE);
+	    c_prt(curs_attrs[CURS_KNOWN][0 != cursor], buf, row, col);
+	}
+
+	else
+	{
+	    /* Acquire the artifact name */
+	    get_art_name(buf, choices[oid]);
+	    c_prt(curs_attrs[CURS_KNOWN][0 != cursor], buf, row, col);
+	}
+}
+
+bool wiz_create_item_subaction(menu_type *m, const ui_event_data *e, int oid)
+{
+    int *choices = menu_priv(m);
+
+    object_type *i_ptr;
+    object_type object_type_body;
+    
+    /* Heh */
+    if (m->title[2] == 'a')
+    {
+	object_kind *kind = &k_info[choices[oid]];
+
+	if (e->type != EVT_SELECT)
+	    return TRUE;
+
+	/* Get local object */
+	i_ptr = &object_type_body;
+	
+	/* Wipe the object */
+	object_wipe(i_ptr);
+	
+	/* Create the item */
+	object_prep(i_ptr, kind->kidx);
+	
+	/* Apply magic (no messages, no artifacts) */
+	apply_magic(i_ptr, p_ptr->depth, FALSE, FALSE, FALSE);
+
+	/* Hack -- Since treasure objects are not effected by apply_magic, they
+	 * need special processing. */
+	if (i_ptr->tval == TV_GOLD) 
+	{
+	    i_ptr->pval = kind->cost / 2 + randint1((kind->cost + 1) / 2);
+	}
+
+	/* Mark as cheat, and where created */
+	i_ptr->origin = ORIGIN_CHEAT;
+	i_ptr->origin_stage = p_ptr->stage;
+	
+    }
+
+    else
+    {
+	int i;
+	int o_idx;
+	artifact_type *a_ptr = &a_info[choices[oid]];
+
+	/* Get the artifact info */
+	a_ptr = &a_info[choices[oid]];
+	
+	/* Ignore "empty" artifacts */
+	if (!a_ptr->name)
+	    return TRUE;
+
+	/* Get local object */
+	i_ptr = &object_type_body;
+
+	/* Wipe the object */
+	object_wipe(i_ptr);
+	
+	/* Acquire the "kind" index */
+	o_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
+	
+	/* Create the base object */
+	object_prep(i_ptr, o_idx);
+
+	/* Mark the object as an artifact. */
+	i_ptr->name1 = a_ptr->aidx;
+	
+	/* Extract the fields */
+	i_ptr->pval = a_ptr->pval;
+	i_ptr->ac = a_ptr->ac;
+	i_ptr->dd = a_ptr->dd;
+	i_ptr->ds = a_ptr->ds;
+	i_ptr->to_a = a_ptr->to_a;
+	i_ptr->to_h = a_ptr->to_h;
+	i_ptr->to_d = a_ptr->to_d;
+	i_ptr->weight = a_ptr->weight;
+	
+	of_copy(i_ptr->flags_obj, a_ptr->flags_obj);
+	cf_copy(i_ptr->flags_curse, a_ptr->flags_curse);
+	
+	for (i = 0; i < MAX_P_RES; i++)
+	    i_ptr->percent_res[i] = a_ptr->percent_res[i];
+	for (i = 0; i < A_MAX; i++)
+	    i_ptr->bonus_stat[i] = a_ptr->bonus_stat[i];
+	for (i = 0; i < MAX_P_BONUS; i++)
+	    i_ptr->bonus_other[i] = a_ptr->bonus_other[i];
+	for (i = 0; i < MAX_P_SLAY; i++)
+	    i_ptr->multiple_slay[i] = a_ptr->multiple_slay[i];
+	for (i = 0; i < MAX_P_BRAND; i++)
+	    i_ptr->multiple_brand[i] = a_ptr->multiple_brand[i];
+	
+	
+	/* Transfer the activation information. */
+	if (a_ptr->effect) 
+	    i_ptr->effect = a_ptr->effect;
+    }
+		
+    /* Drop from heaven */
+    drop_near(i_ptr, -1, p_ptr->py, p_ptr->px, TRUE);
+    
+    /* All done */
+    msg_print("Allocated.");
+    
+    return FALSE;
+}
+
+menu_iter wiz_create_item_submenu =
+{
+	NULL,
+	NULL,
+	wiz_create_item_subdisplay,
+	wiz_create_item_subaction,
+	NULL
+};
+
+void wiz_create_item_display(menu_type *m, int oid, bool cursor,
+		int row, int col, int width)
+{
+	struct tval_desc *tvals = menu_priv(m);
+	c_prt(curs_attrs[CURS_KNOWN][0 != cursor], tvals[oid].desc, row, col);
+}
+
+bool wiz_create_item_action(menu_type *m, const ui_event_data *e, int oid)
+{
+	ui_event_data ret;
+	menu_type *menu;
+
+	int choice[60];
+	int n_choices;
+
+	int i;
+
+	if (e->type != EVT_SELECT)
+		return TRUE;
+
+	/* Regular objects */
+	if (m->count == N_ELEMENTS(tvals))
+	{
+	    for (n_choices = 0, i = 1; (n_choices < 60) && (i < z_info->k_max); i++)
+	    {
+		object_kind *kind = &k_info[i];
+		
+		if (kind->tval != tvals[oid].tval ||
+		    kf_has(kind->flags_kind, KF_INSTA_ART))
+		    continue;
+		
+		choice[n_choices++] = i;
+	    }
+	}
+	/* Artifacts */
+	else
+	{
+	    struct tval_desc *a_tvals = menu_priv(m);
+	    /* ...We have to search the whole artifact list. */
+	    for (n_choices = 0, i = 1; (n_choices < 60) && (i < z_info->a_max); i++) 
+	    {
+		artifact_type *a_ptr = &a_info[i];
+		
+		/* Analyze matching items */
+		if (a_ptr->tval == a_tvals[oid].tval) 
+		{
+		    /* Remember the artifact index */
+		    choice[n_choices++] = i;
+		}
+	    }
+	}
+
+	screen_save();
+	clear_from(0);
+
+	menu = menu_new(MN_SKIN_COLUMNS, &wiz_create_item_submenu);
+	menu->selections = all_letters;
+	if (m->count == N_ELEMENTS(tvals))
+	    menu->title = format("What kind of %s?", tvals[oid].desc);
+	else
+	    menu->title = format("Which artifact %s? ", tvals[oid].desc);
+
+	menu_setpriv(menu, n_choices, choice);
+	menu_layout(menu, &wiz_create_item_area);
+	ret = menu_select(menu, 0);
+
+	screen_load();
+
+	return (ret.type == EVT_ESCAPE);
+}
+
+menu_iter wiz_create_item_menu =
+{
+	NULL,
+	NULL,
+	wiz_create_item_display,
+	wiz_create_item_action,
+	NULL
+};
+
+
+/*
+ * Choose and create an instance of an object kind
+ */
+static void wiz_create_item(void)
+{
+	menu_type *menu = menu_new(MN_SKIN_COLUMNS, &wiz_create_item_menu);
+
+	menu->selections = all_letters;
+	menu->title = "What kind of object?";
+
+	screen_save();
+	clear_from(0);
+
+	menu_setpriv(menu, N_ELEMENTS(tvals), tvals);
+	menu_layout(menu, &wiz_create_item_area);
+	menu_select(menu, 0);
+
+	screen_load();
+}
+
+/*
+ * Choose and create an instance of an object kind
+ */
+static void wiz_create_artifact(void)
+{
+    int num, i;
+    menu_type *menu = menu_new(MN_SKIN_COLUMNS, &wiz_create_item_menu);
+    tval_desc *a_tvals;
+    
+    a_tvals = C_ZNEW(N_ELEMENTS(tvals), tval_desc);
+    
+    for (num = i = 0; i < N_ELEMENTS(tvals); i++) {
+	/* Don't show tvals with no artifacts. */
+	if (!(tvals[i].can_be_artifact))
+	    continue;
+
+	/* Increment number of items in list. */
+	a_tvals[num++] = tvals[i];
+    }
+
+    menu->selections = all_letters;
+    menu->title = "What kind of artifact?";
+    
+    screen_save();
+    clear_from(0);
+    
+    menu_setpriv(menu, num, a_tvals);
+    menu_layout(menu, &wiz_create_item_area);
+    menu_select(menu, 0);
+    
+    screen_load();
+    FREE(a_tvals);
 }
 
 
+#if 0
 /**
  * Hack -- title for each column
  *
@@ -802,7 +1077,7 @@ static int wiz_create_itemtype(bool artifact)
     /* And return successful */
     return (choice[num]);
 }
-
+#endif
 /**
  * Tweak an item
  */
@@ -1242,7 +1517,7 @@ static void do_cmd_wiz_play(void)
     }
 }
 
-
+#if 0
 /**
  * Wizard routine for creating objects
  *
@@ -1302,7 +1577,7 @@ static void wiz_create_item(void)
     /* All done */
     msg_print("Allocated.");
 }
-
+#endif
 
 /**
  * Cure everything instantly
@@ -1444,8 +1719,6 @@ bool jump_menu(int level, int *location)
     menu.title = "Which region do you want to be transported to?";
     menu.cmd_keys = " \n\r";
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
-    //menu.count = j;
-    //menu.menu_data = choice;
     menu_setpriv(&menu, j, choice);
     menu_layout(&menu, &area);
 
@@ -1644,7 +1917,7 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
 	    break;
     }
 }
-
+#if 0
 /**
  * Create an artifact
  */
@@ -1725,7 +1998,7 @@ static void wiz_create_artifact(void)
     /* All done */
     msg_print("Allocated.");
 }
-
+#endif
 
 /**
  * Hack -- Delete all nearby monsters
