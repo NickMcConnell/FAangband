@@ -299,7 +299,47 @@ static bool describe_curses(textblock *tb, const object_type *o_ptr,
     }
 
     if (printed)
-	textblock_append(tb, "\n");
+    	textblock_append(tb, "\n");
+
+    /* Only look at wieldables */
+    if (wield_slot(o_ptr) >= INVEN_WIELD)
+    {
+	/* All normal properties known */
+	if (o_ptr->ident & IDENT_KNOWN)
+        {
+	    /* Everything known */
+	    if (o_ptr->ident & (IDENT_KNOW_CURSES | IDENT_UNCURSED))
+	    {
+		textblock_append(tb, "You know all about this object.\n");
+		printed = TRUE;
+	    }
+
+	    /* Some unknown curses */
+	    else 
+	    {
+		textblock_append(tb, "You know all the enchantments on this object.\n");
+		printed = TRUE;
+	    }
+        }
+	
+	/* Curses known */
+	else
+        {
+	    /* Known uncursed */
+	    if (o_ptr->ident & IDENT_UNCURSED)
+	    {
+		textblock_append(tb, "It is not cursed.\n");
+		printed = TRUE;
+	    }
+
+	    /* Say if all curses are known */
+	    else if (o_ptr->ident & IDENT_KNOW_CURSES) 
+	    {
+		textblock_append(tb, "You know all the curses on this object.\n");
+		printed = TRUE;
+	    }	    
+        }
+    }
 
     return printed;
 }
