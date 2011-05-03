@@ -863,7 +863,7 @@ static void process_world(void)
 
     /* Oppose Poison */
     if ((p_ptr->timed[TMD_OPP_POIS]) && (!extend_magic)) {
-	(void) dec_timed(TMD_OPP_FIRE, 1, FALSE);
+	(void) dec_timed(TMD_OPP_POIS, 1, FALSE);
     }
 
 
