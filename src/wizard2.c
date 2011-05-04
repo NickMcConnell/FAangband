@@ -526,6 +526,8 @@ static void wiz_display_item(object_type * o_ptr)
     prt("Resists, bonuses and slays coming soon...", 23, j);
 }
 
+/** Object creation code **/
+bool choose_artifact = FALSE;
 
 /**
  * A structure to hold a tval, its description and its possibility 
@@ -585,7 +587,7 @@ static tval_desc tvals[] = {
  */
 static void get_art_name(char *buf, int a_idx)
 {
-    int i, len;
+    int i;
     object_type localObject;
     object_type *o_ptr;
     artifact_type *a_ptr = &a_info[a_idx];
@@ -619,24 +621,22 @@ static void get_art_name(char *buf, int a_idx)
 
 static const region wiz_create_item_area = { 0, 0, 0, 0 };
 
-/** Object kind selection */
 void wiz_create_item_subdisplay(menu_type *m, int oid, bool cursor,
 		int row, int col, int width)
 {
 	int *choices = menu_priv(m);
 	char buf[80];
 
-	/* Heh */
-	if (m->title[2] == 'a')
+	/* Artifacts */
+	if (choose_artifact)
 	{
-	    object_kind_name(buf, sizeof buf, choices[oid], TRUE);
+	    get_art_name(buf, choices[oid]);
 	    c_prt(curs_attrs[CURS_KNOWN][0 != cursor], buf, row, col);
 	}
-
+	/* Regular objects */
 	else
 	{
-	    /* Acquire the artifact name */
-	    get_art_name(buf, choices[oid]);
+	    object_kind_name(buf, sizeof buf, choices[oid], TRUE);
 	    c_prt(curs_attrs[CURS_KNOWN][0 != cursor], buf, row, col);
 	}
 }
@@ -648,8 +648,66 @@ bool wiz_create_item_subaction(menu_type *m, const ui_event_data *e, int oid)
     object_type *i_ptr;
     object_type object_type_body;
     
-    /* Heh */
-    if (m->title[2] == 'a')
+    /* Artifacts */
+    if (choose_artifact)
+    {
+	int i;
+	int o_idx;
+	artifact_type *a_ptr = &a_info[choices[oid]];
+
+	/* Get the artifact info */
+	//a_ptr = &a_info[choices[oid]];
+	
+	/* Ignore "empty" artifacts */
+	if (!a_ptr->name)
+	    return TRUE;
+
+	/* Get local object */
+	i_ptr = &object_type_body;
+
+	/* Wipe the object */
+	object_wipe(i_ptr);
+	
+	/* Acquire the "kind" index */
+	o_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
+	
+	/* Create the base object */
+	object_prep(i_ptr, o_idx);
+
+	/* Mark the object as an artifact. */
+	i_ptr->name1 = choices[oid];
+	
+	/* Extract the fields */
+	i_ptr->pval = a_ptr->pval;
+	i_ptr->ac = a_ptr->ac;
+	i_ptr->dd = a_ptr->dd;
+	i_ptr->ds = a_ptr->ds;
+	i_ptr->to_a = a_ptr->to_a;
+	i_ptr->to_h = a_ptr->to_h;
+	i_ptr->to_d = a_ptr->to_d;
+	i_ptr->weight = a_ptr->weight;
+	
+	of_copy(i_ptr->flags_obj, a_ptr->flags_obj);
+	cf_copy(i_ptr->flags_curse, a_ptr->flags_curse);
+	
+	for (i = 0; i < MAX_P_RES; i++)
+	    i_ptr->percent_res[i] = a_ptr->percent_res[i];
+	for (i = 0; i < A_MAX; i++)
+	    i_ptr->bonus_stat[i] = a_ptr->bonus_stat[i];
+	for (i = 0; i < MAX_P_BONUS; i++)
+	    i_ptr->bonus_other[i] = a_ptr->bonus_other[i];
+	for (i = 0; i < MAX_P_SLAY; i++)
+	    i_ptr->multiple_slay[i] = a_ptr->multiple_slay[i];
+	for (i = 0; i < MAX_P_BRAND; i++)
+	    i_ptr->multiple_brand[i] = a_ptr->multiple_brand[i];
+	
+	
+	/* Transfer the activation information. */
+	if (a_ptr->effect) 
+	    i_ptr->effect = a_ptr->effect;
+    }
+    /* Regular objects */
+    else		
     {
 	object_kind *kind = &k_info[choices[oid]];
 
@@ -681,64 +739,6 @@ bool wiz_create_item_subaction(menu_type *m, const ui_event_data *e, int oid)
 	
     }
 
-    else
-    {
-	int i;
-	int o_idx;
-	artifact_type *a_ptr = &a_info[choices[oid]];
-
-	/* Get the artifact info */
-	a_ptr = &a_info[choices[oid]];
-	
-	/* Ignore "empty" artifacts */
-	if (!a_ptr->name)
-	    return TRUE;
-
-	/* Get local object */
-	i_ptr = &object_type_body;
-
-	/* Wipe the object */
-	object_wipe(i_ptr);
-	
-	/* Acquire the "kind" index */
-	o_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
-	
-	/* Create the base object */
-	object_prep(i_ptr, o_idx);
-
-	/* Mark the object as an artifact. */
-	i_ptr->name1 = a_ptr->aidx;
-	
-	/* Extract the fields */
-	i_ptr->pval = a_ptr->pval;
-	i_ptr->ac = a_ptr->ac;
-	i_ptr->dd = a_ptr->dd;
-	i_ptr->ds = a_ptr->ds;
-	i_ptr->to_a = a_ptr->to_a;
-	i_ptr->to_h = a_ptr->to_h;
-	i_ptr->to_d = a_ptr->to_d;
-	i_ptr->weight = a_ptr->weight;
-	
-	of_copy(i_ptr->flags_obj, a_ptr->flags_obj);
-	cf_copy(i_ptr->flags_curse, a_ptr->flags_curse);
-	
-	for (i = 0; i < MAX_P_RES; i++)
-	    i_ptr->percent_res[i] = a_ptr->percent_res[i];
-	for (i = 0; i < A_MAX; i++)
-	    i_ptr->bonus_stat[i] = a_ptr->bonus_stat[i];
-	for (i = 0; i < MAX_P_BONUS; i++)
-	    i_ptr->bonus_other[i] = a_ptr->bonus_other[i];
-	for (i = 0; i < MAX_P_SLAY; i++)
-	    i_ptr->multiple_slay[i] = a_ptr->multiple_slay[i];
-	for (i = 0; i < MAX_P_BRAND; i++)
-	    i_ptr->multiple_brand[i] = a_ptr->multiple_brand[i];
-	
-	
-	/* Transfer the activation information. */
-	if (a_ptr->effect) 
-	    i_ptr->effect = a_ptr->effect;
-    }
-		
     /* Drop from heaven */
     drop_near(i_ptr, -1, p_ptr->py, p_ptr->px, TRUE);
     
@@ -778,22 +778,8 @@ bool wiz_create_item_action(menu_type *m, const ui_event_data *e, int oid)
 	if (e->type != EVT_SELECT)
 		return TRUE;
 
-	/* Regular objects */
-	if (m->count == N_ELEMENTS(tvals))
-	{
-	    for (n_choices = 0, i = 1; (n_choices < 60) && (i < z_info->k_max); i++)
-	    {
-		object_kind *kind = &k_info[i];
-		
-		if (kind->tval != tvals[oid].tval ||
-		    kf_has(kind->flags_kind, KF_INSTA_ART))
-		    continue;
-		
-		choice[n_choices++] = i;
-	    }
-	}
 	/* Artifacts */
-	else
+	if (choose_artifact)
 	{
 	    struct tval_desc *a_tvals = menu_priv(m);
 	    /* ...We have to search the whole artifact list. */
@@ -807,6 +793,20 @@ bool wiz_create_item_action(menu_type *m, const ui_event_data *e, int oid)
 		    /* Remember the artifact index */
 		    choice[n_choices++] = i;
 		}
+	    }
+	}
+	/* Regular objects */
+	else
+	{
+	    for (n_choices = 0, i = 1; (n_choices < 60) && (i < z_info->k_max); i++)
+	    {
+		object_kind *kind = &k_info[i];
+		
+		if (kind->tval != tvals[oid].tval ||
+		    kf_has(kind->flags_kind, KF_INSTA_ART))
+		    continue;
+		
+		choice[n_choices++] = i;
 	    }
 	}
 
@@ -847,6 +847,8 @@ static void wiz_create_item(void)
 {
 	menu_type *menu = menu_new(MN_SKIN_COLUMNS, &wiz_create_item_menu);
 
+	choose_artifact = FALSE;
+    
 	menu->selections = all_letters;
 	menu->title = "What kind of object?";
 
@@ -865,9 +867,11 @@ static void wiz_create_item(void)
  */
 static void wiz_create_artifact(void)
 {
-    int num, i;
+    size_t num, i;
     menu_type *menu = menu_new(MN_SKIN_COLUMNS, &wiz_create_item_menu);
     tval_desc *a_tvals;
+
+    choose_artifact = TRUE;
     
     a_tvals = C_ZNEW(N_ELEMENTS(tvals), tval_desc);
     
@@ -895,191 +899,6 @@ static void wiz_create_artifact(void)
 }
 
 
-#if 0
-/**
- * Hack -- title for each column
- *
- * This will not work with "EBCDIC", I would think.  XXX XXX XXX
- *
- * The third column head overlaps the first after 17 items are
- * listed.  XXX XXX XXX
- */
-
-static char head[3] = { 'a', 'A', '0' };
-
-
-/**
- * Acquire an object or artifact for creation by selecting first a tval 
- * and then a specific object or artifact from successive menus.
- *
- * Can list up to 57 choices in three columns.
- */
-static int wiz_create_itemtype(bool artifact)
-{
-    int i, num, max_num;
-    int col, row;
-    int tval;
-
-    cptr tval_desc;
-    char ch;
-
-    int choice[60];
-
-    char buf[160];
-
-
-    /* Clear screen */
-    Term_clear();
-
-    /* List all tval indexes and descriptions */
-    for (num = i = 0; (i < 57) && tvals[i].tval; i++) {
-	/* Don't show tvals with no artifacts. */
-	if (artifact && !(tvals[i].can_be_artifact))
-	    continue;
-
-	row = 2 + (num % 20);
-	col = 30 * (num / 20);
-
-	ch = head[num / 20] + (num % 20);
-	prt(format("[%c] %s", ch, tvals[i].desc), row, col);
-
-	/* Increment number of items in list. */
-	num++;
-    }
-
-    /* We need to know the maximal possible tval_index */
-    max_num = num;
-
-    /* Choose! */
-    if (artifact) {
-	if (!get_com("Get what type of artifact? ", &ch))
-	    return (0);
-    } else {
-	if (!get_com("Get what type of object? ", &ch))
-	    return (0);
-    }
-
-    /* Analyze choice */
-    num = -1;
-    if ((ch >= head[0]) && (ch < head[0] + 20))
-	num = ch - head[0];
-    if ((ch >= head[1]) && (ch < head[1] + 20))
-	num = ch - head[1] + 20;
-    if ((ch >= head[2]) && (ch < head[2] + 17))
-	num = ch - head[2] + 40;
-
-    /* Bail out if choice is not within the bounds of the list */
-    if ((num < 0) || (num >= max_num))
-	return (0);
-
-    /* Adjust and verify choice of artifact tval. */
-    if (artifact) {
-	/* Scan the tval list up to the chosen tval. */
-	for (i = 0; i <= num; i++) {
-	    /* Slide past all object types with no artifacts. */
-	    if (!(tvals[i].can_be_artifact))
-		num++;
-	}
-
-	/* Paranoia - Verify legality. */
-	if (!(tvals[num].can_be_artifact))
-	    return (0);
-    }
-
-    /* Base object type chosen, fill in tval */
-    tval = tvals[num].tval;
-    tval_desc = tvals[num].desc;
-
-
-  /*** And now we go for k_idx ***/
-
-    /* Clear screen */
-    Term_clear();
-
-    /* If choosing an artifact... */
-    if (artifact) {
-	/* ...We have to search the whole artifact list. */
-	for (num = 0, i = 1; (num < 60) && (i < z_info->a_max); i++) {
-	    artifact_type *a_ptr = &a_info[i];
-
-	    /* Analyze matching items */
-	    if (a_ptr->tval == tval) {
-		/* Prepare it */
-		row = 2 + (num % 20);
-		col = 30 * (num / 20);
-		ch = head[num / 20] + (num % 20);
-
-		/* Acquire the "name" of artifact with index "i" */
-		get_art_name(buf, i);
-
-		/* Print it */
-		prt(format("[%c] %s", ch, buf), row, col);
-
-		/* Remember the artifact index */
-		choice[num++] = i;
-	    }
-	}
-    }
-
-    /* If choosing an object... */
-    else {
-
-	/* We have to search the whole itemlist. */
-	for (num = 0, i = 1; (num < 60) && (i < z_info->k_max); i++) {
-	    object_kind *k_ptr = &k_info[i];
-
-	    /* Analyze matching items */
-	    if (k_ptr->tval == tval) {
-		/* Hack -- Skip instant artifacts */
-		if (kf_has(k_ptr->flags_kind, KF_INSTA_ART))
-		    continue;
-
-		/* Prepare it */
-		row = 2 + (num % 20);
-		col = 30 * (num / 20);
-		ch = head[num / 20] + (num % 20);
-
-		/* Acquire the "name" of object "i" */
-		my_strcpy(buf, k_ptr->name, sizeof(buf));
-
-		/* Print it */
-		prt(format("[%c] %s", ch, buf), row, col);
-
-		/* Remember the object index */
-		choice[num++] = i;
-	    }
-	}
-    }
-
-    /* We need to know the maximal possible remembered object_index */
-    max_num = num;
-
-    /* Choose! */
-    if (artifact) {
-	if (!get_com(format("Which artifact %s? ", tval_desc), &ch))
-	    return (0);
-    } else {
-	if (!get_com(format("What kind of %s? ", tval_desc), &ch))
-	    return (0);
-    }
-
-    /* Analyze choice */
-    num = -1;
-    if ((ch >= head[0]) && (ch < head[0] + 20))
-	num = ch - head[0];
-    if ((ch >= head[1]) && (ch < head[1] + 20))
-	num = ch - head[1] + 20;
-    if ((ch >= head[2]) && (ch < head[2] + 17))
-	num = ch - head[2] + 40;
-
-    /* Bail out if choice is "illegal" */
-    if ((num < 0) || (num >= max_num))
-	return (0);
-
-    /* And return successful */
-    return (choice[num]);
-}
-#endif
 /**
  * Tweak an item
  */
@@ -1519,67 +1338,6 @@ static void do_cmd_wiz_play(void)
     }
 }
 
-#if 0
-/**
- * Wizard routine for creating objects
- *
- * Note that wizards cannot create objects on top of other objects.
- *
- * Hack -- this routine always makes a "dungeon object", and applies
- * magic to it, and attempts to decline cursed items. XXX XXX XXX
- */
-static void wiz_create_item(void)
-{
-    int py = p_ptr->py;
-    int px = p_ptr->px;
-
-    object_type *i_ptr;
-    object_type object_type_body;
-    object_kind *k_ptr;
-
-    int k_idx;
-
-
-    /* Save screen */
-    screen_save();
-
-    /* Get object base type */
-    k_idx = wiz_create_itemtype(FALSE);
-
-    /* Load screen */
-    screen_load();
-
-
-    /* Return if failed */
-    if (!k_idx)
-	return;
-
-    /* Get local object */
-    i_ptr = &object_type_body;
-
-    /* Wipe the object */
-    object_wipe(i_ptr);
-
-    /* Create the item */
-    object_prep(i_ptr, k_idx);
-
-    /* Apply magic (no messages, no artifacts) */
-    apply_magic(i_ptr, p_ptr->depth, FALSE, FALSE, FALSE);
-
-    /* Hack -- Since treasure objects are not effected by apply_magic, they
-     * need special processing. */
-    if (i_ptr->tval == TV_GOLD) {
-	k_ptr = &k_info[i_ptr->k_idx];
-	i_ptr->pval = k_ptr->cost / 2 + randint1((k_ptr->cost + 1) / 2);
-    }
-
-    /* Drop the object from heaven */
-    drop_near(i_ptr, -1, py, px, TRUE);
-
-    /* All done */
-    msg_print("Allocated.");
-}
-#endif
 
 /**
  * Cure everything instantly
@@ -1919,88 +1677,6 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
 	    break;
     }
 }
-#if 0
-/**
- * Create an artifact
- */
-static void wiz_create_artifact(void)
-{
-    object_type object_type_body;
-    object_type *o_ptr;
-    int i;
-    int a_idx;
-    int o_idx;
-    artifact_type *a_ptr;
-
-
-    /* Save screen */
-    screen_save();
-
-    /* Get artifact index */
-    a_idx = wiz_create_itemtype(TRUE);
-
-    /* Load screen */
-    screen_load();
-
-    /* Get the artifact info */
-    a_ptr = &a_info[a_idx];
-
-    /* Ignore "empty" artifacts */
-    if (!a_ptr->name)
-	return;
-
-    /* Get local object */
-    o_ptr = &object_type_body;
-
-    /* Wipe the object */
-    object_wipe(o_ptr);
-
-    /* Acquire the "kind" index */
-    o_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
-
-    /* Create the base object */
-    object_prep(o_ptr, o_idx);
-
-    /* Mark the object as an artifact. */
-    o_ptr->name1 = a_idx;
-
-    /* Extract the fields */
-    o_ptr->pval = a_ptr->pval;
-    o_ptr->ac = a_ptr->ac;
-    o_ptr->dd = a_ptr->dd;
-    o_ptr->ds = a_ptr->ds;
-    o_ptr->to_a = a_ptr->to_a;
-    o_ptr->to_h = a_ptr->to_h;
-    o_ptr->to_d = a_ptr->to_d;
-    o_ptr->weight = a_ptr->weight;
-
-    of_copy(o_ptr->flags_obj, a_ptr->flags_obj);
-    cf_copy(o_ptr->flags_curse, a_ptr->flags_curse);
-
-    for (i = 0; i < MAX_P_RES; i++)
-	o_ptr->percent_res[i] = a_ptr->percent_res[i];
-    for (i = 0; i < A_MAX; i++)
-	o_ptr->bonus_stat[i] = a_ptr->bonus_stat[i];
-    for (i = 0; i < MAX_P_BONUS; i++)
-	o_ptr->bonus_other[i] = a_ptr->bonus_other[i];
-    for (i = 0; i < MAX_P_SLAY; i++)
-	o_ptr->multiple_slay[i] = a_ptr->multiple_slay[i];
-    for (i = 0; i < MAX_P_BRAND; i++)
-	o_ptr->multiple_brand[i] = a_ptr->multiple_brand[i];
-
-
-    /* Transfer the activation information. */
-    if (a_ptr->effect) {
-	o_ptr->effect = a_ptr->effect;
-    }
-
-    /* Drop the artifact from heaven */
-    drop_near(o_ptr, -1, p_ptr->py, p_ptr->px, TRUE);
-
-    /* All done */
-    msg_print("Allocated.");
-}
-#endif
 
 /**
  * Hack -- Delete all nearby monsters
