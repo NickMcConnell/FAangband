@@ -773,6 +773,7 @@ bool wiz_create_item_action(menu_type *m, const ui_event_data *e, int oid)
 	int n_choices;
 
 	int i;
+	char buf[60];
 
 	if (e->type != EVT_SELECT)
 		return TRUE;
@@ -815,10 +816,11 @@ bool wiz_create_item_action(menu_type *m, const ui_event_data *e, int oid)
 	menu = menu_new(MN_SKIN_COLUMNS, &wiz_create_item_submenu);
 	menu->selections = all_letters;
 	if (m->count == N_ELEMENTS(tvals))
-	    menu->title = format("What kind of %s?", tvals[oid].desc);
+	    strnfmt(buf, sizeof(buf), "What kind of %s?", tvals[oid].desc);
 	else
-	    menu->title = format("Which artifact %s? ", tvals[oid].desc);
-
+	    strnfmt(buf, sizeof(buf), "Which artifact %s? ", tvals[oid].desc);
+	
+	menu->title = buf;
 	menu_setpriv(menu, n_choices, choice);
 	menu_layout(menu, &wiz_create_item_area);
 	ret = menu_select(menu, 0);
