@@ -130,19 +130,20 @@ static const char *brandee[] =
 
 static const property_type resists[]= 
 {
-    { TERM_SLATE, " acid"},
-    { TERM_BLUE, " electricity"},
-    { TERM_RED, " fire"},
-    { TERM_L_WHITE, " frost"},
-    { TERM_GREEN, " poison"},
-    { TERM_ORANGE, " light"},
-    { TERM_L_DARK, " darkness"},
-    { TERM_YELLOW, " sound"},
-    { TERM_UMBER, " shards"},
-    { TERM_L_RED, " nexus"},
-    { TERM_L_GREEN, " nether"},
-    { TERM_VIOLET, " chaos"},
-    { TERM_VIOLET, " disenchantment"},
+    { TERM_SLATE, "acid"},
+    { TERM_BLUE, "electricity"},
+    { TERM_RED, "fire"},
+    { TERM_L_WHITE, "frost"},
+    { TERM_GREEN, "poison"},
+    { TERM_ORANGE, "light"},
+    { TERM_L_DARK, "darkness"},
+    { TERM_L_UMBER, "confusion"},
+    { TERM_YELLOW, "sound"},
+    { TERM_UMBER, "shards"},
+    { TERM_L_RED, "nexus"},
+    { TERM_L_GREEN, "nether"},
+    { TERM_VIOLET, "chaos"},
+    { TERM_VIOLET, "disenchantment"},
 };
 
 
@@ -166,13 +167,15 @@ static const flag_type sustain_flags[] =
 
 static const flag_type misc_flags[] =
 {
-    { OF_LIGHT,               "Provides permanent light" },
+    { OF_FEARLESS,           "Renders you fearless" },
+    { OF_SEEING,             "Provides resistance to blindness" },
+    { OF_LIGHT,              "Provides permanent light" },
     { OF_IMPACT,             "Induces earthquakes" },
     { OF_DARKNESS,           "Allows you to see in the dark" },
     { OF_CHAOTIC,            "Causes chaotic effects" },
     { OF_BLESSED,            "Blessed by the gods" },
     { OF_SLOW_DIGEST,        "Slows your metabolism" },
-    { OF_FEATHER,            "Feather Falling" },
+    { OF_FEATHER,            "Makes you fall lightly" },
     { OF_REGEN,              "Speeds regeneration" },
     { OF_FREE_ACT,           "Prevents paralysis" },
     { OF_HOLD_LIFE,          "Sustains your life force" },
@@ -292,7 +295,7 @@ static bool describe_curses(textblock *tb, const object_type *o_ptr,
     {
 	if (cf_has(full ? o_ptr->flags_curse : o_ptr->id_curse, curses[i].flag))
 	{
-	    if (!printed) textblock_append(tb, "Curses:  ");
+	    if (!printed) textblock_append(tb, "\nCurses:  ");
 	    textblock_append(tb, "%s.  ", curses[i].name);
 	    printed = TRUE;
 	}
@@ -434,24 +437,22 @@ static bool describe_bonus(textblock *tb, const object_type *o_ptr,
 	}
 
 	/* Bonuses */
-	else {
-	    for (j = 0; j < MAX_P_BONUS; j++) {
-		if (o_ptr->bonus_other[j] == 0)
-		    continue;
-		attr = (o_ptr->bonus_other[j] > 0 ? TERM_L_GREEN : TERM_ORANGE);
-		textblock_append_c(tb, attr, "%d ", o_ptr->bonus_other[j]);
-		if (!terse) textblock_append(tb, "to your ");
-		textblock_append_c(tb, attr, othername[j]);
-		if (count >= (terse ? 2 : 3))
-		    textblock_append(tb, ", ");
-		if ((count == 2) && !terse)
-		    textblock_append(tb, " and ");
-		if (count == 1)
-		    textblock_append(tb, ". ");
-		count--;
-	    }
+	for (j = 0; j < MAX_P_BONUS; j++) {
+	    if (o_ptr->bonus_other[j] == 0)
+		continue;
+	    attr = (o_ptr->bonus_other[j] > 0 ? TERM_L_GREEN : TERM_ORANGE);
+	    textblock_append_c(tb, attr, "%d ", o_ptr->bonus_other[j]);
+	    if (!terse) textblock_append(tb, "to your ");
+	    textblock_append_c(tb, attr, othername[j]);
+	    if (count >= (terse ? 2 : 3))
+		textblock_append(tb, ", ");
+	    if ((count == 2) && !terse)
+		textblock_append(tb, " and ");
+	    if (count == 1)
+		textblock_append(tb, ". ");
+	    count--;
 	}
-
+	
 	textblock_append(tb, "\n");
 	return TRUE;
     }
@@ -501,7 +502,7 @@ static bool describe_slays(textblock *tb, const object_type *o_ptr,
 
 	/* Slays */
 	for (j = 0; j < MAX_P_SLAY; j++) {
-	    if (!if_has(o_ptr->id_other, OBJECT_ID_BASE_SLAY + j) || 
+	    if (!if_has(o_ptr->id_other, OBJECT_ID_BASE_SLAY + j) && 
 		!(full && (o_ptr->multiple_slay[j] > MULTIPLE_BASE)))
 		continue;
 	    if ((j == P_SLAY_ANIMAL) && 
@@ -530,7 +531,7 @@ static bool describe_slays(textblock *tb, const object_type *o_ptr,
 
 	/* Great banes */
 	for (j = 0; j < MAX_P_SLAY; j++) {
-	    if (!if_has(o_ptr->id_other, OBJECT_ID_BASE_SLAY + j) || 
+	    if (!if_has(o_ptr->id_other, OBJECT_ID_BASE_SLAY + j) && 
 		!(full && (o_ptr->multiple_slay[j] > MULTIPLE_BASE))) 
 		continue;
 	    if ((j == P_SLAY_ANIMAL) && 
@@ -578,9 +579,9 @@ static bool describe_brands(textblock *tb, const object_type *o_ptr,
 	if (terse) textblock_append(tb, "Branded with ");
 	else textblock_append(tb, "It does extra damage from ");
 
-	/* Slays */
-	for (j = 0; j < MAX_P_SLAY; j++) {
-	    if (!if_has(o_ptr->id_other, OBJECT_ID_BASE_BRAND + j) || 
+	/* Brands */
+	for (j = 0; j < MAX_P_BRAND; j++) {
+	    if (!if_has(o_ptr->id_other, OBJECT_ID_BASE_BRAND + j) && 
 		!(full && (o_ptr->multiple_brand[j] > MULTIPLE_BASE)))
 		continue;
 	    textblock_append_c(tb, attr, brandee[j]);
@@ -613,12 +614,6 @@ static bool describe_immune(textblock *tb, const object_type *o_ptr,
     bool dummy = mode & OINFO_DUMMY;
     bool terse = mode & OINFO_TERSE;
     bool prev = FALSE;
-    bool fear = of_has(o_ptr->flags_obj, OF_FEARLESS) && 
-	(of_has(o_ptr->id_obj, OF_FEARLESS) || full);
-    bool blind = of_has(o_ptr->flags_obj, OF_SEEING) && 
-	(of_has(o_ptr->id_obj, OF_SEEING) || full);
-    bool conf = (if_has(o_ptr->id_other, IF_RES_CONFU) || full) &&
-	(o_ptr->percent_res[P_RES_CONFU] < RES_LEVEL_BASE);
 
     /* Check for resists and vulnerabilities */
     for (j = 0; j < MAX_P_RES; j++) {
@@ -627,15 +622,11 @@ static bool describe_immune(textblock *tb, const object_type *o_ptr,
 	if (o_ptr->percent_res[j] == RES_BOOST_IMMUNE) 
 	    imm++;
 	else if (o_ptr->percent_res[j] < RES_LEVEL_BASE) {
-	    if (j == P_RES_CONFU) spec++;
-	    else res++;
+	    res++;
 	}
 	else if (o_ptr->percent_res[j] > RES_LEVEL_BASE)
 	    vul++;
     }
-    if (fear) spec++;
-    if (blind) spec++;
-    if (conf) spec++;
 
     /* Immunities */
     if (imm) {
@@ -678,8 +669,6 @@ static bool describe_immune(textblock *tb, const object_type *o_ptr,
 		continue;
 	    if (!if_has(o_ptr->id_other, OBJECT_ID_BASE_RESIST + j)  && !full)
 		continue;
-	    if (j == P_RES_CONFU)
-		continue;
 
 	    /* List the attribute description, in its proper place. */
 	    textblock_append_c(tb, resists[j].attr, resists[j].name);
@@ -697,40 +686,6 @@ static bool describe_immune(textblock *tb, const object_type *o_ptr,
 	textblock_append(tb, ". ");
 	prev = TRUE;
     }
-
-    /* Special processing for the three "survival resists" */
-    if (spec) {
-	if (fear) {
-	    textblock_append(tb, "It renders you fearless");
-	    textblock_append(tb, (spec == 1) ? ".  " : ", and");
-	}
-
-	if (blind) {
-	    if ((spec > 1) && fear)
-		textblock_append(tb, " provides resistance to blindness");
-	    else
-		textblock_append(tb, "It provides resistance to blindness");
-	    
-	    if (conf)
-		textblock_append(tb, " and");
-	    else
-		textblock_append(tb, ".  ");
-	}
-
-	if (conf) {
-	    if ((spec > 1) && !blind)
-		textblock_append(tb, " provides resistance to");
-	    else if (spec == 1)
-		textblock_append(tb, "It provides resistance to");
-	    textblock_append_c(tb, TERM_L_UMBER, " confusion");
-	    textblock_append(tb, "(");
-	    if (dummy) textblock_append(tb, "about ");
-	    textblock_append(tb, "%d%%).", RES_LEVEL_BASE - 
-			     o_ptr->percent_res[P_RES_CONFU]);
-	    prev = TRUE;
-	} 
-    }
-
 
     /* Vulnerabilities */
     if (vul) {
@@ -828,7 +783,7 @@ static bool describe_misc_magic(textblock *tb, const object_type *o_ptr,
     {
 	if (of_has(full ? o_ptr->flags_obj : o_ptr->id_obj, misc_flags[i].flag))
 	{
-	    if (!printed) textblock_append(tb, "Powers:  ");
+	    if (!printed) textblock_append(tb, "\nPowers:  ");
 	    textblock_append(tb, "%s.  ", misc_flags[i].name);
 	    printed = TRUE;
 	}
@@ -1706,7 +1661,7 @@ static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
 	textblock *tb = textblock_new();
 
 	if (subjective) describe_origin(tb, o_ptr);
-	if (!terse) describe_flavor_text(tb, o_ptr);
+	//if (!terse) describe_flavor_text(tb, o_ptr);
 
 	if (describe_set(tb, o_ptr, mode)) something = TRUE;
 	if (describe_stats(tb, o_ptr, mode)) something = TRUE;
@@ -1716,9 +1671,9 @@ static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
 	if (describe_immune(tb, o_ptr, mode)) something = TRUE;
 	if (describe_sustains(tb, o_ptr, mode)) something = TRUE;
 	if (describe_misc_magic(tb, o_ptr, mode)) something = TRUE;
-	if (describe_curses(tb, o_ptr, mode)) something = TRUE;
 	if (ego && describe_ego(tb, o_ptr)) something = TRUE;
 	if (describe_ignores(tb, o_ptr, mode)) something = TRUE;
+	if (describe_curses(tb, o_ptr, mode)) something = TRUE;
 	if (something) textblock_append(tb, "\n");
 
 	if (describe_effect(tb, o_ptr, mode))
@@ -1739,7 +1694,10 @@ static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
 
 	if (!something)
 		textblock_append(tb, "\n");
-	if (!terse && !dummy) textblock_append(tb, obj_class_info[o_ptr->tval]);
+	if (!terse && !dummy) {
+	    textblock_append(tb, obj_class_info[o_ptr->tval]);
+	    textblock_append(tb, "\n");
+	}
 	return tb;
 }
 

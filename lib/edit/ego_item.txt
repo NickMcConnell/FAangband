@@ -1296,13 +1296,13 @@ N:128:of the Elements
 T:45:0:99
 W:0:4:0:0
 I:BRAND_FIRE | BRAND_COLD | BRAND_ACID | BRAND_POIS | BRAND_ELEC
-D:A ring imparting elemental force to your blows.
+D:It imparts elemental force to your blows.
 
 N:129:of Physical Prowess
 T:45:0:99
 W:0:4:0:0
 I:DD_DS
-D:This ring will enhance your physical powers.
+D:It enhances your physical powers.
 
 N:130:of Combat
 T:45:0:99
@@ -1314,39 +1314,39 @@ N:131:of Mobility
 T:45:0:99
 W:0:4:0:0
 I:FREE_ACT 
-D:A ring that guarantees your freedom to move.
+D:It guarantees your freedom to move.
 
 N:132:of Arcane Resistance
 T:45:0:99
 W:0:4:0:0
 I:RES_POIS | RES_LIGHT | RES_DARK | RES_CONFU | RES_SOUND | 
 I:RES_SHARD | RES_NEXUS | RES_NETHR | RES_CHAOS | RES_DISEN 
-D:This ring protects you from at least one high element.
+D:It protects you from at least one high element.
 
 N:133:of Utility
 T:45:0:99
 W:0:4:0:0
 I:SLOW_DIGEST | FEATHER 
-D:A ring designed to make your life a little easier.
+D:It seems designed to make your life a little easier.
 
 N:134:of Basic Resistance
 T:45:0:99
 W:0:4:0:0
 I:RES_FIRE | RES_COLD 
-D:This type of ring gives magical protection from one of the base elements; 
+D:It gives magical protection from one of the base elements; 
 D:the elements of Fire and Cold are most easily controlled by a ring.
 
 N:135:of Hindrance
 T:45:0:99
 W:0:4:0:0
 I:DD_DS
-D:This ring grabs you and reduces your abilities.
+D:It grabs you and reduces your abilities.
 
 N:136:of the Dawn
 T:45:0:99
 W:0:4:0:0
 I:RES_LIGHT | RES_DARK | SEEING
-D:A ring that calls a truce around you between the powers of Dark and Light.
+D:It calls a truce around you between the powers of Dark and Light.
 
 N:137:of Speed
 T:45:0:99
@@ -1358,8 +1358,7 @@ N:138:of Woe
 T:45:0:99
 W:0:4:0:0
 I:DD_DS
-D:It seems that this ring is draining everything good and joyous from your 
-D:being.
+D:It seems to be draining everything good and joyous from your being.
 
 N:139:of Fickleness
 T:45:0:99
@@ -1382,7 +1381,7 @@ N:160:of Mental Strength
 T:40:0:99
 W:0:4:0:0
 I:DD_DS
-D:This amulet will enhance your mental abilities.
+D:It will enhance your mental abilities.
 
 N:161:of Doom
 T:40:0:99
@@ -1394,21 +1393,20 @@ N:162:of Basic Resistance
 T:40:0:99
 W:0:4:0:0
 I:RES_ACID | RES_ELEC
-D:This type of amulet gives magical protection from one of the base elements; 
+D:It gives magical protection from one of the base elements; 
 D:the elements of Acid and Lightning are most easily controlled by an amulet.
 
 N:163:of Magical Item Mastery
 T:40:0:99
 W:0:4:0:0
 I:DD_DS
-D:An amulet that helps your ability to use rods, wands and staves.
+D:It helps your ability to use rods, wands and staves.
 
 N:164:of Clarity
 T:40:0:99
 W:0:4:0:0
 I:RES_CONFU | SEEING | FREE_ACT | SEE_INVIS 
-D:Wearing this amulet gives you the mental powers to be master of your own 
-D:destiny.
+D:Its wearer gains the mental powers to be master of their own destiny.
 
 N:165:of the Shadows
 T:40:0:99
@@ -1427,7 +1425,7 @@ N:167:of Sustenance
 T:40:0:99
 W:0:4:0:0
 I:SUSTAIN_STR | SUSTAIN_INT | SUSTAIN_WIS | SUSTAIN_DEX | SUSTAIN_CON | SUSTAIN_CHR 
-D:This amulet will help to ward off attacks that would reduce your potency.
+D:It will help to ward off attacks that would reduce your potency.
 
 N:168:of Trickery
 T:40:0:99
@@ -1439,8 +1437,8 @@ N:169:of Weaponmastery
 T:40:0:99
 W:0:4:0:0
 I:FEARLESS | TO_H | TO_D | RES_DISEN 
-D:An amulet that allows the warrior to concentrate on his attacking with no 
-D:fear of fell magic.
+D:It allows the warrior to concentrate on his attacking with no fear of fell 
+D:magic.
 
 N:170:of Vitality
 T:40:0:99
@@ -1453,6 +1451,6 @@ N:171:of Insight
 T:40:0:99
 W:0:4:0:0
 I:SEE_INVIS | TELEPATHY | SEEING 
-D:This amulet gives you vision of that which would otherwise be hard to see.
+D:It gives you vision of that which would otherwise be hard to see.
 
 # 172-191 unused
