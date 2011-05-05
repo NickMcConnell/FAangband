@@ -347,7 +347,7 @@ static void show_obj_list(int num_obj, u32b display, olist_detail_t mode)
 
 	/* Display each line */
 	show_obj(i + sp, max_len, items[i].label, o_ptr, FALSE, mode);
-	if (items[i].key == 'l') 
+	if ((items[i].key == 'l') && need_spacer)
 	{
 	    sp = 1;
 	    prt("", i + sp + 1, MAX(col - 2, 0));
@@ -773,6 +773,7 @@ void item_prompt(int mode)
 
 
 
+
 /**
  * Display an entry on the item menu
  */
@@ -809,10 +810,11 @@ void get_item_display(menu_type *menu, int oid, bool cursor, int row, int col,
  */
 bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
 {
-    bool done = FALSE;
     bool refresh = FALSE;
     struct object_menu_data *choice = menu_priv(menu);
     char key = event->key;
+    int i;
+    char *selections = (char *) menu->selections;
 
     if (event->type == EVT_SELECT)
     {
@@ -822,7 +824,7 @@ bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
 
     if (event->type == EVT_KBRD)
     {
-	if (event->key == '/')
+	if (key == '/')
 	{
 	    /* Toggle to inventory */
 	    if ((item_mode & USE_INVEN) && (p_ptr->command_wrk != USE_INVEN)) 
@@ -848,7 +850,7 @@ bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
 	    }
 	}
 
-	else if (event->key == '-')
+	else if (key == '-')
 	{
 	    /* No toggle allowed */
 	    if (f1 > f2) {
@@ -874,10 +876,11 @@ bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
 	    /* Show the prompt */
 	    item_prompt(item_mode);
 	    
-	    redraw_stuff();
-	    
 	    menu_setpriv(menu, num_obj, items);
+	    for (i = 0; i < num_obj; i++)
+		selections[i] = items[i].key;
 	    menu_refresh(menu);
+	    redraw_stuff();
 	}
 	
 	return FALSE;
@@ -899,7 +902,7 @@ ui_event_data item_menu(void)
 
     size_t max_len = Term->wid - 1;
 
-    bool item = FALSE;
+    char selections[30];
 
     int i;
 
@@ -907,7 +910,9 @@ ui_event_data item_menu(void)
     WIPE(&menu, menu);
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
     menu_setpriv(&menu, num_obj, items);
-    menu.selections = "abcdefghijklmnopqrstuvwxyz0123456789";
+    for (i = 0; i < num_obj; i++)
+	selections[i] = items[i].key;
+    menu.selections = selections;
     menu.cmd_keys = "/-";
     get_max_len(&max_len);
     area.page_rows = menu.count + 1;
