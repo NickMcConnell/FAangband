@@ -607,7 +607,7 @@ static void get_art_name(char *buf, int a_idx)
 	return;
 
     /* Create the base object */
-    object_prep(o_ptr, i);
+    object_prep(o_ptr, i, RANDOMISE);
 
     /* Mark it as an artifact */
     o_ptr->name1 = a_idx;
@@ -672,7 +672,7 @@ bool wiz_create_item_subaction(menu_type *m, const ui_event_data *e, int oid)
 	o_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
 	
 	/* Create the base object */
-	object_prep(i_ptr, o_idx);
+	object_prep(i_ptr, o_idx, RANDOMISE);
 
 	/* Mark the object as an artifact. */
 	i_ptr->name1 = choices[oid];
@@ -721,7 +721,7 @@ bool wiz_create_item_subaction(menu_type *m, const ui_event_data *e, int oid)
 	object_wipe(i_ptr);
 	
 	/* Create the item */
-	object_prep(i_ptr, kind->kidx);
+	object_prep(i_ptr, kind->kidx, RANDOMISE);
 	
 	/* Apply magic (no messages, no artifacts) */
 	apply_magic(i_ptr, p_ptr->depth, FALSE, FALSE, FALSE);
@@ -986,19 +986,19 @@ static void wiz_reroll_item(object_type * o_ptr)
 
 	/* Apply normal magic, but first clear object */
 	else if (ch == 'n' || ch == 'N') {
-	    object_prep(i_ptr, o_ptr->k_idx);
+	    object_prep(i_ptr, o_ptr->k_idx, RANDOMISE);
 	    apply_magic(i_ptr, p_ptr->depth, FALSE, FALSE, FALSE);
 	}
 
 	/* Apply good magic, but first clear object */
 	else if (ch == 'g' || ch == 'g') {
-	    object_prep(i_ptr, o_ptr->k_idx);
+	    object_prep(i_ptr, o_ptr->k_idx, RANDOMISE);
 	    apply_magic(i_ptr, p_ptr->depth, FALSE, TRUE, FALSE);
 	}
 
 	/* Apply great magic, but first clear object */
 	else if (ch == 'e' || ch == 'e') {
-	    object_prep(i_ptr, o_ptr->k_idx);
+	    object_prep(i_ptr, o_ptr->k_idx, RANDOMISE);
 	    apply_magic(i_ptr, p_ptr->depth, FALSE, TRUE, TRUE);
 	}
     }
@@ -1571,7 +1571,7 @@ static void do_cmd_wiz_learn(void)
 	    i_ptr = &object_type_body;
 
 	    /* Prepare object */
-	    object_prep(i_ptr, i);
+	    object_prep(i_ptr, i, RANDOMISE);
 
 	    /* Awareness */
 	    object_aware(i_ptr);

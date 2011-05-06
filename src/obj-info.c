@@ -61,7 +61,7 @@ static void info_out_list(textblock *tb, const char *list[], size_t count)
 		if (i != (count - 1)) textblock_append(tb, ", ");
 	}
 
-	textblock_append(tb, ".\n");
+	textblock_append(tb, ".");
 }
 
 
@@ -140,10 +140,10 @@ static const property_type resists[]=
     { TERM_L_UMBER, "confusion"},
     { TERM_YELLOW, "sound"},
     { TERM_UMBER, "shards"},
-    { TERM_L_RED, "nexus"},
+    { TERM_L_PURPLE, "nexus"},
     { TERM_L_GREEN, "nether"},
     { TERM_VIOLET, "chaos"},
-    { TERM_VIOLET, "disenchantment"},
+    { TERM_L_VIOLET, "disenchantment"},
 };
 
 
@@ -290,6 +290,8 @@ static bool describe_curses(textblock *tb, const object_type *o_ptr,
     size_t i;
     bool printed = FALSE;
     bool full = mode & OINFO_FULL;
+    bool terse = mode & OINFO_TERSE;
+    bool dummy = mode & OINFO_DUMMY;
 
     for (i = 0; i < N_ELEMENTS(curses); i++)
     {
@@ -303,6 +305,8 @@ static bool describe_curses(textblock *tb, const object_type *o_ptr,
 
     if (printed)
     	textblock_append(tb, "\n");
+
+    if (terse || dummy) return printed;
 
     /* Only look at wieldables */
     if (wield_slot(o_ptr) >= INVEN_WIELD)
@@ -642,7 +646,10 @@ static bool describe_immune(textblock *tb, const object_type *o_ptr,
 		continue;
 
 	    /* List the attribute description, in its proper place. */
-	    textblock_append_c(tb, resists[j].attr, resists[j].name);
+	    if (terse)
+		textblock_append(tb, resists[j].name);
+	    else
+		textblock_append_c(tb, resists[j].attr, resists[j].name);
 	    if (imm >= (terse ? 2 : 3))
 		textblock_append(tb, ", ");
 	    if ((imm == 2) && !terse)
@@ -671,7 +678,10 @@ static bool describe_immune(textblock *tb, const object_type *o_ptr,
 		continue;
 
 	    /* List the attribute description, in its proper place. */
-	    textblock_append_c(tb, resists[j].attr, resists[j].name);
+	    if (terse)
+		textblock_append(tb, resists[j].name);
+	    else
+		textblock_append_c(tb, resists[j].attr, resists[j].name);
 	    textblock_append(tb, "(");
 	    if (dummy) textblock_append(tb, "about ");
 	    textblock_append(tb, "%d%%)", RES_LEVEL_BASE - o_ptr->percent_res[j]);
@@ -701,7 +711,10 @@ static bool describe_immune(textblock *tb, const object_type *o_ptr,
 		continue;
 
 	    /* List the attribute description, in its proper place. */
-	    textblock_append_c(tb, resists[j].attr, resists[j].name);
+	    if (terse)
+		textblock_append(tb, resists[j].name);
+	    else
+		textblock_append_c(tb, resists[j].attr, resists[j].name);
 	    textblock_append(tb, "(");
 	    if (dummy) textblock_append(tb, "about ");
 	    textblock_append(tb, "%d%%)", o_ptr->percent_res[j] - RES_LEVEL_BASE);
@@ -1661,7 +1674,7 @@ static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
 	textblock *tb = textblock_new();
 
 	if (subjective) describe_origin(tb, o_ptr);
-	//if (!terse) describe_flavor_text(tb, o_ptr);
+	if (!terse) describe_flavor_text(tb, o_ptr);
 
 	if (describe_set(tb, o_ptr, mode)) something = TRUE;
 	if (describe_stats(tb, o_ptr, mode)) something = TRUE;
@@ -1695,8 +1708,8 @@ static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
 	if (!something)
 		textblock_append(tb, "\n");
 	if (!terse && !dummy) {
-	    textblock_append(tb, obj_class_info[o_ptr->tval]);
-	    textblock_append(tb, "\n");
+	    //textblock_append(tb, obj_class_info[o_ptr->tval]);
+	    //textblock_append(tb, "\n");
 	}
 	return tb;
 }

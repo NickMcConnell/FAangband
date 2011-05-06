@@ -3942,7 +3942,7 @@ void monster_death(int m_idx)
 	    i_ptr = &object_type_body;
 
 	    /* Mega-Hack -- Prepare to make "Grond" */
-	    object_prep(i_ptr, lookup_kind(TV_HAFTED, SV_GROND));
+	    object_prep(i_ptr, lookup_kind(TV_HAFTED, SV_GROND), MAXIMISE);
 
 	    /* Mega-Hack -- Mark this item as "Grond" */
 	    i_ptr->name1 = ART_GROND;
@@ -3958,7 +3958,7 @@ void monster_death(int m_idx)
 	    i_ptr = &object_type_body;
 
 	    /* Mega-Hack -- Prepare to make "Morgoth" */
-	    object_prep(i_ptr, lookup_kind(TV_CROWN, SV_MORGOTH));
+	    object_prep(i_ptr, lookup_kind(TV_CROWN, SV_MORGOTH), MAXIMISE);
 
 	    /* Mega-Hack -- Mark this item as "Morgoth" */
 	    i_ptr->name1 = ART_MORGOTH;
@@ -3976,7 +3976,7 @@ void monster_death(int m_idx)
 	    i_ptr = &object_type_body;
 
 	    /* Mega-Hack -- Prepare to make "Ungoliant" */
-	    object_prep(i_ptr, lookup_kind(TV_CLOAK, SV_UNLIGHT_CLOAK));
+	    object_prep(i_ptr, lookup_kind(TV_CLOAK, SV_UNLIGHT_CLOAK), MAXIMISE);
 
 	    /* Mega-Hack -- Mark this item as "Ungoliant" */
 	    i_ptr->name1 = ART_UNGOLIANT;

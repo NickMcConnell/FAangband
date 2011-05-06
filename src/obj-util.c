@@ -4151,7 +4151,7 @@ void display_object_idx_recall(s16b item)
 void display_object_kind_recall(s16b k_idx)
 {
     object_type object = { 0 };
-    object_prep(&object, k_idx);
+    object_prep(&object, k_idx, EXTREMIFY);
     if (k_info[k_idx].aware)
 	object.ident |= IDENT_STORE;
 

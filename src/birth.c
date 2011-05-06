@@ -660,7 +660,7 @@ static void player_outfit(struct player *p)
 	/* Hack -- Give the player an object */
 	if (e_ptr->kind) {
 	    /* Prepare the item */
-	    object_prep(i_ptr, e_ptr->kind->kidx);
+	    object_prep(i_ptr, e_ptr->kind->kidx, MINIMISE);
 	    i_ptr->number = (byte) rand_range(e_ptr->min, e_ptr->max);
 	    i_ptr->origin = ORIGIN_BIRTH;
 
@@ -681,9 +681,9 @@ static void player_outfit(struct player *p)
 
     /* Hack -- Give the player some food */
     if (OPT(adult_thrall))
-	object_prep(i_ptr, lookup_kind(TV_FOOD, SV_FOOD_WAYBREAD));
+	object_prep(i_ptr, lookup_kind(TV_FOOD, SV_FOOD_WAYBREAD), MINIMISE);
     else
-	object_prep(i_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
+	object_prep(i_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION), MINIMISE);
     i_ptr->number = (byte) rand_range(3, 7);
     object_aware(i_ptr);
     object_known(i_ptr);
@@ -696,7 +696,7 @@ static void player_outfit(struct player *p)
     i_ptr = &object_type_body;
 
     /* Hack -- Give the player some torches */
-    object_prep(i_ptr, lookup_kind(TV_LIGHT, SV_LIGHT_TORCH));
+    object_prep(i_ptr, lookup_kind(TV_LIGHT, SV_LIGHT_TORCH), MINIMISE);
     i_ptr->number = (byte) rand_range(3, 7);
     i_ptr->pval = rand_range(3, 7) * 500;
     object_aware(i_ptr);
@@ -708,7 +708,7 @@ static void player_outfit(struct player *p)
     /* Dungeon gear for escaping thralls */
     if (OPT(adult_thrall)) {
 	/* Nice amulet */
-	object_prep(i_ptr, lookup_kind(TV_AMULET, SV_AMULET_AMETHYST));
+	object_prep(i_ptr, lookup_kind(TV_AMULET, SV_AMULET_AMETHYST), MINIMISE);
 	i_ptr->bonus_other[P_BONUS_M_MASTERY] = 4;
 	of_on(i_ptr->flags_obj, OF_TELEPATHY);
 	object_aware(i_ptr);
@@ -718,7 +718,7 @@ static void player_outfit(struct player *p)
 	i_ptr->kind->everseen = TRUE;
 
 	/* Detection */
-	object_prep(i_ptr, lookup_kind(TV_STAFF, SV_STAFF_DETECTION));
+	object_prep(i_ptr, lookup_kind(TV_STAFF, SV_STAFF_DETECTION), MINIMISE);
 	object_aware(i_ptr);
 	object_known(i_ptr);
 	apply_autoinscription(i_ptr);
@@ -726,7 +726,7 @@ static void player_outfit(struct player *p)
 	i_ptr->kind->everseen = TRUE;
 
 	/* Mapping */
-	object_prep(i_ptr, lookup_kind(TV_ROD, SV_ROD_MAPPING));
+	object_prep(i_ptr, lookup_kind(TV_ROD, SV_ROD_MAPPING), MINIMISE);
 	object_aware(i_ptr);
 	object_known(i_ptr);
 	apply_autoinscription(i_ptr);
@@ -734,7 +734,7 @@ static void player_outfit(struct player *p)
 	i_ptr->kind->everseen = TRUE;
 
 	/* Destruction */
-	object_prep(i_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_DESTRUCTION));
+	object_prep(i_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_DESTRUCTION), MINIMISE);
 	i_ptr->number = 5;
 	object_aware(i_ptr);
 	object_known(i_ptr);
@@ -743,7 +743,7 @@ static void player_outfit(struct player *p)
 	i_ptr->kind->everseen = TRUE;
 
 	/* Identify */
-	object_prep(i_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_IDENTIFY));
+	object_prep(i_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_IDENTIFY), MINIMISE);
 	i_ptr->number = 25;
 	object_aware(i_ptr);
 	object_known(i_ptr);

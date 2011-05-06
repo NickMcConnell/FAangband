@@ -127,7 +127,7 @@ void object_info_chardump(const object_type *o_ptr, char_attr_line **line,
 
 /* obj-make.c */
 s16b get_obj_num(int level);
-void object_prep(object_type *o_ptr, int k_idx);
+void object_prep(object_type *o_ptr, int k_idx, aspect rand_aspect);
 void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great);
 bool make_object(object_type *j_ptr, bool good, bool great, bool exact_kind);
 bool make_gold(object_type *j_ptr);

@@ -495,7 +495,7 @@ void textui_cmd_destroy(void)
 	    object_wipe(i_ptr);
 
 	    /* Create the object */
-	    object_prep(i_ptr, o_ptr->k_idx);
+	    object_prep(i_ptr, o_ptr->k_idx, RANDOMISE);
 
 	    /* make it plural */
 	    i_ptr->number = 2;

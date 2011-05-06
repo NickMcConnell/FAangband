@@ -208,7 +208,7 @@ s16b get_obj_num(int level)
 /**
  * Prepare an object based on an object kind.
  */
-void object_prep(object_type * o_ptr, int k_idx)
+void object_prep(object_type * o_ptr, int k_idx, aspect rand_aspect)
 {
     int i;
 
@@ -226,7 +226,7 @@ void object_prep(object_type * o_ptr, int k_idx)
     o_ptr->sval = k_ptr->sval;
 
     /* Default "pval" */
-    o_ptr->pval = randcalc(k_ptr->pval, k_ptr->level, RANDOMISE);
+    o_ptr->pval = randcalc(k_ptr->pval, k_ptr->level, rand_aspect);
 
     /* Default number */
     o_ptr->number = 1;
@@ -235,9 +235,9 @@ void object_prep(object_type * o_ptr, int k_idx)
     o_ptr->weight = k_ptr->weight;
 
     /* Default magic */
-    o_ptr->to_h = randcalc(k_ptr->to_h, k_ptr->level, RANDOMISE);
-    o_ptr->to_d = randcalc(k_ptr->to_d, k_ptr->level, RANDOMISE);
-    o_ptr->to_a = randcalc(k_ptr->to_a, k_ptr->level, RANDOMISE);
+    o_ptr->to_h = randcalc(k_ptr->to_h, k_ptr->level, rand_aspect);
+    o_ptr->to_d = randcalc(k_ptr->to_d, k_ptr->level, rand_aspect);
+    o_ptr->to_a = randcalc(k_ptr->to_a, k_ptr->level, rand_aspect);
 
     /* Default power */
     o_ptr->ac = k_ptr->ac;
@@ -519,7 +519,7 @@ static bool make_artifact_special(object_type * o_ptr)
 	}
 
 	/* Assign the template */
-	object_prep(o_ptr, k_idx);
+	object_prep(o_ptr, k_idx, RANDOMISE);
 
 	/* Mega-Hack -- mark the item as an artifact */
 	o_ptr->name1 = choice;
@@ -1788,7 +1788,7 @@ bool make_object(object_type * j_ptr, bool good, bool great, bool exact_kind)
 	}
 
 	/* Prepare the object */
-	object_prep(j_ptr, k_idx);
+	object_prep(j_ptr, k_idx, RANDOMISE);
     }
 
     /* Apply magic (allow artifacts) */
@@ -1895,7 +1895,7 @@ bool make_gold(object_type * j_ptr)
 
 
     /* Prepare a gold object */
-    object_prep(j_ptr, treasure);
+    object_prep(j_ptr, treasure, RANDOMISE);
 
     /* Treasure can be worth between 1/2 and the full maximal value. */
     j_ptr->pval =

@@ -63,7 +63,7 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val,
   i_ptr = &object_type_body;
   
   /* Prepare a fake item */
-  object_prep(i_ptr, k);
+  object_prep(i_ptr, k, MAXIMISE);
   
   /* Obtain the "kind" info */
   k_ptr = &k_info[i_ptr->k_idx];
@@ -1055,7 +1055,7 @@ bool make_fake_artifact(object_type *o_ptr, int name1)
     if (!i) return (FALSE);
   
     /* Create the artifact */
-    object_prep(o_ptr, i);
+    object_prep(o_ptr, i, MAXIMISE);
   
     /* Save the name */
     o_ptr->name1 = name1;

@@ -1532,7 +1532,7 @@ static void desc_obj_fake(int k_idx)
     object_wipe(o_ptr);
 
     /* Create the artifact */
-    object_prep(o_ptr, k_idx);
+    object_prep(o_ptr, k_idx, EXTREMIFY);
 
     /* Hack -- its in the store */
     if (k_info[k_idx].aware)
@@ -1546,7 +1546,7 @@ static void desc_obj_fake(int k_idx)
     handle_stuff();
 
     /* Describe */
-    tb = object_info(o_ptr, OINFO_NONE);
+    tb = object_info(o_ptr, OINFO_DUMMY);
     object_desc(header, sizeof(header), o_ptr, ODESC_PREFIX | ODESC_FULL);
     
     textui_textblock_show(tb, area, format("%^s", header));

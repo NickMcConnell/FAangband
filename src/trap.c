@@ -1185,7 +1185,7 @@ extern void hit_trap(int y, int x)
 	    o_ptr = &object_type_body;
 
 	    /* Make a missile, identify it, and drop it near the player. */
-	    object_prep(o_ptr, lookup_kind(tval, sval));
+	    object_prep(o_ptr, lookup_kind(tval, sval), MINIMISE);
 	    object_aware(o_ptr);
 	    object_known(o_ptr);
 	    drop_near(o_ptr, -1, y, x, TRUE);

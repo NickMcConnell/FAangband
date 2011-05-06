@@ -1128,7 +1128,7 @@ static void store_create(void)
 	i_ptr = &object_type_body;
 
 	/* Create a new object of the chosen kind */
-	object_prep(i_ptr, k_idx);
+	object_prep(i_ptr, k_idx, RANDOMISE);
 
 	/* Apply some "low-level" magic (no artifacts) */
 	apply_magic(i_ptr, level, FALSE, FALSE, FALSE);

@@ -465,7 +465,7 @@ void create_athelas(void)
     i_ptr = &object_type_body;
 
     /* Hack -- Make some Athelas, identify it, and drop it near the player. */
-    object_prep(i_ptr, lookup_kind(TV_FOOD, SV_FOOD_ATHELAS));
+    object_prep(i_ptr, lookup_kind(TV_FOOD, SV_FOOD_ATHELAS), MINIMISE);
 
     /* Prevent money-making. */
     i_ptr->discount = 80;

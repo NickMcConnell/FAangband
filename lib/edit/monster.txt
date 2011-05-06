@@ -5302,7 +5302,7 @@ D:are walking on the walls and even the ceiling!  The earth suddenly feels
 D:rather less solid as you see gravity warp all round the monsters.
 
 N:468:Inertia hound
-G:Z:W
+G:Z:M
 I:110:10d21:30:16:0
 W:44:2:0:360
 B:BITE:HURT:2d11
@@ -5317,7 +5317,7 @@ D:Bizarrely, this hound seems to be hardly moving at all, yet it approaches
 D:you with deadly menace.  It makes you tired just to look at it.
 
 N:469:Impact hound
-G:Z:u
+G:Z:m
 I:110:10d21:30:16:0
 W:44:2:0:360
 B:BITE:HURT:2d11
@@ -7333,7 +7333,7 @@ I:110:1d1:0:0:0
 W:0:0:0:0
 
 N:624:Hound of Tindalos
-G:Z:T
+G:Z:t
 I:130:10d69:30:40:0
 W:77:3:0:7000
 B:BITE:HURT:1d18

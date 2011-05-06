@@ -1296,7 +1296,7 @@ static byte spell_color(int type)
 	return (TERM_GREEN);
 
     case GF_PLASMA:
-	return (TERM_RED);
+	return (TERM_L_RED);
     case GF_HELLFIRE:
 	return (TERM_RED);
     case GF_DRAGONFIRE:
@@ -1323,24 +1323,24 @@ static byte spell_color(int type)
     case GF_SHARD:
 	return (TERM_UMBER);
     case GF_INERTIA:
-	return (TERM_L_WHITE);
+	return (TERM_MUSTARD);
     case GF_GRAVITY:
 	return (TERM_L_WHITE);
     case GF_FORCE:
-	return (TERM_UMBER);
+	return (TERM_MUD);
     case GF_WATER:
-	return (TERM_SLATE);
+	return (TERM_BLUE_SLATE);
     case GF_STORM:
-	return (TERM_SLATE);
+	return (TERM_DEEP_L_BLUE);
 
     case GF_NEXUS:
-	return (TERM_L_RED);
+	return (TERM_L_PURPLE);
     case GF_NETHER:
 	return (TERM_L_GREEN);
     case GF_CHAOS:
 	return (TERM_VIOLET);
     case GF_DISENCHANT:
-	return (TERM_VIOLET);
+	return (TERM_L_VIOLET);
     case GF_TIME:
 	return (TERM_L_BLUE);
 
