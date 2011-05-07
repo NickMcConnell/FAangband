@@ -224,7 +224,8 @@ char *obj_class_info[101] = {
     "", "",
 
     "", "", "", "", "",
-    "", "Sling ammo.", "Bow ammo.", "Crossbow ammo.",
+    "", "", "", "", 
+    //"", "Sling ammo.", "Bow ammo.", "Crossbow ammo.",
     "Missile launchers allow you to inflict damage from a distance without using magic.",
 
     "Diggers, especially heavy ones, are invaluable for forced entry and escape and can make a lucky miner rich.",
@@ -268,12 +269,13 @@ char *obj_class_info[101] = {
     "", "", "", "",
     "", "", "", "", "",
 
-    "A manual of sorcerous magics, bound in fine linen dyed deep red.",
-    "A shining gospel of piety in flawless white and gold.",
-    "A runed stone with earthly and natural magics chiseled in brown and rich greens.",
-    "A black tome of necromantic rituals, with shadows lying deep around it.",
+    //"A manual of sorcerous magics, bound in fine linen dyed deep red.",
+    //"A shining gospel of piety in flawless white and gold.",
+    //"A runed stone with earthly and natural magics chiseled in brown and rich greens.",
+    //"A black tome of necromantic rituals, with shadows lying deep around it.",
     "",
     "", "", "", "", "",
+    "", "", "", "",
 
     "Small valuables and coins."
 };
@@ -1708,8 +1710,9 @@ static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
 	if (!something)
 		textblock_append(tb, "\n");
 	if (!terse && !dummy) {
-	    //textblock_append(tb, obj_class_info[o_ptr->tval]);
-	    //textblock_append(tb, "\n");
+	    textblock_append(tb, "\n");
+	    textblock_append(tb, obj_class_info[o_ptr->tval]);
+	    textblock_append(tb, "\n");
 	}
 	return tb;
 }
