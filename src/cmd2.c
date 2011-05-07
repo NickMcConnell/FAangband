@@ -22,6 +22,7 @@
 #include "angband.h"
 #include "cave.h"
 #include "files.h"
+#include "history.h"
 #include "monster.h"
 #include "spells.h"
 #include "squelch.h"

@@ -4057,9 +4057,9 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 		 && (OPT(disturb_move) || 
 		     (OPT(disturb_near) && 
 		      ((m_ptr->mflag & (MFLAG_VIEW))
-		       || (rf_has(r_ptr->flags, RF_PASS_WALL)
+		       || ((rf_has(r_ptr->flags, RF_PASS_WALL)
 			   || rf_has(r_ptr->flags, RF_KILL_WALL))
-		       && (m_ptr->cdis <= 2))))) {
+			   && (m_ptr->cdis <= 2)))))) {
 	    /* Disturb */
 	    disturb(0, 0);
 	}
@@ -4486,8 +4486,7 @@ static void process_monster(monster_type * m_ptr)
      * Innate semi-random movement.  Monsters adjacent to the character 
      * can always strike accurately at him (monster isn't confused).
      */
-    if (rf_has(r_ptr->flags, RF_RAND_50)
-	|| rf_has(r_ptr->flags, RF_RAND_25)
+    if ((rf_has(r_ptr->flags, RF_RAND_50) || rf_has(r_ptr->flags, RF_RAND_25))
 	&& (m_ptr->cdis > 1)) {
 	int chance = 0;
 
@@ -4758,7 +4757,7 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 	}
 
 	/* See if monster notices player */
-	else if (total_wakeup_chance >= randint1(10000)) {
+	else if (total_wakeup_chance >= (uint)randint1(10000)) {
 	    int d = 1;
 
 	    /* Wake up faster near the player */

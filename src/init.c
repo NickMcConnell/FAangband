@@ -240,7 +240,7 @@ static u32b grab_one_effect(const char *what) {
 }
 
 u32b grab_value(const char *what, const char **value_type, int num, int *val) {
-    size_t i;
+    int i;
     char s[80];
     char *t;
 
@@ -1847,7 +1847,6 @@ static errr run_parse_r(struct parser *p) {
 
 static errr finish_parse_r(struct parser *p) {
     struct monster_race *r, *n;
-    int i;
 
     r_info = mem_zalloc(sizeof(*r) * z_info->r_max);
     for (r = parser_priv(p); r; r = r->next) {
@@ -2194,7 +2193,7 @@ struct file_parser p_parser = {
 static enum parser_error parse_c_n(struct parser *p) {
     struct player_class *h = parser_priv(p);
     struct player_class *c = mem_zalloc(sizeof *c);
-    int i, j;
+    int i;
     c->cidx = parser_getuint(p, "index");
     c->name = string_make(parser_getstr(p, "name"));
     c->next = h;
@@ -3761,8 +3760,6 @@ static errr init_race_probs(void)
     int i, j, k, n;
 
     ang_file *fd;
-  
-    ang_file *fpout;
   
     /* General buffer */
     char buf[1024];

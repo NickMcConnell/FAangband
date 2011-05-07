@@ -63,7 +63,7 @@ extern byte type_of_store[MAX_STORES];
 extern const byte char_tables[256][CHAR_TABLE_SLOTS];
 extern const xchar_type latin1_encode[];
 extern byte get_angle_to_grid[41][41];
-extern const byte g_info[196];
+const byte g_info[196];
 
 /* variable.c */
 extern const char *copyright;
@@ -118,7 +118,7 @@ extern s16b o_cnt;
 extern s16b m_max;
 extern s16b m_cnt;
 extern u16b group_id;
-extern s16b feeling;
+extern u16b feeling;
 extern bool do_feeling;
 extern s16b rating;
 extern int player_uid;
@@ -145,7 +145,7 @@ extern byte *temp_x;
 extern u16b (*adjacency)[NUM_STAGES];
 extern u16b (*stage_path)[NUM_STAGES];
 extern u16b (*temp_path)[NUM_STAGES];
-extern u16b (*race_prob)[32];
+extern u16b (*race_prob)[NUM_STAGES];
 extern byte (*cave_info)[256];
 extern byte (*cave_info2)[256];
 extern byte (*cave_feat)[DUNGEON_WID];

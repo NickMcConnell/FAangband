@@ -361,7 +361,7 @@ void show_player(void)
 void do_cmd_show_obj(void)
 {
     cptr q, s;
-    int j, item, tile_hgt;
+    int j, item;
     object_type *o_ptr;
 
     char o_name[120];

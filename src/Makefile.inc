@@ -75,8 +75,8 @@ depgen:
  list-terrain-flags.h list-mon-flags.h list-mon-spells.h z-term.h \
  ui-event.h z-file.h z-bitflag.h z-quark.h z-msg.h config.h game-cmd.h \
  types.h option.h cmds.h object.h z-textblock.h parser.h player.h \
- x-char.h ui.h z-type.h externs.h cave.h files.h monster.h spells.h \
- squelch.h trap.h
+ x-char.h ui.h z-type.h externs.h cave.h files.h history.h monster.h \
+ spells.h squelch.h trap.h
 ./cmd3.o: cmd3.c angband.h h-basic.h z-util.h z-virt.h z-form.h z-rand.h \
  defines.h tvalsval.h list-object-flags.h list-curse-flags.h \
  list-kind-flags.h list-identify-flags.h list-player-flags.h \
@@ -259,7 +259,7 @@ depgen:
  list-terrain-flags.h list-mon-flags.h list-mon-spells.h z-term.h \
  ui-event.h z-file.h z-bitflag.h z-quark.h z-msg.h config.h game-cmd.h \
  types.h option.h cmds.h object.h z-textblock.h parser.h player.h \
- x-char.h ui.h z-type.h externs.h button.h target.h ui-menu.h
+ x-char.h ui.h z-type.h externs.h button.h cave.h target.h ui-menu.h
 ./obj-util.o: obj-util.c angband.h h-basic.h z-util.h z-virt.h z-form.h \
  z-rand.h defines.h tvalsval.h list-object-flags.h list-curse-flags.h \
  list-kind-flags.h list-identify-flags.h list-player-flags.h \
@@ -371,7 +371,7 @@ depgen:
  list-terrain-flags.h list-mon-flags.h list-mon-spells.h z-term.h \
  ui-event.h z-file.h z-bitflag.h z-quark.h z-msg.h config.h game-cmd.h \
  types.h option.h cmds.h object.h z-textblock.h parser.h player.h \
- x-char.h ui.h z-type.h externs.h button.h history.h ui-menu.h
+ x-char.h ui.h z-type.h externs.h button.h cave.h history.h ui-menu.h
 ./spells1.o: spells1.c angband.h h-basic.h z-util.h z-virt.h z-form.h \
  z-rand.h defines.h tvalsval.h list-object-flags.h list-curse-flags.h \
  list-kind-flags.h list-identify-flags.h list-player-flags.h \
@@ -469,7 +469,7 @@ depgen:
  list-terrain-flags.h list-mon-flags.h list-mon-spells.h z-term.h \
  ui-event.h z-file.h z-bitflag.h z-quark.h z-msg.h config.h game-cmd.h \
  types.h option.h cmds.h object.h z-textblock.h parser.h player.h \
- x-char.h ui.h z-type.h externs.h spells.h ui-menu.h
+ x-char.h ui.h z-type.h externs.h cave.h spells.h ui-menu.h
 ./util.o: util.c angband.h h-basic.h z-util.h z-virt.h z-form.h z-rand.h \
  defines.h tvalsval.h list-object-flags.h list-curse-flags.h \
  list-kind-flags.h list-identify-flags.h list-player-flags.h \

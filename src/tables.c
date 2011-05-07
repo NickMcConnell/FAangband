@@ -2508,7 +2508,7 @@ byte get_angle_to_grid[41][41] =
 };
 
 
-extern const byte g_info[] = 
+const byte g_info[] = 
 {
     /* Easterling */
     100,110,110,105,120,115,110,115,110,110,105,105,115,100,

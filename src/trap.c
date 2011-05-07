@@ -1701,10 +1701,8 @@ bool trap_menu(void)
     menu_iter menu_f = { trap_tag, 0, trap_display, trap_action, 0 };
     region area = { 15, 1, 48, -1 };
     ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
-    int cursor = 0;
 
-    int num = 0;
-    size_t i;
+    size_t i, num = 0;
 
     u16b *choice;
 

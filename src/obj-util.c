@@ -1165,19 +1165,6 @@ void compact_objects(int size)
 }
 
 /*
- * Mention artifact preservation for peeking wizards
- */
-static void mention_preserve(const object_type * o_ptr)
-{
-    char o_name[80];
-
-    /* Describe */
-    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE | ODESC_SPOIL);
-
-    msg_format("Preserving (%s)", o_name);
-}
-
-/*
  * Delete all the items when player leaves the level
  *
  * Note -- we do NOT visually reflect these (irrelevant) changes

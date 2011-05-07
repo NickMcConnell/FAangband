@@ -93,7 +93,7 @@ static void wr_item(object_type *o_ptr)
     wr_s16b(o_ptr->held_m_idx);
   
     /* Activation */
-    wr_byte(o_ptr->effect);
+    wr_u16b(o_ptr->effect);
     wr_u16b(o_ptr->time.base);
     wr_u16b(o_ptr->time.dice);
     wr_u16b(o_ptr->time.sides);
@@ -471,7 +471,7 @@ void wr_artifacts(void)
     for (i = ART_MIN_RANDOM; i < z_info->a_max; i++)
     {
 	artifact_type *a_ptr = &a_info[i];
-	int j;
+	size_t j;
 
 	wr_string(format("%s", a_ptr->name));
 	

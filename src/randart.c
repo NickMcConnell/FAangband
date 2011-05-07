@@ -59,13 +59,6 @@ long lprobs[S_WORD + 1][S_WORD + 1][S_WORD + 1];	/* global, hence init
 							 * to 0 */
 long ltotal[S_WORD + 1][S_WORD + 1];	/* global, hence init to 0 */
 
-/**
- * Temporary space for names, while reading and randomizing them. 
- *  - can handle up to 500 artifacts.  If z-info can not push
- * higher.
- */
-static char *names[500];
-
 /* Definitions of most artifact flags. */
 
 #define ADD_STR			1
@@ -3873,18 +3866,6 @@ static void remove_contradictory(int a_idx)
 
 
 /**
- * String-handling function from Greg Wooledge's random artifact generator.
- */
-static char *my_strdup(const char *s)
-{
-    char *t = malloc(strlen(s) + 1);
-    if (t)
-	strcpy(t, s);
-    return t;
-}
-
-
-/**
  * Use W. Sheldon Simms' random name generator.  This function builds
  * probability tables which are used later on for letter selection.  It
  * relies on the ASCII character set.
@@ -4103,7 +4084,6 @@ static void design_random_artifact(int a_idx)
  */
 void initialize_random_artifacts(void)
 {
-    int err;
     /* Index of the artifact currently being initialized. */
     int a_idx;
     /* Initialize the W. Seldon Simms random name generator. */

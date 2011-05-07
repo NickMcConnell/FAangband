@@ -380,8 +380,7 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
     bool ident = FALSE, used = FALSE;
     bool was_aware = object_aware_p(o_ptr);
     int dir = 5;
-    int px = p_ptr->px, py = p_ptr->py;
-    int snd, boost, level;
+    int snd, level;
     use_type use;
     int items_allowed = 0;
 
@@ -553,27 +552,6 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 
 /*** Refuelling ***/
 /**
- * An "item_tester_hook" for refilling lanterns
- */
-static bool item_tester_refill_lantern(const object_type * o_ptr)
-{
-    /* Flasks of oil are okay */
-    if (o_ptr->tval == TV_FLASK)
-	return (TRUE);
-
-    /* Non-empty lanterns are okay */
-    if ((o_ptr->tval == TV_LIGHT) && (o_ptr->sval == SV_LIGHT_LANTERN)
-	&& (o_ptr->pval > 0)) {
-	return (TRUE);
-    }
-
-    /* Assume not okay */
-    return (FALSE);
-}
-
-
-
-/**
  * Refill the players lamp (from the pack or floor)
  */
 static void refill_lamp(object_type *j_ptr, object_type *o_ptr, int item)
@@ -620,20 +598,6 @@ static void refill_lamp(object_type *j_ptr, object_type *o_ptr, int item)
     p_ptr->redraw |= (PR_EQUIP);
 }
 
-
-
-/**
- * An "item_tester_hook" for refilling torches
- */
-static bool item_tester_refuel_torch(const object_type * o_ptr)
-{
-    /* Torches are okay */
-    if ((o_ptr->tval == TV_LIGHT) && (o_ptr->sval == SV_LIGHT_TORCH))
-	return (TRUE);
-
-    /* Assume not okay */
-    return (FALSE);
-}
 
 
 /**
@@ -783,40 +747,6 @@ int get_channeling_boost(void)
 
 
 /**
- * Warriors will eventually learn to pseudo-probe monsters.  If they use 
- * the browse command, give ability information. -LM-
- */
-static void warrior_probe_desc(void)
-{
-    /* Save screen */
-    screen_save();
-
-    /* Erase the screen */
-    Term_clear();
-
-    /* Set the indent */
-    text_out_indent = 5;
-
-    /* Title in light blue. */
-    text_out_to_screen(TERM_L_BLUE, "Warrior Pseudo-Probing Ability:");
-    text_out_to_screen(TERM_WHITE, "\n\n");
-
-    /* Print out information text. */
-    text_out_to_screen(TERM_WHITE,
-		       "Warriors learn to probe monsters at level 35.  This costs nothing except a full turn.  When you reach this level, type 'm', and target the monster you would like to learn more about.  This reveals the monster's race, approximate HPs, and basic resistances.  Be warned:  the information given is not always complete...");
-    text_out_to_screen(TERM_WHITE, "\n\n\n");
-
-    /* The "exit" sign. */
-    text_out_to_screen(TERM_WHITE, "    (Press any key to continue.)\n");
-
-    /* Wait for it. */
-    (void) inkey_ex();
-
-    /* Load screen */
-    screen_load();
-}
-
-/**
  * Warriors will eventually learn to pseudo-probe monsters.  This allows 
  * them to better choose between slays and brands.  They select a target, 
  * and receive (slightly incomplete) infomation about racial type, 
@@ -911,19 +841,7 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
 
     int item_list[INVEN_TOTAL + MAX_FLOOR_STACK];
     int item_num;
-    int i, m = 0;
-
-    int chance, beam, item;
-    s16b shape = 0;
-
-    int plev = p_ptr->lev;
-
-    object_type *o_ptr;
-
-    magic_type *s_ptr;
-
-    cptr q = "";
-    cptr s = "";
+    int i;
 
 
     /* Require spell ability. */

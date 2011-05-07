@@ -16,7 +16,7 @@
  *    are included in all such copies.  Other copyrights may also apply.
  */
 #include "angband.h"
-
+#include "cave.h"
 #include "tvalsval.h"
 #include "game-cmd.h"
 #include "spells.h"
@@ -26,6 +26,40 @@
 
 
 
+
+/**
+ * Warriors will eventually learn to pseudo-probe monsters.  If they use 
+ * the browse command, give ability information. -LM-
+ */
+static void warrior_probe_desc(void)
+{
+    /* Save screen */
+    screen_save();
+
+    /* Erase the screen */
+    Term_clear();
+
+    /* Set the indent */
+    text_out_indent = 5;
+
+    /* Title in light blue. */
+    text_out_to_screen(TERM_L_BLUE, "Warrior Pseudo-Probing Ability:");
+    text_out_to_screen(TERM_WHITE, "\n\n");
+
+    /* Print out information text. */
+    text_out_to_screen(TERM_WHITE,
+		       "Warriors learn to probe monsters at level 35.  This costs nothing except a full turn.  When you reach this level, type 'm', and target the monster you would like to learn more about.  This reveals the monster's race, approximate HPs, and basic resistances.  Be warned:  the information given is not always complete...");
+    text_out_to_screen(TERM_WHITE, "\n\n\n");
+
+    /* The "exit" sign. */
+    text_out_to_screen(TERM_WHITE, "    (Press any key to continue.)\n");
+
+    /* Wait for it. */
+    (void) inkey_ex();
+
+    /* Load screen */
+    screen_load();
+}
 
 /**
  * Spell menu data struct
@@ -63,7 +97,6 @@ static void spell_menu_display(menu_type *m, int oid, bool cursor,
     const magic_type *s_ptr = &mp_ptr->info[spell];
 
     char help[30];
-    char out[80];
 
     int attr_name, attr_extra, attr_book;
     int tval = mp_ptr->spell_book;
@@ -87,8 +120,8 @@ static void spell_menu_display(menu_type *m, int oid, bool cursor,
     }
     else if (tval == TV_NECRO_BOOK) 
     {
-	if (d->book_sval < SV_BOOK_MIN_GOOD) attr_book = TERM_L_DARK;
-	else attr_book = TERM_VIOLET;
+	if (d->book_sval < SV_BOOK_MIN_GOOD) attr_book = TERM_L_PURPLE;
+	else attr_book = TERM_PURPLE;
     }
     else attr_book = TERM_WHITE;
   
@@ -103,7 +136,7 @@ static void spell_menu_display(menu_type *m, int oid, bool cursor,
 	   get_spell_info(mp_ptr->spell_book, spell, help, sizeof(help));
 	   comment = help;
 	   attr_name = attr_book;
-	   attr_extra = TERM_L_BLUE;
+	   attr_extra = TERM_DEEP_L_BLUE;
 	} 
        else {
 	   comment = " untried";
@@ -111,13 +144,15 @@ static void spell_menu_display(menu_type *m, int oid, bool cursor,
 	   attr_extra = TERM_WHITE;
        }
    } 
-   else {
+   else if (s_ptr->slevel <= p_ptr->lev) {
        comment = " unknown";
        attr_extra = TERM_L_WHITE;
-       if (s_ptr->slevel <= p_ptr->lev) 
-	   attr_name = TERM_WHITE;
-       else 
-	   attr_name = TERM_RED;
+       attr_name = TERM_WHITE;
+   }
+   else {
+       comment = " difficult";
+       attr_extra = TERM_MUD;
+       attr_name = TERM_MUD;
    }
    
     /* Dump the spell --(-- */
@@ -161,7 +196,7 @@ static void spell_menu_browser(int oid, void *data, const region *loc)
     screen_save();
 
     Term_gotoxy(loc->col, loc->row + loc->page_rows);
-    text_out(format("\n%s\n", s_info[s_ptr->index].text));
+    text_out_c(TERM_DEEP_L_BLUE, format("\n%s\n", s_info[s_ptr->index].text));
 
     /* XXX */
     text_out_pad = 0;
@@ -315,7 +350,10 @@ void textui_spell_browse(void)
     char s[80];
 
     if (mp_ptr->spell_realm == REALM_NONE) {
-	msg_print("You cannot read books!");
+	if (player_has(PF_PROBE))
+	    warrior_probe_desc();
+	else
+	    msg_print("You cannot read books!");
 	return;
     }
 

@@ -4865,7 +4865,7 @@ D:A stone of the greatest natural lore for Druids.
 #### Magic Books - Necromancy ####
 
 N:680:[Beginner's Curses]
-G:?:v
+G:?:P
 I:93:0:0
 W:5:0:30:25
 A:5/2
@@ -4874,7 +4874,7 @@ F:EASY_KNOW
 D:A tome of simple curses for Necromancers and Assassins.
 
 N:681:[Dark Initiation]
-G:?:v
+G:?:P
 I:93:1:0
 W:10:0:30:100
 A:10/2
@@ -4883,7 +4883,7 @@ F:EASY_KNOW
 D:A tome of curses for Necromancers.
 
 N:682:[Blood Novitiate]
-G:?:v
+G:?:P
 I:93:2:0
 W:20:0:30:400
 A:20/2
@@ -4892,7 +4892,7 @@ F:EASY_KNOW
 D:A tome of curses for Necromancers and Assassins.
 
 N:683:[Frightful Realms]
-G:?:v
+G:?:P
 I:93:3:0
 W:30:0:30:1000
 A:30/2
@@ -4901,7 +4901,7 @@ F:EASY_KNOW
 D:A tome of fell curses for Necromancers.
 
 N:684:[Mysteries of Utumno]
-G:?:P
+G:?:p
 I:93:4:0
 W:45:0:30:5000
 A:45/2
@@ -4911,7 +4911,7 @@ F:EASY_KNOW
 D:A tome of dark secrets for Necromancers and Assassins.
 
 N:685:[Unholy Protection]
-G:?:P
+G:?:p
 I:93:5:0
 W:55:0:30:10000
 A:55/2
@@ -4921,7 +4921,7 @@ F:EASY_KNOW
 D:A tome of evil gifts for Necromancers.
 
 N:686:[Life Force Mastery]
-G:?:P
+G:?:p
 I:93:6:0
 W:70:0:30:30000
 A:70/2
@@ -4931,7 +4931,7 @@ F:EASY_KNOW
 D:A tome of twisted power for Necromancers.
 
 N:687:[Metamorphoses]
-G:?:P
+G:?:p
 I:93:7:0
 W:85:0:30:50000
 A:85/2
@@ -4941,7 +4941,7 @@ F:EASY_KNOW
 D:A corrupting tome for Necromancers and Assassins.
 
 N:688:[Necronomicon]
-G:?:P
+G:?:p
 I:93:8:0
 W:95:0:30:100000
 A:95/2

@@ -61,7 +61,7 @@ static void show_obj(int onum, size_t max_len, char label[80],
     int row = 0, col = 0;
     int ex_width = 0, ex_offset, ex_offset_ctr;
 
-    object_type *o_ptr = object;
+    object_type *o_ptr = (object_type *) object;
     char o_name[160];
     char tmp_val[80];
 

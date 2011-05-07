@@ -65,7 +65,6 @@ struct spec_menu_data {
 bool check_specialty_gain(int specialty)
 {
     int i;
-    bool allowed = FALSE;
 
     /* Can't learn it if we already know it */
     for (i = 0; i < MAX_SPECIALTIES; i++) {
@@ -98,7 +97,6 @@ void gain_spec_display(menu_type * menu, int oid, bool cursor, int row, int col,
 {
     struct spec_menu_data *d = menu_priv(menu);
     int idx = d->specialties[oid];
-    int x, y;
 
     byte attr = (cursor ? TERM_L_GREEN : TERM_GREEN);
 
@@ -142,7 +140,7 @@ static void  gain_spec_menu_browser(int oid, void *data, const region *loc)
     
     clear_from(loc->row + loc->page_rows);
     Term_gotoxy(loc->col, loc->row + loc->page_rows);
-    text_out_to_screen(TERM_L_BLUE, abilities[d->specialties[oid]].desc);
+    text_out_to_screen(TERM_DEEP_L_BLUE, (char *) abilities[d->specialties[oid]].desc);
     
     /* XXX */
     text_out_pad = 0;
@@ -159,11 +157,7 @@ bool gain_spec_menu(int *pick)
 			 gain_spec_action, 0 };
     ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
     struct spec_menu_data *d = mem_alloc(sizeof *d);
-    int cursor = 0;
-
     region loc = { 0, 0, 70, -99 };
-
-    int choices[255];
     bool done = FALSE;
 
     size_t i;
@@ -227,8 +221,7 @@ bool gain_spec_menu(int *pick)
  */
 void gain_specialty(void)
 {
-    int i, k;
-    int choices[255];
+    int k;
     int pick;
 
     /* Find the next open entry in "specialty_order[]" */
@@ -716,7 +709,6 @@ static char view_spec_tag(menu_type *menu, int oid)
 void view_spec_display(menu_type *menu, int oid, bool cursor, int row, int col,
 		       int width)
 {
-    int x, y;
     char buf[80];
     byte color;
     ability *choices = menu->menu_data;
@@ -786,10 +778,6 @@ void view_spec_menu(void)
 {
     menu_type menu;
     menu_iter menu_f = { view_spec_tag, 0, view_spec_display, 0, 0 };
-    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
-
-    bool done = FALSE;
-
     region loc = { 0, 0, 70, -99 };
     char buf[80];
 

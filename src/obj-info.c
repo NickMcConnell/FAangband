@@ -68,7 +68,7 @@ static void info_out_list(textblock *tb, const char *list[], size_t count)
 /*
  *
  */
-static size_t info_collect(textblock *tb, const flag_type list[], size_t max,
+static size_t info_collect(const flag_type list[], size_t max,
 		const bitflag flags[OF_SIZE], const char *recepticle[])
 {
 	size_t i, count = 0;
@@ -614,7 +614,7 @@ static bool describe_brands(textblock *tb, const object_type *o_ptr,
 static bool describe_immune(textblock *tb, const object_type *o_ptr, 
 			    oinfo_detail_t mode)
 {
-    int res = 0, imm = 0, vul = 0, spec = 0, j;
+    int res = 0, imm = 0, vul = 0, j;
 
     bool full = mode & OINFO_FULL;
     bool dummy = mode & OINFO_DUMMY;
@@ -744,7 +744,7 @@ static bool describe_ignores(textblock *tb, const object_type *o_ptr,
 {
     bool full = mode & OINFO_FULL;
     const char *descs[N_ELEMENTS(ignore_flags)];
-    size_t count = info_collect(tb, ignore_flags, N_ELEMENTS(ignore_flags),
+    size_t count = info_collect(ignore_flags, N_ELEMENTS(ignore_flags),
 				full ? o_ptr->flags_obj : o_ptr->id_obj, 
 				descs);
     
@@ -767,7 +767,7 @@ static bool describe_sustains(textblock *tb, const object_type *o_ptr,
 
     bool full = mode & OINFO_FULL;
     const char *descs[N_ELEMENTS(sustain_flags)];
-    size_t count = info_collect(tb, sustain_flags, N_ELEMENTS(sustain_flags),
+    size_t count = info_collect(sustain_flags, N_ELEMENTS(sustain_flags),
 				full ? o_ptr->flags_obj : o_ptr->id_obj, 
 				descs);
 
@@ -881,12 +881,10 @@ static void output_dam(textblock *tb, player_state *state,
 static bool describe_weapon_damage(textblock *tb, const object_type *o_ptr,
 				   oinfo_detail_t mode)
 {
-    object_type forge, *old_ptr = &forge;
     object_type *i_ptr;
     int i, j;
 
     bool full = mode & OINFO_FULL;
-    bool dummy = mode & OINFO_DUMMY;
     bool terse = mode & OINFO_TERSE;
     bool first = TRUE;
     int show_m_tohit;
@@ -1085,7 +1083,6 @@ static bool describe_ammo_damage(textblock *tb, const object_type * o_ptr,
     object_type *i_ptr;
 
     bool full = mode & OINFO_FULL;
-    bool dummy = mode & OINFO_DUMMY;
     bool terse = mode & OINFO_TERSE;
     bool first = TRUE;
     bool perfect = (of_has(o_ptr->id_obj, OF_PERFECT_BALANCE) ||
@@ -1221,8 +1218,6 @@ static bool describe_combat(textblock *tb, const object_type *o_ptr,
 static bool describe_digger(textblock *tb, const object_type *o_ptr,
 		oinfo_detail_t mode)
 {
-    bool full = mode & OINFO_FULL;
-
     player_state st;
 
     object_type inven[INVEN_TOTAL];
@@ -1663,9 +1658,7 @@ bool describe_set(textblock *tb, const object_type *o_ptr,
  */
 static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
 {
-	bitflag flags[OF_SIZE];
 	bool something = FALSE;
-	bool known = object_known_p(o_ptr);
 
 	bool full = mode & OINFO_FULL;
 	bool terse = mode & OINFO_TERSE;

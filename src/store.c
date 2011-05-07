@@ -1023,17 +1023,17 @@ static bool black_market_crap(object_type * o_ptr)
 static void store_delete(void)
 {
     int what, num;
-	object_type *o_ptr;
+    object_type *o_ptr;
 
     /* Paranoia */
     if (st_ptr->stock_num <= 0)
 	return;
 
-    /* Get the object */
-    o_ptr = &st_ptr->stock[what];
-
     /* Pick a random slot */
     what = randint0(st_ptr->stock_num);
+
+    /* Get the object */
+    o_ptr = &st_ptr->stock[what];
 
     /* Determine how many objects are in the slot */
     num = o_ptr->number;

@@ -1485,6 +1485,9 @@ bool target_set_interactive(int mode, int x, int y)
 	    /* Describe and Prompt */
 	    query = target_set_interactive_aux(y, x, mode);
 
+	    /* Remove the path */
+	    if (max > 0)  load_path (max, path, path_char, path_attr);
+          
 	    /* Cancel tracking */
 	    /* health_track(0); */
 
@@ -1679,6 +1682,9 @@ bool target_set_interactive(int mode, int x, int y)
 	    /* Describe and Prompt (enable "TARGET_LOOK") */
 	    query = target_set_interactive_aux(y, x, mode | TARGET_LOOK);
 
+	    /* Remove the path */
+	    if (max > 0)  load_path (max, path, path_char, path_attr);
+          
 	    /* Cancel tracking */
 	    /* health_track(0); */
 

@@ -573,7 +573,7 @@ typedef struct object {
     int multiple_brand[MAX_P_BRAND];  /**< Brand multiples    -NRM- */
 
     byte ident;		/**< ID flags  */
-    byte effect;	/**< Activation indicator */
+    u16b effect;	/**< Activation indicator */
 
     s16b ac;		/**< Normal AC */
     s16b to_h;		/**< Plusses to hit */

@@ -386,11 +386,9 @@ void textblock_dump(textblock *tb, char_attr_line **line, int *current_line,
     const byte *attrs = textblock_attrs(tb);
     
     size_t *line_starts = NULL, *line_lengths = NULL;
-    size_t n_lines;
+    size_t i, j, n_lines;
     
     char_attr_line *lline = *line;
-
-    int i,j;
 
     n_lines = textblock_calculate_lines(tb, &line_starts, &line_lengths, 
 					wrap - indent);

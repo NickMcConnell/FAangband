@@ -428,7 +428,6 @@ void do_cmd_destroy(cmd_code code, cmd_arg args[])
 void textui_cmd_destroy(void)
 {
     int item, amt;
-    int old_number;
 
     object_type *o_ptr;
 
@@ -800,8 +799,7 @@ int cmp_monsters(const void *a, const void *b)
  */
 void do_cmd_query_symbol(void)
 {
-    int i, j, n, r_idx;
-    int start = 0, last_level = 0;
+    int i, n, r_idx;
     char sym;
     ui_event_data query = EVENT_EMPTY;
     char search_str[60] = "";
@@ -815,7 +813,6 @@ void do_cmd_query_symbol(void)
 
     bool recall = FALSE;
 
-    u16b why = 0;
     u16b *who;
 
     /* Get a character, or abort */

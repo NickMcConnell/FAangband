@@ -1493,7 +1493,6 @@ static void spoil_mon_desc(cptr fname)
   char exp[80];
   
   u16b *who;
-  u16b why = 2;
   
   /* Build the filename */
   path_build(buf, 1024, ANGBAND_DIR_USER, fname);

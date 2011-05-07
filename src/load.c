@@ -163,7 +163,7 @@ static int rd_item(object_type *o_ptr)
     rd_s16b(&o_ptr->held_m_idx);
 	
     /* Activation */
-    rd_byte(&o_ptr->effect);
+    rd_u16b(&o_ptr->effect);
     rd_u16b(&time_base);
     rd_u16b(&time_dice);
     rd_u16b(&time_sides);

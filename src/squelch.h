@@ -33,30 +33,6 @@ typedef struct
   const char *desc;
 } tval_desc;
 
-/**
- * Categories for sval-dependent squelch. 
- */
-static tval_desc sval_dependent[] =
-{
-  { TV_STAFF,		"Staffs" },
-  { TV_WAND,		"Wands" },
-  { TV_ROD,		"Rods" },
-  { TV_SCROLL,		"Scrolls" },
-  { TV_POTION,		"Potions" },
-  { TV_FOOD,		"Food" },
-  { TV_MAGIC_BOOK,	"Magic books" },
-  { TV_PRAYER_BOOK,	"Prayer books" },
-  { TV_DRUID_BOOK,	"Stones of Lore" },
-  { TV_NECRO_BOOK,	"Necromantic tomes" },
-  { TV_SPIKE,		"Spikes" },
-  { TV_LIGHT,		"Lights" },
-  { TV_FLASK,           "Oil" },
-  { TV_SKELETON,        "Skeletons" },
-  { TV_BOTTLE,          "Bottles" },
-  { TV_JUNK,            "Junk" }
-};
-
-
 /* squelch.c  */
 extern byte squelch_level[TYPE_MAX];
 void squelch_birth_init(void);

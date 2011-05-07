@@ -100,6 +100,30 @@ static quality_name_struct quality_values[SQUELCH_MAX] =
     { SQUELCH_ALL,"everything except artifacts" },	
 };
 
+/**
+ * Categories for sval-dependent squelch. 
+ */
+static tval_desc sval_dependent[] =
+{
+  { TV_STAFF,		"Staffs" },
+  { TV_WAND,		"Wands" },
+  { TV_ROD,		"Rods" },
+  { TV_SCROLL,		"Scrolls" },
+  { TV_POTION,		"Potions" },
+  { TV_FOOD,		"Food" },
+  { TV_MAGIC_BOOK,	"Magic books" },
+  { TV_PRAYER_BOOK,	"Prayer books" },
+  { TV_DRUID_BOOK,	"Stones of Lore" },
+  { TV_NECRO_BOOK,	"Necromantic tomes" },
+  { TV_SPIKE,		"Spikes" },
+  { TV_LIGHT,		"Lights" },
+  { TV_FLASK,           "Oil" },
+  { TV_SKELETON,        "Skeletons" },
+  { TV_BOTTLE,          "Bottles" },
+  { TV_JUNK,            "Junk" }
+};
+
+
 /*
  * Reset the player's squelch choices for a new game.
  */
@@ -304,7 +328,7 @@ extern bool squelch_item_ok(const object_type *o_ptr)
   object_kind *k_ptr = &k_info[o_ptr->k_idx];
   bool fullid = object_known_p(o_ptr);
   bool sensed = (o_ptr->ident & IDENT_SENSE) || fullid;
-  byte feel   = fullid ? value_check_aux1(o_ptr) : o_ptr->feel;
+  byte feel   = fullid ? value_check_aux1((object_type *)o_ptr) : o_ptr->feel;
   
   
   /* Don't squelch artifacts */
@@ -841,7 +865,6 @@ static void ego_menu(void *unused, const char *also_unused)
   
   menu_type menu;
   menu_iter menu_f = { 0, 0, ego_display, ego_action, 0 };
-  region area = { 1, 5, -1, -1 };
   ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
   int cursor = 0;
   
@@ -1123,8 +1146,6 @@ static bool sval_menu(int tval, const char *desc)
   menu_type *menu;
   menu_iter menu_f = { 0, 0, sval_display, sval_action, 0 };
   region area = { 1, 5, -1, -1 };
-  ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
-  int cursor = 0;
   
   int num = 0;
   size_t i;
@@ -1355,11 +1376,8 @@ static const menu_iter options_item_iter =
  */
 void do_cmd_options_item(const char *name, int row)
 {
-  const char cmd_keys[] = { ARROW_LEFT, ARROW_RIGHT, '\0' };
-  
   menu_type menu;
   
-  //menu.cmd_keys = cmd_keys;
   menu.count = N_ELEMENTS(sval_dependent) + N_ELEMENTS(extra_item_options) + 1;
   menu_init(&menu, MN_SKIN_SCROLL, &options_item_iter);
   menu_setpriv(&menu, N_ELEMENTS(sval_dependent) + N_ELEMENTS(extra_item_options) + 1, NULL);
@@ -1370,27 +1388,7 @@ void do_cmd_options_item(const char *name, int row)
   /* Save and clear screen */
   screen_save();
   clear_from(0);
-  
-/*  while (c.type != EVT_ESCAPE)
-    {
-      clear_from(0);
-      c = menu_select(&menu, cursor);
-      
-      if (c.type == EVT_SELECT)
-	{
-	  if ((size_t) cursor < N_ELEMENTS(sval_dependent))
-	    {
-	      sval_menu(sval_dependent[cursor].tval, sval_dependent[cursor].desc);
-	    }
-	  else
-	    {
-	      cursor = cursor - N_ELEMENTS(sval_dependent) - 1;
-	      if ((size_t) cursor < N_ELEMENTS(extra_item_options))
-		extra_item_options[cursor].action(NULL, NULL);
-	    }
-	}
-	} */
-  
+
   menu_select(&menu, 0);
   /* Load screen */
   screen_load();

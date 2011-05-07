@@ -522,22 +522,6 @@ static u16b hallucinatory_object(void)
     }
 }
 
-/**
- * Hack -- Random hallucination
- */
-static u16b hallucinatory_random(void)
-{
-    /* Normally, assume monsters */
-    if (randint0(100) < 75) {
-	return (hallucinatory_monster());
-    }
-
-    /* Otherwise, assume objects */
-    else {
-	return (hallucinatory_object());
-    }
-}
-
 
 
 /**
