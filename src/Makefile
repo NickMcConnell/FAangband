@@ -6,15 +6,14 @@ include Makefile.src
 INCLUDE = $(HDRS) $(INCS)
 OBJECTS = $(ANGFILES) $(ZFILES)
 SRCS    = ${OBJECTS:.o=.c} ${MAINFILES:.o=.c}
-PROG    = faangband
-#VERSION = `../scripts/version.sh`
+VERSION = `../scripts/version.sh`
 CFLAGS += -DBUILD_ID=${VERSION} -I. -std=c99 -Wdeclaration-after-statement -Wall -Wextra -O0
 
-faangband: faangband.o $(MAINFILES)
-	$(CC) -o faangband faangband.o $(MAINFILES) $(LDFLAGS) $(LDADD)
+$(PROG): $(PROG).o $(MAINFILES)
+	$(CC) -o $(PROG) $(PROG).o $(MAINFILES) $(LDFLAGS) $(LDADD)
 	@printf "%10s %-20s\n" LINK $@
 
-faangband.o: $(OBJECTS)
+$(PROG).o: $(OBJECTS)
 	$(LD) -r -o $@ $(OBJECTS)
 	@printf "%10s %-20s\n" LINK $@
 

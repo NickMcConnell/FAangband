@@ -308,6 +308,7 @@ void init_file_paths(const char *configpath, const char *libpath, const char *da
 
     /* Free the sub-paths */
     string_free(ANGBAND_DIR_APEX);
+    string_free(ANGBAND_DIR_BONE);
     string_free(ANGBAND_DIR_EDIT);
     string_free(ANGBAND_DIR_FILE);
     string_free(ANGBAND_DIR_HELP);
@@ -352,6 +353,9 @@ void init_file_paths(const char *configpath, const char *libpath, const char *da
     path_build(buf, sizeof(buf), ANGBAND_DIR_USER, "scores");
     ANGBAND_DIR_APEX = string_make(buf);
 
+    path_build(buf, sizeof(buf), ANGBAND_DIR_USER, "bone");
+    ANGBAND_DIR_BONE = string_make(buf);
+
     path_build(buf, sizeof(buf), ANGBAND_DIR_USER, "save");
     ANGBAND_DIR_SAVE = string_make(buf);
 
@@ -360,6 +364,7 @@ void init_file_paths(const char *configpath, const char *libpath, const char *da
     /* Build pathnames */
     ANGBAND_DIR_USER = string_make(format("%suser", datapath));
     ANGBAND_DIR_APEX = string_make(format("%sapex", datapath));
+    ANGBAND_DIR_BONE = string_make(format("%sbone", datapath));
     ANGBAND_DIR_SAVE = string_make(format("%ssave", datapath));
 
 #endif /* PRIVATE_USER_PATH */
