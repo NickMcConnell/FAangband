@@ -2264,7 +2264,7 @@ static bool order_menu(int tval, const char *desc)
     choice = C_ZNEW(z_info->k_max, u16b);
 
     /* Iterate over all possible object kinds, finding ones which can be
-     * oredered */
+     * ordered */
     for (i = 1; i < z_info->k_max; i++) {
 	object_kind *k_ptr = &k_info[i];
 
@@ -2278,9 +2278,15 @@ static bool order_menu(int tval, const char *desc)
 	if (k_ptr->tval != tval)
 	    continue;
 
-	/* Hack - town books only */
-	if ((tval >= TV_MAGIC_BOOK) && (num >= 4))
-	    continue;
+	/* Books  */
+	if (tval >= TV_MAGIC_BOOK) {
+	    if (k_ptr->sval >= 4)
+		continue;
+	    if (mp_ptr->book_start_index[k_ptr->sval] == 
+		mp_ptr->book_start_index[k_ptr->sval + 1])
+		continue;
+	}
+
 
 	/* Add this item to our possibles list */
 	choice[num++] = i;
@@ -2324,14 +2330,14 @@ static bool order_menu(int tval, const char *desc)
 
     /* Set up the menu */
     WIPE(&menu, menu);
-    menu.cmd_keys = " \n\r";
-    menu.count = num;
-    menu.menu_data = choice;
+    //menu.cmd_keys = " \n\r";
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+    menu_setpriv(&menu, num, choice);
+    menu_layout(&menu, &area);
 
     /* Select an entry */
-    while (evt.type != EVT_ESCAPE)
-	evt = menu_select(&menu, cursor);
+    //while (evt.type != EVT_ESCAPE)
+    evt = menu_select(&menu, cursor);
 
     /* Free memory */
     FREE(choice);
@@ -2383,9 +2389,10 @@ void store_order(void)
     WIPE(&menu, menu_type);
     menu.title = "Item ordering menu";
     menu.cmd_keys = cmd_keys;
-    menu.menu_data = choice;
-    menu.count = BOOK_START + (mp_ptr->spell_book ? 1 : 0);
+    //menu.menu_data = choice;
+    //menu.count = BOOK_START + (mp_ptr->spell_book ? 1 : 0);
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+    menu_setpriv(&menu, BOOK_START + (mp_ptr->spell_book ? 1 : 0), choice);
 
     menu_layout(&menu, &SCREEN_REGION);
 
@@ -2398,8 +2405,8 @@ void store_order(void)
 	c = menu_select(&menu, cursor);
 
 	if (c.type == EVT_SELECT) {
-	    order_menu(order_types[choice[cursor]].tval,
-		       order_types[choice[cursor]].desc);
+	    order_menu(order_types[choice[menu.cursor]].tval,
+		       order_types[choice[menu.cursor]].desc);
 	}
     }
 

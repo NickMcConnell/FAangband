@@ -1668,11 +1668,10 @@ char trap_tag(menu_type * menu, int oid)
 void trap_display(menu_type * menu, int oid, bool cursor, int row, int col,
 		  int width)
 {
-    const u16b *choice = menu->menu_data;
+    const u16b *choice = menu_priv(menu);
     int idx = choice[oid];
 
     byte attr = (cursor ? TERM_L_BLUE : TERM_WHITE);
-
 
     /* Print it */
     c_put_str(attr, format("%s", trap_type[idx]), row, col);
@@ -1683,12 +1682,12 @@ void trap_display(menu_type * menu, int oid, bool cursor, int row, int col,
  */
 bool trap_action(menu_type *menu, const ui_event_data *db, int oid)
 {
-    u16b *choice = menu->menu_data;
+    u16b *choice = menu_priv(menu);
 
     int idx = choice[oid];
     cave_set_feat(trap_y, trap_x, FEAT_MTRAP_BASE + 1 + idx);
 
-    return TRUE;
+    return FALSE;
 }
 
 
@@ -1737,11 +1736,11 @@ bool trap_menu(void)
 
     /* Set up the menu */
     WIPE(&menu, menu);
-    menu.title = "Choose an advanced monster trap (ESC to cancel):";
-    menu.cmd_keys = " \n\r";
-    menu.count = num;
-    menu.menu_data = choice;
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+    menu.title = "Choose an advanced monster trap (ESC to cancel):";
+    menu_setpriv(&menu, num, choice);
+    menu_layout(&menu, &area);
+    prt("", area.row + 1, area.col);
 
     /* Select an entry */
     evt = menu_select(&menu, 0);

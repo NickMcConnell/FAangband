@@ -85,22 +85,6 @@ byte squelch_level[TYPE_MAX];
 
 
 /**
- * The names for the various kinds of quality
- */
-static quality_name_struct quality_values[SQUELCH_MAX] =
-{
-    { SQUELCH_NONE,"none" },	
-    { SQUELCH_CURSED,"cursed (objects known to have a curse)" }, 
-    { SQUELCH_DUBIOUS,"dubious (all dubious items)" },     
-    { SQUELCH_DUBIOUS_NON,"dubious non-ego (strong pseudo-ID)" },   
-    { SQUELCH_NON_EGO,"non-ego (all but ego-items - strong pseudo-ID)" }, 
-    { SQUELCH_AVERAGE,"average (everything not good or better)" },     
-    { SQUELCH_GOOD_STRONG,"good (strong pseudo-ID or identify)" },    
-    { SQUELCH_GOOD_WEAK,"good (weak pseudo-ID)" },
-    { SQUELCH_ALL,"everything except artifacts" },	
-};
-
-/**
  * Categories for sval-dependent squelch. 
  */
 static tval_desc sval_dependent[] =

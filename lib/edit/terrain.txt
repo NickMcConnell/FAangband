@@ -682,98 +682,98 @@ D:commodities.  He will take orders for some magic potions, scrolls and books.
 
 N:80:monster trap (basic)
 G:^:y
-F:LOS | PROJECT | M_TRAP
+F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A trap that rogues and some druids, rangers and warriors can set.
 
 # 0x51 --> monster trap -- sturdy
 
 N:81:monster trap (sturdy)
 G:^:y
-F:LOS | PROJECT | M_TRAP
+F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that lasts longer than normal.
 
 # 0x52 --> monster trap -- netted
 
 N:82:monster trap (netted)
 G:^:y
-F:LOS | PROJECT | M_TRAP
+F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that with a net to trap flying monsters.
 
 # 0x53 --> monster trap -- confusion
 
 N:83:monster trap (confusion)
 G:^:y
-F:LOS | PROJECT | M_TRAP
+F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that confuses those caught in it.
 
 # 0x54 --> monster trap -- poison
 
 N:84:monster trap (poison gas)
 G:^:y
-F:LOS | PROJECT | M_TRAP
+F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that releases a cloud of poison.
 
 # 0x55 --> monster trap -- spirit
 
 N:85:monster trap (spirit)
 G:^:y
-F:LOS | PROJECT | M_TRAP
+F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that strikes at immaterial monsters.
 
 # 0x56 --> monster trap -- shocking
 
 N:86:monster trap (lightning)
 G:^:y
-F:LOS | PROJECT | M_TRAP
+F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that zaps a monster with electricity.
 
 # 0x57 --> monster trap -- explosive
 
 N:87:monster trap (explosive)
 G:^:y
-F:LOS | PROJECT | M_TRAP
+F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that sets off an explosion.
 
 # 0x58 --> monster trap -- portal
 
 N:88:monster trap (portal)
 G:^:y
-F:LOS | PROJECT | M_TRAP
+F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that teleports its victim.
 
 # 0x59 --> monster trap -- stasis
 
 N:89:monster trap (stasis)
 G:^:y
-F:LOS | PROJECT | M_TRAP
+F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that holds a monster immobile.
 
 # 0x5A --> monster trap -- drain life
 
 N:90:monster trap (drain life)
 G:^:y
-F:LOS | PROJECT | M_TRAP
+F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that drains the life force from living monsters.
 
 # 0x5B --> monster trap -- unmagic
 
 N:91:monster trap (unmagic)
 G:^:y
-F:LOS | PROJECT | M_TRAP
+F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that hurts and drains mana from monsters.
 
 # 0x5C --> monster trap -- dispel monsters
 
 N:92:monster trap (dispel monsters)
 G:^:y
-F:LOS | PROJECT | M_TRAP
+F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that hurts all monsters in sight.
 
 # 0x5D --> monster trap -- genocide
 
 #N:93:monster trap (genocide)
 #G:^:y
-F:LOS | PROJECT | M_TRAP
+F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that removes all nearby like monsters.
 
 # 0x5E --> monster trap -- unused

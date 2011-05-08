@@ -1795,13 +1795,11 @@ static void ego_menu(void *unused, const char *also_unused)
   
   /* Set up the menu */
   WIPE(&menu, menu);
-  //menu.cmd_keys = " \n\r";
   menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
   menu_setpriv(&menu, max_num, choice);
   menu_layout(&menu, &area);
   
   /* Select an entry */
-  //while (evt.key != ESCAPE)
   evt = menu_select(&menu, cursor);
   
   /* Free memory */
