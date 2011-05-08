@@ -707,6 +707,9 @@ static void player_outfit(struct player *p)
 
     /* Dungeon gear for escaping thralls */
     if (OPT(adult_thrall)) {
+	/* Get local object */
+	i_ptr = &object_type_body;
+
 	/* Nice amulet */
 	object_prep(i_ptr, lookup_kind(TV_AMULET, SV_AMULET_AMETHYST), MINIMISE);
 	i_ptr->bonus_other[P_BONUS_M_MASTERY] = 4;
@@ -717,6 +720,9 @@ static void player_outfit(struct player *p)
 	(void) inven_carry(p, i_ptr);
 	i_ptr->kind->everseen = TRUE;
 
+	/* Get local object */
+	i_ptr = &object_type_body;
+
 	/* Detection */
 	object_prep(i_ptr, lookup_kind(TV_STAFF, SV_STAFF_DETECTION), MINIMISE);
 	object_aware(i_ptr);
@@ -724,6 +730,9 @@ static void player_outfit(struct player *p)
 	apply_autoinscription(i_ptr);
 	(void) inven_carry(p, i_ptr);
 	i_ptr->kind->everseen = TRUE;
+
+	/* Get local object */
+	i_ptr = &object_type_body;
 
 	/* Mapping */
 	object_prep(i_ptr, lookup_kind(TV_ROD, SV_ROD_MAPPING), MINIMISE);
@@ -733,6 +742,9 @@ static void player_outfit(struct player *p)
 	(void) inven_carry(p, i_ptr);
 	i_ptr->kind->everseen = TRUE;
 
+	/* Get local object */
+	i_ptr = &object_type_body;
+
 	/* Destruction */
 	object_prep(i_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_DESTRUCTION), MINIMISE);
 	i_ptr->number = 5;
@@ -741,6 +753,9 @@ static void player_outfit(struct player *p)
 	apply_autoinscription(i_ptr);
 	(void) inven_carry(p, i_ptr);
 	i_ptr->kind->everseen = TRUE;
+
+	/* Get local object */
+	i_ptr = &object_type_body;
 
 	/* Identify */
 	object_prep(i_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_IDENTIFY), MINIMISE);

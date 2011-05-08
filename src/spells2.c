@@ -198,7 +198,7 @@ bool el_action(menu_type * menu, const ui_event_data * e, int oid)
 	int idx = choice[oid];
 	set_ele_attack(ele_attack[idx].type, 200);
 
-	return TRUE;
+	return FALSE;
     }
 
     else if (e->type == EVT_ESCAPE)
@@ -208,7 +208,7 @@ bool el_action(menu_type * menu, const ui_event_data * e, int oid)
 	int idx = choice[oid];
 	set_ele_attack(ele_attack[idx].type, 200);
 
-	return TRUE;
+	return FALSE;
     }
 
     return FALSE;
@@ -260,11 +260,10 @@ bool el_menu(void)
 
     /* Set up the menu */
     WIPE(&menu, menu);
-    menu.title = "Choose a temporary elemental brand";
-    menu.cmd_keys = "\n\r";
-    menu.count = num;
-    menu.menu_data = choice;
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+    menu.title = "Choose a temporary elemental brand";
+    menu_setpriv(&menu, num, choice);
+    menu_layout(&menu, &area);
 
     /* Select an entry */
     evt = menu_select(&menu, cursor);

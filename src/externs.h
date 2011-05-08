@@ -145,7 +145,7 @@ extern byte *temp_x;
 extern u16b (*adjacency)[NUM_STAGES];
 extern u16b (*stage_path)[NUM_STAGES];
 extern u16b (*temp_path)[NUM_STAGES];
-extern u16b (*race_prob)[NUM_STAGES];
+extern u16b (*race_prob)[32];
 extern byte (*cave_info)[256];
 extern byte (*cave_info2)[256];
 extern byte (*cave_feat)[DUNGEON_WID];

@@ -498,7 +498,7 @@ u16b (*temp_path)[NUM_STAGES];
  * Array[NUM_STAGES][32] of racial probability boosts for each stage; will need
  * to be expanded if z_info->p_max goes above 32.
  */
-u16b (*race_prob)[NUM_STAGES];
+u16b (*race_prob)[32];
 
 /**
  * Array[DUNGEON_HGT][256] of cave grid info flags (padded)
