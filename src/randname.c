@@ -1,9 +1,8 @@
-/** \file randname.c
-    \brief Random name generation
-
- * Based on W. Sheldon Simms name generator originally in randart.c
+/*
+ * File: randname.c
+ * Purpose: Random name generation
  *
- * Copyright (c) 2007 Antony Sidwell and others
+ * Copyright (c) 2007 Antony Sidwell, Sheldon Simms
  *
  * This work is free software; you can redistribute it and/or modify it
  * under the terms of either:
@@ -17,218 +16,6 @@
  *    are included in all such copies.  Other copyrights may also apply.
  */
 #include "angband.h"
-#include "randname.h"
-
-/**
- * Arrays of purely alphabetical, lower-case strings to teach 
- * the name generator with. 
- */
-static cptr tolkien_names[] =
-{
-	"adanedhel", "adurant", "aeglos", "aegnor", "aelin", "aeluin",
-	"aerandir", "aerin", "agarwaen", "aglareb", "aglarond", "aglon",
-	"ainulindale", "ainur", "alcarinque", "aldaron", "aldudenie",
-	"almaren", "alqualonde", "aman", "amandil", "amarie", "amarth",
-	"amlach", "amon", "amras", "amrod", "anach", "anar", "anarion",
-	"ancalagon", "ancalimon", "anarrima", "andor", "andram", "androth",
-	"anduin", "andunie", "anfauglir", "anfauglith", "angainor", "angband",
-	"anghabar", "anglachel", "angrenost", "angrim", "angrist", "angrod",
-	"anguirel", "annael", "annatar", "annon", "annuminas", "apanonar",
-	"aradan", "aragorn", "araman", "aranel", "aranruth", "aranwe", "aras",
-	"aratan", "aratar", "arathorn", "arda", "ardgalen", "aredhel",
-	"arfeiniel", "argonath", "arien", "armenelos", "arminas", "arnor",
-	"aros", "arossiach", "arthad", "arvernien", "arwen", "ascar",
-	"astaldo", "atalante", "atanamir", "atanatari", "atani", "aule",
-	"avallone", "avari", "avathar", "balan", "balar", "balrog", "barad",
-	"baragund", "barahir", "baran", "baranduin", "bar", "bauglir",
-	"beleg", "belegaer", "belegost", "belegund", "beleriand", "belfalas",
-	"belthil", "belthronding", "beor", "beraid", "bereg", "beren",
-	"boromir", "boron", "bragollach", "brandir", "bregolas", "bregor",
-	"brethil", "brilthor", "brithiach", "brithombar", "brithon", "cabed",
-	"calacirya", "calaquendi", "calenardhon", "calion", "camlost",
-	"caragdur", "caranthir", "carcharoth", "cardolan", "carnil",
-	"celeborn", "celebrant", "celebrimbor", "celebrindal", "celebros",
-	"celegorm", "celon", "cirdan", "cirith", "cirth", "ciryatan",
-	"ciryon", "coimas", "corollaire", "crissaegrim", "cuarthal",
-	"cuivienen", "culurien", "curufin", "curufinwe", "curunir",
-	"cuthalion", "daedeloth", "daeron", "dagnir", "dagor", "dagorlad",
-	"dairuin", "danwedh", "delduwath", "denethor", "dimbar", "dimrost",
-	"dinen", "dior", "dirnen", "dolmed", "doriath", "dorlas",
-	"dorthonion", "draugluin", "drengist", "duath", "duinath", "duilwen",
-	"dunedain", "dungortheb", "earendil", "earendur", "earnil", "earnur",
-	"earrame", "earwen", "echor", "echoriath", "ecthelion", "edain",
-	"edrahil", "eglador", "eglarest", "eglath", "eilinel", "eithel",
-	"ekkaia", "elbereth", "eldalie", "eldalieva", "eldamar", "eldar",
-	"eledhwen", "elemmire", "elende", "elendil", "elendur", "elenna",
-	"elentari", "elenwe", "elerrina", "elleth", "elmoth", "elostirion",
-	"elrond", "elros", "elu", "eluchil", "elured", "elurin", "elwe",
-	"elwing", "emeldir", "endor", "engrin", "engwar", "eol", "eonwe",
-	"ephel", "erchamion", "ereb", "ered", "erech", "eregion", "ereinion",
-	"erellont", "eressea", "eriador", "eru", "esgalduin", "este", "estel",
-	"estolad", "ethir", "ezellohar", "faelivrin", "falas", "falathar",
-	"falathrim", "falmari", "faroth", "fauglith", "feanor", "feanturi",
-	"felagund", "finarfin", "finduilas", "fingolfin", "fingon", "finwe",
-	"firimar", "formenos", "fornost", "frodo", "fuin", "fuinur",
-	"gabilgathol", "galad", "galadriel", "galathilion", "galdor", "galen",
-	"galvorn", "gandalf", "gaurhoth", "gelion", "gelmir", "gelydh", "gil",
-	"gildor", "giliath", "ginglith", "girith", "glaurung", "glingal",
-	"glirhuin", "gloredhel", "glorfindel", "golodhrim", "gondolin",
-	"gondor", "gonnhirrim", "gorgoroth", "gorlim", "gorthaur", "gorthol",
-	"gothmog", "guilin", "guinar", "guldur", "gundor", "gurthang",
-	"gwaith", "gwareth", "gwindor", "hadhodrond", "hador", "haladin",
-	"haldad", "haldan", "haldar", "haldir", "haleth", "halmir", "handir",
-	"harad", "hareth", "hathaldir", "hathol", "haudh", "helcar",
-	"helcaraxe", "helevorn", "helluin", "herumor", "herunumen",
-	"hildorien", "himlad", "himring", "hirilorn", "hisilome",
-	"hithaeglir", "hithlum", "hollin", "huan", "hunthor", "huor", "hurin",
-	"hyarmendacil", "hyarmentir", "iant", "iaur", "ibun", "idril",
-	"illuin", "ilmare", "ilmen", "iluvatar", "imlach", "imladris", "indis",
-	"ingwe", "irmo", "isil", "isildur", "istari", "ithil", "ivrin",
-	"kelvar", "kementari", "ladros", "laiquendi", "lalaith", "lamath",
-	"lammoth", "lanthir", "laurelin", "leithian", "legolin", "lembas",
-	"lenwe", "linaewen", "lindon", "lindorie", "loeg", "lomelindi",
-	"lomin", "lomion", "lorellin", "lorien", "lorindol", "losgar",
-	"lothlann", "lothlorien", "luin", "luinil", "lumbar", "luthien",
-	"mablung", "maedhros", "maeglin", "maglor", "magor", "mahanaxar",
-	"mahtan", "maiar", "malduin", "malinalda", "mandos", "manwe", "mardil",
-	"melian", "melkor", "menegroth", "meneldil", "menelmacar",
-	"meneltarma", "minas", "minastir", "mindeb", "mindolluin", "mindon",
-	"minyatur", "mirdain", "miriel", "mithlond", "mithrandir", "mithrim",
-	"mordor", "morgoth", "morgul", "moria", "moriquendi", "mormegil",
-	"morwen", "nahar", "naeramarth", "namo", "nandor", "nargothrond",
-	"narog", "narsil", "narsilion", "narya", "nauglamir", "naugrim",
-	"ndengin", "neithan", "neldoreth", "nenar", "nenning", "nenuial",
-	"nenya", "nerdanel", "nessa", "nevrast", "nibin", "nienna", "nienor",
-	"nimbrethil", "nimloth", "nimphelos", "nimrais", "nimras",
-	"ningloron", "niniel", "ninniach", "ninquelote", "niphredil",
-	"nirnaeth", "nivrim", "noegyth", "nogrod", "noldolante", "noldor",
-	"numenor", "nurtale", "obel", "ohtar", "oiolosse", "oiomure", "olorin",
-	"olvar", "olwe", "ondolinde", "orfalch", "ormal", "orocarni",
-	"orodreth", "orodruin", "orome", "oromet", "orthanc", "osgiliath",
-	"osse", "ossiriand", "palantir", "pelargir", "pelori", "periannath",
-	"quendi", "quenta", "quenya", "radagast", "radhruin", "ragnor",
-	"ramdal", "rana", "rathloriel", "rauros", "region", "rerir",
-	"rhovanion", "rhudaur", "rhun", "rhunen", "rian", "ringil", "ringwil",
-	"romenna", "rudh", "rumil", "saeros", "salmar", "saruman", "sauron",
-	"serech", "seregon", "serinde", "shelob", "silmarien", "silmaril",
-	"silpion", "sindar", "singollo", "sirion", "soronume", "sul", "sulimo",
-	"talath", "taniquetil", "tar", "taras", "tarn", "tathren", "taur",
-	"tauron", "teiglin", "telchar", "telemnar", "teleri", "telperion",
-	"telumendil", "thalion", "thalos", "thangorodrim", "thargelion",
-	"thingol", "thoronath", "thorondor", "thranduil", "thuringwethil",
-	"tilion", "tintalle", "tinuviel", "tirion", "tirith", "tol", "tulkas",
-	"tumhalad", "tumladen", "tuna", "tuor", "turambar", "turgon", "turin",
-	"uial", "uilos", "uinen", "ulairi", "ulmo", "ulumuri", "umanyar",
-	"umarth", "umbar", "ungoliant", "urthel", "uruloki", "utumno", "vaire",
-	"valacirca", "valandil", "valaquenta", "valar", "valaraukar",
-	"valaroma", "valier", "valimar", "valinor", "valinoreva", "valmar",
-	"vana", "vanyar", "varda", "vasa", "vilya", "vingilot", "vinyamar",
-	"voronwe", "wethrin", "wilwarin", "yavanna",
-	NULL
-};
-
-/**
- * These are (mostly) picked at random from a Latin word list. 
- */
-static cptr scroll_names[] =
-{
-	"abracadabra", "piffpaffpouf", "izzy", "wizzy", "letsgetsbusy",
-	"justlikethat", "hocus", "pocus", "shazam", "please", "abduco",
-	"absorbeo", "abutor", "accipio", "acerbus", "adamo", "adeo", "adficio",
-	"adinventitias", "admitto", "adsidue", "adsumo", "advenio", "aeger",
-	"aegrus", "aestivus", "aggero", "ago", "alioqui", "aliquantum",
-	"aliquot", "alter", "ambianis", "amissio", "amoveo", "andegavense",
-	"animus", "antepono", "appareo", "appropinquo", "ara", "arca", "arguo",
-	"articulus", "ascit", "astrum", "atrebatum", "attonbitus", "audax",
-	"aureus", "autus", "averto", "bardus", "bene", "bibo", "bonus",
-	"breviter", "calamitas", "callidus", "canonus", "caput", "caritas",
-	"casso", "catervatim", "causa", "cedo", "celeriter", "centum",
-	"certus", "charisma", "cimentarius", "cito", "clamor", "claustrum",
-	"coerceo", "cogo", "colloco", "coma", "cometissa", "commeo",
-	"commissum", "commoneo", "compatior", "compes", "compositio",
-	"comprovincialis", "concido", "conculco", "condico", "confiteor",
-	"conicio", "conor", "conservo", "consisto", "constans", "construo",
-	"consueta", "consulto", "consuo", "contamino", "contemptio",
-	"contentus", "contineo", "contradictio", "conventus", "copiose",
-	"corrigo", "corturiacum", "crastinus", "creo", "cribrum", "cruentus",
-	"cubicularius", "cui", "culpa", "cum", "cunctus", "cur", "curiosus",
-	"currus", "curto", "custodiae", "debeo", "decimus", "decumbo",
-	"defendo", "defleo", "degenero", "delego", "delinquo", "demonstro",
-	"dens", "depono", "deprecor", "derelinquo", "desino", "despero",
-	"detego", "devito", "diabolus", "didicerat", "differo", "dignitas",
-	"dilabor", "diluculo", "diripio", "disco", "dissimilis", "districtus",
-	"diutius", "divitiae", "dolens", "domesticus", "donec", "duco",
-	"dulcidine", "duro", "ecclesia", "edo", "efficio", "ego", "elemosina",
-	"eluvies", "emineo", "emptio", "epistula", "equus", "erogo", "erudio",
-	"etsi", "ex", "excito", "excuso", "exesto", "exhorresco", "eximo",
-	"exorior", "experior", "expiscor", "explico", "exsequor", "exstinguo",
-	"extra", "fabula", "facio", "faenum", "famulus", "fautor", "felix",
-	"ferme", "festinus", "fides", "fines", "flamma", "fluo", "formo",
-	"fortiter", "foveo", "frequentia", "frugalitas", "fuga", "fultus",
-	"furor", "galea", "genus", "glacialis", "gratia", "gravatus",
-	"gregatim", "hactenus", "harum", "heniis", "hic", "his", "hoc",
-	"honorabilis", "horum", "huic", "humanitas", "hunnam", "iam", "idem",
-	"ignavus", "illa", "illarum", "illi", "illis", "illius", "illorum",
-	"illum", "imitor", "immortalis", "impedito", "impendo", "imperium",
-	"importunus", "ex", "in", "incertus", "includo", "incorruptus", "inda",
-	"indignatio", "induco", "inexpugnabilis", "infecunditas", "infenso",
-	"infero", "inficio", "infigo", "infirmitas", "infitior", "inflatus",
-	"infligo", "infortunatus", "ingemuo", "inicio", "innotesco", "inquis",
-	"insciens", "insidiae", "insperatus", "instructus", "insurgo",
-	"intentio", "interdum", "intueor", "invado", "invetero", "invisus",
-	"ipsemet", "irritus", "ita", "iucunditas", "iugis", "iussu", "jaculum",
-	"juventus", "labiosus", "laboriose", "labruscum", "lacertosus",
-	"lacrimo", "lacto", "laedo", "laetificus", "laevus", "lamentatio",
-	"laqueus", "laudo", "lectus", "lemiscus", "lenitas", "lentesco", "leo",
-	"lesciense", "leto", "levidensis", "levo", "liber", "libere", "licet",
-	"lino", "loci", "longe", "lucerna", "ludio", "lupus", "macero",
-	"maculo", "maero", "magus", "malmundarium", "mandatum", "manus",
-	"matera", "me", "mei", "memor", "mensa", "meridianus", "mica",
-	"millies", "minuo", "miser", "mitigo", "modio", "molestia",
-	"monasteriense", "monstrum", "morior", "moveo", "multo", "mundus",
-	"munus", "mutuo", "nascor", "navigo", "necesse", "nemo", "neque",
-	"niger", "nisi", "nivellensem", "noceo", "non", "nos", "nota", "novus",
-	"nunc", "nusquam", "obdormio", "oblivio", "obviam", "occupo", "odium",
-	"omitto", "onus", "oporotheca", "opportunitatus", "ops", "orator",
-	"orior", "ostium", "pactum", "palam", "par", "parens", "paro",
-	"passer", "patiens", "patruus", "pax", "pecus", "penitus", "per",
-	"percutio", "perfectus", "periclitatus", "periurium", "perpetro",
-	"perseverantia", "persuadeo", "pertineo", "peruro", "pessimus",
-	"pestis", "phasma", "pictoratus", "pirus", "placide", "plagiarius",
-	"plecto", "plico", "pluma", "plures", "pluvia", "polenta", "pomum",
-	"porta", "postea", "postulo", "potius", "praebeo", "praecido",
-	"praeda", "praefinio", "praenuntio", "praesentia", "praesto",
-	"praetereo", "pravitas", "premo", "primitus", "principatus", "prius",
-	"pro", "procedo", "procurator", "proficio", "profor", "progenero",
-	"progressio", "proinde", "prolecto", "proloquor", "prominens",
-	"promitto", "promptu", "promus", "propello", "propositum", "prorsus",
-	"prosum", "proveho", "prudens", "pudendus", "puerilis", "pugnax",
-	"pulex", "pulpa", "pumilius", "punitor", "purgatio", "puteo",
-	"pyropus", "quadrigae", "quae", "quaesitio", "qualiscumque", "quam",
-	"quando", "quantum", "quantuslibet", "quas", "quater", "quercus",
-	"queror", "quibus", "quicquid", "quin", "quisnam", "quo", "quodammodo",
-	"quorum", "radicitus", "recedo", "recolo", "rectum", "redarguo",
-	"redeo", "refectorium", "rego", "relinquo", "remaneo", "rependo",
-	"repeto", "reprehendo", "resisto", "retraho", "revoco", "rigor",
-	"rotomagense", "rursus", "sacrilegus", "saeta", "saluto",
-	"sanctimonialis", "sanitas", "sapienter", "satis", "scaldus", "scelus",
-	"scio", "se", "secundum", "secus", "seductor", "sententia",
-	"sepulchrum", "sermo", "servus", "siccus", "silens", "silva",
-	"simulatio", "singultus", "sive", "soleo", "sollicitudo", "solum",
-	"somnio", "sopor", "speciosus", "spero", "spolium", "statim", "stipes",
-	"studio", "sub", "subseco", "succendo", "suggero", "summissus",
-	"super", "superne", "suppellex", "suppono", "suscito", "tabellae",
-	"tactus", "tam", "tandem", "taruennam", "tempero", "templum", "tendo",
-	"tenus", "teres", "tergum", "tero", "tertius", "textor", "thema",
-	"thymbra", "titulus", "torqueo", "toties", "traiectum", "trellum",
-	"tricesimus", "tristis", "tubineus", "tungris", "turpe", "ubi",
-	"ultra", "undique", "unus", "usque", "ut", "utilitas", "utroque",
-	"vado", "validus", "vehementer", "vendolius", "ventus", "verecundia",
-	"versus", "vesica", "vestio", "vicissitudo", "video", "vilicus",
-	"vindico", "virga", "vis", "vivo", "voco", "volo", "voluntas", "volva",
-	"voro", "vulariter", "vulnus", "vultus",
-	NULL
-};
 
 /* Markers for the start and end of words. */
 #define S_WORD 26
@@ -237,7 +24,7 @@ static cptr scroll_names[] =
 
 typedef unsigned short name_probs[S_WORD+1][S_WORD+1][TOTAL+1];
 
-/**
+/*
  * This function builds probability tables from a list of purely alphabetical
  * lower-case words, and puts them into the supplied name_probs object.
  * The array of names should have a NULL entry at the end of the list.
@@ -258,7 +45,7 @@ static void build_prob(name_probs probs, cptr *learn)
 		/* Iterate over the next word */
 		while (*ch != '\0')
 		{
-			c_next = A2I(my_tolower((unsigned char)*ch));
+			c_next = A2I(tolower((unsigned char)*ch));
 
 			probs[c_prev][c_cur][c_next]++;
 			probs[c_prev][c_cur][TOTAL]++;
@@ -274,16 +61,16 @@ static void build_prob(name_probs probs, cptr *learn)
 	}
 }
 
-/**
+/*
  * Use W. Sheldon Simms' random name generator algorithm (Markov Chain stylee).
  * 
  * Generate a random word using the probability tables we built earlier.  
  * Relies on the A2I and I2A macros (and so the ASCII character set) and 
  * is_a_vowel (so the basic 5 English vowels).
  */
-size_t randname_make(randname_type name_type, size_t min, size_t max, char *word_buf, size_t buflen)
+size_t randname_make(randname_type name_type, size_t min, size_t max, char *word_buf, size_t buflen, const char ***sections)
 {
-	size_t lnum;
+	size_t lnum = 0;
 	bool found_word = FALSE;
 
 	static name_probs lprobs;
@@ -301,25 +88,10 @@ size_t randname_make(randname_type name_type, size_t min, size_t max, char *word
 	{
 		cptr *wordlist = NULL;
 
-		switch (name_type)
-		{
-			case RANDNAME_TOLKIEN:
-			{
-				wordlist = tolkien_names;
-				break;
-			}
-			case RANDNAME_SCROLL:
-			{
-				wordlist = scroll_names;
-				break;
-			}
-			case RANDNAME_NUM_TYPES:
-			{
-				/* Unreachable - stops compiler warning */
-			}
-		}
+		wordlist = sections[name_type];
 
 		build_prob(lprobs, wordlist);
+
 		cached_type = name_type;
 	}
         
@@ -340,14 +112,22 @@ size_t randname_make(randname_type name_type, size_t min, size_t max, char *word
 		{
 			/* Pick the next letter based on a simple weighting
 			  of which letters can follow the previous two */
-			int r = rand_int(lprobs[c_prev][c_cur][TOTAL]);
+			int r;
 			int c_next = 0;
+
+			assert(c_prev >= 0 && c_prev <= S_WORD);
+			assert(c_cur >= 0 && c_cur <= S_WORD);
+
+			r = randint0(lprobs[c_prev][c_cur][TOTAL]);
 
 			while (r >= lprobs[c_prev][c_cur][c_next])
 			{
 				r -= lprobs[c_prev][c_cur][c_next];
 				c_next++;
 			}
+
+			assert(c_next <= E_WORD);
+			assert(c_next >= 0);
             
 			if (c_next == E_WORD)
 			{
@@ -370,11 +150,13 @@ size_t randname_make(randname_type name_type, size_t min, size_t max, char *word
 				/* Add the letter to the word and move on. */
 				*cp = I2A(c_next);
 
-				if (my_is_vowel(*cp))
+				if (is_a_vowel(*cp))
 					contains_vowel = TRUE;
 
 				cp++;
 				lnum++;
+				assert(c_next <= S_WORD);
+				assert(c_next >= 0);
 				c_prev = c_cur;
 				c_cur = c_next;
 			}
@@ -385,7 +167,7 @@ size_t randname_make(randname_type name_type, size_t min, size_t max, char *word
 }
 
 
-/**
+/* 
  * To run standalone tests, #define RANDNAME_TESTING and link with
  *  with just z-rand.c from Angband. 
  */
@@ -419,7 +201,7 @@ int main(int argc, char *argv[])
 
 	for (i = 0; i < 20; i++)
 	{
-		randname_make(RANDNAME_TOLKIEN, 5, 9, name, 256);
+		randname_make(RANDNAME_TOLKIEN, 5, 9, name, 256, name_sections);
 		name[0] = toupper((unsigned char) name[0]);
 		printf("%s\n", name);
 	}

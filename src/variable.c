@@ -58,31 +58,18 @@ byte sf_extra;		/* Savefile's "version_extra". Used for enryption */
 
 
 /*
- * Savefile information
- */
-u32b sf_xtra;			/* Operating system info */
-u32b sf_when;			/* Time when savefile created */
-u16b sf_lives;			/* Number of past "lives" with this file */
-u16b sf_saves;			/* Number of "saves" during this life */
-
-/*
  * Run-time arguments
  */
-bool arg_fiddle;		/* Command arg -- Request fiddle mode */
 bool arg_wizard;		/* Command arg -- Request wizard mode */
-bool arg_sound;			/* Command arg -- Request special sounds */
+bool arg_rebalance;
 bool arg_graphics;		/* Command arg -- Request graphics mode */
 bool arg_graphics_nice;	        /* Command arg -- Request nice graphics mode */
-bool arg_monochrome;		/* Command arg -- Request monochrome mode */
-bool arg_force_original;	/* Command arg -- Request original keyset */
-bool arg_force_roguelike;	/* Command arg -- Request roguelike keyset */
 
 /*
  * Various things
  */
 
 bool game_start;                /* Restart after death? */
-bool character_quickstart;      /* The character is based on the last one */
 bool character_generated;	/* The character exists */
 bool character_dungeon;		/* The character has a dungeon */
 bool character_loaded;		/* The character was loaded from a savefile */
@@ -101,21 +88,15 @@ s16b monster_level;		/* Current monster creation level */
 char summon_kin_type;		/* Hack -- See summon_specific() */
 
 s32b turn;			/* Current game turn */
-bool is_daylight;               /* If there is natural light */
 
-s32b do_feeling;		/* Hack -- Level feeling indicator */
+bool do_feeling = FALSE;	/* Hack -- Level feeling indicator */
 
 int use_graphics;		/* "graphics" mode */
 bool use_graphics_nice;	        /* The 'nice' "graphics" mode is enabled */
-bool use_trptile = FALSE;       /* The triple tile mode is enabled */
-bool use_dbltile = FALSE;       /* The double tile mode is enabled */
-bool use_bigtile = FALSE;       /* The bigtile mode is enabled */
-bool small_screen = FALSE;      /* Small screen mode for portables */
+byte tile_width = 1;            /* Tile width in units of font width */
+byte tile_height = 1;           /* Tile height in units of font height */
 bool use_transparency = FALSE;  /* Use transparent tiles */
 char notes_start[80];           /* Opening line of notes */
-
-int image_count;  		/* Grids until next random image    */
-                  		/* Optimizes the hallucination code */
 
 s16b signal_count;		/* Hack -- Count interupts */
 
@@ -146,33 +127,11 @@ s16b m_cnt = 0;			/* Number of live monsters */
 u16b group_id = 1;              /* Number of group IDs allocated */    
 
 /*
- * Height of dungeon map on screen.
- * Moved to defines.h -NRM-
-s16b SCREEN_HGT = 22;
-s16b SCREEN_WID = 66; */
-
-/*
  * Dungeon variables
  */
 
-s16b feeling;			/* Most recent feeling */
+u16b feeling;			/* Most recent feeling */
 s16b rating;			/* Level's current rating */
-bool good_item_flag;	        /* True if "Artifact" on this level */
-
-bool closing_flag;		/* Dungeon is closing */
-
-bool fake_monochrome;	        /* Use fake monochrome for effects */
-
-
-/*
- * Dungeon size info
- */
-
-s16b max_panel_rows, max_panel_cols;
-s16b panel_row_min, panel_row_max;
-s16b panel_col_min, panel_col_max;
-s16b panel_col_prt, panel_row_prt;
-bool panel_extra_rows=FALSE;
 
 /*
  * Player info
@@ -186,75 +145,6 @@ int player_egid;
  * Buffer to hold the current savefile name
  */
 char savefile[1024];
-
-
-/**
- * Number of active macros.
- */
-s16b macro__num;
-
-/**
- * Array of macro patterns [MACRO_MAX]
- */
-char **macro__pat;
-
-/**
- * Array of macro actions [MACRO_MAX]
- */
-char **macro__act;
-
-
-/**
- * The number of quarks (first quark is NULL)
- */
-s16b quark__num = 1;
-
-/**
- * The array[QUARK_MAX] of pointers to the quarks
- */
-char **quark__str;
-
-
-/**
- * The next "free" index to use
- */
-u16b message__next;
-
-/**
- * The index of the oldest message (none yet)
- */
-u16b message__last;
-
-/**
- * The next "free" offset
- */
-u16b message__head;
-
-/**
- * The offset to the oldest used char (none yet)
- */
-u16b message__tail;
-
-/**
- * The array[MESSAGE_MAX] of offsets, by index
- */
-u16b *message__ptr;
-
-/**
- * The array[MESSAGE_BUF] of chars, by offset
- */
-char *message__buf;
-
-/**
- * The array[MESSAGE_MAX] of u16b for the types of messages
- */
-u16b *message__type;
-
-
-/**
- * Table of colors associated to message-types
- */
-byte message__color[MSG_MAX];
 
 
 /**
@@ -280,65 +170,143 @@ char angband_term_name[TERM_WIN_MAX][16] =
 
 
 
-int max_macrotrigger = 0;
-char *macro_template = NULL;
-char *macro_modifier_chr;
-char *macro_modifier_name[MAX_MACRO_MOD];
-char *macro_trigger_name[MAX_MACRO_TRIGGER];
-char *macro_trigger_keycode[2][MAX_MACRO_TRIGGER];
 
 
 
 /**
  * Global table of color definitions (mostly zeros)
  */
-byte angband_color_table[256][4] =
+byte angband_color_table[MAX_COLORS][4] =
 {
-  {0x00, 0x00, 0x00, 0x00},	/* TERM_DARK */
-  {0x00, 0xFF, 0xFF, 0xFF},	/* TERM_WHITE */
-  {0x00, 0x80, 0x80, 0x80},	/* TERM_SLATE */
-  {0x00, 0xFF, 0x80, 0x00},	/* TERM_ORANGE */
-  {0x00, 0xC0, 0x00, 0x00},	/* TERM_RED */
-  {0x00, 0x00, 0x80, 0x40},	/* TERM_GREEN */
-  {0x00, 0x00, 0x40, 0xFF},	/* TERM_BLUE */
-  {0x00, 0x80, 0x40, 0x00},	/* TERM_UMBER */
-  {0x00, 0x60, 0x60, 0x60},	/* TERM_L_DARK */
-  {0x00, 0xC0, 0xC0, 0xC0},	/* TERM_L_WHITE */
-  {0x00, 0xFF, 0x00, 0xFF},	/* TERM_VIOLET */
-  {0x00, 0xFF, 0xFF, 0x00},	/* TERM_YELLOW */
-  {0x00, 0xFF, 0x00, 0x00},	/* TERM_L_RED */
-  {0x00, 0x00, 0xFF, 0x00},	/* TERM_L_GREEN */
-  {0x00, 0x00, 0xFF, 0xFF},	/* TERM_L_BLUE */
-  {0x00, 0xC0, 0x80, 0x40},	/* TERM_L_UMBER */
-
-  /*
-   * Values for shades at compile time, taken from shades.prf
-   * Hack -- TERM_WHITE (Shade 1) comes from font-x11.prf, because
-   * we must ensure that all colors are different.
-   */
-  {0x00, 0x00, 0x00, 0x00},	/* TERM_DARK	(Shade 1) */
-  {0x00, 0xAF, 0xFF, 0xFF},	/* TERM_WHITE 	(Shade 1) */
-  {0x00, 0xA0, 0xA0, 0xA0},	/* TERM_SLATE 	(Shade 1) */
-  {0x00, 0xDC, 0x64, 0x00},	/* TERM_ORANGE 	(Shade 1) */
-  {0x00, 0xF0, 0x00, 0x00},	/* TERM_RED 	(Shade 1) */
-  {0x00, 0x00, 0x70, 0x00},	/* TERM_GREEN 	(Shade 1) */
-  {0x00, 0x00, 0x80, 0xFF},	/* TERM_BLUE 	(Shade 1) */
-  {0x00, 0xC8, 0x64, 0x00},	/* TERM_UMBER 	(Shade 1) */
-  {0x00, 0x78, 0x64, 0x64},	/* TERM_L_DARK 	(Shade 1) */
-  {0x00, 0xE8, 0xD0, 0xC0},	/* TERM_L_WHITE	(Shade 1) */
-  {0x00, 0xA5, 0x00, 0xFF},	/* TERM_VIOLET 	(Shade 1) */
-  {0x00, 0xC8, 0xC8, 0x00},	/* TERM_YELLOW 	(Shade 1) */
-  {0x00, 0xB4, 0x46, 0x32},	/* TERM_L_RED 	(Shade 1) */
-  {0x00, 0x00, 0xDC, 0x64},	/* TERM_L_GREEN (Shade 1) */
-  {0x00, 0x64, 0xAA, 0xC8},	/* TERM_L_BLUE  (Shade 1) */
-  {0x00, 0xC8, 0xAA, 0x46} 	/* TERM_L_UMBER (Shade 1) */
+	{0x00, 0x00, 0x00, 0x00}, /* 0  TERM_DARK */
+	{0x00, 0xff, 0xff, 0xff}, /* 1  TERM_WHITE */
+	{0x00, 0x80, 0x80, 0x80}, /* 2  TERM_SLATE */
+	{0x00, 0xff, 0x80, 0x00}, /* 3  TERM_ORANGE */
+	{0x00, 0xc0, 0x00, 0x00}, /* 4  TERM_RED */
+	{0x00, 0x00, 0x80, 0x40}, /* 5  TERM_GREEN */
+	{0x00, 0x00, 0x40, 0xff}, /* 6  TERM_BLUE */
+	{0x00, 0x80, 0x40, 0x00}, /* 7  TERM_UMBER */
+	{0x00, 0x60, 0x60, 0x60}, /* 8  TERM_L_DARK */
+	{0x00, 0xc0, 0xc0, 0xc0}, /* 9  TERM_L_WHITE */
+	{0x00, 0xff, 0x00, 0xff}, /* 10 TERM_L_PURPLE */
+	{0x00, 0xff, 0xff, 0x00}, /* 11 TERM_YELLOW */
+	{0x00, 0xff, 0x40, 0x40}, /* 12 TERM_L_RED */
+	{0x00, 0x00, 0xff, 0x00}, /* 13 TERM_L_GREEN */
+	{0x00, 0x00, 0xff, 0xff}, /* 14 TERM_L_BLUE */
+	{0x00, 0xc0, 0x80, 0x40}, /* 15 TERM_L_UMBER */
+	{0x00, 0x90, 0x00, 0x90}, /* 16 TERM_PURPLE */
+	{0x00, 0x90, 0x20, 0xff}, /* 17 TERM_VIOLET */
+	{0x00, 0x00, 0xa0, 0xa0}, /* 18 TERM_TEAL */
+	{0x00, 0x6c, 0x6c, 0x30}, /* 19 TERM_MUD */
+	{0x00, 0xff, 0xff, 0x90}, /* 20 TERM_L_YELLOW */
+	{0x00, 0xff, 0x00, 0xa0}, /* 21 TERM_MAGENTA */
+	{0x00, 0x20, 0xff, 0xdc}, /* 22 TERM_L_TEAL */
+	{0x00, 0xb8, 0xa8, 0xff}, /* 23 TERM_L_VIOLET */
+	{0x00, 0xff, 0x80, 0x80}, /* 24 TERM_L_PINK */
+	{0x00, 0xb4, 0xb4, 0x00}, /* 25 TERM_MUSTARD */
+	{0x00, 0xa0, 0xc0, 0xd0}, /* 26 TERM_BLUE_SLATE */
+	{0x00, 0x00, 0xb0, 0xff}, /* 27 TERM_DEEP_L_BLUE */
 };
 
+/**
+ * Global array of color names and translations.
+ */
+color_type color_table[MAX_COLORS] =
+{
+    /* full mono vga blind lighter darker highlight metallic misc */
+    {'d', "Dark", {0, 0, 0, TERM_DARK, TERM_L_DARK, TERM_DARK,
+		   TERM_L_DARK, TERM_L_DARK, TERM_DARK}},
+
+    {'w', "White", {1, 1, 1, TERM_WHITE, TERM_YELLOW, TERM_SLATE,
+		    TERM_L_DARK, TERM_YELLOW, TERM_WHITE}},
+
+    {'s', "Slate", {2, 1, 2, TERM_SLATE, TERM_L_WHITE, TERM_L_DARK,
+		    TERM_L_WHITE, TERM_L_WHITE, TERM_SLATE}},
+
+    {'o', "Orange", {3, 1, 3, TERM_L_WHITE, TERM_YELLOW, TERM_SLATE,
+		     TERM_YELLOW, TERM_YELLOW, TERM_ORANGE}},
+
+    {'r', "Red", {4, 1, 4, TERM_SLATE, TERM_L_RED, TERM_SLATE,
+		  TERM_L_RED, TERM_L_RED, TERM_RED}},
+
+    {'g', "Green", {5, 1, 5, TERM_SLATE, TERM_L_GREEN, TERM_SLATE,
+		    TERM_L_GREEN, TERM_L_GREEN, TERM_GREEN}},
+
+    {'b', "Blue", {6, 1, 6, TERM_SLATE, TERM_L_BLUE, TERM_SLATE,
+		   TERM_L_BLUE, TERM_L_BLUE, TERM_BLUE}},
+
+    {'u', "Umber", {7, 1, 7, TERM_L_DARK, TERM_L_UMBER, TERM_L_DARK,
+		    TERM_L_UMBER, TERM_L_UMBER, TERM_UMBER}},
+
+    {'D', "Light Dark", {8, 1, 8, TERM_L_DARK, TERM_SLATE, TERM_L_DARK,
+			 TERM_WHITE, TERM_SLATE, TERM_L_DARK}},
+
+    {'W', "Light Slate", {9, 1, 9, TERM_L_WHITE, TERM_WHITE, TERM_SLATE,
+			  TERM_SLATE, TERM_WHITE, TERM_SLATE}},
+
+    {'P', "Light Purple", {10, 1, 10, TERM_SLATE, TERM_YELLOW, TERM_SLATE,
+			   TERM_PURPLE, TERM_YELLOW, TERM_L_PURPLE}},
+
+    {'y', "Yellow", {11, 1, 11, TERM_L_WHITE, TERM_L_YELLOW, TERM_L_WHITE,
+		     TERM_ORANGE, TERM_WHITE, TERM_YELLOW}},
+
+    {'R', "Light Red", {12, 1, 12, TERM_L_WHITE, TERM_YELLOW, TERM_RED,
+			TERM_RED, TERM_YELLOW, TERM_L_RED}},
+
+    {'G', "Light Green", {13, 1, 13, TERM_L_WHITE, TERM_YELLOW, TERM_GREEN,
+			  TERM_GREEN, TERM_YELLOW, TERM_L_GREEN}},
+
+    {'B', "Light Blue", {14, 1, 14, TERM_L_WHITE, TERM_YELLOW, TERM_BLUE,
+			 TERM_BLUE, TERM_YELLOW, TERM_L_BLUE}},
+
+    {'U', "Light Umber", {15, 1, 15, TERM_L_WHITE, TERM_YELLOW, TERM_UMBER,
+			  TERM_UMBER, TERM_YELLOW, TERM_L_UMBER}},
+
+    /* "new" colors */
+    {'p', "Purple", {16, 1, 10,TERM_SLATE, TERM_L_PURPLE, TERM_SLATE,
+		     TERM_L_PURPLE, TERM_L_PURPLE, TERM_L_PURPLE}},
+
+    {'v', "Violet", {17, 1, 10,TERM_SLATE, TERM_L_PURPLE, TERM_SLATE,
+		     TERM_L_VIOLET, TERM_L_PURPLE, TERM_L_PURPLE}},
+
+    {'t', "Teal", {18, 1, 6, TERM_SLATE, TERM_L_TEAL, TERM_SLATE,
+		   TERM_L_TEAL, TERM_L_TEAL, TERM_L_BLUE}},
+
+    {'m', "Mud", {19, 1, 5, TERM_SLATE, TERM_MUSTARD, TERM_SLATE,
+		  TERM_MUSTARD, TERM_MUSTARD, TERM_UMBER}},
+
+    {'Y', "Light Yellow", {20, 1, 11, TERM_WHITE, TERM_WHITE, TERM_YELLOW,
+			   TERM_ORANGE, TERM_WHITE, TERM_L_YELLOW}},
+
+    {'i', "Magenta-Pink", {21, 1, 12, TERM_SLATE, TERM_L_PINK, TERM_RED,
+			   TERM_L_PINK, TERM_L_PINK, TERM_L_PURPLE}},
+
+    {'T', "Light Teal", {22, 1, 14, TERM_L_WHITE, TERM_YELLOW, TERM_TEAL,
+			 TERM_TEAL, TERM_YELLOW, TERM_L_BLUE}},
+
+    {'V', "Light Violet", {23, 1, 10, TERM_L_WHITE, TERM_YELLOW, TERM_VIOLET,
+			   TERM_VIOLET, TERM_YELLOW, TERM_L_PURPLE}},
+
+    {'I', "Light Pink", {24, 1, 12, TERM_L_WHITE, TERM_YELLOW, TERM_MAGENTA,
+			 TERM_MAGENTA, TERM_YELLOW, TERM_L_PURPLE}},
+
+    {'M', "Mustard", {25, 1, 11, TERM_SLATE, TERM_YELLOW, TERM_SLATE,
+		      TERM_MUD, TERM_YELLOW, TERM_YELLOW}},
+
+    {'z', "Blue Slate",  {26, 1, 9, TERM_SLATE, TERM_DEEP_L_BLUE, TERM_SLATE,
+			  TERM_DEEP_L_BLUE, TERM_DEEP_L_BLUE, TERM_L_WHITE}},
+
+    {'Z', "Deep Light Blue", {27, 1, 14, TERM_L_WHITE, TERM_L_BLUE, 
+			      TERM_BLUE_SLATE, TERM_BLUE_SLATE, TERM_L_BLUE, 
+			      TERM_L_BLUE}},
+
+    /* Rest to be filled in when the game loads */
+};
 
 /**
  * Standard sound names (modifiable?)
  */
-char angband_sound_name[SOUND_MAX][16] =
+const cptr angband_sound_name[SOUND_MAX] =
 {
   "",
   "hit",
@@ -496,7 +464,7 @@ char angband_sound_name[SOUND_MAX][16] =
 /**
  * Array[VIEW_MAX] used by "update_view()"
  */
-sint view_n = 0;
+int view_n = 0;
 u16b *view_g;
 
 /* 
@@ -514,7 +482,7 @@ u32b vinfo_bits_0;
 /*
  * Arrays[TEMP_MAX] used for various things
  */
-sint temp_n = 0;
+int temp_n = 0;
 u16b *temp_g;
 byte *temp_y;
 byte *temp_x;
@@ -629,21 +597,14 @@ monster_lore *l_list;
 quest *q_list;
 
 /**
- * Hack -- Array[NOTES_MAX_LINES] of note records
- */
-note_info *notes;
-
-
-/**
  * Array[MAX_STORES] of stores
  */
 store_type *store;
 
 /**
- * Array[INVEN_TOTAL] of objects in the player's inventory
+ * Array[RANDNAME_NUM_TYPES][num_names] of random names
  */
-object_type *inventory;
-
+cptr** name_sections;
 
 /**
  * The size of "alloc_kind_table" (at most z_info->k_max * 4)
@@ -760,99 +721,79 @@ maxima *z_info;
  * The vault generation arrays
  */
 vault_type *v_info;
-char *v_name;
-char *v_text;
 
 /**
  * The themed level generation arrays. -LM-
  */
 vault_type *t_info;
-char *t_name;
-char *t_text;
 
 /**
  * The terrain feature arrays
  */
 feature_type *f_info;
-char *f_name;
-char *f_text;
 
 /**
  * The object kind arrays
  */
 object_kind *k_info;
-char *k_name;
-char *k_text;
 
 /**
  * The artifact arrays
  */
 artifact_type *a_info;
-char *a_name;
-char *a_text;
 
 /**
  * The set item arrays
  */
-set_type *s_info;
-char *s_name;
-char *s_text;
+set_type *set_info;
 
 /**
  * The ego-item arrays
  */
 ego_item_type *e_info;
-char *e_name;
-char *e_text;
 
 /**
  * The monster race arrays
  */
 monster_race *r_info;
-char *r_name;
-char *r_text;
 
 /**
  * The player race arrays
  */
 player_race *p_info;
-char *p_name;
-char *p_text;
 
 
 /**
  * The player class arrays
  */
 player_class *c_info;
-char *c_name;
-char *c_text;
 
 
 /**
  * The player history arrays
  */
 hist_type *h_info;
-char *h_text;
 
 /**
  * The shop owner arrays
  */
 owner_type *b_info;
-char *b_name;
 
 /**
- * The racial price adjustment arrays
+ * The spell arrays
  */
-byte *g_info;
-
+spell_type *s_info;
 
 /**
  * The object flavor arrays
  */
 flavor_type *flavor_info;
-char *flavor_name;
-char *flavor_text;
 
+
+/*
+ * The hints array
+ */
+struct hint *hints;
 
 /**
  * Hack -- The special Angband "System Suffix"
@@ -951,6 +892,7 @@ char *ANGBAND_DIR_XTRA_FONT;
 char *ANGBAND_DIR_XTRA_GRAF;
 char *ANGBAND_DIR_XTRA_SOUND;
 char *ANGBAND_DIR_XTRA_HELP;
+char *ANGBAND_DIR_XTRA_ICON;
 
 
 /**
@@ -971,19 +913,19 @@ byte item_tester_tval;
  * Here is a "hook" used during calls to "get_item()" and
  * "show_inven()" and "show_equip()", and the choice window routines.
  */
-bool (*item_tester_hook)(object_type*);
+bool (*item_tester_hook)(const object_type*);
 
 
 
 /**
  * Current "comp" function for ang_sort()
  */
-bool (*ang_sort_comp)(vptr u, vptr v, int a, int b);
+bool (*ang_sort_comp)(const void *u, const void *v, int a, int b);
 
 /**
  * Current "swap" function for ang_sort()
  */
-void (*ang_sort_swap)(vptr u, vptr v, int a, int b);
+void (*ang_sort_swap)(void *u, void *v, int a, int b);
 
 
 /**
@@ -1020,6 +962,12 @@ int text_out_wrap = 0;
  * Hack -- Indentation for the text when using text_out().
  */
 int text_out_indent = 0;
+
+
+/**
+ * Hack -- Padding after wrapping
+ */
+int text_out_pad = 0;
 
 
 /**
@@ -1113,6 +1061,8 @@ s16b autosave_freq;			/* Autosave frequency */
  * direction is he headed?  Monsters are handled more simply:  They have 
  * a 33% or 50% chance of walking through. -LM-
  */
+bool cancel_crossing;
+
 byte player_is_crossing;
 
 
@@ -1126,15 +1076,16 @@ byte num_trap_on_level;
 byte num_runes_on_level[MAX_RUNE];
 int mana_reserve = 0;
 
+/**
+ * Artifact counting variables and arrays
+ */
+int *artifact_normal, *artifact_special;
+int artifact_normal_cnt, artifact_special_cnt;
+
+
 
 /** XXX Mega-Hack - See main-win.c */
 bool angband_keymap_flag = TRUE;
-
-/* Path finding variables
- *
- */
-char pf_result[MAX_PF_LENGTH];
-int pf_result_index;
 
 /**
  * Sound hook (for playing FX).
@@ -1148,24 +1099,8 @@ void (*sound_hook)(int sound);
 autoinscription *inscriptions = 0;
 u16b inscriptions_count = 0;
 
+/* Delay in centiseconds before moving to allow another keypress */
+/* Zero means normal instant movement. */
+u16b lazymove_delay = 0;
 
-/* 
- * Mouse button handling variables
- */
-mouse_button *mse_button;
-mouse_button *backup_button;
-int status_end    = 0;
-int depth_start   = 0;
-int button_length = 0;
-int num_buttons   = 0;
-int prompt_end = 0;
-bool normal_screen = TRUE;
 
-/* 
- * Hooks for making and unmaking buttons
- */
-int (*add_button_hook)(char *label, unsigned char keypress);
-int (*kill_button_hook)(unsigned char keypress);
-void (*kill_all_buttons_hook)(void);
-void (*backup_buttons_hook)(void);
-void (*restore_buttons_hook)(void);

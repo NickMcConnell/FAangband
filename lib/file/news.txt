@@ -1,6 +1,6 @@
                                                                                
              ****************************************************              
-             **   FAangband 1.1.6  ****   First Age Angband    **              
+             **   FAangband 1.2.0  ****   First Age Angband    **              
              ** Beleriand in the days of the War of the Jewels **              
              ****************************************************              
                                                                                
@@ -12,19 +12,19 @@
      Ben Harrison, Robert Ruehlmann, Leon Marrick, Bahman Rabii, Jeff Greene,  
      Diego Gonzalez, Andrew Doull, Andi Sidwell, Pete Mack, Si Griffin.      
 	                                                                       
-     FAangband 0.1.0-1.1.6: Copyright (c) 2005-2010 Nick McConnell             
-     FAangband 0.3.6      : Copyright (c) 2009 Si Griffin             
+     FAangband 0.1.0-1.2.0 by Nick McConnell             
+     FAangband 0.3.6       by Si Griffin             
                                                                                
-     Send comments, bug reports, and patches to "nckmccnnll@yahoo.com.au".     
-     The FAangband home page is "http://angband.oook.cz/faangband".            
-     Browse the Angband newsgroup: "rec.games.roguelike.angband".              
-     Visit the Angband ladder page: "http://angband.oook.cz".                  
+     Send comments, bug reports, and patches to nckmccnnll@gmail.com     
+     The FAangband home page is http://angband.oook.cz/faangband            
+     Latest code is at https://github.com/NickMcConnell/FAangband            
+     Visit the Angband ladder page at http://angband.oook.cz                  
                         '?' for in-game help.                                  
 
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwbbbbbbbbbbbbbbbwwwwwwwwwbbbbbbbbbbbbbbbbbwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwZZZZZZZZZZZZZZZwwwwwwwwwZZZZZZZZZZZZZZZZZwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
@@ -35,11 +35,11 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwbbbbbbbbbbbbbbbbbbbbbwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwbbbbbbbbbbbbbbbbbbbbbwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwZZZZZZZZZZZZZZZZZZZZZwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwZZZZZZZZZZZZZZZZZZZZZwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwBBBBBBBBBBBBBBBBBBBBBBBwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwBBBBBBBBBBBBBBBBBBBBBBBBBBBwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwBBBBBBBBBBBBBBBBBBBBBBwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwGwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+wwwwwwwwwwwwwwwwwwwwwwwYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+wwwwwwwwwwwwwwwwwwwwwwwwwYwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww

@@ -1,6 +1,7 @@
-/** \file z-util.c
-    \brief Low-level string handling and other utilities.
- 
+/*
+ * File: z-util.c
+ * Purpose: Low-level string handling and other utilities.
+ *
  * Copyright (c) 1997-2005 Ben Harrison, Robert Ruehlmann.
  *
  * This work is free software; you can redistribute it and/or modify it
@@ -14,16 +15,17 @@
  *    and not for profit purposes provided that this copyright and statement
  *    are included in all such copies.  Other copyrights may also apply.
  */
+
+#include <stdlib.h>
+
 #include "z-util.h"
 
-
-/**
+/*
  * Convenient storage of the program name
  */
 char *argv0 = NULL;
 
-
-/**
+/*
  * Case insensitive comparison between two strings
  */
 int my_stricmp(const char *s1, const char *s2)
@@ -41,8 +43,8 @@ int my_stricmp(const char *s1, const char *s2)
 			return (0);
 		}
 
-		ch1 = toupper(*s1);
-		ch2 = toupper(*s2);
+		ch1 = toupper((unsigned char) *s1);
+		ch2 = toupper((unsigned char) *s2);
 
 		/* If the characters don't match */
 		if (ch1 != ch2)
@@ -58,7 +60,7 @@ int my_stricmp(const char *s1, const char *s2)
 }
 
 
-/**
+/*
  * Case insensitive comparison between the first n characters of two strings
  */
 int my_strnicmp(cptr a, cptr b, int n)
@@ -79,8 +81,7 @@ int my_strnicmp(cptr a, cptr b, int n)
 	return 0;
 }
 
-
-/**
+/*
  * An ANSI version of strstr() with case insensitivity.
  *
  * In the public domain; found at:
@@ -88,7 +89,8 @@ int my_strnicmp(cptr a, cptr b, int n)
  */
 char *my_stristr(const char *string, const char *pattern)
 {
-      char *pptr, *sptr, *start;
+      const char *pptr, *sptr;
+      char *start;
 
       for (start = (char *)string; *start != 0; start++)
       {
@@ -99,8 +101,8 @@ char *my_stristr(const char *string, const char *pattern)
             if (*start == 0)
                   return NULL;
 
-            pptr = (char *)pattern;
-            sptr = (char *)start;
+            pptr = (const char *)pattern;
+            sptr = (const char *)start;
 
             while (toupper((unsigned char)*sptr) == toupper((unsigned char)*pptr))
             {
@@ -117,7 +119,7 @@ char *my_stristr(const char *string, const char *pattern)
 }
 
 
-/**
+/*
  * The my_strcpy() function copies up to 'bufsize'-1 characters from 'src'
  * to 'buf' and NUL-terminates the result.  The 'buf' and 'src' strings may
  * not overlap.
@@ -147,7 +149,7 @@ size_t my_strcpy(char *buf, const char *src, size_t bufsize)
 }
 
 
-/**
+/*
  * The my_strcat() tries to append a string to an existing NUL-terminated string.
  * It never writes more characters into the buffer than indicated by 'bufsize' and
  * NUL-terminates the buffer.  The 'buf' and 'src' strings may not overlap.
@@ -176,7 +178,7 @@ size_t my_strcat(char *buf, const char *src, size_t bufsize)
 }
 
 
-/**
+/*
  * Determine if string "a" is equal to string "b"
  */
 #undef streq
@@ -186,7 +188,7 @@ bool streq(cptr a, cptr b)
 }
 
 
-/**
+/*
  * Determine if string "t" is a suffix of string "s"
  */
 bool suffix(cptr s, cptr t)
@@ -202,7 +204,7 @@ bool suffix(cptr s, cptr t)
 }
 
 
-/**
+/*
  * Determine if string "t" is a prefix of string "s"
  */
 bool prefix(cptr s, cptr t)
@@ -220,12 +222,12 @@ bool prefix(cptr s, cptr t)
 
 
 
-/**
+/*
  * Redefinable "plog" action
  */
 void (*plog_aux)(cptr) = NULL;
 
-/**
+/*
  * Print (or log) a "warning" message (ala "perror()")
  * Note the use of the (optional) "plog_aux" hook.
  */
@@ -240,12 +242,12 @@ void plog(cptr str)
 
 
 
-/**
+/*
  * Redefinable "quit" action
  */
 void (*quit_aux)(cptr) = NULL;
 
-/**
+/*
  * Exit (ala "exit()").  If 'str' is NULL, do "exit(EXIT_SUCCESS)".
  * Otherwise, plog() 'str' and exit with an error code of -1.
  * But always use 'quit_aux', if set, before anything else.
@@ -265,47 +267,34 @@ void quit(cptr str)
 	(void)(exit(EXIT_FAILURE));
 }
 
-/**
- * Fast string concatenation - stolen from NPPangband for FAangband 0.3.2.
- * Append the "src" string to "buf" given the address of the trailing null
- * character of "buf" in "end". "end" can be NULL, in which the trailing null
- * character is fetched from the beginning of "buf".
- * "bufsize" is the maximum size of "buf" (including the trailing null character).
- * It returns the -new- address of the trailing null character of "buf".
- *
- * Example of usage:
- *
- * char buf[100] = "", *end;
- * int i;
- *
- * end = my_fast_strcat(buf, NULL, "START", sizeof(buf));
- *
- * for (i = 0; i < 5; i++)
- * {
- * 	end = my_fast_strcat(buf, end, "_", sizeof(buf));
- * }
- *
- * end = my_fast_strcat(buf, end, "END", sizeof(buf));
- *
- * buf ==> "START_____END"
- */
-char *my_fast_strcat(char *buf, char *end, const char *src, size_t bufsize)
+/* Arithmetic mean of the first 'size' entries of the array 'nums' */
+int mean(int *nums, int size)
 {
-	/* No end, go to the beginning of "buf" */
-	if (end == NULL) end = buf;
+    	int i, total = 0;
 
-	/* Find the trailing null character, if necessary */
-	while (*end) ++end;
+    	for(i = 0; i < size; i++) total += nums[i];
 
-	/* Make room for the trailing null character, if possible */
-	if (bufsize > 0) --bufsize;
+    	return total / size;
+}
 
-	/* Append "str" to "buf", if possible */
-	while (*src && ((size_t)(end - buf) < bufsize)) *end++ = *src++;
+/* Variance of the first 'size' entries of the array 'nums'  */
+int variance(int *nums, int size)
+{
+    	int i, avg, total = 0;
 
-	/* Terminate the string */
-	*end = '\0';
+    	avg = mean(nums, size);
 
-	/* Return the new end of "buf" */
-	return end;
+    	for(i = 0; i < size; i++)
+	{
+        	int delta = nums[i] - avg;
+        	total += delta * delta;
+    	}
+
+    	return total / size;
+}
+
+void sort(void *base, size_t nmemb, size_t smemb,
+          int (*comp)(const void *, const void *))
+{
+	qsort(base, nmemb, smemb, comp);
 }

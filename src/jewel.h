@@ -51,7 +51,7 @@
 #define SUST_CHR		45
 #define SLOW_DIGEST		46
 #define FEATHER	 		47
-#define LITE			48
+#define LIGHT			48
 #define REGEN			49
 #define TELEPATHY		50
 #define SEE_INVIS		51
@@ -73,7 +73,7 @@
 #define RES_FIRE		76
 #define RES_COLD		77
 #define RES_POIS		78
-#define RES_LITE		79
+#define RES_LIGHT		79
 #define RES_DARK		80
 #define RES_CONFU		81
 #define RES_SOUND		82
@@ -90,7 +90,7 @@
 #define VUL_FIRE		92
 #define VUL_COLD		93
 #define VUL_POIS		94
-#define VUL_LITE		95
+#define VUL_LIGHT		95
 #define VUL_DARK		96
 #define VUL_CONFU		97
 #define VUL_SOUND		98

@@ -1,7 +1,7 @@
 MKPATH=../../mk/
 include $(MKPATH)buildsys.mk
 
-DATA = readme
+LIBDATA = readme
 SUBDIRS = diffs_files Spoil
-PACKAGE = ${PACKAGE_NAME}/info
+PACKAGE = info
 

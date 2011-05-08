@@ -13,7 +13,7 @@
 #
 
 # Executable name and default target
-EXE = FAangband.exe
+EXE = faangband.exe
 all: ../$(EXE)
 
 ifneq (,$(findstring \system32,$(PATH)))
@@ -41,13 +41,14 @@ ifdef CONSOLE
   #PDCURSES_LIB = ../../pdcurses/lib/pdcurses.a
 else
   CFLAGS = -DWINDOWS
-  IOBJS = $(BASEOBJS) win/angband.res main-win.o win/readdib.o
+  IOBJS = $(BASEOBJS) win/$(PROG).res main-win.o win/readdib.o
   LIBS = -s -mwindows -lwinmm
 endif
 
 CC = $(CROSS)gcc
 WRES = $(CROSS)windres
-CFLAGS += -Wall -W -std=iso9899:199409 -pedantic -O2 -I.
+WARNINGS = -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers
+CFLAGS += $(WARNINGS) -std=c99 -Wdeclaration-after-statement -O2 -I.
 LIBS += -s
 
 ifdef BUILD_ID
@@ -106,7 +107,7 @@ clean:
 # Rules
 #
 
-win/angband.res: win/angband.rc
+win/$(PROG).res: win/$(PROG).rc
 	$(WRES) $< -O coff -o $@
 
 $(OBJDIR)%.o: %.c $(INCS)

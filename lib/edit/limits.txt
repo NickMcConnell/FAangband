@@ -31,6 +31,9 @@ M:R:800
 # Maximum number of vaults
 M:V:300
 
+# Maximum number of themed levels
+M:W:32
+
 # Maximum number of player races - changes required if this exceeds 32
 M:P:14
 
@@ -47,7 +50,10 @@ M:B:14
 M:L:401
 
 # Maximum number of item sets
-M:S:8
+M:X:8
+
+# Maximum number of spells
+M:S:256
 
 # Maximum number of objects on the level
 M:O:1024

@@ -1,6 +1,7 @@
-/** \file main-gtk.h
-    \brief Header file for the GTK port for Angband
- 
+/*
+ * File: main-gtk.h
+ * Purpose: Header file for the GTK port for Angband
+ *
  * Copyright (c) 2000-2007 Robert Ruehlmann, Shanoah Alkire
  *
  * This work is free software; you can redistribute it and/or modify it
@@ -30,6 +31,8 @@
 #include "game-cmd.h" 
 #include "game-event.h" 
 #include "option.h"
+
+#include <iconv.h>
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>

@@ -1,7 +1,9 @@
-/** \file snd-sdl.c
-    \brief SDL sound support
- 
- * Copyright (c) 2004-2007 Brendon Oliver, Andrew Sidwell.
+/*
+ * File: snd-sdl.c
+ * Purpose: SDL sound support
+ *
+ * Copyright (c) 2004 Brendon Oliver <brendon.oliver@gmail.com>
+ * Copyright (c) 2007 Andi Sidwell <andi@takkaria.org>
  * A large chunk of this file was taken and modified from main-ros.
  *
  * This work is free software; you can redistribute it and/or modify it
@@ -17,6 +19,7 @@
  */
 #include "angband.h"
 
+ 
 #ifdef SOUND_SDL
 
 
@@ -24,22 +27,13 @@
 #include "SDL_mixer.h"
 
 
-/**
- * Don't cache audio 
- */
+/* Don't cache audio */
 static bool no_cache_audio = FALSE;
 
+/* Arbitary limit on number of samples per event */
+#define MAX_SAMPLES      8
 
-
-
-/**
- * Arbitary limit on number of samples per event 
- */
-#define MAX_SAMPLES      16
-
-/**
- * Struct representing all data about an event sample 
- */
+/* Struct representing all data about an event sample */
 typedef struct
 {
 	int num;                        /* Number of samples for this event */
@@ -48,13 +42,13 @@ typedef struct
 } sample_list;
 
 
-/**
+/*
  * Just need an array of SampInfos
  */
 static sample_list samples[MSG_MAX];
 
 
-/**
+/*
  * Shut down the sound system and free resources.
  */
 static void close_audio(void)
@@ -83,7 +77,7 @@ static void close_audio(void)
 }
 
 
-/**
+/*
  * Initialise SDL and open the mixer
  */
 static bool open_audio(void)
@@ -117,155 +111,157 @@ static bool open_audio(void)
 
 
 
-/**
+/*
  * Read sound.cfg and map events to sounds; then load all the sounds into
  * memory to avoid I/O latency later.
  */
 static bool sound_sdl_init(bool no_cache)
 {
-  char path[2048];
-  char buffer[2048];
-  ang_file *fff;
-  
-  
-  /* Initialise the mixer  */
-  if (!open_audio())
-    return FALSE;
-  
-  
-  /* Build the "sound" path */
-  path_build(path, sizeof(path), ANGBAND_DIR_XTRA, "sound");
-  ANGBAND_DIR_XTRA_SOUND = string_make(path);
-  
-  /* Find and open the config file */
-  path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
-  fff = file_open(path, MODE_READ, -1);
-  
-  /* Handle errors */
-  if (!fff)
-    {
-      plog_fmt("Failed to open sound config (%s):\n    %s", 
-	       path, strerror(errno));
-      return FALSE;
-    }
-  
-  /* Parse the file */
-  /* Lines are always of the form "name = sample [sample ...]" */
-  while (file_getl(fff, buffer, sizeof(buffer)))
-    {
-      char *msg_name;
-      char *sample_list;
-      char *search;
-      char *cur_token;
-      char *next_token;
-      int event;
-      
-      /* Skip anything not beginning with an alphabetic character */
-      if (!buffer[0] || !isalpha((unsigned char)buffer[0])) continue;
-      
-      /* Split the line into two: message name, and the rest */
-      search = strchr(buffer, ' ');
-      sample_list = strchr(search + 1, ' ');
-      if (!search) continue;
-      if (!sample_list) continue;
-      
-      /* Set the message name, and terminate at first space */
-      msg_name = buffer;
-      search[0] = '\0';
-      
-      
-      /* Make sure this is a valid event name */
-      for (event = MSG_MAX - 1; event >= 0; event--)
+	char path[2048];
+	char buffer[2048];
+	ang_file *fff;
+
+
+	/* Initialise the mixer  */
+	if (!open_audio())
+	    return FALSE;
+
+
+	/* Build the "sound" path */
+	path_build(path, sizeof(path), ANGBAND_DIR_XTRA, "sound");
+	if (ANGBAND_DIR_XTRA_SOUND)
+		mem_free(ANGBAND_DIR_XTRA_SOUND);
+	ANGBAND_DIR_XTRA_SOUND = string_make(path);
+
+	/* Find and open the config file */
+	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
+	fff = file_open(path, MODE_READ, -1);
+
+	/* Handle errors */
+	if (!fff)
 	{
-	  if (strcmp(msg_name, angband_sound_name[event]) == 0)
-	    break;
+		plog_fmt("Failed to open sound config (%s):\n    %s", 
+		          path, strerror(errno));
+		return FALSE;
 	}
-      if (event < 0) continue;
-      
-      /* Advance the sample list pointer so it's at the beginning of text */
-      sample_list++;
-      if (!sample_list[0]) continue;
-      
-      /* Terminate the current token */
-      cur_token = sample_list;
-      search = strchr(cur_token, ' ');
-      if (search)
+
+	/* Parse the file */
+	/* Lines are always of the form "name = sample [sample ...]" */
+	while (file_getl(fff, buffer, sizeof(buffer)))
 	{
-	  search[0] = '\0';
-	  next_token = search + 1;
-	}
-      else
-	{
-	  next_token = NULL;
-	}
-      
-      /*
-       * Now we find all the sample names and add them one by one
-       */
-      while (cur_token)
+		char *msg_name;
+		char *sample_list;
+		char *search;
+		char *cur_token;
+		char *next_token;
+		int event;
+
+		/* Skip anything not beginning with an alphabetic character */
+		if (!buffer[0] || !isalpha((unsigned char)buffer[0])) continue;
+
+		/* Split the line into two: message name, and the rest */
+		search = strchr(buffer, ' ');
+        sample_list = strchr(search + 1, ' ');
+		if (!search) continue;
+        if (!sample_list) continue;
+
+		/* Set the message name, and terminate at first space */
+		msg_name = buffer;
+		search[0] = '\0';
+
+
+		/* Make sure this is a valid event name */
+		for (event = MSG_MAX - 1; event >= 0; event--)
+		{
+			if (strcmp(msg_name, angband_sound_name[event]) == 0)
+			    break;
+		}
+        if (event < 0) continue;
+
+		/* Advance the sample list pointer so it's at the beginning of text */
+		sample_list++;
+		if (!sample_list[0]) continue;
+
+		/* Terminate the current token */
+		cur_token = sample_list;
+		search = strchr(cur_token, ' ');
+		if (search)
+		{
+			search[0] = '\0';
+			next_token = search + 1;
+		}
+		else
+		{
+			next_token = NULL;
+		}
+
+        /*
+         * Now we find all the sample names and add them one by one
+         */
+        while (cur_token)
         {
-	  int num = samples[event].num;
-	  
-	  /* Don't allow too many samples */
-	  if (num >= MAX_SAMPLES) break;
-	  
-	  /* Build the path to the sample */
-	  path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, cur_token);
-	  if (!file_exists(path)) goto next_token;
-	  
-	  /* Don't load now if we're not caching */
-	  if (no_cache)
-	    {
-	      /* Just save the path for later */
-	      samples[event].paths[num] = (char *)string_make(path);
-	    }
-	  else
-	    {
-	      /* Load the file now */
-	      samples[event].wavs[num] = Mix_LoadMUS(path);
-	      if (!samples[event].wavs[num])
-		{
-		  plog_fmt("%s: %s", SDL_GetError(), strerror(errno));
-		  goto next_token;
+            int num = samples[event].num;
+
+			/* Don't allow too many samples */
+			if (num >= MAX_SAMPLES) break;
+
+			/* Build the path to the sample */
+			path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, cur_token);
+			if (!file_exists(path)) goto next_token;
+
+			/* Don't load now if we're not caching */
+			if (no_cache)
+			{
+				/* Just save the path for later */
+				samples[event].paths[num] = string_make(path);
+			}
+			else
+			{
+				/* Load the file now */
+				samples[event].wavs[num] = Mix_LoadMUS(path);
+				if (!samples[event].wavs[num])
+				{
+					plog_fmt("%s: %s", SDL_GetError(), strerror(errno));
+					goto next_token;
+				}
+			}
+
+			/* Imcrement the sample count */
+			samples[event].num++;
+
+		next_token:
+
+			/* Figure out next token */
+			cur_token = next_token;
+			if (next_token)
+			{
+				/* Try to find a space */
+				search = strchr(cur_token, ' ');
+
+				/* If we can find one, terminate, and set new "next" */
+				if (search)
+				{
+					search[0] = '\0';
+					next_token = search + 1;
+				}
+				else
+				{
+					/* Otherwise prevent infinite looping */
+					next_token = NULL;
+				}
+			}
 		}
-	    }
-	  
-	  /* Imcrement the sample count */
-	  samples[event].num++;
-	  
-	next_token:
-	  
-	  /* Figure out next token */
-	  cur_token = next_token;
-	  if (next_token)
-	    {
-	      /* Try to find a space */
-	      search = strchr(cur_token, ' ');
-	      
-	      /* If we can find one, terminate, and set new "next" */
-	      if (search)
-		{
-		  search[0] = '\0';
-		  next_token = search + 1;
-		}
-	      else
-		{
-		  /* Otherwise prevent infinite looping */
-		  next_token = NULL;
-		}
-	    }
 	}
-    }
-  
-  /* Close the file */
-  file_close(fff);
-  
-  
-  /* Success */
-  return TRUE;
+
+	/* Close the file */
+	file_close(fff);
+
+
+	/* Success */
+	return TRUE;
 }
 
-/**
+/*
  * Play a sound of type "event".
  */
 static void play_sound(int event)
@@ -280,7 +276,7 @@ static void play_sound(int event)
 	if (!samples[event].num) return;
 
 	/* Choose a random event */
-	s = rand_int(samples[event].num);
+	s = randint0(samples[event].num);
 	wave = samples[event].wavs[s];
 
 	/* Try loading it, if it's not cached */
@@ -306,7 +302,7 @@ static void play_sound(int event)
 }
 
 
-/**
+/*
  * Init the SDL sound "module".
  */
 errr init_sound_sdl(int argc, char **argv)

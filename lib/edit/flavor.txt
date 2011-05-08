@@ -32,11 +32,11 @@ G:_:U
 D:Aspen
 
 N:83:55
-G:_:U
+G:_:M
 D:Balsa
 
 N:84:55
-G:_:U
+G:_:Y
 D:Bamboo
 
 N:85:55
@@ -60,7 +60,7 @@ G:_:y
 D:Butternut
 
 N:90:55
-G:_:U
+G:_:u
 D:Cedar
 
 N:91:55
@@ -76,11 +76,11 @@ G:_:U
 D:Cypress
 
 N:94:55
-G:_:U
+G:_:m
 D:Dogwood
 
 N:95:55
-G:_:U1
+G:_:U
 D:Elm
 
 N:96:55
@@ -140,7 +140,7 @@ G:_:u
 D:Mahogany
 
 N:110:55
-G:_:u
+G:_:m
 D:Maple
 
 N:111:55
@@ -160,7 +160,7 @@ G:_:u
 D:Oak
 
 N:115:55
-G:_:G
+G:_:t
 D:Olive
 
 N:116:55
@@ -168,7 +168,7 @@ G:_:U
 D:Palmwood
 
 N:117:55
-G:_:u
+G:_:M
 D:Poplar
 
 N:118:55
@@ -176,7 +176,7 @@ G:_:u
 D:Pine
 
 N:119:55
-G:_:r1
+G:_:r
 D:Redwood
 
 N:120:55
@@ -188,19 +188,19 @@ G:_:u
 D:Rowan
 
 N:122:55
-G:_:u
+G:_:z
 D:Runed
 
 N:123:55
-G:_:W
+G:_:u
 D:Sequoia
 
 N:124:55
-G:_:D
+G:_:z
 D:Silver
 
 N:125:55
-G:_:U1
+G:_:U
 D:Spruce
 
 N:126:55
@@ -212,7 +212,7 @@ G:_:u
 D:Teak
 
 N:128:55
-G:_:U1
+G:_:U
 D:Walnut
 
 N:129:55
@@ -234,7 +234,7 @@ G:-:G
 D:Adamantium-plated
 
 N:133:65
-G:-:B
+G:-:z
 D:Aluminium
 
 N:134:65
@@ -254,11 +254,11 @@ G:-:w
 D:Bismuth
 
 N:138:65
-G:-:U
+G:-:M
 D:Brass
 
 N:139:65
-G:-:o
+G:-:U
 D:Bronze
 
 N:140:65
@@ -278,11 +278,11 @@ G:-:b
 D:Cobalt
 
 N:144:65
-G:-:U
+G:-:u
 D:Copper
 
 N:145:65
-G:-:U
+G:-:u
 D:Copper-Plated
 
 N:146:65
@@ -290,7 +290,7 @@ G:-:r
 D:Corundum
 
 N:147:65
-G:-:B
+G:-:I
 D:Damascened
 
 N:148:65
@@ -310,7 +310,7 @@ G:-:y
 D:Gold
 
 N:152:65
-G:-:v
+G:-:i
 D:Iridescent
 
 N:153:65
@@ -322,7 +322,7 @@ G:-:w
 D:Ivory
 
 N:155:65
-G:-:v
+G:-:p
 D:Jeweled
 
 N:156:65
@@ -362,15 +362,15 @@ G:-:s
 D:Pewter
 
 N:165:65
-G:-:w
+G:-:r
 D:Rhodium
 
 N:166:65
-G:-:r
+G:-:z
 D:Runed
 
 N:167:65
-G:-:r
+G:-:o
 D:Rusty
 
 N:168:65
@@ -441,7 +441,7 @@ G:-:G
 D:Adamantium-plated
 
 N:184:66
-G:-:B
+G:-:Z
 D:Aluminium
 
 N:185:66
@@ -461,11 +461,11 @@ G:-:w
 D:Bismuth
 
 N:189:66
-G:-:U
+G:-:M
 D:Brass
 
 N:190:66
-G:-:o
+G:-:U
 D:Bronze
 
 N:191:66
@@ -485,11 +485,11 @@ G:-:b
 D:Cobalt
 
 N:195:66
-G:-:U
+G:-:u
 D:Copper
 
 N:196:66
-G:-:U
+G:-:u
 D:Copper-Plated
 
 N:197:66
@@ -497,7 +497,7 @@ G:-:r
 D:Corundum
 
 N:198:66
-G:-:B
+G:-:I
 D:Damascened
 
 N:199:66
@@ -517,7 +517,7 @@ G:-:y
 D:Gold
 
 N:203:66
-G:-:v
+G:-:i
 D:Iridescent
 
 N:204:66
@@ -529,7 +529,7 @@ G:-:w
 D:Ivory
 
 N:206:66
-G:-:v
+G:-:p
 D:Jeweled
 
 N:207:66
@@ -569,15 +569,15 @@ G:-:s
 D:Pewter
 
 N:216:66
-G:-:w
+G:-:r
 D:Rhodium
 
 N:217:66
-G:-:r
+G:-:z
 D:Runed
 
 N:218:66
-G:-:r
+G:-:o
 D:Rusty
 
 N:219:66
@@ -641,7 +641,7 @@ D:Zinc-Plated
 ##### Mushrooms #####
 
 N:233:80
-G:,:b1
+G:,:Z
 D:Blue
 
 N:234:80
@@ -661,11 +661,11 @@ G:,:b
 D:Dark Blue
 
 N:238:80
-G:,:g1
+G:,:g
 D:Dark Green
 
 N:239:80
-G:,:r1
+G:,:r
 D:Dark Red
 
 N:240:80
@@ -681,7 +681,7 @@ G:,:w
 D:Fuzzy
 
 N:243:80
-G:,:g
+G:,:t
 D:Green
 
 N:244:80
@@ -701,11 +701,11 @@ G:,:G
 D:Light Green
 
 N:248:80
-G:,:R
+G:,:P
 D:Pink
 
 N:249:80
-G:,:v
+G:,:p
 D:Purple Blotched
 
 N:250:80
@@ -737,7 +737,7 @@ G:,:w
 D:White Spotted
 
 N:257:80
-G:,:u
+G:,:M
 D:Wrinkled
 
 
@@ -755,7 +755,7 @@ D:Light Brown
 
 # Fixed: slime mold juice
 N:260:75:2
-G:!:g1
+G:!:g
 D:Icky Green
 
 N:261:75
@@ -767,11 +767,11 @@ G:!:w
 D:Ashen
 
 N:263:75
-G:!:U
+G:!:u
 D:Auburn
 
 N:264:75
-G:!:B1
+G:!:Z
 D:Azure
 
 N:265:75
@@ -783,7 +783,7 @@ G:!:b
 D:Blue
 
 N:267:75
-G:!:b1
+G:!:b
 D:Blue Speckled
 
 N:268:75
@@ -795,7 +795,7 @@ G:!:u
 D:Brown Speckled
 
 N:270:75
-G:!:W
+G:!:Y
 D:Bubbling
 
 N:271:75
@@ -811,7 +811,7 @@ G:!:u
 D:Chocolate-brown
 
 N:274:75
-G:!:B
+G:!:T
 D:Clear Blue
 
 N:275:75
@@ -823,7 +823,7 @@ G:!:s
 D:Cloudy
 
 N:277:75
-G:!:B
+G:!:b
 D:Cobalt
 
 N:278:75
@@ -843,7 +843,7 @@ G:!:b
 D:Dark Blue
 
 N:282:75
-G:!:g1
+G:!:g
 D:Dark Green
 
 N:283:75
@@ -851,15 +851,15 @@ G:!:r
 D:Dark Red
 
 N:284:75
-G:!:U
+G:!:m
 D:Dirty
 
 N:285:75
-G:!:s
+G:!:z
 D:Frothing
 
 N:286:75
-G:!:g1
+G:!:t
 D:Gloopy Green
 
 N:287:75
@@ -867,11 +867,11 @@ G:!:y
 D:Gold
 
 N:288:75
-G:!:y1
+G:!:Y
 D:Gold Speckled
 
 N:289:75
-G:!:U
+G:!:M
 D:Golden Brown
 
 N:290:75
@@ -891,7 +891,7 @@ G:!:s
 D:Grey Speckled
 
 N:294:75
-G:!:w
+G:!:W
 D:Hazy
 
 N:295:75
@@ -903,7 +903,7 @@ G:!:W
 D:Ivory White
 
 N:297:75
-G:!:v
+G:!:V
 D:Lavender
 
 N:298:75
@@ -911,7 +911,7 @@ G:!:B
 D:Light Blue
 
 N:299:75
-G:!:G1
+G:!:G
 D:Light Green
 
 N:300:75
@@ -923,19 +923,19 @@ G:!:g
 D:Lincoln Green
 
 N:302:75
-G:!:r
+G:!:i
 D:Magenta
 
 N:303:75
-G:!:r
+G:!:p
 D:Maroon
 
 N:304:75
-G:!:b1
+G:!:Z
 D:Metallic Blue
 
 N:305:75
-G:!:r1
+G:!:r
 D:Metallic Red
 
 N:306:75
@@ -947,15 +947,15 @@ G:!:W
 D:Misty
 
 N:308:75
-G:!:U
+G:!:M
 D:Moldy
 
 N:309:75
-G:!:U
+G:!:m
 D:Muddy
 
 N:310:75
-G:!:g1
+G:!:g
 D:Myrtle Green
 
 N:311:75
@@ -971,31 +971,31 @@ G:!:o
 D:Orange Speckled
 
 N:314:75
-G:!:R
+G:!:I
 D:Peach
 
 N:315:75
-G:!:R
+G:!:P
 D:Pink
 
 N:316:75
-G:!:w
+G:!:W
 D:Pearl-grey
 
 N:317:75
-G:!:u
+G:!:M
 D:Puce
 
 N:318:75
-G:!:G
+G:!:i
 D:Pungent
 
 N:319:75
-G:!:v
+G:!:p
 D:Purple
 
 N:320:75
-G:!:v
+G:!:p
 D:Purple Speckled
 
 N:321:75
@@ -1007,7 +1007,7 @@ G:!:r
 D:Red Speckled
 
 N:323:75
-G:!:v
+G:!:p
 D:Tyrian Purple
 
 N:324:75
@@ -1015,11 +1015,11 @@ G:!:R
 D:Rosy
 
 N:325:75
-G:!:b
+G:!:Z
 D:Sea-blue
 
 N:326:75
-G:!:y
+G:!:Y
 D:Shimmering
 
 N:327:75
@@ -1039,11 +1039,11 @@ G:!:D
 D:Smoky
 
 N:331:75
-G:!:o1
+G:!:o
 D:Tangerine
 
 N:332:75
-G:!:s
+G:!:M
 D:Tawny
 
 N:333:75
@@ -1055,15 +1055,15 @@ G:!:u
 D:Umber
 
 N:335:75
-G:!:v1
+G:!:v
 D:Violet
 
 N:336:75
-G:!:r1
+G:!:R
 D:Vermilion
 
 N:337:75
-G:!:R
+G:!:P
 D:Viscous Pink
 
 N:338:75
@@ -1075,7 +1075,7 @@ G:!:y
 D:Yellow
 
 N:340:75
-G:!:y1
+G:!:Y
 D:Yellow Dappled
 
 

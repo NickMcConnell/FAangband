@@ -1,6 +1,6 @@
-/** \file main-xxx.c
-    \brief Sample visual module for Angband 2.8.1 
-
+/*
+ * File: main-xxx.c
+ * Purpose: Outline how to make a new "main-xxx" file.
  *
  * Copyright (c) 1997 Ben Harrison
  *
@@ -14,65 +14,72 @@
  *    This software may be copied and distributed for educational, research,
  *    and not for profit purposes provided that this copyright and statement
  *    are included in all such copies.  Other copyrights may also apply.
+ */
+#include "angband.h"
+
+
+/*
+ * This file helps Angband work on non-existant computers.
  *
- * This file written by "Ben Harrison (benh@phial.com)".
+ * To use this file, use "Makefile.xxx", which defines USE_XXX.
+ *
  *
  * This file is intended to show one way to build a "visual module"
  * for Angband to allow it to work with a new system.  It does not
  * actually work, but if the code near "XXX XXX XXX" comments were
  * replaced with functional code, then it probably would.
  *
- * See z-term.c for info on the concept of the "generic terminal",
+ * See "z-term.c" for info on the concept of the "generic terminal",
  * and for more comments about what this file must supply.
  *
  * There are two basic ways to port Angband to a new system.  The
- * first involves modifying the main-gcu.c and/or main-x11.c
+ * first involves modifying the "main-gcu.c" and/or "main-x11.c"
  * files to support some version of "curses" and/or "X11" on your
  * machine, and to compile with the "USE_GCU" and/or "USE_X11"
  * compilation flags defined.  The second involves creating a
- * new main-xxx.c file, based on this sample file (or on any
- * existing main-xxx.c file), and comes in two flavors, based
- * on whether it contains a main() function (as in main-mac.c
- * and main-win.c) or not (as in main-gcu.c or main-x11.c).
+ * new "main-xxx.c" file, based on this sample file (or on any
+ * existing "main-xxx.c" file), and comes in two flavors, based
+ * on whether it contains a "main()" function (as in "main-mac.c"
+ * and "main-win.c") or not (as in "main-gcu.c" or "main-x11.c").
  *
- * If the main-xxx.c file includes its own main() function,
- * then you should NOT link in the main.c file, and your main()
+ * If the "main-xxx.c" file includes its own "main()" function,
+ * then you should NOT link in the "main.c" file, and your "main()"
  * function must process any command line arguments, initialize the
- * "visual system", and call play_game() with appropriate arguments.
+ * "visual system", and call "play_game()" with appropriate arguments.
  *
- * If the main-xxx.c file does not include its own main()
- * function, then you must add some code to main.c which, if
+ * If the "main-xxx.c" file does not include its own "main()"
+ * function, then you must add some code to "main.c" which, if
  * the appropriate "USE_XXX" compilation flag is defined, will
- * attempt to call the init_xxx() function in the main-xxx.c
+ * attempt to call the "init_xxx()" function in the "main-xxx.c"
  * file, which should initialize the "visual system" and return
- * zero if it was successful.  The main() function in main.c
+ * zero if it was successful.  The "main()" function in "main.c"
  * will take care of processing command line arguments and then
- * calling play_game() with appropriate arguments.
+ * calling "play_game()" with appropriate arguments.
  *
- * Note that the util.c file often contains functions which must
+ * Note that the "util.c" file often contains functions which must
  * be modified in small ways for various platforms, even if you are
- * able to use the existing main-gcu.c and/or main-x11.c files,
+ * able to use the existing "main-gcu.c" and/or "main-x11.c" files,
  * in particular, the "file handling" functions may not work on all
  * systems.
  *
  * When you complete a port to a new system, you should email any
  * newly created files, and any changes made to existing files,
- * including h-config.h and any of the Makefile
- * files, to "benh@phial.com" for inclusion in the next version.
+ * including "h-config.h", "config.h", and any of the "Makefile"
+ * files, to "rr9@thangorodrim.net" for inclusion in the next version.
  *
- * Try to stick to a "three letter" naming scheme for main-xxx.c
- * and Makefile.xxx and such for consistency and simplicity.
+ * Always choose a "three letter" naming scheme for "main-xxx.c"
+ * and "Makefile.xxx" and such for consistency and simplicity.
+ *
+ *
+ * Initial framework (and all code) by Ben Harrison (benh@phial.com).
  */
-
-
-#include "angband.h"
-#include "main.h"
 
 
 #ifdef USE_XXX
 
+#include "main.h"
 
-/**
+/*
  * Extra data to associate with each "window"
  *
  * Each "window" is represented by a "term_data" structure, which
@@ -91,70 +98,38 @@ struct term_data
 
 
 
-/**
+/*
  * Number of "term_data" structures to support XXX XXX XXX
  *
  * You MUST support at least one "term_data" structure, and the
  * game will currently use up to eight "term_data" structures if
  * they are available.
  *
+ * Actually, MAX_TERM_DATA is now defined as eight in 'defines.h'.
+ *
  * If only one "term_data" structure is supported, then a lot of
  * the things that would normally go into a "term_data" structure
  * could be made into global variables instead.
  */
-#define MAX_TERM_DATA 1
+#define MAX_XXX_TERM 1
 
 
-/**
+/*
  * An array of "term_data" structures, one for each "sub-window"
  */
-static term_data data[MAX_TERM_DATA];
+static term_data data[MAX_XXX_TERM];
 
 
-#if 0	/* Fix the syntax below XXX XXX XXX */
+#if 0
 
-/**
- * The "color" array for the visual module XXX XXX XXX
+/*
+ * Often, it is helpful to create an array of "color data" containing
+ * a representation of the "angband_color_table" array in some "local" form.
  *
- * This table should be used in whetever way is necessary to
- * convert the Angband Color Indexes into the proper "color data"
- * for the visual system.  On the Macintosh, these are arrays of
- * three shorts, on the IBM, these are combinations of the eight
- * basic color codes with optional "bright" bits, on X11, these
- * are actual "pixel" codes extracted from another table which
- * contains textual color names.
- *
- * The Angband Color Set (0 to 15):
- *   Black, White, Slate, Orange,    Red, Blue, Green, Umber
- *   D-Gray, L-Gray, Violet, Yellow, L-Red, L-Blue, L-Green, L-Umber
- *
- * Colors 8 to 15 are basically "enhanced" versions of Colors 0 to 7.
- *
- * As decribed in one of the header files, in a perfect world, the
- * colors below should fit a nice clean "quartered" specification
- * in RGB codes, but this must often be Gamma Corrected.  The 1/4
- * parts of each Red,Green,Blue are shown in the comments below,
- * again, these values are *before* gamma correction.
+ * Often, the "Term_xtra(TERM_XTRA_REACT, 0)" hook is used to initialize
+ * "color_data" from "angband_color_table".  XXX XXX XXX
  */
-static local_color_data_type color_data[16] =
-{
-	/* XXX XXX XXX 0,0,0 */,		/* TERM_DARK */
-	/* XXX XXX XXX 4,4,4 */,		/* TERM_WHITE */
-	/* XXX XXX XXX 2,2,2 */,		/* TERM_SLATE */
-	/* XXX XXX XXX 4,2,0 */,		/* TERM_ORANGE */
-	/* XXX XXX XXX 3,0,0 */,		/* TERM_RED */
-	/* XXX XXX XXX 0,2,1 */,		/* TERM_GREEN */
-	/* XXX XXX XXX 0,0,4 */,		/* TERM_BLUE */
-	/* XXX XXX XXX 2,1,0 */,		/* TERM_UMBER */
-	/* XXX XXX XXX 1,1,1 */,		/* TERM_L_DARK */
-	/* XXX XXX XXX 3,3,3 */,		/* TERM_L_WHITE */
-	/* XXX XXX XXX 4,0,4 */,		/* TERM_VIOLET */
-	/* XXX XXX XXX 4,4,0 */,		/* TERM_YELLOW */
-	/* XXX XXX XXX 4,0,0 */,		/* TERM_L_RED */
-	/* XXX XXX XXX 0,4,0 */,		/* TERM_L_GREEN */
-	/* XXX XXX XXX 0,4,4 */,		/* TERM_L_BLUE */
-	/* XXX XXX XXX 3,2,1 */ 		/* TERM_L_UMBER */
-};
+static local_color_data_type color_data[MAX_COLORS];
 
 #endif
 
@@ -163,11 +138,11 @@ static local_color_data_type color_data[16] =
 /*** Function hooks needed by "Term" ***/
 
 
-/**
+/*
  * Init a new "term"
  *
  * This function should do whatever is necessary to prepare a new "term"
- * for use by the "term.c" package.  This may include clearing the window,
+ * for use by the "z-term.c" package.  This may include clearing the window,
  * preparing the cursor, setting the font/colors, etc.  Usually, this
  * function does nothing, and the "init_xxx()" function does it all.
  */
@@ -180,7 +155,7 @@ static void Term_init_xxx(term *t)
 
 
 
-/**
+/*
  * Nuke an old "term"
  *
  * This function is called when an old "term" is no longer needed.  It should
@@ -197,7 +172,7 @@ static void Term_nuke_xxx(term *t)
 
 
 
-/**
+/*
  * Do a "user action" on the current "term"
  *
  * This function allows the visual module to do implementation defined
@@ -219,7 +194,7 @@ static errr Term_user_xxx(int n)
 }
 
 
-/**
+/*
  * Do a "special thing" to the current "term"
  *
  * This function must react to a large number of possible arguments, each
@@ -227,7 +202,7 @@ static errr Term_user_xxx(int n)
  * or by the application itself.
  *
  * The "action type" is specified by the first argument, which must be a
- * constant of the form "TERM_XTRA_*" as given in "term.h", and the second
+ * constant of the form "TERM_XTRA_*" as given in "z-term.h", and the second
  * argument specifies the "information" for that argument, if any, and will
  * vary according to the first argument.
  *
@@ -357,21 +332,6 @@ static errr Term_xtra_xxx(int n, int v)
 			return (0);
 		}
 
-		case TERM_XTRA_SOUND:
-		{
-			/*
-			 * Make a sound XXX XXX XXX
-			 *
-			 * This action should produce sound number "v", where the
-			 * "name" of that sound is "sound_names[v]".  This method
-			 * is still under construction.
-			 *
-			 * This action is optional, and not very important.
-			 */
-
-			return (0);
-		}
-
 		case TERM_XTRA_BORED:
 		{
 			/*
@@ -389,7 +349,7 @@ static errr Term_xtra_xxx(int n, int v)
 			 * React to global changes XXX XXX XXX
 			 *
 			 * For example, this action can be used to react to
-			 * changes in the global "color_table[256][4]" array.
+			 * changes in the global "angband_color_table[MAX_COLORS][4]" array.
 			 *
 			 * This action is optional, but can be very useful for
 			 * handling "color changes" and the "arg_sound" and/or
@@ -460,7 +420,7 @@ static errr Term_xtra_xxx(int n, int v)
 }
 
 
-/**
+/*
  * Display the cursor
  *
  * This routine should display the cursor at the given location
@@ -472,7 +432,7 @@ static errr Term_xtra_xxx(int n, int v)
  *
  * You may assume "valid" input if the window is properly sized.
  *
- * You may use the "Term_grab(x, y, &a, &c)" function, if needed,
+ * You may use the "Term_what(x, y, &a, &c)" function, if needed,
  * to determine what attr/char should be "under" the new cursor,
  * for "inverting" purposes or whatever.
  */
@@ -487,7 +447,7 @@ static errr Term_curs_xxx(int x, int y)
 }
 
 
-/**
+/*
  * Erase some characters
  *
  * This function should erase "n" characters starting at (x,y).
@@ -504,8 +464,18 @@ static errr Term_wipe_xxx(int x, int y, int n)
 	return (0);
 }
 
+/*
+ * Given a position in the ISO Latin-1 character set, return
+ * the correct character on this system.
+ */
+ static byte Term_xchar_xxx(byte c)
+{
+ 	/* The xxx port uses the Latin-1 standard */
+ 	return (c);
+}
 
-/**
+
+/*
  * Draw some text on the screen
  *
  * This function should actually display an array of characters
@@ -521,7 +491,7 @@ static errr Term_wipe_xxx(int x, int y, int n)
  * you must first call "Term_wipe_xxx()" to clear the area.
  *
  * In color environments, you should activate the color contained
- * in "color_data[a & 0x0F]", if needed, before drawing anything.
+ * in "color_data[a & BASIC_COLORS]", if needed, before drawing anything.
  *
  * You may ignore the "attribute" if you are only supporting a
  * monochrome environment, since this routine is normally never
@@ -548,7 +518,7 @@ static errr Term_text_xxx(int x, int y, int n, byte a, const char *cp)
 }
 
 
-/**
+/*
  * Draw some attr/char pairs on the screen
  *
  * This routine should display the given "n" attr/char pairs at
@@ -574,7 +544,8 @@ static errr Term_text_xxx(int x, int y, int n, byte a, const char *cp)
  * This function is only used if one of the "higher_pict" and/or
  * "always_pict" flags are set.
  */
-static errr Term_pict_xxx(int x, int y, int n, const byte *ap, const char *cp)
+static errr Term_pict_xxx(int x, int y, int n, const byte *ap, const char *cp,
+                          const byte *tap, const char *tcp)
 {
 	term_data *td = (term_data*)(Term->data);
 
@@ -589,7 +560,7 @@ static errr Term_pict_xxx(int x, int y, int n, const byte *ap, const char *cp)
 /*** Internal Functions ***/
 
 
-/**
+/*
  * Instantiate a "term_data" structure
  *
  * This is one way to prepare the "term_data" structures and to
@@ -609,78 +580,91 @@ static errr Term_pict_xxx(int x, int y, int n, const byte *ap, const char *cp)
 static void term_data_link(int i)
 {
 	term_data *td = &data[i];
+	term *t = &td->t;
 
 	/* Initialize the term */
-	term_init(td->t, 80, 24, 256);
+	term_init(t, 80, 24, 256);
 
 	/* Choose "soft" or "hard" cursor XXX XXX XXX */
 	/* A "soft" cursor must be explicitly "drawn" by the program */
 	/* while a "hard" cursor has some "physical" existance and is */
-	/* moved whenever text is drawn on the screen.  See "term.c". */
-	/* td->t->soft_cursor = TRUE; */
+	/* moved whenever text is drawn on the screen.  See "z-term.c". */
+	/* t->soft_cursor = TRUE; */
 
 	/* Avoid the "corner" of the window XXX XXX XXX */
-	/* td->t->icky_corner = TRUE; */
+	/* t->icky_corner = TRUE; */
 
 	/* Use "Term_pict()" for all attr/char pairs XXX XXX XXX */
 	/* See the "Term_pict_xxx()" function above. */
-	/* td->t->always_pict = TRUE; */
+	/* t->always_pict = TRUE; */
 
 	/* Use "Term_pict()" for some attr/char pairs XXX XXX XXX */
 	/* See the "Term_pict_xxx()" function above. */
-	/* td->t->higher_pict = TRUE; */
+	/* t->higher_pict = TRUE; */
 
 	/* Use "Term_text()" even for "black" text XXX XXX XXX */
 	/* See the "Term_text_xxx()" function above. */
-	/* td->t->always_text = TRUE; */
+	/* t->always_text = TRUE; */
 
 	/* Ignore the "TERM_XTRA_BORED" action XXX XXX XXX */
 	/* This may make things slightly more efficient. */
-	/* td->t->never_bored = TRUE; */
+	/* t->never_bored = TRUE; */
 
 	/* Ignore the "TERM_XTRA_FROSH" action XXX XXX XXX */
 	/* This may make things slightly more efficient. */
-	/* td->t->never_frosh = TRUE; */
+	/* t->never_frosh = TRUE; */
 
 	/* Erase with "white space" XXX XXX XXX */
-	/* td->t->attr_blank = TERM_WHITE; */
-	/* td->t->char_blank = ' '; */
+	/* t->attr_blank = TERM_WHITE; */
+	/* t->char_blank = ' '; */
 
 	/* Prepare the init/nuke hooks */
-	td->t->init_hook = Term_init_xxx;
-	td->t->nuke_hook = Term_nuke_xxx;
+	t->init_hook = Term_init_xxx;
+	t->nuke_hook = Term_nuke_xxx;
 
 	/* Prepare the template hooks */
-	td->t->user_hook = Term_user_xxx;
-	td->t->xtra_hook = Term_xtra_xxx;
-	td->t->curs_hook = Term_curs_xxx;
-	td->t->wipe_hook = Term_wipe_xxx;
-	td->t->text_hook = Term_text_xxx;
-	td->t->pict_hook = Term_pict_xxx;
+	t->user_hook = Term_user_xxx;
+	t->xtra_hook = Term_xtra_xxx;
+	t->curs_hook = Term_curs_xxx;
+	t->wipe_hook = Term_wipe_xxx;
+	t->text_hook = Term_text_xxx;
+	t->pict_hook = Term_pict_xxx;
+	t->xchar_hook = Term_xchar_xxx;
 
 	/* Remember where we came from */
-	td->t->data = (vptr)(td);
+	t->data = td;
 
 	/* Activate it */
-	Term_activate(td->t);
+	Term_activate(t);
 
 	/* Global pointer */
-	ang_term[i] = td->t;
+	angband_term[i] = t;
 }
 
 
+/*
+ * Help message.
+ *   1st line = max 68 chars.
+ *   Start next lines with 11 spaces
+ */
+const char help_xxx[] = "Describe XXX, subopts -describe suboptions here";
 
-/**
+
+/*
  * Initialization function
  */
-errr init_xxx(void)
+errr init_xxx(int argc, char **argv)
 {
+	int i;
+
 	/* Initialize globals XXX XXX XXX */
 
 	/* Initialize "term_data" structures XXX XXX XXX */
 
+	/* Initialize the "color_data" array XXX XXX XXX */
+
 	/* Create windows (backwards!) */
-	for (i = TERM_DATA_MAX - 1; i >= 0; i--)
+	for (i = MAX_XXX_TERM; i-- > 0; )
 	{
 		/* Link */
 		term_data_link(i);
@@ -708,7 +692,7 @@ errr init_xxx(void)
  */
 
 
-/**
+/*
  * An event handler XXX XXX XXX
  *
  * You may need an event handler, which can be used by both
@@ -726,7 +710,22 @@ static bool CheckEvents(bool wait)
 }
 
 
-/**
+
+/*
+ * Make a sound.
+ *
+ * This action should produce sound number "v", where the
+ * "name" of that sound is "sound_names[v]".
+ *
+ * This action is optional, and not very important.
+ */
+static void xxx_sound(int v)
+{
+	return;
+}
+
+
+/*
  * Init some stuff
  *
  * This function is used to keep the "path" variable off the stack.
@@ -739,14 +738,22 @@ static void init_stuff(void)
 	/* This must in some way prepare the "path" variable */
 	/* so that it points at the "lib" directory.  Every */
 	/* machine handles this in a different way... */
-	strcpy(path, "XXX XXX XXX");
+	my_strcpy(path, "XXX XXX XXX", sizeof(path));
 
 	/* Prepare the filepaths */
-	init_file_paths(path);
+	init_file_paths(path, path, path);
+
+
+#ifdef USE_SOUND
+
+	/* Set up sound hook */
+	sound_hook = xxx_sound;
+
+#endif /* USE_SOUND */
 }
 
 
-/**
+/*
  * Main function
  *
  * This function must do a lot of stuff.
@@ -758,7 +765,7 @@ int main(int argc, char *argv[])
 	/* Process command line arguments XXX XXX XXX */
 
 	/* Initialize the windows */
-	if (init_xxx()) quit("Oops!");
+	if (init_xxx(argc, argv) != 0) quit("Oops!");
 
 	/* XXX XXX XXX */
 	ANGBAND_SYS = "xxx";
@@ -767,7 +774,7 @@ int main(int argc, char *argv[])
 	init_stuff();
 
 	/* Initialize */
-	init_angband */
+	init_angband();
 
 	/* Allow auto-startup XXX XXX XXX */
 

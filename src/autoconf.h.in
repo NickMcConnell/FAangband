@@ -1,7 +1,13 @@
 /* src/autoconf.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Path to the game's configuration data */
+#undef DEFAULT_CONFIG_PATH
+
+/* Path to the game's variable data */
+#undef DEFAULT_DATA_PATH
+
 /* Path to the game's lib directory */
-#undef DEFAULT_PATH
+#undef DEFAULT_LIB_PATH
 
 /* Define to 1 if you have the `can_change_color' function. */
 #undef HAVE_CAN_CHANGE_COLOR
@@ -18,6 +24,9 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the `mkdir' function. */
+#undef HAVE_MKDIR
 
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #undef HAVE_NDIR_H
@@ -111,11 +120,14 @@
 /* Define to 1 if NCurses is found. */
 #undef USE_NCURSES
 
-/* Define to use private user paths. */
+/* Define to use private save and score paths. */
 #undef USE_PRIVATE_PATHS
 
 /* Define to 1 if using the SDL interface and SDL is found. */
 #undef USE_SDL
+
+/* Define to 1 to build the test frontend */
+#undef USE_TEST
 
 /* Define to 1 if using the X11 frontend and X11 libraries are found. */
 #undef USE_X11

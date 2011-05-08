@@ -321,7 +321,7 @@ static void display_scores_aux(const high_score scores[], int from, int to, int 
 	  strnfmt(out_val, sizeof(out_val),
 		  "%3d.%9s  %s the %s %s, Level %d",
 		  place, score->pts, score->who,
-		  p_name + p_info[pr].name, c_name + c_info[pc].name,
+		  p_info[pr].name, c_info[pc].name,
 		  clev);
 	  
 	  /* Append a "maximum level" */
@@ -437,7 +437,7 @@ void enter_score(time_t *death_time)
   int j;
   
   /* Cheaters are not scored */
-  for (j = OPT_score_start; j < OPT_MAX; ++j)
+  for (j = OPT_SCORE; j < OPT_MAX; ++j)
     {
       if (!op_ptr->opt[j]) continue;
       

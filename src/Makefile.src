@@ -8,29 +8,57 @@
 NAME = FAangband
 VERSION = 1.1.6
 COPYRIGHT = (c) 2005-2010 Nick McConnell and contributors
+PROG = faangband
+SUBDIRS = gtk
 
 HEADERS = \
 	angband.h \
+	birth.h \
+	button.h \
+	cave.h \
 	cmds.h \
 	config.h \
 	defines.h \
+	effects.h \
 	externs.h \
+	files.h \
+	game-cmd.h \
+	game-event.h \
 	$(GTKHEADERS) \
 	h-basic.h \
-	h-config.h \
-	h-define.h \
-	h-system.h \
-	h-type.h \
+	history.h \
 	init.h \
 	jewel.h \
 	main.h \
-	randname.h \
+	macro.h \
+	monster.h \
+	object.h \
+	option.h \
+	parser.h \
+	player.h \
+	prefs.h \
+	savefile.h \
+	spells.h \
+	squelch.h \
+	target.h \
+	textui.h \
+	trap.h \
+	tvalsval.h \
 	types.h \
 	ui.h \
+	ui-event.h \
+	ui-birth.h \
+	ui-menu.h \
+	x-char.h \
+	z-bitflag.h \
+	z-debug.h \
+	z-msg.h \
+	z-quark.h \
 	z-file.h \
 	z-form.h \
 	z-rand.h \
 	z-term.h \
+	z-textblock.h \
 	z-type.h \
 	z-util.h \
 	z-virt.h
@@ -39,8 +67,8 @@ GTKHEADERS = \
 	gtk/cairo-utils.h \
 	gtk/main-gtk.h \
 	
-ZFILES = z-file.o z-form.o z-rand.o z-term.o z-type.o \
-         z-util.o z-virt.o
+ZFILES = z-bitflag.o z-file.o z-form.o z-msg.o z-quark.o z-rand.o z-term.o \
+         z-type.o z-util.o z-virt.o z-textblock.o
 MAINFILES = main.o main-crb.o main-gcu.o $(GTKMAINFILES) \
             main-sdl.o main-win.o main-x11.o snd-sdl.o
 
@@ -51,43 +79,72 @@ GTKMAINFILES = \
 ANGFILES = \
 	attack.o \
 	birth.o \
+	button.o \
 	cave.o \
+	charattr.o \
 	cmd0.o \
 	cmd1.o \
 	cmd2.o \
 	cmd3.o \
 	cmd4.o \
-	cmd5.o \
-	cmd6.o \
+	cmd-misc.o \
+	cmd-obj.o \
+	death.o \
 	dungeon.o \
+	effects.o \
 	files.o \
+	game-cmd.o \
+	game-event.o \
 	generate.o \
+	history.o \
 	identify.o \
-	info.o \
-	init1.o \
-	init2.o \
+	init.o \
 	jewel.o \
 	load.o \
+	load-old.o \
+	macro.o \
 	monattk.o \
 	monmove.o \
 	monster1.o \
 	monster2.o \
-	object1.o \
-	object2.o \
+	obj-desc.o \
+	obj-info.o \
+	obj-make.o \
+	obj-ui.o \
+	obj-util.o \
+	option.o \
+	parser.o \
+	pathfind.o \
+	play-calcs.o \
+	play-spell.o \
+	play-timed.o \
+	play-util.o \
 	prefs.o \
 	randart.o \
 	randname.o \
 	save.o \
+	savefile.o \
 	score.o \
+	signals.o \
+	specialty.o \
 	spells1.o \
 	spells2.o \
 	squelch.o \
 	store.o \
 	tables.o \
+	trap.o \
+	target.o \
+	ui-birth.o \
 	ui.o \
+	ui-knowledge.o \
+	ui-menu.o \
+	ui-options.o \
+	ui-spell.o \
 	util.o  \
 	variable.o \
 	wizard1.o \
 	wizard2.o \
-	xtra1.o \
-	xtra2.o
+	x-char.o \
+	x-spell.o \
+	xtra2.o \
+	xtra3.o

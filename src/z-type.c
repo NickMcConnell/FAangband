@@ -1,7 +1,3 @@
-/** \file z-type.c
-    \brief Types
-*/
-
 #include "h-basic.h"
 #include "z-form.h"
 #include "z-term.h"
@@ -20,5 +16,3 @@ TYPE_FUN(i2u, T_INT, int, i)
 TYPE_FUN(c2u, T_CHAR, char, c)
 TYPE_FUN(f2u, T_FLOAT, float, f)
 TYPE_FUN(s2u, T_STRING, const char *, s)
-
-
