@@ -4757,7 +4757,7 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 	}
 
 	/* See if monster notices player */
-	else if (total_wakeup_chance >= (uint)randint1(10000)) {
+	else if (total_wakeup_chance >= (u32b)randint1(10000)) {
 	    int d = 1;
 
 	    /* Wake up faster near the player */
