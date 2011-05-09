@@ -626,24 +626,25 @@ static void special_lighting_floor(byte *a, char *c, enum grid_light_level light
 	    /* "Dark radius" */
 	    
 	}
- 	else switch (use_graphics)
-	     {
-	     case GRAPHICS_NONE:
-	     case GRAPHICS_PSEUDO:
-		 /* Use "yellow" */
-		 if (*a == TERM_WHITE) {
-		     if (lamp) *a = TERM_L_BLUE;
-		     else *a = TERM_YELLOW;
-		     break;
-		 }
-		 case GRAPHICS_ADAM_BOLT:
-		 case GRAPHICS_NOMAD:
-		     *c += 2;
-		     break;
-		 case GRAPHICS_DAVID_GERVAIS:
-		     *c -= 1;
-		     break;
-	     }
+ 	else 
+	    switch (use_graphics)
+	    {
+	    case GRAPHICS_NONE:
+	    case GRAPHICS_PSEUDO:
+		/* Use "yellow" */
+		if (*a == TERM_WHITE) {
+		    if (lamp) *a = TERM_L_BLUE;
+		    else *a = TERM_YELLOW;
+		}
+		break;
+	    case GRAPHICS_ADAM_BOLT:
+	    case GRAPHICS_NOMAD:
+		*c += 2;
+		break;
+	    case GRAPHICS_DAVID_GERVAIS:
+		*c -= 1;
+		break;
+	    }
     }
     
     else if (lighting == LIGHT_DARK)
