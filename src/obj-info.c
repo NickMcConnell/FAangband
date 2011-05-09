@@ -1393,7 +1393,7 @@ static bool describe_effect(textblock *tb, const object_type *o_ptr,
 	/* Sometimes only print activation info */
 	if (terse) return FALSE;
 
-	if (object_aware_p(o_ptr) || kf_has(k_ptr->flags_kind, KF_EASY_KNOW) 
+	if ((object_aware_p(o_ptr) && kf_has(k_ptr->flags_kind, KF_EASY_KNOW)) 
 	    || full) {
 	    effect = o_ptr->effect;
 	    timeout = o_ptr->time;
