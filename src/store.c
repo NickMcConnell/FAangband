@@ -3024,12 +3024,8 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
     button_kill('l');
     button_kill('o');
 
-    /* Free turn XXX XXX XXX */
+    /* Free turn */
     p_ptr->energy_use = 0;
-
-    /* Flush messages XXX XXX XXX */
-    msg_print(NULL);
-
 
     /* Hack -- Decrease "icky" depth */
     character_icky--;
