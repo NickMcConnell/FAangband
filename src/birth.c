@@ -775,10 +775,10 @@ static void player_outfit(struct player *p)
  * Cost of each "point" of a stat.
  */
 static const int birth_stat_costs[18 + 1] =
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 4 };
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 4, 7, 11, 16, 22, 30 };
 
 /* It was feasible to get base 17 in 3 stats with the autoroller */
-#define MAX_BIRTH_POINTS 24	/* 3 * (1+1+1+1+1+1+2) */
+#define MAX_BIRTH_POINTS 48	/* 3 * (1+1+1+1+1+1+2) */
 
 static void recalculate_stats(int *stats, int points_left)
 {

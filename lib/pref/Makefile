@@ -1,15 +1,14 @@
 MKPATH=../../mk/
 include $(MKPATH)buildsys.mk
 
-CONFIG = flvr-dvg.prf  font-nds.prf  graf-ibm.prf  graf-xxx.prf  pref-win.prf \
-       flvr-new.prf  font.prf      graf-lsl.prf  message.prf   pref-x11.prf \
-       flvr-xxx.prf  font-sdl.prf  graf-mac.prf  pref-acn.prf  shades.prf \
-       font-ami.prf  font-win.prf  graf-nds.prf  pref-ami.prf  user-mac.prf \
-       font-dos.prf  font-x11.prf  graf-new.prf  pref-emx.prf  user.prf \
-       font-ext.prf  font-xxx.prf  graf.prf      pref-gcu.prf  xtra-dvg.prf \
-       font-gtk.prf  graf-ami.prf  graf-sdl.prf  pref-mac.prf  xtra-new.prf \
-       font-ibm.prf  graf-dvg.prf  graf-win.prf  pref.prf      xtra-xxx.prf \
-       font-mac.prf  graf-gcu.prf  graf-x11.prf  pref-sdl.prf  font-gcu.prf
+CONFIG = flvr-dvg.prf  font.prf      graf-nds.prf  message.prf   user.prf \
+       flvr-new.prf  font-sdl.prf  graf-new.prf  pref-gcu.prf  xtra-dvg.prf \
+       flvr-xxx.prf  font-win.prf  graf.prf      pref-mac.prf  xtra-new.prf \
+       font-ext.prf  font-x11.prf  graf-sdl.prf  pref.prf      xtra-xxx.prf \
+       font-gcu.prf  font-xxx.prf  graf-win.prf  pref-sdl.prf  user.prf \
+       font-gtk.prf  graf-dvg.prf  graf-x11.prf  pref-win.prf  \
+       font-mac.prf  graf-gcu.prf  graf-xxx.prf  pref-x11.prf \
+       font-nds.prf  graf-mac.prf  user-mac.prf \
 
 PACKAGE = pref
 
