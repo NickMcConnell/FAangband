@@ -1207,7 +1207,7 @@ static bool describe_combat(textblock *tb, const object_type *o_ptr,
 
     /* Print range damage info */
     if (is_missile(o_ptr) || of_has(o_ptr->flags_obj, OF_THROWING))
-	combat = combat || describe_ammo_damage(tb, o_ptr, mode);
+	combat = describe_ammo_damage(tb, o_ptr, mode) || combat;
 
     return combat;
 }
