@@ -588,11 +588,13 @@ static void death_info(const char *title, int row)
     /* Activate the store */
     st_ptr = &store[which];
 
+    screen_save();
+    
     /* Display player */
     display_player(0);
 
     /* Prompt for inventory */
-    prt("Hit any key to see more information (ESC to abort): ", 23, 0);
+    prt("Hit any key to see more information (ESC to abort): ", 0, 0);
 
     /* Buttons */
     button_backup_all();
@@ -672,6 +674,7 @@ static void death_info(const char *title, int row)
 		done = TRUE;
 	}
     }
+    screen_load();
 }
 
 
