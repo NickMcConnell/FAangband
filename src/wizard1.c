@@ -2233,9 +2233,14 @@ static void spoil_mon_info(cptr fname)
       
       if (breath || magic)
 	{
-	  sprintf(buf, "; 1 time in %d.  ",
-		  100 / (r_ptr->freq_ranged));
-	  spoil_out(buf);
+	    if (r_ptr->freq_ranged) {
+		sprintf(buf, "; 1 time in %d.  ", 100 / (r_ptr->freq_ranged));
+		spoil_out(buf);
+	    }
+	    else {
+		sprintf(buf, "; never.  ");
+		spoil_out(buf);
+	    }
 	}
       
       /* Collect special abilities. */
@@ -2667,7 +2672,7 @@ void do_cmd_spoilers(void)
       
       /* Prompt for a file */
       prt("(1) Brief Object Info   (obj-desc.spo)", 5, 5);
-      prt("(2) Brief Artifact Info (artifact.spo)", 6, 5);
+      prt("(2) Brief Artifact Info (artifact.spo) (unavailable)", 6, 5);
       prt("(3) Brief Monster Info  (mon-desc.spo)", 7, 5);
       prt("(4) Full Monster Info   (mon-info.spo)", 8, 5);
       
@@ -2695,7 +2700,8 @@ void do_cmd_spoilers(void)
       /* Option (2) */
       else if (ch == '2')
 	{
-	  spoil_artifact("artifact.spo");
+	  bell("I said unavailable!");
+	  //spoil_artifact("artifact.spo");
 	}
       
       /* Option (3) */
