@@ -612,20 +612,6 @@ static enum birth_stage roller_command(bool first_call)
 #define COSTS_COL (42 + 32)
 #define TOTAL_COL (42 + 19)
 
-/* This is called whenever a stat changes.  We take the easy road, and just
-   redisplay them all using the standard function. */
-static void point_based_stats(game_event_type type, game_event_data *data, void *user)
-{
-}
-
-/* This is called whenever any of the other miscellaneous stat-dependent things
-   changed.  We are hooked into changes in the amount of gold in this case,
-   but redisplay everything because it's easier. */
-static void point_based_misc(game_event_type type, game_event_data *data, void *user)
-{
-}
-
-
 /* This is called whenever the points totals are changed (in birth.c), so
    that we can update our display of how many points have been spent and
    are available. */
@@ -658,6 +644,24 @@ static void point_based_points(game_event_type type, game_event_data *data, void
 	dump_put_str(TERM_WHITE, format("Total Cost: %2d/%2d", sum, data->birthstats.remaining + sum), TOTAL_COL);
 	dump_line(dump_ptr);
 }
+
+/* This is called whenever a stat changes.  We take the easy road, and just
+   redisplay them all using the standard function. */
+static void point_based_stats(game_event_type type, game_event_data *data, void *user)
+{
+    if (data)
+	point_based_points(type, data, user);
+}
+
+/* This is called whenever any of the other miscellaneous stat-dependent things
+   changed.  We are hooked into changes in the amount of gold in this case,
+   but redisplay everything because it's easier. */
+static void point_based_misc(game_event_type type, game_event_data *data, void *user)
+{
+    if (data)
+	point_based_points(type, data, user);
+}
+
 
 static void point_based_start(void)
 {

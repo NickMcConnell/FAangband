@@ -216,11 +216,16 @@ static void get_stats(int stat_use[A_MAX])
 	/* Obtain a "bonus" for "race" and "class" */
 	bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
+	/* Start fully healed */
+	p_ptr->stat_cur[i] = p_ptr->stat_max[i];
+	
+	/* Efficiency -- Apply the racial/class bonuses */
+	stat_use[i] = modify_stat_value(p_ptr->stat_max[i], bonus);
 	/* Apply the bonus to the stat (somewhat randomly) */
-	stat_use[i] = adjust_stat(p_ptr->stat_max[i], bonus);
+	//stat_use[i] = adjust_stat(p_ptr->stat_max[i], bonus);
 
 	/* Save the resulting stat maximum */
-	p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_use[i];
+	//p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_use[i];
 
 	p_ptr->stat_birth[i] = p_ptr->stat_max[i];
     }
@@ -775,7 +780,7 @@ static void player_outfit(struct player *p)
  * Cost of each "point" of a stat.
  */
 static const int birth_stat_costs[18 + 1] =
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 4, 7, 11, 16, 22, 30 };
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 3, 4, 5, 6, 8 };
 
 /* It was feasible to get base 17 in 3 stats with the autoroller */
 #define MAX_BIRTH_POINTS 48	/* 3 * (1+1+1+1+1+1+2) */
@@ -787,11 +792,12 @@ static void recalculate_stats(int *stats, int points_left)
     /* Process stats */
     for (i = 0; i < A_MAX; i++) {
 	/* Obtain a "bonus" for "race" and "class" */
-	int bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
+	//int bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
 	/* Apply the racial/class bonuses */
 	p_ptr->stat_cur[i] = p_ptr->stat_max[i] = p_ptr->stat_birth[i] =
-	    modify_stat_value(stats[i], bonus);
+	    stats[i];
+//modify_stat_value(stats[i], bonus);
 
     }
 
@@ -842,12 +848,12 @@ static bool buy_stat(int choice, int stats[A_MAX], int points_spent[A_MAX],
 	    points_spent[choice] += stat_cost;
 	    *points_left -= stat_cost;
 
-	    /* Tell the UI the new points situation. */
-	    event_signal_birthpoints(points_spent, *points_left);
-
 	    /* Recalculate everything that's changed because the stat has
 	     * changed, and inform the UI. */
 	    recalculate_stats(stats, *points_left);
+
+	    /* Tell the UI the new points situation. */
+	    event_signal_birthpoints(points_spent, *points_left);
 
 	    return TRUE;
 	}
@@ -869,12 +875,12 @@ static bool sell_stat(int choice, int stats[A_MAX], int points_spent[A_MAX],
 	points_spent[choice] -= stat_cost;
 	*points_left += stat_cost;
 
-	/* Tell the UI the new points situation. */
-	event_signal_birthpoints(points_spent, *points_left);
-
 	/* Recalculate everything that's changed because the stat has changed,
 	 * and inform the UI. */
 	recalculate_stats(stats, *points_left);
+
+	/* Tell the UI the new points situation. */
+	event_signal_birthpoints(points_spent, *points_left);
 
 	return TRUE;
     }
@@ -1341,8 +1347,11 @@ void player_birth(bool quickstart_allowed)
     }
 
 
-    /* Outfit the player, if they can sell the stuff */
-    if (!OPT(adult_no_sell)) player_outfit(p_ptr);
+    /* Outfit the player */
+    player_outfit(p_ptr);
+
+    /* Max HP and SP */
+    get_bonuses();
 
     /* Initialize shops */
     store_init();
