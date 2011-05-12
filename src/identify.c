@@ -404,11 +404,11 @@ bool known_really(object_type * o_ptr)
 	    return FALSE;
 
     /* Object flags must be known */
-    if (of_is_subset(o_ptr->id_obj, o_ptr->flags_obj))
+    if (!of_is_subset(o_ptr->id_obj, o_ptr->flags_obj))
 	return FALSE;
 
     /* Other flags must be known */
-    if (if_is_subset(o_ptr->id_other, otherflags))
+    if (!if_is_subset(o_ptr->id_other, otherflags))
 	return FALSE;
 
     /* Objects with bonuses need to be worn to see the bonuses */
