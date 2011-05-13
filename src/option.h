@@ -50,7 +50,7 @@ extern const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER];
 #define OPT_hide_squelchable		7
 #define OPT_squelch_worthless		8
 #define OPT_easy_open			9
-#define OPT_easy_disarm 		10
+#define OPT_easy_alter  		10
 #define OPT_show_lists                  11
 #define OPT_show_menus                  12
 #define OPT_mouse_movement              13

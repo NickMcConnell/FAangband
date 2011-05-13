@@ -51,8 +51,8 @@ bool is_valid_pf(int y, int x)
     f_ptr = &f_info[f_info[feat].mimic];
 
     /* Optionally alter known traps/doors on movement */
-    if ((OPT(easy_open) && (tf_has(f_ptr->flags, TF_DOOR_CLOSED)))
-	|| (OPT(easy_disarm) && (tf_has(f_ptr->flags, TF_TRAP)))) {
+    if (OPT(easy_alter) && (tf_has(f_ptr->flags, TF_DOOR_CLOSED)
+			    || tf_has(f_ptr->flags, TF_TRAP))) {
 	return (TRUE);
     }
 

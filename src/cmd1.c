@@ -793,7 +793,7 @@ void move_player(int dir)
 
     /* Option to disarm a visible trap. -TNB- */
     /* Hack - Rogues can walk over their own trap - BR */
-    if (OPT(easy_disarm) && (cave_feat[y][x] >= FEAT_TRAP_HEAD)
+    if (OPT(easy_alter) && (cave_feat[y][x] >= FEAT_TRAP_HEAD)
 	&& (cave_feat[y][x] <= FEAT_TRAP_TAIL)) 
     {
 	/* Auto-repeat if not already repeating */
@@ -831,13 +831,13 @@ void move_player(int dir)
 	    /* Closed door */
 	    if (cave_feat[y][x] < FEAT_SECRET) {
 		/* Option to automatically open doors. -TNB- */
-		if (OPT(easy_open)) {
+		if (OPT(easy_alter)) {
 		    /* Auto-repeat if not already repeating */
-		    if (cmd_get_nrepeats() == 0)
+		  if (cmd_get_nrepeats() == 0)
 			cmd_set_repeat(99);
 	
-		    (void) do_cmd_open_aux(y, x);
-		    return;
+		  (void) do_cmd_open_aux(y, x);
+		  return;
 		}
 
 		/* Otherwise, a message. */

@@ -2882,8 +2882,8 @@ static bool do_cmd_walk_test(int y, int x)
     if (!cave_passable_bold(y, x)) {
 	/* Door */
 	if (cave_feat[y][x] < FEAT_SECRET) {
-	    /* If OPT(easy_open)_door option is on, doors are legal. */
-	    if (OPT(easy_open))
+	    /* If OPT(easy_alter)_door option is on, doors are legal. */
+	    if (OPT(easy_alter))
 		return (TRUE);
 
 	    /* Otherwise, let the player know of the door. */
@@ -2961,16 +2961,16 @@ void do_cmd_walk(cmd_code code, cmd_arg args[])
  */
 void do_cmd_jump(cmd_code code, cmd_arg args[])
 {
-    bool old_easy_disarm;
+    bool old_easy_alter;
 
     /* OPT(easy_alter) can be turned off (don't disarm traps) */
-    old_easy_disarm = OPT(easy_disarm);
-    OPT(easy_disarm) = FALSE;
+    old_easy_alter = OPT(easy_alter);
+    OPT(easy_alter) = FALSE;
 
     do_cmd_walk(code, args);
 
     /* Restore OPT(easy_alter) */
-    OPT(easy_disarm) = old_easy_disarm;
+    OPT(easy_alter) = old_easy_alter;
 }
 
 
