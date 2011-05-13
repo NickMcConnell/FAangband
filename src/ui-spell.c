@@ -133,7 +133,7 @@ static void spell_menu_display(menu_type *m, int oid, bool cursor,
    else if (p_ptr->spell_flags[spell] & PY_SPELL_LEARNED) {
        if (p_ptr->spell_flags[spell] & PY_SPELL_WORKED) {
 	   /* Get extra info */
-	   get_spell_info(mp_ptr->spell_book, spell, help, sizeof(help));
+	   get_spell_info(mp_ptr->spell_book, s_ptr->index, help, sizeof(help));
 	   comment = help;
 	   attr_name = attr_book;
 	   attr_extra = TERM_DEEP_L_BLUE;

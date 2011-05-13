@@ -336,44 +336,44 @@ void get_spell_info(int tval, int sindex, char *p, size_t len)
 	/* Sorcery */
 
     case SPELL_FIRE_BOLT:
-	strnfmt(p, len, " dam 0d3", 4 + plev / 10);
+	strnfmt(p, len, " dam %dd3", 4 + plev / 10);
 	break;
     case SPELL_PHASE_DOOR:
 	strnfmt(p, len, " range 10");
 	break;
     case SPELL_LIGHT_AREA:
-	strnfmt(p, len, " dam 2d0, rad 0", 1 + (plev / 5), (plev / 10) + 1);
+	strnfmt(p, len, " dam 2d%d, rad %d", 1 + (plev / 5), (plev / 10) + 1);
 	break;
     case SPELL_STINKING_CLOUD:
-	strnfmt(p, len, " dam 0, rad 2", 5 + (plev / 3));
+	strnfmt(p, len, " dam %d, rad 2", 5 + (plev / 3));
 	break;
     case SPELL_RESIST_MAGIC:
 	strnfmt(p, len, " dur 10+d5");
 	break;
     case SPELL_LIGHTNING_BOLT:
-	strnfmt(p, len, " dam 0d8, beam 0%", (2 + ((plev - 5) / 5)), beam);
+	strnfmt(p, len, " dam %dd8, beam %d%", (2 + ((plev - 5) / 5)), beam);
 	break;
     case SPELL_TELEPORT_SELF:
-	strnfmt(p, len, " range 0", 50 + plev * 2);
+	strnfmt(p, len, " range %d", 50 + plev * 2);
 	break;
     case SPELL_FROST_BEAM:
-	strnfmt(p, len, " dam 0", 5 + plev);
+	strnfmt(p, len, " dam %d", 5 + plev);
 	break;
     case SPELL_BLINK_MONSTER:
-	strnfmt(p, len, " range 0", 5 + plev / 10);
+	strnfmt(p, len, " range %d", 5 + plev / 10);
 	break;
     case SPELL_THRUST_AWAY:
-	strnfmt(p, len, " dam 0d0, length 0", 6 + (plev / 10), 8,
+	strnfmt(p, len, " dam %dd%d, length %d", 6 + (plev / 10), 8,
 		1 + (plev / 10));
 	break;
     case SPELL_FIRE_BALL:
-	strnfmt(p, len, " dam 0, rad 2", 55 + plev);
+	strnfmt(p, len, " dam %d, rad 2", 55 + plev);
 	break;
     case SPELL_TELEPORT_OTHER:
-	strnfmt(p, len, " dist 0", 45 + (plev / 2));
+	strnfmt(p, len, " dist %d", 45 + (plev / 2));
 	break;
     case SPELL_RESIST_ELEMENT:
-	strnfmt(p, len, " dur 0+d0", plev, plev);
+	strnfmt(p, len, " dur %d+d%d", plev, plev);
 	break;
     case SPELL_SHIELD:
 	strnfmt(p, len, " dur 30+d20");
@@ -382,75 +382,75 @@ void get_spell_info(int tval, int sindex, char *p, size_t len)
 	strnfmt(p, len, " dur 20+d20");
 	break;
     case SPELL_ESSENCE_OF_SPEED:
-	strnfmt(p, len, " dur 0+d30", 10 + plev);
+	strnfmt(p, len, " dur %d+d30", 10 + plev);
 	break;
     case SPELL_STRENGTHEN_DEFENCES:
 	strnfmt(p, len, " dur 40");
 	break;
     case SPELL_ACID_BOLT:
-	strnfmt(p, len, " dam 0d8, beam 0%", (3 + plev / 3), beam);
+	strnfmt(p, len, " dam %dd8, beam %d%", (3 + plev / 3), beam);
 	break;
     case SPELL_STARBURST:
-	strnfmt(p, len, " dam 0, rad 0", 5 * plev / 2, plev / 12);
+	strnfmt(p, len, " dam %d, rad %d", 5 * plev / 2, plev / 12);
 	break;
     case SPELL_CLOUD_KILL:
-	strnfmt(p, len, " dam 0,0, rad 3,2", 10 + plev, 2 * plev);
+	strnfmt(p, len, " dam %d,%d, rad 3,2", 10 + plev, 2 * plev);
 	break;
     case SPELL_ICE_STORM:
-	strnfmt(p, len, " dam 0, rad 3", 3 * plev);
+	strnfmt(p, len, " dam %d, rad 3", 3 * plev);
 	break;
     case SPELL_METEOR_SWARM:
-	strnfmt(p, len, " dam 0, rad 1", 80 + plev * 2);
+	strnfmt(p, len, " dam %d, rad 1", 80 + plev * 2);
 	break;
     case SPELL_CACOPHONY:
-	strnfmt(p, len, " dam 0+3d0", plev, plev);
+	strnfmt(p, len, " dam %d+3d%d", plev, plev);
 	break;
     case SPELL_UNLEASH_CHAOS:
-	strnfmt(p, len, " dam 0, rad 1", 80 + plev * 2);
+	strnfmt(p, len, " dam %d, rad 1", 80 + plev * 2);
 	break;
     case SPELL_WALL_OF_FORCE:
-	strnfmt(p, len, " dam 0, rad 0", 4 * plev, 3 + plev / 15);
+	strnfmt(p, len, " dam %d, rad %d", 4 * plev, 3 + plev / 15);
 	break;
 
 
 	/* Piety */
     case PRAYER_CURE_LIGHT_WOUNDS:
-	strnfmt(p, len, " heal 2d0", plev / 4 + 5);
+	strnfmt(p, len, " heal 2d%d", plev / 4 + 5);
 	break;
     case PRAYER_BLESS:
 	strnfmt(p, len, " dur 12+d12");
 	break;
     case PRAYER_CALL_LIGHT:
-	strnfmt(p, len, " dam 2d0, rad 0", 1 + plev / 3, plev / 10 + 1);
+	strnfmt(p, len, " dam 2d%d, rad %d", 1 + plev / 3, plev / 10 + 1);
 	break;
     case PRAYER_SLOW_POISON:
 	strnfmt(p, len, " halve poison");
 	break;
     case PRAYER_CURE_SERIOUS_WOUNDS:
-	strnfmt(p, len, " heal 4d0", plev / 4 + 6);
+	strnfmt(p, len, " heal 4d%d", plev / 4 + 6);
 	break;
     case PRAYER_PORTAL:
-	strnfmt(p, len, " range 0", 2 * plev);
+	strnfmt(p, len, " range %d", 2 * plev);
 	break;
     case PRAYER_CHANT:
 	strnfmt(p, len, " dur 24+d24");
 	break;
     case PRAYER_RESIST_HEAT_AND_COLD:
-	strnfmt(p, len, " dur 0+d10", plev / 2);
+	strnfmt(p, len, " dur %d+d10", plev / 2);
 	break;
     case PRAYER_ORB_OF_DRAINING:
-	strnfmt(p, len, " dam 0+3d6, rad 0",
+	strnfmt(p, len, " dam %d+3d6, rad %d",
 		plev / 4 + (plev / ((player_has(PF_STRONG_MAGIC)) ? 2 : 4)),
 		(plev < 30) ? 1 : 2);
 	break;
     case PRAYER_SENSE_INVISIBLE:
-	strnfmt(p, len, " dur 0+d24", plev);
+	strnfmt(p, len, " dur %d+d24", plev);
 	break;
     case PRAYER_PROTECTION_FROM_EVIL:
-	strnfmt(p, len, " dur 0+d24", 3 * plev / 2);
+	strnfmt(p, len, " dur %d+d24", 3 * plev / 2);
 	break;
     case PRAYER_CURE_MORTAL_WOUNDS:
-	strnfmt(p, len, " heal 9d0, any cut", plev / 3 + 12);
+	strnfmt(p, len, " heal 9d%d, any cut", plev / 3 + 12);
 	break;
     case PRAYER_EARTHQUAKE:
 	strnfmt(p, len, " radius 10");
@@ -459,50 +459,50 @@ void get_spell_info(int tval, int sindex, char *p, size_t len)
 	strnfmt(p, len, " dur 48+d48");
 	break;
     case PRAYER_DISPEL_UNDEAD:
-	strnfmt(p, len, " dam d0", 3 * plev);
+	strnfmt(p, len, " dam d%d", 3 * plev);
 	break;
     case PRAYER_HEAL:
 	strnfmt(p, len, " heal 300, any cut");
 	break;
     case PRAYER_DISPEL_EVIL:
-	strnfmt(p, len, " dam d0", 3 * plev);
+	strnfmt(p, len, " dam d%d", 3 * plev);
 	break;
     case PRAYER_SACRED_SHIELD:
-	strnfmt(p, len, " dur 0+d20", plev / 2);
+	strnfmt(p, len, " dur %d+d20", plev / 2);
 	break;
     case PRAYER_HOLY_WORD:
-	strnfmt(p, len, " dam d0, heal 300", plev * 4);
+	strnfmt(p, len, " dam d%d, heal 300", plev * 4);
 	break;
     case PRAYER_BLINK:
 	strnfmt(p, len, " range 10");
 	break;
     case PRAYER_TELEPORT_SELF:
-	strnfmt(p, len, " range 0", 4 * plev);
+	strnfmt(p, len, " range %d", 4 * plev);
 	break;
     case PRAYER_TELEPORT_OTHER:
-	strnfmt(p, len, " dist 0", 45 + (plev / 3));
+	strnfmt(p, len, " dist %d", 45 + (plev / 3));
 	break;
     case PRAYER_HEALING:
 	strnfmt(p, len, " heal 700, any cut");
 	break;
     case PRAYER_LIGHT_OF_MANWE:
-	strnfmt(p, len, " dam 0, rad 3", 2 * plev);
+	strnfmt(p, len, " dam %d, rad 3", 2 * plev);
 	break;
     case PRAYER_LANCE_OF_OROME:
-	strnfmt(p, len, " dam 0", 3 * plev / 2);
+	strnfmt(p, len, " dam %d", 3 * plev / 2);
 	break;
     case PRAYER_STRIKE_OF_MANDOS:
-	strnfmt(p, len, " dam 0+d100", plev * 3);
+	strnfmt(p, len, " dam %d+d100", plev * 3);
 	break;
     case PRAYER_CALL_ON_VARDA:
-	strnfmt(p, len, " dam 0, heal 500", plev * 5);
+	strnfmt(p, len, " dam %d, heal 500", plev * 5);
 	break;
 
 
 	/* Nature Magics */
 
     case LORE_CALL_LIGHT:
-	strnfmt(p, len, " dam 2d0, rad 0", 1 + plev / 4, plev / 10 + 1);
+	strnfmt(p, len, " dam 2d%d, rad %d", 1 + plev / 4, plev / 10 + 1);
 	break;
     case LORE_BLINK:
 	strnfmt(p, len, " range 10");
@@ -511,7 +511,7 @@ void get_spell_info(int tval, int sindex, char *p, size_t len)
 	strnfmt(p, len, " halve poison");
 	break;
     case LORE_LIGHTNING_SPARK:
-	strnfmt(p, len, " dam 0d6, length 0", 2 + plev / 8, 1 + plev / 5);
+	strnfmt(p, len, " dam %dd6, length %d", 2 + plev / 8, 1 + plev / 5);
 	break;
     case LORE_TURN_STONE_TO_MUD:
 	strnfmt(p, len, " dam 20+d30");
@@ -520,25 +520,25 @@ void get_spell_info(int tval, int sindex, char *p, size_t len)
 	strnfmt(p, len, " dam 4d5");
 	break;
     case LORE_FROST_BOLT:
-	strnfmt(p, len, " dam 0d8, beam 0%", 2 + plev / 5, beam_low);
+	strnfmt(p, len, " dam %dd8, beam %d%", 2 + plev / 5, beam_low);
 	break;
     case LORE_SNUFF_SMALL_LIFE:
-	strnfmt(p, len, " dam 0", 2 + plev / 5);
+	strnfmt(p, len, " dam %d", 2 + plev / 5);
 	break;
     case LORE_FIRE_BOLT:
-	strnfmt(p, len, " dam 0d8, beam 0%", 3 + plev / 5, beam_low);
+	strnfmt(p, len, " dam %dd8, beam %d%", 3 + plev / 5, beam_low);
 	break;
     case LORE_HEROISM:
 	strnfmt(p, len, " dur 20+d20");
 	break;
     case LORE_ACID_BOLT:
-	strnfmt(p, len, " dam 0d8, beam 0%", 5 + plev / 5, beam_low);
+	strnfmt(p, len, " dam %dd8, beam %d%", 5 + plev / 5, beam_low);
 	break;
     case LORE_TELEPORT_MONSTER:
-	strnfmt(p, len, " dist 0", 45 + (plev / 3));
+	strnfmt(p, len, " dist %d", 45 + (plev / 3));
 	break;
     case LORE_GRAVITY_BOLT:
-	strnfmt(p, len, " dam 0d8, beam 0%", 5 + plev / 4, beam_low);
+	strnfmt(p, len, " dam %dd8, beam %d%", 5 + plev / 4, beam_low);
 	break;
     case LORE_RESIST_POISON:
 	strnfmt(p, len, " dur 20+d20");
@@ -550,69 +550,69 @@ void get_spell_info(int tval, int sindex, char *p, size_t len)
 	strnfmt(p, len, " dur 20+d20");
 	break;
     case LORE_NATURAL_VITALITY:
-	strnfmt(p, len, " heal 2d0, pois/cut", plev / 5);
+	strnfmt(p, len, " heal 2d%d, pois/cut", plev / 5);
 	break;
     case LORE_RESIST_ACID_AND_LIGHTNING:
 	strnfmt(p, len, " dur 20+d20");
 	break;
     case LORE_WITHER_FOE:
-	strnfmt(p, len, " dam 0d8, conf/slow", plev / 7);
+	strnfmt(p, len, " dam %dd8, conf/slow", plev / 7);
 	break;
     case LORE_RAGING_STORM:
-	strnfmt(p, len, " dam 0+d0, rad 0", plev, 60 + plev * 2,
+	strnfmt(p, len, " dam %d+d%d, rad %d", plev, 60 + plev * 2,
 		1 + plev / 15);
 	break;
     case LORE_THUNDERCLAP:
-	strnfmt(p, len, " dam 0+d0, rad 0", plev, 40 + plev * 2, plev / 8);
+	strnfmt(p, len, " dam %d+d%d, rad %d", plev, 40 + plev * 2, plev / 8);
 	break;
     case LORE_SIGHT_BEYOND_SIGHT:
 	strnfmt(p, len, " dur 24+d24");
 	break;
     case LORE_HERBAL_HEALING:
-	strnfmt(p, len, " heal 0d12, any cut", 25 + plev / 2);
+	strnfmt(p, len, " heal %dd12, any cut", 25 + plev / 2);
 	break;
     case LORE_BLIZZARD:
-	strnfmt(p, len, " dam 0+d0, rad 0", plev, 50 + plev * 2,
+	strnfmt(p, len, " dam %d+d%d, rad %d", plev, 50 + plev * 2,
 		1 + plev / 12);
 	break;
     case LORE_TRIGGER_TSUNAMI:
-	strnfmt(p, len, " dam 0+d0, rad 0", 30 + ((4 * plev) / 5),
+	strnfmt(p, len, " dam %d+d%d, rad %d", 30 + ((4 * plev) / 5),
 		30 + plev * 2, plev / 7);
 	break;
     case LORE_VOLCANIC_ERUPTION:
-	strnfmt(p, len, " dam 0+d0, rad 0", 3 * plev / 2, 50 + plev * 3,
+	strnfmt(p, len, " dam %d+d%d, rad %d", 3 * plev / 2, 50 + plev * 3,
 		1 + plev / 15);
 	break;
     case LORE_MOLTEN_LIGHTNING:
-	strnfmt(p, len, " dam 0+d0, rad 1", 35 + (2 * plev), 90 + plev * 4);
+	strnfmt(p, len, " dam %d+d%d, rad 1", 35 + (2 * plev), 90 + plev * 4);
 	break;
     case LORE_STARBURST:
-	strnfmt(p, len, " dam 0+d0, rad 0", 40 + (3 * plev / 2), plev * 3,
+	strnfmt(p, len, " dam %d+d%d, rad %d", 40 + (3 * plev / 2), plev * 3,
 		plev / 10);
 	break;
     case LORE_SONG_OF_PROTECTION:
-	strnfmt(p, len, " dur 0+d30", plev / 2);
+	strnfmt(p, len, " dur %d+d30", plev / 2);
 	break;
     case LORE_SONG_OF_DISPELLING:
-	strnfmt(p, len, " dam d0", plev * 2);
+	strnfmt(p, len, " dam d%d", plev * 2);
 	break;
     case LORE_WEB_OF_VAIRE:
-	strnfmt(p, len, " dam 0d8, beam 0%", plev / 6, plev * 2);
+	strnfmt(p, len, " dam %dd8, beam %d%", plev / 6, plev * 2);
 	break;
     case LORE_SPEED_OF_NESSA:
-	strnfmt(p, len, " dur 0+d10", plev / 2);
+	strnfmt(p, len, " dur %d+d10", plev / 2);
 	break;
     case LORE_HEALING_OF_ESTE:
 	strnfmt(p, len, " heal 500, dam 100");
 	break;
     case LORE_NATURES_VENGEANCE:
-	strnfmt(p, len, " dam 6d6+0", plev / 3);
+	strnfmt(p, len, " dam 6d6+%d", plev / 3);
 	break;
 
 	/* Necromantic Spells */
 
     case RITUAL_NETHER_BOLT:
-	strnfmt(p, len, " dam 2d0", 5 + plev / 7);
+	strnfmt(p, len, " dam 2d%d", 5 + plev / 7);
 	break;
     case RITUAL_ENHANCED_INFRAVISION:
 	strnfmt(p, len, " dur 70+d70");
@@ -621,52 +621,52 @@ void get_spell_info(int tval, int sindex, char *p, size_t len)
 	strnfmt(p, len, " hurt 2d4");
 	break;
     case RITUAL_DARK_BOLT:
-	strnfmt(p, len, " dam 0d8, beam 0%", 3 + plev / 7, beam_low);
+	strnfmt(p, len, " dam %dd8, beam %d%", 3 + plev / 7, beam_low);
 	break;
     case RITUAL_NOXIOUS_FUMES:
-	strnfmt(p, len, " dam 0, poison", 10 + plev);
+	strnfmt(p, len, " dam %d, poison", 10 + plev);
 	break;
     case RITUAL_DISPEL_UNDEAD:
-	strnfmt(p, len, " dam 0+d0", plev + 15, 3 * plev / 2);
+	strnfmt(p, len, " dam %d+d%d", plev + 15, 3 * plev / 2);
 	break;
     case RITUAL_DISPEL_EVIL:
-	strnfmt(p, len, " dam 0+d0", plev, plev);
+	strnfmt(p, len, " dam %d+d%d", plev, plev);
 	break;
     case RITUAL_SEE_INVISIBLE:
-	strnfmt(p, len, " dur 20+d0", plev / 2);
+	strnfmt(p, len, " dur 20+d%d", plev / 2);
 	break;
     case RITUAL_SHADOW_SHIFTING:
 	strnfmt(p, len, " range 16, hurt 1d4");
 	break;
     case RITUAL_DEATH_BOLT:
-	strnfmt(p, len, " dam 0d8, hurt 1d6", 2 + plev / 3);
+	strnfmt(p, len, " dam %dd8, hurt 1d6", 2 + plev / 3);
 	break;
     case RITUAL_RESIST_POISON:
-	strnfmt(p, len, " dur 0+d20", plev / 2);
+	strnfmt(p, len, " dur %d+d20", plev / 2);
 	break;
     case RITUAL_EXORCISE_DEMONS:
-	strnfmt(p, len, " dam 0+d0", 2 * plev, 2 * plev);
+	strnfmt(p, len, " dam %d+d%d", 2 * plev, 2 * plev);
 	break;
     case RITUAL_DARK_SPEAR:
-	strnfmt(p, len, " dam 0", 15 + 7 * plev / 4);
+	strnfmt(p, len, " dam %d", 15 + 7 * plev / 4);
 	break;
     case RITUAL_CHAOS_STRIKE:
-	strnfmt(p, len, " dam 0d8, beam 0%", 1 + plev / 2, beam);
+	strnfmt(p, len, " dam %dd8, beam %d%", 1 + plev / 2, beam);
 	break;
     case RITUAL_DARK_BALL:
-	strnfmt(p, len, " dam 0, rad 2", 50 + plev * 2);
+	strnfmt(p, len, " dam %d, rad 2", 50 + plev * 2);
 	break;
     case RITUAL_STENCH_OF_DEATH:
-	strnfmt(p, len, " dam 0+d0, hit ~9", 50 + plev * 2, plev);
+	strnfmt(p, len, " dam %d+d%d, hit ~9", 50 + plev * 2, plev);
 	break;
     case RITUAL_SHADOW_WARPING:
-	strnfmt(p, len, " range 0, hurt 2d6", plev * 3);
+	strnfmt(p, len, " range %d, hurt 2d6", plev * 3);
 	break;
     case RITUAL_RESIST_ACID_AND_COLD:
 	strnfmt(p, len, " dur 20+d20");
 	break;
     case RITUAL_PROTECTION_FROM_EVIL:
-	strnfmt(p, len, " 0+d0", plev / 2, plev);
+	strnfmt(p, len, " %d+d%d", plev / 2, plev);
 	break;
     case RITUAL_BLACK_BLESSING:
 	strnfmt(p, len, " dur d66");
@@ -675,16 +675,16 @@ void get_spell_info(int tval, int sindex, char *p, size_t len)
 	strnfmt(p, len, " dur 10+d20");
 	break;
     case RITUAL_STRIKE_AT_LIFE:
-	strnfmt(p, len, " dam 0d13", 3 * plev / 5);
+	strnfmt(p, len, " dam %dd13", 3 * plev / 5);
 	break;
     case RITUAL_ORB_OF_DEATH:
-	strnfmt(p, len, " dam 0, hurt 2d8", 20 + (4 * plev));
+	strnfmt(p, len, " dam %d, hurt 2d8", 20 + (4 * plev));
 	break;
     case RITUAL_DISPEL_LIFE:
-	strnfmt(p, len, " dam 0+4d0", 60, plev);
+	strnfmt(p, len, " dam %d+4d%d", 60, plev);
 	break;
     case RITUAL_VAMPIRIC_DRAIN:
-	strnfmt(p, len, " dam 0d11, heal 0", plev / 3, 3 * plev);
+	strnfmt(p, len, " dam %dd11, heal %d", plev / 3, 3 * plev);
 	break;
     case RITUAL_BECOME_WEREWOLF:
 	strnfmt(p, len, " hurt 2d7");
@@ -699,13 +699,13 @@ void get_spell_info(int tval, int sindex, char *p, size_t len)
 	strnfmt(p, len, " radius 15");
 	break;
     case RITUAL_TELEPORT_AWAY:
-	strnfmt(p, len, " dist 0", 45 + (plev / 3));
+	strnfmt(p, len, " dist %d", 45 + (plev / 3));
 	break;
     case RITUAL_SMASH_UNDEAD:
-	strnfmt(p, len, " dam 0+d50", plev * 3);
+	strnfmt(p, len, " dam %d+d50", plev * 3);
 	break;
     case RITUAL_DARKNESS_STORM:
-	strnfmt(p, len, " dam 0, rad 0", 11 * plev / 2, plev / 7);
+	strnfmt(p, len, " dam %d, rad %d", 11 * plev / 2, plev / 7);
 	break;
     case RITUAL_MENTAL_AWARENESS:
 	strnfmt(p, len, " dur 30+d40");
@@ -717,7 +717,7 @@ void get_spell_info(int tval, int sindex, char *p, size_t len)
 	strnfmt(p, len, " dur 40");
 	break;
     case RITUAL_DARK_POWER:
-	strnfmt(p, len, " mana 0", 3 * plev / 2);
+	strnfmt(p, len, " mana %d", 3 * plev / 2);
 	break;
     }
 }
