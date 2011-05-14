@@ -383,7 +383,7 @@ bool res_menu(void)
 {
     menu_type menu;
     menu_iter menu_f = { res_tag, 0, res_display, res_action, 0 };
-    region area = { 15, 1, 48, -1 };
+    region area = { 15, 1, 48, 7 };
     ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
     int cursor = 0;
 
@@ -400,9 +400,6 @@ bool res_menu(void)
 	choice[i] = i;
     }
 
-    /* Clear space */
-    area.page_rows = 7;
-
     /* Save the screen and clear it */
     screen_save();
 
@@ -410,11 +407,10 @@ bool res_menu(void)
 
     /* Set up the menu */
     WIPE(&menu, menu);
-    menu.title = "Choose a temporary resistance";
-    menu.cmd_keys = "\n\r";
-    menu.count = 5;
-    menu.menu_data = choice;
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+    menu.title = "Choose a temporary resistance";
+    menu_setpriv(&menu, 5, choice);
+    menu_layout(&menu, &area);
 
     /* Select an entry */
     evt = menu_select(&menu, cursor);
