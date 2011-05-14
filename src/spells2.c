@@ -1272,13 +1272,14 @@ static char recall_tag(menu_type *menu, int oid)
 void recall_display(menu_type *menu, int oid, bool cursor, int row, int col,
 		    int width)
 {
-    const u16b *choice = menu->menu_data;
+    const u16b *choice = menu_priv(menu);
     int idx = choice[oid];
     char stage[30];
 
     byte attr = (cursor ? TERM_L_BLUE : TERM_WHITE);
 
-    if (idx < num_points) {
+    if (idx < num_points) 
+    {
 	int region = stage_map[p_ptr->recall[idx]][LOCALITY];
 	int level = stage_map[p_ptr->recall[idx]][DEPTH];
 
@@ -1289,7 +1290,8 @@ void recall_display(menu_type *menu, int oid, bool cursor, int row, int col,
 	    sprintf(stage, "%s Town   ", locality_name[region]);
 	else
 	    sprintf(stage, "%s     ", locality_name[region]);
-    } else
+    } 
+    else
 	sprintf(stage, "Don't replace     ");
 
     /* Print it */
@@ -1301,11 +1303,12 @@ void recall_display(menu_type *menu, int oid, bool cursor, int row, int col,
  */
 bool recall_action(menu_type *menu, const ui_event_data *e, int oid)
 {
-    u16b *choice = menu->menu_data;
+    u16b *choice = menu_priv(menu);
 
     int idx = choice[oid];
 
-    if (inward) {
+    if (inward) 
+    {
 	int stage;
 
 	/* Find the point, being careful about underworld etc */
@@ -1320,13 +1323,15 @@ bool recall_action(menu_type *menu, const ui_event_data *e, int oid)
 
 	/* Set it */
 	p_ptr->recall_pt = stage;
-    } else {
+    } 
+    else 
+    {
 	if (p_ptr->recall[idx] == NOWHERE)
 	    return (FALSE);
 	p_ptr->recall_pt = p_ptr->recall[idx];
     }
 
-    return TRUE;
+    return FALSE;
 }
 
 
@@ -1352,7 +1357,7 @@ bool recall_menu(void)
     for (i = 0; i < num_poss; i++)
 	if (p_ptr->recall[i])
 	    num_points++;
-
+                                               
     if (inward && (num_points < num_poss))
 	num_points++;
     if (inward)
@@ -1384,14 +1389,13 @@ bool recall_menu(void)
 
     /* Set up the menu */
     WIPE(&menu, menu);
+    menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
     if (inward)
 	menu.title = "Which recall point will you replace (or ESC):";
     else
 	menu.title = "Which recall point do you want to go to?";
-    menu.cmd_keys = " \n\r";
-    menu.count = num_entries;
-    menu.menu_data = choice;
-    menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+    menu_setpriv(&menu, num_entries, choice);
+    menu_layout(&menu, &area);
 
     /* Select an entry */
     evt = menu_select(&menu, cursor);
