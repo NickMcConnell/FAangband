@@ -231,6 +231,13 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
 
     equip_o_ptr = &p_ptr->inventory[slot];
 
+    /* Deal with throwing weapons */
+    if ((slot == INVEN_WIELD) && of_has(o_ptr->flags_obj, OF_THROWING))
+    {
+	if (get_check("Equip in throwing belt?")) 
+	    slot = wield_slot_ammo(o_ptr);
+    }
+
     /* If the slot is open, wield and be done */
     if (!equip_o_ptr->k_idx) 
     {

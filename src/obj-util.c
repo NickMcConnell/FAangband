@@ -544,8 +544,8 @@ bool slot_can_wield_item(int slot, const object_type * o_ptr)
 	return (slot == INVEN_LEFT || slot == INVEN_RIGHT) ? TRUE : FALSE;
     else if (obj_is_ammo(o_ptr))
 	return (slot >= QUIVER_START && slot < QUIVER_END) ? TRUE : FALSE;
-    else if (of_has(o_ptr->flags_obj, OF_THROWING))
-	return (slot >= QUIVER_START && slot < QUIVER_END) ? TRUE : FALSE;
+    //else if (of_has(o_ptr->flags_obj, OF_THROWING))
+//	return (slot >= QUIVER_START && slot < QUIVER_END) ? TRUE : FALSE;
     else
 	return (wield_slot(o_ptr) == slot) ? TRUE : FALSE;
 }
