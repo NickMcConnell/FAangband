@@ -347,31 +347,31 @@ bool res_action(menu_type * menu, const ui_event_data * e, int oid)
     case 0:
 	{
 	    (void) inc_timed(TMD_OPP_FIRE, randint1(plev) + plev, TRUE);
-	    return TRUE;
+	    return FALSE;
 	}
     case 1:
 	{
 	    (void) inc_timed(TMD_OPP_COLD, randint1(plev) + plev, TRUE);
-	    return TRUE;
+	    return FALSE;
 	}
     case 2:
 	{
 	    (void) inc_timed(TMD_OPP_ACID, randint1(plev) + plev, TRUE);
-	    return TRUE;
+	    return FALSE;
 	}
     case 3:
 	{
 	    (void) inc_timed(TMD_OPP_ELEC, randint1(plev) + plev, TRUE);
-	    return TRUE;
+	    return FALSE;
 	}
     case 4:
 	{
 	    (void) inc_timed(TMD_OPP_POIS, randint1(plev) + plev, TRUE);
-	    return TRUE;
+	    return FALSE;
 	}
     default:
 	{
-	    return FALSE;
+	    return TRUE;
 	}
     }
 }
