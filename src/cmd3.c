@@ -141,7 +141,7 @@ void wield_item(object_type *o_ptr, int item, int slot)
     flags_init(f, OF_SIZE, OF_OBVIOUS_MASK, FLAG_END);
 
     /* If we are stacking things in the quiver */
-    if (obj_is_quiver_obj(o_ptr))
+    if (obj_is_quiver_obj(o_ptr) && (slot >= QUIVER_START))
     {
 	num = o_ptr->number;
 	combine_quiver = object_similar(o_ptr, &p_ptr->inventory[slot],

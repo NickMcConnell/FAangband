@@ -544,10 +544,12 @@ bool slot_can_wield_item(int slot, const object_type * o_ptr)
 	return (slot == INVEN_LEFT || slot == INVEN_RIGHT) ? TRUE : FALSE;
     else if (obj_is_ammo(o_ptr))
 	return (slot >= QUIVER_START && slot < QUIVER_END) ? TRUE : FALSE;
-    //else if (of_has(o_ptr->flags_obj, OF_THROWING))
-//	return (slot >= QUIVER_START && slot < QUIVER_END) ? TRUE : FALSE;
+    else if (wield_slot(o_ptr) == slot)
+	return TRUE;
+    else if (of_has(o_ptr->flags_obj, OF_THROWING))
+	return (slot >= QUIVER_START && slot < QUIVER_END) ? TRUE : FALSE;
     else
-	return (wield_slot(o_ptr) == slot) ? TRUE : FALSE;
+	return FALSE;
 }
 
 
@@ -2936,18 +2938,23 @@ void inven_item_optimize(int item)
 {
     object_type *o_ptr = &p_ptr->inventory[item];
 
+    /* Save a possibly new quiver size */
+    if (item >= QUIVER_START) save_quiver_size(p_ptr);
+
     /* Only optimize real items which are empty */
     if (!o_ptr->k_idx || o_ptr->number) return;
 
     /* The item is in the pack */
-    if (item < INVEN_WIELD) {
+    if (item < INVEN_WIELD) 
+    {
 	int i;
 
 	/* One less item */
 	p_ptr->inven_cnt--;
 
 	/* Slide everything down */
-	for (i = item; i < INVEN_PACK; i++) {
+	for (i = item; i < INVEN_PACK; i++) 
+	{
 	    /* Hack -- slide object */
 	    (void) COPY(&p_ptr->inventory[i], &p_ptr->inventory[i + 1], object_type);
 	}
@@ -2963,12 +2970,16 @@ void inven_item_optimize(int item)
     }
 
     /* The item is being wielded */
-    else {
+    else 
+    {
 	/* One less item */
 	p_ptr->equip_cnt--;
 
 	/* Erase the empty slot */
 	object_wipe(&p_ptr->inventory[item]);
+
+	/* Reorder the quiver if necessary */
+	if (item >= QUIVER_START) sort_quiver();
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
