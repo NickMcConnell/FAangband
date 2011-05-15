@@ -135,23 +135,23 @@ struct item_selector item_selector[] =
 
     { CMD_FIRE, "Fire which item? ",
       "You have nothing to fire.",
-      obj_can_fire, (USE_INVEN | USE_EQUIP | USE_FLOOR) },
+      obj_can_fire, (USE_INVEN | USE_EQUIP | USE_FLOOR | QUIVER_TAGS) },
 
     { CMD_USE_STAFF, "Use which staff? ",
       "You have no staff to use.",
-      obj_is_staff, (USE_INVEN | USE_FLOOR) },
+      obj_is_staff, (USE_INVEN | USE_FLOOR | SHOW_FAIL) },
 
     { CMD_USE_WAND, "Aim which wand? ",
       "You have no wand to aim.",
-      obj_is_wand, (USE_INVEN | USE_FLOOR) },
+      obj_is_wand, (USE_INVEN | USE_FLOOR | SHOW_FAIL) },
 
     { CMD_USE_ROD, "Zap which rod? ",
       "You have no charged rods to zap.",
-      obj_is_rod, (USE_INVEN | USE_FLOOR) },
+      obj_is_rod, (USE_INVEN | USE_FLOOR | SHOW_FAIL) },
 
     { CMD_ACTIVATE, "Activate which item? ",
       "You have nothing to activate.",
-      obj_is_activatable, (USE_EQUIP) },
+      obj_is_activatable, (USE_EQUIP | SHOW_FAIL) },
 
     { CMD_EAT, "Eat which item? ",
       "You have nothing to eat.",
