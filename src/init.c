@@ -2492,6 +2492,7 @@ static enum parser_error parse_v_n(struct parser *p) {
 
 static enum parser_error parse_v_x(struct parser *p) {
     struct vault *v = parser_priv(p);
+    int max_lev;
 
     if (!v)
 	return PARSE_ERROR_MISSING_RECORD_HEADER;
@@ -2500,14 +2501,9 @@ static enum parser_error parse_v_x(struct parser *p) {
     v->hgt = parser_getuint(p, "height");
     v->wid = parser_getuint(p, "width");
     v->min_lev = parser_getuint(p, "min_lev");
-    v->max_lev = parser_getuint(p, "max_lev");
+    max_lev = parser_getuint(p, "max_lev");
+    v->max_lev = max_lev ? max_lev : MAX_DEPTH;
 
-    /* XXX: huh? These checks were in the original code and I have no idea
-     * why. */
-    if (v->typ == 6 && (v->wid > 33 || v->hgt > 22))
-	return PARSE_ERROR_VAULT_TOO_BIG;
-    if (v->typ == 7 && (v->wid > 66 || v->hgt > 44))
-	return PARSE_ERROR_VAULT_TOO_BIG;
     return PARSE_ERROR_NONE;
 }
 
