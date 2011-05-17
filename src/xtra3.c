@@ -49,10 +49,10 @@ game_event_type player_events[] = {
     EVENT_MONSTERHEALTH,
     EVENT_SHAPECHANGE,
     EVENT_PLAYERSPEED,
-    EVENT_DUNGEONLEVEL,
 };
 
 game_event_type statusline_events[] = {
+    EVENT_DUNGEONLEVEL,
     EVENT_STUDYSTATUS,
     EVENT_STATUS,
     EVENT_DETECTIONSTATUS,
@@ -667,58 +667,6 @@ static void prt_speed(int row, int col)
 }
 
 
-/*
- * Prints depth in stat area
- */
-static void prt_depth(int row, int col)
-{
-    char depths[32];
-
-    s16b attr = TERM_L_BLUE;
-    int region, level;
-
-    region = stage_map[p_ptr->stage][LOCALITY];
-
-    level = stage_map[p_ptr->stage][DEPTH];
-
-    if (level)
-	strnfmt(depths, sizeof(depths), "%s %d", short_locality_name[region],
-		level);
-    else
-	strnfmt(depths, sizeof(depths), "%s", short_locality_name[region]);
-
-
-    /* Get color of level based on feeling -JSV- */
-    if ((p_ptr->depth) && (do_feeling)) {
-	if (p_ptr->themed_level)
-	    attr = TERM_BLUE;
-	else if (feeling == 1)
-	    attr = TERM_VIOLET;
-	else if (feeling == 2)
-	    attr = TERM_RED;
-	else if (feeling == 3)
-	    attr = TERM_L_RED;
-	else if (feeling == 4)
-	    attr = TERM_ORANGE;
-	else if (feeling == 5)
-	    attr = TERM_ORANGE;
-	else if (feeling == 6)
-	    attr = TERM_YELLOW;
-	else if (feeling == 7)
-	    attr = TERM_YELLOW;
-	else if (feeling == 8)
-	    attr = TERM_WHITE;
-	else if (feeling == 9)
-	    attr = TERM_WHITE;
-	else if (feeling == 10)
-	    attr = TERM_L_WHITE;
-    }
-
-    /* Right-Adjust the "depth", and clear old values */
-    put_str(format("%-13s", depths), row, col);
-}
-
-
 
 
 /* Some simple wrapper functions */
@@ -789,13 +737,13 @@ static const struct side_handler_t {
     prt_ac, 7, EVENT_AC}, {
     prt_hp, 8, EVENT_HP}, {
     prt_sp, 9, EVENT_MANA}, {
-    prt_mana, 13, EVENT_MONSTERMANA}, {
     prt_health, 12, EVENT_MONSTERHEALTH}, {
+    prt_mana, 13, EVENT_MONSTERMANA}, {
     NULL, 23, 0}, {
     NULL, 22, 0}, {
     prt_speed, 14, EVENT_PLAYERSPEED},	/* Slow (-NN) / Fast (+NN) */
-    {
-    prt_depth, 15, EVENT_DUNGEONLEVEL},	/* Lev NNN / NNNN ft */
+    	/*{
+    prt_depth, 15, EVENT_DUNGEONLEVEL}, Lev NNN / NNNN ft */
 };
 
 
@@ -966,6 +914,60 @@ static const struct state_info attacks[] = {
 			} \
 		} \
 	} \
+}
+
+
+/*
+ * Print location
+ */
+static size_t prt_depth(int row, int col)
+{
+    char depths[32];
+
+    s16b attr = TERM_L_BLUE;
+    int region, level;
+
+    region = stage_map[p_ptr->stage][LOCALITY];
+
+    level = stage_map[p_ptr->stage][DEPTH];
+
+    if (level)
+	strnfmt(depths, sizeof(depths), "%s %d", locality_name[region],
+		level);
+    else
+	strnfmt(depths, sizeof(depths), "%s", locality_name[region]);
+
+
+    /* Get color of level based on feeling -JSV- */
+    if ((p_ptr->depth) && (do_feeling)) {
+	if (p_ptr->themed_level)
+	    attr = TERM_BLUE;
+	else if (feeling == 1)
+	    attr = TERM_VIOLET;
+	else if (feeling == 2)
+	    attr = TERM_RED;
+	else if (feeling == 3)
+	    attr = TERM_L_RED;
+	else if (feeling == 4)
+	    attr = TERM_ORANGE;
+	else if (feeling == 5)
+	    attr = TERM_ORANGE;
+	else if (feeling == 6)
+	    attr = TERM_YELLOW;
+	else if (feeling == 7)
+	    attr = TERM_YELLOW;
+	else if (feeling == 8)
+	    attr = TERM_WHITE;
+	else if (feeling == 9)
+	    attr = TERM_WHITE;
+	else if (feeling == 10)
+	    attr = TERM_L_WHITE;
+    }
+
+    /* Right-Adjust the "depth", and clear old values */
+    c_put_str(attr, depths, row, col);
+
+    return sizeof(depths);
 }
 
 
@@ -1216,8 +1218,8 @@ static size_t prt_buttons(int row, int col)
 typedef size_t status_f(int row, int col);
 
 status_f *status_handlers[] =
-    { prt_recall, prt_state, prt_cut, prt_stun, prt_hunger, prt_study, prt_spec,
-      prt_tmd, prt_att, prt_dtrap, prt_buttons
+{ prt_depth, prt_recall, prt_state, prt_cut, prt_stun, prt_hunger, prt_study, 
+  prt_spec, prt_tmd, prt_att, prt_dtrap, prt_buttons
 };
 
 
