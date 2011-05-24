@@ -40,6 +40,7 @@ int floor_list[MAX_FLOOR_STACK];
 struct object_menu_data items[50];
 int num_obj;
 int item_mode;
+cmd_code item_cmd;
 static int offset = 0;
 static bool need_spacer;
 static char selection;
@@ -770,9 +771,8 @@ void item_prompt(int mode)
     prt(tmp_val, 0, 0);
 }
 
-
-
-
+cmd_code menu_cmd;
+int menu_mode;
 
 /**
  * Display an entry on the item menu
@@ -813,7 +813,7 @@ bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
     bool refresh = FALSE;
     struct object_menu_data *choice = menu_priv(menu);
     char key = event->key;
-    int i;
+    int i, k;
     char *selections = (char *) menu->selections;
 
     if (event->type == EVT_SELECT)
@@ -865,6 +865,26 @@ bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
 	    }
 	}
 
+	else if ((key >= '0') && (key <= '9'))
+	{
+	    /* Look up the tag */
+	    if (!get_tag(&k, key, item_cmd, item_mode & QUIVER_TAGS)) 
+	    {
+		bell("Illegal object choice (tag)!");
+		return TRUE;
+	    }
+
+	    /* Match the item */
+	    for (i = 0; i < menu->count; i++)
+	    {
+		if (choice[i].object == &p_ptr->inventory[k]) {
+		    Term_keypress(choice[i].key);
+		    return TRUE;
+		}
+	    }
+	}
+	    
+
 	if (refresh)
 	{
 	    /* Load screen */
@@ -893,7 +913,7 @@ bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
 /**
  * Display list items to choose from
  */
-ui_event_data item_menu(void)
+ui_event_data item_menu(cmd_code cmd, int mode)
 {
     menu_type menu;
     menu_iter menu_f = {0, 0, get_item_display, get_item_action, 0 };
@@ -902,7 +922,7 @@ ui_event_data item_menu(void)
 
     size_t max_len = Term->wid - 1;
 
-    char selections[30];
+    char selections[40];
 
     int i;
 
@@ -913,7 +933,7 @@ ui_event_data item_menu(void)
     for (i = 0; i < num_obj; i++)
 	selections[i] = items[i].key;
     menu.selections = selections;
-    menu.cmd_keys = "/-";
+    menu.cmd_keys = "/-0123456789";
     get_max_len(&max_len);
     area.page_rows = menu.count + 1;
     area.width = max_len;
@@ -1009,6 +1029,7 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
     
     prompt = pmt;
     item_mode = mode;
+    item_cmd = cmd;
 
     /* Paranoia XXX XXX XXX */
     msg_print(NULL);
@@ -1207,7 +1228,7 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 	/* Menu if requested */
 	if (show_list) 
 	{
-	    which = item_menu();
+	    which = item_menu(cmd, mode);
 	    if (which.type == EVT_ESCAPE)
 		which.key = ESCAPE;
 	}
