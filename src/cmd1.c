@@ -796,11 +796,16 @@ void move_player(int dir)
     if (OPT(easy_alter) && (cave_feat[y][x] >= FEAT_TRAP_HEAD)
 	&& (cave_feat[y][x] <= FEAT_TRAP_TAIL)) 
     {
+	bool more = FALSE;
 	/* Auto-repeat if not already repeating */
 	if (cmd_get_nrepeats() == 0)
 	    cmd_set_repeat(99);
 	
-	(void) do_cmd_disarm_aux(y, x);
+	more = do_cmd_disarm_aux(y, x);
+
+	/* Cancel repeat unless we may continue */
+	if (!more)
+	    disturb(0, 0);
 	return;
     }
 
@@ -832,14 +837,21 @@ void move_player(int dir)
 	    if (cave_feat[y][x] < FEAT_SECRET) {
 		/* Option to automatically open doors. -TNB- */
 		if (OPT(easy_alter)) {
-		    /* Auto-repeat if not already repeating */
-		  if (cmd_get_nrepeats() == 0)
-			cmd_set_repeat(99);
-	
-		  (void) do_cmd_open_aux(y, x);
-		  return;
-		}
+		    bool more = FALSE;
 
+		    /* Auto-repeat if not already repeating */
+		    if (cmd_get_nrepeats() == 0)
+			cmd_set_repeat(99);
+		    
+		    /* Open the door */
+		    more = do_cmd_open_aux(y, x);
+		    
+		    /* Cancel repeat unless we may continue */
+		    if (!more)
+			disturb(0, 0);
+		    return;
+		}
+		
 		/* Otherwise, a message. */
 		message(MSG_HITWALL, 0, "There is a door blocking your way.");
 	    }
