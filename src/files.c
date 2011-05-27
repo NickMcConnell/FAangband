@@ -1499,12 +1499,18 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
 	    /* Check equipment */
 	    for (n = 6, i = INVEN_WIELD; i < INVEN_TOTAL; i++, n++) {
 		object_type *o_ptr;
+		bitflag objflags[OF_SIZE];
 
 		/* Object */
 		o_ptr = &p_ptr->inventory[i];
 
+		/* Set flags */
+		of_wipe(objflags);
+		of_copy(objflags, o_ptr->flags_obj);
+		of_inter(objflags, o_ptr->id_obj);
+
 		/* Check flags */
-		if ((o_ptr->k_idx) && of_has(o_ptr->id_obj, flag)) {
+		if ((o_ptr->k_idx) && of_has(objflags, flag)) {
 		    dump_put_str(TERM_WHITE, "+", n);
 		}
 

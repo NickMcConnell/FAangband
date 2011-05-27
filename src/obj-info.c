@@ -793,10 +793,17 @@ static bool describe_misc_magic(textblock *tb, const object_type *o_ptr,
     bool full = mode & OINFO_FULL;
     size_t i;
     bool printed = FALSE;
+    bitflag objflags[OF_SIZE];
+
+    of_wipe(objflags);
+    of_copy(objflags, o_ptr->flags_obj);
+    if (!full)
+	of_inter(objflags, o_ptr->id_obj);
+	
 
     for (i = 0; i < N_ELEMENTS(misc_flags); i++)
     {
-	if (of_has(full ? o_ptr->flags_obj : o_ptr->id_obj, misc_flags[i].flag))
+	if (of_has(objflags, misc_flags[i].flag))
 	{
 	    if (!printed) textblock_append(tb, "\nPowers:  ");
 	    textblock_append(tb, "%s.  ", misc_flags[i].name);

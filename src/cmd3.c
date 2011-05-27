@@ -253,6 +253,7 @@ void wield_item(object_type *o_ptr, int item, int slot)
     /* Notice dice, AC, jewellery sensation ID and other obvious stuff */
     notice_other(IF_AC, slot + 1);
     notice_other(IF_DD_DS, slot + 1);
+    of_inter(f, o_ptr->flags_obj);
     of_union(o_ptr->id_obj, f);
     if (is_armour(o_ptr) && (k_info[o_ptr->k_idx].to_h.base))
 	notice_other(IF_TO_H, slot + 1);
