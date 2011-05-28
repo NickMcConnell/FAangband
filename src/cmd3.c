@@ -506,6 +506,7 @@ void textui_cmd_destroy(void)
 
 	    /* set to squelch */
 	    k_ptr->squelch = TRUE;
+	    p_ptr->notice |= PN_SQUELCH;
 
 	    /* Message - no good routine for extracting the plain name */
 	    msg_format("All %^s will always be squelched.", o_name2);
