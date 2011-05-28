@@ -6,8 +6,8 @@
 #
 
 NAME = FAangband
-VERSION = 1.1.6
-COPYRIGHT = (c) 2005-2010 Nick McConnell and contributors
+VERSION = 1.2.1
+COPYRIGHT = (c) 2005-2011 Nick McConnell and contributors
 PROG = faangband
 SUBDIRS = gtk
 
