@@ -344,7 +344,8 @@ void textui_obj_wield(object_type * o_ptr, int item)
 		return;
 	}
 
-	if ((is_missile(o_ptr) || of_has(o_ptr->flags_obj, OF_THROWING)) 
+	if ((is_missile(o_ptr) || 
+	     (of_has(o_ptr->flags_obj, OF_THROWING) && (slot != INVEN_WIELD))) 
 	    && !object_similar(&p_ptr->inventory[slot], o_ptr, OSTACK_QUIVER)) {
 	    cptr q = "Replace which quiver item? ";
 	    cptr s = "Error in obj_wield, please report";
