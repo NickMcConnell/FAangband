@@ -7,8 +7,8 @@ CONFIG = flvr-dvg.prf  font.prf      graf-nds.prf  message.prf   user.prf \
        font-ext.prf  font-x11.prf  graf-sdl.prf  pref.prf      xtra-xxx.prf \
        font-gcu.prf  font-xxx.prf  graf-win.prf  pref-sdl.prf  user.prf \
        font-gtk.prf  graf-dvg.prf  graf-x11.prf  pref-win.prf  \
-       font-mac.prf  graf-gcu.prf  graf-xxx.prf  pref-x11.prf \
-       font-nds.prf  graf-mac.prf  user-mac.prf \
+       font-mac.prf  graf-gcu.prf  graf-xxx.prf  pref-x11.prf graf-nmd.prf \
+       font-nds.prf  graf-mac.prf  user-mac.prf  flvr-nmd.prf xtra-nmd.prf \
 
 PACKAGE = pref
 
