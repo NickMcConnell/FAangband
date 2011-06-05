@@ -1586,6 +1586,10 @@ static void store_purchase(void)
     /* Get the actual object */
     o_ptr = &st_ptr->stock[item];
 
+    /* Clear all current messages */
+    msg_flag = FALSE;
+    prt("", 0, 0);
+
     if (st_ptr->type == STORE_HOME) {
 	amt = o_ptr->number;
     } else {
@@ -1865,6 +1869,10 @@ static void store_sell(void)
 
     /* Start off in equipment mode. */
     p_ptr->command_wrk = (USE_INVEN);
+
+    /* Clear all current messages */
+    msg_flag = FALSE;
+    prt("", 0, 0);
 
     /* Get an item */
     s = "You have nothing that I want.";

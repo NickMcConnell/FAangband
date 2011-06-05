@@ -1031,9 +1031,6 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
     item_mode = mode;
     item_cmd = cmd;
 
-    /* Paranoia XXX XXX XXX */
-    msg_print(NULL);
-
     /* Not done */
     done = FALSE;
 
