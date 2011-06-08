@@ -137,7 +137,7 @@ R:0:0x9D:0x81
 R:0:0x9D:0x82
 ?:[AND [EQU $CLASS Ranger] [EQU $RACE Hobbit] ]
 R:0:0x9D:0x83
-?:[AND [EQU $CLASS Ranger] [EQU $RACE Dr['u]adan] ]
+?:[AND [EQU $CLASS Ranger] [EQU $RACE Druadan] ]
 R:0:0x9D:0x84
 ?:[AND [EQU $CLASS Ranger] [EQU $RACE Petty-Dwarf] ]
 R:0:0x9D:0x85
