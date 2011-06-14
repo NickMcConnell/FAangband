@@ -1203,7 +1203,7 @@ void player_birth(bool quickstart_allowed)
 	    }
 
 	    /* Level */
-	    get_level(p);
+	    get_level(p_ptr);
 
 	    /* Reset score options from cheat options */
 	    for (i = OPT_CHEAT; i < OPT_ADULT; i++) {
