@@ -1202,6 +1202,9 @@ void player_birth(bool quickstart_allowed)
 		op_ptr->opt[OPT_ADULT + (i - OPT_BIRTH)] = op_ptr->opt[i];
 	    }
 
+	    /* Level */
+	    get_level(p);
+
 	    /* Reset score options from cheat options */
 	    for (i = OPT_CHEAT; i < OPT_ADULT; i++) {
 		op_ptr->opt[OPT_SCORE + (i - OPT_CHEAT)] = op_ptr->opt[i];
