@@ -1479,10 +1479,10 @@ static void process_player(void)
 	else if (p_ptr->resting == -3) {
 	    /* Stop resting */
 	    if (!(((turn / 10) * 10) % (10L * TOWN_DAWN))) {
-		msg_print("It is daybreak.");
+		if (!outside) msg_print("It is daybreak.");
 		disturb(0, 0);
 	    } else if (!(((turn / 10) * 10) % ((10L * TOWN_DAWN) / 2))) {
-		msg_print("It is nightfall.");
+		if (!outside) msg_print("It is nightfall.");
 		disturb(0, 0);
 	    }
 	}
