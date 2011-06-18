@@ -481,6 +481,9 @@ static void process_world(void)
 	    /* Check for dawn */
 	    dawn = (!(turn % (10L * TOWN_DAWN)));
 
+	    /* Illuminate */
+	    illuminate();
+
 	    /* Day breaks */
 	    if (dawn) {
 		/* Message */
@@ -497,10 +500,6 @@ static void process_world(void)
 		msg_print("The sun has set.");
 		update_view();
 	    }
-
-	    /* Illuminate */
-	    if (!p_ptr->depth)
-		town_illuminate(dawn, FALSE);
 	}
     }
 
