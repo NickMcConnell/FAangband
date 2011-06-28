@@ -4039,26 +4039,26 @@ void illuminate(void)
 		}
 	    }
 
+	    /* Special case of shops */
+	    else if (cave_feat[y][x] == FEAT_PERM_EXTRA)
+            {
+		/* Illuminate the grid */
+		cave_info[y][x] |= (CAVE_GLOW);
+              
+		/* Memorize the grid */
+		cave_info[y][x] |= (CAVE_MARK);
+            }
+          
 	    /* Viewable grids (light) */
 	    else if (is_daylight) {
 		/* Illuminate the grid */
 		cave_info[y][x] |= (CAVE_GLOW);
-
-		/* Hack -- Memorize grids */
-		//if (OPT(view_perma_grids)) {
-		//  cave_info[y][x] |= (CAVE_MARK);
-		//}
 	    }
 
 	    /* Viewable grids (dark) */
 	    else {
 		/* Darken the grid */
 		cave_info[y][x] &= ~(CAVE_GLOW);
-
-		/* Hack -- Forget grids */
-		if (OPT(view_perma_grids)) {
-		    cave_info[y][x] &= ~(CAVE_MARK);
-		}
 	    }
 	}
     }
