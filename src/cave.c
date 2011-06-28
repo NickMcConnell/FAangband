@@ -734,7 +734,8 @@ static void special_wall_display(byte *a, char *c, bool in_view, int feat)
 	case GRAPHICS_NONE:
 	case GRAPHICS_PSEUDO:
 	    /* Use "gray" */
-	    if (*a == TERM_WHITE) *a = TERM_SLATE;
+	    //if (*a == TERM_WHITE) *a = TERM_SLATE;
+	    *a = get_color(*a, ATTR_DARK, 1);
 	    break;
 	case GRAPHICS_ADAM_BOLT:
 	case GRAPHICS_NOMAD:
@@ -838,8 +839,9 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 		special_lighting_floor(&a, &c, g->lighting, g->in_view);
 
 	/* Special lighting effects (walls only) */
-	if (tf_has(f_ptr->flags, TF_WALL) && OPT(view_granite_light)) 
-		special_wall_display(&a, &c, g->in_view, g->f_idx);
+	//if (tf_has(f_ptr->flags, TF_WALL) && OPT(view_granite_light)) 
+	else if (OPT(view_granite_light)) 
+	    special_wall_display(&a, &c, g->in_view, g->f_idx);
 		
 	/* Save the terrain info for the transparency effects */
 	(*tap) = a;
