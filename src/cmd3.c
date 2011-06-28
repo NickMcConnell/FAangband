@@ -400,6 +400,9 @@ void do_cmd_destroy(cmd_code code, cmd_arg args[])
 	/* Combine the pack */
 	p_ptr->notice |= (PN_COMBINE);
 
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
+
 	/* Done */
 	return;
     }

@@ -505,6 +505,7 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 
     /* Mark as tried and redisplay */
     p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+    p_ptr->redraw |= (PR_INVEN | PR_EQUIP | PR_OBJECT);
 
     /* 
      * If the player becomes aware of the item's function, then mark it as
