@@ -4072,6 +4072,14 @@ void illuminate(void)
 	    /* Track shop doorways */
 	    if ((cave_feat[y][x] >= FEAT_SHOP_HEAD)
 		&& (cave_feat[y][x] <= FEAT_SHOP_TAIL)) {
+		/* Illuminate the grid */
+		cave_info[y][x] |= (CAVE_GLOW);
+		
+		/* Hack -- Memorize grids */
+		if (OPT(view_perma_grids)) {
+		    cave_info[y][x] |= (CAVE_MARK);
+		}
+		
 		for (i = 0; i < 8; i++) {
 		    int yy = y + ddy_ddd[i];
 		    int xx = x + ddx_ddd[i];
