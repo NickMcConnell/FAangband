@@ -290,6 +290,11 @@ bool has_ego_properties(const object_type * o_ptr)
     if (!e_ptr->everseen)
 	return FALSE;
 
+    /* Rings and amulets have to be worn */
+    if ((o_ptr->tval == TV_RING) && (o_ptr->tval == TV_RING) &&
+	(!(o_ptr->ident & IDENT_WORN)))
+	return FALSE;
+
     /* A curse matches */
     if (cf_is_inter(e_ptr->id_curse, o_ptr->id_curse))
 	return TRUE;
