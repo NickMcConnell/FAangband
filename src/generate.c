@@ -10085,33 +10085,20 @@ static void town_gen(void)
     int qx = 1;
     int width = DUNGEON_WID / 3;
 
-    bool daytime;
     bool dummy;
-    bool cave = FALSE;
-
-    /* Hack - some towns are underground */
-    if (((stage > 150) && (stage < 154)) || OPT(adult_dungeon))
-	cave = TRUE;
 
     /* Hack - smaller for minor towns */
     if ((stage < 151) && (!OPT(adult_dungeon)))
 	width /= 2;
 
-
     /* Day time */
-    if (((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2)) && !cave) {
-	/* Day time */
-	daytime = TRUE;
-
+    if (is_daylight) {
 	/* Number of residents */
 	residents = MIN_M_ALLOC_TD;
     }
 
     /* Night time or cave */
     else {
-	/* Night time */
-	daytime = FALSE;
-
 	/* Number of residents */
 	residents = MIN_M_ALLOC_TN;
     }
@@ -10146,9 +10133,6 @@ static void town_gen(void)
 
     /* Build stuff */
     town_gen_hack();
-
-    /* Apply illumination */
-    town_illuminate(daytime, cave);
 
     /* Remove restrictions */
     (void) mon_restrict('\0', 0, &dummy, FALSE);
@@ -10467,6 +10451,8 @@ void generate_cave(void)
     /* Verify the panel */
     verify_panel();
 
+    /* Apply illumination */
+    illuminate();
 
     /* Reset the number of traps, runes, and thefts on the level. */
     num_trap_on_level = 0;

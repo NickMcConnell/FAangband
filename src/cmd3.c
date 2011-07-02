@@ -400,6 +400,9 @@ void do_cmd_destroy(cmd_code code, cmd_arg args[])
 	/* Combine the pack */
 	p_ptr->notice |= (PN_COMBINE);
 
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
+
 	/* Done */
 	return;
     }
@@ -473,48 +476,58 @@ void textui_cmd_destroy(void)
 	/* Verify destruction */
 	strnfmt(out_val, sizeof(out_val), "Really destroy %s? ", o_name);
 
-	result = get_char(out_val, "yns", 3, 'n');
-
-	if (result == 'y') {
-	    cmd_insert(CMD_DESTROY);
-	    cmd_set_arg_item(cmd_get_top(), 0, item);
-	    cmd_set_arg_number(cmd_get_top(), 1, amt);
-	} 
-	else if (result == 's') {
-	    object_kind *k_ptr = &k_info[o_ptr->k_idx];
-	    char o_name2[80];
-
-	    /* make a fake object so we can give a proper message */
-	    object_type *i_ptr;
-	    object_type object_type_body;
-
-	    /* Get local object */
-	    i_ptr = &object_type_body;
-
-	    /* Wipe the object */
-	    object_wipe(i_ptr);
-
-	    /* Create the object */
-	    object_prep(i_ptr, o_ptr->k_idx, RANDOMISE);
-
-	    /* make it plural */
-	    i_ptr->number = 2;
-
-	    /* Obtain plural form without a quantity */
-	    object_desc(o_name2, sizeof o_name2, o_ptr,
-			ODESC_BASE | ODESC_PLURAL);
-
-	    /* set to squelch */
-	    k_ptr->squelch = TRUE;
-	    p_ptr->notice |= PN_SQUELCH;
-
-	    /* Message - no good routine for extracting the plain name */
-	    msg_format("All %^s will always be squelched.", o_name2);
-
-	    /* Mark the view to be updated */
-	    p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW);;
+      /* Give squelch as an option for aware objects */
+      if (object_aware_p(o_ptr) &&
+	  ((k_info[o_ptr->k_idx].tval < TV_SHOT) || 
+	   (k_info[o_ptr->k_idx].tval > TV_DRAG_ARMOR)) &&
+	  !kf_has(k_info[o_ptr->k_idx].flags_kind, KF_INSTA_ART))
+	{
+	    result = get_char(out_val, "yns", 3, 'n');
+	    
+	    if (result == 's') {
+		object_kind *k_ptr = &k_info[o_ptr->k_idx];
+		char o_name2[80];
+		
+		/* make a fake object so we can give a proper message */
+		object_type *i_ptr;
+		object_type object_type_body;
+		
+		/* Get local object */
+		i_ptr = &object_type_body;
+		
+		/* Wipe the object */
+		object_wipe(i_ptr);
+		
+		/* Create the object */
+		object_prep(i_ptr, o_ptr->k_idx, RANDOMISE);
+		
+		/* make it plural */
+		i_ptr->number = 2;
+		
+		/* Obtain plural form without a quantity */
+		object_desc(o_name2, sizeof o_name2, o_ptr,
+			    ODESC_BASE | ODESC_PLURAL);
+		
+		/* set to squelch */
+		k_ptr->squelch = TRUE;
+		p_ptr->notice |= PN_SQUELCH;
+		
+		/* Message - no good routine for extracting the plain name */
+		msg_format("All %^s will always be squelched.", o_name2);
+		
+		/* Mark the view to be updated */
+		p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW);;
+	    }
+	    else if (result != 'y')
+		return;
 	}
+      /* Unaware object, simple yes/no prompt */
+      else if (!get_check(out_val)) return;
     }
+    
+    cmd_insert(CMD_DESTROY);
+    cmd_set_arg_item(cmd_get_top(), 0, item);
+    cmd_set_arg_number(cmd_get_top(), 1, amt);
 }
 
 /**

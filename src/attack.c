@@ -2667,7 +2667,7 @@ void textui_cmd_throw(void)
     /* Get an item */
     q = "Throw which item? ";
     s = "You have nothing to throw.";
-    if (!get_item(&item, q, s, CMD_THROW, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
+    if (!get_item(&item, q, s, CMD_THROW, (USE_EQUIP | USE_INVEN | USE_FLOOR | QUIVER_TAGS)))
 	return;
 
     if (item >= INVEN_WIELD && item < QUIVER_START) {

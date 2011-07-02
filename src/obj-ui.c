@@ -773,6 +773,7 @@ void item_prompt(int mode)
 
 cmd_code menu_cmd;
 int menu_mode;
+static region area = { 20, 1, -1, -2 };
 
 /**
  * Display an entry on the item menu
@@ -899,6 +900,8 @@ bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
 	    menu_setpriv(menu, num_obj, items);
 	    for (i = 0; i < num_obj; i++)
 		selections[i] = items[i].key;
+	    area.page_rows = menu->count + 1;
+	    menu_layout(menu, &area);
 	    menu_refresh(menu);
 	    redraw_stuff();
 	}
@@ -917,7 +920,6 @@ ui_event_data item_menu(cmd_code cmd, int mode)
 {
     menu_type menu;
     menu_iter menu_f = {0, 0, get_item_display, get_item_action, 0 };
-    region area = { 20, 1, -1, -2 };
     ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
 
     size_t max_len = Term->wid - 1;

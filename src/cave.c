@@ -734,7 +734,8 @@ static void special_wall_display(byte *a, char *c, bool in_view, int feat)
 	case GRAPHICS_NONE:
 	case GRAPHICS_PSEUDO:
 	    /* Use "gray" */
-	    if (*a == TERM_WHITE) *a = TERM_SLATE;
+	    //if (*a == TERM_WHITE) *a = TERM_SLATE;
+	    *a = get_color(*a, ATTR_DARK, 1);
 	    break;
 	case GRAPHICS_ADAM_BOLT:
 	case GRAPHICS_NOMAD:
@@ -838,8 +839,9 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 		special_lighting_floor(&a, &c, g->lighting, g->in_view);
 
 	/* Special lighting effects (walls only) */
-	if (tf_has(f_ptr->flags, TF_WALL) && OPT(view_granite_light)) 
-		special_wall_display(&a, &c, g->in_view, g->f_idx);
+	//if (tf_has(f_ptr->flags, TF_WALL) && OPT(view_granite_light)) 
+	else if (OPT(view_granite_light)) 
+	    special_wall_display(&a, &c, g->in_view, g->f_idx);
 		
 	/* Save the terrain info for the transparency effects */
 	(*tap) = a;
@@ -3169,18 +3171,16 @@ void update_view(void)
     fast_view_n = 0;
 
     /* Extract "radius" value */
-    if (is_daylight)
-	radius = DUNGEON_WID;
-    else if ((player_has(PF_UNLIGHT) || p_ptr->state.darkness)
-	     && (p_ptr->cur_light <= 0))
+    if ((player_has(PF_UNLIGHT) || p_ptr->state.darkness)
+	&& (p_ptr->cur_light <= 0))
 	radius = 2;
     else
 	radius = p_ptr->cur_light;
-
+    
     /* Handle real light */
     if (radius > 0)
 	++radius;
-
+    
 
   /*** Step 1 -- player grid ***/
 
@@ -4020,17 +4020,16 @@ void wiz_dark(void)
 
 
 /**
- * Light or Darken the town
+ * Light or Darken the world
  */
-void town_illuminate(bool daytime, bool cave)
+void illuminate(void)
 {
     int y, x, i;
-
 
     /* Apply light or darkness */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    /* Grids "outside" the town walls */
+	    /* Grids outside the walls */
 	    if (cave_feat[y][x] == FEAT_PERM_SOLID) {
 
 		/* Darken the grid */
@@ -4042,35 +4041,26 @@ void town_illuminate(bool daytime, bool cave)
 		}
 	    }
 
-	    /* Interesting grids */
-	    else if (cave_feat[y][x] > FEAT_INVIS) {
+	    /* Special case of shops */
+	    else if (cave_feat[y][x] == FEAT_PERM_EXTRA)
+            {
 		/* Illuminate the grid */
 		cave_info[y][x] |= (CAVE_GLOW);
-
+              
 		/* Memorize the grid */
 		cave_info[y][x] |= (CAVE_MARK);
-	    }
-
-	    /* Boring grids (light) */
-	    else if (daytime && (!cave)) {
+            }
+          
+	    /* Viewable grids (light) */
+	    else if (is_daylight) {
 		/* Illuminate the grid */
 		cave_info[y][x] |= (CAVE_GLOW);
-
-		/* Hack -- Memorize grids */
-		if (OPT(view_perma_grids)) {
-		    cave_info[y][x] |= (CAVE_MARK);
-		}
 	    }
 
-	    /* Boring grids (dark) */
+	    /* Viewable grids (dark) */
 	    else {
 		/* Darken the grid */
 		cave_info[y][x] &= ~(CAVE_GLOW);
-
-		/* Hack -- Forget grids */
-		if (OPT(view_perma_grids)) {
-		    cave_info[y][x] &= ~(CAVE_MARK);
-		}
 	    }
 	}
     }
@@ -4082,6 +4072,14 @@ void town_illuminate(bool daytime, bool cave)
 	    /* Track shop doorways */
 	    if ((cave_feat[y][x] >= FEAT_SHOP_HEAD)
 		&& (cave_feat[y][x] <= FEAT_SHOP_TAIL)) {
+		/* Illuminate the grid */
+		cave_info[y][x] |= (CAVE_GLOW);
+		
+		/* Hack -- Memorize grids */
+		if (OPT(view_perma_grids)) {
+		    cave_info[y][x] |= (CAVE_MARK);
+		}
+		
 		for (i = 0; i < 8; i++) {
 		    int yy = y + ddy_ddd[i];
 		    int xx = x + ddx_ddd[i];

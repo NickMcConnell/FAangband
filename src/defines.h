@@ -61,10 +61,10 @@
 /**
  * Current version string - according to FAangband reckoning.
  */
-#define VERSION_STRING "1.2.1"
+#define VERSION_STRING "1.2.2"
 /*
 #ifdef BUILD_ID
-#define VERSION_STRING	"1.2.1 (" BUILD_ID ")"
+#define VERSION_STRING	"1.2.2 (" BUILD_ID ")"
 #endif
 */
 
@@ -73,7 +73,7 @@
  */
 #define VERSION_MAJOR	1
 #define VERSION_MINOR	2
-#define VERSION_PATCH	1
+#define VERSION_PATCH	2
 #define VERSION_EXTRA	0
 
 /**
