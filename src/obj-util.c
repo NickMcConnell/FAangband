@@ -21,6 +21,7 @@
 #include "defines.h"
 #include "effects.h"
 #include "game-cmd.h"
+#include "generate.h"
 #include "history.h"
 #include "prefs.h"
 #include "spells.h"

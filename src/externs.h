@@ -323,14 +323,6 @@ void death_screen(void);
 extern void play_game(void);
 extern void idle_update(void);
 
-/* generate.c */
-extern int level_hgt;
-extern int level_wid;
-extern void place_unlocked_door(int y, int x);
-extern void place_closed_door(int y, int x);
-extern void destroy_level(bool new_level);
-extern void generate_cave(void);
-
 /* load.c */
 extern bool old_load(void);
 

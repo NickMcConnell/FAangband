@@ -28,6 +28,7 @@
 
 #include "angband.h"
 #include "cave.h"
+#include "generate.h"
 #include "history.h"
 #include "monster.h"
 #include "object.h"

@@ -24,6 +24,7 @@ HEADERS = \
 	files.h \
 	game-cmd.h \
 	game-event.h \
+	generate.h \
 	$(GTKHEADERS) \
 	h-basic.h \
 	history.h \
@@ -96,6 +97,7 @@ ANGFILES = \
 	game-cmd.o \
 	game-event.o \
 	generate.o \
+	gen-monster.o \
 	history.o \
 	identify.o \
 	init.o \
