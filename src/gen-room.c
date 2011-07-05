@@ -4,7 +4,7 @@
  * Code for making rooms of every kind, pits, vaults (inc. interpretation of 
  * v_info.txt)
  *
- * Copyright (c) 2005 
+ * Copyright (c) 2011
  * Nick McConnell, Leon Marrick, Ben Harrison, James E. Wilson, 
  * Robert A. Koeneke
  *
@@ -22,7 +22,6 @@
 
 #include "angband.h"
 #include "cave.h"
-#include "files.h"
 #include "generate.h"
 #include "monster.h"
 #include "trap.h"

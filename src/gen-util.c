@@ -1,13 +1,9 @@
 /** \file gen-util.c 
     \brief Dungeon generation utilities
  
- * Code for making, stocking, and populating levels when generated.  
- * Includes rooms of every kind, pits, vaults (inc. interpretation of 
- * v_info.txt), streamers, tunnelling, etc.  Level feelings and other 
- * messages, autoscummer behavior.  Creation of the town.  Creation of
- * wilderness.
+ * Helper functions making and stocking levels when generated.  
  *
- * Copyright (c) 2005 
+ * Copyright (c) 2011 
  * Nick McConnell, Leon Marrick, Ben Harrison, James E. Wilson, 
  * Robert A. Koeneke
  *
@@ -25,11 +21,9 @@
 
 #include "angband.h"
 #include "cave.h"
-#include "files.h"
 #include "generate.h"
 #include "monster.h"
 #include "trap.h"
-#include "tvalsval.h"
 
 
 /**************************************************************/

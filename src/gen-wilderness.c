@@ -3,7 +3,7 @@
  
  * Code for creation of wilderness.
  *
- * Copyright (c) 2005 
+ * Copyright (c) 2011
  * Nick McConnell, Leon Marrick, Ben Harrison, James E. Wilson, 
  * Robert A. Koeneke
  *
@@ -21,11 +21,8 @@
 
 #include "angband.h"
 #include "cave.h"
-#include "files.h"
 #include "generate.h"
 #include "monster.h"
-#include "trap.h"
-#include "tvalsval.h"
 
 
 /** 

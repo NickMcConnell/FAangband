@@ -3,7 +3,7 @@
  
  * Code for selecting appropriate monsters for levels when generated.  
  *
- * Copyright (c) 2005 
+ * Copyright (c) 2011
  * Nick McConnell, Leon Marrick, Ben Harrison, James E. Wilson, 
  * Robert A. Koeneke
  *
@@ -20,12 +20,8 @@
  */
 
 #include "angband.h"
-#include "cave.h"
-#include "files.h"
 #include "generate.h"
 #include "monster.h"
-#include "trap.h"
-#include "tvalsval.h"
 
 /**
  * This table takes a depth, and returns a suitable monster symbol.  Depth 
