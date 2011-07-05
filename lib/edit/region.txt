@@ -1,0 +1,155 @@
+# File: region.txt
+
+# This file holds templates for wilderness regions.
+
+N:1:Helcarax["e]
+
+N:2:Lammoth
+
+N:3:Losgar
+
+N:4:Nevrast
+
+N:5:Hithlum
+
+N:6:North Falas
+
+N:7:West Beleriand
+
+N:8:Dor-L['o]min
+
+N:9:Mithrim
+
+N:10:Shadow Lands
+
+N:11:Woods of N['u]ath
+
+N:12:Tumhalad
+
+N:13:Talath Dirnen
+
+N:14:Eglamar
+
+N:15:Eglador
+
+N:16:South Falas
+
+N:17:Faroth
+
+N:18:Mid Beleriand
+
+N:19:Arvernien
+
+N:20:Nan Tathren
+
+N:21:Sirion Mouth
+
+N:22:Fen Sirion
+
+N:23:Gates of Sirion
+
+N:24:Andram
+
+N:25:Amon R[^u]dh
+
+N:26:Brethil
+
+N:27:Dimbar
+
+N:28:Sirion Vale
+
+N:29:Fen of Serech
+
+N:30:Anfauglith
+
+N:31:Crissaegrim
+
+N:32:Gondolin
+
+N:33:Dorthonion
+
+N:34:Taur-Nu-Fuin
+
+N:35:Nan Dungortheb
+
+N:36:Neldoreth
+
+N:37:Region
+
+N:38:Nivrim
+
+N:39:East Beleriand
+
+N:40:South Beleriand
+
+N:41:Taur-Im-Duinath
+
+N:42:Ossiriand
+
+N:43:Amon Ereb
+
+N:44:Estolad
+
+N:45:Rethrim
+
+N:46:Ered Gorgoroth
+
+N:47:Pass of Anach
+
+N:48:Nan Elmoth
+
+N:49:Thargelion
+
+N:50:Dor Dinen
+
+N:51:Himlad
+
+N:52:Himring
+
+N:53:Dr[^u]n
+
+N:54:Ladros
+
+N:55:Pass of Aglon
+
+N:56:Maglor's Gap
+
+N:57:March of Maedhros
+
+N:58:Lothlann
+
+N:59:Ered Engrin
+
+N:60:Thangorodrim
+
+N:61:Ered Luin
+
+N:62:Tol Galen
+
+N:63:Anfalas
+
+N:64:Langstrand
+
+N:65:Ered Nimrais
+
+N:66:Enedwaith
+
+N:67:Rohan
+
+N:68:Eriador
+
+N:69:Dunland
+
+N:70:Hithaeglir
+
+N:71:Fangorn
+
+N:72:Eregion
+
+N:73:Arnor
+
+N:74:Ettenmoors
+
+N:75:Anduin Vale
+
+N:76:Northern Waste
