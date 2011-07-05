@@ -1,0 +1,31 @@
+# File: landmarks.txt
+
+# This file holds wilderness landmarks for which terrain is fixed
+
+N:1:Tol Sirion
+
+N:2:Gates of Nargothrond
+
+N:3:Gates of Angband
+
+N:4:Rivil's Well
+
+N:5:Tarn Aeluin
+
+N:6:Haudh-en-Ndengin
+
+N:7:Gondolin
+
+N:8:Falls of Sirion
+
+N:9:Gate of Sirion
+
+N:10:Isle of Balar
+
+N:11:Cabed-in-Aras
+
+N:12:Ephel Brandir
+
+N:13:Vinyamar
+
+N:14:Barad Nimrais

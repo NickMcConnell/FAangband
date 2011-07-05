@@ -153,3 +153,5 @@ N:74:Ettenmoors
 N:75:Anduin Vale
 
 N:76:Northern Waste
+
+N:77:Isle of Balar
