@@ -23,6 +23,7 @@
 #include "angband.h"
 #include "cave.h"
 #include "cmds.h"
+#include "generate.h"
 #include "history.h"
 #include "monster.h"
 #include "tvalsval.h"
