@@ -2,156 +2,247 @@
 
 # This file holds templates for wilderness regions.
 
+# N:region index:region name
+# I:difficulty:scale
+# A:8 adjoining regions
+
 N:1:Helcarax["e]
+A:2:0:0:0:0:0:0:0
 
 N:2:Lammoth
+A:1:5:3:0:0:0:0:0
 
 N:3:Losgar
+A:2:5:8:4:0:0:0:0
 
 N:4:Nevrast
+A:3:8:40:11:6:0:0:0
 
 N:5:Hithlum
+A:40:9:8:3:2:0:0:0
 
 N:6:North Falas
+A:4:11:7:14:0:0:0:0
 
 N:7:West Beleriand
+A:11:12:13:17:14:6:0:0
 
 N:8:Dor-L['o]min
+A:5:9:40:10:11:4:3:0
 
 N:9:Mithrim
+A:5:40:8:0:0:0:0:0
 
 N:10:Shadow Lands
+A:40:28:26:15:13:12:11:8
 
 N:11:Woods of N['u]ath
+A:4:8:10:12:7:6:0:0
 
 N:12:Tumhalad
+A:11:10:13:7:0:0:0:0
 
 N:13:Talath Dirnen
+A:10:15:24:18:17:7:12:0
 
 N:14:Eglamar
+A:7:17:16:6:0:0:0:0
 
-N:15:Eglador
+N:15:Dor-C['u]arthol
+A:26:38:22:24:13:10:25:0
 
 N:16:South Falas
+A:17:18:19:14:0:0:0:0
 
 N:17:Faroth
+A:7:13:18:16:14:0:0:0
 
 N:18:Mid Beleriand
+A:24:23:20:19:16:17:13:0
 
 N:19:Arvernien
+A:16:18:20:21:0:0:0:0
 
 N:20:Nan Tathren
+I:2:1
+A:18:23:75:41:21:19:0:0
+D:%%%%%%%%%%%%%%%%%%%%
+D:%  111222222333333 % 
+D:% 11......|......33%
+D:%61......++|++....3%
+D:%6.....++++|++++..3%
+D:%6||||++++++|++++.3%
+D:%66..+|||||+|+++..3%
+D:% 66..+++++||+++..3%
+D:%  66...+++|+++..43%
+D:%   666...+|+...44 %
+D:%     65555555554  %
+D:%%%%%%%%%%%%%%%%%%%%
 
 N:21:Sirion Mouth
+A:20:41:19:0:0:0:0:0
 
 N:22:Fen Sirion
+A:38:37:39:24:15:0:0:0
 
 N:23:Gates of Sirion
+I:2:
+A:24:75:20:18:0:0:0:0
+D:%%%%%%%%%%%%
+D:%
 
 N:24:Andram
+A:15:22:39:75:23:18:13:0
 
 N:25:Amon R[^u]dh
+A:15:0:0:0:0:0:0:0
 
 N:26:Brethil
+A:10:28:27:36:37:38:15:0
 
 N:27:Dimbar
+A:31:47:35:36:26:28:0:0
 
 N:28:Sirion Vale
+A:29:31:27:26:10:40:0:0
 
 N:29:Fen of Serech
+A:30:33:31:28:40:0:0:0
 
 N:30:Anfauglith
+A:60:59:58:54:53:33:29:40
 
 N:31:Crissaegrim
+A:29:33:47:27:28:0:0:0
 
 N:32:Gondolin
+A:31:0:0:0:0:0:0:0
 
 N:33:Dorthonion
+A:30:53:54:46:47:31:29:0
 
-N:34:Taur-Nu-Fuin
+N:34:Isle of Balar
+A:21:0:0:0:0:0:0:0
 
 N:35:Nan Dungortheb
+A:46:50:37:36:27:47:0:0
 
 N:36:Neldoreth
+A:35:37:38:26:27:0:0:0
 
 N:37:Region
+A:35:50:51:45:39:22:38:36
 
 N:38:Nivrim
+A:26:36:37:22:15:0:0:0
 
 N:39:East Beleriand
+A:45:44:42:75:43:24:22:37
 
-N:40:South Beleriand
+N:40:Ered Wethrin
+A:59:30:29:28:10:8:9:5
 
 N:41:Taur-Im-Duinath
+A:75:42:21:20::::
 
 N:42:Ossiriand
+A:49:61:62:63:41:75:39:44
 
 N:43:Amon Ereb
+A:39:75:0:0:0:0:0:0
 
 N:44:Estolad
+A:48:51:49:42:39:45:0:0
 
 N:45:Rethrim
+A:44:39:37:0:0:0:0:0
 
 N:46:Ered Gorgoroth
+A:33:54:55:50:35:47:0:0
 
 N:47:Pass of Anach
+A:33:46:35:27:31:0:0:0
 
 N:48:Nan Elmoth
+A:51:44:0:0:0:0:0:0
 
 N:49:Thargelion
+A:38:61:42:44:51:56:0:0
 
 N:50:Dor Dinen
+A:46:55:51:37:35:0:0:0
 
 N:51:Himlad
+A:52:56:49:44:48:37:50:55
 
 N:52:Himring
+A:57:56:51:55:0:0:0:0
 
 N:53:Dr[^u]n
+A:30:54:33:0:0:0:0:0
 
 N:54:Ladros
+A:30:38:57:55:46:33:53:0
 
 N:55:Pass of Aglon
+A:57:52:51:50:46:54:0:0
 
 N:56:Maglor's Gap
+A:38:49:51:52:57:0:0:0
 
 N:57:March of Maedhros
+A:38:56:52:5:54:0:0:0
 
 N:58:Lothlann
+A:30:59:74:61:56:57:54:0
 
 N:59:Ered Engrin
+A:74:38:30:60:40:0:0:0
 
 N:60:Thangorodrim
+A:59:30:0:0:0:0:0:0
 
 N:61:Ered Luin
+A:38:74:71:67:65:62:42:49
 
 N:62:Tol Galen
+A:61:65:63:42:0:0:0:0
 
 N:63:Anfalas
+A:65:64:42:62:0:0:0:0
 
-N:64:Langstrand
+N:64:Ered Nimrais
+A:66:63:65:0:0:0:0:0
 
-N:65:Ered Nimrais
+N:65:Enedwaith
+A:67:68:69:66:64:63:62:61
 
-N:66:Enedwaith
+N:66:Rohan
+A:70:64:65:69:0:0:0:0
 
-N:67:Rohan
+N:67:Eriador
+A:71:72:69:68:65:61:0:0
 
-N:68:Eriador
+N:68:Dunland
+A:67:69:65:0:0:0:0:0
 
-N:69:Dunland
+N:69:Hithaeglir
+A:74:73:70:66:65:68:67:72
 
-N:70:Hithaeglir
+N:70:Fangorn
+A:73:66:69:0:0:0:0:0
 
-N:71:Fangorn
+N:71:Arnor
+A:74:72:67:61:0:0:0:0
 
-N:72:Eregion
+N:72:Ettenmoors
+A:74:69:67:71:0:0:0:0
 
-N:73:Arnor
+N:73:Anduin Vale
+A:74:70:69:0:0:0:0:0
 
-N:74:Ettenmoors
+N:74:Northern Waste
+A:59:73:69:72:71:61:38:0
 
-N:75:Anduin Vale
-
-N:76:Northern Waste
-
-N:77:Isle of Balar
+N:75:South Beleriand
+A:39:43:42:41:20:23:24:0
