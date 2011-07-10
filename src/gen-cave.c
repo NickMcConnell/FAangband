@@ -380,10 +380,11 @@ void destroy_level(bool new_level)
 		    }
 
 		    /* No longer part of a room or vault */
-		    cave_info[y][x] &= ~(CAVE_ROOM | CAVE_ICKY);
+		    cave_off(cave_info[y][x], CAVE_ROOM);
+		    cave_off(cave_info[y][x], CAVE_ICKY);
 
 		    /* No longer illuminated */
-		    cave_info[y][x] &= ~(CAVE_GLOW);
+		    cave_off(cave_info[y][x], CAVE_GLOW);
 		}
 	    }
 	}
@@ -804,11 +805,11 @@ static void try_door(int y0, int x0)
 
 
     /* Ignore walls */
-    if (cave_info[y0][x0] & (CAVE_WALL))
+    if (cave_has(cave_info[y0][x0], CAVE_WALL))
 	return;
 
     /* Ignore room grids */
-    if (cave_info[y0][x0] & (CAVE_ROOM))
+    if (cave_has(cave_info[y0][x0], CAVE_ROOM))
 	return;
 
     /* Occasional door (if allowed) */
@@ -820,11 +821,11 @@ static void try_door(int y0, int x0)
 	    x = x0 + ddx_ddd[i];
 
 	    /* Skip impassable grids (or trees) */
-	    if (cave_info[y][x] & (CAVE_WALL))
+	    if (cave_has(cave_info[y][x], CAVE_WALL))
 		continue;
 
 	    /* Skip grids inside rooms */
-	    if (cave_info[y][x] & (CAVE_ROOM))
+	    if (cave_has(cave_info[y][x], CAVE_ROOM))
 		continue;
 
 	    /* We require at least two walls outside of rooms. */
@@ -1001,7 +1002,8 @@ void build_tunnel(int start_room, int end_room)
 	    tmp = get_room_index(row1, col1);
 
 	    /* We're in our destination room - head straight for target. */
-	    if ((tmp == end_room) && (cave_info[row1][col1] & (CAVE_ROOM))) {
+	    if ((tmp == end_room) && 
+		cave_has(cave_info[row1][col1], CAVE_ROOM)) {
 		correct_dir(&row_dir, &col_dir, row1, col1, row2, col2);
 	    }
 
@@ -1231,7 +1233,7 @@ void build_tunnel(int start_room, int end_room)
 
 	    /* Forbid re-entry near this piercing. */
 	    if ((!unalterable(cave_feat[row1 + row_dir][col1 + col_dir]))
-		&& (cave_info[row1][col1] & (CAVE_ROOM))) {
+		&& cave_has(cave_info[row1][col1], CAVE_ROOM)) {
 		if (row_dir) {
 		    for (x = col1 - 3; x <= col1 + 3; x++) {
 			/* Convert adjacent "outer" walls */
@@ -1461,7 +1463,7 @@ void build_tunnel(int start_room, int end_room)
 	}
 
 	/* Travel quickly through rooms. */
-	else if (cave_info[tmp_row][tmp_col] & (CAVE_ROOM)) {
+	else if (cave_has(cave_info[tmp_row][tmp_col], CAVE_ROOM)) {
 	    /* Accept the location */
 	    row1 = tmp_row;
 	    col1 = tmp_col;
@@ -1784,7 +1786,7 @@ extern void cave_gen(void)
 /* Empty levels are useful for testing rooms. */
 #if 0
 	    /* Create bare floors */
-	    cave_info[y][x] &= ~(CAVE_WALL);
+	    cave_off(cave_info[y][x], CAVE_WALL);
 	    cave_feat[y][x] = FEAT_FLOOR;
 
 	    break;
@@ -1792,7 +1794,7 @@ extern void cave_gen(void)
 #endif				/* End of empty level testing code */
 
 	    /* Create granite wall */
-	    cave_info[y][x] |= (CAVE_WALL);
+	    cave_on(cave_info[y][x], CAVE_WALL);
 	    cave_feat[y][x] = FEAT_WALL_EXTRA;
 	}
     }
@@ -2071,7 +2073,7 @@ extern void cave_gen(void)
     /* Clear "temp" flags. */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_TEMP);
+	    cave_off(cave_info[y][x], CAVE_TEMP);
 	}
     }
 }

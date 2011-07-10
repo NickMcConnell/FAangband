@@ -1611,7 +1611,7 @@ bool is_detected(int y, int x)
 	    continue;
 
 	/* Return false if undetected */
-	if ((cave_info2[yy][xx] & (CAVE2_DTRAP)) == 0)
+	if (!cave_has(cave_info[yy][xx], CAVE_DTRAP))
 	    return (FALSE);
     }
 
@@ -1688,7 +1688,7 @@ void monster_swap(int y1, int x1, int y2, int x2)
 	bool old_dtrap, new_dtrap;
 
 	/* Calculate changes in dtrap status */
-	old_dtrap = cave_info2[y1][x1] & (CAVE2_DTRAP);
+	old_dtrap = cave_has(cave_info[y1][x1], CAVE_DTRAP);
 	new_dtrap = is_detected(y2, x2);
 
 	/* Note the change in the detect status */

@@ -1522,57 +1522,36 @@ int rd_dungeon(u32b version)
   
     /*** Run length decoding ***/
   
-    /* Load the dungeon data */
-    for (x = y = 0; y < DUNGEON_HGT; )
+    /* Loop across bytes of cave_info */
+    for (n = 0; n < CAVE_SIZE; n++)
     {
-	/* Grab RLE info */
-	rd_byte(&count);
-	rd_byte(&tmp8u);
-      
-	/* Apply the RLE info */
-	for (i = count; i > 0; i--)
+	/* Load the dungeon data */
+	for (x = y = 0; y < DUNGEON_HGT; )
 	{
-	    /* Extract "info" */
-	    cave_info[y][x] = tmp8u;
-	  
-	    /* Advance/Wrap */
-	    if (++x >= DUNGEON_WID)
+	    /* Grab RLE info */
+	    rd_byte(&count);
+	    rd_byte(&tmp8u);
+	    
+	    /* Apply the RLE info */
+	    for (i = count; i > 0; i--)
 	    {
-		/* Wrap */
-		x = 0;
-	      
+		/* Extract "info" */
+		cave_info[y][x][n] = tmp8u;
+	  
 		/* Advance/Wrap */
-		if (++y >= DUNGEON_HGT) break;
+		if (++x >= DUNGEON_WID)
+		{
+		    /* Wrap */
+		    x = 0;
+		    
+		    /* Advance/Wrap */
+		    if (++y >= DUNGEON_HGT) break;
+		}
 	    }
 	}
     }
 
-    /* Load the dungeon data */
-    for (x = y = 0; y < DUNGEON_HGT; )
-    {
-	/* Grab RLE info */
-	rd_byte(&count);
-	rd_byte(&tmp8u);
-	  
-	/* Apply the RLE info */
-	for (i = count; i > 0; i--)
-	{
-	    /* Extract "info" */
-	    cave_info2[y][x] = tmp8u;
-	      
-	    /* Advance/Wrap */
-	    if (++x >= DUNGEON_WID)
-	    {
-		/* Wrap */
-		x = 0;
-		  
-		/* Advance/Wrap */
-		if (++y >= DUNGEON_HGT) break;
-	    }
-	}
-    }
- 
-    /*** Run length decoding ***/
+   /*** Run length decoding ***/
   
     /* Load the dungeon data */
     for (x = y = 0; y < DUNGEON_HGT; )

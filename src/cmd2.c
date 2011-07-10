@@ -1466,7 +1466,7 @@ int count_feats(int *y, int *x, bool(*test) (int feat), bool under)
 	    continue;
 
 	/* Must have knowledge */
-	if (!(cave_info[yy][xx] & (CAVE_MARK)))
+	if (!cave_has(cave_info[yy][xx], CAVE_MARK))
 	    continue;
 
 	/* Not looking for this feature */
@@ -1547,7 +1547,7 @@ int coords_to_dir(int y, int x)
 static bool do_cmd_open_test(int y, int x)
 {
     /* Must have knowledge */
-    if (!(cave_info[y][x] & (CAVE_MARK))) {
+    if (!cave_has(cave_info[y][x], CAVE_MARK)) {
 	/* Message */
 	msg_print("You see nothing there.");
 
@@ -1744,7 +1744,7 @@ void do_cmd_open(cmd_code code, cmd_arg args[])
 static bool do_cmd_close_test(int y, int x)
 {
     /* Must have knowledge */
-    if (!(cave_info[y][x] & (CAVE_MARK))) {
+    if (!cave_has(cave_info[y][x], CAVE_MARK)) {
 	/* Message */
 	msg_print("You see nothing there.");
 
@@ -1865,7 +1865,7 @@ static bool do_cmd_tunnel_test(int y, int x)
     feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
     /* Must have knowledge */
-    if (!(cave_info[y][x] & (CAVE_MARK))) {
+    if (!cave_has(cave_info[y][x], CAVE_MARK)) {
 	/* Message */
 	msg_print("You see nothing there.");
 
@@ -1908,7 +1908,8 @@ static bool twall(int y, int x)
     sound(MSG_DIG);
 
     /* Forget the wall */
-    cave_info[y][x] &= ~(CAVE_MARK | CAVE_WALL);
+    cave_off(cave_info[y][x], CAVE_MARK);
+    cave_off(cave_info[y][x], CAVE_WALL);
 
     /* Remove the feature */
     cave_set_feat(y, x, FEAT_FLOOR);
@@ -2188,7 +2189,7 @@ void do_cmd_tunnel(cmd_code code, cmd_arg args[])
 static bool do_cmd_disarm_test(int y, int x)
 {
     /* Must have knowledge */
-    if (!(cave_info[y][x] & (CAVE_MARK))) {
+    if (!cave_has(cave_info[y][x], CAVE_MARK)) {
 	/* Message */
 	msg_print("You see nothing there.");
 
@@ -2293,7 +2294,7 @@ extern bool do_cmd_disarm_aux(int y, int x)
 	gain_exp(power);
 
 	/* Forget the trap */
-	cave_info[y][x] &= ~(CAVE_MARK);
+	cave_off(cave_info[y][x], CAVE_MARK);
 
 	/* Remove the trap (trees are hackish) */
 	if (tf_has(f_ptr->flags, TF_TREE))
@@ -2406,7 +2407,7 @@ void do_cmd_disarm(cmd_code code, cmd_arg args[])
 static bool do_cmd_bash_test(int y, int x)
 {
     /* Must have knowledge */
-    if (!(cave_info[y][x] & (CAVE_MARK))) {
+    if (!cave_has(cave_info[y][x], CAVE_MARK)) {
 	/* Message */
 	msg_print("You see nothing there.");
 
@@ -2616,7 +2617,7 @@ void do_cmd_alter_aux(int dir)
     f_ptr = &f_info[feat];
 
     /* Must have knowledge to know feature XXX XXX */
-    if (!(cave_info[y][x] & (CAVE_MARK)))
+    if (!cave_has(cave_info[y][x], CAVE_MARK))
 	feat = FEAT_NONE;
 
 
@@ -2745,7 +2746,7 @@ static bool get_spike(int *ip)
 bool do_cmd_spike_test(int y, int x)
 {
     /* Must have knowledge */
-    if (!(cave_info[y][x] & (CAVE_MARK))) {
+    if (!cave_has(cave_info[y][x], CAVE_MARK)) {
 	/* Message */
 	msg_print("You see nothing there.");
 
@@ -2869,7 +2870,7 @@ static bool do_cmd_walk_test(int y, int x)
 
 
     /* Hack -- walking obtains knowledge XXX XXX */
-    if (!(cave_info[y][x] & (CAVE_MARK)))
+    if (!cave_has(cave_info[y][x], CAVE_MARK))
 	return (TRUE);
 
     /* Check for being stuck in a web */

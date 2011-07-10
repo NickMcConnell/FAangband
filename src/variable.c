@@ -506,8 +506,7 @@ u16b (*race_prob)[32];
  * These arrays are padded to a width of 256 to allow fast access to elements
  * in the array via "grid" values (see the GRID() macros).
  */
-byte (*cave_info)[256];
-byte (*cave_info2)[256];
+bitflag (*cave_info)[256][CAVE_SIZE];
 
 /**
  * Array[DUNGEON_HGT][DUNGEON_WID] of cave grid feature codes

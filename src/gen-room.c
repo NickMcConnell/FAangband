@@ -157,9 +157,9 @@ static bool generate_room(int y1, int x1, int y2, int x2, int light)
 
     for (y = y1; y <= y2; y++) {
 	for (x = x1; x <= x2; x++) {
-	    cave_info[y][x] |= (CAVE_ROOM);
+	    cave_on(cave_info[y][x], CAVE_ROOM);
 	    if (light)
-		cave_info[y][x] |= (CAVE_GLOW);
+		cave_on(cave_info[y][x], CAVE_GLOW);
 	}
     }
 
@@ -192,7 +192,7 @@ extern void generate_mark(int y1, int x1, int y2, int x2, int flg)
 
     for (y = y1; y <= y2; y++) {
 	for (x = x1; x <= x2; x++) {
-	    cave_info[y][x] |= (flg);
+	    cave_on(cave_info[y][x], flg);
 	}
     }
 }
@@ -710,7 +710,7 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2, bool light,
     for (y = y1 + 1; y < y2; y++) {
 	for (x = x1 + 1; x < x2; x++) {
 	    /* Do not touch "icky" grids. */
-	    if (cave_info[y][x] & (CAVE_ICKY))
+	    if (cave_has(cave_info[y][x], CAVE_ICKY))
 		continue;
 
 	    /* Do not touch occupied grids. */
@@ -749,14 +749,14 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2, bool light,
 				cave_set_feat(y, x, feat);
 
 				if (feat == FEAT_FLOOR)
-				    cave_info[y][x] |= (CAVE_ROOM);
+				    cave_on(cave_info[y][x], CAVE_ROOM);
 				else
-				    cave_info[y][x] &= ~(CAVE_ROOM);
+				    cave_off(cave_info[y][x], CAVE_ROOM);
 
 				if (light)
-				    cave_info[y][x] |= (CAVE_GLOW);
+				    cave_on(cave_info[y][x], CAVE_GLOW);
 				else
-				    cave_info[y][x] &= ~(CAVE_GLOW);
+				    cave_off(cave_info[y][x], CAVE_GLOW);
 			    }
 
 			    /* If new feature is non-floor passable terrain,
@@ -777,7 +777,7 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2, bool light,
 
 				/* Light grid. */
 				if (light)
-				    cave_info[y][x] |= (CAVE_GLOW);
+				    cave_on(cave_info[y][x], CAVE_GLOW);
 			    }
 			}
 
@@ -805,11 +805,11 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2, bool light,
 			int xx = x + ddx_ddd[d];
 
 			/* Join to room */
-			cave_info[yy][xx] |= (CAVE_ROOM);
+			cave_on(cave_info[yy][xx], CAVE_ROOM);
 
 			/* Illuminate if requested. */
 			if (light)
-			    cave_info[yy][xx] |= (CAVE_GLOW);
+			    cave_on(cave_info[yy][xx], CAVE_GLOW);
 
 			/* Look for dungeon granite. */
 			if (cave_feat[yy][xx] == FEAT_WALL_EXTRA) {
@@ -1103,7 +1103,7 @@ static bool build_type1(void)
 		if (!light) {
 		    for (y = y1 - 1; y <= y2 + 1; y++) {
 			for (x = x1 - 1; x <= x2 + 1; x++) {
-			    cave_info[y][x] |= (CAVE_GLOW);
+			    cave_on(cave_info[y][x], CAVE_GLOW);
 			}
 		    }
 		}
@@ -2277,11 +2277,11 @@ static bool build_type6(void)
 			continue;
 
 		    /* Turn into room. */
-		    cave_info[yy][xx] |= (CAVE_ROOM);
+		    cave_on(cave_info[yy][xx], CAVE_ROOM);
 
 		    /* Illuminate if requested. */
 		    if (light)
-			cave_info[yy][xx] |= (CAVE_GLOW);
+			cave_on(cave_info[yy][xx], CAVE_GLOW);
 		}
 	    }
 	}
@@ -2399,11 +2399,14 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, cptr data,
 
 	    /* Part of a vault.  Can be lit.  May be "icky". */
 	    if (icky)
-		cave_info[y][x] |= (CAVE_ROOM | CAVE_ICKY);
+	    {
+		cave_on(cave_info[y][x], CAVE_ICKY);
+		cave_on(cave_info[y][x], CAVE_ROOM);
+	    }
 	    else if (stage_map[p_ptr->stage][STAGE_TYPE] == CAVE)
-		cave_info[y][x] |= (CAVE_ROOM);
+		cave_on(cave_info[y][x], CAVE_ROOM);
 	    if (light)
-		cave_info[y][x] |= (CAVE_GLOW);
+		cave_on(cave_info[y][x], CAVE_GLOW);
 
 	    /* Analyze the grid */
 	    switch (*t) {

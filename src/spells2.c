@@ -1596,7 +1596,7 @@ bool detect_traps(int range, bool show)
 		}
 
 		/* Mark grid as detected */
-		cave_info2[y][x] |= (CAVE2_DTRAP);
+		cave_on(cave_info[y][x], CAVE_DTRAP);
 	    }
 	}
     }

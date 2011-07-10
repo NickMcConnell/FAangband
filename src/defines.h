@@ -1729,6 +1729,23 @@ enum
 
 #define CAVE_SIZE                FLAG_SIZE(CAVE_MAX)
 
+#define cave_has(f, flag)        flag_has_dbg(f, CAVE_SIZE, flag, #f, #flag)
+#define cave_next(f, flag)       flag_next(f, CAVE_SIZE, flag)
+#define cave_is_empty(f)         flag_is_empty(f, CAVE_SIZE)
+#define cave_is_full(f)          flag_is_full(f, CAVE_SIZE)
+#define cave_is_inter(f1, f2)    flag_is_inter(f1, f2, CAVE_SIZE)
+#define cave_is_subset(f1, f2)   flag_is_subset(f1, f2, CAVE_SIZE)
+#define cave_is_equal(f1, f2)    flag_is_equal(f1, f2, CAVE_SIZE)
+#define cave_on(f, flag)         flag_on_dbg(f, CAVE_SIZE, flag, #f, #flag)
+#define cave_off(f, flag)        flag_off(f, CAVE_SIZE, flag)
+#define cave_wipe(f)             flag_wipe(f, CAVE_SIZE)
+#define cave_setall(f)           flag_setall(f, CAVE_SIZE)
+#define cave_negate(f)           flag_negate(f, CAVE_SIZE)
+#define cave_copy(f1, f2)        flag_copy(f1, f2, CAVE_SIZE)
+#define cave_union(f1, f2)       flag_union(f1, f2, CAVE_SIZE)
+#define cave_comp_union(f1, f2)  flag_comp_union(f1, f2, CAVE_SIZE)
+#define cave_inter(f1, f2)       flag_inter(f1, f2, CAVE_SIZE)
+#define cave_diff(f1, f2)        flag_diff(f1, f2, CAVE_SIZE)
 
 /*** Object flags ***/
 

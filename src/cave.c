@@ -767,17 +767,17 @@ static void special_wall_display(byte *a, char *c, bool in_view, int feat)
 bool dtrap_edge(int y, int x) 
 { 
     /* Check if the square is a dtrap in the first place */ 
-    if (!cave_info2[y][x] & CAVE2_DTRAP) return FALSE; 
+    if (!cave_has(cave_info[y][x], CAVE_DTRAP)) return FALSE; 
 
     /* Check for non-dtrap adjacent grids */ 
     if (in_bounds_fully(y + 1, x    ) && 
-	(!cave_info2[y + 1][x    ] & CAVE2_DTRAP)) return TRUE; 
+	(!cave_has(cave_info[y + 1][x    ], CAVE_DTRAP))) return TRUE; 
     if (in_bounds_fully(y    , x + 1) && 
-	(!cave_info2[y    ][x + 1] & CAVE2_DTRAP)) return TRUE; 
+	(!cave_has(cave_info[y    ][x + 1], CAVE_DTRAP))) return TRUE; 
     if (in_bounds_fully(y - 1, x    ) && 
-	(!cave_info2[y - 1][x    ] & CAVE2_DTRAP)) return TRUE; 
+	(!cave_has(cave_info[y - 1][x    ], CAVE_DTRAP))) return TRUE; 
     if (in_bounds_fully(y    , x - 1) && 
-	(!cave_info2[y    ][x - 1] & CAVE2_DTRAP)) return TRUE; 
+	(!cave_has(cave_info[y    ][x - 1], CAVE_DTRAP))) return TRUE; 
 
     return FALSE; 
 } 
@@ -1080,14 +1080,13 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 void map_info(unsigned y, unsigned x, grid_data *g)
 {
     object_type *o_ptr;
-    byte info, info2;
+    bitflag info[CAVE_SIZE];
     feature_type *f_ptr;
 
     assert(x < DUNGEON_WID);
     assert(y < DUNGEON_HGT);
 
     info = cave_info[y][x];
-    info2 = cave_info2[y][x];
 	
     /* Default "clear" values, others will be set later where appropriate. */
     g->first_k_idx = 0;
@@ -1096,14 +1095,14 @@ void map_info(unsigned y, unsigned x, grid_data *g)
 
     /* Set things we can work out right now */
     g->f_idx = cave_feat[y][x];
-    g->in_view = (info & CAVE_SEEN) ? TRUE : FALSE;
+    g->in_view = cave_has(info, CAVE_SEEN) ? TRUE : FALSE;
     g->is_player = (cave_m_idx[y][x] < 0) ? TRUE : FALSE;
     g->m_idx = (g->is_player) ? 0 : cave_m_idx[y][x];
     g->hallucinate = p_ptr->timed[TMD_IMAGE] ? TRUE : FALSE;
     g->trapborder = (dtrap_edge(y, x)) ? TRUE : FALSE;
     f_ptr = &f_info[g->f_idx];
     /* If the grid is memorised or can currently be seen */
-    if ((info & CAVE_MARK) || (info & CAVE_SEEN))
+    if (cave_has(info, CAVE_MARK) || cave_has(info, CAVE_SEEN))
     {
 	/* Apply "mimic" field */
 	g->f_idx = f_ptr->mimic;
@@ -1112,17 +1111,17 @@ void map_info(unsigned y, unsigned x, grid_data *g)
 	if ((g->f_idx == FEAT_FLOOR) || (g->f_idx == FEAT_GRASS))
 	{
 	    /* Handle currently visible grids */
-	    if (info & CAVE_SEEN)
+	    if (cave_has(info, CAVE_SEEN))
 	    {
 		/* Only lit by "torch" light */
-		if (info & CAVE_GLOW)
+		if (cave_has(info, CAVE_GLOW))
 		    g->lighting = LIGHT_GLOW;
 		else
 		    g->lighting = LIGHT_TORCH;
 	    }
 
 	    /* Handle "dark" grids and "blindness" */
-	    else if (p_ptr->timed[TMD_BLIND] || !(info & CAVE_GLOW))
+	    else if (p_ptr->timed[TMD_BLIND] || !cave_has(info, CAVE_GLOW))
 		g->lighting = LIGHT_DARK;
 	}
     }
@@ -1427,7 +1426,7 @@ void print_rel(char c, byte a, int y, int x)
  */
 void note_spot(int y, int x)
 {
-	byte info;
+	bitflag info[CAVE_SIZE];
 
 	object_type *o_ptr;
 
@@ -1435,7 +1434,7 @@ void note_spot(int y, int x)
 	info = cave_info[y][x];
 
 	/* Require "seen" flag */
-	if (!(info & (CAVE_SEEN))) return;
+	if (!cave_has(info, CAVE_SEEN)) return;
 
 
 	/* Hack -- memorize objects */
@@ -1447,17 +1446,17 @@ void note_spot(int y, int x)
 
 
 	/* Hack -- memorize grids */
-	if (!(info & (CAVE_MARK)))
+	if (!cave_has(info, CAVE_MARK))
 	{
 		/* Memorize some "boring" grids */
 		if (cave_feat[y][x] <= FEAT_INVIS)
 		{
 			/* Option -- memorize certain floors */
-			if (((info & (CAVE_GLOW)) && OPT(view_perma_grids)) ||
+		    if ((cave_has(info, CAVE_GLOW) && OPT(view_perma_grids)) ||
 			    OPT(view_torch_grids))
 			{
-				/* Memorize */
-				cave_info[y][x] |= (CAVE_MARK);
+			    /* Memorize */
+			    cave_on(cave_info[y][x], CAVE_MARK);
 			}
 		}
 
@@ -1465,7 +1464,7 @@ void note_spot(int y, int x)
 		else
 		{
 			/* Memorize */
-			cave_info[y][x] |= (CAVE_MARK);
+		    cave_on(cave_info[y][x], CAVE_MARK);
 		}
 	}
 }
@@ -2994,7 +2993,7 @@ void forget_view(void)
     int fast_view_n = view_n;
     u16b *fast_view_g = view_g;
 
-    byte *fast_cave_info = &cave_info[0][0];
+    byte *fast_cave_info = &cave_info[0][0][0];
 
 
     /* None to forget */
@@ -3013,7 +3012,7 @@ void forget_view(void)
 	x = GRID_X(g);
 
 	/* Clear "CAVE_VIEW" and "CAVE_SEEN" flags */
-	fast_cave_info[g] &= ~(CAVE_VIEW | CAVE_SEEN);
+	fast_cave_info[g * CAVE_SIZE] &= ~(CAVE_VIEW | CAVE_SEEN);
 
 	/* Only light the spot if is on the panel (can change due to resizing */
 	if (!panel_contains(y, x))
@@ -3136,7 +3135,7 @@ void update_view(void)
     int fast_temp_n = 0;
     u16b *fast_temp_g = temp_g;
 
-    byte *fast_cave_info = &cave_info[0][0];
+    byte *fast_cave_info = &cave_info[0][0][0];
 
     byte info;
 
@@ -3149,7 +3148,7 @@ void update_view(void)
 	g = fast_view_g[i];
 
 	/* Get grid info */
-	info = fast_cave_info[g];
+	info = fast_cave_info[g * CAVE_SIZE];
 
 	/* Save "CAVE_SEEN" grids */
 	if (info & (CAVE_SEEN)) {
@@ -3164,7 +3163,7 @@ void update_view(void)
 	info &= ~(CAVE_VIEW | CAVE_SEEN);
 
 	/* Save cave info */
-	fast_cave_info[g] = info;
+	fast_cave_info[g * CAVE_SIZE] = info;
     }
 
     /* Reset the "view" array */
@@ -3188,7 +3187,7 @@ void update_view(void)
     g = pg;
 
     /* Get grid info */
-    info = fast_cave_info[g];
+    info = fast_cave_info[g * CAVE_SIZE];
 
     /* Assume viewable */
     info |= (CAVE_VIEW);
@@ -3206,7 +3205,7 @@ void update_view(void)
     }
 
     /* Save cave info */
-    fast_cave_info[g] = info;
+    fast_cave_info[g * CAVE_SIZE] = info;
 
     /* Save in array */
     fast_view_g[fast_view_n++] = g;
@@ -3251,7 +3250,7 @@ void update_view(void)
 		g = pg + *((s16b *) (((byte *) (p)) + o2));
 
 		/* Get grid info */
-		info = fast_cave_info[g];
+		info = fast_cave_info[g * CAVE_SIZE];
 
 		/* Handle wall */
 		if (info & (CAVE_WALL)) {
@@ -3293,7 +3292,7 @@ void update_view(void)
 			}
 
 			/* Save cave info */
-			fast_cave_info[g] = info;
+			fast_cave_info[g * CAVE_SIZE] = info;
 
 			/* Save in array */
 			fast_view_g[fast_view_n++] = g;
@@ -3331,7 +3330,7 @@ void update_view(void)
 			}
 
 			/* Save cave info */
-			fast_cave_info[g] = info;
+			fast_cave_info[g * CAVE_SIZE] = info;
 
 			/* Save in array */
 			fast_view_g[fast_view_n++] = g;
@@ -3352,7 +3351,7 @@ void update_view(void)
 	    g = fast_view_g[i];
 
 	    /* Grid cannot be "CAVE_SEEN" */
-	    fast_cave_info[g] &= ~(CAVE_SEEN);
+	    fast_cave_info[g * CAVE_SIZE] &= ~(CAVE_SEEN);
 	}
     }
 
@@ -3362,7 +3361,7 @@ void update_view(void)
 	g = fast_view_g[i];
 
 	/* Get grid info */
-	info = fast_cave_info[g];
+	info = fast_cave_info[g * CAVE_SIZE];
 
 	/* Was not "CAVE_SEEN", is now "CAVE_SEEN" */
 	if ((info & (CAVE_SEEN)) && !(info & (CAVE_TEMP))) {
@@ -3386,13 +3385,13 @@ void update_view(void)
 	g = fast_temp_g[i];
 
 	/* Get grid info */
-	info = fast_cave_info[g];
+	info = fast_cave_info[g * CAVE_SIZE];
 
 	/* Clear "CAVE_TEMP" flag */
 	info &= ~(CAVE_TEMP);
 
 	/* Save cave info */
-	fast_cave_info[g] = info;
+	fast_cave_info[g * CAVE_SIZE] = info;
 
 	/* Was "CAVE_SEEN", is now not "CAVE_SEEN" */
 	if (!(info & (CAVE_SEEN))) {
@@ -3861,7 +3860,7 @@ void map_area(int y, int x, bool extended)
 		/* Memorize normal features */
 		if (cave_feat[y][x] > FEAT_INVIS) {
 		    /* Memorize the object */
-		    cave_info[y][x] |= (CAVE_MARK);
+		    cave_on(cave_info[y][x], CAVE_MARK);
 		}
 
 		/* Memorize known walls */
@@ -3872,7 +3871,7 @@ void map_area(int y, int x, bool extended)
 		    /* All walls are "checked" */
 		    if (cave_feat[yy][xx] >= FEAT_SECRET) {
 			/* Memorize the walls */
-			cave_info[yy][xx] |= (CAVE_MARK);
+			cave_on(cave_info[yy][xx], CAVE_MARK);
 		    }
 		}
 	    }
@@ -3923,7 +3922,7 @@ void wiz_light(bool wizard)
 
 	/* Skip objects in vaults, if not a wizard. */
 	if ((wizard == FALSE)
-	    && (cave_info[o_ptr->iy][o_ptr->ix] & (CAVE_ICKY)))
+	    && cave_has(cave_info[o_ptr->iy][o_ptr->ix], CAVE_ICKY))
 	    continue;
 
 	/* Memorize */
@@ -3944,10 +3943,11 @@ void wiz_light(bool wizard)
 		    int xx = x + ddx_ddd[i];
 
 		    /* Perma-light the grid */
-		    cave_info[yy][xx] |= (CAVE_GLOW);
+		    cave_on(cave_info[yy][xx], CAVE_GLOW);
 
 		    /* Skip non-wall vault features if not a wizard. */
-		    if ((wizard == FALSE) && (cave_info[yy][xx] & (CAVE_ICKY))
+		    if ((wizard == FALSE) && 
+			cave_has(cave_info[yy][xx], CAVE_ICKY)
 			&& ((cave_feat[yy][xx] < FEAT_SECRET)
 			    || (cave_feat[yy][xx] > FEAT_PERM_SOLID)))
 			continue;
@@ -3955,13 +3955,13 @@ void wiz_light(bool wizard)
 		    /* Memorize normal features */
 		    if (cave_feat[yy][xx] > FEAT_INVIS) {
 			/* Memorize the grid */
-			cave_info[yy][xx] |= (CAVE_MARK);
+			cave_on(cave_info[yy][xx], CAVE_MARK);
 		    }
 
 		    /* Normally, memorize floors (see above). */
 		    if (OPT(view_perma_grids) && !OPT(view_torch_grids)) {
 			/* Memorize the grid */
-			cave_info[yy][xx] |= (CAVE_MARK);
+			cave_on(cave_info[yy][xx], CAVE_MARK);
 		    }
 		}
 	    }
@@ -3989,8 +3989,8 @@ void wiz_dark(void)
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
 	    /* Process the grid */
-	    cave_info[y][x] &= ~(CAVE_MARK);
-	    cave_info2[y][x] &= ~(CAVE2_DTRAP);
+	    cave_off(cave_info[y][x], CAVE_MARK);
+	    cave_off(cave_info[y][x], CAVE_DTRAP);
 	}
     }
 
@@ -4033,11 +4033,11 @@ void illuminate(void)
 	    if (cave_feat[y][x] == FEAT_PERM_SOLID) {
 
 		/* Darken the grid */
-		cave_info[y][x] &= ~(CAVE_GLOW);
+		cave_off(cave_info[y][x], CAVE_GLOW);
 
 		/* Hack -- Forget grids */
 		if (OPT(view_perma_grids)) {
-		    cave_info[y][x] &= ~(CAVE_MARK);
+		    cave_off(cave_info[y][x], CAVE_MARK);
 		}
 	    }
 
@@ -4045,22 +4045,22 @@ void illuminate(void)
 	    else if (cave_feat[y][x] == FEAT_PERM_EXTRA)
             {
 		/* Illuminate the grid */
-		cave_info[y][x] |= (CAVE_GLOW);
+		cave_on(cave_info[y][x], CAVE_GLOW);
               
 		/* Memorize the grid */
-		cave_info[y][x] |= (CAVE_MARK);
+		cave_on(cave_info[y][x], CAVE_MARK);
             }
           
 	    /* Viewable grids (light) */
 	    else if (is_daylight) {
 		/* Illuminate the grid */
-		cave_info[y][x] |= (CAVE_GLOW);
+		cave_on(cave_info[y][x], CAVE_GLOW);
 	    }
 
 	    /* Viewable grids (dark) */
 	    else {
 		/* Darken the grid */
-		cave_info[y][x] &= ~(CAVE_GLOW);
+		cave_off(cave_info[y][x], CAVE_GLOW);
 	    }
 	}
     }
@@ -4073,11 +4073,11 @@ void illuminate(void)
 	    if ((cave_feat[y][x] >= FEAT_SHOP_HEAD)
 		&& (cave_feat[y][x] <= FEAT_SHOP_TAIL)) {
 		/* Illuminate the grid */
-		cave_info[y][x] |= (CAVE_GLOW);
+		cave_on(cave_info[y][x], CAVE_GLOW);
 		
 		/* Hack -- Memorize grids */
 		if (OPT(view_perma_grids)) {
-		    cave_info[y][x] |= (CAVE_MARK);
+		    cave_on(cave_info[y][x], CAVE_MARK);
 		}
 		
 		for (i = 0; i < 8; i++) {
@@ -4085,11 +4085,11 @@ void illuminate(void)
 		    int xx = x + ddx_ddd[i];
 
 		    /* Illuminate the grid */
-		    cave_info[yy][xx] |= (CAVE_GLOW);
+		    cave_on(cave_info[yy][xx], CAVE_GLOW);
 
 		    /* Hack -- Memorize grids */
 		    if (OPT(view_perma_grids)) {
-			cave_info[yy][xx] |= (CAVE_MARK);
+			cave_on(cave_info[yy][xx], CAVE_MARK);
 		    }
 		}
 	    }
@@ -4118,12 +4118,12 @@ void cave_set_feat(int y, int x, int feat)
 
     /* Handle "floor" grids. */
     if (tf_has(f_ptr->flags, TF_LOS) || tf_has(f_ptr->flags, TF_SHOP)) {
-	cave_info[y][x] &= ~(CAVE_WALL);
+	cave_off(cave_info[y][x], CAVE_WALL);
     }
 
     /* Handle "wall"/etc grids */
     else {
-	cave_info[y][x] |= (CAVE_WALL);
+	cave_on(cave_info[y][x], CAVE_WALL);
     }
 
     /* Notice/Redraw */

@@ -49,7 +49,7 @@ void get_feats(int *surroundings)
 	    continue;
 
 	/* Must have knowledge */
-	if (!(cave_info[yy][xx] & (CAVE_MARK)))
+	if (!cave_has(cave_info[yy][xx], CAVE_MARK))
 	    continue;
 
 	/* Record the feature */

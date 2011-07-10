@@ -847,7 +847,7 @@ void wr_stores(void)
  */
 void wr_dungeon(void)
 {
-    int y, x;
+    int y, x, i;
   
     byte tmp8u;
   
@@ -867,84 +867,51 @@ void wr_dungeon(void)
     wr_u16b(p_ptr->px);
     wr_u16b(DUNGEON_HGT);
     wr_u16b(DUNGEON_WID);
-    wr_u16b(0);
+    wr_u16b(CAVE_SIZE);
     wr_u16b(0);
   
   
     /*** Simple "Run-Length-Encoding" of cave ***/
   
-    /* Note that this will induce two wasted bytes */
-    count = 0;
-    prev_char = 0;
-  
-    /* Dump the cave */
-    for (y = 0; y < DUNGEON_HGT; y++)
+    /* Loop across bytes of cave_info */
+    for (i = 0; i < CAVE_SIZE; i++)
     {
-	for (x = 0; x < DUNGEON_WID; x++)
+	/* Note that this will induce two wasted bytes */
+	count = 0;
+	prev_char = 0;
+	
+	/* Dump the cave */
+	for (y = 0; y < DUNGEON_HGT; y++)
 	{
-	    /* Extract the important cave_info flags */
-	    tmp8u = (cave_info[y][x] & (IMPORTANT_FLAGS));
-	  
-	    /* If the run is broken, or too full, flush it */
-	    if ((tmp8u != prev_char) || (count == MAX_UCHAR))
+	    for (x = 0; x < DUNGEON_WID; x++)
 	    {
-		wr_byte((byte)count);
-		wr_byte((byte)prev_char);
-		prev_char = tmp8u;
-		count = 1;
-	    }
+		/* Extract the important cave_info flags */
+		tmp8u = cave_info[y][x][i];
 	  
-	    /* Continue the run */
-	    else
-	    {
-		count++;
+		/* If the run is broken, or too full, flush it */
+		if ((tmp8u != prev_char) || (count == MAX_UCHAR))
+		{
+		    wr_byte((byte)count);
+		    wr_byte((byte)prev_char);
+		    prev_char = tmp8u;
+		    count = 1;
+		}
+		
+		/* Continue the run */
+		else
+		{
+		    count++;
+		}
 	    }
 	}
-    }
-  
-    /* Flush the data (if any) */
-    if (count)
-    {
-	wr_byte((byte)count);
-	wr_byte((byte)prev_char);
-    }
-  
-    /* Note that this will induce two wasted bytes */
-    count = 0;
-    prev_char = 0;
-  
-    /* Dump the cave */
-    for (y = 0; y < DUNGEON_HGT; y++)
-    {
-	for (x = 0; x < DUNGEON_WID; x++)
+	
+	/* Flush the data (if any) */
+	if (count)
 	{
-	    /*  Keep all the information from info2 */
-	    tmp8u = cave_info2[y][x];
-	  
-	    /* If the run is broken, or too full, flush it */
-	    if ((tmp8u != prev_char) || (count == MAX_UCHAR))
-	    {
-		wr_byte((byte)count);
-		wr_byte((byte)prev_char);
-		prev_char = tmp8u;
-		count = 1;
-	    }
-	  
-	    /* Continue the run */
-	    else
-	    {
-		count++;
-	    }
+	    wr_byte((byte)count);
+	    wr_byte((byte)prev_char);
 	}
     }
-  
-    /* Flush the data (if any) */
-    if (count)
-    {
-	wr_byte((byte)count);
-	wr_byte((byte)prev_char);
-    }
-  
   
     /*** Simple "Run-Length-Encoding" of cave ***/
   

@@ -1119,10 +1119,10 @@ static size_t prt_state(int row, int col)
  */
 static size_t prt_dtrap(int row, int col)
 {
-    byte info = cave_info2[p_ptr->py][p_ptr->px];
+    bitflag *info = cave_info[p_ptr->py][p_ptr->px];
 
     /* The player is in a trap-detected grid */
-    if (info & (CAVE2_DTRAP)) {
+    if (cave_has(info, CAVE2_DTRAP)) {
 	/* The player is on the border */
 	if (dtrap_edge(p_ptr->py, p_ptr->px))
 	    c_put_str(TERM_YELLOW, "DTrap", row, col);
