@@ -1715,22 +1715,19 @@ enum
 
 
 
-/*** Cave flags ***/
-
 /*
- * Special cave grid flags
+ * Cave flags
  */
-#define CAVE_MARK	0x01 	/* memorized feature */
-#define CAVE_GLOW	0x02 	/* self-illuminating */
-#define CAVE_ICKY	0x04 	/* part of a vault */
-#define CAVE_ROOM	0x08 	/* part of a room */
-#define CAVE_SEEN	0x10 	/* seen flag */
-#define CAVE_VIEW	0x20 	/* view flag */
-#define CAVE_TEMP	0x40 	/* temp flag */
-#define CAVE_WALL	0x80 	/* wall flag */
 
-#define CAVE2_DTRAP	0x001 	/* trap detected grid */
+enum
+{
+	#define CAVE(a,b) CAVE_##a,
+	#include "list-cave-flags.h"
+	#undef CAVE
+	CAVE_MAX
+};
 
+#define CAVE_SIZE                FLAG_SIZE(CAVE_MAX)
 
 
 /*** Object flags ***/
