@@ -500,7 +500,7 @@ static bool target_set_interactive_accept(int y, int x)
     }
 
     /* Interesting memorized features */
-    if (cave_info[y][x] & (CAVE_MARK)) {
+    if (cave_has(cave_info[y][x], CAVE_MARK)) {
 	feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
 	/* Notice interesting things */
@@ -1094,7 +1094,8 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 	feat = f_info[cave_feat[y][x]].mimic;
 
 	/* Require knowledge about grid, or ability to see grid */
-	if (!(cave_info[y][x] & (CAVE_MARK)) && !player_can_see_bold(y, x)) {
+	if (!cave_has(cave_info[y][x], CAVE_MARK) && 
+	    !player_can_see_bold(y, x)) {
 	    /* Forget feature */
 	    feat = FEAT_NONE;
 	}
@@ -1241,12 +1242,13 @@ static int draw_path(u16b * path, char *c, byte * a, int y1, int x1, int y2,
 
 	/* Known walls are blue. */
 	else if (!cave_project(y, x)
-		 && (cave_info[y][x] & (CAVE_MARK)
-		     || player_can_see_bold(y, x))) {
+		 && cave_has(cave_info[y][x], CAVE_MARK)
+		 || player_can_see_bold(y, x)) {
 	    colour = TERM_BLUE;
 	}
 	/* Unknown squares are grey. */
-	else if (!(cave_info[y][x] & (CAVE_MARK)) && !player_can_see_bold(y, x)) {
+	else if (!cave_has(cave_info[y][x], CAVE_MARK) && 
+		 !player_can_see_bold(y, x)) {
 	    colour = TERM_L_DARK;
 	}
 	/* Unoccupied squares are white. */

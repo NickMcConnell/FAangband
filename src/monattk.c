@@ -396,7 +396,7 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
     /* 
      * Hack -- darkness protects those who serve it.
      */
-    if (((cave_info[p_ptr->py][p_ptr->px] & (CAVE_GLOW)) == 0)
+    if (!cave_has(cave_info[p_ptr->py][p_ptr->px], CAVE_GLOW)
 	&& (p_ptr->cur_light <= 0) && (!is_daylight)
 	&& player_has(PF_UNLIGHT))
 	terrain_bonus += ac / 8 + 10;

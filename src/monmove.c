@@ -1203,7 +1203,7 @@ bool cave_exist_mon(monster_race * r_ptr, int y, int x, bool occupied_ok)
   /*** Check passability of various features. ***/
 
     /* Feature is not a wall */
-    if (!(cave_info[y][x] & (CAVE_WALL))) {
+    if (!cave_has(cave_info[y][x], CAVE_WALL)) {
 	/* Floor -- safe for everything */
 	if (feat == FEAT_FLOOR)
 	    return (TRUE);
@@ -1372,7 +1372,7 @@ static int cave_passable_mon(monster_type * m_ptr, int y, int x, bool * bash)
   /*** Check passability of various features. ***/
 
     /* Feature is not a wall */
-    if (!(cave_info[y][x] & (CAVE_WALL))) {
+    if (!cave_has(cave_info[y][x], CAVE_WALL)) {
 	/* Floor */
 	if (feat == FEAT_FLOOR) {
 	    /* Any monster can handle floors */
@@ -2406,7 +2406,7 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 	    /* Character is insufficiently vulnerable */
 	    if (p_ptr->vulnerability <= 4) {
 		/* If we're in sight, find a hiding place */
-		if (cave_info[m_ptr->fy][m_ptr->fx] & (CAVE_SEEN)) {
+		if (cave_has(cave_info[m_ptr->fy][m_ptr->fx], CAVE_SEEN)) {
 		    /* Find a safe spot to lurk in */
 		    if (get_move_retreat(m_ptr, ty, tx)) {
 			*fear = TRUE;
@@ -2727,7 +2727,7 @@ static void make_confused_move(monster_type * m_ptr, int y, int x)
     feat = cave_feat[y][x];
 
     /* Check visibility */
-    if ((m_ptr->ml) && (cave_info[y][x] & (CAVE_SEEN)))
+    if ((m_ptr->ml) && cave_has(cave_info[y][x], CAVE_SEEN))
 	seen = TRUE;
 
 
@@ -2736,7 +2736,7 @@ static void make_confused_move(monster_type * m_ptr, int y, int x)
 
 
     /* Feature is a wall */
-    if (cave_info[y][x] & (CAVE_WALL)) {
+    if (cave_has(cave_info[y][x], CAVE_WALL)) {
 	/* Feature is a (known) door */
 	if ((feat >= FEAT_DOOR_HEAD) && (feat <= FEAT_DOOR_TAIL)) {
 	    if (seen)
@@ -3081,9 +3081,9 @@ static bool make_move(monster_type * m_ptr, int *ty, int *tx, bool fear,
 		}
 
 		/* Monster can't be seen, and is not in a "seen" grid. */
-		if ((!m_ptr->ml) && (!(cave_info[oy][ox] & (CAVE_SEEN)))) {
+		if ((!m_ptr->ml) && (!cave_has(cave_info[oy][ox], CAVE_SEEN))) {
 		    /* Do not enter a "seen" grid */
-		    if (cave_info[ny][nx] & (CAVE_SEEN)) {
+		    if (cave_has(cave_info[ny][nx], CAVE_SEEN)) {
 			moves_data[i].move_chance = 0;
 			continue;
 		    }
@@ -3584,7 +3584,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x, bool * death)
 		    continue;
 
 		/* Ignore monsters in icky squares */
-		if ((cave_info[n_ptr->fy][n_ptr->fx] & CAVE_ICKY) == CAVE_ICKY)
+		if (cave_has(cave_info[n_ptr->fy][n_ptr->fx], CAVE_ICKY))
 		    continue;
 
 		/* Ignore monsters too far away */
@@ -3745,7 +3745,8 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 
 
     /* Entering a wall - dunes need work -NRM- */
-    if ((cave_info[ny][nx] & (CAVE_WALL)) && (cave_feat[ny][nx] != FEAT_DUNE)) {
+    if (cave_has(cave_info[ny][nx], CAVE_WALL) && 
+	(cave_feat[ny][nx] != FEAT_DUNE)) {
 	/* Monster passes through walls (and doors) */
 	if (rf_has(r_ptr->flags, RF_PASS_WALL)) {
 	    /* Monster went through a wall */
@@ -3758,13 +3759,13 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	    did_kill_wall = TRUE;
 
 	    /* Forget the wall */
-	    cave_info[ny][nx] &= ~(CAVE_MARK);
+	    cave_off(cave_info[ny][nx], CAVE_MARK);
 
 	    /* Notice */
 	    cave_set_feat(ny, nx, FEAT_FLOOR);
 
 	    /* Note changes to grid - but only if actually seen */
-	    if (cave_info[ny][nx] & (CAVE_SEEN))
+	    if (cave_has(cave_info[ny][nx], CAVE_SEEN))
 		do_view = TRUE;
 	}
 
@@ -3792,7 +3793,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 		    cave_set_feat(ny, nx, FEAT_OPEN);
 
 		/* Handle viewable doors */
-		if (cave_info[ny][nx] & (CAVE_SEEN)) 
+		if (cave_has(cave_info[ny][nx], CAVE_SEEN)) 
 		    do_view = TRUE;
 		
 		/* Disturb */
@@ -3841,12 +3842,12 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
     /* Glyphs */
     else if (feat == FEAT_RUNE_PROTECT) {
 	/* Describe observable breakage */
-	if (cave_info[ny][nx] & (CAVE_MARK)) {
+	if (cave_has(cave_info[ny][nx], CAVE_MARK)) {
 	    msg_print("The rune of protection is broken!");
 	}
 
 	/* Forget the rune */
-	cave_info[ny][nx] &= ~(CAVE_MARK);
+	cave_off(cave_info[ny][nx], CAVE_MARK);
 
 	/* Break the rune */
 	cave_set_feat(ny, nx, FEAT_FLOOR);
@@ -3927,13 +3928,13 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 		    did_kill_wall = TRUE;
 
 		    /* Forget the wall */
-		    cave_info[yy][xx] &= ~(CAVE_MARK);
+		    cave_off(cave_info[yy][xx], CAVE_MARK);
 
 		    /* Notice */
 		    cave_set_feat(yy, xx, FEAT_FLOOR);
 
 		    /* Note changes to grid - but only if actually seen */
-		    if (cave_info[yy][xx] & (CAVE_SEEN))
+		    if (cave_has(cave_info[yy][xx], CAVE_SEEN))
 			do_view = TRUE;
 		}
 

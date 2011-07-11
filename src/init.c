@@ -3333,7 +3333,7 @@ static errr init_other(void)
     /*** Prepare dungeon arrays ***/
 
     /* Padded into array */
-    cave_info = C_ZNEW(DUNGEON_HGT, grid_wid);
+    cave_info = C_ZNEW(DUNGEON_HGT, grid_256);
 
     /* Feature array */
     cave_feat = C_ZNEW(DUNGEON_HGT, byte_wid);

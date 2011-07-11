@@ -1080,14 +1080,11 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 void map_info(unsigned y, unsigned x, grid_data *g)
 {
     object_type *o_ptr;
-    bitflag info[CAVE_SIZE];
     feature_type *f_ptr;
 
     assert(x < DUNGEON_WID);
     assert(y < DUNGEON_HGT);
 
-    info = cave_info[y][x];
-	
     /* Default "clear" values, others will be set later where appropriate. */
     g->first_k_idx = 0;
     g->multiple_objects = FALSE;
@@ -1095,14 +1092,14 @@ void map_info(unsigned y, unsigned x, grid_data *g)
 
     /* Set things we can work out right now */
     g->f_idx = cave_feat[y][x];
-    g->in_view = cave_has(info, CAVE_SEEN) ? TRUE : FALSE;
+    g->in_view = cave_has(cave_info[y][x], CAVE_SEEN) ? TRUE : FALSE;
     g->is_player = (cave_m_idx[y][x] < 0) ? TRUE : FALSE;
     g->m_idx = (g->is_player) ? 0 : cave_m_idx[y][x];
     g->hallucinate = p_ptr->timed[TMD_IMAGE] ? TRUE : FALSE;
     g->trapborder = (dtrap_edge(y, x)) ? TRUE : FALSE;
     f_ptr = &f_info[g->f_idx];
     /* If the grid is memorised or can currently be seen */
-    if (cave_has(info, CAVE_MARK) || cave_has(info, CAVE_SEEN))
+    if (cave_has(cave_info[y][x], CAVE_MARK) || cave_has(cave_info[y][x], CAVE_SEEN))
     {
 	/* Apply "mimic" field */
 	g->f_idx = f_ptr->mimic;
@@ -1111,17 +1108,17 @@ void map_info(unsigned y, unsigned x, grid_data *g)
 	if ((g->f_idx == FEAT_FLOOR) || (g->f_idx == FEAT_GRASS))
 	{
 	    /* Handle currently visible grids */
-	    if (cave_has(info, CAVE_SEEN))
+	    if (cave_has(cave_info[y][x], CAVE_SEEN))
 	    {
 		/* Only lit by "torch" light */
-		if (cave_has(info, CAVE_GLOW))
+		if (cave_has(cave_info[y][x], CAVE_GLOW))
 		    g->lighting = LIGHT_GLOW;
 		else
 		    g->lighting = LIGHT_TORCH;
 	    }
 
 	    /* Handle "dark" grids and "blindness" */
-	    else if (p_ptr->timed[TMD_BLIND] || !cave_has(info, CAVE_GLOW))
+	    else if (p_ptr->timed[TMD_BLIND] || !cave_has(cave_info[y][x], CAVE_GLOW))
 		g->lighting = LIGHT_DARK;
 	}
     }
@@ -1426,15 +1423,10 @@ void print_rel(char c, byte a, int y, int x)
  */
 void note_spot(int y, int x)
 {
-	bitflag info[CAVE_SIZE];
-
 	object_type *o_ptr;
 
-	/* Get cave info */
-	info = cave_info[y][x];
-
 	/* Require "seen" flag */
-	if (!cave_has(info, CAVE_SEEN)) return;
+	if (!cave_has(cave_info[y][x], CAVE_SEEN)) return;
 
 
 	/* Hack -- memorize objects */
@@ -1446,13 +1438,13 @@ void note_spot(int y, int x)
 
 
 	/* Hack -- memorize grids */
-	if (!cave_has(info, CAVE_MARK))
+	if (!cave_has(cave_info[y][x], CAVE_MARK))
 	{
 		/* Memorize some "boring" grids */
 		if (cave_feat[y][x] <= FEAT_INVIS)
 		{
 			/* Option -- memorize certain floors */
-		    if ((cave_has(info, CAVE_GLOW) && OPT(view_perma_grids)) ||
+		    if ((cave_has(cave_info[y][x], CAVE_GLOW) && OPT(view_perma_grids)) ||
 			    OPT(view_torch_grids))
 			{
 			    /* Memorize */
@@ -3284,7 +3276,7 @@ void update_view(void)
 				(x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
 
 			    /* Check for "simple" illumination */
-			    if (cave_info[yy][xx] & (CAVE_GLOW)) {
+			    if (cave_has(cave_info[yy][xx], CAVE_GLOW)) {
 				/* Mark as seen */
 				info |= (CAVE_SEEN);
 			    }

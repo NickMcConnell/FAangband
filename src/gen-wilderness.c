@@ -545,7 +545,7 @@ int make_formation(int y, int x, int base_feat1, int base_feat2, int *feat,
 		    f_ptr = &f_info[cave_feat[yy][xx]];
 		    if ((tf_has(f_ptr->flags, TF_PERMANENT))
 			|| (distance(yy, xx, p_ptr->py, p_ptr->px) < 20)
-			|| (cave_info[yy][xx] & CAVE_ICKY))
+			|| cave_has(cave_info[yy][xx], CAVE_ICKY))
 			good_place = FALSE;
 		}
 	} else
@@ -595,7 +595,7 @@ int make_formation(int y, int x, int base_feat1, int base_feat2, int *feat,
 	/* Avoid paths, stay in bounds */
 	if (((cave_feat[ty][tx] != base_feat1)
 	     && (cave_feat[ty][tx] != base_feat2)) || !(in_bounds_fully(ty, tx))
-	    || (cave_info[ty][tx] & CAVE_ICKY)) {
+	    || cave_has(cave_info[ty][tx], CAVE_ICKY)) {
 	    free(all_feat);
 	    return (total);
 	}
@@ -608,9 +608,9 @@ int make_formation(int y, int x, int base_feat1, int base_feat2, int *feat,
 
 	/* Set the feature */
 	cave_set_feat(ty, tx, all_feat[i]);
-	cave_info[ty][tx] |= (CAVE_ICKY);
+	cave_on(cave_info[ty][tx], CAVE_ICKY);
 	if ((all_feat[i] >= FEAT_MAGMA) && (all_feat[i] <= FEAT_PERM_SOLID))
-	    cave_info[ty][tx] |= (CAVE_WALL);
+	    cave_on(cave_info[ty][tx], CAVE_WALL);
 
 	/* Choose a random step for next feature, try to keep going */
 	terrain = randint0(8) + 1;
@@ -619,7 +619,7 @@ int make_formation(int y, int x, int base_feat1, int base_feat2, int *feat,
 	for (j = 0; j < 100; j++) {
 	    ty += ddy[terrain];
 	    tx += ddx[terrain];
-	    if (!(cave_info[ty][tx] & (CAVE_ICKY)))
+	    if (!cave_has(cave_info[ty][tx], CAVE_ICKY))
 		break;
 	}
 
@@ -685,7 +685,7 @@ extern void plain_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -706,7 +706,7 @@ extern void plain_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -726,7 +726,7 @@ extern void plain_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -746,7 +746,7 @@ extern void plain_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -775,7 +775,7 @@ extern void plain_gen(void)
     /* No longer "icky" */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_ICKY);
+	    cave_off(cave_info[y][x], CAVE_ICKY);
 	}
     }
 
@@ -829,14 +829,14 @@ extern void plain_gen(void)
     /* Clear "temp" flags. */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_TEMP);
+	    cave_off(cave_info[y][x], CAVE_TEMP);
 
 	    /* Paranoia - remake the dungeon walls */
 
 	    if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
 		|| (x == DUNGEON_WID - 1)) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -856,7 +856,7 @@ void mtn_connect(int y, int x, int y1, int x1)
 	    || (!in_bounds_fully(GRID_Y(gp[j]), GRID_X(gp[j]))))
 	    break;
 	cave_set_feat(GRID_Y(gp[j]), GRID_X(gp[j]), FEAT_FLOOR);
-	cave_info[GRID_Y(gp[j])][GRID_X(gp[j])] |= (CAVE_ICKY);
+	cave_on(cave_info[GRID_Y(gp[j])][GRID_X(gp[j])], CAVE_ICKY);
 	/* y2 = GRID_Y(gp[j]) + randint0(3) - 1; x2 =GRID_X(gp[j]) +
 	 * randint0(3) - 1; if (in_bounds_fully(y2, x2)) cave_set_feat(y2, x2,
 	 * FEAT_FLOOR); */
@@ -911,7 +911,7 @@ extern void mtn_gen(void)
 
 	/* Clear previous contents, add "solid" perma-wall */
 	cave_set_feat(y, x, FEAT_PERM_SOLID);
-	cave_info[y][x] |= (CAVE_WALL);
+	cave_on(cave_info[y][x], CAVE_WALL);
     }
 
     /* Special boundary walls -- Bottom */
@@ -920,7 +920,7 @@ extern void mtn_gen(void)
 
 	/* Clear previous contents, add "solid" perma-wall */
 	cave_set_feat(y, x, FEAT_PERM_SOLID);
-	cave_info[y][x] |= (CAVE_WALL);
+	cave_on(cave_info[y][x], CAVE_WALL);
     }
 
     /* Special boundary walls -- Left */
@@ -929,7 +929,7 @@ extern void mtn_gen(void)
 
 	/* Clear previous contents, add "solid" perma-wall */
 	cave_set_feat(y, x, FEAT_PERM_SOLID);
-	cave_info[y][x] |= (CAVE_WALL);
+	cave_on(cave_info[y][x], CAVE_WALL);
     }
 
     /* Special boundary walls -- Right */
@@ -938,7 +938,7 @@ extern void mtn_gen(void)
 
 	/* Clear previous contents, add "solid" perma-wall */
 	cave_set_feat(y, x, FEAT_PERM_SOLID);
-	cave_info[y][x] |= (CAVE_WALL);
+	cave_on(cave_info[y][x], CAVE_WALL);
     }
 
     /* Place 2 or 3 paths to neighbouring stages, make the paths through the
@@ -975,7 +975,7 @@ extern void mtn_gen(void)
 	for (x = 0; x < DUNGEON_WID; x++)
 	    if (cave_feat[y][x] == FEAT_FLOOR) {
 		/* Hack - prepare for plateaux, connecting */
-		cave_info[y][x] |= (CAVE_ICKY);
+		cave_on(cave_info[y][x], CAVE_ICKY);
 		floors++;
 	    }
     }
@@ -1086,7 +1086,7 @@ extern void mtn_gen(void)
 	    case FEAT_GRASS:
 		{
 		    cave_set_feat(y, x, FEAT_WALL_SOLID);
-		    cave_info[y][x] |= (CAVE_WALL);
+		    cave_on(cave_info[y][x], CAVE_WALL);
 		    break;
 		}
 	    case FEAT_TRAP_HEAD:
@@ -1097,7 +1097,7 @@ extern void mtn_gen(void)
 	    case FEAT_TRAP_HEAD + 1:
 		{
 		    cave_set_feat(y, x, FEAT_MAGMA);
-		    cave_info[y][x] |= (CAVE_WALL);
+		    cave_on(cave_info[y][x], CAVE_WALL);
 		    break;
 		}
 	    case FEAT_TRAP_HEAD + 2:
@@ -1127,14 +1127,14 @@ extern void mtn_gen(void)
     /* No longer "icky" */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_ICKY);
+	    cave_off(cave_info[y][x], CAVE_ICKY);
 
 	    /* Paranoia - remake the dungeon walls */
 
 	    if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
 		|| (x == DUNGEON_WID - 1)) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -1191,7 +1191,7 @@ extern void mtn_gen(void)
     /* Clear "temp" flags. */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_TEMP);
+	    cave_off(cave_info[y][x], CAVE_TEMP);
 	}
     }
 }
@@ -1227,7 +1227,7 @@ extern void mtntop_gen(void)
 
 	/* Clear previous contents, add "solid" perma-wall */
 	cave_set_feat(y, x, FEAT_PERM_SOLID);
-	cave_info[y][x] |= (CAVE_WALL);
+	cave_on(cave_info[y][x], CAVE_WALL);
     }
 
     /* Special boundary walls -- Bottom */
@@ -1236,7 +1236,7 @@ extern void mtntop_gen(void)
 
 	/* Clear previous contents, add "solid" perma-wall */
 	cave_set_feat(y, x, FEAT_PERM_SOLID);
-	cave_info[y][x] |= (CAVE_WALL);
+	cave_on(cave_info[y][x], CAVE_WALL);
     }
 
     /* Special boundary walls -- Left */
@@ -1245,7 +1245,7 @@ extern void mtntop_gen(void)
 
 	/* Clear previous contents, add "solid" perma-wall */
 	cave_set_feat(y, x, FEAT_PERM_SOLID);
-	cave_info[y][x] |= (CAVE_WALL);
+	cave_on(cave_info[y][x], CAVE_WALL);
     }
 
     /* Special boundary walls -- Right */
@@ -1254,7 +1254,7 @@ extern void mtntop_gen(void)
 
 	/* Clear previous contents, add "solid" perma-wall */
 	cave_set_feat(y, x, FEAT_PERM_SOLID);
-	cave_info[y][x] |= (CAVE_WALL);
+	cave_on(cave_info[y][x], CAVE_WALL);
     }
 
     /* Make the main mountaintop */
@@ -1271,9 +1271,9 @@ extern void mtntop_gen(void)
     /* Summit */
     for (i = -1; i <= 1; i++) {
 	cave_feat[y + i][x] = FEAT_WALL_SOLID;
-	cave_info[y + i][x] |= CAVE_WALL;
+	cave_on(cave_info[y + i][x], CAVE_WALL);
 	cave_feat[y][x + i] = FEAT_WALL_SOLID;
-	cave_info[y][x + i] |= CAVE_WALL;
+	cave_on(cave_info[y][x + i], CAVE_WALL);
     }
 
     /* Count the floors */
@@ -1308,7 +1308,7 @@ extern void mtntop_gen(void)
 		continue;
 
 	    /* Leave rock */
-	    if (cave_info[y1][x1] & CAVE_WALL)
+	    if (cave_has(cave_info[y1][x1], CAVE_WALL))
 		continue;
 
 	    /* Leave stair */
@@ -1320,7 +1320,7 @@ extern void mtntop_gen(void)
 		floors--;
 		if (floors == spot) {
 		    player_place(y1, x1);
-		    cave_info[y1][x1] |= (CAVE_ICKY);
+		    cave_on(cave_info[y1][x1], CAVE_ICKY);
 		    continue;
 		}
 	    }
@@ -1328,7 +1328,7 @@ extern void mtntop_gen(void)
 	    /* Place some rock */
 	    if (randint0(10) < 2) {
 		cave_set_feat(y1, x1, FEAT_WALL_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 		continue;
 	    }
 
@@ -1373,7 +1373,7 @@ extern void mtntop_gen(void)
 		    /* Place some rock */
 		    if (randint0(10) < 2) {
 			cave_set_feat(y1, x1, FEAT_WALL_SOLID);
-			cave_info[y][x] |= (CAVE_WALL);
+			cave_on(cave_info[y][x], CAVE_WALL);
 			continue;
 		    }
 
@@ -1401,14 +1401,14 @@ extern void mtntop_gen(void)
     /* No longer "icky" */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_ICKY);
+	    cave_off(cave_info[y][x], CAVE_ICKY);
 
 	    /* Paranoia - remake the dungeon walls */
 
 	    if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
 		|| (x == DUNGEON_WID - 1)) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -1441,7 +1441,7 @@ extern void mtntop_gen(void)
     /* Clear "temp" flags. */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_TEMP);
+	    cave_off(cave_info[y][x], CAVE_TEMP);
 	}
     }
 }
@@ -1502,7 +1502,7 @@ extern void forest_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -1523,7 +1523,7 @@ extern void forest_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -1543,7 +1543,7 @@ extern void forest_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -1563,7 +1563,7 @@ extern void forest_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -1580,7 +1580,7 @@ extern void forest_gen(void)
 		    cave_set_feat(y, x, FEAT_TREE);
 	    } else
 		/* Hack - prepare for clearings */
-		cave_info[y][x] |= (CAVE_ICKY);
+		cave_on(cave_info[y][x], CAVE_ICKY);
 
 	    /* Mega hack - remove paths if emerging from Nan Dungortheb */
 	    if ((last_stage == q_list[2].stage)
@@ -1615,7 +1615,7 @@ extern void forest_gen(void)
     /* No longer "icky" */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_ICKY);
+	    cave_off(cave_info[y][x], CAVE_ICKY);
 	}
     }
 
@@ -1644,7 +1644,7 @@ extern void forest_gen(void)
     /* No longer "icky" */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_ICKY);
+	    cave_off(cave_info[y][x], CAVE_ICKY);
 	}
     }
 
@@ -1697,7 +1697,7 @@ extern void forest_gen(void)
     /* Clear "temp" flags. */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_TEMP);
+	    cave_off(cave_info[y][x], CAVE_TEMP);
 	    /* Paranoia - remake the dungeon walls */
 
 	    if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
@@ -1759,7 +1759,7 @@ extern void swamp_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -1780,7 +1780,7 @@ extern void swamp_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -1800,7 +1800,7 @@ extern void swamp_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -1820,7 +1820,7 @@ extern void swamp_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -1856,7 +1856,7 @@ extern void swamp_gen(void)
     /* No longer "icky" */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_ICKY);
+	    cave_off(cave_info[y][x], CAVE_ICKY);
 	}
     }
 
@@ -1909,7 +1909,7 @@ extern void swamp_gen(void)
     /* Clear "temp" flags. */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_TEMP);
+	    cave_off(cave_info[y][x], CAVE_TEMP);
 	    /* Paranoia - remake the dungeon walls */
 
 	    if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
@@ -1973,7 +1973,7 @@ extern void desert_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -1994,7 +1994,7 @@ extern void desert_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -2014,7 +2014,7 @@ extern void desert_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -2034,7 +2034,7 @@ extern void desert_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -2062,7 +2062,7 @@ extern void desert_gen(void)
 		} else {
 		    /* The walls of Thangorodrim */
 		    cave_set_feat(y, x, FEAT_WALL_SOLID);
-		    cave_info[y][x] |= CAVE_WALL;
+		    cave_on(cave_info[y][x], CAVE_WALL);
 		}
 	    }
 	    if (made_gate)
@@ -2083,7 +2083,7 @@ extern void desert_gen(void)
 		    cave_set_feat(y, x, FEAT_MAGMA);
 	    } else
 		/* Hack - prepare for clearings */
-		cave_info[y][x] |= (CAVE_ICKY);
+		cave_on(cave_info[y][x], CAVE_ICKY);
 	}
     }
 
@@ -2113,7 +2113,7 @@ extern void desert_gen(void)
     /* No longer "icky" */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_ICKY);
+	    cave_off(cave_info[y][x], CAVE_ICKY);
 	}
     }
 
@@ -2134,7 +2134,7 @@ extern void desert_gen(void)
     /* No longer "icky" */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_ICKY);
+	    cave_off(cave_info[y][x], CAVE_ICKY);
 	}
     }
 
@@ -2187,7 +2187,7 @@ extern void desert_gen(void)
     /* Clear "temp" flags. */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_TEMP);
+	    cave_off(cave_info[y][x], CAVE_TEMP);
 	    /* Paranoia - remake the dungeon walls */
 
 	    if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
@@ -2255,7 +2255,7 @@ extern void river_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -2276,7 +2276,7 @@ extern void river_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -2296,7 +2296,7 @@ extern void river_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -2316,7 +2316,7 @@ extern void river_gen(void)
 	    if ((cave_feat[y][x] != FEAT_FLOOR)
 		&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
 		cave_set_feat(y, x, FEAT_PERM_SOLID);
-		cave_info[y][x] |= (CAVE_WALL);
+		cave_on(cave_info[y][x], CAVE_WALL);
 	    }
 	}
     }
@@ -2330,7 +2330,7 @@ extern void river_gen(void)
 	for (x = i - randint0(5) - 10; x < i + randint0(5) + 10; x++) {
 	    /* Make the river */
 	    cave_set_feat(y, x, FEAT_WATER);
-	    cave_info[y][x] |= (CAVE_ICKY);
+	    cave_on(cave_info[y][x], CAVE_ICKY);
 	}
 	/* Meander */
 	i += randint0(3) - 1;
@@ -2400,7 +2400,7 @@ extern void river_gen(void)
     /* No longer "icky" */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_ICKY);
+	    cave_off(cave_info[y][x], CAVE_ICKY);
 	}
     }
 
@@ -2471,7 +2471,7 @@ extern void river_gen(void)
     /* Clear "temp" flags. */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_TEMP);
+	    cave_off(cave_info[y][x], CAVE_TEMP);
 	    /* Paranoia - remake the dungeon walls */
 
 	    if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
@@ -2525,10 +2525,9 @@ bool place_web(int type)
 	    for (x = cx; x < cx + v_ptr->wid; x++)
 		if ((cave_feat[y][x] == FEAT_VOID)
 		    || (cave_feat[y][x] == FEAT_PERM_SOLID)
-		    || (cave_feat[y][x] == FEAT_MORE_SOUTH) || ((y == p_ptr->py)
-								&& (x ==
-								    p_ptr->px))
-		    || (cave_info[y][x] & CAVE_ICKY))
+		    || (cave_feat[y][x] == FEAT_MORE_SOUTH) || 
+		    ((y == p_ptr->py) && (x == p_ptr->px))
+		    || cave_has(cave_info[y][x], CAVE_ICKY))
 		    no_good = TRUE;
 
 	/* Try again, or stop if we've found a place */
@@ -2715,7 +2714,7 @@ extern void valley_gen(void)
     /* No longer "icky" */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_ICKY);
+	    cave_off(cave_info[y][x], CAVE_ICKY);
 	}
     }
 
@@ -2727,7 +2726,7 @@ extern void valley_gen(void)
 	p_ptr->path_coord = 0;
 
 	/* Make sure a web can't be placed on the player */
-	cave_info[y][x] |= (CAVE_ICKY);
+	cave_on(cave_info[y][x], CAVE_ICKY);
     }
 
     /* Basic "amount" */
@@ -2786,7 +2785,7 @@ extern void valley_gen(void)
     /* Clear "temp" flags. */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    cave_info[y][x] &= ~(CAVE_TEMP);
+	    cave_off(cave_info[y][x], CAVE_TEMP);
 	    /* Paranoia - remake the dungeon walls */
 
 	    if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)

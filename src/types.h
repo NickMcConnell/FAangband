@@ -49,7 +49,7 @@
 /**
  * An array of 256 cave bitflag arrays
  */
-typedef bitflag grid_wid[256][CAVE_SIZE];
+typedef bitflag grid_256[256][CAVE_SIZE];
 
 /**
  * An array of DUNGEON_WID byte's

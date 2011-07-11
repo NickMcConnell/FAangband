@@ -1466,7 +1466,7 @@ int rd_dungeon(u32b version)
   
     byte count;
     byte tmp8u;
-    u16b tmp16u;
+    u16b tmp16u, cave_size;
   
   
     /* Only if the player's alive */
@@ -1492,9 +1492,11 @@ int rd_dungeon(u32b version)
     rd_s16b(&px);
     rd_s16b(&ymax);
     rd_s16b(&xmax);
+    rd_u16b(&cave_size);
     rd_u16b(&tmp16u);
-    rd_u16b(&tmp16u);
-  
+
+    /* Always at least two bytes of cave_info */
+    cave_size = MAX(2, cave_size);
   
     /* Ignore illegal dungeons */
     if ((stage < 0) || (stage >= NUM_STAGES))
@@ -1523,7 +1525,7 @@ int rd_dungeon(u32b version)
     /*** Run length decoding ***/
   
     /* Loop across bytes of cave_info */
-    for (n = 0; n < CAVE_SIZE; n++)
+    for (n = 0; n < cave_size; n++)
     {
 	/* Load the dungeon data */
 	for (x = y = 0; y < DUNGEON_HGT; )

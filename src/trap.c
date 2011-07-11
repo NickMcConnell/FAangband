@@ -369,7 +369,7 @@ extern void hit_trap(int y, int x)
 	    if (((stage_map[p_ptr->stage][STAGE_TYPE] == CAVE)
 		 || (stage_map[p_ptr->stage][STAGE_TYPE] == VALLEY))
 		&& (!stage_map[p_ptr->stage][DOWN])) {
-		cave_info[y][x] &= ~(CAVE_MARK);
+		cave_off(cave_info[y][x], CAVE_MARK);
 		cave_set_feat(y, x, FEAT_FLOOR);
 		msg_print("The trap fails!");
 		break;
@@ -465,7 +465,7 @@ extern void hit_trap(int y, int x)
 			}
 
 			/* morgul-traps are one-time only. */
-			cave_info[y][x] &= ~(CAVE_MARK);
+			cave_off(cave_info[y][x], CAVE_MARK);
 			cave_set_feat(y, x, FEAT_FLOOR);
 
 			Rand_quick = TRUE;
@@ -821,7 +821,7 @@ extern void hit_trap(int y, int x)
 	    }
 
 	    /* these are all one-time traps. */
-	    cave_info[y][x] &= ~(CAVE_MARK);
+	    cave_off(cave_info[y][x], CAVE_MARK);
 	    cave_set_feat(y, x, FEAT_FLOOR);
 
 	    break;
@@ -836,7 +836,7 @@ extern void hit_trap(int y, int x)
 		nastyness += 10;
 
 	    /* make room for alterations. */
-	    cave_info[y][x] &= ~(CAVE_MARK);
+	    cave_off(cave_info[y][x], CAVE_MARK);
 	    cave_set_feat(y, x, FEAT_FLOOR);
 
 	    /* Everything truely random from here on. */
@@ -893,7 +893,7 @@ extern void hit_trap(int y, int x)
 	    nastyness = randint0(100);
 
 	    /* these are all one-time traps. */
-	    cave_info[y][x] &= ~(CAVE_MARK);
+	    cave_off(cave_info[y][x], CAVE_MARK);
 	    cave_set_feat(y, x, FEAT_FLOOR);
 
 	    /* Everything truely random from here on. */
@@ -1176,7 +1176,7 @@ extern void hit_trap(int y, int x)
 	    Rand_quick = FALSE;
 
 	    if (randint0(8) == 0) {
-		cave_info[y][x] &= ~(CAVE_MARK);
+		cave_off(cave_info[y][x], CAVE_MARK);
 		cave_set_feat(y, x, FEAT_FLOOR);
 	    }
 
@@ -1224,7 +1224,7 @@ extern void hit_trap(int y, int x)
 		msg_print("A falling branch just misses you.");
 
 	    /* No more */
-	    cave_info[y][x] &= ~(CAVE_MARK);
+	    cave_off(cave_info[y][x], CAVE_MARK);
 	    cave_set_feat(y, x, FEAT_TREE);
 
 	    break;
@@ -1260,7 +1260,7 @@ extern void hit_trap(int y, int x)
 		msg_print("A falling branch just misses you.");
 
 	    /* No more */
-	    cave_info[y][x] &= ~(CAVE_MARK);
+	    cave_off(cave_info[y][x], CAVE_MARK);
 	    cave_set_feat(y, x, FEAT_TREE2);
 
 	    break;

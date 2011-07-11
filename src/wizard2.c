@@ -1812,11 +1812,11 @@ static void do_cmd_wiz_query(void)
 	    byte a = TERM_RED;
 
 	    /* Given mask, show only those grids */
-	    if (mask && !(cave_info[y][x] & mask))
+	    if (mask && !(cave_info[y][x][0] & mask))
 		continue;
 
 	    /* Given no mask, show unknown grids */
-	    if (!mask && (cave_info[y][x] & (CAVE_MARK)))
+	    if (!mask && (cave_info[y][x][0] & (CAVE_MARK)))
 		continue;
 
 	    /* Color */

@@ -2477,7 +2477,7 @@ enum
  * Note the use of the new "CAVE_WALL" flag.
  */
 #define cave_floor_bold(Y,X) \
-	(!(cave_info[Y][X] & (CAVE_WALL)) && \
+    (!cave_has(cave_info[Y][X], CAVE_WALL) && \
           !(cave_feat[Y][X] == FEAT_VOID))
 
 
@@ -2489,7 +2489,7 @@ enum
  * This is a pretty feeble hack -NRM-
  */
 #define cave_project(Y,X) \
-  (!(cave_info[Y][X] & (CAVE_WALL))) 
+    (!cave_has(cave_info[Y][X],CAVE_WALL)) 
 
 
 /**
@@ -2506,7 +2506,7 @@ enum
  * Note the use of the new "CAVE_WALL" flag.
  */
 #define cave_passable_bold(Y,X) \
-	(!(cave_info[Y][X] & (CAVE_WALL)) || \
+    (!cave_has(cave_info[Y][X], CAVE_WALL) ||	\
 	(cave_feat[Y][X] == FEAT_TREE) || \
 	(cave_feat[Y][X] == FEAT_TREE2) || \
 	(cave_feat[Y][X] == FEAT_RUBBLE) || \
@@ -2588,7 +2588,7 @@ enum
  * Note the use of comparison to zero to force a "boolean" result
  */
 #define player_has_los_bold(Y,X) \
-	((cave_info[Y][X] & (CAVE_VIEW)) != 0)
+    (cave_has(cave_info[Y][X], CAVE_VIEW))
 
 
 /**
@@ -2597,7 +2597,7 @@ enum
  * Note the use of comparison to zero to force a "boolean" result
  */
 #define player_can_see_bold(Y,X) \
-    ((cave_info[Y][X] & (CAVE_SEEN)) != 0)
+    (cave_has(cave_info[Y][X], CAVE_SEEN))
 
 
 /**

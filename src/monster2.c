@@ -2078,7 +2078,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
 	k = randint0(chance + 20);
 	if ((k > 20) || (stage_map[p_ptr->stage][STAGE_TYPE] == CAVE)
 	    || (p_ptr->themed_level == THEME_WARLORDS)
-	    || (cave_info[y][x] & CAVE_ICKY))
+	    || cave_has(cave_info[y][x], CAVE_ICKY))
 	    n_ptr->hostile = -1;
 	else
 	    n_ptr->hostile = 0;
@@ -2515,7 +2515,7 @@ bool alloc_monster(int dis, bool slp, bool quick)
 	    continue;
 
 	/* Do not put random monsters in marked rooms. */
-	if ((!character_dungeon) && (cave_info[y][x] & (CAVE_TEMP)))
+	if ((!character_dungeon) && cave_has(cave_info[y][x], CAVE_TEMP))
 	    continue;
 
 	/* Accept far away grids */

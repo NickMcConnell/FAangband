@@ -236,7 +236,7 @@ void teleport_away(int m_idx, int dis)
     monster_swap(oy, ox, ny, nx);
 
     /* Clear the cave_temp flag (the "project()" code may have set it). */
-    cave_info[ny][nx] &= ~(CAVE_TEMP);
+    cave_off(cave_info[ny][nx], CAVE_TEMP);
 }
 
 
@@ -473,7 +473,7 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
     }
 
     /* Clear the cave_temp flag (the "project()" code may have set it). */
-    cave_info[y][x] &= ~(CAVE_TEMP);
+    cave_off(cave_info[y][x], CAVE_TEMP);
 }
 
 /**
@@ -544,7 +544,7 @@ void teleport_player(int dis, bool safe)
 		    continue;
 
 		/* No teleporting into vaults and such */
-		if (cave_info[y][x] & (CAVE_ICKY))
+		if (cave_has(cave_info[y][x], CAVE_ICKY))
 		    continue;
 	    } else {
 		/* Require any terrain capable of holding the player. */
@@ -611,7 +611,7 @@ void teleport_player(int dis, bool safe)
     }
 
     /* Clear the cave_temp flag (the "project()" code may have set it). */
-    cave_info[y][x] &= ~(CAVE_TEMP);
+    cave_off(cave_info[y][x], CAVE_TEMP);
 
     /* Handle stuff XXX XXX XXX */
     if (safe)
@@ -744,7 +744,7 @@ void teleport_player_to(int ny, int nx, bool friendly)
     monster_swap(py, px, y, x);
 
     /* Clear the cave_temp flag (the "project()" code may have set it). */
-    cave_info[y][x] &= ~(CAVE_TEMP);
+    cave_off(cave_info[y][x], CAVE_TEMP);
 
     /* Handle stuff XXX XXX XXX */
     handle_stuff();
@@ -2968,7 +2968,7 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 	{
 	    /* Mark the lava grid for (possible) later alteration. */
 	    if ((cave_feat[y][x] == FEAT_LAVA) && (dist <= 1))
-		cave_info[y][x] |= (CAVE_TEMP);
+		cave_on(cave_info[y][x], CAVE_TEMP);
 	    break;
 	}
 
@@ -2980,7 +2980,7 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 	{
 	    if (dist <= 1) {
 		/* Mark the grid for (possible) later alteration. */
-		cave_info[y][x] |= (CAVE_TEMP);
+		cave_on(cave_info[y][x], CAVE_TEMP);
 	    }
 	    break;
 	}
@@ -2992,7 +2992,7 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 	    if (dist <= 1) {
 		/* Mark the floor grid for (possible) later alteration. */
 		if (cave_feat[y][x] == FEAT_FLOOR)
-		    cave_info[y][x] |= (CAVE_TEMP);
+		    cave_on(cave_info[y][x], CAVE_TEMP);
 	    }
 	    break;
 	}
@@ -3002,7 +3002,7 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 	{
 	    if (dist <= 1) {
 		/* Mark the grid for (possible) later alteration. */
-		cave_info[y][x] |= (CAVE_TEMP);
+		cave_on(cave_info[y][x], CAVE_TEMP);
 	    }
 	    break;
 	}
@@ -3022,7 +3022,7 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 		    }
 
 		    /* Forget the trap */
-		    cave_info[y][x] &= ~(CAVE_MARK);
+		    cave_off(cave_info[y][x], CAVE_MARK);
 
 		    /* Destroy the trap */
 		    cave_set_feat(y, x, FEAT_FLOOR);
@@ -3075,7 +3075,7 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 		}
 
 		/* Forget the door */
-		cave_info[y][x] &= ~(CAVE_MARK);
+		cave_off(cave_info[y][x], CAVE_MARK);
 
 		/* Destroy the feature */
 		cave_set_feat(y, x, FEAT_FLOOR);
@@ -3104,13 +3104,14 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 		/* Granite */
 		if (tf_has(f_ptr->flags, TF_GRANITE)) {
 		    /* Message */
-		    if (cave_info[y][x] & (CAVE_MARK)) {
+		    if (cave_has(cave_info[y][x], CAVE_MARK)) {
 			msg_print("The wall turns into mud.");
 			obvious = TRUE;
 		    }
 
 		    /* Forget the wall */
-		    cave_info[y][x] &= ~(CAVE_MARK | CAVE_WALL);
+		    cave_off(cave_info[y][x], CAVE_WALL);
+		    cave_off(cave_info[y][x], CAVE_MARK);
 
 		    /* Destroy the wall */
 		    cave_set_feat(y, x, FEAT_FLOOR);
@@ -3119,14 +3120,15 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 		/* Quartz / Magma with treasure */
 		else if (cave_feat[y][x] >= FEAT_MAGMA_H) {
 		    /* Message */
-		    if (cave_info[y][x] & (CAVE_MARK)) {
+		    if (cave_has(cave_info[y][x], CAVE_MARK)) {
 			msg_print("The vein turns into mud.");
 			msg_print("You have found something!");
 			obvious = TRUE;
 		    }
 
 		    /* Forget the wall */
-		    cave_info[y][x] &= ~(CAVE_MARK | CAVE_WALL);
+		    cave_off(cave_info[y][x], CAVE_WALL);
+		    cave_off(cave_info[y][x], CAVE_MARK);
 
 		    /* Destroy the wall */
 		    cave_set_feat(y, x, FEAT_FLOOR);
@@ -3138,13 +3140,14 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 		/* Quartz / Magma */
 		else if (cave_feat[y][x] >= FEAT_MAGMA) {
 		    /* Message */
-		    if (cave_info[y][x] & (CAVE_MARK)) {
+		    if (cave_has(cave_info[y][x], CAVE_MARK)) {
 			msg_print("The vein turns into mud.");
 			obvious = TRUE;
 		    }
 
 		    /* Forget the wall */
-		    cave_info[y][x] &= ~(CAVE_MARK | CAVE_WALL);
+		    cave_off(cave_info[y][x], CAVE_WALL);
+		    cave_off(cave_info[y][x], CAVE_MARK);
 
 		    /* Destroy the wall */
 		    cave_set_feat(y, x, FEAT_FLOOR);
@@ -3153,13 +3156,14 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 		/* Rubble */
 		else if (cave_feat[y][x] == FEAT_RUBBLE) {
 		    /* Message */
-		    if (cave_info[y][x] & (CAVE_MARK)) {
+		    if (cave_has(cave_info[y][x], CAVE_MARK)) {
 			msg_print("The rubble turns into mud.");
 			obvious = TRUE;
 		    }
 
 		    /* Forget the wall */
-		    cave_info[y][x] &= ~(CAVE_MARK | CAVE_WALL);
+		    cave_off(cave_info[y][x], CAVE_WALL);
+		    cave_off(cave_info[y][x], CAVE_MARK);
 
 		    /* Destroy the rubble */
 		    cave_set_feat(y, x, FEAT_FLOOR);
@@ -3181,13 +3185,14 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 	    /* Destroy doors (and secret doors) */
 	    else if (tf_has(f_ptr->flags, TF_DOOR_ANY)) {
 		/* Hack -- special message */
-		if (cave_info[y][x] & (CAVE_MARK)) {
+		if (cave_has(cave_info[y][x], CAVE_MARK)) {
 		    msg_print("The door turns into mud!");
 		    obvious = TRUE;
 		}
 
 		/* Forget the wall */
-		cave_info[y][x] &= ~(CAVE_MARK | CAVE_WALL);
+		cave_off(cave_info[y][x], CAVE_WALL);
+		cave_off(cave_info[y][x], CAVE_MARK);
 
 		/* Destroy the feature */
 		cave_set_feat(y, x, FEAT_FLOOR);
@@ -3210,7 +3215,7 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 	    cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x00);
 
 	    /* Observe */
-	    if (cave_info[y][x] & (CAVE_MARK))
+	    if (cave_has(cave_info[y][x], CAVE_MARK))
 		obvious = TRUE;
 
 	    /* Update the visuals */
@@ -3256,7 +3261,7 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
     case GF_LIGHT:
 	{
 	    /* Turn on the light */
-	    cave_info[y][x] |= (CAVE_GLOW);
+	    cave_on(cave_info[y][x], CAVE_GLOW);
 
 	    /* Grid is in line of sight */
 	    if (player_has_los_bold(y, x)) {
@@ -3276,12 +3281,12 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
     case GF_DARK:
 	{
 	    /* Turn off the light */
-	    cave_info[y][x] &= ~(CAVE_GLOW);
+	    cave_off(cave_info[y][x], CAVE_GLOW);
 
 	    /* Hack -- Forget "boring" grids */
 	    if (cave_feat[y][x] <= FEAT_INVIS) {
 		/* Forget */
-		cave_info[y][x] &= ~(CAVE_MARK);
+		cave_off(cave_info[y][x], CAVE_MARK);
 	    }
 
 	    /* Grid is in line of sight */
@@ -4375,7 +4380,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	    }
 
 	    /* Mark grid for later processing. */
-	    cave_info[y][x] |= (CAVE_TEMP);
+	    cave_on(cave_info[y][x], CAVE_TEMP);
 
 	    break;
 	}
@@ -4396,7 +4401,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	    }
 
 	    /* Mark grid for later processing. */
-	    cave_info[y][x] |= (CAVE_TEMP);
+	    cave_on(cave_info[y][x], CAVE_TEMP);
 
 	    break;
 	}
@@ -4458,7 +4463,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	    }
 
 	    /* Mark grid for later processing. */
-	    cave_info[y][x] |= (CAVE_TEMP);
+	    cave_on(cave_info[y][x], CAVE_TEMP);
 
 	    break;
 	}
@@ -4478,7 +4483,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	    }
 
 	    /* Mark grid for later processing. */
-	    cave_info[y][x] |= (CAVE_TEMP);
+	    cave_on(cave_info[y][x], CAVE_TEMP);
 
 	    break;
 	}
@@ -4525,7 +4530,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	    }
 
 	    /* Mark grid for later processing. */
-	    cave_info[y][x] |= (CAVE_TEMP);
+	    cave_on(cave_info[y][x], CAVE_TEMP);
 
 	    break;
 	}
@@ -5020,7 +5025,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
     case GF_AWAY_UNDEAD:
 	{
 	    /* Mark grid for later processing. */
-	    cave_info[y][x] |= (CAVE_TEMP);
+	    cave_on(cave_info[y][x], CAVE_TEMP);
 
 	    /* No damage */
 	    dam = 0;
@@ -5032,7 +5037,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
     case GF_AWAY_EVIL:
 	{
 	    /* Mark grid for later processing. */
-	    cave_info[y][x] |= (CAVE_TEMP);
+	    cave_on(cave_info[y][x], CAVE_TEMP);
 
 	    /* No damage */
 	    dam = 0;
@@ -5045,7 +5050,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
     case GF_AWAY_ALL:
 	{
 	    /* Mark grid for later processing. */
-	    cave_info[y][x] |= (CAVE_TEMP);
+	    cave_on(cave_info[y][x], CAVE_TEMP);
 
 	    /* No damage */
 	    dam = 0;
@@ -5922,7 +5927,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
     }
 
     /* Hack - Darkness protects those who serve it. */
-    if (((cave_info[p_ptr->py][p_ptr->px] & (CAVE_GLOW)) == 0) && (!is_daylight)
+    if (!cave_has(cave_info[p_ptr->py][p_ptr->px], CAVE_GLOW) && (!is_daylight)
 	&& (p_ptr->cur_light <= 0) && (player_has(PF_UNLIGHT)))
 	terrain_adjustment -= dam / 4;
 
@@ -6909,7 +6914,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	    take_hit(dam, killer);
 
 	    /* Mark grid for later processing. */
-	    cave_info[y][x] |= (CAVE_TEMP);
+	    cave_on(cave_info[y][x], CAVE_TEMP);
 
 	    break;
 	}
@@ -6932,7 +6937,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	    take_hit(dam, killer);
 
 	    /* Mark grid for later processing. */
-	    cave_info[y][x] |= (CAVE_TEMP);
+	    cave_on(cave_info[y][x], CAVE_TEMP);
 
 	    break;
 	}
@@ -7004,7 +7009,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		notice_other(IF_RES_CONFU, 0);
 
 	    /* Mark grid for later processing. */
-	    cave_info[y][x] |= (CAVE_TEMP);
+	    cave_on(cave_info[y][x], CAVE_TEMP);
 
 	    break;
 	}
@@ -7021,7 +7026,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	    take_hit(dam, killer);
 
 	    /* Mark grid for later processing. */
-	    cave_info[y][x] |= (CAVE_TEMP);
+	    cave_on(cave_info[y][x], CAVE_TEMP);
 
 	    break;
 	}
@@ -7071,7 +7076,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	    take_hit(dam, killer);
 
 	    /* Mark grid for later processing. */
-	    cave_info[y][x] |= (CAVE_TEMP);
+	    cave_on(cave_info[y][x], CAVE_TEMP);
 
 	    break;
 	}
@@ -7236,7 +7241,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	    }
 
 	    /* Mark grid for later processing. */
-	    cave_info[y][x] |= (CAVE_TEMP);
+	    cave_on(cave_info[y][x], CAVE_TEMP);
 
 	    /* Drain Exp */
 	    if (!p_resist_good(P_RES_CHAOS) || !p_resist_good(P_RES_NETHR)) {
@@ -7355,11 +7360,11 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
     cptr note = NULL;
 
     /* Only process marked grids. */
-    if (!(cave_info[y][x] & (CAVE_TEMP)))
+    if (!cave_has(cave_info[y][x], CAVE_TEMP))
 	return (FALSE);
 
     /* Clear the cave_temp flag. */
-    cave_info[y][x] &= ~(CAVE_TEMP);
+    cave_off(cave_info[y][x], CAVE_TEMP);
 
 
     /* Projection will be affecting a player. */
@@ -7404,7 +7409,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 		if (cave_feat[y][x] == FEAT_LAVA) {
 
 		    /* Forget the lava */
-		    cave_info[y][x] &= ~(CAVE_MARK);
+		    cave_off(cave_info[y][x], CAVE_MARK);
 
 		    /* Destroy the lava */
 		    if (randint1(3) != 1)
@@ -7429,7 +7434,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 		    || (cave_feat[y][x] == FEAT_RUBBLE)) {
 
 		    /* Forget the floor or rubble. */
-		    cave_info[y][x] &= ~(CAVE_MARK);
+		    cave_off(cave_info[y][x], CAVE_MARK);
 
 		    /* Make lava. */
 		    cave_set_feat(y, x, FEAT_LAVA);
@@ -7455,7 +7460,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 		 * evaporate, as Smaug found out the hard way. */
 		if (dam > randint1(600 + k * 300) + 200) {
 		    /* Forget the water */
-		    cave_info[y][x] &= ~(CAVE_MARK);
+		    cave_off(cave_info[y][x], CAVE_MARK);
 
 		    /* Destroy the water */
 		    cave_set_feat(y, x, FEAT_FLOOR);
@@ -7465,7 +7470,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	    /* Can burn trees if strong. */
 	    if ((tf_has(f_ptr->flags, TF_TREE)) && (dam > randint1(400) + 100)) {
 		/* Forget the tree */
-		cave_info[y][x] &= ~(CAVE_MARK);
+		cave_off(cave_info[y][x], CAVE_MARK);
 
 		/* Destroy the tree */
 		cave_set_feat(y, x, FEAT_FLOOR);
@@ -7474,7 +7479,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	    /* Clears webs. */
 	    if (cave_feat[y][x] == FEAT_WEB) {
 		/* Forget the web */
-		cave_info[y][x] &= ~(CAVE_MARK);
+		cave_off(cave_info[y][x], CAVE_MARK);
 
 		/* Destroy the tree */
 		cave_set_feat(y, x, FEAT_FLOOR);
@@ -7576,7 +7581,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 		/* If enough water available, make pool. */
 		if ((dam + (k * 20)) > 100 + (randint0(400))) {
 		    /* Forget the floor */
-		    cave_info[y][x] &= ~(CAVE_MARK);
+		    cave_off(cave_info[y][x], CAVE_MARK);
 
 		    /* Create water */
 		    cave_set_feat(y, x, FEAT_WATER);
@@ -8515,7 +8520,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 	x = gx[i];
 
 	/* Grid must be marked. */
-	if (!(cave_info[y][x] & (CAVE_TEMP)))
+	if (!cave_has(cave_info[y][x], CAVE_TEMP))
 	    continue;
 
 	/* Affect marked grid */
