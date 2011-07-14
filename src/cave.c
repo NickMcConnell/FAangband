@@ -2985,9 +2985,6 @@ void forget_view(void)
     int fast_view_n = view_n;
     u16b *fast_view_g = view_g;
 
-    byte *fast_cave_info = &cave_info[0][0][0];
-
-
     /* None to forget */
     if (!fast_view_n)
 	return;
@@ -3004,7 +3001,8 @@ void forget_view(void)
 	x = GRID_X(g);
 
 	/* Clear "CAVE_VIEW" and "CAVE_SEEN" flags */
-	fast_cave_info[g * CAVE_SIZE] &= ~(CAVE_VIEW | CAVE_SEEN);
+	cave_off(cave_info[y][x], CAVE_VIEW);
+	cave_off(cave_info[y][x], CAVE_SEEN);
 
 	/* Only light the spot if is on the panel (can change due to resizing */
 	if (!panel_contains(y, x))
@@ -3127,10 +3125,7 @@ void update_view(void)
     int fast_temp_n = 0;
     u16b *fast_temp_g = temp_g;
 
-    byte *fast_cave_info = &cave_info[0][0][0];
-
-    byte info;
-
+    int y, x;
 
     /*** Step 0 -- Begin ***/
 
@@ -3140,22 +3135,23 @@ void update_view(void)
 	g = fast_view_g[i];
 
 	/* Get grid info */
-	info = fast_cave_info[g * CAVE_SIZE];
+	y = GRID_Y(g);
+	x = GRID_X(g);
 
 	/* Save "CAVE_SEEN" grids */
-	if (info & (CAVE_SEEN)) {
+	if (cave_has(cave_info[y][x], CAVE_SEEN)) {
 	    /* Set "CAVE_TEMP" flag */
-	    info |= (CAVE_TEMP);
+	    cave_on(cave_info[y][x], CAVE_TEMP);
 
 	    /* Save grid for later */
 	    fast_temp_g[fast_temp_n++] = g;
 	}
 
 	/* Clear "CAVE_VIEW" and "CAVE_SEEN" flags */
-	info &= ~(CAVE_VIEW | CAVE_SEEN);
+	cave_off(cave_info[y][x], CAVE_VIEW);
+	cave_off(cave_info[y][x], CAVE_SEEN);
 
 	/* Save cave info */
-	fast_cave_info[g * CAVE_SIZE] = info;
     }
 
     /* Reset the "view" array */
@@ -3179,25 +3175,23 @@ void update_view(void)
     g = pg;
 
     /* Get grid info */
-    info = fast_cave_info[g * CAVE_SIZE];
+    y = GRID_Y(g);
+    x = GRID_X(g);
 
     /* Assume viewable */
-    info |= (CAVE_VIEW);
+    cave_on(cave_info[y][x], CAVE_VIEW);
 
     /* Torch-lit grid */
     if (0 < radius) {
 	/* Mark as "CAVE_SEEN" */
-	info |= (CAVE_SEEN);
+	cave_on(cave_info[y][x], CAVE_SEEN);
     }
 
     /* Perma-lit grid */
-    else if (info & (CAVE_GLOW)) {
+    else if (cave_has(cave_info[y][x], CAVE_GLOW)) {
 	/* Mark as "CAVE_SEEN" */
-	info |= (CAVE_SEEN);
+	cave_on(cave_info[y][x], CAVE_SEEN);
     }
-
-    /* Save cave info */
-    fast_cave_info[g * CAVE_SIZE] = info;
 
     /* Save in array */
     fast_view_g[fast_view_n++] = g;
@@ -3242,10 +3236,11 @@ void update_view(void)
 		g = pg + *((s16b *) (((byte *) (p)) + o2));
 
 		/* Get grid info */
-		info = fast_cave_info[g * CAVE_SIZE];
+		y = GRID_Y(g);
+		x = GRID_X(g);
 
 		/* Handle wall */
-		if (info & (CAVE_WALL)) {
+		if (cave_has(cave_info[y][x], CAVE_WALL)) {
 		    /* Clear bits */
 		    bits0 &= ~(p->bits_0);
 		    bits1 &= ~(p->bits_1);
@@ -3253,21 +3248,19 @@ void update_view(void)
 		    bits3 &= ~(p->bits_3);
 
 		    /* Newly viewable wall */
-		    if (!(info & (CAVE_VIEW))) {
+		    if (!cave_has(cave_info[y][x], CAVE_VIEW)) {
 			/* Mark as viewable */
-			info |= (CAVE_VIEW);
+			cave_on(cave_info[y][x], CAVE_VIEW);
 
 			/* Torch-lit grids */
 			if (p->d < radius) {
 			    /* Mark as "CAVE_SEEN" */
-			    info |= (CAVE_SEEN);
+			    cave_on(cave_info[y][x], CAVE_SEEN);
 
 			}
 
 			/* Perma-lit grids */
-			else if (info & (CAVE_GLOW)) {
-			    int y = GRID_Y(g);
-			    int x = GRID_X(g);
+			else if (cave_has(cave_info[y][x], CAVE_GLOW)) {
 
 			    /* Hack -- move towards player */
 			    int yy =
@@ -3278,13 +3271,10 @@ void update_view(void)
 			    /* Check for "simple" illumination */
 			    if (cave_has(cave_info[yy][xx], CAVE_GLOW)) {
 				/* Mark as seen */
-				info |= (CAVE_SEEN);
+				cave_on(cave_info[y][x], CAVE_SEEN);
 			    }
 
 			}
-
-			/* Save cave info */
-			fast_cave_info[g * CAVE_SIZE] = info;
 
 			/* Save in array */
 			fast_view_g[fast_view_n++] = g;
@@ -3304,25 +3294,22 @@ void update_view(void)
 		    }
 
 		    /* Newly viewable non-wall */
-		    if (!(info & (CAVE_VIEW))) {
+		    if (!cave_has(cave_info[y][x], CAVE_VIEW)) {
 			/* Mark as "viewable" */
-			info |= (CAVE_VIEW);
+			cave_on(cave_info[y][x], CAVE_VIEW);
 
 			/* Torch-lit grids */
 			if (p->d < radius) {
 			    /* Mark as "CAVE_SEEN" */
-			    info |= (CAVE_SEEN);
+			    cave_on(cave_info[y][x], CAVE_SEEN);
 
 			}
 
 			/* Perma-lit grids */
-			else if (info & (CAVE_GLOW)) {
+			else if (cave_has(cave_info[y][x], CAVE_GLOW)) {
 			    /* Mark as "CAVE_SEEN" */
-			    info |= (CAVE_SEEN);
+			    cave_on(cave_info[y][x], CAVE_SEEN);
 			}
-
-			/* Save cave info */
-			fast_cave_info[g * CAVE_SIZE] = info;
 
 			/* Save in array */
 			fast_view_g[fast_view_n++] = g;
@@ -3341,9 +3328,11 @@ void update_view(void)
 	for (i = 0; i < fast_view_n; i++) {
 	    /* Grid */
 	    g = fast_view_g[i];
+	    y = GRID_Y(g);
+	    x = GRID_X(g);
 
 	    /* Grid cannot be "CAVE_SEEN" */
-	    fast_cave_info[g * CAVE_SIZE] &= ~(CAVE_SEEN);
+	    cave_off(cave_info[y][x], CAVE_SEEN);
 	}
     }
 
@@ -3353,16 +3342,12 @@ void update_view(void)
 	g = fast_view_g[i];
 
 	/* Get grid info */
-	info = fast_cave_info[g * CAVE_SIZE];
+	y = GRID_Y(g);
+	x = GRID_X(g);
 
 	/* Was not "CAVE_SEEN", is now "CAVE_SEEN" */
-	if ((info & (CAVE_SEEN)) && !(info & (CAVE_TEMP))) {
-	    int y, x;
-
-	    /* Location */
-	    y = GRID_Y(g);
-	    x = GRID_X(g);
-
+	if (cave_has(cave_info[y][x], CAVE_SEEN) && 
+	    !cave_has(cave_info[y][x], CAVE_TEMP)) {
 	    /* Note */
 	    note_spot(y, x);
 
@@ -3377,22 +3362,16 @@ void update_view(void)
 	g = fast_temp_g[i];
 
 	/* Get grid info */
-	info = fast_cave_info[g * CAVE_SIZE];
+	y = GRID_Y(g);
+	x = GRID_X(g);
 
 	/* Clear "CAVE_TEMP" flag */
-	info &= ~(CAVE_TEMP);
+	cave_off(cave_info[y][x], CAVE_TEMP);
 
 	/* Save cave info */
-	fast_cave_info[g * CAVE_SIZE] = info;
 
 	/* Was "CAVE_SEEN", is now not "CAVE_SEEN" */
-	if (!(info & (CAVE_SEEN))) {
-	    int y, x;
-
-	    /* Location */
-	    y = GRID_Y(g);
-	    x = GRID_X(g);
-
+	if (!cave_has(cave_info[y][x], CAVE_SEEN)) {
 	    /* Redraw */
 	    light_spot(y, x);
 	}
