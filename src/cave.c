@@ -705,6 +705,8 @@ static void special_lighting_floor(byte *a, char *c, enum grid_light_level light
  */
 static void special_wall_display(byte *a, char *c, bool in_view, int feat)
 {
+    feature *f_ptr = &f_info[feat];
+
     /* Grids currently in view are left alone, rendered as "white" */
     if (in_view) return;
 
@@ -734,7 +736,6 @@ static void special_wall_display(byte *a, char *c, bool in_view, int feat)
 	case GRAPHICS_NONE:
 	case GRAPHICS_PSEUDO:
 	    /* Use "gray" */
-	    //if (*a == TERM_WHITE) *a = TERM_SLATE;
 	    *a = get_color(*a, ATTR_DARK, 1);
 	    break;
 	case GRAPHICS_ADAM_BOLT:
@@ -835,11 +836,11 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 	    a = TERM_L_GREEN;
 
 	/* Special lighting effects */
-	if (tf_has(f_ptr->flags, TF_FLOOR) && OPT(view_special_light))
+	if (tf_has(f_ptr->flags, TF_FLOOR))
+	    if (OPT(view_special_light))
 		special_lighting_floor(&a, &c, g->lighting, g->in_view);
 
 	/* Special lighting effects (walls only) */
-	//if (tf_has(f_ptr->flags, TF_WALL) && OPT(view_granite_light)) 
 	else if (OPT(view_granite_light)) 
 	    special_wall_display(&a, &c, g->in_view, g->f_idx);
 		
