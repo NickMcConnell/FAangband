@@ -1009,6 +1009,8 @@ bool py_attack(int y, int x, bool can_push)
 
     object_type *o_ptr;
 
+    terrain *f_ptr = &f_info[cave_feat[y][x]];
+
     char m_name[80];
 
     bool fear = FALSE;
@@ -1096,18 +1098,16 @@ bool py_attack(int y, int x, bool can_push)
     /* Become hostile */
     m_ptr->hostile = -1;
 
-    /* Monsters in rubble can take advantage of cover. */
-    if (cave_feat[y][x] == FEAT_RUBBLE) {
-	terrain_bonus = r_ptr->ac / 7 + 5;
-    }
-    /* Monsters in trees can take advantage of cover, except from players who
+    /* Monsters in rubble can take advantage of cover. 
+     * Monsters in trees can take advantage of cover, except from players who
      * know nature lore. */
-    if (((cave_feat[y][x] == FEAT_TREE) || (cave_feat[y][x] == FEAT_TREE2))
-	&& !((player_has(PF_WOODSMAN)) || (player_has(PF_ELVEN)))) {
+    if (tf_has(f_ptr->flags, TF_PROTECT) && 
+	!(tf_has(f_ptr->flags, TF_ORGANIC) &&
+	  (player_has(PF_WOODSMAN) || player_has(PF_ELVEN)))) {
 	terrain_bonus = r_ptr->ac / 7 + 5;
     }
     /* Monsters in water are vulnerable.  */
-    if (cave_feat[y][x] == FEAT_WATER) {
+    if (tf_has(f_ptr->flags, TF_EXPOSE)) {
 	terrain_bonus -= r_ptr->ac / 5;
     }
 
@@ -1930,21 +1930,16 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 		sleeping_bonus = 5 + p_ptr->lev / 5;
 	    }
 
-	    /* Monsters in rubble can take advantage of cover. */
-	    if (cave_feat[y][x] == FEAT_RUBBLE) {
-		terrain_bonus = r_ptr->ac / 5 + 5;
-	    }
-
-	    /* Monsters in trees can take advantage of cover, except from
+	    /* Monsters in rubble can take advantage of cover. 
+	     * Monsters in trees can take advantage of cover, except from 
 	     * players who know nature lore. */
-	    if (((cave_feat[y][x] == FEAT_TREE)
-		 || (cave_feat[y][x] == FEAT_TREE2))
-		&& !((player_has(PF_WOODSMAN))
-		     || (player_has(PF_ELVEN)))) {
+	    if (tf_has(f_ptr->flags, TF_PROTECT) && 
+		!(tf_has(f_ptr->flags, TF_ORGANIC) &&
+		  (player_has(PF_WOODSMAN) || player_has(PF_ELVEN)))) {
 		terrain_bonus = r_ptr->ac / 5 + 5;
 	    }
-	    /* Monsters in water are vulnerable. */
-	    if (cave_feat[y][x] == FEAT_WATER) {
+	    /* Monsters in water are vulnerable.  */
+	    if (tf_has(f_ptr->flags, TF_EXPOSE)) {
 		terrain_bonus -= r_ptr->ac / 4;
 	    }
 
@@ -2462,20 +2457,16 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 		    sleeping_bonus = 0;
 	    }
 
-	    /* Monsters in rubble can take advantage of cover. */
-	    if (cave_feat[y][x] == FEAT_RUBBLE) {
-		terrain_bonus = r_ptr->ac / 5 + 5;
-	    }
-	    /* Monsters in trees can take advantage of cover, except from
+	    /* Monsters in rubble can take advantage of cover. 
+	     * Monsters in trees can take advantage of cover, except from 
 	     * players who know nature lore. */
-	    if (((cave_feat[y][x] == FEAT_TREE)
-		 || (cave_feat[y][x] == FEAT_TREE2))
-		&& !((player_has(PF_WOODSMAN))
-		     || (player_has(PF_ELVEN)))) {
+	    if (tf_has(f_ptr->flags, TF_PROTECT) && 
+		!(tf_has(f_ptr->flags, TF_ORGANIC) &&
+		  (player_has(PF_WOODSMAN) || player_has(PF_ELVEN)))) {
 		terrain_bonus = r_ptr->ac / 5 + 5;
 	    }
-	    /* Monsters in water are vulnerable. */
-	    if (cave_feat[y][x] == FEAT_WATER) {
+	    /* Monsters in water are vulnerable.  */
+	    if (tf_has(f_ptr->flags, TF_EXPOSE)) {
 		terrain_bonus -= r_ptr->ac / 4;
 	    }
 

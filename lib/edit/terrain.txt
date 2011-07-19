@@ -454,7 +454,7 @@ D:A door that appears like a granite wall to untrained eyes.
 
 N:49:pile of rubble
 G:::w
-F:ROCK | PASSABLE | OBJECT 
+F:ROCK | PASSABLE | OBJECT | PROTECT 
 D:Greatly slows down any creature that cannot bore or pass through rock.  Ends 
 D:LOS, stops missiles, bolts, and beams, and reduces the radius of ball 
 D:spells.  Grants the character and monsters within it some protection from 
@@ -864,7 +864,7 @@ D:a target in lava.  Lava may freeze to rubble or normal floor.
 
 N:113:water
 G:.:b
-F:LOS | PROJECT | PASSABLE | NO_SCENT 
+F:LOS | PROJECT | PASSABLE | NO_SCENT | EXPOSE 
 D:Cannot be passed by fiery, earthbound monsters, slows down most other 
 D:monsters.  Slows you down if you are carrying too much.  You and your 
 D:enemies are easier to hit when in water, and most spells (especially 
@@ -876,7 +876,7 @@ D:Smaug.  Water may evaporate.
 
 N:114:lowland trees
 G:+:g
-F:PASSABLE | OBJECT | TREE 
+F:PASSABLE | OBJECT | TREE | PROTECT | ORGANIC 
 D:Slows down characters not familiar with druidic techniques, and all 
 D:non-natural monsters that neither fly nor pass through rock.  Ends LOS, 
 D:stops missiles, bolts, and beams, and reduces the radius of ball spells.  
@@ -888,7 +888,7 @@ D:ranged, or magical attacks.  Trees can burn.
 
 N:115:highland trees
 G:+:t
-F:PASSABLE | OBJECT | TREE 
+F:PASSABLE | OBJECT | TREE | PROTECT | ORGANIC 
 D:Slows down characters not familiar with druidic techniques, and all 
 D:non-natural monsters that neither fly nor pass through rock.  Ends LOS, 
 D:stops missiles, bolts, and beams, and reduces the radius of ball spells.  
@@ -899,7 +899,7 @@ D:ranged, or magical attacks.  Trees can burn.
 
 N:116:grass
 G:.:g
-F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT 
+F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | ORGANIC 
 D:Open ground that can be crossed easily by all creatures.  It occurs only in 
 D:wilderness.  It may contain traps. 
 
@@ -908,7 +908,7 @@ D:wilderness.  It may contain traps.
 N:117:invisible trap
 G:.:g
 M:116
-F:LOS | PROJECT | PASSABLE | FLOOR | TRAP_INVIS 
+F:LOS | PROJECT | PASSABLE | FLOOR | TRAP_INVIS | ORGANIC 
 D:A trap hidden in the grass.
 
 # 0x76 --> special feature -- web
@@ -933,7 +933,7 @@ D:spells and missiles can pass through.
 N:120:invisible trap
 G:+:g
 M:114
-F:PASSABLE | TRAP_INVIS | TREE 
+F:PASSABLE | TRAP_INVIS | TREE | ORGANIC 
 D:A tree which can hurt.
 
 # 0x79 --> special feature -- trapped tree
@@ -941,7 +941,7 @@ D:A tree which can hurt.
 N:121:invisible trap
 G:+:t
 M:115
-F:PASSABLE | TRAP_INVIS | TREE 
+F:PASSABLE | TRAP_INVIS | TREE | ORGANIC 
 D:A tree which can hurt.
 
 # 0x7a --> special feature -- sand dune
