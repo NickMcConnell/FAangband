@@ -561,12 +561,12 @@ static void rand_dir(int *row_dir, int *col_dir, int y, int x)
 /** Terrain type is unalterable and impassable. */
 static bool unalterable(byte feat)
 {
+    
     /* A few features are unalterable. */
-    if ((feat == FEAT_PERM_EXTRA) || (feat == FEAT_PERM_INNER)
-	|| (feat == FEAT_PERM_OUTER) || (feat == FEAT_PERM_SOLID)) {
+    if (if tf_has(f_info[feat].flags, TF_PERMANENT)) {
 	return (TRUE);
     }
-
+    
     /* Assume alterable */
     return (FALSE);
 }

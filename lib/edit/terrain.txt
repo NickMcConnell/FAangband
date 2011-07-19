@@ -465,7 +465,7 @@ D:melee, ranged, or magical attacks.  Rubble may dissolve to normal floor.
 
 N:50:magma vein
 G:%:s
-F:WALL | ROCK | NO_SCENT
+F:WALL | ROCK | NO_SCENT | NO_NOISE
 D:A seam of soft rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
 D:sight.
@@ -474,7 +474,7 @@ D:sight.
 
 N:51:quartz vein
 G:%:w
-F:WALL | ROCK | NO_SCENT
+F:WALL | ROCK | NO_SCENT | NO_NOISE
 D:A seam of hardish rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
 D:sight.
@@ -484,7 +484,7 @@ D:sight.
 N:52:magma vein
 G:%:s
 M:50
-F:WALL | ROCK | NO_SCENT
+F:WALL | ROCK | NO_SCENT | NO_NOISE
 D:A seam of soft rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
 D:sight.  It contains hidden treasure.
@@ -495,7 +495,7 @@ D:sight.  It contains hidden treasure.
 N:53:quartz vein
 G:%:w
 M:51
-F:WALL | ROCK | NO_SCENT
+F:WALL | ROCK | NO_SCENT | NO_NOISE
 D:A seam of hardish rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
 D:sight.  It contains hidden treasure.
@@ -504,7 +504,7 @@ D:sight.  It contains hidden treasure.
 
 N:54:magma vein with treasure
 G:*:o
-F:WALL | ROCK | INTERESTING | NO_SCENT
+F:WALL | ROCK | INTERESTING | NO_SCENT | NO_NOISE
 D:A seam of soft rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
 D:sight.  It contains visible treasure.
@@ -514,7 +514,7 @@ D:sight.  It contains visible treasure.
 
 N:55:quartz vein with treasure
 G:*:o
-F:WALL | ROCK | INTERESTING | NO_SCENT
+F:WALL | ROCK | INTERESTING | NO_SCENT | NO_NOISE
 D:A seam of hardish rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
 D:sight.  It contains visible treasure.
@@ -523,7 +523,7 @@ D:sight.  It contains visible treasure.
 
 N:56:granite wall
 G:#:w
-F:WALL | ROCK | GRANITE | NO_SCENT
+F:WALL | ROCK | GRANITE | NO_SCENT | NO_NOISE
 D:A seam of hard rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
 D:sight. 
@@ -534,7 +534,7 @@ D:sight.
 N:57:granite wall
 G:#:w
 M:56
-F:WALL | ROCK | GRANITE | NO_SCENT
+F:WALL | ROCK | GRANITE | NO_SCENT | NO_NOISE
 D:A seam of hard rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
 D:sight. 
@@ -545,7 +545,7 @@ D:sight.
 N:58:granite wall
 G:#:w
 M:56
-F:WALL | ROCK | GRANITE | NO_SCENT
+F:WALL | ROCK | GRANITE | NO_SCENT | NO_NOISE
 D:A seam of hard rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
 D:sight. 
@@ -556,7 +556,7 @@ D:sight.
 N:59:granite wall
 G:#:w
 M:56
-F:WALL | ROCK | GRANITE | NO_SCENT
+F:WALL | ROCK | GRANITE | NO_SCENT | NO_NOISE
 D:A seam of hard rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
 D:sight. 
@@ -566,7 +566,7 @@ D:sight.
 
 N:60:permanent wall
 G:#:w
-F:WALL | ROCK | PERMANENT | NO_SCENT
+F:WALL | ROCK | PERMANENT | NO_SCENT | NO_NOISE
 D:You can dig through most walls but some are impenetrable.  The dungeon is 
 D:surrounded by these kinds of walls and some special rooms are made of them.
 
@@ -575,7 +575,7 @@ D:surrounded by these kinds of walls and some special rooms are made of them.
 N:61:permanent wall
 G:#:w
 M:60
-F:WALL | ROCK | PERMANENT | NO_SCENT
+F:WALL | ROCK | PERMANENT | NO_SCENT | NO_NOISE
 D:You can dig through most walls but some are impenetrable.  The dungeon is 
 D:surrounded by these kinds of walls and some special rooms are made of them.
 
@@ -584,7 +584,7 @@ D:surrounded by these kinds of walls and some special rooms are made of them.
 N:62:permanent wall
 G:#:w
 M:60
-F:WALL | ROCK | PERMANENT | NO_SCENT
+F:WALL | ROCK | PERMANENT | NO_SCENT | NO_NOISE
 D:You can dig through most walls but some are impenetrable.  The dungeon is 
 D:surrounded by these kinds of walls and some special rooms are made of them.
 
@@ -593,7 +593,7 @@ D:surrounded by these kinds of walls and some special rooms are made of them.
 N:63:permanent wall
 G:#:w
 M:60
-F:WALL | ROCK | PERMANENT | NO_SCENT
+F:WALL | ROCK | PERMANENT | NO_SCENT | NO_NOISE
 D:You can dig through most walls but some are impenetrable.  The dungeon is 
 D:surrounded by these kinds of walls and some special rooms are made of them.
 

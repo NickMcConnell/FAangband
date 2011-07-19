@@ -831,8 +831,9 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 	c = f_ptr->x_char;
 
 	/* Check for trap detection boundaries */
-	if (g->trapborder && (g->f_idx == FEAT_FLOOR || g->f_idx == FEAT_GRASS)
-	    && (use_graphics == GRAPHICS_NONE || use_graphics == GRAPHICS_PSEUDO))
+	if (g->trapborder && tf_has(f_ptr->flags, TF_FLOOR) && 
+	    !tf_has(f_ptr->flags, TF_TRAP) && 
+	    (use_graphics == GRAPHICS_NONE || use_graphics == GRAPHICS_PSEUDO))
 	    a = TERM_L_GREEN;
 
 	/* Special lighting effects */
@@ -861,9 +862,7 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 			c = PICT_C(i);
 		}
 		/* Hack to not display objects in trees */
-		else if ((g->f_idx == FEAT_TREE) || 
-			 (g->f_idx == FEAT_TREE2) || 
-			 (g->f_idx == FEAT_RUBBLE)) ;
+		else if (tf_has(f_ptr->flags, TF_HIDE_OBJ));
               
 		else
 		{
@@ -1106,7 +1105,7 @@ void map_info(unsigned y, unsigned x, grid_data *g)
 	g->f_idx = f_ptr->mimic;
 			
 	/* Boring grids (floors, etc) */
-	if ((g->f_idx == FEAT_FLOOR) || (g->f_idx == FEAT_GRASS))
+	if (tf_has(f_ptr->flags, TF_FLOOR) && !tf_has(f_ptr->flags, TF_TRAP))
 	{
 	    /* Handle currently visible grids */
 	    if (cave_has(cave_info[y][x], CAVE_SEEN))
@@ -1164,7 +1163,7 @@ void map_info(unsigned y, unsigned x, grid_data *g)
     /* Rare random hallucination on non-outer walls */
     if (g->hallucinate && g->m_idx == 0 && g->first_k_idx == 0)
     {
-	if (one_in_(256) && (g->f_idx < FEAT_PERM_SOLID))
+	if (one_in_(256) && (g->f_idx != FEAT_PERM_SOLID))
 	{
 	    /* Normally, make an imaginary monster */
 	    if (randint0(100) < 75)
@@ -1424,42 +1423,44 @@ void print_rel(char c, byte a, int y, int x)
  */
 void note_spot(int y, int x)
 {
-	object_type *o_ptr;
+    object_type *o_ptr;
+    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
-	/* Require "seen" flag */
-	if (!cave_has(cave_info[y][x], CAVE_SEEN)) return;
+    /* Require "seen" flag */
+    if (!cave_has(cave_info[y][x], CAVE_SEEN)) return;
 
 
-	/* Hack -- memorize objects */
-	for (o_ptr = get_first_object(y, x); o_ptr; o_ptr = get_next_object(o_ptr))
+    /* Hack -- memorize objects */
+    for (o_ptr = get_first_object(y, x); o_ptr; o_ptr = get_next_object(o_ptr))
+    {
+	/* Memorize objects */
+	o_ptr->marked = TRUE;
+    }
+
+
+    /* Hack -- memorize grids */
+    if (!cave_has(cave_info[y][x], CAVE_MARK))
+    {
+	/* Memorize some "boring" grids */
+	if (tf_has(f_ptr->flags, TF_FLOOR) && 
+	    !tf_has(f_ptr->flags, TF_INTERESTING))
 	{
-		/* Memorize objects */
-		o_ptr->marked = TRUE;
+	    /* Option -- memorize certain floors */
+	    if ((cave_has(cave_info[y][x], CAVE_GLOW) && OPT(view_perma_grids))
+		|| OPT(view_torch_grids))
+	    {
+		/* Memorize */
+		cave_on(cave_info[y][x], CAVE_MARK);
+	    }
 	}
-
-
-	/* Hack -- memorize grids */
-	if (!cave_has(cave_info[y][x], CAVE_MARK))
+	
+	/* Memorize all "interesting" grids */
+	else
 	{
-		/* Memorize some "boring" grids */
-		if (cave_feat[y][x] <= FEAT_INVIS)
-		{
-			/* Option -- memorize certain floors */
-		    if ((cave_has(cave_info[y][x], CAVE_GLOW) && OPT(view_perma_grids)) ||
-			    OPT(view_torch_grids))
-			{
-			    /* Memorize */
-			    cave_on(cave_info[y][x], CAVE_MARK);
-			}
-		}
-
-		/* Memorize all "interesting" grids */
-		else
-		{
-			/* Memorize */
-		    cave_on(cave_info[y][x], CAVE_MARK);
-		}
+	    /* Memorize */
+	    cave_on(cave_info[y][x], CAVE_MARK);
 	}
+    }
 }
 
 
@@ -3647,8 +3648,7 @@ void update_noise(void)
 			continue;
 
 		    /* Ignore walls.  Do not ignore rubble. */
-		    if ((cave_feat[y2][x2] > FEAT_RUBBLE)
-			&& (cave_feat[y2][x2] < FEAT_SHOP_HEAD)) {
+		    if (tf_has(f_info[cave_feat[y2][x2]].flags, NO_NOISE)) {
 			continue;
 		    }
 		}
@@ -3826,11 +3826,10 @@ void map_area(int y, int x, bool extended)
 		continue;
 
 	    /* All non-walls, trees, and rubble are "checked" */
-	    if ((cave_feat[y][x] < FEAT_SECRET)
-		|| (cave_feat[y][x] == FEAT_RUBBLE)
-		|| (cave_feat[y][x] >= FEAT_LAVA)) {
+	    if (!cave_has(cave_info[y][x], CAVE_WALL)) {
 		/* Memorize normal features */
-		if (cave_feat[y][x] > FEAT_INVIS) {
+		if (!tf_has(f_info[cave_feat[y][x]].flags, TF_FLOOR) ||
+		    tf_has(f_info[cave_feat[y][x]].flags, TF_INTERESTING)) {
 		    /* Memorize the object */
 		    cave_on(cave_info[y][x], CAVE_MARK);
 		}
@@ -3841,7 +3840,7 @@ void map_area(int y, int x, bool extended)
 		    int xx = x + ddx_ddd[i];
 
 		    /* All walls are "checked" */
-		    if (cave_feat[yy][xx] >= FEAT_SECRET) {
+		    if (cave_has(cave_info[yy][xx], CAVE_WALL)) {
 			/* Memorize the walls */
 			cave_on(cave_info[yy][xx], CAVE_MARK);
 		    }
@@ -3905,33 +3904,37 @@ void wiz_light(bool wizard)
     for (y = 1; y < DUNGEON_HGT - 1; y++) {
 	/* Scan all normal grids */
 	for (x = 1; x < DUNGEON_WID - 1; x++) {
-	    /* Process all non-walls, trees, and rubble. */
-	    if ((cave_feat[y][x] < FEAT_SECRET)
-		|| (cave_feat[y][x] == FEAT_RUBBLE)
-		|| (cave_feat[y][x] >= FEAT_LAVA)) {
-		/* Scan all neighbors */
-		for (i = 0; i < 9; i++) {
+	    /* Process all passable grids (or all grids, if a wizard) */
+	    if ((cave_passable_bold(y, x)) || (wizard))
+	    {
+		/* Paranoia -- stay in bounds */
+		if (!in_bounds_fully(y, x)) continue;
+
+		/* Scan the grid and all neighbors */
+		for (i = 0; i < 9; i++)
+		{
 		    int yy = y + ddy_ddd[i];
 		    int xx = x + ddx_ddd[i];
-
-		    /* Perma-light the grid */
+		    
+		    /* Perma-light the grid (always) */
 		    cave_on(cave_info[yy][xx], CAVE_GLOW);
-
-		    /* Skip non-wall vault features if not a wizard. */
-		    if ((wizard == FALSE) && 
-			cave_has(cave_info[yy][xx], CAVE_ICKY)
-			&& ((cave_feat[yy][xx] < FEAT_SECRET)
-			    || (cave_feat[yy][xx] > FEAT_PERM_SOLID)))
-			continue;
-
-		    /* Memorize normal features */
-		    if (cave_feat[yy][xx] > FEAT_INVIS) {
+		    
+		    /* If not a wizard, do not mark passable grids in vaults */
+		    if ((!wizard) && cave_has(cave_info[yy][xx], CAVE_ICKY))
+		    {
+			if (cave_passable_bold(yy, xx)) continue;
+		    }
+		    
+		    /* Memorize features other than ordinary floor */
+		    if (!cave_floor_bold(yy, xx))
+		    {
 			/* Memorize the grid */
 			cave_on(cave_info[yy][xx], CAVE_MARK);
 		    }
-
-		    /* Normally, memorize floors (see above). */
-		    if (OPT(view_perma_grids) && !OPT(view_torch_grids)) {
+		    
+		    /* Optionally, memorize floors immediately */
+		    else if (OPT(view_perma_grids) && !OPT(view_torch_grids))
+		    {
 			/* Memorize the grid */
 			cave_on(cave_info[yy][xx], CAVE_MARK);
 		    }
