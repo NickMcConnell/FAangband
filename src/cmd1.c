@@ -761,9 +761,12 @@ void move_player(int dir)
     int temp;
     int y, x;
 
+    feature *f_ptr;
+
     /* Find the result of moving */
     y = py + ddy[dir];
     x = px + ddx[dir];
+    f_ptr = &f_info[cave_feat[y][x]];
 
 
     /* Hack -- attack monsters */
@@ -794,8 +797,7 @@ void move_player(int dir)
 
     /* Option to disarm a visible trap. -TNB- */
     /* Hack - Rogues can walk over their own trap - BR */
-    if (OPT(easy_alter) && (cave_feat[y][x] >= FEAT_TRAP_HEAD)
-	&& (cave_feat[y][x] <= FEAT_TRAP_TAIL)) 
+    if (OPT(easy_alter) && tf_has(f_ptr->flags, TF_TRAP))
     {
 	bool more = FALSE;
 	/* Auto-repeat if not already repeating */
@@ -818,7 +820,7 @@ void move_player(int dir)
 	/* Notice unknown obstacles */
 	if (!cave_has(cave_info[y][x], CAVE_MARK)) {
 	    /* Closed door */
-	    if (cave_feat[y][x] < FEAT_SECRET) {
+	    if (tf_has(f_ptr->flags, TF_DOOR_CLOSED)) {
 		message(MSG_HITWALL, 0, "You feel a door blocking your way.");
 		cave_on(cave_info[y][x], CAVE_MARK);
 		light_spot(y, x);
@@ -835,7 +837,7 @@ void move_player(int dir)
 	/* Mention known obstacles */
 	else {
 	    /* Closed door */
-	    if (cave_feat[y][x] < FEAT_SECRET) {
+	    if (tf_has(f_ptr->flags, TF_DOOR_CLOSED)) {
 		/* Option to automatically open doors. -TNB- */
 		if (OPT(easy_alter)) {
 		    bool more = FALSE;
@@ -1035,10 +1037,8 @@ void move_player(int dir)
 		p_ptr->update |= PU_BONUS;
 
 	    /* Superstealth for ents in trees SJGU */
-	    if ((player_has(PF_WOODEN))
-		&&
-		(tf_has
-		 (f_info[cave_feat[p_ptr->py][p_ptr->px]].flags, TF_TREE))) {
+	    if ((player_has(PF_WOODEN))	&&
+		(tf_has(f_info[cave_feat[p_ptr->py][p_ptr->px]].flags, TF_TREE))) {
 		if (!(tf_has(f_info[cave_feat[py][px]].flags, TF_TREE))
 		    || !(p_ptr->timed[TMD_SSTEALTH])) {
 		    (void) inc_timed(TMD_SSTEALTH, 1, FALSE);
@@ -1055,6 +1055,7 @@ void move_player(int dir)
 	    /* New location */
 	    y = py = p_ptr->py;
 	    x = px = p_ptr->px;
+	    f_ptr = &f_info[cave_feat[y][x]];
 
 	    /* No longer traversing. */
 	    player_is_crossing = 0;
@@ -1077,8 +1078,7 @@ void move_player(int dir)
 	    }
 
 	    /* Handle "store doors" */
-	    if ((cave_feat[y][x] >= FEAT_SHOP_HEAD)
-		&& (cave_feat[y][x] <= FEAT_SHOP_TAIL)) {
+	    if (tf_has(f_ptr->flags, TF_SHOP)) {
 		/* Disturb */
 		disturb(0, 0);
 		cmd_insert(CMD_ENTER_STORE);
@@ -1093,21 +1093,17 @@ void move_player(int dir)
 
 	    /* Flying players have a chance to miss traps */
 	    if ((p_ptr->schange == SHAPE_BAT) || (p_ptr->schange == SHAPE_WYRM)) {
-		if (((cave_feat[y][x] == FEAT_INVIS)
-		     || (cave_feat[y][x] == FEAT_GRASS_INVIS))
+		if (tf_has(f_ptr->flags, TF_TRAP_INVIS)
 		    && (randint0(3) != 0))
 		    trapped = FALSE;
-		else if ((cave_feat[y][x] >= FEAT_TRAP_HEAD)
-			 && (cave_feat[y][x] <= FEAT_TRAP_TAIL)
+		else if (tf_has(f_ptr->flags, TF_TRAP)
 			 && (randint0(10) != 0))
 		    trapped = FALSE;
 	    }
 
 	    /* Discover invisible traps */
-	    else if (((cave_feat[y][x] == FEAT_INVIS)
-		      || (cave_feat[y][x] == FEAT_GRASS_INVIS)
-		      || (cave_feat[y][x] == FEAT_TREE_INVIS)
-		      || (cave_feat[y][x] == FEAT_TREE2_INVIS)) && trapped) {
+	    else if (tf_has(f_ptr->flags, TF_TRAP_INVIS && trapped)) 
+	    {
 		/* Disturb */
 		disturb(0, 0);
 
@@ -1122,8 +1118,8 @@ void move_player(int dir)
 	    }
 
 	    /* Set off a visible trap */
-	    else if ((cave_feat[y][x] >= FEAT_TRAP_HEAD)
-		     && (cave_feat[y][x] <= FEAT_TRAP_TAIL) && trapped) {
+	    else if (tf_has(f_ptr->flags, TF_TRAP && trapped))
+	    {
 		/* Disturb */
 		disturb(0, 0);
 
@@ -1132,8 +1128,8 @@ void move_player(int dir)
 	    }
 
 	    /* Walk on a monster trap */
-	    else if ((cave_feat[y][x] >= FEAT_MTRAP_HEAD)
-		     && (cave_feat[y][x] <= FEAT_MTRAP_TAIL)) {
+	    else if (tf_has(f_ptr->flags, TF_M_TRAP))
+	    {
 		msg_print("You inspect your cunning trap.");
 	    }
 	}

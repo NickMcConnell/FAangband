@@ -447,7 +447,7 @@ D:valuable time by jamming or locking them.
 N:48:secret door
 G:#:w
 M:56
-F:WALL | ROCK | DOOR_ANY | DOOR_CLOSED | GRANITE
+F:WALL | ROCK | DOOR_ANY | GRANITE
 D:A door that appears like a granite wall to untrained eyes.
 
 # 0x31 --> pile of rubble
