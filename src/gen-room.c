@@ -444,16 +444,14 @@ static bool find_space(int *y, int *x, int height, int width)
  */
 extern bool passable(int feat)
 {
+    feature *f_ptr = &f_info[feat];
+
     /* Some kinds of terrain are passable. */
-    if ((feat == FEAT_FLOOR) || (feat == FEAT_SECRET) || (feat == FEAT_RUBBLE)
-	|| (feat == FEAT_WATER) || (feat == FEAT_TREE) || (feat == FEAT_TREE2)
-	|| (feat == FEAT_INVIS) || (feat == FEAT_GRASS_INVIS)
-	|| (feat == FEAT_LAVA) || (feat == FEAT_OPEN) || (feat == FEAT_BROKEN)
-	|| (feat == FEAT_LESS) || (feat == FEAT_MORE))
+    if (tf_has(f_ptr, TF_PASSABLE))
 	return (TRUE);
 
     /* Doors are passable. */
-    if ((feat >= FEAT_DOOR_HEAD) && (feat <= FEAT_DOOR_TAIL))
+    if (tf_has(f_ptr, TF_DOOR_CLOSED))
 	return (TRUE);
 
     /* Everything else is not passable. */
@@ -745,7 +743,8 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2, bool light,
 			if (max_dist >= dist) {
 			    /* If new feature is not passable, or floor, always 
 			     * place it. */
-			    if ((feat == FEAT_FLOOR) || (!passable(feat))) {
+			    if ((feat == FEAT_FLOOR) || (!passable(feat))) 
+			    {
 				cave_set_feat(y, x, feat);
 
 				if (feat == FEAT_FLOOR)

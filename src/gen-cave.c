@@ -136,6 +136,8 @@ static void build_streamer(int feat, int chance)
 
     /* Place streamer into dungeon */
     while (TRUE) {
+	feature *f_ptr;
+
 	/* Advance streamer width steps on the table. */
 	table_start += width;
 
@@ -143,16 +145,19 @@ static void build_streamer(int feat, int chance)
 	 * Change grids outwards along sides.  If moving diagonally, 
 	 * change a cross-shaped area.
 	 */
-	if (ddy[dir]) {
-	    for (dx = x - out1; dx <= x + out2; dx++) {
+	if (ddy[dir]) 
+	{
+	    for (dx = x - out1; dx <= x + out2; dx++) 
+	    {
+		f_ptr = &f_info[cave_feat[y][dx]];
+
 		/* Stay within dungeon. */
 		if (!in_bounds(y, dx))
 		    continue;
 
 		/* Only convert "granite" walls */
-		if (cave_feat[y][dx] < FEAT_WALL_EXTRA)
-		    continue;
-		if (cave_feat[y][dx] > FEAT_WALL_SOLID)
+		if (!tf_has(f_ptr->flags, TF_GRANITE) ||
+		    tf_has(f_ptr->flags, TF_DOOR_ANY))
 		    continue;
 
 		i = table_start + dx - x;
@@ -180,16 +185,19 @@ static void build_streamer(int feat, int chance)
 	    }
 	}
 
-	if (ddx[dir]) {
-	    for (dy = y - out1; dy <= y + out2; dy++) {
+	if (ddx[dir]) 
+	{
+	    for (dy = y - out1; dy <= y + out2; dy++) 
+	    {
+		f_ptr = &f_info[cave_feat[dy][x]];
+
 		/* Stay within dungeon. */
 		if (!in_bounds(dy, x))
 		    continue;
 
 		/* Only convert "granite" walls */
-		if (cave_feat[dy][x] < FEAT_WALL_EXTRA)
-		    continue;
-		if (cave_feat[dy][x] > FEAT_WALL_SOLID)
+		if (!tf_has(f_ptr->flags, TF_GRANITE) ||
+		    tf_has(f_ptr->flags, TF_DOOR_ANY))
 		    continue;
 
 		i = table_start + dy - y;
@@ -563,7 +571,7 @@ static bool unalterable(byte feat)
 {
     
     /* A few features are unalterable. */
-    if (if tf_has(f_info[feat].flags, TF_PERMANENT)) {
+    if (tf_has(f_info[feat].flags, TF_PERMANENT)) {
 	return (TRUE);
     }
     
@@ -782,10 +790,11 @@ static void try_entrance(int y0, int x0)
 	/* Extract the location */
 	int y = y0 + ddy_ddd[i];
 	int x = x0 + ddx_ddd[i];
+	feature *f_ptr = &f_info[cave_feat[y][x]];
 
 	/* Ignore non-walls. */
-	if ((cave_feat[y][x] < FEAT_MAGMA)
-	    || (cave_feat[y][x] > FEAT_MTRAP_HEAD))
+	if (!tf_has(f_ptr->flags, TF_WALL) || 
+	    tf_has(f_ptr->flags, TF_DOOR_ANY))
 	    continue;
 
 	/* We require at least two walls. */
@@ -833,21 +842,39 @@ static void try_door(int y0, int x0)
 		break;
 	}
 
-	if (k == 2) {
+	if (k == 2) 
+	{
+	    feature *f_ptr;
+	    int walls = 0;
+	    
 	    /* Check Vertical */
-	    if ((cave_feat[y0 - 1][x0] >= FEAT_MAGMA)
-		&& (cave_feat[y0 - 1][x0] <= FEAT_SHOP_HEAD)
-		&& (cave_feat[y0 + 1][x0] >= FEAT_MAGMA)
-		&& (cave_feat[y0 + 1][x0] <= FEAT_SHOP_HEAD)) {
+	    for (i = -1; i <= 1; i += 2)
+	    {
+		f_ptr = &f_info[cave_feat[y0 + i][x0]];
+		if (tf_has(f_ptr->flags, TF_WALL) && 
+		    !tf_has(f_ptr->flags, TF_DOOR_ANY))
+		    walls++;
+	    }
+	    
+	    if (walls == 2) 
+	    {
 		place_random_door(y0, x0);
+		return;
 	    }
 
 	    /* Check Horizontal */
-	    else if ((cave_feat[y0][x0 - 1] >= FEAT_MAGMA)
-		     && (cave_feat[y0][x0 - 1] <= FEAT_SHOP_HEAD)
-		     && (cave_feat[y0][x0 + 1] >= FEAT_MAGMA)
-		     && (cave_feat[y0][x0 + 1] <= FEAT_SHOP_HEAD)) {
+	    for (i = -1; i <= 1; i += 2)
+	    {
+		f_ptr = &f_info[cave_feat[y0][x0 + i]];
+		if (tf_has(f_ptr->flags, TF_WALL) && 
+		    !tf_has(f_ptr->flags, TF_DOOR_ANY))
+		    walls++;
+	    }
+	    
+	    if (walls == 2) 
+	    {
 		place_random_door(y0, x0);
+		return;
 	    }
 	}
     }

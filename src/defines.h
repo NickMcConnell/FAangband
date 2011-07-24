@@ -2056,22 +2056,6 @@ enum
 #define TF_SIZE                FLAG_SIZE(TF_MAX)
 
 #define tf_has(f, flag)        flag_has_dbg(f, TF_SIZE, flag, #f, #flag)
-#define tf_next(f, flag)       flag_next(f, TF_SIZE, flag)
-#define tf_is_empty(f)         flag_is_empty(f, TF_SIZE)
-#define tf_is_full(f)          flag_is_full(f, TF_SIZE)
-#define tf_is_inter(f1, f2)    flag_is_inter(f1, f2, TF_SIZE)
-#define tf_is_subset(f1, f2)   flag_is_subset(f1, f2, TF_SIZE)
-#define tf_is_equal(f1, f2)    flag_is_equal(f1, f2, TF_SIZE)
-#define tf_on(f, flag)         flag_on_dbg(f, TF_SIZE, flag, #f, #flag)
-#define tf_off(f, flag)        flag_off(f, TF_SIZE, flag)
-#define tf_wipe(f)             flag_wipe(f, TF_SIZE)
-#define tf_setall(f)           flag_setall(f, TF_SIZE)
-#define tf_negate(f)           flag_negate(f, TF_SIZE)
-#define tf_copy(f1, f2)        flag_copy(f1, f2, TF_SIZE)
-#define tf_union(f1, f2)       flag_union(f1, f2, TF_SIZE)
-#define tf_comp_union(f1, f2)  flag_comp_union(f1, f2, TF_SIZE)
-#define tf_inter(f1, f2)       flag_inter(f1, f2, TF_SIZE)
-#define tf_diff(f1, f2)        flag_diff(f1, f2, TF_SIZE)
 
 
 /*** Monster flags ***/

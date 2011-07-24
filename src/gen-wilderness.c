@@ -609,8 +609,6 @@ int make_formation(int y, int x, int base_feat1, int base_feat2, int *feat,
 	/* Set the feature */
 	cave_set_feat(ty, tx, all_feat[i]);
 	cave_on(cave_info[ty][tx], CAVE_ICKY);
-	if ((all_feat[i] >= FEAT_MAGMA) && (all_feat[i] <= FEAT_PERM_SOLID))
-	    cave_on(cave_info[ty][tx], CAVE_WALL);
 
 	/* Choose a random step for next feature, try to keep going */
 	terrain = randint0(8) + 1;
@@ -857,9 +855,6 @@ void mtn_connect(int y, int x, int y1, int x1)
 	    break;
 	cave_set_feat(GRID_Y(gp[j]), GRID_X(gp[j]), FEAT_FLOOR);
 	cave_on(cave_info[GRID_Y(gp[j])][GRID_X(gp[j])], CAVE_ICKY);
-	/* y2 = GRID_Y(gp[j]) + randint0(3) - 1; x2 =GRID_X(gp[j]) +
-	 * randint0(3) - 1; if (in_bounds_fully(y2, x2)) cave_set_feat(y2, x2,
-	 * FEAT_FLOOR); */
     }
 }
 

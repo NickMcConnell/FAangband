@@ -40,20 +40,19 @@
  */
 int next_to_walls(int y, int x)
 {
-    int k = 0;
+    int i, k = 0;
+    feature *f_ptr;
 
-    if ((cave_feat[y + 1][x] >= FEAT_MAGMA)
-	&& (cave_feat[y + 1][x] <= FEAT_SHOP_HEAD))
-	k++;
-    if ((cave_feat[y - 1][x] >= FEAT_MAGMA)
-	&& (cave_feat[y - 1][x] <= FEAT_SHOP_HEAD))
-	k++;
-    if ((cave_feat[y][x + 1] >= FEAT_MAGMA)
-	&& (cave_feat[y][x + 1] <= FEAT_SHOP_HEAD))
-	k++;
-    if ((cave_feat[y][x - 1] >= FEAT_MAGMA)
-	&& (cave_feat[y][x - 1] <= FEAT_SHOP_HEAD))
-	k++;
+    /* Count the adjacent wall grids */
+    for (i = 0; i < 4; i++) 
+    {
+	/* Extract the terrain info */
+	f_ptr = &f_info[cave_feat[y + ddy_ddd[i]][x + ddx_ddd[i]]];
+
+	if (tf_has(f_ptr->flags, TF_WALL) &&
+	    !tf_has(f_ptr->flags, TF_DOOR_ANY))
+	    k++;
+    }
 
     return (k);
 }
