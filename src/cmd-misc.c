@@ -36,7 +36,8 @@ void get_feats(int *surroundings)
     count = 0;
 
     /* Check around (and under) the character */
-    for (d = 0; d < 9; d++) {
+    for (d = 0; d < 9; d++) 
+    {
 	/* Initialise */
 	surroundings[d] = FEAT_FLOOR;
 
@@ -97,7 +98,8 @@ static void show_display(menu_type * menu, int oid, bool cursor, int row,
 static bool show_action(menu_type * menu, const ui_event_data * e, int oid)
 {
     /* Handle enter and mouse */
-    if (e->type == EVT_SELECT) {
+    if (e->type == EVT_SELECT) 
+    {
 	cmd_insert(comm_code[oid]);
 	if (comm_code[oid] == CMD_NULL)
 	    Term_keypress(comm[oid]);
@@ -148,6 +150,8 @@ void show_player(void)
     bool exist_floor = FALSE;
     bool exist_monster = FALSE;
 
+    feature *f_ptr;
+
     /* No commands yet */
     poss = 0;
 
@@ -155,17 +159,17 @@ void show_player(void)
     get_feats(adj_grid);
 
     /* Analyze surroundings */
-    for (i = 0; i < 8; i++) {
-	if ((adj_grid[i] >= FEAT_TRAP_HEAD) && (adj_grid[i] <= FEAT_TRAP_TAIL))
+    for (i = 0; i < 8; i++) 
+    {
+	f_ptr = &f_info[adj_grid[i]];
+	if (tf_has(f_ptr->flags, TF_TRAP))
 	    exist_trap = TRUE;
-	if ((adj_grid[i] >= FEAT_DOOR_HEAD) && (adj_grid[i] <= FEAT_DOOR_TAIL))
+	if (tf_has(f_ptr->flags, TF_DOOR_CLOSED))
 	    exist_door = TRUE;
 	if ((adj_grid[i] == FEAT_WEB)
-	    || ((adj_grid[i] >= FEAT_SECRET)
-		&& (adj_grid[i] <= FEAT_PERM_SOLID)))
+	    || tf_has(f_ptr->flags, TF_ROCK))
 	    exist_rock_or_web = TRUE;
-	if ((adj_grid[i] >= FEAT_MTRAP_HEAD)
-	    && (adj_grid[i] <= FEAT_MTRAP_TAIL))
+	if (tf_has(f_ptr->flags, TF_M_TRAP))
 	    exist_mtrap = TRUE;
 	if (adj_grid[i] == FEAT_OPEN)
 	    exist_open_door = TRUE;

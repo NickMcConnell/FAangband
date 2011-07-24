@@ -4092,12 +4092,14 @@ void cave_set_feat(int y, int x, int feat)
     cave_feat[y][x] = feat;
 
     /* Handle "floor" grids. */
-    if (tf_has(f_ptr->flags, TF_LOS) || tf_has(f_ptr->flags, TF_SHOP)) {
+    if (tf_has(f_ptr->flags, TF_LOS) || tf_has(f_ptr->flags, TF_SHOP)) 
+    {
 	cave_off(cave_info[y][x], CAVE_WALL);
     }
 
     /* Handle "wall"/etc grids */
-    else {
+    else 
+    {
 	cave_on(cave_info[y][x], CAVE_WALL);
     }
 
