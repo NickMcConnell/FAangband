@@ -1413,40 +1413,14 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
 
 
 /**
- * Return TRUE if the given feature is an open door
- */
-bool is_open(int feat)
-{
-    return (feat == FEAT_OPEN);
-}
-
-
-/**
- * Return TRUE if the given feature is a closed door
- */
-bool is_closed(int feat)
-{
-    return ((feat >= FEAT_DOOR_HEAD) && (feat <= FEAT_DOOR_TAIL));
-}
-
-
-/**
- * Return TRUE if the given feature is a trap
- */
-bool is_trap(int feat)
-{
-    return ((feat >= FEAT_TRAP_HEAD) && (feat <= FEAT_TRAP_TAIL));
-}
-
-
-/**
  * Return the number of doors/traps around (or under) the character
  */
-int count_feats(int *y, int *x, bool(*test) (int feat), bool under)
+int count_feats(int *y, int *x, int flag, bool under)
 {
     int d;
     int xx, yy;
     int count;
+    feature *f_ptr;
 
     /* Count how many matches */
     count = 0;
@@ -1460,6 +1434,7 @@ int count_feats(int *y, int *x, bool(*test) (int feat), bool under)
 	/* Extract adjacent (legal) location */
 	yy = p_ptr->py + ddy_ddd[d];
 	xx = p_ptr->px + ddx_ddd[d];
+	f_ptr = &f_info[cave_feat[yy][xx]];
 
 	/* Paranoia */
 	if (!in_bounds_fully(yy, xx))
@@ -1470,13 +1445,13 @@ int count_feats(int *y, int *x, bool(*test) (int feat), bool under)
 	    continue;
 
 	/* Not looking for this feature */
-	if (!(*test) (cave_feat[yy][xx]))
+	if (!tf_has(f_ptr->flags, flag));
 	    continue;
 
 	/* Count it */
 	++count;
 
-	/* Remember the location of the last door found */
+	/* Remember the location of the last one found */
 	*y = yy;
 	*x = xx;
     }
@@ -1546,6 +1521,8 @@ int coords_to_dir(int y, int x)
  */
 static bool do_cmd_open_test(int y, int x)
 {
+    feature *f_ptr = &f_info[cave_feat[y][x]];
+
     /* Must have knowledge */
     if (!cave_has(cave_info[y][x], CAVE_MARK)) {
 	/* Message */
@@ -1556,8 +1533,8 @@ static bool do_cmd_open_test(int y, int x)
     }
 
     /* Must be a closed door */
-    if (!((cave_feat[y][x] >= FEAT_DOOR_HEAD)
-	  && (cave_feat[y][x] <= FEAT_DOOR_TAIL))) {
+    if (!tf_has(f_ptr->flags, TF_DOOR_CLOSED)) 
+    {
 	/* Message */
 	message(MSG_NOTHING_TO_OPEN, 0, "You see nothing there to open.");
 
@@ -1582,6 +1559,7 @@ extern bool do_cmd_open_aux(int y, int x)
     int i, j;
 
     bool more = FALSE;
+    feature *f_ptr = &f_info[cave_feat[y][x]];
 
 
     /* Verify legality */
@@ -1590,13 +1568,15 @@ extern bool do_cmd_open_aux(int y, int x)
 
 
     /* Jammed door */
-    if (cave_feat[y][x] >= FEAT_DOOR_HEAD + 0x08) {
+    if (tf_has(f_ptr->flags, TF_DOOR_JAMMED))
+    {
 	/* Stuck */
 	msg_print("The door appears to be stuck.");
     }
 
     /* Locked door */
-    else if (cave_feat[y][x] >= FEAT_DOOR_HEAD + 0x01) {
+    else if (tf_has(f_ptr->flags, TF_DOOR_LOCKED)) 
+    {
 	/* Disarm factor */
 	i = p_ptr->state.skills[SKILL_DISARM];
 
@@ -1743,6 +1723,8 @@ void do_cmd_open(cmd_code code, cmd_arg args[])
  */
 static bool do_cmd_close_test(int y, int x)
 {
+    feature *f_ptr = &f_info[cave_feat[y][x]];
+
     /* Must have knowledge */
     if (!cave_has(cave_info[y][x], CAVE_MARK)) {
 	/* Message */
@@ -1753,7 +1735,8 @@ static bool do_cmd_close_test(int y, int x)
     }
 
     /* Require open/broken door */
-    if ((cave_feat[y][x] != FEAT_OPEN) && (cave_feat[y][x] != FEAT_BROKEN)) {
+    if (tf_has(f_ptr->flags, TF_DOOR_ANY) && tf_has(f_ptr->flags, TF_PASSABLE))
+    {
 	/* Message */
 	msg_print("You see nothing there to close.");
 
@@ -1874,7 +1857,8 @@ static bool do_cmd_tunnel_test(int y, int x)
     }
 
     /* Must be a wall/door/etc */
-    if (tf_has(f_ptr->flags, TF_ROCK) || tf_has(f_ptr->flags, TF_DOOR_CLOSED)) {
+    if (tf_has(f_ptr->flags, TF_ROCK) || tf_has(f_ptr->flags, TF_DOOR_CLOSED)) 
+    {
 	/* Okay */
 	return (TRUE);
     }
@@ -1899,9 +1883,10 @@ static bool do_cmd_tunnel_test(int y, int x)
  */
 static bool twall(int y, int x)
 {
+    feature_type *f_ptr = &f_info[cave_feat[y][x]];
+
     /* Paranoia -- Require a wall or door or some such */
-    if (cave_floor_bold(y, x) || (cave_feat[y][x] == FEAT_TREE)
-	|| (cave_feat[y][x] == FEAT_TREE2))
+    if (cave_floor_bold(y, x) || tf_has(f_ptr->flags, TF_TREE))
 	return (FALSE);
 
     /* Sound */
@@ -1975,32 +1960,24 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	    bool gold = FALSE;
 	    bool hard = FALSE;
 
-	    /* Found gold */
-	    if (cave_feat[y][x] >= FEAT_MAGMA_H) {
-		gold = TRUE;
-	    }
-
-	    /* Extract "quartz" flag XXX XXX XXX */
-	    if ((cave_feat[y][x] - FEAT_MAGMA) & 0x01) {
-		hard = TRUE;
-	    }
-
 	    /* Quartz */
-	    if (hard) {
-		okay =
-		    (p_ptr->state.skills[SKILL_DIGGING] > 20 + randint0(800));
+	    if (tf_has(f_ptr->flags, TF_QUARTZ)) 
+	    {
+		okay = (p_ptr->state.skills[SKILL_DIGGING] > 
+			20 + randint0(800));
 	    }
 
 	    /* Magma */
-	    else {
-		okay =
-		    (p_ptr->state.skills[SKILL_DIGGING] > 10 + randint0(400));
+	    else 
+	    {
+		okay = (p_ptr->state.skills[SKILL_DIGGING] > 
+			10 + randint0(400));
 	    }
 
 	    /* Success */
 	    if (okay && twall(y, x)) {
 		/* Found treasure */
-		if (gold) {
+		if (tf_has(f_ptr->flags, TF_GOLD)) {
 		    /* Place some gold */
 		    place_gold(y, x);
 
@@ -2016,7 +1993,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	    }
 
 	    /* Failure (quartz) */
-	    else if (hard) {
+	    else if (tf_has(f_ptr->flags, TF_QUARTZ)) {
 		/* Message, continue digging */
 		msg_print("You tunnel into the quartz vein.");
 		more = TRUE;
@@ -2188,6 +2165,8 @@ void do_cmd_tunnel(cmd_code code, cmd_arg args[])
  */
 static bool do_cmd_disarm_test(int y, int x)
 {
+    feature_type *f_ptr = &f_info[cave_feat[y][x]];
+
     /* Must have knowledge */
     if (!cave_has(cave_info[y][x], CAVE_MARK)) {
 	/* Message */
@@ -2198,12 +2177,10 @@ static bool do_cmd_disarm_test(int y, int x)
     }
 
     /* Require an actual trap or glyph */
-    if (!((cave_feat[y][x] >= FEAT_TRAP_HEAD)
-	  && (cave_feat[y][x] <= FEAT_TRAP_TAIL))
-	&& !((cave_feat[y][x] >= FEAT_RUNE_HEAD)
-	     && (cave_feat[y][x] <= FEAT_RUNE_TAIL))
-	&& !((cave_feat[y][x] >= FEAT_MTRAP_HEAD)
-	     && (cave_feat[y][x] <= FEAT_MTRAP_TAIL))) {
+    if (!tf_has(f_ptr->flags, TF_TRAP) && 
+	!tf_has(f_ptr->flags, TF_RUNE) &&
+	!tf_has(f_ptr->flags, TF_M_TRAP)) 
+    {
 	/* Message */
 	msg_print("You see nothing there to disarm.");
 
@@ -2214,7 +2191,6 @@ static bool do_cmd_disarm_test(int y, int x)
     /* Okay */
     return (TRUE);
 }
-
 
 /**
  * Perform the basic "disarm" command on a trap or glyph.
@@ -2234,8 +2210,6 @@ extern bool do_cmd_disarm_aux(int y, int x)
     bool more = FALSE;
 
     feature_type *f_ptr = &f_info[cave_feat[y][x]];
-
-    int tree_hack = (cave_feat[y][x] == FEAT_TRAP_HEAD + 0x0B ? 1 : 0);
 
     /* Verify legality */
     if (!do_cmd_disarm_test(y, x))
@@ -2274,7 +2248,8 @@ extern bool do_cmd_disarm_aux(int y, int x)
 	j = 2;
 
     /* Success */
-    if ((power == 0) || (randint0(100) < j)) {
+    if ((power == 0) || (randint0(100) < j)) 
+    {
 	/* Special message and decrement the count for runes. */
 	if (tf_has(f_ptr->flags, TF_RUNE)) {
 	    msg_format("You have removed the %s.", name);
@@ -2296,11 +2271,8 @@ extern bool do_cmd_disarm_aux(int y, int x)
 	/* Forget the trap */
 	cave_off(cave_info[y][x], CAVE_MARK);
 
-	/* Remove the trap (trees are hackish) */
-	if (tf_has(f_ptr->flags, TF_TREE))
-	    cave_set_feat(y, x, FEAT_TREE + tree_hack);
-	else
-	    cave_set_feat(y, x, FEAT_FLOOR);
+	/* Remove the trap */
+	cave_set_feat(y, x, f_ptr->base);
     }
 
     /* Failure -- Keep trying */
@@ -2406,6 +2378,8 @@ void do_cmd_disarm(cmd_code code, cmd_arg args[])
  */
 static bool do_cmd_bash_test(int y, int x)
 {
+    feature_type *f_ptr = &f_info[cave_feat[y][x]];
+
     /* Must have knowledge */
     if (!cave_has(cave_info[y][x], CAVE_MARK)) {
 	/* Message */
@@ -2416,8 +2390,8 @@ static bool do_cmd_bash_test(int y, int x)
     }
 
     /* Require a door */
-    if (!((cave_feat[y][x] >= FEAT_DOOR_HEAD)
-	  && (cave_feat[y][x] <= FEAT_DOOR_TAIL))) {
+    if (!tf_has(f_ptr->flags, TF_DOOR_CLOSED))
+    {
 	/* Message */
 	msg_print("You see nothing there to bash.");
 
@@ -2745,6 +2719,8 @@ static bool get_spike(int *ip)
  */
 bool do_cmd_spike_test(int y, int x)
 {
+    feature *f_ptr = &f_info[cave_feat[y][x]];
+
     /* Must have knowledge */
     if (!cave_has(cave_info[y][x], CAVE_MARK)) {
 	/* Message */
@@ -2755,8 +2731,8 @@ bool do_cmd_spike_test(int y, int x)
     }
 
     /* Require a door */
-    if (!((cave_feat[y][x] >= FEAT_DOOR_HEAD)
-	  && (cave_feat[y][x] <= FEAT_DOOR_TAIL))) {
+    if (!tf_has(f_ptr->flags, TF_DOOR_CLOSED)) 
+    {
 	/* Message */
 	msg_print("You see nothing there to spike.");
 
@@ -2856,6 +2832,8 @@ void do_cmd_spike(cmd_code code, cmd_arg args[])
  */
 static bool do_cmd_walk_test(int y, int x)
 {
+    feature *f_ptr = &f_info[cave_feat[y][x]];
+
     /* Assume no monster. */
     monster_type *m_ptr = 0;
 
@@ -2880,9 +2858,11 @@ static bool do_cmd_walk_test(int y, int x)
     }
 
     /* Require open space */
-    if (!cave_passable_bold(y, x)) {
+    if (!cave_passable_bold(y, x)) 
+    {
 	/* Door */
-	if (cave_feat[y][x] < FEAT_SECRET) {
+	if (tf_has(f_ptr->flags, TF_DOOR_CLOSED))
+	{
 	    /* If OPT(easy_alter)_door option is on, doors are legal. */
 	    if (OPT(easy_alter))
 		return (TRUE);
@@ -3046,19 +3026,24 @@ void do_cmd_pathfind(cmd_code code, cmd_arg args[])
  */
 static void do_cmd_hold_or_stay(int pickup)
 {
+    feature *f_ptr = &f_info[cave_feat[p_ptr->py][p_ptr->px]];
+
     /* Take a turn */
     p_ptr->energy_use = 100;
 
     /* Spontaneous Searching */
-    if (p_ptr->state.skills[SKILL_SEARCH_FREQUENCY] >= 50) {
+    if (p_ptr->state.skills[SKILL_SEARCH_FREQUENCY] >= 50) 
+    {
 	(void) search(FALSE);
     } 
-    else if (0 == randint0(50 - p_ptr->state.skills[SKILL_SEARCH_FREQUENCY])) {
+    else if (0 == randint0(50 - p_ptr->state.skills[SKILL_SEARCH_FREQUENCY])) 
+    {
 	(void) search(FALSE);
     }
 
     /* Continuous Searching */
-    if (p_ptr->searching) {
+    if (p_ptr->searching) 
+    {
 	(void) search(FALSE);
     }
 
@@ -3066,8 +3051,8 @@ static void do_cmd_hold_or_stay(int pickup)
     (void) py_pickup(pickup, p_ptr->py, p_ptr->px);
 
     /* Hack -- enter a store if we are on one */
-    if ((cave_feat[p_ptr->py][p_ptr->px] >= FEAT_SHOP_HEAD)
-	&& (cave_feat[p_ptr->py][p_ptr->px] <= FEAT_SHOP_TAIL)) {
+    if (tf_has(f_ptr->flags, TF_SHOP))
+    {
 	/* Disturb */
 	disturb(0, 0);
 

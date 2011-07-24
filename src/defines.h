@@ -1117,6 +1117,8 @@ enum
 /* Traps */
 #define FEAT_TRAP_HEAD	0x10
 #define FEAT_TRAP_TAIL	0x1F
+#define FEAT_TREE_TRAP	0x1A
+#define FEAT_TREE2_TRAP	0x1B
 
 /* Doors */
 #define FEAT_DOOR_HEAD	0x20

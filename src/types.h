@@ -144,8 +144,7 @@ typedef struct feature {
     struct feature *next;
 
     byte mimic;		/**< Feature to mimic */
-
-    byte extra;		/**< Extra byte (unused) */
+    byte base;		/**< Base feature (for traps, etc) */
 
     bitflag flags[TF_SIZE];		/**< Bitflags */
 

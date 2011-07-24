@@ -422,7 +422,7 @@ void process_command(cmd_context ctx, bool no_request)
 		int y, x;
 		int n_closed_doors, n_locked_chests;
 			
-		n_closed_doors = count_feats(&y, &x, is_closed, FALSE);
+		n_closed_doors = count_feats(&y, &x, TF_DOOR_CLOSED, FALSE);
 		n_locked_chests = count_chests(&y, &x, FALSE);
 			
 		if (n_closed_doors + n_locked_chests == 1)
@@ -440,7 +440,7 @@ void process_command(cmd_context ctx, bool no_request)
 		int y, x;
 			
 		/* Count open doors */
-		if (count_feats(&y, &x, is_open, FALSE) == 1)
+		if (count_feats(&y, &x, TF_CLOSABLE, FALSE) == 1)
 		    cmd_set_arg_direction(cmd, 0, coords_to_dir(y, x));
 	    }
 
@@ -455,7 +455,7 @@ void process_command(cmd_context ctx, bool no_request)
 		int y, x;
 		int n_visible_traps, n_trapped_chests;
 			
-		n_visible_traps = count_feats(&y, &x, is_trap, TRUE);			
+		n_visible_traps = count_feats(&y, &x, TF_TRAP, TRUE);			
 		n_trapped_chests = count_chests(&y, &x, TRUE);
 
 		if (n_visible_traps + n_trapped_chests == 1)
