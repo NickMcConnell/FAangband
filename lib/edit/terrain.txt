@@ -37,7 +37,7 @@ G: :w
 
 N:1:open floor
 G:.:w
-F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT 
+F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | EASY 
 D:An open floor or bare ground.  Can be walked across by anything, and can 
 D:hold traps or items.  Does not break line of sight.
 
@@ -53,7 +53,7 @@ D:It looks like open ground, but beware!
 
 N:3:open door
 G:':U
-F:LOS | PROJECT | PASSABLE | DOOR_ANY | INTERESTING | CLOSABLE 
+F:LOS | PROJECT | PASSABLE | DOOR_ANY | INTERESTING | CLOSABLE | EASY  
 D:A door that is already open.  Player, monster, spell and missile can pass
 D:through as long as it stays open.
 
@@ -61,35 +61,35 @@ D:through as long as it stays open.
 
 N:4:broken door
 G:':u
-F:LOS | PROJECT | PASSABLE | DOOR_ANY | INTERESTING
+F:LOS | PROJECT | PASSABLE | DOOR_ANY | INTERESTING | EASY 
 D:A door so broken that it cannot be shut.
 
 # 0x05 --> down stairs (perm)
 
 N:5:down staircase
 G:>:w
-F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR
+F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY 
 D:A staircase down to a deeper part of the dungeon.
 
 # 0x06 --> up stairs (perm)
 
 N:6:up staircase
 G:<:w
-F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR
+F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY 
 D:A staircase up to a shallower part of the dungeon.
 
 # 0x07 --> down shaft (perm)
 
 N:7:down shaft
 G:>:s
-F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR
+F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY 
 D:A staircase down to a much deeper part of the dungeon.
 
 # 0x08 --> up shaft (perm)
 
 N:8:up shaft
 G:<:s
-F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR
+F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY 
 D:A staircase up to a much shallower part of the dungeon.
 
 # 0x09 --> rune of the elements
@@ -97,7 +97,7 @@ D:A staircase up to a much shallower part of the dungeon.
 N:9:rune of the elements
 G:;:o
 B:1
-F:LOS | PROJECT | INTERESTING | RUNE 
+F:LOS | PROJECT | INTERESTING | RUNE | EASY 
 D:A magical rune which affects elemental spells and breaths.
 
 # 0x0A --> rune of magic influence
@@ -105,7 +105,7 @@ D:A magical rune which affects elemental spells and breaths.
 N:10:rune of magic influence
 G:;:b
 B:1
-F:LOS | PROJECT | INTERESTING | RUNE 
+F:LOS | PROJECT | INTERESTING | RUNE | EASY 
 D:A magical rune which affects resistance to magic.
 
 # 0x0B --> rune of instability
@@ -113,7 +113,7 @@ D:A magical rune which affects resistance to magic.
 N:11:rune of instability
 G:;:u
 B:1
-F:LOS | PROJECT | INTERESTING | RUNE 
+F:LOS | PROJECT | INTERESTING | RUNE | EASY 
 D:A magical rune which causes earthquakes.
 
 # 0x0C --> rune of mana
@@ -121,7 +121,7 @@ D:A magical rune which causes earthquakes.
 N:12:rune of mana
 G:;:r
 B:1
-F:LOS | PROJECT | INTERESTING | RUNE 
+F:LOS | PROJECT | INTERESTING | RUNE | EASY 
 D:A magical rune which holds a reserve of mana.
 
 # 0x0D --> rune of protection
@@ -137,7 +137,7 @@ D:A magical rune which monsters cannot pass without difficulty.
 N:14:rune of power
 G:;:s
 B:1
-F:LOS | PROJECT | INTERESTING | RUNE 
+F:LOS | PROJECT | INTERESTING | RUNE | EASY 
 D:A magical rune which affects spell power.
 
 # 0x0F --> rune of speed
@@ -145,7 +145,7 @@ D:A magical rune which affects spell power.
 N:15:rune of speed
 G:;:G
 B:1
-F:LOS | PROJECT | INTERESTING | RUNE 
+F:LOS | PROJECT | INTERESTING | RUNE | EASY 
 D:A magical rune which affects speed.
 
 # 0x1* - player traps -- trap door.  Level 2 and below.
@@ -826,57 +826,56 @@ D:A monster trap that removes all nearby like monsters.
 
 N:96:path north
 G:<:r
-F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR
+F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY 
 D:A path to the neighbouring region.
 
 # 0x61  --> hard path north
 
 N:97:path north
 G:>:r
-F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR
+F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY
 D:A path to the neighbouring region.
 
 # 0x62  --> easy path east
 
 N:98:path east
 G:<:y
-F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR
+F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY
 D:A path to the neighbouring region.
 
 # 0x63  --> hard path east
-F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR
 
 N:99:path east
 G:>:y
-F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR
+F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY
 D:A path to the neighbouring region.
 
 # 0x64  --> easy path south
 
 N:100:path south
 G:<:o
-F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR
+F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY
 D:A path to the neighbouring region.
 
 # 0x65  --> hard path south
 
 N:101:path south
 G:>:o
-F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR
+F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY
 D:A path to the neighbouring region.
 
 # 0x66  --> easy path west
 
 N:102:path west
 G:<:b
-F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR
+F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY
 D:A path to the neighbouring region.
 
 # 0x67  --> hard path west
 
 N:103:path west
 G:>:b
-F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR
+F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY
 D:A path to the neighbouring region.
 
 
@@ -933,7 +932,7 @@ D:ranged, or magical attacks.  Trees can burn.
 
 N:116:grass
 G:.:g
-F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | ORGANIC 
+F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | ORGANIC | EASY
 D:Open ground that can be crossed easily by all creatures.  It occurs only in 
 D:wilderness.  It may contain traps. 
 
@@ -982,7 +981,7 @@ D:A tree which can hurt.
 
 N:122:sand dunes
 G:.:y
-F:PASSABLE | OBJECT 
+F:PASSABLE | OBJECT | EASY
 D:Ends LOS, stops missiles, bolts, and beams, and reduces the radius of ball 
 D:spells.  
 
