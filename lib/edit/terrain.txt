@@ -234,7 +234,7 @@ D:A booby-trap which shoots you.
 N:26:falling branch
 G:^:g
 B:114
-F:PASSABLE | OBJECT | TREE | INTERESTING | TRAP 
+F:PASSABLE | TREE | INTERESTING | TRAP 
 D:A falling branch could be random, or an act of an enemy, animal or vegetable.
 
 # 0x1B --> visible trap -- falling tree branch
@@ -242,7 +242,7 @@ D:A falling branch could be random, or an act of an enemy, animal or vegetable.
 N:27:falling branch
 G:^:t
 B:115
-F:PASSABLE | OBJECT | TREE | INTERESTING | TRAP 
+F:PASSABLE | TREE | INTERESTING | TRAP 
 D:A falling branch could be random, or an act of an enemy, animal or vegetable.
 
 # 0x1C --> visible trap -- unused
@@ -474,7 +474,7 @@ D:A door that appears like a granite wall to untrained eyes.
 
 N:49:pile of rubble
 G:::w
-F:ROCK | PASSABLE | OBJECT | PROTECT 
+F:ROCK | PASSABLE | OBJECT | PROTECT | HIDE_OBJ
 D:Greatly slows down any creature that cannot bore or pass through rock.  Ends 
 D:LOS, stops missiles, bolts, and beams, and reduces the radius of ball 
 D:spells.  Grants the character and monsters within it some protection from 
@@ -909,7 +909,7 @@ D:Smaug.  Water may evaporate.
 
 N:114:lowland trees
 G:+:g
-F:PASSABLE | OBJECT | TREE | PROTECT | ORGANIC 
+F:PASSABLE | OBJECT | TREE | PROTECT | ORGANIC | HIDE_OBJ
 D:Slows down characters not familiar with druidic techniques, and all 
 D:non-natural monsters that neither fly nor pass through rock.  Ends LOS, 
 D:stops missiles, bolts, and beams, and reduces the radius of ball spells.  
@@ -921,7 +921,7 @@ D:ranged, or magical attacks.  Trees can burn.
 
 N:115:highland trees
 G:+:t
-F:PASSABLE | OBJECT | TREE | PROTECT | ORGANIC 
+F:PASSABLE | OBJECT | TREE | PROTECT | ORGANIC | HIDE_OBJ
 D:Slows down characters not familiar with druidic techniques, and all 
 D:non-natural monsters that neither fly nor pass through rock.  Ends LOS, 
 D:stops missiles, bolts, and beams, and reduces the radius of ball spells.  
