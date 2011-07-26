@@ -221,6 +221,8 @@ bool findpath(int y, int x)
  */
 static int see_wall(int dir, int y, int x)
 {
+    feature *f_ptr;
+
     /* Get the new location */
     y += ddy[dir];
     x += ddx[dir];
@@ -229,8 +231,10 @@ static int see_wall(int dir, int y, int x)
     if (!in_bounds(y, x))
 	return (FALSE);
 
+    f_ptr = &f_info[cave_feat[y][x]];
+
     /* Non-wall grids are not known walls */
-    if ((cave_feat[y][x] < FEAT_SECRET) || (cave_feat[y][x] > FEAT_SHOP_HEAD))
+    if (!tf_has(f_ptr->flags, TF_WALL))
 	return (FALSE);
 
     /* Unknown walls are not known walls */
@@ -620,6 +624,7 @@ static bool run_test(void)
     int i, max, inv;
     int option, option2;
 
+    feature *f_ptr;
 
     /* No options yet */
     option = 0;
@@ -677,11 +682,12 @@ static bool run_test(void)
 	new_dir = p_ptr->run_old_dir;
 	row = py + ddy[new_dir];
 	col = px + ddx[new_dir];
+	f_ptr = &f_info[cave_feat[row][col]];
 
 
 	/* Step if there's a path in the right direction */
-	if ((cave_feat[row][col] == FEAT_FLOOR)
-	    || (cave_feat[row][col] == FEAT_INVIS)) {
+	if (tf_has(f_ptr->flags, TF_RUN1)) 
+	{
 	    p_ptr->run_cur_dir = new_dir;
 	    return (FALSE);
 	}
@@ -690,16 +696,16 @@ static bool run_test(void)
 	left_dir = cycle[chome[prev_dir] - 1];
 	row = py + ddy[left_dir];
 	col = px + ddx[left_dir];
-	if ((cave_feat[row][col] == FEAT_FLOOR)
-	    || (cave_feat[row][col] == FEAT_INVIS))
+	f_ptr = &f_info[cave_feat[row][col]];
+	if (tf_has(f_ptr->flags, TF_RUN1)) 
 	    option = left_dir;
 
 	/* Check to the right */
 	right_dir = cycle[chome[prev_dir] + 1];
 	row = py + ddy[right_dir];
 	col = px + ddx[right_dir];
-	if ((cave_feat[row][col] == FEAT_FLOOR)
-	    || (cave_feat[row][col] == FEAT_INVIS))
+	f_ptr = &f_info[cave_feat[row][col]];
+	if (tf_has(f_ptr->flags, TF_RUN1)) 
 	    option2 = right_dir;
 
 	/* Stop if it's a fork */
@@ -718,11 +724,12 @@ static bool run_test(void)
 	/* No paths, so try grass */
 	row = py + ddy[new_dir];
 	col = px + ddx[new_dir];
+	f_ptr = &f_info[cave_feat[row][col]];
 
 
 	/* Step if there's grass in the right direction */
-	if ((cave_feat[row][col] == FEAT_GRASS)
-	    || (cave_feat[row][col] == FEAT_GRASS_INVIS)) {
+	if (tf_has(f_ptr->flags, TF_RUN2)) 
+	{
 	    p_ptr->run_cur_dir = new_dir;
 	    return (FALSE);
 	}
@@ -730,16 +737,16 @@ static bool run_test(void)
 	/* Check to the left */
 	row = py + ddy[left_dir];
 	col = px + ddx[left_dir];
-	if ((cave_feat[row][col] == FEAT_GRASS)
-	    || (cave_feat[row][col] == FEAT_GRASS_INVIS))
+	f_ptr = &f_info[cave_feat[row][col]];
+	if (tf_has(f_ptr->flags, TF_RUN2)) 
 	    option = left_dir;
 
 	/* Check to the right */
 	right_dir = cycle[chome[prev_dir] + 1];
 	row = py + ddy[right_dir];
 	col = px + ddx[right_dir];
-	if ((cave_feat[row][col] == FEAT_GRASS)
-	    || (cave_feat[row][col] == FEAT_GRASS_INVIS))
+	f_ptr = &f_info[cave_feat[row][col]];
+	if (tf_has(f_ptr->flags, TF_RUN2)) 
 	    option2 = right_dir;
 
 	/* Stop if it's a fork */
@@ -800,83 +807,35 @@ static bool run_test(void)
 	inv = TRUE;
 
 	/* Check memorized grids */
-	if (cave_has(cave_info[row][col], CAVE_MARK)) {
+	if (cave_has(cave_info[row][col], CAVE_MARK)) 
+	{
 	    bool notice = TRUE;
 
 	    /* Examine the terrain */
-	    switch (cave_feat[row][col]) {
-		/* Floors */
-	    case FEAT_FLOOR:
-
-		/* Invis traps */
-	    case FEAT_INVIS:
-	    case FEAT_GRASS_INVIS:
-
-		/* Secret doors */
-	    case FEAT_SECRET:
-
-		/* Normal veins */
-	    case FEAT_MAGMA:
-	    case FEAT_QUARTZ:
-
-		/* Hidden treasure */
-	    case FEAT_MAGMA_H:
-	    case FEAT_QUARTZ_H:
-
-		/* Special passable terrain. */
-	    case FEAT_LAVA:
-	    case FEAT_WATER:
-	    case FEAT_TREE:
-	    case FEAT_TREE2:
-	    case FEAT_GRASS:
-		{
-		    /* Ignore */
+	    f_ptr = &f_info[cave_feat[row][col]];
+	    
+	    /* Open doors */
+	    if (tf_has(f_ptr->flags, TF_DOOR_ANY) && 
+		tf_has(f_ptr->flags, TF_PASSABLE))
+	    {
+		/* Option -- ignore */
+		if (OPT(run_ignore_doors))
 		    notice = FALSE;
+	    }
 
-		    /* Done */
-		    break;
-		}
-
-		/* Walls */
-	    case FEAT_WALL_EXTRA:
-	    case FEAT_WALL_INNER:
-	    case FEAT_WALL_OUTER:
-	    case FEAT_WALL_SOLID:
-	    case FEAT_PERM_EXTRA:
-	    case FEAT_PERM_INNER:
-	    case FEAT_PERM_OUTER:
-	    case FEAT_PERM_SOLID:
-		{
-		    /* Ignore */
+	    /* Stairs */
+	    if (tf_has(f_ptr->flags, TF_STAIR)) 
+	    {
+		/* Option -- ignore */
+		if (OPT(run_ignore_stairs))
 		    notice = FALSE;
+	    }
 
-		    /* Done */
-		    break;
-		}
-
-		/* Open doors */
-	    case FEAT_OPEN:
-	    case FEAT_BROKEN:
-		{
-		    /* Option -- ignore */
-		    if (OPT(run_ignore_doors))
-			notice = FALSE;
-
-		    /* Done */
-		    break;
-		}
-
-		/* Stairs */
-	    case FEAT_LESS:
-	    case FEAT_MORE:
-		{
-		    /* Option -- ignore */
-		    if (OPT(run_ignore_stairs))
-			notice = FALSE;
-
-		    /* Done */
-		    break;
-		}
+	    /* Boring grids */
+	    if (!tf_has(f_ptr->flags, TF_INTERESTING))
+	    {
+		/* Ignore */
+		notice = FALSE;
 	    }
 
 	    /* Interesting feature */
@@ -948,65 +907,66 @@ static bool run_test(void)
 
 	    row = py + ddy[new_dir];
 	    col = px + ddx[new_dir];
+	    f_ptr = &f_info[cave_feat[row][col]];
 
 	    /* Unknown grid or non-wall */
 	    /* Was: cave_floor_bold(row, col) */
 	    if (!cave_has(cave_info[row][col], CAVE_MARK)
-		|| (cave_feat[row][col] < FEAT_SECRET)
-		|| (cave_feat[row][col] > FEAT_SHOP_HEAD)) {
+		|| tf_has(f_ptr->flags, TF_ROCK))
+	    {
 		/* Looking to break right */
-		if (p_ptr->run_break_right) {
+		if (p_ptr->run_break_right) 
 		    return (TRUE);
-		}
 	    }
 
 	    /* Obstacle */
-	    else {
+	    else 
+	    {
 		/* Looking to break left */
-		if (p_ptr->run_break_left) {
+		if (p_ptr->run_break_left) 
 		    return (TRUE);
-		}
 	    }
 	}
-
+	
 	/* Hack -- look again */
 	for (i = max; i > 0; i--) {
 	    new_dir = cycle[chome[prev_dir] + i];
 
 	    row = py + ddy[new_dir];
 	    col = px + ddx[new_dir];
+	    f_ptr = &f_info[cave_feat[row][col]];
 
 	    /* Unknown grid or non-wall */
 	    /* Was: cave_floor_bold(row, col) */
 	    if (!cave_has(cave_info[row][col], CAVE_MARK)
-		|| (cave_feat[row][col] < FEAT_SECRET)
-		|| (cave_feat[row][col] > FEAT_SHOP_HEAD)) {
+		|| tf_has(f_ptr->flags, TF_ROCK))
+	    {
 		/* Looking to break left */
-		if (p_ptr->run_break_left) {
+		if (p_ptr->run_break_left) 
 		    return (TRUE);
-		}
 	    }
 
 	    /* Obstacle */
-	    else {
+	    else 
+	    {
 		/* Looking to break right */
-		if (p_ptr->run_break_right) {
+		if (p_ptr->run_break_right) 
 		    return (TRUE);
-		}
 	    }
 	}
     }
-
+    
 
     /* Not looking for open area */
-    else {
+    else 
+    {
 	/* No options */
-	if (!option) {
+	if (!option) 
 	    return (TRUE);
-	}
-
+	
 	/* One option */
-	else if (!option2) {
+	else if (!option2) 
+	{
 	    /* Primary option */
 	    p_ptr->run_cur_dir = option;
 
@@ -1015,7 +975,8 @@ static bool run_test(void)
 	}
 
 	/* Two options, examining corners */
-	else if (OPT(run_use_corners) && !OPT(run_cut_corners)) {
+	else if (OPT(run_use_corners) && !OPT(run_cut_corners)) 
+	{
 	    /* Primary option */
 	    p_ptr->run_cur_dir = option;
 
@@ -1024,37 +985,43 @@ static bool run_test(void)
 	}
 
 	/* Two options, pick one */
-	else {
+	else 
+	{
 	    /* Get next location */
 	    row = py + ddy[option];
 	    col = px + ddx[option];
 
 	    /* Don't see that it is closed off. */
 	    /* This could be a potential corner or an intersection. */
-	    if (!see_wall(option, row, col) || !see_wall(check_dir, row, col)) {
+	    if (!see_wall(option, row, col) || !see_wall(check_dir, row, col)) 
+	    {
 		/* Can not see anything ahead and in the direction we */
 		/* are turning, assume that it is a potential corner. */
 		if (OPT(run_use_corners) && see_nothing(option, row, col)
-		    && see_nothing(option2, row, col)) {
+		    && see_nothing(option2, row, col)) 
+		{
 		    p_ptr->run_cur_dir = option;
 		    p_ptr->run_old_dir = option2;
 		}
 
 		/* STOP: we are next to an intersection or a room */
-		else {
+		else 
+		{
 		    return (TRUE);
 		}
 	    }
 
 	    /* This corner is seen to be enclosed; we cut the corner. */
-	    else if (OPT(run_cut_corners)) {
+	    else if (OPT(run_cut_corners)) 
+	    {
 		p_ptr->run_cur_dir = option2;
 		p_ptr->run_old_dir = option2;
 	    }
 
 	    /* This corner is seen to be enclosed, and we */
 	    /* deliberately go the long way. */
-	    else {
+	    else 
+	    {
 		p_ptr->run_cur_dir = option;
 		p_ptr->run_old_dir = option2;
 	    }
@@ -1063,10 +1030,9 @@ static bool run_test(void)
 
 
     /* About to hit a known wall, stop */
-    if (see_wall(p_ptr->run_cur_dir, py, px)) {
+    if (see_wall(p_ptr->run_cur_dir, py, px)) 
 	return (TRUE);
-    }
-
+    
 
     /* Failure */
     return (FALSE);
