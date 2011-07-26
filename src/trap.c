@@ -39,9 +39,7 @@ extern void pick_trap(int y, int x)
     bool trap_is_okay = FALSE;
 
     /* Paranoia */
-    if ((cave_feat[y][x] != FEAT_INVIS) && (cave_feat[y][x] != FEAT_GRASS_INVIS)
-	&& (cave_feat[y][x] != FEAT_TREE_INVIS)
-	&& (cave_feat[y][x] != FEAT_TREE2_INVIS))
+    if (!tf_has(f_ptr->flags, TF_TRAP_INVIS))
 	return;
 
     /* Try to create a trap appropriate to the level.  Make certain that at
