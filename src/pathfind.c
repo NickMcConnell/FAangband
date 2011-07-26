@@ -221,7 +221,7 @@ bool findpath(int y, int x)
  */
 static int see_wall(int dir, int y, int x)
 {
-    feature *f_ptr;
+    feature_type *f_ptr;
 
     /* Get the new location */
     y += ddy[dir];
@@ -624,7 +624,7 @@ static bool run_test(void)
     int i, max, inv;
     int option, option2;
 
-    feature *f_ptr;
+    feature_type *f_ptr;
 
     /* No options yet */
     option = 0;

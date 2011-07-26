@@ -345,7 +345,7 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 
     object_type *o_ptr;
     object_kind *k_ptr;
-    feature *f_ptr = &f_info[cave_feat[y][x]];
+    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
     char o_name[120];
 
@@ -382,7 +382,7 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
     {
 	/* Players in trees can take advantage of cover, especially elves, 
 	 * rangers and druids. */
-	if (tf_has(f_ptr->flags, ORGANIC)) 
+	if (tf_has(f_ptr->flags, TF_ORGANIC)) 
 	{
 	    if ((player_has(PF_WOODSMAN)) || (player_has(PF_ELVEN)))
 		terrain_bonus = ac / 8 + 10;

@@ -2435,7 +2435,7 @@ void drop_near(object_type * j_ptr, int chance, int y, int x, bool verbose)
     int ty, tx;
 
     object_type *o_ptr;
-    feature *f_ptr;
+    feature_type *f_ptr;
 
     char o_name[80];
 

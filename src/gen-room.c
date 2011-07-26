@@ -444,14 +444,14 @@ static bool find_space(int *y, int *x, int height, int width)
  */
 extern bool passable(int feat)
 {
-    feature *f_ptr = &f_info[feat];
+    feature_type *f_ptr = &f_info[feat];
 
     /* Some kinds of terrain are passable. */
-    if (tf_has(f_ptr, TF_PASSABLE))
+    if (tf_has(f_ptr->flags, TF_PASSABLE))
 	return (TRUE);
 
     /* Doors are passable. */
-    if (tf_has(f_ptr, TF_DOOR_CLOSED))
+    if (tf_has(f_ptr->flags, TF_DOOR_CLOSED))
 	return (TRUE);
 
     /* Everything else is not passable. */

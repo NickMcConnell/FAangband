@@ -705,8 +705,6 @@ static void special_lighting_floor(byte *a, char *c, enum grid_light_level light
  */
 static void special_wall_display(byte *a, char *c, bool in_view, int feat)
 {
-    feature *f_ptr = &f_info[feat];
-
     /* Grids currently in view are left alone, rendered as "white" */
     if (in_view) return;
 
@@ -838,8 +836,10 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 
 	/* Special lighting effects */
 	if (tf_has(f_ptr->flags, TF_FLOOR))
+	{
 	    if (OPT(view_special_light))
 		special_lighting_floor(&a, &c, g->lighting, g->in_view);
+	}
 
 	/* Special lighting effects (walls only) */
 	else if (OPT(view_granite_light)) 
@@ -3648,9 +3648,8 @@ void update_noise(void)
 			continue;
 
 		    /* Ignore walls.  Do not ignore rubble. */
-		    if (tf_has(f_info[cave_feat[y2][x2]].flags, NO_NOISE)) {
+		    if (tf_has(f_info[cave_feat[y2][x2]].flags, TF_NO_NOISE)) 
 			continue;
-		    }
 		}
 
 		/* When doing an update... */

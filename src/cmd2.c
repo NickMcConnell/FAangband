@@ -1420,7 +1420,7 @@ int count_feats(int *y, int *x, int flag, bool under)
     int d;
     int xx, yy;
     int count;
-    feature *f_ptr;
+    feature_type *f_ptr;
 
     /* Count how many matches */
     count = 0;
@@ -1445,7 +1445,7 @@ int count_feats(int *y, int *x, int flag, bool under)
 	    continue;
 
 	/* Not looking for this feature */
-	if (!tf_has(f_ptr->flags, flag));
+	if (!tf_has(f_ptr->flags, flag))
 	    continue;
 
 	/* Count it */
@@ -1521,7 +1521,7 @@ int coords_to_dir(int y, int x)
  */
 static bool do_cmd_open_test(int y, int x)
 {
-    feature *f_ptr = &f_info[cave_feat[y][x]];
+    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
     /* Must have knowledge */
     if (!cave_has(cave_info[y][x], CAVE_MARK)) {
@@ -1559,7 +1559,7 @@ extern bool do_cmd_open_aux(int y, int x)
     int i, j;
 
     bool more = FALSE;
-    feature *f_ptr = &f_info[cave_feat[y][x]];
+    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
 
     /* Verify legality */
@@ -1723,7 +1723,7 @@ void do_cmd_open(cmd_code code, cmd_arg args[])
  */
 static bool do_cmd_close_test(int y, int x)
 {
-    feature *f_ptr = &f_info[cave_feat[y][x]];
+    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
     /* Must have knowledge */
     if (!cave_has(cave_info[y][x], CAVE_MARK)) {
@@ -1957,8 +1957,6 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	else if (!tf_has(f_ptr->flags, TF_GRANITE)
 		 && tf_has(f_ptr->flags, TF_WALL)) {
 	    bool okay = FALSE;
-	    bool gold = FALSE;
-	    bool hard = FALSE;
 
 	    /* Quartz */
 	    if (tf_has(f_ptr->flags, TF_QUARTZ)) 
@@ -2719,7 +2717,7 @@ static bool get_spike(int *ip)
  */
 bool do_cmd_spike_test(int y, int x)
 {
-    feature *f_ptr = &f_info[cave_feat[y][x]];
+    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
     /* Must have knowledge */
     if (!cave_has(cave_info[y][x], CAVE_MARK)) {
@@ -2832,7 +2830,7 @@ void do_cmd_spike(cmd_code code, cmd_arg args[])
  */
 static bool do_cmd_walk_test(int y, int x)
 {
-    feature *f_ptr = &f_info[cave_feat[y][x]];
+    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
     /* Assume no monster. */
     monster_type *m_ptr = 0;
@@ -3026,7 +3024,7 @@ void do_cmd_pathfind(cmd_code code, cmd_arg args[])
  */
 static void do_cmd_hold_or_stay(int pickup)
 {
-    feature *f_ptr = &f_info[cave_feat[p_ptr->py][p_ptr->px]];
+    feature_type *f_ptr = &f_info[cave_feat[p_ptr->py][p_ptr->px]];
 
     /* Take a turn */
     p_ptr->energy_use = 100;

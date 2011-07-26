@@ -1009,7 +1009,7 @@ bool py_attack(int y, int x, bool can_push)
 
     object_type *o_ptr;
 
-    terrain *f_ptr = &f_info[cave_feat[y][x]];
+    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
     char m_name[80];
 
@@ -1887,6 +1887,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	if (cave_m_idx[y][x] > 0) {
 	    monster_type *m_ptr = &m_list[cave_m_idx[y][x]];
 	    monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
 	    bool fear = FALSE;
 
@@ -2423,6 +2424,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 	if (cave_m_idx[y][x] > 0) {
 	    monster_type *m_ptr = &m_list[cave_m_idx[y][x]];
 	    monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
 	    bool fear = FALSE;
 

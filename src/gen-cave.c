@@ -136,7 +136,7 @@ static void build_streamer(int feat, int chance)
 
     /* Place streamer into dungeon */
     while (TRUE) {
-	feature *f_ptr;
+	feature_type *f_ptr;
 
 	/* Advance streamer width steps on the table. */
 	table_start += width;
@@ -790,7 +790,7 @@ static void try_entrance(int y0, int x0)
 	/* Extract the location */
 	int y = y0 + ddy_ddd[i];
 	int x = x0 + ddx_ddd[i];
-	feature *f_ptr = &f_info[cave_feat[y][x]];
+	feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
 	/* Ignore non-walls. */
 	if (!tf_has(f_ptr->flags, TF_WALL) || 
@@ -844,7 +844,7 @@ static void try_door(int y0, int x0)
 
 	if (k == 2) 
 	{
-	    feature *f_ptr;
+	    feature_type *f_ptr;
 	    int walls = 0;
 	    
 	    /* Check Vertical */

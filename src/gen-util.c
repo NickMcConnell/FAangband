@@ -41,7 +41,7 @@
 int next_to_walls(int y, int x)
 {
     int i, k = 0;
-    feature *f_ptr;
+    feature_type *f_ptr;
 
     /* Count the adjacent wall grids */
     for (i = 0; i < 4; i++) 

@@ -1186,7 +1186,7 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
 bool cave_exist_mon(monster_race * r_ptr, int y, int x, bool occupied_ok)
 {
     int feat;
-    feature *f_ptr;
+    feature_type *f_ptr;
 
     /* Check Bounds */
     if (!in_bounds_fully(y, x))
@@ -1315,7 +1315,7 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
     int move_chance = 100;
 
     int feat;
-    feature *f_ptr;
+    feature_type *f_ptr;
 
     /* Check Bounds */
     if (!in_bounds(y, x))
@@ -2731,7 +2731,7 @@ static void make_confused_move(monster_type * m_ptr, int y, int x)
     char m_name[80];
 
     int feat;
-    feature *f_ptr;
+    feature_type *f_ptr;
 
     bool seen = FALSE;
     bool fear = FALSE;
@@ -3335,7 +3335,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x, bool * death)
     int dis_chance;
 
     byte feat = cave_feat[y][x];
-    feature *f_ptr = &f_info[feat];
+    feature_type *f_ptr = &f_info[feat];
 
     /* Assume monster not frightened by trap */
     bool fear = FALSE;
@@ -3697,7 +3697,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 
     int feat;
     int i;
-    feature *f_ptr;
+    feature_type *f_ptr;
 
     /* Default move, default lack of view */
     bool do_move = TRUE;

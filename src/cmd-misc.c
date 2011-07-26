@@ -150,7 +150,7 @@ void show_player(void)
     bool exist_floor = FALSE;
     bool exist_monster = FALSE;
 
-    feature *f_ptr;
+    feature_type *f_ptr;
 
     /* No commands yet */
     poss = 0;

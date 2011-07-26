@@ -761,7 +761,7 @@ void move_player(int dir)
     int temp;
     int y, x;
 
-    feature *f_ptr;
+    feature_type *f_ptr;
 
     /* Find the result of moving */
     y = py + ddy[dir];
