@@ -114,17 +114,17 @@ void shapechange(s16b shape)
     /* Show or hide shapechange on main window. */
     p_ptr->redraw |= (PR_SHAPE);
 
-    if (landing) {
+    if (landing) 
+    {
 	int y = p_ptr->py, x = p_ptr->px;
+	feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
-	if (cave_feat[y][x] == FEAT_VOID) {
+	if (cave_feat[y][x] == FEAT_VOID) 
 	    fall_off_cliff();
-	}
+	
 
-	else if ((cave_feat[y][x] == FEAT_INVIS)
-		 || (cave_feat[y][x] == FEAT_GRASS_INVIS)
-		 || (cave_feat[y][x] == FEAT_TREE_INVIS)
-		 || (cave_feat[y][x] == FEAT_TREE2_INVIS)) {
+	else if (tf_has(f_ptr->flags, TF_TRAP_INVIS))
+	{
 	    /* Disturb */
 	    disturb(0, 0);
 
@@ -139,8 +139,8 @@ void shapechange(s16b shape)
 	}
 
 	/* Set off a visible trap */
-	else if ((cave_feat[y][x] >= FEAT_TRAP_HEAD)
-		 && (cave_feat[y][x] <= FEAT_TRAP_TAIL)) {
+	else if (tf_has(f_ptr->flags, TF_TRAP)) 
+	{
 	    /* Disturb */
 	    disturb(0, 0);
 
@@ -656,7 +656,8 @@ void magic_spiking(void)
     }
 
     /* Go for it */
-    else {
+    else 
+    {
 	/* Verify legality */
 	if (!do_cmd_spike_test(y, x))
 	    return;
@@ -665,13 +666,16 @@ void magic_spiking(void)
 	msg_print("You magically jam the door.");
 
 	/* Convert "locked" to "stuck" XXX XXX XXX */
-	if (cave_feat[y][x] < FEAT_DOOR_HEAD + 0x08) {
+	if (cave_feat[y][x] < FEAT_DOOR_HEAD + 0x08) 
+	{
 	    cave_feat[y][x] += 0x08;
 	}
 
 	/* Add three magical spikes to the door. */
-	for (i = 0; i < 3; i++) {
-	    if (cave_feat[y][x] < FEAT_DOOR_TAIL) {
+	for (i = 0; i < 3; i++) 
+	{
+	    if (cave_feat[y][x] < FEAT_DOOR_TAIL) 
+	    {
 		cave_feat[y][x] += 0x01;
 	    }
 	}
@@ -679,7 +683,8 @@ void magic_spiking(void)
 }
 
 /** Maximum numbers of runes of the various types */
-int max_runes[] = {
+int max_runes[] = 
+{
     4,				/* Rune of the Elements */
     4,				/* Rune of Magic Defence */
     4,				/* Rune of Instability */
@@ -1705,14 +1710,13 @@ bool detect_stairs(int range, bool show)
 	for (x = 0; x < DUNGEON_WID; x++) {
 
 	    /* check range */
-	    if (distance(py, px, y, x) <= range) {
+	    if (distance(py, px, y, x) <= range) 
+	    {
 		feature_type *f_ptr = &f_info[cave_feat[y][x]];
 		/* Detect stairs */
 
-/*	      if ((cave_feat[y][x] == FEAT_LESS) ||
-		  (cave_feat[y][x] == FEAT_MORE)) */
-
-		if (tf_has(f_ptr->flags, TF_STAIR)) {
+		if (tf_has(f_ptr->flags, TF_STAIR)) 
+		{
 		    /* Hack -- Memorize */
 		    cave_on(cave_info[y][x], CAVE_MARK);
 
@@ -1727,7 +1731,8 @@ bool detect_stairs(int range, bool show)
     }
 
     /* Found some */
-    if (num > 0) {
+    if (num > 0) 
+    {
 
 	/* Obvious */
 	detect = TRUE;
@@ -1764,12 +1769,20 @@ bool detect_treasure(int range, bool show)
 	for (x = 0; x < DUNGEON_WID; x++) {
 
 	    /* check range */
-	    if (distance(py, px, y, x) <= range) {
+	    if (distance(py, px, y, x) <= range) 
+	    {
 		/* Notice embedded gold */
-		if ((cave_feat[y][x] == FEAT_MAGMA_H)
-		    || (cave_feat[y][x] == FEAT_QUARTZ_H)) {
+		if (cave_feat[y][x] == FEAT_MAGMA_H)
+		{
 		    /* Expose the gold */
-		    cave_feat[y][x] += 0x02;
+		    cave_feat[y][x] = FEAT_MAGMA_K;
+		}
+
+		/* Notice embedded gold */
+		if (cave_feat[y][x] == FEAT_QUARTZ_H) 
+		{
+		    /* Expose the gold */
+		    cave_feat[y][x] = FEAT_QUARTZ_K;
 		}
 
 		/* Magma/Quartz + Known Gold */
@@ -5338,7 +5351,8 @@ static void cave_temp_room_unlight(void)
 	cave_off(cave_info[y][x], CAVE_GLOW);
 
 	/* Hack -- Forget "boring" grids */
-	if (cave_feat[y][x] <= FEAT_INVIS) {
+	if ((cave_feat[y][x] == FEAT_FLOOR)|| (cave_feat[y][x] == FEAT_INVIS)) 
+	{
 	    /* Forget the grid */
 	    cave_off(cave_info[y][x], CAVE_MARK);
 	}
