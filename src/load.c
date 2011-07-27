@@ -1077,7 +1077,11 @@ int rd_player(u32b version)
     rd_byte(&max_specialties);
     /* Specialty Abilities -BR- */
     for (i = 0; i < max_specialties; i++) 
+    {
 	rd_byte(&p_ptr->specialty_order[i]);
+	if (p_ptr->specialty_order[i] != PF_NO_SPECIALTY)
+	    pf_on(p_ptr->pflags, p_ptr->specialty_order[i]);
+    }
   
     /* Skip */
     strip_bytes(2);
