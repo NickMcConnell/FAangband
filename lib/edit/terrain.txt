@@ -20,7 +20,8 @@ V:1.1.6
 #N: index: name
 #G: ASCII char used to represent the feature: color symbol
 #M: index of the feature whose display this feature uses.
-#B: index of the feature this feature reverts to after disarming.
+#P: display priority on mini-map
+#X: lockedness : jammedness : shop number : digging
 #F: terrain flags
 #D: descriptions
 
@@ -96,7 +97,6 @@ D:A staircase up to a much shallower part of the dungeon.
 
 N:9:rune of the elements
 G:;:o
-B:1
 F:LOS | PROJECT | INTERESTING | RUNE | EASY 
 D:A magical rune which affects elemental spells and breaths.
 
@@ -104,7 +104,6 @@ D:A magical rune which affects elemental spells and breaths.
 
 N:10:rune of magic influence
 G:;:b
-B:1
 F:LOS | PROJECT | INTERESTING | RUNE | EASY 
 D:A magical rune which affects resistance to magic.
 
@@ -112,7 +111,6 @@ D:A magical rune which affects resistance to magic.
 
 N:11:rune of instability
 G:;:u
-B:1
 F:LOS | PROJECT | INTERESTING | RUNE | EASY 
 D:A magical rune which causes earthquakes.
 
@@ -120,7 +118,6 @@ D:A magical rune which causes earthquakes.
 
 N:12:rune of mana
 G:;:r
-B:1
 F:LOS | PROJECT | INTERESTING | RUNE | EASY 
 D:A magical rune which holds a reserve of mana.
 
@@ -128,7 +125,6 @@ D:A magical rune which holds a reserve of mana.
 
 N:13:rune of protection
 G:;:y
-B:1
 F:LOS | PROJECT | INTERESTING | RUNE 
 D:A magical rune which monsters cannot pass without difficulty.
 
@@ -136,7 +132,6 @@ D:A magical rune which monsters cannot pass without difficulty.
 
 N:14:rune of power
 G:;:s
-B:1
 F:LOS | PROJECT | INTERESTING | RUNE | EASY 
 D:A magical rune which affects spell power.
 
@@ -144,7 +139,6 @@ D:A magical rune which affects spell power.
 
 N:15:rune of speed
 G:;:G
-B:1
 F:LOS | PROJECT | INTERESTING | RUNE | EASY 
 D:A magical rune which affects speed.
 
@@ -153,7 +147,6 @@ D:A magical rune which affects speed.
 
 N:16:trap door
 G:^:w
-B:1
 F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
 D:It looks like floor, but step incautiously and you will fall through.
 
@@ -161,7 +154,6 @@ D:It looks like floor, but step incautiously and you will fall through.
 
 N:17:pit
 G:^:u
-B:1
 F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
 D:A hole dug to snare the unwary - hard to get out of, and maybe spiky.
 
@@ -169,7 +161,6 @@ D:A hole dug to snare the unwary - hard to get out of, and maybe spiky.
 
 N:18:dart trap
 G:^:r
-B:1
 F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
 D:A trap which shoots damaging darts.
 
@@ -177,7 +168,6 @@ D:A trap which shoots damaging darts.
 
 N:19:discolored spot
 G:^:s
-B:1
 F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
 D:A strange coloured spot on the ground - beware its elemental attack.
 
@@ -185,7 +175,6 @@ D:A strange coloured spot on the ground - beware its elemental attack.
 
 N:20:gas trap
 G:^:g
-B:1
 F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
 D:A trap that releases gas with various effects.
 
@@ -193,7 +182,6 @@ D:A trap that releases gas with various effects.
 
 N:21:strange rune
 G:^:o
-B:1
 F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
 D:A magical rune which calls up monsters to attack you.
 
@@ -201,7 +189,6 @@ D:A magical rune which calls up monsters to attack you.
 
 N:22:strange rune
 G:^:U
-B:1
 F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
 D:A magical rune which shakes the area.
 
@@ -209,7 +196,6 @@ D:A magical rune which shakes the area.
 
 N:23:hex
 G:^:v
-B:1
 F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
 D:A trap of strange chaotic magical effects.
 
@@ -217,7 +203,6 @@ D:A trap of strange chaotic magical effects.
 
 N:24:shimmering portal
 G:^:b
-B:1
 F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
 D:A portal to another area.
 
@@ -225,7 +210,6 @@ D:A portal to another area.
 
 N:25:murder hole
 G:^:W
-B:1
 F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
 D:A booby-trap which shoots you.
 
@@ -272,6 +256,7 @@ D:A falling branch could be random, or an act of an enemy, animal or vegetable.
 N:32:door
 G:+:U
 M:32
+X:0:0:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
 D:disarming skill makes all the difference to your ability to handle locks, 
@@ -284,6 +269,7 @@ D:valuable time by jamming or locking them.
 
 N:33:locked door
 G:+:U
+X:1:0:0:0
 M:32
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_LOCKED 
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
@@ -297,6 +283,7 @@ D:valuable time by jamming or locking them.
 N:34:locked door
 G:+:U
 M:32
+X:2:0:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_LOCKED 
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
 D:disarming skill makes all the difference to your ability to handle locks, 
@@ -309,6 +296,7 @@ D:valuable time by jamming or locking them.
 N:35:locked door
 G:+:U
 M:32
+X:3:0:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_LOCKED 
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
 D:disarming skill makes all the difference to your ability to handle locks, 
@@ -321,6 +309,7 @@ D:valuable time by jamming or locking them.
 N:36:locked door
 G:+:U
 M:32
+X:4:0:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_LOCKED 
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
 D:disarming skill makes all the difference to your ability to handle locks, 
@@ -333,6 +322,7 @@ D:valuable time by jamming or locking them.
 N:37:locked door
 G:+:U
 M:32
+X:5:0:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_LOCKED 
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
 D:disarming skill makes all the difference to your ability to handle locks, 
@@ -345,6 +335,7 @@ D:valuable time by jamming or locking them.
 N:38:locked door
 G:+:U
 M:32
+X:6:0:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_LOCKED 
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
 D:disarming skill makes all the difference to your ability to handle locks, 
@@ -357,6 +348,7 @@ D:valuable time by jamming or locking them.
 N:39:locked door
 G:+:U
 M:32
+X:7:0:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_LOCKED 
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
 D:disarming skill makes all the difference to your ability to handle locks, 
@@ -369,6 +361,7 @@ D:valuable time by jamming or locking them.
 N:40:jammed door
 G:+:U
 M:32
+X:0:0:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_JAMMED
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
 D:disarming skill makes all the difference to your ability to handle locks, 
@@ -381,6 +374,7 @@ D:valuable time by jamming or locking them.
 N:41:jammed door
 G:+:U
 M:32
+X:0:1:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_JAMMED
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
 D:disarming skill makes all the difference to your ability to handle locks, 
@@ -393,6 +387,7 @@ D:valuable time by jamming or locking them.
 N:42:jammed door
 G:+:U
 M:32
+X:0:2:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_JAMMED
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
 D:disarming skill makes all the difference to your ability to handle locks, 
@@ -405,6 +400,7 @@ D:valuable time by jamming or locking them.
 N:43:jammed door
 G:+:U
 M:32
+X:0:3:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_JAMMED
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
 D:disarming skill makes all the difference to your ability to handle locks, 
@@ -417,6 +413,7 @@ D:valuable time by jamming or locking them.
 N:44:jammed door
 G:+:U
 M:32
+X:0:4:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_JAMMED
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
 D:disarming skill makes all the difference to your ability to handle locks, 
@@ -429,6 +426,7 @@ D:valuable time by jamming or locking them.
 N:45:jammed door
 G:+:U
 M:32
+X:0:5:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_JAMMED
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
 D:disarming skill makes all the difference to your ability to handle locks, 
@@ -441,6 +439,7 @@ D:valuable time by jamming or locking them.
 N:46:jammed door
 G:+:U
 M:32
+X:0:6:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_JAMMED
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
 D:disarming skill makes all the difference to your ability to handle locks, 
@@ -453,6 +452,7 @@ D:valuable time by jamming or locking them.
 N:47:jammed door
 G:+:U
 M:32
+X:0:7:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_JAMMED
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
 D:disarming skill makes all the difference to your ability to handle locks, 
@@ -474,6 +474,7 @@ D:A door that appears like a granite wall to untrained eyes.
 
 N:49:pile of rubble
 G:::w
+X:0:0:0:d200
 F:ROCK | PASSABLE | OBJECT | PROTECT | HIDE_OBJ
 D:Greatly slows down any creature that cannot bore or pass through rock.  Ends 
 D:LOS, stops missiles, bolts, and beams, and reduces the radius of ball 
@@ -485,6 +486,7 @@ D:melee, ranged, or magical attacks.  Rubble may dissolve to normal floor.
 
 N:50:magma vein
 G:%:s
+X:0:0:0:10+d400
 F:WALL | ROCK | NO_SCENT | NO_NOISE | MAGMA 
 D:A seam of soft rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
@@ -494,6 +496,7 @@ D:sight.
 
 N:51:quartz vein
 G:%:w
+X:0:0:0:20+d800
 F:WALL | ROCK | NO_SCENT | NO_NOISE | QUARTZ 
 D:A seam of hardish rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
@@ -504,6 +507,7 @@ D:sight.
 N:52:magma vein
 G:%:s
 M:50
+X:0:0:0:10+d400
 F:WALL | ROCK | NO_SCENT | NO_NOISE | GOLD | MAGMA 
 D:A seam of soft rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
@@ -515,6 +519,7 @@ D:sight.  It contains hidden treasure.
 N:53:quartz vein
 G:%:w
 M:51
+X:0:0:0:20+d800
 F:WALL | ROCK | NO_SCENT | NO_NOISE | GOLD | QUARTZ 
 D:A seam of hardish rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
@@ -524,6 +529,7 @@ D:sight.  It contains hidden treasure.
 
 N:54:magma vein with treasure
 G:*:o
+X:0:0:0:10+d400
 F:WALL | ROCK | INTERESTING | NO_SCENT | NO_NOISE | GOLD | MAGMA 
 D:A seam of soft rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
@@ -534,6 +540,7 @@ D:sight.  It contains visible treasure.
 
 N:55:quartz vein with treasure
 G:*:o
+X:0:0:0:20+d800
 F:WALL | ROCK | INTERESTING | NO_SCENT | NO_NOISE | GOLD | QUARTZ
 D:A seam of hardish rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
@@ -543,6 +550,7 @@ D:sight.  It contains visible treasure.
 
 N:56:granite wall
 G:#:w
+X:0:0:0:40+d1600
 F:WALL | ROCK | GRANITE | NO_SCENT | NO_NOISE
 D:A seam of hard rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
@@ -554,6 +562,7 @@ D:sight.
 N:57:granite wall
 G:#:w
 M:56
+X:0:0:0:40+d1600
 F:WALL | ROCK | GRANITE | NO_SCENT | NO_NOISE
 D:A seam of hard rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
@@ -565,6 +574,7 @@ D:sight.
 N:58:granite wall
 G:#:w
 M:56
+X:0:0:0:40+d1600
 F:WALL | ROCK | GRANITE | NO_SCENT | NO_NOISE
 D:A seam of hard rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
@@ -576,6 +586,7 @@ D:sight.
 N:59:granite wall
 G:#:w
 M:56
+X:0:0:0:40+d1600
 F:WALL | ROCK | GRANITE | NO_SCENT | NO_NOISE
 D:A seam of hard rock.  It can be removed by digging or magic, and passed 
 D:through by immaterial monsters.  It stops any spells, missiles or line of 
@@ -586,6 +597,7 @@ D:sight.
 
 N:60:permanent wall
 G:#:w
+X:0:0:0:0
 F:WALL | ROCK | PERMANENT | NO_SCENT | NO_NOISE
 D:You can dig through most walls but some are impenetrable.  The dungeon is 
 D:surrounded by these kinds of walls and some special rooms are made of them.
@@ -595,6 +607,7 @@ D:surrounded by these kinds of walls and some special rooms are made of them.
 N:61:permanent wall
 G:#:w
 M:60
+X:0:0:0:0
 F:WALL | ROCK | PERMANENT | NO_SCENT | NO_NOISE
 D:You can dig through most walls but some are impenetrable.  The dungeon is 
 D:surrounded by these kinds of walls and some special rooms are made of them.
@@ -604,6 +617,7 @@ D:surrounded by these kinds of walls and some special rooms are made of them.
 N:62:permanent wall
 G:#:w
 M:60
+X:0:0:0:0
 F:WALL | ROCK | PERMANENT | NO_SCENT | NO_NOISE
 D:You can dig through most walls but some are impenetrable.  The dungeon is 
 D:surrounded by these kinds of walls and some special rooms are made of them.
@@ -613,6 +627,7 @@ D:surrounded by these kinds of walls and some special rooms are made of them.
 N:63:permanent wall
 G:#:w
 M:60
+X:0:0:0:0
 F:WALL | ROCK | PERMANENT | NO_SCENT | NO_NOISE
 D:You can dig through most walls but some are impenetrable.  The dungeon is 
 D:surrounded by these kinds of walls and some special rooms are made of them.
@@ -624,6 +639,7 @@ D:surrounded by these kinds of walls and some special rooms are made of them.
 
 N:64:General Store
 G:1:U
+X:0:0:0:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:The General Store sells food, ammunition and lighting supplies.
 
@@ -631,6 +647,7 @@ D:The General Store sells food, ammunition and lighting supplies.
 
 N:65:Armoury
 G:2:s
+X:0:0:1:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:The armour sold here will give you some protection against the blows of your 
 D:enemies.
@@ -640,6 +657,7 @@ D:enemies.
 N:66:Weapon Smiths
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 G:3:w
+X:0:0:2:0
 D:Weapons for hitting and shooting your enemies are forged in the hot, acrid 
 D:backroom of this enticing shop.
 
@@ -647,6 +665,7 @@ D:backroom of this enticing shop.
 
 N:67:Temple
 G:4:g
+X:0:0:3:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:A quiet, reflective place of refuge, with supplies of magical and hallowed 
 D:goods for the pure of heart.
@@ -655,6 +674,7 @@ D:goods for the pure of heart.
 
 N:68:Alchemy Shop
 G:5:b
+X:0:0:4:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:A dim, scented room where potions and scrolls are traded.
 
@@ -662,6 +682,7 @@ D:A dim, scented room where potions and scrolls are traded.
 
 N:69:Magic Shop
 G:6:r
+X:0:0:5:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:A shop for devices with magic trapped within.
 
@@ -669,6 +690,7 @@ D:A shop for devices with magic trapped within.
 
 N:70:Black Market
 G:7:D
+X:0:0:6:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:Watch your back and hold onto your purse as you enter this disreputable 
 D:haunt - and do not expect friendly service or good bargains.
@@ -677,6 +699,7 @@ D:haunt - and do not expect friendly service or good bargains.
 
 N:71:Home
 G:8:y
+X:0:0:7:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:Your safe piece of Middle Earth, and the only place you can store goods apart 
 D:from on your person.
@@ -685,6 +708,7 @@ D:from on your person.
 
 N:72:Bookstore
 G:9:o
+X:0:0:8:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:A dusty room lined with shelves of mystical tomes.
 
@@ -692,6 +716,7 @@ D:A dusty room lined with shelves of mystical tomes.
 
 N:73:Travelling Merchant
 G:0:u
+X:0:0:9:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:This merchant travels around, buying anything of value and selling basic 
 D:commodities.  He will take orders for some magic potions, scrolls and books.
@@ -702,7 +727,6 @@ D:commodities.  He will take orders for some magic potions, scrolls and books.
 
 N:80:monster trap (basic)
 G:^:y
-B:1
 F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A trap that rogues and some druids, rangers and warriors can set.
 
@@ -710,7 +734,6 @@ D:A trap that rogues and some druids, rangers and warriors can set.
 
 N:81:monster trap (sturdy)
 G:^:y
-B:1
 F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that lasts longer than normal.
 
@@ -718,7 +741,6 @@ D:A monster trap that lasts longer than normal.
 
 N:82:monster trap (netted)
 G:^:y
-B:1
 F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that with a net to trap flying monsters.
 
@@ -726,7 +748,6 @@ D:A monster trap that with a net to trap flying monsters.
 
 N:83:monster trap (confusion)
 G:^:y
-B:1
 F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that confuses those caught in it.
 
@@ -734,7 +755,6 @@ D:A monster trap that confuses those caught in it.
 
 N:84:monster trap (poison gas)
 G:^:y
-B:1
 F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that releases a cloud of poison.
 
@@ -742,7 +762,6 @@ D:A monster trap that releases a cloud of poison.
 
 N:85:monster trap (spirit)
 G:^:y
-B:1
 F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that strikes at immaterial monsters.
 
@@ -750,7 +769,6 @@ D:A monster trap that strikes at immaterial monsters.
 
 N:86:monster trap (lightning)
 G:^:y
-B:1
 F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that zaps a monster with electricity.
 
@@ -758,7 +776,6 @@ D:A monster trap that zaps a monster with electricity.
 
 N:87:monster trap (explosive)
 G:^:y
-B:1
 F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that sets off an explosion.
 
@@ -766,7 +783,6 @@ D:A monster trap that sets off an explosion.
 
 N:88:monster trap (portal)
 G:^:y
-B:1
 F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that teleports its victim.
 
@@ -774,7 +790,6 @@ D:A monster trap that teleports its victim.
 
 N:89:monster trap (stasis)
 G:^:y
-B:1
 F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that holds a monster immobile.
 
@@ -782,7 +797,6 @@ D:A monster trap that holds a monster immobile.
 
 N:90:monster trap (drain life)
 G:^:y
-B:1
 F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that drains the life force from living monsters.
 
@@ -790,7 +804,6 @@ D:A monster trap that drains the life force from living monsters.
 
 N:91:monster trap (unmagic)
 G:^:y
-B:1
 F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that hurts and drains mana from monsters.
 
@@ -798,7 +811,6 @@ D:A monster trap that hurts and drains mana from monsters.
 
 N:92:monster trap (dispel monsters)
 G:^:y
-B:1
 F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that hurts all monsters in sight.
 
@@ -806,7 +818,6 @@ D:A monster trap that hurts all monsters in sight.
 
 #N:93:monster trap (genocide)
 #G:^:y
-B:1
 F:LOS | PROJECT | M_TRAP | INTERESTING 
 D:A monster trap that removes all nearby like monsters.
 
@@ -981,6 +992,7 @@ D:A tree which can hurt.
 
 N:122:sand dunes
 G:.:y
+X:0:0:0:0
 F:PASSABLE | OBJECT | EASY
 D:Ends LOS, stops missiles, bolts, and beams, and reduces the radius of ball 
 D:spells.  

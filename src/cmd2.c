@@ -2270,7 +2270,7 @@ extern bool do_cmd_disarm_aux(int y, int x)
 	cave_off(cave_info[y][x], CAVE_MARK);
 
 	/* Remove the trap */
-	cave_set_feat(y, x, f_ptr->base);
+	cave_set_feat(y, x, FEAT_FLOOR);
     }
 
     /* Failure -- Keep trying */

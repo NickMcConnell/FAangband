@@ -1250,7 +1250,6 @@ static enum parser_error parse_f_n(struct parser *p) {
     f->next = h;
     f->fidx = idx;
     f->mimic = idx;
-    f->base = idx;
     f->name = string_make(name);
     parser_setpriv(p, f);
     return PARSE_ERROR_NONE;
@@ -1285,14 +1284,26 @@ static enum parser_error parse_f_m(struct parser *p) {
     return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_f_b(struct parser *p) {
-    unsigned int idx = parser_getuint(p, "index");
+static enum parser_error parse_f_p(struct parser *p) {
+    unsigned int priority = parser_getuint(p, "priority");
     struct feature *f = parser_priv(p);
 
     if (!f)
 	return PARSE_ERROR_MISSING_RECORD_HEADER;
-    f->base = idx;
+    f->priority = priority;
     return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_f_x(struct parser *p) {
+	struct feature *f = parser_priv(p);
+
+	if (!f)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	f->locked = parser_getint(p, "locked");
+	f->jammed = parser_getint(p, "jammed");
+	f->shopnum = parser_getint(p, "shopnum");
+	f->dig = parser_getrand(p, "dig");
+	return PARSE_ERROR_NONE;
 }
 
 static enum parser_error parse_f_f(struct parser *p) {
@@ -1335,7 +1346,8 @@ struct parser *init_parse_f(void) {
     parser_reg(p, "N uint index str name", parse_f_n);
     parser_reg(p, "G char glyph sym color", parse_f_g);
     parser_reg(p, "M uint index", parse_f_m);
-    parser_reg(p, "B uint index", parse_f_b);
+    parser_reg(p, "P uint priority", parse_f_p);
+    parser_reg(p, "X int locked int jammed int shopnum rand dig", parse_f_x);
     parser_reg(p, "F ?str flags", parse_f_f);
     parser_reg(p, "D str text", parse_f_d);
     return p;
