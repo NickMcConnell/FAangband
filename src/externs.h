@@ -165,6 +165,7 @@ extern int cost_at_center;
 #endif
 
 extern maxima *z_info;
+extern trap_type *trap_list;
 extern object_type *o_list;
 extern monster_type *m_list;
 extern monster_lore *l_list;
@@ -196,6 +197,7 @@ extern u32b total_wakeup_chance;
 extern vault_type *v_info;
 extern vault_type *t_info;
 extern feature_type *f_info;
+extern trap_kind *trap_info;
 extern object_kind *k_info;
 extern artifact_type *a_info;
 extern set_type *set_info;
@@ -267,7 +269,7 @@ extern byte player_is_crossing;
 extern bool cancel_crossing;
 extern byte number_of_thefts_on_level;
 extern byte num_trap_on_level;
-extern byte num_runes_on_level[MAX_RUNE];
+extern byte num_runes_on_level[RUNE_TAIL];
 extern int mana_reserve;
 extern int *artifact_normal, *artifact_special;
 extern int artifact_normal_cnt, artifact_special_cnt;

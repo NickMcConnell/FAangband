@@ -1,21 +1,8 @@
-# File: f_info.txt
-
-
-# This file is used to initialize the "lib/raw/f_info.raw" file, which is
-# used to initialize the "terrain feature" information for the Angband game.
-
-# Do not modify this file unless you know exactly what you are doing,
-# unless you wish to risk possible system crashes and broken savefiles.
-
 # Note that the doors, runes and traps are grouped into very regular groups,
 # such that each of the bits in the feature type conveys information.
 
 # Note that terrain feature zero contains the "darkness" picture.
 
-
-# Version stamp (required)
-
-V:1.1.6
 
 #N: index: name
 #G: ASCII char used to represent the feature: color symbol
@@ -41,14 +28,6 @@ G:.:w
 F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | EASY | RUN1
 D:An open floor or bare ground.  Can be walked across by anything, and can 
 D:hold traps or items.  Does not break line of sight.
-
-# 0x02 --> invisible trap (drawn as open floor)
-
-N:2:invisible trap
-G:.:w
-M:1
-F:LOS | PROJECT | PASSABLE | FLOOR | TRAP_INVIS | RUN1
-D:It looks like open ground, but beware!
 
 # 0x03 --> open door
 
@@ -93,161 +72,6 @@ G:<:s
 F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY 
 D:A staircase up to a much shallower part of the dungeon.
 
-# 0x09 --> rune of the elements
-
-N:9:rune of the elements
-G:;:o
-F:LOS | PROJECT | INTERESTING | RUNE | EASY 
-D:A magical rune which affects elemental spells and breaths.
-
-# 0x0A --> rune of magic influence
-
-N:10:rune of magic influence
-G:;:b
-F:LOS | PROJECT | INTERESTING | RUNE | EASY 
-D:A magical rune which affects resistance to magic.
-
-# 0x0B --> rune of instability
-
-N:11:rune of instability
-G:;:u
-F:LOS | PROJECT | INTERESTING | RUNE | EASY 
-D:A magical rune which causes earthquakes.
-
-# 0x0C --> rune of mana
-
-N:12:rune of mana
-G:;:r
-F:LOS | PROJECT | INTERESTING | RUNE | EASY 
-D:A magical rune which holds a reserve of mana.
-
-# 0x0D --> rune of protection
-
-N:13:rune of protection
-G:;:y
-F:LOS | PROJECT | INTERESTING | RUNE 
-D:A magical rune which monsters cannot pass without difficulty.
-
-# 0x0E --> rune of power
-
-N:14:rune of power
-G:;:s
-F:LOS | PROJECT | INTERESTING | RUNE | EASY 
-D:A magical rune which affects spell power.
-
-# 0x0F --> rune of speed
-
-N:15:rune of speed
-G:;:G
-F:LOS | PROJECT | INTERESTING | RUNE | EASY 
-D:A magical rune which affects speed.
-
-# 0x1* - player traps -- trap door.  Level 2 and below.
-# This location is hard-coded, to prevent trap doors on quest levels.
-
-N:16:trap door
-G:^:w
-F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
-D:It looks like floor, but step incautiously and you will fall through.
-
-# 0x11 --> visible trap -- pit.  Level 2 and below.
-
-N:17:pit
-G:^:u
-F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
-D:A hole dug to snare the unwary - hard to get out of, and maybe spiky.
-
-# 0x12 --> visible trap -- stat-reducing dart.  Level 8 and below.
-
-N:18:dart trap
-G:^:r
-F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
-D:A trap which shoots damaging darts.
-
-# 0x13 --> visible trap -- discolored spot.  Level 5 and below.
-
-N:19:discolored spot
-G:^:s
-F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
-D:A strange coloured spot on the ground - beware its elemental attack.
-
-# 0x14 --> visible trap -- gas, with various possible effects.  Any level.
-
-N:20:gas trap
-G:^:g
-F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
-D:A trap that releases gas with various effects.
-
-# 0x15 --> visible trap -- rune -- summoning.  Level 3 and below.
-
-N:21:strange rune
-G:^:o
-F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
-D:A magical rune which calls up monsters to attack you.
-
-# 0x16 --> visible trap -- dungeon alteration.  Level 20 and below.
-
-N:22:strange rune
-G:^:U
-F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
-D:A magical rune which shakes the area.
-
-# 0x17 --> visible trap -- various (mostly rather nasty) traps.  Level 40 and below.
-
-N:23:hex
-G:^:v
-F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
-D:A trap of strange chaotic magical effects.
-
-# 0x18 --> visible trap -- move player.  Any level.
-
-N:24:shimmering portal
-G:^:b
-F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
-D:A portal to another area.
-
-# 0x19 --> visible trap -- arrow, bolt, or shot trap.  Level 4 and below.
-
-N:25:murder hole
-G:^:W
-F:LOS | PROJECT | PASSABLE | FLOOR | INTERESTING | TRAP 
-D:A booby-trap which shoots you.
-
-# 0x1A --> visible trap -- falling tree branch
-
-N:26:falling branch
-G:^:g
-B:114
-F:PASSABLE | TREE | INTERESTING | TRAP 
-D:A falling branch could be random, or an act of an enemy, animal or vegetable.
-
-# 0x1B --> visible trap -- falling tree branch
-
-N:27:falling branch
-G:^:t
-B:115
-F:PASSABLE | TREE | INTERESTING | TRAP 
-D:A falling branch could be random, or an act of an enemy, animal or vegetable.
-
-# 0x1C --> visible trap -- unused
-
-#N:28:????
-#G:^:g
-
-# 0x1D --> visible trap -- unused
-
-#N:29:????
-#G:^:g
-
-# 0x1E --> visible trap -- unused
-
-#N:30:????
-#G:^:g
-
-# 0x1F --> visible trap -- unused
-
-#N:31:????
-#G:^:g
 
 # 0x2* - doors
 
@@ -721,115 +545,6 @@ F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:This merchant travels around, buying anything of value and selling basic 
 D:commodities.  He will take orders for some magic potions, scrolls and books.
 
-# 0x5* - monster traps
-
-# 0x50 --> monster trap -- basic
-
-N:80:monster trap (basic)
-G:^:y
-F:LOS | PROJECT | M_TRAP | INTERESTING 
-D:A trap that rogues and some druids, rangers and warriors can set.
-
-# 0x51 --> monster trap -- sturdy
-
-N:81:monster trap (sturdy)
-G:^:y
-F:LOS | PROJECT | M_TRAP | INTERESTING 
-D:A monster trap that lasts longer than normal.
-
-# 0x52 --> monster trap -- netted
-
-N:82:monster trap (netted)
-G:^:y
-F:LOS | PROJECT | M_TRAP | INTERESTING 
-D:A monster trap that with a net to trap flying monsters.
-
-# 0x53 --> monster trap -- confusion
-
-N:83:monster trap (confusion)
-G:^:y
-F:LOS | PROJECT | M_TRAP | INTERESTING 
-D:A monster trap that confuses those caught in it.
-
-# 0x54 --> monster trap -- poison
-
-N:84:monster trap (poison gas)
-G:^:y
-F:LOS | PROJECT | M_TRAP | INTERESTING 
-D:A monster trap that releases a cloud of poison.
-
-# 0x55 --> monster trap -- spirit
-
-N:85:monster trap (spirit)
-G:^:y
-F:LOS | PROJECT | M_TRAP | INTERESTING 
-D:A monster trap that strikes at immaterial monsters.
-
-# 0x56 --> monster trap -- shocking
-
-N:86:monster trap (lightning)
-G:^:y
-F:LOS | PROJECT | M_TRAP | INTERESTING 
-D:A monster trap that zaps a monster with electricity.
-
-# 0x57 --> monster trap -- explosive
-
-N:87:monster trap (explosive)
-G:^:y
-F:LOS | PROJECT | M_TRAP | INTERESTING 
-D:A monster trap that sets off an explosion.
-
-# 0x58 --> monster trap -- portal
-
-N:88:monster trap (portal)
-G:^:y
-F:LOS | PROJECT | M_TRAP | INTERESTING 
-D:A monster trap that teleports its victim.
-
-# 0x59 --> monster trap -- stasis
-
-N:89:monster trap (stasis)
-G:^:y
-F:LOS | PROJECT | M_TRAP | INTERESTING 
-D:A monster trap that holds a monster immobile.
-
-# 0x5A --> monster trap -- drain life
-
-N:90:monster trap (drain life)
-G:^:y
-F:LOS | PROJECT | M_TRAP | INTERESTING 
-D:A monster trap that drains the life force from living monsters.
-
-# 0x5B --> monster trap -- unmagic
-
-N:91:monster trap (unmagic)
-G:^:y
-F:LOS | PROJECT | M_TRAP | INTERESTING 
-D:A monster trap that hurts and drains mana from monsters.
-
-# 0x5C --> monster trap -- dispel monsters
-
-N:92:monster trap (dispel monsters)
-G:^:y
-F:LOS | PROJECT | M_TRAP | INTERESTING 
-D:A monster trap that hurts all monsters in sight.
-
-# 0x5D --> monster trap -- genocide
-
-#N:93:monster trap (genocide)
-#G:^:y
-F:LOS | PROJECT | M_TRAP | INTERESTING 
-D:A monster trap that removes all nearby like monsters.
-
-# 0x5E --> monster trap -- unused
-
-#N:94:monster trap
-#G:^:y
-
-# 0x5F --> monster trap -- unused
-
-#N:95:monster trap
-#G:^:y
 
 # 0x6* - wilderness only features
 
@@ -947,14 +662,6 @@ F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | ORGANIC | EASY | RUN2
 D:Open ground that can be crossed easily by all creatures.  It occurs only in 
 D:wilderness.  It may contain traps. 
 
-# 0x75 --> special feature -- trap drawn as grass
-
-N:117:invisible trap
-G:.:g
-M:116
-F:LOS | PROJECT | PASSABLE | FLOOR | TRAP_INVIS | ORGANIC | RUN2
-D:A trap hidden in the grass.
-
 # 0x76 --> special feature -- web
 
 N:118:web
@@ -971,22 +678,6 @@ G: :D
 F:LOS | PROJECT 
 D:Empty space - only flying creatures can pass across without falling.  All 
 D:spells and missiles can pass through.
-
-# 0x78 --> special feature -- trapped tree
-
-N:120:invisible trap
-G:+:g
-M:114
-F:PASSABLE | TRAP_INVIS | TREE | ORGANIC 
-D:A tree which can hurt.
-
-# 0x79 --> special feature -- trapped tree
-
-N:121:invisible trap
-G:+:t
-M:115
-F:PASSABLE | TRAP_INVIS | TREE | ORGANIC 
-D:A tree which can hurt.
 
 # 0x7a --> special feature -- sand dune
 

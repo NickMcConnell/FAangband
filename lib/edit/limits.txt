@@ -16,6 +16,9 @@ V:1.1.6
 # Maximum number of feature types
 M:F:140
 
+# Maximum number of trap kinds
+M:T:100
+
 # Maximum number of object kinds
 M:K:755
 
@@ -61,15 +64,6 @@ M:O:1024
 # Maximum number of monsters on the level
 M:M:1024
 
-#
-# Array sizes (in bytes) for some initialization stuff
-#
-
-# Size of the "fake" array for reading in names of monsters, objects,
-# artifacts, store-owners, player-races, ...
-M:N:40960
-
-# Size of the "fake" array for reading in the descriptions of monsters,
-# vaults, and the player-histories
-M:T:122880
+# Maximum number of traps on the level
+M:N:1024
 

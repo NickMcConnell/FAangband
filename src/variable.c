@@ -576,6 +576,11 @@ int cost_at_center = 0;
 #endif	/* MONSTER_FLOW */
 
 /**
+ * Array[z_info->l_max] of traps
+ */
+trap_type *trap_list;
+
+/**
  * Array[z_info->o_max] of dungeon objects
  */
 object_type *o_list;
@@ -730,6 +735,11 @@ vault_type *t_info;
  * The terrain feature arrays
  */
 feature_type *f_info;
+
+/**
+ * The trap kind arrays
+ */
+trap_kind *trap_info;
 
 /**
  * The object kind arrays
@@ -1072,7 +1082,7 @@ byte player_is_crossing;
  */
 byte number_of_thefts_on_level;
 byte num_trap_on_level;
-byte num_runes_on_level[MAX_RUNE];
+byte num_runes_on_level[RUNE_TAIL];
 int mana_reserve = 0;
 
 /**

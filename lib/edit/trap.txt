@@ -1,0 +1,260 @@
+#trap.txt
+
+#This file contains rune, player trap and monster trap definitions
+
+#Rune counting routines assume runes come first in this file
+
+#N: index: name
+#G: ASCII char used to represent the feature: color symbol
+#M: rarity: minimum depth: maximum number on level
+#F: trap flags
+#D: description
+
+N:0:no trap
+G: :w
+
+## Runes ##
+
+N:1:rune of the elements
+G:;:o
+M:0:0:4
+F:RUNE 
+D:A magical rune which affects elemental spells and breaths.
+
+N:2:rune of magic influence
+G:;:b
+M:0:0:4
+F:RUNE  
+D:A magical rune which affects resistance to magic.
+
+N:3:rune of instability
+G:;:u
+M:0:0:4
+F:RUNE 
+D:A magical rune which causes earthquakes.
+
+N:4:rune of mana
+G:;:r
+M:0:0:4
+F:RUNE 
+D:A magical rune which holds a reserve of mana.
+
+N:5:rune of protection
+G:;:y
+M:0:0:4
+F:RUNE 
+D:A magical rune which monsters cannot pass without difficulty.
+
+N:6:rune of power
+G:;:s
+M:0:0:4
+F:RUNE 
+D:A magical rune which affects spell power.
+
+N:7:rune of speed
+G:;:G
+M:0:0:4
+F:RUNE 
+D:A magical rune which affects speed.
+
+
+
+## Player traps ##
+
+N:16:trap door
+G:^:w
+M:1:0:0
+F:TRAP 
+D:It looks like floor, but step incautiously and you will fall through.
+
+# 0x11 --> visible trap -- pit. 
+
+N:17:pit
+G:^:u
+M:1:2:0
+F:TRAP 
+D:A hole dug to snare the unwary - hard to get out of, and maybe spiky.
+
+# 0x12 --> visible trap -- stat-reducing dart. 
+
+N:18:dart trap
+G:^:r
+M:1:8:0
+F:TRAP 
+D:A trap which shoots damaging darts.
+
+# 0x13 --> visible trap -- discolored spot.
+
+N:19:discolored spot
+G:^:s
+M:1:5:0
+F:TRAP 
+D:A strange coloured spot on the ground - beware its elemental attack.
+
+# 0x14 --> visible trap -- gas, with various possible effects.
+
+N:20:gas trap
+G:^:g
+M:1:0:0
+F:TRAP 
+D:A trap that releases gas with various effects.
+
+# 0x15 --> visible trap -- rune -- summoning.
+
+N:21:strange rune
+G:^:o
+M:1:3:0
+F:TRAP 
+D:A magical rune which calls up monsters to attack you.
+
+# 0x16 --> visible trap -- dungeon alteration.
+
+N:22:strange rune
+G:^:U
+M:1:20:0
+F:TRAP 
+D:A magical rune which shakes the area.
+
+# 0x17 --> visible trap -- various (mostly rather nasty) traps. 
+
+N:23:hex
+G:^:v
+M:1:40:0
+F:TRAP 
+D:A trap of strange chaotic magical effects.
+
+# 0x18 --> visible trap -- move player. 
+
+N:24:shimmering portal
+G:^:b
+M:1:0:0
+F:TRAP 
+D:A portal to another area.
+
+# 0x19 --> visible trap -- arrow, bolt, or shot trap.
+
+N:25:murder hole
+G:^:W
+M:1:4:0
+F:TRAP 
+D:A booby-trap which shoots you.
+
+# 0x1A --> visible trap -- falling tree branch
+
+N:26:falling branch
+G:^:g
+M:1:0:0
+F:TRAP 
+D:A falling branch could be random, or an act of an enemy, animal or vegetable.
+
+# 0x1B --> visible trap -- falling tree branch
+
+N:27:falling branch
+G:^:t
+M:1:0:0
+F:TRAP 
+D:A falling branch could be random, or an act of an enemy, animal or vegetable.
+
+
+
+
+## Monster traps ##
+
+# 0x40 --> monster trap -- basic
+
+N:64:monster trap (basic)
+G:^:y
+F:M_TRAP
+D:A trap that rogues and some druids, rangers and warriors can set.
+
+# 0x41 --> monster trap -- sturdy
+
+N:65:monster trap (sturdy)
+G:^:y
+F:M_TRAP
+D:A monster trap that lasts longer than normal.
+
+# 0x42 --> monster trap -- netted
+
+N:66:monster trap (netted)
+G:^:y
+F:M_TRAP
+D:A monster trap that with a net to trap flying monsters.
+
+# 0x43 --> monster trap -- confusion
+
+N:67:monster trap (confusion)
+G:^:y
+F:M_TRAP
+D:A monster trap that confuses those caught in it.
+
+# 0x44 --> monster trap -- poison
+
+N:68:monster trap (poison gas)
+G:^:y
+F:M_TRAP
+D:A monster trap that releases a cloud of poison.
+
+# 0x45 --> monster trap -- spirit
+
+N:69:monster trap (spirit)
+G:^:y
+F:M_TRAP
+D:A monster trap that strikes at immaterial monsters.
+
+# 0x46 --> monster trap -- shocking
+
+N:70:monster trap (lightning)
+G:^:y
+F:M_TRAP
+D:A monster trap that zaps a monster with electricity.
+
+# 0x47 --> monster trap -- explosive
+
+N:71:monster trap (explosive)
+G:^:y
+F:M_TRAP
+D:A monster trap that sets off an explosion.
+
+# 0x48 --> monster trap -- portal
+
+N:72:monster trap (portal)
+G:^:y
+F:M_TRAP
+D:A monster trap that teleports its victim.
+
+# 0x49 --> monster trap -- stasis
+
+N:73:monster trap (stasis)
+G:^:y
+F:M_TRAP
+D:A monster trap that holds a monster immobile.
+
+# 0x4A --> monster trap -- drain life
+
+N:74:monster trap (drain life)
+G:^:y
+F:M_TRAP
+D:A monster trap that drains the life force from living monsters.
+
+# 0x4B --> monster trap -- unmagic
+
+N:75:monster trap (unmagic)
+G:^:y
+F:M_TRAP
+D:A monster trap that hurts and drains mana from monsters.
+
+# 0x4C --> monster trap -- dispel monsters
+
+N:76:monster trap (dispel monsters)
+G:^:y
+F:M_TRAP
+D:A monster trap that hurts all monsters in sight.
+
+# 0x4D --> monster trap -- genocide
+
+N:77:monster trap (genocide)
+G:^:y
+F:M_TRAP
+D:A monster trap that removes all nearby like monsters.
+

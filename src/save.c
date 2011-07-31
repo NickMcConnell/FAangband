@@ -627,8 +627,8 @@ void wr_player(void)
     wr_byte(num_trap_on_level);
   
     /* Store number of runes on this level, mana reserve for rune of mana. */
-    wr_byte(MAX_RUNE);
-    for (i = 0; i < MAX_RUNE; i++)
+    wr_byte(RUNE_TAIL);
+    for (i = 0; i < RUNE_TAIL; i++)
 	wr_byte(num_runes_on_level[i]);
     wr_byte((byte)mana_reserve);
   

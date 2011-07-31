@@ -1640,7 +1640,7 @@ extern bool py_set_trap(int y, int x)
 static int trap_y = 0;
 static int trap_x = 0;
 
-static char *trap_type[] = {
+static char *trap_desc[] = {
     "Sturdy Trap      (less likely to break)",
     "Netted Trap      (effective versus flyers)",
     "Confusion Trap   (confuses monsters)",
@@ -1673,7 +1673,7 @@ void trap_display(menu_type * menu, int oid, bool cursor, int row, int col,
     byte attr = (cursor ? TERM_L_BLUE : TERM_WHITE);
 
     /* Print it */
-    c_put_str(attr, format("%s", trap_type[idx]), row, col);
+    c_put_str(attr, format("%s", trap_desc[idx]), row, col);
 }
 
 /**

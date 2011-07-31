@@ -878,7 +878,7 @@ int rd_player(u32b version)
 {
     int i;
 
-    byte max_recall_pts, tmd_max, max_rune, max_specialties;
+    byte max_recall_pts, tmd_max, rune_tail, max_specialties;
   
     byte tmp8u;
     u32b tmp32u;
@@ -1034,18 +1034,18 @@ int rd_player(u32b version)
     /* Read number of monster traps on level. */
     rd_byte(&num_trap_on_level);
   
-    rd_byte(&max_rune);
-    if (max_rune <= MAX_RUNE)
+    rd_byte(&rune_tail);
+    if (rune_tail <= RUNE_TAIL)
     {
-	for (i = 0; i < max_rune; i++)
+	for (i = 0; i < rune_tail; i++)
 	{
 	    rd_byte(&tmp8u);
 	    num_runes_on_level[i] = tmp8u;
 	}
 
 	/* Initialize any entries not read */
-	if (max_rune < MAX_RUNE)
-	    for (i = max_rune; i < MAX_RUNE; i++)
+	if (rune_tail < RUNE_TAIL)
+	    for (i = rune_tail; i < RUNE_TAIL; i++)
 	    {
 		num_runes_on_level[i] = 0;
 	    }
@@ -1053,14 +1053,14 @@ int rd_player(u32b version)
     else
     {
 	/* Probably in trouble anyway */
-	for (i = 0; i < MAX_RUNE; i++)
+	for (i = 0; i < RUNE_TAIL; i++)
 	{
 	    rd_byte(&tmp8u);
 	    num_runes_on_level[i] = tmp8u;
 	}
 
 	/* Discard unused entries */
-	strip_bytes(2 * (max_rune - MAX_RUNE));
+	strip_bytes(2 * (rune_tail - RUNE_TAIL));
 	note("Discarded unsupported runes");
     }
 

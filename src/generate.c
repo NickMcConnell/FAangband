@@ -729,6 +729,6 @@ void generate_cave(void)
     /* Reset the number of traps, runes, and thefts on the level. */
     num_trap_on_level = 0;
     number_of_thefts_on_level = 0;
-    for (num = 0; num < MAX_RUNE; num++)
+    for (num = 0; num < RUNE_TAIL; num++)
 	num_runes_on_level[num] = 0;
 }

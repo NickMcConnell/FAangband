@@ -1088,7 +1088,7 @@ enum
 #define KEYMAP_MODE_ROGUE	1
 
 
-/*** Feature Indexes (see "lib/edit/f_info.txt") ***/
+/*** Feature Indexes (see "lib/edit/terrain.txt") ***/
 
 /** Nothing */
 #define FEAT_NONE	0x00
@@ -1196,6 +1196,46 @@ enum
 #define FEAT_TREE_INVIS         0x78  
 #define FEAT_TREE2_INVIS        0x79  
 #define FEAT_DUNE               0x7a
+
+/*** Trap Indexes (see "lib/edit/trap.txt") ***/
+
+/** Nothing */
+#define TRAP_NONE	0x00
+
+/* Runes  */
+#define RUNE_HEAD       0x01
+#define RUNE_ELEMENTS   0x01
+#define RUNE_MAGDEF     0x02
+#define RUNE_QUAKE      0x03
+#define RUNE_MANA       0x04
+#define RUNE_PROTECT    0x05
+#define RUNE_POWER      0x06
+#define RUNE_SPEED      0x07
+#define RUNE_TAIL       0x07
+
+/* Traps */
+#define TRAP_HEAD	0x10
+#define TRAP_TAIL	0x1F
+#define TRAP_TREE_TRAP	0x1A
+#define TRAP_TREE2_TRAP	0x1B
+
+/* Specials trap that only effects monsters.  Created only by rogues. -LM- */
+#define MTRAP_HEAD		0x40
+#define MTRAP_TAIL		0x4F
+#define MTRAP_BASE		0x40 /* Level 1 */
+#define MTRAP_STURDY    	0x41 /* Level 1 */
+#define MTRAP_NET		0x42 /* Level 6 */
+#define MTRAP_CONF		0x43 /* Level 12 */
+#define MTRAP_POISON	        0x44 /* Level 18 */
+#define MTRAP_SPIRIT	        0x45 /* Level 24 */
+#define MTRAP_ELEC		0x46 /* Level 30 */
+#define MTRAP_EXPLOSIVE	        0x47 /* Level 36 */
+#define MTRAP_PORTAL	        0x48 /* Level 42 */
+#define MTRAP_STASIS	        0x49 /* Level 48 */
+#define MTRAP_DRAIN_LIFE	0x4A /* Level * */
+#define MTRAP_UNMAGIC	        0x4B /* Level * */
+#define MTRAP_DISPEL_M	        0x4C /* Level * */
+#define MTRAP_GENOCIDE	        0x4D /* Level * */
 
 /*** Object origin kinds ***/
 
@@ -2058,6 +2098,37 @@ enum
 #define tf_has(f, flag)        flag_has_dbg(f, TF_SIZE, flag, #f, #flag)
 
 
+/*** Trap flags ***/
+
+enum
+{
+	#define TRF(a,b) TRF_##a,
+	#include "list-trap-flags.h"
+	#undef TRF
+	TRF_MAX
+};
+
+#define TRF_SIZE                FLAG_SIZE(TRF_MAX)
+
+#define trf_has(f, flag)        flag_has_dbg(f, TRF_SIZE, flag, #f, #flag)
+#define trf_next(f, flag)       flag_next(f, TRF_SIZE, flag)
+#define trf_is_empty(f)         flag_is_empty(f, TRF_SIZE)
+#define trf_is_full(f)          flag_is_full(f, TRF_SIZE)
+#define trf_is_inter(f1, f2)    flag_is_inter(f1, f2, TRF_SIZE)
+#define trf_is_subset(f1, f2)   flag_is_subset(f1, f2, TRF_SIZE)
+#define trf_is_equal(f1, f2)    flag_is_equal(f1, f2, TRF_SIZE)
+#define trf_on(f, flag)         flag_on_dbg(f, TRF_SIZE, flag, #f, #flag)
+#define trf_off(f, flag)        flag_off(f, TRF_SIZE, flag)
+#define trf_wipe(f)             flag_wipe(f, TRF_SIZE)
+#define trf_setall(f)           flag_setall(f, TRF_SIZE)
+#define trf_negate(f)           flag_negate(f, TRF_SIZE)
+#define trf_copy(f1, f2)        flag_copy(f1, f2, TRF_SIZE)
+#define trf_union(f1, f2)       flag_union(f1, f2, TRF_SIZE)
+#define trf_comp_union(f1, f2)  flag_comp_union(f1, f2, TRF_SIZE)
+#define trf_inter(f1, f2)       flag_inter(f1, f2, TRF_SIZE)
+#define trf_diff(f1, f2)        flag_diff(f1, f2, TRF_SIZE)
+
+
 /*** Monster flags ***/
 
 
@@ -2735,7 +2806,6 @@ extern int PlayerUID;
 
 /*
  * Rune types
- */
 #define RUNE_ELEMENTS   0
 #define RUNE_MAGDEF     1
 #define RUNE_QUAKE      2
@@ -2744,6 +2814,7 @@ extern int PlayerUID;
 #define RUNE_POWER      5
 #define RUNE_SPEED      6
 #define MAX_RUNE        7
+ */
 
 /** 
  * Maximum rune mana reserve 
