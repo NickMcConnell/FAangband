@@ -3507,6 +3507,9 @@ static errr init_other(void)
     /* Monsters */
     m_list = C_ZNEW(z_info->m_max, monster_type);
 
+    /* Traps */
+    trap_list = C_ZNEW(z_info->l_max, trap_type);
+
 
     /*** Prepare lore array ***/
 

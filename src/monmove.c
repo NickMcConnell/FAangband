@@ -3334,8 +3334,8 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x, bool * death)
     monster_lore *l_ptr = &l_list[m_ptr->r_idx];
     int dis_chance;
 
-    byte feat = cave_feat[y][x];
-    feature_type *f_ptr = &f_info[feat];
+    byte trap = monster_trap_idx(y, x);
+    trap_type *t_ptr;
 
     /* Assume monster not frightened by trap */
     bool fear = FALSE;
@@ -3352,14 +3352,19 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x, bool * death)
     char m_name[80];
 
     /* Sanity check */
-    if (!tf_has(f_ptr->flags, TF_M_TRAP))
+    if (!cave_monster_trap(y, x))
 	return;
+
+    if ((trap < 0) || (trap >= trap_max))
+	return;
+    else 
+	t_ptr = &trap_list[trap];
 
     /* Get "the monster" or "it" */
     monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
     /* Non-flying monsters usually avoid netted traps */
-    if (feat == FEAT_MTRAP_NET) 
+    if (t_ptr->t_idx == MTRAP_NET) 
     {
 	if (!(rf_has(r_ptr->flags, RF_FLYING))
 	    && (randint0(3) != 0 || rf_has(r_ptr->flags, RF_PASS_WALL))) {
@@ -3370,7 +3375,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x, bool * death)
     }
 
     /* Spirit traps only affect insubstantial creatures */
-    else if (feat == FEAT_MTRAP_SPIRIT) 
+    else if (t_ptr->t_idx == MTRAP_SPIRIT) 
     {
 	if (!(rf_has(r_ptr->flags, RF_PASS_WALL))) {
 	    if (m_ptr->ml)
@@ -3380,11 +3385,11 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x, bool * death)
     }
 
     /* Stasis traps affect everyone */
-    else if (feat == FEAT_MTRAP_STASIS) {
+    else if (t_ptr->t_idx == MTRAP_STASIS) {
     }
 
     /* Lightning traps affect all but ghosts */
-    else if (feat == FEAT_MTRAP_ELEC) {
+    else if (t_ptr->t_idx == MTRAP_ELEC) {
 	if ((rf_has(r_ptr->flags, RF_PASS_WALL)) && (randint0(4) != 0)) {
 	    if (m_ptr->ml)
 		msg_format("%^s flies over your trap.", m_name);
@@ -3466,21 +3471,21 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x, bool * death)
 	else 
 	{
 	    /* HACK - no message for non-damaging traps */
-	    if (!(feat == FEAT_MTRAP_CONF) && !(feat == FEAT_MTRAP_PORTAL)
-		&& !(feat == FEAT_MTRAP_STASIS)) {
+	    if (!(t_ptr->t_idx == MTRAP_CONF) && !(t_ptr->t_idx == MTRAP_PORTAL)
+		&& !(t_ptr->t_idx == MTRAP_STASIS)) {
 		msg_print("You hear anguished yells in the distance.");
 	    }
 	}
 
 	/* Explosion traps are always destroyed. */
-	if ((feat == FEAT_MTRAP_EXPLOSIVE) || (feat == FEAT_MTRAP_STASIS)
-	    || (feat == FEAT_MTRAP_GENOCIDE)) 
+	if ((t_ptr->t_idx == MTRAP_EXPLOSIVE) || (t_ptr->t_idx == MTRAP_STASIS)
+	    || (t_ptr->t_idx == MTRAP_GENOCIDE)) 
 	{
 	    trap_destroyed = TRUE;
 	}
 
 	/* Some traps are rarely destroyed */
-	else if (feat == FEAT_MTRAP_STURDY) 
+	else if (t_ptr->t_idx == MTRAP_STURDY) 
 	{
 	    if (randint0(8) == 0)
 		trap_destroyed = TRUE;
@@ -3505,14 +3510,14 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x, bool * death)
 
 	/* Affect the monster. */
 	/* The basic trap does full damage */
-	if (feat == FEAT_MTRAP_BASE) 
+	if (t_ptr->t_idx == MTRAP_BASE) 
 	{
 	    if (mon_take_hit(cave_m_idx[y][x], trap_power, &fear, note_dies))
 		mon_dies = TRUE;
 	}
 
 	/* Confusion trap */
-	else if (feat == FEAT_MTRAP_CONF) 
+	else if (t_ptr->t_idx == MTRAP_CONF) 
 	{
 	    int tmp;
 	    tmp = randint0((3 * trap_power) / 2) - r_ptr->level - 10;
@@ -3540,20 +3545,20 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x, bool * death)
 	    }
 	}
 
-	else if (feat == FEAT_MTRAP_POISON) {
+	else if (t_ptr->t_idx == MTRAP_POISON) {
 	    (void) fire_meteor(0, GF_POIS, y, x, trap_power / 2, 3, FALSE);
 	    if (!(m_ptr->r_idx))
 		mon_dies = TRUE;
 	}
 
-	else if (feat == FEAT_MTRAP_ELEC) {
+	else if (t_ptr->t_idx == MTRAP_ELEC) {
 	    (void) fire_meteor(0, GF_ELEC, y, x, (7 * trap_power) / 8, 0,
 			       FALSE);
 	    if (!(m_ptr->r_idx))
 		mon_dies = TRUE;
 	}
 
-	else if (feat == FEAT_MTRAP_EXPLOSIVE) {
+	else if (t_ptr->t_idx == MTRAP_EXPLOSIVE) {
 	    (void) fire_meteor(0, GF_FIRE, y, x, (3 * trap_power) / 8, 1,
 			       FALSE);
 	    (void) fire_meteor(0, GF_SHARD, y, x, (3 * trap_power) / 8, 1,
@@ -3562,34 +3567,34 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x, bool * death)
 		mon_dies = TRUE;
 	}
 
-	else if (feat == FEAT_MTRAP_PORTAL) {
+	else if (t_ptr->t_idx == MTRAP_PORTAL) {
 	    if (m_ptr->ml)
 		msg_format("%^s is teleported.", m_name);
 	    teleport_away(cave_m_idx[y][x], 5 + (trap_power / 10));
 	}
 
-	else if (feat == FEAT_MTRAP_STASIS) {
+	else if (t_ptr->t_idx == MTRAP_STASIS) {
 	    /* Stasis the target */
 	    m_ptr->stasis = 3 + (trap_power / 12);
 	    if (m_ptr->ml)
 		msg_format("%^s is caught in stasis!", m_name);
 	}
 
-	else if (feat == FEAT_MTRAP_DRAIN_LIFE) {
+	else if (t_ptr->t_idx == MTRAP_DRAIN_LIFE) {
 	    (void) fire_meteor(0, GF_OLD_DRAIN, y, x, (3 * trap_power) / 4, 3,
 			       FALSE);
 	    if (!(m_ptr->r_idx))
 		mon_dies = TRUE;
 	}
 
-	else if (feat == FEAT_MTRAP_UNMAGIC) {
+	else if (t_ptr->t_idx == MTRAP_UNMAGIC) {
 	    (void) fire_meteor(0, GF_DISENCHANT, y, x, (3 * trap_power) / 4, 0,
 			       FALSE);
 	    if (!(m_ptr->r_idx))
 		mon_dies = TRUE;
 	}
 
-	else if (feat == FEAT_MTRAP_DISPEL_M) {
+	else if (t_ptr->t_idx == MTRAP_DISPEL_M) {
 	    /* 50% - 75% damage of trap power to all creatures within LOS of
 	     * trap */
 	    int dam = ((trap_power / 2) + randint1(trap_power / 4));
@@ -3599,7 +3604,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x, bool * death)
 		mon_dies = TRUE;
 	}
 
-	else if (feat == FEAT_MTRAP_GENOCIDE) {
+	else if (t_ptr->t_idx == MTRAP_GENOCIDE) {
 	    int i;
 	    char typ = r_ptr->d_char;
 
@@ -3657,9 +3662,8 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x, bool * death)
 
     if (trap_destroyed) 
     {
-	/* Kill the trap, decrement the monster trap count. */
-	cave_set_feat(y, x, FEAT_FLOOR);
-	num_trap_on_level--;
+	/* Kill the trap */
+	(void) remove_trap(y, x, trap);
     }
 
     /* Report death */

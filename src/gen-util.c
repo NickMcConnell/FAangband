@@ -409,7 +409,7 @@ void alloc_object(int set, int typ, int num)
 
 	case ALLOC_TYP_TRAP:
 	    {
-		place_trap(y, x);
+		place_trap(y, x, -1, p_ptr->depth);
 		break;
 	    }
 

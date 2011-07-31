@@ -5934,7 +5934,7 @@ bool trap_creation(void)
     for (i = 0; i < 8; i++) {
 	if ((cave_feat[py + ddy_ddd[i]][px + ddx_ddd[i]] == FEAT_TREE)
 	    || (cave_feat[py + ddy_ddd[i]][px + ddx_ddd[i]] == FEAT_TREE2))
-	    place_trap(py + ddy_ddd[i], px + ddx_ddd[i]);
+	    place_trap(py + ddy_ddd[i], px + ddx_ddd[i], -1, p_ptr->depth);
     }
 
     return (project(-1, 1, py, px, 0, GF_MAKE_TRAP, flg, 0, 0));

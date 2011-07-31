@@ -117,6 +117,8 @@ extern s16b o_max;
 extern s16b o_cnt;
 extern s16b m_max;
 extern s16b m_cnt;
+extern s16b trap_max;
+extern s16b trap_cnt;
 extern u16b group_id;
 extern u16b feeling;
 extern bool do_feeling;

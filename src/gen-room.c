@@ -132,7 +132,7 @@ static void spread_traps(int num, int y0, int x0, int dy, int dx)
 	    continue;
 
 	/* Place the trap */
-	place_trap(y, x);
+	place_trap(y, x, -1, p_ptr->depth);
 
 	/* Count the trap, reset the loop count */
 	count++;
@@ -2481,7 +2481,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, cptr data,
 		    if (randint0(100) < 50) {
 			place_object(y, x, FALSE, FALSE, FALSE);
 		    } else {
-			place_trap(y, x);
+			place_trap(y, x, -1, p_ptr->depth);
 		    }
 		    break;
 		}
@@ -2494,7 +2494,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, cptr data,
 		/* Trap */
 	    case '^':
 		{
-		    place_trap(y, x);
+		    place_trap(y, x, -1, p_ptr->depth);
 		    break;
 		}
 		/* Up stairs (and player location in themed level).  */
@@ -2637,7 +2637,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, cptr data,
 				place_object(y, x, FALSE, FALSE, FALSE);
 
 			} else {
-			    place_trap(y, x);
+			    place_trap(y, x, -1, p_ptr->depth);
 			}
 			break;
 		    }

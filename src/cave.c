@@ -1664,23 +1664,6 @@ static byte priority_table[][2] = {
     {FEAT_QUARTZ_K, 19},
     {FEAT_MAGMA_K, 19},
 
-    /* Monster traps */
-    {FEAT_MTRAP_HEAD, 20},
-    {FEAT_MTRAP_TAIL, 20},
-    {FEAT_MTRAP_BASE, 20},
-    {FEAT_MTRAP_STURDY, 20},
-    {FEAT_MTRAP_NET, 20},
-    {FEAT_MTRAP_CONF, 20},
-    {FEAT_MTRAP_POISON, 20},
-    {FEAT_MTRAP_SPIRIT, 20},
-    {FEAT_MTRAP_ELEC, 20},
-    {FEAT_MTRAP_EXPLOSIVE, 20},
-    {FEAT_MTRAP_PORTAL, 20},
-    {FEAT_MTRAP_STASIS, 20},
-    {FEAT_MTRAP_DRAIN_LIFE, 20},
-    {FEAT_MTRAP_UNMAGIC, 20},
-    {FEAT_MTRAP_DISPEL_M, 20},
-
     /* Stairs */
     {FEAT_LESS, 25},
     {FEAT_MORE, 25},

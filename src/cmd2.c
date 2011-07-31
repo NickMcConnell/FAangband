@@ -2578,6 +2578,7 @@ void do_cmd_alter_aux(int dir)
 
     monster_type *m_ptr;
     feature_type *f_ptr;
+    trap_type *t_ptr;
 
     /* Get location */
     y = p_ptr->py + ddy[dir];
@@ -2625,17 +2626,20 @@ void do_cmd_alter_aux(int dir)
     }
 
     /* Disarm advanced monster traps */
-    else if (tf_has(f_ptr->flags, TF_M_TRAP)) {
-	if (feat == FEAT_MTRAP_HEAD) {
-	    /* Modify */
-	    if (!py_modify_trap(y, x))
-		return;
-	} else {
-	    /* Disarm */
-	    more = do_cmd_disarm_aux(y, x);
-	}
+    else if (cave_advanced_monster_trap(y, x)) 
+    {
+	/* Disarm */
+	more = do_cmd_disarm_aux(y, x);
     }
-
+    
+    /* Disarm advanced monster traps */
+    else if (cave_basic_monster_trap(y, x)) 
+    {
+	/* Modify */
+	if (!py_modify_trap(y, x))
+	    return;
+    }
+    
     /* Tunnel through walls */
     else if (tf_has(f_ptr->flags, TF_ROCK)) {
 	/* Tunnel */

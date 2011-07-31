@@ -11,4 +11,4 @@ TRF(NONE,        "")
 TRF(RUNE,        "Is a rune")
 TRF(TRAP,        "Is a player trap")
 TRF(M_TRAP,      "Is a monster trap")
-
+TRF(VISIBLE,     "Is visible")

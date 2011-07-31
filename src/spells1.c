@@ -3261,7 +3261,7 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 		break;
 
 	    /* Place a trap */
-	    place_trap(y, x);
+	    place_trap(y, x, -1, p_ptr->depth);
 
 	    break;
 	}
