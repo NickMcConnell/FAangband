@@ -2177,7 +2177,7 @@ static bool do_cmd_disarm_test(int y, int x)
     /* Require an actual trap or glyph */
     if (!tf_has(f_ptr->flags, TF_TRAP) && 
 	!tf_has(f_ptr->flags, TF_RUNE) &&
-	!tf_has(f_ptr->flags, TF_M_TRAP)) 
+	!cave_monster_trap(y, x)) 
     {
 	/* Message */
 	msg_print("You see nothing there to disarm.");
@@ -2231,7 +2231,7 @@ extern bool do_cmd_disarm_aux(int y, int x)
     power = 5 + p_ptr->depth / 4;
 
     /* Prevent the player's own traps granting exp. */
-    if (tf_has(f_ptr->flags, TF_M_TRAP))
+    if (cave_monster_trap(y, x))
 	power = 0;
 
     /* Prevent runes granting exp. */
@@ -2249,6 +2249,7 @@ extern bool do_cmd_disarm_aux(int y, int x)
     if ((power == 0) || (randint0(100) < j)) 
     {
 	/* Special message and decrement the count for runes. */
+	//(void) remove_trap(yy, xx, -1);
 	if (tf_has(f_ptr->flags, TF_RUNE)) {
 	    msg_format("You have removed the %s.", name);
 	    num_runes_on_level[cave_feat[y][x] - FEAT_RUNE_HEAD]--;

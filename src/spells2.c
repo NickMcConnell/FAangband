@@ -4666,11 +4666,7 @@ void destroy_area(int y1, int x1, int r, bool full)
 		delete_object(y, x);
 
 		/* Decrement the trap or rune count. */
-		if (tf_has(f_ptr->flags, TF_M_TRAP))
-		    num_trap_on_level--;
-		else if (tf_has(f_ptr->flags, TF_RUNE))
-		    num_runes_on_level[cave_feat[y][x] - FEAT_RUNE_HEAD]--;
-
+		(void) remove_trap(y, x, -1);
 
 		/* Wall (or floor) type */
 		t = randint0(200);
@@ -5078,11 +5074,8 @@ void earthquake(int cy, int cx, int r, bool volcano)
 		/* Delete objects */
 		delete_object(yy, xx);
 
-		/* Hack -- Increment the trap or glyph count. */
-		if (tf_has(f_ptr->flags, TF_M_TRAP))
-		    num_trap_on_level--;
-		else if (tf_has(f_ptr->flags, TF_RUNE))
-		    num_runes_on_level[cave_feat[y][x] - FEAT_RUNE_HEAD]--;
+		/* Delete traps */
+		(void) remove_trap(yy, xx, -1);
 
 		/* Wall (or floor) type */
 		t = (floor ? randint0(120) : 200);

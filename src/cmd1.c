@@ -1128,7 +1128,7 @@ void move_player(int dir)
 	    }
 
 	    /* Walk on a monster trap */
-	    else if (tf_has(f_ptr->flags, TF_M_TRAP))
+	    else if (cave_monster_trap(y, x))
 	    {
 		msg_print("You inspect your cunning trap.");
 	    }

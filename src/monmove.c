@@ -4015,7 +4015,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 
 
 	/* Check for monster trap */
-	if (tf_has(f_ptr->flags, TF_M_TRAP))
+	if (cave_monster_trap(ny, nx))
 	{
 	    bool death = FALSE;
 
