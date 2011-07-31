@@ -20,6 +20,7 @@
 #include "tvalsval.h"
 #include "game-cmd.h"
 #include "spells.h"
+#include "trap.h"
 
 
 /**
@@ -283,8 +284,9 @@ bool spell_cast(int spell, int dir)
 
     /* Hack - simplify rune of mana calculations by fully draining the rune
      * first */
-    if ((cave_feat[py][px] == FEAT_RUNE_MANA) && (mana_reserve <= mt_ptr->smana)
-	&& (mt_ptr->index != 60)) {
+    if (cave_trap_specific(py, px, RUNE_MANA) && 
+	(mana_reserve <= mt_ptr->smana)	&& (mt_ptr->index != 60)) 
+    {
 	p_ptr->csp += mana_reserve;
 	mana_reserve = 0;
     }
@@ -313,7 +315,7 @@ bool spell_cast(int spell, int dir)
     }
 
     /* Use mana from a rune if possible */
-    else if ((cave_feat[py][px] == FEAT_RUNE_MANA)
+    else if (cave_trap_specific(py, px, RUNE_MANA)
 	     && (mana_reserve > mt_ptr->smana)) {
 	mana_reserve -= mt_ptr->smana;
     }

@@ -31,6 +31,7 @@
 #include "monster.h" 
 #include "spells.h"
 #include "squelch.h"
+#include "trap.h"
 
 /**
  * Monsters will run up to 25 grids away
@@ -274,7 +275,7 @@ static int summon_possible(int y1, int x1)
 		continue;
 
 	    /* Hack: no summon on glyph of warding */
-	    if (cave_feat[y][x] == FEAT_RUNE_PROTECT)
+	    if (cave_trap_specific(y, x, RUNE_PROTECT))
 		continue;
 
 	    /* Require empty floor grid in line of sight */
@@ -1260,9 +1261,9 @@ bool cave_exist_mon(monster_race * r_ptr, int y, int x, bool occupied_ok)
 	}
 
 	/* Glyphs -- must break first */
-	if (feat == FEAT_RUNE_PROTECT)
+	if (cave_trap_specific(y, x, RUNE_PROTECT))
 	    return (FALSE);
-
+	
 	/* Anything else that's not a wall we assume to be legal. */
 	else
 	    return (TRUE);
@@ -1433,7 +1434,8 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
 	}
 
 	/* Glyphs */
-	if (feat == FEAT_RUNE_PROTECT) {
+	if (cave_trap_specific(y, x, RUNE_PROTECT)) 
+	{
 	    /* Glyphs are hard to break */
 	    return (MIN(100 * r_ptr->level / BREAK_GLYPH, move_chance));
 	}
@@ -3120,7 +3122,7 @@ static bool make_move(monster_type * m_ptr, int *ty, int *tx, bool fear,
 	    }
 
 	    /* XXX XXX -- Sometimes attempt to break glyphs. */
-	    if ((cave_feat[ny][nx] == FEAT_RUNE_PROTECT) && (!fear)
+	    if (cave_trap_specific(ny, nx, RUNE_PROTECT) && (!fear)
 		&& ((randint0(5) == 0) || (cave_m_idx[ny][nx] < 0))) {
 		break;
 	    }
@@ -3334,7 +3336,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x, bool * death)
     monster_lore *l_ptr = &l_list[m_ptr->r_idx];
     int dis_chance;
 
-    byte trap = monster_trap_idx(y, x);
+    int trap = monster_trap_idx(y, x);
     trap_type *t_ptr;
 
     /* Assume monster not frightened by trap */
@@ -3901,7 +3903,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
     }
 
     /* Glyphs */
-    else if (feat == FEAT_RUNE_PROTECT) 
+    else if (cave_trap_specific(ny, nx, RUNE_PROTECT)) 
     {
 	/* Describe observable breakage */
 	if (cave_has(cave_info[ny][nx], CAVE_MARK)) 
@@ -4028,7 +4030,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	}
 
 	/* Check for runes of speed, slow if not slowed already */
-	if ((cave_feat[ny][nx] == FEAT_RUNE_SPEED)
+	if (cave_trap_specific(ny, nx, RUNE_SPEED)
 	    && (m_ptr->mspeed > r_ptr->speed - 5)) 
 	{
 	    char m_name[80];
@@ -4052,7 +4054,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 
 
 	/* Check for runes of mana */
-	if (cave_feat[ny][nx] == FEAT_RUNE_MANA) 
+	if (cave_trap_specific(ny, nx, RUNE_MANA)) 
 	{
 	    int drain = BASE_MANA_BURN;
 	    char m_name[80];
@@ -4075,7 +4077,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	}
 
 	/* Check for runes of instability */
-	if (cave_feat[ny][nx] == FEAT_RUNE_QUAKE)
+	if (cave_trap_specific(ny, nx, RUNE_QUAKE))
 	    earthquake(ny, nx, 4, FALSE);
 
 	/* 

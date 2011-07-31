@@ -479,8 +479,9 @@ bool place_trap(int y, int x, int t_idx, int trap_level)
 	    /* Adjust trap count if necessary */
 	    if (i + 1 > trap_max) trap_max = i + 1;
 
-	    /* We created a glyph */
-	    if (trf_has(t_ptr->flags, TRF_RUNE)) num_runes_on_level[t_idx]++;
+	    /* We created a rune */
+	    if (trf_has(t_ptr->flags, TRF_RUNE)) 
+		num_runes_on_level[t_idx - 1]++;
 
 	    /* We created a monster trap */
 	    if (t_idx == MTRAP_BASE) num_trap_on_level++;
@@ -1256,7 +1257,7 @@ extern void hit_trap(int y, int x)
 			    continue;
 
 			/* Hack -- no summon on glyph of warding */
-			if (cave_feat[y][x] == FEAT_RUNE_PROTECT)
+			if (cave_trap_specific(y, x, RUNE_PROTECT))
 			    continue;
 
 			/* Okay */

@@ -21,6 +21,7 @@
 #include "cmds.h"
 #include "monster.h"
 #include "spells.h"
+#include "trap.h"
 #include "ui-menu.h"
 
 /**

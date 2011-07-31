@@ -682,19 +682,6 @@ void magic_spiking(void)
     }
 }
 
-/** Maximum numbers of runes of the various types */
-int max_runes[] = 
-{
-    4,				/* Rune of the Elements */
-    4,				/* Rune of Magic Defence */
-    4,				/* Rune of Instability */
-    1,				/* Rune of Mana */
-    4,				/* Rune of Protection */
-    1,				/* Rune of Power */
-    1				/* Rune of Speed */
-};
-
-
 /**
  * Leave a rune 
  */
@@ -703,11 +690,11 @@ bool lay_rune(int type)
     int py = p_ptr->py;
     int px = p_ptr->px;
 
-    s16b this_o_idx, next_o_idx = 0;
-    object_type *o_ptr;
+    trap_kind *trap_ptr = &trap_info[type];
 
     /* If we're standing on a rune of mana, we can add mana to it */
-    if ((type == RUNE_MANA) && (cave_feat[py][px] == FEAT_RUNE_MANA)) {
+    if ((type == RUNE_MANA) && (cave_trap_specific(py, px, RUNE_MANA)))
+    {
 	/* Standard mana amount */
 	int mana = 40;
 
@@ -733,7 +720,7 @@ bool lay_rune(int type)
 	msg_print("You cannot lay a rune here.");
 	return (FALSE);
     }
-
+#if 0
     /* Scan all objects in the grid */
     for (this_o_idx = cave_o_idx[py][px]; this_o_idx; this_o_idx = next_o_idx) {
 	/* Acquire object */
@@ -770,21 +757,21 @@ bool lay_rune(int type)
 	    light_spot(py, px);
 	}
     }
-
+#endif
     /* Limit total number of runes. */
-    if (num_runes_on_level[type] >= max_runes[type]) {
+    if (num_runes_on_level[type - 1] >= trap_ptr->max_num) {
 	msg_print("You have reached the maximum number of runes of this type.");
 	return (FALSE);
     }
 
     /* Create a rune */
-    cave_set_feat(py, px, FEAT_RUNE_HEAD + type);
+    place_trap(py, px, type, 0);
 
     /* Increment the rune count. */
-    num_runes_on_level[type]++;
+    num_runes_on_level[type - 1]++;
 
     /* Warning. */
-    if (num_runes_on_level[type] == max_runes[type]) {
+    if (num_runes_on_level[type - 1] == trap_ptr->max_num) {
 	msg_print("You have now reached your limit for runes of this type.");
 	msg_print("In order to set more, remove some.");
     }
@@ -4660,7 +4647,6 @@ void destroy_area(int y1, int x1, int r, bool full)
 	    /* Destroy "valid" grids */
 	    if (cave_valid_bold(y, x)) {
 		int feat = FEAT_FLOOR;
-		feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
 		/* Delete objects */
 		delete_object(y, x);
@@ -4974,7 +4960,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 				continue;
 
 			    /* Hack -- no safety on glyph of warding */
-			    if (cave_feat[y][x] == FEAT_RUNE_PROTECT)
+			    if (cave_trap_specific(y, x, RUNE_PROTECT))
 				continue;
 
 			    /* Important -- Skip "quake" grids */
@@ -5065,7 +5051,6 @@ void earthquake(int cy, int cx, int r, bool volcano)
 
 		monster_type *m_ptr = &m_list[cave_m_idx[yy][xx]];
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
-		feature_type *f_ptr = &f_info[cave_feat[yy][xx]];
 
 		/* Allow more things to be destroyed outside */
 		if (stage_map[p_ptr->stage][STAGE_TYPE] != CAVE)

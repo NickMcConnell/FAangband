@@ -27,6 +27,7 @@
 #include "monster.h"
 #include "player.h"
 #include "target.h"
+#include "trap.h"
 
 
 /**
@@ -2766,7 +2767,7 @@ bool summon_specific(int y1, int x1, bool scattered, int lev, int type)
 		continue;
 
 	    /* Hack -- no summon on glyph of warding */
-	    if (cave_feat[y][x] == FEAT_RUNE_PROTECT)
+	    if (cave_trap_specific(y, x, RUNE_PROTECT))
 		continue;
 
 	    /* Okay */
@@ -2848,7 +2849,7 @@ bool summon_questor(int y1, int x1)
 	    continue;
 
 	/* Hack -- no summon on glyph of warding */
-	if (cave_feat[y][x] == FEAT_RUNE_PROTECT)
+	if (cave_trap_specific(y, x, RUNE_PROTECT))
 	    continue;
 
 	/* Okay */

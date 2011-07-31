@@ -3802,7 +3802,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
     int do_fear = 0;
 
     /* On a magic defence rune? */
-    bool magdef_rune = (cave_feat[y][x] == FEAT_RUNE_MAGDEF);
+    bool magdef_rune = cave_trap_specific(y, x, RUNE_MAGDEF);
 
     /* Hold the monster name */
     char m_name[80];
@@ -8015,11 +8015,12 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 	x1 = px;
 
 	/* Add rune of power effect */
-	if (cave_feat[py][px] == FEAT_RUNE_POWER)
+	if (cave_trap_specific(py, px, RUNE_POWER))
 	    dam += dam / 5;
 
 	/* Add rune of elements effect */
-	if (cave_feat[py][px] == FEAT_RUNE_ELEMENTS) {
+	if (cave_trap_specific(py, px, RUNE_ELEMENTS))
+	{
 	    if ((typ == GF_FIRE) || (typ == GF_COLD) || (typ == GF_ELEC)
 		|| (typ == GF_ACID) || (typ == GF_PLASMA) || (typ == GF_ICE))
 		dam += dam / 5;
@@ -8035,11 +8036,12 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 	x1 = m_list[who].fx;
 
 	/* Subtract rune of power effect */
-	if (cave_feat[py][px] == FEAT_RUNE_POWER)
+	if (cave_trap_specific(py, px, RUNE_POWER))
 	    dam -= dam / 5;
 
 	/* Subtract rune of power effect */
-	if (cave_feat[py][px] == FEAT_RUNE_ELEMENTS) {
+	if (cave_trap_specific(py, px, RUNE_ELEMENTS))
+	{
 	    if ((typ == GF_FIRE) || (typ == GF_COLD) || (typ == GF_ELEC)
 		|| (typ == GF_ACID) || (typ == GF_PLASMA) || (typ == GF_ICE))
 		dam -= dam / 5;
