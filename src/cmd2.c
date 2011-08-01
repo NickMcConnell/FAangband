@@ -2208,6 +2208,7 @@ extern bool do_cmd_disarm_aux(int y, int x)
     bool more = FALSE;
 
     feature_type *f_ptr = &f_info[cave_feat[y][x]];
+    trap_type *t_ptr;
 
     /* Verify legality */
     if (!do_cmd_disarm_test(y, x))
@@ -2249,7 +2250,7 @@ extern bool do_cmd_disarm_aux(int y, int x)
     if ((power == 0) || (randint0(100) < j)) 
     {
 	/* Special message and decrement the count for runes. */
-	//(void) remove_trap(yy, xx, -1);
+	(void) remove_trap(yy, xx, -1);
 	if (tf_has(f_ptr->flags, TF_RUNE)) {
 	    msg_format("You have removed the %s.", name);
 	    num_runes_on_level[cave_feat[y][x] - FEAT_RUNE_HEAD]--;

@@ -70,28 +70,29 @@ bool search(bool verbose)
     }
 
     /* Search the nearby grids, which are always in bounds */
-    for (y = (py - 1); y <= (py + 1); y++) {
-	for (x = (px - 1); x <= (px + 1); x++) {
-	    feature_type *f_ptr = &f_info[cave_feat[y][x]];
-
+    for (y = (py - 1); y <= (py + 1); y++) 
+    {
+	for (x = (px - 1); x <= (px + 1); x++) 
+	{
 	    /* Sometimes, notice things */
-	    if (randint0(100) < chance) {
+	    if (randint0(100) < chance) 
+	    {
 		/* Invisible trap */
-		if (tf_has(f_ptr->flags, TF_TRAP_INVIS)) {
+		if (cave_invisible_trap(y, x)) 
+		{
 		    found = TRUE;
 
-		    /* Pick a trap */
-		    pick_trap(y, x);
-
-		    /* Message */
-		    msg_print("You have found a trap.");
-
-		    /* Disturb */
-		    disturb(0, 0);
+		    /* Reveal one or more traps, display a message */
+		    if (reveal_trap(y, x, chance, TRUE))
+		    {
+			/* Disturb */
+			disturb(0, 0);
+		    }
 		}
 
 		/* Secret door */
-		if (cave_feat[y][x] == FEAT_SECRET) {
+		if (cave_feat[y][x] == FEAT_SECRET) 
+		{
 		    found = TRUE;
 
 		    /* Message */
@@ -1093,37 +1094,29 @@ void move_player(int dir)
 
 	    /* Flying players have a chance to miss traps */
 	    if ((p_ptr->schange == SHAPE_BAT) || (p_ptr->schange == SHAPE_WYRM)) {
-		if (tf_has(f_ptr->flags, TF_TRAP_INVIS)
-		    && (randint0(3) != 0))
+		if (cave_invisible_trap(y, x) && (randint0(3) != 0))
 		    trapped = FALSE;
-		else if (tf_has(f_ptr->flags, TF_TRAP)
-			 && (randint0(10) != 0))
+		else if (cave_visible_trap(y, x) && (randint0(10) != 0))
 		    trapped = FALSE;
 	    }
 
 	    /* Discover invisible traps */
-	    else if (tf_has(f_ptr->flags, TF_TRAP_INVIS && trapped)) 
+	    if (cave_invisible_trap(y, x) && trapped) 
 	    {
 		/* Disturb */
 		disturb(0, 0);
 
-		/* Message */
-		msg_print("You stumble upon a trap!");
-
-		/* Pick a trap */
-		pick_trap(y, x);
-
-		/* Hit the floor trap. */
+		/* Hit the trap. */
 		hit_trap(y, x);
 	    }
 
 	    /* Set off a visible trap */
-	    else if (tf_has(f_ptr->flags, TF_TRAP && trapped))
+	    else if (cave_visible_trap(y, x) && trapped)
 	    {
 		/* Disturb */
 		disturb(0, 0);
 
-		/* Hit the floor trap. */
+		/* Hit the trap. */
 		hit_trap(y, x);
 	    }
 

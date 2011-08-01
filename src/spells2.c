@@ -103,7 +103,8 @@ void shapechange(s16b shape)
 	break;
     }
 
-    if (shape) {
+    if (shape) 
+    {
 	msg_format("You assume the form of a %s.", shapedesc);
 	msg_print("Your equipment merges into your body.");
     }
@@ -117,29 +118,21 @@ void shapechange(s16b shape)
     if (landing) 
     {
 	int y = p_ptr->py, x = p_ptr->px;
-	feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
 	if (cave_feat[y][x] == FEAT_VOID) 
 	    fall_off_cliff();
-	
 
-	else if (tf_has(f_ptr->flags, TF_TRAP_INVIS))
+	else if (cave_trap_invisible(y, x))
 	{
 	    /* Disturb */
 	    disturb(0, 0);
 
-	    /* Message */
-	    msg_print("You stumble upon a trap!");
-
-	    /* Pick a trap */
-	    pick_trap(y, x);
-
-	    /* Hit the floor trap. */
+	    /* Hit the trap. */
 	    hit_trap(y, x);
 	}
 
 	/* Set off a visible trap */
-	else if (tf_has(f_ptr->flags, TF_TRAP)) 
+	else if (cave_trap_visible(y, x)) 
 	{
 	    /* Disturb */
 	    disturb(0, 0);
@@ -1550,41 +1543,27 @@ bool detect_traps(int range, bool show)
     int py = p_ptr->py;
     int px = p_ptr->px;
 
-    int num = 0;
-
-    feature_type *f_ptr = NULL;
+    bool detect = FALSE;
 
     /* Hack - flash the effected region on the current panel */
     if (show)
 	animate_detect(range);
 
     /* Scan the map */
-    for (y = 0; y < DUNGEON_HGT; y++) {
-	for (x = 0; x < DUNGEON_WID; x++) {
-	    /* Set the feature */
-	    f_ptr = &f_info[cave_feat[y][x]];
-
+    for (y = 0; y < DUNGEON_HGT; y++) 
+    {
+	for (x = 0; x < DUNGEON_WID; x++) 
+	{
 	    /* check range */
-	    if (distance(py, px, y, x) <= range) {
+	    if (distance(py, px, y, x) <= range) 
+	    {
 		/* Detect invisible traps */
-		if (tf_has(f_ptr->flags, TF_TRAP_INVIS)) {
-		    /* Pick a trap */
-		    pick_trap(y, x);
-
-		    /* Reset the feature */
-		    f_ptr = &f_info[cave_feat[y][x]];
-		}
-
-		/* Detect traps */
-		if (tf_has(f_ptr->flags, TF_TRAP)) {
-		    /* Hack -- Memorize */
-		    cave_on(cave_info[y][x], CAVE_MARK);
-
-		    /* Redraw */
-		    light_spot(y, x);
-
-		    /* increment number found */
-		    num++;
+		if (cave_trap_invisible(y, x)) 
+		{
+		    if (reveal_trap(y, x, 100, FALSE))
+		    {
+			detect = TRUE;
+		    }
 		}
 
 		/* Mark grid as detected */
@@ -1594,7 +1573,8 @@ bool detect_traps(int range, bool show)
     }
 
     /* Found some */
-    if (num > 0) {
+    if (detect) 
+    {
 	/* Print success message */
 	msg_print("You detect traps.");
     }
@@ -3872,31 +3852,19 @@ bool listen_to_natural_creatures(void)
     /* Find every trap on the level. */
 
     /* Scan all normal grids */
-    for (y = 1; y < DUNGEON_HGT - 1; y++) {
+    for (y = 1; y < DUNGEON_HGT - 1; y++) 
+    {
 	/* Scan all normal grids */
-	for (x = 1; x < DUNGEON_WID - 1; x++) {
-	    feature_type *f_ptr = &f_info[cave_feat[y][x]];
-
+	for (x = 1; x < DUNGEON_WID - 1; x++) 
+	{
 	    /* Detect invisible traps */
-	    if (tf_has(f_ptr->flags, TF_TRAP_INVIS)) {
-		/* Pick a trap */
-		pick_trap(y, x);
-	    }
-
-	    /* Reset the feature */
-	    f_ptr = &f_info[cave_feat[y][x]];
-
-	    /* Detect traps */
-	    if (tf_has(f_ptr->flags, TF_TRAP)) {
-		/* Hack -- Memorize */
-		cave_on(cave_info[y][x], CAVE_MARK);
-
-		/* Redraw */
-		light_spot(y, x);
+	    if (cave_trap_invisible(y, x)) 
+	    {
+		(void) reveal_trap(y, x, 100, FALSE);
 	    }
 	}
     }
-
+    
     /* Report success. */
     return (TRUE);
 }

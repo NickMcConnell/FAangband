@@ -1204,6 +1204,7 @@ enum
 
 /* Runes  */
 #define RUNE_HEAD       0x01
+#define RUNE_TAIL       0x07
 #define RUNE_ELEMENTS   0x01
 #define RUNE_MAGDEF     0x02
 #define RUNE_QUAKE      0x03
@@ -1211,13 +1212,21 @@ enum
 #define RUNE_PROTECT    0x05
 #define RUNE_POWER      0x06
 #define RUNE_SPEED      0x07
-#define RUNE_TAIL       0x07
 
 /* Traps */
 #define TRAP_HEAD	0x10
 #define TRAP_TAIL	0x1F
-#define TRAP_TREE_TRAP	0x1A
-#define TRAP_TREE2_TRAP	0x1B
+#define TRAP_TRAPDOOR	0x10
+#define TRAP_PIT	0x11
+#define TRAP_DART	0x12
+#define TRAP_SPOT	0x13
+#define TRAP_GAS	0x14
+#define TRAP_SUMMON	0x15
+#define TRAP_ALTER	0x16
+#define TRAP_HEX	0x17
+#define TRAP_PORTAL	0x18
+#define TRAP_MURDER	0x19
+#define TRAP_BRANCH	0x1A
 
 /* Specials trap that only effects monsters.  Created only by rogues. -LM- */
 #define MTRAP_HEAD		0x40

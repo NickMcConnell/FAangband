@@ -782,7 +782,7 @@ bool dtrap_edge(int y, int x)
 } 
 
 
-/*
+/**
  * This function takes a pointer to a grid info struct describing the 
  * contents of a grid location (as obtained through the function map_info)
  * and fills in the character and attr pairs for display.
@@ -823,6 +823,10 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 	char c;
 	
 	feature_type *f_ptr = &f_info[g->f_idx];
+	
+	/* Don't display hidden objects */
+	bool ignore_objects = tf_has(f_ptr->flags, TF_HIDE_OBJ);
+              
 
 	/* Normal attr and char */
 	a = f_ptr->x_attr;
@@ -850,8 +854,20 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 	(*tcp) = c;
 
 
+	/* There is a trap in this grid, and we are not hallucinating */
+	if ((g->trap < trap_max) && (!g->hallucinate))
+	{
+	    /* Change graphics to indicate a trap (if visible) */
+	    if (get_trap_graphics(g->trap, &a, &c, TRUE))
+	    {
+		/* Ignore objects stacked on top of this trap */
+		ignore_objects = TRUE;
+	    }
+	}
+
+
 	/* If there's an object, deal with that. */
-	if (g->first_k_idx)
+	if ((g->first_k_idx) && !ignore_objects)
 	{
 		if (g->hallucinate)
 		{
@@ -861,9 +877,6 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 			a = PICT_A(i);
 			c = PICT_C(i);
 		}
-		/* Hack to not display objects in trees */
-		else if (tf_has(f_ptr->flags, TF_HIDE_OBJ));
-              
 		else
 		{
 			object_kind *k_ptr = &k_info[g->first_k_idx];
@@ -1087,6 +1100,7 @@ void map_info(unsigned y, unsigned x, grid_data *g)
 
     /* Default "clear" values, others will be set later where appropriate. */
     g->first_k_idx = 0;
+    g->trap = trap_max;
     g->multiple_objects = FALSE;
     g->lighting = LIGHT_GLOW;
 
@@ -1128,7 +1142,26 @@ void map_info(unsigned y, unsigned x, grid_data *g)
 	g->f_idx = FEAT_NONE;
     }
        
-
+    /* There is a trap in this grid */
+    if (cave_has(cave_info[y][x], CAVE_TRAP))
+    {
+	int i;
+	
+	/* Scan the current trap list */
+	for (i = 0; i < trap_max; i++)
+	{
+	    /* Point to this trap */
+	    trap_type *t_ptr = &trap_list[i];
+	    
+	    /* Find a trap in this position */
+	    if ((t_ptr->fy == y) && (t_ptr->fx == x))
+	    {
+		/* Get the trap */
+		g->trap = i;
+		break;
+	    }
+	}
+    }
 
     /* Objects */
     for (o_ptr = get_first_object(y, x); o_ptr; o_ptr = get_next_object(o_ptr))
