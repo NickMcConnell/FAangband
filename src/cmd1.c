@@ -771,27 +771,33 @@ void move_player(int dir)
 
 
     /* Hack -- attack monsters */
-    if (cave_m_idx[y][x] > 0) {
+    if (cave_m_idx[y][x] > 0) 
+    {
 	/* Attack */
 	if (py_attack(y, x, TRUE))
 	    return;
     }
 
     /* It takes some dexterity, or failing that strength, to get out of pits */
-    if (cave_feat[p_ptr->py][p_ptr->px] == (FEAT_TRAP_HEAD + 0x01)) {
+    if (cave_feat[p_ptr->py][p_ptr->px] == (FEAT_TRAP_HEAD + 0x01)) 
+    {
 	str_escape = adj_dex_dis[p_ptr->state.stat_ind[A_STR]];
 	dex_escape = adj_dex_dis[p_ptr->state.stat_ind[A_DEX]];
 
 	/* First attempt to leap out of the pit, */
-	if ((dex_escape + 1) * 2 < randint1(16)) {
+	if ((dex_escape + 1) * 2 < randint1(16)) 
+	{
 	    /* then attempt to climb out of the pit. */
-	    if (str_escape + 3 < randint1(16)) {
+	    if (str_escape + 3 < randint1(16)) 
+	    {
 		/* Failure costs a turn. */
 		msg_print("You remain stuck in the pit.");
 		return;
-	    } else
+	    } 
+	    else
 		msg_print("You clamber out of the pit.");
-	} else
+	} 
+	else
 	    msg_print("You leap out of the pit.");
     }
 
@@ -873,164 +879,165 @@ void move_player(int dir)
     /* Normal movement */
     else 
     {
+	/* Assume terrain can be traversed normally. */
+	can_move = TRUE;
+
 	/*** Handle traversable terrain.  ***/
-	switch (cave_feat[y][x]) {
-	case FEAT_RUBBLE:
-	    {
-		/* Dwarves move easily through rubble */
-		if (player_has(PF_DWARVEN))
-		    can_move = TRUE;
-
-		/* Bats, dragons can fly */
-		else if ((p_ptr->schange == SHAPE_BAT)
-			 || (p_ptr->schange == SHAPE_WYRM))
-		    can_move = TRUE;
-
-		else if (player_is_crossing == dir)
-		{
-		    can_move = TRUE;
-		    player_is_crossing = 0;
-		}
-		else 
-		{
-		    player_is_crossing = dir;
-		    cmd_insert(CMD_WALK);
-		}
-
-		break;
-	    }
-	case FEAT_TREE:
-	case FEAT_TREE2:
-	    {
-		/* Druids, rangers, elves and ents (SJGU) slip easily under
-		 * trees */
-		if (((player_has(PF_WOODSMAN)) || (player_has(PF_ELVEN)))
-		    || (player_has(PF_WOODEN)))
-		    can_move = TRUE;
-
-		/* Bats, dragons can fly */
-		else if ((p_ptr->schange == SHAPE_BAT)
-			 || (p_ptr->schange == SHAPE_WYRM))
-		    can_move = TRUE;
-
-		/* Allow movement only if partway through already. */
-		else if (player_is_crossing == dir)
-		{
-		    can_move = TRUE;
-		    player_is_crossing = 0;
-		}
-		else 
-		{
-		    player_is_crossing = dir;
-		    cmd_insert(CMD_WALK);
-		}
-		
-		break;
-	    }
-	case FEAT_WATER:	/* Water now slows rather than stopping -NRM- */
-	    {
-		/* Stop any run. */
-		disturb(0, 0);
-
+	if (tf_has(f_ptr->flags, TF_ROCK))
+	{
+	    /* Dwarves move easily through rubble */
+	    if (player_has(PF_DWARVEN))
 		can_move = TRUE;
-
-		/* Speed will need updating */
-		p_ptr->update |= PU_BONUS;
-
-		break;
-	    }
-	case FEAT_LAVA:
+	    
+	    /* Bats, dragons can fly */
+	    else if ((p_ptr->schange == SHAPE_BAT)
+		     || (p_ptr->schange == SHAPE_WYRM))
+		can_move = TRUE;
+	    
+	    else if (player_is_crossing == dir)
 	    {
-		/* Assume player will continue. */
-		temp = TRUE;
+		can_move = TRUE;
+		player_is_crossing = 0;
+	    }
+	    else 
+	    {
+		player_is_crossing = dir;
+		cmd_insert(CMD_WALK);
+	    }
+	}
 
-		/* Smart enough to stop running. */
-		if (p_ptr->running) {
-		    if (!get_check("Lava blocks your path.  Step into it? ")) {
-			temp = FALSE;
-			p_ptr->running = 0;
-		    }
+	if (tf_has(f_ptr->flags, TF_TREE))
+	{
+	    /* Druids, rangers, elves and ents (SJGU) slip easily under
+	     * trees */
+	    if (((player_has(PF_WOODSMAN)) || (player_has(PF_ELVEN)))
+		|| (player_has(PF_WOODEN)))
+		can_move = TRUE;
+	    
+	    /* Bats, dragons can fly */
+	    else if ((p_ptr->schange == SHAPE_BAT)
+		     || (p_ptr->schange == SHAPE_WYRM))
+		can_move = TRUE;
+	    
+	    /* Allow movement only if partway through already. */
+	    else if (player_is_crossing == dir)
+	    {
+		can_move = TRUE;
+		player_is_crossing = 0;
+	    }
+	    else 
+	    {
+		player_is_crossing = dir;
+		cmd_insert(CMD_WALK);
+	    }
+	}
+
+	/* Water now slows rather than stopping -NRM- */
+	if (tf_has(f_ptr->flags, TF_WATERY))
+	{
+	    /* Stop any run. */
+	    disturb(0, 0);
+	    
+	    can_move = TRUE;
+	    
+	    /* Speed will need updating */
+	    p_ptr->update |= PU_BONUS;
+	}
+	
+	if (tf_has(f_ptr->flags, TF_FIERY))
+	{
+	    /* Assume player will continue. */
+	    temp = TRUE;
+	    
+	    /* Smart enough to stop running. */
+	    if (p_ptr->running) {
+		if (!get_check("Lava blocks your path.  Step into it? ")) {
+		    temp = FALSE;
+		    p_ptr->running = 0;
 		}
+	    }
 
-		/* Smart enough to sense trouble. */
-		else if ((!p_resist_pos(P_RES_FIRE))
-			 || (!p_resist_strong(P_RES_FIRE)
-			     && (p_ptr->chp <= 100))
-			 || (!p_immune(P_RES_FIRE) && (p_ptr->chp <= 30))) {
-		    if (!get_check
-			("The heat of the lava scalds you! Really enter? ")) {
-			temp = FALSE;
-		    }
+	    /* Smart enough to sense trouble. */
+	    else if ((!p_resist_pos(P_RES_FIRE))
+		     || (!p_resist_strong(P_RES_FIRE)
+			 && (p_ptr->chp <= 100))
+		     || (!p_immune(P_RES_FIRE) && (p_ptr->chp <= 30))) 
+	    {
+		if (!get_check
+		    ("The heat of the lava scalds you! Really enter? ")) 
+		{
+		    temp = FALSE;
 		}
-
-		/* Enter if OK or confirmed. */
-		if (temp) {
-		    /* Can always cross. */
-		    can_move = TRUE;
-
+	    }
+	    
+	    /* Enter if OK or confirmed. */
+	    if (temp) 
+	    {
+		/* Can always cross. */
+		can_move = TRUE;
+		
 		    /* Feather fall makes one lightfooted. */
-		    if (p_ptr->state.ffall) {
+		    if (p_ptr->state.ffall) 
+		    {
 			notice_obj(OF_FEATHER, 0);
 			temp = 49 + randint1(51);
-		    } else
+		    } 
+		    else
 			temp = 124 + randint1(126);
 
 		    /* Will take serious fire damage. */
 		    fire_dam(temp, "burnt to a cinder in molten lava");
-		}
-		break;
 	    }
-	case FEAT_VOID:
-	    {
-		/* Bats, dragons can fly */
-		if ((p_ptr->schange == SHAPE_BAT)
-		    || (p_ptr->schange == SHAPE_WYRM))
-		    can_move = TRUE;
-		else {
-		    /* Assume player will continue. */
-		    temp = TRUE;
+	}
 
-		    /* Smart enough to stop running. */
-		    if (p_ptr->running) {
-			if (!get_check
-			    ("You have come to a cliff.  Step off it? ")) {
-			    temp = FALSE;
-			    p_ptr->running = 0;
-			}
-		    }
-
-		    /* Smart enough to sense trouble. */
-		    else if (!p_ptr->timed[TMD_BLIND]) {
-			if (!get_check("It's a cliff! Really step off it? ")) {
-			    temp = FALSE;
-			}
-		    }
-
-		    /* Step off if confirmed. */
-		    if (temp) {
-			/* Can always jump. */
-			can_move = TRUE;
-
-			/* Will take serious damage. */
-			falling = TRUE;
-		    }
-		}
-		break;
-	    }
-	default:
-	    {
-		/* All other terrain can be traversed normally. */
+	if (tf_has(f_ptr->flags, TF_FALL))
+	{
+	    /* Bats, dragons can fly */
+	    if ((p_ptr->schange == SHAPE_BAT) || (p_ptr->schange == SHAPE_WYRM))
 		can_move = TRUE;
+	    else 
+	    {
+		/* Assume player will continue. */
+		temp = TRUE;
+		
+		/* Smart enough to stop running. */
+		if (p_ptr->running) 
+		{
+		    if (!get_check
+			("You have come to a cliff.  Step off it? ")) 
+		    {
+			temp = FALSE;
+			p_ptr->running = 0;
+		    }
+		}
+		
+		/* Smart enough to sense trouble. */
+		else if (!p_ptr->timed[TMD_BLIND]) 
+		{
+		    if (!get_check("It's a cliff! Really step off it? ")) 
+			temp = FALSE;
+		}
+		
+		/* Step off if confirmed. */
+		if (temp) 
+		{
+		    /* Can always jump. */
+		    can_move = TRUE;
+		    
+		    /* Will take serious damage. */
+		    falling = TRUE;
+		}
 	    }
 	}
 
 	/* If the player can move, handle various things. */
-	if (can_move) {
+	if (can_move) 
+	{
 	    /* Move player */
 	    monster_swap(py, px, y, x);
 
 	    /* Update speed if stepping out of water */
-	    if (cave_feat[py][px] == FEAT_WATER)
+	    if (tf_has(f_ptr->flags, TF_WATERY))
 		p_ptr->update |= PU_BONUS;
 
 	    /* Update stealth for Unlight */

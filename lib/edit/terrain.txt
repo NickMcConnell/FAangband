@@ -19,12 +19,14 @@
 
 N:0:nothing
 G: :w
+P:2
 
 
 # 0x01 --> open floor
 
 N:1:open floor
 G:.:w
+P:5
 F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | EASY | RUN1 | TRAP
 D:An open floor or bare ground.  Can be walked across by anything, and can 
 D:hold traps or items.  Does not break line of sight.
@@ -33,6 +35,7 @@ D:hold traps or items.  Does not break line of sight.
 
 N:3:open door
 G:':U
+P:15
 F:LOS | PROJECT | PASSABLE | DOOR_ANY | INTERESTING | CLOSABLE | EASY  
 D:A door that is already open.  Player, monster, spell and missile can pass
 D:through as long as it stays open.
@@ -41,6 +44,7 @@ D:through as long as it stays open.
 
 N:4:broken door
 G:':u
+P:15
 F:LOS | PROJECT | PASSABLE | DOOR_ANY | INTERESTING | EASY 
 D:A door so broken that it cannot be shut.
 
@@ -48,6 +52,7 @@ D:A door so broken that it cannot be shut.
 
 N:5:down staircase
 G:>:w
+P:25
 F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY 
 D:A staircase down to a deeper part of the dungeon.
 
@@ -55,6 +60,7 @@ D:A staircase down to a deeper part of the dungeon.
 
 N:6:up staircase
 G:<:w
+P:25
 F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY 
 D:A staircase up to a shallower part of the dungeon.
 
@@ -62,6 +68,7 @@ D:A staircase up to a shallower part of the dungeon.
 
 N:7:down shaft
 G:>:s
+P:25
 F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY 
 D:A staircase down to a much deeper part of the dungeon.
 
@@ -69,6 +76,7 @@ D:A staircase down to a much deeper part of the dungeon.
 
 N:8:up shaft
 G:<:s
+P:25
 F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY 
 D:A staircase up to a much shallower part of the dungeon.
 
@@ -80,6 +88,7 @@ D:A staircase up to a much shallower part of the dungeon.
 N:32:door
 G:+:U
 M:32
+P:17
 X:0:0:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
@@ -93,6 +102,7 @@ D:valuable time by jamming or locking them.
 
 N:33:locked door
 G:+:U
+P:17
 X:1:0:0:0
 M:32
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_LOCKED 
@@ -107,6 +117,7 @@ D:valuable time by jamming or locking them.
 N:34:locked door
 G:+:U
 M:32
+P:17
 X:2:0:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_LOCKED 
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
@@ -120,6 +131,7 @@ D:valuable time by jamming or locking them.
 N:35:locked door
 G:+:U
 M:32
+P:17
 X:3:0:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_LOCKED 
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
@@ -133,6 +145,7 @@ D:valuable time by jamming or locking them.
 N:36:locked door
 G:+:U
 M:32
+P:17
 X:4:0:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_LOCKED 
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
@@ -146,6 +159,7 @@ D:valuable time by jamming or locking them.
 N:37:locked door
 G:+:U
 M:32
+P:17
 X:5:0:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_LOCKED 
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
@@ -159,6 +173,7 @@ D:valuable time by jamming or locking them.
 N:38:locked door
 G:+:U
 M:32
+P:17
 X:6:0:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_LOCKED 
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
@@ -172,6 +187,7 @@ D:valuable time by jamming or locking them.
 N:39:locked door
 G:+:U
 M:32
+P:17
 X:7:0:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_LOCKED 
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
@@ -185,6 +201,7 @@ D:valuable time by jamming or locking them.
 N:40:jammed door
 G:+:U
 M:32
+P:17
 X:0:0:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_JAMMED
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
@@ -198,6 +215,7 @@ D:valuable time by jamming or locking them.
 N:41:jammed door
 G:+:U
 M:32
+P:17
 X:0:1:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_JAMMED
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
@@ -211,6 +229,7 @@ D:valuable time by jamming or locking them.
 N:42:jammed door
 G:+:U
 M:32
+P:17
 X:0:2:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_JAMMED
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
@@ -224,6 +243,7 @@ D:valuable time by jamming or locking them.
 N:43:jammed door
 G:+:U
 M:32
+P:17
 X:0:3:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_JAMMED
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
@@ -237,6 +257,7 @@ D:valuable time by jamming or locking them.
 N:44:jammed door
 G:+:U
 M:32
+P:17
 X:0:4:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_JAMMED
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
@@ -250,6 +271,7 @@ D:valuable time by jamming or locking them.
 N:45:jammed door
 G:+:U
 M:32
+P:17
 X:0:5:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_JAMMED
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
@@ -263,6 +285,7 @@ D:valuable time by jamming or locking them.
 N:46:jammed door
 G:+:U
 M:32
+P:17
 X:0:6:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_JAMMED
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
@@ -276,6 +299,7 @@ D:valuable time by jamming or locking them.
 N:47:jammed door
 G:+:U
 M:32
+P:17
 X:0:7:0:0
 F:DOOR_ANY | DOOR_CLOSED | INTERESTING | DOOR_JAMMED
 D:Doors may be locked or stuck; getting through them may not be easy.  Your 
@@ -291,6 +315,7 @@ D:valuable time by jamming or locking them.
 N:48:secret door
 G:#:w
 M:56
+P:10
 F:WALL | ROCK | DOOR_ANY | GRANITE
 D:A door that appears like a granite wall to untrained eyes.
 
@@ -298,6 +323,7 @@ D:A door that appears like a granite wall to untrained eyes.
 
 N:49:pile of rubble
 G:::w
+P:13
 X:0:0:0:d200
 F:ROCK | PASSABLE | OBJECT | PROTECT | HIDE_OBJ
 D:Greatly slows down any creature that cannot bore or pass through rock.  Ends 
@@ -310,6 +336,7 @@ D:melee, ranged, or magical attacks.  Rubble may dissolve to normal floor.
 
 N:50:magma vein
 G:%:s
+P:12
 X:0:0:0:10+d400
 F:WALL | ROCK | NO_SCENT | NO_NOISE | MAGMA 
 D:A seam of soft rock.  It can be removed by digging or magic, and passed 
@@ -320,6 +347,7 @@ D:sight.
 
 N:51:quartz vein
 G:%:w
+P:11
 X:0:0:0:20+d800
 F:WALL | ROCK | NO_SCENT | NO_NOISE | QUARTZ 
 D:A seam of hardish rock.  It can be removed by digging or magic, and passed 
@@ -331,6 +359,7 @@ D:sight.
 N:52:magma vein
 G:%:s
 M:50
+P:12
 X:0:0:0:10+d400
 F:WALL | ROCK | NO_SCENT | NO_NOISE | GOLD | MAGMA 
 D:A seam of soft rock.  It can be removed by digging or magic, and passed 
@@ -343,6 +372,7 @@ D:sight.  It contains hidden treasure.
 N:53:quartz vein
 G:%:w
 M:51
+P:11
 X:0:0:0:20+d800
 F:WALL | ROCK | NO_SCENT | NO_NOISE | GOLD | QUARTZ 
 D:A seam of hardish rock.  It can be removed by digging or magic, and passed 
@@ -353,6 +383,7 @@ D:sight.  It contains hidden treasure.
 
 N:54:magma vein with treasure
 G:*:o
+P:12
 X:0:0:0:10+d400
 F:WALL | ROCK | INTERESTING | NO_SCENT | NO_NOISE | GOLD | MAGMA 
 D:A seam of soft rock.  It can be removed by digging or magic, and passed 
@@ -364,6 +395,7 @@ D:sight.  It contains visible treasure.
 
 N:55:quartz vein with treasure
 G:*:o
+P:11
 X:0:0:0:20+d800
 F:WALL | ROCK | INTERESTING | NO_SCENT | NO_NOISE | GOLD | QUARTZ
 D:A seam of hardish rock.  It can be removed by digging or magic, and passed 
@@ -374,6 +406,7 @@ D:sight.  It contains visible treasure.
 
 N:56:granite wall
 G:#:w
+P:10
 X:0:0:0:40+d1600
 F:WALL | ROCK | GRANITE | NO_SCENT | NO_NOISE
 D:A seam of hard rock.  It can be removed by digging or magic, and passed 
@@ -386,6 +419,7 @@ D:sight.
 N:57:granite wall
 G:#:w
 M:56
+P:10
 X:0:0:0:40+d1600
 F:WALL | ROCK | GRANITE | NO_SCENT | NO_NOISE
 D:A seam of hard rock.  It can be removed by digging or magic, and passed 
@@ -398,6 +432,7 @@ D:sight.
 N:58:granite wall
 G:#:w
 M:56
+P:10
 X:0:0:0:40+d1600
 F:WALL | ROCK | GRANITE | NO_SCENT | NO_NOISE
 D:A seam of hard rock.  It can be removed by digging or magic, and passed 
@@ -410,6 +445,7 @@ D:sight.
 N:59:granite wall
 G:#:w
 M:56
+P:10
 X:0:0:0:40+d1600
 F:WALL | ROCK | GRANITE | NO_SCENT | NO_NOISE
 D:A seam of hard rock.  It can be removed by digging or magic, and passed 
@@ -421,6 +457,7 @@ D:sight.
 
 N:60:permanent wall
 G:#:w
+P:7
 X:0:0:0:0
 F:WALL | ROCK | PERMANENT | NO_SCENT | NO_NOISE
 D:You can dig through most walls but some are impenetrable.  The dungeon is 
@@ -430,6 +467,7 @@ D:surrounded by these kinds of walls and some special rooms are made of them.
 
 N:61:permanent wall
 G:#:w
+P:7
 M:60
 X:0:0:0:0
 F:WALL | ROCK | PERMANENT | NO_SCENT | NO_NOISE
@@ -440,6 +478,7 @@ D:surrounded by these kinds of walls and some special rooms are made of them.
 
 N:62:permanent wall
 G:#:w
+P:7
 M:60
 X:0:0:0:0
 F:WALL | ROCK | PERMANENT | NO_SCENT | NO_NOISE
@@ -450,6 +489,7 @@ D:surrounded by these kinds of walls and some special rooms are made of them.
 
 N:63:permanent wall
 G:#:w
+P:7
 M:60
 X:0:0:0:0
 F:WALL | ROCK | PERMANENT | NO_SCENT | NO_NOISE
@@ -463,6 +503,7 @@ D:surrounded by these kinds of walls and some special rooms are made of them.
 
 N:64:General Store
 G:1:U
+P:17
 X:0:0:0:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:The General Store sells food, ammunition and lighting supplies.
@@ -471,6 +512,7 @@ D:The General Store sells food, ammunition and lighting supplies.
 
 N:65:Armoury
 G:2:s
+P:17
 X:0:0:1:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:The armour sold here will give you some protection against the blows of your 
@@ -481,6 +523,7 @@ D:enemies.
 N:66:Weapon Smiths
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 G:3:w
+P:17
 X:0:0:2:0
 D:Weapons for hitting and shooting your enemies are forged in the hot, acrid 
 D:backroom of this enticing shop.
@@ -489,6 +532,7 @@ D:backroom of this enticing shop.
 
 N:67:Temple
 G:4:g
+P:17
 X:0:0:3:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:A quiet, reflective place of refuge, with supplies of magical and hallowed 
@@ -498,6 +542,7 @@ D:goods for the pure of heart.
 
 N:68:Alchemy Shop
 G:5:b
+P:17
 X:0:0:4:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:A dim, scented room where potions and scrolls are traded.
@@ -506,6 +551,7 @@ D:A dim, scented room where potions and scrolls are traded.
 
 N:69:Magic Shop
 G:6:r
+P:17
 X:0:0:5:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:A shop for devices with magic trapped within.
@@ -514,6 +560,7 @@ D:A shop for devices with magic trapped within.
 
 N:70:Black Market
 G:7:D
+P:17
 X:0:0:6:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:Watch your back and hold onto your purse as you enter this disreputable 
@@ -523,6 +570,7 @@ D:haunt - and do not expect friendly service or good bargains.
 
 N:71:Home
 G:8:y
+P:17
 X:0:0:7:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:Your safe piece of Middle Earth, and the only place you can store goods apart 
@@ -532,6 +580,7 @@ D:from on your person.
 
 N:72:Bookstore
 G:9:o
+P:17
 X:0:0:8:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:A dusty room lined with shelves of mystical tomes.
@@ -540,6 +589,7 @@ D:A dusty room lined with shelves of mystical tomes.
 
 N:73:Travelling Merchant
 G:0:u
+P:17
 X:0:0:9:0
 F:SHOP | PASSABLE | PERMANENT | INTERESTING
 D:This merchant travels around, buying anything of value and selling basic 
@@ -552,6 +602,7 @@ D:commodities.  He will take orders for some magic potions, scrolls and books.
 
 N:96:path north
 G:<:r
+P:25
 F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY 
 D:A path to the neighbouring region.
 
@@ -559,6 +610,7 @@ D:A path to the neighbouring region.
 
 N:97:path north
 G:>:r
+P:25
 F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY
 D:A path to the neighbouring region.
 
@@ -566,6 +618,7 @@ D:A path to the neighbouring region.
 
 N:98:path east
 G:<:y
+P:25
 F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY
 D:A path to the neighbouring region.
 
@@ -573,6 +626,7 @@ D:A path to the neighbouring region.
 
 N:99:path east
 G:>:y
+P:25
 F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY
 D:A path to the neighbouring region.
 
@@ -580,6 +634,7 @@ D:A path to the neighbouring region.
 
 N:100:path south
 G:<:o
+P:25
 F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY
 D:A path to the neighbouring region.
 
@@ -587,6 +642,7 @@ D:A path to the neighbouring region.
 
 N:101:path south
 G:>:o
+P:25
 F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY
 D:A path to the neighbouring region.
 
@@ -594,6 +650,7 @@ D:A path to the neighbouring region.
 
 N:102:path west
 G:<:b
+P:25
 F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY
 D:A path to the neighbouring region.
 
@@ -601,6 +658,7 @@ D:A path to the neighbouring region.
 
 N:103:path west
 G:>:b
+P:25
 F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | EASY
 D:A path to the neighbouring region.
 
@@ -611,6 +669,7 @@ D:A path to the neighbouring region.
 
 N:112:lava
 G:#:r
+P:14
 F:LOS | PROJECT | PASSABLE | NO_SCENT
 D:Can be passed by any character, but inflicts substantial fire damage (less 
 D:for players with feather fall - they're light on their feet).  All monsters 
@@ -623,6 +682,7 @@ D:a target in lava.  Lava may freeze to rubble or normal floor.
 
 N:113:water
 G:.:b
+P:6
 F:LOS | PROJECT | PASSABLE | NO_SCENT | EXPOSE 
 D:Cannot be passed by fiery, earthbound monsters, slows down most other 
 D:monsters.  Slows you down if you are carrying too much.  You and your 
@@ -635,6 +695,7 @@ D:Smaug.  Water may evaporate.
 
 N:114:lowland trees
 G:+:g
+P:14
 F:PASSABLE | OBJECT | TREE | PROTECT | ORGANIC | HIDE_OBJ | TRAP
 D:Slows down characters not familiar with druidic techniques, and all 
 D:non-natural monsters that neither fly nor pass through rock.  Ends LOS, 
@@ -647,6 +708,7 @@ D:ranged, or magical attacks.  Trees can burn.
 
 N:115:highland trees
 G:+:t
+P:14
 F:PASSABLE | OBJECT | TREE | PROTECT | ORGANIC | HIDE_OBJ | TRAP
 D:Slows down characters not familiar with druidic techniques, and all 
 D:non-natural monsters that neither fly nor pass through rock.  Ends LOS, 
@@ -658,6 +720,7 @@ D:ranged, or magical attacks.  Trees can burn.
 
 N:116:grass
 G:.:g
+P:5
 F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | ORGANIC | EASY | RUN2 | TRAP
 D:Open ground that can be crossed easily by all creatures.  It occurs only in 
 D:wilderness.  It may contain traps. 
@@ -666,6 +729,7 @@ D:wilderness.  It may contain traps.
 
 N:118:web
 G:%:y
+P:20
 F:LOS | PROJECT
 D:Woven by a spider, this traps insects.  Monsters which are not spiders and 
 D:cannot pass through rock will need a turn to clear the web, as will the 
@@ -675,7 +739,8 @@ D:player.  It can be seen through.
 
 N:119:empty space
 G: :D
-F:LOS | PROJECT 
+P:2
+F:LOS | PROJECT | FALL 
 D:Empty space - only flying creatures can pass across without falling.  All 
 D:spells and missiles can pass through.
 
@@ -683,6 +748,7 @@ D:spells and missiles can pass through.
 
 N:122:sand dunes
 G:.:y
+P:13
 X:0:0:0:0
 F:PASSABLE | OBJECT | EASY
 D:Ends LOS, stops missiles, bolts, and beams, and reduces the radius of ball 

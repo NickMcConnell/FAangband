@@ -1632,7 +1632,7 @@ extern bool do_cmd_open_aux(int y, int x)
 	    i = i / 10;
 
 	/* Extract the lock power */
-	j = cave_feat[y][x] - FEAT_DOOR_HEAD;
+	j = f_ptr->locked;
 
 	/* Extract the difficulty XXX XXX XXX */
 	j = i - (j * 4);
@@ -2437,7 +2437,7 @@ static bool do_cmd_bash_aux(int y, int x)
     int bash, temp;
 
     bool more = FALSE;
-
+    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
     /* Verify legality */
     if (!do_cmd_bash_test(y, x))
@@ -2455,7 +2455,10 @@ static bool do_cmd_bash_aux(int y, int x)
     bash = 10 + adj_str_hold[p_ptr->state.stat_ind[A_STR]];
 
     /* Extract door power */
-    temp = ((cave_feat[y][x] - FEAT_DOOR_HEAD) & 0x07);
+    if (tf_has(f_ptr->flags, TF_DOOR_LOCKED))
+	temp = f_ptr->locked;
+    else
+	temp = f_ptr->jammed;
 
     /* Compare bash power to door power XXX XXX XXX */
     temp = (bash - (temp * 8));
@@ -2784,6 +2787,7 @@ bool do_cmd_spike_test(int y, int x)
 void do_cmd_spike(cmd_code code, cmd_arg args[])
 {
     int y, x, dir, item = 0;
+    feature_type *f_ptr;
 
     dir = args[0].direction;
 
@@ -2799,7 +2803,7 @@ void do_cmd_spike(cmd_code code, cmd_arg args[])
     /* Get location */
     y = p_ptr->py + ddy[dir];
     x = p_ptr->px + ddx[dir];
-
+    f_ptr = &f_info[cave_feat[y][x]];
 
     /* Verify legality */
     if (!do_cmd_spike_test(y, x))
@@ -2810,15 +2814,18 @@ void do_cmd_spike(cmd_code code, cmd_arg args[])
     p_ptr->energy_use = 40;
 
     /* Confuse direction */
-    if (confuse_dir(&dir)) {
+    if (confuse_dir(&dir)) 
+    {
 	/* Get location */
 	y = p_ptr->py + ddy[dir];
 	x = p_ptr->px + ddx[dir];
+	f_ptr = &f_info[cave_feat[y][x]];
     }
 
 
     /* Monster.  Make the action now take a full turn */
-    if (cave_m_idx[y][x] > 0) {
+    if (cave_m_idx[y][x] > 0) 
+    {
 	/* Message */
 	msg_print("There is a monster in the way!");
 
@@ -2830,7 +2837,8 @@ void do_cmd_spike(cmd_code code, cmd_arg args[])
     }
 
     /* Go for it */
-    else {
+    else 
+    {
 	/* Verify legality */
 	if (!do_cmd_spike_test(y, x))
 	    return;
@@ -2839,12 +2847,14 @@ void do_cmd_spike(cmd_code code, cmd_arg args[])
 	msg_print("You jam the door with a spike.");
 
 	/* Convert "locked" to "stuck" XXX XXX XXX */
-	if (cave_feat[y][x] < FEAT_DOOR_HEAD + 0x08) {
+	if (!tf_has(f_ptr->flags, TF_DOOR_JAMMED)) 
+	{
 	    cave_feat[y][x] += 0x08;
 	}
 
 	/* Add one spike to the door */
-	if (cave_feat[y][x] < FEAT_DOOR_TAIL) {
+	if (cave_feat[y][x] != FEAT_DOOR_TAIL) 
+	{
 	    cave_feat[y][x] += 0x01;
 	}
 

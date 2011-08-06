@@ -1378,6 +1378,7 @@ static enum parser_error parse_f_n(struct parser *p) {
     f->next = h;
     f->fidx = idx;
     f->mimic = idx;
+    f->priority = 0;
     f->name = string_make(name);
     parser_setpriv(p, f);
     return PARSE_ERROR_NONE;

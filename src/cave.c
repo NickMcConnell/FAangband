@@ -532,35 +532,9 @@ bool feat_supports_lighting(byte feat)
     /* Pseudo graphics don't support lighting */
     if (use_graphics == GRAPHICS_PSEUDO) return FALSE;
 
-    if ((use_graphics != GRAPHICS_DAVID_GERVAIS) &&
-	(feat >= FEAT_TRAP_HEAD) && (feat <= FEAT_TRAP_TAIL))
-    {
-	return TRUE;
-    }
-
-    if ((feat >= FEAT_LAVA) && (feat <= FEAT_WEB))
-	return TRUE;
-
-    switch (feat) {
-    case FEAT_FLOOR:
-    case FEAT_INVIS:
-    case FEAT_SECRET:
-    case FEAT_MAGMA:
-    case FEAT_QUARTZ:
-    case FEAT_MAGMA_H:
-    case FEAT_QUARTZ_H:
-    case FEAT_WALL_EXTRA:
-    case FEAT_WALL_INNER:
-    case FEAT_WALL_OUTER:
-    case FEAT_WALL_SOLID:
-    case FEAT_PERM_EXTRA:
-    case FEAT_PERM_INNER:
-    case FEAT_PERM_OUTER:
-    case FEAT_PERM_SOLID:
-	return TRUE;
-    default:
-	return FALSE;
-    }
+    /* What's the worst that can happen? */
+    return TRUE;
+    
 }
 
 
@@ -1218,7 +1192,7 @@ void map_info(unsigned y, unsigned x, grid_data *g)
 	}
     }
 
-    assert(g->f_idx <= FEAT_DUNE);
+    assert(g->f_idx <= z_info->f_max);
     assert(g->m_idx < (u32b) m_max);
     assert(g->first_k_idx < z_info->k_max);
     /* All other g fields are 'flags', mostly booleans. */
@@ -1641,115 +1615,28 @@ void prt_map(void)
 #define MAP_HGT (DUNGEON_HGT / RATIO)
 #define MAP_WID (DUNGEON_WID / RATIO)
 
-/**
- * Hack -- priority array (see below)
- *
- * Note that all "walls" always look like "secret doors" (see "map_info()").
- */
-static byte priority_table[][2] = {
-    /* Dark */
-    {FEAT_NONE, 2},
-
-    /* Floors, grass */
-    {FEAT_FLOOR, 5},
-    {FEAT_GRASS, 5},
-
-    /* Water. */
-    {FEAT_WATER, 6},
-
-    /* Shop walls */
-    {FEAT_PERM_EXTRA, 7},
-
-    /* Walls */
-    {FEAT_SECRET, 10},
-
-    /* Quartz */
-    {FEAT_QUARTZ, 11},
-
-    /* Magma */
-    {FEAT_MAGMA, 12},
-
-    /* Rubble */
-    {FEAT_RUBBLE, 13},
-
-    /* Trees and lava. */
-    {FEAT_LAVA, 14},
-    {FEAT_TREE, 14},
-    {FEAT_TREE2, 14},
-
-    /* Open doors */
-    {FEAT_OPEN, 15},
-    {FEAT_BROKEN, 15},
-
-    /* Closed doors */
-    {FEAT_DOOR_HEAD + 0x00, 17},
-
-    /* Shops */
-    {FEAT_SHOP_HEAD + 0x00, 17},
-    {FEAT_SHOP_HEAD + 0x01, 17},
-    {FEAT_SHOP_HEAD + 0x02, 17},
-    {FEAT_SHOP_HEAD + 0x03, 17},
-    {FEAT_SHOP_HEAD + 0x04, 17},
-    {FEAT_SHOP_HEAD + 0x05, 17},
-    {FEAT_SHOP_HEAD + 0x06, 17},
-    {FEAT_SHOP_HEAD + 0x07, 17},
-    {FEAT_SHOP_HEAD + 0x08, 17},
-    {FEAT_SHOP_HEAD + 0x09, 17},
-
-    /* Hidden gold */
-    {FEAT_QUARTZ_K, 19},
-    {FEAT_MAGMA_K, 19},
-
-    /* Stairs */
-    {FEAT_LESS, 25},
-    {FEAT_MORE, 25},
-    {FEAT_LESS_NORTH, 25},
-    {FEAT_MORE_NORTH, 25},
-    {FEAT_LESS_EAST, 25},
-    {FEAT_MORE_EAST, 25},
-    {FEAT_LESS_SOUTH, 25},
-    {FEAT_MORE_SOUTH, 25},
-    {FEAT_LESS_WEST, 25},
-    {FEAT_MORE_WEST, 25},
-
-    /* End */
-    {0, 0}
-};
-
 
 /**
  * Hack -- a priority function (see below)
  */
 static byte priority(byte a, char c)
 {
-    int i, p0, p1;
+    int i;
 
     feature_type *f_ptr;
 
     /* Scan the table */
-    for (i = 0; TRUE; i++) {
-	/* Priority level */
-	p1 = priority_table[i][1];
-
-	/* End of table */
-	if (!p1)
-	    break;
-
-	/* Feature index */
-	p0 = priority_table[i][0];
-
+    for (i = 0; i < z_info->f_max; i++) 
+    {
 	/* Access the feature */
-	f_ptr = &f_info[p0];
+	f_ptr = &f_info[i];
 
-	/* Hack - floor more important in wilderness */
-	if ((stage_map[p_ptr->stage][STAGE_TYPE] != CAVE)
-	    && (stage_map[p_ptr->stage][STAGE_TYPE] != TOWN)
-	    && (p0 == FEAT_FLOOR))
-	    p1 = 19;
+	/* Check it exists */
+	if (!f_ptr->fidx) continue;
 
 	/* Check character and attribute, accept matches */
 	if ((f_ptr->x_char == c) && (f_ptr->x_attr == a))
-	    return (p1);
+	    return (f_ptr->priority);
     }
 
     /* Default */
@@ -1837,8 +1724,10 @@ void display_map(int *cy, int *cx)
     tc = ' ';
 
     /* Clear the priorities */
-    for (y = 0; y < map_hgt; ++y) {
-	for (x = 0; x < map_wid; ++x) {
+    for (y = 0; y < map_hgt; ++y) 
+    {
+	for (x = 0; x < map_wid; ++x) 
+	{
 	    /* No priority */
 	    mp[y][x] = 0;
 	}
@@ -1848,15 +1737,19 @@ void display_map(int *cy, int *cx)
     window_make(0, 0, map_wid + 1, map_hgt + 1);
 
     /* Analyze the actual map */
-    for (y = top_row; y < dungeon_hgt; y++) {
-	for (x = left_col; x < dungeon_wid; x++) {
+    for (y = top_row; y < dungeon_hgt; y++) 
+    {
+	for (x = left_col; x < dungeon_wid; x++) 
+	{
 	    row = ((y - top_row) * map_hgt / dungeon_hgt);
 	    col = ((x - left_col) * map_wid / dungeon_wid);
 
-	    if (tile_width > 1) {
+	    if (tile_width > 1) 
+	    {
 		col = col - (col % tile_width);
 	    }
-	    if (tile_height > 1) {
+	    if (tile_height > 1) 
+	    {
 		row = row - (row % tile_height);
 	    }
 
@@ -4060,11 +3953,14 @@ void illuminate(void)
 
 
     /* Handle shop doorways */
-    for (y = 0; y < DUNGEON_HGT; y++) {
-	for (x = 0; x < DUNGEON_WID; x++) {
+    for (y = 0; y < DUNGEON_HGT; y++) 
+    {
+	for (x = 0; x < DUNGEON_WID; x++) 
+	{
+	    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 	    /* Track shop doorways */
-	    if ((cave_feat[y][x] >= FEAT_SHOP_HEAD)
-		&& (cave_feat[y][x] <= FEAT_SHOP_TAIL)) {
+	    if (tf_has(f_ptr->flags, TF_SHOP)) 
+	    {
 		/* Illuminate the grid */
 		cave_on(cave_info[y][x], CAVE_GLOW);
 		
@@ -4073,7 +3969,8 @@ void illuminate(void)
 		    cave_on(cave_info[y][x], CAVE_MARK);
 		}
 		
-		for (i = 0; i < 8; i++) {
+		for (i = 0; i < 8; i++) 
+		{
 		    int yy = y + ddy_ddd[i];
 		    int xx = x + ddx_ddd[i];
 
@@ -4081,7 +3978,8 @@ void illuminate(void)
 		    cave_on(cave_info[yy][xx], CAVE_GLOW);
 
 		    /* Hack -- Memorize grids */
-		    if (OPT(view_perma_grids)) {
+		    if (OPT(view_perma_grids)) 
+		    {
 			cave_on(cave_info[yy][xx], CAVE_MARK);
 		    }
 		}

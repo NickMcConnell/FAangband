@@ -1103,22 +1103,9 @@ enum
 #define FEAT_MORE_SHAFT	0x07
 #define FEAT_LESS_SHAFT	0x08
 
-/* Runes  */
-#define FEAT_RUNE_HEAD       0x09
-#define FEAT_RUNE_ELEMENTS   0x09
-#define FEAT_RUNE_MAGDEF     0x0A
-#define FEAT_RUNE_QUAKE      0x0B
-#define FEAT_RUNE_MANA       0x0C
-#define FEAT_RUNE_PROTECT    0x0D
-#define FEAT_RUNE_POWER      0x0E
-#define FEAT_RUNE_SPEED      0x0F
-#define FEAT_RUNE_TAIL       0x0F
-
 /* Traps */
 #define FEAT_TRAP_HEAD	0x10
 #define FEAT_TRAP_TAIL	0x1F
-#define FEAT_TREE_TRAP	0x1A
-#define FEAT_TREE2_TRAP	0x1B
 
 /* Doors */
 #define FEAT_DOOR_HEAD	0x20
@@ -1154,24 +1141,6 @@ enum
 #define FEAT_SHOP_HEAD 0x40
 #define FEAT_SHOP_HOME 0x47
 #define FEAT_SHOP_TAIL 0x49
-
-/* Specials trap that only effects monsters.  Created only by rogues. -LM- */
-#define FEAT_MTRAP_HEAD		0x50
-#define FEAT_MTRAP_TAIL		0x5F
-#define FEAT_MTRAP_BASE		0x50 /* Level 1 */
-#define FEAT_MTRAP_STURDY	0x51 /* Level 1 */
-#define FEAT_MTRAP_NET		0x52 /* Level 6 */
-#define FEAT_MTRAP_CONF		0x53 /* Level 12 */
-#define FEAT_MTRAP_POISON	0x54 /* Level 18 */
-#define FEAT_MTRAP_SPIRIT	0x55 /* Level 24 */
-#define FEAT_MTRAP_ELEC		0x56 /* Level 30 */
-#define FEAT_MTRAP_EXPLOSIVE	0x57 /* Level 36 */
-#define FEAT_MTRAP_PORTAL	0x58 /* Level 42 */
-#define FEAT_MTRAP_STASIS	0x59 /* Level 48 */
-#define FEAT_MTRAP_DRAIN_LIFE	0x5A /* Level * */
-#define FEAT_MTRAP_UNMAGIC	0x5B /* Level * */
-#define FEAT_MTRAP_DISPEL_M	0x5C /* Level * */
-#define FEAT_MTRAP_GENOCIDE	0x5D /* Level * */
 
 /* "stairs" in wilderness -NRM- */
 #define FEAT_LESS_NORTH		0x60
