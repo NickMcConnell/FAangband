@@ -316,6 +316,7 @@ bool is_open(int feat);
 bool is_closed(int feat);
 bool is_trap(int feat);
 int count_feats(int *y, int *x, int flag, bool under);
+int count_traps(int *y, int *x);
 int count_chests(int *y, int *x, bool trapped);
 int coords_to_dir(int y, int x);
 

@@ -1413,7 +1413,8 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
 
 
 /**
- * Return the number of doors/traps around (or under) the character
+ * Return the number of terrain features with a given flag around (or under) 
+ * the character
  */
 int count_feats(int *y, int *x, int flag, bool under)
 {
@@ -1446,6 +1447,50 @@ int count_feats(int *y, int *x, int flag, bool under)
 
 	/* Not looking for this feature */
 	if (!tf_has(f_ptr->flags, flag))
+	    continue;
+
+	/* Count it */
+	++count;
+
+	/* Remember the location of the last one found */
+	*y = yy;
+	*x = xx;
+    }
+
+    /* All done */
+    return count;
+}
+
+/**
+ * Return the number of visible traps around (or under) the character
+ */
+int count_traps(int *y, int *x)
+{
+    int d;
+    int xx, yy;
+    int count;
+    trap_type *t_ptr;
+
+    /* Count how many matches */
+    count = 0;
+
+    /* Check around (and under) the character */
+    for (d = 0; d < 9; d++) 
+    {
+	/* Extract adjacent (legal) location */
+	yy = p_ptr->py + ddy_ddd[d];
+	xx = p_ptr->px + ddx_ddd[d];
+
+	/* Paranoia */
+	if (!in_bounds_fully(yy, xx))
+	    continue;
+
+	/* Must have knowledge */
+	if (!cave_has(cave_info[yy][xx], CAVE_MARK))
+	    continue;
+
+	/* No trap */
+	if (!cave_has(cave_info[y][x], CAVE_TRAP))
 	    continue;
 
 	/* Count it */

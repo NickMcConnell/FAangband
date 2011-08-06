@@ -162,21 +162,24 @@ void show_player(void)
     /* Analyze surroundings */
     for (i = 0; i < 8; i++) 
     {
+	int yy = p_ptr->py + ddy_ddd[i];
+	int xx = p_ptr->px + ddx_ddd[i];
 	f_ptr = &f_info[adj_grid[i]];
-	if (tf_has(f_ptr->flags, TF_TRAP))
+
+	if (cave_visible_trap(yy, xx))
 	    exist_trap = TRUE;
 	if (tf_has(f_ptr->flags, TF_DOOR_CLOSED))
 	    exist_door = TRUE;
 	if ((adj_grid[i] == FEAT_WEB)
 	    || tf_has(f_ptr->flags, TF_ROCK))
 	    exist_rock_or_web = TRUE;
-	if (cave_monster_trap(p_ptr->py + ddy_ddd[i], p_ptr->px + ddx_ddd[i]))
+	if (cave_monster_trap(yy, xx)
 	    exist_mtrap = TRUE;
 	if (adj_grid[i] == FEAT_OPEN)
 	    exist_open_door = TRUE;
-	if (cave_naked_bold(p_ptr->py + ddy_ddd[i], p_ptr->px + ddx_ddd[i]))
+	if (cave_naked_bold(yy, xx)
 	    exist_floor = TRUE;
-	if (cave_m_idx[ddy_ddd[i]][ddx_ddd[i]] > 0)
+	if (cave_m_idx[yy][xx] > 0)
 	    exist_monster = TRUE;
     }
 

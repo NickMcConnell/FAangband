@@ -52,7 +52,8 @@ bool is_valid_pf(int y, int x)
 
     /* Optionally alter known traps/doors on movement */
     if (OPT(easy_alter) && (tf_has(f_ptr->flags, TF_DOOR_CLOSED)
-			    || tf_has(f_ptr->flags, TF_TRAP))) {
+			    || cave_has(cave_info[y][x], CAVE_TRAP))) 
+    {
 	return (TRUE);
     }
 

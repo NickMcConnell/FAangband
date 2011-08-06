@@ -834,7 +834,7 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 
 	/* Check for trap detection boundaries */
 	if (g->trapborder && tf_has(f_ptr->flags, TF_FLOOR) && 
-	    !tf_has(f_ptr->flags, TF_TRAP) && 
+	    !(g->trap < trap_max) && 
 	    (use_graphics == GRAPHICS_NONE || use_graphics == GRAPHICS_PSEUDO))
 	    a = TERM_L_GREEN;
 
@@ -1112,14 +1112,17 @@ void map_info(unsigned y, unsigned x, grid_data *g)
     g->hallucinate = p_ptr->timed[TMD_IMAGE] ? TRUE : FALSE;
     g->trapborder = (dtrap_edge(y, x)) ? TRUE : FALSE;
     f_ptr = &f_info[g->f_idx];
+
     /* If the grid is memorised or can currently be seen */
-    if (cave_has(cave_info[y][x], CAVE_MARK) || cave_has(cave_info[y][x], CAVE_SEEN))
+    if (cave_has(cave_info[y][x], CAVE_MARK) || 
+	cave_has(cave_info[y][x], CAVE_SEEN))
     {
 	/* Apply "mimic" field */
 	g->f_idx = f_ptr->mimic;
 			
 	/* Boring grids (floors, etc) */
-	if (tf_has(f_ptr->flags, TF_FLOOR) && !tf_has(f_ptr->flags, TF_TRAP))
+	if (tf_has(f_ptr->flags, TF_FLOOR) && 
+	    !cave_has(cave_info[y][x], CAVE_TRAP))
 	{
 	    /* Handle currently visible grids */
 	    if (cave_has(cave_info[y][x], CAVE_SEEN))

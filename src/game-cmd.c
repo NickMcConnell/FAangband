@@ -455,7 +455,7 @@ void process_command(cmd_context ctx, bool no_request)
 		int y, x;
 		int n_visible_traps, n_trapped_chests;
 			
-		n_visible_traps = count_feats(&y, &x, TF_TRAP, TRUE);			
+		n_visible_traps = count_traps(&y, &x);	
 		n_trapped_chests = count_chests(&y, &x, TRUE);
 
 		if (n_visible_traps + n_trapped_chests == 1)
