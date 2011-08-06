@@ -25,7 +25,7 @@
 #include "trap.h"
 #include "ui-menu.h"
 
-/*
+/**
  * Is there a specific kind of trap in this grid?
  */
 bool cave_trap_specific(int y, int x, int t_idx)
@@ -53,7 +53,7 @@ bool cave_trap_specific(int y, int x, int t_idx)
     return (FALSE);
 }
 
-/*
+/**
  * Is there a trap with a given flag in this grid?
  */
 bool cave_trap_flag(int y, int x, int flag)
@@ -81,7 +81,7 @@ bool cave_trap_flag(int y, int x, int flag)
     return (FALSE);
 }
 
-/*
+/**
  * Check for a basic monster trap 
  */
 bool cave_basic_monster_trap(int y, int x)
@@ -90,7 +90,7 @@ bool cave_basic_monster_trap(int y, int x)
     return (cave_trap_specific(y, x, MTRAP_BASE));
 }
 
-/*
+/**
  * Check for an advanced monster trap 
  */
 bool cave_advanced_monster_trap(int y, int x)
@@ -100,7 +100,7 @@ bool cave_advanced_monster_trap(int y, int x)
 	    !cave_trap_specific(y, x, MTRAP_BASE));
 }
 
-/*
+/**
  * Check for any monster trap 
  */
 bool cave_monster_trap(int y, int x)
@@ -109,7 +109,7 @@ bool cave_monster_trap(int y, int x)
     return (cave_trap_flag(y, x, TRF_M_TRAP));
 }
 
-/*
+/**
  * Return the index of a monster trap 
  */
 int monster_trap_idx(int y, int x)
@@ -135,7 +135,7 @@ int monster_trap_idx(int y, int x)
     return -1;
 }
 
-/*
+/**
  * Determine if a trap actually exists in this grid.
  *
  * Called with vis = 0 to accept any trap, = 1 to accept only visible
@@ -195,8 +195,8 @@ static bool verify_trap(int y, int x, int vis)
     return (FALSE);
 }
 
-/*
- * Is there a visible trap in this grid?
+/**
+ * Is there a visible player trap in this grid?
  */
 bool cave_visible_trap(int y, int x)
 {
@@ -207,8 +207,8 @@ bool cave_visible_trap(int y, int x)
     return (verify_trap(y, x, 1));
 }
 
-/*
- * Is there an invisible trap in this grid?
+/**
+ * Is there an invisible player trap in this grid?
  */
 bool cave_invisible_trap(int y, int x)
 {
@@ -217,6 +217,18 @@ bool cave_invisible_trap(int y, int x)
 
     /* Verify trap, require that it be invisible */
     return (verify_trap(y, x, -1));
+}
+
+/**
+ * Is there a player trap in this grid?
+ */
+bool cave_player_trap(int y, int x)
+{
+    /* First, check the trap marker */
+    if (!cave_has(cave_info[y][x], CAVE_TRAP)) return (FALSE);
+
+    /* Verify trap, require that it be invisible */
+    return (verify_trap(y, x, 0));
 }
 
 
@@ -230,12 +242,10 @@ bool cave_invisible_trap(int y, int x)
  */
 bool get_trap_graphics(int t_idx, byte *a, char *c, bool require_visible)
 {
-    int i;
-    bool trap = FALSE;
     trap_type *t_ptr = &trap_list[t_idx];
     
     /* Trap is visible, or we don't care */
-    if (!require_visible || trf_has(t_ptr->flags, TRAP_VISIBLE))
+    if (!require_visible || trf_has(t_ptr->flags, TRF_VISIBLE))
     {
 	/* Get the graphics */
 	*a = color_char_to_attr(t_ptr->kind->x_attr);
@@ -271,17 +281,17 @@ bool reveal_trap(int y, int x, int chance, bool msg)
 	if ((t_ptr->fy == y) && (t_ptr->fx == x))
 	{
 	    /* Trap is invisible */
-	    if (!trf_has(t_ptr->flags, TRAP_VISIBLE))
+	    if (!trf_has(t_ptr->flags, TRF_VISIBLE))
 	    {
 		/* See the trap */
-		trf_on(t_ptr->flags, TRAP_VISIBLE);
+		trf_on(t_ptr->flags, TRF_VISIBLE);
 		cave_on(cave_info[y][x], CAVE_MARK);
 
 		/* We found a trap */
 		found_trap++;
 
 		/* If chance is < 100, sometimes stop */
-		if ((chance < 100) && (randint(100) > chance)) break;
+		if ((chance < 100) && (randint1(100) > chance)) break;
 	    }
 	}
     }
@@ -318,7 +328,7 @@ int num_traps(int y, int x, int vis)
     int i, num;
     
     /* Scan the current trap list */
-    for (num = 0, i = 0; i < t_max; i++)
+    for (num = 0, i = 0; i < trap_max; i++)
     {
 	/* Point to this trap */
 	trap_type *t_ptr = &trap_list[i];
@@ -332,11 +342,11 @@ int num_traps(int y, int x, int vis)
 	    /* Require correct visibility */
 	    if (vis >= 1)
 	    {
-		if (t_ptr->flags & (TRAP_VISIBLE)) num++;
+		if (trf_has(t_ptr->flags, TRF_VISIBLE)) num++;
 	    }
 	    else if (vis <= -1)
 	    {
-		if (!(t_ptr->flags & (TRAP_VISIBLE))) num++;
+		if (!trf_has(t_ptr->flags, TRF_VISIBLE)) num++;
 	    }
 	    else
 	    {
@@ -355,17 +365,17 @@ int num_traps(int y, int x, int vis)
  * This function has been altered in Oangband to (in a hard-coded fashion) 
  * control trap level. -LM-
  */
-static int pick_trap(int trap_level)
+static int pick_trap(int feat, int trap_level)
 {
     int trap = 0;
-    feature_type *f_ptr = &f_info[cave_feat[y][x]];
+    feature_type *f_ptr = &f_info[feat];
 
     trap_kind *trap_ptr;
     bool trap_is_okay = FALSE;
 
     /* Paranoia */
     if (!tf_has(f_ptr->flags, TF_TRAP))
-	return;
+	return -1;
 
     /* Try to create a trap appropriate to the level.  Make certain that at
      * least one trap type can be made on any possible level. -LM- */
@@ -381,11 +391,13 @@ static int pick_trap(int trap_level)
 	if (trap_ptr->min_depth > trap_level) continue;
 
 	/* Tree? */
-	if (tf_has(f_ptr->flags, TF_TREE) && !trf(trap_ptr->flags, TRF_TREE))
+	if (tf_has(f_ptr->flags, TF_TREE) && 
+	    !trf_has(trap_ptr->flags, TRF_TREE))
 	    trap_is_okay = FALSE;
 
 	/* Floor? */
-	if (tf_has(f_ptr->flags, TF_FLOOR) && !trf(trap_ptr->flags, TRF_FLOOR))
+	if (tf_has(f_ptr->flags, TF_FLOOR) && 
+	    !trf_has(trap_ptr->flags, TRF_FLOOR))
 	    trap_is_okay = FALSE;
 
 	/* Assume legal until proven otherwise. */
@@ -488,7 +500,7 @@ bool place_trap(int y, int x, int t_idx, int trap_level)
     /* We've been called with an illegal index; choose a random trap */
     if ((t_idx <= 0) || (t_idx >= z_info->trap_max))
     {
-	t_idx = pick_trap(trap_level);
+	t_idx = pick_trap(cave_feat[y][x], trap_level);
     }
 
     /* Note failure */
@@ -521,7 +533,8 @@ bool place_trap(int y, int x, int t_idx, int trap_level)
 		num_runes_on_level[t_idx - 1]++;
 
 	    /* We created a monster trap */
-	    if (t_idx == MTRAP_BASE) num_trap_on_level++;
+	    if (trf_has(t_ptr->flags, TRF_M_TRAP)) 
+		num_trap_on_level++;
 
 	    /* Toggle on the trap marker */
 	    cave_on(cave_info[y][x], CAVE_TRAP);
@@ -1491,10 +1504,10 @@ extern void hit_trap(int y, int x)
     
     
     /* Scan the current trap list */
-    for (i = 0; i < t_max; i++)
+    for (i = 0; i < trap_max; i++)
     {
 	/* Point to this trap */
-	trap_type *t_ptr = &t_list[i];
+	trap_type *t_ptr = &trap_list[i];
 	
 	/* Find all traps in this position */
 	if ((t_ptr->fy == y) && (t_ptr->fx == x))
@@ -1837,10 +1850,10 @@ extern bool py_set_trap(int y, int x)
 /**
  * Trap coordinates 
  */
-static int trap_y = 0;
-static int trap_x = 0;
+static int mtrap_y = 0;
+static int mtrap_x = 0;
 
-static char *trap_desc[] = {
+static char *mtrap_desc[] = {
     "Sturdy Trap      (less likely to break)",
     "Netted Trap      (effective versus flyers)",
     "Confusion Trap   (confuses monsters)",
@@ -1856,7 +1869,7 @@ static char *trap_desc[] = {
     "Genocide Trap    (removes nearby like monsters)"
 };
 
-char trap_tag(menu_type * menu, int oid)
+char mtrap_tag(menu_type * menu, int oid)
 {
     return I2A(oid);
 }
@@ -1864,7 +1877,7 @@ char trap_tag(menu_type * menu, int oid)
 /**
  * Display an entry on the sval menu
  */
-void trap_display(menu_type * menu, int oid, bool cursor, int row, int col,
+void mtrap_display(menu_type * menu, int oid, bool cursor, int row, int col,
 		  int width)
 {
     const u16b *choice = menu_priv(menu);
@@ -1873,18 +1886,23 @@ void trap_display(menu_type * menu, int oid, bool cursor, int row, int col,
     byte attr = (cursor ? TERM_L_BLUE : TERM_WHITE);
 
     /* Print it */
-    c_put_str(attr, format("%s", trap_desc[idx]), row, col);
+    c_put_str(attr, format("%s", mtrap_desc[idx]), row, col);
 }
 
 /**
  * Deal with events on the trap menu
  */
-bool trap_action(menu_type *menu, const ui_event_data *db, int oid)
+bool mtrap_action(menu_type *menu, const ui_event_data *db, int oid)
 {
     u16b *choice = menu_priv(menu);
 
     int idx = choice[oid];
-    place_trap(trap_y, trap_x, MTRAP_BASE + 1 + idx, 0);
+
+    /* Remove the old trap */
+    remove_trap(mtrap_y, mtrap_x, MTRAP_BASE);
+
+    /* Place the new trap */
+    place_trap(mtrap_y, mtrap_x, MTRAP_BASE + 1 + idx, 0);
 
     return FALSE;
 }
@@ -1893,10 +1911,10 @@ bool trap_action(menu_type *menu, const ui_event_data *db, int oid)
 /**
  * Display list of monster traps.
  */
-bool trap_menu(void)
+bool mtrap_menu(void)
 {
     menu_type menu;
-    menu_iter menu_f = { trap_tag, 0, trap_display, trap_action, 0 };
+    menu_iter menu_f = { mtrap_tag, 0, mtrap_display, mtrap_action, 0 };
     region area = { 15, 1, 48, -1 };
     ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
 
@@ -1975,11 +1993,11 @@ extern bool py_modify_trap(int y, int x)
 	return FALSE;
     }
 
-    trap_y = y;
-    trap_x = x;
+    mtrap_y = y;
+    mtrap_x = x;
 
     /* get choice */
-    if (trap_menu()) {
+    if (mtrap_menu()) {
 	/* Notify the player. */
 	msg_print("You modify the monster trap.");
     }
@@ -1989,7 +2007,7 @@ extern bool py_modify_trap(int y, int x)
 }
 
 
-/*
+/**
  * Delete/Remove all the traps when the player leaves the level
  */
 void wipe_trap_list(void)
@@ -2005,7 +2023,7 @@ void wipe_trap_list(void)
 		WIPE(t_ptr, trap_type);
 	}
 
-	/* Reset "t_max" */
+	/* Reset "trap_max" */
 	trap_max = 0;
 
 	/* Reset the number of glyphs on the level. */
@@ -2018,24 +2036,30 @@ void wipe_trap_list(void)
 
 
 
-/*
+/**
  * Remove a trap
  */
 static void remove_trap_aux(trap_type *t_ptr, int y, int x)
 {
-	/* We are deleting a glyph */
-	if (trf_has(t_ptr->flags, TRF_RUNE))
-	    num_runes_on_level[t_ptr->t_idx - 1]--;
-
-	/* We are deleting a monster trap */
-	if (trf_has(t_ptr->flags, TRF_M_TRAP)) 
-	    num_trap_on_level--;
-
-	/* Wipe the trap */
-	(void)WIPE(t_ptr, trap_type);
+    /* We are deleting a rune */
+    if (trf_has(t_ptr->flags, TRF_RUNE))
+    {
+	msg_format("You have removed the %s.", t_ptr->kind->name);
+	num_runes_on_level[t_ptr->t_idx - 1]--;
+    }
+    else
+	message_format(MSG_DISARM, 0, "You have disarmed the %s.", 
+		       t_ptr->kind->name);
+    
+    /* We are deleting a monster trap */
+    if (trf_has(t_ptr->flags, TRF_M_TRAP)) 
+	num_trap_on_level--;
+    
+    /* Wipe the trap */
+    (void)WIPE(t_ptr, trap_type);
 }
 
-/*
+/**
  * Remove traps.
  *
  * If called with t_idx < 0, will remove all traps in the location given.
@@ -2090,5 +2114,205 @@ bool remove_trap(int y, int x, int t_idx)
     
     /* Report whether any traps exist in this grid */
     return (trap_exists);
+}
+
+/**
+ * Remove all traps of a specific kind from a location.
+ */
+void remove_trap_kind(int y, int x, int t_idx)
+{
+    int i;
+
+    /* Scan the current trap list */
+    for (i = 0; i < trap_max; i++)
+    {
+	/* Point to this trap */
+	trap_type *t_ptr = &trap_list[i];
+
+	/* Find a trap in this position */
+	if ((t_ptr->fy == y) && (t_ptr->fx == x))
+	{
+	    /* Require that it be of this type */
+	    if (t_ptr->t_idx == t_idx) (void)remove_trap(y, x, i);
+	}
+    }
+}
+
+/* Trap menu code */
+
+/**
+ * Choice of trap
+ */
+static int trap_choice = 0;
+
+/**
+ * Label for trap
+ */
+static char trap_tag(menu_type *menu, int oid)
+{
+    return I2A(oid);
+}
+
+/**
+ * Display an entry on the trap menu
+ */
+void trap_display(menu_type *menu, int oid, bool cursor, int row, int col,
+		  int width)
+{
+    const u16b *choice = menu_priv(menu);
+
+    byte attr = (cursor ? TERM_L_BLUE : TERM_WHITE);
+
+    c_prt(attr, trap_list[choice[oid]].kind->name, row, col);
+
+}
+
+/**
+ * Deal with events on the jump menu
+ */
+bool trap_action(menu_type *menu, const ui_event_data *evt, int oid)
+{
+    u16b *choice = menu_priv(menu);
+
+    int idx = choice[oid];
+
+    if (evt->type == EVT_SELECT) 
+    {
+	trap_choice = idx;
+	return FALSE;
+    }
+    else
+	return TRUE;
+}
+
+
+/**
+ * Display list of places to jump to.
+ */
+bool trap_menu(int y, int x, int *idx)
+{
+    menu_type menu;
+    menu_iter menu_f = { trap_tag, 0, trap_display, trap_action, 0 };
+    region area = { 15, 1, 48, -1 };
+    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+    int cursor = 0, j = 0;
+    int i;
+    u16b *choice;
+
+    /* Create the array */
+    choice = C_ZNEW(trap_max, u16b);
+
+    /* Scan the current trap list */
+    for (j = 0, i = 0; i < trap_max; i++)
+    {
+	/* Point to this trap */
+	trap_type *t_ptr = &trap_list[i];
+	
+	/* Find a trap in this position */
+	if ((t_ptr->fy == y) && (t_ptr->fx == x))
+	{
+	    /* Trap must be visible */
+	    if (!trf_has(t_ptr->flags, TRF_VISIBLE)) continue;
+
+	    /* Count all traps */
+	    choice[j++] = i;
+
+	    /* Remember last trap index */
+	    *idx = i;
+	}
+    }
+
+    /* We have no visible traps */
+    if (!j) return (FALSE);
+    
+    /* We have one trap (usual case) */
+    if (j == 1) return (TRUE);
+    
+    /* Clear space */
+    area.page_rows = j + 2;
+
+    /* Save the screen and clear it */
+    screen_save();
+
+    /* Set up the menu */
+    WIPE(&menu, menu);
+    menu.title = "Which trap do you choose?";
+    menu.cmd_keys = " \n\r";
+    menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+    menu_setpriv(&menu, j, choice);
+    menu_layout(&menu, &area);
+
+    /* Select an entry */
+    evt = menu_select(&menu, cursor);
+
+    /* Set it */
+    if (evt.type == EVT_SELECT)
+	*idx = trap_choice;
+
+    /* Free memory */
+    FREE(choice);
+
+    /* Load screen */
+    screen_load();
+    return (evt.type != EVT_ESCAPE);
+}
+
+
+/**
+ * Choose a trap.  If there is more than one trap in this grid, we display
+ * a menu, and let the player choose among them.
+ *
+ * Possible enhancements to this code include remembering which trap was
+ * chosen last so that command repeats can work correctly on grids with
+ * multiple traps.
+ */
+bool get_trap(int y, int x, int *idx)
+{
+    /* Require that grid be legal */
+    if (!in_bounds_fully(y, x)) return (FALSE);
+    
+    /* Look for the trap marker */
+    if (!cave_has(cave_info[y][x], CAVE_TRAP)) return (FALSE);
+
+    /* Get a trap */
+    return trap_menu(y, x, idx);
+}
+
+
+/*
+ * Determine if a trap is disarmable
+ */
+static bool is_disarmable_trap(trap_type *t_ptr)
+{
+    if (!trf_has(t_ptr->flags, TRF_VISIBLE)) return (FALSE);
+    return (!trf_has(t_ptr->kind->flags, TRF_NO_DISARM));
+}
+
+/*
+ * Determine if a grid contains disarmable traps.
+ */
+bool has_disarmable_trap(int y, int x)
+{
+    int i;
+    
+    /* First, check the trap marker */
+    if (!cave_has(cave_info[y][x], CAVE_TRAP)) return (FALSE);
+
+    /* Scan the current trap list */
+    for (i = 0; i < trap_max; i++)
+    {
+	/* Point to this trap */
+	trap_type *t_ptr = &trap_list[i];
+	
+	/* Find all traps in this position */
+	if ((t_ptr->fy == y) && (t_ptr->fx == x))
+	{
+	    /* Accept first disarmable trap */
+	    if (is_disarmable_trap(t_ptr)) return (TRUE);
+	}
+    }
+    
+    /* No disarmable traps found */
+    return (FALSE);
 }
 

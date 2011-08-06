@@ -192,7 +192,7 @@ typedef struct trap
 typedef struct trap_type
 {
     byte t_idx;               /**< Trap kind index */
-    struct trap_kind *kind;
+    struct trap *kind;
 
     byte fy;                  /**< Location of trap */
     byte fx;

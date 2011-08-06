@@ -3915,7 +3915,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	cave_off(cave_info[ny][nx], CAVE_MARK);
 
 	/* Break the rune */
-	cave_set_feat(ny, nx, FEAT_FLOOR);
+	remove_trap_kind(ny, nx, RUNE_PROTECT);
 
 	/* One less glyph on the level */
 	num_runes_on_level[RUNE_PROTECT]--;

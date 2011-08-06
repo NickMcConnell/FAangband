@@ -3033,24 +3033,24 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
     case GF_KILL_TRAP:
 	{
 	    /* Destroy traps */
-	    if (tf_has(f_ptr->flags, TF_TRAP)
-		|| tf_has(f_ptr->flags, TF_TRAP_INVIS)) {
+	    if (cave_player_trap(y, x)) 
+	    {
 		/* 95% chance of success. */
-		if (randint1(20) != 20) {
+		if (randint1(20) != 20) 
+		{
 		    /* Check line of sight */
-		    if (player_has_los_bold(y, x)) {
+		    if (player_has_los_bold(y, x)) 
+		    {
 			msg_print("There is a bright flash of light.");
 			obvious = TRUE;
 		    }
 
-		    /* Forget the trap */
-		    cave_off(cave_info[y][x], CAVE_MARK);
-
-		    /* Destroy the trap */
-		    cave_set_feat(y, x, FEAT_FLOOR);
+		    /* Destroy the trap(s) */
+		    remove_trap(y, x, -1);
 		}
 		/* 5% chance of setting off the trap. */
-		else {
+		else 
+		{
 		    msg_print("Your magic was too weak!");
 		    (void) hit_trap(y, x);
 		}

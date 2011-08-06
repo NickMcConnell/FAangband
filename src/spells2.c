@@ -122,7 +122,7 @@ void shapechange(s16b shape)
 	if (cave_feat[y][x] == FEAT_VOID) 
 	    fall_off_cliff();
 
-	else if (cave_trap_invisible(y, x))
+	else if (cave_invisible_trap(y, x))
 	{
 	    /* Disturb */
 	    disturb(0, 0);
@@ -132,7 +132,7 @@ void shapechange(s16b shape)
 	}
 
 	/* Set off a visible trap */
-	else if (cave_trap_visible(y, x)) 
+	else if (cave_visible_trap(y, x)) 
 	{
 	    /* Disturb */
 	    disturb(0, 0);
@@ -1558,7 +1558,7 @@ bool detect_traps(int range, bool show)
 	    if (distance(py, px, y, x) <= range) 
 	    {
 		/* Detect invisible traps */
-		if (cave_trap_invisible(y, x)) 
+		if (cave_invisible_trap(y, x)) 
 		{
 		    if (reveal_trap(y, x, 100, FALSE))
 		    {
@@ -3858,7 +3858,7 @@ bool listen_to_natural_creatures(void)
 	for (x = 1; x < DUNGEON_WID - 1; x++) 
 	{
 	    /* Detect invisible traps */
-	    if (cave_trap_invisible(y, x)) 
+	    if (cave_invisible_trap(y, x)) 
 	    {
 		(void) reveal_trap(y, x, 100, FALSE);
 	    }

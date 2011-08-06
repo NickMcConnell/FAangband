@@ -2163,8 +2163,6 @@ void do_cmd_tunnel(cmd_code code, cmd_arg args[])
  */
 static bool do_cmd_disarm_test(int y, int x)
 {
-    feature_type *f_ptr = &f_info[cave_feat[y][x]];
-
     /* Must have knowledge */
     if (!cave_has(cave_info[y][x], CAVE_MARK)) {
 	/* Message */
@@ -2175,9 +2173,7 @@ static bool do_cmd_disarm_test(int y, int x)
     }
 
     /* Require an actual trap or glyph */
-    if (!tf_has(f_ptr->flags, TF_TRAP) && 
-	!tf_has(f_ptr->flags, TF_RUNE) &&
-	!cave_monster_trap(y, x)) 
+    if (!cave_visible_trap(y, x)) 
     {
 	/* Message */
 	msg_print("You see nothing there to disarm.");
@@ -2201,22 +2197,19 @@ static bool do_cmd_disarm_test(int y, int x)
  */
 extern bool do_cmd_disarm_aux(int y, int x)
 {
-    int i, j, power;
-
-    cptr name;
+    int i, j, power, idx;
 
     bool more = FALSE;
 
-    feature_type *f_ptr = &f_info[cave_feat[y][x]];
     trap_type *t_ptr;
 
     /* Verify legality */
     if (!do_cmd_disarm_test(y, x))
 	return (FALSE);
 
-
-    /* Access trap or glyph name */
-    name = f_info[cave_feat[y][x]].name;
+    /* Choose trap */
+    if (!get_trap(y, x, &idx)) return (FALSE);
+    t_ptr = &trap_list[idx];
 
     /* Get the "disarm" factor */
     i = p_ptr->state.skills[SKILL_DISARM];
@@ -2232,11 +2225,11 @@ extern bool do_cmd_disarm_aux(int y, int x)
     power = 5 + p_ptr->depth / 4;
 
     /* Prevent the player's own traps granting exp. */
-    if (cave_monster_trap(y, x))
+    if (trf_has(t_ptr->flags, TRF_M_TRAP))
 	power = 0;
 
     /* Prevent runes granting exp. */
-    if (tf_has(f_ptr->flags, TF_RUNE))
+    if (trf_has(t_ptr->flags, TRF_RUNE))
 	power = 0;
 
     /* Extract the disarm probability */
@@ -2249,49 +2242,32 @@ extern bool do_cmd_disarm_aux(int y, int x)
     /* Success */
     if ((power == 0) || (randint0(100) < j)) 
     {
-	/* Special message and decrement the count for runes. */
-	(void) remove_trap(yy, xx, -1);
-	if (tf_has(f_ptr->flags, TF_RUNE)) {
-	    msg_format("You have removed the %s.", name);
-	    num_runes_on_level[cave_feat[y][x] - FEAT_RUNE_HEAD]--;
-	}
-
-	/* Normal message otherwise */
-	else
-	    message_format(MSG_DISARM, 0, "You have disarmed the %s.", name);
-
-	/* If a Rogue's monster trap, decrement the trap count. */
-	if (tf_has(f_ptr->flags, TF_M_TRAP))
-	    num_trap_on_level--;
-
+	/* Remove the trap */
+	(void) remove_trap(y, x, idx);
 
 	/* Reward */
 	gain_exp(power);
-
-	/* Forget the trap */
-	cave_off(cave_info[y][x], CAVE_MARK);
-
-	/* Remove the trap */
-	cave_set_feat(y, x, FEAT_FLOOR);
     }
 
     /* Failure -- Keep trying */
-    else if ((i > 5) && (randint1(i) > 5)) {
+    else if ((i > 5) && (randint1(i) > 5)) 
+    {
 	/* Failure */
 	if (OPT(flush_failure))
 	    flush();
 
 	/* Message */
-	msg_format("You failed to disarm the %s.", name);
+	msg_format("You failed to disarm the %s.", t_ptr->kind->name);
 
 	/* We may keep trying */
 	more = TRUE;
     }
 
     /* Failure -- Set off the trap */
-    else {
+    else 
+    {
 	/* Message */
-	msg_format("You set off the %s!", name);
+	msg_format("You set off the %s!", t_ptr->kind->name);
 
 	/* Hit the trap */
 	hit_trap(y, x);
@@ -2580,7 +2556,6 @@ void do_cmd_alter_aux(int dir)
 
     monster_type *m_ptr;
     feature_type *f_ptr;
-    trap_type *t_ptr;
 
     /* Get location */
     y = p_ptr->py + ddy[dir];
@@ -2619,7 +2594,8 @@ void do_cmd_alter_aux(int dir)
     /* 
      * Some players can set traps.  Total number is checked in py_set_trap.
      */
-    else if ((player_has(PF_TRAP)) && (cave_trappable_bold(y, x))) {
+    else if ((player_has(PF_TRAP)) && (cave_trappable_bold(y, x))) 
+    {
 	/* Make sure not to repeat */
 	cmd_set_repeat(0);
 
@@ -2643,31 +2619,36 @@ void do_cmd_alter_aux(int dir)
     }
     
     /* Tunnel through walls */
-    else if (tf_has(f_ptr->flags, TF_ROCK)) {
+    else if (tf_has(f_ptr->flags, TF_ROCK)) 
+    {
 	/* Tunnel */
 	more = do_cmd_tunnel_aux(y, x);
     }
 
     /* Bash jammed doors */
-    else if (tf_has(f_ptr->flags, TF_DOOR_JAMMED)) {
+    else if (tf_has(f_ptr->flags, TF_DOOR_JAMMED)) 
+    {
 	/* Bash */
 	more = do_cmd_bash_aux(y, x);
     }
 
     /* Open closed doors */
-    else if (tf_has(f_ptr->flags, TF_DOOR_CLOSED)) {
+    else if (tf_has(f_ptr->flags, TF_DOOR_CLOSED)) 
+    {
 	/* Close */
 	more = do_cmd_open_aux(y, x);
     }
 
     /* Disarm traps */
-    else if (tf_has(f_ptr->flags, TF_TRAP)) {
+    else if (cave_has(cave_info[y][x], CAVE_TRAP)) 
+    {
 	/* Disarm */
 	more = do_cmd_disarm_aux(y, x);
     }
 
     /* Oops */
-    else {
+    else 
+    {
 	/* Oops */
 	return;
     }
