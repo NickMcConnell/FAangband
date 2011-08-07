@@ -62,7 +62,8 @@ bool is_valid_pf(int y, int x)
 	return (FALSE);
 
     /* Don't move over lava, web or void */
-    if ((feat == FEAT_LAVA) || (feat == FEAT_WEB) || (feat == FEAT_VOID))
+    if (tf_has(f_ptr->flags, TF_FIERY) || (feat == FEAT_WEB) || 
+	tf_has(f_ptr->flags, TF_FALL))
 	return (FALSE);
 
     /* Otherwise good */

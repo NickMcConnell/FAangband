@@ -173,11 +173,11 @@ void show_player(void)
 	if ((adj_grid[i] == FEAT_WEB)
 	    || tf_has(f_ptr->flags, TF_ROCK))
 	    exist_rock_or_web = TRUE;
-	if (cave_monster_trap(yy, xx)
+	if (cave_monster_trap(yy, xx))
 	    exist_mtrap = TRUE;
 	if (adj_grid[i] == FEAT_OPEN)
 	    exist_open_door = TRUE;
-	if (cave_naked_bold(yy, xx)
+	if (cave_naked_bold(yy, xx))
 	    exist_floor = TRUE;
 	if (cave_m_idx[yy][xx] > 0)
 	    exist_monster = TRUE;

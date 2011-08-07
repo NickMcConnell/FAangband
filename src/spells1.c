@@ -405,19 +405,20 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
     f_ptr = &f_info[cave_feat[y][x]];
 
     /* Some special messages or effects for player. */
-    if (cave_m_idx[y][x] < 0) {
-	if (tf_has(f_ptr->flags,TF_TREE))
+    if (cave_m_idx[y][x] < 0) 
+    {
+	if (tf_has(f_ptr->flags, TF_TREE))
 	    msg_print("You come to rest in some trees.");
-	if (cave_feat[y][x] == FEAT_RUBBLE)
+	if (tf_has(f_ptr->flags, TF_ROCK))
 	    msg_print("You come to rest in some rubble.");
-	if (tf_has(f_ptr->flags,TF_WATERY))
+	if (tf_has(f_ptr->flags, TF_WATERY))
 	    msg_print("You come to rest in a pool of water.");
-	if (cave_feat[y][x] == FEAT_LAVA) 
+	if (tf_has(f_ptr->flags, TF_FIERY))
 	{
 	    msg_print("You are thrown into molten lava!");
 	    fire_dam(damroll(4, 100), "burnt up in molten lava");
 	}
-	if ((cave_feat[y][x] == FEAT_VOID) && (p_ptr->schange != SHAPE_BAT)
+	if (tf_has(f_ptr->flags, TF_FALL) && (p_ptr->schange != SHAPE_BAT)
 	    && (p_ptr->schange != SHAPE_WYRM)) {
 	    msg_print("You are hurled over the cliff!");
 	    fall_off_cliff();
@@ -431,7 +432,7 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	bool fear = FALSE;
 
-	if (tf_has(f_ptr->flags,TF_WATERY))
+	if (tf_has(f_ptr->flags, TF_WATERY))
 	{
 	    if ((strchr("uU", r_ptr->d_char))
 		|| ((rsf_has(r_ptr->spell_flags, RSF_BRTH_FIRE))
@@ -447,7 +448,7 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
 		teleport_away(cave_m_idx[y][x], 3);
 	    }
 	}
-	if (tf_has(f_ptr->flags,TF_FIERY)) 
+	if (tf_has(f_ptr->flags, TF_FIERY)) 
 	{
 	    if ((!(rf_has(r_ptr->flags, RF_IM_FIRE)))
 		&& (!(rf_has(r_ptr->flags, RF_FLYING)))) 
@@ -463,7 +464,7 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
 		teleport_away(cave_m_idx[y][x], 3);
 	    }
 	}
-	if (cave_feat[y][x] == FEAT_VOID) 
+	if (tf_has(f_ptr->flags, TF_FALL)) 
 	{
 	    if ((!(rf_has(r_ptr->flags, RF_FLYING)))) 
 	    {
@@ -598,7 +599,8 @@ void teleport_player(int dis, bool safe)
 	add_speed_boost(20 + d);
     }
 
-    if (!safe) {
+    if (!safe) 
+    {
 	/* The player may hit a tree, slam into rubble, or even land in lava. */
 	if (tf_has(f_ptr->flags, TF_TREE) && (randint0(2) == 0)) 
 	{
@@ -607,7 +609,7 @@ void teleport_player(int dis, bool safe)
 	    if (randint0(3) != 0)
 		inc_timed(TMD_STUN, damroll(2, 8), TRUE);
 	} 
-	else if ((cave_feat[y][x] == FEAT_RUBBLE) && (randint0(2) == 0)) 
+	else if (tf_has(f_ptr->flags, TF_ROCK) && (randint0(2) == 0)) 
 	{
 	    msg_print("You slam into jagged rock!");
 	    take_hit(damroll(2, 14), "being slammed into rubble");
@@ -616,12 +618,12 @@ void teleport_player(int dis, bool safe)
 	    if (randint0(3) != 0)
 		inc_timed(TMD_CUT, damroll(2, 14) * 2, TRUE);
 	} 
-	else if (cave_feat[y][x] == FEAT_LAVA) 
+	else if (tf_has(f_ptr->flags, TF_FIERY)) 
 	{
 	    msg_print("You land in molten lava!");
 	    fire_dam(damroll(4, 100), "landing in molten lava");
 	} 
-	else if (cave_feat[y][x] == FEAT_VOID) 
+	else if (tf_has(f_ptr->flags, TF_FALL)) 
 	{
 	    msg_print("You land in mid-air!");
 	    fall_off_cliff();
@@ -3013,7 +3015,7 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 	{
 	    if (dist <= 1) {
 		/* Mark the floor grid for (possible) later alteration. */
-		if (cave_feat[y][x] == FEAT_FLOOR)
+		if (tf_has(f_ptr->flags, TF_FLOOR))
 		    cave_on(cave_info[y][x], CAVE_TEMP);
 	    }
 	    break;
@@ -3176,7 +3178,7 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 		}
 
 		/* Rubble */
-		else if (cave_feat[y][x] == FEAT_RUBBLE) 
+		else if (tf_has(f_ptr->flags, TF_ROCK))
 		{
 		    /* Message */
 		    if (cave_has(cave_info[y][x], CAVE_MARK)) 
@@ -3251,13 +3253,8 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 	/* Make traps */
     case GF_MAKE_TRAP:
 	{
-	    /* Require a trappable grid - needs work -NRM- */
-	    if (!((cave_feat[y][x] == FEAT_FLOOR)
-		  || (cave_feat[y][x] == FEAT_GRASS)
-		  || (cave_feat[y][x] == FEAT_TREE)
-		  || (cave_feat[y][x] == FEAT_TREE2))
-		&& ((cave_o_idx[y][x] == 0)
-		    && (cave_m_idx[y][x] == 0)))
+	    /* Require a trappable grid */
+	    if (!tf_has(f_ptr->flags, TF_TRAP))
 		break;
 
 	    /* Place a trap */
@@ -3308,8 +3305,8 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 	    cave_off(cave_info[y][x], CAVE_GLOW);
 
 	    /* Hack -- Forget "boring" grids */
-	    if ((cave_feat[y][x] == FEAT_FLOOR) || 
-		(cave_feat[y][x] == FEAT_INVIS))
+	    if (tf_has(f_ptr->flags, TF_FLOOR)
+		&& !cave_has(cave_info[y][x], CAVE_TRAP))
 	    {
 		/* Forget */
 		cave_off(cave_info[y][x], CAVE_MARK);
@@ -3888,31 +3885,25 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	turn_evil_boost = 1;
 
     /* Determine if terrain is capable of preventing physical damage. */
-    switch (cave_feat[y][x]) {
-	/* Monsters can duck behind rubble */    
-    case FEAT_RUBBLE:
+    if (tf_has(f_ptr->flags, TF_PROTECT))
     {
 	if ((randint0(4) == 0) && (!rf_has(r_ptr->flags, RF_NEVER_MOVE))
 	    && (!m_ptr->csleep)) 
 	{
-	    msg_format("%^s ducks behind a boulder!", m_name);
-	    return (FALSE);
+	    /* Monsters can duck behind rubble */    
+	    if (tf_has(f_ptr->flags, TF_ROCK))
+	    {
+		msg_format("%^s ducks behind a boulder!", m_name);
+		return (FALSE);
+	    }
+
+	    /* Monsters can duck behind trees */    
+	    if (tf_has(f_ptr->flags, TF_TREE))
+	    {
+		msg_format("%^s hides behind a tree!", m_name);
+		return (FALSE);
+	    }
 	}
-	break;
-    }
-	/* Monsters can duck behind trees */    
-    case FEAT_TREE:
-    case FEAT_TREE2:
-    {
-	if ((randint0(4) == 0)
-	    && (!rf_has(r_ptr->flags, RF_NEVER_MOVE))
-	    && (!m_ptr->csleep)) 
-	{
-	    msg_format("%^s hides behind a tree!", m_name);
-	    return (FALSE);
-	}
-	break;
-    }
     }
 
     /* Monsters can take only partial damage. */
@@ -5487,13 +5478,18 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 		dam /= 2;
 
 	    /* Check terrain */
-	    if (cave_feat[y][x] != FEAT_GRASS) {
+	    if (!tf_has(f_ptr->flags, TF_ORGANIC)) 
+	    {
 		/* Near a tree? */
 		for (i = 1; i < 10; i++)
-		    if ((cave_feat[y + ddy[i]][x + ddx[i]] == FEAT_TREE)
-			|| (cave_feat[y + ddy[i]][x + ddx[i]] == FEAT_TREE2))
-			break;
+		{
+		    int yy = y + ddy[i], xx = x + ddx[i];
+		    feature_type *ff_ptr = &f_info[cave_feat[yy][xx]];
 
+		    if (tf_has(ff_ptr->flags, TF_TREE))
+			break;
+		}
+		    
 		/* Safe for now */
 		if (i == 10)
 		    dam = 0;
@@ -5785,11 +5781,12 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 		m_ptr->csleep = do_sleep;
 
 		/* Flying monsters fall */
-		if (cave_feat[y][x] == FEAT_VOID) {
+		if (tf_has(f_ptr->flags, TF_FALL))
+		{
 		    msg_format("%s falls out of the sky!", m_name);
 		    delete_monster(y, x);
 		}
-
+		
 		/* Go inactive */
 		m_ptr->mflag &= ~(MFLAG_ACTV);
 	    }
@@ -5905,29 +5902,28 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	dam = 1600;
 
     /* Determine if terrain is capable of preventing physical damage. */
-    switch (cave_feat[y][x]) 
+    if (tf_has(f_ptr->flags, TF_PROTECT))
     {
 	/* A player behind rubble can duck. */
-    case FEAT_RUBBLE:
-    {
-	if (randint1(10) == 1) {
-	    msg_print("You duck behind a boulder!");
-	    return (FALSE);
-	}
-	break;
-    }
-    /* Rangers, elves and druids can duck. */
-    case FEAT_TREE:
-    case FEAT_TREE2:
-    {
-	if ((randint1(8) == 1) && 
-	    ((player_has(PF_WOODSMAN))|| (player_has(PF_ELVEN)))) 
+	if (tf_has(f_ptr->flags, TF_ROCK))
 	{
-	    msg_print("You dodge behind a tree!");
-	    return (FALSE);
+	    if (randint1(10) == 1) 
+	    {
+		msg_print("You duck behind a boulder!");
+		return (FALSE);
+	    }
 	}
-	break;
-    }
+	
+	/* Rangers, elves and druids can duck. */
+	if (tf_has(f_ptr->flags, TF_TREE))
+	{
+	    if ((randint1(8) == 1) && 
+		((player_has(PF_WOODSMAN))|| (player_has(PF_ELVEN)))) 
+	    {
+		msg_print("You dodge behind a tree!");
+		return (FALSE);
+	    }
+	}
     }
 
     /* A player can take only partial damage. */
@@ -7438,7 +7434,8 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
     case GF_ICE:
 	{
 	    if (dam > randint1(900) + 300) {
-		if (cave_feat[y][x] == FEAT_LAVA) {
+		if (tf_has(f_ptr->flags, TF_FIERY)) 
+		{
 
 		    /* Forget the lava */
 		    cave_off(cave_info[y][x], CAVE_MARK);
@@ -7461,7 +7458,8 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
     case GF_PLASMA:
 	{
 	    /* Can create lava if extremely powerful. */
-	    if (dam > randint1(1800) + 600) {
+	    if (dam > randint1(1800) + 600) 
+	    {
 		if ((cave_feat[y][x] == FEAT_FLOOR)
 		    || (cave_feat[y][x] == FEAT_RUBBLE)) {
 
@@ -7474,7 +7472,8 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	    }
 
 	    /* Can boil water if very strong. */
-	    if (cave_feat[y][x] == FEAT_WATER) {
+	    if (tf_has(f_ptr->flags, TF_WATERY)) 
+	    {
 		k = 0;
 
 		/* Look around for nearby water. */
@@ -7482,9 +7481,10 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 		    /* Extract adjacent (legal) location */
 		    int yy = y + ddy_ddd[d];
 		    int xx = x + ddx_ddd[d];
+		    feature_type *ff_ptr = &f_info[cave_feat[yy][xx]];
 
 		    /* Count the water grids. */
-		    if (cave_feat[yy][xx] == FEAT_WATER)
+		    if (tf_has(ff_ptr->flags, TF_WATERY))
 			k++;
 		}
 
@@ -7500,7 +7500,8 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	    }
 
 	    /* Can burn trees if strong. */
-	    if ((tf_has(f_ptr->flags, TF_TREE)) && (dam > randint1(400) + 100)) {
+	    if ((tf_has(f_ptr->flags, TF_TREE)) && 
+		(dam > randint1(400) + 100)) {
 		/* Forget the tree */
 		cave_off(cave_info[y][x], CAVE_MARK);
 
@@ -7550,7 +7551,8 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
     case GF_FORCE:
 	{
 	    /* Force breathers are immune. */
-	    if ((affect_monster) && (rsf_has(r_ptr->spell_flags, RSF_BRTH_FORCE)))
+	    if ((affect_monster) && 
+		(rsf_has(r_ptr->spell_flags, RSF_BRTH_FORCE)))
 		break;
 
 	    if ((affect_monster) || (affect_player)) {
@@ -7596,7 +7598,8 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	    }
 
 	    /* Require strong attack.  Require floor. */
-	    if ((dam >= 60) && (cave_feat[y][x] == FEAT_FLOOR)) {
+	    if ((dam >= 60) && (tf_has(f_ptr->flags, TF_FLOOR))) 
+	    {
 		k = 0;
 
 		/* Look around for nearby water. */
@@ -7604,9 +7607,10 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 		    /* Extract adjacent (legal) location */
 		    int yy = y + ddy_ddd[d];
 		    int xx = x + ddx_ddd[d];
+		    feature_type *ff_ptr = &f_info[cave_feat[yy][xx]];
 
 		    /* Count the water grids. */
-		    if (cave_feat[yy][xx] == FEAT_WATER)
+		    if (tf_has(ff_ptr->flags, TF_WATERY))
 			k++;
 		}
 

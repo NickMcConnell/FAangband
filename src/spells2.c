@@ -118,8 +118,9 @@ void shapechange(s16b shape)
     if (landing) 
     {
 	int y = p_ptr->py, x = p_ptr->px;
+	feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
-	if (cave_feat[y][x] == FEAT_VOID) 
+	if (tf_has(f_ptr->flags, TF_FALL)) 
 	    fall_off_cliff();
 
 	else if (cave_invisible_trap(y, x))
@@ -623,7 +624,7 @@ void magic_spiking(void)
     int px = p_ptr->px;
 
     int y, x, i, dir;
-
+    feature_type *f_ptr;
 
     /* Get a direction (or abort) */
     if (!get_rep_dir(&dir))
@@ -632,7 +633,7 @@ void magic_spiking(void)
     /* Get location */
     y = py + ddy[dir];
     x = px + ddx[dir];
-
+    f_ptr = &f_info[cave_feat[y][x]];
 
     /* Verify legality */
     if (!do_cmd_spike_test(y, x))
@@ -658,8 +659,11 @@ void magic_spiking(void)
 	/* Successful jamming */
 	msg_print("You magically jam the door.");
 
+	/* Successful jamming */
+	msg_print("You jam the door with a spike.");
+
 	/* Convert "locked" to "stuck" XXX XXX XXX */
-	if (cave_feat[y][x] < FEAT_DOOR_HEAD + 0x08) 
+	if (!tf_has(f_ptr->flags, TF_DOOR_JAMMED)) 
 	{
 	    cave_feat[y][x] += 0x08;
 	}
@@ -667,7 +671,7 @@ void magic_spiking(void)
 	/* Add three magical spikes to the door. */
 	for (i = 0; i < 3; i++) 
 	{
-	    if (cave_feat[y][x] < FEAT_DOOR_TAIL) 
+	    if (cave_feat[y][x] != FEAT_DOOR_TAIL) 
 	    {
 		cave_feat[y][x] += 0x01;
 	    }
@@ -1613,9 +1617,11 @@ bool detect_doors(int range, bool show)
 	for (x = 0; x < DUNGEON_WID; x++) {
 
 	    /* check range */
-	    if (distance(py, px, y, x) <= range) {
+	    if (distance(py, px, y, x) <= range) 
+	    {
 		/* Detect secret doors */
-		if (cave_feat[y][x] == FEAT_SECRET) {
+		if (cave_feat[y][x] == FEAT_SECRET) 
+		{
 		    /* Pick a door */
 		    place_closed_door(y, x);
 		}
@@ -1624,7 +1630,8 @@ bool detect_doors(int range, bool show)
 		f_ptr = &f_info[cave_feat[y][x]];
 
 		/* Detect doors */
-		if (tf_has(f_ptr->flags, TF_DOOR_ANY)) {
+		if (tf_has(f_ptr->flags, TF_DOOR_ANY)) 
+		{
 		    /* Hack -- Memorize */
 		    cave_on(cave_info[y][x], CAVE_MARK);
 
@@ -1754,7 +1761,8 @@ bool detect_treasure(int range, bool show)
 
 		/* Magma/Quartz + Known Gold */
 		if ((cave_feat[y][x] == FEAT_MAGMA_K)
-		    || (cave_feat[y][x] == FEAT_QUARTZ_K)) {
+		    || (cave_feat[y][x] == FEAT_QUARTZ_K)) 
+		{
 		    /* Hack -- Memorize */
 		    cave_on(cave_info[y][x], CAVE_MARK);
 
@@ -2431,13 +2439,20 @@ void stair_creation(void)
     delete_object(py, px);
 
     /* Create a staircase */
-    if (is_quest(p_ptr->stage) || (!stage_map[p_ptr->stage][DOWN])) {
+    if (is_quest(p_ptr->stage) || (!stage_map[p_ptr->stage][DOWN])) 
+    {
 	cave_set_feat(py, px, FEAT_LESS);
-    } else if (!stage_map[p_ptr->stage][UP]) {
+    } 
+    else if (!stage_map[p_ptr->stage][UP]) 
+    {
 	cave_set_feat(py, px, FEAT_MORE);
-    } else if (randint0(100) < 50) {
+    } 
+    else if (randint0(100) < 50) 
+    {
 	cave_set_feat(py, px, FEAT_MORE);
-    } else {
+    } 
+    else 
+    {
 	cave_set_feat(py, px, FEAT_LESS);
     }
 }
@@ -3879,8 +3894,10 @@ void grow_trees_and_grass(bool powerful)
 
     /* Check everything in line of sight */
     for (y = py - 20; y <= py + 20; y++)
-	for (x = px - 20; x <= px + 20; x++) {
+	for (x = px - 20; x <= px + 20; x++) 
+	{
 	    int dist = distance(py, px, y, x);
+	    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
 	    /* Skip distant grids */
 	    if (dist > 20)
@@ -3907,12 +3924,14 @@ void grow_trees_and_grass(bool powerful)
 		continue;
 
 	    /* Probably grass, otherwise a tree */
-	    if ((randint0(4) == 0) || powerful) {
+	    if ((randint0(4) == 0) || powerful) 
+	    {
 		if (p_ptr->depth < 40)
 		    cave_set_feat(y, x, FEAT_TREE);
 		else
 		    cave_set_feat(y, x, FEAT_TREE2);
-	    } else
+	    } 
+	    else
 		cave_set_feat(y, x, FEAT_GRASS);
 	}
 
@@ -4613,7 +4632,8 @@ void destroy_area(int y1, int x1, int r, bool full)
 	    delete_monster(y, x);
 
 	    /* Destroy "valid" grids */
-	    if (cave_valid_bold(y, x)) {
+	    if (cave_valid_bold(y, x)) 
+	    {
 		int feat = FEAT_FLOOR;
 
 		/* Delete objects */
@@ -4626,19 +4646,22 @@ void destroy_area(int y1, int x1, int r, bool full)
 		t = randint0(200);
 
 		/* Granite */
-		if (t < 20) {
+		if (t < 20) 
+		{
 		    /* Create granite wall */
 		    feat = FEAT_WALL_EXTRA;
 		}
 
 		/* Quartz */
-		else if (t < 70) {
+		else if (t < 70) 
+		{
 		    /* Create quartz vein */
 		    feat = FEAT_QUARTZ;
 		}
 
 		/* Magma */
-		else if (t < 100) {
+		else if (t < 100) 
+		{
 		    /* Create magma vein */
 		    feat = FEAT_MAGMA;
 		}
@@ -4651,15 +4674,19 @@ void destroy_area(int y1, int x1, int r, bool full)
 
 
     /* Hack -- Affect player */
-    if (flag) {
+    if (flag) 
+    {
 	/* Message */
 	msg_print("There is a searing blast of light!");
 
 	/* Blind the player */
-	if (!p_ptr->state.no_blind && !p_resist_good(P_RES_LIGHT)) {
+	if (!p_ptr->state.no_blind && !p_resist_good(P_RES_LIGHT)) 
+	{
 	    /* Become blind */
 	    (void) inc_timed(TMD_BLIND, 10 + randint1(10), TRUE);
-	} else {
+	} 
+	else 
+	{
 	    notice_other(IF_RES_LIGHT, 0);
 	    notice_obj(OF_SEEING, 0);
 	}
@@ -5289,6 +5316,7 @@ static void cave_temp_room_unlight(void)
     for (i = 0; i < temp_n; i++) {
 	int y = temp_y[i];
 	int x = temp_x[i];
+	feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
 	/* No longer in the array */
 	cave_off(cave_info[y][x], CAVE_TEMP);
@@ -5297,7 +5325,8 @@ static void cave_temp_room_unlight(void)
 	cave_off(cave_info[y][x], CAVE_GLOW);
 
 	/* Hack -- Forget "boring" grids */
-	if ((cave_feat[y][x] == FEAT_FLOOR)|| (cave_feat[y][x] == FEAT_INVIS)) 
+	if (tf_has(f_ptr->flags, TF_FLOOR) && 
+	    !cave_has(cave_info[y][x], CAVE_TRAP))
 	{
 	    /* Forget the grid */
 	    cave_off(cave_info[y][x], CAVE_MARK);
@@ -5875,12 +5904,14 @@ bool trap_creation(void)
 
     int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
 
-    /* Mega-hack - trap trees.  Need to fix projection here */
+    /* Trap trees - projection doesn't work. */
     int i;
-    for (i = 0; i < 8; i++) {
-	if ((cave_feat[py + ddy_ddd[i]][px + ddx_ddd[i]] == FEAT_TREE)
-	    || (cave_feat[py + ddy_ddd[i]][px + ddx_ddd[i]] == FEAT_TREE2))
-	    place_trap(py + ddy_ddd[i], px + ddx_ddd[i], -1, p_ptr->depth);
+    for (i = 0; i < 8; i++) 
+    {
+	int y = py + ddy_ddd[i], x = px + ddx_ddd[i];
+	feature_type *f_ptr = &f_info[cave_feat[x][y]];
+	if (tf_has(f_ptr->flags, TF_TREE))
+	    place_trap(y, x, -1, p_ptr->depth);
     }
 
     return (project(-1, 1, py, px, 0, GF_MAKE_TRAP, flg, 0, 0));

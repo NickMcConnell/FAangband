@@ -1356,12 +1356,12 @@ static void display_store(void)
 {
     char buf[80];
 
-
     /* Clear screen */
     Term_clear();
 
     /* The "Home" is special */
-    if (st_ptr->type == STORE_HOME) {
+    if (st_ptr->type == STORE_HOME) 
+    {
 	/* Put the owner name */
 	put_str("Your Home", 2, 30);
 
@@ -1369,13 +1369,15 @@ static void display_store(void)
 	put_str("Item Description", 4, 3);
 
 	/* If showing weights, show label */
-	if (OPT(show_weights)) {
+	if (OPT(show_weights)) 
+	{
 	    put_str("Weight", 4, 70);
 	}
     }
 
     /* Normal stores */
-    else {
+    else 
+    {
 
 	cptr store_name = f_info[FEAT_SHOP_HEAD + st_ptr->type].name;
 	cptr owner_name = ot_ptr->owner_name;
@@ -2776,37 +2778,41 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
     feature_type *f_ptr = &f_info[cave_feat[py][px]];
 
     /* Verify a store */
-    if (!tf_has(f_ptr->flags, TF_SHOP)) {
+    if (!tf_has(f_ptr->flags, TF_SHOP)) 
+    {
 	msg_print("You see no store here.");
 	return;
     }
 
     /* Check if we're in a small town */
-    for (i = 0; i < NUM_TOWNS_SMALL; i++) {
+    for (i = 0; i < NUM_TOWNS_SMALL; i++) 
+    {
 	/* Found the town, adjust the index */
-	if (towns[i] == p_ptr->stage) {
+	if (towns[i] == p_ptr->stage) 
+	{
 	    /* Set the town */
 	    town = i;
 
-	    switch (cave_feat[py][px]) {
-	    case FEAT_SHOP_HEAD + STORE_TEMPLE:
+	    switch (f_ptr->shopnum) 
+	    {
+	    case STORE_TEMPLE:
 		/* Temple */
-		{
-		    which += 1;
-		    break;
-		}
-	    case FEAT_SHOP_HEAD + STORE_ALCH:
+	    {
+		which += 1;
+		break;
+	    }
+	    case STORE_ALCH:
 		/* Alchemist */
-		{
-		    which += 2;
-		    break;
-		}
-	    case FEAT_SHOP_HEAD + STORE_HOME:
+	    {
+		which += 2;
+		break;
+	    }
+	    case STORE_HOME:
 		/* Home */
-		{
-		    which += 3;
-		    break;
-		}
+	    {
+		which += 3;
+		break;
+	    }
 	    }
 
 	    /* Done */
@@ -2819,33 +2825,38 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 	    which += MAX_STORES_SMALL;
     }
 
-    if (!found) {
+    if (!found) 
+    {
 	/* Find the (large) town */
-	for (i = NUM_TOWNS_SMALL; i < NUM_TOWNS; i++) {
+	for (i = NUM_TOWNS_SMALL; i < NUM_TOWNS; i++) 
+	{
 	    /* Found the town, adjust the index */
-	    if (towns[i] == p_ptr->stage) {
+	    if (towns[i] == p_ptr->stage) 
+	    {
 		/* Set the town */
 		town = i;
 
 		/* Extract the store code */
-		which += (cave_feat[py][px] - FEAT_SHOP_HEAD);
+		which += (f_ptr->shopnum);
 
 		/* Got it */
 		break;
-	    } else
+	    } 
+	    else
 		/* Try the next town */
 		which += MAX_STORES_BIG;
 	}
     }
 
     /* Oops */
-    if (which == MAX_STORES) {
-	if (OPT(adult_dungeon)) {
-	    if (cave_feat[py][px] == FEAT_SHOP_HEAD + STORE_MERCH)
+    if (which == MAX_STORES) 
+    {
+	if (OPT(adult_dungeon)) 
+	{
+	    if (f_ptr->shopnum == STORE_MERCH)
 		which = 0;
 	    else
-		which =
-		    cave_feat[py][px] - FEAT_SHOP_HEAD + 4 * NUM_TOWNS_SMALL;
+		which = f_ptr->shopnum + 4 * NUM_TOWNS_SMALL;
 	} else {
 	    msg_print("You see no store here.");
 	    return;

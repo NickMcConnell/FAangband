@@ -759,6 +759,8 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 
     char coords[20];
 
+    feature_type *f_ptr = &f_info[cave_feat[y][x]];
+
     /* Describe the square location */
     coords_desc(coords, sizeof(coords), y, x);
 
@@ -1095,13 +1097,15 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 
 	/* Require knowledge about grid, or ability to see grid */
 	if (!cave_has(cave_info[y][x], CAVE_MARK) && 
-	    !player_can_see_bold(y, x)) {
+	    !player_can_see_bold(y, x)) 
+	{
 	    /* Forget feature */
 	    feat = FEAT_NONE;
 	}
 
 	/* Terrain feature if needed */
-	if (boring || (feat > FEAT_INVIS)) {
+	if (boring || !tf_has(f_ptr->flags, TF_FLOOR))
+	{
 	    cptr name = f_info[feat].name;
 
 	    /* Hack -- handle unknown grids */
@@ -1109,25 +1113,29 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 		name = "unknown grid";
 
 	    /* Pick a prefix */
-	    if (*s2 && (feat >= FEAT_DOOR_HEAD))
+	    if (*s2 && (feat != FEAT_FLOOR))
 		s2 = "in ";
 
 	    /* Pick proper indefinite article */
 	    s3 = (is_a_vowel(name[0])) ? "an " : "a ";
 
 	    /* Hack -- special introduction for store doors */
-	    if ((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL)) {
+	    if (tf_has(f_ptr->flags, TF_SHOP))
+	    {
 		s3 = "the entrance to the ";
 	    }
 
 	    /* Hack - destination of surface paths */
-	    if ((feat >= FEAT_LESS_NORTH) && (feat <= FEAT_MORE_WEST)) {
+	    if ((feat >= FEAT_LESS_NORTH) && (feat <= FEAT_MORE_WEST)) 
+	    {
 		s4 = " to ";
 		s5 = locality_name[stage_map[stage_map[p_ptr->stage]
 					     [NORTH +
 					      (feat - FEAT_LESS_NORTH) / 2]]
 				   [LOCALITY]];
-	    } else {
+	    } 
+	    else 
+	    {
 		s4 = "";
 		s5 = "";
 	    }

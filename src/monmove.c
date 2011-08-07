@@ -1198,26 +1198,32 @@ bool cave_exist_mon(monster_race * r_ptr, int y, int x, bool occupied_ok)
     f_ptr = &f_info[feat];
 
     /* The grid is already occupied. */
-    if (cave_m_idx[y][x] != 0) {
+    if (cave_m_idx[y][x] != 0) 
+    {
 	if (!occupied_ok)
 	    return (FALSE);
     }
 
-  /*** Check passability of various features. ***/
+    /* Glyphs -- must break first */
+    if (cave_trap_specific(y, x, RUNE_PROTECT))
+	return (FALSE);
+	
+    /*** Check passability of various features. ***/
 
-    /* Feature is not a wall */
-    if (!cave_has(cave_info[y][x], CAVE_WALL)) {
+    /* Feature is passable */
+    if (tf_has(f_ptr->flags, TF_PASSABLE)) 
+    {
 	/* Floor -- safe for everything */
-	if (feat == FEAT_FLOOR)
+	if (tf_has(f_ptr->flags, TF_FLOOR))
 	    return (TRUE);
 
 	/* Earthbound demons, firebreathers, and red elementals cannot handle
 	 * water */
-	if (tf_has(f_ptr->flags,TF_WATERY))
+	if (tf_has(f_ptr->flags, TF_WATERY))
 	{
 	    if (rf_has(r_ptr->flags, RF_FLYING))
 		return (TRUE);
-
+	    
 	    if ((rsf_has(r_ptr->flags, RSF_BRTH_FIRE))
 		|| (strchr("uU", r_ptr->d_char))
 		|| ((strchr("E", r_ptr->d_char))
@@ -1225,14 +1231,14 @@ bool cave_exist_mon(monster_race * r_ptr, int y, int x, bool occupied_ok)
 			|| (r_ptr->d_attr == TERM_L_RED)))) {
 		return (FALSE);
 	    }
-
+	    
 	    else
 		return (TRUE);
 	}
-
-
+	
+	
 	/* Only fiery or strong flying creatures can handle lava */
-	if (tf_has(f_ptr->flags,TF_FIERY))
+	if (tf_has(f_ptr->flags, TF_FIERY))
 	{
 	    if (rf_has(r_ptr->flags, RF_IM_FIRE))
 		return (TRUE);
@@ -1251,19 +1257,6 @@ bool cave_exist_mon(monster_race * r_ptr, int y, int x, bool occupied_ok)
 	    return (FALSE);
 	}
 
-	/* Only flying monsters can, well, fly */
-	if (feat == FEAT_VOID) 
-	{
-	    if (rf_has(r_ptr->flags, RF_FLYING))
-		return (TRUE);
-	    else
-		return (FALSE);
-	}
-
-	/* Glyphs -- must break first */
-	if (cave_trap_specific(y, x, RUNE_PROTECT))
-	    return (FALSE);
-	
 	/* Anything else that's not a wall we assume to be legal. */
 	else
 	    return (TRUE);
@@ -1271,24 +1264,30 @@ bool cave_exist_mon(monster_race * r_ptr, int y, int x, bool occupied_ok)
 
 
     /* Feature is a wall */
-    else {
-	/* Rubble, dunes, trees are OK */
-	if (tf_has(f_ptr->flags, TF_PASSABLE))
-	    return (TRUE);
+    else 
+    {
+	/* Only flying monsters can, well, fly */
+	if (tf_has(f_ptr->flags, TF_FALL)) 
+	{
+	    if (rf_has(r_ptr->flags, RF_FLYING))
+		return (TRUE);
+	    else
+		return (FALSE);
+	}
 
 	/* Permanent walls are never OK */
 	if (tf_has(f_ptr->flags, TF_PERMANENT) && tf_has(f_ptr->flags, TF_WALL))
 	    return (FALSE);
-
+	
 	/* Otherwise, test by the monster's ability to live in walls. */
 	if ((rf_has(r_ptr->flags, RF_PASS_WALL))
 	    || (rf_has(r_ptr->flags, RF_KILL_WALL)))
 	    return (TRUE);
-
+	
 	else
 	    return (FALSE);
     }
-
+    
     /* Catch weirdness */
     return (FALSE);
 }
@@ -1327,31 +1326,35 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
     f_ptr = &f_info[feat];
 
     /* The grid is occupied by the player. */
-    if (cave_m_idx[y][x] < 0) {
+    if (cave_m_idx[y][x] < 0) 
+    {
 	/* Monster has no melee blows - character's grid is off-limits. */
 	if (rf_has(r_ptr->flags, RF_NEVER_BLOW))
 	    return (0);
-
+	
 	/* Any monster with melee blows can attack the character. */
 	else
 	    move_chance = 100;
     }
 
     /* The grid is occupied by a monster. */
-    else if (cave_m_idx[y][x] > 0) {
+    else if (cave_m_idx[y][x] > 0) 
+    {
 	monster_type *n_ptr = &m_list[cave_m_idx[y][x]];
 	monster_race *nr_ptr = &r_info[n_ptr->r_idx];
 
 	/* Kill weaker monsters */
 	if ((rf_has(r_ptr->flags, RF_KILL_BODY))
 	    && (!(rf_has(r_ptr->flags, RF_UNIQUE)))
-	    && (r_ptr->mexp > nr_ptr->mexp)) {
+	    && (r_ptr->mexp > nr_ptr->mexp)) 
+	{
 	    move_chance = 100;
 	}
 
 	/* Push past weaker or similar monsters */
 	else if ((rf_has(r_ptr->flags, RF_MOVE_BODY))
-		 && (r_ptr->mexp >= nr_ptr->mexp)) {
+		 && (r_ptr->mexp >= nr_ptr->mexp)) 
+	{
 	    /* It's easier to push past weaker monsters */
 	    if (r_ptr->mexp == nr_ptr->mexp)
 		move_chance = 50;
@@ -1368,29 +1371,31 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
     if (move_chance > 100)
 	move_chance = 100;
 
+    /* Glyphs */
+    if (cave_trap_specific(y, x, RUNE_PROTECT)) 
+    {
+	/* Glyphs are hard to break */
+	return (MIN(100 * r_ptr->level / BREAK_GLYPH, move_chance));
+    }
 
-  /*** Check passability of various features. ***/
+
+    /*** Check passability of various features. ***/
 
     /* Feature allows line of sight */
-    if (!cave_has(cave_info[y][x], CAVE_WALL)) 
+    if (tf_has(f_ptr->flags, TF_PASSABLE)) 
     {
-	/* Floor */
-	if (feat == FEAT_FLOOR) {
-	    /* Any monster can handle floors */
-	    return (move_chance);
-	}
-
-	if (feat == FEAT_WATER) {
+	if (tf_has(f_ptr->flags, TF_WATERY)) 
+	{
 	    /* Flying monsters can always cross water */
 	    if (rf_has(r_ptr->flags, RF_FLYING))
 		return (move_chance);
-
+	    
 	    /* Earthbound demons and firebreathers cannot cross water */
 	    if (rsf_has(r_ptr->flags, RSF_BRTH_FIRE))
 		return (0);
 	    if (strchr("uU", r_ptr->d_char))
 		return (0);
-
+	    
 	    /* "Red" elementals cannot cross water */
 	    if (strchr("E", r_ptr->d_char)
 		&& ((r_ptr->d_attr == TERM_RED)
@@ -1401,48 +1406,68 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
 	    /* Humanoid-type monsters are slowed a little */
 	    if (strchr("ghkoOpPTXy", r_ptr->d_char))
 		return (MIN(75, move_chance));
-
+	    
 	    /* Undead are slowed a little more (a la Ringwraiths) */
 	    if (strchr("GLMVWz", r_ptr->d_char))
 		return (MIN(50, move_chance));
-
+	    
 	    /* Everything else has no problems crossing water */
 	    return (move_chance);
-
+	    
 	}
 
 
 	/* Lava */
-	if (feat == FEAT_LAVA) {
+	if (tf_has(f_ptr->flags, TF_FIERY)) 
+	{
 	    /* Only fiery or strong flying creatures will cross lava */
 	    if (rf_has(r_ptr->flags, RF_IM_FIRE))
 		return (move_chance);
-
+	    
 	    if ((rf_has(r_ptr->flags, RF_FLYING)) && (m_ptr->hp > 49))
 		return (move_chance);
-
+	    
 	    return (0);
 	}
 
-	/* Void */
-	if (feat == FEAT_VOID) {
-	    /* Have to be able to fly */
-	    if (rf_has(r_ptr->flags, RF_FLYING))
+	/* Rubble */
+	if (tf_has(f_ptr->flags, TF_ROCK)) 
+	{
+	    /* Some monsters move easily through rubble */
+	    if ((rf_has(r_ptr->flags, RF_PASS_WALL))
+		|| (rf_has(r_ptr->flags, RF_KILL_WALL))) 
+	    {
 		return (move_chance);
+	    }
+
+	    /* For most monsters, rubble takes more time to cross. */
 	    else
-		return (0);
+		return MIN(50, move_chance);
 	}
 
-	/* Glyphs */
-	if (cave_trap_specific(y, x, RUNE_PROTECT)) 
+	/* Trees */
+	if (tf_has(f_ptr->flags, TF_TREE)) 
 	{
-	    /* Glyphs are hard to break */
-	    return (MIN(100 * r_ptr->level / BREAK_GLYPH, move_chance));
+	    /* Some monsters can pass right through trees */
+	    if (rf_has(r_ptr->flags, RF_PASS_WALL))
+		return (move_chance);
+
+	    /* Some monsters can fly over trees, or know them well */
+	    if ((rf_has(r_ptr->flags, RF_FLYING))
+		|| (rf_has(r_ptr->flags, RF_ANIMAL))) 
+	    {
+		return (move_chance);
+	    }
+
+	    else 
+	    {
+		/* For many monsters, trees take more time to cross. */
+		return (MIN(50, move_chance));
+	    }
 	}
 
 	/* Anything else that's not a wall we assume to be passable. */
-	else
-	    return (move_chance);
+	return (move_chance);
     }
 
 
@@ -1475,8 +1500,7 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
 	}
 
 	/* Doors */
-	if (tf_has(f_ptr->flags, TF_DOOR_ANY) 
-	    && !tf_has(f_ptr->flags, TF_PASSABLE))
+	if (tf_has(f_ptr->flags, TF_DOOR_ANY))
 	{
 	    int unlock_chance = 0;
 	    int bash_chance = 0;
@@ -1493,7 +1517,7 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
 		    int lock_power, ability;
 
 		    /* Door power (from 35 to 245) */
-		    lock_power = 35 * (feat - FEAT_DOOR_HEAD);
+		    lock_power = 35 * (f_ptr->locked);
 
 		    /* Calculate unlocking ability (usu. 11 to 200) */
 		    ability = r_ptr->level + 10;
@@ -1529,17 +1553,12 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
 	    }
 
 	    /* Monster can bash doors */
-	    if (rf_has(r_ptr->flags, RF_BASH_DOOR)) {
+	    if (rf_has(r_ptr->flags, RF_BASH_DOOR)) 
+	    {
 		int door_power, bashing_power;
 
 		/* Door power (from 60 to 420) */
-		/* 
-		 * XXX - just because a door is difficult to unlock 
-		 * shouldn't mean that it's hard to bash.  Until the 
-		 * character door bashing code is changed, however, 
-		 * we'll stick with this.
-		 */
-		door_power = 60 + 60 * ((feat - FEAT_DOOR_HEAD) & 0x07);
+		door_power = 60 + 60 * (f_ptr->jammed);
 
 		/* 
 		 * Calculate bashing ability (usu. 21 to 300).  Note:  
@@ -1571,47 +1590,14 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
 	    return MIN(move_chance, (MAX(unlock_chance, bash_chance)));
 	}
 
-	/* Rubble */
-	if (feat == FEAT_RUBBLE) 
+	/* Void */
+	if (tf_has(f_ptr->flags, TF_FALL)) 
 	{
-	    /* Some monsters move easily through rubble */
-	    if ((rf_has(r_ptr->flags, RF_PASS_WALL))
-		|| (rf_has(r_ptr->flags, RF_KILL_WALL))) 
-	    {
+	    /* Have to be able to fly */
+	    if (rf_has(r_ptr->flags, RF_FLYING))
 		return (move_chance);
-	    }
-
-	    /* For most monsters, rubble takes more time to cross. */
 	    else
-		return MIN(50, move_chance);
-	}
-
-	/* Trees */
-	if (tf_has(f_ptr->flags, TF_TREE)) 
-	{
-	    /* Some monsters can pass right through trees */
-	    if (rf_has(r_ptr->flags, RF_PASS_WALL))
-		return (move_chance);
-
-	    /* Some monsters can fly over trees, or know them well */
-	    if ((rf_has(r_ptr->flags, RF_FLYING))
-		|| (rf_has(r_ptr->flags, RF_ANIMAL))) 
-	    {
-		return (move_chance);
-	    }
-
-	    else 
-	    {
-		/* For many monsters, trees take more time to cross. */
-		return (MIN(50, move_chance));
-	    }
-	}
-
-	/* Dunes */
-	if (feat == FEAT_DUNE) 
-	{
-	    /* Any monster can handle dunes */
-	    return (move_chance);
+		return (0);
 	}
 
 	/* Any wall grid that isn't explicitly made passible is impassible. */
@@ -2736,6 +2722,7 @@ static void make_confused_move(monster_type * m_ptr, int y, int x)
     feature_type *f_ptr;
 
     bool seen = FALSE;
+    bool stun = FALSE;
     bool fear = FALSE;
     bool death = TRUE;
 
@@ -2756,94 +2743,88 @@ static void make_confused_move(monster_type * m_ptr, int y, int x)
     monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 
-    /* Feature blocks line of sight */
-    if (cave_has(cave_info[y][x], CAVE_WALL)) 
+    /* Feature is a (known) door */
+    if (tf_has(f_ptr->flags, TF_DOOR_CLOSED))
     {
-	/* Feature is a (known) door */
-	if (tf_has(f_ptr->flags, TF_DOOR_CLOSED))
-	{
-	    if (seen)
-		msg_format("%^s bangs into a door.", m_name);
-	}
-
-	/* Rubble */
-	else if (feat == FEAT_RUBBLE) 
-	{
-	    if (seen)
-		msg_format("%^s staggers into some rubble.", m_name);
-	}
-
-	/* Tree */
-	else if (tf_has(f_ptr->flags, TF_TREE))
-	{
-	    if (seen)
-		msg_format("%^s wanders into a tree.", m_name);
-	}
-
-	/* Dune */
-	else if (feat == FEAT_DUNE) 
-	{
-	    if (seen)
-		msg_format("%^s stumbles into the sand.", m_name);
-	}
-
-	/* Otherwise, we assume that the feature is a "wall".  XXX */
-	else {
-	    if (seen)
-		msg_format("%^s bashes into a wall.", m_name);
-	}
-
-	/* Sometimes stun the monster, but only lightly */
-	if ((randint0(3) == 0) && (m_ptr->stunned < 5))
-	    m_ptr->stunned += 3;
+	if (seen)
+	    msg_format("%^s bangs into a door.", m_name);
+	stun = TRUE;
     }
 
-    /* Feature allows line of sight */
-    else {
-	/* Lava */
-	if (feat == FEAT_LAVA) 
+    /* Rubble */
+    else if (tf_has(f_ptr->flags, TF_ROCK))
+    {
+	if (seen)
+	    msg_format("%^s bumps into some rocks.", m_name);
+	stun = TRUE;
+    }
+    
+    /* Tree */
+    else if (tf_has(f_ptr->flags, TF_TREE))
+    {
+	if (seen)
+	    msg_format("%^s wanders into a tree.", m_name);
+	stun = TRUE;
+    }
+
+    /* Wall */
+    else if (tf_has(f_ptr->flags, TF_WALL))
+    {
+	if (seen)
+	    msg_format("%^s bashes into a wall.", m_name);
+	stun = TRUE;
+    }
+
+    /* Lava */
+    else if (tf_has(f_ptr->flags, TF_FIERY))
+    {
+	/* Assume death */
+	cptr note_dies = " is burnt to death in lava!";
+	
+	if (mon_take_hit
+	    (cave_m_idx[m_ptr->fy][m_ptr->fx], 50 + m_ptr->maxhp / 50,
+	     &fear, note_dies)) {
+	    death = TRUE;
+	} 
+	else 
 	{
-	    /* Assume death */
-	    cptr note_dies = " is burnt to death in lava!";
-
-	    if (mon_take_hit
-		(cave_m_idx[m_ptr->fy][m_ptr->fx], 50 + m_ptr->maxhp / 50,
-		 &fear, note_dies)) {
-		death = TRUE;
-	    } else {
-		if (seen)
-		    msg_format("%^s is burnt by lava.", m_name);
-	    }
-	}
-
-	/* Water */
-	else if (tf_has(f_ptr->flags, TF_WATERY)) 
-	{
-	    /* Assume death */
-	    cptr note_dies = " is drowned!";
-
-	    if (mon_take_hit(cave_m_idx[m_ptr->fy][m_ptr->fx], 
-			     5 + m_ptr->maxhp / 20, &fear, note_dies)) 
-	    {
-		death = TRUE;
-	    } 
-	    else 
-	    {
-		if (seen)
-		    msg_format("%^s staggers into the water.", m_name);
-	    }
-	}
-
-	/* Void */
-	else if (feat == FEAT_VOID) {
 	    if (seen)
-		msg_format("%^s stumbles off a cliff.", m_name);
-
-	    /* It's gone */
-	    delete_monster(y, x);
+		msg_format("%^s is burnt by lava.", m_name);
 	}
     }
 
+    /* Water */
+    else if (tf_has(f_ptr->flags, TF_WATERY)) 
+    {
+	/* Assume death */
+	cptr note_dies = " is drowned!";
+	
+	if (mon_take_hit(cave_m_idx[m_ptr->fy][m_ptr->fx], 
+			 5 + m_ptr->maxhp / 20, &fear, note_dies)) 
+	{
+	    death = TRUE;
+	} 
+	else 
+	{
+	    if (seen)
+		msg_format("%^s staggers into the water.", m_name);
+	}
+    }
+
+    /* Void */
+    else if (tf_has(f_ptr->flags, TF_FALL)) 
+    {
+	if (seen)
+	    msg_format("%^s stumbles off a cliff.", m_name);
+	
+	/* It's gone */
+	delete_monster(y, x);
+	return;
+    }
+ 
+    /* Sometimes stun the monster, but only lightly */
+    if ((randint0(3) == 0) && (m_ptr->stunned < 5))
+	m_ptr->stunned += 3;
 
     /* Monster is frightened */
     if ((!death) && (fear) && (seen)) {
@@ -3794,23 +3775,40 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
     }
 
 
+    /* Glyphs */
+    if (cave_trap_specific(ny, nx, RUNE_PROTECT)) 
+    {
+	/* Describe observable breakage */
+	if (cave_has(cave_info[ny][nx], CAVE_MARK)) 
+	{
+	    msg_print("The rune of protection is broken!");
+	}
+
+	/* Forget the rune */
+	cave_off(cave_info[ny][nx], CAVE_MARK);
+
+	/* Break the rune */
+	remove_trap_kind(ny, nx, RUNE_PROTECT);
+    }
+
     /* Get the feature in the grid that the monster is trying to enter. */
     feat = cave_feat[ny][nx];
     f_ptr = &f_info[feat];
 
 
-    /* Entering a wall - dunes need work -NRM- */
-    if (cave_has(cave_info[ny][nx], CAVE_WALL) && 
-	!tf_has(f_ptr->flags, TF_EASY)) 
+    /* Entering a wall */
+    if (tf_has(f_ptr->flags, TF_WALL)|| tf_has(f_ptr->flags, TF_DOOR_CLOSED)) 
     {
 	/* Monster passes through walls (and doors) */
-	if (rf_has(r_ptr->flags, RF_PASS_WALL)) {
+	if (rf_has(r_ptr->flags, RF_PASS_WALL)) 
+	{
 	    /* Monster went through a wall */
 	    did_pass_wall = TRUE;
 	}
 
 	/* Monster destroys walls (and doors) */
-	else if (rf_has(r_ptr->flags, RF_KILL_WALL)) {
+	else if (rf_has(r_ptr->flags, RF_KILL_WALL)) 
+	{
 	    /* Monster destroyed a wall */
 	    did_kill_wall = TRUE;
 
@@ -3887,38 +3885,9 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	    }
 	}
 
-	/* Rubble */
-	else if (feat == FEAT_RUBBLE) 
-	{
-	}
-
-	/* Trees */
-	else if (tf_has(f_ptr->flags, TF_TREE))
-	{
-	}
-
 	/* Paranoia */
 	else
 	    return;
-    }
-
-    /* Glyphs */
-    else if (cave_trap_specific(ny, nx, RUNE_PROTECT)) 
-    {
-	/* Describe observable breakage */
-	if (cave_has(cave_info[ny][nx], CAVE_MARK)) 
-	{
-	    msg_print("The rune of protection is broken!");
-	}
-
-	/* Forget the rune */
-	cave_off(cave_info[ny][nx], CAVE_MARK);
-
-	/* Break the rune */
-	remove_trap_kind(ny, nx, RUNE_PROTECT);
-
-	/* One less glyph on the level */
-	num_runes_on_level[RUNE_PROTECT]--;
     }
 
     /* Monster is allowed to move */
@@ -3995,8 +3964,8 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 		f_ptr = &f_info[cave_feat[yy][xx]];
 
 		/* Kill it */
-		if ((!(tf_has(f_ptr->flags, TF_LOS)))
-		    || (tf_has(f_ptr->flags, TF_DOOR_ANY))) 
+		if (!tf_has(f_ptr->flags, TF_LOS) || 
+		    (tf_has(f_ptr->flags, TF_DOOR_ANY))) 
 		{
 		    /* Monster destroyed a wall */
 		    did_kill_wall = TRUE;

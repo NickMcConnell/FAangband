@@ -1469,7 +1469,6 @@ int count_traps(int *y, int *x)
     int d;
     int xx, yy;
     int count;
-    trap_type *t_ptr;
 
     /* Count how many matches */
     count = 0;
@@ -1490,7 +1489,7 @@ int count_traps(int *y, int *x)
 	    continue;
 
 	/* No trap */
-	if (!cave_has(cave_info[y][x], CAVE_TRAP))
+	if (!cave_has(cave_info[yy][xx], CAVE_TRAP))
 	    continue;
 
 	/* Count it */

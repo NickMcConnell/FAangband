@@ -2754,8 +2754,8 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
 	state->see_infra = state->see_infra + bonus;
     }
 
-
-  /*** Special flags ***/
+    
+    /*** Special flags ***/
 
     /* Hack -- Hero/Shero -> Res fear */
     if (p_ptr->timed[TMD_HERO] || p_ptr->timed[TMD_SHERO]) {
@@ -2784,7 +2784,7 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
     /* End normal temporary bonuses; do bounds check on resistance levels */
     resistance_limits(state);
 
-  /*** Analyze weight ***/
+    /*** Analyze weight ***/
 
     /* Extract the current weight (in tenth pounds) */
     j = p_ptr->total_weight;
@@ -2793,8 +2793,10 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
     i = weight_limit(state);
 
     /* Apply "encumbrance" from weight - more in water, except Maiar, flyers */
-    if (j > i / 2) {
-	if ((cave_feat[p_ptr->py][p_ptr->px] == FEAT_WATER)
+    if (j > i / 2) 
+    {
+	feature_type *f_ptr = &f_info[cave_feat[p_ptr->py][p_ptr->px]];
+	if (tf_has(f_ptr->flags, TF_WATERY)
 	    && (!player_has(PF_DIVINE)) && !(p_ptr->schange == SHAPE_BAT)
 	    && !(p_ptr->schange == SHAPE_WYRM))
 	    state->pspeed -= 3 * ((j - (i / 2)) / (i / 10));

@@ -1854,6 +1854,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
 
     monster_type *n_ptr;
     monster_type monster_type_body;
+    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
     cptr name;
 
@@ -1919,25 +1920,29 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
     name = r_ptr->name;
 
     /* Hack -- "unique" monsters must be "unique" */
-    if ((rf_has(r_ptr->flags, RF_UNIQUE)) && (r_ptr->cur_num >= r_ptr->max_num)) {
+    if ((rf_has(r_ptr->flags, RF_UNIQUE)) && (r_ptr->cur_num >= r_ptr->max_num))
+    {
 	/* Cannot create */
 	return (FALSE);
     }
 
     /* Hack -- only 1 player ghost at a time */
-    if ((rf_has(r_ptr->flags, RF_PLAYER_GHOST)) && bones_selector) {
+    if ((rf_has(r_ptr->flags, RF_PLAYER_GHOST)) && bones_selector) 
+    {
 	/* Cannot create */
 	return (FALSE);
     }
 
     /* Depth monsters may NOT be created out of depth */
-    if ((rf_has(r_ptr->flags, RF_FORCE_DEPTH)) && (p_ptr->depth < r_ptr->level)) {
+    if ((rf_has(r_ptr->flags, RF_FORCE_DEPTH)) && (p_ptr->depth < r_ptr->level))
+    {
 	/* Cannot create */
 	return (FALSE);
     }
 
     /* Monsters only there to be shapechanged into can never be placed */
-    if ((rf_has(r_ptr->flags, RF_NO_PLACE))) {
+    if ((rf_has(r_ptr->flags, RF_NO_PLACE))) 
+    {
 	/* Cannot create */
 	return (FALSE);
     }
@@ -1958,7 +1963,8 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
      * If the monster is a player ghost, perform various manipulations 
      * on it, and forbid ghost creation if something goes wrong.
      */
-    if (rf_has(r_ptr->flags, RF_PLAYER_GHOST)) {
+    if (rf_has(r_ptr->flags, RF_PLAYER_GHOST)) 
+    {
 	if (!prepare_ghost(r_idx, n_ptr, FALSE))
 	    return (FALSE);
 
@@ -1970,7 +1976,8 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
     }
 
     /* Enforce sleeping if needed */
-    if (slp && r_ptr->sleep) {
+    if (slp && r_ptr->sleep) 
+    {
 	int val = r_ptr->sleep;
 	n_ptr->csleep = ((val * 2) + randint1(val * 10));
     } else if (!((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
@@ -1980,13 +1987,16 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
 
     /* Enforce no sleeping if needed */
     if ((stage_map[p_ptr->stage][STAGE_TYPE] == MOUNTAINTOP)
-	&& (cave_feat[y][x] == FEAT_VOID))
+	&& (tf_has(f_ptr->flags, TF_FALL)))
 	n_ptr->csleep = 0;
 
     /* Assign maximal hitpoints */
-    if (rf_has(r_ptr->flags, RF_FORCE_MAXHP)) {
+    if (rf_has(r_ptr->flags, RF_FORCE_MAXHP)) 
+    {
 	n_ptr->maxhp = r_ptr->hdice * r_ptr->hside;
-    } else {
+    } 
+    else 
+    {
 	n_ptr->maxhp = damroll(r_ptr->hdice, r_ptr->hside);
     }
 
@@ -2477,6 +2487,7 @@ bool place_monster(int y, int x, bool slp, bool grp, bool quick)
 bool alloc_monster(int dis, bool slp, bool quick)
 {
     monster_race *r_ptr;
+    feature_type *f_ptr;
 
     int r_idx;
 
@@ -2511,7 +2522,8 @@ bool alloc_monster(int dis, bool slp, bool quick)
 	    continue;
 
 	/* Monsters flying only on mountaintop */
-	if ((cave_feat[y][x] == FEAT_VOID)
+	f_ptr = &f_info[cave_feat[y][x]];
+	if (tf_has(f_ptr->flags, TF_FALL)
 	    && (stage_map[p_ptr->stage][STAGE_TYPE] != MOUNTAINTOP))
 	    continue;
 
