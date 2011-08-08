@@ -231,6 +231,14 @@ bool cave_player_trap(int y, int x)
     return (verify_trap(y, x, 0));
 }
 
+/**
+ * Is there a pit trap in this grid?
+ */
+bool cave_pit_trap(int y, int x)
+{
+    return (cave_trap_specific(y, x, TRAP_PIT));
+}
+
 
 
 /**
