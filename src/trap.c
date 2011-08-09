@@ -526,6 +526,7 @@ bool place_trap(int y, int x, int t_idx, int trap_level)
 	{
 	    /* Fill in the trap index */
 	    t_ptr->t_idx = t_idx;
+	    t_ptr->kind = &trap_info[t_idx];
 
 	    /* Fill in the trap details */
 	    t_ptr->fy = y;

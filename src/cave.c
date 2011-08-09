@@ -27,6 +27,7 @@
 #include "game-cmd.h"
 #include "option.h"
 #include "squelch.h"
+#include "trap.h"
 
 
 
@@ -3816,7 +3817,7 @@ void wiz_light(bool wizard)
 	/* Scan all normal grids */
 	for (x = 1; x < DUNGEON_WID - 1; x++) {
 	    /* Process all passable grids (or all grids, if a wizard) */
-	    if ((cave_passable_bold(y, x)) || (wizard))
+	    if (cave_passable_bold(y, x))
 	    {
 		/* Paranoia -- stay in bounds */
 		if (!in_bounds_fully(y, x)) continue;

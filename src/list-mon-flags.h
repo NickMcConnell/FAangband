@@ -1,9 +1,9 @@
 /* list-mon-flags.h - monster race flags
  *
- * Changing flag order will break savefiles. There is a hard-coded limit of
- * 96 flags, due to 12 bytes of storage for lore flags in the savefile. Flags
- * below start from 1 on line 11, so a flag's sequence number is its line
- * number minus 10.
+ * Changing flag order will break savefiles. There was a hard-coded limit of
+ * 96 flags, due to 12 bytes of storage for lore flags in the savefile; this 
+ * should be fixed now. Flags below start from 1 on line 11, so a flag's 
+ * sequence number is its line number minus 10.
  */
 
 /* symbol       descr */
@@ -104,4 +104,4 @@ RF(NO_FEAR,     "")
 RF(NO_STUN,     "")
 RF(NO_CONF,     "")
 RF(NO_SLEEP,    "")
-/* end flags */
+RF(HATE_WATER,  "")
