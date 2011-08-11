@@ -1489,7 +1489,7 @@ int count_traps(int *y, int *x)
 	    continue;
 
 	/* No trap */
-	if (!cave_has(cave_info[yy][xx], CAVE_TRAP))
+	if (!cave_visible_trap(yy, xx))
 	    continue;
 
 	/* Count it */
@@ -2136,38 +2136,6 @@ void do_cmd_tunnel(cmd_code code, cmd_arg args[])
     y = p_ptr->py + ddy[dir];
     x = p_ptr->px + ddx[dir];
 
-    /* Deal with webs first */
-    if (cave_feat[y][x] == FEAT_WEB) {
-	/* Take a turn */
-	p_ptr->energy_use = 100;
-
-	/* Apply confusion */
-	if (confuse_dir(&dir)) {
-	    /* Get location */
-	    y = p_ptr->py + ddy[dir];
-	    x = p_ptr->px + ddx[dir];
-	}
-
-	/* Monster */
-	if (cave_m_idx[y][x] > 0) {
-	    /* Message */
-	    msg_print("There is a monster in the way!");
-
-	    /* Attack */
-	    if (py_attack(y, x, TRUE))
-		return;
-	}
-
-	if (cave_feat[y][x] == FEAT_WEB) {
-	    msg_print("You clear the web.");
-	    cave_set_feat(y, x, FEAT_FLOOR);
-	} else
-	    msg_print("You claw vainly at the web.");
-
-	/* Done */
-	return;
-    }
-
     /* Oops */
     if (!do_cmd_tunnel_test(y, x))
 	return;
@@ -2216,7 +2184,7 @@ static bool do_cmd_disarm_test(int y, int x)
 	return (FALSE);
     }
 
-    /* Require an actual trap or glyph */
+    /* Require an actual trap, web or glyph */
     if (!cave_visible_trap(y, x)) 
     {
 	/* Message */
@@ -2268,12 +2236,8 @@ extern bool do_cmd_disarm_aux(int y, int x)
     /* Extract trap "power". */
     power = 5 + p_ptr->depth / 4;
 
-    /* Prevent the player's own traps granting exp. */
-    if (trf_has(t_ptr->flags, TRF_M_TRAP))
-	power = 0;
-
-    /* Prevent runes granting exp. */
-    if (trf_has(t_ptr->flags, TRF_RUNE))
+    /* Only player traps grant exp. */
+    if (!trf_has(t_ptr->flags, TRF_TRAP))
 	power = 0;
 
     /* Extract the disarm probability */
@@ -2351,12 +2315,12 @@ void do_cmd_disarm(cmd_code code, cmd_arg args[])
 	return;
     }
 
-
     /* Take a turn */
     p_ptr->energy_use = 100;
 
     /* Apply confusion */
-    if (confuse_dir(&dir)) {
+    if (confuse_dir(&dir)) 
+    {
 	/* Get location */
 	y = p_ptr->py + ddy[dir];
 	x = p_ptr->px + ddx[dir];
@@ -2366,7 +2330,8 @@ void do_cmd_disarm(cmd_code code, cmd_arg args[])
     }
 
     /* Monster */
-    if (cave_m_idx[y][x] > 0) {
+    if (cave_m_idx[y][x] > 0) 
+    {
 	/* Message */
 	msg_print("There is a monster in the way!");
 
@@ -2376,13 +2341,15 @@ void do_cmd_disarm(cmd_code code, cmd_arg args[])
     }
 
     /* Chest */
-    if (o_idx) {
+    if (o_idx) 
+    {
 	/* Disarm the chest */
 	more = do_cmd_disarm_chest(y, x, o_idx);
     }
 
     /* Disarm trap */
-    else {
+    else 
+    {
 	/* Disarm the trap */
 	more = do_cmd_disarm_aux(y, x);
     }
@@ -2891,7 +2858,8 @@ static bool do_cmd_walk_test(int y, int x)
 	return (TRUE);
 
     /* Check for being stuck in a web */
-    if (cave_feat[p_ptr->py][p_ptr->px] == FEAT_WEB) {
+    if (cave_web(p_ptr->py, p_ptr->px))
+    {
 	msg_print("You are stuck!");
 	return (FALSE);
     }
@@ -3042,7 +3010,8 @@ void do_cmd_pathfind(cmd_code code, cmd_arg args[])
     }
 
     /* Hack -- handle stuck players */
-    if (cave_feat[p_ptr->py][p_ptr->px] == FEAT_WEB) {
+    if (cave_web(p_ptr->py, p_ptr->px)) 
+    {
 	/* Tell the player */
 	msg_print("You are stuck!");
 

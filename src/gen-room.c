@@ -2415,7 +2415,16 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, cptr data,
 		    if (p_ptr->themed_level)
 			cave_set_feat(y, x, FEAT_PERM_SOLID);
 		    else if (stage_map[p_ptr->stage][STAGE_TYPE] == VALLEY)
-			cave_set_feat(y, x, FEAT_WEB);
+		    {
+			if (randint1(3) == 1)
+			    cave_set_feat(y, x, FEAT_FLOOR);
+			else if (randint1(2) == 1)
+			    cave_set_feat(y, x, FEAT_TREE);
+			else
+			    cave_set_feat(y, x, FEAT_TREE2);
+
+			place_trap(y, x, OBST_WEB, 0);
+		    }
 		    else
 			cave_set_feat(y, x, FEAT_WALL_OUTER);
 		    break;

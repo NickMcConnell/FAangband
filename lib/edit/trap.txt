@@ -57,6 +57,11 @@ M:0:0:1
 F:RUNE | VISIBLE 
 D:A magical rune which affects speed.
 
+## Other trap-like features ##
+N:10:web
+G:%:y
+M:0:0:0
+F:WEB | VISIBLE 
 
 
 ## Player traps ##

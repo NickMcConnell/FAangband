@@ -20,6 +20,7 @@
 #include "angband.h"
 #include "cave.h"
 #include "squelch.h"
+#include "trap.h"
 
 /****** Pathfinding code ******/
 /**
@@ -52,7 +53,7 @@ bool is_valid_pf(int y, int x)
 
     /* Optionally alter known traps/doors on movement */
     if (OPT(easy_alter) && (tf_has(f_ptr->flags, TF_DOOR_CLOSED)
-			    || cave_has(cave_info[y][x], CAVE_TRAP))) 
+			    || cave_visible_trap(y, x))) 
     {
 	return (TRUE);
     }
@@ -61,9 +62,8 @@ bool is_valid_pf(int y, int x)
     if (tf_has(f_ptr->flags, TF_WALL))
 	return (FALSE);
 
-    /* Don't move over lava, web or void */
-    if (tf_has(f_ptr->flags, TF_FIERY) || (feat == FEAT_WEB) || 
-	tf_has(f_ptr->flags, TF_FALL))
+    /* Don't move over lava or void */
+    if (tf_has(f_ptr->flags, TF_FIERY) || tf_has(f_ptr->flags, TF_FALL))
 	return (FALSE);
 
     /* Otherwise good */

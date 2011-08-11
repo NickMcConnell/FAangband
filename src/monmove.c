@@ -3740,7 +3740,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
     }
 
     /* Check if the monster is in a web */
-    if (cave_feat[oy][ox] == FEAT_WEB) 
+    if (cave_web(oy, ox)) 
     {
 	/* Insects and bats get stuck */
 	if (strchr("abcFIKl", r_ptr->d_char))
@@ -3757,7 +3757,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	else if (rf_has(r_ptr->flags, RF_KILL_WALL)) 
 	{
 	    /* Remove the web */
-	    cave_set_feat(oy, ox, FEAT_FLOOR);
+	    remove_trap_kind(oy, ox, OBST_WEB);
 
 	    /* Notice */
 	    did_kill_wall = TRUE;
@@ -3767,7 +3767,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	else 
 	{
 	    /* Remove the web */
-	    cave_set_feat(oy, ox, FEAT_FLOOR);
+	    remove_trap_kind(oy, ox, OBST_WEB);
 
 	    /* Now can't do anything else */
 	    do_move = FALSE;

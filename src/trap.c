@@ -196,19 +196,16 @@ static bool verify_trap(int y, int x, int vis)
 }
 
 /**
- * Is there a visible player trap in this grid?
+ * Is there a visible trap in this grid?
  */
 bool cave_visible_trap(int y, int x)
 {
-    /* First, check the trap marker */
-    if (!cave_has(cave_info[y][x], CAVE_TRAP)) return (FALSE);
-
-    /* Verify trap, require that it be visible */
-    return (verify_trap(y, x, 1));
+    /* Look for a visible trap */
+    return (cave_trap_flag(y, x, TRF_VISIBLE));
 }
 
 /**
- * Is there an invisible player trap in this grid?
+ * Is there an invisible trap in this grid?
  */
 bool cave_invisible_trap(int y, int x)
 {
@@ -224,11 +221,8 @@ bool cave_invisible_trap(int y, int x)
  */
 bool cave_player_trap(int y, int x)
 {
-    /* First, check the trap marker */
-    if (!cave_has(cave_info[y][x], CAVE_TRAP)) return (FALSE);
-
-    /* Verify trap, require that it be invisible */
-    return (verify_trap(y, x, 0));
+    /* Look for a player trap */
+    return (cave_trap_flag(y, x, TRF_TRAP));
 }
 
 /**
@@ -237,6 +231,14 @@ bool cave_player_trap(int y, int x)
 bool cave_pit_trap(int y, int x)
 {
     return (cave_trap_specific(y, x, TRAP_PIT));
+}
+
+/**
+ * Is there a web in this grid?
+ */
+bool cave_web(int y, int x)
+{
+    return (cave_trap_specific(y, x, OBST_WEB));
 }
 
 
@@ -2050,8 +2052,12 @@ void wipe_trap_list(void)
  */
 static void remove_trap_aux(trap_type *t_ptr, int y, int x)
 {
+    /* We are clearing a web */
+    if (trf_has(t_ptr->flags, TRF_WEB))
+	msg_print("You clear the web.");
+
     /* We are deleting a rune */
-    if (trf_has(t_ptr->flags, TRF_RUNE))
+    else if (trf_has(t_ptr->flags, TRF_RUNE))
     {
 	msg_format("You have removed the %s.", t_ptr->kind->name);
 	num_runes_on_level[t_ptr->t_idx - 1]--;

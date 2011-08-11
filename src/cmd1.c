@@ -1101,9 +1101,11 @@ void move_player(int dir)
 
 	    /* Flying players have a chance to miss traps */
 	    if ((p_ptr->schange == SHAPE_BAT) || (p_ptr->schange == SHAPE_WYRM)) {
-		if (cave_invisible_trap(y, x) && (randint0(3) != 0))
+		if (cave_invisible_trap(y, x) && cave_player_trap(y, x) &&
+		    (randint0(3) != 0))
 		    trapped = FALSE;
-		else if (cave_visible_trap(y, x) && (randint0(10) != 0))
+		else if (cave_visible_trap(y, x) && cave_player_trap(y, x) && 
+			 (randint0(10) != 0))
 		    trapped = FALSE;
 	    }
 
@@ -1118,7 +1120,8 @@ void move_player(int dir)
 	    }
 
 	    /* Set off a visible trap */
-	    else if (cave_visible_trap(y, x) && trapped)
+	    else if (cave_visible_trap(y, x) && cave_player_trap(y, x) && 
+		     trapped)
 	    {
 		/* Disturb */
 		disturb(0, 0);

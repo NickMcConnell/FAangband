@@ -1182,6 +1182,9 @@ enum
 #define RUNE_POWER      0x06
 #define RUNE_SPEED      0x07
 
+/* Other obstructions */
+#define OBST_WEB        0x0A
+
 /* Traps */
 #define TRAP_HEAD	0x10
 #define TRAP_TAIL	0x1F

@@ -23,6 +23,7 @@
 #include "object.h"
 #include "spells.h"
 #include "target.h"
+#include "trap.h"
 
 errr (*cmd_get_hook)(cmd_context c, bool wait);
 
@@ -449,6 +450,20 @@ void process_command(cmd_context ctx, bool no_request)
 
 	case CMD_DISARM:
 	{
+	    /* Player is in a web */
+	    if (cave_web(p_ptr->py, p_ptr->px)) 
+	    {
+		remove_trap_kind(p_ptr->py, p_ptr->px, OBST_WEB);
+
+		disturb(0, 0);
+
+		/* Take a turn */
+		p_ptr->energy_use = 100;
+
+		/* Done */
+		return;
+	    }
+
 	    if (OPT(easy_open) && (!cmd->arg_present[0] ||
 				   cmd->arg[0].direction == DIR_UNKNOWN))
 	    {
@@ -464,26 +479,6 @@ void process_command(cmd_context ctx, bool no_request)
 
 	    goto get_dir;
 	}
-
-	case CMD_TUNNEL:
-	{
-	    /* Deal with webs */
-	    if (cave_feat[p_ptr->py][p_ptr->px] == FEAT_WEB) {
-		msg_print("You clear the web.");
-		cave_set_feat(p_ptr->py, p_ptr->px, FEAT_FLOOR);
-
-		disturb(0, 0);
-
-		/* Take a turn */
-		p_ptr->energy_use = 100;
-
-		/* Done */
-		return;
-	    }
-
-	    goto get_dir;
-	}
-
 
 	case CMD_WALK:
 	{
@@ -506,6 +501,7 @@ void process_command(cmd_context ctx, bool no_request)
 	case CMD_RUN:
 	case CMD_JUMP:
 	case CMD_BASH:
+	case CMD_TUNNEL:
 	case CMD_ALTER:
 	case CMD_JAM:
 	{

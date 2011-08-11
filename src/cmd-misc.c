@@ -143,7 +143,7 @@ void show_player(void)
 {
     int i, j, fy, fx;
     int adj_grid[9];
-    bool exist_rock_or_web = FALSE;
+    bool exist_rock = FALSE;
     bool exist_door = FALSE;
     bool exist_open_door = FALSE;
     bool exist_trap = FALSE;
@@ -170,9 +170,8 @@ void show_player(void)
 	    exist_trap = TRUE;
 	if (tf_has(f_ptr->flags, TF_DOOR_CLOSED))
 	    exist_door = TRUE;
-	if ((adj_grid[i] == FEAT_WEB)
-	    || tf_has(f_ptr->flags, TF_ROCK))
-	    exist_rock_or_web = TRUE;
+	if (tf_has(f_ptr->flags, TF_ROCK))
+	    exist_rock = TRUE;
 	if (cave_monster_trap(yy, xx))
 	    exist_mtrap = TRUE;
 	if (adj_grid[i] == FEAT_OPEN)
@@ -184,11 +183,11 @@ void show_player(void)
     }
 
     /* In a web? */
-    if (adj_grid[8] == FEAT_WEB)
-	exist_rock_or_web = TRUE;
+    if (cave_web(p_ptr->py, p_ptr->px))
+	exist_trap = TRUE;
 
     /* Alter a grid */
-    if (exist_trap || exist_door || exist_rock_or_web || exist_mtrap
+    if (exist_trap || exist_door || exist_rock || exist_mtrap
 	|| exist_open_door || count_chests(&fy, &fx, TRUE)
 	|| count_chests(&fy, &fx, FALSE) || (player_has(PF_TRAP)
 					     && exist_floor)
@@ -199,7 +198,7 @@ void show_player(void)
     }
 
     /* Dig a tunnel */
-    if (exist_door || exist_rock_or_web) {
+    if (exist_door || exist_rock) {
 	comm[poss] = 'T';
 	comm_code[poss] = CMD_TUNNEL;
 	comm_descr[poss++] = "Tunnel";

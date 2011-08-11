@@ -7510,12 +7510,10 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	    }
 
 	    /* Clears webs. */
-	    if (cave_feat[y][x] == FEAT_WEB) {
-		/* Forget the web */
-		cave_off(cave_info[y][x], CAVE_MARK);
-
-		/* Destroy the tree */
-		cave_set_feat(y, x, FEAT_FLOOR);
+	    if (cave_web(y, x)) 
+	    {
+		/* Remove the web */
+		remove_trap_kind(y, x, OBST_WEB);
 	    }
 
 	    break;
