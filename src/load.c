@@ -41,8 +41,8 @@
 #include "squelch.h"
 
 
-/* Object constants */
-byte of_size = 0, cf_size = 0, if_size = 0;
+/* Object, trap constants */
+byte of_size = 0, cf_size = 0, if_size = 0, trf_size = 0;
 byte max_p_res = 0, a_max = 0, max_p_bonus = 0, max_p_slay = 0, max_p_brand = 0;
 
 
@@ -261,6 +261,23 @@ static int rd_monster(monster_type *m_ptr)
     return (0);
 }
 
+
+/**
+ * Read a trap record
+ */
+static void rd_trap(trap_type *t_ptr)
+{
+    int i;
+
+    rd_byte(&t_ptr->t_idx);
+    t_ptr->kind = &trap_info[t_ptr->t_idx];
+    rd_byte(&t_ptr->fy);
+    rd_byte(&t_ptr->fx);
+    rd_byte(&t_ptr->xtra);
+
+    for (i = 0; i < trf_size; i++)
+	rd_byte(&t_ptr->flags[i]);
+}
 
 /**
  * Read RNG state (added in 2.8.0)
@@ -1855,3 +1872,23 @@ int rd_history(u32b version)
     return 0;
 }
 
+int rd_traps(u32b version)
+{
+    int i;
+    u32b tmp32u;
+
+    rd_byte(&trf_size);
+    rd_s16b(&trap_max);
+
+    for (i = 0; i < trap_max; i++)
+    {
+	trap_type *t_ptr = &trap_list[i];
+
+	rd_trap(t_ptr);
+    }
+
+    /* Expansion */
+    rd_u32b(&tmp32u);
+
+    return 0;
+}

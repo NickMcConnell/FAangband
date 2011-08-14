@@ -50,6 +50,7 @@ int rd_objects(u32b version);
 int rd_monsters(u32b version);
 int rd_ghost(u32b version);
 int rd_history(u32b version);
+int rd_traps(u32b version);
 
 /* save.c */
 void wr_randomizer(void);
@@ -72,6 +73,7 @@ void wr_objects(void);
 void wr_monsters(void);
 void wr_ghost(void);
 void wr_history(void);
+void wr_traps(void);
 
 
 #endif /* INCLUDED_SAVEFILE_H */

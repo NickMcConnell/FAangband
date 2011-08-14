@@ -181,6 +181,22 @@ static void wr_monster(monster_type *m_ptr)
 }
 
 /**
+ * Write a trap record
+ */
+static void wr_trap(trap_type *t_ptr)
+{
+    int i;
+
+    wr_byte(t_ptr->t_idx);
+    wr_byte(t_ptr->fy);
+    wr_byte(t_ptr->fx);
+    wr_byte(t_ptr->xtra);
+
+    for (i = 0; i < TRF_SIZE; i++)
+	wr_byte(t_ptr->flags[i]);
+}
+
+/**
  * Write RNG state
  */
 void wr_randomizer(void)
@@ -1050,3 +1066,20 @@ void wr_history(void)
 }
 
 
+void wr_traps(void)
+{
+    int i;
+
+    wr_byte(TRF_SIZE);
+    wr_s16b(trap_max);
+
+    for (i = 0; i < trap_max; i++)
+    {
+	trap_type *t_ptr = &trap_list[i];
+
+	wr_trap(t_ptr);
+    }
+
+    /* Expansion */
+    wr_u32b(0);
+}

@@ -57,6 +57,7 @@ static const struct
     { "monsters", rd_monsters, wr_monsters, 1, 1 },
     { "ghost", rd_ghost, wr_ghost, 1, 1 },
     { "history", rd_history, wr_history, 1, 1 },
+    { "traps", rd_traps, wr_traps, 1, 1 },
 };
 
 

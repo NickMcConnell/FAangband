@@ -4368,8 +4368,9 @@ void cleanup_angband(void)
 
     FREE(p_ptr->inventory);
 
-    /* Free the lore, monster, and object lists */
+    /* Free the lore, trap, monster, and object lists */
     FREE(l_list);
+    FREE(trap_list);
     FREE(m_list);
     FREE(o_list);
 
