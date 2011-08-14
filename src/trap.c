@@ -389,7 +389,7 @@ static int pick_trap(int feat, int trap_level)
 
     /* Try to create a trap appropriate to the level.  Make certain that at
      * least one trap type can be made on any possible level. -LM- */
-    while (!(trap_is_okay)) 
+    while (!trap_is_okay) 
     {
 	/* Pick at random. */
 	trap = TRAP_HEAD + randint0(TRAP_TAIL - TRAP_HEAD + 1);
@@ -400,6 +400,9 @@ static int pick_trap(int feat, int trap_level)
 	/* Require that trap_level not be too low */
 	if (trap_ptr->min_depth > trap_level) continue;
 
+	/* Assume legal until proven otherwise. */
+	trap_is_okay = TRUE;
+
 	/* Tree? */
 	if (tf_has(f_ptr->flags, TF_TREE) && 
 	    !trf_has(trap_ptr->flags, TRF_TREE))
@@ -409,9 +412,6 @@ static int pick_trap(int feat, int trap_level)
 	if (tf_has(f_ptr->flags, TF_FLOOR) && 
 	    !trf_has(trap_ptr->flags, TRF_FLOOR))
 	    trap_is_okay = FALSE;
-
-	/* Assume legal until proven otherwise. */
-	trap_is_okay = TRUE;
 
 	/* Check legality. */
 	switch (trap) 
