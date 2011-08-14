@@ -226,14 +226,6 @@ bool cave_player_trap(int y, int x)
 }
 
 /**
- * Is there a pit trap in this grid?
- */
-bool cave_pit_trap(int y, int x)
-{
-    return (cave_trap_specific(y, x, TRAP_PIT));
-}
-
-/**
  * Is there a web in this grid?
  */
 bool cave_web(int y, int x)
@@ -846,6 +838,10 @@ void hit_trap_aux(int y, int x, int trap)
 		    Rand_quick = TRUE;
 		}
 	    }
+
+	    /* Change to pit terrain */
+	    remove_trap(y, x, trap);
+	    cave_set_feat(y, x, FEAT_PIT);
 
 	    break;
 	}
