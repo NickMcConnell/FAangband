@@ -120,7 +120,7 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
     }
     /* Even for < */
     else if (pstair & 0x01) {
-	if (pstair > FEAT_TRAP_HEAD) {
+	if (pstair > FEAT_DOOR_HEAD) {
 	    msg_print("This is a path to greater danger.");
 	    return;
 	} else {
@@ -276,7 +276,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
     }
     /* Odd for > */
     else if (!(pstair & 0x01)) {
-	if (pstair > FEAT_TRAP_HEAD) {
+	if (pstair > FEAT_DOOR_HEAD) {
 	    msg_print("This is a path to less danger.");
 	    return;
 	} else {

@@ -1103,10 +1103,6 @@ enum
 #define FEAT_MORE_SHAFT	0x07
 #define FEAT_LESS_SHAFT	0x08
 
-/* Traps */
-#define FEAT_TRAP_HEAD	0x10
-#define FEAT_TRAP_TAIL	0x1F
-
 /* Doors */
 #define FEAT_DOOR_HEAD	0x20
 #define FEAT_DOOR_TAIL	0x2F
@@ -1159,11 +1155,8 @@ enum
 #define FEAT_TREE               0x72
 #define FEAT_TREE2		0x73
 #define FEAT_GRASS              0x74  
-#define FEAT_GRASS_INVIS        0x75  
-#define FEAT_WEB                0x76  
 #define FEAT_VOID               0x77  
-#define FEAT_TREE_INVIS         0x78  
-#define FEAT_TREE2_INVIS        0x79  
+#define FEAT_PIT                0x78  
 #define FEAT_DUNE               0x7a
 
 /*** Trap Indexes (see "lib/edit/trap.txt") ***/
@@ -2549,9 +2542,7 @@ enum
 	(cave_feat[Y][X] == FEAT_TREE2) || \
 	(cave_feat[Y][X] == FEAT_RUBBLE) || \
 	(cave_feat[Y][X] == FEAT_DUNE) || \
-	(cave_feat[Y][X] >= FEAT_VOID) || \
-	((cave_feat[Y][X] >= FEAT_TRAP_HEAD) && \
-	 (cave_feat[Y][X] <= FEAT_TRAP_TAIL)))
+	(cave_feat[Y][X] >= FEAT_VOID))
 
 
 

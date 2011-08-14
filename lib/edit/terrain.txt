@@ -744,6 +744,16 @@ F:LOS | PROJECT | FALL
 D:Empty space - only flying creatures can pass across without falling.  All 
 D:spells and missiles can pass through.
 
+# 0x78 --> special feature -- pit
+
+N:120:pit
+G:.:U
+P:20
+X:0:0:0:0
+F:LOS | PROJECT | PASSABLE | EXPOSE 
+D:Ends LOS, stops missiles, bolts, and beams, and reduces the radius of ball 
+D:spells.  
+
 # 0x7a --> special feature -- sand dune
 
 N:122:sand dunes
