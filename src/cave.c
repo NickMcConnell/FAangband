@@ -1121,7 +1121,8 @@ void map_info(unsigned y, unsigned x, grid_data *g)
     }
        
     /* There is a trap in this grid */
-    if (cave_has(cave_info[y][x], CAVE_TRAP))
+    if (cave_has(cave_info[y][x], CAVE_TRAP) && 
+	cave_has(cave_info[y][x], CAVE_MARK))
     {
 	int i;
 	
@@ -3838,7 +3839,7 @@ void wiz_light(bool wizard)
 		    }
 		    
 		    /* Memorize features other than ordinary floor */
-		    if (!cave_floor_bold(yy, xx))
+		    if (!cave_floor_bold(yy, xx) || cave_visible_trap(yy, xx))
 		    {
 			/* Memorize the grid */
 			cave_on(cave_info[yy][xx], CAVE_MARK);

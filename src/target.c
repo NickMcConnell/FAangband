@@ -1024,13 +1024,12 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 		/* Sometimes stop at "space" key */
 		if ((query.key == ' ') && !(mode & (TARGET_LOOK)))
 		    break;
-		
-		/* Double break */
-		if (this_o_idx)
-		    break;
 	    }
 	}
 	
+	/* Double break */
+	if (cave_visible_trap(y, x))
+	    break;
 	
 	/* Assume not floored */
 	floored = FALSE;
