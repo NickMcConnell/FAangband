@@ -3048,7 +3048,7 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 		    }
 
 		    /* Destroy the trap(s) */
-		    remove_trap(y, x, -1);
+		    remove_trap(y, x, FALSE, -1);
 		}
 		/* 5% chance of setting off the trap. */
 		else 

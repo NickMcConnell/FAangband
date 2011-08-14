@@ -11,6 +11,7 @@ int monster_trap_idx(int y, int x);
 bool cave_visible_trap(int y, int x);
 bool cave_invisible_trap(int y, int x);
 bool cave_player_trap(int y, int x);
+int visible_trap_idx(int y, int x);
 bool cave_web(int y, int x);
 bool get_trap_graphics(int t_idx, byte *a, char *c, bool require_visible);
 extern bool reveal_trap(int y, int x, int chance, bool msg);
@@ -21,7 +22,7 @@ extern void py_steal(int y, int x);
 extern bool py_set_trap(int y, int x);
 extern bool py_modify_trap(int y, int x);
 bool get_trap(int y, int x, int *idx);
-bool remove_trap(int y, int x, int t_idx);
+bool remove_trap(int y, int x, bool msg, int t_idx);
 void remove_trap_kind(int y, int x, int t_idx);
 
 #endif /* !TRAP_H */

@@ -779,7 +779,7 @@ void move_player(int dir)
     }
 
     /* It takes some dexterity, or failing that strength, to get out of pits */
-    if (cave_feat[y][x] == FEAT_PIT) 
+    if (cave_feat[py][px] == FEAT_PIT) 
     {
 	str_escape = adj_dex_dis[p_ptr->state.stat_ind[A_STR]];
 	dex_escape = adj_dex_dis[p_ptr->state.stat_ind[A_DEX]];

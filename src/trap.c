@@ -226,6 +226,32 @@ bool cave_player_trap(int y, int x)
 }
 
 /**
+ * Return the index of any visible trap 
+ */
+int visible_trap_idx(int y, int x)
+{
+    int i;
+
+    if (!cave_visible_trap(y, x)) 
+	return -1;
+    
+    /* Scan the current trap list */
+    for (i = 0; i < trap_max; i++)
+    {
+	/* Point to this trap */
+	trap_type *t_ptr = &trap_list[i];
+	
+	/* Find a visible trap in this position */
+	if ((t_ptr->fy == y) && (t_ptr->fx == x) && 
+	    trf_has(t_ptr->flags, TRF_VISIBLE))
+	    return (i);
+    }
+    
+    /* Paranoia */
+    return -1;
+}
+
+/**
  * Is there a web in this grid?
  */
 bool cave_web(int y, int x)
@@ -250,7 +276,7 @@ bool get_trap_graphics(int t_idx, byte *a, char *c, bool require_visible)
     if (!require_visible || trf_has(t_ptr->flags, TRF_VISIBLE))
     {
 	/* Get the graphics */
-	*a = color_char_to_attr(t_ptr->kind->x_attr);
+	*a = t_ptr->kind->x_attr;
 	*c = t_ptr->kind->x_char;
 	
 	/* We found a trap */
@@ -632,7 +658,7 @@ void hit_trap_aux(int y, int x, int trap)
 		 || (stage_map[p_ptr->stage][STAGE_TYPE] == VALLEY))
 		&& (!stage_map[p_ptr->stage][DOWN])) {
 		cave_off(cave_info[y][x], CAVE_MARK);
-		remove_trap(y, x, trap);
+		remove_trap(y, x, TRUE, trap);
 		msg_print("The trap fails!");
 		break;
 	    }
@@ -727,7 +753,7 @@ void hit_trap_aux(int y, int x, int trap)
 			}
 
 			/* morgul-traps are one-time only. */
-			remove_trap(y, x, trap);
+			remove_trap(y, x, TRUE, trap);
 
 			Rand_quick = TRUE;
 		    }
@@ -840,7 +866,7 @@ void hit_trap_aux(int y, int x, int trap)
 	    }
 
 	    /* Change to pit terrain */
-	    remove_trap(y, x, trap);
+	    remove_trap(y, x, FALSE, trap);
 	    cave_set_feat(y, x, FEAT_PIT);
 
 	    break;
@@ -1086,7 +1112,7 @@ void hit_trap_aux(int y, int x, int trap)
 	    }
 
 	    /* these are all one-time traps. */
-	    remove_trap(y, x, trap);
+	    remove_trap(y, x, TRUE, trap);
 
 	    break;
 	}
@@ -1100,7 +1126,7 @@ void hit_trap_aux(int y, int x, int trap)
 		nastyness += 10;
 
 	    /* make room for alterations. */
-	    remove_trap(y, x, trap);
+	    remove_trap(y, x, TRUE, trap);
 
 	    /* Everything truely random from here on. */
 	    Rand_quick = FALSE;
@@ -1156,7 +1182,7 @@ void hit_trap_aux(int y, int x, int trap)
 	    nastyness = randint0(100);
 
 	    /* these are all one-time traps. */
-	    remove_trap(y, x, trap);
+	    remove_trap(y, x, TRUE, trap);
 
 	    /* Everything truely random from here on. */
 	    Rand_quick = FALSE;
@@ -1438,7 +1464,7 @@ void hit_trap_aux(int y, int x, int trap)
 	    Rand_quick = FALSE;
 
 	    if (randint0(8) == 0) 
-		remove_trap(y, x, trap);
+		remove_trap(y, x, TRUE, trap);
 	    
 	    Rand_quick = TRUE;
 
@@ -1484,7 +1510,7 @@ void hit_trap_aux(int y, int x, int trap)
 		msg_print("A falling branch just misses you.");
 
 	    /* No more */
-	    remove_trap(y, x, trap);
+	    remove_trap(y, x, TRUE, trap);
 
 	    break;
 	}
@@ -1906,7 +1932,7 @@ bool mtrap_action(menu_type *menu, const ui_event_data *db, int oid)
     int idx = choice[oid];
 
     /* Remove the old trap */
-    remove_trap(mtrap_y, mtrap_x, MTRAP_BASE);
+    remove_trap(mtrap_y, mtrap_x, TRUE, MTRAP_BASE);
 
     /* Place the new trap */
     place_trap(mtrap_y, mtrap_x, MTRAP_BASE + 1 + idx, 0);
@@ -2046,19 +2072,23 @@ void wipe_trap_list(void)
 /**
  * Remove a trap
  */
-static void remove_trap_aux(trap_type *t_ptr, int y, int x)
+static void remove_trap_aux(trap_type *t_ptr, int y, int x, bool msg)
 {
     /* We are clearing a web */
     if (trf_has(t_ptr->flags, TRF_WEB))
-	msg_print("You clear the web.");
+    {
+	if (msg)
+	    msg_print("You clear the web.");
+    }
 
     /* We are deleting a rune */
     else if (trf_has(t_ptr->flags, TRF_RUNE))
     {
-	msg_format("You have removed the %s.", t_ptr->kind->name);
+	if (msg)
+	    msg_format("You have removed the %s.", t_ptr->kind->name);
 	num_runes_on_level[t_ptr->t_idx - 1]--;
     }
-    else
+    else if (msg)
 	message_format(MSG_DISARM, 0, "You have disarmed the %s.", 
 		       t_ptr->kind->name);
     
@@ -2078,7 +2108,7 @@ static void remove_trap_aux(trap_type *t_ptr, int y, int x)
  *
  * Return TRUE if no traps now exist in this grid.
  */
-bool remove_trap(int y, int x, int t_idx)
+bool remove_trap(int y, int x, bool msg, int t_idx)
 {
     int i;
     bool trap_exists;
@@ -2090,7 +2120,7 @@ bool remove_trap(int y, int x, int t_idx)
 	trap_type *t_ptr = &trap_list[t_idx];
 	
 	/* Remove it */
-	remove_trap_aux(t_ptr, y, x);
+	remove_trap_aux(t_ptr, y, x, msg);
 	
 	/* Note when trap list actually gets shorter */
 	if (t_idx == trap_max - 1) trap_max--;
@@ -2109,7 +2139,7 @@ bool remove_trap(int y, int x, int t_idx)
 	    if ((t_ptr->fy == y) && (t_ptr->fx == x))
 	    {
 		/* Remove it */
-		remove_trap_aux(t_ptr, y, x);
+		remove_trap_aux(t_ptr, y, x, msg);
 		
 		/* Note when trap list actually gets shorter */
 		if (i == trap_max - 1) trap_max--;
@@ -2144,7 +2174,7 @@ void remove_trap_kind(int y, int x, int t_idx)
 	if ((t_ptr->fy == y) && (t_ptr->fx == x))
 	{
 	    /* Require that it be of this type */
-	    if (t_ptr->t_idx == t_idx) (void)remove_trap(y, x, i);
+	    if (t_ptr->t_idx == t_idx) (void)remove_trap(y, x, TRUE, i);
 	}
     }
 }

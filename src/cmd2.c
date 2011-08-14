@@ -2251,7 +2251,7 @@ extern bool do_cmd_disarm_aux(int y, int x)
     if ((power == 0) || (randint0(100) < j)) 
     {
 	/* Remove the trap */
-	(void) remove_trap(y, x, idx);
+	(void) remove_trap(y, x, TRUE, idx);
 
 	/* Reward */
 	gain_exp(power);

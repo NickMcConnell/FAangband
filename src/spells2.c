@@ -4640,7 +4640,7 @@ void destroy_area(int y1, int x1, int r, bool full)
 		delete_object(y, x);
 
 		/* Decrement the trap or rune count. */
-		(void) remove_trap(y, x, -1);
+		(void) remove_trap(y, x, FALSE, -1);
 
 		/* Wall (or floor) type */
 		t = randint0(200);
@@ -5055,7 +5055,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 		delete_object(yy, xx);
 
 		/* Delete traps */
-		(void) remove_trap(yy, xx, -1);
+		(void) remove_trap(yy, xx, FALSE, -1);
 
 		/* Wall (or floor) type */
 		t = (floor ? randint0(120) : 200);

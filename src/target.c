@@ -21,6 +21,7 @@
 #include "game-cmd.h"
 #include "monster.h"
 #include "squelch.h"
+#include "trap.h"
 
 /* 
  * Height of the help screen; any higher than 4 will overlap the health
@@ -491,6 +492,10 @@ static bool target_set_interactive_accept(int y, int x)
 	if (m_ptr->ml)
 	    return (TRUE);
     }
+
+    /* Traps */
+    if (cave_visible_trap(y, x))
+	return(TRUE);
 
     /* Scan all objects in the grid */
     for (o_ptr = get_first_object(y, x); o_ptr; o_ptr = get_next_object(o_ptr)) {
@@ -964,7 +969,69 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 	    }
 	}
 
+	/* A trap */
+	if (cave_visible_trap(y, x)) 
+	{
+	    trap_type *t_ptr = &trap_list[visible_trap_idx(y, x)];
 
+	    /* Not boring */
+	    boring = FALSE;
+
+	    /* Interact */
+	    while (1) 
+	    {
+		/* Change the intro */
+		if (cave_m_idx[y][x] < 0) 
+		{
+		    s1 = "You are ";
+		    s2 = "on ";
+		}
+		else
+		{
+		    s1 = "You see ";
+		    s2 = "";
+		}
+
+		/* Pick proper indefinite article */
+		s3 = (is_a_vowel(t_ptr->kind->name[0])) ? "an " : "a ";
+
+		/* Describe, and prompt for recall */
+		if (p_ptr->wizard) 
+		{
+		    strnfmt(out_val, sizeof(out_val),
+			    "%s%s%s%s, %s (%d:%d).", s1, s2, s3,
+			    t_ptr->kind->name, coords, y, x);
+		} 
+		else 
+		{
+		    strnfmt(out_val, sizeof(out_val), "%s%s%s%s, %s.", 
+			    s1, s2, s3, t_ptr->kind->name, coords);
+		}
+
+		prt(out_val, 0, 0);
+
+		/* Place cursor */
+		move_cursor_relative(y, x);
+
+		/* Command */
+		query = inkey_ex();
+		
+		/* Stop on everything but "return"/"space" */
+		if ((query.key != '\n') && (query.key != '\r')
+		    && (query.key != ' '))
+		    break;
+		
+		/* Sometimes stop at "space" key */
+		if ((query.key == ' ') && !(mode & (TARGET_LOOK)))
+		    break;
+		
+		/* Double break */
+		if (this_o_idx)
+		    break;
+	    }
+	}
+	
+	
 	/* Assume not floored */
 	floored = FALSE;
 
