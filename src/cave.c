@@ -350,6 +350,7 @@ static byte breath_to_attr[32][2] = {
     {0, 0},
     {0, 0},
     {0, 0},
+    {0, 0},
     {TERM_SLATE, TERM_L_DARK},	/* RSF_BRTH_ACID */
     {TERM_BLUE, TERM_L_BLUE},	/* RSF_BRTH_ELEC */
     {TERM_RED, TERM_L_RED},	/* RSF_BRTH_FIRE */
@@ -372,8 +373,7 @@ static byte breath_to_attr[32][2] = {
     {TERM_BLUE, TERM_SLATE},	/* RSF_BRTH_STORM */
     {TERM_RED, TERM_GREEN},	/* RSF_BRTH_DFIRE */
     {TERM_WHITE, TERM_L_WHITE},	/* RSF_BRTH_ICE */
-    {0, 0},			/* */
-    {0, 0}			/* */
+    {255, 255}			/* (any color) *//* RSF_BRTH_ALL */
 };
 
 
@@ -400,10 +400,11 @@ static byte multi_hued_attr(monster_race * r_ptr)
 
     /* Monsters with no ranged attacks can be any color */
     if (!r_ptr->freq_ranged)
-	return (randint1(15));
+	return (randint1(BASIC_COLORS));
 
     /* Check breaths */
-    for (i = 0; i < 32; i++) {
+    for (i = 0; i < 32; i++) 
+    {
 	bool stored = FALSE;
 
 	/* Don't have that breath */
@@ -419,24 +420,24 @@ static byte multi_hued_attr(monster_race * r_ptr)
 
 	/* Monster can be of any color */
 	if (first_color == 255)
-	    return (randint1(15));
-
+	    return (randint1(BASIC_COLORS));
 
 	/* Increment the number of breaths */
 	breaths++;
 
 	/* Monsters with lots of breaths may be any color. */
 	if (breaths == 6)
-	    return (randint1(15));
-
+	    return (randint1(BASIC_COLORS));
 
 	/* Always store the first color */
-	for (j = 0; j < stored_colors; j++) {
+	for (j = 0; j < stored_colors; j++) 
+	{
 	    /* Already stored */
 	    if (allowed_attrs[j] == first_color)
 		stored = TRUE;
 	}
-	if (!stored) {
+	if (!stored) 
+	{
 	    allowed_attrs[stored_colors] = first_color;
 	    stored_colors++;
 	}
@@ -445,17 +446,19 @@ static byte multi_hued_attr(monster_race * r_ptr)
 	 * Remember (but do not immediately store) the second color 
 	 * of the first breath.
 	 */
-	if (breaths == 1) {
+	if (breaths == 1) 
+	{
 	    second_color = breath_to_attr[i][1];
 	}
     }
 
     /* Monsters with no breaths may be of any color. */
     if (breaths == 0)
-	return (randint1(15));
+	return (randint1(BASIC_COLORS));
 
     /* If monster has one breath, store the second color too. */
-    if (breaths == 1) {
+    if (breaths == 1) 
+    {
 	allowed_attrs[stored_colors] = second_color;
 	stored_colors++;
     }
