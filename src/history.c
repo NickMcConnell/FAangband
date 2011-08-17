@@ -189,7 +189,7 @@ bool history_add_full(u16b type, byte a_idx, s16b place, s16b clev, s32b turn, c
  */
 bool history_add(const char *event, u16b type, byte a_idx)
 {
-	return history_add_full(type, a_idx, p_ptr->depth, p_ptr->lev, turn, event);
+	return history_add_full(type, a_idx, p_ptr->stage, p_ptr->lev, turn, event);
 }
 
 
