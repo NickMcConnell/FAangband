@@ -396,6 +396,35 @@ static void get_ahw(void)
     }
 }
 
+/**
+ * Get the player's starting money
+ */
+static void get_money(void)
+{
+    int i;
+  
+    int gold;
+  
+    /* Social Class determines starting gold */
+    gold = (p_ptr->sc * 6) + 350;
+  
+    /* Process the stats */
+    for (i = 0; i < A_MAX; i++)
+    {
+	/* Mega-Hack -- reduce gold for high stats */
+	if (p_ptr->state.stat_use[i] >= 18+50) gold -= 300;
+	else if (p_ptr->state.stat_use[i] >= 18+20) gold -= 200;
+	else if (p_ptr->state.stat_use[i] > 18) gold -= 150;
+	else gold -= (p_ptr->state.stat_use[i] - 8) * 10;
+    }
+  
+    /* Minimum 100 gold */
+    if (gold < 100) gold = 100;
+  
+    /* Save the gold */
+    p_ptr->au = gold;
+}
+
 
 
 void player_init(struct player *p)
@@ -802,7 +831,8 @@ static void recalculate_stats(int *stats, int points_left)
     }
 
     /* Gold is inversely proportional to cost */
-    p_ptr->au_birth = STARTING_GOLD + (50 * points_left);
+    //p_ptr->au_birth = STARTING_GOLD + (50 * points_left);
+    get_money();
 
     /* Update bonuses, hp, etc. */
     get_bonuses();
@@ -1349,6 +1379,9 @@ void player_birth(bool quickstart_allowed)
 	q_list[4].stage = 101;
     }
 
+
+    /* Give the player some money */
+    get_money();
 
     /* Outfit the player */
     player_outfit(p_ptr);
