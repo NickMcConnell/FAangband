@@ -3920,14 +3920,16 @@ void illuminate(void)
     /* Apply light or darkness */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
-	    /* Grids outside the walls */
-	    if (cave_feat[y][x] == FEAT_PERM_SOLID) {
+	    /* Grids outside town walls */
+	    if ((cave_feat[y][x] == FEAT_PERM_SOLID)  && !p_ptr->depth)
+	    {
 
 		/* Darken the grid */
 		cave_off(cave_info[y][x], CAVE_GLOW);
 
 		/* Hack -- Forget grids */
-		if (OPT(view_perma_grids)) {
+		if (OPT(view_perma_grids)) 
+		{
 		    cave_off(cave_info[y][x], CAVE_MARK);
 		}
 	    }
@@ -3943,13 +3945,15 @@ void illuminate(void)
             }
           
 	    /* Viewable grids (light) */
-	    else if (is_daylight) {
+	    else if (is_daylight) 
+	    {
 		/* Illuminate the grid */
 		cave_on(cave_info[y][x], CAVE_GLOW);
 	    }
 
 	    /* Viewable grids (dark) */
-	    else {
+	    else 
+	    {
 		/* Darken the grid */
 		cave_off(cave_info[y][x], CAVE_GLOW);
 	    }
