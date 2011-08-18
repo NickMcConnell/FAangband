@@ -3646,7 +3646,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x, bool * death)
     if (trap_destroyed) 
     {
 	/* Kill the trap */
-	(void) remove_trap(y, x, TRUE, trap);
+	(void) remove_trap(y, x, FALSE, trap);
     }
 
     /* Report death */

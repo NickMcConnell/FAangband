@@ -286,28 +286,28 @@ static void town_gen_hack(void)
 	    switch (n) {
 	    case NORTH:
 		{
-		    y = 1 + 1;
+		    y = 1;
 		    if (stage_map[stage][n])
 			cave_set_feat(y, x, FEAT_MORE_NORTH);
 		    break;
 		}
 	    case EAST:
 		{
-		    x = 1 + qx - 2;
+		    x = qx - 2;
 		    if (stage_map[stage][n])
 			cave_set_feat(y, x, FEAT_MORE_EAST);
 		    break;
 		}
 	    case SOUTH:
 		{
-		    y = 1 + qy - 2;
+		    y = qy - 2;
 		    if (stage_map[stage][n])
 			cave_set_feat(y, x, FEAT_MORE_SOUTH);
 		    break;
 		}
 	    case WEST:
 		{
-		    x = 1 + 1;
+		    x = 1;
 		    if (stage_map[stage][n])
 			cave_set_feat(y, x, FEAT_MORE_WEST);
 		}
