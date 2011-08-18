@@ -804,7 +804,7 @@ void move_player(int dir)
 
     /* Option to disarm a visible trap. -TNB- */
     /* Hack - Rogues can walk over their own trap - BR */
-    if (OPT(easy_alter) && cave_visible_trap(y, x))
+    if (OPT(easy_alter) && cave_visible_trap(y, x) && cave_player_trap(y, x))
     {
 	bool more = FALSE;
 	/* Auto-repeat if not already repeating */
