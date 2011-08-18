@@ -353,8 +353,8 @@ static void town_gen(void)
     int residents;
     int stage = p_ptr->stage;
 
-    int qy = 1;
-    int qx = 1;
+    int qy = 0;
+    int qx = 0;
     int width = DUNGEON_WID / 3;
 
     bool dummy;
