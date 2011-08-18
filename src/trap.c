@@ -1873,9 +1873,6 @@ extern bool py_set_trap(int y, int x)
     /* Notify the player. */
     msg_print("You set a monster trap.");
 
-    /* Increment the number of monster traps. */
-    num_trap_on_level++;
-
     /* A trap has been set */
     return TRUE;
 }
