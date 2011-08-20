@@ -86,8 +86,8 @@ static void build_store(int n, int yy, int xx, int stage)
 {
     int y, x, y0, x0, y1, x1, y2, x2, tmp;
 
-    int qy = 1;
-    int qx = 1;
+    int qy = 0;
+    int qx = 0;
 
 
     /* Find the "center" of the store */
