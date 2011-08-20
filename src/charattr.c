@@ -402,5 +402,5 @@ void textblock_dump(textblock *tb, char_attr_line **line, int *current_line,
 	(*current_line)++;
 	dump_ptr = (char_attr *) &lline[*current_line];
     }
-    
+    if (!n_lines) (*current_line)--;
 }

@@ -1560,7 +1560,7 @@ bool describe_origin(textblock *tb, const object_type *o_ptr)
 	break;
     }
 
-    textblock_append(tb, "\n");
+    //textblock_append(tb, "\n");
 
     return TRUE;
 }
@@ -1689,14 +1689,8 @@ static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
 	if (ego && describe_ego(tb, o_ptr)) something = TRUE;
 	if (describe_ignores(tb, o_ptr, mode)) something = TRUE;
 	if (describe_curses(tb, o_ptr, mode)) something = TRUE;
-	if (something) textblock_append(tb, "\n");
-
-	if (describe_effect(tb, o_ptr, mode))
-	{
-		something = TRUE;
-		textblock_append(tb, "\n");
-	}
-
+	if (describe_effect(tb, o_ptr, mode)) something = TRUE;
+	
 	if (subjective && describe_combat(tb, o_ptr, mode))
 	{
 		something = TRUE;
@@ -1707,8 +1701,8 @@ static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
 	if (describe_light(tb, o_ptr, terse)) something = TRUE;
 	if (!terse && subjective && describe_digger(tb, o_ptr, mode)) something = TRUE;
 
-	if (!something)
-		textblock_append(tb, "\n");
+	//if (!something)
+	//	textblock_append(tb, "\n");
 	if (!terse && !dummy) {
 	    textblock_append(tb, "\n");
 	    textblock_append(tb, obj_class_info[o_ptr->tval]);
