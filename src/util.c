@@ -2506,6 +2506,8 @@ bool get_check(cptr prompt)
 	char buf[80];
 
 	bool repeat = FALSE;
+	bool in_store = tf_has(f_info[cave_feat[p_ptr->py][p_ptr->px]].flags, 
+			       TF_SHOP);
   
 	/* Paranoia XXX XXX XXX */
 	message_flush();
@@ -2528,6 +2530,8 @@ bool get_check(cptr prompt)
 	while (TRUE)
 	{
 		ke = inkey_ex();
+		if (in_store && ((ke.key == '\n') || (ke.key == '\r')))
+		    ke.key = 'y';
 		if (OPT(quick_messages)) break;
 		if (ke.key == ESCAPE) break;
 		if (strchr("YyNn", ke.key)) break;
