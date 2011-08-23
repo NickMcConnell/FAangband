@@ -922,36 +922,28 @@ static bool sell_stat(int choice, int stats[A_MAX], int points_spent[A_MAX],
 
 /*
  * This picks some reasonable starting values for stats based on the
- * current race/class combo, etc.  For now I'm disregarding concerns
- * about role-playing, etc, and using the simple outline from
- * http://angband.oook.cz/forum/showpost.php?p=17588&postcount=6:
+ * current race/class combo, etc. Adapted for FA.
  *
- * 0. buy base STR 17
- * 1. if possible buy adj DEX of 18/10
- * 2. spend up to half remaining points on each of spell-stat and con, 
+ * 0. buy base STR 14
+ * 1. spend up to half remaining points on each of spell-stat and con, 
  *    but only up to max base of 16 unless a pure class 
  *    [mage or priest or warrior]
  * 3. If there are any points left, spend as much as possible in order 
- *    on DEX, non-spell-stat, CHR. 
+ *    on DEX, STR, non-spell-stat, CHR. 
  */
 static void generate_stats(int stats[A_MAX], int points_spent[A_MAX],
 			   int *points_left)
 {
     int step = 0;
     int maxed[A_MAX] = { 0 };
-    bool pure = FALSE;
-
-    /* Determine whether the class is "pure" */
-    if (player_has(PF_XTRA_SPECIALTY) || player_has(PF_STRONG_MAGIC)) {
-	pure = TRUE;
-    }
+    bool pure = player_has(PF_STRONG_MAGIC);
 
     while (*points_left && step >= 0) {
 	switch (step) {
-	    /* Buy base STR 17 */
+	    /* Buy base STR 14 */
 	case 0:
 	    {
-		if (!maxed[A_STR] && stats[A_STR] < 17) {
+		if (!maxed[A_STR] && stats[A_STR] < 14) {
 		    if (!buy_stat(A_STR, stats, points_spent, points_left))
 			maxed[A_STR] = TRUE;
 		} else {
@@ -961,38 +953,11 @@ static void generate_stats(int stats[A_MAX], int points_spent[A_MAX],
 		break;
 	    }
 
-	    /* Try and buy adj DEX of 18/10 */
-	case 1:
-	    {
-		if (!maxed[A_DEX] && p_ptr->state.stat_top[A_DEX] < 18 + 10) {
-		    if (!buy_stat(A_DEX, stats, points_spent, points_left))
-			maxed[A_DEX] = TRUE;
-		} else {
-		    step++;
-		}
-
-		break;
-	    }
-
-	    /* If we can't get 18/10 dex, sell it back. */
-	case 2:
-	    {
-		if (p_ptr->state.stat_top[A_DEX] < 18 + 10) {
-		    while (stats[A_DEX] > 10)
-			sell_stat(A_DEX, stats, points_spent, points_left);
-
-		    maxed[A_DEX] = FALSE;
-		}
-
-		step++;
-	    }
-
 	    /* 
 	     * Spend up to half remaining points on each of spell-stat and 
-	     * con, but only up to max base of 16 unless a pure class 
-	     * [mage or priest or warrior]
+	     * con, but only up to max base of 16 unless a pure caster 
 	     */
-	case 3:
+	case 1:
 	    {
 		int points_trigger = *points_left / 2;
 
@@ -1033,13 +998,15 @@ static void generate_stats(int stats[A_MAX], int points_spent[A_MAX],
 
 	    /* 
 	     * If there are any points left, spend as much as possible in 
-	     * order on DEX, non-spell-stat, CHR. 
+	     * order on STR, DEX, non-spell-stat, CHR. 
 	     */
-	case 4:
+	case 2:
 	    {
 		int next_stat;
 
-		if (!maxed[A_DEX]) {
+		if (!maxed[A_STR]) {
+		    next_stat = A_STR;
+		} else if (!maxed[A_DEX]) {
 		    next_stat = A_DEX;
 		} else if (!maxed[A_INT] && mp_ptr->spell_stat != A_INT) {
 		    next_stat = A_INT;
