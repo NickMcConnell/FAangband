@@ -348,7 +348,7 @@ static void show_obj_list(int num_obj, u32b display, olist_detail_t mode)
 
 	/* Display each line */
 	show_obj(i + sp, max_len, items[i].label, o_ptr, FALSE, mode);
-	if ((items[i].key == 'l') && need_spacer)
+	if ((i == (INVEN_FEET - INVEN_WIELD)) && need_spacer)
 	{
 	    sp = 1;
 	    prt("", i + sp + 1, MAX(col - 2, 0));
