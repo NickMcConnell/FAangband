@@ -199,7 +199,7 @@ static void build_obj_list(int first, int last, const int *floor_list,
 	    int j;
 	    
 	    /* Scan the rest of the items for acceptable entries */
-	    for (j = i; j < last; j++)
+	    for (j = i; j <= last; j++)
 	    {
 		o_ptr = &p_ptr->inventory[j];
 		if (item_tester_okay(o_ptr)) need_spacer = TRUE;
