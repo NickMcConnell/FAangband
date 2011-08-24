@@ -169,7 +169,7 @@ static void build_obj_list(int first, int last, const int *floor_list,
     object_type *o_ptr;
     bool in_term = (mode & OLIST_WINDOW) ? TRUE : FALSE;
 
-    need_spacer = FALSE;
+    if (first) need_spacer = FALSE;
     offset = 0;
     num_obj = 0;
 
@@ -1544,7 +1544,6 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
     button_kill('/');
     button_kill('-');
     button_kill('!');
-    redraw_stuff();
 
     /* Forget the item_tester_tval restriction */
     item_tester_tval = 0;
