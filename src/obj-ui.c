@@ -169,7 +169,7 @@ static void build_obj_list(int first, int last, const int *floor_list,
     object_type *o_ptr;
     bool in_term = (mode & OLIST_WINDOW) ? TRUE : FALSE;
 
-    if (first) need_spacer = FALSE;
+    need_spacer = FALSE;
     offset = 0;
     num_obj = 0;
 
