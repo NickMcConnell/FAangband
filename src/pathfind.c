@@ -914,7 +914,7 @@ static bool run_test(void)
 	    /* Unknown grid or non-wall */
 	    /* Was: cave_floor_bold(row, col) */
 	    if (!cave_has(cave_info[row][col], CAVE_MARK)
-		|| tf_has(f_ptr->flags, TF_ROCK))
+		|| !tf_has(f_ptr->flags, TF_ROCK))
 	    {
 		/* Looking to break right */
 		if (p_ptr->run_break_right) 
@@ -941,7 +941,7 @@ static bool run_test(void)
 	    /* Unknown grid or non-wall */
 	    /* Was: cave_floor_bold(row, col) */
 	    if (!cave_has(cave_info[row][col], CAVE_MARK)
-		|| tf_has(f_ptr->flags, TF_ROCK))
+		|| !tf_has(f_ptr->flags, TF_ROCK))
 	    {
 		/* Looking to break left */
 		if (p_ptr->run_break_left) 
