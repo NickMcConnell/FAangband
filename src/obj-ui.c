@@ -1030,6 +1030,7 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
     ui_event_data which;
     
     prompt = pmt;
+    olist_mode = 0;
     item_mode = mode;
     item_cmd = cmd;
 
