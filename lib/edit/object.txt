@@ -3205,6 +3205,7 @@ I:65:0:15
 W:3:0:10:0
 A:3/3
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:HEAL_MONSTER
 D:that heals a foe.
 
@@ -3214,6 +3215,7 @@ I:65:1:15
 W:3:0:10:0
 A:3/3
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:HASTE_MONSTER
 D:that energizes a foe.
 
@@ -3223,6 +3225,7 @@ I:65:2:6
 W:15:0:10:0
 A:70/8
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:CLONE_MONSTER
 D:that duplicates most foes.
 
@@ -3233,6 +3236,7 @@ I:65:3:8
 W:25:0:10:1750
 A:25/3
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:TELEPORT_AWAY2
 D:that teleports foes away.
 
@@ -3242,6 +3246,7 @@ I:65:4:8
 W:30:0:10:700
 A:30/2
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:DISARMING
 D:that disarms an adjacent trap or chest~.
 
@@ -3251,6 +3256,7 @@ I:65:5:18
 W:10:0:10:75
 A:10/2
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:DOOR_DEST
 D:that destroys doors, even hidden ones.
 
@@ -3260,6 +3266,7 @@ I:65:6:8
 W:10:0:10:300
 A:10/2
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:STONE_TO_MUD
 D:that instantly melts earthen material.
 
@@ -3269,6 +3276,7 @@ I:65:7:12
 W:3:0:10:200
 A:3/2
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:LIGHT_LINE
 D:that shoots beams of light~.
 
@@ -3278,6 +3286,7 @@ I:65:8:12
 W:5:0:10:500
 A:5/2:45/2
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:SLEEP_MONSTER2
 D:that sends a foe to the land of dreams.
 
@@ -3287,6 +3296,7 @@ I:65:9:12
 W:5:0:10:500
 A:5/2:45/2
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:SLOW_MONSTER2
 D:that renders a foe slow and sluggish.
 
@@ -3296,6 +3306,7 @@ I:65:10:12
 W:5:0:10:500
 A:5/2:45/2
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:CONFUSE_MONSTER
 D:that confuses a foe.
 
@@ -3305,6 +3316,7 @@ I:65:11:12
 W:10:0:10:500
 A:10/3
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:FEAR_MONSTER
 D:that scares a foe.
 
@@ -3314,6 +3326,7 @@ I:65:12:5
 W:55:0:10:1500
 A:52/1
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:DRAIN_LIFE1
 D:that sucks the life out of a foe~.
 
@@ -3323,6 +3336,7 @@ I:65:13:9
 W:20:0:10:400
 A:20/2
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:POLYMORPH
 D:that strangely alters a monster.
 
@@ -3332,6 +3346,7 @@ I:65:14:9
 W:5:0:10:400
 A:5/1
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:STINKING_CLOUD
 D:that launches poisonous clouds~.
 
@@ -3341,6 +3356,7 @@ I:65:15:14
 W:3:0:10:200
 A:3/1
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:MAGIC_MISSILE
 D:that fires magical bolts~.
 
@@ -3350,6 +3366,7 @@ I:65:16:10
 W:35:0:10:1000
 A:35/1
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:ACID_BOLT1
 D:that launches bolts or beams of acid~.
 
@@ -3359,6 +3376,7 @@ I:65:17:11
 W:15:0:10:600
 A:15/1
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:ELEC_BOLT1
 D:that fires bolts or beams of electricity~.
 
@@ -3368,6 +3386,7 @@ I:65:18:10
 W:40:0:10:1200
 A:40/1
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:FIRE_BOLT1
 D:that shoots bolts or beams of fire~.
 
@@ -3377,6 +3396,7 @@ I:65:19:11
 W:24:0:10:800
 A:24/1
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:COLD_BOLT1
 D:that fires bolts or beams of frost~.
 
@@ -3386,7 +3406,7 @@ I:65:20:6
 W:60:0:10:2400
 A:60/1
 P:0:1d1:0:0:0:0
-F:ACID_PROOF
+F:ACID_PROOF | EASY_KNOW
 E:ACID_BALL1
 D:that launches balls of noxious acid~.
 
@@ -3396,7 +3416,7 @@ I:65:21:8
 W:45:0:10:1750
 A:45/1
 P:0:1d1:0:0:0:0
-F:ELEC_PROOF
+F:ELEC_PROOF | EASY_KNOW
 E:ELEC_BALL1
 D:that launches lightning balls~.
 
@@ -3406,7 +3426,7 @@ I:65:22:6
 W:65:0:10:2750
 A:65/1
 P:0:1d1:0:0:0:0
-F:FIRE_PROOF
+F:FIRE_PROOF | EASY_KNOW
 E:FIRE_BALL1
 D:that launches fiery balls~.
 
@@ -3416,7 +3436,7 @@ I:65:23:7
 W:50:0:10:2100
 A:50/1
 P:0:1d1:0:0:0:0
-F:COLD_PROOF
+F:COLD_PROOF | EASY_KNOW
 E:COLD_BALL1
 D:that launches icy balls~.
 
@@ -3426,7 +3446,7 @@ I:65:24:12
 W:3:0:10:250
 A:3/1
 P:0:1d1:0:0:0:0
-F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF | EASY_KNOW
 E:WONDER
 D:with many and varied magics.
 
@@ -3436,7 +3456,7 @@ I:65:25:5
 W:90:0:10:12000
 A:90/4
 P:0:1d1:0:0:0:0
-F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF | EASY_KNOW
 E:ANNIHILATION
 D:that tears the life force from a foe~.
 
@@ -3446,7 +3466,7 @@ I:65:26:5
 W:65:0:10:6000
 A:65/3
 P:0:1d1:0:0:0:0
-F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF | EASY_KNOW
 E:DRAGON_FIRE
 D:that breathes a fire storm~.
 
@@ -3456,7 +3476,7 @@ I:65:27:5
 W:65:0:10:6000
 A:65/3
 P:0:1d1:0:0:0:0
-F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF | EASY_KNOW
 E:DRAGON_COLD
 D:that breathes a frost storm~.
 
@@ -3466,7 +3486,7 @@ I:65:28:5
 W:70:0:10:7000
 A:85/3
 P:0:1d1:0:0:0:0
-F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF | EASY_KNOW
 E:DRAGON_BREATH
 D:that breathes an elemental storm~.
 
@@ -3476,7 +3496,7 @@ I:65:29:6
 W:65:0:10:3800
 A:65/2
 P:0:1d1:0:0:0:0
-F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF | EASY_KNOW
 E:STRIKING
 D:that pounds a foe with pure force~.
 
@@ -3486,7 +3506,7 @@ I:65:30:6
 W:50:0:10:3000
 A:55/3
 P:0:1d1:0:0:0:0
-F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
+F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF | EASY_KNOW
 E:STORMS
 D:that unleashes water and lightning balls~.
 
@@ -3496,6 +3516,7 @@ I:65:31:10
 W:20:0:10:800
 A:20/2
 P:0:1d1:0:0:0:0
+F:EASY_KNOW
 E:SHARD_BOLT
 D:that shoots a blast of razor sharp shards~.
 
@@ -3578,6 +3599,7 @@ I:55:0:20
 W:5:0:50:0
 A:5/3
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:DARKNESS
 D:that douses the lights in the immediate area.
 
@@ -3587,6 +3609,7 @@ I:55:1:20
 W:48:0:50:0
 A:48/3
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:SLOWNESS2
 D:that temporarily saps your energy.
 
@@ -3596,6 +3619,7 @@ I:55:2:20
 W:10:0:50:0
 A:10/3
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:HASTE_MONSTERS
 D:that energizes all nearby opponents.
 
@@ -3605,6 +3629,7 @@ I:55:3:4
 W:50:0:50:0
 A:50/3
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:SUMMON4
 D:that summons more enemies for you to fight.
 
@@ -3614,6 +3639,7 @@ I:55:4:10
 W:30:0:50:1500
 A:40/1:70/2
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:TELEPORT100
 D:that can teleport you across the dungeon.
 
@@ -3623,6 +3649,7 @@ I:55:5:20
 W:10:0:50:300
 A:10/1
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:IDENTIFY
 D:that provides basic information about any object.
 
@@ -3632,6 +3659,7 @@ I:55:6:8
 W:40:0:50:500
 A:40/2
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:REMOVE_CURSE
 D:that breaks ordinary curses.
 
@@ -3641,6 +3669,7 @@ I:55:7:13
 W:35:0:50:1500
 A:35/2:50/2
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:STARLIGHT
 D:that strikes at dark-loving monsters, and blinds those exposed to sudden 
 D:light~.
@@ -3651,6 +3680,7 @@ I:55:8:32
 W:5:0:50:250
 A:5/1
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:LIGHT
 D:that magically illuminates a room or a torch-lit area.
 
@@ -3660,6 +3690,7 @@ I:55:9:18
 W:20:0:50:900
 A:20/1
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:MAPPING
 D:that reveals the walls and terrain of the local area.
 
@@ -3669,6 +3700,7 @@ I:55:10:36
 W:5:0:50:200
 A:5/2
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:DETECT_GOLD
 D:that makes mining very profitable.
 
@@ -3678,6 +3710,7 @@ I:55:11:36
 W:5:0:50:200
 A:5/1
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:DETECT_ITEM
 D:that reveals objects nearby.
 
@@ -3687,6 +3720,7 @@ I:55:12:36
 W:8:0:50:200
 A:8/1
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:DETECT_TRAP
 D:that reveals traps nearby.
 
@@ -3696,6 +3730,7 @@ I:55:13:36
 W:8:0:50:300
 A:8/1
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:DETECT_DOOR
 D:that reveals doors and stairs nearby.
 
@@ -3705,6 +3740,7 @@ I:55:14:36
 W:5:0:50:200
 A:5/1
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:DETECT_INVIS
 D:that reveals monsters unseen by ordinary sight.
 
@@ -3714,6 +3750,7 @@ I:55:15:36
 W:20:0:50:350
 A:20/1
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:DETECT_EVIL
 D:that reveals evil creatures nearby.
 
@@ -3723,6 +3760,7 @@ I:55:16:18
 W:12:0:50:550
 A:12/1
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:CURE_MEDIUM
 D:that offers immediate first aid~.
 
@@ -3732,6 +3770,7 @@ I:55:17:9
 W:25:0:50:1000
 A:25/2
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:CURING
 D:that removes a variety of specialized ailments.
 
@@ -3741,6 +3780,7 @@ I:55:18:5
 W:70:0:50:5000
 A:70/2
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:HEALING1
 D:that magically heals you~.
 
@@ -3750,6 +3790,7 @@ I:55:19:8
 W:55:0:50:3500
 A:55/2
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:BANISHMENT
 D:that hurls all evil beings far from you.
 
@@ -3759,6 +3800,7 @@ I:55:20:16
 W:15:0:50:700
 A:15/2:30/2
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:SLEEP_MONSTERS
 D:that sends nearby foes to the land of dreams.
 
@@ -3768,6 +3810,7 @@ I:55:21:16
 W:15:0:50:800
 A:15/2:30/2
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:SLOW_MONSTERS
 D:that renders nearby opponents slow and sluggish.
 
@@ -3777,6 +3820,7 @@ I:55:22:8
 W:48:0:50:2000
 A:48/1
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:SPEED2
 D:that hastens you for a time.
 
@@ -3786,6 +3830,7 @@ I:55:23:16
 W:30:0:50:1800
 A:30/2
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:PROBING
 D:that reveals your opponents' hidden strengths and weaknesses.
 
@@ -3795,6 +3840,7 @@ I:55:24:11
 W:60:0:50:1200
 A:60/1
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:DISPEL_EVIL
 D:that envokes the powers of Good against your foes~.
 
@@ -3804,6 +3850,7 @@ I:55:25:6
 W:70:0:50:4000
 A:70/2
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:POWER
 D:that invokes dispelling magics that no creature can resist~.
 
@@ -3813,6 +3860,7 @@ I:55:26:6
 W:70:0:50:4500
 A:70/2
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:HOLINESS
 D:that rallies powerful magics to aid and protect you against the powers of 
 D:evil~.
@@ -3825,6 +3873,7 @@ I:55:28:14
 W:40:0:50:350
 A:40/2
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:EARTHQUAKES
 D:that shakes the dungeon nearby.
 
@@ -3834,6 +3883,7 @@ I:55:29:5
 W:70:0:50:2500
 A:70/1
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:DESTRUCTION
 D:that utterly destroys virtually everything nearby.
 
@@ -3843,6 +3893,7 @@ I:55:30:24
 W:45:0:50:2500
 A:45/1
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:DETECTION
 D:that reveals objects, monsters, and special features.
 
@@ -3852,6 +3903,7 @@ I:55:31:6
 W:90:0:50:7000
 A:90/4
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:MSTORM
 D:that envokes perilous magics upon you and your foes~.
 
@@ -3861,6 +3913,7 @@ I:55:32:6
 W:80:0:50:6000
 A:80/3
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:STARBURST
 D:that unleashes a storm of pure light upon your foes~.
 
@@ -3870,6 +3923,7 @@ I:55:33:16
 W:40:0:50:1500
 A:40/2
 P:0:1d2:0:0:0:0
+F:EASY_KNOW
 E:MASS_CONFU
 D:that befuddles all monsters nearby.
 
