@@ -1917,6 +1917,7 @@ static void store_sell(void)
 
     /* Get a quantity */
     amt = get_quantity(NULL, o_ptr->number);
+    display_store();
 
     /* Allow user abort */
     if (amt <= 0)
@@ -2012,9 +2013,6 @@ static void store_sell(void)
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER | PN_SORT_QUIVER);
-
-	/* Redraw stuff */
-	p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 
 	/* Get local object */
 	i_ptr = &object_type_body;
@@ -2115,9 +2113,12 @@ static void store_sell(void)
 	    display_inventory();
 	}
     }
+
+    /* Redraw stuff */
+    p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
+
     /* Reset hook */
     item_tester_hook = NULL;
-
 }
 
 
@@ -2503,6 +2504,7 @@ static void store_process_command(ui_event_data ke)
     case 's':
 	{
 	    store_sell();
+	    display_store();
 	    break;
 	}
 
@@ -2682,6 +2684,8 @@ static void store_process_command(ui_event_data ke)
 	}
     }
 
+    display_store();
+    redraw_stuff();
 }
 
 
@@ -2874,7 +2878,7 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
     forget_view();
 
     /* Hack -- Increase "icky" depth */
-    character_icky++;
+    //character_icky++;
 
 
     /* No command argument */
@@ -2914,6 +2918,7 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 	tmp_chr = p_ptr->state.stat_use[A_CHR];
 
 	/* Clear */
+	display_store();
 	clear_from(20);
 
 	/* Basic commands */
@@ -3048,7 +3053,7 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
     p_ptr->energy_use = 0;
 
     /* Hack -- Decrease "icky" depth */
-    character_icky--;
+    //character_icky--;
 
 
     /* Clear the screen */
