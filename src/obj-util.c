@@ -2631,6 +2631,9 @@ void drop_near(object_type * j_ptr, int chance, int y, int x, bool verbose)
     /* Sound */
     sound(MSG_DROP);
 
+    /* Confirm location */
+    f_ptr = &f_info[cave_feat[by][bx]];
+
     /* Message when an object falls under the player */
     if (verbose && (cave_m_idx[by][bx] < 0) && !squelch_item_ok(j_ptr)) {
 	msg_print("You feel something roll beneath your feet.");
