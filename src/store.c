@@ -2545,7 +2545,7 @@ static void store_process_command(ui_event_data ke)
 	/* Inventory list */
     case 'i':
 	{
-	    do_cmd_show_obj();
+	    do_cmd_inven();
 	    break;
 	}
 
@@ -2687,27 +2687,18 @@ static void store_process_command(ui_event_data ke)
 	}
     }
 
-		/* Let the game handle any core commands (equipping, etc) */
-		process_command(CMD_STORE, TRUE);
+    /* Let the game handle any core commands (equipping, etc) */
+    process_command(CMD_STORE, TRUE);
 
-		//if (storechange)
-		//store_menu_recalc(m);
+    event_signal(EVENT_INVENTORY);
+    event_signal(EVENT_EQUIPMENT);
+    
+    /* Notice and handle stuff */
+    notice_stuff();
+    handle_stuff();
 
-			//if (processed) {
-			event_signal(EVENT_INVENTORY);
-			event_signal(EVENT_EQUIPMENT);
-			//}
-
-		/* Notice and handle stuff */
-		notice_stuff();
-		handle_stuff();
-
-		/* Display the store */
-		//store_display_recalc(m);
-		//store_menu_recalc(m);
-		//store_redraw();
-		display_store();
-		//redraw_stuff();
+    /* Display the store */
+    //display_store();
 }
 
 

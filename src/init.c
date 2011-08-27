@@ -2249,7 +2249,7 @@ static enum parser_error parse_p_b(struct parser *p) {
 	which = grab_value(t, player_resist_values, 
 			   N_ELEMENTS(player_resist_values), &val);
 	if (which) {
-	    r->percent_res[which] = RES_LEVEL_BASE - val;
+	    r->percent_res[which - 1] = RES_LEVEL_BASE - val;
 	    t = strtok(NULL, " |");
 	    continue;
 	}
