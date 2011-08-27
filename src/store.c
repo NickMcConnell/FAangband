@@ -27,6 +27,7 @@
 #include "cave.h"
 #include "cmds.h"
 #include "files.h"
+#include "game-event.h"
 #include "history.h"
 #include "squelch.h"
 #include "textui.h"
@@ -2518,9 +2519,11 @@ static void store_process_command(ui_event_data ke)
 
       /*** Inventory Commands ***/
 
-    case 'w':
+    case 'k': 
+
     case 't':
-    case 'k':
+    case 'w':
+	//case 'k':
     case 'b':
     case 'I':
     case '{':
@@ -2684,8 +2687,27 @@ static void store_process_command(ui_event_data ke)
 	}
     }
 
-    display_store();
-    redraw_stuff();
+		/* Let the game handle any core commands (equipping, etc) */
+		process_command(CMD_STORE, TRUE);
+
+		//if (storechange)
+		//store_menu_recalc(m);
+
+			//if (processed) {
+			event_signal(EVENT_INVENTORY);
+			event_signal(EVENT_EQUIPMENT);
+			//}
+
+		/* Notice and handle stuff */
+		notice_stuff();
+		handle_stuff();
+
+		/* Display the store */
+		//store_display_recalc(m);
+		//store_menu_recalc(m);
+		//store_redraw();
+		display_store();
+		//redraw_stuff();
 }
 
 
