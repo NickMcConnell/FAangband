@@ -1096,6 +1096,9 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
     if (e1 <= e2)
 	allow_equip = TRUE;
 
+    /* Reject quiver */
+    if (e2 < QUIVER_START)
+	use_quiver = FALSE;
 
     /* Scan all non-gold objects in the grid */
     floor_num = scan_floor(floor_list, N_ELEMENTS(floor_list), py, px, 0x03);
