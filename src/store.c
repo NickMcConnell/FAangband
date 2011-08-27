@@ -2399,8 +2399,6 @@ void store_order(void)
     WIPE(&menu, menu_type);
     menu.title = "Item ordering menu";
     menu.cmd_keys = cmd_keys;
-    //menu.menu_data = choice;
-    //menu.count = BOOK_START + (mp_ptr->spell_book ? 1 : 0);
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
     menu_setpriv(&menu, BOOK_START + (mp_ptr->spell_book ? 1 : 0), choice);
 
@@ -2445,6 +2443,9 @@ static bool leave_store = FALSE;
  */
 static void store_process_command(ui_event_data ke)
 {
+    /* Clear messages */
+    msg_flag = FALSE;
+
     /* Parse the command */
     switch (ke.key) {
 	/* Leave */
