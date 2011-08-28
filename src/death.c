@@ -20,6 +20,7 @@
 #include "button.h"
 #include "cmds.h"
 #include "files.h"
+#include "game-event.h"
 #include "history.h"
 #include "ui-menu.h"
 
@@ -538,9 +539,7 @@ static void death_knowledge(void)
 
     /* Hack -- Recalculate bonuses */
     p_ptr->update |= (PU_BONUS);
-
-    /* Handle stuff */
-    handle_stuff();
+    p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 }
 
 /*
@@ -847,11 +846,18 @@ void death_screen(void)
     (void) time(&death_time);
 #endif
 
-    /* You are dead */
-    print_tomb();
-
     /* Hack - Know everything upon death */
     death_knowledge();
+
+    event_signal(EVENT_INVENTORY);
+    event_signal(EVENT_EQUIPMENT);
+
+    /* Handle stuff */
+    notice_stuff();
+    handle_stuff();
+
+    /* You are dead */
+    print_tomb();
 
     /* Enter player in high score list */
     enter_score(&death_time);
