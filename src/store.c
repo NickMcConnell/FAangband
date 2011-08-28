@@ -2891,7 +2891,7 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
     forget_view();
 
     /* Hack -- Increase "icky" depth */
-    //character_icky++;
+    character_icky++;
 
 
     /* No command argument */
@@ -3066,7 +3066,7 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
     p_ptr->energy_use = 0;
 
     /* Hack -- Decrease "icky" depth */
-    //character_icky--;
+    character_icky--;
 
 
     /* Clear the screen */
