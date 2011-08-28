@@ -1592,6 +1592,7 @@ static void store_purchase(void)
     /* Clear all current messages */
     msg_flag = FALSE;
     prt("", 0, 0);
+    msg_flag = TRUE;
 
     if (st_ptr->type == STORE_HOME) {
 	amt = o_ptr->number;
@@ -1876,6 +1877,7 @@ static void store_sell(void)
     /* Clear all current messages */
     msg_flag = FALSE;
     prt("", 0, 0);
+    msg_flag = TRUE;
 
     /* Get an item */
     s = "You have nothing that I want.";
@@ -2505,7 +2507,7 @@ static void store_process_command(ui_event_data ke)
     case 's':
 	{
 	    store_sell();
-	    display_store();
+	    display_inventory();
 	    break;
 	}
 
@@ -2698,7 +2700,7 @@ static void store_process_command(ui_event_data ke)
     handle_stuff();
 
     /* Display the store */
-    //display_store();
+    display_inventory();
 }
 
 
@@ -2931,7 +2933,7 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 	tmp_chr = p_ptr->state.stat_use[A_CHR];
 
 	/* Clear */
-	display_store();
+	display_inventory();
 	clear_from(20);
 
 	/* Basic commands */

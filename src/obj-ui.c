@@ -1167,6 +1167,9 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 	}
     }
 
+    /* Clear all current messages */
+    msg_flag = FALSE;
+
     /* Start out in "display" mode */
     if (show_list) {
 	/* Save screen */
