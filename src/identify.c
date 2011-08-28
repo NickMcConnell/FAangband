@@ -505,7 +505,8 @@ void notice_obj(int obj_flag, int item)
 	already_ego = has_ego_properties(o_ptr);
 
 	/* Add properties */
-	of_on(o_ptr->id_obj, obj_flag);
+	if (of_has(o_ptr->flags_obj, obj_flag)) 
+	    of_on(o_ptr->id_obj, obj_flag);
 
 	/* Ego item? */
 	if (already_ego != has_ego_properties(o_ptr))
@@ -524,8 +525,9 @@ void notice_obj(int obj_flag, int item)
 	already_ego = has_ego_properties(o_ptr);
 
 	/* Add properties */
-	of_on(o_ptr->id_obj, obj_flag);
-
+	if (of_has(o_ptr->flags_obj, obj_flag)) 
+	    of_on(o_ptr->id_obj, obj_flag);
+	
 	/* Ego item? */
 	if (already_ego != has_ego_properties(o_ptr))
 	    label_as_ego(o_ptr, item);
