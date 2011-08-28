@@ -658,7 +658,7 @@ void hit_trap_aux(int y, int x, int trap)
 		 || (stage_map[p_ptr->stage][STAGE_TYPE] == VALLEY))
 		&& (!stage_map[p_ptr->stage][DOWN])) {
 		cave_off(cave_info[y][x], CAVE_MARK);
-		remove_trap(y, x, TRUE, trap);
+		remove_trap(y, x, FALSE, trap);
 		msg_print("The trap fails!");
 		break;
 	    }
@@ -753,7 +753,7 @@ void hit_trap_aux(int y, int x, int trap)
 			}
 
 			/* morgul-traps are one-time only. */
-			remove_trap(y, x, TRUE, trap);
+			remove_trap(y, x, FALSE, trap);
 
 			Rand_quick = TRUE;
 		    }
@@ -1112,7 +1112,7 @@ void hit_trap_aux(int y, int x, int trap)
 	    }
 
 	    /* these are all one-time traps. */
-	    remove_trap(y, x, TRUE, trap);
+	    remove_trap(y, x, FALSE, trap);
 
 	    break;
 	}
@@ -1126,7 +1126,7 @@ void hit_trap_aux(int y, int x, int trap)
 		nastyness += 10;
 
 	    /* make room for alterations. */
-	    remove_trap(y, x, TRUE, trap);
+	    remove_trap(y, x, FALSE, trap);
 
 	    /* Everything truely random from here on. */
 	    Rand_quick = FALSE;
@@ -1182,7 +1182,7 @@ void hit_trap_aux(int y, int x, int trap)
 	    nastyness = randint0(100);
 
 	    /* these are all one-time traps. */
-	    remove_trap(y, x, TRUE, trap);
+	    remove_trap(y, x, FALSE, trap);
 
 	    /* Everything truely random from here on. */
 	    Rand_quick = FALSE;
@@ -1464,7 +1464,7 @@ void hit_trap_aux(int y, int x, int trap)
 	    Rand_quick = FALSE;
 
 	    if (randint0(8) == 0) 
-		remove_trap(y, x, TRUE, trap);
+		remove_trap(y, x, FALSE, trap);
 	    
 	    Rand_quick = TRUE;
 
@@ -1510,7 +1510,7 @@ void hit_trap_aux(int y, int x, int trap)
 		msg_print("A falling branch just misses you.");
 
 	    /* No more */
-	    remove_trap(y, x, TRUE, trap);
+	    remove_trap(y, x, FALSE, trap);
 
 	    break;
 	}
@@ -1929,7 +1929,7 @@ bool mtrap_action(menu_type *menu, const ui_event_data *db, int oid)
     int idx = choice[oid];
 
     /* Remove the old trap */
-    remove_trap(mtrap_y, mtrap_x, TRUE, MTRAP_BASE);
+    remove_trap(mtrap_y, mtrap_x, FALSE, MTRAP_BASE);
 
     /* Place the new trap */
     place_trap(mtrap_y, mtrap_x, MTRAP_BASE + 1 + idx, 0);
