@@ -2016,7 +2016,7 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
 
     object_type *o_ptr;
 
-  /*** Reset ***/
+    /*** Reset ***/
 
     /* Reset player speed */
     state->pspeed = 110;
@@ -2089,7 +2089,7 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
     }
 
 
-  /*** Extract race/class info ***/
+    /*** Extract race/class info ***/
 
     /* Base infravision (purely racial) */
     state->see_infra = rp_ptr->infra;
@@ -2134,7 +2134,7 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
     /* Base skill -- digging */
     state->skills[SKILL_DIGGING] = 0;
 
-  /*** Analyze player ***/
+    /*** Analyze player ***/
 
     /* Object flags */
     if (of_has(rp_ptr->flags_obj, OF_SUSTAIN_STR))
@@ -2483,10 +2483,10 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
 	state->ffall = FALSE;
 
 
-  /*** Analyze shapechanges - statistics only ***/
+    /*** Analyze shapechanges - statistics only ***/
     shape_change_stat(state);
 
-  /*** (Most) Specialty Abilities ***/
+    /*** (Most) Specialty Abilities ***/
 
     /* Physical stat boost */
     if (player_has(PF_ATHLETICS)) {
@@ -2527,7 +2527,7 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
     if (player_has(PF_DWARVEN))
 	state->skills[SKILL_DIGGING] += 40;
 
-  /*** Handle stats ***/
+    /*** Handle stats ***/
 
     /* Calculate stats */
     for (i = 0; i < A_MAX; i++) {
@@ -3153,19 +3153,19 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
  */
 static void update_bonuses(void)
 {
-	int i;
-
-	player_state *state = &p_ptr->state;
-	player_state old = p_ptr->state;
-	object_type *o_ptr;
-
-	/*** Calculate bonuses ***/
-
-	calc_bonuses(p_ptr->inventory, &p_ptr->state, FALSE);
-
-
-  /*** Notice changes ***/
-
+    int i;
+    
+    player_state *state = &p_ptr->state;
+    player_state old = p_ptr->state;
+    object_type *o_ptr;
+    
+    /*** Calculate bonuses ***/
+    
+    calc_bonuses(p_ptr->inventory, &p_ptr->state, FALSE);
+    
+    
+    /*** Notice changes ***/
+    
     /* Analyze stats */
     for (i = 0; i < A_MAX; i++) {
 	/* Notice changes */

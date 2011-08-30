@@ -1045,7 +1045,11 @@ void move_player(int dir)
 	
 	/* Update stealth for Unlight */
 	if (player_has(PF_UNLIGHT))
-		p_ptr->update |= PU_BONUS;
+	    p_ptr->update |= PU_BONUS;
+	
+	/* Update speed for elven woodspersons */
+	if (player_has(PF_WOODSMAN) && player_has(PF_ELVEN))
+	    p_ptr->update |= PU_BONUS;
 	
 	/* Superstealth for ents in trees SJGU */
 	if ((player_has(PF_WOODEN))	&&
