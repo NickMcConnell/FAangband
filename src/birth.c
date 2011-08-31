@@ -161,21 +161,6 @@ static void load_roller_data(birther * player, birther * prev_player)
 
 
 /*
- * Adjust a stat by an amount.
- *
- * This just uses "modify_stat_value()" unless "maximize" mode is false,
- * and a positive bonus is being applied, in which case, a special hack
- * is used.
- */
-static int adjust_stat(int value, int amount)
-{
-    return (modify_stat_value(value, amount));
-}
-
-
-
-
-/*
  * Roll for a characters stats
  *
  * For efficiency, we include a chunk of "calc_bonuses()".

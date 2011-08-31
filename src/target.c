@@ -1315,9 +1315,10 @@ static int draw_path(u16b * path, char *c, byte * a, int y1, int x1, int y2,
 	}
 
 	/* Known walls are blue. */
-	else if (!cave_project(y, x)
-		 && cave_has(cave_info[y][x], CAVE_MARK)
-		 || player_can_see_bold(y, x)) {
+	else if (!cave_project(y, x) && 
+		 (cave_has(cave_info[y][x], CAVE_MARK) || 
+		  player_can_see_bold(y, x))) 
+	{
 	    colour = TERM_BLUE;
 	}
 	/* Unknown squares are grey. */

@@ -3897,7 +3897,6 @@ void grow_trees_and_grass(bool powerful)
 	for (x = px - 20; x <= px + 20; x++) 
 	{
 	    int dist = distance(py, px, y, x);
-	    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
 	    /* Skip distant grids */
 	    if (dist > 20)
