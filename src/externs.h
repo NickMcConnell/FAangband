@@ -77,7 +77,7 @@ extern byte sf_patch;
 extern byte sf_extra;
 extern bool arg_rebalance;
 extern bool arg_wizard;
-extern bool arg_graphics;
+extern int arg_graphics;
 extern bool arg_graphics_nice;
 extern bool game_start;
 extern bool character_generated;

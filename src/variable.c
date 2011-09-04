@@ -62,7 +62,7 @@ byte sf_extra;		/* Savefile's "version_extra". Used for enryption */
  */
 bool arg_wizard;		/* Command arg -- Request wizard mode */
 bool arg_rebalance;
-bool arg_graphics;		/* Command arg -- Request graphics mode */
+int arg_graphics;		/* Command arg -- Request graphics mode */
 bool arg_graphics_nice;	        /* Command arg -- Request nice graphics mode */
 
 /*
