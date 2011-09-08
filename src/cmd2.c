@@ -1779,7 +1779,7 @@ static bool do_cmd_close_test(int y, int x)
     }
 
     /* Require open/broken door */
-    if (tf_has(f_ptr->flags, TF_DOOR_ANY) && tf_has(f_ptr->flags, TF_PASSABLE))
+    if (!tf_has(f_ptr->flags, TF_CLOSABLE))
     {
 	/* Message */
 	msg_print("You see nothing there to close.");
