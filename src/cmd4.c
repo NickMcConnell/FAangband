@@ -193,7 +193,16 @@ void do_cmd_change_name(void)
         {
 	  char namebuf[32] = "";
 
-	  (void) get_name(namebuf, sizeof namebuf);
+	  if (get_name(namebuf, sizeof namebuf))
+	  {
+	      /* Set player name */
+	      my_strcpy(op_ptr->full_name, namebuf,
+			sizeof(op_ptr->full_name));
+	      
+	      /* Don't change savefile name. */
+	      process_player_name(FALSE);
+	  }
+	  //(void) get_name(namebuf, sizeof namebuf);
 	  (void) make_dump(dumpline, 2);
         }
       

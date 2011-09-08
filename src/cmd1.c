@@ -995,9 +995,8 @@ void move_player(int dir)
 	if (tf_has(f_ptr->flags, TF_FALL))
 	{
 	    /* Bats, dragons can fly */
-	    if ((p_ptr->schange == SHAPE_BAT) || (p_ptr->schange == SHAPE_WYRM))
-		can_move = TRUE;
-	    else 
+	    if (!(p_ptr->schange == SHAPE_BAT) &&
+		!(p_ptr->schange == SHAPE_WYRM))
 	    {
 		/* Assume player will continue. */
 		temp = TRUE;
@@ -1008,6 +1007,7 @@ void move_player(int dir)
 		    if (!get_check
 			("You have come to a cliff.  Step off it? ")) 
 		    {
+			can_move = FALSE;
 			temp = FALSE;
 			p_ptr->running = 0;
 		    }
@@ -1017,15 +1017,15 @@ void move_player(int dir)
 		else if (!p_ptr->timed[TMD_BLIND]) 
 		{
 		    if (!get_check("It's a cliff! Really step off it? ")) 
+		    {
+			can_move = FALSE;
 			temp = FALSE;
+		    }
 		}
 		
 		/* Step off if confirmed. */
 		if (temp) 
 		{
-		    /* Can always jump. */
-		    can_move = TRUE;
-		    
 		    /* Will take serious damage. */
 		    falling = TRUE;
 		}
