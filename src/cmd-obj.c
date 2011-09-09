@@ -972,6 +972,8 @@ void do_cmd_study_book(cmd_code code, cmd_arg args[])
 	    continue;
 	if (!spell_okay_to_study(s))
 	    continue;
+	if (!spell_in_book(s, book))
+	    continue;
 
 	/* Apply the randomizer */
 	if ((++k > 1) && (randint0(k) != 0))
