@@ -3077,7 +3077,8 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
   /*** Analyze weapon ***/
 
     /* Examine the "current weapon" */
-    o_ptr = &p_ptr->inventory[INVEN_WIELD];
+    //o_ptr = &p_ptr->inventory[INVEN_WIELD];
+    o_ptr = &(inventory[INVEN_WIELD]);
 
     /* Assume that the player is not a Priest wielding an edged weapon. */
     state->icky_wield = FALSE;
