@@ -2283,8 +2283,8 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
 
     /* Scan the equipment */
     for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
-	o_ptr = &p_ptr->inventory[i];
-
+	//	o_ptr = &p_ptr->inventory[i];
+	o_ptr = &(inventory[i]);
 	/* Skip non-objects */
 	if (!o_ptr->k_idx)
 	    continue;
@@ -2954,8 +2954,8 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
   /*** Analyze current bow ***/
 
     /* Examine the "current bow" */
-    o_ptr = &p_ptr->inventory[INVEN_BOW];
-
+    //o_ptr = &p_ptr->inventory[INVEN_BOW];
+    o_ptr = &(inventory[INVEN_BOW]);
     /* Assume not heavy */
     state->heavy_shoot = FALSE;
 
@@ -3077,7 +3077,8 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
   /*** Analyze weapon ***/
 
     /* Examine the "current weapon" */
-    o_ptr = &p_ptr->inventory[INVEN_WIELD];
+    //o_ptr = &p_ptr->inventory[INVEN_WIELD];
+    o_ptr = &(inventory[INVEN_WIELD]);
 
     /* Assume that the player is not a Priest wielding an edged weapon. */
     state->icky_wield = FALSE;
