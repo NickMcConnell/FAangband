@@ -333,7 +333,8 @@ bool good_ego(const ego_item_type * e_ptr)
 	return FALSE;
 
     /* Curses */
-    if ((e_ptr->flags_curse) || kf_has(e_ptr->flags_kind, KF_RAND_CURSE))
+    if (!cf_is_empty(e_ptr->flags_curse) || 
+	kf_has(e_ptr->flags_kind, KF_RAND_CURSE))
 	return FALSE;
 
 
@@ -450,7 +451,7 @@ static int make_ego_item(object_type * o_ptr, int power)
     e_idx = (byte) table[i].index;
     o_ptr->name2 = e_idx;
 
-    return ((e_info[e_idx].flags_curse
+    return ((!cf_is_empty(e_info[e_idx].flags_curse)
 	     || kf_has(e_info[e_idx].flags_kind, KF_RAND_CURSE)) ? -2 : 2);
 }
 
