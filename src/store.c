@@ -3214,9 +3214,9 @@ void store_maint(int which)
 	j = st_ptr->stock_size - 1;
 
     /* Acquire some new items */
+    int giveup = 0;
     while (st_ptr->stock_num < j)
     {
-	static int giveup = 0;
 	store_create();
 	giveup++;
 	if (giveup > 100) break;
