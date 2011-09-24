@@ -38,7 +38,7 @@
 #include "ui-menu.h"
 
 /* Element to be proofed against in element-proofing */
-static bitflag *el_to_proof = NULL;
+static bitflag el_to_proof[OF_SIZE];
 
 /**
  * Alter player's shape.  Taken from Sangband.
@@ -2944,6 +2944,7 @@ bool el_proof(bitflag *flag)
     cptr q, s;
 
     /* Set the element */
+    of_wipe(el_to_proof);
     of_copy(el_to_proof, flag);
 
     /* Only unproofed items */
