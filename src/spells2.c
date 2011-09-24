@@ -3496,9 +3496,6 @@ bool recharge(int power)
 	    if (artifact_p(o_ptr) && (o_ptr->pval > k_ptr->pval.base))
 		o_ptr->pval = k_ptr->pval.base;
 
-	    /* Hack -- we no longer "know" the item */
-	    o_ptr->ident &= ~(IDENT_KNOWN);
-
 	    /* Hack -- we no longer think the item is empty */
 	    o_ptr->ident &= ~(IDENT_EMPTY);
 	}

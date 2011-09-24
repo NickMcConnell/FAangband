@@ -1738,6 +1738,7 @@ I:55:40:6
 W:85:40:50:35000
 P:0:1d2:0:0:0:0
 F:INSTA_ART
+E:STARFIRE
 D:A thorny staff with whorls and faintly gleaming engravings covering its 
 D:surface from heel to crown.
 
@@ -1750,6 +1751,7 @@ I:55:41:6
 W:50:40:50:20000
 P:0:1d2:0:0:0:0
 F:INSTA_ART
+E:WINDS
 D:This staff trembles ever so slightly, buffeted by the Four Winds that 
 D:impatiently await release.
 
@@ -1762,6 +1764,7 @@ I:55:42:5
 W:80:48:50:30000
 P:0:1d2:0:0:0:0
 F:INSTA_ART
+E:HOLDING
 D:Suddenly, the cries of beings that cling to existence beyond life seem 
 D:thin and weak, and you call out with a mighty voice for them to hold and 
 D:await your will!
@@ -1775,6 +1778,7 @@ I:55:43:5
 W:50:48:50:20000
 P:0:1d2:0:0:0:0
 F:INSTA_ART
+E:KELVAR
 D:Inside this staff lies the power of Yavanna to listen to her creations. 
 
 
@@ -1796,6 +1800,7 @@ I:65:40:10
 W:40:40:10:15000
 P:0:1d1:0:0:0:0
 F:INSTA_ART
+E:ILKORIN
 D:Deadly venoms that blight and wither seep continually from this wand.
 
 # The Wand of Beguiling
@@ -1806,6 +1811,7 @@ I:65:41:5
 W:70:52:10:27500
 P:0:1d1:0:0:0:0
 F:INSTA_ART
+E:BEGUILING
 D:Every creature has its soft spot...
 
 # The Wand of Unmaking
@@ -1816,6 +1822,7 @@ I:65:42:5
 W:100:48:10:150000
 P:0:1d1:0:0:0:0
 F:INSTA_ART
+E:UNMAKING
 D:Most treacherous of all spells of doom are those that rip asunder the fabric 
 D:of the created world, annhilating order and reveling in the primal chaos 
 D:that howls against all that is - and ever threatens to consume it at the 
@@ -1830,6 +1837,7 @@ I:65:43:6
 W:70:48:10:22500
 P:0:1d1:0:0:0:0
 F:INSTA_ART
+E:OSSE
 D:The Maia Oss["e] was at one time drawn to Melkor, and still finds delight in 
 D:the destructive power of the sea.
 
