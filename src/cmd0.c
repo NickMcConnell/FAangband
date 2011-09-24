@@ -294,7 +294,7 @@ static bool cmd_menu(command_list *list, void *selection_p)
     ui_event_data evt;
     struct generic_command *selection = selection_p;
 
-    /* Set up th emenu */
+    /* Set up the menu */
     menu_init(&menu, MN_SKIN_SCROLL, &commands_menu);
     menu_setpriv(&menu, list->len, list->list);
     menu_layout(&menu, &area);
@@ -700,7 +700,7 @@ static bool textui_process_key(unsigned char c)
     struct command *cmd;
     struct generic_command *command;
 
-    if (c == '\n' || c == '\r')
+    if ((c == '\n' || c == '\r') && OPT(show_menus))
 	c = textui_action_menu_choose();
 
     cmd = &converted_list[c];
@@ -708,7 +708,7 @@ static bool textui_process_key(unsigned char c)
     if (!command)
 	return FALSE;
 
-    if (c == ESCAPE || c == ' ' || c == '\a')
+    if (c == ESCAPE || c == ' ' || c == '\a' || c == '\n' || c == '\r')
 	return TRUE;
 
     if (key_confirm_command(c) &&

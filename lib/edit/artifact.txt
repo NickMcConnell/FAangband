@@ -1738,7 +1738,7 @@ I:55:40:6
 W:85:40:50:35000
 P:0:1d2:0:0:0:0
 F:INSTA_ART
-E:STARFIRE
+#E:STARFIRE
 D:A thorny staff with whorls and faintly gleaming engravings covering its 
 D:surface from heel to crown.
 
@@ -1751,7 +1751,7 @@ I:55:41:6
 W:50:40:50:20000
 P:0:1d2:0:0:0:0
 F:INSTA_ART
-E:WINDS
+#E:WINDS
 D:This staff trembles ever so slightly, buffeted by the Four Winds that 
 D:impatiently await release.
 
@@ -1764,7 +1764,7 @@ I:55:42:5
 W:80:48:50:30000
 P:0:1d2:0:0:0:0
 F:INSTA_ART
-E:HOLDING
+#E:HOLDING
 D:Suddenly, the cries of beings that cling to existence beyond life seem 
 D:thin and weak, and you call out with a mighty voice for them to hold and 
 D:await your will!
@@ -1778,7 +1778,7 @@ I:55:43:5
 W:50:48:50:20000
 P:0:1d2:0:0:0:0
 F:INSTA_ART
-E:KELVAR
+#E:KELVAR
 D:Inside this staff lies the power of Yavanna to listen to her creations. 
 
 
@@ -1800,7 +1800,7 @@ I:65:40:10
 W:40:40:10:15000
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-E:ILKORIN
+#E:ILKORIN
 D:Deadly venoms that blight and wither seep continually from this wand.
 
 # The Wand of Beguiling
@@ -1811,7 +1811,7 @@ I:65:41:5
 W:70:52:10:27500
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-E:BEGUILING
+#E:BEGUILING
 D:Every creature has its soft spot...
 
 # The Wand of Unmaking
@@ -1822,7 +1822,7 @@ I:65:42:5
 W:100:48:10:150000
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-E:UNMAKING
+#E:UNMAKING
 D:Most treacherous of all spells of doom are those that rip asunder the fabric 
 D:of the created world, annhilating order and reveling in the primal chaos 
 D:that howls against all that is - and ever threatens to consume it at the 
@@ -1837,7 +1837,7 @@ I:65:43:6
 W:70:48:10:22500
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-E:OSSE
+#E:OSSE
 D:The Maia Oss["e] was at one time drawn to Melkor, and still finds delight in 
 D:the destructive power of the sea.
 
@@ -1861,7 +1861,7 @@ I:66:40:0
 W:65:40:15:12500
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-E:DELVING:0
+#E:DELVING:0
 D:Even Dwarven skill must yield to he who can dissolve the sinews of 
 D:mountains at a word.
 
@@ -1874,7 +1874,7 @@ I:66:41:0
 W:80:40:15:20000
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-E:SHADOW:300
+#E:SHADOW:300
 D:The legendary rogues of old could wrap themselves in shadows, and become 
 D:as mist and rumour to their unwitting foes.
 
@@ -1887,7 +1887,7 @@ I:66:42:0
 W:85:48:15:25000
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-E:AIR:75
+#E:AIR:75
 D:The Elemental Host of the vast Plains of Air wield powers unknown to 
 D:beings who live below, and will gladly smite those upon whom you call 
 D:their wrath.
@@ -1901,7 +1901,7 @@ I:66:43:0
 W:70:64:15:50000
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-E:PORTALS:40
+#E:PORTALS:40
 D:The mastery of mystic entrances and exits is now almost unknown, and 
 D:fortunate he who finds the Rod of Hidden Ways.
 
