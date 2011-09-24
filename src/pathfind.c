@@ -1135,8 +1135,7 @@ void run_step(int dir)
 		}
 	    }
 
-	    if (!player_is_crossing)
-		p_ptr->run_cur_dir = pf_result[pf_result_index--] - '0';
+	    p_ptr->run_cur_dir = pf_result[pf_result_index--] - '0';
 	}
     }
 

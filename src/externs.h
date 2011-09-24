@@ -267,8 +267,6 @@ extern bool ghost_has_spoken;
 extern bool is_autosave;
 extern bool autosave;
 extern s16b autosave_freq;
-extern byte player_is_crossing;
-extern bool cancel_crossing;
 extern byte number_of_thefts_on_level;
 extern byte num_trap_on_level;
 extern byte num_runes_on_level[RUNE_TAIL];

@@ -893,17 +893,12 @@ void move_player(int dir)
 	    else if ((p_ptr->schange == SHAPE_BAT)
 		     || (p_ptr->schange == SHAPE_WYRM))
 		can_move = TRUE;
-	    
-	    else if (player_is_crossing == dir)
-	    {
-		can_move = TRUE;
-		player_is_crossing = 0;
-	    }
+
+	    /* Require more energy */
 	    else 
 	    {
-		can_move = FALSE;
-		player_is_crossing = dir;
-		cmd_insert(CMD_WALK);
+		can_move = TRUE;
+		p_ptr->energy_use += 100;
 	    }
 	}
 
@@ -919,18 +914,12 @@ void move_player(int dir)
 	    else if ((p_ptr->schange == SHAPE_BAT)
 		     || (p_ptr->schange == SHAPE_WYRM))
 		can_move = TRUE;
-	    
-	    /* Allow movement only if partway through already. */
-	    else if (player_is_crossing == dir)
-	    {
-		can_move = TRUE;
-		player_is_crossing = 0;
-	    }
+
+	    /* Require more energy */
 	    else 
 	    {
-		can_move = FALSE;
-		player_is_crossing = dir;
-		cmd_insert(CMD_WALK);
+		can_move = TRUE;
+		p_ptr->energy_use += 100;
 	    }
 	}
 
@@ -1076,9 +1065,6 @@ void move_player(int dir)
 	y = py = p_ptr->py;
 	x = px = p_ptr->px;
 	f_ptr = &f_info[cave_feat[y][x]];
-	
-	/* No longer traversing. */
-	player_is_crossing = 0;
 	
 	/* Fall off a cliff */
 	if (falling)

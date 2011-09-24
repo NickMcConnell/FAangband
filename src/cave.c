@@ -4483,9 +4483,6 @@ void disturb(int stop_search, int unused_flag)
     /* Cancel repeated commands */
     cmd_cancel_repeat();
 
-    /* Cancel automatic movement */
-    if (player_is_crossing) cancel_crossing = TRUE;
-    
     /* Cancel Resting */
     if (p_ptr->resting) {
 	/* Cancel */

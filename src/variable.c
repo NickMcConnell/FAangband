@@ -1068,16 +1068,6 @@ bool autosave;				/* Timed autosave */
 s16b autosave_freq;			/* Autosave frequency */
 
 
-/**
- * Is the player partly through trees or rubble and, if so, in which 
- * direction is he headed?  Monsters are handled more simply:  They have 
- * a 33% or 50% chance of walking through. -LM-
- */
-bool cancel_crossing;
-
-byte player_is_crossing;
-
-
 /*
  * Two variables that limit rogue stealing and creation of traps.  
  * One array that limits the number of runes of any type.

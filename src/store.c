@@ -3137,7 +3137,7 @@ void store_shuffle(int which)
 void store_maint(int which)
 {
     int j;
-
+    int giveup = 0;
     int old_rating = rating;
 
     /* Save the store index */
@@ -3214,7 +3214,6 @@ void store_maint(int which)
 	j = st_ptr->stock_size - 1;
 
     /* Acquire some new items */
-    int giveup = 0;
     while (st_ptr->stock_num < j)
     {
 	store_create();

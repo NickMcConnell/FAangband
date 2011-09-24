@@ -481,26 +481,6 @@ void process_command(cmd_context ctx, bool no_request)
 	}
 
 	case CMD_WALK:
-	{
-	    /* Deal with trees and rubble */
-	    if (player_is_crossing)
-	    {
-		if (cancel_crossing)
-		{
-		    cancel_crossing = FALSE;
-		    return;
-		}
-
-		if (!inkey_next)
-		{
-		  cmd_set_arg_direction(cmd, 0, player_is_crossing);
-		  break;
-		}
-	    }
-
-	    goto get_dir;
-	}
-
 	case CMD_RUN:
 	case CMD_JUMP:
 	case CMD_BASH:
