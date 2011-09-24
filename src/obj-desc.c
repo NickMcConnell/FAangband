@@ -820,7 +820,7 @@ static size_t obj_desc_inscrip(const object_type * o_ptr, char *buf, size_t max,
     else if (!object_aware_p(o_ptr) && object_tried_p(o_ptr))
 	u[n++] = "tried";
     
-    /* Use the discount, if any No annoying inscription for homemade
+    /* Use the discount, if any. No annoying inscription for homemade
      * branded items. */
     if ((o_ptr->discount > 0) && (o_ptr->discount != 80)) 
 	u[n++] = format("%d%% off", o_ptr->discount);
@@ -850,9 +850,19 @@ static size_t obj_desc_inscrip(const object_type * o_ptr, char *buf, size_t max,
 static size_t obj_desc_aware(const object_type * o_ptr, char *buf, size_t max,
 			     size_t end)
 {
-    if (!object_aware_p(o_ptr))
-	strnfcat(buf, max, &end, " {unseen}");
-
+    if (object_aware_p(o_ptr))
+    {
+	if ((o_ptr->discount > 0) && (o_ptr->discount != 80)) 
+	    strnfcat(buf, max, &end, " {%d%% off}", o_ptr->discount);
+    }
+    else
+    {
+	if ((o_ptr->discount == 0) || (o_ptr->discount == 80)) 
+	    strnfcat(buf, max, &end, " {unseen}");
+	else
+	    strnfcat(buf, max, &end, " {%d%% off, unseen}", o_ptr->discount);
+    }
+    
     return end;
 }
 
