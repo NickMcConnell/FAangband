@@ -3732,6 +3732,7 @@ void map_area(int y, int x, bool extended)
     /* Scan the maximal area of mapping */
     for (y = y_c - rad; y <= y_c + rad; y++) {
 	for (x = x_c - rad; x <= x_c + rad; x++) {
+	    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
 	    /* Ignore "illegal" locations */
 	    if (!in_bounds(y, x))
@@ -3741,11 +3742,11 @@ void map_area(int y, int x, bool extended)
 	    if (distance(y_c, x_c, y, x) > rad)
 		continue;
 
-	    /* All non-walls, trees, and rubble are "checked" */
-	    if (!cave_has(cave_info[y][x], CAVE_WALL)) {
+	    /* All non-walls, trees, dunes and rubble are "checked" */
+	    if (tf_has(f_ptr->flags, TF_PASSABLE)) {
 		/* Memorize normal features */
-		if (!tf_has(f_info[cave_feat[y][x]].flags, TF_FLOOR) ||
-		    tf_has(f_info[cave_feat[y][x]].flags, TF_INTERESTING)) {
+		if (!tf_has(f_ptr->flags, TF_FLOOR) ||
+		    tf_has(f_ptr->flags, TF_INTERESTING)) {
 		    /* Memorize the object */
 		    cave_on(cave_info[y][x], CAVE_MARK);
 		}

@@ -348,7 +348,7 @@ static char textui_action_menu_choose(void)
 {
     region area = { 21, 5, 37, 6 };
 
-    struct generic_command chosen_command = { 0, 0, 0, 0, 0 };
+    struct generic_command chosen_command = { 0 };
 
     if (!command_menu)
 	command_menu = menu_new(MN_SKIN_SCROLL, &command_menu_iter);
