@@ -37,9 +37,6 @@
 ?:[EQU $SYS ami]
 %:font-ami.prf
 
-?:[EQU $SYS gtk]
-%:font-gtk.prf
-
 ?:[EQU $SYS mac]
 %:font-mac.prf
 

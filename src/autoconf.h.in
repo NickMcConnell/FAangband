@@ -114,9 +114,6 @@
 /* Define to 1 if using the Curses frontend. */
 #undef USE_GCU
 
-/* Define to 1 if using the GTK+ 2.x interface and GTK+ 2.x is found. */
-#undef USE_GTK
-
 /* Define to 1 if NCurses is found. */
 #undef USE_NCURSES
 

@@ -18,7 +18,7 @@
 
 ##### System Specific Subfiles #####
 
-?:[IOR [EQU $SYS xaw] [EQU $SYS x11] [EQU $SYS gtk]]
+?:[IOR [EQU $SYS xaw] [EQU $SYS x11]
 %:user-x11.prf
 
 ?:[EQU $SYS gcu]

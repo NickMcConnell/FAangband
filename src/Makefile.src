@@ -9,7 +9,6 @@ NAME = FAangband
 VERSION = 1.2.4
 COPYRIGHT = (c) 2005-2011 Nick McConnell and contributors
 PROG = faangband
-SUBDIRS = gtk
 
 HEADERS = \
 	angband.h \
@@ -25,7 +24,6 @@ HEADERS = \
 	game-cmd.h \
 	game-event.h \
 	generate.h \
-	$(GTKHEADERS) \
 	h-basic.h \
 	history.h \
 	init.h \
@@ -64,19 +62,11 @@ HEADERS = \
 	z-util.h \
 	z-virt.h
 
-GTKHEADERS = \
-	gtk/cairo-utils.h \
-	gtk/main-gtk.h \
-	
 ZFILES = z-bitflag.o z-file.o z-form.o z-msg.o z-quark.o z-rand.o z-term.o \
          z-type.o z-util.o z-virt.o z-textblock.o
-MAINFILES = main.o main-crb.o main-gcu.o $(GTKMAINFILES) \
+MAINFILES = main.o main-crb.o main-gcu.o \
             main-sdl.o main-win.o main-x11.o snd-sdl.o
 
-GTKMAINFILES = \
-	gtk/main-gtk.o \
-	gtk/cairo-utils.o 
-	
 ANGFILES = \
 	attack.o \
 	birth.o \

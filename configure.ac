@@ -155,10 +155,6 @@ NOINSTALL="$with_noinstall"; AC_SUBST(NOINSTALL)
 SETEGID="$with_setgid";      AC_SUBST(SETEGID)
 
 dnl Frontends
-AC_ARG_ENABLE(gtk,
-	[AS_HELP_STRING([--enable-gtk],       [Enables GTK 2.x frontend (default: disabled)])],
-	[enable_gtk=$enableval],
-	[enable_gtk=no])
 AC_ARG_ENABLE(curses,
 	[AS_HELP_STRING([--enable-curses],    [Enables Curses frontend (default: enabled)])],
 	[enable_curses=$enableval],
@@ -181,13 +177,6 @@ AC_ARG_ENABLE(sdl_mixer,
 	[AS_HELP_STRING([--enable-sdl-mixer], [Enables SDL mixer sound support (default: enabled)])],
 	[enable_sdl_mixer=$enable_sdl_mixer],
 	[enable_sdl_mixer=yes])
-
-
-if test "x$enable_gtk" = "xyes"; then
-	if test "x$wsetgid" = "xyes"; then
-		AC_MSG_ERROR([The "setgid" option and the GTK port are incompatible.])
-	fi
-fi
 
 
 dnl curses checking
@@ -254,30 +243,6 @@ if test "$enable_sdl" = "yes"; then
 fi
 
 
-dnl GTK checking
-if test "$enable_gtk" = "yes"; then
-	PKG_CHECK_MODULES(GTK, [glib-2.0 >= 2.6.0 gtk+-2.0 >= 2.6.0 gthread-2.0 pango libglade-2.0],
-		[with_gtk=yes],
-		[with_gtk=no]
-	)
-	PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.6.0],
-		[with_gtkx=yes],
-		[with_gtk=no]
-	)
-
-	if test "x$SETEGID" != "x"; then
-		enable_gtk=no
-		with_gtk=no
-	fi
-
-	if test "$with_gtk" = "yes"; then
-		AC_DEFINE(USE_GTK, 1, [Define to 1 if using the GTK+ 2.x interface and GTK+ 2.x is found.])
-		CFLAGS="${CFLAGS} $GTK_CFLAGS"
-		LDFLAGS="${LDFLAGS} $GTK_LIBS -rdynamic -export-dynamic"
-	fi
-fi
-
-
 dnl SDL mixer checking
 if test "$enable_sdl_mixer" = "yes"; then
 	AC_CHECK_LIB(SDL_mixer, Mix_OpenAudio, found_sdl_mixer=yes, found_sdl_mixer=no)
@@ -335,15 +300,6 @@ if test "$enable_curses" = "yes"; then
 	fi
 else
 	echo "- Curses                                  Disabled"
-fi
-if test "$enable_gtk" = "yes"; then
-	if test "$with_gtk" = "no"; then
-		echo "- GTK 2.x                                 No; missing libraries"
-	else
-		echo "- GTK 2.x                                 Yes"
-	fi
-else
-	echo "- GTK 2.x                                 Disabled"
 fi
 if test "$enable_x11" = "yes"; then
 	if test "$with_x11" = "no"; then
