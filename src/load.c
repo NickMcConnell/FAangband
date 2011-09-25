@@ -1327,11 +1327,6 @@ int rd_inventory(u32b version)
 	  
 	    /* One more item */
 	    p_ptr->equip_cnt++;
-
-	    /* Notice dice and other obvious stuff */
-	    notice_other(IF_DD_DS, n + 1);
-	    flags_mask(p_ptr->inventory[n].id_obj, OF_SIZE, OF_OBVIOUS_MASK, 
-		       FLAG_END); 
 	}
       
 	/* Warning -- backpack is full */
@@ -1358,11 +1353,6 @@ int rd_inventory(u32b version)
 	  
 	    /* One more item */
 	    p_ptr->inven_cnt++;
-
-	    /* Notice dice and other obvious stuff */
-	    notice_other(IF_DD_DS, n + 1);
-	    flags_mask(p_ptr->inventory[n].id_obj, OF_SIZE, OF_OBVIOUS_MASK, 
-		       FLAG_END); 
 	}
     }
 
