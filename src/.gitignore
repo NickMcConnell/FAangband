@@ -1,6 +1,7 @@
 faangband
 .deps
 *.o
+*.o.*
 *~
 main-wce.c
 Makefile.win_sdl
