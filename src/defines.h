@@ -543,7 +543,6 @@ typedef enum
 #define PY_MAX_LEVEL	50		/* Maximum level */
 #define PY_MAX_SPELLS   64              /* Maximum number of spells */
 #define PY_MAX_BOOKS    11              /* Maximum number of spellbooks */
-#define SPELLS_PER_BOOK 12              /* Maximum number of spells per book */
 
 
 /*
