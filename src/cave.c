@@ -812,7 +812,7 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 
 	/* Check for trap detection boundaries */
 	if (g->trapborder && tf_has(f_ptr->flags, TF_FLOOR) && 
-	    !(g->trap < trap_max) && 
+	    !((int) g->trap < trap_max) && 
 	    (use_graphics == GRAPHICS_NONE || use_graphics == GRAPHICS_PSEUDO))
 	    a = TERM_L_GREEN;
 
@@ -833,7 +833,7 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 
 
 	/* There is a trap in this grid, and we are not hallucinating */
-	if ((g->trap < trap_max) && (!g->hallucinate))
+	if (((int) g->trap < trap_max) && (!g->hallucinate))
 	{
 	    /* Change graphics to indicate a trap (if visible) */
 	    if (get_trap_graphics(g->trap, &a, &c, TRUE))

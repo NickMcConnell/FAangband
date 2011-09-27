@@ -2701,7 +2701,7 @@ void do_cmd_spoilers(void)
       else if (ch == '2')
 	{
 	  bell("I said unavailable!");
-	  //spoil_artifact("artifact.spo");
+	  if (0) spoil_artifact("artifact.spo");
 	}
       
       /* Option (3) */

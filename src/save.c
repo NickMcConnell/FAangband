@@ -185,7 +185,7 @@ static void wr_monster(monster_type *m_ptr)
  */
 static void wr_trap(trap_type *t_ptr)
 {
-    int i;
+    size_t i;
 
     wr_byte(t_ptr->t_idx);
     wr_byte(t_ptr->fy);
@@ -863,7 +863,8 @@ void wr_stores(void)
  */
 void wr_dungeon(void)
 {
-    int y, x, i;
+    int y, x;
+    size_t i;
   
     byte tmp8u;
   
