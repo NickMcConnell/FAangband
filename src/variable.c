@@ -376,6 +376,7 @@ const cptr angband_sound_name[SOUND_MAX] =
   "blessed", 
   "hero", 
   "berserk", 
+  "bold", 
   "prot_evil", 
   "invuln", 
   "see_invis", 

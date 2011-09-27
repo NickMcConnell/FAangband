@@ -2522,7 +2522,7 @@ bool make_attack_ranged(monster_type * m_ptr, int attack)
     case RSF_BRTH_DISEN:
     {
 	disturb(1, 0);
-	sound(MSG_BR_DISENCHANT);
+	sound(MSG_BR_DISEN);
 	if (blind)
 	    msg_format("%^s breathes.", m_name);
 	else

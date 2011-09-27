@@ -2517,7 +2517,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		shapechange(SHAPE_WYRM);
 	    } else {
 		chance = randint0(2);
-		sound(((chance == 1 ? MSG_BR_CHAOS : MSG_BR_DISENCHANT)));
+		sound(((chance == 1 ? MSG_BR_CHAOS : MSG_BR_DISEN)));
 		msg_format("You breathe %s.",
 			   ((chance == 1 ? "chaos" : "disenchantment")));
 		fire_arc((chance == 1 ? GF_CHAOS : GF_DISENCHANT), dir,
@@ -2533,7 +2533,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    } else {
 		chance = randint0(4);
 		sound(((chance == 1) ? MSG_BR_CHAOS : 
-		       ((chance == 2) ? MSG_BR_DISENCHANT : 
+		       ((chance == 2) ? MSG_BR_DISEN : 
 			((chance == 3) ? MSG_BR_SOUND :	MSG_BR_SHARDS))));
 		msg_format("You breathe %s.",
 			   ((chance == 1) ? "chaos" : 
