@@ -1108,7 +1108,7 @@ static bool remove_curse_aux(int good)
 		    floor_item_describe(0 - item);
 		    floor_item_optimize(0 - item);
 		}
-		return (FALSE);
+		return (TRUE);
 	    }
 
 	    /* Try once */
@@ -1177,8 +1177,12 @@ static bool remove_curse_aux(int good)
     /* Redraw stuff */
     p_ptr->redraw |= (PR_EQUIP | PR_INVEN);
 
-    /* Return "something uncursed" */
-    return (cf_is_empty(curses) ? FALSE : TRUE);
+    /* Something uncursed */
+    if (cf_is_empty(curses))
+	msg_print("You feel as if someone is watching over you.");
+
+    /* Return scroll used/spell cast */
+    return (TRUE);
 }
 
 
