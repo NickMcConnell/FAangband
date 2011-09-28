@@ -772,7 +772,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
     /* Repeat forever */
     while (1) {
 	/* Paranoia */
-	query.key = ' ';
+	query.key.code = ' ';
 
 	/* Assume boring */
 	boring = TRUE;
@@ -810,7 +810,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 	    query = inkey_ex();
 
 	    /* Stop on everything but "return" */
-	    if ((query.key != '\n') && (query.key != '\r'))
+	    if ((query.key.code != '\n') && (query.key.code != '\r'))
 		break;
 
 	    /* Repeat forever */
@@ -888,7 +888,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 		    }
 
 		    /* Normal commands */
-		    if (query.key != 'r')
+		    if (query.key.code != 'r')
 			break;
 
 		    /* Toggle recall */
@@ -896,12 +896,12 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 		}
 
 		/* Stop on everything but "return"/"space" */
-		if ((query.key != '\n') && (query.key != '\r')
-		    && (query.key != ' '))
+		if ((query.key.code != '\n') && (query.key.code != '\r')
+		    && (query.key.code != ' '))
 		    break;
 
 		/* Sometimes stop at "space" key */
-		if ((query.key == ' ') && !(mode & (TARGET_LOOK)))
+		if ((query.key.code == ' ') && !(mode & (TARGET_LOOK)))
 		    break;
 
 		/* Change the intro */
@@ -948,12 +948,12 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 		    query = inkey_ex();
 
 		    /* Stop on everything but "return"/"space" */
-		    if ((query.key != '\n') && (query.key != '\r')
-			&& (query.key != ' '))
+		    if ((query.key.code != '\n') && (query.key.code != '\r')
+			&& (query.key.code != ' '))
 			break;
 
 		    /* Sometimes stop at "space" key */
-		    if ((query.key == ' ') && !(mode & (TARGET_LOOK)))
+		    if ((query.key.code == ' ') && !(mode & (TARGET_LOOK)))
 			break;
 
 		    /* Change the intro */
@@ -1017,12 +1017,12 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 		query = inkey_ex();
 		
 		/* Stop on everything but "return"/"space" */
-		if ((query.key != '\n') && (query.key != '\r')
-		    && (query.key != ' '))
+		if ((query.key.code != '\n') && (query.key.code != '\r')
+		    && (query.key.code != ' '))
 		    break;
 		
 		/* Sometimes stop at "space" key */
-		if ((query.key == ' ') && !(mode & (TARGET_LOOK)))
+		if ((query.key.code == ' ') && !(mode & (TARGET_LOOK)))
 		    break;
 	    }
 	}
@@ -1067,7 +1067,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 		    query = inkey_ex();
 
 		    /* Display objects */
-		    if (query.key == 'r') {
+		    if (query.key.code == 'r') {
 			int rdone = 0;
 			int pos;
 			while (!rdone) {
@@ -1085,7 +1085,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 			    /* Load screen */
 			    screen_load();
 
-			    pos = query.key - 'a';
+			    pos = query.key.code - 'a';
 			    if (0 <= pos && pos < floor_num) {
 				track_object(-floor_list[pos]);
 				handle_stuff();
@@ -1132,12 +1132,12 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 		query = inkey_ex();
 
 		/* Stop on everything but "return"/"space" */
-		if ((query.key != '\n') && (query.key != '\r')
-		    && (query.key != ' '))
+		if ((query.key.code != '\n') && (query.key.code != '\r')
+		    && (query.key.code != ' '))
 		    break;
 
 		/* Sometimes stop at "space" key */
-		if ((query.key == ' ') && !(mode & (TARGET_LOOK)))
+		if ((query.key.code == ' ') && !(mode & (TARGET_LOOK)))
 		    break;
 
 		/* Change the intro */
@@ -1222,13 +1222,13 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 	    query = inkey_ex();
 
 	    /* Stop on everything but "return"/"space" */
-	    if ((query.key != '\n') && (query.key != '\r')
-		&& (query.key != ' '))
+	    if ((query.key.code != '\n') && (query.key.code != '\r')
+		&& (query.key.code != ' '))
 		break;
 	}
 
 	/* Stop on everything but "return" */
-	if ((query.key != '\n') && (query.key != '\r'))
+	if ((query.key.code != '\n') && (query.key.code != '\r'))
 	    break;
     }
 
@@ -1583,7 +1583,7 @@ bool target_set_interactive(int mode, int x, int y)
 	    } else {
 
 		/* Analyze */
-		switch (query.key) {
+		switch (query.key.code) {
 		case ESCAPE:
 		case 'q':
 		    {
@@ -1712,7 +1712,8 @@ bool target_set_interactive(int mode, int x, int y)
 		    int old_wy = Term->offset_y;
 		    int old_wx = Term->offset_x;
 
-		    /* Change if legal */
+		    /* Change if legal */#include "angband.h"
+
 		    if (change_panel(d)) {
 			/* Recalculate interesting grids */
 			target_set_interactive_prepare(mode);
@@ -1797,7 +1798,7 @@ bool target_set_interactive(int mode, int x, int y)
 	    } else {
 
 		/* Analyze the keypress */
-		switch (query.key) {
+		switch (query.key.code) {
 		case ESCAPE:
 		case 'q':
 		    {

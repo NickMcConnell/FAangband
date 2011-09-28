@@ -28,8 +28,8 @@ HEADERS = \
 	history.h \
 	init.h \
 	jewel.h \
+	keymap.h \
 	main.h \
-	macro.h \
 	monster.h \
 	object.h \
 	option.h \
@@ -96,9 +96,9 @@ ANGFILES = \
 	identify.o \
 	init.o \
 	jewel.o \
+	keymap.o \
 	load.o \
 	load-old.o \
-	macro.o \
 	monattk.o \
 	monmove.o \
 	monster1.o \
@@ -132,6 +132,7 @@ ANGFILES = \
 	target.o \
 	ui-birth.o \
 	ui.o \
+	ui-event.o \
 	ui-knowledge.o \
 	ui-menu.o \
 	ui-options.o \

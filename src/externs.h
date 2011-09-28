@@ -104,7 +104,6 @@ extern bool inkey_base;
 extern bool inkey_xtra;
 extern u32b inkey_scan;
 extern bool inkey_flag;
-extern cptr inkey_next;
 extern s16b coin_type;
 extern bool magic_throw;
 extern bool opening_chest;
@@ -186,8 +185,6 @@ extern u32b alloc_race_total;
 extern byte misc_to_attr[256];
 extern char misc_to_char[256];
 extern byte tval_to_attr[128];
-extern char macro_buffer[1024];
-extern char *keymap_act[KEYMAP_MODES][256];
 extern player_sex *sp_ptr;
 extern player_race *rp_ptr;
 extern player_class *cp_ptr;
@@ -278,6 +275,9 @@ extern void (*sound_hook)(int);
 extern autoinscription *inscriptions;
 extern u16b inscriptions_count;
 
+/* util.c */
+extern struct keypress *inkey_next;
+
 /*
  * Automatically generated "function declarations"
  */
@@ -350,9 +350,6 @@ extern void run_step(int dir);
 /* randart.c */
 extern void initialize_random_artifacts(void);
 
-/* randname.c */
-extern size_t randname_make(randname_type name_type, size_t min, size_t max, char *word_buf, size_t buflen, const char ***wordlist);
-
 /* save.c */
 extern bool old_save(void);
 
@@ -375,8 +372,8 @@ extern char *find_roman_suffix_start(cptr buf);
 extern int roman_to_int(const char *roman);
 extern int int_to_roman(int n, char *roman, size_t bufsize);
 extern void flush(void);
-extern char anykey(void);
-extern char inkey(void);
+extern void anykey(void);
+extern struct keypress inkey(void);
 extern ui_event inkey_ex(void);
 extern void bell(cptr reason);
 extern void sound(int val);
@@ -391,20 +388,20 @@ extern void c_put_str(byte attr, cptr str, int row, int col);
 extern void put_str(cptr str, int row, int col);
 extern void c_prt(byte attr, cptr str, int row, int col);
 extern void prt(cptr str, int row, int col);
-extern void text_out_to_file(byte attr, char *str);
-extern void text_out_to_screen(byte a, char *str);
+extern void text_out_to_file(byte attr, const char *str);
+extern void text_out_to_screen(byte a, const char *str);
 extern void text_out(const char *fmt, ...);
 extern void text_out_c(byte a, const char *fmt, ...);
 extern void text_out_e(const char *fmt, ...);
 extern void clear_from(int row);
-extern bool askfor_aux_keypress(char *buf, size_t buflen, size_t *curs, size_t *len, char keypress, bool firsttime);
-extern bool askfor_aux(char *buf, size_t len, bool keypress_h(char *, size_t, size_t *, size_t *, char, bool));
+extern bool askfor_aux_keypress(char *buf, size_t buflen, size_t *curs, size_t *len, struct keypress keypress, bool firsttime);
+extern bool askfor_aux(char *buf, size_t len, bool keypress_h(char *, size_t, size_t *, size_t *, struct keypress, bool));
 extern bool get_string(cptr prompt, char *buf, size_t len);
 extern s16b get_quantity(cptr prompt, int max);
 extern char get_char(cptr prompt, const char *options, size_t len, char fallback);
 extern bool get_check(cptr prompt);
-extern bool get_com(cptr prompt, char *command);
-extern bool get_com_ex(cptr prompt, ui_event *command);
+extern bool get_com(const char *prompt, struct keypress *command);
+extern bool get_com_ex(const char *prompt, ui_event *command);
 extern void pause_line(int row);
 extern bool is_a_vowel(int ch);
 extern int color_char_to_attr(char c);
@@ -429,7 +426,7 @@ extern void gain_exp(s32b amount);
 extern void lose_exp(s32b amount);
 bool word_recall(int v);
 int motion_dir(int y1, int x1, int y2, int x2);
-extern int target_dir(char ch);
+extern int target_dir(struct keypress ch);
 extern bool get_rep_dir(int *dp);
 extern bool confuse_dir(int *dp);
 extern void center_panel(void);

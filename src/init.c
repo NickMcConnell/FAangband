@@ -23,11 +23,12 @@
 #include "game-cmd.h"
 #include "game-event.h"
 #include "init.h"
-#include "macro.h"
+#include "keymap.h"
 #include "tvalsval.h"
 #include "option.h"
 #include "parser.h"
 #include "prefs.h"
+#include "randname.h"
 #include "squelch.h"
 
 /*
@@ -3459,9 +3460,6 @@ static errr init_other(void)
 
     /*** Prepare the various "bizarre" arrays ***/
 
-    /* Initialize the "macro" package */
-    (void)macro_init();
-
     /* Initialize the "quark" package */
     (void)quarks_init();
 
@@ -4333,12 +4331,6 @@ void cleanup_angband(void)
 {
     int i;
 
-
-    /* Free the macros */
-    macro_free();
-
-    /* Free the macro triggers */
-    macro_trigger_free();
 
     /* Free the allocation tables */
     FREE(alloc_kind_table);

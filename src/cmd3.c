@@ -64,7 +64,7 @@ void do_cmd_inven(void)
 
     /* Get a new command */
     e = inkey_ex();
-    if (!(e.type == EVT_KBRD && e.key == ESCAPE))
+    if (!(e.type == EVT_KBRD && e.key.code == ESCAPE))
 	Term_event_push(&e);
 
     /* Load screen */
@@ -99,7 +99,7 @@ void do_cmd_equip(void)
 
     /* Get a new command */
     e = inkey_ex();
-    if (!(e.type == EVT_KBRD && e.key == ESCAPE))
+    if (!(e.type == EVT_KBRD && e.key.code == ESCAPE))
 	Term_event_push(&e);
 
     /* Load screen */
@@ -616,7 +616,7 @@ void do_cmd_locate(void)
 
 	/* Get a direction */
 	while (!dir) {
-	    char command;
+	    struct keypress command;
 
 	    /* Get a command (or Cancel) */
 	    if (!get_com(out_val, &command)) break;
@@ -815,8 +815,8 @@ int cmp_monsters(const void *a, const void *b)
 void do_cmd_query_symbol(void)
 {
     int i, n, r_idx;
-    char sym;
-    ui_event query = EVENT_EMPTY;
+	struct keypress sym;
+    ui_event query;
     char search_str[60] = "";
     char monster_name[80];
     char buf[128];
@@ -836,21 +836,21 @@ void do_cmd_query_symbol(void)
  
     /* Find that character info, and describe it */
     for (i = 0; ident_info[i]; ++i) {
-	if (sym == ident_info[i][0])
+	if (sym.code == (unsigned char) ident_info[i][0])
 	    break;
     }
 
     /* Describe */
-    if (sym == KTRL('A')) {
+    if (sym.code == KTRL('A')) {
 	all = TRUE;
 	strcpy(buf, "Full monster list.");
-    } else if (sym == KTRL('U')) {
+    } else if (sym.code == KTRL('U')) {
 	all = uniq = TRUE;
 	strcpy(buf, "Unique monster list.");
-    } else if (sym == KTRL('N')) {
+    } else if (sym.code == KTRL('N')) {
 	all = norm = TRUE;
 	strcpy(buf, "Non-unique monster list.");
-    } else if (sym == KTRL('F'))
+    } else if (sym.code == KTRL('F'))
     {
 	if (!get_string("Substring to search: ", search_str, 
 			sizeof(search_str)))
@@ -863,9 +863,9 @@ void do_cmd_query_symbol(void)
 	sprintf(buf, "Monsters matching '%s'", search_str);
 	all = FALSE;
     } else if (ident_info[i]) {
-	sprintf(buf, "%c - %s.", sym, ident_info[i] + 2);
+	sprintf(buf, "%c - %s.", sym.code, ident_info[i] + 2);
     } else {
-	sprintf(buf, "%c - %s.", sym, "Unknown Symbol");
+	sprintf(buf, "%c - %s.", sym.code, "Unknown Symbol");
     }
 
     /* Display the result */
@@ -902,7 +902,7 @@ void do_cmd_query_symbol(void)
 		who[n++] = i;
 	    continue;
 	}
-	if (all || (r_ptr->d_char == sym))
+	if (all || ((unsigned char) r_ptr->d_char == sym.code))
 	    who[n++] = i;
     }
 
@@ -936,12 +936,12 @@ void do_cmd_query_symbol(void)
     redraw_stuff();
 
     /* Interpret the response */
-    if (query.key == 'k')
+    if (query.key.code == 'k')
     {
 	/* Sort by kills (and level) */
 	sort(who, n, sizeof(*who), cmp_pkill);
     }
-    else if (query.key == 'y' || query.key == 'p')
+    else if (query.key.code == 'y' || query.key.code == 'p')
     {
 	/* Sort by level; accept 'p' as legacy */
 	sort(who, n, sizeof(*who), cmp_level);
@@ -1011,7 +1011,7 @@ void do_cmd_query_symbol(void)
 	    }
 
 	    /* Normal commands */
-	    if (query.key != 'r')
+	    if (query.key.code != 'r')
 		break;
 
 	    /* Toggle recall */
@@ -1019,11 +1019,11 @@ void do_cmd_query_symbol(void)
 	}
 
 	/* Stop scanning */
-	if (query.key == ESCAPE)
+	if (query.key.code == ESCAPE)
 	    break;
 
 	/* Move to "prev" monster */
-	if (query.key == '-') {
+	if (query.key.code == '-') {
 	    if (i-- == 0) {
 		i = n - 1;
 	    }

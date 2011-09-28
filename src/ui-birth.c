@@ -110,21 +110,21 @@ static enum birth_stage get_quickstart_command(void)
 		/* Get a key */
 		ke = inkey_ex();
 		
-		if (ke.key == 'N' || ke.key == 'n')
+		if (ke.key.code == 'N' || ke.key.code == 'n')
 		{
 			cmd_insert(CMD_BIRTH_RESET);
 			next = BIRTH_SEX_CHOICE;
 		}
-		else if (ke.key == KTRL('X'))
+		else if (ke.key.code == KTRL('X'))
 		{
 			cmd_insert(CMD_QUIT);
 			next = BIRTH_COMPLETE;
 		}
-		else if (ke.key == 'C' || ke.key == 'c')
+		else if (ke.key.code == 'C' || ke.key.code == 'c')
 		{
 			next = BIRTH_NAME_CHOICE;
 		}
-		else if (ke.key == 'Y' || ke.key == 'y')
+		else if (ke.key.code == 'Y' || ke.key.code == 'y')
 		{
 			cmd_insert(CMD_ACCEPT_CHARACTER);
 			next = BIRTH_COMPLETE;
@@ -473,7 +473,7 @@ static enum birth_stage menu_question(enum birth_stage current, menu_type *curre
 		else if (cx.type == EVT_KBRD)
 		{
 			/* '*' chooses an option at random from those the game's provided. */
-			if (cx.key == '*' && menu_data->allow_random) 
+			if (cx.key.code == '*' && menu_data->allow_random) 
 			{
 				current_menu->cursor = randint0(current_menu->count);
 				cmd_insert(choice_command);
@@ -482,17 +482,17 @@ static enum birth_stage menu_question(enum birth_stage current, menu_type *curre
 				menu_refresh(current_menu);
 				next = current + 1;
 			}
-			else if (cx.key == '=') 
+			else if (cx.key.code == '=') 
 			{
 				do_cmd_options();
 				next = current;
 			}
-			else if (cx.key == KTRL('X')) 
+			else if (cx.key.code == KTRL('X')) 
 			{
 				cmd_insert(CMD_QUIT);
 				next = BIRTH_COMPLETE;
 			}
-			else if (cx.key == '?')
+			else if (cx.key.code == '?')
 			{
 				do_cmd_help();
 			}
@@ -545,7 +545,7 @@ static enum birth_stage roller_command(bool first_call)
 	
 	/* Prompt and get a command */
 	ke = inkey_ex();
-	ch = ke.key;
+	ch = ke.key.code;
 
 	if (ch == ESCAPE) 
 	{
@@ -692,7 +692,7 @@ static void point_based_stop(void)
 static enum birth_stage point_based_command(void)
 {
 	static int stat = 0;
-	char ch;
+	struct keypress ch;
 	enum birth_stage next = BIRTH_POINTBASED;
 
 /*	point_based_display();*/
@@ -703,50 +703,50 @@ static enum birth_stage point_based_command(void)
 	/* Get key */
 	ch = inkey();
 	
-	if (ch == KTRL('X')) 
+	if (ch.code == KTRL('X')) 
 	{
 		cmd_insert(CMD_QUIT);
 		next = BIRTH_COMPLETE;
 	}
 	
 	/* Go back a step, or back to the start of this step */
-	else if (ch == ESCAPE) 
+	else if (ch.code == ESCAPE) 
 	{
 		next = BIRTH_BACK;
 	}
 
-	else if (ch == 'r' || ch == 'R') 
+	else if (ch.code == 'r' || ch.code == 'R') 
 	{
 		cmd_insert(CMD_RESET_STATS);
 		cmd_set_arg_choice(cmd_get_top(), 0, FALSE);
 	}
 	
 	/* Done */
-	else if ((ch == '\r') || (ch == '\n')) 
+	else if ((ch.code == '\r') || (ch.code == '\n')) 
 	{
 		next = BIRTH_NAME_CHOICE;
 	}
 	else
 	{
-		ch = target_dir(ch);
+		int dir = target_dir(ch);
 		
 		/* Prev stat, looping round to the bottom when going off the top */
-		if (ch == 8)
+		if (dir == 8)
 			stat = (stat + A_MAX - 1) % A_MAX;
 		
 		/* Next stat, looping round to the top when going off the bottom */
-		if (ch == 2)
+		if (dir == 2)
 			stat = (stat + 1) % A_MAX;
 		
 		/* Decrease stat (if possible) */
-		if (ch == 4)
+		if (dir == 4)
 		{
 			cmd_insert(CMD_SELL_STAT);
 			cmd_set_arg_choice(cmd_get_top(), 0, stat);
 		}
 		
 		/* Increase stat (if possible) */
-		if (ch == 6)
+		if (dir == 6)
 		{
 			cmd_insert(CMD_BUY_STAT);
 			cmd_set_arg_choice(cmd_get_top(), 0, stat);
@@ -802,16 +802,16 @@ static enum birth_stage get_confirm_command(void)
 	ke = inkey_ex();
 	
 	/* Start over */
-	if (ke.key == 'S' || ke.key == 's')
+	if (ke.key.code == 'S' || ke.key.code == 's')
 	{
 		next = BIRTH_RESET;
 	}
-	else if (ke.key == KTRL('X'))
+	else if (ke.key.code == KTRL('X'))
 	{
 		cmd_insert(CMD_QUIT);
 		next = BIRTH_COMPLETE;
 	}
-	else if (ke.key == ESCAPE)
+	else if (ke.key.code == ESCAPE)
 	{
 		next = BIRTH_BACK;
 	}

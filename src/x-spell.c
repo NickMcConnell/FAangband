@@ -1541,7 +1541,7 @@ bool cast_spell(int tval, int sindex, int dir)
 		ui_event ke;
 
 		ke = inkey_ex();
-		answer = ke.key;
+		answer = ke.key.code;
 
 		if ((answer == 'W') || (answer == 'w')) {
 		    (void) enchant_spell(randint0(4) + 1, randint0(4) + 1, 0);

@@ -664,17 +664,6 @@ char misc_to_char[256];
 byte tval_to_attr[128];
 
 
-/**
- * Current (or recent) macro action
- */
-char macro_buffer[1024];
-
-
-/**
- * Keymaps for each "mode" associated with each keypress.
- */
-char *keymap_act[KEYMAP_MODES][256];
-
 
 
 /*** Player information ***/

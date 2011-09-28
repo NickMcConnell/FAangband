@@ -103,7 +103,7 @@ static bool show_action(menu_type * menu, const ui_event * e, int oid)
     {
 	cmd_insert(comm_code[oid]);
 	if (comm_code[oid] == CMD_NULL)
-	    Term_keypress(comm[oid]);
+	    Term_keypress(comm[oid],0);
     }
     return TRUE;
 }

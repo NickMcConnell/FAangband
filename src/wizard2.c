@@ -38,7 +38,7 @@ static void do_cmd_wiz_hack_ben(void)
 
 #ifdef MONSTER_FLOW
 
-    char cmd;
+    struct keypress cmd;
 
     int py = p_ptr->py;
     int px = p_ptr->px;
@@ -51,7 +51,7 @@ static void do_cmd_wiz_hack_ben(void)
 
 
     /* Analyze the command */
-    switch (cmd) {
+    switch (cmd.code) {
     case 'S':
     case 's':
 	{
@@ -120,7 +120,7 @@ static void do_cmd_wiz_hack_ben(void)
 		 &cmd))
 		return;
 
-	    if ((cmd == 'D') || (cmd == 'd')) {
+	    if ((cmd.code == 'D') || (cmd.code == 'd')) {
 		/* Update map */
 		for (y = Term->offset_y; y <= Term->offset_y + SCREEN_HGT; y++) {
 		    for (x = Term->offset_x; x <= Term->offset_x + SCREEN_WID; x++) {
@@ -178,6 +178,7 @@ static void do_cmd_wiz_hack_ben(void)
 	    /* Actual cost values */
 	    else {
 		int j;
+		struct keypress key;
 
 		for (i = cost_at_center - 2; i <= 100 + NOISE_STRENGTH; ++i) {
 		    /* First show grids with no scent */
@@ -222,7 +223,8 @@ static void do_cmd_wiz_hack_ben(void)
 		    }
 
 		    /* Get key */
-		    if (inkey() == ESCAPE)
+		    key = inkey();
+		    if (key.code == ESCAPE)
 			break;
 
 		    /* Redraw map */
@@ -950,7 +952,7 @@ static void wiz_reroll_item(object_type * o_ptr)
     object_type *i_ptr;
     object_type object_type_body;
 
-    char ch;
+    struct keypress ch;
 
     bool changed = FALSE;
 
@@ -979,25 +981,25 @@ static void wiz_reroll_item(object_type * o_ptr)
 	}
 
 	/* Create/change it! */
-	if (ch == 'A' || ch == 'a') {
+	if (ch.code == 'A' || ch.code == 'a') {
 	    changed = TRUE;
 	    break;
 	}
 
 	/* Apply normal magic, but first clear object */
-	else if (ch == 'n' || ch == 'N') {
+	else if (ch.code == 'n' || ch.code == 'N') {
 	    object_prep(i_ptr, o_ptr->k_idx, RANDOMISE);
 	    apply_magic(i_ptr, p_ptr->depth, FALSE, FALSE, FALSE);
 	}
 
 	/* Apply good magic, but first clear object */
-	else if (ch == 'g' || ch == 'g') {
+	else if (ch.code == 'g' || ch.code == 'g') {
 	    object_prep(i_ptr, o_ptr->k_idx, RANDOMISE);
 	    apply_magic(i_ptr, p_ptr->depth, FALSE, TRUE, FALSE);
 	}
 
 	/* Apply great magic, but first clear object */
-	else if (ch == 'e' || ch == 'e') {
+	else if (ch.code == 'e' || ch.code == 'e') {
 	    object_prep(i_ptr, o_ptr->k_idx, RANDOMISE);
 	    apply_magic(i_ptr, p_ptr->depth, FALSE, TRUE, TRUE);
 	}
@@ -1041,7 +1043,7 @@ static void wiz_statistics(object_type * o_ptr)
 {
     long i, matches, better, worse, other;
 
-    char ch;
+    struct keypress ch;
     char *quality;
 
     bool good, great;
@@ -1068,15 +1070,15 @@ static void wiz_statistics(object_type * o_ptr)
 	if (!get_com(pmt, &ch))
 	    break;
 
-	if (ch == 'n' || ch == 'N') {
+	if (ch.code == 'n' || ch.code == 'N') {
 	    good = FALSE;
 	    great = FALSE;
 	    quality = "normal";
-	} else if (ch == 'g' || ch == 'G') {
+	} else if (ch.code == 'g' || ch.code == 'G') {
 	    good = TRUE;
 	    great = FALSE;
 	    quality = "good";
-	} else if (ch == 'e' || ch == 'E') {
+	} else if (ch.code == 'e' || ch.code == 'E') {
 	    good = TRUE;
 	    great = TRUE;
 	    quality = "excellent";
@@ -1098,18 +1100,19 @@ static void wiz_statistics(object_type * o_ptr)
 	for (i = 0; i <= TEST_ROLL; i++) {
 	    /* Output every few rolls */
 	    if ((i < 100) || (i % 100 == 0)) {
+		struct keypress kp;
+
 		/* Do not wait */
 		inkey_scan = SCAN_INSTANT;
 
 		/* Allow interupt */
-		if (inkey()) {
-		    /* Flush */
+		kp = inkey();
+		if (kp.type != EVT_NONE)
+		{
 		    flush();
-
-		    /* Stop rolling */
 		    break;
 		}
-
+		
 		/* Dump the stats */
 		prt(format(q, i, matches, better, worse, other), 0, 0);
 		Term_fresh();
@@ -1236,7 +1239,7 @@ static void do_cmd_wiz_play(void)
 
     object_type *o_ptr;
 
-    char ch;
+    struct keypress ch;
 
     cptr q, s;
 
@@ -1287,24 +1290,24 @@ static void do_cmd_wiz_play(void)
 	    break;
 	}
 
-	if (ch == 'A' || ch == 'a') {
+	if (ch.code == 'A' || ch.code == 'a') {
 	    changed = TRUE;
 	    break;
 	}
 
-	if (ch == 's' || ch == 'S') {
+	if (ch.code == 's' || ch.code == 'S') {
 	    wiz_statistics(i_ptr);
 	}
 
-	if (ch == 'r' || ch == 'R') {
+	if (ch.code == 'r' || ch.code == 'R') {
 	    wiz_reroll_item(i_ptr);
 	}
 
-	if (ch == 't' || ch == 'T') {
+	if (ch.code == 't' || ch.code == 'T') {
 	    wiz_tweak_item(i_ptr);
 	}
 
-	if (ch == 'q' || ch == 'Q') {
+	if (ch.code == 'q' || ch.code == 'Q') {
 	    wiz_quantity_item(i_ptr);
 	}
     }
@@ -1448,7 +1451,7 @@ bool jump_menu(int level, int *location)
     menu_type menu;
     menu_iter menu_f = { jump_tag, 0, jump_display, jump_action, 0 };
     region area = { 15, 1, 48, -1 };
-    ui_event evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { 0 };
     int cursor = 0, j = 0;
     size_t i;
     u16b *choice;
@@ -1744,7 +1747,7 @@ static void do_cmd_wiz_query(void)
 
     int y, x;
 
-    char cmd;
+    struct keypress cmd;
 
     u16b mask = 0x00;
 
@@ -1754,7 +1757,7 @@ static void do_cmd_wiz_query(void)
 	return;
 
     /* Extract a flag */
-    switch (cmd) {
+    switch (cmd.code) {
     case '0':
 	mask = (1 << 0);
 	break;
@@ -1867,7 +1870,7 @@ void do_cmd_debug(void)
     int py = p_ptr->py;
     int px = p_ptr->px;
 
-    char cmd;
+    struct keypress cmd;
 
 
     /* Get a "debug command" */
@@ -1875,7 +1878,7 @@ void do_cmd_debug(void)
 	return;
 
     /* Analyze the command */
-    switch (cmd) {
+    switch (cmd.code) {
 	/* Nothing */
     case ESCAPE:
     case ' ':

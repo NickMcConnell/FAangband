@@ -1492,20 +1492,19 @@ static void process_player(void)
     /* Check for "player abort" */
     if (p_ptr->running || cmd_get_nrepeats() > 0
 	|| (p_ptr->resting && !((turn * 10) % 0x0F))) {
-	/* Do not wait */
-	inkey_scan = SCAN_INSTANT;
+		ui_event e;
 
-	/* Check for a key */
-	if (anykey()) {
-	    /* Flush input */
-	    flush();
+		/* Do not wait */
+		inkey_scan = SCAN_INSTANT;
 
-	    /* Disturb */
-	    disturb(0, 0);
-
-	    /* Hack -- Show a Message */
-	    msg_print("Cancelled.");
-	}
+		/* Check for a key */
+		e = inkey_ex();
+		if (e.type != EVT_NONE) {
+			/* Flush and disturb */
+			flush();
+			disturb(0, 0);
+			msg("Cancelled.");
+		}
     }
 
     /* Add context-sensitive mouse buttons */

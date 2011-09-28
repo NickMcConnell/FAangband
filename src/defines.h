@@ -429,18 +429,6 @@
 #define USE_DEVICE      3	/* x> Harder devices x< Easier devices     */
 
 /**
- * The different types of name make_word can generate 
- */
-typedef enum 
-{
-  RANDNAME_TOLKIEN = 1,
-  RANDNAME_SCROLL,
-
-  /* End of type marker - not a valid name type */
-  RANDNAME_NUM_TYPES
-} randname_type;
-
-/**
  * Percentage likelihood that monsters will be disturbed by the
  * character each ten game turns, assuming a stealth of zero.
  *
@@ -1070,22 +1058,6 @@ enum
 #define LRN_BLIND_SAVE  48 /* Both resist Blind and Saves apply */
 #define LRN_CONFU_SAVE  49 /* Both resist Confusion and Saves apply */
 #define LRN_ALL         50 /* Recurses to all the resistables */
-
-/**
- * Number of keymap modes
- */
-#define KEYMAP_MODES	        2
-
-/**
- * Mode for original keyset commands
- */
-#define KEYMAP_MODE_ORIG	0
-
-/**
- * Mode for roguelike keyset commands
- */
-#define KEYMAP_MODE_ROGUE	1
-
 
 /*** Feature Indexes (see "lib/edit/terrain.txt") ***/
 
@@ -2464,13 +2436,13 @@ enum
  * Convert a "key event" into a "location" (Y)
  */
 #define KEY_GRID_Y(K) \
-  ((int) (((K.mousey - ROW_MAP) / tile_height) + Term->offset_y))
+  ((int) (((K.mouse.y - ROW_MAP) / tile_height) + Term->offset_y))
 
 /**
  * Convert a "key event" into a "location" (X)
  */
 #define KEY_GRID_X(K) \
-	((int) (((K.mousex - COL_MAP) / tile_width) + Term->offset_x))
+	((int) (((K.mouse.x - COL_MAP) / tile_width) + Term->offset_x))
 
 /**
  * Determines if a map location is "meaningful"

@@ -381,7 +381,7 @@ void history_display(void)
 
 	while (1)
 	{
-		char ch;
+		struct keypress ch;
 
 		Term_clear();
 
@@ -417,7 +417,7 @@ void history_display(void)
 
 		ch = inkey();
 
-		if (ch == 'n')
+		if (ch.code == 'n')
 		{
 			size_t scroll_to = first_item + page_size;
 
@@ -426,7 +426,7 @@ void history_display(void)
 
 			first_item = (scroll_to < max_item ? scroll_to : max_item);
 		}
-		else if (ch == 'p')
+		else if (ch.code == 'p')
 		{
 			int scroll_to = first_item - page_size;
 
@@ -435,7 +435,7 @@ void history_display(void)
 
 			first_item = (scroll_to >= 0 ? scroll_to : 0);
 		}
-		else if (ch == ARROW_DOWN)
+		else if (ch.code == ARROW_DOWN)
 		{
 			size_t scroll_to = first_item + 1;
 
@@ -444,7 +444,7 @@ void history_display(void)
 
 			first_item = (scroll_to < max_item ? scroll_to : max_item);
 		}
-		else if (ch == ARROW_UP)
+		else if (ch.code == ARROW_UP)
 		{
 			int scroll_to = first_item - 1;
 
@@ -453,7 +453,7 @@ void history_display(void)
 
 			first_item = (scroll_to >= 0 ? scroll_to : 0);
 		}
-		else if (ch == ESCAPE)
+		else if (ch.code == ESCAPE)
 			break;
 	}
 

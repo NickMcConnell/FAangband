@@ -155,7 +155,7 @@ bool gain_spec_menu(int *pick)
     menu_type menu;
     menu_iter menu_f = { gain_spec_tag, 0, gain_spec_display,
 			 gain_spec_action, 0 };
-    ui_event evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { 0 };
     struct spec_menu_data *d = mem_alloc(sizeof *d);
     region loc = { 0, 0, 70, -99 };
     bool done = FALSE;
@@ -869,19 +869,19 @@ void do_cmd_specialty(void)
 	while (get_com_ex
 	       ("View abilities or Learn specialty (l/v/ESC)?", &answer)) {
 	    /* New ability */
-	    if ((answer.key == 'L') || (answer.key == 'l')) {
+	    if ((answer.key.code == 'L') || (answer.key.code == 'l')) {
 		gain_specialty();
 		break;
 	    }
 
 	    /* View Current */
-	    if ((answer.key == 'V') || (answer.key == 'v')) {
+	    if ((answer.key.code == 'V') || (answer.key.code == 'v')) {
 		view_specialties();
 		break;
 	    }
 
 	    /* Exit */
-	    else if (answer.key == ESCAPE)
+	    else if (answer.key.code == ESCAPE)
 		break;
 
 

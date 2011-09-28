@@ -1252,6 +1252,7 @@ static void spoil_obj_gen(cptr fname)
 static void spoil_mon_gen(cptr fname)
 {
   int i, num;
+  struct keypress key;
   
   /* Storage */
   u32b *monster = malloc(z_info->r_max * sizeof(*monster));
@@ -1319,7 +1320,8 @@ static void spoil_mon_gen(cptr fname)
   prt("Command: ", 15, 0);
   
   /* Get a choice */
-  i = inkey();
+  key = inkey();
+  i = key.code;
   
   if (i == 'y') quick = TRUE;
   else quick = FALSE;
@@ -2651,7 +2653,7 @@ extern void do_cmd_spoilers(void);
 void do_cmd_spoilers(void)
 {
   int ch;
-  
+  struct keypress key;
   
   /* Save screen */
   screen_save();
@@ -2683,7 +2685,8 @@ void do_cmd_spoilers(void)
       prt("Command: ", 12, 0);
       
       /* Get a choice */
-      ch = inkey();
+      key = inkey();
+      ch = key.code;
       
       /* Escape */
       if (ch == ESCAPE)

@@ -24,6 +24,7 @@
 #include "generate.h"
 #include "history.h"
 #include "prefs.h"
+#include "randname.h"
 #include "spells.h"
 #include "squelch.h"
 #include "tvalsval.h"

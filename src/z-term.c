@@ -16,6 +16,7 @@
  *    are included in all such copies.  Other copyrights may also apply.
  */
 #include "angband.h"
+#include "z-term.h"
 
 
 /*
@@ -1982,15 +1983,15 @@ errr Term_flush(void)
 /*
  * Add a keypress to the "queue"
  */
-errr Term_keypress(int k)
+errr Term_keypress(keycode_t k, byte mods)
 {
   /* Hack -- Refuse to enqueue non-keys */
   if (!k) return (-1);
   
   /* Store the char, advance the queue */
-  Term->key_queue[Term->key_head].key = k;
-  Term->key_queue[Term->key_head].index = 0;
   Term->key_queue[Term->key_head].type = EVT_KBRD;
+  Term->key_queue[Term->key_head].key.code = k;
+  Term->key_queue[Term->key_head].key.mods = mods;
   Term->key_head++;
   
   /* Circular queue, handle wrap */
@@ -2009,10 +2010,9 @@ errr Term_keypress(int k)
 errr Term_mousepress(int x, int y, char button)
 {
   /* Store the char, advance the queue */
-  Term->key_queue[Term->key_head].key = 0;
-  Term->key_queue[Term->key_head].mousex = x;
-  Term->key_queue[Term->key_head].mousey = y;
-  Term->key_queue[Term->key_head].index = button;
+  Term->key_queue[Term->key_head].mouse.x = x;
+  Term->key_queue[Term->key_head].mouse.y = y;
+  Term->key_queue[Term->key_head].mouse.button = button;
   Term->key_queue[Term->key_head].type = EVT_MOUSE;
   Term->key_head++;
   
@@ -2042,8 +2042,8 @@ errr Term_key_push(int k)
 	if (!k) return (-1);
 
 	ke.type = EVT_KBRD;
-	ke.index = 0;
-	ke.key = k;
+	ke.key.code = k;
+	ke.key.mods = 0;
 
 	return Term_event_push(&ke);
 }
@@ -2089,7 +2089,7 @@ errr Term_event_push(const ui_event *ke)
 errr Term_inkey(ui_event *ch, bool wait, bool take)
 {
 	/* Assume no key */
-	ch->type = ch->key = 0;
+	memset(ch, 0, sizeof *ch);
 
 	/* Hack -- get bored */
 	if (!Term->never_bored)
@@ -2238,7 +2238,8 @@ errr Term_resize(int w, int h)
 	term_win *hold_mem;
 	term_win *hold_tmp;
 
-	ui_event evt = { EVT_RESIZE, 0, 0, 0, 0 };
+	ui_event evt = { 0 };
+	evt.type = EVT_RESIZE;
 
 
 	/* Resizing is forbidden */

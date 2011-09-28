@@ -3224,7 +3224,7 @@ void textui_cmd_suicide(void)
 
     /* Verify Suicide */
     else {
-	char ch;
+	struct keypress ch;
 
 	/* Verify */
 	if (!get_check("Do you really want to commit suicide? "))
@@ -3235,7 +3235,7 @@ void textui_cmd_suicide(void)
 	flush();
 	ch = inkey();
 	prt("", 0, 0);
-	if (ch != '@')
+	if (ch.code != '@')
 	    return;
     }
 

@@ -186,10 +186,10 @@ void do_cmd_change_name(void)
       ke = inkey_ex();
       
       /* Exit */
-      if (ke.key == ESCAPE) break;
+      if (ke.key.code == ESCAPE) break;
       
       /* Change name */
-      if (ke.key == 'c')
+      if (ke.key.code == 'c')
         {
 	  char namebuf[32] = "";
 
@@ -207,7 +207,7 @@ void do_cmd_change_name(void)
         }
       
       /* File dump */
-      else if (ke.key == 'f')
+      else if (ke.key.code == 'f')
 	{
 	  char ftmp[80];
 	  
@@ -226,42 +226,42 @@ void do_cmd_change_name(void)
 	}
       
       /* Scroll down */
-      else if ((ke.key == '\xff')|| (ke.key == ARROW_DOWN))
+      else if ((ke.key.code == '\xff')|| (ke.key.code == ARROW_DOWN))
 	{
 	  if (top_line + Term->hgt - 2 < last_line)
 	    top_line++;
 	}
       
       /* Page down */
-      else if (ke.key == ' ')
+      else if (ke.key.code == ' ')
 	{
 	  top_line = MIN(last_line - Term->hgt + 2, 
 			 top_line + (Term->hgt - 2));
 	}
       
       /* Scroll up */
-      else if (ke.key == ARROW_UP)
+      else if (ke.key.code == ARROW_UP)
 	{
 	  if (top_line)
 	    top_line--;
 	}
       
       /* Page up */
-      else if (ke.key == '-')
+      else if (ke.key.code == '-')
 	{
 	  top_line -= (Term->hgt - 2) / 2;
 	  if (top_line < 0) top_line = 0;
 	}
       
       /* Scroll left */
-      else if (ke.key == ARROW_LEFT)
+      else if (ke.key.code == ARROW_LEFT)
 	{
 	  if (col)
 	    col--;
 	}
       
       /* Scroll right */
-      else if (ke.key == ARROW_RIGHT)
+      else if (ke.key.code == ARROW_RIGHT)
 	{
 	  if (col < 32)
 	    col++;
@@ -410,13 +410,13 @@ void do_cmd_messages(void)
       ke = inkey_ex();
       
       /* Exit on Escape */
-      if (ke.key == ESCAPE) break;
+      if (ke.key.code == ESCAPE) break;
       
       /* Hack -- Save the old index */
       j = i;
       
       /* Horizontal scroll */
-      if (ke.key == '4')
+      if (ke.key.code == '4')
 	{
 	  /* Scroll left */
 	  q = (q >= wid / 2) ? (q - wid / 2) : 0;
@@ -426,7 +426,7 @@ void do_cmd_messages(void)
 	}
       
       /* Horizontal scroll */
-      if (ke.key == '6')
+      if (ke.key.code == '6')
 	{
 	  /* Scroll right */
 	  q = q + wid / 2;
@@ -436,7 +436,7 @@ void do_cmd_messages(void)
 	}
       
       /* Hack -- handle show */
-      if (ke.key == '=')
+      if (ke.key.code == '=')
 	{
 	  /* Prompt */
 	  prt("Show: ", hgt - 1, 0);
@@ -449,7 +449,7 @@ void do_cmd_messages(void)
 	}
       
       /* Hack -- handle find */
-      if (ke.key == '/')
+      if (ke.key.code == '/')
 	{
 	  s16b z;
 	  
@@ -480,53 +480,53 @@ void do_cmd_messages(void)
 	}
       
       /* Recall 20 older messages */
-      if ((ke.key == 'p') || (ke.key == KTRL('P')) || (ke.key == ' '))
+      if ((ke.key.code == 'p') || (ke.key.code == KTRL('P')) || (ke.key.code == ' '))
 	{
 	  /* Go older if legal */
 	  if (i + 20 < n) i += 20;
 	}
       
       /* Recall 10 older messages */
-      if (ke.key == '+')
+      if (ke.key.code == '+')
 	{
 	  /* Go older if legal */
 	  if (i + 10 < n) i += 10;
 	}
       
       /* Recall 1 older message */
-      if ((ke.key == '8') || (ke.key == '\n') || (ke.key == '\r'))
+      if ((ke.key.code == '8') || (ke.key.code == '\n') || (ke.key.code == '\r'))
 	{
 	  /* Go older if legal */
 	  if (i + 1 < n) i += 1;
 	}
       
       /* Recall 20 newer messages */
-      if ((ke.key == 'n') || (ke.key == KTRL('N')))
+      if ((ke.key.code == 'n') || (ke.key.code == KTRL('N')))
 	{
 	  /* Go newer (if able) */
 	  i = (i >= 20) ? (i - 20) : 0;
 	}
       
       /* Recall 10 newer messages */
-      if (ke.key == '-')
+      if (ke.key.code == '-')
 	{
 	  /* Go newer (if able) */
 	  i = (i >= 10) ? (i - 10) : 0;
 	}
       
       /* Recall 1 newer messages */
-      if (ke.key == '2')
+      if (ke.key.code == '2')
 	{
 	  /* Go newer (if able) */
 	  i = (i >= 1) ? (i - 1) : 0;
 	}
       
       /* Scroll forwards or backwards using mouse clicks */
-      if (ke.key == '\xff')
+      if (ke.key.code == '\xff')
 	{
-	  if (ke.index)
+	  if (ke.mouse.button)
 	    {
-	      if (ke.mousey <= hgt / 2)
+	      if (ke.mouse.y <= hgt / 2)
 		{
 		  /* Go older if legal */
 		  if (i + 20 < n) i += 20;
@@ -947,7 +947,7 @@ void do_cmd_save_screen(void)
     button_add("h", 'h');
     button_add("t", 't');
     ke = inkey_ex();
-    switch(ke.key) 
+    switch(ke.key.code) 
     {
     case ESCAPE:
 	break;

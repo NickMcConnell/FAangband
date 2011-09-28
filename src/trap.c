@@ -1946,7 +1946,7 @@ bool mtrap_menu(void)
     menu_type menu;
     menu_iter menu_f = { mtrap_tag, 0, mtrap_display, mtrap_action, 0 };
     region area = { 15, 1, 48, -1 };
-    ui_event evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { 0 };
 
     size_t i, num = 0;
 
@@ -2232,7 +2232,7 @@ bool trap_menu(int y, int x, int *idx)
     menu_type menu;
     menu_iter menu_f = { trap_tag, 0, trap_display, trap_action, 0 };
     region area = { 15, 1, 48, -1 };
-    ui_event evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { 0 };
     int cursor = 0, j = 0;
     int i;
     u16b *choice;

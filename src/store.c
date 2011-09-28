@@ -1450,23 +1450,23 @@ static bool get_stock(int *com_val, cptr pmt)
 	    return (FALSE);
 
 	/* Extract "query" setting */
-	if (isalpha(which.key)) {
-	    ver = isupper(which.key);
-	    which.key = tolower(which.key);
+	if (isalpha(which.key.code)) {
+	    ver = isupper(which.key.code);
+	    which.key.code = tolower(which.key.code);
 	}
 
 	/* Convert response to item */
-	if (which.key == '\xff') {
-	    if (!which.mousey)
+	if (which.key.code == '\xff') {
+	    if (!which.mouse.y)
 		return (FALSE);
-	    else if ((which.mousey > 4) && (which.mousey < 17))
-		item = which.mousey + store_top - 5;
+	    else if ((which.mouse.y > 4) && (which.mouse.y < 17))
+		item = which.mouse.y + store_top - 5;
 	    else
 		item = -1;
 	    if (item >= st_ptr->stock_num)
 		item = -1;
 	} else
-	    item = label_to_store(which.key);
+	    item = label_to_store(which.key.code);
 
 	/* Oops */
 	if (item < 0) {
@@ -2265,7 +2265,7 @@ static bool order_menu(int tval, const char *desc)
     menu_type menu;
     menu_iter menu_f = { 0, 0, order_item_display, order_item_action, 0 };
     region area = { 1, 5, -1, -1 };
-    ui_event evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { 0 };
     int cursor = 0;
 
     int num = 0;
@@ -2451,7 +2451,7 @@ static void store_process_command(ui_event ke)
     msg_flag = FALSE;
 
     /* Parse the command */
-    switch (ke.key) {
+    switch (ke.key.code) {
 	/* Leave */
     case ESCAPE:
 	{
@@ -2532,7 +2532,7 @@ static void store_process_command(ui_event ke)
     case '}':
     case '~':
 	{
-	    Term_key_push(ke.key);
+	    Term_key_push(ke.key.code);
 	    textui_process_command(TRUE);
 	    break;
 	}

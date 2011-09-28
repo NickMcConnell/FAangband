@@ -2467,24 +2467,24 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	ke = inkey_ex();
 
 	/* Mouse input - menus */
-	if ((ke.key == '\xff') && (menu) && (mouse[ke.mousey])) {
+	if ((ke.key.code == '\xff') && (menu) && (mouse[ke.mouse.y])) {
 	    /* Recurse on that file */
-	    if (!show_file(hook[mouse[ke.mousey]], NULL, 0, mode))
-		ke.key = '?';
+	    if (!show_file(hook[mouse[ke.mouse.y]], NULL, 0, mode))
+		ke.key.code = '?';
 	}
 
 	/* Hack -- return to last screen on escape */
-	if (ke.key == ESCAPE)
+	if (ke.key.code == ESCAPE)
 	    break;
 
 
 	/* Toggle case sensitive on/off */
-	if (ke.key == '!') {
+	if (ke.key.code == '!') {
 	    case_sensitive = !case_sensitive;
 	}
 
 	/* Hack -- try showing */
-	if (ke.key == '=') {
+	if (ke.key.code == '=') {
 	    /* Get "shower" */
 	    prt("Show: ", hgt - 1, 0);
 	    (void) askfor_aux(shower, 80, NULL);
@@ -2495,7 +2495,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	}
 
 	/* Hack -- try finding */
-	if (ke.key == '/') {
+	if (ke.key.code == '/') {
 	    /* Get "finder" */
 	    prt("Find: ", hgt - 1, 0);
 	    if (askfor_aux(finder, 80, NULL)) {
@@ -2514,7 +2514,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	}
 
 	/* Hack -- go to a specific line */
-	if (ke.key == '#') {
+	if (ke.key.code == '#') {
 	    char tmp[81];
 	    prt("Goto Line: ", hgt - 1, 0);
 	    strcpy(tmp, "0");
@@ -2524,48 +2524,48 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	}
 
 	/* Hack -- go to a specific file */
-	if (ke.key == '%') {
+	if (ke.key.code == '%') {
 	    char tmp[81];
 	    prt("Goto File: ", hgt - 1, 0);
 	    strcpy(tmp, "help.hlp");
 	    if (askfor_aux(tmp, 80, NULL)) {
 		if (!show_file(tmp, NULL, 0, mode))
-		    ke.key = '?';
+		    ke.key.code = '?';
 	    }
 	}
 
 	/* Back up one line */
-	if (ke.key == ARROW_UP || ke.key == '8') {
+	if (ke.key.code == ARROW_UP || ke.key.code == '8') {
 	    line = line - 1;
 	}
 
 	/* Hack -- Allow backing up */
-	if ((ke.key == '-') || (ke.key == '9')) {
+	if ((ke.key.code == '-') || (ke.key.code == '9')) {
 	    line = line - 10;
 	    if (line < 0)
 		line = 0;
 	}
 
 	/* Hack -- Advance a single line */
-	if ((ke.key == '\n') || (ke.key == '\r') || (ke.key == '2')
-	    || (ke.key == ARROW_DOWN)) {
+	if ((ke.key.code == '\n') || (ke.key.code == '\r') || (ke.key.code == '2')
+	    || (ke.key.code == ARROW_DOWN)) {
 	    line = line + 1;
 	}
 
 	/* Advance one page */
-	if ((ke.key == ' ') || (ke.key == '3')) {
+	if ((ke.key.code == ' ') || (ke.key.code == '3')) {
 	    line = line + hgt - 4;
 	}
 
 	/* Recurse on numbers */
-	if (menu && isdigit(ke.key) && hook[D2I(ke.key)][0]) {
+	if (menu && isdigit(ke.key.code) && hook[D2I(ke.key.code)][0]) {
 	    /* Recurse on that file */
-	    if (!show_file(hook[D2I(ke.key)], NULL, 0, mode))
-		ke.key = '?';
+	    if (!show_file(hook[D2I(ke.key.code)], NULL, 0, mode))
+		ke.key.code = '?';
 	}
 
 	/* Exit on '?' */
-	if (ke.key == '?')
+	if (ke.key.code == '?')
 	    break;
     }
 
@@ -2577,7 +2577,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
     ret = TRUE;
 
     /* Exit on '?' */
-    if (ke.key == '?')
+    if (ke.key.code == '?')
 	ret = FALSE;
 
   DONE:
@@ -2831,7 +2831,7 @@ void close_game(void)
 
 	    /* Predict score (or ESCAPE) */
 	    ke = inkey_ex();
-	    if (ke.key != ESCAPE) predict_score();
+	    if (ke.key.code != ESCAPE) predict_score();
 	}
     }
 

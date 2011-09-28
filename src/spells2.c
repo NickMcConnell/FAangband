@@ -218,7 +218,7 @@ bool el_menu(void)
     menu_type menu;
     menu_iter menu_f = { el_tag, 0, el_display, el_action, 0 };
     region area = { 15, 1, 48, -1 };
-    ui_event evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { 0 };
     int cursor = 0;
 
     int num = 0;
@@ -379,7 +379,7 @@ bool res_menu(void)
     menu_type menu;
     menu_iter menu_f = { res_tag, 0, res_display, res_action, 0 };
     region area = { 15, 1, 48, 7 };
-    ui_event evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { 0 };
     int cursor = 0;
 
     size_t i;
@@ -1333,7 +1333,7 @@ bool recall_menu(void)
     menu_type menu;
     menu_iter menu_f = { recall_tag, 0, recall_display, recall_action, 0 };
     region area = { 15, 1, 48, -1 };
-    ui_event evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { 0 };
     int cursor = 0;
     int num_entries;
     int num_poss = OPT(adult_dungeon) ? 1 : 4;
@@ -4433,7 +4433,7 @@ bool genocide(void)
 {
     int i;
 
-    char typ;
+    struct keypress typ;
 
 
     /* Mega-Hack -- Get a monster symbol */
@@ -4455,7 +4455,7 @@ bool genocide(void)
 	    continue;
 
 	/* Skip "wrong" monsters */
-	if (r_ptr->d_char != typ)
+	if (r_ptr->d_char != typ.code)
 	    continue;
 
 	/* Ignore monsters in icky squares */
