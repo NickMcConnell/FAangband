@@ -108,7 +108,7 @@ void gain_spec_display(menu_type * menu, int oid, bool cursor, int row, int col,
 /**
  * Deal with events on the gain specialty menu
  */
-bool gain_spec_action(menu_type * menu, const ui_event_data * e, int oid)
+bool gain_spec_action(menu_type * menu, const ui_event * e, int oid)
 {
     struct spec_menu_data *d = menu_priv(menu);
     static int i;
@@ -155,7 +155,7 @@ bool gain_spec_menu(int *pick)
     menu_type menu;
     menu_iter menu_f = { gain_spec_tag, 0, gain_spec_display,
 			 gain_spec_action, 0 };
-    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { EVT_NONE, 0, 0, 0, 0 };
     struct spec_menu_data *d = mem_alloc(sizeof *d);
     region loc = { 0, 0, 70, -99 };
     bool done = FALSE;
@@ -857,7 +857,7 @@ void view_specialties(void)
  */
 void do_cmd_specialty(void)
 {
-    ui_event_data answer;
+    ui_event answer;
 
     /* Might want to gain a new ability or browse old ones */
     if (p_ptr->new_specialties > 0) {

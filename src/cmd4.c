@@ -138,7 +138,7 @@ void redraw_window(void)
  */
 void do_cmd_change_name(void)
 {
-  ui_event_data ke;
+  ui_event ke;
   
   int col = 0;
   int last_line = 0;
@@ -313,7 +313,7 @@ void do_cmd_message_one(void)
  */
 void do_cmd_messages(void)
 {
-  ui_event_data ke;
+  ui_event ke;
   
   int i, j, n, q;
   int wid, hgt;
@@ -941,7 +941,7 @@ void do_cmd_save_screen_html(int mode)
  */
 void do_cmd_save_screen(void)
 {
-    ui_event_data ke;
+    ui_event ke;
     msg_print("Dump type [(t)ext; (h)tml; (f)orum embedded html]:");
     button_add("f", 'f');
     button_add("h", 'h');

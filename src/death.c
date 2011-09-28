@@ -115,7 +115,7 @@ static void make_bones(void)
     ang_file *fp;
 
     char str[1024];
-    ui_event_data answer;
+    ui_event answer;
     byte choice = 0;
 
     int i;
@@ -563,7 +563,7 @@ static void death_info(const char *title, int row)
 
     store_type *st_ptr;
 
-    ui_event_data ke;
+    ui_event ke;
 
     bool done = FALSE;
 

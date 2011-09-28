@@ -96,7 +96,7 @@ static void show_display(menu_type * menu, int oid, bool cursor, int row,
 /**
 * Handle user input from a command menu
 */
-static bool show_action(menu_type * menu, const ui_event_data * e, int oid)
+static bool show_action(menu_type * menu, const ui_event * e, int oid)
 {
     /* Handle enter and mouse */
     if (e->type == EVT_SELECT) 
@@ -117,7 +117,7 @@ bool show_cmd_menu(bool object)
     menu_iter commands_menu = { show_tag, 0, show_display, show_action, 0 };
     region area = { 0, (object ? 2 : 1), 20, 0 };
 
-    ui_event_data evt = EVENT_EMPTY;
+    ui_event evt = EVENT_EMPTY;
     int cursor = 0;
 
     /* Size of menu */

@@ -528,7 +528,7 @@ byte py_pickup(int pickup, int y, int x)
 	    /* Optionally, display more information about floor items */
 	    if (OPT(pickup_detail))
 	    {
-		ui_event_data e;
+		ui_event e;
 
 		if (!can_pickup)	p = "have no room for the following objects";
 		else if (blind)     p = "feel something on the floor";

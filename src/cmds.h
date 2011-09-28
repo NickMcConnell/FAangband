@@ -39,7 +39,7 @@ void textui_obj_wield(object_type *o_ptr, int item);
 
 /* cmd-misc.c */
 extern void cmd_init(void);
-extern int click_area(ui_event_data ke);
+extern int click_area(ui_event ke);
 extern void do_cmd_show_obj(void);
 extern void do_cmd_handle(void);
 extern void handle_mousepress(int y, int x);

@@ -2106,7 +2106,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
     int i, k, n;
     int wid, hgt;
     int ret;
-    ui_event_data ke;
+    ui_event ke;
 
     /* Number of "real" lines passed by */
     int next = 0;
@@ -2793,7 +2793,7 @@ void save_game(void)
  */
 void close_game(void)
 {
-    ui_event_data ke;
+    ui_event ke;
 
     /* Handle stuff */
     handle_stuff();

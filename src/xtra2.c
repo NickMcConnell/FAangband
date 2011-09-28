@@ -569,7 +569,7 @@ bool get_aim_dir(int *dp)
     /* Global direction */
     int dir = 0;
 
-    ui_event_data ke;
+    ui_event ke;
 
     cptr p;
 
@@ -687,7 +687,7 @@ bool get_rep_dir(int *dp)
 {
     int dir = 0;
 
-    ui_event_data ke;
+    ui_event ke;
 
     /* Initialize */
     (*dp) = 0;

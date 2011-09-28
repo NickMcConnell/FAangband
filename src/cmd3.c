@@ -37,7 +37,7 @@
  */
 void do_cmd_inven(void)
 {
-    ui_event_data e;
+    ui_event e;
     int diff = weight_remaining();
 
     /* Note that we are in "inventory" mode. */
@@ -77,7 +77,7 @@ void do_cmd_inven(void)
  */
 void do_cmd_equip(void)
 {
-    ui_event_data e;
+    ui_event e;
 
     /* Note that we are in "equipment" mode */
     p_ptr->command_wrk = (USE_EQUIP);
@@ -816,7 +816,7 @@ void do_cmd_query_symbol(void)
 {
     int i, n, r_idx;
     char sym;
-    ui_event_data query = EVENT_EMPTY;
+    ui_event query = EVENT_EMPTY;
     char search_str[60] = "";
     char monster_name[80];
     char buf[128];

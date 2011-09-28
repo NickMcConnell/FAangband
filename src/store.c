@@ -1424,7 +1424,7 @@ static bool get_stock(int *com_val, cptr pmt)
 {
     int item;
 
-    ui_event_data which;
+    ui_event which;
 
     char buf[160];
 
@@ -2217,7 +2217,7 @@ static void order_item_display(menu_type * menu, int oid, bool cursor, int row,
 /**
  * Deal with events on the sval menu
  */
-static bool order_item_action(menu_type *menu, const ui_event_data *ev, int oid)
+static bool order_item_action(menu_type *menu, const ui_event *ev, int oid)
 {
     u16b *choice = menu->menu_data;
     int i, avail;
@@ -2265,7 +2265,7 @@ static bool order_menu(int tval, const char *desc)
     menu_type menu;
     menu_iter menu_f = { 0, 0, order_item_display, order_item_action, 0 };
     region area = { 1, 5, -1, -1 };
-    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { EVT_NONE, 0, 0, 0, 0 };
     int cursor = 0;
 
     int num = 0;
@@ -2389,7 +2389,7 @@ void store_order(void)
 {
     size_t i;
     int j = 0, cursor = 0;
-    ui_event_data c = EVENT_EMPTY;
+    ui_event c = EVENT_EMPTY;
     const char cmd_keys[] = { ARROW_LEFT, ARROW_RIGHT, '\0' };
 
     menu_iter menu_f = { tag_order, 0, display_order, NULL, 0 };
@@ -2445,7 +2445,7 @@ static bool leave_store = FALSE;
  * which is needed to prevent the "redraw" from affecting
  * the display of the store.  XXX XXX XXX
  */
-static void store_process_command(ui_event_data ke)
+static void store_process_command(ui_event ke)
 {
     /* Clear messages */
     msg_flag = FALSE;
@@ -2793,7 +2793,7 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 
     bool found = FALSE;
 
-    ui_event_data ke;
+    ui_event ke;
 
     feature_type *f_ptr = &f_info[cave_feat[py][px]];
 

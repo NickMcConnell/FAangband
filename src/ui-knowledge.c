@@ -175,7 +175,7 @@ const char *feature_group_text[] = {
 static void display_visual_list(int col, int row, int height, int width,
 				byte attr_top, byte char_left);
 
-static bool visual_mode_command(ui_event_data ke, bool * visual_list_ptr,
+static bool visual_mode_command(ui_event ke, bool * visual_list_ptr,
 				int height, int width, byte * attr_top_ptr,
 				byte * char_left_ptr, byte * cur_attr_ptr,
 				byte * cur_char_ptr, int col, int row,
@@ -353,7 +353,7 @@ static void display_knowledge(const char *title, int *obj_list, int o_count,
     int prev_g = -1;
 
     int omode = OPT(rogue_like_commands);
-    ui_event_data ke;
+    ui_event ke;
 
     /* Get size */
     Term_get_size(&wid, &hgt);
@@ -533,7 +533,7 @@ static void display_knowledge(const char *title, int *obj_list, int o_count,
 
 	ke = inkey_ex();
 	if (!visual_list) {
-	    ui_event_data ke0 = EVENT_EMPTY;
+	    ui_event ke0 = EVENT_EMPTY;
 
 	    if (ke.type == EVT_MOUSE)
 		menu_handle_mouse(active_menu, &ke, &ke0);
@@ -708,7 +708,7 @@ static void remove_visual_list(int col, int row, bool * visual_list_ptr,
 /*
  *  Do visual mode command -- Change symbols
  */
-static bool visual_mode_command(ui_event_data ke, bool * visual_list_ptr,
+static bool visual_mode_command(ui_event ke, bool * visual_list_ptr,
 				int height, int width, byte * attr_top_ptr,
 				byte * char_left_ptr, byte * cur_attr_ptr,
 				byte * cur_char_ptr, int col, int row,

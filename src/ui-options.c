@@ -168,7 +168,7 @@ static void option_toggle_display(menu_type *m, int oid, bool cursor,
 /**
  * Handle keypresses for an option entry.
  */
-static bool option_toggle_handle(menu_type *m, const ui_event_data *event,
+static bool option_toggle_handle(menu_type *m, const ui_event *event,
 		int oid)
 {
 	bool next = FALSE;
@@ -262,7 +262,7 @@ static void do_cmd_options_win(const char *name, int row)
     int y = 0;
     int x = 0;
 
-    ui_event_data ke;
+    ui_event ke;
 
     u32b new_flags[ANGBAND_TERM_MAX];
 
@@ -456,7 +456,7 @@ static void do_cmd_options_win(const char *name, int row)
  */
 static void do_cmd_macro_aux(char *buf)
 {
-	ui_event_data e;
+	ui_event e;
 
 	int n = 0;
 	int curs_x, curs_y;
@@ -1168,7 +1168,7 @@ void do_cmd_panel_change(const char *name, int row)
   while (1)
     {
       int pdist = (op_ptr->panel_change + 1) * 2;
-      ui_event_data ke;
+      ui_event ke;
       prt(format("Current panel change: %d (%d / %d)",
                  op_ptr->panel_change, pdist, pdist * 2), 22, 0);
       prt("New panel change (0-4, +, - or ESC to accept): ", 21, 0);
@@ -1323,7 +1323,7 @@ s16b toggle_frequency(s16b current)
  */
 static void do_cmd_options_autosave(const char *name, int row)
 {
-  ui_event_data ke;
+  ui_event ke;
   
   int i, k = 0, n = 1;
   
@@ -1689,7 +1689,7 @@ static void ego_display(menu_type *menu, int oid, bool cursor, int row,
 /**
  * Deal with events on the sval menu
  */
-static bool ego_action(menu_type *menu, const ui_event_data *event, int oid)
+static bool ego_action(menu_type *menu, const ui_event *event, int oid)
 {
   ego_desc *choice = menu->menu_data;
   
@@ -1717,7 +1717,7 @@ static void ego_menu(void *unused, const char *also_unused)
   menu_type menu;
   menu_iter menu_f = { 0, 0, ego_display, ego_action, 0 };
   region area = { 1, 3, -1, -1 };
-  ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+  ui_event evt = { EVT_NONE, 0, 0, 0, 0 };
   int cursor = 0;
   
   int i;
@@ -1851,7 +1851,7 @@ static void quality_subdisplay(menu_type *menu, int oid, bool cursor, int row,
 /**
  * Handle "Enter".  :(
 
-static bool quality_subaction(menu_type *menu, const ui_event_data *e, int oid)
+static bool quality_subaction(menu_type *menu, const ui_event *e, int oid)
 {
   return TRUE;
 } */
@@ -1860,12 +1860,12 @@ static bool quality_subaction(menu_type *menu, const ui_event_data *e, int oid)
 /**
  * Handle keypresses.
  */
-static bool quality_action(menu_type *menu1, const ui_event_data *ev, int oid)
+static bool quality_action(menu_type *menu1, const ui_event *ev, int oid)
 {
     menu_type menu;
     menu_iter menu_f = { 0, 0, quality_subdisplay, 0, 0 };
     region area = { 24, 1, 44, SQUELCH_MAX };
-    ui_event_data evt;
+    ui_event evt;
     int cursor;
     int count;
   
@@ -1967,7 +1967,7 @@ static void sval_display(menu_type *menu, int oid, bool cursor, int row,
 /**
  * Deal with events on the sval menu
  */
-static bool sval_action(menu_type *menu, const ui_event_data *e, int oid)
+static bool sval_action(menu_type *menu, const ui_event *e, int oid)
 {
   u16b *choice = menu->menu_data;
   
@@ -2190,7 +2190,7 @@ static void display_options_item(menu_type *menu, int oid, bool cursor,
 }
 
 
-bool handle_options_item(menu_type *menu, const ui_event_data *event, int oid)
+bool handle_options_item(menu_type *menu, const ui_event *event, int oid)
 {
 	if (event->type == EVT_SELECT)
 	{

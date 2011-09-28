@@ -1922,7 +1922,7 @@ void mtrap_display(menu_type * menu, int oid, bool cursor, int row, int col,
 /**
  * Deal with events on the trap menu
  */
-bool mtrap_action(menu_type *menu, const ui_event_data *db, int oid)
+bool mtrap_action(menu_type *menu, const ui_event *db, int oid)
 {
     u16b *choice = menu_priv(menu);
 
@@ -1946,7 +1946,7 @@ bool mtrap_menu(void)
     menu_type menu;
     menu_iter menu_f = { mtrap_tag, 0, mtrap_display, mtrap_action, 0 };
     region area = { 15, 1, 48, -1 };
-    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { EVT_NONE, 0, 0, 0, 0 };
 
     size_t i, num = 0;
 
@@ -2208,7 +2208,7 @@ void trap_display(menu_type *menu, int oid, bool cursor, int row, int col,
 /**
  * Deal with events on the jump menu
  */
-bool trap_action(menu_type *menu, const ui_event_data *evt, int oid)
+bool trap_action(menu_type *menu, const ui_event *evt, int oid)
 {
     u16b *choice = menu_priv(menu);
 
@@ -2232,7 +2232,7 @@ bool trap_menu(int y, int x, int *idx)
     menu_type menu;
     menu_iter menu_f = { trap_tag, 0, trap_display, trap_action, 0 };
     region area = { 15, 1, 48, -1 };
-    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { EVT_NONE, 0, 0, 0, 0 };
     int cursor = 0, j = 0;
     int i;
     u16b *choice;

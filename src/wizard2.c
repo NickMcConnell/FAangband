@@ -641,7 +641,7 @@ void wiz_create_item_subdisplay(menu_type *m, int oid, bool cursor,
 	}
 }
 
-bool wiz_create_item_subaction(menu_type *m, const ui_event_data *e, int oid)
+bool wiz_create_item_subaction(menu_type *m, const ui_event *e, int oid)
 {
     int *choices = menu_priv(m);
 
@@ -764,9 +764,9 @@ void wiz_create_item_display(menu_type *m, int oid, bool cursor,
 	c_prt(curs_attrs[CURS_KNOWN][0 != cursor], tvals[oid].desc, row, col);
 }
 
-bool wiz_create_item_action(menu_type *m, const ui_event_data *e, int oid)
+bool wiz_create_item_action(menu_type *m, const ui_event *e, int oid)
 {
-	ui_event_data ret;
+	ui_event ret;
 	menu_type *menu;
 
 	int choice[60];
@@ -1419,7 +1419,7 @@ void jump_display(menu_type *menu, int oid, bool cursor, int row, int col,
 /**
  * Deal with events on the jump menu
  */
-bool jump_action(menu_type *menu, const ui_event_data *evt, int oid)
+bool jump_action(menu_type *menu, const ui_event *evt, int oid)
 {
     u16b *choice = menu_priv(menu);
 
@@ -1448,7 +1448,7 @@ bool jump_menu(int level, int *location)
     menu_type menu;
     menu_iter menu_f = { jump_tag, 0, jump_display, jump_action, 0 };
     region area = { 15, 1, 48, -1 };
-    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { EVT_NONE, 0, 0, 0, 0 };
     int cursor = 0, j = 0;
     size_t i;
     u16b *choice;

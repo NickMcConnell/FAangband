@@ -809,7 +809,7 @@ void get_item_display(menu_type *menu, int oid, bool cursor, int row, int col,
 /**
  * Deal with events on the get_item menu
  */
-bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
+bool get_item_action(menu_type *menu, const ui_event *event, int oid)
 {
     bool refresh = FALSE;
     struct object_menu_data *choice = menu_priv(menu);
@@ -916,11 +916,11 @@ bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
 /**
  * Display list items to choose from
  */
-ui_event_data item_menu(cmd_code cmd, int mode)
+ui_event item_menu(cmd_code cmd, int mode)
 {
     menu_type menu;
     menu_iter menu_f = {0, 0, get_item_display, get_item_action, 0 };
-    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { EVT_NONE, 0, 0, 0, 0 };
 
     size_t max_len = Term->wid - 1;
 
@@ -1027,7 +1027,7 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
     bool allow_floor = FALSE;
 
     int floor_num;
-    ui_event_data which;
+    ui_event which;
     
     prompt = pmt;
     olist_mode = 0;

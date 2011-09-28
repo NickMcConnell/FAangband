@@ -1538,7 +1538,7 @@ bool cast_spell(int tval, int sindex, int dir)
 
 	    /* Interact and enchant. */
 	    while (1) {
-		ui_event_data ke;
+		ui_event ke;
 
 		ke = inkey_ex();
 		answer = ke.key;
