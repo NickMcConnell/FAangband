@@ -4337,6 +4337,8 @@ void cleanup_angband(void)
     FREE(alloc_ego_table);
     FREE(alloc_race_table);
 
+    event_remove_all_handlers();
+
     if (store)
     {
 	/* Free the store inventories */
