@@ -105,7 +105,7 @@ static struct {
     const char *name;
 } monster_group[] = {
     {
-    (cptr) - 1, "Uniques"}, {
+    (const char *) - 1, "Uniques"}, {
     "a", "Ants"}, {
     "b", "Bats"}, {
     "B", "Birds"}, {

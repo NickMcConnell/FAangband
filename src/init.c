@@ -4103,7 +4103,7 @@ static errr init_race_probs(void)
 	if (fd)
 	{
 	    /* Dump it */
-	    file_write(fd, (cptr)race_prob, 32 * sizeof(u16b_stage));
+	    file_write(fd, (const char *)race_prob, 32 * sizeof(u16b_stage));
 
 	    /* Close */
 	    file_close(fd);

@@ -548,7 +548,7 @@ size_t vstrnfmt(char *buf, size_t max, const char *fmt, va_list vp)
 				 */
 
 				/* Get the next argument */
-				arg = tval.t == T_END ? va_arg(vp, cptr) : tval.u.s;
+				arg = tval.t == T_END ? va_arg(vp, const char *) : tval.u.s;
 
 				/* Hack -- convert NULL to EMPTY */
 				if (!arg) arg = "";

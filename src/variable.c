@@ -612,7 +612,7 @@ store_type *store;
 /**
  * Array[RANDNAME_NUM_TYPES][num_names] of random names
  */
-cptr** name_sections;
+const char *** name_sections;
 
 /**
  * The size of "alloc_kind_table" (at most z_info->k_max * 4)
