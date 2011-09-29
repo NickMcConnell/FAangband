@@ -567,7 +567,7 @@ int chest_traps[100] =
 /**
  * Hack -- the "basic" color names (see "TERM_xxx")
  */
-cptr color_names[16] =
+const char *color_names[16] =
   {
     "Dark",
     "White",
@@ -663,7 +663,7 @@ grouper group_item[] =
 /**
  * Abbreviations of healthy stats
  */
-cptr stat_names[A_MAX] =
+const char *stat_names[A_MAX] =
   {
     "STR: ", "INT: ", "WIS: ", "DEX: ", "CON: ", "CHR: "
   };
@@ -671,7 +671,7 @@ cptr stat_names[A_MAX] =
 /**
  * Abbreviations of damaged stats
  */
-cptr stat_names_reduced[A_MAX] =
+const char *stat_names_reduced[A_MAX] =
   {
     "Str: ", "Int: ", "Wis: ", "Dex: ", "Con: ", "Chr: "
   };
@@ -685,7 +685,7 @@ cptr stat_names_reduced[A_MAX] =
  * main window, including File dump (help), File dump (artifacts, uniques),
  * Character screen, Small scale map, Previous Messages, Store screen, etc.
  */
-cptr window_flag_desc[32] =
+const char *window_flag_desc[32] =
   {
     "Display inven/equip",
     "Display equip/inven",
@@ -764,7 +764,7 @@ const char *magic_desc[REALM_MAX][MD_MAX] =
      "tome",       "tome"},
 };
 
-cptr feel_text[FEEL_MAX] =
+const char *feel_text[FEEL_MAX] =
   {
     NULL,	 /* FEEL_NONE */
     "dubious",	 /* FEEL_DUBIOUS_STRONG */
@@ -1974,7 +1974,7 @@ int dungeon_map[NUM_STAGES][9] =
  * Names of localities 
  */
 
-cptr locality_name[MAX_LOCALITIES] = 
+const char *locality_name[MAX_LOCALITIES] = 
   {
     "Nowhere",
     "Hithaeglir",
@@ -2020,7 +2020,7 @@ cptr locality_name[MAX_LOCALITIES] =
  * Names of localities 
  */
 
-cptr short_locality_name[MAX_LOCALITIES] = 
+const char *short_locality_name[MAX_LOCALITIES] = 
   {
     "Nowhere",
     "Hith",

@@ -36,7 +36,7 @@
 
 #define MAX_COMMENT_0	6
 
-static cptr comment_0[MAX_COMMENT_0] = {
+static const char *comment_0[MAX_COMMENT_0] = {
     "Okay.",
     "Fine.",
     "Accepted!",
@@ -60,7 +60,7 @@ static void say_comment_0(void)
 
 #define MAX_COMMENT_1 	4
 
-static cptr comment_1[MAX_COMMENT_1] = {
+static const char *comment_1[MAX_COMMENT_1] = {
     "Arrgghh!",
     "You bastard!",
     "You hear someone sobbing...",
@@ -69,7 +69,7 @@ static cptr comment_1[MAX_COMMENT_1] = {
 
 #define MAX_COMMENT_2 	4
 
-static cptr comment_2[MAX_COMMENT_2] = {
+static const char *comment_2[MAX_COMMENT_2] = {
     "Robbery!",
     "You fiend!",
     "The shopkeeper curses at you.",
@@ -78,7 +78,7 @@ static cptr comment_2[MAX_COMMENT_2] = {
 
 #define MAX_COMMENT_3	4
 
-static cptr comment_3[MAX_COMMENT_3] = {
+static const char *comment_3[MAX_COMMENT_3] = {
     "Cool!",
     "You've made my day!",
     "The shopkeeper giggles.",
@@ -87,7 +87,7 @@ static cptr comment_3[MAX_COMMENT_3] = {
 
 #define MAX_COMMENT_4 	4
 
-static cptr comment_4[MAX_COMMENT_4] = {
+static const char *comment_4[MAX_COMMENT_4] = {
     "Yipee!",
     "I think I'll retire!",
     "The shopkeeper jumps for joy.",
@@ -1380,9 +1380,9 @@ static void display_store(void)
     else 
     {
 
-	cptr store_name = f_info[FEAT_SHOP_HEAD + st_ptr->type].name;
-	cptr owner_name = ot_ptr->owner_name;
-	cptr race_name = p_info[ot_ptr->owner_race].name;
+	const char *store_name = f_info[FEAT_SHOP_HEAD + st_ptr->type].name;
+	const char *owner_name = ot_ptr->owner_name;
+	const char *race_name = p_info[ot_ptr->owner_race].name;
 
 
 	/* Put the owner name and race */
@@ -1420,7 +1420,7 @@ static void display_store(void)
  *
  * Return TRUE if an object was selected
  */
-static bool get_stock(int *com_val, cptr pmt)
+static bool get_stock(int *com_val, const char *pmt)
 {
     int item;
 
@@ -1854,7 +1854,7 @@ static void store_sell(void)
     object_type *i_ptr;
     object_type object_type_body;
 
-    cptr q, s;
+    const char *q, *s;
 
     char o_name[120];
 

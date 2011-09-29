@@ -309,7 +309,7 @@ color_type color_table[MAX_COLORS] =
 /**
  * Standard sound names (modifiable?)
  */
-const cptr angband_sound_name[SOUND_MAX] =
+const const char *angband_sound_name[SOUND_MAX] =
 {
   "",
   "hit",

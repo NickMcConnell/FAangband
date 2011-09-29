@@ -81,7 +81,7 @@ static u32b buffer_check;
  *
  * Avoid the top two lines, to avoid interference with "msg_print()".
  */
-void note(cptr msg)
+void note(const char *msg)
 {
     static int y = 2;
 
@@ -160,7 +160,7 @@ void wr_s32b(s32b v)
     wr_u32b((u32b)v);
 }
 
-void wr_string(cptr str)
+void wr_string(const char *str)
 {
     while (*str)
     {
@@ -461,7 +461,7 @@ bool old_load(void)
     ang_file *fh;
     byte head[8];
 
-    cptr what = "generic";
+    const char *what = "generic";
     errr err = 0;
 
     /* Clear screen */

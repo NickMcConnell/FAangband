@@ -32,7 +32,7 @@ struct object_menu_data {
     int index;
 };
 
-cptr prompt;
+const char *prompt;
 int i1, i2;
 int e1, e2;
 int f1, f2;
@@ -489,7 +489,7 @@ void show_floor(const int *floor_list, int floor_num, olist_detail_t mode)
  *
  * The item can be negative to mean "item on floor".
  */
-bool verify_item(cptr prompt, int item)
+bool verify_item(const char *prompt, int item)
 {
     char o_name[80];
 
@@ -569,7 +569,7 @@ static bool get_item_allow(int item, unsigned char ch, bool is_harmless)
 static int get_tag(int *cp, char tag, cmd_code cmd, bool quiver_tags)
 {
     int i;
-    cptr s;
+    const char *s;
 
     /* (f)ire is handled differently from all others, due to the quiver */
     if (quiver_tags) {
@@ -1002,7 +1002,7 @@ ui_event item_menu(cmd_code cmd, int mode)
  * Note that only "acceptable" floor objects get indexes, so between two
  * commands, the indexes of floor objects may change.  XXX XXX XXX
  */
-bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
+bool get_item(int *cp, const char *pmt, const char *str, cmd_code cmd, int mode)
 {
     s16b py = p_ptr->py;
     s16b px = p_ptr->px;

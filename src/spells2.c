@@ -782,7 +782,7 @@ bool lay_rune(int type)
 /**
  * Array of stat "descriptions"
  */
-static cptr desc_stat_pos[] = {
+static const char *desc_stat_pos[] = {
     "strong",
     "smart",
     "wise",
@@ -795,7 +795,7 @@ static cptr desc_stat_pos[] = {
 /**
  * Array of stat "descriptions"
  */
-static cptr desc_stat_neg[] = {
+static const char *desc_stat_neg[] = {
     "weak",
     "stupid",
     "naive",
@@ -1045,7 +1045,7 @@ static bool remove_curse_aux(int good)
 
     char o_name[120];
 
-    cptr q, s;
+    const char *q, *s;
 
     bitflag curses[CF_SIZE];
 
@@ -2682,7 +2682,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 
     char o_name[120];
 
-    cptr q, s;
+    const char *q, *s;
 
 
     /* Assume enchant weapon */
@@ -2757,7 +2757,7 @@ bool brand_missile(int ammo_type, int brand_type)
 {
     int item, choice;
     object_type *o_ptr;
-    cptr q, s;
+    const char *q, *s;
     bool status;
 
     /* Restrict choices Hack - check for restricted choice */
@@ -2945,7 +2945,7 @@ bool el_proof(bitflag *flag)
 
     int item;
 
-    cptr q, s;
+    const char *q, *s;
 
     /* Set the element */
     of_wipe(el_to_proof);
@@ -3181,7 +3181,7 @@ bool ident_spell(void)
 
     char o_name[120];
 
-    cptr q, s;
+    const char *q, *s;
 
     /* Only un-id'ed items */
     item_tester_hook = item_tester_unknown;
@@ -3272,7 +3272,7 @@ bool identify_fully(void)
 
     object_type *o_ptr;
 
-    cptr q, s;
+    const char *q, *s;
 
     char header[120];
 
@@ -3391,7 +3391,7 @@ bool recharge(int power)
     bool fail = FALSE;
     byte fail_type = 1;
 
-    cptr q, s;
+    const char *q, *s;
     char o_name[120];
 
 
@@ -3672,8 +3672,8 @@ void tap_magical_energy(void)
 
     object_type *o_ptr;
 
-    cptr q, s;
-    cptr item_name = "";
+    const char *q, *s;
+    const char *item_name = "";
 
 
     /* Only accept legal items */

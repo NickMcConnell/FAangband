@@ -337,8 +337,8 @@ void textui_obj_wield(object_type * o_ptr, int item)
      * to replace */
     if (p_ptr->inventory[slot].k_idx) {
 	if (o_ptr->tval == TV_RING) {
-	    cptr q = "Replace which ring? ";
-	    cptr s = "Error in obj_wield, please report";
+	    const char *q = "Replace which ring? ";
+	    const char *s = "Error in obj_wield, please report";
 	    item_tester_hook = obj_is_ring;
 	    if (!get_item(&slot, q, s, CMD_WIELD, USE_EQUIP))
 		return;
@@ -347,8 +347,8 @@ void textui_obj_wield(object_type * o_ptr, int item)
 	if ((is_missile(o_ptr) || 
 	     (of_has(o_ptr->flags_obj, OF_THROWING) && (slot != INVEN_WIELD))) 
 	    && !object_similar(&p_ptr->inventory[slot], o_ptr, OSTACK_QUIVER)) {
-	    cptr q = "Replace which quiver item? ";
-	    cptr s = "Error in obj_wield, please report";
+	    const char *q = "Replace which quiver item? ";
+	    const char *s = "Error in obj_wield, please report";
 	    item_tester_hook = obj_is_quiver_obj;
 	    if (!get_item(&slot, q, s, CMD_WIELD, USE_EQUIP))
 		return;

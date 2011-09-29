@@ -2779,7 +2779,7 @@ static void make_confused_move(monster_type * m_ptr, int y, int x)
     else if (tf_has(f_ptr->flags, TF_FIERY))
     {
 	/* Assume death */
-	cptr note_dies = " is burnt to death in lava!";
+	const char *note_dies = " is burnt to death in lava!";
 	
 	if (mon_take_hit
 	    (cave_m_idx[m_ptr->fy][m_ptr->fx], 50 + m_ptr->maxhp / 50,
@@ -2797,7 +2797,7 @@ static void make_confused_move(monster_type * m_ptr, int y, int x)
     else if (tf_has(f_ptr->flags, TF_WATERY)) 
     {
 	/* Assume death */
-	cptr note_dies = " is drowned!";
+	const char *note_dies = " is drowned!";
 	
 	if (mon_take_hit(cave_m_idx[m_ptr->fy][m_ptr->fx], 
 			 5 + m_ptr->maxhp / 20, &fear, note_dies)) 
@@ -3426,7 +3426,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x, bool * death)
     if (trap_hit) 
     {
 	/* Assume a default death */
-	cptr note_dies = " dies.";
+	const char *note_dies = " dies.";
 
 	int n, trap_power;
 

@@ -3,7 +3,7 @@
 #ifndef FILES_H
 #define FILES_H
 
-extern void html_screenshot(cptr name, int mode);
+extern void html_screenshot(const char *name, int mode);
 extern void safe_setuid_drop(void);
 extern void safe_setuid_grab(void);
 extern s16b tokenize(char *buf, s16b num, char **tokens);
@@ -14,8 +14,8 @@ extern void display_player_sml(void);
 extern int make_dump(char_attr_line *line, int mode);
 extern void display_dump(char_attr_line *line, int top_line, int bottom_line, 
 			 int col);
-extern errr file_character(cptr name, char_attr_line *line, int last_line);
-extern bool show_file(cptr name, cptr what, int line, int mode);
+extern errr file_character(const char *name, char_attr_line *line, int last_line);
+extern bool show_file(const char *name, const char *what, int line, int mode);
 extern void do_cmd_help(void);
 extern void process_player_name(bool sf);
 extern bool get_name(char *buf, size_t buflen);

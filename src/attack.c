@@ -804,7 +804,7 @@ static int adjust_dam(long *die_average, object_type * o_ptr,
  */
 static int get_druid_damage(int plev, char m_name[], int power, int deadliness)
 {
-    cptr description;
+    const char *description;
     int dd = 0, ds = 0;
     int chance, n, n_chances, i;
     int damage;
@@ -1896,7 +1896,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	    int cur_range, base_range, chance2;
 
 	    /* Assume a default death */
-	    cptr note_dies = " dies.";
+	    const char *note_dies = " dies.";
 
 	    /* Find Range */
 	    cur_range = distance(py, px, y, x);
@@ -2433,7 +2433,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 	    int cur_range, base_range, chance2;
 
 	    /* Assume a default death */
-	    cptr note_dies = " dies.";
+	    const char *note_dies = " dies.";
 
 	    /* Find Range */
 	    cur_range = distance(py, px, y, x);
@@ -2655,7 +2655,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 void textui_cmd_throw(void)
 {
     int item, dir;
-    cptr q, s;
+    const char *q, *s;
 
     /* Get an item */
     q = "Throw which item? ";

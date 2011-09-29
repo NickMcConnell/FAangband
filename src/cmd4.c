@@ -144,7 +144,7 @@ void do_cmd_change_name(void)
   int last_line = 0;
   int top_line = 0;
 
-  cptr p;
+  const char *p;
 
   /* Prompt */
   p = "['c' change name, 'f' to file, scroll, or ESC]";
@@ -370,7 +370,7 @@ void do_cmd_messages(void)
       /* Dump messages */
       for (j = 0; (j < hgt - 4) && (i + j < n); j++)
 	{
-	  cptr msg = message_str((s16b)(i+j));
+	  const char *msg = message_str((s16b)(i+j));
 	  byte attr = message_color((s16b)(i+j));
 	  
 	  /* Apply horizontal scroll */
@@ -382,7 +382,7 @@ void do_cmd_messages(void)
 	  /* Hilight "shower" */
 	  if (shower[0])
 	    {
-	      cptr str = msg;
+	      const char *str = msg;
 	      
 	      /* Display matches */
 	      while ((str = strstr(str, shower)) != NULL)
@@ -465,7 +465,7 @@ void do_cmd_messages(void)
 	  /* Scan messages */
 	  for (z = i + 1; z < n; z++)
 	    {
-	      cptr msg = message_str(z);
+	      const char *msg = message_str(z);
 	      
 	      /* Search for it */
 	      if (strstr(msg, finder))
@@ -659,7 +659,7 @@ void do_cmd_feeling(void)
 /*
  * Array of feeling strings
  */
-static cptr do_cmd_challenge_text[14] =
+static const char *do_cmd_challenge_text[14] =
 {
   "challenges you from beyond the grave!",
   "thunders 'Prove worthy of your traditions - or die ashamed!'.",

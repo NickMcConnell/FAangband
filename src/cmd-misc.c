@@ -68,7 +68,7 @@ void get_feats(int *surroundings)
 */
 char comm[22];
 cmd_code comm_code[22];
-cptr comm_descr[22];
+const char *comm_descr[22];
 int poss;
 
 /**
@@ -367,7 +367,7 @@ void show_player(void)
  */
 void do_cmd_show_obj(void)
 {
-    cptr q, s;
+    const char *q, *s;
     int j, item;
     object_type *o_ptr;
 

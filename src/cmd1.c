@@ -589,7 +589,7 @@ byte py_pickup(int pickup, int y, int x)
     /* Display a list if requested. */
     if (pickup == 2)
     {
-	cptr q, s;
+	const char *q, *s;
 	int item;
 
 	/* Get an object or exit. */

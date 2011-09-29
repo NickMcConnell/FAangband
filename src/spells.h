@@ -14,12 +14,12 @@ extern bool chaotic_effects(monster_type *m_ptr);
 extern void add_heighten_power(int value);
 extern void add_speed_boost(int value);
 extern int resist_damage(int dam, byte resist, byte rand_factor);
-extern void take_hit(int dam, cptr kb_str);
-extern void acid_dam(int dam, cptr kb_str);
-extern void elec_dam(int dam, cptr kb_str);
-extern void fire_dam(int dam, cptr kb_str);
-extern void cold_dam(int dam, cptr kb_str);
-extern void pois_dam(int dam, cptr kb_str);
+extern void take_hit(int dam, const char *kb_str);
+extern void acid_dam(int dam, const char *kb_str);
+extern void elec_dam(int dam, const char *kb_str);
+extern void fire_dam(int dam, const char *kb_str);
+extern void cold_dam(int dam, const char *kb_str);
+extern void pois_dam(int dam, const char *kb_str);
 extern bool pois_hit(int pois_inc);
 extern bool inc_stat(int stat, bool star);
 extern bool dec_stat(int stat, int amount, int permanent);
@@ -148,7 +148,7 @@ extern bool sleep_monsters_touch(int dam);
 
 /* x-spell.c */
 extern int get_spell_index(const object_type *o_ptr, int index);
-extern cptr get_spell_name(int index);
+extern const char *get_spell_name(int index);
 extern void get_spell_info(int tval, int index, char *buf, size_t len);
 extern bool cast_spell(int tval, int index, int dir);
 extern bool spell_needs_aim(int tval, int spell);

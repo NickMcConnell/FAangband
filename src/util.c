@@ -670,7 +670,7 @@ static void msg_print_aux(u16b type, const char *msg)
 /*
 * Print a message in the default color (white)
 */
-void msg_print(cptr msg)
+void msg_print(const char *msg)
 {
 msg_print_aux(MSG_GENERIC, msg);
 }
@@ -679,7 +679,7 @@ msg_print_aux(MSG_GENERIC, msg);
 /*
 * Display a formatted message, using "vstrnfmt()" and "msg_print()".
 */
-void msg_format(cptr fmt, ...)
+void msg_format(const char *fmt, ...)
 {
 va_list vp;
 
@@ -704,7 +704,7 @@ msg_print_aux(MSG_GENERIC, buf);
 *
 * The "extra" parameter is currently unused.
 */
-void message(u16b message_type, s16b extra, cptr message)
+void message(u16b message_type, s16b extra, const char *message)
 {
 /* Unused parameter */
 (void)extra;
@@ -721,7 +721,7 @@ msg_print_aux(message_type, message);
 *
 * The "extra" parameter is currently unused.
 */
-void message_format(u16b message_type, s16b extra, cptr fmt, ...)
+void message_format(u16b message_type, s16b extra, const char *fmt, ...)
 {
 va_list vp;
 

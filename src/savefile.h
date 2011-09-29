@@ -6,7 +6,7 @@ int rd_savefile_old(void);
 
 
 /* Utility */
-void note(cptr msg);
+void note(const char *msg);
 bool older_than(int x, int y, int z);
 
 /* Writing bits */
@@ -15,7 +15,7 @@ void wr_u16b(u16b v);
 void wr_s16b(s16b v);
 void wr_u32b(u32b v);
 void wr_s32b(s32b v);
-void wr_string(cptr str);
+void wr_string(const char *str);
 void pad_bytes(int n);
 
 /* Reading bits */

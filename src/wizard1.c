@@ -150,7 +150,7 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val,
 /**
  * Create a spoiler file for items
  */
-static void spoil_obj_desc(cptr fname)
+static void spoil_obj_desc(const char *fname)
 {
   int i, k, s, t, n = 0;
   
@@ -507,31 +507,31 @@ typedef struct
   char description[160];
   
   /* A list of stat boosts granted by an object */
-  cptr stats[N_ELEMENTS(stat_desc) + 1];
+  const char *stats[N_ELEMENTS(stat_desc) + 1];
   
   /* A list of other bonuses granted by an object */
-  cptr bonus[N_ELEMENTS(bonus_desc) + 1];
+  const char *bonus[N_ELEMENTS(bonus_desc) + 1];
   
   /* A list of an object's slaying preferences */
-  cptr slays[N_ELEMENTS(slay_desc) + 1];
+  const char *slays[N_ELEMENTS(slay_desc) + 1];
   
   /* A list if an object's elemental brands */
-  cptr brands[N_ELEMENTS(brand_desc) + 1];
+  const char *brands[N_ELEMENTS(brand_desc) + 1];
   
   /* A list of resistances granted by an object */
-  cptr resistances[N_ELEMENTS(resist_desc) + 1];
+  const char *resistances[N_ELEMENTS(resist_desc) + 1];
   
   /* A list of stats sustained by an object */
-  cptr sustains[N_ELEMENTS(sustain_flags_desc)  - 1 + 1];
+  const char *sustains[N_ELEMENTS(sustain_flags_desc)  - 1 + 1];
   
   /* A list of various magical qualities an object may have */
-  cptr powers[N_ELEMENTS(flags_obj_desc) + 1];	
+  const char *powers[N_ELEMENTS(flags_obj_desc) + 1];	
   
   /* A list of various curses an object may have */
-  cptr curses[N_ELEMENTS(flags_curse_desc) + 1 + 1];
+  const char *curses[N_ELEMENTS(flags_curse_desc) + 1 + 1];
   
   /* A string describing an artifact's activation */
-  cptr activation;
+  const char *activation;
   
   /* "Level 20, Rarity 30, 3.0 lbs, 20000 Gold" */
   char misc_desc[80];
@@ -559,7 +559,7 @@ static void spoiler_blanklines(int n)
 /**
  * Write a line to the spoiler file and then "underline" it with hypens
  */
-static void spoiler_underline(cptr str)
+static void spoiler_underline(const char *str)
 {
   file_putf(fff, "%s\n", str);
   spoiler_out_n_chars(strlen(str), '-');
@@ -580,9 +580,9 @@ static void spoiler_underline(cptr str)
  * The possibly updated description pointer is returned.
  */
 
-static cptr *spoiler_flag_aux(const bitflag *art_flags, 
+static const char **spoiler_flag_aux(const bitflag *art_flags, 
 			      const flag_desc *flag_x_ptr,
-			      cptr *desc_x_ptr, const int n_elmnts)
+			      const char **desc_x_ptr, const int n_elmnts)
 {
   int i;
   
@@ -597,9 +597,9 @@ static cptr *spoiler_flag_aux(const bitflag *art_flags,
   return desc_x_ptr;
 }
 
-static cptr *spoiler_int_aux(const int *values, const int base, 
+static const char **spoiler_int_aux(const int *values, const int base, 
 			     const char **desc,
-			     cptr *desc_x_ptr, const int n_elmnts)
+			     const char **desc_x_ptr, const int n_elmnts)
 {
   int i;
   
@@ -616,9 +616,9 @@ static cptr *spoiler_int_aux(const int *values, const int base,
   return desc_x_ptr;
 }
 
-static cptr *spoiler_frac_aux(const int *values, const int base, 
+static const char **spoiler_frac_aux(const int *values, const int base, 
 			      const char **desc,
-			      cptr *desc_x_ptr, const int n_elmnts)
+			      const char **desc_x_ptr, const int n_elmnts)
 {
   int i;
   
@@ -647,7 +647,7 @@ static void analyze_general (object_type *o_ptr, char *desc_x_ptr)
 /**
  * List stat bonuses.
  */
-static void analyze_stats(object_type *o_ptr, cptr *stat_list)
+static void analyze_stats(object_type *o_ptr, const char **stat_list)
 {
   /* Are any stats affected? */
   stat_list = spoiler_int_aux(o_ptr->bonus_stat, 0, stat_desc,
@@ -660,7 +660,7 @@ static void analyze_stats(object_type *o_ptr, cptr *stat_list)
 /**
  * List other bonuses.
  */
-static void analyze_bonus(object_type *o_ptr, cptr *bonus_list)
+static void analyze_bonus(object_type *o_ptr, const char **bonus_list)
 {
   /* Are any stats affected? */
   bonus_list = spoiler_int_aux(o_ptr->bonus_other, 0, bonus_desc,
@@ -673,7 +673,7 @@ static void analyze_bonus(object_type *o_ptr, cptr *bonus_list)
 /**
  * Note the slaying specialties of a weapon 
  */
-static void analyze_slay (object_type *o_ptr, cptr *slay_list)
+static void analyze_slay (object_type *o_ptr, const char **slay_list)
 {
   slay_list = spoiler_frac_aux(o_ptr->multiple_slay, MULTIPLE_BASE, slay_desc,
 			       slay_list, N_ELEMENTS(slay_desc));
@@ -685,7 +685,7 @@ static void analyze_slay (object_type *o_ptr, cptr *slay_list)
 /**
  * Note an object's elemental brands 
  */
-static void analyze_brand (object_type *o_ptr, cptr *brand_list)
+static void analyze_brand (object_type *o_ptr, const char **brand_list)
 {
   brand_list = spoiler_frac_aux(o_ptr->multiple_brand, MULTIPLE_BASE, 
 				brand_desc, brand_list, N_ELEMENTS(brand_desc));
@@ -699,7 +699,7 @@ static void analyze_brand (object_type *o_ptr, cptr *brand_list)
  * Note the resistances granted by an object 
  */
 
-static void analyze_resist (object_type *o_ptr, cptr *resist_list)
+static void analyze_resist (object_type *o_ptr, const char **resist_list)
 {
   resist_list = spoiler_int_aux(o_ptr->percent_res, RES_LEVEL_BASE, resist_desc,
 				 resist_list, N_ELEMENTS(resist_desc));
@@ -712,7 +712,7 @@ static void analyze_resist (object_type *o_ptr, cptr *resist_list)
  * Note which stats an object sustains 
  */
 
-static void analyze_sustains (object_type *o_ptr, cptr *sustain_list)
+static void analyze_sustains (object_type *o_ptr, const char **sustain_list)
 {
     bitflag all_sustains[OF_SIZE];
 
@@ -749,7 +749,7 @@ static void analyze_sustains (object_type *o_ptr, cptr *sustain_list)
  * free action, permanent light, etc.
  */
 
-static void analyze_powers (object_type *o_ptr, cptr *power_list)
+static void analyze_powers (object_type *o_ptr, const char **power_list)
 {
     /* Hack - put perma curse in with curses */
     bitflag flags[OF_SIZE];
@@ -779,7 +779,7 @@ static void analyze_powers (object_type *o_ptr, cptr *power_list)
  * Note artifact curses
  */
 
-static void analyze_curses (object_type *o_ptr, cptr *curse_list)
+static void analyze_curses (object_type *o_ptr, const char **curse_list)
 {
   /*
    * Special flags
@@ -904,7 +904,7 @@ static void print_header(void)
 #define LIST_SEP ';'
 
 
-static void spoiler_outlist(cptr header, cptr *list, char separator)
+static void spoiler_outlist(const char *header, const char **list, char separator)
 {
   int line_len, buf_len;
   char line[MAX_LINE_LEN+1], buf[80];
@@ -1102,7 +1102,7 @@ bool make_fake_artifact(object_type *o_ptr, int name1)
 /**
  * Show what object kinds appear on the current level
  */
-static void spoil_obj_gen(cptr fname)
+static void spoil_obj_gen(const char *fname)
 {
   int i;
   
@@ -1200,7 +1200,7 @@ static void spoil_obj_gen(cptr fname)
 	{
 	  object_kind *k_ptr = &k_info[i];
 	  char *t;
-	  cptr str = k_ptr->name;
+	  const char *str = k_ptr->name;
 	  
 	  if (strlen(str) == 0) continue;
 	  
@@ -1249,7 +1249,7 @@ static void spoil_obj_gen(cptr fname)
 /**
  * Show what monster races appear on the current level
  */
-static void spoil_mon_gen(cptr fname)
+static void spoil_mon_gen(const char *fname)
 {
   int i, num;
   struct keypress key;
@@ -1361,7 +1361,7 @@ static void spoil_mon_gen(cptr fname)
     {
       monster_race *r_ptr = &r_info[i];
       
-      cptr name = r_ptr->name;
+      const char *name = r_ptr->name;
       
       if (monster[i])
 	{
@@ -1398,7 +1398,7 @@ static void spoil_mon_gen(cptr fname)
 /**
  * Create a spoiler file for artifacts
  */
-static void spoil_artifact(cptr fname)
+static void spoil_artifact(const char *fname)
 {
   int i, j;
   
@@ -1480,7 +1480,7 @@ static void spoil_artifact(cptr fname)
 /**
  * Create a spoiler file for monsters
  */
-static void spoil_mon_desc(cptr fname)
+static void spoil_mon_desc(const char *fname)
 {
   int i, n = 0;
   
@@ -1541,7 +1541,7 @@ static void spoil_mon_desc(cptr fname)
     {
       monster_race *r_ptr = &r_info[who[i]];
       
-      cptr name = r_ptr->name;
+      const char *name = r_ptr->name;
       
       /* Get the "name" */
       if (rf_has(r_ptr->flags, RF_QUESTOR))
@@ -1628,21 +1628,21 @@ static void spoil_mon_desc(cptr fname)
 /**
  * Pronoun array
  */
-static cptr wd_che[3] =
+static const char *wd_che[3] =
   { "It", "He", "She" };
 /**
  * Pronoun array
  */
-static cptr wd_lhe[3] =
+static const char *wd_lhe[3] =
   { "it", "he", "she" };
 
 /**
  * Buffer text to the given file. (-SHAWN-)
  * This is basically c_roff() from util.c with a few changes.
  */
-static void spoil_out(cptr str)
+static void spoil_out(const char *str)
 {
-  cptr r;
+  const char *r;
 
   /* Line buffer */
   static char roff_buf[256];
@@ -1709,17 +1709,17 @@ static void spoil_out(cptr str)
 /**
  * Create a spoiler file for monsters (-SHAWN-)
  */
-static void spoil_mon_info(cptr fname)
+static void spoil_mon_info(const char *fname)
 {
   char buf[1024];
   int msex, vn, i, j, k, n;
   bool breath, magic, sin;
-  cptr p, q;
-  cptr vp[64];
+  const char *p, *q;
+  const char *vp[64];
 
   int spower;
   
-  cptr name;
+  const char *name;
   
   /* Build the filename */
   path_build(buf, 1024, ANGBAND_DIR_USER, fname);

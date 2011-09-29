@@ -130,7 +130,7 @@ void wield_item(object_type *o_ptr, int item, int slot)
     object_type object_type_body;
     object_type *i_ptr = &object_type_body;
 
-    cptr fmt;
+    const char *fmt;
     char o_name[80];
 
     bool combine_quiver = FALSE;
@@ -441,7 +441,7 @@ void textui_cmd_destroy(void)
     char o_name[120];
     char out_val[160];
 
-    cptr q, s;
+    const char *q, *s;
 
     /* Get an item */
     q = "Destroy which item? ";
@@ -650,7 +650,7 @@ void do_cmd_locate(void)
  * The table of "symbol info" -- each entry is a string of the form
  * "X:desc" where "X" is the trigger, and "desc" is the "info".
  */
-static cptr ident_info[] = {
+static const char *ident_info[] = {
     " :A dark grid",
     "!:A potion (or oil)",
     "\":An amulet (or necklace)",

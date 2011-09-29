@@ -101,8 +101,8 @@ static int *obj_group_order = NULL;
  * Description of each monster group.
  */
 static struct {
-    cptr chars;
-    cptr name;
+    const char *chars;
+    const char *name;
 } monster_group[] = {
     {
     (cptr) - 1, "Uniques"}, {

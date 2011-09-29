@@ -168,8 +168,8 @@ const char *get_autoinscription(s16b kind_idx)
 int apply_autoinscription(object_type *o_ptr)
 {
   char o_name[80];
-  cptr note = get_autoinscription(o_ptr->k_idx);
-  cptr existing_inscription = quark_str(o_ptr->note);
+  const char *note = get_autoinscription(o_ptr->k_idx);
+  const char *existing_inscription = quark_str(o_ptr->note);
   
   /* Don't inscribe unaware objects */
   if (!note || !object_aware_p(o_ptr))
@@ -213,7 +213,7 @@ int remove_autoinscription(s16b kind)
 }
 
 
-int add_autoinscription(s16b kind, cptr inscription)
+int add_autoinscription(s16b kind, const char *inscription)
 {
   int index;
   

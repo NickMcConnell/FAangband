@@ -295,7 +295,7 @@ static void display_scores_aux(const high_score scores[], int from, int to, int 
 	  byte attr;
 	  
 	  int pr, pc, clev, mlev, mdun;
-	  cptr user, gold, when, aged, cdun;
+	  const char *user, *gold, *when, *aged, *cdun;
 	  
 	  
 	  /* Hack -- indicate death in yellow */

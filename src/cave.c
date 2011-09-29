@@ -1827,7 +1827,7 @@ void regional_map(int num, int size)
     int i, j, col, row;
     int *stage = malloc(size * sizeof(*stage));
     int north, east, south, west;
-    cptr lev;
+    const char *lev;
 
     /* Get the side length */
     num = 2 * num + 1;

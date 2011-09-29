@@ -561,7 +561,7 @@ bool get_aim_dir(int *dp)
 
     ui_event ke;
 
-    cptr p;
+    const char *p;
 
     /* Initialize */
     (*dp) = 0;

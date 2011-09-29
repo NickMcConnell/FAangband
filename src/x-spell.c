@@ -298,7 +298,7 @@ int get_spell_index(const object_type *o_ptr, int index)
     return spell;
 }
 
-cptr get_spell_name(int sindex)
+const char *get_spell_name(int sindex)
 {
     return s_info[sindex].name;
 }
@@ -1635,7 +1635,7 @@ bool cast_spell(int tval, int sindex, int dir)
 	}
     case SPELL_DAY_OF_MISRULE:
 	{
-	    cptr p = (p_ptr->psex == SEX_FEMALE ? "Daughters" : "Sons");
+	    const char *p = (p_ptr->psex == SEX_FEMALE ? "Daughters" : "Sons");
 	    msg_format(" of Night rejoice!  It's the Day of Misrule!", p);
 	    (void) inc_timed(TMD_FAST, randint1(30) + 30, TRUE);
 	    (void) inc_timed(TMD_SHERO, randint1(30) + 30, TRUE);

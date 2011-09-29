@@ -904,11 +904,11 @@ void display_monlist(void)
  */
 void monster_desc(char *desc, size_t max, monster_type * m_ptr, int mode)
 {
-    cptr res;
+    const char *res;
 
     monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-    cptr name = r_ptr->name;
+    const char *name = r_ptr->name;
     char undead_name[40] = "oops";
 
     bool seen, pron;
@@ -1039,7 +1039,7 @@ void monster_desc(char *desc, size_t max, monster_type * m_ptr, int mode)
 
     /* Handle all other visible monster requests */
     else {
-	cptr race_name = NULL;
+	const char *race_name = NULL;
 
 	/* Get a racial prefix if necessary */
 	if (m_ptr->p_race != NON_RACIAL)
@@ -1856,7 +1856,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
     monster_type monster_type_body;
     feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
-    cptr name;
+    const char *name;
 
     /* Save previous monster restriction value. */
     bool(*get_mon_num_hook_temp) (int r_idx) = get_mon_num_hook;
@@ -3792,7 +3792,7 @@ void update_smart_learn(int m_idx, int what)
  */
 static int get_coin_type(monster_race * r_ptr)
 {
-    cptr name = r_ptr->name;
+    const char *name = r_ptr->name;
 
     /* Analyze "coin" monsters */
     if (r_ptr->d_char == '$') {
@@ -4180,7 +4180,7 @@ void monster_death(int m_idx)
  *
  * Hack -- we "delay" fear messages by passing around a "fear" flag.
  */
-bool mon_take_hit(int m_idx, int dam, bool * fear, cptr note)
+bool mon_take_hit(int m_idx, int dam, bool * fear, const char *note)
 {
     monster_type *m_ptr = &m_list[m_idx];
 

@@ -496,7 +496,7 @@ void generate_cave(void)
     /* Generate */
     for (num = 0; TRUE; num++) {
 	bool okay = TRUE;
-	cptr why = NULL;
+	const char *why = NULL;
 
 	/* Reset monsters and objects */
 	o_max = 1;

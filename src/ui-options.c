@@ -299,7 +299,7 @@ static void do_cmd_options_win(const char *name, int row)
 	{
 	    byte a = TERM_WHITE;
 
-	    cptr s = angband_term_name[j];
+	    const char *s = angband_term_name[j];
 
 	    /* Use color */
 	    if (j == x) a = TERM_L_BLUE;
@@ -313,7 +313,7 @@ static void do_cmd_options_win(const char *name, int row)
 	{
 	    byte a = TERM_WHITE;
 
-	    cptr str = window_flag_desc[i];
+	    const char *str = window_flag_desc[i];
 
 	    /* Use color */
 	    if (i == y) a = TERM_L_BLUE;
@@ -807,7 +807,7 @@ static void colors_modify(const char *title, int row)
 	/* Hack -- query until done */
 	while (1)
 	{
-		cptr name;
+		const char *name;
 		char index;
 
 		/* Clear */
@@ -1146,7 +1146,7 @@ static void options_load_pref_file(const char *n, int row)
 /**
  * Autosave options -- textual names
  */
-static cptr autosave_text[1] =
+static const char *autosave_text[1] =
 {
   "autosave"
 };
@@ -1154,7 +1154,7 @@ static cptr autosave_text[1] =
 /**
  * Autosave options -- descriptions
  */
-static cptr autosave_desc[1] =
+static const char *autosave_desc[1] =
   {
     "Timed autosave"
   };

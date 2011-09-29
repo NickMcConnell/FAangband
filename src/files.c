@@ -160,7 +160,7 @@ static byte likert_color = TERM_WHITE;
 /**
  * Returns a "rating" of x depending on y
  */
-static cptr likert(int x, int y)
+static const char *likert(int x, int y)
 {
     char description[10];
 
@@ -617,7 +617,7 @@ static u32b display_player_powers[10] = {
 /**
  * Hack -- see below
  */
-static cptr display_player_resist_names[2][7] = {
+static const char *display_player_resist_names[2][7] = {
     {
      "Acid:",			/* P_RES_ACID */
      "Elec:",			/* P_RES_ELEC */
@@ -640,7 +640,7 @@ static cptr display_player_resist_names[2][7] = {
 };
 
 
-static cptr display_player_power_names[10] = {
+static const char *display_player_power_names[10] = {
     "S.Dig:",			/* OF_SLOW_DIGEST */
     "Feath:",			/* OF_FEATHER */
     "PLght:",			/* OF_LIGHT */
@@ -653,7 +653,7 @@ static cptr display_player_power_names[10] = {
     "NFear:"			/* OF_FEARLESS */
 };
 
-static cptr display_player_bonus_names[8] = {
+static const char *display_player_bonus_names[8] = {
     "M-Mas:",			/* P_BONUS_M_MASTERY */
     "Stea.:",			/* P_BONUS_STEALTH */
     "Sear.:",			/* P_BONUS_SEARCH */
@@ -708,7 +708,7 @@ void display_player(int mode)
  * Print long number with header at given row, column
  * Use the color for the number, not the header
  */
-static void prt_lnum(cptr header, s32b num, int row, int col, byte color)
+static void prt_lnum(const char *header, s32b num, int row, int col, byte color)
 {
     int len = strlen(header);
     char out_val[32];
@@ -720,7 +720,7 @@ static void prt_lnum(cptr header, s32b num, int row, int col, byte color)
 /**
  * Print number with header at given row, column
  */
-static void prt_num(cptr header, int num, int row, int col, byte color)
+static void prt_num(const char *header, int num, int row, int col, byte color)
 {
     int len = strlen(header);
     char out_val[32];
@@ -733,7 +733,7 @@ static void prt_num(cptr header, int num, int row, int col, byte color)
 /**
  * Print decimal number with header at given row, column
  */
-static void prt_deci(cptr header, int num, int deci, int row, int col,
+static void prt_deci(const char *header, int num, int deci, int row, int col,
 		     byte color)
 {
     int len = strlen(header);
@@ -953,7 +953,7 @@ extern int make_dump(char_attr_line * line, int mode)
     int i, j, x, y, col;
     bool quiver_empty = TRUE;
 
-    cptr paren = ")";
+    const char *paren = ")";
 
     int k, which = 0;
 
@@ -977,12 +977,12 @@ extern int make_dump(char_attr_line * line, int mode)
 
     int xthn, xthb, xfos, xsrh;
     int xdis, xdev, xsav, xstl;
-    cptr desc;
+    const char *desc;
 
     int n;
 
     u32b flag;
-    cptr name1;
+    const char *name1;
 
     int player_resists[MAX_P_RES];
     int player_bonus[MAX_P_BONUS];
@@ -2003,7 +2003,7 @@ void display_dump(char_attr_line * line, int top_line, int bottom_line, int col)
  * Write a character dump to a file
  */
 
-errr file_character(cptr name, char_attr_line * line, int last_line)
+errr file_character(const char *name, char_attr_line * line, int last_line)
 {
     int i;
     char buf[100];
@@ -2069,7 +2069,7 @@ errr file_character(cptr name, char_attr_line * line, int last_line)
  */
 static void string_lower(char *buf)
 {
-    cptr buf_ptr;
+    const char *buf_ptr;
 
     /* No string */
     if (!buf)
@@ -2101,7 +2101,7 @@ static int push_file = 0;
 
 #define MAX_BUF 1024
 
-bool show_file(cptr name, cptr what, int line, int mode)
+bool show_file(const char *name, const char *what, int line, int mode)
 {
     int i, k, n;
     int wid, hgt;
@@ -2127,10 +2127,10 @@ bool show_file(cptr name, cptr what, int line, int mode)
     ang_file *fff = NULL;
 
     /* Find this string (if any) */
-    cptr find = NULL;
+    const char *find = NULL;
 
     /* Jump to this tag */
-    cptr tag = NULL;
+    const char *tag = NULL;
 
     /* Hold a string to find */
     char finder[81] = "";
@@ -2388,7 +2388,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 
 	    /* Hilight "shower" */
 	    if (shower[0]) {
-		cptr str = lc_buf;
+		const char *str = lc_buf;
 
 		/* Display matches */
 		while ((str = strstr(str, shower)) != NULL) {
@@ -2954,7 +2954,7 @@ static void write_html_escape_char(ang_file * htm, char c)
 }
 
 /* Take an html screenshot */
-void html_screenshot(cptr name, int mode)
+void html_screenshot(const char *name, int mode)
 {
 	int y, x;
 	int wid, hgt;

@@ -634,7 +634,7 @@ void hit_trap_aux(int y, int x, int trap)
 
     trap_type *t_ptr = &trap_list[trap];
 
-    cptr name = t_ptr->kind->name;
+    const char *name = t_ptr->kind->name;
 
     /* Use the "simple" RNG to insure that traps are consistant. */
     Rand_quick = TRUE;
@@ -1384,7 +1384,7 @@ void hit_trap_aux(int y, int x, int trap)
 	    /* hold the missile type and name. */
 	    int sval = 0;
 	    int tval = 0;
-	    cptr missile_name = "";
+	    const char *missile_name = "";
 
 
 
@@ -1562,7 +1562,7 @@ extern void hit_trap(int y, int x)
 /**
  * Hack -- possible victim outcry. -LM- 
  */
-static cptr desc_victim_outcry[] = {
+static const char *desc_victim_outcry[] = {
     "'My money, where's my money?'",
     "'Thief! Thief! Thief! Baggins! We hates it forever!'",
     "'Tell me, have you seen a purse wandering around?'",
@@ -1597,7 +1597,7 @@ static cptr desc_victim_outcry[] = {
  */
 extern void py_steal(int y, int x)
 {
-    cptr act = NULL;
+    const char *act = NULL;
 
     monster_type *m_ptr = &m_list[cave_m_idx[y][x]];
     monster_race *r_ptr = &r_info[m_ptr->r_idx];

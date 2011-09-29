@@ -46,7 +46,7 @@ void object_kind_name(char *buf, size_t max, int k_idx, bool easy_know)
 
     /* Use proper name (Healing, or whatever) */
     else {
-	cptr str = k_ptr->name;
+	const char *str = k_ptr->name;
 
 	if (k_ptr->tval == TV_FOOD && k_ptr->sval < SV_FOOD_MIN_FOOD) {
 	    my_strcpy(buf, "Mushroom of ", max);

@@ -906,7 +906,7 @@ static void wiz_create_artifact(void)
  */
 static void wiz_tweak_item(object_type * o_ptr)
 {
-    cptr p;
+    const char *p;
     char tmp_val[80];
 
 
@@ -1051,7 +1051,7 @@ static void wiz_statistics(object_type * o_ptr)
     object_type *i_ptr;
     object_type object_type_body;
 
-    cptr q = "Rolls: %ld, Matches: %ld, Better: %ld, Worse: %ld, Other: %ld";
+    const char *q = "Rolls: %ld, Matches: %ld, Better: %ld, Worse: %ld, Other: %ld";
 
 
     /* Mega-Hack -- allow multiple artifacts XXX XXX XXX */
@@ -1061,7 +1061,7 @@ static void wiz_statistics(object_type * o_ptr)
 
     /* Interact */
     while (TRUE) {
-	cptr pmt = "Roll for [n]ormal, [g]ood, or [e]xcellent treasure? ";
+	const char *pmt = "Roll for [n]ormal, [g]ood, or [e]xcellent treasure? ";
 
 	/* Display item */
 	wiz_display_item(o_ptr);
@@ -1241,7 +1241,7 @@ static void do_cmd_wiz_play(void)
 
     struct keypress ch;
 
-    cptr q, s;
+    const char *q, *s;
 
     bool changed;
 

@@ -89,7 +89,7 @@ bool player_can_study(void)
 
 	if (!p_ptr->new_spells)
 	{
-		cptr p = magic_desc[mp_ptr->spell_realm][SPELL_NOUN];
+		const char *p = magic_desc[mp_ptr->spell_realm][SPELL_NOUN];
 		msg_format("You cannot learn any new %ss!", p);
 		return FALSE;
 	}

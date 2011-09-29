@@ -259,7 +259,7 @@ static void make_bones(void)
 /**
  * Centers a string within a 31 character string
  */
-static void center_string(char *buf, cptr str)
+static void center_string(char *buf, const char *str)
 {
     int i, j;
 
@@ -278,7 +278,7 @@ static void center_string(char *buf, cptr str)
  */
 static void print_tomb(void)
 {
-    cptr p;
+    const char *p;
 
     int offset = 12;
 
@@ -704,7 +704,7 @@ static void death_scores(const char *title, int row)
 static void death_examine(const char *title, int row)
 {
     int item;
-    cptr q, s;
+    const char *q, *s;
 
 
     /* Get an item */

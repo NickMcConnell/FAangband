@@ -861,9 +861,9 @@ typedef struct {
  * Player sex info
  */
 typedef struct player_sex {
-    cptr title;		/**< Type of sex */
+    const char *title;		/**< Type of sex */
 
-    cptr winner;	/**< Name of winner */
+    const char *winner;	/**< Name of winner */
 } player_sex;
 
 
@@ -1014,7 +1014,7 @@ typedef struct {
 /** Druid blows. -LM- */
 struct druid_blows {
 
-    cptr description;
+    const char *description;
 			/**< Name of the blow. */
 
     s16b dd;		/**< Number of damage dice. */

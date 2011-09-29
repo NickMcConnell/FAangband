@@ -38,7 +38,7 @@ void do_cmd_move_house(void)
     int old_home = 0, new_home = 0, i = 0;
     store_type temp;
 
-    cptr town = locality_name[stage_map[p_ptr->stage][LOCALITY]];
+    const char *town = locality_name[stage_map[p_ptr->stage][LOCALITY]];
 
     if (!p_ptr->depth) {
 	/* Already home */
@@ -3149,7 +3149,7 @@ void textui_cmd_rest(void)
 {
     /* Prompt for time if needed */
     if (p_ptr->command_arg <= 0) {
-	cptr p =
+	const char *p =
 	    "Rest (0-9999, '*' for HP and SP, '&' as needed, '$' until sunrise/set): ";
 
 	char out_val[5] = "& ";

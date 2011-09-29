@@ -10,7 +10,7 @@ extern bool prepare_ghost(int r_idx, monster_type *m_ptr, bool from_savefile);
 
 /* monster2.c */
 extern void monster_death(int m_idx);
-extern bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note);
+extern bool mon_take_hit(int m_idx, int dam, bool *fear, const char *note);
 extern void delete_monster_idx(int i);
 extern void delete_monster(int y, int x);
 extern void compact_monsters(int size);
