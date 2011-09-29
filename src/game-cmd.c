@@ -453,7 +453,7 @@ void process_command(cmd_context ctx, bool no_request)
 	    /* Player is in a web */
 	    if (cave_web(p_ptr->py, p_ptr->px)) 
 	    {
-		remove_trap_kind(p_ptr->py, p_ptr->px, OBST_WEB);
+		remove_trap_kind(p_ptr->py, p_ptr->px, TRUE, OBST_WEB);
 
 		disturb(0, 0);
 

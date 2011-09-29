@@ -3757,7 +3757,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	else if (rf_has(r_ptr->flags, RF_KILL_WALL)) 
 	{
 	    /* Remove the web */
-	    remove_trap_kind(oy, ox, OBST_WEB);
+	    remove_trap_kind(oy, ox, FALSE, OBST_WEB);
 
 	    /* Notice */
 	    did_kill_wall = TRUE;
@@ -3767,7 +3767,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	else 
 	{
 	    /* Remove the web */
-	    remove_trap_kind(oy, ox, OBST_WEB);
+	    remove_trap_kind(oy, ox, FALSE, OBST_WEB);
 
 	    /* Now can't do anything else */
 	    do_move = FALSE;
@@ -3788,7 +3788,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	cave_off(cave_info[ny][nx], CAVE_MARK);
 
 	/* Break the rune */
-	remove_trap_kind(ny, nx, RUNE_PROTECT);
+	remove_trap_kind(ny, nx, FALSE, RUNE_PROTECT);
     }
 
     /* Get the feature in the grid that the monster is trying to enter. */

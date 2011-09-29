@@ -2157,7 +2157,7 @@ bool remove_trap(int y, int x, bool msg, int t_idx)
 /**
  * Remove all traps of a specific kind from a location.
  */
-void remove_trap_kind(int y, int x, int t_idx)
+void remove_trap_kind(int y, int x, bool msg, int t_idx)
 {
     int i;
 
@@ -2171,7 +2171,7 @@ void remove_trap_kind(int y, int x, int t_idx)
 	if ((t_ptr->fy == y) && (t_ptr->fx == x))
 	{
 	    /* Require that it be of this type */
-	    if (t_ptr->t_idx == t_idx) (void)remove_trap(y, x, TRUE, i);
+	    if (t_ptr->t_idx == t_idx) (void)remove_trap(y, x, msg, i);
 	}
     }
 }

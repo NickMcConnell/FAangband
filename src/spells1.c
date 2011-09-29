@@ -7513,7 +7513,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	    if (cave_web(y, x)) 
 	    {
 		/* Remove the web */
-		remove_trap_kind(y, x, OBST_WEB);
+		remove_trap_kind(y, x, FALSE, OBST_WEB);
 	    }
 
 	    break;
