@@ -121,6 +121,9 @@
 #include <string.h>
 #include <time.h>
 
+#include <wchar.h>
+#include <wctype.h>
+
 /** POSIX headers **/
 #if defined(SET_UID) || defined(MACH_O_CARBON)
 # include <pwd.h>
@@ -133,7 +136,6 @@
 /*** Define the basic game types ***/
 
 /*
- * const char *is a shortcut type for "const char *".  XXX
  * errr is an error code
  *
  * A "byte" is an unsigned byte of memory.
@@ -145,8 +147,6 @@
 #undef bool
 #define bool bool_hack
 
-
-typedef const char *cptr;
 typedef int errr;
 
 
@@ -238,7 +238,7 @@ typedef int errr;
 #define MAX(a,b)	(((a) < (b)) ? (b)  : (a))
 #define ABS(a)		(((a) < 0)   ? (-(a)) : (a))
 #define SGN(a)		(((a) < 0)   ? (-1) : ((a) != 0))
-#define CMP(a,b) (a < b ? -1 : (b < a ? 1: 0))
+#define CMP(a,b) ((a) < (b) ? -1 : ((b) < (a) ? 1 : 0))
 
 
 /*** Useful fairly generic macros ***/
@@ -258,7 +258,7 @@ typedef int errr;
 
 /*
  * Note that all "index" values must be "lowercase letters", while
- * all "digits" must be "digits". 
+ * all "digits" must be "digits".
  */
 #define A2I(X)	((X) - 'a')
 #define I2A(X)	((X) + 'a')
