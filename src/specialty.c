@@ -200,7 +200,7 @@ bool gain_spec_menu(int *pick)
     menu_layout(&menu, &loc);
 
     while (!done) {
-	evt = menu_select(&menu, EVT_SELECT);
+	evt = menu_select(&menu, EVT_SELECT, TRUE);
 	done = (evt.type == EVT_ESCAPE);
 	if (!done && (d->selected_spec))
 	    done = get_check("Are you sure? ");
@@ -798,7 +798,7 @@ void view_spec_menu(void)
     region_erase_bordered(&loc);
     menu_layout(&menu, &loc);
 
-    menu_select(&menu, 0);
+    menu_select(&menu, 0, FALSE);
 
     /* Load screen */
     screen_load();

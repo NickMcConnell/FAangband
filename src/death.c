@@ -881,6 +881,6 @@ void death_screen(void)
 
     do
     {
-	menu_select(death_menu, 0);
+	menu_select(death_menu, 0, FALSE);
     } while (!get_check("Do you want to quit? "));
 }

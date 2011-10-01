@@ -244,7 +244,7 @@ static void option_toggle_menu(const char *name, int page)
 	screen_save();
 
 	clear_from(0);
-	menu_select(m, 0);
+	menu_select(m, 0, FALSE);
 
 	screen_load();
 
@@ -675,7 +675,7 @@ static void do_cmd_keymaps(const char *title, int row)
     }
 
     menu_layout(keymap_menu, &loc);
-    menu_select(keymap_menu, 0);
+    menu_select(keymap_menu, 0, FALSE);
 
     screen_load();
 }
@@ -767,7 +767,7 @@ static void do_cmd_visuals(const char *title, int row)
 	}
 
 	menu_layout(visual_menu, &SCREEN_REGION);
-	menu_select(visual_menu, 0);
+	menu_select(visual_menu, 0, FALSE);
 
 	screen_load();
 }
@@ -907,7 +907,7 @@ void do_cmd_colors(const char *title, int row)
 	}
 
 	menu_layout(color_menu, &SCREEN_REGION);
-	menu_select(color_menu, 0);
+	menu_select(color_menu, 0, FALSE);
 
 	screen_load();
 }
@@ -1657,7 +1657,7 @@ static void ego_menu(void *unused, const char *also_unused)
   menu_layout(&menu, &area);
   
   /* Select an entry */
-  evt = menu_select(&menu, cursor);
+  evt = menu_select(&menu, cursor, FALSE);
   
   /* Free memory */
   FREE(choice);
@@ -1751,7 +1751,7 @@ static bool quality_action(menu_type *menu1, const ui_event *ev, int oid)
     window_make(area.col - 2, area.row - 1, area.col + area.width + 2, 
 		area.row + area.page_rows);
 
-    evt = menu_select(&menu, 0);
+    evt = menu_select(&menu, 0, TRUE);
   
     /* Set the new value appropriately */
     if (evt.type == EVT_SELECT)
@@ -1788,7 +1788,7 @@ static void quality_menu(void *unused, const char *also_unused)
   menu_layout(&menu, &area);
   
   /* Select an entry */
-  menu_select(&menu, 0);
+  menu_select(&menu, 0, FALSE);
   
   /* Load screen */
   screen_load();
@@ -1915,21 +1915,11 @@ static bool sval_menu(int tval, const char *desc)
   
   text_out_indent = 0;
   
-	/* Run menu */
-	menu = menu_new(MN_SKIN_COLUMNS, &menu_f);
-	menu_setpriv(menu, num, choice);
-	menu_layout(menu, &area);
-	menu_select(menu, 0);
-  /* Set up the menu 
-  WIPE(&menu, menu);
-  menu.cmd_keys = " \n\r";
-  menu.count = num;
-  menu.menu_data = choice;
-  menu_init(&menu, MN_SKIN_SCROLL, &menu_f);*/
-  
-  /* Select an entry 
-  while (evt.type != EVT_ESCAPE)
-    evt = menu_select(&menu, cursor);*/
+  /* Run menu */
+  menu = menu_new(MN_SKIN_COLUMNS, &menu_f);
+  menu_setpriv(menu, num, choice);
+  menu_layout(menu, &area);
+  menu_select(menu, 0, FALSE);
   
   /* Free memory */
   FREE(choice);
@@ -2096,7 +2086,7 @@ void do_cmd_options_item(const char *name, int row)
   screen_save();
   clear_from(0);
 
-  menu_select(&menu, 0);
+  menu_select(&menu, 0, FALSE);
   /* Load screen */
   screen_load();
 
@@ -2159,7 +2149,7 @@ void do_cmd_options(void)
 	clear_from(0);
 
 	menu_layout(option_menu, &SCREEN_REGION);
-	menu_select(option_menu, 0);
+	menu_select(option_menu, 0, FALSE);
 
 	screen_load();
 }

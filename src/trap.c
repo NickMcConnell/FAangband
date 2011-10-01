@@ -1990,7 +1990,7 @@ bool mtrap_menu(void)
     prt("", area.row + 1, area.col);
 
     /* Select an entry */
-    evt = menu_select(&menu, 0);
+    evt = menu_select(&menu, 0, TRUE);
 
     /* Free memory */
     FREE(choice);
@@ -2281,7 +2281,7 @@ bool trap_menu(int y, int x, int *idx)
     menu_layout(&menu, &area);
 
     /* Select an entry */
-    evt = menu_select(&menu, cursor);
+    evt = menu_select(&menu, cursor, TRUE);
 
     /* Set it */
     if (evt.type == EVT_SELECT)

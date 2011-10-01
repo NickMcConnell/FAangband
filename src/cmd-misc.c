@@ -131,7 +131,7 @@ bool show_cmd_menu(bool object)
     menu_init(&menu, MN_SKIN_SCROLL, &commands_menu);
 
     /* Select an entry */
-    evt = menu_select(&menu, cursor);
+    evt = menu_select(&menu, cursor, TRUE);
 
     return (evt.type != EVT_ESCAPE);
 }

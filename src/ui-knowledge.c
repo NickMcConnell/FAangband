@@ -508,8 +508,8 @@ static void display_knowledge(const char *title, int *obj_list, int o_count,
 			    object_menu.active.page_rows, object_region.col);
 	}
 
-	menu_refresh(inactive_menu);
-	menu_refresh(active_menu);
+	menu_refresh(inactive_menu, FALSE);
+	menu_refresh(active_menu, FALSE);
 
 	handle_stuff();
 
@@ -1947,7 +1947,7 @@ void textui_browse_knowledge(void)
     menu_layout(&knowledge_menu, &knowledge_region);
 
     clear_from(0);
-    menu_select(&knowledge_menu, 0);
+    menu_select(&knowledge_menu, 0, FALSE);
 
     screen_load();
 }

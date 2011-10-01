@@ -902,7 +902,7 @@ bool get_item_action(menu_type *menu, const ui_event *event, int oid)
 		selections[i] = items[i].key;
 	    area.page_rows = menu->count + 1;
 	    menu_layout(menu, &area);
-	    menu_refresh(menu);
+	    menu_refresh(menu, TRUE);
 	    redraw_stuff();
 	}
 	
@@ -941,7 +941,7 @@ ui_event item_menu(cmd_code cmd, int mode)
     area.width = max_len;
     area.col = MIN(Term->wid - 1 - max_len, 20);
     menu_layout(&menu, &area);
-    evt = menu_select(&menu, 0);
+    evt = menu_select(&menu, 0, TRUE);
 
     if (evt.type != EVT_ESCAPE)
     {

@@ -271,7 +271,7 @@ static int spell_menu_select(menu_type *m, const char *noun, const char *verb)
     prt(format("%^s which %s? ", verb, noun), 0, 0);
 
     screen_save();
-    menu_select(m, 0);
+    menu_select(m, 0, TRUE);
     screen_load();
 
     screen_load();
@@ -293,7 +293,7 @@ static void spell_menu_browse(menu_type *m, const char *noun)
 
     screen_save();
     d->browse = TRUE;
-    menu_select(m, 0);
+    menu_select(m, 0, TRUE);
     screen_load();
 
     screen_load();

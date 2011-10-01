@@ -99,7 +99,7 @@ static bool menu_action_handle(menu_type *m, const ui_event *event, int oid)
 
 
 /* Virtual function table for action_events */
-const menu_iter menu_iter_actions =
+static const menu_iter menu_iter_actions =
 {
 	menu_action_tag,
 	menu_action_valid,
@@ -219,7 +219,7 @@ static ui_event scroll_process_direction(menu_type *m, int dir)
 }
 
 /* Virtual function table for scrollable menu skin */
-const menu_skin menu_skin_scroll =
+static const menu_skin menu_skin_scroll =
 {
 	scrolling_get_cursor,
 	display_scrolling,
@@ -434,10 +434,15 @@ static void display_menu_row(menu_type *menu, int pos, int top,
 	menu->row_funcs->display_row(menu, oid, cursor, row, col, width);
 }
 
-void menu_refresh(menu_type *menu)
+void menu_refresh(menu_type *menu, bool reset_screen)
 {
 	int oid = menu->cursor;
 	region *loc = &menu->active;
+
+	if (reset_screen) {
+		screen_load();
+		screen_save();
+	}
 
 	if (menu->filter_list && menu->cursor >= 0)
 		oid = menu->filter_list[oid];
@@ -446,17 +451,16 @@ void menu_refresh(menu_type *menu)
 		Term_putstr(menu->boundary.col, menu->boundary.row,
 				loc->width, TERM_WHITE, menu->title);
 
+	if (menu->header)
+		Term_putstr(loc->col, loc->row - 1, loc->width,
+				TERM_WHITE, menu->header);
+
 	if (menu->prompt)
-		Term_putstr(loc->col, loc->row + loc->page_rows - 1,
+		Term_putstr(menu->boundary.col, loc->row + loc->page_rows,
 				loc->width, TERM_WHITE, menu->prompt);
 
 	if (menu->browse_hook && oid >= 0)
 		menu->browse_hook(oid, menu->menu_data, loc);
-
-
-	if (menu->header)
-		Term_putstr(loc->col, loc->row - 1, loc->width,
-				TERM_WHITE, menu->header);
 
 	menu->skin->display_list(menu, menu->cursor, &menu->top, loc);
 }
@@ -510,7 +514,7 @@ bool menu_handle_mouse(menu_type *menu, const ui_event *in,
  * Returns TRUE if the key was handled at all (including if it's not handled
  * and just ignored).
  */
-bool menu_handle_action(menu_type *m, const ui_event *in)
+static bool menu_handle_action(menu_type *m, const ui_event *in)
 {
 	if (m->row_funcs->row_handler)
 	{
@@ -615,38 +619,41 @@ bool menu_handle_keypress(menu_type *menu, const ui_event *in,
 
 /* 
  * Run a menu.
+ *
+ * If popup is true, the screen is saved before the menu is drawn, and
+ * restored afterwards. Each time a popup menu is redrawn, it resets the
+ * screen before redrawing.
  */
-ui_event menu_select(menu_type *menu, int notify)
+ui_event menu_select(menu_type *menu, int notify, bool popup)
 {
 	ui_event in = EVENT_EMPTY;
+	bool no_act = (menu->flags & MN_NO_ACTION) ? TRUE : FALSE;
 
 	assert(menu->active.width != 0 && menu->active.page_rows != 0);
 
 	notify |= (EVT_SELECT | EVT_ESCAPE);
+	if (popup)
+		screen_save();
 
 	/* Stop on first unhandled event */
 	while (!(in.type & notify))
 	{
-		bool ignore;
 		ui_event out = EVENT_EMPTY;
 
-		menu_refresh(menu);
+		menu_refresh(menu, popup);
 		in = inkey_ex();
 
 		/* Handle mouse & keyboard commands */
-		if (in.type == EVT_MOUSE)
-			ignore = menu_handle_mouse(menu, &in, &out);
-		else if (in.type == EVT_KBRD)
-		{
-			if (menu->cmd_keys &&
-			    strchr(menu->cmd_keys, (char)in.key.code) &&
+		if (in.type == EVT_MOUSE) {
+			menu_handle_mouse(menu, &in, &out);
+		} else if (in.type == EVT_KBRD) {
+			if (!no_act && menu->cmd_keys &&
+					strchr(menu->cmd_keys, (char)in.key.code) &&
 					menu_handle_action(menu, &in))
 				continue;
 
-			ignore = menu_handle_keypress(menu, &in, &out);
-		}
-		else if (in.type == EVT_RESIZE)
-		{
+			menu_handle_keypress(menu, &in, &out);
+		} else if (in.type == EVT_RESIZE) {
 			menu_calc_size(menu);
 			if (menu->row_funcs->resize)
 				menu->row_funcs->resize(menu);
@@ -655,14 +662,19 @@ ui_event menu_select(menu_type *menu, int notify)
 		/* XXX should redraw menu here if cursor has moved */
 
 		/* If we've selected an item, then send that event out */
-		if (out.type == EVT_SELECT && menu_handle_action(menu, &out))
+		if (out.type == EVT_SELECT && !no_act && menu_handle_action(menu, &out))
 			continue;
 
 		/* Notify about the outgoing type */
-		if (notify & out.type)
+		if (notify & out.type) {
+			if (popup)
+				screen_load();
 			return out;
+		}
 	}
 
+	if (popup)
+		screen_load();
 	return in;
 }
 
@@ -762,10 +774,9 @@ static bool menu_calc_size(menu_type *menu)
 
 	if (menu->prompt)
 	{
-		if (menu->active.page_rows > 1)
+		if (menu->active.page_rows > 1) {
 			menu->active.page_rows--;
-		else
-		{
+		} else {
 			int offset = strlen(menu->prompt) + 2;
 			menu->active.col += offset;
 			menu->active.width -= offset;
@@ -822,3 +833,114 @@ menu_type *menu_new_action(menu_action *acts, size_t n)
 	menu_setpriv(m, n, acts);
 	return m;
 }
+
+
+/*** Dynamic menu handling ***/
+
+struct menu_entry {
+	char *text;
+	int value;
+
+	struct menu_entry *next;
+};
+
+static void dynamic_display(menu_type *m, int oid, bool cursor,
+		int row, int col, int width)
+{
+	struct menu_entry *entry;
+	byte color = curs_attrs[CURS_KNOWN][0 != cursor];
+
+	for (entry = menu_priv(m); oid; oid--) {
+		entry = entry->next;
+		assert(entry);
+	}
+
+	Term_putstr(col, row, width, color, entry->text);
+}
+
+static const menu_iter dynamic_iter = {
+	NULL,	/* tag */
+	NULL,	/* valid */
+	dynamic_display,
+	NULL,	/* handler */
+	NULL	/* resize */
+};
+
+menu_type *menu_dynamic_new(void)
+{
+	menu_type *m = menu_new(MN_SKIN_SCROLL, &dynamic_iter);
+	menu_setpriv(m, 0, NULL);
+	return m;
+}
+
+void menu_dynamic_add(menu_type *m, const char *text, int value)
+{
+	struct menu_entry *head = menu_priv(m);
+	struct menu_entry *new = mem_zalloc(sizeof *new);
+
+	assert(m->row_funcs == &dynamic_iter);
+
+	new->text = string_make(text);
+	new->value = value;
+
+	if (head) {
+		struct menu_entry *tail = head;
+		while (1) {
+			if (tail->next)
+				tail = tail->next;
+			else
+				break;
+		}
+
+		tail->next = new;
+		menu_setpriv(m, m->count + 1, head);
+	} else {
+		menu_setpriv(m, m->count + 1, new);
+	}
+}
+
+size_t menu_dynamic_longest_entry(menu_type *m)
+{
+	size_t biggest = 0;
+	size_t current;
+
+	struct menu_entry *entry;
+
+	for (entry = menu_priv(m); entry; entry = entry->next) {
+		current = strlen(entry->text);
+		if (current > biggest)
+			biggest = current;
+	}
+
+	return biggest;
+}
+
+int menu_dynamic_select(menu_type *m)
+{
+	ui_event e = menu_select(m, 0, TRUE);
+	struct menu_entry *entry;
+	int cursor = m->cursor;
+
+	if (e.type == EVT_ESCAPE)
+		return -1;
+
+	for (entry = menu_priv(m); cursor; cursor--) {
+		entry = entry->next;
+		assert(entry);
+	}	
+
+	return entry->value;
+}
+
+void menu_dynamic_free(menu_type *m)
+{
+	struct menu_entry *entry = menu_priv(m);
+	if (entry) {
+		struct menu_entry *next = entry->next;
+		string_free(entry->text);
+		mem_free(entry);
+		entry = next;
+	}
+	mem_free(m);
+}
+

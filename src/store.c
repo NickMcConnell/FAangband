@@ -2351,7 +2351,7 @@ static bool order_menu(int tval, const char *desc)
 
     /* Select an entry */
     //while (evt.type != EVT_ESCAPE)
-    evt = menu_select(&menu, cursor);
+    evt = menu_select(&menu, cursor, FALSE);
 
     /* Free memory */
     FREE(choice);
@@ -2414,7 +2414,7 @@ void store_order(void)
 
     while (c.type != EVT_ESCAPE) {
 	clear_from(0);
-	c = menu_select(&menu, cursor);
+	c = menu_select(&menu, cursor, FALSE);
 
 	if (c.type == EVT_SELECT) {
 	    order_menu(order_types[choice[menu.cursor]].tval,

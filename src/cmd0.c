@@ -259,7 +259,7 @@ static bool cmd_menu(command_list *list, void *selection_p)
     window_make(21, 3, 62, 17);
 
     /* Select an entry */
-    evt = menu_select(&menu, 0);
+    evt = menu_select(&menu, 0, TRUE);
 
     /* Load de screen */
     screen_load();
@@ -315,7 +315,7 @@ static char textui_action_menu_choose(void)
     screen_save();
     window_make(19, 4, 58, 11);
 
-    menu_select(command_menu, 0);
+    menu_select(command_menu, 0, TRUE);
 
     screen_load();
 

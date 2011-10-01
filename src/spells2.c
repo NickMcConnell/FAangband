@@ -261,7 +261,7 @@ bool el_menu(void)
     menu_layout(&menu, &area);
 
     /* Select an entry */
-    evt = menu_select(&menu, cursor);
+    evt = menu_select(&menu, cursor, TRUE);
 
     /* Free memory */
     FREE(choice);
@@ -408,7 +408,7 @@ bool res_menu(void)
     menu_layout(&menu, &area);
 
     /* Select an entry */
-    evt = menu_select(&menu, cursor);
+    evt = menu_select(&menu, cursor, TRUE);
 
     /* Free memory */
     FREE(choice);
@@ -1388,7 +1388,7 @@ bool recall_menu(void)
     menu_layout(&menu, &area);
 
     /* Select an entry */
-    evt = menu_select(&menu, cursor);
+    evt = menu_select(&menu, cursor, TRUE);
 
     /* Free memory */
     FREE(choice);

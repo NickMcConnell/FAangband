@@ -825,7 +825,7 @@ bool wiz_create_item_action(menu_type *m, const ui_event *e, int oid)
 	menu->title = buf;
 	menu_setpriv(menu, n_choices, choice);
 	menu_layout(menu, &wiz_create_item_area);
-	ret = menu_select(menu, 0);
+	ret = menu_select(menu, 0, FALSE);
 
 	screen_load();
 
@@ -859,7 +859,7 @@ static void wiz_create_item(void)
 
 	menu_setpriv(menu, N_ELEMENTS(tvals), tvals);
 	menu_layout(menu, &wiz_create_item_area);
-	menu_select(menu, 0);
+	menu_select(menu, 0, FALSE);
 
 	screen_load();
 }
@@ -894,7 +894,7 @@ static void wiz_create_artifact(void)
     
     menu_setpriv(menu, num, a_tvals);
     menu_layout(menu, &wiz_create_item_area);
-    menu_select(menu, 0);
+    menu_select(menu, 0, FALSE);
     
     screen_load();
     FREE(a_tvals);
@@ -1486,7 +1486,7 @@ bool jump_menu(int level, int *location)
     menu_layout(&menu, &area);
 
     /* Select an entry */
-    evt = menu_select(&menu, cursor);
+    evt = menu_select(&menu, cursor, TRUE);
 
     /* Set it */
     if (evt.type == EVT_SELECT)
