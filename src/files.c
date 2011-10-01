@@ -2758,7 +2758,7 @@ void save_game(void)
     signals_ignore_tstp();
 
     /* Save the player */
-    if (old_save()) {
+    if (savefile_save()) {
 	if (!is_autosave)
 	    prt("Saving game... done.", 0, 0);
     }
@@ -2880,7 +2880,7 @@ void exit_game_panic(void)
     strcpy(p_ptr->died_from, "(panic save)");
 
     /* Panic save, or get worried */
-    if (!old_save())
+    if (!savefile_save())
 	quit("panic save failed!");
 
     /* Successful panic save */

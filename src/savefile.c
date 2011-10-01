@@ -372,7 +372,7 @@ static bool try_load(ang_file *file)
 /*
  * Attempt to save the player in a savefile
  */
-bool old_save(void)
+bool savefile_save(void)
 {
     ang_file *file;
 

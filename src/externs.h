@@ -351,7 +351,7 @@ extern void run_step(int dir);
 extern void initialize_random_artifacts(void);
 
 /* save.c */
-extern bool old_save(void);
+extern bool savefile_save(void);
 
 /* score.c */
 extern void enter_score(time_t *death_time);

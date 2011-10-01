@@ -90,7 +90,8 @@ struct parser_spec {
 struct parser_value {
 	struct parser_spec spec;
 	union {
-		wchar_t cval;
+		char cval;
+	    //wchar_t cval;
 		int ival;
 		unsigned int uval;
 		char *sval;
