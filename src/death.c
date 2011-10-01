@@ -22,6 +22,7 @@
 #include "files.h"
 #include "game-event.h"
 #include "history.h"
+#include "savefile.h"
 #include "ui-menu.h"
 
 /**
@@ -830,7 +831,7 @@ void death_screen(void)
 	kingly();
 
     /* Save dead player */
-    if (!savefile_save())
+    if (!savefile_save(savefile))
     {
 	msg_print("death save failed!");
 	message_flush();

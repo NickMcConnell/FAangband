@@ -1,6 +1,22 @@
 #ifndef INCLUDED_SAVEFILE_H
 #define INCLUDED_SAVEFILE_H
 
+/*** Savefile API ***/
+
+/**
+ * Load the savefile given.  Returns TRUE on succcess, FALSE otherwise.
+ */
+bool savefile_load(const char *path);
+
+/**
+ * Save to the given location.  Returns TRUE on success, FALSE otherwise.
+ */
+bool savefile_save(const char *path);
+
+
+
+/*** Ignore these ***/
+
 /* load-old.c */
 int rd_savefile_old(void);
 

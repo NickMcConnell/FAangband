@@ -33,6 +33,7 @@
 #include "monster.h"
 #include "tvalsval.h"
 #include "prefs.h"
+#include "savefile.h"
 #include "spells.h"
 #include "target.h"
 
@@ -2271,7 +2272,7 @@ void play_game(void)
 
     if (savefile[0] && file_exists(savefile))
     {
-	bool ok = savefile_load();
+	bool ok = savefile_load(savefile);
 	if (!ok) quit("broken savefile");
 
 	if (p_ptr->is_dead && arg_wizard)

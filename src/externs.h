@@ -325,9 +325,6 @@ void death_screen(void);
 extern void play_game(void);
 extern void idle_update(void);
 
-/* load.c */
-extern bool savefile_load(void);
-
 /* monattk.c */
 extern bool make_attack_normal(monster_type *m_ptr, int y, int x);
 extern bool make_attack_ranged(monster_type *m_ptr, int attack);
@@ -349,9 +346,6 @@ extern void run_step(int dir);
 
 /* randart.c */
 extern void initialize_random_artifacts(void);
-
-/* save.c */
-extern bool savefile_save(void);
 
 /* score.c */
 extern void enter_score(time_t *death_time);
