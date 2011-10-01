@@ -326,7 +326,7 @@ extern void play_game(void);
 extern void idle_update(void);
 
 /* load.c */
-extern bool old_load(void);
+extern bool savefile_load(void);
 
 /* monattk.c */
 extern bool make_attack_normal(monster_type *m_ptr, int y, int x);

@@ -452,7 +452,7 @@ bool savefile_save(void)
  * Note that we always try to load the "current" savefile, even if
  * there is no such file, so we must check for "empty" savefile names.
  */
-bool old_load(void)
+bool savefile_load(void)
 {
     byte sf_major = 0;
     byte sf_minor = 0;
