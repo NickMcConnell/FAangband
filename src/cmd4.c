@@ -81,7 +81,7 @@ void do_cmd_redraw(void)
   Term_clear();
 
   /* Hack -- update */
-  handle_stuff();
+  handle_stuff(p_ptr);
   
   /* Place the cursor on the player */
   if (0 != character_dungeon)
@@ -124,7 +124,7 @@ void redraw_window(void)
   Term_xtra(TERM_XTRA_REACT, 0);
   
   /* Hack -- update */
-  handle_stuff();
+  handle_stuff(p_ptr);
   
   /* Redraw */
   Term_redraw();
@@ -174,7 +174,7 @@ void do_cmd_change_name(void)
       /* Display the player */
       display_dump(dumpline, top_line, top_line + Term->hgt - 1, col);
 
-      redraw_stuff();
+      redraw_stuff(p_ptr);
 
       /* Clear the bottom line */
       prt("", Term->hgt - 1, 0);
@@ -404,7 +404,7 @@ void do_cmd_messages(void)
       
       /* Display prompt (not very informative) */
       prt(p, hgt - 1, 0);
-      redraw_stuff();
+      redraw_stuff(p_ptr);
       
       /* Get a command */
       ke = inkey_ex();

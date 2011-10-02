@@ -1724,7 +1724,7 @@ static void store_purchase(void)
 
 
 	    /* Handle stuff */
-	    handle_stuff();
+	    handle_stuff(p_ptr);
 
 	    /* Note how many slots the store used to have */
 	    n = st_ptr->stock_num;
@@ -1807,7 +1807,7 @@ static void store_purchase(void)
 	msg_format("You have %s (%c).", o_name, index_to_label(item_new));
 
 	/* Handle stuff */
-	handle_stuff();
+	handle_stuff(p_ptr);
 
 	/* Take note if we take the last one */
 	n = st_ptr->stock_num;
@@ -2073,7 +2073,7 @@ static void store_sell(void)
 
 
 	/* Handle stuff */
-	handle_stuff();
+	handle_stuff(p_ptr);
 
 	/* The store gets that (known) object */
 	item_pos = store_carry(i_ptr);
@@ -2105,7 +2105,7 @@ static void store_sell(void)
 
 
 	/* Handle stuff */
-	handle_stuff();
+	handle_stuff(p_ptr);
 
 	/* Let the home carry it */
 	item_pos = home_carry(i_ptr);
@@ -2689,8 +2689,8 @@ static void store_process_command(ui_event ke)
     event_signal(EVENT_EQUIPMENT);
     
     /* Notice and handle stuff */
-    notice_stuff();
-    handle_stuff();
+    notice_stuff(p_ptr);
+    handle_stuff(p_ptr);
 
     /* Display the store */
     display_inventory();
@@ -2964,10 +2964,10 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 	store_process_command(ke);
 
 	/* Notice stuff */
-	notice_stuff();
+	notice_stuff(p_ptr);
 
 	/* Handle stuff */
-	handle_stuff();
+	handle_stuff(p_ptr);
 
 	/* Pack Overflow XXX XXX XXX */
 	if (p_ptr->inventory[INVEN_PACK].k_idx) {
@@ -3025,7 +3025,7 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 		inven_item_optimize(item);
 
 		/* Handle stuff */
-		handle_stuff();
+		handle_stuff(p_ptr);
 
 		/* Let the home carry it */
 		item_pos = home_carry(i_ptr);

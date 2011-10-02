@@ -1849,7 +1849,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
     path_n = project_path(path_g, tdis, py, px, ty, tx, PROJECT_THRU);
 
     /* Hack -- Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Project along the path */
     for (i = 0; i < path_n; ++i) {
@@ -1870,11 +1870,11 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	    print_rel(missile_char, missile_attr, y, x);
 	    move_cursor_relative(y, x);
 	    Term_fresh();
-	    if (p_ptr->redraw) redraw_stuff();
+	    if (p_ptr->redraw) redraw_stuff(p_ptr);
 	    Term_xtra(TERM_XTRA_DELAY, msec);
 	    light_spot(y, x);
 	    Term_fresh();
-	    if (p_ptr->redraw) redraw_stuff();
+	    if (p_ptr->redraw) redraw_stuff(p_ptr);
 	}
 
 	/* Delay anyway for consistency */
@@ -2386,7 +2386,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 
 
     /* Hack -- Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Project along the path */
     for (i = 0; i < path_n; ++i) {
@@ -2407,11 +2407,11 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 	    print_rel(missile_char, missile_attr, y, x);
 	    move_cursor_relative(y, x);
 	    Term_fresh();
-	    if (p_ptr->redraw) redraw_stuff();
+	    if (p_ptr->redraw) redraw_stuff(p_ptr);
 	    Term_xtra(TERM_XTRA_DELAY, msec);
 	    light_spot(y, x);
 	    Term_fresh();
-	    if (p_ptr->redraw) redraw_stuff();
+	    if (p_ptr->redraw) redraw_stuff(p_ptr);
 	}
 
 	/* Delay anyway for consistency */

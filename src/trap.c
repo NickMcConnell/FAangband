@@ -1751,7 +1751,7 @@ extern void py_steal(int y, int x)
     p_ptr->update |= (PU_BONUS);
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
 
     /* Increment the number of thefts, and possibly raise the hue and cry. */

@@ -903,7 +903,7 @@ bool get_item_action(menu_type *menu, const ui_event *event, int oid)
 	    area.page_rows = menu->count + 1;
 	    menu_layout(menu, &area);
 	    menu_refresh(menu, TRUE);
-	    redraw_stuff();
+	    redraw_stuff(p_ptr);
 	}
 	
 	return FALSE;
@@ -1211,7 +1211,7 @@ bool get_item(int *cp, const char *pmt, const char *str, cmd_code cmd, int mode)
 	p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 
 	/* Redraw windows */
-	redraw_stuff();
+	redraw_stuff(p_ptr);
 
 	/* Change the list if needed */
 	if (refresh) {
@@ -1229,7 +1229,7 @@ bool get_item(int *cp, const char *pmt, const char *str, cmd_code cmd, int mode)
 	/* Show the prompt */
 	item_prompt(mode);
 
-	redraw_stuff();
+	redraw_stuff(p_ptr);
 
 	/* Menu if requested */
 	if (show_list) 
@@ -1564,7 +1564,7 @@ bool get_item(int *cp, const char *pmt, const char *str, cmd_code cmd, int mode)
 
     /* Update */
     p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
-    redraw_stuff();
+    redraw_stuff(p_ptr);
 
     /* Clear the prompt line */
     prt("", 0, 0);

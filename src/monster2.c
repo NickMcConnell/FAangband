@@ -4139,7 +4139,7 @@ void monster_death(int m_idx)
     p_ptr->update |= (PU_SPECIALTY);
 
     /* Update */
-    update_stuff();
+    update_stuff(p_ptr);
 
     /* Was it the big one? */
     if (r_ptr->level == 100) {

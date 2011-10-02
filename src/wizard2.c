@@ -1360,7 +1360,7 @@ static void do_cmd_wiz_cure_all(void)
 
     /* Update stuff (if needed) */
     if (p_ptr->update)
-	update_stuff();
+	update_stuff(p_ptr);
 
     /* Heal the player */
     p_ptr->chp = p_ptr->mhp;
@@ -1621,7 +1621,7 @@ static void do_cmd_rerate(void)
     p_ptr->redraw |= (PR_HP);
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Message */
     msg_format("Current Life Rating is %d/100.", percent);

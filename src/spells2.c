@@ -491,7 +491,7 @@ void dimen_door(void)
 	msg_print("You fail to exit the astral plane correctly!");
 	p_ptr->energy -= 50;
 	teleport_player(15, FALSE);
-	handle_stuff();
+	handle_stuff(p_ptr);
     }
 
     /* Controlled teleport. */
@@ -1451,7 +1451,7 @@ bool set_recall(int v)
     p_ptr->redraw |= PR_STATUS;
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Result */
     return (TRUE);
@@ -1506,7 +1506,7 @@ static void animate_detect(int rad)
 
     /* Flush the image of detected region */
     Term_fresh();
-    if (p_ptr->redraw) redraw_stuff();
+    if (p_ptr->redraw) redraw_stuff(p_ptr);
 
     /* Delay (efficiently) */
     Term_xtra(TERM_XTRA_DELAY, msec);
@@ -1534,7 +1534,7 @@ static void animate_detect(int rad)
 
     /* Flush screen back to normal */
     Term_fresh();
-    if (p_ptr->redraw) redraw_stuff();
+    if (p_ptr->redraw) redraw_stuff(p_ptr);
 
     /* Exit */
     return;
@@ -2373,7 +2373,7 @@ bool detect_monsters_living(int range, bool show)
 	/* Update */
 	p_ptr->redraw |= PR_MAP;
 
-	redraw_stuff();
+	redraw_stuff(p_ptr);
     }
 
 
@@ -3218,7 +3218,7 @@ bool ident_spell(void)
     p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Description */
     object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
@@ -3330,7 +3330,7 @@ bool identify_fully(void)
     p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Success */
     return (TRUE);
@@ -5247,7 +5247,7 @@ static void cave_temp_room_light(void)
     p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW | PU_MONSTERS);
 
     /* Update stuff */
-    update_stuff();
+    update_stuff(p_ptr);
 
     /* Process the grids */
     for (i = 0; i < temp_n; i++) {
@@ -5338,7 +5338,7 @@ static void cave_temp_room_unlight(void)
     p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW | PU_MONSTERS);
 
     /* Update stuff */
-    update_stuff();
+    update_stuff(p_ptr);
 
     /* Process the grids */
     for (i = 0; i < temp_n; i++) {

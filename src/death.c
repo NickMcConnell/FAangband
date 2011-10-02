@@ -854,8 +854,8 @@ void death_screen(void)
     event_signal(EVENT_EQUIPMENT);
 
     /* Handle stuff */
-    notice_stuff();
-    handle_stuff();
+    notice_stuff(p_ptr);
+    handle_stuff(p_ptr);
 
     /* You are dead */
     print_tomb();

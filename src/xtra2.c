@@ -89,7 +89,7 @@ void check_experience(void)
     p_ptr->redraw |= (PR_EXP);
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
 
     /* Lose levels while possible */
@@ -105,7 +105,7 @@ void check_experience(void)
 	p_ptr->redraw |= (PR_EXP | PR_LEV | PR_TITLE);
 
 	/* Handle stuff */
-	handle_stuff();
+	handle_stuff(p_ptr);
     }
 
 
@@ -150,7 +150,7 @@ void check_experience(void)
 	p_ptr->redraw |= (PR_EXP | PR_LEV | PR_TITLE);
 
 	/* Handle stuff */
-	handle_stuff();
+	handle_stuff(p_ptr);
     }
 
     /* Gain max levels while possible Called rarely - only when leveling while
@@ -168,7 +168,7 @@ void check_experience(void)
 	p_ptr->redraw |= (PR_LEV | PR_TITLE);
 
 	/* Handle stuff */
-	handle_stuff();
+	handle_stuff(p_ptr);
     }
 }
 
@@ -255,7 +255,7 @@ bool modify_panel(term *t, int wy, int wx)
 		p_ptr->redraw |= (PR_MAP);
 
 		/* Redraw for big graphics */
-		if ((tile_width > 1) || (tile_height > 1)) redraw_stuff();
+		if ((tile_width > 1) || (tile_height > 1)) redraw_stuff(p_ptr);
       
 		/* Hack -- optional disturb on "panel change" */
 		if (OPT(disturb_panel) && !OPT(center_player)) disturb(0, 0);

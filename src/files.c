@@ -2743,7 +2743,7 @@ void save_game(void)
     message_flush();
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Message */
     if (!is_autosave)
@@ -2797,7 +2797,7 @@ void close_game(void)
     ui_event ke;
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Flush the messages */
     msg_print(NULL);

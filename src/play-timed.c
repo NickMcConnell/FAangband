@@ -220,7 +220,7 @@ bool set_timed(int idx, int v, bool notify)
     p_ptr->redraw |= (PR_STATUS | effect->flag_redraw);
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Result */
     return TRUE;
@@ -386,7 +386,7 @@ static bool set_stun(int v)
     p_ptr->redraw |= (PR_STATUS);
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Result */
     return (TRUE);
@@ -581,7 +581,7 @@ static bool set_cut(int v)
     p_ptr->redraw |= (PR_STATUS);
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Result */
     return (TRUE);
@@ -788,7 +788,7 @@ bool set_food(int v)
     p_ptr->redraw |= (PR_STATUS);
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Result */
     return (TRUE);

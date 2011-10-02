@@ -3375,7 +3375,7 @@ static void update_bonuses(void)
 /**
  * Handle "p_ptr->notice"
  */
-void notice_stuff(void)
+void notice_stuff(struct player *p)
 {
     /* Notice stuff */
     if (!p_ptr->notice)
@@ -3420,7 +3420,7 @@ void notice_stuff(void)
 /**
  * Handle "p_ptr->update"
  */
-void update_stuff(void)
+void update_stuff(struct player *p)
 {
     /* Update stuff */
     if (!p_ptr->update)
@@ -3541,7 +3541,7 @@ static const struct flag_event_trigger redraw_events[] =
 /**
  * Handle "p_ptr->redraw"
  */
-void redraw_stuff(void)
+void redraw_stuff(struct player *p)
 {
     size_t i;
 
@@ -3587,11 +3587,11 @@ void redraw_stuff(void)
 /**
  * Handle "p_ptr->update" and "p_ptr->redraw"
  */
-void handle_stuff(void)
+void handle_stuff(struct player *p)
 {
 	/* Update stuff */
-	if (p_ptr->update) update_stuff();
+	if (p_ptr->update) update_stuff(p);
 
 	/* Redraw stuff */
-	if (p_ptr->redraw) redraw_stuff();
+	if (p_ptr->redraw) redraw_stuff(p);
 }

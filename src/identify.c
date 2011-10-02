@@ -357,7 +357,7 @@ void label_as_ego(object_type * o_ptr, int item)
     p_ptr->redraw |= (PR_INVEN | PR_EQUIP | PR_BASIC | PR_EXTRA);
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Description */
     object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);

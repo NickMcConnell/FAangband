@@ -4756,15 +4756,15 @@ void pack_overflow(void)
 
     /* Notice stuff (if needed) */
     if (p_ptr->notice)
-	notice_stuff();
+	notice_stuff(p_ptr);
 
     /* Update stuff (if needed) */
     if (p_ptr->update)
-	update_stuff();
+	update_stuff(p_ptr);
 
     /* Redraw stuff (if needed) */
     if (p_ptr->redraw)
-	redraw_stuff();
+	redraw_stuff(p_ptr);
 }
 
 /* Set Item Code */

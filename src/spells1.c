@@ -635,7 +635,7 @@ void teleport_player(int dis, bool safe)
 
     /* Handle stuff XXX XXX XXX */
     if (safe)
-	handle_stuff();
+	handle_stuff(p_ptr);
 }
 
 /**
@@ -700,7 +700,7 @@ void teleport_towards(int oy, int ox, int ny, int nx)
     monster_swap(oy, ox, y, x);
 
     /* Handle stuff XXX XXX XXX */
-    handle_stuff();
+    handle_stuff(p_ptr);
 }
 
 
@@ -771,7 +771,7 @@ void teleport_player_to(int ny, int nx, bool friendly)
     cave_off(cave_info[y][x], CAVE_TEMP);
 
     /* Handle stuff XXX XXX XXX */
-    handle_stuff();
+    handle_stuff(p_ptr);
 }
 
 /**
@@ -1577,7 +1577,7 @@ void take_hit(int dam, const char *kb_str)
 	    msg_print(NULL);
 
 	    /* Redraw */
-	    redraw_stuff();
+	    redraw_stuff(p_ptr);
 
 	    /* Dump the screen */
 	    do_cmd_save_screen();
@@ -8000,7 +8000,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
     int *dam_at_dist = malloc((MAX_RANGE + 1) * sizeof(*dam_at_dist));
 
     /* Hack -- Flush any pending output */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Hack -- Jump to target */
     if (flg & (PROJECT_JUMP)) {
@@ -8161,11 +8161,11 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 			print_rel(c, a, y, x);
 			move_cursor_relative(y, x);
 			Term_fresh();
-			if (p_ptr->redraw) redraw_stuff();
+			if (p_ptr->redraw) redraw_stuff(p_ptr);
 			Term_xtra(TERM_XTRA_DELAY, msec);
 			light_spot(y, x);
 			Term_fresh();
-			if (p_ptr->redraw) redraw_stuff();
+			if (p_ptr->redraw) redraw_stuff(p_ptr);
 
 			/* Display "beam" grids */
 			if (flg & (PROJECT_BEAM)) {
@@ -8423,7 +8423,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 	    if (i == grids) {
 		/* Flush each radius seperately */
 		Term_fresh();
-		if (p_ptr->redraw) redraw_stuff();
+		if (p_ptr->redraw) redraw_stuff(p_ptr);
 
 		/* Delay (efficiently) */
 		if (visual || drawn) {
@@ -8435,7 +8435,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 	    else if (gd[i + 1] > gd[i]) {
 		/* Flush each radius seperately */
 		Term_fresh();
-		if (p_ptr->redraw) redraw_stuff();
+		if (p_ptr->redraw) redraw_stuff(p_ptr);
 		
 		/* Delay (efficiently) */
 		if (visual || drawn) {
@@ -8463,7 +8463,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 
 	    /* Flush the explosion */
 	    Term_fresh();
-	    if (p_ptr->redraw) redraw_stuff();
+	    if (p_ptr->redraw) redraw_stuff(p_ptr);
 	}
     }
 
@@ -8566,7 +8566,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 
     /* Update stuff if needed */
     if (p_ptr->update)
-	update_stuff();
+	update_stuff(p_ptr);
 
     free(dam_at_dist);
 

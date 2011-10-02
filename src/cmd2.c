@@ -3138,7 +3138,7 @@ void do_cmd_rest(cmd_code code, cmd_arg args[])
     p_ptr->redraw |= (PR_STATE);
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Refresh XXX XXX XXX */
     Term_fresh();

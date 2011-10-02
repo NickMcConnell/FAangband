@@ -1372,7 +1372,7 @@ static void process_player_aux(void)
 	    p_ptr->redraw |= (PR_MONSTER);
 
 	    /* Window stuff */
-	    redraw_stuff();
+	    redraw_stuff(p_ptr);
 	}
     }
 }
@@ -1535,15 +1535,15 @@ static void process_player(void)
     do {
 	/* Notice stuff (if needed) */
 	if (p_ptr->notice)
-	    notice_stuff();
+	    notice_stuff(p_ptr);
 
 	/* Update stuff (if needed) */
 	if (p_ptr->update)
-	    update_stuff();
+	    update_stuff(p_ptr);
 
 	/* Redraw stuff (if needed) */
 	if (p_ptr->redraw)
-	    redraw_stuff();
+	    redraw_stuff(p_ptr);
 
 	/* Place the cursor on the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
@@ -1860,7 +1860,7 @@ void idle_update(void)
 
     /* Animate and redraw if necessary */
     do_animation();
-    redraw_stuff();
+    redraw_stuff(p_ptr);
 
     /* Refresh the main screen */
     Term_fresh();
@@ -1991,10 +1991,10 @@ static void dungeon(void)
     p_ptr->redraw |= (PR_MONSTER | PR_MONLIST | PR_ITEMLIST);
 
     /* Update stuff */
-    update_stuff();
+    update_stuff(p_ptr);
 
     /* Redraw stuff */
-    redraw_stuff();
+    redraw_stuff(p_ptr);
 
 
     /* Hack -- Decrease "xtra" depth */
@@ -2018,13 +2018,13 @@ static void dungeon(void)
     p_ptr->redraw |= (PR_BUTTONS);
 
     /* Notice stuff */
-    notice_stuff();
+    notice_stuff(p_ptr);
 
     /* Update stuff */
-    update_stuff();
+    update_stuff(p_ptr);
 
     /* Redraw stuff */
-    redraw_stuff();
+    redraw_stuff(p_ptr);
 
     /* Refresh */
     Term_fresh();
@@ -2118,13 +2118,13 @@ static void dungeon(void)
 	}
 
 	/* Notice stuff */
-	if (p_ptr->notice) notice_stuff();
+	if (p_ptr->notice) notice_stuff(p_ptr);
 
 	/* Update stuff */
-	if (p_ptr->update) update_stuff();
+	if (p_ptr->update) update_stuff(p_ptr);
 
 	/* Redraw stuff */
-	if (p_ptr->redraw) redraw_stuff();
+	if (p_ptr->redraw) redraw_stuff(p_ptr);
 
 	/* Hack -- Hilight the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
@@ -2142,13 +2142,13 @@ static void dungeon(void)
 	reset_monsters();
 
 	/* Notice stuff */
-	if (p_ptr->notice) notice_stuff();
+	if (p_ptr->notice) notice_stuff(p_ptr);
 
 	/* Update stuff */
-	if (p_ptr->update) update_stuff();
+	if (p_ptr->update) update_stuff(p_ptr);
 
 	/* Redraw stuff */
-	if (p_ptr->redraw) redraw_stuff();
+	if (p_ptr->redraw) redraw_stuff(p_ptr);
 
 	/* Hack -- Hilight the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
@@ -2164,13 +2164,13 @@ static void dungeon(void)
 	process_world();
 
 	/* Notice stuff */
-	if (p_ptr->notice) notice_stuff();
+	if (p_ptr->notice) notice_stuff(p_ptr);
 
 	/* Update stuff */
-	if (p_ptr->update) update_stuff();
+	if (p_ptr->update) update_stuff(p_ptr);
 
 	/* Redraw stuff */
-	if (p_ptr->redraw) redraw_stuff();
+	if (p_ptr->redraw) redraw_stuff(p_ptr);
 
 	/* Hack -- Hilight the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
@@ -2399,7 +2399,7 @@ void play_game(void)
 
     /* Redraw stuff */
     p_ptr->redraw |= (PR_INVEN | PR_EQUIP | PR_MESSAGE | PR_MONSTER);
-    redraw_stuff();
+    redraw_stuff(p_ptr);
 
     /* Process some user pref files */
     process_some_user_pref_files();
@@ -2438,15 +2438,15 @@ void play_game(void)
 
 	/* Notice stuff */
 	if (p_ptr->notice)
-	    notice_stuff();
+	    notice_stuff(p_ptr);
 
 	/* Update stuff */
 	if (p_ptr->update)
-	    update_stuff();
+	    update_stuff(p_ptr);
 
 	/* Redraw stuff */
 	if (p_ptr->redraw)
-	    redraw_stuff();
+	    redraw_stuff(p_ptr);
 
 	/* Cancel the target */
 	target_set_monster(0);
