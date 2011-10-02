@@ -179,7 +179,7 @@ static u32b grab_one_effect(const char *what) {
     }
 
     /* Oops */
-    msg_format("Unknown effect '%s'.", what);
+    msg("Unknown effect '%s'.", what);
 
     /* Error */
     return 0;

@@ -187,7 +187,7 @@ static void highscore_write(const high_score scores[], size_t sz)
   
   if (file_exists(lok_name))
     {
-      msg_print("Lock file in place for scorefile; not writing.");
+      msg("Lock file in place for scorefile; not writing.");
       return;
     }
   
@@ -198,7 +198,7 @@ static void highscore_write(const high_score scores[], size_t sz)
   
   if (!lok)
     {
-      msg_print("Failed to create lock for scorefile; not writing.");
+      msg("Failed to create lock for scorefile; not writing.");
       return;
     }
   
@@ -211,7 +211,7 @@ static void highscore_write(const high_score scores[], size_t sz)
   
   if (!scorefile)
     {
-      msg_print("Failed to open new scorefile for writing.");
+      msg("Failed to open new scorefile for writing.");
       
       file_close(lok);
       file_delete(lok_name);
@@ -226,13 +226,13 @@ static void highscore_write(const high_score scores[], size_t sz)
   safe_setuid_grab();
   
   if (file_exists(old_name) && !file_delete(old_name))
-    msg_print("Couldn't delete old scorefile");
+    msg("Couldn't delete old scorefile");
   
   if (file_exists(cur_name) && !file_move(cur_name, old_name))
-    msg_print("Couldn't move old scores.raw out of the way");
+    msg("Couldn't move old scores.raw out of the way");
   
   if (!file_move(new_name, cur_name))
-    msg_print("Couldn't rename new scorefile to scores.raw");
+    msg("Couldn't rename new scorefile to scores.raw");
   
   /* Remove the lock */
   file_close(lok);
@@ -441,7 +441,7 @@ void enter_score(time_t *death_time)
     {
       if (!op_ptr->opt[j]) continue;
       
-      msg_print("Score not registered for cheaters.");
+      msg("Score not registered for cheaters.");
       message_flush();
       return;
     }
@@ -449,7 +449,7 @@ void enter_score(time_t *death_time)
   /* Wizard-mode pre-empts scoring */
   if (p_ptr->noscore & 0x000F)
     {
-      msg_print("Score not registered for wizards.");
+      msg("Score not registered for wizards.");
       message_flush();
     }
   
@@ -458,7 +458,7 @@ void enter_score(time_t *death_time)
   /* Borg-mode pre-empts scoring */
   else if (p_ptr->noscore & 0x00F0)
     {
-      msg_print("Score not registered for borgs.");
+      msg("Score not registered for borgs.");
       message_flush();
     }
   
@@ -467,14 +467,14 @@ void enter_score(time_t *death_time)
   /* Hack -- Interupted */
   else if (!p_ptr->total_winner && streq(p_ptr->died_from, "Interrupting"))
     {
-      msg_print("Score not registered due to interruption.");
+      msg("Score not registered due to interruption.");
       message_flush();
     }
   
   /* Hack -- Quitter */
   else if (!p_ptr->total_winner && streq(p_ptr->died_from, "Quitting"))
     {
-      msg_print("Score not registered due to quitting.");
+      msg("Score not registered due to quitting.");
       message_flush();
     }
   

@@ -1849,7 +1849,7 @@ static bool build_type5(void)
     /* Describe */
     if (OPT(cheat_room)) {
 	/* Room type */
-	msg_format("Monster pit (%s)", name);
+	msg("Monster pit (%s)", name);
     }
 
     /* Increase the level rating */
@@ -3028,7 +3028,7 @@ static bool build_type8(void)
 
     /* Message */
     if (OPT(cheat_room))
-	msg_print("Lesser Vault");
+	msg("Lesser Vault");
 
     /* Boost the rating */
     rating += v_ptr->rat;
@@ -3082,7 +3082,7 @@ static bool build_type9(void)
 
     /* Message */
     if (OPT(cheat_room))
-	msg_print("Greater Vault");
+	msg("Greater Vault");
 
     /* Boost the rating */
     rating += v_ptr->rat;

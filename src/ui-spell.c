@@ -328,7 +328,7 @@ void textui_book_browse(const object_type *o_ptr)
 	spell_menu_browse(m, magic_desc[mp_ptr->spell_realm][SPELL_NOUN]);
 	spell_menu_destroy(m);
     } else {
-	msg_print("You cannot browse that.");
+	msg("You cannot browse that.");
     }
 }
 
@@ -346,7 +346,7 @@ void textui_spell_browse(void)
 	if (player_has(PF_PROBE))
 	    warrior_probe_desc();
 	else
-	    msg_print("You cannot read books!");
+	    msg("You cannot read books!");
 	return;
     }
 
@@ -377,7 +377,7 @@ void textui_obj_study(void)
     char s[80];
 
     if (mp_ptr->spell_realm == REALM_NONE) {
-	msg_print("You cannot read books!");
+	msg("You cannot read books!");
 	return;
     }
 
@@ -419,7 +419,7 @@ void textui_obj_cast(void)
     char s[80];
 
     if (mp_ptr->spell_realm == REALM_NONE) {
-	msg_print("You cannot read books!");
+	msg("You cannot read books!");
 	return;
     }
 

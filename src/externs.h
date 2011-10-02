@@ -371,6 +371,8 @@ extern struct keypress inkey(void);
 extern ui_event inkey_ex(void);
 extern void bell(const char *reason);
 extern void sound(int val);
+extern void msg(const char *fmt, ...);
+extern void msgt(unsigned int type, const char *fmt, ...);
 extern void msg_print(const char *msg);
 extern void msg_format(const char *fmt, ...);
 extern void message(u16b message_type, s16b extra, const char *message);

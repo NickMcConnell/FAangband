@@ -564,7 +564,7 @@ static int message_column = 0;
  * Hack -- Note that "msg("%s", NULL)" will clear the top line even if no
  * messages are pending.
  */
-static void msg_print_aux(u16b type, const char *msg)
+static void msg_aux(u16b type, const char *msg)
 {
 	int n;
 	char *t;
@@ -668,38 +668,6 @@ static void msg_print_aux(u16b type, const char *msg)
 }
 
 /*
-* Print a message in the default color (white)
-*/
-void msg_print(const char *msg)
-{
-msg_print_aux(MSG_GENERIC, msg);
-}
-
-
-/*
-* Display a formatted message, using "vstrnfmt()" and "msg_print()".
-*/
-void msg_format(const char *fmt, ...)
-{
-va_list vp;
-
-char buf[1024];
-
-/* Begin the Varargs Stuff */
-va_start(vp, fmt);
-
-/* Format the args, save the length */
-(void)vstrnfmt(buf, sizeof(buf), fmt, vp);
-
-/* End the Varargs Stuff */
-va_end(vp);
-
-/* Display */
-msg_print_aux(MSG_GENERIC, buf);
-}
-
-
-/*
 * Display a message and play the associated sound.
 *
 * The "extra" parameter is currently unused.
@@ -711,7 +679,7 @@ void message(u16b message_type, s16b extra, const char *message)
 
 sound(message_type);
 
-msg_print_aux(message_type, message);
+msg_aux(message_type, message);
 }
 
 
@@ -759,7 +727,7 @@ void msg(const char *fmt, ...)
 	va_end(vp);
 
 	/* Display */
-	msg_print_aux(MSG_GENERIC, buf);
+	msg_aux(MSG_GENERIC, buf);
 }
 
 void msgt(unsigned int type, const char *fmt, ...)
@@ -770,7 +738,7 @@ void msgt(unsigned int type, const char *fmt, ...)
 	vstrnfmt(buf, sizeof(buf), fmt, vp);
 	va_end(vp);
 	sound(type);
-	msg_print_aux(type, buf);
+	msg_aux(type, buf);
 }
 
 /*

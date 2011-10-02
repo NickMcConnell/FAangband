@@ -304,7 +304,7 @@ void wield_item(object_type *o_ptr, int item, int slot)
 	    /* Get an object description */
 	    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 
-	    msg_format("You feel the %s (%c) you are %s %s %s...", o_name,
+	    msg("You feel the %s (%c) you are %s %s %s...", o_name,
 		       index_to_label(slot), describe_use(slot),
 		       ((o_ptr->number == 1) ? "is" : "are"), feel_text[feel]);
 
@@ -359,7 +359,7 @@ void do_cmd_destroy(cmd_code code, cmd_arg args[])
 
     if (!item_is_available(item, NULL, USE_INVEN | USE_EQUIP | USE_FLOOR))
     {
-	msg_print("You do not have that item to destroy it.");
+	msg("You do not have that item to destroy it.");
 	return;
     }
 
@@ -369,7 +369,7 @@ void do_cmd_destroy(cmd_code code, cmd_arg args[])
     if (cf_has(o_ptr->flags_curse, CF_STICKY_CARRY) || 
 	cf_has(o_ptr->flags_curse, CF_STICKY_WIELD)) {
 	/* Oops */
-	msg_print("Hmmm, it seems to be cursed.");
+	msg("Hmmm, it seems to be cursed.");
 
 	/* Notice */
 	notice_curse(CF_STICKY_CARRY, item + 1);
@@ -388,7 +388,7 @@ void do_cmd_destroy(cmd_code code, cmd_arg args[])
 	int feel = FEEL_SPECIAL;
 
 	/* Message */
-	msg_format("You cannot destroy %s.", o_name);
+	msg("You cannot destroy %s.", o_name);
 
 	/* Hack -- inscribe the artifact, if not identified. */
 	if (!object_known_p(o_ptr))
@@ -408,7 +408,7 @@ void do_cmd_destroy(cmd_code code, cmd_arg args[])
     }
 
     /* Message */
-    msg_format("You destroy %s.", o_name);
+    msg("You destroy %s.", o_name);
 
     /* Reduce the charges of rods/wands */
     reduce_charges(o_ptr, amt);
@@ -513,7 +513,7 @@ void textui_cmd_destroy(void)
 		p_ptr->notice |= PN_SQUELCH;
 		
 		/* Message - no good routine for extracting the plain name */
-		msg_format("All %^s will always be squelched.", o_name2);
+		msg("All %^s will always be squelched.", o_name2);
 		
 		/* Mark the view to be updated */
 		p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW);;
@@ -537,12 +537,12 @@ void do_cmd_target(void)
 {
     /* Target set */
     if (target_set_interactive(TARGET_KILL, -1, -1)) {
-	msg_print("Target Selected.");
+	msg("Target Selected.");
     }
 
     /* Target aborted */
     else {
-	msg_print("Target Aborted.");
+	msg("Target Aborted.");
     }
 }
 
@@ -563,7 +563,7 @@ void do_cmd_look(void)
 {
     /* Look around */
     if (target_set_interactive(TARGET_LOOK, -1, -1)) {
-	msg_print("Target Selected.");
+	msg("Target Selected.");
     }
 }
 

@@ -188,7 +188,7 @@ int apply_autoinscription(object_type *o_ptr)
   else
     o_ptr->note = 0;
   
-  msg_format("You autoinscribe %s.", o_name);
+  msg("You autoinscribe %s.", o_name);
   
   return 1;
 }
@@ -231,7 +231,7 @@ int add_autoinscription(s16b kind, const char *inscription)
   
   if (index >= AUTOINSCRIPTIONS_MAX)
     {
-      msg_format("This inscription (%s) cannot be added because the inscription array is full!", inscription);
+      msg("This inscription (%s) cannot be added because the inscription array is full!", inscription);
       return 0;
     }
   

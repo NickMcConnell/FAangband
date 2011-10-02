@@ -581,7 +581,7 @@ static void textui_process_click(ui_event e)
     else if (e.mousebutton == 2)
     {
 	target_set_location(y, x);
-	msg_print("Target set.");
+	msg("Target set.");
     }
 #endif
 }

@@ -206,7 +206,7 @@ void compact_monsters(int size)
 
     /* Message (only if compacting) */
     if (size)
-	msg_print("Compacting monsters...");
+	msg("Compacting monsters...");
 
 
     /* Compact at least 'size' objects */
@@ -396,7 +396,7 @@ s16b m_pop(void)
 
     /* Warn the player (except during dungeon creation) */
     if (character_dungeon)
-	msg_print("Too many monsters!");
+	msg("Too many monsters!");
 
     /* Try not to crash */
     return (0);
@@ -2116,7 +2116,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
     if ((rf_has(r_ptr->flags, RF_UNIQUE)) && (r_ptr->level > p_ptr->depth)) {
 	/* Message */
 	if (OPT(cheat_hear))
-	    msg_format("Deep Unique (%s).", name);
+	    msg("Deep Unique (%s).", name);
 
 	/* Boost rating by twice delta-depth */
 	rating += (r_ptr->level - p_ptr->depth) * 2;
@@ -2126,14 +2126,14 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
     else if (rf_has(r_ptr->flags, RF_UNIQUE)) {
 	/* Message */
 	if (OPT(cheat_hear))
-	    msg_format("Unique (%s).", name);
+	    msg("Unique (%s).", name);
     }
 
     /* Deep normal monsters */
     else if (r_ptr->level > p_ptr->depth + 4) {
 	/* Message */
 	if (OPT(cheat_hear))
-	    msg_format("Deep Monster (%s).", name);
+	    msg("Deep Monster (%s).", name);
 
 	/* Boost rating by a function of delta-depth */
 	rating +=
@@ -3094,8 +3094,8 @@ int assess_shapechange(int m_idx, monster_type * m_ptr)
     }
 
     if (p_ptr->wizard) {
-	msg_format("Shapechange rating: %i.", best_rate);
-	msg_format("Best shape: %i.", best_shape);
+	msg("Shapechange rating: %i.", best_rate);
+	msg("Best shape: %i.", best_shape);
     }
 
     /* Set the shape in case it's used */
@@ -3167,7 +3167,7 @@ void message_pain(int m_idx, int dam)
 
     /* Notice non-damage */
     if (dam == 0) {
-	msg_format("%^s is unharmed.", m_name);
+	msg("%^s is unharmed.", m_name);
 	return;
     }
 
@@ -3181,73 +3181,73 @@ void message_pain(int m_idx, int dam)
     /* Jelly's, Mold's, Vortex's, Quthl's */
     if (strchr("jmvQ", r_ptr->d_char)) {
 	if (percentage > 95)
-	    msg_format("%^s barely notices.", m_name);
+	    msg("%^s barely notices.", m_name);
 	else if (percentage > 75)
-	    msg_format("%^s flinches.", m_name);
+	    msg("%^s flinches.", m_name);
 	else if (percentage > 50)
-	    msg_format("%^s squelches.", m_name);
+	    msg("%^s squelches.", m_name);
 	else if (percentage > 35)
-	    msg_format("%^s quivers in pain.", m_name);
+	    msg("%^s quivers in pain.", m_name);
 	else if (percentage > 20)
-	    msg_format("%^s writhes about.", m_name);
+	    msg("%^s writhes about.", m_name);
 	else if (percentage > 10)
-	    msg_format("%^s writhes in agony.", m_name);
+	    msg("%^s writhes in agony.", m_name);
 	else
-	    msg_format("%^s jerks limply.", m_name);
+	    msg("%^s jerks limply.", m_name);
     }
 
     /* Dogs and Hounds */
     else if (strchr("CZ", r_ptr->d_char)) {
 	if (percentage > 95)
-	    msg_format("%^s shrugs off the attack.", m_name);
+	    msg("%^s shrugs off the attack.", m_name);
 	else if (percentage > 75)
-	    msg_format("%^s snarls with pain.", m_name);
+	    msg("%^s snarls with pain.", m_name);
 	else if (percentage > 50)
-	    msg_format("%^s yelps in pain.", m_name);
+	    msg("%^s yelps in pain.", m_name);
 	else if (percentage > 35)
-	    msg_format("%^s howls in pain.", m_name);
+	    msg("%^s howls in pain.", m_name);
 	else if (percentage > 20)
-	    msg_format("%^s howls in agony.", m_name);
+	    msg("%^s howls in agony.", m_name);
 	else if (percentage > 10)
-	    msg_format("%^s writhes in agony.", m_name);
+	    msg("%^s writhes in agony.", m_name);
 	else
-	    msg_format("%^s yelps feebly.", m_name);
+	    msg("%^s yelps feebly.", m_name);
     }
 
     /* One type of monsters (ignore,squeal,shriek) */
     else if (strchr("FIKMRSXabclqrst", r_ptr->d_char)) {
 	if (percentage > 95)
-	    msg_format("%^s ignores the attack.", m_name);
+	    msg("%^s ignores the attack.", m_name);
 	else if (percentage > 75)
-	    msg_format("%^s grunts with pain.", m_name);
+	    msg("%^s grunts with pain.", m_name);
 	else if (percentage > 50)
-	    msg_format("%^s squeals in pain.", m_name);
+	    msg("%^s squeals in pain.", m_name);
 	else if (percentage > 35)
-	    msg_format("%^s shrieks in pain.", m_name);
+	    msg("%^s shrieks in pain.", m_name);
 	else if (percentage > 20)
-	    msg_format("%^s shrieks in agony.", m_name);
+	    msg("%^s shrieks in agony.", m_name);
 	else if (percentage > 10)
-	    msg_format("%^s writhes in agony.", m_name);
+	    msg("%^s writhes in agony.", m_name);
 	else
-	    msg_format("%^s cries out feebly.", m_name);
+	    msg("%^s cries out feebly.", m_name);
     }
 
     /* Another type of monsters (shrug,cry,scream) */
     else {
 	if (percentage > 95)
-	    msg_format("%^s shrugs off the attack.", m_name);
+	    msg("%^s shrugs off the attack.", m_name);
 	else if (percentage > 75)
-	    msg_format("%^s grunts with pain.", m_name);
+	    msg("%^s grunts with pain.", m_name);
 	else if (percentage > 50)
-	    msg_format("%^s cries out in pain.", m_name);
+	    msg("%^s cries out in pain.", m_name);
 	else if (percentage > 35)
-	    msg_format("%^s screams in pain.", m_name);
+	    msg("%^s screams in pain.", m_name);
 	else if (percentage > 20)
-	    msg_format("%^s screams in agony.", m_name);
+	    msg("%^s screams in agony.", m_name);
 	else if (percentage > 10)
-	    msg_format("%^s writhes in agony.", m_name);
+	    msg("%^s writhes in agony.", m_name);
 	else
-	    msg_format("%^s cries out feebly.", m_name);
+	    msg("%^s cries out feebly.", m_name);
     }
 }
 
@@ -3850,7 +3850,7 @@ static void build_quest_stairs(int y, int x, char *portal)
     delete_object(y, x);
 
     /* Explain the staircase */
-    msg_format("A magical %s appears...", portal);
+    msg("A magical %s appears...", portal);
 
     /* Create stairs down */
     cave_set_feat(y, x, FEAT_MORE);
@@ -4129,7 +4129,7 @@ void monster_death(int m_idx)
 	cave_set_feat(DUNGEON_HGT - 2, p_ptr->px, FEAT_LESS_SOUTH);
 
 	/* Announce it */
-	msg_print("The way out of Nan Dungortheb is revealed!");
+	msg("The way out of Nan Dungortheb is revealed!");
     }
 
     /* Increment complete quests */
@@ -4154,9 +4154,9 @@ void monster_death(int m_idx)
 	p_ptr->redraw |= (PR_TITLE);
 
 	/* Congratulations */
-	msg_print("*** CONGRATULATIONS ***");
-	msg_print("You have won the game!");
-	msg_print("You may retire (commit suicide) when you are ready.");
+	msg("*** CONGRATULATIONS ***");
+	msg("You have won the game!");
+	msg("You may retire (commit suicide) when you are ready.");
     }
 }
 
@@ -4214,7 +4214,7 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, const char *note)
     /* Complex message. Moved from melee and archery, now allows spell and
      * magical items damage to be debugged by wizards.  -LM- */
     if (p_ptr->wizard) {
-	msg_format("You do %d (out of %d) damage.", dam, m_ptr->hp);
+	msg("You do %d (out of %d) damage.", dam, m_ptr->hp);
     }
 
     /* Hurt it */
@@ -4245,7 +4245,7 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, const char *note)
 	    r_ptr = &r_info[m_ptr->r_idx];
 
 	    /* Note the change */
-	    msg_format("%^s is revealed in %s true form.", m_name, m_poss);
+	    msg("%^s is revealed in %s true form.", m_name, m_poss);
 	}
 
 	/* Extract monster name */

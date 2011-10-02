@@ -175,7 +175,7 @@ bool gain_spec_menu(int *pick)
 
     /* We are out of specialties - should never happen */
     if (!d->spec_known) {
-	msg_print("No specialties available.");
+	msg("No specialties available.");
 	screen_load();
 	return FALSE;
     }
@@ -233,7 +233,7 @@ void gain_specialty(void)
 
     /* Check if specialty array is full */
     if (k >= MAX_SPECIALTIES - 1) {
-	msg_print("Maximum specialties known.");
+	msg("Maximum specialties known.");
 	return;
     }
 

@@ -560,7 +560,7 @@ void generate_cave(void)
 	    if ((randint0(THEMED_LEVEL_CHANCE) == 0) && build_themed_level()) {
 		/* Message. */
 		if (OPT(cheat_room))
-		    msg_print("Themed level");
+		    msg("Themed level");
 	    }
 
 	    /* Build a real stage */
@@ -691,7 +691,7 @@ void generate_cave(void)
 
 	/* Message */
 	if ((OPT(cheat_room)) && (why))
-	    msg_format("Generation restarted (%s)", why);
+	    msg("Generation restarted (%s)", why);
 
 	/* Accept */
 	if (okay)

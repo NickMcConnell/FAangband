@@ -79,7 +79,7 @@ static u32b buffer_check;
 /*
  * Hack -- Show information on the screen, one line at a time.
  *
- * Avoid the top two lines, to avoid interference with "msg_print()".
+ * Avoid the top two lines, to avoid interference with "msg()".
  */
 void note(const char *msg)
 {
@@ -546,7 +546,7 @@ bool savefile_load(const char *path)
     }
 
     /* Message */
-    msg_format("Error (%s) reading %d.%d.%d savefile.",
+    msg("Error (%s) reading %d.%d.%d savefile.",
 	       what, sf_major, sf_minor, sf_patch);
     message_flush();
 

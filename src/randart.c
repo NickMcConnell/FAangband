@@ -2946,7 +2946,7 @@ static void choose_basic_theme(int a_idx)
 	}
     default:
 	{
-	    msg_print("error -- object kind not recognized.");
+	    msg("error -- object kind not recognized.");
 	    break;
 	}
     }
@@ -4001,8 +4001,8 @@ static char *find_word(int a_idx)
      * unavailable, complain loudly. */
     if (!art_name[0]) {
 	if (find_all_names) {
-	    msg_print("Cannot find any files with names or naming resources!");
-	    msg_print("Your 'files' folder lacks needed documents!");
+	    msg("Cannot find any files with names or naming resources!");
+	    msg("Your 'files' folder lacks needed documents!");
 	}
 
 	/* Format the output of make_word. */

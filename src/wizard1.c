@@ -171,7 +171,7 @@ static void spoil_obj_desc(const char *fname)
   /* Oops */
   if (!fff)
     {
-      msg_print("Cannot create spoiler file.");
+      msg("Cannot create spoiler file.");
       return;
     }
   
@@ -262,12 +262,12 @@ static void spoil_obj_desc(const char *fname)
   /* Check for errors */
   if (!file_close(fff))
     {
-      msg_print("Cannot close spoiler file.");
+      msg("Cannot close spoiler file.");
       return;
     }
   
   /* Message */
-  msg_print("Successfully created a spoiler file.");
+  msg("Successfully created a spoiler file.");
 }
 
 
@@ -1128,14 +1128,14 @@ static void spoil_obj_gen(const char *fname)
   /* Oops */
   if (!fff)
     {
-      msg_print("Cannot create spoiler file.");
+      msg("Cannot create spoiler file.");
       free(object);
       return;
     }
   
   
   
-  msg_print("This may take a while...");
+  msg("This may take a while...");
   
   file_putf(fff, "Object Generation Spoiler for FAangband Version %d.%d.%d\n",
 	  VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
@@ -1234,12 +1234,12 @@ static void spoil_obj_gen(const char *fname)
   /* Check for errors */
   if (!file_close(fff))
     {
-      msg_print("Cannot close spoiler file.");
+      msg("Cannot close spoiler file.");
       return;
     }
   
   /* Message */
-  msg_print("Successfully created a spoiler file.");
+  msg("Successfully created a spoiler file.");
 }
 
 
@@ -1272,7 +1272,7 @@ static void spoil_mon_gen(const char *fname)
   /* Oops */
   if (!fff)
     {
-      msg_print("Cannot create spoiler file.");
+      msg("Cannot create spoiler file.");
       free(monster);
       return;
     }
@@ -1327,7 +1327,7 @@ static void spoil_mon_gen(const char *fname)
   else quick = FALSE;
   
   
-  msg_print("This may take a while...");
+  msg("This may take a while...");
   
   /* Initialize monster generation. */
   if (quick) (void)get_mon_num(p_ptr->depth);
@@ -1382,12 +1382,12 @@ static void spoil_mon_gen(const char *fname)
   /* Check for errors */
   if (!file_close(fff))
     {
-      msg_print("Cannot close spoiler file.");
+      msg("Cannot close spoiler file.");
       return;
     }
 
   /* Message */
-  msg_print("Successfully created a spoiler file.");
+  msg("Successfully created a spoiler file.");
 }
 
 
@@ -1419,7 +1419,7 @@ static void spoil_artifact(const char *fname)
   /* Oops */
   if (!fff)
     {
-      msg_print("Cannot create spoiler file.");
+      msg("Cannot create spoiler file.");
       return;
     }
   
@@ -1465,12 +1465,12 @@ static void spoil_artifact(const char *fname)
   /* Check for errors */
   if (!file_close(fff))
     {
-      msg_print("Cannot close spoiler file.");
+      msg("Cannot close spoiler file.");
       return;
 	}
   
   /* Message */
-  msg_print("Successfully created a spoiler file.");
+  msg("Successfully created a spoiler file.");
 }
 
 
@@ -1505,7 +1505,7 @@ static void spoil_mon_desc(const char *fname)
   /* Oops */
   if (!fff)
     {
-      msg_print("Cannot create spoiler file.");
+      msg("Cannot create spoiler file.");
       return;
     }
   
@@ -1608,12 +1608,12 @@ static void spoil_mon_desc(const char *fname)
   /* Check for errors */
   if (!file_close(fff))
     {
-      msg_print("Cannot close spoiler file.");
+      msg("Cannot close spoiler file.");
 		return;
     }
   
   /* Worked */
-  msg_print("Successfully created a spoiler file.");
+  msg("Successfully created a spoiler file.");
 }
 
 
@@ -1730,7 +1730,7 @@ static void spoil_mon_info(const char *fname)
   /* Oops */
   if (!fff)
     {
-      msg_print("Cannot create spoiler file.");
+      msg("Cannot create spoiler file.");
       return;
     }
 
@@ -2630,11 +2630,11 @@ static void spoil_mon_info(const char *fname)
   /* Check for errors */
   if (!file_close(fff))
     {
-      msg_print("Cannot close spoiler file.");
+      msg("Cannot close spoiler file.");
       return;
     }
   
-  msg_print("Successfully created a spoiler file.");
+  msg("Successfully created a spoiler file.");
 }
 
 
@@ -2738,7 +2738,7 @@ void do_cmd_spoilers(void)
 	}
       
       /* Flush messages */
-      msg_print(NULL);
+      msg(NULL);
     }
   
   

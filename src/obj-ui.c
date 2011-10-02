@@ -1571,7 +1571,7 @@ bool get_item(int *cp, const char *pmt, const char *str, cmd_code cmd, int mode)
 
     /* Warning if needed */
     if (oops && str)
-	msg_print(str);
+	msg(str);
 
     /* Result */
     return (item);

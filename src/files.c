@@ -2037,8 +2037,8 @@ errr file_character(const char *name, char_attr_line * line, int last_line)
     /* Invalid file */
     if (!dump_out_file) {
 	/* Message */
-	msg_format("Character dump failed!");
-	msg_print(NULL);
+	msg("Character dump failed!");
+	msg(NULL);
 
 	/* Error */
 	return (-1);
@@ -2057,8 +2057,8 @@ errr file_character(const char *name, char_attr_line * line, int last_line)
     file_close(dump_out_file);
 
     /* Message */
-    msg_print("Character dump successful.");
-    msg_print(NULL);
+    msg("Character dump successful.");
+    msg(NULL);
 
     /* Success */
     return (0);
@@ -2230,7 +2230,7 @@ bool show_file(const char *name, const char *what, int line, int mode)
     /* Oops */
     if (!fff) {
 	/* Message */
-	msg_format("Cannot open '%s'.", name);
+	msg("Cannot open '%s'.", name);
 	message_flush();
 
 	/* Oops */
@@ -2800,7 +2800,7 @@ void close_game(void)
     handle_stuff(p_ptr);
 
     /* Flush the messages */
-    msg_print(NULL);
+    msg(NULL);
 
     /* Flush the input */
     flush();
@@ -2859,7 +2859,7 @@ void exit_game_panic(void)
     if (!character_generated || character_saved)
 	quit("panic");
 
-    /* Mega-Hack -- see "msg_print()" */
+    /* Mega-Hack -- see "msg()" */
     msg_flag = FALSE;
 
     /* Clear the top line */

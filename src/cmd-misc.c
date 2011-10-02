@@ -601,11 +601,11 @@ static bool enter_wizard_mode(void)
     /* Ask first time */
     if (!(p_ptr->noscore & 0x0002)) {
 	/* Mention effects */
-	msg_print
+	msg
 	    ("You are about to enter 'wizard' mode for the very first time!");
-	msg_print
+	msg
 	    ("This is a form of cheating, and your game will not be scored!");
-	msg_print(NULL);
+	msg(NULL);
 
 	/* Verify request */
 	if (!get_check("Are you sure you want to enter wizard mode? ")) {
@@ -631,10 +631,10 @@ extern void do_cmd_wizard(void)
 	/* Toggle mode */
 	if (p_ptr->wizard) {
 	    p_ptr->wizard = FALSE;
-	    msg_print("Wizard mode off.");
+	    msg("Wizard mode off.");
 	} else {
 	    p_ptr->wizard = TRUE;
-	    msg_print("Wizard mode on.");
+	    msg("Wizard mode on.");
 	}
 
 	/* Update monsters */
@@ -660,12 +660,12 @@ static bool verify_debug_mode(void)
     /* Ask first time, unless the savefile is already in debug mode. */
     if (verify && (!(p_ptr->noscore & 0x0008))) {
 	/* Mention effects */
-	msg_print
+	msg
 	    ("You are about to use the dangerous, unsupported, debug commands!");
-	msg_print
+	msg
 	    ("Your machine may crash, and your savefile may become corrupted!");
-	msg_print("Using the debug commands will also mark your savefile.");
-	msg_print(NULL);
+	msg("Using the debug commands will also mark your savefile.");
+	msg(NULL);
 
 	/* Verify request */
 	if (!get_check("Are you sure you want to use the debug commands? ")) {
@@ -711,9 +711,9 @@ extern bool do_cmd_try_borg(void)
     /* Ask first time */
     if (!(p_ptr->noscore & NOSCORE_BORG)) {
 	/* Mention effects */
-	msg_print
+	msg
 	    ("You are about to use the dangerous, unsupported, borg commands!");
-	msg_print
+	msg
 	    ("Your machine may crash, and your savefile may become corrupted!");
 	message_flush();
 
@@ -780,7 +780,7 @@ void bear_shape(void)
 void unchange(void)
 {
     if (!SCHANGE) {
-	msg_print("You aren't in another form right now.");
+	msg("You aren't in another form right now.");
 	return;
     }
 

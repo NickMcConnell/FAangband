@@ -647,7 +647,7 @@ bool get_aim_dir(int *dp)
     /* Notice confusion */
     if ((*dp) != dir) {
 	/* Warn the user */
-	msg_print("You are confused.");
+	msg("You are confused.");
     }
 
     /* Save direction */
@@ -810,7 +810,7 @@ bool confuse_dir(int *dp)
     /* Notice confusion */
     if ((*dp) != dir) {
 	/* Warn the user */
-	msg_print("You are confused.");
+	msg("You are confused.");
 
 	/* Save direction */
 	(*dp) = dir;

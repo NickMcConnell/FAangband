@@ -833,7 +833,7 @@ void death_screen(void)
     /* Save dead player */
     if (!savefile_save(savefile))
     {
-	msg_print("death save failed!");
+	msg("death save failed!");
 	message_flush();
     }
 
@@ -867,7 +867,7 @@ void death_screen(void)
     flush();
 
     /* Flush messages */
-    msg_print(NULL);
+    msg(NULL);
 
     if (!death_menu)
     {

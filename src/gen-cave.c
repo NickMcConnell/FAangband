@@ -318,7 +318,7 @@ void destroy_level(bool new_level)
 
     /* Note destroyed levels. */
     if (OPT(cheat_room) && new_level)
-	msg_print("Destroyed Level");
+	msg("Destroyed Level");
 
     /* determine the maximum number of epicenters. */
     if (new_level)
@@ -1709,7 +1709,7 @@ extern bool build_themed_level(void)
 
 
     /* Give the player something to read. */
-    msg_print("Please wait.  This may take a little while.");
+    msg("Please wait.  This may take a little while.");
 
     /* Indicate that the player is on the selected themed level. */
     p_ptr->themed_level = choice;
@@ -1784,7 +1784,7 @@ extern void cave_gen(void)
 	 && (randint0(MORIA_LEVEL_CHANCE) == 0)) || (underworld)) {
 	moria_level = TRUE;
 	if (OPT(cheat_room))
-	    msg_print("Moria level");
+	    msg("Moria level");
 
 	/* Moria levels do not have certain kinds of rooms. */
 	for (i = 0; i < ROOM_MAX; i++) {

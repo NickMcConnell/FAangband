@@ -906,7 +906,7 @@ extern void get_chamber_monsters(int y1, int x1, int y2, int x2)
     /* Describe */
     if (OPT(cheat_room)) {
 	/* Room type */
-	msg_format("Room of chambers (%s)", name);
+	msg("Room of chambers (%s)", name);
     }
 }
 

@@ -129,9 +129,9 @@ static void dump_pref_file(void (*dump)(ang_file *), const char *title, int row)
 	
 		prt("", 0, 0);
 		if (prefs_save(buf, dump, title))
-			msg_print(format("Dumped %s", strstr(title, " ") + 1));
+			msg(format("Dumped %s", strstr(title, " ") + 1));
 		else
-			msg_print("Failed");
+			msg("Failed");
 	}
 
 	screen_load();
@@ -721,7 +721,7 @@ static void visuals_reset(const char *title, int row)
 
 	/* Message */
 	prt("", 0, 0);
-	msg_print("Visual attr/char tables reset.");
+	msg("Visual attr/char tables reset.");
 	message_flush();
 }
 
@@ -1109,13 +1109,13 @@ static void do_cmd_pref_file_hack(long row)
 		{
 			/* Mention failure */
 			prt("", 0, 0);
-			msg_format("Failed to load '%s'!", ftmp);
+			msg("Failed to load '%s'!", ftmp);
 		}
 		else
 		{
 			/* Mention success */
 			prt("", 0, 0);
-			msg_format("Loaded '%s'.", ftmp);
+			msg("Loaded '%s'.", ftmp);
 		}
 	}
 

@@ -687,35 +687,35 @@ bool set_food(int v)
 	    /* Weak */
 	case 1:
 	    {
-		msg_print("You are still weak.");
+		msg("You are still weak.");
 		break;
 	    }
 
 	    /* Hungry */
 	case 2:
 	    {
-		msg_print("You are still hungry.");
+		msg("You are still hungry.");
 		break;
 	    }
 
 	    /* Normal */
 	case 3:
 	    {
-		msg_print("You are no longer hungry.");
+		msg("You are no longer hungry.");
 		break;
 	    }
 
 	    /* Full */
 	case 4:
 	    {
-		msg_print("You are full!");
+		msg("You are full!");
 		break;
 	    }
 
 	    /* Bloated */
 	case 5:
 	    {
-		msg_print("You have gorged yourself!");
+		msg("You have gorged yourself!");
 		break;
 	    }
 	}

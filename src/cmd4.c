@@ -218,9 +218,9 @@ void do_cmd_change_name(void)
 	      if (ftmp[0] && (ftmp[0] != ' '))
 		{
 		  if (file_character(ftmp, dumpline, last_line))
-		    msg_print("Character dump failed!");
+		    msg("Character dump failed!");
 		  else
-		    msg_print("Character dump successful.");
+		    msg("Character dump successful.");
 		}
 	    }
 	}
@@ -588,7 +588,7 @@ void do_cmd_note(void)
     if (!tmp[0] || (tmp[0] == ' ')) return;
 
     /* Add the note to the message recall */
-    msg_format("Note: %s", tmp);
+    msg("Note: %s", tmp);
 
     /* Add a history entry */
     history_add(tmp, HISTORY_USER_INPUT, 0);
@@ -602,7 +602,7 @@ void do_cmd_note(void)
 void do_cmd_version(void)
 {
     /* Silly message */
-    msg_format("You are playing %s %s.  Type '?' for more info.",
+    msg("You are playing %s %s.  Type '?' for more info.",
 	       VERSION_NAME, VERSION_STRING);
 }
 
@@ -640,20 +640,20 @@ void do_cmd_feeling(void)
   /* No useful feeling in town */
   if (!p_ptr->depth)
     {
-      msg_print("Looks like a typical town.");
+      msg("Looks like a typical town.");
       return;
     }
   
   /* No useful feelings until enough time has passed */
   if (!do_feeling)
     {
-      msg_print("You are still uncertain about this level...");
+      msg("You are still uncertain about this level...");
       return;
     }
   
   /* Display the feeling */
-    if (p_ptr->themed_level) msg_format("%s", themed_feeling);
-    else msg_print(feeling_text[feeling]);
+    if (p_ptr->themed_level) msg("%s", themed_feeling);
+    else msg(feeling_text[feeling]);
 }
 
 /*
@@ -687,7 +687,7 @@ void ghost_challenge(void)
 {
     monster_race *r_ptr = &r_info[r_ghost];
     
-    msg_format("%^s, the %^s %s", ghost_name, r_ptr->name, 
+    msg("%^s, the %^s %s", ghost_name, r_ptr->name, 
 	       do_cmd_challenge_text[randint0(14)]);
 }
 
@@ -787,7 +787,7 @@ void do_cmd_load_screen(void)
   
 
   /* Message */
-  msg_print("Screen dump loaded.");
+  msg("Screen dump loaded.");
   message_flush();
   
   
@@ -873,7 +873,7 @@ void do_cmd_save_screen_text(void)
   
   
   /* Message */
-  msg_print("Screen dump saved.");
+  msg("Screen dump saved.");
   message_flush();
   
   
@@ -909,7 +909,7 @@ void do_cmd_save_screen_html(int mode)
     /* Check for failure */
     if (!fff)
     {
-	msg_print("Screen dump failed.");
+	msg("Screen dump failed.");
 	message_flush();
 	return;
     }
@@ -931,7 +931,7 @@ void do_cmd_save_screen_html(int mode)
     file_delete(file_name);
     do_cmd_redraw();
   
-    msg_print("HTML screen dump saved.");
+    msg("HTML screen dump saved.");
     message_flush();
 }
 
@@ -942,7 +942,7 @@ void do_cmd_save_screen_html(int mode)
 void do_cmd_save_screen(void)
 {
     ui_event ke;
-    msg_print("Dump type [(t)ext; (h)tml; (f)orum embedded html]:");
+    msg("Dump type [(t)ext; (h)tml; (f)orum embedded html]:");
     button_add("f", 'f');
     button_add("h", 'h');
     button_add("t", 't');
@@ -978,7 +978,7 @@ void do_cmd_time(void)
   
   
   /* Message */
-  msg_format("This is day %d. The time is %d:%02d %s.", day,
+  msg("This is day %d. The time is %d:%02d %s.", day,
              (hour % 12 == 0) ? 12 : (hour % 12), min,
              (hour < 12) ? "AM" : "PM");
 }

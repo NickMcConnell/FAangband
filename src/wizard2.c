@@ -250,7 +250,7 @@ static void do_cmd_wiz_hack_ben(void)
 #else				/* MONSTER_FLOW */
 
     /* Oops */
-    msg_print("Monster flow is not included in this copy of the game.");
+    msg("Monster flow is not included in this copy of the game.");
 
 #endif				/* MONSTER_FLOW */
 
@@ -296,7 +296,7 @@ static void do_cmd_wiz_bamf(void)
 
     /* Test for passable terrain. */
     if (!cave_passable_bold(ny, nx)) {
-	msg_print("The square you are aiming for is impassable.");
+	msg("The square you are aiming for is impassable.");
     }
 
     /* The simple act of controlled teleport. */
@@ -745,7 +745,7 @@ bool wiz_create_item_subaction(menu_type *m, const ui_event *e, int oid)
     drop_near(i_ptr, -1, p_ptr->py, p_ptr->px, TRUE);
     
     /* All done */
-    msg_print("Allocated.");
+    msg("Allocated.");
     
     return FALSE;
 }
@@ -1089,9 +1089,9 @@ static void wiz_statistics(object_type * o_ptr)
 	}
 
 	/* Let us know what we are doing */
-	msg_format("Creating a lot of %s items. Base level = %d.", quality,
+	msg("Creating a lot of %s items. Base level = %d.", quality,
 		   p_ptr->depth);
-	msg_print(NULL);
+	msg(NULL);
 
 	/* Set counters to zero */
 	matches = better = worse = other = 0;
@@ -1170,8 +1170,8 @@ static void wiz_statistics(object_type * o_ptr)
 	}
 
 	/* Final dump */
-	msg_format(q, i, matches, better, worse, other);
-	msg_print(NULL);
+	msg(q, i, matches, better, worse, other);
+	msg(NULL);
     }
 
 
@@ -1320,7 +1320,7 @@ static void do_cmd_wiz_play(void)
     /* Accept change */
     if (changed) {
 	/* Message */
-	msg_print("Changes accepted.");
+	msg("Changes accepted.");
 
 	/* Change */
 	object_copy(o_ptr, i_ptr);
@@ -1337,7 +1337,7 @@ static void do_cmd_wiz_play(void)
 
     /* Ignore change */
     else {
-	msg_print("Changes ignored.");
+	msg("Changes ignored.");
     }
 }
 
@@ -1432,7 +1432,7 @@ bool jump_action(menu_type *menu, const ui_event *evt, int oid)
     {
 	place = idx;
 	/* Accept request */
-	msg_format("You jump to %s level %d.",
+	msg("You jump to %s level %d.",
 		   locality_name[stage_map[place][LOCALITY]],
 		   stage_map[place][DEPTH]);
     } 
@@ -1624,7 +1624,7 @@ static void do_cmd_rerate(void)
     handle_stuff(p_ptr);
 
     /* Message */
-    msg_format("Current Life Rating is %d/100.", percent);
+    msg("Current Life Rating is %d/100.", percent);
 }
 
 
@@ -1838,8 +1838,8 @@ static void do_cmd_wiz_query(void)
     }
 
     /* Get keypress */
-    msg_print("Press any key.");
-    msg_print(NULL);
+    msg("Press any key.");
+    msg(NULL);
 
     /* Redraw map */
     prt_map();
@@ -2098,7 +2098,7 @@ void do_cmd_debug(void)
 	/* Oops */
     default:
 	{
-	    msg_print("That is not a valid debug command.");
+	    msg("That is not a valid debug command.");
 	    break;
 	}
     }

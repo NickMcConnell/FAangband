@@ -1140,7 +1140,7 @@ void player_birth(bool quickstart_allowed)
 			  (buf - (char *) &op_ptr->full_name)));
 
 	if (!success)
-	    msg_print("Sorry, could not deal with suffix");
+	    msg("Sorry, could not deal with suffix");
     }
 
 
