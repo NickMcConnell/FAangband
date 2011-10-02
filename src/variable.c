@@ -20,6 +20,7 @@
  */
 
 #include "angband.h"
+#include "buildid.h"
 
 
 /*

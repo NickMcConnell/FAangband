@@ -54,14 +54,12 @@
 /**
  * Name of the version/variant
  */
-#define VERSION_NAME "FAangband"
 #define SAVEFILE_NAME  "FAAN"
 
 
 /**
  * Current version string - according to FAangband reckoning.
  */
-#define VERSION_STRING "1.2.5"
 /*
 #ifdef BUILD_ID
 #define VERSION_STRING	"1.2.5 (" BUILD_ID ")"

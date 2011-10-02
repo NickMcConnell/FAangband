@@ -18,6 +18,7 @@
  */
 #include "angband.h"
 #include "cmds.h"
+#include "buildid.h"
 #include "files.h"
 
 /*

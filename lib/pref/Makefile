@@ -2,7 +2,7 @@ MKPATH=../../mk/
 include $(MKPATH)buildsys.mk
 
 CONFIG = flvr-dvg.prf  font.prf      graf-nds.prf  message.prf   user.prf \
-       flvr-new.prf  font-sdl.prf  graf-new.prf  pref-gcu.prf  xtra-dvg.prf \
+       flvr-new.prf  font-sdl.prf  graf-new.prf  xtra-dvg.prf \
        flvr-xxx.prf  font-win.prf  graf.prf      pref-mac.prf  xtra-new.prf \
        font-ext.prf  font-x11.prf  graf-sdl.prf  pref.prf      xtra-xxx.prf \
        font-gcu.prf  font-xxx.prf  graf-win.prf  user.prf \

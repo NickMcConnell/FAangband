@@ -24,6 +24,7 @@
  */
 
 #include "angband.h"
+#include "buildid.h"
 #include "button.h"
 #include "cave.h"
 #include "cmds.h"

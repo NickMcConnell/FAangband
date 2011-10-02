@@ -229,9 +229,6 @@ C:1:^G
 
 ##### System Specific Subfiles #####
 
-?:[IOR [EQU $SYS gcu] [EQU $SYS lsl] [EQU $SYS cap] [EQU $SYS vcs] [EQU $SYS sla]]
-%:pref-gcu.prf
-
 ?:[EQU $SYS mac]
 %:pref-mac.prf
 

@@ -22,7 +22,7 @@
     */
 
 #include "angband.h"
-
+#include "buildid.h"
 
 /**
  * Local "savefile" pointer

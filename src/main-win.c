@@ -72,6 +72,7 @@
  */
 
 #include "angband.h"
+#include "buildid.h"
 #define uint unsigned int
 
 #if (defined(WINDOWS) && !defined(USE_SDL))
