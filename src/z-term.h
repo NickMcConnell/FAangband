@@ -144,8 +144,6 @@ struct term_win
  *	- Hook for init-ing the term
  *	- Hook for nuke-ing the term
  *
- *	- Hook for user actions
- *
  *	- Hook for extra actions
  *
  *	- Hook for placing the cursor
@@ -211,13 +209,11 @@ struct term
 	term_win *tmp;
 	term_win *mem;
 
-        /* Number of times saved */
-        byte saved;
+	/* Number of times saved */
+	byte saved;
 
 	void (*init_hook)(term *t);
 	void (*nuke_hook)(term *t);
-
-	errr (*user_hook)(int n);
 
 	errr (*xtra_hook)(int n, int v);
 
@@ -333,6 +329,13 @@ struct term
 
 
 
+/* sketchy key logging pt. 1 */
+#define KEYLOG_SIZE 8
+extern int log_i;
+extern int log_size;
+struct keypress keylog[KEYLOG_SIZE];
+
+
 /**** Available Variables ****/
 
 extern term *Term;
@@ -343,7 +346,6 @@ extern bool smlcurs;
 
 /**** Available Functions ****/
 
-extern errr Term_user(int n);
 extern errr Term_xtra(int n, int v);
 
 extern void Term_queue_char(term *t, int x, int y, byte a, char c, byte ta, char tc);
@@ -386,8 +388,6 @@ extern errr Term_activate(term *t);
 extern errr term_nuke(term *t);
 extern errr term_init(term *t, int w, int h, int k);
 
+extern bool panel_contains(unsigned int y, unsigned int x);
 
-#endif
-
-
-
+#endif /* INCLUDED_Z_TERM_H */

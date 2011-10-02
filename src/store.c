@@ -2595,13 +2595,6 @@ static void store_process_command(ui_event ke)
 
       /*** System Commands ***/
 
-	/* Hack -- User interface */
-    case '!':
-	{
-	    (void) Term_user(0);
-	    break;
-	}
-
 	/* Single line from a pref file */
     case '"':
 	{

@@ -186,17 +186,12 @@
  *
  *   Term->init_hook = Init the term
  *   Term->nuke_hook = Nuke the term
- *   Term->user_hook = Perform user actions
  *   Term->xtra_hook = Perform extra actions
  *   Term->curs_hook = Draw (or Move) the cursor
  *   Term->bigcurs_hook = Draw (or Move) the big cursor (bigtile mode)
  *   Term->wipe_hook = Draw some blank spaces
  *   Term->text_hook = Draw some text in the window
  *   Term->pict_hook = Draw some attr/chars in the window
- *
- * The "Term->user_hook" hook provides a simple hook to an implementation
- * defined function, with application defined semantics.  It is available
- * to the program via the "Term_user()" function.
  *
  * The "Term->xtra_hook" hook provides a variety of different functions,
  * based on the first parameter (which should be taken from the various
@@ -261,12 +256,6 @@
  * files use "white space" ("attr 1" / "char 32") to "erase" or "clear"
  * any window, for efficiency.
  *
- * The game "Angband" uses the "Term_user" hook to allow any of the
- * "main-xxx.c" files to interact with the user, by calling this hook
- * whenever the user presses the "!" key when the game is waiting for
- * a new command.  This could be used, for example, to provide "unix
- * shell commands" to the Unix versions of the game.
- *
  * See "main-xxx.c" for a simple skeleton file which can be used to
  * create a "visual system" for a new platform when porting Angband.
  */
@@ -281,7 +270,9 @@
  */
 term *Term = NULL;
 
-
+/* grumbles */
+int log_i = 0;
+int log_size = 0;
 
 
 /*** Local routines ***/
@@ -397,18 +388,6 @@ static errr term_win_copy(term_win *s, term_win *f, int w, int h)
 
 /*** External hooks ***/
 
-
-/*
- * Execute the "Term->user_hook" hook, if available (see above).
- */
-errr Term_user(int n)
-{
-	/* Verify the hook */
-	if (!Term->user_hook) return (-1);
-
-	/* Call the hook */
-	return ((*Term->user_hook)(n));
-}
 
 /*
  * Execute the "Term->xtra_hook" hook, if available (see above).
@@ -695,7 +674,7 @@ static void Term_fresh_row_pict(int y, int x1, int x2)
 			{
 				/* Draw pending attr/char pairs */
 				(void)((*Term->pict_hook)(fx, y, fn, &scr_aa[fx], &scr_cc[fx],
-				                          &scr_taa[fx], &scr_tcc[fx]));
+							  &scr_taa[fx], &scr_tcc[fx]));
 
 				/* Forget */
 				fn = 0;
@@ -704,7 +683,7 @@ static void Term_fresh_row_pict(int y, int x1, int x2)
 			/* Skip */
 			continue;
 		}
-		
+
 		/* Save new contents */
 		old_aa[x] = na;
 		old_cc[x] = nc;
@@ -721,7 +700,7 @@ static void Term_fresh_row_pict(int y, int x1, int x2)
 	{
 		/* Draw pending attr/char pairs */
 		(void)((*Term->pict_hook)(fx, y, fn, &scr_aa[fx], &scr_cc[fx],
-		                          &scr_taa[fx], &scr_tcc[fx]));
+					  &scr_taa[fx], &scr_tcc[fx]));
 	}
 }
 
@@ -1020,6 +999,9 @@ static void Term_fresh_row_text(int y, int x1, int x2)
 		}
 	}
 }
+
+byte tile_width = 1;            /* Tile width in units of font width */
+byte tile_height = 1;           /* Tile height in units of font height */
 
 /* Helper variables for large cursor */
 bool bigcurs = FALSE;
@@ -1355,7 +1337,7 @@ errr Term_fresh(void)
 		/* Draw the cursor */
 		if (!scr->cu && scr->cv)
 		{
-		        if ((((tile_width > 1)||(tile_height > 1)) && 
+			if ((((tile_width > 1)||(tile_height > 1)) &&
 			     (!smlcurs) && (Term->saved == 0) && (scr->cy > 0))
 			    || bigcurs)
 			{
@@ -1619,7 +1601,7 @@ errr Term_putch(int x, int y, byte a, char c)
  */
 void Term_big_putch(int x, int y, byte a, char c)
 {
-        int hor, vert;
+	int hor, vert;
 
 	/* Avoid warning */
 	(void)c;
@@ -1627,39 +1609,39 @@ void Term_big_putch(int x, int y, byte a, char c)
 	/* No tall skinny tiles */
 	if (tile_width > 1)
 	{
-	        /* Horizontal first */
-	        for (hor = 0; hor <= tile_width; hor++)
+		/* Horizontal first */
+		for (hor = 0; hor <= tile_width; hor++)
 		{
-		        /* Queue dummy character */
-		        if (hor != 0)
-			{	
-			        if (a & 0x80)
-				        Term_putch(x + hor, y, 255, -1);
+			/* Queue dummy character */
+			if (hor != 0)
+			{
+				if (a & 0x80)
+					Term_putch(x + hor, y, 255, -1);
 				else
-				        Term_putch(x + hor, y, TERM_WHITE, ' ');
+					Term_putch(x + hor, y, TERM_WHITE, ' ');
 			}
 
 			/* Now vertical */
 			for (vert = 1; vert <= tile_height; vert++)
 			{
-			        /* Queue dummy character */
-			        if (a & 0x80)
-				        Term_putch(x + hor, y + vert, 255, -1);
+				/* Queue dummy character */
+				if (a & 0x80)
+					Term_putch(x + hor, y + vert, 255, -1);
 				else
-				        Term_putch(x + hor, y + vert, TERM_WHITE, ' ');
+					Term_putch(x + hor, y + vert, TERM_WHITE, ' ');
 			}
 		}
 	}
 	else
 	{
-	        /* Only vertical */
-	        for (vert = 1; vert <= tile_height; vert++)
+		/* Only vertical */
+		for (vert = 1; vert <= tile_height; vert++)
 		{
-		        /* Queue dummy character */
-		        if (a & 0x80)
-			        Term_putch(x, y + vert, 255, -1);
+			/* Queue dummy character */
+			if (a & 0x80)
+				Term_putch(x, y + vert, 255, -1);
 			else
-			        Term_putch(x, y + vert, TERM_WHITE, ' ');
+				Term_putch(x, y + vert, TERM_WHITE, ' ');
 		}
 	}
 }
@@ -1671,6 +1653,9 @@ void Term_big_putch(int x, int y, byte a, char c)
 errr Term_putstr(int x, int y, int n, byte a, const char *s)
 {
 	errr res;
+
+	if (!Term)
+		return 0;
 
 	/* Move first */
 	if ((res = Term_gotoxy(x, y)) != 0) return (res);
@@ -1737,11 +1722,11 @@ errr Term_erase(int x, int y, int n)
 		/* Save the "literal" information */
 		scr_aa[x] = na;
 		scr_cc[x] = nc;
-		
+
 		scr_taa[x] = 0;
 		scr_tcc[x] = 0;
 
-		/* Track minumum changed column */
+		/* Track minimum changed column */
 		if (x1 < 0) x1 = x;
 
 		/* Track maximum changed column */
@@ -1841,7 +1826,7 @@ errr Term_redraw(void)
 
 
 /*
- * Redraw part of a widow.
+ * Redraw part of a window.
  */
 errr Term_redraw_section(int x1, int y1, int x2, int y2)
 {
@@ -1911,12 +1896,9 @@ errr Term_get_cursor(bool *v)
  */
 errr Term_get_size(int *w, int *h)
 {
-	/* Access the cursor */
-	(*w) = Term->wid;
-	(*h) = Term->hgt;
-
-	/* Success */
-	return (0);
+	*w = Term ? Term->wid : 80;
+	*h = Term ? Term->hgt : 24;
+	return 0;
 }
 
 
@@ -1969,6 +1951,9 @@ errr Term_what(int x, int y, byte *a, char *c)
  */
 errr Term_flush(void)
 {
+	if (!Term)
+		return 0;
+
 	/* Hack -- Flush all events */
 	Term_xtra(TERM_XTRA_FLUSH, 0);
 
@@ -1980,28 +1965,40 @@ errr Term_flush(void)
 }
 
 
+/* sketchy keylogging pt. 2 */
+static void log_keypress(ui_event e)
+{
+	if (e.type != EVT_KBRD) return;
+	if (!e.key.code) return;
+
+	keylog[log_i] = e.key;
+	if (log_size < KEYLOG_SIZE) log_size++;
+	log_i = (log_i + 1) % KEYLOG_SIZE;
+}
+
+
 /*
  * Add a keypress to the "queue"
  */
 errr Term_keypress(keycode_t k, byte mods)
 {
-  /* Hack -- Refuse to enqueue non-keys */
-  if (!k) return (-1);
-  
-  /* Store the char, advance the queue */
-  Term->key_queue[Term->key_head].type = EVT_KBRD;
-  Term->key_queue[Term->key_head].key.code = k;
-  Term->key_queue[Term->key_head].key.mods = mods;
-  Term->key_head++;
-  
-  /* Circular queue, handle wrap */
-  if (Term->key_head == Term->key_size) Term->key_head = 0;
-  
-  /* Success (unless overflow) */
-  if (Term->key_head != Term->key_tail) return (0);
-  
-  /* Problem */
-  return (1);
+	/* Hack -- Refuse to enqueue non-keys */
+	if (!k) return (-1);
+
+	/* Store the char, advance the queue */
+	Term->key_queue[Term->key_head].type = EVT_KBRD;
+	Term->key_queue[Term->key_head].key.code = k;
+	Term->key_queue[Term->key_head].key.mods = mods;
+	Term->key_head++;
+
+	/* Circular queue, handle wrap */
+	if (Term->key_head == Term->key_size) Term->key_head = 0;
+
+	/* Success (unless overflow) */
+	if (Term->key_head != Term->key_tail) return (0);
+
+	/* Problem */
+	return (1);
 }
 
 /*
@@ -2010,10 +2007,10 @@ errr Term_keypress(keycode_t k, byte mods)
 errr Term_mousepress(int x, int y, char button)
 {
   /* Store the char, advance the queue */
+  Term->key_queue[Term->key_head].type = EVT_MOUSE;
   Term->key_queue[Term->key_head].mouse.x = x;
   Term->key_queue[Term->key_head].mouse.y = y;
   Term->key_queue[Term->key_head].mouse.button = button;
-  Term->key_queue[Term->key_head].type = EVT_MOUSE;
   Term->key_head++;
   
   /* Circular queue, handle wrap */
@@ -2126,6 +2123,9 @@ errr Term_inkey(ui_event *ch, bool wait, bool take)
 	/* Extract the next keypress */
 	(*ch) = Term->key_queue[Term->key_tail];
 
+	/* sketchy key loggin */
+	log_keypress(*ch);
+
 	/* If requested, advance the queue, wrap around if necessary */
 	if (take && (++Term->key_tail == Term->key_size)) Term->key_tail = 0;
 
@@ -2198,6 +2198,9 @@ errr Term_load(void)
 
 		/* Free the old window */
 		(void)term_win_nuke(tmp);
+
+		/* Kill it */
+		FREE(tmp);
 	}
 
 	/* Assume change */
@@ -2238,7 +2241,7 @@ errr Term_resize(int w, int h)
 	term_win *hold_mem;
 	term_win *hold_tmp;
 
-	ui_event evt = { 0 };
+	ui_event evt = EVENT_EMPTY;
 	evt.type = EVT_RESIZE;
 
 
@@ -2580,4 +2583,15 @@ errr term_init(term *t, int w, int h, int k)
 
 	/* Success */
 	return (0);
+}
+
+bool panel_contains(unsigned int y, unsigned int x)
+{
+	unsigned int hgt;
+	unsigned int wid;
+	if (!Term)
+		return TRUE;
+	hgt = SCREEN_HGT;
+	wid = SCREEN_WID;
+	return (y - Term->offset_y) < hgt && (x - Term->offset_x) < wid;
 }

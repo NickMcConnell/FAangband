@@ -93,8 +93,8 @@ bool do_feeling = FALSE;	/* Hack -- Level feeling indicator */
 
 int use_graphics;		/* "graphics" mode */
 bool use_graphics_nice;	        /* The 'nice' "graphics" mode is enabled */
-byte tile_width = 1;            /* Tile width in units of font width */
-byte tile_height = 1;           /* Tile height in units of font height */
+//byte tile_width = 1;            /* Tile width in units of font width */
+//byte tile_height = 1;           /* Tile height in units of font height */
 bool use_transparency = FALSE;  /* Use transparent tiles */
 char notes_start[80];           /* Opening line of notes */
 
