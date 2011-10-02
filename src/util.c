@@ -136,7 +136,7 @@ int roman_to_int(const char *roman)
 	char *p;
 
 	char roman_token_chr1[] = "MDCLXVI";
-	char* roman_token_chr2[] = {0, 0, "DM", 0, "LC", 0, "VX"};
+	const char *roman_token_chr2[] = {0, 0, "DM", 0, "LC", 0, "VX"};
 
 	int roman_token_vals[7][3] = {{1000},
 	                              {500},
@@ -564,13 +564,16 @@ static int message_column = 0;
  * Hack -- Note that "msg("%s", NULL)" will clear the top line even if no
  * messages are pending.
  */
-static void msg_aux(u16b type, const char *msg)
+static void msg_print_aux(u16b type, const char *msg)
 {
 	int n;
 	char *t;
 	char buf[1024];
 	byte color;
 	int w, h;
+
+	if (!Term)
+		return;
 
 	/* Obtain the size */
 	(void)Term_get_size(&w, &h);
@@ -686,7 +689,7 @@ void msg(const char *fmt, ...)
 	va_end(vp);
 
 	/* Display */
-	msg_aux(MSG_GENERIC, buf);
+	msg_print_aux(MSG_GENERIC, buf);
 }
 
 void msgt(unsigned int type, const char *fmt, ...)
@@ -697,7 +700,7 @@ void msgt(unsigned int type, const char *fmt, ...)
 	vstrnfmt(buf, sizeof(buf), fmt, vp);
 	va_end(vp);
 	sound(type);
-	msg_aux(type, buf);
+	msg_print_aux(type, buf);
 }
 
 /*
@@ -712,7 +715,8 @@ void message_flush(void)
 	if (message_column)
 	{
 		/* Print pending messages */
-		msg_flush(message_column);
+		if (Term)
+			msg_flush(message_column);
 
 		/* Forget it */
 		msg_flag = FALSE;
@@ -1862,16 +1866,13 @@ bool get_com_ex(const char *prompt, ui_event *command)
  *
  * This function is stupid.  XXX XXX XXX
  */
-void pause_line(int row)
+void pause_line(struct term *term)
 {
-	prt("", row, 0);
-	put_str("[Press any key to continue]", row, 23);
+	prt("", term->hgt - 1, 0);
+	put_str("[Press any key to continue]", term->hgt - 1, 23);
 	(void)anykey();
-	prt("", row, 0);
+	prt("", term->hgt - 1, 0);
 }
-
-
-
 
 /*
  * Check a char for "vowel-hood"
