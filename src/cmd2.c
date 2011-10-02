@@ -165,7 +165,7 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
 	    p_ptr->last_stage = NOWHERE;
 
 	    /* Portal */
-	    message(MSG_STAIRS_UP, 0, "You trigger a magic portal.");
+	    msgt(MSG_STAIRS_UP, "You trigger a magic portal.");
 
 	    /* New stage */
 	    p_ptr->stage = stage_map[p_ptr->stage][UP];
@@ -180,7 +180,7 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
 	}
 
 	/* stairs */
-	message(MSG_STAIRS_DOWN, 0, "You enter a maze of up staircases.");
+	msgt(MSG_STAIRS_DOWN, "You enter a maze of up staircases.");
 
 	/* make the way back */
 	p_ptr->create_stair = FEAT_MORE;
@@ -194,7 +194,7 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
 	    p_ptr->last_stage = NOWHERE;
 
 	    /* Portal */
-	    message(MSG_STAIRS_UP, 0, "You trigger a magic portal.");
+	    msgt(MSG_STAIRS_UP, "You trigger a magic portal.");
 
 	    /* New stage */
 	    p_ptr->stage = stage_map[stage_map[p_ptr->stage][UP]][UP];
@@ -209,13 +209,13 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
 	}
 
 	/* shaft */
-	message(MSG_STAIRS_DOWN, 0, "You enter a maze of up staircases.");
+	msgt(MSG_STAIRS_DOWN, "You enter a maze of up staircases.");
 
 	/* make the way back */
 	p_ptr->create_stair = FEAT_MORE_SHAFT;
     } else {
 	/* path */
-	message(MSG_STAIRS_DOWN, 0, "You enter a winding path to less danger.");
+	msgt(MSG_STAIRS_DOWN, "You enter a winding path to less danger.");
 
 	/* make the way back */
 	p_ptr->create_stair = pstair ^ 0x05;
@@ -348,7 +348,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 	    p_ptr->last_stage = NOWHERE;
 
 	    /* Portal */
-	    message(MSG_STAIRS_DOWN, 0, "You trigger a magic portal.");
+	    msgt(MSG_STAIRS_DOWN, "You trigger a magic portal.");
 
 	    /* New stage */
 	    p_ptr->stage = stage_map[p_ptr->stage][DOWN];
@@ -363,7 +363,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 	}
 
 	/* stairs */
-	message(MSG_STAIRS_DOWN, 0, "You enter a maze of down staircases.");
+	msgt(MSG_STAIRS_DOWN, "You enter a maze of down staircases.");
 
 	/* New stage */
 	p_ptr->stage = stage_map[p_ptr->stage][DOWN];
@@ -380,7 +380,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 	    p_ptr->last_stage = NOWHERE;
 
 	    /* Portal */
-	    message(MSG_STAIRS_DOWN, 0, "You trigger a magic portal.");
+	    msgt(MSG_STAIRS_DOWN, "You trigger a magic portal.");
 
 	    /* New stage */
 	    p_ptr->stage = stage_map[stage_map[p_ptr->stage][DOWN]][DOWN];
@@ -395,7 +395,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 	}
 
 	/* stairs */
-	message(MSG_STAIRS_DOWN, 0, "You enter a maze of down staircases.");
+	msgt(MSG_STAIRS_DOWN, "You enter a maze of down staircases.");
 
 	/* New stage */
 	p_ptr->stage = stage_map[stage_map[p_ptr->stage][DOWN]][DOWN];
@@ -411,7 +411,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 	if (stage_map[p_ptr->stage][LOCALITY] == NAN_DUNGORTHEB)
 
 	    /* scree slope */
-	    message(MSG_STAIRS_DOWN, 0,
+	    msgt(MSG_STAIRS_DOWN,
 		    "You slide down amidst a small avalanche.");
 
 	else {
@@ -419,7 +419,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 	    p_ptr->create_stair = pstair ^ 0x05;
 
 	    /* path */
-	    message(MSG_STAIRS_DOWN, 0,
+	    msgt(MSG_STAIRS_DOWN,
 		    "You enter a winding path to greater danger.");
 	}
     }
@@ -1303,7 +1303,7 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
 
 	/* Success -- May still have traps */
 	if (randint0(100) < j) {
-	    message(MSG_LOCKPICK, 0, "You have picked the lock.");
+	    msgt(MSG_LOCKPICK, "You have picked the lock.");
 	    gain_exp(o_ptr->pval);
 	    flag = TRUE;
 	}
@@ -1314,7 +1314,7 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
 	    more = TRUE;
 	    if (OPT(flush_failure))
 		flush();
-	    message(MSG_LOCKPICK_FAIL, 0, "You failed to pick the lock.");
+	    msgt(MSG_LOCKPICK_FAIL, "You failed to pick the lock.");
 	}
     }
 
@@ -1580,7 +1580,7 @@ static bool do_cmd_open_test(int y, int x)
     if (!tf_has(f_ptr->flags, TF_DOOR_CLOSED)) 
     {
 	/* Message */
-	message(MSG_NOTHING_TO_OPEN, 0, "You see nothing there to open.");
+	msgt(MSG_NOTHING_TO_OPEN, "You see nothing there to open.");
 
 	/* Nope */
 	return (FALSE);
@@ -1643,7 +1643,7 @@ extern bool do_cmd_open_aux(int y, int x)
 	/* Success */
 	if (randint0(100) < j) {
 	    /* Message */
-	    message(MSG_LOCKPICK, 0, "You have picked the lock.");
+	    msgt(MSG_LOCKPICK, "You have picked the lock.");
 
 	    /* Open the door */
 	    cave_set_feat(y, x, FEAT_OPEN);
@@ -1662,7 +1662,7 @@ extern bool do_cmd_open_aux(int y, int x)
 		flush();
 
 	    /* Message */
-	    message(MSG_LOCKPICK_FAIL, 0, "You failed to pick the lock.");
+	    msgt(MSG_LOCKPICK_FAIL, "You failed to pick the lock.");
 
 	    /* We may keep trying */
 	    more = TRUE;
@@ -2446,7 +2446,7 @@ static bool do_cmd_bash_aux(int y, int x)
 	}
 
 	/* Message */
-	message(MSG_OPENDOOR, 0, "The door crashes open!");
+	msgt(MSG_OPENDOOR, "The door crashes open!");
 
 	/* Update the visuals */
 	p_ptr->update |= (PU_UPDATE_VIEW | PU_MONSTERS);

@@ -805,7 +805,7 @@ void teleport_player_level(bool friendly)
 
     if ((stage_map[p_ptr->stage][STAGE_TYPE] == CAVE) && (p_ptr->stage != 255)) {
 	if (is_quest(p_ptr->stage) || (!stage_map[p_ptr->stage][DOWN])) {
-	    message(MSG_TPLEVEL, 0, "You rise up through the ceiling.");
+	    msgt(MSG_TPLEVEL, "You rise up through the ceiling.");
 
 	    /* New stage */
 	    p_ptr->stage = stage_map[p_ptr->stage][UP];
@@ -813,7 +813,7 @@ void teleport_player_level(bool friendly)
 	}
 
 	else if (!stage_map[p_ptr->stage][UP]) {
-	    message(MSG_TPLEVEL, 0, "You sink through the floor.");
+	    msgt(MSG_TPLEVEL, "You sink through the floor.");
 
 	    /* New stage */
 	    p_ptr->stage = stage_map[p_ptr->stage][DOWN];
@@ -823,7 +823,7 @@ void teleport_player_level(bool friendly)
 	else {
 
 	    if (randint0(100) < 50) {
-		message(MSG_TPLEVEL, 0, "You rise up through the ceiling.");
+		msgt(MSG_TPLEVEL, "You rise up through the ceiling.");
 
 		/* New stage */
 		p_ptr->stage = stage_map[p_ptr->stage][UP];
@@ -831,7 +831,7 @@ void teleport_player_level(bool friendly)
 	    }
 
 	    else {
-		message(MSG_TPLEVEL, 0, "You sink through the floor.");
+		msgt(MSG_TPLEVEL, "You sink through the floor.");
 
 		/* New stage */
 		p_ptr->stage = stage_map[p_ptr->stage][DOWN];
@@ -842,7 +842,7 @@ void teleport_player_level(bool friendly)
 
     /* Caution - assumes Nan Dungortheb levels are contiguous South */
     else if (stage_map[p_ptr->stage][STAGE_TYPE] == VALLEY) {
-	message(MSG_TPLEVEL, 0, "You fly through the air.");
+	msgt(MSG_TPLEVEL, "You fly through the air.");
 
 	/* Got to go up */
 	if (stage_map[p_ptr->stage + 1][STAGE_TYPE] != VALLEY)
@@ -869,7 +869,7 @@ void teleport_player_level(bool friendly)
 	if ((randint0(100) < 50)
 	    && !(stage_map[p_ptr->stage][STAGE_TYPE] == SWAMP)
 	    && !(stage_map[p_ptr->stage][STAGE_TYPE] == TOWN)) {
-	    message(MSG_TPLEVEL, 0, "You rise into the air.");
+	    msgt(MSG_TPLEVEL, "You rise into the air.");
 
 	    /* Set the ways forward and back */
 	    stage_map[256][DOWN] = p_ptr->stage;
@@ -882,7 +882,7 @@ void teleport_player_level(bool friendly)
 	}
 
 	else {
-	    message(MSG_TPLEVEL, 0, "You sink through the ground.");
+	    msgt(MSG_TPLEVEL, "You sink through the ground.");
 
 	    /* Set the ways forward and back, if not there already */
 	    if (!stage_map[p_ptr->stage][DOWN]) {
@@ -902,7 +902,7 @@ void teleport_player_level(bool friendly)
     /* Got to go back */
     else {
 	if (p_ptr->stage == 255) {
-	    message(MSG_TPLEVEL, 0, "You rise up through the ceiling.");
+	    msgt(MSG_TPLEVEL, "You rise up through the ceiling.");
 
 	    /* New stage */
 	    p_ptr->stage = stage_map[p_ptr->stage][UP];
@@ -914,7 +914,7 @@ void teleport_player_level(bool friendly)
 	}
 
 	else if (p_ptr->stage == 256) {
-	    message(MSG_TPLEVEL, 0, "You plunge downward.");
+	    msgt(MSG_TPLEVEL, "You plunge downward.");
 
 	    /* New stage */
 	    p_ptr->stage = stage_map[p_ptr->stage][DOWN];
@@ -1006,17 +1006,17 @@ bool chaotic_effects(monster_type * m_ptr)
 		msg("%^s is unaffected.", m_name);
 	    } else if (m_ptr->confused > 0) {
 		if (m_ptr->ml)
-		    message_format(MSG_HIT, 0, "%^s appears more confused.",
+		    msgt(MSG_HIT, "%^s appears more confused.",
 				   m_name);
 		else
-		    message_format(MSG_HIT, 0, "%^s sounds more confused.",
+		    msgt(MSG_HIT, "%^s sounds more confused.",
 				   m_name);
 		m_ptr->confused += 4 + randint0(p_ptr->lev) / 12;
 	    } else {
 		if (m_ptr->ml)
-		    message_format(MSG_HIT, 0, "%^s appears confused.", m_name);
+		    msgt(MSG_HIT, "%^s appears confused.", m_name);
 		else
-		    message_format(MSG_HIT, 0, "%^s sounds confused.", m_name);
+		    msgt(MSG_HIT, "%^s sounds confused.", m_name);
 		m_ptr->confused += 10 + randint0(p_ptr->lev) / 5;
 	    }
 
@@ -1085,8 +1085,7 @@ bool chaotic_effects(monster_type * m_ptr)
 		    sound(MSG_FLEE);
 
 		    /* Message */
-		    message_format(MSG_FLEE, m_ptr->r_idx,
-				   "%^s flees in terror!", m_name);
+		    msgt(MSG_FLEE, "%^s flees in terror!", m_name);
 		}
 	    }
 
@@ -1568,7 +1567,7 @@ void take_hit(int dam, const char *kb_str)
 	sound(MSG_DEATH);
 
 	/* Hack -- Note death */
-	message(MSG_DEATH, 0, "You die.");
+	msgt(MSG_DEATH, "You die.");
 	msg(NULL);
 
 	/* Ask for a screen dump */

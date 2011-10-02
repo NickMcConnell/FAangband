@@ -289,7 +289,7 @@ void wield_item(object_type *o_ptr, int item, int slot)
     object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
 
     /* Message */
-    message_format(MSG_WIELD, 0, fmt, o_name, index_to_label(slot));
+    msgt(MSG_WIELD, fmt, o_name, index_to_label(slot));
 
     if (!object_known_p(o_ptr)) {
 	int feel;

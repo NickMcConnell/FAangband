@@ -255,7 +255,7 @@ static void py_pickup_gold(void)
 
 	/* Display the message */
 	if (verbal)
-	    message(sound_msg, 0, buf);
+	    msgt(sound_msg, buf);
 
 	/* Add gold to purse */
 	p_ptr->au += total_gold;
@@ -828,14 +828,14 @@ void move_player(int dir)
 	if (!cave_has(cave_info[y][x], CAVE_MARK)) {
 	    /* Closed door */
 	    if (tf_has(f_ptr->flags, TF_DOOR_CLOSED)) {
-		message(MSG_HITWALL, 0, "You feel a door blocking your way.");
+		msgt(MSG_HITWALL, "You feel a door blocking your way.");
 		cave_on(cave_info[y][x], CAVE_MARK);
 		light_spot(y, x);
 	    }
 
 	    /* Wall (or secret door) */
 	    else {
-		message(MSG_HITWALL, 0, "You feel a wall blocking your way.");
+		msgt(MSG_HITWALL, "You feel a wall blocking your way.");
 		cave_on(cave_info[y][x], CAVE_MARK);
 		light_spot(y, x);
 	    }
@@ -863,12 +863,12 @@ void move_player(int dir)
 		}
 		
 		/* Otherwise, a message. */
-		message(MSG_HITWALL, 0, "There is a door blocking your way.");
+		msgt(MSG_HITWALL, "There is a door blocking your way.");
 	    }
 
 	    /* Wall (or secret door) */
 	    else {
-		message(MSG_HITWALL, 0, "There is a wall blocking your way.");
+		msgt(MSG_HITWALL, "There is a wall blocking your way.");
 	    }
 	}
 

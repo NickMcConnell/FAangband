@@ -3381,7 +3381,7 @@ s16b inven_takeoff(int item, int amt)
     slot = inven_carry(p_ptr, i_ptr);
 
     /* Message */
-    message_format(MSG_WIELD, 0, "%s %s (%c).", act, o_name,
+    msgt(MSG_WIELD, "%s %s (%c).", act, o_name,
 		   index_to_label(slot));
 
     p_ptr->notice |= PN_SQUELCH;

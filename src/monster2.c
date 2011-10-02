@@ -4269,12 +4269,12 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, const char *note)
 
 	/* Death by Missile/Spell attack */
 	if (note) {
-	    message_format(MSG_KILL, p_ptr->lev, "%^s%s", m_name, note);
+	    msgt(MSG_KILL, "%^s%s", m_name, note);
 	}
 
 	/* Death by physical attack -- invisible monster */
 	else if (!m_ptr->ml) {
-	    message_format(MSG_KILL, p_ptr->lev, "You have killed %s.", m_name);
+	    msgt(MSG_KILL, "You have killed %s.", m_name);
 	}
 
 	/* Death by Physical attack -- non-living monster */
@@ -4282,13 +4282,13 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, const char *note)
 		 || (rf_has(r_ptr->flags, RF_UNDEAD))
 		 || (rf_has(r_ptr->flags, RF_STUPID))
 		 || (strchr("Evg", r_ptr->d_char))) {
-	    message_format(MSG_KILL, p_ptr->lev, "You have destroyed %s.",
+	    msgt(MSG_KILL, "You have destroyed %s.",
 			   m_name);
 	}
 
 	/* Death by Physical attack -- living monster */
 	else {
-	    message_format(MSG_KILL, p_ptr->lev, "You have slain %s.", m_name);
+	    msgt(MSG_KILL, "You have slain %s.", m_name);
 	}
 
 	/* Maximum player level */

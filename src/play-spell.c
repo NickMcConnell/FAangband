@@ -203,7 +203,7 @@ void spell_learn(int spell)
     mt_ptr = &mp_ptr->info[spell];
 
     /* Mention the result */
-    message_format(MSG_STUDY, 0, "You have learned the %s of %s.", 
+    msgt(MSG_STUDY, "You have learned the %s of %s.", 
 		   magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
 		   get_spell_name(mt_ptr->index));
 

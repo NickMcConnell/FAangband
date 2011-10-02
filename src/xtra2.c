@@ -127,8 +127,7 @@ void check_experience(void)
 	sound(MSG_LEVEL);
 
 	/* Message */
-	message_format(MSG_LEVEL, p_ptr->lev, "Welcome to level %d.",
-		       p_ptr->lev);
+	msgt(MSG_LEVEL, "Welcome to level %d.", p_ptr->lev);
 
 	/* Write a note to the file every 5th level. */
 

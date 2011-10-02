@@ -179,24 +179,24 @@ bool set_timed(int idx, int v, bool notify)
 
     /* Turning off, always mention */
     if (v == 0) {
-	message(MSG_RECOVER, 0, effect->on_end);
+	msgt(MSG_RECOVER, effect->on_end);
 	notify = TRUE;
     }
 
     /* Turning on, always mention */
     else if (p_ptr->timed[idx] == 0) {
-	message(effect->msg, 0, effect->on_begin);
+	msgt(effect->msg, effect->on_begin);
 	notify = TRUE;
     }
 
     else if (notify) {
 	/* Decrementing */
 	if (p_ptr->timed[idx] > v && effect->on_decrease)
-	    message(effect->msg, 0, effect->on_decrease);
+	    msgt(effect->msg, effect->on_decrease);
 
 	/* Incrementing */
 	else if (v > p_ptr->timed[idx] && effect->on_increase)
-	    message(effect->msg, 0, effect->on_increase);
+	    msgt(effect->msg, effect->on_increase);
     }
 
     /* Use the value */
@@ -327,21 +327,21 @@ static bool set_stun(int v)
 	    /* Stun */
 	case 1:
 	    {
-		message(MSG_STUN, 0, "You have been stunned.");
+		msgt(MSG_STUN, "You have been stunned.");
 		break;
 	    }
 
 	    /* Heavy stun */
 	case 2:
 	    {
-		message(MSG_STUN, 0, "You have been heavily stunned.");
+		msgt(MSG_STUN, "You have been heavily stunned.");
 		break;
 	    }
 
 	    /* Knocked out */
 	case 3:
 	    {
-		message(MSG_STUN, 0, "You have been knocked out.");
+		msgt(MSG_STUN, "You have been knocked out.");
 		break;
 	    }
 	}
@@ -357,7 +357,7 @@ static bool set_stun(int v)
 	    /* None */
 	case 0:
 	    {
-		message(MSG_RECOVER, 0, "You are no longer stunned.");
+		msgt(MSG_RECOVER, "You are no longer stunned.");
 		if (OPT(disturb_state))
 		    disturb(0, 0);
 		break;
@@ -494,49 +494,49 @@ static bool set_cut(int v)
 	    /* Graze */
 	case 1:
 	    {
-		message(MSG_CUT, 0, "You have been given a graze.");
+		msgt(MSG_CUT, "You have been given a graze.");
 		break;
 	    }
 
 	    /* Light cut */
 	case 2:
 	    {
-		message(MSG_CUT, 0, "You have been given a light cut.");
+		msgt(MSG_CUT, "You have been given a light cut.");
 		break;
 	    }
 
 	    /* Bad cut */
 	case 3:
 	    {
-		message(MSG_CUT, 0, "You have been given a bad cut.");
+		msgt(MSG_CUT, "You have been given a bad cut.");
 		break;
 	    }
 
 	    /* Nasty cut */
 	case 4:
 	    {
-		message(MSG_CUT, 0, "You have been given a nasty cut.");
+		msgt(MSG_CUT, "You have been given a nasty cut.");
 		break;
 	    }
 
 	    /* Severe cut */
 	case 5:
 	    {
-		message(MSG_CUT, 0, "You have been given a severe cut.");
+		msgt(MSG_CUT, "You have been given a severe cut.");
 		break;
 	    }
 
 	    /* Deep gash */
 	case 6:
 	    {
-		message(MSG_CUT, 0, "You have been given a deep gash.");
+		msgt(MSG_CUT, "You have been given a deep gash.");
 		break;
 	    }
 
 	    /* Mortal wound */
 	case 7:
 	    {
-		message(MSG_CUT, 0, "You have been given a mortal wound.");
+		msgt(MSG_CUT, "You have been given a mortal wound.");
 		break;
 	    }
 	}
@@ -552,7 +552,7 @@ static bool set_cut(int v)
 	    /* None */
 	case 0:
 	    {
-		message(MSG_RECOVER, 0, "You are no longer bleeding.");
+		msgt(MSG_RECOVER, "You are no longer bleeding.");
 		if (OPT(disturb_state))
 		    disturb(0, 0);
 		break;
@@ -731,7 +731,7 @@ bool set_food(int v)
 	    /* Fainting / Starving */
 	case 0:
 	    {
-		message_format(MSG_NOTICE, 0,
+		msgt(MSG_NOTICE,
 			       "You are getting faint from hunger!");
 		break;
 	    }
@@ -739,7 +739,7 @@ bool set_food(int v)
 	    /* Weak */
 	case 1:
 	    {
-		message_format(MSG_NOTICE, 0,
+		msgt(MSG_NOTICE,
 			       "You are getting weak from hunger!");
 		break;
 	    }
@@ -747,21 +747,21 @@ bool set_food(int v)
 	    /* Hungry */
 	case 2:
 	    {
-		message_format(MSG_HUNGRY, 0, "You are getting hungry.");
+		msgt(MSG_HUNGRY, "You are getting hungry.");
 		break;
 	    }
 
 	    /* Normal */
 	case 3:
 	    {
-		message_format(MSG_NOTICE, 0, "You are no longer full.");
+		msgt(MSG_NOTICE, "You are no longer full.");
 		break;
 	    }
 
 	    /* Full */
 	case 4:
 	    {
-		message_format(MSG_NOTICE, 0, "You are no longer gorged.");
+		msgt(MSG_NOTICE, "You are no longer gorged.");
 		break;
 	    }
 	}

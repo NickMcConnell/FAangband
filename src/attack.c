@@ -133,18 +133,18 @@ static int critical_melee(int chance, int sleeping_bonus, bool visible,
 	if ((sleeping_bonus) && (visible)) {
 	    /* More "interesting" messages if we get a seriously good hit. */
 	    if ((add_dice >= 4) && (player_has(PF_BACKSTAB))) {
-		message(MSG_HIT, 0, "You ruthlessly sneak attack!");
+		msgt(MSG_HIT, "You ruthlessly sneak attack!");
 	    }
 
 	    /* Standard "wakeup call". */
 	    else {
-		message(MSG_HIT, 0, "You rudely awaken the monster.");
+		msgt(MSG_HIT, "You rudely awaken the monster.");
 	    }
 	}
 
 	/* Credit where credit is due - not if already a special message */
 	else if (armsman)
-	    message(MSG_HIT, 0, "Armsman hit!");
+	    msgt(MSG_HIT, "Armsman hit!");
 
 	/* Print special messages if monster is visible. */
 	if (visible) {
@@ -155,15 +155,15 @@ static int critical_melee(int chance, int sleeping_bonus, bool visible,
 	     */
 	    if (add_dice <= 2) {
 		sound(MSG_HIT_GOOD);
-		message_format(MSG_HIT, 0, "You strike %s.", m_name);
+		msgt(MSG_HIT, "You strike %s.", m_name);
 	    }
 
 	    else if (add_dice == 3) {
 		sound(MSG_HIT_GREAT);
 		if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)) {
-		    message_format(MSG_HIT, 0, "You hack at %s.", m_name);
+		    msgt(MSG_HIT, "You hack at %s.", m_name);
 		} else {
-		    message_format(MSG_HIT, 0, "You pound %s.", m_name);
+		    msgt(MSG_HIT, "You pound %s.", m_name);
 		}
 	    }
 
@@ -171,15 +171,15 @@ static int critical_melee(int chance, int sleeping_bonus, bool visible,
 		sound(MSG_HIT_SUPERB);
 		if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)) {
 		    if (vorpal) {
-			message_format(MSG_HIT, 0,
+			msgt(MSG_HIT,
 				       "Your vorpal blade goes snicker-snack!",
 				       m_name);
 		    } else {
-			message_format(MSG_HIT, 0, "You slice into %s.",
+			msgt(MSG_HIT, "You slice into %s.",
 				       m_name);
 		    }
 		} else {
-		    message_format(MSG_HIT, 0, "You bludgeon %s.", m_name);
+		    msgt(MSG_HIT, "You bludgeon %s.", m_name);
 		}
 	    }
 
@@ -187,12 +187,12 @@ static int critical_melee(int chance, int sleeping_bonus, bool visible,
 		if ((vorpal)
 		    && ((o_ptr->tval == TV_SWORD)
 			|| (o_ptr->tval == TV_POLEARM))) {
-		    message_format(MSG_HIT, 0,
+		    msgt(MSG_HIT,
 				   "Your vorpal blade goes snicker-snack!",
 				   m_name);
 		} else {
 		    sound(MSG_HIT_HI_GREAT);
-		    message_format(MSG_HIT, 0, "You *smite* %s!", m_name);
+		    msgt(MSG_HIT, "You *smite* %s!", m_name);
 		}
 	    }
 	}
@@ -201,13 +201,13 @@ static int critical_melee(int chance, int sleeping_bonus, bool visible,
     /* If the blow is not a critical hit, then the default message is shown. */
     else if (visible) {
 	sound(MSG_HIT);
-	message_format(MSG_HIT, 0, "You hit %s.", m_name);
+	msgt(MSG_HIT, "You hit %s.", m_name);
     }
 
     /* Hits on non-visible monsters always generate the same message. */
     if (!visible) {
 	sound(MSG_HIT);
-	message(MSG_HIT, 0, "You hit something.");
+	msgt(MSG_HIT, "You hit something.");
     }
 
     /* Return the number of damage dice to add. */
@@ -268,33 +268,33 @@ static int critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
 	/* Encourage the player to throw and shoot things at sleeping monsters */
 	if ((sleeping_bonus) && (visible)) {
 	    if ((thrown_weapon) && (add_dice >= 2)) {
-		message(MSG_HIT, 0, "Assassin strike!");
+		msgt(MSG_HIT, "Assassin strike!");
 	    }
 
 	    else {
-		message(MSG_HIT, 0, "You rudely awaken the monster.");
+		msgt(MSG_HIT, "You rudely awaken the monster.");
 	    }
 	}
 
 	/* Credit where credit is due - but not if already a special message */
 	else if (marksman)
-	    message(MSG_HIT, 0, "Marksmanship!");
+	    msgt(MSG_HIT, "Marksmanship!");
 
 	/* Print special messages if monster is visible. */
 	if (visible) {
 	    /* Messages depend on quality of critical hit. */
 	    if (add_dice == 1) {
-		message_format(MSG_HIT, 0, "The %s penetrates %s.", o_name,
+		msgt(MSG_HIT, "The %s penetrates %s.", o_name,
 			       m_name);
 	    }
 
 	    else if (add_dice == 2) {
-		message_format(MSG_HIT, 0, "The %s drives into %s.", o_name,
+		msgt(MSG_HIT, "The %s drives into %s.", o_name,
 			       m_name);
 	    }
 
 	    else if (add_dice >= 3) {
-		message_format(MSG_HIT, 0, "The %s transpierces %s!", o_name,
+		msgt(MSG_HIT, "The %s transpierces %s!", o_name,
 			       m_name);
 	    }
 	}
@@ -302,12 +302,12 @@ static int critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
 
     /* If the shot is not a critical hit, then the default message is shown. */
     else if (visible) {
-	message_format(MSG_HIT, 0, "The %s hits %s.", o_name, m_name);
+	msgt(MSG_HIT, "The %s hits %s.", o_name, m_name);
     }
 
     /* Hits on non-visible monsters always generate the same message. */
     if (!visible) {
-	message_format(MSG_HIT, 0, "The %s finds a mark.", o_name);
+	msgt(MSG_HIT, "The %s finds a mark.", o_name);
     }
 
     /* Return the number of damage dice to add. */
@@ -888,18 +888,18 @@ static int get_druid_damage(int plev, char m_name[], int power, int deadliness)
 
 	/* And display the attack message. Feedback for Power Strike Specialty */
 	if (power_strike)
-	    message_format(MSG_HIT, 0,
+	    msgt(MSG_HIT,
 			   "Power Strike! You attempt to confuse %s.", m_name);
 	else
-	    message_format(MSG_HIT, 0, "You %s and attempt to confuse %s.",
+	    msgt(MSG_HIT, "You %s and attempt to confuse %s.",
 			   description, m_name);
     } else {
 	/* Basic attack message. */
 	if (power_strike)
-	    message_format(MSG_HIT, 0, "Power Strike! You %s %s.", description,
+	    msgt(MSG_HIT, "Power Strike! You %s %s.", description,
 			   m_name);
 	else
-	    message_format(MSG_HIT, 0, "You %s %s.", description, m_name);
+	    msgt(MSG_HIT, "You %s %s.", description, m_name);
     }
     return (damage);
 }
@@ -1163,7 +1163,7 @@ bool py_attack(int y, int x, bool can_push)
 
     /* Try to get in a shield bash. */
     if (bash_chance > randint0(240 + r_ptr->level * 9)) {
-	message(MSG_HIT, 0, "You get in a shield bash!");
+	msgt(MSG_HIT, "You get in a shield bash!");
 
 	/* Calculate attack quality, a mix of momentum and accuracy. */
 	bash_quality =
@@ -1196,7 +1196,7 @@ bool py_attack(int y, int x, bool can_push)
 	/* Encourage the player to keep wearing that heavy shield. */
 	if (randint1(bash_dam) > 30 + randint1(bash_dam / 2)) {
 	    sound(MSG_HIT_HI_SUPERB);
-	    message(MSG_HIT, 0, "WHAMM!");
+	    msgt(MSG_HIT, "WHAMM!");
 	}
 
 	/* Damage, check for fear and death. */
@@ -1238,7 +1238,7 @@ bool py_attack(int y, int x, bool can_push)
 		if (m_ptr->ml)
 		    rf_on(l_ptr->flags, RF_NO_STUN);
 	    } else {
-		message_format(MSG_HIT, 0, "%^s is stunned.", m_name);
+		msgt(MSG_HIT, "%^s is stunned.", m_name);
 		m_ptr->stunned += randint0(p_ptr->lev / 5) + 4;
 		if (m_ptr->stunned > 24)
 		    m_ptr->stunned = 24;
@@ -1251,7 +1251,7 @@ bool py_attack(int y, int x, bool can_push)
 		if (m_ptr->ml)
 		    rf_on(l_ptr->flags, RF_NO_CONF);
 	    } else {
-		message_format(MSG_HIT, 0, "%^s appears confused.", m_name);
+		msgt(MSG_HIT, "%^s appears confused.", m_name);
 		m_ptr->confused += randint0(p_ptr->lev / 5) + 4;
 	    }
 	}
@@ -1260,7 +1260,7 @@ bool py_attack(int y, int x, bool can_push)
 	if ((30 + adj_dex_th[p_ptr->state.stat_ind[A_DEX]] - 128) < randint1(60)) {
 	    blows -= randint1(blows);
 
-	    message(MSG_GENERIC, 0, "You stumble!");
+	    msgt(MSG_GENERIC, "You stumble!");
 	}
     }
 
@@ -1353,7 +1353,7 @@ bool py_attack(int y, int x, bool can_push)
 		    m_ptr->mana -= burn;
 		    dice++;
 
-		    message(MSG_HIT, 0, "Mana Burn!");
+		    msgt(MSG_HIT, "Mana Burn!");
 		}
 
 		/* Get the average value of a single damage die. (x10) */
@@ -1399,7 +1399,7 @@ bool py_attack(int y, int x, bool can_push)
 		} else {
 		    damage = 1 + ((int) (adj_str_td[p_ptr->state.stat_ind[A_STR]])
 				  - 128);
-		    message_format(MSG_HIT, 0, "You punch %s.", m_name);
+		    msgt(MSG_HIT, "You punch %s.", m_name);
 		}
 	    }
 
@@ -1438,7 +1438,7 @@ bool py_attack(int y, int x, bool can_push)
 		|| (p_ptr->special_attack & (ATTACK_DRUID_CONFU))) {
 		/* Message */
 		if (!(p_ptr->special_attack & (ATTACK_DRUID_CONFU)))
-		    message(MSG_HIT, 0, "Your hands stop glowing.");
+		    msgt(MSG_HIT, "Your hands stop glowing.");
 
 		/* Cancel special confusion attack */
 		p_ptr->special_attack &= ~(ATTACK_CONFUSE);
@@ -1456,18 +1456,18 @@ bool py_attack(int y, int x, bool can_push)
 		    msg("%^s is unaffected.", m_name);
 		} else if (m_ptr->confused > 0) {
 		    if (m_ptr->ml)
-			message_format(MSG_HIT, 0, "%^s appears more confused.",
+			msgt(MSG_HIT, "%^s appears more confused.",
 				       m_name);
 		    else
-			message_format(MSG_HIT, 0, "%^s sounds more confused.",
+			msgt(MSG_HIT, "%^s sounds more confused.",
 				       m_name);
 		    m_ptr->confused += 4 + randint0(p_ptr->lev) / 12;
 		} else {
 		    if (m_ptr->ml)
-			message_format(MSG_HIT, 0, "%^s appears confused.",
+			msgt(MSG_HIT, "%^s appears confused.",
 				       m_name);
 		    else
-			message_format(MSG_HIT, 0, "%^s sounds confused.",
+			msgt(MSG_HIT, "%^s sounds confused.",
 				       m_name);
 		    m_ptr->confused += 10 + randint0(p_ptr->lev) / 5;
 		}
@@ -1499,7 +1499,7 @@ bool py_attack(int y, int x, bool can_push)
 		/* Tasting some of their own medicine... */
 		else {
 		    m_ptr->black_breath = TRUE;
-		    message_format(MSG_HIT, 0,
+		    msgt(MSG_HIT,
 				   "%^s is stricken with the Black Breath!",
 				   m_name);
 		}
@@ -1560,7 +1560,7 @@ bool py_attack(int y, int x, bool can_push)
 	    sound(MSG_MISS);
 
 	    /* Message */
-	    message_format(MSG_MISS, 0, "You miss %s.", m_name);
+	    msgt(MSG_MISS, "You miss %s.", m_name);
 	}
     }
 
@@ -1585,7 +1585,7 @@ bool py_attack(int y, int x, bool can_push)
 	sound(MSG_FLEE);
 
 	/* Message */
-	message_format(MSG_FLEE, m_ptr->r_idx, "%^s flees in terror!", m_name);
+	msgt(MSG_FLEE, "%^s flees in terror!", m_name);
     }
 
 
@@ -2094,8 +2094,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 		    sound(MSG_FLEE);
 
 		    /* Message */
-		    message_format(MSG_FLEE, m_ptr->r_idx,
-				   "%^s flees in terror!", m_name);
+		    msgt(MSG_FLEE, "%^s flees in terror!", m_name);
 		}
 	    }
 
@@ -2551,10 +2550,10 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 	    else {
 		/* Display a default hit message. */
 		if (m_ptr->ml) {
-		    message_format(MSG_HIT, 0, "The %s hits %s.", o_name,
+		    msgt(MSG_HIT, "The %s hits %s.", o_name,
 				   m_name);
 		} else {
-		    message_format(MSG_HIT, 0, "The %s finds a mark.", o_name);
+		    msgt(MSG_HIT, "The %s finds a mark.", o_name);
 		}
 	    }
 

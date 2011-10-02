@@ -523,7 +523,7 @@ void squelch_items(void)
   /* Mention casualties */
   if (count > 0)
     {
-      message_format(MSG_GENERIC, 0, "%d item%s squelched.",
+      msgt(MSG_GENERIC, "%d item%s squelched.",
 		     count, ((count > 1) ? "s" : ""));
       
       /* Combine/reorder the pack */

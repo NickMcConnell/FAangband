@@ -105,7 +105,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
     /* Item was worthless, but we bought it */
     if ((value <= 0) && (price > value)) {
 	/* Comment */
-	message(MSG_STORE1, 0, comment_1[randint0(MAX_COMMENT_1)]);
+	msgt(MSG_STORE1, comment_1[randint0(MAX_COMMENT_1)]);
 
 	/* Sound */
 	sound(MSG_STORE1);
@@ -114,7 +114,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
     /* Item was cheaper than we thought, and we paid more than necessary */
     else if ((value < guess) && (price > value)) {
 	/* Comment */
-	message(MSG_STORE2, 0, comment_2[randint0(MAX_COMMENT_2)]);
+	msgt(MSG_STORE2, comment_2[randint0(MAX_COMMENT_2)]);
 
 	/* Sound */
 	sound(MSG_STORE2);
@@ -123,7 +123,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
     /* Item was a good bargain, and we got away with it */
     else if ((value > guess) && (value < (4 * guess)) && (price < value)) {
 	/* Comment */
-	message(MSG_STORE3, 0, comment_3[randint0(MAX_COMMENT_3)]);
+	msgt(MSG_STORE3, comment_3[randint0(MAX_COMMENT_3)]);
 
 	/* Sound */
 	sound(MSG_STORE3);
@@ -132,7 +132,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
     /* Item was a great bargain, and we got away with it */
     else if ((value > guess) && (price < value)) {
 	/* Comment */
-	message(MSG_STORE4, 0, comment_4[randint0(MAX_COMMENT_4)]);
+	msgt(MSG_STORE4, comment_4[randint0(MAX_COMMENT_4)]);
 
 	/* Sound */
 	sound(MSG_STORE4);

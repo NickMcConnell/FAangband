@@ -668,47 +668,6 @@ static void msg_aux(u16b type, const char *msg)
 }
 
 /*
-* Display a message and play the associated sound.
-*
-* The "extra" parameter is currently unused.
-*/
-void message(u16b message_type, s16b extra, const char *message)
-{
-/* Unused parameter */
-(void)extra;
-
-sound(message_type);
-
-msg_aux(message_type, message);
-}
-
-
-
-/*
-* Display a formatted message and play the associated sound.
-*
-* The "extra" parameter is currently unused.
-*/
-void message_format(u16b message_type, s16b extra, const char *fmt, ...)
-{
-va_list vp;
-
-char buf[1024];
-
-/* Begin the Varargs Stuff */
-va_start(vp, fmt);
-
-/* Format the args, save the length */
-(void)vstrnfmt(buf, sizeof(buf), fmt, vp);
-
-/* End the Varargs Stuff */
-va_end(vp);
-
-/* Display */
-message(message_type, extra, buf);
-}
-
-/*
  * Display a formatted message, using "vstrnfmt()" and "msg("%s", )".
  */
 void msg(const char *fmt, ...)

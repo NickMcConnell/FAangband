@@ -2086,7 +2086,7 @@ static void remove_trap_aux(trap_type *t_ptr, int y, int x, bool domsg)
 	num_runes_on_level[t_ptr->t_idx - 1]--;
     }
     else if (domsg)
-	message_format(MSG_DISARM, 0, "You have disarmed the %s.", 
+	msgt(MSG_DISARM, "You have disarmed the %s.", 
 		       t_ptr->kind->name);
     
     /* We are deleting a monster trap */
