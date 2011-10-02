@@ -2038,7 +2038,7 @@ errr file_character(const char *name, char_attr_line * line, int last_line)
     if (!dump_out_file) {
 	/* Message */
 	msg("Character dump failed!");
-	msg(NULL);
+	message_flush();
 
 	/* Error */
 	return (-1);
@@ -2058,7 +2058,7 @@ errr file_character(const char *name, char_attr_line * line, int last_line)
 
     /* Message */
     msg("Character dump successful.");
-    msg(NULL);
+    message_flush();
 
     /* Success */
     return (0);
@@ -2800,7 +2800,7 @@ void close_game(void)
     handle_stuff(p_ptr);
 
     /* Flush the messages */
-    msg(NULL);
+    message_flush();
 
     /* Flush the input */
     flush();

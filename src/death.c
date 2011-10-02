@@ -867,7 +867,7 @@ void death_screen(void)
     flush();
 
     /* Flush messages */
-    msg(NULL);
+    message_flush();
 
     if (!death_menu)
     {

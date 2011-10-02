@@ -1568,12 +1568,12 @@ void take_hit(int dam, const char *kb_str)
 
 	/* Hack -- Note death */
 	msgt(MSG_DEATH, "You die.");
-	msg(NULL);
+	message_flush();
 
 	/* Ask for a screen dump */
 	if (get_check("Would you like to dump the final screen? ")) {
 	    /* Flush the messages */
-	    msg(NULL);
+	    message_flush();
 
 	    /* Redraw */
 	    redraw_stuff(p_ptr);
@@ -1632,7 +1632,7 @@ void take_hit(int dam, const char *kb_str)
 
 	/* Message */
 	msg("*** LOW HITPOINT WARNING! ***");
-	msg(NULL);
+	message_flush();
     }
 }
 
@@ -6368,7 +6368,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 		    if (p_ptr->black_breath == FALSE) {
 			/* Messages. */
 			msg("Your foe calls upon your soul!");
-			msg(NULL);
+			message_flush();
 			msg
 			    ("You feel the Black Breath slowly draining you of life...");
 		    }

@@ -1661,7 +1661,7 @@ static void store_purchase(void)
 
 	/* Message */
 	msg("Buying %s (%c).", o_name, store_to_label(item));
-	msg(NULL);
+	message_flush();
 
 	/* Player can afford it */
 	if (p_ptr->au >= price) {

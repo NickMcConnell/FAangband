@@ -470,7 +470,7 @@ static void process_world(void)
 	    is_autosave = TRUE;
 	    save_game();
 	    is_autosave = FALSE;
-	    msg(NULL);
+	    message_flush();
 	}
     }
 
@@ -1957,7 +1957,7 @@ static void dungeon(void)
 
 
     /* Flush messages */
-    msg(NULL);
+    message_flush();
 
 
     /* Hack -- Increase "xtra" depth */
@@ -2468,7 +2468,7 @@ void play_game(void)
 	   wipe_m_list(); */
 
 	/* XXX XXX XXX */
-	msg(NULL);
+	message_flush();
 
 	/* Accidental Death */
 	if (p_ptr->playing && p_ptr->is_dead) {
@@ -2486,7 +2486,7 @@ void play_game(void)
 
 		/* Message */
 		msg("You invoke wizard mode and cheat death.");
-		msg(NULL);
+		message_flush();
 
 		/* Cheat death */
 		p_ptr->is_dead = FALSE;

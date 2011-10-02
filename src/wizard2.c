@@ -1091,7 +1091,7 @@ static void wiz_statistics(object_type * o_ptr)
 	/* Let us know what we are doing */
 	msg("Creating a lot of %s items. Base level = %d.", quality,
 		   p_ptr->depth);
-	msg(NULL);
+	message_flush();
 
 	/* Set counters to zero */
 	matches = better = worse = other = 0;
@@ -1171,7 +1171,7 @@ static void wiz_statistics(object_type * o_ptr)
 
 	/* Final dump */
 	msg(q, i, matches, better, worse, other);
-	msg(NULL);
+	message_flush();
     }
 
 
@@ -1839,7 +1839,7 @@ static void do_cmd_wiz_query(void)
 
     /* Get keypress */
     msg("Press any key.");
-    msg(NULL);
+    message_flush();
 
     /* Redraw map */
     prt_map();

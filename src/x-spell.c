@@ -1093,7 +1093,7 @@ bool cast_spell(int tval, int sindex, int dir)
     case SPELL_DIMENSION_DOOR:
 	{
 	    msg("Choose a location to teleport to.");
-	    msg(NULL);
+	    message_flush();
 	    dimen_door();
 	    break;
 	}

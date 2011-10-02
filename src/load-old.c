@@ -453,7 +453,7 @@ static errr rd_savefile_new_aux(void)
     {
 	msg("Loading an FAangband %d.%d.%d savefile.", 
 		   sf_major, sf_minor, sf_patch);
-	msg(NULL);
+	message_flush();
     }
 
     if (!get_check("Load your monster and object memory and then start a new character?"))

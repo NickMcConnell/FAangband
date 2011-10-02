@@ -280,7 +280,7 @@ static void make_request(int m_idx)
 	/* Make the trade. */
 	if (get_check("Accept the offer? ")) {
 	    /* Be friendly. */
-	    msg(NULL);
+	    message_flush();
 	    msg("May you have all your heart's desire!");
 
 	    /* Take the item. */
@@ -302,7 +302,7 @@ static void make_request(int m_idx)
 	/* How can you be so stingy! */
 	else {
 	    /* Complain bitterly. */
-	    msg(NULL);
+	    message_flush();
 	    msg
 		("You scummy excuse for a kobold crook!  May jackals gnaw your bones!");
 	}

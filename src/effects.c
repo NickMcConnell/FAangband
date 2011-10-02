@@ -1062,7 +1062,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	{
 	    /* Hack - 'show' effected region only with the first detect */
 	    msg("You begin to feel more enlightened...");
-	    msg(NULL);
+	    message_flush();
 	    wiz_light(TRUE);
 	    (void) do_inc_stat(A_INT, TRUE);
 	    (void) do_inc_stat(A_WIS, TRUE);
@@ -2145,7 +2145,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_PORTALS:
 	{
 	    msg("Choose a location to teleport to.");
-	    msg(NULL);
+	    message_flush();
 	    dimen_door();
 	    *ident = TRUE;
 	    return TRUE;

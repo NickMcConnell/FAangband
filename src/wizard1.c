@@ -2738,7 +2738,7 @@ void do_cmd_spoilers(void)
 	}
       
       /* Flush messages */
-      msg(NULL);
+      message_flush();
     }
   
   
