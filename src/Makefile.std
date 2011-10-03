@@ -46,13 +46,13 @@ SYS_sdl = -DUSE_SDL $(shell sdl-config --cflags) $(shell sdl-config --libs) -lSD
 # Basic compiler stuff
 CC = gcc
 WARNINGS = -W -Wall -Wextra -Wno-unused-parameter -Wold-style-definition -Wdeclaration-after-statement -Wmissing-declarations -Wredundant-decls -Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wformat-security -Winit-self -Wmissing-include-dirs -Wundef -Wmissing-format-attribute -Wnested-externs -Wunreachable-code
-CFLAGS = -std=c99 -O0 -g $(WARNINGS)
+CFLAGS = -O0 -g $(WARNINGS)
 
 # Add additional search directives here
 # Example: -I/usr/X11R6/include -I/usr/include/ncurses
 INCLUDES = -I.
 # Example: -L/usr/X11R6/lib 
-LIBS =
+LIBS = -lm
 
 
 
