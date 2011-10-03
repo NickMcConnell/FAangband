@@ -1498,7 +1498,7 @@ bool get_item(int *cp, const char *pmt, const char *str, cmd_code cmd, int mode)
 		/* Convert letter to floor index */
 		else {
 		    k = (islower((unsigned char) which.key.code) ? 
-			 A2I(which.key.code) : -1);
+			 A2I((unsigned char)which.key.code) : -1);
 
 		    if (k < 0 || k >= floor_num) {
 			bell("Illegal object choice (floor)!");

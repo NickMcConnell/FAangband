@@ -4455,7 +4455,7 @@ bool genocide(void)
 	    continue;
 
 	/* Skip "wrong" monsters */
-	if (r_ptr->d_char != typ.code)
+	if ((unsigned char)r_ptr->d_char != typ.code)
 	    continue;
 
 	/* Ignore monsters in icky squares */

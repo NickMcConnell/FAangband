@@ -435,7 +435,7 @@ static int textui_get_count(void)
 /*
  * Hack -- special buffer to hold the action of the current keymap
  */
-static char request_command_buffer[256];
+static struct keypress request_command_buffer[256];
 
 
 /*

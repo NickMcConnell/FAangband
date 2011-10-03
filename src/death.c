@@ -779,7 +779,7 @@ static void kingly(void)
     flush();
 
     /* Wait for response */
-    pause_line(23);
+    pause_line(Term);
 }
 
 /*

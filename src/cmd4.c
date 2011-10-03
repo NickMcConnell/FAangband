@@ -227,7 +227,7 @@ void do_cmd_change_name(void)
 	}
       
       /* Scroll down */
-      else if ((ke.key.code == '\xff')|| (ke.key.code == ARROW_DOWN))
+      else if (ke.key.code == ARROW_DOWN)
 	{
 	  if (top_line + Term->hgt - 2 < last_line)
 	    top_line++;
@@ -523,22 +523,19 @@ void do_cmd_messages(void)
 	}
       
       /* Scroll forwards or backwards using mouse clicks */
-      if (ke.key.code == '\xff')
-	{
-	  if (ke.mouse.button)
-	    {
-	      if (ke.mouse.y <= hgt / 2)
-		{
-		  /* Go older if legal */
-		  if (i + 20 < n) i += 20;
-		}
-	      else
-		{
-		  /* Go newer (if able) */
-		  i = (i >= 20) ? (i - 20) : 0;
-		}
-	    }
-	}
+      if (ke.mouse.button)
+      {
+	  if (ke.mouse.y <= hgt / 2)
+	  {
+	      /* Go older if legal */
+	      if (i + 20 < n) i += 20;
+	  }
+	  else
+	  {
+	      /* Go newer (if able) */
+	      i = (i >= 20) ? (i - 20) : 0;
+	  }
+      }
       
       /* Hack -- Error of some kind */
       if (i == j) bell(NULL);

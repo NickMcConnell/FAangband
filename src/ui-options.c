@@ -1565,7 +1565,7 @@ static bool ego_action(menu_type *menu, const ui_event *event, int oid)
 /**
  * Display list of ego items to be squelched.
  */
-static void ego_menu(void *unused, const char *also_unused)
+static void ego_menu(const char *unused, int also_unused)
 {
   int idx, max_num = 0;
   ego_item_type *e_ptr;
@@ -1765,7 +1765,7 @@ static bool quality_action(menu_type *menu1, const ui_event *ev, int oid)
 /**
  * Display quality squelch menu.
  */
-static void quality_menu(void *unused, const char *also_unused)
+static void quality_menu(const char *unused, int also_unused)
 {
   menu_type menu;
   menu_iter menu_f = { 0, 0, quality_display, quality_action, 0 };
@@ -1965,7 +1965,7 @@ struct
 {
   char tag;
   char *name;
-  void (*action)(void *unused, const char *also_unused);
+    void (*action)(const char *unused, int also_unused);
 } extra_item_options[] =
   {
     { 'Q', "Quality squelching options", quality_menu },
@@ -2049,7 +2049,7 @@ bool handle_options_item(menu_type *menu, const ui_event *event, int oid)
 		{
 			oid = oid - (int)N_ELEMENTS(sval_dependent) - 1;
 			assert((size_t) oid < N_ELEMENTS(extra_item_options));
-			extra_item_options[oid].action(NULL, NULL);
+			extra_item_options[oid].action(NULL, 0);
 		}
 
 		return TRUE;

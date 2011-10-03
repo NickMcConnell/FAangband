@@ -1655,7 +1655,7 @@ static const char *o_xtra_prompt(int oid)
 /*
  * Special key actions for object inscription.
  */
-static void o_xtra_act(char ch, int oid)
+static void o_xtra_act(struct keypress ch, int oid)
 {
     object_kind *k_ptr = &k_info[oid];
     s16b idx = get_autoinscription_index(oid);
@@ -1665,14 +1665,14 @@ static void o_xtra_act(char ch, int oid)
 	return;
 
     /* Uninscribe */
-    if (ch == '}') {
+    if (ch.code == '}') {
 	if (idx != -1)
 	    remove_autoinscription(oid);
 	return;
     }
 
     /* Inscribe */
-    else if (ch == '{') {
+    else if (ch.code == '{') {
 	char note_text[80] = "";
 
 	/* Avoid the prompt getting in the way */
@@ -1710,7 +1710,7 @@ static void o_xtra_act(char ch, int oid)
 /*
  * Display known objects
  */
-void textui_browse_object_knowledge(void *obj, const char *name)
+void textui_browse_object_knowledge(const char *name, int row)
 {
     group_funcs kind_f = { TV_GOLD, FALSE, kind_name, o_cmp_tval, obj2gid, 0 };
     member_funcs obj_f =

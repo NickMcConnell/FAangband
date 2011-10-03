@@ -2469,7 +2469,7 @@ bool show_file(const char *name, const char *what, int line, int mode)
 	ke = inkey_ex();
 
 	/* Mouse input - menus */
-	if ((ke.key.code == '\xff') && (menu) && (mouse[ke.mouse.y])) {
+	if ((menu) && (mouse[ke.mouse.y])) {
 	    /* Recurse on that file */
 	    if (!show_file(hook[mouse[ke.mouse.y]], NULL, 0, mode))
 		ke.key.code = '?';

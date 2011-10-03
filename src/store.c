@@ -1456,7 +1456,7 @@ static bool get_stock(int *com_val, const char *pmt)
 	}
 
 	/* Convert response to item */
-	if (which.key.code == '\xff') {
+	if (which.mouse.button) {
 	    if (!which.mouse.y)
 		return (FALSE);
 	    else if ((which.mouse.y > 4) && (which.mouse.y < 17))
@@ -2390,7 +2390,7 @@ void store_order(void)
     size_t i;
     int j = 0, cursor = 0;
     ui_event c = EVENT_EMPTY;
-    const char cmd_keys[] = { ARROW_LEFT, ARROW_RIGHT, '\0' };
+    const char cmd_keys[] = { (char) ARROW_LEFT, (char) ARROW_RIGHT, '\0' };
 
     menu_iter menu_f = { tag_order, 0, display_order, NULL, 0 };
     menu_type menu;
