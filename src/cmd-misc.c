@@ -69,7 +69,7 @@ void get_feats(int *surroundings)
 char comm[22];
 cmd_code comm_code[22];
 const char *comm_descr[22];
-int poss;
+int poss, item;
 
 /**
 * Item tag/command key
@@ -104,8 +104,9 @@ static bool show_action(menu_type * menu, const ui_event * e, int oid)
 	cmd_insert(comm_code[oid]);
 	if (comm_code[oid] == CMD_NULL)
 	    Term_keypress(comm[oid],0);
+	cmd_set_arg_item(cmd_get_top(), 0, item);
     }
-    return TRUE;
+    return FALSE;
 }
 
 /**
@@ -115,7 +116,7 @@ bool show_cmd_menu(bool object)
 {
     menu_type menu;
     menu_iter commands_menu = { show_tag, 0, show_display, show_action, 0 };
-    region area = { 0, (object ? 2 : 1), 20, 0 };
+    region area = { 15, (object ? 2 : 1), 20, 0 };
 
     ui_event evt = EVENT_EMPTY;
     int cursor = 0;
@@ -125,10 +126,11 @@ bool show_cmd_menu(bool object)
 
     /* Set up the menu */
     WIPE(&menu, menu);
-    menu.cmd_keys = "\x8B\x8C\n\r";
-    menu.count = poss;
-    menu.menu_data = comm;
     menu_init(&menu, MN_SKIN_SCROLL, &commands_menu);
+    menu.cmd_keys = "\x8B\x8C\n\r";
+    area.page_rows = poss + (object ? 1 : 0);
+    menu_setpriv(&menu, poss, comm);
+    menu_layout(&menu, &area);
 
     /* Select an entry */
     evt = menu_select(&menu, cursor, TRUE);
@@ -368,7 +370,7 @@ void show_player(void)
 void do_cmd_show_obj(void)
 {
     const char *q, *s;
-    int j, item;
+    int j;
     object_type *o_ptr;
 
     char o_name[120];
