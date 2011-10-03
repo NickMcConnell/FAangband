@@ -120,38 +120,27 @@ void do_cmd_inscribe(cmd_code code, cmd_arg args[])
     p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 }
 
-void textui_obj_inscribe(object_type * o_ptr, int item)
-{
-    char o_name[80];
-    char tmp[80] = "";
-
-    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
-    msg("Inscribing %s.", o_name);
-    message_flush();
-
-    /* Use old inscription */
-    if (o_ptr->note)
-	strnfmt(tmp, sizeof(tmp), "%s", quark_str(o_ptr->note));
-
-    /* Get a new inscription (possibly empty) */
-    if (get_string("Inscription: ", tmp, sizeof(tmp))) {
-	cmd_insert(CMD_INSCRIBE);
-	cmd_set_arg_item(cmd_get_top(), 0, item);
-	cmd_set_arg_string(cmd_get_top(), 1, tmp);
-    }
-}
-
-
 /*** Examination ***/
-void textui_obj_examine(object_type * o_ptr, int item)
+void textui_obj_examine(void)
 {
     char header[120];
 
     textblock *tb;
     region area = { 0, 0, 0, 0 };
 
+    object_type *o_ptr;
+    int item;
+
+    /* Select item */
+    if (!get_item(&item, "Examine which item?", "You have nothing to examine.",
+		  CMD_NULL, (USE_EQUIP | USE_INVEN | USE_FLOOR | IS_HARMLESS)))
+	return;
+
+    /* Track object for object recall */
     track_object(item);
 
+    /* Display info */
+    o_ptr = object_from_item_idx(item);
     tb = object_info(o_ptr, OINFO_NONE);
     object_desc(header, sizeof(header), o_ptr, ODESC_PREFIX | ODESC_FULL);
 
@@ -252,6 +241,7 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
 	object_desc(o_name, sizeof(o_name), equip_o_ptr, ODESC_BASE);
 	msg("The %s you are %s appears to be cursed.", o_name,
 		   describe_use(slot));
+	notice_curse(CF_STICKY_WIELD, slot + 1);
 	return;
     }
 
@@ -320,46 +310,6 @@ void do_cmd_drop(cmd_code code, cmd_arg args[])
     /* Drop (some of) the item */
     inven_drop(item, amt);
 }
-
-void textui_obj_wield(object_type * o_ptr, int item)
-{
-    int slot = wield_slot(o_ptr);
-
-    /* Deal with throwing weapons */
-    if ((slot == INVEN_WIELD) && of_has(o_ptr->flags_obj, OF_THROWING))
-    {
-	if (get_check("Equip in throwing belt?")) 
-	    slot = wield_slot_ammo(o_ptr);
-    }
-
-    /* Usually if the slot is taken we'll just replace the item in the slot,
-     * but in some cases we need to ask the user which slot they actually want
-     * to replace */
-    if (p_ptr->inventory[slot].k_idx) {
-	if (o_ptr->tval == TV_RING) {
-	    const char *q = "Replace which ring? ";
-	    const char *s = "Error in obj_wield, please report";
-	    item_tester_hook = obj_is_ring;
-	    if (!get_item(&slot, q, s, CMD_WIELD, USE_EQUIP))
-		return;
-	}
-
-	if ((is_missile(o_ptr) || 
-	     (of_has(o_ptr->flags_obj, OF_THROWING) && (slot != INVEN_WIELD))) 
-	    && !object_similar(&p_ptr->inventory[slot], o_ptr, OSTACK_QUIVER)) {
-	    const char *q = "Replace which quiver item? ";
-	    const char *s = "Error in obj_wield, please report";
-	    item_tester_hook = obj_is_quiver_obj;
-	    if (!get_item(&slot, q, s, CMD_WIELD, USE_EQUIP))
-		return;
-	}
-    }
-
-    cmd_insert(CMD_WIELD);
-    cmd_set_arg_item(cmd_get_top(), 0, item);
-    cmd_set_arg_number(cmd_get_top(), 1, slot);
-}
-
 
 
 /*** Using items the traditional way ***/

@@ -114,6 +114,7 @@ static struct cmd_info cmd_item_manage[]  =
 {
     { "Display equipment listing", 'e', CMD_NULL, do_cmd_equip, NULL },
     { "Display inventory listing", 'i', CMD_NULL, do_cmd_inven, NULL },
+    { "Examine an item",           'I', CMD_NULL, textui_obj_examine },
     { "Pick up objects",           'g', CMD_PICKUP, NULL, NULL },
     { "Take off/unwield an item",  't', CMD_TAKEOFF, NULL, NULL },
     { "Drop an item",              'd', CMD_DROP, NULL, NULL },

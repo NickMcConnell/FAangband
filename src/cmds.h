@@ -33,9 +33,7 @@ extern int get_channeling_boost(void);
 void do_cmd_cast(cmd_code code, cmd_arg args[]);
 void do_cmd_study_book(cmd_code code, cmd_arg args[]);
 
-void textui_obj_inscribe(object_type *o_ptr, int item);
-void textui_obj_examine(object_type *o_ptr, int item);
-void textui_obj_wield(object_type *o_ptr, int item);
+void textui_obj_examine(void);
 
 /* cmd-misc.c */
 extern void cmd_init(void);
