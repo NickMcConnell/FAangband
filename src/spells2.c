@@ -3604,6 +3604,9 @@ bool recharge(int power)
 		if (o_ptr->tval == TV_WAND)
 		    o_ptr->pval = 0;
 
+		/* Reduce the charges of rods/wands/staves */
+		reduce_charges(o_ptr, 1);
+
 		/* Reduce and describe inventory */
 		if (item >= 0) {
 		    inven_item_increase(item, -1);
@@ -3633,6 +3636,9 @@ bool recharge(int power)
 		    if (randint0(4) == 0)
 			num_gone--;
 
+
+		/* Reduce the charges of rods/wands/staves */
+		reduce_charges(o_ptr, num_gone);
 
 		/* Reduce and describe inventory */
 		if (item >= 0) {
