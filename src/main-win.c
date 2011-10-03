@@ -1,14 +1,21 @@
-/* File: main-win.c */
-
 /*
+ * File: main-win.c
+ * Purpose: Pseudo-UI for end-to-end testing.
+ *
  * Copyright (c) 1997 Ben Harrison, Skirmantas Kligys, Robert Ruehlmann,
  * and others
  *
- * This software may be copied and distributed for educational, research,
- * and not for profit purposes provided that this copyright and statement
- * are included in all such copies.
+ * This work is free software; you can redistribute it and/or modify it
+ * under the terms of either:
+ *
+ * a) the GNU General Public License as published by the Free Software
+ *    Foundation, version 2, or
+ *
+ * b) the "Angband licence":
+ *    This software may be copied and distributed for educational, research,
+ *    and not for profit purposes provided that this copyright and statement
+ *    are included in all such copies.  Other copyrights may also apply.
  */
-
 
 /*
  * This file helps Angband work with Windows computers.
@@ -73,6 +80,11 @@
 
 #include "angband.h"
 #include "buildid.h"
+#include "cmds.h"
+#include "cave.h"
+#include "init.h"
+#include "files.h"
+
 #define uint unsigned int
 
 #if (defined(WINDOWS) && !defined(USE_SDL))
@@ -271,6 +283,7 @@
  * Include the support for loading bitmaps
  */
 #ifdef USE_GRAPHICS
+//# include "win/readdib.h"
 # include "win/readdib.h"
 #endif /* USE_GRAPHICS */
 
@@ -465,7 +478,6 @@ static HPALETTE hPal;
  */
 static HWND hwndSaver;
 
-static bool screensaver = FALSE;
 static bool screensaver_active = FALSE;
 
 static HANDLE screensaverSemaphore;
@@ -576,91 +588,6 @@ static byte win_pal[MAX_COLORS] =
 static int gamma_correction;
 #endif /* SUPPORT_GAMMA */
 
-
-/*
- * Hack -- define which keys are "special"
- */
-static bool special_key[256];
-
-/*
- * Hack -- initialization list for "special_key"
- *
- * We ignore the modifier keys (shift, control, alt, num lock, scroll lock),
- * and the normal keys (escape, tab, return, letters, numbers, etc), but we
- * catch the keypad keys (with and without numlock set, including keypad 5),
- * the function keys (including the "menu" key which maps to F10), and the
- * "pause" key (between scroll lock and numlock).  We also catch a few odd
- * keys which I do not recognize, but which are listed among keys which we
- * do catch, so they should be harmless to catch.
- */
-static const byte special_key_list[] =
-{
-	VK_CLEAR,		/* 0x0C (KP<5>) */
-
-	VK_PAUSE,		/* 0x13 (pause) */
-
-	VK_PRIOR,		/* 0x21 (KP<9>) */
-	VK_NEXT,		/* 0x22 (KP<3>) */
-	VK_END,			/* 0x23 (KP<1>) */
-	VK_HOME,		/* 0x24 (KP<7>) */
-	VK_LEFT,		/* 0x25 (KP<4>) */
-	VK_UP,			/* 0x26 (KP<8>) */
-	VK_RIGHT,		/* 0x27 (KP<6>) */
-	VK_DOWN,		/* 0x28 (KP<2>) */
-	VK_SELECT,		/* 0x29 (?) */
-	VK_PRINT,		/* 0x2A (?) */
-	VK_EXECUTE,		/* 0x2B (?) */
-	VK_SNAPSHOT,	/* 0x2C (?) */
-	VK_INSERT,		/* 0x2D (KP<0>) */
-	VK_DELETE,		/* 0x2E (KP<.>) */
-	VK_HELP,		/* 0x2F (?) */
-
-#if 0
-	VK_NUMPAD0,		/* 0x60 (KP<0>) */
-	VK_NUMPAD1,		/* 0x61 (KP<1>) */
-	VK_NUMPAD2,		/* 0x62 (KP<2>) */
-	VK_NUMPAD3,		/* 0x63 (KP<3>) */
-	VK_NUMPAD4,		/* 0x64 (KP<4>) */
-	VK_NUMPAD5,		/* 0x65 (KP<5>) */
-	VK_NUMPAD6,		/* 0x66 (KP<6>) */
-	VK_NUMPAD7,		/* 0x67 (KP<7>) */
-	VK_NUMPAD8,		/* 0x68 (KP<8>) */
-	VK_NUMPAD9,		/* 0x69 (KP<9>) */
-	VK_MULTIPLY,	/* 0x6A (KP<*>) */
-	VK_ADD,			/* 0x6B (KP<+>) */
-	VK_SEPARATOR,	/* 0x6C (?????) */
-	VK_SUBTRACT,	/* 0x6D (KP<->) */
-	VK_DECIMAL,		/* 0x6E (KP<.>) */
-	VK_DIVIDE,		/* 0x6F (KP</>) */
-#endif /* 0 */
-
-	VK_F1,			/* 0x70 */
-	VK_F2,			/* 0x71 */
-	VK_F3,			/* 0x72 */
-	VK_F4,			/* 0x73 */
-	VK_F5,			/* 0x74 */
-	VK_F6,			/* 0x75 */
-	VK_F7,			/* 0x76 */
-	VK_F8,			/* 0x77 */
-	VK_F9,			/* 0x78 */
-	VK_F10,			/* 0x79 */
-	VK_F11,			/* 0x7A */
-	VK_F12,			/* 0x7B */
-	VK_F13,			/* 0x7C */
-	VK_F14,			/* 0x7D */
-	VK_F15,			/* 0x7E */
-	VK_F16,			/* 0x7F */
-	VK_F17,			/* 0x80 */
-	VK_F18,			/* 0x81 */
-	VK_F19,			/* 0x82 */
-	VK_F20,			/* 0x83 */
-	VK_F21,			/* 0x84 */
-	VK_F22,			/* 0x85 */
-	VK_F23,			/* 0x86 */
-	VK_F24,			/* 0x87 */
-
-	0
-};
 
 #include "cmds.h"
 #include "textui.h"
@@ -1365,79 +1292,44 @@ static bool init_graphics(void)
 		char buf[1024];
 		int wid, hgt;
 		const char *name;
-		const char *mask = NULL;
 
-		if (arg_graphics == GRAPHICS_DAVID_GERVAIS)
-		{
+		if (arg_graphics == GRAPHICS_DAVID_GERVAIS) {
 			wid = 32;
 			hgt = 32;
-
-			name = "32x32.bmp";
-			mask = "mask32.bmp";
-
+			name = "32x32.png";
 			ANGBAND_GRAF = "david";
-
 			use_transparency = FALSE;
-		}
-		else if (arg_graphics == GRAPHICS_ADAM_BOLT)
-		{
+		} else if (arg_graphics == GRAPHICS_ADAM_BOLT){
 			wid = 16;
 			hgt = 16;
-
-			name = "16X16.BMP";
-			mask = "mask.bmp";
-
+			name = "16x16.png";
 			ANGBAND_GRAF = "new";
-
 			use_transparency = TRUE;
-		}
-		else if (arg_graphics == GRAPHICS_NOMAD)
-		{
+		} else if (arg_graphics == GRAPHICS_NOMAD) {
 			wid = 16;
 			hgt = 16;
-
-			name = "8X16.BMP";
-			mask = "mask8x16.bmp";
-
+			name = "8x16.png";
 			ANGBAND_GRAF = "nomad";
-
 			use_transparency = TRUE;
-		}
-		else
-		{
+		} else {
 			wid = 8;
 			hgt = 8;
-
-			name = "8X8.BMP";
+			name = "8x8.png";
 			ANGBAND_GRAF = "old";
 		}
 
 		/* Access the bitmap file */
 		path_build(buf, sizeof(buf), ANGBAND_DIR_XTRA_GRAF, name);
 
-		/* Load the bitmap or quit */
-		if (!ReadDIB(data[0].w, buf, &infGraph))
-		{
-			plog_fmt("Cannot read bitmap file '%s'", name);
-			return (FALSE);
+		/* Load the image or quit */
+		if (!ReadDIB2_PNG(data[0].w, buf, &infGraph, &infMask)) {
+			plog_fmt("Cannot read file '%s'", name);
+			return FALSE;
 		}
 
 		/* Save the new sizes */
 		infGraph.CellWidth = wid;
 		infGraph.CellHeight = hgt;
-
-		if (mask)
-		{
-			/* Access the mask file */
-			path_build(buf, sizeof(buf), ANGBAND_DIR_XTRA_GRAF, mask);
-
-			/* Load the bitmap or quit */
-			if (!ReadDIB(data[0].w, buf, &infMask))
-			{
-				plog_fmt("Cannot read bitmap file '%s'", buf);
-				return (FALSE);
-			}
-		}
 
 		/* Activate a palette */
 		if (!new_palette())
@@ -1753,19 +1645,6 @@ static void Term_nuke_win(term *t)
 }
 
 #endif /* 0 */
-
-
-/*
- * Interact with the User
- */
-static errr Term_user_win(int n)
-{
-	/* Unused parameter */
-	(void)n;
-
-	/* Success */
-	return (0);
-}
 
 
 /*
@@ -2666,7 +2545,6 @@ static void term_data_link(term_data *td)
 #endif /* 0 */
 
 	/* Prepare the template hooks */
-	t->user_hook = Term_user_win;
 	t->xtra_hook = Term_xtra_win;
 	t->curs_hook = Term_curs_win;
 	t->bigcurs_hook = Term_bigcurs_win;
@@ -3290,19 +3168,7 @@ static void start_screensaver(void)
  */
 static void display_help(const char *filename)
 {
-	char tmp[1024];
-
-	path_build(tmp, sizeof(tmp), ANGBAND_DIR_XTRA_HELP, filename);
-
-	if (file_exists(tmp))
-	{
-		ShellExecute(data[0].w, "open", tmp, NULL, NULL, SW_SHOWNORMAL);
-	}
-	else
-	{
-		plog_fmt("Cannot find help file: %s", tmp);
-		plog("Use the online help files instead.");
-	}
+	plog("Use the online help files instead.");
 }
 
 
@@ -3984,7 +3850,7 @@ static void handle_wm_paint(HWND hWnd)
 	term_data *td;
 
 	/* Acquire proper "term_data" info */
-	td = (term_data *)GetWindowLong(hWnd, 0);
+	td = (term_data *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
 	BeginPaint(hWnd, &ps);
 
@@ -4011,6 +3877,103 @@ static void handle_wm_paint(HWND hWnd)
 }
 
 
+/*
+ * We ignore the modifier keys (shift, control, alt, num lock, scroll lock),
+ * and the normal keys (escape, tab, return, letters, numbers, etc), but we
+ * catch the keypad keys (with and without numlock set, including keypad 5),
+ * the function keys (including the "menu" key which maps to F10), and the
+ * "pause" key (between scroll lock and numlock).  We also catch a few odd
+ * keys which I do not recognize, but which are listed among keys which we
+ * do catch, so they should be harmless to catch.
+ */
+static void handle_keydown(WPARAM wParam, LPARAM lParam)
+{
+	keycode_t ch = 0;
+
+	bool mc = FALSE;
+	bool ms = FALSE;
+	bool ma = FALSE;
+	bool kp = FALSE;
+
+#ifdef USE_SAVER
+	if (screensaver_active)
+	{
+		stop_screensaver();
+		return 0;
+	}
+#endif /* USE_SAVER */
+
+	/* Extract the modifiers */
+	if (GetKeyState(VK_CONTROL) & 0x8000) mc = TRUE;
+	if (GetKeyState(VK_SHIFT)   & 0x8000) ms = TRUE;
+	if (GetKeyState(VK_MENU)    & 0x8000) ma = TRUE;
+
+	/* for VK_ http://msdn.microsoft.com/en-us/library/dd375731(v=vs.85).aspx */
+	switch (wParam) {
+		case VK_F1: ch = KC_F1; break;
+		case VK_F2: ch = KC_F2; break;
+		case VK_F3: ch = KC_F3; break;
+		case VK_F4: ch = KC_F4; break;
+		case VK_F5: ch = KC_F5; break;
+		case VK_F6: ch = KC_F6; break;
+		case VK_F7: ch = KC_F7; break;
+		case VK_F8: ch = KC_F8; break;
+		case VK_F9: ch = KC_F9; break;
+		case VK_F10: ch = KC_F10; break;
+		case VK_F11: ch = KC_F11; break;
+		case VK_F12: ch = KC_F12; break;
+		case VK_F13: ch = KC_F13; break;
+		case VK_F14: ch = KC_F14; break;
+		case VK_F15: ch = KC_F15; break;
+
+		case VK_INSERT: ch = KC_INSERT; break;
+		case VK_DELETE: ch = KC_DELETE; break;
+		/* Backspace is calling both backspace and delete
+		   Removed the backspace call, so it only calls delete */
+		case VK_BACK: break;
+
+		case VK_TAB: ch = KC_TAB; break;
+		case VK_PRIOR: ch = KC_PGUP; break;
+		case VK_NEXT: ch = KC_PGDOWN; break;
+		case VK_END: ch = KC_END; break;
+		case VK_HOME: ch = KC_HOME; break;
+		case VK_LEFT: ch = ARROW_LEFT; break;
+		case VK_RIGHT: ch = ARROW_RIGHT; break;
+		case VK_UP: ch = ARROW_UP; break;
+		case VK_DOWN: ch = ARROW_DOWN; break;
+
+		case VK_CLEAR: ch = '5'; kp=TRUE; break;
+		case VK_PAUSE: ch = KC_PAUSE; break;
+
+		/* have have these to get consistent ctrl-shift behaviour */
+		case '0': if (!ms || mc || ma) ch = '0'; break;
+		case '1': if (!ms || mc || ma) ch = '1'; break;
+		case '2': if (!ms || mc || ma) ch = '2'; break;
+		case '3': if (!ms || mc || ma) ch = '3'; break;
+		case '4': if (!ms || mc || ma) ch = '4'; break;
+		case '5': if (!ms || mc || ma) ch = '5'; break;
+		case '6': if (!ms || mc || ma) ch = '6'; break;
+		case '7': if (!ms || mc || ma) ch = '7'; break;
+		case '8': if (!ms || mc || ma) ch = '8'; break;
+		case '9': if (!ms || mc || ma) ch = '9'; break;
+	}
+
+	/* we could fall back on using the scancode */
+	/* obtained using LOBYTE(HIWORD(lParam)) */
+	/* see http://source.winehq.org/source/include/dinput.h#L468 */
+
+	if (ch) {
+		int mods = 
+				(mc && (kp || MODS_INCLUDE_CONTROL(ch)) ? KC_MOD_CONTROL : 0) |
+				(ms && (kp || MODS_INCLUDE_SHIFT(ch)) ? KC_MOD_SHIFT : 0) |
+				(ma ? KC_MOD_ALT : 0) | (kp ? KC_MOD_KEYPAD : 0);
+		printf("ch=%d mods=%d\n", ch, mods);
+		Term_keypress(ch, mods);
+	}
+}
+
+
+
 static LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
                                           WPARAM wParam, LPARAM lParam)
 {
@@ -4029,7 +3992,7 @@ static LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 #endif /* USE_SAVER */
 
 	/* Acquire proper "term_data" info */
-	td = (term_data *)GetWindowLong(hWnd, 0);
+	td = (term_data *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
 	/* Handle message */
 	switch (uMsg)
@@ -4037,7 +4000,11 @@ static LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 		/* XXX XXX XXX */
 		case WM_NCCREATE:
 		{
-			SetWindowLong(hWnd, 0, (LONG)(my_td));
+#ifdef _WIN64
+			SetWindowLongPtr(hWnd, GWLP_USERDATA, my_td);
+#else
+			SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG)(my_td));
+#endif
 			break;
 		}
 
@@ -4082,56 +4049,18 @@ static LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
 		{
-			bool mc = FALSE;
-			bool ms = FALSE;
-			bool ma = FALSE;
-
-#ifdef USE_SAVER
-			if (screensaver_active)
-			{
-				stop_screensaver();
-				return 0;
-			}
-#endif /* USE_SAVER */
-
-			/* Extract the modifiers */
-			if (GetKeyState(VK_CONTROL) & 0x8000) mc = TRUE;
-			if (GetKeyState(VK_SHIFT)   & 0x8000) ms = TRUE;
-			if (GetKeyState(VK_MENU)    & 0x8000) ma = TRUE;
-
-			/* Handle "special" keys */
-			if (special_key[(byte)(wParam)])
-			{
-				/* Begin the macro trigger */
-				Term_keypress(31);
-
-				/* Send the modifiers */
-				if (mc) Term_keypress('C');
-				if (ms) Term_keypress('S');
-				if (ma) Term_keypress('A');
-
-				/* Extract "scan code" */
-				i = LOBYTE(HIWORD(lParam));
-
-				/* Introduce the scan code */
-				Term_keypress('x');
-
-				/* Encode the hexidecimal scan code */
-				Term_keypress(hexsym[i/16]);
-				Term_keypress(hexsym[i%16]);
-
-				/* End the macro trigger */
-				Term_keypress(13);
-
-				return 0;
-			}
-
+			handle_keydown(wParam, lParam);
 			break;
 		}
 
 		case WM_CHAR:
 		{
-			Term_keypress(wParam);
+			// really vicious hack; [Control]Return -> 10 (Return -> 13)
+			if (wParam == 10) {
+				Term_keypress(13, KC_MOD_CONTROL);
+			} else {
+				Term_keypress(wParam, 0);
+			}
 			return 0;
 		}
 
@@ -4367,7 +4296,7 @@ static LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
 
 
 	/* Acquire proper "term_data" info */
-	td = (term_data *)GetWindowLong(hWnd, 0);
+	td = (term_data *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
 	/* Process message */
 	switch (uMsg)
@@ -4375,7 +4304,11 @@ static LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
 		/* XXX XXX XXX */
 		case WM_NCCREATE:
 		{
-			SetWindowLong(hWnd, 0, (LONG)(my_td));
+#ifdef _WIN64
+			SetWindowLongPtr(hWnd, GWLP_USERDATA, my_td);
+#else
+			SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG)(my_td));
+#endif
 			break;
 		}
 
@@ -4491,56 +4424,13 @@ static LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
 		{
-			bool mc = FALSE;
-			bool ms = FALSE;
-			bool ma = FALSE;
-
-#ifdef USE_SAVER
-			if (screensaver_active)
-			{
-				stop_screensaver();
-				return 0;
-			}
-#endif /* USE_SAVER */
-
-			/* Extract the modifiers */
-			if (GetKeyState(VK_CONTROL) & 0x8000) mc = TRUE;
-			if (GetKeyState(VK_SHIFT)   & 0x8000) ms = TRUE;
-			if (GetKeyState(VK_MENU)    & 0x8000) ma = TRUE;
-
-			/* Handle "special" keys */
-			if (special_key[(byte)(wParam)])
-			{
-				/* Begin the macro trigger */
-				Term_keypress(31);
-
-				/* Send the modifiers */
-				if (mc) Term_keypress('C');
-				if (ms) Term_keypress('S');
-				if (ma) Term_keypress('A');
-
-				/* Extract "scan code" */
-				i = LOBYTE(HIWORD(lParam));
-
-				/* Introduce the scan code */
-				Term_keypress('x');
-
-				/* Encode the hexidecimal scan code */
-				Term_keypress(hexsym[i/16]);
-				Term_keypress(hexsym[i%16]);
-
-				/* End the macro trigger */
-				Term_keypress(13);
-
-				return 0;
-			}
-
+			handle_keydown(wParam, lParam);
 			break;
 		}
 
 		case WM_CHAR:
 		{
-			Term_keypress(wParam);
+			Term_keypress(wParam, 0);
 			return 0;
 		}
 
@@ -4860,10 +4750,6 @@ static void hook_quit(const char *str)
 	/* Free strings */
 	string_free(ini_file);
 	string_free(argv0);
-	string_free(ANGBAND_DIR_XTRA_FONT);
-	string_free(ANGBAND_DIR_XTRA_GRAF);
-	string_free(ANGBAND_DIR_XTRA_SOUND);
-	string_free(ANGBAND_DIR_XTRA_HELP);
 
 #ifdef HAS_CLEANUP
 	cleanup_angband();
@@ -4992,16 +4878,6 @@ static void init_stuff(void)
 	/* Hack -- Validate the "news.txt" file */
 	validate_file(path);
 
-
-	/* Build the "font" path */
-	path_build(path, sizeof(path), ANGBAND_DIR_XTRA, "font");
-
-	/* Allocate the path */
-	ANGBAND_DIR_XTRA_FONT = string_make(path);
-
-	/* Validate the "font" directory */
-	validate_dir(ANGBAND_DIR_XTRA_FONT);
-
 	/* Build the filename */
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_FONT, DEFAULT_FONT);
 
@@ -5011,12 +4887,6 @@ static void init_stuff(void)
 
 #ifdef USE_GRAPHICS
 
-	/* Build the "graf" path */
-	path_build(path, sizeof(path), ANGBAND_DIR_XTRA, "graf");
-
-	/* Allocate the path */
-	ANGBAND_DIR_XTRA_GRAF = string_make(path);
-
 	/* Validate the "graf" directory */
 	validate_dir(ANGBAND_DIR_XTRA_GRAF);
 
@@ -5025,27 +4895,10 @@ static void init_stuff(void)
 
 #ifdef USE_SOUND
 
-	/* Build the "sound" path */
-	path_build(path, sizeof(path), ANGBAND_DIR_XTRA, "sound");
-
-	/* Allocate the path */
-	ANGBAND_DIR_XTRA_SOUND = string_make(path);
-
 	/* Validate the "sound" directory */
 	validate_dir(ANGBAND_DIR_XTRA_SOUND);
 
 #endif /* USE_SOUND */
-
-	/* Build the "help" path */
-	path_build(path, sizeof(path), ANGBAND_DIR_XTRA, "help");
-
-	/* Allocate the path */
-	ANGBAND_DIR_XTRA_HELP = string_make(path);
-
-#if 0
-	/* Validate the "help" directory */
-	validate_dir(ANGBAND_DIR_XTRA_HELP);
-#endif /* 0 */
 }
 
 
@@ -5149,12 +5002,6 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 
 	/* Prepare the filepaths */
 	init_stuff();
-
-	/* Initialize the keypress analyzer */
-	for (i = 0; special_key_list[i]; i++)
-	{
-		special_key[special_key_list[i]] = TRUE;
-	}
 
 	/* Determine if display is 16/256/true color */
 	hdc = GetDC(NULL);

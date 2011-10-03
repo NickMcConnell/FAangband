@@ -17,7 +17,6 @@
  */
 #include "angband.h"
 #include "buildid.h"
-#include "keymap.h"
 
 /*
  * This file helps Angband work with UNIX/X11 computers.
@@ -544,7 +543,7 @@ static u32b create_pixel(Display *dpy, byte red, byte green, byte blue)
 	if (!(XAllocColor(dpy, cmap, &xcolour)))
 	{
 		quit_fmt("Couldn't allocate bitmap color #%04x%04x%04x\n",
-		         xcolour.red, xcolour.green, xcolour.blue);
+			 xcolour.red, xcolour.green, xcolour.blue);
 	}
 
 	return (xcolour.pixel);
@@ -1762,7 +1761,7 @@ static errr CheckEvent(bool wait)
 	term_data *td = NULL;
 	infowin *iwin = NULL;
 
-	int i, x, y;
+	int i;
 	int window = 0;
 
 	/* Do not wait unless requested */
@@ -1840,27 +1839,8 @@ static errr CheckEvent(bool wait)
 			break;
 		}
 
-#if 0
-		case MotionNotify:
-		{
-			/* Where is the mouse */
-			int x = xev->xmotion.x;
-			int y = xev->xmotion.y;
-			unsigned int z = xev->xmotion.state;
-
-			/* Convert to co-ordinates Angband understands. */
-			pixel_to_square(&x, &y, x, y);
-			
-			break;
-		}
-#endif
-
 		case KeyPress:
 		{
-			/* Save the mouse location */
-			x = xev->xkey.x;
-			y = xev->xkey.y;
-
 			/* Hack -- use "old" term */
 			Term_activate(&old_td->t);
 
@@ -1996,9 +1976,9 @@ static errr Term_xtra_x11_react(void)
 		for (i = 0; i < MAX_COLORS; i++)
 		{
 			if ((color_table_x11[i][0] != angband_color_table[i][0]) ||
-				(color_table_x11[i][1] != angband_color_table[i][1]) ||
-				(color_table_x11[i][2] != angband_color_table[i][2]) ||
-				(color_table_x11[i][3] != angband_color_table[i][3]))
+			    (color_table_x11[i][1] != angband_color_table[i][1]) ||
+			    (color_table_x11[i][2] != angband_color_table[i][2]) ||
+			    (color_table_x11[i][3] != angband_color_table[i][3]))
 			{
 				Pixell pixel;
 
@@ -2010,9 +1990,9 @@ static errr Term_xtra_x11_react(void)
 
 				/* Create pixel */
 				pixel = create_pixel(Metadpy->dpy,
-									 color_table_x11[i][1],
-									 color_table_x11[i][2],
-									 color_table_x11[i][3]);
+						     color_table_x11[i][1],
+						     color_table_x11[i][2],
+						     color_table_x11[i][3]);
 
 				/* Change the foreground */
 				Infoclr_set(clr[i]);
@@ -2077,9 +2057,9 @@ static errr Term_curs_x11(int x, int y)
 	term_data *td = (term_data*)(Term->data);
 
 	XDrawRectangle(Metadpy->dpy, Infowin->win, xor->gc,
-			 x * td->tile_wid + Infowin->ox,
-			 y * td->tile_hgt + Infowin->oy,
-			 td->tile_wid - 1, td->tile_hgt - 1);
+		       x * td->tile_wid + Infowin->ox,
+		       y * td->tile_hgt + Infowin->oy,
+		       td->tile_wid - 1, td->tile_hgt - 1);
 
 	/* Success */
 	return (0);
@@ -2094,9 +2074,9 @@ static errr Term_bigcurs_x11(int x, int y)
 	term_data *td = (term_data*)(Term->data);
 
 	XDrawRectangle(Metadpy->dpy, Infowin->win, xor->gc,
-			 x * td->tile_wid + Infowin->ox,
-			 y * td->tile_hgt + Infowin->oy,
-			 td->tile_wid2 - 1, td->tile_hgt - 1);
+		       x * td->tile_wid + Infowin->ox,
+		       y * td->tile_hgt + Infowin->oy,
+		       td->tile_wid2 - 1, td->tile_hgt - 1);
 
 	/* Success */
 	return (0);
@@ -2743,9 +2723,9 @@ errr init_x11(int argc, char **argv)
 		{
 			/* Create pixel */
 			pixel = create_pixel(Metadpy->dpy,
-								 color_table_x11[i][1],
-								 color_table_x11[i][2],
-								 color_table_x11[i][3]);
+					     color_table_x11[i][1],
+					     color_table_x11[i][2],
+					     color_table_x11[i][3]);
 		}
 
 		/* Initialize the color */
