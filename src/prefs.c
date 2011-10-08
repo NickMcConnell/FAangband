@@ -250,6 +250,7 @@ void option_dump(ang_file *fff)
         }
 
         autoinsc_dump(fff);
+        keymap_dump(fff);
 #if 0
         /* Dumping squelch settings caused problems, see #784 */
         squelch_dump(fff);
