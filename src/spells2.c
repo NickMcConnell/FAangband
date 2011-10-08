@@ -85,7 +85,7 @@ void shapechange(s16b shape)
 	if ((stage_map[p_ptr->stage][STAGE_TYPE] != CAVE)
 	    && (stage_map[p_ptr->stage][STAGE_TYPE] != VALLEY)
 	    && ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))) {
-	    msg_print("The sunlight prevents your shapechange!");
+	    msg("The sunlight prevents your shapechange!");
 	    shape = SHAPE_NORMAL;
 	    p_ptr->schange = (byte) shape;
 	    break;
@@ -99,14 +99,14 @@ void shapechange(s16b shape)
 	shapedesc = "bear";
 	break;
     default:
-	msg_print("You return to your normal form.");
+	msg("You return to your normal form.");
 	break;
     }
 
     if (shape) 
     {
-	msg_format("You assume the form of a %s.", shapedesc);
-	msg_print("Your equipment merges into your body.");
+	msg("You assume the form of a %s.", shapedesc);
+	msg("Your equipment merges into your body.");
     }
 
     /* Recalculate mana. */
@@ -184,7 +184,7 @@ void el_display(menu_type * menu, int oid, bool cursor, int row, int col,
 /**
  * Deal with events on the sval menu
  */
-bool el_action(menu_type * menu, const ui_event_data * e, int oid)
+bool el_action(menu_type * menu, const ui_event * e, int oid)
 {
     u16b *choice = menu->menu_data;
 
@@ -218,7 +218,7 @@ bool el_menu(void)
     menu_type menu;
     menu_iter menu_f = { el_tag, 0, el_display, el_action, 0 };
     region area = { 15, 1, 48, -1 };
-    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { 0 };
     int cursor = 0;
 
     int num = 0;
@@ -261,7 +261,7 @@ bool el_menu(void)
     menu_layout(&menu, &area);
 
     /* Select an entry */
-    evt = menu_select(&menu, cursor);
+    evt = menu_select(&menu, cursor, TRUE);
 
     /* Free memory */
     FREE(choice);
@@ -283,7 +283,7 @@ bool choose_ele_attack(void)
 
     /* Choose */
     if (!el_menu())
-	msg_print("You cancel the temporary branding.");
+	msg("You cancel the temporary branding.");
     else
 	brand = TRUE;
 
@@ -329,7 +329,7 @@ void res_display(menu_type * menu, int oid, bool cursor, int row, int col,
 /**
  * Deal with events on the sval menu
  */
-bool res_action(menu_type * menu, const ui_event_data * e, int oid)
+bool res_action(menu_type * menu, const ui_event * e, int oid)
 {
     u16b *choice = menu->menu_data;
     int plev = p_ptr->lev;
@@ -379,7 +379,7 @@ bool res_menu(void)
     menu_type menu;
     menu_iter menu_f = { res_tag, 0, res_display, res_action, 0 };
     region area = { 15, 1, 48, 7 };
-    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { 0 };
     int cursor = 0;
 
     size_t i;
@@ -408,7 +408,7 @@ bool res_menu(void)
     menu_layout(&menu, &area);
 
     /* Select an entry */
-    evt = menu_select(&menu, cursor);
+    evt = menu_select(&menu, cursor, TRUE);
 
     /* Free memory */
     FREE(choice);
@@ -430,7 +430,7 @@ extern bool choose_ele_resist(void)
 
     /* Choose */
     if (!res_menu())
-	msg_print("You cancel the temporary resistance.");
+	msg("You cancel the temporary resistance.");
     else
 	resist = TRUE;
 
@@ -488,10 +488,10 @@ void dimen_door(void)
     if (!cave_empty_bold(ny, nx) || cave_has(cave_info[ny][nx], CAVE_ICKY)
 	|| (distance(ny, nx, p_ptr->py, p_ptr->px) > 25)
 	|| (randint0(p_ptr->lev) == 0)) {
-	msg_print("You fail to exit the astral plane correctly!");
+	msg("You fail to exit the astral plane correctly!");
 	p_ptr->energy -= 50;
 	teleport_player(15, FALSE);
-	handle_stuff();
+	handle_stuff(p_ptr);
     }
 
     /* Controlled teleport. */
@@ -516,19 +516,19 @@ void rebalance_weapon(void)
 
     /* Nothing to rebalance */
     if (!o_ptr->k_idx) {
-	msg_print("You are not wielding any melee weapon.");
+	msg("You are not wielding any melee weapon.");
 	return;
     }
     /* Artifacts not allowed. */
     if (o_ptr->name1) {
-	msg_print("Artifacts cannot be rebalanced.");
+	msg("Artifacts cannot be rebalanced.");
 	return;
     }
 
     /* Not a throwing weapon. */
     if (!of_has(o_ptr->flags_obj, OF_THROWING)) 
     {
-	msg_print
+	msg
 	    ("The melee weapon you are wielding is not designed for throwing.");
 	return;
     }
@@ -545,7 +545,7 @@ void rebalance_weapon(void)
 	cf_on(o_ptr->flags_curse, FLAG_START + randint0(CF_MAX));
 
 	/* Describe */
-	msg_format("Oh no!  A dreadful black aura surrounds your %s!", o_name);
+	msg("Oh no!  A dreadful black aura surrounds your %s!", o_name);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -560,7 +560,7 @@ void rebalance_weapon(void)
 	object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 
 	/* Describe */
-	msg_format("Your %s gleams steel blue!", o_name);
+	msg("Your %s gleams steel blue!", o_name);
 
 	/* Prevent money-making. */
 	o_ptr->discount = 80;
@@ -588,22 +588,22 @@ bool hp_player(int num)
 
 	/* Heal 0-4 */
 	if (num < 5) {
-	    msg_print("You feel a little better.");
+	    msg("You feel a little better.");
 	}
 
 	/* Heal 5-14 */
 	else if (num < 15) {
-	    msg_print("You feel better.");
+	    msg("You feel better.");
 	}
 
 	/* Heal 15-34 */
 	else if (num < 35) {
-	    msg_print("You feel much better.");
+	    msg("You feel much better.");
 	}
 
 	/* Heal 35+ */
 	else {
-	    msg_print("You feel very good.");
+	    msg("You feel very good.");
 	}
 
 	/* Notice */
@@ -642,7 +642,7 @@ void magic_spiking(void)
     /* Monster */
     if (cave_m_idx[y][x] > 0) {
 	/* Message */
-	msg_print("There is a monster in the way!");
+	msg("There is a monster in the way!");
 
 	/* Attack */
 	if (py_attack(y, x, TRUE))
@@ -657,10 +657,10 @@ void magic_spiking(void)
 	    return;
 
 	/* Successful jamming */
-	msg_print("You magically jam the door.");
+	msg("You magically jam the door.");
 
 	/* Successful jamming */
-	msg_print("You jam the door with a spike.");
+	msg("You jam the door with a spike.");
 
 	/* Convert "locked" to "stuck" XXX XXX XXX */
 	if (!tf_has(f_ptr->flags, TF_DOOR_JAMMED)) 
@@ -697,7 +697,7 @@ bool lay_rune(int type)
 
 	/* Already full? */
 	if (mana_reserve >= MAX_MANA_RESERVE) {
-	    msg_print("The rune cannot hold more mana");
+	    msg("The rune cannot hold more mana");
 	    return (FALSE);
 	}
 
@@ -714,7 +714,7 @@ bool lay_rune(int type)
 
     /* XXX XXX XXX */
     if (!cave_trappable_bold(py, px)) {
-	msg_print("You cannot lay a rune here.");
+	msg("You cannot lay a rune here.");
 	return (FALSE);
     }
 #if 0
@@ -728,7 +728,7 @@ bool lay_rune(int type)
 
 	/* Artifact */
 	if (o_ptr->name1) {
-	    msg_print("There is an indestructible object here.");
+	    msg("There is an indestructible object here.");
 	    return (FALSE);
 	}
     }
@@ -757,7 +757,7 @@ bool lay_rune(int type)
 #endif
     /* Limit total number of runes. */
     if (num_runes_on_level[type - 1] >= trap_ptr->max_num) {
-	msg_print("You have reached the maximum number of runes of this type.");
+	msg("You have reached the maximum number of runes of this type.");
 	return (FALSE);
     }
 
@@ -769,8 +769,8 @@ bool lay_rune(int type)
 
     /* Warning. */
     if (num_runes_on_level[type - 1] == trap_ptr->max_num) {
-	msg_print("You have now reached your limit for runes of this type.");
-	msg_print("In order to set more, remove some.");
+	msg("You have now reached your limit for runes of this type.");
+	msg("In order to set more, remove some.");
     }
 
     return (TRUE);
@@ -782,7 +782,7 @@ bool lay_rune(int type)
 /**
  * Array of stat "descriptions"
  */
-static cptr desc_stat_pos[] = {
+static const char *desc_stat_pos[] = {
     "strong",
     "smart",
     "wise",
@@ -795,7 +795,7 @@ static cptr desc_stat_pos[] = {
 /**
  * Array of stat "descriptions"
  */
-static cptr desc_stat_neg[] = {
+static const char *desc_stat_neg[] = {
     "weak",
     "stupid",
     "naive",
@@ -846,7 +846,7 @@ bool do_dec_stat(int stat)
     /* Sustain */
     if (sust) {
 	/* Message */
-	msg_format("You feel very %s for a moment, but the feeling passes.",
+	msg("You feel very %s for a moment, but the feeling passes.",
 		   desc_stat_neg[stat]);
 
 	/* Notice effect */
@@ -857,7 +857,7 @@ bool do_dec_stat(int stat)
     /* Attempt to reduce the stat */
     if (dec_stat(stat, 10, FALSE)) {
 	/* Message */
-	msg_format("You feel very %s.", desc_stat_neg[stat]);
+	msg("You feel very %s.", desc_stat_neg[stat]);
 
 	/* Notice effect */
 	return (TRUE);
@@ -876,7 +876,7 @@ bool do_res_stat(int stat)
     /* Attempt to increase */
     if (res_stat(stat)) {
 	/* Message */
-	msg_format("You feel less %s.", desc_stat_neg[stat]);
+	msg("You feel less %s.", desc_stat_neg[stat]);
 
 	/* Notice */
 	return (TRUE);
@@ -900,7 +900,7 @@ bool do_inc_stat(int stat, bool star)
     /* Attempt to increase */
     if (inc_stat(stat, star)) {
 	/* Message */
-	msg_format("You feel very %s!", desc_stat_pos[stat]);
+	msg("You feel very %s!", desc_stat_pos[stat]);
 
 	/* Notice */
 	return (TRUE);
@@ -909,7 +909,7 @@ bool do_inc_stat(int stat, bool star)
     /* Restoration worked */
     if (res) {
 	/* Message */
-	msg_format("You feel less %s.", desc_stat_neg[stat]);
+	msg("You feel less %s.", desc_stat_neg[stat]);
 
 	/* Notice */
 	return (TRUE);
@@ -1045,7 +1045,7 @@ static bool remove_curse_aux(int good)
 
     char o_name[120];
 
-    cptr q, s;
+    const char *q, *s;
 
     bitflag curses[CF_SIZE];
 
@@ -1093,7 +1093,7 @@ static bool remove_curse_aux(int good)
 	    if ((of_has(o_ptr->flags_obj, OF_FRAGILE))
 		&& (randint0(100) < destroy_chance - (good ? 10 : 0))) {
 		/* Message */
-		msg_print("There is a bang and a flash!");
+		msg("There is a bang and a flash!");
 
 		/* Damage */
 		take_hit(damroll(5, 5), "Failed uncursing");
@@ -1156,7 +1156,7 @@ static bool remove_curse_aux(int good)
 	    /* Get an object description */
 	    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 
-	    msg_format("You feel the %s (%c) you are %s %s now %s...", o_name,
+	    msg("You feel the %s (%c) you are %s %s now %s...", o_name,
 		       index_to_label(slot), describe_use(slot),
 		       ((o_ptr->number == 1) ? "is" : "are"), feel_text[feel]);
 
@@ -1179,7 +1179,7 @@ static bool remove_curse_aux(int good)
 
     /* Something uncursed */
     if (cf_is_empty(curses))
-	msg_print("You feel as if someone is watching over you.");
+	msg("You feel as if someone is watching over you.");
 
     /* Return scroll used/spell cast */
     return (TRUE);
@@ -1212,7 +1212,7 @@ bool restore_level(void)
     /* Restore experience */
     if (p_ptr->exp < p_ptr->max_exp) {
 	/* Message */
-	msg_print("You feel your life energies returning.");
+	msg("You feel your life energies returning.");
 
 	/* Restore the experience */
 	p_ptr->exp = p_ptr->max_exp;
@@ -1291,7 +1291,7 @@ void recall_display(menu_type *menu, int oid, bool cursor, int row, int col,
 /**
  * Deal with events on the recall menu
  */
-bool recall_action(menu_type *menu, const ui_event_data *e, int oid)
+bool recall_action(menu_type *menu, const ui_event *e, int oid)
 {
     u16b *choice = menu_priv(menu);
 
@@ -1333,7 +1333,7 @@ bool recall_menu(void)
     menu_type menu;
     menu_iter menu_f = { recall_tag, 0, recall_display, recall_action, 0 };
     region area = { 15, 1, 48, -1 };
-    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { 0 };
     int cursor = 0;
     int num_entries;
     int num_poss = OPT(adult_dungeon) ? 1 : 4;
@@ -1388,7 +1388,7 @@ bool recall_menu(void)
     menu_layout(&menu, &area);
 
     /* Select an entry */
-    evt = menu_select(&menu, cursor);
+    evt = menu_select(&menu, cursor, TRUE);
 
     /* Free memory */
     FREE(choice);
@@ -1409,7 +1409,7 @@ bool set_recall(int v)
     /* No use until the player has been somewhere */
     if (((p_ptr->stage == p_ptr->home) && (!p_ptr->recall_pt)) || (!p_ptr->home)
 	|| (OPT(adult_ironman) && !p_ptr->total_winner)) {
-	msg_print("Nothing happens.");
+	msg("Nothing happens.");
 	return (FALSE);
     }
 
@@ -1423,7 +1423,7 @@ bool set_recall(int v)
 
 	    if (!recall_menu())
 		return FALSE;
-	    msg_print("The air about you becomes charged...");
+	    msg("The air about you becomes charged...");
 	    notice = TRUE;
 	}
     }
@@ -1431,7 +1431,7 @@ bool set_recall(int v)
     /* Shut */
     else {
 	if (p_ptr->word_recall) {
-	    msg_print("A tension leaves the air around you...");
+	    msg("A tension leaves the air around you...");
 	    notice = TRUE;
 	}
     }
@@ -1451,7 +1451,7 @@ bool set_recall(int v)
     p_ptr->redraw |= PR_STATUS;
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Result */
     return (TRUE);
@@ -1495,8 +1495,8 @@ static void animate_detect(int rad)
 	    /* Only show the region that the player can see */
 	    if (panel_contains(y, x)) {
 		/* Hack - Obtain attr/char */
-		a = misc_to_attr[0x3B];
-		c = misc_to_char[0x3B];
+		a = gf_to_attr[GF_DETECT][BOLT_NO_MOTION];
+		c = gf_to_char[GF_DETECT][BOLT_NO_MOTION];
 
 		/* Hack -- Visual effects -- Display a yellow star */
 		print_rel(c, a, y, x);
@@ -1506,7 +1506,7 @@ static void animate_detect(int rad)
 
     /* Flush the image of detected region */
     Term_fresh();
-    if (p_ptr->redraw) redraw_stuff();
+    if (p_ptr->redraw) redraw_stuff(p_ptr);
 
     /* Delay (efficiently) */
     Term_xtra(TERM_XTRA_DELAY, msec);
@@ -1534,7 +1534,7 @@ static void animate_detect(int rad)
 
     /* Flush screen back to normal */
     Term_fresh();
-    if (p_ptr->redraw) redraw_stuff();
+    if (p_ptr->redraw) redraw_stuff(p_ptr);
 
     /* Exit */
     return;
@@ -1584,7 +1584,7 @@ bool detect_traps(int range, bool show)
     if (detect) 
     {
 	/* Print success message */
-	msg_print("You detect traps.");
+	msg("You detect traps.");
     }
 
     /* Redraw DTrap Status */
@@ -1656,7 +1656,7 @@ bool detect_doors(int range, bool show)
 	detect = TRUE;
 
 	/* Print success message */
-	msg_print("You detect doors.");
+	msg("You detect doors.");
     }
 
     /* Result */
@@ -1716,7 +1716,7 @@ bool detect_stairs(int range, bool show)
 	detect = TRUE;
 
 	/* Print success message */
-	msg_print("You detect stairs.");
+	msg("You detect stairs.");
     }
 
     /* Result */
@@ -1787,7 +1787,7 @@ bool detect_treasure(int range, bool show)
 	detect = TRUE;
 
 	/* Print success message */
-	msg_print("You detect buried treasure.");
+	msg("You detect buried treasure.");
 
     }
 
@@ -1853,7 +1853,7 @@ bool detect_objects_gold(int range, bool show)
 
 	/* Obvious */
 	detect = TRUE;
-	msg_print("You detect treasure.");
+	msg("You detect treasure.");
 
     }
 
@@ -1923,7 +1923,7 @@ bool detect_objects_normal(int range, bool show)
 	detect = TRUE;
 
 	/* Print success message */
-	msg_print("You detect objects.");
+	msg("You detect objects.");
 
     }
 
@@ -2006,7 +2006,7 @@ bool detect_objects_magic(int range, bool show)
 	detect = TRUE;
 
 	/* Print success message */
-	msg_print("You detect magic objects.");
+	msg("You detect magic objects.");
 
     }
 
@@ -2080,9 +2080,9 @@ bool detect_monsters_normal(int range, bool show)
 
 	/* Print success message */
 	if (num_off > 0)
-	    msg_format("You detect monsters (%i offscreen).", num_off);
+	    msg("You detect monsters (%i offscreen).", num_off);
 	else
-	    msg_print("You detect monsters.");
+	    msg("You detect monsters.");
     }
 
     /* Result */
@@ -2165,10 +2165,10 @@ bool detect_monsters_invis(int range, bool show)
 
 	/* Print success message */
 	if (num_off > 0)
-	    msg_format("You detect invisible creatures (%i offscreen).",
+	    msg("You detect invisible creatures (%i offscreen).",
 		       num_off);
 	else
-	    msg_print("You detect invisible creatures.");
+	    msg("You detect invisible creatures.");
     }
 
     /* Result */
@@ -2252,9 +2252,9 @@ bool detect_monsters_evil(int range, bool show)
 
 	/* Print success message */
 	if (num_off > 0)
-	    msg_format("You detect evil creatures (%i offscreen).", num_off);
+	    msg("You detect evil creatures (%i offscreen).", num_off);
 	else
-	    msg_print("You detect evil creatures.");
+	    msg("You detect evil creatures.");
 
     }
 
@@ -2330,9 +2330,9 @@ bool detect_monsters_living(int range, bool show)
 
 	/* Print success message */
 	if (num_off > 0)
-	    msg_format("You detect living creatures (%i offscreen).", num_off);
+	    msg("You detect living creatures (%i offscreen).", num_off);
 	else
-	    msg_print("You detect living creatures.");
+	    msg("You detect living creatures.");
 
     }
 
@@ -2368,12 +2368,12 @@ bool detect_monsters_living(int range, bool show)
 	flag = TRUE;
 
 	/* Print message */
-	msg_print("You detect trees.");
+	msg("You detect trees.");
 
 	/* Update */
 	p_ptr->redraw |= PR_MAP;
 
-	redraw_stuff();
+	redraw_stuff(p_ptr);
     }
 
 
@@ -2429,13 +2429,13 @@ void stair_creation(void)
 
     /* XXX XXX XXX */
     if (!cave_valid_bold(py, px)) {
-	msg_print("The object resists the spell.");
+	msg("The object resists the spell.");
 	return;
     }
 
     /* Doesn't work outside caves */
     if (stage_map[p_ptr->stage][STAGE_TYPE] != CAVE) {
-	msg_print("You can only create stairs in caves!");
+	msg("You can only create stairs in caves!");
 	return;
     }
 
@@ -2682,7 +2682,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 
     char o_name[120];
 
-    cptr q, s;
+    const char *q, *s;
 
 
     /* Assume enchant weapon */
@@ -2716,7 +2716,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
     object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 
     /* Describe */
-    msg_format("%s %s glow%s brightly!", ((item >= 0) ? "Your" : "The"), o_name,
+    msg("%s %s glow%s brightly!", ((item >= 0) ? "Your" : "The"), o_name,
 	       ((o_ptr->number > 1) ? "" : "s"));
 
     /* Enchant */
@@ -2734,7 +2734,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 	    flush();
 
 	/* Message */
-	msg_print("The enchantment failed.");
+	msg("The enchantment failed.");
     }
 
     /* Something happened */
@@ -2757,7 +2757,7 @@ bool brand_missile(int ammo_type, int brand_type)
 {
     int item, choice;
     object_type *o_ptr;
-    cptr q, s;
+    const char *q, *s;
     bool status;
 
     /* Restrict choices Hack - check for restricted choice */
@@ -2795,7 +2795,7 @@ bool brand_missile(int ammo_type, int brand_type)
 	    flush();
 
 	/* Fail */
-	msg_print("The ammunition enchantment failed.");
+	msg("The ammunition enchantment failed.");
 
 	/* Notice */
 	return (TRUE);
@@ -2813,35 +2813,35 @@ bool brand_missile(int ammo_type, int brand_type)
     case EGO_FLAME:
 	{
 	    /* Print message and fire brand missiles. */
-	    msg_print("Your missiles are covered in a fiery aura!");
+	    msg("Your missiles are covered in a fiery aura!");
 	    break;
 	}
 
     case EGO_FROST:
 	{
 	    /* Print message and frost brand missiles. */
-	    msg_print("Your missiles are covered in a frosty sheath!");
+	    msg("Your missiles are covered in a frosty sheath!");
 	    break;
 	}
 
     case EGO_ACIDIC:
 	{
 	    /* Print message and acid brand missiles. */
-	    msg_print("Your missiles sizzle with acid!");
+	    msg("Your missiles sizzle with acid!");
 	    break;
 	}
 
     case EGO_ELECT:
 	{
 	    /* Print message and electric brand missiles. */
-	    msg_print("Your missiles are covered in sparks!");
+	    msg("Your missiles are covered in sparks!");
 	    break;
 	}
 
     case EGO_POISON:
 	{
 	    /* Print message and poison brand missiles. */
-	    msg_print("Your missiles drip with deadly poison!");
+	    msg("Your missiles drip with deadly poison!");
 	    break;
 	}
 
@@ -2945,7 +2945,7 @@ bool el_proof(bitflag *flag)
 
     int item;
 
-    cptr q, s;
+    const char *q, *s;
 
     /* Set the element */
     of_wipe(el_to_proof);
@@ -3005,7 +3005,7 @@ bool curse_armor(void)
     /* Attempt a saving throw for artifacts */
     if (artifact_p(o_ptr) && (randint0(100) < 50)) {
 	/* Cool */
-	msg_format("A %s tries to %s, but your %s resists the effects!",
+	msg("A %s tries to %s, but your %s resists the effects!",
 		   "terrible black aura", "surround your armor", o_name);
     }
 
@@ -3015,7 +3015,7 @@ bool curse_armor(void)
 	bool heavy = FALSE;
 
 	/* Oops */
-	msg_format("A terrible black aura blasts your %s!", o_name);
+	msg("A terrible black aura blasts your %s!", o_name);
 
 	/* Try every curse */
 	for (i = FLAG_START; i < CF_MAX; i++) {
@@ -3045,7 +3045,7 @@ bool curse_armor(void)
 	    /* Get an object description */
 	    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 
-	    msg_format("You feel the %s (%c) you are %s %s now %s...", o_name,
+	    msg("You feel the %s (%c) you are %s %s now %s...", o_name,
 		       index_to_label(slot), describe_use(slot),
 		       ((o_ptr->number == 1) ? "is" : "are"), feel_text[feel]);
 
@@ -3098,7 +3098,7 @@ bool curse_weapon(void)
     /* Attempt a saving throw */
     if (artifact_p(o_ptr) && (randint0(100) < 50)) {
 	/* Cool */
-	msg_format("A %s tries to %s, but your %s resists the effects!",
+	msg("A %s tries to %s, but your %s resists the effects!",
 		   "terrible black aura", "surround your weapon", o_name);
     }
 
@@ -3108,7 +3108,7 @@ bool curse_weapon(void)
 	bool heavy = FALSE;
 
 	/* Oops */
-	msg_format("A terrible black aura blasts your %s!", o_name);
+	msg("A terrible black aura blasts your %s!", o_name);
 
 	/* Try every curse */
 	for (i = FLAG_START; i < CF_MAX; i++) {
@@ -3138,7 +3138,7 @@ bool curse_weapon(void)
 	    /* Get an object description */
 	    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 
-	    msg_format("You feel the %s (%c) you are %s %s now %s...", o_name,
+	    msg("You feel the %s (%c) you are %s %s now %s...", o_name,
 		       index_to_label(slot), describe_use(slot),
 		       ((o_ptr->number == 1) ? "is" : "are"), feel_text[feel]);
 
@@ -3181,7 +3181,7 @@ bool ident_spell(void)
 
     char o_name[120];
 
-    cptr q, s;
+    const char *q, *s;
 
     /* Only un-id'ed items */
     item_tester_hook = item_tester_unknown;
@@ -3218,7 +3218,7 @@ bool ident_spell(void)
     p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Description */
     object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
@@ -3234,15 +3234,15 @@ bool ident_spell(void)
 
     /* Describe */
     if (item >= INVEN_WIELD) {
-	msg_format("%^s: %s (%c).", describe_use(item), o_name,
+	msg("%^s: %s (%c).", describe_use(item), o_name,
 		   index_to_label(item));
     } else if (item >= 0) {
-	msg_format("In your pack: %s (%c).  %s", o_name, index_to_label(item),
+	msg("In your pack: %s (%c).  %s", o_name, index_to_label(item),
 		   ((squelch ==
 		     1) ? "(Squelch)" : ((squelch ==
 					  -1) ? "(Squelch Failed)" : "")));
     } else {
-	msg_format("On the ground: %s. %s", o_name,
+	msg("On the ground: %s. %s", o_name,
 		   ((squelch ==
 		     1) ? "(Squelch)" : ((squelch ==
 					  -1) ? "(Squelch Failed)" : "")));
@@ -3253,7 +3253,7 @@ bool ident_spell(void)
     if (o_ptr->name1) {
 	artifact_type *a_ptr = &a_info[o_ptr->name1];
 	if (a_ptr->set_no != 0) {
-	    msg_print("This item is part of a set!");
+	    msg("This item is part of a set!");
 	}
     }
 
@@ -3272,7 +3272,7 @@ bool identify_fully(void)
 
     object_type *o_ptr;
 
-    cptr q, s;
+    const char *q, *s;
 
     char header[120];
 
@@ -3309,7 +3309,7 @@ bool identify_fully(void)
     o_ptr->ident |= IDENT_KNOW_CURSES;
     if (cf_is_empty(o_ptr->flags_curse)) {
 	o_ptr->ident |= IDENT_UNCURSED;
-	msg_print("This item has no curses.");
+	msg("This item has no curses.");
     } 
     else {
 	tb = object_info(o_ptr, OINFO_FULL);
@@ -3330,7 +3330,7 @@ bool identify_fully(void)
     p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Success */
     return (TRUE);
@@ -3391,7 +3391,7 @@ bool recharge(int power)
     bool fail = FALSE;
     byte fail_type = 1;
 
-    cptr q, s;
+    const char *q, *s;
     char o_name[120];
 
 
@@ -3512,7 +3512,7 @@ bool recharge(int power)
 	if (artifact_p(o_ptr)) {
 	    object_desc(o_name, sizeof(o_name), o_ptr,
 			ODESC_PREFIX | ODESC_BASE);
-	    msg_format("The recharging backfires - %s is completely drained!",
+	    msg("The recharging backfires - %s is completely drained!",
 		       o_name);
 
 	    /* Artifact rods. */
@@ -3580,12 +3580,12 @@ bool recharge(int power)
 	    /* Drain object or stack of objects. */
 	    if (fail_type == 1) {
 		if (o_ptr->tval == TV_ROD) {
-		    msg_print
+		    msg
 			("The recharge backfires, draining the rod further!");
 		    if (o_ptr->timeout < 10000)
 			o_ptr->timeout = (o_ptr->timeout + 100) * 2;
 		} else if (o_ptr->tval == TV_WAND) {
-		    msg_format
+		    msg
 			("You save your %s from destruction, but all charges are lost.",
 			 o_name);
 		    o_ptr->pval = 0;
@@ -3596,13 +3596,16 @@ bool recharge(int power)
 	    /* Destroy an object or one in a stack of objects. */
 	    if (fail_type == 2) {
 		if (o_ptr->number > 1)
-		    msg_format("Wild magic consumes one of your %s!", o_name);
+		    msg("Wild magic consumes one of your %s!", o_name);
 		else
-		    msg_format("Wild magic consumes your %s!", o_name);
+		    msg("Wild magic consumes your %s!", o_name);
 
 		/* Reduce rod stack maximum timeout, drain wands. */
 		if (o_ptr->tval == TV_WAND)
 		    o_ptr->pval = 0;
+
+		/* Reduce the charges of rods/wands/staves */
+		reduce_charges(o_ptr, 1);
 
 		/* Reduce and describe inventory */
 		if (item >= 0) {
@@ -3624,15 +3627,18 @@ bool recharge(int power)
 		int num_gone = -2;
 
 		if (o_ptr->number > 1)
-		    msg_format("Wild magic consumes some of your %s!", o_name);
+		    msg("Wild magic consumes some of your %s!", o_name);
 		else
-		    msg_format("Wild magic consumes your %s!", o_name);
+		    msg("Wild magic consumes your %s!", o_name);
 
 		/* At least 2 gone, roll for others */
 		while ((o_ptr->number + num_gone) > 0)
 		    if (randint0(4) == 0)
 			num_gone--;
 
+
+		/* Reduce the charges of rods/wands/staves */
+		reduce_charges(o_ptr, num_gone);
 
 		/* Reduce and describe inventory */
 		if (item >= 0) {
@@ -3672,8 +3678,8 @@ void tap_magical_energy(void)
 
     object_type *o_ptr;
 
-    cptr q, s;
-    cptr item_name = "";
+    const char *q, *s;
+    const char *item_name = "";
 
 
     /* Only accept legal items */
@@ -3728,7 +3734,7 @@ void tap_magical_energy(void)
     /* Require a resonable amount of energy */
     if (energy < 36) {
 	/* Notify of failure. */
-	msg_format("That %s had no useable energy", item_name);
+	msg("That %s had no useable energy", item_name);
     } else {
 	/* If mana below maximum, increase mana and drain object. */
 	if (p_ptr->csp < p_ptr->msp) {
@@ -3751,14 +3757,14 @@ void tap_magical_energy(void)
 	    if (p_ptr->csp > p_ptr->msp)
 		(p_ptr->csp = p_ptr->msp);
 
-	    msg_print("You feel your head clear.");
+	    msg("You feel your head clear.");
 
 	    p_ptr->redraw |= (PR_MANA);
 	}
 
 	/* Player is a smart cookie. */
 	else
-	    msg_format
+	    msg
 		("Your mana was already at its maximum.  %^s not drained.",
 		 item_name);
     }
@@ -3809,7 +3815,7 @@ void do_starlight(int burst_number, int dam, bool strong)
 
 	/* Confusing to be suddenly lit up. */
 	if (!cave_has(cave_info[y][x], CAVE_GLOW))
-	    fire_meteor(-1, GF_CONFUSION, y, x, dam, strong ? 1 : 0, FALSE);
+	    fire_meteor(-1, GF_CONFU, y, x, dam, strong ? 1 : 0, FALSE);
 
 	/* The actual burst of light. */
 	fire_meteor(-1, GF_LIGHT_WEAK, y, x, dam, strong ? 2 : 1, FALSE);
@@ -4027,7 +4033,7 @@ void ele_air_smite(void)
     int y, x;
 
     /* Due warning. */
-    msg_print("The powers of Air rain down destruction!");
+    msg("The powers of Air rain down destruction!");
 
     /* Multiple gravity, light, and electricity balls. */
     for (i = 0; i < 8; i++) {
@@ -4419,7 +4425,7 @@ bool aggravate_monsters(int who, bool the_entire_level)
 
     /* Messages */
     if (sleep)
-	msg_print("You hear a sudden stirring in the distance!");
+	msg("You hear a sudden stirring in the distance!");
 
     return (known);
 }
@@ -4433,7 +4439,7 @@ bool genocide(void)
 {
     int i;
 
-    char typ;
+    struct keypress typ;
 
 
     /* Mega-Hack -- Get a monster symbol */
@@ -4455,7 +4461,7 @@ bool genocide(void)
 	    continue;
 
 	/* Skip "wrong" monsters */
-	if (r_ptr->d_char != typ)
+	if ((unsigned char)r_ptr->d_char != typ.code)
 	    continue;
 
 	/* Ignore monsters in icky squares */
@@ -4542,16 +4548,16 @@ bool probing(void)
 
 	    /* Start the message */
 	    if (!probe)
-		msg_print("Probing...");
+		msg("Probing...");
 
 	    /* Get "the monster" or "something" */
 	    monster_desc(m_name, sizeof(m_name), m_ptr, 0x04);
 
 	    /* Describe the monster */
 	    if (!(r_ptr->mana))
-		msg_format("%^s has %d hit points.", m_name, m_ptr->hp);
+		msg("%^s has %d hit points.", m_name, m_ptr->hp);
 	    else
-		msg_format("%^s has %d hit points and %d mana.", m_name,
+		msg("%^s has %d hit points and %d mana.", m_name,
 			   m_ptr->hp, m_ptr->mana);
 
 	    /* Learn all of the non-spell, non-treasure flags */
@@ -4564,7 +4570,7 @@ bool probing(void)
 
     /* Done */
     if (probe) {
-	msg_print("That's all.");
+	msg("That's all.");
     }
 
     /* Result */
@@ -4678,7 +4684,7 @@ void destroy_area(int y1, int x1, int r, bool full)
     if (flag) 
     {
 	/* Message */
-	msg_print("There is a searing blast of light!");
+	msg("There is a searing blast of light!");
 
 	/* Blind the player */
 	if (!p_ptr->state.no_blind && !p_resist_good(P_RES_LIGHT)) 
@@ -4833,18 +4839,18 @@ void earthquake(int cy, int cx, int r, bool volcano)
 	    switch (randint1(3)) {
 	    case 1:
 		{
-		    msg_print("The cave ceiling collapses!");
+		    msg("The cave ceiling collapses!");
 		    break;
 		}
 	    case 2:
 		{
-		    msg_print("The cave floor twists in an unnatural way!");
+		    msg("The cave floor twists in an unnatural way!");
 		    break;
 		}
 	    default:
 		{
-		    msg_print("The cave quakes!");
-		    msg_print("You are pummeled with debris!");
+		    msg("The cave quakes!");
+		    msg("You are pummeled with debris!");
 		    break;
 		}
 	    }
@@ -4853,18 +4859,18 @@ void earthquake(int cy, int cx, int r, bool volcano)
 	    switch (randint1(3)) {
 	    case 1:
 		{
-		    msg_print("There is a mighty upheaval of the earth!");
+		    msg("There is a mighty upheaval of the earth!");
 		    break;
 		}
 	    case 2:
 		{
-		    msg_print("The ground twists in an unnatural way!");
+		    msg("The ground twists in an unnatural way!");
 		    break;
 		}
 	    default:
 		{
-		    msg_print("The ground quakes!");
-		    msg_print("You are pummeled with debris!");
+		    msg("The ground quakes!");
+		    msg("You are pummeled with debris!");
 		    break;
 		}
 	    }
@@ -4874,7 +4880,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 	/* Hurt the player a lot */
 	if (!sn) {
 	    /* Message and damage */
-	    msg_print("You are severely crushed!");
+	    msg("You are severely crushed!");
 	    damage = damroll(5, 80);
 	}
 
@@ -4884,13 +4890,13 @@ void earthquake(int cy, int cx, int r, bool volcano)
 	    switch (randint1(3)) {
 	    case 1:
 		{
-		    msg_print("You nimbly dodge the blast!");
+		    msg("You nimbly dodge the blast!");
 		    damage = 0;
 		    break;
 		}
 	    case 2:
 		{
-		    msg_print("You are bashed by rubble!");
+		    msg("You are bashed by rubble!");
 		    damage = damroll(10, 4);
 		    (void) inc_timed(TMD_STUN, randint1(50), TRUE);
 		    break;
@@ -4901,7 +4907,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 		    if (abyss > randint1(total)) {
 			fall_off_cliff();
 		    } else {
-			msg_print("You are crushed!");
+			msg("You are crushed!");
 			damage = damroll(10, 8);
 			(void) inc_timed(TMD_STUN, randint1(50), TRUE);
 			break;
@@ -4977,7 +4983,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 		    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 		    /* Scream in pain */
-		    msg_format("%^s wails out in pain!", m_name);
+		    msg("%^s wails out in pain!", m_name);
 
 		    /* Take damage from the quake */
 		    damage = (sn ? damroll(4, 8) : damroll(5, 80));
@@ -4994,7 +5000,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 		    /* Delete (not kill) "dead" monsters */
 		    if (m_ptr->hp < 0) {
 			/* Message */
-			msg_format("%^s is embedded in the rock!", m_name);
+			msg("%^s is embedded in the rock!", m_name);
 
 			/* Delete the monster */
 			delete_monster(yy, xx);
@@ -5150,7 +5156,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 			    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 			    /* There it goes... */
-			    msg_format("%s falls into the dark!", m_name);
+			    msg("%s falls into the dark!", m_name);
 
 			    /* Gone, precious */
 			    delete_monster(y, x);
@@ -5247,7 +5253,7 @@ static void cave_temp_room_light(void)
     p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW | PU_MONSTERS);
 
     /* Update stuff */
-    update_stuff();
+    update_stuff(p_ptr);
 
     /* Process the grids */
     for (i = 0; i < temp_n; i++) {
@@ -5288,7 +5294,7 @@ static void cave_temp_room_light(void)
 		    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 		    /* Dump a message */
-		    msg_format("%^s wakes up.", m_name);
+		    msg("%^s wakes up.", m_name);
 		}
 	    }
 	}
@@ -5338,7 +5344,7 @@ static void cave_temp_room_unlight(void)
     p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW | PU_MONSTERS);
 
     /* Update stuff */
-    update_stuff();
+    update_stuff(p_ptr);
 
     /* Process the grids */
     for (i = 0; i < temp_n; i++) {
@@ -5477,7 +5483,7 @@ bool light_area(int dam, int rad)
 
     /* Hack -- Message */
     if (!p_ptr->timed[TMD_BLIND]) {
-	msg_print("You are surrounded by a white light.");
+	msg("You are surrounded by a white light.");
     }
 
     /* Hook into the "project()" function */
@@ -5504,7 +5510,7 @@ bool unlight_area(int dam, int rad)
 
     /* Hack -- Message */
     if (!p_ptr->timed[TMD_BLIND]) {
-	msg_print("Darkness surrounds you.");
+	msg("Darkness surrounds you.");
     }
 
     /* Hook into the "project()" function */

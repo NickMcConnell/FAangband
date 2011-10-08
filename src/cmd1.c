@@ -60,7 +60,7 @@ bool search(bool verbose)
     {
 	if (verbose)
 	{
-	    msg_print("You can't make out your surroundings well enough to search.");
+	    msg("You can't make out your surroundings well enough to search.");
 
 	    /* Cancel repeat */
 	    disturb(0, 0);
@@ -96,7 +96,7 @@ bool search(bool verbose)
 		    found = TRUE;
 
 		    /* Message */
-		    msg_print("You have found a secret door.");
+		    msg("You have found a secret door.");
 
 		    /* Pick a door */
 		    place_closed_door(y, x);
@@ -125,7 +125,7 @@ bool search(bool verbose)
 			found = TRUE;
 
 			/* Message */
-			msg_print("You have discovered a trap on the chest!");
+			msg("You have discovered a trap on the chest!");
 
 			/* Know the trap */
 			object_known(o_ptr);
@@ -140,9 +140,9 @@ bool search(bool verbose)
     if (verbose && !found)
     {
 	if (chance >= 100)
-	    msg_print("There are no secrets here.");
+	    msg("There are no secrets here.");
 	else
-	    msg_print("You found nothing.");
+	    msg("You found nothing.");
     }
 
     return TRUE;
@@ -255,7 +255,7 @@ static void py_pickup_gold(void)
 
 	/* Display the message */
 	if (verbal)
-	    message(sound_msg, 0, buf);
+	    msgt(sound_msg, buf);
 
 	/* Add gold to purse */
 	p_ptr->au += total_gold;
@@ -286,7 +286,7 @@ static bool auto_pickup_okay(object_type * o_ptr)
 /**
  * Carry an object and delete it.
  */
-extern void py_pickup_aux(int o_idx, bool msg)
+extern void py_pickup_aux(int o_idx, bool domsg)
 {
     int slot, quiver_slot = 0;
 
@@ -374,13 +374,13 @@ extern void py_pickup_aux(int o_idx, bool msg)
     p_ptr->update |= (PU_BONUS);
 
     /* Optionally, display a message */
-    if (msg && !quiver_slot)
+    if (domsg && !quiver_slot)
     {
 	/* Describe the object */
 	object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
 
 	/* Message */
-	msg_format("You have %s (%c).", o_name, index_to_label(slot));
+	msg("You have %s (%c).", o_name, index_to_label(slot));
     }
 
 
@@ -438,7 +438,7 @@ byte py_pickup(int pickup, int y, int x)
     int can_pickup = 0;
     bool call_function_again = FALSE;
     bool blind = ((p_ptr->timed[TMD_BLIND]) || (no_light()));
-    bool msg = TRUE;
+    bool domsg = TRUE;
     bool telekinesis = (!(y == p_ptr->py) || !(x == p_ptr->px));
 
     /* Nothing to pick up -- return */
@@ -521,14 +521,14 @@ byte py_pickup(int pickup, int y, int x)
 
 	    /* Message */
 	    message_flush();
-	    msg_format("You %s %s.", p, o_name);
+	    msg("You %s %s.", p, o_name);
 	}
 	else
 	{
 	    /* Optionally, display more information about floor items */
 	    if (OPT(pickup_detail))
 	    {
-		ui_event_data e;
+		ui_event e;
 
 		if (!can_pickup)	p = "have no room for the following objects";
 		else if (blind)     p = "feel something on the floor";
@@ -562,9 +562,9 @@ byte py_pickup(int pickup, int y, int x)
 		message_flush();
 
 		if (!can_pickup)
-		    msg_print("You have no room for any of the items on the floor.");
+		    msg("You have no room for any of the items on the floor.");
 		else
-		    msg_format("You %s a pile of %d items.", (blind ? "feel" : "see"), floor_num);
+		    msg("You %s a pile of %d items.", (blind ? "feel" : "see"), floor_num);
 	    }
 	}
 
@@ -589,7 +589,7 @@ byte py_pickup(int pickup, int y, int x)
     /* Display a list if requested. */
     if (pickup == 2)
     {
-	cptr q, s;
+	const char *q, *s;
 	int item;
 
 	/* Get an object or exit. */
@@ -617,7 +617,7 @@ byte py_pickup(int pickup, int y, int x)
 	}
 
 	/* With a list, we do not need explicit pickup messages */
-	msg = FALSE;
+	domsg = FALSE;
     }
 
     /* Pick up object, if legal */
@@ -626,7 +626,7 @@ byte py_pickup(int pickup, int y, int x)
 	/* Regular pickup or telekinesis with pack not full */
 	if (can_pickup) {
 	    /* Pick up the object */
-	    py_pickup_aux(this_o_idx, msg);
+	    py_pickup_aux(this_o_idx, domsg);
 	}
 	/* Telekinesis with pack full */
 	else {
@@ -661,7 +661,7 @@ void fall_off_cliff(void)
 {
     int i = 0, dam;
 
-    msg_print("You fall into the darkness!");
+    msg("You fall into the darkness!");
 
     /* Where we fell from */
     p_ptr->last_stage = p_ptr->stage;
@@ -725,7 +725,7 @@ void fall_off_cliff(void)
 	    }
 
 	    /* Announce */
-	    msg_format("This level is home to %s.", r_ptr->name);
+	    msg("This level is home to %s.", r_ptr->name);
 	}
 
     }
@@ -791,14 +791,14 @@ void move_player(int dir)
 	    if (str_escape + 3 < randint1(16)) 
 	    {
 		/* Failure costs a turn. */
-		msg_print("You remain stuck in the pit.");
+		msg("You remain stuck in the pit.");
 		return;
 	    } 
 	    else
-		msg_print("You clamber out of the pit.");
+		msg("You clamber out of the pit.");
 	} 
 	else
-	    msg_print("You leap out of the pit.");
+	    msg("You leap out of the pit.");
     }
 
 
@@ -828,14 +828,14 @@ void move_player(int dir)
 	if (!cave_has(cave_info[y][x], CAVE_MARK)) {
 	    /* Closed door */
 	    if (tf_has(f_ptr->flags, TF_DOOR_CLOSED)) {
-		message(MSG_HITWALL, 0, "You feel a door blocking your way.");
+		msgt(MSG_HITWALL, "You feel a door blocking your way.");
 		cave_on(cave_info[y][x], CAVE_MARK);
 		light_spot(y, x);
 	    }
 
 	    /* Wall (or secret door) */
 	    else {
-		message(MSG_HITWALL, 0, "You feel a wall blocking your way.");
+		msgt(MSG_HITWALL, "You feel a wall blocking your way.");
 		cave_on(cave_info[y][x], CAVE_MARK);
 		light_spot(y, x);
 	    }
@@ -863,12 +863,12 @@ void move_player(int dir)
 		}
 		
 		/* Otherwise, a message. */
-		message(MSG_HITWALL, 0, "There is a door blocking your way.");
+		msgt(MSG_HITWALL, "There is a door blocking your way.");
 	    }
 
 	    /* Wall (or secret door) */
 	    else {
-		message(MSG_HITWALL, 0, "There is a wall blocking your way.");
+		msgt(MSG_HITWALL, "There is a wall blocking your way.");
 	    }
 	}
 
@@ -1131,7 +1131,7 @@ void move_player(int dir)
 	/* Walk on a monster trap */
 	else if (cave_monster_trap(y, x))
 	{
-	    msg_print("You inspect your cunning trap.");
+	    msg("You inspect your cunning trap.");
 	}
     }
 }

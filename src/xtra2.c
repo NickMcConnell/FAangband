@@ -26,6 +26,7 @@
 #include "cave.h"
 #include "cmds.h"
 #include "history.h"
+#include "keymap.h"
 #include "spells.h"
 #include "squelch.h"
 #include "target.h"
@@ -88,7 +89,7 @@ void check_experience(void)
     p_ptr->redraw |= (PR_EXP);
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
 
     /* Lose levels while possible */
@@ -104,7 +105,7 @@ void check_experience(void)
 	p_ptr->redraw |= (PR_EXP | PR_LEV | PR_TITLE);
 
 	/* Handle stuff */
-	handle_stuff();
+	handle_stuff(p_ptr);
     }
 
 
@@ -126,8 +127,7 @@ void check_experience(void)
 	sound(MSG_LEVEL);
 
 	/* Message */
-	message_format(MSG_LEVEL, p_ptr->lev, "Welcome to level %d.",
-		       p_ptr->lev);
+	msgt(MSG_LEVEL, "Welcome to level %d.", p_ptr->lev);
 
 	/* Write a note to the file every 5th level. */
 
@@ -149,7 +149,7 @@ void check_experience(void)
 	p_ptr->redraw |= (PR_EXP | PR_LEV | PR_TITLE);
 
 	/* Handle stuff */
-	handle_stuff();
+	handle_stuff(p_ptr);
     }
 
     /* Gain max levels while possible Called rarely - only when leveling while
@@ -167,7 +167,7 @@ void check_experience(void)
 	p_ptr->redraw |= (PR_LEV | PR_TITLE);
 
 	/* Handle stuff */
-	handle_stuff();
+	handle_stuff(p_ptr);
     }
 }
 
@@ -254,7 +254,7 @@ bool modify_panel(term *t, int wy, int wx)
 		p_ptr->redraw |= (PR_MAP);
 
 		/* Redraw for big graphics */
-		if ((tile_width > 1) || (tile_height > 1)) redraw_stuff();
+		if ((tile_width > 1) || (tile_height > 1)) redraw_stuff(p_ptr);
       
 		/* Hack -- optional disturb on "panel change" */
 		if (OPT(disturb_panel) && !OPT(center_player)) disturb(0, 0);
@@ -472,22 +472,16 @@ int motion_dir(int y1, int x1, int y2, int x2)
 /*
  * Extract a direction (or zero) from a character
  */
-int target_dir(char ch)
+int target_dir(struct keypress ch)
 {
     int d = 0;
 
-    int mode;
-
-    cptr act;
-
-    cptr s;
-
 
     /* Already a direction? */
-    if (isdigit((unsigned char) ch)) {
-	d = D2I(ch);
-    } else if (isarrow(ch)) {
-	switch (ch) {
+    if (isdigit((unsigned char) ch.code)) {
+	d = D2I(ch.code);
+    } else if (isarrow(ch.code)) {
+	switch (ch.code) {
 	case ARROW_DOWN:
 	    d = 2;
 	    break;
@@ -502,26 +496,21 @@ int target_dir(char ch)
 	    break;
 	}
     } else {
-	/* Roguelike */
-	if (OPT(rogue_like_commands)) {
+	int mode;
+	const struct keypress *act;
+
+	if (OPT(rogue_like_commands))
 	    mode = KEYMAP_MODE_ROGUE;
-	}
-
-	/* Original */
-	else {
+	else
 	    mode = KEYMAP_MODE_ORIG;
-	}
 
-	/* Extract the action (if any) */
-	act = keymap_act[mode][(byte) (ch)];
-
-	/* Analyze */
+	/* XXX see if this key has a digit in the keymap we can use */
+	act = keymap_find(mode, ch);
 	if (act) {
-	    /* Convert to a direction */
-	    for (s = act; *s; ++s) {
-		/* Use any digits in keymap */
-		if (isdigit((unsigned char) *s))
-		    d = D2I(*s);
+	    const struct keypress *cur;
+	    for (cur = act; cur->type == EVT_KBRD; cur++) {
+		if (isdigit((unsigned char) cur->code))
+		    d = D2I(cur->code);
 	    }
 	}
     }
@@ -569,9 +558,9 @@ bool get_aim_dir(int *dp)
     /* Global direction */
     int dir = 0;
 
-    ui_event_data ke;
+    ui_event ke;
 
-    cptr p;
+    const char *p;
 
     /* Initialize */
     (*dp) = 0;
@@ -597,23 +586,23 @@ bool get_aim_dir(int *dp)
 		(TARGET_KILL, KEY_GRID_X(ke), KEY_GRID_Y(ke)))
 		dir = 5;
 	} else if (ke.type == EVT_KBRD) {
-	    if (ke.key == '*') {
+	    if (ke.key.code == '*') {
 		/* Set new target, use target if legal */
 		if (target_set_interactive(TARGET_KILL, -1, -1))
 		    dir = 5;
-	    } else if (ke.key == '\'') {
+	    } else if (ke.key.code == '\'') {
 		/* Set to closest target */
 		if (target_set_closest(TARGET_KILL))
 		    dir = 5;
-	    } else if (ke.key == 't' || ke.key == '5' || ke.key == '0'
-		       || ke.key == '.') {
+	    } else if (ke.key.code == 't' || ke.key.code == '5' || ke.key.code == '0'
+		       || ke.key.code == '.') {
 		if (target_okay())
 		    dir = 5;
 	    } else {
 		/* Possible direction */
 		int keypresses_handled = 0;
 
-		while (ke.key != 0) {
+		while (ke.key.code != 0) {
 		    int this_dir;
 
 		    /* XXX Ideally show and move the cursor here to indicate
@@ -657,7 +646,7 @@ bool get_aim_dir(int *dp)
     /* Notice confusion */
     if ((*dp) != dir) {
 	/* Warn the user */
-	msg_print("You are confused.");
+	msg("You are confused.");
     }
 
     /* Save direction */
@@ -687,7 +676,7 @@ bool get_rep_dir(int *dp)
 {
     int dir = 0;
 
-    ui_event_data ke;
+    ui_event ke;
 
     /* Initialize */
     (*dp) = 0;
@@ -746,10 +735,10 @@ bool get_rep_dir(int *dp)
 	else {
 	    int keypresses_handled = 0;
 
-	    while (ke.key != 0) {
+	    while (ke.type == EVT_KBRD && ke.key.code != 0) {
 		int this_dir;
 
-		if (ke.key == ESCAPE) {
+		if (ke.key.code == ESCAPE) {
 		    /* Clear the prompt */
 		    prt("", 0, 0);
 
@@ -820,7 +809,7 @@ bool confuse_dir(int *dp)
     /* Notice confusion */
     if ((*dp) != dir) {
 	/* Warn the user */
-	msg_print("You are confused.");
+	msg("You are confused.");
 
 	/* Save direction */
 	(*dp) = dir;

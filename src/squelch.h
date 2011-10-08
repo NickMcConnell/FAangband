@@ -40,7 +40,7 @@ int get_autoinscription_index(s16b k_idx);
 const char *get_autoinscription(s16b kind_idx);
 int apply_autoinscription(object_type *o_ptr);
 int remove_autoinscription(s16b kind);
-int add_autoinscription(s16b kind, cptr inscription);
+int add_autoinscription(s16b kind, const char *inscription);
 void autoinscribe_ground(void);
 void autoinscribe_pack(void);
 bool squelch_tval(int tval);

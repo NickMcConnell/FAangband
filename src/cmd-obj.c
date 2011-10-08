@@ -38,24 +38,24 @@
 static int check_devices(object_type * o_ptr)
 {
     int fail;
-    const char *msg;
+    const char *action;
     const char *what = NULL;
 
     /* Get the right string */
     switch (o_ptr->tval) {
     case TV_ROD:
-	msg = "zap the rod";
+	action = "zap the rod";
 	break;
     case TV_WAND:
-	msg = "use the wand";
+	action = "use the wand";
 	what = "wand";
 	break;
     case TV_STAFF:
-	msg = "use the staff";
+	action = "use the staff";
 	what = "staff";
 	break;
     default:
-	msg = "activate it";
+	action = "activate it";
 	break;
     }
 
@@ -66,7 +66,7 @@ static int check_devices(object_type * o_ptr)
     if (randint1(1000) < fail) {
 	if (OPT(flush_failure))
 	    flush();
-	msg_format("You failed to %s properly.", msg);
+	msg("You failed to %s properly.", action);
 	return FALSE;
     }
 
@@ -74,7 +74,7 @@ static int check_devices(object_type * o_ptr)
     if (what && o_ptr->pval <= 0) {
 	if (OPT(flush_failure))
 	    flush();
-	msg_format("The %s has no charges left.", what);
+	msg("The %s has no charges left.", what);
 	o_ptr->ident |= (IDENT_EMPTY);
 	return FALSE;
     }
@@ -97,7 +97,7 @@ void do_cmd_uninscribe(cmd_code code, cmd_arg args[])
     object_type *o_ptr = object_from_item_idx(args[0].item);
 
     if (obj_has_inscrip(o_ptr))
-	msg_print("Inscription removed.");
+	msg("Inscription removed.");
 
     /* Remove the incription */
     o_ptr->note = 0;
@@ -120,38 +120,27 @@ void do_cmd_inscribe(cmd_code code, cmd_arg args[])
     p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 }
 
-void textui_obj_inscribe(object_type * o_ptr, int item)
-{
-    char o_name[80];
-    char tmp[80] = "";
-
-    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
-    msg_format("Inscribing %s.", o_name);
-    message_flush();
-
-    /* Use old inscription */
-    if (o_ptr->note)
-	strnfmt(tmp, sizeof(tmp), "%s", quark_str(o_ptr->note));
-
-    /* Get a new inscription (possibly empty) */
-    if (get_string("Inscription: ", tmp, sizeof(tmp))) {
-	cmd_insert(CMD_INSCRIBE);
-	cmd_set_arg_item(cmd_get_top(), 0, item);
-	cmd_set_arg_string(cmd_get_top(), 1, tmp);
-    }
-}
-
-
 /*** Examination ***/
-void textui_obj_examine(object_type * o_ptr, int item)
+void textui_obj_examine(void)
 {
     char header[120];
 
     textblock *tb;
     region area = { 0, 0, 0, 0 };
 
+    object_type *o_ptr;
+    int item;
+
+    /* Select item */
+    if (!get_item(&item, "Examine which item?", "You have nothing to examine.",
+		  CMD_NULL, (USE_EQUIP | USE_INVEN | USE_FLOOR | IS_HARMLESS)))
+	return;
+
+    /* Track object for object recall */
     track_object(item);
 
+    /* Display info */
+    o_ptr = object_from_item_idx(item);
     tb = object_info(o_ptr, OINFO_NONE);
     object_desc(header, sizeof(header), o_ptr, ODESC_PREFIX | ODESC_FULL);
 
@@ -172,20 +161,20 @@ void do_cmd_takeoff(cmd_code code, cmd_arg args[])
     int item = args[0].item;
 
     if (SCHANGE) {
-	msg_print("You cannot take off equipment while shapechanged.");
-	msg_print("Use the ']' command to return to your normal form.");
+	msg("You cannot take off equipment while shapechanged.");
+	msg("Use the ']' command to return to your normal form.");
 	return;
     }
 
     if (!item_is_available(item, NULL, USE_EQUIP))
     {
-	msg_print("You are not wielding that item.");
+	msg("You are not wielding that item.");
 	return;
     }
 
     if (!obj_can_takeoff(object_from_item_idx(item)))
     {
-	msg_print("You cannot take off that item.");
+	msg("You cannot take off that item.");
 	return;
     }
 
@@ -211,21 +200,21 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
     object_type *o_ptr = object_from_item_idx(item);
 
     if (SCHANGE) {
-	msg_print("You cannot wield equipment while shapechanged.");
-	msg_print("Use the ']' command to return to your normal form.");
+	msg("You cannot wield equipment while shapechanged.");
+	msg("Use the ']' command to return to your normal form.");
 	return;
     }
 
     if (!item_is_available(item, NULL, USE_INVEN | USE_FLOOR))
     {
-	msg_print("You do not have that item to wield.");
+	msg("You do not have that item to wield.");
 	return;
     }
 
     /* Check the slot */
     if (!slot_can_wield_item(slot, o_ptr))
     {
-	msg_print("You cannot wield that item there.");
+	msg("You cannot wield that item there.");
 	return;
     }
 
@@ -250,8 +239,9 @@ void do_cmd_wield(cmd_code code, cmd_arg args[])
     if (cf_has(equip_o_ptr->flags_curse, CF_STICKY_WIELD))
     {
 	object_desc(o_name, sizeof(o_name), equip_o_ptr, ODESC_BASE);
-	msg_format("The %s you are %s appears to be cursed.", o_name,
+	msg("The %s you are %s appears to be cursed.", o_name,
 		   describe_use(slot));
+	notice_curse(CF_STICKY_WIELD, slot + 1);
 	return;
     }
 
@@ -283,14 +273,14 @@ void do_cmd_drop(cmd_code code, cmd_arg args[])
 
     if (!item_is_available(item, NULL, USE_INVEN | USE_EQUIP))
     {
-	msg_print("You do not have that item to drop it.");
+	msg("You do not have that item to drop it.");
 	return;
     }
 
     /* Hack -- Cannot drop some cursed items */
     if (cf_has(o_ptr->flags_curse, CF_STICKY_CARRY)) {
 	/* Oops */
-	msg_print("Hmmm, it seems to be cursed.");
+	msg("Hmmm, it seems to be cursed.");
 
 	/* Notice */
 	notice_curse(CF_STICKY_CARRY, item + 1);
@@ -301,7 +291,7 @@ void do_cmd_drop(cmd_code code, cmd_arg args[])
 
     if ((item >= INVEN_WIELD) && cf_has(o_ptr->flags_curse, CF_STICKY_WIELD)) {
 	/* Oops */
-	msg_print("Hmmm, it seems to be cursed.");
+	msg("Hmmm, it seems to be cursed.");
 
 	/* Notice */
 	notice_curse(CF_STICKY_WIELD, item + 1);
@@ -320,46 +310,6 @@ void do_cmd_drop(cmd_code code, cmd_arg args[])
     /* Drop (some of) the item */
     inven_drop(item, amt);
 }
-
-void textui_obj_wield(object_type * o_ptr, int item)
-{
-    int slot = wield_slot(o_ptr);
-
-    /* Deal with throwing weapons */
-    if ((slot == INVEN_WIELD) && of_has(o_ptr->flags_obj, OF_THROWING))
-    {
-	if (get_check("Equip in throwing belt?")) 
-	    slot = wield_slot_ammo(o_ptr);
-    }
-
-    /* Usually if the slot is taken we'll just replace the item in the slot,
-     * but in some cases we need to ask the user which slot they actually want
-     * to replace */
-    if (p_ptr->inventory[slot].k_idx) {
-	if (o_ptr->tval == TV_RING) {
-	    cptr q = "Replace which ring? ";
-	    cptr s = "Error in obj_wield, please report";
-	    item_tester_hook = obj_is_ring;
-	    if (!get_item(&slot, q, s, CMD_WIELD, USE_EQUIP))
-		return;
-	}
-
-	if ((is_missile(o_ptr) || 
-	     (of_has(o_ptr->flags_obj, OF_THROWING) && (slot != INVEN_WIELD))) 
-	    && !object_similar(&p_ptr->inventory[slot], o_ptr, OSTACK_QUIVER)) {
-	    cptr q = "Replace which quiver item? ";
-	    cptr s = "Error in obj_wield, please report";
-	    item_tester_hook = obj_is_quiver_obj;
-	    if (!get_item(&slot, q, s, CMD_WIELD, USE_EQUIP))
-		return;
-	}
-    }
-
-    cmd_insert(CMD_WIELD);
-    cmd_set_arg_item(cmd_get_top(), 0, item);
-    cmd_set_arg_number(cmd_get_top(), 1, slot);
-}
-
 
 
 /*** Using items the traditional way ***/
@@ -395,7 +345,7 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
     /* Determine how this item is used. */
     if (obj_is_rod(o_ptr)) {
 	if (!obj_can_zap(o_ptr)) {
-	    msg_print("That rod is still charging.");
+	    msg("That rod is still charging.");
 	    return;
 	}
 
@@ -404,7 +354,7 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 	items_allowed = USE_INVEN | USE_FLOOR;
     } else if (obj_is_wand(o_ptr)) {
 	if (!obj_has_charges(o_ptr)) {
-	    msg_print("That wand has no charges.");
+	    msg("That wand has no charges.");
 	    return;
 	}
 
@@ -413,7 +363,7 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 	items_allowed = USE_INVEN | USE_FLOOR;
     } else if (obj_is_staff(o_ptr)) {
 	if (!obj_has_charges(o_ptr)) {
-	    msg_print("That staff has no charges.");
+	    msg("That staff has no charges.");
 	    return;
 	}
 
@@ -438,7 +388,7 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 	items_allowed = USE_INVEN | USE_FLOOR;
     } else if (obj_is_activatable(o_ptr)) {
 	if (!obj_can_activate(o_ptr)) {
-	    msg_print("That item is still charging.");
+	    msg("That item is still charging.");
 	    return;
 	}
 
@@ -446,12 +396,12 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 	snd = MSG_ACT_ARTIFACT;
 	items_allowed = USE_EQUIP;
     } else {
-	msg_print("The item cannot be used at the moment");
+	msg("The item cannot be used at the moment");
     }
 
     /* Check if item is within player's reach. */
     if (items_allowed == 0 || !item_is_available(item, NULL, items_allowed)) {
-	msg_print("You cannot use that item from its current location.");
+	msg("You cannot use that item from its current location.");
 	return;
     }
 
@@ -474,9 +424,9 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
     if ((use != USE_CHARGE && use != USE_TIMEOUT) || check_devices(o_ptr)) {
 	/* Special message for artifacts */
 	if (artifact_p(o_ptr) && wearable_p(o_ptr)) {
-	    message(snd, 0, "You activate it.");
+	    msgt(snd, "You activate it.");
 	    if (a_info[o_ptr->name1].effect_msg)
-		msg_print(a_info[o_ptr->name1].effect_msg);
+		msg(a_info[o_ptr->name1].effect_msg);
 	    level = a_info[o_ptr->name1].level;
 	} else {
 	    /* Make a noise! */
@@ -569,12 +519,12 @@ static void refill_lamp(object_type *j_ptr, object_type *o_ptr, int item)
     j_ptr->pval += o_ptr->pval;
 
     /* Message */
-    msg_print("You fuel your lamp.");
+    msg("You fuel your lamp.");
 
     /* Comment */
     if (j_ptr->pval >= FUEL_LAMP) {
 	j_ptr->pval = FUEL_LAMP;
-	msg_print("Your lamp is full.");
+	msg("Your lamp is full.");
     }
 
     /* Use fuel from a lantern */
@@ -621,17 +571,17 @@ static void refuel_torch(object_type *j_ptr, object_type *o_ptr, int item)
     j_ptr->pval += o_ptr->pval + 5;
 
     /* Message */
-    msg_print("You combine the torches.");
+    msg("You combine the torches.");
 
     /* Over-fuel message */
     if (j_ptr->pval >= FUEL_TORCH) {
 	j_ptr->pval = FUEL_TORCH;
-	msg_print("Your torch is fully fueled.");
+	msg("Your torch is fully fueled.");
     }
 
     /* Refuel message */
     else {
-	msg_print("Your torch glows more brightly.");
+	msg("Your torch glows more brightly.");
     }
 
     /* Decrease the item (from the pack) */
@@ -665,12 +615,12 @@ void do_cmd_refill(cmd_code code, cmd_arg args[])
     object_type *o_ptr = object_from_item_idx(item);
 
     if (!item_is_available(item, NULL, USE_INVEN | USE_FLOOR)) {
-	msg_print("You do not have that item to refill with it.");
+	msg("You do not have that item to refill with it.");
 	return;
     }
 
     if (j_ptr->tval != TV_LIGHT) {
-	msg_print("You are not wielding a light.");
+	msg("You are not wielding a light.");
 	return;
     }
 
@@ -683,7 +633,7 @@ void do_cmd_refill(cmd_code code, cmd_arg args[])
 	refuel_torch(j_ptr, o_ptr, item);
 
     else {
-	msg_print("Your light cannot be refilled.");
+	msg("Your light cannot be refilled.");
 	return;
     }
 
@@ -724,7 +674,7 @@ void do_cmd_study_spell(cmd_code code, cmd_arg args[])
 		p_ptr->energy_use = 100;
 	    } else {
 		/* Spell is present, but player incapable. */
-		msg_format("You cannot learn that %s.",
+		msg("You cannot learn that %s.",
 		    magic_desc[mp_ptr->spell_realm][SPELL_NOUN]);
 	    }
 
@@ -777,7 +727,7 @@ void pseudo_probe(void)
 
     /* If no target monster, fail. */
     if (m_idx < 1) {
-	msg_print("You must actually target a monster.");
+	msg("You must actually target a monster.");
 	return;
     }
 
@@ -797,9 +747,9 @@ void pseudo_probe(void)
 
 	/* Describe the monster */
 	if (!(r_ptr->mana))
-	    msg_format("%^s has about %d hit points.", m_name, approx_hp);
+	    msg("%^s has about %d hit points.", m_name, approx_hp);
 	else
-	    msg_format("%^s has about %d hit points and about %d mana.", m_name,
+	    msg("%^s has about %d hit points and about %d mana.", m_name,
 		       approx_hp, approx_mana);
 
 	/* Learn some flags.  Chance of omissions. */
@@ -831,7 +781,7 @@ void pseudo_probe(void)
 	    rf_on(l_ptr->flags, RF_IM_POIS);
 
 	/* Confirm success. */
-	msg_print("You feel you know more about this monster...");
+	msg("You feel you know more about this monster...");
 
 	/* Update monster recall window */
 	if (p_ptr->monster_race_idx == m_ptr->r_idx) {
@@ -860,7 +810,7 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
     /* Warriors will eventually learn to pseudo-probe monsters. */
     if (player_has(PF_PROBE)) {
 	/* Get a target. */
-	msg_print("Target a monster to probe.");
+	msg("Target a monster to probe.");
 	if (!get_aim_dir(&dir))
 	    return;
 	
@@ -892,7 +842,7 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
 		if (s_ptr->smana > p_ptr->csp)
 		{
 		    /* Warning */
-		    msg_format("You do not have enough mana to %s this %s.", 
+		    msg("You do not have enough mana to %s this %s.", 
 			       magic_desc[mp_ptr->spell_realm][SPELL_VERB], 
 			       magic_desc[mp_ptr->spell_realm][SPELL_NOUN]); 
 					
@@ -930,7 +880,7 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
 		else
 		{
 		    /* Spell is present, but player incapable. */
-		    msg_format("You cannot %s that %s.", 
+		    msg("You cannot %s that %s.", 
 			       magic_desc[mp_ptr->spell_realm][SPELL_VERB], 
 			       magic_desc[mp_ptr->spell_realm][SPELL_NOUN]); 
 		}
@@ -959,7 +909,7 @@ void do_cmd_study_book(cmd_code code, cmd_arg args[])
 
     /* Check that the player has access to the nominated spell book. */
     if (!item_is_available(book, obj_can_browse, (USE_INVEN | USE_FLOOR))) {
-	msg_format("That item is not within your reach.");
+	msg("That item is not within your reach.");
 	return;
     }
 
@@ -987,7 +937,7 @@ void do_cmd_study_book(cmd_code code, cmd_arg args[])
     /* Nothing to study */
     if (spell < 0) {
 	/* Message */
-	msg_format("You cannot learn any %s%s that %s.", 
+	msg("You cannot learn any %s%s that %s.", 
 		   magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
 		   (mp_ptr->spell_realm == REALM_NATURE) ? " from" : "s in", 
 		   magic_desc[mp_ptr->spell_realm][BOOK_NOUN]);

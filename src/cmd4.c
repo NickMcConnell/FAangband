@@ -18,6 +18,7 @@
  *    are included in all such copies.  Other copyrights may also apply.
  */
 #include "angband.h"
+#include "buildid.h"
 #include "button.h"
 #include "cave.h"
 #include "files.h"
@@ -81,7 +82,7 @@ void do_cmd_redraw(void)
   Term_clear();
 
   /* Hack -- update */
-  handle_stuff();
+  handle_stuff(p_ptr);
   
   /* Place the cursor on the player */
   if (0 != character_dungeon)
@@ -124,7 +125,7 @@ void redraw_window(void)
   Term_xtra(TERM_XTRA_REACT, 0);
   
   /* Hack -- update */
-  handle_stuff();
+  handle_stuff(p_ptr);
   
   /* Redraw */
   Term_redraw();
@@ -138,13 +139,13 @@ void redraw_window(void)
  */
 void do_cmd_change_name(void)
 {
-  ui_event_data ke;
+  ui_event ke;
   
   int col = 0;
   int last_line = 0;
   int top_line = 0;
 
-  cptr p;
+  const char *p;
 
   /* Prompt */
   p = "['c' change name, 'f' to file, scroll, or ESC]";
@@ -174,7 +175,7 @@ void do_cmd_change_name(void)
       /* Display the player */
       display_dump(dumpline, top_line, top_line + Term->hgt - 1, col);
 
-      redraw_stuff();
+      redraw_stuff(p_ptr);
 
       /* Clear the bottom line */
       prt("", Term->hgt - 1, 0);
@@ -186,10 +187,10 @@ void do_cmd_change_name(void)
       ke = inkey_ex();
       
       /* Exit */
-      if (ke.key == ESCAPE) break;
+      if (ke.key.code == ESCAPE) break;
       
       /* Change name */
-      if (ke.key == 'c')
+      if (ke.key.code == 'c')
         {
 	  char namebuf[32] = "";
 
@@ -207,7 +208,7 @@ void do_cmd_change_name(void)
         }
       
       /* File dump */
-      else if (ke.key == 'f')
+      else if (ke.key.code == 'f')
 	{
 	  char ftmp[80];
 	  
@@ -218,50 +219,50 @@ void do_cmd_change_name(void)
 	      if (ftmp[0] && (ftmp[0] != ' '))
 		{
 		  if (file_character(ftmp, dumpline, last_line))
-		    msg_print("Character dump failed!");
+		    msg("Character dump failed!");
 		  else
-		    msg_print("Character dump successful.");
+		    msg("Character dump successful.");
 		}
 	    }
 	}
       
       /* Scroll down */
-      else if ((ke.key == '\xff')|| (ke.key == ARROW_DOWN))
+      else if (ke.key.code == ARROW_DOWN)
 	{
 	  if (top_line + Term->hgt - 2 < last_line)
 	    top_line++;
 	}
       
       /* Page down */
-      else if (ke.key == ' ')
+      else if (ke.key.code == ' ')
 	{
 	  top_line = MIN(last_line - Term->hgt + 2, 
 			 top_line + (Term->hgt - 2));
 	}
       
       /* Scroll up */
-      else if (ke.key == ARROW_UP)
+      else if (ke.key.code == ARROW_UP)
 	{
 	  if (top_line)
 	    top_line--;
 	}
       
       /* Page up */
-      else if (ke.key == '-')
+      else if (ke.key.code == '-')
 	{
 	  top_line -= (Term->hgt - 2) / 2;
 	  if (top_line < 0) top_line = 0;
 	}
       
       /* Scroll left */
-      else if (ke.key == ARROW_LEFT)
+      else if (ke.key.code == ARROW_LEFT)
 	{
 	  if (col)
 	    col--;
 	}
       
       /* Scroll right */
-      else if (ke.key == ARROW_RIGHT)
+      else if (ke.key.code == ARROW_RIGHT)
 	{
 	  if (col < 32)
 	    col++;
@@ -313,7 +314,7 @@ void do_cmd_message_one(void)
  */
 void do_cmd_messages(void)
 {
-  ui_event_data ke;
+  ui_event ke;
   
   int i, j, n, q;
   int wid, hgt;
@@ -370,7 +371,7 @@ void do_cmd_messages(void)
       /* Dump messages */
       for (j = 0; (j < hgt - 4) && (i + j < n); j++)
 	{
-	  cptr msg = message_str((s16b)(i+j));
+	  const char *msg = message_str((s16b)(i+j));
 	  byte attr = message_color((s16b)(i+j));
 	  
 	  /* Apply horizontal scroll */
@@ -382,7 +383,7 @@ void do_cmd_messages(void)
 	  /* Hilight "shower" */
 	  if (shower[0])
 	    {
-	      cptr str = msg;
+	      const char *str = msg;
 	      
 	      /* Display matches */
 	      while ((str = strstr(str, shower)) != NULL)
@@ -404,19 +405,19 @@ void do_cmd_messages(void)
       
       /* Display prompt (not very informative) */
       prt(p, hgt - 1, 0);
-      redraw_stuff();
+      redraw_stuff(p_ptr);
       
       /* Get a command */
       ke = inkey_ex();
       
       /* Exit on Escape */
-      if (ke.key == ESCAPE) break;
+      if (ke.key.code == ESCAPE) break;
       
       /* Hack -- Save the old index */
       j = i;
       
       /* Horizontal scroll */
-      if (ke.key == '4')
+      if (ke.key.code == '4')
 	{
 	  /* Scroll left */
 	  q = (q >= wid / 2) ? (q - wid / 2) : 0;
@@ -426,7 +427,7 @@ void do_cmd_messages(void)
 	}
       
       /* Horizontal scroll */
-      if (ke.key == '6')
+      if (ke.key.code == '6')
 	{
 	  /* Scroll right */
 	  q = q + wid / 2;
@@ -436,7 +437,7 @@ void do_cmd_messages(void)
 	}
       
       /* Hack -- handle show */
-      if (ke.key == '=')
+      if (ke.key.code == '=')
 	{
 	  /* Prompt */
 	  prt("Show: ", hgt - 1, 0);
@@ -449,7 +450,7 @@ void do_cmd_messages(void)
 	}
       
       /* Hack -- handle find */
-      if (ke.key == '/')
+      if (ke.key.code == '/')
 	{
 	  s16b z;
 	  
@@ -465,7 +466,7 @@ void do_cmd_messages(void)
 	  /* Scan messages */
 	  for (z = i + 1; z < n; z++)
 	    {
-	      cptr msg = message_str(z);
+	      const char *msg = message_str(z);
 	      
 	      /* Search for it */
 	      if (strstr(msg, finder))
@@ -480,64 +481,61 @@ void do_cmd_messages(void)
 	}
       
       /* Recall 20 older messages */
-      if ((ke.key == 'p') || (ke.key == KTRL('P')) || (ke.key == ' '))
+      if ((ke.key.code == 'p') || (ke.key.code == KTRL('P')) || (ke.key.code == ' '))
 	{
 	  /* Go older if legal */
 	  if (i + 20 < n) i += 20;
 	}
       
       /* Recall 10 older messages */
-      if (ke.key == '+')
+      if (ke.key.code == '+')
 	{
 	  /* Go older if legal */
 	  if (i + 10 < n) i += 10;
 	}
       
       /* Recall 1 older message */
-      if ((ke.key == '8') || (ke.key == '\n') || (ke.key == '\r'))
+      if ((ke.key.code == '8') || (ke.key.code == '\n') || (ke.key.code == '\r'))
 	{
 	  /* Go older if legal */
 	  if (i + 1 < n) i += 1;
 	}
       
       /* Recall 20 newer messages */
-      if ((ke.key == 'n') || (ke.key == KTRL('N')))
+      if ((ke.key.code == 'n') || (ke.key.code == KTRL('N')))
 	{
 	  /* Go newer (if able) */
 	  i = (i >= 20) ? (i - 20) : 0;
 	}
       
       /* Recall 10 newer messages */
-      if (ke.key == '-')
+      if (ke.key.code == '-')
 	{
 	  /* Go newer (if able) */
 	  i = (i >= 10) ? (i - 10) : 0;
 	}
       
       /* Recall 1 newer messages */
-      if (ke.key == '2')
+      if (ke.key.code == '2')
 	{
 	  /* Go newer (if able) */
 	  i = (i >= 1) ? (i - 1) : 0;
 	}
       
       /* Scroll forwards or backwards using mouse clicks */
-      if (ke.key == '\xff')
-	{
-	  if (ke.index)
-	    {
-	      if (ke.mousey <= hgt / 2)
-		{
-		  /* Go older if legal */
-		  if (i + 20 < n) i += 20;
-		}
-	      else
-		{
-		  /* Go newer (if able) */
-		  i = (i >= 20) ? (i - 20) : 0;
-		}
-	    }
-	}
+      if (ke.mouse.button)
+      {
+	  if (ke.mouse.y <= hgt / 2)
+	  {
+	      /* Go older if legal */
+	      if (i + 20 < n) i += 20;
+	  }
+	  else
+	  {
+	      /* Go newer (if able) */
+	      i = (i >= 20) ? (i - 20) : 0;
+	  }
+      }
       
       /* Hack -- Error of some kind */
       if (i == j) bell(NULL);
@@ -588,7 +586,7 @@ void do_cmd_note(void)
     if (!tmp[0] || (tmp[0] == ' ')) return;
 
     /* Add the note to the message recall */
-    msg_format("Note: %s", tmp);
+    msg("Note: %s", tmp);
 
     /* Add a history entry */
     history_add(tmp, HISTORY_USER_INPUT, 0);
@@ -602,7 +600,7 @@ void do_cmd_note(void)
 void do_cmd_version(void)
 {
     /* Silly message */
-    msg_format("You are playing %s %s.  Type '?' for more info.",
+    msg("You are playing %s %s.  Type '?' for more info.",
 	       VERSION_NAME, VERSION_STRING);
 }
 
@@ -640,26 +638,26 @@ void do_cmd_feeling(void)
   /* No useful feeling in town */
   if (!p_ptr->depth)
     {
-      msg_print("Looks like a typical town.");
+      msg("Looks like a typical town.");
       return;
     }
   
   /* No useful feelings until enough time has passed */
   if (!do_feeling)
     {
-      msg_print("You are still uncertain about this level...");
+      msg("You are still uncertain about this level...");
       return;
     }
   
   /* Display the feeling */
-    if (p_ptr->themed_level) msg_format("%s", themed_feeling);
-    else msg_print(feeling_text[feeling]);
+    if (p_ptr->themed_level) msg("%s", themed_feeling);
+    else msg(feeling_text[feeling]);
 }
 
 /*
  * Array of feeling strings
  */
-static cptr do_cmd_challenge_text[14] =
+static const char *do_cmd_challenge_text[14] =
 {
   "challenges you from beyond the grave!",
   "thunders 'Prove worthy of your traditions - or die ashamed!'.",
@@ -687,7 +685,7 @@ void ghost_challenge(void)
 {
     monster_race *r_ptr = &r_info[r_ghost];
     
-    msg_format("%^s, the %^s %s", ghost_name, r_ptr->name, 
+    msg("%^s, the %^s %s", ghost_name, r_ptr->name, 
 	       do_cmd_challenge_text[randint0(14)]);
 }
 
@@ -787,7 +785,7 @@ void do_cmd_load_screen(void)
   
 
   /* Message */
-  msg_print("Screen dump loaded.");
+  msg("Screen dump loaded.");
   message_flush();
   
   
@@ -873,7 +871,7 @@ void do_cmd_save_screen_text(void)
   
   
   /* Message */
-  msg_print("Screen dump saved.");
+  msg("Screen dump saved.");
   message_flush();
   
   
@@ -909,7 +907,7 @@ void do_cmd_save_screen_html(int mode)
     /* Check for failure */
     if (!fff)
     {
-	msg_print("Screen dump failed.");
+	msg("Screen dump failed.");
 	message_flush();
 	return;
     }
@@ -927,11 +925,11 @@ void do_cmd_save_screen_html(int mode)
   
     /* Recover current graphics settings */
     reset_visuals(TRUE);
-    process_pref_file(file_name, TRUE);
+    process_pref_file(file_name, TRUE, FALSE);
     file_delete(file_name);
     do_cmd_redraw();
   
-    msg_print("HTML screen dump saved.");
+    msg("HTML screen dump saved.");
     message_flush();
 }
 
@@ -941,13 +939,13 @@ void do_cmd_save_screen_html(int mode)
  */
 void do_cmd_save_screen(void)
 {
-    ui_event_data ke;
-    msg_print("Dump type [(t)ext; (h)tml; (f)orum embedded html]:");
+    ui_event ke;
+    msg("Dump type [(t)ext; (h)tml; (f)orum embedded html]:");
     button_add("f", 'f');
     button_add("h", 'h');
     button_add("t", 't');
     ke = inkey_ex();
-    switch(ke.key) 
+    switch(ke.key.code) 
     {
     case ESCAPE:
 	break;
@@ -978,7 +976,7 @@ void do_cmd_time(void)
   
   
   /* Message */
-  msg_format("This is day %d. The time is %d:%02d %s.", day,
+  msg("This is day %d. The time is %d:%02d %s.", day,
              (hour % 12 == 0) ? 12 : (hour % 12), min,
              (hour < 12) ? "AM" : "PM");
 }

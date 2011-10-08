@@ -121,6 +121,9 @@
 #include <string.h>
 #include <time.h>
 
+#include <wchar.h>
+#include <wctype.h>
+
 /** POSIX headers **/
 #if defined(SET_UID) || defined(MACH_O_CARBON)
 # include <pwd.h>
@@ -133,7 +136,6 @@
 /*** Define the basic game types ***/
 
 /*
- * cptr is a shortcut type for "const char *".  XXX
  * errr is an error code
  *
  * A "byte" is an unsigned byte of memory.
@@ -145,8 +147,6 @@
 #undef bool
 #define bool bool_hack
 
-
-typedef const char *cptr;
 typedef int errr;
 
 
@@ -238,7 +238,7 @@ typedef int errr;
 #define MAX(a,b)	(((a) < (b)) ? (b)  : (a))
 #define ABS(a)		(((a) < 0)   ? (-(a)) : (a))
 #define SGN(a)		(((a) < 0)   ? (-1) : ((a) != 0))
-#define CMP(a,b) (a < b ? -1 : (b < a ? 1: 0))
+#define CMP(a,b) ((a) < (b) ? -1 : ((b) < (a) ? 1 : 0))
 
 
 /*** Useful fairly generic macros ***/
@@ -258,28 +258,11 @@ typedef int errr;
 
 /*
  * Note that all "index" values must be "lowercase letters", while
- * all "digits" must be "digits".  Control characters can be made
- * from any legal characters.  XXX XXX XXX
+ * all "digits" must be "digits".
  */
 #define A2I(X)	((X) - 'a')
 #define I2A(X)	((X) + 'a')
 #define D2I(X)	((X) - '0')
 #define I2D(X)	((X) + '0')
-#define KTRL(X)	((X) & 0x1F)
-#define UN_KTRL(X)	((X) + 64)
-#define ESCAPE	'\033'
-
-
-/*
- * System-independent definitions for the arrow keys.
- */
-#define ARROW_DOWN	'\x8A'
-#define ARROW_LEFT	'\x8B'
-#define ARROW_RIGHT	'\x8C'
-#define ARROW_UP	'\x8D'
-
-/* Analogous to isdigit() etc in ctypes */
-#define isarrow(c)	((c >= ARROW_DOWN) && (c <= ARROW_UP))
-
 
 #endif /* INCLUDED_H_BASIC_H */

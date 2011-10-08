@@ -92,7 +92,7 @@ static bitflag breath_flag_mask[RSF_SIZE];
  * Table of monster descriptions.  Used to make descriptions for kinds 
  * of pits and rooms of chambers that have no special names.
  */
-cptr d_char_req_desc[] = {
+const char *d_char_req_desc[] = {
     "B:bird",
     "C:canine",
     "D:dragon",
@@ -906,7 +906,7 @@ extern void get_chamber_monsters(int y1, int x1, int y2, int x2)
     /* Describe */
     if (OPT(cheat_room)) {
 	/* Room type */
-	msg_format("Room of chambers (%s)", name);
+	msg("Room of chambers (%s)", name);
     }
 }
 
@@ -1060,11 +1060,11 @@ extern void general_monster_restrictions(void)
  * To avoid rebuilding the monster list too often (which can quickly 
  * get expensive), we handle monsters of a specified race separately.
  */
-extern void get_vault_monsters(char racial_symbol[], byte vault_type, cptr data,
+extern void get_vault_monsters(char racial_symbol[], byte vault_type, const char *data,
 			       int y1, int y2, int x1, int x2)
 {
     int i, y, x, temp;
-    cptr t;
+    const char *t;
 
     for (i = 0; racial_symbol[i] != '\0'; i++) {
 	/* Require correct race, allow uniques. */

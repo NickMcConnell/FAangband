@@ -180,7 +180,7 @@ extern void get_chamber_monsters(int y1, int x1, int y2, int x2);
 extern void spread_monsters(char symbol, int depth, int num, int y0, int x0,
 			    int dy, int dx);
 extern void general_monster_restrictions(void);
-extern void get_vault_monsters(char racial_symbol[], byte vault_type, cptr data,
+extern void get_vault_monsters(char racial_symbol[], byte vault_type, const char *data,
 			       int y1, int y2, int x1, int x2);
 
 extern void correct_dir(int *row_dir, int *col_dir, int y1, int x1, int y2,
@@ -195,7 +195,7 @@ extern void destroy_level(bool new_level);
 extern bool passable(int feat);
 extern bool generate_starburst_room(int y1, int x1, int y2, int x2, bool light,
 				    int feat, bool special_ok);
-extern bool build_vault(int y0, int x0, int ymax, int xmax, cptr data,
+extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 			bool light, bool icky, byte vault_type);
 extern bool room_build(int room_type);
 

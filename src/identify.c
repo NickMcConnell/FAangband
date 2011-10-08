@@ -357,17 +357,17 @@ void label_as_ego(object_type * o_ptr, int item)
     p_ptr->redraw |= (PR_INVEN | PR_EQUIP | PR_BASIC | PR_EXTRA);
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Description */
     object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
 
     /* Describe */
     if (item - 1 >= INVEN_WIELD) {
-	msg_format("%^s: %s (%c).", describe_use(item - 1), o_name,
+	msg("%^s: %s (%c).", describe_use(item - 1), o_name,
 		   index_to_label(item - 1));
     } else if (item - 1 >= 0) {
-	msg_format("In your pack: %s (%c).", o_name, index_to_label(item));
+	msg("In your pack: %s (%c).", o_name, index_to_label(item));
     }
 }
 

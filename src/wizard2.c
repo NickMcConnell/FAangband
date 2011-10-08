@@ -38,7 +38,7 @@ static void do_cmd_wiz_hack_ben(void)
 
 #ifdef MONSTER_FLOW
 
-    char cmd;
+    struct keypress cmd;
 
     int py = p_ptr->py;
     int px = p_ptr->px;
@@ -51,7 +51,7 @@ static void do_cmd_wiz_hack_ben(void)
 
 
     /* Analyze the command */
-    switch (cmd) {
+    switch (cmd.code) {
     case 'S':
     case 's':
 	{
@@ -120,7 +120,7 @@ static void do_cmd_wiz_hack_ben(void)
 		 &cmd))
 		return;
 
-	    if ((cmd == 'D') || (cmd == 'd')) {
+	    if ((cmd.code == 'D') || (cmd.code == 'd')) {
 		/* Update map */
 		for (y = Term->offset_y; y <= Term->offset_y + SCREEN_HGT; y++) {
 		    for (x = Term->offset_x; x <= Term->offset_x + SCREEN_WID; x++) {
@@ -178,6 +178,7 @@ static void do_cmd_wiz_hack_ben(void)
 	    /* Actual cost values */
 	    else {
 		int j;
+		struct keypress key;
 
 		for (i = cost_at_center - 2; i <= 100 + NOISE_STRENGTH; ++i) {
 		    /* First show grids with no scent */
@@ -222,7 +223,8 @@ static void do_cmd_wiz_hack_ben(void)
 		    }
 
 		    /* Get key */
-		    if (inkey() == ESCAPE)
+		    key = inkey();
+		    if (key.code == ESCAPE)
 			break;
 
 		    /* Redraw map */
@@ -248,7 +250,7 @@ static void do_cmd_wiz_hack_ben(void)
 #else				/* MONSTER_FLOW */
 
     /* Oops */
-    msg_print("Monster flow is not included in this copy of the game.");
+    msg("Monster flow is not included in this copy of the game.");
 
 #endif				/* MONSTER_FLOW */
 
@@ -294,7 +296,7 @@ static void do_cmd_wiz_bamf(void)
 
     /* Test for passable terrain. */
     if (!cave_passable_bold(ny, nx)) {
-	msg_print("The square you are aiming for is impassable.");
+	msg("The square you are aiming for is impassable.");
     }
 
     /* The simple act of controlled teleport. */
@@ -641,7 +643,7 @@ void wiz_create_item_subdisplay(menu_type *m, int oid, bool cursor,
 	}
 }
 
-bool wiz_create_item_subaction(menu_type *m, const ui_event_data *e, int oid)
+bool wiz_create_item_subaction(menu_type *m, const ui_event *e, int oid)
 {
     int *choices = menu_priv(m);
 
@@ -743,7 +745,7 @@ bool wiz_create_item_subaction(menu_type *m, const ui_event_data *e, int oid)
     drop_near(i_ptr, -1, p_ptr->py, p_ptr->px, TRUE);
     
     /* All done */
-    msg_print("Allocated.");
+    msg("Allocated.");
     
     return FALSE;
 }
@@ -764,9 +766,9 @@ void wiz_create_item_display(menu_type *m, int oid, bool cursor,
 	c_prt(curs_attrs[CURS_KNOWN][0 != cursor], tvals[oid].desc, row, col);
 }
 
-bool wiz_create_item_action(menu_type *m, const ui_event_data *e, int oid)
+bool wiz_create_item_action(menu_type *m, const ui_event *e, int oid)
 {
-	ui_event_data ret;
+	ui_event ret;
 	menu_type *menu;
 
 	int choice[60];
@@ -823,7 +825,7 @@ bool wiz_create_item_action(menu_type *m, const ui_event_data *e, int oid)
 	menu->title = buf;
 	menu_setpriv(menu, n_choices, choice);
 	menu_layout(menu, &wiz_create_item_area);
-	ret = menu_select(menu, 0);
+	ret = menu_select(menu, 0, FALSE);
 
 	screen_load();
 
@@ -857,7 +859,7 @@ static void wiz_create_item(void)
 
 	menu_setpriv(menu, N_ELEMENTS(tvals), tvals);
 	menu_layout(menu, &wiz_create_item_area);
-	menu_select(menu, 0);
+	menu_select(menu, 0, FALSE);
 
 	screen_load();
 }
@@ -892,7 +894,7 @@ static void wiz_create_artifact(void)
     
     menu_setpriv(menu, num, a_tvals);
     menu_layout(menu, &wiz_create_item_area);
-    menu_select(menu, 0);
+    menu_select(menu, 0, FALSE);
     
     screen_load();
     FREE(a_tvals);
@@ -904,7 +906,7 @@ static void wiz_create_artifact(void)
  */
 static void wiz_tweak_item(object_type * o_ptr)
 {
-    cptr p;
+    const char *p;
     char tmp_val[80];
 
 
@@ -950,7 +952,7 @@ static void wiz_reroll_item(object_type * o_ptr)
     object_type *i_ptr;
     object_type object_type_body;
 
-    char ch;
+    struct keypress ch;
 
     bool changed = FALSE;
 
@@ -979,25 +981,25 @@ static void wiz_reroll_item(object_type * o_ptr)
 	}
 
 	/* Create/change it! */
-	if (ch == 'A' || ch == 'a') {
+	if (ch.code == 'A' || ch.code == 'a') {
 	    changed = TRUE;
 	    break;
 	}
 
 	/* Apply normal magic, but first clear object */
-	else if (ch == 'n' || ch == 'N') {
+	else if (ch.code == 'n' || ch.code == 'N') {
 	    object_prep(i_ptr, o_ptr->k_idx, RANDOMISE);
 	    apply_magic(i_ptr, p_ptr->depth, FALSE, FALSE, FALSE);
 	}
 
 	/* Apply good magic, but first clear object */
-	else if (ch == 'g' || ch == 'g') {
+	else if (ch.code == 'g' || ch.code == 'g') {
 	    object_prep(i_ptr, o_ptr->k_idx, RANDOMISE);
 	    apply_magic(i_ptr, p_ptr->depth, FALSE, TRUE, FALSE);
 	}
 
 	/* Apply great magic, but first clear object */
-	else if (ch == 'e' || ch == 'e') {
+	else if (ch.code == 'e' || ch.code == 'e') {
 	    object_prep(i_ptr, o_ptr->k_idx, RANDOMISE);
 	    apply_magic(i_ptr, p_ptr->depth, FALSE, TRUE, TRUE);
 	}
@@ -1041,7 +1043,7 @@ static void wiz_statistics(object_type * o_ptr)
 {
     long i, matches, better, worse, other;
 
-    char ch;
+    struct keypress ch;
     char *quality;
 
     bool good, great;
@@ -1049,7 +1051,7 @@ static void wiz_statistics(object_type * o_ptr)
     object_type *i_ptr;
     object_type object_type_body;
 
-    cptr q = "Rolls: %ld, Matches: %ld, Better: %ld, Worse: %ld, Other: %ld";
+    const char *q = "Rolls: %ld, Matches: %ld, Better: %ld, Worse: %ld, Other: %ld";
 
 
     /* Mega-Hack -- allow multiple artifacts XXX XXX XXX */
@@ -1059,7 +1061,7 @@ static void wiz_statistics(object_type * o_ptr)
 
     /* Interact */
     while (TRUE) {
-	cptr pmt = "Roll for [n]ormal, [g]ood, or [e]xcellent treasure? ";
+	const char *pmt = "Roll for [n]ormal, [g]ood, or [e]xcellent treasure? ";
 
 	/* Display item */
 	wiz_display_item(o_ptr);
@@ -1068,15 +1070,15 @@ static void wiz_statistics(object_type * o_ptr)
 	if (!get_com(pmt, &ch))
 	    break;
 
-	if (ch == 'n' || ch == 'N') {
+	if (ch.code == 'n' || ch.code == 'N') {
 	    good = FALSE;
 	    great = FALSE;
 	    quality = "normal";
-	} else if (ch == 'g' || ch == 'G') {
+	} else if (ch.code == 'g' || ch.code == 'G') {
 	    good = TRUE;
 	    great = FALSE;
 	    quality = "good";
-	} else if (ch == 'e' || ch == 'E') {
+	} else if (ch.code == 'e' || ch.code == 'E') {
 	    good = TRUE;
 	    great = TRUE;
 	    quality = "excellent";
@@ -1087,9 +1089,9 @@ static void wiz_statistics(object_type * o_ptr)
 	}
 
 	/* Let us know what we are doing */
-	msg_format("Creating a lot of %s items. Base level = %d.", quality,
+	msg("Creating a lot of %s items. Base level = %d.", quality,
 		   p_ptr->depth);
-	msg_print(NULL);
+	message_flush();
 
 	/* Set counters to zero */
 	matches = better = worse = other = 0;
@@ -1098,18 +1100,19 @@ static void wiz_statistics(object_type * o_ptr)
 	for (i = 0; i <= TEST_ROLL; i++) {
 	    /* Output every few rolls */
 	    if ((i < 100) || (i % 100 == 0)) {
+		struct keypress kp;
+
 		/* Do not wait */
 		inkey_scan = SCAN_INSTANT;
 
 		/* Allow interupt */
-		if (inkey()) {
-		    /* Flush */
+		kp = inkey();
+		if (kp.type != EVT_NONE)
+		{
 		    flush();
-
-		    /* Stop rolling */
 		    break;
 		}
-
+		
 		/* Dump the stats */
 		prt(format(q, i, matches, better, worse, other), 0, 0);
 		Term_fresh();
@@ -1167,8 +1170,8 @@ static void wiz_statistics(object_type * o_ptr)
 	}
 
 	/* Final dump */
-	msg_format(q, i, matches, better, worse, other);
-	msg_print(NULL);
+	msg(q, i, matches, better, worse, other);
+	message_flush();
     }
 
 
@@ -1236,9 +1239,9 @@ static void do_cmd_wiz_play(void)
 
     object_type *o_ptr;
 
-    char ch;
+    struct keypress ch;
 
-    cptr q, s;
+    const char *q, *s;
 
     bool changed;
 
@@ -1287,24 +1290,24 @@ static void do_cmd_wiz_play(void)
 	    break;
 	}
 
-	if (ch == 'A' || ch == 'a') {
+	if (ch.code == 'A' || ch.code == 'a') {
 	    changed = TRUE;
 	    break;
 	}
 
-	if (ch == 's' || ch == 'S') {
+	if (ch.code == 's' || ch.code == 'S') {
 	    wiz_statistics(i_ptr);
 	}
 
-	if (ch == 'r' || ch == 'R') {
+	if (ch.code == 'r' || ch.code == 'R') {
 	    wiz_reroll_item(i_ptr);
 	}
 
-	if (ch == 't' || ch == 'T') {
+	if (ch.code == 't' || ch.code == 'T') {
 	    wiz_tweak_item(i_ptr);
 	}
 
-	if (ch == 'q' || ch == 'Q') {
+	if (ch.code == 'q' || ch.code == 'Q') {
 	    wiz_quantity_item(i_ptr);
 	}
     }
@@ -1317,7 +1320,7 @@ static void do_cmd_wiz_play(void)
     /* Accept change */
     if (changed) {
 	/* Message */
-	msg_print("Changes accepted.");
+	msg("Changes accepted.");
 
 	/* Change */
 	object_copy(o_ptr, i_ptr);
@@ -1334,7 +1337,7 @@ static void do_cmd_wiz_play(void)
 
     /* Ignore change */
     else {
-	msg_print("Changes ignored.");
+	msg("Changes ignored.");
     }
 }
 
@@ -1357,7 +1360,7 @@ static void do_cmd_wiz_cure_all(void)
 
     /* Update stuff (if needed) */
     if (p_ptr->update)
-	update_stuff();
+	update_stuff(p_ptr);
 
     /* Heal the player */
     p_ptr->chp = p_ptr->mhp;
@@ -1419,7 +1422,7 @@ void jump_display(menu_type *menu, int oid, bool cursor, int row, int col,
 /**
  * Deal with events on the jump menu
  */
-bool jump_action(menu_type *menu, const ui_event_data *evt, int oid)
+bool jump_action(menu_type *menu, const ui_event *evt, int oid)
 {
     u16b *choice = menu_priv(menu);
 
@@ -1429,7 +1432,7 @@ bool jump_action(menu_type *menu, const ui_event_data *evt, int oid)
     {
 	place = idx;
 	/* Accept request */
-	msg_format("You jump to %s level %d.",
+	msg("You jump to %s level %d.",
 		   locality_name[stage_map[place][LOCALITY]],
 		   stage_map[place][DEPTH]);
     } 
@@ -1448,7 +1451,7 @@ bool jump_menu(int level, int *location)
     menu_type menu;
     menu_iter menu_f = { jump_tag, 0, jump_display, jump_action, 0 };
     region area = { 15, 1, 48, -1 };
-    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { 0 };
     int cursor = 0, j = 0;
     size_t i;
     u16b *choice;
@@ -1483,7 +1486,7 @@ bool jump_menu(int level, int *location)
     menu_layout(&menu, &area);
 
     /* Select an entry */
-    evt = menu_select(&menu, cursor);
+    evt = menu_select(&menu, cursor, TRUE);
 
     /* Set it */
     if (evt.type == EVT_SELECT)
@@ -1618,10 +1621,10 @@ static void do_cmd_rerate(void)
     p_ptr->redraw |= (PR_HP);
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Message */
-    msg_format("Current Life Rating is %d/100.", percent);
+    msg("Current Life Rating is %d/100.", percent);
 }
 
 
@@ -1744,7 +1747,7 @@ static void do_cmd_wiz_query(void)
 
     int y, x;
 
-    char cmd;
+    struct keypress cmd;
 
     u16b mask = 0x00;
 
@@ -1754,7 +1757,7 @@ static void do_cmd_wiz_query(void)
 	return;
 
     /* Extract a flag */
-    switch (cmd) {
+    switch (cmd.code) {
     case '0':
 	mask = (1 << 0);
 	break;
@@ -1835,8 +1838,8 @@ static void do_cmd_wiz_query(void)
     }
 
     /* Get keypress */
-    msg_print("Press any key.");
-    msg_print(NULL);
+    msg("Press any key.");
+    message_flush();
 
     /* Redraw map */
     prt_map();
@@ -1867,7 +1870,7 @@ void do_cmd_debug(void)
     int py = p_ptr->py;
     int px = p_ptr->px;
 
-    char cmd;
+    struct keypress cmd;
 
 
     /* Get a "debug command" */
@@ -1875,7 +1878,7 @@ void do_cmd_debug(void)
 	return;
 
     /* Analyze the command */
-    switch (cmd) {
+    switch (cmd.code) {
 	/* Nothing */
     case ESCAPE:
     case ' ':
@@ -2095,7 +2098,7 @@ void do_cmd_debug(void)
 	/* Oops */
     default:
 	{
-	    msg_print("That is not a valid debug command.");
+	    msg("That is not a valid debug command.");
 	    break;
 	}
     }

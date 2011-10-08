@@ -374,8 +374,8 @@ static int cmp_distance(const void *a, const void *b)
     int py = p_ptr->py;
     int px = p_ptr->px;
 
-    const struct point *pa = a;
-    const struct point *pb = b;
+    const struct loc *pa = a;
+    const struct loc *pb = b;
 
     int da, db, kx, ky;
 
@@ -526,7 +526,7 @@ static bool target_set_interactive_accept(int y, int x)
 static void target_set_interactive_prepare(int mode)
 {
     int y, x;
-    struct point *pts = mem_zalloc(sizeof(*pts) * SCREEN_HGT * SCREEN_WID);
+    struct loc *pts = mem_zalloc(sizeof(*pts) * SCREEN_HGT * SCREEN_WID);
     unsigned int n = 0;
 
     /* Scan the current panel */
@@ -743,11 +743,11 @@ static void target_display_help(bool monster, bool free)
  *
  * This function must handle blindness/hallucination.
  */
-static ui_event_data target_set_interactive_aux(int y, int x, int mode)
+static ui_event target_set_interactive_aux(int y, int x, int mode)
 {
     s16b this_o_idx = 0, next_o_idx = 0;
 
-    cptr s1, s2, s3, s4, s5;
+    const char *s1, *s2, *s3, *s4, *s5;
 
     bool boring;
 
@@ -758,7 +758,7 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
     int floor_list[MAX_FLOOR_STACK];
     int floor_num;
 
-    ui_event_data query;
+    ui_event query;
 
     char out_val[256];
 
@@ -772,7 +772,7 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
     /* Repeat forever */
     while (1) {
 	/* Paranoia */
-	query.key = ' ';
+	query.key.code = ' ';
 
 	/* Assume boring */
 	boring = TRUE;
@@ -794,7 +794,7 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 
 	/* Hack -- hallucination */
 	if (p_ptr->timed[TMD_IMAGE]) {
-	    cptr name = "something strange";
+	    const char *name = "something strange";
 
 	    /* Display a message */
 	    if (p_ptr->wizard) {
@@ -810,7 +810,7 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 	    query = inkey_ex();
 
 	    /* Stop on everything but "return" */
-	    if ((query.key != '\n') && (query.key != '\r'))
+	    if ((query.key.code != '\n') && (query.key.code != '\r'))
 		break;
 
 	    /* Repeat forever */
@@ -841,7 +841,7 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 		health_track(cave_m_idx[y][x]);
 
 		/* Hack -- handle stuff */
-		handle_stuff();
+		handle_stuff(p_ptr);
 
 		/* Interact */
 		while (1) {
@@ -888,7 +888,7 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 		    }
 
 		    /* Normal commands */
-		    if (query.key != 'r')
+		    if (query.key.code != 'r')
 			break;
 
 		    /* Toggle recall */
@@ -896,12 +896,12 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 		}
 
 		/* Stop on everything but "return"/"space" */
-		if ((query.key != '\n') && (query.key != '\r')
-		    && (query.key != ' '))
+		if ((query.key.code != '\n') && (query.key.code != '\r')
+		    && (query.key.code != ' '))
 		    break;
 
 		/* Sometimes stop at "space" key */
-		if ((query.key == ' ') && !(mode & (TARGET_LOOK)))
+		if ((query.key.code == ' ') && !(mode & (TARGET_LOOK)))
 		    break;
 
 		/* Change the intro */
@@ -948,12 +948,12 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 		    query = inkey_ex();
 
 		    /* Stop on everything but "return"/"space" */
-		    if ((query.key != '\n') && (query.key != '\r')
-			&& (query.key != ' '))
+		    if ((query.key.code != '\n') && (query.key.code != '\r')
+			&& (query.key.code != ' '))
 			break;
 
 		    /* Sometimes stop at "space" key */
-		    if ((query.key == ' ') && !(mode & (TARGET_LOOK)))
+		    if ((query.key.code == ' ') && !(mode & (TARGET_LOOK)))
 			break;
 
 		    /* Change the intro */
@@ -1017,12 +1017,12 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 		query = inkey_ex();
 		
 		/* Stop on everything but "return"/"space" */
-		if ((query.key != '\n') && (query.key != '\r')
-		    && (query.key != ' '))
+		if ((query.key.code != '\n') && (query.key.code != '\r')
+		    && (query.key.code != ' '))
 		    break;
 		
 		/* Sometimes stop at "space" key */
-		if ((query.key == ' ') && !(mode & (TARGET_LOOK)))
+		if ((query.key.code == ' ') && !(mode & (TARGET_LOOK)))
 		    break;
 	    }
 	}
@@ -1044,7 +1044,7 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 	    boring = FALSE;
 
 	    track_object(-floor_list[0]);
-	    handle_stuff();
+	    handle_stuff(p_ptr);
 
 	    /* If there is more than one item... */
 	    if (floor_num > 1)
@@ -1067,7 +1067,7 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 		    query = inkey_ex();
 
 		    /* Display objects */
-		    if (query.key == 'r') {
+		    if (query.key.code == 'r') {
 			int rdone = 0;
 			int pos;
 			while (!rdone) {
@@ -1085,10 +1085,10 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 			    /* Load screen */
 			    screen_load();
 
-			    pos = query.key - 'a';
+			    pos = query.key.code - 'a';
 			    if (0 <= pos && pos < floor_num) {
 				track_object(-floor_list[pos]);
-				handle_stuff();
+				handle_stuff(p_ptr);
 				continue;
 			    }
 			    rdone = 1;
@@ -1132,12 +1132,12 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 		query = inkey_ex();
 
 		/* Stop on everything but "return"/"space" */
-		if ((query.key != '\n') && (query.key != '\r')
-		    && (query.key != ' '))
+		if ((query.key.code != '\n') && (query.key.code != '\r')
+		    && (query.key.code != ' '))
 		    break;
 
 		/* Sometimes stop at "space" key */
-		if ((query.key == ' ') && !(mode & (TARGET_LOOK)))
+		if ((query.key.code == ' ') && !(mode & (TARGET_LOOK)))
 		    break;
 
 		/* Change the intro */
@@ -1172,7 +1172,7 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 	/* Terrain feature if needed */
 	if (boring || !tf_has(f_ptr->flags, TF_FLOOR))
 	{
-	    cptr name = f_info[feat].name;
+	    const char *name = f_info[feat].name;
 
 	    /* Hack -- handle unknown grids */
 	    if (feat == FEAT_NONE)
@@ -1222,13 +1222,13 @@ static ui_event_data target_set_interactive_aux(int y, int x, int mode)
 	    query = inkey_ex();
 
 	    /* Stop on everything but "return"/"space" */
-	    if ((query.key != '\n') && (query.key != '\r')
-		&& (query.key != ' '))
+	    if ((query.key.code != '\n') && (query.key.code != '\r')
+		&& (query.key.code != ' '))
 		break;
 	}
 
 	/* Stop on everything but "return" */
-	if ((query.key != '\n') && (query.key != '\r'))
+	if ((query.key.code != '\n') && (query.key.code != '\r'))
 	    break;
     }
 
@@ -1303,15 +1303,15 @@ static int draw_path(u16b * path, char *c, byte * a, int y1, int x1, int y2,
 	/* This square is being overwritten, so save the original. */
 	Term_what(Term->scr->cx, Term->scr->cy, a + i, c + i);
 
-	/* Choose a colour. */
+	/* Choose a colour - such a hack now! */
 	/* Visible monsters are red. */
 	if (cave_m_idx[y][x] && m_list[cave_m_idx[y][x]].ml) {
-	    colour = TERM_L_RED;
+	    colour = GF_FIRE;
 	}
 
 	/* Known objects are yellow. */
 	else if (cave_o_idx[y][x] && o_list[cave_o_idx[y][x]].marked) {
-	    colour = TERM_YELLOW;
+	    colour = GF_SOUND;
 	}
 
 	/* Known walls are blue. */
@@ -1319,21 +1319,21 @@ static int draw_path(u16b * path, char *c, byte * a, int y1, int x1, int y2,
 		 (cave_has(cave_info[y][x], CAVE_MARK) || 
 		  player_can_see_bold(y, x))) 
 	{
-	    colour = TERM_BLUE;
+	    colour = GF_ELEC;
 	}
 	/* Unknown squares are grey. */
 	else if (!cave_has(cave_info[y][x], CAVE_MARK) && 
 		 !player_can_see_bold(y, x)) {
-	    colour = TERM_L_DARK;
+	    colour = GF_DARK;
 	}
 	/* Unoccupied squares are white. */
 	else {
-	    colour = TERM_WHITE;
+	    colour = GF_COLD;
 	}
 
 	/* Hack - Obtain attr/char */
-	a1 = misc_to_attr[0x30 + colour];
-	c1 = misc_to_char[0x30 + colour];
+	a1 = gf_to_attr[colour][BOLT_NO_MOTION];
+	c1 = gf_to_char[colour][BOLT_NO_MOTION];
 
 	/* Draw the path segment */
 	print_rel(c1, a1, y, x);
@@ -1378,7 +1378,7 @@ bool target_set_closest(int mode)
 
     /* If nothing was prepared, then return */
     if (temp_n < 1) {
-	msg_print("No Available Target.");
+	msg("No Available Target.");
 	return FALSE;
     }
 
@@ -1389,7 +1389,7 @@ bool target_set_closest(int mode)
 
     /* Target the monster, if possible */
     if ((m_idx <= 0) || !target_able(m_idx)) {
-	msg_print("No Available Target.");
+	msg("No Available Target.");
 	return FALSE;
     }
 
@@ -1397,7 +1397,7 @@ bool target_set_closest(int mode)
     m_ptr = &m_list[m_idx];
     monster_desc(m_name, sizeof(m_name), m_ptr, 0x00);
     if (!(mode & TARGET_QUIET))
-	msg_format("%^s is targeted.", m_name);
+	msg("%^s is targeted.", m_name);
     Term_fresh();
 
     /* Set up target information */
@@ -1482,7 +1482,7 @@ bool target_set_interactive(int mode, int x, int y)
 
     bool failure_message = FALSE;
 
-    ui_event_data query;
+    ui_event query;
 
     /* These are used for displaying the path to the target */
     u16b *path = malloc(MAX_RANGE * sizeof(*path));
@@ -1540,7 +1540,7 @@ bool target_set_interactive(int mode, int x, int y)
 	    /* Adjust panel if needed */
 	    if (adjust_panel_help(y, x, help)) {
 		/* Handle stuff */
-		handle_stuff();
+		handle_stuff(p_ptr);
 	    }
 
 	    /* Update help */
@@ -1583,7 +1583,7 @@ bool target_set_interactive(int mode, int x, int y)
 	    } else {
 
 		/* Analyze */
-		switch (query.key) {
+		switch (query.key.code) {
 		case ESCAPE:
 		case 'q':
 		    {
@@ -1616,7 +1616,7 @@ bool target_set_interactive(int mode, int x, int y)
 			verify_panel();
 
 			/* Handle stuff */
-			handle_stuff();
+			handle_stuff(p_ptr);
 
 			y = py;
 			x = px;
@@ -1677,7 +1677,7 @@ bool target_set_interactive(int mode, int x, int y)
 			p_ptr->redraw |=
 			    (PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIP);
 			Term_clear();
-			handle_stuff();
+			handle_stuff(p_ptr);
 			if (!help)
 			    prt("Press '?' for help.", help_prompt_loc, 0);
 
@@ -1712,7 +1712,8 @@ bool target_set_interactive(int mode, int x, int y)
 		    int old_wy = Term->offset_y;
 		    int old_wx = Term->offset_x;
 
-		    /* Change if legal */
+		    /* Change if legal */#include "angband.h"
+
 		    if (change_panel(d)) {
 			/* Recalculate interesting grids */
 			target_set_interactive_prepare(mode);
@@ -1727,7 +1728,7 @@ bool target_set_interactive(int mode, int x, int y)
 			}
 
 			/* Handle stuff */
-			handle_stuff();
+			handle_stuff(p_ptr);
 		    }
 		}
 
@@ -1797,7 +1798,7 @@ bool target_set_interactive(int mode, int x, int y)
 	    } else {
 
 		/* Analyze the keypress */
-		switch (query.key) {
+		switch (query.key.code) {
 		case ESCAPE:
 		case 'q':
 		    {
@@ -1819,7 +1820,7 @@ bool target_set_interactive(int mode, int x, int y)
 			verify_panel();
 
 			/* Handle stuff */
-			handle_stuff();
+			handle_stuff(p_ptr);
 
 			y = p_ptr->py;
 			x = p_ptr->px;
@@ -1881,7 +1882,7 @@ bool target_set_interactive(int mode, int x, int y)
 			p_ptr->redraw |=
 			    (PR_BASIC | PR_EXTRA | PR_MAP | PR_EQUIP);
 			Term_clear();
-			handle_stuff();
+			handle_stuff(p_ptr);
 			if (!help)
 			    prt("Press '?' for help.", help_prompt_loc, 0);
 
@@ -1940,7 +1941,7 @@ bool target_set_interactive(int mode, int x, int y)
 		/* Adjust panel if needed */
 		if (adjust_panel_help(y, x, help)) {
 		    /* Handle stuff */
-		    handle_stuff();
+		    handle_stuff(p_ptr);
 
 		    /* Recalculate interesting grids */
 		    target_set_interactive_prepare(mode);
@@ -1966,7 +1967,7 @@ bool target_set_interactive(int mode, int x, int y)
     verify_panel();
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     free(path);
     free(path_char);
@@ -1975,7 +1976,7 @@ bool target_set_interactive(int mode, int x, int y)
     /* Failure to set target */
     if (!target_set) {
 	if (failure_message)
-	    msg_print("There is nothing within reach.");
+	    msg("There is nothing within reach.");
 	return (FALSE);
     }
 

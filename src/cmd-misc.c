@@ -68,8 +68,8 @@ void get_feats(int *surroundings)
 */
 char comm[22];
 cmd_code comm_code[22];
-cptr comm_descr[22];
-int poss;
+const char *comm_descr[22];
+int poss, item;
 
 /**
 * Item tag/command key
@@ -96,16 +96,17 @@ static void show_display(menu_type * menu, int oid, bool cursor, int row,
 /**
 * Handle user input from a command menu
 */
-static bool show_action(menu_type * menu, const ui_event_data * e, int oid)
+static bool show_action(menu_type * menu, const ui_event * e, int oid)
 {
     /* Handle enter and mouse */
     if (e->type == EVT_SELECT) 
     {
 	cmd_insert(comm_code[oid]);
 	if (comm_code[oid] == CMD_NULL)
-	    Term_keypress(comm[oid]);
+	    Term_keypress(comm[oid],0);
+	cmd_set_arg_item(cmd_get_top(), 0, item);
     }
-    return TRUE;
+    return FALSE;
 }
 
 /**
@@ -115,9 +116,9 @@ bool show_cmd_menu(bool object)
 {
     menu_type menu;
     menu_iter commands_menu = { show_tag, 0, show_display, show_action, 0 };
-    region area = { 0, (object ? 2 : 1), 20, 0 };
+    region area = { 15, (object ? 2 : 1), 20, 0 };
 
-    ui_event_data evt = EVENT_EMPTY;
+    ui_event evt = EVENT_EMPTY;
     int cursor = 0;
 
     /* Size of menu */
@@ -125,13 +126,14 @@ bool show_cmd_menu(bool object)
 
     /* Set up the menu */
     WIPE(&menu, menu);
-    menu.cmd_keys = "\x8B\x8C\n\r";
-    menu.count = poss;
-    menu.menu_data = comm;
     menu_init(&menu, MN_SKIN_SCROLL, &commands_menu);
+    menu.cmd_keys = "\x8B\x8C\n\r";
+    area.page_rows = poss + (object ? 1 : 0);
+    menu_setpriv(&menu, poss, comm);
+    menu_layout(&menu, &area);
 
     /* Select an entry */
-    evt = menu_select(&menu, cursor);
+    evt = menu_select(&menu, cursor, TRUE);
 
     return (evt.type != EVT_ESCAPE);
 }
@@ -367,8 +369,8 @@ void show_player(void)
  */
 void do_cmd_show_obj(void)
 {
-    cptr q, s;
-    int j, item;
+    const char *q, *s;
+    int j;
     object_type *o_ptr;
 
     char o_name[120];
@@ -601,11 +603,11 @@ static bool enter_wizard_mode(void)
     /* Ask first time */
     if (!(p_ptr->noscore & 0x0002)) {
 	/* Mention effects */
-	msg_print
+	msg
 	    ("You are about to enter 'wizard' mode for the very first time!");
-	msg_print
+	msg
 	    ("This is a form of cheating, and your game will not be scored!");
-	msg_print(NULL);
+	message_flush();
 
 	/* Verify request */
 	if (!get_check("Are you sure you want to enter wizard mode? ")) {
@@ -631,10 +633,10 @@ extern void do_cmd_wizard(void)
 	/* Toggle mode */
 	if (p_ptr->wizard) {
 	    p_ptr->wizard = FALSE;
-	    msg_print("Wizard mode off.");
+	    msg("Wizard mode off.");
 	} else {
 	    p_ptr->wizard = TRUE;
-	    msg_print("Wizard mode on.");
+	    msg("Wizard mode on.");
 	}
 
 	/* Update monsters */
@@ -660,12 +662,12 @@ static bool verify_debug_mode(void)
     /* Ask first time, unless the savefile is already in debug mode. */
     if (verify && (!(p_ptr->noscore & 0x0008))) {
 	/* Mention effects */
-	msg_print
+	msg
 	    ("You are about to use the dangerous, unsupported, debug commands!");
-	msg_print
+	msg
 	    ("Your machine may crash, and your savefile may become corrupted!");
-	msg_print("Using the debug commands will also mark your savefile.");
-	msg_print(NULL);
+	msg("Using the debug commands will also mark your savefile.");
+	message_flush();
 
 	/* Verify request */
 	if (!get_check("Are you sure you want to use the debug commands? ")) {
@@ -711,9 +713,9 @@ extern bool do_cmd_try_borg(void)
     /* Ask first time */
     if (!(p_ptr->noscore & NOSCORE_BORG)) {
 	/* Mention effects */
-	msg_print
+	msg
 	    ("You are about to use the dangerous, unsupported, borg commands!");
-	msg_print
+	msg
 	    ("Your machine may crash, and your savefile may become corrupted!");
 	message_flush();
 
@@ -780,7 +782,7 @@ void bear_shape(void)
 void unchange(void)
 {
     if (!SCHANGE) {
-	msg_print("You aren't in another form right now.");
+	msg("You aren't in another form right now.");
 	return;
     }
 

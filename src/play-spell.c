@@ -203,7 +203,7 @@ void spell_learn(int spell)
     mt_ptr = &mp_ptr->info[spell];
 
     /* Mention the result */
-    message_format(MSG_STUDY, 0, "You have learned the %s of %s.", 
+    msgt(MSG_STUDY, "You have learned the %s of %s.", 
 		   magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
 		   get_spell_name(mt_ptr->index));
 
@@ -216,7 +216,7 @@ void spell_learn(int spell)
     /* Message if needed */
     if (p_ptr->new_spells) {
 	/* Message */
-	msg_format("You can learn %d more %s%s.", p_ptr->new_spells,
+	msg("You can learn %d more %s%s.", p_ptr->new_spells,
 		   magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
 		   ((p_ptr->new_spells != 1)
 		    && (!mp_ptr->spell_book != TV_DRUID_BOOK)) ? "s" : "");
@@ -254,7 +254,7 @@ bool spell_cast(int spell, int dir)
 
 	if (OPT(flush_failure))
 	    flush();
-	msg_print(magic_desc[mp_ptr->spell_realm][SPELL_FAIL]);
+	msg(magic_desc[mp_ptr->spell_realm][SPELL_FAIL]);
     }
 
     /* Process spell */
@@ -354,9 +354,9 @@ bool spell_cast(int spell, int dir)
 
 	/* Message */
 	if (mp_ptr->spell_realm == REALM_NECROMANTIC)
-	    msg_print("You collapse after the ritual!");
+	    msg("You collapse after the ritual!");
 	else
-	    msg_print("You faint from the effort!");
+	    msg("You faint from the effort!");
 
 	/* Hack -- Bypass free action */
 	(void) inc_timed(TMD_PARALYZED, randint1(5 * oops + 1), TRUE);
@@ -366,7 +366,7 @@ bool spell_cast(int spell, int dir)
 	    bool perm = (randint0(100) < 25);
 
 	    /* Message */
-	    msg_print("You have damaged your health!");
+	    msg("You have damaged your health!");
 
 	    /* Reduce constitution */
 	    (void) dec_stat(A_CON, 15 + randint1(10), perm);

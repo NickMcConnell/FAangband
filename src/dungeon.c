@@ -33,6 +33,7 @@
 #include "monster.h"
 #include "tvalsval.h"
 #include "prefs.h"
+#include "savefile.h"
 #include "spells.h"
 #include "target.h"
 
@@ -191,7 +192,7 @@ static void recharged_notice(const object_type * o_ptr, bool all)
 {
     char o_name[120];
 
-    cptr s;
+    const char *s;
 
     bool notify = FALSE;
 
@@ -230,18 +231,18 @@ static void recharged_notice(const object_type * o_ptr, bool all)
     /* Notify the player */
     if (o_ptr->number > 1)
     {
-	if (all) msg_format("Your %s have recharged.", o_name);
-	else msg_format("One of your %s has recharged.", o_name);
+	if (all) msg("Your %s have recharged.", o_name);
+	else msg("One of your %s has recharged.", o_name);
     }
 
     /* Artifacts */
     else if (o_ptr->name1)
     {
-	msg_format("The %s has recharged.", o_name);
+	msg("The %s has recharged.", o_name);
     }
 
     /* Single, non-artifact items */
-    else msg_format("Your %s has recharged.", o_name);
+    else msg("Your %s has recharged.", o_name);
 }
 
 /*
@@ -381,7 +382,7 @@ void sun_banish(void)
 
     process_monsters(0);
     if (some_gone)
-	msg_print("Creatures of the darkness flee from the sunlight!");
+	msg("Creatures of the darkness flee from the sunlight!");
 }
 
 
@@ -469,7 +470,7 @@ static void process_world(void)
 	    is_autosave = TRUE;
 	    save_game();
 	    is_autosave = FALSE;
-	    msg_print(NULL);
+	    message_flush();
 	}
     }
 
@@ -488,7 +489,7 @@ static void process_world(void)
 	    /* Day breaks */
 	    if (dawn) {
 		/* Message */
-		msg_print("The sun has risen.");
+		msg("The sun has risen.");
 		sun_banish();
 		if (p_ptr->schange == SHAPE_VAMPIRE)
 		    shapechange(SHAPE_NORMAL);
@@ -498,7 +499,7 @@ static void process_world(void)
 	    /* Night falls */
 	    else {
 		/* Message */
-		msg_print("The sun has set.");
+		msg("The sun has set.");
 		update_view();
 	    }
 	}
@@ -636,7 +637,7 @@ static void process_world(void)
 	    /* Faint occasionally */
 	    if (!p_ptr->timed[TMD_PARALYZED] && (randint0(100) < 10)) {
 		/* Message */
-		msg_print("You faint from the lack of food.");
+		msg("You faint from the lack of food.");
 		disturb(1, 0);
 
 		/* Hack -- faint (bypass free action) */
@@ -734,7 +735,7 @@ static void process_world(void)
 
 	    /* Warn the player that he's going to be revealed soon. */
 	    if (p_ptr->timed[TMD_SSTEALTH] == 5)
-		msg_print("You sense your mantle of shadow fading...");
+		msg("You sense your mantle of shadow fading...");
 	}
     }
 
@@ -939,7 +940,7 @@ static void process_world(void)
 	/* If we are allowed to speak, warn and disturb. */
 
 	if (be_silent == FALSE) {
-	    msg_print("The Black Breath saps your soul!");
+	    msg("The Black Breath saps your soul!");
 	    disturb(0, 0);
 	}
     }
@@ -1001,13 +1002,13 @@ static void process_world(void)
 	    /* The light is now out */
 	    else if (o_ptr->pval == 0) {
 		disturb(0, 0);
-		msg_print("Your light has gone out!");
+		msg("Your light has gone out!");
 	    }
 
 	    /* The light is getting dim */
 	    else if ((o_ptr->pval < 100) && (!(o_ptr->pval % 10))) {
 		disturb(0, 0);
-		msg_print("Your light is growing faint.");
+		msg("Your light is growing faint.");
 	    }
 	}
     }
@@ -1123,7 +1124,7 @@ static void process_world(void)
     /* Summon demons */
     if ((p_ptr->state.attract_demon) && (randint0(500) < 1)) {
 	/* Message */
-	msg_print("You have attracted a demon.");
+	msg("You have attracted a demon.");
 
 	/* Here it comes */
 	summon_specific(p_ptr->py, p_ptr->px, FALSE, p_ptr->depth,
@@ -1136,7 +1137,7 @@ static void process_world(void)
     /* Summon undead */
     if ((p_ptr->state.attract_undead) && (randint0(500) < 1)) {
 	/* Message */
-	msg_print("A call goes out beyond the grave.");
+	msg("A call goes out beyond the grave.");
 
 	/* Here it comes */
 	summon_specific(p_ptr->py, p_ptr->px, FALSE, p_ptr->depth,
@@ -1221,7 +1222,7 @@ static void process_world(void)
 
 		if (has_charges) {
 		    /* Message */
-		    msg_print("Energy drains from your pack!");
+		    msg("Energy drains from your pack!");
 
 		    /* Obvious */
 		    notice_curse(CF_DRAIN_CHARGE, 0);
@@ -1260,7 +1261,7 @@ static void process_world(void)
 
 	    /* Determine the level */
 	    if (p_ptr->stage != p_ptr->home) {
-		msg_print("You feel yourself yanked homewards!");
+		msg("You feel yourself yanked homewards!");
 
 		/* Homeward bound */
 		p_ptr->last_stage = NOWHERE;
@@ -1272,7 +1273,7 @@ static void process_world(void)
 		/* Leaving */
 		p_ptr->leaving = TRUE;
 	    } else {
-		msg_print("You feel yourself yanked away!");
+		msg("You feel yourself yanked away!");
 
 		/* New stage */
 		p_ptr->last_stage = NOWHERE;
@@ -1371,7 +1372,7 @@ static void process_player_aux(void)
 	    p_ptr->redraw |= (PR_MONSTER);
 
 	    /* Window stuff */
-	    redraw_stuff();
+	    redraw_stuff(p_ptr);
 	}
     }
 }
@@ -1385,7 +1386,7 @@ static void special_mana_gain(void)
     if (p_ptr->mana_gain) {
 	/* Message */
 	if (p_ptr->csp < p_ptr->msp)
-	    msg_print("You gain mana.");
+	    msg("You gain mana.");
 
 	/* Partial fill */
 	if (p_ptr->mana_gain < p_ptr->msp - p_ptr->csp) {
@@ -1404,7 +1405,7 @@ static void special_mana_gain(void)
 	 * and not Power Siphon.
 	 */
 	if ((p_ptr->mana_gain > p_ptr->lev) && (player_has(PF_EVIL))) {
-	    msg_print("You absorb too much mana!");
+	    msg("You absorb too much mana!");
 	    take_hit(damroll(2, 8), "mana burn");
 	}
 
@@ -1480,10 +1481,10 @@ static void process_player(void)
 	else if (p_ptr->resting == -3) {
 	    /* Stop resting */
 	    if (!(((turn / 10) * 10) % (10L * TOWN_DAWN))) {
-		if (!outside) msg_print("It is daybreak.");
+		if (!outside) msg("It is daybreak.");
 		disturb(0, 0);
 	    } else if (!(((turn / 10) * 10) % ((10L * TOWN_DAWN) / 2))) {
-		if (!outside) msg_print("It is nightfall.");
+		if (!outside) msg("It is nightfall.");
 		disturb(0, 0);
 	    }
 	}
@@ -1492,20 +1493,19 @@ static void process_player(void)
     /* Check for "player abort" */
     if (p_ptr->running || cmd_get_nrepeats() > 0
 	|| (p_ptr->resting && !((turn * 10) % 0x0F))) {
-	/* Do not wait */
-	inkey_scan = SCAN_INSTANT;
+		ui_event e;
 
-	/* Check for a key */
-	if (anykey()) {
-	    /* Flush input */
-	    flush();
+		/* Do not wait */
+		inkey_scan = SCAN_INSTANT;
 
-	    /* Disturb */
-	    disturb(0, 0);
-
-	    /* Hack -- Show a Message */
-	    msg_print("Cancelled.");
-	}
+		/* Check for a key */
+		e = inkey_ex();
+		if (e.type != EVT_NONE) {
+			/* Flush and disturb */
+			flush();
+			disturb(0, 0);
+			msg("Cancelled.");
+		}
     }
 
     /* Add context-sensitive mouse buttons */
@@ -1535,15 +1535,15 @@ static void process_player(void)
     do {
 	/* Notice stuff (if needed) */
 	if (p_ptr->notice)
-	    notice_stuff();
+	    notice_stuff(p_ptr);
 
 	/* Update stuff (if needed) */
 	if (p_ptr->update)
-	    update_stuff();
+	    update_stuff(p_ptr);
 
 	/* Redraw stuff (if needed) */
 	if (p_ptr->redraw)
-	    redraw_stuff();
+	    redraw_stuff(p_ptr);
 
 	/* Place the cursor on the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
@@ -1860,7 +1860,7 @@ void idle_update(void)
 
     /* Animate and redraw if necessary */
     do_animation();
-    redraw_stuff();
+    redraw_stuff(p_ptr);
 
     /* Refresh the main screen */
     Term_fresh();
@@ -1957,7 +1957,7 @@ static void dungeon(void)
 
 
     /* Flush messages */
-    msg_print(NULL);
+    message_flush();
 
 
     /* Hack -- Increase "xtra" depth */
@@ -1991,10 +1991,10 @@ static void dungeon(void)
     p_ptr->redraw |= (PR_MONSTER | PR_MONLIST | PR_ITEMLIST);
 
     /* Update stuff */
-    update_stuff();
+    update_stuff(p_ptr);
 
     /* Redraw stuff */
-    redraw_stuff();
+    redraw_stuff(p_ptr);
 
 
     /* Hack -- Decrease "xtra" depth */
@@ -2018,13 +2018,13 @@ static void dungeon(void)
     p_ptr->redraw |= (PR_BUTTONS);
 
     /* Notice stuff */
-    notice_stuff();
+    notice_stuff(p_ptr);
 
     /* Update stuff */
-    update_stuff();
+    update_stuff(p_ptr);
 
     /* Redraw stuff */
-    redraw_stuff();
+    redraw_stuff(p_ptr);
 
     /* Refresh */
     Term_fresh();
@@ -2118,13 +2118,13 @@ static void dungeon(void)
 	}
 
 	/* Notice stuff */
-	if (p_ptr->notice) notice_stuff();
+	if (p_ptr->notice) notice_stuff(p_ptr);
 
 	/* Update stuff */
-	if (p_ptr->update) update_stuff();
+	if (p_ptr->update) update_stuff(p_ptr);
 
 	/* Redraw stuff */
-	if (p_ptr->redraw) redraw_stuff();
+	if (p_ptr->redraw) redraw_stuff(p_ptr);
 
 	/* Hack -- Hilight the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
@@ -2142,13 +2142,13 @@ static void dungeon(void)
 	reset_monsters();
 
 	/* Notice stuff */
-	if (p_ptr->notice) notice_stuff();
+	if (p_ptr->notice) notice_stuff(p_ptr);
 
 	/* Update stuff */
-	if (p_ptr->update) update_stuff();
+	if (p_ptr->update) update_stuff(p_ptr);
 
 	/* Redraw stuff */
-	if (p_ptr->redraw) redraw_stuff();
+	if (p_ptr->redraw) redraw_stuff(p_ptr);
 
 	/* Hack -- Hilight the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
@@ -2164,13 +2164,13 @@ static void dungeon(void)
 	process_world();
 
 	/* Notice stuff */
-	if (p_ptr->notice) notice_stuff();
+	if (p_ptr->notice) notice_stuff(p_ptr);
 
 	/* Update stuff */
-	if (p_ptr->update) update_stuff();
+	if (p_ptr->update) update_stuff(p_ptr);
 
 	/* Redraw stuff */
-	if (p_ptr->redraw) redraw_stuff();
+	if (p_ptr->redraw) redraw_stuff(p_ptr);
 
 	/* Hack -- Hilight the player */
 	move_cursor_relative(p_ptr->py, p_ptr->px);
@@ -2203,25 +2203,25 @@ static void process_some_user_pref_files(void)
     char buf[128];
 
     /* Process the "user.prf" file */
-    (void) process_pref_file("user.prf", TRUE);
+    (void) process_pref_file("user.prf", TRUE, TRUE);
 
     /* Access the "race" pref file */
     sprintf(buf, "%s.prf", rp_ptr->name);
 
     /* Process that file */
-    process_pref_file(buf, TRUE);
+    process_pref_file(buf, TRUE, TRUE);
 
     /* Access the "class" pref file */
     sprintf(buf, "%s.prf", cp_ptr->name);
 
     /* Process that file */
-    process_pref_file(buf, TRUE);
+    process_pref_file(buf, TRUE, TRUE);
 
     /* Process the "PLAYER.prf" file */
     sprintf(buf, "%s.prf", op_ptr->base_name);
 
     /* Process the "PLAYER.prf" file */
-    (void) process_pref_file(buf, TRUE);
+    (void) process_pref_file(buf, TRUE, TRUE);
 }
 
 /**
@@ -2272,7 +2272,7 @@ void play_game(void)
 
     if (savefile[0] && file_exists(savefile))
     {
-	bool ok = old_load();
+	bool ok = savefile_load(savefile);
 	if (!ok) quit("broken savefile");
 
 	if (p_ptr->is_dead && arg_wizard)
@@ -2352,7 +2352,7 @@ void play_game(void)
 	p_ptr->depth = stage_map[p_ptr->stage][DEPTH];
 
 	/* Read the default options */
-	process_pref_file("birth.prf", TRUE);
+	process_pref_file("birth.prf", TRUE, TRUE);
 
     }
 
@@ -2399,7 +2399,7 @@ void play_game(void)
 
     /* Redraw stuff */
     p_ptr->redraw |= (PR_INVEN | PR_EQUIP | PR_MESSAGE | PR_MONSTER);
-    redraw_stuff();
+    redraw_stuff(p_ptr);
 
     /* Process some user pref files */
     process_some_user_pref_files();
@@ -2438,15 +2438,15 @@ void play_game(void)
 
 	/* Notice stuff */
 	if (p_ptr->notice)
-	    notice_stuff();
+	    notice_stuff(p_ptr);
 
 	/* Update stuff */
 	if (p_ptr->update)
-	    update_stuff();
+	    update_stuff(p_ptr);
 
 	/* Redraw stuff */
 	if (p_ptr->redraw)
-	    redraw_stuff();
+	    redraw_stuff(p_ptr);
 
 	/* Cancel the target */
 	target_set_monster(0);
@@ -2468,7 +2468,7 @@ void play_game(void)
 	   wipe_m_list(); */
 
 	/* XXX XXX XXX */
-	msg_print(NULL);
+	message_flush();
 
 	/* Accidental Death */
 	if (p_ptr->playing && p_ptr->is_dead) {
@@ -2485,8 +2485,8 @@ void play_game(void)
 		p_ptr->noscore |= NOSCORE_WIZARD;
 
 		/* Message */
-		msg_print("You invoke wizard mode and cheat death.");
-		msg_print(NULL);
+		msg("You invoke wizard mode and cheat death.");
+		message_flush();
 
 		/* Cheat death */
 		p_ptr->is_dead = FALSE;
@@ -2516,7 +2516,7 @@ void play_game(void)
 		/* Hack -- cancel recall */
 		if (p_ptr->word_recall) {
 		    /* Message */
-		    msg_print("A tension leaves the air around you...");
+		    msg("A tension leaves the air around you...");
 		    message_flush();
 
 		    /* Hack -- Prevent recall */

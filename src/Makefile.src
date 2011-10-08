@@ -6,13 +6,14 @@
 #
 
 NAME = FAangband
-VERSION = 1.2.5
+VERSION = 1.2.6
 COPYRIGHT = (c) 2005-2011 Nick McConnell and contributors
 PROG = faangband
 
 HEADERS = \
 	angband.h \
 	birth.h \
+	buildid.h \
 	button.h \
 	cave.h \
 	cmds.h \
@@ -28,8 +29,8 @@ HEADERS = \
 	history.h \
 	init.h \
 	jewel.h \
+	keymap.h \
 	main.h \
-	macro.h \
 	monster.h \
 	object.h \
 	option.h \
@@ -70,6 +71,7 @@ MAINFILES = main.o main-crb.o main-gcu.o \
 ANGFILES = \
 	attack.o \
 	birth.o \
+	buildid.o \
 	button.o \
 	cave.o \
 	charattr.o \
@@ -96,9 +98,9 @@ ANGFILES = \
 	identify.o \
 	init.o \
 	jewel.o \
+	keymap.o \
 	load.o \
 	load-old.o \
-	macro.o \
 	monattk.o \
 	monmove.o \
 	monster1.o \
@@ -132,6 +134,7 @@ ANGFILES = \
 	target.o \
 	ui-birth.o \
 	ui.o \
+	ui-event.o \
 	ui-knowledge.o \
 	ui-menu.o \
 	ui-options.o \

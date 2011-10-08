@@ -22,6 +22,7 @@
 #include "files.h"
 #include "game-event.h"
 #include "history.h"
+#include "savefile.h"
 #include "ui-menu.h"
 
 /**
@@ -115,7 +116,7 @@ static void make_bones(void)
     ang_file *fp;
 
     char str[1024];
-    ui_event_data answer;
+    ui_event answer;
     byte choice = 0;
 
     int i;
@@ -200,7 +201,7 @@ static void make_bones(void)
 		clear_from(16);
 
 		/* Determine what the personalized string will be used for.  */
-		if ((answer.key == 'Y') || (answer.key == 'y')) {
+		if ((answer.key.code == 'Y') || (answer.key.code == 'y')) {
 		    prt("Will you add something for your ghost to say,", 15, 0);
 		    prt("or add to the monster description?", 16, 0);
 		    prt("((M)essage/(D)escription)", 17, 0);
@@ -218,10 +219,10 @@ static void make_bones(void)
 			clear_from(15);
 			clear_from(16);
 
-			if ((answer.key == 'M') || (answer.key == 'm')) {
+			if ((answer.key.code == 'M') || (answer.key.code == 'm')) {
 			    choice = 1;
 			    break;
-			} else if ((answer.key == 'D') || (answer.key == 'd')) {
+			} else if ((answer.key.code == 'D') || (answer.key.code == 'd')) {
 			    choice = 2;
 			    break;
 			} else {
@@ -229,8 +230,8 @@ static void make_bones(void)
 			    break;
 			}
 		    }
-		} else if ((answer.key == 'N') || (answer.key == 'n')
-			   || (answer.key == ESCAPE)) {
+		} else if ((answer.key.code == 'N') || (answer.key.code == 'n')
+			   || (answer.key.code == ESCAPE)) {
 		    choice = 0;
 		    break;
 		}
@@ -259,7 +260,7 @@ static void make_bones(void)
 /**
  * Centers a string within a 31 character string
  */
-static void center_string(char *buf, cptr str)
+static void center_string(char *buf, const char *str)
 {
     int i, j;
 
@@ -278,7 +279,7 @@ static void center_string(char *buf, cptr str)
  */
 static void print_tomb(void)
 {
-    cptr p;
+    const char *p;
 
     int offset = 12;
 
@@ -563,7 +564,7 @@ static void death_info(const char *title, int row)
 
     store_type *st_ptr;
 
-    ui_event_data ke;
+    ui_event ke;
 
     bool done = FALSE;
 
@@ -603,7 +604,7 @@ static void death_info(const char *title, int row)
 
     /* Allow abort at this point */
     ke = inkey_ex();
-    if (ke.key == ESCAPE)
+    if (ke.key.code == ESCAPE)
 	done = TRUE;
 
     /* Show equipment and inventory */
@@ -615,7 +616,7 @@ static void death_info(const char *title, int row)
 	show_equip(OLIST_WEIGHT);
 	prt("You are using: -more-", 0, 0);
 	ke = inkey_ex();
-	if (ke.key == ESCAPE)
+	if (ke.key.code == ESCAPE)
 	    done = TRUE;
     }
 
@@ -626,7 +627,7 @@ static void death_info(const char *title, int row)
 	show_inven(OLIST_WEIGHT);
 	prt("You are carrying: -more-", 0, 0);
 	ke = inkey_ex();
-	if (ke.key == ESCAPE)
+	if (ke.key.code == ESCAPE)
 	    done = TRUE;
     }
 
@@ -669,7 +670,7 @@ static void death_info(const char *title, int row)
 
 	    /* Wait for it */
 	    ke = inkey_ex();
-	    if (ke.key == ESCAPE)
+	    if (ke.key.code == ESCAPE)
 		done = TRUE;
 	}
     }
@@ -704,7 +705,7 @@ static void death_scores(const char *title, int row)
 static void death_examine(const char *title, int row)
 {
     int item;
-    cptr q, s;
+    const char *q, *s;
 
 
     /* Get an item */
@@ -778,7 +779,7 @@ static void kingly(void)
     flush();
 
     /* Wait for response */
-    pause_line(23);
+    pause_line(Term);
 }
 
 /*
@@ -830,9 +831,9 @@ void death_screen(void)
 	kingly();
 
     /* Save dead player */
-    if (!old_save())
+    if (!savefile_save(savefile))
     {
-	msg_print("death save failed!");
+	msg("death save failed!");
 	message_flush();
     }
 
@@ -853,8 +854,8 @@ void death_screen(void)
     event_signal(EVENT_EQUIPMENT);
 
     /* Handle stuff */
-    notice_stuff();
-    handle_stuff();
+    notice_stuff(p_ptr);
+    handle_stuff(p_ptr);
 
     /* You are dead */
     print_tomb();
@@ -866,7 +867,7 @@ void death_screen(void)
     flush();
 
     /* Flush messages */
-    msg_print(NULL);
+    message_flush();
 
     if (!death_menu)
     {
@@ -880,6 +881,6 @@ void death_screen(void)
 
     do
     {
-	menu_select(death_menu, 0);
+	menu_select(death_menu, 0, FALSE);
     } while (!get_check("Do you want to quit? "));
 }

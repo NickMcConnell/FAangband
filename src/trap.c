@@ -291,7 +291,7 @@ bool get_trap_graphics(int t_idx, byte *a, char *c, bool require_visible)
 /**
  * Reveal some of the traps in a grid
  */
-bool reveal_trap(int y, int x, int chance, bool msg)
+bool reveal_trap(int y, int x, int chance, bool domsg)
 {
     int i;
     int found_trap = 0;
@@ -328,10 +328,10 @@ bool reveal_trap(int y, int x, int chance, bool msg)
     if (found_trap)
     {
 	/* We want to talk about it */
-	if (msg)
+	if (domsg)
 	{
-	    if (found_trap == 1) msg_print("You have found a trap.");
-	    else msg_format("You have found %d traps.", found_trap);
+	    if (found_trap == 1) msg("You have found a trap.");
+	    else msg("You have found %d traps.", found_trap);
 	}
 
 	/* Memorize */
@@ -634,7 +634,7 @@ void hit_trap_aux(int y, int x, int trap)
 
     trap_type *t_ptr = &trap_list[trap];
 
-    cptr name = t_ptr->kind->name;
+    const char *name = t_ptr->kind->name;
 
     /* Use the "simple" RNG to insure that traps are consistant. */
     Rand_quick = TRUE;
@@ -659,15 +659,15 @@ void hit_trap_aux(int y, int x, int trap)
 		&& (!stage_map[p_ptr->stage][DOWN])) {
 		cave_off(cave_info[y][x], CAVE_MARK);
 		remove_trap(y, x, FALSE, trap);
-		msg_print("The trap fails!");
+		msg("The trap fails!");
 		break;
 	    }
 
 
-	    msg_print("You fall through a trap door!");
+	    msg("You fall through a trap door!");
 	    if (p_ptr->state.ffall) {
 		notice_obj(OF_FEATHER, 0);
-		msg_print("You float gently down to the next level.");
+		msg("You float gently down to the next level.");
 	    } else {
 		dam = damroll(2, 8);
 		take_hit(dam, name);
@@ -715,12 +715,12 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* pit of daggers. */
 	    if ((nastyness > 80) && (randint1(3) != 3)) {
-		msg_print("You fall into a pit of daggers!");
+		msg("You fall into a pit of daggers!");
 
 		if (p_ptr->state.ffall) {
 		    notice_obj(OF_FEATHER, 0);
-		    msg_print("You float gently to the floor of the pit.");
-		    msg_print("You carefully avoid setting off the daggers.");
+		    msg("You float gently to the floor of the pit.");
+		    msg("You carefully avoid setting off the daggers.");
 		}
 
 		else {
@@ -729,9 +729,9 @@ void hit_trap_aux(int y, int x, int trap)
 			Rand_quick = FALSE;
 
 
-			msg_print
+			msg
 			    ("A single coldly gleaming dagger pierces you deeply!");
-			msg_print
+			msg
 			    ("You feel a deadly chill slowly withering your soul.");
 
 			/* activate the Black Breath. */
@@ -742,7 +742,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 			/* undead may be attracted. */
 			if (randint1(2) == 1) {
-			    msg_print
+			    msg
 				("Undead suddenly appear and call you to them!");
 
 			    k = randint1(3) + 2;
@@ -762,7 +762,7 @@ void hit_trap_aux(int y, int x, int trap)
 			Rand_quick = FALSE;
 
 			/* activate the ordinary daggers. */
-			msg_print("Daggers pierce you everywhere!");
+			msg("Daggers pierce you everywhere!");
 
 			k = randint1(10) + 5;
 			for (i = 0; i < k; i++) {
@@ -782,12 +782,12 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* poisoned spiked pit. */
 	    else if ((nastyness > 55) && (randint1(3) != 3)) {
-		msg_print("You fall into a spiked pit!");
+		msg("You fall into a spiked pit!");
 
 		if (p_ptr->state.ffall) {
 		    notice_obj(OF_FEATHER, 0);
-		    msg_print("You float gently to the floor of the pit.");
-		    msg_print("You carefully avoid touching the spikes.");
+		    msg("You float gently to the floor of the pit.");
+		    msg("You carefully avoid touching the spikes.");
 		}
 
 		else {
@@ -800,7 +800,7 @@ void hit_trap_aux(int y, int x, int trap)
 		    if (randint0(100) < 85) {
 			bool was_poisoned;
 
-			msg_print("You are impaled on poisonous spikes!");
+			msg("You are impaled on poisonous spikes!");
 
 			dam = dam * (randint1(6) + 3);
 			(void) inc_timed(TMD_CUT, randint1(dam), TRUE);
@@ -808,7 +808,7 @@ void hit_trap_aux(int y, int x, int trap)
 			was_poisoned = pois_hit(dam);
 
 			if (!was_poisoned)
-			    msg_print("The poison does not affect you!");
+			    msg("The poison does not affect you!");
 		    }
 
 		    /* Take the damage */
@@ -820,12 +820,12 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* spiked pit. */
 	    else if ((nastyness > 30) && (randint1(3) != 3)) {
-		msg_print("You fall into a spiked pit!");
+		msg("You fall into a spiked pit!");
 
 		if (p_ptr->state.ffall) {
 		    notice_obj(OF_FEATHER, 0);
-		    msg_print("You float gently to the floor of the pit.");
-		    msg_print("You carefully avoid touching the spikes.");
+		    msg("You float gently to the floor of the pit.");
+		    msg("You carefully avoid touching the spikes.");
 		}
 
 		else {
@@ -836,7 +836,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 		    /* Extra spike damage */
 		    if (randint0(100) < 85) {
-			msg_print("You are impaled!");
+			msg("You are impaled!");
 
 			dam = dam * (2 + randint1(4));
 			(void) inc_timed(TMD_CUT, randint1(dam), TRUE);
@@ -851,10 +851,10 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* ordinary pit in all other cases. */
 	    else {
-		msg_print("You fall into a pit!");
+		msg("You fall into a pit!");
 		if (p_ptr->state.ffall) {
 		    notice_obj(OF_FEATHER, 0);
-		    msg_print("You float gently to the bottom of the pit.");
+		    msg("You float gently to the bottom of the pit.");
 		} else {
 		    Rand_quick = FALSE;
 
@@ -882,7 +882,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 		Rand_quick = FALSE;
 
-		msg_print("A small dart hits you!");
+		msg("A small dart hits you!");
 		dam = damroll(1, 4);
 		take_hit(dam, name);
 
@@ -902,7 +902,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 		Rand_quick = TRUE;
 	    } else {
-		msg_print("A small dart barely misses you.");
+		msg("A small dart barely misses you.");
 	    }
 	    break;
 	}
@@ -924,14 +924,14 @@ void hit_trap_aux(int y, int x, int trap)
 		if ((nastyness >= 50) && (randint1(2) == 1)) {
 		    Rand_quick = FALSE;
 
-		    msg_print("You are struck by lightning!");
+		    msg("You are struck by lightning!");
 		    dam = damroll(6, 30);
 
 		    Rand_quick = TRUE;
 		} else {
 		    Rand_quick = FALSE;
 
-		    msg_print("You get zapped!");
+		    msg("You get zapped!");
 		    dam = damroll(4, 8);
 
 		    Rand_quick = TRUE;
@@ -947,14 +947,14 @@ void hit_trap_aux(int y, int x, int trap)
 		if ((nastyness >= 50) && (randint1(2) == 1)) {
 		    Rand_quick = FALSE;
 
-		    msg_print("You are lost within a blizzard!");
+		    msg("You are lost within a blizzard!");
 		    dam = damroll(6, 30);
 
 		    Rand_quick = TRUE;
 		} else {
 		    Rand_quick = FALSE;
 
-		    msg_print("You are coated in frost!");
+		    msg("You are coated in frost!");
 		    dam = damroll(4, 8);
 
 		    Rand_quick = TRUE;
@@ -969,14 +969,14 @@ void hit_trap_aux(int y, int x, int trap)
 		if ((nastyness >= 50) && (randint1(2) == 1)) {
 		    Rand_quick = FALSE;
 
-		    msg_print("You are enveloped in a column of fire!");
+		    msg("You are enveloped in a column of fire!");
 		    dam = damroll(6, 30);
 
 		    Rand_quick = TRUE;
 		} else {
 		    Rand_quick = FALSE;
 
-		    msg_print("You are surrounded by flames!");
+		    msg("You are surrounded by flames!");
 		    dam = damroll(4, 8);
 
 		    Rand_quick = TRUE;
@@ -991,14 +991,14 @@ void hit_trap_aux(int y, int x, int trap)
 		if ((nastyness >= 50) && (randint1(2) == 1)) {
 		    Rand_quick = FALSE;
 
-		    msg_print("A cauldron of acid is tipped over your head!");
+		    msg("A cauldron of acid is tipped over your head!");
 		    dam = damroll(6, 30);
 
 		    Rand_quick = TRUE;
 		} else {
 		    Rand_quick = FALSE;
 
-		    msg_print("You are splashed with acid!");
+		    msg("You are splashed with acid!");
 		    dam = damroll(4, 8);
 
 		    Rand_quick = TRUE;
@@ -1018,7 +1018,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* blinding trap. */
 	    if (selection == 1) {
-		msg_print("You are surrounded by a black gas!");
+		msg("You are surrounded by a black gas!");
 		if (!p_ptr->state.no_blind) {
 		    Rand_quick = FALSE;
 
@@ -1031,7 +1031,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* confusing trap. */
 	    if (selection == 2) {
-		msg_print
+		msg
 		    ("You are surrounded by a gas of scintillating colors!");
 		if (!p_resist_good(P_RES_CONFU)) {
 		    Rand_quick = FALSE;
@@ -1045,7 +1045,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* poisoning trap. */
 	    if (selection == 3) {
-		msg_print("You are surrounded by a pungent green gas!");
+		msg("You are surrounded by a pungent green gas!");
 
 		Rand_quick = FALSE;
 
@@ -1056,7 +1056,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* sleeping trap. */
 	    if (selection == 4) {
-		msg_print("You are surrounded by a strange white mist!");
+		msg("You are surrounded by a strange white mist!");
 		if (!p_ptr->state.free_act) {
 		    (void) inc_timed(TMD_PARALYZED, randint0(10) + 5, TRUE);
 		} else
@@ -1072,7 +1072,7 @@ void hit_trap_aux(int y, int x, int trap)
 	    sound(MSG_SUM_MONSTER);
 	    /* sometimes summon thieves. */
 	    if ((p_ptr->depth > 8) && (randint1(5) == 1)) {
-		msg_print("You have aroused a den of thieves!");
+		msg("You have aroused a den of thieves!");
 
 		Rand_quick = FALSE;
 
@@ -1087,7 +1087,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* sometimes summon a nasty unique. */
 	    else if (randint1(8) == 1) {
-		msg_print("You are enveloped in a cloud of smoke!");
+		msg("You are enveloped in a cloud of smoke!");
 
 		Rand_quick = FALSE;
 
@@ -1099,7 +1099,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* otherwise, the ordinary summon monsters. */
 	    else {
-		msg_print("You are enveloped in a cloud of smoke!");
+		msg("You are enveloped in a cloud of smoke!");
 
 		Rand_quick = FALSE;
 
@@ -1133,7 +1133,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* dungeon destruction trap. */
 	    if ((nastyness > 60) && (randint1(12) == 1)) {
-		msg_print
+		msg
 		    ("A ear-splitting howl shatters your mind as the dungeon is smashed by hammer blows!");
 
 		(void) destroy_level(FALSE);
@@ -1148,13 +1148,13 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* earthquake trap. */
 	    else if ((nastyness > 20) && (randint1(4) == 1)) {
-		msg_print("A tremor shakes the earth around you");
+		msg("A tremor shakes the earth around you");
 		earthquake(y, x, 10, FALSE);
 	    }
 
 	    /* falling rock trap. */
 	    else if ((nastyness > 4) && (randint1(2) == 1)) {
-		msg_print("A rock falls on your head.");
+		msg("A rock falls on your head.");
 		dam = damroll(2, 10);
 		take_hit(dam, name);
 
@@ -1163,7 +1163,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* a few pebbles. */
 	    else {
-		msg_print("A bunch of pebbles rain down on you.");
+		msg("A bunch of pebbles rain down on you.");
 		dam = damroll(1, 8);
 		take_hit(dam, name);
 	    }
@@ -1225,7 +1225,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 			if (num == 1) {
 			    /* Message */
-			    msg_print("Energy drains from your pack!");
+			    msg("Energy drains from your pack!");
 
 			    /* Uncharge */
 			    if ((o_ptr->tval == TV_STAFF)
@@ -1250,18 +1250,18 @@ void hit_trap_aux(int y, int x, int trap)
 	    /* trap of forgetting. */
 	    else if (nastyness < 35) {
 		if (check_save(100)) {
-		    msg_print("You hang on to your memories!");
+		    msg("You hang on to your memories!");
 		} else if (lose_all_info()) {
-		    msg_print("Your memories fade away.");
+		    msg("Your memories fade away.");
 		}
 	    }
 
 	    /* trap of alter reality. */
 	    else if (nastyness < 50) {
 		if (OPT(adult_ironman))
-		    msg_print("Nothing happens.");
+		    msg("Nothing happens.");
 		else {
-		    msg_print("The world changes!");
+		    msg("The world changes!");
 
 		    /* Leaving */
 		    p_ptr->leaving = TRUE;
@@ -1272,12 +1272,12 @@ void hit_trap_aux(int y, int x, int trap)
 	    else if (nastyness < 75) {
 		int max1, cur1, max2, cur2, ii, jj;
 
-		msg_print("You feel yourself being twisted by wild magic!");
+		msg("You feel yourself being twisted by wild magic!");
 
 		if (check_save(100)) {
-		    msg_print("You resist the effects!");
+		    msg("You resist the effects!");
 		} else {
-		    msg_print("Your body starts to scramble...");
+		    msg("Your body starts to scramble...");
 
 		    /* Pick a pair of stats */
 		    ii = randint0(6);
@@ -1300,7 +1300,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* time ball trap. */
 	    else if (nastyness < 90) {
-		msg_print("You feel time itself assault you!");
+		msg("You feel time itself assault you!");
 
 		/* Target the player with a radius 0 ball attack. */
 		fire_meteor(0, GF_TIME, p_ptr->py, p_ptr->px, 75, 0, TRUE);
@@ -1309,7 +1309,7 @@ void hit_trap_aux(int y, int x, int trap)
 	    /* trap of bugs gone berserk. */
 	    else {
 		/* explain what the dickens is going on. */
-		msg_print("GRUESOME Gnawing Bugs leap out at you!");
+		msg("GRUESOME Gnawing Bugs leap out at you!");
 
 		if (!p_resist_good(P_RES_CONFU)) {
 		    (void) inc_timed(TMD_CONFUSED, randint0(20) + 10, TRUE);
@@ -1349,7 +1349,7 @@ void hit_trap_aux(int y, int x, int trap)
 		}
 
 		/* herald the arrival of bugs. */
-		msg_print("AAAAAAAHHHH! THEY'RE EVERYWHERE!");
+		msg("AAAAAAAHHHH! THEY'RE EVERYWHERE!");
 	    }
 
 	    Rand_quick = TRUE;
@@ -1361,9 +1361,9 @@ void hit_trap_aux(int y, int x, int trap)
     case TRAP_PORTAL:
 	{
 	    if (stage_map[p_ptr->stage][STAGE_TYPE] >= CAVE)
-		msg_print("You teleport across the dungeon.");
+		msg("You teleport across the dungeon.");
 	    else
-		msg_print("You teleport across the wilderness.");
+		msg("You teleport across the wilderness.");
 
 	    Rand_quick = FALSE;
 
@@ -1384,7 +1384,7 @@ void hit_trap_aux(int y, int x, int trap)
 	    /* hold the missile type and name. */
 	    int sval = 0;
 	    int tval = 0;
-	    cptr missile_name = "";
+	    const char *missile_name = "";
 
 
 
@@ -1433,17 +1433,17 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* determine if the missile hits. */
 	    if (check_trap_hit(75 + p_ptr->depth)) {
-		msg_format("A %s hits you from above.", missile_name);
+		msg("A %s hits you from above.", missile_name);
 
 		Rand_quick = FALSE;
 
 		/* critical hits. */
 		if (randint1(2) == 1) {
-		    msg_print("It was well-aimed!");
+		    msg("It was well-aimed!");
 		    dam *= 1 + randint1(2);
 		}
 		if (randint1(2) == 1) {
-		    msg_print("It gouges you!");
+		    msg("It gouges you!");
 		    dam = 3 * dam / 2;
 
 		    /* cut the player. */
@@ -1457,7 +1457,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* Explain what just happened. */
 	    else
-		msg_format("A %s wizzes by your head.", missile_name);
+		msg("A %s wizzes by your head.", missile_name);
 
 	    /* these will eventually run out of ammo. */
 
@@ -1487,13 +1487,13 @@ void hit_trap_aux(int y, int x, int trap)
 	    if (check_trap_hit(75 + p_ptr->depth)) {
 		/* Take damage */
 		dam = damroll(3, 5);
-		msg_print("A branch hits you from above.");
+		msg("A branch hits you from above.");
 
 		Rand_quick = FALSE;
 
 		/* critical hits. */
 		if (randint1(2) == 1) {
-		    msg_print("It was heavy!");
+		    msg("It was heavy!");
 		    dam = 3 * dam / 2;
 
 		    /* stun the player. */
@@ -1507,7 +1507,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* Explain what just happened. */
 	    else
-		msg_print("A falling branch just misses you.");
+		msg("A falling branch just misses you.");
 
 	    /* No more */
 	    remove_trap(y, x, FALSE, trap);
@@ -1532,8 +1532,8 @@ extern void hit_trap(int y, int x)
     int num = num_traps(y, x, -1);
     
     /* Oops.  We've walked right into trouble. */
-    if      (num == 1) msg_print("You stumble upon a trap!");
-    else if (num >  1) msg_print("You stumble upon some traps!");
+    if      (num == 1) msg("You stumble upon a trap!");
+    else if (num >  1) msg("You stumble upon some traps!");
     
     
     /* Scan the current trap list */
@@ -1562,7 +1562,7 @@ extern void hit_trap(int y, int x)
 /**
  * Hack -- possible victim outcry. -LM- 
  */
-static cptr desc_victim_outcry[] = {
+static const char *desc_victim_outcry[] = {
     "'My money, where's my money?'",
     "'Thief! Thief! Thief! Baggins! We hates it forever!'",
     "'Tell me, have you seen a purse wandering around?'",
@@ -1597,7 +1597,7 @@ static cptr desc_victim_outcry[] = {
  */
 extern void py_steal(int y, int x)
 {
-    cptr act = NULL;
+    const char *act = NULL;
 
     monster_type *m_ptr = &m_list[cave_m_idx[y][x]];
     monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -1621,7 +1621,7 @@ extern void py_steal(int y, int x)
 
     /* Hard limit on theft. */
     if (number_of_thefts_on_level > 4) {
-	msg_print
+	msg
 	    ("Everyone is keeping a lookout for you.  You can steal nothing here.");
 	return;
     }
@@ -1713,11 +1713,11 @@ extern void py_steal(int y, int x)
 
 	/* Announce the good news. */
 	if (purse)
-	    msg_format("You burgle %d gold.", purse);
+	    msg("You burgle %d gold.", purse);
 
 	/* Pockets are empty. */
 	else
-	    msg_print("You burgle only dust.");
+	    msg("You burgle only dust.");
     }
 
     /* The victim normally, but not always, wakes up and is aggravated. */
@@ -1734,12 +1734,12 @@ extern void py_steal(int y, int x)
 	if ((randint1(5) == 1) && (purse) && (rf_has(r_ptr->flags, RF_SMART))) {
 	    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 	    act = desc_victim_outcry[randint0(20)];
-	    msg_format("%^s cries out %s", m_name, act);
+	    msg("%^s cries out %s", m_name, act);
 	}
 	/* Otherwise, simply explain what happened. */
 	else {
 	    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
-	    msg_format("You have aroused %s.", m_name);
+	    msg("You have aroused %s.", m_name);
 	}
     }
 
@@ -1751,7 +1751,7 @@ extern void py_steal(int y, int x)
     p_ptr->update |= (PU_BONUS);
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
 
     /* Increment the number of thefts, and possibly raise the hue and cry. */
@@ -1759,14 +1759,14 @@ extern void py_steal(int y, int x)
 
     if (number_of_thefts_on_level > 4) {
 	/* Notify the player of the trouble he's in. */
-	msg_print("All the level is in an uproar over your misdeeds!");
+	msg("All the level is in an uproar over your misdeeds!");
 
 	/* Aggravate and speed up all monsters on level. */
 	(void) aggravate_monsters(1, TRUE);
     }
 
     else if ((number_of_thefts_on_level > 2) || (randint1(8) == 1)) {
-	msg_print
+	msg
 	    ("You hear hunting parties scouring the area for a notorious burgler.");
 
 	/* Aggravate monsters nearby. */
@@ -1779,7 +1779,7 @@ extern void py_steal(int y, int x)
 	p_ptr->special_attack &= ~(ATTACK_FLEE);
 
 	/* Message */
-	msg_print("You escape into the shadows!");
+	msg("You escape into the shadows!");
 
 	/* Teleport. */
 	teleport_player(6 + p_ptr->lev / 5, TRUE);
@@ -1804,26 +1804,26 @@ extern bool py_set_trap(int y, int x)
 	(player_has(PF_EXTRA_TRAP) ? 1 : 0);
 
     if (p_ptr->timed[TMD_BLIND] || no_light()) {
-	msg_print("You can not see to set a trap.");
+	msg("You can not see to set a trap.");
 	return FALSE;
     }
 
     if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_IMAGE]) {
-	msg_print("You are too confused.");
+	msg("You are too confused.");
 	return FALSE;
     }
 
     /* Paranoia -- Forbid more than max_traps being set. */
     if (num_trap_on_level >= max_traps) {
-	msg_print
+	msg
 	    ("You must disarm your existing trap to free up your equipment.");
 	return FALSE;
     }
 
     /* No setting traps while shapeshifted */
     if (SCHANGE) {
-	msg_print("You can not set traps while shapechanged.");
-	msg_print("Use the ']' command to return to your normal form.");
+	msg("You can not set traps while shapechanged.");
+	msg("Use the ']' command to return to your normal form.");
 	return FALSE;
     }
 #if 0
@@ -1837,7 +1837,7 @@ extern bool py_set_trap(int y, int x)
 
 	/* Artifact */
 	if (o_ptr->name1) {
-	    msg_print("There is an indestructible object here.");
+	    msg("There is an indestructible object here.");
 	    return FALSE;
 	}
 
@@ -1871,7 +1871,7 @@ extern bool py_set_trap(int y, int x)
     place_trap(y, x, MTRAP_BASE, 0);
 
     /* Notify the player. */
-    msg_print("You set a monster trap.");
+    msg("You set a monster trap.");
 
     /* A trap has been set */
     return TRUE;
@@ -1922,7 +1922,7 @@ void mtrap_display(menu_type * menu, int oid, bool cursor, int row, int col,
 /**
  * Deal with events on the trap menu
  */
-bool mtrap_action(menu_type *menu, const ui_event_data *db, int oid)
+bool mtrap_action(menu_type *menu, const ui_event *db, int oid)
 {
     u16b *choice = menu_priv(menu);
 
@@ -1946,7 +1946,7 @@ bool mtrap_menu(void)
     menu_type menu;
     menu_iter menu_f = { mtrap_tag, 0, mtrap_display, mtrap_action, 0 };
     region area = { 15, 1, 48, -1 };
-    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { 0 };
 
     size_t i, num = 0;
 
@@ -1990,7 +1990,7 @@ bool mtrap_menu(void)
     prt("", area.row + 1, area.col);
 
     /* Select an entry */
-    evt = menu_select(&menu, 0);
+    evt = menu_select(&menu, 0, TRUE);
 
     /* Free memory */
     FREE(choice);
@@ -2007,19 +2007,19 @@ bool mtrap_menu(void)
 extern bool py_modify_trap(int y, int x)
 {
     if (p_ptr->timed[TMD_BLIND] || no_light()) {
-	msg_print("You can not see to modify your trap.");
+	msg("You can not see to modify your trap.");
 	return FALSE;
     }
 
     if (p_ptr->timed[TMD_CONFUSED] || p_ptr->timed[TMD_IMAGE]) {
-	msg_print("You are too confused.");
+	msg("You are too confused.");
 	return FALSE;
     }
 
     /* No setting traps while shapeshifted */
     if (SCHANGE) {
-	msg_print("You can not set traps while shapechanged.");
-	msg_print("Use the ']' command to return to your normal form.");
+	msg("You can not set traps while shapechanged.");
+	msg("Use the ']' command to return to your normal form.");
 	return FALSE;
     }
 
@@ -2029,7 +2029,7 @@ extern bool py_modify_trap(int y, int x)
     /* get choice */
     if (mtrap_menu()) {
 	/* Notify the player. */
-	msg_print("You modify the monster trap.");
+	msg("You modify the monster trap.");
     }
 
     /* Trap was modified */
@@ -2069,24 +2069,24 @@ void wipe_trap_list(void)
 /**
  * Remove a trap
  */
-static void remove_trap_aux(trap_type *t_ptr, int y, int x, bool msg)
+static void remove_trap_aux(trap_type *t_ptr, int y, int x, bool domsg)
 {
     /* We are clearing a web */
     if (trf_has(t_ptr->flags, TRF_WEB))
     {
-	if (msg)
-	    msg_print("You clear the web.");
+	if (domsg)
+	    msg("You clear the web.");
     }
 
     /* We are deleting a rune */
     else if (trf_has(t_ptr->flags, TRF_RUNE))
     {
-	if (msg)
-	    msg_format("You have removed the %s.", t_ptr->kind->name);
+	if (domsg)
+	    msg("You have removed the %s.", t_ptr->kind->name);
 	num_runes_on_level[t_ptr->t_idx - 1]--;
     }
-    else if (msg)
-	message_format(MSG_DISARM, 0, "You have disarmed the %s.", 
+    else if (domsg)
+	msgt(MSG_DISARM, "You have disarmed the %s.", 
 		       t_ptr->kind->name);
     
     /* We are deleting a monster trap */
@@ -2105,7 +2105,7 @@ static void remove_trap_aux(trap_type *t_ptr, int y, int x, bool msg)
  *
  * Return TRUE if no traps now exist in this grid.
  */
-bool remove_trap(int y, int x, bool msg, int t_idx)
+bool remove_trap(int y, int x, bool domsg, int t_idx)
 {
     int i;
     bool trap_exists;
@@ -2117,7 +2117,7 @@ bool remove_trap(int y, int x, bool msg, int t_idx)
 	trap_type *t_ptr = &trap_list[t_idx];
 	
 	/* Remove it */
-	remove_trap_aux(t_ptr, y, x, msg);
+	remove_trap_aux(t_ptr, y, x, domsg);
 	
 	/* Note when trap list actually gets shorter */
 	if (t_idx == trap_max - 1) trap_max--;
@@ -2136,7 +2136,7 @@ bool remove_trap(int y, int x, bool msg, int t_idx)
 	    if ((t_ptr->fy == y) && (t_ptr->fx == x))
 	    {
 		/* Remove it */
-		remove_trap_aux(t_ptr, y, x, msg);
+		remove_trap_aux(t_ptr, y, x, domsg);
 		
 		/* Note when trap list actually gets shorter */
 		if (i == trap_max - 1) trap_max--;
@@ -2157,7 +2157,7 @@ bool remove_trap(int y, int x, bool msg, int t_idx)
 /**
  * Remove all traps of a specific kind from a location.
  */
-void remove_trap_kind(int y, int x, bool msg, int t_idx)
+void remove_trap_kind(int y, int x, bool domsg, int t_idx)
 {
     int i;
 
@@ -2171,7 +2171,7 @@ void remove_trap_kind(int y, int x, bool msg, int t_idx)
 	if ((t_ptr->fy == y) && (t_ptr->fx == x))
 	{
 	    /* Require that it be of this type */
-	    if (t_ptr->t_idx == t_idx) (void)remove_trap(y, x, msg, i);
+	    if (t_ptr->t_idx == t_idx) (void)remove_trap(y, x, domsg, i);
 	}
     }
 }
@@ -2208,7 +2208,7 @@ void trap_display(menu_type *menu, int oid, bool cursor, int row, int col,
 /**
  * Deal with events on the jump menu
  */
-bool trap_action(menu_type *menu, const ui_event_data *evt, int oid)
+bool trap_action(menu_type *menu, const ui_event *evt, int oid)
 {
     u16b *choice = menu_priv(menu);
 
@@ -2232,7 +2232,7 @@ bool trap_menu(int y, int x, int *idx)
     menu_type menu;
     menu_iter menu_f = { trap_tag, 0, trap_display, trap_action, 0 };
     region area = { 15, 1, 48, -1 };
-    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { 0 };
     int cursor = 0, j = 0;
     int i;
     u16b *choice;
@@ -2281,7 +2281,7 @@ bool trap_menu(int y, int x, int *idx)
     menu_layout(&menu, &area);
 
     /* Select an entry */
-    evt = menu_select(&menu, cursor);
+    evt = menu_select(&menu, cursor, TRUE);
 
     /* Set it */
     if (evt.type == EVT_SELECT)

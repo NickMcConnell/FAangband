@@ -24,6 +24,7 @@
  */
 
 #include "angband.h"
+#include "buildid.h"
 #include "button.h"
 #include "cave.h"
 #include "cmds.h"
@@ -32,6 +33,7 @@
 #include "history.h"
 #include "tvalsval.h"
 #include "option.h"
+#include "savefile.h"
 #include "ui-menu.h"
 
 
@@ -160,7 +162,7 @@ static byte likert_color = TERM_WHITE;
 /**
  * Returns a "rating" of x depending on y
  */
-static cptr likert(int x, int y)
+static const char *likert(int x, int y)
 {
     char description[10];
 
@@ -617,7 +619,7 @@ static u32b display_player_powers[10] = {
 /**
  * Hack -- see below
  */
-static cptr display_player_resist_names[2][7] = {
+static const char *display_player_resist_names[2][7] = {
     {
      "Acid:",			/* P_RES_ACID */
      "Elec:",			/* P_RES_ELEC */
@@ -640,7 +642,7 @@ static cptr display_player_resist_names[2][7] = {
 };
 
 
-static cptr display_player_power_names[10] = {
+static const char *display_player_power_names[10] = {
     "S.Dig:",			/* OF_SLOW_DIGEST */
     "Feath:",			/* OF_FEATHER */
     "PLght:",			/* OF_LIGHT */
@@ -653,7 +655,7 @@ static cptr display_player_power_names[10] = {
     "NFear:"			/* OF_FEARLESS */
 };
 
-static cptr display_player_bonus_names[8] = {
+static const char *display_player_bonus_names[8] = {
     "M-Mas:",			/* P_BONUS_M_MASTERY */
     "Stea.:",			/* P_BONUS_STEALTH */
     "Sear.:",			/* P_BONUS_SEARCH */
@@ -708,7 +710,7 @@ void display_player(int mode)
  * Print long number with header at given row, column
  * Use the color for the number, not the header
  */
-static void prt_lnum(cptr header, s32b num, int row, int col, byte color)
+static void prt_lnum(const char *header, s32b num, int row, int col, byte color)
 {
     int len = strlen(header);
     char out_val[32];
@@ -720,7 +722,7 @@ static void prt_lnum(cptr header, s32b num, int row, int col, byte color)
 /**
  * Print number with header at given row, column
  */
-static void prt_num(cptr header, int num, int row, int col, byte color)
+static void prt_num(const char *header, int num, int row, int col, byte color)
 {
     int len = strlen(header);
     char out_val[32];
@@ -733,7 +735,7 @@ static void prt_num(cptr header, int num, int row, int col, byte color)
 /**
  * Print decimal number with header at given row, column
  */
-static void prt_deci(cptr header, int num, int deci, int row, int col,
+static void prt_deci(const char *header, int num, int deci, int row, int col,
 		     byte color)
 {
     int len = strlen(header);
@@ -953,7 +955,7 @@ extern int make_dump(char_attr_line * line, int mode)
     int i, j, x, y, col;
     bool quiver_empty = TRUE;
 
-    cptr paren = ")";
+    const char *paren = ")";
 
     int k, which = 0;
 
@@ -977,12 +979,12 @@ extern int make_dump(char_attr_line * line, int mode)
 
     int xthn, xthb, xfos, xsrh;
     int xdis, xdev, xsav, xstl;
-    cptr desc;
+    const char *desc;
 
     int n;
 
     u32b flag;
-    cptr name1;
+    const char *name1;
 
     int player_resists[MAX_P_RES];
     int player_bonus[MAX_P_BONUS];
@@ -2003,7 +2005,7 @@ void display_dump(char_attr_line * line, int top_line, int bottom_line, int col)
  * Write a character dump to a file
  */
 
-errr file_character(cptr name, char_attr_line * line, int last_line)
+errr file_character(const char *name, char_attr_line * line, int last_line)
 {
     int i;
     char buf[100];
@@ -2036,8 +2038,8 @@ errr file_character(cptr name, char_attr_line * line, int last_line)
     /* Invalid file */
     if (!dump_out_file) {
 	/* Message */
-	msg_format("Character dump failed!");
-	msg_print(NULL);
+	msg("Character dump failed!");
+	message_flush();
 
 	/* Error */
 	return (-1);
@@ -2056,8 +2058,8 @@ errr file_character(cptr name, char_attr_line * line, int last_line)
     file_close(dump_out_file);
 
     /* Message */
-    msg_print("Character dump successful.");
-    msg_print(NULL);
+    msg("Character dump successful.");
+    message_flush();
 
     /* Success */
     return (0);
@@ -2069,7 +2071,7 @@ errr file_character(cptr name, char_attr_line * line, int last_line)
  */
 static void string_lower(char *buf)
 {
-    cptr buf_ptr;
+    const char *buf_ptr;
 
     /* No string */
     if (!buf)
@@ -2101,12 +2103,12 @@ static int push_file = 0;
 
 #define MAX_BUF 1024
 
-bool show_file(cptr name, cptr what, int line, int mode)
+bool show_file(const char *name, const char *what, int line, int mode)
 {
     int i, k, n;
     int wid, hgt;
     int ret;
-    ui_event_data ke;
+    ui_event ke;
 
     /* Number of "real" lines passed by */
     int next = 0;
@@ -2127,10 +2129,10 @@ bool show_file(cptr name, cptr what, int line, int mode)
     ang_file *fff = NULL;
 
     /* Find this string (if any) */
-    cptr find = NULL;
+    const char *find = NULL;
 
     /* Jump to this tag */
-    cptr tag = NULL;
+    const char *tag = NULL;
 
     /* Hold a string to find */
     char finder[81] = "";
@@ -2229,7 +2231,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
     /* Oops */
     if (!fff) {
 	/* Message */
-	msg_format("Cannot open '%s'.", name);
+	msg("Cannot open '%s'.", name);
 	message_flush();
 
 	/* Oops */
@@ -2388,7 +2390,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 
 	    /* Hilight "shower" */
 	    if (shower[0]) {
-		cptr str = lc_buf;
+		const char *str = lc_buf;
 
 		/* Display matches */
 		while ((str = strstr(str, shower)) != NULL) {
@@ -2467,24 +2469,24 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	ke = inkey_ex();
 
 	/* Mouse input - menus */
-	if ((ke.key == '\xff') && (menu) && (mouse[ke.mousey])) {
+	if ((menu) && (mouse[ke.mouse.y])) {
 	    /* Recurse on that file */
-	    if (!show_file(hook[mouse[ke.mousey]], NULL, 0, mode))
-		ke.key = '?';
+	    if (!show_file(hook[mouse[ke.mouse.y]], NULL, 0, mode))
+		ke.key.code = '?';
 	}
 
 	/* Hack -- return to last screen on escape */
-	if (ke.key == ESCAPE)
+	if (ke.key.code == ESCAPE)
 	    break;
 
 
 	/* Toggle case sensitive on/off */
-	if (ke.key == '!') {
+	if (ke.key.code == '!') {
 	    case_sensitive = !case_sensitive;
 	}
 
 	/* Hack -- try showing */
-	if (ke.key == '=') {
+	if (ke.key.code == '=') {
 	    /* Get "shower" */
 	    prt("Show: ", hgt - 1, 0);
 	    (void) askfor_aux(shower, 80, NULL);
@@ -2495,7 +2497,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	}
 
 	/* Hack -- try finding */
-	if (ke.key == '/') {
+	if (ke.key.code == '/') {
 	    /* Get "finder" */
 	    prt("Find: ", hgt - 1, 0);
 	    if (askfor_aux(finder, 80, NULL)) {
@@ -2514,7 +2516,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	}
 
 	/* Hack -- go to a specific line */
-	if (ke.key == '#') {
+	if (ke.key.code == '#') {
 	    char tmp[81];
 	    prt("Goto Line: ", hgt - 1, 0);
 	    strcpy(tmp, "0");
@@ -2524,48 +2526,48 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	}
 
 	/* Hack -- go to a specific file */
-	if (ke.key == '%') {
+	if (ke.key.code == '%') {
 	    char tmp[81];
 	    prt("Goto File: ", hgt - 1, 0);
 	    strcpy(tmp, "help.hlp");
 	    if (askfor_aux(tmp, 80, NULL)) {
 		if (!show_file(tmp, NULL, 0, mode))
-		    ke.key = '?';
+		    ke.key.code = '?';
 	    }
 	}
 
 	/* Back up one line */
-	if (ke.key == ARROW_UP || ke.key == '8') {
+	if (ke.key.code == ARROW_UP || ke.key.code == '8') {
 	    line = line - 1;
 	}
 
 	/* Hack -- Allow backing up */
-	if ((ke.key == '-') || (ke.key == '9')) {
+	if ((ke.key.code == '-') || (ke.key.code == '9')) {
 	    line = line - 10;
 	    if (line < 0)
 		line = 0;
 	}
 
 	/* Hack -- Advance a single line */
-	if ((ke.key == '\n') || (ke.key == '\r') || (ke.key == '2')
-	    || (ke.key == ARROW_DOWN)) {
+	if ((ke.key.code == '\n') || (ke.key.code == '\r') || (ke.key.code == '2')
+	    || (ke.key.code == ARROW_DOWN)) {
 	    line = line + 1;
 	}
 
 	/* Advance one page */
-	if ((ke.key == ' ') || (ke.key == '3')) {
+	if ((ke.key.code == ' ') || (ke.key.code == '3')) {
 	    line = line + hgt - 4;
 	}
 
 	/* Recurse on numbers */
-	if (menu && isdigit(ke.key) && hook[D2I(ke.key)][0]) {
+	if (menu && isdigit(ke.key.code) && hook[D2I(ke.key.code)][0]) {
 	    /* Recurse on that file */
-	    if (!show_file(hook[D2I(ke.key)], NULL, 0, mode))
-		ke.key = '?';
+	    if (!show_file(hook[D2I(ke.key.code)], NULL, 0, mode))
+		ke.key.code = '?';
 	}
 
 	/* Exit on '?' */
-	if (ke.key == '?')
+	if (ke.key.code == '?')
 	    break;
     }
 
@@ -2577,7 +2579,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
     ret = TRUE;
 
     /* Exit on '?' */
-    if (ke.key == '?')
+    if (ke.key.code == '?')
 	ret = FALSE;
 
   DONE:
@@ -2742,7 +2744,7 @@ void save_game(void)
     message_flush();
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Message */
     if (!is_autosave)
@@ -2758,7 +2760,7 @@ void save_game(void)
     signals_ignore_tstp();
 
     /* Save the player */
-    if (old_save()) {
+    if (savefile_save(savefile)) {
 	if (!is_autosave)
 	    prt("Saving game... done.", 0, 0);
     }
@@ -2793,13 +2795,13 @@ void save_game(void)
  */
 void close_game(void)
 {
-    ui_event_data ke;
+    ui_event ke;
 
     /* Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Flush the messages */
-    msg_print(NULL);
+    message_flush();
 
     /* Flush the input */
     flush();
@@ -2831,7 +2833,7 @@ void close_game(void)
 
 	    /* Predict score (or ESCAPE) */
 	    ke = inkey_ex();
-	    if (ke.key != ESCAPE) predict_score();
+	    if (ke.key.code != ESCAPE) predict_score();
 	}
     }
 
@@ -2858,7 +2860,7 @@ void exit_game_panic(void)
     if (!character_generated || character_saved)
 	quit("panic");
 
-    /* Mega-Hack -- see "msg_print()" */
+    /* Mega-Hack -- see "msg()" */
     msg_flag = FALSE;
 
     /* Clear the top line */
@@ -2880,7 +2882,7 @@ void exit_game_panic(void)
     strcpy(p_ptr->died_from, "(panic save)");
 
     /* Panic save, or get worried */
-    if (!old_save())
+    if (!savefile_save(savefile))
 	quit("panic save failed!");
 
     /* Successful panic save */
@@ -2954,7 +2956,7 @@ static void write_html_escape_char(ang_file * htm, char c)
 }
 
 /* Take an html screenshot */
-void html_screenshot(cptr name, int mode)
+void html_screenshot(const char *name, int mode)
 {
 	int y, x;
 	int wid, hgt;

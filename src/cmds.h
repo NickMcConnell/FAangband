@@ -33,13 +33,11 @@ extern int get_channeling_boost(void);
 void do_cmd_cast(cmd_code code, cmd_arg args[]);
 void do_cmd_study_book(cmd_code code, cmd_arg args[]);
 
-void textui_obj_inscribe(object_type *o_ptr, int item);
-void textui_obj_examine(object_type *o_ptr, int item);
-void textui_obj_wield(object_type *o_ptr, int item);
+void textui_obj_examine(void);
 
 /* cmd-misc.c */
 extern void cmd_init(void);
-extern int click_area(ui_event_data ke);
+extern int click_area(ui_event ke);
 extern void do_cmd_show_obj(void);
 extern void do_cmd_handle(void);
 extern void handle_mousepress(int y, int x);
@@ -124,8 +122,8 @@ void textui_obj_study(void);
 void textui_obj_cast(void);
 
 /* ui-knowledge.c */
-extern void big_pad(int col, int row, byte a, byte c);
-extern void textui_browse_object_knowledge(void *obj, const char *name);
+extern int big_pad(int col, int row, byte a, byte c);
+extern void textui_browse_object_knowledge(const char *name, int row);
 extern void textui_knowledge_init(void);
 extern void textui_browse_knowledge(void);
 

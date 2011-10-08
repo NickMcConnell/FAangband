@@ -168,8 +168,8 @@ const char *get_autoinscription(s16b kind_idx)
 int apply_autoinscription(object_type *o_ptr)
 {
   char o_name[80];
-  cptr note = get_autoinscription(o_ptr->k_idx);
-  cptr existing_inscription = quark_str(o_ptr->note);
+  const char *note = get_autoinscription(o_ptr->k_idx);
+  const char *existing_inscription = quark_str(o_ptr->note);
   
   /* Don't inscribe unaware objects */
   if (!note || !object_aware_p(o_ptr))
@@ -188,7 +188,7 @@ int apply_autoinscription(object_type *o_ptr)
   else
     o_ptr->note = 0;
   
-  msg_format("You autoinscribe %s.", o_name);
+  msg("You autoinscribe %s.", o_name);
   
   return 1;
 }
@@ -213,7 +213,7 @@ int remove_autoinscription(s16b kind)
 }
 
 
-int add_autoinscription(s16b kind, cptr inscription)
+int add_autoinscription(s16b kind, const char *inscription)
 {
   int index;
   
@@ -231,7 +231,7 @@ int add_autoinscription(s16b kind, cptr inscription)
   
   if (index >= AUTOINSCRIPTIONS_MAX)
     {
-      msg_format("This inscription (%s) cannot be added because the inscription array is full!", inscription);
+      msg("This inscription (%s) cannot be added because the inscription array is full!", inscription);
       return 0;
     }
   
@@ -523,7 +523,7 @@ void squelch_items(void)
   /* Mention casualties */
   if (count > 0)
     {
-      message_format(MSG_GENERIC, 0, "%d item%s squelched.",
+      msgt(MSG_GENERIC, "%d item%s squelched.",
 		     count, ((count > 1) ? "s" : ""));
       
       /* Combine/reorder the pack */

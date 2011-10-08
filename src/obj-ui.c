@@ -32,7 +32,7 @@ struct object_menu_data {
     int index;
 };
 
-cptr prompt;
+const char *prompt;
 int i1, i2;
 int e1, e2;
 int f1, f2;
@@ -489,7 +489,7 @@ void show_floor(const int *floor_list, int floor_num, olist_detail_t mode)
  *
  * The item can be negative to mean "item on floor".
  */
-bool verify_item(cptr prompt, int item)
+bool verify_item(const char *prompt, int item)
 {
     char o_name[80];
 
@@ -569,7 +569,7 @@ static bool get_item_allow(int item, unsigned char ch, bool is_harmless)
 static int get_tag(int *cp, char tag, cmd_code cmd, bool quiver_tags)
 {
     int i;
-    cptr s;
+    const char *s;
 
     /* (f)ire is handled differently from all others, due to the quiver */
     if (quiver_tags) {
@@ -809,11 +809,11 @@ void get_item_display(menu_type *menu, int oid, bool cursor, int row, int col,
 /**
  * Deal with events on the get_item menu
  */
-bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
+bool get_item_action(menu_type *menu, const ui_event *event, int oid)
 {
     bool refresh = FALSE;
     struct object_menu_data *choice = menu_priv(menu);
-    char key = event->key;
+    char key = event->key.code;
     int i, k;
     char *selections = (char *) menu->selections;
 
@@ -879,7 +879,7 @@ bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
 	    for (i = 0; i < menu->count; i++)
 	    {
 		if (choice[i].object == &p_ptr->inventory[k]) {
-		    Term_keypress(choice[i].key);
+		    Term_keypress(choice[i].key, 0);
 		    return TRUE;
 		}
 	    }
@@ -902,8 +902,8 @@ bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
 		selections[i] = items[i].key;
 	    area.page_rows = menu->count + 1;
 	    menu_layout(menu, &area);
-	    menu_refresh(menu);
-	    redraw_stuff();
+	    menu_refresh(menu, TRUE);
+	    redraw_stuff(p_ptr);
 	}
 	
 	return FALSE;
@@ -916,11 +916,11 @@ bool get_item_action(menu_type *menu, const ui_event_data *event, int oid)
 /**
  * Display list items to choose from
  */
-ui_event_data item_menu(cmd_code cmd, int mode)
+ui_event item_menu(cmd_code cmd, int mode)
 {
     menu_type menu;
     menu_iter menu_f = {0, 0, get_item_display, get_item_action, 0 };
-    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { 0 };
 
     size_t max_len = Term->wid - 1;
 
@@ -941,11 +941,11 @@ ui_event_data item_menu(cmd_code cmd, int mode)
     area.width = max_len;
     area.col = MIN(Term->wid - 1 - max_len, 20);
     menu_layout(&menu, &area);
-    evt = menu_select(&menu, 0);
+    evt = menu_select(&menu, 0, TRUE);
 
     if (evt.type != EVT_ESCAPE)
     {
-	evt.key = selection;
+	evt.key.code = selection;
     }
 
     /* Result */
@@ -1002,7 +1002,7 @@ ui_event_data item_menu(cmd_code cmd, int mode)
  * Note that only "acceptable" floor objects get indexes, so between two
  * commands, the indexes of floor objects may change.  XXX XXX XXX
  */
-bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
+bool get_item(int *cp, const char *pmt, const char *str, cmd_code cmd, int mode)
 {
     s16b py = p_ptr->py;
     s16b px = p_ptr->px;
@@ -1027,7 +1027,7 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
     bool allow_floor = FALSE;
 
     int floor_num;
-    ui_event_data which;
+    ui_event which;
     
     prompt = pmt;
     olist_mode = 0;
@@ -1211,7 +1211,7 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 	p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 
 	/* Redraw windows */
-	redraw_stuff();
+	redraw_stuff(p_ptr);
 
 	/* Change the list if needed */
 	if (refresh) {
@@ -1229,21 +1229,21 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 	/* Show the prompt */
 	item_prompt(mode);
 
-	redraw_stuff();
+	redraw_stuff(p_ptr);
 
 	/* Menu if requested */
 	if (show_list) 
 	{
 	    which = item_menu(cmd, mode);
 	    if (which.type == EVT_ESCAPE)
-		which.key = ESCAPE;
+		which.key.code = ESCAPE;
 	}
 
 	/* Get a key */
 	else which = inkey_ex();
 
 	/* Parse it */
-	switch (which.key) 
+	switch (which.key.code) 
 	{
 	    case ESCAPE:
 	    {
@@ -1354,7 +1354,7 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 	    case '9':
 	    {
 		/* Look up the tag */
-		if (!get_tag(&k, which.key, cmd, quiver_tags)) 
+		if (!get_tag(&k, which.key.code, cmd, quiver_tags)) 
 		{
 		    bell("Illegal object choice (tag)!");
 		    break;
@@ -1470,14 +1470,14 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 		bool verify;
 
 		/* Note verify */
-		verify = (isupper((unsigned char) which.key) ? TRUE : FALSE);
+		verify = (isupper((unsigned char) which.key.code) ? TRUE : FALSE);
 
 		/* Lowercase */
-		which.key = tolower((unsigned char) which.key);
+		which.key.code = tolower((unsigned char) which.key.code);
 
 		/* Convert letter to inventory index */
 		if (p_ptr->command_wrk == USE_INVEN) {
-		    k = label_to_inven(which.key);
+		    k = label_to_inven(which.key.code);
 
 		    if (k < 0) {
 			bell("Illegal object choice (inven)!");
@@ -1487,7 +1487,7 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 
 		/* Convert letter to equipment index */
 		else if (p_ptr->command_wrk == USE_EQUIP) {
-		    k = label_to_equip(which.key);
+		    k = label_to_equip(which.key.code);
 
 		    if (k < 0) {
 			bell("Illegal object choice (equip)!");
@@ -1497,8 +1497,8 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 
 		/* Convert letter to floor index */
 		else {
-		    k = (islower((unsigned char) which.key) ? A2I(which.key) :
-			 -1);
+		    k = (islower((unsigned char) which.key.code) ? 
+			 A2I((unsigned char)which.key.code) : -1);
 
 		    if (k < 0 || k >= floor_num) {
 			bell("Illegal object choice (floor)!");
@@ -1564,14 +1564,14 @@ bool get_item(int *cp, cptr pmt, cptr str, cmd_code cmd, int mode)
 
     /* Update */
     p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
-    redraw_stuff();
+    redraw_stuff(p_ptr);
 
     /* Clear the prompt line */
     prt("", 0, 0);
 
     /* Warning if needed */
     if (oops && str)
-	msg_print(str);
+	msg(str);
 
     /* Result */
     return (item);

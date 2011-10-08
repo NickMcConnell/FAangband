@@ -25,12 +25,12 @@
 /**
  * Pronoun arrays, by gender.
  */
-static cptr wd_he[3] = { "it", "he", "she" };
+static const char *wd_he[3] = { "it", "he", "she" };
 
 /**
  * Pronoun arrays, by gender.
  */
-static cptr wd_his[3] = { "its", "his", "her" };
+static const char *wd_his[3] = { "its", "his", "her" };
 
 /**
  * Descriptions of monster rarity.
@@ -1638,7 +1638,7 @@ extern void describe_monster(int r_idx, bool spoilers)
     if ((((int) l_ptr->wake * (int) l_ptr->wake) > r_ptr->sleep)
 	|| (l_ptr->ignore == MAX_UCHAR) || ((r_ptr->sleep == 0)
 					    && (l_ptr->tkills >= 10))) {
-	cptr act;
+	const char *act;
 
 	if (r_ptr->sleep > 150) {
 	    act = "is nearly oblivious of";
@@ -2104,7 +2104,7 @@ extern void roff_top(int r_idx)
 void screen_roff(int r_idx)
 {
     /* Flush messages */
-    msg_print(NULL);
+    message_flush();
 
     /* Begin recall */
     Term_erase(0, 1, 255);

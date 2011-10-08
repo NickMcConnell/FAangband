@@ -108,7 +108,7 @@ void gain_spec_display(menu_type * menu, int oid, bool cursor, int row, int col,
 /**
  * Deal with events on the gain specialty menu
  */
-bool gain_spec_action(menu_type * menu, const ui_event_data * e, int oid)
+bool gain_spec_action(menu_type * menu, const ui_event * e, int oid)
 {
     struct spec_menu_data *d = menu_priv(menu);
     static int i;
@@ -155,7 +155,7 @@ bool gain_spec_menu(int *pick)
     menu_type menu;
     menu_iter menu_f = { gain_spec_tag, 0, gain_spec_display,
 			 gain_spec_action, 0 };
-    ui_event_data evt = { EVT_NONE, 0, 0, 0, 0 };
+    ui_event evt = { 0 };
     struct spec_menu_data *d = mem_alloc(sizeof *d);
     region loc = { 0, 0, 70, -99 };
     bool done = FALSE;
@@ -175,7 +175,7 @@ bool gain_spec_menu(int *pick)
 
     /* We are out of specialties - should never happen */
     if (!d->spec_known) {
-	msg_print("No specialties available.");
+	msg("No specialties available.");
 	screen_load();
 	return FALSE;
     }
@@ -200,7 +200,7 @@ bool gain_spec_menu(int *pick)
     menu_layout(&menu, &loc);
 
     while (!done) {
-	evt = menu_select(&menu, EVT_SELECT);
+	evt = menu_select(&menu, EVT_SELECT, TRUE);
 	done = (evt.type == EVT_ESCAPE);
 	if (!done && (d->selected_spec))
 	    done = get_check("Are you sure? ");
@@ -233,7 +233,7 @@ void gain_specialty(void)
 
     /* Check if specialty array is full */
     if (k >= MAX_SPECIALTIES - 1) {
-	msg_print("Maximum specialties known.");
+	msg("Maximum specialties known.");
 	return;
     }
 
@@ -798,7 +798,7 @@ void view_spec_menu(void)
     region_erase_bordered(&loc);
     menu_layout(&menu, &loc);
 
-    menu_select(&menu, 0);
+    menu_select(&menu, 0, FALSE);
 
     /* Load screen */
     screen_load();
@@ -857,7 +857,7 @@ void view_specialties(void)
  */
 void do_cmd_specialty(void)
 {
-    ui_event_data answer;
+    ui_event answer;
 
     /* Might want to gain a new ability or browse old ones */
     if (p_ptr->new_specialties > 0) {
@@ -869,19 +869,19 @@ void do_cmd_specialty(void)
 	while (get_com_ex
 	       ("View abilities or Learn specialty (l/v/ESC)?", &answer)) {
 	    /* New ability */
-	    if ((answer.key == 'L') || (answer.key == 'l')) {
+	    if ((answer.key.code == 'L') || (answer.key.code == 'l')) {
 		gain_specialty();
 		break;
 	    }
 
 	    /* View Current */
-	    if ((answer.key == 'V') || (answer.key == 'v')) {
+	    if ((answer.key.code == 'V') || (answer.key.code == 'v')) {
 		view_specialties();
 		break;
 	    }
 
 	    /* Exit */
-	    else if (answer.key == ESCAPE)
+	    else if (answer.key.code == ESCAPE)
 		break;
 
 

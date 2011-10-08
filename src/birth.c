@@ -257,7 +257,7 @@ static void get_bonuses(void)
     p_ptr->update |= (PU_BONUS | PU_HP);
 
     /* Update stuff */
-    update_stuff();
+    update_stuff(p_ptr);
 
     /* Fully healed */
     p_ptr->chp = p_ptr->mhp;
@@ -1140,7 +1140,7 @@ void player_birth(bool quickstart_allowed)
 			  (buf - (char *) &op_ptr->full_name)));
 
 	if (!success)
-	    msg_print("Sorry, could not deal with suffix");
+	    msg("Sorry, could not deal with suffix");
     }
 
 

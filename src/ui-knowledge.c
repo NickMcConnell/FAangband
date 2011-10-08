@@ -62,7 +62,7 @@ typedef struct {
 
     const char *(*xtra_prompt) (int oid);	/* Returns optional extra
 						 * prompt */
-    void (*xtra_act) (char ch, int oid);	/* Handles optional extra
+    void (*xtra_act) (struct keypress ch, int oid);	/* Handles optional extra
 						 * actions */
 
     bool is_visual;		/* Does this kind have visual editing? */
@@ -101,11 +101,11 @@ static int *obj_group_order = NULL;
  * Description of each monster group.
  */
 static struct {
-    cptr chars;
-    cptr name;
+    const char *chars;
+    const char *name;
 } monster_group[] = {
     {
-    (cptr) - 1, "Uniques"}, {
+    (const char *) - 1, "Uniques"}, {
     "a", "Ants"}, {
     "b", "Bats"}, {
     "B", "Birds"}, {
@@ -175,7 +175,7 @@ const char *feature_group_text[] = {
 static void display_visual_list(int col, int row, int height, int width,
 				byte attr_top, byte char_left);
 
-static bool visual_mode_command(ui_event_data ke, bool * visual_list_ptr,
+static bool visual_mode_command(ui_event ke, bool * visual_list_ptr,
 				int height, int width, byte * attr_top_ptr,
 				byte * char_left_ptr, byte * cur_attr_ptr,
 				byte * cur_char_ptr, int col, int row,
@@ -226,13 +226,14 @@ static int feat_order(int feat)
 
 
 /* Emit a 'graphical' symbol and a padding character if appropriate */
-extern void big_pad(int col, int row, byte a, byte c)
+extern int big_pad(int col, int row, byte a, byte c)
 {
     Term_putch(col, row, a, c);
 
-    if ((tile_width > 1) || (tile_height > 1)) {
+    if ((tile_width > 1) || (tile_height > 1)) 
 	Term_big_putch(col, row, a, c);
-    }
+
+	return tile_width;
 }
 
 /* Return the actual width of a symbol */
@@ -353,7 +354,7 @@ static void display_knowledge(const char *title, int *obj_list, int o_count,
     int prev_g = -1;
 
     int omode = OPT(rogue_like_commands);
-    ui_event_data ke;
+    ui_event ke;
 
     /* Get size */
     Term_get_size(&wid, &hgt);
@@ -508,10 +509,10 @@ static void display_knowledge(const char *title, int *obj_list, int o_count,
 			    object_menu.active.page_rows, object_region.col);
 	}
 
-	menu_refresh(inactive_menu);
-	menu_refresh(active_menu);
+	menu_refresh(inactive_menu, FALSE);
+	menu_refresh(active_menu, FALSE);
 
-	handle_stuff();
+	handle_stuff(p_ptr);
 
 	if (visual_list) {
 	    bigcurs = TRUE;
@@ -533,7 +534,7 @@ static void display_knowledge(const char *title, int *obj_list, int o_count,
 
 	ke = inkey_ex();
 	if (!visual_list) {
-	    ui_event_data ke0 = EVENT_EMPTY;
+	    ui_event ke0 = EVENT_EMPTY;
 
 	    if (ke.type == EVT_MOUSE)
 		menu_handle_mouse(active_menu, &ke, &ke0);
@@ -556,7 +557,7 @@ static void display_knowledge(const char *title, int *obj_list, int o_count,
 	switch (ke.type) {
 	case EVT_KBRD:
 	    {
-		if (ke.key == 'r' || ke.key == 'R')
+		if (ke.key.code == 'r' || ke.key.code == 'R')
 		    recall = TRUE;
 		else if (o_funcs.xtra_act)
 		    o_funcs.xtra_act(ke.key, oid);
@@ -708,7 +709,7 @@ static void remove_visual_list(int col, int row, bool * visual_list_ptr,
 /*
  *  Do visual mode command -- Change symbols
  */
-static bool visual_mode_command(ui_event_data ke, bool * visual_list_ptr,
+static bool visual_mode_command(ui_event ke, bool * visual_list_ptr,
 				int height, int width, byte * attr_top_ptr,
 				byte * char_left_ptr, byte * cur_attr_ptr,
 				byte * cur_char_ptr, int col, int row,
@@ -724,25 +725,87 @@ static bool visual_mode_command(ui_event_data ke, bool * visual_list_ptr,
     int frame_top = logical_height(4);
     int frame_bottom = logical_height(4);
 
-    switch (ke.key) {
-    case ESCAPE:
+    /* Get mouse movement */
+    if (ke.type == EVT_MOUSE)
+    {
+	int eff_width = actual_width(width);
+	int eff_height = actual_height(height);
+	byte a = *cur_attr_ptr;
+	byte c = *cur_char_ptr;
+
+	int my = logical_height(ke.mouse.y - row);
+	int mx = logical_width(ke.mouse.x - col);
+
+	if ((my >= 0) && (my < eff_height) && (mx >= 0) && (mx < eff_width)
+	    && ((ke.mouse.button) || (a != *attr_top_ptr + my)
+		|| (c != *char_left_ptr + mx)))
 	{
-	    if (*visual_list_ptr) {
-		/* Cancel change */
-		*cur_attr_ptr = attr_old;
-		*cur_char_ptr = char_old;
+	    /* Set the visual */
+	    *cur_attr_ptr = a = *attr_top_ptr + my;
+	    *cur_char_ptr = c = *char_left_ptr + mx;
+
+	    /* Move the frame */
+	    if (*char_left_ptr > MAX(0, (int)c - frame_left))
+		(*char_left_ptr)--;
+	    if (*char_left_ptr + eff_width <= MIN(255, (int)c + frame_right))
+		(*char_left_ptr)++;
+	    if (*attr_top_ptr > MAX(0, (int)a - frame_top))
+		(*attr_top_ptr)--;
+	    if (*attr_top_ptr + eff_height <= MIN(255, (int)a + frame_bottom))
+		(*attr_top_ptr)++;
+
+	    /* Delay */
+	    *delay = 100;
+
+	    /* Accept change */
+	    if (ke.mouse.button)
 		remove_visual_list(col, row, visual_list_ptr, width, height);
 
-		return TRUE;
-	    }
-
-	    break;
+	    return TRUE;
 	}
+
+	/* Cancel change */
+	else if (ke.mouse.button)
+	{
+	    *cur_attr_ptr = attr_old;
+	    *cur_char_ptr = char_old;
+	    remove_visual_list(col, row, visual_list_ptr, width, height);
+
+	    return TRUE;
+	}
+
+	else
+	{
+	    return FALSE;
+	}
+    }
+
+    if (ke.type != EVT_KBRD)
+	return FALSE;
+
+
+    switch (ke.key.code)
+    {
+    case ESCAPE:
+    {
+	if (*visual_list_ptr)
+	{
+	    /* Cancel change */
+	    *cur_attr_ptr = attr_old;
+	    *cur_char_ptr = char_old;
+	    remove_visual_list(col, row, visual_list_ptr, width, height);
+
+	    return TRUE;
+	}
+
+	break;
+    }
 
     case '\n':
     case '\r':
 	{
-	    if (*visual_list_ptr) {
+	    if (*visual_list_ptr)
+	    {
 		/* Accept change */
 		remove_visual_list(col, row, visual_list_ptr, width, height);
 		return TRUE;
@@ -754,17 +817,19 @@ static bool visual_mode_command(ui_event_data ke, bool * visual_list_ptr,
     case 'V':
     case 'v':
 	{
-	    if (!*visual_list_ptr) {
+	    if (!*visual_list_ptr)
+	    {
 		*visual_list_ptr = TRUE;
 		bigcurs = TRUE;
 
-		*attr_top_ptr = (byte) MAX(0, (int) *cur_attr_ptr - frame_top);
-		*char_left_ptr =
-		    (char) MAX(0, (int) *cur_char_ptr - frame_left);
+		*attr_top_ptr = (byte)MAX(0, (int)*cur_attr_ptr - frame_top);
+		*char_left_ptr = (char)MAX(0, (int)*cur_char_ptr - frame_left);
 
 		attr_old = *cur_attr_ptr;
 		char_old = *cur_char_ptr;
-	    } else {
+	    }
+	    else
+	    {
 		/* Cancel change */
 		*cur_attr_ptr = attr_old;
 		*cur_char_ptr = char_old;
@@ -787,126 +852,72 @@ static bool visual_mode_command(ui_event_data ke, bool * visual_list_ptr,
     case 'P':
     case 'p':
 	{
-	    if (attr_idx) {
+	    if (attr_idx)
+	    {
 		/* Set the char */
 		*cur_attr_ptr = attr_idx;
-		*attr_top_ptr = (byte) MAX(0, (int) *cur_attr_ptr - frame_top);
+		*attr_top_ptr = (byte)MAX(0, (int)*cur_attr_ptr - frame_top);
 	    }
 
-	    if (char_idx) {
+	    if (char_idx)
+	    {
 		/* Set the char */
 		*cur_char_ptr = char_idx;
-		*char_left_ptr =
-		    (char) MAX(0, (int) *cur_char_ptr - frame_left);
+		*char_left_ptr = (char)MAX(0, (int)*cur_char_ptr - frame_left);
 	    }
 
 	    return TRUE;
 	}
 
     default:
-	{
-	    if (*visual_list_ptr) {
-		int eff_width = actual_width(width);
-		int eff_height = actual_height(height);
-		int d = target_dir(ke.key);
-		byte a = *cur_attr_ptr;
-		byte c = *cur_char_ptr;
+    {
+	int d = target_dir(ke.key);
+	byte a = *cur_attr_ptr;
+	byte c = *cur_char_ptr;
 
-		bigcurs = TRUE;
+	if (!*visual_list_ptr)
+	    break;
 
-		/* Get mouse movement */
-		if (ke.type == EVT_MOUSE) {
-		    int my = ke.mousey - row;
-		    int mx = ke.mousex - col;
+	bigcurs = TRUE;
 
-		    my = logical_height(my);
-		    mx = logical_width(mx);
+	/* Restrict direction */
+	if ((a == 0) && (ddy[d] < 0)) d = 0;
+	if ((c == 0) && (ddx[d] < 0)) d = 0;
+	if ((a == 255) && (ddy[d] > 0)) d = 0;
+	if ((c == 255) && (ddx[d] > 0)) d = 0;
 
-		    if ((my >= 0) && (my < eff_height) && (mx >= 0)
-			&& (mx < eff_width)
-			&& ((ke.index) || (a != *attr_top_ptr + my)
-			    || (c != *char_left_ptr + mx))) {
-			/* Set the visual */
-			*cur_attr_ptr = a = *attr_top_ptr + my;
-			*cur_char_ptr = c = *char_left_ptr + mx;
+	a += ddy[d];
+	c += ddx[d];
 
-			/* Move the frame */
-			if (*char_left_ptr > MAX(0, (int) c - frame_left))
-			    (*char_left_ptr)--;
-			if (*char_left_ptr + eff_width <=
-			    MIN(255, (int) c + frame_right))
-			    (*char_left_ptr)++;
-			if (*attr_top_ptr > MAX(0, (int) a - frame_top))
-			    (*attr_top_ptr)--;
-			if (*attr_top_ptr + eff_height <=
-			    MIN(255, (int) a + frame_bottom))
-			    (*attr_top_ptr)++;
+	/* Set the visual */
+	*cur_attr_ptr = a;
+	*cur_char_ptr = c;
 
-			/* Delay */
-			*delay = 100;
+	/* Move the frame */
+	if (ddx[d] < 0 &&
+	    *char_left_ptr > MAX(0, (int)c - frame_left))
+	    (*char_left_ptr)--;
+	if ((ddx[d] > 0) &&
+	    *char_left_ptr + (width / tile_width) <=
+	    MIN(255, (int)c + frame_right))
+	    (*char_left_ptr)++;
 
-			/* Accept change */
-			if (ke.index)
-			    remove_visual_list(col, row, visual_list_ptr, width,
-					       height);
+	if (ddy[d] < 0 &&
+	    *attr_top_ptr > MAX(0, (int)a - frame_top))
+	    (*attr_top_ptr)--;
+	if (ddy[d] > 0 &&
+	    *attr_top_ptr + (height / tile_height) <=
+	    MIN(255, (int)a + frame_bottom))
+	    (*attr_top_ptr)++;
 
-			return TRUE;
-		    }
-
-		    /* Cancel change */
-		    else if (ke.index) {
-			*cur_attr_ptr = attr_old;
-			*cur_char_ptr = char_old;
-			remove_visual_list(col, row, visual_list_ptr, width,
-					   height);
-
-			return TRUE;
-		    }
-		} else {
-		    /* Restrict direction */
-		    if ((a == 0) && (ddy[d] < 0))
-			d = 0;
-		    if ((c == 0) && (ddx[d] < 0))
-			d = 0;
-		    if ((a == 255) && (ddy[d] > 0))
-			d = 0;
-		    if ((c == 255) && (ddx[d] > 0))
-			d = 0;
-
-		    a += ddy[d];
-		    c += ddx[d];
-
-		    /* Set the visual */
-		    *cur_attr_ptr = a;
-		    *cur_char_ptr = c;
-
-		    /* Move the frame */
-		    if ((ddx[d] < 0)
-			&& *char_left_ptr > MAX(0, (int) c - frame_left))
-			(*char_left_ptr)--;
-		    if ((ddx[d] > 0)
-			&& *char_left_ptr + eff_width <= MIN(255,
-							     (int) c +
-							     frame_right))
-			(*char_left_ptr)++;
-
-		    if ((ddy[d] < 0)
-			&& *attr_top_ptr > MAX(0, (int) a - frame_top))
-			(*attr_top_ptr)--;
-		    if ((ddy[d] > 0)
-			&& *attr_top_ptr + eff_height <= MIN(255,
-							     (int) a +
-							     frame_bottom))
-			(*attr_top_ptr)++;
-
-		    /* We need to always eat the input even if it is clipped,
-		     * otherwise it will be interpreted as a change object
-		     * selection command with messy results. */
-		    return TRUE;
-		}
-	    }
-	}
+	/* We need to always eat the input even if it is clipped,
+	 * otherwise it will be interpreted as a change object
+	 * selection command with messy results.
+	 */
+	return TRUE;
     }
+    }
+
 
     /* Visual mode command is not used */
     return FALSE;
@@ -1000,7 +1011,7 @@ static void mon_lore(int oid)
 {
     /* Update the monster recall window */
     monster_race_track(default_join[oid].oid);
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Save the screen */
     screen_save();
@@ -1222,7 +1233,7 @@ static void desc_art_fake(int a_idx)
 	}
 
 	/* Hack -- Handle stuff */
-	handle_stuff();
+	handle_stuff(p_ptr);
 
 	tb = object_info(o_ptr, OINFO_NONE);
 	object_desc(header, sizeof(header), o_ptr, ODESC_PREFIX | ODESC_FULL);
@@ -1526,7 +1537,7 @@ static void desc_obj_fake(int k_idx)
 
     /* Update the object recall window */
     track_object_kind(k_idx);
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Wipe the object */
     object_wipe(o_ptr);
@@ -1543,7 +1554,7 @@ static void desc_obj_fake(int k_idx)
 	object_known(o_ptr);
 
     /* Hack -- Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Describe */
     tb = object_info(o_ptr, OINFO_DUMMY);
@@ -1645,7 +1656,7 @@ static const char *o_xtra_prompt(int oid)
 /*
  * Special key actions for object inscription.
  */
-static void o_xtra_act(char ch, int oid)
+static void o_xtra_act(struct keypress ch, int oid)
 {
     object_kind *k_ptr = &k_info[oid];
     s16b idx = get_autoinscription_index(oid);
@@ -1655,14 +1666,14 @@ static void o_xtra_act(char ch, int oid)
 	return;
 
     /* Uninscribe */
-    if (ch == '}') {
+    if (ch.code == '}') {
 	if (idx != -1)
 	    remove_autoinscription(oid);
 	return;
     }
 
     /* Inscribe */
-    else if (ch == '{') {
+    else if (ch.code == '{') {
 	char note_text[80] = "";
 
 	/* Avoid the prompt getting in the way */
@@ -1700,7 +1711,7 @@ static void o_xtra_act(char ch, int oid)
 /*
  * Display known objects
  */
-void textui_browse_object_knowledge(void *obj, const char *name)
+void textui_browse_object_knowledge(const char *name, int row)
 {
     group_funcs kind_f = { TV_GOLD, FALSE, kind_name, o_cmp_tval, obj2gid, 0 };
     member_funcs obj_f =
@@ -1755,13 +1766,16 @@ static void display_feature(int col, int row, bool cursor, int oid)
     /* Display the name */
     c_prt(attr, f_ptr->name, row, col);
 
-    if ((tile_width > 1) || (tile_height > 1))
-	return;
-
-    /* Display symbol */
-    big_pad(68, row, f_ptr->x_attr, f_ptr->x_char);
-
-    /* ILLUMINATION AND DARKNESS GO HERE */
+    if (tile_height == 1) {
+	/* Display symbols */
+	col = 66;
+	col += big_pad(col, row, f_ptr->x_attr[FEAT_LIGHTING_DARK],
+		       f_ptr->x_char[FEAT_LIGHTING_DARK]);
+	col += big_pad(col, row, f_ptr->x_attr[FEAT_LIGHTING_LIT],
+		       f_ptr->x_char[FEAT_LIGHTING_LIT]);
+	col += big_pad(col, row, f_ptr->x_attr[FEAT_LIGHTING_BRIGHT],
+		       f_ptr->x_char[FEAT_LIGHTING_BRIGHT]);
+    }
 
 }
 
@@ -1780,24 +1794,40 @@ static int f_cmp_fkind(const void *a, const void *b)
     return strcmp(fa->name, fb->name);
 }
 
-static const char *fkind_name(int gid)
+
+static const char *fkind_name(int gid) { return feature_group_text[gid]; }
+/* Disgusting hack to allow 3 in 1 editting of terrain visuals */
+static enum grid_light_level f_uik_lighting = FEAT_LIGHTING_LIT;
+/* XXX needs *better* retooling for multi-light terrain */
+static byte *f_xattr(int oid) { return &f_info[oid].x_attr[f_uik_lighting]; }
+static char *f_xchar(int oid) { return &f_info[oid].x_char[f_uik_lighting]; }
+static void feat_lore(int oid) { (void)oid; /* noop */ }
+static const char *feat_prompt(int oid)
 {
-    return feature_group_text[gid];
+	(void)oid;
+	return ", 'l' to cycle lighting";
 }
 
-static byte *f_xattr(int oid)
+/*
+ * Special key actions for cycling lighting
+ */
+static void f_xtra_act(struct keypress ch, int oid)
 {
-    return &f_info[oid].x_attr;
-}
-
-static char *f_xchar(int oid)
-{
-    return &f_info[oid].x_char;
-}
-
-static void feat_lore(int oid)
-{
-    (void) oid;			/* noop */
+	/* XXX must be a better way to cycle this */
+	if (ch.code == 'l') {
+		switch (f_uik_lighting) {
+				case FEAT_LIGHTING_LIT:  f_uik_lighting = FEAT_LIGHTING_BRIGHT; break;
+				case FEAT_LIGHTING_BRIGHT:  f_uik_lighting = FEAT_LIGHTING_DARK; break;
+				default:	f_uik_lighting = FEAT_LIGHTING_LIT; break;
+		}		
+	} else if (ch.code == 'L') {
+		switch (f_uik_lighting) {
+				case FEAT_LIGHTING_DARK:  f_uik_lighting = FEAT_LIGHTING_BRIGHT; break;
+				case FEAT_LIGHTING_LIT:  f_uik_lighting = FEAT_LIGHTING_DARK; break;
+				default:	f_uik_lighting = FEAT_LIGHTING_LIT; break;
+		}
+	}
+	
 }
 
 /*
@@ -1810,7 +1840,7 @@ static void do_cmd_knowledge_features(const char *name, int row)
     };
 
     member_funcs feat_f =
-	{ display_feature, feat_lore, f_xchar, f_xattr, 0, 0, 0 };
+	{ display_feature, feat_lore, f_xchar, f_xattr, feat_prompt, f_xtra_act,0 };
 
     int *features;
     int f_count = 0;
@@ -1937,7 +1967,7 @@ void textui_browse_knowledge(void)
     menu_layout(&knowledge_menu, &knowledge_region);
 
     clear_from(0);
-    menu_select(&knowledge_menu, 0);
+    menu_select(&knowledge_menu, 0, FALSE);
 
     screen_load();
 }

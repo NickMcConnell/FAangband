@@ -24,6 +24,7 @@
 #include "generate.h"
 #include "history.h"
 #include "prefs.h"
+#include "randname.h"
 #include "spells.h"
 #include "squelch.h"
 #include "tvalsval.h"
@@ -264,12 +265,17 @@ void reset_visuals(bool load_prefs)
 
 
     /* Extract default attr/char code for features */
-    for (i = 0; i < z_info->f_max; i++) {
+    for (i = 0; i < z_info->f_max; i++)
+    {
+	int j;
 	feature_type *f_ptr = &f_info[i];
-
+	
 	/* Assume we will use the underlying values */
-	f_ptr->x_attr = f_ptr->d_attr;
-	f_ptr->x_char = f_ptr->d_char;
+	for (j = 0; j < FEAT_LIGHTING_MAX; j++)
+	{
+	    f_ptr->x_attr[j] = f_ptr->d_attr;
+	    f_ptr->x_char[j] = f_ptr->d_char;
+	}
     }
 
     /* Extract default attr/char code for objects */
@@ -313,13 +319,13 @@ void reset_visuals(bool load_prefs)
     /* Graphic symbols */
     if (use_graphics) {
 	/* Process "graf.prf" */
-	process_pref_file("graf.prf", FALSE);
+	process_pref_file("graf.prf", FALSE, FALSE);
     }
 
     /* Normal symbols */
     else {
 	/* Process "font.prf" */
-	process_pref_file("font.prf", FALSE);
+	process_pref_file("font.prf", FALSE, FALSE);
     }
 
 #ifdef ALLOW_BORG_GRAPHICS
@@ -608,9 +614,9 @@ const char *mention_use(int slot)
  * Return a string describing how a given item is being worn.
  * Currently, only used for items in the equipment, not inventory.
  */
-cptr describe_use(int i)
+const char *describe_use(int i)
 {
-    cptr p;
+    const char *p;
 
     switch (i) {
     case INVEN_WIELD:	p = "attacking monsters with";
@@ -1079,7 +1085,7 @@ void compact_objects(int size)
 
 
     /* Message */
-    msg_print("Compacting objects...");
+    msg("Compacting objects...");
 
 	/*** Try destroying objects ***/
 
@@ -1277,7 +1283,7 @@ s16b o_pop(void)
 
     /* Warn the player (except during dungeon creation) */
     if (character_dungeon)
-	msg_print("Too many objects!");
+	msg("Too many objects!");
 
     /* Oops */
     return (0);
@@ -2455,7 +2461,7 @@ void drop_near(object_type * j_ptr, int chance, int y, int x, bool verbose)
     /* Handle normal "breakage" */
     if (!artifact_p(j_ptr) && (randint0(100) < chance)) {
 	/* Message */
-	msg_format("The %s break%s.", o_name, PLURAL(plural));
+	msg("The %s break%s.", o_name, PLURAL(plural));
 
 	/* Failure */
 	return;
@@ -2566,11 +2572,11 @@ void drop_near(object_type * j_ptr, int chance, int y, int x, bool verbose)
     /* Handle lack of space */
     if (!flag && !artifact_p(j_ptr)) {
 	/* Message */
-	msg_format("The %s disappear%s.", o_name, PLURAL(plural));
+	msg("The %s disappear%s.", o_name, PLURAL(plural));
 
 	/* Debug */
 	if (p_ptr->wizard)
-	    msg_print("Breakage (no floor space).");
+	    msg("Breakage (no floor space).");
 
 	/* Failure */
 	return;
@@ -2614,11 +2620,11 @@ void drop_near(object_type * j_ptr, int chance, int y, int x, bool verbose)
 	artifact_type *a_ptr = artifact_of(j_ptr);
 
 	/* Message */
-	msg_format("The %s disappear%s.", o_name, PLURAL(plural));
+	msg("The %s disappear%s.", o_name, PLURAL(plural));
 
 	/* Debug */
 	if (p_ptr->wizard)
-	    msg_print("Breakage (too many objects).");
+	    msg("Breakage (too many objects).");
 
 	if (a_ptr)
 	    a_ptr->created = FALSE;
@@ -2636,12 +2642,12 @@ void drop_near(object_type * j_ptr, int chance, int y, int x, bool verbose)
 
     /* Message when an object falls under the player */
     if (verbose && (cave_m_idx[by][bx] < 0) && !squelch_item_ok(j_ptr)) {
-	msg_print("You feel something roll beneath your feet.");
+	msg("You feel something roll beneath your feet.");
     }
 
     /* Message when an object falls under the player or in trees or rubble */
     else if (tf_has(f_ptr->flags, TF_HIDE_OBJ) && !p_ptr->timed[TMD_BLIND])
-	msg_format("The %s disappear%s from view.", o_name, PLURAL(plural));
+	msg("The %s disappear%s from view.", o_name, PLURAL(plural));
 }
 
 
@@ -2687,7 +2693,7 @@ void acquirement(int y1, int x1, int num, bool great)
 	return;
 
     /* Print a message */
-    msg_format("You have %d charge%s remaining.", o_ptr->pval,
+    msg("You have %d charge%s remaining.", o_ptr->pval,
 	       (o_ptr->pval != 1) ? "s" : "");
 }
 
@@ -2704,14 +2710,14 @@ void acquirement(int y1, int x1, int num, bool great)
 	object_desc(o_name, sizeof(o_name), o_ptr, ODESC_FULL);
 
 	/* Print a message */
-	msg_format("You no longer have the %s (%c).", o_name,
+	msg("You no longer have the %s (%c).", o_name,
 		   index_to_label(item));
     } else {
 	/* Get a description */
 	object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
 
 	/* Print a message */
-	msg_format("You have %s (%c).", o_name, index_to_label(item));
+	msg("You have %s (%c).", o_name, index_to_label(item));
     }
 }
 
@@ -3004,7 +3010,7 @@ void floor_item_charges(int item)
 	return;
 
     /* Print a message */
-    msg_format("There are %d charge%s remaining.", o_ptr->pval,
+    msg("There are %d charge%s remaining.", o_ptr->pval,
 	       (o_ptr->pval != 1) ? "s" : "");
 }
 
@@ -3020,7 +3026,7 @@ void floor_item_charges(int item)
     object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
 
     /* Print a message */
-    msg_format("You see %s.", o_name);
+    msg("You see %s.", o_name);
 }
 
 /*
@@ -3312,7 +3318,7 @@ s16b inven_takeoff(int item, int amt)
     object_type *i_ptr;
     object_type object_type_body;
 
-    cptr act;
+    const char *act;
 
     char o_name[80];
 
@@ -3380,7 +3386,7 @@ s16b inven_takeoff(int item, int amt)
     slot = inven_carry(p_ptr, i_ptr);
 
     /* Message */
-    message_format(MSG_WIELD, 0, "%s %s (%c).", act, o_name,
+    msgt(MSG_WIELD, "%s %s (%c).", act, o_name,
 		   index_to_label(slot));
 
     p_ptr->notice |= PN_SQUELCH;
@@ -3446,7 +3452,7 @@ void inven_drop(int item, int amt)
     object_desc(o_name, sizeof(o_name), i_ptr, ODESC_PREFIX | ODESC_FULL);
 
     /* Message */
-    msg_format("You drop %s (%c).", o_name, index_to_label(item));
+    msg("You drop %s (%c).", o_name, index_to_label(item));
 
     /* Drop it near the player */
     drop_near(i_ptr, 0, py, px, FALSE);
@@ -3538,7 +3544,7 @@ void combine_pack(void)
 
     /* Message */
     if (flag) {
-	msg_print("You combine some items in your pack.");
+	msg("You combine some items in your pack.");
 
 	/* Stop "repeat last command" from working. */
 	cmd_disable_repeat();
@@ -3665,7 +3671,7 @@ void reorder_pack(void)
     }
 
     if (flag) {
-	msg_print("You reorder some items in your pack.");
+	msg("You reorder some items in your pack.");
 
 	/* Stop "repeat last command" from working. */
 	cmd_disable_repeat();
@@ -3866,7 +3872,7 @@ int lookup_kind(int tval, int sval)
 	    return (k);
     }
     /* Failure */ 
-    msg_format("No object (%s,%d)", tval_find_name(tval), tval, sval);
+    msg("No object (%s,%d)", tval_find_name(tval), tval, sval);
     return 0;
 }
 
@@ -3968,7 +3974,7 @@ int lookup_name(int tval, const char *name)
 	if (k_ptr->tval == tval && !strcmp(name, nm))
 	    return k;
     }
-    msg_format("No object (\"%s\",\"%s\")", tval_find_name(tval), name);
+    msg("No object (\"%s\",\"%s\")", tval_find_name(tval), name);
     return -1;
 }
 
@@ -4737,13 +4743,13 @@ void pack_overflow(void)
     disturb(0, 0);
 
     /* Warning */
-    msg_print("Your pack overflows!");
+    msg("Your pack overflows!");
 
     /* Describe */
     object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
 
     /* Message */
-    msg_format("You drop %s (%c).", o_name, index_to_label(item));
+    msg("You drop %s (%c).", o_name, index_to_label(item));
 
     /* Drop it (carefully) near the player */
     drop_near(o_ptr, 0, p_ptr->py, p_ptr->px, FALSE);
@@ -4755,15 +4761,15 @@ void pack_overflow(void)
 
     /* Notice stuff (if needed) */
     if (p_ptr->notice)
-	notice_stuff();
+	notice_stuff(p_ptr);
 
     /* Update stuff (if needed) */
     if (p_ptr->update)
-	update_stuff();
+	update_stuff(p_ptr);
 
     /* Redraw stuff (if needed) */
     if (p_ptr->redraw)
-	redraw_stuff();
+	redraw_stuff(p_ptr);
 }
 
 /* Set Item Code */
@@ -4854,7 +4860,7 @@ void apply_set(int set_idx)
 
     /* Notify */
     if (bonus_applied)
-	msg_print("Item set completed!");
+	msg("Item set completed!");
 }
 
 /**
@@ -4913,6 +4919,6 @@ void remove_set(int set_idx)
 
     /* Notify */
     if (bonus_removed)
-	msg_print("Item set no longer completed.");
+	msg("Item set no longer completed.");
 }
 

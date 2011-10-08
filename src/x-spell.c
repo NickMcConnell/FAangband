@@ -298,7 +298,7 @@ int get_spell_index(const object_type *o_ptr, int index)
     return spell;
 }
 
-cptr get_spell_name(int sindex)
+const char *get_spell_name(int sindex)
 {
     return s_info[sindex].name;
 }
@@ -905,7 +905,7 @@ bool cast_spell(int tval, int sindex, int dir)
 	}
     case SPELL_SPEAR_OF_LIGHT:
 	{
-	    msg_print("A line of blue shimmering light appears.");
+	    msg("A line of blue shimmering light appears.");
 	    light_line(dir);
 	    break;
 	}
@@ -1016,7 +1016,7 @@ bool cast_spell(int tval, int sindex, int dir)
 		p_ptr->csp_frac = 0;
 		if (p_ptr->csp > p_ptr->msp)
 		    (p_ptr->csp = p_ptr->msp);
-		msg_print("You feel your head clear a little.");
+		msg("You feel your head clear a little.");
 		p_ptr->redraw |= (PR_MANA);
 	    }
 	    break;
@@ -1092,8 +1092,8 @@ bool cast_spell(int tval, int sindex, int dir)
 	}
     case SPELL_DIMENSION_DOOR:
 	{
-	    msg_print("Choose a location to teleport to.");
-	    msg_print(NULL);
+	    msg("Choose a location to teleport to.");
+	    message_flush();
 	    dimen_door();
 	    break;
 	}
@@ -1284,7 +1284,7 @@ bool cast_spell(int tval, int sindex, int dir)
     case PRAYER_REMOVE_CURSE:
 	{
 	    if (remove_curse())
-		msg_print("You feel kindly hands aiding you.");
+		msg("You feel kindly hands aiding you.");
 	    break;
 	}
     case PRAYER_RESIST_HEAT_AND_COLD:
@@ -1426,9 +1426,9 @@ bool cast_spell(int tval, int sindex, int dir)
     case PRAYER_ALTER_REALITY:
 	{
 	    if (OPT(adult_ironman))
-		msg_print("Nothing happens.");
+		msg("Nothing happens.");
 	    else {
-		msg_print("The world changes!");
+		msg("The world changes!");
 
 		/* Leaving */
 		p_ptr->leaving = TRUE;
@@ -1465,7 +1465,7 @@ bool cast_spell(int tval, int sindex, int dir)
     case PRAYER_BANISHMENT:
 	{
 	    if (banish_evil(80)) {
-		msg_print("The power of the Valar banishes evil!");
+		msg("The power of the Valar banishes evil!");
 	    }
 	    break;
 	}
@@ -1510,7 +1510,7 @@ bool cast_spell(int tval, int sindex, int dir)
     case PRAYER_DISPEL_CURSE:
 	{
 	    if (remove_curse_good())
-		msg_print("A beneficent force surrounds you for a moment.");
+		msg("A beneficent force surrounds you for a moment.");
 	    break;
 	}
     case PRAYER_DISARM_TRAP:
@@ -1530,7 +1530,7 @@ bool cast_spell(int tval, int sindex, int dir)
 	    char answer;
 
 	    /* Query */
-	    msg_print("Would you like to enchant a 'W'eapon or 'A'rmour");
+	    msg("Would you like to enchant a 'W'eapon or 'A'rmour");
 
 	    /* Buttons */
 	    button_add("a", 'a');
@@ -1538,10 +1538,10 @@ bool cast_spell(int tval, int sindex, int dir)
 
 	    /* Interact and enchant. */
 	    while (1) {
-		ui_event_data ke;
+		ui_event ke;
 
 		ke = inkey_ex();
-		answer = ke.key;
+		answer = ke.key.code;
 
 		if ((answer == 'W') || (answer == 'w')) {
 		    (void) enchant_spell(randint0(4) + 1, randint0(4) + 1, 0);
@@ -1583,7 +1583,7 @@ bool cast_spell(int tval, int sindex, int dir)
 	}
     case PRAYER_CALL_ON_VARDA:
 	{
-	    msg_print("Gilthoniel A Elbereth!");
+	    msg("Gilthoniel A Elbereth!");
 	    fire_sphere(GF_LIGHT, 0, plev * 5, plev / 7 + 2, 20);
 	    (void) fear_monsters(plev * 2);
 	    (void) hp_player(500);
@@ -1603,7 +1603,7 @@ bool cast_spell(int tval, int sindex, int dir)
 		p_ptr->special_attack &= ~ATTACK_BLKBRTH;
 
 	    if (!(p_ptr->special_attack & ATTACK_HOLY))
-		msg_print("Your blows will strike with Holy might!");
+		msg("Your blows will strike with Holy might!");
 	    p_ptr->special_attack |= (ATTACK_HOLY);
 
 	    /* Redraw the state */
@@ -1635,8 +1635,8 @@ bool cast_spell(int tval, int sindex, int dir)
 	}
     case SPELL_DAY_OF_MISRULE:
 	{
-	    cptr p = (p_ptr->psex == SEX_FEMALE ? "Daughters" : "Sons");
-	    msg_format(" of Night rejoice!  It's the Day of Misrule!", p);
+	    const char *p = (p_ptr->psex == SEX_FEMALE ? "Daughters" : "Sons");
+	    msg(" of Night rejoice!  It's the Day of Misrule!", p);
 	    (void) inc_timed(TMD_FAST, randint1(30) + 30, TRUE);
 	    (void) inc_timed(TMD_SHERO, randint1(30) + 30, TRUE);
 	    break;
@@ -1697,7 +1697,7 @@ bool cast_spell(int tval, int sindex, int dir)
 	}
     case LORE_RAY_OF_SUNLIGHT:
 	{
-	    msg_print("A ray of golden yellow light appears.");
+	    msg("A ray of golden yellow light appears.");
 	    light_line(dir);
 	    break;
 	}
@@ -1755,7 +1755,7 @@ bool cast_spell(int tval, int sindex, int dir)
     case LORE_REMOVE_CURSE:
 	{
 	    if (remove_curse())
-		msg_print("You feel tender hands aiding you.");
+		msg("You feel tender hands aiding you.");
 	    break;
 	}
     case LORE_ACID_BOLT:
@@ -1841,7 +1841,7 @@ bool cast_spell(int tval, int sindex, int dir)
 	}
     case LORE_THUNDERCLAP:
 	{
-	    msg_print("Boom!");
+	    msg("Boom!");
 	    fire_sphere(GF_SOUND, 0, plev + randint1(40 + plev * 2), plev / 8,
 			20);
 	    break;
@@ -1916,7 +1916,7 @@ bool cast_spell(int tval, int sindex, int dir)
 	}
     case LORE_TRIGGER_TSUNAMI:
 	{
-	    msg_print("You hurl mighty waves at your foes!");
+	    msg("You hurl mighty waves at your foes!");
 	    fire_sphere(GF_WATER, 0,
 			30 + ((4 * plev) / 5) + randint1(30 + plev * 2),
 			plev / 7, 20);
@@ -1924,7 +1924,7 @@ bool cast_spell(int tval, int sindex, int dir)
 	}
     case LORE_VOLCANIC_ERUPTION:
 	{
-	    msg_print("The earth convulses and erupts in fire!");
+	    msg("The earth convulses and erupts in fire!");
 	    fire_sphere(GF_FIRE, 0, 3 * plev / 2 + randint1(50 + plev * 3),
 			1 + plev / 15, 20);
 	    earthquake(py, px, plev / 5, TRUE);
@@ -1938,14 +1938,14 @@ bool cast_spell(int tval, int sindex, int dir)
 	}
     case LORE_STARBURST:
 	{
-	    msg_print("Light bright beyond enduring dazzles your foes!");
+	    msg("Light bright beyond enduring dazzles your foes!");
 	    fire_sphere(GF_LIGHT, 0, 40 + (3 * plev / 2) + randint1(plev * 3),
 			plev / 10, 20);
 	    break;
 	}
     case LORE_SONG_OF_LULLING:
 	{
-	    msg_print("Your tranquil music enchants those nearby.");
+	    msg("Your tranquil music enchants those nearby.");
 
 	    (void) slow_monsters(5 * plev / 3);
 	    (void) sleep_monsters(5 * plev / 3);
@@ -1953,7 +1953,7 @@ bool cast_spell(int tval, int sindex, int dir)
 	}
     case LORE_SONG_OF_PROTECTION:
 	{
-	    msg_print("Your song creates a mystic shield.");
+	    msg("Your song creates a mystic shield.");
 	    if (!p_ptr->timed[TMD_SHIELD]) {
 		(void) inc_timed(TMD_SHIELD, randint1(30) + plev / 2, TRUE);
 	    } else {
@@ -1963,7 +1963,7 @@ bool cast_spell(int tval, int sindex, int dir)
 	}
     case LORE_SONG_OF_DISPELLING:
 	{
-	    msg_print("An unbearable discord tortures your foes!");
+	    msg("An unbearable discord tortures your foes!");
 
 	    (void) dispel_monsters(randint1(plev * 2));
 	    (void) dispel_evil(randint1(plev * 2));
@@ -1971,14 +1971,14 @@ bool cast_spell(int tval, int sindex, int dir)
 	}
     case LORE_SONG_OF_WARDING:
 	{
-	    msg_print("Your song creates a place of sanctuary.");
+	    msg("Your song creates a place of sanctuary.");
 
 	    (void) lay_rune(RUNE_PROTECT);
 	    break;
 	}
     case LORE_SONG_OF_RENEWAL:
 	{
-	    msg_print
+	    msg
 		("Amidst the gloom, you invoke light and beauty; your body regains its natural vitality.");
 
 	    (void) do_res_stat(A_STR);
@@ -2033,7 +2033,7 @@ bool cast_spell(int tval, int sindex, int dir)
 	}
     case LORE_CREATURE_KNOWLEDGE:
 	{
-	    msg_print("Target the monster you wish to learn about.");
+	    msg("Target the monster you wish to learn about.");
 	    if (!get_aim_dir(&dir))
 		return FALSE;
 	    pseudo_probe();
@@ -2086,7 +2086,7 @@ bool cast_spell(int tval, int sindex, int dir)
     case RITUAL_BREAK_CURSE:
 	{
 	    if (remove_curse())
-		msg_print("You feel mighty hands aiding you.");
+		msg("You feel mighty hands aiding you.");
 	    break;
 	}
     case RITUAL_SLOW_MONSTER:
@@ -2348,7 +2348,7 @@ bool cast_spell(int tval, int sindex, int dir)
     case RITUAL_DISPEL_CURSE:
 	{
 	    if (remove_curse_good())
-		msg_print("You feel mighty hands aiding you.");
+		msg("You feel mighty hands aiding you.");
 	    break;
 	}
     case RITUAL_BECOME_VAMPIRE:
@@ -2373,7 +2373,7 @@ bool cast_spell(int tval, int sindex, int dir)
 		p_ptr->special_attack &= ~ATTACK_HOLY;
 
 	    if (!(p_ptr->special_attack & ATTACK_BLKBRTH))
-		msg_print("Your hands start to radiate Night.");
+		msg("Your hands start to radiate Night.");
 	    p_ptr->special_attack |= (ATTACK_BLKBRTH);
 
 	    /* Redraw the state */
@@ -2449,7 +2449,7 @@ bool cast_spell(int tval, int sindex, int dir)
 		p_ptr->csp_frac = 0;
 		if (p_ptr->csp > p_ptr->msp)
 		    (p_ptr->csp = p_ptr->msp);
-		msg_print("You feel flow of power.");
+		msg("You feel flow of power.");
 		p_ptr->redraw |= (PR_MANA);
 	    }
 	    break;
@@ -2457,7 +2457,7 @@ bool cast_spell(int tval, int sindex, int dir)
 
     default:			/* No Spell */
 	{
-	    msg_print("Undefined Spell");
+	    msg("Undefined Spell");
 	    break;
 	}
     }

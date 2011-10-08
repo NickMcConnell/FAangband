@@ -27,7 +27,7 @@
 /**
  * Format and translate a string, then print it out to file.
  */
-void x_fprintf(ang_file *f, int encoding, cptr fmt, ...)
+void x_fprintf(ang_file *f, int encoding, const char *fmt, ...)
 {
     va_list vp;
 
@@ -252,7 +252,7 @@ int make_metric(int wgt)
 void text_out_dump(byte a, char *str, char_attr_line **line, int *current_line, 
 		   int indent, int wrap)
 {
-    cptr s;
+    const char *s;
     char buf[1024];
 
     /* Current position on the line */

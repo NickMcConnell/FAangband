@@ -90,7 +90,7 @@ static bool quickstart_allowed = FALSE;
 static enum birth_stage get_quickstart_command(void)
 {
 	const char *prompt = "['Y' to use this character, 'N' to start afresh, 'C' to change name]";
-	ui_event_data ke;
+	ui_event ke;
 
 	enum birth_stage next = BIRTH_QUICKSTART;
 
@@ -103,28 +103,28 @@ static enum birth_stage get_quickstart_command(void)
 	button_add("[Y]", 'y');
 	button_add("[N]", 'n');
 	button_add("[C]", 'c');
-	redraw_stuff();
+	redraw_stuff(p_ptr);
 	
 	do
 	{
 		/* Get a key */
 		ke = inkey_ex();
 		
-		if (ke.key == 'N' || ke.key == 'n')
+		if (ke.key.code == 'N' || ke.key.code == 'n')
 		{
 			cmd_insert(CMD_BIRTH_RESET);
 			next = BIRTH_SEX_CHOICE;
 		}
-		else if (ke.key == KTRL('X'))
+		else if (ke.key.code == KTRL('X'))
 		{
 			cmd_insert(CMD_QUIT);
 			next = BIRTH_COMPLETE;
 		}
-		else if (ke.key == 'C' || ke.key == 'c')
+		else if (ke.key.code == 'C' || ke.key.code == 'c')
 		{
 			next = BIRTH_NAME_CHOICE;
 		}
-		else if (ke.key == 'Y' || ke.key == 'y')
+		else if (ke.key.code == 'Y' || ke.key.code == 'y')
 		{
 			cmd_insert(CMD_ACCEPT_CHARACTER);
 			next = BIRTH_COMPLETE;
@@ -133,7 +133,7 @@ static enum birth_stage get_quickstart_command(void)
 	
 	/* Buttons */
 	button_kill_all();
-	redraw_stuff();
+	redraw_stuff(p_ptr);
 
 	/* Clear prompt */
 	clear_from(23);
@@ -413,7 +413,7 @@ static void print_menu_instructions(void)
 static enum birth_stage menu_question(enum birth_stage current, menu_type *current_menu, cmd_code choice_command)
 {
 	struct birthmenu_data *menu_data = menu_priv(current_menu);
-	ui_event_data cx;
+	ui_event cx;
 
 	enum birth_stage next = BIRTH_RESET;
 	
@@ -426,7 +426,7 @@ static enum birth_stage menu_question(enum birth_stage current, menu_type *curre
 	while (next == BIRTH_RESET)
 	{
 		/* Display the menu, wait for a selection of some sort to be made. */
-		cx = menu_select(current_menu, EVT_KBRD);
+	    cx = menu_select(current_menu, EVT_KBRD, FALSE);
 
 		/* As all the menus are displayed in "hierarchical" style, we allow
 		   use of "back" (left arrow key or equivalent) to step back in 
@@ -473,26 +473,26 @@ static enum birth_stage menu_question(enum birth_stage current, menu_type *curre
 		else if (cx.type == EVT_KBRD)
 		{
 			/* '*' chooses an option at random from those the game's provided. */
-			if (cx.key == '*' && menu_data->allow_random) 
+			if (cx.key.code == '*' && menu_data->allow_random) 
 			{
 				current_menu->cursor = randint0(current_menu->count);
 				cmd_insert(choice_command);
 				cmd_set_arg_choice(cmd_get_top(), 0, current_menu->cursor);
 
-				menu_refresh(current_menu);
+				menu_refresh(current_menu, FALSE);
 				next = current + 1;
 			}
-			else if (cx.key == '=') 
+			else if (cx.key.code == '=') 
 			{
 				do_cmd_options();
 				next = current;
 			}
-			else if (cx.key == KTRL('X')) 
+			else if (cx.key.code == KTRL('X')) 
 			{
 				cmd_insert(CMD_QUIT);
 				next = BIRTH_COMPLETE;
 			}
-			else if (cx.key == '?')
+			else if (cx.key.code == '?')
 			{
 				do_cmd_help();
 			}
@@ -512,7 +512,7 @@ static enum birth_stage roller_command(bool first_call)
 	char prompt[80] = "";
 	size_t promptlen = 0;
 
-	ui_event_data ke;
+	ui_event ke;
 	char ch;
 
 	enum birth_stage next = BIRTH_ROLLER;
@@ -532,7 +532,7 @@ static enum birth_stage roller_command(bool first_call)
 	button_add("[r]", 'r');
 	if (prev_roll) button_add("[p]", 'p');
 	clear_from(Term->hgt - 2);
-	redraw_stuff();
+	redraw_stuff(p_ptr);
 
 	/* Prepare a prompt (must squeeze everything in) */
 	strnfcat(prompt, sizeof (prompt), &promptlen, "['r' to reroll");
@@ -545,7 +545,7 @@ static enum birth_stage roller_command(bool first_call)
 	
 	/* Prompt and get a command */
 	ke = inkey_ex();
-	ch = ke.key;
+	ch = ke.key.code;
 
 	if (ch == ESCAPE) 
 	{
@@ -598,7 +598,7 @@ static enum birth_stage roller_command(bool first_call)
 	button_kill('\r');
 	button_kill('r');
 	button_kill('p');
-	redraw_stuff();
+	redraw_stuff(p_ptr);
 
 	return next;
 }
@@ -692,7 +692,7 @@ static void point_based_stop(void)
 static enum birth_stage point_based_command(void)
 {
 	static int stat = 0;
-	char ch;
+	struct keypress ch;
 	enum birth_stage next = BIRTH_POINTBASED;
 
 /*	point_based_display();*/
@@ -703,50 +703,50 @@ static enum birth_stage point_based_command(void)
 	/* Get key */
 	ch = inkey();
 	
-	if (ch == KTRL('X')) 
+	if (ch.code == KTRL('X')) 
 	{
 		cmd_insert(CMD_QUIT);
 		next = BIRTH_COMPLETE;
 	}
 	
 	/* Go back a step, or back to the start of this step */
-	else if (ch == ESCAPE) 
+	else if (ch.code == ESCAPE) 
 	{
 		next = BIRTH_BACK;
 	}
 
-	else if (ch == 'r' || ch == 'R') 
+	else if (ch.code == 'r' || ch.code == 'R') 
 	{
 		cmd_insert(CMD_RESET_STATS);
 		cmd_set_arg_choice(cmd_get_top(), 0, FALSE);
 	}
 	
 	/* Done */
-	else if ((ch == '\r') || (ch == '\n')) 
+	else if ((ch.code == '\r') || (ch.code == '\n')) 
 	{
 		next = BIRTH_NAME_CHOICE;
 	}
 	else
 	{
-		ch = target_dir(ch);
+		int dir = target_dir(ch);
 		
 		/* Prev stat, looping round to the bottom when going off the top */
-		if (ch == 8)
+		if (dir == 8)
 			stat = (stat + A_MAX - 1) % A_MAX;
 		
 		/* Next stat, looping round to the top when going off the bottom */
-		if (ch == 2)
+		if (dir == 2)
 			stat = (stat + 1) % A_MAX;
 		
 		/* Decrease stat (if possible) */
-		if (ch == 4)
+		if (dir == 4)
 		{
 			cmd_insert(CMD_SELL_STAT);
 			cmd_set_arg_choice(cmd_get_top(), 0, stat);
 		}
 		
 		/* Increase stat (if possible) */
-		if (ch == 6)
+		if (dir == 6)
 		{
 			cmd_insert(CMD_BUY_STAT);
 			cmd_set_arg_choice(cmd_get_top(), 0, stat);
@@ -784,7 +784,7 @@ static enum birth_stage get_name_command(void)
 static enum birth_stage get_confirm_command(void)
 {
 	const char *prompt = "['ESC' to step back, 'S' to start over, or any other key to continue]";
-	ui_event_data ke;
+	ui_event ke;
 
 	enum birth_stage next;
 
@@ -796,22 +796,22 @@ static enum birth_stage get_confirm_command(void)
 	button_add("[Continue]", 'q');
 	button_add("[ESC]", ESCAPE);
 	button_add("[S]", 'S');
-	redraw_stuff();
+	redraw_stuff(p_ptr);
 	
 	/* Get a key */
 	ke = inkey_ex();
 	
 	/* Start over */
-	if (ke.key == 'S' || ke.key == 's')
+	if (ke.key.code == 'S' || ke.key.code == 's')
 	{
 		next = BIRTH_RESET;
 	}
-	else if (ke.key == KTRL('X'))
+	else if (ke.key.code == KTRL('X'))
 	{
 		cmd_insert(CMD_QUIT);
 		next = BIRTH_COMPLETE;
 	}
-	else if (ke.key == ESCAPE)
+	else if (ke.key.code == ESCAPE)
 	{
 		next = BIRTH_BACK;
 	}
@@ -823,7 +823,7 @@ static enum birth_stage get_confirm_command(void)
 	
 	/* Buttons */
 	button_kill_all();
-	redraw_stuff();
+	redraw_stuff(p_ptr);
 
 	/* Clear prompt */
 	clear_from(23);
@@ -892,21 +892,21 @@ errr get_birth_command(bool wait)
 
 			if (current_stage > BIRTH_SEX_CHOICE)
 			{
-				menu_refresh(&sex_menu);
+			    menu_refresh(&sex_menu, FALSE);
 				menu = &race_menu;
 				command = CMD_CHOOSE_RACE;
 			}
 			
 			if (current_stage > BIRTH_RACE_CHOICE)
 			{
-				menu_refresh(&race_menu);
+			    menu_refresh(&race_menu, FALSE);
 				menu = &class_menu;
 				command = CMD_CHOOSE_CLASS;
 			}
 
 			if (current_stage > BIRTH_CLASS_CHOICE)
 			{
-				menu_refresh(&class_menu);
+			    menu_refresh(&class_menu, FALSE);
 				menu = &roller_menu;
 				command = CMD_NULL;
 			}

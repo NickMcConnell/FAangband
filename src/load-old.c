@@ -22,7 +22,7 @@
     */
 
 #include "angband.h"
-
+#include "buildid.h"
 
 /**
  * Local "savefile" pointer
@@ -65,9 +65,9 @@ static bool older_than(byte x, byte y, byte z)
 /**
  * Hack -- Show information on the screen, one line at a time.
  *
- * Avoid the top two lines, to avoid interference with "msg_print()".
+ * Avoid the top two lines, to avoid interference with "msg()".
  */
-static void note(cptr msg)
+static void note(const char *msg)
 {
     static int y = 2;
   
@@ -451,9 +451,9 @@ static errr rd_savefile_new_aux(void)
     /* Mention the savefile version if not current */
     if (older_than(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH))
     {
-	msg_format("Loading an FAangband %d.%d.%d savefile.", 
+	msg("Loading an FAangband %d.%d.%d savefile.", 
 		   sf_major, sf_minor, sf_patch);
-	msg_print(NULL);
+	message_flush();
     }
 
     if (!get_check("Load your monster and object memory and then start a new character?"))

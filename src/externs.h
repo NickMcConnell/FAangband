@@ -1,6 +1,7 @@
 #ifndef INCLUDED_EXTERNS_H
 #define INCLUDED_EXTERNS_H
 
+#include "spells.h"
 
 /** \file externs.h 
     \brief Variable and function definitions.
@@ -40,23 +41,23 @@ extern s32b player_exp[PY_MAX_LEVEL];
 extern player_sex sex_info[MAX_SEXES];
 extern byte deadliness_conversion[151];
 extern int chest_traps[100];
-extern cptr color_names[16];
+extern const char *color_names[16];
 extern int new_group_index[];
 extern grouper group_item[];
-extern cptr stat_names[A_MAX];
-extern cptr stat_names_reduced[A_MAX];
-extern cptr window_flag_desc[32];
+extern const char *stat_names[A_MAX];
+extern const char *stat_names_reduced[A_MAX];
+extern const char *window_flag_desc[32];
 extern druid_blows d_blow[NUM_D_BLOWS];
 extern const char *magic_desc[REALM_MAX][MD_MAX];
-extern cptr feel_text[FEEL_MAX];
+extern const char *feel_text[FEEL_MAX];
 extern const grouper object_text_order[];
 extern byte mana_cost[RSF_MAX];
 extern byte spell_desire[RSF_MAX][D_MAX];
 extern byte spell_range[RSF_MAX];
 extern int stage_map[NUM_STAGES][9];
 extern int dungeon_map[NUM_STAGES][9];
-extern cptr locality_name[MAX_LOCALITIES];
-extern cptr short_locality_name[MAX_LOCALITIES];
+extern const char *locality_name[MAX_LOCALITIES];
+extern const char *short_locality_name[MAX_LOCALITIES];
 extern int towns[10];
 extern int race_town_prob[10][14];
 extern byte type_of_store[MAX_STORES];
@@ -104,7 +105,6 @@ extern bool inkey_base;
 extern bool inkey_xtra;
 extern u32b inkey_scan;
 extern bool inkey_flag;
-extern cptr inkey_next;
 extern s16b coin_type;
 extern bool magic_throw;
 extern bool opening_chest;
@@ -131,7 +131,7 @@ extern term *angband_term[TERM_WIN_MAX];
 extern char angband_term_name[TERM_WIN_MAX][16];
 extern byte angband_color_table[256][4];
 extern color_type color_table[MAX_COLORS];
-extern const cptr angband_sound_name[MSG_MAX];
+extern const const char *angband_sound_name[MSG_MAX];
 extern int view_n;
 extern u16b *view_g;
 extern int  vinfo_grids;
@@ -147,7 +147,7 @@ extern byte *temp_x;
 extern u16b (*adjacency)[NUM_STAGES];
 extern u16b (*stage_path)[NUM_STAGES];
 extern u16b (*temp_path)[NUM_STAGES];
-extern u16b (*race_prob)[32];
+extern u16b (*race_prob)[NUM_STAGES];
 extern bitflag (*cave_info)[256][CAVE_SIZE];
 extern byte (*cave_feat)[DUNGEON_WID];
 extern s16b (*cave_o_idx)[DUNGEON_WID];
@@ -173,7 +173,7 @@ extern monster_type *m_list;
 extern monster_lore *l_list;
 extern quest *q_list;
 extern store_type *store;
-extern cptr** name_sections;
+extern const char *** name_sections;
 extern object_type *inventory;
 extern object_type *quiver;
 extern s16b alloc_kind_size;
@@ -183,11 +183,11 @@ extern alloc_entry *alloc_ego_table;
 extern s16b alloc_race_size;
 extern alloc_entry *alloc_race_table;
 extern u32b alloc_race_total;
+extern byte gf_to_attr[GF_MAX][BOLT_MAX];
+extern char gf_to_char[GF_MAX][BOLT_MAX];
 extern byte misc_to_attr[256];
 extern char misc_to_char[256];
 extern byte tval_to_attr[128];
-extern char macro_buffer[1024];
-extern char *keymap_act[KEYMAP_MODES][256];
 extern player_sex *sp_ptr;
 extern player_race *rp_ptr;
 extern player_class *cp_ptr;
@@ -241,7 +241,7 @@ extern bool (*item_tester_hook)(const object_type*);
 extern bool (*get_mon_num_hook)(int r_idx);
 extern bool (*get_obj_num_hook)(int k_idx);
 extern ang_file *text_out_file;
-extern void (*text_out_hook)(byte a, char *str);
+extern void (*text_out_hook)(byte a, const char *str);
 extern int text_out_wrap;
 extern int text_out_indent;
 extern int text_out_pad;
@@ -278,6 +278,9 @@ extern void (*sound_hook)(int);
 extern autoinscription *inscriptions;
 extern u16b inscriptions_count;
 
+/* util.c */
+extern struct keypress *inkey_next;
+
 /*
  * Automatically generated "function declarations"
  */
@@ -289,7 +292,7 @@ extern bool py_attack(int y, int x, bool can_push);
 extern void player_birth(bool quickstart_allowed);
 
 /* charattr.c */
-extern void x_fprintf(ang_file *f, int encoding, cptr fmt, ...);
+extern void x_fprintf(ang_file *f, int encoding, const char *fmt, ...);
 extern void dump_put_str(byte attr, const char *str, int col);
 extern void dump_lnum(char *header, s32b num, int col, byte color);
 extern void dump_num(char *header, int num, int col, byte color);
@@ -325,9 +328,6 @@ void death_screen(void);
 extern void play_game(void);
 extern void idle_update(void);
 
-/* load.c */
-extern bool old_load(void);
-
 /* monattk.c */
 extern bool make_attack_normal(monster_type *m_ptr, int y, int x);
 extern bool make_attack_ranged(monster_type *m_ptr, int attack);
@@ -350,12 +350,6 @@ extern void run_step(int dir);
 /* randart.c */
 extern void initialize_random_artifacts(void);
 
-/* randname.c */
-extern size_t randname_make(randname_type name_type, size_t min, size_t max, char *word_buf, size_t buflen, const char ***wordlist);
-
-/* save.c */
-extern bool old_save(void);
-
 /* score.c */
 extern void enter_score(time_t *death_time);
 extern void show_scores(void);
@@ -369,47 +363,45 @@ extern void stores_maint(int times);
 extern void store_init(void);
 
 /* util.c */
-extern void text_to_ascii(char *buf, size_t len, cptr str);
-extern void ascii_to_text(char *buf, size_t len, cptr str);
-extern char *find_roman_suffix_start(cptr buf);
+extern void text_to_ascii(char *buf, size_t len, const char *str);
+extern void ascii_to_text(char *buf, size_t len, const char *str);
+extern char *find_roman_suffix_start(const char *buf);
 extern int roman_to_int(const char *roman);
 extern int int_to_roman(int n, char *roman, size_t bufsize);
 extern void flush(void);
-extern char anykey(void);
-extern char inkey(void);
-extern ui_event_data inkey_ex(void);
-extern void bell(cptr reason);
+extern void anykey(void);
+extern struct keypress inkey(void);
+extern ui_event inkey_ex(void);
+extern void bell(const char *reason);
 extern void sound(int val);
-extern void msg_print(cptr msg);
-extern void msg_format(cptr fmt, ...);
-extern void message(u16b message_type, s16b extra, cptr message);
-extern void message_format(u16b message_type, s16b extra, cptr fmt, ...);
+extern void msg(const char *fmt, ...);
+extern void msgt(unsigned int type, const char *fmt, ...);
 extern void message_flush(void);
 extern void screen_save(void);
 extern void screen_load(void);
-extern void c_put_str(byte attr, cptr str, int row, int col);
-extern void put_str(cptr str, int row, int col);
-extern void c_prt(byte attr, cptr str, int row, int col);
-extern void prt(cptr str, int row, int col);
-extern void text_out_to_file(byte attr, char *str);
-extern void text_out_to_screen(byte a, char *str);
+extern void c_put_str(byte attr, const char *str, int row, int col);
+extern void put_str(const char *str, int row, int col);
+extern void c_prt(byte attr, const char *str, int row, int col);
+extern void prt(const char *str, int row, int col);
+extern void text_out_to_file(byte attr, const char *str);
+extern void text_out_to_screen(byte a, const char *str);
 extern void text_out(const char *fmt, ...);
 extern void text_out_c(byte a, const char *fmt, ...);
 extern void text_out_e(const char *fmt, ...);
 extern void clear_from(int row);
-extern bool askfor_aux_keypress(char *buf, size_t buflen, size_t *curs, size_t *len, char keypress, bool firsttime);
-extern bool askfor_aux(char *buf, size_t len, bool keypress_h(char *, size_t, size_t *, size_t *, char, bool));
-extern bool get_string(cptr prompt, char *buf, size_t len);
-extern s16b get_quantity(cptr prompt, int max);
-extern char get_char(cptr prompt, const char *options, size_t len, char fallback);
-extern bool get_check(cptr prompt);
-extern bool get_com(cptr prompt, char *command);
-extern bool get_com_ex(cptr prompt, ui_event_data *command);
-extern void pause_line(int row);
+extern bool askfor_aux_keypress(char *buf, size_t buflen, size_t *curs, size_t *len, struct keypress keypress, bool firsttime);
+extern bool askfor_aux(char *buf, size_t len, bool keypress_h(char *, size_t, size_t *, size_t *, struct keypress, bool));
+extern bool get_string(const char *prompt, char *buf, size_t len);
+extern s16b get_quantity(const char *prompt, int max);
+extern char get_char(const char *prompt, const char *options, size_t len, char fallback);
+extern bool get_check(const char *prompt);
+extern bool get_com(const char *prompt, struct keypress *command);
+extern bool get_com_ex(const char *prompt, ui_event *command);
+extern void pause_line(struct term *term);
 extern bool is_a_vowel(int ch);
 extern int color_char_to_attr(char c);
-extern int color_text_to_attr(cptr name);
-extern cptr attr_to_text(byte a);
+extern int color_text_to_attr(const char *name);
+extern const char *attr_to_text(byte a);
 
 #ifdef SUPPORT_GAMMA
 extern byte gamma_table[256];
@@ -419,7 +411,7 @@ extern void build_gamma_table(int gamma);
 /* x-char.c */
 extern void xchar_trans_hook(char *s, int encoding);
 extern void xstr_trans(char *str, int encoding);
-extern void escape_latin1(char *dest, size_t max, cptr src);
+extern void escape_latin1(char *dest, size_t max, const char *src);
 extern const char seven_bit_translation[128];
 extern char xchar_trans(byte c);
 
@@ -429,7 +421,7 @@ extern void gain_exp(s32b amount);
 extern void lose_exp(s32b amount);
 bool word_recall(int v);
 int motion_dir(int y1, int x1, int y2, int x2);
-extern int target_dir(char ch);
+extern int target_dir(struct keypress ch);
 extern bool get_rep_dir(int *dp);
 extern bool confuse_dir(int *dp);
 extern void center_panel(void);

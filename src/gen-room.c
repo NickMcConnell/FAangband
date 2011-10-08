@@ -1849,7 +1849,7 @@ static bool build_type5(void)
     /* Describe */
     if (OPT(cheat_room)) {
 	/* Room type */
-	msg_format("Monster pit (%s)", name);
+	msg("Monster pit (%s)", name);
     }
 
     /* Increase the level rating */
@@ -2331,7 +2331,7 @@ static bool build_type6(void)
 /**
  * Hack -- fill in "vault" rooms and themed levels
  */
-extern bool build_vault(int y0, int x0, int ymax, int xmax, cptr data,
+extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 			bool light, bool icky, byte vault_type)
 {
     int x, y;
@@ -2340,7 +2340,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, cptr data,
 
     bool placed = FALSE;
 
-    cptr t;
+    const char *t;
     char racial_symbol[30] = "";
 
     /* Bail if no vaults allowed on this stage */
@@ -3028,7 +3028,7 @@ static bool build_type8(void)
 
     /* Message */
     if (OPT(cheat_room))
-	msg_print("Lesser Vault");
+	msg("Lesser Vault");
 
     /* Boost the rating */
     rating += v_ptr->rat;
@@ -3082,7 +3082,7 @@ static bool build_type9(void)
 
     /* Message */
     if (OPT(cheat_room))
-	msg_print("Greater Vault");
+	msg("Greater Vault");
 
     /* Boost the rating */
     rating += v_ptr->rat;

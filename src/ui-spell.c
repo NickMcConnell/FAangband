@@ -165,7 +165,7 @@ static void spell_menu_display(menu_type *m, int oid, bool cursor,
 /**
  * Handle an event on a menu row.
  */
-static bool spell_menu_handler(menu_type *m, const ui_event_data *e, int oid)
+static bool spell_menu_handler(menu_type *m, const ui_event *e, int oid)
 {
     struct spell_menu_data *d = menu_priv(m);
 
@@ -191,9 +191,6 @@ static void spell_menu_browser(int oid, void *data, const region *loc)
     text_out_wrap = 0;
     text_out_indent = loc->col - 1;
     text_out_pad = 1;
-
-    screen_load();
-    screen_save();
 
     Term_gotoxy(loc->col, loc->row + loc->page_rows);
     text_out_c(TERM_DEEP_L_BLUE, format("\n%s\n", s_info[s_ptr->index].text));
@@ -270,9 +267,7 @@ static int spell_menu_select(menu_type *m, const char *noun, const char *verb)
     region_erase_bordered(&m->active);
     prt(format("%^s which %s? ", verb, noun), 0, 0);
 
-    screen_save();
-    menu_select(m, 0);
-    screen_load();
+    menu_select(m, 0, TRUE);
 
     screen_load();
 
@@ -291,10 +286,8 @@ static void spell_menu_browse(menu_type *m, const char *noun)
     region_erase_bordered(&m->active);
     prt(format("Browsing %ss.  Press Escape to exit.", noun), 0, 0);
 
-    screen_save();
     d->browse = TRUE;
-    menu_select(m, 0);
-    screen_load();
+    menu_select(m, 0, TRUE);
 
     screen_load();
 }
@@ -335,7 +328,7 @@ void textui_book_browse(const object_type *o_ptr)
 	spell_menu_browse(m, magic_desc[mp_ptr->spell_realm][SPELL_NOUN]);
 	spell_menu_destroy(m);
     } else {
-	msg_print("You cannot browse that.");
+	msg("You cannot browse that.");
     }
 }
 
@@ -353,7 +346,7 @@ void textui_spell_browse(void)
 	if (player_has(PF_PROBE))
 	    warrior_probe_desc();
 	else
-	    msg_print("You cannot read books!");
+	    msg("You cannot read books!");
 	return;
     }
 
@@ -369,7 +362,7 @@ void textui_spell_browse(void)
 
     /* Track the object kind */
     track_object(item);
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     textui_book_browse(object_from_item_idx(item));
 }
@@ -384,7 +377,7 @@ void textui_obj_study(void)
     char s[80];
 
     if (mp_ptr->spell_realm == REALM_NONE) {
-	msg_print("You cannot read books!");
+	msg("You cannot read books!");
 	return;
     }
 
@@ -398,7 +391,7 @@ void textui_obj_study(void)
 	return;
 
     track_object(item);
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     if (mp_ptr->spell_book != TV_PRAYER_BOOK) {
 	int spell = get_spell(object_from_item_idx(item),
@@ -421,12 +414,12 @@ void textui_obj_cast(void)
     int item;
     int spell;
 
-    cptr verb = magic_desc[mp_ptr->spell_realm][SPELL_VERB];
+    const char *verb = magic_desc[mp_ptr->spell_realm][SPELL_VERB];
     char q[80];
     char s[80];
 
     if (mp_ptr->spell_realm == REALM_NONE) {
-	msg_print("You cannot read books!");
+	msg("You cannot read books!");
 	return;
     }
 

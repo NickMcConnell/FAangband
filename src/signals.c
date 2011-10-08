@@ -18,6 +18,7 @@
 
 #include "angband.h"
 #include "files.h"
+#include "savefile.h"
 
 #ifndef WINDOWS
 
@@ -208,8 +209,8 @@ static void handle_signal_abort(int sig)
 	/* Flush output */
 	Term_fresh();
 
-	/* Panic Save
-	p_ptr->panic_save = 1; */
+	/* Panic Save 
+	   p_ptr->panic_save = 1; */
 
 	/* Panic save */
 	my_strcpy(p_ptr->died_from, "(panic save)", sizeof(p_ptr->died_from));
@@ -218,16 +219,10 @@ static void handle_signal_abort(int sig)
 	signals_ignore_tstp();
 
 	/* Attempt to save */
-	if (old_save())
-	{
+	if (savefile_save(savefile))
 		Term_putstr(45, 23, -1, TERM_RED, "Panic save succeeded!");
-	}
-
-	/* Save failed */
 	else
-	{
 		Term_putstr(45, 23, -1, TERM_RED, "Panic save failed!");
-	}
 
 	/* Flush output */
 	Term_fresh();
@@ -305,16 +300,15 @@ void signals_init(void)
 	(void)(*signal_aux)(SIGIOT, handle_signal_abort);
 #endif
 
-#ifdef SIGKILL
-	(void)(*signal_aux)(SIGKILL, handle_signal_abort);
-#endif
-
-#ifdef SIGBUS
+/* Set to 0 to suppress signal handlers when debugging */
+#if 1
+# ifdef SIGBUS
 	(void)(*signal_aux)(SIGBUS, handle_signal_abort);
-#endif
+# endif
 
-#ifdef SIGSEGV
+# ifdef SIGSEGV
 	(void)(*signal_aux)(SIGSEGV, handle_signal_abort);
+# endif
 #endif
 
 #ifdef SIGTERM

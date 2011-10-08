@@ -57,24 +57,24 @@ bool player_can_cast(void)
 {
     if (player_has(PF_PROBE)) {
 	if (p_ptr->lev < 35) {
-	    msg_print("You do not know how to probe monsters yet.");
+	    msg("You do not know how to probe monsters yet.");
 	    return FALSE;
 	}
 	else if ((p_ptr->timed[TMD_CONFUSED]) || (p_ptr->timed[TMD_IMAGE])) {
-	    msg_print("You feel awfully confused.");
+	    msg("You feel awfully confused.");
 	    return FALSE;
 	}
     }
 
     if (p_ptr->timed[TMD_BLIND] || no_light())
     {
-	msg_print("You cannot see!");
+	msg("You cannot see!");
 	return FALSE;
     }
     
     if (p_ptr->timed[TMD_CONFUSED])
     {
-	msg_print("You are too confused!");
+	msg("You are too confused!");
 	return FALSE;
     }
     
@@ -89,8 +89,8 @@ bool player_can_study(void)
 
 	if (!p_ptr->new_spells)
 	{
-		cptr p = magic_desc[mp_ptr->spell_realm][SPELL_NOUN];
-		msg_format("You cannot learn any new %ss!", p);
+		const char *p = magic_desc[mp_ptr->spell_realm][SPELL_NOUN];
+		msg("You cannot learn any new %ss!", p);
 		return FALSE;
 	}
 
@@ -102,19 +102,19 @@ bool player_can_read(void)
 {
 	if (p_ptr->timed[TMD_BLIND])
 	{
-		msg_print("You can't see anything.");
+		msg("You can't see anything.");
 		return FALSE;
 	}
 
 	if (no_light())
 	{
-		msg_print("You have no light to read by.");
+		msg("You have no light to read by.");
 		return FALSE;
 	}
 
 	if (p_ptr->timed[TMD_CONFUSED])
 	{
-		msg_print("You are too confused to read!");
+		msg("You are too confused to read!");
 		return FALSE;
 	}
 
@@ -129,7 +129,7 @@ bool player_can_fire(void)
 	/* Require a usable launcher */
 	if (!o_ptr->tval || !p_ptr->state.ammo_tval)
 	{
-		msg_print("You have nothing to fire with.");
+		msg("You have nothing to fire with.");
 		return FALSE;
 	}
 

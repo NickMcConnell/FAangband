@@ -26,6 +26,7 @@
 #include "game-event.h"
 #include "game-cmd.h"
 #include "option.h"
+#include "spells.h"
 #include "squelch.h"
 #include "trap.h"
 
@@ -574,169 +575,6 @@ byte get_color(byte a, int attr, int n)
 }
 
 
-/*
- * This function modifies the attr/char pair for an empty floor space
- * to reflect the various lighting options available.
- *
- * For text, this means changing the colouring for OPT(view_yellow_light) or
- * OPT(view_bright_light), and for graphics it means modifying the char to
- * use a different tile in the tileset.  These modifications are different
- * for different sets, depending on the tiles available, and their position 
- * in the set.
- */
-static void special_lighting_floor(byte *a, char *c, enum grid_light_level lighting, bool in_view)
-{
-    /* Huge hack for Lamp of Gwindor */
-    bool lamp = (p_ptr->inventory[INVEN_LIGHT].k_idx == 733);
-
-    /* The floor starts off "lit" - i.e. rendered in white or the default 
-     * tile. */
-
-    if (lighting == LIGHT_TORCH && OPT(view_yellow_light))
-    {
-	/* 
-	 * OPT(view_yellow_light) distinguishes between torchlit and 
-	 * permanently-lit areas 
-	 */
-	if ((player_has(PF_UNLIGHT) || p_ptr->state.darkness) && 
-	    (p_ptr->cur_light <= 0))
-	{
-	    /* "Dark radius" */
-	    
-	}
- 	else 
-	    switch (use_graphics)
-	    {
-	    case GRAPHICS_NONE:
-	    case GRAPHICS_PSEUDO:
-		/* Use "yellow" */
-		if (*a == TERM_WHITE) {
-		    if (lamp) *a = TERM_L_BLUE;
-		    else *a = TERM_YELLOW;
-		}
-		break;
-	    case GRAPHICS_ADAM_BOLT:
-	    case GRAPHICS_NOMAD:
-		*c += 2;
-		break;
-	    case GRAPHICS_DAVID_GERVAIS:
-		*c -= 1;
-		break;
-	    }
-    }
-    
-    else if (lighting == LIGHT_DARK)
-    {
-	/* Use a dark tile */
-	switch (use_graphics)
-	{
-	case GRAPHICS_NONE:
-	case GRAPHICS_PSEUDO:
-	    /* Use "dark gray" */
-	    if (*a == TERM_WHITE) *a = TERM_L_DARK;
-	    if (*a == TERM_GREEN) *a = TERM_L_DARK;
-	    break;
-	case GRAPHICS_ADAM_BOLT:
-	case GRAPHICS_NOMAD:
-	case GRAPHICS_DAVID_GERVAIS:
-	    *c += 1;
-	    break;
-	}
-    }
-    else
-    {
-	/* 
-	 * OPT(view_bright_light) makes tiles that aren't in the "eyeline" 
-	 * of the player show up dimmer than those that are.
-	 */
-	if (OPT(view_bright_light) && !in_view)
-	{
-	    switch (use_graphics)
-	    {
-	    case GRAPHICS_NONE:
-	    case GRAPHICS_PSEUDO:
-		/* Use "gray" */
-		if (*a == TERM_WHITE) *a = TERM_SLATE;
-		else if (*a == TERM_L_GREEN) *a = TERM_GREEN;
-		break;
-	    case GRAPHICS_ADAM_BOLT:
-	    case GRAPHICS_NOMAD:
-	    case GRAPHICS_DAVID_GERVAIS:
-		*c += 1;
-		break;
-	    }
-	}
-    }
-}
-
-/*
- * This function modifies the attr/char pair for a wall (or other "interesting"
- * grids to show them as more-or-less lit.  Note that how walls are drawn 
- * isn't directly related to how they are lit - walls are always "lit".
- * The lighting effects we use are as a visual cue to emphasise blindness 
- * and to show field-of-view (OPT(view_bright_light)).
- *
- * For text, we change the attr and for graphics we modify the char to
- * use a different tile in the tileset.  These modifications are different
- * for different sets, depending on the tiles available, and their position 
- * in the set.
- */
-static void special_wall_display(byte *a, char *c, bool in_view, int feat)
-{
-    /* Grids currently in view are left alone, rendered as "white" */
-    if (in_view) return;
-
-    /* When blind, we make walls and other "white" things dark */
-    if (p_ptr->timed[TMD_BLIND])
-    {
-	switch (use_graphics)
-	{
-	case GRAPHICS_NONE:
-	case GRAPHICS_PSEUDO:
-	    /* Use "dark gray" */
-	    if (*a == TERM_WHITE) *a = TERM_L_DARK;
-	    break;
-	case GRAPHICS_ADAM_BOLT:
-	case GRAPHICS_NOMAD:
-	case GRAPHICS_DAVID_GERVAIS:
-	    if (feat_supports_lighting(feat)) *c += 1;
-	    break;
-	}
-    }
-
-    /* Handle "OPT(view_bright_light)" by dimming walls not "in view" */
-    else if (OPT(view_bright_light))
-    {
-	switch (use_graphics)
-	{
-	case GRAPHICS_NONE:
-	case GRAPHICS_PSEUDO:
-	    /* Use "gray" */
-	    *a = get_color(*a, ATTR_DARK, 1);
-	    break;
-	case GRAPHICS_ADAM_BOLT:
-	case GRAPHICS_NOMAD:
-	case GRAPHICS_DAVID_GERVAIS:
-	    if (feat_supports_lighting(feat)) *c += 1;
-	    break;
-	}
-    }
-    else
-    {
-	/* Use a brightly lit tile */
-	switch (use_graphics)
-	{
-	case GRAPHICS_ADAM_BOLT:
-	case GRAPHICS_NOMAD:
-	    if (feat_supports_lighting(feat)) *c += 2;
-	    break;
-	case GRAPHICS_DAVID_GERVAIS:
-	    if (feat_supports_lighting(feat)) *c -= 1;
-	    break;
-	}
-    }
-}
-
 
 /* 
  * Checks if a square is at the (inner) edge of a trap detect area 
@@ -758,6 +596,40 @@ bool dtrap_edge(int y, int x)
 
     return FALSE; 
 } 
+
+
+/**
+ * Apply text lighting effects
+ */
+static void grid_get_text(grid_data *g, byte *a, char *c, feature_type *f_ptr)
+{
+	/* Trap detect edge, but don't colour traps themselves, or treasure */
+	if (g->trapborder && tf_has(f_ptr->flags, TF_FLOOR) &&
+	    !((int) g->trap < trap_max))
+	{
+		if (g->in_view)
+			*a = TERM_L_GREEN;
+		else
+			*a = TERM_GREEN;
+	}
+	else if (g->f_idx == FEAT_FLOOR)
+	{
+		if (g->lighting == FEAT_LIGHTING_BRIGHT) {
+			if (*a == TERM_WHITE)
+				*a = TERM_YELLOW;
+		} else if (g->lighting == FEAT_LIGHTING_DARK) {
+			if (*a == TERM_WHITE)
+				*a = TERM_L_DARK;
+		}
+	}
+	else if (g->f_idx > FEAT_INVIS)
+	{
+		if (g->lighting == FEAT_LIGHTING_DARK) {
+			if (*a == TERM_WHITE)
+				*a = TERM_SLATE;
+		}
+	}
+}
 
 
 /**
@@ -797,36 +669,18 @@ bool dtrap_edge(int y, int x)
  */
 void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
 {
-	byte a;
-	char c;
-	
 	feature_type *f_ptr = &f_info[g->f_idx];
 	
+	byte a = f_ptr->x_attr[g->lighting];
+	char c = f_ptr->x_char[g->lighting];
+
 	/* Don't display hidden objects */
 	bool ignore_objects = tf_has(f_ptr->flags, TF_HIDE_OBJ);
               
-
-	/* Normal attr and char */
-	a = f_ptr->x_attr;
-	c = f_ptr->x_char;
-
 	/* Check for trap detection boundaries */
-	if (g->trapborder && tf_has(f_ptr->flags, TF_FLOOR) && 
-	    !((int) g->trap < trap_max) && 
-	    (use_graphics == GRAPHICS_NONE || use_graphics == GRAPHICS_PSEUDO))
-	    a = TERM_L_GREEN;
+	if (use_graphics == GRAPHICS_NONE || use_graphics == GRAPHICS_PSEUDO)
+	    grid_get_text(g, &a, &c, f_ptr);
 
-	/* Special lighting effects */
-	if (tf_has(f_ptr->flags, TF_FLOOR))
-	{
-	    if (OPT(view_special_light))
-		special_lighting_floor(&a, &c, g->lighting, g->in_view);
-	}
-
-	/* Special lighting effects (walls only) */
-	else if (OPT(view_granite_light)) 
-	    special_wall_display(&a, &c, g->in_view, g->f_idx);
-		
 	/* Save the terrain info for the transparency effects */
 	(*tap) = a;
 	(*tcp) = c;
@@ -1080,7 +934,7 @@ void map_info(unsigned y, unsigned x, grid_data *g)
     g->first_k_idx = 0;
     g->trap = trap_max;
     g->multiple_objects = FALSE;
-    g->lighting = LIGHT_GLOW;
+    g->lighting = FEAT_LIGHTING_DARK;
 
     /* Set things we can work out right now */
     g->f_idx = cave_feat[y][x];
@@ -1107,14 +961,14 @@ void map_info(unsigned y, unsigned x, grid_data *g)
 	    {
 		/* Only lit by "torch" light */
 		if (cave_has(cave_info[y][x], CAVE_GLOW))
-		    g->lighting = LIGHT_GLOW;
+		    g->lighting = FEAT_LIGHTING_LIT;
 		else
-		    g->lighting = LIGHT_TORCH;
+		    g->lighting = FEAT_LIGHTING_BRIGHT;
 	    }
 
 	    /* Handle "dark" grids and "blindness" */
 	    else if (p_ptr->timed[TMD_BLIND] || !cave_has(cave_info[y][x], CAVE_GLOW))
-		g->lighting = LIGHT_DARK;
+		g->lighting = FEAT_LIGHTING_DARK;
 	}
     }
     /* Unknown */
@@ -1198,7 +1052,8 @@ void map_info(unsigned y, unsigned x, grid_data *g)
     }
 
     assert(g->f_idx <= z_info->f_max);
-    assert(g->m_idx < (u32b) m_max);
+    if (!g->hallucinate)
+	assert(g->m_idx < (u32b) m_max);
     assert(g->first_k_idx < z_info->k_max);
     /* All other g fields are 'flags', mostly booleans. */
 }
@@ -1640,7 +1495,7 @@ static byte priority(byte a, char c)
 	if (!f_ptr->fidx) continue;
 
 	/* Check character and attribute, accept matches */
-	if ((f_ptr->x_char == c) && (f_ptr->x_attr == a))
+	if ((f_ptr->d_char == c) && (f_ptr->d_attr == a))
 	    return (f_ptr->priority);
     }
 
@@ -1827,7 +1682,7 @@ void regional_map(int num, int size)
     int i, j, col, row;
     int *stage = malloc(size * sizeof(*stage));
     int north, east, south, west;
-    cptr lev;
+    const char *lev;
 
     /* Get the side length */
     num = 2 * num + 1;

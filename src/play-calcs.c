@@ -940,7 +940,7 @@ static void calc_spells(void)
 	    p_ptr->spell_flags[j] &= ~PY_SPELL_LEARNED;
 	    
 	    /* Message */
-	    msg_format("You have forgotten the %s of %s.", 
+	    msg("You have forgotten the %s of %s.", 
 		       magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
 		       get_spell_name(mt_ptr->index));
 	    
@@ -976,7 +976,7 @@ static void calc_spells(void)
 	    p_ptr->spell_flags[j] &= ~PY_SPELL_LEARNED;
 
 	    /* Message */
-	    msg_format("You have forgotten the %s of %s.",
+	    msg("You have forgotten the %s of %s.",
 		       magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
 		       get_spell_name(mt_ptr->index));
 
@@ -1015,7 +1015,7 @@ static void calc_spells(void)
 	    p_ptr->spell_flags[j] |= PY_SPELL_LEARNED;
 
 	    /* Message */
-	    msg_format("You have remembered the %s of %s.",
+	    msg("You have remembered the %s of %s.",
 		       magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
 		       get_spell_name(mt_ptr->index));
 
@@ -1056,7 +1056,7 @@ static void calc_spells(void)
 	/* Message if needed */
 	if (p_ptr->new_spells) {
 	    /* Message */
-	    msg_format("You can learn %d more %s%s.", p_ptr->new_spells,
+	    msg("You can learn %d more %s%s.", p_ptr->new_spells,
 		       magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
 		       ((p_ptr->new_spells != 1)
 			&& (mp_ptr->spell_book != TV_DRUID_BOOK)) ? "s" : "");
@@ -1104,7 +1104,7 @@ static void calc_specialty(void)
     /* More specialties are available (or fewer forgotten) */
     if (p_ptr->old_specialties < p_ptr->new_specialties) {
 	if (p_ptr->old_specialties < 0) {
-	    msg_print("You have regained specialist abilities.");
+	    msg("You have regained specialist abilities.");
 
 	    /* Put forgotten specialties back on the flags */
 	    for (i = MIN(0, p_ptr->new_specialties); i > p_ptr->old_specialties;
@@ -1113,7 +1113,7 @@ static void calc_specialty(void)
 	}
 
 	if (p_ptr->new_specialties > 0)
-	    msg_print("You may learn a specialist ability using the 'O' key.");
+	    msg("You may learn a specialist ability using the 'O' key.");
 
 	/* Redraw Study Status */
 	p_ptr->redraw |= (PR_STUDY);
@@ -1122,7 +1122,7 @@ static void calc_specialty(void)
     /* Fewer specialties are available (or more forgotten) */
     if (p_ptr->old_specialties > p_ptr->new_specialties) {
 	if (p_ptr->new_specialties < 0) {
-	    msg_print("You have lost specialist abilities.");
+	    msg("You have lost specialist abilities.");
 
 	    /* Remove forgotten specialties from the flags */
 	    for (i = 0; i > p_ptr->new_specialties; i--)
@@ -1277,9 +1277,9 @@ static void calc_mana(void)
     if (old_cumber_glove != p_ptr->cumber_glove) {
 	/* Message */
 	if (p_ptr->cumber_glove) {
-	    msg_print("Your covered hands feel unsuitable for spellcasting.");
+	    msg("Your covered hands feel unsuitable for spellcasting.");
 	} else {
-	    msg_print("Your hands feel more suitable for spellcasting.");
+	    msg("Your hands feel more suitable for spellcasting.");
 	}
     }
 
@@ -1288,9 +1288,9 @@ static void calc_mana(void)
     if (old_cumber_armor != p_ptr->cumber_armor) {
 	/* Message */
 	if (p_ptr->cumber_armor) {
-	    msg_print("The weight of your armor encumbers your movement.");
+	    msg("The weight of your armor encumbers your movement.");
 	} else {
-	    msg_print("You feel able to move more freely.");
+	    msg("You feel able to move more freely.");
 	}
     }
 }
@@ -3289,15 +3289,15 @@ static void update_bonuses(void)
     if (state->evasion_chance != old.evasion_chance) {
 	/* Messages */
 	if (!old.evasion_chance) {
-	    msg_print("You are able to Evade attacks.");
+	    msg("You are able to Evade attacks.");
 	} else if (!state->evasion_chance) {
-	    msg_print("You are no longer able to Evade attacks");
+	    msg("You are no longer able to Evade attacks");
 	}
 	/* Mega-Hack - Mask out small changes */
 	else if (state->evasion_chance > (old.evasion_chance + 5)) {
-	    msg_print("You are better able to Evade attacks.");
+	    msg("You are better able to Evade attacks.");
 	} else if ((state->evasion_chance + 5) < old.evasion_chance) {
-	    msg_print("You are less able to Evade attacks.");
+	    msg("You are less able to Evade attacks.");
 	}
 
 	/* Save it */
@@ -3308,11 +3308,11 @@ static void update_bonuses(void)
     if (old.heavy_shoot != state->heavy_shoot) {
 	/* Message */
 	if (state->heavy_shoot) {
-	    msg_print("You have trouble wielding such a heavy bow.");
+	    msg("You have trouble wielding such a heavy bow.");
 	} else if (p_ptr->inventory[INVEN_BOW].k_idx) {
-	    msg_print("You have no trouble wielding your bow.");
+	    msg("You have no trouble wielding your bow.");
 	} else {
-	    msg_print("You feel relieved to put down your heavy bow.");
+	    msg("You feel relieved to put down your heavy bow.");
 	}
 
 	/* Save it */
@@ -3323,11 +3323,11 @@ static void update_bonuses(void)
     if (old.heavy_wield != state->heavy_wield) {
 	/* Message */
 	if (state->heavy_wield) {
-	    msg_print("You have trouble wielding such a heavy weapon.");
+	    msg("You have trouble wielding such a heavy weapon.");
 	} else if (p_ptr->inventory[INVEN_WIELD].k_idx) {
-	    msg_print("You have no trouble wielding your weapon.");
+	    msg("You have no trouble wielding your weapon.");
 	} else {
-	    msg_print("You feel relieved to put down your heavy weapon.");
+	    msg("You feel relieved to put down your heavy weapon.");
 	}
 
 	/* Save it */
@@ -3338,12 +3338,12 @@ static void update_bonuses(void)
     if (old.icky_wield != state->icky_wield) {
 	/* Message */
 	if (state->icky_wield) {
-	    msg_print("You do not feel comfortable with your weapon.");
+	    msg("You do not feel comfortable with your weapon.");
 	} else if (p_ptr->inventory[INVEN_WIELD].k_idx) {
 	    notice_obj(OF_BLESSED, INVEN_WIELD + 1);
-	    msg_print("You feel comfortable with your weapon.");
+	    msg("You feel comfortable with your weapon.");
 	} else {
-	    msg_print("You feel more comfortable after removing your weapon.");
+	    msg("You feel more comfortable after removing your weapon.");
 	}
 
 	/* Save it */
@@ -3354,9 +3354,9 @@ static void update_bonuses(void)
     if (old.shield_on_back != state->shield_on_back) {
 	/* Messages */
 	if (state->shield_on_back) {
-	    msg_print("You are carrying your shield on your back.");
+	    msg("You are carrying your shield on your back.");
 	} else if (p_ptr->inventory[INVEN_ARM].k_idx) {
-	    msg_print("You are carrying your shield in your hand.");
+	    msg("You are carrying your shield in your hand.");
 	}
 
 	/* No message for players no longer carrying a shield. */
@@ -3375,7 +3375,7 @@ static void update_bonuses(void)
 /**
  * Handle "p_ptr->notice"
  */
-void notice_stuff(void)
+void notice_stuff(struct player *p)
 {
     /* Notice stuff */
     if (!p_ptr->notice)
@@ -3420,7 +3420,7 @@ void notice_stuff(void)
 /**
  * Handle "p_ptr->update"
  */
-void update_stuff(void)
+void update_stuff(struct player *p)
 {
     /* Update stuff */
     if (!p_ptr->update)
@@ -3541,7 +3541,7 @@ static const struct flag_event_trigger redraw_events[] =
 /**
  * Handle "p_ptr->redraw"
  */
-void redraw_stuff(void)
+void redraw_stuff(struct player *p)
 {
     size_t i;
 
@@ -3587,11 +3587,11 @@ void redraw_stuff(void)
 /**
  * Handle "p_ptr->update" and "p_ptr->redraw"
  */
-void handle_stuff(void)
+void handle_stuff(struct player *p)
 {
 	/* Update stuff */
-	if (p_ptr->update) update_stuff();
+	if (p_ptr->update) update_stuff(p);
 
 	/* Redraw stuff */
-	if (p_ptr->redraw) redraw_stuff();
+	if (p_ptr->redraw) redraw_stuff(p);
 }

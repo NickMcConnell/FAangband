@@ -54,17 +54,15 @@
 /**
  * Name of the version/variant
  */
-#define VERSION_NAME "FAangband"
 #define SAVEFILE_NAME  "FAAN"
 
 
 /**
  * Current version string - according to FAangband reckoning.
  */
-#define VERSION_STRING "1.2.5"
 /*
 #ifdef BUILD_ID
-#define VERSION_STRING	"1.2.5 (" BUILD_ID ")"
+#define VERSION_STRING	"1.2.6 (" BUILD_ID ")"
 #endif
 */
 
@@ -73,7 +71,7 @@
  */
 #define VERSION_MAJOR	1
 #define VERSION_MINOR	2
-#define VERSION_PATCH	5
+#define VERSION_PATCH	6
 #define VERSION_EXTRA	0
 
 /**
@@ -427,18 +425,6 @@
 #define MON_SUMMON_ADJ	2	/* Adjust level of summoned creatures */
 #define MON_DRAIN_LIFE	2	/* Percent of player exp drained per hit */
 #define USE_DEVICE      3	/* x> Harder devices x< Easier devices     */
-
-/**
- * The different types of name make_word can generate 
- */
-typedef enum 
-{
-  RANDNAME_TOLKIEN = 1,
-  RANDNAME_SCROLL,
-
-  /* End of type marker - not a valid name type */
-  RANDNAME_NUM_TYPES
-} randname_type;
 
 /**
  * Percentage likelihood that monsters will be disturbed by the
@@ -954,86 +940,6 @@ enum
    (X->multiple_brand[Y] > 10)
 
 /*
- * Spell types used by project(), and related functions.
- */
-#define GF_ROCK	     	1	/* Physical missiles */
-#define GF_SHOT         2
-#define GF_ARROW        3
-#define GF_MISSILE      4
-#define GF_PMISSILE     5
-#define GF_WHIP         6	/* Used for lash/spit attacks. */
-
-#define GF_ACID         8	/* The basic elements & poison */
-#define GF_ELEC         9
-#define GF_FIRE         10
-#define GF_COLD         11
-#define GF_POIS         12
-
-#define GF_PLASMA       13	/* Variations on the elements */
-#define GF_HELLFIRE	14
-#define GF_ICE          15
-#define GF_DRAGONFIRE   16     
-
-#define GF_LIGHT_WEAK	20	/* Light and darkness */
-#define GF_LIGHT         21
-#define GF_DARK_WEAK	23
-#define GF_DARK         24
-#define GF_MORGUL_DARK	25
-
-#define GF_CONFUSION    26	/* Physical */
-#define GF_SOUND        27
-#define GF_SHARD        28
-#define GF_INERTIA      29
-#define GF_GRAVITY      30
-#define GF_FORCE        31
-#define GF_WATER        32
-#define GF_STORM        33
-
-#define GF_NEXUS        36	/* Magical */
-#define GF_NETHER       37
-#define GF_CHAOS        38
-#define GF_DISENCHANT   39
-#define GF_TIME         40
-
-#define GF_MANA         43	/* Special */
-#define GF_HOLY_ORB     44
-#define GF_METEOR       45
-#define GF_SPIRIT	46
-#define GF_ALL          47
-
-#define GF_KILL_WALL	50	/* Dungeon-altering */
-#define GF_KILL_DOOR	51
-#define GF_KILL_TRAP	52
-#define GF_MAKE_WALL	53
-#define GF_MAKE_DOOR	54
-#define GF_MAKE_TRAP	55
-
-#define GF_HOLD		59	/* Area-effect */
-#define GF_HOLD_UNDEAD	60
-#define GF_AWAY_UNDEAD	61
-#define GF_AWAY_EVIL	62
-#define GF_AWAY_ALL	63
-#define GF_TURN_UNDEAD	64
-#define GF_TURN_EVIL	65
-#define GF_TURN_ALL	66
-#define GF_DISP_UNDEAD	67
-#define GF_DISP_EVIL	68
-#define GF_DISP_NOT_EVIL 69
-#define GF_DISP_DEMON	70
-#define GF_DISP_DRAGON	71
-#define GF_DISP_ALL	72
-#define GF_DISP_SMALL_ALL 73
-#define GF_OLD_CLONE	74
-#define GF_OLD_POLY	75
-#define GF_OLD_HEAL	76
-#define GF_OLD_SPEED	77
-#define GF_OLD_SLOW	78
-#define GF_OLD_CONF	79
-#define GF_OLD_SLEEP	80
-#define GF_OLD_DRAIN	81
-#define GF_NATURE	82
-
-/*
  * Some constants for the "learn" code.  These generalized from the
  * old DRS constants.
  */
@@ -1070,22 +976,6 @@ enum
 #define LRN_BLIND_SAVE  48 /* Both resist Blind and Saves apply */
 #define LRN_CONFU_SAVE  49 /* Both resist Confusion and Saves apply */
 #define LRN_ALL         50 /* Recurses to all the resistables */
-
-/**
- * Number of keymap modes
- */
-#define KEYMAP_MODES	        2
-
-/**
- * Mode for original keyset commands
- */
-#define KEYMAP_MODE_ORIG	0
-
-/**
- * Mode for roguelike keyset commands
- */
-#define KEYMAP_MODE_ROGUE	1
-
 
 /*** Feature Indexes (see "lib/edit/terrain.txt") ***/
 
@@ -1502,43 +1392,6 @@ enum
 #define PROJECT_NO          0
 #define PROJECT_NOT_CLEAR   1
 #define PROJECT_CLEAR       2
-
-/*
- * Bit flags for the "project()" function
- *
- *   JUMP:  Jump directly to the target location (this is a hack)
- *   BEAM:  Work as a beam weapon (affect every grid passed through)
- *   ARC:   Act as an arc spell (a portion of a caster-centered ball)
- *   THRU:  Continue "through" the target (used for "bolts"/"beams")
- *   STOP:  Stop as soon as we hit a monster (used for "bolts")
- *   GRID:  Affect each grid in the "blast area" in some way
- *   ITEM:  Affect each object in the "blast area" in some way
- *   KILL:  Affect each monster in the "blast area" in some way
- *   PLAY:  Explicitly affect the player
- *   HIDE:  Hack -- disable "visual" feedback from projection
- *   CHCK:  Note occupied grids, but do not stop at them.
- */
-#define PROJECT_NONE    0x0000
-#define PROJECT_JUMP	0x0001
-#define PROJECT_BEAM	0x0002
-#define PROJECT_SAFE    0x0004
-#define PROJECT_ARC	0x0008
-#define PROJECT_THRU	0x0010
-#define PROJECT_STOP	0x0020
-#define PROJECT_GRID	0x0040
-#define PROJECT_ITEM	0x0080
-#define PROJECT_KILL	0x0100
-#define PROJECT_PLAY	0x0200
-#define PROJECT_HIDE	0x0400
-#define PROJECT_CHCK	0x0800
-
-/*
- * Bit flags for the "enchant()" function
- */
-#define ENCH_TOHIT   0x01
-#define ENCH_TODAM   0x02
-#define ENCH_TOAC    0x04
-
 
 /*
  * Bit flags for the "target_set" function
@@ -2464,13 +2317,13 @@ enum
  * Convert a "key event" into a "location" (Y)
  */
 #define KEY_GRID_Y(K) \
-  ((int) (((K.mousey - ROW_MAP) / tile_height) + Term->offset_y))
+  ((int) (((K.mouse.y - ROW_MAP) / tile_height) + Term->offset_y))
 
 /**
  * Convert a "key event" into a "location" (X)
  */
 #define KEY_GRID_X(K) \
-	((int) (((K.mousex - COL_MAP) / tile_width) + Term->offset_x))
+	((int) (((K.mouse.x - COL_MAP) / tile_width) + Term->offset_x))
 
 /**
  * Determines if a map location is "meaningful"
@@ -2493,10 +2346,10 @@ enum
  * Determines if a map location is currently "on screen"
  * Note that "panel_contains(Y,X)" always implies "in_bounds(Y,X)".
  * Pre-storing this into a cave_info flag would be nice.  XXX XXX
- */
 #define panel_contains(Y,X) \
 	(((unsigned)((Y) - Term->offset_y) < (unsigned)(SCREEN_HGT)) && \
 	 ((unsigned)((X) - Term->offset_x) < (unsigned)(SCREEN_WID)))
+ */
 
 /**
  * Determine if a "legal" grid is a "floor" grid

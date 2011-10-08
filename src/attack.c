@@ -133,18 +133,18 @@ static int critical_melee(int chance, int sleeping_bonus, bool visible,
 	if ((sleeping_bonus) && (visible)) {
 	    /* More "interesting" messages if we get a seriously good hit. */
 	    if ((add_dice >= 4) && (player_has(PF_BACKSTAB))) {
-		message(MSG_HIT, 0, "You ruthlessly sneak attack!");
+		msgt(MSG_HIT, "You ruthlessly sneak attack!");
 	    }
 
 	    /* Standard "wakeup call". */
 	    else {
-		message(MSG_HIT, 0, "You rudely awaken the monster.");
+		msgt(MSG_HIT, "You rudely awaken the monster.");
 	    }
 	}
 
 	/* Credit where credit is due - not if already a special message */
 	else if (armsman)
-	    message(MSG_HIT, 0, "Armsman hit!");
+	    msgt(MSG_HIT, "Armsman hit!");
 
 	/* Print special messages if monster is visible. */
 	if (visible) {
@@ -155,15 +155,15 @@ static int critical_melee(int chance, int sleeping_bonus, bool visible,
 	     */
 	    if (add_dice <= 2) {
 		sound(MSG_HIT_GOOD);
-		message_format(MSG_HIT, 0, "You strike %s.", m_name);
+		msgt(MSG_HIT, "You strike %s.", m_name);
 	    }
 
 	    else if (add_dice == 3) {
 		sound(MSG_HIT_GREAT);
 		if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)) {
-		    message_format(MSG_HIT, 0, "You hack at %s.", m_name);
+		    msgt(MSG_HIT, "You hack at %s.", m_name);
 		} else {
-		    message_format(MSG_HIT, 0, "You pound %s.", m_name);
+		    msgt(MSG_HIT, "You pound %s.", m_name);
 		}
 	    }
 
@@ -171,15 +171,15 @@ static int critical_melee(int chance, int sleeping_bonus, bool visible,
 		sound(MSG_HIT_SUPERB);
 		if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)) {
 		    if (vorpal) {
-			message_format(MSG_HIT, 0,
+			msgt(MSG_HIT,
 				       "Your vorpal blade goes snicker-snack!",
 				       m_name);
 		    } else {
-			message_format(MSG_HIT, 0, "You slice into %s.",
+			msgt(MSG_HIT, "You slice into %s.",
 				       m_name);
 		    }
 		} else {
-		    message_format(MSG_HIT, 0, "You bludgeon %s.", m_name);
+		    msgt(MSG_HIT, "You bludgeon %s.", m_name);
 		}
 	    }
 
@@ -187,12 +187,12 @@ static int critical_melee(int chance, int sleeping_bonus, bool visible,
 		if ((vorpal)
 		    && ((o_ptr->tval == TV_SWORD)
 			|| (o_ptr->tval == TV_POLEARM))) {
-		    message_format(MSG_HIT, 0,
+		    msgt(MSG_HIT,
 				   "Your vorpal blade goes snicker-snack!",
 				   m_name);
 		} else {
 		    sound(MSG_HIT_HI_GREAT);
-		    message_format(MSG_HIT, 0, "You *smite* %s!", m_name);
+		    msgt(MSG_HIT, "You *smite* %s!", m_name);
 		}
 	    }
 	}
@@ -201,13 +201,13 @@ static int critical_melee(int chance, int sleeping_bonus, bool visible,
     /* If the blow is not a critical hit, then the default message is shown. */
     else if (visible) {
 	sound(MSG_HIT);
-	message_format(MSG_HIT, 0, "You hit %s.", m_name);
+	msgt(MSG_HIT, "You hit %s.", m_name);
     }
 
     /* Hits on non-visible monsters always generate the same message. */
     if (!visible) {
 	sound(MSG_HIT);
-	message(MSG_HIT, 0, "You hit something.");
+	msgt(MSG_HIT, "You hit something.");
     }
 
     /* Return the number of damage dice to add. */
@@ -268,33 +268,33 @@ static int critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
 	/* Encourage the player to throw and shoot things at sleeping monsters */
 	if ((sleeping_bonus) && (visible)) {
 	    if ((thrown_weapon) && (add_dice >= 2)) {
-		message(MSG_HIT, 0, "Assassin strike!");
+		msgt(MSG_HIT, "Assassin strike!");
 	    }
 
 	    else {
-		message(MSG_HIT, 0, "You rudely awaken the monster.");
+		msgt(MSG_HIT, "You rudely awaken the monster.");
 	    }
 	}
 
 	/* Credit where credit is due - but not if already a special message */
 	else if (marksman)
-	    message(MSG_HIT, 0, "Marksmanship!");
+	    msgt(MSG_HIT, "Marksmanship!");
 
 	/* Print special messages if monster is visible. */
 	if (visible) {
 	    /* Messages depend on quality of critical hit. */
 	    if (add_dice == 1) {
-		message_format(MSG_HIT, 0, "The %s penetrates %s.", o_name,
+		msgt(MSG_HIT, "The %s penetrates %s.", o_name,
 			       m_name);
 	    }
 
 	    else if (add_dice == 2) {
-		message_format(MSG_HIT, 0, "The %s drives into %s.", o_name,
+		msgt(MSG_HIT, "The %s drives into %s.", o_name,
 			       m_name);
 	    }
 
 	    else if (add_dice >= 3) {
-		message_format(MSG_HIT, 0, "The %s transpierces %s!", o_name,
+		msgt(MSG_HIT, "The %s transpierces %s!", o_name,
 			       m_name);
 	    }
 	}
@@ -302,12 +302,12 @@ static int critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
 
     /* If the shot is not a critical hit, then the default message is shown. */
     else if (visible) {
-	message_format(MSG_HIT, 0, "The %s hits %s.", o_name, m_name);
+	msgt(MSG_HIT, "The %s hits %s.", o_name, m_name);
     }
 
     /* Hits on non-visible monsters always generate the same message. */
     if (!visible) {
-	message_format(MSG_HIT, 0, "The %s finds a mark.", o_name);
+	msgt(MSG_HIT, "The %s finds a mark.", o_name);
     }
 
     /* Return the number of damage dice to add. */
@@ -760,7 +760,7 @@ static int adjust_dam(long *die_average, object_type * o_ptr,
     /* Hack - Sometimes, a temporary Holy Attack becomes exhusted. */
     if ((p_ptr->special_attack & (ATTACK_HOLY)) && (randint1(20) == 1)) {
 	p_ptr->special_attack &= ~(ATTACK_HOLY);
-	msg_print("Your temporary Holy attack has dissipated.");
+	msg("Your temporary Holy attack has dissipated.");
 
 	/* Redraw the state */
 	p_ptr->redraw |= (PR_STATUS);
@@ -804,7 +804,7 @@ static int adjust_dam(long *die_average, object_type * o_ptr,
  */
 static int get_druid_damage(int plev, char m_name[], int power, int deadliness)
 {
-    cptr description;
+    const char *description;
     int dd = 0, ds = 0;
     int chance, n, n_chances, i;
     int damage;
@@ -888,18 +888,18 @@ static int get_druid_damage(int plev, char m_name[], int power, int deadliness)
 
 	/* And display the attack message. Feedback for Power Strike Specialty */
 	if (power_strike)
-	    message_format(MSG_HIT, 0,
+	    msgt(MSG_HIT,
 			   "Power Strike! You attempt to confuse %s.", m_name);
 	else
-	    message_format(MSG_HIT, 0, "You %s and attempt to confuse %s.",
+	    msgt(MSG_HIT, "You %s and attempt to confuse %s.",
 			   description, m_name);
     } else {
 	/* Basic attack message. */
 	if (power_strike)
-	    message_format(MSG_HIT, 0, "Power Strike! You %s %s.", description,
+	    msgt(MSG_HIT, "Power Strike! You %s %s.", description,
 			   m_name);
 	else
-	    message_format(MSG_HIT, 0, "You %s %s.", description, m_name);
+	    msgt(MSG_HIT, "You %s %s.", description, m_name);
     }
     return (damage);
 }
@@ -1032,7 +1032,7 @@ bool py_attack(int y, int x, bool can_push)
 	monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
 	/* Message */
-	msg_format("You push past %s.", m_name);
+	msg("You push past %s.", m_name);
 
 	return (FALSE);
     }
@@ -1071,10 +1071,10 @@ bool py_attack(int y, int x, bool can_push)
     if (p_ptr->timed[TMD_AFRAID]) {
 	if (m_ptr->ml) {
 	    /* Message */
-	    msg_format("You are too afraid to attack %s!", m_name);
+	    msg("You are too afraid to attack %s!", m_name);
 	} else {
 	    /* Special Message */
-	    msg_print("Something scary is in your way!");
+	    msg("Something scary is in your way!");
 	}
 
 	/* Done */
@@ -1085,10 +1085,10 @@ bool py_attack(int y, int x, bool can_push)
     if (m_ptr->stasis) {
 	if (m_ptr->ml) {
 	    /* Message */
-	    msg_format("Stasis protects %s!", m_name);
+	    msg("Stasis protects %s!", m_name);
 	} else {
 	    /* Special Message */
-	    msg_print("Something immovable is in your way!");
+	    msg("Something immovable is in your way!");
 	}
 
 	/* Done */
@@ -1163,7 +1163,7 @@ bool py_attack(int y, int x, bool can_push)
 
     /* Try to get in a shield bash. */
     if (bash_chance > randint0(240 + r_ptr->level * 9)) {
-	message(MSG_HIT, 0, "You get in a shield bash!");
+	msgt(MSG_HIT, "You get in a shield bash!");
 
 	/* Calculate attack quality, a mix of momentum and accuracy. */
 	bash_quality =
@@ -1196,7 +1196,7 @@ bool py_attack(int y, int x, bool can_push)
 	/* Encourage the player to keep wearing that heavy shield. */
 	if (randint1(bash_dam) > 30 + randint1(bash_dam / 2)) {
 	    sound(MSG_HIT_HI_SUPERB);
-	    message(MSG_HIT, 0, "WHAMM!");
+	    msgt(MSG_HIT, "WHAMM!");
 	}
 
 	/* Damage, check for fear and death. */
@@ -1238,7 +1238,7 @@ bool py_attack(int y, int x, bool can_push)
 		if (m_ptr->ml)
 		    rf_on(l_ptr->flags, RF_NO_STUN);
 	    } else {
-		message_format(MSG_HIT, 0, "%^s is stunned.", m_name);
+		msgt(MSG_HIT, "%^s is stunned.", m_name);
 		m_ptr->stunned += randint0(p_ptr->lev / 5) + 4;
 		if (m_ptr->stunned > 24)
 		    m_ptr->stunned = 24;
@@ -1251,7 +1251,7 @@ bool py_attack(int y, int x, bool can_push)
 		if (m_ptr->ml)
 		    rf_on(l_ptr->flags, RF_NO_CONF);
 	    } else {
-		message_format(MSG_HIT, 0, "%^s appears confused.", m_name);
+		msgt(MSG_HIT, "%^s appears confused.", m_name);
 		m_ptr->confused += randint0(p_ptr->lev / 5) + 4;
 	    }
 	}
@@ -1260,7 +1260,7 @@ bool py_attack(int y, int x, bool can_push)
 	if ((30 + adj_dex_th[p_ptr->state.stat_ind[A_DEX]] - 128) < randint1(60)) {
 	    blows -= randint1(blows);
 
-	    message(MSG_GENERIC, 0, "You stumble!");
+	    msgt(MSG_GENERIC, "You stumble!");
 	}
     }
 
@@ -1295,7 +1295,7 @@ bool py_attack(int y, int x, bool can_push)
 
 	/* Credit where credit is due */
 	if (bonus_attack && (num == blows))
-	    msg_print("Extra Attack!");
+	    msg("Extra Attack!");
 
 	/* Test for hit */
 	if (test_hit_combat
@@ -1353,7 +1353,7 @@ bool py_attack(int y, int x, bool can_push)
 		    m_ptr->mana -= burn;
 		    dice++;
 
-		    message(MSG_HIT, 0, "Mana Burn!");
+		    msgt(MSG_HIT, "Mana Burn!");
 		}
 
 		/* Get the average value of a single damage die. (x10) */
@@ -1399,7 +1399,7 @@ bool py_attack(int y, int x, bool can_push)
 		} else {
 		    damage = 1 + ((int) (adj_str_td[p_ptr->state.stat_ind[A_STR]])
 				  - 128);
-		    message_format(MSG_HIT, 0, "You punch %s.", m_name);
+		    msgt(MSG_HIT, "You punch %s.", m_name);
 		}
 	    }
 
@@ -1438,7 +1438,7 @@ bool py_attack(int y, int x, bool can_push)
 		|| (p_ptr->special_attack & (ATTACK_DRUID_CONFU))) {
 		/* Message */
 		if (!(p_ptr->special_attack & (ATTACK_DRUID_CONFU)))
-		    message(MSG_HIT, 0, "Your hands stop glowing.");
+		    msgt(MSG_HIT, "Your hands stop glowing.");
 
 		/* Cancel special confusion attack */
 		p_ptr->special_attack &= ~(ATTACK_CONFUSE);
@@ -1451,23 +1451,23 @@ bool py_attack(int y, int x, bool can_push)
 			rf_on(l_ptr->flags, RF_NO_CONF);
 		    }
 
-		    msg_format("%^s is unaffected.", m_name);
+		    msg("%^s is unaffected.", m_name);
 		} else if (randint0(110) < r_ptr->level + randint1(10)) {
-		    msg_format("%^s is unaffected.", m_name);
+		    msg("%^s is unaffected.", m_name);
 		} else if (m_ptr->confused > 0) {
 		    if (m_ptr->ml)
-			message_format(MSG_HIT, 0, "%^s appears more confused.",
+			msgt(MSG_HIT, "%^s appears more confused.",
 				       m_name);
 		    else
-			message_format(MSG_HIT, 0, "%^s sounds more confused.",
+			msgt(MSG_HIT, "%^s sounds more confused.",
 				       m_name);
 		    m_ptr->confused += 4 + randint0(p_ptr->lev) / 12;
 		} else {
 		    if (m_ptr->ml)
-			message_format(MSG_HIT, 0, "%^s appears confused.",
+			msgt(MSG_HIT, "%^s appears confused.",
 				       m_name);
 		    else
-			message_format(MSG_HIT, 0, "%^s sounds confused.",
+			msgt(MSG_HIT, "%^s sounds confused.",
 				       m_name);
 		    m_ptr->confused += 10 + randint0(p_ptr->lev) / 5;
 		}
@@ -1479,7 +1479,7 @@ bool py_attack(int y, int x, bool can_push)
 		p_ptr->special_attack &= ~(ATTACK_BLKBRTH);
 
 		/* Message */
-		msg_print("Your hands stop radiating Night.");
+		msg("Your hands stop radiating Night.");
 
 		/* Redraw the state */
 		p_ptr->redraw |= (PR_STATUS);
@@ -1490,16 +1490,16 @@ bool py_attack(int y, int x, bool can_push)
 			rf_on(l_ptr->flags, RF_UNDEAD);
 		    }
 
-		    msg_format("%^s is immune!", m_name);
+		    msg("%^s is immune!", m_name);
 		}
 		/* All other monsters get a saving throw. */
 		else if ((randint0(160)) < (r_ptr->level + randint0(60))) {
-		    msg_format("%^s wards off your deadly blow.", m_name);
+		    msg("%^s wards off your deadly blow.", m_name);
 		}
 		/* Tasting some of their own medicine... */
 		else {
 		    m_ptr->black_breath = TRUE;
-		    message_format(MSG_HIT, 0,
+		    msgt(MSG_HIT,
 				   "%^s is stricken with the Black Breath!",
 				   m_name);
 		}
@@ -1511,7 +1511,7 @@ bool py_attack(int y, int x, bool can_push)
 		p_ptr->special_attack &= ~(ATTACK_FLEE);
 
 		/* Message */
-		msg_print("You escape into the shadows!");
+		msg("You escape into the shadows!");
 
 		/* Teleport. */
 		teleport_player(6 + p_ptr->lev / 5, TRUE);
@@ -1560,7 +1560,7 @@ bool py_attack(int y, int x, bool can_push)
 	    sound(MSG_MISS);
 
 	    /* Message */
-	    message_format(MSG_MISS, 0, "You miss %s.", m_name);
+	    msgt(MSG_MISS, "You miss %s.", m_name);
 	}
     }
 
@@ -1585,7 +1585,7 @@ bool py_attack(int y, int x, bool can_push)
 	sound(MSG_FLEE);
 
 	/* Message */
-	message_format(MSG_FLEE, m_ptr->r_idx, "%^s flees in terror!", m_name);
+	msgt(MSG_FLEE, "%^s flees in terror!", m_name);
     }
 
 
@@ -1713,7 +1713,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 
     /* Require a usable launcher */
     if (!o_ptr->tval || !p_ptr->state.ammo_tval) {
-	msg_print("You have nothing to fire with.");
+	msg("You have nothing to fire with.");
 	return;
     }
 
@@ -1724,7 +1724,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
     /* Check the item being fired is usable by the player. */
     if (!item_is_available(item, NULL, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
     {
-	msg_format("That item is not within your reach.");
+	msg("That item is not within your reach.");
 	return;
     }
 
@@ -1734,7 +1734,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
     /* Check the ammo can be used with the launcher */
     if (j_ptr->tval != p_ptr->state.ammo_tval)
     {
-	msg_format("That ammo cannot be fired by your current weapon.");
+	msg("That ammo cannot be fired by your current weapon.");
 	return;
     }
 
@@ -1765,10 +1765,10 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 
 	/* Give a hint to the player. */
 	if (!has_ego_properties(o_ptr))
-	    msg_format("You feel a strange aura of power around your %s.",
+	    msg("You feel a strange aura of power around your %s.",
 		       o_name);
 	else
-	    msg_format("Your %s feels very powerful.", o_name);
+	    msg("Your %s feels very powerful.", o_name);
     }
 
     /* Missile launchers of Accuracy sometimes "supercharge" */
@@ -1783,10 +1783,10 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 
 	/* Give a hint to the player. */
 	if (!has_ego_properties(o_ptr))
-	    msg_format("You feel a strange aura of power around your %s.",
+	    msg("You feel a strange aura of power around your %s.",
 		       o_name);
 	else
-	    msg_format("Your %s feels very accurate.", o_name);
+	    msg("Your %s feels very accurate.", o_name);
     }
 
     /* Fire ammo of backbiting, and it will turn on you.  -LM- */
@@ -1798,7 +1798,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	    notice_other(IF_TO_H, item);
 
 	/* Message. */
-	msg_print("Your missile turns in midair and strikes you!");
+	msg("Your missile turns in midair and strikes you!");
 
 	/* Calculate damage. */
 	damage =
@@ -1849,7 +1849,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
     path_n = project_path(path_g, tdis, py, px, ty, tx, PROJECT_THRU);
 
     /* Hack -- Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Project along the path */
     for (i = 0; i < path_n; ++i) {
@@ -1870,11 +1870,11 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	    print_rel(missile_char, missile_attr, y, x);
 	    move_cursor_relative(y, x);
 	    Term_fresh();
-	    if (p_ptr->redraw) redraw_stuff();
+	    if (p_ptr->redraw) redraw_stuff(p_ptr);
 	    Term_xtra(TERM_XTRA_DELAY, msec);
 	    light_spot(y, x);
 	    Term_fresh();
-	    if (p_ptr->redraw) redraw_stuff();
+	    if (p_ptr->redraw) redraw_stuff(p_ptr);
 	}
 
 	/* Delay anyway for consistency */
@@ -1896,7 +1896,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	    int cur_range, base_range, chance2;
 
 	    /* Assume a default death */
-	    cptr note_dies = " dies.";
+	    const char *note_dies = " dies.";
 
 	    /* Find Range */
 	    cur_range = distance(py, px, y, x);
@@ -2094,8 +2094,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 		    sound(MSG_FLEE);
 
 		    /* Message */
-		    message_format(MSG_FLEE, m_ptr->r_idx,
-				   "%^s flees in terror!", m_name);
+		    msgt(MSG_FLEE, "%^s flees in terror!", m_name);
 		}
 	    }
 
@@ -2103,7 +2102,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	    if ((player_has(PF_PIERCE_SHOT)) && (randint0(2) == 0)
 		&& ((p_ptr->state.ammo_tval == TV_ARROW)
 		    || (p_ptr->state.ammo_tval == TV_BOLT))) {
-		msg_print("Pierce!");
+		msg("Pierce!");
 		did_pierce = TRUE;
 		continue;
 	    }
@@ -2153,7 +2152,7 @@ void textui_cmd_fire_at_nearest(void)
 
     /* Require a usable launcher */
     if (!p_ptr->inventory[INVEN_BOW].tval) {
-	msg_print("You have nothing to fire with.");
+	msg("You have nothing to fire with.");
 	return;
     }
 
@@ -2189,7 +2188,7 @@ void textui_cmd_fire_at_nearest(void)
 
     /* Require usable ammo */
     if (item < 0) {
-	msg_print("You have no ammunition in the quiver to fire");
+	msg("You have no ammunition in the quiver to fire");
 	return;
     }
 
@@ -2199,7 +2198,7 @@ void textui_cmd_fire_at_nearest(void)
 
     /* Check for confusion */
     if (p_ptr->timed[TMD_CONFUSED]) {
-	msg_print("You are confused.");
+	msg("You are confused.");
 	dir = ddd[randint0(8)];
     }
 
@@ -2265,14 +2264,14 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
     /* Make sure the player isn't throwing wielded items */
     if (item >= INVEN_WIELD && item < QUIVER_START)
     {
-	msg_print("You have cannot throw wielded items.");
+	msg("You have cannot throw wielded items.");
 	return;
     }
 
     /* Check the item being thrown is usable by the player. */
     if (!item_is_available(item, NULL, (USE_EQUIP | USE_INVEN | USE_FLOOR)))
     {
-	msg_format("That item is not within your reach.");
+	msg("That item is not within your reach.");
 	return;
     }
 
@@ -2283,7 +2282,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
     if ((item > INVEN_PACK) && (item < QUIVER_START)
 	&& (cf_has(o_ptr->flags_curse, CF_STICKY_WIELD))) {
 	/* Oops */
-	msg_print("Hmmm, it seems to be cursed.");
+	msg("Hmmm, it seems to be cursed.");
 
 	/* Notice */
 	notice_curse(CF_STICKY_WIELD, item + 1);
@@ -2294,7 +2293,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 
     if (cf_has(o_ptr->flags_curse, CF_STICKY_CARRY)) {
 	/* Oops */
-	msg_print("Hmmm, it seems to be cursed.");
+	msg("Hmmm, it seems to be cursed.");
 
 	/* Notice */
 	notice_curse(CF_STICKY_CARRY, item + 1);
@@ -2386,7 +2385,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 
 
     /* Hack -- Handle stuff */
-    handle_stuff();
+    handle_stuff(p_ptr);
 
     /* Project along the path */
     for (i = 0; i < path_n; ++i) {
@@ -2407,11 +2406,11 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 	    print_rel(missile_char, missile_attr, y, x);
 	    move_cursor_relative(y, x);
 	    Term_fresh();
-	    if (p_ptr->redraw) redraw_stuff();
+	    if (p_ptr->redraw) redraw_stuff(p_ptr);
 	    Term_xtra(TERM_XTRA_DELAY, msec);
 	    light_spot(y, x);
 	    Term_fresh();
-	    if (p_ptr->redraw) redraw_stuff();
+	    if (p_ptr->redraw) redraw_stuff(p_ptr);
 	}
 
 	/* Delay anyway for consistency */
@@ -2433,7 +2432,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 	    int cur_range, base_range, chance2;
 
 	    /* Assume a default death */
-	    cptr note_dies = " dies.";
+	    const char *note_dies = " dies.";
 
 	    /* Find Range */
 	    cur_range = distance(py, px, y, x);
@@ -2551,10 +2550,10 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 	    else {
 		/* Display a default hit message. */
 		if (m_ptr->ml) {
-		    message_format(MSG_HIT, 0, "The %s hits %s.", o_name,
+		    msgt(MSG_HIT, "The %s hits %s.", o_name,
 				   m_name);
 		} else {
-		    message_format(MSG_HIT, 0, "The %s finds a mark.", o_name);
+		    msgt(MSG_HIT, "The %s finds a mark.", o_name);
 		}
 	    }
 
@@ -2609,7 +2608,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 		    sound(MSG_FLEE);
 
 		    /* Message */
-		    msg_format("%^s flees in terror!", m_name);
+		    msg("%^s flees in terror!", m_name);
 		}
 	    }
 
@@ -2655,7 +2654,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 void textui_cmd_throw(void)
 {
     int item, dir;
-    cptr q, s;
+    const char *q, *s;
 
     /* Get an item */
     q = "Throw which item? ";
@@ -2664,7 +2663,7 @@ void textui_cmd_throw(void)
 	return;
 
     if (item >= INVEN_WIELD && item < QUIVER_START) {
-	msg_print("You cannot throw wielded items.");
+	msg("You cannot throw wielded items.");
 	return;
     }
 

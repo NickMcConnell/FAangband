@@ -17,6 +17,7 @@ extern errr init_sound_sdl(int argc, char **argv);
 
 
 extern errr init_lfb(int argc, char **argv);
+extern errr init_gtk(int argc, char **argv);
 extern errr init_x11(int argc, char **argv);
 extern errr init_xpj(int argc, char **argv);
 extern errr init_gcu(int argc, char **argv);
@@ -31,12 +32,14 @@ extern errr init_vme(int argc, char **argv);
 extern errr init_vcs(int argc, char **argv);
 extern errr init_sdl(int argc, char **argv);
 extern errr init_test(int argc, char **argv);
+extern errr init_stats(int argc, char **argv);
 
 
 extern const char help_lfb[];
 extern const char help_xpj[];
 extern const char help_x11[];
 extern const char help_vcs[];
+extern const char help_gtk[];
 extern const char help_gcu[];
 extern const char help_cap[];
 extern const char help_vme[];
@@ -48,12 +51,13 @@ extern const char help_ibm[];
 extern const char help_dos[];
 extern const char help_sdl[];
 extern const char help_test[];
+extern const char help_stats[];
 
 
 struct module
 {
-	cptr name;
-	cptr help;
+	const char *name;
+	const char *help;
 	errr (*init)(int argc, char **argv);
 };
 

@@ -20,6 +20,7 @@
  */
 
 #include "angband.h"
+#include "buildid.h"
 
 
 /*
@@ -93,8 +94,8 @@ bool do_feeling = FALSE;	/* Hack -- Level feeling indicator */
 
 int use_graphics;		/* "graphics" mode */
 bool use_graphics_nice;	        /* The 'nice' "graphics" mode is enabled */
-byte tile_width = 1;            /* Tile width in units of font width */
-byte tile_height = 1;           /* Tile height in units of font height */
+//byte tile_width = 1;            /* Tile width in units of font width */
+//byte tile_height = 1;           /* Tile height in units of font height */
 bool use_transparency = FALSE;  /* Use transparent tiles */
 char notes_start[80];           /* Opening line of notes */
 
@@ -309,7 +310,7 @@ color_type color_table[MAX_COLORS] =
 /**
  * Standard sound names (modifiable?)
  */
-const cptr angband_sound_name[SOUND_MAX] =
+const const char *angband_sound_name[SOUND_MAX] =
 {
   "",
   "hit",
@@ -376,6 +377,7 @@ const cptr angband_sound_name[SOUND_MAX] =
   "blessed", 
   "hero", 
   "berserk", 
+  "bold", 
   "prot_evil", 
   "invuln", 
   "see_invis", 
@@ -501,7 +503,7 @@ u16b (*temp_path)[NUM_STAGES];
  * Array[NUM_STAGES][32] of racial probability boosts for each stage; will need
  * to be expanded if z_info->p_max goes above 32.
  */
-u16b (*race_prob)[32];
+u16b (*race_prob)[NUM_STAGES];
 
 /**
  * Array[DUNGEON_HGT][256] of cave grid info flags (padded)
@@ -611,7 +613,7 @@ store_type *store;
 /**
  * Array[RANDNAME_NUM_TYPES][num_names] of random names
  */
-cptr** name_sections;
+const char *** name_sections;
 
 /**
  * The size of "alloc_kind_table" (at most z_info->k_max * 4)
@@ -649,6 +651,13 @@ alloc_entry *alloc_race_table;
 u32b alloc_race_total;
 
 /*
+ * Specify attr/char pairs for visual special effects for project()
+ */
+byte gf_to_attr[GF_MAX][BOLT_MAX];
+char gf_to_char[GF_MAX][BOLT_MAX];
+
+
+/*
  * Specify attr/char pairs for visual special effects
  * Be sure to use "index & 0xFF" to avoid illegal access
  */
@@ -662,17 +671,6 @@ char misc_to_char[256];
  */
 byte tval_to_attr[128];
 
-
-/**
- * Current (or recent) macro action
- */
-char macro_buffer[1024];
-
-
-/**
- * Keymaps for each "mode" associated with each keypress.
- */
-char *keymap_act[KEYMAP_MODES][256];
 
 
 
@@ -960,7 +958,7 @@ ang_file *text_out_file = NULL;
  * Hack -- function hook to output (colored) text to the
  * screen or to a file.
  */
-void (*text_out_hook)(byte a, char *str);
+void (*text_out_hook)(byte a, const char *str);
 
 
 /**

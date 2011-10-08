@@ -567,7 +567,7 @@ int make_formation(int y, int x, int base_feat1, int base_feat2, int *feat,
 
 	    /* Message */
 	    if (OPT(cheat_room))
-		msg_format("%s. ", v_ptr->name);
+		msg("%s. ", v_ptr->name);
 
 	    /* One less to make */
 	    wild_vaults--;

@@ -278,19 +278,19 @@ static void object_mention(object_type * o_ptr)
     /* Artifact */
     if (artifact_p(o_ptr)) {
 	/* Silly message */
-	msg_format("Artifact (%s)", o_name);
+	msg("Artifact (%s)", o_name);
     }
 
     /* Ego-item */
     else if (ego_item_p(o_ptr)) {
 	/* Silly message */
-	msg_format("Ego-item (%s)", o_name);
+	msg("Ego-item (%s)", o_name);
     }
 
     /* Normal item */
     else {
 	/* Silly message */
-	msg_format("Object (%s)", o_name);
+	msg("Object (%s)", o_name);
     }
 }
 

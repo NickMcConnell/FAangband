@@ -15,10 +15,10 @@ typedef enum game_event_type
 	EVENT_PLAYERLEVEL,	/* Player's level has changed */
 	EVENT_PLAYERTITLE,	/* Player's title has changed */
 	EVENT_GOLD,		/* Player's gold amount. */
-	EVENT_MONSTERMANA,	/* Observed monster's mana level. */
+	EVENT_MONSTERMANA,      /* Observed monster's mana level. */
 	EVENT_MONSTERHEALTH,	/* Observed monster's health level. */
 	EVENT_DUNGEONLEVEL,	/* Dungeon depth */
-	EVENT_SHAPECHANGE,	/* Player's shape */
+	EVENT_SHAPECHANGE,      /* Player's shape */
 	EVENT_PLAYERSPEED,	/* Player's speed */
 	EVENT_RACE_CLASS,	/* Race or Class */
 	EVENT_STUDYSTATUS,	/* "Study" availability */
@@ -100,6 +100,7 @@ typedef void game_event_handler(game_event_type type, game_event_data *data, voi
 
 void event_add_handler(game_event_type type, game_event_handler *fn, void *user);
 void event_remove_handler(game_event_type type, game_event_handler *fn, void *user);
+void event_remove_all_handlers(void);
 void event_add_handler_set(game_event_type *type, size_t n_types, game_event_handler *fn, void *user);
 void event_remove_handler_set(game_event_type *type, size_t n_types, game_event_handler *fn, void *user);
 

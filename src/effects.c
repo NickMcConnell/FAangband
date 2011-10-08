@@ -207,7 +207,7 @@ bool effect_wonder(int dir, int die)
 
     if (die > 100) {
 	/* above 100 the effect is always visible */
-	msg_print("You feel a surge of power!");
+	msg("You feel a surge of power!");
 	visible = TRUE;
     }
 
@@ -291,7 +291,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     if (effect < 1 || effect > EF_MAX)
     {
-	msg_print("Bad effect passed to do_effect().  Please report this bug.");
+	msg("Bad effect passed to do_effect().  Please report this bug.");
 	return FALSE;
     }
 
@@ -446,7 +446,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_DETONATIONS:
 	{
-	    msg_print("Massive explosions rupture your body!");
+	    msg("Massive explosions rupture your body!");
 	    take_hit(damroll(50, 20), "a potion of Detonation");
 	    (void) inc_timed(TMD_STUN, 75, TRUE);
 	    (void) inc_timed(TMD_CUT, 5000, TRUE);
@@ -456,7 +456,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_DEATH:
 	{
-	    msg_print("A feeling of Death flows through your body.");
+	    msg("A feeling of Death flows through your body.");
 	    take_hit(p_ptr->chp, "a potion of Death");
 	    *ident = TRUE;
 	    return TRUE;
@@ -471,7 +471,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_SALT_WATER:
 	{
-	    msg_print("The potion makes you vomit!");
+	    msg("The potion makes you vomit!");
 	    (void) set_food(PY_FOOD_STARVE - 1);
 	    (void) clear_timed(TMD_POISONED, TRUE);
 	    (void) inc_timed(TMD_PARALYZED, 4, TRUE);
@@ -495,7 +495,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_LOSE_MEMORIES:
 	{
 	    if (!p_ptr->state.hold_life && (p_ptr->exp > 0)) {
-		msg_print("You feel your memories fade.");
+		msg("You feel your memories fade.");
 		lose_exp(p_ptr->exp / 4);
 		*ident = TRUE;
 	    }
@@ -504,7 +504,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_RUINATION:
 	{
-	    msg_print("Your nerves and muscles feel weak and lifeless!");
+	    msg("Your nerves and muscles feel weak and lifeless!");
 	    take_hit(damroll(5, 10), "a potion of Ruination");
 	    (void) dec_stat(A_DEX, 25, FALSE);
 	    (void) dec_stat(A_WIS, 25, FALSE);
@@ -531,7 +531,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_AGGRAVATE:
 	{
-	    msg_print("There is a high pitched humming noise.");
+	    msg("There is a high pitched humming noise.");
 	    (void) aggravate_monsters(1, FALSE);
 	    *ident = TRUE;
 	    return TRUE;
@@ -639,7 +639,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_ROUSE_LEVEL:
 	{
-	    msg_print
+	    msg
 		("A mighty blast of horns shakes the air, and you hear stirring everwhere!");
 	    (void) aggravate_monsters(1, TRUE);
 	    *ident = TRUE;
@@ -713,13 +713,13 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_FOOD_ATHELAS:
 	{
-	    msg_print
+	    msg
 		("A fresh, clean essence rises, driving away wounds and poison.");
 	    (void) clear_timed(TMD_POISONED, TRUE);
 	    (void) clear_timed(TMD_STUN, TRUE);
 	    (void) clear_timed(TMD_CUT, TRUE);
 	    if (p_ptr->black_breath) {
-		msg_print("The hold of the Black Breath on you is broken!");
+		msg("The hold of the Black Breath on you is broken!");
 	    }
 	    p_ptr->black_breath = FALSE;
 	    *ident = TRUE;
@@ -728,7 +728,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_FOOD_BEORNING:
 	{
-	    msg_print("The cakes of the Beornings are tasty.");
+	    msg("The cakes of the Beornings are tasty.");
 	    (void) hp_player(damroll(5, 8));
 	    *ident = TRUE;
 	    return TRUE;
@@ -736,7 +736,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_FOOD_GOOD:
 	{
-	    msg_print("That tastes good.");
+	    msg("That tastes good.");
 	    *ident = TRUE;
 	    return TRUE;
 	}
@@ -744,7 +744,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	/* Waybread is always fully satisfying. */
     case EF_FOOD_WAYBREAD:
 	{
-	    msg_print("That tastes good.");
+	    msg("That tastes good.");
 	    (void) set_food(PY_FOOD_MAX - 1);
 	    (void) dec_timed(TMD_POISONED, p_ptr->timed[TMD_POISONED] / 2,
 			     TRUE);
@@ -758,7 +758,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_DRINK_GOOD:
 	{
-	    msg_print("You feel less thirsty.");
+	    msg("You feel less thirsty.");
 	    *ident = TRUE;
 	    return TRUE;
 	}
@@ -858,7 +858,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    if (clear_timed(TMD_CUT, TRUE))
 		*ident = TRUE;
 	    if (p_ptr->black_breath) {
-		msg_print("The hold of the Black Breath on you is broken!");
+		msg("The hold of the Black Breath on you is broken!");
 		*ident = TRUE;
 	    }
 	    p_ptr->black_breath = FALSE;
@@ -867,7 +867,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_LIFE:
 	{
-	    msg_print("You feel life flow through your body!");
+	    msg("You feel life flow through your body!");
 	    restore_level();
 	    (void) clear_timed(TMD_BLIND, TRUE);
 	    (void) clear_timed(TMD_CONFUSED, TRUE);
@@ -883,7 +883,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    (void) do_res_stat(A_CHR);
 	    hp_player(2000);
 	    if (p_ptr->black_breath) {
-		msg_print("The hold of the Black Breath on you is broken!");
+		msg("The hold of the Black Breath on you is broken!");
 	    }
 	    p_ptr->black_breath = FALSE;
 	    *ident = TRUE;
@@ -993,7 +993,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    if (p_ptr->csp < p_ptr->msp) {
 		p_ptr->csp = p_ptr->msp;
 		p_ptr->csp_frac = 0;
-		msg_print("Your magical powers are completely restored!");
+		msg("Your magical powers are completely restored!");
 		p_ptr->redraw |= (PR_MANA);
 		*ident = TRUE;
 	    }
@@ -1052,7 +1052,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_ENLIGHTENMENT1:
 	{
-	    msg_print("An image of your surroundings forms in your mind...");
+	    msg("An image of your surroundings forms in your mind...");
 	    wiz_light(FALSE);
 	    *ident = TRUE;
 	    return TRUE;
@@ -1061,8 +1061,8 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_ENLIGHTENMENT2:
 	{
 	    /* Hack - 'show' effected region only with the first detect */
-	    msg_print("You begin to feel more enlightened...");
-	    msg_print(NULL);
+	    msg("You begin to feel more enlightened...");
+	    message_flush();
 	    wiz_light(TRUE);
 	    (void) do_inc_stat(A_INT, TRUE);
 	    (void) do_inc_stat(A_WIS, TRUE);
@@ -1083,7 +1083,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		s32b ee = (p_ptr->exp / 2) + 10;
 		if (ee > 100000L)
 		    ee = 100000L;
-		msg_print("You feel more experienced.");
+		msg("You feel more experienced.");
 		gain_exp(ee);
 		*ident = TRUE;
 	    }
@@ -1099,20 +1099,20 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
 	    /* Priests/Paladins can't be Vampires */
 	    if (mp_ptr->spell_book == TV_PRAYER_BOOK) {
-		msg_print("You reject the unholy serum.");
+		msg("You reject the unholy serum.");
 		take_hit(damroll(10, 6), "dark forces");
 		return TRUE;
 	    }
 
 	    /* Druids/Rangers can't be Vampires */
 	    if (mp_ptr->spell_book == TV_DRUID_BOOK) {
-		msg_print("You reject the unnatural serum.");
+		msg("You reject the unnatural serum.");
 		take_hit(damroll(10, 6), "dark forces");
 		return TRUE;
 	    }
 
 	    /* Others can */
-	    msg_print("You are infused with dark power.");
+	    msg("You are infused with dark power.");
 
 	    /* But it hurts */
 	    take_hit(damroll(3, 6), "shapeshifting stress");
@@ -1345,7 +1345,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_MONSTER_CONFU:
 	{
 	    if (!(p_ptr->special_attack & (ATTACK_CONFUSE))) {
-		msg_print("Your hands begin to glow.");
+		msg("Your hands begin to glow.");
 		p_ptr->special_attack |= (ATTACK_CONFUSE);
 		*ident = TRUE;
 		p_ptr->redraw |= PR_STATUS;
@@ -1484,7 +1484,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	{
 	    /* Message. */
 	    if (!p_ptr->timed[TMD_BLIND]) {
-		msg_print("The staff glitters with unearthly light.");
+		msg("The staff glitters with unearthly light.");
 	    }
 
 	    /* Starbursts everywhere. */
@@ -1529,7 +1529,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	{
 	    if (banish_evil(80)) {
 		*ident = TRUE;
-		msg_print("A mighty force drives away evil!");
+		msg("A mighty force drives away evil!");
 	    }
 	    return TRUE;
 	}
@@ -1618,7 +1618,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_MSTORM:
 	{
 
-	    msg_print("Mighty magics rend your enemies!");
+	    msg("Mighty magics rend your enemies!");
 	    fire_sphere(GF_MANA, 0, randint1(75) + 125, 5, 20);
 	    if (!(player_has(PF_DEVICE_EXPERT))) {
 		(void) take_hit(20, "unleashing magics too mighty to control");
@@ -1629,7 +1629,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_STARBURST:
 	{
-	    msg_print("Light bright beyond enduring dazzles your foes!");
+	    msg("Light bright beyond enduring dazzles your foes!");
 	    fire_sphere(GF_LIGHT, 0, randint1(67) + 100, 5, 20);
 	    *ident = TRUE;
 	    return TRUE;
@@ -1647,7 +1647,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	{
 	    /* Message. */
 	    if (!p_ptr->timed[TMD_BLIND]) {
-		msg_print("The staff blazes with unearthly light.");
+		msg("The staff blazes with unearthly light.");
 	    }
 
 	    /* (large) Starbursts everywhere. */
@@ -1661,7 +1661,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_WINDS:
 	{
 	    /* Raise a storm. */
-	    msg_print("A howling whirlwind rises in wrath around you.");
+	    msg("A howling whirlwind rises in wrath around you.");
 	    fire_sphere(GF_FORCE, 0, randint1(100) + 100, 6, 20);
 
 	    /* Whisk around the player and nearby monsters.  This is actually
@@ -1676,7 +1676,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_HOLDING:
 	{
-	    msg_print("You envoke binding magics upon the undead nearby!");
+	    msg("You envoke binding magics upon the undead nearby!");
 
 	    /* Attempt to Hold all undead in LOS. */
 	    if (hold_undead())
@@ -1689,9 +1689,9 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	{
 	    /* Try to learn about the dungeon and traps in it from animals. */
 	    if (listen_to_natural_creatures())
-		msg_print("You listen and learn from natural creatures.");
+		msg("You listen and learn from natural creatures.");
 	    else
-		msg_print("You found no animals nearby to learn from.");
+		msg("You found no animals nearby to learn from.");
 
 	    /* *Identify */
 	    *ident = TRUE;
@@ -1728,7 +1728,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_LIGHT_LINE:
 	{
-	    msg_print("A line of blue shimmering light appears.");
+	    msg("A line of blue shimmering light appears.");
 	    light_line(dir);
 	    *ident = TRUE;
 	    return TRUE;
@@ -1918,7 +1918,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_ILKORIN:
 	{
 	    TARGET_DECLARE
-	    msg_print("Deadly venom spurts and steams from your wand.");
+	    msg("Deadly venom spurts and steams from your wand.");
 	    TARGET_PRESERVE fire_bolt(GF_POIS, dir, damroll(plev / 2, 11));
 	    TARGET_RESTORE fire_cloud(GF_POIS, dir, 30, 6);
 	    *ident = TRUE;
@@ -1927,7 +1927,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_BEGUILING:
 	{
-	    msg_print("You speak soft, beguiling words.");
+	    msg("You speak soft, beguiling words.");
 
 	    if (randint0(2) == 0) {
 		if (slow_monster(dir, plev * 2))
@@ -1947,7 +1947,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_UNMAKING:
 	{
-	    msg_print("You envoke the powers of Unmaking!");
+	    msg("You envoke the powers of Unmaking!");
 	    unmake(dir);
 	    *ident = TRUE;
 	    return TRUE;
@@ -1955,7 +1955,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_OSSE:
 	{
-	    msg_print("You raise a foam-crested tidal wave.");
+	    msg("You raise a foam-crested tidal wave.");
 	    fire_arc(GF_WATER, dir, 3 * plev + randint1(100), 14, 90);
 	    *ident = TRUE;
 	    return TRUE;
@@ -2135,7 +2135,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_AIR:
 	{
-	    msg_print
+	    msg
 		("You raise your rod skyward and call upon the powers of Air.");
 	    ele_air_smite();
 	    *ident = TRUE;
@@ -2144,8 +2144,8 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_PORTALS:
 	{
-	    msg_print("Choose a location to teleport to.");
-	    msg_print(NULL);
+	    msg("Choose a location to teleport to.");
+	    message_flush();
 	    dimen_door();
 	    *ident = TRUE;
 	    return TRUE;
@@ -2166,7 +2166,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	}
     case EF_ELESSAR:
 	{
-	    msg_print("You feel a warm tingling inside...");
+	    msg("You feel a warm tingling inside...");
 	    (void) hp_player(500);
 	    (void) clear_timed(TMD_CUT, TRUE);
 	    restore_level();
@@ -2175,10 +2175,10 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_RAZORBACK:
 	{
 	    if ((p_ptr->schange) != SHAPE_WYRM) {
-		msg_print("You become Dragonking of Storms.");
+		msg("You become Dragonking of Storms.");
 		shapechange(SHAPE_WYRM);
 	    } else {
-		msg_print("You are surrounded by lightning...");
+		msg("You are surrounded by lightning...");
 		for (k = 0; k < 8; k++)
 		    fire_ball(GF_ELEC, ddd[k], 150, 3, FALSE);
 	    }
@@ -2187,10 +2187,10 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_BLADETURNER:
 	{
 	    if ((p_ptr->schange) != SHAPE_WYRM) {
-		msg_print("You become an Avatar of Dragonkind.");
+		msg("You become an Avatar of Dragonkind.");
 		shapechange(SHAPE_WYRM);
 	    } else {
-		msg_print("Your scales glow many colours...");
+		msg("Your scales glow many colours...");
 		(void) hp_player(30);
 		(void) clear_timed(TMD_AFRAID, TRUE);
 		(void) inc_timed(TMD_SHERO, randint1(50) + 50, TRUE);
@@ -2205,7 +2205,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	}
     case EF_SOULKEEPER:
 	{
-	    msg_print("You feel much better...");
+	    msg("You feel much better...");
 	    (void) hp_player(1000);
 	    (void) clear_timed(TMD_CUT, TRUE);
 	    return TRUE;
@@ -2228,7 +2228,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
     case EF_NARGOTHROND:
 	{
-	    msg_print("You feel a warm tingling inside...");
+	    msg("You feel a warm tingling inside...");
 	    (void) hp_player(500);
 	    (void) clear_timed(TMD_CUT, TRUE);
 	    return TRUE;
@@ -2366,11 +2366,11 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_DRAGON_BLACK:
 	{
 	    if ((p_ptr->schange) != SHAPE_WYRM) {
-		msg_print("You become an acidic dragon.");
+		msg("You become an acidic dragon.");
 		shapechange(SHAPE_WYRM);
 	    } else {
 		sound(MSG_BR_ACID);
-		msg_print("You breathe acid.");
+		msg("You breathe acid.");
 		fire_arc(GF_ACID, dir, (plev / 10 + 1) * 45, 10, 40);
 	    }
 	    return TRUE;
@@ -2378,11 +2378,11 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_DRAGON_BLUE:
 	{
 	    if ((p_ptr->schange) != SHAPE_WYRM) {
-		msg_print("You become a storm dragon.");
+		msg("You become a storm dragon.");
 		shapechange(SHAPE_WYRM);
 	    } else {
 		sound(MSG_BR_ELEC);
-		msg_print("You breathe lightning.");
+		msg("You breathe lightning.");
 		fire_arc(GF_ELEC, dir, (plev / 10 + 1) * 40, 10, 40);
 	    }
 	    return TRUE;
@@ -2390,10 +2390,10 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_DRAGON_WHITE:
 	{
 	    if ((p_ptr->schange) != SHAPE_WYRM) {
-		msg_print("You become an icy dragon.");
+		msg("You become an icy dragon.");
 		shapechange(SHAPE_WYRM);
 	    } else {
-		msg_print("You breathe frost.");
+		msg("You breathe frost.");
 		fire_arc(GF_COLD, dir, (plev / 10 + 1) * 45, 10, 40);
 	    }
 	    return TRUE;
@@ -2401,11 +2401,11 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_DRAGON_RED:
 	{
 	    if ((p_ptr->schange) != SHAPE_WYRM) {
-		msg_print("You become a fire dragon.");
+		msg("You become a fire dragon.");
 		shapechange(SHAPE_WYRM);
 	    } else {
 		sound(MSG_BR_FIRE);
-		msg_print("You breathe fire.");
+		msg("You breathe fire.");
 		fire_arc(GF_FIRE, dir, (plev / 10 + 1) * 50, 10, 40);
 	    }
 	    return TRUE;
@@ -2413,11 +2413,11 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_DRAGON_GREEN:
 	{
 	    if ((p_ptr->schange) != SHAPE_WYRM) {
-		msg_print("You become a poisonous dragon.");
+		msg("You become a poisonous dragon.");
 		shapechange(SHAPE_WYRM);
 	    } else {
 		sound(MSG_BR_GAS);
-		msg_print("You breathe poison gas.");
+		msg("You breathe poison gas.");
 		fire_arc(GF_POIS, dir, (plev / 10 + 1) * 45, 10, 40);
 	    }
 	    return TRUE;
@@ -2438,12 +2438,12 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    };
 
 	    if ((p_ptr->schange) != SHAPE_WYRM) {
-		msg_print("You become a powerful dragon.");
+		msg("You become a powerful dragon.");
 		shapechange(SHAPE_WYRM);
 	    } else {
 		chance = randint0(5);
 		sound(mh[chance].sound);
-		msg_format("You breathe %s.", 
+		msg("You breathe %s.", 
 			   ((chance == 1) ? "lightning" : 
 			    ((chance == 2) ? "frost" : 
 			     ((chance == 3) ? "acid" : 
@@ -2459,12 +2459,12 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_DRAGON_SHINING:
 	{
 	    if ((p_ptr->schange) != SHAPE_WYRM) {
-		msg_print("You become a glowing dragon.");
+		msg("You become a glowing dragon.");
 		shapechange(SHAPE_WYRM);
 	    } else {
 		chance = randint0(2);
 		sound(((chance == 0 ? MSG_BR_LIGHT : MSG_BR_DARK)));
-		msg_format("You breathe %s.",
+		msg("You breathe %s.",
 			   ((chance == 0 ? "light" : "darkness")));
 		fire_arc((chance == 0 ? GF_LIGHT : GF_DARK), dir,
 			 (plev / 10 + 1) * 50, 10, 40);
@@ -2474,12 +2474,12 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_DRAGON_LAW:
 	{
 	    if ((p_ptr->schange) != SHAPE_WYRM) {
-		msg_print("You become a dragon of Order.");
+		msg("You become a dragon of Order.");
 		shapechange(SHAPE_WYRM);
 	    } else {
 		chance = randint0(2);
 		sound(((chance == 1 ? MSG_BR_SOUND : MSG_BR_SHARDS)));
-		msg_format("You breathe %s.",
+		msg("You breathe %s.",
 			   ((chance == 1 ? "sound" : "shards")));
 		fire_arc((chance == 1 ? GF_SOUND : GF_SHARD), dir,
 			 (plev / 10 + 1) * 60, 10, 40);
@@ -2489,23 +2489,23 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_DRAGON_BRONZE:
 	{
 	    if ((p_ptr->schange) != SHAPE_WYRM) {
-		msg_print("You become a mystifying dragon.");
+		msg("You become a mystifying dragon.");
 		shapechange(SHAPE_WYRM);
 	    } else {
 		sound(MSG_BR_CONF);
-		msg_print("You breathe confusion.");
-		fire_arc(GF_CONFUSION, dir, (plev / 10 + 1) * 40, 10, 40);
+		msg("You breathe confusion.");
+		fire_arc(GF_CONFU, dir, (plev / 10 + 1) * 40, 10, 40);
 	    }
 	    return TRUE;
 	}
     case EF_DRAGON_GOLD:
 	{
 	    if ((p_ptr->schange) != SHAPE_WYRM) {
-		msg_print("You become a dragon with a deafening roar.");
+		msg("You become a dragon with a deafening roar.");
 		shapechange(SHAPE_WYRM);
 	    } else {
 		sound(MSG_BR_SOUND);
-		msg_print("You breathe sound.");
+		msg("You breathe sound.");
 		fire_arc(GF_SOUND, dir, (plev / 10 + 1) * 40, 10, 40);
 	    }
 	    return TRUE;
@@ -2513,14 +2513,14 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_DRAGON_CHAOS:
 	{
 	    if ((p_ptr->schange) != SHAPE_WYRM) {
-		msg_print("You become a dragon of Chaos.");
+		msg("You become a dragon of Chaos.");
 		shapechange(SHAPE_WYRM);
 	    } else {
 		chance = randint0(2);
-		sound(((chance == 1 ? MSG_BR_CHAOS : MSG_BR_DISENCHANT)));
-		msg_format("You breathe %s.",
+		sound(((chance == 1 ? MSG_BR_CHAOS : MSG_BR_DISEN)));
+		msg("You breathe %s.",
 			   ((chance == 1 ? "chaos" : "disenchantment")));
-		fire_arc((chance == 1 ? GF_CHAOS : GF_DISENCHANT), dir,
+		fire_arc((chance == 1 ? GF_CHAOS : GF_DISEN), dir,
 			 (plev / 10 + 1) * 55, 10, 40);
 	    }
 	    return TRUE;
@@ -2528,19 +2528,19 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_DRAGON_BALANCE:
 	{
 	    if ((p_ptr->schange) != SHAPE_WYRM) {
-		msg_print("You become a dragon of Balance.");
+		msg("You become a dragon of Balance.");
 		shapechange(SHAPE_WYRM);
 	    } else {
 		chance = randint0(4);
 		sound(((chance == 1) ? MSG_BR_CHAOS : 
-		       ((chance == 2) ? MSG_BR_DISENCHANT : 
+		       ((chance == 2) ? MSG_BR_DISEN : 
 			((chance == 3) ? MSG_BR_SOUND :	MSG_BR_SHARDS))));
-		msg_format("You breathe %s.",
+		msg("You breathe %s.",
 			   ((chance == 1) ? "chaos" : 
 			    ((chance == 2) ? "disenchantment" : 
 			     ((chance == 3) ? "sound" : "shards"))));
 		fire_arc(((chance == 1) ? GF_CHAOS : 
-			  ((chance == 2) ? GF_DISENCHANT : 
+			  ((chance == 2) ? GF_DISEN : 
 			   ((chance == 3) ? GF_SOUND : GF_SHARD))),
 			 dir, (plev / 10 + 1) * 65, 10, 40);
 	    }
@@ -2549,11 +2549,11 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_DRAGON_POWER:
 	{
 	    if ((p_ptr->schange) != SHAPE_WYRM) {
-		msg_print("You become a wonderous dragon.");
+		msg("You become a wonderous dragon.");
 		shapechange(SHAPE_WYRM);
 	    } else {
 		sound(MSG_BR_ELEMENTS);
-		msg_print("You breathe the elements.");
+		msg("You breathe the elements.");
 		fire_arc(GF_ALL, dir, (plev / 10 + 1) * 75, 10, 40);
 	    }
 	    return TRUE;
@@ -2605,7 +2605,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    if (p_ptr->schange == SHAPE_LION)
 		return TRUE;
 
-	    msg_print("You become a fierce Lion.");
+	    msg("You become a fierce Lion.");
 	    shapechange(SHAPE_LION);
 	    return TRUE;
 	}
@@ -2624,148 +2624,148 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     /* Activations for random artifacts, and available for use elsewhere. */
     case EF_RAND_FIRE1:
     {
-	msg_print("You launch a bolt of fire.");
+	msg("You launch a bolt of fire.");
 	fire_bolt(GF_FIRE, dir, damroll(3 + plev / 8, 8));
 	return TRUE;
     }
     case EF_RAND_FIRE2:
     {
-	msg_print("You feel a sphere of fire form between your hands.");
+	msg("You feel a sphere of fire form between your hands.");
 	fire_sphere(GF_FIRE, dir, 90, 1, 20);
 	return TRUE;
     }
     case EF_RAND_FIRE3:
     {
-	msg_print("The fires of Anor rise in wrath!");
+	msg("The fires of Anor rise in wrath!");
 	fire_sphere(GF_FIRE, 0, 150, 5, 20);
 	return TRUE;
     }
     case EF_RAND_COLD1:
     {
-	msg_print("You launch a bolt of frost.");
+	msg("You launch a bolt of frost.");
 	fire_bolt(GF_COLD, dir, damroll(3 + plev / 8, 8));
 	return TRUE;
     }
     case EF_RAND_COLD2:
     {
-	msg_print("You hurl a sphere of killing frost.");
+	msg("You hurl a sphere of killing frost.");
 	fire_sphere(GF_COLD, dir, 90, 1, 20);
 	return TRUE;
     }
     case EF_RAND_COLD3:
     {
-	msg_print("A wild Northland frost storms uncontrollably!");
+	msg("A wild Northland frost storms uncontrollably!");
 	fire_sphere(GF_COLD, 0, 150, 5, 20);
 	return TRUE;
     }
     case EF_RAND_ACID1:
     {
-	msg_print("You launch a bolt of acid.");
+	msg("You launch a bolt of acid.");
 	fire_bolt(GF_ACID, dir, damroll(3 + plev / 8, 8));
 	return TRUE;
     }
     case EF_RAND_ACID2:
     {
-	msg_print("A sphere of deadly acid forms upon your hand.");
+	msg("A sphere of deadly acid forms upon your hand.");
 	fire_sphere(GF_ACID, dir, 90, 1, 20);
 	return TRUE;
     }
     case EF_RAND_ACID3:
     {
-	msg_print("A tornado of acid melts armour and flesh!");
+	msg("A tornado of acid melts armour and flesh!");
 	fire_sphere(GF_ACID, 0, 160, 3, 20);
 	return TRUE;
     }
     case EF_RAND_ELEC1:
     {
-	msg_print("You launch a bolt of electricity.");
+	msg("You launch a bolt of electricity.");
 	fire_bolt(GF_ELEC, dir, damroll(3 + plev / 8, 8));
 	return TRUE;
     }
     case EF_RAND_ELEC2:
     {
-	msg_print("You summon ball lightning to your aid.");
+	msg("You summon ball lightning to your aid.");
 	fire_sphere(GF_ELEC, dir, 90, 1, 20);
 	return TRUE;
     }
     case EF_RAND_ELEC3:
     {
-	msg_print("A massive stroke of lightning smites the ground!");
+	msg("A massive stroke of lightning smites the ground!");
 	fire_sphere(GF_ELEC, 0, 130, 2, 20);
-	msg_print("Boom!");
+	msg("Boom!");
 	fire_sphere(GF_SOUND, 0, 25, 9, 20);
 	return TRUE;
     }
     case EF_RAND_POIS1:
     {
-	msg_print("You launch a poison dart.");
+	msg("You launch a poison dart.");
 	fire_bolt(GF_POIS, dir, damroll(3 + plev / 10, 8));
 	return TRUE;
     }
     case EF_RAND_POIS2:
     {
-	msg_print("Deadly gases blanket the area.");
+	msg("Deadly gases blanket the area.");
 	fire_sphere(GF_POIS, 0, 110, 9, 30);
 	return TRUE;
     }
     case EF_RAND_LIGHT1:
     {
 	TARGET_DECLARE
-	msg_print("You throw a radiant sphere...");
+	msg("You throw a radiant sphere...");
 	TARGET_PRESERVE fire_ball(GF_LIGHT, dir, 50, 0, FALSE);
-	TARGET_RESTORE fire_ball(GF_CONFUSION, dir, 10, 0, FALSE);
+	TARGET_RESTORE fire_ball(GF_CONFU, dir, 10, 0, FALSE);
 	return TRUE;
     }
     case EF_RAND_LIGHT2:
     {
-	msg_print("You bathe the area in radiant light!");
+	msg("You bathe the area in radiant light!");
 	dispel_light_hating(175);
 	return TRUE;
     }
     case EF_RAND_DISPEL_UNDEAD:
     {
-	msg_print("A tide of life surrounds you!");
+	msg("A tide of life surrounds you!");
 	(void) dispel_undead(100);
 	return TRUE;
     }
     case EF_RAND_DISPEL_EVIL:
     {
-	msg_print("A wave of goodness washes over you...");
+	msg("A wave of goodness washes over you...");
 	(void) dispel_evil(100);
 
 	if (player_has(PF_EVIL)) {
-	    msg_print("Your black soul is hit!");
+	    msg("Your black soul is hit!");
 	    take_hit(25, "struck down by Good");
 	}
 	return TRUE;
     }
     case EF_RAND_SMITE_UNDEAD:
     {
-	msg_print("Spells to dispel an undead antagonist surround you...");
+	msg("Spells to dispel an undead antagonist surround you...");
 	dispel_an_undead(dir, damroll(plev / 4, 33));
 	return TRUE;
     }
     case EF_RAND_SMITE_DEMON:
     {
-	msg_print("Spells to dispel a demonic adversary surround you...");
+	msg("Spells to dispel a demonic adversary surround you...");
 	dispel_a_demon(dir, damroll(plev / 4, 33));
 	return TRUE;
     }
     case EF_RAND_SMITE_DRAGON:
     {
-	msg_print("Spells to dispel a dragonic foe surround you...");
+	msg("Spells to dispel a dragonic foe surround you...");
 	dispel_a_dragon(dir, damroll(plev / 4, 33));
 	return TRUE;
     }
     case EF_RAND_HOLY_ORB:
     {
-	msg_print("A cleansing ball materializes on your fingertips.");
+	msg("A cleansing ball materializes on your fingertips.");
 	fire_sphere(GF_HOLY_ORB, dir, 60, 1, 20);
 	return TRUE;
     }
     case EF_RAND_BLESS:
     {
-	msg_print("You feel blessed for battle.");
+	msg("You feel blessed for battle.");
 	if (!p_ptr->timed[TMD_BLESSED]) {
 	    (void) inc_timed(TMD_BLESSED, randint1(24) + 24, TRUE);
 	} else {
@@ -2775,7 +2775,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     }
     case EF_RAND_FRIGHTEN_ALL:
     {
-	msg_print("You reveal yourself in wrath; your enemies tremble!");
+	msg("You reveal yourself in wrath; your enemies tremble!");
 	(void) fear_monsters((3 * plev / 2) + 5);
 	return TRUE;
     }
@@ -2803,7 +2803,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     }
     case EF_RAND_CURE:
     {
-	msg_print("Tender hands massage your hurts away.");
+	msg("Tender hands massage your hurts away.");
 	(void) clear_timed(TMD_BLIND, TRUE);
 	(void) clear_timed(TMD_POISONED, TRUE);
 	(void) clear_timed(TMD_CONFUSED, TRUE);
@@ -2814,31 +2814,31 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     }
     case EF_RAND_PROT_FROM_EVIL:
     {
-	msg_print("A shrill wail surrounds you.");
+	msg("A shrill wail surrounds you.");
 
 	if (!p_ptr->timed[TMD_PROTEVIL]) {
 	    (void) inc_timed(TMD_PROTEVIL, randint1(24) + 24, TRUE);
 	} else {
 	    (void) inc_timed(TMD_PROTEVIL, randint1(30), TRUE);
 	}
-	msg_print("You feel somewhat safer.");
+	msg("You feel somewhat safer.");
 	return TRUE;
     }
     case EF_RAND_CHAOS:
     {
-	msg_print("You unleash the powers of Unmaking!");
+	msg("You unleash the powers of Unmaking!");
 	fire_ball(GF_CHAOS, dir, randint1(320), 2, FALSE);
 	return TRUE;
     }
     case EF_RAND_SHARD_SOUND:
     {
-	msg_print("You invoke the powers of Law...");
+	msg("You invoke the powers of Law...");
 	if (randint1(2) == 1) {
-	    msg_print
+	    msg
 		("...and razor-sharp obsidian chips hail upon your foes!");
 	    fire_ball(GF_SHARD, dir, 150, 4, FALSE);
 	} else {
-	    msg_format("...and an awful cacophony shakes %s!",
+	    msg("...and an awful cacophony shakes %s!",
 		       locality_name[stage_map[p_ptr->stage][LOCALITY]]);
 	    fire_ball(GF_SOUND, dir, 150, 4, FALSE);
 	}
@@ -2846,32 +2846,32 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     }
     case EF_RAND_NETHR:
     {
-	msg_print("You cast a gleaming orb of midnight hue!");
+	msg("You cast a gleaming orb of midnight hue!");
 	fire_sphere(GF_NETHER, dir, 100, 1, 20);
 	return TRUE;
     }
     case EF_RAND_LINE_LIGHT:
     {
-	msg_print("A line of shimmering yellow light appears.");
+	msg("A line of shimmering yellow light appears.");
 	light_line(dir);
 	return TRUE;
     }
     case EF_RAND_STARLIGHT:
     {
-	msg_print("Light radiates outward in all directions.");
+	msg("Light radiates outward in all directions.");
 	for (k = 0; k < 8; k++)
 	    light_line(ddd[k]);
 	return TRUE;
     }
     case EF_RAND_EARTHQUAKE:
     {
-	msg_print("You strike the floor, and the earth crumbles!");
+	msg("You strike the floor, and the earth crumbles!");
 	earthquake(p_ptr->py, p_ptr->px, 10, FALSE);
 	return TRUE;
     }
     case EF_RAND_SPEED:
     {
-	msg_print("All around you move with dreamlike slowness.");
+	msg("All around you move with dreamlike slowness.");
 	if (!p_ptr->timed[TMD_FAST]) {
 	    (void) set_timed(TMD_FAST, randint1(20) + 20, FALSE);
 	} else {
@@ -2881,13 +2881,13 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     }
     case EF_RAND_TELEPORT_AWAY:
     {
-	msg_print("You weave a pattern of rejection and denial.");
+	msg("You weave a pattern of rejection and denial.");
 	(void) teleport_monster(dir, 55 + (plev / 2));
 	return TRUE;
     }
     case EF_RAND_HEROISM:
     {
-	msg_print("A thrilling battle song awakes the warrior within you!");
+	msg("A thrilling battle song awakes the warrior within you!");
 	(void) hp_player(10);
 	(void) clear_timed(TMD_AFRAID, TRUE);
 	(void) inc_timed(TMD_HERO, randint1(25) + 25, TRUE);
@@ -2895,20 +2895,20 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     }
     case EF_RAND_STORM_DANCE:
     {
-	msg_print("Wild music plays, and you dance up a storm...");
+	msg("Wild music plays, and you dance up a storm...");
 	fire_sphere(GF_SOUND, 0, 24, 8, 20);
 	fire_sphere(GF_SHARD, 0, 32, 8, 20);
-	fire_sphere(GF_CONFUSION, 0, 8, 8, 20);
+	fire_sphere(GF_CONFU, 0, 8, 8, 20);
 
 	if (randint1(2) == 1) {
-	    msg_print("Your wild movements exhaust you!");
+	    msg("Your wild movements exhaust you!");
 	    take_hit(damroll(1, 12), "danced to death");
 	}
 	return TRUE;
     }
     case EF_RAND_RESIST_ELEMENTS:
     {
-	msg_print("Quadricolored magics swirl around you protectingly.");
+	msg("Quadricolored magics swirl around you protectingly.");
 	(void) inc_timed(TMD_OPP_ACID, randint1(20) + 20, TRUE);
 	(void) inc_timed(TMD_OPP_ELEC, randint1(20) + 20, TRUE);
 	(void) inc_timed(TMD_OPP_FIRE, randint1(20) + 20, TRUE);
@@ -2917,7 +2917,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     }
     case EF_RAND_RESIST_ALL:
     {
-	msg_print("Penticolored magics swirl around you protectingly.");
+	msg("Penticolored magics swirl around you protectingly.");
 	(void) inc_timed(TMD_OPP_ACID, randint1(20) + 20, TRUE);
 	(void) inc_timed(TMD_OPP_ELEC, randint1(20) + 20, TRUE);
 	(void) inc_timed(TMD_OPP_FIRE, randint1(20) + 20, TRUE);
@@ -2927,13 +2927,13 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     }
     case EF_RAND_TELEPORT1:
     {
-	msg_print("You pass through a transparent gateway...");
+	msg("You pass through a transparent gateway...");
 	teleport_player(30, TRUE);
 	return TRUE;
     }
     case EF_RAND_TELEPORT2:
     {
-	msg_print("Time and space twist about you...");
+	msg("Time and space twist about you...");
 	teleport_player(200, TRUE);
 	return TRUE;
     }
@@ -2945,15 +2945,15 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     }
     case EF_RAND_REGAIN:
     {
-	msg_print("Surrounded by darkness, you envoke light and beauty.");
-	msg_print("Your spirit regains its natural vitality.");
+	msg("Surrounded by darkness, you envoke light and beauty.");
+	msg("Your spirit regains its natural vitality.");
 
 	(void) restore_level();
 	return TRUE;
     }
     case EF_RAND_RESTORE:
     {
-	msg_print
+	msg
 	    ("A multicolored mist surounds you, restoring body and mind.");
 	(void) do_res_stat(A_STR);
 	(void) do_res_stat(A_INT);
@@ -2965,7 +2965,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     }
     case EF_RAND_SHIELD:
     {
-	msg_print("Magics coalesce to form a shimmering barrier.");
+	msg("Magics coalesce to form a shimmering barrier.");
 	if (!p_ptr->timed[TMD_SHIELD]) {
 	    (void) inc_timed(TMD_SHIELD, randint1(25) + 25, TRUE);
 	} else {
@@ -2989,7 +2989,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	if (o_ptr->sval == SV_SLING)
 	    missile_name = "shot";
 
-	msg_format
+	msg
 	    ("The %s you have ready to hand gleams with deadly power.",
 	     missile_name);
 	p_ptr->special_attack |= (ATTACK_SUPERSHOT);
@@ -3001,25 +3001,25 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     }
     case EF_RAND_DETECT_MONSTERS:
     {
-	msg_print("You search for monsters.");
+	msg("You search for monsters.");
 	(void) detect_monsters_normal(DETECT_RAD_DEFAULT, TRUE);
 	return TRUE;
     }
     case EF_RAND_DETECT_EVIL:
     {
-	msg_print("You hunt for evil creatures...");
+	msg("You hunt for evil creatures...");
 	(void) detect_monsters_evil(DETECT_RAD_DEFAULT, TRUE);
 	return TRUE;
     }
     case EF_RAND_DETECT_ALL:
     {
-	msg_print("You sense the area around you.");
+	msg("You sense the area around you.");
 	detect_all(DETECT_RAD_DEFAULT, TRUE);
 	return TRUE;
     }
     case EF_RAND_MAGIC_MAP:
     {
-	msg_print
+	msg
 	    ("A mental image of your surroundings is fixed in your mind.");
 	map_area(0, 0, FALSE);
 	return TRUE;
@@ -3027,7 +3027,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_RAND_DETECT_D_S_T:
     {
 	/* Hack - 'show' effected region only with the first detect */
-	msg_print("The secrets of traps and doors are revealed.");
+	msg("The secrets of traps and doors are revealed.");
 	(void) detect_traps(DETECT_RAD_DEFAULT, TRUE);
 	(void) detect_doors(DETECT_RAD_DEFAULT, FALSE);
 	(void) detect_stairs(DETECT_RAD_DEFAULT, FALSE);
@@ -3035,72 +3035,72 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     }
     case EF_RAND_CONFU_FOE:
     {
-	msg_print("You chant runes of confusing...");
+	msg("You chant runes of confusing...");
 	if (confuse_monster(dir, 5 * plev / 3))
-	    msg_print("...which utterly baffle your foe!");
+	    msg("...which utterly baffle your foe!");
 	return TRUE;
     }
     case EF_RAND_SLEEP_FOE:
     {
-	msg_print("A fine dust appears in your hand, and you throw it...");
+	msg("A fine dust appears in your hand, and you throw it...");
 	if (sleep_monster(dir, 5 * plev / 3))
-	    msg_print("...sending a foe to the realm of dreams!");
+	    msg("...sending a foe to the realm of dreams!");
 	return TRUE;
     }
     case EF_RAND_TURN_FOE:
     {
-	msg_print("You lock eyes with an enemy...");
+	msg("You lock eyes with an enemy...");
 	if (fear_monster(dir, 5 * plev / 3))
-	    msg_print("...and break his courage!");
+	    msg("...and break his courage!");
 	return TRUE;
     }
     case EF_RAND_SLOW_FOE:
     {
-	msg_print("You focus on the mind of an opponent...");
+	msg("You focus on the mind of an opponent...");
 	if (slow_monster(dir, 5 * plev / 3))
-	    msg_print("...and sap his strength!");
+	    msg("...and sap his strength!");
 	return TRUE;
     }
     case EF_RAND_BANISH_EVIL:
     {
-	msg_print("A mighty hand drives your foes from you!");
+	msg("A mighty hand drives your foes from you!");
 	(void) banish_evil(80);
 	return TRUE;
     }
     case EF_RAND_DISARM:
     {
-	msg_print("You feel skilled hands guiding your disarming.");
+	msg("You feel skilled hands guiding your disarming.");
 	(void) disarm_trap(dir);
 	return TRUE;
     }
     case EF_RAND_CONFU_FOES:
     {
-	msg_print("You intone a bewildering hex...");
+	msg("You intone a bewildering hex...");
 	if (confu_monsters(3 * plev / 2))
-	    msg_print("...which utterly baffles your foes!");
+	    msg("...which utterly baffles your foes!");
 	return TRUE;
     }
     case EF_RAND_SLEEP_FOES:
     {
-	msg_print("Soft, soothing music washes over you..");
+	msg("Soft, soothing music washes over you..");
 	if (sleep_monsters(3 * plev / 2))
-	    msg_print("...and sends your enemies to sleep!");
+	    msg("...and sends your enemies to sleep!");
 	return TRUE;
     }
     case EF_RAND_TURN_FOES:
     {
-	msg_print("You reveal yourself in wrath; your enemies tremble!");
+	msg("You reveal yourself in wrath; your enemies tremble!");
 	(void) fear_monsters(3 * plev / 2);
 	return TRUE;
     }
     case EF_RAND_SLOW_FOES:
     {
-	msg_print("An opaque cloud blankets the area...");
+	msg("An opaque cloud blankets the area...");
 	if (slow_monsters(3 * plev / 2))
-	    msg_print
+	    msg
 		("...and dissipates, along with your opponents' strength!");
 	else
-	    msg_print("...and dissipates without effect.");
+	    msg("...and dissipates without effect.");
 	return TRUE;
     }
 
@@ -3108,7 +3108,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_ACID_BLAST:
     {
 	/* Acid, confusion, fear */
-	msg_print("A blast of corrosion strikes your foes!");
+	msg("A blast of corrosion strikes your foes!");
 	fire_sphere(GF_ACID, 0, randint1(100) + 100, 5, 20);
 	(void) confu_monsters(100);
 	(void) fear_monsters(100);
@@ -3124,7 +3124,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	int flag = PROJECT_STOP | PROJECT_KILL;
 	int avail_mon[100], avail_mon_num;
 
-	msg_print("The lightning of Manwe leaps from your hands!");
+	msg("The lightning of Manwe leaps from your hands!");
 
 	/* Initialise */
 	for (k = 0; k < 100; k++)
@@ -3197,7 +3197,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	int y, x;
 	int py = p_ptr->py, px = p_ptr->px;
 
-	msg_print("Lava wells around you!");
+	msg("Lava wells around you!");
 
 	/* Everything in range */
 	for (y = py - 7; y <= py + 7; y++)
@@ -3230,7 +3230,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_ICE_WHIRLPOOL:
     {
 	/* Unleash a whirlpool. */
-	msg_print("A howling vortex of ice rises in wrath around you.");
+	msg("A howling vortex of ice rises in wrath around you.");
 	fire_sphere(GF_ICE, 0, randint1(100) + 100, 5, 10);
 
 	/* Whisk around and slow the nearby monsters. */
@@ -3241,13 +3241,13 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     }
     case EF_GROW_FOREST:
     {
-	msg_print("A leafy forest surrounds you!");
+	msg("A leafy forest surrounds you!");
 	grow_trees_and_grass(TRUE);
 	return TRUE;
     }
     case EF_RESTORE_AND_ENHANCE:
     {
-	msg_print("You feel life flow through your body!");
+	msg("You feel life flow through your body!");
 	restore_level();
 	(void) clear_timed(TMD_POISONED, TRUE);
 	(void) clear_timed(TMD_BLIND, TRUE);
@@ -3263,7 +3263,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	(void) do_res_stat(A_CHR);
 	hp_player(2000);
 	if (p_ptr->black_breath) {
-	    msg_print("The hold of the Black Breath on you is broken!");
+	    msg("The hold of the Black Breath on you is broken!");
 	}
 	p_ptr->black_breath = FALSE;
 	(void) clear_timed(TMD_AFRAID, TRUE);
@@ -3278,7 +3278,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	int y, x;
 	int py = p_ptr->py, px = p_ptr->px;
 
-	msg_print("The forces of chaos surround you!");
+	msg("The forces of chaos surround you!");
 
 	/* Everything in range */
 	for (y = py - 10; y <= py + 10; y++)
@@ -3301,7 +3301,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     }
     case EF_PRESSURE_WAVE:
     {
-	msg_print("Your foes are thrown backward!");
+	msg("Your foes are thrown backward!");
 	fire_ball(GF_FORCE, 0, 50, 20, FALSE);
 
 	return TRUE;
@@ -3312,7 +3312,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	int py = p_ptr->py, px = p_ptr->px;
 	monster_type *m_ptr;
 
-	msg_print
+	msg
 	    ("Your foes slow, and you seem to have an eternity to act...");
 
 	/* Everything in range */
@@ -3344,7 +3344,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     }
     case EF_MASS_STASIS:
     {
-	msg_print("You command your foes to be still!");
+	msg("You command your foes to be still!");
 	hold_all();
 	return TRUE;
     }
@@ -3353,7 +3353,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	int y, x;
 	int py = p_ptr->py, px = p_ptr->px;
 
-	msg_print("The light of the Valar shines from above!");
+	msg("The light of the Valar shines from above!");
 
 	/* Everything in range */
 	for (y = py - 10; y <= py + 10; y++)
@@ -3376,14 +3376,14 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     }
     case EF_MASS_POLYMORPH:
     {
-	msg_print("Reality warps...");
+	msg("Reality warps...");
 	poly_all(p_ptr->depth);
 
 	return TRUE;
     }
     case EF_GRAVITY_WAVE:
     {
-	msg_print("Gravity crushes, then releases, your foes!");
+	msg("Gravity crushes, then releases, your foes!");
 	fire_ball(GF_GRAVITY, 0, 100, 20, FALSE);
 
 	return TRUE;
@@ -3393,13 +3393,13 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	int m_idx, targ_y, targ_x, group;
 	int targ = target_get_monster();
 
-	msg_print("You call on the Earth to bring forth allies!");
+	msg("You call on the Earth to bring forth allies!");
 
 	/* Must target a monster */
 	if (!get_aim_dir(&dir))
 	    return FALSE;
 	if (targ <= 0) {
-	    msg_print("You must target a monster.");
+	    msg("You must target a monster.");
 	    return FALSE;
 	}
 
@@ -3437,7 +3437,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
 
 	/* A crude way to simulate a long-range melee blow... */
-	msg_print("You lash out at a nearby foe.");
+	msg("You lash out at a nearby foe.");
 	fire_arc(GF_FIRE, dir, damroll(o_ptr->dd, o_ptr->ds), 2, 0);
 	return TRUE;
     }
@@ -3451,7 +3451,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		p_ptr->csp = p_ptr->msp;
 		p_ptr->csp_frac = 0;
 	    }
-	    msg_print("Magical power flows from your staff.");
+	    msg("Magical power flows from your staff.");
 	    p_ptr->redraw |= (PR_MANA);
 	}
 	return TRUE;
@@ -3462,7 +3462,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     default:
     {
 	/* Mistake */
-	msg_print("Oops.  Effect type unrecognized.");
+	msg("Oops.  Effect type unrecognized.");
 	return FALSE;
     }
     }

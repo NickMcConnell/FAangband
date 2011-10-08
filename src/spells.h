@@ -3,6 +3,67 @@
 #ifndef SPELLS_H
 #define SPELLS_H
 
+/*
+ * Spell types used by project(), and related functions.
+ */
+enum
+{
+    #define GF(a) GF_##a,
+    #include "list-gf-types.h"
+    #undef GF
+};
+
+/**
+ * Bolt motion (used in prefs.c, spells1.c)
+ */
+enum
+{
+    BOLT_NO_MOTION,
+    BOLT_0,
+    BOLT_45,
+    BOLT_90,
+    BOLT_135,
+    BOLT_MAX
+};
+
+
+/*
+ * Bit flags for the "project()" function
+ *
+ *   JUMP:  Jump directly to the target location (this is a hack)
+ *   BEAM:  Work as a beam weapon (affect every grid passed through)
+ *   ARC:   Act as an arc spell (a portion of a caster-centered ball)
+ *   THRU:  Continue "through" the target (used for "bolts"/"beams")
+ *   STOP:  Stop as soon as we hit a monster (used for "bolts")
+ *   GRID:  Affect each grid in the "blast area" in some way
+ *   ITEM:  Affect each object in the "blast area" in some way
+ *   KILL:  Affect each monster in the "blast area" in some way
+ *   PLAY:  Explicitly affect the player
+ *   HIDE:  Hack -- disable "visual" feedback from projection
+ *   CHCK:  Note occupied grids, but do not stop at them.
+ */
+#define PROJECT_NONE    0x0000
+#define PROJECT_JUMP	0x0001
+#define PROJECT_BEAM	0x0002
+#define PROJECT_SAFE    0x0004
+#define PROJECT_ARC	0x0008
+#define PROJECT_THRU	0x0010
+#define PROJECT_STOP	0x0020
+#define PROJECT_GRID	0x0040
+#define PROJECT_ITEM	0x0080
+#define PROJECT_KILL	0x0100
+#define PROJECT_PLAY	0x0200
+#define PROJECT_HIDE	0x0400
+#define PROJECT_CHCK	0x0800
+
+/*
+ * Bit flags for the "enchant()" function
+ */
+#define ENCH_TOHIT   0x01
+#define ENCH_TODAM   0x02
+#define ENCH_TOAC    0x04
+
+
 /* spells1.c */
 extern bool check_save(int roll);
 extern s16b poly_r_idx(int r_idx, bool shapechange);
@@ -10,16 +71,18 @@ extern void teleport_away(int m_idx, int dis);
 extern void teleport_player(int dis, bool safe);
 extern void teleport_player_to(int ny, int nx, bool friendly);
 extern void teleport_player_level(bool friendly);
+int gf_name_to_idx(const char *name);
+const char *gf_idx_to_name(int type);
 extern bool chaotic_effects(monster_type *m_ptr);
 extern void add_heighten_power(int value);
 extern void add_speed_boost(int value);
 extern int resist_damage(int dam, byte resist, byte rand_factor);
-extern void take_hit(int dam, cptr kb_str);
-extern void acid_dam(int dam, cptr kb_str);
-extern void elec_dam(int dam, cptr kb_str);
-extern void fire_dam(int dam, cptr kb_str);
-extern void cold_dam(int dam, cptr kb_str);
-extern void pois_dam(int dam, cptr kb_str);
+extern void take_hit(int dam, const char *kb_str);
+extern void acid_dam(int dam, const char *kb_str);
+extern void elec_dam(int dam, const char *kb_str);
+extern void fire_dam(int dam, const char *kb_str);
+extern void cold_dam(int dam, const char *kb_str);
+extern void pois_dam(int dam, const char *kb_str);
 extern bool pois_hit(int pois_inc);
 extern bool inc_stat(int stat, bool star);
 extern bool dec_stat(int stat, int amount, int permanent);
@@ -148,7 +211,7 @@ extern bool sleep_monsters_touch(int dam);
 
 /* x-spell.c */
 extern int get_spell_index(const object_type *o_ptr, int index);
-extern cptr get_spell_name(int index);
+extern const char *get_spell_name(int index);
 extern void get_spell_info(int tval, int index, char *buf, size_t len);
 extern bool cast_spell(int tval, int index, int dir);
 extern bool spell_needs_aim(int tval, int spell);

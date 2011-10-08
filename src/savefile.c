@@ -79,9 +79,9 @@ static u32b buffer_check;
 /*
  * Hack -- Show information on the screen, one line at a time.
  *
- * Avoid the top two lines, to avoid interference with "msg_print()".
+ * Avoid the top two lines, to avoid interference with "msg()".
  */
-void note(cptr msg)
+void note(const char *msg)
 {
     static int y = 2;
 
@@ -160,7 +160,7 @@ void wr_s32b(s32b v)
     wr_u32b((u32b)v);
 }
 
-void wr_string(cptr str)
+void wr_string(const char *str)
 {
     while (*str)
     {
@@ -372,7 +372,7 @@ static bool try_load(ang_file *file)
 /*
  * Attempt to save the player in a savefile
  */
-bool old_save(void)
+bool savefile_save(const char *path)
 {
     ang_file *file;
 
@@ -380,8 +380,8 @@ bool old_save(void)
     char old_savefile[1024];
 
     /* New savefile */
-    strnfmt(new_savefile, sizeof(new_savefile), "%s.new", savefile);
-    strnfmt(old_savefile, sizeof(old_savefile), "%s.old", savefile);
+    strnfmt(new_savefile, sizeof(new_savefile), "%s.new", path);
+    strnfmt(old_savefile, sizeof(old_savefile), "%s.old", path);
 
     /* Make sure that the savefile doesn't already exist */
     safe_setuid_grab();
@@ -452,7 +452,7 @@ bool old_save(void)
  * Note that we always try to load the "current" savefile, even if
  * there is no such file, so we must check for "empty" savefile names.
  */
-bool old_load(void)
+bool savefile_load(const char *path)
 {
     byte sf_major = 0;
     byte sf_minor = 0;
@@ -461,7 +461,7 @@ bool old_load(void)
     ang_file *fh;
     byte head[8];
 
-    cptr what = "generic";
+    const char *what = "generic";
     errr err = 0;
 
     /* Clear screen */
@@ -546,7 +546,7 @@ bool old_load(void)
     }
 
     /* Message */
-    msg_format("Error (%s) reading %d.%d.%d savefile.",
+    msg("Error (%s) reading %d.%d.%d savefile.",
 	       what, sf_major, sf_minor, sf_patch);
     message_flush();
 

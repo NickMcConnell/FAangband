@@ -17,17 +17,19 @@
  */
 
 #include "angband.h"
+#include "buildid.h"
 #include "button.h"
 #include "cave.h"
 #include "cmds.h"
 #include "game-cmd.h"
 #include "game-event.h"
 #include "init.h"
-#include "macro.h"
+#include "keymap.h"
 #include "tvalsval.h"
 #include "option.h"
 #include "parser.h"
 #include "prefs.h"
+#include "randname.h"
 #include "squelch.h"
 
 /*
@@ -44,39 +46,6 @@
  * be able to load any template file with more than 20K of names or 60K
  * of text, even though technically, up to 64K should be legal.
  */
-
-struct file_parser {
-    const char *name;
-    struct parser *(*init)(void);
-    errr (*run)(struct parser *p);
-    errr (*finish)(struct parser *p);
-};
-
-static void print_error(struct file_parser *fp, struct parser *p) {
-    struct parser_state s;
-    parser_getstate(p, &s);
-    msg_format("Parse error in %s line %d column %d: %s: %s", fp->name,
-	       s.line, s.col, s.msg, parser_error_str[s.error]);
-    message_flush();
-    quit_fmt("Parse error in %s line %d column %d.", fp->name, s.line, s.col);
-}
-
-errr run_parser(struct file_parser *fp) {
-    struct parser *p = fp->init();
-    errr r;
-    if (!p) {
-	return PARSE_ERROR_GENERIC;
-    }
-    r = fp->run(p);
-    if (r) {
-	print_error(fp, p);
-	return r;
-    }
-    r = fp->finish(p);
-    if (r)
-	print_error(fp, p);
-    return r;
-}
 
 static const char *object_flags[] = {
 #define OF(a, b) #a,
@@ -200,28 +169,6 @@ static const char *brand_values[] =
     "BRAND_POIS"
 };
 
-static int lookup_flag(const char **flag_table, const char *flag_name) {
-    int i = FLAG_START;
-
-    while (flag_table[i] && !streq(flag_table[i], flag_name))
-	i++;
-
-    /* End of table reached without match */
-    if (!flag_table[i]) i = FLAG_END;
-
-    return i;
-}
-
-static errr grab_flag(bitflag *flags, const size_t size, const char **flag_table, const char *flag_name) {
-    int flag = lookup_flag(flag_table, flag_name);
-
-    if (flag == FLAG_END) return PARSE_ERROR_INVALID_FLAG;
-
-    flag_on(flags, size, flag);
-
-    return 0;
-}
-
 static u32b grab_one_effect(const char *what) {
     size_t i;
 
@@ -233,7 +180,7 @@ static u32b grab_one_effect(const char *what) {
     }
 
     /* Oops */
-    msg_format("Unknown effect '%s'.", what);
+    msg("Unknown effect '%s'.", what);
 
     /* Error */
     return 0;
@@ -397,29 +344,6 @@ void create_needed_dirs(void)
 
     path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_HELP, "");
     if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
-}
-
-errr parse_file(struct parser *p, const char *filename) {
-    char path[1024];
-    char buf[1024];
-    ang_file *fh;
-    errr r = 0;
-
-    path_build(path, sizeof(path), ANGBAND_DIR_EDIT, format("%s.txt", filename));
-    fh = file_open(path, MODE_READ, -1);
-    if (!fh)
-	quit(format("Cannot open '%s.txt'", filename));
-    while (file_getl(fh, buf, sizeof(buf))) {
-	r = parser_parse(p, buf);
-	if (r)
-	    break;
-    }
-    file_close(fh);
-    return r;
-}
-
-static enum parser_error ignored(struct parser *p) {
-    return PARSE_ERROR_NONE;
 }
 
 static enum parser_error parse_z(struct parser *p) {
@@ -3459,9 +3383,6 @@ static errr init_other(void)
 
     /*** Prepare the various "bizarre" arrays ***/
 
-    /* Initialize the "macro" package */
-    (void)macro_init();
-
     /* Initialize the "quark" package */
     (void)quarks_init();
 
@@ -4105,7 +4026,7 @@ static errr init_race_probs(void)
 	if (fd)
 	{
 	    /* Dump it */
-	    file_write(fd, (cptr)race_prob, 32 * sizeof(u16b_stage));
+	    file_write(fd, (const char *)race_prob, 32 * sizeof(u16b_stage));
 
 	    /* Close */
 	    file_close(fd);
@@ -4297,7 +4218,7 @@ bool init_angband(void)
     event_signal_string(EVENT_INITSTATUS, "Loading basic user pref file...");
 
     /* Process that file */
-    (void)process_pref_file("pref.prf", FALSE);
+    (void)process_pref_file("pref.prf", FALSE, FALSE);
 
     /* Done */
     event_signal_string(EVENT_INITSTATUS, "Initialization complete");
@@ -4334,16 +4255,12 @@ void cleanup_angband(void)
     int i;
 
 
-    /* Free the macros */
-    macro_free();
-
-    /* Free the macro triggers */
-    macro_trigger_free();
-
     /* Free the allocation tables */
     FREE(alloc_kind_table);
     FREE(alloc_ego_table);
     FREE(alloc_race_table);
+
+    event_remove_all_handlers();
 
     if (store)
     {
@@ -4366,6 +4283,7 @@ void cleanup_angband(void)
     /* Free the quest list */
     FREE(q_list);
 
+    button_free();
     FREE(p_ptr->inventory);
 
     /* Free the lore, trap, monster, and object lists */

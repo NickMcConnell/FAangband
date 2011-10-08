@@ -157,8 +157,8 @@ typedef struct feature {
     char d_char;	/**< Default feature character */
 
 
-    byte x_attr;	/**< Desired feature attribute */
-    char x_char;	/**< Desired feature character */
+    byte x_attr[3];   /**< Desired feature attribute (set by user/pref file) */
+    char x_char[3];   /**< Desired feature character (set by user/pref file) */
 } feature_type;
 
 
@@ -861,9 +861,9 @@ typedef struct {
  * Player sex info
  */
 typedef struct player_sex {
-    cptr title;		/**< Type of sex */
+    const char *title;		/**< Type of sex */
 
-    cptr winner;	/**< Name of winner */
+    const char *winner;	/**< Name of winner */
 } player_sex;
 
 
@@ -1014,7 +1014,7 @@ typedef struct {
 /** Druid blows. -LM- */
 struct druid_blows {
 
-    cptr description;
+    const char *description;
 			/**< Name of the blow. */
 
     s16b dd;		/**< Number of damage dice. */
@@ -1357,9 +1357,10 @@ struct history_info
 
 enum grid_light_level
 {
-	LIGHT_TORCH,
-	LIGHT_GLOW,
-	LIGHT_DARK
+	FEAT_LIGHTING_BRIGHT = 0,
+	FEAT_LIGHTING_LIT,
+	FEAT_LIGHTING_DARK,
+	FEAT_LIGHTING_MAX
 };
 
 typedef struct
