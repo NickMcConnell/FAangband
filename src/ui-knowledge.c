@@ -226,13 +226,14 @@ static int feat_order(int feat)
 
 
 /* Emit a 'graphical' symbol and a padding character if appropriate */
-extern void big_pad(int col, int row, byte a, byte c)
+extern int big_pad(int col, int row, byte a, byte c)
 {
     Term_putch(col, row, a, c);
 
-    if ((tile_width > 1) || (tile_height > 1)) {
+    if ((tile_width > 1) || (tile_height > 1)) 
 	Term_big_putch(col, row, a, c);
-    }
+
+	return tile_width;
 }
 
 /* Return the actual width of a symbol */
@@ -1765,13 +1766,16 @@ static void display_feature(int col, int row, bool cursor, int oid)
     /* Display the name */
     c_prt(attr, f_ptr->name, row, col);
 
-    if ((tile_width > 1) || (tile_height > 1))
-	return;
-
-    /* Display symbol */
-    big_pad(68, row, f_ptr->x_attr, f_ptr->x_char);
-
-    /* ILLUMINATION AND DARKNESS GO HERE */
+    if (tile_height == 1) {
+	/* Display symbols */
+	col = 66;
+	col += big_pad(col, row, f_ptr->x_attr[FEAT_LIGHTING_DARK],
+		       f_ptr->x_char[FEAT_LIGHTING_DARK]);
+	col += big_pad(col, row, f_ptr->x_attr[FEAT_LIGHTING_LIT],
+		       f_ptr->x_char[FEAT_LIGHTING_LIT]);
+	col += big_pad(col, row, f_ptr->x_attr[FEAT_LIGHTING_BRIGHT],
+		       f_ptr->x_char[FEAT_LIGHTING_BRIGHT]);
+    }
 
 }
 
@@ -1790,24 +1794,40 @@ static int f_cmp_fkind(const void *a, const void *b)
     return strcmp(fa->name, fb->name);
 }
 
-static const char *fkind_name(int gid)
+
+static const char *fkind_name(int gid) { return feature_group_text[gid]; }
+/* Disgusting hack to allow 3 in 1 editting of terrain visuals */
+static enum grid_light_level f_uik_lighting = FEAT_LIGHTING_LIT;
+/* XXX needs *better* retooling for multi-light terrain */
+static byte *f_xattr(int oid) { return &f_info[oid].x_attr[f_uik_lighting]; }
+static char *f_xchar(int oid) { return &f_info[oid].x_char[f_uik_lighting]; }
+static void feat_lore(int oid) { (void)oid; /* noop */ }
+static const char *feat_prompt(int oid)
 {
-    return feature_group_text[gid];
+	(void)oid;
+	return ", 'l' to cycle lighting";
 }
 
-static byte *f_xattr(int oid)
+/*
+ * Special key actions for cycling lighting
+ */
+static void f_xtra_act(struct keypress ch, int oid)
 {
-    return &f_info[oid].x_attr;
-}
-
-static char *f_xchar(int oid)
-{
-    return &f_info[oid].x_char;
-}
-
-static void feat_lore(int oid)
-{
-    (void) oid;			/* noop */
+	/* XXX must be a better way to cycle this */
+	if (ch.code == 'l') {
+		switch (f_uik_lighting) {
+				case FEAT_LIGHTING_LIT:  f_uik_lighting = FEAT_LIGHTING_BRIGHT; break;
+				case FEAT_LIGHTING_BRIGHT:  f_uik_lighting = FEAT_LIGHTING_DARK; break;
+				default:	f_uik_lighting = FEAT_LIGHTING_LIT; break;
+		}		
+	} else if (ch.code == 'L') {
+		switch (f_uik_lighting) {
+				case FEAT_LIGHTING_DARK:  f_uik_lighting = FEAT_LIGHTING_BRIGHT; break;
+				case FEAT_LIGHTING_LIT:  f_uik_lighting = FEAT_LIGHTING_DARK; break;
+				default:	f_uik_lighting = FEAT_LIGHTING_LIT; break;
+		}
+	}
+	
 }
 
 /*
@@ -1820,7 +1840,7 @@ static void do_cmd_knowledge_features(const char *name, int row)
     };
 
     member_funcs feat_f =
-	{ display_feature, feat_lore, f_xchar, f_xattr, 0, 0, 0 };
+	{ display_feature, feat_lore, f_xchar, f_xattr, feat_prompt, f_xtra_act,0 };
 
     int *features;
     int f_count = 0;

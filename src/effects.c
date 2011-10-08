@@ -2494,7 +2494,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	    } else {
 		sound(MSG_BR_CONF);
 		msg("You breathe confusion.");
-		fire_arc(GF_CONFUSION, dir, (plev / 10 + 1) * 40, 10, 40);
+		fire_arc(GF_CONFU, dir, (plev / 10 + 1) * 40, 10, 40);
 	    }
 	    return TRUE;
 	}
@@ -2520,7 +2520,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		sound(((chance == 1 ? MSG_BR_CHAOS : MSG_BR_DISEN)));
 		msg("You breathe %s.",
 			   ((chance == 1 ? "chaos" : "disenchantment")));
-		fire_arc((chance == 1 ? GF_CHAOS : GF_DISENCHANT), dir,
+		fire_arc((chance == 1 ? GF_CHAOS : GF_DISEN), dir,
 			 (plev / 10 + 1) * 55, 10, 40);
 	    }
 	    return TRUE;
@@ -2540,7 +2540,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 			    ((chance == 2) ? "disenchantment" : 
 			     ((chance == 3) ? "sound" : "shards"))));
 		fire_arc(((chance == 1) ? GF_CHAOS : 
-			  ((chance == 2) ? GF_DISENCHANT : 
+			  ((chance == 2) ? GF_DISEN : 
 			   ((chance == 3) ? GF_SOUND : GF_SHARD))),
 			 dir, (plev / 10 + 1) * 65, 10, 40);
 	    }
@@ -2713,7 +2713,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	TARGET_DECLARE
 	msg("You throw a radiant sphere...");
 	TARGET_PRESERVE fire_ball(GF_LIGHT, dir, 50, 0, FALSE);
-	TARGET_RESTORE fire_ball(GF_CONFUSION, dir, 10, 0, FALSE);
+	TARGET_RESTORE fire_ball(GF_CONFU, dir, 10, 0, FALSE);
 	return TRUE;
     }
     case EF_RAND_LIGHT2:
@@ -2898,7 +2898,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	msg("Wild music plays, and you dance up a storm...");
 	fire_sphere(GF_SOUND, 0, 24, 8, 20);
 	fire_sphere(GF_SHARD, 0, 32, 8, 20);
-	fire_sphere(GF_CONFUSION, 0, 8, 8, 20);
+	fire_sphere(GF_CONFU, 0, 8, 8, 20);
 
 	if (randint1(2) == 1) {
 	    msg("Your wild movements exhaust you!");

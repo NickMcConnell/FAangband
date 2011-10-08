@@ -1495,8 +1495,8 @@ static void animate_detect(int rad)
 	    /* Only show the region that the player can see */
 	    if (panel_contains(y, x)) {
 		/* Hack - Obtain attr/char */
-		a = misc_to_attr[0x3B];
-		c = misc_to_char[0x3B];
+		a = gf_to_attr[GF_DETECT][BOLT_NO_MOTION];
+		c = gf_to_char[GF_DETECT][BOLT_NO_MOTION];
 
 		/* Hack -- Visual effects -- Display a yellow star */
 		print_rel(c, a, y, x);
@@ -3815,7 +3815,7 @@ void do_starlight(int burst_number, int dam, bool strong)
 
 	/* Confusing to be suddenly lit up. */
 	if (!cave_has(cave_info[y][x], CAVE_GLOW))
-	    fire_meteor(-1, GF_CONFUSION, y, x, dam, strong ? 1 : 0, FALSE);
+	    fire_meteor(-1, GF_CONFU, y, x, dam, strong ? 1 : 0, FALSE);
 
 	/* The actual burst of light. */
 	fire_meteor(-1, GF_LIGHT_WEAK, y, x, dam, strong ? 2 : 1, FALSE);

@@ -2094,7 +2094,7 @@ bool make_attack_ranged(monster_type * m_ptr, int attack)
 	{
 	    damage += resist_damage(damage, P_RES_CONFU, 0);
 
-	    typ = GF_CONFUSION;
+	    typ = GF_CONFU;
 	    desc = " confusion";
 	    add_of = " of";
 	    break;
@@ -2105,7 +2105,7 @@ bool make_attack_ranged(monster_type * m_ptr, int attack)
 	{
 	    damage += resist_damage(damage, P_RES_DISEN, 0);
 
-	    typ = GF_DISENCHANT;
+	    typ = GF_DISEN;
 	    desc = " unmagic";
 	    add_of = " of";
 	    break;
@@ -2401,7 +2401,7 @@ bool make_attack_ranged(monster_type * m_ptr, int attack)
 	    msg("%^s breathes.", m_name);
 	else
 	    msg("%^s breathes confusion.", m_name);
-	mon_arc(m_idx, GF_CONFUSION, TRUE,
+	mon_arc(m_idx, GF_CONFU, TRUE,
 		((3 * m_ptr->hp / 10) > 500 ? 500 : (3 * m_ptr->hp / 10)),
 		0, (rf_has(r_ptr->flags, RF_POWERFUL) ? 40 : 20));
 	break;
@@ -2527,7 +2527,7 @@ bool make_attack_ranged(monster_type * m_ptr, int attack)
 	    msg("%^s breathes.", m_name);
 	else
 	    msg("%^s breathes disenchantment.", m_name);
-	mon_arc(m_idx, GF_DISENCHANT, TRUE,
+	mon_arc(m_idx, GF_DISEN, TRUE,
 		((3 * m_ptr->hp / 10) > 400 ? 400 : (3 * m_ptr->hp / 10)),
 		0, (rf_has(r_ptr->flags, RF_POWERFUL) ? 40 : 20));
 	break;
@@ -2866,7 +2866,7 @@ bool make_attack_ranged(monster_type * m_ptr, int attack)
 		msg("%^s invokes a storm of confusion.", m_name);
 	    rad = 3;
 	}
-	mon_ball(m_idx, GF_CONFUSION, get_dam(3 * spower, 12), rad);
+	mon_ball(m_idx, GF_CONFU, get_dam(3 * spower, 12), rad);
 	break;
     }
 

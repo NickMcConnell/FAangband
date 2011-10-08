@@ -651,6 +651,13 @@ alloc_entry *alloc_race_table;
 u32b alloc_race_total;
 
 /*
+ * Specify attr/char pairs for visual special effects for project()
+ */
+byte gf_to_attr[GF_MAX][BOLT_MAX];
+char gf_to_char[GF_MAX][BOLT_MAX];
+
+
+/*
  * Specify attr/char pairs for visual special effects
  * Be sure to use "index & 0xFF" to avoid illegal access
  */

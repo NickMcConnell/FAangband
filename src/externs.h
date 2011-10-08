@@ -1,6 +1,7 @@
 #ifndef INCLUDED_EXTERNS_H
 #define INCLUDED_EXTERNS_H
 
+#include "spells.h"
 
 /** \file externs.h 
     \brief Variable and function definitions.
@@ -182,6 +183,8 @@ extern alloc_entry *alloc_ego_table;
 extern s16b alloc_race_size;
 extern alloc_entry *alloc_race_table;
 extern u32b alloc_race_total;
+extern byte gf_to_attr[GF_MAX][BOLT_MAX];
+extern char gf_to_char[GF_MAX][BOLT_MAX];
 extern byte misc_to_attr[256];
 extern char misc_to_char[256];
 extern byte tval_to_attr[128];

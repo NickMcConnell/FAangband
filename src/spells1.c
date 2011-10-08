@@ -1288,6 +1288,33 @@ bool chaotic_effects(monster_type * m_ptr)
 
 
 
+static const char *gf_name_list[] =
+{
+    #define GF(a) #a,
+    #include "list-gf-types.h"
+    #undef GF
+    NULL
+};
+
+int gf_name_to_idx(const char *name)
+{
+    int i;
+    for (i = 0; gf_name_list[i]; i++) {
+        if (!my_stricmp(name, gf_name_list[i]))
+            return i;
+    }
+
+    return -1;
+}
+
+const char *gf_idx_to_name(int type)
+{
+    assert(type >= 0);
+    assert(type < GF_MAX);
+
+    return gf_name_list[type];
+}
+
 /**
  * Return a color to use for the bolt/ball spells
  */
@@ -1340,7 +1367,7 @@ static byte spell_color(int type)
     case GF_MORGUL_DARK:
 	return (TERM_L_DARK);
 
-    case GF_CONFUSION:
+    case GF_CONFU:
 	return (TERM_L_UMBER);
     case GF_SOUND:
 	return (TERM_YELLOW);
@@ -1363,7 +1390,7 @@ static byte spell_color(int type)
 	return (TERM_L_GREEN);
     case GF_CHAOS:
 	return (TERM_VIOLET);
-    case GF_DISENCHANT:
+    case GF_DISEN:
 	return (TERM_L_VIOLET);
     case GF_TIME:
 	return (TERM_L_BLUE);
@@ -1387,55 +1414,42 @@ static byte spell_color(int type)
 
 
 
-/**
+/*
  * Find the attr/char pair to use for a spell effect
  *
  * It is moving (or has moved) from (x,y) to (nx,ny).
  *
  * If the distance is not "one", we (may) return "*".
  */
-static u16b bolt_pict(int y, int x, int ny, int nx, int typ)
+static void bolt_pict(int y, int x, int ny, int nx, int typ, byte *a, char *c)
 {
-    int base;
+	int motion;
 
-    byte k;
+	/* Convert co-ordinates into motion */
+	if ((ny == y) && (nx == x))
+		motion = BOLT_NO_MOTION;
+	else if (nx == x)
+		motion = BOLT_0;
+	else if ((ny-y) == (x-nx))
+		motion = BOLT_45;
+	else if (ny == y)
+		motion = BOLT_90;
+	else if ((ny-y) == (nx-x))
+		motion = BOLT_135;
+	else
+		motion = BOLT_NO_MOTION;
 
-    byte a;
-    char c;
+	/* Decide on output char */
+	if (use_graphics == GRAPHICS_NONE || use_graphics == GRAPHICS_PSEUDO) {
+		/* ASCII is simple */
+		char chars[] = "*|/-\\";
 
-    /* No motion (*) */
-    if ((ny == y) && (nx == x))
-	base = 0x30;
-
-    /* Vertical (|) */
-    else if (nx == x)
-	base = 0x40;
-
-    /* Horizontal (-) */
-    else if (ny == y)
-	base = 0x50;
-
-    /* Diagonal (/) */
-    else if ((ny - y) == (x - nx))
-	base = 0x60;
-
-    /* Diagonal (\) */
-    else if ((ny - y) == (nx - x))
-	base = 0x70;
-
-    /* Weird */
-    else
-	base = 0x30;
-
-    /* Basic spell color */
-    k = spell_color(typ);
-
-    /* Obtain attr/char */
-    a = misc_to_attr[base + k];
-    c = misc_to_char[base + k];
-
-    /* Create pict */
-    return (PICT(a, c));
+		*c = chars[motion];
+		*a = spell_color(typ);
+	} else {
+		*a = gf_to_attr[typ][motion];
+		*c = gf_to_char[typ][motion];
+	}
 }
 
 
@@ -4317,7 +4331,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	}
 
 	/* Confusion */
-    case GF_CONFUSION:
+    case GF_CONFU:
 	{
 	    /* Slightly affected by terrain. */
 	    dam += terrain_adjustment / 2;
@@ -4556,7 +4570,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	}
 
 	/* Disenchantment -- Breathers and Disenchanters resist */
-    case GF_DISENCHANT:
+    case GF_DISEN:
 	{
 	    if (seen)
 		obvious = TRUE;
@@ -6804,7 +6818,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	}
 
 	/* Pure confusion */
-    case GF_CONFUSION:
+    case GF_CONFU:
 	{
 	    /* Slightly affected by terrain. */
 	    dam += terrain_adjustment / 2;
@@ -7109,7 +7123,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	}
 
 	/* Disenchantment -- see above */
-    case GF_DISENCHANT:
+    case GF_DISEN:
 	{
 	    if (fuzzy)
 		msg("You are hit by something strange!");
@@ -8144,17 +8158,11 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 
 		    /* Only do visuals if the player can "see" the bolt */
 		    if (panel_contains(y, x) && player_has_los_bold(y, x)) {
-			u16b p;
-
 			byte a;
 			char c;
 
 			/* Obtain the bolt pict */
-			p = bolt_pict(oy, ox, y, x, typ);
-
-			/* Extract attr/char */
-			a = PICT_A(p);
-			c = PICT_C(p);
+			bolt_pict(oy, ox, y, x, typ, &a, &c);
 
 			/* Visual effects */
 			print_rel(c, a, y, x);
@@ -8170,11 +8178,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 			if (flg & (PROJECT_BEAM)) {
 
 			    /* Obtain the explosion pict */
-			    p = bolt_pict(y, x, y, x, typ);
-
-			    /* Extract attr/char */
-			    a = PICT_A(p);
-			    c = PICT_C(p);
+			    bolt_pict(y, x, y, x, typ, &a, &c);
 
 			    /* Visual effects */
 			    print_rel(c, a, y, x);
@@ -8397,19 +8401,13 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 
 	    /* Only do visuals if the player can "see" the blast */
 	    if (panel_contains(y, x) && player_has_los_bold(y, x)) {
-		u16b p;
-
 		byte a;
 		char c;
 
 		drawn = TRUE;
 
 		/* Obtain the explosion pict */
-		p = bolt_pict(y, x, y, x, typ);
-
-		/* Extract attr/char */
-		a = PICT_A(p);
-		c = PICT_C(p);
+		bolt_pict(y, x, y, x, typ, &a, &c);
 
 		/* Visual effects -- Display */
 		print_rel(c, a, y, x);

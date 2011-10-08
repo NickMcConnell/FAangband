@@ -3571,7 +3571,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x, bool * death)
 	}
 
 	else if (t_ptr->t_idx == MTRAP_UNMAGIC) {
-	    (void) fire_meteor(0, GF_DISENCHANT, y, x, (3 * trap_power) / 4, 0,
+	    (void) fire_meteor(0, GF_DISEN, y, x, (3 * trap_power) / 4, 0,
 			       FALSE);
 	    if (!(m_ptr->r_idx))
 		mon_dies = TRUE;

@@ -1303,15 +1303,15 @@ static int draw_path(u16b * path, char *c, byte * a, int y1, int x1, int y2,
 	/* This square is being overwritten, so save the original. */
 	Term_what(Term->scr->cx, Term->scr->cy, a + i, c + i);
 
-	/* Choose a colour. */
+	/* Choose a colour - such a hack now! */
 	/* Visible monsters are red. */
 	if (cave_m_idx[y][x] && m_list[cave_m_idx[y][x]].ml) {
-	    colour = TERM_L_RED;
+	    colour = GF_FIRE;
 	}
 
 	/* Known objects are yellow. */
 	else if (cave_o_idx[y][x] && o_list[cave_o_idx[y][x]].marked) {
-	    colour = TERM_YELLOW;
+	    colour = GF_SOUND;
 	}
 
 	/* Known walls are blue. */
@@ -1319,21 +1319,21 @@ static int draw_path(u16b * path, char *c, byte * a, int y1, int x1, int y2,
 		 (cave_has(cave_info[y][x], CAVE_MARK) || 
 		  player_can_see_bold(y, x))) 
 	{
-	    colour = TERM_BLUE;
+	    colour = GF_ELEC;
 	}
 	/* Unknown squares are grey. */
 	else if (!cave_has(cave_info[y][x], CAVE_MARK) && 
 		 !player_can_see_bold(y, x)) {
-	    colour = TERM_L_DARK;
+	    colour = GF_DARK;
 	}
 	/* Unoccupied squares are white. */
 	else {
-	    colour = TERM_WHITE;
+	    colour = GF_COLD;
 	}
 
 	/* Hack - Obtain attr/char */
-	a1 = misc_to_attr[0x30 + colour];
-	c1 = misc_to_char[0x30 + colour];
+	a1 = gf_to_attr[colour][BOLT_NO_MOTION];
+	c1 = gf_to_char[colour][BOLT_NO_MOTION];
 
 	/* Draw the path segment */
 	print_rel(c1, a1, y, x);

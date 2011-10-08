@@ -12,41 +12,41 @@
 
 # Floors (white / centered dot)
 
-F:1:0x01:0x07
+F:1:all:0x01:0x07
 
 # Invis traps (white / centered dot)
 
-F:2:0x01:0x07
+F:2:all:0x01:0x07
 
 
 # Magma (slate / solid block)
 
-F:50:0x02:0x03
+F:50:all:0x02:0x03
 
 
 # Quartz (light slate / solid block)
 
-F:51:0x09:0x03
+F:51:all:0x09:0x03
 
 
 # Granite walls & permanent rock (white / solid block)
 
 # granite wall
-F:56:0x01:0x02
+F:56:all:0x01:0x02
 
 # permanent wall
-F:60:0x01:0x01
+F:60:all:0x01:0x01
 
 # Water (blue / centered blob)
 
-F:113:0x06:0x09
+F:113:all:0x06:0x09
 
 # Grass (green / centered dot)
 
-F:116:0x05:0x08
+F:116:all:0x05:0x08
 
 # Invis grass traps (green / centered dot)
 
-F:117:0x05:0x08
+F:117:all:0x05:0x08
 
 

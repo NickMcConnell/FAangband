@@ -265,12 +265,17 @@ void reset_visuals(bool load_prefs)
 
 
     /* Extract default attr/char code for features */
-    for (i = 0; i < z_info->f_max; i++) {
+    for (i = 0; i < z_info->f_max; i++)
+    {
+	int j;
 	feature_type *f_ptr = &f_info[i];
-
+	
 	/* Assume we will use the underlying values */
-	f_ptr->x_attr = f_ptr->d_attr;
-	f_ptr->x_char = f_ptr->d_char;
+	for (j = 0; j < FEAT_LIGHTING_MAX; j++)
+	{
+	    f_ptr->x_attr[j] = f_ptr->d_attr;
+	    f_ptr->x_char[j] = f_ptr->d_char;
+	}
     }
 
     /* Extract default attr/char code for objects */
@@ -314,13 +319,13 @@ void reset_visuals(bool load_prefs)
     /* Graphic symbols */
     if (use_graphics) {
 	/* Process "graf.prf" */
-	process_pref_file("graf.prf", FALSE);
+	process_pref_file("graf.prf", FALSE, FALSE);
     }
 
     /* Normal symbols */
     else {
 	/* Process "font.prf" */
-	process_pref_file("font.prf", FALSE);
+	process_pref_file("font.prf", FALSE, FALSE);
     }
 
 #ifdef ALLOW_BORG_GRAPHICS

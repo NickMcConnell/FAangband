@@ -2203,25 +2203,25 @@ static void process_some_user_pref_files(void)
     char buf[128];
 
     /* Process the "user.prf" file */
-    (void) process_pref_file("user.prf", TRUE);
+    (void) process_pref_file("user.prf", TRUE, TRUE);
 
     /* Access the "race" pref file */
     sprintf(buf, "%s.prf", rp_ptr->name);
 
     /* Process that file */
-    process_pref_file(buf, TRUE);
+    process_pref_file(buf, TRUE, TRUE);
 
     /* Access the "class" pref file */
     sprintf(buf, "%s.prf", cp_ptr->name);
 
     /* Process that file */
-    process_pref_file(buf, TRUE);
+    process_pref_file(buf, TRUE, TRUE);
 
     /* Process the "PLAYER.prf" file */
     sprintf(buf, "%s.prf", op_ptr->base_name);
 
     /* Process the "PLAYER.prf" file */
-    (void) process_pref_file(buf, TRUE);
+    (void) process_pref_file(buf, TRUE, TRUE);
 }
 
 /**
@@ -2352,7 +2352,7 @@ void play_game(void)
 	p_ptr->depth = stage_map[p_ptr->stage][DEPTH];
 
 	/* Read the default options */
-	process_pref_file("birth.prf", TRUE);
+	process_pref_file("birth.prf", TRUE, TRUE);
 
     }
 
