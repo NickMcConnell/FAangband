@@ -24,7 +24,7 @@
 #include "cave.h"
 #include "generate.h"
 #include "monster.h"
-
+#include "trap.h"
 
 
 /*
@@ -429,7 +429,7 @@ static void clear_cave(void)
 
 	wipe_o_list();
 	wipe_m_list();
-
+	wipe_trap_list();
 	/* Clear flags and flow information. */
 	for (y = 0; y < DUNGEON_HGT; y++)
 	{
