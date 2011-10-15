@@ -153,8 +153,6 @@ extern byte (*cave_feat)[DUNGEON_WID];
 extern s16b (*cave_o_idx)[DUNGEON_WID];
 extern s16b (*cave_m_idx)[DUNGEON_WID];
 
-#ifdef MONSTER_FLOW
-
 extern byte (*cave_cost)[DUNGEON_WID];
 extern byte (*cave_when)[DUNGEON_WID];
 extern int scent_when;
@@ -163,8 +161,6 @@ extern int flow_center_x;
 extern int update_center_y;
 extern int update_center_x;
 extern int cost_at_center;
-
-#endif
 
 extern maxima *z_info;
 extern trap_type *trap_list;

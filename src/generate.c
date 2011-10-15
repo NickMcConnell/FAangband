@@ -509,11 +509,9 @@ void generate_cave(void)
 		/* No flags */
 		cave_wipe(cave_info[y][x]);
 
-#ifdef MONSTER_FLOW
 		/* No flow */
 		cave_cost[y][x] = 0;
 		cave_when[y][x] = 0;
-#endif				/* MONSTER_FLOW */
 
 	    }
 	}

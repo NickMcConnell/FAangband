@@ -81,29 +81,6 @@
 
 
 /*
- * OPTION: for the AFS distributed file system, define this to ensure that
- * the program is secure with respect to the setuid code.  This option has
- * not been tested (to the best of my knowledge).  This option may require
- * some weird tricks with "player_uid" and such involving "defines".
- * Note that this option used the AFS library routines Authenticate(),
- * bePlayer(), beGames() to enforce the proper priviledges.
- * You may need to turn "SAFE_SETUID" off to use this option.
- */
-/* #define SECURE */
-
-
-
-
-/*
- * OPTION: Verify savefile Checksums (Angband 2.7.0 and up)
- * This option can help prevent "corruption" of savefiles, and also
- * stop intentional modification by amateur users.
- */
-#define VERIFY_CHECKSUMS
-
-
-
-/*
  * OPTION: Hack -- Compile in support for "Borg mode"
  */
 /* #define ALLOW_BORG */
@@ -130,12 +107,6 @@
 #define ALLOW_VISUALS
 
 /*
- * OPTION: Allow "do_cmd_macros" at run-time
- */
-#define ALLOW_MACROS
-
-
-/*
  * OPTION: Allow characters to be "auto-rolled"
  */
 #define ALLOW_AUTOROLLER
@@ -147,42 +118,6 @@
  * It should be usually be defined anyway to allow easy "updating".
  */
 #define ALLOW_TEMPLATES
-
-/*
- * OPTION: Delay the loading of the "f_text" array until it is actually
- * needed, saving ~1K, since "feature" descriptions are unused.
- */
-#define DELAY_LOAD_F_TEXT
-
-/*
- * OPTION: Delay the loading of the "k_text" array until it is actually
- * needed, saving ?K, but slowing down the display of object descriptions.
- */
-/* #define DELAY_LOAD_K_TEXT */
-
-/*
- * OPTION: Delay the loading of the "a_text" array until it is actually
- * needed, saving ?K, but slowing down the display of artifact descriptions.
- */
-/* #define DELAY_LOAD_A_TEXT */
-
-/*
- * OPTION: Delay the loading of the "e_text" array until it is actually
- * needed, saving ?K, but slowing down the display of ego-item descriptions.
- */
-/* #define DELAY_LOAD_E_TEXT */
-
-/*
- * OPTION: Delay the loading of the "r_text" array until it is actually
- * needed, saving ~60K, but "simplifying" the "monster" descriptions.
- */
-/* #define DELAY_LOAD_R_TEXT */
-
-/*
- * OPTION: Delay the loading of the "v_text" array until it is actually
- * needed, saving ~1K, but "destroying" the "vault" generation.
- */
-/* #define DELAY_LOAD_V_TEXT */
 
 /*
  * OPTION: Do not generate themed levels. -LM-
@@ -211,14 +146,6 @@
  */
 /* #define SCORE_CHEATERS */
 
-
-
-/*
- * OPTION: Allow monsters to use noise and scent information to better 
- * track the character.  This feature requires a significant amount of 
- * memory.
- */
-#define MONSTER_FLOW
 
 
 /*
@@ -375,11 +302,6 @@
 #if defined(MACINTOSH) || defined(WINDOWS) || defined(AMIGA)
 # define SAVEFILE_MUTABLE
 #endif
-
-/*
- * OPTION: Check the "time" against "lib/file/hours.txt"
- */
-/* #define CHECK_TIME */
 
 /*
  * OPTION: Capitalize the "user_name" (for "default" player name)

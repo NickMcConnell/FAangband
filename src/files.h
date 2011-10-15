@@ -7,8 +7,6 @@ extern void html_screenshot(const char *name, int mode);
 extern void safe_setuid_drop(void);
 extern void safe_setuid_grab(void);
 extern s16b tokenize(char *buf, s16b num, char **tokens);
-extern errr check_time(void);
-extern errr check_time_init(void);
 extern void display_player(int mode);
 extern void display_player_sml(void);
 extern int make_dump(char_attr_line *line, int mode);

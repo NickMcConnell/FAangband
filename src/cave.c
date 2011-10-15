@@ -3184,7 +3184,6 @@ void update_view(void)
  */
 void update_noise(void)
 {
-#ifdef MONSTER_FLOW
     int cost;
     int route_distance = 0;
 
@@ -3452,8 +3451,6 @@ void update_noise(void)
 	    next_cycle = 1;
 	}
     }
-
-#endif
 }
 
 
@@ -3475,8 +3472,6 @@ void update_noise(void)
  */
 void update_smell(void)
 {
-#ifdef MONSTER_FLOW
-
     int i, j;
     int y, x;
 
@@ -3552,8 +3547,6 @@ void update_smell(void)
 	    cave_when[y][x] = scent_when + scent_adjust[i][j];
 	}
     }
-
-#endif
 }
 
 /**

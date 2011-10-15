@@ -544,9 +544,6 @@ s16b (*cave_o_idx)[DUNGEON_WID];
  */
 s16b (*cave_m_idx)[DUNGEON_WID];
 
-
-#ifdef MONSTER_FLOW
-
 /**
  * Array[DUNGEON_HGT][DUNGEON_WID] of cave grid flow "cost" values
  * Used to simulate character noise.
@@ -578,7 +575,6 @@ int update_center_x;
  */
 int cost_at_center = 0;
 
-#endif	/* MONSTER_FLOW */
 
 /**
  * Array[z_info->l_max] of traps
