@@ -24,5 +24,6 @@ extern bool py_modify_trap(int y, int x);
 bool get_trap(int y, int x, int *idx);
 bool remove_trap(int y, int x, bool msg, int t_idx);
 void remove_trap_kind(int y, int x, bool msg, int t_idx);
+void wipe_trap_list(void);
 
 #endif /* !TRAP_H */
