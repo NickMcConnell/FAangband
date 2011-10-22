@@ -2056,10 +2056,10 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
 
 	/* Choose a race */
 	else {
-	    k = randint0(race_prob[p_ptr->stage][z_info->p_max - 1]);
+	    k = randint0(race_prob[z_info->p_max - 1][p_ptr->stage]);
 
 	    for (i = 0; i < z_info->p_max; i++)
-		if (race_prob[p_ptr->stage][i] > k) {
+		if (race_prob[i][p_ptr->stage] > k) {
 		    n_ptr->p_race = i;
 		    break;
 		}

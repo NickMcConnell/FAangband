@@ -3932,11 +3932,10 @@ bool make_attack_ranged(monster_type * m_ptr, int attack)
 	    } else {
 		/* If the old monster wasn't racial, we need a race */
 		if (!(rf_has(r_ptr->flags, RF_RACIAL))) {
-		    temp = randint0(race_prob[p_ptr->stage]
-				    [z_info->p_max - 1]);
+		    temp = randint0(race_prob[z_info->p_max - 1][p_ptr->stage]);
 
 		    for (k = 0; k < z_info->p_max; k++)
-			if (race_prob[p_ptr->stage][k] > temp) {
+			if (race_prob[k][p_ptr->stage] > temp) {
 			    m_ptr->p_race = k;
 			    break;
 			}

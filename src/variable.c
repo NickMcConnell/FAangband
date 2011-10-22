@@ -505,6 +505,9 @@ u16b (*temp_path)[NUM_STAGES];
  */
 u16b (*race_prob)[NUM_STAGES];
 
+/* Dummy array */
+byte *dummy;
+
 /**
  * Array[DUNGEON_HGT][256] of cave grid info flags (padded)
  *

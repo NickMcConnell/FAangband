@@ -1262,11 +1262,11 @@ bool chaotic_effects(monster_type * m_ptr)
 		} else {
 		    /* If the old monster wasn't racial, we need a race */
 		    if (!(rf_has(r_ptr->flags, RF_RACIAL))) {
-			k = randint0(race_prob[p_ptr->stage]
-				     [z_info->p_max - 1]);
+			k = randint0(race_prob[z_info->p_max - 1]
+				     [p_ptr->stage]);
 
 			for (i = 0; i < z_info->p_max; i++)
-			    if (race_prob[p_ptr->stage][i] > k) {
+			    if (race_prob[i][p_ptr->stage] > k) {
 				m_ptr->p_race = i;
 				break;
 			    }
@@ -5622,10 +5622,10 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	    } else {
 		/* If the old monster wasn't racial, we need a race */
 		if (!(rf_has(r_ptr->flags, RF_RACIAL))) {
-		    k = randint0(race_prob[p_ptr->stage][z_info->p_max - 1]);
+		    k = randint0(race_prob[z_info->p_max - 1][p_ptr->stage]);
 
 		    for (i = 0; i < z_info->p_max; i++)
-			if (race_prob[p_ptr->stage][i] > k) {
+			if (race_prob[i][p_ptr->stage] > k) {
 			    m_ptr->p_race = i;
 			    break;
 			}
