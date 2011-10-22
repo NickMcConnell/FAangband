@@ -1928,8 +1928,11 @@ bool mtrap_action(menu_type *menu, const ui_event *db, int oid)
 
     int idx = choice[oid];
 
+    /* Get the old trap */
+    int old_trap = monster_trap_idx(mtrap_y, mtrap_x);
+
     /* Remove the old trap */
-    remove_trap(mtrap_y, mtrap_x, FALSE, MTRAP_BASE);
+    remove_trap(mtrap_y, mtrap_x, FALSE, old_trap);
 
     /* Place the new trap */
     place_trap(mtrap_y, mtrap_x, MTRAP_BASE + 1 + idx, 0);
@@ -2094,6 +2097,7 @@ static void remove_trap_aux(trap_type *t_ptr, int y, int x, bool domsg)
 	num_trap_on_level--;
     
     /* Wipe the trap */
+    cave_off(cave_info[y][x], CAVE_TRAP);
     (void)WIPE(t_ptr, trap_type);
 }
 
