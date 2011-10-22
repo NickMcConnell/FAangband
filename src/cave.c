@@ -2627,14 +2627,8 @@ errr vinfo_init(void)
     while (queue_head < queue_tail) {
 	int e;
 
-	vinfo_type *p;
-
-
 	/* Index */
-	e = queue_head;
-
-	/* Dequeue next grid */
-	p = queue[queue_head++];
+	e = queue_head++;
 
 	/* Main Grid */
 	g = vinfo[e].grid_0;

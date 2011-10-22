@@ -294,7 +294,7 @@ static bool try_save(ang_file *file)
 static bool try_load(ang_file *file)
 {
     byte savefile_head[SAVEFILE_HEAD_SIZE];
-    u32b block_version, block_size, block_checksum;
+    u32b block_version, block_size;
 
     while (TRUE)
     {
@@ -336,12 +336,6 @@ static bool try_load(ang_file *file)
 	    ((u32b) savefile_head[22] << 16) |
 	    ((u32b) savefile_head[23] << 24);
 
-	/* 4-byte block checksum */
-	block_checksum = ((u32b) savefile_head[24]) |
-	    ((u32b) savefile_head[25] << 8) |
-	    ((u32b) savefile_head[26] << 16) |
-	    ((u32b) savefile_head[27] << 24);
-
 	/* pad to 4 bytes */
 	if (block_size % 4)
 	    block_size += 4 - (block_size % 4);
@@ -359,7 +353,6 @@ static bool try_load(ang_file *file)
 	if (savefile_blocks[i].loader(block_version))
 	    return -1;
 
-/*		assert(buffer_check == block_checksum); */
 	mem_free(buffer);
     }
 

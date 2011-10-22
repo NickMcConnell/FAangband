@@ -265,17 +265,6 @@ static void do_cmd_options_win(const char *name, int row)
     ui_event ke;
 
     u32b new_flags[ANGBAND_TERM_MAX];
-
-
-    u32b old_flag[ANGBAND_TERM_MAX];
-  
-  
-    /* Memorize old flags */
-    for (j = 0; j < ANGBAND_TERM_MAX; j++)
-    {
-	old_flag[j] = op_ptr->window_flag[j];
-    }
-  
   
     /* Set new flags to the old values */
     for (j = 0; j < ANGBAND_TERM_MAX; j++)
@@ -409,31 +398,7 @@ static void do_cmd_options_win(const char *name, int row)
 	    bell("Illegal command for window options!");
 	}
     }
-#if 0
-    /* Notice changes */
-    for (j = 0; j < ANGBAND_TERM_MAX; j++)
-    {
-	term *old = Term;
-      
-	/* Dead window */
-	if (!angband_term[j]) continue;
-      
-	/* Ignore non-changes */
-	if (op_ptr->window_flag[j] == old_flag[j]) continue;
-      
-	/* Activate */
-	Term_activate(angband_term[j]);
-      
-	/* Erase */
-	Term_clear();
-      
-	/* Refresh */
-	Term_fresh();
-      
-	/* Restore */
-	Term_activate(old);
-    }
-#endif
+
     /* Notice changes */
     subwindows_set_flags(new_flags, ANGBAND_TERM_MAX);
 
@@ -1523,7 +1488,6 @@ static void ego_display(menu_type *menu, int oid, bool cursor, int row,
 			 int col, int width)
 {
   char buf[80] = "";
-  int length;
   ego_desc *choice = (ego_desc *)menu->menu_data;
   ego_item_type *e_ptr = &e_info[choice[oid].e_idx];
 
@@ -1531,7 +1495,7 @@ static void ego_display(menu_type *menu, int oid, bool cursor, int row,
   byte sq_attr = (e_ptr->squelch ? TERM_L_RED : TERM_L_GREEN);
   
   /* Acquire the "name" of object "i" */
-  length = ego_item_name(buf, sizeof(buf), &choice[oid]);
+  (void) ego_item_name(buf, sizeof(buf), &choice[oid]);
   
   /* Print it */
   c_put_str(attr, format("%s", buf), row, col);
@@ -1574,7 +1538,6 @@ static void ego_menu(const char *unused, int also_unused)
   menu_type menu;
   menu_iter menu_f = { 0, 0, ego_display, ego_action, 0 };
   region area = { 1, 3, -1, -1 };
-  ui_event evt = { 0 };
   int cursor = 0;
   
   int i;
@@ -1657,7 +1620,7 @@ static void ego_menu(const char *unused, int also_unused)
   menu_layout(&menu, &area);
   
   /* Select an entry */
-  evt = menu_select(&menu, cursor, FALSE);
+  (void) menu_select(&menu, cursor, FALSE);
   
   /* Free memory */
   FREE(choice);
@@ -1723,12 +1686,10 @@ static bool quality_action(menu_type *menu1, const ui_event *ev, int oid)
     menu_iter menu_f = { 0, 0, quality_subdisplay, 0, 0 };
     region area = { 24, 1, 44, SQUELCH_MAX };
     ui_event evt;
-    int cursor;
     int count;
   
     /* Display at the right point */
     area.row += oid;
-    cursor = squelch_level[oid];
   
     /* Save */
     screen_save();

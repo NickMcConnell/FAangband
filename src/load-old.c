@@ -491,18 +491,10 @@ static errr rd_savefile_new_aux(void)
     /* Read the available records */
     for (i = 0; i < tmp16u; i++)
     {
-	monster_race *r_ptr;
-	monster_lore *l_ptr;
-      
 	j = i;
       
 	/* Read the lore */
 	rd_lore(j);
-      
-	/* Access that monster */
-	r_ptr = &r_info[j];
-	l_ptr = &l_list[j];
-      
     }
   
     /* Object Memory */

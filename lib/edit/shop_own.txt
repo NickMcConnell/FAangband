@@ -26,302 +26,302 @@ V:1.1.6
 
 
 # General Store
-N:0:0:Rincewind the Chicken
+N:0:Rincewind the Chicken
 I:0:300:140
-N:0:1:Ella the Quiet
+N:1:Ella the Quiet
 I:1:300:135
-N:0:2:Lyar-el the Comely
+N:2:Lyar-el the Comely
 I:2:300:145
-N:0:3:Haldro the Friendly
+N:3:Haldro the Friendly
 I:3:350:135
-N:0:4:Snafu the Midget
+N:4:Snafu the Midget
 I:4:450:150
-N:0:5:Bezel Broadbeam
+N:5:Bezel Broadbeam
 I:5:400:145
-N:0:6:Gorgrund the Haggler
+N:6:Gorgrund the Haggler
 I:6:200:160
-N:0:7:Falin of ZirakZigil
+N:7:Falin of ZirakZigil
 I:7:300:155
-N:0:8:Dorlas the Craven
+N:8:Dorlas the Craven
 I:8:250:165
-N:0:9:Eldalin of the Swallow
+N:9:Eldalin of the Swallow
 I:9:350:145
-N:0:10:Esto, servant of Aul["e]
+N:10:Esto, servant of Aul["e]
 I:10:450:135
-N:0:11:Anw["e] the Cautious
+N:11:Anw["e] the Cautious
 I:11:200:150
-N:0:12:Quickbeam the Gentle
+N:12:Quickbeam the Gentle
 I:12:450:140
-N:0:13:Bruna of Carrock
+N:13:Bruna of Carrock
 I:13:350:150
 
 # Armoury
-N:1:0:Darg-Low the Grim
+N:0:Darg-Low the Grim
 I:0:10000:160
-N:1:1:Ambol of Legolin
+N:1:Ambol of Legolin
 I:1:20000:170
-N:1:2:Ella the Dextrous
+N:2:Ella the Dextrous
 I:2:25000:165
-N:1:3:['E]agol the Stoor
+N:3:['E]agol the Stoor
 I:3:5000:180
-N:1:4:Am[^u]n the Cunning
+N:4:Am[^u]n the Cunning
 I:4:10000:175
-N:1:5:Mauglin the Grumpy
+N:5:Mauglin the Grumpy
 I:5:30000:175
-N:1:6:Kon-Dar the Ugly
+N:6:Kon-Dar the Ugly
 I:6:5000:180
-N:1:7:Alebeard the Tipsy
+N:7:Alebeard the Tipsy
 I:7:15000:150
-N:1:8:Decado the Handsome
+N:8:Decado the Handsome
 I:8:25000:160
-N:1:9:Mardil of the Harp
+N:9:Mardil of the Harp
 I:9:30000:155
-N:1:10:Alavella Iron-Lady
+N:10:Alavella Iron-Lady
 I:10:20000:165
-N:1:11:Vivirion True-Forger
+N:11:Vivirion True-Forger
 I:11:15000:160
-N:1:12:Ironbark of Arvernien
+N:12:Ironbark of Arvernien
 I:12:25000:150
-N:1:13:Rognor the Woodsman
+N:13:Rognor the Woodsman
 I:13:20000:175
 
 # Weapon Smith
-N:2:0:William Wrathful
+N:0:William Wrathful
 I:0:7500:135
-N:2:1:Jarl the Generous
+N:1:Jarl the Generous
 I:1:20000:120
-N:2:2:Arndal the Staunch
+N:2:Arndal the Staunch
 I:2:15000:140
-N:2:3:Tarl Stronginthearm
+N:3:Tarl Stronginthearm
 I:3:25000:140
-N:2:4:Y[^i]n the Brave
+N:4:Y[^i]n the Brave
 I:4:15000:135
-N:2:5:Oglign Dragon-Slayer
+N:5:Oglign Dragon-Slayer
 I:5:30000:130
-N:2:6:Stor the Steadfast
+N:6:Stor the Steadfast
 I:6:30000:135
-N:2:7:Borin the Grasping
+N:7:Borin the Grasping
 I:7:5000:150
-N:2:8:Alach of Dor-L['o]min
+N:8:Alach of Dor-L['o]min
 I:8:15000:140
-N:2:9:Shrada of the Golden Flower
+N:9:Shrada of the Golden Flower
 I:9:25000:145
-N:2:10:Elw["e] the Redeemed
+N:10:Elw["e] the Redeemed
 I:10:20000:150
-N:2:11:Silence the Stealthy
+N:11:Silence the Stealthy
 I:11:10000:125
-N:2:12:Borobab the Solid
+N:12:Borobab the Solid
 I:12:10000:140
-N:2:13:Bearclaw the Fierce
+N:13:Bearclaw the Fierce
 I:13:5000:145
 
 
 # Temple
-N:3:0:Gunnar the Paladin
+N:0:Gunnar the Paladin
 I:0:10000:150
-N:3:1:Delilah the Pure
+N:1:Delilah the Pure
 I:1:25000:140
-N:3:2:Saeros the Sarcastic
+N:2:Saeros the Sarcastic
 I:2:5000:155
-N:3:3:Folco Harfoot
+N:3:Folco Harfoot
 I:3:30000:130
-N:3:4:Arbot the Small
+N:4:Arbot the Small
 I:4:20000:140
-N:3:5:Bosk the Wise
+N:5:Bosk the Wise
 I:5:30000:135
-N:3:6:Aghan the Faithful
+N:6:Aghan the Faithful
 I:6:25000:140
-N:3:7:Grundalo the Humble
+N:7:Grundalo the Humble
 I:7:5000:125
-N:3:8:Andor of Teiglin
+N:8:Andor of Teiglin
 I:8:15000:145
-N:3:9:Egaldor of the Heavenly Arch
+N:9:Egaldor of the Heavenly Arch
 I:9:20000:140
-N:3:10:Orin, servant of Manw["e]
+N:10:Orin, servant of Manw["e]
 I:10:10000:140
-N:3:11:Irivin the Kind
+N:11:Irivin the Kind
 I:11:20000:130
-N:3:12:Beechnut the White
+N:12:Beechnut the White
 I:12:25000:135
-N:3:13:Cuddle the Victorious
+N:13:Cuddle the Victorious
 I:13:15000:130
 
 # Alchemist
-N:4:0:Mauser the Chemist
+N:0:Mauser the Chemist
 I:0:10000:150
-N:4:1:Vella the Slender
+N:1:Vella the Slender
 I:1:10000:165
-N:4:2:Dilon of Region
+N:2:Dilon of Region
 I:2:7500:160
-N:4:3:Wizzle the Chaotic
+N:3:Wizzle the Chaotic
 I:3:7500:155
-N:4:4:Ga-nat the Greedy
+N:4:Ga-nat the Greedy
 I:4:15000:170
-N:4:5:Oroglad the Thaumaturge
+N:5:Oroglad the Thaumaturge
 I:5:15000:160
-N:4:6:Sopor the Druid
+N:6:Sopor the Druid
 I:6:12500:150
-N:4:7:Tarin the Mystic
+N:7:Tarin the Mystic
 I:7:10000:165
-N:4:8:Arawen son of Aranor
+N:8:Arawen son of Aranor
 I:8:15000:140
-N:4:9:Belegon of the Tree
+N:9:Belegon of the Tree
 I:9:12500:145
-N:4:10:Oro, servant of Est["e]
+N:10:Oro, servant of Est["e]
 I:10:7500:150
-N:4:11:Ingwil of Cuivi['e]nen
+N:11:Ingwil of Cuivi['e]nen
 I:11:15000:150
-N:4:12:Fieriel of Fangorn
+N:12:Fieriel of Fangorn
 I:12:12500:140
-N:4:13:Sevestor the Silent
+N:13:Sevestor the Silent
 I:13:12500:145
 
 # Magic Shop
-N:5:0:Murid the Skinflint
+N:0:Murid the Skinflint
 I:0:10000:160
-N:5:1:Ariel the Sorceress
+N:1:Ariel the Sorceress
 I:1:20000:155
-N:5:2:Inglorian the Mage
+N:2:Inglorian the Mage
 I:2:30000:150
-N:5:3:Aradoc of the Anduin
+N:3:Aradoc of the Anduin
 I:3:25000:140
-N:5:4:Buggerby the Great
+N:4:Buggerby the Great
 I:4:20000:165
-N:5:5:Arin Firebeard
+N:5:Arin Firebeard
 I:5:20000:135
-N:5:6:['U]ghu the Conjurer
+N:6:['U]ghu the Conjurer
 I:6:30000:140
-N:5:7:Pagin Silverbeard
+N:7:Pagin Silverbeard
 I:7:10000:140
-N:5:8:Allach of Brethil
+N:8:Allach of Brethil
 I:8:25000:155
-N:5:9:Ariengil of the Pillar
+N:9:Ariengil of the Pillar
 I:9:30000:140
-N:5:10:Avarin of Valinor
+N:10:Avarin of Valinor
 I:10:17500:150
-N:5:11:Barinel of the East
+N:11:Barinel of the East
 I:11:20000:140
-N:5:12:Oakblood the Old
+N:12:Oakblood the Old
 I:12:10000:145
-N:5:13:Yeovil the Skinchanger
+N:13:Yeovil the Skinchanger
 I:13:17500:145
 
 # Black Market
-N:6:0:Tancred of the Axe
+N:0:Tancred of the Axe
 I:0:25000:350
-N:6:1:Ravil of Thalos
+N:1:Ravil of Thalos
 I:1:30000:340
-N:6:2:Drago the Fair
+N:2:Drago the Fair
 I:2:30000:330
-N:6:3:Grollo Marshdweller
+N:3:Grollo Marshdweller
 I:3:20000:340
-N:6:4:Neo the Twisted
+N:4:Neo the Twisted
 I:4:27500:360
-N:6:5:Ara Blacklock
+N:5:Ara Blacklock
 I:5:30000:330
-N:6:6:Histor the Stumpy
+N:6:Histor the Stumpy
 I:6:20000:345
-N:6:7:Murin the Dark
+N:7:Murin the Dark
 I:7:30000:350
-N:6:8:Durwin the Shifty
+N:8:Durwin the Shifty
 I:8:30000:335
-N:6:9:Muril of the Mole
+N:9:Muril of the Mole
 I:9:25000:320
-N:6:10:Halar the Dubious
+N:10:Halar the Dubious
 I:10:30000:335
-N:6:11:Arvin the Shady
+N:11:Arvin the Shady
 I:11:22500:345
-N:6:12:Darkheart the Huorn
+N:12:Darkheart the Huorn
 I:12:27500:330
-N:6:13:Lo-Hak the Awful
+N:13:Lo-Hak the Awful
 I:13:20000:340
 
 # Home
-N:7:0:Your home
+N:0:Your home
 I:99:0:100
-N:7:1:Your home
+N:1:Your home
 I:99:0:100
-N:7:2:Your home
+N:2:Your home
 I:99:0:100
-N:7:3:Your home
+N:3:Your home
 I:99:0:100
-N:7:4:Your home
+N:4:Your home
 I:99:0:100
-N:7:5:Your home
+N:5:Your home
 I:99:0:100
-N:7:6:Your home
+N:6:Your home
 I:99:0:100
-N:7:7:Your home
+N:7:Your home
 I:99:0:100
-N:7:8:Your home
+N:8:Your home
 I:99:0:100
-N:7:9:Your home
+N:9:Your home
 I:99:0:100
-N:7:10:Your home
+N:10:Your home
 I:99:0:100
-N:7:11:Your home
+N:11:Your home
 I:99:0:100
-N:7:12:Your home
+N:12:Your home
 I:99:0:100
-N:7:13:Your home
+N:13:Your home
 I:99:0:100
 
 # Bookseller
-N:8:0:Borfang the Learned
+N:0:Borfang the Learned
 I:0:15000:120
-N:8:1:Marw["e] of Tol Galen
+N:1:Marw["e] of Tol Galen
 I:1:12500:110
-N:8:2:Nastra the Dusty
+N:2:Nastra the Dusty
 I:2:10000:115
-N:8:3:Bilbo the Tome-master
+N:3:Bilbo the Tome-master
 I:3:20000:130
-N:8:4:Gabberam the Sage
+N:4:Gabberam the Sage
 I:4:20000:125
-N:8:5:Arlin Stiffbeard
+N:5:Arlin Stiffbeard
 I:5:30000:135
-N:8:6:Olin the Librarian
+N:6:Olin the Librarian
 I:6:20000:120
-N:8:7:Lavin Stonedweller
+N:7:Lavin Stonedweller
 I:7:25000:115
-N:8:8:Silmarien the Joyous
+N:8:Silmarien the Joyous
 I:8:25000:120
-N:8:9:Hastiel the Encyclopedist
+N:9:Hastiel the Encyclopedist
 I:9:30000:135
-N:8:10:Vara, servant of Vair["e]
+N:10:Vara, servant of Vair["e]
 I:10:10000:110
-N:8:11:Eril the Ancient
+N:11:Eril the Ancient
 I:11:20000:125
-N:8:12:Skinbark of Dorthonion
+N:12:Skinbark of Dorthonion
 I:12:15000:130
-N:8:13:Targor Pagemaster
+N:13:Targor Pagemaster
 I:13:12500:115
 
 # Travelling Merchant
-N:9:0:Sandor the Pedlar
+N:0:Sandor the Pedlar
 I:0:25000:340
-N:9:1:Erdil the Traveller
+N:1:Erdil the Traveller
 I:1:30000:330
-N:9:2:Damleg the Grey
+N:2:Damleg the Grey
 I:2:30000:330
-N:9:3:Bongo the Wanderer
+N:3:Bongo the Wanderer
 I:3:20000:335
-N:9:4:Ild son of Gild
+N:4:Ild son of Gild
 I:4:27500:345
-N:9:5:Volin Stonefoot
+N:5:Volin Stonefoot
 I:5:30000:345
-N:9:6:Gald of the Woods
+N:6:Gald of the Woods
 I:6:20000:330
-N:9:7:Gilette the Lawful
+N:7:Gilette the Lawful
 I:7:30000:335
-N:9:8:Bella the Merchant
+N:8:Bella the Merchant
 I:8:30000:350
-N:9:9:Erdan of the Harp
+N:9:Erdan of the Harp
 I:9:25000:340
-N:9:10:Yrin the Student
+N:10:Yrin the Student
 I:10:30000:345
-N:9:11:Tervin of Arda
+N:11:Tervin of Arda
 I:11:22500:335
-N:9:12:Fairleaf of Neldoreth
+N:12:Fairleaf of Neldoreth
 I:12:27500:340
-N:9:13:Bergin of Hithaeglir
+N:13:Bergin of Hithaeglir
 I:13:20000:330

@@ -289,7 +289,7 @@ static void show_obj_list(int num_obj, u32b display, olist_detail_t mode)
 {
     int i, row = 0, col = 0, sp = 0;
     size_t max_len = Term->wid - 1;
-    int ex_width = 0, ex_offset;
+    int ex_width = 0;
 
     object_type *o_ptr;
     char tmp_val[80];
@@ -337,9 +337,6 @@ static void show_obj_list(int num_obj, u32b display, olist_detail_t mode)
 	if (col < 3)
 	    col = 0;
     }
-
-    /* Column offset of the first extra field */
-    ex_offset = MIN(max_len, (size_t) (Term->wid - 1 - ex_width - col));
 
     /* Output the list */
     for (i = 0; i < num_obj; i++) 

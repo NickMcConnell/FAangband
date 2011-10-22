@@ -344,7 +344,6 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
     s32b gold;
 
     object_type *o_ptr;
-    object_kind *k_ptr;
     feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
     char o_name[120];
@@ -834,7 +833,6 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 
 		    /* Obtain the item */
 		    o_ptr = &p_ptr->inventory[i];
-		    k_ptr = &k_info[o_ptr->k_idx];
 
 		    /* use "tmp" to decide if a item can be uncharged.  By
 		     * default, assume it can't. */
@@ -1053,7 +1051,6 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 		     * timeouts or charges between those stolen and those
 		     * missed. -LM- */
 		    if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND)) {
-			k_ptr = &k_info[o_ptr->k_idx];
 			i_ptr->pval = o_ptr->pval / o_ptr->number;
 			o_ptr->pval -= i_ptr->pval;
 		    }

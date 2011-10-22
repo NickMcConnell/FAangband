@@ -2065,7 +2065,6 @@ static bool choose_type(object_type *o_ptr)
 	    case EGO_RING_SPEED:
 	      /* min potential  */
 	      {
-		int property;
 		int speed[1] = {SPEED};
 		int max_value = 14;
 
@@ -2073,7 +2072,7 @@ static bool choose_type(object_type *o_ptr)
 		if (potential < 3000) break;
 
 		/* SPEED! */
-		property = select_property(potential, speed, 1, &max_value,
+		(void) select_property(potential, speed, 1, &max_value,
 					   FIND_MAX_VALUE, o_ptr);
 
 		/* Either sacrifice for some other properties... */ 

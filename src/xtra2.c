@@ -57,13 +57,6 @@ bool word_recall(int v)
  */
 void check_experience(void)
 {
-    int i;
-
-
-    /* Note current level */
-    i = p_ptr->lev;
-
-
     /* Hack -- lower limit */
     if (p_ptr->exp < 0)
 	p_ptr->exp = 0;

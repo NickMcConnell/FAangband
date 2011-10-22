@@ -256,7 +256,6 @@ static void recharge_objects(void)
     bool charged = FALSE, discharged_stack;
 
     object_type *o_ptr;
-    object_kind *k_ptr;
 
     /*** Recharge equipment ***/
     for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
@@ -290,7 +289,6 @@ static void recharge_objects(void)
     for (i = 0; i < INVEN_PACK; i++)
     {
 	o_ptr = &p_ptr->inventory[i];
-	k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Skip non-objects */
 	if (!o_ptr->k_idx) continue;
@@ -437,7 +435,6 @@ static void process_world(void)
     int regen_amount, mana_regen_amount, chance;
     int plev = p_ptr->lev;
     object_type *o_ptr;
-    object_kind *k_ptr;
 
     bool was_ghost = FALSE;
 
@@ -1201,7 +1198,6 @@ static void process_world(void)
 
 	    /* Obtain the item */
 	    o_ptr = &p_ptr->inventory[i];
-	    k_ptr = &k_info[o_ptr->k_idx];
 
 	    /* Skip non-objects */
 	    if (!o_ptr->k_idx)
@@ -2238,8 +2234,6 @@ static void process_some_user_pref_files(void)
  */ 
 void play_game(void)
 {
-    bool existing_dead_save = FALSE;
-
     int i;
 
     /* Initialize */
@@ -2280,15 +2274,6 @@ void play_game(void)
 	    p_ptr->is_dead = FALSE;
 	    p_ptr->noscore |= NOSCORE_WIZARD;
 	}
-
-	else if (p_ptr->is_dead)
-	{
-	    existing_dead_save = TRUE;
-	}
-    }
-    else
-    {
-	existing_dead_save = TRUE;
     }
 
     /* No living character loaded */

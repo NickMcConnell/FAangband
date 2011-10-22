@@ -571,13 +571,11 @@ static const char *specialty_names[] = {
  */
 void display_player(int mode)
 {
-    int last_line = 0;
-
     /* Erase screen */
     clear_from(0);
 
     /* Make the array of lines */
-    last_line = make_dump(((mode == 0) ? pline0 : pline1), mode);
+    (void) make_dump(((mode == 0) ? pline0 : pline1), mode);
 
     /* Display the player */
     display_dump(((mode == 0) ? pline0 : pline1), 0, 25, 0);
@@ -2048,9 +2046,6 @@ bool show_file(const char *name, const char *what, int line, int mode)
     /* Sub-menu mouse position */
     int mouse[24];
 
-    /* Handle second half of screen */
-    bool line_finished = FALSE;
-
     /* mallocs */
     filename = malloc(MAX_BUF);
     path = malloc(MAX_BUF);
@@ -2261,16 +2256,8 @@ bool show_file(const char *name, const char *what, int line, int mode)
 	    /* Hack -- stop searching */
 	    find = NULL;
 
-	    /* Check if the line is finished */
-	    for (k = 0; k < 32; k++)
-		if (!buf[k])
-		    line_finished = TRUE;
-
 	    /* Dump the line */
 	    Term_putstr(0, i + 2, -1, TERM_WHITE, buf);
-
-	    /* Reset line */
-	    line_finished = FALSE;
 
 	    /* Hilight "shower" */
 	    if (shower[0]) {

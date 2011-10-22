@@ -3390,7 +3390,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     }
     case EF_ENLIST_EARTH:
     {
-	int m_idx, targ_y, targ_x, group;
+	int m_idx, targ_y, targ_x;
 	int targ = target_get_monster();
 
 	msg("You call on the Earth to bring forth allies!");
@@ -3405,7 +3405,6 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
 	targ_y = m_list[targ].fy;
 	targ_x = m_list[targ].fx;
-	group = m_list[targ].group;
 
 	/* Summon golems */
 	summon_specific(targ_y, targ_x, FALSE, p_ptr->depth, SUMMON_GOLEM);

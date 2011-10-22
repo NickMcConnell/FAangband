@@ -2823,7 +2823,7 @@ static void make_confused_move(monster_type * m_ptr, int y, int x)
     }
  
     /* Sometimes stun the monster, but only lightly */
-    if ((randint0(3) == 0) && (m_ptr->stunned < 5))
+    if (stun && (randint0(3) == 0) && (m_ptr->stunned < 5))
 	m_ptr->stunned += 3;
 
     /* Monster is frightened */

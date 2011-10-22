@@ -1960,10 +1960,8 @@ struct file_parser r_parser = {
 static enum parser_error parse_b_n(struct parser *p) {
     struct owner_type *h = parser_priv(p);
     struct owner_type *b = mem_alloc(sizeof *b);
-    int i;
     memset(b, 0, sizeof(*b));
     b->next = h;
-    i = parser_getuint(p, "shop");
     b->bidx = parser_getuint(p, "index");
     b->owner_name = string_make(parser_getstr(p, "name"));
     parser_setpriv(p, b);
@@ -1986,7 +1984,7 @@ struct parser *init_parse_b(void) {
     parser_setpriv(p, NULL);
 
     parser_reg(p, "V sym version", ignored);
-    parser_reg(p, "N uint shop uint index str name", parse_b_n);
+    parser_reg(p, "N uint index str name", parse_b_n);
     parser_reg(p, "I int race int gld int inf", parse_b_i);
     return p;
 }

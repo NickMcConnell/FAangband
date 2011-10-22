@@ -2265,7 +2265,6 @@ static bool order_menu(int tval, const char *desc)
     menu_type menu;
     menu_iter menu_f = { 0, 0, order_item_display, order_item_action, 0 };
     region area = { 1, 5, -1, -1 };
-    ui_event evt = { 0 };
     int cursor = 0;
 
     int num = 0;
@@ -2350,8 +2349,7 @@ static bool order_menu(int tval, const char *desc)
     menu_layout(&menu, &area);
 
     /* Select an entry */
-    //while (evt.type != EVT_ESCAPE)
-    evt = menu_select(&menu, cursor, FALSE);
+    (void) menu_select(&menu, cursor, FALSE);
 
     /* Free memory */
     FREE(choice);

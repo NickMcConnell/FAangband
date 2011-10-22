@@ -98,7 +98,7 @@ static void fill_terrain_info(void)
 
 bool findpath(int y, int x)
 {
-    int i, j, k, dir, starty = 0, startx = 0, startdir, start_index;
+    int i, j, k, dir, starty = 0, startx = 0, start_index;
     bool try_again;
     int cur_distance;
     int findir[] = { 1, 4, 7, 8, 9, 6, 3, 2 };
@@ -213,7 +213,6 @@ bool findpath(int y, int x)
 	j += ddy[dir];
 	starty = 0;
 	startx = 0;
-	startdir = 0;
     }
     pf_result_index--;
     return (TRUE);

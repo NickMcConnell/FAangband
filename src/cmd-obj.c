@@ -338,7 +338,7 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
     bool ident = FALSE, used = FALSE;
     bool was_aware = object_aware_p(o_ptr);
     int dir = 5;
-    int snd, level;
+    int snd;
     use_type use;
     int items_allowed = 0;
 
@@ -427,11 +427,9 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
 	    msgt(snd, "You activate it.");
 	    if (a_info[o_ptr->name1].effect_msg)
 		msg(a_info[o_ptr->name1].effect_msg);
-	    level = a_info[o_ptr->name1].level;
 	} else {
 	    /* Make a noise! */
 	    sound(snd);
-	    level = k_info[o_ptr->k_idx].level;
 	}
 
 	/* Do effect */

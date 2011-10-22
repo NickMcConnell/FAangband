@@ -1665,50 +1665,44 @@ bool describe_set(textblock *tb, const object_type *o_ptr,
  */
 static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
 {
-	bool something = FALSE;
+    bool full = mode & OINFO_FULL;
+    bool terse = mode & OINFO_TERSE;
+    bool subjective = mode & OINFO_SUBJ;
+    bool dummy = mode & OINFO_DUMMY;
 
-	bool full = mode & OINFO_FULL;
-	bool terse = mode & OINFO_TERSE;
-	bool subjective = mode & OINFO_SUBJ;
-	bool ego = mode & OINFO_EGO;
-	bool dummy = mode & OINFO_DUMMY;
+    textblock *tb = textblock_new();
 
-	textblock *tb = textblock_new();
+    if (subjective) (void) describe_origin(tb, o_ptr);
+    if (!terse) (void) describe_flavor_text(tb, o_ptr);
 
-	if (subjective) describe_origin(tb, o_ptr);
-	if (!terse) describe_flavor_text(tb, o_ptr);
-
-	if (describe_set(tb, o_ptr, mode)) something = TRUE;
-	if (describe_stats(tb, o_ptr, mode)) something = TRUE;
-	if (describe_bonus(tb, o_ptr, mode)) something = TRUE;
-	if (describe_slays(tb, o_ptr, mode)) something = TRUE;
-	if (describe_brands(tb, o_ptr, mode)) something = TRUE;
-	if (describe_immune(tb, o_ptr, mode)) something = TRUE;
-	if (describe_sustains(tb, o_ptr, mode)) something = TRUE;
-	if (describe_misc_magic(tb, o_ptr, mode)) something = TRUE;
-	if (ego && describe_ego(tb, o_ptr)) something = TRUE;
-	if (describe_ignores(tb, o_ptr, mode)) something = TRUE;
-	if (describe_curses(tb, o_ptr, mode)) something = TRUE;
-	if (describe_effect(tb, o_ptr, mode)) something = TRUE;
+    (void) describe_set(tb, o_ptr, mode);
+    (void) describe_stats(tb, o_ptr, mode);
+    (void) describe_bonus(tb, o_ptr, mode);
+    (void) describe_slays(tb, o_ptr, mode);
+    (void) describe_brands(tb, o_ptr, mode);
+    (void) describe_immune(tb, o_ptr, mode);
+    (void) describe_sustains(tb, o_ptr, mode);
+    (void) describe_misc_magic(tb, o_ptr, mode);
+    (void) describe_ego(tb, o_ptr);
+    (void) describe_ignores(tb, o_ptr, mode);
+    (void) describe_curses(tb, o_ptr, mode);
+    (void) describe_effect(tb, o_ptr, mode);
 	
-	if (subjective && describe_combat(tb, o_ptr, mode))
-	{
-		something = TRUE;
-		textblock_append(tb, "\n");
-	}
+    if (subjective && describe_combat(tb, o_ptr, mode))
+    {
+	textblock_append(tb, "\n");
+    }
 
-	if (!terse && describe_food(tb, o_ptr, subjective, full)) something = TRUE;
-	if (describe_light(tb, o_ptr, terse)) something = TRUE;
-	if (!terse && subjective && describe_digger(tb, o_ptr, mode)) something = TRUE;
+    (void) describe_food(tb, o_ptr, subjective, full);
+    (void) describe_light(tb, o_ptr, terse);
+    (void) describe_digger(tb, o_ptr, mode);
 
-	//if (!something)
-	//	textblock_append(tb, "\n");
-	if (!terse && !dummy) {
-	    textblock_append(tb, "\n");
-	    textblock_append(tb, obj_class_info[o_ptr->tval]);
-	    textblock_append(tb, "\n");
-	}
-	return tb;
+    if (!terse && !dummy) {
+	textblock_append(tb, "\n");
+	textblock_append(tb, obj_class_info[o_ptr->tval]);
+	textblock_append(tb, "\n");
+    }
+    return tb;
 }
 
 

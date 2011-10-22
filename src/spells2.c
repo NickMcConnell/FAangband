@@ -923,7 +923,6 @@ void identify_object(object_type * o_ptr)
 {
     object_kind *k_ptr;
     bool was_dubious = FALSE;
-    bool aware = FALSE;
 
     /* Get the object kind. */
     k_ptr = &k_info[o_ptr->k_idx];
@@ -932,10 +931,6 @@ void identify_object(object_type * o_ptr)
     if ((o_ptr->feel == FEEL_PERILOUS) || (o_ptr->feel == FEEL_DUBIOUS_WEAK)
 	|| (o_ptr->feel == FEEL_DUBIOUS_STRONG))
 	was_dubious = TRUE;
-
-    /* Remember awareness */
-    if (object_aware_p(o_ptr))
-	aware = TRUE;
 
     /* Identify it fully */
     object_aware(o_ptr);

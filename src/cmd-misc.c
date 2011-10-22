@@ -31,10 +31,6 @@ void get_feats(int *surroundings)
 {
     int d;
     int xx, yy;
-    int count;
-
-    /* Count how many matches */
-    count = 0;
 
     /* Check around (and under) the character */
     for (d = 0; d < 9; d++) 
