@@ -18,7 +18,7 @@ cd "${1:-.}" || usage
 if head=$(git rev-parse --verify --short HEAD 2>/dev/null); then
 	# If we are past a tagged commit (like "v3.2.0-64-g72357d5"),
 	# we pretty print it.
-	if atag="$(git describe 2>/dev/null)"; then
+	if atag="$(git describe --tags 2>/dev/null)"; then
 		printf "$atag"
 
 	# If we don't have a tag at all we print -g{commitish}.
