@@ -529,20 +529,6 @@ static u16b hallucinatory_object(void)
 
 
 
-/**
- * The 16x16 tile of the terrain supports lighting
- */
-bool feat_supports_lighting(byte feat)
-{
-    /* Pseudo graphics don't support lighting */
-    if (use_graphics == GRAPHICS_PSEUDO) return FALSE;
-
-    /* What's the worst that can happen? */
-    return TRUE;
-    
-}
-
-
 /*
  * Translate text colours.
  *
@@ -601,7 +587,7 @@ bool dtrap_edge(int y, int x)
 /**
  * Apply text lighting effects
  */
-static void grid_get_text(grid_data *g, byte *a, char *c, feature_type *f_ptr)
+static void grid_get_attr(grid_data *g, byte *a, feature_type *f_ptr)
 {
 	/* Trap detect edge, but don't colour traps themselves, or treasure */
 	if (g->trapborder && tf_has(f_ptr->flags, TF_FLOOR) &&
@@ -622,7 +608,7 @@ static void grid_get_text(grid_data *g, byte *a, char *c, feature_type *f_ptr)
 				*a = TERM_L_DARK;
 		}
 	}
-	else if (g->f_idx > FEAT_INVIS)
+	else
 	{
 		if (g->lighting == FEAT_LIGHTING_DARK) {
 			if (*a == TERM_WHITE)
@@ -679,7 +665,7 @@ void grid_data_as_text(grid_data *g, byte *ap, char *cp, byte *tap, char *tcp)
               
 	/* Check for trap detection boundaries */
 	if (use_graphics == GRAPHICS_NONE || use_graphics == GRAPHICS_PSEUDO)
-	    grid_get_text(g, &a, &c, f_ptr);
+	    grid_get_attr(g, &a, f_ptr);
 
 	/* Save the terrain info for the transparency effects */
 	(*tap) = a;
@@ -945,34 +931,20 @@ void map_info(unsigned y, unsigned x, grid_data *g)
     g->trapborder = (dtrap_edge(y, x)) ? TRUE : FALSE;
     f_ptr = &f_info[g->f_idx];
 
-    /* If the grid is memorised or can currently be seen */
-    if (cave_has(cave_info[y][x], CAVE_MARK) || 
-	cave_has(cave_info[y][x], CAVE_SEEN))
-    {
-	/* Apply "mimic" field */
-	g->f_idx = f_ptr->mimic;
+    /* Apply "mimic" field */
+    g->f_idx = f_ptr->mimic;
 			
-	/* Boring grids (floors, etc) */
-	if (tf_has(f_ptr->flags, TF_FLOOR) && 
-	    !cave_has(cave_info[y][x], CAVE_TRAP))
-	{
-	    /* Handle currently visible grids */
-	    if (cave_has(cave_info[y][x], CAVE_SEEN))
-	    {
-		/* Only lit by "torch" light */
-		if (cave_has(cave_info[y][x], CAVE_GLOW))
-		    g->lighting = FEAT_LIGHTING_LIT;
-		else
-		    g->lighting = FEAT_LIGHTING_BRIGHT;
-	    }
+    /* If the grid is memorised or can currently be seen */
+    if (g->in_view)
+    {
+	g->lighting = FEAT_LIGHTING_LIT;
 
-	    /* Handle "dark" grids and "blindness" */
-	    else if (p_ptr->timed[TMD_BLIND] || !cave_has(cave_info[y][x], CAVE_GLOW))
-		g->lighting = FEAT_LIGHTING_DARK;
-	}
+	if (!cave_has(cave_info[y][x], CAVE_GLOW) && OPT(view_yellow_light))
+	    g->lighting = FEAT_LIGHTING_BRIGHT;
+
     }
     /* Unknown */
-    else
+    else if (!cave_has(cave_info[y][x], CAVE_MARK))
     {
 	g->f_idx = FEAT_NONE;
     }
@@ -1294,7 +1266,6 @@ void print_rel(char c, byte a, int y, int x)
 void note_spot(int y, int x)
 {
     object_type *o_ptr;
-    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
     /* Require "seen" flag */
     if (!cave_has(cave_info[y][x], CAVE_SEEN)) return;
@@ -1309,29 +1280,13 @@ void note_spot(int y, int x)
 
 
     /* Hack -- memorize grids */
-    if (!cave_has(cave_info[y][x], CAVE_MARK))
-    {
-	/* Memorize some "boring" grids */
-	if (tf_has(f_ptr->flags, TF_FLOOR) && 
-	    !tf_has(f_ptr->flags, TF_INTERESTING))
-	{
-	    /* Option -- memorize certain floors */
-	    if ((cave_has(cave_info[y][x], CAVE_GLOW) && OPT(view_perma_grids))
-		|| OPT(view_torch_grids))
-	    {
-		/* Memorize */
-		cave_on(cave_info[y][x], CAVE_MARK);
-	    }
-	}
-	
-	/* Memorize all "interesting" grids */
-	else
-	{
-	    /* Memorize */
-	    cave_on(cave_info[y][x], CAVE_MARK);
-	}
-    }
+    if (cave_has(cave_info[y][x], CAVE_MARK))
+	return;
+
+    /* Memorize */
+    cave_on(cave_info[y][x], CAVE_MARK);
 }
+
 
 
 
