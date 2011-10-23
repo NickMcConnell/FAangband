@@ -52,10 +52,8 @@ cp ../*.exe .
 cp ../*.dll .
 
 # Copy the readmes and suchlike, converting to DOS line endings on the way
-cp_unix2dos ../changes.txt ./changes.txt
-cp_unix2dos ../thanks.txt ./thanks.txt
 cp_unix2dos ../copying.txt ./copying.txt
-cp_unix2dos ../readme.txt ./readme.txt
+cp_unix2dos ../README ./README
 cp_unix2dos ../faq.txt ./faq.txt
 
 cp ../lib/edit/*.txt lib/edit
@@ -74,7 +72,7 @@ cp ../lib/xtra/graf/16x16.png lib/xtra/graf
 cp ../lib/xtra/graf/32x32.png lib/xtra/graf
 
 cp ../lib/xtra/sound/sound.cfg lib/xtra/sound
-cp ../lib/xtra/sound/*.wav lib/xtra/sound
+cp ../lib/xtra/sound/*.mpg lib/xtra/sound
 
 cd ..
 zip -9 -r $OUT $DIR
