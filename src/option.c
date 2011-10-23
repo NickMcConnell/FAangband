@@ -56,12 +56,12 @@ const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER] =
 	  OPT_show_weights,
 	  OPT_show_detect,
 	  OPT_view_yellow_light,
-	  OPT_view_bright_light,
-	  OPT_view_granite_light,
-	  OPT_view_special_light,
 	  OPT_view_perma_grids,
 	  OPT_view_torch_grids,
 	  OPT_animate_flicker,
+	  OPT_NONE,
+	  OPT_NONE,
+	  OPT_NONE,
 	  OPT_NONE
       },
     

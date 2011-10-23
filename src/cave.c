@@ -1498,9 +1498,6 @@ void display_map(int *cy, int *cx)
     /* Large array on the stack */
     byte mp[DUNGEON_HGT][DUNGEON_WID];
 
-    bool old_view_special_light;
-    bool old_view_granite_light;
-
     monster_race *r_ptr = &r_info[0];
 
     /* Desired map height */
@@ -1524,15 +1521,6 @@ void display_map(int *cy, int *cx)
     /* Prevent accidents */
     if ((map_wid < 1) || (map_hgt < 1))
 	return;
-
-
-    /* Save lighting effects */
-    old_view_special_light = OPT(view_special_light);
-    old_view_granite_light = OPT(view_granite_light);
-
-    /* Disable lighting effects */
-    OPT(view_special_light) = FALSE;
-    OPT(view_granite_light) = FALSE;
 
     /* Nothing here */
     ta = TERM_WHITE;
@@ -1622,11 +1610,6 @@ void display_map(int *cy, int *cx)
 	(*cy) = row + 1;
     if (cx != NULL)
 	(*cx) = col + 1;
-
-
-    /* Restore lighting effects */
-    OPT(view_special_light) = old_view_special_light;
-    OPT(view_granite_light) = old_view_granite_light;
 }
 
 /**
