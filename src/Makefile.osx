@@ -196,6 +196,7 @@ dist: install
 	@rm -rf disttemp*
 	mkdir -p disttemp/Docs
 	cp ../copying.txt disttemp/Docs
+	cp ../worldmap.png disttemp/Docs
 	cp -R -p "$(APPBNDL)" disttemp
 	SetFile -a B disttemp/$(APPNAME)
 
