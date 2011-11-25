@@ -1,0 +1,197 @@
+# File: Makefile.osx
+
+# This is a (rather crude) Makefile for Mac OS X Carbon port of Angband.
+#
+# Based on Makefile.std, made separate because this port does not uses
+# main.c.
+
+# default target
+all: install
+
+# settings
+CC = gcc
+LD = ld
+OPT ?= -O2
+
+ARCH = -arch i386
+WARNINGS = -W -Wall -Wno-unused-parameter -Wno-missing-field-initializers
+JUST_C = -std=c99 -Wdeclaration-after-statement
+OBJ_CFLAGS = -std=c99 -x objective-c -mmacosx-version-min=10.0
+CFLAGS = -g -I. $(WARNINGS) $(OPT) -DMACH_O_CARBON -DHAVE_MKSTEMP \
+	-DPRIVATE_USER_PATH=\"~/Library/Preferences\" -DUSE_PRIVATE_PATHS \
+	-fno-stack-protector $(ARCH)
+LIBS = -framework CoreFoundation -framework QuickTime -framework Carbon \
+	-framework Cocoa
+
+# Import user prefs
+# If you don't want to edit this file, put your module redefinitions
+# and build flags in "./config"
+-include config
+
+#
+# Provide a CFLAGS override so that older versions of OS X can continue to
+# compile their own builds.  The default CFLAGS provide a backwards-compatible
+# binary, but will error when building on <10.3.9.
+#
+
+# -DALLOW_BORG is required for all .o files in a borg build 
+ifneq (,$(findstring borg, $(MAKECMDGOALS)))
+CFLAGS += -DALLOW_BORG
+endif
+
+# Check for autoconf.h; do not warn on nonexistence
+autoconf= $(wildcard autoconf.h)
+ifneq ($(autoconf),)
+CFLAGS += -DHAVE_CONFIG_H
+endif
+
+
+
+include Makefile.inc
+
+APPNAME = $(NAME).app
+EXE = $(PROG)
+
+BOBJS = borg1.o borg2.o borg3.o borg4.o borg5.o borg6.o borg7.o borg8.o borg9.o
+OBJS = $(BASEOBJS)
+OSX_OBJS = main-leo.o
+
+
+
+#
+# Build the "Angband" program
+#
+
+
+$(EXE).o: $(OBJS)
+	$(LD) -r -arch i386 -o $@.i386 $(OBJS)
+	lipo -arch i386 $@.i386 -create -output $(EXE).o
+
+$(EXE): $(EXE).o $(OSX_OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(EXE) $(EXE).o $(OSX_OBJS) $(LIBS) 
+
+borg: $(OBJS) $(BOBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(EXE) $(OBJS) $(BOBJS) $(LIBS) 
+
+#
+# Clean up old junk
+#
+
+clean:
+	-rm -f $(OBJS) $(EXE) $(EXE).o.i386 $(EXE).o $(OSX_OBJS)
+
+
+#
+# Basic build rules and dependencies
+#
+
+main-leo.o : main-leo.c
+	@printf "%10s %-20s (objective-c)\n" CC $<
+	@$(CC) $(CFLAGS) $(OBJ_CFLAGS) -c -o $@ $<
+%.o : %.c
+	@printf "%10s %-20s\n" CC $<
+	@$(CC) $(JUST_C) $(CFLAGS) -c -o $@ $<
+
+
+main-leo.o: osx/osx_tables.h
+
+
+#
+# Installation.
+# Application bundle -- a directory looking like an ordinary application
+#
+
+# Bundle of the game (it must be a directory whose name ends in ".app")
+APPBNDL = ../$(APPNAME)
+
+# A bundle must have these subdirectories
+APPCONT = $(APPBNDL)/Contents
+APPBIN = $(APPCONT)/MacOS
+APPRES = $(APPCONT)/Resources
+
+# Auxiliary files. Please note that it still uses resouce fork based
+# resources for menus, dialogues and sounds, so that it isn't safe to use
+# utilities that doesn't understand them (virtually all Un*x commands) to
+# copy or archive the application.
+#
+# The graphics tiles have been moved out of the resource fork, but, again,
+# it isn't generally safe just to convert GIF or BMP files to PNG, because
+# the Mac OS takes dpi values stored in various images quite seriously.
+# Almost all tilesets for *band requires adjustment, with the sole exception
+# of 8x8.png for Vanilla.  Make sure setting dpi to 72, *not* preserving
+# the actual size of image.  When you have them ready, put them in
+# the lib/xtra/graf directory and rebuild.
+ICONFILES = osx/$(NAME).icns osx/Save.icns osx/Edit.icns osx/Data.icns
+PLIST = osx/$(NAME).xml
+
+GRAPHSRC=../lib/xtra/graf/
+TILES = $(GRAPHSRC)8x8.png $(GRAPHSRC)8x16.png $(GRAPHSRC)16x16.png $(GRAPHSRC)32x32.png
+
+LIBFILES = \
+  ../lib/edit/*.txt \
+  ../lib/file/*.txt \
+  ../lib/help/*.txt \
+  ../lib/help/*.hlp \
+  ../lib/pref/*.prf \
+
+install: $(EXE) $(ICONFILES) $(PLIST) $(LIBFILES)
+	@echo making directories...
+	@mkdir -p $(APPBNDL)
+	@mkdir -p $(APPCONT)
+	@mkdir -p $(APPBIN)
+	@mkdir -p $(APPRES)
+	@mkdir -p $(APPRES)/English.lproj/main.nib 
+	@mkdir -p $(APPRES)/lib/edit
+	@mkdir -p $(APPRES)/lib/file
+	@mkdir -p $(APPRES)/lib/help
+	@mkdir -p $(APPRES)/lib/pref
+	@mkdir -p $(APPRES)/lib/script
+	@mkdir -p $(APPRES)/lib/xtra/graf
+	@mkdir -p $(APPRES)/lib/xtra/sound
+
+	@echo copying files...
+	@cp ../lib/edit/*.txt $(APPRES)/lib/edit
+	@cp ../lib/file/*.txt $(APPRES)/lib/file
+	@cp ../lib/help/*.txt $(APPRES)/lib/help
+	@cp ../lib/help/*.hlp $(APPRES)/lib/help
+	@cp ../lib/pref/*.prf $(APPRES)/lib/pref
+
+	# 'optionally' install sound and graphics tiles, if present
+	-cp $(TILES) $(APPRES)/lib/xtra/graf
+	-cp ../lib/xtra/sound/*.wav $(APPRES)/lib/xtra/sound
+	-cp ../lib/xtra/sound/sound.cfg $(APPRES)/lib/xtra/sound
+
+	install -m 755 $(EXE) $(APPBIN)
+	install -m 644 $(ICONFILES) $(APPRES)
+	cp osx/English.lproj/main.nib/*ib $(APPRES)/English.lproj/main.nib
+	sed -e 's/\$$VERSION\$$/$(VERSION)/' -e 's/\$$COPYRIGHT\$$/$(COPYRIGHT)/' \
+		-e 's/\$$NAME\$$/$(NAME)/' -e 's/\$$EXECUTABLE\$$/$(EXE)/' \
+		$(PLIST) > $(APPCONT)/Info.plist
+
+	SetFile -a B $(APPBNDL)
+
+
+vars:
+	@echo LDFLAGS = $(LDFLAGS)
+	@echo CFLAGS = $(CFLAGS)
+	@echo BASEOBJS = $(BASEOBJS)
+
+
+
+PACKAGE_NAME = $(NAME)-$(VERSION)
+
+# In the unlikely event that tar+zip isn't enough...
+
+dist: install
+	@rm -rf disttemp*
+	mkdir -p disttemp/Docs
+	cp ../copying.txt disttemp/Docs
+	cp -R -p "$(APPBNDL)" disttemp
+	SetFile -a B disttemp/$(APPNAME)
+
+	@-rm ../"$(PACKAGE_NAME)-osx.dmg"
+
+	hdiutil create -quiet -fs HFS+ -volname $(PACKAGE_NAME) -srcfolder disttemp disttemp.dmg
+	hdiutil convert disttemp.dmg -quiet -format UDZO -imagekey zlib-level=6 -o ../"$(PACKAGE_NAME)-osx.dmg"
+
+	rm -rf disttemp*
