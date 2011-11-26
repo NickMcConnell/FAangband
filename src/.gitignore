@@ -5,3 +5,4 @@ faangband
 *~
 main-wce.c
 Makefile.win_sdl
+.DS_Store
