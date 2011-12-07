@@ -2448,22 +2448,6 @@ enum
 	 (cave_m_idx[Y][X] == 0))
 
 /**
- * Determine if a "legal" grid can hold a monster trap
- *
- * Line 1 -- forbid non-floors
- * Line 2 -- allow grass
- * Line 3 -- allow sand dunes
- * Line 4 -- forbid player/monsters
- */
-#define cave_trappable_bold(Y,X) \
-	(((cave_feat[Y][X] == FEAT_FLOOR) || \
-         (cave_feat[Y][X] == FEAT_GRASS) || \
-         (cave_feat[Y][X] == FEAT_DUNE)) && \
-	 (cave_m_idx[Y][X] <= 0))
-
-
-
-/**
  * Determine if a "legal" grid is within "los" of the player
  *
  * Note the use of comparison to zero to force a "boolean" result

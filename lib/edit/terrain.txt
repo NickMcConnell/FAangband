@@ -27,7 +27,7 @@ P:2
 N:1:open floor
 G:.:w
 P:5
-F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | EASY | RUN1 | TRAP
+F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | EASY | RUN1 | TRAP | MTRAP | RUNE
 D:An open floor or bare ground.  Can be walked across by anything, and can 
 D:hold traps or items.  Does not break line of sight.
 
@@ -670,7 +670,7 @@ D:A path to the neighbouring region.
 N:112:lava
 G:#:r
 P:14
-F:LOS | PROJECT | PASSABLE | NO_SCENT
+F:LOS | PROJECT | PASSABLE | NO_SCENT | FIERY
 D:Can be passed by any character, but inflicts substantial fire damage (less 
 D:for players with feather fall - they're light on their feet).  All monsters 
 D:other than fiery or strong flying creatures will not cross.  Water and 
@@ -683,7 +683,7 @@ D:a target in lava.  Lava may freeze to rubble or normal floor.
 N:113:water
 G:.:b
 P:6
-F:LOS | PROJECT | PASSABLE | NO_SCENT | EXPOSE 
+F:LOS | PROJECT | PASSABLE | NO_SCENT | EXPOSE | WATERY
 D:Cannot be passed by fiery, earthbound monsters, slows down most other 
 D:monsters.  Slows you down if you are carrying too much.  You and your 
 D:enemies are easier to hit when in water, and most spells (especially 
@@ -721,7 +721,8 @@ D:ranged, or magical attacks.  Trees can burn.
 N:116:grass
 G:.:g
 P:5
-F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | ORGANIC | EASY | RUN2 | TRAP
+F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | ORGANIC | EASY | RUN2 | TRAP | 
+F:MTRAP | RUNE
 D:Open ground that can be crossed easily by all creatures.  It occurs only in 
 D:wilderness.  It may contain traps. 
 

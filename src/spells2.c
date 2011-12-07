@@ -688,6 +688,7 @@ bool lay_rune(int type)
     int px = p_ptr->px;
 
     trap_kind *trap_ptr = &trap_info[type];
+    bool takes_rune = tf_has(cave_feat[py][px].flags, TF_RUNE);
 
     /* If we're standing on a rune of mana, we can add mana to it */
     if ((type == RUNE_MANA) && (cave_trap_specific(py, px, RUNE_MANA)))
@@ -712,8 +713,8 @@ bool lay_rune(int type)
 	return (TRUE);
     }
 
-    /* XXX XXX XXX */
-    if (!cave_trappable_bold(py, px)) {
+    /* Need appropriate terrain and no monster */
+    if (!takes_rune || cave_m_idx[py][px] > 0) {
 	msg("You cannot lay a rune here.");
 	return (FALSE);
     }

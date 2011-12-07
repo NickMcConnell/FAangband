@@ -2605,10 +2605,8 @@ void do_cmd_alter_aux(int dir)
 	    (void) py_attack(y, x, FALSE);
     }
 
-    /* 
-     * Some players can set traps.  Total number is checked in py_set_trap.
-     */
-    else if (player_has(PF_TRAP) && cave_trappable_bold(y, x) &&
+    /* Some players can set traps.  Total number is checked in py_set_trap. */
+    else if (player_has(PF_TRAP) && tf_has(f_ptr->flags, TF_MTRAP) && 
 	     !cave_monster_trap(y, x)) 
     {
 	/* Make sure not to repeat */
