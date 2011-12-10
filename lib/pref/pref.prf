@@ -443,9 +443,13 @@ C:1:X
 A:h
 C:1:^G
 
+# Roguelike keymap: move house
+A:H
+C:1:$
+
+
 # Message colors
 %:message.prf
-
 
 ##### System Specific Subfiles #####
 
