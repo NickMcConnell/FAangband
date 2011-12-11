@@ -2552,6 +2552,7 @@ static void store_process_command(ui_event ke)
       /*** Various commands ***/
 
 	/* Look at an object */
+    case 'x':
     case 'l':
 	{
 	    store_inspect();
