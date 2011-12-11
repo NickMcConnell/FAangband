@@ -1615,7 +1615,7 @@ void display_map(int *cy, int *cx)
 /**
  * Display a map of the type of wilderness surrounding the current stage
  */
-void regional_map(int num, int size)
+void regional_map(int num, int size, int centre_stage)
 {
     int i, j, col, row;
     int *stage = malloc(size * sizeof(*stage));
@@ -1630,7 +1630,7 @@ void regional_map(int num, int size)
 	stage[i] = 0;
 
     /* Set the centre */
-    stage[size / 2] = p_ptr->stage;
+    stage[size / 2] = centre_stage;
 
     /* Redo the right number of times */
     for (j = 0; j < num; j++) {
@@ -1713,7 +1713,7 @@ void regional_map(int num, int size)
 	}
 	if (stage[i] == p_ptr->stage)
 	    c_put_str(TERM_VIOLET, "Current ", row, col);
-	c_put_str(TERM_WHITE, lev, row + 1, col);
+	c_put_str(i == size/2 ? TERM_WHITE : TERM_L_DARK, lev, row + 1, col);
 	if (stage_map[stage[i]][EAST])
 	    c_put_str(TERM_WHITE, "-", row + 1, col + 8);
 	if (stage_map[stage[i]][DOWN]) {
@@ -1776,7 +1776,10 @@ void regional_map(int num, int size)
 void do_cmd_view_map(void)
 {
     int cy, cx;
-    int wid, hgt, num_down, num_across, num;
+    int wid, hgt;
+    /* variables for regional map */ 
+    int num_down, num_across, num, centre_stage, next_stage;
+    ui_event ke;
 
     /* Get size */
     Term_get_size(&wid, &hgt);
@@ -1785,6 +1788,7 @@ void do_cmd_view_map(void)
     num_down = (hgt - 6) / 8;
     num_across = (wid - 24) / 20;
     num = (num_down < num_across ? num_down : num_across);
+    centre_stage = p_ptr->stage;
 
     /* Save screen */
     screen_save();
@@ -1813,6 +1817,8 @@ void do_cmd_view_map(void)
     /* Regional map if not in the dungeon */
     if (stage_map[p_ptr->stage][STAGE_TYPE] != CAVE) {
 
+    for(;;) {
+    
 	/* Flush */
 	Term_fresh();
 
@@ -1820,15 +1826,32 @@ void do_cmd_view_map(void)
 	Term_clear();
 
 	/* Display the regional map */
-	regional_map(num, (2 * num + 1) * (2 * num + 1));
+	regional_map(num, (2 * num + 1) * (2 * num + 1), centre_stage);
 
 	/* Wait for it */
-	put_str("Hit any key to continue", hgt - 1, (wid - COL_MAP) / 2);
+	put_str("Move keys to scroll, other input to continue", hgt - 1, (wid - 40) / 2);
 
 	/* Get any key */
-	(void) inkey_ex();
+	ke = inkey_ex();
+    next_stage = -1;
+    switch(ke.key.code) {
+        case 'k': case ARROW_UP:
+            next_stage = stage_map[centre_stage][NORTH]; break;
+        case 'j': case ARROW_DOWN:
+            next_stage = stage_map[centre_stage][SOUTH]; break;
+        case 'h': case ARROW_LEFT:
+            next_stage = stage_map[centre_stage][WEST]; break;
+        case 'l': case ARROW_RIGHT:
+            next_stage = stage_map[centre_stage][EAST]; break;
     }
+    if (next_stage == -1)
+        break;
+    if (next_stage) 
+        centre_stage = next_stage;
+            
 
+    } /* for(;;) */
+    } 
     /* Load screen */
     screen_load();
 }
