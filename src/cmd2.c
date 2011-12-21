@@ -1938,7 +1938,6 @@ static bool twall(int y, int x)
 
     /* Forget the wall */
     cave_off(cave_info[y][x], CAVE_MARK);
-    cave_off(cave_info[y][x], CAVE_WALL);
 
     /* Remove the feature */
     cave_set_feat(y, x, FEAT_FLOOR);
