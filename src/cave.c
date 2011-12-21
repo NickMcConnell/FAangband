@@ -3601,8 +3601,10 @@ void wiz_light(bool wizard)
     for (y = 1; y < DUNGEON_HGT - 1; y++) {
 	/* Scan all normal grids */
 	for (x = 1; x < DUNGEON_WID - 1; x++) {
+	    feature_type *f_ptr = &f_info[cave_feat[y][x]];
+	    
 	    /* Process all passable grids (or all grids, if a wizard) */
-	    if (cave_passable_bold(y, x))
+	    if (tf_has(f_ptr->flags, TF_PASSABLE))
 	    {
 		/* Paranoia -- stay in bounds */
 		if (!in_bounds_fully(y, x)) continue;
@@ -3612,14 +3614,16 @@ void wiz_light(bool wizard)
 		{
 		    int yy = y + ddy_ddd[i];
 		    int xx = x + ddx_ddd[i];
-		    
+
+		    f_ptr = &f_info[cave_feat[y][x]];		    
+
 		    /* Perma-light the grid (always) */
 		    cave_on(cave_info[yy][xx], CAVE_GLOW);
 		    
 		    /* If not a wizard, do not mark passable grids in vaults */
 		    if ((!wizard) && cave_has(cave_info[yy][xx], CAVE_ICKY))
 		    {
-			if (cave_passable_bold(yy, xx)) continue;
+			if (tf_has(f_ptr->flags, TF_PASSABLE)) continue;
 		    }
 		    
 		    /* Memorize features other than ordinary floor */
@@ -4121,6 +4125,7 @@ byte projectable(int y1, int x1, int y2, int x2, int flg)
 
     int grid_n = 0;
     u16b grid_g[512];
+    feature_type *f_ptr;
 
     /* Check the projection path */
     grid_n = project_path(grid_g, MAX_RANGE, y1, x1, y2, x2, flg);
@@ -4137,8 +4142,9 @@ byte projectable(int y1, int x1, int y2, int x2, int flg)
     if ((y != y2) || (x != x2))
 	return (PROJECT_NO);
 
-    /* May not end in a wall, unless a tree or rubble grid. */
-    if (!cave_passable_bold(y, x))
+    /* Must end in a passable grid. */
+    f_ptr = &f_info[cave_feat[y][x]];
+    if (!tf_has(f_ptr->flags, TF_PASSABLE))
 	return (PROJECT_NO);
 
 

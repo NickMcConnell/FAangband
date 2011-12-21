@@ -364,9 +364,10 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
 	    }
 
 	    /* Check for obstruction. */
+	    f_ptr = &f_info[cave_feat[yy][xx]];
 	    if (!cave_project(yy, xx)) {
 		/* Some features allow entrance, but not exit. */
-		if (cave_passable_bold(yy, xx)) {
+		if (tf_has(f_ptr->flags, TF_PASSABLE)) {
 		    /* Travel down the path. */
 		    monster_swap(y, x, yy, xx);
 
@@ -560,7 +561,8 @@ void teleport_player(int dis, bool safe)
 		    continue;
 	    } else {
 		/* Require any terrain capable of holding the player. */
-		if (!cave_passable_bold(y, x))
+		f_ptr = &f_info[cave_feat[y][x]];
+		if (!tf_has(f_ptr->flags, TF_PASSABLE))
 		    continue;
 
 		/* Must be unoccupied. */
@@ -3828,7 +3830,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	return (FALSE);
 
     /* Walls and doors entirely protect monsters, rubble and trees do not. */
-    if (!cave_passable_bold(y, x))
+    if (!tf_has(f_ptr->flags, TF_PASSABLE))
 	return (FALSE);
 
     /* Never affect projector */
@@ -8127,10 +8129,11 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 
 		int ny = GRID_Y(path_g[i]);
 		int nx = GRID_X(path_g[i]);
+		feature_type *f_ptr = &f_info[cave_feat[ny][nx]];
 
 
 		/* Hack -- Balls explode before reaching walls. */
-		if (!cave_passable_bold(ny, nx) && (rad > 0))
+		if (!tf_has(f_ptr->flags, TF_PASSABLE) && (rad > 0))
 		    break;
 
 		/* Advance */
@@ -8254,6 +8257,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 	 */
 	for (y = y0 - rad; y <= y0 + rad; y++) {
 	    for (x = x0 - rad; x <= x0 + rad; x++) {
+		feature_type *f_ptr = &f_info[cave_feat[y][x]];
+
 		/* Center grid has already been stored. */
 		if ((y == y0) && (x == x0))
 		    continue;
@@ -8268,7 +8273,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 
 		/* Some explosions are allowed to affect one layer of walls */
 		/* All exposions can affect one layer of rubble or trees -BR- */
-		if ((flg & (PROJECT_THRU)) || (cave_passable_bold(y, x))) {
+		if ((flg & (PROJECT_THRU)) || 
+		    (tf_has(f_ptr->flags, TF_PASSABLE))) {
 		    /* If this is a wall grid, ... */
 		    if (!cave_project(y, x)) {
 			/* Check neighbors */

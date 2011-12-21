@@ -1326,6 +1326,8 @@ void hit_trap_aux(int y, int x, int trap)
 		for (i = 0; i < k; ++i) {
 		    /* Look for a location */
 		    for (j = 0; j < 20; ++j) {
+			feature_type *f_ptr;
+
 			/* Pick a (scattered) distance. */
 			int d = (j / 10) + randint1(3);
 
@@ -1333,7 +1335,8 @@ void hit_trap_aux(int y, int x, int trap)
 			scatter(&y, &x, y, x, d, 0);
 
 			/* Require passable terrain */
-			if (!cave_passable_bold(y, x))
+			f_ptr = &f_info[cave_feat[y][x]];
+			if (!tf_has(f_ptr->flags, TF_PASSABLE))
 			    continue;
 
 			/* Hack -- no summon on glyph of warding */

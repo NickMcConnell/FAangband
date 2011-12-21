@@ -273,6 +273,8 @@ static void prt_binary(const bitflag *flags, int offset, int row, int col,
  */
 static void do_cmd_wiz_bamf(void)
 {
+    feature_type *f_ptr;
+
     /* target starts at player. */
     s16b ny = 0;
     s16b nx = 0;
@@ -285,7 +287,8 @@ static void do_cmd_wiz_bamf(void)
     target_get(&nx, &ny);
 
     /* Test for passable terrain. */
-    if (!cave_passable_bold(ny, nx)) {
+    f_ptr = &f_info[cave_feat[ny][nx]];
+    if (!tf_has(f_ptr->flags, TF_PASSABLE)) {
 	msg("The square you are aiming for is impassable.");
     }
 

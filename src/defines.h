@@ -2376,30 +2376,6 @@ enum
 
 
 /**
- * Determine if a "legal" grid is able to be passed through by creatures 
- * that cannot bore or pass through walls.  This new definition is needed, 
- * because some terrain can now be traversed,  but ends LOS.  It is also
- * used in the projectable function. -LM-
- *
- * Line 1 -- forbid doors, seams, walls, etc.
- * Line 2, 3 -- but allow trees
- * Line 4 -- but allow rubble
- * Line 5 -- but allow sand dunes
- *
- * Note the use of the new "CAVE_WALL" flag.
- */
-#define cave_passable_bold(Y,X) \
-    (!cave_has(cave_info[Y][X], CAVE_WALL) ||	\
-	(cave_feat[Y][X] == FEAT_TREE) || \
-	(cave_feat[Y][X] == FEAT_TREE2) || \
-	(cave_feat[Y][X] == FEAT_RUBBLE) || \
-	(cave_feat[Y][X] == FEAT_DUNE) || \
-	(cave_feat[Y][X] >= FEAT_VOID))
-
-
-
-
-/**
  * Determine if a "legal" grid is a "clean" floor grid
  *
  * Line 1 -- forbid non-floors

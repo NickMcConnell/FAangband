@@ -741,7 +741,7 @@ D:player.  It can be seen through.
 N:119:empty space
 G: :D
 P:2
-F:LOS | PROJECT | FALL 
+F:LOS | PROJECT | PASSABLE | FALL 
 D:Empty space - only flying creatures can pass across without falling.  All 
 D:spells and missiles can pass through.
 
