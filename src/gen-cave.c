@@ -811,10 +811,11 @@ static void try_door(int y0, int x0)
 {
     int i, y, x;
     int k = 0;
+    feature_type *f_ptr = &f_info[cave_feat[y0][x0]];
 
 
-    /* Ignore walls */
-    if (cave_has(cave_info[y0][x0], CAVE_WALL))
+    /* Ignore non-floors */
+    if (!tf_has(f_ptr->flags, TF_FLOOR))
 	return;
 
     /* Ignore room grids */
@@ -828,9 +829,10 @@ static void try_door(int y0, int x0)
 	    /* Extract the location */
 	    y = y0 + ddy_ddd[i];
 	    x = x0 + ddx_ddd[i];
+	    f_ptr = &f_info[cave_feat[y][x]];
 
-	    /* Skip impassable grids (or trees) */
-	    if (cave_has(cave_info[y][x], CAVE_WALL))
+	    /* Skip grids without clear space */
+	    if (!tf_has(f_ptr->flags, TF_PROJECT))
 		continue;
 
 	    /* Skip grids inside rooms */
@@ -844,7 +846,6 @@ static void try_door(int y0, int x0)
 
 	if (k == 2) 
 	{
-	    feature_type *f_ptr;
 	    int walls = 0;
 	    
 	    /* Check Vertical */
@@ -1813,7 +1814,6 @@ extern void cave_gen(void)
 /* Empty levels are useful for testing rooms. */
 #if 0
 	    /* Create bare floors */
-	    cave_off(cave_info[y][x], CAVE_WALL);
 	    cave_feat[y][x] = FEAT_FLOOR;
 
 	    break;
@@ -1821,7 +1821,6 @@ extern void cave_gen(void)
 #endif				/* End of empty level testing code */
 
 	    /* Create granite wall */
-	    cave_on(cave_info[y][x], CAVE_WALL);
 	    cave_feat[y][x] = FEAT_WALL_EXTRA;
 	}
     }

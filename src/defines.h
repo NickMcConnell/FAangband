@@ -2360,8 +2360,8 @@ enum
  * Note the use of the new "CAVE_WALL" flag.
  */
 #define cave_floor_bold(Y,X) \
-    (!cave_has(cave_info[Y][X], CAVE_WALL) && \
-          !(cave_feat[Y][X] == FEAT_VOID))
+    (tf_has(f_info[cave_feat[Y][X]].flags, TF_LOS) && \
+     !(cave_feat[Y][X] == FEAT_VOID))
 
 
 /**
@@ -2372,7 +2372,7 @@ enum
  * This is a pretty feeble hack -NRM-
  */
 #define cave_project(Y,X) \
-    (!cave_has(cave_info[Y][X],CAVE_WALL)) 
+    (tf_has(f_info[cave_feat[Y][X]].flags, TF_PROJECT)) 
 
 
 /**
