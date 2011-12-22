@@ -3706,7 +3706,7 @@ void wiz_dark(void)
  */
 void illuminate(void)
 {
-    int y, x;
+    int y, x, i;
 
     /* Apply light or darkness */
     for (y = 0; y < DUNGEON_HGT; y++) {
