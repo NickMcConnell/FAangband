@@ -3,6 +3,13 @@
 #ifndef GENERATE_H
 #define GENERATE_H
 
+/**
+ * Determine if a "legal" grid is a "naked" grid
+ * ie forbid player/monsters/objects
+ */
+#define cave_naked_bold(Y,X) \
+	((cave_o_idx[Y][X] == 0) && (cave_m_idx[Y][X] == 0))
+
 /*
  * Dungeon generation values
  */

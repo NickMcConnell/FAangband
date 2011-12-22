@@ -249,12 +249,15 @@ static void town_gen_hack(void)
     if (OPT(adult_dungeon)) {
 	/* Place the stairs */
 	while (TRUE) {
+	    feature_type *f_ptr;
+
 	    /* Pick a location at least "three" from the outer walls */
 	    y = 1 + rand_range(3, DUNGEON_HGT / 3 - 4);
 	    x = 1 + rand_range(3, DUNGEON_WID / 3 - 4);
 
-	    /* Require a "naked" floor grid */
-	    if (cave_naked_bold(y, x))
+	    /* Require a floor grid */
+	    f_ptr = &f_info[cave_feat[y][x]];
+	    if (tf_has(f_ptr->flags, TF_FLOOR))
 		break;
 	}
 

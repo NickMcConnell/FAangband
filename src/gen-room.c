@@ -104,6 +104,7 @@ static void spread_traps(int num, int y0, int x0, int dy, int dx)
     int i, j;			/* Limits on loops */
     int count;
     int y = y0, x = x0;
+    feature_type *f_ptr;
 
     /* Try to create traps within our rectangle of effect. */
     for (count = 0, i = 0; ((count < num) && (i < 50)); i++) {
@@ -128,7 +129,8 @@ static void spread_traps(int num, int y0, int x0, int dy, int dx)
 	}
 
 	/* Require "naked" floor grids */
-	if (!cave_naked_bold(y, x))
+	f_ptr = &f_info[cave_feat[y][x]];
+	if (!(cave_naked_bold(y, x) && tf_has(f_ptr->flags, TF_TRAP)))
 	    continue;
 
 	/* Place the trap */

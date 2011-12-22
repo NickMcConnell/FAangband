@@ -722,6 +722,7 @@ void teleport_player_to(int ny, int nx, bool friendly)
     int y, x;
 
     int dis = 0, ctr = 0;
+    feature_type *f_ptr;
 
     /* Initialize */
     y = py;
@@ -744,8 +745,9 @@ void teleport_player_to(int ny, int nx, bool friendly)
 		break;
 	}
 
-	/* Accept "naked" floor grids */
-	if (cave_naked_bold(y, x))
+	/* Acceptable grids */
+	f_ptr = &f_info[cave_feat[y][x]];
+	if ((cave_m_idx[y][x] == 0) && (tf_has(f_ptr->flags, TF_PASSABLE)))
 	    break;
 
 	/* Occasionally advance the distance */
@@ -3248,8 +3250,11 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 	/* Make doors */
     case GF_MAKE_DOOR:
 	{
+	    feature_type *f_ptr = &f_info[cave_feat[y][x]];
+
 	    /* Require a "naked" floor grid */
-	    if (!cave_naked_bold(y, x))
+	    if ((cave_m_idx[y][x] == 0) && (cave_o_idx[y][x] == 0) && 
+		(tf_has(f_ptr->flags, TF_FLOOR)))
 		break;
 
 	    /* Create closed door */

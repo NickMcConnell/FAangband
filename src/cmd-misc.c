@@ -174,7 +174,7 @@ void show_player(void)
 	    exist_mtrap = TRUE;
 	if (adj_grid[i] == FEAT_OPEN)
 	    exist_open_door = TRUE;
-	if (cave_naked_bold(yy, xx))
+	if (tf_has(f_ptr->flags, TF_MTRAP))
 	    exist_floor = TRUE;
 	if (cave_m_idx[yy][xx] > 0)
 	    exist_monster = TRUE;

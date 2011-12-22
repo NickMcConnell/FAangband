@@ -66,6 +66,7 @@ void new_player_spot(void)
 {
     int i = 0;
     int y, x;
+    feature_type *f_ptr;
 
     /* 
      * Check stored stair locations, then search at random.
@@ -92,7 +93,9 @@ void new_player_spot(void)
 			break;
 
 		    /* Accept floors, build correct stairs. */
-		    if (cave_naked_bold(y, x)) {
+		    f_ptr = &f_info[cave_feat[y][x]];
+		    if (cave_naked_bold(y, x) && tf_has(f_ptr->flags, TF_FLOOR)) 
+		    {
 			cave_set_feat(y, x, p_ptr->create_stair);
 			break;
 		    }
@@ -102,11 +105,12 @@ void new_player_spot(void)
 	    /* If character doesn't start on stairs, ... */
 	    else {
 		/* Accept only "naked" floor grids */
-		if (cave_naked_bold(y, x))
+		f_ptr = &f_info[cave_feat[y][x]];
+		if (cave_naked_bold(y, x) && tf_has(f_ptr->flags, TF_FLOOR))		    
 		    break;
 	    }
 	}
-
+	
 	/* Then, search at random */
 	else {
 	    /* Pick a random grid */
@@ -118,7 +122,8 @@ void new_player_spot(void)
 		continue;
 
 	    /* Must be a "naked" floor grid */
-	    if (!cave_naked_bold(y, x))
+	    f_ptr = &f_info[cave_feat[y][x]];
+	    if (!(cave_naked_bold(y, x) && tf_has(f_ptr->flags, TF_FLOOR)))
 		continue;
 
 	    /* Player prefers to be near walls. */
@@ -285,6 +290,7 @@ void place_random_door(int y, int x)
 void alloc_stairs(int feat, int num, int walls)
 {
     int y, x, i, j;
+    feature_type *f_ptr;
     bool no_down_shaft = (!stage_map[stage_map[p_ptr->stage][DOWN]][DOWN]
 			  || is_quest(stage_map[p_ptr->stage][DOWN])
 			  || is_quest(p_ptr->stage));
@@ -319,7 +325,8 @@ void alloc_stairs(int feat, int num, int walls)
 	    }
 
 	    /* Require "naked" floor grid */
-	    if (!cave_naked_bold(y, x))
+	    f_ptr = &f_info[cave_feat[y][x]];
+	    if (!(cave_naked_bold(y, x) && tf_has(f_ptr->flags, TF_FLOOR)))
 		continue;
 
 	    /* Require a certain number of adjacent walls */
@@ -365,6 +372,7 @@ void alloc_stairs(int feat, int num, int walls)
 void alloc_object(int set, int typ, int num)
 {
     int y, x, k;
+    feature_type *f_ptr;
 
     /* Place some objects */
     for (k = 0; k < num; k++) {
@@ -375,13 +383,15 @@ void alloc_object(int set, int typ, int num)
 	    /* Location */
 	    y = randint0(DUNGEON_HGT);
 	    x = randint0(DUNGEON_WID);
+	    f_ptr = &f_info[cave_feat[y][x]];
 
 	    /* Paranoia - keep objects out of the outer walls */
 	    if (!in_bounds_fully(y, x))
 		continue;
 
 	    /* Require "naked" floor grid */
-	    if (!cave_naked_bold(y, x))
+	    f_ptr = &f_info[cave_feat[y][x]];
+	    if (!(cave_naked_bold(y, x) && tf_has(f_ptr->flags, TF_FLOOR)))
 		continue;
 
 	    /* Check for "room" */

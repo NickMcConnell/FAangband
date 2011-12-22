@@ -839,6 +839,8 @@ extern void get_chamber_monsters(int y1, int x1, int y2, int x2)
     /* Description of monsters in room */
     char *name;
 
+    feature_type *f_ptr;
+
     /* Get a legal depth. */
     depth = p_ptr->depth + randint0(11) - 5;
     if (depth > 60)
@@ -888,8 +890,9 @@ extern void get_chamber_monsters(int y1, int x1, int y2, int x2)
 	y = y1 + randint0(1 + ABS(y2 - y1));
 	x = x1 + randint0(1 + ABS(x2 - x1));
 
-	/* Require a floor square with no monster in it already. */
-	if (!cave_naked_bold(y, x))
+	/* Require a passable square with no monster in it already. */
+	f_ptr = &f_info[cave_feat[y][x]];
+	if (!(cave_empty_bold(y, x) && tf_has(f_ptr->flags, TF_PASSABLE)))
 	    continue;
 
 	/* Place a single monster.  Sleeping 2/3rds of the time. */
