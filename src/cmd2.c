@@ -1927,12 +1927,6 @@ static bool do_cmd_tunnel_test(int y, int x)
  */
 static bool twall(int y, int x)
 {
-    feature_type *f_ptr = &f_info[cave_feat[y][x]];
-
-    /* Paranoia -- Require a wall or door or some such */
-    if (cave_floor_bold(y, x) || tf_has(f_ptr->flags, TF_TREE))
-	return (FALSE);
-
     /* Sound */
     sound(MSG_DIG);
 

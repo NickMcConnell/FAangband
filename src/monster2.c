@@ -1596,6 +1596,7 @@ s16b monster_carry(int m_idx, object_type * j_ptr)
 bool is_detected(int y, int x)
 {
     int d, xx, yy;
+    feature_type *f_ptr;
 
     /* Check around (and under) the character */
     for (d = 0; d < 9; d++) {
@@ -1608,7 +1609,8 @@ bool is_detected(int y, int x)
 	    continue;
 
 	/* Only check trappable grids */
-	if (!cave_floor_bold(yy, xx))
+	f_ptr = &f_info[cave_feat[yy][xx]];
+	if (!tf_has(f_ptr->flags, TF_TRAP))
 	    continue;
 
 	/* Return false if undetected */

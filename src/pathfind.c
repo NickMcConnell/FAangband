@@ -851,7 +851,8 @@ static bool run_test(void)
 	}
 
 	/* Analyze unknown grids and floors */
-	if (inv || cave_floor_bold(row, col)) {
+	f_ptr = &f_info[cave_feat[row][col]];
+	if (inv || tf_has(f_ptr->flags, TF_FLOOR)) {
 	    /* Looking for open area */
 	    if (p_ptr->run_open_area) {
 		/* Nothing */

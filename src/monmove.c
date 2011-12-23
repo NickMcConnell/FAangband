@@ -2377,7 +2377,10 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 	     * If character vulnerability has not yet been 
 	     * calculated this turn, calculate it now.
 	     */
-	    if (p_ptr->vulnerability == 0) {
+	    if (p_ptr->vulnerability == 0) 
+	    {
+		feature_type *f_ptr;
+
 		/* Count passable grids next to target */
 		for (i = 0; i < 8; i++) {
 		    y = targ_y + ddy_ddd[i];
@@ -2387,12 +2390,12 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 		    if (!in_bounds(y, x))
 			continue;
 
-		    /* Count floor grids (generic passable) */
-		    if (cave_floor_bold(y, x)) {
+		    /* Count passable grids */
+		    f_ptr = &f_info[cave_feat[y][x]];
+		    if (tf_has(f_ptr->flags, TF_PASSABLE))
 			p_ptr->vulnerability++;
-		    }
 		}
-
+		
 
 		/* Dead ends are not all that safe */
 		if (p_ptr->vulnerability == 1)

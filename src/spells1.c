@@ -3124,7 +3124,7 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
     case GF_KILL_WALL:
 	{
 	    /* Non-walls (etc) */
-	    if (cave_floor_bold(y, x))
+	    if (tf_has(f_ptr->flags, TF_PROJECT))
 		break;
 
 	    /* Trees are unaffected. */

@@ -5049,10 +5049,11 @@ void earthquake(int cy, int cx, int r, bool volcano)
 	    if (cave_valid_bold(yy, xx)) {
 		int feat = FEAT_FLOOR;
 
-		bool floor = cave_floor_bold(yy, xx);
-
 		monster_type *m_ptr = &m_list[cave_m_idx[yy][xx]];
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
+		feature_type *f_ptr = &f_info[cave_feat[yy][xx]];
+
+		bool floor = tf_has(f_ptr->flags, TF_FLOOR);
 
 		/* Allow more things to be destroyed outside */
 		if (stage_map[p_ptr->stage][STAGE_TYPE] != CAVE)

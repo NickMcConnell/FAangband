@@ -3621,7 +3621,7 @@ void wiz_light(bool wizard)
 		    int yy = y + ddy_ddd[i];
 		    int xx = x + ddx_ddd[i];
 
-		    f_ptr = &f_info[cave_feat[y][x]];		    
+		    f_ptr = &f_info[cave_feat[yy][xx]];		    
 
 		    /* Perma-light the grid (always) */
 		    cave_on(cave_info[yy][xx], CAVE_GLOW);
@@ -3633,7 +3633,8 @@ void wiz_light(bool wizard)
 		    }
 		    
 		    /* Memorize features other than ordinary floor */
-		    if (!cave_floor_bold(yy, xx) || cave_visible_trap(yy, xx))
+		    if (!tf_has(f_ptr->flags, TF_FLOOR) || 
+			cave_visible_trap(yy, xx))
 		    {
 			/* Memorize the grid */
 			cave_on(cave_info[yy][xx], CAVE_MARK);
