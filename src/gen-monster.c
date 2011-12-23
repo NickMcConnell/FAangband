@@ -892,7 +892,7 @@ extern void get_chamber_monsters(int y1, int x1, int y2, int x2)
 
 	/* Require a passable square with no monster in it already. */
 	f_ptr = &f_info[cave_feat[y][x]];
-	if (!(cave_empty_bold(y, x) && tf_has(f_ptr->flags, TF_PASSABLE)))
+	if (!cave_empty_bold(y, x))
 	    continue;
 
 	/* Place a single monster.  Sleeping 2/3rds of the time. */

@@ -1039,7 +1039,7 @@ static void chest_death(bool scatter, int y, int x, s16b o_idx)
 		x = randint0(DUNGEON_WID);
 
 		/* Must be an empty floor. */
-		if (!cave_empty_bold(y, x))
+		if (!cave_clean_bold(y, x))
 		    continue;
 
 		/* Place the object there. */

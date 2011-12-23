@@ -2375,6 +2375,7 @@ enum
 
 /**
  * Determine if a legal grid is an empty floor grid
+ * Used for safely placing the player or a monster
  *
  * Line 1 -- check passable
  * Line 2 -- forbid player/monsters

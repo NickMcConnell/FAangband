@@ -3652,7 +3652,7 @@ static bool project_o(int who, int y, int x, int dam, int typ)
 			    ox = randint0(DUNGEON_WID);
 
 			    /* Must be an empty floor. */
-			    if (!cave_empty_bold(oy, ox))
+			    if (!cave_clean_bold(oy, ox))
 				continue;
 
 			    /* Get local object */
