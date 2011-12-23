@@ -2360,18 +2360,15 @@ enum
 
 
 /**
- * Determine if a "legal" grid is a "clean" floor grid
+ * Determine if a legal grid is a clean floor grid
+ * Used for placing objects
  *
- * Line 1 -- forbid non-floors
- * Line 2 -- allow grass
- * Line 3 -- allow sand dunes
- * Line 4 -- forbid normal objects
+ * Line 1 -- check can hold an object
+ * Line 2 -- forbid normal objects
  */
 #define cave_clean_bold(Y,X)		     \
-  (((cave_feat[Y][X] == FEAT_FLOOR) ||	     \
-    (cave_feat[Y][X] == FEAT_GRASS) ||	     \
-    (cave_feat[Y][X] == FEAT_DUNE)) &&	     \
-   (cave_o_idx[Y][X] == 0))
+    (tf_has(f_info[cave_feat[Y][X]].flags, TF_OBJECT) && \
+     (cave_o_idx[Y][X] == 0))
 
 /**
  * Determine if a legal grid is an empty floor grid
