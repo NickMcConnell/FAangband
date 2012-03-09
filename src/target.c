@@ -1269,7 +1269,7 @@ static int draw_path(u16b * path, char *c, byte * a, int y1, int x1, int y2,
 
     /* Draw the path. */
     for (i = 0; i < max; i++) {
-	byte colour;
+	byte colour, typ;
 
 	/* Find the co-ordinates on the level. */
 	int y = GRID_Y(path[i]);
@@ -1300,12 +1300,14 @@ static int draw_path(u16b * path, char *c, byte * a, int y1, int x1, int y2,
 	/* Choose a colour - such a hack now! */
 	/* Visible monsters are red. */
 	if (cave_m_idx[y][x] && m_list[cave_m_idx[y][x]].ml) {
-	    colour = GF_FIRE;
+	    typ = GF_FIRE;
+	    colour = TERM_RED;
 	}
 
 	/* Known objects are yellow. */
 	else if (cave_o_idx[y][x] && o_list[cave_o_idx[y][x]].marked) {
-	    colour = GF_SOUND;
+	    typ = GF_SOUND;
+	    colour = TERM_YELLOW;
 	}
 
 	/* Known walls are blue. */
@@ -1313,21 +1315,35 @@ static int draw_path(u16b * path, char *c, byte * a, int y1, int x1, int y2,
 		 (cave_has(cave_info[y][x], CAVE_MARK) || 
 		  player_can_see_bold(y, x))) 
 	{
-	    colour = GF_ELEC;
+	    typ = GF_ELEC;
+	    colour = TERM_BLUE;
 	}
 	/* Unknown squares are grey. */
 	else if (!cave_has(cave_info[y][x], CAVE_MARK) && 
 		 !player_can_see_bold(y, x)) {
-	    colour = GF_DARK;
+	    typ = GF_DARK;
+	    colour = TERM_L_DARK;
 	}
 	/* Unoccupied squares are white. */
 	else {
-	    colour = GF_COLD;
+	    typ = GF_COLD;
+	    colour = TERM_WHITE;
 	}
 
-	/* Hack - Obtain attr/char */
-	a1 = gf_to_attr[colour][BOLT_NO_MOTION];
-	c1 = gf_to_char[colour][BOLT_NO_MOTION];
+	/* Decide on output char */
+	if (use_graphics == GRAPHICS_NONE || use_graphics == GRAPHICS_PSEUDO) 
+	{
+	    /* ASCII is simple */
+	    
+	    c1 = '*';
+	    a1 = colour;
+	}
+	else
+	{
+	    /* Hack - Obtain attr/char */
+	    a1 = gf_to_attr[typ][BOLT_NO_MOTION];
+	    c1 = gf_to_char[typ][BOLT_NO_MOTION];
+	}
 
 	/* Draw the path segment */
 	print_rel(c1, a1, y, x);
