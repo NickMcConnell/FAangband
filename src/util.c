@@ -1676,6 +1676,8 @@ bool get_check(const char *prompt)
 
 	bool repeat = FALSE;
   
+	feature_type *f_ptr = &f_info[cave_feat[p_ptr->py][p_ptr->px]];
+  
 	/* Paranoia XXX XXX XXX */
 	message_flush();
 
@@ -1704,6 +1706,12 @@ bool get_check(const char *prompt)
   
 	/* Erase the prompt */
 	prt("", 0, 0);
+
+	/* Hack of the century */
+	if ((ke.code == '\r') && tf_has(f_ptr->flags, TF_SHOP))
+        {
+	    ke.code = 'y';
+        }
 
 	/* Normal negation */
 	if ((ke.code != 'Y') && (ke.code != 'y')) return (FALSE);
