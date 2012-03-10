@@ -7499,6 +7499,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	    if (dam > randint1(1800) + 600) 
 	    {
 		if ((cave_feat[y][x] == FEAT_FLOOR)
+		    || (cave_feat[y][x] == FEAT_ROAD)
 		    || (cave_feat[y][x] == FEAT_RUBBLE)) {
 
 		    /* Forget the floor or rubble. */
