@@ -951,7 +951,19 @@ static void display_monster(int col, int row, bool cursor, int oid)
     /* Display the name */
     c_prt(attr, r_ptr->name, row, col);
 
-    if ((tile_width > 1) || (tile_height > 1))
+    /* Monster recall window */
+    if (cursor)
+    {
+	character_icky--;
+	character_icky--;
+	p_ptr->monster_race_idx = r_idx;
+	p_ptr->redraw |= PR_MONSTER;
+	handle_stuff(p_ptr);
+	character_icky++;
+	character_icky++;
+    }
+
+   if ((tile_width > 1) || (tile_height > 1))
 	return;
 
     /* Display symbol */
@@ -1501,6 +1513,18 @@ static void display_object(int col, int row, bool cursor, int oid)
 
     /* Display the name */
     c_prt(attr, o_name, row, col);
+
+    /* Object recall window */
+    if (cursor)
+    {
+	character_icky--;
+	character_icky--;
+	p_ptr->object_kind_idx = k_idx;
+	p_ptr->redraw |= PR_OBJECT;
+	handle_stuff(p_ptr);
+	character_icky++;
+	character_icky++;
+    }
 
     /* Show autoinscription if around */
     if (aware && inscrip)
