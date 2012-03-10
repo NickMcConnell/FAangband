@@ -726,15 +726,15 @@ F:MTRAP | RUNE
 D:Open ground that can be crossed easily by all creatures.  It occurs only in 
 D:wilderness.  It may contain traps. 
 
-# 0x76 --> special feature -- web
+# 0x76 --> special feature -- road
 
-N:118:web
-G:%:y
-P:20
-F:LOS | PROJECT
-D:Woven by a spider, this traps insects.  Monsters which are not spiders and 
-D:cannot pass through rock will need a turn to clear the web, as will the 
-D:player.  It can be seen through.
+N:117:road
+G:.:W
+P:13
+X:0:0:0:0
+F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | EASY | RUN1 | TRAP | MTRAP | RUNE
+D:An open road.  Can be walked across by anything, and can
+D:hold traps or items.  Does not break line of sight.
 
 # 0x77 --> special feature -- void
 
