@@ -1934,7 +1934,10 @@ static bool twall(int y, int x)
     cave_off(cave_info[y][x], CAVE_MARK);
 
     /* Remove the feature */
-    cave_set_feat(y, x, FEAT_FLOOR);
+    if (outside)
+	cave_set_feat(y, x, FEAT_ROAD);
+    else
+	cave_set_feat(y, x, FEAT_FLOOR);
 
     /* Update the visuals */
     p_ptr->update |= (PU_UPDATE_VIEW | PU_MONSTERS);

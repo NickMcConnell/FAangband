@@ -1730,7 +1730,12 @@ s16b player_place(int y, int x)
 
     /* No stairs if we don't do that */
     if (OPT(adult_no_stairs) && !p_ptr->themed_level && p_ptr->depth && !(OPT(adult_thrall) && (p_ptr->depth == 58) && (turn < 10)))
-	cave_set_feat(y, x, FEAT_FLOOR);
+    {
+	if (outside)
+	    cave_set_feat(y, x, FEAT_ROAD);
+	else
+	    cave_set_feat(y, x, FEAT_FLOOR);
+    }
 
     /* Save player location */
     p_ptr->py = y;
@@ -4130,7 +4135,7 @@ void monster_death(int m_idx)
 	     && !OPT(adult_dungeon)) {
 	/* Make a path */
 	for (y = p_ptr->py; y < DUNGEON_HGT - 2; y++)
-	    cave_set_feat(y, p_ptr->px, FEAT_FLOOR);
+	    cave_set_feat(y, p_ptr->px, FEAT_ROAD);
 	cave_set_feat(DUNGEON_HGT - 2, p_ptr->px, FEAT_LESS_SOUTH);
 
 	/* Announce it */

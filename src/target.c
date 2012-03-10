@@ -1173,7 +1173,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 		name = "unknown grid";
 
 	    /* Pick a prefix */
-	    if (*s2 && (feat != FEAT_FLOOR))
+	    if (*s2 && (feat != FEAT_FLOOR) && (feat != FEAT_ROAD))
 		s2 = "in ";
 
 	    /* Pick proper indefinite article */

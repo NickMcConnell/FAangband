@@ -3916,8 +3916,9 @@ void grow_trees_and_grass(bool powerful)
 	    if ((cave_o_idx[y][x] > 0) && (!powerful))
 		continue;
 
-	    /* Skip grids that aren't floor */
-	    if (cave_feat[y][x] != FEAT_FLOOR)
+	    /* Skip grids that aren't floor or road */
+	    if ((cave_feat[y][x] != FEAT_FLOOR) && 
+		(cave_feat[y][x] != FEAT_ROAD))
 		continue;
 
 	    /* Skip grids that have monsters */
@@ -4641,7 +4642,7 @@ void destroy_area(int y1, int x1, int r, bool full)
 	    /* Destroy "valid" grids */
 	    if (cave_valid_bold(y, x)) 
 	    {
-		int feat = FEAT_FLOOR;
+		int feat = outside ? FEAT_ROAD : FEAT_FLOOR;
 
 		/* Delete objects */
 		delete_object(y, x);
@@ -5047,7 +5048,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 
 	    /* Destroy location (if valid).  Increment trap/glyph count. */
 	    if (cave_valid_bold(yy, xx)) {
-		int feat = FEAT_FLOOR;
+		int feat = outside ? FEAT_ROAD : FEAT_FLOOR;
 
 		monster_type *m_ptr = &m_list[cave_m_idx[yy][xx]];
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];

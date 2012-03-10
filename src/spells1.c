@@ -3114,7 +3114,10 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 		cave_off(cave_info[y][x], CAVE_MARK);
 
 		/* Destroy the feature */
-		cave_set_feat(y, x, FEAT_FLOOR);
+		if (outside)
+		    cave_set_feat(y, x, FEAT_ROAD);
+		else
+		    cave_set_feat(y, x, FEAT_FLOOR);
 	    }
 
 	    break;
@@ -3150,7 +3153,10 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 		    cave_off(cave_info[y][x], CAVE_MARK);
 
 		    /* Destroy the wall */
-		    cave_set_feat(y, x, FEAT_FLOOR);
+		    if (outside)
+			cave_set_feat(y, x, FEAT_ROAD);
+		    else
+			cave_set_feat(y, x, FEAT_FLOOR);
 		}
 
 		/* Quartz / Magma with treasure */
@@ -3168,7 +3174,10 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 		    cave_off(cave_info[y][x], CAVE_MARK);
 
 		    /* Destroy the wall */
-		    cave_set_feat(y, x, FEAT_FLOOR);
+		    if (outside)
+			cave_set_feat(y, x, FEAT_ROAD);
+		    else
+			cave_set_feat(y, x, FEAT_FLOOR);
 
 		    /* Place some gold */
 		    place_gold(y, x);
@@ -3188,7 +3197,10 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 		    cave_off(cave_info[y][x], CAVE_MARK);
 
 		    /* Destroy the wall */
-		    cave_set_feat(y, x, FEAT_FLOOR);
+		    if (outside)
+			cave_set_feat(y, x, FEAT_ROAD);
+		    else
+			cave_set_feat(y, x, FEAT_FLOOR);
 		}
 
 		/* Rubble */
@@ -3205,7 +3217,10 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 		    cave_off(cave_info[y][x], CAVE_MARK);
 
 		    /* Destroy the rubble */
-		    cave_set_feat(y, x, FEAT_FLOOR);
+		    if (outside)
+			cave_set_feat(y, x, FEAT_ROAD);
+		    else
+			cave_set_feat(y, x, FEAT_FLOOR);
 
 		    /* Hack -- place an object.  Chance much less in Oangband. */
 		    if (randint0(100) < 1) {
@@ -3233,7 +3248,10 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 		cave_off(cave_info[y][x], CAVE_MARK);
 
 		/* Destroy the feature */
-		cave_set_feat(y, x, FEAT_FLOOR);
+		if (outside)
+		    cave_set_feat(y, x, FEAT_ROAD);
+		else
+		    cave_set_feat(y, x, FEAT_FLOOR);
 	    }
 
 	    /* Update the visuals */
@@ -7457,7 +7475,12 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 
 		    /* Destroy the lava */
 		    if (randint1(3) != 1)
-			cave_set_feat(y, x, FEAT_FLOOR);
+		    {
+			if (outside)
+			    cave_set_feat(y, x, FEAT_ROAD);
+			else
+			    cave_set_feat(y, x, FEAT_FLOOR);
+		    }
 		    else
 			cave_set_feat(y, x, FEAT_RUBBLE);
 		}
@@ -7510,7 +7533,10 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 		    cave_off(cave_info[y][x], CAVE_MARK);
 
 		    /* Destroy the water */
-		    cave_set_feat(y, x, FEAT_FLOOR);
+		    if (outside)
+			cave_set_feat(y, x, FEAT_ROAD);
+		    else
+			cave_set_feat(y, x, FEAT_FLOOR);
 		}
 	    }
 
@@ -7521,7 +7547,10 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 		cave_off(cave_info[y][x], CAVE_MARK);
 
 		/* Destroy the tree */
-		cave_set_feat(y, x, FEAT_FLOOR);
+		if (outside)
+		    cave_set_feat(y, x, FEAT_ROAD);
+		else
+		    cave_set_feat(y, x, FEAT_FLOOR);
 	    }
 
 	    /* Clears webs. */

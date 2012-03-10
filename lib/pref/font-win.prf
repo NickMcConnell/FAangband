@@ -45,8 +45,7 @@ F:113:all:0x06:0x09
 
 F:116:all:0x05:0x08
 
-# Invis grass traps (green / centered dot)
+# Roads (white / centered dot)
 
-F:117:all:0x05:0x08
-
+F:117:all:0x01:0x07
 

@@ -598,7 +598,7 @@ static void grid_get_attr(grid_data *g, byte *a, feature_type *f_ptr)
 		else
 			*a = TERM_GREEN;
 	}
-	else if (g->f_idx == FEAT_FLOOR)
+	else if ((g->f_idx == FEAT_FLOOR) || (g->f_idx == FEAT_ROAD))
 	{
 		if (g->lighting == FEAT_LIGHTING_BRIGHT) {
 			if (*a == TERM_WHITE)

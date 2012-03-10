@@ -3819,7 +3819,10 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	    cave_off(cave_info[ny][nx], CAVE_MARK);
 
 	    /* Notice */
-	    cave_set_feat(ny, nx, FEAT_FLOOR);
+	    if (outside)
+		cave_set_feat(ny, nx, FEAT_ROAD);
+	    else
+		cave_set_feat(ny, nx, FEAT_FLOOR);
 
 	    /* Note changes to grid - but only if actually seen */
 	    if (cave_has(cave_info[ny][nx], CAVE_SEEN))
@@ -3977,7 +3980,10 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 		    cave_off(cave_info[yy][xx], CAVE_MARK);
 
 		    /* Notice */
-		    cave_set_feat(yy, xx, FEAT_FLOOR);
+		    if (outside)
+			cave_set_feat(yy, xx, FEAT_ROAD);
+		    else
+			cave_set_feat(yy, xx, FEAT_FLOOR);
 
 		    /* Note changes to grid - but only if actually seen */
 		    if (cave_has(cave_info[yy][xx], CAVE_SEEN))
