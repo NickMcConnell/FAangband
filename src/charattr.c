@@ -42,9 +42,6 @@ void x_fprintf(ang_file *f, int encoding, const char *fmt, ...)
     /* End the Varargs Stuff */
     va_end(vp);
 
-    /* Translate */
-    xstr_trans(buf, encoding);
-
     file_put(f, buf);
 }
 
@@ -60,34 +57,30 @@ void x_fprintf(ang_file *f, int encoding, const char *fmt, ...)
 void dump_put_str(byte attr, const char *str, int col)
 {
     int i = 0;
-    char *s;
-    char buf[1024];
+    wchar_t *s;
+    wchar_t buf[1024];
     bool finished = FALSE;
 
     /* Find the start point */
     while ((i != col) && (i < MAX_C_A_LEN))
     {
-	if (dump_ptr[i].pchar == '\0') finished = TRUE;
+	if (dump_ptr[i].pchar == L'\0') finished = TRUE;
 	if (finished) 
         {
-	    dump_ptr[i].pchar = ' ';
+	    dump_ptr[i].pchar = L' ';
 	    dump_ptr[i].pattr = TERM_WHITE;
         }
 	i++;
     }
   
     /* Copy to a rewriteable string */
-    my_strcpy(buf, str, 1024);
-
-    /* Hack - translate if we do that */
-    if (Term->xchar_hook)
-	xstr_trans(buf, (Term->xchar_hook(128) == 128));
+    Term_mbstowcs(buf, str, 1024);
 
     /* Current location within "buf" */
     s = buf;
 
     /* Write the characters */
-    while ((*s != '\0') && (i < MAX_C_A_LEN))
+    while ((*s != L'\0') && (i < MAX_C_A_LEN))
     {
 	dump_ptr[i].pattr = attr;
 	dump_ptr[i++].pchar = *s++;
@@ -98,7 +91,7 @@ void dump_put_str(byte attr, const char *str, int col)
 	i--;
 
     /* Terminate */
-    dump_ptr[i].pchar = '\0';
+    dump_ptr[i].pchar = L'\0';
 }
 
 /**
@@ -151,32 +144,23 @@ void dump_line_file(char_attr *this_line)
 {
     int x = 0;
     char_attr xa = this_line[0];
-    byte (*old_xchar_hook)(byte c) = Term->xchar_hook;
-    char buf[2];
 
-    /* We use either ascii or system-specific encoding */
-    int encoding = OPT(xchars_to_file) ? SYSTEM_SPECIFIC : ASCII;
-
-    /* Display the requested encoding -- ASCII or system-specific */
-    if (!OPT(xchars_to_file)) Term->xchar_hook = NULL;
+    char buf[1024];
+    char *p = buf;
 
     /* Dump the line */
-    while (xa.pchar != '\0')
+    while (xa.pchar != L'\0')
     {
 	/* Add the char/attr */
-	x_fprintf(dump_out_file, encoding, "%c", xa.pchar);
+	p += wctomb(p, xa.pchar);
 
 	/* Advance */
 	xa = this_line[++x];
     }
 
-    /* Return to standard display */
-    Term->xchar_hook = old_xchar_hook;
-
     /* Terminate the line */
-    buf[0] = '\n';
-    buf[1] = '\0';
-    file_put(dump_out_file, buf);
+    *p = '\0';
+    x_file_putf(dump_out_file, "%s\n", buf);
 }
 
 /**
@@ -191,7 +175,7 @@ void dump_line_screen(char_attr *this_line)
     Term_erase(0, dump_row, 255);
 
     /* Dump the line */
-    while (xa.pchar != '\0')
+    while (xa.pchar != L'\0')
     {
 	/* Add the char/attr */
 	Term_addch(xa.pattr, xa.pchar);
@@ -258,16 +242,10 @@ void text_out_dump(byte a, char *str, char_attr_line **line, int *current_line,
     /* Current position on the line */
     int pos = 0;
 
-    /* We use either ascii or system-specific encoding */
-    int encoding = OPT(xchars_to_file) ? SYSTEM_SPECIFIC : ASCII;
-
     char_attr_line *lline = *line;
 
     /* Copy to a rewriteable string */
     my_strcpy(buf, str, 1024);
-
-    /* Translate it to 7-bit ASCII or system-specific format */
-    xstr_trans(buf, encoding);
 
     /* Current location within "buf" */
     s = buf;
@@ -275,7 +253,6 @@ void text_out_dump(byte a, char *str, char_attr_line **line, int *current_line,
     /* Process the string */
     while (*s)
     {
-	char ch;
 	int n = 0;
 	int len = wrap - pos;
 	int l_space = -1;
@@ -340,11 +317,8 @@ void text_out_dump(byte a, char *str, char_attr_line **line, int *current_line,
 	/* Write that line to dump */
 	for (n = 0; n < len; n++)
 	{
-	    /* Ensure the character is printable */
-	    ch = (my_isprint((unsigned char) s[n]) ? s[n] : ' ');
-
 	    /* Write out the character */
-	    dump_put_str(a, format("%c",ch), pos);
+	    dump_put_str(a, format("%c",s[n]), pos);
 
 	    /* Increment */
 	    pos++;
@@ -382,7 +356,7 @@ void text_out_dump(byte a, char *str, char_attr_line **line, int *current_line,
 void textblock_dump(textblock *tb, char_attr_line **line, int *current_line, 
 		   int indent, int wrap)
 {
-    const char *text = textblock_text(tb);
+    const wchar_t *text = textblock_text(tb);
     const byte *attrs = textblock_attrs(tb);
     
     size_t *line_starts = NULL, *line_lengths = NULL;

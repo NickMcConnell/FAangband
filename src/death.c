@@ -304,21 +304,21 @@ static void print_tomb(void)
 
     /* Build the filename */
     if (tree)
-	path_build(buf, 1024, ANGBAND_DIR_FILE, "tree.txt");
+	path_build(buf, sizeof(buf), ANGBAND_DIR_FILE, "tree.txt");
     else if (boat)
-	path_build(buf, 1024, ANGBAND_DIR_FILE, "boat.txt");
+	path_build(buf, sizeof(buf), ANGBAND_DIR_FILE, "boat.txt");
     else
-	path_build(buf, 1024, ANGBAND_DIR_FILE, "dead.txt");
+	path_build(buf, sizeof(buf), ANGBAND_DIR_FILE, "dead.txt");
 
-    /* Open the News file */
-    fp = file_open(buf, MODE_READ, FTYPE_TEXT);
+    /* Open the death file */
+    fp = file_open(buf, MODE_READ, -1);
 
     /* Dump */
     if (fp) {
 	int i, y, x;
 
 	byte a = 0;
-	char c = ' ';
+	wchar_t c = L' ';
 
 	bool okay = TRUE;
 

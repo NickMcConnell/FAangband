@@ -1247,13 +1247,13 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
  *
  * From NPPangband
  */
-static int draw_path(u16b * path, char *c, byte * a, int y1, int x1, int y2,
+static int draw_path(u16b * path, wchar_t *c, byte * a, int y1, int x1, int y2,
 		     int x2)
 {
     int i;
     int max;
     bool on_screen;
-    char c1;
+    wchar_t c1;
     byte a1;
 
     /* Find the path. */
@@ -1335,7 +1335,7 @@ static int draw_path(u16b * path, char *c, byte * a, int y1, int x1, int y2,
 	{
 	    /* ASCII is simple */
 	    
-	    c1 = '*';
+	    c1 = L'*';
 	    a1 = colour;
 	}
 	else
@@ -1357,7 +1357,7 @@ static int draw_path(u16b * path, char *c, byte * a, int y1, int x1, int y2,
  *
  * From NPPangband
  */
-static void load_path(int max, u16b * path, char *c, byte * a)
+static void load_path(int max, u16b * path, wchar_t *c, byte * a)
 {
     int i;
     for (i = 0; i < max; i++) {
@@ -1496,7 +1496,7 @@ bool target_set_interactive(int mode, int x, int y)
 
     /* These are used for displaying the path to the target */
     u16b *path = malloc(MAX_RANGE * sizeof(*path));
-    char *path_char = malloc(MAX_RANGE * sizeof(*path_char));
+    wchar_t *path_char = malloc(MAX_RANGE * sizeof(*path_char));
     byte *path_attr = malloc(MAX_RANGE * sizeof(*path_attr));
     int max = 0;
 

@@ -641,10 +641,10 @@ void display_player_sml(void)
     int i, j;
 
     byte a;
-    char c;
+    wchar_t c;
 
     char buf[100];
-
+ 
     int show_m_tohit = p_ptr->state.dis_to_h;
     int show_a_tohit = p_ptr->state.dis_to_h;
     int show_m_todam = p_ptr->state.dis_to_d;
@@ -697,12 +697,12 @@ void display_player_sml(void)
 	for (j = 0; j < A_MAX; j++) {
 	    /* Initialize color based of sign of bonus. */
 	    a = TERM_SLATE;
-	    c = '.';
+	    c = L'.';
 
 	    /* Boost */
 	    if (o_ptr->bonus_stat[j] != 0) {
 		/* Default */
-		c = '*';
+		c = L'*';
 
 		/* Good */
 		if (o_ptr->bonus_stat[j] > 0) {
@@ -711,7 +711,7 @@ void display_player_sml(void)
 
 		    /* Label boost */
 		    if (o_ptr->bonus_stat[j] < 10)
-			c = '0' + o_ptr->bonus_stat[j];
+			c = L'0' + o_ptr->bonus_stat[j];
 		}
 
 		/* Bad */
@@ -721,7 +721,7 @@ void display_player_sml(void)
 
 		    /* Label boost */
 		    if (o_ptr->bonus_stat[j] < 10)
-			c = '0' - o_ptr->bonus_stat[j];
+			c = L'0' - o_ptr->bonus_stat[j];
 		}
 	    }
 
@@ -729,13 +729,11 @@ void display_player_sml(void)
 	    if (of_has(o_ptr->id_obj, OF_SUSTAIN_STR + j)) {
 		/* Dark green, "s" if no stat bonus. */
 		a = TERM_GREEN;
-		if (c == '.')
-		    c = 's';
+		if (c == L'.')
+		    c = L's';
 	    }
 
 	    /* Dump proper character */
-	    buf[0] = c;
-	    buf[1] = '\0';
 	    Term_putch(i + 1, 4 + j, a, c);
 	}
 
@@ -2808,19 +2806,22 @@ errr get_rnd_line(char *file_name, char *output)
 
 
 
-static void write_html_escape_char(ang_file * htm, char c)
+static void write_html_escape_char(ang_file * htm, wchar_t c)
 {
+    char mbseq[MB_CUR_MAX];
+
     switch (c) {
-    case '<':
+    case L'<':
 	file_putf(htm, "&lt;");
 	break;
-    case '>':
+    case L'>':
 	file_putf(htm, "&gt;");
 	break;
-    case '&':
+    case L'&':
 	file_putf(htm, "&amp;");
 	break;
     default:
+	wctomb(mbseq, c);
 	file_putf(htm, "%c", c);
 	break;
     }
@@ -2834,7 +2835,7 @@ void html_screenshot(const char *name, int mode)
 
 	byte a = TERM_WHITE;
 	byte oa = TERM_WHITE;
-	char c = ' ';
+	wchar_t c = L' ';
 
 	const char *new_color_fmt = (mode == 0) ?
 					"<font color=\"#%02X%02X%02X\">"
@@ -2885,7 +2886,7 @@ void html_screenshot(const char *name, int mode)
 			(void)(Term_what(x, y, &a, &c));
 
 			/* Color change */
-			if (oa != a && c != ' ')
+			if (oa != a && c != L' ')
 			{
 				/* From the default white to another color */
 				if (oa == TERM_WHITE)
@@ -2917,7 +2918,12 @@ void html_screenshot(const char *name, int mode)
 
 			/* Write the character and escape special HTML characters */
 			if (mode == 0) write_html_escape_char(fp, c);
-			else file_putf(fp, "%c", c);
+			else
+			{
+				char mbseq[MB_LEN_MAX+1] = {0};
+				wctomb(mbseq, c);
+				file_putf(fp, "%s", mbseq);
+			}
 		}
 
 		/* End the row */

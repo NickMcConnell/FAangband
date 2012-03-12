@@ -4594,7 +4594,7 @@ $as_echo "#define USE_GCU 1" >>confdefs.h
 	fi
 fi
 
-for ac_func in use_default_colors can_change_color
+for ac_func in mvwaddnwstr use_default_colors can_change_color
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"

@@ -25,10 +25,6 @@
 #include "main.h"
 #include "files.h"
 
-/* locale junk */
-#include "locale.h"
-#include "langinfo.h"
-
 /* Avoid 'struct term' name conflict with <curses.h> (via <term.h>) on AIX */
 #define term System_term
 
@@ -123,18 +119,6 @@ static int active = 0;
 #define CTRL_ORE 1
 #define CTRL_WALL 2
 #define CTRL_ROCK 3
-
-static char ctrl_char[32] = {
-	'\0', '*', '#', '%', '?', '?', '?', '\'', '+', '?', '?', '+',
-	'+', '+', '+', '+', '~', '-', '-', '-', '_', '+', '+', '+',
-	'+', '|', '?', '?', '?', '?', '?', '.'
-};
-
-static int ctrl_attr[32] = {
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0
-};
 
 #ifdef A_COLOR
 
@@ -698,36 +682,11 @@ static errr Term_wipe_gcu(int x, int y, int n) {
 	return 0;
 }
 
-/*
- * Since GCU currently only supports Latin-1 extended chracters, we only
- * install this hook if we're not using UTF-8.
- * Given a position in the ISO Latin-1 character set, return the correct
- * character on this system. Currently
- */
- static byte Term_xchar_gcu(byte c) {
-	return c;
-}
-
-
-/* Hack - replace non-ASCII characters to
- * avoid display glitches in selectors.
- *
- * Note that we do this after the ACS mapping,
- * because the display glitches we are avoiding
- * are in curses itself.
- */
-char filter_char(char c) {
-	if (c < ' ' || c >= 127)
-		return '?';
-	else
-		return c;
-}
-
 
 /*
  * Place some text on the screen using an attribute
  */
-static errr Term_text_gcu(int x, int y, int n, byte a, const char *s) {
+static errr Term_text_gcu(int x, int y, int n, byte a, const wchar_t *s) {
 	term_data *td = (term_data *)(Term->data);
 
 #ifdef A_COLOR
@@ -735,21 +694,8 @@ static errr Term_text_gcu(int x, int y, int n, byte a, const char *s) {
 	if (can_use_color) (void)wattrset(td->win, colortable[a & 255]);
 #endif
 
-	/* Move the cursor */
-	wmove(td->win, y, x);
-
-	/* Write to screen */
-	while (n--) {
-		unsigned char c = *(s++);
-
-		if (c < 32) {
-			wattron(td->win, ctrl_attr[c]);
-			waddch(td->win, filter_char(ctrl_char[c]));
-			wattroff(td->win, ctrl_attr[c]);
-		} else {
-			waddch(td->win, filter_char(c));
-		}
-	}
+	/* Move cursor and write to screen */
+	mvwaddnwstr(td->win, y, x, s, n);
 
 #if defined(A_COLOR)
 	/* Unset the color */
@@ -796,13 +742,6 @@ static errr term_data_init_gcu(term_data *td, int rows, int cols, int y, int x) 
 	t->curs_hook = Term_curs_gcu;
 	t->xtra_hook = Term_xtra_gcu;
 
-	/* only if the locale supports Latin-1 will we enable xchar_hook */
-	if (setlocale(LC_CTYPE, "")) {
-		/* the Latin-1 codeset is ISO-8859-1 */
-		if (strcmp(nl_langinfo(CODESET), "ISO-8859-1") == 0)
-			t->xchar_hook = Term_xchar_gcu;
-	}
-
 	/* Save the data */
 	t->data = td;
 
@@ -829,7 +768,7 @@ errr init_gcu(int argc, char **argv) {
 	int i;
 	int rows, cols, y, x;
 	int next_win = 0;
-	bool graphics = TRUE;
+/*	bool graphics = TRUE; */
 
 	/* Initialize info about terminal capabilities */
 	termtype = getenv("TERM");
@@ -841,18 +780,18 @@ errr init_gcu(int argc, char **argv) {
 			use_big_screen = TRUE;
 		else if (prefix(argv[i], "-B"))
 			bold_extended = TRUE;
-		else if (prefix(argv[i], "-a"))
-			graphics = FALSE;
+/*		else if (prefix(argv[i], "-a"))
+			graphics = FALSE; */
 		else
 			plog_fmt("Ignoring option: %s", argv[i]);
 	}
 
-	if (graphics) {
+/*	if (graphics) {
 		ctrl_char[CTRL_WALL] = ' ';
 		ctrl_attr[CTRL_ORE] = A_REVERSE;
 		ctrl_attr[CTRL_WALL] = A_REVERSE;
 		ctrl_attr[CTRL_ROCK] = A_REVERSE;
-	}
+	}*/
 
 	/* Extract the normal keymap */
 	keymap_norm_prepare();

@@ -86,7 +86,7 @@ s16b num_repro;			/* Current reproducer count */
 s16b object_level;		/* Current object creation level */
 s16b monster_level;		/* Current monster creation level */
 
-char summon_kin_type;		/* Hack -- See summon_specific() */
+wchar_t summon_kin_type;		/* Hack -- See summon_specific() */
 
 s32b turn;			/* Current game turn */
 
@@ -653,7 +653,7 @@ u32b alloc_race_total;
  * Specify attr/char pairs for visual special effects for project()
  */
 byte gf_to_attr[GF_MAX][BOLT_MAX];
-char gf_to_char[GF_MAX][BOLT_MAX];
+wchar_t gf_to_char[GF_MAX][BOLT_MAX];
 
 
 /*

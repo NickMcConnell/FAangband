@@ -367,10 +367,6 @@ extern void describe_monster(int r_idx, bool spoilers)
 
     my_strcpy(buf, r_ptr->text, sizeof(buf));
 
-    /* Hack - translate if we do that */
-    if (Term->xchar_hook)
-	xstr_trans(buf, (Term->xchar_hook(128) == 128));
-
     /* Dump it */
     text_out_indent = 0;
     text_out_to_screen(TERM_L_BLUE, buf);
@@ -2040,7 +2036,7 @@ extern void roff_top(int r_idx)
     monster_race *r_ptr = &r_info[r_idx];
 
     byte a1, a2;
-    char c1, c2;
+    wchar_t c1, c2;
 
     char buf[100];
 
@@ -2073,10 +2069,6 @@ extern void roff_top(int r_idx)
 
     /* For all other monsters, dump the racial name. */
     my_strcat(buf, r_ptr->name, sizeof(buf));
-
-    /* Hack - translate if we do that */
-    if (Term->xchar_hook)
-	xstr_trans(buf, (Term->xchar_hook(128) == 128));
 
     /* Print it */
     Term_addstr(-1, TERM_WHITE, buf);

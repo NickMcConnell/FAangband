@@ -4166,7 +4166,7 @@ void display_itemlist(void)
     unsigned i;
     unsigned disp_count = 0;
     byte a;
-    char c;
+    wchar_t c;
 
     object_type *types[MAX_ITEMLIST];
     int counts[MAX_ITEMLIST];

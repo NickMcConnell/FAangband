@@ -208,7 +208,7 @@ if test "$enable_curses" = "yes"; then
 	fi
 fi
 
-AC_CHECK_FUNCS([use_default_colors can_change_color])
+AC_CHECK_FUNCS([mvwaddnwstr use_default_colors can_change_color])
 
 dnl X11 checking
 if test "$enable_x11" = "yes"; then

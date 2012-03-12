@@ -764,10 +764,6 @@ void display_monlist(void)
 	/* Obtain the length of the description */
 	n = strlen(m_name);
 
-	/* Hack - translate if we do that */
-	if (Term->xchar_hook)
-	    xstr_trans(m_name, (Term->xchar_hook(128) == 128));
-
 	/* See if there are any neutrals */
 	if (neutral_counts[m_ptr->r_idx] > 0)
 	    attitudes++;

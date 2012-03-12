@@ -61,8 +61,6 @@ extern const char *short_locality_name[MAX_LOCALITIES];
 extern int towns[10];
 extern int race_town_prob[10][14];
 extern byte type_of_store[MAX_STORES];
-extern const byte char_tables[256][CHAR_TABLE_SLOTS];
-extern const xchar_type latin1_encode[];
 extern byte get_angle_to_grid[41][41];
 const byte g_info[196];
 
@@ -92,7 +90,7 @@ extern u32b seed_town[10];
 extern s16b num_repro;
 extern s16b object_level;
 extern s16b monster_level;
-extern char summon_kin_type;
+extern wchar_t summon_kin_type;
 extern s32b turn;
 extern s32b old_turn;
 extern int use_graphics;
@@ -181,7 +179,7 @@ extern s16b alloc_race_size;
 extern alloc_entry *alloc_race_table;
 extern u32b alloc_race_total;
 extern byte gf_to_attr[GF_MAX][BOLT_MAX];
-extern char gf_to_char[GF_MAX][BOLT_MAX];
+extern wchar_t gf_to_char[GF_MAX][BOLT_MAX];
 extern byte misc_to_attr[256];
 extern char misc_to_char[256];
 extern byte tval_to_attr[128];
@@ -399,6 +397,7 @@ extern bool is_a_vowel(int ch);
 extern int color_char_to_attr(char c);
 extern int color_text_to_attr(const char *name);
 extern const char *attr_to_text(byte a);
+extern bool char_matches_key(wchar_t c, keycode_t key);
 
 #ifdef SUPPORT_GAMMA
 extern byte gamma_table[256];

@@ -691,7 +691,7 @@ static enum parser_error parse_prefs_k(struct parser *p)
 
 	kind = &k_info[idx];
         kind->x_attr = (byte)parser_getint(p, "attr");
-        kind->x_char = (char)parser_getint(p, "char");
+        kind->x_char = (wchar_t)parser_getint(p, "char");
 
 	return PARSE_ERROR_NONE;
 }
@@ -711,7 +711,7 @@ static enum parser_error parse_prefs_r(struct parser *p)
 
 	monster = &r_info[idx];
 	monster->x_attr = (byte)parser_getint(p, "attr");
-	monster->x_char = (char)parser_getint(p, "char");
+	monster->x_char = (wchar_t)parser_getint(p, "char");
 
 	return PARSE_ERROR_NONE;
 }
@@ -748,7 +748,7 @@ static enum parser_error parse_prefs_f(struct parser *p)
         {
                 feature = &f_info[idx];
                 feature->x_attr[light_idx] = (byte)parser_getint(p, "attr");
-                feature->x_char[light_idx] = (char)parser_getint(p, "char");
+                feature->x_char[light_idx] = (wchar_t)parser_getint(p, "char");
         }
         else
         {
@@ -756,7 +756,7 @@ static enum parser_error parse_prefs_f(struct parser *p)
                 {
                         feature = &f_info[idx];
                         feature->x_attr[light_idx] = (byte)parser_getint(p, "attr");
-                        feature->x_char[light_idx] = (char)parser_getint(p, "char");
+                        feature->x_char[light_idx] = (wchar_t)parser_getint(p, "char");
                 }
         }
 
@@ -814,7 +814,7 @@ static enum parser_error parse_prefs_gf(struct parser *p)
                 if (!types[i]) continue;
 
                 gf_to_attr[i][motion] = (byte)parser_getuint(p, "attr");
-                gf_to_char[i][motion] = (char)parser_getuint(p, "char");
+                gf_to_char[i][motion] = (wchar_t)parser_getuint(p, "char");
         }
 
         return PARSE_ERROR_NONE;
@@ -835,7 +835,7 @@ static enum parser_error parse_prefs_l(struct parser *p)
 
 	flavor = &flavor_info[idx];
 	flavor->x_attr = (byte)parser_getint(p, "attr");
-	flavor->x_char = (char)parser_getint(p, "char");
+	flavor->x_char = (wchar_t)parser_getint(p, "char");
 
         return PARSE_ERROR_NONE;
 }

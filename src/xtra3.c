@@ -281,7 +281,7 @@ static void prt_equippy(int row, int col)
     int i;
 
     byte a;
-    char c;
+    wchar_t c;
 
     object_type *o_ptr;
 
@@ -1268,7 +1268,7 @@ static void update_maps(game_event_type type, game_event_data * data,
     else {
 	grid_data g;
 	byte a, ta;
-	char c, tc;
+	wchar_t c, tc;
 
 	int ky, kx;
 	int vy, vx;
@@ -1929,7 +1929,7 @@ static void show_splashscreen(game_event_type type, game_event_data * data,
 	int i, y, x;
       
 	byte a = 0;
-	char c = ' ';
+	wchar_t c = L' ';
       
 	bool okay = TRUE;
       
@@ -2022,7 +2022,7 @@ static void show_splashscreen(game_event_type type, game_event_data * data,
 	int i, y, x;
       
 	byte a = 0;
-	char c = ' ';
+	wchar_t c = L' ';
       
 	bool okay = TRUE;
       

@@ -46,7 +46,6 @@
 #include "object.h"
 #include "parser.h"
 #include "player.h"
-#include "x-char.h"
 #include "ui.h"
 #include "z-type.h"
 #include "externs.h"

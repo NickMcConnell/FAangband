@@ -25,6 +25,7 @@ HEADERS = \
 	game-cmd.h \
 	game-event.h \
 	generate.h \
+	grafmode.h \
 	h-basic.h \
 	history.h \
 	init.h \
@@ -49,7 +50,6 @@ HEADERS = \
 	ui-event.h \
 	ui-birth.h \
 	ui-menu.h \
-	x-char.h \
 	z-bitflag.h \
 	z-debug.h \
 	z-msg.h \
@@ -94,6 +94,7 @@ ANGFILES = \
 	gen-room.o \
 	gen-util.o \
 	gen-wilderness.o \
+	grafmode.o \
 	history.o \
 	identify.o \
 	init.o \
@@ -143,7 +144,6 @@ ANGFILES = \
 	variable.o \
 	wizard1.o \
 	wizard2.o \
-	x-char.o \
 	x-spell.o \
 	xtra2.o \
 	xtra3.o

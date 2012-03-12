@@ -457,12 +457,12 @@ static enum parser_error parse_k_n(struct parser *p) {
 }
 
 static enum parser_error parse_k_g(struct parser *p) {
-    const char *sym = parser_getsym(p, "char");
+    const wchar_t glyph = parser_getchar(p, "glyph");
     const char *color = parser_getsym(p, "color");
     struct object_kind *k = parser_priv(p);
     assert(k);
 
-    k->d_char = sym[0];
+    k->d_char = glyph;
     if (strlen(color) > 1)
 	k->d_attr = color_text_to_attr(color);
     else
@@ -634,7 +634,7 @@ struct parser *init_parse_k(void) {
     parser_setpriv(p, NULL);
     parser_reg(p, "V sym version", ignored);
     parser_reg(p, "N int index str name", parse_k_n);
-    parser_reg(p, "G sym char sym color", parse_k_g);
+    parser_reg(p, "G char glyph sym color", parse_k_g);
     parser_reg(p, "I sym tval int sval rand pval", parse_k_i);
     parser_reg(p, "W int level int extra int weight int cost", parse_k_w);
     parser_reg(p, "A str pairs", parse_k_a);
@@ -1311,7 +1311,7 @@ static enum parser_error parse_f_n(struct parser *p) {
 }
 
 static enum parser_error parse_f_g(struct parser *p) {
-    char glyph = parser_getchar(p, "glyph");
+    wchar_t glyph = parser_getchar(p, "glyph");
     const char *color = parser_getsym(p, "color");
     int attr = 0;
     struct feature *f = parser_priv(p);

@@ -1425,7 +1425,7 @@ static byte spell_color(int type)
  *
  * If the distance is not "one", we (may) return "*".
  */
-static void bolt_pict(int y, int x, int ny, int nx, int typ, byte *a, char *c)
+static void bolt_pict(int y, int x, int ny, int nx, int typ, byte *a, wchar_t *c)
 {
 	int motion;
 
@@ -1446,7 +1446,7 @@ static void bolt_pict(int y, int x, int ny, int nx, int typ, byte *a, char *c)
 	/* Decide on output char */
 	if (use_graphics == GRAPHICS_NONE || use_graphics == GRAPHICS_PSEUDO) {
 		/* ASCII is simple */
-		char chars[] = "*|/-\\";
+		wchar_t chars[] = L"*|/-\\";
 
 		*c = chars[motion];
 		*a = spell_color(typ);
@@ -8192,7 +8192,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 		    /* Only do visuals if the player can "see" the bolt */
 		    if (panel_contains(y, x) && player_has_los_bold(y, x)) {
 			byte a;
-			char c;
+			wchar_t c;
 
 			/* Obtain the bolt pict */
 			bolt_pict(oy, ox, y, x, typ, &a, &c);
@@ -8438,7 +8438,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 	    /* Only do visuals if the player can "see" the blast */
 	    if (panel_contains(y, x) && player_has_los_bold(y, x)) {
 		byte a;
-		char c;
+		wchar_t c;
 
 		drawn = TRUE;
 

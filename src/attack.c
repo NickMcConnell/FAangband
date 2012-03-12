@@ -1696,7 +1696,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
     bool did_miss = FALSE;
 
     byte missile_attr;
-    char missile_char;
+    wchar_t missile_char;
 
     char o_name[120];
     char m_name[80];
@@ -2246,7 +2246,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 
     byte stat;
     byte missile_attr;
-    char missile_char;
+    wchar_t missile_char;
 
     char o_name[120];
     char m_name[80];
