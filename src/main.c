@@ -20,6 +20,10 @@
 #include "files.h"
 #include "init.h"
 
+/* locale junk */
+#include "locale.h"
+#include "langinfo.h"
+
 /*
  * Some machines have a "main()" function in their "main-xxx.c" file,
  * all the others use this file for their "main()" function.
@@ -187,13 +191,12 @@ static void user_name(char *buf, size_t len, int id)
 	struct passwd *pw = getpwuid(id);
 
 	/* Default to PLAYER */
-	if (!pw)
-	{
+	if (!pw || !pw->pw_name || !pw->pw_name[0] ) {
 		my_strcpy(buf, "PLAYER", len);
 		return;
 	}
 
-	/* Capitalise and copy */
+	/* Copy and capitalise */
 	my_strcpy(buf, pw->pw_name, len);
 	my_strcap(buf);
 }
@@ -314,7 +317,9 @@ int main(int argc, char *argv[])
 
 			case 'g':
 				/* Default graphics tile */
-				arg_graphics = GRAPHICS_ADAM_BOLT;
+				/* in graphics.txt, 2 corresponds to adam bolt's tiles */
+				arg_graphics = 2; 
+				if (*arg) arg_graphics = atoi(arg);
 				break;
 
 			case 'u':
@@ -389,6 +394,12 @@ int main(int argc, char *argv[])
 	/* If we were told which mode to use, then use it */
 	if (mstr)
 		ANGBAND_SYS = mstr;
+
+	if (setlocale(LC_CTYPE, "")) {
+		/* Require UTF-8 */
+		if (strcmp(nl_langinfo(CODESET), "UTF-8") != 0)
+			quit("Angband requires UTF-8 support");
+	}
 
 	/* Get the file paths */
 	init_stuff();
