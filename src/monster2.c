@@ -889,6 +889,7 @@ void display_monlist(void)
  *   - 0x20 --> Pronominalize visible monsters
  *   - 0x40 --> Assume the monster is hidden
  *   - 0x80 --> Assume the monster is visible
+ *   - 0x100 --> Capitalise monster name
  *
  * Useful Modes:
  *   - 0x00 --> Full nominative name ("the kobold") or "it"
@@ -1119,6 +1120,9 @@ void monster_desc(char *desc, size_t max, monster_type * m_ptr, int mode)
 	    my_strcat(desc, " (offscreen)", max);
 	}
     }
+    
+    if (mode & 0x100)
+	my_strcap(desc);
 }
 
 
@@ -3169,11 +3173,11 @@ void message_pain(int m_idx, int dam)
 
 
     /* Get the monster name */
-    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
+    monster_desc(m_name, sizeof(m_name), m_ptr, 0x100);
 
     /* Notice non-damage */
     if (dam == 0) {
-	msg("%^s is unharmed.", m_name);
+	msg("%s is unharmed.", m_name);
 	return;
     }
 
@@ -3187,73 +3191,73 @@ void message_pain(int m_idx, int dam)
     /* Jelly's, Mold's, Vortex's, Quthl's */
     if (strchr("jmvQ", r_ptr->d_char)) {
 	if (percentage > 95)
-	    msg("%^s barely notices.", m_name);
+	    msg("%s barely notices.", m_name);
 	else if (percentage > 75)
-	    msg("%^s flinches.", m_name);
+	    msg("%s flinches.", m_name);
 	else if (percentage > 50)
-	    msg("%^s squelches.", m_name);
+	    msg("%s squelches.", m_name);
 	else if (percentage > 35)
-	    msg("%^s quivers in pain.", m_name);
+	    msg("%s quivers in pain.", m_name);
 	else if (percentage > 20)
-	    msg("%^s writhes about.", m_name);
+	    msg("%s writhes about.", m_name);
 	else if (percentage > 10)
-	    msg("%^s writhes in agony.", m_name);
+	    msg("%s writhes in agony.", m_name);
 	else
-	    msg("%^s jerks limply.", m_name);
+	    msg("%s jerks limply.", m_name);
     }
 
     /* Dogs and Hounds */
     else if (strchr("CZ", r_ptr->d_char)) {
 	if (percentage > 95)
-	    msg("%^s shrugs off the attack.", m_name);
+	    msg("%s shrugs off the attack.", m_name);
 	else if (percentage > 75)
-	    msg("%^s snarls with pain.", m_name);
+	    msg("%s snarls with pain.", m_name);
 	else if (percentage > 50)
-	    msg("%^s yelps in pain.", m_name);
+	    msg("%s yelps in pain.", m_name);
 	else if (percentage > 35)
-	    msg("%^s howls in pain.", m_name);
+	    msg("%s howls in pain.", m_name);
 	else if (percentage > 20)
-	    msg("%^s howls in agony.", m_name);
+	    msg("%s howls in agony.", m_name);
 	else if (percentage > 10)
-	    msg("%^s writhes in agony.", m_name);
+	    msg("%s writhes in agony.", m_name);
 	else
-	    msg("%^s yelps feebly.", m_name);
+	    msg("%s yelps feebly.", m_name);
     }
 
     /* One type of monsters (ignore,squeal,shriek) */
     else if (strchr("FIKMRSXabclqrst", r_ptr->d_char)) {
 	if (percentage > 95)
-	    msg("%^s ignores the attack.", m_name);
+	    msg("%s ignores the attack.", m_name);
 	else if (percentage > 75)
-	    msg("%^s grunts with pain.", m_name);
+	    msg("%s grunts with pain.", m_name);
 	else if (percentage > 50)
-	    msg("%^s squeals in pain.", m_name);
+	    msg("%s squeals in pain.", m_name);
 	else if (percentage > 35)
-	    msg("%^s shrieks in pain.", m_name);
+	    msg("%s shrieks in pain.", m_name);
 	else if (percentage > 20)
-	    msg("%^s shrieks in agony.", m_name);
+	    msg("%s shrieks in agony.", m_name);
 	else if (percentage > 10)
-	    msg("%^s writhes in agony.", m_name);
+	    msg("%s writhes in agony.", m_name);
 	else
-	    msg("%^s cries out feebly.", m_name);
+	    msg("%s cries out feebly.", m_name);
     }
 
     /* Another type of monsters (shrug,cry,scream) */
     else {
 	if (percentage > 95)
-	    msg("%^s shrugs off the attack.", m_name);
+	    msg("%s shrugs off the attack.", m_name);
 	else if (percentage > 75)
-	    msg("%^s grunts with pain.", m_name);
+	    msg("%s grunts with pain.", m_name);
 	else if (percentage > 50)
-	    msg("%^s cries out in pain.", m_name);
+	    msg("%s cries out in pain.", m_name);
 	else if (percentage > 35)
-	    msg("%^s screams in pain.", m_name);
+	    msg("%s screams in pain.", m_name);
 	else if (percentage > 20)
-	    msg("%^s screams in agony.", m_name);
+	    msg("%s screams in agony.", m_name);
 	else if (percentage > 10)
-	    msg("%^s writhes in agony.", m_name);
+	    msg("%s writhes in agony.", m_name);
 	else
-	    msg("%^s cries out feebly.", m_name);
+	    msg("%s cries out feebly.", m_name);
     }
 }
 
@@ -4233,6 +4237,8 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, const char *note)
 
 	/* Shapeshifters die as their original form */
 	if (m_ptr->schange) {
+	    char *str;
+
 	    /* Paranoia - make sure _something_ dies */
 	    if (!m_ptr->orig_idx)
 		m_ptr->orig_idx = m_ptr->r_idx;
@@ -4251,7 +4257,9 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, const char *note)
 	    r_ptr = &r_info[m_ptr->r_idx];
 
 	    /* Note the change */
-	    msg("%^s is revealed in %s true form.", m_name, m_poss);
+	    str = format("%s%s", m_name);
+	    my_strcap(str);
+	    msg("%s is revealed in %s true form.", str, m_poss);
 	}
 
 	/* Extract monster name */
@@ -4275,7 +4283,9 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, const char *note)
 
 	/* Death by Missile/Spell attack */
 	if (note) {
-	    msgt(MSG_KILL, "%^s%s", m_name, note);
+	    char *str = format("%s%s", m_name, note);
+	    my_strcap(str);
+	    msgt(MSG_KILL, "%s", str);
 	}
 
 	/* Death by physical attack -- invisible monster */
@@ -4331,7 +4341,7 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, const char *note)
 	    /* write note for player ghosts */
 	    if (rf_has(r_ptr->flags, RF_PLAYER_GHOST)) {
 		my_strcpy(note,
-			  format("Destroyed %^s, the %^s", ghost_name,
+			  format("Destroyed %s, the %s", ghost_name,
 				 r_ptr->name), sizeof(note));
 	    }
 

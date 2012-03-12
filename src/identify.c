@@ -364,8 +364,10 @@ void label_as_ego(object_type * o_ptr, int item)
 
     /* Describe */
     if (item - 1 >= INVEN_WIELD) {
-	msg("%^s: %s (%c).", describe_use(item - 1), o_name,
-		   index_to_label(item - 1));
+	char *m = format("%s: %s (%c).", describe_use(item - 1), o_name, 
+			 index_to_label(item - 1));
+	my_strcap(m);
+	msg(m);
     } else if (item - 1 >= 0) {
 	msg("In your pack: %s (%c).", o_name, index_to_label(item));
     }

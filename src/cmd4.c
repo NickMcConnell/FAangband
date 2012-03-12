@@ -685,7 +685,7 @@ void ghost_challenge(void)
 {
     monster_race *r_ptr = &r_info[r_ghost];
     
-    msg("%^s, the %^s %s", ghost_name, r_ptr->name, 
+    msg("%s, the %s %s", ghost_name, r_ptr->name, 
 	       do_cmd_challenge_text[randint0(14)]);
 }
 

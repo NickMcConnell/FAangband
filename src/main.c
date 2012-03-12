@@ -194,7 +194,8 @@ static void user_name(char *buf, size_t len, int id)
 	}
 
 	/* Capitalise and copy */
-	strnfmt(buf, len, "%^s", pw->pw_name);
+	my_strcpy(buf, pw->pw_name, len);
+	my_strcap(buf);
 }
 
 #endif /* SET_UID */

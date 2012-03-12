@@ -958,7 +958,7 @@ bool chaotic_effects(monster_type * m_ptr)
     char m_name[80];
 
     /* Extract monster name (or "it") */
-    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
+    monster_desc(m_name, sizeof(m_name), m_ptr, 0x100);
 
     /* Spin the wheel... */
     effect = randint1(14);
@@ -978,7 +978,7 @@ bool chaotic_effects(monster_type * m_ptr)
 	    /* Handle polymorph */
 	    if ((tmp != m_ptr->r_idx) && (tmp != 0)) {
 		/* Monster polymorphs */
-		msg("%^s changes!", m_name);
+		msg("%s changes!", m_name);
 
 		/* "Kill" the "old" monster */
 		delete_monster_idx(cave_m_idx[my][mx]);
@@ -1005,22 +1005,22 @@ bool chaotic_effects(monster_type * m_ptr)
 		    rf_on(l_ptr->flags, RF_NO_CONF);
 		}
 
-		msg("%^s is unaffected.", m_name);
+		msg("%s is unaffected.", m_name);
 	    } else if (randint0(110) < r_ptr->level + randint1(10)) {
-		msg("%^s is unaffected.", m_name);
+		msg("%s is unaffected.", m_name);
 	    } else if (m_ptr->confused > 0) {
 		if (m_ptr->ml)
-		    msgt(MSG_HIT, "%^s appears more confused.",
+		    msgt(MSG_HIT, "%s appears more confused.",
 				   m_name);
 		else
-		    msgt(MSG_HIT, "%^s sounds more confused.",
+		    msgt(MSG_HIT, "%s sounds more confused.",
 				   m_name);
 		m_ptr->confused += 4 + randint0(p_ptr->lev) / 12;
 	    } else {
 		if (m_ptr->ml)
-		    msgt(MSG_HIT, "%^s appears confused.", m_name);
+		    msgt(MSG_HIT, "%s appears confused.", m_name);
 		else
-		    msgt(MSG_HIT, "%^s sounds confused.", m_name);
+		    msgt(MSG_HIT, "%s sounds confused.", m_name);
 		m_ptr->confused += 10 + randint0(p_ptr->lev) / 5;
 	    }
 
@@ -1030,7 +1030,7 @@ bool chaotic_effects(monster_type * m_ptr)
     case 3:
 	{
 	    /* Message */
-	    msg("%^s disappears!", m_name);
+	    msg("%s disappears!", m_name);
 
 	    /* Teleport */
 	    teleport_away(cave_m_idx[my][mx], 8);
@@ -1045,7 +1045,7 @@ bool chaotic_effects(monster_type * m_ptr)
 	    m_ptr->hp += (m_ptr->maxhp - m_ptr->hp) / 2;
 
 	    /* Message */
-	    msg("%^s looks healthier.", m_name);
+	    msg("%s looks healthier.", m_name);
 
 	    return (TRUE);
 	}
@@ -1067,9 +1067,9 @@ bool chaotic_effects(monster_type * m_ptr)
 
 	    /* Message */
 	    if (tmp < m_ptr->mana)
-		msg("%^s loses mana.", m_name);
+		msg("%s loses mana.", m_name);
 	    else if (tmp > m_ptr->mana)
-		msg("%^s gains mana.", m_name);
+		msg("%s gains mana.", m_name);
 
 	    /* Set the value */
 	    m_ptr->mana = tmp;
@@ -1089,7 +1089,7 @@ bool chaotic_effects(monster_type * m_ptr)
 		    sound(MSG_FLEE);
 
 		    /* Message */
-		    msgt(MSG_FLEE, "%^s flees in terror!", m_name);
+		    msgt(MSG_FLEE, "%s flees in terror!", m_name);
 		}
 	    }
 
@@ -1111,7 +1111,7 @@ bool chaotic_effects(monster_type * m_ptr)
 	    /* Failed */
 	    else {
 		m_ptr->stasis = (byte) (5 + randint0(6));
-		msg("%^s is Held in stasis!", m_name);
+		msg("%s is Held in stasis!", m_name);
 	    }
 
 	    /* Can't be hit now */
@@ -1174,7 +1174,7 @@ bool chaotic_effects(monster_type * m_ptr)
 		if (m_ptr->mspeed > 60) {
 		    if (r_ptr->speed - m_ptr->mspeed <= 10) {
 			m_ptr->mspeed -= 10;
-			msg("%^s starts moving slower.", m_name);
+			msg("%s starts moving slower.", m_name);
 		    }
 		}
 	    }
@@ -1187,7 +1187,7 @@ bool chaotic_effects(monster_type * m_ptr)
 	    /* Speed up */
 	    if (m_ptr->mspeed < 150)
 		m_ptr->mspeed += 10;
-	    msg("%^s starts moving faster.", m_name);
+	    msg("%s starts moving faster.", m_name);
 
 	    return (TRUE);
 	}
@@ -1250,7 +1250,7 @@ bool chaotic_effects(monster_type * m_ptr)
 		q_ptr = &r_info[tmp];
 
 		/* Message */
-		msg("%^s shimmers and changes!", m_name);
+		msg("%s shimmers and changes!", m_name);
 
 		/* Change shape */
 		m_ptr->orig_idx = m_ptr->r_idx;
@@ -3874,11 +3874,11 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
     }
 
     /* Get the monster name (BEFORE polymorphing) */
-    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
+    monster_desc(m_name, sizeof(m_name), m_ptr, 0x100);
 
     /* Monsters in stasis are invulnerable. -LM- */
     if (m_ptr->stasis) {
-	msg("%^s is in stasis, and cannot be harmed.", m_name);
+	msg("%s is in stasis, and cannot be harmed.", m_name);
 	return (FALSE);
     }
 
@@ -3926,14 +3926,14 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	    /* Monsters can duck behind rubble */    
 	    if (tf_has(f_ptr->flags, TF_ROCK))
 	    {
-		msg("%^s ducks behind a boulder!", m_name);
+		msg("%s ducks behind a boulder!", m_name);
 		return (FALSE);
 	    }
 
 	    /* Monsters can duck behind trees */    
 	    if (tf_has(f_ptr->flags, TF_TREE))
 	    {
-		msg("%^s hides behind a tree!", m_name);
+		msg("%s hides behind a tree!", m_name);
 		return (FALSE);
 	    }
 	}
@@ -5626,7 +5626,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	    q_ptr = &r_info[tmp];
 
 	    /* Message */
-	    msg("%^s shimmers and changes!", m_name);
+	    msg("%s shimmers and changes!", m_name);
 
 	    /* Change shape */
 	    m_ptr->orig_idx = m_ptr->r_idx;
@@ -5751,7 +5751,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 	    /* Give detailed messages if destroyed */
 	    if (note)
-		msg("%^s%s", m_name, note);
+		msg("%s%s", m_name, note);
 	}
 
 	/* Damaged monster */
@@ -5760,7 +5760,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 	    /* Give detailed messages if visible or destroyed */
 	    if (note && seen)
-		msg("%^s%s", m_name, note);
+		msg("%s%s", m_name, note);
 
 	    /* Hack -- Pain message */
 	    else if (dam > 0)
@@ -5793,7 +5793,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 
 	    /* Give detailed messages if visible or destroyed */
 	    if (note && seen)
-		msg("%^s%s", m_name, note);
+		msg("%s%s", m_name, note);
 
 	    /* Hack -- Pain message */
 	    else if (dam > 0)
@@ -5805,7 +5805,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 		sound(MSG_FLEE);
 
 		/* Message */
-		msg("%^s flees in terror!", m_name);
+		msg("%s flees in terror!", m_name);
 	    }
 
 	    /* Hack -- handle sleep */
@@ -7441,7 +7441,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	l_ptr = &l_list[m_ptr->r_idx];
 
 	/* Get the monster name */
-	monster_desc(m_name, sizeof(m_name), m_ptr, 0);
+	monster_desc(m_name, sizeof(m_name), m_ptr, 0x100);
     }
 
     if (affect_player) {
@@ -7827,7 +7827,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
     if (affect_monster) {
 	/* Give detailed messages if visible */
 	if (note && seen) {
-	    msg("%^s%s", m_name, note);
+	    msg("%s%s", m_name, note);
 	}
 
 	/* Update the monster */

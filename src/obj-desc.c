@@ -937,5 +937,8 @@ size_t object_desc(char *buf, size_t max, const object_type * o_ptr,
 	    end = obj_desc_inscrip(o_ptr, buf, max, end);
     }
 
+    if (mode & ODESC_CAPITAL) 
+	my_strcap(buf);
+
     return end;
 }

@@ -1238,7 +1238,7 @@ bool py_attack(int y, int x, bool can_push)
 		if (m_ptr->ml)
 		    rf_on(l_ptr->flags, RF_NO_STUN);
 	    } else {
-		msgt(MSG_HIT, "%^s is stunned.", m_name);
+		msgt(MSG_HIT, "%s is stunned.", m_name);
 		m_ptr->stunned += randint0(p_ptr->lev / 5) + 4;
 		if (m_ptr->stunned > 24)
 		    m_ptr->stunned = 24;
@@ -1251,7 +1251,7 @@ bool py_attack(int y, int x, bool can_push)
 		if (m_ptr->ml)
 		    rf_on(l_ptr->flags, RF_NO_CONF);
 	    } else {
-		msgt(MSG_HIT, "%^s appears confused.", m_name);
+		msgt(MSG_HIT, "%s appears confused.", m_name);
 		m_ptr->confused += randint0(p_ptr->lev / 5) + 4;
 	    }
 	}
@@ -1451,23 +1451,23 @@ bool py_attack(int y, int x, bool can_push)
 			rf_on(l_ptr->flags, RF_NO_CONF);
 		    }
 
-		    msg("%^s is unaffected.", m_name);
+		    msg("%s is unaffected.", m_name);
 		} else if (randint0(110) < r_ptr->level + randint1(10)) {
-		    msg("%^s is unaffected.", m_name);
+		    msg("%s is unaffected.", m_name);
 		} else if (m_ptr->confused > 0) {
 		    if (m_ptr->ml)
-			msgt(MSG_HIT, "%^s appears more confused.",
+			msgt(MSG_HIT, "%s appears more confused.",
 				       m_name);
 		    else
-			msgt(MSG_HIT, "%^s sounds more confused.",
+			msgt(MSG_HIT, "%s sounds more confused.",
 				       m_name);
 		    m_ptr->confused += 4 + randint0(p_ptr->lev) / 12;
 		} else {
 		    if (m_ptr->ml)
-			msgt(MSG_HIT, "%^s appears confused.",
+			msgt(MSG_HIT, "%s appears confused.",
 				       m_name);
 		    else
-			msgt(MSG_HIT, "%^s sounds confused.",
+			msgt(MSG_HIT, "%s sounds confused.",
 				       m_name);
 		    m_ptr->confused += 10 + randint0(p_ptr->lev) / 5;
 		}
@@ -1490,17 +1490,17 @@ bool py_attack(int y, int x, bool can_push)
 			rf_on(l_ptr->flags, RF_UNDEAD);
 		    }
 
-		    msg("%^s is immune!", m_name);
+		    msg("%s is immune!", m_name);
 		}
 		/* All other monsters get a saving throw. */
 		else if ((randint0(160)) < (r_ptr->level + randint0(60))) {
-		    msg("%^s wards off your deadly blow.", m_name);
+		    msg("%s wards off your deadly blow.", m_name);
 		}
 		/* Tasting some of their own medicine... */
 		else {
 		    m_ptr->black_breath = TRUE;
 		    msgt(MSG_HIT,
-				   "%^s is stricken with the Black Breath!",
+				   "%s is stricken with the Black Breath!",
 				   m_name);
 		}
 	    }
@@ -1585,7 +1585,7 @@ bool py_attack(int y, int x, bool can_push)
 	sound(MSG_FLEE);
 
 	/* Message */
-	msgt(MSG_FLEE, "%^s flees in terror!", m_name);
+	msgt(MSG_FLEE, "%s flees in terror!", m_name);
     }
 
 
@@ -2095,7 +2095,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 		    sound(MSG_FLEE);
 
 		    /* Message */
-		    msgt(MSG_FLEE, "%^s flees in terror!", m_name);
+		    msgt(MSG_FLEE, "%s flees in terror!", m_name);
 		}
 	    }
 
@@ -2610,7 +2610,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 		    sound(MSG_FLEE);
 
 		    /* Message */
-		    msg("%^s flees in terror!", m_name);
+		    msg("%s flees in terror!", m_name);
 		}
 	    }
 

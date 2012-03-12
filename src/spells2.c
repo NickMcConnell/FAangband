@@ -3230,8 +3230,10 @@ bool ident_spell(void)
 
     /* Describe */
     if (item >= INVEN_WIELD) {
-	msg("%^s: %s (%c).", describe_use(item), o_name,
-		   index_to_label(item));
+	char *m = format("%s: %s (%c).", describe_use(item), o_name, 
+			 index_to_label(item));
+	my_strcap(m);
+	msg(m);
     } else if (item >= 0) {
 	msg("In your pack: %s (%c).  %s", o_name, index_to_label(item),
 		   ((squelch ==
@@ -3675,7 +3677,7 @@ void tap_magical_energy(void)
     object_type *o_ptr;
 
     const char *q, *s;
-    const char *item_name = "";
+    char *item_name = "";
 
 
     /* Only accept legal items */
@@ -3760,9 +3762,11 @@ void tap_magical_energy(void)
 
 	/* Player is a smart cookie. */
 	else
-	    msg
-		("Your mana was already at its maximum.  %^s not drained.",
+	{
+	    my_strcap(item_name);
+	    msg("Your mana was already at its maximum.  %s not drained.",
 		 item_name);
+	}
     }
 }
 
@@ -4552,13 +4556,13 @@ bool probing(void)
 		msg("Probing...");
 
 	    /* Get "the monster" or "something" */
-	    monster_desc(m_name, sizeof(m_name), m_ptr, 0x04);
+	    monster_desc(m_name, sizeof(m_name), m_ptr, 0x104);
 
 	    /* Describe the monster */
 	    if (!(r_ptr->mana))
-		msg("%^s has %d hit points.", m_name, m_ptr->hp);
+		msg("%s has %d hit points.", m_name, m_ptr->hp);
 	    else
-		msg("%^s has %d hit points and %d mana.", m_name,
+		msg("%s has %d hit points and %d mana.", m_name,
 			   m_ptr->hp, m_ptr->mana);
 
 	    /* Learn all of the non-spell, non-treasure flags */
@@ -4981,10 +4985,10 @@ void earthquake(int cy, int cx, int r, bool volcano)
 		    }
 
 		    /* Describe the monster */
-		    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
+		    monster_desc(m_name, sizeof(m_name), m_ptr, 0x100);
 
 		    /* Scream in pain */
-		    msg("%^s wails out in pain!", m_name);
+		    msg("%s wails out in pain!", m_name);
 
 		    /* Take damage from the quake */
 		    damage = (sn ? damroll(4, 8) : damroll(5, 80));
@@ -5001,7 +5005,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 		    /* Delete (not kill) "dead" monsters */
 		    if (m_ptr->hp < 0) {
 			/* Message */
-			msg("%^s is embedded in the rock!", m_name);
+			msg("%s is embedded in the rock!", m_name);
 
 			/* Delete the monster */
 			delete_monster(yy, xx);
@@ -5293,10 +5297,10 @@ static void cave_temp_room_light(void)
 		    char m_name[80];
 
 		    /* Acquire the monster name */
-		    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
+		    monster_desc(m_name, sizeof(m_name), m_ptr, 0x100);
 
 		    /* Dump a message */
-		    msg("%^s wakes up.", m_name);
+		    msg("%s wakes up.", m_name);
 		}
 	    }
 	}

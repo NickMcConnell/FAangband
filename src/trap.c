@@ -1737,7 +1737,8 @@ extern void py_steal(int y, int x)
 	if ((randint1(5) == 1) && (purse) && (rf_has(r_ptr->flags, RF_SMART))) {
 	    monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 	    act = desc_victim_outcry[randint0(20)];
-	    msg("%^s cries out %s", m_name, act);
+	    my_strcap(m_name);
+	    msg("%s cries out %s", m_name, act);
 	}
 	/* Otherwise, simply explain what happened. */
 	else {

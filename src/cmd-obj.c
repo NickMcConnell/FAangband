@@ -142,9 +142,9 @@ void textui_obj_examine(void)
     /* Display info */
     o_ptr = object_from_item_idx(item);
     tb = object_info(o_ptr, OINFO_NONE);
-    object_desc(header, sizeof(header), o_ptr, ODESC_PREFIX | ODESC_FULL);
+    object_desc(header, sizeof(header), o_ptr, ODESC_PREFIX | ODESC_FULL | ODESC_CAPITAL);
 
-    textui_textblock_show(tb, area, format("%^s", header));
+    textui_textblock_show(tb, area, format("%s", header));
     textblock_free(tb);
 }
 
@@ -731,7 +731,7 @@ void pseudo_probe(void)
 
     else {
 	/* Get "the monster" or "something" */
-	monster_desc(m_name, sizeof(m_name), m_ptr, 0x04);
+	monster_desc(m_name, sizeof(m_name), m_ptr, 0x104);
 
 	/* Approximate monster HPs */
 	approx_hp =
@@ -745,9 +745,9 @@ void pseudo_probe(void)
 
 	/* Describe the monster */
 	if (!(r_ptr->mana))
-	    msg("%^s has about %d hit points.", m_name, approx_hp);
+	    msg("%s has about %d hit points.", m_name, approx_hp);
 	else
-	    msg("%^s has about %d hit points and about %d mana.", m_name,
+	    msg("%s has about %d hit points and about %d mana.", m_name,
 		       approx_hp, approx_mana);
 
 	/* Learn some flags.  Chance of omissions. */

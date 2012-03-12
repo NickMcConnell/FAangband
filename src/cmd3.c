@@ -506,14 +506,14 @@ void textui_cmd_destroy(void)
 		
 		/* Obtain plural form without a quantity */
 		object_desc(o_name2, sizeof o_name2, o_ptr,
-			    ODESC_BASE | ODESC_PLURAL);
+			    ODESC_BASE | ODESC_PLURAL | ODESC_CAPITAL);
 		
 		/* set to squelch */
 		k_ptr->squelch = TRUE;
 		p_ptr->notice |= PN_SQUELCH;
 		
 		/* Message - no good routine for extracting the plain name */
-		msg("All %^s will always be squelched.", o_name2);
+		msg("All %s will always be squelched.", o_name2);
 		
 		/* Mark the view to be updated */
 		p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW);;
