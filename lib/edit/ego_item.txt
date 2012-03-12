@@ -898,7 +898,7 @@ D:This weapon smites the physical forms - demons - of the fallen Maiar of
 D:Morgoth's following; use it warily, because it takes a toll on your bodily 
 D:attributes.
 
-N:84:of the Dr[^u]gs
+N:84:of the Drûgs
 X:7
 T:21:0:99
 T:22:0:99
@@ -907,7 +907,7 @@ W:0:12:0:500
 B:SLAY_ORC[20] | SPEED[-2] 
 F:FEARLESS 
 I:SLAY_ORC | FEARLESS 
-D:This weapon embodies the Dr[^u]-folk - slow, but courageous and with a hatred 
+D:This weapon embodies the Drû-folk - slow, but courageous and with a hatred 
 D:of orcs.
 
 N:85:of Sneaking

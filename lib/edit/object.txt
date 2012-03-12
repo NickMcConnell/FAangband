@@ -1996,7 +1996,7 @@ G:":R
 I:40:7:0
 W:75:0:3:2500
 A:75/3:80/3
-D:A fiery ruby from Khazad D[^u]m sparkling from a clasp of mithril.
+D:A fiery ruby from Khazad Dûm sparkling from a clasp of mithril.
 
 N:308:Emerald
 G:":g
@@ -5226,7 +5226,7 @@ F:INSTA_ART
 
 # The Palantir of Avallone -- see artifact list
 
-N:735:& Palant['i]r~
+N:735:& Palantír~
 G:~:D
 I:39:6:0
 W:90:0:5:60000

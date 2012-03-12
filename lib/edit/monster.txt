@@ -5440,7 +5440,7 @@ N:477:()
 I:110:1d1:0:0:0
 W:0:0:0:0
 
-N:478:M[^u]mak
+N:478:Mûmak
 G:q:s
 I:110:11d49:20:30:100
 W:45:3:0:1600
@@ -6278,7 +6278,7 @@ S:BLIND | SCARE | SLOW | DARKNESS | HASTE |
 S:PMISSL | BOLT_POIS 
 D:She hunts you down patiently, ready with her poison-tipped blades.
 
-N:541:M[^u]mak
+N:541:Mûmak
 G:q:s
 I:110:11d49:20:30:100
 W:53:2:0:1600
@@ -7856,7 +7856,7 @@ S:1_IN_2 | S_KIN
 D:You prepare to avoid this foul mess on the ground, then you realise 
 D:it's alive...
 
-N:668:Mugh[^a]sh the Kobold Lord
+N:668:Mughâsh the Kobold Lord
 G:k:v
 I:110:12d10:20:15:20
 W:7:3:0:100
@@ -8066,7 +8066,7 @@ N:687:()
 I:110:1d1:0:0:0
 W:0:0:0:0
 
-N:688:Ibun, Son of M[^i]m
+N:688:Ibun, Son of Mîm
 G:h:I
 I:110:49d10:20:40:10
 W:27:2:63:300
@@ -8084,7 +8084,7 @@ S:HEAL | SLOW | BOLT_FIRE
 D:One of the last of the petty dwarves.  Ibun is a tricky sorcerous little 
 D:being, full of mischief.
 
-N:689:Kh[^i]m, Son of M[^i]m
+N:689:Khîm, Son of Mîm
 G:h:I
 I:110:70d7:20:40:10
 W:27:2:63:300
@@ -8099,7 +8099,7 @@ F:OPEN_DOOR | BASH_DOOR |
 F:IM_FIRE | IM_COLD | NO_CONF
 S:1_IN_10 | POW_25 | 
 S:HEAL | SLOW | BOLT_FIRE
-D:One of the last of the petty dwarves.  Kh[^i]m is a tricky sorcerous little 
+D:One of the last of the petty dwarves.  Khîm is a tricky sorcerous little 
 D:being, full of mischief.
 
 N:690:Orcobal the Mighty
@@ -8136,7 +8136,7 @@ W:0:0:0:0
 
 # Mim only appears on level 30 of Amon Rudh
 
-N:695:M[^i]m, Betrayer of Turin
+N:695:Mîm, Betrayer of Turin
 G:h:o
 I:120:10d65:100:40:0
 W:30:4:72:1100
@@ -8152,7 +8152,7 @@ F:EVIL | IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS |
 F:NO_CONF
 S:1_IN_6 | POW_45 | 
 S:HEAL | SCARE | BALL_ACID
-D:M[^i]m is a petty-dwarf, one of the last of his race.  He betrayed T['u]rin 
+D:Mîm is a petty-dwarf, one of the last of his race.  He betrayed Túrin 
 D:Turambar to the servants of Morgoth for his own gain.
 
 N:696:Ulfang the Black
@@ -8169,7 +8169,7 @@ F:ONLY_ITEM | DROP_1D2 | DROP_GOOD |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | 
 F:EVIL
 D:An evil, faithless, and cunning man from the East, trusted vainly by the 
-D:sons of F["e]anor.
+D:sons of Fëanor.
 
 N:697:Draebor, the Imp
 G:u:G
@@ -8385,7 +8385,7 @@ N:716:()
 I:110:1d1:0:0:0
 W:0:0:0:0
 
-N:717:E["o]l, the Dark Elven Smith
+N:717:Eöl, the Dark Elven Smith
 G:h:v
 I:120:11d100:25:55:5
 W:50:3:84:5000
@@ -8401,7 +8401,7 @@ F:EVIL | IM_ACID | IM_POIS | IM_COLD | IM_ELEC
 S:1_IN_3 | POW_20 | 
 S:HOLD | SCARE | DARKNESS | BLIND | DISPEL
 D:A grim-faced dark elf, garbed in layer upon layer of gleaming black 
-D:armor.  As strong as he is magical, E["o]l is a worthy opponent.
+D:armor.  As strong as he is magical, Eöl is a worthy opponent.
 
 N:718:Lorgan, Chief of the Easterlings
 G:p:P
@@ -9056,7 +9056,7 @@ F:NEVER_MOVE | EMPTY_MIND |
 F:NO_CONF | NO_SLEEP | NO_FEAR |
 F:IM_COLD | IM_FIRE | IM_ACID | IM_POIS 
 S:1_IN_3 | S_KIN | BRTH_COLD | BRTH_SOUND
-D:A violent icy whirlpool, brought from the frozen wastes of the Helcarax["e] 
+D:A violent icy whirlpool, brought from the frozen wastes of the Helcaraxë 
 D:by Morgoth as guard and entertainment.  Smaller vortices arise on its edges, 
 D:and you feel as if you will never be free of its deafening roar.
 
@@ -9243,7 +9243,7 @@ S:1_IN_3 | POW_45 |
 S:CONF | WOUND | HOLD | BLIND | SCARE | 
 S:BRTH_FIRE | BRTH_DFIRE | 
 S:S_DRAGON
-D:Smaug is one of the Urul['o]ki, a flying fire-drake of immense cunning and 
+D:Smaug is one of the Urulóki, a flying fire-drake of immense cunning and 
 D:intelligence.  His speed through air is matched by few other dragons and his 
 D:dragonfire is what legends are made of.
 
@@ -9334,7 +9334,7 @@ S:BLIND | CONF | SCARE | HOLD |
 S:LASH | BRTH_FIRE | BALL_FIRE | BOLT_PLAS | ARC_HFIRE | 
 S:S_HI_DEMON | S_HI_UNDEAD
 D:The Chief Balrog in Morgoth's personal guard.  Gothmog is renowned 
-D:for slaying F["e]anor and has never been defeated in combat.  With his whip 
+D:for slaying Fëanor and has never been defeated in combat.  With his whip 
 D:of flame and awesome fiery breath he saved his master from Ungoliant's rage.
 
 # The next three monsters are Sauron's shapechange forms

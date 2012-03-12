@@ -69,7 +69,7 @@ D:by Thingol Greycloak, master of his surroundings.
 
 # The Palantir of Avallone
 
-N:3:of Avall['o]n["e]
+N:3:of Avallónë
 I:39:6:0
 W:90:40:5:85000
 P:0:1d1:0:0:0:3
@@ -77,7 +77,7 @@ F:SEE_INVIS | HOLD_LIFE |
 F:INSTA_ART
 E:DETECTION:120+d120
 M:The palantir clouds, then clears...
-D:A crystal made by F["e]anor in Aman, wherein things far away could be seen 
+D:A crystal made by Fëanor in Aman, wherein things far away could be seen 
 D:small but clear, as with the eyes of eagles.
 
 # The Amulet of Carlammas (Set Item)
@@ -99,9 +99,9 @@ F:SUSTAIN_STR | SUSTAIN_INT | SUSTAIN_WIS | SUSTAIN_DEX | SUSTAIN_CON | SUSTAIN_
 F:FEARLESS | INSTA_ART
 M:The silmaril shows the Light of the Trees...
 E:DWARVES:200+d200
-D:The Nauglam['i]r; the carcanet of gold set with a multitude of shining gems 
+D:The Nauglamír; the carcanet of gold set with a multitude of shining gems 
 D:of Valinor is but a setting.  The true power lies in the Silmaril of 
-D:F["e]anor at its centre, shining forth the light of the Two Trees of 
+D:Fëanor at its centre, shining forth the light of the Two Trees of 
 D:Valinor.  Its beauty and desirability are equalled only by its revealing 
 D:power.
 
@@ -257,7 +257,7 @@ B:CON[2] | RES_ACID[50] | RES_ELEC[45] | RES_FIRE[45] |
 B:RES_COLD[45] | RES_SHARD[40] | RES_NEXUS[40]
 F:FREE_ACT 
 D:A hauberk, leggings, and sleeves of interlocking steel rings, well padded 
-D:with leather.  You feel the vigour of T['u]rin Turambar, the Blacksword of 
+D:with leather.  You feel the vigour of Túrin Turambar, the Blacksword of 
 D:Nargothrond, as you put it on.
 
 # The Augmented Chain Mail of Caspanion
@@ -379,7 +379,7 @@ D:it conveys the same powers of endurance to its bearer.
 
 # The Knight's Shield of Earendil
 
-N:47:of E["a]rendil
+N:47:of Eärendil
 I:34:6:0
 W:65:6:160:90000
 P:10:1d6:0:0:15:33
@@ -387,7 +387,7 @@ B:RES_DARK[45] | RES_NETHR[40] | RES_ELEC[45] | RES_FIRE[50]
 F:LIGHT | SEEING
 E:CURING:100
 M:Your shield throbs deep blue...
-D:A shining shield wrought for E["a]rendil Half-Elven, son of Tuor and Idril, 
+D:A shining shield wrought for Eärendil Half-Elven, son of Tuor and Idril, 
 D:"scored with runes to keep all wounds and harm from him".
 
 
@@ -480,7 +480,7 @@ D:the one who wears it.
 
 # The Steel Helm of Dor-Lomin (Set Item)
 
-N:56:of Dor-L['o]min
+N:56:of Dor-Lómin
 I:32:6:4
 W:70:12:75:300000
 P:6:1d3:0:0:20:0
@@ -488,7 +488,7 @@ B:STR[4] | DEX[4] | CON[4] |
 B:RES_ACID[35] | RES_ELEC[35] | RES_FIRE[45] | RES_COLD[35] | RES_LIGHT[35] 
 F:SEEING | LIGHT | SEE_INVIS | TELEPATHY
 D:The legendary dragon helm of Hador, crafted by Telchar of Nogrod.  It's 
-D:dwarven visor allowed T['u]rin Turambar alone to face the fire of Glaurung, 
+D:dwarven visor allowed Túrin Turambar alone to face the fire of Glaurung, 
 D:an image of whose head was set on its crest in defiance.
 
 
@@ -610,7 +610,7 @@ D:of Law.
 
 # The Shadow Cloak of Luthien
 
-N:71:of L['u]thien
+N:71:of Lúthien
 I:35:4:2
 W:80:20:5:45000
 P:4:0d0:0:0:20:45
@@ -620,7 +620,7 @@ E:RESTORE_EXP:450
 M:Your cloak glows a deep red...
 D:The opaque midnight folds of this cloak, inset with a multitude of tiny 
 D:diamonds, swirl around you and you feel a hint, a fragment of the 
-D:knowledge and power to restore that lay in L['u]thien, the most beautiful 
+D:knowledge and power to restore that lay in Lúthien, the most beautiful 
 D:being who ever knew death.
 
 
@@ -775,14 +775,14 @@ D:Morgoth seven mighty wounds and pain that will last forever.
 
 # The Pair of Hard Leather Boots of Feanor
 
-N:89:of F["e]anor
+N:89:of Fëanor
 I:30:3:15
 W:60:100:40:250000
 P:3:1d1:0:0:15:61
 B:SPEED[15] | RES_NEXUS[35] 
 E:SPEED2:200
 M:Your boots glow bright green...
-D:This wondrous pair of leather boots once sped F["e]anor, creator of the 
+D:This wondrous pair of leather boots once sped Fëanor, creator of the 
 D:Silmarils and the mightiest of the Eldar, to fulfill his hero's challenge 
 D:and do battle for a Middle-Earth held in thrall.  "Dear-bought those songs 
 D:shall be accounted, and yet shall be well-bought.  For the price could be 
@@ -837,7 +837,7 @@ B:INT[3] | DEX[3] | RES_CHAOS[40] | SPEED[3] |
 B:SLAY_TROLL[20] | SLAY_GIANT[20] | SLAY_EVIL[15] 
 F:FREE_ACT | SEE_INVIS | SHOW_MODS 
 D:A short thrusting blade with a large guard worn by Maedhros the Tall, 
-D:eldest son of Feanor.
+D:eldest son of Fëanor.
 
 
 # The Dagger 'Angrist' (Set Item)
@@ -939,7 +939,7 @@ D:peril.
 
 # The Broad Sword 'Aranruth'
 
-N:105:'Aranr['u]th'
+N:105:'Aranrúth'
 I:23:16:4
 W:40:45:110:50000
 P:0:3d5:20:12:0:71
@@ -1003,7 +1003,7 @@ B:SLAY_UNDEAD[20] | SLAY_DEMON[20] | SLAY_TROLL[20] | SLAY_GIANT[20] |
 B:SLAY_ORC[20] | RES_FIRE[50] | RES_CONFU[-20] 
 F:FREE_ACT | SEE_INVIS | AGGRO_PERM | HALLU_RAND | CUT_RAND_BAD | 
 F:TWO_HANDED_DES | SHOW_MODS | SHOW_CURSE
-D:Runes dark and deadly stand stark against the naked blade of T['u]rin's 
+D:Runes dark and deadly stand stark against the naked blade of Túrin's 
 D:awesome black weapon, and you feel a wrathful power of slaying and rending 
 D:as you slowly approach.
 
@@ -1077,7 +1077,7 @@ P:0:2d5:15:16:0:0
 B:STR[2] | CON[2] | SPEED[2] | SLAY_EVIL[15] | BRAND_ELEC[17] 
 B:SLAY_DEMON[20] | RES_ELEC[50] | RES_LIGHT[35] 
 F:FREE_ACT | LIGHT | SEE_INVIS | SHOW_MODS
-D:Forged of black galvorn by the Dark-Elven smith E["o]l, this blade has the 
+D:Forged of black galvorn by the Dark-Elven smith Eöl, this blade has the 
 D:living lightning trapped inside.
 
 
@@ -1113,7 +1113,7 @@ P:0:1d7:13:8:0:0
 B:STR[1] | DEX[1] | SLAY_DRAGON[20] | SLAY_ANIMAL[17] | 
 B:SLAY_TROLL[20] | SLAY_GIANT[20] | SLAY_ORC[20]  
 F:FEARLESS | SHOW_MODS
-D:An heirloom of the dauntless Lords of Rh[^u]n far to the east, and a name 
+D:An heirloom of the dauntless Lords of Rhûn far to the east, and a name 
 D:of dismay to creatures natural and unnatural.
 
 # The Small Sword of Idril
@@ -1171,7 +1171,7 @@ D:shadow of death even as you inflict wounds that will not heal.
 
 # The Valinorean Sword of Manwe
 
-N:125:of Manw["e]
+N:125:of Manwë
 I:23:30:0
 W:80:80:210:200000
 P:0:5d6:20:20:0:74
@@ -1255,7 +1255,7 @@ D:The mighty spear of Gil-galad, famed as "Snow-point" in the songs of Elves.
 
 # The Spear of Orome
 
-N:138:of Orom["e]
+N:138:of Oromë
 I:22:2:4
 W:35:23:50:80000
 P:0:2d6:15:15:0:80
@@ -1264,7 +1264,7 @@ B:BRAND_FIRE[17] | SLAY_GIANT[20] | RES_FIRE[50] | RES_LIGHT[40]
 F:THROWING | FEATHER | LIGHT | SEE_INVIS | BLESSED | SHOW_MODS
 E:STONE_TO_MUD:5
 M:Your spear pulsates...
-D:The spear of wise Orom["e] the Vala, strong against giants of 
+D:The spear of wise Oromë the Vala, strong against giants of 
 D:frost, and able to melt rock or flesh with ease.
 
 
@@ -1304,12 +1304,12 @@ B:RES_ACID[40] | RES_FIRE[40] | RES_LIGHT[40] | RES_DARK[40] | RES_CHAOS[35]
 F:FREE_ACT | TWO_HANDED_DES | SHOW_MODS
 D:The twin massive axe heads of this ancient demon's dread gleam with 
 D:mithril inlay, which tell sagas of endurance, invoking the powers of 
-D:Khazad-d[^u]m to protect the wearer and slay all evils found underground.
+D:Khazad-dûm to protect the wearer and slay all evils found underground.
 
 
 # The Great Axe of Eonwe
 
-N:142:of E["o]nw["e]
+N:142:of Eönwë
 I:22:25:2
 W:70:80:230:200000
 P:0:4d7:15:18:8:81
@@ -1320,7 +1320,7 @@ F:FREE_ACT | SEE_INVIS | BLESSED |
 F:TWO_HANDED_DES | SHOW_MODS
 E:MASS_GENOCIDE:1500
 M:Your axe lets out a long, shrill note...
-D:The axe of E["o]nw["e], herald of Manw["e] S['u]limo, 
+D:The axe of Eönwë, herald of Manwë Súlimo, 
 D:strikes with the pure icy wrath of Taniquetil at the undead, disperses hosts 
 D:of evil at a word, and grants Maia-like powers of body and mind.
 
@@ -1390,7 +1390,7 @@ B:STR[2] | DEX[2] | SLAY_EVIL[15] | SLAY_UNDEAD[20] |
 B:RES_LIGHT[50] | RES_DARK[50] 
 F:SEE_INVIS | BLESSED | TWO_HANDED_DES | SHOW_MODS
 D:A massive triple-pronged spear, so great it normally requires two hands 
-D:to wield, evoking the spirit of Oss["e] who with it pierced legions of 
+D:to wield, evoking the spirit of Ossë who with it pierced legions of 
 D:evil and undead.
 
 
@@ -1406,7 +1406,7 @@ F:FREE_ACT | HOLD_LIFE | SEE_INVIS | BLESSED | SHOW_MODS
 E:ULMO:75
 M:Your trident glows deep red...
 D:The awesome weapon of the Vala Ulmo, Lord of Waters.  Mightiest of all the 
-D:powers of good save Manw["e] himself, Ulmo laughs to scorn the dread powers 
+D:powers of good save Manwë himself, Ulmo laughs to scorn the dread powers 
 D:of the undead, and is utterly in command of the Element of acid.
 
 
@@ -1427,7 +1427,7 @@ D:returning.
 
 # The Dart of Eol
 
-N:150:of E["o]l
+N:150:of Eöl
 I:22:28:3
 W:10:10:60:30000
 P:0:2d5:8:8:0:0
@@ -1549,7 +1549,7 @@ D:fingers and eyebrows.
 
 # The War Hammer of Aule
 
-N:164:of Aul["e]
+N:164:of Aulë
 I:21:8:4
 W:80:95:140:200000
 P:0:5d5:19:21:5:0
@@ -1557,7 +1557,7 @@ B:WIS[4] | BRAND_ELEC[17] |
 B:SLAY_DRAGON[20] | SLAY_EVIL[15] | SLAY_UNDEAD[20] | SLAY_DEMON[20] | 
 B:RES_ACID[40] | RES_ELEC[50] | RES_FIRE[40] | RES_COLD[40] | RES_NEXUS[35] | 
 F:SHOW_MODS
-D:The wondrous hammer of Aul["e], creator of the wise Dwarven lords of old.  
+D:The wondrous hammer of Aulë, creator of the wise Dwarven lords of old.  
 D:It bears magics of demolishing that no serpent or demon can withstand, and 
 D:envokes the strength of mountains to ward off the tumult of the elements.
 
@@ -1589,7 +1589,7 @@ D:grants keen sight and clear knowledge of many hidden things.
 
 # The Quarterstaff of Olorin
 
-N:167:of Ol['o]rin
+N:167:of Olórin
 I:21:3:4
 W:60:90:170:120000
 P:10:2d7:10:13:0:93
@@ -1598,7 +1598,7 @@ B:SLAY_ORC[20] | SLAY_GIANT[20] | RES_ACID[50] | RES_NETHR[45]
 F:HOLD_LIFE | SEE_INVIS | TWO_HANDED_REQ | SHOW_MODS
 E:PROBING:20
 M:Your quarterstaff glows brightly...
-D:A staff tall and sturdy, borne of old by Ol['o]rin, wisest of the Maiar.  
+D:A staff tall and sturdy, borne of old by Olórin, wisest of the Maiar.  
 D:Rough-hewn runes that invoke the element of Earth stand bold upon its 
 D:gnarled surface, and no creature who lives in the shadow of mountains can 
 D:withstand the blows it deals.
@@ -1674,7 +1674,7 @@ W:50:20:40:35000
 P:0:3d1:20:22:0:0
 B:DEX[3] | STEALTH[3] | SHOTS[1] | RES_DISEN[35] | SLAY_EVIL[13] | SPEED[1] 
 F:SHOW_MODS
-D:The great bow of Beleg C['u]thalion, made of black yew and strung with elven 
+D:The great bow of Beleg Cúthalion, made of black yew and strung with elven 
 D:hair that faintly shimmers a pale clear gold.
 
 
@@ -1713,7 +1713,7 @@ B:STR[2] | CON[2] | MIGHT[2] |
 B:RES_FIRE[35] | RES_ELEC[35] | RES_COLD[35] 
 F:REGEN
 D:A hunter's bow used for sport and war across the plains of East 
-D:Beleriand.  It remembers the fury of the sons of F["e]anor.
+D:Beleriand.  It remembers the fury of the sons of Fëanor.
 
 
 # The Short Bow of Celegorm
@@ -1726,7 +1726,7 @@ B:INT[1] | WIS[1] | DEX[1] | SHOTS[1] | MIGHT[1] | SPEED[1] |
 B:RES_FIRE[35] | RES_ELEC[35] | RES_COLD[35] 
 F:SLOW_DIGEST
 D:A cunning bow, crafted by the Noldor of old.  It remembers the 
-D:wiles of the sons of F["e]anor.
+D:wiles of the sons of Fëanor.
 
 
 # Artifact 185 is unused
@@ -1831,14 +1831,14 @@ D:last.
 
 # The Wand of Osse
 
-N:197:of Oss["e]
+N:197:of Ossë
 I:65:43:6
 # W:70:1:10:22500 TNB
 W:70:48:10:22500
 P:0:1d1:0:0:0:0
 F:INSTA_ART
 #E:OSSE
-D:The Maia Oss["e] was at one time drawn to Melkor, and still finds delight in 
+D:The Maia Ossë was at one time drawn to Melkor, and still finds delight in 
 D:the destructive power of the sea.
 
 

@@ -56,7 +56,7 @@ F:REGEN | TELEPATHY
 N:4:The Mormegil's Armor
 C:3
 D:It is from the battle gear worn by Turin Turambar while at Nargothrond
-# The Steel Helm of Dor-L['o]min
+# The Steel Helm of Dor-Lómin
 P:56
 B:RES_FIRE[100]
 # The Two-Handed Sword 'Gurthang'
