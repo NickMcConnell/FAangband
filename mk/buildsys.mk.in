@@ -581,27 +581,27 @@ distclean: clean
 		fi \
 	done
 
-DIR_ENTER = printf "[K[36mEntering directory [1m$$i(B[m[36m.(B[m\n"; cd $$i || exit 1
-DIR_LEAVE = printf "[K[36mLeaving directory [1m$$i(B[m[36m.(B[m\n"; cd .. || exit 1
-DEPEND_STATUS = printf "[K[33mGenerating dependencies...(B[m\r"
-DEPEND_OK = printf "[K[32mSuccessfully generated dependencies.(B[m\n"
-DEPEND_FAILED = printf "[K[31mFailed to generate dependencies!(B[m\n"; exit 1
-COMPILE_STATUS = printf "[K[33mCompiling [1m$<(B[m[33m...(B[m\r"
-COMPILE_OK = printf "[K[32mSuccessfully compiled [1m$<(B[m[32m.(B[m\n"
-COMPILE_FAILED = printf "[K[31mFailed to compile [1m$<(B[m[31m!(B[m\n"; exit 1
-COMPILE_LIB_STATUS = printf "[K[33mCompiling [1m$<(B[m[33m (lib)...(B[m\r"
-COMPILE_LIB_OK = printf "[K[32mSuccessfully compiled [1m$<(B[m[32m (lib).(B[m\n"
-COMPILE_LIB_FAILED = printf "[K[31mFailed to compile [1m$<(B[m[31m (lib)!(B[m\n"; exit 1
-COMPILE_PLUGIN_STATUS = printf "[K[33mCompiling [1m$<(B[m[33m (plugin)...(B[m\r"
-COMPILE_PLUGIN_OK = printf "[K[32mSuccessfully compiled [1m$<(B[m[32m (plugin).(B[m\n"
-COMPILE_PLUGIN_FAILED = printf "[K[31mFailed to compile [1m$<(B[m[31m (plugin)!(B[m\n"; exit 1
-LINK_STATUS = printf "[K[33mLinking [1m$@(B[m[33m...(B[m\r"
-LINK_OK = printf "[K[32mSuccessfully linked [1m$@(B[m[32m.(B[m\n"
-LINK_FAILED = printf "[K[31mFailed to link [1m$@(B[m[31m!(B[m\n"; exit 1
-INSTALL_STATUS = printf "[K[33mInstalling [1m$$i(B[m[33m...(B[m\r"
-INSTALL_OK = printf "[K[32mSuccessfully installed [1m$$i(B[m[32m.(B[m\n"
-INSTALL_FAILED = printf "[K[31mFailed to install [1m$$i(B[m[31m!(B[m\n"; exit 1
-DELETE_OK = printf "[K[34mDeleted [1m$$i(B[m[34m.(B[m\n"
-DELETE_FAILED = printf "[K[31mFailed to delete [1m$$i(B[m[31m!(B[m\n"; exit 1
+DIR_ENTER = printf "@TERM_EL@@TERM_SETAF6@Entering directory @TERM_BOLD@$$i@TERM_SGR0@@TERM_SETAF6@.@TERM_SGR0@\n"; cd $$i || exit 1
+DIR_LEAVE = printf "@TERM_EL@@TERM_SETAF6@Leaving directory @TERM_BOLD@$$i@TERM_SGR0@@TERM_SETAF6@.@TERM_SGR0@\n"; cd .. || exit 1
+DEPEND_STATUS = printf "@TERM_EL@@TERM_SETAF3@Generating dependencies...@TERM_SGR0@\r"
+DEPEND_OK = printf "@TERM_EL@@TERM_SETAF2@Successfully generated dependencies.@TERM_SGR0@\n"
+DEPEND_FAILED = printf "@TERM_EL@@TERM_SETAF1@Failed to generate dependencies!@TERM_SGR0@\n"; exit 1
+COMPILE_STATUS = printf "@TERM_EL@@TERM_SETAF3@Compiling @TERM_BOLD@$<@TERM_SGR0@@TERM_SETAF3@...@TERM_SGR0@\r"
+COMPILE_OK = printf "@TERM_EL@@TERM_SETAF2@Successfully compiled @TERM_BOLD@$<@TERM_SGR0@@TERM_SETAF2@.@TERM_SGR0@\n"
+COMPILE_FAILED = printf "@TERM_EL@@TERM_SETAF1@Failed to compile @TERM_BOLD@$<@TERM_SGR0@@TERM_SETAF1@!@TERM_SGR0@\n"; exit 1
+COMPILE_LIB_STATUS = printf "@TERM_EL@@TERM_SETAF3@Compiling @TERM_BOLD@$<@TERM_SGR0@@TERM_SETAF3@ (lib)...@TERM_SGR0@\r"
+COMPILE_LIB_OK = printf "@TERM_EL@@TERM_SETAF2@Successfully compiled @TERM_BOLD@$<@TERM_SGR0@@TERM_SETAF2@ (lib).@TERM_SGR0@\n"
+COMPILE_LIB_FAILED = printf "@TERM_EL@@TERM_SETAF1@Failed to compile @TERM_BOLD@$<@TERM_SGR0@@TERM_SETAF1@ (lib)!@TERM_SGR0@\n"; exit 1
+COMPILE_PLUGIN_STATUS = printf "@TERM_EL@@TERM_SETAF3@Compiling @TERM_BOLD@$<@TERM_SGR0@@TERM_SETAF3@ (plugin)...@TERM_SGR0@\r"
+COMPILE_PLUGIN_OK = printf "@TERM_EL@@TERM_SETAF2@Successfully compiled @TERM_BOLD@$<@TERM_SGR0@@TERM_SETAF2@ (plugin).@TERM_SGR0@\n"
+COMPILE_PLUGIN_FAILED = printf "@TERM_EL@@TERM_SETAF1@Failed to compile @TERM_BOLD@$<@TERM_SGR0@@TERM_SETAF1@ (plugin)!@TERM_SGR0@\n"; exit 1
+LINK_STATUS = printf "@TERM_EL@@TERM_SETAF3@Linking @TERM_BOLD@$@@TERM_SGR0@@TERM_SETAF3@...@TERM_SGR0@\r"
+LINK_OK = printf "@TERM_EL@@TERM_SETAF2@Successfully linked @TERM_BOLD@$@@TERM_SGR0@@TERM_SETAF2@.@TERM_SGR0@\n"
+LINK_FAILED = printf "@TERM_EL@@TERM_SETAF1@Failed to link @TERM_BOLD@$@@TERM_SGR0@@TERM_SETAF1@!@TERM_SGR0@\n"; exit 1
+INSTALL_STATUS = printf "@TERM_EL@@TERM_SETAF3@Installing @TERM_BOLD@$$i@TERM_SGR0@@TERM_SETAF3@...@TERM_SGR0@\r"
+INSTALL_OK = printf "@TERM_EL@@TERM_SETAF2@Successfully installed @TERM_BOLD@$$i@TERM_SGR0@@TERM_SETAF2@.@TERM_SGR0@\n"
+INSTALL_FAILED = printf "@TERM_EL@@TERM_SETAF1@Failed to install @TERM_BOLD@$$i@TERM_SGR0@@TERM_SETAF1@!@TERM_SGR0@\n"; exit 1
+DELETE_OK = printf "@TERM_EL@@TERM_SETAF4@Deleted @TERM_BOLD@$$i@TERM_SGR0@@TERM_SETAF4@.@TERM_SGR0@\n"
+DELETE_FAILED = printf "@TERM_EL@@TERM_SETAF1@Failed to delete @TERM_BOLD@$$i@TERM_SGR0@@TERM_SETAF1@!@TERM_SGR0@\n"; exit 1
 
 include .deps

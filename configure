@@ -565,7 +565,7 @@ PACKAGE_STRING='FAangband 1.2.0'
 PACKAGE_BUGREPORT='nckmccnnll@gmail.com'
 PACKAGE_URL=''
 
-ac_unique_file="configure.ac"
+ac_unique_file="src"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -604,6 +604,12 @@ ac_includes_default="\
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+USE_STATS
+GLIB_LIBS
+GLIB_CFLAGS
+GTK_LIBS
+GTK_CFLAGS
+PKG_CONFIG
 SDL_LIBS
 SDL_CFLAGS
 SDL_CONFIG
@@ -612,6 +618,9 @@ X_LIBS
 X_PRE_LIBS
 X_CFLAGS
 XMKMF
+NCURSES_LIBS
+NCURSES_CFLAGS
+NCURSES_CONFIG
 SETEGID
 NOINSTALL
 vardatadir
@@ -638,8 +647,16 @@ CPPFLAGS
 LDFLAGS
 CFLAGS
 CC
-VERSION
 PACKAGE
+TERM_SETAF6
+TERM_SETAF4
+TERM_SETAF3
+TERM_SETAF2
+TERM_SETAF1
+TERM_BOLD
+TERM_SGR0
+TERM_EL
+TPUT
 target_alias
 host_alias
 build_alias
@@ -687,11 +704,16 @@ with_no_install
 with_configpath
 with_libpath
 with_varpath
+enable_gtk
 enable_curses
 enable_x11
 enable_sdl
 enable_test
+enable_stats
 enable_sdl_mixer
+with_ncurses_prefix
+with_ncurses_exec_prefix
+enable_ncursestest
 with_x
 with_sdl_prefix
 with_sdl_exec_prefix
@@ -1323,11 +1345,14 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-gtk            Enables GTK 2.x frontend (default: disabled)
   --enable-curses         Enables Curses frontend (default: enabled)
   --enable-x11            Enables X11 frontend (default: enabled)
   --enable-sdl            Enables SDL frontend (default: disabled)
   --enable-test           Enables test frontend (default: disabled)
+  --enable-stats          Enables stats frontend (default: disabled)
   --enable-sdl-mixer      Enables SDL mixer sound support (default: enabled)
+  --disable-ncursestest       Do not try to compile and run a test ncurses program
   --disable-sdltest       Do not try to compile and run a test SDL program
 
 Optional Packages:
@@ -1339,6 +1364,8 @@ Optional Packages:
   --with-configpath=PATH  use PATH as the path to the FAangband configuration folder
   --with-libpath=PATH     use PATH as the path to the FAangband lib folder
   --with-varpath=PATH     use PATH as the path to the FAangband saved data folder
+  --with-ncurses-prefix=PFX   Prefix where ncurses is installed (optional)
+  --with-ncurses-exec-prefix=PFX Exec prefix where ncurses is installed (optional)
   --with-x                use the X Window System
   --with-sdl-prefix=PFX   Prefix where SDL is installed (optional)
   --with-sdl-exec-prefix=PFX Exec prefix where SDL is installed (optional)
@@ -2194,13 +2221,132 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-ac_config_headers="$ac_config_headers src/autoconf.h"
 
+	# Extract the first word of "tput", so it can be a program name with args.
+set dummy tput; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_TPUT+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $TPUT in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_TPUT="$TPUT" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_path_TPUT="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+TPUT=$ac_cv_path_TPUT
+if test -n "$TPUT"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $TPUT" >&5
+$as_echo "$TPUT" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+
+	if test x"$TPUT" != x""; then :
+
+		if x=$($TPUT el 2>/dev/null); then
+			TERM_EL="$x"
+
+		else
+			TERM_EL="$($TPUT ce 2>/dev/null)"
+
+		fi
+
+		if x=$($TPUT sgr0 2>/dev/null); then
+			TERM_SGR0="$x"
+
+		else
+			TERM_SGR0="$($TPUT me 2>/dev/null)"
+
+		fi
+
+		if x=$($TPUT bold 2>/dev/null); then
+			TERM_BOLD="$x"
+
+		else
+			TERM_BOLD="$($TPUT md 2>/dev/null)"
+
+		fi
+
+		if x=$($TPUT setaf 1 2>/dev/null); then
+			TERM_SETAF1="$x"
+
+			TERM_SETAF2="$($TPUT setaf 2 2>/dev/null)"
+
+			TERM_SETAF3="$($TPUT setaf 3 2>/dev/null)"
+
+			TERM_SETAF4="$($TPUT setaf 4 2>/dev/null)"
+
+			TERM_SETAF6="$($TPUT setaf 6 2>/dev/null)"
+
+		else
+			TERM_SETAF1="$($TPUT AF 1 2>/dev/null)"
+
+			TERM_SETAF2="$($TPUT AF 2 2>/dev/null)"
+
+			TERM_SETAF3="$($TPUT AF 3 2>/dev/null)"
+
+			TERM_SETAF4="$($TPUT AF 4 2>/dev/null)"
+
+			TERM_SETAF6="$($TPUT AF 6 2>/dev/null)"
+
+		fi
+
+else
+
+		TERM_EL='\033\133K'
+
+		TERM_SGR0='\033\133m'
+
+		TERM_BOLD='\033\1331m'
+
+		TERM_SETAF1='\033\13331m'
+
+		TERM_SETAF2='\033\13332m'
+
+		TERM_SETAF3='\033\13333m'
+
+		TERM_SETAF4='\033\13334m'
+
+		TERM_SETAF6='\033\13336m'
+
+
+fi
+
+
+	${as_echo:="echo"} ${as_me:="configure"}": touching .deps files"
+	for i in $(find . -name Makefile); do
+		DEPSFILE="$(dirname $i)/.deps"
+		test -f "$DEPSFILE" && rm "$DEPSFILE"
+		touch -t 0001010000 "$DEPSFILE"
+	done
 
 
 PACKAGE=faangband
 
-VERSION=1.2.0
+
+ac_config_headers="$ac_config_headers src/autoconf.h"
 
 
 
@@ -4265,7 +4411,7 @@ $as_echo "#define USE_PRIVATE_PATHS 1" >>confdefs.h
 fi
 
 # Only change bindir if it's the configure-supplied default, which handily doesn't expand exec_prefix
-if test "x$bindir" == "x\${exec_prefix}/bin"; then
+if test "x$bindir" = "x\${exec_prefix}/bin"; then
   bindir=${exec_prefix}/games
 fi
 
@@ -4279,7 +4425,7 @@ fi
 if test "x$with_configpath" != "x"; then
 	configpath="${with_configpath}"
 elif test "x$with_no_install" != "x"; then
-	configpath="./lib/"
+	configpath="${PWD}/lib/"
 else
 	configpath="${prefix}/etc/${PACKAGE}/"
 fi
@@ -4311,7 +4457,7 @@ fi
 if test "x$with_libpath" != "x"; then
 	libpath="${with_libpath}"
 elif test "x$with_no_install" != "x"; then
-	libpath="./lib/"
+	libpath="${PWD}/lib/"
 	bindir=".."
 else
 	libpath="${prefix}/share/${PACKAGE}/"
@@ -4344,7 +4490,7 @@ fi
 if test "x$with_varpath" != "x"; then
 	varpath="${with_varpath}"
 elif test "x$with_no_install" != "x"; then
-	varpath="./lib/"
+	varpath="${PWD}/lib/"
 else
 	varpath="${prefix}/var/games/${PACKAGE}/"
 fi
@@ -4389,6 +4535,13 @@ _ACEOF
 NOINSTALL="$with_noinstall";
 SETEGID="$with_setgid";
 
+# Check whether --enable-gtk was given.
+if test "${enable_gtk+set}" = set; then :
+  enableval=$enable_gtk; enable_gtk=$enableval
+else
+  enable_gtk=no
+fi
+
 # Check whether --enable-curses was given.
 if test "${enable_curses+set}" = set; then :
   enableval=$enable_curses; enable_curses=$enableval
@@ -4417,6 +4570,13 @@ else
   enable_test=no
 fi
 
+# Check whether --enable-stats was given.
+if test "${enable_stats+set}" = set; then :
+  enableval=$enable_stats; enable_stats=$enableval
+else
+  enable_stats=no
+fi
+
 
 # Check whether --enable-sdl_mixer was given.
 if test "${enable_sdl_mixer+set}" = set; then :
@@ -4427,170 +4587,210 @@ fi
 
 
 
+if test "x$enable_gtk" = "xyes"; then
+	if test "x$wsetgid" = "xyes"; then
+		as_fn_error $? "The \"setgid\" option and the GTK port are incompatible." "$LINENO" 5
+	fi
+fi
+
+
 if test "$enable_curses" = "yes"; then
-	as_ac_Lib=`$as_echo "ac_cv_lib_curses  ''_initscr" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for initscr in -lcurses  " >&5
-$as_echo_n "checking for initscr in -lcurses  ... " >&6; }
-if eval \${$as_ac_Lib+:} false; then :
+
+# Check whether --with-ncurses-prefix was given.
+if test "${with_ncurses_prefix+set}" = set; then :
+  withval=$with_ncurses_prefix; ncurses_prefix="$withval"
+else
+  ncurses_prefix=""
+fi
+
+
+# Check whether --with-ncurses-exec-prefix was given.
+if test "${with_ncurses_exec_prefix+set}" = set; then :
+  withval=$with_ncurses_exec_prefix; ncurses_exec_prefix="$withval"
+else
+  ncurses_exec_prefix=""
+fi
+
+# Check whether --enable-ncursestest was given.
+if test "${enable_ncursestest+set}" = set; then :
+  enableval=$enable_ncursestest;
+else
+  enable_ncursestest=yes
+fi
+
+
+  if test x$ncurses_exec_prefix != x ; then
+     ncurses_args="$ncurses_args --exec-prefix=$ncurses_exec_prefix"
+     if test x${NCURSES_CONFIG+set} != xset ; then
+        NCURSES_CONFIG=$ncurses_exec_prefix/bin/ncursesw5-config
+     fi
+  fi
+  if test x$ncurses_prefix != x ; then
+     ncurses_args="$ncurses_args --prefix=$ncurses_prefix"
+     if test x${NCURSES_CONFIG+set} != xset ; then
+        NCURSES_CONFIG=$ncurses_prefix/bin/ncursesw5-config
+     fi
+  fi
+
+  # Extract the first word of "ncursesw5-config", so it can be a program name with args.
+set dummy ncursesw5-config; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_NCURSES_CONFIG+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lcurses    $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+  case $NCURSES_CONFIG in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_NCURSES_CONFIG="$NCURSES_CONFIG" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_path_NCURSES_CONFIG="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_path_NCURSES_CONFIG" && ac_cv_path_NCURSES_CONFIG="no"
+  ;;
+esac
+fi
+NCURSES_CONFIG=$ac_cv_path_NCURSES_CONFIG
+if test -n "$NCURSES_CONFIG"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $NCURSES_CONFIG" >&5
+$as_echo "$NCURSES_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ncurses - wide char support" >&5
+$as_echo_n "checking for ncurses - wide char support... " >&6; }
+  no_ncurses=""
+  if test "$NCURSES_CONFIG" = "no" ; then
+    no_ncurses=yes
+  else
+    NCURSES_CFLAGS=`$NCURSES_CONFIG $ncurses_args --cflags`
+    NCURSES_LIBS=`$NCURSES_CONFIG $ncurses_args --libs`
+
+    ac_save_CFLAGS="$CFLAGS"
+    ac_save_LIBS="$LIBS"
+    CFLAGS="$CFLAGS $NCURSES_CFLAGS"
+    LIBS="$LIBS $NCURSES_LIBS"
+    rm -f conf.ncursestest
+    if test "$cross_compiling" = yes; then :
+  echo $ac_n "cross compiling; assumed OK... $ac_c"
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char initscr ();
+#include <stdio.h>
+#include "ncurses.h"
+
+int main (int argc, char *argv[])
+{
+  { FILE *fp = fopen("conf.ncursestest", "a"); if ( fp ) fclose(fp); }
+
+  return 0;
+}
+
+
+_ACEOF
+if ac_fn_c_try_run "$LINENO"; then :
+
+else
+  no_ncurses=yes
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+  	CFLAGS="$ac_save_CFLAGS"
+  	LIBS="$ac_save_LIBS"
+  fi
+
+  if test "x$no_ncurses" = x ; then
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+     with_curses=yes
+  else
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+     if test "$NCURSES_CONFIG" = "no" ; then
+       echo "*** The ncursesw5-config script installed by ncursesw could not be found"
+       echo "*** If ncursesw was installed in PREFIX, make sure PREFIX/bin is in"
+       echo "*** your path, or set the NCURSES_CONFIG environment variable to the"
+       echo "*** full path to ncursesw5-config."
+	 else
+	   if test -f conf.ncursestest ; then
+        :
+       else
+          echo "*** Could not run ncurses test program, checking why..."
+          CFLAGS="$CFLAGS $NCURSES_CFLAGS"
+          LIBS="$LIBS $NCURSES_LIBS"
+          cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <stdio.h>
+#include "ncurses.h"
+
 int
 main ()
 {
-return initscr ();
+ return 0;
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  eval "$as_ac_Lib=yes"
+   echo "*** The test program compiled, but did not run. This usually means"
+          echo "*** that the run-time linker is not finding ncursesw. If it is not finding"
+          echo "*** ncursesw, you'll need to set your LD_LIBRARY_PATH environment variable,"
+          echo "*** or edit /etc/ld.so.conf to point to the installed location.  Also, make"
+          echo "*** sure you have run ldconfig if that is required on your system"
+          echo "***"
+          echo "*** If you have an old version installed, it is best to remove it, although"
+          echo "*** you may also be able to get things to work by modifying LD_LIBRARY_PATH"
 else
-  eval "$as_ac_Lib=no"
+   echo "*** The test program failed to compile or link. See the file config.log for the"
+          echo "*** exact error that occured. This usually means ncursesw was incorrectly"
+          echo "*** installed or that you have moved ncursesw since it was installed. In the"
+          echo "*** latter case, you may want to edit the ncursesw5-config script:"
+          echo "*** $NCURSES_CONFIG"
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-eval ac_res=\$$as_ac_Lib
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
-  found_curses=yes
-else
-  found_curses=no
-fi
+          CFLAGS="$ac_save_CFLAGS"
+          LIBS="$ac_save_LIBS"
+       fi
 
-	as_ac_Lib=`$as_echo "ac_cv_lib_ncurses ''_initscr" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for initscr in -lncurses " >&5
-$as_echo_n "checking for initscr in -lncurses ... " >&6; }
-if eval \${$as_ac_Lib+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lncurses   $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char initscr ();
-int
-main ()
-{
-return initscr ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  eval "$as_ac_Lib=yes"
-else
-  eval "$as_ac_Lib=no"
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-eval ac_res=\$$as_ac_Lib
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
-  found_ncurses=yes
-else
-  found_ncurses=no
-fi
-
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for initscr in -lpdcurses" >&5
-$as_echo_n "checking for initscr in -lpdcurses... " >&6; }
-if ${ac_cv_lib_pdcurses_initscr+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lpdcurses  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char initscr ();
-int
-main ()
-{
-return initscr ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_pdcurses_initscr=yes
-else
-  ac_cv_lib_pdcurses_initscr=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_pdcurses_initscr" >&5
-$as_echo "$ac_cv_lib_pdcurses_initscr" >&6; }
-if test "x$ac_cv_lib_pdcurses_initscr" = xyes; then :
-  found_pdcurses=yes
-else
-  found_pdcurses=no
-fi
-
-	if test "x$found_ncurses" = "xno"; then
-		if test "x$found_pdcurses" = "xno"; then
-			if test "x$found_curses" = "xno"; then
-				with_curses=no
-			else
-
-$as_echo "#define USE_CURSES 1" >>confdefs.h
+     fi
+     NCURSES_CFLAGS=""
+     NCURSES_LIBS=""
+     with_curses=no
+  fi
 
 
-$as_echo "#define USE_GCU 1" >>confdefs.h
+  rm -f conf.ncursestest
 
-				LDFLAGS="${LDFLAGS} -lcurses"
-				with_curses=yes
-			fi
-		else
-
-$as_echo "#define USE_CURSES 1" >>confdefs.h
-
-
-$as_echo "#define USE_GCU 1" >>confdefs.h
-
-			LDFLAGS="${LDFLAGS} -lpdcurses"
-			with_curses=yes
-		fi
-	else
+	if test "$with_curses" = "yes"; then
 
 $as_echo "#define USE_NCURSES 1" >>confdefs.h
 
 
 $as_echo "#define USE_GCU 1" >>confdefs.h
 
-		LDFLAGS="${LDFLAGS} -lncurses"
-		with_curses=yes
+		CFLAGS="${CFLAGS} ${NCURSES_CFLAGS}"
+		LDFLAGS="${LDFLAGS} ${NCURSES_LIBS}"
 	fi
 fi
 
@@ -5645,6 +5845,223 @@ $as_echo "#define USE_SDL 1" >>confdefs.h
 fi
 
 
+if test "$enable_gtk" = "yes"; then
+
+  succeeded=no
+
+  if test -z "$PKG_CONFIG"; then
+    # Extract the first word of "pkg-config", so it can be a program name with args.
+set dummy pkg-config; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_PKG_CONFIG+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $PKG_CONFIG in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_path_PKG_CONFIG="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_path_PKG_CONFIG" && ac_cv_path_PKG_CONFIG="no"
+  ;;
+esac
+fi
+PKG_CONFIG=$ac_cv_path_PKG_CONFIG
+if test -n "$PKG_CONFIG"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PKG_CONFIG" >&5
+$as_echo "$PKG_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+  fi
+
+  if test "$PKG_CONFIG" = "no" ; then
+     echo "*** The pkg-config script could not be found. Make sure it is"
+     echo "*** in your path, or set the PKG_CONFIG environment variable"
+     echo "*** to the full path to pkg-config."
+     echo "*** Or see http://www.freedesktop.org/software/pkgconfig to get pkg-config."
+  else
+     PKG_CONFIG_MIN_VERSION=0.9.0
+     if $PKG_CONFIG --atleast-pkgconfig-version $PKG_CONFIG_MIN_VERSION; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for glib-2.0 >= 2.6.0 gtk+-2.0 >= 2.6.0 gthread-2.0 pango libglade-2.0" >&5
+$as_echo_n "checking for glib-2.0 >= 2.6.0 gtk+-2.0 >= 2.6.0 gthread-2.0 pango libglade-2.0... " >&6; }
+
+        if $PKG_CONFIG --exists "glib-2.0 >= 2.6.0 gtk+-2.0 >= 2.6.0 gthread-2.0 pango libglade-2.0" ; then
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+            succeeded=yes
+
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking GTK_CFLAGS" >&5
+$as_echo_n "checking GTK_CFLAGS... " >&6; }
+            GTK_CFLAGS=`$PKG_CONFIG --cflags "glib-2.0 >= 2.6.0 gtk+-2.0 >= 2.6.0 gthread-2.0 pango libglade-2.0"`
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GTK_CFLAGS" >&5
+$as_echo "$GTK_CFLAGS" >&6; }
+
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking GTK_LIBS" >&5
+$as_echo_n "checking GTK_LIBS... " >&6; }
+            GTK_LIBS=`$PKG_CONFIG --libs "glib-2.0 >= 2.6.0 gtk+-2.0 >= 2.6.0 gthread-2.0 pango libglade-2.0"`
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GTK_LIBS" >&5
+$as_echo "$GTK_LIBS" >&6; }
+        else
+	    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+            GTK_CFLAGS=""
+            GTK_LIBS=""
+            ## If we have a custom action on failure, don't print errors, but
+            ## do set a variable so people can do so.
+            GTK_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "glib-2.0 >= 2.6.0 gtk+-2.0 >= 2.6.0 gthread-2.0 pango libglade-2.0"`
+
+        fi
+
+
+
+     else
+        echo "*** Your version of pkg-config is too old. You need version $PKG_CONFIG_MIN_VERSION or newer."
+        echo "*** See http://www.freedesktop.org/software/pkgconfig"
+     fi
+  fi
+
+  if test $succeeded = yes; then
+     with_gtk=yes
+  else
+     with_gtk=no
+
+  fi
+
+
+  succeeded=no
+
+  if test -z "$PKG_CONFIG"; then
+    # Extract the first word of "pkg-config", so it can be a program name with args.
+set dummy pkg-config; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_PKG_CONFIG+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $PKG_CONFIG in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_path_PKG_CONFIG="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_path_PKG_CONFIG" && ac_cv_path_PKG_CONFIG="no"
+  ;;
+esac
+fi
+PKG_CONFIG=$ac_cv_path_PKG_CONFIG
+if test -n "$PKG_CONFIG"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PKG_CONFIG" >&5
+$as_echo "$PKG_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+  fi
+
+  if test "$PKG_CONFIG" = "no" ; then
+     echo "*** The pkg-config script could not be found. Make sure it is"
+     echo "*** in your path, or set the PKG_CONFIG environment variable"
+     echo "*** to the full path to pkg-config."
+     echo "*** Or see http://www.freedesktop.org/software/pkgconfig to get pkg-config."
+  else
+     PKG_CONFIG_MIN_VERSION=0.9.0
+     if $PKG_CONFIG --atleast-pkgconfig-version $PKG_CONFIG_MIN_VERSION; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for glib-2.0 >= 2.6.0" >&5
+$as_echo_n "checking for glib-2.0 >= 2.6.0... " >&6; }
+
+        if $PKG_CONFIG --exists "glib-2.0 >= 2.6.0" ; then
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+            succeeded=yes
+
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking GLIB_CFLAGS" >&5
+$as_echo_n "checking GLIB_CFLAGS... " >&6; }
+            GLIB_CFLAGS=`$PKG_CONFIG --cflags "glib-2.0 >= 2.6.0"`
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GLIB_CFLAGS" >&5
+$as_echo "$GLIB_CFLAGS" >&6; }
+
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking GLIB_LIBS" >&5
+$as_echo_n "checking GLIB_LIBS... " >&6; }
+            GLIB_LIBS=`$PKG_CONFIG --libs "glib-2.0 >= 2.6.0"`
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GLIB_LIBS" >&5
+$as_echo "$GLIB_LIBS" >&6; }
+        else
+	    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+            GLIB_CFLAGS=""
+            GLIB_LIBS=""
+            ## If we have a custom action on failure, don't print errors, but
+            ## do set a variable so people can do so.
+            GLIB_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "glib-2.0 >= 2.6.0"`
+
+        fi
+
+
+
+     else
+        echo "*** Your version of pkg-config is too old. You need version $PKG_CONFIG_MIN_VERSION or newer."
+        echo "*** See http://www.freedesktop.org/software/pkgconfig"
+     fi
+  fi
+
+  if test $succeeded = yes; then
+     with_gtkx=yes
+  else
+     with_gtk=no
+
+  fi
+
+
+	if test "x$SETEGID" != "x"; then
+		enable_gtk=no
+		with_gtk=no
+	fi
+
+	if test "$with_gtk" = "yes"; then
+
+$as_echo "#define USE_GTK 1" >>confdefs.h
+
+		CFLAGS="${CFLAGS} $GTK_CFLAGS"
+		LDFLAGS="${LDFLAGS} $GTK_LIBS -rdynamic -export-dynamic"
+	fi
+fi
+
+
 if test "$enable_sdl_mixer" = "yes"; then
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Mix_OpenAudio in -lSDL_mixer" >&5
 $as_echo_n "checking for Mix_OpenAudio in -lSDL_mixer... " >&6; }
@@ -5699,13 +6116,166 @@ $as_echo "#define SOUND_SDL 1" >>confdefs.h
 	fi
 fi
 
+
+LDFLAGS="${LDFLAGS} -lm"
+
+
 if test "$enable_test" = "yes"; then
 
 $as_echo "#define USE_TEST 1" >>confdefs.h
 
 fi
 
-ac_config_files="$ac_config_files mk/extra.mk mk/sinclude.mk"
+
+LDFLAGS_SAVE="$LDFLAGS"
+if test "$enable_stats" = "yes"; then
+	# SQLite3 detection
+	SQLITE3_OK=yes
+	ac_fn_c_check_header_mongrel "$LINENO" "sqlite3.h" "ac_cv_header_sqlite3_h" "$ac_includes_default"
+if test "x$ac_cv_header_sqlite3_h" = xyes; then :
+
+else
+
+		SQLITE3_OK=missing
+		for sqlite3_path in $SEARCH_DIR_HEADERS; do
+			if test "x$ac_cv_header_sqlite3_h" != xyes; then
+				unset ac_cv_header_sqlite3_h
+				as_ac_Header=`$as_echo "ac_cv_header_$sqlite3_path/sqlite3.h" | $as_tr_sh`
+ac_fn_c_check_header_mongrel "$LINENO" "$sqlite3_path/sqlite3.h" "$as_ac_Header" "$ac_includes_default"
+if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
+
+						SQLITE3_CFLAGS="-I$sqlite3_path"
+						SQLITE3_OK=yes
+
+
+fi
+
+
+			fi
+		done
+
+fi
+
+
+	if test "x$SQLITE3_OK" = xyes; then
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for sqlite3_open in -lsqlite3" >&5
+$as_echo_n "checking for sqlite3_open in -lsqlite3... " >&6; }
+if ${ac_cv_lib_sqlite3_sqlite3_open+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lsqlite3  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char sqlite3_open ();
+int
+main ()
+{
+return sqlite3_open ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_sqlite3_sqlite3_open=yes
+else
+  ac_cv_lib_sqlite3_sqlite3_open=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_sqlite3_sqlite3_open" >&5
+$as_echo "$ac_cv_lib_sqlite3_sqlite3_open" >&6; }
+if test "x$ac_cv_lib_sqlite3_sqlite3_open" = xyes; then :
+
+			SQLITE3_LDFLAGS="-lsqlite3"
+
+else
+
+			SQLITE3_OK=missing
+			for sqlite3_path in $SEARCH_DIR_LIBS; do
+				if test "x$ac_cv_lib_sqlite3_sqlite3_open" != xyes; then
+					unset ac_cv_lib_sqlite3_sqlite3_open
+					LDFLAGS="$LDFLAGS_SAVE -L$sqlite3_path"
+					{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for sqlite3_open in -lsqlite3" >&5
+$as_echo_n "checking for sqlite3_open in -lsqlite3... " >&6; }
+if ${ac_cv_lib_sqlite3_sqlite3_open+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lsqlite3  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char sqlite3_open ();
+int
+main ()
+{
+return sqlite3_open ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_sqlite3_sqlite3_open=yes
+else
+  ac_cv_lib_sqlite3_sqlite3_open=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_sqlite3_sqlite3_open" >&5
+$as_echo "$ac_cv_lib_sqlite3_sqlite3_open" >&6; }
+if test "x$ac_cv_lib_sqlite3_sqlite3_open" = xyes; then :
+
+						SQLITE3_LDFLAGS="-L$sqlite3_path -lsqlite3"
+						SQLITE3_OK=yes
+
+fi
+
+				fi
+			done
+
+fi
+
+	fi
+	if test "x$SQLITE3_OK" = xyes; then
+
+$as_echo "#define USE_STATS 1" >>confdefs.h
+
+		CFLAGS="${CFLAGS} ${SQLITE3_CFLAGS}"
+		LDFLAGS="${LDFLAGS_SAVE} ${SQLITE3_LDFLAGS}"
+		USE_STATS=1
+
+	else
+		as_fn_error $? "Could not find sqlite3 library; disabling stats" "$LINENO" 5
+		enable_stats=no
+
+$as_echo "#define USE_STATS 0" >>confdefs.h
+
+		LDFLAGS="$LDFLAGS_SAVE"
+		USE_STATS=0
+
+	fi
+fi
+
+
+ac_config_files="$ac_config_files mk/buildsys.mk mk/extra.mk mk/sinclude.mk"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -6411,6 +6981,7 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "src/autoconf.h") CONFIG_HEADERS="$CONFIG_HEADERS src/autoconf.h" ;;
+    "mk/buildsys.mk") CONFIG_FILES="$CONFIG_FILES mk/buildsys.mk" ;;
     "mk/extra.mk") CONFIG_FILES="$CONFIG_FILES mk/extra.mk" ;;
     "mk/sinclude.mk") CONFIG_FILES="$CONFIG_FILES mk/sinclude.mk" ;;
 
@@ -7044,6 +7615,15 @@ if test "$enable_curses" = "yes"; then
 else
 	echo "- Curses                                  Disabled"
 fi
+if test "$enable_gtk" = "yes"; then
+	if test "$with_gtk" = "no"; then
+		echo "- GTK 2.x                                 No; missing libraries"
+	else
+		echo "- GTK 2.x                                 Yes"
+	fi
+else
+	echo "- GTK 2.x                                 Disabled"
+fi
 if test "$enable_x11" = "yes"; then
 	if test "$with_x11" = "no"; then
 		echo "- X11                                     No; missing libraries"
@@ -7067,6 +7647,12 @@ if test "$enable_test" = "yes"; then
 	echo "- Test                                    Yes"
 else
     echo "- Test                                    No"
+fi
+
+if test "$enable_stats" = "yes"; then
+	echo "- Stats                                   Yes"
+else
+    echo "- Stats                                   No"
 fi
 
 echo
