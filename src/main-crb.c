@@ -26,6 +26,7 @@
 #include "buildid.h"
 #include "files.h"
 #include "init.h"
+#include "grafmode.h"
 
 /*
  * Notes:
@@ -1197,7 +1198,7 @@ static errr graphics_init(void)
 	locate_lib(path, sizeof(path));
 	char *tail = path + strlen(path);
 	FSSpec pict_spec;
-	snprintf(tail, path+1024-tail, "xtra/graf/%s.png", pict_id);
+	snprintf(tail, path+1024-tail, "xtra/graf/%s", pict_id);
 	if(noErr != path_to_spec(path, &pict_spec))
 		return -1;
 
@@ -1769,17 +1770,6 @@ static errr Term_wipe_mac(int x, int y, int n)
 
 
 /*
- * Given a position in the ISO Latin-1 character set, return
- * the correct character on this system.
- */
- static byte Term_xchar_mac(byte c)
-{
- 	/* The Mac port uses the Latin-1 standard */
- 	return (c);
-}
-
-
-/*
  * Low level graphics.  Assumes valid input.
  *
  * Draw several ("n") chars, with an attr, at a given location.
@@ -1880,7 +1870,6 @@ static void term_data_link(int i)
 	td->t->bigcurs_hook = Term_curs_mac;
 	td->t->text_hook = Term_text_mac;
 	td->t->pict_hook = Term_pict_mac;
-	td->t->xchar_hook = Term_xchar_mac; 
 
 
 	td->t->never_bored = TRUE;
@@ -2558,9 +2547,12 @@ static void init_menubar(void)
 		/* Invalid entry */
 		SetMenuItemRefCon(m, i, -1);
 	}
-	for (size_t i = 0; i < N_ELEMENTS(graphics_modes); i++) {
-		SetMenuItemRefCon(m, graphics_modes[i].menuItem, i);
-	}
+	/* Note that menu indices start at 1, while grafIDs start at 0.
+	 * Hence the + 1. */
+	size_t i = 0;
+	do {
+		SetMenuItemRefCon(m, graphics_modes[i].grafID + 1, i);
+	} while (graphics_modes[i++].pNext);
 
 	/* Set up bigtile menus */
 	m = MyGetMenuHandle(kBigtileWidthMenu);
@@ -3101,13 +3093,22 @@ static OSStatus ResizeCommand(EventHandlerCallRef inCallRef,
 static void graphics_aux(UInt32 op)
 {
 	graf_mode = op;
-	use_transparency = graphics_modes[op].trans;
-	pict_id = graphics_modes[op].file;
-	graf_width = graf_height = graphics_modes[op].size;
-	use_graphics = (op != 0);
-	graf_mode = op;
-	ANGBAND_GRAF = graphics_modes[op].name;
-	arg_graphics = op;
+	current_graphics_mode = get_graphics_mode(op);
+	if (current_graphics_mode) {
+		use_transparency = (op != 0);
+		pict_id = current_graphics_mode->file;
+		graf_width = current_graphics_mode->cell_width;
+		graf_height = current_graphics_mode->cell_height;
+		use_graphics = (op != 0);
+		graf_mode = op;
+		ANGBAND_GRAF = current_graphics_mode->pref;
+		arg_graphics = op;
+	} else {
+		use_graphics = 0;
+		graf_mode = 0;
+		ANGBAND_GRAF = 0;
+		use_transparency = false;
+	}
 
 	graphics_nuke();
 
@@ -3121,6 +3122,7 @@ static void graphics_aux(UInt32 op)
 		use_graphics = 0;
 		graf_mode = 0;
 		ANGBAND_GRAF = 0;
+		current_graphics_mode = NULL;
 
 		/* reset transparency mode */
 		use_transparency = false;
@@ -3937,6 +3939,8 @@ static void hook_quit(const char *str)
 	/* Write a preference file */
 	if (initialized) save_pref_file();
 
+	close_graphics_modes();
+
 	/* All done */
 	ExitToShell();
 }
@@ -4008,15 +4012,18 @@ int main(void)
 	/* Show the "watch" cursor */
 	SetCursor(*(GetCursor(watchCursor)));
 
+	/* Initialize */
+	init_paths();
+
+	/* Load possible graphics modes -- must happen before menubar init */
+	init_graphics_modes("graphics.txt");
+
 	/* Prepare the menubar */
 	init_menubar();
 
 	/* Ensure that the recent items array is always an array and start with an empty menu */
 	recentItemsArrayRef = CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks);
 	redrawRecentItemsMenu();
-
-	/* Initialize */
-	init_paths();
 
 	/* Prepare the windows */
 	init_windows();
@@ -4057,7 +4064,7 @@ int main(void)
 	/* Set up the display handlers and things. */
 	init_display();
 
-	if(graf_mode) graphics_aux(graf_mode);
+	if(graphics_modes[graf_mode].grafID) graphics_aux(graf_mode);
 
 	/* We are now initialized */
 	initialized = TRUE;
