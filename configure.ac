@@ -60,6 +60,7 @@ AC_PROG_MAKE_SET
 AC_PROG_LN_S
 AC_PROG_INSTALL
 AC_PROG_MKDIR_P
+AC_CHECK_TOOL(RC, windres, no)
 
 AC_PATH_PROG(RM, rm)
 AC_PATH_PROG(MV, mv)
@@ -172,6 +173,10 @@ AC_ARG_ENABLE(sdl,
 	[AS_HELP_STRING([--enable-sdl],       [Enables SDL frontend (default: disabled)])],
 	[enable_sdl=$enableval],
 	[enable_sdl=no])
+AC_ARG_ENABLE(win,
+	[AS_HELP_STRING([--enable-win],       [Enables Windows frontend (default: disabled)])],
+	[enable_win=$enableval],
+	[enable_win=no])
 AC_ARG_ENABLE(test,
 	[AS_HELP_STRING([--enable-test],      [Enables test frontend (default: disabled)])],
 	[enable_test=$enableval],
@@ -194,6 +199,7 @@ if test "x$enable_gtk" = "xyes"; then
 	fi
 fi
 
+MAINFILES="\$(BASEMAINFILES)"
 
 dnl curses checking
 if test "$enable_curses" = "yes"; then
@@ -202,7 +208,8 @@ if test "$enable_curses" = "yes"; then
 		AC_DEFINE(USE_NCURSES, 1, [Define to 1 if NCurses is found.])
 		AC_DEFINE(USE_GCU, 1, [Define to 1 if using the Curses frontend.])
 		CFLAGS="${CFLAGS} ${NCURSES_CFLAGS}"
-		LDFLAGS="${LDFLAGS} ${NCURSES_LIBS}"
+		LIBS="${LIBS} ${NCURSES_LIBS}"
+		MAINFILES="${MAINFILES} \$(GCUMAINFILES)"
 	fi 
 fi
 
@@ -217,7 +224,8 @@ if test "$enable_x11" = "yes"; then
 	else
 		AC_DEFINE(USE_X11, 1, [Define to 1 if using the X11 frontend and X11 libraries are found.])
 		CFLAGS="$CFLAGS $X_CFLAGS"
-		LDFLAGS="$LDFLAGS $X_PRE_LIBS $X_LIBS -lX11 $X_EXTRA_LIBS"
+		LIBS="${LIBS} ${X_PRE_LIBS} ${X_LIBS} -lX11 ${X_EXTRA_LIBS}"
+		MAINFILES="${MAINFILES} \$(X11MAINFILES)"
 		with_x11=yes
 	fi
 fi
@@ -235,7 +243,8 @@ if test "$enable_sdl" = "yes"; then
 		if test "$with_sdl" = "yes"; then
 			AC_DEFINE(USE_SDL, 1, [Define to 1 if using the SDL interface and SDL is found.])
 			CFLAGS="${CFLAGS} ${SDL_CFLAGS}"
-			LDFLAGS="${LDFLAGS} ${SDL_LIBS} -lSDL_image -lSDL_ttf"
+			LIBS="${LIBS} ${SDL_LIBS} -lSDL_image -lSDL_ttf"
+			MAINFILES="${MAINFILES} \$(SDLMAINFILES)"
 		fi
 	fi
 fi
@@ -260,10 +269,21 @@ if test "$enable_gtk" = "yes"; then
 	if test "$with_gtk" = "yes"; then
 		AC_DEFINE(USE_GTK, 1, [Define to 1 if using the GTK+ 2.x interface and GTK+ 2.x is found.])
 		CFLAGS="${CFLAGS} $GTK_CFLAGS"
-		LDFLAGS="${LDFLAGS} $GTK_LIBS -rdynamic -export-dynamic"
+		LDFLAGS="${LDFLAGS} -rdynamic -export-dynamic"
+		LIBS="${LIBS} ${GTK_LIBS}"
+		MAINFILES="${MAINFILES} \$(GTKMAINFILES)"
 	fi
 fi
 
+dnl Windows checking
+if test "$enable_win" = "yes"; then
+	AC_DEFINE(USE_WIN, 1, [Define to 1 if using the Windows interface.])
+	CFLAGS="${CFLAGS} -DWINDOWS -static -Iwin/include"
+	LDFLAGS="${LDFLAGS} -Lwin/lib"
+	LIBS="${LIBS} -mwindows -lwinmm -lzlib -llibpng -lmsimg32"
+dnl Note complete replacement of all main files
+	MAINFILES="\$(WINMAINFILES)"
+fi
 
 dnl SDL mixer checking
 if test "$enable_sdl_mixer" = "yes"; then
@@ -273,17 +293,19 @@ if test "$enable_sdl_mixer" = "yes"; then
 		AC_DEFINE(SOUND_SDL, 1, [Define to 1 if using SDL_mixer sound support and it's found.])
 		SDL_CFLAGS=`sdl-config --cflags`
 		CFLAGS="${CFLAGS} ${SDL_CFLAGS}"
-		LDFLAGS="${LDFLAGS} -lSDL_mixer"
+		LIBS="${LIBS} -lSDL_mixer"
+		MAINFILES="${MAINFILES} \$(SNDSDLFILES)"
 	fi
 fi
 
 
-LDFLAGS="${LDFLAGS} -lm"
+LIBS="${LIBS} -lm"
 
 
 dnl Test checking
 if test "$enable_test" = "yes"; then
 	AC_DEFINE(USE_TEST, 1, [Define to 1 to build the test frontend])
+	MAINFILES="${MAINFILES} \$(TESTMAINFILES)"
 fi
 
 dnl Stats checking
@@ -308,15 +330,16 @@ if test "$enable_stats" = "yes"; then
 	])
 	if test "x$SQLITE3_OK" = xyes; then
 		AC_CHECK_LIB(sqlite3, sqlite3_open, [
-			SQLITE3_LDFLAGS="-lsqlite3"
+			SQLITE3_LIBS="-lsqlite3"
 		], [
 			SQLITE3_OK=missing
 			for sqlite3_path in $SEARCH_DIR_LIBS; do
 				if test "x$ac_cv_lib_sqlite3_sqlite3_open" != xyes; then
 					unset ac_cv_lib_sqlite3_sqlite3_open
-					LDFLAGS="$LDFLAGS_SAVE -L$sqlite3_path"
+					LDFLAGS="${LDFLAGS_SAVE} -L$sqlite3_path"
 					AC_CHECK_LIB(sqlite3, sqlite3_open, [
-						SQLITE3_LDFLAGS="-L$sqlite3_path -lsqlite3"
+						SQLITE3_LDFLAGS="-L$sqlite3_path"
+						SQLITE3_LIBS="-lsqlite3"
 						SQLITE3_OK=yes
 					])
 				fi
@@ -327,6 +350,8 @@ if test "$enable_stats" = "yes"; then
 		AC_DEFINE(USE_STATS, 1, [Define to 1 to build the stats frontend])
 		CFLAGS="${CFLAGS} ${SQLITE3_CFLAGS}"
 		LDFLAGS="${LDFLAGS_SAVE} ${SQLITE3_LDFLAGS}"
+		LIBS="${LIBS} ${SQLITE3_LIBS}"
+		MAINFILES="${MAINFILES} \$(STATSMAINFILES)"
 		AC_SUBST(USE_STATS, 1)
 	else
 		AC_MSG_ERROR(Could not find sqlite3 library; disabling stats)
@@ -337,7 +362,7 @@ if test "$enable_stats" = "yes"; then
 	fi
 fi
 
-
+AC_SUBST(MAINFILES, ${MAINFILES})
 AC_CONFIG_FILES([mk/buildsys.mk mk/extra.mk mk/sinc@&t@lude.mk])
 AC_OUTPUT
 
@@ -405,6 +430,16 @@ if test "$enable_sdl" = "yes"; then
 	fi
 else
 	echo "- SDL                                     Disabled"
+fi
+
+if test "$enable_win" = "yes"; then
+	if test "$with_sdl" = "no"; then
+		echo "- Windows                                 No; missing libraries"
+	else
+		echo "- Windows                                 Yes"
+	fi
+else
+	echo "- Windows                                 Disabled"
 fi
 
 if test "$enable_test" = "yes"; then

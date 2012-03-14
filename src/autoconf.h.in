@@ -132,6 +132,9 @@
 /* Define to 1 to build the test frontend */
 #undef USE_TEST
 
+/* Define to 1 if using the Windows interface. */
+#undef USE_WIN
+
 /* Define to 1 if using the X11 frontend and X11 libraries are found. */
 #undef USE_X11
 

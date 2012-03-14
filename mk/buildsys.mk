@@ -22,6 +22,67 @@
 #
 include ${MKPATH}extra.mk
 
+PACKAGE = faangband
+AS = @AS@
+CC = gcc
+CXX = @CXX@
+CPP = gcc -E
+DC = @DC@
+ERLC = @ERLC@
+OBJC = @OBJC@
+OBJCXX = @OBJCXX@
+AR = @AR@
+LD = ${CC}
+RANLIB = @RANLIB@
+PYTHON = @PYTHON@
+ASFLAGS = @ASFLAGS@
+CFLAGS = -g -O2 -DHAVE_CONFIG_H -fno-strength-reduce -W -Wall -Wno-unused-parameter -Wno-missing-field-initializers -pedantic -I/usr/include/ncursesw  -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT
+CXXFLAGS = @CXXFLAGS@
+CPPFLAGS =  -I.
+DFLAGS = @DFLAGS@
+ERLCFLAGS = @ERLCFLAGS@
+OBJCFLAGS = @OBJCFLAGS@
+OBJCXXFLAGS = @OBJCXXFLAGS@
+LDFLAGS = 
+LDFLAGS_RPATH = @LDFLAGS_RPATH@
+LIBS =  -lncursesw  -lSM -lICE  -lX11  -L/usr/lib64 -lSDL -lpthread -lSDL_image -lSDL_ttf -lSDL_mixer -lm
+PYTHON_FLAGS = @PYTHON_FLAGS@
+PROG_IMPLIB_NEEDED = @PROG_IMPLIB_NEEDED@
+PROG_IMPLIB_LDFLAGS = @PROG_IMPLIB_LDFLAGS@
+PROG_SUFFIX = 
+LIB_CFLAGS = @LIB_CFLAGS@
+LIB_LDFLAGS = @LIB_LDFLAGS@
+LIB_PREFIX = @LIB_PREFIX@
+LIB_SUFFIX = @LIB_SUFFIX@
+PLUGIN_CFLAGS = @PLUGIN_CFLAGS@
+PLUGIN_LDFLAGS = @PLUGIN_LDFLAGS@
+PLUGIN_SUFFIX = @PLUGIN_SUFFIX@
+INSTALL_LIB = @INSTALL_LIB@
+UNINSTALL_LIB = @UNINSTALL_LIB@
+CLEAN_LIB = @CLEAN_LIB@
+LN_S = ln -s
+MKDIR_P = mkdir -p
+INSTALL = /usr/bin/install -c
+SHELL = /bin/sh
+MSGFMT = @MSGFMT@
+JAVAC = @JAVAC@
+JAVACFLAGS = @JAVACFLAGS@
+JAR = @JAR@
+WINDRES = @WINDRES@
+prefix = /usr/local
+exec_prefix = /usr/local
+bindir = /usr/local/games
+libdir = ${exec_prefix}/lib64
+plugindir ?= ${libdir}/${PACKAGE}
+datarootdir = ${prefix}/share
+datadir = ${datarootdir}
+includedir = ${prefix}/include
+includesubdir ?= ${PACKAGE}
+localedir = ${datarootdir}/locale
+localename ?= ${PACKAGE}
+mandir = ${datarootdir}/man
+mansubdir ?= man1
+
 OBJS1 = ${SRCS:.c=.o}
 OBJS2 = ${OBJS1:.cc=.o}
 OBJS3 = ${OBJS2:.cxx=.o}
@@ -48,12 +109,12 @@ MO_FILES = ${LOCALES:.po=.mo}
 all:
 	${MAKE} ${MFLAGS} subdirs
 	${MAKE} ${MFLAGS} depend
-	${MAKE} ${STATIC_LIB} ${STATIC_LIB_NOINST} ${STATIC_PIC_LIB} ${STATIC_PIC_LIB_NOINST} ${LIB} ${LIB_NOINST} ${PLUGIN} ${PLUGIN_NOINST} ${PROG} ${PROG_NOINST} ${JARFILE} locales
+	${MAKE} ${STATIC_LIB} ${STATIC_LIB_NOINST} ${STATIC_PIC_LIB} ${STATIC_PIC_LIB_NOINST} ${SHARED_LIB} ${SHARED_LIB_NOINST} ${PLUGIN} ${PLUGIN_NOINST} ${PROG} ${PROG_NOINST} ${JARFILE} locales
 
 subdirs:
 	for i in ${SUBDIRS}; do \
 		${DIR_ENTER}; \
-		${MAKE} ${MFLAGS} || exit 1; \
+		${MAKE} ${MFLAGS} || exit $$?; \
 		${DIR_LEAVE}; \
 	done
 
@@ -112,7 +173,7 @@ ${JARFILE}: ${EXT_DEPS} ${JAR_MANIFEST} ${OBJS}
 		fi \
 	fi
 
-${LIB} ${LIB_NOINST}: ${EXT_DEPS} ${LIB_OBJS}
+${SHARED_LIB} ${SHARED_LIB_NOINST}: ${EXT_DEPS} ${LIB_OBJS}
 	${LINK_STATUS}; \
 	if ${LD} -o $@ ${LIB_OBJS} ${LIB_LDFLAGS} ${LDFLAGS} ${LIBS}; then \
 		${LINK_OK}; \
@@ -148,7 +209,7 @@ ${STATIC_LIB} ${STATIC_LIB_NOINST}: ${EXT_DEPS} ${OBJS}
 		rm -fr $$dir; \
 		mkdir -p $$dir; \
 		cd $$dir; \
-		ar x ../$$i; \
+		${AR} x ../$$i; \
 		for j in *.o; do \
 			objs="$$objs $$dir/$$j"; \
 		done; \
@@ -167,6 +228,7 @@ ${STATIC_LIB} ${STATIC_LIB_NOINST}: ${EXT_DEPS} ${OBJS}
 
 ${STATIC_PIC_LIB} ${STATIC_PIC_LIB_NOINST}: ${EXT_DEPS} ${LIB_OBJS}
 	${LINK_STATUS}
+	rm -f $@
 	if ${AR} cr $@ ${LIB_OBJS} && ${RANLIB} $@; then \
 		${LINK_OK}; \
 	else \
@@ -364,16 +426,16 @@ locales: ${MO_FILES}
 		${COMPILE_PLUGIN_FAILED}; \
 	fi
 
-install: ${LIB} ${STATIC_LIB} ${STATIC_PIC_LIB} ${PLUGIN} ${PROG} install-extra
+install: ${SHARED_LIB} ${STATIC_LIB} ${STATIC_PIC_LIB} ${PLUGIN} ${PROG} install-extra
 	for i in ${SUBDIRS}; do \
 		${DIR_ENTER}; \
-		${MAKE} ${MFLAGS} install || exit 1; \
+		${MAKE} ${MFLAGS} install || exit $$?; \
 		${DIR_LEAVE}; \
 	done
 
-	for i in ${LIB}; do \
+	for i in ${SHARED_LIB}; do \
 		${INSTALL_STATUS}; \
-		if ${MKDIR_P} $$(dirname ${DESTDIR}${libdatadir}/${PACKAGE}/$$i) && ${INSTALL} -m 644 $$i ${DESTDIR}${libdatadir}/${PACKAGE}/$$i; then \
+		if ${MKDIR_P} ${DESTDIR}${libdir} ${INSTALL_LIB}; then \
 			${INSTALL_OK}; \
 		else \
 			${INSTALL_FAILED}; \
@@ -457,11 +519,11 @@ install-extra:
 uninstall: uninstall-extra
 	for i in ${SUBDIRS}; do \
 		${DIR_ENTER}; \
-		${MAKE} ${MFLAGS} uninstall || exit 1; \
+		${MAKE} ${MFLAGS} uninstall || exit $$?; \
 		${DIR_LEAVE}; \
 	done
 
-	for i in ${LIB}; do \
+	for i in ${SHARED_LIB}; do \
 		if test -f ${DESTDIR}${libdir}/$$i; then \
 			if : ${UNINSTALL_LIB}; then \
 				${DELETE_OK}; \
@@ -550,11 +612,11 @@ uninstall-extra:
 clean:
 	for i in ${SUBDIRS}; do \
 		${DIR_ENTER}; \
-		${MAKE} ${MFLAGS} clean || exit 1; \
+		${MAKE} ${MFLAGS} clean || exit $$?; \
 		${DIR_LEAVE}; \
 	done
 
-	for i in ${DEPS} ${OBJS} ${LIB_OBJS} ${PLUGIN_OBJS} ${PROG} ${PROG_NOINST} ${LIB} ${LIB_NOINST} ${STATIC_LIB} ${STATIC_LIB_NOINST} ${STATIC_PIC_LIB} ${STATIC_PIC_LIB_NOINST} ${PLUGIN} ${PLUGIN_NOINST} ${CLEAN_LIB} ${MO_FILES} ${CLEAN}; do \
+	for i in ${DEPS} ${OBJS} ${LIB_OBJS} ${PLUGIN_OBJS} ${PROG} ${PROG_NOINST} ${SHARED_LIB} ${SHARED_LIB_NOINST} ${STATIC_LIB} ${STATIC_LIB_NOINST} ${STATIC_PIC_LIB} ${STATIC_PIC_LIB_NOINST} ${PLUGIN} ${PLUGIN_NOINST} ${CLEAN_LIB} ${MO_FILES} ${CLEAN}; do \
 		if test -f $$i -o -d $$i; then \
 			if rm -fr $$i; then \
 				${DELETE_OK}; \
@@ -567,7 +629,7 @@ clean:
 distclean: clean
 	for i in ${SUBDIRS}; do \
 		${DIR_ENTER}; \
-		${MAKE} ${MFLAGS} distclean || exit 1; \
+		${MAKE} ${MFLAGS} distclean || exit $$?; \
 		${DIR_LEAVE}; \
 	done
 
@@ -581,27 +643,27 @@ distclean: clean
 		fi \
 	done
 
-DIR_ENTER = printf "[K[36mEntering directory [1m$$i(B[m[36m.(B[m\n"; cd $$i || exit 1
-DIR_LEAVE = printf "[K[36mLeaving directory [1m$$i(B[m[36m.(B[m\n"; cd .. || exit 1
+DIR_ENTER = printf "[K[36mEntering directory [1m$$i(B[m[36m.(B[m\n"; cd $$i || exit $$?
+DIR_LEAVE = printf "[K[36mLeaving directory [1m$$i(B[m[36m.(B[m\n"; cd .. || exit $$?
 DEPEND_STATUS = printf "[K[33mGenerating dependencies...(B[m\r"
 DEPEND_OK = printf "[K[32mSuccessfully generated dependencies.(B[m\n"
-DEPEND_FAILED = printf "[K[31mFailed to generate dependencies!(B[m\n"; exit 1
+DEPEND_FAILED = err=$$?; printf "[K[31mFailed to generate dependencies!(B[m\n"; exit $$err
 COMPILE_STATUS = printf "[K[33mCompiling [1m$<(B[m[33m...(B[m\r"
 COMPILE_OK = printf "[K[32mSuccessfully compiled [1m$<(B[m[32m.(B[m\n"
-COMPILE_FAILED = printf "[K[31mFailed to compile [1m$<(B[m[31m!(B[m\n"; exit 1
+COMPILE_FAILED = err=$$?; printf "[K[31mFailed to compile [1m$<(B[m[31m!(B[m\n"; exit $$err
 COMPILE_LIB_STATUS = printf "[K[33mCompiling [1m$<(B[m[33m (lib)...(B[m\r"
 COMPILE_LIB_OK = printf "[K[32mSuccessfully compiled [1m$<(B[m[32m (lib).(B[m\n"
-COMPILE_LIB_FAILED = printf "[K[31mFailed to compile [1m$<(B[m[31m (lib)!(B[m\n"; exit 1
+COMPILE_LIB_FAILED = err=$$?; printf "[K[31mFailed to compile [1m$<(B[m[31m (lib)!(B[m\n"; exit $$err
 COMPILE_PLUGIN_STATUS = printf "[K[33mCompiling [1m$<(B[m[33m (plugin)...(B[m\r"
 COMPILE_PLUGIN_OK = printf "[K[32mSuccessfully compiled [1m$<(B[m[32m (plugin).(B[m\n"
-COMPILE_PLUGIN_FAILED = printf "[K[31mFailed to compile [1m$<(B[m[31m (plugin)!(B[m\n"; exit 1
+COMPILE_PLUGIN_FAILED = err=$$?; printf "[K[31mFailed to compile [1m$<(B[m[31m (plugin)!(B[m\n"; exit $$err
 LINK_STATUS = printf "[K[33mLinking [1m$@(B[m[33m...(B[m\r"
 LINK_OK = printf "[K[32mSuccessfully linked [1m$@(B[m[32m.(B[m\n"
-LINK_FAILED = printf "[K[31mFailed to link [1m$@(B[m[31m!(B[m\n"; exit 1
+LINK_FAILED = err=$$?; printf "[K[31mFailed to link [1m$@(B[m[31m!(B[m\n"; exit $$err
 INSTALL_STATUS = printf "[K[33mInstalling [1m$$i(B[m[33m...(B[m\r"
 INSTALL_OK = printf "[K[32mSuccessfully installed [1m$$i(B[m[32m.(B[m\n"
-INSTALL_FAILED = printf "[K[31mFailed to install [1m$$i(B[m[31m!(B[m\n"; exit 1
+INSTALL_FAILED = err=$$?; printf "[K[31mFailed to install [1m$$i(B[m[31m!(B[m\n"; exit $$err
 DELETE_OK = printf "[K[34mDeleted [1m$$i(B[m[34m.(B[m\n"
-DELETE_FAILED = printf "[K[31mFailed to delete [1m$$i(B[m[31m!(B[m\n"; exit 1
+DELETE_FAILED = err=$$?; printf "[K[31mFailed to delete [1m$$i(B[m[31m!(B[m\n"; exit $$err
 
 include .deps

@@ -180,6 +180,7 @@
 size_t vstrnfmt(char *buf, size_t max, const char *fmt, va_list vp)
 {
 	const char *s;
+	int i = 0, len = 0;
 
 	/* The argument is "long" */
 	bool do_long;
@@ -494,6 +495,13 @@ size_t vstrnfmt(char *buf, size_t max, const char *fmt, va_list vp)
 				if (do_long)
 				{
 					const wchar_t *arg;
+					char arg2[1024];
+
+					/* XXX There is a big bug here: if one
+					 * passes "%.0s" to strnfmt, then really we
+					 * should not dereference the arg at all.
+					 * But it does.  See bug #666.
+					 */
 
 					/* Get the next argument */
 					arg = va_arg(vp, const wchar_t *);
@@ -502,7 +510,29 @@ size_t vstrnfmt(char *buf, size_t max, const char *fmt, va_list vp)
 					if (!arg) arg = L"";
 
 					/* Format the argument */
-					snprintf(tmp, sizeof(tmp), aux, arg);
+					/* snprintf should not be used in a snprintf replacement function
+					snprintf(tmp, sizeof(tmp), aux, arg); */
+					/* Prevent buffer overflows and convert string to char */
+					/* this really should use a wcstombs type function */
+					len = wcslen(arg);
+					if (len >= 768) {
+						len = 767;
+					}
+					for (i = 0; i < len; ++i) {
+						arg2[i] = (char)arg[i];
+					}
+					arg2[len] = '\0';
+
+					/* Remove the l from aux, since we no longer have wchar_t as input */
+					aux[q-2] = 's';
+					aux[q-1] = '\0';
+
+					/* Format the argument */
+					sprintf(tmp, aux, arg2);
+
+					/*if (my_strcpy((char*)arg2, (char*)arg, sizeof(arg2)) < 1024) {
+						sprintf(tmp, aux, arg2);
+					}*/
 
 					/* Done */
 					break;
@@ -510,6 +540,7 @@ size_t vstrnfmt(char *buf, size_t max, const char *fmt, va_list vp)
 				else
 				{
 					const char *arg;
+					char arg2[1024];
 
 					/* XXX There is a big bug here: if one
 					 * passes "%.0s" to strnfmt, then really we
@@ -524,7 +555,14 @@ size_t vstrnfmt(char *buf, size_t max, const char *fmt, va_list vp)
 					if (!arg) arg = "";
 
 					/* Format the argument */
-					snprintf(tmp, sizeof(tmp), aux, arg);
+					/* snprintf should not be used in a snprintf replacement function
+					snprintf(tmp, sizeof(tmp), aux, arg); */
+
+					/* Prevent buffer overflows */
+					(void)my_strcpy(arg2, arg, sizeof(arg2));
+
+					/* Format the argument */
+					sprintf(tmp, aux, arg2);
 
 					/* Done */
 					break;

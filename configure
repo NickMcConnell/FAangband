@@ -604,6 +604,7 @@ ac_includes_default="\
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+MAINFILES
 USE_STATS
 GLIB_LIBS
 GLIB_CFLAGS
@@ -634,6 +635,7 @@ CPP
 CP
 MV
 RM
+RC
 MKDIR_P
 INSTALL_DATA
 INSTALL_SCRIPT
@@ -708,6 +710,7 @@ enable_gtk
 enable_curses
 enable_x11
 enable_sdl
+enable_win
 enable_test
 enable_stats
 enable_sdl_mixer
@@ -1349,6 +1352,7 @@ Optional Features:
   --enable-curses         Enables Curses frontend (default: enabled)
   --enable-x11            Enables X11 frontend (default: enabled)
   --enable-sdl            Enables SDL frontend (default: disabled)
+  --enable-win            Enables Windows frontend (default: disabled)
   --enable-test           Enables test frontend (default: disabled)
   --enable-stats          Enables stats frontend (default: disabled)
   --enable-sdl-mixer      Enables SDL mixer sound support (default: enabled)
@@ -3410,6 +3414,98 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $MKDIR_P" >&5
 $as_echo "$MKDIR_P" >&6; }
 
+if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}windres", so it can be a program name with args.
+set dummy ${ac_tool_prefix}windres; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_RC+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$RC"; then
+  ac_cv_prog_RC="$RC" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_RC="${ac_tool_prefix}windres"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+RC=$ac_cv_prog_RC
+if test -n "$RC"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $RC" >&5
+$as_echo "$RC" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_RC"; then
+  ac_ct_RC=$RC
+  # Extract the first word of "windres", so it can be a program name with args.
+set dummy windres; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_ac_ct_RC+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_RC"; then
+  ac_cv_prog_ac_ct_RC="$ac_ct_RC" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_ac_ct_RC="windres"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_RC=$ac_cv_prog_ac_ct_RC
+if test -n "$ac_ct_RC"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_ct_RC" >&5
+$as_echo "$ac_ct_RC" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_RC" = x; then
+    RC="no"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    RC=$ac_ct_RC
+  fi
+else
+  RC="$ac_cv_prog_RC"
+fi
+
 
 # Extract the first word of "rm", so it can be a program name with args.
 set dummy rm; ac_word=$2
@@ -4563,6 +4659,13 @@ else
   enable_sdl=no
 fi
 
+# Check whether --enable-win was given.
+if test "${enable_win+set}" = set; then :
+  enableval=$enable_win; enable_win=$enableval
+else
+  enable_win=no
+fi
+
 # Check whether --enable-test was given.
 if test "${enable_test+set}" = set; then :
   enableval=$enable_test; enable_test=$enableval
@@ -4593,6 +4696,7 @@ if test "x$enable_gtk" = "xyes"; then
 	fi
 fi
 
+MAINFILES="\$(BASEMAINFILES)"
 
 if test "$enable_curses" = "yes"; then
 
@@ -4790,7 +4894,8 @@ $as_echo "#define USE_NCURSES 1" >>confdefs.h
 $as_echo "#define USE_GCU 1" >>confdefs.h
 
 		CFLAGS="${CFLAGS} ${NCURSES_CFLAGS}"
-		LDFLAGS="${LDFLAGS} ${NCURSES_LIBS}"
+		LIBS="${LIBS} ${NCURSES_LIBS}"
+		MAINFILES="${MAINFILES} \$(GCUMAINFILES)"
 	fi
 fi
 
@@ -5499,7 +5604,8 @@ fi
 $as_echo "#define USE_X11 1" >>confdefs.h
 
 		CFLAGS="$CFLAGS $X_CFLAGS"
-		LDFLAGS="$LDFLAGS $X_PRE_LIBS $X_LIBS -lX11 $X_EXTRA_LIBS"
+		LIBS="${LIBS} ${X_PRE_LIBS} ${X_LIBS} -lX11 ${X_EXTRA_LIBS}"
+		MAINFILES="${MAINFILES} \$(X11MAINFILES)"
 		with_x11=yes
 	fi
 fi
@@ -5839,7 +5945,8 @@ fi
 $as_echo "#define USE_SDL 1" >>confdefs.h
 
 			CFLAGS="${CFLAGS} ${SDL_CFLAGS}"
-			LDFLAGS="${LDFLAGS} ${SDL_LIBS} -lSDL_image -lSDL_ttf"
+			LIBS="${LIBS} ${SDL_LIBS} -lSDL_image -lSDL_ttf"
+			MAINFILES="${MAINFILES} \$(SDLMAINFILES)"
 		fi
 	fi
 fi
@@ -6057,10 +6164,21 @@ $as_echo "no" >&6; }
 $as_echo "#define USE_GTK 1" >>confdefs.h
 
 		CFLAGS="${CFLAGS} $GTK_CFLAGS"
-		LDFLAGS="${LDFLAGS} $GTK_LIBS -rdynamic -export-dynamic"
+		LDFLAGS="${LDFLAGS} -rdynamic -export-dynamic"
+		LIBS="${LIBS} ${GTK_LIBS}"
+		MAINFILES="${MAINFILES} \$(GTKMAINFILES)"
 	fi
 fi
 
+if test "$enable_win" = "yes"; then
+
+$as_echo "#define USE_WIN 1" >>confdefs.h
+
+	CFLAGS="${CFLAGS} -DWINDOWS -static -Iwin/include"
+	LDFLAGS="${LDFLAGS} -Lwin/lib"
+	LIBS="${LIBS} -mwindows -lwinmm -lzlib -llibpng -lmsimg32"
+	MAINFILES="\$(WINMAINFILES)"
+fi
 
 if test "$enable_sdl_mixer" = "yes"; then
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Mix_OpenAudio in -lSDL_mixer" >&5
@@ -6112,18 +6230,20 @@ $as_echo "#define SOUND_SDL 1" >>confdefs.h
 
 		SDL_CFLAGS=`sdl-config --cflags`
 		CFLAGS="${CFLAGS} ${SDL_CFLAGS}"
-		LDFLAGS="${LDFLAGS} -lSDL_mixer"
+		LIBS="${LIBS} -lSDL_mixer"
+		MAINFILES="${MAINFILES} \$(SNDSDLFILES)"
 	fi
 fi
 
 
-LDFLAGS="${LDFLAGS} -lm"
+LIBS="${LIBS} -lm"
 
 
 if test "$enable_test" = "yes"; then
 
 $as_echo "#define USE_TEST 1" >>confdefs.h
 
+	MAINFILES="${MAINFILES} \$(TESTMAINFILES)"
 fi
 
 
@@ -6196,7 +6316,7 @@ fi
 $as_echo "$ac_cv_lib_sqlite3_sqlite3_open" >&6; }
 if test "x$ac_cv_lib_sqlite3_sqlite3_open" = xyes; then :
 
-			SQLITE3_LDFLAGS="-lsqlite3"
+			SQLITE3_LIBS="-lsqlite3"
 
 else
 
@@ -6204,7 +6324,7 @@ else
 			for sqlite3_path in $SEARCH_DIR_LIBS; do
 				if test "x$ac_cv_lib_sqlite3_sqlite3_open" != xyes; then
 					unset ac_cv_lib_sqlite3_sqlite3_open
-					LDFLAGS="$LDFLAGS_SAVE -L$sqlite3_path"
+					LDFLAGS="${LDFLAGS_SAVE} -L$sqlite3_path"
 					{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for sqlite3_open in -lsqlite3" >&5
 $as_echo_n "checking for sqlite3_open in -lsqlite3... " >&6; }
 if ${ac_cv_lib_sqlite3_sqlite3_open+:} false; then :
@@ -6243,7 +6363,8 @@ fi
 $as_echo "$ac_cv_lib_sqlite3_sqlite3_open" >&6; }
 if test "x$ac_cv_lib_sqlite3_sqlite3_open" = xyes; then :
 
-						SQLITE3_LDFLAGS="-L$sqlite3_path -lsqlite3"
+						SQLITE3_LDFLAGS="-L$sqlite3_path"
+						SQLITE3_LIBS="-lsqlite3"
 						SQLITE3_OK=yes
 
 fi
@@ -6260,6 +6381,8 @@ $as_echo "#define USE_STATS 1" >>confdefs.h
 
 		CFLAGS="${CFLAGS} ${SQLITE3_CFLAGS}"
 		LDFLAGS="${LDFLAGS_SAVE} ${SQLITE3_LDFLAGS}"
+		LIBS="${LIBS} ${SQLITE3_LIBS}"
+		MAINFILES="${MAINFILES} \$(STATSMAINFILES)"
 		USE_STATS=1
 
 	else
@@ -6274,6 +6397,7 @@ $as_echo "#define USE_STATS 0" >>confdefs.h
 	fi
 fi
 
+MAINFILES=${MAINFILES}
 
 ac_config_files="$ac_config_files mk/buildsys.mk mk/extra.mk mk/sinclude.mk"
 
@@ -7641,6 +7765,16 @@ if test "$enable_sdl" = "yes"; then
 	fi
 else
 	echo "- SDL                                     Disabled"
+fi
+
+if test "$enable_win" = "yes"; then
+	if test "$with_sdl" = "no"; then
+		echo "- Windows                                 No; missing libraries"
+	else
+		echo "- Windows                                 Yes"
+	fi
+else
+	echo "- Windows                                 Disabled"
 fi
 
 if test "$enable_test" = "yes"; then

@@ -85,6 +85,7 @@
 #include "init.h"
 #include "files.h"
 #include "grafmode.h"
+#include "win/win-menu.h"
 
 /* Make sure the winver allows the AlphaBlend function */
 #if (WINVER < 0x0500)
@@ -125,126 +126,6 @@
 
 #endif /* ALLOW_BORG */
 
-#ifndef GetWindowLongPtr
-#define GetWindowLongPtr GetWindowLong
-#endif
-#ifndef SetWindowLongPtr
-#define SetWindowLongPtr SetWindowLong
-#endif
-#ifndef GWLP_USERDATA
-#define GWLP_USERDATA GWL_USERDATA
-#endif
-
-/*
- * Menu constants -- see "ANGBAND.RC"
- */
-
-#define IDM_FILE_NEW			100
-#define IDM_FILE_OPEN			101
-#define IDM_FILE_SAVE			110
-#define IDM_FILE_EXIT			130
-
-#define IDM_WINDOW_VIS_0		200
-#define IDM_WINDOW_VIS_1		201
-#define IDM_WINDOW_VIS_2		202
-#define IDM_WINDOW_VIS_3		203
-#define IDM_WINDOW_VIS_4		204
-#define IDM_WINDOW_VIS_5		205
-#define IDM_WINDOW_VIS_6		206
-#define IDM_WINDOW_VIS_7		207
-
-#define IDM_WINDOW_FONT_0		210
-#define IDM_WINDOW_FONT_1		211
-#define IDM_WINDOW_FONT_2		212
-#define IDM_WINDOW_FONT_3		213
-#define IDM_WINDOW_FONT_4		214
-#define IDM_WINDOW_FONT_5		215
-#define IDM_WINDOW_FONT_6		216
-#define IDM_WINDOW_FONT_7		217
-
-#define IDM_WINDOW_BIZ_0		230
-#define IDM_WINDOW_BIZ_1		231
-#define IDM_WINDOW_BIZ_2		232
-#define IDM_WINDOW_BIZ_3		233
-#define IDM_WINDOW_BIZ_4		234
-#define IDM_WINDOW_BIZ_5		235
-#define IDM_WINDOW_BIZ_6		236
-#define IDM_WINDOW_BIZ_7		237
-
-#define IDM_WINDOW_I_WID_0		240
-#define IDM_WINDOW_I_WID_1		241
-#define IDM_WINDOW_I_WID_2		242
-#define IDM_WINDOW_I_WID_3		243
-#define IDM_WINDOW_I_WID_4		244
-#define IDM_WINDOW_I_WID_5		245
-#define IDM_WINDOW_I_WID_6		246
-#define IDM_WINDOW_I_WID_7		247
-
-#define IDM_WINDOW_D_WID_0		250
-#define IDM_WINDOW_D_WID_1		251
-#define IDM_WINDOW_D_WID_2		252
-#define IDM_WINDOW_D_WID_3		253
-#define IDM_WINDOW_D_WID_4		254
-#define IDM_WINDOW_D_WID_5		255
-#define IDM_WINDOW_D_WID_6		256
-#define IDM_WINDOW_D_WID_7		257
-
-#define IDM_WINDOW_I_HGT_0		260
-#define IDM_WINDOW_I_HGT_1		261
-#define IDM_WINDOW_I_HGT_2		262
-#define IDM_WINDOW_I_HGT_3		263
-#define IDM_WINDOW_I_HGT_4		264
-#define IDM_WINDOW_I_HGT_5		265
-#define IDM_WINDOW_I_HGT_6		266
-#define IDM_WINDOW_I_HGT_7		267
-
-#define IDM_WINDOW_D_HGT_0		270
-#define IDM_WINDOW_D_HGT_1		271
-#define IDM_WINDOW_D_HGT_2		272
-#define IDM_WINDOW_D_HGT_3		273
-#define IDM_WINDOW_D_HGT_4		274
-#define IDM_WINDOW_D_HGT_5		275
-#define IDM_WINDOW_D_HGT_6		276
-#define IDM_WINDOW_D_HGT_7		277
-
-#define IDM_OPTIONS_GRAPHICS_NONE   400
-#define IDM_OPTIONS_GRAPHICS_NICE   445
-#define IDM_OPTIONS_LOW_PRIORITY    420
-#define IDM_OPTIONS_SAVER           430
-#define IDM_OPTIONS_MAP             440
-#define IDM_OPTIONS_SCREENSHOT      441
-
-#define IDM_OPTIONS_TILE_1x1        447
-#define IDM_OPTIONS_TILE_2x1        448
-#define IDM_OPTIONS_TILE_4x2        449
-#define IDM_OPTIONS_TILE_2x2        450
-#define IDM_OPTIONS_TILE_3x1        451
-#define IDM_OPTIONS_TILE_3x3        452
-#define IDM_OPTIONS_TILE_4x4        453
-#define IDM_OPTIONS_TILE_6x3        454
-#define IDM_OPTIONS_TILE_6x6        455
-#define IDM_OPTIONS_TILE_8x4        456
-#define IDM_OPTIONS_TILE_8x8        457
-#define IDM_OPTIONS_TILE_16x8       458
-#define IDM_OPTIONS_TILE_16x16      459
-
-#define IDM_TILE_FONT 		190
-#define IDM_TILE_08X08		191
-#define IDM_TILE_16X16		192
-#define IDM_TILE_32X32		193
-#define IDM_TILE_08X16		194
-#define IDM_TILE_10X20		195
-#define IDM_TILE_16X32		196
-#define IDM_TILE_08X13		197
-#define IDM_TILE_10X17		198
-#define IDM_TILE_12X13		199
-#define IDM_TILE_12X20		188
-#define IDM_TILE_16X25		189
-
-#define IDM_HELP_GENERAL		901
-#define IDM_HELP_SPOILERS		902
-
-
 /*
  * This may need to be removed for some compilers XXX XXX XXX
  */
@@ -284,7 +165,7 @@
  * Exclude parts of WINDOWS.H that are not needed (Win32)
  */
 #define WIN32_LEAN_AND_MEAN
-#define NONLS             /* All NLS defines and routines */
+/*#define NONLS*/             /* All NLS defines and routines */
 #define NOSERVICE         /* All Service Controller routines, SERVICE_ equates, etc. */
 #define NOKANJI           /* Kanji support stuff. */
 #define NOMCX             /* Modem Configuration Extensions */
@@ -294,6 +175,16 @@
  */
 #include <windows.h>
 #include <windowsx.h>
+
+#ifndef GetWindowLongPtr
+#define GetWindowLongPtr GetWindowLong
+#endif
+#ifndef SetWindowLongPtr
+#define SetWindowLongPtr SetWindowLong
+#endif
+#ifndef GWLP_USERDATA
+#define GWLP_USERDATA GWL_USERDATA
+#endif
 
 #ifdef USE_SOUND
 
@@ -517,8 +408,6 @@ static HPALETTE hPal;
  */
 static HWND hwndSaver;
 
-static bool screensaver_active = FALSE;
-
 static HANDLE screensaverSemaphore;
 
 static char saverfilename[1024];
@@ -528,6 +417,8 @@ static HMENU main_menu;
 #define MOUSE_SENS 10
 
 #endif /* USE_SAVER */
+
+static bool screensaver_active = FALSE;
 
 
 #ifdef USE_GRAPHICS
@@ -1312,14 +1203,10 @@ static bool init_graphics(void)
 		graphics_mode *mode = NULL;
 
 		if (arg_graphics) {
-			int i = 0;
-			while (graphics_modes[i].grafID != 0)  {
-				if (graphics_modes[i].grafID == arg_graphics) {
-					mode = &(graphics_modes[i]);
-					break;
-				}
-				i++;
-			}
+			mode = get_graphics_mode(arg_graphics);
+		}
+		if (!mode) {
+			mode = get_graphics_mode(1);
 		}
 		if (mode) {
 			if (!mode->pref[0]) {
@@ -1329,7 +1216,7 @@ static bool init_graphics(void)
 			wid = mode->cell_width;
 			hgt = mode->cell_height;
 			if ((wid < 2) || (hgt < 2)) {
-				plog_fmt("invalid tile dimensions in tileset name: '%s'", mode->menuname);
+				plog_fmt("invalid tile dimensions in tileset: '%s'", mode->menuname);
 				return FALSE;
 			}
 
@@ -1354,12 +1241,61 @@ static bool init_graphics(void)
 
 		/* Load the image or quit */
 		if (alphablend) {
-			if (!ReadDIB2_PNG(data[0].w, buf, &infGraph, NULL)) {
-				plog_fmt("Cannot read file '%s'", name);
-				return FALSE;
+			/* see if the given file is already pre mulitiplied */
+			if (strstr(name, "_pre")) {
+				/* if so, just load it */
+				if (!ReadDIB2_PNG(data[0].w, buf, &infGraph, NULL, FALSE)) {
+					plog_fmt("Cannot read file '%s'", name);
+					return FALSE;
+				}
+			} else {
+				/* if not, see if there is already a premultiplied tileset */
+				/* the there is load it */
+				char *ext;
+				char modname[1024];
+				bool have_space = 0;
+				my_strcpy(modname, buf,1024);
+				ext = strstr(modname,".png");
+				/* make sure we have enough space to make the desired name */
+				if (ext && ((ext-buf) < 1019)) {
+					have_space = TRUE;
+					strcpy(ext, "_pre.png");
+					if (!file_exists(modname)) {
+						/* if the file does not exist, mark that we need to 
+						 * create it, so clear the extension pointer */
+						ext = NULL;
+					} else
+					if (file_newer(buf, modname)) {
+						/* if the base file is newer than the premultiplied file,
+						 * mark that we need to recreate the premultiplied file. */
+						ext = NULL;
+					}
+				}
+				if (ext && have_space) {
+					/* at this point we know the file exists, so load it */
+					if (!ReadDIB2_PNG(data[0].w, modname, &infGraph, NULL, FALSE)) {
+						plog_fmt("Cannot read premultiplied version of file '%s'", name);
+						return FALSE;
+					}
+				} else
+				/* if not, load the base file and premultiply it */
+				{
+					if (!ReadDIB2_PNG(data[0].w, buf, &infGraph, NULL, TRUE)) {
+						plog_fmt("Cannot read file '%s'", name);
+						return FALSE;
+					}
+					/* save the premultiplied file */
+					/* saving alpha without a mask is not working yet
+					if (SavePNG(data[0].w, modname,
+							infGraph.hBitmap,infGraph.hPalette,
+							1, NULL,
+							infGraph.ImageWidth, infGraph.ImageHeight, FALSE) < 0) {
+						plog_fmt("Cannot write premultiplied version of file '%s'", name);
+					}*/
+				}
 			}
 		} else {
-			if (!ReadDIB2_PNG(data[0].w, buf, &infGraph, &infMask)) {
+ 			if (!ReadDIB2_PNG(data[0].w, buf, &infGraph, &infMask, FALSE)) {
 				plog_fmt("Cannot read file '%s'", name);
 				return FALSE;
 			}
@@ -1443,6 +1379,9 @@ static void term_remove_font(const char *name)
 
 	/* Remove it */
 	RemoveFontResource(buf);
+
+	/* Notify other applications of the change  XXX */
+	PostMessage(HWND_BROADCAST, WM_FONTCHANGE, 0, 0);
 
 	return;
 }
@@ -2547,7 +2486,7 @@ static errr Term_pict_win_alpha(int x, int y, int n, const byte *ap, const wchar
 	for (i = n-1; i >= 0; i--, x2 -= w2)
 	{
 		byte a = ap[i];
-		char c = cp[i];
+		wchar_t c = cp[i];
 
 		/* Extract picture */
 		int row = (a & 0x7F);
@@ -2759,6 +2698,7 @@ static void init_windows(void)
 
 	MENUITEMINFO mii;
 	HMENU hm;
+	graphics_mode *mode;
 
 	/* Main window */
 	td = &data[0];
@@ -2922,22 +2862,31 @@ static void init_windows(void)
 
 	/* Populate the graphic options sub menu with the graphics modes */
 	hm = GetMenu(data[0].w);
-	i=0;
 	mii.cbSize = sizeof(MENUITEMINFO);
 	mii.fMask = MIIM_ID | MIIM_TYPE;
 	mii.fType = MFT_STRING;
-	while (graphics_modes[i].grafID != 0) {
-		mii.wID = graphics_modes[i].grafID + IDM_OPTIONS_GRAPHICS_NONE;
-		mii.dwTypeData = graphics_modes[i].menuname;
-		mii.cch = strlen(graphics_modes[i].menuname);
-		InsertMenuItem(hm,IDM_OPTIONS_GRAPHICS_NONE, FALSE, &mii);
-		++i;
+	mode = graphics_modes;
+	while (mode) {
+		if (mode->grafID != GRAPHICS_NONE) {
+			mii.wID = mode->grafID + IDM_OPTIONS_GRAPHICS_NONE;
+			mii.dwTypeData = mode->menuname;
+			mii.cch = strlen(mode->menuname);
+			InsertMenuItem(hm,IDM_OPTIONS_GRAPHICS_NICE, FALSE, &mii);
+		}
+		mode = mode->pNext;
 	}
+	//mii.cbSize = sizeof(MENUITEMINFO);
+	mii.fMask = MIIM_TYPE;
+	mii.fType = MFT_SEPARATOR;
+	mii.wID = 399;
+	mii.dwTypeData = 0;
+	mii.cch = 0;
+	InsertMenuItem(hm,IDM_OPTIONS_GRAPHICS_NICE, FALSE, &mii);
 
 	/* setup the alpha blending function */
 	blendfn.BlendOp = AC_SRC_OVER;
 	blendfn.BlendFlags = 0;
-	blendfn.AlphaFormat = AC_SRC_NO_PREMULT_ALPHA;//AC_SRC_ALPHA;
+	blendfn.AlphaFormat = AC_SRC_ALPHA;
 	blendfn.SourceConstantAlpha = 255;
 
 
@@ -2968,6 +2917,7 @@ static void stop_screensaver(void)
 static void setup_menus(void)
 {
 	size_t i;
+	graphics_mode *mode;
 
 	HMENU hm = GetMenu(data[0].w);
 
@@ -2985,6 +2935,8 @@ static void setup_menus(void)
 	EnableMenuItem(hm, IDM_FILE_EXIT,
 	               MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
 
+	EnableMenuItem(hm, IDM_WINDOW_OPT,
+	               MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
 
 	/* No character available */
 	if (!character_generated)
@@ -3001,6 +2953,8 @@ static void setup_menus(void)
 	{
 		/* Menu "File", Item "Save" */
 		EnableMenuItem(hm, IDM_FILE_SAVE, MF_BYCOMMAND | MF_ENABLED);
+		/* Allow accessing the window options */
+		EnableMenuItem(hm, IDM_WINDOW_OPT, MF_BYCOMMAND | MF_ENABLED);
 	}
 
 	if (!game_in_progress || !character_generated || inkey_flag)
@@ -3105,11 +3059,12 @@ static void setup_menus(void)
 	}
 
 	/* Menu "Options", disable all */
-	i = 0;
-	do {
-		EnableMenuItem(hm, graphics_modes[i].grafID + IDM_OPTIONS_GRAPHICS_NONE,
+	mode = graphics_modes;
+	while (mode) {
+		EnableMenuItem(hm, mode->grafID + IDM_OPTIONS_GRAPHICS_NONE,
 					   MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
-	} while (graphics_modes[i++].grafID != 0); 
+		mode = mode->pNext;
+	} 
 
 	EnableMenuItem(hm, IDM_OPTIONS_GRAPHICS_NICE,
 				   MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
@@ -3139,11 +3094,12 @@ static void setup_menus(void)
 		               MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
 
 	/* Menu "Options", update all */
-	i = 0;
-	do {
-		CheckMenuItem(hm, graphics_modes[i].grafID + IDM_OPTIONS_GRAPHICS_NONE,
-					  (arg_graphics == graphics_modes[i].grafID ? MF_CHECKED : MF_UNCHECKED));
-	} while (graphics_modes[i++].grafID != 0); 
+	mode = graphics_modes;
+	while (mode) {
+		CheckMenuItem(hm, mode->grafID + IDM_OPTIONS_GRAPHICS_NONE,
+	                (arg_graphics == mode->grafID ? MF_CHECKED : MF_UNCHECKED));
+		mode = mode->pNext;
+	} 
 
 	CheckMenuItem(hm, IDM_OPTIONS_GRAPHICS_NICE,
 				  (arg_graphics_nice ? MF_CHECKED : MF_UNCHECKED));
@@ -3235,10 +3191,13 @@ static void setup_menus(void)
 #ifdef USE_GRAPHICS
 	if (inkey_flag && initialized) {
 		/* Menu "Options", Item "Graphics" */
-		i = 0;
-		do {
-			EnableMenuItem(hm, graphics_modes[i].grafID + IDM_OPTIONS_GRAPHICS_NONE,MF_ENABLED );
-		} while (graphics_modes[i++].grafID != 0); 
+		mode = graphics_modes;
+		while (mode) {
+			if ((mode->grafID == 0) || (mode->file && mode->file[0])) {
+				EnableMenuItem(hm, mode->grafID + IDM_OPTIONS_GRAPHICS_NONE, MF_ENABLED);
+			}
+			mode = mode->pNext;
+		} 
 
 		EnableMenuItem(hm, IDM_OPTIONS_GRAPHICS_NICE, MF_ENABLED);
 
@@ -3314,18 +3273,21 @@ static void check_for_save_file(LPSTR cmd_line)
  * be switched off when recording.
  */
 
-extern char (*inkey_hack)(int flush_first);
+extern struct keypress (*inkey_hack)(int flush_first);
 
-static char screensaver_inkey_hack_buffer[1024];
+static struct keypress screensaver_inkey_hack_buffer[1024];
 
-static char screensaver_inkey_hack(int flush_first)
+static struct keypress screensaver_inkey_hack(int flush_first)
 {
-	static int screensaver_inkey_hack_index = 0;
+	static size_t screensaver_inkey_hack_index = 0;
 
 	if (screensaver_inkey_hack_index < sizeof(screensaver_inkey_hack_buffer))
 		return (screensaver_inkey_hack_buffer[screensaver_inkey_hack_index++]);
 	else
-		return ESCAPE;
+	{
+		struct keypress key = {EVT_KBRD, ESCAPE, 0};
+		return key;
+	}
 }
 
 #endif /* ALLOW_BORG */
@@ -3340,6 +3302,7 @@ static void start_screensaver(void)
 
 #ifdef ALLOW_BORG
 	int i, j;
+	struct keypress key = {EVT_KBRD, 0, 0};
 #endif /* ALLOW_BORG */
 
 	/* Set the name for process_player_name() */
@@ -3366,7 +3329,6 @@ static void start_screensaver(void)
 	SendMessage(data[0].w, WM_COMMAND, IDM_OPTIONS_LOW_PRIORITY, 0);
 
 #ifdef ALLOW_BORG
-
 	/*
 	 * MegaHack - Try to start the Borg.
 	 *
@@ -3387,22 +3349,30 @@ static void start_screensaver(void)
 	 * Luckily it's possible to send the same keypresses no matter if
 	 * the character is alive, dead, or not even yet created.
 	 */
-	screensaver_inkey_hack_buffer[j++] = ESCAPE; /* Gender */
-	screensaver_inkey_hack_buffer[j++] = ESCAPE; /* Race */
-	screensaver_inkey_hack_buffer[j++] = ESCAPE; /* Class */
-	screensaver_inkey_hack_buffer[j++] = 'n'; /* Modify options */
-	screensaver_inkey_hack_buffer[j++] = '\r'; /* Reroll */
+	key.code = ESCAPE;
+	screensaver_inkey_hack_buffer[j++] = key; /* Gender */
+	screensaver_inkey_hack_buffer[j++] = key; /* Race */
+	screensaver_inkey_hack_buffer[j++] = key; /* Class */
+	key.code = 'n';
+	screensaver_inkey_hack_buffer[j++] = key; /* Modify options */
+	key.code = '\r';
+	screensaver_inkey_hack_buffer[j++] = key; /* Reroll */
 
-	if (!file_exists)
+	if (!file_exist)
 	{
 		/* Savefile name */
 		int n = strlen(saverfilename);
 		for (i = 0; i < n; i++)
-			screensaver_inkey_hack_buffer[j++] = saverfilename[i];
+		{
+			key.code = saverfilename[i];
+			screensaver_inkey_hack_buffer[j++] = key;
+		}
 	}
 
-	screensaver_inkey_hack_buffer[j++] = '\r'; /* Return */
-	screensaver_inkey_hack_buffer[j++] = ESCAPE; /* Character info */
+	key.code = '\r';
+	screensaver_inkey_hack_buffer[j++] = key; /* Return */
+	key.code = ESCAPE;
+	screensaver_inkey_hack_buffer[j++] = key; /* Character info */
 
 	/*
 	 * Make sure the "verify_special" options is off, so that we can
@@ -3416,26 +3386,32 @@ static void start_screensaver(void)
 	 * Make sure the "OPT(cheat_live)" option is set, so that the Borg can
 	 * automatically restart.
 	 */
-	screensaver_inkey_hack_buffer[j++] = '5'; /* Cheat options */
+	key.code = '5';
+	screensaver_inkey_hack_buffer[j++] = key; /* Cheat options */
 
 	/* Cursor down to "cheat live" */
-	for (i = 0; i < OPT_OPT(cheat_live) - OPT_CHEAT; i++)
-		screensaver_inkey_hack_buffer[j++] = '2';
+	key.code = '2';
+	for (i = 0; i < OPT_cheat_live - OPT_CHEAT - 1; i++)
+		screensaver_inkey_hack_buffer[j++] = key;
 
-	screensaver_inkey_hack_buffer[j++] = 'y'; /* Switch on "OPT(cheat_live)" */
-	screensaver_inkey_hack_buffer[j++] = ESCAPE; /* Leave cheat options */
-	screensaver_inkey_hack_buffer[j++] = ESCAPE; /* Leave options */
+	key.code = 'y';
+	screensaver_inkey_hack_buffer[j++] = key; /* Switch on "OPT(cheat_live)" */
+	key.code = ESCAPE;
+	screensaver_inkey_hack_buffer[j++] = key; /* Leave cheat options */
+	screensaver_inkey_hack_buffer[j++] = key; /* Leave options */
 
 	/*
 	 * Now start the Borg!
 	 */
 
-	screensaver_inkey_hack_buffer[j++] = KTRL('Z'); /* Enter borgmode */
-	screensaver_inkey_hack_buffer[j++] = 'z'; /* Run Borg */
+	key.code = KTRL('Z');
+	screensaver_inkey_hack_buffer[j++] = key; /* Enter borgmode */
+	key.code = 'z';
+	screensaver_inkey_hack_buffer[j++] = key; /* Run Borg */
 #endif /* ALLOW_BORG */
 
 	/* Play game */
-	play_game((bool)!file_exist);
+	play_game();
 }
 
 #endif /* USE_SAVER */
@@ -3747,6 +3723,13 @@ static void process_menus(WORD wCmd)
 
 			term_getsize(td);
 			term_window_resize(td);
+
+			break;
+		}
+
+		case IDM_WINDOW_OPT: {
+			Term_keypress('=',0);
+			Term_keypress('w',0);
 
 			break;
 		}
@@ -4201,7 +4184,7 @@ static void handle_keydown(WPARAM wParam, LPARAM lParam)
 	if (screensaver_active)
 	{
 		stop_screensaver();
-		return 0;
+		return;
 	}
 #endif /* USE_SAVER */
 
@@ -4358,32 +4341,41 @@ static LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 		case WM_RBUTTONDOWN:
 		case WM_LBUTTONDOWN:
 		{
+			if (screensaver_active) {
 #ifdef USE_SAVER
-			if (screensaver_active)
-			{
 				stop_screensaver();
+#else
+				screensaver_active = FALSE;
+#endif /* USE_SAVER */
 				return 0;
+			} else {
+				/* Get the text grid */
+				xPos = GET_X_LPARAM(lParam);
+				yPos = GET_Y_LPARAM(lParam);
+				xPos /= td->tile_wid;
+				yPos /= td->tile_hgt;
+
+				if (uMsg == WM_LBUTTONDOWN)
+					button = 1;
+				else if (uMsg == WM_RBUTTONDOWN)
+					button = 2;
+				else
+					button = 3;
+
+				/* Extract the modifiers */
+				/* XXX using the numbers below rather than KC_MOD_CONTROL, KCMOD_SHIFT,
+				 * and KC_MOD_ALT, to avoid having to shift them all the time. They
+				 * need to be shifted because I don't want to change the function
+				 * parameters (which would break the other platforms, which I can't
+				 * test), so the mods need to be encoded into the button.
+				 */
+				if (GetKeyState(VK_CONTROL) & 0x8000) button |= 16;
+				if (GetKeyState(VK_SHIFT)   & 0x8000) button |= 32;
+				if (GetKeyState(VK_MENU)    & 0x8000) button |= 64;
+
+				Term_mousepress(xPos,yPos,button);
 			}
 			break;
-#else
-
-			/* Get the text grid */
-			xPos = GET_X_LPARAM(lParam);
-			yPos = GET_Y_LPARAM(lParam);
-			xPos /= td->tile_wid;
-			yPos /= td->tile_hgt;
-
-			if (uMsg == WM_LBUTTONDOWN)
-				button = 1;
-			else if (uMsg == WM_RBUTTONDOWN)
-				button = 2;
-			else
-				button = 3;
-
-			Term_mousepress(xPos,yPos,button);
-
-			break;
-#endif /* USE_SAVER */
 		}
 
 #ifdef USE_SAVER
