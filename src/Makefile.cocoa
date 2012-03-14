@@ -12,10 +12,6 @@ CC = clang
 LD = ld
 OPT ?= -O2
 
-NAME = Angband
-APPNAME = $(NAME).app
-EXE = Angband
-
 ARCH = -arch i386 -arch x86_64
 WARNINGS = -W -Wall -Wno-unused-parameter -Wno-missing-field-initializers
 JUST_C = -std=c99 -Wdeclaration-after-statement
@@ -44,6 +40,8 @@ endif
 # including Makefile.inc
 include Makefile.inc
 
+APPNAME = $(NAME).app
+EXE = $(PROG)
 VERSION := $(shell ../scripts/version.sh)
 CFLAGS += -DBUILD_ID=${VERSION}
 
@@ -61,7 +59,7 @@ OSX_OBJS = main-cocoa.o
 $(EXE).o: $(OBJS)
 	$(LD) -r -arch x86_64 -o $@.x86_64 $(OBJS)
 	$(LD) -r -arch i386 -o $@.i386 $(OBJS)
-	lipo -arch x86_64 $@.x86_64 -arch i386 $@.i386 -create -output angband.o
+	lipo -arch x86_64 $@.x86_64 -arch i386 $@.i386 -create -output $(PROG).o
 
 $(EXE): $(EXE).o $(OSX_OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $(EXE) $(EXE).o $(OSX_OBJS) $(LIBS) 
@@ -114,9 +112,9 @@ APPRES = $(APPCONT)/Resources
 # of 8x8.png for Vanilla.  Make sure setting dpi to 72, *not* preserving
 # the actual size of image.  When you have them ready, put them in
 # the lib/xtra/graf directory and rebuild.
-PLIST = cocoa/Angband-Cocoa.xml
+PLIST = cocoa/FAangband-Cocoa.xml
 
-ICONFILES = cocoa/Angband_Icons.icns cocoa/Save.icns cocoa/Edit.icns cocoa/Data.icns
+ICONFILES = cocoa/FAangband_Icons.icns cocoa/Save.icns cocoa/Edit.icns cocoa/Data.icns
 
 LIBFILES = \
   ../lib/edit/*.txt \
