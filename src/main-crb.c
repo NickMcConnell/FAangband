@@ -1709,13 +1709,13 @@ static errr Term_curs_mac(int x, int y)
 
 	if (tile_width != 1) {
 		Term_what(x + 1, y, &a, &c);
-		if (c == (char) 0xff)
+		if (c == (wchar_t) 0xff)
 			tile_wid *= tile_width;
 	}
 
 	if (tile_height != 1) {
 		Term_what(x, y + 1, &a, &c);
-		if (c == (char) 0xff)
+		if (c == (wchar_t) 0xff)
 			tile_hgt *= tile_height;
 	}
 
