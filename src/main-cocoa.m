@@ -1814,10 +1814,10 @@ static errr term_text_cocoa(int x, int y, int n, byte a, const wchar_t *cp)
                 redisplayRect = NSUnionRect(redisplayRect, expandedRect);
                 
                 // Redraw text if we have any
-                if (previouslyDrawnVal != 0)
+                if (previouslyDrawnValB != 0)
                 {
-                    byte color = previouslyDrawnVal >> 8;
-                    unsigned char index = previouslyDrawnVal & 0xFF;
+                    byte color = previouslyDrawnValA;
+                    wchar_t index = previouslyDrawnValB;
                     
                     set_color_for_index(color);
                     [angbandContext drawGlyphAtIndex:index inRect:overdrawRect];
