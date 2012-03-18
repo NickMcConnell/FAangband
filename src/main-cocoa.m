@@ -141,8 +141,11 @@ static NSFont *default_font;
     /* Last time we drew, so we can throttle drawing */
     CFAbsoluteTime lastRefreshTime;
     
-    /* To address subpixel rendering overdraw problems, we cache all the characters we're told to draw (in the form (attribute << 8) | (character) */
-    uint16_t *charOverdrawCache;
+    /* To address subpixel rendering overdraw problems, we cache all the colours we're told to draw  */
+    unsigned char *attrOverdrawCache;
+    
+    /* To address subpixel rendering overdraw problems, we cache all the characters we're told to draw  */
+    wchar_t *charOverdrawCache;
 }
 
 - (void)drawRect:(NSRect)rect inView:(NSView *)view;
@@ -219,7 +222,8 @@ static NSFont *default_font;
 @end
 
 /* To indicate that a grid element contains a picture, we store 0xFFFF. */
-#define NO_OVERDRAW ((uint16_t)(0xFFFF))
+#define NO_OVERDRAW_ATTR ((char) (0xFF))
+#define NO_OVERDRAW_CHAR ((wchar_t)(0xFFFF))
 
 /* Here is some support for rounding to pixels in a scaled context */
 static double push_pixel(double pixel, double scale, BOOL increase)
@@ -669,6 +673,7 @@ static int compare_advances(const void *ap, const void *bp)
 /* Indication that we're redrawing everything, so get rid of the overdraw cache. */
 - (void)clearOverdrawCache
 {
+    bzero(attrOverdrawCache, self->cols * self->rows * sizeof *attrOverdrawCache);
     bzero(charOverdrawCache, self->cols * self->rows * sizeof *charOverdrawCache);
 }
 
@@ -778,6 +783,7 @@ static int compare_advances(const void *ap, const void *bp)
         self->borderSize = NSMakeSize(2, 2);
         
         /* Allocate overdraw cache, unscanned and collectable. */
+        self->attrOverdrawCache = NSAllocateCollectable(self->cols * self->rows *sizeof *attrOverdrawCache, 0);
         self->charOverdrawCache = NSAllocateCollectable(self->cols * self->rows *sizeof *charOverdrawCache, 0);
         
         /* Allocate our array of views */
@@ -820,6 +826,8 @@ static int compare_advances(const void *ap, const void *bp)
     primaryWindow = nil;
     
     /* Free overdraw cache (unless we're GC, in which case it was allocated collectable) */
+    if (! [NSGarbageCollector defaultCollector]) free(self->attrOverdrawCache);
+    self->attrOverdrawCache = NULL;
     if (! [NSGarbageCollector defaultCollector]) free(self->charOverdrawCache);
     self->charOverdrawCache = NULL;
 }
@@ -1648,7 +1656,8 @@ static errr Term_pict_cocoa(int x, int y, int n, const byte *ap, const char *cp,
     AngbandContext* angbandContext = Term->data;
     
     /* Indicate that we have a picture here (and hence this should not be overdrawn by term_text_cocoa) */
-    angbandContext->charOverdrawCache[y * angbandContext->cols + x] = NO_OVERDRAW;
+    angbandContext->attrOverdrawCache[y * angbandContext->cols + x] = NO_OVERDRAW_ATTR;
+    angbandContext->charOverdrawCache[y * angbandContext->cols + x] = NO_OVERDRAW_CHAR;
     
     /* Lock focus */
     [angbandContext lockFocus];
@@ -1731,7 +1740,7 @@ static errr Term_pict_cocoa(int x, int y, int n, const byte *ap, const char *cp,
  *
  * Draw several ("n") chars, with an attr, at a given location.
  */
-static errr term_text_cocoa(int x, int y, int n, byte a, const char *cp)
+static errr term_text_cocoa(int x, int y, int n, byte a, const wchar_t *cp)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
@@ -1750,8 +1759,12 @@ static errr term_text_cocoa(int x, int y, int n, byte a, const char *cp)
     /* record our data in our cache */
     int start = y * angbandContext->cols + x;
     int location;
-    for (location = 0; location < n; location++) angbandContext->charOverdrawCache[start + location] = (a << 8) | ((unsigned char)cp[location]);
-    
+    for (location = 0; location < n; location++) 
+    {
+	    angbandContext->attrOverdrawCache[start + location] = a;
+	    angbandContext->charOverdrawCache[start + location] = cp[location];
+    }
+
     /* Focus on our layer */
     [angbandContext lockFocus];
     
@@ -1785,10 +1798,12 @@ static errr term_text_cocoa(int x, int y, int n, byte a, const char *cp)
         // Nothing to overdraw if we're at an edge
         if (overdrawX >= 0 && (size_t)overdrawX < angbandContext->cols)
         {
-            uint16_t previouslyDrawnVal = angbandContext->charOverdrawCache[y * angbandContext->cols + overdrawX];
+            unsigned char previouslyDrawnValA = angbandContext->attrOverdrawCache[y * angbandContext->cols + overdrawX];
+            wchar_t previouslyDrawnValB = angbandContext->charOverdrawCache[y * angbandContext->cols + overdrawX];
             
             // Don't overdraw if it's not text
-            if (previouslyDrawnVal != NO_OVERDRAW)
+            if ((previouslyDrawnValA != NO_OVERDRAW_ATTR)
+		&& (previouslyDrawnValB != NO_OVERDRAW_CHAR))
             {
                 NSRect overdrawRect = [angbandContext rectInImageForTileAtX:overdrawX Y:y];
                 NSRect expandedRect = crack_rect(overdrawRect, scaleFactor, push_options(overdrawX, y));
