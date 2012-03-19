@@ -280,7 +280,7 @@ static void display_group_member(menu_type * menu, int oid, bool cursor,
 
     /* Do visual mode */
     if (o_funcs->is_visual && o_funcs->xattr) {
-	byte c = *o_funcs->xchar(oid);
+	wchar_t c = *o_funcs->xchar(oid);
 	byte a = *o_funcs->xattr(oid);
 
 	c_put_str(attr, format((c & 0x80) ? "%02x/%02x" : "%02x/%d", a, c), row,
@@ -738,7 +738,7 @@ static bool visual_mode_command(ui_event ke, bool * visual_list_ptr,
 	int mx = logical_width(ke.mouse.x - col);
 
 	if ((my >= 0) && (my < eff_height) && (mx >= 0) && (mx < eff_width)
-	    && ((ke.mouse.button) || (a != *attr_top_ptr + my)
+	    && ((ke.mouse.button == 1) || (a != *attr_top_ptr + my)
 		|| (c != *char_left_ptr + mx)))
 	{
 	    /* Set the visual */
@@ -766,7 +766,7 @@ static bool visual_mode_command(ui_event ke, bool * visual_list_ptr,
 	}
 
 	/* Cancel change */
-	else if (ke.mouse.button)
+	else if (ke.mouse.button == 2)
 	{
 	    *cur_attr_ptr = attr_old;
 	    *cur_char_ptr = char_old;
@@ -819,7 +819,9 @@ static bool visual_mode_command(ui_event ke, bool * visual_list_ptr,
     case 'v':
 	{
 	    /* No visual mode without graphics, for now - NRM */
-	    if (current_graphics_mode->grafID == 0) break;
+	    if (current_graphics_mode != NULL)
+		if (current_graphics_mode->grafID == 0)
+		    break;
 
 	    if (!*visual_list_ptr)
 	    {
@@ -952,6 +954,12 @@ static void display_monster(int col, int row, bool cursor, int oid)
     byte a = r_ptr->x_attr;
     wchar_t c = r_ptr->x_char;
 
+    if ((tile_height != 1) && (a & 0x80)) 
+    {
+	a = r_ptr->d_attr;
+	c = r_ptr->d_char;
+    }
+
     /* Display the name */
     c_prt(attr, r_ptr->name, row, col);
 
@@ -966,9 +974,6 @@ static void display_monster(int col, int row, bool cursor, int oid)
 	character_icky++;
 	character_icky++;
     }
-
-   if ((tile_width > 1) || (tile_height > 1))
-	return;
 
     /* Display symbol */
     big_pad(66, row, a, c);
