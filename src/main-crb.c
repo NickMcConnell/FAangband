@@ -1111,6 +1111,7 @@ static void DrawTile(int x, int y, byte a, wchar_t c, byte ta, wchar_t tc)
 
 static void ShowTextAt(int x, int y, int color, int n, const wchar_t *text )
 {
+  int i, j;
 	term_data *td = (term_data*) Term->data;
 	GlyphInfo *info = td->ginfo;
 	/* Overwite the text, unless it's being called recursively. */
@@ -1121,9 +1122,29 @@ static void ShowTextAt(int x, int y, int color, int n, const wchar_t *text )
 	/* Cribbed from the SDL port */
 	wchar_t src[255];
 	UInt8 text_mb[MB_LEN_MAX * 255];
+	if (text[0] > 255) 
+	  {
+	    group_id = text[0] & 0xff;
+	  }
 	wcsncpy(src, text, n);
 	src[n] = L'\0';
-	size_t text_bytes = wcstombs(text_mb, src, n * MB_LEN_MAX);
+	size_t text_bytes = 0;
+
+	/* Manually extract bytes - NRM */
+	for (i = 0; i < n; i++) {
+	  assert((src[i] & 0xffff) == src[i]);
+	  if ((src[i] & 0x7f) == src[i])
+	    text_mb[text_bytes++] = (UInt8) src[i];
+	  else if ((src[i] & 0x7ff) == src[i]){
+	    text_mb[text_bytes++] = (UInt8) 0xc0 + (src[i] >> 6);
+	    text_mb[text_bytes++] = (UInt8) 0x80 + (src[i] & 0x3f);
+	  } else {
+	    text_mb[text_bytes++] = (UInt8) 0xe0 + (src[i] >> 12);
+	    text_mb[text_bytes++] = (UInt8) 0x80 + ((src[i] >> 6) & 0x3f);
+	    text_mb[text_bytes++] = (UInt8) 0x80 + (src[i] & 0x3f);
+	  }
+	}
+	    
 	text_mb[text_bytes] = '\0';
 
 	CFStringRef text_str = CFStringCreateWithBytes(
