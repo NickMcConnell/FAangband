@@ -1138,11 +1138,17 @@ static void ShowTextAt(int x, int y, int color, int n, const wchar_t *text )
 	  else if ((src[i] & 0x7ff) == src[i]){
 	    text_mb[text_bytes++] = (UInt8) 0xc0 + (src[i] >> 6);
 	    text_mb[text_bytes++] = (UInt8) 0x80 + (src[i] & 0x3f);
-	  } else {
+	  } else if ((src[i] & 0xffff) == src[i]) {
 	    text_mb[text_bytes++] = (UInt8) 0xe0 + (src[i] >> 12);
 	    text_mb[text_bytes++] = (UInt8) 0x80 + ((src[i] >> 6) & 0x3f);
 	    text_mb[text_bytes++] = (UInt8) 0x80 + (src[i] & 0x3f);
+	  } else {
+	    text_mb[text_bytes++] = (UInt8) 0xf0 + (src[i] >> 18);
+	    text_mb[text_bytes++] = (UInt8) 0x80 + ((src[i] >> 12) & 0x3f);
+	    text_mb[text_bytes++] = (UInt8) 0x80 + ((src[i] >> 6) & 0x3f);
+	    text_mb[text_bytes++] = (UInt8) 0x80 + (src[i] & 0x3f);
 	  }
+
 	}
 	    
 	text_mb[text_bytes] = '\0';
