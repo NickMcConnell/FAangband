@@ -1132,7 +1132,6 @@ static void ShowTextAt(int x, int y, int color, int n, const wchar_t *text )
 
 	/* Manually extract bytes - NRM */
 	for (i = 0; i < n; i++) {
-	  assert((src[i] & 0xffff) == src[i]);
 	  if ((src[i] & 0x7f) == src[i])
 	    text_mb[text_bytes++] = (UInt8) src[i];
 	  else if ((src[i] & 0x7ff) == src[i]){
