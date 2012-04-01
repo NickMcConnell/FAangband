@@ -186,8 +186,7 @@ G:f:U
 I:110:1d2:15:3:10
 W:0:3:0:0
 B:CLAW:HURT:1d1
-F:RAND_25 | 
-F:ANIMAL
+F:RAND_25
 D:A skinny little furball with sharp claws and a menacing look.
 
 N:13:Scruffy little dog
@@ -195,8 +194,7 @@ G:C:U
 I:110:1d3:20:3:5
 W:0:3:0:0
 B:BITE:HURT:1d1
-F:RAND_25 | 
-F:ANIMAL
+F:RAND_25 
 D:A thin flea-ridden mutt, growling as you get close.
 
 N:14:The Complainer
@@ -244,9 +242,7 @@ G:k:y
 I:110:2d7:20:10:10
 W:1:1:0:4
 B:HIT:HURT:1d4
-F:DROP_60 | MOVE_BODY | 
-F:OPEN_DOOR | BASH_DOOR | 
-F:EVIL | IM_POIS
+F:DROP_60 | MOVE_BODY  
 D:A squat and ugly humanoid figure.
 
 N:21:Soldier ant
@@ -254,8 +250,7 @@ G:a:W
 I:110:2d4:10:5:10
 W:1:2:0:2
 B:BITE:HURT:1d2
-F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL | FRIEND | TERRITORIAL 
+F:FRIEND | TERRITORIAL 
 D:A large ant with powerful mandibles.
 
 N:22:Fruit bat
@@ -263,8 +258,7 @@ G:b:o
 I:120:2d2:16:11:10
 W:1:1:0:1
 B:BITE:HURT:1d1
-F:RAND_25 |
-F:ANIMAL | FLYING
+F:RAND_25
 D:A fast-moving pest.
 
 N:23:Giant yellow centipede
@@ -273,8 +267,6 @@ I:110:2d6:8:8:30
 W:1:1:0:2
 B:BITE:HURT:1d3
 B:STING:HURT:1d3
-F:WEIRD_MIND | 
-F:ANIMAL
 D:It is about four feet long and carnivorous.
 
 N:24:Giant white centipede
@@ -283,9 +275,7 @@ I:110:3d5:8:8:40
 W:1:1:0:2
 B:BITE:HURT:1d2
 B:STING:HURT:1d2
-F:RAND_50 | 
-F:WEIRD_MIND | 
-F:ANIMAL
+F:RAND_50 
 D:It is about four feet long and carnivorous.
 
 N:25:Rock lizard
@@ -312,8 +302,7 @@ G:C:U
 I:110:1d4:10:5:10
 W:1:2:0:1
 B:BITE:HURT:1d1
-F:FRIENDS | 
-F:ANIMAL | TERRITORIAL 
+F:FRIENDS | TERRITORIAL 
 D:A yapping snarling dog, dangerous when in a pack.
 
 N:28:Giant white mouse
@@ -436,9 +425,7 @@ G:k:G
 I:110:3d6:20:12:10
 W:2:1:0:4
 B:HIT:HURT:1d6
-F:DROP_60 | MOVE_BODY | 
-F:OPEN_DOOR | BASH_DOOR | 
-F:EVIL | IM_POIS
+F:DROP_60 | MOVE_BODY 
 D:A small, dog-headed humanoid.
 
 N:41:Blue yeek
@@ -457,8 +444,7 @@ I:120:2d6:25:15:1
 W:2:2:0:7
 B:CLAW:HURT:1d3
 B:CLAW:HURT:1d3
-F:BASH_DOOR | 
-F:ANIMAL | TERRITORIAL
+F:BASH_DOOR | TERRITORIAL
 D:A larger than normal feline, hissing loudly.  Its velvet claws conceal a 
 D:fistful of needles.
 
@@ -467,9 +453,7 @@ G:a:D
 I:110:2d8:8:12:80
 W:2:2:0:3
 B:BITE:HURT:1d4
-F:WEIRD_MIND | 
-F:BASH_DOOR | TERRITORIAL | 
-F:ANIMAL | FRIEND
+F:TERRITORIAL | FRIEND
 D:A black ant about three feet long.
 
 N:44:Giant white ant
@@ -477,8 +461,7 @@ G:a:w
 I:110:2d7:8:10:80
 W:2:2:0:3
 B:BITE:HURT:1d3
-F:WEIRD_MIND | BASH_DOOR | TERRITORIAL | 
-F:ANIMAL | FRIENDS
+F:TERRITORIAL | FRIENDS
 D:A white ant about two feet long.  One by itself is very weak, but you'll 
 D:seldom see just one.
 
@@ -487,9 +470,7 @@ G:c:g
 I:120:3d5:5:10:10
 W:2:1:0:3
 B:CRAWL:HURT:1d3
-F:RAND_50 | 
-F:WEIRD_MIND | 
-F:ANIMAL
+F:RAND_50 
 D:It is about four feet long and carnivorous.
 
 N:46:Giant green frog
@@ -591,9 +572,8 @@ I:120:6d8:2:1:99
 W:2:1:0:8
 B:TOUCH:POISON:1d2
 F:NEVER_MOVE | 
-F:STUPID | EMPTY_MIND | 
 F:IM_POIS | HURT_LIGHT | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:NO_CONF | NO_SLEEP
 D:Its a large pile of white flesh.
 
 N:56:White harpy
@@ -622,9 +602,9 @@ I:110:2d6:22:11:10
 W:3:2:0:4
 B:HIT:HURT:1d4
 B:TOUCH:EAT_GOLD
-F:MALE | MOVE_BODY | 
+F:MALE |
 F:DROP_60 | 
-F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | 
+F:TAKE_ITEM | BASH_DOOR | 
 D:A short little guy, in bedraggled clothes.  He appears to be looking 
 D:for a good tavern.
 
@@ -647,9 +627,7 @@ G:c:b
 I:120:3d5:6:11:15
 W:3:1:0:5
 B:CRAWL:HURT:1d4
-F:RAND_50 | 
-F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL
+F:RAND_50 | BASH_DOOR 
 D:It is about four feet long and carnivorous.
 
 N:62:Large grey snake
@@ -668,9 +646,7 @@ G:l:w
 I:120:1d1:6:3:10
 W:3:1:0:1
 B:BITE:HURT:1d1
-F:RAND_50 | RAND_25 | 
-F:MULTIPLY | WEIRD_MIND | 
-F:ANIMAL
+F:RAND_25
 D:It is six inches long.
 
 N:64:Yellow worm mass
@@ -711,9 +687,8 @@ I:120:3d3:8:12:80
 W:3:2:0:3
 B:CRAWL:ACID:1d3
 F:RAND_50 | RAND_25 | DROP_60 | 
-F:STUPID | EMPTY_MIND | 
 F:IM_ACID | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:NO_CONF | NO_SLEEP 
 D:It's green and it's oozing.
 
 N:68:Silver jelly
@@ -723,9 +698,8 @@ W:3:2:0:11
 B:TOUCH:EAT_LIGHT:1d3
 B:TOUCH:EAT_LIGHT:1d3
 F:NEVER_MOVE | 
-F:STUPID | EMPTY_MIND | 
 F:IM_POIS | HURT_LIGHT | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:NO_CONF | NO_SLEEP 
 S:1_IN_15 | POW_0 | 
 S:DRAIN_MANA
 D:It is a large pile of silver flesh that sucks all light from its 
@@ -737,9 +711,8 @@ I:120:8d8:2:1:99
 W:3:1:0:10
 B:TOUCH:POISON:1d3
 F:NEVER_MOVE | 
-F:STUPID | EMPTY_MIND | 
 F:IM_POIS | HURT_LIGHT | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:NO_CONF | NO_SLEEP 
 S:1_IN_15 | 
 S:DRAIN_MANA
 D:It's a large pile of yellow flesh.
@@ -773,9 +746,9 @@ W:3:1:70:8
 B:TOUCH:TERRIFY
 F:RAND_50 | RAND_25 | 
 F:DROP_90 | 
-F:INVISIBLE | COLD_BLOOD | PASS_WALL | TAKE_ITEM | 
-F:EVIL | UNDEAD | MOVE_BODY | 
-F:IM_COLD | IM_POIS | HURT_LIGHT | NO_CONF | NO_SLEEP
+F:INVISIBLE | TAKE_ITEM | 
+F:EVIL | MOVE_BODY | 
+F:IM_COLD | IM_POIS | HURT_LIGHT | NO_CONF
 S:1_IN_15 | POW_0 | 
 S:BLINK
 D:It is a ghastly, ghostly form.
@@ -821,9 +794,7 @@ G:c:r
 I:120:3d8:8:13:20
 W:4:1:0:9
 B:CRAWL:HURT:1d6
-F:RAND_25 | 
-F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL
+F:RAND_25 | BASH_DOOR
 D:It is about four feet long and carnivorous.
 
 N:78:Giant Anaconda
@@ -867,9 +838,8 @@ I:110:9d8:2:1:99
 W:4:1:0:12
 B:TOUCH:COLD:1d6
 F:NEVER_MOVE | COLD_BLOOD | 
-F:STUPID | EMPTY_MIND | 
 F:IM_COLD | HURT_LIGHT | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:NO_CONF | NO_SLEEP 
 D:It's a large pile of pulsing blue flesh.
 
 N:82:Creeping copper coins
@@ -878,10 +848,7 @@ I:100:5d8:3:20:10
 W:4:2:0:8
 B:HIT:HURT:1d4
 B:TOUCH:POISON:2d4
-F:ONLY_GOLD | DROP_1D2 | 
-F:COLD_BLOOD | BASH_DOOR | 
-F:ANIMAL | IM_POIS | 
-F:NO_CONF | NO_SLEEP
+F:DROP_1D2
 D:An animated pile of copper coins.
 
 N:83:()
@@ -897,9 +864,7 @@ G:k:b
 I:110:10d9:20:16:30
 W:5:1:0:20
 B:HIT:HURT:1d10
-F:DROP_60 | MOVE_BODY | 
-F:OPEN_DOOR | BASH_DOOR | 
-F:EVIL | IM_POIS
+F:DROP_60 | MOVE_BODY 
 D:A man-sized figure with the all too recognizable face of a kobold.
 
 N:86:Copperhead snake
@@ -927,9 +892,8 @@ I:110:2d5:8:11:80
 W:5:1:0:7
 B:CRAWL:COLD:1d4
 F:RAND_50 | RAND_25 | DROP_60 | 
-F:STUPID | EMPTY_MIND | 
 F:IM_COLD | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:NO_CONF | NO_SLEEP
 D:It's blue and it's oozing.
 
 N:89:Green jelly
@@ -938,9 +902,8 @@ I:120:17d8:2:1:99
 W:5:1:0:18
 B:TOUCH:ACID:1d2
 F:NEVER_MOVE | 
-F:STUPID | EMPTY_MIND | 
 F:IM_ACID | HURT_LIGHT | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:NO_CONF | NO_SLEEP 
 D:It is a large pile of pulsing green flesh.
 
 N:90:Black harpy
@@ -996,8 +959,8 @@ W:5:1:0:13
 B:TOUCH:EAT_FOOD:1d1
 F:RAND_50 | RAND_25 | 
 F:DROP_90 | 
-F:INVISIBLE | COLD_BLOOD | PASS_WALL | MOVE_BODY | 
-F:EVIL | UNDEAD | NO_CONF | NO_SLEEP
+F:INVISIBLE | MOVE_BODY | 
+F:EVIL | NO_CONF
 D:A very ugly green ghost with a voracious appetite.
 
 N:95:()
@@ -1049,9 +1012,7 @@ G:k:g
 I:110:6d9:24:16:20
 W:6:3:0:12
 B:HIT:HURT:1d8
-F:DROP_60 | MOVE_BODY | FRIEND | 
-F:OPEN_DOOR | BASH_DOOR | 
-F:EVIL | IM_POIS
+F:DROP_60 | MOVE_BODY | FRIEND 
 S:1_IN_6 | POW_3 | 
 S:PMISSL
 D:A shifty-looking dog-headed humanoid that throws poisoned darts.  Usually 
@@ -1062,8 +1023,7 @@ G:b:u
 I:130:2d9:18:12:30
 W:6:1:0:10
 B:BITE:HURT:1d3
-F:RAND_25 | FLYING | 
-F:ANIMAL
+F:RAND_25
 D:It screeches as it attacks.
 
 N:102:Night lizard
@@ -1138,9 +1098,7 @@ I:100:8d8:4:18:10
 W:6:2:0:8
 B:HIT:HURT:1d6
 B:TOUCH:POISON:2d6
-F:ONLY_GOLD | DROP_60 | DROP_1D2 | 
-F:COLD_BLOOD | BASH_DOOR | 
-F:ANIMAL | IM_POIS | NO_CONF | NO_SLEEP
+F:DROP_60 | DROP_1D2
 D:It is a pile of coins, crawling forward on thousands of tiny legs.
 
 N:109:()
@@ -1157,10 +1115,10 @@ I:110:7d6:20:10:20
 W:7:2:25:20
 B:HIT:HURT:1d6
 B:HIT:HURT:1d6
-F:MALE | MOVE_BODY | 
+F:MALE |
 F:FORCE_SLEEP | 
 F:DROP_60 | 
-F:OPEN_DOOR | BASH_DOOR | 
+F:BASH_DOOR | 
 F:EVIL 
 S:1_IN_10 | POW_2 | 
 S:CONF | DARKNESS
@@ -1187,8 +1145,7 @@ I:110:3d7:12:13:40
 W:7:2:0:22
 B:BITE:HURT:1d4
 B:STING:LOSE_STR:1d4
-F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL | TERRITORIAL 
+F:TERRITORIAL 
 D:A large, deep pink ant with venomous mandibles.
 
 N:114:Crow of Udun
@@ -1197,7 +1154,7 @@ I:120:3d7:25:16:30
 W:7:3:6:20
 B:BITE:HURT:1d3
 B:CLAW:HURT:1d2
-F:ANIMAL | FLYING | FRIENDS
+F:FRIENDS
 S:1_IN_9 | POW_2 | 
 S:WOUND
 D:A crook-beaked bird with bedraggled black feathers.  It mocks you, and you 
@@ -1240,9 +1197,8 @@ I:110:20d8:2:4:99
 W:7:1:0:26
 B:TOUCH:LOSE_STR:1d5
 F:NEVER_MOVE | 
-F:STUPID | EMPTY_MIND | 
 F:HURT_LIGHT | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:NO_CONF | NO_SLEEP 
 D:It is a large pulsating mound of red flesh.
 
 N:119:Disenchanter eye
@@ -1298,9 +1254,9 @@ W:7:2:70:18
 B:HIT:HURT:2d2
 B:TOUCH:LOSE_WIS
 F:RAND_50 | DROP_90 | 
-F:INVISIBLE | COLD_BLOOD | TAKE_ITEM | PASS_WALL | 
-F:EVIL | UNDEAD | MOVE_BODY | 
-F:IM_COLD | NO_CONF | NO_SLEEP
+F:INVISIBLE | TAKE_ITEM |
+F:EVIL | MOVE_BODY | 
+F:IM_COLD | NO_CONF
 S:1_IN_15 | POW_0 | 
 S:TPORT | DRAIN_MANA
 D:It is almost insubstantial.
@@ -1441,7 +1397,7 @@ I:110:7d7:20:15:20
 W:9:3:0:13
 B:HIT:HURT:2d4
 F:DROP_60 | FRIENDS |
-F:OPEN_DOOR | BASH_DOOR | MOVE_BODY
+F:BASH_DOOR
 D:Hilarious-looking monstrosities with deformed, multicolored limbs and 
 D:bodies.  They riot gleefully towards you.
 
@@ -1578,8 +1534,8 @@ G:h:Z
 I:120:6d9:20:20:2
 W:10:2:38:23
 B:HIT:EAT_GOLD:1d3
-F:ONLY_GOLD | DROP_60 | DROP_1D2 | MOVE_BODY | 
-F:EVIL | OPEN_DOOR | MALE | TAKE_ITEM
+F:ONLY_GOLD | DROP_60 | DROP_1D2 |
+F:EVIL | MALE | TAKE_ITEM
 S:1_IN_4 | POW_2 | 
 S:TELE_SELF_TO | BLINK
 D:His eyes light up around gold, and he uses all his sorcerous 
@@ -1592,9 +1548,9 @@ W:10:1:50:38
 B:HIT:HURT:1d6
 B:HIT:HURT:1d6
 F:MALE | 
-F:FORCE_SLEEP | SMART | MOVE_BODY | 
+F:FORCE_SLEEP | SMART |
 F:ONLY_ITEM | DROP_90 | 
-F:OPEN_DOOR | BASH_DOOR | 
+F:BASH_DOOR | 
 F:EVIL | IM_POIS | LOW_MANA_RUN
 S:1_IN_3 | POW_5 | 
 S:BLIND | CONF | BOLT_ACID | DARKNESS | BALL_POIS | ADD_MANA
@@ -1607,8 +1563,7 @@ W:10:1:0:33
 B:HIT:HURT:1d9
 B:HIT:HURT:1d9
 F:MALE | SMART | 
-F:DROP_90 | MOVE_BODY | 
-F:OPEN_DOOR | BASH_DOOR | 
+F:DROP_90 | BASH_DOOR | 
 F:EVIL 
 D:A dark elven figure in armour, ready with his sword, his features twisted 
 D:and tormented.
@@ -1619,8 +1574,7 @@ I:120:7d8:25:15:2
 W:10:2:0:25
 B:CLAW:HURT:1d8
 B:CLAW:HURT:1d8
-F:BASH_DOOR | 
-F:ANIMAL | TERRITORIAL 
+F:BASH_DOOR | TERRITORIAL 
 D:A large black cat, stalking you with intent.  It thinks you're its next 
 D:meal.
 
@@ -1650,10 +1604,7 @@ G:C:u
 I:120:4d7:30:15:20
 W:10:2:0:20
 B:BITE:HURT:1d6
-F:RAND_25 | 
-F:FRIENDS | 
-F:BASH_DOOR | 
-F:ANIMAL | TERRITORIAL 
+F:RAND_25 | FRIENDS | BASH_DOOR | TERRITORIAL 
 D:It howls and snaps at you.
 
 N:159:Giant fruit fly
@@ -1661,9 +1612,7 @@ G:I:G
 I:120:1d4:8:7:10
 W:10:6:0:3
 B:BITE:HURT:1d2
-F:RAND_50 | RAND_25 | FLYING | 
-F:MULTIPLY | WEIRD_MIND | 
-F:ANIMAL
+F:RAND_50 | RAND_25 
 D:A fast-breeding, annoying pest.
 
 N:160:Hairy mold
@@ -1720,10 +1669,8 @@ W:10:3:35:60
 B:CLAW:HURT:1d3
 B:CLAW:HURT:1d3
 B:BITE:HURT:1d5
-F:FORCE_MAXHP | FORCE_SLEEP | 
 F:DROP_60 | 
-F:BASH_DOOR | 
-F:DRAGON
+F:BASH_DOOR 
 S:1_IN_9 | POW_3 | 
 S:CONF | SCARE | 
 S:BRTH_LIGHT | BRTH_DARK
@@ -1748,10 +1695,7 @@ I:100:12d8:5:18:10
 W:10:3:0:24
 B:HIT:HURT:2d5
 B:TOUCH:POISON:3d5
-F:ONLY_GOLD | DROP_90 | DROP_1D2 | 
-F:COLD_BLOOD | BASH_DOOR | 
-F:ANIMAL | 
-F:IM_POIS | NO_CONF | NO_SLEEP
+F:DROP_90 | DROP_1D2 
 D:It is a pile of coins, crawling forward on thousands of tiny legs.
 
 N:167:()
@@ -1767,9 +1711,9 @@ G:h:r
 I:110:6d9:18:10:10
 W:11:2:50:38
 B:HIT:HURT:1d5
-F:MALE | SMART | MOVE_BODY | 
+F:MALE | SMART |
 F:FORCE_SLEEP | DROP_90 | 
-F:OPEN_DOOR | BASH_DOOR | 
+F:BASH_DOOR | 
 F:EVIL | 
 F:LOW_MANA_RUN
 S:1_IN_2 | POW_4 | 
@@ -1811,9 +1755,6 @@ I:110:8d9:12:15:10
 W:11:1:0:24
 B:HIT:HURT:1d6
 B:HIT:HURT:1d6
-F:EMPTY_MIND | BASH_DOOR | 
-F:IM_ELEC | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
 D:A shambling humanoid monster with long scars.
 
 N:174:Moaning spirit
@@ -1824,8 +1765,8 @@ B:WAIL:TERRIFY
 B:TOUCH:LOSE_DEX:1d8
 F:FORCE_SLEEP | RAND_25 | 
 F:DROP_90 | 
-F:INVISIBLE | COLD_BLOOD | PASS_WALL | MOVE_BODY | 
-F:EVIL | UNDEAD | IM_COLD | NO_CONF | NO_SLEEP
+F:INVISIBLE | MOVE_BODY | 
+F:EVIL | IM_COLD | NO_CONF
 S:1_IN_15 | POW_5 | 
 S:TPORT | SCARE
 D:A ghostly apparition that shrieks horribly.
@@ -1875,8 +1816,7 @@ W:12:2:0:30
 B:BITE:HURT:2d4
 B:BITE:HURT:2d4
 B:STING:HURT:2d4
-F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL
+F:BASH_DOOR 
 D:It is a vast armoured centipede with massive mandibles and a spiked tail.
 
 N:181:Killer brown beetle
@@ -1884,8 +1824,7 @@ G:K:u
 I:110:9d8:10:25:30
 W:12:1:0:30
 B:BITE:HURT:3d4
-F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL
+F:WEIRD_MIND
 D:A vicious insect with a tough carapace.
 
 N:182:White wolf
@@ -1897,7 +1836,7 @@ B:BITE:HURT:1d4
 F:RAND_25 | 
 F:FRIENDS | 
 F:BASH_DOOR | TERRITORIAL | 
-F:ANIMAL | IM_COLD
+F:IM_COLD
 D:A large and muscled wolf from the northern wastes.  Its breath is cold and 
 D:icy and its fur coated in frost.
 
@@ -1907,9 +1846,8 @@ I:110:8d37:2:1:99
 W:12:3:0:60
 B:TOUCH:EXP_10
 F:NEVER_MOVE | 
-F:STUPID | EMPTY_MIND | 
 F:IM_POIS | HURT_LIGHT | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:NO_CONF | NO_SLEEP 
 S:1_IN_11 | POW_0 | 
 S:DRAIN_MANA
 D:It is a pulsing mound of glowing flesh.
@@ -1922,9 +1860,9 @@ B:TOUCH:ACID:1d10
 B:TOUCH:ACID:2d6
 B:TOUCH:ACID:2d6
 F:NEVER_MOVE | 
-F:STUPID | EMPTY_MIND | COLD_BLOOD | 
+F:COLD_BLOOD | 
 F:IM_ACID | IM_POIS | HURT_LIGHT | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:NO_CONF | NO_SLEEP
 D:A jelly thing.
 
 N:185:Air spirit
@@ -1933,9 +1871,7 @@ I:130:4d11:12:20:20
 W:12:1:0:30
 B:HIT:HURT:1d3
 F:RAND_50 | RAND_25 | FLYING | 
-F:EMPTY_MIND | INVISIBLE | COLD_BLOOD | BASH_DOOR | 
-F:EVIL | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:INVISIBLE | COLD_BLOOD | BASH_DOOR 
 D:A whirlwind of sentient air.
 
 N:186:()
@@ -1952,8 +1888,7 @@ I:110:5d8:16:13:25
 W:13:2:0:30
 B:SPIT:ACID:2d8
 F:RAND_25 | 
-F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL | FRIEND | TERRITORIAL 
+F:FRIEND | TERRITORIAL 
 S:1_IN_2 | 
 S:LASH
 D:A large, ebony-colored ant spitting acid.
@@ -1988,10 +1923,10 @@ W:13:3:0:40
 B:TOUCH:ACID:1d10
 B:TOUCH:ACID:2d6
 B:TOUCH:ACID:2d6
-F:STUPID | EMPTY_MIND | COLD_BLOOD | 
+F:COLD_BLOOD | 
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | 
 F:IM_ACID | IM_POIS | KILL_BODY | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:NO_CONF | NO_SLEEP 
 D:A fast moving highly acidic jelly thing that is eating away the ground it 
 D:rests on.
 
@@ -2027,7 +1962,7 @@ B:BITE:HURT:1d8
 F:RAND_25 | 
 F:FRIENDS | 
 F:BASH_DOOR | TERRITORIAL | 
-F:ANIMAL | EVIL
+F:EVIL
 D:A large wolf with eyes full of cunning.
 
 N:197:Giant white dragon fly
@@ -2035,10 +1970,7 @@ G:F:w
 I:120:2d7:20:15:50
 W:14:1:0:60
 B:BITE:COLD:1d3
-F:FORCE_SLEEP | 
-F:RAND_50 | 
-F:WEIRD_MIND | BASH_DOOR | MOVE_BODY | FLYING | 
-F:ANIMAL | IM_COLD
+F:IM_COLD
 S:1_IN_10 | POW_0 | 
 S:BRTH_COLD
 D:A large dragonfly surrounded by frost particles.
@@ -2048,9 +1980,6 @@ G:l:D
 I:120:1d2:6:3:10
 W:14:1:0:3
 B:BITE:HURT:1d2
-F:RAND_50 | 
-F:WEIRD_MIND | MULTIPLY | 
-F:ANIMAL
 D:It makes you itch just to look at it.
 
 N:199:Blue icky thing
@@ -2077,9 +2006,7 @@ W:14:1:0:30
 B:HIT:HURT:2d4
 B:HIT:HURT:2d4
 F:RAND_25 | 
-F:EMPTY_MIND | COLD_BLOOD | BASH_DOOR | FLYING | 
-F:EVIL | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:COLD_BLOOD | BASH_DOOR | FLYING 
 D:A whirlpool of sentient liquid.
 
 N:201:Ogre
@@ -2099,9 +2026,7 @@ I:110:10d13:20:22:50
 W:14:1:0:40
 B:HIT:HURT:3d6
 B:HIT:HURT:3d6
-F:DROP_60 | 
-F:OPEN_DOOR | BASH_DOOR | SMART | MOVE_BODY | 
-F:EVIL | GIANT
+F:DROP_60 | SMART | EVIL
 D:A ten foot tall humanoid with powerful muscles.
 
 N:203:Skeleton troll
@@ -2123,10 +2048,6 @@ I:110:10d15:30:14:10
 W:14:3:0:80
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
-F:CHAR_CLEAR | ATTR_CLEAR | 
-F:NEVER_MOVE | FORCE_MAXHP | DUNGEON | 
-F:EMPTY_MIND | INVISIBLE | COLD_BLOOD | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
 D:A strange creature that merges with the dungeon floor, trapping its 
 D:victims by enveloping them within its perfectly disguised form.
 
@@ -2179,8 +2100,7 @@ W:15:2:0:40
 B:CLAW:HURT:1d8
 B:CLAW:HURT:1d8
 B:BITE:HURT:1d9
-F:BASH_DOOR | 
-F:ANIMAL | TERRITORIAL 
+F:BASH_DOOR | TERRITORIAL 
 D:One of the largest of its species.  Its sleek orange and black shape creeps 
 D:towards you, ready to pounce.
 
@@ -2191,8 +2111,7 @@ W:15:2:0:20
 B:BITE:HURT:2d4
 B:STING:HURT:2d4
 F:ATTR_CLEAR | 
-F:INVISIBLE | WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL
+F:INVISIBLE | BASH_DOOR 
 D:It is about four feet long and carnivorous.
 
 N:211:Drider
@@ -2263,8 +2182,7 @@ I:120:2d7:14:10:0
 W:15:5:0:15
 B:BITE:HURT:1d6
 B:BITE:TERRIFY
-F:IM_POIS | PASS_WALL | FRIENDS | 
-F:ANIMAL | FLYING 
+F:IM_POIS | PASS_WALL | FRIENDS
 D:Ghostly, shimmering apparitions materializing out of solid wall.
 
 N:217:()
@@ -2276,9 +2194,9 @@ G:h:r
 I:110:6d9:20:10:20
 W:16:3:60:30
 B:HIT:HURT:1d5
-F:MALE | MOVE_BODY | 
+F:MALE |
 F:FORCE_SLEEP | FRIENDS | DROP_60 | 
-F:OPEN_DOOR | BASH_DOOR | SMART | 
+F:BASH_DOOR | SMART | 
 F:EVIL | 
 F:LOW_MANA_RUN
 S:1_IN_2 | POW_4 | 
@@ -2359,9 +2277,9 @@ I:90:6d8:10:6:1
 W:16:2:0:7
 B:TOUCH:ACID:2d6
 F:RAND_50 | DROP_60 | 
-F:STUPID | EMPTY_MIND | MULTIPLY | 
+F:MULTIPLY | 
 F:TAKE_ITEM | KILL_BODY | OPEN_DOOR | BASH_DOOR | 
-F:IM_POIS | NO_FEAR
+F:IM_POIS 
 S:1_IN_11 | 
 S:DRAIN_MANA
 D:It is a strangely moving puddle.
@@ -2398,10 +2316,9 @@ W:16:2:0:35
 B:HIT:HURT:2d8
 B:HIT:HURT:2d8
 F:RAND_25 | 
-F:EMPTY_MIND | COLD_BLOOD | FLYING | 
+F:COLD_BLOOD | FLYING | 
 F:PASS_WALL | 
-F:EVIL | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | HURT_ROCK | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:IM_FIRE | IM_COLD | IM_ELEC | HURT_ROCK 
 D:A whirling form of sentient rock.
 
 N:228:Half-orc
@@ -2423,9 +2340,8 @@ I:110:10d14:20:25:50
 W:16:1:0:55
 B:HIT:COLD:3d6
 B:HIT:HURT:2d8
-F:DROP_60 | MOVE_BODY | 
-F:OPEN_DOOR | BASH_DOOR | 
-F:EVIL | GIANT | SMART | 
+F:DROP_60 |  
+F:EVIL | SMART | 
 F:IM_COLD
 D:A twelve foot tall giant covered in furs.
 
@@ -2452,9 +2368,7 @@ G:F:g
 I:120:2d7:20:16:50
 W:17:1:0:60
 B:BITE:POISON:1d3
-F:FORCE_SLEEP | RAND_50 | RAND_25 | 
-F:WEIRD_MIND | BASH_DOOR | MOVE_BODY | FLYING | 
-F:ANIMAL | IM_POIS
+F:IM_POIS
 S:1_IN_10 | POW_0 | 
 S:BRTH_POIS
 D:A great, foul-smelling dragonfly.
@@ -2479,10 +2393,10 @@ B:TOUCH:ACID:1d10
 B:TOUCH:ACID:1d10
 F:FORCE_MAXHP | 
 F:DROP_1D2 | DROP_2D2 | 
-F:STUPID | EMPTY_MIND | COLD_BLOOD | KILL_BODY | 
+F:COLD_BLOOD | KILL_BODY | 
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | DUNGEON | 
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:NO_CONF | NO_SLEEP
 D:A strange, vast gelatinous structure that has been sculpted to cubic form 
 D:by the dungeon corridors it patrols.  Through its transparent jelly 
 D:structure you can see treasures it has engulfed, and a few corpses as well.
@@ -2493,10 +2407,9 @@ I:110:10d23:12:25:10
 W:17:2:0:30
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
-F:EMPTY_MIND | COLD_BLOOD | BASH_DOOR | 
-F:IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
-F:HURT_ROCK | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:COLD_BLOOD |
+F:IM_FIRE | IM_COLD | IM_POIS | 
+F:HURT_ROCK 
 D:It is a massive animated statue made out of hardened clay.
 
 N:237:Orc captain
@@ -2538,9 +2451,7 @@ G:I:y
 I:120:2d2:8:7:10
 W:18:5:0:6
 B:BITE:CONFUSE:2d2
-F:RAND_50 | RAND_25 | MOVE_BODY | FLYING | 
-F:MULTIPLY | WEIRD_MIND | 
-F:ANIMAL
+F:RAND_50 | RAND_25 | MOVE_BODY 
 D:A giant buzzing wasp with a stinger dripping venom.
 
 N:242:Shambling mound
@@ -2576,9 +2487,8 @@ I:110:10d16:20:30:50
 W:18:2:0:55
 B:HIT:FIRE:3d7
 B:HIT:HURT:2d9
-F:DROP_60 | SMART | MOVE_BODY | 
-F:OPEN_DOOR | BASH_DOOR | 
-F:EVIL | GIANT | 
+F:DROP_60 | SMART |
+F:EVIL |
 F:IM_FIRE
 D:A glowing fourteen foot tall giant.  Flames drip from its red skin.
 
@@ -2600,9 +2510,7 @@ G:I:s
 I:120:1d4:8:6:10
 W:18:1:0:4
 B:BITE:HURT:1d2
-F:RAND_50 | RAND_25 | FLYING | 
-F:MULTIPLY | WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL
+F:RAND_50 | RAND_25 | BASH_DOOR
 D:It makes you itch just to look at it.
 
 N:247:Skeleton lord
@@ -2664,10 +2572,7 @@ I:110:10d15:5:25:10
 W:18:4:0:45
 B:HIT:HURT:2d5
 B:TOUCH:POISON:3d5
-F:ONLY_GOLD | DROP_90 | DROP_2D2 | 
-F:COLD_BLOOD | BASH_DOOR | 
-F:ANIMAL | 
-F:IM_POIS | NO_CONF | NO_SLEEP
+F:DROP_90 | DROP_2D2 
 D:It is a pile of coins, shambling forward on thousands of tiny legs.
 
 N:251:()
@@ -2684,8 +2589,7 @@ I:110:10d8:10:15:40
 W:19:2:0:45
 B:BITE:HURT:2d10
 F:RAND_25 | KILL_BODY | 
-F:WEIRD_MIND | BASH_DOOR | TERRITORIAL | 
-F:ANIMAL | FRIEND
+F:TERRITORIAL | FRIEND
 D:An ant encased in shaggy grey fur.
 
 N:254:Giant red tick
@@ -2702,9 +2606,7 @@ N:255:Giant black dragon fly
 G:F:s
 I:120:4d9:12:10:40
 W:19:1:0:60
-F:FORCE_SLEEP | NEVER_BLOW | RAND_50 | RAND_25 | 
-F:WEIRD_MIND | BASH_DOOR | MOVE_BODY | FLYING | 
-F:ANIMAL | IM_ACID
+F:NEVER_BLOW | IM_ACID
 S:1_IN_9 | POW_0 | 
 S:BRTH_ACID
 D:A flying insect the size of a large bird, dripping caustic acid.
@@ -2728,9 +2630,8 @@ W:19:2:0:40
 B:HIT:FIRE:2d6
 B:HIT:FIRE:2d6
 F:RAND_25 | 
-F:EMPTY_MIND | BASH_DOOR | FLYING | 
-F:EVIL | IM_FIRE | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:BASH_DOOR | FLYING | 
+F:IM_FIRE 
 D:A whirlwind of sentient flame.
 
 N:258:Forest troll
@@ -2778,8 +2679,8 @@ W:19:4:40:26
 B:TOUCH:EAT_FOOD
 B:TOUCH:EAT_FOOD
 F:RAND_25 | RAND_50 | 
-F:COLD_BLOOD | PASS_WALL | MOVE_BODY | 
-F:UNDEAD | IM_COLD | NO_CONF | NO_SLEEP
+F:MOVE_BODY | 
+F:IM_COLD | NO_CONF
 S:1_IN_6 | POW_3 | 
 S:HUNGER | DARKNESS | BLINK | TPORT | ADD_MANA
 D:A deathly thin spirit, eternally ravenous and forever insatiable.
@@ -2815,9 +2716,8 @@ I:130:2d6:12:13:50
 W:20:1:0:54
 B:BITE:ELEC:1d3
 F:FORCE_SLEEP | 
-F:RAND_50 | MOVE_BODY | FLYING | 
-F:BASH_DOOR | 
-F:ANIMAL | IM_ELEC
+F:RAND_50 | MOVE_BODY |
+F:BASH_DOOR | IM_ELEC
 S:1_IN_4 | POW_0 | 
 S:BRTH_ELEC
 D:A glowing blue bat with a sharp tail.
@@ -2829,8 +2729,7 @@ W:20:2:30:50
 B:BITE:HURT:1d8
 F:RAND_25 | 
 F:FRIENDS | 
-F:BASH_DOOR | TERRITORIAL | 
-F:ANIMAL
+F:BASH_DOOR | TERRITORIAL
 S:1_IN_4 | POW_0 | 
 S:BLINK | TELE_SELF_TO
 D:A strange magical member of the canine race, its form seems to shimmer and 
@@ -2845,7 +2744,7 @@ B:BITE:HURT:1d6
 B:BITE:HURT:1d10
 F:RAND_25 | SMART | MOVE_BODY | 
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | 
-F:ANIMAL | EVIL
+F:EVIL
 D:It is a huge wolf with eyes that glow with manly intelligence.
 
 N:268:Fire hound
@@ -2923,10 +2822,9 @@ W:20:2:49:180
 B:CLAW:HURT:2d5
 B:CLAW:HURT:2d5
 B:BITE:ELEC:3d4
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:DROP_1D2 | 
 F:BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON | IM_ELEC
+F:EVIL | IM_ELEC
 S:1_IN_10 | POW_3 | 
 S:SCARE | SLOW | 
 S:BRTH_ELEC
@@ -2940,10 +2838,9 @@ W:20:2:49:180
 B:CLAW:HURT:2d5
 B:CLAW:HURT:2d5
 B:BITE:COLD:3d4
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:DROP_1D2 | 
 F:BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON | IM_COLD
+F:EVIL | IM_COLD
 S:1_IN_10 | POW_3 | 
 S:SCARE | SLOW | 
 S:BRTH_COLD
@@ -2958,10 +2855,9 @@ W:20:2:49:180
 B:CLAW:HURT:2d5
 B:CLAW:HURT:2d5
 B:BITE:ACID:3d4
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:DROP_1D2 | 
 F:BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON | IM_ACID
+F:EVIL | IM_ACID
 S:1_IN_10 | POW_3 | 
 S:SCARE | SLOW | 
 S:BRTH_ACID
@@ -3036,10 +2932,7 @@ G:F:y
 I:120:2d8:12:10:50
 W:21:2:0:70
 B:BITE:HURT:1d3
-F:FORCE_SLEEP | MOVE_BODY | FLYING | 
-F:RAND_50 | RAND_25 | 
-F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL | IM_FIRE
+F:IM_FIRE
 S:1_IN_9 | POW_0 | 
 S:BRTH_SOUND
 D:Large beating wings support this dazzling insect.  A loud buzzing noise 
@@ -3051,9 +2944,9 @@ I:110:10d18:20:35:50
 W:21:1:0:90
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
-F:DROP_60 | MOVE_BODY | 
-F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | 
-F:EVIL | GIANT
+F:DROP_60 |
+F:TAKE_ITEM |
+F:EVIL
 D:It is sixteen feet tall and looking at you.
 
 N:284:Green worm
@@ -3063,10 +2956,9 @@ W:21:2:49:200
 B:CLAW:HURT:2d5
 B:CLAW:HURT:2d5
 B:BITE:POISON:3d4
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:DROP_1D2 | 
 F:BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON | IM_POIS
+F:EVIL | IM_POIS
 S:1_IN_10 | POW_3 | 
 S:SCARE | SLOW | 
 S:BRTH_POIS
@@ -3102,10 +2994,10 @@ I:120:10d14:20:15:30
 W:22:1:59:170
 B:HIT:HURT:1d8
 B:HIT:HURT:1d8
-F:MALE | MOVE_BODY | 
+F:MALE |
 F:FORCE_SLEEP | 
 F:ONLY_ITEM | DROP_90 | 
-F:SMART | OPEN_DOOR | BASH_DOOR | 
+F:SMART | BASH_DOOR | 
 F:EVIL | HURT_LIGHT | LOW_MANA_RUN
 S:1_IN_5 | POW_13 | 
 S:HEAL | CURE | BLIND | SCARE | WOUND | DARKNESS | 
@@ -3120,9 +3012,9 @@ W:22:2:35:170
 B:HIT:HURT:2d5
 B:HIT:HURT:2d5
 F:MALE | SMART | FRIEND | 
-F:FORCE_SLEEP | MOVE_BODY | 
+F:FORCE_SLEEP | 
 F:DROP_60 | 
-F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | 
+F:TAKE_ITEM | BASH_DOOR | 
 F:ARCHER
 S:1_IN_10 | POW_10 | 
 S:CURE | SHOT 
@@ -3135,8 +3027,7 @@ W:22:1:0:80
 B:CLAW:HURT:2d12
 B:CLAW:HURT:2d12
 F:RAND_25 | 
-F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL
+F:WEIRD_MIND
 D:A giant beetle with great vicious-looking claws.
 
 N:291:Red mold
@@ -3156,10 +3047,9 @@ I:100:10d24:12:35:10
 W:22:2:0:100
 B:HIT:HURT:1d10
 B:HIT:HURT:1d10
-F:COLD_BLOOD | EMPTY_MIND | BASH_DOOR | 
-F:IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
-F:HURT_ROCK | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:COLD_BLOOD |
+F:IM_FIRE | IM_COLD | IM_POIS | 
+F:HURT_ROCK
 D:It is a massive animated statue.
 
 N:293:White wraith
@@ -3192,11 +3082,10 @@ I:120:10d20:20:28:30
 W:23:2:53:300
 B:HIT:HURT:3d8
 B:HIT:HURT:3d8
-F:MALE | SMART | MOVE_BODY | 
+F:MALE | SMART | 
 F:FORCE_SLEEP | 
 F:ONLY_ITEM | DROP_60 | DROP_1D2 | 
-F:OPEN_DOOR | BASH_DOOR | 
-F:EVIL 
+F:BASH_DOOR | EVIL 
 S:1_IN_4 | POW_15 | 
 S:TELE_SELF_TO | HASTE | BLIND | CONF | DARKNESS | 
 S:BOLT_FIRE | BOLT_COLD
@@ -3210,8 +3099,7 @@ B:CLAW:HURT:1d10
 B:CLAW:HURT:1d10
 B:BITE:HURT:1d10
 B:BITE:HURT:1d10
-F:BASH_DOOR | TERRITORIAL | 
-F:ANIMAL
+F:BASH_DOOR | TERRITORIAL
 D:A fierce and dangerous cat.  Its huge tusks and sharp claws would lacerate 
 D:even the strongest armour.
 
@@ -3221,8 +3109,7 @@ I:130:2d9:12:14:50
 W:23:1:0:70
 B:BITE:FIRE:1d3
 F:FORCE_SLEEP | RAND_50 | 
-F:BASH_DOOR | MOVE_BODY | FLYING | 
-F:ANIMAL | IM_FIRE
+F:BASH_DOOR | MOVE_BODY | IM_FIRE
 S:1_IN_4 | POW_0 | 
 S:BRTH_FIRE
 D:A sharp-tailed bat wreathed in fire.
@@ -3235,8 +3122,7 @@ B:WAIL:TERRIFY
 B:BITE:HURT:2d4
 B:CLAW:HURT:2d4
 F:RAND_25 | 
-F:BASH_DOOR | MOVE_BODY | FLYING | 
-F:ANIMAL | EVIL
+F:BASH_DOOR | MOVE_BODY | EVIL
 S:1_IN_5 | POW_3 | 
 S:SCARE | SHRIEK
 D:An ever-wakeful flying eye of Sauron, with a haunting cry that alerts his 
@@ -3361,10 +3247,9 @@ W:23:3:49:210
 B:CLAW:HURT:2d5
 B:CLAW:HURT:2d5
 B:BITE:HURT:3d5
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:DROP_60 | DROP_1D2 | 
 F:BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON | NO_CONF
+F:EVIL | NO_CONF
 S:1_IN_11 | POW_4 | 
 S:SCARE | SLOW | 
 S:BRTH_CONFU
@@ -3385,8 +3270,7 @@ I:110:10d13:14:15:30
 W:24:1:0:85
 B:BITE:LOSE_STR:4d4
 F:RAND_25 | 
-F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL
+F:WEIRD_MIND
 D:A giant beetle with poisonous mandibles.
 
 N:312:Black pudding
@@ -3400,10 +3284,10 @@ B:TOUCH:ACID:1d10
 F:FORCE_MAXHP | 
 F:FRIENDS | 
 F:DROP_60 | DROP_1D2 | 
-F:STUPID | EMPTY_MIND | COLD_BLOOD | 
+F:COLD_BLOOD | 
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | 
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:NO_CONF | NO_SLEEP
 D:A lump of rotting black flesh that slurrrrrrrps across the ground.
 
 N:313:Umber hulk
@@ -3429,10 +3313,10 @@ W:24:3:66:300
 B:CLAW:HURT:2d4
 B:CLAW:HURT:2d4
 B:BITE:COLD:3d4
-F:FORCE_SLEEP | FORCE_MAXHP | TAKE_ITEM | INVISIBLE | SMART | 
+F:TAKE_ITEM | INVISIBLE | SMART | 
 F:ONLY_ITEM | DROP_60 | DROP_1D2 | 
 F:BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON | IM_COLD
+F:EVIL | IM_COLD
 S:1_IN_5 | POW_5 | 
 S:HASTE | SLOW | CONF | SCARE | DARKNESS | 
 S:BRTH_DARK
@@ -3446,10 +3330,9 @@ W:24:3:49:230
 B:CLAW:HURT:2d5
 B:CLAW:HURT:2d5
 B:BITE:HURT:5d2
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:DROP_60 | DROP_1D2 | 
 F:BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON
+F:EVIL 
 S:1_IN_10 | POW_4 | 
 S:SCARE | SLOW | 
 S:BRTH_SOUND
@@ -3463,10 +3346,9 @@ W:24:2:49:220
 B:CLAW:HURT:2d6
 B:CLAW:FIRE:2d6
 B:BITE:HURT:3d6
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:DROP_1D2 | 
 F:BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON | IM_FIRE
+F:EVIL | IM_FIRE
 S:1_IN_10 | POW_3 | 
 S:SCARE | SLOW | 
 S:BRTH_FIRE
@@ -3502,8 +3384,7 @@ I:110:5d13:10:18:60
 W:25:2:0:70
 B:BITE:ELEC:5d5
 F:RAND_25 | 
-F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL | IM_ELEC | FRIEND
+F:IM_ELEC | FRIEND
 D:A giant ant that crackles with energy.
 
 N:321:Giant black scorpion
@@ -3609,9 +3490,9 @@ I:110:10d25:20:30:50
 W:25:1:0:220
 B:HIT:ELEC:3d8
 B:HIT:ELEC:3d8
-F:DROP_60 | SMART | MOVE_BODY | 
-F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | 
-F:EVIL | GIANT | IM_ELEC
+F:DROP_60 | SMART |
+F:TAKE_ITEM |
+F:EVIL | IM_ELEC
 D:It is a sixteen foot tall giant wreathed in clouds.
 
 N:329:Ghoul
@@ -3637,8 +3518,8 @@ B:WAIL:TERRIFY
 B:TOUCH:EXP_20
 F:FEMALE | SMART | 
 F:RAND_50 | DROP_90 | MOVE_BODY | 
-F:INVISIBLE | COLD_BLOOD | TAKE_ITEM | PASS_WALL | 
-F:EVIL | UNDEAD | IM_COLD | IM_POIS | NO_CONF | NO_SLEEP
+F:INVISIBLE | TAKE_ITEM |
+F:EVIL | IM_COLD | IM_POIS | NO_CONF
 S:1_IN_15 | POW_15 | 
 S:TPORT | DRAIN_MANA
 D:It is a ghostly woman's form that wails mournfully.
@@ -3706,8 +3587,7 @@ I:115:10d8:10:30:40
 W:26:3:0:90
 B:BITE:HURT:2d12
 F:RAND_25 | KILL_BODY | FRIENDS | 
-F:WEIRD_MIND | BASH_DOOR | TERRITORIAL | 
-F:ANIMAL
+F:TERRITORIAL 
 D:An armoured form moving with purpose.  Powerful on its own, flee when 
 D:hordes of them march.
 
@@ -3717,8 +3597,7 @@ I:110:10d28:14:22:30
 W:26:1:0:95
 B:BITE:HURT:3d4
 B:SPIT:FIRE:4d5
-F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL | IM_FIRE
+F:WEIRD_MIND | IM_FIRE
 D:A giant beetle wreathed in flames.
 
 N:338:Wolf Chieftain
@@ -3755,9 +3634,8 @@ I:110:10d69:12:40:10
 W:26:2:35:180
 B:HIT:HURT:1d12
 F:FORCE_SLEEP | 
-F:EMPTY_MIND | COLD_BLOOD | BASH_DOOR | 
-F:IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:COLD_BLOOD |
+F:IM_FIRE | IM_COLD | IM_POIS
 S:1_IN_7 | POW_0 | 
 S:SLOW
 D:A massive metal statue moving steadily towards you.
@@ -3829,10 +3707,7 @@ N:347:Giant bronze dragon fly
 G:F:U
 I:120:2d9:12:12:50
 W:27:2:0:90
-F:FORCE_SLEEP | NEVER_BLOW | MOVE_BODY | 
-F:RAND_50 | RAND_25 | 
-F:WEIRD_MIND | BASH_DOOR | FLYING | 
-F:ANIMAL | NO_CONF
+F:NEVER_BLOW | NO_CONF
 S:1_IN_9 | POW_0 | 
 S:BRTH_CONFU
 D:This great gleaming bronze dragonfly has wings which beat mesmerically fast.
@@ -3879,9 +3754,9 @@ I:120:7d10:20:30:30
 W:28:3:35:200
 B:BITE:POISON:1d10
 B:CLAW:HURT:1d4
-F:DROP_60 | RAND_25 | MOVE_BODY | FLYING | 
+F:DROP_60 | RAND_25 | MOVE_BODY | 
 F:BASH_DOOR | MOVE_BODY | FRIENDS | 
-F:ANIMAL | IM_POIS
+F:IM_POIS
 S:1_IN_5 | POW_4 | 
 S:SCARE | BRTH_POIS | BRTH_DARK
 D:Fed with horrid meats and grown to enormous size, this slavering creature 
@@ -3893,8 +3768,8 @@ I:120:7d9:12:20:50
 W:28:1:0:150
 B:BITE:EXP_40:1d4
 B:BITE:EXP_40:1d4
-F:RAND_50 | COLD_BLOOD | REGENERATE | MOVE_BODY | FLYING | 
-F:EVIL | ANIMAL | UNDEAD | IM_COLD | IM_POIS | 
+F:RAND_50 | COLD_BLOOD | REGENERATE | MOVE_BODY | 
+F:EVIL | UNDEAD | IM_COLD | IM_POIS | 
 F:NO_CONF | NO_SLEEP
 D:An undead bat that flies at your neck hungrily.
 
@@ -3905,10 +3780,9 @@ W:28:2:53:350
 B:HIT:HURT:1d12
 B:HIT:HURT:3d6
 F:FORCE_SLEEP | 
-F:EMPTY_MIND | COLD_BLOOD | BASH_DOOR | 
-F:IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
-F:HURT_ROCK | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:COLD_BLOOD | 
+F:IM_FIRE | IM_COLD | IM_POIS | 
+F:HURT_ROCK
 S:1_IN_4 | POW_15 | 
 S:SLOW | CONF | BOLT_ACID
 D:A stumpy figure carved from stone, with glittering eyes, this sentinel 
@@ -3942,9 +3816,9 @@ B:PUNCH:HURT:1d7
 B:PUNCH:HURT:1d7
 B:KICK:HURT:3d8
 F:MALE | SMART | 
-F:FORCE_SLEEP | MOVE_BODY | 
+F:FORCE_SLEEP |
 F:ONLY_ITEM | DROP_90 | 
-F:OPEN_DOOR | BASH_DOOR | 
+F:BASH_DOOR | 
 F:EVIL | IM_POIS 
 S:1_IN_3 | POW_22 | 
 S:HASTE | CURE | CONF | HOLD | BLIND | DARKNESS | 
@@ -3959,9 +3833,8 @@ I:110:10d17:15:20:10
 W:29:2:0:60
 B:STING:PARALYZE:2d6
 B:STING:PARALYZE:2d6
-F:RAND_25 | 
-F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL | IM_POIS
+F:RAND_25 | BASH_DOOR | 
+F:IM_POIS
 D:A hideous centipede covered in slime, with glowing tentacles around its 
 D:head.
 
@@ -4037,8 +3910,7 @@ B:CLAW:EAT_FOOD:1d5
 B:CLAW:EAT_FOOD:1d5
 B:BITE:HURT:2d9
 B:BITE:HURT:2d9
-F:INVISIBLE | BASH_DOOR | 
-F:ANIMAL
+F:INVISIBLE | BASH_DOOR 
 S:1_IN_7 | POW_3 | 
 S:TELE_SELF_TO
 D:A great black cat, hidden from ordinary sight.  Twin scimitars gleam in its 
@@ -4050,8 +3922,7 @@ I:110:10d40:16:30:30
 W:30:1:0:190
 B:BITE:HURT:5d4
 B:WAIL:TERRIFY:5d6
-F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL
+F:WEIRD_MIND
 D:It is a giant beetle that produces a chilling sound.
 
 N:367:Gorgimera
@@ -4078,10 +3949,9 @@ B:CLAW:HURT:2d7
 B:CLAW:HURT:2d7
 B:BITE:HURT:3d6
 F:ATTR_MULTI | 
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:DROP_60 | DROP_1D2 | 
 F:BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON | IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | 
+F:EVIL | IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | 
 F:IM_POIS
 S:1_IN_9 | POW_4 | 
 S:SCARE | SLOW | 
@@ -4152,8 +4022,7 @@ W:31:2:60:260
 B:HIT:HURT:3d7
 B:HIT:HURT:3d7
 F:MALE | SMART | 
-F:FRIENDS | DROP_90 | GIANT | MOVE_BODY | 
-F:OPEN_DOOR | BASH_DOOR
+F:FRIENDS | DROP_90
 S:1_IN_8 | POW_17 | 
 S:SCARE | WOUND | CURE | HEAL
 D:A giant both devout and skillful in battle.
@@ -4166,10 +4035,7 @@ B:BITE:POISON:3d4
 B:TOUCH:POISON:3d5
 B:HIT:HURT:1d12
 B:HIT:HURT:1d12
-F:ONLY_GOLD | DROP_90 | DROP_2D2 | 
-F:COLD_BLOOD | BASH_DOOR | 
-F:ANIMAL | 
-F:IM_POIS | NO_CONF | NO_SLEEP
+F:DROP_90 | DROP_2D2 
 D:It is a pile of coins, slithering forward on thousands of tiny legs.
 
 N:376:()
@@ -4213,9 +4079,8 @@ W:32:2:60:300
 B:HIT:ELEC:3d8
 B:HIT:ELEC:3d8
 F:FORCE_SLEEP | 
-F:EMPTY_MIND | COLD_BLOOD | BASH_DOOR | 
-F:IM_ELEC | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:COLD_BLOOD |
+F:IM_POIS 
 S:1_IN_3 | POW_20 | 
 S:TELE_SELF_TO | 
 S:BOLT_ELEC | BEAM_ELEC
@@ -4259,10 +4124,10 @@ W:32:3:56:600
 B:CLAW:HURT:2d6
 B:CLAW:HURT:2d6
 B:BITE:HURT:3d6
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:ONLY_ITEM | DROP_60 | DROP_1D2 | MOVE_BODY | 
 F:INVISIBLE | PASS_WALL | 
-F:EVIL | DRAGON | NO_CONF
+F:EVIL | NO_CONF
 S:1_IN_6 | POW_5 | 
 S:SLOW | CONF | SCARE | 
 S:BRTH_LIGHT | BRTH_DARK
@@ -4316,8 +4181,7 @@ I:110:10d46:14:38:30
 W:33:1:0:200
 B:BITE:HURT:5d8
 B:BITE:HURT:5d8
-F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL
+F:WEIRD_MIND
 D:A giant beetle with deadly sharp cutting mandibles and a rock-hard 
 D:carapace.
 
@@ -4368,7 +4232,7 @@ B:GAZE:LOSE_INT:2d6
 B:GAZE:LOSE_INT:2d6
 F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
 F:ONLY_ITEM | DROP_1D2 | 
-F:OPEN_DOOR | BASH_DOOR | MOVE_BODY | 
+F:BASH_DOOR | 
 F:EVIL | NO_CONF | NO_SLEEP
 S:1_IN_8 | POW_20 | 
 S:BLIND | HOLD | SCARE | MIND_BLAST | BRAIN_SMASH | FORGET | 
@@ -4426,8 +4290,7 @@ G:I:r
 I:120:3d2:8:12:10
 W:34:4:0:4
 B:BITE:BLIND:1d2
-F:RAND_50 | RAND_25 | 
-F:MULTIPLY | WEIRD_MIND | ANIMAL
+F:RAND_50 | RAND_25 
 D:Clouds of these monsters light up the area so brightly that you can 
 D:barely see through them.
 
@@ -4440,9 +4303,9 @@ B:TOUCH:EXP_20
 B:CLAW:LOSE_INT:1d6
 B:CLAW:LOSE_WIS:1d6
 F:FORCE_SLEEP | RAND_25 | DROP_1D2 | 
-F:INVISIBLE | COLD_BLOOD | TAKE_ITEM | PASS_WALL | 
-F:EVIL | UNDEAD | IM_COLD | MOVE_BODY | 
-F:IM_POIS | NO_CONF | NO_SLEEP
+F:INVISIBLE | TAKE_ITEM |
+F:EVIL | IM_COLD | MOVE_BODY | 
+F:IM_POIS | NO_CONF
 S:1_IN_15 | POW_20 | 
 S:BLIND | HOLD | DRAIN_MANA
 D:You don't believe in them.
@@ -4474,8 +4337,7 @@ W:35:2:0:220
 B:BITE:FIRE:3d12
 B:BITE:FIRE:3d12
 F:FORCE_MAXHP | KILL_BODY | FRIENDS | 
-F:WEIRD_MIND | BASH_DOOR | TERRITORIAL | 
-F:ANIMAL | IM_FIRE
+F:TERRITORIAL | IM_FIRE
 D:A giant ant covered in red fur.  Its powerful jaws glow with heat.
 
 N:402:Catoblepas
@@ -4499,10 +4361,9 @@ W:35:3:0:300
 B:HIT:HURT:3d5
 B:HIT:HURT:3d5
 B:HIT:HURT:3d5
-F:EMPTY_MIND | INVISIBLE | COLD_BLOOD | 
+F:INVISIBLE | COLD_BLOOD | 
 F:OPEN_DOOR | BASH_DOOR | KILL_BODY | 
-F:EVIL | IM_ELEC | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:IM_ELEC 
 D:It is impossible to define its form but its violence is legendary.
 
 N:404:Shardstorm
@@ -4669,8 +4530,7 @@ W:37:3:0:225
 B:BITE:HURT:6d2
 B:CLAW:HURT:1d5
 B:CLAW:HURT:1d5
-F:SMART | KILL_BODY | NO_FEAR | 
-F:EVIL | ANIMAL
+F:SMART | KILL_BODY | NO_FEAR | EVIL
 D:Falcons, like other creatures of blood, are often used as spies by Morgoth.  
 D:Beware this wrathful hunter!  Flee its matchless speed!
 
@@ -4737,8 +4597,8 @@ B:HIT:ELEC:4d4
 B:HIT:ELEC:4d4
 B:HIT:ELEC:4d4
 F:FORCE_SLEEP | FORCE_MAXHP | DROP_90 | SMART | 
-F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | MOVE_BODY | 
-F:EVIL | GIANT | IM_COLD | IM_ELEC
+F:TAKE_ITEM |
+F:EVIL | IM_COLD | IM_ELEC
 S:1_IN_7 | POW_24 | 
 S:BLINK | TELE_TO | CONF | SCARE | 
 S:BALL_ELEC | BALL_STORM | BOLT_WATER
@@ -4775,10 +4635,10 @@ W:38:2:56:600
 B:CLAW:HURT:2d7
 B:CLAW:HURT:2d7
 B:BITE:ELEC:3d6
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:DROP_60 | DROP_1D2 | 
 F:BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON | IM_ELEC | NO_CONF
+F:EVIL | IM_ELEC | NO_CONF
 S:1_IN_7 | POW_8 | 
 S:CONF | SCARE | SLOW | 
 S:BRTH_ELEC
@@ -4791,10 +4651,10 @@ W:38:2:56:600
 B:CLAW:HURT:2d7
 B:CLAW:HURT:2d7
 B:BITE:COLD:3d6
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:DROP_60 | DROP_1D2 | 
 F:BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON | IM_COLD | NO_CONF
+F:EVIL | IM_COLD | NO_CONF
 S:1_IN_7 | POW_8 | 
 S:CONF | SCARE | SLOW | 
 S:BRTH_COLD
@@ -4807,10 +4667,10 @@ W:38:2:56:600
 B:CLAW:HURT:2d7
 B:CLAW:ACID:2d7
 B:BITE:HURT:3d6
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:DROP_60 | DROP_1D2 | 
 F:BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON | IM_ACID | NO_CONF
+F:EVIL | IM_ACID | NO_CONF
 S:1_IN_7 | POW_8 | 
 S:CONF | SCARE | SLOW | 
 S:BRTH_ACID
@@ -4847,9 +4707,8 @@ B:HIT:HURT:3d8
 B:HIT:HURT:5d5
 B:HIT:HURT:5d5
 F:ONLY_GOLD | DROP_60 | DROP_2D2 | 
-F:EMPTY_MIND | COLD_BLOOD | BASH_DOOR | 
-F:IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:COLD_BLOOD |
+F:IM_FIRE | IM_COLD | IM_POIS
 D:It is a massive statue of purest mithril.  It looks expensive!
 
 N:433:Half-troll
@@ -4876,10 +4735,8 @@ W:39:2:60:350
 B:HIT:FIRE:1d6
 B:ENGULF:FIRE:4d6
 F:FORCE_SLEEP | RAND_25 | 
-F:EMPTY_MIND | 
 F:KILL_ITEM | KILL_BODY | BASH_DOOR | 
-F:EVIL | IM_FIRE | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:IM_FIRE 
 S:1_IN_4 | POW_20 | 
 S:ADD_MANA | 
 S:BALL_FIRE | ARC_HFIRE
@@ -4894,9 +4751,9 @@ B:TOUCH:EXP_40
 B:CLAW:LOSE_INT:2d10
 F:FORCE_SLEEP | RAND_25 | MOVE_BODY | 
 F:ONLY_ITEM | DROP_90 | DROP_1D2 | 
-F:INVISIBLE | COLD_BLOOD | TAKE_ITEM | PASS_WALL | 
-F:EVIL | UNDEAD | IM_COLD | IM_POIS | 
-F:NO_CONF | NO_SLEEP
+F:INVISIBLE | TAKE_ITEM |
+F:EVIL | IM_COLD | IM_POIS | 
+F:NO_CONF
 S:1_IN_15 | POW_25 | 
 S:BLIND | HOLD | DRAIN_MANA | FORGET
 D:A shadowy form clutches at you from the darkness.  A powerful undead with 
@@ -4911,9 +4768,9 @@ B:TOUCH:EXP_40
 B:CLAW:LOSE_WIS:5d5
 F:FORCE_SLEEP | RAND_25 | MOVE_BODY | 
 F:ONLY_ITEM | DROP_90 | DROP_1D2 | 
-F:INVISIBLE | COLD_BLOOD | TAKE_ITEM | PASS_WALL | 
-F:EVIL | UNDEAD | IM_COLD | IM_POIS | 
-F:NO_CONF | NO_SLEEP
+F:INVISIBLE | TAKE_ITEM |
+F:EVIL | IM_COLD | IM_POIS | 
+F:NO_CONF
 S:1_IN_15 | POW_25 | 
 S:BLIND | HOLD | DRAIN_MANA | FORGET
 D:A phantasmal shrieking spirit.  Its wail drives the intense cold of pure 
@@ -4926,10 +4783,10 @@ W:39:2:56:650
 B:CLAW:HURT:2d6
 B:CLAW:HURT:2d6
 B:BITE:POISON:3d6
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:DROP_60 | DROP_1D2 | 
 F:BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON | IM_POIS | NO_CONF
+F:EVIL | IM_POIS | NO_CONF
 S:1_IN_8 | POW_8 | 
 S:CONF | SCARE | SLOW | 
 S:BRTH_POIS
@@ -4987,8 +4844,7 @@ W:40:1:0:550
 B:CLAW:ELEC:2d12
 B:CLAW:ELEC:2d12
 B:BITE:PARALYZE
-F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL | IM_ELEC | 
+F:WEIRD_MIND | IM_ELEC | 
 F:ATTR_MULTI
 D:A giant beetle, tall as a man, whose carapace shimmers with vibrant 
 D:energies.
@@ -5000,10 +4856,10 @@ W:40:3:56:700
 B:CLAW:HURT:2d8
 B:CLAW:HURT:2d8
 B:BITE:HURT:3d8
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:DROP_2D2 | 
 F:BASH_DOOR | MOVE_BODY | FLYING | 
-F:EVIL | DRAGON | NO_CONF
+F:EVIL | NO_CONF
 S:1_IN_8 | POW_10 | 
 S:CONF | SCARE | SLOW | 
 S:BRTH_CONFU
@@ -5033,10 +4889,8 @@ B:HIT:HURT:1d10
 B:HIT:HURT:1d10
 B:ENGULF:HURT:10d1
 F:FORCE_SLEEP | RAND_25 | 
-F:EMPTY_MIND | COLD_BLOOD | 
-F:KILL_BODY | KILL_ITEM | BASH_DOOR | 
-F:EVIL | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:COLD_BLOOD | 
+F:KILL_BODY | KILL_ITEM | BASH_DOOR 
 S:1_IN_4 | POW_17 | 
 S:ADD_MANA | 
 S:BOLT_WATER | BALL_STORM | BALL_ELEC 
@@ -5065,10 +4919,9 @@ W:41:3:56:800
 B:CLAW:HURT:2d8
 B:CLAW:HURT:2d8
 B:BITE:HURT:11d1
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:DROP_2D2 | 
 F:BASH_DOOR | MOVE_BODY | SMART | 
-F:EVIL | DRAGON | NO_CONF
+F:EVIL | NO_CONF
 S:1_IN_8 | POW_10 | 
 S:CONF | SCARE | SLOW | 
 S:BRTH_SOUND
@@ -5089,7 +4942,7 @@ W:42:3:90:550
 B:HIT:HURT:2d5
 F:MALE | SMART | 
 F:FORCE_SLEEP | DROP_60 | DROP_1D2 | 
-F:MOVE_BODY | OPEN_DOOR | BASH_DOOR | 
+F:BASH_DOOR | 
 F:EVIL | 
 F:LOW_MANA_RUN
 S:1_IN_2 | POW_27 | 
@@ -5103,9 +4956,8 @@ I:110:10d17:15:20:10
 W:42:3:0:160
 B:STING:PARALYZE:2d6
 B:STING:PARALYZE:2d6
-F:RAND_25 | FRIENDS | 
-F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL | IM_POIS
+F:RAND_25 | FRIENDS | BASH_DOOR | 
+F:IM_POIS
 D:A hideous centipede covered in slime, with glowing tentacles around its 
 D:head.
 
@@ -5114,9 +4966,7 @@ G:I:i
 I:120:1d4:20:1:0
 W:42:9:45:16
 B:BITE:HURT:1d3
-F:MULTIPLY | 
-F:OPEN_DOOR | BASH_DOOR | KILL_WALL | FLYING | 
-F:ANIMAL
+F:OPEN_DOOR | BASH_DOOR | KILL_WALL 
 S:1_IN_3 | POW_0 | 
 S:TPORT | BLINK 
 D:AAAAHHHH!  They're everywhere!  You feel a rising sense of panic as 
@@ -5130,10 +4980,9 @@ B:HIT:HURT:4d6
 B:HIT:HURT:4d6
 B:HIT:HURT:4d6
 F:FORCE_SLEEP | 
-F:EMPTY_MIND | COLD_BLOOD | 
+F:COLD_BLOOD | 
 F:KILL_ITEM | KILL_BODY | PASS_WALL | 
-F:EVIL | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | HURT_ROCK | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:IM_FIRE | IM_COLD | IM_ELEC | HURT_ROCK 
 S:1_IN_5 | POW_24 | 
 S:ADD_MANA | 
 S:BALL_SHARD | BOULDER
@@ -5146,10 +4995,9 @@ W:42:2:56:750
 B:CLAW:HURT:2d8
 B:CLAW:HURT:2d8
 B:BITE:FIRE:3d8
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:DROP_60 | DROP_1D2 | 
 F:BASH_DOOR | MOVE_BODY | SMART | 
-F:EVIL | DRAGON | IM_FIRE | NO_CONF
+F:EVIL | IM_FIRE | NO_CONF
 S:1_IN_7 | POW_8 | 
 S:CONF | SCARE | SLOW |  
 S:BRTH_FIRE
@@ -5171,15 +5019,12 @@ B:TOUCH:EXP_40
 B:TOUCH:UN_POWER
 B:TOUCH:LOSE_DEX:1d8
 B:TOUCH:LOSE_DEX:1d8
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
-F:ONLY_ITEM | DROP_1D2 | 
-F:COLD_BLOOD | MOVE_BODY | OPEN_DOOR | BASH_DOOR | 
-F:EVIL | UNDEAD | IM_COLD | IM_ELEC | IM_POIS | HURT_LIGHT | 
-F:NO_SLEEP
+F:FORCE_SLEEP | DROP_1D2 | 
+F:MOVE_BODY | IM_ELEC | HURT_LIGHT
 S:1_IN_3 | POW_35 | 
-S:HASTE | BLINK | TELE_TO | TELE_AWAY | BLIND | HOLD | SLOW | SCARE | 
+S:HASTE | BLINK | TELE_TO | TELE_AWAY | HOLD | SLOW | SCARE | 
 S:DRAIN_MANA | BRAIN_SMASH | ADD_MANA | 
-S:WOUND | BOLT_ELEC | DISPEL
+S:BOLT_ELEC | DISPEL
 D:A skeletal form dressed in robes.  It radiates vastly evil power.
 
 N:459:Master vampire
@@ -5248,8 +5093,8 @@ B:HIT:ELEC:4d6
 B:HIT:ELEC:4d6
 B:CRUSH:HURT:6d3
 F:FORCE_SLEEP | FORCE_MAXHP | DROP_60 | DROP_1D2 | MALE | SMART | ESCORT | 
-F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | MOVE_BODY | 
-F:EVIL | GIANT | IM_ELEC
+F:TAKE_ITEM |
+F:EVIL | IM_ELEC
 S:1_IN_10 | POW_25 | 
 S:SHRIEK | TELE_TO | SCARE | 
 S:BALL_ELEC | BEAM_ELEC | MISSL
@@ -5280,7 +5125,7 @@ B:BITE:FIRE:3d12
 F:FORCE_SLEEP | FORCE_MAXHP | 
 F:RAND_25 | FRIENDS | 
 F:BASH_DOOR | MOVE_BODY | 
-F:ANIMAL | EVIL | IM_FIRE
+F:EVIL | IM_FIRE
 S:1_IN_5 | POW_0 | 
 S:BRTH_FIRE
 D:A great hound dog that glows with heat.  Flames pour from its nostrils.
@@ -5343,9 +5188,9 @@ B:TOUCH:ACID:1d10
 B:TOUCH:ACID:1d10
 F:FORCE_MAXHP | TAKE_ITEM | COLD_BLOOD | 
 F:DROP_1D2 | DROP_2D2 | KILL_BODY | 
-F:STUPID | EMPTY_MIND | OPEN_DOOR | BASH_DOOR | 
+F:OPEN_DOOR | BASH_DOOR | 
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
-F:NO_FEAR | NO_CONF | NO_SLEEP
+F:NO_CONF | NO_SLEEP
 D:A disgusting animated blob of destruction.  Flee its gruesome hunger!
 
 N:471:Eog golem
@@ -5357,9 +5202,8 @@ B:HIT:HURT:8d6
 B:HIT:HURT:6d6
 B:HIT:HURT:6d6
 F:ONLY_GOLD | DROP_2D2 | 
-F:EMPTY_MIND | COLD_BLOOD | BASH_DOOR | 
-F:IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:COLD_BLOOD |
+F:IM_FIRE | IM_COLD | IM_POIS
 D:It is a massive deep brown statue, striding towards you with an 
 D:all-too-familiar purpose.  Your magic surprisingly feels much less 
 D:powerful now.
@@ -5371,10 +5215,9 @@ W:44:2:60:390
 B:HIT:HURT:1d11
 B:ENGULF:CONFUSE:2d12
 F:FORCE_SLEEP | RAND_25 | 
-F:EMPTY_MIND | COLD_BLOOD | 
+F:COLD_BLOOD | 
 F:KILL_BODY | KILL_ITEM | BASH_DOOR | FLYING | 
-F:EVIL | IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC
 S:1_IN_5 | POW_30 | 
 S:ADD_MANA | 
 S:ARC_FORCE | BALL_LIGHT
@@ -5403,10 +5246,10 @@ B:CLAW:HURT:3d6
 B:CLAW:HURT:3d6
 B:BITE:HURT:3d12
 F:ATTR_MULTI | 
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:ONLY_ITEM | DROP_2D2 | 
 F:INVISIBLE | BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON | IM_COLD | NO_CONF
+F:EVIL | IM_COLD | NO_CONF
 S:1_IN_6 | POW_11 | 
 S:SLOW | CONF | SCARE | 
 S:BRTH_SHARD
@@ -5422,10 +5265,10 @@ B:CLAW:ELEC:2d8
 B:CLAW:FIRE:2d8
 B:BITE:COLD:3d9
 F:ATTR_MULTI | 
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:ONLY_ITEM | DROP_2D2 | 
 F:BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON | IM_ACID | IM_FIRE | IM_COLD | 
+F:EVIL | IM_ACID | IM_FIRE | IM_COLD | 
 F:IM_ELEC | IM_POIS | NO_CONF
 S:1_IN_7 | POW_10 | 
 S:BLIND | CONF | SCARE | SLOW | 
@@ -5475,11 +5318,10 @@ B:TOUCH:ACID:1d10
 B:TOUCH:ACID:1d10
 B:TOUCH:ACID:1d10
 F:FORCE_SLEEP | 
-F:EMPTY_MIND | COLD_BLOOD | 
+F:COLD_BLOOD | 
 F:KILL_ITEM | KILL_BODY | BASH_DOOR | 
-F:EVIL | IM_ACID | IM_FIRE | 
-F:IM_COLD | IM_ELEC | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:IM_ACID | IM_FIRE | 
+F:IM_COLD | IM_ELEC 
 S:1_IN_5 | POW_32 | 
 S:ADD_MANA | 
 S:BOLT_ACID | BALL_ACID
@@ -5510,9 +5352,9 @@ B:HIT:HURT:4d6
 B:HIT:LOSE_STR:3d4
 F:FORCE_SLEEP | RAND_25 | 
 F:ONLY_ITEM | DROP_60 | DROP_1D2 | MOVE_BODY | 
-F:TAKE_ITEM | INVISIBLE | COLD_BLOOD | PASS_WALL | 
-F:EVIL | UNDEAD | IM_COLD | IM_POIS | 
-F:NO_CONF | NO_SLEEP
+F:TAKE_ITEM | INVISIBLE |
+F:EVIL | IM_COLD | IM_POIS | 
+F:NO_CONF
 S:1_IN_15 | POW_44 | 
 S:BLIND | HOLD | CONF | DRAIN_MANA | BOLT_NETHR
 D:A ghastly form that screams its presence against the eye.  Death incarnate, 
@@ -5527,10 +5369,10 @@ B:CLAW:HURT:2d8
 B:CLAW:HURT:2d8
 B:BITE:HURT:3d10
 F:ATTR_MULTI | 
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:ONLY_ITEM | DROP_2D2 | 
 F:BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON | 
+F:EVIL | 
 F:IM_FIRE | NO_CONF | NO_SLEEP
 S:1_IN_6 | POW_11 | 
 S:SLOW | CONF | SCARE | 
@@ -5575,10 +5417,9 @@ B:HIT:HURT:10d10
 B:HIT:HURT:6d6
 B:HIT:HURT:6d6
 F:FORCE_MAXHP | 
-F:EMPTY_MIND | COLD_BLOOD | BASH_DOOR | 
-F:IM_FIRE | IM_COLD | IM_ELEC | 
-F:IM_POIS | HURT_ROCK | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:COLD_BLOOD |
+F:IM_FIRE | IM_COLD | 
+F:IM_POIS | HURT_ROCK
 D:An enormous construct resembling a titan made from stone.  It strides 
 D:purposefully towards you, swinging its slow fists with earth-shattering 
 D:power.
@@ -5591,11 +5432,9 @@ B:BITE:COLD:2d8
 B:HIT:HURT:2d6
 B:BITE:COLD:2d8
 F:FORCE_SLEEP | 
-F:EMPTY_MIND | COLD_BLOOD | 
+F:COLD_BLOOD | 
 F:KILL_ITEM | KILL_BODY | BASH_DOOR | 
-F:EVIL | IM_COLD | IM_ELEC | 
-F:IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:IM_COLD | IM_ELEC 
 S:1_IN_5 | POW_36 | 
 S:ADD_MANA | 
 S:BOLT_ICE | BALL_COLD
@@ -5611,8 +5450,8 @@ B:CLAW:LOSE_INT:1d10
 B:CLAW:LOSE_WIS:1d10
 F:FORCE_SLEEP | MOVE_BODY | 
 F:ONLY_ITEM | DROP_90 | 
-F:INVISIBLE | COLD_BLOOD | PASS_WALL | 
-F:EVIL | UNDEAD | IM_COLD | IM_POIS | NO_SLEEP
+F:INVISIBLE |
+F:EVIL | IM_COLD | IM_POIS 
 S:1_IN_6 | POW_35 | 
 S:FORGET
 D:An unholy creature of darkness, the aura emanating from this evil being 
@@ -5625,10 +5464,9 @@ W:46:3:63:1250
 B:CLAW:HURT:2d8
 B:CLAW:HURT:2d8
 B:BITE:HURT:3d10
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_2D2 | 
 F:BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON | SMART | 
+F:EVIL | SMART | 
 F:IM_COLD | NO_CONF
 S:1_IN_6 | POW_11 | 
 S:SLOW | CONF | SCARE | 
@@ -5643,10 +5481,7 @@ W:46:1:54:700
 B:HIT:HURT:3d4
 B:TOUCH:LOSE_STR:1d5
 F:FEMALE | SMART | 
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_60 | 
-F:OPEN_DOOR | BASH_DOOR | 
-F:EVIL | DEMON | 
 F:IM_FIRE | IM_POIS | NO_FEAR
 S:1_IN_11 | POW_14 | 
 S:BLIND | CONF | 
@@ -5663,10 +5498,6 @@ B:HIT:HURT:3d8
 B:HIT:HURT:3d8
 B:HIT:PARALYZE:15d1
 B:HIT:PARALYZE:15d1
-F:CHAR_CLEAR | ATTR_CLEAR | 
-F:NEVER_MOVE | FORCE_MAXHP | DUNGEON | 
-F:INVISIBLE | EMPTY_MIND | COLD_BLOOD | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
 D:A larger cousin of the lurker, this creature traps unsuspecting victims 
 D:and paralyzes them, to be slowly digested later.
 
@@ -5838,10 +5669,10 @@ B:CLAW:HURT:2d8
 B:CLAW:HURT:2d8
 B:BITE:HURT:3d10
 F:ATTR_MULTI | 
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:ONLY_ITEM | DROP_2D2 | 
 F:BASH_DOOR | MOVE_BODY | 
-F:EVIL | DRAGON | 
+F:EVIL | 
 F:IM_FIRE | IM_COLD | NO_CONF
 S:1_IN_6 | POW_12 | 
 S:SLOW | CONF | SCARE | 
@@ -5879,11 +5710,8 @@ W:49:2:68:800
 B:HIT:FIRE:3d7
 B:ENGULF:FIRE:11d19
 F:FORCE_SLEEP | 
-F:EMPTY_MIND | 
 F:KILL_ITEM | KILL_BODY | PASS_WALL | 
-F:EVIL | IM_FIRE | IM_ELEC | 
-F:IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:IM_FIRE | IM_ELEC 
 S:1_IN_3 | POW_30 | 
 S:ADD_MANA | 
 S:BOLT_PLAS
@@ -5896,11 +5724,9 @@ W:49:1:45:1000
 B:HIT:HURT:3d4
 B:CLAW:HURT:7d12
 B:CLAW:HURT:7d12
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:FRIENDS | SMART | 
 F:ONLY_ITEM | DROP_60 | 
-F:OPEN_DOOR | BASH_DOOR | 
-F:EVIL | DEMON | IM_FIRE | NO_FEAR
+F:IM_FIRE | NO_FEAR
 S:1_IN_15 | POW_3 | 
 S:BLIND | CONF
 D:A awkward-looking demon with a long neck and terrible raking claws.
@@ -5953,8 +5779,7 @@ W:50:2:0:1000
 B:CLAW:HURT:8d12
 B:CRUSH:HURT:8d12
 B:HIT:ELEC:12d12
-F:BASH_DOOR | 
-F:ANIMAL | IM_ELEC
+F:BASH_DOOR | IM_ELEC
 D:A vast legendary bird; its iron talons rake the most impenetrable of 
 D:surfaces and its screech echoes avross the land and through the many winding 
 D:dungeon corridors.
@@ -6104,7 +5929,7 @@ B:HIT:HURT:2d8
 F:MALE | 
 F:FORCE_SLEEP | 
 F:ONLY_ITEM | DROP_60 | DROP_2D2 | 
-F:SMART | OPEN_DOOR | BASH_DOOR | MOVE_BODY | 
+F:SMART | BASH_DOOR | 
 F:EVIL | NO_CONF | NO_SLEEP | 
 F:LOW_MANA_RUN
 S:1_IN_2 | POW_50 | 
@@ -6141,8 +5966,8 @@ B:CLAW:LOSE_INT:3d10
 B:CLAW:LOSE_WIS:3d10
 F:FORCE_SLEEP | MOVE_BODY | 
 F:ONLY_ITEM | DROP_90 | 
-F:INVISIBLE | COLD_BLOOD | PASS_WALL | 
-F:EVIL | UNDEAD | IM_COLD | IM_POIS | NO_SLEEP
+F:INVISIBLE |
+F:EVIL | IM_COLD | IM_POIS
 S:1_IN_8 | POW_35 | 
 S:TELE_TO | SLOW
 D:A mighty spirit of darkness of vaguely humanoid form.  Razor-edged claws 
@@ -6156,10 +5981,10 @@ W:51:1:63:2200
 B:CLAW:HURT:3d6
 B:CLAW:HURT:3d6
 B:BITE:ELEC:4d8
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:DROP_1D2 | DROP_2D2 | 
 F:BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | IM_ELEC | NO_CONF
+F:EVIL | IM_ELEC | NO_CONF
 S:1_IN_6 | POW_18 | 
 S:BLIND | CONF | SCARE | SLOW | 
 S:BRTH_ELEC
@@ -6172,10 +5997,10 @@ W:51:1:63:2200
 B:CLAW:HURT:3d6
 B:CLAW:HURT:3d6
 B:BITE:COLD:4d8
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:DROP_1D2 | DROP_3D2 | 
 F:BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | IM_COLD | NO_CONF
+F:EVIL | IM_COLD | NO_CONF
 S:1_IN_6 | POW_18 | 
 S:BLIND | CONF | SCARE | SLOW | 
 S:BRTH_COLD
@@ -6188,10 +6013,10 @@ W:51:1:63:2200
 B:CLAW:HURT:3d6
 B:CLAW:HURT:3d6
 B:BITE:ACID:4d8
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:DROP_1D2 | DROP_3D2 | 
 F:BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | IM_ACID | NO_CONF
+F:EVIL | IM_ACID | NO_CONF
 S:1_IN_6 | POW_18 | 
 S:BLIND | CONF | SCARE | 
 S:BRTH_ACID
@@ -6227,9 +6052,9 @@ B:HIT:LOSE_STR:3d4
 F:FORCE_SLEEP | 
 F:RAND_25 | FRIENDS | 
 F:ONLY_ITEM | DROP_60 | 
-F:TAKE_ITEM | INVISIBLE | COLD_BLOOD | PASS_WALL | 
-F:EVIL | UNDEAD | IM_COLD | IM_POIS | 
-F:NO_CONF | NO_SLEEP
+F:TAKE_ITEM | INVISIBLE |
+F:EVIL | IM_COLD | IM_POIS | 
+F:NO_CONF
 S:1_IN_15 | POW_44 | 
 S:BLIND | HOLD | CONF | DRAIN_MANA | BOLT_NETHR
 D:It is a form that screams its presence against the eye.  Death incarnate, 
@@ -6243,10 +6068,10 @@ W:52:2:63:2500
 B:CLAW:HURT:3d6
 B:CLAW:HURT:3d6
 B:BITE:POISON:3d8
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:DROP_1D2 | DROP_3D2 | 
 F:BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | IM_POIS | NO_CONF
+F:EVIL | IM_POIS | NO_CONF
 S:1_IN_8 | POW_18 | 
 S:BLIND | CONF | SCARE | 
 S:BRTH_POIS
@@ -6315,10 +6140,8 @@ W:53:3:76:2250
 B:CLAW:HURT:3d4
 B:BITE:ACID:3d10
 B:BITE:BLIND:3d10
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:SMART | 
-F:OPEN_DOOR | BASH_DOOR | 
-F:EVIL | DEMON | IM_FIRE | IM_ACID | NO_FEAR
+F:IM_FIRE | IM_ACID | NO_FEAR
 S:1_IN_2 | POW_50 | 
 S:MISSL | BRTH_FIRE | BRTH_ACID | BOLT_FIRE | BOLT_ACID
 D:A sluggish demon of lizard form, firing powerful missiles.  From the 
@@ -6337,8 +6160,7 @@ B:WAIL:TERRIFY
 B:BITE:HURT:3d15
 B:CLAW:HURT:3d15
 B:CLAW:PARALYZE:2d10
-F:BASH_DOOR | MOVE_BODY | FLYING | 
-F:ANIMAL | EVIL
+F:BASH_DOOR | MOVE_BODY | EVIL
 S:1_IN_4 | POW_15 | 
 S:SCARE | HOLD | BLIND | 
 S:BRTH_POIS
@@ -6355,8 +6177,8 @@ B:HIT:LOSE_STR:3d4
 B:HIT:LOSE_STR:3d4
 F:FORCE_SLEEP | FORCE_MAXHP | RAND_25 | 
 F:ONLY_ITEM | DROP_1D2 | DROP_2D2 | MOVE_BODY | 
-F:SMART | TAKE_ITEM | INVISIBLE | COLD_BLOOD | PASS_WALL | 
-F:EVIL | UNDEAD | IM_COLD | IM_POIS | NO_CONF | NO_SLEEP
+F:SMART | TAKE_ITEM | INVISIBLE |
+F:EVIL | IM_COLD | IM_POIS | NO_CONF
 S:1_IN_6 | POW_55 | 
 S:TELE_LEVEL | BLIND | HOLD | CONF | WOUND | DRAIN_MANA | BEAM_NETHR | 
 S:S_UNDEAD
@@ -6389,10 +6211,9 @@ I:110:36d10:20:25:80
 W:54:1:99:1750
 B:HIT:HURT:3d4
 B:HIT:HURT:3d4
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:ONLY_ITEM | DROP_60 | FRIEND | 
-F:OPEN_DOOR | BASH_DOOR | 
-F:EVIL | DEMON | IM_FIRE | NO_FEAR
+F:IM_FIRE | NO_FEAR
 S:1_IN_7 | POW_20 | 
 S:SLOW | CONF | BLIND | HOLD | 
 S:BOLT_FIRE | ARC_HFIRE | 
@@ -6431,10 +6252,10 @@ W:55:3:63:2700
 B:CLAW:HURT:3d6
 B:CLAW:HURT:3d6
 B:BITE:HURT:4d8
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:DROP_1D2 | DROP_3D2 | 
 F:SMART | BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | NO_CONF
+F:EVIL | NO_CONF
 S:1_IN_6 | POW_21 | 
 S:BLIND | CONF | SCARE | SLOW | 
 S:BRTH_CONFU
@@ -6447,10 +6268,9 @@ W:55:1:63:2800
 B:CLAW:HURT:3d7
 B:CLAW:HURT:3d7
 B:BITE:FIRE:4d10
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:DROP_1D2 | DROP_3D2 | 
 F:SMART | BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | IM_FIRE | NO_CONF
+F:EVIL | IM_FIRE | NO_CONF
 S:1_IN_6 | POW_18 | 
 S:BLIND | CONF | SCARE | SLOW | 
 S:BRTH_FIRE
@@ -6469,11 +6289,11 @@ B:CLAW:HURT:1d18
 B:CLAW:HURT:1d18
 B:BITE:EXP_80:1d6
 B:BITE:EXP_80:1d6
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:ONLY_ITEM | DROP_1D2 | DROP_2D2 | 
 F:INVISIBLE | TAKE_ITEM | 
 F:PASS_WALL | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | IM_COLD | NO_CONF
+F:EVIL | IM_COLD | NO_CONF
 S:1_IN_6 | POW_18 | 
 S:SLOW | CONF | BLIND | SCARE | 
 S:BRTH_NETHR
@@ -6487,10 +6307,8 @@ W:56:1:47:2900
 B:HIT:HURT:5d2
 B:HIT:HURT:5d2
 B:HIT:HURT:5d2
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_90 | 
-F:OPEN_DOOR | BASH_DOOR | 
-F:EVIL | DEMON | SMART | 
+F:SMART | 
 F:IM_FIRE | NO_FEAR
 S:1_IN_12 | POW_0 | 
 S:BRTH_FIRE | 
@@ -6529,10 +6347,10 @@ W:57:3:63:3000
 B:CLAW:HURT:3d7
 B:CLAW:HURT:3d7
 B:BITE:HURT:4d9
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:DROP_1D2 | DROP_3D2 | 
 F:BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | NO_CONF
+F:EVIL | NO_CONF
 S:1_IN_6 | POW_21 | 
 S:BLIND | CONF | SCARE | SLOW | 
 S:BRTH_SOUND
@@ -6634,14 +6452,13 @@ B:TOUCH:EXP_80
 B:TOUCH:UN_POWER
 B:TOUCH:LOSE_DEX:2d8
 B:TOUCH:LOSE_DEX:2d8
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
-F:ONLY_ITEM | DROP_1D2 | DROP_2D2 | 
-F:COLD_BLOOD | OPEN_DOOR | BASH_DOOR | 
-F:EVIL | UNDEAD | IM_COLD | IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP
+F:FORCE_SLEEP | 
+F:DROP_1D2 | DROP_2D2 | 
+F:IM_ELEC | NO_CONF
 S:1_IN_3 | POW_60 | 
-S:BLINK | TELE_TO | BLIND | HOLD | CONF | SCARE | 
+S:BLINK | TELE_TO | HOLD | CONF | SCARE | 
 S:DRAIN_MANA | BRAIN_SMASH | ADD_MANA | 
-S:WOUND | BALL_ELEC | SHAPECHANGE | 
+S:BALL_ELEC | SHAPECHANGE | 
 S:S_UNDEAD | DISPEL
 D:A skeletal form wrapped in robes.  Powerful magic crackles along its bony 
 D:fingers.
@@ -6655,10 +6472,8 @@ B:HIT:HURT:3d5
 B:HIT:HURT:3d5
 B:HIT:HURT:3d5
 F:FEMALE | SMART | 
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_90 | 
-F:OPEN_DOOR | BASH_DOOR | 
-F:EVIL | DEMON | IM_FIRE | NO_FEAR
+F:IM_FIRE | NO_FEAR
 S:1_IN_6 | POW_50 | 
 S:BLIND | CONF
 S:LASH | BOLT_FIRE | BOLT_PLAS | 
@@ -6675,7 +6490,7 @@ B:CLAW:POISON:4d10
 F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
 F:ESCORTS | GAURHOTH | 
 F:OPEN_DOOR | BASH_DOOR | MOVE_BODY | 
-F:ANIMAL | EVIL | IM_POIS | IM_COLD | IM_FIRE | 
+F:EVIL | IM_POIS | IM_COLD | IM_FIRE | 
 F:NO_FEAR | NO_CONF | NO_SLEEP 
 S:1_IN_5 | POW_0 | 
 S:BRTH_NETHR | BRTH_DARK | S_HOUND
@@ -6715,10 +6530,9 @@ B:CLAW:HURT:4d10
 B:CLAW:HURT:4d10
 B:BITE:HURT:4d12
 F:ATTR_MULTI | 
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_1D2 | DROP_3D2 | SMART | 
 F:INVISIBLE | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | IM_COLD | NO_CONF
+F:EVIL | IM_COLD | NO_CONF
 S:1_IN_6 | POW_20 | 
 S:SLOW | CONF | SCARE | 
 S:BRTH_SHARD
@@ -6735,10 +6549,9 @@ B:CLAW:FIRE:3d9
 B:CLAW:COLD:3d9
 B:BITE:ELEC:4d14
 F:ATTR_MULTI | 
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_1D2 | DROP_3D2 | 
 F:SMART | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | IM_ACID | IM_FIRE | IM_COLD | 
+F:EVIL | IM_ACID | IM_FIRE | IM_COLD | 
 F:IM_ELEC | IM_POIS | NO_CONF
 S:1_IN_5 | POW_18 | 
 S:BLIND | CONF | SCARE | SLOW | 
@@ -6827,11 +6640,11 @@ W:62:3:70:7300
 B:CLAW:HURT:4d5
 B:CLAW:HURT:4d5
 B:BITE:HURT:4d12
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:ONLY_ITEM | DROP_1D2 | DROP_3D2 | 
 F:INVISIBLE | 
 F:PASS_WALL | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | NO_CONF
+F:EVIL | NO_CONF
 S:1_IN_5 | POW_25 | 
 S:BLIND | CONF | SCARE | 
 S:BRTH_LIGHT | BRTH_DARK 
@@ -6847,10 +6660,9 @@ B:HIT:HURT:3d10
 B:HIT:HURT:3d10
 B:HIT:LOSE_CON:10d2
 B:STING:POISON:4d5
-F:FORCE_SLEEP | FORCE_MAXHP | FRIEND | 
+F:FRIEND | 
 F:ONLY_ITEM | DROP_90 | 
-F:OPEN_DOOR | BASH_DOOR | 
-F:EVIL | DEMON | IM_POIS | NO_CONF | NO_SLEEP
+F:IM_POIS | NO_CONF | NO_SLEEP
 S:1_IN_8 | POW_50 | 
 S:SCARE | S_DEMON
 D:A foul, humanoid creature, among the elite shock troops 
@@ -6912,8 +6724,8 @@ B:HIT:PARALYZE:4d11
 B:TOUCH:EAT_GOLD
 B:TOUCH:EAT_ITEM
 F:MALE | SMART | EMPTY_MIND | 
-F:DROP_3D2 | MOVE_BODY | FORCE_SLEEP | 
-F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | 
+F:DROP_3D2 | FORCE_SLEEP | 
+F:TAKE_ITEM | BASH_DOOR | 
 F:IM_POIS
 S:1_IN_5 | POW_48 | 
 S:TELE_TO | TELE_SELF_TO | BLINK | TRAPS | DARKNESS | BLIND | HOLD | 
@@ -6948,8 +6760,8 @@ B:HIT:CONFUSE:6d6
 B:HIT:CONFUSE:6d6
 F:FORCE_SLEEP | FORCE_MAXHP | 
 F:DROP_90 | DROP_3D2 | 
-F:SMART | TAKE_ITEM | OPEN_DOOR | BASH_DOOR | MOVE_BODY | 
-F:EVIL | GIANT
+F:SMART | TAKE_ITEM |
+F:EVIL
 S:1_IN_3 | POW_49 | 
 S:HEAL | TELE_TO | SCARE | 
 S:S_MONSTERS
@@ -6984,11 +6796,11 @@ B:CLAW:HURT:3d10
 B:CLAW:HURT:3d10
 B:BITE:EXP_80:1d6
 B:BITE:EXP_80:1d6
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
+F:SMART | 
 F:ONLY_ITEM | DROP_90 | DROP_1D2 | DROP_GOOD | 
 F:COLD_BLOOD | 
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | UNDEAD | IM_ELEC | IM_COLD | IM_POIS | 
+F:EVIL | UNDEAD | IM_ELEC | IM_COLD | IM_POIS | 
 F:NO_CONF | NO_SLEEP
 S:1_IN_7 | POW_8 | 
 S:CONF | SCARE | TELE_TO | 
@@ -7005,10 +6817,9 @@ B:CLAW:HURT:3d10
 B:CLAW:HURT:3d10
 B:BITE:HURT:6d8
 B:GAZE:PARALYZE
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_90 | DROP_1D2 | DROP_GOOD | 
 F:OPEN_DOOR | BASH_DOOR | SMART | MOVE_BODY | POWERFUL | 
-F:ANIMAL | EVIL | DRAGON | IM_ACID | IM_FIRE | NO_CONF | NO_SLEEP
+F:ANIMAL | EVIL | IM_ACID | IM_FIRE | NO_CONF | NO_SLEEP
 S:1_IN_7 | POW_8 | 
 S:HOLD | SCARE | 
 S:BRTH_FIRE | BRTH_NETHR
@@ -7100,10 +6911,10 @@ B:HIT:FIRE:4d7
 B:HIT:HURT:4d7
 B:HIT:FIRE:4d7
 B:HIT:HURT:4d7
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | MALE | 
+F:SMART | MALE | 
 F:ONLY_ITEM | DROP_60 | DROP_1D2 | 
-F:OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | DEMON | IM_FIRE | NO_FEAR | 
+F:POWERFUL | MOVE_BODY | 
+F:IM_FIRE | NO_FEAR | 
 F:UDUN_MAGIC
 S:1_IN_4 | POW_65 | 
 S:BLIND | CONF | 
@@ -7133,10 +6944,9 @@ B:BITE:HURT:3d8
 B:CLAW:POISON:2d3
 B:CLAW:POISON:2d3
 F:FORCE_SLEEP | FORCE_MAXHP | 
-F:EMPTY_MIND | COLD_BLOOD | OPEN_DOOR | BASH_DOOR | 
+F:COLD_BLOOD | OPEN_DOOR |
 F:DRAGON | IM_FIRE | IM_COLD | FLYING | POWERFUL | 
-F:IM_ELEC | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:IM_POIS
 S:1_IN_6 | POW_105 | 
 S:BLIND | SLOW | CONF | PMISSL | 
 S:BRTH_POIS
@@ -7205,9 +7015,9 @@ B:HIT:LOSE_STR:4d6
 F:FORCE_SLEEP | FORCE_MAXHP | 
 F:RAND_25 | 
 F:ONLY_ITEM | DROP_1D2 | DROP_3D2 | 
-F:INVISIBLE | COLD_BLOOD | TAKE_ITEM | PASS_WALL | 
-F:EVIL | UNDEAD | 
-F:IM_COLD | IM_POIS | NO_CONF | NO_SLEEP
+F:INVISIBLE | TAKE_ITEM |
+F:EVIL |
+F:IM_COLD | IM_POIS | NO_CONF
 S:1_IN_4 | POW_85 | 
 S:BLIND | HOLD | CONF | DRAIN_MANA | 
 S:BALL_NETHR | BEAM_NETHR | BALL_DARK
@@ -7233,10 +7043,10 @@ B:HIT:CONFUSE:12d12
 B:HIT:CONFUSE:12d12
 B:HIT:CONFUSE:12d12
 B:HIT:CONFUSE:12d12
-F:FORCE_SLEEP | FORCE_MAXHP | MOVE_BODY | 
+F:FORCE_SLEEP | FORCE_MAXHP |
 F:ONLY_ITEM | DROP_1D2 | DROP_3D2 | 
-F:SMART | TAKE_ITEM | OPEN_DOOR | BASH_DOOR | 
-F:EVIL | GIANT
+F:SMART | TAKE_ITEM |
+F:EVIL
 S:1_IN_3 | POW_68 | 
 S:HEAL | TELE_TO | SCARE | 
 S:S_MONSTERS | DISPEL
@@ -7300,10 +7110,9 @@ B:CLAW:HURT:3d12
 B:CLAW:ACID:3d12
 B:CLAW:ACID:3d12
 B:BITE:POISON:4d14
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | ATTR_MULTI | 
-F:ONLY_ITEM | DROP_3D2 | DROP_GOOD | ANGBAND | 
-F:BASH_DOOR | FLYING | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | IM_ACID | IM_POIS | NO_CONF | NO_SLEEP
+F:ATTR_MULTI | 
+F:DROP_3D2 |
+F:IM_ACID | IM_POIS 
 S:1_IN_5 | POW_26 | 
 S:BLIND | CONF | SCARE | HOLD | SLOW | 
 S:BRTH_ACID | BRTH_POIS 
@@ -7354,10 +7163,8 @@ B:CLAW:HURT:3d12
 B:CLAW:COLD:3d12
 B:CLAW:COLD:3d12
 B:BITE:HURT:4d14
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
-F:ONLY_ITEM | DROP_3D2 | DROP_GOOD | ANGBAND | 
-F:BASH_DOOR | FLYING | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | IM_COLD | NO_CONF | NO_SLEEP
+F:DROP_3D2 |
+F:IM_COLD
 S:1_IN_5 | POW_26 | 
 S:BLIND | CONF | SCARE | HOLD | SLOW | 
 S:BRTH_COLD | BRTH_ICE 
@@ -7387,13 +7194,11 @@ B:HIT:HURT:5d12
 B:HIT:UN_BONUS:4d7
 B:HIT:LOSE_STR:3d7
 B:HIT:LOSE_CON:3d7
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
-F:ONLY_ITEM | DROP_1D2 | DROP_3D2 | 
-F:COLD_BLOOD | OPEN_DOOR | BASH_DOOR | 
-F:EVIL | UNDEAD | IM_COLD | IM_ELEC | IM_POIS | 
-F:NO_SLEEP | KILL_WALL
+F:FORCE_SLEEP | 
+F:DROP_1D2 | DROP_3D2 | 
+F:IM_ELEC | KILL_WALL
 S:1_IN_3 | POW_75 | 
-S:TELE_TO | BLIND | HOLD | CONF | WOUND | DRAIN_MANA | 
+S:TELE_TO | HOLD | CONF | DRAIN_MANA | 
 S:BRAIN_SMASH | BALL_NETHR | BALL_ELEC | 
 S:S_UNDEAD | DISPEL
 D:A humanoid form, black as night, crackling with lightning and raw 
@@ -7437,10 +7242,8 @@ B:CLAW:HURT:3d12
 B:CLAW:ELEC:3d12
 B:CLAW:ELEC:3d12
 B:BITE:HURT:4d14
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
-F:ONLY_ITEM | DROP_3D2 | DROP_GOOD | ANGBAND | 
-F:BASH_DOOR | FLYING | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | IM_ELEC | NO_CONF | NO_SLEEP
+F:DROP_3D2 |
+F:IM_ELEC 
 S:1_IN_5 | POW_26 | 
 S:BLIND | CONF | SCARE | HOLD | SLOW | 
 S:BRTH_ELEC | BRTH_STORM 
@@ -7524,10 +7327,8 @@ B:CLAW:HURT:3d13
 B:CLAW:FIRE:3d13
 B:CLAW:FIRE:3d13
 B:BITE:HURT:4d16
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | ANGBAND | 
-F:ONLY_ITEM | DROP_1D2 | DROP_3D2 | DROP_GOOD | 
-F:BASH_DOOR | POWERFUL | MOVE_BODY | FLYING | 
-F:EVIL | DRAGON | IM_FIRE | NO_CONF | NO_SLEEP
+F:DROP_1D2 | DROP_3D2 | 
+F:IM_FIRE 
 S:1_IN_5 | POW_27 | 
 S:BLIND | CONF | SCARE | HOLD | SLOW | 
 S:BRTH_FIRE | BRTH_DFIRE
@@ -7571,11 +7372,9 @@ B:CLAW:HURT:4d12
 B:CLAW:HURT:4d12
 B:CLAW:HURT:4d12
 B:BITE:ELEC:6d14
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | ATTR_MULTI | 
-F:IM_ELEC | IM_COLD | FLYING | ANGBAND | 
-F:ONLY_ITEM | DROP_2D2 | DROP_4D2 | DROP_GOOD | 
-F:BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | NO_CONF | NO_SLEEP 
+F:ATTR_MULTI | 
+F:IM_ELEC | IM_COLD |
+F:DROP_2D2 | DROP_4D2 |
 S:1_IN_4 | POW_30 | 
 S:BLIND | CONF | SCARE | 
 S:BRTH_ELEC | BRTH_LIGHT | BRTH_GRAV | BRTH_SOUND | BRTH_FORCE 
@@ -7595,10 +7394,9 @@ B:ENGULF:FIRE:9d25
 B:HIT:HURT:4d10
 B:HIT:HURT:4d10
 B:CRUSH:CONFUSE:4d10
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | MALE | ESCORT | 
+F:SMART | MALE | ESCORT | 
 F:ONLY_ITEM | DROP_1D2 | DROP_3D2 | 
-F:OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | KILL_WALL | 
-F:EVIL | DEMON | 
+F:POWERFUL | MOVE_BODY | KILL_WALL | 
 F:IM_FIRE | IM_ELEC | IM_ACID | NO_FEAR | NO_CONF | 
 F:UDUN_MAGIC
 S:1_IN_4 | POW_105 | 
@@ -7622,10 +7420,7 @@ B:CLAW:HURT:5d12
 B:CLAW:HURT:5d12
 B:BITE:HURT:8d14
 F:ATTR_MULTI | 
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
-F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_GOOD | 
-F:BASH_DOOR | FLYING | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | NO_CONF | NO_SLEEP | ANGBAND | 
+F:DROP_2D2 | DROP_3D2 
 S:1_IN_3 | POW_32 | 
 S:BLIND | CONF | SCARE | 
 S:BRTH_CHAOS | BRTH_DISEN | 
@@ -7642,10 +7437,7 @@ B:CLAW:HURT:5d12
 B:CLAW:HURT:5d12
 B:CLAW:HURT:5d12
 B:BITE:HURT:8d14
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
-F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_GOOD | 
-F:BASH_DOOR | FLYING | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | NO_CONF | NO_SLEEP | ANGBAND | 
+F:DROP_2D2 | DROP_3D2 |
 S:1_IN_3 | POW_32 | 
 S:BLIND | CONF | SCARE | 
 S:BRTH_SOUND | BRTH_SHARD | BRTH_FORCE | 
@@ -7666,10 +7458,8 @@ B:CLAW:HURT:4d12
 B:CLAW:HURT:4d12
 B:CLAW:HURT:4d12
 B:BITE:HURT:7d14
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | PASS_WALL | 
-F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_GOOD | 
-F:BASH_DOOR | FLYING | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | NO_CONF | NO_SLEEP | ANGBAND | 
+F:PASS_WALL | 
+F:DROP_2D2 | DROP_3D2 |
 S:1_IN_3 | POW_32 | 
 S:BLIND | CONF | SCARE | 
 S:BRTH_LIGHT | BRTH_DARK | BRTH_CONFU | 
@@ -7692,10 +7482,7 @@ B:CLAW:HURT:5d14
 B:CLAW:HURT:5d14
 B:BITE:HURT:9d14
 F:ATTR_MULTI | 
-F:FORCE_SLEEP | FORCE_MAXHP | SMART | 
-F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_GOOD | 
-F:BASH_DOOR | FLYING | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | NO_CONF | NO_SLEEP | ANGBAND | 
+F:DROP_2D2 | DROP_3D2 |
 S:1_IN_3 | POW_35 | 
 S:BLIND | CONF | SCARE | 
 S:BRTH_SOUND | BRTH_CHAOS | BRTH_SHARD | BRTH_DISEN | 
@@ -7748,11 +7535,10 @@ B:CLAW:HURT:6d12
 B:CLAW:HURT:6d12
 B:BITE:HURT:8d16
 F:ATTR_MULTI | 
-F:FORCE_SLEEP | FORCE_MAXHP | ESCORT | ANGBAND | 
-F:ONLY_ITEM | DROP_2D2 | DROP_4D2 | DROP_GOOD | 
-F:BASH_DOOR | FLYING | POWERFUL | MOVE_BODY | SMART | 
+F:ESCORT |
+F:DROP_2D2 | DROP_4D2 |
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
-F:EVIL | DRAGON | NO_CONF | NO_SLEEP | KILL_WALL | NO_FEAR
+F:KILL_WALL | NO_FEAR
 S:1_IN_3 | POW_45 | 
 S:BLIND | CONF | HOLD | SLOW | BRAIN_SMASH | WOUND | 
 S:BRTH_ACID | BRTH_FIRE | BRTH_COLD | BRTH_ELEC | BRTH_POIS | 
@@ -7806,10 +7592,10 @@ I:110:4d10:20:20:20
 W:2:2:24:30
 B:HIT:HURT:2d3
 B:HIT:HURT:2d3
-F:UNIQUE | MOVE_BODY | 
+F:UNIQUE |
 F:FORCE_MAXHP | MALE | SPEAKING | SMART | 
 F:ONLY_ITEM | DROP_90 | 
-F:BASH_DOOR | OPEN_DOOR | 
+F:BASH_DOOR |
 F:EVIL
 S:1_IN_9 | POW_0 | 
 S:BLIND
@@ -7834,9 +7620,9 @@ B:HIT:HURT:1d6
 B:TOUCH:EAT_ITEM
 B:TOUCH:EAT_GOLD
 F:UNIQUE | MALE | SPEAKING | SMART | 
-F:FORCE_MAXHP | MOVE_BODY | 
+F:FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_90 | DROP_90 | DROP_GOOD | 
-F:OPEN_DOOR | BASH_DOOR | 
+F:BASH_DOOR | 
 D:He is a sturdy hobbit who is renowned for his unusual strength and 
 D:vigour.  He can prove a troublesome opponent.
 
@@ -7867,8 +7653,7 @@ F:UNIQUE | MALE |
 F:FORCE_MAXHP | 
 F:ESCORT | ESCORTS | 
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | 
-F:OPEN_DOOR | BASH_DOOR | MOVE_BODY | 
-F:EVIL | IM_POIS
+F:MOVE_BODY
 D:Strong and powerful, for a kobold.
 
 N:669:Ulfast, son of Ulfang
@@ -8075,9 +7860,9 @@ B:HIT:HURT:3d6
 B:HIT:HURT:3d6
 B:HIT:UN_BONUS
 F:UNIQUE | MALE | SPEAKING | SMART | 
-F:FORCE_SLEEP | FORCE_MAXHP | MOVE_BODY | 
+F:FORCE_SLEEP | FORCE_MAXHP |
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | 
-F:OPEN_DOOR | BASH_DOOR | 
+F:BASH_DOOR | 
 F:IM_FIRE | IM_COLD | NO_CONF
 S:1_IN_10 | POW_25 | 
 S:HEAL | SLOW | BOLT_FIRE
@@ -8093,9 +7878,9 @@ B:HIT:HURT:3d6
 B:HIT:HURT:3d6
 B:HIT:UN_BONUS
 F:UNIQUE | MALE | SPEAKING | SMART | 
-F:FORCE_SLEEP | FORCE_MAXHP | MOVE_BODY | 
+F:FORCE_SLEEP | FORCE_MAXHP |  
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | 
-F:OPEN_DOOR | BASH_DOOR | 
+F:BASH_DOOR | 
 F:IM_FIRE | IM_COLD | NO_CONF
 S:1_IN_10 | POW_25 | 
 S:HEAL | SLOW | BOLT_FIRE
@@ -8147,7 +7932,7 @@ B:HIT:UN_BONUS
 F:UNIQUE | MALE | QUESTOR | SPEAKING | SMART | 
 F:FORCE_MAXHP | FORCE_SLEEP | FORCE_DEPTH | RUDH |
 F:ONLY_ITEM | DROP_2D2 | DROP_GOOD | 
-F:OPEN_DOOR | BASH_DOOR | MOVE_BODY | 
+F:BASH_DOOR | 
 F:EVIL | IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
 F:NO_CONF
 S:1_IN_6 | POW_45 | 
@@ -8244,8 +8029,7 @@ F:UNIQUE | FEMALE |
 F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ESCORT | ESCORTS | TERRITORIAL | 
 F:ONLY_ITEM | DROP_2D2 | DROP_GOOD | 
-F:WEIRD_MIND | OPEN_DOOR | BASH_DOOR | 
-F:ANIMAL
+F:OPEN_DOOR
 S:1_IN_2 | POW_0 | 
 S:S_ANT
 D:She's upset because you hurt her children.
@@ -8326,10 +8110,8 @@ B:HIT:FIRE:4d6
 B:HIT:FIRE:4d6
 F:UNIQUE | 
 F:FORCE_SLEEP | FORCE_MAXHP | RAND_25 | 
-F:EMPTY_MIND | 
 F:KILL_ITEM | KILL_BODY | BASH_DOOR | POWERFUL | 
-F:EVIL | IM_FIRE | 
-F:IM_POIS | NO_CONF | NO_SLEEP | NO_FEAR
+F:IM_FIRE 
 S:1_IN_3 | POW_60 | 
 S:BOLT_PLAS | BALL_FIRE | ARC_HFIRE
 D:A towering fire elemental, Vargo burns everything beyond recognition.
@@ -8344,10 +8126,8 @@ B:HIT:HURT:5d5
 B:HIT:HURT:5d5
 F:UNIQUE | 
 F:FORCE_SLEEP | FORCE_MAXHP | RAND_25 | 
-F:EMPTY_MIND | COLD_BLOOD | 
-F:KILL_ITEM | KILL_BODY | BASH_DOOR | POWERFUL | 
-F:EVIL | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:COLD_BLOOD | 
+F:KILL_ITEM | KILL_BODY | BASH_DOOR | POWERFUL 
 S:1_IN_3 | POW_60 | 
 S:BOLT_ICE | BOLT_WATER | BALL_COLD | BALL_STORM
 D:A towering water elemental, Waldern is master of all things liquid. 
@@ -8362,10 +8142,9 @@ B:BITE:HURT:2d14
 B:BITE:HURT:2d14
 B:BITE:HURT:2d14
 F:UNIQUE | MALE | ATTR_MULTI | SPEAKING | SMART | 
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_3D2 | DROP_GOOD | 
 F:OPEN_DOOR | BASH_DOOR | POWERFUL | 
-F:EVIL | DRAGON | IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | 
+F:EVIL | IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | 
 F:NO_CONF
 S:1_IN_4 | POW_0 | 
 S:BRTH_ACID | BRTH_FIRE | BRTH_COLD | BRTH_ELEC | BRTH_SOUND | BRTH_CONFU | 
@@ -8394,9 +8173,9 @@ B:HIT:HURT:4d12
 B:HIT:HURT:4d12
 B:HIT:HURT:4d12
 F:UNIQUE | MALE | SPEAKING | 
-F:FORCE_SLEEP | FORCE_MAXHP | MOVE_BODY | 
+F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_3D2 | DROP_GOOD | 
-F:SMART | OPEN_DOOR | BASH_DOOR | 
+F:SMART | BASH_DOOR | 
 F:EVIL | IM_ACID | IM_POIS | IM_COLD | IM_ELEC
 S:1_IN_3 | POW_20 | 
 S:HOLD | SCARE | DARKNESS | BLIND | DISPEL
@@ -8432,10 +8211,10 @@ B:CLAW:LOSE_INT:2d8
 B:CLAW:LOSE_WIS:2d8
 F:UNIQUE | SPEAKING | 
 F:FORCE_MAXHP | SMART | REGENERATE | 
-F:INVISIBLE | COLD_BLOOD | PASS_WALL | 
-F:EVIL | UNDEAD | IM_COLD | IM_POIS | 
+F:INVISIBLE |
+F:EVIL | IM_COLD | IM_POIS | 
 F:ONLY_ITEM | DROP_2D2 | DROP_GOOD | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:NO_CONF | NO_FEAR
 S:1_IN_5 | POW_51 | 
 S:BOLT_NETHR | WOUND | BOLT_WATER |
 S:FORGET | HOLD | MIND_BLAST
@@ -8453,11 +8232,10 @@ B:HIT:HURT:6d6
 B:HIT:SHATTER:10d10
 F:UNIQUE | MALE | 
 F:FORCE_SLEEP | FORCE_MAXHP | 
-F:EMPTY_MIND | COLD_BLOOD | 
+F:COLD_BLOOD | 
 F:KILL_ITEM | KILL_BODY | PASS_WALL | POWERFUL | 
-F:EVIL | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
-F:HURT_ROCK | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:IM_FIRE | IM_COLD | IM_ELEC |
+F:HURT_ROCK 
 S:1_IN_3 | POW_65 | 
 S:BOLT_ACID | BALL_ACID | BALL_SHARD | ARC_FORCE
 D:A towering stone elemental stands before you.  The walls and ceiling are 
@@ -8474,10 +8252,9 @@ B:HIT:CONFUSE:1d4
 F:UNIQUE | FEMALE | 
 F:FORCE_SLEEP | FORCE_MAXHP | 
 F:RAND_25 | 
-F:EMPTY_MIND | COLD_BLOOD | 
+F:COLD_BLOOD | 
 F:KILL_ITEM | KILL_BODY | BASH_DOOR | FLYING | POWERFUL | 
-F:EVIL | IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC 
 S:1_IN_5 | POW_60 | 
 S:BOLT_ELEC | BALL_COLD | BALL_ELEC
 D:A towering air elemental, Ariel the sorceress avoids your blows 
@@ -8492,10 +8269,9 @@ B:CLAW:HURT:3d6
 B:BITE:HURT:4d12
 B:BITE:FIRE:4d12
 F:UNIQUE | MALE | SPEAKING | SMART | 
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_1D2 | DROP_4D2 | DROP_GOOD | 
 F:BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | IM_FIRE | NO_CONF | NO_SLEEP | NO_FEAR
+F:EVIL | IM_FIRE | NO_CONF | NO_SLEEP | NO_FEAR
 S:1_IN_4 | POW_30 | 
 S:SLOW | CONF | WOUND | BLIND | HOLD | 
 S:BRTH_FIRE | BRTH_DFIRE | 
@@ -8514,10 +8290,10 @@ B:CLAW:HURT:5d12
 B:BITE:FIRE:8d14
 B:BITE:POISON:8d14
 F:UNIQUE | MALE | QUESTOR | SPEAKING | SMART | 
-F:FORCE_SLEEP | FORCE_MAXHP | FORCE_DEPTH | NARGOTHROND |
+F:FORCE_DEPTH | NARGOTHROND |
 F:ONLY_ITEM | DROP_3D2 | DROP_4D2 | DROP_GOOD | 
 F:BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | IM_POIS | IM_FIRE | NO_CONF | NO_SLEEP | NO_FEAR
+F:EVIL | IM_POIS | IM_FIRE | NO_CONF | NO_SLEEP | NO_FEAR
 S:1_IN_5 | POW_55 | 
 S:CONF | WOUND | BLIND | SCARE | HOLD | MIND_BLAST | BRAIN_SMASH | 
 S:BRTH_FIRE | BRTH_POIS | BRTH_DFIRE | 
@@ -8681,10 +8457,9 @@ B:CLAW:HURT:4d9
 B:BITE:COLD:6d14
 B:BITE:COLD:6d14
 F:UNIQUE | MALE | SPEAKING | SMART | 
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_3D2 | DROP_4D2 | DROP_GOOD | 
 F:BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | IM_COLD | NO_CONF | NO_SLEEP | NO_FEAR
+F:EVIL | IM_COLD | NO_CONF | NO_SLEEP | NO_FEAR
 S:1_IN_3 | POW_38 | 
 S:SLOW | CONF | WOUND | HOLD | BLIND | CURE | 
 S:BRTH_COLD | BRTH_ICE | 
@@ -8702,9 +8477,9 @@ B:HIT:HURT:8d6
 B:HIT:HURT:8d6
 B:HIT:HURT:8d6
 F:UNIQUE | MALE | SPEAKING | SMART | 
-F:FORCE_SLEEP | FORCE_MAXHP | MOVE_BODY | 
+F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_2D2 | DROP_4D2 | DROP_GOOD | 
-F:OPEN_DOOR | BASH_DOOR | 
+F:BASH_DOOR | 
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | NO_CONF
 S:1_IN_4 | POW_75 | 
 S:HEAL | BLIND | CONF | SCARE | WOUND | BRAIN_SMASH | 
@@ -8747,8 +8522,8 @@ B:HIT:FIRE:9d12
 F:UNIQUE | 
 F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | 
-F:OPEN_DOOR | BASH_DOOR | FLYING | 
-F:ANIMAL | IM_ACID | IM_FIRE | IM_ELEC | IM_POIS | NO_SLEEP
+F:OPEN_DOOR | BASH_DOOR | 
+F:IM_ACID | IM_FIRE | IM_ELEC | IM_POIS | NO_SLEEP
 S:1_IN_3 | POW_85 | 
 S:BOLT_FIRE | BOLT_PLAS | BALL_FIRE | 
 S:BRTH_FIRE | BRTH_LIGHT | BRTH_PLAS
@@ -8766,8 +8541,8 @@ B:BITE:HURT:10d14
 F:UNIQUE | 
 F:FORCE_SLEEP | FORCE_MAXHP | KILL_WALL | 
 F:ONLY_ITEM | DROP_2D2 | DROP_4D2 | DROP_GOOD | 
-F:OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | IM_ACID | IM_FIRE | IM_POIS | ANIMAL | 
+F:OPEN_DOOR | POWERFUL | MOVE_BODY | 
+F:EVIL | IM_ACID | IM_FIRE | IM_POIS | 
 F:NO_CONF | NO_SLEEP | NO_FEAR
 S:1_IN_3 | 
 S:BRTH_ACID | BRTH_POIS | S_KIN
@@ -8847,7 +8622,7 @@ F:ESCORT | ESCORTS |
 F:RAND_25 | 
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | 
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | MOVE_BODY | 
-F:ANIMAL | EVIL | IM_POIS
+F:EVIL | IM_POIS
 S:1_IN_3 | POW_30 | 
 S:SCARE | 
 S:S_ANIMAL | S_HOUND
@@ -8865,7 +8640,7 @@ B:HIT:HURT:10d10
 F:UNIQUE | MALE | SPEAKING | 
 F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_2D2 | DROP_4D2 | DROP_GOOD | 
-F:SMART | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | 
+F:SMART | BASH_DOOR | POWERFUL | 
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS
 S:1_IN_4 | POW_70 | 
 S:BALL_ACID | BALL_ELEC | HASTE | HEAL | 
@@ -8904,15 +8679,12 @@ B:HIT:HURT:5d5
 B:HIT:HURT:5d5
 B:TOUCH:LOSE_DEX:2d12
 F:UNIQUE | MALE | SPEAKING | 
-F:FORCE_SLEEP | FORCE_MAXHP | 
-F:ESCORT | 
-F:ONLY_ITEM | DROP_1D2 | DROP_2D2 | DROP_4D2 | DROP_GOOD | 
-F:SMART | COLD_BLOOD | OPEN_DOOR | BASH_DOOR | 
-F:EVIL | UNDEAD | 
-F:IM_COLD | IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP
+F:FORCE_SLEEP | ESCORT | 
+F:DROP_1D2 | DROP_2D2 | DROP_4D2 | DROP_GOOD | 
+F:IM_ELEC | NO_CONF
 S:1_IN_3 | POW_105 | 
-S:BLINK | TPORT | TELE_SELF_TO | BLIND | SCARE | ADD_MANA | 
-S:WOUND | BRAIN_SMASH | TRAPS | 
+S:BLINK | TPORT | TELE_SELF_TO | SCARE | ADD_MANA | 
+S:BRAIN_SMASH | TRAPS | 
 S:BALL_NETHR | BALL_POIS | BALL_ELEC | BALL_CHAOS | 
 S:S_MONSTERS | S_UNDEAD
 D:A stench of corruption and decay surrounds this sorcerer, who has clearly 
@@ -8956,7 +8728,7 @@ B:HIT:CONFUSE:12d12
 B:TOUCH:LOSE_DEX:2d12
 B:HIT:BLIND:10d5
 B:HIT:PARALYZE:15d1
-F:UNIQUE | MALE | ANIMAL | EVIL | DEMON | 
+F:UNIQUE | MALE | EVIL | DEMON | 
 F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ESCORT | ESCORTS | MOVE_BODY | 
 F:ONLY_ITEM | DROP_4D2 | DROP_GOOD | 
@@ -8977,10 +8749,10 @@ B:HIT:FIRE:8d10
 B:HIT:FIRE:8d10
 B:HIT:HURT:8d10
 F:UNIQUE | MALE | SPEAKING | 
-F:FORCE_SLEEP | FORCE_MAXHP | KILL_WALL | 
+F:KILL_WALL | 
 F:ONLY_ITEM | DROP_2D2 | DROP_4D2 | DROP_GOOD | 
-F:SMART | TAKE_ITEM | OPEN_DOOR | FLYING | BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:IM_ACID | IM_FIRE | IM_ELEC | IM_POIS | DEMON | EVIL
+F:SMART | TAKE_ITEM | FLYING | POWERFUL | MOVE_BODY | 
+F:IM_ACID | IM_FIRE | IM_ELEC | IM_POIS
 F:UDUN_MAGIC
 S:1_IN_3 | POW_92 | 
 S:TELE_TO | BLIND | 
@@ -9000,11 +8772,10 @@ B:HIT:FIRE:7d12
 B:CRUSH:HURT:7d12
 B:TOUCH:UN_POWER
 F:UNIQUE | MALE | SPEAKING | SMART | 
-F:FORCE_SLEEP | FORCE_MAXHP | KILL_WALL | 
-F:ESCORT | ESCORTS | 
+F:KILL_WALL | ESCORT | ESCORTS | 
 F:ONLY_ITEM | DROP_1D2 | DROP_2D2 | DROP_4D2 | DROP_GOOD | 
-F:OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | DEMON | IM_FIRE | 
+F:POWERFUL | MOVE_BODY | 
+F:IM_FIRE | 
 F:NO_CONF | NO_SLEEP | NO_FEAR | 
 F:UDUN_MAGIC 
 S:1_IN_3 | POW_105 | 
@@ -9028,7 +8799,7 @@ F:UNIQUE | MALE | SPEAKING | SMART |
 F:FORCE_SLEEP | FORCE_MAXHP | RAND_25 | 
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | 
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | MOVE_BODY | 
-F:ANIMAL | EVIL | NO_CONF | NO_SLEEP
+F:EVIL | NO_CONF | NO_SLEEP
 S:1_IN_6 | POW_55 | 
 S:TELE_TO | HEAL | SCARE | 
 S:S_HOUND
@@ -9135,9 +8906,9 @@ B:HIT:LOSE_STR:4d6
 F:UNIQUE | MALE | SPEAKING | SMART | 
 F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT | 
-F:INVISIBLE | COLD_BLOOD | PASS_WALL | 
-F:EVIL | UNDEAD | 
-F:IM_COLD | IM_POIS | NO_CONF | NO_SLEEP
+F:INVISIBLE |
+F:EVIL |
+F:IM_COLD | IM_POIS | NO_CONF
 S:1_IN_3 | POW_110 | 
 S:BLIND | HOLD | CONF | 
 S:BALL_DARK | BALL_NETHR | DRAIN_MANA | 
@@ -9158,7 +8929,7 @@ I:110:1d1:0:0:0
 W:0:0:0:0
 
 N:763:Pazuzu, Lord of Air
-G:B:T
+G:U:T
 I:140:27d100:40:50:10
 W:87:2:145:30000
 B:HIT:ELEC:12d12
@@ -9166,10 +8937,9 @@ B:HIT:ELEC:12d12
 B:HIT:ELEC:12d12
 B:HIT:ELEC:12d12
 F:UNIQUE | MALE | SPEAKING | 
-F:FORCE_SLEEP | FORCE_MAXHP | 
 F:ONLY_ITEM | DROP_4D2 | DROP_GOOD | 
-F:INVISIBLE | OPEN_DOOR | BASH_DOOR | FLYING | 
-F:EVIL | DEMON | IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | 
+F:INVISIBLE | FLYING | 
+F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | 
 F:IM_POIS | NO_CONF | NO_SLEEP
 S:1_IN_3 | POW_105 | 
 S:MIND_BLAST | BOLT_ELEC | BOLT_PLAS | BALL_ELEC | 
@@ -9210,17 +8980,14 @@ B:TOUCH:UN_POWER
 B:TOUCH:LOSE_DEX:4d18
 B:TOUCH:LOSE_DEX:4d18
 F:UNIQUE | MALE | SPEAKING | 
-F:FORCE_SLEEP | FORCE_MAXHP | 
-F:ESCORT | 
-F:ONLY_ITEM | DROP_1D2 | DROP_2D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT | 
-F:SMART | COLD_BLOOD | OPEN_DOOR | BASH_DOOR | 
-F:EVIL | UNDEAD | 
-F:IM_COLD | IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP | 
+F:FORCE_SLEEP | ESCORT | 
+F:DROP_1D2 | DROP_2D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT | 
+F:IM_ELEC | NO_CONF | 
 F:MORGUL_MAGIC
 S:1_IN_2 | POW_130 | 
 S:BLINK | TELE_TO | TPORT | DRAIN_MANA | ADD_MANA | 
-S:BLIND | HOLD | CONF | SCARE | DISPEL | 
-S:WOUND | BRAIN_SMASH | TRAPS | 
+S:HOLD | CONF | SCARE | DISPEL | 
+S:BRAIN_SMASH | TRAPS | 
 S:BALL_ELEC | BALL_NETHR | BALL_DARK | BEAM_NETHR | 
 S:S_KIN | S_MONSTERS | S_DEMON | S_HI_UNDEAD
 D:He is a highly cunning, extremely magical being, spoken of in legends.  
@@ -9234,11 +9001,9 @@ B:CLAW:HURT:5d13
 B:CLAW:HURT:5d13
 B:BITE:FIRE:8d12
 B:BITE:FIRE:8d12
-F:UNIQUE | MALE | SPEAKING | SMART | 
-F:FORCE_SLEEP | FORCE_MAXHP | ANGBAND | 
-F:ONLY_ITEM | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT | 
-F:BASH_DOOR | FLYING | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | IM_FIRE | NO_CONF | NO_SLEEP | NO_FEAR
+F:UNIQUE | MALE | SPEAKING |
+F:DROP_3D2 | DROP_4D2 | DROP_GREAT | 
+F:IM_FIRE | NO_FEAR
 S:1_IN_3 | POW_45 | 
 S:CONF | WOUND | HOLD | BLIND | SCARE | 
 S:BRTH_FIRE | BRTH_DFIRE | 
@@ -9298,13 +9063,11 @@ B:CLAW:HURT:8d12
 B:CLAW:HURT:8d12
 B:CLAW:HURT:8d12
 B:BITE:HURT:12d14
-F:UNIQUE | MALE | SPEAKING | SMART | 
-F:FORCE_SLEEP | FORCE_MAXHP | 
-F:ESCORT | ANGBAND | 
-F:ONLY_ITEM | DROP_1D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT | 
-F:OPEN_DOOR | BASH_DOOR | FLYING | POWERFUL | MOVE_BODY | 
-F:EVIL | DRAGON | 
-F:IM_ACID | IM_FIRE | IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP | 
+F:UNIQUE | MALE | SPEAKING |
+F:ESCORT |
+F:DROP_1D2 | DROP_3D2 | DROP_4D2 | DROP_GREAT | 
+F:OPEN_DOOR |
+F:IM_ACID | IM_FIRE | IM_ELEC | IM_POIS |
 F:NO_FEAR
 S:1_IN_3 | POW_90 | 
 S:BLIND | CONF | SCARE | 
@@ -9322,11 +9085,10 @@ B:HIT:FIRE:9d12
 B:CRUSH:HURT:8d12
 B:TOUCH:UN_POWER
 F:UNIQUE | MALE | SPEAKING | SMART | 
-F:FORCE_SLEEP | FORCE_MAXHP | KILL_WALL | 
+F:KILL_WALL | 
 F:ESCORT | ESCORTS | 
 F:ONLY_ITEM | DROP_1D2 | DROP_2D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT | 
-F:OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | 
-F:EVIL | DEMON | 
+F:POWERFUL | MOVE_BODY | 
 F:IM_FIRE | IM_ELEC | NO_CONF | NO_SLEEP | NO_FEAR | 
 F:UDUN_MAGIC
 S:1_IN_3 | POW_145 | 
@@ -9351,7 +9113,7 @@ F:UNIQUE | MALE | SPEAKING | NO_PLACE |
 F:FORCE_SLEEP | FORCE_MAXHP |  FORCE_DEPTH | GAURHOTH |
 F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT | 
 F:SMART | OPEN_DOOR | BASH_DOOR | MOVE_BODY | REGENERATE | 
-F:EVIL | IM_POIS |  IM_ELEC | IM_FIRE | IM_COLD | MORGUL_MAGIC |
+F:EVIL | IM_POIS | IM_ELEC | IM_FIRE | IM_COLD | MORGUL_MAGIC |
 F:NO_CONF | NO_SLEEP | NO_FEAR
 S:1_IN_3 | POW_120 | 
 S:BLINK | TPORT | TELE_LEVEL | TELE_SELF_TO | BLIND | CONF | SCARE | WOUND | 
@@ -9510,10 +9272,10 @@ B:TOUCH:TERRIFY:1d2
 B:TOUCH:LOSE_DEX:1d2
 F:UNIQUE | PLAYER_GHOST | 
 F:FORCE_MAXHP | RAND_25 | SMART | 
-F:PASS_WALL | INVISIBLE | 
-F:EVIL | UNDEAD | COLD_BLOOD | IM_POIS | IM_COLD | 
+F:INVISIBLE | 
+F:EVIL | IM_POIS | IM_COLD | 
 F:ONLY_ITEM | DROP_90 | DROP_CHEST | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:NO_CONF | NO_FEAR
 S:1_IN_6 | POW_14 | 
 S:SCARE | DARKNESS | DRAIN_MANA | BLIND
 D:A ghostly apparition that shrieks horribly.  You feel you know it and it 
@@ -9568,10 +9330,10 @@ B:CLAW:LOSE_INT:3d7
 B:CLAW:LOSE_WIS:3d7
 F:UNIQUE | PLAYER_GHOST | 
 F:FORCE_MAXHP | SMART | 
-F:PASS_WALL | INVISIBLE | 
-F:EVIL | UNDEAD | COLD_BLOOD | IM_POIS | IM_COLD | 
+F:INVISIBLE | 
+F:EVIL | IM_POIS | IM_COLD | 
 F:ONLY_ITEM | DROP_90 | DROP_CHEST | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:NO_CONF | NO_FEAR
 S:1_IN_4 | POW_36 | 
 S:DARKNESS | DRAIN_MANA | SCARE | BLIND | HOLD
 D:A phantasm, a shadow given life.  The nimbus of corpse-light around it 
@@ -9606,10 +9368,10 @@ B:CLAW:LOSE_INT:3d8
 B:CLAW:LOSE_WIS:3d8
 F:UNIQUE | PLAYER_GHOST | 
 F:FORCE_MAXHP | SMART | REGENERATE | 
-F:INVISIBLE | COLD_BLOOD | PASS_WALL | 
-F:EVIL | UNDEAD | IM_COLD | IM_POIS | 
+F:INVISIBLE |
+F:EVIL | IM_COLD | IM_POIS | 
 F:ONLY_ITEM | DROP_90 | DROP_CHEST | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:NO_CONF | NO_FEAR
 S:1_IN_5 | POW_51 | 
 S:BOLT_NETHR | 
 S:FORGET | HOLD | MIND_BLAST
@@ -9625,15 +9387,13 @@ B:TOUCH:UN_POWER
 B:TOUCH:LOSE_DEX:4d9
 B:TOUCH:LOSE_DEX:4d9
 F:UNIQUE | PLAYER_GHOST | 
-F:FORCE_MAXHP | SMART | REGENERATE | 
-F:SMART | COLD_BLOOD | OPEN_DOOR | BASH_DOOR | 
-F:EVIL | UNDEAD | IM_COLD | IM_POIS | HURT_LIGHT | 
-F:ONLY_ITEM | DROP_90 | DROP_CHEST | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
+F:REGENERATE | HURT_LIGHT | 
+F:DROP_90 | DROP_CHEST | 
+F:NO_CONF | NO_FEAR
 S:1_IN_4 | POW_63 | 
 S:BALL_COLD | BALL_ELEC | 
-S:BLINK | TELE_TO | TELE_AWAY | BLIND | HOLD | SLOW | SCARE | 
-S:WOUND | DRAIN_MANA | MIND_BLAST | ADD_MANA | DISPEL
+S:BLINK | TELE_TO | TELE_AWAY | HOLD | SLOW | SCARE | 
+S:DRAIN_MANA | MIND_BLAST | ADD_MANA | DISPEL
 D:A skeletal form dressed in robes, radiating vastly evil 
 D:power.  You feel you know it and it knows you.
 
