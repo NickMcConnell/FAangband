@@ -23,9 +23,11 @@
 #include "cmds.h"
 #include "game-cmd.h"
 #include "game-event.h"
+#include "generate.h"
 #include "init.h"
 #include "keymap.h"
 #include "tvalsval.h"
+#include "monster.h"
 #include "option.h"
 #include "parser.h"
 #include "prefs.h"
@@ -422,11 +424,17 @@ static errr finish_parse_z(struct parser *p) {
     return 0;
 }
 
+static void cleanup_z(void)
+{
+	mem_free(z_info);
+}
+
 static struct file_parser z_parser = {
     "limits",
     init_parse_z,
     run_parse_z,
-    finish_parse_z
+    finish_parse_z,
+    cleanup_z
 };
 
 static enum parser_error parse_k_n(struct parser *p) {
@@ -672,11 +680,22 @@ static errr finish_parse_k(struct parser *p) {
     return 0;
 }
 
+static void cleanup_k(void)
+{
+	int idx;
+	for (idx = 0; idx < z_info->k_max; idx++) {
+		string_free(k_info[idx].name);
+		mem_free(k_info[idx].text);
+	}
+	mem_free(k_info);
+}
+
 struct file_parser k_parser = {
     "object",
     init_parse_k,
     run_parse_k,
-    finish_parse_k
+    finish_parse_k,
+    cleanup_k
 };
 
 static enum parser_error parse_a_n(struct parser *p) {
@@ -897,11 +916,23 @@ static errr finish_parse_a(struct parser *p) {
     return 0;
 }
 
+static void cleanup_a(void)
+{
+	int idx;
+	for (idx = 0; idx < z_info->a_max; idx++) {
+		string_free(a_info[idx].name);
+		mem_free(a_info[idx].effect_msg);
+		mem_free(a_info[idx].text);
+	}
+	mem_free(a_info);
+}
+
 struct file_parser a_parser = {
     "artifact",
     init_parse_a,
     run_parse_a,
-    finish_parse_a
+    finish_parse_a,
+    cleanup_a
 };
 
 /* Current set item */
@@ -1074,11 +1105,22 @@ static errr finish_parse_set(struct parser *p) {
     return 0;
 }
 
+static void cleanup_set(void)
+{
+    int idx;
+    for (idx = 0; idx < z_info->set_max; idx++) {
+	string_free(set_info[idx].name);
+	mem_free(set_info[idx].text);
+    }
+    mem_free(set_info);
+}
+
 struct file_parser set_parser = {
     "set_item",
     init_parse_set,
     run_parse_set,
-    finish_parse_set
+    finish_parse_set,
+    cleanup_set
 };
 
 struct name {
@@ -1150,11 +1192,24 @@ static errr finish_parse_names(struct parser *p) {
     return 0;
 }
 
+static void cleanup_names(void)
+{
+	int i, j;
+	for (i = 0; i < RANDNAME_NUM_TYPES; i++) {
+		for (j = 0; name_sections[i][j]; j++) {
+			string_free((char *)name_sections[i][j]);
+		}
+		mem_free(name_sections[i]);
+	}
+	mem_free(name_sections);
+}
+
 struct file_parser names_parser = {
     "names",
     init_parse_names,
     run_parse_names,
-    finish_parse_names
+    finish_parse_names,
+    cleanup_names
 };
 
 static const char *trap_flags[] =
@@ -1280,11 +1335,22 @@ static errr finish_parse_trap(struct parser *p) {
     return 0;
 }
 
+static void cleanup_trap(void)
+{
+	int i;
+	for (i = 0; i < z_info->trap_max; i++) {
+		string_free(trap_info[i].name);
+		mem_free(trap_info[i].text);
+	}
+	mem_free(trap_info);
+}
+
 struct file_parser trap_parser = {
     "trap",
     init_parse_trap,
     run_parse_trap,
-    finish_parse_trap
+    finish_parse_trap,
+    cleanup_trap
 };
 
 static const char *terrain_flags[] =
@@ -1433,11 +1499,20 @@ static errr finish_parse_f(struct parser *p) {
     return 0;
 }
 
+static void cleanup_f(void) {
+	int idx;
+	for (idx = 0; idx < z_info->f_max; idx++) {
+		string_free(f_info[idx].name);
+	}
+	mem_free(f_info);
+}
+
 struct file_parser f_parser = {
     "terrain",
     init_parse_f,
     run_parse_f,
-    finish_parse_f
+    finish_parse_f,
+    cleanup_f
 };
 
 static enum parser_error parse_e_n(struct parser *p) {
@@ -1701,13 +1776,185 @@ static errr finish_parse_e(struct parser *p) {
     return 0;
 }
 
+static void cleanup_e(void)
+{
+	int idx;
+	for (idx = 0; idx < z_info->e_max; idx++) {
+		string_free(e_info[idx].name);
+		mem_free(e_info[idx].text);
+	}
+	mem_free(e_info);
+}
+
 struct file_parser e_parser = {
     "ego_item",
     init_parse_e,
     run_parse_e,
-    finish_parse_e
+    finish_parse_e,
+    cleanup_e
 };
 
+/* Parsing functions for monster_base.txt */
+
+static enum parser_error parse_rb_n(struct parser *p) {
+	struct monster_base *h = parser_priv(p);
+	struct monster_base *rb = mem_zalloc(sizeof *rb);
+	rb->next = h;
+	rb->name = string_make(parser_getstr(p, "name"));
+	parser_setpriv(p, rb);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_rb_g(struct parser *p) {
+	struct monster_base *rb = parser_priv(p);
+
+	if (!rb)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	rb->d_char = parser_getchar(p, "glyph");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_rb_m(struct parser *p) {
+	struct monster_base *rb = parser_priv(p);
+	int pain_idx;
+
+	if (!rb)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	pain_idx = parser_getuint(p, "pain");
+	if (pain_idx >= z_info->mp_max)
+		/* XXX need a real error code for this */
+		return PARSE_ERROR_GENERIC;
+
+	rb->pain = &pain_messages[pain_idx];
+
+	return PARSE_ERROR_NONE;
+}
+
+const char *r_info_flags[] =
+{
+	#define RF(a, b) #a,
+	#include "list-mon-flags.h"
+	#undef RF
+	NULL
+};
+
+static enum parser_error parse_rb_f(struct parser *p) {
+	struct monster_base *rb = parser_priv(p);
+	char *flags;
+	char *s;
+
+	if (!rb)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	if (!parser_hasval(p, "flags"))
+		return PARSE_ERROR_NONE;
+	flags = string_make(parser_getstr(p, "flags"));
+	s = strtok(flags, " |");
+	while (s) {
+		if (grab_flag(rb->flags, RF_SIZE, r_info_flags, s)) {
+			mem_free(flags);
+			quit_fmt("bad f-flag: %s", s);
+			return PARSE_ERROR_INVALID_FLAG;
+		}
+		s = strtok(NULL, " |");
+	}
+
+	mem_free(flags);
+	return PARSE_ERROR_NONE;
+}
+
+const char *r_info_spell_flags[] =
+{
+	#define RSF(a, b) #a,
+	#include "list-mon-spells.h"
+	#undef RSF
+	NULL
+};
+
+static enum parser_error parse_rb_s(struct parser *p) {
+	struct monster_base *rb = parser_priv(p);
+	char *flags;
+	char *s;
+
+	if (!rb)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	if (!parser_hasval(p, "spells"))
+		return PARSE_ERROR_NONE;
+	flags = string_make(parser_getstr(p, "spells"));
+	s = strtok(flags, " |");
+	while (s) {
+		if (grab_flag(rb->spell_flags, RSF_SIZE, r_info_spell_flags, s)) {
+			mem_free(flags);
+			quit_fmt("bad s-flag: %s", s);
+			return PARSE_ERROR_INVALID_FLAG;
+		}
+		s = strtok(NULL, " |");
+	}
+
+	mem_free(flags);
+	return PARSE_ERROR_NONE;
+}
+
+
+static enum parser_error parse_rb_d(struct parser *p) {
+	struct monster_base *rb = parser_priv(p);
+
+	if (!rb)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	rb->text = string_append(rb->text, parser_getstr(p, "desc"));
+	return PARSE_ERROR_NONE;
+}
+
+
+struct parser *init_parse_rb(void) {
+	struct parser *p = parser_new();
+	parser_setpriv(p, NULL);
+
+	parser_reg(p, "V sym version", ignored);
+	parser_reg(p, "N str name", parse_rb_n);
+	parser_reg(p, "G char glyph", parse_rb_g);
+	parser_reg(p, "M uint pain", parse_rb_m);
+	parser_reg(p, "F ?str flags", parse_rb_f);
+	parser_reg(p, "S ?str spells", parse_rb_s);
+	parser_reg(p, "D str desc", parse_rb_d);
+	return p;
+}
+
+static errr run_parse_rb(struct parser *p) {
+	return parse_file(p, "monster_base");
+}
+
+static errr finish_parse_rb(struct parser *p) {
+	rb_info = parser_priv(p);
+	parser_destroy(p);
+	return 0;
+}
+
+static void cleanup_rb(void)
+{
+	struct monster_base *rb, *next;
+
+	rb = rb_info;
+	while (rb) {
+		next = rb->next;
+		string_free(rb->text);
+		string_free(rb->name);
+		mem_free(rb);
+		rb = next;
+	}
+}
+
+struct file_parser rb_parser = {
+	"monster_base",
+	init_parse_rb,
+	run_parse_rb,
+	finish_parse_rb,
+	cleanup_rb
+};
+
+
+/* Parsing functions for monster.txt */
 static enum parser_error parse_r_n(struct parser *p) {
     struct monster_race *h = parser_priv(p);
     struct monster_race *r = mem_alloc(sizeof *r);
@@ -1719,7 +1966,32 @@ static enum parser_error parse_r_n(struct parser *p) {
     return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_r_t(struct parser *p) {
+	struct monster_race *r = parser_priv(p);
+
+	r->base = lookup_monster_base(parser_getsym(p, "base"));
+	if (r->base == NULL)
+		/* Todo: make new error for this */
+		return PARSE_ERROR_UNRECOGNISED_TVAL;
+
+	/* The template sets the default display character */
+	r->d_char = r->base->d_char;
+
+	/* Give the monster its default flags */
+	rf_union(r->flags, r->base->flags);
+
+	return PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_r_g(struct parser *p) {
+    struct monster_race *r = parser_priv(p);
+
+    /* If the display character is specified, it overrides any template */
+    r->d_char = parser_getchar(p, "glyph");
+    return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_r_c(struct parser *p) {
     struct monster_race *r = parser_priv(p);
     const char *color;
     int attr;
@@ -1734,7 +2006,6 @@ static enum parser_error parse_r_g(struct parser *p) {
     if (attr < 0)
 	return PARSE_ERROR_INVALID_COLOR;
     r->d_attr = attr;
-    r->d_char = parser_getchar(p, "glyph");
     return PARSE_ERROR_NONE;
 }
 
@@ -1828,14 +2099,6 @@ static enum parser_error parse_r_b(struct parser *p) {
     return PARSE_ERROR_NONE;
 }
 
-static const char *r_info_flags[] =
-{
-#define RF(a, b) #a,
-#include "list-mon-flags.h"
-#undef RF
-    NULL
-};
-
 static enum parser_error parse_r_f(struct parser *p) {
     struct monster_race *r = parser_priv(p);
     char *flags;
@@ -1868,14 +2131,6 @@ static enum parser_error parse_r_d(struct parser *p) {
     return PARSE_ERROR_NONE;
 }
 
-static const char *r_info_spell_flags[] =
-{
-#define RSF(a, b) #a,
-#include "list-mon-spells.h"
-#undef RSF
-    NULL
-};
-
 static enum parser_error parse_r_s(struct parser *p) {
     struct monster_race *r = parser_priv(p);
     char *flags;
@@ -1905,6 +2160,10 @@ static enum parser_error parse_r_s(struct parser *p) {
 	s = strtok(NULL, " |");
     }
 
+    /* Add the "base monster" flags to the monster */
+    if (r->base)
+	rsf_union(r->spell_flags, r->base->spell_flags);
+
     mem_free(flags);
     return ret;
 }
@@ -1915,7 +2174,9 @@ struct parser *init_parse_r(void) {
 
     parser_reg(p, "V sym version", ignored);
     parser_reg(p, "N uint index str name", parse_r_n);
-    parser_reg(p, "G char glyph sym color", parse_r_g);
+    parser_reg(p, "T sym base", parse_r_t);
+    parser_reg(p, "G char glyph", parse_r_g);
+    parser_reg(p, "C sym color", parse_r_c);
     parser_reg(p, "I int speed rand hp int aaf int ac int sleep", parse_r_i);
     parser_reg(p, "W int level int rarity int mana int mexp", parse_r_w);
     parser_reg(p, "B sym method ?sym effect ?rand damage", parse_r_b);
@@ -1950,11 +2211,26 @@ static errr finish_parse_r(struct parser *p) {
     return 0;
 }
 
+static void cleanup_r(void)
+{
+	int ridx;
+
+	for (ridx = 0; ridx < z_info->r_max; ridx++) {
+		struct monster_race *r = &r_info[ridx];
+
+		string_free(r->text);
+		string_free(r->name);
+	}
+
+	mem_free(r_info);
+}
+
 struct file_parser r_parser = {
     "monster",
     init_parse_r,
     run_parse_r,
-    finish_parse_r
+    finish_parse_r,
+    cleanup_r
 };
 
 static enum parser_error parse_b_n(struct parser *p) {
@@ -2016,11 +2292,21 @@ static errr finish_parse_b(struct parser *p) {
     return 0;
 }
 
+static void cleanup_b(void)
+{
+	int idx;
+	for (idx = 0; idx < z_info->b_max * MAX_STORE_TYPES; idx++) {
+		string_free(b_info[idx].owner_name);
+	}
+	mem_free(b_info);
+}
+
 struct file_parser b_parser = {
     "shop_own",
     init_parse_b,
     run_parse_b,
-    finish_parse_b
+    finish_parse_b,
+    cleanup_b
 };
 
 static enum parser_error parse_p_n(struct parser *p) {
@@ -2265,11 +2551,21 @@ static errr finish_parse_p(struct parser *p) {
     return 0;
 }
 
+static void cleanup_p(void)
+{
+	int idx;
+	for (idx = 0; idx < z_info->p_max; idx++) {
+	    string_free((char *)p_info[idx].name);
+	}
+	mem_free(p_info);
+}
+
 struct file_parser p_parser = {
     "p_race",
     init_parse_p,
     run_parse_p,
-    finish_parse_p
+    finish_parse_p,
+    cleanup_p
 };
 
 static enum parser_error parse_c_n(struct parser *p) {
@@ -2549,11 +2845,24 @@ static errr finish_parse_c(struct parser *p) {
     return 0;
 }
 
+static void cleanup_c(void)
+{
+    int idx, i;
+    for (idx = 0; idx < z_info->c_max; idx++) {
+	for (i = 0; i < PY_MAX_LEVEL / 5; i++) {
+	    string_free((char *)c_info[idx].title[i]);
+	}
+	string_free((char *)c_info[idx].name);
+    }
+    mem_free(c_info);
+}
+
 struct file_parser c_parser = {
     "p_class",
     init_parse_c,
     run_parse_c,
-    finish_parse_c
+    finish_parse_c,
+    cleanup_c
 };
 
 static enum parser_error parse_v_n(struct parser *p) {
@@ -2628,11 +2937,22 @@ static errr finish_parse_v(struct parser *p) {
     return 0;
 }
 
+static void cleanup_v(void)
+{
+    int idx;
+    for (idx = 0; idx < z_info->v_max; idx++) {
+	mem_free(v_info[idx].name);
+	mem_free(v_info[idx].text);
+    }
+    mem_free(v_info);
+}
+
 struct file_parser v_parser = {
     "vault",
     init_parse_v,
     run_parse_v,
-    finish_parse_v
+    finish_parse_v,
+    cleanup_v
 };
 
 static enum parser_error parse_t_n(struct parser *p) {
@@ -2699,11 +3019,22 @@ static errr finish_parse_t(struct parser *p) {
     return 0;
 }
 
+static void cleanup_t(void)
+{
+    int idx;
+    for (idx = 0; idx < z_info->t_max; idx++) {
+	mem_free(t_info[idx].name);
+	mem_free(t_info[idx].text);
+    }
+    mem_free(t_info);
+}
+
 struct file_parser t_parser = {
     "themed",
     init_parse_t,
     run_parse_t,
-    finish_parse_t
+    finish_parse_t,
+    cleanup_t
 };
 
 static enum parser_error parse_h_n(struct parser *p) {
@@ -2765,11 +3096,21 @@ static errr finish_parse_h(struct parser *p) {
     return PARSE_ERROR_NONE;
 }
 
+static void cleanup_h(void)
+{
+	int idx;
+	for (idx = 0; idx < z_info->h_max; idx++) {
+	    mem_free(h_info[idx].text);
+	}
+	mem_free(h_info);
+}
+
 struct file_parser h_parser = {
     "p_hist",
     init_parse_h,
     run_parse_h,
-    finish_parse_h
+    finish_parse_h,
+    cleanup_h
 };
 
 static enum parser_error parse_flavor_n(struct parser *p) {
@@ -2854,11 +3195,23 @@ static errr finish_parse_flavor(struct parser *p) {
     return 0;
 }
 
+static void cleanup_flavor(void)
+{
+	int idx;
+	for (idx = 0; idx < z_info->flavor_max; idx++) {
+		/* Hack - scrolls get randomly-generated names */
+		if (flavor_info[idx].tval != TV_SCROLL)
+			mem_free(flavor_info[idx].text);
+	}
+	mem_free(flavor_info);
+}
+
 struct file_parser flavor_parser = {
     "flavor",
     init_parse_flavor,
     run_parse_flavor,
-    finish_parse_flavor
+    finish_parse_flavor,
+    cleanup_flavor
 };
 
 static enum parser_error parse_s_n(struct parser *p) {
@@ -2914,11 +3267,22 @@ static errr finish_parse_s(struct parser *p) {
     return 0;
 }
 
+static void cleanup_s(void)
+{
+	int idx;
+	for (idx = 0; idx < z_info->s_max; idx++) {
+		string_free(s_info[idx].name);
+		mem_free(s_info[idx].text);
+	}
+	mem_free(s_info);
+}
+
 static struct file_parser s_parser = {
     "spell",
     init_parse_s,
     run_parse_s,
-    finish_parse_s
+    finish_parse_s,
+    cleanup_s
 };
 
 /* Initialise hints */
@@ -2949,11 +3313,392 @@ static errr finish_parse_hints(struct parser *p) {
     return 0;
 }
 
+static void cleanup_hints(void)
+{
+	struct hint *h, *next;
+
+	h = hints;
+	while(h) {
+		next = h->next;
+		string_free(h->hint);
+		mem_free(h);
+		h = next;
+	}
+}
+
 static struct file_parser hints_parser = {
     "hints",
     init_parse_hints,
     run_parse_hints,
     finish_parse_hints,
+    cleanup_hints
+};
+
+
+/* Initialise monster pain messages */
+static enum parser_error parse_mp_n(struct parser *p) {
+	struct monster_pain *h = parser_priv(p);
+	struct monster_pain *mp = mem_zalloc(sizeof *mp);
+	mp->next = h;
+	mp->pain_idx = parser_getuint(p, "index");
+	parser_setpriv(p, mp);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_mp_m(struct parser *p) {
+	struct monster_pain *mp = parser_priv(p);
+	int i;
+
+	if (!mp)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	for (i = 0; i < 7; i++)
+		if (!mp->messages[i])
+			break;
+	if (i == 7)
+		return PARSE_ERROR_TOO_MANY_ENTRIES;
+	mp->messages[i] = string_make(parser_getstr(p, "message"));
+	return PARSE_ERROR_NONE;
+}
+
+struct parser *init_parse_mp(void) {
+	struct parser *p = parser_new();
+	parser_setpriv(p, NULL);
+
+	parser_reg(p, "N uint index", parse_mp_n);
+	parser_reg(p, "M str message", parse_mp_m);
+	return p;
+}
+
+static errr run_parse_mp(struct parser *p) {
+	return parse_file(p, "pain");
+}
+
+static errr finish_parse_mp(struct parser *p) {
+	struct monster_pain *mp, *n;
+		
+	/* scan the list for the max id */
+	z_info->mp_max = 0;
+	mp = parser_priv(p);
+	while (mp) {
+		if (mp->pain_idx > z_info->mp_max)
+			z_info->mp_max = mp->pain_idx;
+		mp = mp->next;
+	}
+
+	/* allocate the direct access list and copy the data to it */
+	pain_messages = mem_zalloc((z_info->mp_max+1) * sizeof(*mp));
+	for (mp = parser_priv(p); mp; mp = n) {
+		memcpy(&pain_messages[mp->pain_idx], mp, sizeof(*mp));
+		n = mp->next;
+		if (n)
+			pain_messages[mp->pain_idx].next = &pain_messages[n->pain_idx];
+		else
+			pain_messages[mp->pain_idx].next = NULL;
+		mem_free(mp);
+	}
+	z_info->mp_max += 1;
+
+	parser_destroy(p);
+	return 0;
+}
+
+static void cleanup_mp(void)
+{
+	int idx, i;
+	for (idx = 0; idx < z_info->mp_max; idx++) {
+		for (i = 0; i < 7; i++) {
+			string_free((char *)pain_messages[idx].messages[i]);
+		}
+	}
+	mem_free(pain_messages);
+}
+
+struct file_parser mp_parser = {
+	"pain messages",
+	init_parse_mp,
+	run_parse_mp,
+	finish_parse_mp,
+	cleanup_mp
+};
+
+
+/*
+ * Initialize monster pits
+ */
+
+static enum parser_error parse_pit_n(struct parser *p) {
+	struct pit_profile *h = parser_priv(p);
+	struct pit_profile *pit = mem_zalloc(sizeof *pit);
+	pit->next = h;
+	pit->pit_idx = parser_getuint(p, "index");
+	pit->name = string_make(parser_getstr(p, "name"));
+	pit->colors = NULL;
+	pit->forbidden_monsters = NULL;
+	parser_setpriv(p, pit);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_pit_r(struct parser *p) {
+	struct pit_profile *pit = parser_priv(p);
+
+	if (!pit)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	pit->room_type = parser_getuint(p, "type");
+	return PARSE_ERROR_NONE;
+}
+static enum parser_error parse_pit_a(struct parser *p) {
+	struct pit_profile *pit = parser_priv(p);
+
+	if (!pit)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	pit->rarity = parser_getuint(p, "rarity");
+	pit->ave = parser_getuint(p, "level");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_pit_o(struct parser *p) {
+	struct pit_profile *pit = parser_priv(p);
+
+	if (!pit)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	pit->obj_rarity = parser_getuint(p, "obj_rarity");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_pit_t(struct parser *p) {
+	struct pit_profile *pit = parser_priv(p);
+	monster_base *base = lookup_monster_base(parser_getsym(p, "base"));
+
+	if (!pit)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	else if (pit->n_bases == MAX_RVALS)
+		return PARSE_ERROR_TOO_MANY_ENTRIES;
+	else if (!base)
+		return PARSE_ERROR_UNRECOGNISED_TVAL;
+	else {
+		pit->base[pit->n_bases++] = base;
+		return PARSE_ERROR_NONE;		
+	}
+}
+
+static enum parser_error parse_pit_c(struct parser *p) {
+	struct pit_profile *pit = parser_priv(p);
+	struct pit_color_profile *colors;
+	const char *color;
+	int attr;
+
+	if (!pit)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	color = parser_getsym(p, "color");
+	if (strlen(color) > 1)
+		attr = color_text_to_attr(color);
+	else
+		attr = color_char_to_attr(color[0]);
+	if (attr < 0)
+		return PARSE_ERROR_INVALID_COLOR;
+
+	colors = mem_zalloc(sizeof *colors);
+	colors->color = attr;
+	colors->next = pit->colors;
+	pit->colors = colors;
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_pit_f(struct parser *p) {
+	struct pit_profile *pit = parser_priv(p);
+	char *flags;
+	char *s;
+
+	if (!pit)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	if (!parser_hasval(p, "flags"))
+		return PARSE_ERROR_NONE;
+	flags = string_make(parser_getstr(p, "flags"));
+	s = strtok(flags, " |");
+	while (s) {
+		if (grab_flag(pit->flags, RF_SIZE, r_info_flags, s)) {
+			mem_free(flags);
+			return PARSE_ERROR_INVALID_FLAG;
+		}
+		s = strtok(NULL, " |");
+	}
+	
+	mem_free(flags);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_pit_f2(struct parser *p) {
+	struct pit_profile *pit = parser_priv(p);
+	char *flags;
+	char *s;
+
+	if (!pit)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	if (!parser_hasval(p, "flags"))
+		return PARSE_ERROR_NONE;
+	flags = string_make(parser_getstr(p, "flags"));
+	s = strtok(flags, " |");
+	while (s) {
+		if (grab_flag(pit->forbidden_flags, RF_SIZE, r_info_flags, s)) {
+			mem_free(flags);
+			return PARSE_ERROR_INVALID_FLAG;
+		}
+		s = strtok(NULL, " |");
+	}
+	
+	mem_free(flags);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_pit_s(struct parser *p) {
+	struct pit_profile *pit = parser_priv(p);
+	char *flags;
+	char *s;
+
+	if (!pit)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	if (!parser_hasval(p, "spells"))
+		return PARSE_ERROR_NONE;
+	flags = string_make(parser_getstr(p, "spells"));
+	s = strtok(flags, " |");
+	while (s) {
+		if (grab_flag(pit->spell_flags, RSF_SIZE, r_info_spell_flags, s)) {
+			mem_free(flags);
+			return PARSE_ERROR_INVALID_FLAG;
+		}
+		s = strtok(NULL, " |");
+	}
+	
+	mem_free(flags);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_pit_s2(struct parser *p) {
+	struct pit_profile *pit = parser_priv(p);
+	char *flags;
+	char *s;
+
+	if (!pit)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	if (!parser_hasval(p, "spells"))
+		return PARSE_ERROR_NONE;
+	flags = string_make(parser_getstr(p, "spells"));
+	s = strtok(flags, " |");
+	while (s) {
+		if (grab_flag(pit->forbidden_spell_flags, RSF_SIZE, r_info_spell_flags, s)) {
+			mem_free(flags);
+			return PARSE_ERROR_INVALID_FLAG;
+		}
+		s = strtok(NULL, " |");
+	}
+	
+	mem_free(flags);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_pit_e(struct parser *p) {
+	struct pit_profile *pit = parser_priv(p);
+	struct pit_forbidden_monster *monsters;
+	int r_idx = lookup_monster(parser_getsym(p, "race"));
+
+	if (!pit)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	monsters = mem_zalloc(sizeof *monsters);
+	monsters->r_idx = r_idx;
+	monsters->next = pit->forbidden_monsters;
+	pit->forbidden_monsters = monsters;
+	return PARSE_ERROR_NONE;
+}
+
+struct parser *init_parse_pit(void) {
+	struct parser *p = parser_new();
+	parser_setpriv(p, NULL);
+
+	parser_reg(p, "N uint index str name", parse_pit_n);
+	parser_reg(p, "R uint type", parse_pit_r);
+	parser_reg(p, "A uint rarity uint level", parse_pit_a);
+	parser_reg(p, "O uint obj_rarity", parse_pit_o);
+	parser_reg(p, "T sym base", parse_pit_t);
+	parser_reg(p, "C sym color", parse_pit_c);
+	parser_reg(p, "F ?str flags", parse_pit_f);
+	parser_reg(p, "f ?str flags", parse_pit_f2);
+	parser_reg(p, "S ?str spells", parse_pit_s);
+	parser_reg(p, "s ?str spells", parse_pit_s2);
+	parser_reg(p, "E sym race", parse_pit_e);
+	return p;
+}
+
+static errr run_parse_pit(struct parser *p) {
+	return parse_file(p, "pit");
+}
+ 
+static errr finish_parse_pit(struct parser *p) {
+	struct pit_profile *pit, *n;
+		
+	/* scan the list for the max id */
+	z_info->pit_max = 0;
+	pit = parser_priv(p);
+	while (pit) {
+		if (pit->pit_idx > z_info->pit_max)
+			z_info->pit_max = pit->pit_idx;
+		pit = pit->next;
+	}
+
+	/* allocate the direct access list and copy the data to it */
+	pit_info = mem_zalloc((z_info->pit_max+1) * sizeof(*pit));
+	for (pit = parser_priv(p); pit; pit = n) {
+		memcpy(&pit_info[pit->pit_idx], pit, sizeof(*pit));
+		n = pit->next;
+		if (n)
+			pit_info[pit->pit_idx].next = &pit_info[n->pit_idx];
+		else
+			pit_info[pit->pit_idx].next = NULL;
+
+		mem_free(pit);
+	}
+	z_info->pit_max += 1;
+
+	parser_destroy(p);
+	return 0;
+}
+
+static void cleanup_pits(void)
+{
+	int idx;
+	
+	for (idx = 0; idx < z_info->pit_max; idx++) {
+		struct pit_profile *pit = &pit_info[idx];
+		struct pit_color_profile *c, *cn;
+		struct pit_forbidden_monster *m, *mn;
+		
+		c = pit->colors;
+		while (c) {
+			cn = c->next;
+			mem_free(c);
+			c = cn;
+		}
+		m = pit->forbidden_monsters;
+		while (m) {
+			mn = m->next;
+			mem_free(m);
+			m = mn;
+		}
+		string_free((char *)pit_info[idx].name);
+		
+	}
+	mem_free(pit_info);
+}
+
+struct file_parser pit_parser = {
+	"pits",
+	init_parse_pit,
+	run_parse_pit,
+	finish_parse_pit,
+	cleanup_pits
 };
 
 
@@ -4173,6 +4918,14 @@ bool init_angband(void)
     event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (ego-items)");
     if (run_parser(&e_parser)) quit("Cannot initialize ego-items");
 
+    /* Initialize monster pain messages */
+    event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (pain messages)");
+    if (run_parser(&mp_parser)) quit("Cannot initialize monster pain messages");
+
+    /* Initialize monster-base info */
+    event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (monster bases)");
+    if (run_parser(&rb_parser)) quit("Cannot initialize monster bases");
+	
     /* Initialize monster info */
     event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (monsters)");
     if (run_parser(&r_parser)) quit("Cannot initialize monsters");
@@ -4345,11 +5098,33 @@ void cleanup_angband(void)
     /* Free the "quarks" */
     quarks_free();
 
-    mem_free(k_info);
-    mem_free(a_info);
-    mem_free(e_info);
-    mem_free(r_info);
-    mem_free(c_info);
+    //mem_free(k_info);
+    //mem_free(a_info);
+    //mem_free(e_info);
+    //mem_free(r_info);
+    //mem_free(c_info);
+
+	cleanup_parser(&k_parser);
+	cleanup_parser(&a_parser);
+	cleanup_parser(&set_parser);
+	cleanup_parser(&names_parser);
+	cleanup_parser(&trap_parser);
+	cleanup_parser(&r_parser);
+	cleanup_parser(&rb_parser);
+	cleanup_parser(&f_parser);
+	cleanup_parser(&e_parser);
+	cleanup_parser(&b_parser);
+	cleanup_parser(&p_parser);
+	cleanup_parser(&c_parser);
+	cleanup_parser(&v_parser);
+	cleanup_parser(&h_parser);
+	cleanup_parser(&t_parser);
+	cleanup_parser(&flavor_parser);
+	cleanup_parser(&s_parser);
+	cleanup_parser(&hints_parser);
+	cleanup_parser(&mp_parser);
+	cleanup_parser(&pit_parser);
+	cleanup_parser(&z_parser);
 
     /* Free the format() buffer */
     vformat_kill();

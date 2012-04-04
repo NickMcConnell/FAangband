@@ -765,6 +765,8 @@ ego_item_type *e_info;
  * The monster race arrays
  */
 monster_race *r_info;
+monster_base *rb_info;
+monster_pain *pain_messages;
 
 /**
  * The player race arrays
@@ -799,11 +801,16 @@ spell_type *s_info;
 flavor_type *flavor_info;
 
 
-/*
+/**
  * The hints array
  */
 struct hint *hints;
 
+/**
+ * Array of pit types
+ */
+struct pit_profile *pit_info;
+ 
 /**
  * Hack -- The special Angband "System Suffix"
  * This variable is used to choose an appropriate "pref-xxx" file

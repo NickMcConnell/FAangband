@@ -116,6 +116,7 @@ typedef struct maxima {
     u16b a_max;		/**< Max size for "a_info[]" */
     u16b e_max;		/**< Max size for "e_info[]" */
     u16b r_max;		/**< Max size for "r_info[]" */
+    u16b mp_max;        /**< Maximum number of monster pain message sets */
     u16b v_max;		/**< Max size for "v_info[]" */
     u16b t_max;		/**< Max size for "t_info[]" */
     u16b p_max;		/**< Max size for "p_info[]" */
@@ -125,6 +126,7 @@ typedef struct maxima {
     u16b flavor_max;	/**< Max size for "flavor_info[]" */
     u16b s_max;		/**< Max size for "s_info[]" */
     u16b set_max;	/**< Max size for "set_info[]" */
+    u16b pit_max;	/**< Maximum number of monster pit types */
 
     u16b o_max;		/**< Max size for "o_list[]" */
     u16b m_max;		/**< Max size for "mon_list[]" */
@@ -424,6 +426,35 @@ typedef struct {
 
 
 
+/*
+ * Monster pain messages.
+ */
+typedef struct monster_pain
+{
+	const char *messages[7];
+	int pain_idx;
+	
+	struct monster_pain *next;
+} monster_pain;
+ 
+/*
+ * Information about "base" monster type.
+ */
+typedef struct monster_base
+{
+	struct monster_base *next;
+
+	char *name;
+	char *text;
+
+	bitflag flags[RF_SIZE];         /* Flags */
+	bitflag spell_flags[RSF_SIZE];  /* Spell flags */
+	
+	wchar_t d_char;			/* Default monster character */
+
+	monster_pain *pain;		/* Pain messages */
+} monster_base;
+
 /**
  * Monster "race" information, including racial memories
  *
@@ -449,6 +480,8 @@ typedef struct monster_race {
     char *name;		/**< Name (offset) */
     char *text;		/**< Text (offset) */
 
+    struct monster_base *base;
+	
     byte hdice;		/**< Creatures hit dice count */
     byte hside;		/**< Creatures hit dice sides */
 

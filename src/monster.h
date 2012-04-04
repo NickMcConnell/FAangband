@@ -2,6 +2,9 @@
 #define MONSTER_MONSTER_H
 
 /* monster1.c */
+int lookup_monster(const char *name);
+monster_base *lookup_monster_base(const char *name);
+bool match_monster_bases(const monster_base *base, ...);
 extern void describe_monster(int r_idx, bool spoilers);
 extern void roff_top(int r_idx);
 extern void screen_roff(int r_idx);

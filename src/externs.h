@@ -199,7 +199,9 @@ extern object_kind *k_info;
 extern artifact_type *a_info;
 extern set_type *set_info;
 extern ego_item_type *e_info;
+extern monster_base *rb_info;
 extern monster_race *r_info;
+extern monster_pain *pain_messages;
 extern hist_type *h_info;
 extern player_race *p_info;
 extern player_class *c_info;
@@ -207,6 +209,7 @@ extern owner_type *b_info;
 extern spell_type *s_info;
 extern flavor_type *flavor_info;
 extern struct hint *hints;
+extern struct pit_profile *pit_info;
 
 extern const char *ANGBAND_SYS;
 extern const char *ANGBAND_GRAF;

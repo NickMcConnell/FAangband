@@ -59,7 +59,7 @@ V:1.1.6
 
 # monster zero is used for the player picture (in text mode).
 N:0:<player>
-T:Player
+T:player
 C:w
 
 
@@ -2963,14 +2963,17 @@ D:A small demonic spirit full of malevolence.
 
 N:277:Mimic (potion)
 T:mimic
+G:!
 C:w
 I:110:7d10:25:15:1
 W:20:3:75:60
 B:HIT:POISON:3d4
 B:HIT:HURT:2d3
 B:HIT:HURT:2d3
+F:COLD_BLOOD | NEVER_MOVE |
 F:CHAR_MULTI
 S:1_IN_6 | POW_9 | 
+S:BLIND | CONF | SCARE | SHAPECHANGE |
 S:WOUND | BOLT_COLD
 D:A strange creature that disguises itself as discarded objects to lure 
 D:unsuspecting adventurers within reach of its venomous claws.
@@ -3648,9 +3651,11 @@ B:HIT:POISON:3d4
 B:HIT:POISON:3d4
 B:HIT:HURT:2d3
 B:HIT:HURT:2d3
+F:COLD_BLOOD | NEVER_MOVE |
 F:CHAR_MULTI
 S:1_IN_6 | POW_12 | 
 S:WOUND | BOLT_FIRE | 
+S:BLIND | CONF | SCARE | SHAPECHANGE |
 S:S_MONSTER
 D:A strange creature that disguises itself as discarded objects to lure 
 D:unsuspecting adventurers within reach of its venomous claws.
@@ -4524,6 +4529,7 @@ D:A vicious monster, feared for his ferocity.
 
 N:406:Mimic (ring)
 T:mimic
+G:=
 C:w
 I:120:10d24:30:25:20
 W:35:3:120:200
@@ -4531,9 +4537,10 @@ B:HIT:POISON:3d4
 B:HIT:POISON:3d4
 B:HIT:POISON:3d4
 B:HIT:POISON:3d4
-F:CHAR_MULTI
+F:CHAR_MULTI |
+F:COLD_BLOOD | NEVER_MOVE
 S:1_IN_4 | POW_16 | 
-S:WOUND | FORGET | 
+S:WOUND | FORGET | BLIND | CONF | SCARE | SHAPECHANGE |
 S:BOLT_ACID | BOLT_FIRE | BOLT_COLD | BOLT_ELEC | 
 S:S_MONSTER
 D:A strange creature that disguises itself as discarded objects to lure 
@@ -5204,16 +5211,16 @@ D:A humanoid form composed of flames and hatred.
 
 N:461:Blade of slaughter
 T:mimic
+G:|
 C:R
 I:130:10d10:17:35:15
 W:43:4:45:670
 B:HIT:HURT:6d4
 B:HIT:HURT:6d4
 B:HIT:HURT:6d4
-F:FORCE_SLEEP
-F:EMPTY_MIND | KILL_BODY | FLYING | 
+F:KILL_BODY | FLYING | 
 F:IM_COLD | IM_ELEC | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR | NO_STUN
+F:NO_STUN
 S:1_IN_11 | POW_0 | 
 S:TELE_SELF_TO
 D:A blade with no wielder you can see, slaughtering where it will.  It is 
@@ -5742,13 +5749,7 @@ B:HIT:HURT:1d9
 B:HIT:HURT:1d9
 B:HIT:HURT:1d9
 B:HIT:HURT:1d9
-F:FORCE_SLEEP | FORCE_MAXHP | RAND_50 | 
-F:SMART | EMPTY_MIND | INVISIBLE | 
-F:PASS_WALL | MOVE_BODY | FLYING | 
-F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
-F:NO_CONF | NO_SLEEP | NO_FEAR
-S:1_IN_2 | POW_15 | 
-S:BLINK | TELE_SELF_TO | TPORT | CONF | WOUND
+S:1_IN_2 | POW_15 
 D:A strange ball of glowing light.  It disappears and reappears and seems to 
 D:draw you to it.  You seem somehow compelled to stand still and watch its 
 D:strange dancing motion.
@@ -6871,6 +6872,7 @@ W:0:0:0:0
 
 N:582:Living dungeon
 T:xorn
+G:#
 C:D
 I:110:28d100:14:68:5
 W:63:2:0:6500
@@ -7508,6 +7510,7 @@ W:0:0:0:0
 
 N:636:Mimic (large jeweled chest)
 T:mimic
+G:~
 C:v
 I:130:10d100:30:20:100
 W:83:6:165:15000
@@ -7515,8 +7518,10 @@ B:GAZE:CONFUSE
 B:CLAW:BLIND:1d19
 B:CLAW:PARALYZE:1d19
 B:TOUCH:POISON:10d20
+F:COLD_BLOOD | NEVER_MOVE |
 F:FORCE_MAXHP 
 S:1_IN_3 | POW_115 | 
+S:BLIND | CONF | SCARE | SHAPECHANGE |
 S:BRAIN_SMASH | BALL_POIS | 
 S:S_MONSTER | S_MONSTERS
 D:A deadly creature that disguises itself as a chest to lure unsuspecting 

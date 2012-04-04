@@ -23,6 +23,71 @@
 
 
 /**
+ * Returns the r_idx of the monster with the given name. If no monster has
+ * the exact name given, returns the r_idx of the first monster having the
+ * given name as a (case-insensitive) substring.
+ *
+ * Returns -1 if no match is found.
+ */
+int lookup_monster(const char *name)
+{
+	int i;
+	int r_idx = -1;
+	
+	/* Look for it */
+	for (i = 1; i < z_info->r_max; i++)
+	{
+		monster_race *r_ptr = &r_info[i];
+
+		/* Test for equality */
+		if (r_ptr->name && streq(name, r_ptr->name))
+			return i;
+		
+		/* Test for close matches */
+		if (r_ptr->name && my_stristr(r_ptr->name, name) && r_idx == -1)
+			r_idx = i;
+	} 
+
+	/* Return our best match */
+	return r_idx;
+}
+
+/**
+ * Return the monster base matching the given name.
+ */
+monster_base *lookup_monster_base(const char *name)
+{
+	monster_base *base;
+
+	/* Look for it */
+	for (base = rb_info; base; base = base->next) {
+		if (streq(name, base->name))
+			return base;
+	}
+
+	return NULL;
+}
+
+/**
+ * Return whether the given base matches any of the names given.
+ *
+ * Accepts a variable-length list of name strings. The list must end with NULL.
+ */
+bool match_monster_bases(const monster_base *base, ...)
+{
+	bool ok = FALSE;
+	va_list vp;
+	char *name;
+
+	va_start(vp, base);
+	while (!ok && ((name = va_arg(vp, char *)) != NULL))
+		ok = base == lookup_monster_base(name);
+	va_end(vp);
+
+	return ok;
+}
+
+/**
  * Pronoun arrays, by gender.
  */
 static const char *wd_he[3] = { "It", "He", "She" };
