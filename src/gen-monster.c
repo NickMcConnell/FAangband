@@ -366,6 +366,7 @@ extern char *mon_restrict(char symbol, byte depth, bool * ordered,
 	if (i < 2499) {
 	    /* ...use that monster's symbol for all monsters. */
 	    symbol = r_info[j].d_char;
+	    strcpy(name, r_info[j].base->name);
 	} else {
 	    /* Paranoia - pit stays empty if no monster is found */
 	    return (NULL);
@@ -803,18 +804,6 @@ extern char *mon_restrict(char symbol, byte depth, bool * ordered,
 		*ordered = FALSE;
 
 	    break;
-	}
-    }
-
-    /* If monster pit hasn't been named already, get a name. */
-    if (streq(name, "misc")) {
-	/* Search a table for a description of the symbol */
-	for (i = 0; d_char_req_desc[i]; ++i) {
-	    if (symbol == d_char_req_desc[i][0]) {
-		/* Get all but the 1st 2 characters of the text. */
-		sprintf(name, "%s", d_char_req_desc[i] + 2);
-		break;
-	    }
 	}
     }
 
