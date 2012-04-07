@@ -1426,7 +1426,7 @@ W:0:0:0:0
 
 N:136:Novice shapeshifter
 T:person
-C:w
+C:Y
 I:110:6d5:20:7:10
 W:9:2:40:6
 B:HIT:HURT:1d3
@@ -4441,7 +4441,7 @@ D:You don't believe in them.
 
 N:399:Shapeshifter
 T:person
-C:w
+C:Y
 I:120:11d35:20:7:10
 W:35:2:100:300
 B:HIT:HURT:2d6

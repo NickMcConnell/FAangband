@@ -2567,11 +2567,6 @@ extern int PlayerUID;
 /** Max number of items in the itemlist */
 #define MAX_ITEMLIST 256
 
-/**
- * Maximum number of rvals (monster templates) that a pit can specify.
- */
-#define MAX_RVALS 4
-
 /* MSVC doesn't have va_copy (which is C99) or an alternative, so we'll just
  * copy the SRC pointer. In other cases we'll use va_copy() as we should. */
 #ifdef _MSC_VER
