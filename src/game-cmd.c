@@ -40,11 +40,11 @@ static bool repeating = FALSE;
 /* A simple list of commands and their handling functions. */
 static struct
 {
-    cmd_code cmd;
-    enum cmd_arg_type arg_type[CMD_MAX_ARGS];
-    cmd_handler_fn fn;
-    bool repeat_allowed;
-    int auto_repeat_n;
+	cmd_code cmd;
+	enum cmd_arg_type arg_type[CMD_MAX_ARGS];
+	cmd_handler_fn fn;
+	bool repeat_allowed;
+	int auto_repeat_n;
 } game_cmds[] =
 {
     { CMD_LOADFILE, { arg_NONE }, NULL, FALSE, 0 },
@@ -111,12 +111,12 @@ static struct
 /* Item selector type (everything required for get_item()) */
 struct item_selector
 {
-    cmd_code command;
+	cmd_code command;
     const char *prompt;
     const char *noop;
 
-    bool (*filter)(const object_type *o_ptr);
-    int mode;
+	bool (*filter)(const object_type *o_ptr);
+	int mode;
 };
 
 /** List of requirements for various commands' objects */
@@ -183,7 +183,7 @@ struct item_selector item_selector[] =
 
 game_command *cmd_get_top(void)
 {
-    return &cmd_queue[prev_cmd_idx(cmd_head)];
+	return &cmd_queue[prev_cmd_idx(cmd_head)];
 }
 
 
@@ -192,34 +192,34 @@ game_command *cmd_get_top(void)
  */
 errr cmd_insert_s(game_command *cmd)
 {
-    /* If queue full, return error */
-    if (cmd_head + 1 == cmd_tail) return 1;
-    if (cmd_head + 1 == CMD_QUEUE_SIZE && cmd_tail == 0) return 1;
+	/* If queue full, return error */
+	if (cmd_head + 1 == cmd_tail) return 1;
+	if (cmd_head + 1 == CMD_QUEUE_SIZE && cmd_tail == 0) return 1;
 
-    /* Insert command into queue. */
-    if (cmd->command != CMD_REPEAT)
-    {
-	cmd_queue[cmd_head] = *cmd;
-    }
-    else
-    {
-	int cmd_prev = cmd_head - 1;
+	/* Insert command into queue. */
+	if (cmd->command != CMD_REPEAT)
+	{
+		cmd_queue[cmd_head] = *cmd;
+	}
+	else
+	{
+		int cmd_prev = cmd_head - 1;
 
-	if (!repeat_prev_allowed) return 1;
+		if (!repeat_prev_allowed) return 1;
 
-	/* If we're repeating a command, we duplicate the previous command 
-	   in the next command "slot". */
-	if (cmd_prev < 0) cmd_prev = CMD_QUEUE_SIZE - 1;
+		/* If we're repeating a command, we duplicate the previous command 
+		   in the next command "slot". */
+		if (cmd_prev < 0) cmd_prev = CMD_QUEUE_SIZE - 1;
 		
-	if (cmd_queue[cmd_prev].command != CMD_NULL)
-	    cmd_queue[cmd_head] = cmd_queue[cmd_prev];
-    }
+		if (cmd_queue[cmd_prev].command != CMD_NULL)
+			cmd_queue[cmd_head] = cmd_queue[cmd_prev];
+	}
 
-    /* Advance point in queue, wrapping around at the end */
-    cmd_head++;
-    if (cmd_head == CMD_QUEUE_SIZE) cmd_head = 0;
+	/* Advance point in queue, wrapping around at the end */
+	cmd_head++;
+	if (cmd_head == CMD_QUEUE_SIZE) cmd_head = 0;
 
-    return 0;	
+	return 0;	
 }
 
 /*
@@ -229,129 +229,127 @@ errr cmd_insert_s(game_command *cmd)
  */
 errr cmd_get(cmd_context c, game_command **cmd, bool wait)
 {
-    /* If we're repeating, just pull the last command again. */
-    if (repeating)
-    {
-	*cmd = &cmd_queue[prev_cmd_idx(cmd_tail)];
-	return 0;
-    }
+	/* If we're repeating, just pull the last command again. */
+	if (repeating)
+	{
+		*cmd = &cmd_queue[prev_cmd_idx(cmd_tail)];
+		return 0;
+	}
 
-    /* If there are no commands queued, ask the UI for one. */
-    if (cmd_head == cmd_tail) 
-	cmd_get_hook(c, wait);
+	/* If there are no commands queued, ask the UI for one. */
+	if (cmd_head == cmd_tail) 
+		cmd_get_hook(c, wait);
 
-    /* If we have a command ready, set it and return success. */
-    if (cmd_head != cmd_tail)
-    {
-	*cmd = &cmd_queue[cmd_tail++];
-	if (cmd_tail == CMD_QUEUE_SIZE) cmd_tail = 0;
+	/* If we have a command ready, set it and return success. */
+	if (cmd_head != cmd_tail)
+	{
+		*cmd = &cmd_queue[cmd_tail++];
+		if (cmd_tail == CMD_QUEUE_SIZE) cmd_tail = 0;
 
-	return 0;
-    }
+		return 0;
+	}
 
-    /* Failure to get a command. */
-    return 1;
+	/* Failure to get a command. */
+	return 1;
 }
 
 /* Return the index of the given command in the command array. */
 static int cmd_idx(cmd_code code)
 {
-    size_t i;
+	size_t i;
 
-    for (i = 0; i < N_ELEMENTS(game_cmds); i++)
-    {
-	if (game_cmds[i].cmd == code)
+	for (i = 0; i < N_ELEMENTS(game_cmds); i++)
 	{
-	    return i;
+		if (game_cmds[i].cmd == code)
+			return i;
 	}
-    }
 
-    return -1;
+	return -1;
 }
 
 void cmd_set_arg_choice(game_command *cmd, int n, int choice)
 {
-    int idx = cmd_idx(cmd->command);
+	int idx = cmd_idx(cmd->command);
 
-    assert(n <= CMD_MAX_ARGS);
-    assert(game_cmds[idx].arg_type[n] & arg_CHOICE);
+	assert(n <= CMD_MAX_ARGS);
+	assert(game_cmds[idx].arg_type[n] & arg_CHOICE);
 
-    cmd->arg[n].choice = choice;
-    cmd->arg_type[n] = arg_CHOICE;
-    cmd->arg_present[n] = TRUE;
+	cmd->arg[n].choice = choice;
+	cmd->arg_type[n] = arg_CHOICE;
+	cmd->arg_present[n] = TRUE;
 }
 
 void cmd_set_arg_string(game_command *cmd, int n, const char *str)
 {
-    int idx = cmd_idx(cmd->command);
+	int idx = cmd_idx(cmd->command);
 
-    assert(n <= CMD_MAX_ARGS);
-    assert(game_cmds[idx].arg_type[n] & arg_STRING);
+	assert(n <= CMD_MAX_ARGS);
+	assert(game_cmds[idx].arg_type[n] & arg_STRING);
 
-    cmd->arg[n].string = string_make(str);
-    cmd->arg_type[n] = arg_STRING;
-    cmd->arg_present[n] = TRUE;
+	cmd->arg[n].string = string_make(str);
+	cmd->arg_type[n] = arg_STRING;
+	cmd->arg_present[n] = TRUE;
 }
 
 void cmd_set_arg_direction(game_command *cmd, int n, int dir)
 {
-    int idx = cmd_idx(cmd->command);
+	int idx = cmd_idx(cmd->command);
 
-    assert(n <= CMD_MAX_ARGS);
-    assert(game_cmds[idx].arg_type[n] & arg_DIRECTION);
+	assert(n <= CMD_MAX_ARGS);
+	assert(game_cmds[idx].arg_type[n] & arg_DIRECTION);
 
-    cmd->arg[n].direction = dir;
-    cmd->arg_type[n] = arg_DIRECTION;
-    cmd->arg_present[n] = TRUE;
+	cmd->arg[n].direction = dir;
+	cmd->arg_type[n] = arg_DIRECTION;
+	cmd->arg_present[n] = TRUE;
 }
 
 void cmd_set_arg_target(game_command *cmd, int n, int target)
 {
-    int idx = cmd_idx(cmd->command);
+	int idx = cmd_idx(cmd->command);
 
-    assert(n <= CMD_MAX_ARGS);
-    assert(game_cmds[idx].arg_type[n] & arg_TARGET);
+	assert(n <= CMD_MAX_ARGS);
+	assert(game_cmds[idx].arg_type[n] & arg_TARGET);
 
-    cmd->arg[n].direction = target;
-    cmd->arg_type[n] = arg_TARGET;
-    cmd->arg_present[n] = TRUE;
+	cmd->arg[n].direction = target;
+	cmd->arg_type[n] = arg_TARGET;
+	cmd->arg_present[n] = TRUE;
 }
 
 void cmd_set_arg_point(game_command *cmd, int n, int x, int y)
 {
-    int idx = cmd_idx(cmd->command);
+	int idx = cmd_idx(cmd->command);
 
-    assert(n <= CMD_MAX_ARGS);
-    assert(game_cmds[idx].arg_type[n] & arg_POINT);
+	assert(n <= CMD_MAX_ARGS);
+	assert(game_cmds[idx].arg_type[n] & arg_POINT);
 
-    cmd->arg[n].point.x = x;
-    cmd->arg[n].point.y = y;
-    cmd->arg_type[n] = arg_POINT;
-    cmd->arg_present[n] = TRUE;
+	cmd->arg[n].point.x = x;
+	cmd->arg[n].point.y = y;
+	cmd->arg_type[n] = arg_POINT;
+	cmd->arg_present[n] = TRUE;
 }
 
 void cmd_set_arg_item(game_command *cmd, int n, int item)
 {
-    int idx = cmd_idx(cmd->command);
+	int idx = cmd_idx(cmd->command);
 
-    assert(n <= CMD_MAX_ARGS);
-    assert(game_cmds[idx].arg_type[n] & arg_ITEM);
+	assert(n <= CMD_MAX_ARGS);
+	assert(game_cmds[idx].arg_type[n] & arg_ITEM);
 
-    cmd->arg[n].item = item;
-    cmd->arg_type[n] = arg_ITEM;
-    cmd->arg_present[n] = TRUE;
+	cmd->arg[n].item = item;
+	cmd->arg_type[n] = arg_ITEM;
+	cmd->arg_present[n] = TRUE;
 }
 
 void cmd_set_arg_number(game_command *cmd, int n, int num)
 {
-    int idx = cmd_idx(cmd->command);
+	int idx = cmd_idx(cmd->command);
 
-    assert(n <= CMD_MAX_ARGS);
-    assert(game_cmds[idx].arg_type[n] & arg_NUMBER);
+	assert(n <= CMD_MAX_ARGS);
+	assert(game_cmds[idx].arg_type[n] & arg_NUMBER);
 
-    cmd->arg[n].number = num;
-    cmd->arg_type[n] = arg_NUMBER;
-    cmd->arg_present[n] = TRUE;
+	cmd->arg[n].number = num;
+	cmd->arg_type[n] = arg_NUMBER;
+	cmd->arg_present[n] = TRUE;
 }
 
 /*
@@ -360,15 +358,15 @@ void cmd_set_arg_number(game_command *cmd, int n, int num)
  */
 errr cmd_insert_repeated(cmd_code c, int nrepeats)
 {
-    game_command cmd = { CMD_NULL, 0, {{0}} };
+	game_command cmd = { 0 };
 
-    if (cmd_idx(c) == -1)
-	return 1;
+	if (cmd_idx(c) == -1)
+		return 1;
 
-    cmd.command = c;
-    cmd.nrepeats = nrepeats;
+	cmd.command = c;
+	cmd.nrepeats = nrepeats;
 
-    return cmd_insert_s(&cmd);
+	return cmd_insert_s(&cmd);
 }
 
 /* 
@@ -376,7 +374,7 @@ errr cmd_insert_repeated(cmd_code c, int nrepeats)
  */
 errr cmd_insert(cmd_code c)
 {
-    return cmd_insert_repeated(c, 0);
+	return cmd_insert_repeated(c, 0);
 }
 
 
@@ -386,100 +384,101 @@ errr cmd_insert(cmd_code c)
  */
 void process_command(cmd_context ctx, bool no_request)
 {
-    game_command *cmd;
+	game_command *cmd;
 
-    /* Reset so that when selecting items, we look in the default location */
-    p_ptr->command_wrk = 0;
+	/* Reset so that when selecting items, we look in the default location */
+	p_ptr->command_wrk = 0;
 
-    /* If we've got a command to process, do it. */
-    if (cmd_get(ctx, &cmd, !no_request) == 0)
-    {
-	int oldrepeats = cmd->nrepeats;
-	int idx = cmd_idx(cmd->command);
-
-	if (idx == -1) return;
-
-	for (size_t i = 0; i < N_ELEMENTS(item_selector); i++)
+	/* If we've got a command to process, do it. */
+	if (cmd_get(ctx, &cmd, !no_request) == 0)
 	{
-	    struct item_selector *is = &item_selector[i];
+		int oldrepeats = cmd->nrepeats;
+		int idx = cmd_idx(cmd->command);
+		size_t i;
 
-	    if (is->command != cmd->command)
-		continue;
+		if (idx == -1) return;
 
-	    if (!cmd->arg_present[0])
-	    {
-		int item;
+		for (i = 0; i < N_ELEMENTS(item_selector); i++)
+		{
+			struct item_selector *is = &item_selector[i];
 
-		item_tester_hook = is->filter;
+			if (is->command != cmd->command)
+				continue;
+
+			if (!cmd->arg_present[0])
+			{
+				int item;
+
+				item_tester_hook = is->filter;
 		if (!get_item(&item, is->prompt, is->noop, cmd->command, 
 			      is->mode))
-		    return;
+					return;
 
-		cmd_set_arg_item(cmd, 0, item);
-	    }
-	}
+				cmd_set_arg_item(cmd, 0, item);
+			}
+		}
 
-	/* Do some sanity checking on those arguments that might have 
-	   been declared as "unknown", such as directions and targets. */
-	switch (cmd->command)
-	{
-	case CMD_INSCRIBE:
-	{
-	    char o_name[80];
-	    char tmp[80] = "";
-	    object_type *o_ptr = object_from_item_idx(cmd->arg[0].item);
+		/* Do some sanity checking on those arguments that might have 
+		   been declared as "unknown", such as directions and targets. */
+		switch (cmd->command)
+		{
+			case CMD_INSCRIBE:
+			{
+				char o_name[80];
+				char tmp[80] = "";
+				object_type *o_ptr = object_from_item_idx(cmd->arg[0].item);
+			
+				object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
+				msg("Inscribing %s.", o_name);
+				message_flush();
+			
+				/* Use old inscription */
+				if (o_ptr->note)
+					strnfmt(tmp, sizeof(tmp), "%s", quark_str(o_ptr->note));
+			
+				/* Get a new inscription (possibly empty) */
+				if (!get_string("Inscription: ", tmp, sizeof(tmp)))
+					return;
 
-	    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
-	    msg("Inscribing %s.", o_name);
-	    message_flush();
+				cmd_set_arg_string(cmd, 1, tmp);
+				break;
+			}
 
-	    /* Use old inscription */
-	    if (o_ptr->note)
-		strnfmt(tmp, sizeof(tmp), "%s", quark_str(o_ptr->note));
-
-	    /* Get a new inscription (possibly empty) */
-	    if (!get_string("Inscription: ", tmp, sizeof(tmp))) 
-		return;
-
-	    cmd_set_arg_string(cmd, 1, tmp);
-	    break;
-	}
-
-	case CMD_OPEN:
-	{
-	    if (OPT(easy_open) && (!cmd->arg_present[0] ||
-				   cmd->arg[0].direction == DIR_UNKNOWN))
-	    {
-		int y, x;
-		int n_closed_doors, n_locked_chests;
+			case CMD_OPEN:
+			{
+				if (OPT(easy_open) && (!cmd->arg_present[0] ||
+						cmd->arg[0].direction == DIR_UNKNOWN))
+				{
+					int y, x;
+					int n_closed_doors, n_locked_chests;
 			
 		n_closed_doors = count_feats(&y, &x, TF_DOOR_CLOSED, FALSE);
-		n_locked_chests = count_chests(&y, &x, FALSE);
+					n_locked_chests = count_chests(&y, &x, FALSE);
 			
-		if (n_closed_doors + n_locked_chests == 1)
-		    cmd_set_arg_direction(cmd, 0, coords_to_dir(y, x));
-	    }
+					if (n_closed_doors + n_locked_chests == 1)
+						cmd_set_arg_direction(cmd, 0, coords_to_dir(y, x));
+				}
 
-	    goto get_dir;
-	}
+				goto get_dir;
+			}
 
-	case CMD_CLOSE:
-	{
-	    if (OPT(easy_open) && (!cmd->arg_present[0] ||
-				   cmd->arg[0].direction == DIR_UNKNOWN))
-	    {
-		int y, x;
+			case CMD_CLOSE:
+			{
+				if (OPT(easy_open) && (!cmd->arg_present[0] ||
+						cmd->arg[0].direction == DIR_UNKNOWN))
+				{
+					int y, x;
 			
-		/* Count open doors */
+					/* Count open doors */
 		if (count_feats(&y, &x, TF_CLOSABLE, FALSE) == 1)
-		    cmd_set_arg_direction(cmd, 0, coords_to_dir(y, x));
-	    }
+						cmd_set_arg_direction(cmd, 0, coords_to_dir(y, x));
+				}
 
-	    goto get_dir;
-	}
+				goto get_dir;
+			}
 
-	case CMD_DISARM:
-	{
+			case CMD_DISARM:
+			{
 	    /* Player is in a web */
 	    if (cave_web(p_ptr->py, p_ptr->px)) 
 	    {
@@ -494,129 +493,129 @@ void process_command(cmd_context ctx, bool no_request)
 		return;
 	    }
 
-	    if (OPT(easy_open) && (!cmd->arg_present[0] ||
-				   cmd->arg[0].direction == DIR_UNKNOWN))
-	    {
-		int y, x;
-		int n_visible_traps, n_trapped_chests;
+				if (OPT(easy_open) && (!cmd->arg_present[0] ||
+						cmd->arg[0].direction == DIR_UNKNOWN))
+				{
+					int y, x;
+					int n_visible_traps, n_trapped_chests;
 			
 		n_visible_traps = count_traps(&y, &x);	
-		n_trapped_chests = count_chests(&y, &x, TRUE);
+					n_trapped_chests = count_chests(&y, &x, TRUE);
 
-		if (n_visible_traps + n_trapped_chests == 1)
-		    cmd_set_arg_direction(cmd, 0, coords_to_dir(y, x));
-	    }
+					if (n_visible_traps + n_trapped_chests == 1)
+						cmd_set_arg_direction(cmd, 0, coords_to_dir(y, x));
+				}
 
-	    goto get_dir;
-	}
+				goto get_dir;
+			}
 
-	case CMD_WALK:
-	case CMD_RUN:
-	case CMD_JUMP:
-	case CMD_BASH:
+			case CMD_WALK:
+			case CMD_RUN:
+			case CMD_JUMP:
+			case CMD_BASH:
 	case CMD_TUNNEL:
-	case CMD_ALTER:
-	case CMD_JAM:
-	{
-	get_dir:
+			case CMD_ALTER:
+			case CMD_JAM:
+			{
+			get_dir:
 
-	    /* Direction hasn't been specified, so we ask for one. */
-	    if (!cmd->arg_present[0] ||
-		cmd->arg[0].direction == DIR_UNKNOWN)
-	    {
-		int dir;
-		if (!get_rep_dir(&dir))
-		    return;
+				/* Direction hasn't been specified, so we ask for one. */
+				if (!cmd->arg_present[0] ||
+						cmd->arg[0].direction == DIR_UNKNOWN)
+				{
+					int dir;
+					if (!get_rep_dir(&dir))
+						return;
 
-		cmd_set_arg_direction(cmd, 0, dir);
-	    }
+					cmd_set_arg_direction(cmd, 0, dir);
+				}
 				
-	    break;
-	}
+				break;
+			}
 
-	case CMD_DROP:
-	{
-	    if (!cmd->arg_present[1])
-	    {
-		object_type *o_ptr = object_from_item_idx(cmd->arg[0].item);
-		int amt = get_quantity(NULL, o_ptr->number);
-		if (amt <= 0)
-		    return;
+			case CMD_DROP:
+			{
+				if (!cmd->arg_present[1])
+				{
+					object_type *o_ptr = object_from_item_idx(cmd->arg[0].item);
+					int amt = get_quantity(NULL, o_ptr->number);
+					if (amt <= 0)
+						return;
 
-		cmd_set_arg_number(cmd, 1, amt);
-	    }
+					cmd_set_arg_number(cmd, 1, amt);
+				}
 
-	    break;
-	}
+				break;
+			}
 			
-	/* 
-	 * These take an item number and a  "target" as arguments, 
-	 * though a target isn't always actually needed, so we'll 
-	 * only prompt for it via callback if the item being used needs it.
-	 */
-	case CMD_USE_WAND:
-	case CMD_USE_ROD:
-	case CMD_QUAFF:
-	case CMD_ACTIVATE:
-	case CMD_READ_SCROLL:
-	case CMD_FIRE:
-	case CMD_THROW:
-	{
-	    bool get_target = FALSE;
+			/* 
+			 * These take an item number and a  "target" as arguments, 
+			 * though a target isn't always actually needed, so we'll 
+			 * only prompt for it via callback if the item being used needs it.
+			 */
+			case CMD_USE_WAND:
+			case CMD_USE_ROD:
+			case CMD_QUAFF:
+			case CMD_ACTIVATE:
+			case CMD_READ_SCROLL:
+			case CMD_FIRE:
+			case CMD_THROW:
+			{
+				bool get_target = FALSE;
 
 	    if (obj_needs_aim(object_from_item_idx(cmd->arg[0].choice)))
-	    {
-		if (!cmd->arg_present[1])
-		    get_target = TRUE;
+				{
+					if (!cmd->arg_present[1])
+						get_target = TRUE;
 
-		if (cmd->arg[1].direction == DIR_UNKNOWN)
-		    get_target = TRUE;
+					if (cmd->arg[1].direction == DIR_UNKNOWN)
+						get_target = TRUE;
 
-		if (cmd->arg[1].direction == DIR_TARGET && !target_okay())
-		    get_target = TRUE;
-	    }
+					if (cmd->arg[1].direction == DIR_TARGET && !target_okay())
+						get_target = TRUE;
+				}
 
-	    if (get_target && !get_aim_dir(&cmd->arg[1].direction))
-		return;
+				if (get_target && !get_aim_dir(&cmd->arg[1].direction))
+						return;
 
-	    cmd->arg_present[1] = TRUE;
+				cmd->arg_present[1] = TRUE;
 
-	    break;
-	}
+				break;
+			}
 			
-	/* This takes a choice and a direction. */
-	case CMD_CAST:
-	{
-	    bool get_target = FALSE;
+			/* This takes a choice and a direction. */
+			case CMD_CAST:
+			{
+				bool get_target = FALSE;
 
 	    if (spell_needs_aim(mp_ptr->spell_book, cmd->arg[0].choice))
-	    {
-		if (!cmd->arg_present[1])
-		    get_target = TRUE;
+				{
+					if (!cmd->arg_present[1])
+						get_target = TRUE;
 
-		if (cmd->arg[1].direction == DIR_UNKNOWN)
-		    get_target = TRUE;
+					if (cmd->arg[1].direction == DIR_UNKNOWN)
+						get_target = TRUE;
 
-		if (cmd->arg[1].direction == DIR_TARGET && !target_okay())
-		    get_target = TRUE;
-	    }
+					if (cmd->arg[1].direction == DIR_TARGET && !target_okay())
+						get_target = TRUE;
+				}
 
-	    if (get_target && !get_aim_dir(&cmd->arg[1].direction))
-		return;
+				if (get_target && !get_aim_dir(&cmd->arg[1].direction))
+						return;
 
-	    cmd->arg_present[1] = TRUE;
+				cmd->arg_present[1] = TRUE;
 				
-	    break;
-	}
+				break;
+			}
 
-	case CMD_WIELD:
-	{
-	    object_type *o_ptr = object_from_item_idx(cmd->arg[0].choice);
-	    int slot = wield_slot(o_ptr);
-
+			case CMD_WIELD:
+			{
+				object_type *o_ptr = object_from_item_idx(cmd->arg[0].choice);
+				int slot = wield_slot(o_ptr);
+			
 	    /* Deal with throwing weapons */
 	    if ((slot == INVEN_WIELD) && of_has(o_ptr->flags_obj, OF_THROWING))
-	    {
+					{
 		if (get_check("Equip in throwing belt?")) 
 		    slot = wield_slot_ammo(o_ptr);
 	    }
@@ -626,61 +625,61 @@ void process_command(cmd_context ctx, bool no_request)
 	     * to replace */
 	    if (p_ptr->inventory[slot].k_idx) {
 		if (o_ptr->tval == TV_RING) {
-		    const char *q = "Replace which ring? ";
-		    const char *s = "Error in obj_wield, please report";
-		    item_tester_hook = obj_is_ring;
+						const char *q = "Replace which ring? ";
+						const char *s = "Error in obj_wield, please report";
+						item_tester_hook = obj_is_ring;
 		    if (!get_item(&slot, q, s, CMD_WIELD, USE_EQUIP))
 			return;
-		}
-
+					}
+			
 		if ((is_missile(o_ptr) || 
 		     (of_has(o_ptr->flags_obj, OF_THROWING) && (slot != INVEN_WIELD))) 
 		    && !object_similar(&p_ptr->inventory[slot], o_ptr, OSTACK_QUIVER)) {
 		    const char *q = "Replace which quiver item? ";
-		    const char *s = "Error in obj_wield, please report";
+						const char *s = "Error in obj_wield, please report";
 		    item_tester_hook = obj_is_quiver_obj;
 		    if (!get_item(&slot, q, s, CMD_WIELD, USE_EQUIP))
 			return;
+					}
+				}
+
+				cmd_set_arg_number(cmd, 1, slot);
+				break;
+			}
+
+			default: 
+			{
+				/* I can see the point of the compiler warning, but still... */
+				break;
+			}
 		}
-	    }
 
-	    cmd_set_arg_number(cmd, 1, slot);
-	    break;
+		/* Command repetition */
+		if (game_cmds[idx].repeat_allowed)
+		{
+			/* Auto-repeat only if there isn't already a repeat length. */
+			if (game_cmds[idx].auto_repeat_n > 0 && cmd->nrepeats == 0)
+				cmd_set_repeat(game_cmds[idx].auto_repeat_n);
+		}
+		else
+		{
+			cmd->nrepeats = 0;
+			repeating = FALSE;
+		}
+
+		/* 
+		 * The command gets to unset this if it isn't appropriate for
+		 * the user to repeat it.
+		 */
+		repeat_prev_allowed = TRUE;
+
+		if (game_cmds[idx].fn)
+			game_cmds[idx].fn(cmd->command, cmd->arg);
+
+		/* If the command hasn't changed nrepeats, count this execution. */
+		if (cmd->nrepeats > 0 && oldrepeats == cmd_get_nrepeats())
+			cmd_set_repeat(oldrepeats - 1);
 	}
-
-	default: 
-	{
-	    /* I can see the point of the compiler warning, but still... */
-	    break;
-	}
-	}
-
-	/* Command repetition */
-	if (game_cmds[idx].repeat_allowed)
-	{
-	    /* Auto-repeat only if there isn't already a repeat length. */
-	    if (game_cmds[idx].auto_repeat_n > 0 && cmd->nrepeats == 0)
-		cmd_set_repeat(game_cmds[idx].auto_repeat_n);
-	}
-	else
-	{
-	    cmd->nrepeats = 0;
-	    repeating = FALSE;
-	}
-
-	/* 
-	 * The command gets to unset this if it isn't appropriate for
-	 * the user to repeat it.
-	 */
-	repeat_prev_allowed = TRUE;
-
-	if (game_cmds[idx].fn)
-	    game_cmds[idx].fn(cmd->command, cmd->arg);
-
-	/* If the command hasn't changed nrepeats, count this execution. */
-	if (cmd->nrepeats > 0 && oldrepeats == cmd_get_nrepeats())
-	    cmd_set_repeat(oldrepeats - 1);
-    }
 }
 
 /* 
@@ -688,17 +687,17 @@ void process_command(cmd_context ctx, bool no_request)
  */
 void cmd_cancel_repeat(void)
 {
-    game_command *cmd = &cmd_queue[prev_cmd_idx(cmd_tail)];
+	game_command *cmd = &cmd_queue[prev_cmd_idx(cmd_tail)];
 
-    if (cmd->nrepeats || repeating)
-    {
-	/* Cancel */
-	cmd->nrepeats = 0;
-	repeating = FALSE;
+	if (cmd->nrepeats || repeating)
+	{
+		/* Cancel */
+		cmd->nrepeats = 0;
+		repeating = FALSE;
 		
-	/* Redraw the state (later) */
-	p_ptr->redraw |= (PR_STATE);
-    }
+		/* Redraw the state (later) */
+		p_ptr->redraw |= (PR_STATE);
+	}
 }
 
 /* 
@@ -706,14 +705,14 @@ void cmd_cancel_repeat(void)
  */
 void cmd_set_repeat(int nrepeats)
 {
-    game_command *cmd = &cmd_queue[prev_cmd_idx(cmd_tail)];
+	game_command *cmd = &cmd_queue[prev_cmd_idx(cmd_tail)];
 
-    cmd->nrepeats = nrepeats;
-    if (nrepeats) repeating = TRUE;
-    else repeating = FALSE;
+	cmd->nrepeats = nrepeats;
+	if (nrepeats) repeating = TRUE;
+	else repeating = FALSE;
 
-    /* Redraw the state (later) */
-    p_ptr->redraw |= (PR_STATE);
+	/* Redraw the state (later) */
+	p_ptr->redraw |= (PR_STATE);
 }
 
 /* 
@@ -721,8 +720,8 @@ void cmd_set_repeat(int nrepeats)
  */
 int cmd_get_nrepeats(void)
 {
-    game_command *cmd = &cmd_queue[prev_cmd_idx(cmd_tail)];
-    return cmd->nrepeats;
+	game_command *cmd = &cmd_queue[prev_cmd_idx(cmd_tail)];
+	return cmd->nrepeats;
 }
 
 /*
@@ -731,5 +730,5 @@ int cmd_get_nrepeats(void)
  */
 void cmd_disable_repeat(void)
 {
-    repeat_prev_allowed = FALSE;
+	repeat_prev_allowed = FALSE;
 }
