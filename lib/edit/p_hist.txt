@@ -74,11 +74,11 @@ D:You were born by the River Adurant.
 N:4:7:90:55
 D:You followed Denethor across the Ered Luin.  
 N:4:7:95:60
-D:You are of the clan of Lenw["e].  
+D:You are of the clan of Lenwë.  
 N:4:7:98:65
 D:You are regarded as a leader of the Nandor.  
 N:4:7:100:70
-D:You were a counsellor of Denethor son of Lenw["e].  
+D:You were a counsellor of Denethor son of Lenwë.  
 
 N:5:7:40:50
 D:You are of the Sindar.  
@@ -89,7 +89,7 @@ D:You have lived in Menegroth.
 N:5:7:95:60
 D:You have served in the border guard of Doriath.  
 N:5:7:98:65
-D:You were born on the journey from Cuivi['e]nen.  
+D:You were born on the journey from Cuiviénen.  
 N:5:7:100:70
 D:You are of the court of Thingol Greycloak.  
 
@@ -185,9 +185,9 @@ N:18:57:100:55
 D:You are a well liked child.  
 
 N:19:23:85:45
-D:You are one of several children of a Dr['u]adan 
+D:You are one of several children of a Drúadan 
 N:19:23:100:55
-D:You are the only child of a Dr['u]adan 
+D:You are the only child of a Drúadan 
 
 N:20:21:10:25
 D:You are the illegitimate and unacknowledged child 
@@ -205,9 +205,9 @@ D:of a Haladin woodsman.
 N:21:3:80:90
 D:of a foot-soldier slain in the Dagor Bragollach.  
 N:21:3:90:105
-D:of a fugitive of the House of B["e]or.  
+D:of a fugitive of the House of Bëor.  
 N:21:3:96:120
-D:of a dispossessed landowner of Dor-L['o]min.  
+D:of a dispossessed landowner of Dor-Lómin.  
 N:21:3:99:130
 D:of a guard of Handir of Brethil.  
 N:21:3:100:140
@@ -242,7 +242,7 @@ D:You are a celebrated assistant to
 N:26:67:20:55
 D:Nessa.  
 N:26:67:40:60
-D:V['a]na.  
+D:Vána.  
 N:26:67:50:65
 D:Tulkas.  
 N:26:67:80:75
@@ -252,7 +252,7 @@ D:Nienna.
 N:26:67:95:90
 D:Varda.  
 N:26:67:100:95
-D:Manw["e].  
+D:Manwë.  
 
 N:28:29:10:35
 D:You are the bastard child of a Dark Elf 

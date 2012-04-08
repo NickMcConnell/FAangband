@@ -603,13 +603,13 @@ D:until broken.
 N:180:Song of Renewal
 D:Restores all your stats.
 
-N:181:Web of Vair["e]
+N:181:Web of Vairë
 D:Fires a bolt or beam of time.
 
 N:182:Speed of Nessa
 D:Temporarily hastens you.
 
-N:183:Renewal of V['a]na
+N:183:Renewal of Vána
 D:Recharges a magical item.
 
 N:184:Servant of Yavanna

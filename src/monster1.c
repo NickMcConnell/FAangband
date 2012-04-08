@@ -566,7 +566,7 @@ extern void describe_monster(int r_idx, bool spoilers)
 	if (rf_has(mon_flags, RF_ANGBAND))
 	    strcpy(location_desc, " in Angband");
 	if (rf_has(mon_flags, RF_RUDH))
-	    strcpy(location_desc, " in Amon R[^]udh");
+	    strcpy(location_desc, " in Amon Rûdh");
 	if (rf_has(mon_flags, RF_NARGOTHROND))
 	    strcpy(location_desc, " in Nargothrond");
 	if (rf_has(mon_flags, RF_DUNGORTHEB))
@@ -2834,8 +2834,9 @@ bool prepare_ghost(int r_idx, monster_type * m_ptr, bool from_savefile)
 
     /* Copy the info from the template to the special "ghost slot", and use
      * that from here on */
-    r_info[PLAYER_GHOST_RACE] = r_info[r_idx];
+    memcpy(&r_info[PLAYER_GHOST_RACE], r_ptr, sizeof(*r_ptr));
     r_ptr = &r_info[PLAYER_GHOST_RACE];
+    r_ptr->name = string_make(r_info[r_idx].name);
 
     /* Choose a bones file.  Use the variable bones_selector if it has any
      * information in it (this allows saved ghosts to reacquire all special

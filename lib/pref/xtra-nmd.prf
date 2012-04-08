@@ -21,7 +21,7 @@ R:0:0x9B:0x81
 R:0:0x9B:0x82
 ?:[AND [EQU $CLASS Warrior] [EQU $RACE Hobbit] ]
 R:0:0x9B:0x83
-?:[AND [EQU $CLASS Warrior] [EQU $RACE Dr['u]adan] ]
+?:[AND [EQU $CLASS Warrior] [EQU $RACE Drúadan] ]
 R:0:0x9B:0x84
 ?:[AND [EQU $CLASS Warrior] [EQU $RACE Petty-Dwarf] ]
 R:0:0x9B:0x85
@@ -50,7 +50,7 @@ R:0:0x9B:0x91
 R:0:0x9B:0x92
 ?:[AND [EQU $CLASS Mage] [EQU $RACE Hobbit] ]
 R:0:0x9B:0x93
-?:[AND [EQU $CLASS Mage] [EQU $RACE Dr['u]adan] ]
+?:[AND [EQU $CLASS Mage] [EQU $RACE Drúadan] ]
 R:0:0x9B:0x9C
 ?:[AND [EQU $CLASS Mage] [EQU $RACE Petty-Dwarf] ]
 R:0:0x9B:0x95
@@ -79,7 +79,7 @@ R:0:0x9C:0x81
 R:0:0x9C:0x82
 ?:[AND [EQU $CLASS Druid] [EQU $RACE Hobbit] ]
 R:0:0x9C:0x83
-?:[AND [EQU $CLASS Druid] [EQU $RACE Dr['u]adan] ]
+?:[AND [EQU $CLASS Druid] [EQU $RACE Drúadan] ]
 R:0:0x9C:0x84
 ?:[AND [EQU $CLASS Druid] [EQU $RACE Petty-Dwarf] ]
 R:0:0x9C:0x85
@@ -108,7 +108,7 @@ R:0:0x9C:0x91
 R:0:0x9C:0x92
 ?:[AND [EQU $CLASS Rogue] [EQU $RACE Hobbit] ]
 R:0:0x9C:0x93
-?:[AND [EQU $CLASS Rogue] [EQU $RACE Dr['u]adan] ]
+?:[AND [EQU $CLASS Rogue] [EQU $RACE Drúadan] ]
 R:0:0x9C:0x94
 ?:[AND [EQU $CLASS Rogue] [EQU $RACE Petty-Dwarf] ]
 R:0:0x9C:0x95
@@ -166,7 +166,7 @@ R:0:0x9D:0x91
 R:0:0x9D:0x92
 ?:[AND [EQU $CLASS Paladin] [EQU $RACE Hobbit] ]
 R:0:0x9D:0x93
-?:[AND [EQU $CLASS Paladin] [EQU $RACE Dr['u]adan] ]
+?:[AND [EQU $CLASS Paladin] [EQU $RACE Drúadan] ]
 R:0:0x9D:0x94
 ?:[AND [EQU $CLASS Paladin] [EQU $RACE Petty-Dwarf] ]
 R:0:0x9D:0x95
@@ -195,7 +195,7 @@ R:0:0x9B:0x81
 R:0:0x9B:0x82
 ?:[AND [EQU $CLASS Assassin] [EQU $RACE Hobbit] ]
 R:0:0x9B:0x83
-?:[AND [EQU $CLASS Assassin] [EQU $RACE Dr['u]adan] ]
+?:[AND [EQU $CLASS Assassin] [EQU $RACE Drúadan] ]
 R:0:0x9B:0x84
 ?:[AND [EQU $CLASS Assassin] [EQU $RACE Petty-Dwarf] ]
 R:0:0x9B:0x85
@@ -224,7 +224,7 @@ R:0:0x9B:0x91
 R:0:0x9B:0x92
 ?:[AND [EQU $CLASS Necromancer] [EQU $RACE Hobbit] ]
 R:0:0x9B:0x93
-?:[AND [EQU $CLASS Necromancer] [EQU $RACE Dr['u]adan] ]
+?:[AND [EQU $CLASS Necromancer] [EQU $RACE Drúadan] ]
 R:0:0x9B:0x9C
 ?:[AND [EQU $CLASS Necromancer] [EQU $RACE Petty-Dwarf] ]
 R:0:0x9B:0x95
@@ -253,7 +253,7 @@ R:0:0x9D:0x91
 R:0:0x9D:0x92
 ?:[AND [EQU $CLASS Priest] [EQU $RACE Hobbit] ]
 R:0:0x9D:0x93
-?:[AND [EQU $CLASS Priest] [EQU $RACE Dr['u]adan] ]
+?:[AND [EQU $CLASS Priest] [EQU $RACE Drúadan] ]
 R:0:0x9D:0x94
 ?:[AND [EQU $CLASS Priest] [EQU $RACE Petty-Dwarf] ]
 R:0:0x9D:0x95

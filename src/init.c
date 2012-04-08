@@ -2215,7 +2215,7 @@ static void cleanup_r(void)
 {
 	int ridx;
 
-	for (ridx = 0; ridx < z_info->r_max; ridx++) {
+	for (ridx = 0; ridx < z_info->r_max - 1; ridx++) {
 		struct monster_race *r = &r_info[ridx];
 
 		string_free(r->text);
@@ -4789,6 +4789,11 @@ void cleanup_angband(void)
 
     button_free();
     FREE(p_ptr->inventory);
+
+    /* Free the character screen arrays */
+    FREE(dumpline);
+    FREE(pline0);
+    FREE(pline1);
 
     /* Free the lore, trap, monster, and object lists */
     FREE(l_list);

@@ -149,11 +149,11 @@ static void build_streamer(int feat, int chance)
 	{
 	    for (dx = x - out1; dx <= x + out2; dx++) 
 	    {
-		f_ptr = &f_info[cave_feat[y][dx]];
-
 		/* Stay within dungeon. */
 		if (!in_bounds(y, dx))
 		    continue;
+
+		f_ptr = &f_info[cave_feat[y][dx]];
 
 		/* Only convert "granite" walls */
 		if (!tf_has(f_ptr->flags, TF_GRANITE) ||
@@ -189,11 +189,11 @@ static void build_streamer(int feat, int chance)
 	{
 	    for (dy = y - out1; dy <= y + out2; dy++) 
 	    {
-		f_ptr = &f_info[cave_feat[dy][x]];
-
 		/* Stay within dungeon. */
 		if (!in_bounds(dy, x))
 		    continue;
+
+		f_ptr = &f_info[cave_feat[dy][x]];
 
 		/* Only convert "granite" walls */
 		if (!tf_has(f_ptr->flags, TF_GRANITE) ||

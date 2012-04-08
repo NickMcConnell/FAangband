@@ -46,9 +46,9 @@ N:8:Dorlas the Craven
 I:8:250:165
 N:9:Eldalin of the Swallow
 I:9:350:145
-N:10:Esto, servant of Aul["e]
+N:10:Esto, servant of Aulë
 I:10:450:135
-N:11:Anw["e] the Cautious
+N:11:Anwë the Cautious
 I:11:200:150
 N:12:Quickbeam the Gentle
 I:12:450:140
@@ -62,9 +62,9 @@ N:1:Ambol of Legolin
 I:1:20000:170
 N:2:Ella the Dextrous
 I:2:25000:165
-N:3:['E]agol the Stoor
+N:3:Éagol the Stoor
 I:3:5000:180
-N:4:Am[^u]n the Cunning
+N:4:Amûn the Cunning
 I:4:10000:175
 N:5:Mauglin the Grumpy
 I:5:30000:175
@@ -94,7 +94,7 @@ N:2:Arndal the Staunch
 I:2:15000:140
 N:3:Tarl Stronginthearm
 I:3:25000:140
-N:4:Y[^i]n the Brave
+N:4:Yîn the Brave
 I:4:15000:135
 N:5:Oglign Dragon-Slayer
 I:5:30000:130
@@ -102,11 +102,11 @@ N:6:Stor the Steadfast
 I:6:30000:135
 N:7:Borin the Grasping
 I:7:5000:150
-N:8:Alach of Dor-L['o]min
+N:8:Alach of Dor-Lómin
 I:8:15000:140
 N:9:Shrada of the Golden Flower
 I:9:25000:145
-N:10:Elw["e] the Redeemed
+N:10:Elwë the Redeemed
 I:10:20000:150
 N:11:Silence the Stealthy
 I:11:10000:125
@@ -137,7 +137,7 @@ N:8:Andor of Teiglin
 I:8:15000:145
 N:9:Egaldor of the Heavenly Arch
 I:9:20000:140
-N:10:Orin, servant of Manw["e]
+N:10:Orin, servant of Manwë
 I:10:10000:140
 N:11:Irivin the Kind
 I:11:20000:130
@@ -167,9 +167,9 @@ N:8:Arawen son of Aranor
 I:8:15000:140
 N:9:Belegon of the Tree
 I:9:12500:145
-N:10:Oro, servant of Est["e]
+N:10:Oro, servant of Estë
 I:10:7500:150
-N:11:Ingwil of Cuivi['e]nen
+N:11:Ingwil of Cuiviénen
 I:11:15000:150
 N:12:Fieriel of Fangorn
 I:12:12500:140
@@ -189,7 +189,7 @@ N:4:Buggerby the Great
 I:4:20000:165
 N:5:Arin Firebeard
 I:5:20000:135
-N:6:['U]ghu the Conjurer
+N:6:Úghu the Conjurer
 I:6:30000:140
 N:7:Pagin Silverbeard
 I:7:10000:140
@@ -269,7 +269,7 @@ I:99:0:100
 # Bookseller
 N:0:Borfang the Learned
 I:0:15000:120
-N:1:Marw["e] of Tol Galen
+N:1:Marwë of Tol Galen
 I:1:12500:110
 N:2:Nastra the Dusty
 I:2:10000:115
@@ -287,7 +287,7 @@ N:8:Silmarien the Joyous
 I:8:25000:120
 N:9:Hastiel the Encyclopedist
 I:9:30000:135
-N:10:Vara, servant of Vair["e]
+N:10:Vara, servant of Vairë
 I:10:10000:110
 N:11:Eril the Ancient
 I:11:20000:125

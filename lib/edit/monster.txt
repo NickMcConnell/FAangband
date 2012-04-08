@@ -5902,6 +5902,7 @@ D:A awkward-looking demon with a long neck and terrible raking claws.
 
 N:512:Stone warden
 T:xorn
+G:#
 C:W
 I:110:50d10:20:48:100
 W:49:5:0:900
@@ -6872,7 +6873,6 @@ W:0:0:0:0
 
 N:582:Living dungeon
 T:xorn
-G:#
 C:D
 I:110:28d100:14:68:5
 W:63:2:0:6500
