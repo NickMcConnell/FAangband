@@ -2836,7 +2836,6 @@ bool prepare_ghost(int r_idx, monster_type * m_ptr, bool from_savefile)
      * that from here on */
     memcpy(&r_info[PLAYER_GHOST_RACE], r_ptr, sizeof(*r_ptr));
     r_ptr = &r_info[PLAYER_GHOST_RACE];
-    r_ptr->name = string_make(r_info[r_idx].name);
 
     /* Choose a bones file.  Use the variable bones_selector if it has any
      * information in it (this allows saved ghosts to reacquire all special

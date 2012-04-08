@@ -24,6 +24,7 @@
 #include "game-cmd.h"
 #include "game-event.h"
 #include "generate.h"
+#include "history.h"
 #include "init.h"
 #include "keymap.h"
 #include "tvalsval.h"
@@ -1503,6 +1504,7 @@ static void cleanup_f(void) {
 	int idx;
 	for (idx = 0; idx < z_info->f_max; idx++) {
 		string_free(f_info[idx].name);
+		mem_free(f_info[idx].text);
 	}
 	mem_free(f_info);
 }
@@ -3025,6 +3027,7 @@ static void cleanup_t(void)
     for (idx = 0; idx < z_info->t_max; idx++) {
 	mem_free(t_info[idx].name);
 	mem_free(t_info[idx].text);
+	mem_free(t_info[idx].message);
     }
     mem_free(t_info);
 }
@@ -3833,6 +3836,11 @@ static void autoinscribe_init(void)
     inscriptions_count = 0;
 
     inscriptions = C_ZNEW(AUTOINSCRIPTIONS_MAX, autoinscription);
+}
+
+static void autoinscribe_free(void)
+{
+	FREE(inscriptions);
 }
 
 
@@ -4758,6 +4766,16 @@ void cleanup_angband(void)
 {
     int i;
 
+    /* Free the macros */
+    keymap_free();
+
+    /* Free racial probability arrays */
+    FREE(race_prob);
+    FREE(dummy);
+
+    /* Free the artifact lists */
+    FREE(artifact_normal);
+    FREE(artifact_special);
 
     /* Free the allocation tables */
     FREE(alloc_kind_table);
@@ -4820,41 +4838,42 @@ void cleanup_angband(void)
     /* Free the messages */
     messages_free();
 
+    /* Free the history */
+    history_clear();
+
+    /* Free the autoinscriptions */
+    autoinscribe_free();
+   
     /* Free the "quarks" */
     quarks_free();
 
-    //mem_free(k_info);
-    //mem_free(a_info);
-    //mem_free(e_info);
-    //mem_free(r_info);
-    //mem_free(c_info);
-
-	cleanup_parser(&k_parser);
-	cleanup_parser(&a_parser);
-	cleanup_parser(&set_parser);
-	cleanup_parser(&names_parser);
-	cleanup_parser(&trap_parser);
-	cleanup_parser(&r_parser);
-	cleanup_parser(&rb_parser);
-	cleanup_parser(&f_parser);
-	cleanup_parser(&e_parser);
-	cleanup_parser(&b_parser);
-	cleanup_parser(&p_parser);
-	cleanup_parser(&c_parser);
-	cleanup_parser(&v_parser);
-	cleanup_parser(&h_parser);
-	cleanup_parser(&t_parser);
-	cleanup_parser(&flavor_parser);
-	cleanup_parser(&s_parser);
-	cleanup_parser(&hints_parser);
-	cleanup_parser(&mp_parser);
-	cleanup_parser(&z_parser);
+    cleanup_parser(&k_parser);
+    cleanup_parser(&a_parser);
+    cleanup_parser(&set_parser);
+    cleanup_parser(&names_parser);
+    cleanup_parser(&trap_parser);
+    cleanup_parser(&r_parser);
+    cleanup_parser(&rb_parser);
+    cleanup_parser(&f_parser);
+    cleanup_parser(&e_parser);
+    cleanup_parser(&b_parser);
+    cleanup_parser(&p_parser);
+    cleanup_parser(&c_parser);
+    cleanup_parser(&v_parser);
+    cleanup_parser(&h_parser);
+    cleanup_parser(&t_parser);
+    cleanup_parser(&flavor_parser);
+    cleanup_parser(&s_parser);
+    cleanup_parser(&hints_parser);
+    cleanup_parser(&mp_parser);
+    cleanup_parser(&z_parser);
 
     /* Free the format() buffer */
     vformat_kill();
 
     /* Free the directories */
     string_free(ANGBAND_DIR_APEX);
+    string_free(ANGBAND_DIR_BONE);
     string_free(ANGBAND_DIR_EDIT);
     string_free(ANGBAND_DIR_FILE);
     string_free(ANGBAND_DIR_HELP);
@@ -4863,4 +4882,10 @@ void cleanup_angband(void)
     string_free(ANGBAND_DIR_PREF);
     string_free(ANGBAND_DIR_USER);
     string_free(ANGBAND_DIR_XTRA);
+
+    string_free(ANGBAND_DIR_XTRA_FONT);
+    string_free(ANGBAND_DIR_XTRA_GRAF);
+    string_free(ANGBAND_DIR_XTRA_HELP);
+    string_free(ANGBAND_DIR_XTRA_SOUND);
+    string_free(ANGBAND_DIR_XTRA_ICON);
 }
