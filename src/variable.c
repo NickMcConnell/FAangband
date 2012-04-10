@@ -466,24 +466,6 @@ const const char *angband_sound_name[SOUND_MAX] =
 };
 
 
-/**
- * Array[VIEW_MAX] used by "update_view()"
- */
-int view_n = 0;
-u16b *view_g;
-
-/* 
- * Variables for dealing with the vinfo array used by update_view() -NRM-
- */
-
-int  vinfo_grids;
-int  vinfo_slopes;
-u32b vinfo_bits_3;
-u32b vinfo_bits_2;
-u32b vinfo_bits_1;
-u32b vinfo_bits_0;
-
-
 /*
  * Arrays[TEMP_MAX] used for various things
  */

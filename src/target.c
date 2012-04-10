@@ -1494,7 +1494,7 @@ bool target_set_interactive(int mode, int x, int y)
     prt("Press '?' for help.", help_prompt_loc, 0);
 
     /* Prepare the "temp" array */
-    target_set_interactive_prepare(mode);
+    targets = target_set_interactive_prepare(mode);
 
     /* Start near the player */
     m = 0;

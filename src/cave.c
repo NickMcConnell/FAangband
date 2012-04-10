@@ -31,6 +31,14 @@
 #include "trap.h"
 
 
+static int view_n;
+static u16b view_g[VIEW_MAX];
+static int  vinfo_grids;
+static int  vinfo_slopes;
+static u32b vinfo_bits_3;
+static u32b vinfo_bits_2;
+static u32b vinfo_bits_1;
+static u32b vinfo_bits_0;
 
 /**
  * Approximate Distance between two points.
