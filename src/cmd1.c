@@ -441,11 +441,11 @@ byte py_pickup(int pickup, int y, int x)
     bool domsg = TRUE;
     bool telekinesis = (!(y == p_ptr->py) || !(x == p_ptr->px));
 
-    /* Nothing to pick up -- return */
-    if (!cave_o_idx[y][x]) return (0);
-
     /* Always pickup gold, effortlessly */
     if (!telekinesis) py_pickup_gold();
+
+    /* Nothing to pick up -- return */
+    if (!cave_o_idx[y][x]) return (objs_picked_up);
 
     /* Scan the pile of objects */
     for (this_o_idx = cave_o_idx[y][x]; this_o_idx; this_o_idx = next_o_idx) {
@@ -530,8 +530,10 @@ byte py_pickup(int pickup, int y, int x)
 	    {
 		ui_event e;
 
-		if (!can_pickup)	p = "have no room for the following objects";
-		else if (blind)     p = "feel something on the floor";
+		if (!can_pickup)
+		    p = "have no room for the following objects";
+		else if (blind)
+		    p = "feel something on the floor";
 
 		/* Scan all marked objects in the grid */
 		floor_num = scan_floor(floor_list, N_ELEMENTS(floor_list), y, x, 0x03);
@@ -647,7 +649,7 @@ byte py_pickup(int pickup, int y, int x)
     /* If requested, call this function recursively.  Count objects picked up.
      * Force the display of a menu in all cases. */
     if (call_function_again)
-	objs_picked_up += py_pickup(3, y, x);
+	objs_picked_up += py_pickup(2, y, x);
 
     /* Indicate how many objects have been picked up. */
     return (objs_picked_up);

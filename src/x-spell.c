@@ -886,10 +886,10 @@ bool cast_spell(int tval, int sindex, int dir)
     case SPELL_TELEKINESIS:
 	{
 	    s16b ty, tx;
-	    target_get(&tx, &ty);
 	    if (!target_set_interactive(TARGET_OBJ, -1, -1))
 		return FALSE;
-	    if (!py_pickup(2, ty, tx))
+	    target_get(&tx, &ty);
+	    if (!py_pickup(1, ty, tx))
 		return FALSE;
 	    break;
 	}

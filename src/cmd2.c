@@ -3078,7 +3078,7 @@ void do_cmd_pickup(cmd_code code, cmd_arg args[])
     int energy_cost;
 
     /* Pick up floor objects, forcing a menu for multiple objects. */
-    energy_cost = py_pickup(2, p_ptr->py, p_ptr->px) * 10;
+    energy_cost = py_pickup(1, p_ptr->py, p_ptr->px) * 10;
 
     /* Maximum time expenditure is a full turn. */
     if (energy_cost > 100)
