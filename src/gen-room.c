@@ -510,6 +510,7 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2, bool light,
     /* Number (max 45) of arcs. */
     int arc_num;
 
+    feature_type *f_ptr = &f_info[feat];
 
     /* Make certain the room does not cross the dungeon edge. */
     if ((!in_bounds(y1, x1)) || (!in_bounds(y2, x2)))
@@ -559,7 +560,7 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2, bool light,
 	 * Hack -- extend a "corridor" between room centers, to ensure 
 	 * that the rooms are connected together.
 	 */
-	if (feat == FEAT_FLOOR) {
+	if (tf_has(f_ptr->flags, TF_FLOOR)) {
 	    for (y = (y1 + tmp_ay) / 2; y <= (tmp_by + y2) / 2; y++) {
 		for (x = (x1 + tmp_ax) / 2; x <= (tmp_bx + x2) / 2; x++) {
 		    cave_set_feat(y, x, feat);
@@ -745,11 +746,11 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2, bool light,
 			if (max_dist >= dist) {
 			    /* If new feature is not passable, or floor, always 
 			     * place it. */
-			    if ((feat == FEAT_FLOOR) || (!passable(feat))) 
+			    if ((tf_has(f_ptr->flags, TF_FLOOR)) || (!passable(feat))) 
 			    {
 				cave_set_feat(y, x, feat);
 
-				if (feat == FEAT_FLOOR)
+				if (tf_has(f_ptr->flags, TF_FLOOR))
 				    cave_on(cave_info[y][x], CAVE_ROOM);
 				else
 				    cave_off(cave_info[y][x], CAVE_ROOM);
@@ -767,12 +768,12 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2, bool light,
 				if ((feat == FEAT_TREE) || (feat == FEAT_TREE2)
 				    || (feat == FEAT_RUBBLE)) {
 				    /* Make denser in the middle. */
-				    if ((cave_feat[y][x] == FEAT_FLOOR)
+				    if ((tf_has(f_info[cave_feat[y][x]].flags, TF_FLOOR))
 					&& (randint1(max_dist + 5) >= dist + 5))
 					cave_set_feat(y, x, feat);
 				}
 				if ((feat == FEAT_WATER) || (feat == FEAT_LAVA)) {
-				    if (cave_feat[y][x] == FEAT_FLOOR)
+				    if (tf_has(f_info[cave_feat[y][x]].flags, TF_FLOOR))
 					cave_set_feat(y, x, feat);
 				}
 
@@ -794,11 +795,11 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2, bool light,
      * If we placed floors or dungeon granite, all dungeon granite next 
      * to floors needs to become outer wall.
      */
-    if ((feat == FEAT_FLOOR) || (feat == FEAT_WALL_EXTRA)) {
+    if ((tf_has(f_ptr->flags, TF_FLOOR)) || (feat == FEAT_WALL_EXTRA)) {
 	for (y = y1 + 1; y < y2; y++) {
 	    for (x = x1 + 1; x < x2; x++) {
 		/* Floor grids only */
-		if (cave_feat[y][x] == FEAT_FLOOR) {
+		if (tf_has(f_info[cave_feat[y][x]].flags, TF_FLOOR)) {
 		    /* Look in all directions. */
 		    for (d = 0; d < 8; d++) {
 			/* Extract adjacent location */
@@ -2267,7 +2268,7 @@ static bool build_type6(void)
 		    }
 		}
 	    }
-	    if (cave_feat[y][x] == FEAT_FLOOR) {
+	    if (tf_has(f_info[cave_feat[y][x]].flags, TF_FLOOR)) {
 		for (d = 0; d < 9; d++) {
 		    /* Extract adjacent location */
 		    int yy = y + ddy_ddd[d];
