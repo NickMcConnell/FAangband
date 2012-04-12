@@ -416,7 +416,7 @@ static option_entry options[OPT_MAX] =
     {"birth_no_artifacts",    "Birth: Restrict creation of artifacts",
      FALSE /* 137 */},
     {"birth_no_stairs",       "Birth: Generate levels with disconnected stairs",
-     TRUE  /* 138 */},
+     FALSE  /* 138 */},
     {"birth_ai_cheat",        "Birth: Monsters exploit players weaknesses",
      FALSE /* 139 */},
     {"birth_auto_scum",       "Birth: Auto-scum for good levels",
