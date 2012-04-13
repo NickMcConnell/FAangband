@@ -1689,7 +1689,8 @@ bool detect_stairs(int range, bool show)
 		feature_type *f_ptr = &f_info[cave_feat[y][x]];
 		/* Detect stairs */
 
-		if (tf_has(f_ptr->flags, TF_STAIR)) 
+		if (tf_has(f_ptr->flags, TF_STAIR) ||
+		    tf_has(f_ptr->flags, TF_PATH))
 		{
 		    /* Hack -- Memorize */
 		    cave_on(cave_info[y][x], CAVE_MARK);

@@ -1506,12 +1506,12 @@ static void process_player(void)
 
     /* Add context-sensitive mouse buttons */
 
-    if (tf_has(f_ptr->flags, TF_STAIR) && !(feat % 2))
+    if (tf_has(f_ptr->flags, TF_UPSTAIR))
 	button_add("[<]", '<');
     else
 	button_kill('<');
 
-    if (tf_has(f_ptr->flags, TF_STAIR) && (feat % 2))
+    if (tf_has(f_ptr->flags, TF_DOWNSTAIR))
 	button_add("[>]", '>');
     else
 	button_kill('>');

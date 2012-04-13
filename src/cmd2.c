@@ -114,16 +114,20 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
     feature_type *f_ptr = &f_info[pstair];
 
     /* Check for appropriate terrain */
-    if (!tf_has(f_ptr->flags, TF_STAIR)) {
+    if (!(tf_has(f_ptr->flags, TF_STAIR) || tf_has(f_ptr->flags, TF_PATH)))
+    {
 	msg("I see no path or staircase here.");
 	return;
     }
-    /* Even for < */
-    else if (pstair & 0x01) {
-	if (pstair > FEAT_DOOR_HEAD) {
+    else if (tf_has(f_ptr->flags, TF_DOWNSTAIR))
+    {
+	if (tf_has(f_ptr->flags, TF_PATH))
+	{
 	    msg("This is a path to greater danger.");
 	    return;
-	} else {
+	}
+	else
+	{
 	    msg("This staircase leads down.");
 	    return;
 	}
@@ -270,21 +274,24 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
     feature_type *f_ptr = &f_info[pstair];
 
     /* Check for appropriate terrain */
-    if (!tf_has(f_ptr->flags, TF_STAIR)) {
+    if (!(tf_has(f_ptr->flags, TF_STAIR) || tf_has(f_ptr->flags, TF_PATH)))
+    {
 	msg("I see no path or staircase here.");
 	return;
     }
-    /* Odd for > */
-    else if (!(pstair & 0x01)) {
-	if (pstair > FEAT_DOOR_HEAD) {
+    else if (tf_has(f_ptr->flags, TF_UPSTAIR))
+
+	if (tf_has(f_ptr->flags, TF_PATH))
+	{
 	    msg("This is a path to less danger.");
 	    return;
-	} else {
+	}
+	else
+	{
 	    msg("This staircase leads up.");
 	    return;
 	}
     }
-
 
     /* Handle ironman */
     if (OPT(adult_ironman) && !p_ptr->depth && !OPT(adult_dungeon)) {
@@ -370,7 +377,9 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 
 	/* make the way back */
 	p_ptr->create_stair = FEAT_LESS;
-    } else if (pstair == FEAT_MORE_SHAFT) {
+    }
+    else if (pstair == FEAT_MORE_SHAFT)
+    {
 	/* Magical portal for dungeon-only games */
 	if (OPT(adult_dungeon)
 	    && ((stage_map[p_ptr->stage][LOCALITY]) !=
@@ -402,7 +411,9 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 
 	/* make the way back */
 	p_ptr->create_stair = FEAT_LESS_SHAFT;
-    } else {
+    }
+    else
+    {
 	/* New stage */
 	p_ptr->stage =
 	    stage_map[p_ptr->stage][2 + (pstair - FEAT_MORE_NORTH) / 2];
@@ -414,7 +425,8 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 	    msgt(MSG_STAIRS_DOWN,
 		    "You slide down amidst a small avalanche.");
 
-	else {
+	else
+	{
 	    /* Make the way back */
 	    p_ptr->create_stair = pstair ^ 0x05;
 
@@ -425,7 +437,8 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
     }
 
     /* Handle mountaintop stuff */
-    if (stage_map[p_ptr->last_stage][LOCALITY] == MOUNTAIN_TOP) {
+    if (stage_map[p_ptr->last_stage][LOCALITY] == MOUNTAIN_TOP)
+    {
 	/* Reset */
 	stage_map[256][DOWN] = 0;
 	stage_map[p_ptr->stage][UP] = 0;
