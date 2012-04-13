@@ -1257,15 +1257,6 @@ bool cave_exist_mon(monster_race * r_ptr, int y, int x, bool occupied_ok)
 	    return (FALSE);
 	}
 
-	/* Anything else that's not a wall we assume to be legal. */
-	else
-	    return (TRUE);
-    }
-
-
-    /* Feature is a wall */
-    else 
-    {
 	/* Only flying monsters can, well, fly */
 	if (tf_has(f_ptr->flags, TF_FALL)) 
 	{
@@ -1275,6 +1266,15 @@ bool cave_exist_mon(monster_race * r_ptr, int y, int x, bool occupied_ok)
 		return (FALSE);
 	}
 
+	/* Anything else that's not a wall we assume to be legal. */
+	else
+	    return (TRUE);
+    }
+
+
+    /* Feature is a wall */
+    else
+    {
 	/* Permanent walls are never OK */
 	if (tf_has(f_ptr->flags, TF_PERMANENT) && tf_has(f_ptr->flags, TF_WALL))
 	    return (FALSE);
@@ -1381,7 +1381,7 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
 
     /*** Check passability of various features. ***/
 
-    /* Feature allows line of sight */
+    /* Feature techincally passable */
     if (tf_has(f_ptr->flags, TF_PASSABLE)) 
     {
 	if (tf_has(f_ptr->flags, TF_WATERY)) 
@@ -1466,12 +1466,22 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
 	    }
 	}
 
+	/* Void */
+	if (tf_has(f_ptr->flags, TF_FALL))
+	{
+	    /* Have to be able to fly */
+	    if (rf_has(r_ptr->flags, RF_FLYING))
+		return (move_chance);
+	    else
+		return (0);
+	}
+
 	/* Anything else that's not a wall we assume to be passable. */
 	return (move_chance);
     }
 
 
-    /* Feature blocks line of sight */
+    /* Feature is tecnically impassable as it stands */
     else 
     {
 	/* Can the monster move easily through walls? */
@@ -1588,16 +1598,6 @@ static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
 		*bash = TRUE;
 
 	    return MIN(move_chance, (MAX(unlock_chance, bash_chance)));
-	}
-
-	/* Void */
-	if (tf_has(f_ptr->flags, TF_FALL)) 
-	{
-	    /* Have to be able to fly */
-	    if (rf_has(r_ptr->flags, RF_FLYING))
-		return (move_chance);
-	    else
-		return (0);
 	}
 
 	/* Any wall grid that isn't explicitly made passible is impassible. */
