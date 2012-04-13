@@ -2375,11 +2375,11 @@ enum
  * Determine if a legal grid is an empty floor grid
  * Used for safely placing the player or a monster
  *
- * Line 1 -- check passable
+ * Line 1 -- check easily passed through
  * Line 2 -- forbid player/monsters
  */
 #define cave_empty_bold(Y,X) \
-    (tf_has(f_info[cave_feat[Y][X]].flags, TF_PASSABLE) && \
+    (tf_has(f_info[cave_feat[Y][X]].flags, TF_EASY) && \
      (cave_m_idx[Y][X] == 0))
 
 /**
