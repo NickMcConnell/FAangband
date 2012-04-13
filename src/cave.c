@@ -582,34 +582,36 @@ bool dtrap_edge(int y, int x)
 /**
  * Apply text lighting effects
  */
-static void grid_get_attr(grid_data *g, byte *a, feature_type *f_ptr)
+static void grid_get_attr(grid_data *g, byte *a)
 {
-	/* Trap detect edge, but don't colour traps themselves, or treasure */
-	if (g->trapborder && tf_has(f_ptr->flags, TF_FLOOR) &&
-	    !((int) g->trap < trap_max))
-	{
-		if (g->in_view)
-			*a = TERM_L_GREEN;
-		else
-			*a = TERM_GREEN;
-	}
-	else if ((g->f_idx == FEAT_FLOOR) || (g->f_idx == FEAT_ROAD))
-	{
-		if (g->lighting == FEAT_LIGHTING_BRIGHT) {
-			if (*a == TERM_WHITE)
-				*a = TERM_YELLOW;
-		} else if (g->lighting == FEAT_LIGHTING_DARK) {
-			if (*a == TERM_WHITE)
-				*a = TERM_L_DARK;
-		}
-	}
+    feature_type *f_ptr = &f_info[g->f_idx];
+
+    /* Trap detect edge, but don't colour traps themselves, or treasure */
+    if (g->trapborder && tf_has(f_ptr->flags, TF_FLOOR) &&
+	!((int) g->trap < trap_max))
+    {
+	if (g->in_view)
+	    *a = TERM_L_GREEN;
 	else
-	{
-		if (g->lighting == FEAT_LIGHTING_DARK) {
-			if (*a == TERM_WHITE)
-				*a = TERM_SLATE;
-		}
+	    *a = TERM_GREEN;
+    }
+    else if (tf_has(f_ptr->flags, TF_TORCH))
+    {
+	if (g->lighting == FEAT_LIGHTING_BRIGHT) {
+	    if (*a == TERM_WHITE)
+		*a = TERM_YELLOW;
+	} else if (g->lighting == FEAT_LIGHTING_DARK) {
+	    if (*a == TERM_WHITE)
+		*a = TERM_L_DARK;
 	}
+    }
+    else
+    {
+	if (g->lighting == FEAT_LIGHTING_DARK) {
+	    if (*a == TERM_WHITE)
+		*a = TERM_SLATE;
+	}
+    }
 }
 
 
@@ -660,7 +662,7 @@ void grid_data_as_text(grid_data *g, byte *ap, wchar_t *cp, byte *tap, wchar_t *
               
 	/* Check for trap detection boundaries */
 	if (use_graphics == GRAPHICS_NONE || use_graphics == GRAPHICS_PSEUDO)
-	    grid_get_attr(g, &a, f_ptr);
+	    grid_get_attr(g, &a);
 
 	/* Save the terrain info for the transparency effects */
 	(*tap) = a;

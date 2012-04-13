@@ -27,7 +27,8 @@ P:2
 N:1:open floor
 G:.:w
 P:5
-F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | EASY | RUN1 | TRAP | MTRAP | RUNE
+F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | EASY | RUN1 | TRAP | MTRAP |
+F:RUNE | TORCH
 D:An open floor or bare ground.  Can be walked across by anything, and can 
 D:hold traps or items.  Does not break line of sight.
 
@@ -732,7 +733,8 @@ N:117:road
 G:.:W
 P:13
 X:0:0:0:0
-F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | EASY | RUN1 | TRAP | MTRAP | RUNE
+F:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | EASY | RUN1 | TRAP | MTRAP |
+F:RUNE | TORCH
 D:An open road.  Can be walked across by anything, and can
 D:hold traps or items.  Does not break line of sight.
 
