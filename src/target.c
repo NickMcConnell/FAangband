@@ -1174,7 +1174,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 	    }
 
 	    /* Hack - destination of surface paths */
-	    if ((feat >= FEAT_LESS_NORTH) && (feat <= FEAT_MORE_WEST)) 
+	    if (tf_has(f_ptr->flags, TF_PATH))
 	    {
 		s4 = " to ";
 		s5 = locality_name[stage_map[stage_map[p_ptr->stage]

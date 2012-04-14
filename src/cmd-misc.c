@@ -179,6 +179,7 @@ void show_player(void)
 	if (cave_m_idx[yy][xx] > 0)
 	    exist_monster = TRUE;
     }
+    f_ptr = &f_info[adj_grid[8]];
 
     /* In a web? */
     if (cave_web(p_ptr->py, p_ptr->px))
@@ -282,7 +283,9 @@ void show_player(void)
 
     /* Go up staircase */
     if ((adj_grid[8] == FEAT_LESS)
-	|| ((adj_grid[8] >= FEAT_LESS_NORTH) && (!(adj_grid[8] % 2)))) {
+	|| (tf_has(f_ptr->flags, TF_PATH) &&
+	    tf_has(f_ptr->flags, TF_UPSTAIR)))
+    {
 	comm[poss] = '<';
 	comm_code[poss] = CMD_GO_UP;
 	comm_descr[poss++] = "Take stair/path";
@@ -290,7 +293,9 @@ void show_player(void)
 
     /* Go down staircase */
     if ((adj_grid[8] == FEAT_MORE)
-	|| ((adj_grid[8] >= FEAT_LESS_NORTH) && (adj_grid[8] % 2))) {
+	|| (tf_has(f_ptr->flags, TF_PATH) &&
+	    tf_has(f_ptr->flags, TF_DOWNSTAIR)))
+    {
 	comm[poss] = '>';
 	comm_code[poss] = CMD_GO_DOWN;
 	comm_descr[poss++] = "Take stair/path";

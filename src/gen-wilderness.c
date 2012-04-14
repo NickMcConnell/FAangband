@@ -2376,8 +2376,7 @@ extern void river_gen(void)
 	cave_m_idx[y][x] = 0;
 	cave_set_feat(y, x, path);
 	for (y = p_ptr->py; y > 0; y--)
-	    if ((cave_feat[y][p_ptr->px] > FEAT_RUBBLE)
-		&& (cave_feat[y][p_ptr->px] <= FEAT_PERM_SOLID))
+	    if (tf_has(f_info[cave_feat[y][p_ptr->px]].flags, TF_WALL))
 		cave_set_feat(y, p_ptr->px, FEAT_ROAD);
     }
 

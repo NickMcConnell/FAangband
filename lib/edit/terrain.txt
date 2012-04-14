@@ -68,7 +68,7 @@ D:A staircase up to a shallower part of the dungeon.
 # 0x07 --> down shaft (perm)
 
 N:7:down shaft
-G:>:s
+G:>:U
 P:25
 F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | DOWNSTAIR | EASY
 D:A staircase down to a much deeper part of the dungeon.
@@ -76,7 +76,7 @@ D:A staircase down to a much deeper part of the dungeon.
 # 0x08 --> up shaft (perm)
 
 N:8:up shaft
-G:<:s
+G:<:U
 P:25
 F:LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | STAIR | UPSTAIR | EASY
 D:A staircase up to a much shallower part of the dungeon.

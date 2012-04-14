@@ -101,6 +101,27 @@ void do_cmd_move_house(void)
     return;
 }
 
+/** Path translations */
+
+typedef struct {
+    int path;
+    int direction;
+    int return_path;
+    bool eastwest;
+} pather;
+
+static const pather path_data[] =
+{
+    {FEAT_LESS_NORTH, NORTH, FEAT_MORE_SOUTH, FALSE},
+    {FEAT_MORE_NORTH, NORTH, FEAT_LESS_SOUTH, FALSE},
+    {FEAT_LESS_EAST, EAST, FEAT_MORE_WEST, TRUE},
+    {FEAT_MORE_EAST, EAST, FEAT_LESS_WEST, TRUE},
+    {FEAT_LESS_SOUTH, SOUTH, FEAT_MORE_NORTH, FALSE},
+    {FEAT_MORE_SOUTH, SOUTH, FEAT_LESS_NORTH, FALSE},
+    {FEAT_LESS_WEST, WEST, FEAT_MORE_EAST, TRUE},
+    {FEAT_MORE_WEST, WEST, FEAT_LESS_EAST, TRUE}
+};
+
 
 /**
  * Go to less danger
@@ -109,9 +130,23 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
 {
     int py = p_ptr->py;
     int px = p_ptr->px;
+    size_t i;
 
     byte pstair = cave_feat[py][px];
     feature_type *f_ptr = &f_info[pstair];
+
+    /* Get the path data */
+    for (i = 0; i < N_ELEMENTS(path_data); i++)
+    {
+	if (path_data[i].path == pstair) break;
+    }
+
+    /* Undefined path */
+    if (!(tf_has(f_ptr->flags, TF_STAIR) || tf_has(f_ptr->flags, TF_PATH)))
+    {
+	msg("I see no path or staircase here.");
+	return;
+    }
 
     /* Check for appropriate terrain */
     if (!(tf_has(f_ptr->flags, TF_STAIR) || tf_has(f_ptr->flags, TF_PATH)))
@@ -134,16 +169,21 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
     }
 
     /* Handle ironman */
-    if (OPT(adult_ironman)) {
-	int next = stage_map[p_ptr->stage][2 + (pstair - FEAT_LESS_NORTH) / 2];
-
+    if (OPT(adult_ironman))
+    {
 	/* Upstairs */
-	if (pstair < FEAT_LESS_NORTH) {
+	if (tf_has(f_ptr->flags, TF_STAIR))
+	{
 	    msg("Nothing happens.");
 	    return;
-	} else {
+	}
+	else
+	{
+	    int next = stage_map[p_ptr->stage][path_data[i].direction];
+
 	    /* New towns are OK */
-	    if ((next == p_ptr->last_stage) || stage_map[next][DEPTH]) {
+	    if ((next == p_ptr->last_stage) || stage_map[next][DEPTH])
+	    {
 		msg("Nothing happens.");
 		return;
 	    }
@@ -160,11 +200,13 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
     p_ptr->energy_use = 100;
 
     /* Success */
-    if (pstair == FEAT_LESS) {
+    if (pstair == FEAT_LESS)
+    {
 	/* Magical portal for dungeon-only games */
 	if (OPT(adult_dungeon) && (p_ptr->depth != 1)
 	    && ((stage_map[p_ptr->stage][LOCALITY]) !=
-		(stage_map[stage_map[p_ptr->stage][UP]][LOCALITY]))) {
+		(stage_map[stage_map[p_ptr->stage][UP]][LOCALITY])))
+	{
 	    /* Land properly */
 	    p_ptr->last_stage = NOWHERE;
 
@@ -188,12 +230,15 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
 
 	/* make the way back */
 	p_ptr->create_stair = FEAT_MORE;
-    } else if (pstair == FEAT_LESS_SHAFT) {
+    }
+    else if (pstair == FEAT_LESS_SHAFT)
+    {
 	/* Magical portal for dungeon-only games */
 	if (OPT(adult_dungeon) && (p_ptr->depth != 2)
 	    && ((stage_map[p_ptr->stage][LOCALITY]) !=
 		(stage_map[stage_map[stage_map[p_ptr->stage][UP]][UP]]
-		 [LOCALITY]))) {
+		 [LOCALITY])))
+	{
 	    /* Land properly */
 	    p_ptr->last_stage = NOWHERE;
 
@@ -217,28 +262,31 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
 
 	/* make the way back */
 	p_ptr->create_stair = FEAT_MORE_SHAFT;
-    } else {
+    }
+    else
+    {
 	/* path */
 	msgt(MSG_STAIRS_DOWN, "You enter a winding path to less danger.");
 
 	/* make the way back */
-	p_ptr->create_stair = pstair ^ 0x05;
+	p_ptr->create_stair = path_data[i].return_path;
     }
 
     /* Remember where we came from */
     p_ptr->last_stage = p_ptr->stage;
 
     /* New stage (really need a check here...) */
-    if (pstair >= FEAT_LESS_NORTH)
+    if (tf_has(f_ptr->flags, TF_PATH))
 	p_ptr->stage =
-	    stage_map[p_ptr->stage][2 + (pstair - FEAT_LESS_NORTH) / 2];
+	    stage_map[p_ptr->stage][path_data[i].direction];
     else if (pstair == FEAT_LESS_SHAFT)
 	p_ptr->stage = stage_map[stage_map[p_ptr->stage][UP]][UP];
     else
 	p_ptr->stage = stage_map[p_ptr->stage][UP];
 
     /* Handle underworld stuff */
-    if (stage_map[p_ptr->last_stage][LOCALITY] == UNDERWORLD) {
+    if (stage_map[p_ptr->last_stage][LOCALITY] == UNDERWORLD)
+    {
 	/* Reset */
 	stage_map[255][UP] = 0;
 	stage_map[p_ptr->stage][DOWN] = 0;
@@ -249,10 +297,13 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
     }
 
     /* Record the non-obvious exit coordinate */
-    if (pstair & 0x02)
-	p_ptr->path_coord = py;
-    else
-	p_ptr->path_coord = px;
+    if (tf_has(f_ptr->flags, TF_PATH))
+    {
+	if (path_data[i].eastwest)
+	    p_ptr->path_coord = py;
+	else
+	    p_ptr->path_coord = px;
+    }
 
     /* Set the depth */
     p_ptr->depth = stage_map[p_ptr->stage][DEPTH];
@@ -269,9 +320,16 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 {
     int py = p_ptr->py;
     int px = p_ptr->px;
+    size_t i;
 
     byte pstair = cave_feat[py][px];
     feature_type *f_ptr = &f_info[pstair];
+
+    /* Get the path data */
+    for (i = 0; i < N_ELEMENTS(path_data); i++)
+    {
+	if (path_data[i].path == pstair) break;
+    }
 
     /* Check for appropriate terrain */
     if (!(tf_has(f_ptr->flags, TF_STAIR) || tf_has(f_ptr->flags, TF_PATH)))
@@ -280,7 +338,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 	return;
     }
     else if (tf_has(f_ptr->flags, TF_UPSTAIR))
-
+    {
 	if (tf_has(f_ptr->flags, TF_PATH))
 	{
 	    msg("This is a path to less danger.");
@@ -295,12 +353,12 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 
     /* Handle ironman */
     if (OPT(adult_ironman) && !p_ptr->depth && !OPT(adult_dungeon)) {
-	int i, other;
-	int next = stage_map[p_ptr->stage][2 + (pstair - FEAT_MORE_NORTH) / 2];
+	int j, other;
+	int next = stage_map[p_ptr->stage][path_data[i].direction];
 
 	/* Check if this is the right way out of town */
-	for (i = NORTH; i <= WEST; i++) {
-	    other = stage_map[p_ptr->stage][i];
+	for (j = NORTH; j <= WEST; i++) {
+	    other = stage_map[p_ptr->stage][j];
 	    if (stage_map[next][DEPTH] < stage_map[other][DEPTH]) {
 		msg("Nothing happens.");
 		return;
@@ -416,7 +474,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
     {
 	/* New stage */
 	p_ptr->stage =
-	    stage_map[p_ptr->stage][2 + (pstair - FEAT_MORE_NORTH) / 2];
+	    stage_map[p_ptr->stage][path_data[i].direction];
 
 	/* Check for Nan Dungortheb */
 	if (stage_map[p_ptr->stage][LOCALITY] == NAN_DUNGORTHEB)
@@ -428,7 +486,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 	else
 	{
 	    /* Make the way back */
-	    p_ptr->create_stair = pstair ^ 0x05;
+	    p_ptr->create_stair = path_data[i].return_path;
 
 	    /* path */
 	    msgt(MSG_STAIRS_DOWN,
@@ -449,7 +507,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
     }
 
     /* Record the non-obvious exit coordinate */
-    if (pstair & 0x02)
+    if (path_data[i].eastwest)
 	p_ptr->path_coord = py;
     else
 	p_ptr->path_coord = px;
