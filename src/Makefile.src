@@ -6,7 +6,7 @@
 #
 
 NAME = FAangband
-VERSION = 1.2.8
+VERSION = 1.2.9
 COPYRIGHT = (c) 2005-2012 Nick McConnell and contributors
 PROG = faangband
 

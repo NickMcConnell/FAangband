@@ -1,6 +1,6 @@
                                                                                
              ****************************************************              
-             **   FAangband 1.2.8  ****   First Age Angband    **              
+             **   FAangband 1.2.9  ****   First Age Angband    **              
              ** Beleriand in the days of the War of the Jewels **              
              ****************************************************              
                                                                                
@@ -10,15 +10,15 @@
      Contributors include Robert Alan Koeneke, James E. Wilson, Alex Cutler,   
      Andy Astrand, Sean Marsh, Geoff Hill, Charles Teague, Charles Swiger,     
      Ben Harrison, Robert Ruehlmann, Leon Marrick, Bahman Rabii, Jeff Greene,  
-     Diego Gonzalez, Andrew Doull, Andi Sidwell, Pete Mack, Si Griffin.      
+     Diego Gonzalez, Andrew Doull, Andi Sidwell, Pete Mack, Si Griffin.        
 	                                                                       
-     FAangband 0.1.0-1.2.8 by Nick McConnell             
-     FAangband 0.3.6       by Si Griffin             
+     FAangband 0.1.0-1.2.9 by Nick McConnell                                   
+     FAangband 0.3.6       by Si Griffin                                       
                                                                                
-     Send comments, bug reports, and patches to nckmccnnll@gmail.com     
-     The FAangband home page is http://angband.oook.cz/faangband            
-     Latest code is at https://github.com/NickMcConnell/FAangband            
-     Visit the Angband ladder page at http://angband.oook.cz                  
+     Send comments, bug reports, and patches to nckmccnnll@gmail.com           
+     The FAangband home page is http://angband.oook.cz/faangband               
+     Latest code is at https://github.com/NickMcConnell/FAangband              
+     Visit the Angband ladder page at http://angband.oook.cz                   
                         '?' for in-game help.                                  
 
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
