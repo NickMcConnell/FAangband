@@ -215,7 +215,7 @@ static menu_type *spell_menu_new(const object_type *o_ptr,
     menu_type *m = menu_new(MN_SKIN_SCROLL, &spell_menu_iter);
     struct spell_menu_data *d = mem_alloc(sizeof *d);
 
-    region loc = { -70, 1, 65, -99 };
+    region loc = { -65, 1, 65, -99 };
 
     /* collect spells from object */
     d->n_spells = spell_collect_from_book(o_ptr, d->spells);
