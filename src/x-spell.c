@@ -351,7 +351,7 @@ void get_spell_info(int tval, int sindex, char *p, size_t len)
 	strnfmt(p, len, " dur 10+d5");
 	break;
     case SPELL_LIGHTNING_BOLT:
-	strnfmt(p, len, " dam %dd8, beam %d%", (2 + ((plev - 5) / 5)), beam);
+	strnfmt(p, len, " dam %dd8, beam %d%%", (2 + ((plev - 5) / 5)), beam);
 	break;
     case SPELL_TELEPORT_SELF:
 	strnfmt(p, len, " range %d", 50 + plev * 2);
@@ -388,7 +388,7 @@ void get_spell_info(int tval, int sindex, char *p, size_t len)
 	strnfmt(p, len, " dur 40");
 	break;
     case SPELL_ACID_BOLT:
-	strnfmt(p, len, " dam %dd8, beam %d%", (3 + plev / 3), beam);
+	strnfmt(p, len, " dam %dd8, beam %d%%", (3 + plev / 3), beam);
 	break;
     case SPELL_STARBURST:
 	strnfmt(p, len, " dam %d, rad %d", 5 * plev / 2, plev / 12);
@@ -520,25 +520,25 @@ void get_spell_info(int tval, int sindex, char *p, size_t len)
 	strnfmt(p, len, " dam 4d5");
 	break;
     case LORE_FROST_BOLT:
-	strnfmt(p, len, " dam %dd8, beam %d%", 2 + plev / 5, beam_low);
+	strnfmt(p, len, " dam %dd8, beam %d%%", 2 + plev / 5, beam_low);
 	break;
     case LORE_SNUFF_SMALL_LIFE:
 	strnfmt(p, len, " dam %d", 2 + plev / 5);
 	break;
     case LORE_FIRE_BOLT:
-	strnfmt(p, len, " dam %dd8, beam %d%", 3 + plev / 5, beam_low);
+	strnfmt(p, len, " dam %dd8, beam %d%%", 3 + plev / 5, beam_low);
 	break;
     case LORE_HEROISM:
 	strnfmt(p, len, " dur 20+d20");
 	break;
     case LORE_ACID_BOLT:
-	strnfmt(p, len, " dam %dd8, beam %d%", 5 + plev / 5, beam_low);
+	strnfmt(p, len, " dam %dd8, beam %d%%", 5 + plev / 5, beam_low);
 	break;
     case LORE_TELEPORT_MONSTER:
 	strnfmt(p, len, " dist %d", 45 + (plev / 3));
 	break;
     case LORE_GRAVITY_BOLT:
-	strnfmt(p, len, " dam %dd8, beam %d%", 5 + plev / 4, beam_low);
+	strnfmt(p, len, " dam %dd8, beam %d%%", 5 + plev / 4, beam_low);
 	break;
     case LORE_RESIST_POISON:
 	strnfmt(p, len, " dur 20+d20");
@@ -597,7 +597,7 @@ void get_spell_info(int tval, int sindex, char *p, size_t len)
 	strnfmt(p, len, " dam d%d", plev * 2);
 	break;
     case LORE_WEB_OF_VAIRE:
-	strnfmt(p, len, " dam %dd8, beam %d%", plev / 6, plev * 2);
+	strnfmt(p, len, " dam %dd8, beam %d%%", plev / 6, plev * 2);
 	break;
     case LORE_SPEED_OF_NESSA:
 	strnfmt(p, len, " dur %d+d10", plev / 2);
@@ -621,7 +621,7 @@ void get_spell_info(int tval, int sindex, char *p, size_t len)
 	strnfmt(p, len, " hurt 2d4");
 	break;
     case RITUAL_DARK_BOLT:
-	strnfmt(p, len, " dam %dd8, beam %d%", 3 + plev / 7, beam_low);
+	strnfmt(p, len, " dam %dd8, beam %d%%", 3 + plev / 7, beam_low);
 	break;
     case RITUAL_NOXIOUS_FUMES:
 	strnfmt(p, len, " dam %d, poison", 10 + plev);
@@ -651,7 +651,7 @@ void get_spell_info(int tval, int sindex, char *p, size_t len)
 	strnfmt(p, len, " dam %d", 15 + 7 * plev / 4);
 	break;
     case RITUAL_CHAOS_STRIKE:
-	strnfmt(p, len, " dam %dd8, beam %d%", 1 + plev / 2, beam);
+	strnfmt(p, len, " dam %dd8, beam %d%%", 1 + plev / 2, beam);
 	break;
     case RITUAL_DARK_BALL:
 	strnfmt(p, len, " dam %d, rad 2", 50 + plev * 2);
