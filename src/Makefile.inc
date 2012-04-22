@@ -244,9 +244,9 @@ depgen:
  list-mon-flags.h list-mon-spells.h z-term.h ui-event.h z-file.h \
  z-bitflag.h z-quark.h z-msg.h config.h game-cmd.h types.h option.h \
  cmds.h object.h z-textblock.h parser.h player.h ui.h z-type.h externs.h \
- spells.h list-gf-types.h buildid.h button.h cave.h game-event.h init.h \
- keymap.h prefs.h randname.h squelch.h list-effects.h list-blow-methods.h \
- list-blow-effects.h
+ spells.h list-gf-types.h buildid.h button.h cave.h game-event.h \
+ generate.h history.h init.h keymap.h monster.h prefs.h randname.h \
+ squelch.h list-effects.h list-blow-methods.h list-blow-effects.h
 ./jewel.o: jewel.c angband.h h-basic.h z-util.h z-virt.h z-form.h z-rand.h \
  defines.h tvalsval.h list-cave-flags.h list-object-flags.h \
  list-curse-flags.h list-kind-flags.h list-identify-flags.h \
@@ -562,8 +562,8 @@ depgen:
  list-trap-flags.h list-mon-flags.h list-mon-spells.h z-term.h ui-event.h \
  z-file.h z-bitflag.h z-quark.h z-msg.h config.h game-cmd.h types.h \
  option.h cmds.h object.h z-textblock.h parser.h player.h ui.h z-type.h \
- externs.h spells.h list-gf-types.h cave.h history.h monster.h squelch.h \
- ui-menu.h
+ externs.h spells.h list-gf-types.h cave.h grafmode.h history.h monster.h \
+ squelch.h ui-menu.h
 ./ui-menu.o: ui-menu.c angband.h h-basic.h z-util.h z-virt.h z-form.h \
  z-rand.h defines.h tvalsval.h list-cave-flags.h list-object-flags.h \
  list-curse-flags.h list-kind-flags.h list-identify-flags.h \
