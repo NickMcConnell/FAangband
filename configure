@@ -606,11 +606,6 @@ ac_subst_vars='LTLIBOBJS
 LIBOBJS
 MAINFILES
 USE_STATS
-GLIB_LIBS
-GLIB_CFLAGS
-GTK_LIBS
-GTK_CFLAGS
-PKG_CONFIG
 SDL_LIBS
 SDL_CFLAGS
 SDL_CONFIG
@@ -706,7 +701,6 @@ with_no_install
 with_configpath
 with_libpath
 with_varpath
-enable_gtk
 enable_curses
 enable_x11
 enable_sdl
@@ -1348,7 +1342,6 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --enable-gtk            Enables GTK 2.x frontend (default: disabled)
   --enable-curses         Enables Curses frontend (default: enabled)
   --enable-x11            Enables X11 frontend (default: enabled)
   --enable-sdl            Enables SDL frontend (default: disabled)
@@ -4631,13 +4624,6 @@ _ACEOF
 NOINSTALL="$with_noinstall";
 SETEGID="$with_setgid";
 
-# Check whether --enable-gtk was given.
-if test "${enable_gtk+set}" = set; then :
-  enableval=$enable_gtk; enable_gtk=$enableval
-else
-  enable_gtk=no
-fi
-
 # Check whether --enable-curses was given.
 if test "${enable_curses+set}" = set; then :
   enableval=$enable_curses; enable_curses=$enableval
@@ -4689,12 +4675,6 @@ else
 fi
 
 
-
-if test "x$enable_gtk" = "xyes"; then
-	if test "x$wsetgid" = "xyes"; then
-		as_fn_error $? "The \"setgid\" option and the GTK port are incompatible." "$LINENO" 5
-	fi
-fi
 
 MAINFILES="\$(BASEMAINFILES)"
 
@@ -5951,224 +5931,6 @@ $as_echo "#define USE_SDL 1" >>confdefs.h
 	fi
 fi
 
-
-if test "$enable_gtk" = "yes"; then
-
-  succeeded=no
-
-  if test -z "$PKG_CONFIG"; then
-    # Extract the first word of "pkg-config", so it can be a program name with args.
-set dummy pkg-config; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_path_PKG_CONFIG+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  case $PKG_CONFIG in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_path_PKG_CONFIG="$as_dir/$ac_word$ac_exec_ext"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  test -z "$ac_cv_path_PKG_CONFIG" && ac_cv_path_PKG_CONFIG="no"
-  ;;
-esac
-fi
-PKG_CONFIG=$ac_cv_path_PKG_CONFIG
-if test -n "$PKG_CONFIG"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PKG_CONFIG" >&5
-$as_echo "$PKG_CONFIG" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-  fi
-
-  if test "$PKG_CONFIG" = "no" ; then
-     echo "*** The pkg-config script could not be found. Make sure it is"
-     echo "*** in your path, or set the PKG_CONFIG environment variable"
-     echo "*** to the full path to pkg-config."
-     echo "*** Or see http://www.freedesktop.org/software/pkgconfig to get pkg-config."
-  else
-     PKG_CONFIG_MIN_VERSION=0.9.0
-     if $PKG_CONFIG --atleast-pkgconfig-version $PKG_CONFIG_MIN_VERSION; then
-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for glib-2.0 >= 2.6.0 gtk+-2.0 >= 2.6.0 gthread-2.0 pango libglade-2.0" >&5
-$as_echo_n "checking for glib-2.0 >= 2.6.0 gtk+-2.0 >= 2.6.0 gthread-2.0 pango libglade-2.0... " >&6; }
-
-        if $PKG_CONFIG --exists "glib-2.0 >= 2.6.0 gtk+-2.0 >= 2.6.0 gthread-2.0 pango libglade-2.0" ; then
-            { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-            succeeded=yes
-
-            { $as_echo "$as_me:${as_lineno-$LINENO}: checking GTK_CFLAGS" >&5
-$as_echo_n "checking GTK_CFLAGS... " >&6; }
-            GTK_CFLAGS=`$PKG_CONFIG --cflags "glib-2.0 >= 2.6.0 gtk+-2.0 >= 2.6.0 gthread-2.0 pango libglade-2.0"`
-            { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GTK_CFLAGS" >&5
-$as_echo "$GTK_CFLAGS" >&6; }
-
-            { $as_echo "$as_me:${as_lineno-$LINENO}: checking GTK_LIBS" >&5
-$as_echo_n "checking GTK_LIBS... " >&6; }
-            GTK_LIBS=`$PKG_CONFIG --libs "glib-2.0 >= 2.6.0 gtk+-2.0 >= 2.6.0 gthread-2.0 pango libglade-2.0"`
-            { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GTK_LIBS" >&5
-$as_echo "$GTK_LIBS" >&6; }
-        else
-	    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-            GTK_CFLAGS=""
-            GTK_LIBS=""
-            ## If we have a custom action on failure, don't print errors, but
-            ## do set a variable so people can do so.
-            GTK_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "glib-2.0 >= 2.6.0 gtk+-2.0 >= 2.6.0 gthread-2.0 pango libglade-2.0"`
-
-        fi
-
-
-
-     else
-        echo "*** Your version of pkg-config is too old. You need version $PKG_CONFIG_MIN_VERSION or newer."
-        echo "*** See http://www.freedesktop.org/software/pkgconfig"
-     fi
-  fi
-
-  if test $succeeded = yes; then
-     with_gtk=yes
-  else
-     with_gtk=no
-
-  fi
-
-
-  succeeded=no
-
-  if test -z "$PKG_CONFIG"; then
-    # Extract the first word of "pkg-config", so it can be a program name with args.
-set dummy pkg-config; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_path_PKG_CONFIG+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  case $PKG_CONFIG in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_path_PKG_CONFIG="$as_dir/$ac_word$ac_exec_ext"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  test -z "$ac_cv_path_PKG_CONFIG" && ac_cv_path_PKG_CONFIG="no"
-  ;;
-esac
-fi
-PKG_CONFIG=$ac_cv_path_PKG_CONFIG
-if test -n "$PKG_CONFIG"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PKG_CONFIG" >&5
-$as_echo "$PKG_CONFIG" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-  fi
-
-  if test "$PKG_CONFIG" = "no" ; then
-     echo "*** The pkg-config script could not be found. Make sure it is"
-     echo "*** in your path, or set the PKG_CONFIG environment variable"
-     echo "*** to the full path to pkg-config."
-     echo "*** Or see http://www.freedesktop.org/software/pkgconfig to get pkg-config."
-  else
-     PKG_CONFIG_MIN_VERSION=0.9.0
-     if $PKG_CONFIG --atleast-pkgconfig-version $PKG_CONFIG_MIN_VERSION; then
-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for glib-2.0 >= 2.6.0" >&5
-$as_echo_n "checking for glib-2.0 >= 2.6.0... " >&6; }
-
-        if $PKG_CONFIG --exists "glib-2.0 >= 2.6.0" ; then
-            { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-            succeeded=yes
-
-            { $as_echo "$as_me:${as_lineno-$LINENO}: checking GLIB_CFLAGS" >&5
-$as_echo_n "checking GLIB_CFLAGS... " >&6; }
-            GLIB_CFLAGS=`$PKG_CONFIG --cflags "glib-2.0 >= 2.6.0"`
-            { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GLIB_CFLAGS" >&5
-$as_echo "$GLIB_CFLAGS" >&6; }
-
-            { $as_echo "$as_me:${as_lineno-$LINENO}: checking GLIB_LIBS" >&5
-$as_echo_n "checking GLIB_LIBS... " >&6; }
-            GLIB_LIBS=`$PKG_CONFIG --libs "glib-2.0 >= 2.6.0"`
-            { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GLIB_LIBS" >&5
-$as_echo "$GLIB_LIBS" >&6; }
-        else
-	    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-            GLIB_CFLAGS=""
-            GLIB_LIBS=""
-            ## If we have a custom action on failure, don't print errors, but
-            ## do set a variable so people can do so.
-            GLIB_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "glib-2.0 >= 2.6.0"`
-
-        fi
-
-
-
-     else
-        echo "*** Your version of pkg-config is too old. You need version $PKG_CONFIG_MIN_VERSION or newer."
-        echo "*** See http://www.freedesktop.org/software/pkgconfig"
-     fi
-  fi
-
-  if test $succeeded = yes; then
-     with_gtkx=yes
-  else
-     with_gtk=no
-
-  fi
-
-
-	if test "x$SETEGID" != "x"; then
-		enable_gtk=no
-		with_gtk=no
-	fi
-
-	if test "$with_gtk" = "yes"; then
-
-$as_echo "#define USE_GTK 1" >>confdefs.h
-
-		CFLAGS="${CFLAGS} $GTK_CFLAGS"
-		LDFLAGS="${LDFLAGS} -rdynamic -export-dynamic"
-		LIBS="${LIBS} ${GTK_LIBS}"
-		MAINFILES="${MAINFILES} \$(GTKMAINFILES)"
-	fi
-fi
 
 if test "$enable_win" = "yes"; then
 
@@ -7738,15 +7500,6 @@ if test "$enable_curses" = "yes"; then
 	fi
 else
 	echo "- Curses                                  Disabled"
-fi
-if test "$enable_gtk" = "yes"; then
-	if test "$with_gtk" = "no"; then
-		echo "- GTK 2.x                                 No; missing libraries"
-	else
-		echo "- GTK 2.x                                 Yes"
-	fi
-else
-	echo "- GTK 2.x                                 Disabled"
 fi
 if test "$enable_x11" = "yes"; then
 	if test "$with_x11" = "no"; then
