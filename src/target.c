@@ -796,7 +796,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 	    query = inkey_ex();
 
 	    /* Stop on everything but "return" */
-	    if ((query.key.code != '\n') && (query.key.code != '\r'))
+	    if (query.key.code != KC_ENTER)
 		break;
 
 	    /* Repeat forever */
@@ -882,8 +882,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 		}
 
 		/* Stop on everything but "return"/"space" */
-		if ((query.key.code != '\n') && (query.key.code != '\r')
-		    && (query.key.code != ' '))
+		if ((query.key.code != KC_ENTER) && (query.key.code != ' '))
 		    break;
 
 		/* Sometimes stop at "space" key */
@@ -934,8 +933,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 		    query = inkey_ex();
 
 		    /* Stop on everything but "return"/"space" */
-		    if ((query.key.code != '\n') && (query.key.code != '\r')
-			&& (query.key.code != ' '))
+		    if ((query.key.code != KC_ENTER) && (query.key.code != ' '))
 			break;
 
 		    /* Sometimes stop at "space" key */
@@ -1003,8 +1001,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 		query = inkey_ex();
 		
 		/* Stop on everything but "return"/"space" */
-		if ((query.key.code != '\n') && (query.key.code != '\r')
-		    && (query.key.code != ' '))
+		if ((query.key.code != KC_ENTER) && (query.key.code != ' '))
 		    break;
 		
 		/* Sometimes stop at "space" key */
@@ -1114,8 +1111,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 		query = inkey_ex();
 
 		/* Stop on everything but "return"/"space" */
-		if ((query.key.code != '\n') && (query.key.code != '\r')
-		    && (query.key.code != ' '))
+		if ((query.key.code != KC_ENTER) && (query.key.code != ' '))
 		    break;
 
 		/* Sometimes stop at "space" key */
@@ -1204,13 +1200,12 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 	    query = inkey_ex();
 
 	    /* Stop on everything but "return"/"space" */
-	    if ((query.key.code != '\n') && (query.key.code != '\r')
-		&& (query.key.code != ' '))
+	    if ((query.key.code != KC_ENTER) && (query.key.code != ' '))
 		break;
 	}
 
 	/* Stop on everything but "return" */
-	if ((query.key.code != '\n') && (query.key.code != '\r'))
+	if (query.key.code != KC_ENTER)
 	    break;
     }
 

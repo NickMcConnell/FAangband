@@ -2418,7 +2418,7 @@ bool show_file(const char *name, const char *what, int line, int mode)
 	}
 
 	/* Hack -- Advance a single line */
-	if ((ke.key.code == '\n') || (ke.key.code == '\r') || (ke.key.code == '2')
+	if ((ke.key.code == KC_ENTER) || (ke.key.code == '2')
 	    || (ke.key.code == ARROW_DOWN)) {
 	    line = line + 1;
 	}

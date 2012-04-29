@@ -42,7 +42,7 @@ typedef struct _button_mouse_1d
 	char label[MAX_MOUSE_LABEL]; /*!< Label on the button */
 	int left;                    /*!< Column containing the left edge of the button */
 	int right;                   /*!< Column containing the right edge of the button */
-	unsigned char key;           /*!< Keypress corresponding to the button */
+	keycode_t key;           /*!< Keypress corresponding to the button */
 } button_mouse;
 
 typedef struct _button_backup
@@ -88,7 +88,7 @@ button_kill_f button_kill_hook;
 /*
  * Add a button
  */
-int button_add_text(const char *label, unsigned char keypress)
+int button_add_text(const char *label, keycode_t keypress)
 {
 	int i;
 	int length = strlen(label);
@@ -122,7 +122,7 @@ int button_add_text(const char *label, unsigned char keypress)
 /*
  * Add a button
  */
-int button_add(const char *label, unsigned char keypress)
+int button_add(const char *label, keycode_t keypress)
 {
 	if (!button_add_hook)
 		return 0;
@@ -218,7 +218,7 @@ void button_restore(void)
 /*
  * Remove a button
  */
-int button_kill_text(unsigned char keypress)
+int button_kill_text(keycode_t keypress)
 {
 	int i, j, length;
 
@@ -263,7 +263,7 @@ int button_kill_text(unsigned char keypress)
 /*
  * Kill a button
  */
-int button_kill(unsigned char keypress)
+int button_kill(keycode_t keypress)
 {
 	if (!button_kill_hook) return 0;
 	else

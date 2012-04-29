@@ -1665,7 +1665,7 @@ static void react_keypress(XKeyEvent *ev)
 		case XK_KP_Multiply: ch = '*'; kp = TRUE; break;
 		case XK_KP_Subtract: ch = '-'; kp = TRUE; break;
 		case XK_KP_Add: ch = '+'; kp = TRUE; break;
-		case XK_KP_Enter: ch = '\n'; kp = TRUE; break;
+		case XK_KP_Enter: ch = KC_ENTER; kp = TRUE; break;
 		case XK_KP_Equal: ch = '='; kp = TRUE; break;
 
 		case XK_KP_Delete: ch = KC_DELETE; kp = TRUE; break;
@@ -2507,6 +2507,9 @@ static errr term_data_init(term_data *td, int i)
 	/* Erase with "white space" */
 	t->attr_blank = TERM_WHITE;
 	t->char_blank = ' ';
+
+	/* Differentiate between BS/^h, Tab/^i, etc. */
+	t->complex_input = TRUE;
 
 	/* Hooks */
 	t->xtra_hook = Term_xtra_x11;

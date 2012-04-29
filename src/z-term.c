@@ -535,27 +535,33 @@ void Term_big_queue_char(term *t, int x, int y, byte a, wchar_t c, byte a1, wcha
 			}
 
 			/* Now vertical */
-			for (vert = 1; vert <= tile_height; vert++)
-			{
+			for (vert = 1; vert <= tile_height; vert++){
+			
+				/* Leave space on bottom for status */
+				if (y + vert + 1 < t-> hgt) {
 			        /* Queue dummy character */
 			        if (a & 0x80)
 				        Term_queue_char(t, x + hor, y + vert, 255, -1, 0, 0);
-				else
+					else
 				        Term_queue_char(t, x + hor, y + vert, TERM_WHITE, ' ', a1, c1);
+				}
 			}
 		}
 	}
 	else
 	{
 	        /* Only vertical */
-	        for (vert = 1; vert <= tile_height; vert++)
-		{
-		        /* Queue dummy character */
-		        if (a & 0x80)
-			        Term_queue_char(t, x, y + vert, 255, -1, 0, 0);
-			else
-			        Term_queue_char(t, x, y + vert, TERM_WHITE, ' ', a1, c1);
-		}
+	        for (vert = 1; vert <= tile_height; vert++) {	
+			
+				/* Leave space on bottom for status */
+				if (y + vert + 1 < t->hgt) {
+					/* Queue dummy character */
+					if (a & 0x80)
+						Term_queue_char(t, x, y + vert, 255, -1, 0, 0);
+					else
+						Term_queue_char(t, x, y + vert, TERM_WHITE, ' ', a1, c1);
+				}
+			}
 	}
 }
 
@@ -2011,6 +2017,24 @@ errr Term_keypress(keycode_t k, byte mods)
 	/* Hack -- Refuse to enqueue non-keys */
 	if (!k) return (-1);
 
+	if(!Term->complex_input) {
+		switch (k)
+		{
+			case '\r':
+			case '\n':
+			  	k = KC_ENTER;
+			  	break;
+			case 8:
+			  	k = KC_BACKSPACE;
+			  	break;
+			case 9:
+			  	k = KC_TAB;
+			  	break;
+			case 27:
+			  	k = ESCAPE;
+			  	break;
+		}
+	}
 	/* Store the char, advance the queue */
 	Term->key_queue[Term->key_head].type = EVT_KBRD;
 	Term->key_queue[Term->key_head].key.code = k;

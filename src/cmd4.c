@@ -495,7 +495,7 @@ void do_cmd_messages(void)
 	}
       
       /* Recall 1 older message */
-      if ((ke.key.code == '8') || (ke.key.code == '\n') || (ke.key.code == '\r'))
+      if ((ke.key.code == '8') || (ke.key.code == KC_ENTER))
 	{
 	  /* Go older if legal */
 	  if (i + 1 < n) i += 1;

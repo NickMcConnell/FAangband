@@ -255,6 +255,11 @@ static ui_event inkey_aux(int scan_cutoff)
  */
 struct keypress *inkey_next = NULL;
 
+/**
+ * See if more propmts will be skipped while in a keymap.
+ */
+static bool keymap_auto_more;
+
 
 #ifdef ALLOW_BORG
 
@@ -322,7 +327,7 @@ ui_event inkey_ex(void)
 	}
 
 	/* Hack -- Use the "inkey_next" pointer */
-	if (inkey_next && inkey_next->code)
+	while (inkey_next && inkey_next->code)
 	{
 		/* Get next character, and advance */
 		ke.key = *inkey_next++;
@@ -331,9 +336,32 @@ ui_event inkey_ex(void)
 		inkey_flag = FALSE;
 		inkey_scan = 0;
 
+		/* peek at the key, and see if we want to skip more prompts */
+		if (ke.key.code == '(') {
+			keymap_auto_more = TRUE;
+			/* since we are not returning this char, make sure the next key below works well */
+			if (!inkey_next || !inkey_next->code) {
+				ke.type = EVT_NONE;
+				break;
+			}
+			continue;
+		} else
+		if (ke.key.code == ')') {
+			keymap_auto_more = FALSE;
+			/* since we are not returning this char, make sure the next key below works well */
+			if (!inkey_next || !inkey_next->code) {
+				ke.type = EVT_NONE;
+				break;
+			}
+			continue;
+		}
+
 		/* Accept result */
 		return (ke);
 	}
+
+	/* make sure that the flag to skip more prompts is off */
+	keymap_auto_more = FALSE;
 
 	/* Forget pointer */
 	inkey_next = NULL;
@@ -405,6 +433,10 @@ ui_event inkey_ex(void)
 
 		/* Get a key (see above) */
 		ke = inkey_aux(inkey_scan);
+
+		if(inkey_scan && ke.type == EVT_NONE)
+			/* The keypress timed out. We need to stop here. */
+			break;
 
 		/* Handle mouse buttons */
 		if ((ke.type == EVT_MOUSE) && (OPT(mouse_buttons)))
@@ -581,7 +613,7 @@ static void msg_flush(int x)
 	/* Pause for response */
 	Term_putstr(x, 0, -1, a, "-more-");
 
-	if (!OPT(auto_more))
+	if ((!OPT(auto_more)) && !keymap_auto_more)
 		anykey();
 
 	/* Clear the line */
@@ -1351,8 +1383,7 @@ bool askfor_aux_keypress(char *buf, size_t buflen, size_t *curs, size_t *len, st
 			break;
 		}
 		
-		case '\n':
-		case '\r':
+		case KC_ENTER:
 		{
 			*curs = *len;
 			return TRUE;
@@ -1373,8 +1404,8 @@ bool askfor_aux_keypress(char *buf, size_t buflen, size_t *curs, size_t *len, st
 			break;
 		}
 		
-		case 0x7F:
-		case '\010':
+               case KC_BACKSPACE:
+               case KC_DELETE:
 		{
 			/* If this is the first time round, backspace means "delete all" */
 			if (firsttime)
@@ -1387,13 +1418,21 @@ bool askfor_aux_keypress(char *buf, size_t buflen, size_t *curs, size_t *len, st
 			}
 
 			/* Refuse to backspace into oblivion */
-			if (*curs == 0) break;
+			if((keypress.code == KC_BACKSPACE && *curs == 0) ||
+			   (keypress.code == KC_DELETE && *curs >= *len))
+				break;
 
 			/* Move the string from k to nul along to the left by 1 */
-			memmove(&buf[*curs - 1], &buf[*curs], *len - *curs);
+			if(keypress.code == KC_BACKSPACE)
+				memmove(&buf[*curs - 1], &buf[*curs],
+					*len - *curs);
+			else
+				memmove(&buf[*curs], &buf[*curs+1],
+					*len - *curs -1);
 
 			/* Decrement */
-			(*curs)--;
+			if(keypress.code == KC_BACKSPACE)
+				(*curs)--;
 			(*len)--;
 
 			/* Terminate */
@@ -1711,8 +1750,6 @@ bool get_check(const char *prompt)
 
 	bool repeat = FALSE;
   
-        feature_type *f_ptr = &f_info[cave_feat[p_ptr->py][p_ptr->px]];
-  
 	/* Paranoia XXX XXX XXX */
 	message_flush();
 
@@ -1742,13 +1779,7 @@ bool get_check(const char *prompt)
 	/* Erase the prompt */
 	prt("", 0, 0);
 
-        /* Hack of the century */
-        if ((ke.key.code == '\r') && tf_has(f_ptr->flags, TF_SHOP))
-        {
-            ke.key.code = 'y';
-        }
-
- 	/* Normal negation */
+	/* Normal negation */
 	if (ke.type == EVT_MOUSE) {
 		if ((ke.mouse.button != 1) && (ke.mouse.y != 0)) return (FALSE);
 	} else

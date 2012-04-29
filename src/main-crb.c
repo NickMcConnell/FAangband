@@ -1111,7 +1111,6 @@ static void DrawTile(int x, int y, byte a, wchar_t c, byte ta, wchar_t tc)
 
 static void ShowTextAt(int x, int y, int color, int n, const wchar_t *text )
 {
-  int i, j;
 	term_data *td = (term_data*) Term->data;
 	GlyphInfo *info = td->ginfo;
 	/* Overwite the text, unless it's being called recursively. */
@@ -1124,28 +1123,7 @@ static void ShowTextAt(int x, int y, int color, int n, const wchar_t *text )
 	UInt8 text_mb[MB_LEN_MAX * 255];
 	wcsncpy(src, text, n);
 	src[n] = L'\0';
-	size_t text_bytes = 0;
-
-	/* Manually extract bytes - NRM */
-	for (i = 0; i < n; i++) {
-	  if ((src[i] & 0x7f) == src[i])
-	    text_mb[text_bytes++] = (UInt8) src[i];
-	  else if ((src[i] & 0x7ff) == src[i]){
-	    text_mb[text_bytes++] = (UInt8) 0xc0 + (src[i] >> 6);
-	    text_mb[text_bytes++] = (UInt8) 0x80 + (src[i] & 0x3f);
-	  } else if ((src[i] & 0xffff) == src[i]) {
-	    text_mb[text_bytes++] = (UInt8) 0xe0 + (src[i] >> 12);
-	    text_mb[text_bytes++] = (UInt8) 0x80 + ((src[i] >> 6) & 0x3f);
-	    text_mb[text_bytes++] = (UInt8) 0x80 + (src[i] & 0x3f);
-	  } else {
-	    text_mb[text_bytes++] = (UInt8) 0xf0 + (src[i] >> 18);
-	    text_mb[text_bytes++] = (UInt8) 0x80 + ((src[i] >> 12) & 0x3f);
-	    text_mb[text_bytes++] = (UInt8) 0x80 + ((src[i] >> 6) & 0x3f);
-	    text_mb[text_bytes++] = (UInt8) 0x80 + (src[i] & 0x3f);
-	  }
-
-	}
-	    
+	size_t text_bytes = wcstombs(text_mb, src, n * MB_LEN_MAX);
 	text_mb[text_bytes] = '\0';
 
 	CFStringRef text_str = CFStringCreateWithBytes(
@@ -1731,13 +1709,13 @@ static errr Term_curs_mac(int x, int y)
 
 	if (tile_width != 1) {
 		Term_what(x + 1, y, &a, &c);
-		if (c == (wchar_t) 0xff)
+		if (c == (char) 0xff)
 			tile_wid *= tile_width;
 	}
 
 	if (tile_height != 1) {
 		Term_what(x, y + 1, &a, &c);
-		if (c == (wchar_t) 0xff)
+		if (c == (char) 0xff)
 			tile_hgt *= tile_height;
 	}
 
@@ -1815,47 +1793,6 @@ static errr Term_text_mac(int x, int y, int n, byte a, const wchar_t *cp)
 	return (0);
 }
 
-static size_t Term_mbcs_mac(wchar_t *dest, const char *src, int n)
-{
-    int i;
-    int count = 0;
-
-    /* Unicode code point to UTF-8
-     *  0x0000-0x007f:   0xxxxxxx
-     *  0x0080-0x07ff:   110xxxxx 10xxxxxx
-     *  0x0800-0xffff:   1110xxxx 10xxxxxx 10xxxxxx
-     * 0x10000-0x1fffff: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
-     * Note that UTF-16 limits Unicode to 0x10ffff. This code is not
-     * endian-agnostic.
-     */
-    for (i = 0; i < n; i++) {
-        if ((src[i] & 0x80) == 0) {
-            dest[count++] = src[i];
-            if (src[i] == 0) break;
-        } else if ((src[i] & 0xe0) == 0xc0) {
-            dest[count++] = (((unsigned char)src[i] & 0x1f) << 6)| 
-                            ((unsigned char)src[i+1] & 0x3f);
-            i++;
-        } else if ((src[i] & 0xf0) == 0xe0) {
-            dest[count++] = (((unsigned char)src[i] & 0x0f) << 12) | 
-                            (((unsigned char)src[i+1] & 0x3f) << 6) |
-                            ((unsigned char)src[i+2] & 0x3f);
-            i += 2;
-        } else if ((src[i] & 0xf8) == 0xf0) {
-            dest[count++] = (((unsigned char)src[i] & 0x0f) << 18) | 
-                            (((unsigned char)src[i+1] & 0x3f) << 12) |
-                            (((unsigned char)src[i+2] & 0x3f) << 6) |
-                            ((unsigned char)src[i+3] & 0x3f);
-            i += 3;
-        } else {
-            /* Should not get here; asserting a known false expression */
-            assert((src[i] & 0xf8) == 0xf0);
-        }
-    }
-    return count;
-}
-
-
 static errr Term_pict_mac(int x, int y, int n, const byte *ap,
 			const wchar_t *cp, const byte *tap, 
 			const wchar_t *tcp)
@@ -1921,6 +1858,9 @@ static void term_data_link(int i)
 	/* Use a "software" cursor */
 	td->t->soft_cursor = TRUE;
 
+    /* Differentiate between BS/^h, Tab/^i, etc. */
+    td->t->complex_input = TRUE;
+
 	/*
 	 * We have an "icky" lower right corner, since
 	 * the window resize control is placed there
@@ -1942,7 +1882,6 @@ static void term_data_link(int i)
 	td->t->bigcurs_hook = Term_curs_mac;
 	td->t->text_hook = Term_text_mac;
 	td->t->pict_hook = Term_pict_mac;
-	td->t->mbcs_hook = Term_mbcs_mac;
 
 
 	td->t->never_bored = TRUE;
@@ -3649,7 +3588,7 @@ static OSStatus KeyboardCommand ( EventHandlerCallRef inCallRef,
 		case 67: ch = '*'; kp = TRUE; break;
 		case 69: ch = '+'; kp = TRUE; break;
 		case 75: ch = '/'; kp = TRUE; break;
-		case 76: ch = '\n'; kp = TRUE; break;
+		case 76: ch = KC_ENTER; kp = TRUE; break;
 		case 78: ch = '-'; kp = TRUE; break;
 		case 81: ch = '='; kp = TRUE; break;
 		case 82: ch = '0'; kp = TRUE; break;
@@ -3665,8 +3604,9 @@ static OSStatus KeyboardCommand ( EventHandlerCallRef inCallRef,
 
 		/* main keyboard but deal with here */
 		case 48: ch = KC_TAB; break;
-		case 36: ch = KC_RETURN; break;
+		case 36: ch = KC_ENTER; break;
 		case 51: ch = KC_BACKSPACE; break;
+		case 53: ch = ESCAPE; break;
 
 		/* middle bit */
 		case 114: ch = KC_HELP; break;

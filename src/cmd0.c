@@ -402,7 +402,7 @@ static int textui_get_count(void)
 	    return -1;
 
 	/* Simple editing (delete or backspace) */
-	else if (ke.code == 0x7F || ke.code == KTRL('H'))
+	else if (ke.code == KC_DELETE || ke.code == KC_BACKSPACE)
 	    count = count / 10;
 
 	/* Actual numeric data */
@@ -421,7 +421,7 @@ static int textui_get_count(void)
 	else
 	{
 	    /* XXX nasty hardcoding of action menu key */
-	    if (ke.code != '\n' && ke.code != '\r')
+	    if (ke.code != KC_ENTER)
 		Term_keypress(ke.code, ke.mods);
 
 	    break;
@@ -629,7 +629,7 @@ static bool textui_process_key(unsigned char c)
     struct command *cmd;
     struct cmd_info *command;
 
-    if ((c == '\n' || c == '\r') && OPT(show_menus))
+    if ((c == KC_ENTER) && OPT(show_menus))
 	c = textui_action_menu_choose();
 
     cmd = &converted_list[c];
@@ -637,7 +637,7 @@ static bool textui_process_key(unsigned char c)
     if (!command)
 	return FALSE;
 
-    if (c == ESCAPE || c == ' ' || c == '\a' || c == '\n' || c == '\r')
+    if (c == ESCAPE || c == ' ' || c == '\a' || c == KC_ENTER)
 	return TRUE;
 
     if (key_confirm_command(c) &&
@@ -684,13 +684,12 @@ static bool textui_process_key(struct keypress kp)
     struct cmd_info *cmd;
 
     /* XXXmacro this needs rewriting */
-    unsigned char c = (unsigned char)kp.code;
+    keycode_t c = kp.code;
 
-    if ((c == '\n' || c == '\r') && OPT(show_menus))
+    if ((c == KC_ENTER) && OPT(show_menus))
 	c = textui_action_menu_choose();
 
-    if (c == '\0' || c == ESCAPE || c == ' ' || c == '\a' || c == '\n' || 
-	c == '\r')
+    if (c == '\0' || c == ESCAPE || c == ' ' || c == '\a' || c == KC_ENTER)
 	return TRUE;
 
     cmd = converted_list[c];
