@@ -1656,7 +1656,7 @@ static void store_purchase(void)
 	price = price_item(i_ptr, ot_ptr->inflate, FALSE) * i_ptr->number;
 
 	/* Confirm purchase */
-	if (!get_check(format("Buy %s for %d gold?", o_name, price)))
+	if (!get_char(format("Buy %s for %d gold?", o_name, price), "yn", 2, 'y'))
 	    return;
 
 	/* Message */
@@ -1969,7 +1969,7 @@ static void store_sell(void)
 		       index_to_label(item), price);
 
 	    /* Confirm sale */
-	    if (!get_check(format("Accept %d gold?", price)))
+	    if (!get_char(format("Accept %d gold?", price), "yn", 2, 'y'))
 		return;
 
 	    /* Say "okay" */
@@ -1983,7 +1983,7 @@ static void store_sell(void)
 		p_ptr->au = PY_MAX_GOLD;
 	}
 
-	else if (!get_check(format("Donate %s?", o_name)))
+	else if (!get_char(format("Donate %s?", o_name), "yn", 2, 'y'))
 	    return;
 
 	/* Update the display */
