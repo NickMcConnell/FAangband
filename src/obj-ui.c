@@ -20,6 +20,7 @@
 #include "button.h"
 #include "cave.h"
 #include "cmds.h"
+#include "keymap.h"
 #include "target.h"
 #include "tvalsval.h"
 #include "ui-menu.h"
@@ -605,7 +606,7 @@ static int get_tag(int *cp, char tag, cmd_code cmd, bool quiver_tags)
 	    }
 
 	    /* Check the special tags */
-	    if ((cmd_lookup(s[1]) == cmd) && (s[2] == tag)) {
+	    if ((cmd_lookup(s[1], KEYMAP_MODE_ORIG) == cmd) && (s[2] == tag)) {
 		/* Save the actual inventory ID */
 		*cp = i;
 
@@ -1003,7 +1004,7 @@ bool get_item(int *cp, const char *pmt, const char *str, cmd_code cmd, int mode)
 {
     s16b py = p_ptr->py;
     s16b px = p_ptr->px;
-    unsigned char cmdkey = cmd_lookup_key(cmd);
+    unsigned char cmdkey = cmd_lookup_key(cmd, KEYMAP_MODE_ORIG);
 
     bool done, item;
     int j, k;
