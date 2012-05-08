@@ -528,7 +528,7 @@ static enum birth_stage roller_command(bool first_call)
 
 	/* Add buttons */
 	button_add("[ESC]", ESCAPE);
-	button_add("[Enter]", '\r');
+	button_add("[Enter]", KC_ENTER);
 	button_add("[r]", 'r');
 	if (prev_roll) button_add("[p]", 'p');
 	clear_from(Term->hgt - 2);
@@ -556,7 +556,7 @@ static enum birth_stage roller_command(bool first_call)
 	}
 
 	/* 'Enter' accepts the roll */
-	if ((ch == '\r') || (ch == '\n')) 
+	if (ch == KC_ENTER) 
 	{
 		next = BIRTH_NAME_CHOICE;
 	}
@@ -595,7 +595,7 @@ static enum birth_stage roller_command(bool first_call)
 
 	/* Kill buttons */
 	button_kill(ESCAPE);
-	button_kill('\r');
+	button_kill(KC_ENTER);
 	button_kill('r');
 	button_kill('p');
 	redraw_stuff(p_ptr);
@@ -722,7 +722,7 @@ static enum birth_stage point_based_command(void)
 	}
 	
 	/* Done */
-	else if ((ch.code == '\r') || (ch.code == '\n')) 
+	else if (ch.code == KC_ENTER) 
 	{
 		next = BIRTH_NAME_CHOICE;
 	}
