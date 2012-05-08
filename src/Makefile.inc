@@ -342,7 +342,7 @@ depgen:
  list-mon-flags.h list-mon-spells.h z-term.h ui-event.h z-file.h \
  z-bitflag.h z-quark.h z-msg.h config.h game-cmd.h types.h option.h \
  cmds.h object.h z-textblock.h parser.h player.h ui.h z-type.h externs.h \
- spells.h list-gf-types.h button.h cave.h target.h ui-menu.h
+ spells.h list-gf-types.h button.h cave.h keymap.h target.h ui-menu.h
 ./obj-util.o: obj-util.c angband.h h-basic.h z-util.h z-virt.h z-form.h \
  z-rand.h defines.h tvalsval.h list-cave-flags.h list-object-flags.h \
  list-curse-flags.h list-kind-flags.h list-identify-flags.h \

@@ -62,7 +62,7 @@
  */
 /*
 #ifdef BUILD_ID
-#define VERSION_STRING	"1.2.9 (" BUILD_ID ")"
+#define VERSION_STRING	"1.2.10 (" BUILD_ID ")"
 #endif
 */
 
@@ -71,7 +71,7 @@
  */
 #define VERSION_MAJOR	1
 #define VERSION_MINOR	2
-#define VERSION_PATCH	9
+#define VERSION_PATCH	10
 #define VERSION_EXTRA	0
 
 /**
