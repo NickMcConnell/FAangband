@@ -184,7 +184,7 @@ static bool option_toggle_handle(menu_type *m, const ui_event *event,
 			next = TRUE;
 		} else if (event->key.code == '?') {
 			screen_save();
-			show_file(format("option.txt#%s", option_name(oid)), NULL, 0, 0);
+			show_file(format("optdesc.txt#%s", option_name(oid)), NULL, 0, 0);
 			screen_load();
 		} else {
 			return FALSE;
