@@ -945,10 +945,11 @@ static bool describe_weapon_damage(textblock *tb, const object_type *o_ptr,
 
     /*
      * Get the player's hypothetical state, were they to be
-     * wielding this item.
+     * wielding this item (setting irrelevant shield state).
      */
     memcpy(inven, p_ptr->inventory, INVEN_TOTAL * sizeof(object_type));
     inven[INVEN_WIELD] = *o_ptr;
+    state.shield_on_back = FALSE;
 
     calc_bonuses(inven, &state, TRUE);
 
@@ -1252,6 +1253,7 @@ static bool describe_digger(textblock *tb, const object_type *o_ptr,
     if (o_ptr != &p_ptr->inventory[INVEN_RIGHT])
 	inven[sl] = *o_ptr;
 
+    st.shield_on_back = FALSE;
     calc_bonuses(inven, &st, TRUE);
 
     chances[0] = st.skills[SKILL_DIGGING] * 8;
