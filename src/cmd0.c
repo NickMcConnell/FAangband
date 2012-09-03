@@ -129,7 +129,7 @@ static struct cmd_info cmd_info[] =
 {
         { "Check/learn specialties", { 'O' }, CMD_NULL, do_cmd_specialty }, 
 	{ "Full dungeon map", { 'M' }, CMD_NULL, do_cmd_view_map },
-	{ "Display visible item list", { ']' }, CMD_NULL, do_cmd_itemlist },
+	{ "Display visible item list", { KTRL('I') }, CMD_NULL, do_cmd_itemlist },
 	{ "Display visible monster list", { '[' }, CMD_NULL, do_cmd_monlist },
 	{ "Locate player on map", { 'L', 'W' }, CMD_NULL, do_cmd_locate },
 	{ "Help", { '?' }, CMD_NULL, do_cmd_help },
