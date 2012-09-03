@@ -439,7 +439,7 @@ byte py_pickup(int pickup, int y, int x)
     bool call_function_again = FALSE;
     bool blind = ((p_ptr->timed[TMD_BLIND]) || (no_light()));
     bool domsg = TRUE;
-    bool telekinesis = (!(y == p_ptr->py) || !(x == p_ptr->px));
+    bool telekinesis = ((y != p_ptr->py) || (x != p_ptr->px));
 
     /* Always pickup gold, effortlessly */
     if (!telekinesis) py_pickup_gold();
