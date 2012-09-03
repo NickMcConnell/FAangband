@@ -1111,7 +1111,7 @@ static void DrawTile(int x, int y, byte a, wchar_t c, byte ta, wchar_t tc)
 
 static void ShowTextAt(int x, int y, int color, int n, const wchar_t *text )
 {
-  int i, j;
+        int i;
 	term_data *td = (term_data*) Term->data;
 	GlyphInfo *info = td->ginfo;
 	/* Overwite the text, unless it's being called recursively. */
@@ -1124,28 +1124,27 @@ static void ShowTextAt(int x, int y, int color, int n, const wchar_t *text )
 	UInt8 text_mb[MB_LEN_MAX * 255];
 	wcsncpy(src, text, n);
 	src[n] = L'\0';
-	size_t text_bytes = 0;
+        size_t text_bytes = 0;
+ 
+        /* Copied from FAangband - thanks to nck_m! */
+        for (i = 0; i < n; i++) {
+            if ((src[i] & 0x7f) == src[i])
+                text_mb[text_bytes++] = (UInt8) src[i];
+            else if ((src[i] & 0x7ff) == src[i]){
+                text_mb[text_bytes++] = (UInt8) 0xc0 + (src[i] >> 6);
+                text_mb[text_bytes++] = (UInt8) 0x80 + (src[i] & 0x3f);
+            } else if ((src[i] & 0xffff) == src[i]) {
+                text_mb[text_bytes++] = (UInt8) 0xe0 + (src[i] >> 12);
+                text_mb[text_bytes++] = (UInt8) 0x80 + ((src[i] >> 6) & 0x3f);
+                text_mb[text_bytes++] = (UInt8) 0x80 + (src[i] & 0x3f);
+            } else {
+                text_mb[text_bytes++] = (UInt8) 0xf0 + (src[i] >> 18);
+                text_mb[text_bytes++] = (UInt8) 0x80 + ((src[i] >> 12) & 0x3f);
+                text_mb[text_bytes++] = (UInt8) 0x80 + ((src[i] >> 6) & 0x3f);
+                text_mb[text_bytes++] = (UInt8) 0x80 + (src[i] & 0x3f);
+            }
+        }
 
-	/* Manually extract bytes - NRM */
-	for (i = 0; i < n; i++) {
-	  if ((src[i] & 0x7f) == src[i])
-	    text_mb[text_bytes++] = (UInt8) src[i];
-	  else if ((src[i] & 0x7ff) == src[i]){
-	    text_mb[text_bytes++] = (UInt8) 0xc0 + (src[i] >> 6);
-	    text_mb[text_bytes++] = (UInt8) 0x80 + (src[i] & 0x3f);
-	  } else if ((src[i] & 0xffff) == src[i]) {
-	    text_mb[text_bytes++] = (UInt8) 0xe0 + (src[i] >> 12);
-	    text_mb[text_bytes++] = (UInt8) 0x80 + ((src[i] >> 6) & 0x3f);
-	    text_mb[text_bytes++] = (UInt8) 0x80 + (src[i] & 0x3f);
-	  } else {
-	    text_mb[text_bytes++] = (UInt8) 0xf0 + (src[i] >> 18);
-	    text_mb[text_bytes++] = (UInt8) 0x80 + ((src[i] >> 12) & 0x3f);
-	    text_mb[text_bytes++] = (UInt8) 0x80 + ((src[i] >> 6) & 0x3f);
-	    text_mb[text_bytes++] = (UInt8) 0x80 + (src[i] & 0x3f);
-	  }
-
-	}
-	    
 	text_mb[text_bytes] = '\0';
 
 	CFStringRef text_str = CFStringCreateWithBytes(
@@ -1157,7 +1156,6 @@ static void ShowTextAt(int x, int y, int color, int n, const wchar_t *text )
 		NULL, NULL);
 	assert(font != NULL);
 
-	CFIndex text_len = CFStringGetLength(text_str);
 	UniChar *characters = (UniChar *)mem_alloc(n * sizeof(UniChar));
 	CGGlyph *glyphs = (CGGlyph *)mem_alloc(n * sizeof(CGGlyph));
 
@@ -1815,47 +1813,6 @@ static errr Term_text_mac(int x, int y, int n, byte a, const wchar_t *cp)
 	return (0);
 }
 
-static size_t Term_mbcs_mac(wchar_t *dest, const char *src, int n)
-{
-    int i;
-    int count = 0;
-
-    /* Unicode code point to UTF-8
-     *  0x0000-0x007f:   0xxxxxxx
-     *  0x0080-0x07ff:   110xxxxx 10xxxxxx
-     *  0x0800-0xffff:   1110xxxx 10xxxxxx 10xxxxxx
-     * 0x10000-0x1fffff: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
-     * Note that UTF-16 limits Unicode to 0x10ffff. This code is not
-     * endian-agnostic.
-     */
-    for (i = 0; i < n; i++) {
-        if ((src[i] & 0x80) == 0) {
-            dest[count++] = src[i];
-            if (src[i] == 0) break;
-        } else if ((src[i] & 0xe0) == 0xc0) {
-            dest[count++] = (((unsigned char)src[i] & 0x1f) << 6)| 
-                            ((unsigned char)src[i+1] & 0x3f);
-            i++;
-        } else if ((src[i] & 0xf0) == 0xe0) {
-            dest[count++] = (((unsigned char)src[i] & 0x0f) << 12) | 
-                            (((unsigned char)src[i+1] & 0x3f) << 6) |
-                            ((unsigned char)src[i+2] & 0x3f);
-            i += 2;
-        } else if ((src[i] & 0xf8) == 0xf0) {
-            dest[count++] = (((unsigned char)src[i] & 0x0f) << 18) | 
-                            (((unsigned char)src[i+1] & 0x3f) << 12) |
-                            (((unsigned char)src[i+2] & 0x3f) << 6) |
-                            ((unsigned char)src[i+3] & 0x3f);
-            i += 3;
-        } else {
-            /* Should not get here; asserting a known false expression */
-            assert((src[i] & 0xf8) == 0xf0);
-        }
-    }
-    return count;
-}
-
-
 static errr Term_pict_mac(int x, int y, int n, const byte *ap,
 			const wchar_t *cp, const byte *tap, 
 			const wchar_t *tcp)
@@ -1896,6 +1853,55 @@ static errr Term_pict_mac(int x, int y, int n, const byte *ap,
 	return (0);
 }
 
+/* From the Linux mbstowcs(3) man page:
+ *   If dest is NULL, n is ignored, and the conversion  proceeds  as  above,
+ *   except  that  the converted wide characters are not written out to mem‐
+ *   ory, and that no length limit exists.
+ */
+static size_t Term_mbcs_mac(wchar_t *dest, const char *src, int n)
+{
+    int i;
+    int count = 0;
+
+    /* Unicode code point to UTF-8
+     *  0x0000-0x007f:   0xxxxxxx
+     *  0x0080-0x07ff:   110xxxxx 10xxxxxx
+     *  0x0800-0xffff:   1110xxxx 10xxxxxx 10xxxxxx
+     * 0x10000-0x1fffff: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+     * Note that UTF-16 limits Unicode to 0x10ffff. This code is not
+     * endian-agnostic.
+     */
+    for (i = 0; i < n || dest == NULL; i++) {
+        if ((src[i] & 0x80) == 0) {
+            if (dest != NULL) dest[count] = src[i];
+            if (src[i] == 0) break;
+        } else if ((src[i] & 0xe0) == 0xc0) {
+            if (dest != NULL) dest[count] = 
+                            (((unsigned char)src[i] & 0x1f) << 6)| 
+                            ((unsigned char)src[i+1] & 0x3f);
+            i++;
+        } else if ((src[i] & 0xf0) == 0xe0) {
+            if (dest != NULL) dest[count] = 
+                            (((unsigned char)src[i] & 0x0f) << 12) | 
+                            (((unsigned char)src[i+1] & 0x3f) << 6) |
+                            ((unsigned char)src[i+2] & 0x3f);
+            i += 2;
+        } else if ((src[i] & 0xf8) == 0xf0) {
+            if (dest != NULL) dest[count] = 
+                            (((unsigned char)src[i] & 0x0f) << 18) | 
+                            (((unsigned char)src[i+1] & 0x3f) << 12) |
+                            (((unsigned char)src[i+2] & 0x3f) << 6) |
+                            ((unsigned char)src[i+3] & 0x3f);
+            i += 3;
+        } else {
+            /* Found an invalid multibyte sequence */
+            return (size_t)-1;
+        }
+        count++;
+    }
+    return count;
+}
+
 
 /*
  * Create and initialize window number "i"
@@ -1921,8 +1927,8 @@ static void term_data_link(int i)
 	/* Use a "software" cursor */
 	td->t->soft_cursor = TRUE;
 
-	/* Differentiate between BS/^h, Tab/^i, etc. */
-	td->t->complex_input = TRUE;
+    /* Differentiate between BS/^h, Tab/^i, etc. */
+    td->t->complex_input = TRUE;
 
 	/*
 	 * We have an "icky" lower right corner, since
@@ -2311,7 +2317,7 @@ static void cf_load_prefs()
 								kFontNoScriptCode, kFontNoLanguageCode, &fid);
 			if(fid) td->font_id = fid;
 			/* Use the default */
-			else my_strcpy(td->font_name, "Monaco", sizeof(td->font_name));
+			else my_strcpy(td->font_name, "Menlo-Regular", sizeof(td->font_name));
 		}
 	}
 	
@@ -2336,16 +2342,16 @@ static void cf_load_prefs()
  */
 static void term_data_hack(term_data *td)
 {
-	/* Default to Monaco font */
+	/* Default to Menlo font */
 	ATSUFontID fid = 0;
 
-	ATSUFindFontFromName("Monaco", strlen("Monaco"), kFontPostscriptName,
+	ATSUFindFontFromName("Menlo-Regular", strlen("Menlo-Regular"), kFontPostscriptName,
 							kFontMacintoshPlatform, kFontNoScriptCode,
 							kFontNoLanguageCode, &fid);
 
 
 	if(!fid)
-		quit("Failed to find font 'Monaco'");
+		quit("Failed to find font 'Menlo'");
 
 	/* Wipe it */
 	WIPE(td, term_data);
@@ -2355,7 +2361,7 @@ static void term_data_hack(term_data *td)
 
 	/* Default font */
 	td->font_id = fid;
-	my_strcpy(td->font_name, "Monaco", sizeof(td->font_name));
+	my_strcpy(td->font_name, "Menlo-Regular", sizeof(td->font_name));
 
 	/* Default font size - was 12 */
 	td->font_size = 14;

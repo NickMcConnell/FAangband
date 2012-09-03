@@ -230,13 +230,19 @@ static const menu_skin menu_skin_scroll =
 
 /*** Multi-column menus ***/
 
-/* Find the position of a cursor given a screen address */
 static int columns_get_cursor(int row, int col, int n, int top, region *loc)
 {
-	int rows_per_page = loc->page_rows;
-	int colw = loc->width / (n + rows_per_page - 1) / rows_per_page;
-	int cursor = row + rows_per_page * (col - loc->col) / colw;
+	int w, h, cursor;
+        int rows_per_page = loc->page_rows;
+        int cols = (n + rows_per_page - 1) / rows_per_page;
+	int colw = 23;
 
+	Term_get_size(&w, &h);
+
+	if ((colw * cols) > (w - col))
+		colw = (w - col) / cols;
+
+	cursor = (row - loc->row) + rows_per_page * ((col - loc->col) / colw);
 	if (cursor < 0) cursor = 0;	/* assert: This should never happen */
 	if (cursor >= n) cursor = n - 1;
 
