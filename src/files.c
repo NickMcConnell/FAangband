@@ -2338,7 +2338,9 @@ bool show_file(const char *name, const char *what, int line, int mode)
 	ke = inkey_ex();
 
 	/* Mouse input - menus */
-	if ((menu) && (mouse[ke.mouse.y])) {
+	if ((menu) && (ke.mouse.y <= 24) && (ke.mouse.y > 0) && 
+	    (mouse[ke.mouse.y])) 
+	{
 	    /* Recurse on that file */
 	    if (!show_file(hook[mouse[ke.mouse.y]], NULL, 0, mode))
 		ke.key.code = '?';
