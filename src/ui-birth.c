@@ -513,7 +513,7 @@ static enum birth_stage roller_command(bool first_call)
 	size_t promptlen = 0;
 
 	ui_event ke;
-	char ch;
+	keycode_t ch;
 
 	enum birth_stage next = BIRTH_ROLLER;
 
