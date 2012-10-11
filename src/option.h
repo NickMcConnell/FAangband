@@ -104,6 +104,7 @@ extern const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER];
 #define OPT_birth_no_stairs             (OPT_BIRTH+10)
 #define OPT_birth_ai_cheat              (OPT_BIRTH+11)
 #define OPT_birth_auto_scum             (OPT_BIRTH+12)
+#define OPT_birth_compressed            (OPT_BIRTH+13)
 
 #define OPT_cheat_peek                  (OPT_CHEAT+0)
 #define OPT_cheat_hear                  (OPT_CHEAT+1)
@@ -125,6 +126,7 @@ extern const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER];
 #define OPT_adult_no_stairs             (OPT_ADULT+10)
 #define OPT_adult_ai_cheat              (OPT_ADULT+11)
 #define OPT_adult_auto_scum             (OPT_ADULT+12)
+#define OPT_adult_compressed            (OPT_ADULT+13)
 
 #define OPT_score_peek                  (OPT_SCORE+0)
 #define OPT_score_hear                  (OPT_SCORE+1)
