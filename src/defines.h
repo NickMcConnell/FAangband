@@ -2406,7 +2406,7 @@ enum
 #define outside \
     ((stage_map[p_ptr->stage][STAGE_TYPE] != CAVE)	\
      && (stage_map[p_ptr->stage][STAGE_TYPE] != VALLEY) \
-       && ((p_ptr->stage < 151) || (p_ptr->stage > 153)))
+       && ((p_ptr->stage < KHAZAD_DUM_TOWN) || (p_ptr->stage > MENEGROTH_TOWN)))
 
 			 
 /**
@@ -2521,18 +2521,18 @@ extern int PlayerUID;
 #define STAGE_TYPE             8
 
 /* Special stage numbers */
-#define ERIADOR_TOWN           (OPT(adult_compressed) ? 6 : 6)
-#define OSSIRIAND_TOWN         (OPT(adult_compressed) ? 30 : 30)
-#define ERED_LUIN_SOUTH_TOWN   (OPT(adult_compressed) ? 37 : 37)
-#define TAUR_IM_DUINATH_TOWN   (OPT(adult_compressed) ? 44 : 44)
-#define EPHEL_BRANDIR_TOWN     (OPT(adult_compressed) ? 115 : 115)
-#define GLADDEN_FIELDS_TOWN    (OPT(adult_compressed) ? 150 : 150)
-#define KHAZAD_DUM_TOWN        (OPT(adult_compressed) ? 151 : 151)
-#define BELEGOST_TOWN          (OPT(adult_compressed) ? 152 : 152)
-#define MENEGROTH_TOWN         (OPT(adult_compressed) ? 153 : 153)
-#define GONDOLIN_TOWN          (OPT(adult_compressed) ? 154 : 154)
-#define UNDERWORLD_STAGE       (OPT(adult_compressed) ? 255 : 255)
-#define MOUNTAINTOP_STAGE      (OPT(adult_compressed) ? 256 : 256)
+#define ERIADOR_TOWN           (OPT(adult_compressed) ? 5 : 6)
+#define OSSIRIAND_TOWN         (OPT(adult_compressed) ? 20 : 30)
+#define ERED_LUIN_SOUTH_TOWN   (OPT(adult_compressed) ? 24 : 37)
+#define TAUR_IM_DUINATH_TOWN   (OPT(adult_compressed) ? 27 : 44)
+#define EPHEL_BRANDIR_TOWN     (OPT(adult_compressed) ? 59 : 115)
+#define GLADDEN_FIELDS_TOWN    (OPT(adult_compressed) ? 79 : 150)
+#define KHAZAD_DUM_TOWN        (OPT(adult_compressed) ? 80 : 151)
+#define BELEGOST_TOWN          (OPT(adult_compressed) ? 81 : 152)
+#define MENEGROTH_TOWN         (OPT(adult_compressed) ? 82 : 153)
+#define GONDOLIN_TOWN          (OPT(adult_compressed) ? 83 : 154)
+#define UNDERWORLD_STAGE       (OPT(adult_compressed) ? 84 : 255)
+#define MOUNTAINTOP_STAGE      (OPT(adult_compressed) ? 85 : 256)
 
 
 /*

@@ -1298,7 +1298,8 @@ bool recall_action(menu_type *menu, const ui_event *e, int oid)
 	int stage;
 
 	/* Find the point, being careful about underworld etc */
-	if ((p_ptr->stage == 255) || (p_ptr->stage == 256))
+	if ((p_ptr->stage == UNDERWORLD_STAGE) || 
+	    (p_ptr->stage == MOUNTAINTOP_STAGE))
 	    stage = p_ptr->last_stage;
 	else
 	    stage = p_ptr->stage;

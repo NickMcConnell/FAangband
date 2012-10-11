@@ -1494,6 +1494,15 @@ int rd_dungeon(u32b version)
 		stage_map[i][n] = dungeon_map[i][n];
     }
 
+    if (OPT(adult_compressed))
+    {
+	for (i = 0; i < NUM_STAGES; i++)
+	    for (n = 0; n < 9; n++)
+		stage_map[i][n] = compressed_map[i][n];
+
+	for (i = 0; i < NUM_TOWNS; i++)
+	    towns[i] = compressed_towns[i];
+    }
 
 
     /* Header info */

@@ -288,9 +288,9 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
     if (stage_map[p_ptr->last_stage][LOCALITY] == UNDERWORLD)
     {
 	/* Reset */
-	stage_map[255][UP] = 0;
+	stage_map[UNDERWORLD_STAGE][UP] = 0;
 	stage_map[p_ptr->stage][DOWN] = 0;
-	stage_map[255][DEPTH] = 0;
+	stage_map[UNDERWORLD_STAGE][DEPTH] = 0;
 
 	/* No way back */
 	p_ptr->create_stair = 0;
@@ -498,9 +498,9 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
     if (stage_map[p_ptr->last_stage][LOCALITY] == MOUNTAIN_TOP)
     {
 	/* Reset */
-	stage_map[256][DOWN] = 0;
+	stage_map[MOUNTAINTOP_STAGE][DOWN] = 0;
 	stage_map[p_ptr->stage][UP] = 0;
-	stage_map[256][DEPTH] = 0;
+	stage_map[MOUNTAINTOP_STAGE][DEPTH] = 0;
 
 	/* No way back */
 	p_ptr->create_stair = 0;

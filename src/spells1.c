@@ -807,7 +807,8 @@ void teleport_player_level(bool friendly)
     /* Remember where we came from */
     p_ptr->last_stage = p_ptr->stage;
 
-    if ((stage_map[p_ptr->stage][STAGE_TYPE] == CAVE) && (p_ptr->stage != 255)) {
+    if ((stage_map[p_ptr->stage][STAGE_TYPE] == CAVE) && 
+	(p_ptr->stage != UNDERWORLD_STAGE)) {
 	if (is_quest(p_ptr->stage) || (!stage_map[p_ptr->stage][DOWN])) {
 	    msgt(MSG_TPLEVEL, "You rise up through the ceiling.");
 
@@ -869,16 +870,17 @@ void teleport_player_level(bool friendly)
     }
 
     /* Heh heh */
-    else if ((p_ptr->stage != 255) && (p_ptr->stage != 256)) {
+    else if ((p_ptr->stage != UNDERWORLD_STAGE) && 
+	     (p_ptr->stage != MOUNTAINTOP_STAGE)) {
 	if ((randint0(100) < 50)
 	    && !(stage_map[p_ptr->stage][STAGE_TYPE] == SWAMP)
 	    && !(stage_map[p_ptr->stage][STAGE_TYPE] == TOWN)) {
 	    msgt(MSG_TPLEVEL, "You rise into the air.");
 
 	    /* Set the ways forward and back */
-	    stage_map[256][DOWN] = p_ptr->stage;
-	    stage_map[p_ptr->stage][UP] = 256;
-	    stage_map[256][DEPTH] = p_ptr->depth + 1;
+	    stage_map[MOUNTAINTOP_STAGE][DOWN] = p_ptr->stage;
+	    stage_map[p_ptr->stage][UP] = MOUNTAINTOP_STAGE;
+	    stage_map[MOUNTAINTOP_STAGE][DEPTH] = p_ptr->depth + 1;
 
 	    /* New stage */
 	    p_ptr->stage = stage_map[p_ptr->stage][UP];
@@ -890,9 +892,9 @@ void teleport_player_level(bool friendly)
 
 	    /* Set the ways forward and back, if not there already */
 	    if (!stage_map[p_ptr->stage][DOWN]) {
-		stage_map[255][UP] = p_ptr->stage;
-		stage_map[p_ptr->stage][DOWN] = 255;
-		stage_map[255][DEPTH] = p_ptr->depth + 1;
+		stage_map[UNDERWORLD_STAGE][UP] = p_ptr->stage;
+		stage_map[p_ptr->stage][DOWN] = UNDERWORLD_STAGE;
+		stage_map[UNDERWORLD_STAGE][DEPTH] = p_ptr->depth + 1;
 	    }
 
 	    /* New stage */
@@ -905,28 +907,28 @@ void teleport_player_level(bool friendly)
 
     /* Got to go back */
     else {
-	if (p_ptr->stage == 255) {
+	if (p_ptr->stage == UNDERWORLD_STAGE) {
 	    msgt(MSG_TPLEVEL, "You rise up through the ceiling.");
 
 	    /* New stage */
 	    p_ptr->stage = stage_map[p_ptr->stage][UP];
 
 	    /* Reset */
-	    stage_map[255][UP] = 0;
+	    stage_map[UNDERWORLD_STAGE][UP] = 0;
 	    stage_map[p_ptr->stage][DOWN] = 0;
-	    stage_map[255][DEPTH] = 0;
+	    stage_map[UNDERWORLD_STAGE][DEPTH] = 0;
 	}
 
-	else if (p_ptr->stage == 256) {
+	else if (p_ptr->stage == MOUNTAINTOP_STAGE) {
 	    msgt(MSG_TPLEVEL, "You plunge downward.");
 
 	    /* New stage */
 	    p_ptr->stage = stage_map[p_ptr->stage][DOWN];
 
 	    /* Reset */
-	    stage_map[256][DOWN] = 0;
+	    stage_map[MOUNTAINTOP_STAGE][DOWN] = 0;
 	    stage_map[p_ptr->stage][UP] = 0;
-	    stage_map[256][DEPTH] = 0;
+	    stage_map[MOUNTAINTOP_STAGE][DEPTH] = 0;
 	}
     }
 

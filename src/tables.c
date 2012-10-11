@@ -2482,10 +2482,8 @@ const char *short_locality_name[MAX_LOCALITIES] =
 /**
  * Stage numbers of towns 
  */
-
-int towns[10] = {ERIADOR_TOWN, OSSIRIAND_TOWN, ERED_LUIN_SOUTH_TOWN, 
-		 TAUR_IM_DUINATH_TOWN, EPHEL_BRANDIR_TOWN, GLADDEN_FIELDS_TOWN, 
-		 KHAZAD_DUM_TOWN, BELEGOST_TOWN, MENEGROTH_TOWN, GONDOLIN_TOWN};
+int towns[10] = {6, 30, 37, 44, 115, 150, 151, 152, 153, 154};
+int compressed_towns[10] = {5, 20, 24, 27, 59, 79, 80, 81, 82, 83};
 
 
 /**

@@ -674,9 +674,9 @@ void fall_off_cliff(void)
 	p_ptr->depth = stage_map[p_ptr->stage][DEPTH];
 
 	/* Reset */
-	stage_map[256][DOWN] = 0;
+	stage_map[MOUNTAINTOP_STAGE][DOWN] = 0;
 	stage_map[p_ptr->stage][UP] = 0;
-	stage_map[256][DEPTH] = 0;
+	stage_map[MOUNTAINTOP_STAGE][DEPTH] = 0;
 
 	if (p_ptr->state.ffall) {
 	    notice_obj(OF_FEATHER, 0);

@@ -352,6 +352,8 @@ static void get_level(struct player *p)
 	p->home = 0;
     else if (OPT(adult_dungeon))
 	p->home = 1;
+    else if (OPT(adult_compressed))
+	p->home = compressed_towns[rp_ptr->hometown];
     else
 	p->home = towns[rp_ptr->hometown];
 }
@@ -1330,7 +1332,29 @@ void player_birth(bool quickstart_allowed)
 	/* Morgoth */
 	q_list[4].stage = 101;
     }
+    else if (OPT(adult_compressed)) {
+	for (i = 0; i < NUM_TOWNS; i++)
+	    towns[i] = compressed_towns[i];
 
+	for (i = 0; i < NUM_STAGES; i++)
+	    for (j = 0; j < 9; j++)
+		stage_map[i][j] = dungeon_map[i][j];
+
+	/* Mim */
+	q_list[0].stage = 94;
+
+	/* Glaurung */
+	q_list[1].stage = 123;
+
+	/* Ungoliant */
+	q_list[2].stage = 110;
+
+	/* Sauron */
+	q_list[3].stage = 139;
+
+	/* Morgoth */
+	q_list[4].stage = 180;
+    }
 
     /* Give the player some money */
     get_money();

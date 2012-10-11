@@ -677,9 +677,9 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    if (!stage_map[p_ptr->stage][DOWN]) {
 		/* Set the ways forward and back */
-		stage_map[255][UP] = p_ptr->stage;
-		stage_map[p_ptr->stage][DOWN] = 255;
-		stage_map[255][DEPTH] = p_ptr->depth + 1;
+		stage_map[UNDERWORLD_STAGE][UP] = p_ptr->stage;
+		stage_map[p_ptr->stage][DOWN] = UNDERWORLD_STAGE;
+		stage_map[UNDERWORLD_STAGE][DEPTH] = p_ptr->depth + 1;
 	    }
 
 	    /* New stage */
