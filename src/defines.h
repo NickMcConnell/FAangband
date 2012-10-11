@@ -2520,6 +2520,21 @@ extern int PlayerUID;
 #define DOWN                   7
 #define STAGE_TYPE             8
 
+/* Special stage numbers */
+#define ERIADOR_TOWN           (1 ? 6 : 6)
+#define OSSIRIAND_TOWN         (1 ? 30 : 30)
+#define ERED_LUIN_SOUTH_TOWN   (1 ? 37 : 37)
+#define TAUR_IM_DUINATH_TOWN   (1 ? 44 : 44)
+#define EPHEL_BRANDIR_TOWN     (1 ? 115 : 115)
+#define GLADDEN_FIELDS_TOWN    (1 ? 150 : 150)
+#define KHAZAD_DUM_TOWN        (1 ? 151 : 151)
+#define BELEGOST_TOWN          (1 ? 152 : 152)
+#define MENEGROTH_TOWN         (1 ? 153 : 153)
+#define GONDOLIN_TOWN          (1 ? 154 : 154)
+#define UNDERWORLD_STAGE       (1 ? 255 : 255)
+#define MOUNTAINTOP_STAGE      (1 ? 256 : 256)
+
+
 /*
  * Mouse click region names
  */
