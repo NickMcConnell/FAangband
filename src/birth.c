@@ -1338,7 +1338,7 @@ void player_birth(bool quickstart_allowed)
 
 	for (i = 0; i < NUM_STAGES; i++)
 	    for (j = 0; j < 9; j++)
-		stage_map[i][j] = dungeon_map[i][j];
+		stage_map[i][j] = compressed_map[i][j];
 
 	/* Mim */
 	q_list[0].stage = 94;
