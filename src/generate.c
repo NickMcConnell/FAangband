@@ -498,6 +498,7 @@ void generate_cave(void)
 
     /* Generate */
     for (num = 0; TRUE; num++) {
+	int max = 2;
 	bool okay = TRUE;
 	const char *why = NULL;
 
@@ -538,6 +539,8 @@ void generate_cave(void)
 
 	/* Set the number of wilderness "vaults" */
 	wild_vaults = 0;
+	if (OPT(hard_mode)) max += 2;
+
 	if (p_ptr->depth > 10)
 	    wild_vaults += randint0(2);
 	if (p_ptr->depth > 20)
@@ -546,6 +549,7 @@ void generate_cave(void)
 	    wild_vaults += randint0(2);
 	if (p_ptr->depth > 40)
 	    wild_vaults += randint0(2);
+
 	if (no_vault())
 	    wild_vaults = 0;
 
@@ -670,7 +674,7 @@ void generate_cave(void)
 	}
 
 	/* Mega-Hack -- "auto-scum" */
-	if (OPT(adult_auto_scum) && (num < 100) && !(p_ptr->themed_level)) {
+	if (OPT(auto_scum) && (num < 100) && !(p_ptr->themed_level)) {
 	    int fudge = (no_vault()? 3 : 0);
 
 	    /* Require "goodness" */

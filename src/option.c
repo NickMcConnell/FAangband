@@ -29,19 +29,19 @@ const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER] =
 	  OPT_use_sound,
 	  OPT_rogue_like_commands,
 	  OPT_use_old_target,
-	  OPT_pickup_always,
-	  OPT_pickup_inven,
-	  OPT_pickup_detail,
-	  OPT_pickup_single,
 	  OPT_hide_squelchable,
 	  OPT_squelch_worthless,
-	  OPT_easy_open,
-	  OPT_easy_alter,
 	  OPT_show_lists,
 	  OPT_show_menus,
 	  OPT_mouse_movement,
 	  OPT_mouse_buttons,
-	  OPT_xchars_to_file
+	  OPT_xchars_to_file,
+	  OPT_NONE,
+	  OPT_NONE,
+	  OPT_NONE,
+	  OPT_NONE,
+	  OPT_NONE,
+	  OPT_NONE
       },
 
     /*** Display ***/
@@ -65,6 +65,27 @@ const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER] =
 	  OPT_NONE
       },
     
+    /*** Gameplay ***/
+    
+      {
+	  OPT_pickup_always,
+	  OPT_pickup_inven,
+	  OPT_pickup_detail,
+	  OPT_pickup_single,
+	  OPT_easy_open,
+	  OPT_easy_alter,
+	  OPT_auto_scum,
+	  OPT_hard_mode,
+	  OPT_NONE,
+	  OPT_NONE,
+	  OPT_NONE,
+	  OPT_NONE,
+	  OPT_NONE,
+	  OPT_NONE,
+	  OPT_NONE,
+	  OPT_NONE
+     },
+
     /*** Warning ***/
     
       {
@@ -98,7 +119,7 @@ const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER] =
       OPT_birth_no_artifacts,
       OPT_birth_no_stairs,
       OPT_birth_ai_cheat,
-      OPT_birth_auto_scum,
+      OPT_NONE,
       OPT_NONE,
       OPT_NONE,
       OPT_NONE,
@@ -235,9 +256,9 @@ static option_entry options[OPT_MAX] =
      FALSE /* 46 */},
     {"notify_recharge",       "Notify on object recharge",
      FALSE /* 47 */},
-    {NULL,                     NULL,
+    {"auto_scum",             "Auto-scum for good levels",
      FALSE /* 48 */},
-    {NULL,                     NULL,
+    {"hard_mode",             "Generate more pits and vaults",
      FALSE /* 49 */},
     {NULL,                     NULL,
      FALSE /* 50 */},

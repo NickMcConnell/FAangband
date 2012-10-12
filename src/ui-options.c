@@ -2065,6 +2065,7 @@ static menu_action option_actions[] =
 {
 	{ 0, 'a', "Interface options", option_toggle_menu },
 	{ 0, 'b', "Display options", option_toggle_menu },
+	{ 0, 'c', "Gameplay options", option_toggle_menu },
 	{ 0, 'e', "Warning and disturbance options", option_toggle_menu },
 	{ 0, 'f', "Birth (difficulty) options", option_toggle_menu },
 	{ 0, 'g', "Cheat options", option_toggle_menu },

@@ -14,7 +14,7 @@ void option_set_defaults(void);
 /*
  * Information for "do_cmd_options()".
  */
-#define OPT_PAGE_MAX				5
+#define OPT_PAGE_MAX				6
 #define OPT_PAGE_PER				16
 
 /* The option data structures */
@@ -90,6 +90,10 @@ extern const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER];
 #define OPT_flush_failure		45
 #define OPT_flush_disturb		46
 #define OPT_notify_recharge		47
+
+#define OPT_auto_scum   		48
+#define OPT_hard_mode   		49
+
 
 #define OPT_birth_point_based           (OPT_BIRTH+0)
 #define OPT_birth_auto_roller           (OPT_BIRTH+1)
