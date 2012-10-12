@@ -542,13 +542,13 @@ void generate_cave(void)
 	if (OPT(hard_mode)) max += 2;
 
 	if (p_ptr->depth > 10)
-	    wild_vaults += randint0(2);
+	    wild_vaults += randint0(max);
 	if (p_ptr->depth > 20)
-	    wild_vaults += randint0(2);
+	    wild_vaults += randint0(max);
 	if (p_ptr->depth > 30)
-	    wild_vaults += randint0(2);
+	    wild_vaults += randint0(max);
 	if (p_ptr->depth > 40)
-	    wild_vaults += randint0(2);
+	    wild_vaults += randint0(max);
 
 	if (no_vault())
 	    wild_vaults = 0;
