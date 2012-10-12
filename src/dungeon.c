@@ -2336,8 +2336,18 @@ void play_game(void)
 	player_birth(p_ptr->ht_birth ? TRUE : FALSE);
 
 	/* Start in home town - or on the stairs to Angband */
-	p_ptr->stage =
-	    (OPT(adult_thrall) ? (OPT(adult_dungeon) ? 87 : 135) : p_ptr->home);
+	if (OPT(adult_thrall))
+	{
+	    if (OPT(adult_dungeon))
+		p_ptr->stage = 87;
+	    else if (OPT(adult_compressed))
+		p_ptr->stage = 70;
+	    else
+		p_ptr->stage = 135;
+	}
+	else
+	    p_ptr->stage = p_ptr->home;
+
 	p_ptr->depth = stage_map[p_ptr->stage][DEPTH];
 
 	/* Read the default options */
