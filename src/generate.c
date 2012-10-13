@@ -199,7 +199,7 @@ static void town_gen_hack(void)
 	Rand_value = seed_town[0];
 
     /* Set major town flag if necessary */
-    if ((stage > 150) || OPT(adult_dungeon))
+    if ((stage > GLADDEN_FIELDS_TOWN) || OPT(adult_dungeon))
 	major = TRUE;
 
     /* Hack - reduce width for minor towns */
@@ -363,7 +363,7 @@ static void town_gen(void)
     bool dummy;
 
     /* Hack - smaller for minor towns */
-    if ((stage < 151) && (!OPT(adult_dungeon)))
+    if ((stage < KHAZAD_DUM_TOWN) && (!OPT(adult_dungeon)))
 	width /= 2;
 
     /* Day time */
