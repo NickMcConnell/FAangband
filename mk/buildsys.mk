@@ -36,7 +36,7 @@ LD = ${CC}
 RANLIB = @RANLIB@
 PYTHON = @PYTHON@
 ASFLAGS = @ASFLAGS@
-CFLAGS = -g -O2 -DHAVE_CONFIG_H -fno-strength-reduce -W -Wall -Wno-unused-parameter -Wno-missing-field-initializers -pedantic -I/usr/include/ncursesw  -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT
+CFLAGS = -g -O2 -DHAVE_CONFIG_H -fno-strength-reduce -W -Wall -Wno-unused-parameter -Wno-missing-field-initializers -pedantic -I/usr/include/ncursesw  -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT
 CXXFLAGS = @CXXFLAGS@
 CPPFLAGS =  -I.
 DFLAGS = @DFLAGS@
@@ -45,7 +45,7 @@ OBJCFLAGS = @OBJCFLAGS@
 OBJCXXFLAGS = @OBJCXXFLAGS@
 LDFLAGS = 
 LDFLAGS_RPATH = @LDFLAGS_RPATH@
-LIBS =  -lncursesw -ltinfo  -lSM -lICE  -lX11  -L/usr/lib64 -lSDL -lpthread -lSDL_image -lSDL_ttf -lSDL_mixer -lm
+LIBS =  -lncursesw -ltinfo  -lSM -lICE  -lX11  -L/usr/lib64 -lSDL -lpthread -lSDL_image -lSDL_ttf -lm
 PYTHON_FLAGS = @PYTHON_FLAGS@
 PROG_IMPLIB_NEEDED = @PROG_IMPLIB_NEEDED@
 PROG_IMPLIB_LDFLAGS = @PROG_IMPLIB_LDFLAGS@
