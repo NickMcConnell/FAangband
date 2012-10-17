@@ -167,7 +167,7 @@ F:48:lit:0x96:0x81
 F:48:dark:0x96:0x82
 
 # pile of rubble
-F:49:all:0x87:0x87
+F:49:all:0x87:0xB7
 
 # magma vein (+ w/ hidden treasure)
 F:50:bright:0x96:0xB3
@@ -2703,8 +2703,8 @@ GF:CHAOS:135:0x81:0xA3
 
 
 # Load the special player pictures
-%:xtra-dvg.prf
+%:xtra-shb.prf
 
 # Load the flavored objects
-%:flvr-dvg.prf
+%:flvr-shb.prf
 
