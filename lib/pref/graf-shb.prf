@@ -51,63 +51,6 @@ F:7:all:0x97:0x93
 # up shaft
 F:8:all:0x97:0x94
 
-# rune of the elements
-F:9:all:0x9B:0x80
-
-# rune of magic influence
-F:10:all:0x9B:0x81
-
-# rune of instability
-F:11:all:0x9B:0x82
-
-# rune of mana
-F:12:all:0x9B:0x84
-
-# rune of protection
-F:13:all:0x9B:0x83
-
-# rune of power
-F:14:all:0x9B:0x85
-
-# rune of speed
-F:15:all:0x9B:0x86
-
-# trap door
-F:16:all:0x95:0xEC
-
-# pit
-F:17:all:0x95:0xED
-
-# dart trap
-F:18:all:0x95:0xF5
-
-# discolored spot
-F:19:all:0x95:0xF3
-
-# gas trap
-F:20:all:0x95:0xFA
-
-# strange rune
-F:21:all:0x95:0xF0
-
-# strange rune
-F:22:all:0x95:0xF1
-
-# ancient hex
-F:23:all:0x95:0xF4
-
-# shimmering portal
-F:24:all:0x95:0xFB
-
-# murder hole
-F:25:all:0x95:0xF7
-
-# falling branch
-#F:26
-
-# falling branch
-#F:27
-
 # F:28 unused
 # F:29 unused
 # F:30 unused
@@ -237,45 +180,6 @@ F:73:all:0x9A:0x95
 
 #F:65:all:0x88:0xCB
 
-# monster trap (basic)
-F:80:all:0x99:0x9A
-
-# monster trap (sturdy)
-F:81:all:0x99:0x9B
-
-# monster trap (netted)
-F:82:all:0x99:0x9C
-
-# monster trap (confusion)
-F:83:all:0x99:0x9D
-
-# monster trap (poison gas)
-F:84:all:0x99:0x9E
-
-# monster trap (spirit)
-F:85:all:0x99:0x9F
-
-# monster trap (lightning)
-F:86:all:0x99:0xA0
-
-# monster trap (explosive)
-F:87:all:0x99:0xA1
-
-# monster trap (portal)
-F:88:all:0x99:0xA2
-
-# monster trap (stasis)
-F:89:all:0x99:0xA3
-
-# monster trap (drain life)
-F:90:all:0x99:0xA3
-
-# monster trap (unmagic)
-F:91:all:0x99:0xA3
-
-# monster trap (dispel monsters)
-F:92:all:0x99:0xA3
-
 # F:93 unused
 # F:94 unused
 # F:95 unused
@@ -348,6 +252,107 @@ F:122:bright:0x97:0x8C
 F:122:lit:0x97:0x8D
 F:122:dark:0x97:0x8E
 
+
+# Trap attr/char definitions
+
+# rune of the elements
+N:1:0x9B:0x80
+
+# rune of magic influence
+N:2:0x9B:0x81
+
+# rune of instability
+N:3:0x9B:0x82
+
+# rune of mana
+N:4:0x9B:0x84
+
+# rune of protection
+N:5:0x9B:0x83
+
+# rune of power
+N:6:0x9B:0x85
+
+# rune of speed
+N:7:0x9B:0x86
+
+# web
+N:10:0x81:0xC7
+
+# trap door
+N:16:0x95:0xEC
+
+# pit
+N:17:0x95:0xED
+
+# dart trap
+N:18:0x95:0xF5
+
+# discolored spot
+N:19:0x95:0xF3
+
+# gas trap
+N:20:0x95:0xFA
+
+# strange rune
+N:21:0x95:0xF0
+
+# strange rune
+N:22:0x95:0xF1
+
+# ancient hex
+N:23:0x95:0xF4
+
+# shimmering portal
+N:24:0x95:0xFB
+
+# murder hole
+N:25:0x95:0xF7
+
+# falling branch
+#N:26
+
+# falling branch
+#N:27
+
+# monster trap (basic)
+N:64:0x99:0x9A
+
+# monster trap (sturdy)
+N:65:0x99:0x9B
+
+# monster trap (netted)
+N:66:0x99:0x9C
+
+# monster trap (confusion)
+N:67:0x99:0x9D
+
+# monster trap (poison gas)
+N:68:0x99:0x9E
+
+# monster trap (spirit)
+N:69:0x99:0x9F
+
+# monster trap (lightning)
+N:70:0x99:0xA0
+
+# monster trap (explosive)
+N:71:0x99:0xA1
+
+# monster trap (portal)
+N:72:0x99:0xA2
+
+# monster trap (stasis)
+N:73:0x99:0xA3
+
+# monster trap (drain life)
+N:74:0x99:0xA3
+
+# monster trap (unmagic)
+N:75:0x99:0xA3
+
+# monster trap (dispel monsters)
+N:76:0x99:0xA3
 
 # Monster attr/char definitions
 

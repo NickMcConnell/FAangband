@@ -759,6 +759,26 @@ static enum parser_error parse_prefs_f(struct parser *p)
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_prefs_n(struct parser *p)
+{
+	int idx;
+	trap_kind *trap;
+
+	struct prefs_data *d = parser_priv(p);
+	assert(d != NULL);
+	if (d->bypass) return PARSE_ERROR_NONE;
+
+	idx = parser_getuint(p, "idx");
+	if (idx >= z_info->trap_max)
+		return PARSE_ERROR_OUT_OF_BOUNDS;
+
+	trap = &trap_info[idx];
+	trap->x_attr = (byte)parser_getint(p, "attr");
+	trap->x_char = (wchar_t)parser_getint(p, "char");
+
+	return PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_prefs_gf(struct parser *p)
 {
 	bool types[GF_MAX] = { 0 };
@@ -1061,6 +1081,7 @@ static struct parser *init_parse_prefs(bool user)
 	parser_reg(p, "K sym tval sym sval int attr int char", parse_prefs_k);
 	parser_reg(p, "R uint idx int attr int char", parse_prefs_r);
 	parser_reg(p, "F uint idx sym lighting int attr int char", parse_prefs_f);
+	parser_reg(p, "N uint idx int attr int char", parse_prefs_n);
 	parser_reg(p, "GF sym type sym direction uint attr uint char", parse_prefs_gf);
 	parser_reg(p, "L uint idx int attr int char", parse_prefs_l);
 	parser_reg(p, "E sym tval int attr", parse_prefs_e);
