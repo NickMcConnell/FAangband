@@ -5,7 +5,8 @@ Earth which your character can visit.  Dungeons are shown in brackets under
 the region where their entrance lies (Nan Dungortheb is not strictly a dungeon,
 but acts like one in some ways).  Some towns are clearly marked; for the
 others and for a description of towns, see "town.txt".  For more information
-about wilderness and dungeons, see "wild-dun.txt".
+about wilderness and dungeons, see "wild-dun.txt".  Note that the routes
+marked with *s are only available in the compressed_map (default) option.
 
    Anfauglith -------------------------Lothlann
     (Angband) \                              \
@@ -15,20 +16,20 @@ about wilderness and dungeons, see "wild-dun.txt".
 Sirion Vale-----Gondolin  Dor Dinen             |
 (Tol-in-Gaurhoth)           |    \              |         Hithaeglir--Gladden
           \                 |    Himlad         |             /       Fields
-          Brethil           |        \        Ered Luin   Khazad Dum
+          Brethil        Doriath     \        Ered Luin   Khazad Dum
              \              |         East        \         /
-          ___ Ephel        Doriath   Beleriand     \    Hithaeglir
-        /    Brandir             \        \         |     /
-Talath /         \                \      Thargelion |   Eriador
-Dirnen       West Beleriand    Menegroth     \      |  /    \            
-(Nargothrond)     \                \           Belegost      \
-              Amon Rudh           Doriath          |          Eriador
-              (Amon Rudh)             \         Ered Luin      town
-                    \                  \            |            |
-                West Beleriand    East Beleriand    |            |
-                     \                        \   Ossiriand      |
-                   Andram                      \     |           |
-                      \                         \    |           |
+          ___ Ephel      Menegroth   Beleriand     \    Hithaeglir
+        /    Brandir             \       |          |     /
+Talath /         \           Doriath     Thargelion |   Eriador
+Dirnen       West Beleriand       |     *    \      |  /    \
+(Nargothrond)     \                \   *       Belegost      \
+              Amon Rudh      East Beleriand        |          Eriador
+              (Amon Rudh)     *           \     Ered Luin      town
+                    \        *             \        |            |
+                West Beleriand              \       |            |
+                     \                       \    Ossiriand      |
+                   Andram                     \      |           |
+                      \                        \     |           |
                     East Beleriand              Ossiriand        |
                         \                        /town           |
                       Taur-Im-Duinath   _Ent Path   |            |
