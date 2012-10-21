@@ -1558,7 +1558,7 @@ int compressed_map[NUM_STAGES][9] =
   /* 3   */ {ERIADOR         ,   4,   0,   2,   0,   4,   0,   0,   PLAIN},
   /* 4   */ {ERIADOR         ,   6,   0,   3,   5,   6,   0,   0,   PLAIN},
   /* 5   */ {ERIADOR         ,   0,   4,   0,   7,   0,   0,   0,   TOWN},
-  /* 6   */ {ERIADOR         ,   9,   0,   6,   0,  81,   0,   0,   MOUNTAIN},
+  /* 6   */ {ERIADOR         ,   9,   0,   4,   0,  81,   0,   0,   MOUNTAIN},
   /* 7   */ {ERIADOR_SOUTH   ,   5,   5,   0,   8,   0,   0,   0,   PLAIN},
   /* 8   */ {ERIADOR_SOUTH   ,   4,   7,   0,   0,   9,   0,   0,   PLAIN},
   /* 9   */ {ERIADOR_SOUTH   ,   3,   0,   8,  10,   0,   0,   0,   PLAIN},
