@@ -1851,7 +1851,7 @@ void idle_update(void)
     if (!character_dungeon)
 	return;
 
-    if (!OPT(animate_flicker))
+    if (!OPT(animate_flicker) || (use_graphics != GRAPHICS_NONE))
 	return;
 
     /* Animate and redraw if necessary */

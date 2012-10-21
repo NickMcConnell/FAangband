@@ -2784,6 +2784,7 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
     int tmp_chr;
 
     bool found = FALSE;
+    bool old_curs = smlcurs;
 
     ui_event ke;
 
@@ -2887,6 +2888,8 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
     /* Hack -- Increase "icky" depth */
     character_icky++;
 
+    /* Fix cursor */
+    smlcurs = TRUE;
 
     /* No command argument */
     p_ptr->command_arg = 0;
@@ -3062,6 +3065,8 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
     /* Hack -- Decrease "icky" depth */
     character_icky--;
 
+    /* Restore cursor */
+    smlcurs = old_curs;
 
     /* Clear the screen */
     Term_clear();

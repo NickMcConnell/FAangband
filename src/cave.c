@@ -1550,13 +1550,16 @@ void display_map(int *cy, int *cx)
 
 	    /* Get the attr/char at that map location */
 	    map_info(y, x, &g);
-	    grid_data_as_text(&g, &ta, &tc, &ta, &tc);
 
 	    /* Get the priority of that attr/char */
 	    tp = priority(ta, tc);
 
 	    /* Save "best" */
 	    if (mp[row][col] < tp) {
+		/* Hack - make every grid on the map lit */
+		g.lighting = FEAT_LIGHTING_LIT; /*FEAT_LIGHTING_BRIGHT;*/
+		grid_data_as_text(&g, &ta, &tc, &ta, &tc);
+
 		/* Add the character */
 		Term_putch(col + 1, row + 1, ta, tc);
 
