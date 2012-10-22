@@ -1611,7 +1611,7 @@ bool describe_ego(textblock *tb, const object_type *o_ptr)
 	    num++;
     }
 
-    if (num)
+    if (has_ego_properties(o_ptr) && num)
     {
 	const char *xtra[] = { "vulnerability", "pair of small resistances",
 			       "resistance", "high resistance", "sustain", 
