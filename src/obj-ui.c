@@ -98,7 +98,7 @@ static void show_obj(int onum, size_t max_len, char label[80],
 	/* Main window */
 	row = 1;
 	col = Term->wid - 3 - max_len - ex_width;
-	col = MIN(col, 20);
+	col = MIN(col, COL_MAP + tile_width);
 
 	if (col < 3)
 	    col = 0;
@@ -888,6 +888,7 @@ bool get_item_action(menu_type *menu, const ui_event *event, int oid)
 	{
 	    /* Load screen */
 	    screen_load();
+	    Term_fresh();
 	    
 	    /* Save screen */
 	    screen_save();
@@ -937,7 +938,7 @@ ui_event item_menu(cmd_code cmd, int mode)
     get_max_len(&max_len);
     area.page_rows = menu.count + 1;
     area.width = max_len;
-    area.col = MIN(Term->wid - 1 - max_len, 20);
+    area.col = MIN(Term->wid - 1 - max_len, COL_MAP + tile_width);
     menu_layout(&menu, &area);
     evt = menu_select(&menu, 0, TRUE);
 
