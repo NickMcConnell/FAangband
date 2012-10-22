@@ -2692,6 +2692,7 @@ static enum parser_error parse_c_f(struct parser *p) {
     c->magic.book_start_index[6] = parser_getuint(p, "first6");
     c->magic.book_start_index[7] = parser_getuint(p, "first7");
     c->magic.book_start_index[8] = parser_getuint(p, "first8");
+    c->magic.book_start_index[9] = parser_getuint(p, "first9");
     return PARSE_ERROR_NONE;
 }
 
@@ -2813,7 +2814,7 @@ struct parser *init_parse_c(void) {
     parser_reg(p, "I int mhp int sense-base", parse_c_i);
     parser_reg(p, "A int max_1 int max_50 int penalty int max_penalty int bonus int max_bonus", parse_c_a);
     parser_reg(p, "M uint book uint stat uint realm uint first uint weight1 uint weight2 uint number", parse_c_m);
-    parser_reg(p, "F uint first0 uint first1 uint first2 uint first3 uint first4 uint first5 uint first6 uint first7 uint first8", parse_c_f); 
+    parser_reg(p, "F uint first0 uint first1 uint first2 uint first3 uint first4 uint first5 uint first6 uint first7 uint first8 uint first9", parse_c_f); 
     parser_reg(p, "B uint spell uint index uint level int mana int fail int exp", parse_c_b);
     parser_reg(p, "E sym tval sym sval uint min uint max", parse_c_e);
     parser_reg(p, "U ?str flags", parse_c_u);
