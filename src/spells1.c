@@ -771,6 +771,37 @@ void teleport_player_to(int ny, int nx, bool friendly)
     /* Move player */
     monster_swap(py, px, y, x);
 
+    if (!friendly) 
+    {
+	/* The player may hit a tree, slam into rubble, or even land in lava. */
+	if (tf_has(f_ptr->flags, TF_TREE) && (randint0(2) == 0)) 
+	{
+	    msg("You hit a tree!");
+	    take_hit(damroll(2, 8), "being hurtled into a tree");
+	    if (randint0(3) != 0)
+		inc_timed(TMD_STUN, damroll(2, 8), TRUE);
+	} 
+	else if (tf_has(f_ptr->flags, TF_ROCK) && (randint0(2) == 0)) 
+	{
+	    msg("You slam into jagged rock!");
+	    take_hit(damroll(2, 14), "being slammed into rubble");
+	    if (randint0(3) == 0)
+		inc_timed(TMD_STUN, damroll(2, 14), TRUE);
+	    if (randint0(3) != 0)
+		inc_timed(TMD_CUT, damroll(2, 14) * 2, TRUE);
+	} 
+	else if (tf_has(f_ptr->flags, TF_FIERY)) 
+	{
+	    msg("You land in molten lava!");
+	    fire_dam(damroll(4, 100), "landing in molten lava");
+	} 
+	else if (tf_has(f_ptr->flags, TF_FALL)) 
+	{
+	    msg("You land in mid-air!");
+	    fall_off_cliff();
+	}
+    }
+
     /* Clear the cave_temp flag (the "project()" code may have set it). */
     cave_off(cave_info[y][x], CAVE_TEMP);
 
