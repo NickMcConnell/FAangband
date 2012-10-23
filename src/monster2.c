@@ -704,150 +704,524 @@ s16b get_mon_num_quick(int level)
     return (table[i].index);
 }
 
+
 /**
+ * Mega-hack - Fix plural names of monsters
+ *
+ * Taken from PernAngband via EY, modified to fit NPP monster list
+ *
+ * Note: It should handle all regular Angband monsters.
+ *
+ * TODO: Specify monster name plurals in monster.txt instead.
+ */
+void plural_aux(char *name, size_t max)
+{
+	int name_len = strlen(name);
+
+	if (strstr(name, " of "))
+	{
+		char *aider = strstr(name, " of ");
+		char dummy[80];
+		int i = 0;
+		char *ctr = name;
+
+		while (ctr < aider)
+		{
+			dummy[i] = *ctr;
+			ctr++;
+			i++;
+		}
+
+		if (dummy[i - 1] == 's')
+		{
+			strcpy (&(dummy[i]), "es");
+			i++;
+		}
+		else
+		{
+			strcpy (&(dummy[i]), "s");
+		}
+
+		strcpy(&(dummy[i + 1]), aider);
+		my_strcpy(name, dummy, max);
+	}
+	else if ((strstr(name, "coins")) || (strstr(name, "gems")))
+	{
+		char dummy[80];
+		strcpy (dummy, "Piles of c");
+		my_strcat (dummy, &(name[1]), sizeof(dummy));
+		my_strcpy (name, dummy, max);
+		return;
+	}
+
+	else if (strstr(name, "Greater Servant of"))
+	{
+		char dummy[80];
+		strcpy (dummy, "Greater Servants of ");
+		my_strcat (dummy, &(name[1]), sizeof(dummy));
+		my_strcpy (name, dummy, max);
+		return;
+	}
+	else if (strstr(name, "Lesser Servant of"))
+	{
+		char dummy[80];
+		strcpy (dummy, "Greater Servants of ");
+		my_strcat (dummy, &(name[1]), sizeof(dummy));
+		my_strcpy (name, dummy, max);
+		return;
+	}
+	else if (strstr(name, "Servant of"))
+	{
+		char dummy[80];
+		strcpy (dummy, "Servants of ");
+		my_strcat (dummy, &(name[1]), sizeof(dummy));
+		my_strcpy (name, dummy, max);
+		return;
+	}
+	else if (strstr(name, "Great Wyrm"))
+	{
+		char dummy[80];
+		strcpy (dummy, "Great Wyrms ");
+		my_strcat (dummy, &(name[1]), sizeof(dummy));
+		my_strcpy (name, dummy, max);
+		return;
+	}
+	else if (strstr(name, "Spawn of"))
+	{
+		char dummy[80];
+		strcpy (dummy, "Spawn of ");
+		my_strcat (dummy, &(name[1]), sizeof(dummy));
+		my_strcpy (name, dummy, max);
+		return;
+	}
+	else if (strstr(name, "Descendant of"))
+	{
+		char dummy[80];
+		strcpy (dummy, "Descendant of ");
+		my_strcat (dummy, &(name[1]), sizeof(dummy));
+		my_strcpy (name, dummy, max);
+		return;
+	}
+	else if ((strstr(name, "Manes")) || (name[name_len-1] == 'u') || (strstr(name, "Yeti")) ||
+		(streq(&(name[name_len-2]), "ua")) || (streq(&(name[name_len-3]), "nee")) ||
+		(streq(&(name[name_len-4]), "idhe")))
+	{
+		return;
+	}
+	else if (name[name_len-1] == 'y')
+	{
+		strcpy(&(name[name_len - 1]), "ies");
+	}
+	else if (streq(&(name[name_len - 4]), "ouse"))
+	{
+		strcpy (&(name[name_len - 4]), "ice");
+	}
+	else if (streq(&(name[name_len - 4]), "lung"))
+	{
+		strcpy (&(name[name_len - 4]), "lungen");
+	}
+	else if (streq(&(name[name_len - 3]), "sus"))
+	{
+		strcpy (&(name[name_len - 3]), "si");
+	}
+	else if (streq(&(name[name_len - 4]), "star"))
+	{
+		strcpy (&(name[name_len - 4]), "stari");
+	}
+	else if (streq(&(name[name_len - 3]), "aia"))
+	{
+		strcpy (&(name[name_len - 3]), "aiar");
+	}
+	else if (streq(&(name[name_len - 3]), "inu"))
+	{
+		strcpy (&(name[name_len - 3]), "inur");
+	}
+	else if (streq(&(name[name_len - 5]), "culus"))
+	{
+		strcpy (&(name[name_len - 5]), "culi");
+	}
+	else if (streq(&(name[name_len - 4]), "sman"))
+	{
+		strcpy (&(name[name_len - 4]), "smen");
+	}
+	else if (streq(&(name[name_len - 4]), "lman"))
+	{
+		strcpy (&(name[name_len - 4]), "lmen");
+	}
+	else if (streq(&(name[name_len - 2]), "ex"))
+	{
+		strcpy (&(name[name_len - 2]), "ices");
+	}
+	else if ((name[name_len - 1] == 'f') && (!streq(&(name[name_len - 2]), "ff")))
+	{
+		strcpy (&(name[name_len - 1]), "ves");
+	}
+	else if (((streq(&(name[name_len - 2]), "ch")) || (name[name_len - 1] == 's')) &&
+			(!streq(&(name[name_len - 5]), "iarch")))
+	{
+		strcpy (&(name[name_len]), "es");
+	}
+	else
+	{
+		strcpy (&(name[name_len]), "s");
+	}
+}
+
+
+/**
+ * Helper function for display monlist.  Prints the number of creatures,
+ * followed by either a singular or plural version of the race name as
+ * appropriate.
+ */
+static void get_mon_name(char *output_name, size_t max,
+		const monster_race *r_ptr, int num)
+{
+	char race_name[80];
+
+	assert(r_ptr);
+
+	my_strcpy(race_name, r_ptr->name, sizeof(race_name));
+
+	/* Unique names don't have a number */
+	if (rf_has(r_ptr->flags, RF_UNIQUE))
+		my_strcpy(output_name, "[U] ", max);
+
+	/* Normal races*/
+	else {
+		my_strcpy(output_name, format("%3d ", num), max);
+
+		/* Make it plural, if needed. */
+		if (num > 1)
+			plural_aux(race_name, sizeof(race_name));
+	}
+
+	/* Mix the quantity and the header. */
+	my_strcat(output_name, race_name, max);
+}
+
+
+/*
+ * Monster data for the visible monster list
+ */
+typedef struct
+{
+	u16b count;		/* total number of this type visible */
+	u16b asleep;		/* number asleep (not in LOS) */
+	u16b los;		/* number in LOS */
+	u16b los_asleep;	/* number asleep and in LOS */
+	byte attr; /* attr to use for drawing */
+} monster_vis;
+
+/*
  * Display visible monsters in a window
  */
 void display_monlist(void)
 {
-    int idx, n, i;
-    int line = 0;
+	int ii;
+	size_t i, j, k;
+	int max;
+	int line = 1, x = 0;
+	int cur_x;
+	unsigned total_count = 0, disp_count = 0, type_count = 0, los_count = 0;
 
-    char *m_name;
-    char buf[80];
+	byte attr;
 
-    monster_type *m_ptr;
-    monster_race *r_ptr;
+	char m_name[80];
+	char buf[80];
 
-    u16b *race_counts, *neutral_counts;
+	monster_type *m_ptr;
+	monster_race *r_ptr;
+	monster_race *r2_ptr;
 
-    /* Allocate the arrays */
-    race_counts = C_ZNEW(z_info->r_max, u16b);
-    neutral_counts = C_ZNEW(z_info->r_max, u16b);
+	monster_vis *list;
 
-    /* Iterate over m_list */
-    for (idx = 1; idx < z_info->m_max; idx++) {
-	m_ptr = &m_list[idx];
+	u16b *order;
 
-	/* Only visible monsters */
-	if (!m_ptr->ml)
-	    continue;
+	bool in_term = (Term != angband_term[0]);
 
-	/* Bump the count for this race */
-	race_counts[m_ptr->r_idx]++;
+	/* Hallucination is weird */
+	if (p_ptr->timed[TMD_IMAGE]) {
+		if (in_term)
+			clear_from(0);
+		Term_gotoxy(0, 0);
+		text_out_to_screen(TERM_ORANGE,
+			"Your hallucinations are too wild to see things clearly.");
 
-	/* Check neutrality */
-	if (m_ptr->hostile >= 0)
-	    neutral_counts[m_ptr->r_idx]++;
-    }
+		return;
+	}
 
+	/* Clear the term if in a subwindow, set x otherwise */
+	if (in_term) {
+		clear_from(0);
+		max = Term->hgt - 1;
+	}
+	else {
+		x = 13;
+		max = Term->hgt - 2;
+	}
 
-    /* Iterate over m_list ( again :-/ ) */
-    for (idx = 1; idx < z_info->m_max; idx++) {
-	int attitudes = 1;
+	/* Allocate the primary array */
+	list = C_ZNEW(z_info->r_max, monster_vis);
 
-	m_ptr = &m_list[idx];
+	/* Scan the list of monsters on the level */
+	for (ii = 1; ii < m_max; ii++) {
+		monster_vis *v;
 
-	/* Only visible monsters */
-	if (!m_ptr->ml)
-	    continue;
+		m_ptr = &m_list[ii];
+		r_ptr = &r_info[m_ptr->r_idx];
 
-	/* Do each race only once */
-	if (!race_counts[m_ptr->r_idx])
-	    continue;
+		/* Only consider visible, known monsters */
+		if (!m_ptr->ml) continue;
 
-	/* Get monster race */
-	r_ptr = &r_info[m_ptr->r_idx];
+		/* Take a pointer to this monster visibility entry */
+		v = &list[m_ptr->r_idx];
 
-	/* Get the monster name */
-	m_name = r_ptr->name;
+		/* Note each monster type and save its display attr (color) */
+		if (!v->count) type_count++;
+		if (!v->attr) v->attr = m_ptr->attr ? m_ptr->attr : r_ptr->x_attr;
 
-	/* Obtain the length of the description */
-	n = strlen(m_name);
+		/* Check for LOS
+		 * Hack - we should use (m_ptr->mflag & (MFLAG_VIEW)) here,
+		 * but this does not catch monsters detected by ESP which are
+		 * targetable, so we cheat and use projectable() instead
+		 */
+		if (projectable(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx,
+		PROJECT_CHCK))
+		{
+			/* Increment the total number of in-LOS monsters */
+			los_count++;
 
-	/* See if there are any neutrals */
-	if (neutral_counts[m_ptr->r_idx] > 0)
-	    attitudes++;
+			/* Increment the LOS count for this monster type */
+			v->los++;
 
-	/* Extract hostile count */
-	race_counts[m_ptr->r_idx] -= neutral_counts[m_ptr->r_idx];
+			/* Check if asleep or neutral and increment */
+			if (m_ptr->csleep || (m_ptr->hostile >= 0))
+			    v->los_asleep++;
+		}
+		/* Not in LOS so increment if asleep */
+		else if (m_ptr->csleep || (m_ptr->hostile >= 0)) v->asleep++;
 
-	/* Display the entry itself */
-	for (i = 0; i < attitudes; i++) {
-	    /* Skip straight to neutrals if no hostiles, finish if no neutrals */
-	    if ((race_counts[m_ptr->r_idx] == 0) && (i == 0))
-		continue;
-	    if ((neutral_counts[m_ptr->r_idx] == 0) && (i == 1))
-		break;
+		/* Bump the count for this race, and the total count */
+		v->count++;
+		total_count++;
+	}
 
-	    /* Name */
-	    Term_putstr(0, line, n, TERM_WHITE, m_name);
+	/* Note no visible monsters at all */
+	if (!total_count)
+	{
+		/* Clear display and print note */
+		c_prt(TERM_SLATE, "You see no monsters.", 0, 0);
+		if (!in_term)
+		    Term_addstr(-1, TERM_WHITE, "  (Press any key to continue.)");
 
-	    /* Attitude */
-	    if (attitudes > 1) {
-		Term_addstr(-1, TERM_WHITE,
-			    (i == 0) ? " (hostile)" : " (neutral)");
-		n += 10;
-	    }
+		/* Free up memory */
+		FREE(list);
 
-	    /* Append the "standard" attr/char info */
-	    Term_addstr(-1, TERM_WHITE, " ('");
-	    Term_addch(r_ptr->d_attr, r_ptr->d_char);
-	    Term_addstr(-1, TERM_WHITE, "')");
-	    n += 6;
+		/* Done */
+		return;
+	}
 
-	    /* Monster graphic on one line */
-	    if ((tile_width < 3) && (tile_height < 2)) {
-		/* Append the "optional" attr/char info */
-		Term_addstr(-1, TERM_WHITE, "/('");
+	/* Allocate the secondary array */
+	order = C_ZNEW(type_count, u16b);
 
-		Term_addch(r_ptr->x_attr, r_ptr->x_char);
+	/* Sort, because we cannot rely on monster.txt being ordered */
 
-		if (tile_width == 2) {
-		    if (r_ptr->x_attr & 0x80)
-			Term_addch(255, -1);
-		    else
-			Term_addch(0, ' ');
+	/* Populate the ordered array, starting at 1 to ignore @ */
+	for (i = 1; i < z_info->r_max; i++)
+	{
+		/* No monsters of this race are visible */
+		if (!list[i].count) continue;
 
-		    n++;
+		/* Get the monster info */
+		r_ptr = &r_info[i];
+
+		/* Fit this monster into the sorted array */
+		for (j = 0; j < type_count; j++)
+		{
+			/* If we get to the end of the list, put this one in */
+			if (!order[j])
+			{
+				order[j] = i;
+				break;
+			}
+
+			/* Get the monster info for comparison */
+			r2_ptr = &r_info[order[j]];
+
+			/* Monsters are sorted by depth */
+			if (r_ptr->level > r2_ptr->level)
+			{
+				/* Move weaker monsters down the array */
+				for (k = type_count - 1; k > j; k--)
+				{
+					order[k] = order[k - 1];
+				}
+
+				/* Put current monster in the right place */
+				order[j] = i;
+				break;
+			}
+		}
+	}
+
+	/* Message for monsters in LOS - even if there are none */
+	if (!los_count) prt(format("You can see no monsters."), 0, 0);
+	else prt(format("You can see %d monster%s", los_count, (los_count == 1
+		? ":" : "s:")), 0, 0);
+
+	/* Print out in-LOS monsters in descending order */
+	for (i = 0; (i < type_count) && (line < max); i++)
+	{
+		/* Skip if there are none of these in LOS */
+		if (!list[order[i]].los) continue;
+
+		/* Reset position */
+		cur_x = x;
+
+		/* Note that these have been displayed */
+		disp_count += list[order[i]].los;
+
+		/* Get monster race and name */
+		r_ptr = &r_info[order[i]];
+		get_mon_name(m_name, sizeof(m_name), r_ptr, list[order[i]].los);
+
+		/* Display uniques in a special colour */
+		if (rf_has(r_ptr->flags, RF_UNIQUE))
+			attr = TERM_VIOLET;
+		else if (r_ptr->level > p_ptr->depth)
+			attr = TERM_RED;
+		else
+			attr = TERM_WHITE;
+
+		/* Build the monster name */
+		if (list[order[i]].los == 1)
+			strnfmt(buf, sizeof(buf), (list[order[i]].los_asleep ==
+			1 ? "%s (asleep or neutral) " : "%s "), m_name);
+		else strnfmt(buf, sizeof(buf), (list[order[i]].los_asleep > 0 ?
+			"%s (%d asleep or neutral) " : "%s"), m_name,
+			     list[order[i]].los_asleep);
+
+		/* Display the pict */
+		if ((tile_width == 1) && (tile_height == 1)) {
+	        Term_putch(cur_x++, line, list[order[i]].attr, r_ptr->x_char);
+			Term_putch(cur_x++, line, TERM_WHITE, L' ');
 		}
 
-		Term_addstr(-1, TERM_WHITE, "'):");
-		n += 7;
-	    }
+		/* Print and bump line counter */
+		c_prt(attr, buf, line, cur_x);
+		line++;
 
-	    /* Add race count */
-	    if (i == 0)
-		sprintf(buf, "%d", race_counts[m_ptr->r_idx]);
-	    else
-		sprintf(buf, "%d", neutral_counts[m_ptr->r_idx]);
-	    Term_addch(TERM_WHITE, '[');
-	    Term_addstr(strlen(buf), TERM_WHITE, buf);
-	    Term_addch(TERM_WHITE, ']');
-	    n += strlen(buf) + 2;
+		/* Page wrap */
+		if (!in_term && (line == max) && disp_count != total_count) {
+			prt("-- more --", line, x);
+			anykey();
 
-	    /* Don't do this race again */
-	    if (i == 0)
-		race_counts[m_ptr->r_idx] = 0;
-	    else
-		neutral_counts[m_ptr->r_idx] = 0;
+			/* Clear the screen */
+			for (line = 1; line <= max; line++)
+				prt("", line, 0);
 
-	    /* Erase the rest of the line */
-	    Term_erase(n, line, 255);
+			/* Reprint Message */
+			prt(format("You can see %d monster%s",
+				los_count, (los_count > 0 ? (los_count == 1 ?
+				":" : "s:") : "s.")), 0, 0);
 
-	    /* Bump line counter */
-	    line++;
+			/* Reset */
+			line = 1;
+		}
 	}
-    }
 
-    /* Free the race counters */
-    FREE(race_counts);
-    FREE(neutral_counts);
+	/* Message for monsters outside LOS, if there are any */
+	if (total_count > los_count) {
+		/* Leave a blank line */
+		line++;
 
-    /* Erase the rest of the window */
-    for (idx = line; idx < Term->hgt; idx++) {
-	/* Erase the line */
-	Term_erase(0, idx, 255);
-    }
+		prt(format("You are aware of %d %smonster%s",
+		(total_count - los_count), (los_count > 0 ? "other " : ""),
+		((total_count - los_count) == 1 ? ":" : "s:")), line++, 0);
+	}
+
+	/* Print out non-LOS monsters in descending order */
+	for (i = 0; (i < type_count) && (line < max); i++) {
+		int out_of_los = list[order[i]].count - list[order[i]].los;
+
+		/* Skip if there are none of these out of LOS */
+		if (list[order[i]].count == list[order[i]].los) continue;
+
+		/* Reset position */
+		cur_x = x;
+
+		/* Note that these have been displayed */
+		disp_count += out_of_los;
+
+		/* Get monster race and name */
+		r_ptr = &r_info[order[i]];
+		get_mon_name(m_name, sizeof(m_name), r_ptr, out_of_los);
+
+		/* Display uniques in a special colour */
+		if (rf_has(r_ptr->flags, RF_UNIQUE))
+			attr = TERM_VIOLET;
+		else if (r_ptr->level > p_ptr->depth)
+			attr = TERM_RED;
+		else
+			attr = TERM_WHITE;
+
+		/* Build the monster name */
+		if (out_of_los == 1)
+			strnfmt(buf, sizeof(buf), (list[order[i]].asleep ==
+			1 ? "%s (asleep or neutral) " : "%s "), m_name);
+		else strnfmt(buf, sizeof(buf), (list[order[i]].asleep > 0 ?
+			"%s (%d asleep or neutral) " : "%s"), m_name,
+			list[order[i]].asleep);
+
+		/* Display the pict */
+		if ((tile_width == 1) && (tile_height == 1)) {
+	        Term_putch(cur_x++, line, list[order[i]].attr, r_ptr->x_char);
+			Term_putch(cur_x++, line, TERM_WHITE, L' ');
+		}
+
+		/* Print and bump line counter */
+		c_prt(attr, buf, line, cur_x);
+		line++;
+
+		/* Page wrap */
+		if (!in_term && (line == max) && disp_count != total_count) {
+			prt("-- more --", line, x);
+			anykey();
+
+			/* Clear the screen */
+			for (line = 1; line <= max; line++)
+				prt("", line, 0);
+
+			/* Reprint Message */
+			prt(format("You are aware of %d %smonster%s",
+				(total_count - los_count), (los_count > 0 ?
+				"other " : ""), ((total_count - los_count) > 0
+				? ((total_count - los_count) == 1 ? ":" : "s:")
+				: "s.")), 0, 0);
+
+			/* Reset */
+			line = 1;
+		}
+	}
+
+
+	/* Print "and others" message if we've run out of space */
+	if (disp_count != total_count) {
+		strnfmt(buf, sizeof buf, "  ...and %d others.",
+			total_count - disp_count);
+		c_prt(TERM_WHITE, buf, line, x);
+	}
+
+	/* Otherwise clear a line at the end, for main-term display */
+	else
+		prt("", line, x);
+
+	if (!in_term)
+		Term_addstr(-1, TERM_WHITE, "  (Press any key to continue.)");
+
+	/* Free the arrays */
+	FREE(list);
+	FREE(order);
 }
 
 
