@@ -506,7 +506,7 @@ N:64:General Store
 G:1:U
 P:17
 X:0:0:0:0
-F:SHOP | PASSABLE | PERMANENT | INTERESTING | EASY
+F:SHOP | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY
 D:The General Store sells food, ammunition and lighting supplies.
 
 # 0x41 --> shop -- armoury (perm)
@@ -515,14 +515,14 @@ N:65:Armoury
 G:2:s
 P:17
 X:0:0:1:0
-F:SHOP | PASSABLE | PERMANENT | INTERESTING | EASY
+F:SHOP | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY
 D:The armour sold here will give you some protection against the blows of your 
 D:enemies.
 
 # 0x42 --> shop -- weapon shop (perm)
 
 N:66:Weapon Smiths
-F:SHOP | PASSABLE | PERMANENT | INTERESTING | EASY
+F:SHOP | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY
 G:3:w
 P:17
 X:0:0:2:0
@@ -535,7 +535,7 @@ N:67:Temple
 G:4:g
 P:17
 X:0:0:3:0
-F:SHOP | PASSABLE | PERMANENT | INTERESTING | EASY
+F:SHOP | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY
 D:A quiet, reflective place of refuge, with supplies of magical and hallowed 
 D:goods for the pure of heart.
 
@@ -545,7 +545,7 @@ N:68:Alchemy Shop
 G:5:b
 P:17
 X:0:0:4:0
-F:SHOP | PASSABLE | PERMANENT | INTERESTING | EASY
+F:SHOP | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY
 D:A dim, scented room where potions and scrolls are traded.
 
 # 0x45 --> shop -- magic shop (perm)
@@ -554,7 +554,7 @@ N:69:Magic Shop
 G:6:r
 P:17
 X:0:0:5:0
-F:SHOP | PASSABLE | PERMANENT | INTERESTING | EASY
+F:SHOP | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY
 D:A shop for devices with magic trapped within.
 
 # 0x46 --> shop -- black market (perm)
@@ -563,7 +563,7 @@ N:70:Black Market
 G:7:D
 P:17
 X:0:0:6:0
-F:SHOP | PASSABLE | PERMANENT | INTERESTING | EASY
+F:SHOP | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY
 D:Watch your back and hold onto your purse as you enter this disreputable 
 D:haunt - and do not expect friendly service or good bargains.
 
@@ -573,7 +573,7 @@ N:71:Home
 G:8:y
 P:17
 X:0:0:7:0
-F:SHOP | PASSABLE | PERMANENT | INTERESTING | EASY
+F:SHOP | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY
 D:Your safe piece of Middle Earth, and the only place you can store goods apart 
 D:from on your person.
 
@@ -583,7 +583,7 @@ N:72:Bookstore
 G:9:o
 P:17
 X:0:0:8:0
-F:SHOP | PASSABLE | PERMANENT | INTERESTING | EASY
+F:SHOP | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY
 D:A dusty room lined with shelves of mystical tomes.
 
 # 0x49 --> shop -- travelling merchant (perm)
@@ -592,7 +592,7 @@ N:73:Travelling Merchant
 G:0:u
 P:17
 X:0:0:9:0
-F:SHOP | PASSABLE | PERMANENT | INTERESTING | EASY
+F:SHOP | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY
 D:This merchant travels around, buying anything of value and selling basic 
 D:commodities.  He will take orders for some magic potions, scrolls and books.
 
