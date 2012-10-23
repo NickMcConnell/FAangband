@@ -1856,6 +1856,9 @@ void update_mon(int m_idx, bool full)
 	    /* Disturb on appearance */
 	    if (OPT(disturb_near) && (m_ptr->hostile == -1))
 		disturb(1, 0);
+
+	    /* Re-draw monster window */
+	    p_ptr->redraw |= PR_MONLIST;
 	}
     }
 
@@ -1869,6 +1872,9 @@ void update_mon(int m_idx, bool full)
 	    /* Disturb on disappearance */
 	    if (OPT(disturb_near) && (m_ptr->hostile == -1))
 		disturb(1, 0);
+
+	    /* Re-draw monster window */
+	    p_ptr->redraw |= PR_MONLIST;
 	}
     }
 }
@@ -2030,6 +2036,9 @@ void monster_swap(int y1, int x1, int y2, int x2)
 
 	/* Update monster */
 	update_mon(m1, TRUE);
+
+	/* Redraw monster list */
+	p_ptr->redraw |= (PR_MONLIST);
     }
 
     /* Player 1 */
@@ -2050,6 +2059,9 @@ void monster_swap(int y1, int x1, int y2, int x2)
 
 	/* Update monster */
 	update_mon(m2, TRUE);
+
+	/* Redraw monster list */
+	p_ptr->redraw |= (PR_MONLIST);
     }
 
     /* Player 2 */
@@ -2079,6 +2091,9 @@ void monster_swap(int y1, int x1, int y2, int x2)
 
 	/* Redraw stuff */
 	p_ptr->redraw |= PR_MAP;
+
+	/* Redraw monster list */
+	p_ptr->redraw |= (PR_MONLIST);
 
 	/* Warn when leaving trap detected region */
 	if (OPT(disturb_detect) && old_dtrap && !new_dtrap) {
@@ -4484,14 +4499,14 @@ void monster_death(int m_idx)
 	return;
 
 
-    /* Hack -- Mark quests as complete */
+    /* Mark quests as complete */
     for (i = 0; i < MAX_Q_IDX; i++) {
-	/* Hack -- note completed quests */
+	/* Note completed quests */
 	if (stage_map[q_list[i].stage][1] == r_ptr->level)
 	    q_list[i].stage = 0;
     }
 
-    /* Hack -- Mark Sauron's other forms as dead */
+    /* Mark Sauron's other forms as dead */
     if ((r_ptr->level == 85) && (rf_has(r_ptr->flags, RF_QUESTOR)))
 	for (i = 1; i < 4; i++)
 	    r_info[m_ptr->r_idx - i].max_num--;

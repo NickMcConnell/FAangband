@@ -5836,6 +5836,8 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
     /* Redraw the monster grid */
     light_spot(y, x);
 
+    /* Update the visuals, as appropriate. */
+    p_ptr->redraw |= (PR_MONLIST);
 
     /* Update monster recall window */
     if (p_ptr->monster_race_idx == m_ptr->r_idx) {

@@ -4482,6 +4482,9 @@ bool genocide(void)
 	take_hit(randint1(4), "the strain of casting Genocide");
     }
 
+    /* Update monster list window */
+    p_ptr->redraw |= PR_MONLIST;
+
     return (TRUE);
 }
 
@@ -4520,6 +4523,9 @@ bool mass_genocide(void)
 	/* Take some damage */
 	take_hit(randint1(3), "the strain of casting Mass Genocide");
     }
+
+    /* Update monster list window */
+    p_ptr->redraw |= PR_MONLIST;
 
     return (TRUE);
 }
@@ -4712,6 +4718,9 @@ void destroy_area(int y1, int x1, int r, bool full)
 
     /* Redraw map */
     p_ptr->redraw |= (PR_MAP);
+
+    /* Redraw monster list */
+    p_ptr->redraw |= (PR_MONLIST | PR_ITEMLIST);
 }
 
 
@@ -5190,6 +5199,9 @@ void earthquake(int cy, int cx, int r, bool volcano)
 
     /* Update the health and mana bars */
     p_ptr->redraw |= (PR_HEALTH | PR_MON_MANA);
+
+    /* Window stuff */
+    p_ptr->redraw |= (PR_MONLIST | PR_ITEMLIST);
 }
 
 /**
