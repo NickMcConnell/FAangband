@@ -203,7 +203,7 @@ static void build_obj_list(int first, int last, const int *floor_list,
 	    for (j = i; j <= last; j++)
 	    {
 		o_ptr = &p_ptr->inventory[j];
-		if (item_tester_okay(o_ptr)) need_spacer = TRUE;
+		if (item_tester_okay(o_ptr) || in_term) need_spacer = TRUE;
 	    }
 
 	    continue;
