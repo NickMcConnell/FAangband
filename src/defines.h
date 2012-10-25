@@ -62,7 +62,7 @@
  */
 /*
 #ifdef BUILD_ID
-#define VERSION_STRING	"1.2.11 (" BUILD_ID ")"
+#define VERSION_STRING	"1.3.0 (" BUILD_ID ")"
 #endif
 */
 
@@ -70,8 +70,8 @@
  * Current FAangband version numbers.
  */
 #define VERSION_MAJOR	1
-#define VERSION_MINOR	2
-#define VERSION_PATCH	11
+#define VERSION_MINOR	3
+#define VERSION_PATCH	0
 #define VERSION_EXTRA	0
 
 /**
