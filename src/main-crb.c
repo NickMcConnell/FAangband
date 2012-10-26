@@ -2129,11 +2129,11 @@ static bool load_pref_ushort(const char *key, unsigned short *vptr)
 	return ret;
 }
 
-/* XXX Version number for pref file */
+/* XXX Version number for pref file 
 #define VERSION_MAJOR   3
 #define VERSION_MINOR   0
 #define VERSION_PATCH   14
-#define VERSION_EXTRA   0
+#define VERSION_EXTRA   0 */
 
 /*
  * Save preferences to preferences file for current host+current user+
