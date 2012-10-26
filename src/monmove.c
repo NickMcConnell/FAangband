@@ -4147,6 +4147,9 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 		char m_name[80];
 		char o_name[120];
 
+		/* Wipe the flags */
+		rf_wipe(mon_flags);
+
 		/* Acquire the object name */
 		object_desc(o_name, sizeof(o_name), o_ptr,
 			    ODESC_PREFIX | ODESC_FULL);
