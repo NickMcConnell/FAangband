@@ -441,7 +441,7 @@ void do_cmd_use(cmd_code code, cmd_arg args[])
     }
 
     /* If the item is a null pointer or has been wiped, be done now */
-    if (!o_ptr || o_ptr->k_idx <= 1)
+    if (!o_ptr || !o_ptr->kind)
 	return;
 
     /* Food feeds the player */
