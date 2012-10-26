@@ -3999,7 +3999,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	    || (typ == GF_STORM))
 	    terrain_adjustment -= dam / 3;
 	else if ((typ == GF_FIRE) || (typ == GF_HELLFIRE) || 
-		 (typ == GF_PLASMA) || (GF_DRAGONFIRE))
+		 (typ == GF_PLASMA) || (typ == GF_DRAGONFIRE))
 	    terrain_adjustment = dam / 5;
    }
 
