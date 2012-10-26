@@ -3,6 +3,7 @@
 #ifndef CAVE_H
 #define CAVE_H
 
+#include "defines.h"
 #include "z-type.h"
 
 extern int distance(int y1, int x1, int y2, int x2);

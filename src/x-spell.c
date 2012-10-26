@@ -1527,7 +1527,7 @@ bool cast_spell(int tval, int sindex, int dir)
 	}
     case PRAYER_ENCHANT_WEAPON_OR_ARMOUR:
 	{
-	    char answer;
+	    keycode_t answer;
 
 	    /* Query */
 	    msg("Would you like to enchant a 'W'eapon or 'A'rmour");

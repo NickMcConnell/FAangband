@@ -18,6 +18,7 @@
  */
 #include "angband.h"
 #include "buildid.h"
+#include "cave.h"
 #include "cmds.h"
 #include "files.h"
 

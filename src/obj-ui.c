@@ -938,7 +938,7 @@ ui_event item_menu(cmd_code cmd, int mode)
     get_max_len(&max_len);
     area.page_rows = menu.count + 1;
     area.width = max_len;
-    area.col = MIN(Term->wid - 1 - max_len, COL_MAP + tile_width);
+    area.col = MIN(Term->wid - 1 - max_len, COL_MAP + (uint) tile_width);
     menu_layout(&menu, &area);
     evt = menu_select(&menu, 0, TRUE);
 
