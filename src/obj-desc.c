@@ -401,10 +401,14 @@ static bool obj_desc_show_to_hit(const object_type * o_ptr)
     object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
     /* Hack - delay displaying ring and amulet bonuses */
-    if (is_jewellery(o_ptr) && !if_has(o_ptr->id_other, IF_TO_H))
+    if (is_jewellery(o_ptr) && !if_has(o_ptr->id_other, IF_TO_H)
+	&& !if_has(o_ptr->id_other, IF_TO_D))
 	return FALSE;
 
     if (o_ptr->to_h && ((if_has(o_ptr->id_other, IF_TO_H)) || k_ptr->to_h.base))
+	return TRUE;
+
+    if (o_ptr->to_d && (if_has(o_ptr->id_other, IF_TO_D)))
 	return TRUE;
 
     return FALSE;
@@ -418,10 +422,14 @@ static bool obj_desc_show_to_dam(const object_type * o_ptr)
     object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
     /* Hack - delay displaying ring and amulet bonuses */
-    if (is_jewellery(o_ptr) && !if_has(o_ptr->id_other, IF_TO_D))
+    if (is_jewellery(o_ptr) && !if_has(o_ptr->id_other, IF_TO_D)
+	&& !if_has(o_ptr->id_other, IF_TO_H))
 	return FALSE;
 
     if (o_ptr->to_d && ((if_has(o_ptr->id_other, IF_TO_D)) || k_ptr->to_d.base))
+	return TRUE;
+
+    if (o_ptr->to_h && (if_has(o_ptr->id_other, IF_TO_H)))
 	return TRUE;
 
     return FALSE;
@@ -612,9 +620,14 @@ static size_t obj_desc_combat(const object_type * o_ptr, char *buf, size_t max,
 
     /* Show weapon bonuses */
     if (obj_desc_show_weapon(o_ptr)) {
-	if (spoil || (if_has(o_ptr->id_other, IF_TO_H) && 
+	if (spoil || (if_has(o_ptr->id_other, IF_TO_H) &&
 		      if_has(o_ptr->id_other, IF_TO_D)))
-	    strnfcat(buf, max, &end, " (%+d,%+d)", o_ptr->to_h, 
+	    strnfcat(buf, max, &end, " (%+d,%+d)", o_ptr->to_h,
+		     o_ptr->to_d);
+	else if ((if_has(o_ptr->id_other, IF_TO_H) ||
+		  if_has(o_ptr->id_other, IF_TO_D))
+		 && is_jewellery(o_ptr))
+	    strnfcat(buf, max, &end, " (%+d,%+d)", o_ptr->to_h,
 		     o_ptr->to_d);
 	else if (if_has(o_ptr->id_other, IF_TO_H))
 	    strnfcat(buf, max, &end, " (%+d,?)", o_ptr->to_h);
