@@ -408,7 +408,7 @@ static bool obj_desc_show_to_hit(const object_type * o_ptr)
     if (o_ptr->to_h && ((if_has(o_ptr->id_other, IF_TO_H)) || k_ptr->to_h.base))
 	return TRUE;
 
-    if (o_ptr->to_d && (if_has(o_ptr->id_other, IF_TO_D)))
+    if (is_jewellery(o_ptr) && o_ptr->to_d && if_has(o_ptr->id_other, IF_TO_D))
 	return TRUE;
 
     return FALSE;
@@ -429,7 +429,7 @@ static bool obj_desc_show_to_dam(const object_type * o_ptr)
     if (o_ptr->to_d && ((if_has(o_ptr->id_other, IF_TO_D)) || k_ptr->to_d.base))
 	return TRUE;
 
-    if (o_ptr->to_h && (if_has(o_ptr->id_other, IF_TO_H)))
+    if (is_jewellery(o_ptr) && o_ptr->to_h && if_has(o_ptr->id_other, IF_TO_H))
 	return TRUE;
 
     return FALSE;
