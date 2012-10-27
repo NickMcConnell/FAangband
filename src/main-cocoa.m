@@ -291,7 +291,7 @@ static int pict_rows = 0;
 /*
  * Value used to signal that we using ASCII, not graphical tiles.
  */ 
-#define GRAF_MODE_NONE 0
+#define GRAF_MODE_NONE 1
 
 /*
  * Requested graphics mode (as a grafID).
@@ -2289,7 +2289,7 @@ static errr cocoa_get_cmd(cmd_context context, bool wait)
 /* Return the directory into which we put data (save and config) */
 static NSString *get_data_directory(void)
 {
-    return [@"~/Documents/Angband/" stringByExpandingTildeInPath];
+    return [@"~/Documents/FAangband/" stringByExpandingTildeInPath];
 }
 
 /*
