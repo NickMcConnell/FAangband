@@ -2328,15 +2328,17 @@ extern void river_gen(void)
 	{
 	    /* This place is hard to get into... */
 	    for (y = y1 - 1; y < y1 + 2; y++) {
-		for (x = mid[y1] - 10; x < mid[y1] - 5; x++)
-		    cave_set_feat(y, x, FEAT_WALL_SOLID);
-		for (x = mid[y1] - 5; x < mid[y1] + 5; x++) {
-		    if ((y == y1) && (x == mid[y1] - 5)) {
+		for (x = mid[y1] - 15; x < mid[y1] - 5; x++)
+		    if ((y == y1) && (x == mid[y1] - 6)) {
 			cave_set_feat(y, x, FEAT_MORE);
 			if (stage_map[p_ptr->last_stage][STAGE_TYPE] == CAVE)
 			    player_place(y, x);
 		    } else
-			cave_set_feat(y, x, FEAT_WATER);
+			cave_set_feat(y, x, FEAT_WALL_SOLID);
+		for (x = mid[y1] - 5; x < mid[y1]; x++)
+		    cave_set_feat(y, x, FEAT_ROAD);
+		for (x = mid[y1] - 4; x < mid[y1] + 5; x++) {
+		    cave_set_feat(y, x, FEAT_WATER);
 		}
 	    }
 	}
