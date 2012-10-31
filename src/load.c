@@ -1494,7 +1494,7 @@ int rd_dungeon(u32b version)
 		stage_map[i][n] = dungeon_map[i][n];
     }
 
-    if (OPT(adult_compressed))
+    else if (OPT(adult_compressed))
     {
 	for (i = 0; i < NUM_STAGES; i++)
 	    for (n = 0; n < 9; n++)
