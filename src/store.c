@@ -1648,7 +1648,10 @@ static void store_purchase(void)
     }
 
     /* Attempt to buy it */
-    if (st_ptr->type != STORE_HOME) {
+    if (st_ptr->type != STORE_HOME) 
+    {
+	char answer;
+
 	/* Describe the object (fully) */
 	object_desc(o_name, sizeof(o_name), i_ptr, ODESC_PREFIX | ODESC_FULL);
 
@@ -1656,8 +1659,11 @@ static void store_purchase(void)
 	price = price_item(i_ptr, ot_ptr->inflate, FALSE) * i_ptr->number;
 
 	/* Confirm purchase */
-	if (!get_char(format("Buy %s for %d gold?", o_name, price), "yn", 2, 'y'))
-	    return;
+	answer = get_char(format("Buy %s for %d gold?", o_name, price), "yn", 
+			  2, 'y');
+
+	if ((answer == (keycode_t) 'n') || !answer)
+		return;
 
 	/* Message */
 	msg("Buying %s (%c).", o_name, store_to_label(item));
@@ -1958,6 +1964,7 @@ static void store_sell(void)
     /* Real store */
     if (st_ptr->type != STORE_HOME) {
 	bool aware = FALSE;
+	char answer;
 
 	/* No selling */
 	if (!OPT(adult_no_sell)) {
@@ -1969,7 +1976,9 @@ static void store_sell(void)
 		       index_to_label(item), price);
 
 	    /* Confirm sale */
-	    if (!get_char(format("Accept %d gold?", price), "yn", 2, 'y'))
+	    answer = get_char(format("Accept %d gold?", price), "yn", 2, 'y');
+	    
+	    if ((answer == (keycode_t) 'n') || !answer)
 		return;
 
 	    /* Say "okay" */
@@ -1983,8 +1992,13 @@ static void store_sell(void)
 		p_ptr->au = PY_MAX_GOLD;
 	}
 
-	else if (!get_char(format("Donate %s?", o_name), "yn", 2, 'y'))
-	    return;
+	else 
+	{
+	    answer = get_char(format("Donate %s?", o_name), "yn", 2, 'y');
+	    
+	    if ((answer == (keycode_t) 'n') || !answer)
+		return;
+	}
 
 	/* Update the display */
 	store_prt_gold();
