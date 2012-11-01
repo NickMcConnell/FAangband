@@ -49,7 +49,7 @@ static bool test_hit_combat(int chance, int ac, int visible, int item1,
     /* Percentile dice */
     k = randint0(100);
 
-    /* Hack -- Instant miss or hit */
+    /* Instant 5% miss or hit chance */
     if (k < 10)
 	return (k < 5);
 
@@ -65,10 +65,10 @@ static bool test_hit_combat(int chance, int ac, int visible, int item1,
     power = randint0(chance);
 
     /* Just hit tells to_h bonus */
-    if (power == ac) {
+    if (power == ac) 
+    {
 	notice_other(IF_TO_H, item1);
-	if (item2)
-	    notice_other(IF_TO_H, item2);
+	if (item2) notice_other(IF_TO_H, item2);
     }
 
     /* Power competes against armor */
@@ -93,9 +93,6 @@ static bool test_hit_combat(int chance, int ac, int visible, int item1,
  * damage they do is more variable).  Their great saving grace is precisely 
  * this variablity; criticals benefit them more.
  *
- * Vorpal blades/weapons of concussion get lots of criticals.
- * -- Not currently used in Oangband -BR-
- *
  * This function is responsible for the basic melee combat messages, which 
  * vary according to the quality of the hit.  A distinction is made between 
  * visible and invisible monsters.
@@ -103,7 +100,6 @@ static bool test_hit_combat(int chance, int ac, int visible, int item1,
 static int critical_melee(int chance, int sleeping_bonus, bool visible,
 			  char m_name[], const object_type * o_ptr)
 {
-    bool vorpal = FALSE;
     bool armsman = FALSE;
 
     /* Extract melee power. */
@@ -112,100 +108,110 @@ static int critical_melee(int chance, int sleeping_bonus, bool visible,
     /* Assume no added dice */
     int add_dice = 0;
 
-    /* Specialty Ability */
-    if ((visible) && (player_has(PF_ARMSMAN)) && (randint0(6) == 0)) {
+    /* Armsman Ability - 1/6 critical chance */
+    if ((visible) && (player_has(PF_ARMSMAN)) && (randint0(6) == 0)) 
+    {
 	armsman = TRUE;
     }
 
-    /* Test for critical hit. */
-    if ((armsman) || (randint1(power + 240) <= power)) {
+    /* Test for critical hit - chance power/(power + 240) */
+    if ((armsman) || (randint1(power + 240) <= power)) 
+    {
 	/* Determine level of critical hit. */
+	/* 1/40 add 5 dice */
 	if (randint0(40) == 0)
 	    add_dice = 5;
+	/* Failing that, 1/12 add 4 dice */
 	else if (randint0(12) == 0)
 	    add_dice = 4;
+	/* Failing that, 1/3 add 3 dice */
 	else if (randint0(3) == 0)
 	    add_dice = 3;
+	/* Otherwise add 2 dice */
 	else
 	    add_dice = 2;
 
 	/* Encourage the player to beat on sleeping monsters. */
-	if ((sleeping_bonus) && (visible)) {
+	if ((sleeping_bonus) && (visible)) 
+	{
 	    /* More "interesting" messages if we get a seriously good hit. */
-	    if ((add_dice >= 4) && (player_has(PF_BACKSTAB))) {
+	    if ((add_dice >= 4) && (player_has(PF_BACKSTAB))) 
+	    {
 		msgt(MSG_HIT, "You ruthlessly sneak attack!");
 	    }
 
 	    /* Standard "wakeup call". */
-	    else {
+	    else 
+	    {
 		msgt(MSG_HIT, "You rudely awaken the monster.");
 	    }
 	}
 
 	/* Credit where credit is due - not if already a special message */
 	else if (armsman)
+	{
 	    msgt(MSG_HIT, "Armsman hit!");
+	}
 
 	/* Print special messages if monster is visible. */
-	if (visible) {
+	if (visible) 
+	{
 	    /* 
 	     * Messages depend on quality of critical hit.  A distinction 
 	     * is often made between edged and blunt weapons.  Unfortu-
 	     * nately, whips sometimes display rather odd messages... 
 	     */
-	    if (add_dice <= 2) {
+	    if (add_dice <= 2) 
+	    {
 		sound(MSG_HIT_GOOD);
 		msgt(MSG_HIT, "You strike %s.", m_name);
 	    }
 
-	    else if (add_dice == 3) {
+	    else if (add_dice == 3) 
+	    {
 		sound(MSG_HIT_GREAT);
-		if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)) {
+		if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)) 
+		{
 		    msgt(MSG_HIT, "You hack at %s.", m_name);
-		} else {
+		} 
+		else 
+		{
 		    msgt(MSG_HIT, "You pound %s.", m_name);
 		}
 	    }
 
-	    else if (add_dice == 4) {
+	    else if (add_dice == 4) 
+	    {
 		sound(MSG_HIT_SUPERB);
-		if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)) {
-		    if (vorpal) {
-			msgt(MSG_HIT,
-				       "Your vorpal blade goes snicker-snack!",
-				       m_name);
-		    } else {
-			msgt(MSG_HIT, "You slice into %s.",
-				       m_name);
-		    }
-		} else {
+		if ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)) 
+		{
+		    msgt(MSG_HIT, "You slice into %s.", m_name);
+		    
+		} 
+		else 
+		{
 		    msgt(MSG_HIT, "You bludgeon %s.", m_name);
 		}
 	    }
 
-	    else if (add_dice >= 5) {
-		if ((vorpal)
-		    && ((o_ptr->tval == TV_SWORD)
-			|| (o_ptr->tval == TV_POLEARM))) {
-		    msgt(MSG_HIT,
-				   "Your vorpal blade goes snicker-snack!",
-				   m_name);
-		} else {
-		    sound(MSG_HIT_HI_GREAT);
-		    msgt(MSG_HIT, "You *smite* %s!", m_name);
-		}
+	    else if (add_dice >= 5) 
+	    {
+		sound(MSG_HIT_HI_GREAT);
+		msgt(MSG_HIT, "You *smite* %s!", m_name);
 	    }
 	}
     }
 
     /* If the blow is not a critical hit, then the default message is shown. */
-    else if (visible) {
+    else if (visible) 
+    {
 	sound(MSG_HIT);
 	msgt(MSG_HIT, "You hit %s.", m_name);
     }
 
     /* Hits on non-visible monsters always generate the same message. */
-    if (!visible) {
+    if (!visible) 
+    {
 	sound(MSG_HIT);
 	msgt(MSG_HIT, "You hit something.");
     }
@@ -245,10 +251,13 @@ static int critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
 
     /* Throwing weapons get lots of critical hits. */
     if (thrown_weapon)
+    {
 	power = power * 3 / 2;
+    }
 
-    /* Specialty Ability */
-    if ((visible) && (player_has(PF_MARKSMAN)) && (randint0(6) == 0)) {
+    /* Marksman Ability - 1/6 chance of critical */
+    if ((visible) && (player_has(PF_MARKSMAN)) && (randint0(6) == 0)) 
+    {
 	marksman = TRUE;
     }
 
@@ -256,22 +265,29 @@ static int critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
     object_desc(o_name, sizeof(o_name), o_ptr, ODESC_FULL | ODESC_SINGULAR);
 
     /* Test for critical hit. */
-    if (marksman || (randint1(power + 360) <= power)) {
+    if (marksman || (randint1(power + 360) <= power)) 
+    {
 	/* Determine level of critical hit. */
+	/* 1/50 chance of 3 dice */
 	if (randint0(50) == 0)
 	    add_dice = 3;
+	/* Failing that, 1/10 chance of 2 dice */
 	else if (randint0(10) == 0)
 	    add_dice = 2;
+	/* Otherwis 1 */
 	else
 	    add_dice = 1;
 
-	/* Encourage the player to throw and shoot things at sleeping monsters */
-	if ((sleeping_bonus) && (visible)) {
-	    if ((thrown_weapon) && (add_dice >= 2)) {
+	/* Encourage the player to throw and shoot things at sleeping monsters*/
+	if ((sleeping_bonus) && (visible)) 
+	{
+	    if ((thrown_weapon) && (add_dice >= 2)) 
+	    {
 		msgt(MSG_HIT, "Assassin strike!");
 	    }
 
-	    else {
+	    else 
+	    {
 		msgt(MSG_HIT, "You rudely awaken the monster.");
 	    }
 	}
@@ -281,32 +297,35 @@ static int critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
 	    msgt(MSG_HIT, "Marksmanship!");
 
 	/* Print special messages if monster is visible. */
-	if (visible) {
+	if (visible) 
+	{
 	    /* Messages depend on quality of critical hit. */
-	    if (add_dice == 1) {
-		msgt(MSG_HIT, "The %s penetrates %s.", o_name,
-			       m_name);
+	    if (add_dice == 1) 
+	    {
+		msgt(MSG_HIT, "The %s penetrates %s.", o_name, m_name);
 	    }
 
-	    else if (add_dice == 2) {
-		msgt(MSG_HIT, "The %s drives into %s.", o_name,
-			       m_name);
+	    else if (add_dice == 2) 
+	    {
+		msgt(MSG_HIT, "The %s drives into %s.", o_name, m_name);
 	    }
 
-	    else if (add_dice >= 3) {
-		msgt(MSG_HIT, "The %s transpierces %s!", o_name,
-			       m_name);
+	    else if (add_dice >= 3) 
+	    {
+		msgt(MSG_HIT, "The %s transpierces %s!", o_name, m_name);
 	    }
 	}
     }
 
     /* If the shot is not a critical hit, then the default message is shown. */
-    else if (visible) {
+    else if (visible) 
+    {
 	msgt(MSG_HIT, "The %s hits %s.", o_name, m_name);
     }
 
     /* Hits on non-visible monsters always generate the same message. */
-    if (!visible) {
+    if (!visible) 
+    {
 	msgt(MSG_HIT, "The %s finds a mark.", o_name);
     }
 
@@ -314,7 +333,121 @@ static int critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
     return (add_dice);
 }
 
+typedef struct {
+    int notice_slay;
+    int slain;
+} slay_info;
 
+static const slay_info slays[] =
+{
+    { IF_SLAY_ANIMAL, RF_ANIMAL },
+    { IF_SLAY_EVIL, RF_EVIL },
+    { IF_SLAY_UNDEAD, RF_UNDEAD },
+    { IF_SLAY_DEMON, RF_DEMON },
+    { IF_SLAY_ORC, RF_ORC },
+    { IF_SLAY_TROLL, RF_TROLL },
+    { IF_SLAY_GIANT, RF_GIANT },
+    { IF_SLAY_DRAGON, RF_DRAGON }
+};
+
+typedef struct {
+    int notice_brand;
+    int resistant;
+} brand_info;
+
+static const brand_info brands[] =
+{
+    { IF_BRAND_ACID, RF_IM_ACID },
+    { IF_BRAND_ELEC, RF_IM_ELEC },
+    { IF_BRAND_FIRE, RF_IM_FIRE },
+    { IF_BRAND_COLD, RF_IM_COLD },
+    { IF_BRAND_POIS, RF_IM_POIS }
+};
+
+/**
+ * Adjust for and notice slays
+ */
+void get_slay_info(monster_type *m_ptr, int *slay, int *mul, int item,
+		   bool notice_launcher, bool notice_ring)
+{
+    int i;
+    monster_race *r_ptr = &r_info[m_ptr->r_idx];
+    monster_lore *l_ptr = &l_list[m_ptr->r_idx];
+
+    for (i = 0; i < MAX_P_SLAY; i++)
+    {
+	/* Are we slaying this monster race? */
+	if ((slay[i] > MULTIPLE_BASE)
+	    && (rf_has(r_ptr->flags, slays[i].slain))) 
+	{
+	    if (m_ptr->ml) 
+	    {
+		rf_on(l_ptr->flags, slays[i].slain);
+	    }
+	    
+	    /* Increase multiple if it's better */
+	    if (*mul < slay[i])	*mul = slay[i];
+
+	    /* Special case for holy attacks */
+	    if ((i == P_SLAY_EVIL) && (p_ptr->special_attack & (ATTACK_HOLY)) 
+		&& (*mul < 15))
+		*mul = 15;
+	    
+	    /* Notice slay */
+	    notice_other(slays[i].notice_slay, item + 1);
+	    if (notice_launcher)
+		notice_other(slays[i].notice_slay, INVEN_BOW + 1);
+	    if (notice_ring) {
+		notice_other(slays[i].notice_slay, INVEN_RIGHT + 1);
+		notice_other(slays[i].notice_slay, INVEN_LEFT + 1);
+	    }
+	}
+    }
+}
+
+/**
+ * Adjust for and notice brands
+ */
+void get_brand_info(monster_type *m_ptr, int *brand, int *mul, int item,
+		   bool notice_launcher, bool notice_ring)
+{
+    int i;
+    monster_race *r_ptr = &r_info[m_ptr->r_idx];
+    monster_lore *l_ptr = &l_list[m_ptr->r_idx];
+
+    for (i = 0; i < MAX_P_BRAND; i++)
+    {
+	/* Is this brand effective? */
+	if (brand[i] > MULTIPLE_BASE) 
+	{
+	    /* Notice immunity */
+	    if (rf_has(r_ptr->flags, brands[i].resistant)) 
+	    {
+		if (m_ptr->ml) 
+		{
+		    rf_on(l_ptr->flags, brands[i].resistant);
+		}
+	    }
+	    
+	    /* Otherwise, take extra damage */
+	    else if (*mul < brand[i]) 
+	    {
+		/* Increase multiple if it's better */
+		*mul = brand[i];
+		
+		/* Notice brand */
+		notice_other(brands[i].notice_brand, item + 1);
+		if (notice_launcher)
+		    notice_other(brands[i].notice_brand, INVEN_BOW + 1);
+		if (notice_ring) {
+		    notice_other(brands[i].notice_brand, INVEN_RIGHT + 1);
+		    notice_other(brands[i].notice_brand, INVEN_LEFT + 1);
+		}
+	    }
+	}
+    }
+}
+	
 /**
  * Handle all special adjustments to the damage done by a non-magical attack.
  *
@@ -333,11 +466,10 @@ static int critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
  * Players may have temporary magic branding.  Paladins do not get to apply 
  * temporary brands to missiles.  A nasty hack, but necessary. -LM-
  */
-static int adjust_dam(long *die_average, object_type * o_ptr,
-		      monster_type * m_ptr, int item)
+static int adjust_dam(long *die_average, object_type *o_ptr,
+		      monster_type *m_ptr, int item)
 {
     monster_race *r_ptr = &r_info[m_ptr->r_idx];
-    monster_lore *l_ptr = &l_list[m_ptr->r_idx];
 
     object_type *i_ptr;
     int i, j, slay[MAX_P_SLAY], brand[MAX_P_BRAND];
@@ -357,52 +489,87 @@ static int adjust_dam(long *die_average, object_type * o_ptr,
     for (i = 0; i < MAX_P_BRAND; i++)
 	brand[i] = o_ptr->multiple_brand[i];
 
-    switch (o_ptr->tval) {
+    switch (o_ptr->tval) 
+    {
     case TV_SHOT:
     case TV_ARROW:
     case TV_BOLT:
+    {
+	/* Check launcher for additional brands (slays) */
+	i_ptr = &p_ptr->inventory[INVEN_BOW];
+	
+	/* If wielding a launcher - sanity check */
+	if (i_ptr->k_idx) 
 	{
-	    /* Check launcher for additional brands (slays) */
-	    i_ptr = &p_ptr->inventory[INVEN_BOW];
-
-	    /* If wielding a launcher - sanity check */
-	    if (i_ptr->k_idx) {
-		/* Hack - take the maximum value */
-		for (i = 0; i < MAX_P_SLAY; i++)
-		    slay[i] = MAX(i_ptr->multiple_slay[i], slay[i]);
-		for (i = 0; i < MAX_P_BRAND; i++)
-		    brand[i] = MAX(i_ptr->multiple_brand[i], brand[i]);
-
-		/* Prepare to notice */
-		notice_launcher = TRUE;
-	    }
-	    break;
+	    /* Take the maximum value */
+	    for (i = 0; i < MAX_P_SLAY; i++)
+		slay[i] = MAX(i_ptr->multiple_slay[i], slay[i]);
+	    for (i = 0; i < MAX_P_BRAND; i++)
+		brand[i] = MAX(i_ptr->multiple_brand[i], brand[i]);
+	    
+	    /* Prepare to notice */
+	    notice_launcher = TRUE;
 	}
+	break;
+    }
     case TV_HAFTED:
     case TV_POLEARM:
     case TV_SWORD:
     case TV_DIGGING:
+    {
+	for (j = 0; j < 2; j++) 
 	{
-	    for (j = 0; j < 2; j++) {
-		/* Check rings for additional brands (slays) */
-		i_ptr = &p_ptr->inventory[INVEN_LEFT + j];
-
-		/* If wearing a ring */
-		if (i_ptr->k_idx) {
-		    /* Hack - take the maximum value */
-		    for (i = 0; i < MAX_P_SLAY; i++)
-			slay[i] = MAX(i_ptr->multiple_slay[i], slay[i]);
-		    for (i = 0; i < MAX_P_BRAND; i++)
-			brand[i] = MAX(i_ptr->multiple_brand[i], brand[i]);
-
-		    /* Prepare to notice */
-		    notice_ring = TRUE;
-		}
+	    /* Check rings for additional brands (slays) */
+	    i_ptr = &p_ptr->inventory[INVEN_LEFT + j];
+	    
+	    /* If wearing a ring */
+	    if (i_ptr->k_idx) 
+	    {
+		/* Take the maximum value */
+		for (i = 0; i < MAX_P_SLAY; i++)
+		    slay[i] = MAX(i_ptr->multiple_slay[i], slay[i]);
+		for (i = 0; i < MAX_P_BRAND; i++)
+		    brand[i] = MAX(i_ptr->multiple_brand[i], brand[i]);
+		
+		/* Prepare to notice */
+		notice_ring = TRUE;
 	    }
-	    /* temporary elemental brands */
+	}
+	/* temporary elemental brands */
+	if (p_ptr->special_attack & (ATTACK_ACID))
+	    brand[P_BRAND_ACID] =
+		MAX(brand[P_BRAND_ACID], BRAND_BOOST_NORMAL);
+	if (p_ptr->special_attack & (ATTACK_ELEC))
+	    brand[P_BRAND_ELEC] =
+		MAX(brand[P_BRAND_ELEC], BRAND_BOOST_NORMAL);
+	if (p_ptr->special_attack & (ATTACK_FIRE))
+	    brand[P_BRAND_FIRE] =
+		MAX(brand[P_BRAND_FIRE], BRAND_BOOST_NORMAL);
+	if (p_ptr->special_attack & (ATTACK_COLD))
+	    brand[P_BRAND_COLD] =
+		MAX(brand[P_BRAND_COLD], BRAND_BOOST_NORMAL);
+	if (p_ptr->special_attack & (ATTACK_POIS))
+	    brand[P_BRAND_POIS] =
+		MAX(brand[P_BRAND_POIS], BRAND_BOOST_NORMAL);
+	break;
+    }
+    }
+
+
+    /* Wielded weapons and diggers and fired missiles may do extra damage. */
+    switch (o_ptr->tval) 
+    {
+    case TV_SHOT:
+    case TV_ARROW:
+    case TV_BOLT:
+    {
+	/* Hack -- paladins (and priests) cannot take advantage of
+	 * temporary elemental brands to rescue their lousy shooting skill.
+	 * Missle weapons are "kind of" edged, right? */
+	if (!player_has(PF_BLESS_WEAPON)) {
 	    if (p_ptr->special_attack & (ATTACK_ACID))
 		brand[P_BRAND_ACID] =
-		    MAX(brand[P_BRAND_ACID], BRAND_BOOST_NORMAL);
+			MAX(brand[P_BRAND_ACID], BRAND_BOOST_NORMAL);
 	    if (p_ptr->special_attack & (ATTACK_ELEC))
 		brand[P_BRAND_ELEC] =
 		    MAX(brand[P_BRAND_ELEC], BRAND_BOOST_NORMAL);
@@ -415,346 +582,38 @@ static int adjust_dam(long *die_average, object_type * o_ptr,
 	    if (p_ptr->special_attack & (ATTACK_POIS))
 		brand[P_BRAND_POIS] =
 		    MAX(brand[P_BRAND_POIS], BRAND_BOOST_NORMAL);
-	    break;
+	    
 	}
+	
+	/* Fall through. */
     }
-
-
-    /* Wielded weapons and diggers and fired missiles may do extra damage. */
-    switch (o_ptr->tval) {
-    case TV_SHOT:
-    case TV_ARROW:
-    case TV_BOLT:
-	{
-	    /* Hack -- paladins (and priests) cannot take advantage of
-	     * temporary elemental brands to rescue their lousy shooting skill.
-	     * Missle weapons are "kind of" edged, right? */
-	    if (!player_has(PF_BLESS_WEAPON)) {
-		if (p_ptr->special_attack & (ATTACK_ACID))
-		    brand[P_BRAND_ACID] =
-			MAX(brand[P_BRAND_ACID], BRAND_BOOST_NORMAL);
-		if (p_ptr->special_attack & (ATTACK_ELEC))
-		    brand[P_BRAND_ELEC] =
-			MAX(brand[P_BRAND_ELEC], BRAND_BOOST_NORMAL);
-		if (p_ptr->special_attack & (ATTACK_FIRE))
-		    brand[P_BRAND_FIRE] =
-			MAX(brand[P_BRAND_FIRE], BRAND_BOOST_NORMAL);
-		if (p_ptr->special_attack & (ATTACK_COLD))
-		    brand[P_BRAND_COLD] =
-			MAX(brand[P_BRAND_COLD], BRAND_BOOST_NORMAL);
-		if (p_ptr->special_attack & (ATTACK_POIS))
-		    brand[P_BRAND_POIS] =
-			MAX(brand[P_BRAND_POIS], BRAND_BOOST_NORMAL);
-
-	    }
-
-	    /* Fall through. */
-	}
     case TV_HAFTED:
     case TV_POLEARM:
     case TV_SWORD:
     case TV_DIGGING:
+    {
+	get_slay_info(m_ptr, slay, &mul, item, notice_launcher, notice_ring);
+	get_brand_info(m_ptr, brand, &mul, item, notice_launcher, notice_ring);
+	
+	/* Additional bonus for Holy Light */
+	if (player_has(PF_HOLY_LIGHT)) 
 	{
-	    /* Slay Animal */
-	    if ((slay[P_SLAY_ANIMAL] > MULTIPLE_BASE)
-		&& (rf_has(r_ptr->flags, RF_ANIMAL))) {
-		if (m_ptr->ml) {
-		    rf_on(l_ptr->flags, RF_ANIMAL);
-		}
-
-		if (mul < slay[P_SLAY_ANIMAL])
-		    mul = slay[P_SLAY_ANIMAL];
-
-		/* Notice slay */
-		notice_other(IF_SLAY_ANIMAL, item + 1);
-		if (notice_launcher)
-		    notice_other(IF_SLAY_ANIMAL, INVEN_BOW + 1);
-		if (notice_ring) {
-		    notice_other(IF_SLAY_ANIMAL, INVEN_RIGHT + 1);
-		    notice_other(IF_SLAY_ANIMAL, INVEN_LEFT + 1);
-		}
+	    /* +2 or +3 versus Undead and light-sensitive creatures */
+	    if ((rf_has(r_ptr->flags, RF_UNDEAD))
+		|| (rf_has(r_ptr->flags, RF_HURT_LIGHT))) 
+	    {
+		mul += (mul + 10) / 10;
 	    }
 
-	    /* Slay Evil */
-	    if (((slay[P_SLAY_EVIL] > MULTIPLE_BASE)
-		 || (p_ptr->special_attack & (ATTACK_HOLY)))
-		&& (rf_has(r_ptr->flags, RF_EVIL))) {
-		if (m_ptr->ml) {
-		    rf_on(l_ptr->flags, RF_EVIL);
-		}
-
-		if (mul < slay[P_SLAY_EVIL])
-		    mul = slay[P_SLAY_EVIL];
-		if ((p_ptr->special_attack & (ATTACK_HOLY)) && (mul < 15))
-		    mul = 15;
-
-		/* Notice slay */
-		notice_other(IF_SLAY_EVIL, item + 1);
-		if (notice_launcher)
-		    notice_other(IF_SLAY_EVIL, INVEN_BOW + 1);
-		if (notice_ring) {
-		    notice_other(IF_SLAY_EVIL, INVEN_RIGHT + 1);
-		    notice_other(IF_SLAY_EVIL, INVEN_LEFT + 1);
-		}
+	    /* +1 or +2 versus other Evil creatures */
+	    else if (rf_has(r_ptr->flags, RF_EVIL)) 
+	    {
+		mul += mul / 10;
 	    }
-
-
-	    /* Slay Undead */
-	    if ((slay[P_SLAY_UNDEAD] > MULTIPLE_BASE)
-		&& (rf_has(r_ptr->flags, RF_UNDEAD))) {
-		if (m_ptr->ml) {
-		    rf_on(l_ptr->flags, RF_UNDEAD);
-		}
-
-		if (mul < slay[P_SLAY_UNDEAD])
-		    mul = slay[P_SLAY_UNDEAD];
-
-		/* Notice slay */
-		notice_other(IF_SLAY_UNDEAD, item + 1);
-		if (notice_launcher)
-		    notice_other(IF_SLAY_UNDEAD, INVEN_BOW + 1);
-		if (notice_ring) {
-		    notice_other(IF_SLAY_UNDEAD, INVEN_RIGHT + 1);
-		    notice_other(IF_SLAY_UNDEAD, INVEN_LEFT + 1);
-		}
-	    }
-
-	    /* Slay Demon */
-	    if ((slay[P_SLAY_DEMON] > MULTIPLE_BASE)
-		&& (rf_has(r_ptr->flags, RF_DEMON))) {
-		if (m_ptr->ml) {
-		    rf_on(l_ptr->flags, RF_DEMON);
-		}
-
-		if (mul < slay[P_SLAY_DEMON])
-		    mul = slay[P_SLAY_DEMON];
-
-		/* Notice slay */
-		notice_other(IF_SLAY_DEMON, item + 1);
-		if (notice_launcher)
-		    notice_other(IF_SLAY_DEMON, INVEN_BOW + 1);
-		if (notice_ring) {
-		    notice_other(IF_SLAY_DEMON, INVEN_RIGHT + 1);
-		    notice_other(IF_SLAY_DEMON, INVEN_LEFT + 1);
-		}
-	    }
-
-	    /* Slay Orc */
-	    if ((slay[P_SLAY_ORC] > MULTIPLE_BASE)
-		&& (rf_has(r_ptr->flags, RF_ORC))) {
-		if (m_ptr->ml) {
-		    rf_on(l_ptr->flags, RF_ORC);
-		}
-
-		if (mul < slay[P_SLAY_ORC])
-		    mul = slay[P_SLAY_ORC];
-
-		/* Notice slay */
-		notice_other(IF_SLAY_ORC, item + 1);
-		if (notice_launcher)
-		    notice_other(IF_SLAY_ORC, INVEN_BOW + 1);
-		if (notice_ring) {
-		    notice_other(IF_SLAY_ORC, INVEN_RIGHT + 1);
-		    notice_other(IF_SLAY_ORC, INVEN_LEFT + 1);
-		}
-	    }
-
-	    /* Slay Troll */
-	    if ((slay[P_SLAY_TROLL] > MULTIPLE_BASE)
-		&& (rf_has(r_ptr->flags, RF_TROLL))) {
-		if (m_ptr->ml) {
-		    rf_on(l_ptr->flags, RF_TROLL);
-		}
-
-		if (mul < slay[P_SLAY_TROLL])
-		    mul = slay[P_SLAY_TROLL];
-
-		/* Notice slay */
-		notice_other(IF_SLAY_TROLL, item + 1);
-		if (notice_launcher)
-		    notice_other(IF_SLAY_TROLL, INVEN_BOW + 1);
-		if (notice_ring) {
-		    notice_other(IF_SLAY_TROLL, INVEN_RIGHT + 1);
-		    notice_other(IF_SLAY_TROLL, INVEN_LEFT + 1);
-		}
-	    }
-
-	    /* Slay Giant */
-	    if ((slay[P_SLAY_GIANT] > MULTIPLE_BASE)
-		&& (rf_has(r_ptr->flags, RF_GIANT))) {
-		if (m_ptr->ml) {
-		    rf_on(l_ptr->flags, RF_GIANT);
-		}
-
-		if (mul < slay[P_SLAY_GIANT])
-		    mul = slay[P_SLAY_GIANT];
-
-		/* Notice slay */
-		notice_other(IF_SLAY_GIANT, item + 1);
-		if (notice_launcher)
-		    notice_other(IF_SLAY_GIANT, INVEN_BOW + 1);
-		if (notice_ring) {
-		    notice_other(IF_SLAY_GIANT, INVEN_RIGHT + 1);
-		    notice_other(IF_SLAY_GIANT, INVEN_LEFT + 1);
-		}
-	    }
-
-	    /* Slay Dragon */
-	    if ((slay[P_SLAY_DRAGON] > MULTIPLE_BASE)
-		&& (rf_has(r_ptr->flags, RF_DRAGON))) {
-		if (m_ptr->ml) {
-		    rf_on(l_ptr->flags, RF_DRAGON);
-		}
-
-		if (mul < slay[P_SLAY_DRAGON])
-		    mul = slay[P_SLAY_DRAGON];
-
-		/* Notice slay */
-		notice_other(IF_SLAY_DRAGON, item + 1);
-		if (notice_launcher)
-		    notice_other(IF_SLAY_DRAGON, INVEN_BOW + 1);
-		if (notice_ring) {
-		    notice_other(IF_SLAY_DRAGON, INVEN_RIGHT + 1);
-		    notice_other(IF_SLAY_DRAGON, INVEN_LEFT + 1);
-		}
-	    }
-
-	    /* Brand (Acid) */
-	    if (brand[P_BRAND_ACID] > MULTIPLE_BASE) {
-		/* Notice immunity */
-		if (rf_has(r_ptr->flags, RF_IM_ACID)) {
-		    if (m_ptr->ml) {
-			rf_on(l_ptr->flags, RF_IM_ACID);
-		    }
-		}
-
-		/* Otherwise, take extra damage */
-		else if (mul < brand[P_BRAND_ACID]) {
-		    mul = brand[P_BRAND_ACID];
-
-		    /* Notice brand */
-		    notice_other(IF_BRAND_ACID, item + 1);
-		    if (notice_launcher)
-			notice_other(IF_BRAND_ACID, INVEN_BOW + 1);
-		    if (notice_ring) {
-			notice_other(IF_BRAND_ACID, INVEN_RIGHT + 1);
-			notice_other(IF_BRAND_ACID, INVEN_LEFT + 1);
-		    }
-		}
-	    }
-
-	    /* Brand (Elec) */
-	    if (brand[P_BRAND_ELEC] > MULTIPLE_BASE) {
-		/* Notice immunity */
-		if (rf_has(r_ptr->flags, RF_IM_ELEC)) {
-		    if (m_ptr->ml) {
-			rf_on(l_ptr->flags, RF_IM_ELEC);
-		    }
-		}
-
-		/* Otherwise, take extra damage */
-		else if (mul < brand[P_BRAND_ELEC]) {
-		    mul = brand[P_BRAND_ELEC];
-
-		    /* Notice brand */
-		    notice_other(IF_BRAND_ELEC, item + 1);
-		    if (notice_launcher)
-			notice_other(IF_BRAND_ELEC, INVEN_BOW + 1);
-		    if (notice_ring) {
-			notice_other(IF_BRAND_ELEC, INVEN_RIGHT + 1);
-			notice_other(IF_BRAND_ELEC, INVEN_LEFT + 1);
-		    }
-		}
-	    }
-
-	    /* Brand (Fire) */
-	    if (brand[P_BRAND_FIRE] > MULTIPLE_BASE) {
-		/* Notice immunity */
-		if (rf_has(r_ptr->flags, RF_IM_FIRE)) {
-		    if (m_ptr->ml) {
-			rf_on(l_ptr->flags, RF_IM_FIRE);
-		    }
-		}
-
-		/* Otherwise, take extra damage */
-		else if (mul < brand[P_BRAND_FIRE]) {
-		    mul = brand[P_BRAND_FIRE];
-
-		    /* Notice brand */
-		    notice_other(IF_BRAND_FIRE, item + 1);
-		    if (notice_launcher)
-			notice_other(IF_BRAND_FIRE, INVEN_BOW + 1);
-		    if (notice_ring) {
-			notice_other(IF_BRAND_FIRE, INVEN_RIGHT + 1);
-			notice_other(IF_BRAND_FIRE, INVEN_LEFT + 1);
-		    }
-		}
-	    }
-
-	    /* Brand (Cold) */
-	    if (brand[P_BRAND_COLD] > MULTIPLE_BASE) {
-		/* Notice immunity */
-		if (rf_has(r_ptr->flags, RF_IM_COLD)) {
-		    if (m_ptr->ml) {
-			rf_on(l_ptr->flags, RF_IM_COLD);
-		    }
-		}
-
-		/* Otherwise, take extra damage */
-		else if (mul < brand[P_BRAND_COLD]) {
-		    mul = brand[P_BRAND_COLD];
-
-		    /* Notice brand */
-		    notice_other(IF_BRAND_COLD, item + 1);
-		    if (notice_launcher)
-			notice_other(IF_BRAND_COLD, INVEN_BOW + 1);
-		    if (notice_ring) {
-			notice_other(IF_BRAND_COLD, INVEN_RIGHT + 1);
-			notice_other(IF_BRAND_COLD, INVEN_LEFT + 1);
-		    }
-		}
-	    }
-
-	    /* Brand (Poison) */
-	    if (brand[P_BRAND_POIS] > MULTIPLE_BASE) {
-		/* Notice immunity */
-		if (rf_has(r_ptr->flags, RF_IM_POIS)) {
-		    if (m_ptr->ml) {
-			rf_on(l_ptr->flags, RF_IM_POIS);
-		    }
-		}
-
-		/* Otherwise, take extra damage */
-		else if (mul < brand[P_BRAND_POIS]) {
-		    mul = brand[P_BRAND_POIS];
-
-		    /* Notice brand */
-		    notice_other(IF_BRAND_POIS, item + 1);
-		    if (notice_launcher)
-			notice_other(IF_BRAND_POIS, INVEN_BOW + 1);
-		    if (notice_ring) {
-			notice_other(IF_BRAND_POIS, INVEN_RIGHT + 1);
-			notice_other(IF_BRAND_POIS, INVEN_LEFT + 1);
-		    }
-		}
-	    }
-
-	    /* Additional bonus for Holy Light */
-	    if (player_has(PF_HOLY_LIGHT)) {
-		/* +2 or +3 versus Undead and light-sensitive creatures */
-		if ((rf_has(r_ptr->flags, RF_UNDEAD))
-		    || (rf_has(r_ptr->flags, RF_HURT_LIGHT))) {
-		    mul += (mul + 10) / 10;
-		}
-
-		/* +1 or +2 versus other Evil creatures */
-		else if (rf_has(r_ptr->flags, RF_EVIL)) {
-		    mul += mul / 10;
-		}
-	    }
-
-	    break;
 	}
+
+	break;
+    }
     }
 
     /* Hack - Sometimes, a temporary Holy Attack becomes exhusted. */
@@ -773,18 +632,20 @@ static int adjust_dam(long *die_average, object_type * o_ptr,
      * better against orcs than is a dagger (1d9).
      * SJGU tone down the affect of slays and brands for launchers
      */
-    if (mul > 10) {
-	switch (o_ptr->tval) {
+    if (mul > 10) 
+    {
+	switch (o_ptr->tval) 
+	{
 	case TV_SHOT:
 	case TV_ARROW:
 	case TV_BOLT:
-	    {
-		mul -= (mul - 9) / 3;
-	    }
+	{
+	    mul -= (mul - 9) / 3;
+	}
 	}
 	add = (mul - 10);
     }
-
+    
     /* Apply multiplier to the die average now. */
     *die_average *= mul;
 
@@ -811,7 +672,7 @@ static int get_druid_damage(int plev, char m_name[], int power, int deadliness)
     int b_select;
     bool power_strike = FALSE;
 
-    /* Specialty Ability */
+    /* Martial Arts Ability gives a 1/6 powerful blow, Power Strike 1/8 */
     if ((player_has(PF_MARTIAL_ARTS) && (randint0(6) == 0))
 	|| (player_has(PF_POWER_STRIKE) && (randint0(8) == 0))) {
 	power_strike = TRUE;
@@ -847,7 +708,8 @@ static int get_druid_damage(int plev, char m_name[], int power, int deadliness)
 	n_chances++;
 
     /* Loop over number of number of chances */
-    for (n = 0; n < n_chances; n++) {
+    for (n = 0; n < n_chances; n++) 
+    {
 	/* Choose a (level restricted) attack */
 	chance = randint1(2 * plev / 5);
 
@@ -882,22 +744,23 @@ static int get_druid_damage(int plev, char m_name[], int power, int deadliness)
     p_ptr->barehand_dam[11] = (u16b) damage;
 
     /* Druids can also confuse monsters. */
-    if ((power_strike && (randint0(3) != 0)) || (power > randint0(500) + 25)) {
+    if ((power_strike && (randint0(3) != 0)) || (power > randint0(500) + 25)) 
+    {
 	/* Use the special druid confusion attack. */
 	p_ptr->special_attack |= (ATTACK_DRUID_CONFU);
 
-	/* And display the attack message. Feedback for Power Strike Specialty */
+	/* And display the attack message. Feedback for relevant specialties */
 	if (power_strike)
-	    msgt(MSG_HIT,
-			   "Power Strike! You attempt to confuse %s.", m_name);
+	    msgt(MSG_HIT, "Power Strike! You attempt to confuse %s.", m_name);
 	else
 	    msgt(MSG_HIT, "You %s and attempt to confuse %s.",
 			   description, m_name);
-    } else {
+    } 
+    else 
+    {
 	/* Basic attack message. */
 	if (power_strike)
-	    msgt(MSG_HIT, "Power Strike! You %s %s.", description,
-			   m_name);
+	    msgt(MSG_HIT, "Power Strike! You %s %s.", description, m_name);
 	else
 	    msgt(MSG_HIT, "You %s %s.", description, m_name);
     }
@@ -943,6 +806,166 @@ static void apply_deadliness(long *die_average, int deadliness)
     }
 }
 
+
+/**
+ * Attempt a shield bash; return true if the monster dies
+ */
+bool attempt_shield_bash(int y, int x, bool *fear, int *blows, char *m_name)
+{
+    monster_type *m_ptr = &m_list[cave_m_idx[y][x]];
+    monster_race *r_ptr = &r_info[m_ptr->r_idx];
+    monster_lore *l_ptr = &l_list[m_ptr->r_idx];
+
+    int bash_chance, bash_quality, bash_dam;
+
+    /* Bashing chance depends on melee Skill, Dex, and a class level bonus. */
+    bash_chance =
+	p_ptr->state.skills[SKILL_TO_HIT_MELEE] +
+	(adj_dex_th[p_ptr->state.stat_ind[A_DEX]]) - 128 +
+	((player_has(PF_STRONG_BASHES)) ? p_ptr->lev : 0);
+
+    /* Spell casters don't bash much - except for those who like the "blunt"
+     * nature of bashes. */
+
+    if ((player_has(PF_STRONG_MAGIC)) && (!(player_has(PF_BLESS_WEAPON)))) {
+	bash_chance /= 3;
+    }
+
+    /* Players bash more often when they see a real need. */
+    /* Unarmed and unskilled */
+    if ((!(p_ptr->inventory[INVEN_WIELD].k_idx)) && (bash_chance)
+	&& (!(player_has(PF_UNARMED_COMBAT)))
+	&& (!(player_has(PF_MARTIAL_ARTS)))) {
+	bash_chance *= 4;
+    }
+
+    /* ... or armed with a puny weapon */
+    if ((p_ptr->inventory[INVEN_WIELD].k_idx) && (bash_chance)	&&
+	((p_ptr->inventory[INVEN_WIELD].dd * p_ptr->inventory[INVEN_WIELD].ds *
+	  (*blows))
+	 < (p_ptr->inventory[INVEN_ARM].dd * p_ptr->inventory[INVEN_ARM].ds *
+	    3))) 
+    {
+	bash_chance *= 2;
+    }
+
+    /* Try to get in a shield bash. */
+    if (bash_chance > randint0(240 + r_ptr->level * 9)) 
+    {
+	msgt(MSG_HIT, "You get in a shield bash!");
+
+	/* Calculate attack quality, a mix of momentum and accuracy. */
+	bash_quality =
+	    p_ptr->state.skills[SKILL_TO_HIT_MELEE] + (p_ptr->wt / 8) +
+	    (p_ptr->total_weight / 80) +
+	    (p_ptr->inventory[INVEN_ARM].weight / 3);
+
+	/* Enhanced for shield masters */
+	if (player_has(PF_SHIELD_MAST))
+	    bash_quality += p_ptr->inventory[INVEN_ARM].weight / 5;
+
+	/* Calculate damage.  Big shields are deadly. */
+	bash_dam =
+	    damroll(p_ptr->inventory[INVEN_ARM].dd,
+		    p_ptr->inventory[INVEN_ARM].ds);
+
+	/* Notice dice */
+	notice_other(IF_DD_DS, INVEN_ARM + 1);
+
+	/* Multiply by quality and experience factors */
+	bash_dam *= bash_quality / 20 + p_ptr->lev / 7;
+
+	/* Strength bonus. */
+	bash_dam += (adj_str_td[p_ptr->state.stat_ind[A_STR]] - 128);
+
+	/* Paranoia. */
+	if (bash_dam > 125)
+	    bash_dam = 125;
+
+	/* Encourage the player to keep wearing that heavy shield. */
+	if (randint1(bash_dam) > 30 + randint1(bash_dam / 2)) {
+	    sound(MSG_HIT_HI_SUPERB);
+	    msgt(MSG_HIT, "WHAMM!");
+	}
+
+	/* Damage, check for fear and death. */
+	if (mon_take_hit(cave_m_idx[y][x], bash_dam, fear, NULL)) 
+	{
+	    /* 
+	     * Hack -- High-level warriors can spread their attacks out 
+	     * among weaker foes.
+	     * In this case a shield bash kill takes the same time one
+	     * attack.
+	     */
+	    if ((player_has(PF_SPREAD_ATTACKS)) && (p_ptr->energy_use)
+		&& (p_ptr->lev > 39)) {
+		p_ptr->energy_use = p_ptr->energy_use / (*blows);
+	    }
+
+	    /* Specialty Ability Fury */
+	    if (player_has(PF_FURY)) {
+		int boost_value;
+
+		/* Mega-Hack - base bonus value on energy used this round */
+		/* value = 15 * (energy_use/100) * (10/energy per turn) */
+		boost_value =
+		    (3 * p_ptr->energy_use) / 
+		    (extract_energy[p_ptr->state.pspeed] * 2);
+
+		/* Minimum boost */
+		boost_value = ((boost_value > 0) ? boost_value : 1);
+
+		add_speed_boost(boost_value);
+	    }
+
+	    /* Fight's over. */
+	    return (TRUE);
+	}
+
+	/* Stunning. */
+	if (bash_quality + p_ptr->lev > randint1(200 + r_ptr->level * 4)) 
+	{
+	    if (rf_has(r_ptr->flags, RF_NO_STUN)) 
+	    {
+		if (m_ptr->ml)
+		    rf_on(l_ptr->flags, RF_NO_STUN);
+	    } 
+	    else 
+	    {
+		msgt(MSG_HIT, "%s is stunned.", m_name);
+		m_ptr->stunned += randint0(p_ptr->lev / 5) + 4;
+		if (m_ptr->stunned > 24)
+		    m_ptr->stunned = 24;
+	    }
+	}
+
+	/* Confusion. */
+	if (bash_quality + p_ptr->lev > randint1(300 + r_ptr->level * 6)) 
+	{
+	    if (rf_has(r_ptr->flags, RF_NO_CONF)) 
+	    {
+		if (m_ptr->ml)
+		    rf_on(l_ptr->flags, RF_NO_CONF);
+	    } 
+	    else 
+	    {
+		msgt(MSG_HIT, "%s appears confused.", m_name);
+		m_ptr->confused += randint0(p_ptr->lev / 5) + 4;
+	    }
+	}
+
+	/* The player will sometimes stumble. */
+	if ((30 + adj_dex_th[p_ptr->state.stat_ind[A_DEX]] - 128) 
+	    < randint1(60)) 
+	{
+	    *blows -= randint1(*blows);
+
+	    msgt(MSG_GENERIC, "You stumble!");
+	}
+    }
+
+    return (FALSE);
+}
 
 /**
  * Player attacks a (poor, defenseless) creature in melee. 
@@ -998,9 +1021,6 @@ bool py_attack(int y, int x, bool can_push)
     /* Skill and Deadliness */
     int bonus, chance, total_deadliness;
 
-    /* Variables for the bashing code */
-    int bash_chance, bash_quality, bash_dam;
-
     bool first_hit = TRUE;
 
     monster_type *m_ptr;
@@ -1026,8 +1046,9 @@ bool py_attack(int y, int x, bool can_push)
     r_ptr = &r_info[m_ptr->r_idx];
     l_ptr = &l_list[m_ptr->r_idx];
 
-    /* Just push past town monsters */
-    if ((m_ptr->hostile != -1) && can_push) {
+    /* Just push past neutral monsters */
+    if ((m_ptr->hostile != -1) && can_push) 
+    {
 	/* Get monster name (or "something") */
 	monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
@@ -1041,13 +1062,14 @@ bool py_attack(int y, int x, bool can_push)
     /* 
      * If the monster is sleeping and visible, it can be hit more easily.
      */
-    if ((m_ptr->csleep) && (m_ptr->ml)) {
+    if ((m_ptr->csleep) && (m_ptr->ml)) 
+    {
 	sleeping_bonus = 5 + 1 * p_ptr->lev / 5;
 	if (player_has(PF_BACKSTAB))
 	    sleeping_bonus *= 2;
 	else if (player_has(PF_ASSASSINATE))
 	    sleeping_bonus = (3 * sleeping_bonus / 2);
-
+	
     }
 
     /* Disturb the monster */
@@ -1068,11 +1090,15 @@ bool py_attack(int y, int x, bool can_push)
     monster_desc(m_name, sizeof(m_name), m_ptr, 0);
 
     /* Handle player fear */
-    if (p_ptr->timed[TMD_AFRAID]) {
-	if (m_ptr->ml) {
+    if (p_ptr->timed[TMD_AFRAID]) 
+    {
+	if (m_ptr->ml) 
+	{
 	    /* Message */
 	    msg("You are too afraid to attack %s!", m_name);
-	} else {
+	} 
+	else 
+	{
 	    /* Special Message */
 	    msg("Something scary is in your way!");
 	}
@@ -1082,11 +1108,15 @@ bool py_attack(int y, int x, bool can_push)
     }
 
     /* Hack - Monsters in stasis are invulnerable. */
-    if (m_ptr->stasis) {
-	if (m_ptr->ml) {
+    if (m_ptr->stasis) 
+    {
+	if (m_ptr->ml) 
+	{
 	    /* Message */
 	    msg("Stasis protects %s!", m_name);
-	} else {
+	} 
+	else 
+	{
 	    /* Special Message */
 	    msg("Something immovable is in your way!");
 	}
@@ -1103,21 +1133,22 @@ bool py_attack(int y, int x, bool can_push)
      * know nature lore. */
     if (tf_has(f_ptr->flags, TF_PROTECT) && 
 	!(tf_has(f_ptr->flags, TF_ORGANIC) &&
-	  (player_has(PF_WOODSMAN) || player_has(PF_ELVEN)))) {
+	  (player_has(PF_WOODSMAN) || player_has(PF_ELVEN)))) 
+    {
 	terrain_bonus = r_ptr->ac / 7 + 5;
     }
+    
     /* Monsters in water are vulnerable.  */
-    if (tf_has(f_ptr->flags, TF_EXPOSE)) {
+    if (tf_has(f_ptr->flags, TF_EXPOSE)) 
+    {
 	terrain_bonus -= r_ptr->ac / 5;
     }
 
 
-  /**** The monster bashing code. -LM-  ****/
+    /**** The monster bashing code. -LM-  ****/
 
     /* No shield on arm, no bash.  */
-    if ((!p_ptr->inventory[INVEN_ARM].k_idx) || (p_ptr->state.shield_on_back)) {
-	bash_chance = 0;
-    }
+    if ((!p_ptr->inventory[INVEN_ARM].k_idx) || (p_ptr->state.shield_on_back)) ;
 
     /* 
      * Players do not bash if they could otherwise take advantage of special 
@@ -1125,145 +1156,10 @@ bool py_attack(int y, int x, bool can_push)
      * not visible.
      */
     else if ((sleeping_bonus) || (!m_ptr->ml)
-	     || (r_ptr->level < p_ptr->lev / 2)) {
-	bash_chance = 0;
-    }
+	     || (r_ptr->level < p_ptr->lev / 2)) ;
 
-    /* Bashing chance depends on melee Skill, Dex, and a class level bonus. */
-    else
-	bash_chance =
-	    p_ptr->state.skills[SKILL_TO_HIT_MELEE] +
-	    (adj_dex_th[p_ptr->state.stat_ind[A_DEX]]) - 128 +
-	    ((player_has(PF_STRONG_BASHES)) ? p_ptr->lev : 0);
-
-    /* Spell casters don't bash much - except for those who like the "blunt"
-     * nature of bashes. */
-
-    if ((player_has(PF_STRONG_MAGIC)) && (!(player_has(PF_BLESS_WEAPON)))) {
-	bash_chance /= 3;
-    }
-
-    /* Players bash more often when they see a real need. */
-    /* Unarmed and unskilled */
-    if ((!(p_ptr->inventory[INVEN_WIELD].k_idx)) && (bash_chance)
-	&& (!(player_has(PF_UNARMED_COMBAT)))
-	&& (!(player_has(PF_MARTIAL_ARTS)))) {
-	bash_chance *= 4;
-    }
-
-    /* ... or armed with a puny weapon */
-    if ((p_ptr->inventory[INVEN_WIELD].k_idx) && (bash_chance)
-	&&
-	((p_ptr->inventory[INVEN_WIELD].dd * p_ptr->inventory[INVEN_WIELD].ds *
-	  blows)
-	 < (p_ptr->inventory[INVEN_ARM].dd * p_ptr->inventory[INVEN_ARM].ds *
-	    3))) {
-	bash_chance *= 2;
-    }
-
-    /* Try to get in a shield bash. */
-    if (bash_chance > randint0(240 + r_ptr->level * 9)) {
-	msgt(MSG_HIT, "You get in a shield bash!");
-
-	/* Calculate attack quality, a mix of momentum and accuracy. */
-	bash_quality =
-	    p_ptr->state.skills[SKILL_TO_HIT_MELEE] + (p_ptr->wt / 8) +
-	    (p_ptr->total_weight / 80) +
-	    (p_ptr->inventory[INVEN_ARM].weight / 3);
-
-	/* Enhanced for shield masters */
-	if (player_has(PF_SHIELD_MAST))
-	    bash_quality += p_ptr->inventory[INVEN_ARM].weight / 5;
-
-	/* Calculate damage.  Big shields are deadly. */
-	bash_dam =
-	    damroll(p_ptr->inventory[INVEN_ARM].dd,
-		    p_ptr->inventory[INVEN_ARM].ds);
-
-	/* Notice dice */
-	notice_other(IF_DD_DS, INVEN_ARM + 1);
-
-	/* Multiply by quality and experience factors */
-	bash_dam *= bash_quality / 20 + p_ptr->lev / 7;
-
-	/* Strength bonus. */
-	bash_dam += (adj_str_td[p_ptr->state.stat_ind[A_STR]] - 128);
-
-	/* Paranoia. */
-	if (bash_dam > 125)
-	    bash_dam = 125;
-
-	/* Encourage the player to keep wearing that heavy shield. */
-	if (randint1(bash_dam) > 30 + randint1(bash_dam / 2)) {
-	    sound(MSG_HIT_HI_SUPERB);
-	    msgt(MSG_HIT, "WHAMM!");
-	}
-
-	/* Damage, check for fear and death. */
-	if (mon_take_hit(cave_m_idx[y][x], bash_dam, &fear, NULL)) {
-	    /* 
-	     * Hack -- High-level warriors can spread their attacks out 
-	     * among weaker foes.
-	     * In this case a shield bash kill takes the same time one
-	     * attack.
-	     */
-	    if ((player_has(PF_SPREAD_ATTACKS)) && (p_ptr->energy_use)
-		&& (p_ptr->lev > 39)) {
-		p_ptr->energy_use = p_ptr->energy_use / blows;
-	    }
-
-	    /* Specialty Ability Fury */
-	    if (player_has(PF_FURY)) {
-		int boost_value;
-
-		/* Mega-Hack - base bonus value on energy used this round */
-		/* value = 15 * (energy_use/100) * (10/energy per turn) */
-		boost_value =
-		    (3 * p_ptr->energy_use) / 
-		    (extract_energy[p_ptr->state.pspeed] * 2);
-
-		/* Minimum boost */
-		boost_value = ((boost_value > 0) ? boost_value : 1);
-
-		add_speed_boost(boost_value);
-	    }
-
-	    /* Fight's over. */
-	    return (TRUE);
-	}
-
-	/* Stunning. */
-	if (bash_quality + p_ptr->lev > randint1(200 + r_ptr->level * 4)) {
-	    if (rf_has(r_ptr->flags, RF_NO_STUN)) {
-		if (m_ptr->ml)
-		    rf_on(l_ptr->flags, RF_NO_STUN);
-	    } else {
-		msgt(MSG_HIT, "%s is stunned.", m_name);
-		m_ptr->stunned += randint0(p_ptr->lev / 5) + 4;
-		if (m_ptr->stunned > 24)
-		    m_ptr->stunned = 24;
-	    }
-	}
-
-	/* Confusion. */
-	if (bash_quality + p_ptr->lev > randint1(300 + r_ptr->level * 6)) {
-	    if (rf_has(r_ptr->flags, RF_NO_CONF)) {
-		if (m_ptr->ml)
-		    rf_on(l_ptr->flags, RF_NO_CONF);
-	    } else {
-		msgt(MSG_HIT, "%s appears confused.", m_name);
-		m_ptr->confused += randint0(p_ptr->lev / 5) + 4;
-	    }
-	}
-
-	/* The player will sometimes stumble. */
-	if ((30 + adj_dex_th[p_ptr->state.stat_ind[A_DEX]] - 128) < randint1(60)) {
-	    blows -= randint1(blows);
-
-	    msgt(MSG_GENERIC, "You stumble!");
-	}
-    }
-
+    else if (attempt_shield_bash(y, x, &fear, &blows, m_name))
+	return (TRUE);
 
     /* Get the weapon */
     o_ptr = &p_ptr->inventory[INVEN_WIELD];
@@ -1754,7 +1650,8 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
     sound(MSG_SHOOT);
 
     /* Missile launchers of Velocity sometimes "supercharge" */
-    if ((o_ptr->name2 == EGO_VELOCITY) && (randint0(5) == 0)) {
+    if ((o_ptr->name2 == EGO_VELOCITY) && (randint0(5) == 0)) 
+    {
 	/* Learn the to-dam (and maybe ego) */
 	notice_other(IF_TO_D, INVEN_BOW + 1);
 
@@ -1790,7 +1687,8 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
     }
 
     /* Fire ammo of backbiting, and it will turn on you.  -LM- */
-    if (i_ptr->name2 == EGO_BACKBITING) {
+    if (i_ptr->name2 == EGO_BACKBITING) 
+    {
 	/* Learn to-hit (!) */
 	if (item >= 0)
 	    notice_other(IF_TO_H, item + 1);
@@ -1801,9 +1699,10 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	msg("Your missile turns in midair and strikes you!");
 
 	/* Calculate damage. */
-	damage =
-	    damroll(p_ptr->state.ammo_mult * i_ptr->dd * randint1(2), i_ptr->ds * 4);
-	if (special_dam) {
+	damage = damroll(p_ptr->state.ammo_mult * i_ptr->dd * randint1(2), 
+			 i_ptr->ds * 4);
+	if (special_dam) 
+	{
 	    damage += 15;
 	}
 
@@ -2482,10 +2381,11 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 	    hit_body = TRUE;
 
 	    /* Did we miss it (penalize range)? */
-	    if (!
-		(test_hit_combat
-		 (chance2 + sleeping_bonus, r_ptr->ac + terrain_bonus,
-		  m_ptr->ml, ((item < 0) ? item : item + 1), 0))) {
+	    if (!test_hit_combat(chance2 + sleeping_bonus, 
+				 r_ptr->ac + terrain_bonus,
+				 m_ptr->ml, 
+				 ((item < 0) ? item : item + 1), 0)) 
+	    {
 		/* Keep Going - magical throw always hits visible monsters */
 		if (!(magic_throw) || !m_ptr->ml)
 		    break;
