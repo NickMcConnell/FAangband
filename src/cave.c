@@ -1423,35 +1423,6 @@ void prt_map(void)
 
 
 /**
- * Hack -- a priority function (see below)
- */
-static byte priority(byte a, char c)
-{
-    int i;
-
-    feature_type *f_ptr;
-
-    /* Scan the table */
-    for (i = 0; i < z_info->f_max; i++) 
-    {
-	/* Access the feature */
-	f_ptr = &f_info[i];
-
-	/* Check it exists */
-	if (!f_ptr->fidx) continue;
-
-	/* Check character and attribute, accept matches */
-	if ((f_ptr->d_char == c) && (f_ptr->d_attr == a))
-	    return (f_ptr->priority);
-    }
-
-    /* Default */
-    return (20);
-}
-
-
-
-/**
  * Display a "small-scale" map of the dungeon in the active Term
  *
  * Note that the "map_info()" function must return fully colorized
@@ -1481,8 +1452,8 @@ void display_map(int *cy, int *cx)
     int x, y;
     grid_data g;
 
-    byte ta;
-    wchar_t tc;
+    byte a, ta;
+    wchar_t c, tc;
 
     byte tp;
 
@@ -1515,6 +1486,8 @@ void display_map(int *cy, int *cx)
 	return;
 
     /* Nothing here */
+    a = TERM_WHITE;
+    c = L' ';
     ta = TERM_WHITE;
     tc = L' ';
 
@@ -1550,21 +1523,25 @@ void display_map(int *cy, int *cx)
 
 	    /* Get the attr/char at that map location */
 	    map_info(y, x, &g);
+	    grid_data_as_text(&g, &a, &c, &ta, &tc);
 
-	    /* Get the priority of that attr/char */
-	    tp = priority(ta, tc);
+	    /* Get the priority of that feature */
+	    tp = f_info[g.f_idx].priority;
+
+	    /* Stuff on top of terrain gets higher priority */
+	    if ((a != ta) || (c != tc)) tp = 20;
 
 	    /* Save "best" */
 	    if (mp[row][col] < tp) {
 		/* Hack - make every grid on the map lit */
 		g.lighting = FEAT_LIGHTING_LIT; /*FEAT_LIGHTING_BRIGHT;*/
-		grid_data_as_text(&g, &ta, &tc, &ta, &tc);
+		grid_data_as_text(&g, &a, &c, &ta, &tc);
 
 		/* Add the character */
-		Term_putch(col + 1, row + 1, ta, tc);
+		Term_putch(col + 1, row + 1, a, c);
 
 		if ((tile_width > 1) || (tile_height > 1)) {
-		    Term_big_putch(col + 1, row + 1, ta, tc);
+		    Term_big_putch(col + 1, row + 1, a, c);
 		}
 
 		/* Save priority */
