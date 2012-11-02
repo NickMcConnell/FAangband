@@ -151,12 +151,14 @@ static const char *desc_sneer[] = {
     "relates his problems with running in the right direction.",
     "testifies that some monsters speak in tongues.",
     "reports that some adventurers lie about their past.",
-    "reminisces about bargaining with shopkeepers",
+    "reminisces about bargaining with shopkeepers.",
     "asserts that he has been cloned.",
     "maintains that vaults are really just big larders.",
     "alleges that patches of grass are really magical staircases.",
     "calls Ironbark the Ent a stingy bastard.",
-    "declares that wilderness pathways dilate time."
+    "declares that wilderness pathways dilate time.",
+    "observes that the dwarves of Khazad Dûm are getting bigger.",
+    "mutters that shopkeepers won't take no for an answer."
 };
 
 /**
@@ -718,7 +720,7 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 
 	    case RBM_SNEER:
 	    {
-		act = desc_sneer[randint0(23)];
+		act = desc_sneer[randint0(25)];
 		break;
 	    }
 
