@@ -356,6 +356,8 @@ void do_cmd_destroy(cmd_code code, cmd_arg args[])
 	squelch_items();
 	return;
     }
+    else if (object_from_item_idx(item)->kind->squelch)
+	return;
 
     if (!item_is_available(item, NULL, USE_INVEN | USE_EQUIP | USE_FLOOR))
     {
