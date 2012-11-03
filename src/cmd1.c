@@ -1031,7 +1031,7 @@ void move_player(int dir)
 	monster_swap(py, px, y, x);
 	
 	/* Update speed if stepping out of water */
-	if (tf_has(f_ptr->flags, TF_WATERY))
+	if (tf_has(f_info[cave_feat[py][px]].flags, TF_WATERY))
 	    p_ptr->update |= PU_BONUS;
 	
 	/* Update stealth for Unlight */
