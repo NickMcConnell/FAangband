@@ -2810,9 +2810,8 @@ errr get_rnd_line(char *file_name, char *output)
 
 static void write_html_escape_char(ang_file * htm, wchar_t c)
 {
-    char mbseq[MB_CUR_MAX];
-
-    switch (c) {
+    switch (c) 
+    {
     case L'<':
 	file_putf(htm, "&lt;");
 	break;
@@ -2823,9 +2822,16 @@ static void write_html_escape_char(ang_file * htm, wchar_t c)
 	file_putf(htm, "&amp;");
 	break;
     default:
-	wctomb(mbseq, c);
-	file_putf(htm, "%c", c);
+    {
+	char *mbseq = (char*) mem_alloc(sizeof(char)*(MB_CUR_MAX+1));
+	byte len;
+	len = wctomb(mbseq, c);
+	if (len > MB_CUR_MAX) len = MB_CUR_MAX;
+	mbseq[len] = '\0';
+	file_putf(htm, "%s", mbseq);
+	mem_free(mbseq);
 	break;
+    }
     }
 }
 
