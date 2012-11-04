@@ -2208,8 +2208,8 @@ void object_absorb(object_type * o_ptr, const object_type * j_ptr)
 
     /* Hack -- if wands or staves are stacking, combine the charges */
     /* If gold is stacking combine the amount */
-    if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF
-	|| o_ptr->tval == TV_GOLD) {
+    if ((o_ptr->tval == TV_WAND) || (o_ptr->tval == TV_STAFF)
+	|| (o_ptr->tval == TV_GOLD)) {
 	int total = o_ptr->pval + j_ptr->pval;
 	o_ptr->pval = total >= MAX_PVAL ? MAX_PVAL : total;
     }

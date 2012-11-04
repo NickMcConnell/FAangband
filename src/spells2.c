@@ -3454,11 +3454,12 @@ bool recharge(int power)
     else {
 	/* Extract a recharge strength by comparing object level to power.
 	 * Divide up a stack of wands' charges to calculate charge penalty. */
-	if ((o_ptr->tval == TV_WAND) && (o_ptr->number > 1))
+	if (((o_ptr->tval == TV_WAND) || (o_ptr->tval == TV_STAFF)) && 
+	    (o_ptr->number > 1))
 	    recharge_strength =
 		(100 + power - lev - (8 * o_ptr->pval / o_ptr->number)) / 15;
 
-	/* All staffs, unstacked wands. */
+	/* All unstacked staffs, wands. */
 	else
 	    recharge_strength = (100 + power - lev - (8 * o_ptr->pval)) / 15;
 
@@ -3470,7 +3471,8 @@ bool recharge(int power)
 	}
 
 	/* If the spell didn't backfire, recharge the wand or staff. */
-	else {
+	else 
+	{
 	    /* Recharge based on the standard number of charges. */
 	    recharge_amount = 
 		randint1(1 + randcalc(k_ptr->pval, lev, RANDOMISE) / 2);
@@ -3496,20 +3498,22 @@ bool recharge(int power)
 	    /* Recharge the wand or staff. */
 	    o_ptr->pval += recharge_amount;
 
-	    /* Hack - Artifacts have a maximum # of charges. */
+	    /* Artifacts have a maximum # of charges. */
 	    if (artifact_p(o_ptr) && (o_ptr->pval > k_ptr->pval.base))
 		o_ptr->pval = k_ptr->pval.base;
 
-	    /* Hack -- we no longer think the item is empty */
+	    /* We no longer think the item is empty */
 	    o_ptr->ident &= ~(IDENT_EMPTY);
 	}
     }
 
 
     /* Inflict the penalties for failing a recharge. */
-    if (fail) {
+    if (fail) 
+    {
 	/* Artifacts are never destroyed. */
-	if (artifact_p(o_ptr)) {
+	if (artifact_p(o_ptr)) 
+	{
 	    object_desc(o_name, sizeof(o_name), o_ptr,
 			ODESC_PREFIX | ODESC_BASE);
 	    msg("The recharging backfires - %s is completely drained!",
@@ -3522,7 +3526,9 @@ bool recharge(int power)
 	    /* Artifact wands and staffs. */
 	    else if ((o_ptr->tval == TV_WAND) || (o_ptr->tval == TV_STAFF))
 		o_ptr->pval = 0;
-	} else {
+	} 
+	else 
+	{
 	    /* Get the object description */
 	    object_desc(o_name, sizeof(o_name), o_ptr, ODESC_BASE);
 
@@ -3531,21 +3537,24 @@ bool recharge(int power)
 	    /* Mages recharge objects more safely. */
 	    if (player_has(PF_DEVICE_EXPERT)) {
 		/* 10% chance to blow up one rod, otherwise draining. */
-		if (o_ptr->tval == TV_ROD) {
+		if (o_ptr->tval == TV_ROD) 
+		{
 		    if (randint1(10) == 1)
 			fail_type = 2;
 		    else
 			fail_type = 1;
 		}
 		/* 67% chance to blow up one wand, otherwise draining. */
-		else if (o_ptr->tval == TV_WAND) {
+		else if (o_ptr->tval == TV_WAND) 
+		{
 		    if (randint1(3) != 1)
 			fail_type = 2;
 		    else
 			fail_type = 1;
 		}
 		/* 50% chance to blow up one staff, otherwise no effect. */
-		else if (o_ptr->tval == TV_STAFF) {
+		else if (o_ptr->tval == TV_STAFF) 
+		{
 		    if (randint1(2) == 1)
 			fail_type = 2;
 		    else
@@ -3554,23 +3563,27 @@ bool recharge(int power)
 	    }
 
 	    /* All other classes get no special favors. */
-	    else {
+	    else 
+	    {
 		/* 33% chance to blow up one rod, otherwise draining. */
-		if (o_ptr->tval == TV_ROD) {
+		if (o_ptr->tval == TV_ROD) 
+		{
 		    if (randint1(3) == 1)
 			fail_type = 2;
 		    else
 			fail_type = 1;
 		}
 		/* 20% chance of the entire stack, else destroy one wand. */
-		else if (o_ptr->tval == TV_WAND) {
+		else if (o_ptr->tval == TV_WAND) 
+		{
 		    if (randint1(5) == 1)
 			fail_type = 3;
 		    else
 			fail_type = 2;
 		}
 		/* Blow up one staff. */
-		else if (o_ptr->tval == TV_STAFF) {
+		else if (o_ptr->tval == TV_STAFF) 
+		{
 		    fail_type = 2;
 		}
 	    }
@@ -3578,23 +3591,26 @@ bool recharge(int power)
 	  /*** Apply draining and destruction. ***/
 
 	    /* Drain object or stack of objects. */
-	    if (fail_type == 1) {
-		if (o_ptr->tval == TV_ROD) {
+	    if (fail_type == 1) 
+	    {
+		if (o_ptr->tval == TV_ROD) 
+		{
 		    msg
 			("The recharge backfires, draining the rod further!");
 		    if (o_ptr->timeout < 10000)
 			o_ptr->timeout = (o_ptr->timeout + 100) * 2;
-		} else if (o_ptr->tval == TV_WAND) {
-		    msg
-			("You save your %s from destruction, but all charges are lost.",
-			 o_name);
+		} 
+		else if (o_ptr->tval == TV_WAND) 
+		{
+		    msg("You save your %s from destruction, but all charges are lost.", o_name);
 		    o_ptr->pval = 0;
 		}
 		/* Staffs aren't drained. */
 	    }
 
 	    /* Destroy an object or one in a stack of objects. */
-	    if (fail_type == 2) {
+	    if (fail_type == 2) 
+	    {
 		if (o_ptr->number > 1)
 		    msg("Wild magic consumes one of your %s!", o_name);
 		else
@@ -3608,14 +3624,16 @@ bool recharge(int power)
 		reduce_charges(o_ptr, 1);
 
 		/* Reduce and describe inventory */
-		if (item >= 0) {
+		if (item >= 0) 
+		{
 		    inven_item_increase(item, -1);
 		    inven_item_describe(item);
 		    inven_item_optimize(item);
 		}
 
 		/* Reduce and describe floor item */
-		else {
+		else 
+		{
 		    floor_item_increase(0 - item, -1);
 		    floor_item_describe(0 - item);
 		    floor_item_optimize(0 - item);
@@ -3623,7 +3641,8 @@ bool recharge(int power)
 	    }
 
 	    /* Destroy some members of a stack of objects. */
-	    if (fail_type == 3) {
+	    if (fail_type == 3) 
+	    {
 		int num_gone = -2;
 
 		if (o_ptr->number > 1)
@@ -3641,14 +3660,16 @@ bool recharge(int power)
 		reduce_charges(o_ptr, num_gone);
 
 		/* Reduce and describe inventory */
-		if (item >= 0) {
+		if (item >= 0) 
+		{
 		    inven_item_increase(item, num_gone);
 		    inven_item_describe(item);
 		    inven_item_optimize(item);
 		}
 
 		/* Reduce and describe floor item */
-		else {
+		else 
+		{
 		    floor_item_increase(0 - item, num_gone);
 		    floor_item_describe(0 - item);
 		    floor_item_optimize(0 - item);
@@ -3705,7 +3726,8 @@ void tap_magical_energy(void)
     lev = k_info[o_ptr->k_idx].level;
 
     /* Extract the object's energy and get its generic name. */
-    if (o_ptr->tval == TV_ROD) {
+    if (o_ptr->tval == TV_ROD) 
+    {
 	/* Rods have little usable energy, for obvious balance reasons... */
 	energy = (lev * o_ptr->number * 2) / 3;
 
@@ -3718,12 +3740,14 @@ void tap_magical_energy(void)
 	    energy = (energy * (o_ptr->pval - o_ptr->timeout)) / o_ptr->pval;
 	item_name = "rod";
     }
-    if (o_ptr->tval == TV_STAFF) {
+    if (o_ptr->tval == TV_STAFF) 
+    {
 	energy = (5 + lev) * o_ptr->pval;
 
 	item_name = "staff";
     }
-    if (o_ptr->tval == TV_WAND) {
+    if (o_ptr->tval == TV_WAND) 
+    {
 	energy = (5 + lev) * 3 * o_ptr->pval / 2;
 
 	item_name = "wand";
@@ -3732,12 +3756,16 @@ void tap_magical_energy(void)
     /* Turn energy into mana. */
 
     /* Require a resonable amount of energy */
-    if (energy < 36) {
+    if (energy < 36) 
+    {
 	/* Notify of failure. */
 	msg("That %s had no useable energy", item_name);
-    } else {
+    } 
+    else 
+    {
 	/* If mana below maximum, increase mana and drain object. */
-	if (p_ptr->csp < p_ptr->msp) {
+	if (p_ptr->csp < p_ptr->msp) 
+	{
 	    /* Drain the object. */
 	    if (o_ptr->tval == TV_ROD)
 		o_ptr->timeout = o_ptr->pval;

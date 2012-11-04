@@ -829,7 +829,8 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 		take_hit(damage, ddesc);
 
 		/* Blindly hunt ten times for an item. */
-		for (k = 0; k < 10; k++) {
+		for (k = 0; k < 10; k++) 
+		{
 		    /* Pick an item */
 		    i = randint0(INVEN_PACK);
 
@@ -847,7 +848,8 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 		    /* Drain charged wands/staffs/rods */
 		    if ((o_ptr->tval == TV_STAFF)
 			|| (o_ptr->tval == TV_WAND)
-			|| (o_ptr->tval == TV_ROD)) {
+			|| (o_ptr->tval == TV_ROD)) 
+		    {
 			/* case of charged wands/staffs. */
 			if (((o_ptr->tval == TV_STAFF)
 			     || (o_ptr->tval == TV_WAND)) && (o_ptr->pval))
@@ -858,7 +860,8 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 			    && (o_ptr->timeout < o_ptr->pval))
 			    tmp = 1;
 
-			if (tmp) {
+			if (tmp) 
+			{
 			    /* Message */
 			    msg("Energy drains from your pack!");
 
@@ -869,24 +872,32 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 			     * doubled if it slips to hps */
 			    j = 2 + rlev / 20;
 
-			    /* Handle new-style wands correctly. */
-			    if (o_ptr->tval == TV_WAND) {
+			    /* Wands, staffs: amount is per charge */
+			    if ((o_ptr->tval == TV_WAND) ||
+				(o_ptr->tval == TV_STAFF))
+			    {
 				j *= o_ptr->pval;
 			    }
-			    /* Handle new-style rods correctly. */
-			    else if (o_ptr->tval == TV_ROD) {
-				j *= (o_ptr->pval - o_ptr->timeout)
-				    / 30;
-			    } else {
+			    /* Rods: amount is per timeout left */
+			    else if (o_ptr->tval == TV_ROD) 
+			    {
+				j *= (o_ptr->pval - o_ptr->timeout) / 30;
+			    } 
+			    else 
+			    {
 				j *= o_ptr->pval * o_ptr->number;
 			    }
 
 			    /* Replenish monster mana */
-			    if (m_ptr->mana < r_ptr->mana) {
-				if (j > (r_ptr->mana - m_ptr->mana) * 10) {
+			    if (m_ptr->mana < r_ptr->mana) 
+			    {
+				if (j > (r_ptr->mana - m_ptr->mana) * 10) 
+				{
 				    j -= (r_ptr->mana - m_ptr->mana) * 10;
 				    m_ptr->mana = r_ptr->mana;
-				} else {
+				} 
+				else 
+				{
 				    m_ptr->mana += (j / 10) + 1;
 				    j = 0;
 				}
@@ -1049,10 +1060,12 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 		    /* One item is stolen at a time. */
 		    i_ptr->number = 1;
 
-		    /* Hack -- If a rod or wand, allocate total maximum
+		    /* If a rod, staff or wand, allocate total maximum
 		     * timeouts or charges between those stolen and those
-		     * missed. -LM- */
-		    if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND)) {
+		     * missed. */
+		    if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND) || 
+			(o_ptr->tval == TV_STAFF)) 
+		    {
 			i_ptr->pval = o_ptr->pval / o_ptr->number;
 			o_ptr->pval -= i_ptr->pval;
 		    }
