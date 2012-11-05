@@ -1500,6 +1500,7 @@ bool describe_origin(textblock *tb, const object_type *o_ptr)
 {
     char origin_text[80];
 
+    /* Format location of origin */
     if (stage_map[o_ptr->origin_stage][DEPTH])
 	strnfmt(origin_text, sizeof(origin_text), "%s Level %d",
 		locality_name[stage_map[o_ptr->origin_stage][LOCALITY]], 
@@ -1520,7 +1521,7 @@ bool describe_origin(textblock *tb, const object_type *o_ptr)
 	break;
 
     case ORIGIN_STORE:
-	textblock_append(tb, "Bought from a store.\n");
+	textblock_append(tb, "Bought from a store in %s.\n");
 	break;
 
     case ORIGIN_FLOOR:
@@ -1533,7 +1534,8 @@ bool describe_origin(textblock *tb, const object_type *o_ptr)
 
 	textblock_append(tb, "Dropped by ");
 
-	if (rf_has(r_info[o_ptr->origin_xtra].flags, RF_UNIQUE))
+	if (rf_has(r_info[o_ptr->origin_xtra].flags, RF_UNIQUE) && 
+	    !rf_has(r_info[o_ptr->origin_xtra].flags, RF_PLAYER_GHOST))
 	    textblock_append(tb, "%s", name);
 	else
 	    textblock_append(tb, "%s%s", is_a_vowel(name[0]) ? "an " : "a ", 
@@ -1557,12 +1559,41 @@ bool describe_origin(textblock *tb, const object_type *o_ptr)
 	break;
 
     case ORIGIN_CHEST:
+	if (o_ptr->origin_xtra)
+	{
+	    const char *name = r_info[o_ptr->origin_xtra].name;
+
+	    textblock_append(tb, "Found in a chest dropped by ");
+
+	    if (rf_has(r_info[o_ptr->origin_xtra].flags, RF_UNIQUE) &&
+		!rf_has(r_info[o_ptr->origin_xtra].flags, RF_PLAYER_GHOST))
+		textblock_append(tb, "%s", name);
+	    else
+		textblock_append(tb, "%s%s", is_a_vowel(name[0]) ? "an " : "a ",
+ 				 name);
+
+	    textblock_append(tb, " in %s.\n", origin_text);
+	    break;
+	}
 	textblock_append(tb, "Found in a chest from %s.\n",
 			 origin_text);
 	break;
-    }
 
-    //textblock_append(tb, "\n");
+    case ORIGIN_RUBBLE:
+	textblock_append(tb, "Found under some rubble in %s.\n",
+			 origin_text);
+	break;
+
+    case ORIGIN_VAULT:
+	textblock_append(tb, "Found in a vault in %s.\n",
+			 origin_text);
+	break;
+
+    case ORIGIN_CHAOS:
+	textblock_append(tb, "Created by the forces of chaos in %s.\n");
+	break;
+
+    }
 
     return TRUE;
 }

@@ -1101,23 +1101,6 @@ enum
 #define MTRAP_DISPEL_M	        0x4C /* Level * */
 #define MTRAP_GENOCIDE	        0x4D /* Level * */
 
-/*** Object origin kinds ***/
-
-enum
-{
-	ORIGIN_NONE = 0,
-	ORIGIN_MIXED,
-	ORIGIN_BIRTH,
-	ORIGIN_STORE,
-	ORIGIN_FLOOR,
-	ORIGIN_DROP,
-	ORIGIN_DROP_UNKNOWN,
-	ORIGIN_ACQUIRE,
-	ORIGIN_CHEAT,
-	ORIGIN_CHEST
-};
-
-
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 

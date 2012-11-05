@@ -494,6 +494,42 @@ static void store_object_absorb(object_type * o_ptr, object_type * j_ptr)
     if ((o_ptr->tval == TV_WAND) || (o_ptr->tval == TV_STAFF))
 	o_ptr->pval += j_ptr->pval;
 
+    if ((o_ptr->origin != j_ptr->origin) ||
+	(o_ptr->origin_stage != j_ptr->origin_stage) ||
+	(o_ptr->origin_xtra != j_ptr->origin_xtra))
+    {
+	int act = 2;
+
+	if ((o_ptr->origin == ORIGIN_DROP) && (o_ptr->origin == j_ptr->origin))
+	{
+	    monster_race *r_ptr = &r_info[o_ptr->origin_xtra];
+	    monster_race *s_ptr = &r_info[j_ptr->origin_xtra];
+
+	    bool r_uniq = rf_has(r_ptr->flags, RF_UNIQUE) ? TRUE : FALSE;
+	    bool s_uniq = rf_has(s_ptr->flags, RF_UNIQUE) ? TRUE : FALSE;
+
+	    if (r_uniq && !s_uniq) act = 0;
+	    else if (s_uniq && !r_uniq) act = 1;
+	    else act = 2;
+	}
+
+	switch (act)
+	{
+	    /* Overwrite with j_ptr */
+	case 1:
+	{
+	    o_ptr->origin = j_ptr->origin;
+	    o_ptr->origin_stage = j_ptr->origin_stage;
+	    o_ptr->origin_xtra = j_ptr->origin_xtra;
+	}
+
+	/* Set as "mixed" */
+	case 2:
+	{
+	    o_ptr->origin = ORIGIN_MIXED;
+	}
+	}
+    }
 }
 
 
@@ -1148,6 +1184,8 @@ static void store_create(void)
 
 	/* Item belongs to a store */
 	i_ptr->ident |= IDENT_STORE;
+	i_ptr->origin = ORIGIN_STORE;
+	i_ptr->origin_stage = p_ptr->stage;
 
 	/* Shown curses are shown */
 	if (of_has(i_ptr->flags_obj, OF_SHOW_CURSE))

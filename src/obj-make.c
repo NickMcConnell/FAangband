@@ -1917,7 +1917,7 @@ bool make_gold(object_type * j_ptr)
 /**
  * Attempt to place an object (normal or good/great) at the given location.
  */
-void place_object(int y, int x, bool good, bool great, bool exact_kind)
+void place_object(int y, int x, bool good, bool great, bool exact_kind, byte origin)
 {
     object_type *i_ptr;
     object_type object_type_body;
@@ -1937,10 +1937,16 @@ void place_object(int y, int x, bool good, bool great, bool exact_kind)
     object_wipe(i_ptr);
 
     /* Make an object */
-    if (make_object(i_ptr, good, great, exact_kind)) {
+    if (make_object(i_ptr, good, great, exact_kind)) 
+    {
+	/* Set the origin */
+	i_ptr->origin = origin;
+	i_ptr->origin_stage = p_ptr->stage;
+
 	/* Give it to the floor */
-	if (!floor_carry(y, x, i_ptr)) {
-	    /* Hack -- Preserve artifacts */
+	if (!floor_carry(y, x, i_ptr)) 
+	{
+	    /* Preserve artifacts */
 	    a_info[i_ptr->name1].created = FALSE;
 	}
     }

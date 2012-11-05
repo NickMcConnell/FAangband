@@ -77,7 +77,7 @@ static void spread_objects(int depth, int num, int y0, int x0, int dy, int dx)
 
 	/* Place an item */
 	if (randint0(100) < 67) {
-	    place_object(y, x, FALSE, FALSE, FALSE);
+	    place_object(y, x, FALSE, FALSE, FALSE, ORIGIN_FLOOR);
 	}
 
 	/* Place gold */
@@ -1366,7 +1366,7 @@ static bool build_type3(void)
 
 	    /* Place a treasure in the vault */
 	    object_level = p_ptr->depth + 2;
-	    place_object(y0, x0, FALSE, FALSE, FALSE);
+	    place_object(y0, x0, FALSE, FALSE, FALSE, ORIGIN_FLOOR);
 	    object_level = p_ptr->depth;
 
 	    /* Let's guard the treasure well */
@@ -1505,7 +1505,7 @@ static bool build_type4(void)
 	    /* Object (80%) */
 	    if (randint0(100) < 80) {
 		object_level = p_ptr->depth + 2;
-		place_object(y0, x0, FALSE, FALSE, FALSE);
+		place_object(y0, x0, FALSE, FALSE, FALSE, ORIGIN_FLOOR);
 		object_level = p_ptr->depth;
 	    }
 
@@ -1569,9 +1569,9 @@ static bool build_type4(void)
 
 		/* Objects */
 		if (randint0(3) == 0)
-		    place_object(y0, x0 - 2, FALSE, FALSE, FALSE);
+		    place_object(y0, x0 - 2, FALSE, FALSE, FALSE, ORIGIN_FLOOR);
 		if (randint0(3) == 0)
-		    place_object(y0, x0 + 2, FALSE, FALSE, FALSE);
+		    place_object(y0, x0 + 2, FALSE, FALSE, FALSE, ORIGIN_FLOOR);
 	    }
 
 	    break;
@@ -2491,7 +2491,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 	    case '&':
 		{
 		    if (randint0(100) < 50) {
-			place_object(y, x, FALSE, FALSE, FALSE);
+			place_object(y, x, FALSE, FALSE, FALSE, ORIGIN_VAULT);
 		    } else {
 			place_trap(y, x, -1, p_ptr->depth);
 		    }
@@ -2644,9 +2644,9 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 			 * better that it does at least sometimes. */
 			else if (rand == 2) {
 			    if (randint0(8) == 0)
-				place_object(y, x, TRUE, FALSE, FALSE);
+				place_object(y, x, TRUE, FALSE, FALSE, ORIGIN_VAULT);
 			    else
-				place_object(y, x, FALSE, FALSE, FALSE);
+				place_object(y, x, FALSE, FALSE, FALSE, ORIGIN_VAULT);
 
 			} else {
 			    place_trap(y, x, -1, p_ptr->depth);
@@ -2665,7 +2665,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 		case '3':
 		    {
 			object_level = p_ptr->depth + 3;
-			place_object(y, x, FALSE, FALSE, FALSE);
+			place_object(y, x, FALSE, FALSE, FALSE, ORIGIN_VAULT);
 			object_level = p_ptr->depth;
 			break;
 		    }
@@ -2679,7 +2679,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 			}
 			if (randint0(100) < 50) {
 			    object_level = p_ptr->depth + 4;
-			    place_object(y, x, FALSE, FALSE, FALSE);
+			    place_object(y, x, FALSE, FALSE, FALSE, ORIGIN_VAULT);
 			    object_level = p_ptr->depth;
 			}
 			break;
@@ -2688,7 +2688,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 		case '5':
 		    {
 			object_level = p_ptr->depth + 7;
-			place_object(y, x, FALSE, FALSE, FALSE);
+			place_object(y, x, FALSE, FALSE, FALSE, ORIGIN_VAULT);
 			object_level = p_ptr->depth;
 			break;
 		    }
@@ -2704,7 +2704,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 		case '7':
 		    {
 			object_level = p_ptr->depth + 15;
-			place_object(y, x, FALSE, FALSE, FALSE);
+			place_object(y, x, FALSE, FALSE, FALSE, ORIGIN_VAULT);
 			object_level = p_ptr->depth;
 			break;
 		    }
@@ -2723,7 +2723,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 			place_monster(y, x, TRUE, TRUE, FALSE);
 			monster_level = p_ptr->depth;
 			object_level = p_ptr->depth + 5;
-			place_object(y, x, TRUE, FALSE, FALSE);
+			place_object(y, x, TRUE, FALSE, FALSE, ORIGIN_VAULT);
 			object_level = p_ptr->depth;
 			break;
 		    }
@@ -2735,7 +2735,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 			place_monster(y, x, TRUE, TRUE, FALSE);
 			monster_level = p_ptr->depth;
 			object_level = p_ptr->depth + 15;
-			place_object(y, x, TRUE, TRUE, FALSE);
+			place_object(y, x, TRUE, TRUE, FALSE, ORIGIN_VAULT);
 			object_level = p_ptr->depth;
 			break;
 		    }
@@ -2746,7 +2746,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 			required_tval = TV_CHEST;
 
 			object_level = p_ptr->depth + 5;
-			place_object(y, x, FALSE, FALSE, TRUE);
+			place_object(y, x, FALSE, FALSE, TRUE, ORIGIN_VAULT);
 			object_level = p_ptr->depth;
 
 			required_tval = 0;
@@ -2788,7 +2788,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 			else
 			    required_tval = TV_DRAG_ARMOR;
 
-			place_object(y, x, TRUE, FALSE, TRUE);
+			place_object(y, x, TRUE, FALSE, TRUE, ORIGIN_VAULT);
 			object_level = p_ptr->depth;
 
 			required_tval = 0;
@@ -2811,7 +2811,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 			else if (temp == 4)
 			    required_tval = TV_BOW;
 
-			place_object(y, x, TRUE, FALSE, TRUE);
+			place_object(y, x, TRUE, FALSE, TRUE, ORIGIN_VAULT);
 			object_level = p_ptr->depth;
 
 			required_tval = 0;
@@ -2825,9 +2825,9 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 
 			object_level = p_ptr->depth + 3;
 			if (randint1(4) == 1)
-			    place_object(y, x, TRUE, FALSE, TRUE);
+			    place_object(y, x, TRUE, FALSE, TRUE, ORIGIN_VAULT);
 			else
-			    place_object(y, x, FALSE, FALSE, TRUE);
+			    place_object(y, x, FALSE, FALSE, TRUE, ORIGIN_VAULT);
 			object_level = p_ptr->depth;
 
 			required_tval = 0;
@@ -2841,9 +2841,9 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 
 			object_level = p_ptr->depth + 3;
 			if (randint1(4) == 1)
-			    place_object(y, x, TRUE, FALSE, TRUE);
+			    place_object(y, x, TRUE, FALSE, TRUE, ORIGIN_VAULT);
 			else
-			    place_object(y, x, FALSE, FALSE, TRUE);
+			    place_object(y, x, FALSE, FALSE, TRUE, ORIGIN_VAULT);
 			object_level = p_ptr->depth;
 
 			required_tval = 0;
@@ -2857,9 +2857,9 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 
 			object_level = p_ptr->depth + 3;
 			if (randint1(4) == 1)
-			    place_object(y, x, TRUE, FALSE, TRUE);
+			    place_object(y, x, TRUE, FALSE, TRUE, ORIGIN_VAULT);
 			else
-			    place_object(y, x, FALSE, FALSE, TRUE);
+			    place_object(y, x, FALSE, FALSE, TRUE, ORIGIN_VAULT);
 			object_level = p_ptr->depth;
 
 			required_tval = 0;
@@ -2873,9 +2873,9 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 
 			object_level = p_ptr->depth + 3;
 			if (randint1(4) == 1)
-			    place_object(y, x, TRUE, FALSE, TRUE);
+			    place_object(y, x, TRUE, FALSE, TRUE, ORIGIN_VAULT);
 			else
-			    place_object(y, x, FALSE, FALSE, TRUE);
+			    place_object(y, x, FALSE, FALSE, TRUE, ORIGIN_VAULT);
 			object_level = p_ptr->depth;
 
 			required_tval = 0;
@@ -2889,9 +2889,9 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 
 			object_level = p_ptr->depth + 3;
 			if (randint1(4) == 1)
-			    place_object(y, x, TRUE, FALSE, TRUE);
+			    place_object(y, x, TRUE, FALSE, TRUE, ORIGIN_VAULT);
 			else
-			    place_object(y, x, FALSE, FALSE, TRUE);
+			    place_object(y, x, FALSE, FALSE, TRUE, ORIGIN_VAULT);
 			object_level = p_ptr->depth;
 
 			required_tval = 0;
@@ -2908,9 +2908,9 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 
 			object_level = p_ptr->depth + 3;
 			if (randint1(4) == 1)
-			    place_object(y, x, TRUE, FALSE, TRUE);
+			    place_object(y, x, TRUE, FALSE, TRUE, ORIGIN_VAULT);
 			else
-			    place_object(y, x, FALSE, FALSE, TRUE);
+			    place_object(y, x, FALSE, FALSE, TRUE, ORIGIN_VAULT);
 			object_level = p_ptr->depth;
 
 			required_tval = 0;
@@ -2923,7 +2923,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 			required_tval = TV_FOOD;
 
 			object_level = p_ptr->depth + 3;
-			place_object(y, x, FALSE, FALSE, TRUE);
+			place_object(y, x, FALSE, FALSE, TRUE, ORIGIN_VAULT);
 			object_level = p_ptr->depth;
 
 			required_tval = 0;

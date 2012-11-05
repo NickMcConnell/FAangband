@@ -1102,6 +1102,11 @@ static void chest_death(bool scatter, int y, int x, s16b o_idx)
 	    required_tval = get_choice();
 	}
 
+	/* Record origin */
+	i_ptr->origin = ORIGIN_CHEST;
+	i_ptr->origin_stage = o_ptr->origin_stage;
+	i_ptr->origin_xtra = o_ptr->origin_xtra;
+
 	/* If chest scatters its contents, pick any floor square. */
 	if (scatter) {
 	    for (i = 0; i < 200; i++) {
@@ -2127,7 +2132,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		/* Hack -- place an object */
 		if (randint0(100) == 0) {
 		    /* Create a simple object */
-		    place_object(y, x, FALSE, FALSE, FALSE);
+		    place_object(y, x, FALSE, FALSE, FALSE, ORIGIN_RUBBLE);
 
 		    /* Observe new object */
 		    if (!squelch_hide_item(&o_list[cave_o_idx[y][x]])

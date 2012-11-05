@@ -14,6 +14,26 @@ struct player;
 
 /*** Constants ***/
 
+/*** Object origin kinds ***/
+
+enum
+{
+	ORIGIN_NONE = 0,
+	ORIGIN_MIXED,			/* stack with mixed origins */
+	ORIGIN_BIRTH,			/* objects created at character birth */
+	ORIGIN_STORE,			/* something you bought */
+	ORIGIN_FLOOR,			/* found on the dungeon floor */
+	ORIGIN_DROP,			/* normal monster drops */
+	ORIGIN_DROP_UNKNOWN,	        /* drops from unseen foes */
+	ORIGIN_ACQUIRE,			/* called forth by scroll */
+	ORIGIN_CHEAT,			/* created by wizard mode */
+	ORIGIN_CHEST,			/* found in a chest */
+	ORIGIN_RUBBLE,			/* found under rubble */
+	ORIGIN_VAULT,			/* on the floor of a vault */
+	ORIGIN_CHAOS			/* created chaotically */
+};
+
+
 /**
  * Modes for object_desc().
  */
@@ -132,7 +152,7 @@ void object_prep(object_type *o_ptr, int k_idx, aspect rand_aspect);
 void apply_magic(object_type *o_ptr, int lev, bool okay, bool good, bool great);
 bool make_object(object_type *j_ptr, bool good, bool great, bool exact_kind);
 bool make_gold(object_type *j_ptr);
-void place_object(int y, int x, bool good, bool great, bool exact_kind);
+void place_object(int y, int x, bool good, bool great, bool exact_kind, byte origin);
 void place_gold(int y, int x);
 
 /* obj-util.c */

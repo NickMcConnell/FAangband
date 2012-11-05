@@ -431,7 +431,7 @@ void alloc_object(int set, int typ, int num)
 
 	case ALLOC_TYP_OBJECT:
 	    {
-		place_object(y, x, FALSE, FALSE, FALSE);
+		place_object(y, x, FALSE, FALSE, FALSE, ORIGIN_FLOOR);
 		break;
 	    }
 	}
