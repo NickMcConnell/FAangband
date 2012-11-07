@@ -246,7 +246,7 @@ static bool cmd_menu(command_list *list, void *selection_p)
     region area = { 23, 4, 37, 13 };
 
     ui_event evt;
-    struct cmd_info *selection = selection_p;
+    struct cmd_info **selection = selection_p;
 
     /* Set up the menu */
     menu_init(&menu, MN_SKIN_SCROLL, &commands_menu);
@@ -264,7 +264,7 @@ static bool cmd_menu(command_list *list, void *selection_p)
     screen_load();
 
     if (evt.type == EVT_SELECT)
-	*selection = list->list[menu.cursor];
+	*selection = &list->list[menu.cursor];
 
     return FALSE;
 }
@@ -832,13 +832,22 @@ static bool textui_process_key(struct keypress kp)
     /* XXXmacro this needs rewriting */
     keycode_t c = kp.code;
 
-    if ((c == KC_ENTER) && OPT(show_menus))
-	cmd = textui_action_menu_choose();
-
-    if (c == '\0' || c == ESCAPE || c == ' ' || c == '\a' || c == KC_ENTER)
+    if (c == '\0' || c == ESCAPE || c == ' ' || c == '\a')
 	return TRUE;
 
-    cmd = converted_list[mode][c];
+    if (c == KC_ENTER)
+    {
+	if(OPT(show_menus))
+	    cmd = textui_action_menu_choose();
+	else
+	    return TRUE;
+    }
+    else 
+    {
+	if (c > UCHAR_MAX) return FALSE;
+	cmd = converted_list[mode][c];
+    }
+
     if (!cmd) return FALSE;
 
     if (key_confirm_command(c) &&
