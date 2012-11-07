@@ -1605,9 +1605,11 @@ void regional_map(int num, int size, int centre_stage)
     stage[size / 2] = centre_stage;
 
     /* Redo the right number of times */
-    for (j = 0; j < num; j++) {
+    for (j = 0; j < num; j++) 
+    {
 	/* Pass across the whole array */
-	for (i = 0; i < size; i++) {
+	for (i = 0; i < size; i++) 
+	{
 	    /* See what's adjacent */
 	    north = (i > (num - 1) ? (i - num) : -1);
 	    east = ((i % num) != (num - 1) ? (i + 1) : -1);
@@ -1760,6 +1762,9 @@ void do_cmd_view_map(void)
     num_down = (hgt - 6) / 8;
     num_across = (wid - 24) / 20;
     num = (num_down < num_across ? num_down : num_across);
+
+    /* Hack - limit range for now */
+    num = 2;
     centre_stage = p_ptr->stage;
 
     /* Save screen */
@@ -1787,43 +1792,50 @@ void do_cmd_view_map(void)
     (void) inkey_ex();
 
     /* Regional map if not in the dungeon */
-    if (stage_map[p_ptr->stage][STAGE_TYPE] != CAVE) {
+    if (stage_map[p_ptr->stage][STAGE_TYPE] != CAVE) 
+    {
+	for(;;) 
+	{    
+	    /* Flush */
+	    Term_fresh();
+	    
+	    /* Clear the screen */
+	    Term_clear();
+	    
+	    /* Display the regional map */
+	    regional_map(num, (2 * num + 1) * (2 * num + 1), centre_stage);
+	    
+	    /* Wait for it */
+	    put_str("Move keys to scroll, other input to continue", 
+		    hgt - 1, (wid - 40) / 2);
 
-    for(;;) {
-    
-	/* Flush */
-	Term_fresh();
-
-	/* Clear the screen */
-	Term_clear();
-
-	/* Display the regional map */
-	regional_map(num, (2 * num + 1) * (2 * num + 1), centre_stage);
-
-	/* Wait for it */
-	put_str("Move keys to scroll, other input to continue", hgt - 1, (wid - 40) / 2);
-
-	/* Get any key */
-	ke = inkey_ex();
-    next_stage = -1;
-    switch(ke.key.code) {
-        case 'k': case ARROW_UP:
-            next_stage = stage_map[centre_stage][NORTH]; break;
-        case 'j': case ARROW_DOWN:
-            next_stage = stage_map[centre_stage][SOUTH]; break;
-        case 'h': case ARROW_LEFT:
-            next_stage = stage_map[centre_stage][WEST]; break;
-        case 'l': case ARROW_RIGHT:
-            next_stage = stage_map[centre_stage][EAST]; break;
-    }
-    if (next_stage == -1)
-        break;
-    if (next_stage) 
-        centre_stage = next_stage;
-            
-
-    } /* for(;;) */
+	    /* Get any key */
+	    ke = inkey_ex();
+	    next_stage = -1;
+	    switch(ke.key.code) 
+	    {
+	    case 'k': case ARROW_UP:
+		next_stage = stage_map[centre_stage][NORTH]; 
+		break;
+	    case 'j': case ARROW_DOWN:
+		next_stage = stage_map[centre_stage][SOUTH]; 
+		break;
+	    case 'h': case ARROW_LEFT:
+		next_stage = stage_map[centre_stage][WEST]; 
+		break;
+	    case 'l': case ARROW_RIGHT:
+		next_stage = stage_map[centre_stage][EAST]; 
+		break;
+	    }
+	    if (next_stage == -1)
+		break;
+	    if (next_stage) 
+		centre_stage = next_stage;
+	    
+	    
+	} /* for(;;) */
     } 
+    
     /* Load screen */
     screen_load();
 }
