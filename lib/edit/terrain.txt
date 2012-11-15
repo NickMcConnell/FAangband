@@ -759,7 +759,7 @@ D:spells.
 
 # 0x7a --> special feature -- sand dune
 
-N:122:sand dunes
+N:122:sand dune
 G:.:y
 P:13
 X:0:0:0:0

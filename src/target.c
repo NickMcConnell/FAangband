@@ -1169,6 +1169,11 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 		s3 = "the entrance to the ";
 	    }
 
+	    /* Sometimes no article */
+	    if ((feat == FEAT_GRASS) || (feat == FEAT_WATER) ||
+		(feat == FEAT_LAVA) || tf_has(f_ptr->flags, TF_TREE))
+		s3 = "";
+
 	    /* Hack - destination of surface paths */
 	    if (tf_has(f_ptr->flags, TF_PATH))
 	    {
