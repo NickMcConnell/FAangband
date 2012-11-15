@@ -604,28 +604,28 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
 	    {
 		mul += (mul + 10) / 10;
 	    }
-
+	    
 	    /* +1 or +2 versus other Evil creatures */
 	    else if (rf_has(r_ptr->flags, RF_EVIL)) 
 	    {
 		mul += mul / 10;
 	    }
 	}
-
+	
 	break;
     }
     }
-
+    
     /* Hack - Sometimes, a temporary Holy Attack becomes exhusted. */
     if ((p_ptr->special_attack & (ATTACK_HOLY)) && (randint1(20) == 1)) {
 	p_ptr->special_attack &= ~(ATTACK_HOLY);
 	msg("Your temporary Holy attack has dissipated.");
-
+	
 	/* Redraw the state */
 	p_ptr->redraw |= (PR_STATUS);
     }
-
-
+    
+    
     /* 
      * In addition to multiplying the base damage, slays and brands also 
      * add to it.  This means that a dagger of Slay Orc (1d4) is a lot 
@@ -648,7 +648,7 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
     
     /* Apply multiplier to the die average now. */
     *die_average *= mul;
-
+    
     /* Return the addend for later handling. */
     return (add);
 }
@@ -733,6 +733,24 @@ static int get_druid_damage(int plev, char m_name[], int power, int deadliness)
     description = d_blow[b_select - 1].description;
     dd = d_blow[b_select - 1].dd;
     ds = d_blow[b_select - 1].ds;
+
+    /* Additional bonus for Holy Light */
+    if (player_has(PF_HOLY_LIGHT)) 
+    {
+	/* +2 sides versus Undead and light-sensitive creatures */
+	if ((rf_has(r_ptr->flags, RF_UNDEAD))
+	    || (rf_has(r_ptr->flags, RF_HURT_LIGHT))) 
+	{
+	    ds += 2;
+	}
+	
+	/* +1 side versus other Evil creatures */
+	else if (rf_has(r_ptr->flags, RF_EVIL)) 
+	{
+	    ds++;;
+	}
+    }
+    
     if (power_strike)
 	damage = (dd * ds);
     else
