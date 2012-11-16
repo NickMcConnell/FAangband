@@ -4303,241 +4303,117 @@ static errr init_alloc(void)
 /**
  * Initialize the racial probability array
  */
-static errr init_race_probs(void)
+extern errr init_race_probs(void)
 {
     int i, j, k, n;
 
-    ang_file *fd;
-  
-    /* General buffer */
-    char buf[1024];
-  
-    /* Make the arrays */
+    /* Make the array */
     race_prob = C_ZNEW(32, u16b_stage);
-    dummy = C_ZNEW(32 * NUM_STAGES * sizeof(u16b), byte);
-  
-    /*** Load the binary image file ***/
-  
-    /* Build the filename */
-    path_build(buf, sizeof(buf), ANGBAND_DIR_USER, "raceprob.raw");
-  
-    /* Attempt to open the "raw" file */
-    fd = file_open(buf, MODE_READ, -1);
-  
-    /* Process existing "raw" file */
-    if (fd)
-    {
-	/* Attempt to parse the "raw" file */
-	/* Read in the array */
-	file_read(fd, (char *)dummy, 32 * NUM_STAGES * sizeof(u16b));
-      
-	/* Close it */
-	file_close(fd);
 
-	for (i = 0; i < NUM_STAGES; i++)
-	{
-	    for (j = 0; j < 32; j++)
-	    {
-		int k = NUM_STAGES * j + 2 * i;
-		race_prob[j][i] = (u16b) ((dummy[k] << 8) | dummy[k + 1]);
-	    }
-	}
-    }
-  
-    /* Do the matrix calculations? */
-    else
+    /*** Prepare temporary adjacency arrays ***/
+    adjacency = C_ZNEW(NUM_STAGES, u16b_stage);
+    stage_path = C_ZNEW(NUM_STAGES, u16b_stage);
+    temp_path = C_ZNEW(NUM_STAGES, u16b_stage);
+      
+    /* Make the adjacency matrix */
+    for (i = 0; i < NUM_STAGES; i++)
     {
-	/*** Prepare temporary adjacency arrays ***/
-	adjacency = C_ZNEW(NUM_STAGES, u16b_stage);
-	stage_path = C_ZNEW(NUM_STAGES, u16b_stage);
-	temp_path = C_ZNEW(NUM_STAGES, u16b_stage);
-      
-	/* Make the adjacency matrix */
-	for (i = 0; i < NUM_STAGES; i++)
+	/* Initialise this row */
+	for (k = 0; k < NUM_STAGES; k++)
 	{
-	    /* Initialise this row */
-	    for (k = 0; k < NUM_STAGES; k++)
+	    adjacency[i][k] = 0;
+	    stage_path[i][k] = 0;
+	    temp_path[i][k] = 0;
+	}
+	  
+	/* Add 1s where there's an adjacent stage (not up or down) */
+	for (k = 2; k < 6; k++)
+	    if (stage_map[i][k] != 0) 
 	    {
-		adjacency[i][k] = 0;
-		stage_path[i][k] = 0;
-		temp_path[i][k] = 0;
+		adjacency[i][stage_map[i][k]] = 1;
+		temp_path[i][stage_map[i][k]] = 1;
 	    }
-	  
-	    /* Add 1s where there's an adjacent stage (not up or down) */
-	    for (k = 2; k < 6; k++)
-		if (stage_map[i][k] != 0) 
-		{
-		    adjacency[i][stage_map[i][k]] = 1;
-		    temp_path[i][stage_map[i][k]] = 1;
-		}
-	}
+    }
       
-	/* Power it up (squaring 3 times gives eighth power) */
-	for (n = 0; n < 3; n++)
-	{
-	    /* Square */
-	    for (i = 0; i < NUM_STAGES; i++)
-		for (j = 0; j < NUM_STAGES; j++)
-		{
-		    stage_path[i][j] = 0;
-		    for (k = 0; k < NUM_STAGES; k++)
-			stage_path[i][j] += temp_path[i][k] * temp_path[k][j];
-		}
-	  
-	    /* Copy it over for the next squaring or final multiply */
-	    for (i = 0; i < NUM_STAGES; i++)
-		for (j = 0; j < NUM_STAGES; j++)
-		    temp_path[i][j] = stage_path[i][j];
-	  
-	}
-      
-	/* Get the max of length 8 and length 9 paths */
+    /* Power it up (squaring 3 times gives eighth power) */
+    for (n = 0; n < 3; n++)
+    {
+	/* Square */
 	for (i = 0; i < NUM_STAGES; i++)
 	    for (j = 0; j < NUM_STAGES; j++)
 	    {
-		/* Multiply to get the length 9s */
 		stage_path[i][j] = 0;
 		for (k = 0; k < NUM_STAGES; k++)
-		    stage_path[i][j] += temp_path[i][k] * adjacency[k][j];
-	    
-		/* Now replace by the length 8s if it's larger */
-		if (stage_path[i][j] < temp_path[i][j])
-		    stage_path[i][j] = temp_path[i][j];
-	    
+		    stage_path[i][j] += temp_path[i][k] * temp_path[k][j];
 	    }
-
-	/* We now have the maximum of the number of paths of length 8 and the 
-	 * number of paths of length 9 (we need to try odd and even length paths,
-	 * as using just one leads to anomalies) from any stage to any other,
-	 * which we will use as a basis for the racial probability table for 
-	 * racially based monsters in any given stage.  For a stage, we give 
-	 * every race a 1, then add the number of paths of length 8 from their 
-	 * hometown to that stage.  We then turn every row entry into the 
-	 * cumulative total of the row to that point.  Whenever a racially based 
-	 * monster is called for, we will take a random integer less than the 
-	 * last entry of the row for that stage, and proceed along the row, 
-	 * allocating the race corresponding to the position where we first 
-	 *exceed that integer.
-	 */
-
-	for (i = 0; i < NUM_STAGES; i++)
-	{
-	    int prob = 0;
 	  
-	    /* No more than 32 races */
-	    for (j = 0; j < 32; j++)
-	    {
-		/* Nobody lives nowhere */
-		if (stage_map[i][LOCALITY] == NOWHERE)
-		{
-		    race_prob[j][i] = 0;
-		    continue;
-		}
-	      
-		/* Invalid race */
-		if (j >= z_info->p_max) 
-		{
-		    race_prob[j][i] = 0;
-		    continue;
-		}
-	      
-		/* Enter the cumulative probability */
-		prob += 1 + stage_path[towns[p_info[j].hometown]][i];
-		race_prob[j][i] = prob;
-	    } 
-	}
-      
-	/*** Dump the binary image file ***/
-      
-	/* Build the filename */
-	path_build(buf, sizeof(buf), ANGBAND_DIR_USER, "raceprob.raw");
-      
-	/* Attempt to open the file */
-	fd = file_open(buf, MODE_READ, -1);
-      
-	/* Failure */
-	if (!fd)
-	{
-	    /* Grab permissions */
-	    safe_setuid_grab();
-	    
-	    /* Create a new file */
-	    fd = file_open(buf, MODE_WRITE, FTYPE_RAW);
-	    
-	    /* Drop permissions */
-	    safe_setuid_drop();
-	    
-	    /* Failure */
-	    if (!fd)
-	    {
-		/* Complain */
-		plog_fmt("Cannot create the '%s' file!", buf);
-		
-		/* Free the temporary arrays */
-		FREE(temp_path);
-		FREE(adjacency);
-		FREE(stage_path);
-		FREE(dummy);
-
-		/* Continue */
-		return (0);
-	    }
-	}
-      
-	/* Close it */
-	file_close(fd);
-      
-	/* Grab permissions */
-	safe_setuid_grab();
-      
-	/* Attempt to create the raw file */
-	fd = file_open(buf, MODE_WRITE, FTYPE_RAW);
-      
-	/* Drop permissions */
-	safe_setuid_drop();
-      
-	/* Failure */
-	if (!fd)
-	{
-	    /* Complain */
-	    plog_fmt("Cannot write the '%s' file!", buf);
-	  
-	    /* Free the temporary arrays */
-	    FREE(temp_path);
-	    FREE(adjacency);
-	    FREE(stage_path);
-	    FREE(dummy);
-
-	    /* Continue */
-	    return (0);
-	}
-
-	/* Fill the dummy array */
+	/* Copy it over for the next squaring or final multiply */
 	for (i = 0; i < NUM_STAGES; i++)
-	{
-	    for (j = 0; j < 32; j++)
-	    {
-		int k = NUM_STAGES * j + 2 * i;
-		dummy[k] = (byte) ((race_prob[j][i] >> 8) & 0xFF);
-		dummy[k + 1] = (byte) (race_prob[j][i] & 0xFF);
-	    }
-	}
-      
-	/* Dump to the file */
-	if (fd)
-	{
-	    /* Dump it */
-	    file_write(fd, (const char *)dummy, 32 * NUM_STAGES * sizeof(u16b));
-
-	    /* Close */
-	    file_close(fd);
-	}
-	/* Free the temporary arrays */
-	FREE(temp_path);
-	FREE(adjacency);
-	FREE(stage_path);
-	FREE(dummy);
+	    for (j = 0; j < NUM_STAGES; j++)
+		temp_path[i][j] = stage_path[i][j];
+	  
     }
+      
+    /* Get the max of length 8 and length 9 paths */
+    for (i = 0; i < NUM_STAGES; i++)
+	for (j = 0; j < NUM_STAGES; j++)
+	{
+	    /* Multiply to get the length 9s */
+	    stage_path[i][j] = 0;
+	    for (k = 0; k < NUM_STAGES; k++)
+		stage_path[i][j] += temp_path[i][k] * adjacency[k][j];
+	    
+	    /* Now replace by the length 8s if it's larger */
+	    if (stage_path[i][j] < temp_path[i][j])
+		stage_path[i][j] = temp_path[i][j];
+	    
+	}
+
+    /* We now have the maximum of the number of paths of length 8 and the 
+     * number of paths of length 9 (we need to try odd and even length paths,
+     * as using just one leads to anomalies) from any stage to any other,
+     * which we will use as a basis for the racial probability table for 
+     * racially based monsters in any given stage.  For a stage, we give 
+     * every race a 1, then add the number of paths of length 8 from their 
+     * hometown to that stage.  We then turn every row entry into the 
+     * cumulative total of the row to that point.  Whenever a racially based 
+     * monster is called for, we will take a random integer less than the 
+     * last entry of the row for that stage, and proceed along the row, 
+     * allocating the race corresponding to the position where we first 
+     *exceed that integer.
+     */
+
+    for (i = 0; i < NUM_STAGES; i++)
+    {
+	int prob = 0;
+	  
+	/* No more than 32 races */
+	for (j = 0; j < 32; j++)
+	{
+	    /* Nobody lives nowhere */
+	    if (stage_map[i][LOCALITY] == NOWHERE)
+	    {
+		race_prob[j][i] = 0;
+		continue;
+	    }
+	      
+	    /* Invalid race */
+	    if (j >= z_info->p_max) 
+	    {
+		race_prob[j][i] = 0;
+		continue;
+	    }
+	      
+	    /* Enter the cumulative probability */
+	    prob += 1 + stage_path[towns[p_info[j].hometown]][i];
+	    race_prob[j][i] = prob;
+	} 
+    }
+      
+    /* Free the temporary arrays */
+    FREE(temp_path);
+    FREE(adjacency);
+    FREE(stage_path);
   
     return 0;     
 }      
@@ -4717,10 +4593,6 @@ bool init_angband(void)
     /* Initialize some other arrays */
     event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (alloc)");
     if (init_alloc()) quit("Cannot initialize alloc stuff");
-
-    /* Initialize some other arrays */
-    event_signal_string(EVENT_INITSTATUS, "Initializing arrays... (race_probs)");
-    if (init_race_probs()) quit("Cannot initialize race probs");
 
     /*** Load default user pref files ***/
 

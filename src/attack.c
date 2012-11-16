@@ -663,7 +663,8 @@ static int adjust_dam(long *die_average, object_type *o_ptr,
  * Added minimum attack quality and a bonus for deadliness.  Also changed
  * the chance of confusion to depend on skill rather than plev.
  */
-static int get_druid_damage(int plev, char m_name[], int power, int deadliness)
+static int get_druid_damage(int plev, char m_name[], monster_race *r_ptr, 
+			    int power, int deadliness)
 {
     const char *description;
     int dd = 0, ds = 0;
@@ -1307,7 +1308,7 @@ bool py_attack(int y, int x, bool can_push)
 		if ((player_has(PF_UNARMED_COMBAT))
 		    || player_has(PF_MARTIAL_ARTS)) {
 		    damage =
-			get_druid_damage(p_ptr->lev, m_name,
+			get_druid_damage(p_ptr->lev, m_name, r_ptr,
 					 chance + sleeping_bonus,
 					 total_deadliness);
 		} else {
