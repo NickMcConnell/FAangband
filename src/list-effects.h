@@ -326,7 +326,7 @@ EFFECT(RAND_RECALL,        FALSE,  10,	"returns you to a recall point or takes y
 EFFECT(RAND_REGAIN,        FALSE,  8,	"restores your life levels", 800, 0)
 EFFECT(RAND_RESTORE,       FALSE,  10,	"restores any drained stats", 800, 0)
 EFFECT(RAND_SHIELD,        FALSE,  8,	"produces a magical shield", 400, 0)
-EFFECT(RAND_BRAND_MISSILE, FALSE,  20,	"brands missiles", 0, 0)
+EFFECT(RAND_BRAND_MISSILE, FALSE,  20,	"brands missiles", 1750, 0)
 EFFECT(RAND_SUPER_SHOOTING, FALSE,  10,	"gives you an especially deadly shot", 200, 200)
 EFFECT(RAND_DETECT_MONSTERS, FALSE,  4,	"detects monsters", 4, 4)
 EFFECT(RAND_DETECT_EVIL,   FALSE,  3,	"detects evil", 4, 4)
