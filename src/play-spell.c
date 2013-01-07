@@ -260,7 +260,7 @@ bool spell_cast(int spell, int dir)
     /* Process spell */
     else {
 	/* Cast the spell */
-	if (!cast_spell(mp_ptr->spell_book, mt_ptr->index, dir))
+	if (!cast_spell(mp_ptr->spell_book, mt_ptr->index, dir, plev))
 	    return FALSE;
 
 	/* A spell was cast */

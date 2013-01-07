@@ -213,7 +213,7 @@ extern bool sleep_monsters_touch(int dam);
 extern int get_spell_index(const object_type *o_ptr, int index);
 extern const char *get_spell_name(int index);
 extern void get_spell_info(int tval, int index, char *buf, size_t len);
-extern bool cast_spell(int tval, int index, int dir);
+extern bool cast_spell(int tval, int index, int dir, int plev);
 extern bool spell_needs_aim(int tval, int spell);
 
 #endif /* !SPELLS_H */
