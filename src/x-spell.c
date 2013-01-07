@@ -798,12 +798,11 @@ bool spell_needs_aim(int tval, int spell)
 }
 
 
-bool cast_spell(int tval, int sindex, int dir)
+bool cast_spell(int tval, int sindex, int dir, int plev)
 {
     int py = p_ptr->py;
     int px = p_ptr->px;
 
-    int plev = p_ptr->lev;
     int shape = SHAPE_NORMAL;
     bool beam = FALSE;
 
