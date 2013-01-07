@@ -1044,6 +1044,7 @@ bool cast_spell(int tval, int sindex, int dir)
 	    (void) inc_timed(TMD_OPP_FIRE, time, TRUE);
 	    (void) inc_timed(TMD_OPP_COLD, time, TRUE);
 	    (void) inc_timed(TMD_OPP_POIS, time, TRUE);
+	    break;
 	}
     case SPELL_ESSENCE_OF_SPEED:
 	{
