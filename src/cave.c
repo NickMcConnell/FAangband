@@ -409,7 +409,7 @@ static byte multi_hued_attr(monster_race * r_ptr)
 
     /* Monsters with no ranged attacks can be any color */
     if (!r_ptr->freq_ranged)
-	return (randint1(BASIC_COLORS));
+	return (randint1(BASIC_COLORS-1));
 
     /* Check breaths */
     for (i = 0; i < 32; i++) 
@@ -429,14 +429,14 @@ static byte multi_hued_attr(monster_race * r_ptr)
 
 	/* Monster can be of any color */
 	if (first_color == 255)
-	    return (randint1(BASIC_COLORS));
+	    return (randint1(BASIC_COLORS-1));
 
 	/* Increment the number of breaths */
 	breaths++;
 
 	/* Monsters with lots of breaths may be any color. */
 	if (breaths == 6)
-	    return (randint1(BASIC_COLORS));
+	    return (randint1(BASIC_COLORS-1));
 
 	/* Always store the first color */
 	for (j = 0; j < stored_colors; j++) 
@@ -463,7 +463,7 @@ static byte multi_hued_attr(monster_race * r_ptr)
 
     /* Monsters with no breaths may be of any color. */
     if (breaths == 0)
-	return (randint1(BASIC_COLORS));
+	return (randint1(BASIC_COLORS-1));
 
     /* If monster has one breath, store the second color too. */
     if (breaths == 1) 
