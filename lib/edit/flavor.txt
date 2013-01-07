@@ -831,7 +831,7 @@ G:!:u
 D:Copper Speckled
 
 N:279:75
-G:!:R1
+G:!:R
 D:Crimson
 
 N:280:75
