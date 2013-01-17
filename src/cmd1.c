@@ -211,13 +211,13 @@ static void py_pickup_gold(void)
 	(void)strnfmt(buf, sizeof(buf), "You have found %ld gold pieces worth of ", (long)total_gold);
 
 	/* Count the types of treasure present */
-	for (total = 0, i = 0; i < SV_GOLD_MAX; i++)
+	for (total = 0, i = 0; i <= SV_GOLD_MAX; i++)
 	{
 	    if (treasure[i]) total++;
 	}
 
 	/* List the treasure types */
-	for (count = 0, i = 0; i < SV_GOLD_MAX; i++)
+	for (count = 0, i = 0; i <= SV_GOLD_MAX; i++)
 	{
 	    /* Skip if no treasure of this type */
 	    if (!treasure[i]) continue;
