@@ -184,7 +184,7 @@ static void py_pickup_gold(void)
 
 	/* Ignore if not legal treasure */
 	if ((o_ptr->tval != TV_GOLD) ||
-	    (o_ptr->sval >= SV_GOLD_MAX)) continue;
+	    (o_ptr->sval > SV_GOLD_MAX)) continue;
 
 	/* Note that we have this kind of treasure */
 	treasure[o_ptr->sval]++;
