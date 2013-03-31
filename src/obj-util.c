@@ -4225,7 +4225,13 @@ void display_itemlist(void)
 		/* We saw a new item. So insert it at the end of the list and */
 		/* then sort it forward using compare_items(). The types list */
 		/* is always kept sorted. */
+		/* If we have too many items, replace the last (normally least important) */
+		/* item in the list. */
 		if (j == counter) {
+			if (counter == MAX_ITEMLIST) {
+				counter -= 1;
+				j -= 1;	
+			}
 		    types[counter] = o_ptr;
 		    counts[counter] = o_ptr->number;
 		    dy[counter] = my - p_ptr->py;
@@ -4263,6 +4269,8 @@ void display_itemlist(void)
 
 	/* Done */
 	return;
+    } else if (counter == MAX_ITEMLIST) {
+	    c_prt(TERM_SLATE, "You see many items.", 0, 0);
     } else {
 	/* Reprint Message */
 	prt(format("You can see %d item%s:", counter, (counter > 1 ? "s" : "")),
@@ -4306,10 +4314,15 @@ void display_itemlist(void)
 		prt("", line, x);
 
 	    /* Reprint Message */
-	    prt(format
-		("You can see %d item%s:", counter, (counter > 1 ? "s" : "")),
-		0, 0);
-
+	    if (counter == MAX_ITEMLIST) {
+		    prt(format
+			("You can see many items:"),
+			0, 0);		
+		} else {
+		    prt(format
+			("You can see %d item%s:", counter, (counter > 1 ? "s" : "")),
+			0, 0);
+		}
 	    /* Reset */
 	    line = 1;
 	} else if (line == max) {
@@ -4347,9 +4360,13 @@ void display_itemlist(void)
     }
 
     if (disp_count != counter) {
-	/* Print "and others" message if we've run out of space */
-	strnfmt(buf, sizeof buf, "  ...and %d others.", counter - disp_count);
-	c_prt(TERM_WHITE, buf, line, x);
+		/* Print "and others" message if we've run out of space */
+		if (counter == MAX_ITEMLIST) {
+			strnfmt(buf, sizeof buf, "  ...and many others.");
+		} else {
+			strnfmt(buf, sizeof buf, "  ...and %d others.", counter - disp_count);
+		}
+		c_prt(TERM_WHITE, buf, line, x);
     } else {
 	/* Otherwise clear a line at the end, for main-term display */
 	prt("", line, x);

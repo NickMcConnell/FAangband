@@ -184,10 +184,10 @@ static void py_pickup_gold(void)
 
 	/* Ignore if not legal treasure */
 	if ((o_ptr->tval != TV_GOLD) ||
-	    (o_ptr->sval >= SV_GOLD_MAX)) continue;
+	    (o_ptr->sval > SV_GOLD_MAX)) continue;
 
 	/* Note that we have this kind of treasure */
-	treasure[o_ptr->sval]++;
+	treasure[o_ptr->sval-1]++;
 
 	/* Remember whether feedback message is in order */
 	if (!squelch_item_ok(o_ptr))
@@ -223,7 +223,7 @@ static void py_pickup_gold(void)
 	    if (!treasure[i]) continue;
 
 	    /* Get this object index */
-	    k_idx = lookup_kind(TV_GOLD, i);
+	    k_idx = lookup_kind(TV_GOLD, i+1);
 
 	    /* Skip past errors  XXX */
 	    if (k_idx <= 0) continue;
