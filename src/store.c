@@ -1184,8 +1184,9 @@ static void store_create(void)
 
 	/* Item belongs to a store */
 	i_ptr->ident |= IDENT_STORE;
-	i_ptr->origin = ORIGIN_STORE;
-	i_ptr->origin_stage = p_ptr->stage;
+
+	/* No origin yet */ 
+	i_ptr->origin = ORIGIN_NONE;
 
 	/* Shown curses are shown */
 	if (of_has(i_ptr->flags_obj, OF_SHOW_CURSE))
@@ -1735,6 +1736,8 @@ static void store_purchase(void)
 
 	    /* The object no longer belongs to the store */
 	    i_ptr->ident &= ~(IDENT_STORE);
+	    i_ptr->origin = ORIGIN_STORE;
+	    i_ptr->origin_stage = p_ptr->stage; 
 
 	    /* Describe the transaction */
 	    object_desc(o_name, sizeof(o_name), i_ptr, 
