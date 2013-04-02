@@ -546,7 +546,7 @@ W:2:3:0:9
 B:BITE:HURT:2d3
 B:CLAW:HURT:2d3
 F:BASH_DOOR | TERRITORIAL 
-D:A utterly silent whirlwind of fangs and claws aiming straight for your 
+D:An utterly silent whirlwind of fangs and claws aiming straight for your 
 D:jugular.
 
 N:51:Green worm mass
