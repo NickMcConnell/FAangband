@@ -1159,7 +1159,11 @@ static void calc_mana(void)
 
     /* Hack -- Must possess some magical realm. */
     if (!mp_ptr->spell_realm)
+    {
+	p_ptr->msp = 0;
+	p_ptr->csp = 0;
 	return;
+    }
 
     /* Hack -- handle "xtra" mode */
     if (character_xtra)
