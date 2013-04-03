@@ -1798,7 +1798,7 @@ static s32b object_value_real(const object_type *o_ptr)
 	{
 	    /* Pay extra for charges, depending on standard number of charges */
 	    int temp_pval = randcalc(k_ptr->pval, k_ptr->level, RANDOMISE);
-	    value += (value * o_ptr->pval / (temp_pval * 2));
+	    value += (value * o_ptr->pval / o_ptr->number / (temp_pval * 2));
 
 	    /* Done */
 	    break;
