@@ -1442,6 +1442,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_ACID_PROOF:
 	{
 	    bitflag proof_flag[OF_SIZE];
+	    of_wipe(proof_flag);
 	    of_on(proof_flag, OF_ACID_PROOF);
 	    *ident = TRUE;
 	    if (!el_proof(proof_flag))
@@ -1452,6 +1453,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_ELEC_PROOF:
 	{
 	    bitflag proof_flag[OF_SIZE];
+	    of_wipe(proof_flag);
 	    of_on(proof_flag, OF_ELEC_PROOF);
 	    *ident = TRUE;
 	    if (!el_proof(proof_flag))
@@ -1462,6 +1464,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
     case EF_FIRE_PROOF:
 	{
 	    bitflag proof_flag[OF_SIZE];
+	    of_wipe(proof_flag);
 	    of_on(proof_flag, OF_FIRE_PROOF);
 	    *ident = TRUE;
 	    if (!el_proof(proof_flag))
