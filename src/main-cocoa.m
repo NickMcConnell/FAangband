@@ -1786,7 +1786,7 @@ static errr Term_pict_cocoa(int x, int y, int n, const byte *ap,
  *
  * Draw several ("n") chars, with an attr, at a given location.
  */
-static errr Term_text_cocoa(int x, int y, int n, byte a, const wchar_t *cp)
+static errr Term_text_cocoa(int x, int y, int n, int a, const wchar_t *cp)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     

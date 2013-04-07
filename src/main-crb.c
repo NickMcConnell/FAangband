@@ -270,7 +270,7 @@ static OSStatus RevalidateGraphics(term_data *td, bool reset_tilesize);
 static char *locate_lib(char *buf, size_t size);
 static void graphics_aux(UInt32 op);
 static void Term_wipe_mac_aux(int x, int y, int n);
-inline static void term_data_color(int a);
+inline static void term_data_color(term_data *td, int a);
 static void install_handlers(WindowRef w);
 static void graphics_tiles_nuke(void);
 static void play_sound(int num);
@@ -623,6 +623,7 @@ static void update_color_info(void)
 	}
 }
 
+#if 0
 /*
  * Activate a color (0 to 256)
  * -1 is invalid, 256 is true black.
@@ -641,6 +642,47 @@ inline static void term_data_color(int a)
 							focus.color_info[a][1], focus.color_info[a][2], 1);
 	}
 }
+#endif
+
+/*
+ * Hack -- activate a color (0 to 255)
+ *
+ * From Sil  - changed to allow modification of the background colour
+ */
+static void term_data_color(term_data *td, int a)
+{
+	/* Activate the color */
+	if ((td->last != a) || (a >= MAX_COLORS))
+	{
+		/* Activate the color */
+		RGBForeColor(&color_info[a % MAX_COLORS]);
+
+		/* Memorize color */
+		td->last = a;
+
+		// Determine the background colour
+		switch (a / MAX_COLORS)
+		{
+			case BG_BLACK:
+				/* Default Background */
+				RGBBackColor(&color_info[0]);
+				break;
+			case BG_SAME:
+				/* Background same as foreground*/
+				RGBBackColor(&color_info[a % MAX_COLORS]);
+				break;
+			case BG_DARK:
+				/* Highlight Background */
+				RGBBackColor(&color_info[TERM_SHADE]);
+				break;
+			case BG_TRAP:
+				/* Highlight Background */
+				RGBBackColor(&color_info[TERM_SGREEN]);
+				break;
+		}
+	}
+}
+
 
 /*
  * Get font metrics 
@@ -1802,7 +1844,7 @@ static errr Term_wipe_mac(int x, int y, int n)
  *
  * Draw several ("n") chars, with an attr, at a given location.
  */
-static errr Term_text_mac(int x, int y, int n, byte a, const wchar_t *cp)
+static errr Term_text_mac(int x, int y, int n, int a, const wchar_t *cp)
 {
 	if(!focus.ctx) activate(focus.active);
 

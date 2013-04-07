@@ -650,7 +650,7 @@ static void grid_get_attr(grid_data *g, byte *a)
  * This will probably be done outside of the current text->graphics mappings
  * though.
  */
-void grid_data_as_text(grid_data *g, byte *ap, wchar_t *cp, byte *tap, wchar_t *tcp)
+void grid_data_as_text(grid_data *g, int *ap, wchar_t *cp, byte *tap, wchar_t *tcp)
 {
 	feature_type *f_ptr = &f_info[g->f_idx];
 	
@@ -659,6 +659,9 @@ void grid_data_as_text(grid_data *g, byte *ap, wchar_t *cp, byte *tap, wchar_t *
 
 	/* Don't display hidden objects */
 	bool ignore_objects = tf_has(f_ptr->flags, TF_HIDE_OBJ);
+
+	/* Neutral monsters get shaded background */
+	bool neutral = FALSE;
               
 	/* Check for trap detection boundaries */
 	if (use_graphics == GRAPHICS_NONE || use_graphics == GRAPHICS_PSEUDO)
@@ -727,6 +730,9 @@ void grid_data_as_text(grid_data *g, byte *ap, wchar_t *cp, byte *tap, wchar_t *
 			/* Desired attr & char */
 			da = r_ptr->x_attr;
 			dc = r_ptr->x_char;
+
+			/* Neutral monster get shaded background */
+			if (m_ptr->hostile >= 0) neutral = TRUE;
 
 			/* Special attr/char codes */
 			if (da & 0x80)
@@ -846,6 +852,9 @@ void grid_data_as_text(grid_data *g, byte *ap, wchar_t *cp, byte *tap, wchar_t *
 		/* Get the "player" char */
 		c = r_ptr->x_char;
 	}
+
+	/* Shaded for neutrals */
+	if (neutral) a += MAX_COLORS * BG_DARK;
 
 	/* Result */
 	(*ap) = a;
@@ -1295,7 +1304,7 @@ void light_spot(int y, int x)
 
 static void prt_map_aux(void)
 {
-	byte a;
+	int a;
 	wchar_t c;
 	byte ta;
 	wchar_t tc;
@@ -1359,7 +1368,7 @@ static void prt_map_aux(void)
  */
 void prt_map(void)
 {
-	byte a;
+	int a;
 	wchar_t c;
 	byte ta;
 	wchar_t tc;
@@ -1452,7 +1461,8 @@ void display_map(int *cy, int *cx)
     int x, y;
     grid_data g;
 
-    byte a, ta;
+    int a;
+    byte ta;
     wchar_t c, tc;
 
     byte tp;

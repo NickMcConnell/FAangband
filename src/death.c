@@ -317,7 +317,7 @@ static void print_tomb(void)
     if (fp) {
 	int i, y, x;
 
-	byte a = 0;
+	int a = 0;
 	wchar_t c = L' ';
 
 	bool okay = TRUE;

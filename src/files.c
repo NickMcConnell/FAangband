@@ -2841,8 +2841,8 @@ void html_screenshot(const char *name, int mode)
 	int y, x;
 	int wid, hgt;
 
-	byte a = TERM_WHITE;
-	byte oa = TERM_WHITE;
+	int a = TERM_WHITE;
+	int oa = TERM_WHITE;
 	wchar_t c = L' ';
 
 	const char *new_color_fmt = (mode == 0) ?

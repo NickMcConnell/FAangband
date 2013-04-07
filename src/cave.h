@@ -11,7 +11,7 @@ extern bool los(int y1, int x1, int y2, int x2);
 extern bool no_light(void);
 extern bool cave_valid_bold(int y, int x);
 extern byte get_color(byte a, int attr, int n);
-extern void grid_data_as_text(grid_data *g, byte *ap, wchar_t *cp, byte *tap, wchar_t *tcp);
+extern void grid_data_as_text(grid_data *g, int *ap, wchar_t *cp, byte *tap, wchar_t *tcp);
 extern void map_info(unsigned x, unsigned y, grid_data *g);
 extern void move_cursor_relative(int y, int x);
 extern void big_putch(int x, int y, byte a, char c);

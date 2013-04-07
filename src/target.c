@@ -1298,7 +1298,7 @@ bool target_set_closest(int mode)
  *
  * From NPPangband
  */
-static int draw_path(u16b path_n, u16b *path_g, wchar_t *c, byte *a, int y1, int x1)
+static int draw_path(u16b path_n, u16b *path_g, wchar_t *c, int *a, int y1, int x1)
 {
     int i;
     bool on_screen;
@@ -1373,7 +1373,7 @@ static int draw_path(u16b path_n, u16b *path_g, wchar_t *c, byte *a, int y1, int
  * Load the attr/char at each point along "path" which is on screen from
  * "a" and "c". This was saved in draw_path().
  */
-static void load_path(u16b path_n, u16b *path_g, wchar_t *c, byte *a) {
+static void load_path(u16b path_n, u16b *path_g, wchar_t *c, int *a) {
     int i;
     for (i = 0; i < path_n; i++) {
 	int y = GRID_Y(path_g[i]);
@@ -1455,7 +1455,7 @@ bool target_set_interactive(int mode, int x, int y)
     int path_n;
     u16b path_g[256];
     wchar_t *path_char = malloc(MAX_RANGE * sizeof(*path_char));
-    byte *path_attr = malloc(MAX_RANGE * sizeof(*path_attr));
+    int *path_attr = malloc(MAX_RANGE * sizeof(*path_attr));
     struct point_set *targets;
 
     /* If we haven't been given an initial location, start on the player. */
