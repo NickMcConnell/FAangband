@@ -677,7 +677,7 @@ static void term_data_color(term_data *td, int a)
 				break;
 			case BG_TRAP:
 				/* Highlight Background */
-				RGBBackColor(&color_info[TERM_SGREEN]);
+				RGBBackColor(&color_info[TERM_GREEN]);
 				break;
 		}
 	}
