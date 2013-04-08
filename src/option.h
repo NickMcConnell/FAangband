@@ -93,6 +93,8 @@ extern const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER];
 
 #define OPT_auto_scum   		48
 #define OPT_hard_mode   		49
+#define OPT_solid_walls   		50
+#define OPT_hybrid_walls   		51
 
 
 #define OPT_birth_point_based           (OPT_BIRTH+0)

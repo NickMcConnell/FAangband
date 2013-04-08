@@ -268,7 +268,7 @@ bool cave_web(int y, int x)
  * wait until we do, in fact, have stacked traps under normal conditions.
  *
  */
-bool get_trap_graphics(int t_idx, byte *a, wchar_t *c, bool require_visible)
+bool get_trap_graphics(int t_idx, int *a, wchar_t *c, bool require_visible)
 {
     trap_type *t_ptr = &trap_list[t_idx];
     

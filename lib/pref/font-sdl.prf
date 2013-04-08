@@ -21,21 +21,21 @@ F:2:all:0x01:0x07
 
 # Magma (slate / solid block)
 
-F:50:all:0x02:0x03
+#F:50:all:0x02:0x03
 
 
 # Quartz (light slate / solid block)
 
-F:51:all:0x09:0x03
+#F:51:all:0x09:0x03
 
 
 # Granite walls & permanent rock (white / solid block)
 
 # granite wall
-F:56:all:0x01:0x02
+#F:56:all:0x01:0x02
 
 # permanent wall
-F:60:all:0x01:0x01
+#F:60:all:0x01:0x01
 
 # Water (blue / centered blob)
 

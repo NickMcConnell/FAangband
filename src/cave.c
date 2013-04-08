@@ -479,7 +479,7 @@ static byte multi_hued_attr(monster_race * r_ptr)
 /**
  * Hack -- Hallucinatory monster
  */
-static void hallucinatory_monster(byte *a, wchar_t *c)
+static void hallucinatory_monster(int *a, wchar_t *c)
 {
     while (1) {
 	/* Select a random monster */
@@ -500,7 +500,7 @@ static void hallucinatory_monster(byte *a, wchar_t *c)
 /**
  * Hack -- Hallucinatory object
  */
-static void hallucinatory_object(byte *a, wchar_t *c)
+static void hallucinatory_object(int *a, wchar_t *c)
 {
     while (1) {
 	/* Select a random object */
@@ -582,7 +582,7 @@ bool dtrap_edge(int y, int x)
 /**
  * Apply text lighting effects
  */
-static void grid_get_attr(grid_data *g, byte *a)
+static void grid_get_attr(grid_data *g, int *a)
 {
     feature_type *f_ptr = &f_info[g->f_idx];
 
@@ -590,10 +590,7 @@ static void grid_get_attr(grid_data *g, byte *a)
     if (g->trapborder && tf_has(f_ptr->flags, TF_FLOOR) &&
 	!((int) g->trap < trap_max))
     {
-	if (g->in_view)
-	    *a = TERM_L_GREEN;
-	else
-	    *a = TERM_GREEN;
+	*a += MAX_COLORS * BG_TRAP;
     }
     else if (tf_has(f_ptr->flags, TF_TORCH))
     {
@@ -604,12 +601,28 @@ static void grid_get_attr(grid_data *g, byte *a)
 	    if (*a == TERM_WHITE)
 		*a = TERM_L_DARK;
 	}
+	if (OPT(hybrid_walls) && tf_has(f_ptr->flags, TF_WALL))
+	{
+	    *a = *a + (MAX_COLORS * BG_DARK);
+	}
+	else if (OPT(solid_walls) && tf_has(f_ptr->flags, TF_WALL))
+	{
+	    *a = *a + (MAX_COLORS * BG_SAME);
+	}
     }
     else
     {
 	if (g->lighting == FEAT_LIGHTING_DARK) {
 	    if (*a == TERM_WHITE)
 		*a = TERM_SLATE;
+	}
+	if (OPT(hybrid_walls) && tf_has(f_ptr->flags, TF_WALL))
+	{
+	    *a = *a + (MAX_COLORS * BG_DARK);
+	}
+	else if (OPT(solid_walls) && tf_has(f_ptr->flags, TF_WALL))
+	{
+	    *a = *a + (MAX_COLORS * BG_SAME);
 	}
     }
 }
@@ -654,7 +667,7 @@ void grid_data_as_text(grid_data *g, int *ap, wchar_t *cp, byte *tap, wchar_t *t
 {
 	feature_type *f_ptr = &f_info[g->f_idx];
 	
-	byte a = f_ptr->x_attr[g->lighting];
+	int a = f_ptr->x_attr[g->lighting];
 	wchar_t c = f_ptr->x_char[g->lighting];
 
 	/* Don't display hidden objects */
@@ -854,7 +867,8 @@ void grid_data_as_text(grid_data *g, int *ap, wchar_t *cp, byte *tap, wchar_t *t
 	}
 
 	/* Shaded for neutrals */
-	if (neutral) a += MAX_COLORS * BG_DARK;
+	if (neutral) 
+	    a += MAX_COLORS * BG_DARK;
 
 	/* Result */
 	(*ap) = a;

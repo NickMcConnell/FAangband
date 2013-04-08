@@ -13,7 +13,7 @@ bool cave_invisible_trap(int y, int x);
 bool cave_player_trap(int y, int x);
 int visible_trap_idx(int y, int x);
 bool cave_web(int y, int x);
-bool get_trap_graphics(int t_idx, byte *a, wchar_t *c, bool require_visible);
+bool get_trap_graphics(int t_idx, int *a, wchar_t *c, bool require_visible);
 extern bool reveal_trap(int y, int x, int chance, bool msg);
 extern int num_traps(int y, int x, int vis);
 extern void hit_trap(int y, int x);
