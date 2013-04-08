@@ -313,6 +313,7 @@ struct term
 #define TERM_BLUE_SLATE  26    /* z */
 #define TERM_DEEP_L_BLUE 27    /* Z */
 #define TERM_SHADE       28    /* for shaded backgrounds */
+#define TERM_SH_GREEN    29    /* for trap detect background */
 
 /* The following allow color 'translations' to support environments with a limited color depth
  * as well as translate colours to alternates for e.g. menu highlighting. */

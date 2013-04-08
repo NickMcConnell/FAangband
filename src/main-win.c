@@ -2188,7 +2188,7 @@ static errr Term_text_win(int x, int y, int n, int a, const wchar_t *s)
 				break;
 			case BG_TRAP:
 				/* Highlight Background */
-				SetBkColor(hdc, win_clr[TERM_GREEN]);
+				SetBkColor(hdc, win_clr[TERM_SH_GREEN]);
 				break;
 		}
 	}

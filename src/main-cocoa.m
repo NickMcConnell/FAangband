@@ -1845,7 +1845,7 @@ static errr Term_text_cocoa(int x, int y, int n, int a, const wchar_t *cp)
     }
     case BG_TRAP:
     {
-	set_color_for_index(TERM_GREEN);
+	set_color_for_index(TERM_SH_GREEN);
 	break;
     }
     }
@@ -1884,10 +1884,6 @@ static errr Term_text_cocoa(int x, int y, int n, int a, const wchar_t *cp)
 		case BG_SAME:
 		{
 		    set_color_for_index(previouslyDrawnAttr % MAX_COLORS);
-		    //int rv = angband_color_table[a % MAX_COLORS][1];
-		    //int gv = angband_color_table[a % MAX_COLORS][2];
-		    //int bv = angband_color_table[a % MAX_COLORS][3];
-		    //[[NSColor colorWithCalibratedRed:rv/255 green:gv/255 blue:bv/255 alpha:1] retain];
 		    break;
 		}
 		case BG_DARK:
@@ -1897,7 +1893,7 @@ static errr Term_text_cocoa(int x, int y, int n, int a, const wchar_t *cp)
 		}
 		case BG_TRAP:
 		{
-		    set_color_for_index(TERM_GREEN);
+		    set_color_for_index(TERM_SH_GREEN);
 		    break;
 		}
 		}

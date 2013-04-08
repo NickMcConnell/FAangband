@@ -1193,7 +1193,7 @@ static void ShowTextAt(int x, int y, int color, int n, const wchar_t *text )
 		}
 		case BG_TRAP:
 		{
-		    term_data_color(TERM_GREEN);
+		    term_data_color(TERM_SH_GREEN);
 		    break;
 		}
 		}

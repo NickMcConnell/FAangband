@@ -2773,9 +2773,9 @@ errr init_x11(int argc, char **argv)
 				case BG_TRAP:
 					/* Green Background */
 					backpixel = create_pixel(Metadpy->dpy,
-											 color_table_x11[TERM_GREEN][1],
-											 color_table_x11[TERM_GREEN][2],
-											 color_table_x11[TERM_GREEN][3]);
+											 color_table_x11[TERM_SH_GREEN][1],
+											 color_table_x11[TERM_SH_GREEN][2],
+											 color_table_x11[TERM_SH_GREEN][3]);
 					Infoclr_init_ppn(pixel, backpixel, "cpy", 0);
 					break;
 			}

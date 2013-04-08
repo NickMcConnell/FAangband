@@ -2988,7 +2988,7 @@ static errr Term_text_sdl(int col, int row, int n, int a, const wchar_t *s)
 	    break;
 	case BG_TRAP:
 	    /* Green Background */
-	    bg = text_colours[TERM_GREEN];
+	    bg = text_colours[TERM_SH_GREEN];
 	    break;
 	}
 
