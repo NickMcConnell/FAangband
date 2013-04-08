@@ -623,7 +623,6 @@ static void update_color_info(void)
 	}
 }
 
-#if 0
 /*
  * Activate a color (0 to 256)
  * -1 is invalid, 256 is true black.
@@ -642,8 +641,8 @@ inline static void term_data_color(int a)
 							focus.color_info[a][1], focus.color_info[a][2], 1);
 	}
 }
-#endif
 
+#if 0
 /*
  * Hack -- activate a color (0 to 255)
  *
@@ -682,6 +681,7 @@ static void term_data_color(term_data *td, int a)
 		}
 	}
 }
+#endif
 
 
 /*
@@ -1216,7 +1216,29 @@ static void ShowTextAt(int x, int y, int color, int n, const wchar_t *text )
 	if(use_graphics || !use_overwrite_hack) {
 		r = (CGRect) {{x*td->tile_wid, y*td->tile_hgt},
 											{n*td->tile_wid, td->tile_hgt}};
-		term_data_color(COLOR_BLACK);
+		switch (color / MAX_COLORS)
+		{
+		case BG_BLACK:
+		{
+		    term_data_color(COLOR_BLACK);
+		    break;
+		}
+		case BG_SAME:
+		{
+		    term_data_color(color % MAX_COLORS);
+		    break;
+		}
+		case BG_DARK:
+		{
+		    term_data_color(TERM_SHADE);
+		    break;
+		}
+		case BG_TRAP:
+		{
+		    term_data_color(TERM_GREEN);
+		    break;
+		}
+		}
 		CGContextFillRect(focus.ctx, r);
 	}
 
