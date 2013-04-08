@@ -299,7 +299,7 @@ static long mac_os_version;
 
 /* Out-of-band color identifiers */
 /* True black (TERM_BLACK may be altered) */
-#define COLOR_BLACK        (256)
+#define COLOR_BLACK        (255)
 /* No current color */
 #define COLOR_INVALID    (-1)
 
@@ -641,48 +641,6 @@ inline static void term_data_color(int a)
 							focus.color_info[a][1], focus.color_info[a][2], 1);
 	}
 }
-
-#if 0
-/*
- * Hack -- activate a color (0 to 255)
- *
- * From Sil  - changed to allow modification of the background colour
- */
-static void term_data_color(term_data *td, int a)
-{
-	/* Activate the color */
-	if ((td->last != a) || (a >= MAX_COLORS))
-	{
-		/* Activate the color */
-		RGBForeColor(&color_info[a % MAX_COLORS]);
-
-		/* Memorize color */
-		td->last = a;
-
-		// Determine the background colour
-		switch (a / MAX_COLORS)
-		{
-			case BG_BLACK:
-				/* Default Background */
-				RGBBackColor(&color_info[0]);
-				break;
-			case BG_SAME:
-				/* Background same as foreground*/
-				RGBBackColor(&color_info[a % MAX_COLORS]);
-				break;
-			case BG_DARK:
-				/* Highlight Background */
-				RGBBackColor(&color_info[TERM_SHADE]);
-				break;
-			case BG_TRAP:
-				/* Highlight Background */
-				RGBBackColor(&color_info[TERM_GREEN]);
-				break;
-		}
-	}
-}
-#endif
-
 
 /*
  * Get font metrics 
@@ -1215,7 +1173,7 @@ static void ShowTextAt(int x, int y, int color, int n, const wchar_t *text )
 	CGRect r;
 	if(use_graphics || !use_overwrite_hack) {
 		r = (CGRect) {{x*td->tile_wid, y*td->tile_hgt},
-											{n*td->tile_wid, td->tile_hgt}};
+			      {n*td->tile_wid, td->tile_hgt}};
 		switch (color / MAX_COLORS)
 		{
 		case BG_BLACK:
