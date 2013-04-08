@@ -270,7 +270,7 @@ static OSStatus RevalidateGraphics(term_data *td, bool reset_tilesize);
 static char *locate_lib(char *buf, size_t size);
 static void graphics_aux(UInt32 op);
 static void Term_wipe_mac_aux(int x, int y, int n);
-inline static void term_data_color(term_data *td, int a);
+inline static void term_data_color(int a);
 static void install_handlers(WindowRef w);
 static void graphics_tiles_nuke(void);
 static void play_sound(int num);
