@@ -677,7 +677,7 @@ void grid_data_as_text(grid_data *g, int *ap, wchar_t *cp, byte *tap, wchar_t *t
 	bool neutral = FALSE;
               
 	/* Check for trap detection boundaries */
-	if (use_graphics == GRAPHICS_NONE || use_graphics == GRAPHICS_PSEUDO)
+	if (use_graphics == GRAPHICS_NONE)
 	    grid_get_attr(g, &a);
 
 	/* Save the terrain info for the transparency effects */
