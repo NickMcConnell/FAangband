@@ -1205,7 +1205,7 @@ static void ShowTextAt(int x, int y, int color, int n, const wchar_t *text )
 		CGContextClipToRect(focus.ctx, r);
 	}
 
-	term_data_color(color);
+	term_data_color(color % MAX_COLORS);
 	/* Monospace; use preset text spacing when tiling is wider than text */
 	if(n == 1 || info->monospace) {
 		CGContextShowGlyphsAtPoint(focus.ctx, 
