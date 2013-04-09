@@ -2159,17 +2159,17 @@ static errr Term_text_win(int x, int y, int n, int a, const wchar_t *s)
 	/* Foreground color */
 	if (colors16)
 	{
-		SetTextColor(hdc, PALETTEINDEX(win_pal[a]));
+		SetTextColor(hdc, PALETTEINDEX(win_pal[a % MAX_COLORS]));
 	}
 	else 
 	{
 	       if (paletted)
 	       { 
-		       SetTextColor(hdc, win_clr[a & (BASIC_COLORS-1)]);
+		   SetTextColor(hdc, win_clr[(a % MAX_COLORS) & 0x1F]);
 	       }
 	       else
 	       {
-		       SetTextColor(hdc, win_clr[a]);
+		       SetTextColor(hdc, win_clr[a % MAX_COLORS]);
 	       }
 	       /* Determine the background colour - from Sil */
 		switch (a / MAX_COLORS)
