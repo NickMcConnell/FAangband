@@ -2843,13 +2843,15 @@ void html_screenshot(const char *name, int mode)
 
 	int a = TERM_WHITE;
 	int oa = TERM_WHITE;
+	int fg_colour = TERM_WHITE;
+	int bg_colour = TERM_DARK;
 	wchar_t c = L' ';
 
 	const char *new_color_fmt = (mode == 0) ?
-					"<font color=\"#%02X%02X%02X\">"
+					"<font color=\"#%02X%02X%02X\" style=\"background-color: #%02X%02X%02X\">"
 				 	: "[COLOR=\"#%02X%02X%02X\"]";
 	const char *change_color_fmt = (mode == 0) ?
-					"</font><font color=\"#%02X%02X%02X\">"
+					"</font><font color=\"#%02X%02X%02X\" style=\"background-color: #%02X%02X%02X\">"
 					: "[/COLOR][COLOR=\"#%02X%02X%02X\"]";
 	const char *close_color_fmt = mode ==  0 ? "</font>" : "[/COLOR]";
 
@@ -2893,20 +2895,45 @@ void html_screenshot(const char *name, int mode)
 			/* Get the attr/char */
 			(void)(Term_what(x, y, &a, &c));
 
+			/* Set the foreground and background */
+			fg_colour = a % MAX_COLORS;
+			switch (a / MAX_COLORS)
+			{
+			case BG_BLACK:
+			    bg_colour = TERM_DARK;
+			    break;
+			case BG_SAME:
+			    bg_colour = fg_colour;
+			    break;
+			case BG_DARK:
+			    bg_colour = TERM_SHADE;
+			    break;
+			case BG_TRAP:
+			    bg_colour = TERM_SH_GREEN;
+			    break;
+			default:
+			    assert((a >= BG_BLACK) && (a < BG_MAX * MAX_COLORS));
+			}
+
 			/* Color change */
-			if (oa != a && c != L' ')
+			if (oa != a)
 			{
 				/* From the default white to another color */
 				if (oa == TERM_WHITE)
 				{
 					file_putf(fp, new_color_fmt,
-					        angband_color_table[a][1],
-					        angband_color_table[a][2],
-					        angband_color_table[a][3]);
+					        angband_color_table[fg_colour][1],
+						angband_color_table[fg_colour][2],
+						angband_color_table[fg_colour][3],
+					        angband_color_table[bg_colour][1],
+					        angband_color_table[bg_colour][2],
+					        angband_color_table[bg_colour][3]);
 				}
 
 				/* From another color to the default white */
-				else if (a == TERM_WHITE)
+			        else if ((fg_colour == TERM_WHITE) &&
+					 (bg_colour == TERM_DARK))
+
 				{
 					file_putf(fp, close_color_fmt);
 				}
@@ -2915,9 +2942,12 @@ void html_screenshot(const char *name, int mode)
 				else
 				{
 					file_putf(fp, change_color_fmt,
-					        angband_color_table[a][1],
-					        angband_color_table[a][2],
-					        angband_color_table[a][3]);
+					        angband_color_table[fg_colour][1],
+						angband_color_table[fg_colour][2],
+						angband_color_table[fg_colour][3],
+					        angband_color_table[bg_colour][1],
+					        angband_color_table[bg_colour][2],
+					        angband_color_table[bg_colour][3]);
 				}
 
 				/* Remember the last color */
