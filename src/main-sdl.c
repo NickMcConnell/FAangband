@@ -535,22 +535,11 @@ static errr sdl_mapFontDraw(sdl_Font *font, SDL_Surface *surface, SDL_Color colo
 	}
 
 	RECT(x, y, n * font->width, font->height, &rc);
-	//if (bg != colour)
-	//{
-	    text = TTF_RenderUTF8_Shaded(font->sdl_font, s, colour, bg);
-	    if (text) {
-		SDL_BlitSurface(text, NULL, surface, &rc);
-		SDL_FreeSurface(text);
-	    }
-	    //}
-	    //else
-	    //{
-	    //text = TTF_RenderUTF8_Solid(font->sdl_font, s, colour);
-	    //if (text) {
-	    //SDL_BlitSurface(text, NULL, surface, &rc);
-	    //SDL_FreeSurface(text);
-	    //}
-	    //}
+	text = TTF_RenderUTF8_Shaded(font->sdl_font, s, colour, bg);
+	if (text) {
+	    SDL_BlitSurface(text, NULL, surface, &rc);
+	    SDL_FreeSurface(text);
+	}
 	
 	/* Unlock the surface */
 	if (SDL_MUSTLOCK(surface)) SDL_UnlockSurface(surface);
@@ -3174,8 +3163,8 @@ static errr sdl_BuildTileset(term_window *win)
  * XXX - This function _never_ seems to get called with n > 1 ?
  * This needs improvement...
  */
-static errr Term_pict_sdl(int col, int row, int n, const byte *ap, const wchar_t *cp,
-						  const byte *tap, const wchar_t *tcp)
+static errr Term_pict_sdl(int col, int row, int n, const int *ap, const wchar_t *cp,
+						  const int *tap, const wchar_t *tcp)
 {
 	
 #ifdef USE_GRAPHICS
