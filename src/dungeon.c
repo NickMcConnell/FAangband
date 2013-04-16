@@ -2403,13 +2403,6 @@ void play_game(void)
     /* Flush the message */
     Term_fresh();
 
-
-    /*** Prepare "vinfo" array ***/
-
-    /* Used by "update_view()" - need birth options set as of FAangband 0.3.4 */
-    (void) vinfo_init();
-
-
     /* Flavor the objects */
     flavor_init();
 

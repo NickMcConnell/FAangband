@@ -21,7 +21,6 @@ extern void light_spot(int y, int x);
 extern void prt_map(void);
 extern void display_map(int *cy, int *cx);
 extern void do_cmd_view_map(void);
-extern errr vinfo_init(void);
 extern void forget_view(void);
 extern void update_view(void);
 extern void update_noise(void);
@@ -42,6 +41,9 @@ extern void track_object_kind(int k_idx);
 extern void disturb(int stop_search, int unused_flag);
 extern bool is_quest(int stage);
 extern bool dtrap_edge(int y, int x);
+
+#define CAVE_INFO_Y	DUNGEON_HGT
+#define CAVE_INFO_X	256
 
 
 #endif /* !CAVE_H */
