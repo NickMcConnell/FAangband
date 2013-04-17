@@ -2338,7 +2338,11 @@ static void update_one(int y, int x, int blind)
 bool cave_iswall(int y, int x) 
 {
     /* Terrain */
-    feature_type *f_ptr = &f_info[cave_feat[y][x]];
+    feature_type *f_ptr;
+
+    if (!in_bounds_fully(y, x)) return FALSE;
+
+    f_ptr = &f_info[cave_feat[y][x]];
 	
     return !tf_has(f_ptr->flags, TF_LOS);
 }
@@ -2415,7 +2419,7 @@ static void update_view_one(int y, int x, int radius, int py, int px)
 	/* Check that we got here via the 'knight's move' rule. If so,
 	 * don't steal LOS. */
 	if (ax == 2 && ay == 1) {
-	    if (!cave_iswall(x + sx, y) && cave_iswall(x + sx, y + sy)) 
+	    if (!cave_iswall(y, x + sx) && cave_iswall(y + sy, x + sx)) 
 	    {
 		xc = x;
 		yc = y;
@@ -2423,7 +2427,7 @@ static void update_view_one(int y, int x, int radius, int py, int px)
 	} 
 	else if (ax == 1 && ay == 2) 
 	{
-	    if (cave_iswall(x, y + sy) && cave_iswall(x + sx, y + sy)) 
+	    if (cave_iswall(y + sy, x) && cave_iswall(y + sy, x + sx)) 
 	    {
 		xc = x;
 		yc = y;
