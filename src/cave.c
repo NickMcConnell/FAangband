@@ -2419,7 +2419,7 @@ static void update_view_one(int y, int x, int radius, int py, int px)
 	/* Check that we got here via the 'knight's move' rule. If so,
 	 * don't steal LOS. */
 	if (ax == 2 && ay == 1) {
-	    if (!cave_iswall(y, x + sx) && cave_iswall(y + sy, x + sx)) 
+	    if (!cave_iswall(y, x - sx) && cave_iswall(y - sy, x - sx)) 
 	    {
 		xc = x;
 		yc = y;
@@ -2427,7 +2427,7 @@ static void update_view_one(int y, int x, int radius, int py, int px)
 	} 
 	else if (ax == 1 && ay == 2) 
 	{
-	    if (cave_iswall(y + sy, x) && cave_iswall(y + sy, x + sx)) 
+	    if (cave_iswall(y - sy, x) && cave_iswall(y - sy, x - sx)) 
 	    {
 		xc = x;
 		yc = y;
