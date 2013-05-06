@@ -2198,7 +2198,7 @@ void object_absorb(object_type * o_ptr, const object_type * j_ptr)
 	o_ptr->discount = j_ptr->discount;
 
     /* Hack -- blend "feelings" */
-    if (j_ptr->feel)
+    if (o_ptr->feel && j_ptr->feel)
 	o_ptr->feel = j_ptr->feel;
 
     /* Hack -- if rods are stacking, re-calculate the timeouts */
