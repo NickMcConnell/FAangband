@@ -481,9 +481,11 @@ s16b get_mon_num(int level)
 
 
     /* Sometimes, monsters in the dungeon can be out of depth */
-    if (p_ptr->depth != 0) {
+    if (p_ptr->depth != 0) 
+    {
 	/* Occasional boost to maximum level */
-	if (randint0(NASTY_MON) == 0) {
+	if (randint0(NASTY_MON) == 0) 
+	{
 	    /* Pick a level bonus */
 	    d = level / 10 + 1;
 
@@ -491,13 +493,19 @@ s16b get_mon_num(int level)
 	    temp_level += ((d < 5) ? d : 5);
 
 	    /* Occasional second boost */
-	    if (randint0(NASTY_MON) == 0) {
+	    if (randint0(NASTY_MON) == 0) 
+	    {
 		/* Pick a level bonus */
 		d = level / 10 + 1;
 
 		/* Boost the level */
 		temp_level += ((d < 5) ? d : 5);
 	    }
+	}
+	/* Hard mode wilderness is hard */
+	if (OPT(hard_mode) && (stage_map[p_ptr->stage][STAGE_TYPE] != CAVE))
+	{
+	    temp_level += 5;
 	}
     }
 
@@ -586,7 +594,7 @@ s16b get_mon_num(int level)
 
 	    /* Tol-In-Gaurhoth is full of wolves and undead */
 	    if (stage_map[p_ptr->stage][LOCALITY] == TOL_IN_GAURHOTH) {
-		if ((r_ptr->d_char == 'C') || (r_ptr->d_char == 'Z'))
+		if (r_ptr->d_char == 'C')
 		    table[i].prob3 *= 4;
 		else if (rf_has(r_ptr->flags, RF_UNDEAD))
 		    table[i].prob3 *= 2;
