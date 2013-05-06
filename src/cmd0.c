@@ -100,7 +100,7 @@ static struct cmd_info cmd_item[] =
 	{ "Examine an item", { 'I' }, CMD_NULL, textui_obj_examine },
 	{ "Drop an item", { 'd' }, CMD_DROP },
 	{ "Fire your missile weapon", { 'f', 't' }, CMD_FIRE, NULL, player_can_fire },
-	{ "Throw an item", { 'v' }, CMD_THROW, textui_cmd_throw },
+	{ "Throw an item", { 'v' }, CMD_THROW },
 	{ "Use a staff", { 'u', 'Z' }, CMD_USE_STAFF },
 	{ "Aim a wand", {'a', 'z'}, CMD_USE_WAND },
 	{ "Zap a rod", {'z', 'a'}, CMD_USE_ROD },

@@ -2183,7 +2183,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
     /* Make sure the player isn't throwing wielded items */
     if (item >= INVEN_WIELD && item < QUIVER_START)
     {
-	msg("You have cannot throw wielded items.");
+	msg("You cannot throw wielded items.");
 	return;
     }
 
@@ -2578,15 +2578,15 @@ void textui_cmd_throw(void)
     const char *q, *s;
 
     /* Get an item */
+    item_tester_hook = obj_can_throw;
     q = "Throw which item? ";
     s = "You have nothing to throw.";
-    if (!get_item(&item, q, s, CMD_THROW, (USE_EQUIP | USE_INVEN | USE_FLOOR | QUIVER_TAGS)))
-	return;
-
-    if (item >= INVEN_WIELD && item < QUIVER_START) {
-	msg("You cannot throw wielded items.");
+    if (!get_item(&item, q, s, CMD_THROW, (USE_INVEN | USE_FLOOR | QUIVER_TAGS)))
+    {
+	item_tester_hook = NULL;
 	return;
     }
+    item_tester_hook = NULL;
 
     /* Get a direction (or cancel) */
     if (!get_aim_dir(&dir))

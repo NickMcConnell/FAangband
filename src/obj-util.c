@@ -4588,6 +4588,18 @@ bool obj_can_fire(const object_type * o_ptr)
     return o_ptr->tval == p_ptr->state.ammo_tval;
 }
 
+/* Can only fire an item with the right tval */
+bool obj_can_throw(const object_type *o_ptr)
+{
+    int i;
+
+    for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	if (o_ptr == &p_ptr->inventory[i])
+	    return FALSE;
+
+    return TRUE;
+}
+
 /* Can has inscrip pls */
 bool obj_has_inscrip(const object_type * o_ptr)
 {

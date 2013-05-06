@@ -1096,7 +1096,7 @@ bool get_item(int *cp, const char *pmt, const char *str, cmd_code cmd, int mode)
 	allow_equip = TRUE;
 
     /* Reject quiver */
-    if (e2 < QUIVER_START)
+    if ((e2 < QUIVER_START) || !allow_equip)
 	use_quiver = FALSE;
 
     /* Scan all non-gold objects in the grid */
