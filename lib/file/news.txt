@@ -1,6 +1,6 @@
                                                                                
              ****************************************************              
-             **   FAangband 1.3.2  ****   First Age Angband    **              
+             **   FAangband 1.3.3  ****   First Age Angband    **              
              ** Beleriand in the days of the War of the Jewels **              
              ****************************************************              
                                                                                
@@ -12,7 +12,7 @@
      Ben Harrison, Robert Ruehlmann, Leon Marrick, Bahman Rabii, Jeff Greene,  
      Diego Gonzalez, Andrew Doull, Andi Sidwell, Pete Mack, Si Griffin.        
 	                                                                       
-     FAangband 0.1.0-1.3.2  by Nick McConnell                                  
+     FAangband 0.1.0-1.3.3  by Nick McConnell                                  
      FAangband 0.3.6        by Si Griffin                                      
                                                                                
      Send comments, bug reports, and patches to nckmccnnll@gmail.com           
