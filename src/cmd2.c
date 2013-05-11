@@ -226,7 +226,7 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
 	}
 
 	/* stairs */
-	msgt(MSG_STAIRS_DOWN, "You enter a maze of up staircases.");
+	msgt(MSG_STAIRS_UP, "You enter a maze of up staircases.");
 
 	/* make the way back */
 	p_ptr->create_stair = FEAT_MORE;
@@ -258,7 +258,7 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
 	}
 
 	/* shaft */
-	msgt(MSG_STAIRS_DOWN, "You enter a maze of up staircases.");
+	msgt(MSG_STAIRS_UP, "You enter a maze of up staircases.");
 
 	/* make the way back */
 	p_ptr->create_stair = FEAT_MORE_SHAFT;
@@ -266,7 +266,7 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
     else
     {
 	/* path */
-	msgt(MSG_STAIRS_DOWN, "You enter a winding path to less danger.");
+	msgt(MSG_STAIRS_UP, "You enter a winding path to less danger.");
 
 	/* make the way back */
 	p_ptr->create_stair = path_data[i].return_path;
