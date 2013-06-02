@@ -357,7 +357,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 	int next = stage_map[p_ptr->stage][path_data[i].direction];
 
 	/* Check if this is the right way out of town */
-	for (j = NORTH; j <= WEST; i++) {
+	for (j = NORTH; j <= WEST; j++) {
 	    other = stage_map[p_ptr->stage][j];
 	    if (stage_map[next][DEPTH] < stage_map[other][DEPTH]) {
 		msg("Nothing happens.");
