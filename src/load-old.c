@@ -331,37 +331,54 @@ static void rd_options(void)
   
     /*** Normal Options ***/
   
-    /* Read the option flags */
-    for (n = 0; n < 8; n++) rd_u32b(&flag[n]);
-  
-    /* Read the option masks */
-    for (n = 0; n < 8; n++) rd_u32b(&mask[n]);
-  
-    /* Analyze the options */
-    for (i = 0; i < OPT_MAX; i++)
+    if (older_than(1, 4, 0))
     {
-	int os = i / 32;
-	int ob = i % 32;
-      
-	/* Process saved entries */
-	if (mask[os] & (1L << ob))
+	/* Read the option flags */
+	for (n = 0; n < 8; n++) rd_u32b(&flag[n]);
+  
+	/* Read the option masks */
+	for (n = 0; n < 8; n++) rd_u32b(&mask[n]);
+  
+	/* Analyze the options */
+	for (i = 0; i < OPT_MAX; i++)
 	{
-	    /* Set flag */
-	    if (flag[os] & (1L << ob))
+	    int os = i / 32;
+	    int ob = i % 32;
+      
+	    /* Process saved entries */
+	    if (mask[os] & (1L << ob))
 	    {
-		/* Set */
-		op_ptr->opt[i] = TRUE;
-	    }
-	    /* Clear flag */
-	    else
-	    {
-		/* Set */
-		op_ptr->opt[i] = FALSE;
+		/* Set flag */
+		if (flag[os] & (1L << ob))
+		{
+		    /* Set */
+		    op_ptr->opt[i] = TRUE;
+		}
+		/* Clear flag */
+		else
+		{
+		    /* Set */
+		    op_ptr->opt[i] = FALSE;
+		}
 	    }
 	}
     }
-  
-  
+    else
+    {
+	while (1) 
+	{
+	    byte value;
+	    char name[20];
+	    rd_string(name, sizeof name);
+	    
+	    if (!name[0])
+		break;
+	    
+	    rd_byte(&value);
+	    option_set(name, !!value);
+	}
+    }
+
     /*** Window Options ***/
   
     /* Read the window flags */
