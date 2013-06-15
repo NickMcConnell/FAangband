@@ -1728,7 +1728,7 @@ extern void describe_monster(int r_idx, bool spoilers)
 				  wd_he[msex], act, wd_he[msex]));
 	text_out_to_screen(TERM_WHITE,
 			   format("%d feet.  ",
-				  (OPT(adult_small_device) ? 5 : 10) *
+				  (MODE(SMALL_DEVICE) ? 5 : 10) *
 				  r_ptr->aaf));
     }
 
@@ -2218,7 +2218,7 @@ static void process_ghost_race(int ghost_race, monster_type * m_ptr)
 	{
 	    if (r_ptr->freq_ranged)
 		r_ptr->freq_ranged += 3;
-	    r_ptr->aaf += (OPT(adult_small_device) ? 1 : 2);
+	    r_ptr->aaf += (MODE(SMALL_DEVICE) ? 1 : 2);
 	    r_ptr->hdice = 6 * r_ptr->hdice / 7;
 	    break;
 	    if (rf_has(r_ptr->flags, RF_HURT_LIGHT))
@@ -2230,7 +2230,7 @@ static void process_ghost_race(int ghost_race, monster_type * m_ptr)
 	{
 	    if (r_ptr->freq_ranged)
 		r_ptr->freq_ranged += 5;
-	    r_ptr->aaf += (OPT(adult_small_device) ? 2 : 4);
+	    r_ptr->aaf += (MODE(SMALL_DEVICE) ? 2 : 4);
 	    r_ptr->hdice = 4 * r_ptr->hdice / 5;
 	    if (rf_has(r_ptr->flags, RF_HURT_LIGHT))
 		rf_off(r_ptr->flags, RF_HURT_LIGHT);
@@ -2304,7 +2304,7 @@ static void process_ghost_race(int ghost_race, monster_type * m_ptr)
 
 	    if (r_ptr->freq_ranged)
 		r_ptr->freq_ranged += 8;
-	    r_ptr->aaf += (OPT(adult_small_device) ? 2 : 5);
+	    r_ptr->aaf += (MODE(SMALL_DEVICE) ? 2 : 5);
 	    if (rf_has(r_ptr->flags, RF_HURT_LIGHT))
 		rf_off(r_ptr->flags, RF_HURT_LIGHT);
 	    break;
@@ -2316,7 +2316,7 @@ static void process_ghost_race(int ghost_race, monster_type * m_ptr)
 	    if (r_ptr->freq_ranged)
 		r_ptr->freq_ranged += 5;
 	    r_ptr->ac += r_ptr->level / 10 + 5;
-	    r_ptr->aaf += (OPT(adult_small_device) ? 2 : 4);
+	    r_ptr->aaf += (MODE(SMALL_DEVICE) ? 2 : 4);
 	    r_ptr->hdice = 5 * r_ptr->hdice / 4;
 	    break;
 	}
@@ -2326,7 +2326,7 @@ static void process_ghost_race(int ghost_race, monster_type * m_ptr)
 	{
 	    if (r_ptr->freq_ranged)
 		r_ptr->freq_ranged += 3;
-	    r_ptr->aaf += (OPT(adult_small_device) ? 1 : 2);
+	    r_ptr->aaf += (MODE(SMALL_DEVICE) ? 1 : 2);
 	    rf_on(r_ptr->flags, RF_INVISIBLE);
 	    r_ptr->hdice = 3 * r_ptr->hdice / 4;
 	    break;
@@ -2539,7 +2539,7 @@ static void process_ghost_class(int ghost_class, monster_type * m_ptr)
 	{
 	    if (r_ptr->freq_ranged == 0)
 		r_ptr->freq_ranged = 8;
-	    r_ptr->aaf += (OPT(adult_small_device) ? 2 : 5);
+	    r_ptr->aaf += (MODE(SMALL_DEVICE) ? 2 : 5);
 
 	    rsf_on(r_ptr->spell_flags, RSF_ARROW);
 	    if ((dun_level > 24) && (r_ptr->freq_ranged))

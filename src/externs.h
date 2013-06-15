@@ -57,6 +57,8 @@ extern byte spell_range[RSF_MAX];
 extern int stage_map[NUM_STAGES][9];
 extern int compressed_map[NUM_STAGES][9];
 extern int dungeon_map[NUM_STAGES][9];
+extern int extended_map[NUM_STAGES][9];
+extern int fanilla_map[NUM_STAGES][9];
 extern const char *locality_name[MAX_LOCALITIES];
 extern const char *short_locality_name[MAX_LOCALITIES];
 extern int towns[10];

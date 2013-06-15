@@ -1485,7 +1485,7 @@ void display_map(int *cy, int *cx)
     dungeon_hgt = (p_ptr->depth ? DUNGEON_HGT : 2 * DUNGEON_HGT / 3);
     dungeon_wid = (p_ptr->depth ? DUNGEON_WID : 2 * DUNGEON_WID / 3);
     if (!(p_ptr->depth) && (p_ptr->stage < KHAZAD_DUM_TOWN) && 
-	(!OPT(adult_dungeon)))
+	(p_ptr->map_mode != MAP_MODE_DUNGEON))
 	dungeon_wid = DUNGEON_WID / 2;
     top_row = (p_ptr->depth ? 0 : DUNGEON_HGT / 3);
     left_col = (p_ptr->depth ? 0 : DUNGEON_WID / 3);
@@ -3219,7 +3219,7 @@ void cave_set_feat(int y, int x, int feat)
  * This algorithm is similar to, but slightly different from, the one used
  * by update_view_los(), and very different from the one used by los().
  */
-int project_path(u16b * gp, int range, int y1, int x1, int y2, int x2, int flg)
+int project_path(u16b *gp, int range, int y1, int x1, int y2, int x2, int flg)
 {
     int y, x;
 

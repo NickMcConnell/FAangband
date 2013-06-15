@@ -2173,7 +2173,8 @@ s16b player_place(int y, int x)
 	return (0);
 
     /* No stairs if we don't do that */
-    if (OPT(adult_no_stairs) && !p_ptr->themed_level && p_ptr->depth && !(OPT(adult_thrall) && (p_ptr->depth == 58) && (turn < 10)))
+    if (MODE(NO_STAIRS) && !p_ptr->themed_level && p_ptr->depth && 
+	!(MODE(THRALL) && (p_ptr->depth == 58) && (turn < 10)))
     {
 	if (outside)
 	    cave_set_feat(y, x, FEAT_ROAD);
@@ -4597,12 +4598,13 @@ void monster_death(int m_idx)
 	build_quest_stairs(y, x, "staircase");
 
     /* ...or a portal for ironmen wilderness games */
-    else if (OPT(adult_ironman) && !OPT(adult_dungeon) && (p_ptr->depth != 100))
+    else if (MODE(IRONMAN) && (p_ptr->map_mode != MAP_MODE_DUNGEON) && 
+	     (p_ptr->depth != 100))
 	build_quest_stairs(y, x, "portal");
 
     /* or a path out of Nan Dungortheb for wilderness games */
     else if ((r_ptr->level == 70) && (p_ptr->depth == 70)
-	     && !OPT(adult_dungeon)) {
+	     && (p_ptr->map_mode != MAP_MODE_DUNGEON)) {
 	/* Make a path */
 	for (y = p_ptr->py; y < DUNGEON_HGT - 2; y++)
 	    cave_set_feat(y, p_ptr->px, FEAT_ROAD);

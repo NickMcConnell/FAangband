@@ -451,7 +451,7 @@ static int pick_trap(int feat, int trap_level)
 		    trap_is_okay = FALSE;
 
 		/* Trap doors only in dungeons in ironman */
-		if (OPT(adult_ironman)
+		if (MODE(IRONMAN)
 		    && (stage_map[p_ptr->stage][STAGE_TYPE] < CAVE))
 		    trap_is_okay = FALSE;
 
@@ -1258,7 +1258,7 @@ void hit_trap_aux(int y, int x, int trap)
 
 	    /* trap of alter reality. */
 	    else if (nastyness < 50) {
-		if (OPT(adult_ironman))
+		if (MODE(IRONMAN))
 		    msg("Nothing happens.");
 		else {
 		    msg("The world changes!");

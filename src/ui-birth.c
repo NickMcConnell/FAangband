@@ -51,6 +51,7 @@ enum birth_stage
 	BIRTH_BACK = -1,
 	BIRTH_RESET = 0,
 	BIRTH_QUICKSTART,
+	BIRTH_MODE_CHOICE,
 	BIRTH_SEX_CHOICE,
 	BIRTH_RACE_CHOICE,
 	BIRTH_CLASS_CHOICE,
@@ -113,7 +114,7 @@ static enum birth_stage get_quickstart_command(void)
 		if (ke.key.code == 'N' || ke.key.code == 'n')
 		{
 			cmd_insert(CMD_BIRTH_RESET);
-			next = BIRTH_SEX_CHOICE;
+			next = BIRTH_MODE_CHOICE;
 		}
 		else if (ke.key.code == KTRL('X'))
 		{
@@ -137,6 +138,33 @@ static enum birth_stage get_quickstart_command(void)
 
 	/* Clear prompt */
 	clear_from(23);
+
+	return next;
+}
+
+/* ------------------------------------------------------------------------
+ * Get the game mode (formerly birth options)
+ * ------------------------------------------------------------------------ */
+static enum birth_stage get_mode_command(void)
+{
+	enum birth_stage next;
+	//ui_event ke;
+
+	p_ptr->game_mode[GAME_MODE_THRALL] = FALSE;
+	p_ptr->game_mode[GAME_MODE_IRONMAN] = FALSE;
+	p_ptr->game_mode[GAME_MODE_NO_STAIRS] = FALSE;
+	p_ptr->game_mode[GAME_MODE_SMALL_DEVICE] = FALSE;
+	p_ptr->game_mode[GAME_MODE_NO_ARTIFACTS] = FALSE;
+	p_ptr->game_mode[GAME_MODE_NO_SELLING] = FALSE;
+	p_ptr->game_mode[GAME_MODE_AI_CHEAT] = FALSE;
+	if (1)
+	{	
+		next = BIRTH_SEX_CHOICE;
+	}
+	else
+	{
+		next = BIRTH_BACK;
+	}
 
 	return next;
 }
@@ -217,7 +245,7 @@ static void race_help(int i, void *db, const region *l)
 	}
 	
 	text_out_e("Hit die: %d\n", p_info[i].r_mhp);
-	if (!OPT(adult_dungeon))
+	if (p_ptr->map_mode != MAP_MODE_DUNGEON)
 	  {
 	    text_out_e("Difficulty: Level %d\n", p_info[i].difficulty);
       
@@ -876,6 +904,12 @@ errr get_birth_command(bool wait)
 		{
 			display_player(0);
 			next = get_quickstart_command();
+			break;
+		}
+
+		case BIRTH_MODE_CHOICE:
+		{
+			next = get_mode_command();
 			break;
 		}
 

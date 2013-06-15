@@ -1451,7 +1451,7 @@ bool jump_menu(int level, int *location)
     u16b *choice;
 
     /* Dungeon only is easy */
-    if (OPT(adult_dungeon))
+    if (p_ptr->map_mode == MAP_MODE_DUNGEON)
     {
 	*location = level + 1;
 	return TRUE;

@@ -1929,7 +1929,7 @@ static void dungeon(void)
 
 
     /* No stairs from town or if not allowed */
-    if (p_ptr->depth && OPT(adult_no_stairs)) {
+    if (p_ptr->depth && MODE(NO_STAIRS)) {
 	p_ptr->create_stair = 0;
     }
 
@@ -2359,11 +2359,11 @@ void play_game(void)
 	player_birth(p_ptr->ht_birth ? TRUE : FALSE);
 
 	/* Start in home town - or on the stairs to Angband */
-	if (OPT(adult_thrall))
+	if (MODE(THRALL))
 	{
-	    if (OPT(adult_dungeon))
+	    if (p_ptr->map_mode == MAP_MODE_DUNGEON)
 		p_ptr->stage = 87;
-	    else if (OPT(adult_compressed))
+	    else if (p_ptr->map_mode == MAP_MODE_COMPRESSED)
 		p_ptr->stage = 70;
 	    else
 		p_ptr->stage = 135;

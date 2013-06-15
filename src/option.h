@@ -46,19 +46,4 @@ enum
 
 #define OPT(opt_name)	op_ptr->opt[OPT_##opt_name]
 
-
-/*** Option definitions (hack waiting for game modes)  ***/
-
-#define OPT_ADULT					32
-#define OPT_adult_no_sell               (OPT_ADULT+4)
-#define OPT_adult_ironman               (OPT_ADULT+5)
-#define OPT_adult_thrall                (OPT_ADULT+6)
-#define OPT_adult_small_device          (OPT_ADULT+7)
-#define OPT_adult_dungeon               (OPT_ADULT+8)
-#define OPT_adult_no_artifacts          (OPT_ADULT+9)
-#define OPT_adult_no_stairs             (OPT_ADULT+10)
-#define OPT_adult_ai_cheat              (OPT_ADULT+11)
-#define OPT_adult_auto_scum             (OPT_ADULT+12)
-#define OPT_adult_compressed            (OPT_ADULT+13)
-
 #endif /* !INCLUDED_OPTIONS_H */

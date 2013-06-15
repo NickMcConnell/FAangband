@@ -85,7 +85,7 @@ void new_player_spot(void)
 		continue;
 
 	    /* If character starts on stairs, ... */
-	    if (!OPT(adult_no_stairs) || !p_ptr->depth) {
+	    if (!MODE(NO_STAIRS) || !p_ptr->depth) {
 		/* Accept stairs going the right way or floors. */
 		if (p_ptr->create_stair) {
 		    /* Accept correct stairs */
@@ -182,13 +182,20 @@ void place_random_stairs(int y, int x)
 	return;
 
     /* Choose a staircase */
-    if (!p_ptr->depth) {
+    if (!p_ptr->depth) 
+    {
 	place_down_stairs(y, x);
-    } else if (OPT(adult_dungeon) && !stage_map[p_ptr->stage][DOWN]) {
+    } 
+    else if ((p_ptr->map_mode == MAP_MODE_DUNGEON) && 
+	     !stage_map[p_ptr->stage][DOWN]) {
 	place_up_stairs(y, x);
-    } else if (randint0(100) < 50) {
+    } 
+    else if (randint0(100) < 50) 
+    {
 	place_down_stairs(y, x);
-    } else {
+    } 
+    else 
+    {
 	place_up_stairs(y, x);
     }
 }

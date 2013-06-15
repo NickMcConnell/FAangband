@@ -198,6 +198,32 @@
 #define STORE_MERCH             9
 
 /**
+ * Map modes
+ */
+#define MAP_MODE_COMPRESSED     0
+#define MAP_MODE_EXTENDED       1
+#define MAP_MODE_DUNGEON        2
+#define MAP_MODE_FANILLA        3
+
+/**
+ * Game modes
+ */
+enum
+{
+    GAME_MODE_THRALL = 0,
+    GAME_MODE_IRONMAN,
+    GAME_MODE_NO_STAIRS,
+    GAME_MODE_SMALL_DEVICE,
+    GAME_MODE_NO_ARTIFACTS,
+    GAME_MODE_NO_SELLING,
+    GAME_MODE_AI_CHEAT,
+
+    GAME_MODE_MAX
+};
+
+#define MODE(gmode)	p_ptr->game_mode[GAME_MODE_##gmode]
+
+/**
  * Maximum number of player "sex" types (see "table.c", etc)
  */
 #define MAX_SEXES            2
@@ -477,8 +503,8 @@
 #define MAX_RANGE_LGE   20      /* Maximum projection range */
 #define MAX_SIGHT_SML   10      /* Maximum view distance (small devices) */
 #define MAX_RANGE_SML   10      /* Maximum projection range (small devices) */
-#define MAX_SIGHT (OPT(adult_small_device) ? MAX_SIGHT_SML : MAX_SIGHT_LGE)  
-#define MAX_RANGE (OPT(adult_small_device) ? MAX_RANGE_SML : MAX_RANGE_LGE)
+#define MAX_SIGHT (MODE(SMALL_DEVICE) ? MAX_SIGHT_SML : MAX_SIGHT_LGE)  
+#define MAX_RANGE (MODE(SMALL_DEVICE) ? MAX_RANGE_SML : MAX_RANGE_LGE)
 
 
 /**
@@ -2499,18 +2525,18 @@ extern int PlayerUID;
 #define STAGE_TYPE             8
 
 /* Special stage numbers */
-#define ERIADOR_TOWN           (OPT(adult_compressed) ? 5 : 6)
-#define OSSIRIAND_TOWN         (OPT(adult_compressed) ? 20 : 30)
-#define ERED_LUIN_SOUTH_TOWN   (OPT(adult_compressed) ? 24 : 37)
-#define TAUR_IM_DUINATH_TOWN   (OPT(adult_compressed) ? 27 : 44)
-#define EPHEL_BRANDIR_TOWN     (OPT(adult_compressed) ? 59 : 115)
-#define GLADDEN_FIELDS_TOWN    (OPT(adult_compressed) ? 79 : 150)
-#define KHAZAD_DUM_TOWN        (OPT(adult_compressed) ? 80 : 151)
-#define BELEGOST_TOWN          (OPT(adult_compressed) ? 81 : 152)
-#define MENEGROTH_TOWN         (OPT(adult_compressed) ? 82 : 153)
-#define GONDOLIN_TOWN          (OPT(adult_compressed) ? 83 : 154)
-#define UNDERWORLD_STAGE       (OPT(adult_compressed) ? 84 : 255)
-#define MOUNTAINTOP_STAGE      (OPT(adult_compressed) ? 85 : 256)
+#define ERIADOR_TOWN           (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 5 : 6)
+#define OSSIRIAND_TOWN         (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 20 : 30)
+#define ERED_LUIN_SOUTH_TOWN   (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 24 : 37)
+#define TAUR_IM_DUINATH_TOWN   (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 27 : 44)
+#define EPHEL_BRANDIR_TOWN     (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 59 : 115)
+#define GLADDEN_FIELDS_TOWN    (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 79 : 150)
+#define KHAZAD_DUM_TOWN        (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 80 : 151)
+#define BELEGOST_TOWN          (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 81 : 152)
+#define MENEGROTH_TOWN         (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 82 : 153)
+#define GONDOLIN_TOWN          (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 83 : 154)
+#define UNDERWORLD_STAGE       (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 84 : 255)
+#define MOUNTAINTOP_STAGE      (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 85 : 256)
 
 
 /*

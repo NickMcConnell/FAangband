@@ -2425,7 +2425,7 @@ static void spoil_mon_info(const char *fname)
       else spoil_out(" is ever vigilant for");
       
       sprintf(buf, " intruders, which %s may notice from %d feet.  ",
-	      wd_lhe[msex], (OPT(adult_small_device) ? 5 : 10) * r_ptr->aaf);
+	      wd_lhe[msex], (MODE(SMALL_DEVICE) ? 5 : 10) * r_ptr->aaf);
       spoil_out(buf);
       
       i = 0;

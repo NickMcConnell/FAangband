@@ -1996,7 +1996,7 @@ static void store_sell(void)
 	char answer;
 
 	/* No selling */
-	if (!OPT(adult_no_sell)) 
+	if (!MODE(NO_SELLING)) 
 	{
 	    /* Get the price */
 	    price = price_item(i_ptr, ot_ptr->inflate, TRUE) * i_ptr->number;
@@ -2091,7 +2091,7 @@ static void store_sell(void)
 	object_desc(o_name, sizeof(o_name), i_ptr, ODESC_PREFIX | ODESC_FULL);
 
 	/* No selling */
-	if (OPT(adult_no_sell)) 
+	if (MODE(NO_SELLING)) 
 	{
 	    /* Describe the result (in message buffer) */
 	    msg("You gave over %s (%c).", o_name, index_to_label(item));
@@ -2913,7 +2913,7 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
     /* Oops */
     if (which == MAX_STORES) 
     {
-	if (OPT(adult_dungeon)) 
+	if (p_ptr->map_mode == MAP_MODE_DUNGEON) 
 	{
 	    if (f_ptr->shopnum == STORE_MERCH)
 		which = 0;

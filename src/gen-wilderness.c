@@ -475,7 +475,7 @@ static void alloc_paths(int stage, int last_stage)
     /* Place the player, unless we've just come upstairs */
     if (((stage_map[p_ptr->last_stage][STAGE_TYPE] == CAVE)
 	 && (stage_map[p_ptr->last_stage][LOCALITY] != UNDERWORLD))
-	|| ((turn <= 10) && (OPT(adult_thrall))))
+	|| ((turn <= 10) && (MODE(THRALL))))
 	return;
 
     player_place(py, px);
@@ -2755,7 +2755,8 @@ extern void valley_gen(void)
     }
 
     /* Maybe place a few random portals. */
-    if (OPT(adult_dungeon) && stage_map[p_ptr->stage][DOWN]) {
+    if ((p_ptr->map_mode == MAP_MODE_DUNGEON) && stage_map[p_ptr->stage][DOWN])
+    {
 	feature_type *f_ptr = NULL;
 
 	k = randint1(3) + 1;

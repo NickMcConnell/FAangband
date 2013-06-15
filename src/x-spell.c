@@ -1425,7 +1425,7 @@ bool cast_spell(int tval, int sindex, int dir, int plev)
 	}
     case PRAYER_ALTER_REALITY:
 	{
-	    if (OPT(adult_ironman))
+	    if (MODE(IRONMAN))
 		msg("Nothing happens.");
 	    else {
 		msg("The world changes!");

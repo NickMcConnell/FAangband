@@ -1265,6 +1265,8 @@ typedef struct player {
     bool is_dead;	/**< Player is dead */
 
     bool wizard;	/**< Player is in wizard mode */
+    byte map_mode;      /**< Which stage_map to use */
+    bool game_mode[GAME_MODE_MAX];  /**< Game mode (thrall, ironman, etc) */
 
   /*** Temporary fields ***/
 

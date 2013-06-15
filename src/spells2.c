@@ -1333,7 +1333,7 @@ bool recall_menu(void)
     ui_event evt = { 0 };
     int cursor = 0;
     int num_entries;
-    int num_poss = OPT(adult_dungeon) ? 1 : 4;
+    int num_poss = (p_ptr->map_mode == MAP_MODE_DUNGEON) ? 1 : 4;
 
     int i;
 
@@ -1405,7 +1405,7 @@ bool set_recall(int v)
 
     /* No use until the player has been somewhere */
     if (((p_ptr->stage == p_ptr->home) && (!p_ptr->recall_pt)) || (!p_ptr->home)
-	|| (OPT(adult_ironman) && !p_ptr->total_winner)) {
+	|| (MODE(IRONMAN) && !p_ptr->total_winner)) {
 	msg("Nothing happens.");
 	return (FALSE);
     }

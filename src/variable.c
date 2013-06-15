@@ -1093,4 +1093,3 @@ u16b inscriptions_count = 0;
 /* Zero means normal instant movement. */
 u16b lazymove_delay = 0;
 
-

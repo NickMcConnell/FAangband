@@ -328,7 +328,8 @@ static void get_level(struct player *p)
 {
 
     /* Check if they're an "advanced race" */
-    if ((rp_ptr->start_lev - 1) && !OPT(adult_thrall) && !OPT(adult_dungeon)) {
+    if ((rp_ptr->start_lev - 1) && !MODE(THRALL) && 
+	(p_ptr->map_mode != MAP_MODE_DUNGEON)) {
 	/* Add the experience */
 	p->exp = player_exp[rp_ptr->start_lev - 2];
 	p->max_exp = player_exp[rp_ptr->start_lev - 2];
@@ -348,11 +349,11 @@ static void get_level(struct player *p)
     }
 
     /* Set home town */
-    if (OPT(adult_thrall))
+    if (MODE(THRALL))
 	p->home = 0;
-    else if (OPT(adult_dungeon))
+    else if (p_ptr->map_mode == MAP_MODE_DUNGEON)
 	p->home = 1;
-    else if (OPT(adult_compressed))
+    else if (p_ptr->map_mode == MAP_MODE_COMPRESSED)
 	p->home = compressed_towns[rp_ptr->hometown];
     else
 	p->home = towns[rp_ptr->hometown];
@@ -436,21 +437,6 @@ void player_init(struct player *p)
     for (i = 0; i < MAX_Q_IDX; i++) {
 	q_list[i].stage = 0;
     }
-
-    /* Mim */
-    q_list[0].stage = 170;
-
-    /* Glaurung */
-    q_list[1].stage = 247;
-
-    /* Ungoliant */
-    q_list[2].stage = 211;
-
-    /* Sauron */
-    q_list[3].stage = 318;
-
-    /* Morgoth */
-    q_list[4].stage = 384;
 
     /* Start with no score */
     p_ptr->score = 0;
@@ -686,7 +672,7 @@ static void player_outfit(struct player *p)
 	    i_ptr->origin = ORIGIN_BIRTH;
 
 	    /* Nasty hack for "advanced" races -NRM- */
-	    if ((!OPT(adult_thrall)) && (!OPT(adult_dungeon)))
+	    if ((!MODE(THRALL)) && (p_ptr->map_mode != MAP_MODE_DUNGEON))
 		object_upgrade(i_ptr);
 
 	    object_aware(i_ptr);
@@ -701,7 +687,7 @@ static void player_outfit(struct player *p)
     i_ptr = &object_type_body;
 
     /* Hack -- Give the player some food */
-    if (OPT(adult_thrall))
+    if (MODE(THRALL))
 	object_prep(i_ptr, lookup_kind(TV_FOOD, SV_FOOD_WAYBREAD), MINIMISE);
     else
 	object_prep(i_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION), MINIMISE);
@@ -727,7 +713,7 @@ static void player_outfit(struct player *p)
     i_ptr->kind->everseen = TRUE;
 
     /* Dungeon gear for escaping thralls */
-    if (OPT(adult_thrall)) {
+    if (MODE(THRALL)) {
 	/* Get local object */
 	i_ptr = &object_type_body;
 
@@ -1074,6 +1060,103 @@ static void do_birth_reset(bool use_quickstart, birther * quickstart_prev)
     get_bonuses();
 }
 
+/*
+ * Set the appropriate dungeon map and quests
+ */
+void set_map(struct player *p)
+{
+    int i, j;
+    /* Set map, quests */
+    if (p->map_mode == MAP_MODE_EXTENDED) 
+    {
+	for (i = 0; i < NUM_STAGES; i++)
+	    for (j = 0; j < 9; j++)
+		stage_map[i][j] = extended_map[i][j];
+
+	/* Mim */
+	q_list[0].stage = 170;
+
+	/* Glaurung */
+	q_list[1].stage = 247;
+
+	/* Ungoliant */
+	q_list[2].stage = 211;
+
+	/* Sauron */
+	q_list[3].stage = 318;
+
+	/* Morgoth */
+	q_list[4].stage = 384;
+    }
+    else if (p->map_mode == MAP_MODE_DUNGEON) 
+    {
+	for (i = 0; i < NUM_STAGES; i++)
+	    for (j = 0; j < 9; j++)
+		stage_map[i][j] = dungeon_map[i][j];
+
+	/* Mim */
+	q_list[0].stage = 31;
+
+	/* Glaurung */
+	q_list[1].stage = 56;
+
+	/* Ungoliant */
+	q_list[2].stage = 71;
+
+	/* Sauron */
+	q_list[3].stage = 86;
+
+	/* Morgoth */
+	q_list[4].stage = 101;
+    }
+    else if (p->map_mode == MAP_MODE_FANILLA) 
+    {
+	for (i = 0; i < NUM_STAGES; i++)
+	    for (j = 0; j < 9; j++)
+		stage_map[i][j] = fanilla_map[i][j];
+
+	/* Mim */
+	q_list[0].stage = 0;
+
+	/* Glaurung */
+	q_list[1].stage = 0;
+
+	/* Ungoliant */
+	q_list[2].stage = 0;
+
+	/* Sauron */
+	q_list[3].stage = 0;
+
+	/* Morgoth */
+	q_list[4].stage = 101;
+    }
+    else if (p->map_mode == MAP_MODE_COMPRESSED) 
+    {
+	int i;
+	for (i = 0; i < NUM_TOWNS; i++)
+	    towns[i] = compressed_towns[i];
+
+	for (i = 0; i < NUM_STAGES; i++)
+	    for (j = 0; j < 9; j++)
+		stage_map[i][j] = compressed_map[i][j];
+
+	/* Mim */
+	q_list[0].stage = 94;
+
+	/* Glaurung */
+	q_list[1].stage = 123;
+
+	/* Ungoliant */
+	q_list[2].stage = 110;
+
+	/* Sauron */
+	q_list[3].stage = 139;
+
+	/* Morgoth */
+	q_list[4].stage = 180;
+    }
+
+}
 
 /*
  * Create a new character.
@@ -1083,7 +1166,7 @@ static void do_birth_reset(bool use_quickstart, birther * quickstart_prev)
  */
 void player_birth(bool quickstart_allowed)
 {
-    int i, j;
+    int i;
     game_command blank = { CMD_NULL, 0, {{0}} };
     game_command *cmd = &blank;
 
@@ -1163,6 +1246,8 @@ void player_birth(bool quickstart_allowed)
 	    reset_stats(stats, points_spent, &points_left);
 	    do_birth_reset(quickstart_allowed, &quickstart_prev);
 	    rolled_stats = FALSE;
+	} else if (cmd->command == CMD_CHOOSE_MODE) {
+	    set_map(p_ptr);
 	} else if (cmd->command == CMD_CHOOSE_SEX) {
 	    p_ptr->psex = cmd->arg[0].choice;
 	    player_generate(p_ptr, NULL, NULL, NULL);
@@ -1180,19 +1265,15 @@ void player_birth(bool quickstart_allowed)
 	    reset_stats(stats, points_spent, &points_left);
 	    generate_stats(stats, points_spent, &points_left);
 	    rolled_stats = FALSE;
-	    //} else if (cmd->command == CMD_FINALIZE_OPTIONS) {
-	    /* Set adult options from birth options */
-	    //for (i = OPT_BIRTH; i < OPT_CHEAT; i++) {
-	    //	op_ptr->opt[OPT_ADULT + (i - OPT_BIRTH)] = op_ptr->opt[i];
-	    //}
-
+	} else if (cmd->command == CMD_FINALIZE_OPTIONS) {
 	    /* Level */
-	    //get_level(p_ptr);
+	    get_level(p_ptr);
 
 	    /* Reset score options from cheat options */
-	    //for (i = OPT_CHEAT; i < OPT_ADULT; i++) {
-	    //	op_ptr->opt[OPT_SCORE + (i - OPT_CHEAT)] = op_ptr->opt[i];
-	    //}
+	    for (i = 0; i < OPT_MAX; i++) {
+		if (option_type(i) == OP_CHEAT)
+		    op_ptr->opt[i + 1] = op_ptr->opt[i];
+	    }
 	} else if (cmd->command == CMD_BUY_STAT) {
 	    /* .choice is the stat to buy */
 	    if (!rolled_stats)
@@ -1310,51 +1391,6 @@ void player_birth(bool quickstart_allowed)
     message_add("  ", MSG_GENERIC);
     message_add(" ", MSG_GENERIC);
 
-
-    /* Set map, quests */
-    if (OPT(adult_dungeon)) {
-	for (i = 0; i < NUM_STAGES; i++)
-	    for (j = 0; j < 9; j++)
-		stage_map[i][j] = dungeon_map[i][j];
-
-	/* Mim */
-	q_list[0].stage = 31;
-
-	/* Glaurung */
-	q_list[1].stage = 56;
-
-	/* Ungoliant */
-	q_list[2].stage = 71;
-
-	/* Sauron */
-	q_list[3].stage = 86;
-
-	/* Morgoth */
-	q_list[4].stage = 101;
-    }
-    else if (OPT(adult_compressed)) {
-	for (i = 0; i < NUM_TOWNS; i++)
-	    towns[i] = compressed_towns[i];
-
-	for (i = 0; i < NUM_STAGES; i++)
-	    for (j = 0; j < 9; j++)
-		stage_map[i][j] = compressed_map[i][j];
-
-	/* Mim */
-	q_list[0].stage = 94;
-
-	/* Glaurung */
-	q_list[1].stage = 123;
-
-	/* Ungoliant */
-	q_list[2].stage = 110;
-
-	/* Sauron */
-	q_list[3].stage = 139;
-
-	/* Morgoth */
-	q_list[4].stage = 180;
-    }
 
     /* Give the player some money */
     get_money();

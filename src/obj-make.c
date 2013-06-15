@@ -474,7 +474,7 @@ static bool make_artifact_special(object_type * o_ptr)
     int k_idx = 0;
 
     /* No artifacts in the town */
-    if (!p_ptr->depth || OPT(adult_no_artifacts))
+    if (!p_ptr->depth || MODE(NO_ARTIFACTS))
 	return (FALSE);
 
     first_pick = randint0(artifact_special_cnt);
@@ -1793,7 +1793,7 @@ bool make_object(object_type * j_ptr, bool good, bool great, bool exact_kind)
     }
 
     /* Apply magic (allow artifacts) */
-    apply_magic(j_ptr, object_level, !OPT(adult_no_artifacts), good, great);
+    apply_magic(j_ptr, object_level, !MODE(NO_ARTIFACTS), good, great);
 
     /* Get the object kind. */
     k_ptr = &k_info[j_ptr->k_idx];
@@ -1903,7 +1903,7 @@ bool make_gold(object_type * j_ptr)
 	k_info[treasure].cost / 2 + randint1((k_info[treasure].cost + 1) / 2);
 
     /* Hack - double for no selling */
-    if (OPT(adult_no_sell))
+    if (MODE(NO_SELLING))
 	j_ptr->pval *= 2;
 
     /* Success */

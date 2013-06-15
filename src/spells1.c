@@ -817,7 +817,7 @@ void teleport_player_level(bool friendly)
     int poss;
 
     /* Disable for ironman */
-    if (OPT(adult_ironman)) {
+    if (MODE(IRONMAN)) {
 	msg("Nothing happens.");
 	return;
     }

@@ -18,6 +18,7 @@ typedef enum cmd_code
 	 * Birth commands 
 	 */
 	CMD_BIRTH_RESET,
+	CMD_CHOOSE_MODE,
 	CMD_CHOOSE_SEX,
 	CMD_CHOOSE_RACE,
 	CMD_CHOOSE_CLASS,

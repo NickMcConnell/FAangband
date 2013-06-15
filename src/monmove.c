@@ -1067,7 +1067,7 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
     breath_maxhp = (m_ptr->maxhp > 2000 ? m_ptr->maxhp : 2000);
 
     /* Cheat if requested, or if a player ghost. */
-    if (OPT(adult_ai_cheat) || (rf_has(r_ptr->flags, RF_PLAYER_GHOST)))
+    if (MODE(AI_CHEAT) || (rf_has(r_ptr->flags, RF_PLAYER_GHOST)))
 	update_smart_cheat(m_idx);
 
     /* Now check every remaining spell */
@@ -4301,7 +4301,7 @@ static void process_monster(monster_type * m_ptr)
     int old_shape = m_ptr->orig_idx;
     int old_race = m_ptr->old_p_race;
     int dir;
-    int scan_range = (OPT(adult_small_device) ? r_ptr->aaf / 2 : r_ptr->aaf);
+    int scan_range = (MODE(SMALL_DEVICE) ? r_ptr->aaf / 2 : r_ptr->aaf);
     bool fear = FALSE;
 
     bool bash;
@@ -4688,7 +4688,7 @@ static void recover_monster(monster_type * m_ptr, bool regen)
     monster_lore *l_ptr = &l_list[m_ptr->r_idx];
 
     int frac;
-    int scan_range = (OPT(adult_small_device) ? r_ptr->aaf / 2 : r_ptr->aaf);
+    int scan_range = (MODE(SMALL_DEVICE) ? r_ptr->aaf / 2 : r_ptr->aaf);
 
     /* Handle stasis */
     if (m_ptr->stasis) {
