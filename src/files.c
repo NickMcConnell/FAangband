@@ -1834,18 +1834,10 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
     current_line += 2;
 
     /* Dump options */
-    for (i = OPT_ADULT + 4; i < OPT_SCORE; i++) {
-	if (option_desc(i)) {
-	    dump_ptr = (char_attr *) &line[current_line];
-	    sprintf(buf, "%-49s: %s (%s)", option_desc(i),
-		    op_ptr->opt[i] ? "yes" : "no ", option_name(i));
-	    dump_put_str(TERM_WHITE, buf, 0);
-	    current_line++;
-	}
-    }
-
-    for (i = OPT_SCORE; i < OPT_MAX; i++) {
-	if (option_desc(i)) {
+    for (i = 0; i < OPT_MAX; i++) 
+    {
+	if (option_type(i) == OP_SCORE) 
+	{
 	    dump_ptr = (char_attr *) &line[current_line];
 	    sprintf(buf, "%-49s: %s (%s)", option_desc(i),
 		    op_ptr->opt[i] ? "yes" : "no ", option_name(i));

@@ -203,11 +203,13 @@ void option_dump(ang_file *fff)
 {
 	int i, j;
 
-	/* Dump options (skip cheat, adult, score) */
-	for (i = 0; i < OPT_CHEAT; i++)
+	/* Dump interface and gameplay options */
+	for (i = 0; i < OPT_MAX; i++)
 	{
 		const char *name = option_name(i);
-		if (!name) continue;
+		int type = option_type(i);
+		if ((type != OP_GAMEPLAY) && (type != OP_INTERFACE))
+		    continue;
 
 		/* Comment */
 		file_putf(fff, "# Option '%s'\n", option_desc(i));

@@ -231,7 +231,7 @@ static void option_toggle_menu(const char *name, int page)
 
 	/* Find the number of valid entries */
 	for (i = 0; i < OPT_PAGE_PER; i++) {
-		if (option_page[page][i] == OPT_NONE)
+		if (option_page[page][i] == OPT_none)
 			break;
 	}
 
@@ -2064,9 +2064,9 @@ static menu_type *option_menu;
 static menu_action option_actions[] = 
 {
 	{ 0, 'a', "Interface options", option_toggle_menu },
-	{ 0, 'c', "Gameplay options", option_toggle_menu },
-	{ 0, 'f', "Birth (difficulty) options", option_toggle_menu },
-	{ 0, 'g', "Cheat options", option_toggle_menu },
+	{ 0, 'b', "Gameplay options", option_toggle_menu },
+	//{ 0, 'f', "Birth (difficulty) options", option_toggle_menu },
+	{ 0, 'c', "Cheat options", option_toggle_menu },
 	{0, 0, 0, 0}, /* Load and append */
 	{ 0, 'w', "Subwindow display settings", do_cmd_options_win },
 	{ 0, 's', "Item squelch settings", do_cmd_options_item },

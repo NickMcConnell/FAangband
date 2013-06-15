@@ -438,13 +438,14 @@ void enter_score(time_t *death_time)
   int j;
   
   /* Cheaters are not scored */
-  for (j = OPT_SCORE; j < OPT_MAX; ++j)
+  for (j = 0; j < OPT_MAX; ++j)
     {
-      if (!op_ptr->opt[j]) continue;
-      
-      msg("Score not registered for cheaters.");
-      message_flush();
-      return;
+	if (option_type(j) != OP_SCORE) continue;
+	if (!op_ptr->opt[j]) continue;
+	
+	msg("Score not registered for cheaters.");
+	message_flush();
+	return;
     }
   
   /* Wizard-mode pre-empts scoring */

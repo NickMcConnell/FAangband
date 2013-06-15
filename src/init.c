@@ -4004,7 +4004,7 @@ static errr init_other(void)
   
  
     /*** Prepare the options ***/
-    option_set_defaults();
+    init_options();
 
     /* Initialize the window flags */
     for (i = 0; i < ANGBAND_TERM_MAX; i++)

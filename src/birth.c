@@ -1180,19 +1180,19 @@ void player_birth(bool quickstart_allowed)
 	    reset_stats(stats, points_spent, &points_left);
 	    generate_stats(stats, points_spent, &points_left);
 	    rolled_stats = FALSE;
-	} else if (cmd->command == CMD_FINALIZE_OPTIONS) {
+	    //} else if (cmd->command == CMD_FINALIZE_OPTIONS) {
 	    /* Set adult options from birth options */
-	    for (i = OPT_BIRTH; i < OPT_CHEAT; i++) {
-		op_ptr->opt[OPT_ADULT + (i - OPT_BIRTH)] = op_ptr->opt[i];
-	    }
+	    //for (i = OPT_BIRTH; i < OPT_CHEAT; i++) {
+	    //	op_ptr->opt[OPT_ADULT + (i - OPT_BIRTH)] = op_ptr->opt[i];
+	    //}
 
 	    /* Level */
-	    get_level(p_ptr);
+	    //get_level(p_ptr);
 
 	    /* Reset score options from cheat options */
-	    for (i = OPT_CHEAT; i < OPT_ADULT; i++) {
-		op_ptr->opt[OPT_SCORE + (i - OPT_CHEAT)] = op_ptr->opt[i];
-	    }
+	    //for (i = OPT_CHEAT; i < OPT_ADULT; i++) {
+	    //	op_ptr->opt[OPT_SCORE + (i - OPT_CHEAT)] = op_ptr->opt[i];
+	    //}
 	} else if (cmd->command == CMD_BUY_STAT) {
 	    /* .choice is the stat to buy */
 	    if (!rolled_stats)
