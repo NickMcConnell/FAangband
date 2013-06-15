@@ -14,7 +14,7 @@ void option_set_defaults(void);
 /*
  * Information for "do_cmd_options()".
  */
-#define OPT_PAGE_MAX				6
+#define OPT_PAGE_MAX				4
 #define OPT_PAGE_PER				16
 
 /* The option data structures */

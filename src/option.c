@@ -26,84 +26,42 @@ const int option_page[OPT_PAGE_MAX][OPT_PAGE_PER] =
     /*** Interface ***/
     
       {
-	  OPT_use_sound,
 	  OPT_rogue_like_commands,
-	  OPT_use_old_target,
-	  OPT_hide_squelchable,
-	  OPT_squelch_worthless,
+	  OPT_center_player,
 	  OPT_show_lists,
 	  OPT_show_menus,
 	  OPT_mouse_movement,
 	  OPT_mouse_buttons,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE
-      },
-
-    /*** Display ***/
-    
-      {
-	  OPT_hp_changes_colour,
-	  OPT_center_player,
 	  OPT_show_flavors,
 	  OPT_show_detect,
 	  OPT_view_yellow_light,
 	  OPT_animate_flicker,
 	  OPT_solid_walls,
 	  OPT_hybrid_walls,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE
+	  OPT_ring_bell,
+	  OPT_use_sound,
+	  OPT_hp_changes_colour,
+	  OPT_auto_more
       },
-    
+
     /*** Gameplay ***/
     
       {
+	  OPT_auto_scum,
+	  OPT_hard_mode,
+	  OPT_use_old_target,
 	  OPT_pickup_always,
 	  OPT_pickup_inven,
 	  OPT_easy_open,
 	  OPT_easy_alter,
-	  OPT_auto_scum,
-	  OPT_hard_mode,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE
-     },
-
-    /*** Warning ***/
-    
-      {
+	  OPT_hide_squelchable,
+	  OPT_squelch_worthless,
 	  OPT_run_ignore_stairs,
 	  OPT_run_ignore_doors,
 	  OPT_disturb_near,
 	  OPT_disturb_detect,
 	  OPT_verify_destroy,
-	  OPT_ring_bell,
-	  OPT_auto_more,
 	  OPT_notify_recharge,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
-	  OPT_NONE,
 	  OPT_NONE
       },
     
