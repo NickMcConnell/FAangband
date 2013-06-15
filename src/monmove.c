@@ -4112,12 +4112,11 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	
 	/* Possible disturb */
 	else if (m_ptr->ml && (m_ptr->hostile == -1)
-		 && (OPT(disturb_move) || 
-		     (OPT(disturb_near) && 
-		      ((m_ptr->mflag & (MFLAG_VIEW))
-		       || ((rf_has(r_ptr->flags, RF_PASS_WALL)
+		 && (OPT(disturb_near) && 
+		     ((m_ptr->mflag & (MFLAG_VIEW))
+		      || ((rf_has(r_ptr->flags, RF_PASS_WALL)
 			   || rf_has(r_ptr->flags, RF_KILL_WALL))
-			   && (m_ptr->cdis <= 2)))))) {
+			  && (m_ptr->cdis <= 2))))) {
 	    /* Disturb */
 	    disturb(0, 0);
 	}

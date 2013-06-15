@@ -226,24 +226,14 @@ static void build_obj_list(int first, int last, const int *floor_list,
 	else continue;
 
 	/* Special labels for equipment */
-	if (first){
+	if (first)
+	{
 	    char tmp_val[80];
 
 	    /* Show full slot labels */
-	    if (OPT(show_labels))
-	    {
-		strnfmt(tmp_val, sizeof(tmp_val), "%-14s: ", mention_use(i));
-		my_strcat(items[num_obj].label, tmp_val, 
-			  sizeof(items[num_obj].label));
-	    }
-
-	    /* Otherwise only show short quiver labels */
-	    else if (i >= QUIVER_START)
-	    {
-		strnfmt(tmp_val, sizeof(tmp_val), "[f%d]: ", i - QUIVER_START);
-		my_strcat(items[num_obj].label, tmp_val, 
-			  sizeof(items[num_obj].label));
-	    }
+	    strnfmt(tmp_val, sizeof(tmp_val), "%-14s: ", mention_use(i));
+	    my_strcat(items[num_obj].label, tmp_val,
+		      sizeof(items[num_obj].label));
 	}
 
 	/* Save the object */
@@ -1303,7 +1293,7 @@ bool get_item(int *cp, const char *pmt, const char *str, cmd_code cmd, int mode)
 		}
 
 		/* There is only one item */
-		if (OPT(pickup_single) && (floor_num == 1)) 
+		if (floor_num == 1) 
 		{
 		    /* Fall through */
 		} 

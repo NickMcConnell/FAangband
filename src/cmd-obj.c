@@ -64,16 +64,14 @@ static int check_devices(object_type * o_ptr)
 
     /* Roll for usage */
     if (randint1(1000) < fail) {
-	if (OPT(flush_failure))
-	    flush();
+	flush();
 	msg("You failed to %s properly.", action);
 	return FALSE;
     }
 
     /* Notice empty staffs */
     if (what && o_ptr->pval <= 0) {
-	if (OPT(flush_failure))
-	    flush();
+	flush();
 	msg("The %s has no charges left.", what);
 	o_ptr->ident |= (IDENT_EMPTY);
 	return FALSE;

@@ -249,31 +249,6 @@ static int see_wall(int dir, int y, int x)
 }
 
 
-/**
- * Hack -- Check for an "unknown corner" (see below)
- */
-static int see_nothing(int dir, int y, int x)
-{
-    /* Get the new location */
-    y += ddy[dir];
-    x += ddx[dir];
-
-    /* Illegal grids are unknown XXX XXX XXX */
-    if (!in_bounds(y, x))
-	return (TRUE);
-
-    /* Memorized grids are always known */
-    if (cave_has(cave_info[y][x], CAVE_MARK))
-	return (FALSE);
-
-    /* Default */
-    return (TRUE);
-}
-
-
-
-
-
 /*
  * Calculates and returns the angle to the target or in the given
  * direction.
@@ -619,7 +594,6 @@ static bool run_test(void)
 
     int prev_dir;
     int new_dir;
-    int check_dir = 0;
     int left_dir;
     int right_dir;
 
@@ -875,13 +849,11 @@ static bool run_test(void)
 
 	    /* Two new (adjacent) directions (case 1) */
 	    else if (new_dir & 0x01) {
-		check_dir = cycle[chome[prev_dir] + i - 2];
 		option2 = new_dir;
 	    }
 
 	    /* Two new (adjacent) directions (case 2) */
 	    else {
-		check_dir = cycle[chome[prev_dir] + i + 1];
 		option2 = option;
 		option = new_dir;
 	    }
@@ -980,56 +952,13 @@ static bool run_test(void)
 	}
 
 	/* Two options, examining corners */
-	else if (OPT(run_use_corners) && !OPT(run_cut_corners)) 
+	else
 	{
 	    /* Primary option */
 	    p_ptr->run_cur_dir = option;
 
 	    /* Hack -- allow curving */
 	    p_ptr->run_old_dir = option2;
-	}
-
-	/* Two options, pick one */
-	else 
-	{
-	    /* Get next location */
-	    row = py + ddy[option];
-	    col = px + ddx[option];
-
-	    /* Don't see that it is closed off. */
-	    /* This could be a potential corner or an intersection. */
-	    if (!see_wall(option, row, col) || !see_wall(check_dir, row, col)) 
-	    {
-		/* Can not see anything ahead and in the direction we */
-		/* are turning, assume that it is a potential corner. */
-		if (OPT(run_use_corners) && see_nothing(option, row, col)
-		    && see_nothing(option2, row, col)) 
-		{
-		    p_ptr->run_cur_dir = option;
-		    p_ptr->run_old_dir = option2;
-		}
-
-		/* STOP: we are next to an intersection or a room */
-		else 
-		{
-		    return (TRUE);
-		}
-	    }
-
-	    /* This corner is seen to be enclosed; we cut the corner. */
-	    else if (OPT(run_cut_corners)) 
-	    {
-		p_ptr->run_cur_dir = option2;
-		p_ptr->run_old_dir = option2;
-	    }
-
-	    /* This corner is seen to be enclosed, and we */
-	    /* deliberately go the long way. */
-	    else 
-	    {
-		p_ptr->run_cur_dir = option;
-		p_ptr->run_old_dir = option2;
-	    }
 	}
     }
 

@@ -250,9 +250,6 @@ bool modify_panel(term *t, int wy, int wx)
 		/* Redraw for big graphics */
 		if ((tile_width > 1) || (tile_height > 1)) redraw_stuff(p_ptr);
       
-		/* Hack -- optional disturb on "panel change" */
-		if (OPT(disturb_panel) && !OPT(center_player)) disturb(0, 0);
-  
 		/* Changed */
 		return (TRUE);
 	}

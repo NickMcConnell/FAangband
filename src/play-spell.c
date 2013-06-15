@@ -252,8 +252,7 @@ bool spell_cast(int spell, int dir)
     if (randint0(100) < chance) {
 	failed = TRUE;
 
-	if (OPT(flush_failure))
-	    flush();
+	flush();
 	msg(magic_desc[mp_ptr->spell_realm][SPELL_FAIL]);
     }
 

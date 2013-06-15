@@ -1441,8 +1441,7 @@ bool set_recall(int v)
 	return (FALSE);
 
     /* Disturb */
-    if (OPT(disturb_state))
-	disturb(0, 0);
+    disturb(0, 0);
 
     /* Redraw status */
     p_ptr->redraw |= PR_STATUS;
@@ -2728,8 +2727,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
     /* Failure */
     if (!okay) {
 	/* Flush */
-	if (OPT(flush_failure))
-	    flush();
+	flush();
 
 	/* Message */
 	msg("The enchantment failed.");
@@ -2789,8 +2787,7 @@ bool brand_missile(int ammo_type, int brand_type)
      */
     if (artifact_p(o_ptr) || ego_item_p(o_ptr)) {
 	/* Flush */
-	if (OPT(flush_failure))
-	    flush();
+	flush();
 
 	/* Fail */
 	msg("The ammunition enchantment failed.");

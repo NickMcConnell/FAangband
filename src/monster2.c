@@ -1707,7 +1707,6 @@ void lore_treasure(int m_idx, int num_item, int num_gold)
  * or viewed directly, but old targets will remain set.   XXX XXX
  *
  * The player can choose to be disturbed by several things, including
- * disturb_move (monster which is viewable moves in some way), and
  * disturb_near (monster which is "easily" viewable moves in some
  * way).  Note that "moves" includes "appears" and "disappears".
  */
@@ -1879,10 +1878,6 @@ void update_mon(int m_idx, bool full)
 	    if (l_ptr->sights < MAX_SHORT)
 		l_ptr->sights++;
 
-	    /* Disturb on appearance */
-	    if (OPT(disturb_move) && (m_ptr->hostile == -1))
-		disturb(1, 0);
-
 	    /* Redraw stuff */
 	    p_ptr->redraw |= PR_MONLIST;
 
@@ -1903,10 +1898,6 @@ void update_mon(int m_idx, bool full)
 	    if (p_ptr->health_who == m_idx)
 		p_ptr->redraw |= (PR_HEALTH | PR_MON_MANA);
 
-	    /* Disturb on disappearance */
-	    if (OPT(disturb_move) && (m_ptr->hostile == -1))
-		disturb(1, 0);
-
 	    /* Redraw stuff */
 	    p_ptr->redraw |= PR_MONLIST;
 
@@ -1920,10 +1911,6 @@ void update_mon(int m_idx, bool full)
 	if (!(m_ptr->mflag & (MFLAG_VIEW))) {
 	    /* Mark as easily visible */
 	    m_ptr->mflag |= (MFLAG_VIEW);
-
-	    /* Disturb on appearance */
-	    if (OPT(disturb_near) && (m_ptr->hostile == -1))
-		disturb(1, 0);
 
 	    /* Re-draw monster window */
 	    p_ptr->redraw |= PR_MONLIST;

@@ -212,8 +212,7 @@ bool set_timed(int idx, int v, bool notify)
 	return FALSE;
 
     /* Disturb */
-    if (OPT(disturb_state))
-	disturb(0, 0);
+    disturb(0, 0);
 
     /* Update the visuals, as appropriate. */
     p_ptr->update |= effect->flag_update;
@@ -358,8 +357,7 @@ static bool set_stun(int v)
 	case 0:
 	    {
 		msgt(MSG_RECOVER, "You are no longer stunned.");
-		if (OPT(disturb_state))
-		    disturb(0, 0);
+		disturb(0, 0);
 		break;
 	    }
 	}
@@ -376,8 +374,7 @@ static bool set_stun(int v)
 	return (FALSE);
 
     /* Disturb */
-    if (OPT(disturb_state))
-	disturb(0, 0);
+    disturb(0, 0);
 
     /* Recalculate bonuses */
     p_ptr->update |= (PU_BONUS);
@@ -553,8 +550,7 @@ static bool set_cut(int v)
 	case 0:
 	    {
 		msgt(MSG_RECOVER, "You are no longer bleeding.");
-		if (OPT(disturb_state))
-		    disturb(0, 0);
+		disturb(0, 0);
 		break;
 	    }
 	}
@@ -571,8 +567,7 @@ static bool set_cut(int v)
 	return (FALSE);
 
     /* Disturb */
-    if (OPT(disturb_state))
-	disturb(0, 0);
+    disturb(0, 0);
 
     /* Recalculate bonuses */
     p_ptr->update |= (PU_BONUS);
@@ -778,8 +773,7 @@ bool set_food(int v)
 	return (FALSE);
 
     /* Disturb */
-    if (OPT(disturb_state))
-	disturb(0, 0);
+    disturb(0, 0);
 
     /* Recalculate bonuses */
     p_ptr->update |= (PU_BONUS);
