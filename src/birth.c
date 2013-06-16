@@ -798,17 +798,13 @@ static void recalculate_stats(int *stats, int points_left)
     /* Process stats */
     for (i = 0; i < A_MAX; i++) {
 	/* Obtain a "bonus" for "race" and "class" */
-	//int bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
 	/* Apply the racial/class bonuses */
 	p_ptr->stat_cur[i] = p_ptr->stat_max[i] = p_ptr->stat_birth[i] =
 	    stats[i];
-//modify_stat_value(stats[i], bonus);
-
     }
 
     /* Gold is inversely proportional to cost */
-    //p_ptr->au_birth = STARTING_GOLD + (50 * points_left);
     get_money();
 
     /* Update bonuses, hp, etc. */
@@ -1173,6 +1169,16 @@ void set_map(struct player *p)
 }
 
 /*
+ * Set the game modes (once were birth options)
+ */
+char *modelist;
+
+void set_modes(struct player *p)
+{
+    /* Parse modelist */
+}
+
+/*
  * Create a new character.
  *
  * Note that we may be called with "junk" leftover in the various
@@ -1263,6 +1269,9 @@ void player_birth(bool quickstart_allowed)
 	} else if (cmd->command == CMD_SET_MAP) {
 	    p_ptr->map = cmd->arg[0].choice;
 	    set_map(p_ptr);
+	} else if (cmd->command == CMD_SET_MODES) {
+	    modelist = (char *) &cmd->arg[0].choice;
+	    set_modes(p_ptr);
 	} else if (cmd->command == CMD_CHOOSE_SEX) {
 	    p_ptr->psex = cmd->arg[0].choice;
 	    player_generate(p_ptr, NULL, NULL, NULL);

@@ -288,7 +288,6 @@ static menu_type *map_menu_new(void)
     int i;
 
     region loc = { 5, 15, 70, -99 };
-    //region loc = { -65, 1, 65, -99 };
 
     /* copy across private data */
     d->selected_map = -1;
@@ -307,7 +306,6 @@ static menu_type *map_menu_new(void)
     m->browse_hook = map_menu_browser;
 
     /* set size */
-    //clear_from(0);
     loc.page_rows = MAP_MAX + 2;
     menu_layout(m, &loc);
 
@@ -341,6 +339,7 @@ static int map_menu_select(menu_type *m)
 
 static enum birth_stage get_map_command(void)
 {
+    enum birth_stage next;
     menu_type *m;
 
     m = map_menu_new();
@@ -350,23 +349,26 @@ static enum birth_stage get_map_command(void)
 	map_menu_destroy(m);
 	if (map == -1)
 	{
-	    return BIRTH_BACK;
+	    next = BIRTH_BACK;
 	}
 	else if (map == MAP_MAX)
 	{
 	    cmd_insert(CMD_QUIT);
-	    return BIRTH_COMPLETE;
+	    next = BIRTH_COMPLETE;
 	}
 	else
 	{
-	    p_ptr->map = map;
 	    cmd_insert(CMD_SET_MAP);
 	    cmd_set_arg_choice(cmd_get_top(), 0, m->cursor);
-	    return BIRTH_MODE_CHOICE;
+	    next = BIRTH_MODE_CHOICE;
 	}
     }
+    else
+    {
+	next = BIRTH_BACK;
+    }
 
-    return BIRTH_BACK;
+    return next;
 }
 
 /* ------------------------------------------------------------------------
