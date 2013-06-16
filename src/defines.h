@@ -204,6 +204,7 @@
 #define MAP_EXTENDED       1
 #define MAP_DUNGEON        2
 #define MAP_FANILLA        3
+#define MAP_MAX            4
 
 /**
  * Game modes

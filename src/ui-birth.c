@@ -115,7 +115,7 @@ static enum birth_stage get_quickstart_command(void)
 		if (ke.key.code == 'N' || ke.key.code == 'n')
 		{
 			cmd_insert(CMD_BIRTH_RESET);
-			next = BIRTH_MODE_CHOICE;
+			next = BIRTH_MAP_CHOICE;
 		}
 		else if (ke.key.code == KTRL('X'))
 		{
@@ -146,21 +146,172 @@ static enum birth_stage get_quickstart_command(void)
 /* ------------------------------------------------------------------------
  * Set the map
  * ------------------------------------------------------------------------ */
+/**
+ * Map descriptions
+ */
+const char *map_name[] = 
+{ 
+    "Default", 
+    "Extended", 
+    "Hybrid dungeon", 
+    "FAnilla dungeon" 
+};
+
+const char *map_description[] =
+{
+    "compressed",
+    "extended",
+    "dungeon",
+    "FAnilla"
+};
+
+/**
+ * Map menu data struct
+ */
+struct map_menu_data {
+    const char *maps[MAP_MAX];
+    const char *description[MAP_MAX];
+
+    int selected_map;
+};
+
+
+/**
+ * Is item oid valid?
+ */
+static int map_menu_valid(menu_type *m, int oid)
+{
+    return TRUE;
+}
+
+/**
+ * Display a row of the map menu
+ */
+static void map_menu_display(menu_type *m, int oid, bool cursor,
+			       int row, int col, int wid)
+{
+    struct map_menu_data *d = menu_priv(m);
+    int attr_name= cursor ? TERM_L_BLUE : TERM_WHITE;
+
+    /* Dump the name */
+    c_put_str(attr_name, d->maps[oid], row, col);
+}
+
+/**
+ * Handle an event on a menu row.
+ */
+static bool map_menu_handler(menu_type *m, const ui_event *e, int oid)
+{
+    struct map_menu_data *d = menu_priv(m);
+
+    if (e->type == EVT_SELECT) {
+	d->selected_map = oid;
+	return FALSE;
+    }
+
+    return TRUE;
+}
+
+/**
+ * Show map description when browsing
+ */
+static void map_menu_browser(int oid, void *data, const region *loc)
+{
+    struct map_menu_data *d = data;
+
+    /* Redirect output to the screen */
+    text_out_hook = text_out_to_screen;
+    text_out_wrap = 0;
+    text_out_indent = loc->col - 1;
+    text_out_pad = 1;
+
+    Term_gotoxy(loc->col, loc->row + loc->page_rows);
+    text_out_c(TERM_DEEP_L_BLUE, format("\n%s\n", d->description[oid]));
+
+    /* XXX */
+    text_out_pad = 0;
+    text_out_indent = 0;
+}
+
+static const menu_iter map_menu_iter = {
+    NULL,	/* get_tag = NULL, just use lowercase selections */
+    map_menu_valid, // just use NULL here?
+    map_menu_display,
+    map_menu_handler,
+    NULL	/* no resize hook */
+};
+
+/** Create and initialise the map menu */
+static menu_type *map_menu_new(void)
+{
+    menu_type *m = menu_new(MN_SKIN_SCROLL, &map_menu_iter);
+    struct map_menu_data *d = mem_alloc(sizeof *d);
+    int i;
+
+    region loc = { -65, 1, 65, -99 };
+
+    /* copy across private data */
+    d->selected_map = -1;
+    for (i = 0; i < MAP_MAX; i++)
+    {
+	d->maps[i] = map_name[i];
+	d->description[i] = map_description[i];
+    }
+
+    menu_setpriv(m, MAP_MAX, d);
+
+    /* set flags */
+    m->header = "Choose from one of the following game maps:";
+    m->flags = MN_CASELESS_TAGS;
+    m->selections = lower_case;
+    m->browse_hook = map_menu_browser;
+
+    /* set size */
+    loc.page_rows = MAP_MAX + 1;
+    menu_layout(m, &loc);
+
+    return m;
+}
+
+/** Clean up a map menu instance */
+static void map_menu_destroy(menu_type *m)
+{
+    struct map_menu_data *d = menu_priv(m);
+    mem_free(d);
+    mem_free(m);
+}
+
+/**
+ * Run the map menu to select a map.
+ */
+static int map_menu_select(menu_type *m)
+{
+    struct map_menu_data *d = menu_priv(m);
+
+    screen_save();
+    region_erase_bordered(&m->active);
+
+    menu_select(m, 0, TRUE);
+
+    screen_load();
+
+    return d->selected_map;
+}
+
 static enum birth_stage get_map_command(void)
 {
-	enum birth_stage next;
-	//ui_event ke;
+    menu_type *m;
 
-	if (1)
-	{	
-		next = BIRTH_MODE_CHOICE;
-	}
-	else
-	{
-		next = BIRTH_BACK;
-	}
+    m = map_menu_new();
+    if (m) 
+    {
+	int map = map_menu_select(m);
+	map_menu_destroy(m);
+	p_ptr->map = map;
+	return BIRTH_MODE_CHOICE;
+    }
 
-	return next;
+    return BIRTH_BACK;
 }
 
 /* ------------------------------------------------------------------------
