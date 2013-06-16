@@ -183,7 +183,7 @@ static void town_gen_hack(void)
     int last_stage = p_ptr->last_stage;
 
     int rooms[MAX_STORES_BIG + 1];
-    int per_row = ((p_ptr->map == MAP_DUNGEON) || (p_ptr->map == MAP_DUNGEON) 
+    int per_row = ((p_ptr->map == MAP_DUNGEON) || (p_ptr->map == MAP_FANILLA) 
 		   ? 5 : 4);
 
     bool place = FALSE;
