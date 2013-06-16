@@ -51,7 +51,7 @@ static struct
     { CMD_NEWGAME, { arg_NONE }, NULL, FALSE, 0 },
 
     { CMD_BIRTH_RESET, { arg_NONE }, NULL, FALSE, 0 },
-    { CMD_SET_MAP, { arg_NONE }, NULL, FALSE, 0 },
+    { CMD_SET_MAP, { arg_CHOICE }, NULL, FALSE, 0 },
     { CMD_CHOOSE_SEX, { arg_CHOICE }, NULL, FALSE, 0 },
     { CMD_CHOOSE_RACE, { arg_CHOICE }, NULL, FALSE, 0 },
     { CMD_CHOOSE_CLASS, { arg_CHOICE }, NULL, FALSE, 0 },

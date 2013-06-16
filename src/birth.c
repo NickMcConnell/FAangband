@@ -1261,6 +1261,7 @@ void player_birth(bool quickstart_allowed)
 	    do_birth_reset(quickstart_allowed, &quickstart_prev);
 	    rolled_stats = FALSE;
 	} else if (cmd->command == CMD_SET_MAP) {
+	    p_ptr->map = cmd->arg[0].choice;
 	    set_map(p_ptr);
 	} else if (cmd->command == CMD_CHOOSE_SEX) {
 	    p_ptr->psex = cmd->arg[0].choice;

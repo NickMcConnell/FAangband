@@ -361,6 +361,7 @@ static enum birth_stage get_map_command(void)
 	{
 	    p_ptr->map = map;
 	    cmd_insert(CMD_SET_MAP);
+	    cmd_set_arg_choice(cmd_get_top(), 0, m->cursor);
 	    return BIRTH_MODE_CHOICE;
 	}
     }
