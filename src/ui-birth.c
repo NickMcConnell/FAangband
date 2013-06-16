@@ -146,6 +146,39 @@ static enum birth_stage get_quickstart_command(void)
 /* ------------------------------------------------------------------------
  * Set the map
  * ------------------------------------------------------------------------ */
+#define MAP_TEXT \
+    "    *    \n" \
+    "  #{lightyellow}#{/} {lightyellow}#{/}#  \n" \
+    " #{lightgreen}#{/}{lightyellow}#{/} {lightyellow}#{/}{lightgreen}#{/}# \n" \
+    "/{lightyellow}##{/}{deeplightblue}/{/}{yellow}@{/}{deeplightblue}\\{/}{lightyellow}##{/}\\\n" \
+    "*  {yellow}@{/}{orange}@{/}{yellow}@{/}  *  Welcome to First Age Angband!\n" \
+    "\\{lightyellow}##{/}{deeplightblue}\\{/}{yellow}@{/}{deeplightblue}/{/}{lightyellow}##{/}/\n" \
+    " #{lightgreen}#{/}{lightyellow}#{/} {lightyellow}#{/}{lightgreen}#{/}# \n" \
+    "  #{lightyellow}#{/} {lightyellow}#{/}#  \n" \
+    "    *    \n\n"				     \
+    "There are four different ways of structuring\n" \
+    "the world of FAangband; these are described below."
+
+/* Show the map instructions */	
+static void print_map_instructions(void)
+{
+	/* Clear screen */
+	Term_clear();
+	
+	/* Output to the screen */
+	text_out_hook = text_out_to_screen;
+	
+	/* Indent output */
+	text_out_indent = 5;
+	Term_gotoxy(5, 1);
+	
+	/* Display some helpful information */
+	text_out_e(MAP_TEXT);
+	
+	/* Reset text_out() indentation */
+	text_out_indent = 0;
+}
+
 /**
  * Map descriptions
  */
@@ -154,23 +187,25 @@ const char *map_name[] =
     "Default", 
     "Extended", 
     "Hybrid dungeon", 
-    "FAnilla dungeon" 
+    "FAnilla dungeon",
+    "Quit"
 };
 
 const char *map_description[] =
 {
-    "compressed",
-    "extended",
-    "dungeon",
-    "FAnilla"
+    "The standard FAangband wilderness.  You will start in a town,\nand need to traverse the map to find dungeons, fighting enemies\nas you go.  Each dungeon has a guardian at the bottom.",
+    "A more extended wilderness, which was the standard up until\nversion 1.2.",
+    "Here you descend just through the dungeons of Beleriand, with\nportals at the bottom of each which will take you to the next one.\nAll guardians except the last are optional to fight.",
+    "An experience more like regular Angband, with a single town,\na single dungeon, and two quests - Sauron on level 99,\nand Morgoth on level 100.",
+    "Quit FAangband."
 };
 
 /**
  * Map menu data struct
  */
 struct map_menu_data {
-    const char *maps[MAP_MAX];
-    const char *description[MAP_MAX];
+    const char *maps[MAP_MAX + 1];
+    const char *description[MAP_MAX + 1];
 
     int selected_map;
 };
@@ -206,6 +241,10 @@ static bool map_menu_handler(menu_type *m, const ui_event *e, int oid)
 
     if (e->type == EVT_SELECT) {
 	d->selected_map = oid;
+	return FALSE;
+    }
+    else if (e->type == EVT_ESCAPE) {
+	d->selected_map = -1;
 	return FALSE;
     }
 
@@ -248,26 +287,28 @@ static menu_type *map_menu_new(void)
     struct map_menu_data *d = mem_alloc(sizeof *d);
     int i;
 
-    region loc = { -65, 1, 65, -99 };
+    region loc = { 5, 15, 70, -99 };
+    //region loc = { -65, 1, 65, -99 };
 
     /* copy across private data */
     d->selected_map = -1;
-    for (i = 0; i < MAP_MAX; i++)
+    for (i = 0; i <= MAP_MAX; i++)
     {
 	d->maps[i] = map_name[i];
 	d->description[i] = map_description[i];
     }
 
-    menu_setpriv(m, MAP_MAX, d);
+    menu_setpriv(m, MAP_MAX + 1, d);
 
     /* set flags */
-    m->header = "Choose from one of the following game maps:";
+    m->header = "Choose from one of the following game maps (or quit):";
     m->flags = MN_CASELESS_TAGS;
     m->selections = lower_case;
     m->browse_hook = map_menu_browser;
 
     /* set size */
-    loc.page_rows = MAP_MAX + 1;
+    //clear_from(0);
+    loc.page_rows = MAP_MAX + 2;
     menu_layout(m, &loc);
 
     return m;
@@ -307,8 +348,20 @@ static enum birth_stage get_map_command(void)
     {
 	int map = map_menu_select(m);
 	map_menu_destroy(m);
-	p_ptr->map = map;
-	return BIRTH_MODE_CHOICE;
+	if (map == -1)
+	{
+	    return BIRTH_BACK;
+	}
+	else if (map == MAP_MAX)
+	{
+	    cmd_insert(CMD_QUIT);
+	    return BIRTH_COMPLETE;
+	}
+	else
+	{
+	    p_ptr->map = map;
+	    return BIRTH_MODE_CHOICE;
+	}
     }
 
     return BIRTH_BACK;
@@ -1081,13 +1134,18 @@ errr get_birth_command(bool wait)
 
 		case BIRTH_MAP_CHOICE:
 		{
+			print_map_instructions();
 			next = get_map_command();
+			if (next == BIRTH_BACK)
+				next = current_stage - 1;
 			break;
 		}
 
 		case BIRTH_MODE_CHOICE:
 		{
 			next = get_mode_command();
+			if (next == BIRTH_BACK)
+				next = current_stage - 1;
 			break;
 		}
 

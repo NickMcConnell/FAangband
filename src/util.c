@@ -1326,10 +1326,10 @@ void text_out_e(const char *fmt, ...)
 
 		if (tag)
 		{
-			char tagbuffer[11];
+			char tagbuffer[15];
 
 			/* Colour names are less than 11 characters long. */
-			assert(taglen < 11);
+			assert(taglen < 15);
 
 			memcpy(tagbuffer, tag, taglen);
 			tagbuffer[taglen] = '\0';

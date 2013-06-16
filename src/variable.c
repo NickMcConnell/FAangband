@@ -244,28 +244,28 @@ color_type color_table[MAX_COLORS] =
     {'u', "Umber", {7, 1, 7, TERM_L_DARK, TERM_L_UMBER, TERM_L_DARK,
 		    TERM_L_UMBER, TERM_L_UMBER, TERM_UMBER}},
 
-    {'D', "Light Dark", {8, 1, 8, TERM_L_DARK, TERM_SLATE, TERM_L_DARK,
+    {'D', "LightDark", {8, 1, 8, TERM_L_DARK, TERM_SLATE, TERM_L_DARK,
 			 TERM_WHITE, TERM_SLATE, TERM_L_DARK}},
 
-    {'W', "Light Slate", {9, 1, 9, TERM_L_WHITE, TERM_WHITE, TERM_SLATE,
+    {'W', "LightSlate", {9, 1, 9, TERM_L_WHITE, TERM_WHITE, TERM_SLATE,
 			  TERM_SLATE, TERM_WHITE, TERM_SLATE}},
 
-    {'P', "Light Purple", {10, 1, 10, TERM_SLATE, TERM_YELLOW, TERM_SLATE,
+    {'P', "LightPurple", {10, 1, 10, TERM_SLATE, TERM_YELLOW, TERM_SLATE,
 			   TERM_PURPLE, TERM_YELLOW, TERM_L_PURPLE}},
 
     {'y', "Yellow", {11, 1, 11, TERM_L_WHITE, TERM_L_YELLOW, TERM_L_WHITE,
 		     TERM_ORANGE, TERM_WHITE, TERM_YELLOW}},
 
-    {'R', "Light Red", {12, 1, 12, TERM_L_WHITE, TERM_YELLOW, TERM_RED,
+    {'R', "LightRed", {12, 1, 12, TERM_L_WHITE, TERM_YELLOW, TERM_RED,
 			TERM_RED, TERM_YELLOW, TERM_L_RED}},
 
-    {'G', "Light Green", {13, 1, 13, TERM_L_WHITE, TERM_YELLOW, TERM_GREEN,
+    {'G', "LightGreen", {13, 1, 13, TERM_L_WHITE, TERM_YELLOW, TERM_GREEN,
 			  TERM_GREEN, TERM_YELLOW, TERM_L_GREEN}},
 
-    {'B', "Light Blue", {14, 1, 14, TERM_L_WHITE, TERM_YELLOW, TERM_BLUE,
+    {'B', "LightBlue", {14, 1, 14, TERM_L_WHITE, TERM_YELLOW, TERM_BLUE,
 			 TERM_BLUE, TERM_YELLOW, TERM_L_BLUE}},
 
-    {'U', "Light Umber", {15, 1, 15, TERM_L_WHITE, TERM_YELLOW, TERM_UMBER,
+    {'U', "LightUmber", {15, 1, 15, TERM_L_WHITE, TERM_YELLOW, TERM_UMBER,
 			  TERM_UMBER, TERM_YELLOW, TERM_L_UMBER}},
 
     /* "new" colors */
@@ -281,28 +281,28 @@ color_type color_table[MAX_COLORS] =
     {'m', "Mud", {19, 1, 5, TERM_SLATE, TERM_MUSTARD, TERM_SLATE,
 		  TERM_MUSTARD, TERM_MUSTARD, TERM_UMBER}},
 
-    {'Y', "Light Yellow", {20, 1, 11, TERM_WHITE, TERM_WHITE, TERM_YELLOW,
+    {'Y', "LightYellow", {20, 1, 11, TERM_WHITE, TERM_WHITE, TERM_YELLOW,
 			   TERM_ORANGE, TERM_WHITE, TERM_L_YELLOW}},
 
     {'i', "Magenta-Pink", {21, 1, 12, TERM_SLATE, TERM_L_PINK, TERM_RED,
 			   TERM_L_PINK, TERM_L_PINK, TERM_L_PURPLE}},
 
-    {'T', "Light Teal", {22, 1, 14, TERM_L_WHITE, TERM_YELLOW, TERM_TEAL,
+    {'T', "LightTeal", {22, 1, 14, TERM_L_WHITE, TERM_YELLOW, TERM_TEAL,
 			 TERM_TEAL, TERM_YELLOW, TERM_L_BLUE}},
 
-    {'V', "Light Violet", {23, 1, 10, TERM_L_WHITE, TERM_YELLOW, TERM_VIOLET,
+    {'V', "LightViolet", {23, 1, 10, TERM_L_WHITE, TERM_YELLOW, TERM_VIOLET,
 			   TERM_VIOLET, TERM_YELLOW, TERM_L_PURPLE}},
 
-    {'I', "Light Pink", {24, 1, 12, TERM_L_WHITE, TERM_YELLOW, TERM_MAGENTA,
+    {'I', "LightPink", {24, 1, 12, TERM_L_WHITE, TERM_YELLOW, TERM_MAGENTA,
 			 TERM_MAGENTA, TERM_YELLOW, TERM_L_PURPLE}},
 
     {'M', "Mustard", {25, 1, 11, TERM_SLATE, TERM_YELLOW, TERM_SLATE,
 		      TERM_MUD, TERM_YELLOW, TERM_YELLOW}},
 
-    {'z', "Blue Slate",  {26, 1, 9, TERM_SLATE, TERM_DEEP_L_BLUE, TERM_SLATE,
+    {'z', "BlueSlate",  {26, 1, 9, TERM_SLATE, TERM_DEEP_L_BLUE, TERM_SLATE,
 			  TERM_DEEP_L_BLUE, TERM_DEEP_L_BLUE, TERM_L_WHITE}},
 
-    {'Z', "Deep Light Blue", {27, 1, 14, TERM_L_WHITE, TERM_L_BLUE, 
+    {'Z', "DeepLightBlue", {27, 1, 14, TERM_L_WHITE, TERM_L_BLUE, 
 			      TERM_BLUE_SLATE, TERM_BLUE_SLATE, TERM_L_BLUE, 
 			      TERM_L_BLUE}},
 
