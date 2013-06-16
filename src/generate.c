@@ -195,11 +195,11 @@ static void town_gen_hack(void)
 	if (stage == towns[i])
 	    Rand_value = seed_town[i];
 
-    if (p_ptr->map_mode == MAP_MODE_DUNGEON)
+    if (p_ptr->map == MAP_DUNGEON)
 	Rand_value = seed_town[0];
 
     /* Set major town flag if necessary */
-    if ((stage > GLADDEN_FIELDS_TOWN) || (p_ptr->map_mode == MAP_MODE_DUNGEON))
+    if ((stage > GLADDEN_FIELDS_TOWN) || (p_ptr->map == MAP_DUNGEON))
 	major = TRUE;
 
     /* Hack - reduce width for minor towns */
@@ -218,7 +218,7 @@ static void town_gen_hack(void)
 	n = 4;
     }
 
-    if (p_ptr->map_mode == MAP_MODE_DUNGEON)
+    if (p_ptr->map == MAP_DUNGEON)
 	rooms[n++] = 9;
 
     /* No stores for ironmen away from home */
@@ -226,7 +226,7 @@ static void town_gen_hack(void)
 	/* Place two rows of stores */
 	for (y = 0; y < 2; y++) {
 	    /* Place two, four or five stores per row */
-	    for (x = 0; x < (p_ptr->map_mode == MAP_MODE_DUNGEON ? 5 : 4); x++)
+	    for (x = 0; x < (p_ptr->map == MAP_DUNGEON ? 5 : 4); x++)
 	    {
 		/* Pick a random unplaced store */
 		k = ((n <= 1) ? 0 : randint0(n));
@@ -243,11 +243,11 @@ static void town_gen_hack(void)
 	    }
 	}
 	/* Hack -- Build the 9th store.  Taken from Zangband */
-	if (major && (p_ptr->map_mode != MAP_MODE_DUNGEON))
+	if (major && (p_ptr->map != MAP_DUNGEON))
 	    build_store(rooms[0], randint0(2), 4, stage);
     }
 
-    if (p_ptr->map_mode == MAP_MODE_DUNGEON) {
+    if (p_ptr->map == MAP_DUNGEON) {
 	/* Place the stairs */
 	while (TRUE) {
 	    feature_type *f_ptr;
@@ -364,7 +364,7 @@ static void town_gen(void)
     bool dummy;
 
     /* Hack - smaller for minor towns */
-    if ((stage < KHAZAD_DUM_TOWN) && (p_ptr->map_mode != MAP_MODE_DUNGEON))
+    if ((stage < KHAZAD_DUM_TOWN) && (p_ptr->map != MAP_DUNGEON))
 	width /= 2;
 
     /* Day time */

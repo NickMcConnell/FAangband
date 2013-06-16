@@ -1487,14 +1487,14 @@ int rd_dungeon(u32b version)
     /*** Basic info ***/
   
     /* Hack - rewrite stage_map if necessary */
-    if (p_ptr->map_mode == MAP_MODE_DUNGEON)
+    if (p_ptr->map == MAP_DUNGEON)
     {
 	for (i = 0; i < NUM_STAGES; i++)
 	    for (n = 0; n < 9; n++)
 		stage_map[i][n] = dungeon_map[i][n];
     }
 
-    else if (p_ptr->map_mode == MAP_MODE_COMPRESSED)
+    else if (p_ptr->map == MAP_COMPRESSED)
     {
 	for (i = 0; i < NUM_STAGES; i++)
 	    for (n = 0; n < 9; n++)
@@ -1503,14 +1503,14 @@ int rd_dungeon(u32b version)
 	for (i = 0; i < NUM_TOWNS; i++)
 	    towns[i] = compressed_towns[i];
     }
-    else if (p_ptr->map_mode == MAP_MODE_EXTENDED)
+    else if (p_ptr->map == MAP_EXTENDED)
     {
 	for (i = 0; i < NUM_STAGES; i++)
 	    for (n = 0; n < 9; n++)
 		stage_map[i][n] = extended_map[i][n];
 
     }
-    else if (p_ptr->map_mode == MAP_MODE_FANILLA)
+    else if (p_ptr->map == MAP_FANILLA)
     {
 	for (i = 0; i < NUM_STAGES; i++)
 	    for (n = 0; n < 9; n++)

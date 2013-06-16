@@ -329,7 +329,7 @@ static void get_level(struct player *p)
 
     /* Check if they're an "advanced race" */
     if ((rp_ptr->start_lev - 1) && !MODE(THRALL) && 
-	(p_ptr->map_mode != MAP_MODE_DUNGEON)) {
+	(p_ptr->map != MAP_DUNGEON)) {
 	/* Add the experience */
 	p->exp = player_exp[rp_ptr->start_lev - 2];
 	p->max_exp = player_exp[rp_ptr->start_lev - 2];
@@ -351,9 +351,9 @@ static void get_level(struct player *p)
     /* Set home town */
     if (MODE(THRALL))
 	p->home = 0;
-    else if (p_ptr->map_mode == MAP_MODE_DUNGEON)
+    else if (p_ptr->map == MAP_DUNGEON)
 	p->home = 1;
-    else if (p_ptr->map_mode == MAP_MODE_COMPRESSED)
+    else if (p_ptr->map == MAP_COMPRESSED)
 	p->home = compressed_towns[rp_ptr->hometown];
     else
 	p->home = towns[rp_ptr->hometown];
@@ -672,7 +672,7 @@ static void player_outfit(struct player *p)
 	    i_ptr->origin = ORIGIN_BIRTH;
 
 	    /* Nasty hack for "advanced" races -NRM- */
-	    if ((!MODE(THRALL)) && (p_ptr->map_mode != MAP_MODE_DUNGEON))
+	    if ((!MODE(THRALL)) && (p_ptr->map != MAP_DUNGEON))
 		object_upgrade(i_ptr);
 
 	    object_aware(i_ptr);
@@ -1067,7 +1067,7 @@ void set_map(struct player *p)
 {
     int i, j;
     /* Set map, quests */
-    if (p->map_mode == MAP_MODE_EXTENDED) 
+    if (p->map == MAP_EXTENDED) 
     {
 	for (i = 0; i < NUM_STAGES; i++)
 	    for (j = 0; j < 9; j++)
@@ -1088,7 +1088,7 @@ void set_map(struct player *p)
 	/* Morgoth */
 	q_list[4].stage = 384;
     }
-    else if (p->map_mode == MAP_MODE_DUNGEON) 
+    else if (p->map == MAP_DUNGEON) 
     {
 	for (i = 0; i < NUM_STAGES; i++)
 	    for (j = 0; j < 9; j++)
@@ -1109,7 +1109,7 @@ void set_map(struct player *p)
 	/* Morgoth */
 	q_list[4].stage = 101;
     }
-    else if (p->map_mode == MAP_MODE_FANILLA) 
+    else if (p->map == MAP_FANILLA) 
     {
 	for (i = 0; i < NUM_STAGES; i++)
 	    for (j = 0; j < 9; j++)
@@ -1130,7 +1130,7 @@ void set_map(struct player *p)
 	/* Morgoth */
 	q_list[4].stage = 101;
     }
-    else if (p->map_mode == MAP_MODE_COMPRESSED) 
+    else if (p->map == MAP_COMPRESSED) 
     {
 	int i;
 	for (i = 0; i < NUM_TOWNS; i++)

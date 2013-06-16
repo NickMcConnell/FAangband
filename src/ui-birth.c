@@ -245,7 +245,7 @@ static void race_help(int i, void *db, const region *l)
 	}
 	
 	text_out_e("Hit die: %d\n", p_info[i].r_mhp);
-	if (p_ptr->map_mode != MAP_MODE_DUNGEON)
+	if (p_ptr->map != MAP_DUNGEON)
 	  {
 	    text_out_e("Difficulty: Level %d\n", p_info[i].difficulty);
       

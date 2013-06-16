@@ -481,7 +481,7 @@ static void death_knowledge(void)
     store_type *st_ptr = NULL;
 
     /* Get the store number of the home */
-    if (p_ptr->map_mode == MAP_MODE_DUNGEON)
+    if (p_ptr->map == MAP_DUNGEON)
 	which = NUM_TOWNS_SMALL * 4 + STORE_HOME;
     else {
 	for (i = 0; i < NUM_TOWNS; i++) {
@@ -569,7 +569,7 @@ static void death_info(const char *title, int row)
     bool done = FALSE;
 
     /* Get the store number of the home */
-    if (p_ptr->map_mode == MAP_MODE_DUNGEON)
+    if (p_ptr->map == MAP_DUNGEON)
 	which = NUM_TOWNS_SMALL * 4 + STORE_HOME;
     else {
 	for (i = 0; i < NUM_TOWNS; i++) {

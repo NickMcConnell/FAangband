@@ -2361,9 +2361,9 @@ void play_game(void)
 	/* Start in home town - or on the stairs to Angband */
 	if (MODE(THRALL))
 	{
-	    if (p_ptr->map_mode == MAP_MODE_DUNGEON)
+	    if (p_ptr->map == MAP_DUNGEON)
 		p_ptr->stage = 87;
-	    else if (p_ptr->map_mode == MAP_MODE_COMPRESSED)
+	    else if (p_ptr->map == MAP_COMPRESSED)
 		p_ptr->stage = 70;
 	    else
 		p_ptr->stage = 135;

@@ -878,7 +878,7 @@ extern int make_dump(char_attr_line * line, int mode)
 
     /* Get the store number of the home */
     if (have_home) {
-	if (p_ptr->map_mode == MAP_MODE_DUNGEON)
+	if (p_ptr->map == MAP_DUNGEON)
 	    which = NUM_TOWNS_SMALL * 4 + STORE_HOME;
 	else {
 	    for (k = 0; k < NUM_TOWNS; k++) {

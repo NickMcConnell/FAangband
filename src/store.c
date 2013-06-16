@@ -2913,7 +2913,7 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
     /* Oops */
     if (which == MAX_STORES) 
     {
-	if (p_ptr->map_mode == MAP_MODE_DUNGEON) 
+	if (p_ptr->map == MAP_DUNGEON) 
 	{
 	    if (f_ptr->shopnum == STORE_MERCH)
 		which = 0;

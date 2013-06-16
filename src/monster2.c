@@ -4598,13 +4598,13 @@ void monster_death(int m_idx)
 	build_quest_stairs(y, x, "staircase");
 
     /* ...or a portal for ironmen wilderness games */
-    else if (MODE(IRONMAN) && (p_ptr->map_mode != MAP_MODE_DUNGEON) && 
+    else if (MODE(IRONMAN) && (p_ptr->map != MAP_DUNGEON) && 
 	     (p_ptr->depth != 100))
 	build_quest_stairs(y, x, "portal");
 
     /* or a path out of Nan Dungortheb for wilderness games */
     else if ((r_ptr->level == 70) && (p_ptr->depth == 70)
-	     && (p_ptr->map_mode != MAP_MODE_DUNGEON)) {
+	     && (p_ptr->map != MAP_DUNGEON)) {
 	/* Make a path */
 	for (y = p_ptr->py; y < DUNGEON_HGT - 2; y++)
 	    cave_set_feat(y, p_ptr->px, FEAT_ROAD);

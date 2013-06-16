@@ -203,7 +203,7 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
     if (pstair == FEAT_LESS)
     {
 	/* Magical portal for dungeon-only games */
-	if ((p_ptr->map_mode == MAP_MODE_DUNGEON) && (p_ptr->depth != 1)
+	if ((p_ptr->map == MAP_DUNGEON) && (p_ptr->depth != 1)
 	    && ((stage_map[p_ptr->stage][LOCALITY]) !=
 		(stage_map[stage_map[p_ptr->stage][UP]][LOCALITY])))
 	{
@@ -234,7 +234,7 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
     else if (pstair == FEAT_LESS_SHAFT)
     {
 	/* Magical portal for dungeon-only games */
-	if ((p_ptr->map_mode == MAP_MODE_DUNGEON) && (p_ptr->depth != 2)
+	if ((p_ptr->map == MAP_DUNGEON) && (p_ptr->depth != 2)
 	    && ((stage_map[p_ptr->stage][LOCALITY]) !=
 		(stage_map[stage_map[stage_map[p_ptr->stage][UP]][UP]]
 		 [LOCALITY])))
@@ -352,7 +352,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
     }
 
     /* Handle ironman */
-    if (MODE(IRONMAN) && !p_ptr->depth && (p_ptr->map_mode != MAP_MODE_DUNGEON))
+    if (MODE(IRONMAN) && !p_ptr->depth && (p_ptr->map != MAP_DUNGEON))
     {
 	int j, other;
 	int next = stage_map[p_ptr->stage][path_data[i].direction];
@@ -386,7 +386,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 
 	/* Magical portal for ironman */
 	if (MODE(IRONMAN) && !stage_map[p_ptr->stage][DOWN]
-	    && (p_ptr->map_mode != MAP_MODE_DUNGEON)) 
+	    && (p_ptr->map != MAP_DUNGEON)) 
 	{
 	    /* Get choice */
 	    if (!jump_menu(p_ptr->depth + 1, &location))
@@ -408,7 +408,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 	}
 
 	/* Magical portal for dungeon-only games */
-	if ((p_ptr->map_mode == MAP_MODE_DUNGEON) && (p_ptr->depth)
+	if ((p_ptr->map == MAP_DUNGEON) && (p_ptr->depth)
 	    && ((stage_map[p_ptr->stage][LOCALITY]) !=
 		(stage_map[stage_map[p_ptr->stage][DOWN]][LOCALITY]))) {
 	    /* Land properly */
@@ -441,7 +441,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
     else if (pstair == FEAT_MORE_SHAFT)
     {
 	/* Magical portal for dungeon-only games */
-	if ((p_ptr->map_mode == MAP_MODE_DUNGEON)
+	if ((p_ptr->map == MAP_DUNGEON)
 	    && ((stage_map[p_ptr->stage][LOCALITY]) !=
 		(stage_map[stage_map[stage_map[p_ptr->stage][DOWN]][DOWN]]
 		 [LOCALITY]))) {
@@ -518,7 +518,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
     p_ptr->depth = stage_map[p_ptr->stage][DEPTH];
 
     /* Check for quests */
-    if ((p_ptr->map_mode == MAP_MODE_DUNGEON) && is_quest(p_ptr->stage) && 
+    if ((p_ptr->map == MAP_DUNGEON) && is_quest(p_ptr->stage) && 
 	(p_ptr->depth < 100)) 
     {
 	int i;

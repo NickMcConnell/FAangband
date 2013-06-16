@@ -200,10 +200,10 @@
 /**
  * Map modes
  */
-#define MAP_MODE_COMPRESSED     0
-#define MAP_MODE_EXTENDED       1
-#define MAP_MODE_DUNGEON        2
-#define MAP_MODE_FANILLA        3
+#define MAP_COMPRESSED     0
+#define MAP_EXTENDED       1
+#define MAP_DUNGEON        2
+#define MAP_FANILLA        3
 
 /**
  * Game modes
@@ -2525,18 +2525,18 @@ extern int PlayerUID;
 #define STAGE_TYPE             8
 
 /* Special stage numbers */
-#define ERIADOR_TOWN           (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 5 : 6)
-#define OSSIRIAND_TOWN         (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 20 : 30)
-#define ERED_LUIN_SOUTH_TOWN   (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 24 : 37)
-#define TAUR_IM_DUINATH_TOWN   (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 27 : 44)
-#define EPHEL_BRANDIR_TOWN     (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 59 : 115)
-#define GLADDEN_FIELDS_TOWN    (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 79 : 150)
-#define KHAZAD_DUM_TOWN        (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 80 : 151)
-#define BELEGOST_TOWN          (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 81 : 152)
-#define MENEGROTH_TOWN         (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 82 : 153)
-#define GONDOLIN_TOWN          (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 83 : 154)
-#define UNDERWORLD_STAGE       (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 84 : 255)
-#define MOUNTAINTOP_STAGE      (p_ptr->map_mode==MAP_MODE_COMPRESSED ? 85 : 256)
+#define ERIADOR_TOWN           (p_ptr->map == MAP_COMPRESSED ? 5 : 6)
+#define OSSIRIAND_TOWN         (p_ptr->map == MAP_COMPRESSED ? 20 : 30)
+#define ERED_LUIN_SOUTH_TOWN   (p_ptr->map == MAP_COMPRESSED ? 24 : 37)
+#define TAUR_IM_DUINATH_TOWN   (p_ptr->map == MAP_COMPRESSED ? 27 : 44)
+#define EPHEL_BRANDIR_TOWN     (p_ptr->map == MAP_COMPRESSED ? 59 : 115)
+#define GLADDEN_FIELDS_TOWN    (p_ptr->map == MAP_COMPRESSED ? 79 : 150)
+#define KHAZAD_DUM_TOWN        (p_ptr->map == MAP_COMPRESSED ? 80 : 151)
+#define BELEGOST_TOWN          (p_ptr->map == MAP_COMPRESSED ? 81 : 152)
+#define MENEGROTH_TOWN         (p_ptr->map == MAP_COMPRESSED ? 82 : 153)
+#define GONDOLIN_TOWN          (p_ptr->map == MAP_COMPRESSED ? 83 : 154)
+#define UNDERWORLD_STAGE       (p_ptr->map == MAP_COMPRESSED ? 84 : 255)
+#define MOUNTAINTOP_STAGE      (p_ptr->map == MAP_COMPRESSED ? 85 : 256)
 
 
 /*
