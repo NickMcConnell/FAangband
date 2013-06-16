@@ -1516,6 +1516,16 @@ int rd_dungeon(u32b version)
 	    for (n = 0; n < 9; n++)
 		stage_map[i][n] = fanilla_map[i][n];
 
+	/* Hack of the year */
+	for (i = 0; i < z_info->r_max; i++)
+	{
+	    monster_race *r_ptr = &r_info[i];
+
+	    /* In ths mode, Sauron and his forms need to be level 99 */
+	    if (rf_has(r_ptr->flags, RF_GAURHOTH) && (r_ptr->level == 85))
+		r_info[i].level = 99;
+	}
+		
     }
 
 

@@ -186,8 +186,9 @@ void place_random_stairs(int y, int x)
     {
 	place_down_stairs(y, x);
     } 
-    else if ((p_ptr->map == MAP_DUNGEON) && 
-	     !stage_map[p_ptr->stage][DOWN]) {
+    else if (((p_ptr->map == MAP_DUNGEON) || (p_ptr->map == MAP_FANILLA)) 
+	     && !stage_map[p_ptr->stage][DOWN]) 
+    {
 	place_up_stairs(y, x);
     } 
     else if (randint0(100) < 50) 

@@ -549,21 +549,24 @@ s16b get_mon_num(int level)
 		continue;
 
 	    /* Hack - handle dungeon specific -NRM- */
-	    if ((rf_has(r_ptr->flags, RF_RUDH))
-		&& (stage_map[p_ptr->stage][LOCALITY] != AMON_RUDH))
-		continue;
-
-	    if ((rf_has(r_ptr->flags, RF_NARGOTHROND))
-		&& (stage_map[p_ptr->stage][LOCALITY] != NARGOTHROND))
-		continue;
-
-	    if ((rf_has(r_ptr->flags, RF_DUNGORTHEB))
-		&& (stage_map[p_ptr->stage][LOCALITY] != NAN_DUNGORTHEB))
-		continue;
-
-	    if ((rf_has(r_ptr->flags, RF_GAURHOTH))
-		&& (stage_map[p_ptr->stage][LOCALITY] != TOL_IN_GAURHOTH))
-		continue;
+	    if (p_ptr->map != MAP_FANILLA)
+	    {
+		if ((rf_has(r_ptr->flags, RF_RUDH))
+		    && (stage_map[p_ptr->stage][LOCALITY] != AMON_RUDH))
+		    continue;
+		
+		if ((rf_has(r_ptr->flags, RF_NARGOTHROND))
+		    && (stage_map[p_ptr->stage][LOCALITY] != NARGOTHROND))
+		    continue;
+		
+		if ((rf_has(r_ptr->flags, RF_DUNGORTHEB))
+		    && (stage_map[p_ptr->stage][LOCALITY] != NAN_DUNGORTHEB))
+		    continue;
+		
+		if ((rf_has(r_ptr->flags, RF_GAURHOTH))
+		    && (stage_map[p_ptr->stage][LOCALITY] != TOL_IN_GAURHOTH))
+		    continue;
+	    }
 
 	    if ((rf_has(r_ptr->flags, RF_ANGBAND))
 		&& (stage_map[p_ptr->stage][LOCALITY] != ANGBAND))
@@ -4599,12 +4602,13 @@ void monster_death(int m_idx)
 
     /* ...or a portal for ironmen wilderness games */
     else if (MODE(IRONMAN) && (p_ptr->map != MAP_DUNGEON) && 
-	     (p_ptr->depth != 100))
+	     (p_ptr->map != MAP_FANILLA) && (p_ptr->depth != 100))
 	build_quest_stairs(y, x, "portal");
 
     /* or a path out of Nan Dungortheb for wilderness games */
     else if ((r_ptr->level == 70) && (p_ptr->depth == 70)
-	     && (p_ptr->map != MAP_DUNGEON)) {
+	     && (p_ptr->map != MAP_DUNGEON) && (p_ptr->map != MAP_FANILLA)) 
+    {
 	/* Make a path */
 	for (y = p_ptr->py; y < DUNGEON_HGT - 2; y++)
 	    cave_set_feat(y, p_ptr->px, FEAT_ROAD);

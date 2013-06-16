@@ -360,6 +360,7 @@ static enum birth_stage get_map_command(void)
 	else
 	{
 	    p_ptr->map = map;
+	    cmd_insert(CMD_SET_MAP);
 	    return BIRTH_MODE_CHOICE;
 	}
     }
@@ -470,7 +471,7 @@ static void race_help(int i, void *db, const region *l)
 	}
 	
 	text_out_e("Hit die: %d\n", p_info[i].r_mhp);
-	if (p_ptr->map != MAP_DUNGEON)
+	if ((p_ptr->map != MAP_DUNGEON) && (p_ptr->map != MAP_FANILLA))
 	  {
 	    text_out_e("Difficulty: Level %d\n", p_info[i].difficulty);
       
@@ -1120,7 +1121,7 @@ errr get_birth_command(bool wait)
 			if (quickstart_allowed)
 				next = BIRTH_QUICKSTART;
 			else
-				next = BIRTH_SEX_CHOICE;
+				next = BIRTH_MAP_CHOICE;
 
 			break;
 		}

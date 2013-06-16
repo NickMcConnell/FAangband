@@ -1333,7 +1333,8 @@ bool recall_menu(void)
     ui_event evt = { 0 };
     int cursor = 0;
     int num_entries;
-    int num_poss = (p_ptr->map == MAP_DUNGEON) ? 1 : 4;
+    int num_poss = (p_ptr->map == MAP_DUNGEON) || (p_ptr->map == MAP_FANILLA) 
+	? 1 : 4;
 
     int i;
 

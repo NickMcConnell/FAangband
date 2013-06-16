@@ -1485,7 +1485,7 @@ void display_map(int *cy, int *cx)
     dungeon_hgt = (p_ptr->depth ? DUNGEON_HGT : 2 * DUNGEON_HGT / 3);
     dungeon_wid = (p_ptr->depth ? DUNGEON_WID : 2 * DUNGEON_WID / 3);
     if (!(p_ptr->depth) && (p_ptr->stage < KHAZAD_DUM_TOWN) && 
-	(p_ptr->map != MAP_DUNGEON))
+	(p_ptr->map != MAP_DUNGEON) && (p_ptr->map != MAP_FANILLA))
 	dungeon_wid = DUNGEON_WID / 2;
     top_row = (p_ptr->depth ? 0 : DUNGEON_HGT / 3);
     left_col = (p_ptr->depth ? 0 : DUNGEON_WID / 3);

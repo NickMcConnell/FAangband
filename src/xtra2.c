@@ -204,7 +204,8 @@ void lose_exp(s32b amount)
 void town_adjust(int *dungeon_hgt, int *dungeon_wid)
 {
     bool small_town = ((p_ptr->stage < KHAZAD_DUM_TOWN) && 
-		       (p_ptr->map != MAP_DUNGEON));
+		       (p_ptr->map != MAP_DUNGEON) && 
+		       (p_ptr->map != MAP_FANILLA));
 
     (*dungeon_hgt) /= 3;
     (*dungeon_wid) /= (small_town ? 6 : 3);

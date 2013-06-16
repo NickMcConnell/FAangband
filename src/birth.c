@@ -329,7 +329,8 @@ static void get_level(struct player *p)
 
     /* Check if they're an "advanced race" */
     if ((rp_ptr->start_lev - 1) && !MODE(THRALL) && 
-	(p_ptr->map != MAP_DUNGEON)) {
+	(p_ptr->map != MAP_DUNGEON) && (p_ptr->map != MAP_FANILLA)) 
+    {
 	/* Add the experience */
 	p->exp = player_exp[rp_ptr->start_lev - 2];
 	p->max_exp = player_exp[rp_ptr->start_lev - 2];
@@ -337,8 +338,10 @@ static void get_level(struct player *p)
 	/* Set the level */
 	p->lev = rp_ptr->start_lev;
 	p->max_lev = rp_ptr->start_lev;
-    } else {			/* Paranoia */
-
+    } 
+    /* Paranoia */
+    else 
+    {			
 	/* Add the experience */
 	p->exp = 0;
 	p->max_exp = 0;
@@ -351,7 +354,7 @@ static void get_level(struct player *p)
     /* Set home town */
     if (MODE(THRALL))
 	p->home = 0;
-    else if (p_ptr->map == MAP_DUNGEON)
+    else if ((p_ptr->map == MAP_DUNGEON) || (p_ptr->map == MAP_FANILLA))
 	p->home = 1;
     else if (p_ptr->map == MAP_COMPRESSED)
 	p->home = compressed_towns[rp_ptr->hometown];
@@ -672,7 +675,8 @@ static void player_outfit(struct player *p)
 	    i_ptr->origin = ORIGIN_BIRTH;
 
 	    /* Nasty hack for "advanced" races -NRM- */
-	    if ((!MODE(THRALL)) && (p_ptr->map != MAP_DUNGEON))
+	    if ((!MODE(THRALL)) && (p_ptr->map != MAP_DUNGEON)
+		&& (p_ptr->map != MAP_FANILLA))
 		object_upgrade(i_ptr);
 
 	    object_aware(i_ptr);
@@ -1125,8 +1129,18 @@ void set_map(struct player *p)
 	q_list[2].stage = 0;
 
 	/* Sauron */
-	q_list[3].stage = 0;
+	q_list[3].stage = 100;
 
+	/* Hack of the year */
+	for (i = 0; i < z_info->r_max; i++)
+	{
+	    monster_race *r_ptr = &r_info[i];
+
+	    /* In ths mode, Sauron and his forms need to be level 99 */
+	    if (rf_has(r_ptr->flags, RF_GAURHOTH) && (r_ptr->level == 85))
+		r_info[i].level = 99;
+	}
+		
 	/* Morgoth */
 	q_list[4].stage = 101;
     }
@@ -1246,7 +1260,7 @@ void player_birth(bool quickstart_allowed)
 	    reset_stats(stats, points_spent, &points_left);
 	    do_birth_reset(quickstart_allowed, &quickstart_prev);
 	    rolled_stats = FALSE;
-	} else if (cmd->command == CMD_CHOOSE_MODE) {
+	} else if (cmd->command == CMD_SET_MAP) {
 	    set_map(p_ptr);
 	} else if (cmd->command == CMD_CHOOSE_SEX) {
 	    p_ptr->psex = cmd->arg[0].choice;

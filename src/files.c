@@ -877,24 +877,27 @@ extern int make_dump(char_attr_line * line, int mode)
     bool have_home = (p_ptr->home != 0);
 
     /* Get the store number of the home */
-    if (have_home) {
-	if (p_ptr->map == MAP_DUNGEON)
+    if (have_home) 
+    {
+	if ((p_ptr->map == MAP_DUNGEON) || (p_ptr->map == MAP_FANILLA))
 	    which = NUM_TOWNS_SMALL * 4 + STORE_HOME;
-	else {
-	    for (k = 0; k < NUM_TOWNS; k++) {
+	else 
+	{
+	    for (k = 0; k < NUM_TOWNS; k++) 
+	    {
 		/* Found the town */
-		if (p_ptr->home == towns[k]) {
+		if (p_ptr->home == towns[k]) 
+		{
 		    which += (k < NUM_TOWNS_SMALL ? 3 : STORE_HOME);
 		    break;
 		}
 		/* Next town */
 		else
-		    which +=
-			(k <
-			 NUM_TOWNS_SMALL ? MAX_STORES_SMALL : MAX_STORES_BIG);
+		    which += (k < NUM_TOWNS_SMALL ? MAX_STORES_SMALL : 
+			      MAX_STORES_BIG);
 	    }
 	}
-
+	
 	/* Activate the store */
 	st_ptr = &store[which];
     }

@@ -352,7 +352,8 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
     }
 
     /* Handle ironman */
-    if (MODE(IRONMAN) && !p_ptr->depth && (p_ptr->map != MAP_DUNGEON))
+    if (MODE(IRONMAN) && !p_ptr->depth && (p_ptr->map != MAP_DUNGEON)
+	&& (p_ptr->map != MAP_FANILLA))
     {
 	int j, other;
 	int next = stage_map[p_ptr->stage][path_data[i].direction];
@@ -386,7 +387,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 
 	/* Magical portal for ironman */
 	if (MODE(IRONMAN) && !stage_map[p_ptr->stage][DOWN]
-	    && (p_ptr->map != MAP_DUNGEON)) 
+	    && (p_ptr->map != MAP_DUNGEON) && (p_ptr->map != MAP_FANILLA)) 
 	{
 	    /* Get choice */
 	    if (!jump_menu(p_ptr->depth + 1, &location))
