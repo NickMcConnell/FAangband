@@ -51,6 +51,7 @@ enum birth_stage
 	BIRTH_BACK = -1,
 	BIRTH_RESET = 0,
 	BIRTH_QUICKSTART,
+	BIRTH_MAP_CHOICE,
 	BIRTH_MODE_CHOICE,
 	BIRTH_SEX_CHOICE,
 	BIRTH_RACE_CHOICE,
@@ -138,6 +139,26 @@ static enum birth_stage get_quickstart_command(void)
 
 	/* Clear prompt */
 	clear_from(23);
+
+	return next;
+}
+
+/* ------------------------------------------------------------------------
+ * Set the map
+ * ------------------------------------------------------------------------ */
+static enum birth_stage get_map_command(void)
+{
+	enum birth_stage next;
+	//ui_event ke;
+
+	if (1)
+	{	
+		next = BIRTH_MODE_CHOICE;
+	}
+	else
+	{
+		next = BIRTH_BACK;
+	}
 
 	return next;
 }
@@ -904,6 +925,12 @@ errr get_birth_command(bool wait)
 		{
 			display_player(0);
 			next = get_quickstart_command();
+			break;
+		}
+
+		case BIRTH_MAP_CHOICE:
+		{
+			next = get_map_command();
 			break;
 		}
 
