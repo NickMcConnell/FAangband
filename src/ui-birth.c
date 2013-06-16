@@ -639,9 +639,9 @@ static void clear_question(void)
 #define BIRTH_MENU_HELPTEXT \
 	"{lightblue}Please select your character from the menu below:{/}\n\n" \
 	"Use the {lightgreen}movement keys{/} to scroll the menu, " \
-	"{lightgreen}Enter{/} to select the current menu item, '{lightgreen}*{/}' " \
-	"for a random menu item, '{lightgreen}ESC{/}' to step back through the " \
-	"birth process, '{lightgreen}={/}' for the birth options, '{lightgreen}?{/} " \
+	"{lightgreen}Enter{/} to select the\ncurrent menu item, '{lightgreen}*{/}' " \
+	"for a random menu item, '{lightgreen}ESC{/}' to step back\nthrough the " \
+	"birth process, '{lightgreen}?{/} " \
 	"for help, or '{lightgreen}Ctrl-X{/}' to quit."
 
 /* Show the birth instructions on an otherwise blank screen */	
@@ -678,7 +678,7 @@ static enum birth_stage menu_question(enum birth_stage current, menu_type *curre
 	clear_question();
 	Term_putstr(QUESTION_COL, QUESTION_ROW, -1, TERM_YELLOW, menu_data->hint);
 
-	current_menu->cmd_keys = "?=*\x18";	 /* ?, =, *, <ctl-X> */
+	current_menu->cmd_keys = "?*\x18";	 /* ?, *, <ctl-X> */
 
 	while (next == BIRTH_RESET)
 	{
@@ -738,11 +738,6 @@ static enum birth_stage menu_question(enum birth_stage current, menu_type *curre
 
 				menu_refresh(current_menu, FALSE);
 				next = current + 1;
-			}
-			else if (cx.key.code == '=') 
-			{
-				do_cmd_options();
-				next = current;
 			}
 			else if (cx.key.code == KTRL('X')) 
 			{
