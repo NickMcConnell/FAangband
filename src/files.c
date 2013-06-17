@@ -876,6 +876,25 @@ extern int make_dump(char_attr_line * line, int mode)
     bool dead = FALSE;
     bool have_home = (p_ptr->home != 0);
 
+    const char *map_name[] = 
+	{ 
+	    "Standard wilderness", 
+	    "Extended wilderness", 
+	    "Hybrid dungeon", 
+	    "FAnilla dungeon"
+	};
+
+    const char *mode_name[] = 
+	{ 
+	    "Thrall",
+	    "Ironman", 
+	    "Disconnected stairs", 
+	    "Small device", 
+	    "No artifacts",
+	    "No selling",
+	    "Smart cheat"
+	};
+
     /* Get the store number of the home */
     if (have_home) 
     {
@@ -1829,6 +1848,23 @@ sprintf(buf1, "%d feet", p_ptr->state.see_infra * 10);
     current_line++;
     dump_ptr = (char_attr *) &line[current_line];
 
+    /* Dump game map and modes */
+    current_line++;
+    dump_ptr = (char_attr *) &line[current_line];
+    dump_put_str(TERM_WHITE, "[Map and modes]", 2);
+    current_line += 2;
+    dump_ptr = (char_attr *) &line[current_line];
+    dump_put_str(TERM_WHITE, map_name[p_ptr->map], 0);
+    current_line++;
+    for (i = 0; i < GAME_MODE_MAX; i++) 
+    {
+	if (p_ptr->game_mode[i])
+	{
+	    dump_ptr = (char_attr *) &line[current_line];
+	    dump_put_str(TERM_WHITE, mode_name[i], 0);
+	    current_line++;
+	}
+    }
 
     /* Dump options */
     current_line++;

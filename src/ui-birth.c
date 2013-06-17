@@ -184,8 +184,8 @@ static void print_map_instructions(void)
  */
 const char *map_name[] = 
 { 
-    "Default", 
-    "Extended", 
+    "Standard wilderness", 
+    "Extended wilderness", 
     "Hybrid dungeon", 
     "FAnilla dungeon",
     "Quit"
