@@ -967,6 +967,21 @@ int rd_player(u32b version)
     /* Hack -- Repair maximum player level */
     if (p_ptr->max_lev < p_ptr->lev) p_ptr->max_lev = p_ptr->lev;
   
+    /* Game map and modes */
+    rd_byte(&p_ptr->map);
+    rd_byte(&tmp8u);
+    for (i = 0; i < tmp8u; i++)
+    {
+	byte mode;
+	rd_byte(&mode);
+	if (i >= GAME_MODE_MAX) continue;
+	if (mode) p_ptr->game_mode[i] = TRUE;
+	else p_ptr->game_mode[i] = FALSE;
+    }
+    for (i = tmp8u; i < GAME_MODE_MAX; i++)
+    	p_ptr->game_mode[i] = FALSE;
+
+  
     /* More info */
     rd_s16b(&p_ptr->speed_boost);
     rd_s16b(&p_ptr->heighten_power);

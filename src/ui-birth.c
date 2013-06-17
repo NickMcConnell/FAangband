@@ -585,7 +585,6 @@ static enum birth_stage get_mode_command(void)
     if (m) 
     {
 	bool *selections = mode_menu_select(m);
-	mode_menu_destroy(m);
 	if (selections[GAME_MODE_MAX] == TRUE)
 	{
 	    next = BIRTH_BACK;
@@ -608,6 +607,7 @@ static enum birth_stage get_mode_command(void)
 	    cmd_set_arg_string(cmd_get_top(), 0, (const char *)modes);
 	    next = BIRTH_SEX_CHOICE;
 	}
+	mode_menu_destroy(m);
     }
     else
     {

@@ -581,6 +581,12 @@ void wr_player(void)
     wr_byte(MAX_RECALL_PTS);
     for (i = 0; i < MAX_RECALL_PTS; i++) wr_s16b(p_ptr->recall[i]);
     wr_s16b(p_ptr->recall_pt);
+
+    /* Game map and modes */
+    wr_byte(p_ptr->map);
+    wr_byte(GAME_MODE_MAX);
+    for (i = 0; i < GAME_MODE_MAX; i++)
+	wr_byte(p_ptr->game_mode[i]);
   
     /* More info */
     wr_s16b(p_ptr->speed_boost);	/* Specialty Fury */
