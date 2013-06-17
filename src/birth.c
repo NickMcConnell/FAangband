@@ -206,11 +206,6 @@ static void get_stats(int stat_use[A_MAX])
 	
 	/* Efficiency -- Apply the racial/class bonuses */
 	stat_use[i] = modify_stat_value(p_ptr->stat_max[i], bonus);
-	/* Apply the bonus to the stat (somewhat randomly) */
-	//stat_use[i] = adjust_stat(p_ptr->stat_max[i], bonus);
-
-	/* Save the resulting stat maximum */
-	//p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_use[i];
 
 	p_ptr->stat_birth[i] = p_ptr->stat_max[i];
     }

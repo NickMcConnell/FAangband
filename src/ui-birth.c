@@ -386,7 +386,7 @@ const char *mode_name[] =
 const char *mode_description[] =
 {
     "Accept the current state of the game modes as printed below",
-    "Start as a thrall on the steps of Angband.  Not available\nin the FAnilla map",
+    "Start as a thrall on the steps of Angband",
     "Only ever go into greater danger until you win or die",
     "Taking a dungeon stair or wilderness path will not place\nyou on a stair or path back the way you came",
     "Player and monster spell and view distances are halved.\nThis is good if you have a small screen or large tiles",
@@ -412,8 +412,6 @@ struct mode_menu_data
  */
 static int mode_menu_valid(menu_type *m, int oid)
 {
-    //struct mode_menu_data *d = menu_priv(m);
-
     /* No thralls in FAnilla map */
     if ((p_ptr->map == MAP_FANILLA) && (oid == 1))
 	return 0;
