@@ -212,14 +212,6 @@ struct map_menu_data {
 
 
 /**
- * Is item oid valid?
- */
-static int map_menu_valid(menu_type *m, int oid)
-{
-    return TRUE;
-}
-
-/**
  * Display a row of the map menu
  */
 static void map_menu_display(menu_type *m, int oid, bool cursor,
@@ -272,9 +264,10 @@ static void map_menu_browser(int oid, void *data, const region *loc)
     text_out_indent = 0;
 }
 
-static const menu_iter map_menu_iter = {
+static const menu_iter map_menu_iter = 
+{
     NULL,	/* get_tag = NULL, just use lowercase selections */
-    map_menu_valid, // just use NULL here?
+    NULL,       /* no validity hook */
     map_menu_display,
     map_menu_handler,
     NULL	/* no resize hook */
