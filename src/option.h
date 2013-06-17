@@ -7,11 +7,11 @@
  */
 enum
 {
-	OP_SPECIAL = 0,
-	OP_INTERFACE,
+	OP_INTERFACE = 0,
 	OP_GAMEPLAY,
 	OP_CHEAT,
 	OP_SCORE,
+	OP_SPECIAL,
 
         OP_MAX
 };
@@ -19,7 +19,7 @@ enum
 /*
  * Information for "do_cmd_options()".
  */
-#define OPT_PAGE_MAX				OP_CHEAT
+#define OPT_PAGE_MAX				OP_SCORE
 #define OPT_PAGE_PER				16
 
 /* The option data structures */
