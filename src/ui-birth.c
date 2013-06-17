@@ -386,7 +386,7 @@ const char *mode_name[] =
 const char *mode_description[] =
 {
     "Accept the current state of the game modes as printed below",
-    "Start as a thrall on the steps of Angband",
+    "Start as a thrall on the steps of Angband.  Not available\nin the FAnilla map",
     "Only ever go into greater danger until you win or die",
     "Taking a dungeon stair or wilderness path will not place\nyou on a stair or path back the way you came",
     "Player and monster spell and view distances are halved.\nThis is good if you have a small screen or large tiles",
@@ -396,28 +396,227 @@ const char *mode_description[] =
     "Quit FAangband"
 };
 
+/**
+ * Mode menu data struct
+ */
+struct mode_menu_data 
+{
+    const char *modes[GAME_MODE_MAX + 2];
+    const char *description[GAME_MODE_MAX + 2];
+
+    bool mode_settings[GAME_MODE_MAX + 1];
+};
+
+/**
+ * Is item oid valid?
+ */
+static int mode_menu_valid(menu_type *m, int oid)
+{
+    //struct mode_menu_data *d = menu_priv(m);
+
+    /* No thralls in FAnilla map */
+    if ((p_ptr->map == MAP_FANILLA) && (oid == 1))
+	return 0;
+
+    return 1;
+}
+
+/**
+ * Display a row of the mode menu
+ */
+static void mode_menu_display(menu_type *m, int oid, bool cursor,
+			       int row, int col, int wid)
+{
+    struct mode_menu_data *d = menu_priv(m);
+    int attr_name= cursor ? TERM_L_BLUE : TERM_WHITE;
+
+    /* Dump the name */
+    c_put_str(attr_name, d->modes[oid], row, col);
+}
+
+/**
+ * Handle an event on a menu row.
+ */
+static bool mode_menu_handler(menu_type *m, const ui_event *e, int oid)
+{
+    struct mode_menu_data *d = menu_priv(m);
+
+    if (e->type == EVT_SELECT) {
+	/* We're done, return */
+	if (oid == 0)
+	    return FALSE;
+	/* Quitting */
+	else if (oid == GAME_MODE_MAX + 1)
+	{
+	    d->mode_settings[GAME_MODE_MAX + 1] = TRUE;
+	    return FALSE;
+	}
+	/* toggle */
+	else
+	{
+	    d->mode_settings[oid - 1] = !d->mode_settings[oid - 1];
+	}
+    }
+    else if ((e->type == EVT_KBRD) && (e->key.code == ESCAPE)) {
+	d->mode_settings[GAME_MODE_MAX] = TRUE;
+	return FALSE;
+    }
+
+    return TRUE;
+}
+
+/**
+ * Show mode description when browsing
+ */
+static void mode_menu_browser(int oid, void *data, const region *loc)
+{
+    struct mode_menu_data *d = data;
+    int i, j;
+
+    /* Redirect output to the screen */
+    text_out_hook = text_out_to_screen;
+    text_out_wrap = 0;
+    text_out_indent = loc->col - 1;
+    text_out_pad = 1;
+
+    Term_gotoxy(loc->col, loc->row + loc->page_rows);
+    text_out_c(TERM_DEEP_L_BLUE, format("\n%s\n", d->description[oid]));
+
+    Term_gotoxy(loc->col, loc->row + loc->page_rows + 4);
+    text_out_c(TERM_L_YELLOW, "Currently true:");
+    for (i = 0, j = 0; i < GAME_MODE_MAX; i++)
+    {
+	if (d->mode_settings[i])
+	{
+	    char tag[2] = "b";
+
+	    tag[0] += i;
+	    Term_gotoxy(loc->col + 16 + 2 * j++, loc->row + loc->page_rows + 4);
+	    text_out_c(TERM_MAGENTA, tag);
+	}
+    }
+
+    /* XXX */
+    text_out_pad = 0;
+    text_out_indent = 0;
+}
+
+static const menu_iter mode_menu_iter = 
+{
+    NULL,	/* get_tag = NULL, just use lowercase selections */
+    mode_menu_valid,
+    mode_menu_display,
+    mode_menu_handler,
+    NULL	/* no resize hook */
+};
+
+/** Create and initialise the mode menu */
+static menu_type *mode_menu_new(void)
+{
+    menu_type *m = menu_new(MN_SKIN_SCROLL, &mode_menu_iter);
+    struct mode_menu_data *d = mem_alloc(sizeof *d);
+    int i;
+    const char cmd_keys[] = { (char) ESCAPE, '\0' };
+
+    region loc = { 5, 11, 70, -99 };
+
+    /* copy across private data */
+    /* current game modes */
+    for (i = 0; i < GAME_MODE_MAX; i++)
+    {
+	d->mode_settings[i] = p_ptr->game_mode[i];
+    }
+    /* go back */
+    d->mode_settings[GAME_MODE_MAX] = FALSE;
+    /* quit */
+    d->mode_settings[GAME_MODE_MAX + 1] = FALSE;
+    /* actual modes and descriptions */
+    for (i = 0; i < GAME_MODE_MAX + 2; i++)
+    {
+	d->modes[i] = mode_name[i];
+	d->description[i] = mode_description[i];
+    }
+
+    menu_setpriv(m, GAME_MODE_MAX + 2, d);
+
+    /* set flags */
+    m->header = "Now, toggle any of the permanent game modes, accept or quit:";
+    m->flags = MN_CASELESS_TAGS;
+    m->cmd_keys = cmd_keys;
+    m->selections = lower_case;
+    m->browse_hook = mode_menu_browser;
+
+    /* set size */
+    loc.page_rows = GAME_MODE_MAX + 3;
+    menu_layout(m, &loc);
+
+    return m;
+}
+
+/** Clean up a mode menu instance */
+static void mode_menu_destroy(menu_type *m)
+{
+    struct mode_menu_data *d = menu_priv(m);
+    mem_free(d);
+    mem_free(m);
+}
+
+/**
+ * Run the mode menu to select game modes.
+ */
+static bool *mode_menu_select(menu_type *m)
+{
+    struct mode_menu_data *d = menu_priv(m);
+
+    screen_save();
+    region_erase_bordered(&m->active);
+
+    menu_select(m, 0, TRUE);
+
+    screen_load();
+
+    return (bool *)d->mode_settings;
+}
+
 static enum birth_stage get_mode_command(void)
 {
-	enum birth_stage next;
-	//ui_event ke;
+    enum birth_stage next;
+    menu_type *m;
 
-	p_ptr->game_mode[GAME_MODE_THRALL] = FALSE;
-	p_ptr->game_mode[GAME_MODE_IRONMAN] = FALSE;
-	p_ptr->game_mode[GAME_MODE_NO_STAIRS] = FALSE;
-	p_ptr->game_mode[GAME_MODE_SMALL_DEVICE] = FALSE;
-	p_ptr->game_mode[GAME_MODE_NO_ARTIFACTS] = FALSE;
-	p_ptr->game_mode[GAME_MODE_NO_SELLING] = FALSE;
-	p_ptr->game_mode[GAME_MODE_AI_CHEAT] = FALSE;
-	if (1)
-	{	
-		next = BIRTH_SEX_CHOICE;
+    m = mode_menu_new();
+    if (m) 
+    {
+	bool *selections = mode_menu_select(m);
+	mode_menu_destroy(m);
+	if (selections[GAME_MODE_MAX] == TRUE)
+	{
+	    next = BIRTH_BACK;
+	}
+	else if (selections[GAME_MODE_MAX + 1] == TRUE)
+	{
+	    cmd_insert(CMD_QUIT);
+	    next = BIRTH_COMPLETE;
 	}
 	else
 	{
-		next = BIRTH_BACK;
-	}
+	    char modes[GAME_MODE_MAX];
+	    int i;
 
-	return next;
+	    /* Write a Y/N string for game mode setting */
+	    for (i = 0; i < GAME_MODE_MAX; i++)
+		modes[i] = selections[i] ? 'Y' : 'N';
+
+	    cmd_insert(CMD_SET_MODES);
+	    cmd_set_arg_string(cmd_get_top(), 0, (const char *)modes);
+	    next = BIRTH_SEX_CHOICE;
+	}
+    }
+    else
+    {
+	next = BIRTH_BACK;
+    }
+
+    return next;
 }
 
 /* ------------------------------------------------------------------------
@@ -1158,15 +1357,16 @@ errr get_birth_command(bool wait)
 			print_map_instructions();
 			next = get_map_command();
 			if (next == BIRTH_BACK)
-				next = current_stage - 1;
+				next = BIRTH_RESET;
 			break;
 		}
 
 		case BIRTH_MODE_CHOICE:
 		{
+			print_map_instructions();
 			next = get_mode_command();
 			if (next == BIRTH_BACK)
-				next = current_stage - 1;
+				next = BIRTH_MAP_CHOICE;
 			break;
 		}
 

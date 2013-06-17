@@ -1175,7 +1175,18 @@ char *modelist;
 
 void set_modes(struct player *p)
 {
+    int i;
+
     /* Parse modelist */
+    for (i = 0; i < GAME_MODE_MAX; i++)
+    {
+	if (modelist[i] == 'Y')
+	    p_ptr->game_mode[i] = TRUE;
+	else if (modelist[i] == 'N')
+	    p_ptr->game_mode[i] = FALSE;
+	else 
+	    quit("Bad game mode string");
+    }
 }
 
 /*
@@ -1270,7 +1281,7 @@ void player_birth(bool quickstart_allowed)
 	    p_ptr->map = cmd->arg[0].choice;
 	    set_map(p_ptr);
 	} else if (cmd->command == CMD_SET_MODES) {
-	    modelist = (char *) &cmd->arg[0].choice;
+	    modelist = (char *) cmd->arg[0].string;
 	    set_modes(p_ptr);
 	} else if (cmd->command == CMD_CHOOSE_SEX) {
 	    p_ptr->psex = cmd->arg[0].choice;
