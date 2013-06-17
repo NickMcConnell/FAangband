@@ -257,41 +257,18 @@ void wr_options(void)
   
     /*** Normal options ***/
   
-    /* Reset */
-    for (i = 0; i < 8; i++)
-    {
-	flag[i] = 0L;
-	mask[i] = 0L;
+    for (i = 0; i < OPT_MAX; i++) {
+	const char *name = option_name(i);
+	if (!name)
+	    continue;
+
+	wr_string(name);
+	wr_byte(op_ptr->opt[i]);
     }
-  
-    /* Analyze the options */
-    for (i = 0; i < OPT_MAX; i++)
-    {
-	int os = i / 32;
-	int ob = i % 32;
-      
-	/* Process real entries */
-	if (!option_name(i)) continue;
-	
-	/* Set flag */
-	if (op_ptr->opt[i])
-	{
-	    /* Set */
-	    flag[os] |= (1L << ob);
-	}
-	  
-	/* Set mask */
-	mask[os] |= (1L << ob);
-	
-    }
-  
-    /* Dump the flags */
-    for (i = 0; i < 8; i++) wr_u32b(flag[i]);
-  
-    /* Dump the masks */
-    for (i = 0; i < 8; i++) wr_u32b(mask[i]);
-  
-  
+
+    /* Sentinel */
+    wr_byte(0);
+
     /*** Window options ***/
   
     /* Reset */
