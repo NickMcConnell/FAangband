@@ -367,6 +367,35 @@ static enum birth_stage get_map_command(void)
 /* ------------------------------------------------------------------------
  * Get the game mode (formerly birth options)
  * ------------------------------------------------------------------------ */
+/**
+ * Mode descriptions
+ */
+const char *mode_name[] = 
+{ 
+    "Accept current options",
+    "Thrall",
+    "Ironman", 
+    "Disconnected stairs", 
+    "Small device", 
+    "No artifacts",
+    "No selling",
+    "Smart cheat",
+    "Quit"
+};
+
+const char *mode_description[] =
+{
+    "Accept the current state of the game modes as printed below",
+    "Start as a thrall on the steps of Angband",
+    "Only ever go into greater danger until you win or die",
+    "Taking a dungeon stair or wilderness path will not place\nyou on a stair or path back the way you came",
+    "Player and monster spell and view distances are halved.\nThis is good if you have a small screen or large tiles",
+    "Artifacts are never generated",
+    "You cannot sell items to shops for money, but you will\nget more money from the dungeon floor and monsters",
+    "Monsters know your weaknesses without having to learn them",
+    "Quit FAangband"
+};
+
 static enum birth_stage get_mode_command(void)
 {
 	enum birth_stage next;
