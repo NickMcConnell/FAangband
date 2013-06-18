@@ -3085,6 +3085,8 @@ void illuminate(void)
 {
     int y, x, i;
 
+    if (stage_map[p_ptr->stage][STAGE_TYPE] == CAVE) return;
+
     /* Apply light or darkness */
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
