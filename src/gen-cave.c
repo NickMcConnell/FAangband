@@ -448,8 +448,8 @@ static int num_rooms_allowed(int room_type)
 	}
     }
 
-    /* Hard mode */
-    if (OPT(hard_mode)) base_num *= room_type;
+    /* Nightmare */
+    if (OPT(night_mare)) base_num *= room_type;
 
     /* Find out how many times we'll try to boost the room count. */
     num_tries = 3 * base_num / 100;

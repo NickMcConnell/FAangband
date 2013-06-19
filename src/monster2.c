@@ -503,7 +503,7 @@ s16b get_mon_num(int level)
 	    }
 	}
 	/* Hard mode wilderness is hard */
-	if (OPT(hard_mode) && (stage_map[p_ptr->stage][STAGE_TYPE] != CAVE))
+	if (OPT(night_mare) && (stage_map[p_ptr->stage][STAGE_TYPE] != CAVE))
 	{
 	    temp_level += 5;
 	}

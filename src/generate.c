@@ -547,7 +547,7 @@ void generate_cave(void)
 
 	/* Set the number of wilderness "vaults" */
 	wild_vaults = 0;
-	if (OPT(hard_mode)) max += 2;
+	if (OPT(night_mare)) max += 2;
 
 	if (p_ptr->depth > 10)
 	    wild_vaults += randint0(max);

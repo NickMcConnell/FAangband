@@ -30,17 +30,31 @@
 
 
 
-typedef struct
+/**
+ * The names for the various kinds of quality
+ */
+static quality_name_struct quality_values[SQUELCH_MAX] =
 {
-    int enum_val;
-    const char *name;
-} quality_name_struct;
+    { SQUELCH_NONE, "none", "no" },	
+    { SQUELCH_CURSED, "cursed (objects known to have a curse)", 
+      "all known cursed" }, 
+    { SQUELCH_DUBIOUS, "dubious (all dubious items)", "all dubious" },     
+    { SQUELCH_DUBIOUS_NON, "dubious non-ego (strong pseudo-ID)", 
+      "all dubious non-ego" },   
+    { SQUELCH_NON_EGO, "non-ego (all but ego-items - strong pseudo-ID)", 
+      "all non-ego" }, 
+    { SQUELCH_AVERAGE, "average (everything not good or better)", 
+      "all average" },     
+    { SQUELCH_GOOD_STRONG, "good (strong pseudo-ID or identify)", 
+      "all good non-ego" },    
+    { SQUELCH_GOOD_WEAK, "good (weak pseudo-ID)", "all good" },
+    { SQUELCH_ALL, "everything except artifacts", "all non-artifact" },	
+};
 
 /**
- * Names of categories.
- * Mapping of tval -> type 
+ * Categories for quality squelch
  */
-static quality_name_struct quality_choices[TYPE_MAX] = 
+static tval_desc quality_choices[TYPE_MAX] = 
 {
     { TV_SWORD, "Swords" }, 
     { TV_POLEARM,"Polearms"  },
@@ -61,25 +75,6 @@ static quality_name_struct quality_choices[TYPE_MAX] =
     { TV_DIGGING,"Diggers"  },
     { TV_RING, "Rings" },
     { TV_AMULET, "Amulets" },
-};
-
-byte squelch_level[TYPE_MAX];
-
-
-/**
- * The names for the various kinds of quality
- */
-static quality_name_struct quality_values[SQUELCH_MAX] =
-{
-    { SQUELCH_NONE,"none" },	
-    { SQUELCH_CURSED,"cursed (objects known to have a curse)" }, 
-    { SQUELCH_DUBIOUS,"dubious (all dubious items)" },     
-    { SQUELCH_DUBIOUS_NON,"dubious non-ego (strong pseudo-ID)" },   
-    { SQUELCH_NON_EGO,"non-ego (all but ego-items - strong pseudo-ID)" }, 
-    { SQUELCH_AVERAGE,"average (everything not good or better)" },     
-    { SQUELCH_GOOD_STRONG,"good (strong pseudo-ID or identify)" },    
-    { SQUELCH_GOOD_WEAK,"good (weak pseudo-ID)" },
-    { SQUELCH_ALL,"everything except artifacts" },	
 };
 
 /**
@@ -1255,45 +1250,6 @@ static void do_cmd_options_autosave(const char *name, int row)
 
 /*** Ego item squelch menu ***/
 
-static tval_desc raw_tvals[] =
-  {
-    {TV_SKELETON, "Skeletons"},
-    {TV_BOTTLE, "Bottles"},
-    {TV_JUNK, "Junk"},
-    {TV_SPIKE, "Spikes"},
-    {TV_CHEST, "Chests"},
-    {TV_SHOT, "Shots"},
-    {TV_ARROW, "Arrows"},
-    {TV_BOLT, "Bolts"},
-    {TV_BOW, "Launchers"},
-    {TV_DIGGING, "Diggers"},
-    {TV_HAFTED, "Blunt weapons"},
-    {TV_POLEARM, "Polearms"},
-    {TV_SWORD, "Swords"},
-    {TV_BOOTS, "Boots"},
-    {TV_GLOVES, "Gloves"},
-    {TV_HELM, "Helmets"},
-    {TV_CROWN, "Crowns"},
-    {TV_SHIELD, "Shields"},
-    {TV_CLOAK, "Cloaks"},
-    {TV_SOFT_ARMOR, "Soft Armor"},
-    {TV_HARD_ARMOR, "Hard Armor"},
-    {TV_DRAG_ARMOR, "DSMails"},
-    {TV_LIGHT, "Lights"},
-    {TV_AMULET, "Amulets"},
-    {TV_RING, "Rings"},
-    {TV_STAFF, "Staves"},
-    {TV_WAND, "Wands"},
-    {TV_ROD, "Rods"},
-    {TV_SCROLL, "Scrolls"},
-    {TV_POTION, "Potions"},
-    {TV_FLASK, "Flaskes"},
-    {TV_FOOD, "Food"},
-    {TV_MAGIC_BOOK, "Magic Books"},
-    {TV_PRAYER_BOOK, "Prayer Books"},
-    {TV_DRUID_BOOK, "Stones of Lore"},
-    {TV_NECRO_BOOK, "Necromantic Tomes"}
-};
 
 #ifdef _WIN32_WCE
 /**
@@ -1339,18 +1295,12 @@ void *my_bsearch(const void *key, const void *base, size_t num, size_t size,
 }
 #endif
 
-#define NUM_RAW_TVALS (sizeof(raw_tvals) / sizeof(raw_tvals[0]))
-
-typedef struct ego_desc
-{
-  s16b e_idx;
-  const char *short_name;
-} ego_desc;
+#define NUM_QUALITY_CHOICES (sizeof(quality_choices) / sizeof(quality_choices[0]))
 
 /**
  * Skip common prefixes in ego-item names.
  */
-static const char *strip_ego_name(const char *name)
+const char *strip_ego_name(const char *name)
 {
   if (prefix(name, "of the "))	return name + 7;
   if (prefix(name, "of "))	return name + 3;
@@ -1420,11 +1370,11 @@ int ego_item_name(char *buf, size_t buf_size, ego_desc *d_ptr)
       key.desc = NULL;
       
 #ifdef _WIN32_WCE
-      result = my_bsearch(&key, raw_tvals, NUM_RAW_TVALS, 
-		       sizeof(raw_tvals[0]), tval_comp_func);
+      result = my_bsearch(&key, quality_choices, NUM_QUALITY_CHOICES, 
+		       sizeof(quality_choices[0]), tval_comp_func);
 #else
-      result = bsearch(&key, raw_tvals, NUM_RAW_TVALS, 
-		       sizeof(raw_tvals[0]), tval_comp_func);
+      result = bsearch(&key, quality_choices, NUM_QUALITY_CHOICES, 
+		       sizeof(quality_choices[0]), tval_comp_func);
 #endif
     
       if (result) tval_name = result->desc;
@@ -1550,7 +1500,7 @@ static void ego_menu(const char *unused, int also_unused)
     {
       sort_tvals = FALSE;
       
-      qsort(raw_tvals, NUM_RAW_TVALS, sizeof(raw_tvals[0]), tval_comp_func);
+      qsort(quality_choices, NUM_QUALITY_CHOICES, sizeof(quality_choices[0]), tval_comp_func);
     }
   
   /* Create the array */
@@ -1643,7 +1593,7 @@ static void ego_menu(const char *unused, int also_unused)
 static void quality_display(menu_type *menu, int oid, bool cursor, int row, 
 			    int col, int width)
 {
-  const char *name = quality_choices[oid].name;
+  const char *name = quality_choices[oid].desc;
  
   byte level = squelch_level[oid];
   const char *level_name = quality_values[level].name;
@@ -1695,8 +1645,8 @@ static bool quality_action(menu_type *menu1, const ui_event *ev, int oid)
   
     /* Run menu */
     count = SQUELCH_MAX;
-    if ((quality_choices[oid].enum_val == TV_AMULET) || 
-	(quality_choices[oid].enum_val == TV_RING))
+    if ((quality_choices[oid].tval == TV_AMULET) || 
+	(quality_choices[oid].tval == TV_RING))
 	count = area.page_rows = SQUELCH_CURSED + 1;
   
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);

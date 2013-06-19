@@ -666,7 +666,7 @@ void item_prompt(int mode)
 	}
 
 	/* Indicate that squelched items can be selected */
-	if (can_squelch)
+	if (can_squelch && !OPT(hide_squelchable))
 	{
 	    my_strcat(out_val, " ! for squelched,", sizeof(out_val));
 	    button_add("[!]", '!');
@@ -705,7 +705,7 @@ void item_prompt(int mode)
 	/* Indicate legality of the "floor" */
 	if (allow_floor) {
 	    my_strcat(out_val, " - for floor,", sizeof(out_val));
-	    button_add("[!]", '!');
+	    button_add("[-]", '-');
 	}
     }
 
@@ -743,7 +743,7 @@ void item_prompt(int mode)
 	}
 
 	/* Indicate that squelched items can be selected */
-	if (can_squelch) {
+	if (can_squelch && !OPT(hide_squelchable)) {
 	    my_strcat(out_val, " ! for squelched,", sizeof(out_val));
 	    button_add("[!]", '!');
 	}

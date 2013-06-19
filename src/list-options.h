@@ -43,7 +43,7 @@ OP(auto_more,             "Automatically clear '-more-' prompts",
 INTERFACE, FALSE)
 OP(auto_scum,             "Auto-scum for good levels",
 GAMEPLAY, FALSE)
-OP(hard_mode,             "Generate more pits and vaults",
+OP(night_mare,            "Generate more pits and vaults",
 GAMEPLAY, FALSE)
 OP(use_old_target,        "Use old target by default",
 GAMEPLAY, FALSE)
@@ -57,8 +57,6 @@ OP(easy_alter,            "Open/close/disarm on movement",
 GAMEPLAY, FALSE)
 OP(hide_squelchable,      "Hide items set as squelchable",
 GAMEPLAY, TRUE)
-OP(squelch_worthless,     "Squelch worthless items automatically",
-GAMEPLAY, FALSE)
 OP(run_ignore_stairs,     "When running, ignore stairs",
 GAMEPLAY, TRUE)
 OP(run_ignore_doors,      "When running, ignore doors",
@@ -66,8 +64,6 @@ GAMEPLAY, TRUE)
 OP(disturb_near,          "Disturb whenever viewable monster moves",
 GAMEPLAY, TRUE)
 OP(disturb_detect,        "Disturb when leaving trap detect area",
-GAMEPLAY, TRUE)
-OP(verify_destroy,        "Verify destruction of objects",
 GAMEPLAY, TRUE)
 OP(notify_recharge,       "Notify on object recharge",
 GAMEPLAY, FALSE)

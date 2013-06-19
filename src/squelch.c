@@ -48,17 +48,10 @@
 #include "ui-menu.h"
 
 
-typedef struct
-{
-    int enum_val;
-    const char *name;
-} quality_name_struct;
-
 /**
- * Names of categories.
- * Mapping of tval -> type 
+ * Categories for quality squelch - must be the same as the one in cmd3.c
  */
-static quality_name_struct quality_choices[TYPE_MAX] = 
+static tval_desc quality_choices[TYPE_MAX] = 
 {
     { TV_SWORD, "Swords" }, 
     { TV_POLEARM,"Polearms"  },
@@ -300,6 +293,104 @@ bool squelch_tval(int tval)
   return FALSE;
 }
 
+/*
+ * Find the squelch type of the object, or TYPE_MAX if none
+ */
+int squelch_type_of(const object_type *o_ptr)
+{
+    size_t i;
+    
+    /* Find the appropriate squelch group */
+    for (i = 0; i < TYPE_MAX; i++)
+    {
+	if (quality_choices[i].tval == o_ptr->tval)
+	    return i;
+    }
+    
+    return TYPE_MAX;
+}
+
+/**
+ * Check if a squelch level squelches an object with a given feeling
+ */
+bool squelch_feel(size_t level, byte feel)
+{
+    switch (level)
+    {
+    case SQUELCH_DUBIOUS:
+    {
+	if ((feel == FEEL_DUBIOUS_WEAK) || (feel == FEEL_PERILOUS) ||
+	    (feel == FEEL_DUBIOUS_STRONG))
+	{
+	    return TRUE;
+	}
+	
+	break;
+    }
+    
+    case SQUELCH_DUBIOUS_NON:
+    {
+	if (feel == FEEL_DUBIOUS_STRONG)
+	{
+	    return TRUE;
+	}
+	
+	break;
+    }
+      
+    case SQUELCH_NON_EGO:
+    {
+	if ((feel == FEEL_DUBIOUS_STRONG) || (feel == FEEL_AVERAGE) || 
+	    (feel == FEEL_GOOD_STRONG))
+	{
+	    return TRUE;
+	}
+	
+	break;
+    }
+      
+    case SQUELCH_AVERAGE:
+    {
+	if ((feel == FEEL_DUBIOUS_WEAK) || (feel == FEEL_PERILOUS) ||
+	    (feel == FEEL_DUBIOUS_STRONG) || (feel == FEEL_AVERAGE))
+	{
+	    return TRUE;
+	}
+	
+	break;
+    }
+      
+    case SQUELCH_GOOD_STRONG:
+    {
+	if ((feel == FEEL_PERILOUS) || (feel == FEEL_DUBIOUS_STRONG) || 
+	    (feel == FEEL_AVERAGE) || (feel == FEEL_GOOD_STRONG))
+	{
+	    return TRUE;
+	}
+	
+	break;
+    }
+      
+    case SQUELCH_GOOD_WEAK:
+    {
+	if ((feel == FEEL_PERILOUS) || (feel == FEEL_DUBIOUS_STRONG) || 
+	    (feel == FEEL_AVERAGE) || (feel == FEEL_GOOD_WEAK) ||
+	    (feel == FEEL_GOOD_STRONG))
+	{
+	    return TRUE;
+	}
+	
+	break;
+    }
+      
+    case SQUELCH_ALL:
+    {
+	return TRUE;
+    }
+    }
+
+    return FALSE;
+}
 
 /**
  * Determines if an object is eligable for squelching.
@@ -337,119 +428,34 @@ extern bool squelch_item_ok(const object_type *o_ptr)
   
   /* Squelch some ego items if known */
   if (has_ego_properties(o_ptr) && (e_info[o_ptr->name2].squelch))
-    {
+  {
       return TRUE;
-    }
-
+  }
+  
   
   /* Don't check pseudo-ID for nonsensed things */
   if (!sensed) return FALSE;
   
-  
-  
   /* Find the appropriate squelch group */
   for (i = 0; i < N_ELEMENTS(quality_choices); i++)
-    {
-      if (quality_choices[i].enum_val == o_ptr->tval)
-	{
+  {
+      if (quality_choices[i].tval == o_ptr->tval)
+      {
 	  num = i;
 	  break;
-	}
-    }
+      }
+  }
   
   /* Never squelched */
   if (num == -1)
-    return FALSE;
+      return FALSE;
   
   
   /* Get result based on the feeling and the squelch_level */
-  switch (squelch_level[num])
-    {
-    case SQUELCH_CURSED:
-      {
-	if (o_ptr->ident & IDENT_CURSED)
-	  {
-	    return TRUE;
-	  }
-	
-	break;
-      }
-      
-    case SQUELCH_DUBIOUS:
-      {
-	if ((feel == FEEL_DUBIOUS_WEAK) || (feel == FEEL_PERILOUS) ||
-	    (feel == FEEL_DUBIOUS_STRONG))
-	  {
-	    return TRUE;
-	  }
-	
-	break;
-      }
-      
-    case SQUELCH_DUBIOUS_NON:
-      {
-	if (feel == FEEL_DUBIOUS_STRONG)
-	  {
-	    return TRUE;
-	  }
-	
-	break;
-      }
-      
-    case SQUELCH_NON_EGO:
-      {
-	if ((feel == FEEL_DUBIOUS_STRONG) || (feel == FEEL_AVERAGE) || 
-	    (feel == FEEL_GOOD_STRONG))
-	  {
-	    return TRUE;
-	  }
-	
-	break;
-      }
-      
-    case SQUELCH_AVERAGE:
-      {
-	if ((feel == FEEL_DUBIOUS_WEAK) || (feel == FEEL_PERILOUS) ||
-	    (feel == FEEL_DUBIOUS_STRONG) || (feel == FEEL_AVERAGE))
-	  {
-	    return TRUE;
-	  }
-	
-	break;
-      }
-      
-    case SQUELCH_GOOD_STRONG:
-      {
-	if ((feel == FEEL_PERILOUS) || (feel == FEEL_DUBIOUS_STRONG) || 
-	    (feel == FEEL_AVERAGE) || (feel == FEEL_GOOD_STRONG))
-	  {
-	    return TRUE;
-	  }
-	
-	break;
-      }
-      
-    case SQUELCH_GOOD_WEAK:
-      {
-	if ((feel == FEEL_PERILOUS) || (feel == FEEL_DUBIOUS_STRONG) || 
-	    (feel == FEEL_AVERAGE) || (feel == FEEL_GOOD_WEAK) ||
-	    (feel == FEEL_GOOD_STRONG))
-	  {
-	    return TRUE;
-	  }
-	
-	break;
-      }
-      
-    case SQUELCH_ALL:
-      {
-	return TRUE;
-	break;
-      }
-    }
-  
-  /* Failure */
-  return FALSE;
+  if (squelch_level[num] == SQUELCH_CURSED)
+      return (o_ptr->ident & IDENT_CURSED);
+  else
+      return (squelch_feel(squelch_level[num], feel));
 }
 
 
