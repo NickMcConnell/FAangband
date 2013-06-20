@@ -902,13 +902,6 @@ static enum parser_error parse_prefs_q(struct parser *p)
 		kind = &k_info[idx];
 		kind->squelch = parser_getint(p, "flag");
 	}
-	else
-	{
-		int idx = parser_getint(p, "idx");
-		int level = parser_getint(p, "n");
-
-		squelch_level[idx] = level;
-	}
 
 	return PARSE_ERROR_NONE;
 }

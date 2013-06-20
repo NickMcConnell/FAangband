@@ -474,23 +474,69 @@ static tval_desc quality_choices[TYPE_MAX] =
 /**
  * The names for the various kinds of quality
  */
-static quality_name_struct quality_values[SQUELCH_MAX] =
+static quality_desc_struct quality_strings[SQUELCH_MAX] =
 {
-    { SQUELCH_NONE, "none", "no" },	
-    { SQUELCH_CURSED, "cursed (objects known to have a curse)", 
-      "known cursed" }, 
-    { SQUELCH_DUBIOUS, "dubious (all dubious items)", "dubious" },     
-    { SQUELCH_DUBIOUS_NON, "dubious non-ego (strong pseudo-ID)", 
-      "dubious non-ego" },   
-    { SQUELCH_NON_EGO, "non-ego (all but ego-items - strong pseudo-ID)", 
-      "non-ego" }, 
-    { SQUELCH_AVERAGE, "average (everything not good or better)", 
-      "average" },     
-    { SQUELCH_GOOD_STRONG, "good (strong pseudo-ID or identify)", 
-      "good non-ego" },    
-    { SQUELCH_GOOD_WEAK, "good (weak pseudo-ID)", "good" },
-    { SQUELCH_ALL, "everything except artifacts", "non-artifact" },	
+    { SQUELCH_NONE, "unknown", "unknown", "all unknown" },	
+    { SQUELCH_KNOWN_PERILOUS, "sensed as perilous", "identified as perilous", 
+      "all known perilous" }, 
+    { SQUELCH_KNOWN_DUBIOUS, "sensed as dubious", "identified as dubious", 
+      "all known dubious non-ego" },     
+    { SQUELCH_AVERAGE, "sensed as average", "sensed as average", 
+      "all average" },     
+    { SQUELCH_KNOWN_GOOD, "sensed as good", "identified as good",
+      "all known good non-ego" },    
+    { SQUELCH_KNOWN_EXCELLENT, "sensed as excellent", 
+      "identified as excellent", "all known excellent" }, 
+    { SQUELCH_FELT_DUBIOUS, "", "sensed as dubious", "all dubious" },   
+    { SQUELCH_FELT_GOOD, "", "sensed as good", "all good" },    
 };
+
+bool squelch_suggestion(int feel, int sq_val)
+{
+    /* Paranoia */
+    if ((feel == FEEL_NONE) || (feel == FEEL_SPECIAL))
+	return FALSE;
+
+    switch (sq_val)
+    {
+    case SQUELCH_KNOWN_PERILOUS:
+    {
+	if (feel == FEEL_PERILOUS) return TRUE;	
+	else return FALSE;
+    }
+    case SQUELCH_KNOWN_DUBIOUS:
+    {
+	if (feel == FEEL_DUBIOUS_STRONG) return TRUE;	
+	else return FALSE;
+    }
+    case SQUELCH_AVERAGE:
+    {
+	if (feel == FEEL_AVERAGE) return TRUE;	
+	else return FALSE;
+    }
+    case SQUELCH_KNOWN_GOOD:
+    {
+	if (feel == FEEL_GOOD_STRONG) return TRUE;	
+	else return FALSE;
+    }
+    case SQUELCH_KNOWN_EXCELLENT:
+    {
+	if (feel == FEEL_EXCELLENT) return TRUE;	
+	else return FALSE;
+    }
+    case SQUELCH_FELT_DUBIOUS:
+    {
+	if (feel == FEEL_DUBIOUS_WEAK) return TRUE;	
+	else return FALSE;
+    }
+    case SQUELCH_FELT_GOOD:
+    {
+	if (feel == FEEL_GOOD_WEAK) return TRUE;	
+	else return FALSE;
+    }
+    }
+    return FALSE;
+}
 
 void textui_cmd_destroy_menu(int item)
 {
@@ -564,23 +610,17 @@ void textui_cmd_destroy_menu(int item)
 	/* Quality squelching */
 	type = squelch_type_of(o_ptr);
 
-	if (o_ptr->ident & IDENT_CURSED)
-	{
-	    strnfmt(out_val, sizeof(out_val), "Squelch all known cursed %s", 
-		    quality_choices[type].desc);
-	    menu_dynamic_add(m, out_val, DESTROY_CURSED);
-	}
-	for (sq_val = SQUELCH_DUBIOUS; sq_val < SQUELCH_MAX; sq_val++)
+	for (sq_val = SQUELCH_NONE + 1; sq_val < SQUELCH_MAX; sq_val++)
 	{
 	    if (!sensed) break;
-	    if (!heavy && ((sq_val == SQUELCH_DUBIOUS_NON) || 
-			   (sq_val == SQUELCH_NON_EGO) || 
-			   (sq_val == SQUELCH_GOOD_STRONG)))
+	    if (heavy && ((sq_val == SQUELCH_FELT_DUBIOUS) || 
+			  (sq_val == SQUELCH_FELT_GOOD)))
+		break;
+	    if (feel_to_squelch_level(feel) != sq_val)
 		continue;
-	    if (!squelch_feel(sq_val, feel))
-		continue;
-	    strnfmt(out_val, sizeof(out_val), "Squelch all %s %s", 
-		    quality_values[sq_val].adjective, 
+	    
+	    strnfmt(out_val, sizeof(out_val), "Squelch %s %s", 
+		    quality_strings[sq_val].adjective, 
 		    quality_choices[type].desc);
 	    menu_dynamic_add(m, out_val, sq_val);
 	}
@@ -633,10 +673,10 @@ void textui_cmd_destroy_menu(int item)
     }
     else
     {
-	for (sq_val = SQUELCH_CURSED; sq_val < SQUELCH_MAX; sq_val++)
+	for (sq_val = SQUELCH_NONE + 1; sq_val < SQUELCH_MAX; sq_val++)
 	{
 	    if (selected == sq_val)
-		squelch_level[type] = sq_val;
+		squelch_profile[type][sq_val] = TRUE;
 	}
     }
     

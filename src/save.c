@@ -654,12 +654,13 @@ void wr_player(void)
  */
 void wr_squelch(void)
 {
-    int i;
+    int i, j;
   
-    /* Write number of squelch bytes */
-    wr_byte(TYPE_MAX);
+    /* Write number of quality squelch bytes */
+    wr_byte(TYPE_MAX * SQUELCH_MAX);
     for (i = 0; i < TYPE_MAX; i++)
-	wr_byte(squelch_level[i]);
+	for (j = 0; j < SQUELCH_MAX; j++)
+	    wr_byte(squelch_profile[i][j]);
   
     /* Write ego-item squelch bits */
     wr_u16b(z_info->e_max);

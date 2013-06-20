@@ -74,7 +74,7 @@ static tval_desc quality_choices[TYPE_MAX] =
     { TV_AMULET, "Amulets" },
 };
 
-byte squelch_level[TYPE_MAX];
+bool squelch_profile[TYPE_MAX][SQUELCH_MAX];
 
 
 /**
@@ -106,19 +106,20 @@ static tval_desc sval_dependent[] =
  */
 void squelch_birth_init(void)
 {
-	int i;
+    int i, j;
 
-	/* Reset squelch bits */
-	for (i = 0; i < z_info->k_max; i++)
-		k_info[i].squelch = FALSE;
+    /* Reset squelch bits */
+    for (i = 0; i < z_info->k_max; i++)
+	k_info[i].squelch = FALSE;
 
- /* Reset ego squelch */
-  for (i = 0; i < z_info->e_max; i++)
-    e_info[i].squelch = FALSE;
+    /* Reset ego squelch */
+    for (i = 0; i < z_info->e_max; i++)
+	e_info[i].squelch = FALSE;
   
-	/* Clear the squelch bytes */
-	for (i = 0; i < TYPE_MAX; i++)
-		squelch_level[i] = 0;
+    /* Clear the squelch bytes */
+    for (i = 0; i < TYPE_MAX; i++)
+	for (j = 0; j < SQUELCH_MAX; j++)
+	    squelch_profile[i][j] = SQUELCH_NONE;
 }
 
 /*** Autoinscription stuff ***/
@@ -310,86 +311,31 @@ int squelch_type_of(const object_type *o_ptr)
     return TYPE_MAX;
 }
 
-/**
- * Check if a squelch level squelches an object with a given feeling
- */
-bool squelch_feel(size_t level, byte feel)
+int feel_to_squelch_level(int feel)
 {
-    switch (level)
+    switch (feel)
     {
-    case SQUELCH_DUBIOUS:
-    {
-	if ((feel == FEEL_DUBIOUS_WEAK) || (feel == FEEL_PERILOUS) ||
-	    (feel == FEEL_DUBIOUS_STRONG))
-	{
-	    return TRUE;
-	}
-	
-	break;
-    }
-    
-    case SQUELCH_DUBIOUS_NON:
-    {
-	if (feel == FEEL_DUBIOUS_STRONG)
-	{
-	    return TRUE;
-	}
-	
-	break;
-    }
-      
-    case SQUELCH_NON_EGO:
-    {
-	if ((feel == FEEL_DUBIOUS_STRONG) || (feel == FEEL_AVERAGE) || 
-	    (feel == FEEL_GOOD_STRONG))
-	{
-	    return TRUE;
-	}
-	
-	break;
-    }
-      
-    case SQUELCH_AVERAGE:
-    {
-	if ((feel == FEEL_DUBIOUS_WEAK) || (feel == FEEL_PERILOUS) ||
-	    (feel == FEEL_DUBIOUS_STRONG) || (feel == FEEL_AVERAGE))
-	{
-	    return TRUE;
-	}
-	
-	break;
-    }
-      
-    case SQUELCH_GOOD_STRONG:
-    {
-	if ((feel == FEEL_PERILOUS) || (feel == FEEL_DUBIOUS_STRONG) || 
-	    (feel == FEEL_AVERAGE) || (feel == FEEL_GOOD_STRONG))
-	{
-	    return TRUE;
-	}
-	
-	break;
-    }
-      
-    case SQUELCH_GOOD_WEAK:
-    {
-	if ((feel == FEEL_PERILOUS) || (feel == FEEL_DUBIOUS_STRONG) || 
-	    (feel == FEEL_AVERAGE) || (feel == FEEL_GOOD_WEAK) ||
-	    (feel == FEEL_GOOD_STRONG))
-	{
-	    return TRUE;
-	}
-	
-	break;
-    }
-      
-    case SQUELCH_ALL:
-    {
-	return TRUE;
-    }
+    case FEEL_NONE: 
+	return SQUELCH_NONE;
+    case FEEL_DUBIOUS_STRONG: 
+	return SQUELCH_KNOWN_DUBIOUS;
+    case FEEL_PERILOUS: 
+	return SQUELCH_KNOWN_PERILOUS;
+    case FEEL_DUBIOUS_WEAK: 
+	return SQUELCH_FELT_DUBIOUS;
+    case FEEL_AVERAGE: 
+	return SQUELCH_AVERAGE;
+    case FEEL_GOOD_STRONG: 
+	return SQUELCH_KNOWN_GOOD;
+    case FEEL_EXCELLENT: 
+	return SQUELCH_KNOWN_EXCELLENT;
+    case FEEL_GOOD_WEAK: 
+	return SQUELCH_FELT_GOOD;
+    case FEEL_SPECIAL: 
+	return SQUELCH_NONE;
     }
 
-    return FALSE;
+    return SQUELCH_NONE;
 }
 
 /**
@@ -397,65 +343,65 @@ bool squelch_feel(size_t level, byte feel)
  */
 extern bool squelch_item_ok(const object_type *o_ptr)
 {
-  size_t i;
-  int num = -1;
+    size_t i;
+    int num = -1;
   
-  object_kind *k_ptr = &k_info[o_ptr->k_idx];
-  bool fullid = object_known_p(o_ptr);
-  bool sensed = (o_ptr->ident & IDENT_SENSE) || fullid;
-  byte feel   = fullid ? value_check_aux1((object_type *)o_ptr) : o_ptr->feel;
+    object_kind *k_ptr = &k_info[o_ptr->k_idx];
+    bool fullid = object_known_p(o_ptr);
+    bool sensed = (o_ptr->ident & IDENT_SENSE) || fullid;
+    byte feel   = fullid ? value_check_aux1((object_type *)o_ptr) : o_ptr->feel;
+    int quality_squelch = SQUELCH_NONE;
   
+    /* Don't squelch artifacts */
+    if (artifact_p(o_ptr)) return FALSE;
   
-  /* Don't squelch artifacts */
-  if (artifact_p(o_ptr)) return FALSE;
-  
-  /* Don't squelch stuff inscribed not to be destroyed (!k) */
-  if (check_for_inscrip(o_ptr, "!k") || check_for_inscrip(o_ptr, "!*"))
+    /* Don't squelch stuff inscribed not to be destroyed (!k) */
+    if (check_for_inscrip(o_ptr, "!k") || check_for_inscrip(o_ptr, "!*"))
     {
-      return FALSE;
+	return FALSE;
     }
   
-  /* Auto-squelch dead chests */
-  if (o_ptr->tval == TV_CHEST && o_ptr->pval == 0)
-    return TRUE;
+    /* Auto-squelch dead chests */
+    if (o_ptr->tval == TV_CHEST && o_ptr->pval == 0)
+	return TRUE;
   
-  /* Do squelching by sval, if we 'know' the flavour. */
-  if (k_ptr->squelch && (k_ptr->flavor == 0 || k_ptr->aware))
+    /* Do squelching by sval, if we 'know' the flavour. */
+    if (k_ptr->squelch && (k_ptr->flavor == 0 || k_ptr->aware))
     {
-      if (squelch_tval(k_info[o_ptr->k_idx].tval))
+	if (squelch_tval(k_info[o_ptr->k_idx].tval))
+	    return TRUE;
+    }
+  
+    /* Squelch some ego items if known */
+    if (has_ego_properties(o_ptr) && (e_info[o_ptr->name2].squelch))
+    {
 	return TRUE;
     }
   
-  /* Squelch some ego items if known */
-  if (has_ego_properties(o_ptr) && (e_info[o_ptr->name2].squelch))
-  {
-      return TRUE;
-  }
+    /* Don't check pseudo-ID for nonsensed things */
+    if (!sensed) return FALSE;
   
+    /* Find the appropriate squelch group */
+    for (i = 0; i < N_ELEMENTS(quality_choices); i++)
+    {
+	if (quality_choices[i].tval == o_ptr->tval)
+	{
+	    num = i;
+	    break;
+	}
+    }
   
-  /* Don't check pseudo-ID for nonsensed things */
-  if (!sensed) return FALSE;
+    /* Never squelched */
+    if (num == -1)
+	return FALSE;
   
-  /* Find the appropriate squelch group */
-  for (i = 0; i < N_ELEMENTS(quality_choices); i++)
-  {
-      if (quality_choices[i].tval == o_ptr->tval)
-      {
-	  num = i;
-	  break;
-      }
-  }
-  
-  /* Never squelched */
-  if (num == -1)
-      return FALSE;
-  
-  
-  /* Get result based on the feeling and the squelch_level */
-  if (squelch_level[num] == SQUELCH_CURSED)
-      return (o_ptr->ident & IDENT_CURSED);
-  else
-      return (squelch_feel(squelch_level[num], feel));
+    /* Get result based on the feeling and the squelch_profile */
+    quality_squelch = feel_to_squelch_level(feel);
+
+    if (quality_squelch == SQUELCH_NONE)
+	return FALSE;
+    else
+	return squelch_profile[num][quality_squelch];
 }
 
 

@@ -1111,23 +1111,28 @@ int rd_player(u32b version)
  */
 int rd_squelch(u32b version)
 {
-    int i;
+    int i, j;
     byte tmp8u;
     u16b file_e_max;
     u32b tmp32u;
   
-    /* Read how many squelch bytes we have */
+    /* Read how many quality squelch bytes we have */
     rd_byte(&tmp8u);
 
     /* Check against current number */
-    if (tmp8u != TYPE_MAX)
+    if (tmp8u != TYPE_MAX * SQUELCH_MAX)
     {
 	strip_bytes(tmp8u);
     }
     else
     {
 	for (i = 0; i < TYPE_MAX; i++)
-	    rd_byte(&squelch_level[i]);
+	    for (j = 0; j < SQUELCH_MAX; j++)
+	    {
+		rd_byte(&tmp8u);
+		if (tmp8u) squelch_profile[i][j] = TRUE;
+		else squelch_profile[i][j] = FALSE;
+	    }
     }
   
   
