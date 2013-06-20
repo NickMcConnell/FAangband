@@ -2394,14 +2394,14 @@ void play_game(void)
     /* Flash a message */
     prt("Please wait...", 0, 0);
 
+    /* Flush the message */
+    Term_fresh();
+
     /* Initialize race probabilities */
     if (init_race_probs()) quit("Cannot initialize race probs");
 
     /* Allow big cursor */
     smlcurs = FALSE;
-
-    /* Flush the message */
-    Term_fresh();
 
     /* Flavor the objects */
     flavor_init();

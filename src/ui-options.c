@@ -1664,11 +1664,6 @@ static bool quality_action(menu_type *menu1, const ui_event *ev, int oid)
     while (evt.type != EVT_ESCAPE)
     {
 	evt = menu_select(&menu, 0, TRUE);
-  
-	/* Toggle the chosen level */
-	//if (evt.type == EVT_SELECT)
-	//  squelch_profile[oid][menu.cursor] = 
-	//	!squelch_profile[oid][menu.cursor];
     }
   
     /* Load and finish */
