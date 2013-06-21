@@ -2525,7 +2525,11 @@ extern int PlayerUID;
 #define DOWN                   7
 #define STAGE_TYPE             8
 
-/* Special stage numbers */
+/* 
+ * Special stage numbers 
+ * 
+ * These need to be changed any time the maps change
+ */
 #define ERIADOR_TOWN           (p_ptr->map == MAP_COMPRESSED ? 5 : 6)
 #define OSSIRIAND_TOWN         (p_ptr->map == MAP_COMPRESSED ? 20 : 30)
 #define ERED_LUIN_SOUTH_TOWN   (p_ptr->map == MAP_COMPRESSED ? 24 : 37)
@@ -2538,6 +2542,9 @@ extern int PlayerUID;
 #define GONDOLIN_TOWN          (p_ptr->map == MAP_COMPRESSED ? 83 : 154)
 #define UNDERWORLD_STAGE       (p_ptr->map == MAP_COMPRESSED ? 84 : 255)
 #define MOUNTAINTOP_STAGE      (p_ptr->map == MAP_COMPRESSED ? 85 : 256)
+#define THRALL_START \
+	((p_ptr->map == MAP_DUNGEON) ? 87 :	\
+	 ((p_ptr->map == MAP_COMPRESSED) ? 70 : 135))
 
 
 /*
@@ -2566,18 +2573,6 @@ extern int PlayerUID;
  * Sign of a non-racial monster
  */
 #define NON_RACIAL 255
-
-/*
- * Rune types
-#define RUNE_ELEMENTS   0
-#define RUNE_MAGDEF     1
-#define RUNE_QUAKE      2
-#define RUNE_MANA       3
-#define RUNE_PROTECT    4
-#define RUNE_POWER      5
-#define RUNE_SPEED      6
-#define MAX_RUNE        7
- */
 
 /** 
  * Maximum rune mana reserve 
