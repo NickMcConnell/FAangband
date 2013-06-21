@@ -2766,17 +2766,22 @@ void get_owner(bool pick)
 	return;
 
     /* Choose an owner */
-    if (pick) {
+    if (pick) 
+    {
 	byte *possible = malloc(z_info->p_max * sizeof(*possible));
 
 	for (i = 0; i < z_info->p_max; i++)
 	    possible[i] = 1;
 
 	/* See who's available */
-	for (i = 0; i < MAX_STORES; i++) {
-	    if (type_of_store[i] == type) {
-		for (j = 0; j < z_info->p_max; j++) {
-		    if (owner[i] == j) {
+	for (i = 0; i < MAX_STORES; i++) 
+	{
+	    if (type_of_store[i] == type) 
+	    {
+		for (j = 0; j < z_info->p_max; j++) 
+		{
+		    if (owner[i] == j) 
+		    {
 			possible[j] = 0;
 			out_of -= race_town_prob[town][j];
 		    }
@@ -2785,7 +2790,9 @@ void get_owner(bool pick)
 	}
 
 	/* Travelling merchant or no legal owner available */
-	if ((type == STORE_MERCH) || (out_of == 0)) {
+	if ((type == STORE_MERCH) || (out_of == 0) 
+	    || (p_ptr->map == MAP_FANILLA)) 
+	{
 	    /* Choose a random owner */
 	    i = randint0(z_info->p_max);
 
@@ -2795,12 +2802,14 @@ void get_owner(bool pick)
 	}
 
 	/* Choose a legal race */
-	else {
+	else 
+	{
 	    /* Get a random value */
 	    j = randint0(out_of);
 
 	    /* Look up the race probability */
-	    for (i = 0; i < z_info->p_max; i++) {
+	    for (i = 0; i < z_info->p_max; i++) 
+	    {
 		/* Add the probability for the legal races */
 		chance += race_town_prob[town][i] * possible[i];
 
@@ -2818,7 +2827,6 @@ void get_owner(bool pick)
 
     /* Activate the owner */
     ot_ptr = &b_info[(type * z_info->b_max) + st_ptr->owner];
-
 }
 
 /**
