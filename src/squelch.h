@@ -3,7 +3,9 @@
 #ifndef SQUELCH_H
 #define SQUELCH_H
 
-#define TYPE_MAX 19
+#define  Q_TV_MAX  19
+#define  S_TV_MAX  16
+
 
 /**
  * The different kinds of quality squelch
@@ -23,6 +25,21 @@ enum
 };
 
 #define SQUELCH_KNOWN_MAX SQUELCH_FELT_DUBIOUS
+
+enum
+{
+    DESTROY_THIS_ITEM,
+    DESTROY_CURSED,
+    DESTROY_DUBIOUS,   
+    DESTROY_DUBIOUS_NON,   
+    DESTROY_NON_EGO,
+    DESTROY_AVERAGE,    
+    DESTROY_GOOD_STRONG,    
+    DESTROY_GOOD_WEAK,
+    DESTROY_ALL,	
+    DESTROY_THIS_FLAVOR,
+    DESTROY_THIS_EGO
+};
 
 /**
  * Structure to describe tval/description pairings. 
@@ -55,7 +72,10 @@ typedef struct
 
 
 /* squelch.c  */
-extern bool squelch_profile[TYPE_MAX][SQUELCH_MAX];
+tval_desc quality_choices[Q_TV_MAX];
+quality_desc_struct quality_strings[SQUELCH_MAX];
+extern bool squelch_profile[Q_TV_MAX][SQUELCH_MAX];
+tval_desc sval_dependent[S_TV_MAX];
 void squelch_birth_init(void);
 int get_autoinscription_index(s16b k_idx);
 const char *get_autoinscription(s16b kind_idx);
@@ -71,12 +91,11 @@ extern bool squelch_item_ok(const object_type *o_ptr);
 bool squelch_hide_item(object_type *o_ptr);
 extern void squelch_drop(void);
 void squelch_items(void);
-extern bool seen_tval(int tval);
-void do_cmd_options_item(const char *name, int row);
 
 /* ui-options.c */
-const char *strip_ego_name(const char *name);
 int ego_item_name(char *buf, size_t buf_size, ego_desc *d_ptr);
+extern bool seen_tval(int tval);
+void do_cmd_options_item(const char *name, int row);
 
 
 #endif /* !SQUELCH_H */

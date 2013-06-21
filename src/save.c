@@ -657,8 +657,8 @@ void wr_squelch(void)
     int i, j;
   
     /* Write number of quality squelch bytes */
-    wr_byte(TYPE_MAX * SQUELCH_MAX);
-    for (i = 0; i < TYPE_MAX; i++)
+    wr_byte(Q_TV_MAX * SQUELCH_MAX);
+    for (i = 0; i < Q_TV_MAX; i++)
 	for (j = 0; j < SQUELCH_MAX; j++)
 	    wr_byte(squelch_profile[i][j]);
   

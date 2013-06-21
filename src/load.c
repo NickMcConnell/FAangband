@@ -1120,13 +1120,13 @@ int rd_squelch(u32b version)
     rd_byte(&tmp8u);
 
     /* Check against current number */
-    if (tmp8u != TYPE_MAX * SQUELCH_MAX)
+    if (tmp8u != Q_TV_MAX * SQUELCH_MAX)
     {
 	strip_bytes(tmp8u);
     }
     else
     {
-	for (i = 0; i < TYPE_MAX; i++)
+	for (i = 0; i < Q_TV_MAX; i++)
 	    for (j = 0; j < SQUELCH_MAX; j++)
 	    {
 		rd_byte(&tmp8u);

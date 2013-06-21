@@ -28,75 +28,6 @@
 #include "files.h"
 
 
-/**
- * The names for the various kinds of quality
- */
-static quality_desc_struct quality_strings[SQUELCH_MAX] =
-{
-    { SQUELCH_NONE, "unknown", "unknown", "all unknown" },	
-    { SQUELCH_KNOWN_PERILOUS, "sensed as perilous", "identified as perilous", 
-      "all known perilous" }, 
-    { SQUELCH_KNOWN_DUBIOUS, "sensed as dubious", "identified as dubious", 
-      "all known dubious non-ego" },     
-    { SQUELCH_AVERAGE, "sensed as average", "sensed as average", 
-      "all average" },     
-    { SQUELCH_KNOWN_GOOD, "sensed as good", "identified as good",
-      "all known good non-ego" },    
-    { SQUELCH_KNOWN_EXCELLENT, "sensed as excellent", 
-      "identified as excellent", "all known excellent" }, 
-    { SQUELCH_FELT_DUBIOUS, "", "sensed as dubious", "all dubious" },   
-    { SQUELCH_FELT_GOOD, "", "sensed as good", "all good" },    
-};
-
-/**
- * Categories for quality squelch
- */
-static tval_desc quality_choices[TYPE_MAX] = 
-{
-    { TV_SWORD, "Swords" }, 
-    { TV_POLEARM,"Polearms"  },
-    { TV_HAFTED,"Blunt weapons"  },
-    { TV_BOW, "Missile weapons" },
-    { TV_SHOT, "Sling ammunition" },
-    { TV_ARROW,"Bow ammunition"  },
-    { TV_BOLT,"Crossbow ammunition"  },
-    { TV_SOFT_ARMOR, "Soft armor" },
-    { TV_HARD_ARMOR,"Hard armor"  },
-    { TV_DRAG_ARMOR, "Dragon Scale Mail" },
-    { TV_CLOAK,"Cloaks"  },
-    { TV_SHIELD, "Shields" },
-    { TV_HELM, "Helms" },
-    { TV_CROWN, "Crowns" },
-    { TV_GLOVES, "Gloves" },
-    { TV_BOOTS,"Boots"  },
-    { TV_DIGGING,"Diggers"  },
-    { TV_RING, "Rings" },
-    { TV_AMULET, "Amulets" },
-};
-
-/**
- * Categories for sval-dependent squelch. 
- */
-static tval_desc sval_dependent[] =
-{
-  { TV_STAFF,		"Staffs" },
-  { TV_WAND,		"Wands" },
-  { TV_ROD,		"Rods" },
-  { TV_SCROLL,		"Scrolls" },
-  { TV_POTION,		"Potions" },
-  { TV_FOOD,		"Food" },
-  { TV_MAGIC_BOOK,	"Magic books" },
-  { TV_PRAYER_BOOK,	"Prayer books" },
-  { TV_DRUID_BOOK,	"Stones of Lore" },
-  { TV_NECRO_BOOK,	"Necromantic tomes" },
-  { TV_SPIKE,		"Spikes" },
-  { TV_LIGHT,		"Lights" },
-  { TV_FLASK,           "Oil" },
-  { TV_SKELETON,        "Skeletons" },
-  { TV_BOTTLE,          "Bottles" },
-  { TV_JUNK,            "Junk" }
-};
-
 static void dump_pref_file(void (*dump)(ang_file *), const char *title, int row)
 {
 	char ftmp[80];
@@ -1246,58 +1177,13 @@ static void do_cmd_options_autosave(const char *name, int row)
 }
 
 /*** Ego item squelch menu ***/
-
-
-#ifdef _WIN32_WCE
-/**
- * WinCE has no bsearch 
- */
-typedef int (*comp_fn) (const void *, const void *);
-
-void *my_bsearch(const void *key, const void *base, size_t num, size_t size, 
-	       comp_fn my_comp);
-
-
-void *my_bsearch(const void *key, const void *base, size_t num, size_t size,
-		 int (*my_comp)(const void *, const void *))
-{
-    size_t odd_mask, bytes;
-    const char *centre, *high, *low;
-    int comp;
-  
-    odd_mask = ((size ^ (size - 1)) >> 1) + 1;
-    low = base;
-    bytes = num == 0 ? size : size + 1;
-    centre = low + num * size;
-    comp = 0;
-    while (bytes != size) 
-    {
-	if (comp > 0) 
-	{
-	    low = centre;
-	} 
-	else 
-	{
-	    high = centre;
-	}
-	bytes = high - low;
-	centre = low + ((bytes & odd_mask ? bytes - size : bytes) >> 1);
-	comp = my_comp(key, centre);
-	if (comp == 0) 
-	{
-	    return (void *)centre;
-	}
-    }
-    return NULL;
-}
-#endif
-
-#define NUM_QUALITY_CHOICES (sizeof(quality_choices) / sizeof(quality_choices[0]))
+#define EGO_MENU_HELPTEXT \
+"{lightgreen}Movement keys{/} scroll the list\n{lightred}ESC{/} returns to the previous menu\n{lightblue}Enter{/} toggles the current setting."
 
 /**
  * Skip common prefixes in ego-item names.
  */
-const char *strip_ego_name(const char *name)
+static const char *strip_ego_name(const char *name)
 {
     if (prefix(name, "of the "))	return name + 7;
     if (prefix(name, "of "))	return name + 3;
@@ -1369,10 +1255,10 @@ int ego_item_name(char *buf, size_t buf_size, ego_desc *d_ptr)
 	const char *tval_name;
 	int j;
 
-	for (j = 0; j < TYPE_MAX; j++)
+	for (j = 0; j < Q_TV_MAX; j++)
 	    if (quality_choices[j].tval == tval_table[i]) break;
 
-	tval_name = j < TYPE_MAX ? quality_choices[j].desc : "????";
+	tval_name = j < Q_TV_MAX ? quality_choices[j].desc : "????";
      
 	/* Append the proper separator first, if any */
 	if (i > 0)
@@ -1420,8 +1306,6 @@ static int ego_comp_func(const void *a_ptr, const void *b_ptr)
     /* Note the removal of common prefixes */
     return (strcmp(a->short_name, b->short_name));
 }
-
-/*** Ego squelch menu ***/
 
 /**
  * Display an entry on the sval menu
@@ -1479,11 +1363,10 @@ static void ego_menu(const char *unused, int also_unused)
   
     menu_type menu;
     menu_iter menu_f = { 0, 0, ego_display, ego_action, 0 };
-    region area = { 1, 3, -1, -1 };
+    region area = { 1, 5, -1, -1 };
     int cursor = 0;
   
     int i;
-  
   
     /* Hack - Used to sort the tval table for the first time */
     static bool sort_tvals = TRUE;
@@ -1493,7 +1376,7 @@ static void ego_menu(const char *unused, int also_unused)
     {
 	sort_tvals = FALSE;
       
-	qsort(quality_choices, NUM_QUALITY_CHOICES, sizeof(quality_choices[0]),
+	qsort(quality_choices, Q_TV_MAX, sizeof(quality_choices[0]),
 	      tval_comp_func);
     }
   
@@ -1532,6 +1415,9 @@ static void ego_menu(const char *unused, int also_unused)
     screen_save();
     clear_from(0);
   
+    /* Help text */
+    prt("Ego item squelch menu", 0, 0);
+
     /* Buttons */
     button_add("Up", ARROW_UP);
     button_add("Down", ARROW_DOWN);
@@ -1543,16 +1429,10 @@ static void ego_menu(const char *unused, int also_unused)
     /* Indent output */
     text_out_indent = 1;
     text_out_wrap = 79;
-    Term_gotoxy(1, 0);
+    Term_gotoxy(1, 1);
   
     /* Display some helpful information */
-    text_out("Use the ");
-    text_out_c(TERM_L_GREEN, "movement keys");
-    text_out(" to scroll the list or ");
-    text_out_c(TERM_L_GREEN, "ESC");
-    text_out(" to return to the previous menu.  ");
-    text_out_c(TERM_L_BLUE, "Enter");
-    text_out(" toggles the current setting.");
+    text_out_e(EGO_MENU_HELPTEXT);
   
     text_out_indent = 0;
   
@@ -1581,6 +1461,8 @@ static void ego_menu(const char *unused, int also_unused)
 
 /*** Quality-squelch menu ***/
 
+#define QUALITY_MENU_HELPTEXT \
+"{lightgreen}Movement keys{/} scroll the list\n{lightred}ESC{/} returns to the previous menu\n{lightblue}Enter{/} selects a type of item or toggles the current setting."
 int current_tval;
 
 /**
@@ -1633,7 +1515,7 @@ static bool quality_action(menu_type *menu1, const ui_event *ev, int oid)
 {
     menu_type menu;
     menu_iter menu_f = { 0, 0, quality_subdisplay, quality_subaction, 0 };
-    region area = { 24, 1, 44, SQUELCH_MAX };
+    region area = { 24, 5, 44, SQUELCH_MAX };
     ui_event evt = EVENT_EMPTY;
     int count;
     bool heavy = (player_has(PF_PSEUDO_ID_HEAVY));
@@ -1678,7 +1560,7 @@ static void quality_menu(const char *unused, int also_unused)
 {
     menu_type menu;
     menu_iter menu_f = { 0, 0, quality_display, quality_action, 0 };
-    region area = { 1, 3, -1, -1 };
+    region area = { 3, 5, -1, -1 };
   
     /* Save screen */
     screen_save();
@@ -1686,14 +1568,23 @@ static void quality_menu(const char *unused, int also_unused)
   
     /* Help text */
     prt("Quality squelch menu", 0, 0);
-  
+
+    /* Output to the screen */
+    text_out_hook = text_out_to_screen;
+	
+    /* Indent output */
+    text_out_indent = 1;
+    text_out_wrap = 70;
     Term_gotoxy(1, 1);
-    text_out_to_screen(TERM_L_RED, "Use the movement keys to navigate, and Enter to change settings.");
+    text_out_e(QUALITY_MENU_HELPTEXT);
   
+    /* Reset text_out() indentation */
+    text_out_indent = 0;
+    text_out_wrap = 0;
+
     /* Set up the menu */
     menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
-    menu.title = "Quality squelch menu";
-    menu_setpriv(&menu, TYPE_MAX, quality_choices);
+    menu_setpriv(&menu, Q_TV_MAX, quality_choices);
     menu_layout(&menu, &area);
   
     /* Select an entry */
@@ -1800,6 +1691,9 @@ static bool sval_menu(int tval, const char *desc)
     screen_save();
     clear_from(0);
   
+    /* Help text */
+    prt("Item type squelch menu", 0, 0);
+
     /* Buttons */
     button_add("Up", ARROW_UP);
     button_add("Down", ARROW_DOWN);
@@ -1811,16 +1705,10 @@ static bool sval_menu(int tval, const char *desc)
     /* Indent output */
     text_out_indent = 1;
     text_out_wrap = 79;
-    Term_gotoxy(1, 0);
+    Term_gotoxy(1, 1);
   
     /* Display some helpful information */
-    text_out("Use the ");
-    text_out_c(TERM_L_GREEN, "movement keys");
-    text_out(" to scroll the list or ");
-    text_out_c(TERM_L_GREEN, "ESC");
-    text_out(" to return to the previous menu.  ");
-    text_out_c(TERM_L_BLUE, "Enter");
-    text_out(" toggles the current setting.");
+    text_out_e(EGO_MENU_HELPTEXT);
   
     text_out_indent = 0;
   

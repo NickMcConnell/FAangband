@@ -49,38 +49,58 @@
 
 
 /**
- * Categories for quality squelch - must be the same as the one in cmd3.c
+ * Categories for quality squelch
  */
-static tval_desc quality_choices[TYPE_MAX] = 
+tval_desc quality_choices[Q_TV_MAX] = 
 {
-    { TV_SWORD, "Swords" }, 
-    { TV_POLEARM,"Polearms"  },
-    { TV_HAFTED,"Blunt weapons"  },
-    { TV_BOW, "Missile weapons" },
-    { TV_SHOT, "Sling ammunition" },
-    { TV_ARROW,"Bow ammunition"  },
-    { TV_BOLT,"Crossbow ammunition"  },
+    { TV_SWORD,      "Swords" }, 
+    { TV_POLEARM,    "Polearms"  },
+    { TV_HAFTED,     "Blunt weapons"  },
+    { TV_BOW,        "Missile weapons" },
+    { TV_SHOT,       "Sling shots" },
+    { TV_ARROW,      "Arrows"  },
+    { TV_BOLT,       "Crossbow bolts"  },
     { TV_SOFT_ARMOR, "Soft armor" },
-    { TV_HARD_ARMOR,"Hard armor"  },
+    { TV_HARD_ARMOR, "Hard armor"  },
     { TV_DRAG_ARMOR, "Dragon Scale Mail" },
-    { TV_CLOAK,"Cloaks"  },
-    { TV_SHIELD, "Shields" },
-    { TV_HELM, "Helms" },
-    { TV_CROWN, "Crowns" },
-    { TV_GLOVES, "Gloves" },
-    { TV_BOOTS,"Boots"  },
-    { TV_DIGGING,"Diggers"  },
-    { TV_RING, "Rings" },
-    { TV_AMULET, "Amulets" },
+    { TV_CLOAK,      "Cloaks"  },
+    { TV_SHIELD,     "Shields" },
+    { TV_HELM,       "Helms" },
+    { TV_CROWN,      "Crowns" },
+    { TV_GLOVES,     "Gloves" },
+    { TV_BOOTS,      "Boots"  },
+    { TV_DIGGING,    "Diggers"  },
+    { TV_RING,       "Rings" },
+    { TV_AMULET,     "Amulets" },
 };
 
-bool squelch_profile[TYPE_MAX][SQUELCH_MAX];
+/**
+ * The names for the various kinds of quality
+ */
+quality_desc_struct quality_strings[SQUELCH_MAX] =
+{
+    { SQUELCH_NONE, "unknown", "unknown", "all unknown" },	
+    { SQUELCH_KNOWN_PERILOUS, "sensed as perilous", "identified as perilous", 
+      "all known perilous" }, 
+    { SQUELCH_KNOWN_DUBIOUS, "sensed as dubious", "identified as dubious", 
+      "all known dubious non-ego" },     
+    { SQUELCH_AVERAGE, "sensed as average", "sensed as average", 
+      "all average" },     
+    { SQUELCH_KNOWN_GOOD, "sensed as good", "identified as good",
+      "all known good non-ego" },    
+    { SQUELCH_KNOWN_EXCELLENT, "sensed as excellent", 
+      "identified as excellent", "all known excellent" }, 
+    { SQUELCH_FELT_DUBIOUS, "", "sensed as dubious", "all dubious" },   
+    { SQUELCH_FELT_GOOD, "", "sensed as good", "all good" },    
+};
+
+bool squelch_profile[Q_TV_MAX][SQUELCH_MAX];
 
 
 /**
  * Categories for sval-dependent squelch. 
  */
-static tval_desc sval_dependent[] =
+tval_desc sval_dependent[S_TV_MAX] =
 {
   { TV_STAFF,		"Staffs" },
   { TV_WAND,		"Wands" },
@@ -100,27 +120,6 @@ static tval_desc sval_dependent[] =
   { TV_JUNK,            "Junk" }
 };
 
-
-/*
- * Reset the player's squelch choices for a new game.
- */
-void squelch_birth_init(void)
-{
-    int i, j;
-
-    /* Reset squelch bits */
-    for (i = 0; i < z_info->k_max; i++)
-	k_info[i].squelch = FALSE;
-
-    /* Reset ego squelch */
-    for (i = 0; i < z_info->e_max; i++)
-	e_info[i].squelch = FALSE;
-  
-    /* Clear the squelch bytes */
-    for (i = 0; i < TYPE_MAX; i++)
-	for (j = 0; j < SQUELCH_MAX; j++)
-	    squelch_profile[i][j] = SQUELCH_NONE;
-}
 
 /*** Autoinscription stuff ***/
 
@@ -277,6 +276,27 @@ void autoinscribe_pack(void)
 
 /*** Squelch code ***/
 
+/*
+ * Reset the player's squelch choices for a new game.
+ */
+void squelch_birth_init(void)
+{
+    int i, j;
+
+    /* Reset squelch bits */
+    for (i = 0; i < z_info->k_max; i++)
+	k_info[i].squelch = FALSE;
+
+    /* Reset ego squelch */
+    for (i = 0; i < z_info->e_max; i++)
+	e_info[i].squelch = FALSE;
+  
+    /* Clear the squelch bytes */
+    for (i = 0; i < Q_TV_MAX; i++)
+	for (j = 0; j < SQUELCH_MAX; j++)
+	    squelch_profile[i][j] = SQUELCH_NONE;
+}
+
 /**
  * Determines whether a tval is eligable for sval-squelch.
  */
@@ -295,20 +315,20 @@ bool squelch_tval(int tval)
 }
 
 /*
- * Find the squelch type of the object, or TYPE_MAX if none
+ * Find the squelch type of the object, or Q_TV_MAX if none
  */
 int squelch_type_of(const object_type *o_ptr)
 {
     size_t i;
     
     /* Find the appropriate squelch group */
-    for (i = 0; i < TYPE_MAX; i++)
+    for (i = 0; i < Q_TV_MAX; i++)
     {
 	if (quality_choices[i].tval == o_ptr->tval)
 	    return i;
     }
     
-    return TYPE_MAX;
+    return Q_TV_MAX;
 }
 
 int feel_to_squelch_level(int feel)

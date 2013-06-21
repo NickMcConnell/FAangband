@@ -430,114 +430,6 @@ void do_cmd_destroy(cmd_code code, cmd_arg args[])
     }
 }
 
-enum
-{
-    DESTROY_THIS_ITEM,
-    DESTROY_CURSED,
-    DESTROY_DUBIOUS,   
-    DESTROY_DUBIOUS_NON,   
-    DESTROY_NON_EGO,
-    DESTROY_AVERAGE,    
-    DESTROY_GOOD_STRONG,    
-    DESTROY_GOOD_WEAK,
-    DESTROY_ALL,	
-    DESTROY_THIS_FLAVOR,
-    DESTROY_THIS_EGO
-};
-
-/**
- * Categories for quality squelch - must be the same as the one in squelch.c
- */
-static tval_desc quality_choices[TYPE_MAX] = 
-{
-    { TV_SWORD, "Swords" }, 
-    { TV_POLEARM,"Polearms"  },
-    { TV_HAFTED,"Blunt weapons"  },
-    { TV_BOW, "Missile weapons" },
-    { TV_SHOT, "Sling ammunition" },
-    { TV_ARROW,"Bow ammunition"  },
-    { TV_BOLT,"Crossbow ammunition"  },
-    { TV_SOFT_ARMOR, "Soft armor" },
-    { TV_HARD_ARMOR,"Hard armor"  },
-    { TV_DRAG_ARMOR, "Dragon Scale Mail" },
-    { TV_CLOAK,"Cloaks"  },
-    { TV_SHIELD, "Shields" },
-    { TV_HELM, "Helms" },
-    { TV_CROWN, "Crowns" },
-    { TV_GLOVES, "Gloves" },
-    { TV_BOOTS,"Boots"  },
-    { TV_DIGGING,"Diggers"  },
-    { TV_RING, "Rings" },
-    { TV_AMULET, "Amulets" },
-};
-
-/**
- * The names for the various kinds of quality
- */
-static quality_desc_struct quality_strings[SQUELCH_MAX] =
-{
-    { SQUELCH_NONE, "unknown", "unknown", "all unknown" },	
-    { SQUELCH_KNOWN_PERILOUS, "sensed as perilous", "identified as perilous", 
-      "all known perilous" }, 
-    { SQUELCH_KNOWN_DUBIOUS, "sensed as dubious", "identified as dubious", 
-      "all known dubious non-ego" },     
-    { SQUELCH_AVERAGE, "sensed as average", "sensed as average", 
-      "all average" },     
-    { SQUELCH_KNOWN_GOOD, "sensed as good", "identified as good",
-      "all known good non-ego" },    
-    { SQUELCH_KNOWN_EXCELLENT, "sensed as excellent", 
-      "identified as excellent", "all known excellent" }, 
-    { SQUELCH_FELT_DUBIOUS, "", "sensed as dubious", "all dubious" },   
-    { SQUELCH_FELT_GOOD, "", "sensed as good", "all good" },    
-};
-
-bool squelch_suggestion(int feel, int sq_val)
-{
-    /* Paranoia */
-    if ((feel == FEEL_NONE) || (feel == FEEL_SPECIAL))
-	return FALSE;
-
-    switch (sq_val)
-    {
-    case SQUELCH_KNOWN_PERILOUS:
-    {
-	if (feel == FEEL_PERILOUS) return TRUE;	
-	else return FALSE;
-    }
-    case SQUELCH_KNOWN_DUBIOUS:
-    {
-	if (feel == FEEL_DUBIOUS_STRONG) return TRUE;	
-	else return FALSE;
-    }
-    case SQUELCH_AVERAGE:
-    {
-	if (feel == FEEL_AVERAGE) return TRUE;	
-	else return FALSE;
-    }
-    case SQUELCH_KNOWN_GOOD:
-    {
-	if (feel == FEEL_GOOD_STRONG) return TRUE;	
-	else return FALSE;
-    }
-    case SQUELCH_KNOWN_EXCELLENT:
-    {
-	if (feel == FEEL_EXCELLENT) return TRUE;	
-	else return FALSE;
-    }
-    case SQUELCH_FELT_DUBIOUS:
-    {
-	if (feel == FEEL_DUBIOUS_WEAK) return TRUE;	
-	else return FALSE;
-    }
-    case SQUELCH_FELT_GOOD:
-    {
-	if (feel == FEEL_GOOD_WEAK) return TRUE;	
-	else return FALSE;
-    }
-    }
-    return FALSE;
-}
-
 void textui_cmd_destroy_menu(int item)
 {
     int amt, type, sq_val;
@@ -565,8 +457,6 @@ void textui_cmd_destroy_menu(int item)
 	cmd_set_arg_item(cmd_get_top(), 0, item);
 	return;
     }
-
-    //if (artifact_p(o_ptr)) return;
 
     /* Get all the object info */
     o_ptr = object_from_item_idx(item);
@@ -633,7 +523,6 @@ void textui_cmd_destroy_menu(int item)
 	    
 	    e_ptr = &e_info[o_ptr->name2];
 	    choice.e_idx = e_ptr->eidx;
-	    //choice.short_name = strip_ego_name(e_ptr->name);
 	    choice.short_name = "";
 	    (void) ego_item_name(buf, sizeof(buf), &choice);
 	    strnfmt(out_val, sizeof out_val, "Squelch all %s", buf + 4);

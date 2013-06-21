@@ -203,7 +203,6 @@ void do_cmd_change_name(void)
 	      /* Don't change savefile name. */
 	      process_player_name(FALSE);
 	  }
-	  //(void) get_name(namebuf, sizeof namebuf);
 	  (void) make_dump(dumpline, 2);
         }
       
