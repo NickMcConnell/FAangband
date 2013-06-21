@@ -207,6 +207,14 @@ s32b price_item(object_type * o_ptr, int greed, bool flip)
     if (price <= 0)
 	return (0L);
 
+    /* I'm not a complete idiot */
+    if (o_ptr->feel == FEEL_PERILOUS)
+	price /= 3;
+    else if (o_ptr->feel == FEEL_DUBIOUS_STRONG)
+	price /= 10;
+    else if (o_ptr->feel == FEEL_DUBIOUS_WEAK)
+	price /= 5;
+
     /* Compute the racial factor */
     racial_factor = g_info[(ot_ptr->owner_race * z_info->p_max) + p_ptr->prace];
 
