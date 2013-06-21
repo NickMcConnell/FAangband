@@ -193,10 +193,10 @@ const char *map_name[] =
 
 const char *map_description[] =
 {
-    "The standard FAangband wilderness.  You will start in a town,\nand need to traverse the map to find dungeons, fighting enemies\nas you go.  Each dungeon has a guardian at the bottom.",
-    "A more extended wilderness, which was the standard up until\nversion 1.2.",
-    "Here you descend just through the dungeons of Beleriand, with\nportals at the bottom of each which will take you to the next one.\nAll guardians except the last are optional to fight.",
-    "An experience more like regular Angband, with a single town,\na single dungeon, and two quests - Sauron on level 99,\nand Morgoth on level 100.",
+    "The standard FAangband wilderness.  You will start in a town, and need to traverse the map to find dungeons, fighting enemies as you go.  Each dungeon has a guardian at the bottom.",
+    "A more extended wilderness, which was the standard up until version 1.2.",
+    "Here you descend just through the dungeons of Beleriand, with portals at the bottom of each which will take you to the next one.  All guardians except the last are optional to fight.",
+    "An experience more like regular Angband, with a single town, a single dungeon, and two quests - Sauron on level 99, and Morgoth on level 100.",
     "Quit FAangband."
 };
 
@@ -252,7 +252,7 @@ static void map_menu_browser(int oid, void *data, const region *loc)
 
     /* Redirect output to the screen */
     text_out_hook = text_out_to_screen;
-    text_out_wrap = 0;
+    text_out_wrap = 60;
     text_out_indent = loc->col - 1;
     text_out_pad = 1;
 
@@ -262,6 +262,7 @@ static void map_menu_browser(int oid, void *data, const region *loc)
     /* XXX */
     text_out_pad = 0;
     text_out_indent = 0;
+    text_out_wrap = 0;
 }
 
 static const menu_iter map_menu_iter = 
@@ -388,10 +389,10 @@ const char *mode_description[] =
     "Accept the current state of the game modes as printed below",
     "Start as a thrall on the steps of Angband",
     "Only ever go into greater danger until you win or die",
-    "Taking a dungeon stair or wilderness path will not place\nyou on a stair or path back the way you came",
-    "Player and monster spell and view distances are halved.\nThis is good if you have a small screen or large tiles",
+    "Taking a dungeon stair or wilderness path will not place you on a stair or path back the way you came",
+    "Player and monster spell and view distances are halved.  This is good if you have a small screen or large tiles",
     "Artifacts are never generated",
-    "You cannot sell items to shops for money, but you will\nget more money from the dungeon floor and monsters",
+    "You cannot sell items to shops for money, but you will get more money from the dungeon floor and monsters",
     "Monsters know your weaknesses without having to learn them",
     "Quit FAangband"
 };
@@ -473,7 +474,7 @@ static void mode_menu_browser(int oid, void *data, const region *loc)
 
     /* Redirect output to the screen */
     text_out_hook = text_out_to_screen;
-    text_out_wrap = 0;
+    text_out_wrap = 60;
     text_out_indent = loc->col - 1;
     text_out_pad = 1;
 
@@ -497,6 +498,7 @@ static void mode_menu_browser(int oid, void *data, const region *loc)
     /* XXX */
     text_out_pad = 0;
     text_out_indent = 0;
+    text_out_wrap = 0;
 }
 
 static const menu_iter mode_menu_iter = 
@@ -858,8 +860,8 @@ static void clear_question(void)
 #define BIRTH_MENU_HELPTEXT \
 	"{lightblue}Please select your character from the menu below:{/}\n\n" \
 	"Use the {lightgreen}movement keys{/} to scroll the menu, " \
-	"{lightgreen}Enter{/} to select the\ncurrent menu item, '{lightgreen}*{/}' " \
-	"for a random menu item, '{lightgreen}ESC{/}' to step back\nthrough the " \
+	"{lightgreen}Enter{/} to select the current menu item, '{lightgreen}*{/}' " \
+	"for a random menu item, '{lightgreen}ESC{/}' to step back through the " \
 	"birth process, '{lightgreen}?{/} " \
 	"for help, or '{lightgreen}Ctrl-X{/}' to quit."
 
@@ -874,6 +876,7 @@ static void print_menu_instructions(void)
 	
 	/* Indent output */
 	text_out_indent = QUESTION_COL;
+	text_out_wrap = 60;
 	Term_gotoxy(QUESTION_COL, HEADER_ROW);
 	
 	/* Display some helpful information */
@@ -881,6 +884,7 @@ static void print_menu_instructions(void)
 	
 	/* Reset text_out() indentation */
 	text_out_indent = 0;
+	text_out_wrap = 0;
 }
 
 /* Allow the user to select from the current menu, and return the 

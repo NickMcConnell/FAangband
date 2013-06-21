@@ -133,7 +133,7 @@ static void  gain_spec_menu_browser(int oid, void *data, const region *loc)
     
     /* Redirect output to the screen */
     text_out_hook = text_out_to_screen;
-    text_out_wrap = 0;
+    text_out_wrap = 60;
     text_out_indent = loc->col - 1;
     text_out_pad = 1;
     
@@ -145,6 +145,7 @@ static void  gain_spec_menu_browser(int oid, void *data, const region *loc)
     /* XXX */
     text_out_pad = 0;
     text_out_indent = 0;
+    text_out_wrap = 0;
 }
 
 /**
@@ -759,7 +760,7 @@ static void view_spec_menu_browser(int oid, void *data, const region *loc)
 
 	/* Redirect output to the screen */
 	text_out_hook = text_out_to_screen;
-	text_out_wrap = 0;
+	text_out_wrap = 60;
 	text_out_indent = loc->col - 1;
 	text_out_pad = 1;
 
@@ -773,6 +774,7 @@ static void view_spec_menu_browser(int oid, void *data, const region *loc)
 	/* XXX */
 	text_out_pad = 0;
 	text_out_indent = 0;
+	text_out_wrap = 0;
 }
 
 /**
