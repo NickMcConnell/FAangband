@@ -128,15 +128,15 @@ tval_desc sval_dependent[S_TV_MAX] =
  */
 int get_autoinscription_index(s16b k_idx)
 {
-  int i;
+    int i;
   
-  for (i = 0; i < inscriptions_count; i++)
+    for (i = 0; i < inscriptions_count; i++)
     {
-      if (k_idx == inscriptions[i].kind_idx)
-	return i;
+	if (k_idx == inscriptions[i].kind_idx)
+	    return i;
     }
   
-  return -1;
+    return -1;
 }
 
 /**
@@ -144,15 +144,15 @@ int get_autoinscription_index(s16b k_idx)
  */
 const char *get_autoinscription(s16b kind_idx)
 {
-  int i;
+    int i;
   
-  for (i = 0; i < inscriptions_count; i++)
+    for (i = 0; i < inscriptions_count; i++)
     {
-      if (kind_idx == inscriptions[i].kind_idx)
-	return quark_str(inscriptions[i].inscription_idx);
+	if (kind_idx == inscriptions[i].kind_idx)
+	    return quark_str(inscriptions[i].inscription_idx);
     }
   
-  return 0;
+    return 0;
 }
 
 /**
@@ -160,117 +160,118 @@ const char *get_autoinscription(s16b kind_idx)
  */
 int apply_autoinscription(object_type *o_ptr)
 {
-  char o_name[80];
-  const char *note = get_autoinscription(o_ptr->k_idx);
-  const char *existing_inscription = quark_str(o_ptr->note);
+    char o_name[80];
+    const char *note = get_autoinscription(o_ptr->k_idx);
+    const char *existing_inscription = quark_str(o_ptr->note);
   
-  /* Don't inscribe unaware objects */
-  if (!note || !object_aware_p(o_ptr))
-    return 0;
+    /* Don't inscribe unaware objects */
+    if (!note || !object_aware_p(o_ptr))
+	return 0;
   
-  /* Don't re-inscribe if it's already correctly inscribed */
-  if (existing_inscription && streq(note, existing_inscription))
-    return 0;
+    /* Don't re-inscribe if it's already correctly inscribed */
+    if (existing_inscription && streq(note, existing_inscription))
+	return 0;
   
-  /* Get an object description */
-  object_desc(o_name, sizeof(o_name), o_ptr,
-	      ODESC_PREFIX | ODESC_FULL);
+    /* Get an object description */
+    object_desc(o_name, sizeof(o_name), o_ptr,
+		ODESC_PREFIX | ODESC_FULL);
   
-  if (note[0] != 0)
-    o_ptr->note = quark_add(note);
-  else
-    o_ptr->note = 0;
+    if (note[0] != 0)
+	o_ptr->note = quark_add(note);
+    else
+	o_ptr->note = 0;
   
-  msg("You autoinscribe %s.", o_name);
+    msg("You autoinscribe %s.", o_name);
+    p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
   
-  return 1;
+    return 1;
 }
 
 
 int remove_autoinscription(s16b kind)
 {
-  int i = get_autoinscription_index(kind);
+    int i = get_autoinscription_index(kind);
   
-  /* It's not here. */
-  if (i == -1) return 0;
+    /* It's not here. */
+    if (i == -1) return 0;
   
-  while (i < inscriptions_count - 1)
+    while (i < inscriptions_count - 1)
     {
-      inscriptions[i] = inscriptions[i+1];
-      i++;
+	inscriptions[i] = inscriptions[i+1];
+	i++;
     }
   
-  inscriptions_count--;
+    inscriptions_count--;
   
-  return 1;
+    return 1;
 }
 
 
 int add_autoinscription(s16b kind, const char *inscription)
 {
-  int index;
+    int index;
   
-  /* Paranoia */
-  if (kind == 0) return 0;
+    /* Paranoia */
+    if (kind == 0) return 0;
   
-  /* If there's no inscription, remove it */
-  if (!inscription || (inscription[0] == 0))
-    return remove_autoinscription(kind);
+    /* If there's no inscription, remove it */
+    if (!inscription || (inscription[0] == 0))
+	return remove_autoinscription(kind);
   
-  index = get_autoinscription_index(kind);
+    index = get_autoinscription_index(kind);
   
-  if (index == -1)
-    index = inscriptions_count;
+    if (index == -1)
+	index = inscriptions_count;
   
-  if (index >= AUTOINSCRIPTIONS_MAX)
+    if (index >= AUTOINSCRIPTIONS_MAX)
     {
-      msg("This inscription (%s) cannot be added because the inscription array is full!", inscription);
-      return 0;
+	msg("This inscription (%s) cannot be added because the inscription array is full!", inscription);
+	return 0;
     }
   
-  inscriptions[index].kind_idx = kind;
-  inscriptions[index].inscription_idx = quark_add(inscription);
+    inscriptions[index].kind_idx = kind;
+    inscriptions[index].inscription_idx = quark_add(inscription);
   
-  /* Only increment count if inscription added to end of array */
-  if (index == inscriptions_count)
-    inscriptions_count++;
+    /* Only increment count if inscription added to end of array */
+    if (index == inscriptions_count)
+	inscriptions_count++;
   
-  return 1;
+    return 1;
 }
 
 
 void autoinscribe_ground(void)
 {
-  int py = p_ptr->py;
-  int px = p_ptr->px;
-  s16b this_o_idx, next_o_idx = 0;
+    int py = p_ptr->py;
+    int px = p_ptr->px;
+    s16b this_o_idx, next_o_idx = 0;
   
-  /* Scan the pile of objects */
-  for (this_o_idx = cave_o_idx[py][px]; this_o_idx; this_o_idx = next_o_idx)
+    /* Scan the pile of objects */
+    for (this_o_idx = cave_o_idx[py][px]; this_o_idx; this_o_idx = next_o_idx)
     {
-      /* Get the next object */
-      next_o_idx = o_list[this_o_idx].next_o_idx;
+	/* Get the next object */
+	next_o_idx = o_list[this_o_idx].next_o_idx;
       
-      /* Apply an autoinscription */
-      apply_autoinscription(&o_list[this_o_idx]);
+	/* Apply an autoinscription */
+	apply_autoinscription(&o_list[this_o_idx]);
     }
 }
 
 void autoinscribe_pack(void)
 {
-  int i;
+    int i;
   
-  /* Cycle through the inventory */
-  for (i = INVEN_PACK; i > 0; i--)
+    /* Cycle through the inventory */
+    for (i = INVEN_PACK; i >= 0; i--)
     {
-      /* Skip empty items */
-      if (!p_ptr->inventory[i].k_idx) continue;
+	/* Skip empty items */
+	if (!p_ptr->inventory[i].k_idx) continue;
       
-      /* Apply the inscription */
-      apply_autoinscription(&p_ptr->inventory[i]);
+	/* Apply the inscription */
+	apply_autoinscription(&p_ptr->inventory[i]);
     }
   
-  return;
+    return;
 }
 
 

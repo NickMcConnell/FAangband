@@ -1928,7 +1928,6 @@ static void o_xtra_act(struct keypress ch, int oid)
 
 	    /* Notice stuff (later) */
 	    p_ptr->notice |= (PN_AUTOINSCRIBE);
-	    p_ptr->redraw |= (PR_INVEN | PR_EQUIP);
 	}
 
 	/* Reload the screen */
