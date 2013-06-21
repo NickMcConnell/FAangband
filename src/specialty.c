@@ -203,7 +203,11 @@ bool gain_spec_menu(int *pick)
 	evt = menu_select(&menu, EVT_SELECT, TRUE);
 	done = (evt.type == EVT_ESCAPE);
 	if (!done && (d->selected_spec))
-	    done = get_check("Are you sure? ");
+	{
+    menu_layout(&menu, &loc);
+	    done = get_check(format("Definitely choose %s? ", 
+				    abilities[d->selected_spec].name));
+	}
     }
 
     if (evt.type != EVT_ESCAPE)
