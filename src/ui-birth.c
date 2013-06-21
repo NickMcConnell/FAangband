@@ -187,7 +187,7 @@ const char *map_name[] =
     "Standard wilderness", 
     "Extended wilderness", 
     "Hybrid dungeon", 
-    "FAnilla dungeon",
+    "Angband dungeon",
     "Quit"
 };
 

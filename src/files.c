@@ -881,7 +881,7 @@ extern int make_dump(char_attr_line * line, int mode)
 	    "Standard wilderness", 
 	    "Extended wilderness", 
 	    "Hybrid dungeon", 
-	    "FAnilla dungeon"
+	    "Angband dungeon"
 	};
 
     const char *mode_name[] = 
