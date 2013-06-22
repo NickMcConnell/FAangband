@@ -228,6 +228,9 @@ static size_t obj_desc_name(char *buf, size_t max, size_t end,
 
     bool pluralise = (mode & ODESC_PLURAL) ? TRUE : FALSE;
 
+    /* Hack - make sure known objects are properly known */
+    if (object_known_p(o_ptr)) object_known(o_ptr);
+
     if (aware && !k_ptr->everseen)
 	k_ptr->everseen = TRUE;
 
