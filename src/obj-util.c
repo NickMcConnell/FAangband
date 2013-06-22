@@ -437,12 +437,18 @@ bool wearable_p(const object_type *o_ptr)
 
 int get_inscribed_ammo_slot(const object_type *o_ptr)
 {
-    char *s;
+    char *s = NULL, *t = NULL;
     if (!o_ptr->note) return 0;
-    s = strchr(quark_str(o_ptr->note), 'f');
-    if (!s || s[1] < '0' || s[1] > '9') return 0;
+    s = strchr(quark_str(o_ptr->note), 'v');
+    t = strchr(quark_str(o_ptr->note), 'f');
 
-    return QUIVER_START + (s[1] - '0');
+    /* Prefer throwing weapons */
+    if (s && (s[1] >= '0') && (s[1] <= '9'))
+	return QUIVER_START + (s[1] - '0');
+    else if (t && (t[1] >= '0') && (t[1] <= '9'))
+	return QUIVER_START + (t[1] - '0');
+
+    return 0;
 }
 
 /**
@@ -2828,19 +2834,20 @@ void sort_quiver(void)
     /* Ammo slots go from 0-9; these indices correspond to the range of
      * (QUIVER_START) - (QUIVER_END-1) in inventory[].
      */
-    bool locked[QUIVER_SIZE] = {FALSE, FALSE, FALSE, FALSE, FALSE,
-				FALSE, FALSE, FALSE, FALSE, FALSE};
+    int locked[QUIVER_SIZE] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     int desired[QUIVER_SIZE] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
     int i, j, k;
-    object_type *o_ptr;
+    object_type *o_ptr, *o1_ptr;
 
     /* Here we figure out which slots have inscribed ammo, and whether that
      * ammo is already in the slot it "wants" to be in or not.
      */
-    for (i=0; i < QUIVER_SIZE; i++)
+    for (i = 0; i < QUIVER_SIZE; i++)
     {
+	bool throwing = FALSE;
 	j = QUIVER_START + i;
 	o_ptr = &p_ptr->inventory[j];
+	throwing = of_has(o_ptr->flags_obj, OF_THROWING);
 
 	/* Skip this slot if it doesn't have ammo */
 	if (!o_ptr->k_idx) continue;
@@ -2850,25 +2857,48 @@ void sort_quiver(void)
 	if (!k) continue;
 
 	k -= QUIVER_START;
-	if (k == i) locked[i] = TRUE;
-	if (desired[k] < 0) desired[k] = i;
+	if (k == i) locked[i] = throwing ? 2 : 1;
+	if (desired[i] < 0) desired[i] = k;
     }
 
     /* For items which had a preference that was not fulfilled, we will swap
      * them into the slot as long as it isn't already locked.
      */
-    for (i=0; i < QUIVER_SIZE; i++)
+    for (i = 0; i < QUIVER_SIZE; i++)
     {
-	if (locked[i] || desired[i] < 0) continue;
+	bool throwing = FALSE;
+	int old_lock = -1;
+
+	/* Doesn't want to move */
+	if (desired[i] < 0) continue;
+
+	/* Throwing weapons can replace ammo */
+	if (locked[desired[i]])
+	{
+	    o_ptr = &p_ptr->inventory[QUIVER_START + i];
+	    throwing = of_has(o_ptr->flags_obj, OF_THROWING);
+	    o1_ptr = &p_ptr->inventory[QUIVER_START + desired[i]];
+
+	    /* Break the lock */
+	    if (!of_has(o1_ptr->flags_obj, OF_THROWING) && throwing)
+	    {
+		old_lock = locked[desired[i]];
+		locked[desired[i]] = 0;
+	    }
+	}
+
+	/* Still locked, can't move */
+	if (locked[desired[i]]) continue;
 
 	/* item in slot 'desired[i]' desires to be in slot 'i' */
 	swap_quiver_slots(desired[i], i);
-	locked[i] = TRUE;
+	locked[desired[i]] = throwing ? 2 : 1;
+	locked[i] = old_lock;
     }
 
     /* Now we need to compact ammo which isn't in a preferrred slot towards the
      * "front" of the quiver */
-    for (i=0; i < QUIVER_SIZE; i++)
+    for (i = 0; i < QUIVER_SIZE; i++)
     {
 	/* If the slot isn't empty, skip it */
 	if (p_ptr->inventory[QUIVER_START + i].k_idx) continue;
@@ -2883,7 +2913,7 @@ void sort_quiver(void)
     }
 
     /* Now we will sort all other ammo using a simple insertion sort */
-    for (i=0; i < QUIVER_SIZE; i++)
+    for (i = 0; i < QUIVER_SIZE; i++)
     {
 	k = i;
 	if (!locked[k])
