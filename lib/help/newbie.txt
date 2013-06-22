@@ -51,7 +51,8 @@ is very handy at night. Once you've earned a little money, invest in a shovel
 or a pickaxe, and some potions of Cure Light Wounds.  Now, 'w'ear a torch or 
 your lantern.  The 'O' command allows you to gain speciality abilities, and to 
 view your race, class, and specialty abilities.
-     See that path '>'?  It's the way to the world outside your home town.  Out
+     See that path '>'?  It's the way to the world outside your home town (or 
+the dungeon if you're playing a dungeon-only game).  Out
 there is a wilderness of forests, plains and mountains, swamps and deserts, 
 and the deadly, lucrative dungeons.  Head off (Once on the path, type '>').
      Once you do that, you will find yourself in the wilderness.  Unless you 

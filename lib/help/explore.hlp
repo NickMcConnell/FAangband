@@ -4,7 +4,7 @@
     (2) Towns                                              (town.txt)
     (3) Exploring Wilderness and Dungeons                  (wild-dun.txt)
     (4) Objects and Monsters                               (objs-mon.txt)
-    (5) Map of Middle-Earth                                (memap.txt)
+    (5) Map of Middle-Earth                                (maps.txt)
 
 
 
@@ -17,4 +17,4 @@
 ***** [2] town.txt
 ***** [3] wild-dun.txt
 ***** [4] objs-mon.txt
-***** [5] memap.txt
+***** [5] maps.txt

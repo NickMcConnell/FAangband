@@ -3,11 +3,6 @@
 
 ********************** Using a Larger Display (Bigscreen) *********************
 
-This version of FAangband uses's Steven Fuerst's bigscreen code, which
-allows you to have a terminal larger than 80x24.  This allows you to
-see more of the dungeon map.  It is not necessary to set any particular 
-command line or preference options.
-
 Under most systems, you can simply resize the terminal while FAangband
 is running, and the game will take advantage of the new size.  In some
 cases (eg gcu 'curses' consoles), FAangband will use the terminal size

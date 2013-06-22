@@ -32,77 +32,38 @@ Various concepts mentioned in the descriptions below:
      "sub-windows": (see below).
 
 
-=== Option Set 1 -- User Interface ===
+=== Option Set 1 -- Interface ===
 
 ***** <rogue_like_commands>
 Rogue-like commands    [rogue_like_commands]
      Selects the "roguelike" command set (see the help file "cmdlist.txt" for 
      more info).
 
-***** <quick_messages>
-Activate quick messages    [quick_messages]
-     Allows the use of any keypress as a response to the "-more-" prompt
-     (useful for monster farming).  Allows most keys to mean "no" to any
-     "[y/n]" prompt.
-
-***** <floor_query_flag>
-Prompt for floor item selection    [floor_query_flag]
-     Makes the player explicitly select objects on the floor instead of using 
-     the only logical floor choice.  This makes you type an extra keypress, 
-     but increases safety.
-
-***** <carry_query_flag>
-Prompt before picking things up    [carry_query_flag]
-     Forces the game to ask your permission before allowing you to pick up any 
-     single object or stack.  This is most often desired when the auto-pickup 
-     option is on.
-
-***** <use_old_target>
-Use old target by default    [use_old_target]
-     Forces all commands which normally ask for a "direction" to use the
-     current "target" if there is one.  Use of this option can be dangerous
-     if you target locations on the ground, unless you clear them when done.
-
-***** <always_pickup>
-Pick things up by default    [always_pickup]
-     Tells the game that walking onto an item should attempt to pick it up.
-     Picking up objects this way takes no additional energy.  Note the "-" 
-     command, which can be used to reverse this option for a single turn.
-
-***** <always_repeat>
-Repeat obvious commands    [always_repeat]
-     Tells the game that when you attempt to open a door or chest, bash
-     a door, tunnel through walls, disarm traps or chests, or alter
-     any grid, you wish to automatically repeat the command 99 times (see 
-     the help file "cmddesc.txt"), unless an explicit repeat count was 
-     given.
-
-***** <show_labels>
-Show labels in equipment listings    [show_labels]
-     Display "labels" (what an object is being used for) for objects in all
-     equipment listings.
-
-***** <show_weights>
-Show weights in all object listings    [show_weights]
-     Display weights (in pounds or kilograms) of objects in all inventory, 
-     equipment, store, and home listings.
-
-***** <show_choices>
-Show choices in inven/equip listings    [show_choices]
-     Display "choices" (legal responses) in any sub-windows which are being
-     used to display your inventory or equipment.  Also, if one sub-window
-     is being used to display your inventory or equipment, then this option
-     will cause it to be (temporarily) toggled as needed to always show the
-     "appropriate" set of objects (inventory or equipment).
-
-***** <show_details>
-Show details in monster descriptions    [show_details]
-     Display "details" (including number of monsters killed, and textual
-     descriptions) in monster descriptions.
+***** <center_player>
+Keep the player centered (slow)    [center_player]
+    Scrolls the display whenever the character moves. When this option is off,
+    the display scrolls when the character reaches the edges of the visible
+    dungeon.
 
 ***** <show_lists>
 Automatically show lists for commands   [show_lists]
      Automatically bring up a menu to choose from whenever appropriate.
+
+***** <show_menus>
+Enter key brings up command menu    [show_menus]
+     Hitting the enter key brings up a nested system of menus, where any 
+     command can be found.  Probably a bit cumbersome to use all the time, but 
+     useful before you're familiar with all the game commands.
+
+***** <mouse_movement>
+Allow mouse clicks to move the player    [mouse_movement]
+     Clicking the mouse on the map will move the character toward the click, 
+     finding a path as well as possible.  Movement is interrupted if monsters 
+     or objects are encountered.
+
+***** <mouse_buttons>
+Mouse commands are enabled    [mouse_buttons]
+     Text "buttons" are shown in the status area for mouse commands.
 
 ***** <show_flavors>
 Show flavors in object descriptions    [show_flavors]
@@ -115,129 +76,45 @@ Show region affected by using detection spells   [show_detect]
      Display a circular flash on the screen that helps show where the 
      detection radius ends.
 
-***** <hp_changes_colour>
-Player colour indicates low hit points    [hp_changes_colour]
-     The '@' player symbol (in non-graphics mode) changes from white to yellow
-     to orange to red as the player's hitpoints fall.
+***** <view_yellow_light>
+Use special colors for torch-lit grids    [view_yellow_light]
+     Floor grids that are only lit by the player's own light source will 
+     appear yellow.
 
-***** <mouse_buttons>
-Buttons for common mouse commands are shown    [mouse_buttons]
-     Text "buttons" are shown in the status area mouse commands.  See the help 
-     file "mouse.txt" for more information about mouse commands.
+***** <animate_flicker>
+Animate multi-coloured monsters and items [animate_flicker]
+     Certain powerful monsters and items will shimmer in real time, i.e.
+     between keypresses.
 
-***** <bottom_status>
-Status is shown at the bottom of the screen   [bottom_status]
-     Character titles, statistics et cetera are displayed at the bottom of the
-     screen instead of the left side.  This is particularly useful when playing
-     on portable devices in portrait mode.
+***** <solid_walls>
+Show walls as solid blocks    [solid_walls]
+     Walls are shown as solid blocks of the appropriate colour instead of '#' 
+     or '%' symbols.
 
-***** <squelch_worthless>
-Squelch worthless items automatically    [squelch_worthless]
-     Items of no value are automatically set to squelch.
-
-***** <hide_squelchable>
-Hide items set as squelchable   [hide_squelchable]
-     Items set to be squelched are not visible to the player in any way.  If 
-     this option is turned off, such items become visible again, appear in 
-     lists of floor items, etc.
-
-=== Option Set 2 -- Disturbance ===
-
-***** <run_ignore_stairs>
-Run past stairs    [run_ignore_stairs]
-     Ignore stairs when running.
-
-***** <run_ignore_doors>
-Run through open doors    [run_ignore_doors]
-     Ignore open doors when running.
-
-***** <run_cut_corners>
-Run past known corners    [run_cut_corners]
-     Cut sharply around known corners when running.  This will result in
-     faster running, but may cause you to run into a lurking monster.
-
-***** <run_use_corners>
-Run into potential corners    [run_use_corners]
-     When running in unmapped hallways, fully explore potential corners.
-
-***** <disturb_move>
-Disturb whenever any monster moves    [disturb_move]
-     Disturb the player when any monster moves, appears, or disappears.
-     This includes monsters which are only visible due to telepathy, so
-     you should probably turn this option off if you want to rest near
-     such monsters.
-
-***** <disturb_near>
-Disturb whenever viewable monster moves    [disturb_near]
-     Disturb the player when any viewable monster moves, whenever any
-     monster becomes viewable for the first time, and also whenever any
-     viewable monster becomes no longer viewable.  This option ignores
-     the existence of "telepathy" for the purpose of determining whether
-     a monster is "viewable".
-
-***** <disturb_panel>
-Disturb whenever map panel changes    [disturb_panel]
-     This option causes you to be disturbed by the screen scrolling, as it 
-     does when your character gets close to the edge of the screen.
-
-***** <disturb_trap_detect>
-Disturb when leaving last trap detect area    [disturb_trap_detect]
-     This option causes you to be disturbed when attempting to run outside
-     the region of your last 'detect traps' spell.  It will take effect only
-     once per trap detection spell you use.  In addition, this option will
-     cause a text warning to be printed when you leave this region.
-
-***** <disturb_state>
-Disturb whenever player state changes    [disturb_state]
-     This option causes you to be disturbed whenever the player state changes, 
-     including changes in hunger, resistance, confusion, etc.
-
-***** <disturb_minor>
-Disturb whenever boring things happen    [disturb_minor]
-     This option causes you to be disturbed by various boring things,
-     including monsters bashing down doors, inventory feelings, and
-     beginning to run out of fuel.
-
-***** <disturb_other>
-Disturb whenever various things happen    [disturb_other]
-     This option is currently unused.
-
-***** <alert_hitpoint>
-Alert user to critical hitpoints    [alert_hitpoint]
-     Produce a "bell" noise, and flush all pending input, when your hitpoints
-     reach the "critical point" chosen elsewhere, preventing stupid deaths.
-     Make certain you change the hitpoint warning number.
-
-***** <verify_destroy>
-Verify destruction of objects    [verify_destroy]
-     Prompt for verification of the "destroy" command.
-
-***** <verify_destroy_junk>
-Verify destruction of worthless objects    [verify_destroy_junk]
-     Prompt for verification of the "destroy" command when destroying
-     worthless objects. This option has no effect if verify_destroy is off.
-
-***** <verify_special>
-Verify use of special commands    [verify_special]
-     Prompt for verification of the "special" commands (borg and debug).
+***** <hybrid_walls>
+Show walls with shaded background    [hybrid_walls]
+     Walls are shown as the usual '#' or '%' symbols, but with a shaded gray 
+     background to make them stand out.
 
 ***** <ring_bell>
 Ring bell on error    [ring_bell]
      Attempt to make a "bell" sound upon various failures or illegal inputs.
+
+***** <use_sound>
+Use sound    [use_sound]
+  Turns on sound effects, if your system supports them.
+
+***** <hp_changes_colour>
+Player colour indicates low hit points    [hp_changes_colour]
+     The '@' player symbol (in non-graphics mode) changes from white to yellow
+     to orange to red as the player's hitpoints fall.
 
 ***** <auto_more>
 Automatically clear '-more-' prompts   [auto_more]	
      Don't wait for user input before clearing the message line.  Turning this 
      option on might lead to missing important messages.
 
-=== Option Set 3 -- Game-play ===
-
-***** <auto_haggle>
-Auto-haggle in stores    [auto_haggle]
-     Disable haggling in stores, resulting in a ten percent sales tax on items 
-     which you would have otherwise been forced to haggle for.  When this option 
-     is on, all prices listed in stores will be the actual price that you pay 
-     for an item, as opposed to shop-keeper's initial offer.
+=== Option Set 2 -- Game-play ===
 
 ***** <auto_scum>
 Auto-scum for good levels    [auto_scum]
@@ -247,202 +124,80 @@ Auto-scum for good levels    [auto_scum]
      is based on the dungeon level, so the deeper you go, the better the
      level will be.  Some people consider this option to be cheating.
 
+***** <night_mare>
+Generate more pits and vaults    [night_mare]
+     This makes the occurrence of pits, vaults and other interesting rooms 
+     much more frequent in dungeons (and more so as you go deeper), and makes 
+     wilderness more dangerous and have more special buildings and areas.  
+     Using this with auto-scum makes for an exciting, and often short, game.
+
+***** <use_old_target>
+Use old target by default    [use_old_target]
+     Forces all commands which normally ask for a "direction" to use the
+     current "target" if there is one.  Use of this option can be dangerous
+     if you target locations on the ground, unless you clear them when done.
+
+***** <pickup_always>
+Pick things up by default    [pickup_always]
+     Tells the game that walking onto an item should attempt to pick it up.
+     Picking up objects this way takes no additional energy.  Note the "-" 
+     command, which can be used to reverse this option for a single turn.
+
+***** <pickup_inven>
+Always pickup items matching inventory   [pickup_inven]
+  Like 'pickup_always', but picks up an item only if it is a copy of an
+  item that you already have in your inventory.
+
 ***** <easy_open>
-Open and close doors automatically    [easy_open]
-     Open doors automatically if you move into them.  Opens and closes doors
-     automatically if only one logical choice is available when you issue 
-     the open command.  From Tim Baker's Easy Patch.
+Open/close/disarm without direction    [easy_open]
+     If there is only one closed door next to the character, the game will not
+     bother asking for a direction when the player asks to 'o'pen something.
+     The same applies for 'c'losing doors and 'D'isarming traps.
 
-***** <easy_disarm>
-Disarm traps automatically    [easy_disarm]
-     Disarm traps automatically if you move into them, or if only one logical 
-     choice is available when you issue the disarm command.  From Tim Baker's 
-     Easy Patch.  Note that this option will not cause a Rogue to undo a
-     monster trap.
+***** <easy_alter>
+Open/close/disarm on movement    [easy_alter]
+     Open doors or disarm traps automatically if you move into them, or if 
+     only one logical choice is available when you issue the appropriate 
+     command.
 
-***** <expand_look>
-Expand the power of the look command    [expand_look]
-     Expand the "look" command to allow the user to "look" at grids which
-     are not actually in view of the player, allowing the examination of
-     objects/monsters which have only been detected by spells, or sensed
-     via telepathy.
+***** <hide_squelchable>
+Hide items set as squelchable   [hide_squelchable]
+     Items set to be squelched are not visible to the player in any way.  If 
+     this option is turned off, such items become visible again, appear in 
+     lists of floor items, etc.
 
-***** <expand_list>
-Expand the power of the list commands    [expand_list]
-     Expand the "listing" commands so that they "wrap" at the "edges" of
-     the appropriate list.  This allows the "look" and "target" commands
-     to "cycle" through all appropriate grids forever, and the "identify
-     symbol" to browse through all of the monsters of a given type.
+***** <run_ignore_stairs>
+Run past stairs    [run_ignore_stairs]
+     Ignore stairs when running.
 
-***** <view_perma_grids>
-Map remembers all perma-lit grids    [view_perma_grids]
-     Memorize all perma-lit floor grids which are seen by the player.
-     This option allows you to keep track of which explored floor grids
-     were perma-lit, but does not distinguish between dark floor grids,
-     unexplored floor grids, and unknown grids.  Turning off this option
-     allows the player to always know which lit floor grids are in line
-     of sight, but this is better accomplished by the "view_bright_lite"
-     option.  Note that any non-floor grids which is seen by the player
-     are always memorized, and objects seen by the player are memorized 
-     independently from the grid itself.
+***** <run_ignore_doors>
+Run through open doors    [run_ignore_doors]
+     Ignore open doors when running.
 
-***** <view_torch_grids>
-Map remembers all torch-lit grids    [view_torch_grids]
-     Memorize all floor grids which have ever been lit up by the player.  
+***** <disturb_near>
+Disturb whenever viewable monster moves    [disturb_near]
+     Disturb the player when any viewable monster moves, whenever any
+     monster becomes viewable for the first time, and also whenever any
+     viewable monster becomes no longer viewable.  This option ignores
+     the existence of "telepathy" for the purpose of determining whether
+     a monster is "viewable".
 
-***** <dungeon_stair>
-Generate dungeons with connected stairs    [dungeon_stair]
-     Always generate a staircase back to the level you came from, if you used
-     a staircase to get to the level.  This is more "realistic", and "safer",
-     but less of a "challenge" for some people.
+***** <disturb_detect>
+Disturb when leaving last trap detect area    [disturb_detect]
+     This option causes you to be disturbed when attempting to run outside
+     the region of your last 'detect traps' spell.  It will take effect only
+     once per trap detection spell you use.  In addition, this option will
+     cause a text warning to be printed when you leave this region.
 
-***** <strong_squelch>
-Auto-squelched items are immediately destroyed   [strong_squelch]
-     Items set to be squelched (either through the squelch menus or on the
-     destroy prompt) are destroyed immediately the player steps on them.
-
-***** <stack_force_notes>
-Merge inscriptions when stacking    [stack_force_notes]
-     Force otherwise identical objects to merge, even if one has an empty
-     inscription and the other does not.  The resulting stack keeps the 
-     non-empty inscription.
-
-***** <stack_force_costs>
-Merge discounts when stacking    [stack_force_costs]
-     Force otherwise identical objects to merge, even if they have different
-     discounts.  The resulting stack keeps the largest discount.  This option
-     may cause you to lose value, but will give you optimal pack usage.
-
-***** <smart_cheat>
-Monsters exploit players weaknesses    [smart_cheat]
-     Allow monsters to know what spell attacks you are resistant to,
-     and to use this information to choose the best attacks.
+***** <notify_recharge>
+Notify on object recharge   [notify_recharge]
+     This causes the game to print a message when any rechargeable object
+     (i.e. a rod or activatable weapon or armour item) finishes recharging. It
+     is the equivalent of inscribing '{!!}' on all such items.
 
 
-=== Option Set 4 -- Efficiency ===
 
-***** <view_reduce_lite>
-Reduce light radius when running    [view_reduce_lite]
-     Reduce the "radius" of the player's light to that of a torch when the 
-     player is running.  This speeds up running on slower machines, but is 
-     rather annoying.
-
-***** <hidden_player>
-Hide player symbol when running    [hidden_player]
-     Hide the player symbol when the player is running, which makes the game 
-     somewhat faster.
-
-***** <avoid_abort>
-Avoid checking for user abort    [avoid_abort]
-     Avoid checking to see if the user has pressed a key during resting
-     or running or repeated commands.  This not only makes the game much
-     more efficient (on many systems), but also allows the use of certain
-     obscure macro sequences, such as turning this option on, resting until
-     done, turning this option off, and casting a spell.  Note that the use
-     of this option may be dangerous on certain "graphic" machines.  Resting
-     for long periods of time with this option set is dangerous since the
-     resting may not stop until the user takes damage from starvation.
-
-***** <avoid_other>
-Avoid processing special colors    [avoid_other]
-     Avoid processing the multi-hued or clear attributes of monsters.  This 
-     will cause all multi-hued monsters to appear violet, all clear monsters 
-     to appear white, and will cause "trappers" and "lurkers" to be visible 
-     on some machines, but it may greatly increase efficiency especially when 
-     telepathy is active.
-
-***** <flush_failure>
-Flush input on various failures    [flush_failure]
-     This option forces the game to flush all pending input whenever various
-     "failures" occur, such as failure to cast a spell, failure to use a wand,
-     etc.  This is very useful if you use macros which include "directional"
-     components with commands that can fail, since it will prevent you from
-     walking towards monsters when your spells fail.
-
-***** <flush_disturb>
-Flush input whenever disturbed    [flush_disturb]
-     This option forces the game to flush all pending input whenever the
-     character is disturbed.  This is useful if you use macros which take
-     time, since it will prevent you from continuing your macro while being
-     attacked by a monster.
-
-***** <fresh_before>
-Flush output before every command    [fresh_before]
-     This option forces the game to flush all output before every command.
-     This will give you maximal information, but may slow down the game
-     somewhat.  Note that this option is only useful when using macros,
-     resting, running, or repeating commands, since the output is always
-     flushed when the game is waiting for a keypress from the user.
-
-***** <fresh_after>
-Flush output after various things    [fresh_after]
-     This option forces the game to flush all output after not only every
-     player command, but also after every round of processing monsters and
-     objects, and after every message, which will maximize your information,
-     but may slow down the game a lot, especially on slower machines, and on
-     faster machines you cannot see the results anyway.
-
-***** <compress_savefile>
-Compress messages in savefiles    [compress_savefile]
-     Compress the savefile, saving only the most recent player messages.  
-     This can cut the size of the savefile substantially, but will result in 
-     the loss of message information.
-
-***** <hilite_player>
-Highlight the player with the cursor    [hilite_player]
-     Place the visible cursor on the player.  This looks fine on some Unix
-     machines, but horrible on most graphics machines.
-
-***** <view_yellow_lite>
-Use special colors for torch-lit grids    [view_yellow_lite]
-     If the option "view_special_lite" is also on, floor grids that are only 
-     lit by the player's own light source will appear yellow.  If the option 
-     "view_granite_lite" is on, walls will be colored in the same way.  Turning 
-     this option off will slightly increase the speed of the game.
-
-***** <view_bright_lite>
-Use special colors for field of view    [view_bright_lite]
-     If the option "view_special_lite" is also on, those floor grids that the 
-     player can see directly are drawn in white, and all other known grids are 
-     drawn in dark gray.  If the option "view_granite_lite" is on, walls will 
-     be colored in the same way.  Turning this option off will slightly 
-     increase the speed of the game.
-
-***** <view_granite_lite>
-Use special colors for wall grids (slow)    [view_granite_lite]
-     If either the option "view_yellow_lite" or "view_bright_lite" is on, 
-     wall grids will change color depending on lighting conditions instead of 
-     always being gray.  This option may not work well if the attr/char codes 
-     for walls/veins have been changed, or if graphics are being used.  Turning 
-     it off will slightly increase the speed of the game.
-
-***** <view_special_lite>
-Use special colors for floor grids (slow)    [view_special_lite]
-     If either the option "view_yellow_lite" or "view_bright_lite" is on, 
-     floor grids will change color depending on lighting conditions instead of 
-     always being gray.  This option may not work well if the attr/char codes 
-     for floors have been changed, or if graphics are being used.  Turning 
-     it off will slightly increase the speed of the game.
-
-***** <center_player>
-Keep the player centered (slow)    [center_player]
-    Scrolls the display whenever the character moves. When this option is off,
-    the display scrolls when the character reaches the edges of the visible
-    dungeon.
-
-***** <center_running>
-Keep player centered while running (slow)    [center_running]
-    When this option is on, the center_player option is enabled while
-    running. Otherwise, the screen is recentered on the player when running
-    is finished. This option has no effect if center_player is off.
-
-***** <show_piles>
-Show stacks using special attr/char    [show_piles]
-    Causes piles of object to be displayed as a generic symbol rather than
-    looking like the "top" object.
-
-
-=== Option Set 5 -- Cheat Options ===
+=== Option Set 3 -- Cheat Options ===
 
 ***** <cheat_peek>
 Peek into object creation    [cheat_peek]
@@ -484,11 +239,11 @@ Display inven/equip
 Display equip/inven
      Display the player equipment (and sometimes the inventory).
 
-Display player screen
+Display player (basic)
      Display a brief description of the character, including a breakdown
      of the current player "skills" (including attacks/shots per round).
 
-Display player flags
+Display player (extra)
      Display a brief description of the character, including a breakdown
      of the contributions of each equipment item to various resistances
      and stats.
@@ -516,6 +271,10 @@ Display monster list
      Display a list of all monsters currently detected by the player.  This is 
      particularly useful in wilderness when visible monsters may be offscreen.
 
+Display item list
+     Display a list of all objects currently detected by the player.  Also 
+     shows distance in the compass directions to each object.
+
 Display borg messages
      This window flag is currently used only by the Borg.
      There is currently no Borg for FAangband.
@@ -528,32 +287,32 @@ Display borg status
 
 Item squelching (based on the Autosquelch patch by David Blackston)
 allows you define certain items that you know do not interest you.
-These items will be marked so that you can quickly and easily destroy
-them.
+These items will be automatically hidden, or marked so that you can quickly 
+and easily destroy them.
 
-Uninteresting items are automatically inscribed with the word
-"SQUELCH".  The 'destroy item' command, followed by an exlaimation
-point ("!") will delete all items marked "SQUELCH" in your inventory
-and at your current location on the map.  The "SQUELCH" inscribtion
-can be removed normally from any objects you wish not to destroy.
-
-FAangband supports two types of item squelching:
+FAangband supports three types of item squelching:
 
 The main autosquelch screen allows you to select known item types
-through menus.  For example, if you choose to squelch "Amulets of
-DOOM", they will be marked "(squelch)" when they are created.
+through menus.  For example, if you choose to squelch "Wands of Haste Monster", 
+they will be set to squelch when they are created.
 
-The secondary autosquelch menu allows you to set miminum "quality"
-threshholds for various categories of armor, weaponry and ammunition.
-For any given category, you may choose to squelch some, most, or none
-of the items, depending on quality.  These items will be generated
-normally, but those identified as squelchable will be marked
-"(squelch)".  Note that items inscribed with '!k' or '!*' can not be
-squelched.
+The quality autosquelch menu allows you to squelch different quality
+wearable and wieldable items.  For any given category, you may choose to 
+squelch some, most, or none of the items, depending on quality.  These items 
+will be generated normally, but those identified as squelchable will be marked
+"squelch" and optionally hidden, in the usual way.
+
+The ego autosquelch menu is like the quality menu, except it allows individual 
+ego items to be squelched.  So if you no longer want to see any more Boots of 
+Pitiless Torment, you can set them to squelch and they will be squelched as 
+soon as you have recognised them.
 
 Having chosen items to be squelched, the hide_squelchable option, if set, will
 remove them from the player's notice; they will reappear if the option is 
 unset.
+
+Note too that options for squelching of items are also given whenever you 
+use the 'destroy' command.
 
 === Miscellaneous Options ===
 

@@ -892,89 +892,94 @@ static void print_menu_instructions(void)
    by the UI (displaying help text, for instance). */
 static enum birth_stage menu_question(enum birth_stage current, menu_type *current_menu, cmd_code choice_command)
 {
-	struct birthmenu_data *menu_data = menu_priv(current_menu);
-	ui_event cx;
+    struct birthmenu_data *menu_data = menu_priv(current_menu);
+    ui_event cx;
 
-	enum birth_stage next = BIRTH_RESET;
+    enum birth_stage next = BIRTH_RESET;
 	
-	/* Print the question currently being asked. */
-	clear_question();
-	Term_putstr(QUESTION_COL, QUESTION_ROW, -1, TERM_YELLOW, menu_data->hint);
+    /* Print the question currently being asked. */
+    clear_question();
+    Term_putstr(QUESTION_COL, QUESTION_ROW, -1, TERM_YELLOW, menu_data->hint);
 
-	current_menu->cmd_keys = "?*\x18";	 /* ?, *, <ctl-X> */
+    current_menu->cmd_keys = "?*\x18";	 /* ?, *, <ctl-X> */
 
-	while (next == BIRTH_RESET)
+    while (next == BIRTH_RESET)
+    {
+	/* Display the menu, wait for a selection of some sort to be made. */
+	cx = menu_select(current_menu, EVT_KBRD, FALSE);
+
+	/* As all the menus are displayed in "hierarchical" style, we allow
+	   use of "back" (left arrow key or equivalent) to step back in 
+	   the proces as well as "escape". */
+	if (cx.type == EVT_ESCAPE)
 	{
-		/* Display the menu, wait for a selection of some sort to be made. */
-	    cx = menu_select(current_menu, EVT_KBRD, FALSE);
-
-		/* As all the menus are displayed in "hierarchical" style, we allow
-		   use of "back" (left arrow key or equivalent) to step back in 
-		   the proces as well as "escape". */
-		if (cx.type == EVT_ESCAPE)
-		{
-			next = BIRTH_BACK;
-		}
-		else if (cx.type == EVT_SELECT)
-		{
-			if (current == BIRTH_ROLLER_CHOICE)
-			{
-				cmd_insert(CMD_FINALIZE_OPTIONS);
-
-				if (current_menu->cursor)
-				{
-					/* Do a first roll of the stats */
-					cmd_insert(CMD_ROLL_STATS);
-					next = current + 2;
-				}
-				else
-				{
-					/* 
-					 * Make sure we've got a point-based char to play with. 
-					 * We call point_based_start here to make sure we get
-					 * an update on the points totals before trying to
-					 * display the screen.  The call to CMD_RESET_STATS
-					 * forces a rebuying of the stats to give us up-to-date
-					 * totals.  This is, it should go without saying, a hack.
-					 */
-					point_based_start();
-					cmd_insert(CMD_RESET_STATS);
-					cmd_set_arg_choice(cmd_get_top(), 0, TRUE);
-					next = current + 1;
-				}
-			}
-			else
-			{
-				cmd_insert(choice_command);
-				cmd_set_arg_choice(cmd_get_top(), 0, current_menu->cursor);
-				next = current + 1;
-			}
-		}
-		else if (cx.type == EVT_KBRD)
-		{
-			/* '*' chooses an option at random from those the game's provided. */
-			if (cx.key.code == '*' && menu_data->allow_random) 
-			{
-				current_menu->cursor = randint0(current_menu->count);
-				cmd_insert(choice_command);
-				cmd_set_arg_choice(cmd_get_top(), 0, current_menu->cursor);
-
-				menu_refresh(current_menu, FALSE);
-				next = current + 1;
-			}
-			else if (cx.key.code == KTRL('X')) 
-			{
-				cmd_insert(CMD_QUIT);
-				next = BIRTH_COMPLETE;
-			}
-			else if (cx.key.code == '?')
-			{
-				do_cmd_help();
-			}
-		}
+	    next = BIRTH_BACK;
 	}
+	else if (cx.type == EVT_SELECT)
+	{
+	    if (current == BIRTH_ROLLER_CHOICE)
+	    {
+		cmd_insert(CMD_FINALIZE_OPTIONS);
+
+		if (current_menu->cursor)
+		{
+		    /* Do a first roll of the stats */
+		    cmd_insert(CMD_ROLL_STATS);
+		    next = current + 2;
+		}
+		else
+		{
+		    /* 
+		     * Make sure we've got a point-based char to play with. 
+		     * We call point_based_start here to make sure we get
+		     * an update on the points totals before trying to
+		     * display the screen.  The call to CMD_RESET_STATS
+		     * forces a rebuying of the stats to give us up-to-date
+		     * totals.  This is, it should go without saying, a hack.
+		     */
+		    point_based_start();
+		    cmd_insert(CMD_RESET_STATS);
+		    cmd_set_arg_choice(cmd_get_top(), 0, TRUE);
+		    next = current + 1;
+		}
+	    }
+	    else
+	    {
+		cmd_insert(choice_command);
+		cmd_set_arg_choice(cmd_get_top(), 0, current_menu->cursor);
+		next = current + 1;
+	    }
+	}
+	else if (cx.type == EVT_KBRD)
+	{
+	    /* '*' chooses an option at random from those the game's provided. */
+	    if (cx.key.code == '*' && menu_data->allow_random) 
+	    {
+		current_menu->cursor = randint0(current_menu->count);
+		cmd_insert(choice_command);
+		cmd_set_arg_choice(cmd_get_top(), 0, current_menu->cursor);
+
+		menu_refresh(current_menu, FALSE);
+		next = current + 1;
+	    }
+	    else if (cx.key.code == KTRL('X')) 
+	    {
+		cmd_insert(CMD_QUIT);
+		next = BIRTH_COMPLETE;
+	    }
+	    else if (cx.key.code == '?')
+	    {
+		const char *name = 
+		    (const char *)menu_data->items[current_menu->cursor];
+		screen_save();
+		show_file(format("raceclas.txt#%s", 
+				 name), NULL, 0, 0);
+		screen_load();
+	    }
+	}
+    }
 	
-	return next;
+    return next;
 }
 
 /* ------------------------------------------------------------------------

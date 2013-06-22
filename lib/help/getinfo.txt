@@ -82,11 +82,19 @@ known spell by typing its letter.
 
 === Learning More About the Environment:  The "Look" Command ===
 
-     There's so much to see and do in the that you might get a little 
+     There's so much to see and do in the world that you might get a little 
 confused about all the symbols around you.  The 'l'ook (or 'x'amine, in the 
 roguelike keyset) command is your friend; simply type that letter, type 'o' if 
 you like precise movement control, and use the direction keys to move the cursor 
 around.
+
+
+=== Remembering what you know: The Knowledge Menus
+
+     Pretty much everything you have learned can be revisited by looking at 
+the knowledge menus, accessed by '~'.  These menus can also be used to change 
+the way objects, monsters and terrain are displayed, and to automatically 
+inscribe objects.
 
 
 === Places with Useful Information ===

@@ -1,5 +1,11 @@
 =================== "Map" of Middle Earth =======================
 
+There are four maps you can choose when beginning a game of FAangband.  The 
+standard wilderness, extended wilderness and hybrid dungeon basically use the 
+map below (although in the case of the hybrid dungeon, travel between dungeons 
+is via portal).  The Angband dungeon map uses a standard Angband model, where 
+the player starts in town, and there is dungeon immediately below.
+
 Below is a rough diagram of the linkages between the regions of Middle
 Earth which your character can visit.  Dungeons are shown in brackets under
 the region where their entrance lies (Nan Dungortheb is not strictly a dungeon,

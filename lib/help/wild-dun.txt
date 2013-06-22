@@ -7,7 +7,7 @@ Middle Earth you are in and the danger level (1 is the lowest outside towns)
 will be shown at the bottom of the screen.  Take careful note of the danger 
 level outside your town - some regions are very deadly.  As a general rule, 
 the closer to Morgoth's fortress of Angband you get, the more dangerous it is.  
-Look at the file "memap.txt" to get some idea of the layout of Middle Earth.
+Look at the file "maps.txt" to get some idea of the layout of Middle Earth.
     Each region will appear as a large rectangle with paths off some sides 
 leading to other regions, and sometimes with stairs leading down into a 
 dungeon.  Each time you visit a region it will appear different, as there is a 

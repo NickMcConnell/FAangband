@@ -9,7 +9,7 @@ advantage of various cheats to improve his chances down in the dungeon.
 === Saving and Loading your Game, and Importing Angband Savefiles ===
 
      Depending on the port of FAangband you are playing, you will have various 
-saving and loading commands available to you.  DOS, IBM, and UNIX versions use 
+saving and loading commands available to you.  Linux versions use 
 the commands described in the help file "cmddesc.txt", while Macintosh and 
 Windows users may also use menu options (normally found in the "file" menu).  
 Be warned that the Macintosh uses preference files to determine where saves 
@@ -17,10 +17,6 @@ should go; it may take a little fiddling before you make them appear where you
 want them to.  If you get errors when saving your game, make sure the lib/save 
 directory exists and, on multi-user machines, that you have write permission.
 
-     If you are playing most ports of FAangband, the game will automatically load 
-any savefile named "player" found in <<whatever directory FAangband is in>>
-/lib/save/.  Under other systems, the game will wait for you to select a menu 
-option (normally found in the "file" menu) and choose a savefile to load.  
      If the character contained in that savefile is dead, you are asked to 
 generate a new adventurer, who possesses all the monster memories of the slain 
 hero and starts out using the same options.  Otherwise, you continue your game 

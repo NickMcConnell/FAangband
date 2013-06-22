@@ -24,7 +24,7 @@ treasure.
 
 --- Other Towns ---
 
-     As you wander around the world, you will encounter other towns.  If your
+     If you are on a wilderness map, you will encounter other towns.  If your
 race originates in a small town, finding a larger town will allow you to do 
 some more extensive shopping, and maybe sell some of the weapons and armour
 you've been carrying around.  The large towns are Khazad Dum, Belegost, 
@@ -68,20 +68,6 @@ will add it to their inventory.  If it was a bad bargain, they simply throw
 the item away.  In any case, you may receive some knowledge of the item type.
 Travelling merchants do not put out the stock you sell them - see below for
 more details.
-
-Bargaining:
-     If you toggle the auto-haggle option off, you may bargain with the store 
-owners for items, which allows you to get noticeably better deals with only a 
-small amount of effort.  When bargaining, you enter prices you will pay (or 
-accept) for some object.  You can either enter the absolute amount, or precede 
-a number with a plus or minus sign to give a positive or negative increment on 
-your previous offer.  Once you learn how much to increment or decrement your 
-offers by, you will be able to avoid insulting the shopkeepers, and possibly 
-even getting thrown out of the store.  After you have bargained with a shop-
-keeper long enough, and forced him down to his final offer often enough, he 
-will recognize that you are such a superb haggler that he'd might as well give 
-you the best possible price without argument.  The more expensive the item is, 
-the less likely the store owner is to assume that you are a good haggler.
 
 The General Store ("1")
      The General Store sells foods, drinks, cloaks, torches, lamps, oil, 
