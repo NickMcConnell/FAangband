@@ -156,8 +156,8 @@ static enum birth_stage get_quickstart_command(void)
     " #{lightgreen}#{/}{lightyellow}#{/} {lightyellow}#{/}{lightgreen}#{/}# \n" \
     "  #{lightyellow}#{/} {lightyellow}#{/}#  \n" \
     "    *    \n\n"				     \
-    "There are four different ways of structuring\n" \
-    "the world of FAangband; these are described below."
+    "There are four different ways of structuring the world\n" \
+    "of FAangband; '{lightgreen}?{/}' gives more details."
 
 /* Show the map instructions */	
 static void print_map_instructions(void)
@@ -239,7 +239,16 @@ static bool map_menu_handler(menu_type *m, const ui_event *e, int oid)
 	d->selected_map = -1;
 	return FALSE;
     }
-
+    else if (e->type == EVT_KBRD)
+    {
+	if (e->key.code == '?')
+	{
+	    screen_save();
+	    show_file("maps.txt", NULL, 0, 0);
+	    screen_load();
+	}
+	return FALSE;
+    }
     return TRUE;
 }
 
@@ -294,6 +303,7 @@ static menu_type *map_menu_new(void)
     menu_setpriv(m, MAP_MAX + 1, d);
 
     /* set flags */
+    m->cmd_keys = "?";	 
     m->header = "Choose from one of the following game maps (or quit):";
     m->flags = MN_CASELESS_TAGS;
     m->selections = lower_case;
