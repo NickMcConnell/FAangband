@@ -571,6 +571,16 @@ bool slot_can_wield_item(int slot, const object_type * o_ptr)
  */
 const char *mention_use(int slot)
 {
+    char tag[5] = "";
+
+    if (slot >= QUIVER_START)
+    {
+	if (obj_is_ammo(&p_ptr->inventory[slot]))
+	    strnfmt(tag, sizeof(tag), "[f%d]", slot - QUIVER_START);
+	else if (obj_is_quiver_obj(&p_ptr->inventory[slot]))
+	    strnfmt(tag, sizeof(tag), "[v%d]", slot - QUIVER_START);
+    }
+
     switch (slot) {
     case INVEN_WIELD:
     {
@@ -600,16 +610,17 @@ const char *mention_use(int slot)
     case INVEN_FEET:	return "On feet";
 
 
-    case QUIVER_START + 0: return "In quiver [f0]";
-    case QUIVER_START + 1: return "In quiver [f1]";
-    case QUIVER_START + 2: return "In quiver [f2]";
-    case QUIVER_START + 3: return "In quiver [f3]";
-    case QUIVER_START + 4: return "In quiver [f4]";
-    case QUIVER_START + 5: return "In quiver [f5]";
-    case QUIVER_START + 6: return "In quiver [f6]";
-    case QUIVER_START + 7: return "In quiver [f7]";
-    case QUIVER_START + 8: return "In quiver [f8]";
-    case QUIVER_START + 9: return "In quiver [f9]";
+    case QUIVER_START + 0: 
+    case QUIVER_START + 1: 
+    case QUIVER_START + 2: 
+    case QUIVER_START + 3:
+    case QUIVER_START + 4:
+    case QUIVER_START + 5:
+    case QUIVER_START + 6:
+    case QUIVER_START + 7:
+    case QUIVER_START + 8:
+    case QUIVER_START + 9:
+	return format("In quiver %s", tag);    
     }
     
     return "In pack";
