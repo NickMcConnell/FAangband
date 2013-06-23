@@ -45,3 +45,43 @@ Dirnen       West Beleriand       |     *    \      |  /    \
                                                         |       /
                                                     Ered Luin South
                                                         town
+
+=================== Game modes =======================
+
+***** <Thrall>
+    Thrall
+The player starts on the steps to Angband, already in an area of high danger.  
+This mode often leads to quick death.  It is not available for the Angband 
+dungeon map.
+
+***** <Ironman>
+    Ironman 
+This option, not recommended for non-advanced players, prevents the
+player from returning to areas of less danger by staircase, path, Word of
+Recall or teleport level.
+
+***** <Disconnected stairs>
+    Disconnected stairs 
+When you enter a new area, you don't start on a path or staircase back to the 
+previous one.
+
+***** <Small device>
+    Small device 
+Distance of seeing, casting spells, shooting and so on are all halved.
+This is useful for playing with large tiles, or on small devices.
+
+***** <No artifacts>
+    No artifacts
+No artifacts will be created. Ever.
+
+***** <No selling>
+    No selling
+Shopkeepers will never pay you for items you sell, though they will still
+identify unknown items for you, and will still sell you their wares. To
+balance out income in the game, gold found will be increased.
+
+***** <Smart cheat>
+    Smart cheat
+Allow monsters to know what spell attacks you are resistant to, and to
+use this information to choose the best attacks.
+

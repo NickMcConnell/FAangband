@@ -290,7 +290,7 @@ static menu_type *map_menu_new(void)
     struct map_menu_data *d = mem_alloc(sizeof *d);
     int i;
 
-    region loc = { 5, 15, 70, -99 };
+    region loc = { 5, 14, 70, -99 };
 
     /* copy across private data */
     d->selected_map = -1;
@@ -304,7 +304,6 @@ static menu_type *map_menu_new(void)
 
     /* set flags */
     m->cmd_keys = "?";	 
-    m->header = "Choose from one of the following game maps (or quit):";
     m->flags = MN_CASELESS_TAGS;
     m->selections = lower_case;
     m->browse_hook = map_menu_browser;
@@ -378,6 +377,31 @@ static enum birth_stage get_map_command(void)
 /* ------------------------------------------------------------------------
  * Get the game mode (formerly birth options)
  * ------------------------------------------------------------------------ */
+#define MODE_TEXT \
+    "Now, toggle any of the permanent game modes,  '{lightgreen}?{/}'\n" \
+    "for help, accept or quit:"
+
+
+/* Show the mode instructions */	
+static void print_mode_instructions(void)
+{
+    /* Clear screen */
+    clear_from(11);
+    
+    /* Output to the screen */
+    text_out_hook = text_out_to_screen;
+	
+    /* Indent output */
+    text_out_indent = 5;
+    Term_gotoxy(5, 11);
+    
+    /* Display some helpful information */
+    text_out_e(MODE_TEXT);
+    
+    /* Reset text_out() indentation */
+    text_out_indent = 0;
+}
+
 /**
  * Mode descriptions
  */
@@ -437,7 +461,7 @@ static void mode_menu_display(menu_type *m, int oid, bool cursor,
 			       int row, int col, int wid)
 {
     struct mode_menu_data *d = menu_priv(m);
-    int attr_name= cursor ? TERM_L_BLUE : TERM_WHITE;
+    int attr_name = cursor ? TERM_L_BLUE : TERM_WHITE;
 
     /* Dump the name */
     c_put_str(attr_name, d->modes[oid], row, col);
@@ -466,8 +490,19 @@ static bool mode_menu_handler(menu_type *m, const ui_event *e, int oid)
 	    d->mode_settings[oid - 1] = !d->mode_settings[oid - 1];
 	}
     }
-    else if ((e->type == EVT_KBRD) && (e->key.code == ESCAPE)) {
-	d->mode_settings[GAME_MODE_MAX] = TRUE;
+    else if (e->type == EVT_KBRD)
+    {
+	if (e->key.code == ESCAPE) 
+	{
+	    d->mode_settings[GAME_MODE_MAX] = TRUE;
+	}
+	else if (e->key.code == '?')
+	{
+	    const char *name = d->modes[oid];
+	    screen_save();
+	    show_file(format("mapmode.txt#%s", name), NULL, 0, 0);
+	    screen_load();
+	}
 	return FALSE;
     }
 
@@ -526,9 +561,9 @@ static menu_type *mode_menu_new(void)
     menu_type *m = menu_new(MN_SKIN_SCROLL, &mode_menu_iter);
     struct mode_menu_data *d = mem_alloc(sizeof *d);
     int i;
-    const char cmd_keys[] = { (char) ESCAPE, '\0' };
+    const char cmd_keys[] = { '?', (char) ESCAPE, '\0' };
 
-    region loc = { 5, 11, 70, -99 };
+    region loc = { 5, 14, 70, -99 };
 
     /* copy across private data */
     /* current game modes */
@@ -550,7 +585,6 @@ static menu_type *mode_menu_new(void)
     menu_setpriv(m, GAME_MODE_MAX + 2, d);
 
     /* set flags */
-    m->header = "Now, toggle any of the permanent game modes, accept or quit:";
     m->flags = MN_CASELESS_TAGS;
     m->cmd_keys = cmd_keys;
     m->selections = lower_case;
@@ -1380,7 +1414,8 @@ errr get_birth_command(bool wait)
 
 		case BIRTH_MODE_CHOICE:
 		{
-			print_map_instructions();
+		    //print_map_instructions();
+			print_mode_instructions();
 			next = get_mode_command();
 			if (next == BIRTH_BACK)
 				next = BIRTH_MAP_CHOICE;
