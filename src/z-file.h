@@ -184,7 +184,7 @@ bool x_file_putf(ang_file *f, const char *fmt, ...);
  *
  * Returns TRUE if successful, FALSE otherwise.
  */
-bool file_seek(ang_file *f, u32b pos);
+bool file_skip(ang_file *f, int bytes);
 
 /**
  * Reads n bytes from file 'f' into buffer 'buf'.

@@ -17,13 +17,8 @@ bool savefile_save(const char *path);
 
 /*** Ignore these ***/
 
-/* load-old.c */
-int rd_savefile_old(void);
-
-
 /* Utility */
 void note(const char *msg);
-bool older_than(int x, int y, int z);
 
 /* Writing bits */
 void wr_byte(byte v);
@@ -46,27 +41,31 @@ void strip_bytes(int n);
 
 
 /* load.c */
-int rd_randomizer(u32b version);
-int rd_options(u32b version);
-int rd_messages(u32b version);
-int rd_monster_memory(u32b version);
-int rd_object_memory(u32b version);
-int rd_quests(u32b version);
-int rd_artifacts(u32b version);
-int rd_player(u32b version);
-int rd_squelch(u32b version);
-int rd_misc(u32b version);
-int rd_player_hp(u32b version);
-int rd_player_spells(u32b version);
-int rd_randarts(u32b version);
-int rd_inventory(u32b version);
-int rd_stores(u32b version);
-int rd_dungeon(u32b version);
-int rd_objects(u32b version);
-int rd_monsters(u32b version);
-int rd_ghost(u32b version);
-int rd_history(u32b version);
-int rd_traps(u32b version);
+int rd_randomizer(void);
+int rd_options_1(void);
+int rd_options_2(void);
+int rd_messages(void);
+int rd_monster_memory(void);
+int rd_object_memory(void);
+int rd_quests(void);
+int rd_artifacts(void);
+int rd_player_1(void);
+int rd_player_2(void);
+int rd_squelch_1(void);
+int rd_squelch_2(void);
+int rd_misc(void);
+int rd_player_hp(void);
+int rd_player_spells(void);
+int rd_randarts(void);
+int rd_inventory(void);
+int rd_stores(void);
+int rd_dungeon(void);
+int rd_objects(void);
+int rd_monsters(void);
+int rd_ghost(void);
+int rd_history(void);
+int rd_traps(void);
+int rd_null(void);
 
 /* save.c */
 void wr_randomizer(void);

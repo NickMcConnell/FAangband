@@ -282,7 +282,7 @@ static void rd_trap(trap_type *t_ptr)
 /**
  * Read RNG state (added in 2.8.0)
  */
-int rd_randomizer(u32b version)
+int rd_randomizer(void)
 {
     int i;
     u32b noop;
@@ -315,21 +315,213 @@ int rd_randomizer(u32b version)
     return (0);
 }
 
+typedef struct
+{
+	const char *name;
+	int value;
+} old_opt_struct;
+
+
+old_opt_struct old_options[] = {
+    { "rogue_like_commands",        1},
+    { "center_player",              18},
+    { "show_lists",                 11},
+    { "show_menus",                 12},
+    { "mouse_movement",             13},
+    { "mouse_buttons",              14},
+    { "show_flavors",               20},
+    { "show_detect",                23},
+    { "view_yellow_light",          24},
+    { "animate_flicker",            30},
+    { "solid_walls",                50},
+    { "hybrid_walls",               51},
+    { "ring_bell",                  43},
+    { "use_sound",                  0},
+    { "hp_changes_colour",          16},
+    { "auto_more",                  44},
+    { "auto_scum",                  48},
+    { "hard_mode",                  49},
+    { "use_old_target",             2},
+    { "pickup_always",              3},
+    { "pickup_inven",               4},
+    { "easy_open",                  9},
+    { "easy_alter",                 10},
+    { "hide_squelchable",           7},
+    { "run_ignore_stairs",          32},
+    { "run_ignore_doors",           33},
+    { "disturb_near",               37},
+    { "disturb_detect",             39}, 
+    { "notify_recharge",            47},
+    { "cheat_peek",                 160},
+    { "cheat_hear",                 161},
+    { "cheat_room",                 162},
+    { "cheat_xtra",                 163},
+    { "cheat_know",                 164},
+    { "cheat_live",                 165},
+    { "score_peek",                 224},
+    { "score_hear",                 225},
+    { "score_room",                 226},
+    { "score_xtra",                 227},
+    { "score_know",                 228},
+    { "score_live",                 229}
+};
+
+/**
+ * Read options 
+ */
+int rd_options_1(void)
+{
+    int i, n;
+  
+    byte b;
+  
+    u16b tmp16u;
+
+    u32b flag[8];
+    u32b mask[8];
+
+    bool map_extended = TRUE;
+
+  
+    /*** Timed Autosave, inspired by Zangband. ***/
+    rd_byte(&b);
+    autosave = b;
+    rd_s16b(&autosave_freq);
+  
+  
+    /*** Special info */
+  
+    /* Read "delay_factor" */
+    rd_byte(&b);
+    op_ptr->delay_factor = b;
+  
+    /* Read "hitpoint_warn" */
+    rd_byte(&b);
+    op_ptr->hitpoint_warn = b;
+  
+    /* Read "panel_change" */
+    rd_byte(&b); 
+    op_ptr->panel_change = b;
+
+    /* Read lazymove delay */  
+    rd_u16b(&tmp16u);
+    lazymove_delay = (tmp16u < 1000) ? tmp16u : 0;
+  
+    /*** Normal Options ***/
+  
+    /* Read the option flags */
+    for (n = 0; n < 8; n++) rd_u32b(&flag[n]);
+  
+    /* Read the option masks */
+    for (n = 0; n < 8; n++) rd_u32b(&mask[n]);
+  
+    /* Analyze the options (ugh) */
+    for (i = 0; i < 256; i++)
+    {
+	int os = i / 32;
+	int ob = i % 32;
+	size_t j;
+	bool opt_val = (mask[os] & (1L << ob)) && (flag[os] & (1L << ob));
+
+	for (j = 0; j < N_ELEMENTS(old_options); j++)
+	{
+	    if (old_options[j].value == i)
+		option_set(old_options[j].name, opt_val);
+	}
+	if (i == 196)
+	{
+	    p_ptr->game_mode[GAME_MODE_NO_SELLING] = opt_val;
+	}
+	if (i == 197)
+	{
+	    p_ptr->game_mode[GAME_MODE_IRONMAN] = opt_val;
+	}
+	if (i == 198)
+	{
+	    p_ptr->game_mode[GAME_MODE_THRALL] = opt_val;
+	}
+	if (i == 199)
+	{
+	    p_ptr->game_mode[GAME_MODE_SMALL_DEVICE] = opt_val;
+	}
+	if (i == 201)
+	{
+	    p_ptr->game_mode[GAME_MODE_NO_ARTIFACTS] = opt_val;
+	}
+	if (i == 202)
+	{
+	    p_ptr->game_mode[GAME_MODE_NO_STAIRS] = opt_val;
+	}
+	if (i == 203)
+	{
+	    p_ptr->game_mode[GAME_MODE_AI_CHEAT] = opt_val;
+	}
+	if ((i == 200) && opt_val)
+	{
+	    p_ptr->map = MAP_DUNGEON;
+	    map_extended = FALSE;
+	}
+	if ((i == 205) && opt_val)
+	{
+	    p_ptr->map = MAP_COMPRESSED;
+	    map_extended = FALSE;
+	}
+    }
+
+    if (map_extended)
+	p_ptr->map = MAP_EXTENDED;
+  
+    /*** Window Options ***/
+  
+    /* Read the window flags */
+    for (n = 0; n < ANGBAND_TERM_MAX; n++) rd_u32b(&flag[n]);
+  
+    /* Read the window masks */
+    for (n = 0; n < ANGBAND_TERM_MAX; n++) rd_u32b(&mask[n]);
+  
+    /* Analyze the options */
+    for (n = 0; n < ANGBAND_TERM_MAX; n++)
+    {
+	/* Analyze the options */
+	for (i = 0; i < 32; i++)
+	{
+	    /* Process valid flags */
+	    if (window_flag_desc[i])
+	    {
+				/* Blank invalid flags */
+				if (!(mask[n] & (1L << i)))
+				{
+					flag[n] &= ~(1L << i);
+				}
+#if 0
+		/* Process valid flags */
+		if (mask[n] & (1L << i))
+		{
+		    /* Set */
+		    if (flag[n] & (1L << i))
+		    {
+			/* Set */
+			op_ptr->window_flag[n] |= (1L << i);
+		    }
+		}
+#endif
+	    }
+	}
+    }
+  
+
+    /* Set up the subwindows */
+    subwindows_set_flags(flag, ANGBAND_TERM_MAX);
+
+    /* Success */
+    return (0);
+}
 
 
 /**
- * Read options (ignore most pre-2.8.0 options)
- *
- * Note that the normal options are now stored as a set of 256 bit flags,
- * plus a set of 256 bit masks to indicate which bit flags were defined
- * at the time the savefile was created.  This will allow new options
- * to be added, and old options to be removed, at any time, without
- * hurting old savefiles.
- *
- * The window options are stored in the same way, but note that each
- * window gets 32 options, and their order is fixed by certain defines.
+ * Read options 
  */
-int rd_options(u32b version)
+int rd_options_2(void)
 {
     int i, n;
   
@@ -431,7 +623,7 @@ int rd_options(u32b version)
 /**
  * Read the saved messages
  */
-int rd_messages(u32b version)
+int rd_messages(void)
 {
   int i;
   char buf[128];
@@ -467,7 +659,7 @@ int rd_messages(u32b version)
 /**
  * Read the monster lore
  */
-int rd_monster_memory(u32b version)
+int rd_monster_memory(void)
 {
     byte tmp8u, rf_size, rsf_size, monster_blow_max;
     int r_idx;
@@ -571,7 +763,7 @@ int rd_monster_memory(u32b version)
     return (0);
 }
 
-int rd_object_memory(u32b version)
+int rd_object_memory(void)
 {
     int i;
     u16b tmp16u;
@@ -691,7 +883,7 @@ int rd_object_memory(u32b version)
     return 0;
 }
 
-int rd_quests(u32b version)
+int rd_quests(void)
 {
     int i;
     byte tmp8u;
@@ -719,7 +911,7 @@ int rd_quests(u32b version)
     return 0;
 }
 
-int rd_artifacts(u32b version)
+int rd_artifacts(void)
 {
     int i, k;
     byte tmp8u;
@@ -872,7 +1064,226 @@ int rd_artifacts(u32b version)
 /*
  * Read the "extra" information
  */
-int rd_player(u32b version)
+int rd_player_1(void)
+{
+    int i;
+
+    byte max_recall_pts, tmd_max, rune_tail, max_specialties;
+  
+    byte tmp8u;
+    u32b tmp32u;
+  
+    rd_string(op_ptr->full_name, sizeof(op_ptr->full_name));
+  
+    rd_string(p_ptr->died_from, 80);
+  
+    rd_string(p_ptr->history, 250);
+  
+    /* Player race */
+    rd_byte(&p_ptr->prace);
+
+    /* Verify player race */
+    if (p_ptr->prace >= z_info->p_max)
+    {
+	note(format("Invalid player race (%d).", p_ptr->prace));
+	return (-1);
+    }
+    rp_ptr = &p_info[p_ptr->prace];
+    p_ptr->race = rp_ptr;
+
+    /* Player class */
+    rd_byte(&p_ptr->pclass);
+
+    /* Verify player class */
+    if (p_ptr->pclass >= z_info->c_max)
+    {
+	note(format("Invalid player class (%d).", p_ptr->pclass));
+	return (-1);
+    }
+    cp_ptr = &c_info[p_ptr->pclass];
+    p_ptr->class = cp_ptr;
+    mp_ptr = &cp_ptr->magic;
+
+    /* Player gender */
+    rd_byte(&p_ptr->psex);
+    sp_ptr = &sex_info[p_ptr->psex];
+    p_ptr->sex = sp_ptr;
+
+    /* Numeric name suffix */
+    rd_byte(&op_ptr->name_suffix);
+  
+    /* Special Race/Class info */
+    rd_byte(&p_ptr->hitdie);
+    strip_bytes(1);
+  
+    /* Age/Height/Weight */
+    rd_s16b(&p_ptr->age);
+    rd_s16b(&p_ptr->ht);
+    rd_s16b(&p_ptr->wt);
+  
+    /* Read the stat info */
+    for (i = 0; i < a_max; i++) rd_s16b(&p_ptr->stat_max[i]);
+    for (i = 0; i < a_max; i++) rd_s16b(&p_ptr->stat_cur[i]);
+    for (i = 0; i < a_max; i++) rd_s16b(&p_ptr->stat_birth[i]);
+
+    rd_s16b(&p_ptr->ht_birth);
+    rd_s16b(&p_ptr->wt_birth);
+    rd_s16b(&p_ptr->sc_birth);
+    rd_s32b(&p_ptr->au_birth);
+
+    /* Barehand damage */  
+    for (i = 0; i < 12; i++) rd_u16b(&p_ptr->barehand_dam[i]);
+  
+    rd_s32b(&p_ptr->au);
+  
+    rd_s32b(&p_ptr->max_exp);
+    rd_s32b(&p_ptr->exp);
+    rd_u16b(&p_ptr->exp_frac);
+    rd_s16b(&p_ptr->lev);
+    rd_s16b(&p_ptr->home);
+  
+    rd_s16b(&p_ptr->mhp);
+    rd_s16b(&p_ptr->chp);
+    rd_u16b(&p_ptr->chp_frac);
+  
+    rd_s16b(&p_ptr->msp);
+    rd_s16b(&p_ptr->csp);
+    rd_u16b(&p_ptr->csp_frac);
+  
+    rd_s16b(&p_ptr->max_lev);
+    rd_byte(&max_recall_pts);
+    for (i = 0; i < max_recall_pts; i++)	
+	rd_s16b(&p_ptr->recall[i]);
+    rd_s16b(&p_ptr->recall_pt);
+
+    /* Hack -- Repair maximum player level */
+    if (p_ptr->max_lev < p_ptr->lev) p_ptr->max_lev = p_ptr->lev;
+  
+    /* More info */
+    rd_s16b(&p_ptr->speed_boost);
+    rd_s16b(&p_ptr->heighten_power);
+  
+    rd_s16b(&p_ptr->sc);
+  
+    /* Read the flags */
+    rd_s16b(&p_ptr->food);
+    rd_s16b(&p_ptr->energy);
+    rd_s16b(&p_ptr->word_recall);
+    rd_s16b(&p_ptr->state.see_infra);
+  
+    /* Find the number of timed effects */
+    rd_byte(&tmd_max);	
+
+    if (tmd_max <= TMD_MAX)
+    {
+	/* Read all the effects */
+	for (i = 0; i < tmd_max; i++)
+	    rd_s16b(&p_ptr->timed[i]);
+
+	/* Initialize any entries not read */
+	if (tmd_max < TMD_MAX)
+	    C_WIPE(p_ptr->timed + tmd_max, TMD_MAX - tmd_max, s16b);
+    }
+    else
+    {
+	/* Probably in trouble anyway */
+	for (i = 0; i < TMD_MAX; i++)
+	    rd_s16b(&p_ptr->timed[i]);
+
+	/* Discard unused entries */
+	strip_bytes(2 * (tmd_max - TMD_MAX));
+	note("Discarded unsupported timed effects");
+    }
+
+  
+    /* Bit flags for various attack modifiers. */
+    rd_u32b(&p_ptr->special_attack);
+  
+    rd_byte(&tmp8u);	/* oops */
+    rd_byte(&tmp8u);	/* oops */
+  
+    rd_byte((byte *) &p_ptr->black_breath);	/* Status of Black Breath. */
+  
+    rd_byte(&p_ptr->searching);
+  
+    /* Was maximize, preserve modes */
+    rd_byte(&tmp8u);
+    rd_byte(&tmp8u);
+  
+    /* Current shapechange. */
+    rd_byte(&p_ptr->schange);
+  
+    /* The number of the bone file (if any) that player ghosts should use to 
+     * reacquire a name, sex, class, and race.
+     */
+    rd_byte(&bones_selector);
+  
+    /* Find out how many thefts have already occured on this level. */
+    rd_byte(&number_of_thefts_on_level);
+  
+    /* Read number of monster traps on level. */
+    rd_byte(&num_trap_on_level);
+  
+    rd_byte(&rune_tail);
+    if (rune_tail <= RUNE_TAIL)
+    {
+	for (i = 0; i < rune_tail; i++)
+	{
+	    rd_byte(&tmp8u);
+	    num_runes_on_level[i] = tmp8u;
+	}
+
+	/* Initialize any entries not read */
+	if (rune_tail < RUNE_TAIL)
+	    for (i = rune_tail; i < RUNE_TAIL; i++)
+	    {
+		num_runes_on_level[i] = 0;
+	    }
+    }
+    else
+    {
+	/* Probably in trouble anyway */
+	for (i = 0; i < RUNE_TAIL; i++)
+	{
+	    rd_byte(&tmp8u);
+	    num_runes_on_level[i] = tmp8u;
+	}
+
+	/* Discard unused entries */
+	strip_bytes(2 * (rune_tail - RUNE_TAIL));
+	note("Discarded unsupported runes");
+    }
+
+    rd_byte(&tmp8u);
+    mana_reserve = tmp8u;
+    
+  
+    /* Is the level themed and, if so, which theme is it? */
+    rd_byte(&p_ptr->themed_level);
+  
+    /* What themed levels have already appeared? */
+    rd_u32b(&p_ptr->themed_level_appeared);
+
+    rd_byte(&max_specialties);
+    /* Specialty Abilities -BR- */
+    for (i = 0; i < max_specialties; i++) 
+    {
+	rd_byte(&p_ptr->specialty_order[i]);
+	if (p_ptr->specialty_order[i] != PF_NO_SPECIALTY)
+	    pf_on(p_ptr->pflags, p_ptr->specialty_order[i]);
+    }
+  
+    /* Skip */
+    strip_bytes(2);
+    
+    /* Expansion */
+    rd_u32b(&tmp32u);
+    rd_u32b(&tmp32u);
+
+    return 0;
+}
+
+int rd_player_2(void)
 {
     int i;
 
@@ -1109,7 +1520,57 @@ int rd_player(u32b version)
 /**
  * Read squelch and autoinscription submenu for all known objects
  */
-int rd_squelch(u32b version)
+int rd_squelch_1(void)
+{
+    int i;
+    byte tmp8u;
+    u16b file_e_max;
+    u32b tmp32u;
+  
+    /* Read how many squelch bytes we have */
+    rd_byte(&tmp8u);
+
+    /* Discard */
+    strip_bytes(tmp8u);
+  
+  
+    /* Read the number of saved ego-item */
+    rd_u16b(&file_e_max);
+  
+    for (i = 0; i < file_e_max; i++)
+    {
+	if (i < z_info->e_max)
+	{
+	    byte flags;
+	  
+	    /* Read and extract the flag */
+	    rd_byte(&flags);
+	    e_info[i].squelch = (flags & 0x01) ? TRUE : FALSE;
+	    e_info[i].everseen = (flags & 0x02) ? TRUE : FALSE;
+    
+	    /* Expansion */
+	    rd_u32b(&tmp32u);
+	}
+    }
+  
+    /* Read the current number of auto-inscriptions */
+    rd_u16b(&inscriptions_count);
+  
+    /* Write the autoinscriptions array*/
+    for (i = 0; i < inscriptions_count; i++)
+    {
+	char tmp[80];
+      
+	rd_s16b(&inscriptions[i].kind_idx);
+	rd_string(tmp, sizeof(tmp));
+      
+	inscriptions[i].inscription_idx = quark_add(tmp);
+    }
+  
+    return 0;
+}
+
+int rd_squelch_2(void)
 {
     int i, j;
     byte tmp8u;
@@ -1173,7 +1634,7 @@ int rd_squelch(u32b version)
 }
 
 
-int rd_misc(u32b version)
+int rd_misc(void)
 {
 	byte tmp8u;
 	u32b tmp32u;
@@ -1214,7 +1675,7 @@ int rd_misc(u32b version)
 	return 0;
 }
 
-int rd_player_hp(u32b version)
+int rd_player_hp(void)
 {
 	int i;
 	u16b tmp16u;
@@ -1237,7 +1698,7 @@ int rd_player_hp(u32b version)
 }
 
 
-int rd_player_spells(u32b version)
+int rd_player_spells(void)
 {
     int i;
     u16b tmp16u;
@@ -1268,12 +1729,12 @@ int rd_player_spells(u32b version)
     return (0);
 }
 
-int rd_randarts(u32b version)
+int rd_randarts(void)
 {
     return 0;
 }
 
-int rd_inventory(u32b version)
+int rd_inventory(void)
 {
     int slot = 0;
     byte all_inven_total;
@@ -1368,7 +1829,7 @@ int rd_inventory(u32b version)
 /**
  * Read a store
  */
-int rd_stores(u32b version)
+int rd_stores(void)
 {
     int i;
     byte num, max_stores, store_inven_max, store_choices;
@@ -1467,7 +1928,7 @@ int rd_stores(u32b version)
  * DUNGEON_HGT by DUNGEON_WID, and any dungeon with another
  * size will be silently discarded by this routine.
  */
-int rd_dungeon(u32b version)
+int rd_dungeon(void)
 {
     int i, n, y, x;
   
@@ -1665,7 +2126,7 @@ int rd_dungeon(u32b version)
   
 /*** Objects ***/
   
-int rd_objects(u32b version)
+int rd_objects(void)
 {
     int i;
     u16b limit;
@@ -1744,7 +2205,7 @@ int rd_objects(u32b version)
   
 /*** Monsters ***/
   
-int rd_monsters(u32b version)
+int rd_monsters(void)
 {
     int i;
     u16b limit;
@@ -1849,7 +2310,7 @@ int rd_monsters(u32b version)
  *
  * XXX XXX XXX This is such a nasty hack it hurts.
  */
-int rd_ghost(u32b version)
+int rd_ghost(void)
 {
     char buf[64];
   
@@ -1867,7 +2328,7 @@ int rd_ghost(u32b version)
 }
 
 
-int rd_history(u32b version)
+int rd_history(void)
 {
     u32b tmp32u;
     size_t i;
@@ -1896,7 +2357,7 @@ int rd_history(u32b version)
     return 0;
 }
 
-int rd_traps(u32b version)
+int rd_traps(void)
 {
     int i;
     u32b tmp32u;
@@ -1915,4 +2376,11 @@ int rd_traps(u32b version)
     rd_u32b(&tmp32u);
 
     return 0;
+}
+
+/**
+ * For blocks that don't need loading anymore.
+ */
+int rd_null(void) {
+	return 0;
 }
