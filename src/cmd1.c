@@ -277,6 +277,8 @@ static bool auto_pickup_okay(object_type * o_ptr)
 {
 	if (!inven_carry_okay(o_ptr)) return FALSE;
 	if (OPT(pickup_always) || check_for_inscrip(o_ptr, "=g")) return TRUE;
+	if (check_for_inscrip(o_ptr, "@f") || check_for_inscrip(o_ptr, "@v")) 
+	    return TRUE;
 	if (OPT(pickup_inven) && inven_stack_okay(o_ptr)) return TRUE;
 
 	return FALSE;
