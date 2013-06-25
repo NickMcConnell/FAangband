@@ -93,6 +93,7 @@ static const struct {
 	void (*save)(void);
 	u32b version;	
 } savers[] = {
+	{ "description", wr_description, 1 },
 	{ "rng", wr_randomizer, 1 },
 	{ "options", wr_options, 2 },
 	{ "messages", wr_messages, 1 },
@@ -118,6 +119,7 @@ static const struct {
 
 /** Savefile loading functions */
 static const struct blockinfo loaders[] = {
+	{ "description", rd_null, 1 },
 	{ "rng", rd_randomizer, 1 },
 	{ "options", rd_options_1, 1 },
 	{ "options", rd_options_2, 2 },
@@ -365,6 +367,25 @@ static bool try_save(ang_file *file)
     return TRUE;
 }
 
+/*
+ * Set the savefile name.
+ */
+void savefile_set_name(const char *fname)
+{
+	char path[128];
+
+#if defined(SETGID)
+	/* Rename the savefile, using the player_uid and base_name */
+	strnfmt(path, sizeof(path), "%d.%s", player_uid, fname);
+#else
+	/* Rename the savefile, using the base name */
+	strnfmt(path, sizeof(path), "%s", fname);
+#endif
+
+	/* Save the path */
+	path_build(savefile, sizeof(savefile), ANGBAND_DIR_SAVE, path);
+}
+
 
 /*
  * Attempt to save the player in a savefile
@@ -565,6 +586,45 @@ static bool try_load(ang_file *f, const struct blockinfo *loaders) {
 
 	return TRUE;
 }
+
+/* XXX this isn't nice but it'll have to do */
+static char savefile_desc[120];
+
+static int get_desc(void) {
+	rd_string(savefile_desc, sizeof savefile_desc);
+	return 0;
+}
+
+/**
+ * Try to get the 'description' block from a savefile.  Fail gracefully.
+ */
+const char *savefile_get_description(const char *path) {
+	errr err;
+	struct blockheader b;
+
+	ang_file *f = file_open(path, MODE_READ, FTYPE_TEXT);
+	if (!f) return NULL;
+
+	/* Blank the description */
+	savefile_desc[0] = 0;
+
+	if (!check_header(f)) {
+		my_strcpy(savefile_desc, "Invalid savefile", sizeof savefile_desc);
+	} else {
+		while ((err = next_blockheader(f, &b)) == 0) {
+			if (!streq(b.name, "description")) {
+				skip_block(f, &b);
+				continue;
+			}
+			load_block(f, &b, get_desc);
+			break;
+		}
+	}
+
+	file_close(f);
+	return savefile_desc;
+}
+
 
 /**
  * Load a savefile.

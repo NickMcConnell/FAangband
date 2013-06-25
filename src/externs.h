@@ -389,6 +389,7 @@ extern bool get_string(const char *prompt, char *buf, size_t len);
 extern s16b get_quantity(const char *prompt, int max);
 extern char get_char(const char *prompt, const char *options, size_t len, char fallback);
 extern bool get_check(const char *prompt);
+extern bool (*get_file)(const char *suggested_name, char *path, size_t len);
 extern bool get_com(const char *prompt, struct keypress *command);
 extern bool get_com_ex(const char *prompt, ui_event *command);
 extern void pause_line(struct term *term);

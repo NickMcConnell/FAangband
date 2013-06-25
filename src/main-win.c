@@ -86,6 +86,7 @@
 #include "files.h"
 #include "grafmode.h"
 #include "win/win-menu.h"
+#include "savefile.h" /* savefile_set_name() */
 
 /* Make sure the winver allows the AlphaBlend function */
 #if (WINVER < 0x0500)
@@ -286,6 +287,7 @@
  */
 #include "win/win-term.h"
 
+bool use_graphics_nice;
 
 /*
  * An array of term_data's
@@ -2163,15 +2165,12 @@ static errr Term_text_win(int x, int y, int n, int a, const wchar_t *s)
 	}
 	else 
 	{
-	       if (paletted)
-	       { 
-		   SetTextColor(hdc, win_clr[(a % MAX_COLORS) & 0x1F]);
-	       }
-	       else
-	       {
-		       SetTextColor(hdc, win_clr[a % MAX_COLORS]);
-	       }
-	       /* Determine the background colour - from Sil */
+		if (paletted)
+			SetTextColor(hdc, win_clr[(a % MAX_COLORS) & 0x1F]);
+		else
+			SetTextColor(hdc, win_clr[a % MAX_COLORS]);
+
+		/* Determine the background colour - from Sil */
 		switch (a / MAX_COLORS)
 		{
 			case BG_BLACK:
@@ -2578,7 +2577,7 @@ static void windows_map_aux(void)
 	wchar_t c;
 	int x, min_x, max_x;
 	int y, min_y, max_y;
-	byte ta;
+	int ta;
 	wchar_t tc;
 
 	td->map_tile_wid = (td->tile_wid * td->cols) / DUNGEON_WID;
@@ -3326,7 +3325,7 @@ static void start_screensaver(void)
 	my_strcpy(op_ptr->full_name, saverfilename, sizeof(op_ptr->full_name));
 
 	/* Set 'savefile' to a valid name */
-	process_player_name(TRUE);
+	savefile_set_name(player_safe_name(p_ptr));
 
 	/* Does the savefile already exist? */
 	file_exist = file_exists(savefile);
@@ -3752,9 +3751,12 @@ static void process_menus(WORD wCmd)
 			break;
 		}
 		case IDM_WINDOW_RESET: {
-			/* This feature is bugged and causes the game to crash in windows.  It's been disabled for the 3.4 release. */
-			plog("This feature is disabled for this version.");
-			break;
+			/* Paranoia */
+			if (!inkey_flag || !initialized)
+			{
+				plog("You may not do that right now.");
+				break;
+			}
 			
 			
 			if (MessageBox(NULL,
@@ -4440,7 +4442,6 @@ static LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 		case WM_KEYDOWN:
 		{
 			return handle_keydown(wParam, lParam);
-			break;
 		}
 
 		case WM_CHAR:
@@ -4451,6 +4452,17 @@ static LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 			/* printf("wParam=%d lParam=%d vsc=%d vk=%d kp=%d\n", */
 			/*        wParam, lParam, vsc, vk, extended_key); */
 			/* fflush(stdout); */
+
+			if (!game_in_progress) {
+				/* Handle keyboard shortcuts pre-game */
+				switch (wParam) {
+					case KTRL('N'): process_menus(IDM_FILE_NEW); break;
+					case KTRL('O'): process_menus(IDM_FILE_OPEN); break;
+					case KTRL('X'): process_menus(IDM_FILE_EXIT); break;
+					default: return TRUE;
+				}
+				return FALSE;
+			}
 
 			// We don't want to translate some keys to their ascii values
 			// so we have to intercept them here.
@@ -4473,6 +4485,7 @@ static LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 					Term_keypress(wParam, 0);
 					return 0;
 			}
+
 			mods = extract_modifiers(ch, kp);
 			Term_keypress(ch, mods);
 
@@ -4554,28 +4567,40 @@ static LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 			return 0;
 		}
 
+#ifndef WM_QUERYENDSESSION
+#define WM_QUERYENDSESSION 0x0011
+#endif
+
+		case WM_QUERYENDSESSION:
+		case WM_QUIT: {
+			if (game_in_progress && character_generated) {
+				if (uMsg == WM_QUERYENDSESSION && !inkey_flag) {
+					plog("Please exit any open menus before closing the game.");
+					return FALSE;
+				}
+
+				msg_flag = FALSE;
+				save_game();
+			}
+
+			quit(NULL);
+			return TRUE;
+		}
+
+
 		case WM_CLOSE:
 		{
-			if (game_in_progress && character_generated)
-			{
-				if (!inkey_flag)
-				{
-					plog("You may not do that right now.");
+			if (game_in_progress && character_generated) {
+				if (!inkey_flag) {
+					plog("Please exit any open menus before closing the game.");
 					return 0;
 				}
 
 				/* Hack -- Forget messages */
 				msg_flag = FALSE;
-
-				/* Save the game */
 				save_game();
 			}
-			quit(NULL);
-			return 0;
-		}
 
-		case WM_QUIT:
-		{
 			quit(NULL);
 			return 0;
 		}

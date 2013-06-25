@@ -213,7 +213,7 @@ static const char *obj_desc_get_basename(const object_type * o_ptr, bool aware)
  * in the place indicated by '~' if required, or using alterate...
  */
 static size_t obj_desc_name(char *buf, size_t max, size_t end,
-			    const object_type * o_ptr, bool prefix,
+			    object_type * o_ptr, bool prefix,
 			    odesc_detail_t mode, bool spoil)
 {
     object_kind *k_ptr = &k_info[o_ptr->k_idx];
@@ -903,6 +903,7 @@ size_t object_desc(char *buf, size_t max, const object_type * o_ptr,
 		   odesc_detail_t mode)
 {
     object_kind *k_ptr = &k_info[o_ptr->k_idx];
+    object_type *o1_ptr = (object_type *) o_ptr;
 
     bool prefix = mode & ODESC_PREFIX;
     bool spoil = (mode & ODESC_SPOIL);
@@ -929,7 +930,7 @@ size_t object_desc(char *buf, size_t max, const object_type * o_ptr,
 	/** Construct the name **/
 
     /* Copy the base name to the buffer */
-    end = obj_desc_name(buf, max, end, o_ptr, prefix, mode, spoil);
+    end = obj_desc_name(buf, max, end, o1_ptr, prefix, mode, spoil);
 
     if (mode & ODESC_COMBAT) {
 	if (o_ptr->tval == TV_CHEST)

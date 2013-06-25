@@ -461,14 +461,15 @@ static void fsetfileinfo(const char *pathname, u32b fcreator, u32b ftype)
 
 static void osx_file_open_hook(const char *path, file_type ftype)
 {
-	u32b mac_type = 'TEXT';
+	u32b mac_type = 0;
 		
 	if (ftype == FTYPE_RAW)
 		mac_type = 'DATA';
 	else if (ftype == FTYPE_SAVE)
 		mac_type = 'SAVE';
-		
-	fsetfileinfo(path, 'A271', mac_type);
+
+	if (mac_type)
+		fsetfileinfo(path, 'A271', mac_type);
 }
 
 
@@ -1172,30 +1173,21 @@ static void ShowTextAt(int x, int y, int color, int n, const wchar_t *text )
 
 	CGRect r;
 	if(use_graphics || !use_overwrite_hack) {
-		r = (CGRect) {{x*td->tile_wid, y*td->tile_hgt},
-			      {n*td->tile_wid, td->tile_hgt}};
-		switch (color / MAX_COLORS)
-		{
-		case BG_BLACK:
-		{
-		    term_data_color(COLOR_BLACK);
-		    break;
-		}
-		case BG_SAME:
-		{
-		    term_data_color(color % MAX_COLORS);
-		    break;
-		}
-		case BG_DARK:
-		{
-		    term_data_color(TERM_SHADE);
-		    break;
-		}
-		case BG_TRAP:
-		{
-		    term_data_color(TERM_SH_GREEN);
-		    break;
-		}
+		r = (CGRect) { {x*td->tile_wid, y*td->tile_hgt},
+				{n*td->tile_wid, td->tile_hgt} };
+		switch (color / MAX_COLORS) {
+			case BG_BLACK:
+				term_data_color(COLOR_BLACK);
+				break;
+			case BG_SAME:
+				term_data_color(color % MAX_COLORS);
+				break;
+			case BG_DARK:
+				term_data_color(TERM_SHADE);
+				break;
+		        case BG_TRAP:
+			        term_data_color(TERM_SH_GREEN);
+				break;
 		}
 		CGContextFillRect(focus.ctx, r);
 	}
@@ -3043,6 +3035,21 @@ static errr crb_get_cmd(cmd_context context, bool wait)
 		return textui_get_cmd(context, wait);
 }
 
+static bool crb_get_file(const char *suggested_name, char *path, size_t len)
+{
+	NSSavePanel *panel = [NSSavePanel savePanel];
+	NSString *directory = [NSString stringWithCString:ANGBAND_DIR_USER encoding:NSASCIIStringEncoding];
+	NSString *filename = [NSString stringWithCString:suggested_name encoding:NSASCIIStringEncoding];
+
+	if ([panel runModalForDirectory:directory file:filename] == NSOKButton) {
+		const char *p = [[[panel URL] path] UTF8String];
+		my_strcpy(path, p, len);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static OSStatus QuitCommand(EventHandlerCallRef inCallRef,
 							EventRef inEvent, void *inUserData )
 {
@@ -4166,6 +4173,7 @@ int main(void)
 
 	/* Set command hook */ 
 	cmd_get_hook = crb_get_cmd; 
+	get_file = crb_get_file;
 
 	/* Set up the display handlers and things. */
 	init_display();

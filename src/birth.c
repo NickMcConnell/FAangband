@@ -1363,16 +1363,14 @@ void player_birth(bool quickstart_allowed)
 	    event_signal(EVENT_AC);
 	    event_signal(EVENT_HP);
 	    event_signal(EVENT_STATS);
-	} else if (cmd->command == CMD_NAME_CHOICE) {
+	} 
+	else if (cmd->command == CMD_NAME_CHOICE) 
+	{
 	    /* Set player name */
 	    my_strcpy(op_ptr->full_name, cmd->arg[0].string,
 		      sizeof(op_ptr->full_name));
 
 	    string_free((void *) cmd->arg[0].string);
-
-	    /* Don't change savefile name.  If the UI wants it changed, they
-	     * can do it. XXX (Good idea?) */
-	    process_player_name(FALSE);
 	}
 	/* Various not-specific-to-birth commands. */
 	else if (cmd->command == CMD_HELP) {

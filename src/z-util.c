@@ -268,6 +268,27 @@ void strskip(char *s, const char c){
 }
 
 /*
+ * rewrite string s in-place removing escape character c
+ * note that pairs of c will leave one instance of c in out
+ */
+void strescape(char *s, const char c){
+	char *in=s;
+	char *out=s;
+	bool escapenext = FALSE;
+	while(*in){
+		if(*in!=c || escapenext){
+			*out=*in;
+			out++;
+			escapenext = FALSE;
+		} else if (*in == c) {
+			escapenext = TRUE;
+		}
+		in++;
+	}
+	*out=0;
+}
+
+/*
  * returns TRUE if string only contains spaces
  */
 bool contains_only_spaces(const char* s){
@@ -316,13 +337,13 @@ void quit(const char *str)
 	if (quit_aux) (*quit_aux)(str);
 
 	/* Success */
-	if (!str) (void)(exit(EXIT_SUCCESS));
+	if (!str) exit(EXIT_SUCCESS);
 
 	/* Send the string to plog() */
 	plog(str);
 
 	/* Failure */
-	(void)(exit(EXIT_FAILURE));
+	exit(EXIT_FAILURE);
 }
 
 /* Arithmetic mean of the first 'size' entries of the array 'nums' */

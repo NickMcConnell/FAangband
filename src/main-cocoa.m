@@ -189,6 +189,9 @@ static NSFont *default_font;
 /* Make the context aware that one of its views changed size */
 - (void)angbandViewDidScale:(AngbandView *)view;
 
+/* Handle becoming the main window */
+- (void)windowDidBecomeMain:(NSNotification *)notification;
+
 /* Order the context's primary window frontmost */
 - (void)orderFront;
 
@@ -199,7 +202,7 @@ static NSFont *default_font;
 - (BOOL)isOrderedIn;
 
 /* Return whether the context's primary window is key */
-- (BOOL)isKeyWindow;
+- (BOOL)isMainWindow;
 
 /* Invalidate the whole image */
 - (void)setNeedsDisplay:(BOOL)val;
@@ -291,7 +294,7 @@ static int pict_rows = 0;
 /*
  * Value used to signal that we using ASCII, not graphical tiles.
  */ 
-#define GRAF_MODE_NONE 1
+#define GRAF_MODE_NONE 0
 
 /*
  * Requested graphics mode (as a grafID).
@@ -326,6 +329,7 @@ static void play_sound(int event);
 static void update_term_visibility(void);
 static BOOL check_events(int wait);
 static void cocoa_file_open_hook(const char *path, file_type ftype);
+static bool cocoa_get_file(const char *suggested_name, char *path, size_t len);
 static BOOL send_event(NSEvent *event);
 static void record_current_savefile(void);
 
@@ -451,7 +455,7 @@ static int compare_advances(const void *ap, const void *bp)
     [allCharsString autorelease];
     
     // Get glyphs
-    bzero(glyphArray, sizeof glyphArray);
+    memset(glyphArray, 0, sizeof glyphArray);
     CTFontGetGlyphsForCharacters((CTFontRef)screenFont, unicharString, glyphArray, GLYPH_COUNT);
     
     // Get advances. Record the max advance.
@@ -652,10 +656,8 @@ static int compare_advances(const void *ap, const void *bp)
     UniChar unicharString[2] = {(UniChar)wchar, 0};
 
     // Get glyph and advance
-    CGGlyph thisGlyphArray[1] = {};
-    CGSize advances[1] = {};
-    bzero(thisGlyphArray, 1);
-    bzero(advances, 1);
+    CGGlyph thisGlyphArray[1] = { 0 };
+    CGSize advances[1] = { { 0, 0 } };
     CTFontGetGlyphsForCharacters((CTFontRef)screenFont, unicharString, thisGlyphArray, 1);
     CGGlyph glyph = thisGlyphArray[0];
     CTFontGetAdvancesForGlyphs((CTFontRef)screenFont, kCTFontHorizontalOrientation, thisGlyphArray, advances, 1);
@@ -706,8 +708,8 @@ static int compare_advances(const void *ap, const void *bp)
 /* Indication that we're redrawing everything, so get rid of the overdraw cache. */
 - (void)clearOverdrawCache
 {
-    bzero(charOverdrawCache, self->cols * self->rows * sizeof *charOverdrawCache);
-    bzero(attrOverdrawCache, self->cols * self->rows * sizeof *attrOverdrawCache);
+    memset(charOverdrawCache, 0, self->cols * self->rows * sizeof *charOverdrawCache);
+    memset(attrOverdrawCache, 0, self->cols * self->rows * sizeof *attrOverdrawCache);
 }
 
 /* Lock and unlock focus on our image or layer, setting up the CTM appropriately. */
@@ -887,7 +889,10 @@ static int compare_advances(const void *ap, const void *bp)
     
 	/* Hook in to the file_open routine */
 	file_open_hook = cocoa_file_open_hook;
-    
+
+    /* Hook into file saving dialogue routine */
+    get_file = cocoa_get_file;
+
     // initialize file paths
     initialize_file_paths();
 
@@ -1007,6 +1012,15 @@ static int compare_advances(const void *ap, const void *bp)
     }
 }
 
+- (void)windowDidBecomeMain:(NSNotification *)notification
+{
+    NSWindow *window = [notification object];
+    NSFontPanel *panel = [NSFontPanel sharedFontPanel];
+
+    if ([panel isVisible])
+        [panel setPanelFont:[[[window contentView] angbandContext] selectionFont] isMultiple:NO];
+}
+
 - (void)removeAngbandView:(AngbandView *)view
 {
     if ([angbandViews containsObject:view])
@@ -1083,9 +1097,9 @@ static NSMenuItem *superitem(NSMenuItem *self)
     return [[[angbandViews lastObject] window] isVisible];
 }
 
-- (BOOL)isKeyWindow
+- (BOOL)isMainWindow
 {
-    return [[[angbandViews lastObject] window] isKeyWindow];
+    return [[[angbandViews lastObject] window] isMainWindow];
 }
 
 - (void)orderOut
@@ -1691,8 +1705,8 @@ static void draw_image_tile(CGImageRef image, NSRect srcRect, NSRect dstRect, NS
     CGImageRelease(subimage);
 }
 
-static errr Term_pict_cocoa(int x, int y, int n, const byte *ap,
-                            const wchar_t *cp, const byte *tap,
+static errr Term_pict_cocoa(int x, int y, int n, const int *ap,
+                            const wchar_t *cp, const int *tap,
                             const wchar_t *tcp)
 {
     
@@ -1826,29 +1840,23 @@ static errr Term_text_cocoa(int x, int y, int n, int a, const wchar_t *cp)
     leftPushOptions &= ~ PUSH_RIGHT;
     rightPushOptions &= ~ PUSH_LEFT;
     
-    switch (a / MAX_COLORS)
-    {
+    switch (a / MAX_COLORS) {
     case BG_BLACK:
-    {
-	[[NSColor blackColor] set];
-	break;
-    }
+	    [[NSColor blackColor] set];
+	    break;
     case BG_SAME:
-    {
-	set_color_for_index(a % MAX_COLORS);
-	break;
-    }
+	    set_color_for_index(a % MAX_COLORS);
+	    break;
     case BG_DARK:
-    {
-	set_color_for_index(TERM_SHADE);
-	break;
-    }
+	    set_color_for_index(TERM_SHADE);
+	    break;
     case BG_TRAP:
     {
 	set_color_for_index(TERM_SH_GREEN);
 	break;
     }
     }
+    
     NSRect rectToClear = charRect;
     rectToClear.size.width = tileWidth * n;
     NSRectFill(crack_rect(rectToClear, scaleFactor, leftPushOptions | rightPushOptions));
@@ -1874,30 +1882,22 @@ static errr Term_text_cocoa(int x, int y, int n, int a, const wchar_t *cp)
                 NSRect expandedRect = crack_rect(overdrawRect, scaleFactor, push_options(overdrawX, y));
                 
                 // Make sure we redisplay it
-		switch (previouslyDrawnAttr / MAX_COLORS)
-		{
+		switch (previouslyDrawnAttr / MAX_COLORS) {
 		case BG_BLACK:
-		{
 		    [[NSColor blackColor] set];
 		    break;
-		}
 		case BG_SAME:
-		{
 		    set_color_for_index(previouslyDrawnAttr % MAX_COLORS);
 		    break;
-		}
 		case BG_DARK:
-		{
 		    set_color_for_index(TERM_SHADE);
 		    break;
-		}
 		case BG_TRAP:
 		{
 		    set_color_for_index(TERM_SH_GREEN);
 		    break;
 		}
 		}
-
                 NSRectFill(expandedRect);
                 redisplayRect = NSUnionRect(redisplayRect, expandedRect);
                 
@@ -2554,6 +2554,7 @@ static BOOL send_event(NSEvent *event)
                     Term_mousepress(x, y, 1);
                 }
             }
+
             /* Pass click through to permit focus change, resize, etc. */
             [NSApp sendEvent:event];
             break;
@@ -2704,6 +2705,22 @@ static void cocoa_file_open_hook(const char *path, file_type ftype)
     [pool drain];
 }
 
+/* A platform-native file save dialogue box, e.g. for saving character dumps */
+static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
+{
+    NSSavePanel *panel = [NSSavePanel savePanel];
+    NSString *directory = [NSString stringWithCString:ANGBAND_DIR_USER encoding:NSASCIIStringEncoding];
+    NSString *filename = [NSString stringWithCString:suggested_name encoding:NSASCIIStringEncoding];
+
+    if ([panel runModalForDirectory:directory file:filename] == NSOKButton) {
+        const char *p = [[[panel URL] path] UTF8String];
+        my_strcpy(path, p, len);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 /*** Main program ***/
 
 
@@ -2719,7 +2736,7 @@ static void initialize_file_paths(void)
     BOOL isDir = NO;
     if (! [fm fileExistsAtPath:libString isDirectory:&isDir] || ! isDir)
     {
-        NSRunAlertPanel(@"Unable to find lib directory", @"Unable to find the lib directory at path %@.  Angband has to quit.", @"Nuts", nil, nil, libpath);
+        NSRunAlertPanel(@"Unable to find lib directory", @"Unable to find the lib directory at path %@.  Angband has to quit.", @"Nuts", nil, nil, libString);
         exit(0);
     }
     
@@ -2781,7 +2798,7 @@ static void initialize_file_paths(void)
 
     int i;
     for (i=0; i < ANGBAND_TERM_MAX; i++) {
-        if ([(id)angband_term[i]->data isKeyWindow]) {
+        if ([(id)angband_term[i]->data isMainWindow]) {
             termFont = [(id)angband_term[i]->data selectionFont];
             break;
         }
@@ -2793,19 +2810,22 @@ static void initialize_file_paths(void)
 
 - (void)changeFont:(id)sender
 {
-    int keyTerm;
-    for (keyTerm=0; keyTerm < ANGBAND_TERM_MAX; keyTerm++) {
-        if ([(id)angband_term[keyTerm]->data isKeyWindow]) {
+    int mainTerm;
+    for (mainTerm=0; mainTerm < ANGBAND_TERM_MAX; mainTerm++) {
+        if ([(id)angband_term[mainTerm]->data isMainWindow]) {
             break;
         }
     }
+
+    /* Bug #1709: Only change font for angband windows */
+    if (mainTerm == ANGBAND_TERM_MAX) return;
     
     NSFont *oldFont = default_font;
     NSFont *newFont = [sender convertFont:oldFont];
     if (! newFont) return; //paranoia
     
-    /* Store it as the default font if we changed the main window */
-    if (keyTerm == 0) {
+    /* Store as the default font if we changed the first term */
+    if (mainTerm == 0) {
         [newFont retain];
         [default_font release];
         default_font = newFont;
@@ -2814,15 +2834,15 @@ static void initialize_file_paths(void)
     /* Record it in the preferences */
     NSUserDefaults *defs = [NSUserDefaults angbandDefaults];
     [defs setValue:[newFont fontName] 
-        forKey:[NSString stringWithFormat:@"FontName-%d", keyTerm]];
+        forKey:[NSString stringWithFormat:@"FontName-%d", mainTerm]];
     [defs setFloat:[newFont pointSize]
-        forKey:[NSString stringWithFormat:@"FontSize-%d", keyTerm]];
+        forKey:[NSString stringWithFormat:@"FontSize-%d", mainTerm]];
     [defs synchronize];
     
     NSDisableScreenUpdates();
     
-    /* Update main window */
-    AngbandContext *angbandContext = angband_term[keyTerm]->data;
+    /* Update window */
+    AngbandContext *angbandContext = angband_term[mainTerm]->data;
     [(id)angbandContext setSelectionFont:newFont];
     [(id)angbandContext setScaleFactor:NSMakeSize(1,1)];
     

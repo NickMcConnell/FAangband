@@ -11,16 +11,12 @@
 #else
 
 /*
- * Extract the "WINDOWS" flag from the compiler
+ * Native MSVC compiler doesn't understand inline or snprintf
  */
-# if defined(_Windows) || defined(__WINDOWS__) || \
-     defined(__WIN32__) || defined(WIN32) || \
-     defined(__WINNT__) || defined(__NT__)
-#  ifndef WINDOWS
-#   define WINDOWS
-#  endif
-# endif
-
+#ifdef _MSC_VER
+#	define inline __inline
+#	define snprintf _snprintf
+#endif
 
 /* Necessary? */
 #ifdef NDS
@@ -34,12 +30,14 @@
 /*
  * Using C99, assume we have stdint and stdbool
  */
-# if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+# if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L) \
+  || (defined(_MSC_VER) && _MSC_VER >= 1600L)
 #  define HAVE_STDINT_H
-#  define HAVE_STDBOOL_H
 # endif
 
-
+# if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+#  define HAVE_STDBOOL_H
+# endif
 
 /*
  * Everyone except RISC OS has fcntl.h and sys/stat.h
@@ -49,34 +47,33 @@
 
 #endif /* HAVE_CONFIG_H */
 
-
-
-
 /*
- * OPTION: set "SET_UID" if the machine is a "multi-user" wmachine.
- *
- * This option is used to verify the use of "uids" and "gids" for
- * various "Unix" calls, and of "pids" for getting a random seed,
- * and of the "umask()" call for various reasons, and to guess if
- * the "kill()" function is available, and for permission to use
- * functions to extract user names and expand "tildes" in filenames.
- * It is also used for "locking" and "unlocking" the score file.
- * Basically, SET_UID should *only* be set for "Unix" machines.
+ * Extract the "WINDOWS" flag from the compiler
  */
-#if !defined(MACH_O_CARBON) && !defined(WINDOWS) && \
-		!defined(GAMEBOY) && !defined(NDS)
-# define SET_UID
-
-/* Without autoconf, turn on some things */
-# ifndef HAVE_CONFIG_H
-#  define HAVE_DIRENT_H
-#  define HAVE_SETEGID
-#  if defined(linux)
-#   define HAVE_SETRESGID
+# if defined(_Windows) || defined(__WINDOWS__) || \
+     defined(__WIN32__) || defined(WIN32) || \
+     defined(__WINNT__) || defined(__NT__)
+#  ifndef WINDOWS
+#   define WINDOWS
 #  endif
 # endif
 
+/*
+ * Define UNIX if our OS is UNIXy
+ */
+#if !defined(WINDOWS) && !defined(GAMEBOY) && !defined(NDS)
+# define UNIX
+
+# ifndef HAVE_DIRENT_H
+#  define HAVE_DIRENT_H
+# endif
 #endif
+
+/*
+ * Define SETGID if we are running as a central install on a multiuser
+ * system that has setgid support.
+ */
+/* #define SETGID */
 
 
 /*
@@ -125,7 +122,7 @@
 #include <wctype.h>
 
 /** POSIX headers **/
-#if defined(SET_UID) || defined(MACH_O_CARBON)
+#ifdef UNIX
 # include <pwd.h>
 # include <sys/stat.h>
 # include <unistd.h>
@@ -156,6 +153,9 @@ typedef int errr;
 #ifdef HAVE_STDBOOL_H
 
   #include <stdbool.h>
+
+  #undef TRUE
+  #undef FALSE
 
   #define TRUE  true
   #define FALSE false

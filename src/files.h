@@ -15,7 +15,6 @@ extern void display_dump(char_attr_line *line, int top_line, int bottom_line,
 extern errr file_character(const char *name, char_attr_line *line, int last_line);
 extern bool show_file(const char *name, const char *what, int line, int mode);
 extern void do_cmd_help(void);
-extern void process_player_name(bool sf);
 extern bool get_name(char *buf, size_t buflen);
 extern void display_scores(int from, int to);
 extern void save_game(void);

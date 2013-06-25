@@ -28,36 +28,48 @@
 #include "files.h"
 
 
-static void dump_pref_file(void (*dump)(ang_file *), const char *title, int row)
-{
+/**
+ * Prompt the user for a filename to save the pref file to.
+ */
+static bool get_pref_path(const char *what, int row, char *buf, size_t max) {
 	char ftmp[80];
-	char buf[1024];
+	bool ok;
 
 	screen_save();
 
 	/* Prompt */
-	prt(format("%s to a pref file", title), row, 0);
-	
-	/* Prompt */
+	prt(format("%s to a pref file", what), row, 0);
 	prt("File: ", row + 2, 0);
-	
+
 	/* Default filename */
-	strnfmt(ftmp, sizeof ftmp, "%s.prf", op_ptr->base_name);
+	strnfmt(ftmp, sizeof ftmp, "%s.prf", player_safe_name(p_ptr));
 	
 	/* Get a filename */
-	if (askfor_aux(ftmp, sizeof ftmp, NULL))
-	{
-		/* Build the filename */
-		path_build(buf, sizeof(buf), ANGBAND_DIR_USER, ftmp);
-	
-		prt("", 0, 0);
-		if (prefs_save(buf, dump, title))
-			msg(format("Dumped %s", strstr(title, " ") + 1));
-		else
-			msg("Failed");
-	}
-
+	ok = askfor_aux(ftmp, sizeof ftmp, NULL);
 	screen_load();
+
+	/* Build the filename */
+	if (ok)
+		path_build(buf, max, ANGBAND_DIR_USER, ftmp);
+
+	return ok;
+}
+
+
+static void dump_pref_file(void (*dump)(ang_file *), const char *title, int row) {
+	char buf[1024];
+
+	/* Get filename from user */
+	if (!get_pref_path(title, row, buf, sizeof(buf)))
+		return;
+
+	/* Try to save */
+	if (prefs_save(buf, dump, title))
+		msg("Saved %s.", strstr(title, " ") + 1);
+	else
+		msg("Failed to save %s.", strstr(title, " ") + 1);
+
+	message_flush();
 
 	return;
 }
@@ -986,7 +998,7 @@ static void do_cmd_pref_file_hack(long row)
 	prt("File: ", row + 2, 0);
 
 	/* Default filename */
-	strnfmt(ftmp, sizeof ftmp, "%s.prf", op_ptr->base_name);
+	strnfmt(ftmp, sizeof ftmp, "%s.prf", player_safe_name(p_ptr));
 
 	/* Ask for a file (or cancel) */
 	if (askfor_aux(ftmp, sizeof ftmp, NULL))

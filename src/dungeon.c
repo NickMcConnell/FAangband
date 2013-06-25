@@ -2223,8 +2223,8 @@ static void process_some_user_pref_files(void)
     /* Process that file */
     process_pref_file(buf, TRUE, TRUE);
 
-    /* Process the "PLAYER.prf" file */
-    sprintf(buf, "%s.prf", op_ptr->base_name);
+    /* Get the "PLAYER.prf" filename */
+    (void)strnfmt(buf, sizeof(buf), "%s.prf", player_safe_name(p_ptr), TRUE);
 
     /* Process the "PLAYER.prf" file */
     (void) process_pref_file(buf, TRUE, TRUE);
@@ -2313,10 +2313,6 @@ void play_game(void)
 	character_dungeon = FALSE;
     }
 
-    /* Hack -- Default base_name */
-    if (!op_ptr->base_name[0])
-	my_strcpy(op_ptr->base_name, "PLAYER", sizeof(op_ptr->base_name));
- 
     /* Init RNG */
     if (Rand_quick) {
 	u32b seed;
@@ -2373,15 +2369,9 @@ void play_game(void)
 
     }
 
-    /* Normal machine (process player name) */
-    if (savefile[0]) {
-	process_player_name(FALSE);
-    }
-
-    /* Weird machine (process player name, pick savefile name) */
-    else {
-	process_player_name(TRUE);
-    }
+    /* Set the savefile name if it's not already set */
+    if (!savefile[0])
+	savefile_set_name(player_safe_name(p_ptr));
 
     /* Stop the player being quite so dead */
     p_ptr->is_dead = FALSE;

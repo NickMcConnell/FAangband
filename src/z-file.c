@@ -25,10 +25,6 @@
 # include <direct.h>
 #endif
 
-#ifdef MACH_O_CARBON
-# include <Carbon/Carbon.h>
-#endif
-
 #ifdef HAVE_FCNTL_H
 # include <fcntl.h>
 #endif
@@ -65,7 +61,7 @@ int player_egid;
  */
 void safe_setuid_drop(void)
 {
-#ifdef SET_UID
+#ifdef SETGID
 # if defined(HAVE_SETRESGID)
 
 	if (setresgid(-1, getgid(), -1) != 0)
@@ -77,7 +73,7 @@ void safe_setuid_drop(void)
 		quit("setegid(): cannot drop permissions correctly!");
 
 # endif
-#endif /* SET_UID */
+#endif /* SETGID */
 }
 
 
@@ -86,7 +82,7 @@ void safe_setuid_drop(void)
  */
 void safe_setuid_grab(void)
 {
-#ifdef SET_UID
+#ifdef SETGID
 # if defined(HAVE_SETRESGID)
 
 	if (setresgid(-1, player_egid, -1) != 0)
@@ -98,7 +94,7 @@ void safe_setuid_grab(void)
 		quit("setegid(): cannot grab permissions correctly!");
 
 # endif
-#endif /* SET_UID */
+#endif /* SETGID */
 }
 
 
@@ -114,10 +110,9 @@ static void path_parse(char *buf, size_t max, const char *file)
 }
 
 
-
 static void path_process(char *buf, size_t len, size_t *cur_len, const char *path)
 {
-#if defined(SET_UID) || defined(USE_PRIVATE_PATHS)
+#if defined(UNIX)
 
 	/* Home directory on Unixes */
 	if (path[0] == '~')
@@ -142,27 +137,8 @@ static void path_process(char *buf, size_t len, size_t *cur_len, const char *pat
 			username = user;
 		}
 
-#ifndef MACH_O_CARBON
-
 		/* Look up a user (or "current" user) */
 		pw = username[0] ? getpwnam(username) : getpwuid(getuid());
-
-#else /* MACH_O_CARBON */
-
-		{
-			/* On Macs getlogin() can incorrectly return root, so get the username via system frameworks */
-			CFStringRef cfusername = CSCopyUserName(TRUE);
-			CFIndex cfbufferlength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(cfusername), kCFStringEncodingUTF8) + 1;
-			char *macusername = mem_alloc(cfbufferlength);
-			CFStringGetCString(cfusername, macusername, cfbufferlength, kCFStringEncodingUTF8);
-			CFRelease(cfusername);
-
-			/* Look up the user */
-			pw = getpwnam(macusername);
-			mem_free(macusername);
-		}
-#endif /* !MACH_O_CARBON */
-
 		if (!pw) return;
 
 		/* Copy across */
@@ -171,11 +147,9 @@ static void path_process(char *buf, size_t len, size_t *cur_len, const char *pat
 	}
 	else
 
-#endif
+#endif /* defined(UNIX) */
 
-	{
-		strnfcat(buf, len, cur_len, "%s", path);
-	}
+	strnfcat(buf, len, cur_len, "%s", path);
 }
 
 
@@ -208,7 +182,7 @@ size_t path_build(char *buf, size_t len, const char *base, const char *leaf)
 	 *   or there's no base path,
 	 * We use the leafname only.
 	 */
-#if defined(SET_UID) || defined(USE_PRIVATE_PATHS)
+#if defined(UNIX)
 	if ((!base || !base[0]) || prefix(leaf, PATH_SEP) || leaf[0] == '~')
 #else
 	if ((!base || !base[0]) || prefix(leaf, PATH_SEP))
@@ -230,12 +204,6 @@ size_t path_build(char *buf, size_t len, const char *base, const char *leaf)
 
 
 /*** File-handling API ***/
-
-/* On Windows, fwrite() and fread() are broken. */
-#if defined(WINDOWS) || defined(SET_UID)
-# define HAVE_WRITE
-# define HAVE_READ
-#endif
 
 /* Some defines for compatibility between various build platforms */
 #ifndef S_IRUSR
@@ -398,12 +366,14 @@ ang_file *file_open(const char *fname, file_mode mode, file_type ftype)
 			}
 			break;
 		}
-
-		case MODE_READ: f->fh = fopen(buf, "rb"); break;
-
-		case MODE_APPEND: f->fh = fopen(buf, "a+"); break;
-
-		default: f->fh = fopen(buf, "__");
+		case MODE_READ:
+			f->fh = fopen(buf, "rb");
+			break;
+		case MODE_APPEND:
+			f->fh = fopen(buf, "a+");
+			break;
+		default:
+			assert(0);
 	}
 
 	if (f->fh == NULL)
@@ -445,7 +415,7 @@ bool file_close(ang_file *f)
  */
 void file_lock(ang_file *f)
 {
-#if defined(HAVE_FCNTL_H) && defined(SET_UID)
+#if defined(HAVE_FCNTL_H) && defined(UNIX)
 	struct flock lock;
 	lock.l_type = (f->mode == MODE_READ ? F_RDLCK : F_WRLCK);
 	lock.l_whence = SEEK_SET;
@@ -453,7 +423,7 @@ void file_lock(ang_file *f)
 	lock.l_len = 0;
 	lock.l_pid = 0;
 	fcntl(fileno(f->fh), F_SETLKW, &lock);
-#endif /* HAVE_FCNTL_H && SET_UID */
+#endif /* HAVE_FCNTL_H && UNIX */
 }
 
 /*
@@ -461,7 +431,7 @@ void file_lock(ang_file *f)
  */
 void file_unlock(ang_file *f)
 {
-#if defined(HAVE_FCNTL_H) && defined(SET_UID)
+#if defined(HAVE_FCNTL_H) && defined(UNIX)
 	struct flock lock;
 	lock.l_type = F_UNLCK;
 	lock.l_whence = SEEK_SET;
@@ -469,7 +439,7 @@ void file_unlock(ang_file *f)
 	lock.l_len = 0;
 	lock.l_pid = 0;
 	fcntl(fileno(f->fh), F_SETLK, &lock);
-#endif /* HAVE_FCNTL_H && SET_UID */
+#endif /* HAVE_FCNTL_H && UNIX */
 }
 
 
@@ -904,3 +874,4 @@ void my_dclose(ang_dir *dir)
 
 #endif /* HAVE_DIRENT_H */
 #endif /* WINDOWS */
+
