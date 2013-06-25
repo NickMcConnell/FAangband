@@ -50,37 +50,6 @@
 
 
 /*
- * OPTION: for multi-user machines running the game setuid to some other
- * user (like 'games') this SAFE_SETUID option allows the program to drop
- * its privileges when saving files that allow for user specified pathnames.
- * This lets the game be installed system wide without major security
- * concerns.  There should not be any side effects on any machines.
- *
- * This will handle "gids" correctly once the permissions are set right. 
- */
-#define SAFE_SETUID
-
-
-/*
- * This flag enables the "POSIX" methods for "SAFE_SETUID".
- */
-#ifdef _POSIX_SAVED_IDS
-# define SAFE_SETUID_POSIX
-#endif
-
-
-/*
- * Prevent problems on (non-Solaris) Suns using "SAFE_SETUID".
- * The SAFE_SETUID code is weird, use it at your own risk...
- */
-#if defined(SUNOS) && !defined(SOLARIS)
-# undef SAFE_SETUID_POSIX
-#endif
-
-
-
-
-/*
  * OPTION: Hack -- Compile in support for "Borg mode"
  */
 /* #define ALLOW_BORG */
@@ -107,31 +76,6 @@
 #define ALLOW_VISUALS
 
 /*
- * OPTION: Allow characters to be "auto-rolled"
- */
-#define ALLOW_AUTOROLLER
-
-
-/*
- * OPTION: Allow parsing of the ascii template files in "init.c".
- * This must be defined if you do not have valid binary image files.
- * It should be usually be defined anyway to allow easy "updating".
- */
-#define ALLOW_TEMPLATES
-
-/*
- * OPTION: Do not generate themed levels. -LM-
- */
-/* #define NO_THEMED_LEVELS */
-
-
-/*
- * OPTION: Handle signals
- */
-#define HANDLE_SIGNALS
-
-
-/*
  * Allow "Wizards" to yield "high scores"
  */
 /* #define SCORE_WIZARDS */
@@ -146,26 +90,6 @@
  */
 /* #define SCORE_CHEATERS */
 
-
-
-/*
- * OPTION: Support multiple "player" grids in "map_info()"
- */
-/* #define MAP_INFO_MULTIPLE_PLAYERS */
-
-
-/*
- * OPTION: Use the "complex" wall illumination code
- */
-/* #define UPDATE_VIEW_COMPLEX_WALL_ILLUMINATION */
-
-
-/*
- * OPTION: Check the modification time of *_info.raw files
- */
-#define CHECK_MODIFICATION_TIME
-
-
 /*
  * OPTION: Allow the use of "sound" in various places.
  */
@@ -178,39 +102,6 @@
  * OPTION: Allow the use of "graphics" in various places
  */
 #define USE_GRAPHICS /* TNB */
-
-
-/*
- * OPTION: Hack -- Macintosh stuff
- */
-#ifdef MACINTOSH
-
-/* Do not handle signals */
-# undef HANDLE_SIGNALS
-
-#endif
-
-
-/*
- * OPTION: Hack -- Windows stuff
- */
-#ifdef WINDOWS
-
-/* Do not handle signals */
-# undef HANDLE_SIGNALS
-
-#endif
-
-
-/*
- * OPTION: Hack -- EMX stuff
- */
-#ifdef USE_EMX
-
-/* Do not handle signals */
-# undef HANDLE_SIGNALS
-
-#endif
 
 
 /*** Some really important things you ought to change ***/
@@ -264,11 +155,9 @@
  * OPTION: Create and use a hidden directory in the users home directory
  * for storing pref-files and character-dumps.
  */
-#ifdef SET_UID
-# ifndef PRIVATE_USER_PATH
+#if defined(UNIX) && !defined(MACH_O_CARBON) && !defined(PRIVATE_USER_PATH)
 #  define PRIVATE_USER_PATH "~/.angband"
-# endif /* PRIVATE_USER_PATH */
-#endif /* SET_UID */
+#endif
 
 
 /*
@@ -278,36 +167,6 @@
 #ifdef PRIVATE_USER_PATH
 /* # define USE_PRIVATE_PATHS */
 #endif /* PRIVATE_USER_PATH */
-
-
-/*
- * On multiuser systems, add the "uid" to savefile names
- */
-#ifdef SET_UID
-# define SAVEFILE_USE_UID
-#endif
-
-
-/*
- * OPTION: For some brain-dead computers with no command line interface,
- * namely Macintosh, there has to be some way of "naming" your savefiles.
- * The current "Macintosh" hack is to make it so whenever the character
- * name changes, the savefile is renamed accordingly.  But on normal
- * machines, once you manage to "load" a savefile, it stays that way.
- * Macintosh is particularly weird because you can load savefiles that
- * are not contained in the "lib:save:" folder, and if you change the
- * player's name, it will then save the savefile elsewhere.  Note that
- * this also gives a method of "bypassing" the "VERIFY_TIMESTAMP" code.
- */
-#if defined(MACINTOSH) || defined(WINDOWS) || defined(AMIGA)
-# define SAVEFILE_MUTABLE
-#endif
-
-/*
- * OPTION: Capitalize the "user_name" (for "default" player name)
- * This option is only relevant on SET_UID machines.
- */
-#define CAPITALIZE_USER_NAME
 
 
 /*
