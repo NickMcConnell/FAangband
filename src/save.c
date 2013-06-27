@@ -36,12 +36,11 @@ void wr_description(void)
 	strnfmt(buf, sizeof buf, "%s, dead (%s)", op_ptr->full_name, 
 		p_ptr->died_from);
     else
-	strnfmt(buf, sizeof buf, "%s, L%d %s %s, at DL%d",
+	strnfmt(buf, sizeof buf, "%s, L%d %s %s",
 		op_ptr->full_name,
 		p_ptr->lev,
-		p_ptr->race->name,
-		p_ptr->class->name,
-		p_ptr->depth);
+		rp_ptr->name,
+		cp_ptr->name);
 
     wr_string(buf);
 }
