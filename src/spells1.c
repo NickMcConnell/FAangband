@@ -3299,8 +3299,8 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 	    feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
 	    /* Require a "naked" floor grid */
-	    if ((cave_m_idx[y][x] == 0) && (cave_o_idx[y][x] == 0) && 
-		(tf_has(f_ptr->flags, TF_FLOOR)))
+	    if ((cave_m_idx[y][x] != 0) || (cave_o_idx[y][x] != 0) || 
+		(!tf_has(f_ptr->flags, TF_FLOOR)))
 		break;
 
 	    /* Create closed door */
