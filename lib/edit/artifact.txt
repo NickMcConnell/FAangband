@@ -1861,7 +1861,7 @@ I:66:40:0
 W:65:40:15:12500
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-#E:DELVING:0
+E:DELVING:0
 D:Even Dwarven skill must yield to he who can dissolve the sinews of 
 D:mountains at a word.
 
@@ -1874,7 +1874,7 @@ I:66:41:0
 W:80:40:15:20000
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-#E:SHADOW:300
+E:SHADOW:300
 D:The legendary rogues of old could wrap themselves in shadows, and become 
 D:as mist and rumour to their unwitting foes.
 
@@ -1887,7 +1887,7 @@ I:66:42:0
 W:85:48:15:25000
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-#E:AIR:75
+E:AIR:75
 D:The Elemental Host of the vast Plains of Air wield powers unknown to 
 D:beings who live below, and will gladly smite those upon whom you call 
 D:their wrath.
@@ -1901,7 +1901,7 @@ I:66:43:0
 W:70:64:15:50000
 P:0:1d1:0:0:0:0
 F:INSTA_ART
-#E:PORTALS:40
+E:PORTALS:40
 D:The mastery of mystic entrances and exits is now almost unknown, and 
 D:fortunate he who finds the Rod of Hidden Ways.
 
