@@ -3303,6 +3303,15 @@ void store_maint(int which)
 		object_prep(i_ptr, k_idx, RANDOMISE);
 		i_ptr->number = 10;
 
+		/* The object is "known" */
+		object_known(i_ptr);
+
+		/* Item belongs to a store */
+		i_ptr->ident |= IDENT_STORE;
+
+		/* No origin yet */ 
+		i_ptr->origin = ORIGIN_NONE;
+
 		/* Stock them */
 		store_carry(i_ptr);
 
