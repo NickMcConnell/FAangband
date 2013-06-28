@@ -3233,7 +3233,6 @@ void store_maint(int which)
 	}
     }
 
-
     /* Choose the number of slots to keep */
     j = st_ptr->stock_num;
 
@@ -3278,6 +3277,39 @@ void store_maint(int which)
     /* Acquire some new items */
     while (st_ptr->stock_num < j)
     {
+	/* Mega-Hack -- ensure recall */
+	if (st_ptr->type == STORE_ALCH) 
+	{
+	    int i;
+	    object_type object_type_body;
+	    int k_idx = lookup_kind(TV_SCROLL, SV_SCROLL_WORD_OF_RECALL);
+
+	    /* Check if we've got some */
+	    for (i = 0; i < STORE_INVEN_MAX; i++)
+	    {
+		object_type *o_ptr = &st_ptr->stock[i];
+		if (o_ptr->k_idx == k_idx)
+		    break;
+	    }
+
+	    if (i == STORE_INVEN_MAX)
+	    {		
+		object_type *i_ptr;
+		
+		/* Get local object */
+		i_ptr = &object_type_body;
+		
+		/* Create some scrolls */
+		object_prep(i_ptr, k_idx, RANDOMISE);
+		i_ptr->number = 10;
+
+		/* Stock them */
+		store_carry(i_ptr);
+
+		continue;
+	    }
+	}
+
 	store_create();
 	giveup++;
 	if (giveup > 100) break;
