@@ -349,7 +349,6 @@ static enum birth_stage get_map_command(void)
     if (m) 
     {
 	int map = map_menu_select(m);
-	map_menu_destroy(m);
 	if (map == -1)
 	{
 	    next = BIRTH_BACK;
@@ -370,6 +369,7 @@ static enum birth_stage get_map_command(void)
     {
 	next = BIRTH_BACK;
     }
+    map_menu_destroy(m);
 
     return next;
 }
@@ -653,12 +653,12 @@ static enum birth_stage get_mode_command(void)
 	    cmd_set_arg_string(cmd_get_top(), 0, (const char *)modes);
 	    next = BIRTH_SEX_CHOICE;
 	}
-	mode_menu_destroy(m);
     }
     else
     {
 	next = BIRTH_BACK;
     }
+    mode_menu_destroy(m);
 
     return next;
 }
