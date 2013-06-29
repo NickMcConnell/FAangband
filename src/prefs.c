@@ -626,7 +626,7 @@ static const char *process_pref_file_expr(char **sp, char *fp)
 			else if (streq(b+1, "PLAYER"))
 				v = player_safe_name(p_ptr);
 			else if (streq(b+1, "GENDER"))
-				v = p_ptr->sex->title;
+				v = sp_ptr->title;
 		}
 
 		/* Constant */
