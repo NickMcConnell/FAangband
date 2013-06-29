@@ -244,7 +244,7 @@ static bool map_menu_handler(menu_type *m, const ui_event *e, int oid)
 	if (e->key.code == '?')
 	{
 	    screen_save();
-	    show_file("maps.txt", NULL, 0, 0);
+	    show_file("mapmode.txt", NULL, 0, 0);
 	    screen_load();
 	}
 	return FALSE;
