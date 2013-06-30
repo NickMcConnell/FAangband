@@ -177,6 +177,10 @@ static void place_down_stairs(int y, int x)
  */
 void place_random_stairs(int y, int x)
 {
+    bool dunquest = is_quest(p_ptr->stage) &&
+	((stage_map[p_ptr->stage][DEPTH] == 100) ||
+	 (stage_map[p_ptr->stage][DEPTH] == 99));
+
     /* Paranoia */
     if (!cave_clean_bold(y, x))
 	return;
@@ -187,7 +191,7 @@ void place_random_stairs(int y, int x)
 	place_down_stairs(y, x);
     } 
     else if (((p_ptr->map == MAP_DUNGEON) || (p_ptr->map == MAP_FANILLA)) 
-	     && !stage_map[p_ptr->stage][DOWN]) 
+	     && (!stage_map[p_ptr->stage][DOWN] || dunquest)) 
     {
 	place_up_stairs(y, x);
     } 
@@ -303,8 +307,9 @@ void alloc_stairs(int feat, int num, int walls)
 			  || is_quest(stage_map[p_ptr->stage][DOWN])
 			  || is_quest(p_ptr->stage));
     bool no_up_shaft = (!stage_map[stage_map[p_ptr->stage][UP]][UP]);
-    bool morgy = is_quest(p_ptr->stage)
-	&& stage_map[p_ptr->stage][DEPTH] == 100;
+    bool dunquest = is_quest(p_ptr->stage) &&
+	((stage_map[p_ptr->stage][DEPTH] == 100) ||
+	 (stage_map[p_ptr->stage][DEPTH] == 99));
 
 
     /* Place "num" stairs */
@@ -355,7 +360,8 @@ void alloc_stairs(int feat, int num, int walls)
 	    }
 
 	    /* Bottom of dungeon, Morgoth or underworld -- must go up */
-	    else if ((!stage_map[p_ptr->stage][DOWN]) || underworld || morgy) {
+	    else if ((!stage_map[p_ptr->stage][DOWN]) || underworld || dunquest)
+	    {
 		/* Clear previous contents, add up stairs */
 		if (feat != FEAT_LESS_SHAFT)
 		    cave_set_feat(y, x, FEAT_LESS);

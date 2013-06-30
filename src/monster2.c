@@ -543,10 +543,15 @@ s16b get_mon_num(int level)
 		&& (r_ptr->cur_num >= r_ptr->max_num))
 		continue;
 
-	    /* Forced-depth monsters only appear at their level. */
+	    /* Forced-depth monsters only appear at their level. Usually. */
 	    if ((rf_has(r_ptr->flags, RF_FORCE_DEPTH))
 		&& (r_ptr->level != p_ptr->depth))
-		continue;
+	    {
+		/* Hack for questors on FAnilla map */
+		if ((p_ptr->map != MAP_FANILLA) || (r_ptr->level >= 99)
+		    || (!rf_has(r_ptr->flags, RF_QUESTOR)))
+			continue;
+	    }
 
 	    /* Hack - handle dungeon specific -NRM- */
 	    if (p_ptr->map != MAP_FANILLA)
@@ -4334,7 +4339,7 @@ static void build_quest_stairs(int y, int x, char *portal)
 void monster_death(int m_idx)
 {
     int i, j, y, x;
-
+    
     int dump_item = 0;
     int dump_gold = 0;
 
@@ -4585,26 +4590,28 @@ void monster_death(int m_idx)
 
 
     /* Mark quests as complete */
-    for (i = 0; i < MAX_Q_IDX; i++) {
+    for (i = 0; i < MAX_Q_IDX; i++) 
+    {
 	/* Note completed quests */
 	if (stage_map[q_list[i].stage][1] == r_ptr->level)
 	    q_list[i].stage = 0;
     }
 
-    /* Mark Sauron's other forms as dead */
-    if ((r_ptr->level == 85) && (rf_has(r_ptr->flags, RF_QUESTOR)))
+    /* Hack - mark Sauron's other forms as dead */
+    if (((r_ptr->level == 85)||(r_ptr->level == 99)) 
+	&& (rf_has(r_ptr->flags, RF_QUESTOR)))
 	for (i = 1; i < 4; i++)
 	    r_info[m_ptr->r_idx - i].max_num--;
-
-    /* Make a staircase for Morgoth */
-    if (r_ptr->level == 100)
+    
+    /* Make a staircase for Morgoth (or Sauron) */
+    if ((r_ptr->level == 100)||(r_ptr->level == 99))
 	build_quest_stairs(y, x, "staircase");
-
+    
     /* ...or a portal for ironmen wilderness games */
     else if (MODE(IRONMAN) && (p_ptr->map != MAP_DUNGEON) && 
 	     (p_ptr->map != MAP_FANILLA) && (p_ptr->depth != 100))
 	build_quest_stairs(y, x, "portal");
-
+    
     /* or a path out of Nan Dungortheb for wilderness games */
     else if ((r_ptr->level == 70) && (p_ptr->depth == 70)
 	     && (p_ptr->map != MAP_DUNGEON) && (p_ptr->map != MAP_FANILLA)) 
