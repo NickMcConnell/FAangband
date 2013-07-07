@@ -78,6 +78,8 @@ struct birther {
     s32b au;
 
     s16b stat[A_MAX];
+    byte map;
+    bool game_mode[GAME_MODE_MAX];
 
     char history[250];
 };
@@ -100,10 +102,18 @@ static void save_roller_data(birther * player)
     player->ht = p_ptr->ht_birth;
     player->sc = p_ptr->sc_birth;
     player->au = p_ptr->au_birth;
+    player->map = p_ptr->map;
 
     /* Save the stats */
     for (i = 0; i < A_MAX; i++) {
 	player->stat[i] = p_ptr->stat_birth[i];
+    }
+
+    /* Save the modes */
+    for (i = 0; i < GAME_MODE_MAX; i++) 
+    {
+	if (p_ptr->game_mode[i]) player->game_mode[i] = TRUE;
+	else player->game_mode[i] = FALSE;
     }
 
     /* Save the history */
@@ -144,11 +154,19 @@ static void load_roller_data(birther * player, birther * prev_player)
     p_ptr->sc = p_ptr->sc_birth = player->sc;
     p_ptr->au_birth = player->au;
     p_ptr->au = STARTING_GOLD;
+    p_ptr->map = player->map;
 
     /* Load the stats */
     for (i = 0; i < A_MAX; i++) {
 	p_ptr->stat_max[i] = p_ptr->stat_cur[i] = p_ptr->stat_birth[i] =
 	    player->stat[i];
+    }
+
+    /* Load the modes */
+    for (i = 0; i < GAME_MODE_MAX; i++) 
+    {
+	if (player->game_mode[i]) p_ptr->game_mode[i] = TRUE;
+	else p_ptr->game_mode[i] = FALSE;
     }
 
     /* Load the history */
@@ -1041,20 +1059,6 @@ void player_generate(struct player *p, player_sex * s,
 }
 
 
-/* Reset everything back to how it would be on loading the game. */
-static void do_birth_reset(bool use_quickstart, birther * quickstart_prev)
-{
-
-    /* If there's quickstart data, we use it to set default character choices. */
-    if (use_quickstart && quickstart_prev)
-	load_roller_data(quickstart_prev, NULL);
-
-    player_generate(p_ptr, NULL, NULL, NULL);
-
-    /* Update stats with bonuses, etc. */
-    get_bonuses();
-}
-
 /*
  * Set the appropriate dungeon map and quests
  */
@@ -1184,6 +1188,23 @@ void set_modes(struct player *p)
     }
 }
 
+/* Reset everything back to how it would be on loading the game. */
+static void do_birth_reset(bool use_quickstart, birther * quickstart_prev)
+{
+
+    /* If there's quickstart data, we use it to set default character choices. */
+    if (use_quickstart && quickstart_prev)
+	load_roller_data(quickstart_prev, NULL);
+
+    player_generate(p_ptr, NULL, NULL, NULL);
+
+    /* Set the map */
+    set_map(p_ptr);
+
+    /* Update stats with bonuses, etc. */
+    get_bonuses();
+}
+
 /*
  * Create a new character.
  *
@@ -1209,14 +1230,14 @@ void player_birth(bool quickstart_allowed)
      * We rely on prev.age being zero to determine whether there is a stored
      * character or not, so initialise it here.
      */
-    birther prev = { 0, 0, 0, 0, 0, 0, 0, 0, {0}, "" };
+    birther prev = { 0, 0, 0, 0, 0, 0, 0, 0, {0}, 0, {0}, "" };
 
     /* 
      * If quickstart is allowed, we store the old character in this,
      * to allow for it to be reloaded if we step back that far in the
      * birth process.
      */
-    birther quickstart_prev = { 0, 0, 0, 0, 0, 0, 0, 0, {0}, "" };
+    birther quickstart_prev = { 0, 0, 0, 0, 0, 0, 0, 0, {0}, 0, {0}, "" };
 
     char long_day[25];
 
