@@ -1924,34 +1924,16 @@ errr file_character(const char *name, char_attr_line * line, int last_line)
     /* Drop priv's */
     safe_setuid_drop();
 
-    /* Build the filename */
-    path_build(buf, 1024, ANGBAND_DIR_USER, name);
-
-    /* Check for existing file */
-    if (file_exists(buf)) {
-	char out_val[160];
-
-	/* Build query */
-	sprintf(out_val, "Replace existing file %s? ", buf);
-
-	/* Ask */
-	if (!get_check(out_val))
-	    return (-1);
-    }
-
     /* Open the non-existing file */
-    dump_out_file = file_open(buf, MODE_WRITE, FTYPE_TEXT);
+    dump_out_file = file_open(name, MODE_WRITE, FTYPE_TEXT);
 
     /* Grab priv's */
     safe_setuid_grab();
 
 
     /* Invalid file */
-    if (!dump_out_file) {
-	/* Message */
-	msg("Character dump failed!");
-	message_flush();
-
+    if (!dump_out_file) 
+    {
 	/* Error */
 	return (-1);
     }
@@ -1967,10 +1949,6 @@ errr file_character(const char *name, char_attr_line * line, int last_line)
 
     /* Close it */
     file_close(dump_out_file);
-
-    /* Message */
-    msg("Character dump successful.");
-    message_flush();
 
     /* Success */
     return (0);
