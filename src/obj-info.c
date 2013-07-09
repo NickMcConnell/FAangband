@@ -306,7 +306,11 @@ static bool describe_curses(textblock *tb, const object_type *o_ptr,
     }
 
     if (printed)
+    {
     	textblock_append(tb, "\n");
+	if (of_has(o_ptr->flags_obj, OF_FRAGILE))
+	    textblock_append(tb, "Attempting to uncurse it may destroy it.\n");
+    }
 
     if (terse || dummy) return printed;
 
