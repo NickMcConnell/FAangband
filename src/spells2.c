@@ -967,6 +967,9 @@ void identify_object(object_type * o_ptr)
 	    || (o_ptr->tval == TV_WAND) || (o_ptr->tval == TV_ROD))
 	    k_ptr->known_effect = TRUE;
     }
+
+    /* Set squelch flag as appropriate */
+    p_ptr->notice |= PN_SQUELCH;
 }
 
 /**
