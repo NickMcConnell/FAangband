@@ -485,6 +485,7 @@ void dump_history(char_attr_line *line, int *curr_line, bool *dead)
 {
     size_t i;
     char buf[90];
+    char buf1[90];
     
     /* Dump notes */
     for (i = 0; i < (last_printable_item() + 1); i++)
@@ -567,19 +568,9 @@ void dump_history(char_attr_line *line, int *curr_line, bool *dead)
 				 0);
 
 		/* Write that line */
-		for (n = startpoint; n <= endpoint; n++) {
-		    char ch;
-		    char buf1[5];
-
-		    /* Ensure the character is printable */
-		    ch = (isprint(buf[n]) ? buf[n] : ' ');
-
-		    /* Write out the character */
-		    sprintf(buf1, "%c", ch);
-		    dump_put_str(attr, buf1, 
-				 strlen(info_note) + n - startpoint);
-
-		}
+		strnfmt(buf1, endpoint - startpoint + 1, "%s", 
+			&buf[startpoint]);
+		dump_put_str(attr, buf1, strlen(info_note));
 
 		/* Break the line */
 		(*curr_line)++;
