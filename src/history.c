@@ -530,7 +530,7 @@ void dump_history(char_attr_line *line, int *curr_line, bool *dead)
 	if ((length + length_info) > LINEWRAP) {
 	    bool keep_going = TRUE;
 	    int startpoint = 0;
-	    int endpoint, n;
+	    int endpoint;
 
 	    while (keep_going) {
 		/* Don't print more than the set linewrap amount */

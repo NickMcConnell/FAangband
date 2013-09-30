@@ -619,6 +619,33 @@ static bool describe_brands(textblock *tb, const object_type *o_ptr,
 
 
 /*
+ * Describe throwability.
+ */
+static bool describe_throws(textblock *tb, const object_type *o_ptr,
+		oinfo_detail_t mode)
+{
+    bool terse = mode & OINFO_TERSE;
+
+    if (of_has(o_ptr->id_obj, OF_THROWING))
+    {
+	if (of_has(o_ptr->id_obj, OF_PERFECT_BALANCE))
+	{
+	    if (terse) textblock_append(tb, "Well-balanced.\n"); 
+	    else textblock_append(tb, "It can be thrown hard and fast.\n");
+	}
+	else 
+	{
+	    if (terse) textblock_append(tb, "Throwable.\n"); 
+	    else textblock_append(tb, "It can be thrown effectively.\n");
+	}
+	return TRUE;
+    }
+
+    return FALSE;
+}
+
+
+/*
  * Describe immunities granted by an object.
  */
 static bool describe_immune(textblock *tb, const object_type *o_ptr, 
@@ -1725,6 +1752,7 @@ static textblock *object_info_out(const object_type *o_ptr, oinfo_detail_t mode)
     (void) describe_bonus(tb, o_ptr, mode);
     (void) describe_slays(tb, o_ptr, mode);
     (void) describe_brands(tb, o_ptr, mode);
+    (void) describe_throws(tb, o_ptr, mode);
     (void) describe_immune(tb, o_ptr, mode);
     (void) describe_sustains(tb, o_ptr, mode);
     (void) describe_misc_magic(tb, o_ptr, mode);
