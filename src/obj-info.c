@@ -308,6 +308,12 @@ static bool describe_curses(textblock *tb, const object_type *o_ptr,
     if (printed)
     {
     	textblock_append(tb, "\n");
+
+	/* Say if the curse is permanent */
+	if (of_has(o_ptr->id_obj, OF_PERMA_CURSE) 
+	    text_out_to_screen(TERM_WHITE, "It cannot be uncursed. ");
+	
+	/* Say if curse removal has been tried */
 	if (of_has(o_ptr->flags_obj, OF_FRAGILE))
 	    textblock_append(tb, "Attempting to uncurse it may destroy it.\n");
     }
