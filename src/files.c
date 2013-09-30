@@ -1919,7 +1919,6 @@ void display_dump(char_attr_line * line, int top_line, int bottom_line, int col)
 errr file_character(const char *name, char_attr_line * line, int last_line)
 {
     int i;
-    char buf[100];
 
     /* Drop priv's */
     safe_setuid_drop();

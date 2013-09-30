@@ -227,7 +227,10 @@ static size_t obj_desc_name(char *buf, size_t max, size_t end,
     const char *modstr = obj_desc_get_modstr(o_ptr);
 
     bool pluralise = (mode & ODESC_PLURAL) ? TRUE : FALSE;
-
+    bool balanced = of_has(o_ptr->flags_obj, OF_PERFECT_BALANCE) && 
+	of_has(o_ptr->flags_obj, OF_THROWING) && 
+	!artifact_p(o_ptr) && of_has(o_ptr->id_obj, OF_PERFECT_BALANCE);
+	
     /* Hack - make sure known objects are properly known */
     if (object_known_p(o_ptr)) object_known(o_ptr);
 
@@ -265,6 +268,9 @@ static size_t obj_desc_name(char *buf, size_t max, size_t end,
 		an = TRUE;
 	    }
 
+	    if (balanced)
+		an = FALSE;
+
 	    if (an)
 		strnfcat(buf, max, &end, "an ");
 	    else
@@ -283,6 +289,11 @@ static size_t obj_desc_name(char *buf, size_t max, size_t end,
  * name.
  */
 
+    /* Non-artifact perfectly balanced throwing weapons are indicated. */
+    if (balanced)
+    {
+	strnfcat(buf, max, &end, "Well-balanced ");
+    }
 
 
     /* Copy the string */
@@ -918,7 +929,7 @@ size_t object_desc(char *buf, size_t max, const object_type * o_ptr,
 	e_info[o_ptr->name2].everseen = TRUE;
 
 
-	/*** Some things get really simple descriptions ***/
+    /*** Some things get really simple descriptions ***/
 
     if (o_ptr->tval == TV_GOLD)
 	return strnfmt(buf, max, "%d gold pieces worth of %s", o_ptr->pval,

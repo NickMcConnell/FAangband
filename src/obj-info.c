@@ -626,7 +626,7 @@ static bool describe_throws(textblock *tb, const object_type *o_ptr,
 {
     bool terse = mode & OINFO_TERSE;
 
-    if (of_has(o_ptr->id_obj, OF_THROWING))
+    if (of_has(o_ptr->flags_obj, OF_THROWING))
     {
 	if (of_has(o_ptr->id_obj, OF_PERFECT_BALANCE))
 	{

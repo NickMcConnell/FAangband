@@ -2221,6 +2221,10 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 	return;
     }
 
+    /* Notice perfect balance */
+    if (of_has(o_ptr->flags_obj, OF_PERFECT_BALANCE))
+	notice_obj(OF_PERFECT_BALANCE, (item < 0) ? item : item + 1);
+
     /* Get local object */
     i_ptr = &object_type_body;
 
