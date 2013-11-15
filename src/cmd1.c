@@ -812,18 +812,18 @@ void move_player(int dir)
 	disturb(0, 0);
 
 	/* Notice unknown obstacles */
-	if (!cave_has(cave_info[y][x], CAVE_MARK)) {
+	if (!cave_has(cave_info[y][x], SQUARE_MARK)) {
 	    /* Closed door */
 	    if (tf_has(f_ptr->flags, TF_DOOR_CLOSED)) {
 		msgt(MSG_HITWALL, "You feel a door blocking your way.");
-		cave_on(cave_info[y][x], CAVE_MARK);
+		cave_on(cave_info[y][x], SQUARE_MARK);
 		light_spot(y, x);
 	    }
 
 	    /* Wall (or secret door) */
 	    else {
 		msgt(MSG_HITWALL, "You feel a wall blocking your way.");
-		cave_on(cave_info[y][x], CAVE_MARK);
+		cave_on(cave_info[y][x], SQUARE_MARK);
 		light_spot(y, x);
 	    }
 	}

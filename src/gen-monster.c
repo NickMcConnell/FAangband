@@ -853,7 +853,7 @@ extern void get_chamber_monsters(int y1, int x1, int y2, int x2)
 	return;
 
     /* No normal monsters. */
-    generate_mark(y1, x1, y2, x2, CAVE_TEMP);
+    generate_mark(y1, x1, y2, x2, SQUARE_TEMP);
 
 
     /* Usually, we want 35 monsters. */

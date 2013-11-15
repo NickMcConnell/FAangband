@@ -159,9 +159,9 @@ static bool generate_room(int y1, int x1, int y2, int x2, int light)
 
     for (y = y1; y <= y2; y++) {
 	for (x = x1; x <= x2; x++) {
-	    cave_on(cave_info[y][x], CAVE_ROOM);
+	    cave_on(cave_info[y][x], SQUARE_ROOM);
 	    if (light)
-		cave_on(cave_info[y][x], CAVE_GLOW);
+		cave_on(cave_info[y][x], SQUARE_GLOW);
 	}
     }
 
@@ -711,7 +711,7 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2, bool light,
     for (y = y1 + 1; y < y2; y++) {
 	for (x = x1 + 1; x < x2; x++) {
 	    /* Do not touch "icky" grids. */
-	    if (cave_has(cave_info[y][x], CAVE_ICKY))
+	    if (cave_has(cave_info[y][x], SQUARE_ICKY))
 		continue;
 
 	    /* Do not touch occupied grids. */
@@ -751,14 +751,14 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2, bool light,
 				cave_set_feat(y, x, feat);
 
 				if (tf_has(f_ptr->flags, TF_FLOOR))
-				    cave_on(cave_info[y][x], CAVE_ROOM);
+				    cave_on(cave_info[y][x], SQUARE_ROOM);
 				else
-				    cave_off(cave_info[y][x], CAVE_ROOM);
+				    cave_off(cave_info[y][x], SQUARE_ROOM);
 
 				if (light)
-				    cave_on(cave_info[y][x], CAVE_GLOW);
+				    cave_on(cave_info[y][x], SQUARE_GLOW);
 				else
-				    cave_off(cave_info[y][x], CAVE_GLOW);
+				    cave_off(cave_info[y][x], SQUARE_GLOW);
 			    }
 
 			    /* If new feature is non-floor passable terrain,
@@ -779,7 +779,7 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2, bool light,
 
 				/* Light grid. */
 				if (light)
-				    cave_on(cave_info[y][x], CAVE_GLOW);
+				    cave_on(cave_info[y][x], SQUARE_GLOW);
 			    }
 			}
 
@@ -807,11 +807,11 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2, bool light,
 			int xx = x + ddx_ddd[d];
 
 			/* Join to room */
-			cave_on(cave_info[yy][xx], CAVE_ROOM);
+			cave_on(cave_info[yy][xx], SQUARE_ROOM);
 
 			/* Illuminate if requested. */
 			if (light)
-			    cave_on(cave_info[yy][xx], CAVE_GLOW);
+			    cave_on(cave_info[yy][xx], SQUARE_GLOW);
 
 			/* Look for dungeon granite. */
 			if (cave_feat[yy][xx] == FEAT_WALL_EXTRA) {
@@ -1072,7 +1072,7 @@ static bool build_type1(void)
 				9);
 
 		/* No normal monsters. */
-		generate_mark(y1, x1, y2, x2, CAVE_TEMP);
+		generate_mark(y1, x1, y2, x2, SQUARE_TEMP);
 	    }
 	}
 
@@ -1105,7 +1105,7 @@ static bool build_type1(void)
 		if (!light) {
 		    for (y = y1 - 1; y <= y2 + 1; y++) {
 			for (x = x1 - 1; x <= x2 + 1; x++) {
-			    cave_on(cave_info[y][x], CAVE_GLOW);
+			    cave_on(cave_info[y][x], SQUARE_GLOW);
 			}
 		    }
 		}
@@ -1601,7 +1601,7 @@ static bool build_type4(void)
 		spread_monsters('\0', p_ptr->depth, randint1(6), y0, x0, 2, 9);
 
 	    /* No random monsters. */
-	    generate_mark(y1, x1, y2, x2, CAVE_TEMP);
+	    generate_mark(y1, x1, y2, x2, SQUARE_TEMP);
 
 	    /* Traps make them entertaining. */
 	    spread_traps(2 + randint0(4), y0, x0, 2, 9);
@@ -2279,11 +2279,11 @@ static bool build_type6(void)
 			continue;
 
 		    /* Turn into room. */
-		    cave_on(cave_info[yy][xx], CAVE_ROOM);
+		    cave_on(cave_info[yy][xx], SQUARE_ROOM);
 
 		    /* Illuminate if requested. */
 		    if (light)
-			cave_on(cave_info[yy][xx], CAVE_GLOW);
+			cave_on(cave_info[yy][xx], SQUARE_GLOW);
 		}
 	    }
 	}
@@ -2370,7 +2370,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 
     /* No random monsters in vaults and interesting rooms. */
     if (!p_ptr->themed_level)
-	generate_mark(y1, x1, y2, x2, CAVE_TEMP);
+	generate_mark(y1, x1, y2, x2, SQUARE_TEMP);
 
 
     /* 
@@ -2402,13 +2402,13 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax, const char *data,
 	    /* Part of a vault.  Can be lit.  May be "icky". */
 	    if (icky)
 	    {
-		cave_on(cave_info[y][x], CAVE_ICKY);
-		cave_on(cave_info[y][x], CAVE_ROOM);
+		cave_on(cave_info[y][x], SQUARE_ICKY);
+		cave_on(cave_info[y][x], SQUARE_ROOM);
 	    }
 	    else if (stage_map[p_ptr->stage][STAGE_TYPE] == CAVE)
-		cave_on(cave_info[y][x], CAVE_ROOM);
+		cave_on(cave_info[y][x], SQUARE_ROOM);
 	    if (light)
-		cave_on(cave_info[y][x], CAVE_GLOW);
+		cave_on(cave_info[y][x], SQUARE_GLOW);
 
 	    /* Analyze the grid */
 	    switch (*t) {

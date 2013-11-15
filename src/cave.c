@@ -554,17 +554,17 @@ byte get_color(byte a, int attr, int n)
 bool dtrap_edge(int y, int x) 
 { 
     /* Check if the square is a dtrap in the first place */ 
-    if (!cave_has(cave_info[y][x], CAVE_DTRAP)) return FALSE; 
+    if (!cave_has(cave_info[y][x], SQUARE_DTRAP)) return FALSE; 
 
     /* Check for non-dtrap adjacent grids */ 
     if (in_bounds_fully(y + 1, x    ) && 
-	(!cave_has(cave_info[y + 1][x    ], CAVE_DTRAP))) return TRUE; 
+	(!cave_has(cave_info[y + 1][x    ], SQUARE_DTRAP))) return TRUE; 
     if (in_bounds_fully(y    , x + 1) && 
-	(!cave_has(cave_info[y    ][x + 1], CAVE_DTRAP))) return TRUE; 
+	(!cave_has(cave_info[y    ][x + 1], SQUARE_DTRAP))) return TRUE; 
     if (in_bounds_fully(y - 1, x    ) && 
-	(!cave_has(cave_info[y - 1][x    ], CAVE_DTRAP))) return TRUE; 
+	(!cave_has(cave_info[y - 1][x    ], SQUARE_DTRAP))) return TRUE; 
     if (in_bounds_fully(y    , x - 1) && 
-	(!cave_has(cave_info[y    ][x - 1], CAVE_DTRAP))) return TRUE; 
+	(!cave_has(cave_info[y    ][x - 1], SQUARE_DTRAP))) return TRUE; 
 
     return FALSE; 
 } 
@@ -929,7 +929,7 @@ void map_info(unsigned y, unsigned x, grid_data *g)
 
     /* Set things we can work out right now */
     g->f_idx = cave_feat[y][x];
-    g->in_view = cave_has(cave_info[y][x], CAVE_SEEN) ? TRUE : FALSE;
+    g->in_view = cave_has(cave_info[y][x], SQUARE_SEEN) ? TRUE : FALSE;
     g->is_player = (cave_m_idx[y][x] < 0) ? TRUE : FALSE;
     g->m_idx = (g->is_player) ? 0 : cave_m_idx[y][x];
     g->hallucinate = p_ptr->timed[TMD_IMAGE] ? TRUE : FALSE;
@@ -944,19 +944,19 @@ void map_info(unsigned y, unsigned x, grid_data *g)
     {
 	g->lighting = FEAT_LIGHTING_LIT;
 
-	if (!cave_has(cave_info[y][x], CAVE_GLOW) && OPT(view_yellow_light))
+	if (!cave_has(cave_info[y][x], SQUARE_GLOW) && OPT(view_yellow_light))
 	    g->lighting = FEAT_LIGHTING_BRIGHT;
 
     }
     /* Unknown */
-    else if (!cave_has(cave_info[y][x], CAVE_MARK))
+    else if (!cave_has(cave_info[y][x], SQUARE_MARK))
     {
 	g->f_idx = FEAT_NONE;
     }
        
     /* There is a trap in this grid */
-    if (cave_has(cave_info[y][x], CAVE_TRAP) && 
-	cave_has(cave_info[y][x], CAVE_MARK))
+    if (cave_has(cave_info[y][x], SQUARE_TRAP) && 
+	cave_has(cave_info[y][x], SQUARE_MARK))
     {
 	int i;
 	
@@ -1273,7 +1273,7 @@ void note_spot(int y, int x)
     object_type *o_ptr;
 
     /* Require "seen" flag */
-    if (!cave_has(cave_info[y][x], CAVE_SEEN)) return;
+    if (!cave_has(cave_info[y][x], SQUARE_SEEN)) return;
 
 
     /* Hack -- memorize objects */
@@ -1285,11 +1285,11 @@ void note_spot(int y, int x)
 
 
     /* Hack -- memorize grids */
-    if (cave_has(cave_info[y][x], CAVE_MARK))
+    if (cave_has(cave_info[y][x], SQUARE_MARK))
 	return;
 
     /* Memorize */
-    cave_on(cave_info[y][x], CAVE_MARK);
+    cave_on(cave_info[y][x], SQUARE_MARK);
 }
 
 
@@ -1952,22 +1952,22 @@ void do_cmd_view_map(void)
  * out into some other data structure and the new flags should take their
  * place.  This may require a few minor changes in the savefile code.
  *
- * The "CAVE_ROOM" flag is saved in the savefile and is used to determine
+ * The "SQUARE_ROOM" flag is saved in the savefile and is used to determine
  * which grids are part of "rooms", and thus which grids are affected by
  * "illumination" spells.  This flag does not have to be very fast.
  *
- * The "CAVE_ICKY" flag is saved in the savefile and is used to determine
+ * The "SQUARE_ICKY" flag is saved in the savefile and is used to determine
  * which grids are part of "vaults", and thus which grids cannot serve as
  * the destinations of player teleportation.  This flag does not have to
  * be very fast.
  *
- * The "CAVE_MARK" flag is saved in the savefile and is used to determine
+ * The "SQUARE_MARK" flag is saved in the savefile and is used to determine
  * which grids have been "memorized" by the player.  This flag is used by
  * the "map_info()" function to determine if a grid should be displayed.
  * This flag is used in a few other places to determine if the player can
  * "know" about a given grid.  This flag must be very fast. 
  *
- * The "CAVE_GLOW" flag is saved in the savefile and is used to determine
+ * The "SQUARE_GLOW" flag is saved in the savefile and is used to determine
  * which grids are "permanently illuminated".  This flag is used by the
  * "update_view()" function to help determine which viewable flags may
  * be "seen" by the player.  This flag is used by the "map_info" function
@@ -1975,12 +1975,12 @@ void do_cmd_view_map(void)
  * has special semantics for wall grids (see "update_view()").  This flag
  * must be very fast.
  *
- * The "CAVE_WALL" flag is used to determine which grids block the player's
+ * The "SQUARE_WALL" flag is used to determine which grids block the player's
  * line of sight.  This flag is used by the "update_view()" function to
  * determine which grids block line of sight, and to help determine which
  * grids can be "seen" by the player.  This flag must be very fast.
  *
- * The "CAVE_VIEW" flag is used to determine which grids are currently in
+ * The "SQUARE_VIEW" flag is used to determine which grids are currently in
  * line of sight of the player.   This flag is set by (and used by) the
  * "update_view()" function.  This flag is used by any code which needs to
  * know if the player can "view" a given grid.  This flag is used by the
@@ -1992,40 +1992,40 @@ void do_cmd_view_map(void)
  * player.  This flag is used to allow any monster in the player's field of
  * view to "sense" the presence of the player.  This flag must be very fast.
  *
- * The "CAVE_SEEN" flag is used to determine which grids are currently in
+ * The "SQUARE_SEEN" flag is used to determine which grids are currently in
  * line of sight of the player and also illuminated in some way.  This flag
  * is set by the "update_view()" function, using computations based on the
- * "CAVE_VIEW" and "CAVE_WALL" and "CAVE_GLOW" flags of various grids.  This
+ * "SQUARE_VIEW" and "SQUARE_WALL" and "SQUARE_GLOW" flags of various grids.  This
  * flag is used by any code which needs to know if the player can "see" a
  * given grid.  This flag is used by the "map_info()" function both to see
  * if a given "boring" grid can be seen by the player, and for some optional
  * special lighting effects.  The "player_can_see_bold()" macro wraps an
  * abstraction around this flag, but certain code idioms are much more
  * efficient.  This flag is used to see if certain monsters are "visible" to
- * the player.  This flag is never set for a grid unless "CAVE_VIEW" is also
- * set for the grid.  Whenever the "CAVE_WALL" or "CAVE_GLOW" flag changes
- * for a grid which has the "CAVE_VIEW" flag set, the "CAVE_SEEN" flag must
+ * the player.  This flag is never set for a grid unless "SQUARE_VIEW" is also
+ * set for the grid.  Whenever the "SQUARE_WALL" or "SQUARE_GLOW" flag changes
+ * for a grid which has the "SQUARE_VIEW" flag set, the "SQUARE_SEEN" flag must
  * be recalculated.  The simplest way to do this is to call "forget_view()"
- * and "update_view()" whenever the "CAVE_WALL" or "CAVE_GLOW" flags change
- * for a grid which has "CAVE_VIEW" set.  This flag must be very fast.
+ * and "update_view()" whenever the "SQUARE_WALL" or "SQUARE_GLOW" flags change
+ * for a grid which has "SQUARE_VIEW" set.  This flag must be very fast.
  *
- * The "CAVE_TEMP" flag is used for a variety of temporary purposes.  This
- * flag is used to determine if the "CAVE_SEEN" flag for a grid has changed
+ * The "SQUARE_TEMP" flag is used for a variety of temporary purposes.  This
+ * flag is used to determine if the "SQUARE_SEEN" flag for a grid has changed
  * during the "update_view()" function.   This flag is used to "spread" light
  * or darkness through a room.  This flag is used by the "monster flow code".
  * This flag must always be cleared by any code which sets it, often, this
  * can be optimized by the use of the special "temp_g", "temp_y", "temp_x"
  * arrays (and the special "temp_n" global).  This flag must be very fast.
  *
- * Note that the "CAVE_MARK" flag is used for many reasons, some of which
- * are strictly for optimization purposes.  The "CAVE_MARK" flag means that
+ * Note that the "SQUARE_MARK" flag is used for many reasons, some of which
+ * are strictly for optimization purposes.  The "SQUARE_MARK" flag means that
  * even if the player cannot "see" the grid, he "knows" about the terrain in
  * that grid.  This is used to "memorize" grids when they are first "seen" by
  * the player, and to allow certain grids to be "detected" by certain magic.
  * Note that most grids are always memorized when they are first "seen", but
  * "boring" grids (floor grids) are only memorized if the "view_torch_grids"
  * option is set, or if the "view_perma_grids" option is set, and the grid
- * in question has the "CAVE_GLOW" flag set.
+ * in question has the "SQUARE_GLOW" flag set.
  *
  * Objects are "memorized" in a different way, using a special "marked" flag
  * on the object itself, which is set when an object is observed or detected.
@@ -2037,17 +2037,17 @@ void do_cmd_view_map(void)
  * is resting, or performing any repeated actions (like digging, disarming,
  * farming, etc), there is no need to call the "update_view()" function, so
  * even if it was not very efficient, this would really only matter when the
- * player was "running" through the dungeon.  It sets the "CAVE_VIEW" flag
+ * player was "running" through the dungeon.  It sets the "SQUARE_VIEW" flag
  * on every cave grid in the player's field of view, and maintains an array
  * of all such grids in the global "view_g" array.  It also checks the torch
- * radius of the player, and sets the "CAVE_SEEN" flag for every grid which
+ * radius of the player, and sets the "SQUARE_SEEN" flag for every grid which
  * is in the "field of view" of the player and which is also "illuminated",
  * either by the players torch (if any) or by any permanent light source.
  * It could use and help maintain information about multiple light sources,
  * which would be helpful in a multi-player version of Angband.
  *
  * The "update_view()" function maintains the special "view_g" array, which
- * contains exactly those grids which have the "CAVE_VIEW" flag set.  This
+ * contains exactly those grids which have the "SQUARE_VIEW" flag set.  This
  * array is used by "update_view()" to (only) memorize grids which become
  * newly "seen", and to (only) redraw grids whose "seen" value changes, which
  * allows the use of some interesting (and very efficient) "special lighting
@@ -2065,18 +2065,18 @@ void do_cmd_view_map(void)
  * indicate which grids are illuminated only by the player's torch by using
  * the color yellow for those grids.
  *
- * The old "update_view()" algorithm uses the special "CAVE_EASY" flag as a
+ * The old "update_view()" algorithm uses the special "SQUARE_EASY" flag as a
  * temporary internal flag to mark those grids which are not only in view,
  * but which are also "easily" in line of sight of the player.  This flag
- * is actually just the "CAVE_SEEN" flag, and the "update_view()" function
- * makes sure to clear it for all old "CAVE_SEEN" grids, and then use it in
- * the algorithm as "CAVE_EASY", and then clear it for all "CAVE_EASY" grids,
- * and then reset it as appropriate for all new "CAVE_SEEN" grids.  This is
+ * is actually just the "SQUARE_SEEN" flag, and the "update_view()" function
+ * makes sure to clear it for all old "SQUARE_SEEN" grids, and then use it in
+ * the algorithm as "SQUARE_EASY", and then clear it for all "SQUARE_EASY" grids,
+ * and then reset it as appropriate for all new "SQUARE_SEEN" grids.  This is
  * kind of messy, but it works.   The old algorithm may disappear eventually.
  *
  * The new "update_view()" algorithm uses a faster and more mathematically
  * correct algorithm, assisted by a large machine generated static array, to
- * determine the "CAVE_VIEW" and "CAVE_SEEN" flags simultaneously.  See below.
+ * determine the "SQUARE_VIEW" and "SQUARE_SEEN" flags simultaneously.  See below.
  *
  * It seems as though slight modifications to the "update_view()" functions
  * would allow us to determine "reverse" line-of-sight as well as "normal"
@@ -2090,14 +2090,14 @@ void do_cmd_view_map(void)
  * the monsters move around even if the player was not detectable, and to
  * "remember" where the player was last seen, to avoid looking stupid.
  *
- * Note that the "CAVE_GLOW" flag means that a grid is permanently lit in
+ * Note that the "SQUARE_GLOW" flag means that a grid is permanently lit in
  * some way.  However, for the player to "see" the grid, as determined by
- * the "CAVE_SEEN" flag, the player must not be blind, the grid must have
- * the "CAVE_VIEW" flag set, and if the grid is a "wall" grid, and it is
+ * the "SQUARE_SEEN" flag, the player must not be blind, the grid must have
+ * the "SQUARE_VIEW" flag set, and if the grid is a "wall" grid, and it is
  * not lit by the player's torch, then it must touch a grid which does not
- * have the "CAVE_WALL" flag set, but which does have both the "CAVE_GLOW"
- * and "CAVE_VIEW" flags set.  This last part about wall grids is induced
- * by the semantics of "CAVE_GLOW" as applied to wall grids, and checking
+ * have the "SQUARE_WALL" flag set, but which does have both the "SQUARE_GLOW"
+ * and "SQUARE_VIEW" flags set.  This last part about wall grids is induced
+ * by the semantics of "SQUARE_GLOW" as applied to wall grids, and checking
  * the technical requirements can be very expensive, especially since the
  * grid may be touching some "illegal" grids.  Luckily, it is more or less
  * correct to restrict the "touching" grids from the eight "possible" grids
@@ -2105,19 +2105,19 @@ void do_cmd_view_map(void)
  * closer to the player than the grid itself, which eliminates more than
  * half of the work, including all of the potentially "illegal" grids, if
  * at most one of the three grids is a "diagonal" grid.   In addition, in
- * almost every situation, it is possible to ignore the "CAVE_VIEW" flag
+ * almost every situation, it is possible to ignore the "SQUARE_VIEW" flag
  * on these three "touching" grids, for a variety of technical reasons.
  * Finally, note that in most situations, it is only necessary to check
  * a single "touching" grid, in fact, the grid which is strictly closest
  * to the player of all the touching grids, and in fact, it is normally
- * only necessary to check the "CAVE_GLOW" flag of that grid, again, for
+ * only necessary to check the "SQUARE_GLOW" flag of that grid, again, for
  * various technical reasons.  However, one of the situations which does
  * not work with this last reduction is the very common one in which the
  * player approaches an illuminated room from a dark hallway, in which the
  * two wall grids which form the "entrance" to the room would not be marked
- * as "CAVE_SEEN", since of the three "touching" grids nearer to the player
+ * as "SQUARE_SEEN", since of the three "touching" grids nearer to the player
  * than each wall grid, only the farthest of these grids is itself marked
- * "CAVE_GLOW". 
+ * "SQUARE_GLOW". 
  *
  *
  * Here are some pictures of the legal "light source" radius values, in
@@ -2191,7 +2191,7 @@ void do_cmd_view_map(void)
 
 
 /**
- * Forget the "CAVE_VIEW" grids, redrawing as needed
+ * Forget the "SQUARE_VIEW" grids, redrawing as needed
  */
 void forget_view(void)
 {
@@ -2199,10 +2199,10 @@ void forget_view(void)
 
 	for (y = 0; y < CAVE_INFO_Y; y++) {
 		for (x = 0; x < CAVE_INFO_X; x++) {
-		    if (!cave_has(cave_info[y][x], CAVE_VIEW))
+		    if (!cave_has(cave_info[y][x], SQUARE_VIEW))
 			continue;
-		    cave_off(cave_info[y][x], CAVE_VIEW);
-		    cave_off(cave_info[y][x], CAVE_SEEN);
+		    cave_off(cave_info[y][x], SQUARE_VIEW);
+		    cave_off(cave_info[y][x], SQUARE_SEEN);
 		    light_spot(y, x);
 		}
 	}
@@ -2233,23 +2233,23 @@ void forget_view(void)
  * along the diagonal axes, so we check the bits corresponding to
  * the lines of sight near the major axes first.
  *
- * We use the "temp_g" array (and the "CAVE_TEMP" flag) to keep track of
- * which grids were previously marked "CAVE_SEEN", since only those grids
- * whose "CAVE_SEEN" value changes during this routine must be redrawn.
+ * We use the "temp_g" array (and the "SQUARE_TEMP" flag) to keep track of
+ * which grids were previously marked "SQUARE_SEEN", since only those grids
+ * whose "SQUARE_SEEN" value changes during this routine must be redrawn.
  *
- * This function is now responsible for maintaining the "CAVE_SEEN"
- * flags as well as the "CAVE_VIEW" flags, which is good, because
+ * This function is now responsible for maintaining the "SQUARE_SEEN"
+ * flags as well as the "SQUARE_VIEW" flags, which is good, because
  * the only grids which normally need to be memorized and/or redrawn
- * are the ones whose "CAVE_SEEN" flag changes during this routine.
+ * are the ones whose "SQUARE_SEEN" flag changes during this routine.
  *
  * Basically, this function divides the "octagon of view" into octants of
  * grids (where grids on the main axes and diagonal axes are "shared" by
  * two octants), and processes each octant one at a time, processing each
  * octant one grid at a time, processing only those grids which "might" be
- * viewable, and setting the "CAVE_VIEW" flag for each grid for which there
+ * viewable, and setting the "SQUARE_VIEW" flag for each grid for which there
  * is an (unobstructed) line of sight from the center of the player grid to
- * any internal point in the grid (and collecting these "CAVE_VIEW" grids
- * into the "view_g" array), and setting the "CAVE_SEEN" flag for the grid
+ * any internal point in the grid (and collecting these "SQUARE_VIEW" grids
+ * into the "view_g" array), and setting the "SQUARE_SEEN" flag for the grid
  * if, in addition, the grid is "illuminated" in some way.
  *
  * This function relies on a theorem (suggested and proven by Mat Hostetter)
@@ -2302,10 +2302,10 @@ static void mark_wasseen(void)
 	/* Save the old "view" grids for later */
 	for (y = 0; y < CAVE_INFO_Y; y++) {
 	    for (x = 0; x < CAVE_INFO_X; x++) {
-		if (cave_has(cave_info[y][x], CAVE_SEEN))
-		    cave_on(cave_info[y][x], CAVE_TEMP);
-		cave_off(cave_info[y][x], CAVE_VIEW);
-		cave_off(cave_info[y][x], CAVE_SEEN);
+		if (cave_has(cave_info[y][x], SQUARE_SEEN))
+		    cave_on(cave_info[y][x], SQUARE_TEMP);
+		cave_off(cave_info[y][x], SQUARE_VIEW);
+		cave_off(cave_info[y][x], SQUARE_SEEN);
 	    }
 	}
 }
@@ -2313,22 +2313,22 @@ static void mark_wasseen(void)
 static void update_one(int y, int x, int blind)
 {
     if (blind)
-	cave_off(cave_info[y][x], CAVE_SEEN);
+	cave_off(cave_info[y][x], SQUARE_SEEN);
 
     /* Square went from unseen -> seen */
-    if (cave_has(cave_info[y][x], CAVE_SEEN) && 
-	!cave_has(cave_info[y][x], CAVE_TEMP))
+    if (cave_has(cave_info[y][x], SQUARE_SEEN) && 
+	!cave_has(cave_info[y][x], SQUARE_TEMP))
     {
 	note_spot(y, x);
 	light_spot(y, x);
     }
 
     /* Square went from seen -> unseen */
-    if (!cave_has(cave_info[y][x], CAVE_SEEN) && 
-	cave_has(cave_info[y][x], CAVE_TEMP))
+    if (!cave_has(cave_info[y][x], SQUARE_SEEN) && 
+	cave_has(cave_info[y][x], SQUARE_TEMP))
 	light_spot(y, x);
 
-    cave_off(cave_info[y][x], CAVE_TEMP);
+    cave_off(cave_info[y][x], SQUARE_TEMP);
 }
 
 /**
@@ -2351,15 +2351,15 @@ static void become_viewable(int y, int x, int lit, int py, int px)
 {
     int xc = x;
     int yc = y;
-    if (cave_has(cave_info[y][x], CAVE_VIEW))
+    if (cave_has(cave_info[y][x], SQUARE_VIEW))
 	return;
     
-    cave_on(cave_info[y][x], CAVE_VIEW);
+    cave_on(cave_info[y][x], SQUARE_VIEW);
     
     if (lit)
-	cave_on(cave_info[y][x], CAVE_SEEN);
+	cave_on(cave_info[y][x], SQUARE_SEEN);
 
-    if (cave_has(cave_info[y][x], CAVE_GLOW))
+    if (cave_has(cave_info[y][x], SQUARE_GLOW))
     {
 	if (cave_iswall(y, x)) 
 	{
@@ -2369,8 +2369,8 @@ static void become_viewable(int y, int x, int lit, int py, int px)
 	    xc = (x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
 	    yc = (y < py) ? (y + 1) : (y > py) ? (y - 1) : y;
 	}
-	if (cave_has(cave_info[yc][xc], CAVE_GLOW))
-	    cave_on(cave_info[y][x], CAVE_SEEN);
+	if (cave_has(cave_info[yc][xc], SQUARE_GLOW))
+	    cave_on(cave_info[y][x], SQUARE_SEEN);
     }
 }
 
@@ -2459,9 +2459,9 @@ void update_view(void)
     if (radius > 0) ++radius;
 
     /* Assume we can view the player grid */
-    cave_on(cave_info[p_ptr->py][p_ptr->px], CAVE_VIEW);
-    if (radius > 0 || cave_has(cave_info[p_ptr->py][p_ptr->px], CAVE_GLOW))
-	cave_on(cave_info[p_ptr->py][p_ptr->px], CAVE_SEEN);
+    cave_on(cave_info[p_ptr->py][p_ptr->px], SQUARE_VIEW);
+    if (radius > 0 || cave_has(cave_info[p_ptr->py][p_ptr->px], SQUARE_GLOW))
+	cave_on(cave_info[p_ptr->py][p_ptr->px], SQUARE_SEEN);
 
     /* View squares we have LOS to */
     for (y = 0; y < CAVE_INFO_Y; y++)
@@ -2916,7 +2916,7 @@ void map_area(int y, int x, bool extended)
 		    tf_has(f_ptr->flags, TF_INTERESTING)) 
 		{
 		    /* Memorize the object */
-		    cave_on(cave_info[y][x], CAVE_MARK);
+		    cave_on(cave_info[y][x], SQUARE_MARK);
 		}
 
 		/* Memorize known walls */
@@ -2928,7 +2928,7 @@ void map_area(int y, int x, bool extended)
 		    f_ptr = &f_info[cave_feat[yy][xx]];
 		    if (!tf_has(f_ptr->flags, TF_LOS)) {
 			/* Memorize the walls */
-			cave_on(cave_info[yy][xx], CAVE_MARK);
+			cave_on(cave_info[yy][xx], SQUARE_MARK);
 		    }
 		}
 	    }
@@ -2979,7 +2979,7 @@ void wiz_light(bool wizard)
 
 	/* Skip objects in vaults, if not a wizard. */
 	if ((wizard == FALSE)
-	    && cave_has(cave_info[o_ptr->iy][o_ptr->ix], CAVE_ICKY))
+	    && cave_has(cave_info[o_ptr->iy][o_ptr->ix], SQUARE_ICKY))
 	    continue;
 
 	/* Memorize */
@@ -3007,10 +3007,10 @@ void wiz_light(bool wizard)
 		    f_ptr = &f_info[cave_feat[yy][xx]];		    
 
 		    /* Perma-light the grid (always) */
-		    cave_on(cave_info[yy][xx], CAVE_GLOW);
+		    cave_on(cave_info[yy][xx], SQUARE_GLOW);
 		    
 		    /* If not a wizard, do not mark passable grids in vaults */
-		    if ((!wizard) && cave_has(cave_info[yy][xx], CAVE_ICKY))
+		    if ((!wizard) && cave_has(cave_info[yy][xx], SQUARE_ICKY))
 		    {
 			if (tf_has(f_ptr->flags, TF_PASSABLE)) continue;
 		    }
@@ -3020,7 +3020,7 @@ void wiz_light(bool wizard)
 			cave_visible_trap(yy, xx))
 		    {
 			/* Memorize the grid */
-			cave_on(cave_info[yy][xx], CAVE_MARK);
+			cave_on(cave_info[yy][xx], SQUARE_MARK);
 		    }
 		}
 	    }
@@ -3048,8 +3048,8 @@ void wiz_dark(void)
     for (y = 0; y < DUNGEON_HGT; y++) {
 	for (x = 0; x < DUNGEON_WID; x++) {
 	    /* Process the grid */
-	    cave_off(cave_info[y][x], CAVE_MARK);
-	    cave_off(cave_info[y][x], CAVE_DTRAP);
+	    cave_off(cave_info[y][x], SQUARE_MARK);
+	    cave_off(cave_info[y][x], SQUARE_DTRAP);
 	}
     }
 
@@ -3095,32 +3095,32 @@ void illuminate(void)
 	    {
 
 		/* Darken and forget the grid */
-		cave_off(cave_info[y][x], CAVE_GLOW);
-		cave_off(cave_info[y][x], CAVE_MARK);
+		cave_off(cave_info[y][x], SQUARE_GLOW);
+		cave_off(cave_info[y][x], SQUARE_MARK);
 	    }
 
 	    /* Special case of shops */
 	    else if (cave_feat[y][x] == FEAT_PERM_EXTRA)
             {
 		/* Illuminate the grid */
-		cave_on(cave_info[y][x], CAVE_GLOW);
+		cave_on(cave_info[y][x], SQUARE_GLOW);
               
 		/* Memorize the grid */
-		cave_on(cave_info[y][x], CAVE_MARK);
+		cave_on(cave_info[y][x], SQUARE_MARK);
             }
           
 	    /* Viewable grids (light) */
 	    else if (is_daylight) 
 	    {
 		/* Illuminate the grid */
-		cave_on(cave_info[y][x], CAVE_GLOW);
+		cave_on(cave_info[y][x], SQUARE_GLOW);
 	    }
 
 	    /* Viewable grids (dark) */
 	    else 
 	    {
 		/* Darken the grid */
-		cave_off(cave_info[y][x], CAVE_GLOW);
+		cave_off(cave_info[y][x], SQUARE_GLOW);
 	    }
 	}
     }
@@ -3136,8 +3136,8 @@ void illuminate(void)
 	    if (tf_has(f_ptr->flags, TF_SHOP)) 
 	    {
 		/* Illuminate and memorise the grid */
-		cave_on(cave_info[y][x], CAVE_GLOW);
-		cave_on(cave_info[y][x], CAVE_MARK);
+		cave_on(cave_info[y][x], SQUARE_GLOW);
+		cave_on(cave_info[y][x], SQUARE_MARK);
 		
 		for (i = 0; i < 8; i++) 
 		{
@@ -3145,8 +3145,8 @@ void illuminate(void)
 		    int xx = x + ddx_ddd[i];
 
 		    /* Illuminate and memorise the grid */
-		    cave_on(cave_info[yy][xx], CAVE_GLOW);
-		    cave_on(cave_info[yy][xx], CAVE_MARK);
+		    cave_on(cave_info[yy][xx], SQUARE_GLOW);
+		    cave_on(cave_info[yy][xx], SQUARE_MARK);
 		}
 	    }
 	}

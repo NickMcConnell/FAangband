@@ -2057,7 +2057,7 @@ bool is_detected(int y, int x)
 	    continue;
 
 	/* Return false if undetected */
-	if (!cave_has(cave_info[yy][xx], CAVE_DTRAP))
+	if (!cave_has(cave_info[yy][xx], SQUARE_DTRAP))
 	    return (FALSE);
     }
 
@@ -2140,7 +2140,7 @@ void monster_swap(int y1, int x1, int y2, int x2)
 	bool old_dtrap, new_dtrap;
 
 	/* Calculate changes in dtrap status */
-	old_dtrap = cave_has(cave_info[y1][x1], CAVE_DTRAP);
+	old_dtrap = cave_has(cave_info[y1][x1], SQUARE_DTRAP);
 	new_dtrap = is_detected(y2, x2);
 
 	/* Note the change in the detect status */
@@ -2549,7 +2549,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
 	k = randint0(chance + 20);
 	if ((k > 20) || (stage_map[p_ptr->stage][STAGE_TYPE] == CAVE)
 	    || (p_ptr->themed_level == THEME_WARLORDS)
-	    || cave_has(cave_info[y][x], CAVE_ICKY))
+	    || cave_has(cave_info[y][x], SQUARE_ICKY))
 	    n_ptr->hostile = -1;
 	else
 	    n_ptr->hostile = 0;
@@ -2988,7 +2988,7 @@ bool alloc_monster(int dis, bool slp, bool quick)
 	    continue;
 
 	/* Do not put random monsters in marked rooms. */
-	if ((!character_dungeon) && cave_has(cave_info[y][x], CAVE_TEMP))
+	if ((!character_dungeon) && cave_has(cave_info[y][x], SQUARE_TEMP))
 	    continue;
 
 	/* Accept far away grids */

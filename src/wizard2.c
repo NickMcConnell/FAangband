@@ -1778,28 +1778,28 @@ static void do_cmd_wiz_query(void)
 	break;
 
     case 'm':
-	mask |= (CAVE_MARK);
+	mask |= (SQUARE_MARK);
 	break;
     case 'g':
-	mask |= (CAVE_GLOW);
+	mask |= (SQUARE_GLOW);
 	break;
     case 'r':
-	mask |= (CAVE_ROOM);
+	mask |= (SQUARE_ROOM);
 	break;
     case 'i':
-	mask |= (CAVE_ICKY);
+	mask |= (SQUARE_ICKY);
 	break;
     case 's':
-	mask |= (CAVE_SEEN);
+	mask |= (SQUARE_SEEN);
 	break;
     case 'v':
-	mask |= (CAVE_VIEW);
+	mask |= (SQUARE_VIEW);
 	break;
     case 't':
-	mask |= (CAVE_TEMP);
+	mask |= (SQUARE_TEMP);
 	break;
     case 'w':
-	mask |= (CAVE_WALL);
+	mask |= (SQUARE_WALL);
 	break;
     }
 
@@ -1814,7 +1814,7 @@ static void do_cmd_wiz_query(void)
 		continue;
 
 	    /* Given no mask, show unknown grids */
-	    if (!mask && (cave_info[y][x][0] & (CAVE_MARK)))
+	    if (!mask && (cave_info[y][x][0] & (SQUARE_MARK)))
 		continue;
 
 	    /* Color */

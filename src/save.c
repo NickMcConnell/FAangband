@@ -858,12 +858,6 @@ void wr_stores(void)
 
 
 /**
- * The cave grid flags that get saved in the savefile
- */
-#define IMPORTANT_FLAGS (CAVE_MARK | CAVE_GLOW | CAVE_ICKY | CAVE_ROOM)
-
-
-/**
  * Write the current dungeon
  */
 void wr_dungeon(void)
@@ -889,14 +883,14 @@ void wr_dungeon(void)
     wr_u16b(p_ptr->px);
     wr_u16b(DUNGEON_HGT);
     wr_u16b(DUNGEON_WID);
-    wr_u16b(CAVE_SIZE);
+    wr_u16b(SQUARE_SIZE);
     wr_u16b(0);
   
   
     /*** Simple "Run-Length-Encoding" of cave ***/
   
     /* Loop across bytes of cave_info */
-    for (i = 0; i < CAVE_SIZE; i++)
+    for (i = 0; i < SQUARE_SIZE; i++)
     {
 	/* Note that this will induce two wasted bytes */
 	count = 0;

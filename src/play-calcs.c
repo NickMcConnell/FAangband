@@ -2507,7 +2507,7 @@ extern void calc_bonuses(object_type inventory[], player_state *state,
     /* Unlight stealth boost */
     if (player_has(PF_UNLIGHT)) {
 	if ((p_ptr->cur_light <= 0) && (!is_daylight)
-	    && !cave_has(cave_info[p_ptr->py][p_ptr->px], CAVE_GLOW))
+	    && !cave_has(cave_info[p_ptr->py][p_ptr->px], SQUARE_GLOW))
 	    state->skills[SKILL_STEALTH] += 6;
 	else
 	    state->skills[SKILL_STEALTH] += 3;

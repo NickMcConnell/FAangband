@@ -498,7 +498,7 @@ byte *dummy;
  * These arrays are padded to a width of 256 to allow fast access to elements
  * in the array via "grid" values (see the GRID() macros).
  */
-bitflag (*cave_info)[256][CAVE_SIZE];
+bitflag (*cave_info)[256][SQUARE_SIZE];
 
 /**
  * Array[DUNGEON_HGT][DUNGEON_WID] of cave grid feature codes
