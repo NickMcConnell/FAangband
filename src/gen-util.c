@@ -118,7 +118,7 @@ void new_player_spot(void)
 	    x = randint0(DUNGEON_WID);
 
 	    /* Refuse to start on anti-teleport (vault) grids */
-	    if (cave_has(cave_info[y][x], SQUARE_ICKY))
+	    if (sqinfo_has(cave_info[y][x], SQUARE_ICKY))
 		continue;
 
 	    /* Must be a "naked" floor grid */
@@ -409,7 +409,7 @@ void alloc_object(int set, int typ, int num)
 		continue;
 
 	    /* Check for "room" */
-	    room = cave_has(cave_info[y][x], SQUARE_ROOM) ? TRUE : FALSE;
+	    room = sqinfo_has(cave_info[y][x], SQUARE_ROOM) ? TRUE : FALSE;
 
 	    /* Require corridor? */
 	    if ((set == ALLOC_SET_CORR) && room)

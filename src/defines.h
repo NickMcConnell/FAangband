@@ -1563,23 +1563,23 @@ enum
 
 #define SQUARE_SIZE                FLAG_SIZE(SQUARE_MAX)
 
-#define cave_has(f, flag)        flag_has_dbg(f, SQUARE_SIZE, flag, #f, #flag)
-#define cave_next(f, flag)       flag_next(f, SQUARE_SIZE, flag)
-#define cave_is_empty(f)         flag_is_empty(f, SQUARE_SIZE)
-#define cave_is_full(f)          flag_is_full(f, SQUARE_SIZE)
-#define cave_is_inter(f1, f2)    flag_is_inter(f1, f2, SQUARE_SIZE)
-#define cave_is_subset(f1, f2)   flag_is_subset(f1, f2, SQUARE_SIZE)
-#define cave_is_equal(f1, f2)    flag_is_equal(f1, f2, SQUARE_SIZE)
-#define cave_on(f, flag)         flag_on_dbg(f, SQUARE_SIZE, flag, #f, #flag)
-#define cave_off(f, flag)        flag_off(f, SQUARE_SIZE, flag)
-#define cave_wipe(f)             flag_wipe(f, SQUARE_SIZE)
-#define cave_setall(f)           flag_setall(f, SQUARE_SIZE)
-#define cave_negate(f)           flag_negate(f, SQUARE_SIZE)
-#define cave_copy(f1, f2)        flag_copy(f1, f2, SQUARE_SIZE)
-#define cave_union(f1, f2)       flag_union(f1, f2, SQUARE_SIZE)
-#define cave_comp_union(f1, f2)  flag_comp_union(f1, f2, SQUARE_SIZE)
-#define cave_inter(f1, f2)       flag_inter(f1, f2, SQUARE_SIZE)
-#define cave_diff(f1, f2)        flag_diff(f1, f2, SQUARE_SIZE)
+#define sqinfo_has(f, flag)        flag_has_dbg(f, SQUARE_SIZE, flag, #f, #flag)
+#define sqinfo_next(f, flag)       flag_next(f, SQUARE_SIZE, flag)
+#define sqinfo_is_empty(f)         flag_is_empty(f, SQUARE_SIZE)
+#define sqinfo_is_full(f)          flag_is_full(f, SQUARE_SIZE)
+#define sqinfo_is_inter(f1, f2)    flag_is_inter(f1, f2, SQUARE_SIZE)
+#define sqinfo_is_subset(f1, f2)   flag_is_subset(f1, f2, SQUARE_SIZE)
+#define sqinfo_is_equal(f1, f2)    flag_is_equal(f1, f2, SQUARE_SIZE)
+#define sqinfo_on(f, flag)         flag_on_dbg(f, SQUARE_SIZE, flag, #f, #flag)
+#define sqinfo_off(f, flag)        flag_off(f, SQUARE_SIZE, flag)
+#define sqinfo_wipe(f)             flag_wipe(f, SQUARE_SIZE)
+#define sqinfo_setall(f)           flag_setall(f, SQUARE_SIZE)
+#define sqinfo_negate(f)           flag_negate(f, SQUARE_SIZE)
+#define sqinfo_copy(f1, f2)        flag_copy(f1, f2, SQUARE_SIZE)
+#define sqinfo_union(f1, f2)       flag_union(f1, f2, SQUARE_SIZE)
+#define sqinfo_comp_union(f1, f2)  flag_comp_union(f1, f2, SQUARE_SIZE)
+#define sqinfo_inter(f1, f2)       flag_inter(f1, f2, SQUARE_SIZE)
+#define sqinfo_diff(f1, f2)        flag_diff(f1, f2, SQUARE_SIZE)
 
 /*** Object flags ***/
 
@@ -2352,7 +2352,7 @@ enum
  * Note the use of comparison to zero to force a "boolean" result
  */
 #define player_has_los_bold(Y,X) \
-    (cave_has(cave_info[Y][X], SQUARE_VIEW))
+    (sqinfo_has(cave_info[Y][X], SQUARE_VIEW))
 
 
 /**
@@ -2361,7 +2361,7 @@ enum
  * Note the use of comparison to zero to force a "boolean" result
  */
 #define player_can_see_bold(Y,X) \
-    (cave_has(cave_info[Y][X], SQUARE_SEEN))
+    (sqinfo_has(cave_info[Y][X], SQUARE_SEEN))
 
 
 /**

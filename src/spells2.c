@@ -485,7 +485,7 @@ void dimen_door(void)
 
     /* Test for empty floor, forbid vaults or too large a distance, and insure
      * that this spell is never certain. */
-    if (!cave_empty_bold(ny, nx) || cave_has(cave_info[ny][nx], SQUARE_ICKY)
+    if (!cave_empty_bold(ny, nx) || sqinfo_has(cave_info[ny][nx], SQUARE_ICKY)
 	|| (distance(ny, nx, p_ptr->py, p_ptr->px) > 25)
 	|| (randint0(p_ptr->lev) == 0)) {
 	msg("You fail to exit the astral plane correctly!");
@@ -1575,7 +1575,7 @@ bool detect_traps(int range, bool show)
 		}
 
 		/* Mark grid as detected */
-		cave_on(cave_info[y][x], SQUARE_DTRAP);
+		sqinfo_on(cave_info[y][x], SQUARE_DTRAP);
 	    }
 	}
     }
@@ -1637,7 +1637,7 @@ bool detect_doors(int range, bool show)
 		if (tf_has(f_ptr->flags, TF_DOOR_ANY)) 
 		{
 		    /* Hack -- Memorize */
-		    cave_on(cave_info[y][x], SQUARE_MARK);
+		    sqinfo_on(cave_info[y][x], SQUARE_MARK);
 
 		    /* Redraw */
 		    light_spot(y, x);
@@ -1697,7 +1697,7 @@ bool detect_stairs(int range, bool show)
 		    tf_has(f_ptr->flags, TF_PATH))
 		{
 		    /* Hack -- Memorize */
-		    cave_on(cave_info[y][x], SQUARE_MARK);
+		    sqinfo_on(cave_info[y][x], SQUARE_MARK);
 
 		    /* Redraw */
 		    light_spot(y, x);
@@ -1769,7 +1769,7 @@ bool detect_treasure(int range, bool show)
 		    || (cave_feat[y][x] == FEAT_QUARTZ_K)) 
 		{
 		    /* Hack -- Memorize */
-		    cave_on(cave_info[y][x], SQUARE_MARK);
+		    sqinfo_on(cave_info[y][x], SQUARE_MARK);
 
 		    /* Redraw */
 		    light_spot(y, x);
@@ -2356,7 +2356,7 @@ bool detect_monsters_living(int range, bool show)
 	    /* Notice trees */
 	    if (tf_has(f_ptr->flags, TF_TREE)) {
 		/* Mark it */
-		cave_on(cave_info[y][x], SQUARE_MARK);
+		sqinfo_on(cave_info[y][x], SQUARE_MARK);
 
 		/* Count it */
 		num++;
@@ -3813,7 +3813,7 @@ void do_starlight(int burst_number, int dam, bool strong)
     feature_type *f_ptr;
 
     /* Is the player in a square already magically lit? */
-    bool player_lit = cave_has(cave_info[p_ptr->py][p_ptr->px], SQUARE_GLOW);
+    bool player_lit = sqinfo_has(cave_info[p_ptr->py][p_ptr->px], SQUARE_GLOW);
 
     for (i = 0; i < burst_number; i++) {
 	/* First, we find the spot. */
@@ -3847,7 +3847,7 @@ void do_starlight(int burst_number, int dam, bool strong)
 	/* Then we hit the spot. */
 
 	/* Confusing to be suddenly lit up. */
-	if (!cave_has(cave_info[y][x], SQUARE_GLOW))
+	if (!sqinfo_has(cave_info[y][x], SQUARE_GLOW))
 	    fire_meteor(-1, GF_CONFU, y, x, dam, strong ? 1 : 0, FALSE);
 
 	/* The actual burst of light. */
@@ -4501,7 +4501,7 @@ bool genocide(void)
 	    continue;
 
 	/* Ignore monsters in icky squares */
-	if (cave_has(cave_info[m_ptr->fy][m_ptr->fx], SQUARE_ICKY))
+	if (sqinfo_has(cave_info[m_ptr->fy][m_ptr->fx], SQUARE_ICKY))
 	    continue;
 
 	/* Delete the monster */
@@ -4543,7 +4543,7 @@ bool mass_genocide(void)
 	    continue;
 
 	/* Ignore monsters in icky squares */
-	if (cave_has(cave_info[m_ptr->fy][m_ptr->fx], SQUARE_ICKY))
+	if (sqinfo_has(cave_info[m_ptr->fy][m_ptr->fx], SQUARE_ICKY))
 	    continue;
 
 	/* Delete the monster */
@@ -4654,15 +4654,15 @@ void destroy_area(int y1, int x1, int r, bool full)
 		continue;
 
 	    /* Ignore icky squares */
-	    if (cave_has(cave_info[y][x], SQUARE_ICKY))
+	    if (sqinfo_has(cave_info[y][x], SQUARE_ICKY))
 		continue;
 
 	    /* Lose room */
-	    cave_off(cave_info[y][x], SQUARE_ROOM);
+	    sqinfo_off(cave_info[y][x], SQUARE_ROOM);
 
 	    /* Lose light and knowledge */
-	    cave_off(cave_info[y][x], SQUARE_MARK);
-	    cave_off(cave_info[y][x], SQUARE_GLOW);
+	    sqinfo_off(cave_info[y][x], SQUARE_MARK);
+	    sqinfo_off(cave_info[y][x], SQUARE_GLOW);
 
 	    /* Hack -- Notice player affect */
 	    if (cave_m_idx[y][x] < 0) {
@@ -4816,11 +4816,11 @@ void earthquake(int cy, int cx, int r, bool volcano)
 		continue;
 
 	    /* Lose room */
-	    cave_off(cave_info[yy][xx], SQUARE_ROOM);
+	    sqinfo_off(cave_info[yy][xx], SQUARE_ROOM);
 
 	    /* Lose light and knowledge */
-	    cave_off(cave_info[yy][xx], SQUARE_MARK);
-	    cave_off(cave_info[yy][xx], SQUARE_GLOW);
+	    sqinfo_off(cave_info[yy][xx], SQUARE_MARK);
+	    sqinfo_off(cave_info[yy][xx], SQUARE_GLOW);
 
 	    /* Count total, water, lava and void grids */
 	    total++;
@@ -5255,7 +5255,7 @@ bool tremor(void)
 	nx = tx;
 
 	/* Test for empty floor and line of sight, forbid vaults */
-	if (cave_empty_bold(ny, nx) && !cave_has(cave_info[ny][nx], SQUARE_ICKY)
+	if (cave_empty_bold(ny, nx) && !sqinfo_has(cave_info[ny][nx], SQUARE_ICKY)
 	    && (player_has_los_bold(ny, nx)))
 	    valid_grid = TRUE;
     }
@@ -5292,10 +5292,10 @@ static void cave_temp_room_light(void)
 	int x = temp_x[i];
 
 	/* No longer in the array */
-	cave_off(cave_info[y][x], SQUARE_TEMP);
+	sqinfo_off(cave_info[y][x], SQUARE_TEMP);
 
 	/* Perma-Light */
-	cave_on(cave_info[y][x], SQUARE_GLOW);
+	sqinfo_on(cave_info[y][x], SQUARE_GLOW);
     }
 
     /* Fully update the visuals */
@@ -5375,17 +5375,17 @@ static void cave_temp_room_unlight(void)
 	feature_type *f_ptr = &f_info[cave_feat[y][x]];
 
 	/* No longer in the array */
-	cave_off(cave_info[y][x], SQUARE_TEMP);
+	sqinfo_off(cave_info[y][x], SQUARE_TEMP);
 
 	/* Darken the grid */
-	cave_off(cave_info[y][x], SQUARE_GLOW);
+	sqinfo_off(cave_info[y][x], SQUARE_GLOW);
 
 	/* Hack -- Forget "boring" grids */
 	if (tf_has(f_ptr->flags, TF_FLOOR) && 
-	    !cave_has(cave_info[y][x], SQUARE_TRAP))
+	    !sqinfo_has(cave_info[y][x], SQUARE_TRAP))
 	{
 	    /* Forget the grid */
-	    cave_off(cave_info[y][x], SQUARE_MARK);
+	    sqinfo_off(cave_info[y][x], SQUARE_MARK);
 	}
     }
 
@@ -5421,11 +5421,11 @@ static void cave_temp_room_aux(int y, int x)
 	return;
 
     /* Avoid infinite recursion */
-    if (cave_has(cave_info[y][x], SQUARE_TEMP))
+    if (sqinfo_has(cave_info[y][x], SQUARE_TEMP))
 	return;
 
     /* Do not "leave" the current room */
-    if (!cave_has(cave_info[y][x], SQUARE_ROOM))
+    if (!sqinfo_has(cave_info[y][x], SQUARE_ROOM))
 	return;
 
     /* Paranoia -- verify space */
@@ -5433,7 +5433,7 @@ static void cave_temp_room_aux(int y, int x)
 	return;
 
     /* Mark the grid as "seen" */
-    cave_on(cave_info[y][x], SQUARE_TEMP);
+    sqinfo_on(cave_info[y][x], SQUARE_TEMP);
 
     /* Add it to the "seen" set */
     temp_y[temp_n] = y;

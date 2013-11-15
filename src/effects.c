@@ -3221,7 +3221,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 		    continue;
 
 		/* Skip grids in vaults */
-		if (cave_has(cave_info[y][x], SQUARE_ICKY))
+		if (sqinfo_has(cave_info[y][x], SQUARE_ICKY))
 		    continue;
 
 		/* Lava now */

@@ -450,7 +450,7 @@ static void clear_cave(void)
 			cave_feat[y][x] = 0;
 
 			/* No flags */
-			cave_wipe(cave_info[y][x]);
+			sqinfo_wipe(cave_info[y][x]);
 
 			/* No flow */
 			cave_cost[y][x] = 0;
@@ -519,7 +519,7 @@ void generate_cave(void)
 	for (y = 0; y < DUNGEON_HGT; y++) {
 	    for (x = 0; x < DUNGEON_WID; x++) {
 		/* No flags */
-		cave_wipe(cave_info[y][x]);
+		sqinfo_wipe(cave_info[y][x]);
 
 		/* No flow */
 		cave_cost[y][x] = 0;

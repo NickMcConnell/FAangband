@@ -1946,7 +1946,7 @@ static void dungeon(void)
 	    cave_set_feat(py, px, p_ptr->create_stair);
 
 	    /* Mark the stairs as known */
-	    cave_on(cave_info[py][px], SQUARE_MARK);
+	    sqinfo_on(cave_info[py][px], SQUARE_MARK);
 	}
 
 	/* Cancel the stair request */
