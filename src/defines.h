@@ -1325,66 +1325,26 @@ enum
 #define MONSTER_BLOW_MAX 4
 
 /*
- * New monster blow methods
+ * Monster blow methods
  */
-#define RBM_HIT		1
-#define RBM_TOUCH	2
-#define RBM_PUNCH	3
-#define RBM_KICK	4
-#define RBM_CLAW	5
-#define RBM_BITE	6
-#define RBM_STING	7
-#define RBM_XXX1	8
-#define RBM_BUTT	9
-#define RBM_CRUSH	10
-#define RBM_ENGULF	11
-#define RBM_XXX2	12
-#define RBM_CRAWL	13
-#define RBM_DROOL	14
-#define RBM_SPIT	15
-#define RBM_XXX3	16
-#define RBM_GAZE	17
-#define RBM_WAIL	18
-#define RBM_SPORE	19
-#define RBM_XXX4	20
-#define RBM_BEG		21
-#define RBM_INSULT	22
-#define RBM_SNEER	23
-#define RBM_REQUEST	24
-
+enum
+{
+	#define RBM(x, y) RBM_##x,
+	#include "list-blow-methods.h"
+	#undef RBM
+	RBM_MAX
+};
 
 /*
- * New monster blow effects
+ * Monster blow effects
  */
-#define RBE_HURT	1
-#define RBE_POISON	2
-#define RBE_UN_BONUS	3
-#define RBE_UN_POWER	4
-#define RBE_EAT_GOLD	5
-#define RBE_EAT_ITEM	6
-#define RBE_EAT_FOOD	7
-#define RBE_EAT_LIGHT	8
-#define RBE_ACID	9
-#define RBE_ELEC	10
-#define RBE_FIRE	11
-#define RBE_COLD	12
-#define RBE_BLIND	13
-#define RBE_CONFUSE	14
-#define RBE_TERRIFY	15
-#define RBE_PARALYZE	16
-#define RBE_LOSE_STR	17
-#define RBE_LOSE_INT	18
-#define RBE_LOSE_WIS	19
-#define RBE_LOSE_DEX	20
-#define RBE_LOSE_CON	21
-#define RBE_LOSE_CHR	22
-#define RBE_LOSE_ALL	23
-#define RBE_SHATTER	24
-#define RBE_EXP_10	25
-#define RBE_EXP_20	26
-#define RBE_EXP_40	27
-#define RBE_EXP_80	28
-
+enum
+{
+	#define RBE(x, y) RBE_##x,
+	#include "list-blow-effects.h"
+	#undef RBE
+	RBE_MAX
+};
 
 /** 1/x chance of reducing stats (for elemental attacks).  From Zangband
  * -LM-
