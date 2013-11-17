@@ -1,8 +1,6 @@
-# File: Makefile.cocoa
+# File: Makefile.osx
 
-# This is a Makefile for Mac OS X Cocoa port of Angband.
-#
-# Based on Makefile.osx
+# This is a Makefile for the Mac OS X Cocoa port of Angband.
 
 # default target
 all: install
@@ -13,7 +11,8 @@ LD = ld
 OPT ?= -O2
 
 ARCH = -arch i386 -arch x86_64
-WARNINGS = -W -Wall -Wno-unused-parameter -Wno-missing-field-initializers
+WARNINGS = -W -Wall -Wno-unused-parameter -Wno-missing-field-initializers \
+	-Wunused-macros
 JUST_C = -std=c99 -Wdeclaration-after-statement
 OBJ_CFLAGS = -std=c99 -x objective-c -mmacosx-version-min=10.5
 CFLAGS = -g -I. $(WARNINGS) $(OPT) -DMACH_O_CARBON -DHAVE_MKSTEMP \
@@ -40,8 +39,7 @@ ifneq ($(autoconf),)
 CFLAGS += -DHAVE_CONFIG_H
 endif
 
-# Note that Makefile.inc sets VERSION, and so we must run version.sh after
-# including Makefile.inc
+# Note that Makefile.inc sets VERSION, and so we must run version.sh after including Makefile.inc
 include Makefile.inc
 
 APPNAME = $(NAME).app
@@ -61,8 +59,10 @@ OSX_OBJS = main-cocoa.o
 
 
 $(EXE).o: $(OBJS)
-	$(LD) -r -arch x86_64 -o $@.x86_64 $(OBJS)
-	$(LD) -r -arch i386 -o $@.i386 $(OBJS)
+	@printf "%10s %-20s\n" LD $@.x86_64
+	@$(LD) -r -arch x86_64 -o $@.x86_64 $(OBJS)
+	@printf "%10s %-20s\n" LD $@.i386
+	@$(LD) -r -arch i386 -o $@.i386 $(OBJS)
 	lipo -arch x86_64 $@.x86_64 -arch i386 $@.i386 -create -output $(PROG).o
 
 $(EXE): $(EXE).o $(OSX_OBJS)
@@ -76,7 +76,7 @@ borg: $(OBJS) $(BOBJS)
 #
 
 clean:
-	-rm -f $(OBJS) $(EXE) $(EXE).o.i386 $(EXE).o $(OSX_OBJS)
+	-rm -f $(OBJS) $(EXE) $(EXE).o.i386 $(EXE).o.x86_64 $(EXE).o $(OSX_OBJS)
 
 
 #
@@ -85,10 +85,10 @@ clean:
 
 main-cocoa.o : main-cocoa.m
 	@printf "%10s %-20s (objective-c)\n" CC $<
-	$(CC) $(CFLAGS) $(OBJ_CFLAGS) -c -o $@ $<
+	@$(CC) $(CFLAGS) $(OBJ_CFLAGS) -c -o $@ $<
 %.o : %.c
 	@printf "%10s %-20s\n" CC $<
-	$(CC) $(JUST_C) $(CFLAGS) -c -o $@ $<
+	@$(CC) $(JUST_C) $(CFLAGS) -c -o $@ $<
 
 
 #
@@ -154,14 +154,19 @@ install: $(EXE) $(ICONFILES) $(PLIST) $(LIBFILES)
 	# so we can just recursively copy that directory.
 	-cp ../lib/xtra/graf/graphics.txt $(APPRES)/lib/xtra/graf
 	-cp ../lib/xtra/graf/*.png $(APPRES)/
-	-cp ../lib/xtra/sound/*.wav $(APPRES)/lib/xtra/sound
+	-cp ../lib/xtra/sound/*.mp3 $(APPRES)/lib/xtra/sound
 	-cp ../lib/xtra/sound/sound.cfg $(APPRES)/lib/xtra/sound
 
 	install -m 755 $(EXE) $(APPBIN)
 	install -m 644 $(ICONFILES) $(APPRES)
 	cp cocoa/English.lproj/MainMenu.nib/*ib $(APPRES)/English.lproj/MainMenu.nib
-	sed -e 's/\$$VERSION\$$/$(VERSION)/' -e 's/\$$COPYRIGHT\$$/$(COPYRIGHT)/' \
-		-e 's/\$$NAME\$$/$(NAME)/' -e 's/\$$EXECUTABLE\$$/$(EXE)/' \
+	cp cocoa/CommandMenu.plist $(APPRES)/CommandMenu.plist
+	sed -e 's/\$$VERSION\$$/$(VERSION)/' \
+		-e 's/\$$COPYRIGHT\$$/$(COPYRIGHT)/' \
+		-e 's/\$$NAME\$$/$(NAME)/' \
+		-e 's/\$$EXECUTABLE\$$/$(EXE)/' \
+		-e 's/\$$BUNDLE_VERSION\$$/$(BUNDLE_VERSION)/' \
+		-e 's/\$$BUNDLE_IDENTIFIER\$$/$(BUNDLE_IDENTIFIER)/' \
 		$(PLIST) > $(APPCONT)/Info.plist
 
 	SetFile -a B $(APPBNDL)
@@ -172,6 +177,16 @@ vars:
 	@echo CFLAGS = $(CFLAGS)
 	@echo BASEOBJS = $(BASEOBJS)
 
+# build a version that has separate prefs (different bundle ID) and directories (setting SAFE_DIRECTORY preprocessor flag)
+safe-install:
+	$(MAKE) -f Makefile.osx install CFLAGS="-DSAFE_DIRECTORY $(CFLAGS)"
+	sed -e 's/\$$VERSION\$$/$(VERSION)/' \
+		-e 's/\$$COPYRIGHT\$$/$(COPYRIGHT)/' \
+		-e 's/\$$NAME\$$/$(NAME)/' \
+		-e 's/\$$EXECUTABLE\$$/$(EXE)/' \
+		-e 's/\$$BUNDLE_VERSION\$$/$(BUNDLE_VERSION)/' \
+		-e 's/\$$BUNDLE_IDENTIFIER\$$/$(BUNDLE_IDENTIFIER).$(VERSION)/' \
+		$(PLIST) > $(APPCONT)/Info.plist
 
 
 PACKAGE_NAME = $(NAME)-$(VERSION)
@@ -182,6 +197,7 @@ dist: install
 	@rm -rf disttemp*
 	mkdir -p disttemp/Docs
 	cp ../copying.txt ../README disttemp/Docs
+	-cp ../doc/manual.html ../doc/manual.pdf disttemp/Docs
 	cp -R -p "$(APPBNDL)" disttemp
 	SetFile -a B disttemp/$(APPNAME)
 
