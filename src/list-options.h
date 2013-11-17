@@ -67,6 +67,8 @@ OP(disturb_detect,        "Disturb when leaving trap detect area",
 GAMEPLAY, TRUE)
 OP(notify_recharge,       "Notify on object recharge",
 GAMEPLAY, FALSE)
+OP(show_target,           "Highlight target with cursor",
+GAMEPLAY, TRUE)
 OP(cheat_peek,            "Cheat: Peek into object creation",
 CHEAT, FALSE)
 OP(score_peek,            "Score: Peek into object creation",

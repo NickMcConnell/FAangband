@@ -15,5 +15,6 @@ bool get_aim_dir(int *dp);
 void target_get(s16b *col, s16b *row);
 s16b target_get_monster(void);
 bool target_is_set(void);
+bool target_sighted(void);
 
 #endif /* !TARGET_H */

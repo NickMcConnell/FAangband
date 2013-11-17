@@ -1418,6 +1418,18 @@ static void special_mana_gain(void)
 }
 
 
+/*
+ * Place cursor on a monster or the player.
+ */
+static void place_cursor(void) {
+	if (OPT(show_target) && target_sighted()) {
+		s16b col, row;
+		target_get(&col, &row);
+		move_cursor_relative(row, col);
+	}
+}
+
+
 /**
  * Process the player
  *
@@ -1542,7 +1554,7 @@ static void process_player(void)
 	    redraw_stuff(p_ptr);
 
 	/* Place the cursor on the player */
-	move_cursor_relative(p_ptr->py, p_ptr->px);
+	place_cursor();
 
 	/* Refresh (optional) */
 	Term_fresh();
@@ -1611,7 +1623,7 @@ static void process_player(void)
 	    process_player_aux();
 
 	    /* Place the cursor on the player */
-	    move_cursor_relative(p_ptr->py, p_ptr->px);
+	    place_cursor();
 
 	    /* Process the command */
 	    process_command(CMD_GAME, FALSE);
@@ -2133,7 +2145,7 @@ static void dungeon(void)
 	if (p_ptr->redraw) redraw_stuff(p_ptr);
 
 	/* Hack -- Hilight the player */
-	move_cursor_relative(p_ptr->py, p_ptr->px);
+	place_cursor();
 
 	/* Refresh */
 	Term_fresh();
@@ -2157,7 +2169,7 @@ static void dungeon(void)
 	if (p_ptr->redraw) redraw_stuff(p_ptr);
 
 	/* Hack -- Hilight the player */
-	move_cursor_relative(p_ptr->py, p_ptr->px);
+	place_cursor();
 
 	/* Refresh */
 	Term_fresh();
@@ -2179,7 +2191,7 @@ static void dungeon(void)
 	if (p_ptr->redraw) redraw_stuff(p_ptr);
 
 	/* Hack -- Hilight the player */
-	move_cursor_relative(p_ptr->py, p_ptr->px);
+	place_cursor();
 
 	/* Refresh */
 	Term_fresh();

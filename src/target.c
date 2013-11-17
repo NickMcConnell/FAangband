@@ -35,7 +35,7 @@
 bool target_set;
 
 /* Current monster being tracked, or 0 */
-u16b target_who;
+static struct monster *target_who;
 
 /* Current object being tracked, or 0 */
 u16b target_what;
@@ -120,38 +120,27 @@ static void look_mon_desc(char *buf, size_t max, int m_idx)
  * Future versions may restrict the ability to target "trappers"
  * and "mimics", but the semantics is a little bit weird.
  */
-bool target_able(int m_idx)
+bool target_able(struct monster *m)
 {
-    int py = p_ptr->py;
-    int px = p_ptr->px;
-
-    monster_type *m_ptr;
-
     /* No monster */
-    if (m_idx <= 0)
+    if (m == NULL)
 	return (FALSE);
 
-    /* Get monster */
-    m_ptr = &m_list[m_idx];
-
     /* Monster must be alive */
-    if (!m_ptr->r_idx)
+    if (!m->r_idx)
 	return (FALSE);
 
     /* Monster must be visible */
-    if (!m_ptr->ml)
+    if (!m->ml)
 	return (FALSE);
 
     /* Monster must be projectable */
-    if (!projectable(py, px, m_ptr->fy, m_ptr->fx, PROJECT_NONE))
+    if (!projectable(p_ptr->py, p_ptr->px, m->fy, m->fx, PROJECT_NONE))
 	return (FALSE);
 
     /* Hack -- no targeting hallucinations */
     if (p_ptr->timed[TMD_IMAGE])
 	return (FALSE);
-
-    /* Hack -- Never target trappers XXX XXX XXX */
-    /* if (CLEAR_ATTR && (CLEAR_CHAR)) return (FALSE); */
 
     /* Assume okay */
     return (TRUE);
@@ -232,45 +221,59 @@ bool target_okay(void)
 {
     /* No target */
     if (!target_set)
-	return (FALSE);
-
+		return (FALSE);
+	
     /* Accept "location" targets */
     if ((target_who == 0) && (target_what == 0))
-	return (TRUE);
-
+		return (TRUE);
+	
     /* Check "monster" targets */
-    if (target_who > 0) {
-	int m_idx = target_who;
+	if (target_who) {
+		if (target_able(target_who)) {
+			/* Get the monster location */
+			target_y = target_who->fy;
+			target_x = target_who->fx;
 
-	/* Accept reasonable targets */
-	if (target_able(m_idx)) {
-	    monster_type *m_ptr = &m_list[m_idx];
+			/* Good target */
+			return TRUE;
+		}
+		//if (target_who > 0) {
+		//int m_idx = target_who;
+
+		///* Accept reasonable targets */
+			//if (target_able(m_idx)) {
+	    //monster_type *m_ptr = &m_list[m_idx];
 
 	    /* Get the monster location */
-	    target_y = m_ptr->fy;
-	    target_x = m_ptr->fx;
+	    //target_y = m_ptr->fy;
+	    //target_x = m_ptr->fx;
 
-	    /* Good target */
-	    return (TRUE);
-	}
+	    ///* Good target */
+	    //return (TRUE);
+		//}
     }
-
+	
     /* Check "object" targets */
     if (target_what > 0) {
-	int o_idx = target_what;
-
-	/* Accept reasonable targets */
-	if (target_able_obj(o_idx)) {
-	    object_type *o_ptr = &o_list[o_idx];
-
-	    /* Acquire object location */
-	    target_y = o_ptr->iy;
-	    target_x = o_ptr->ix;
-
-	    /* Good target */
-	    return (TRUE);
-	}
+		int o_idx = target_what;
+		
+		/* Accept reasonable targets */
+		if (target_able_obj(o_idx)) {
+			object_type *o_ptr = &o_list[o_idx];
+			
+			/* Acquire object location */
+			target_y = o_ptr->iy;
+			target_x = o_ptr->ix;
+			
+			/* Good target */
+			return (TRUE);
+		}
     }
+
+	if (target_x && target_y) {
+		/* Allow a direction without a monster */
+		return TRUE;
+	}
 
     /* Assume no target */
     return (FALSE);
@@ -280,28 +283,27 @@ bool target_okay(void)
 /**
  * Set the target to a monster (or nobody)
  */
-void target_set_monster(int m_idx)
+void target_set_monster(struct monster *mon)
 {
     /* Acceptable target */
-    if ((m_idx > 0) && target_able(m_idx)) {
-	monster_type *m_ptr = &m_list[m_idx];
-
-	/* Save target info */
-	target_set = TRUE;
-	target_who = m_idx;
-	target_what = 0;
-	target_y = m_ptr->fy;
-	target_x = m_ptr->fx;
+    if (mon && target_able(mon)) {
+		
+		/* Save target info */
+		target_set = TRUE;
+		target_who = mon;
+		target_what = 0;
+		target_y = mon->fy;
+		target_x = mon->fx;
     }
-
+	
     /* Clear target */
     else {
-	/* Reset target info */
-	target_set = FALSE;
-	target_who = 0;
-	target_what = 0;
-	target_y = 0;
-	target_x = 0;
+		/* Reset target info */
+		target_set = FALSE;
+		target_who = 0;
+		target_what = 0;
+		target_y = 0;
+		target_x = 0;
     }
 }
 
@@ -313,24 +315,24 @@ void target_set_object(int o_idx)
 {
     /* Acceptable target */
     if ((o_idx > 0) && target_able_obj(o_idx)) {
-	object_type *o_ptr = &o_list[o_idx];
-
-	/* Save target info */
-	target_set = TRUE;
-	target_who = 0;
-	target_what = o_idx;
-	target_y = o_ptr->iy;
-	target_x = o_ptr->ix;
+		object_type *o_ptr = &o_list[o_idx];
+		
+		/* Save target info */
+		target_set = TRUE;
+		target_who = 0;
+		target_what = o_idx;
+		target_y = o_ptr->iy;
+		target_x = o_ptr->ix;
     }
-
+	
     /* Clear target */
     else {
-	/* Reset target info */
-	target_set = FALSE;
-	target_who = 0;
-	target_what = 0;
-	target_y = 0;
-	target_x = 0;
+		/* Reset target info */
+		target_set = FALSE;
+		target_who = 0;
+		target_what = 0;
+		target_y = 0;
+		target_x = 0;
     }
 }
 
@@ -544,7 +546,7 @@ static struct point_set *target_set_interactive_prepare(int mode)
 		    continue;
 
 		/* Must be a targettable monster */
-		if (!target_able(cave_m_idx[y][x]))
+		if (!target_able(&m_list[cave_m_idx[y][x]]))
 		    continue;
 	    }
 
@@ -1247,7 +1249,7 @@ bool target_set_closest(int mode)
     m_idx = cave_m_idx[y][x];
 	
     /* Target the monster, if possible */
-    if ((m_idx <= 0) || !target_able(m_idx))
+    if ((m_idx <= 0) || !target_able(&m_list[m_idx]))
     {
 	msg("No Available Target.");
 	point_set_dispose(targets);
@@ -1264,7 +1266,7 @@ bool target_set_closest(int mode)
     /* Set up target information */
     monster_race_track(m_ptr->r_idx);
     health_track(cave_m_idx[y][x]);
-    target_set_monster(m_idx);
+    target_set_monster(m_ptr);
 
     /* Visual cue */
     Term_get_cursor(&visibility);
@@ -1517,7 +1519,7 @@ bool target_set_interactive(int mode, int x, int y)
 	    if (help) {
 		bool good_target = FALSE;
 		if ((mode & TARGET_KILL) && (cave_m_idx[y][x] > 0)
-		    && target_able(cave_m_idx[y][x]))
+		    && target_able(&m_list[cave_m_idx[y][x]]))
 		    good_target = TRUE;
 		if ((mode & TARGET_OBJ) && (cave_o_idx[y][x] > 0)
 		    && target_able_obj(cave_o_idx[y][x]))
@@ -1559,13 +1561,13 @@ bool target_set_interactive(int mode, int x, int y)
 			/* same as keyboard target selection command below */
 			int m_idx = cave_m_idx[y][x];
 
-			if ((m_idx > 0) && target_able(m_idx)) {
+			if ((m_idx > 0) && target_able(&m_list[m_idx])) {
 			    monster_type *m_ptr = &m_list[m_idx];
 			    /* Set up target information */
 			    monster_race_track(m_ptr->r_idx);
 			    health_track(m_idx);
 			    /*health_track(p_ptr, m_idx);*/
-			    target_set_monster(m_idx);
+			    target_set_monster(m_ptr);
 			    done = TRUE;
 			} else {
 			    bell("Illegal target!");
@@ -1659,10 +1661,11 @@ bool target_set_interactive(int mode, int x, int y)
 		{
 		    if (mode & TARGET_KILL) {
 			int m_idx = cave_m_idx[y][x];
+			struct monster *m = &m_list[m_idx];
 			
-			if ((m_idx > 0) && target_able(m_idx)) {
+			if ((m_idx > 0) && target_able(m)) {
 			    health_track(m_idx);
-			    target_set_monster(m_idx);
+			    target_set_monster(m);
 			    done = TRUE;
 			} else {
 			    bell("Illegal target!");
@@ -1770,7 +1773,7 @@ bool target_set_interactive(int mode, int x, int y)
 	    /* Update help */
 	    if (help) {
 		bool good_target = ((cave_m_idx[y][x] > 0)
-				    && target_able(cave_m_idx[y][x]));
+				    && target_able(&m_list[cave_m_idx[y][x]]));
 		target_display_help(good_target, !(flag && point_set_size(targets)));
 	    }
 	
@@ -2097,9 +2100,9 @@ void target_get(s16b * col, s16b * row)
 
 
 /**
- * Returns the currently targeted monster index.
+ * Returns the currently targeted monster.
  */
-s16b target_get_monster(void)
+struct monster *target_get_monster(void)
 {
 	return target_who;
 }
@@ -2111,3 +2114,16 @@ bool target_is_set(void)
 {
     return target_set;
 }
+
+
+/*
+ * True if the player's current target is in LOS.
+ */
+bool target_sighted(void)
+{
+	return target_okay() &&
+			panel_contains(target_y, target_x) &&
+			 /* either the target is a grid and is visible, or it is a monster that is visible */
+			((!target_who && player_can_see_bold(target_y, target_x)) || (target_who && target_who->ml));
+}
+

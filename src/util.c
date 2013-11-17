@@ -19,8 +19,14 @@
 #include "angband.h"
 #include "button.h"
 #include "cmds.h"
+#include "target.h"
+#include "files.h"
 #include "game-event.h"
 #include "randname.h"
+
+
+
+static bool inkey_xtra;
 
 /*
  * Flush all pending input.
@@ -224,7 +230,7 @@ ui_event inkey_ex(void)
 	(void)Term_get_cursor(&cursor_state);
 
 	/* Show the cursor if waiting, except sometimes in "command" mode */
-	if (!inkey_scan && (!inkey_flag || character_icky))
+	if (!inkey_scan && (!inkey_flag || character_icky || (OPT(show_target) && target_sighted())))
 		(void)Term_set_cursor(TRUE);
 
 
@@ -646,92 +652,28 @@ void message_flush(void)
 
 
 
-/*
- * Save the screen, and increase the "icky" depth.
- *
- * This function must match exactly one call to "screen_load()".
- */
-void screen_save(void)
-{
-	/* Hack -- Flush messages */
-	message_flush();
-
-	/* Save the screen (if legal) */
-	Term_save();
-
-	/* Increase "icky" depth */
-	character_icky++;
-}
-
+/*** text_out() ***/
 
 /*
- * Load the screen, and decrease the "icky" depth.
- *
- * This function must match exactly one call to "screen_save()".
+ * Function hook to output (colored) text to the screen or to a file.
  */
-void screen_load(void)
-{
-	/* Hack -- Flush messages */
-	message_flush();
-
-	/* Load the screen (if legal) */
-	Term_load();
-
-	/* Decrease "icky" depth */
-	character_icky--;
-
-	/* Mega hack -redraw big graphics - sorry NRM */
-	if (character_icky == 0 && (tile_width > 1 || tile_height > 1))
-		Term_redraw();
-}
-
+void (*text_out_hook)(byte a, const char *str);
 
 /*
- * Display a string on the screen using an attribute.
- *
- * At the given location, using the given attribute, if allowed,
- * add the given string.  Do not clear the line.
+ * Hack -- Where to wrap the text when using text_out().  Use the default
+ * value (for example the screen width) when 'text_out_wrap' is 0.
  */
-void c_put_str(byte attr, const char *str, int row, int col)
-{
-	/* Position cursor, Dump the attr/text */
-	Term_putstr(col, row, -1, attr, str);
-}
-
+int text_out_wrap = 0;
 
 /*
- * As above, but in "white"
+ * Hack -- Indentation for the text when using text_out().
  */
-void put_str(const char *str, int row, int col)
-{
-	/* Spawn */
-	Term_putstr(col, row, -1, TERM_WHITE, str);
-}
-
-
+int text_out_indent = 0;
 
 /*
- * Display a string on the screen using an attribute, and clear
- * to the end of the line.
+ * Hack -- Padding after wrapping
  */
-void c_prt(byte attr, const char *str, int row, int col)
-{
-	/* Clear line, position cursor */
-	Term_erase(col, row, 255);
-
-	/* Dump the attr/text */
-	Term_addstr(-1, attr, str);
-}
-
-
-/*
- * As above, but in "white"
- */
-void prt(const char *str, int row, int col)
-{
-	/* Spawn */
-	c_prt(TERM_WHITE, str, row, col);
-}
+int text_out_pad = 0;
 
 
 /*
@@ -857,6 +799,12 @@ void text_out_to_screen(byte a, const char *str)
 		if (++x > wrap) x = wrap;
 	}
 }
+
+
+/*
+ * Hack - the destination file for text_out_to_file.
+ */
+ang_file *text_out_file = NULL;
 
 
 /*
@@ -1063,7 +1011,7 @@ static bool next_section(const char *source, size_t init, const char **text, siz
 	{
 		const char *s = next + 1;
 
-		while (*s && isalpha((unsigned char) *s)) s++;
+		while (*s && (isalpha((unsigned char) *s) || isspace((unsigned char) *s))) s++;
 
 		/* Woo!  valid opening tag thing */
 		if (*s == '}')
@@ -1159,10 +1107,10 @@ void text_out_e(const char *fmt, ...)
 
 		if (tag)
 		{
-			char tagbuffer[15];
+			char tagbuffer[16];
 
-			/* Colour names are less than 11 characters long. */
-			assert(taglen < 15);
+			/* Colour names are less than 16 characters long. */
+			assert(taglen < 16);
 
 			memcpy(tagbuffer, tag, taglen);
 			tagbuffer[taglen] = '\0';
@@ -1213,14 +1161,12 @@ bool askfor_aux_keypress(char *buf, size_t buflen, size_t *curs, size_t *len, st
 		{
 			*curs = 0;
 			return TRUE;
-			break;
 		}
 		
 		case KC_ENTER:
 		{
 			*curs = *len;
 			return TRUE;
-			break;
 		}
 		
 		case ARROW_LEFT:
@@ -1508,29 +1454,15 @@ bool get_string(const char *prompt, char *buf, size_t len)
 
 /*
  * Request a "quantity" from the user
- *
- * Allow "p_ptr->command_arg" to specify a quantity
  */
 s16b get_quantity(const char *prompt, int max)
 {
 	int amt = 1;
 
-
-	/* Use "command_arg" */
-	if (p_ptr->command_arg)
-	{
-		/* Extract a number */
-		amt = p_ptr->command_arg;
-
-		/* Clear "command_arg" */
-		p_ptr->command_arg = 0;
-	}
-
 	/* Prompt if needed */
-	else if ((max != 1))
+	if (max != 1)
 	{
 		char tmp[80];
-
 		char buf[80];
 
 		/* Build a prompt if needed */
@@ -1702,14 +1634,11 @@ static bool get_file_text(const char *suggested_name, char *path, size_t len)
 	path_build(path, len, ANGBAND_DIR_USER, buf);
 
 	/* Check if it already exists */
-	if (file_exists(buf))
-	{
-		char buf2[160];
-		strnfmt(buf2, sizeof(buf2), "Replace existing file %s?", buf);
+	if (file_exists(path) && !get_check("Replace existing file? "))
+		return FALSE;
 
-		if (get_check(buf2) == FALSE)
-			return FALSE;
-	}
+	/* Tell the user where it's saved to. */
+	msg("Saving as %s.", path);
 
 	return TRUE;
 }

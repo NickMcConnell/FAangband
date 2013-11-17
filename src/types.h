@@ -673,7 +673,7 @@ typedef struct object {
  * The "hold_o_idx" field points to the first object of a stack
  * of objects (if any) being carried by the monster (see above).
  */
-typedef struct {
+typedef struct monster {
     s16b r_idx;		/**< Monster race index */
     s16b orig_idx;	 /**< Original race of shapechanged monster */
 

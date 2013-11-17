@@ -805,38 +805,6 @@ bool (*get_mon_num_hook)(int r_idx);
 bool (*get_obj_num_hook)(int k_idx);
 
 /**
- * Hack - the destination file for text_out_to_file.
- */
-ang_file *text_out_file = NULL;
-
-
-/**
- * Hack -- function hook to output (colored) text to the
- * screen or to a file.
- */
-void (*text_out_hook)(byte a, const char *str);
-
-
-/**
- * Hack -- Where to wrap the text when using text_out().  Use the default
- * value (for example the screen width) when 'text_out_wrap' is 0.
- */
-int text_out_wrap = 0;
-
-
-/**
- * Hack -- Indentation for the text when using text_out().
- */
-int text_out_indent = 0;
-
-
-/**
- * Hack -- Padding after wrapping
- */
-int text_out_pad = 0;
-
-
-/**
  * Hack - the destination row for dump_line_screen.
  */
 int dump_row = 0;

@@ -105,7 +105,6 @@ extern char notes_start[80];
 extern s16b signal_count;
 extern bool msg_flag;
 extern bool inkey_base;
-extern bool inkey_xtra;
 extern u32b inkey_scan;
 extern bool inkey_flag;
 extern s16b coin_type;
