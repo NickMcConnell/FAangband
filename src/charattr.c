@@ -160,7 +160,7 @@ void dump_line_file(char_attr *this_line)
 
     /* Terminate the line */
     *p = '\0';
-    x_file_putf(dump_out_file, "%s\n", buf);
+    file_putf(dump_out_file, "%s\n", buf);
 }
 
 /**

@@ -302,7 +302,7 @@ static void show_obj_list(int num_obj, u32b display, olist_detail_t mode)
 	
 	    /* Count windows displaying inven */
 	    if (op_ptr->window_flag[i] & display)
-		max_len = MIN(max_len, angband_term[i]->wid);
+			max_len = MIN((int) max_len, angband_term[i]->wid);
 	}
     }	
 

@@ -2,7 +2,7 @@
  * File: z-file.c
  * Purpose: Low-level file (and directory) handling
  *
- * Copyright (c) 1997-2007 Ben Harrison, pelpel, Andrew Sidwell, Matthew Jones
+ * Copyright (c) 1997-2007 Ben Harrison, pelpel, Andi Sidwell, Matthew Jones
  *
  * This work is free software; you can redistribute it and/or modify it
  * under the terms of either:
@@ -201,7 +201,24 @@ size_t path_build(char *buf, size_t len, const char *base, const char *leaf)
 	return cur_len;
 }
 
+/*
+ * Return the index of the filename in a path, using PATH_SEPC. If no path
+ * separator is found, return 0.
+ */
+size_t path_filename_index(const char *path)
+{
+	int i;
 
+	if (strlen(path) == 0)
+		return 0;
+
+	for (i = strlen(path) - 1; i >= 0; i--) {
+		if (path[i] == PATH_SEPC)
+			return i + 1;
+	}
+
+	return 0;
+}
 
 /*** File-handling API ***/
 
@@ -616,27 +633,6 @@ bool file_vputf(ang_file *f, const char *fmt, va_list vp)
 
 	(void)vstrnfmt(buf, sizeof(buf), fmt, vp);
 	return file_put(f, buf);
-}
-
-/*
- * Format and translate a string, then print it out to file.
- */
-bool x_file_putf(ang_file *f, const char *fmt, ...)
-{
-	va_list vp;
-
- 	char buf[1024];
-
- 	/* Begin the Varargs Stuff */
- 	va_start(vp, fmt);
-
- 	/* Format the args, save the length */
- 	(void)vstrnfmt(buf, sizeof(buf), fmt, vp);
-
- 	/* End the Varargs Stuff */
- 	va_end(vp);
-
- 	return file_put(f, buf);
 }
 
 

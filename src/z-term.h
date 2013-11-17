@@ -39,7 +39,7 @@ typedef struct term_win term_win;
 struct term_win
 {
 	bool cu, cv;
-	byte cx, cy;
+	int cx, cy;
 
 	int **a;
 	wchar_t **c;
@@ -194,18 +194,18 @@ struct term
 	u16b key_xtra;
 	u16b key_size;
 
-	byte wid;
-	byte hgt;
+	int wid;
+	int hgt;
 
-	byte y1;
-	byte y2;
+	int y1;
+	int y2;
 
-	byte *x1;
-	byte *x2;
+	int *x1;
+	int *x2;
 
 	/* Offsets used by the map subwindows */
-	byte offset_x;
-	byte offset_y;
+	int offset_x;
+	int offset_y;
 
 	term_win *old;
 	term_win *scr;
@@ -274,8 +274,7 @@ struct term
 #define TERM_XTRA_DELAY 13    /* Delay some milliseconds (optional) */
 
 
-/*** Color constants ***/
-
+/*** Colors ***/
 
 /*
  * Angband "attributes" (with symbols, and base (R,G,B) codes)
@@ -340,6 +339,20 @@ struct term
 #define BG_DARK 2	/* The set number for the dark-background glyphs */
 #define BG_TRAP 3	/* The set number for the detect boundary glyphs */
 #define BG_MAX 4	/* The max number of backgrounds */
+
+/*
+ * A game color.
+ */
+typedef struct color_type color_type;
+struct color_type
+{
+	char index_char;            /* Character index:  'r' = red, etc. */
+	char name[32];              /* Color name */
+	byte color_translate[MAX_ATTR];       /* Index for various in-game translations */
+};
+
+extern byte angband_color_table[MAX_COLORS][4];
+extern color_type color_table[MAX_COLORS];
 
 
 

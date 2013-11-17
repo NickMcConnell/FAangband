@@ -87,7 +87,6 @@ typedef struct store_type store_type;
 typedef struct druid_blows druid_blows;
 typedef struct autoinscription autoinscription;
 typedef struct history_info history_info;
-typedef struct color_type color_type;
 
 
 /**** Available structs ****/
@@ -324,14 +323,6 @@ typedef struct artifact {
     bool set_bonus;	/**< Is the item set, is the bonus currently applied? */
 } artifact_type;
 
-
-/**
- *
- */
-typedef struct {
-    byte tval;
-    const char * name;
-} grouper;
 
 /* Item sets */
 
@@ -1412,15 +1403,6 @@ typedef struct
     bool trapborder;
 } grid_data;
 
-
-/**
- * A game color 
- */
-struct color_type {
-    char index_char;		    /**< Character index:  'r' = red, etc. */
-    char name[32];		    /**< Color name */
-    byte color_translate[MAX_ATTR]; /**< Index for various in-game translations */
-};
 
 /**
  * A hint.
