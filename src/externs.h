@@ -318,10 +318,6 @@ int coords_to_dir(int y, int x);
 /* death.c */
 void death_screen(void);
 
-/* dungeon.c */
-extern void play_game(void);
-extern void idle_update(void);
-
 /* monattk.c */
 extern bool make_attack_normal(monster_type *m_ptr, int y, int x);
 extern bool make_attack_ranged(monster_type *m_ptr, int attack);

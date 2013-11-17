@@ -34,8 +34,8 @@ depgen:
  list-mon-spells.h z-term.h ui-event.h z-file.h z-bitflag.h z-quark.h \
  z-msg.h config.h game-cmd.h types.h option.h list-options.h cmds.h \
  object.h z-textblock.h parser.h player.h ui.h z-type.h externs.h \
- spells.h list-gf-types.h files.h game-event.h history.h squelch.h \
- ui-menu.h
+ spells.h list-gf-types.h birth.h files.h game-event.h history.h \
+ squelch.h ui-menu.h
 ./buildid.o: buildid.c buildid.h
 ./button.o: button.c angband.h h-basic.h z-util.h z-virt.h z-form.h \
  z-rand.h defines.h tvalsval.h list-blow-methods.h list-blow-effects.h \
@@ -408,7 +408,7 @@ depgen:
  list-terrain-flags.h list-trap-flags.h list-mon-flags.h \
  list-mon-spells.h z-rand.h z-file.h z-util.h z-term.h ui-event.h \
  z-quark.h z-msg.h z-textblock.h types.h option.h list-options.h \
- externs.h spells.h list-gf-types.h
+ externs.h spells.h list-gf-types.h z-type.h
 ./pathfind.o: pathfind.c angband.h h-basic.h z-util.h z-virt.h z-form.h \
  z-rand.h defines.h tvalsval.h list-blow-methods.h list-blow-effects.h \
  list-square-flags.h list-object-flags.h list-curse-flags.h \
@@ -453,7 +453,7 @@ depgen:
  list-mon-spells.h z-term.h ui-event.h z-file.h z-bitflag.h z-quark.h \
  z-msg.h config.h game-cmd.h types.h option.h list-options.h cmds.h \
  object.h z-textblock.h parser.h player.h ui.h z-type.h externs.h \
- spells.h list-gf-types.h cave.h
+ spells.h list-gf-types.h birth.h cave.h
 ./prefs.o: prefs.c angband.h h-basic.h z-util.h z-virt.h z-form.h z-rand.h \
  defines.h tvalsval.h list-blow-methods.h list-blow-effects.h \
  list-square-flags.h list-object-flags.h list-curse-flags.h \
@@ -666,7 +666,8 @@ depgen:
  list-mon-spells.h z-term.h ui-event.h z-file.h z-bitflag.h z-quark.h \
  z-msg.h config.h game-cmd.h types.h option.h list-options.h cmds.h \
  object.h z-textblock.h parser.h player.h ui.h z-type.h externs.h \
- spells.h list-gf-types.h button.h game-event.h randname.h
+ spells.h list-gf-types.h button.h target.h files.h game-event.h \
+ randname.h
 ./variable.o: variable.c angband.h h-basic.h z-util.h z-virt.h z-form.h \
  z-rand.h defines.h tvalsval.h list-blow-methods.h list-blow-effects.h \
  list-square-flags.h list-object-flags.h list-curse-flags.h \

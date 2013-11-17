@@ -17,6 +17,7 @@
  */
 #include "angband.h"
 #include "buildid.h"
+#include "dungeon.h"
 
 /*
  * This file helps Angband work with UNIX/X11 computers.
@@ -405,7 +406,6 @@ struct term_data
 /* Init a top level infowin by pos,size,bord,Colors */
 #define Infowin_init_top(X,Y,W,H,B,FG,BG) \
 	Infowin_init_data(None,X,Y,W,H,B,FG,BG)
-
 
 /* Set the current Infowin */
 #define Infowin_set(I) \

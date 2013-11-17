@@ -24,6 +24,7 @@
  */
 #include "angband.h"
 #include "buildid.h"
+#include "dungeon.h"
 #include "files.h"
 #include "init.h"
 #include "grafmode.h"

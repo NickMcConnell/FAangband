@@ -47,6 +47,6 @@ bool player_can_cast(void);
 bool player_can_study(void);
 bool player_can_read(void);
 bool player_can_fire(void);
-extern const char *player_safe_name(struct player *p);
+extern const char *player_safe_name(struct player *p, bool strip_suffix);
 
 #endif /* !PLAYER_PLAYER_H */

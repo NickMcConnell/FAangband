@@ -20,12 +20,13 @@
 #include "buildid.h"
 #include "cave.h"
 #include "cmds.h"
+#include "dungeon.h"
 #include "files.h"
 
 /*
  * Comments and suggestions are welcome. The UI probably needs some
  * adjustment, and I need comments from you.
- * perhaps also something like "Angband 3.0.8 by Andrew Sidwell and others;
+ * perhaps also something like "Angband 3.0.8 by Andi Sidwell and others;
  * SDL port by Iain McFall an others, please see the accompanying documentation
  * for credits" or something
  */
@@ -509,7 +510,7 @@ static errr sdl_FontCreate(sdl_Font *font, const char *fontname, SDL_Surface *su
 
 
 /*
- * Draw some text onto a surface
+ * Draw some text onto a surface, allowing shaded backgrounds
  * The surface is first checked to see if it is compatible with
  * this font, if it isn't the the font will be 're-precalculated'
  *
@@ -556,8 +557,7 @@ static errr sdl_mapFontDraw(sdl_Font *font, SDL_Surface *surface, SDL_Color colo
  * You can, I suppose, use one font on many surfaces, but it is
  * definitely not recommended. One font per surface is good enough.
  */
-static errr sdl_FontDraw(sdl_Font *font, SDL_Surface *surface, SDL_Color colour,
-			 int x, int y, int n , const char *s)
+static errr sdl_FontDraw(sdl_Font *font, SDL_Surface *surface, SDL_Color colour, int x, int y, int n , const char *s)
 {
 	Uint8 bpp = surface->format->BytesPerPixel;
 	Uint16 pitch = surface->pitch;
@@ -577,8 +577,8 @@ static errr sdl_FontDraw(sdl_Font *font, SDL_Surface *surface, SDL_Color colour,
 	RECT(x, y, n * font->width, font->height, &rc);
 	text = TTF_RenderUTF8_Solid(font->sdl_font, s, colour);
 	if (text) {
-	    SDL_BlitSurface(text, NULL, surface, &rc);
-	    SDL_FreeSurface(text);
+		SDL_BlitSurface(text, NULL, surface, &rc);
+		SDL_FreeSurface(text);
 	}
 	
 	/* Unlock the surface */
@@ -920,7 +920,7 @@ static void sdl_WindowBlit(sdl_Window* window)
 
 static void sdl_WindowText(sdl_Window* window, SDL_Color c, int x, int y, const char *s)
 {
-    sdl_FontDraw(&window->font, window->surface, c, x, y, strlen(s), s);
+	sdl_FontDraw(&window->font, window->surface, c, x, y, strlen(s), s);
 }
 
 static void sdl_WindowUpdate(sdl_Window* window)
@@ -3511,7 +3511,7 @@ static void init_gfx(void)
 				plog_fmt("Can't find file %s - graphics mode '%s' will be disabled.", path, graphics_modes[i].menuname);
 				graphics_modes[i].file[0] = 0;
 			}
-			if ((i + 1)  == use_graphics) {
+			if ((i + 1) == use_graphics) {
 				current_graphics_mode = &(graphics_modes[i]);
 			}
 		}

@@ -20,6 +20,7 @@
 #include "angband.h"
 #include "buildid.h"
 #include "cmds.h"
+#include "dungeon.h"
 
 #ifdef USE_GCU
 #include "main.h"
@@ -403,7 +404,7 @@ static void balance_dimension(int *size, int *start, int term_group_index,
 			if (window_size > min_term0_size + subterm_group_count + *size * subterm_group_count)
 				(*size)++;
 		} else {
-			*size = MIN(min_term0_size, window_size - min_term0_size - comfy_subterm_size - subterm_group_count);
+			*size = MIN(min_term0_size, window_size - min_term0_size - comfy_subterm_size*(subterm_group_count - 1) - subterm_group_count);
 		}
 		*start = window_size - *size;
 	} else {
