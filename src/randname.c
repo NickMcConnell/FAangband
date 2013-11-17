@@ -23,7 +23,7 @@
 #define E_WORD S_WORD
 #define TOTAL  27
 
-typedef unsigned short name_probs[S_WORD+1][S_WORD+1][TOTAL+1];
+typedef unsigned short name_probs[S_WORD + 1][S_WORD + 1][TOTAL + 1];
 
 /*
  * This function builds probability tables from a list of purely alphabetical
@@ -38,19 +38,17 @@ static void build_prob(name_probs probs, const char **learn)
 	int i;
 
 	/* Build raw frequencies */
-	for (i = 0; learn[i] != NULL; i++)
-	{
+	for (i = 0; learn[i] != NULL; i++) {
 		c_prev = c_cur = S_WORD;
 		ch = learn[i];
 
 		/* Iterate over the next word */
-		while (*ch != '\0')
-		{
-			c_next = A2I(tolower((unsigned char)*ch));
+		while (*ch != '\0') {
+			c_next = A2I(tolower((unsigned char) *ch));
 
 			probs[c_prev][c_cur][c_next]++;
 			probs[c_prev][c_cur][TOTAL]++;
-                        
+
 			/* Step on */
 			c_prev = c_cur;
 			c_cur = c_next;
@@ -69,7 +67,8 @@ static void build_prob(name_probs probs, const char **learn)
  * Relies on the A2I and I2A macros (and so the ASCII character set) and 
  * is_a_vowel (so the basic 5 English vowels).
  */
-size_t randname_make(randname_type name_type, size_t min, size_t max, char *word_buf, size_t buflen, const char ***sections)
+size_t randname_make(randname_type name_type, size_t min, size_t max,
+					 char *word_buf, size_t buflen, const char ***sections)
 {
 	size_t lnum = 0;
 	bool found_word = FALSE;
@@ -85,21 +84,19 @@ size_t randname_make(randname_type name_type, size_t min, size_t max, char *word
 	/* We cache one set of probabilities, only regenerate when
 	   the type changes.  It's as good a way as any for now.
 	   Frankly, we could probably regenerate every time. */
-	if (cached_type != name_type)
-	{
+	if (cached_type != name_type) {
 		const char **wordlist = NULL;
 
 		wordlist = sections[name_type];
 
-		(void)WIPE(lprobs, name_probs);
+		(void) WIPE(lprobs, name_probs);
 		build_prob(lprobs, wordlist);
 
 		cached_type = name_type;
 	}
-        
+
 	/* Generate the actual word wanted. */
-	while (!found_word)
-	{
+	while (!found_word) {
 		char *cp = word_buf;
 		int c_prev = S_WORD;
 		int c_cur = S_WORD;
@@ -110,10 +107,9 @@ size_t randname_make(randname_type name_type, size_t min, size_t max, char *word
 		/* We start the word again if we run out of space or have
 		   had to have 10 goes to find a word that satisfies the
 		   minimal conditions. */
-		while (tries < 10 && lnum <= max && !found_word)
-		{
+		while (tries < 10 && lnum <= max && !found_word) {
 			/* Pick the next letter based on a simple weighting
-			  of which letters can follow the previous two */
+			   of which letters can follow the previous two */
 			int r;
 			int c_next = 0;
 
@@ -122,33 +118,26 @@ size_t randname_make(randname_type name_type, size_t min, size_t max, char *word
 
 			r = randint0(lprobs[c_prev][c_cur][TOTAL]);
 
-			while (r >= lprobs[c_prev][c_cur][c_next])
-			{
+			while (r >= lprobs[c_prev][c_cur][c_next]) {
 				r -= lprobs[c_prev][c_cur][c_next];
 				c_next++;
 			}
 
 			assert(c_next <= E_WORD);
 			assert(c_next >= 0);
-            
-			if (c_next == E_WORD)
-			{
+
+			if (c_next == E_WORD) {
 				/* If we've reached the end, we check if we've
 				   met the simple conditions, otherwise have
 				   another go at choosing a letter for this
 				   position. */
-				if (lnum >= min && contains_vowel)
-				{
+				if (lnum >= min && contains_vowel) {
 					*cp = '\0';
 					found_word = TRUE;
-				}
-				else
-				{
+				} else {
 					tries++;
 				}
-			}
-			else
-			{
+			} else {
 				/* Add the letter to the word and move on. */
 				*cp = I2A(c_next);
 
@@ -181,14 +170,13 @@ size_t randname_make(randname_type name_type, size_t min, size_t max, char *word
 
 bool is_a_vowel(int ch)
 {
-	switch (ch)
-	{
-		case 'a':
-		case 'e':
-		case 'i':
-		case 'o':
-		case 'u':
-			 return (TRUE);
+	switch (ch) {
+	case 'a':
+	case 'e':
+	case 'i':
+	case 'o':
+	case 'u':
+		return (TRUE);
 	}
 
 	return (FALSE);
@@ -201,8 +189,7 @@ int main(int argc, char *argv[])
 
 	Rand_value = time(NULL);
 
-	for (i = 0; i < 20; i++)
-	{
+	for (i = 0; i < 20; i++) {
 		randname_make(RANDNAME_TOLKIEN, 5, 9, name, 256, name_sections);
 		my_strcap(name);
 		printf("%s\n", name);

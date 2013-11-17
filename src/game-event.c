@@ -20,31 +20,31 @@
 #include "z-virt.h"
 #include "game-event.h"
 
-struct event_handler_entry
-{
-	struct event_handler_entry *next;	
+struct event_handler_entry {
+	struct event_handler_entry *next;
 	game_event_handler *fn;
 	void *user;
 };
 
 struct event_handler_entry *event_handlers[N_GAME_EVENTS];
 
-static void game_event_dispatch(game_event_type type, game_event_data *data)
+static void game_event_dispatch(game_event_type type,
+								game_event_data * data)
 {
 	struct event_handler_entry *this = event_handlers[type];
 
 	/* 
 	 * Send the word out to all interested event handlers.
 	 */
-	while (this)
-	{
+	while (this) {
 		/* Call the handler with the relevant data */
 		this->fn(type, data, this->user);
 		this = this->next;
 	}
 }
 
-void event_add_handler(game_event_type type, game_event_handler *fn, void *user)
+void event_add_handler(game_event_type type, game_event_handler * fn,
+					   void *user)
 {
 	struct event_handler_entry *new;
 
@@ -60,23 +60,19 @@ void event_add_handler(game_event_type type, game_event_handler *fn, void *user)
 	event_handlers[type] = new;
 }
 
-void event_remove_handler(game_event_type type, game_event_handler *fn, void *user)
+void event_remove_handler(game_event_type type, game_event_handler * fn,
+						  void *user)
 {
 	struct event_handler_entry *prev = NULL;
 	struct event_handler_entry *this = event_handlers[type];
 
 	/* Look for the entry in the list */
-	while (this)
-	{
+	while (this) {
 		/* Check if this is the entry we want to remove */
-		if (this->fn == fn && this->user == user)
-		{
-			if (!prev)
-			{
+		if (this->fn == fn && this->user == user) {
+			if (!prev) {
 				event_handlers[type] = this->next;
-			}
-			else
-			{
+			} else {
 				prev->next = this->next;
 			}
 
@@ -105,7 +101,8 @@ void event_remove_all_handlers(void)
 	}
 }
 
-void event_add_handler_set(game_event_type *type, size_t n_types, game_event_handler *fn, void *user)
+void event_add_handler_set(game_event_type * type, size_t n_types,
+						   game_event_handler * fn, void *user)
 {
 	size_t i;
 
@@ -113,7 +110,8 @@ void event_add_handler_set(game_event_type *type, size_t n_types, game_event_han
 		event_add_handler(type[i], fn, user);
 }
 
-void event_remove_handler_set(game_event_type *type, size_t n_types, game_event_handler *fn, void *user)
+void event_remove_handler_set(game_event_type * type, size_t n_types,
+							  game_event_handler * fn, void *user)
 {
 	size_t i;
 
@@ -165,4 +163,3 @@ void event_signal_birthpoints(int stats[6], int remaining)
 
 	game_event_dispatch(EVENT_BIRTHPOINTS, &data);
 }
-

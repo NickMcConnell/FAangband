@@ -24,7 +24,8 @@ graphics_mode *graphics_modes;
 graphics_mode *current_graphics_mode = NULL;
 int graphics_mode_high_id;
 
-static enum parser_error parse_graf_n(struct parser *p) {
+static enum parser_error parse_graf_n(struct parser *p)
+{
 	graphics_mode *list = parser_priv(p);
 	graphics_mode *mode = mem_zalloc(sizeof(graphics_mode));
 	if (!mode) {
@@ -39,12 +40,13 @@ static enum parser_error parse_graf_n(struct parser *p) {
 	mode->overdrawMax = 0;
 	strncpy(mode->file, "", 32);
 	strncpy(mode->pref, "none", 32);
-	
+
 	parser_setpriv(p, mode);
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_graf_i(struct parser *p) {
+static enum parser_error parse_graf_i(struct parser *p)
+{
 	graphics_mode *mode = parser_priv(p);
 	if (!mode) {
 		return PARSE_ERROR_INVALID_VALUE;
@@ -55,7 +57,8 @@ static enum parser_error parse_graf_i(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_graf_p(struct parser *p) {
+static enum parser_error parse_graf_p(struct parser *p)
+{
 	graphics_mode *mode = parser_priv(p);
 	if (!mode) {
 		return PARSE_ERROR_INVALID_VALUE;
@@ -64,7 +67,8 @@ static enum parser_error parse_graf_p(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_graf_x(struct parser *p) {
+static enum parser_error parse_graf_x(struct parser *p)
+{
 	graphics_mode *mode = parser_priv(p);
 	if (!mode) {
 		return PARSE_ERROR_INVALID_VALUE;
@@ -75,7 +79,8 @@ static enum parser_error parse_graf_x(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-static struct parser *init_parse_grafmode(void) {
+static struct parser *init_parse_grafmode(void)
+{
 	struct parser *p = parser_new();
 	parser_setpriv(p, NULL);
 
@@ -88,12 +93,13 @@ static struct parser *init_parse_grafmode(void) {
 	return p;
 }
 
-errr finish_parse_grafmode(struct parser *p) {
+errr finish_parse_grafmode(struct parser * p)
+{
 	graphics_mode *mode, *n;
 	int max = 0;
 	int count = 0;
 	int i;
-	
+
 	/* see how many graphics modes we have and what the highest index is */
 	if (p) {
 		mode = parser_priv(p);
@@ -111,15 +117,15 @@ errr finish_parse_grafmode(struct parser *p) {
 		close_graphics_modes();
 	}
 
-	graphics_modes = mem_zalloc(sizeof(graphics_mode) * (count+1));
+	graphics_modes = mem_zalloc(sizeof(graphics_mode) * (count + 1));
 	if (p) {
 		mode = parser_priv(p);
-		for (i = count-1; i >= 0; i--, mode = mode->pNext) {
+		for (i = count - 1; i >= 0; i--, mode = mode->pNext) {
 			memcpy(&(graphics_modes[i]), mode, sizeof(graphics_mode));
-			graphics_modes[i].pNext = &(graphics_modes[i+1]);
+			graphics_modes[i].pNext = &(graphics_modes[i + 1]);
 		}
 	}
-	
+
 	/* hardcode the no graphics option */
 	graphics_modes[count].pNext = NULL;
 	graphics_modes[count].grafID = GRAPHICS_NONE;
@@ -129,12 +135,12 @@ errr finish_parse_grafmode(struct parser *p) {
 	strncpy(graphics_modes[count].pref, "none", 8);
 	strncpy(graphics_modes[count].file, "", 32);
 	strncpy(graphics_modes[count].menuname, "None", 32);
-	
+
 	graphics_mode_high_id = max;
 
 	/* set the default graphics mode to be no graphics */
 	current_graphics_mode = &(graphics_modes[count]);
-	
+
 	if (p) {
 		mode = parser_priv(p);
 		while (mode) {
@@ -142,22 +148,24 @@ errr finish_parse_grafmode(struct parser *p) {
 			mem_free(mode);
 			mode = n;
 		}
-	
+
 		parser_setpriv(p, NULL);
 		parser_destroy(p);
 	}
 	return PARSE_ERROR_NONE;
 }
 
-static void print_error(const char *name, struct parser *p) {
+static void print_error(const char *name, struct parser *p)
+{
 	struct parser_state s;
 	parser_getstate(p, &s);
 	msg("Parse error in %s line %d column %d: %s: %s", name,
-	           s.line, s.col, s.msg, parser_error_str[s.error]);
+		s.line, s.col, s.msg, parser_error_str[s.error]);
 	message_flush();
 }
 
-bool init_graphics_modes(const char *filename) {
+bool init_graphics_modes(const char *filename)
+{
 	char buf[1024];
 
 	ang_file *f;
@@ -195,21 +203,23 @@ bool init_graphics_modes(const char *filename) {
 	return e == PARSE_ERROR_NONE;
 }
 
-void close_graphics_modes(void) {
+void close_graphics_modes(void)
+{
 	if (graphics_modes) {
 		mem_free(graphics_modes);
 		graphics_modes = NULL;
 		/*graphics_mode *test,*next;
-		test = graphics_modes;
-		while (test) {
-			next = test->pNext;
-			delete(test);
-			test = next;
-		}*/
+		   test = graphics_modes;
+		   while (test) {
+		   next = test->pNext;
+		   delete(test);
+		   test = next;
+		   } */
 	}
 }
 
-graphics_mode* get_graphics_mode(byte id) {
+graphics_mode *get_graphics_mode(byte id)
+{
 	graphics_mode *test = graphics_modes;
 	while (test) {
 		if (test->grafID == id) {

@@ -25,7 +25,7 @@
 #include "target.h"
 #include "trap.h"
 
-errr (*cmd_get_hook)(cmd_context c, bool wait);
+errr(*cmd_get_hook) (cmd_context c, bool wait);
 
 #define CMD_QUEUE_SIZE 20
 #define prev_cmd_idx(idx) ((idx + CMD_QUEUE_SIZE - 1) % CMD_QUEUE_SIZE)
@@ -38,15 +38,13 @@ static bool repeat_prev_allowed = FALSE;
 static bool repeating = FALSE;
 
 /* A simple list of commands and their handling functions. */
-static struct
-{
+static struct {
 	cmd_code cmd;
 	enum cmd_arg_type arg_type[CMD_MAX_ARGS];
 	cmd_handler_fn fn;
 	bool repeat_allowed;
 	int auto_repeat_n;
-} game_cmds[] =
-{
+} game_cmds[] = {
     { CMD_LOADFILE, { arg_NONE }, NULL, FALSE, 0 },
     { CMD_NEWGAME, { arg_NONE }, NULL, FALSE, 0 },
 
@@ -111,78 +109,76 @@ static struct
 };
 
 /* Item selector type (everything required for get_item()) */
-struct item_selector
-{
+struct item_selector {
 	cmd_code command;
-    const char *prompt;
-    const char *noop;
+	const char *prompt;
+	const char *noop;
 
-	bool (*filter)(const object_type *o_ptr);
+	 bool(*filter) (const object_type * o_ptr);
 	int mode;
 };
 
 /** List of requirements for various commands' objects */
-struct item_selector item_selector[] =
-{
-    { CMD_INSCRIBE, "Inscribe which item? ",
-      "You have nothing to inscribe.",
-      NULL, (USE_EQUIP | USE_INVEN | USE_FLOOR | IS_HARMLESS) },
+struct item_selector item_selector[] = {
+	{CMD_INSCRIBE, "Inscribe which item? ",
+	 "You have nothing to inscribe.",
+	 NULL, (USE_EQUIP | USE_INVEN | USE_FLOOR | IS_HARMLESS)},
 
-    { CMD_UNINSCRIBE, "Un-inscribe which item? ",
-      "You have nothing to un-inscribe.",
-      obj_has_inscrip, (USE_EQUIP | USE_INVEN | USE_FLOOR) },
+	{CMD_UNINSCRIBE, "Un-inscribe which item? ",
+	 "You have nothing to un-inscribe.",
+	 obj_has_inscrip, (USE_EQUIP | USE_INVEN | USE_FLOOR)},
 
-    { CMD_WIELD, "Wear/wield which item? ",
-      "You have nothing you can wear or wield.",
-      obj_can_wear, (USE_INVEN | USE_FLOOR) },
+	{CMD_WIELD, "Wear/wield which item? ",
+	 "You have nothing you can wear or wield.",
+	 obj_can_wear, (USE_INVEN | USE_FLOOR)},
 
-    { CMD_TAKEOFF, "Take off which item? ",
-      "You are not wearing anything you can take off.",
-      obj_think_can_takeoff, USE_EQUIP },
+	{CMD_TAKEOFF, "Take off which item? ",
+	 "You are not wearing anything you can take off.",
+	 obj_think_can_takeoff, USE_EQUIP},
 
-    { CMD_DROP, "Drop which item? ",
-      "You have nothing to drop.",
-      NULL, (USE_EQUIP | USE_INVEN) },
+	{CMD_DROP, "Drop which item? ",
+	 "You have nothing to drop.",
+	 NULL, (USE_EQUIP | USE_INVEN)},
 
-    { CMD_FIRE, "Fire which item? ",
-      "You have nothing to fire.",
-      obj_can_fire, (USE_INVEN | USE_EQUIP | USE_FLOOR | QUIVER_TAGS) },
+	{CMD_FIRE, "Fire which item? ",
+	 "You have nothing to fire.",
+	 obj_can_fire, (USE_INVEN | USE_EQUIP | USE_FLOOR | QUIVER_TAGS)},
 
-    { CMD_THROW, "Throw which item? ",
-      "You have nothing to throw.",
-      obj_can_throw, (USE_INVEN | USE_EQUIP | USE_FLOOR | QUIVER_TAGS) },
+	{CMD_THROW, "Throw which item? ",
+	 "You have nothing to throw.",
+	 obj_can_throw, (USE_INVEN | USE_EQUIP | USE_FLOOR | QUIVER_TAGS)},
 
-    { CMD_USE_STAFF, "Use which staff? ",
-      "You have no staff to use.",
-      obj_is_staff, (USE_INVEN | USE_FLOOR | SHOW_FAIL) },
+	{CMD_USE_STAFF, "Use which staff? ",
+	 "You have no staff to use.",
+	 obj_is_staff, (USE_INVEN | USE_FLOOR | SHOW_FAIL)},
 
-    { CMD_USE_WAND, "Aim which wand? ",
-      "You have no wand to aim.",
-      obj_is_wand, (USE_INVEN | USE_FLOOR | SHOW_FAIL) },
+	{CMD_USE_WAND, "Aim which wand? ",
+	 "You have no wand to aim.",
+	 obj_is_wand, (USE_INVEN | USE_FLOOR | SHOW_FAIL)},
 
-    { CMD_USE_ROD, "Zap which rod? ",
-      "You have no charged rods to zap.",
-      obj_is_rod, (USE_INVEN | USE_FLOOR | SHOW_FAIL) },
+	{CMD_USE_ROD, "Zap which rod? ",
+	 "You have no charged rods to zap.",
+	 obj_is_rod, (USE_INVEN | USE_FLOOR | SHOW_FAIL)},
 
-    { CMD_ACTIVATE, "Activate which item? ",
-      "You have nothing to activate.",
-      obj_is_activatable, (USE_EQUIP | SHOW_FAIL) },
+	{CMD_ACTIVATE, "Activate which item? ",
+	 "You have nothing to activate.",
+	 obj_is_activatable, (USE_EQUIP | SHOW_FAIL)},
 
-    { CMD_EAT, "Eat which item? ",
-      "You have nothing to eat.",
-      obj_is_food, (USE_INVEN | USE_FLOOR) },
+	{CMD_EAT, "Eat which item? ",
+	 "You have nothing to eat.",
+	 obj_is_food, (USE_INVEN | USE_FLOOR)},
 
-    { CMD_QUAFF, "Quaff which potion? ",
-      "You have no potions to quaff.",
-      obj_is_potion, (USE_INVEN | USE_FLOOR) },
+	{CMD_QUAFF, "Quaff which potion? ",
+	 "You have no potions to quaff.",
+	 obj_is_potion, (USE_INVEN | USE_FLOOR)},
 
-    { CMD_READ_SCROLL, "Read which scroll? ",
-      "You have no scrolls to read.",
-      obj_is_scroll, (USE_INVEN | USE_FLOOR) },
+	{CMD_READ_SCROLL, "Read which scroll? ",
+	 "You have no scrolls to read.",
+	 obj_is_scroll, (USE_INVEN | USE_FLOOR)},
 
-    { CMD_REFILL, "Refuel with what fuel source? ",
-      "You have nothing to refuel with.",
-      obj_can_refill, (USE_INVEN | USE_FLOOR) },
+	{CMD_REFILL, "Refuel with what fuel source? ",
+	 "You have nothing to refuel with.",
+	 obj_can_refill, (USE_INVEN | USE_FLOOR)},
 };
 
 
@@ -196,36 +192,38 @@ game_command *cmd_get_top(void)
 /*
  * Insert the given command into the command queue.
  */
-errr cmd_insert_s(game_command *cmd)
+errr cmd_insert_s(game_command * cmd)
 {
 	/* If queue full, return error */
-	if (cmd_head + 1 == cmd_tail) return 1;
-	if (cmd_head + 1 == CMD_QUEUE_SIZE && cmd_tail == 0) return 1;
+	if (cmd_head + 1 == cmd_tail)
+		return 1;
+	if (cmd_head + 1 == CMD_QUEUE_SIZE && cmd_tail == 0)
+		return 1;
 
 	/* Insert command into queue. */
-	if (cmd->command != CMD_REPEAT)
-	{
+	if (cmd->command != CMD_REPEAT) {
 		cmd_queue[cmd_head] = *cmd;
-	}
-	else
-	{
+	} else {
 		int cmd_prev = cmd_head - 1;
 
-		if (!repeat_prev_allowed) return 1;
+		if (!repeat_prev_allowed)
+			return 1;
 
 		/* If we're repeating a command, we duplicate the previous command 
 		   in the next command "slot". */
-		if (cmd_prev < 0) cmd_prev = CMD_QUEUE_SIZE - 1;
-		
+		if (cmd_prev < 0)
+			cmd_prev = CMD_QUEUE_SIZE - 1;
+
 		if (cmd_queue[cmd_prev].command != CMD_NULL)
 			cmd_queue[cmd_head] = cmd_queue[cmd_prev];
 	}
 
 	/* Advance point in queue, wrapping around at the end */
 	cmd_head++;
-	if (cmd_head == CMD_QUEUE_SIZE) cmd_head = 0;
+	if (cmd_head == CMD_QUEUE_SIZE)
+		cmd_head = 0;
 
-	return 0;	
+	return 0;
 }
 
 /*
@@ -233,24 +231,23 @@ errr cmd_insert_s(game_command *cmd)
  * are prepared to wait for a command or require a quick return with
  * no command.
  */
-errr cmd_get(cmd_context c, game_command **cmd, bool wait)
+errr cmd_get(cmd_context c, game_command ** cmd, bool wait)
 {
 	/* If we're repeating, just pull the last command again. */
-	if (repeating)
-	{
+	if (repeating) {
 		*cmd = &cmd_queue[prev_cmd_idx(cmd_tail)];
 		return 0;
 	}
 
 	/* If there are no commands queued, ask the UI for one. */
-	if (cmd_head == cmd_tail) 
+	if (cmd_head == cmd_tail)
 		cmd_get_hook(c, wait);
 
 	/* If we have a command ready, set it and return success. */
-	if (cmd_head != cmd_tail)
-	{
+	if (cmd_head != cmd_tail) {
 		*cmd = &cmd_queue[cmd_tail++];
-		if (cmd_tail == CMD_QUEUE_SIZE) cmd_tail = 0;
+		if (cmd_tail == CMD_QUEUE_SIZE)
+			cmd_tail = 0;
 
 		return 0;
 	}
@@ -264,8 +261,7 @@ static int cmd_idx(cmd_code code)
 {
 	size_t i;
 
-	for (i = 0; i < N_ELEMENTS(game_cmds); i++)
-	{
+	for (i = 0; i < N_ELEMENTS(game_cmds); i++) {
 		if (game_cmds[i].cmd == code)
 			return i;
 	}
@@ -273,7 +269,7 @@ static int cmd_idx(cmd_code code)
 	return -1;
 }
 
-void cmd_set_arg_choice(game_command *cmd, int n, int choice)
+void cmd_set_arg_choice(game_command * cmd, int n, int choice)
 {
 	int idx = cmd_idx(cmd->command);
 
@@ -285,7 +281,7 @@ void cmd_set_arg_choice(game_command *cmd, int n, int choice)
 	cmd->arg_present[n] = TRUE;
 }
 
-void cmd_set_arg_string(game_command *cmd, int n, const char *str)
+void cmd_set_arg_string(game_command * cmd, int n, const char *str)
 {
 	int idx = cmd_idx(cmd->command);
 
@@ -297,7 +293,7 @@ void cmd_set_arg_string(game_command *cmd, int n, const char *str)
 	cmd->arg_present[n] = TRUE;
 }
 
-void cmd_set_arg_direction(game_command *cmd, int n, int dir)
+void cmd_set_arg_direction(game_command * cmd, int n, int dir)
 {
 	int idx = cmd_idx(cmd->command);
 
@@ -309,7 +305,7 @@ void cmd_set_arg_direction(game_command *cmd, int n, int dir)
 	cmd->arg_present[n] = TRUE;
 }
 
-void cmd_set_arg_target(game_command *cmd, int n, int target)
+void cmd_set_arg_target(game_command * cmd, int n, int target)
 {
 	int idx = cmd_idx(cmd->command);
 
@@ -321,7 +317,7 @@ void cmd_set_arg_target(game_command *cmd, int n, int target)
 	cmd->arg_present[n] = TRUE;
 }
 
-void cmd_set_arg_point(game_command *cmd, int n, int x, int y)
+void cmd_set_arg_point(game_command * cmd, int n, int x, int y)
 {
 	int idx = cmd_idx(cmd->command);
 
@@ -334,7 +330,7 @@ void cmd_set_arg_point(game_command *cmd, int n, int x, int y)
 	cmd->arg_present[n] = TRUE;
 }
 
-void cmd_set_arg_item(game_command *cmd, int n, int item)
+void cmd_set_arg_item(game_command * cmd, int n, int item)
 {
 	int idx = cmd_idx(cmd->command);
 
@@ -346,7 +342,7 @@ void cmd_set_arg_item(game_command *cmd, int n, int item)
 	cmd->arg_present[n] = TRUE;
 }
 
-void cmd_set_arg_number(game_command *cmd, int n, int num)
+void cmd_set_arg_number(game_command * cmd, int n, int num)
 {
 	int idx = cmd_idx(cmd->command);
 
@@ -396,28 +392,26 @@ void process_command(cmd_context ctx, bool no_request)
 	p_ptr->command_wrk = 0;
 
 	/* If we've got a command to process, do it. */
-	if (cmd_get(ctx, &cmd, !no_request) == 0)
-	{
+	if (cmd_get(ctx, &cmd, !no_request) == 0) {
 		int oldrepeats = cmd->nrepeats;
 		int idx = cmd_idx(cmd->command);
 		size_t i;
 
-		if (idx == -1) return;
+		if (idx == -1)
+			return;
 
-		for (i = 0; i < N_ELEMENTS(item_selector); i++)
-		{
+		for (i = 0; i < N_ELEMENTS(item_selector); i++) {
 			struct item_selector *is = &item_selector[i];
 
 			if (is->command != cmd->command)
 				continue;
 
-			if (!cmd->arg_present[0])
-			{
+			if (!cmd->arg_present[0]) {
 				int item;
 
 				item_tester_hook = is->filter;
-		if (!get_item(&item, is->prompt, is->noop, cmd->command, 
-			      is->mode))
+				if (!get_item(&item, is->prompt, is->noop, cmd->command,
+							  is->mode))
 					return;
 
 				cmd_set_arg_item(cmd, 0, item);
@@ -426,22 +420,24 @@ void process_command(cmd_context ctx, bool no_request)
 
 		/* Do some sanity checking on those arguments that might have 
 		   been declared as "unknown", such as directions and targets. */
-		switch (cmd->command)
-		{
-			case CMD_INSCRIBE:
+		switch (cmd->command) {
+		case CMD_INSCRIBE:
 			{
 				char o_name[80];
 				char tmp[80] = "";
-				object_type *o_ptr = object_from_item_idx(cmd->arg[0].item);
-			
-				object_desc(o_name, sizeof(o_name), o_ptr, ODESC_PREFIX | ODESC_FULL);
+				object_type *o_ptr =
+					object_from_item_idx(cmd->arg[0].item);
+
+				object_desc(o_name, sizeof(o_name), o_ptr,
+							ODESC_PREFIX | ODESC_FULL);
 				msg("Inscribing %s.", o_name);
 				message_flush();
-			
+
 				/* Use old inscription */
 				if (o_ptr->note)
-					strnfmt(tmp, sizeof(tmp), "%s", quark_str(o_ptr->note));
-			
+					strnfmt(tmp, sizeof(tmp), "%s",
+							quark_str(o_ptr->note));
+
 				/* Get a new inscription (possibly empty) */
 				if (!get_string("Inscription: ", tmp, sizeof(tmp)))
 					return;
@@ -450,17 +446,18 @@ void process_command(cmd_context ctx, bool no_request)
 				break;
 			}
 
-			case CMD_OPEN:
+		case CMD_OPEN:
 			{
 				if (OPT(easy_open) && (!cmd->arg_present[0] ||
-						cmd->arg[0].direction == DIR_UNKNOWN))
-				{
+									   cmd->arg[0].direction ==
+									   DIR_UNKNOWN)) {
 					int y, x;
 					int n_closed_doors, n_locked_chests;
-			
-		n_closed_doors = count_feats(&y, &x, TF_DOOR_CLOSED, FALSE);
+
+					n_closed_doors =
+						count_feats(&y, &x, TF_DOOR_CLOSED, FALSE);
 					n_locked_chests = count_chests(&y, &x, FALSE);
-			
+
 					if (n_closed_doors + n_locked_chests == 1)
 						cmd_set_arg_direction(cmd, 0, coords_to_dir(y, x));
 				}
@@ -468,44 +465,43 @@ void process_command(cmd_context ctx, bool no_request)
 				goto get_dir;
 			}
 
-			case CMD_CLOSE:
+		case CMD_CLOSE:
 			{
 				if (OPT(easy_open) && (!cmd->arg_present[0] ||
-						cmd->arg[0].direction == DIR_UNKNOWN))
-				{
+									   cmd->arg[0].direction ==
+									   DIR_UNKNOWN)) {
 					int y, x;
-			
+
 					/* Count open doors */
-		if (count_feats(&y, &x, TF_CLOSABLE, FALSE) == 1)
+					if (count_feats(&y, &x, TF_CLOSABLE, FALSE) == 1)
 						cmd_set_arg_direction(cmd, 0, coords_to_dir(y, x));
 				}
 
 				goto get_dir;
 			}
 
-			case CMD_DISARM:
+		case CMD_DISARM:
 			{
-	    /* Player is in a web */
-	    if (cave_web(p_ptr->py, p_ptr->px)) 
-	    {
-		remove_trap_kind(p_ptr->py, p_ptr->px, TRUE, OBST_WEB);
+				/* Player is in a web */
+				if (cave_web(p_ptr->py, p_ptr->px)) {
+					remove_trap_kind(p_ptr->py, p_ptr->px, TRUE, OBST_WEB);
 
-		disturb(0, 0);
+					disturb(0, 0);
 
-		/* Take a turn */
-		p_ptr->energy_use = 100;
+					/* Take a turn */
+					p_ptr->energy_use = 100;
 
-		/* Done */
-		return;
-	    }
+					/* Done */
+					return;
+				}
 
 				if (OPT(easy_open) && (!cmd->arg_present[0] ||
-						cmd->arg[0].direction == DIR_UNKNOWN))
-				{
+									   cmd->arg[0].direction ==
+									   DIR_UNKNOWN)) {
 					int y, x;
 					int n_visible_traps, n_trapped_chests;
-			
-		n_visible_traps = count_traps(&y, &x);	
+
+					n_visible_traps = count_traps(&y, &x);
 					n_trapped_chests = count_chests(&y, &x, TRUE);
 
 					if (n_visible_traps + n_trapped_chests == 1)
@@ -515,35 +511,34 @@ void process_command(cmd_context ctx, bool no_request)
 				goto get_dir;
 			}
 
-			case CMD_WALK:
-			case CMD_RUN:
-			case CMD_JUMP:
-			case CMD_BASH:
-	case CMD_TUNNEL:
-			case CMD_ALTER:
-			case CMD_JAM:
+		case CMD_WALK:
+		case CMD_RUN:
+		case CMD_JUMP:
+		case CMD_BASH:
+		case CMD_TUNNEL:
+		case CMD_ALTER:
+		case CMD_JAM:
 			{
-			get_dir:
+			  get_dir:
 
 				/* Direction hasn't been specified, so we ask for one. */
 				if (!cmd->arg_present[0] ||
-						cmd->arg[0].direction == DIR_UNKNOWN)
-				{
+					cmd->arg[0].direction == DIR_UNKNOWN) {
 					int dir;
 					if (!get_rep_dir(&dir))
 						return;
 
 					cmd_set_arg_direction(cmd, 0, dir);
 				}
-				
+
 				break;
 			}
 
-			case CMD_DROP:
+		case CMD_DROP:
 			{
-				if (!cmd->arg_present[1])
-				{
-					object_type *o_ptr = object_from_item_idx(cmd->arg[0].item);
+				if (!cmd->arg_present[1]) {
+					object_type *o_ptr =
+						object_from_item_idx(cmd->arg[0].item);
 					int amt = get_quantity(NULL, o_ptr->number);
 					if (amt <= 0)
 						return;
@@ -553,109 +548,116 @@ void process_command(cmd_context ctx, bool no_request)
 
 				break;
 			}
-			
+
 			/* 
 			 * These take an item number and a  "target" as arguments, 
 			 * though a target isn't always actually needed, so we'll 
 			 * only prompt for it via callback if the item being used needs it.
 			 */
-			case CMD_USE_WAND:
-			case CMD_USE_ROD:
-			case CMD_QUAFF:
-			case CMD_ACTIVATE:
-			case CMD_READ_SCROLL:
-			case CMD_FIRE:
+		case CMD_USE_WAND:
+		case CMD_USE_ROD:
+		case CMD_QUAFF:
+		case CMD_ACTIVATE:
+		case CMD_READ_SCROLL:
+		case CMD_FIRE:
 			{
 				bool get_target = FALSE;
 
-	    if (obj_needs_aim(object_from_item_idx(cmd->arg[0].choice)))
-				{
+				if (obj_needs_aim
+					(object_from_item_idx(cmd->arg[0].choice))) {
 					if (!cmd->arg_present[1])
 						get_target = TRUE;
 
 					if (cmd->arg[1].direction == DIR_UNKNOWN)
 						get_target = TRUE;
 
-					if (cmd->arg[1].direction == DIR_TARGET && !target_okay())
+					if (cmd->arg[1].direction == DIR_TARGET
+						&& !target_okay())
 						get_target = TRUE;
 				}
 
 				if (get_target && !get_aim_dir(&cmd->arg[1].direction))
-						return;
+					return;
 
 				cmd->arg_present[1] = TRUE;
 
 				break;
 			}
-			
-			 /* This takes an item number and a target */
-			case CMD_THROW:
+
+			/* This takes an item number and a target */
+		case CMD_THROW:
 			{
-			    if (!get_aim_dir(&cmd->arg[1].direction))
-				return;
+				if (!get_aim_dir(&cmd->arg[1].direction))
+					return;
 
-			    cmd->arg_present[1] = TRUE;
+				cmd->arg_present[1] = TRUE;
 
-			    break;
+				break;
 			}
 
 			/* This takes a choice and a direction. */
-			case CMD_CAST:
+		case CMD_CAST:
 			{
 				bool get_target = FALSE;
 
-	    if (spell_needs_aim(mp_ptr->spell_book, cmd->arg[0].choice))
-				{
+				if (spell_needs_aim
+					(mp_ptr->spell_book, cmd->arg[0].choice)) {
 					if (!cmd->arg_present[1])
 						get_target = TRUE;
 
 					if (cmd->arg[1].direction == DIR_UNKNOWN)
 						get_target = TRUE;
 
-					if (cmd->arg[1].direction == DIR_TARGET && !target_okay())
+					if (cmd->arg[1].direction == DIR_TARGET
+						&& !target_okay())
 						get_target = TRUE;
 				}
 
 				if (get_target && !get_aim_dir(&cmd->arg[1].direction))
-						return;
+					return;
 
 				cmd->arg_present[1] = TRUE;
-				
+
 				break;
 			}
 
-			case CMD_WIELD:
+		case CMD_WIELD:
 			{
-				object_type *o_ptr = object_from_item_idx(cmd->arg[0].choice);
+				object_type *o_ptr =
+					object_from_item_idx(cmd->arg[0].choice);
 				int slot = wield_slot(o_ptr);
-			
-	    /* Deal with throwing weapons */
-	    if ((slot == INVEN_WIELD) && of_has(o_ptr->flags_obj, OF_THROWING))
-					{
-		if (get_check("Equip in throwing belt?")) 
-		    slot = wield_slot_ammo(o_ptr);
-	    }
 
-	    /* Usually if the slot is taken we'll just replace the item in the slot,
-	     * but in some cases we need to ask the user which slot they actually want
-	     * to replace */
-	    if (p_ptr->inventory[slot].k_idx) {
-		if (o_ptr->tval == TV_RING) {
+				/* Deal with throwing weapons */
+				if ((slot == INVEN_WIELD)
+					&& of_has(o_ptr->flags_obj, OF_THROWING)) {
+					if (get_check("Equip in throwing belt?"))
+						slot = wield_slot_ammo(o_ptr);
+				}
+
+				/* Usually if the slot is taken we'll just replace the item in 
+				 * the slot, but in some cases we need to ask the user which 
+				 * slot they actually want to replace */
+				if (p_ptr->inventory[slot].k_idx) {
+					if (o_ptr->tval == TV_RING) {
 						const char *q = "Replace which ring? ";
-						const char *s = "Error in obj_wield, please report";
+						const char *s =
+							"Error in obj_wield, please report";
 						item_tester_hook = obj_is_ring;
-		    if (!get_item(&slot, q, s, CMD_WIELD, USE_EQUIP))
-			return;
+						if (!get_item(&slot, q, s, CMD_WIELD, USE_EQUIP))
+							return;
 					}
-			
-		if ((is_missile(o_ptr) || 
-		     (of_has(o_ptr->flags_obj, OF_THROWING) && (slot != INVEN_WIELD))) 
-		    && !object_similar(&p_ptr->inventory[slot], o_ptr, OSTACK_QUIVER)) {
-		    const char *q = "Replace which quiver item? ";
-						const char *s = "Error in obj_wield, please report";
-		    item_tester_hook = obj_is_quiver_obj;
-		    if (!get_item(&slot, q, s, CMD_WIELD, USE_EQUIP))
-			return;
+
+					if ((is_missile(o_ptr) ||
+						 (of_has(o_ptr->flags_obj, OF_THROWING)
+						  && (slot != INVEN_WIELD)))
+						&& !object_similar(&p_ptr->inventory[slot], o_ptr,
+										   OSTACK_QUIVER)) {
+						const char *q = "Replace which quiver item? ";
+						const char *s =
+							"Error in obj_wield, please report";
+						item_tester_hook = obj_is_quiver_obj;
+						if (!get_item(&slot, q, s, CMD_WIELD, USE_EQUIP))
+							return;
 					}
 				}
 
@@ -663,7 +665,7 @@ void process_command(cmd_context ctx, bool no_request)
 				break;
 			}
 
-			default: 
+		default:
 			{
 				/* I can see the point of the compiler warning, but still... */
 				break;
@@ -671,14 +673,11 @@ void process_command(cmd_context ctx, bool no_request)
 		}
 
 		/* Command repetition */
-		if (game_cmds[idx].repeat_allowed)
-		{
+		if (game_cmds[idx].repeat_allowed) {
 			/* Auto-repeat only if there isn't already a repeat length. */
 			if (game_cmds[idx].auto_repeat_n > 0 && cmd->nrepeats == 0)
 				cmd_set_repeat(game_cmds[idx].auto_repeat_n);
-		}
-		else
-		{
+		} else {
 			cmd->nrepeats = 0;
 			repeating = FALSE;
 		}
@@ -705,12 +704,11 @@ void cmd_cancel_repeat(void)
 {
 	game_command *cmd = &cmd_queue[prev_cmd_idx(cmd_tail)];
 
-	if (cmd->nrepeats || repeating)
-	{
+	if (cmd->nrepeats || repeating) {
 		/* Cancel */
 		cmd->nrepeats = 0;
 		repeating = FALSE;
-		
+
 		/* Redraw the state (later) */
 		p_ptr->redraw |= (PR_STATE);
 	}
@@ -724,8 +722,10 @@ void cmd_set_repeat(int nrepeats)
 	game_command *cmd = &cmd_queue[prev_cmd_idx(cmd_tail)];
 
 	cmd->nrepeats = nrepeats;
-	if (nrepeats) repeating = TRUE;
-	else repeating = FALSE;
+	if (nrepeats)
+		repeating = TRUE;
+	else
+		repeating = FALSE;
 
 	/* Redraw the state (later) */
 	p_ptr->redraw |= (PR_STATE);

@@ -41,72 +41,72 @@
  */
 void do_cmd_redraw(void)
 {
-  int j;
-  
-  term *old = Term;
-  
-  
-  /* Low level flush */
-  Term_flush();
-  
-  /* Reset "inkey()" */
-  flush();
-  
-  if (character_dungeon)
-    verify_panel();
-  
-  
-  /* Hack -- React to changes */
-  Term_xtra(TERM_XTRA_REACT, 0);
-  
-  
-  /* Combine and Reorder the pack (later) */
-  p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-  
-  
-  /* Update torch */
-  p_ptr->update |= (PU_TORCH);
-  
-  /* Update stuff */
-  p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
-  
-  /* Fully update the visuals */
-  p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW | PU_MONSTERS);
-  
-  /* Redraw everything */
-  p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP | PR_INVEN | PR_EQUIP |
-		    PR_MESSAGE | PR_MONSTER | PR_OBJECT |
-		    PR_MONLIST | PR_ITEMLIST);
-  
-  /* Clear screen */
-  Term_clear();
+	int j;
 
-  /* Hack -- update */
-  handle_stuff(p_ptr);
-  
-  /* Place the cursor on the player */
-  if (0 != character_dungeon)
-    move_cursor_relative(p_ptr->px, p_ptr->py);
-  
-  
-  /* Redraw every window */
-  for (j = 0; j < ANGBAND_TERM_MAX; j++)
-    {
-      /* Dead window */
-      if (!angband_term[j]) continue;
-      
-      /* Activate */
-      Term_activate(angband_term[j]);
-      
-      /* Redraw */
-      Term_redraw();
-      
-      /* Refresh */
-      Term_fresh();
-      
-      /* Restore */
-      Term_activate(old);
-    }
+	term *old = Term;
+
+
+	/* Low level flush */
+	Term_flush();
+
+	/* Reset "inkey()" */
+	flush();
+
+	if (character_dungeon)
+		verify_panel();
+
+
+	/* Hack -- React to changes */
+	Term_xtra(TERM_XTRA_REACT, 0);
+
+
+	/* Combine and Reorder the pack (later) */
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+
+	/* Update torch */
+	p_ptr->update |= (PU_TORCH);
+
+	/* Update stuff */
+	p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
+
+	/* Fully update the visuals */
+	p_ptr->update |= (PU_FORGET_VIEW | PU_UPDATE_VIEW | PU_MONSTERS);
+
+	/* Redraw everything */
+	p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP | PR_INVEN | PR_EQUIP |
+					  PR_MESSAGE | PR_MONSTER | PR_OBJECT |
+					  PR_MONLIST | PR_ITEMLIST);
+
+	/* Clear screen */
+	Term_clear();
+
+	/* Hack -- update */
+	handle_stuff(p_ptr);
+
+	/* Place the cursor on the player */
+	if (0 != character_dungeon)
+		move_cursor_relative(p_ptr->px, p_ptr->py);
+
+
+	/* Redraw every window */
+	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+		/* Dead window */
+		if (!angband_term[j])
+			continue;
+
+		/* Activate */
+		Term_activate(angband_term[j]);
+
+		/* Redraw */
+		Term_redraw();
+
+		/* Refresh */
+		Term_fresh();
+
+		/* Restore */
+		Term_activate(old);
+	}
 }
 
 
@@ -115,23 +115,24 @@ void do_cmd_redraw(void)
  */
 void redraw_window(void)
 {
-  /* Only if the dungeon exists */
-  if (!character_dungeon) return;
-  
-  /* Hack - Activate term zero for the redraw */
-  Term_activate(&term_screen[0]);
-  
-  /* Hack -- react to changes */
-  Term_xtra(TERM_XTRA_REACT, 0);
-  
-  /* Hack -- update */
-  handle_stuff(p_ptr);
-  
-  /* Redraw */
-  Term_redraw();
-  
-  /* Refresh */
-  Term_fresh();
+	/* Only if the dungeon exists */
+	if (!character_dungeon)
+		return;
+
+	/* Hack - Activate term zero for the redraw */
+	Term_activate(&term_screen[0]);
+
+	/* Hack -- react to changes */
+	Term_xtra(TERM_XTRA_REACT, 0);
+
+	/* Hack -- update */
+	handle_stuff(p_ptr);
+
+	/* Redraw */
+	Term_redraw();
+
+	/* Refresh */
+	Term_fresh();
 }
 
 /**
@@ -139,145 +140,136 @@ void redraw_window(void)
  */
 void do_cmd_change_name(void)
 {
-  ui_event ke;
-  
-  int col = 0;
-  int last_line = 0;
-  int top_line = 0;
+	ui_event ke;
 
-  const char *p;
+	int col = 0;
+	int last_line = 0;
+	int top_line = 0;
 
-  /* Prompt */
-  p = "['c' change name, 'f' to file, scroll, or ESC]";
-  
-  /* Save screen */
-  screen_save();
+	const char *p;
 
-  /* Adjust the buttons */
-  button_backup_all();
-  button_kill_all();
-  button_add("ESC", ESCAPE);
-  button_add("Spc", ' ');
-  button_add("-", '-');
-  button_add("c", 'c');
-  button_add("f", 'f');
-  button_add("->", ARROW_RIGHT);
-  button_add("<-", ARROW_LEFT);
-  p_ptr->redraw |= PR_BUTTONS;
+	/* Prompt */
+	p = "['c' change name, 'f' to file, scroll, or ESC]";
 
-  /* Make the array of lines */
-  C_WIPE(dumpline, DUMP_MAX_LINES, char_attr_line);
-  last_line = make_dump(dumpline, 2);
+	/* Save screen */
+	screen_save();
 
-  /* Forever */
-  while (1)
-    {
-      /* Display the player */
-      display_dump(dumpline, top_line, top_line + Term->hgt - 1, col);
+	/* Adjust the buttons */
+	button_backup_all();
+	button_kill_all();
+	button_add("ESC", ESCAPE);
+	button_add("Spc", ' ');
+	button_add("-", '-');
+	button_add("c", 'c');
+	button_add("f", 'f');
+	button_add("->", ARROW_RIGHT);
+	button_add("<-", ARROW_LEFT);
+	p_ptr->redraw |= PR_BUTTONS;
 
-      redraw_stuff(p_ptr);
+	/* Make the array of lines */
+	C_WIPE(dumpline, DUMP_MAX_LINES, char_attr_line);
+	last_line = make_dump(dumpline, 2);
 
-      /* Clear the bottom line */
-      prt("", Term->hgt - 1, 0);
-      
-      /* Prompt */
-      Term_putstr(0, Term->hgt - 1, -1, TERM_WHITE, p);
-     
-      /* Query */
-      ke = inkey_ex();
-      
-      /* Exit */
-      if (ke.key.code == ESCAPE) break;
-      
-      /* Change name */
-      if (ke.key.code == 'c')
-        {
-	  char namebuf[32] = "";
+	/* Forever */
+	while (1) {
+		/* Display the player */
+		display_dump(dumpline, top_line, top_line + Term->hgt - 1, col);
 
-	  if (get_name(namebuf, sizeof namebuf))
-	  {
-	      /* Set player name */
-	      my_strcpy(op_ptr->full_name, namebuf,
-			sizeof(op_ptr->full_name));
-	  }
-	  (void) make_dump(dumpline, 2);
-        }
-      
-      /* File dump */
-      else if (ke.key.code == 'f')
-	{
-	    char buf[1024];
-	    char fname[80];
+		redraw_stuff(p_ptr);
 
-	    strnfmt(fname, sizeof fname, "%s.txt", player_safe_name(p_ptr, FALSE));
+		/* Clear the bottom line */
+		prt("", Term->hgt - 1, 0);
 
-	    if (get_file(fname, buf, sizeof buf))
-	    {
-		if (file_character(buf, dumpline, last_line) != 0)
-		    msg("Character dump failed!");
-		else
-		    msg("Character dump successful.");
-	    }
+		/* Prompt */
+		Term_putstr(0, Term->hgt - 1, -1, TERM_WHITE, p);
+
+		/* Query */
+		ke = inkey_ex();
+
+		/* Exit */
+		if (ke.key.code == ESCAPE)
+			break;
+
+		/* Change name */
+		if (ke.key.code == 'c') {
+			char namebuf[32] = "";
+
+			if (get_name(namebuf, sizeof namebuf)) {
+				/* Set player name */
+				my_strcpy(op_ptr->full_name, namebuf,
+						  sizeof(op_ptr->full_name));
+			}
+			(void) make_dump(dumpline, 2);
+		}
+
+		/* File dump */
+		else if (ke.key.code == 'f') {
+			char buf[1024];
+			char fname[80];
+
+			strnfmt(fname, sizeof fname, "%s.txt",
+					player_safe_name(p_ptr, FALSE));
+
+			if (get_file(fname, buf, sizeof buf)) {
+				if (file_character(buf, dumpline, last_line) != 0)
+					msg("Character dump failed!");
+				else
+					msg("Character dump successful.");
+			}
+		}
+
+		/* Scroll down */
+		else if (ke.key.code == ARROW_DOWN) {
+			if (top_line + Term->hgt - 2 < last_line)
+				top_line++;
+		}
+
+		/* Page down */
+		else if (ke.key.code == ' ') {
+			top_line = MIN(last_line - Term->hgt + 2,
+						   top_line + (Term->hgt - 2));
+		}
+
+		/* Scroll up */
+		else if (ke.key.code == ARROW_UP) {
+			if (top_line)
+				top_line--;
+		}
+
+		/* Page up */
+		else if (ke.key.code == '-') {
+			top_line -= (Term->hgt - 2) / 2;
+			if (top_line < 0)
+				top_line = 0;
+		}
+
+		/* Scroll left */
+		else if (ke.key.code == ARROW_LEFT) {
+			if (col)
+				col--;
+		}
+
+		/* Scroll right */
+		else if (ke.key.code == ARROW_RIGHT) {
+			if (col < 32)
+				col++;
+		}
+
+
+		/* Oops */
+		else {
+			bell(NULL);
+		}
+
+		/* Flush messages */
+		message_flush();
 	}
-      
-      /* Scroll down */
-      else if (ke.key.code == ARROW_DOWN)
-	{
-	  if (top_line + Term->hgt - 2 < last_line)
-	    top_line++;
-	}
-      
-      /* Page down */
-      else if (ke.key.code == ' ')
-	{
-	  top_line = MIN(last_line - Term->hgt + 2, 
-			 top_line + (Term->hgt - 2));
-	}
-      
-      /* Scroll up */
-      else if (ke.key.code == ARROW_UP)
-	{
-	  if (top_line)
-	    top_line--;
-	}
-      
-      /* Page up */
-      else if (ke.key.code == '-')
-	{
-	  top_line -= (Term->hgt - 2) / 2;
-	  if (top_line < 0) top_line = 0;
-	}
-      
-      /* Scroll left */
-      else if (ke.key.code == ARROW_LEFT)
-	{
-	  if (col)
-	    col--;
-	}
-      
-      /* Scroll right */
-      else if (ke.key.code == ARROW_RIGHT)
-	{
-	  if (col < 32)
-	    col++;
-	}
-      
-      
-      /* Oops */
-      else
-	{
-	  bell(NULL);
-	}
-      
-      /* Flush messages */
-      message_flush();
-    }
 
-  /* Adjust the buttons */
-  button_restore();
+	/* Adjust the buttons */
+	button_restore();
 
-  /* Load screen */
-  screen_load();
+	/* Load screen */
+	screen_load();
 }
 
 
@@ -286,8 +278,8 @@ void do_cmd_change_name(void)
  */
 void do_cmd_message_one(void)
 {
-  /* Recall one message XXX XXX XXX */
-  c_prt(message_color(0), format( "> %s", message_str(0)), 0, 0);
+	/* Recall one message XXX XXX XXX */
+	c_prt(message_color(0), format("> %s", message_str(0)), 0, 0);
 }
 
 
@@ -308,238 +300,228 @@ void do_cmd_message_one(void)
  */
 void do_cmd_messages(void)
 {
-  ui_event ke;
-  
-  int i, j, n, q;
-  int wid, hgt;
-  
-  char shower[80];
-  char finder[80];
-  char p[80];  
-  
-  /* Wipe finder */
-  my_strcpy(finder, "", sizeof(shower));
-  
-  /* Wipe shower */
-  my_strcpy(shower, "", sizeof(finder));
-  
-  
-  /* Total messages */
-  n = messages_num();
-  
-  /* Start on first message */
-  i = 0;
-  
-  /* Start at leftmost edge */
-  q = 0;
-  
-  /* Get size */
-  Term_get_size(&wid, &hgt);
-  
-  /* Prompt */
-  strncpy(p, "[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", 80);
+	ui_event ke;
 
-  /* Save screen */
-  screen_save();
-  
-  /* Adjust the buttons */
-  button_backup_all();
-  button_kill_all();
-  button_add("ESC", ESCAPE);
-  button_add("-", '-');
-  button_add("=", '=');
-  button_add("/", '/');
-  button_add("p", 'p');
-  button_add("n", 'n');
-  button_add("+", '+');
-  button_add("->", '6');
-  button_add("<-", '4');
-  p_ptr->redraw |= (PR_BUTTONS);
+	int i, j, n, q;
+	int wid, hgt;
 
-  /* Process requests until done */
-  while (1)
-    {
-      /* Clear screen */
-      Term_clear();
-      
-      /* Dump messages */
-      for (j = 0; (j < hgt - 4) && (i + j < n); j++)
-	{
-	  const char *msg = message_str((s16b)(i+j));
-	  byte attr = message_color((s16b)(i+j));
-	  
-	  /* Apply horizontal scroll */
-	  msg = ((int)strlen(msg) >= q) ? (msg + q) : "";
-	  
-	  /* Dump the messages, bottom to top */
-	  Term_putstr(0, hgt - 3 - j, -1, attr, msg);
-	  
-	  /* Hilight "shower" */
-	  if (shower[0])
-	    {
-	      const char *str = msg;
-	      
-	      /* Display matches */
-	      while ((str = strstr(str, shower)) != NULL)
-		{
-		  int len = strlen(shower);
-		  
-		  /* Display the match */
-		  Term_putstr(str-msg, hgt - 3 - j, len, TERM_YELLOW, shower);
-		  
-		  /* Advance */
-		  str += len;
+	char shower[80];
+	char finder[80];
+	char p[80];
+
+	/* Wipe finder */
+	my_strcpy(finder, "", sizeof(shower));
+
+	/* Wipe shower */
+	my_strcpy(shower, "", sizeof(finder));
+
+
+	/* Total messages */
+	n = messages_num();
+
+	/* Start on first message */
+	i = 0;
+
+	/* Start at leftmost edge */
+	q = 0;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+
+	/* Prompt */
+	strncpy(p, "[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", 80);
+
+	/* Save screen */
+	screen_save();
+
+	/* Adjust the buttons */
+	button_backup_all();
+	button_kill_all();
+	button_add("ESC", ESCAPE);
+	button_add("-", '-');
+	button_add("=", '=');
+	button_add("/", '/');
+	button_add("p", 'p');
+	button_add("n", 'n');
+	button_add("+", '+');
+	button_add("->", '6');
+	button_add("<-", '4');
+	p_ptr->redraw |= (PR_BUTTONS);
+
+	/* Process requests until done */
+	while (1) {
+		/* Clear screen */
+		Term_clear();
+
+		/* Dump messages */
+		for (j = 0; (j < hgt - 4) && (i + j < n); j++) {
+			const char *msg = message_str((s16b) (i + j));
+			byte attr = message_color((s16b) (i + j));
+
+			/* Apply horizontal scroll */
+			msg = ((int) strlen(msg) >= q) ? (msg + q) : "";
+
+			/* Dump the messages, bottom to top */
+			Term_putstr(0, hgt - 3 - j, -1, attr, msg);
+
+			/* Hilight "shower" */
+			if (shower[0]) {
+				const char *str = msg;
+
+				/* Display matches */
+				while ((str = strstr(str, shower)) != NULL) {
+					int len = strlen(shower);
+
+					/* Display the match */
+					Term_putstr(str - msg, hgt - 3 - j, len, TERM_YELLOW,
+								shower);
+
+					/* Advance */
+					str += len;
+				}
+			}
 		}
-	    }
-	}
-      
-      /* Display header XXX XXX XXX */
-      prt(format("Message Recall (%d-%d of %d), Offset %d",
-		 i, i + j - 1, n, q), 0, 0);
-      
-      /* Display prompt (not very informative) */
-      prt(p, hgt - 1, 0);
-      redraw_stuff(p_ptr);
-      
-      /* Get a command */
-      ke = inkey_ex();
-      
-      /* Exit on Escape */
-      if (ke.key.code == ESCAPE) break;
-      
-      /* Hack -- Save the old index */
-      j = i;
-      
-      /* Horizontal scroll */
-      if (ke.key.code == '4')
-	{
-	  /* Scroll left */
-	  q = (q >= wid / 2) ? (q - wid / 2) : 0;
-	  
-	  /* Success */
-	  continue;
-	}
-      
-      /* Horizontal scroll */
-      if (ke.key.code == '6')
-	{
-	  /* Scroll right */
-	  q = q + wid / 2;
-	  
-	  /* Success */
-	  continue;
-	}
-      
-      /* Hack -- handle show */
-      if (ke.key.code == '=')
-	{
-	  /* Prompt */
-	  prt("Show: ", hgt - 1, 0);
-	  
-	  /* Get a "shower" string, or continue */
-	  if (!askfor_aux(shower, sizeof shower, NULL)) continue;
-	  
-	  /* Okay */
-	  continue;
-	}
-      
-      /* Hack -- handle find */
-      if (ke.key.code == '/')
-	{
-	  s16b z;
-	  
-	  /* Prompt */
-	  prt("Find: ", hgt - 1, 0);
-	  
-	  /* Get a "finder" string, or continue */
-	  if (!askfor_aux(finder, sizeof finder, NULL)) continue;
-	  
-	  /* Show it */
-	  my_strcpy(shower, finder, sizeof(shower));
-	  
-	  /* Scan messages */
-	  for (z = i + 1; z < n; z++)
-	    {
-	      const char *msg = message_str(z);
-	      
-	      /* Search for it */
-	      if (strstr(msg, finder))
-		{
-		  /* New location */
-		  i = z;
-		  
-		  /* Done */
-		  break;
-		}
-	    }
-	}
-      
-      /* Recall 20 older messages */
-      if ((ke.key.code == 'p') || (ke.key.code == KTRL('P')) || (ke.key.code == ' '))
-	{
-	  /* Go older if legal */
-	  if (i + 20 < n) i += 20;
-	}
-      
-      /* Recall 10 older messages */
-      if (ke.key.code == '+')
-	{
-	  /* Go older if legal */
-	  if (i + 10 < n) i += 10;
-	}
-      
-      /* Recall 1 older message */
-      if ((ke.key.code == '8') || (ke.key.code == KC_ENTER))
-	{
-	  /* Go older if legal */
-	  if (i + 1 < n) i += 1;
-	}
-      
-      /* Recall 20 newer messages */
-      if ((ke.key.code == 'n') || (ke.key.code == KTRL('N')))
-	{
-	  /* Go newer (if able) */
-	  i = (i >= 20) ? (i - 20) : 0;
-	}
-      
-      /* Recall 10 newer messages */
-      if (ke.key.code == '-')
-	{
-	  /* Go newer (if able) */
-	  i = (i >= 10) ? (i - 10) : 0;
-	}
-      
-      /* Recall 1 newer messages */
-      if (ke.key.code == '2')
-	{
-	  /* Go newer (if able) */
-	  i = (i >= 1) ? (i - 1) : 0;
-	}
-      
-      /* Scroll forwards or backwards using mouse clicks */
-      if (ke.mouse.button)
-      {
-	  if (ke.mouse.y <= hgt / 2)
-	  {
-	      /* Go older if legal */
-	      if (i + 20 < n) i += 20;
-	  }
-	  else
-	  {
-	      /* Go newer (if able) */
-	      i = (i >= 20) ? (i - 20) : 0;
-	  }
-      }
-      
-      /* Hack -- Error of some kind */
-      if (i == j) bell(NULL);
-    }
-  
-  /* Adjust the buttons */
-  button_restore();
 
-  /* Load screen */
-  screen_load();
+		/* Display header XXX XXX XXX */
+		prt(format("Message Recall (%d-%d of %d), Offset %d",
+				   i, i + j - 1, n, q), 0, 0);
+
+		/* Display prompt (not very informative) */
+		prt(p, hgt - 1, 0);
+		redraw_stuff(p_ptr);
+
+		/* Get a command */
+		ke = inkey_ex();
+
+		/* Exit on Escape */
+		if (ke.key.code == ESCAPE)
+			break;
+
+		/* Hack -- Save the old index */
+		j = i;
+
+		/* Horizontal scroll */
+		if (ke.key.code == '4') {
+			/* Scroll left */
+			q = (q >= wid / 2) ? (q - wid / 2) : 0;
+
+			/* Success */
+			continue;
+		}
+
+		/* Horizontal scroll */
+		if (ke.key.code == '6') {
+			/* Scroll right */
+			q = q + wid / 2;
+
+			/* Success */
+			continue;
+		}
+
+		/* Hack -- handle show */
+		if (ke.key.code == '=') {
+			/* Prompt */
+			prt("Show: ", hgt - 1, 0);
+
+			/* Get a "shower" string, or continue */
+			if (!askfor_aux(shower, sizeof shower, NULL))
+				continue;
+
+			/* Okay */
+			continue;
+		}
+
+		/* Hack -- handle find */
+		if (ke.key.code == '/') {
+			s16b z;
+
+			/* Prompt */
+			prt("Find: ", hgt - 1, 0);
+
+			/* Get a "finder" string, or continue */
+			if (!askfor_aux(finder, sizeof finder, NULL))
+				continue;
+
+			/* Show it */
+			my_strcpy(shower, finder, sizeof(shower));
+
+			/* Scan messages */
+			for (z = i + 1; z < n; z++) {
+				const char *msg = message_str(z);
+
+				/* Search for it */
+				if (strstr(msg, finder)) {
+					/* New location */
+					i = z;
+
+					/* Done */
+					break;
+				}
+			}
+		}
+
+		/* Recall 20 older messages */
+		if ((ke.key.code == 'p') || (ke.key.code == KTRL('P'))
+			|| (ke.key.code == ' ')) {
+			/* Go older if legal */
+			if (i + 20 < n)
+				i += 20;
+		}
+
+		/* Recall 10 older messages */
+		if (ke.key.code == '+') {
+			/* Go older if legal */
+			if (i + 10 < n)
+				i += 10;
+		}
+
+		/* Recall 1 older message */
+		if ((ke.key.code == '8') || (ke.key.code == KC_ENTER)) {
+			/* Go older if legal */
+			if (i + 1 < n)
+				i += 1;
+		}
+
+		/* Recall 20 newer messages */
+		if ((ke.key.code == 'n') || (ke.key.code == KTRL('N'))) {
+			/* Go newer (if able) */
+			i = (i >= 20) ? (i - 20) : 0;
+		}
+
+		/* Recall 10 newer messages */
+		if (ke.key.code == '-') {
+			/* Go newer (if able) */
+			i = (i >= 10) ? (i - 10) : 0;
+		}
+
+		/* Recall 1 newer messages */
+		if (ke.key.code == '2') {
+			/* Go newer (if able) */
+			i = (i >= 1) ? (i - 1) : 0;
+		}
+
+		/* Scroll forwards or backwards using mouse clicks */
+		if (ke.mouse.button) {
+			if (ke.mouse.y <= hgt / 2) {
+				/* Go older if legal */
+				if (i + 20 < n)
+					i += 20;
+			} else {
+				/* Go newer (if able) */
+				i = (i >= 20) ? (i - 20) : 0;
+			}
+		}
+
+		/* Hack -- Error of some kind */
+		if (i == j)
+			bell(NULL);
+	}
+
+	/* Adjust the buttons */
+	button_restore();
+
+	/* Load screen */
+	screen_load();
 }
 
 
@@ -549,16 +531,17 @@ void do_cmd_messages(void)
  */
 void do_cmd_pref(void)
 {
-  char tmp[80];
-  
-  /* Default */
-  my_strcpy(tmp, "", sizeof(tmp));
-  
-  /* Ask for a "user pref command" */
-  if (!get_string("Pref: ", tmp, 80)) return;
-  
-  /* Process that pref command */
-  (void)process_pref_file_command(tmp);
+	char tmp[80];
+
+	/* Default */
+	my_strcpy(tmp, "", sizeof(tmp));
+
+	/* Ask for a "user pref command" */
+	if (!get_string("Pref: ", tmp, 80))
+		return;
+
+	/* Process that pref command */
+	(void) process_pref_file_command(tmp);
 }
 
 
@@ -568,34 +551,36 @@ void do_cmd_pref(void)
  */
 void do_cmd_note(void)
 {
-    char tmp[80];
+	char tmp[80];
 
-    /* Default */
-    my_strcpy(tmp, "", sizeof(tmp));
+	/* Default */
+	my_strcpy(tmp, "", sizeof(tmp));
 
-    /* Input */
-    if (!get_string("Note: ", tmp, 80)) return;
+	/* Input */
+	if (!get_string("Note: ", tmp, 80))
+		return;
 
-    /* Ignore empty notes */
-    if (!tmp[0] || (tmp[0] == ' ')) return;
+	/* Ignore empty notes */
+	if (!tmp[0] || (tmp[0] == ' '))
+		return;
 
-    /* Add the note to the message recall */
-    msg("Note: %s", tmp);
+	/* Add the note to the message recall */
+	msg("Note: %s", tmp);
 
-    /* Add a history entry */
-    history_add(tmp, HISTORY_USER_INPUT, 0);
+	/* Add a history entry */
+	history_add(tmp, HISTORY_USER_INPUT, 0);
 }
-  
-  
+
+
 
 /**
  * Mention the current version
  */
 void do_cmd_version(void)
 {
-    /* Silly message */
-    msg("You are playing %s %s.  Type '?' for more info.",
-	       VERSION_NAME, VERSION_STRING);
+	/* Silly message */
+	msg("You are playing %s %s.  Type '?' for more info.",
+		VERSION_NAME, VERSION_STRING);
 }
 
 
@@ -603,19 +588,18 @@ void do_cmd_version(void)
 /*
  * Array of feeling strings
  */
-static const char *feeling_text[] =
-{
-  "Looks like any other level.",
-  "You feel there is something special about this level.",
-  "You have a superb feeling about this level.",
-  "You have an excellent feeling...",
-  "You have a very good feeling...",
-  "You have a good feeling...",
-  "You feel strangely lucky...",
-  "You feel your luck is turning...",
-  "You like the look of this place...",
-  "This level can't be all bad...",
-  "What a boring place..."
+static const char *feeling_text[] = {
+	"Looks like any other level.",
+	"You feel there is something special about this level.",
+	"You have a superb feeling about this level.",
+	"You have an excellent feeling...",
+	"You have a very good feeling...",
+	"You have a good feeling...",
+	"You feel strangely lucky...",
+	"You feel your luck is turning...",
+	"You like the look of this place...",
+	"This level can't be all bad...",
+	"What a boring place..."
 };
 
 
@@ -625,48 +609,47 @@ static const char *feeling_text[] =
  */
 void do_cmd_feeling(void)
 {
-  /* Verify the feeling */
-  if (feeling >= N_ELEMENTS(feeling_text))
-    feeling = N_ELEMENTS(feeling_text) - 1;
-  
-  /* No useful feeling in town */
-  if (!p_ptr->depth)
-    {
-      msg("Looks like a typical town.");
-      return;
-    }
-  
-  /* No useful feelings until enough time has passed */
-  if (!do_feeling)
-    {
-      msg("You are still uncertain about this level...");
-      return;
-    }
-  
-  /* Display the feeling */
-    if (p_ptr->themed_level) msg("%s", themed_feeling);
-    else msg(feeling_text[feeling]);
+	/* Verify the feeling */
+	if (feeling >= N_ELEMENTS(feeling_text))
+		feeling = N_ELEMENTS(feeling_text) - 1;
+
+	/* No useful feeling in town */
+	if (!p_ptr->depth) {
+		msg("Looks like a typical town.");
+		return;
+	}
+
+	/* No useful feelings until enough time has passed */
+	if (!do_feeling) {
+		msg("You are still uncertain about this level...");
+		return;
+	}
+
+	/* Display the feeling */
+	if (p_ptr->themed_level)
+		msg("%s", themed_feeling);
+	else
+		msg(feeling_text[feeling]);
 }
 
 /*
  * Array of feeling strings
  */
-static const char *do_cmd_challenge_text[14] =
-{
-  "challenges you from beyond the grave!",
-  "thunders 'Prove worthy of your traditions - or die ashamed!'.",
-  "desires to test your mettle!",
-  "has risen from the dead to test you!",
-  "roars 'Fight, or know yourself for a coward!'.",
-  "summons you to a duel of life and death!",
-  "desires you to know that you face a mighty champion of yore!",
-  "demands that you prove your worthiness in combat!",
-  "calls you unworthy of your ancestors!",
-  "challenges you to a deathmatch!",
-  "walks Middle-Earth once more!",
-  "challenges you to demonstrate your prowess!",
-  "demands you prove yourself here and now!",
-  "asks 'Can ye face the best of those who came before?'."
+static const char *do_cmd_challenge_text[14] = {
+	"challenges you from beyond the grave!",
+	"thunders 'Prove worthy of your traditions - or die ashamed!'.",
+	"desires to test your mettle!",
+	"has risen from the dead to test you!",
+	"roars 'Fight, or know yourself for a coward!'.",
+	"summons you to a duel of life and death!",
+	"desires you to know that you face a mighty champion of yore!",
+	"demands that you prove your worthiness in combat!",
+	"calls you unworthy of your ancestors!",
+	"challenges you to a deathmatch!",
+	"walks Middle-Earth once more!",
+	"challenges you to demonstrate your prowess!",
+	"demands you prove yourself here and now!",
+	"asks 'Can ye face the best of those who came before?'."
 };
 
 
@@ -677,10 +660,10 @@ static const char *do_cmd_challenge_text[14] =
  */
 void ghost_challenge(void)
 {
-    monster_race *r_ptr = &r_info[r_ghost];
-    
-    msg("%s, the %s %s", ghost_name, r_ptr->name, 
-	       do_cmd_challenge_text[randint0(14)]);
+	monster_race *r_ptr = &r_info[r_ghost];
+
+	msg("%s, the %s %s", ghost_name, r_ptr->name,
+		do_cmd_challenge_text[randint0(14)]);
 }
 
 
@@ -688,7 +671,7 @@ void ghost_challenge(void)
 /**
  * Encode the screen colors
  */
-static const char hack[BASIC_COLORS+1] = "dwsorgbuDWvyRGBU";
+static const char hack[BASIC_COLORS + 1] = "dwsorgbuDWvyRGBU";
 
 
 /**
@@ -700,180 +683,177 @@ static const char hack[BASIC_COLORS+1] = "dwsorgbuDWvyRGBU";
  */
 void do_cmd_load_screen(void)
 {
-  int i, y, x;
-  
-  int a = 0;
-  wchar_t c = L' ';
-  
-  bool okay = TRUE;
-  
-  ang_file *fp;
-  
-  char buf[1024];
-  
+	int i, y, x;
 
-  /* Build the filename */
-  path_build(buf, 1024, ANGBAND_DIR_USER, "dump.txt");
-  
-  /* Open the file */
-  fp = file_open(buf, MODE_READ, -1);
+	int a = 0;
+	wchar_t c = L' ';
 
-  /* Oops */
-  if (!fp) return;
-  
+	bool okay = TRUE;
 
-  /* Save screen */
-  screen_save();
+	ang_file *fp;
 
-  
-  /* Clear the screen */
-  Term_clear();
-  
-  
-  /* Load the screen */
-  for (y = 0; okay && (y < 24); y++)
-    {
-      /* Get a line of data */
-      if (!file_getl(fp, buf, sizeof(buf))) okay = FALSE;
-      
-      
-      /* Show each row */
-      for (x = 0; x < 79; x++)
-	{
-	    Term_mbstowcs(&c, &buf[x], 1);
-	  /* Put the attr/char */
-	  Term_draw(x, y, TERM_WHITE, buf[x]);
+	char buf[1024];
+
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_USER, "dump.txt");
+
+	/* Open the file */
+	fp = file_open(buf, MODE_READ, -1);
+
+	/* Oops */
+	if (!fp)
+		return;
+
+
+	/* Save screen */
+	screen_save();
+
+
+	/* Clear the screen */
+	Term_clear();
+
+
+	/* Load the screen */
+	for (y = 0; okay && (y < 24); y++) {
+		/* Get a line of data */
+		if (!file_getl(fp, buf, sizeof(buf)))
+			okay = FALSE;
+
+
+		/* Show each row */
+		for (x = 0; x < 79; x++) {
+			Term_mbstowcs(&c, &buf[x], 1);
+			/* Put the attr/char */
+			Term_draw(x, y, TERM_WHITE, buf[x]);
+		}
 	}
-    }
-  
-  /* Get the blank line */
-  if (!file_getl(fp, buf, sizeof(buf))) okay = FALSE;
-  
 
-  /* Dump the screen */
-  for (y = 0; okay && (y < 24); y++)
-    {
-      /* Get a line of data */
-      if (!file_getl(fp, buf, sizeof(buf))) okay = FALSE;
-      
-      /* Dump each row */
-      for (x = 0; x < 79; x++)
-	{
-	  /* Get the attr/char */
-	  (void)(Term_what(x, y, &a, &c));
+	/* Get the blank line */
+	if (!file_getl(fp, buf, sizeof(buf)))
+		okay = FALSE;
 
-	  /* Look up the attr */
-	  for (i = 0; i < BASIC_COLORS; i++)
-	    {
-	      /* Use attr matches */
-	      if (hack[i] == buf[x]) a = i;
-	    }
-	  
-	  /* Put the attr/char */
-	  Term_draw(x, y, a, c);
+
+	/* Dump the screen */
+	for (y = 0; okay && (y < 24); y++) {
+		/* Get a line of data */
+		if (!file_getl(fp, buf, sizeof(buf)))
+			okay = FALSE;
+
+		/* Dump each row */
+		for (x = 0; x < 79; x++) {
+			/* Get the attr/char */
+			(void) (Term_what(x, y, &a, &c));
+
+			/* Look up the attr */
+			for (i = 0; i < BASIC_COLORS; i++) {
+				/* Use attr matches */
+				if (hack[i] == buf[x])
+					a = i;
+			}
+
+			/* Put the attr/char */
+			Term_draw(x, y, a, c);
+		}
 	}
-    }
-  
-  
-  /* Close it */
-  file_close(fp);
-  
 
-  /* Message */
-  msg("Screen dump loaded.");
-  message_flush();
-  
-  
-  /* Load screen */
-  screen_load();
+
+	/* Close it */
+	file_close(fp);
+
+
+	/* Message */
+	msg("Screen dump loaded.");
+	message_flush();
+
+
+	/* Load screen */
+	screen_load();
 }
 
 void do_cmd_save_screen_text(void)
 {
-  int y, x;
-  
-  int a = 0;
-  wchar_t c = L' ';
-  
-  ang_file *fff;
-  
-  char buf[1024];
-  char *p;
-  
-  /* Build the filename */
-  path_build(buf, 1024, ANGBAND_DIR_USER, "dump.txt");
-  
-  /* Append to the file */
-  fff = file_open(buf, MODE_WRITE, FTYPE_TEXT);
-  
-  /* Oops */
-  if (!fff) return;
-  
-  
-  /* Save screen */
-  screen_save();
+	int y, x;
+
+	int a = 0;
+	wchar_t c = L' ';
+
+	ang_file *fff;
+
+	char buf[1024];
+	char *p;
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_USER, "dump.txt");
+
+	/* Append to the file */
+	fff = file_open(buf, MODE_WRITE, FTYPE_TEXT);
+
+	/* Oops */
+	if (!fff)
+		return;
 
 
-  /* Dump the screen */
-  for (y = 0; y < 24; y++)
-    {
-	p = buf;
-      /* Dump each row */
-      for (x = 0; x < 79; x++)
-	{
-	  /* Get the attr/char */
-	  (void)(Term_what(x, y, &a, &c));
-	  
-	  /* Dump it */
-	  p += wctomb(p, c);
+	/* Save screen */
+	screen_save();
+
+
+	/* Dump the screen */
+	for (y = 0; y < 24; y++) {
+		p = buf;
+		/* Dump each row */
+		for (x = 0; x < 79; x++) {
+			/* Get the attr/char */
+			(void) (Term_what(x, y, &a, &c));
+
+			/* Dump it */
+			p += wctomb(p, c);
+		}
+
+		/* Terminate */
+		*p = '\0';
+
+		/* End the row */
+		file_putf(fff, "%s\n", buf);
 	}
-      
-      /* Terminate */
-      *p = '\0';
-      
-      /* End the row */
-      file_putf(fff, "%s\n", buf);
-    }
-  
-  /* Skip a line */
-  file_putf(fff, "\n");
-  
-  
-  /* Dump the screen */
-  for (y = 0; y < 24; y++)
-    {
-      /* Dump each row */
-      for (x = 0; x < 79; x++)
-	{
-	  /* Get the attr/char */
-	  (void)(Term_what(x, y, &a, &c));
-	  
-	  /* Dump it */
-	  buf[x] = hack[a & 0x0F];
+
+	/* Skip a line */
+	file_putf(fff, "\n");
+
+
+	/* Dump the screen */
+	for (y = 0; y < 24; y++) {
+		/* Dump each row */
+		for (x = 0; x < 79; x++) {
+			/* Get the attr/char */
+			(void) (Term_what(x, y, &a, &c));
+
+			/* Dump it */
+			buf[x] = hack[a & 0x0F];
+		}
+
+		/* Terminate */
+		buf[x] = '\0';
+
+		/* End the row */
+		file_putf(fff, "%s\n", buf);
 	}
-      
-      /* Terminate */
-      buf[x] = '\0';
-      
-      /* End the row */
-      file_putf(fff, "%s\n", buf);
-    }
-  
-  /* Skip a line */
-  file_putf(fff, "\n");
-  
-  
-  /* Close it */
-  file_close(fff);
-  
-  
-  /* Message */
-  msg("Screen dump saved.");
-  message_flush();
-  
-  
-  /* Load screen */
-  screen_load();
+
+	/* Skip a line */
+	file_putf(fff, "\n");
+
+
+	/* Close it */
+	file_close(fff);
+
+
+	/* Message */
+	msg("Screen dump saved.");
+	message_flush();
+
+
+	/* Load screen */
+	screen_load();
 }
 
 
@@ -882,52 +862,57 @@ void do_cmd_save_screen_text(void)
  */
 void do_cmd_save_screen_html(int mode)
 {
-    size_t i;
-  
-    ang_file *fff;
-    char file_name[1024];
-    char tmp_val[256];
-  
-    typedef void (*dump_func)(ang_file *);
-    dump_func dump_visuals [] = 
-	{ dump_monsters, dump_features, dump_objects, dump_flavors, dump_colors };
-  
-    /* Ask for a file */
-    if (mode == 0) my_strcpy(tmp_val, "dump.html", sizeof(tmp_val));
-    else my_strcpy(tmp_val, "dump.txt", sizeof(tmp_val));
-    if (!get_string("File: ", tmp_val, sizeof(tmp_val))) return;
-  
-    /* Save current preferences */
-    path_build(file_name, 1024, ANGBAND_DIR_USER, "dump.prf");
-    fff = file_open(file_name, MODE_WRITE, (mode == 0 ? FTYPE_HTML : FTYPE_TEXT));
-  
-    /* Check for failure */
-    if (!fff)
-    {
-	msg("Screen dump failed.");
+	size_t i;
+
+	ang_file *fff;
+	char file_name[1024];
+	char tmp_val[256];
+
+	typedef void (*dump_func) (ang_file *);
+	dump_func dump_visuals[] =
+		{ dump_monsters, dump_features, dump_objects, dump_flavors,
+dump_colors };
+
+	/* Ask for a file */
+	if (mode == 0)
+		my_strcpy(tmp_val, "dump.html", sizeof(tmp_val));
+	else
+		my_strcpy(tmp_val, "dump.txt", sizeof(tmp_val));
+	if (!get_string("File: ", tmp_val, sizeof(tmp_val)))
+		return;
+
+	/* Save current preferences */
+	path_build(file_name, 1024, ANGBAND_DIR_USER, "dump.prf");
+	fff =
+		file_open(file_name, MODE_WRITE,
+				  (mode == 0 ? FTYPE_HTML : FTYPE_TEXT));
+
+	/* Check for failure */
+	if (!fff) {
+		msg("Screen dump failed.");
+		message_flush();
+		return;
+	}
+
+	/* Dump all the visuals */
+	for (i = 0; i < N_ELEMENTS(dump_visuals); i++)
+		dump_visuals[i] (fff);
+
+	file_close(fff);
+
+	/* Dump the screen with raw character attributes */
+	reset_visuals(FALSE);
+	do_cmd_redraw();
+	html_screenshot(tmp_val, mode);
+
+	/* Recover current graphics settings */
+	reset_visuals(TRUE);
+	process_pref_file(file_name, TRUE, FALSE);
+	file_delete(file_name);
+	do_cmd_redraw();
+
+	msg("HTML screen dump saved.");
 	message_flush();
-	return;
-    }
-  
-    /* Dump all the visuals */
-    for (i = 0; i < N_ELEMENTS(dump_visuals); i++)
-	dump_visuals[i](fff);
-  
-    file_close(fff);
-  
-    /* Dump the screen with raw character attributes */
-    reset_visuals(FALSE);
-    do_cmd_redraw();
-    html_screenshot(tmp_val, mode);
-  
-    /* Recover current graphics settings */
-    reset_visuals(TRUE);
-    process_pref_file(file_name, TRUE, FALSE);
-    file_delete(file_name);
-    do_cmd_redraw();
-  
-    msg("HTML screen dump saved.");
-    message_flush();
 }
 
 
@@ -936,27 +921,29 @@ void do_cmd_save_screen_html(int mode)
  */
 void do_cmd_save_screen(void)
 {
-    ui_event ke;
-    msg("Dump type [(t)ext; (h)tml; (f)orum embedded html]:");
-    button_add("f", 'f');
-    button_add("h", 'h');
-    button_add("t", 't');
-    ke = inkey_ex();
-    switch(ke.key.code) 
-    {
-    case ESCAPE:
-	break;
-    case 't': do_cmd_save_screen_text();
-	break;
-    case 'h': do_cmd_save_screen_html(0);
-	break;
-    case 'f': do_cmd_save_screen_html(1);
-	break;
-    }
-    button_kill('f');
-    button_kill('t');
-    button_kill('h');
-    message_flush();
+	ui_event ke;
+	msg("Dump type [(t)ext; (h)tml; (f)orum embedded html]:");
+	button_add("f", 'f');
+	button_add("h", 'h');
+	button_add("t", 't');
+	ke = inkey_ex();
+	switch (ke.key.code) {
+	case ESCAPE:
+		break;
+	case 't':
+		do_cmd_save_screen_text();
+		break;
+	case 'h':
+		do_cmd_save_screen_html(0);
+		break;
+	case 'f':
+		do_cmd_save_screen_html(1);
+		break;
+	}
+	button_kill('f');
+	button_kill('t');
+	button_kill('h');
+	message_flush();
 }
 
 /**
@@ -964,19 +951,16 @@ void do_cmd_save_screen(void)
  */
 void do_cmd_time(void)
 {
-  s32b len = 10L * TOWN_DAWN;
-  s32b tick = turn % len + len / 4;
-  
-  int day = turn / len + 1;
-  int hour = (24 * tick / len) % 24;
-  int min = (1440 * tick / len) % 60;
-  
-  
-  /* Message */
-  msg("This is day %d. The time is %d:%02d %s.", day,
-             (hour % 12 == 0) ? 12 : (hour % 12), min,
-             (hour < 12) ? "AM" : "PM");
+	s32b len = 10L * TOWN_DAWN;
+	s32b tick = turn % len + len / 4;
+
+	int day = turn / len + 1;
+	int hour = (24 * tick / len) % 24;
+	int min = (1440 * tick / len) % 60;
+
+
+	/* Message */
+	msg("This is day %d. The time is %d:%02d %s.", day,
+		(hour % 12 == 0) ? 12 : (hour % 12), min,
+		(hour < 12) ? "AM" : "PM");
 }
-
-
-

@@ -37,20 +37,18 @@
 /**
  * Mouse button structure
  */
-typedef struct _button_mouse_1d
-{
-	char label[MAX_MOUSE_LABEL]; /*!< Label on the button */
-	int left;                    /*!< Column containing the left edge of the button */
-	int right;                   /*!< Column containing the right edge of the button */
-	keycode_t key;           /*!< Keypress corresponding to the button */
+typedef struct _button_mouse_1d {
+	char label[MAX_MOUSE_LABEL];	/*!< Label on the button */
+	int left;					/*!< Column containing the left edge of the button */
+	int right;					/*!< Column containing the right edge of the button */
+	keycode_t key;				/*!< Keypress corresponding to the button */
 } button_mouse;
 
-typedef struct _button_backup
-{
-	struct _button_backup *next; /* the button set that will be restored after this one */
-	button_mouse *buttons;       /* the list of buttons */
-        int num;                     /* the number of buttons in the list */
-        int length;                  /* the length of the row of buttons */
+typedef struct _button_backup {
+	struct _button_backup *next;	/* the button set that will be restored after this one */
+	button_mouse *buttons;		/* the list of buttons */
+	int num;					/* the number of buttons in the list */
+	int length;					/* the length of the row of buttons */
 } button_backup;
 
 /*** Variables ***/
@@ -94,8 +92,7 @@ int button_add_text(const char *label, keycode_t keypress)
 	int length = strlen(label);
 
 	/* Check the label length */
-	if (length > MAX_MOUSE_LABEL)
-	{
+	if (length > MAX_MOUSE_LABEL) {
 		bell("Label too long - button abandoned!");
 		return 0;
 	}
@@ -138,7 +135,7 @@ void button_backup_all(void)
 	button_backup *newbackup;
 
 	newbackup = RNEW(button_backup);
-	if(!newbackup) {
+	if (!newbackup) {
 		return;
 	}
 	if (button_num == 0) {
@@ -152,7 +149,8 @@ void button_backup_all(void)
 			return;
 		}
 		/* Straight memory copy */
-		(void)C_COPY(newbackup->buttons, button_mse, button_num, button_mouse);
+		(void) C_COPY(newbackup->buttons, button_mse, button_num,
+					  button_mouse);
 
 		newbackup->num = button_num;
 		newbackup->length = button_length;
@@ -164,10 +162,10 @@ void button_backup_all(void)
 
 
 	/* Check we haven't already done this */
-	/*if (button_backup[0].key) return;*/
+	/*if (button_backup[0].key) return; */
 
 	/* Straight memory copy */
-	/*(void)C_COPY(button_backup, button_mse, MAX_MOUSE_BUTTONS, button_mouse);*/
+	/*(void)C_COPY(button_backup, button_mse, MAX_MOUSE_BUTTONS, button_mouse); */
 }
 
 
@@ -187,15 +185,18 @@ void button_restore(void)
 		if (button_backups->buttons) {
 			/* traight memory copy */
 			if (button_backups->num > MAX_MOUSE_BUTTONS) {
-				(void)C_COPY(button_mse, button_backups->buttons, MAX_MOUSE_BUTTONS, button_mouse);
+				(void) C_COPY(button_mse, button_backups->buttons,
+							  MAX_MOUSE_BUTTONS, button_mouse);
 				button_num = MAX_MOUSE_BUTTONS;
 				button_length = button_backups->length;
 				/* modify the length of the button row based on the buttons that were not copied */
 				for (i = MAX_MOUSE_BUTTONS; i < button_backups->num; i++) {
-					button_length -= strlen(button_backups->buttons[i].label);
+					button_length -=
+						strlen(button_backups->buttons[i].label);
 				}
 			} else {
-				(void)C_COPY(button_mse, button_backups->buttons, button_backups->num, button_mouse);
+				(void) C_COPY(button_mse, button_backups->buttons,
+							  button_backups->num, button_mouse);
 				button_num = button_backups->num;
 				button_length = button_backups->length;
 			}
@@ -209,7 +210,7 @@ void button_restore(void)
 		FREE(button_backups);
 		button_backups = next;
 	}
-			
+
 	/* signal that the buttons need to be redrawn */
 	p_ptr->redraw |= (PR_BUTTONS);
 }
@@ -224,11 +225,11 @@ int button_kill_text(keycode_t keypress)
 
 	/* Find the button */
 	for (i = 0; i < button_num; i++)
-		if (button_mse[i].key == keypress) break;
+		if (button_mse[i].key == keypress)
+			break;
 
 	/* No such button */
-	if (i == button_num)
-	{
+	if (i == button_num) {
 		return 0;
 	}
 
@@ -237,8 +238,7 @@ int button_kill_text(keycode_t keypress)
 	button_length -= length;
 
 	/* Move each button up one */
-	for (j = i; j < button_num - 1; j++)
-	{
+	for (j = i; j < button_num - 1; j++) {
 		button_mse[j] = button_mse[j + 1];
 
 		/* Adjust length */
@@ -265,7 +265,8 @@ int button_kill_text(keycode_t keypress)
  */
 int button_kill(keycode_t keypress)
 {
-	if (!button_kill_hook) return 0;
+	if (!button_kill_hook)
+		return 0;
 	else
 		return (*button_kill_hook) (keypress);
 }
@@ -278,11 +279,12 @@ void button_kill_all(void)
 	int i;
 
 	/* Paranoia */
-	if (!button_kill_hook) return;
+	if (!button_kill_hook)
+		return;
 
 	/* One by one */
 	for (i = button_num - 1; i >= 0; i--)
-		(void)(*button_kill_hook) (button_mse[i].key);
+		(void) (*button_kill_hook) (button_mse[i].key);
 }
 
 
@@ -332,12 +334,10 @@ char button_get_key(int x, int y)
 {
 	int i;
 
-	for (i = 0; i < button_num; i++)
-	{
+	for (i = 0; i < button_num; i++) {
 		if ((y == button_start_y) &&
-		    (x >= button_start_x + button_mse[i].left) &&
-		    (x <= button_start_x + button_mse[i].right))
-		{
+			(x >= button_start_x + button_mse[i].left) &&
+			(x <= button_start_x + button_mse[i].right)) {
 			return button_mse[i].key;
 		}
 	}
@@ -356,7 +356,8 @@ size_t button_print(int row, int col)
 	button_start_y = row;
 
 	for (j = 0; j < button_num; j++)
-		c_put_str(TERM_SLATE, button_mse[j].label, row, col + button_mse[j].left);
+		c_put_str(TERM_SLATE, button_mse[j].label, row,
+				  col + button_mse[j].left);
 
 	return button_length;
 }
@@ -367,48 +368,49 @@ int button_get_length(void)
 }
 
 #if 0
-typedef struct _button_mouse_2d
-{
-  struct _button_mouse *next;
-  byte id;
-	wchar_t label[MAX_MOUSE_LABEL]; /*!< Label on the button */
-	int left;                    /*!< Column containing the left edge of the button */
-	int right;                   /*!< Column containing the right edge of the button */
-	int top;                     /*!< Row containing the left edge of the button */
-	int bottom;                  /*!< Row containing the right edge of the button */
-	ui_event_type type;          /*!< Is the event generated a key or mouse press */
-	keycode_t code;              /*!< Keypress corresponding to the button */
-  byte mods;                   /*!< modifiers sent with the press */
-  byte list;                   /*!< button list to switch to on press */
+typedef struct _button_mouse_2d {
+	struct _button_mouse *next;
+	byte id;
+	wchar_t label[MAX_MOUSE_LABEL];	/*!< Label on the button */
+	int left;					/*!< Column containing the left edge of the button */
+	int right;					/*!< Column containing the right edge of the button */
+	int top;					/*!< Row containing the left edge of the button */
+	int bottom;					/*!< Row containing the right edge of the button */
+	ui_event_type type;			/*!< Is the event generated a key or mouse press */
+	keycode_t code;				/*!< Keypress corresponding to the button */
+	byte mods;					/*!< modifiers sent with the press */
+	byte list;					/*!< button list to switch to on press */
 } button_mouse2;
 /* if type is mouse, it is stored in a global, to be used at the location of
  * next non button mouse press. */
-typedef struct _button_list
-{
-  struct _button_list *next;
-  byte id;
-  byte prev_list;
-  byte count;
-  btye flags; /* if previous list is not removed from screen, if button miss goes back to previous list */
-  button_mouse *list;
+typedef struct _button_list {
+	struct _button_list *next;
+	byte id;
+	byte prev_list;
+	byte count;
+	btye flags;					/* if previous list is not removed from screen, if button miss goes back to previous list */
+	button_mouse *list;
 } button_list;
 
 extern int button_platform_draw;
 
-int button_add(byte list, button_mouse *src);
-int button_add_key(byte list, byte id, keycode_t code, byte mods, wchar_t *label);
-int button_add_mouse(byte list, byte id, byte button, byte mods, wchar_t *label);
-int button_add_event(byte list, byte id, ui_event *event, wchar_t *label);
+int button_add(byte list, button_mouse * src);
+int button_add_key(byte list, byte id, keycode_t code, byte mods,
+				   wchar_t * label);
+int button_add_mouse(byte list, byte id, byte button, byte mods,
+					 wchar_t * label);
+int button_add_event(byte list, byte id, ui_event * event,
+					 wchar_t * label);
 
 int button_set_delayed(byte list, byte id, bool delayed);
 int button_set_size(byte list, byte id, int width, int height);
 int button_set_pos(byte list, byte id, int y, int x);
-int button_set_label(byte list, byte id, wchar_t *label);
+int button_set_label(byte list, byte id, wchar_t * label);
 
-int button_set_event(byte list, byte id, ui_event *event);
-int button_get_event(byte list, byte id, ui_event *event);
-int button_get_event(int x, int y, ui_event *event);
-int button_get_event(button_mouse2 *button, ui_event *event);
+int button_set_event(byte list, byte id, ui_event * event);
+int button_get_event(byte list, byte id, ui_event * event);
+int button_get_event(int x, int y, ui_event * event);
+int button_get_event(button_mouse2 * button, ui_event * event);
 
 
 int button_show(byte list, byte id);
@@ -430,19 +432,19 @@ byte button_get_current_list_id(void);
 
 size_t button_print(int row, int col);
 
-      // need globals:
-      //  ui_event *delayed_event;
-      //  button_list *active_list;
-      //  button * last_button;
-      //  byte button_list_id;
-      // global button lists:
-      //  initial
-      //  main
-      //  store
-      //  char screen
-      //  get item
+	  // need globals:
+	  //  ui_event *delayed_event;
+	  //  button_list *active_list;
+	  //  button * last_button;
+	  //  byte button_list_id;
+	  // global button lists:
+	  //  initial
+	  //  main
+	  //  store
+	  //  char screen
+	  //  get item
 
 
-      /* if found, and has an ui event, inject the event */
-      /* if found, and it switches the active button list, switch lists */
+	  /* if found, and has an ui event, inject the event */
+	  /* if found, and it switches the active button list, switch lists */
 #endif

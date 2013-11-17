@@ -41,56 +41,54 @@ static int ox, oy, ex, ey;
 
 bool is_valid_pf(int y, int x)
 {
-    feature_type *f_ptr = NULL;
-    int feat = cave_feat[y][x];
+	feature_type *f_ptr = NULL;
+	int feat = cave_feat[y][x];
 
-    /* Hack -- assume unvisited is permitted */
-    if (!sqinfo_has(cave_info[y][x], SQUARE_MARK))
+	/* Hack -- assume unvisited is permitted */
+	if (!sqinfo_has(cave_info[y][x], SQUARE_MARK))
+		return (TRUE);
+
+	/* Get mimiced feat */
+	f_ptr = &f_info[f_info[feat].mimic];
+
+	/* Optionally alter known traps/doors on movement */
+	if (OPT(easy_alter) && (tf_has(f_ptr->flags, TF_DOOR_CLOSED)
+							|| cave_visible_trap(y, x))) {
+		return (TRUE);
+	} else if (cave_visible_trap(y, x) && cave_player_trap(y, x))
+		return (FALSE);
+
+	/* Require moveable space */
+	if (tf_has(f_ptr->flags, TF_WALL))
+		return (FALSE);
+
+	/* Don't move over lava or void */
+	if (tf_has(f_ptr->flags, TF_FIERY) || tf_has(f_ptr->flags, TF_FALL))
+		return (FALSE);
+
+	/* Otherwise good */
 	return (TRUE);
-
-    /* Get mimiced feat */
-    f_ptr = &f_info[f_info[feat].mimic];
-
-    /* Optionally alter known traps/doors on movement */
-    if (OPT(easy_alter) && (tf_has(f_ptr->flags, TF_DOOR_CLOSED)
-			    || cave_visible_trap(y, x))) 
-    {
-	return (TRUE);
-    }
-    else if (cave_visible_trap(y, x) && cave_player_trap(y, x))
-	return (FALSE);
-
-    /* Require moveable space */
-    if (tf_has(f_ptr->flags, TF_WALL))
-	return (FALSE);
-
-    /* Don't move over lava or void */
-    if (tf_has(f_ptr->flags, TF_FIERY) || tf_has(f_ptr->flags, TF_FALL))
-	return (FALSE);
-
-    /* Otherwise good */
-    return (TRUE);
 }
 
 static void fill_terrain_info(void)
 {
-    int i, j;
+	int i, j;
 
-    ox = MAX(p_ptr->px - MAX_PF_RADIUS / 2, 0);
-    oy = MAX(p_ptr->py - MAX_PF_RADIUS / 2, 0);
+	ox = MAX(p_ptr->px - MAX_PF_RADIUS / 2, 0);
+	oy = MAX(p_ptr->py - MAX_PF_RADIUS / 2, 0);
 
-    ex = MIN(p_ptr->px + MAX_PF_RADIUS / 2 - 1, DUNGEON_WID);
-    ey = MIN(p_ptr->py + MAX_PF_RADIUS / 2 - 1, DUNGEON_HGT);
+	ex = MIN(p_ptr->px + MAX_PF_RADIUS / 2 - 1, DUNGEON_WID);
+	ey = MIN(p_ptr->py + MAX_PF_RADIUS / 2 - 1, DUNGEON_HGT);
 
-    for (i = 0; i < MAX_PF_RADIUS * MAX_PF_RADIUS; i++)
-	terrain[0][i] = -1;
+	for (i = 0; i < MAX_PF_RADIUS * MAX_PF_RADIUS; i++)
+		terrain[0][i] = -1;
 
-    for (j = oy; j < ey; j++)
-	for (i = ox; i < ex; i++)
-	    if (is_valid_pf(j, i))
-		terrain[j - oy][i - ox] = MAX_PF_LENGTH;
+	for (j = oy; j < ey; j++)
+		for (i = ox; i < ex; i++)
+			if (is_valid_pf(j, i))
+				terrain[j - oy][i - ox] = MAX_PF_LENGTH;
 
-    terrain[p_ptr->py - oy][p_ptr->px - ox] = 1;
+	terrain[p_ptr->py - oy][p_ptr->px - ox] = 1;
 }
 
 #define MARK_DISTANCE(c,d) if ((c <= MAX_PF_LENGTH) && (c > d)) \
@@ -98,124 +96,125 @@ static void fill_terrain_info(void)
 
 bool findpath(int y, int x)
 {
-    int i, j, k, dir, starty = 0, startx = 0, start_index;
-    bool try_again;
-    int cur_distance;
-    int findir[] = { 1, 4, 7, 8, 9, 6, 3, 2 };
+	int i, j, k, dir, starty = 0, startx = 0, start_index;
+	bool try_again;
+	int cur_distance;
+	int findir[] = { 1, 4, 7, 8, 9, 6, 3, 2 };
 
-    fill_terrain_info();
+	fill_terrain_info();
 
-    terrain[p_ptr->py - oy][p_ptr->px - ox] = 1;
+	terrain[p_ptr->py - oy][p_ptr->px - ox] = 1;
 
-    if ((x >= ox) && (x < ex) && (y >= oy) && (y < ey)) {
-	if ((cave_m_idx[y][x] > 0) && (m_list[cave_m_idx[y][x]].ml)) {
-	    terrain[y - oy][x - ox] = MAX_PF_LENGTH;
-	}
-	/* else if (terrain[y - oy][x - ox] != MAX_PF_LENGTH) { bell("Target
-	 * blocked"); return (FALSE); } */
-	terrain[y - oy][x - ox] = MAX_PF_LENGTH;
-    } else {
-	bell("Target out of range.");
-	return (FALSE);
-    }
-
-    if (terrain[y - oy][x - ox] == -1) {
-	bell("Target space forbidden");
-	return (FALSE);
-    }
-
-
-    /* 
-     * And now starts the very naive and very 
-     * inefficient pathfinding algorithm
-     */
-    do {
-	try_again = (FALSE);
-	for (j = oy + 1; j < ey - 1; j++)
-	    for (i = ox + 1; i < ex - 1; i++) {
-		cur_distance = terrain[j - oy][i - ox] + 1;
-		if ((cur_distance > 0) && (cur_distance < MAX_PF_LENGTH)) {
-		    for (dir = 1; dir < 10; dir++) {
-			if (dir == 5)
-			    continue;
-			MARK_DISTANCE(terrain[j - oy + ddy[dir]]
-				      [i - ox + ddx[dir]], cur_distance);
-		    }
+	if ((x >= ox) && (x < ex) && (y >= oy) && (y < ey)) {
+		if ((cave_m_idx[y][x] > 0) && (m_list[cave_m_idx[y][x]].ml)) {
+			terrain[y - oy][x - ox] = MAX_PF_LENGTH;
 		}
-	    }
-	if (terrain[y - oy][x - ox] < MAX_PF_LENGTH)
-	    try_again = (FALSE);
-    } while (try_again);
-
-    /* Failure */
-    if (terrain[y - oy][x - ox] == MAX_PF_LENGTH) {
-	bell("Target space unreachable.");
-	return (FALSE);
-    }
-
-    /* Success */
-    i = x;
-    j = y;
-
-    pf_result_index = 0;
-
-    while ((i != p_ptr->px) || (j != p_ptr->py)) {
-	int xdiff = i - p_ptr->px, ydiff = j - p_ptr->py;
-
-	cur_distance = terrain[j - oy][i - ox] - 1;
-
-	/* Starting direction */
-	if (xdiff < 0)
-	    startx = 1;
-	else if (xdiff > 0)
-	    startx = -1;
-	else
-	    startx = 0;
-
-	if (ydiff < 0)
-	    starty = 1;
-	else if (ydiff > 0)
-	    starty = -1;
-	else
-	    starty = 0;
-
-	for (dir = 1; dir < 10; dir++)
-	    if ((ddx[dir] == startx) && (ddy[dir] == starty))
-		break;
-
-	/* Should never happend */
-	if ((dir % 5) == 0) {
-	    bell("Wtf ?");
-	    return (FALSE);
+		/* else if (terrain[y - oy][x - ox] != MAX_PF_LENGTH) { bell("Target
+		 * blocked"); return (FALSE); } */
+		terrain[y - oy][x - ox] = MAX_PF_LENGTH;
+	} else {
+		bell("Target out of range.");
+		return (FALSE);
 	}
 
-	for (start_index = 0; findir[start_index % 8] != dir; start_index++);
-
-	for (k = 0; k < 5; k++) {
-	    dir = findir[(start_index + k) % 8];
-	    if (terrain[j - oy + ddy[dir]][i - ox + ddx[dir]]
-		== cur_distance)
-		break;
-	    dir = findir[(8 + start_index - k) % 8];
-	    if (terrain[j - oy + ddy[dir]][i - ox + ddx[dir]]
-		== cur_distance)
-		break;
+	if (terrain[y - oy][x - ox] == -1) {
+		bell("Target space forbidden");
+		return (FALSE);
 	}
 
-	/* Should never happend */
-	if (k == 5) {
-	    bell("Heyyy !");
-	    return (FALSE);
+
+	/* 
+	 * And now starts the very naive and very 
+	 * inefficient pathfinding algorithm
+	 */
+	do {
+		try_again = (FALSE);
+		for (j = oy + 1; j < ey - 1; j++)
+			for (i = ox + 1; i < ex - 1; i++) {
+				cur_distance = terrain[j - oy][i - ox] + 1;
+				if ((cur_distance > 0) && (cur_distance < MAX_PF_LENGTH)) {
+					for (dir = 1; dir < 10; dir++) {
+						if (dir == 5)
+							continue;
+						MARK_DISTANCE(terrain[j - oy + ddy[dir]]
+									  [i - ox + ddx[dir]], cur_distance);
+					}
+				}
+			}
+		if (terrain[y - oy][x - ox] < MAX_PF_LENGTH)
+			try_again = (FALSE);
+	} while (try_again);
+
+	/* Failure */
+	if (terrain[y - oy][x - ox] == MAX_PF_LENGTH) {
+		bell("Target space unreachable.");
+		return (FALSE);
 	}
 
-	pf_result[pf_result_index++] = '0' + (char) (10 - dir);
-	i += ddx[dir];
-	j += ddy[dir];
-	starty = 0;
-	startx = 0;
-    }
-    pf_result_index--;
-    return (TRUE);
+	/* Success */
+	i = x;
+	j = y;
+
+	pf_result_index = 0;
+
+	while ((i != p_ptr->px) || (j != p_ptr->py)) {
+		int xdiff = i - p_ptr->px, ydiff = j - p_ptr->py;
+
+		cur_distance = terrain[j - oy][i - ox] - 1;
+
+		/* Starting direction */
+		if (xdiff < 0)
+			startx = 1;
+		else if (xdiff > 0)
+			startx = -1;
+		else
+			startx = 0;
+
+		if (ydiff < 0)
+			starty = 1;
+		else if (ydiff > 0)
+			starty = -1;
+		else
+			starty = 0;
+
+		for (dir = 1; dir < 10; dir++)
+			if ((ddx[dir] == startx) && (ddy[dir] == starty))
+				break;
+
+		/* Should never happend */
+		if ((dir % 5) == 0) {
+			bell("Wtf ?");
+			return (FALSE);
+		}
+
+		for (start_index = 0; findir[start_index % 8] != dir;
+			 start_index++);
+
+		for (k = 0; k < 5; k++) {
+			dir = findir[(start_index + k) % 8];
+			if (terrain[j - oy + ddy[dir]][i - ox + ddx[dir]]
+				== cur_distance)
+				break;
+			dir = findir[(8 + start_index - k) % 8];
+			if (terrain[j - oy + ddy[dir]][i - ox + ddx[dir]]
+				== cur_distance)
+				break;
+		}
+
+		/* Should never happend */
+		if (k == 5) {
+			bell("Heyyy !");
+			return (FALSE);
+		}
+
+		pf_result[pf_result_index++] = '0' + (char) (10 - dir);
+		i += ddx[dir];
+		j += ddy[dir];
+		starty = 0;
+		startx = 0;
+	}
+	pf_result_index--;
+	return (TRUE);
 }
 
 
@@ -224,28 +223,28 @@ bool findpath(int y, int x)
  */
 static int see_wall(int dir, int y, int x)
 {
-    feature_type *f_ptr;
+	feature_type *f_ptr;
 
-    /* Get the new location */
-    y += ddy[dir];
-    x += ddx[dir];
+	/* Get the new location */
+	y += ddy[dir];
+	x += ddx[dir];
 
-    /* Illegal grids are not known walls XXX XXX XXX */
-    if (!in_bounds(y, x))
-	return (FALSE);
+	/* Illegal grids are not known walls XXX XXX XXX */
+	if (!in_bounds(y, x))
+		return (FALSE);
 
-    f_ptr = &f_info[cave_feat[y][x]];
+	f_ptr = &f_info[cave_feat[y][x]];
 
-    /* Non-wall grids are not known walls */
-    if (!tf_has(f_ptr->flags, TF_WALL))
-	return (FALSE);
+	/* Non-wall grids are not known walls */
+	if (!tf_has(f_ptr->flags, TF_WALL))
+		return (FALSE);
 
-    /* Unknown walls are not known walls */
-    if (!sqinfo_has(cave_info[y][x], SQUARE_MARK))
-	return (FALSE);
+	/* Unknown walls are not known walls */
+	if (!sqinfo_has(cave_info[y][x], SQUARE_MARK))
+		return (FALSE);
 
-    /* Default */
-    return (TRUE);
+	/* Default */
+	return (TRUE);
 }
 
 
@@ -262,24 +261,21 @@ int get_angle_to_target(int y0, int x0, int y1, int x1, int dir)
 	int dist_conv;
 
 	/* No valid compass direction given */
-	if ((dir == 0) || (dir == 5) || (dir > 9))
-	{
+	if ((dir == 0) || (dir == 5) || (dir > 9)) {
 		/* Check for a valid target */
-		if ((y1) && (x1))
-		{
+		if ((y1) && (x1)) {
 			/* Get absolute distance between source and target */
 			int dy = ABS(y1 - y0);
 			int dx = ABS(x1 - x0);
 
 			/* Calculate distance conversion factor */
-			if ((dy > 20) || (dx > 20))
-			{
+			if ((dy > 20) || (dx > 20)) {
 				/* Must shrink the distance to avoid illegal table access */
-				if (dy > dx) dist_conv = 1 + (10 * dy / 20);
-				else         dist_conv = 1 + (10 * dx / 20);
-			}
-			else
-			{
+				if (dy > dx)
+					dist_conv = 1 + (10 * dy / 20);
+				else
+					dist_conv = 1 + (10 * dx / 20);
+			} else {
 				dist_conv = 10;
 			}
 			/* Convert and reorient grid for table access */
@@ -287,23 +283,20 @@ int get_angle_to_target(int y0, int x0, int y1, int x1, int dir)
 			nx = 20 + 10 * (x1 - x0) / dist_conv;
 
 			/* Illegal table access is bad */
-			if ((ny < 0) || (ny > 40) || (nx < 0) || (nx > 40))
-			{
+			if ((ny < 0) || (ny > 40) || (nx < 0) || (nx > 40)) {
 				/* Note error */
 				return (-1);
 			}
 		}
 
 		/* No compass direction and no target --> note error */
-		else
-		{
+		else {
 			return (-1);
 		}
 	}
 
 	/* We have a valid compass direction */
-	else
-	{
+	else {
 		/* Step in that direction a bunch of times, get target */
 		y1 = y0 + (ddy_ddd[dir] * 10);
 		x1 = x0 + (ddx_ddd[dir] * 10);
@@ -469,7 +462,8 @@ int get_angle_to_target(int y0, int x0, int y1, int x1, int dir)
 /**
  * Hack -- allow quick "cycling" through the legal directions
  */
-static byte cycle[] = { 1, 2, 3, 6, 9, 8, 7, 4, 1, 2, 3, 6, 9, 8, 7, 4, 1 };
+static byte cycle[] =
+	{ 1, 2, 3, 6, 9, 8, 7, 4, 1, 2, 3, 6, 9, 8, 7, 4, 1 };
 
 /**
  * Hack -- map each direction into the "middle" of the "cycle[]" array
@@ -494,91 +488,91 @@ static byte chome[] = { 0, 8, 9, 10, 7, 0, 11, 6, 5, 4 };
  */
 static void run_init(int dir)
 {
-    int py = p_ptr->py;
-    int px = p_ptr->px;
+	int py = p_ptr->py;
+	int px = p_ptr->px;
 
-    int i, row, col;
+	int i, row, col;
 
-    bool deepleft, deepright;
-    bool shortleft, shortright;
+	bool deepleft, deepright;
+	bool shortleft, shortright;
 
 
-    /* Save the direction */
-    p_ptr->run_cur_dir = dir;
+	/* Save the direction */
+	p_ptr->run_cur_dir = dir;
 
-    /* Assume running straight */
-    p_ptr->run_old_dir = dir;
+	/* Assume running straight */
+	p_ptr->run_old_dir = dir;
 
-    /* If it's wilderness, done -NRM- */
-    if ((stage_map[p_ptr->stage][STAGE_TYPE] != CAVE)
-	&& (stage_map[p_ptr->stage][STAGE_TYPE] != TOWN))
-	return;
+	/* If it's wilderness, done -NRM- */
+	if ((stage_map[p_ptr->stage][STAGE_TYPE] != CAVE)
+		&& (stage_map[p_ptr->stage][STAGE_TYPE] != TOWN))
+		return;
 
-    /* Assume looking for open area */
-    p_ptr->run_open_area = TRUE;
+	/* Assume looking for open area */
+	p_ptr->run_open_area = TRUE;
 
-    /* Assume not looking for breaks */
-    p_ptr->run_break_right = FALSE;
-    p_ptr->run_break_left = FALSE;
+	/* Assume not looking for breaks */
+	p_ptr->run_break_right = FALSE;
+	p_ptr->run_break_left = FALSE;
 
-    /* Assume no nearby walls */
-    deepleft = deepright = FALSE;
-    shortright = shortleft = FALSE;
+	/* Assume no nearby walls */
+	deepleft = deepright = FALSE;
+	shortright = shortleft = FALSE;
 
-    /* Find the destination grid */
-    row = py + ddy[dir];
-    col = px + ddx[dir];
+	/* Find the destination grid */
+	row = py + ddy[dir];
+	col = px + ddx[dir];
 
-    /* Extract cycle index */
-    i = chome[dir];
+	/* Extract cycle index */
+	i = chome[dir];
 
-    /* Check for nearby wall */
-    if (see_wall(cycle[i + 1], py, px)) {
-	p_ptr->run_break_left = TRUE;
-	shortleft = TRUE;
-    }
-
-    /* Check for distant wall */
-    else if (see_wall(cycle[i + 1], row, col)) {
-	p_ptr->run_break_left = TRUE;
-	deepleft = TRUE;
-    }
-
-    /* Check for nearby wall */
-    if (see_wall(cycle[i - 1], py, px)) {
-	p_ptr->run_break_right = TRUE;
-	shortright = TRUE;
-    }
-
-    /* Check for distant wall */
-    else if (see_wall(cycle[i - 1], row, col)) {
-	p_ptr->run_break_right = TRUE;
-	deepright = TRUE;
-    }
-
-    /* Looking for a break */
-    if (p_ptr->run_break_left && p_ptr->run_break_right) {
-	/* Not looking for open area */
-	p_ptr->run_open_area = FALSE;
-
-	/* Hack -- allow angled corridor entry */
-	if (dir & 0x01) {
-	    if (deepleft && !deepright) {
-		p_ptr->run_old_dir = cycle[i - 1];
-	    } else if (deepright && !deepleft) {
-		p_ptr->run_old_dir = cycle[i + 1];
-	    }
+	/* Check for nearby wall */
+	if (see_wall(cycle[i + 1], py, px)) {
+		p_ptr->run_break_left = TRUE;
+		shortleft = TRUE;
 	}
 
-	/* Hack -- allow blunt corridor entry */
-	else if (see_wall(cycle[i], row, col)) {
-	    if (shortleft && !shortright) {
-		p_ptr->run_old_dir = cycle[i - 2];
-	    } else if (shortright && !shortleft) {
-		p_ptr->run_old_dir = cycle[i + 2];
-	    }
+	/* Check for distant wall */
+	else if (see_wall(cycle[i + 1], row, col)) {
+		p_ptr->run_break_left = TRUE;
+		deepleft = TRUE;
 	}
-    }
+
+	/* Check for nearby wall */
+	if (see_wall(cycle[i - 1], py, px)) {
+		p_ptr->run_break_right = TRUE;
+		shortright = TRUE;
+	}
+
+	/* Check for distant wall */
+	else if (see_wall(cycle[i - 1], row, col)) {
+		p_ptr->run_break_right = TRUE;
+		deepright = TRUE;
+	}
+
+	/* Looking for a break */
+	if (p_ptr->run_break_left && p_ptr->run_break_right) {
+		/* Not looking for open area */
+		p_ptr->run_open_area = FALSE;
+
+		/* Hack -- allow angled corridor entry */
+		if (dir & 0x01) {
+			if (deepleft && !deepright) {
+				p_ptr->run_old_dir = cycle[i - 1];
+			} else if (deepright && !deepleft) {
+				p_ptr->run_old_dir = cycle[i + 1];
+			}
+		}
+
+		/* Hack -- allow blunt corridor entry */
+		else if (see_wall(cycle[i], row, col)) {
+			if (shortleft && !shortright) {
+				p_ptr->run_old_dir = cycle[i - 2];
+			} else if (shortright && !shortleft) {
+				p_ptr->run_old_dir = cycle[i + 2];
+			}
+		}
+	}
 }
 
 
@@ -589,421 +583,409 @@ static void run_init(int dir)
  */
 static bool run_test(void)
 {
-    int py = p_ptr->py;
-    int px = p_ptr->px;
+	int py = p_ptr->py;
+	int px = p_ptr->px;
 
-    int prev_dir;
-    int new_dir;
-    int left_dir;
-    int right_dir;
+	int prev_dir;
+	int new_dir;
+	int left_dir;
+	int right_dir;
 
-    int row, col;
-    int i, max, inv;
-    int option, option2;
+	int row, col;
+	int i, max, inv;
+	int option, option2;
 
-    feature_type *f_ptr;
+	feature_type *f_ptr;
 
-    /* No options yet */
-    option = 0;
-    option2 = 0;
+	/* No options yet */
+	option = 0;
+	option2 = 0;
 
-    /* Where we came from */
-    prev_dir = p_ptr->run_old_dir;
+	/* Where we came from */
+	prev_dir = p_ptr->run_old_dir;
 
-    /* Range of newly adjacent grids */
-    max = (prev_dir & 0x01) + 1;
+	/* Range of newly adjacent grids */
+	max = (prev_dir & 0x01) + 1;
 
-    /* Simplistic running for outdoors -NRM- */
-    if ((stage_map[p_ptr->stage][STAGE_TYPE] != CAVE)
-	&& (stage_map[p_ptr->stage][STAGE_TYPE] != TOWN)) {
+	/* Simplistic running for outdoors -NRM- */
+	if ((stage_map[p_ptr->stage][STAGE_TYPE] != CAVE)
+		&& (stage_map[p_ptr->stage][STAGE_TYPE] != TOWN)) {
+		/* Look at every newly adjacent square. */
+		for (i = -max; i <= max; i++) {
+			s16b this_o_idx, next_o_idx = 0;
+
+
+			/* New direction */
+			new_dir = cycle[chome[prev_dir] + i];
+
+			/* New location */
+			row = py + ddy[new_dir];
+			col = px + ddx[new_dir];
+
+
+			/* Visible monsters abort running */
+			if (cave_m_idx[row][col] > 0) {
+				monster_type *m_ptr = &m_list[cave_m_idx[row][col]];
+
+				/* Visible monster */
+				if (m_ptr->ml)
+					return (TRUE);
+			}
+
+			/* Visible objects abort running */
+			for (this_o_idx = cave_o_idx[row][col]; this_o_idx;
+				 this_o_idx = next_o_idx) {
+				object_type *o_ptr;
+
+				/* Acquire object */
+				o_ptr = &o_list[this_o_idx];
+
+				/* Acquire next object */
+				next_o_idx = o_ptr->next_o_idx;
+
+				/* Visible object */
+				if (o_ptr->marked && !squelch_hide_item(o_ptr))
+					return (TRUE);
+			}
+		}
+
+		/* Assume main direction */
+		new_dir = p_ptr->run_old_dir;
+		row = py + ddy[new_dir];
+		col = px + ddx[new_dir];
+		f_ptr = &f_info[cave_feat[row][col]];
+
+
+		/* Step if there's a path in the right direction */
+		if (tf_has(f_ptr->flags, TF_RUN1) && !cave_visible_trap(row, col)) {
+			p_ptr->run_cur_dir = new_dir;
+			return (FALSE);
+		}
+
+		/* Check to the left */
+		left_dir = cycle[chome[prev_dir] - 1];
+		row = py + ddy[left_dir];
+		col = px + ddx[left_dir];
+		f_ptr = &f_info[cave_feat[row][col]];
+		if (tf_has(f_ptr->flags, TF_RUN1) && !cave_visible_trap(row, col))
+			option = left_dir;
+
+		/* Check to the right */
+		right_dir = cycle[chome[prev_dir] + 1];
+		row = py + ddy[right_dir];
+		col = px + ddx[right_dir];
+		f_ptr = &f_info[cave_feat[row][col]];
+		if (tf_has(f_ptr->flags, TF_RUN1) && !cave_visible_trap(row, col))
+			option2 = right_dir;
+
+		/* Stop if it's a fork */
+		if (option && option2)
+			return (TRUE);
+
+		/* Otherwise step in the secondary direction */
+		if (option) {
+			p_ptr->run_cur_dir = left_dir;
+			return (FALSE);
+		} else if (option2) {
+			p_ptr->run_cur_dir = right_dir;
+			return (FALSE);
+		}
+
+		/* No paths, so try grass */
+		row = py + ddy[new_dir];
+		col = px + ddx[new_dir];
+		f_ptr = &f_info[cave_feat[row][col]];
+
+
+		/* Step if there's grass in the right direction */
+		if (tf_has(f_ptr->flags, TF_RUN2) && !cave_visible_trap(row, col)) {
+			p_ptr->run_cur_dir = new_dir;
+			return (FALSE);
+		}
+
+		/* Check to the left */
+		row = py + ddy[left_dir];
+		col = px + ddx[left_dir];
+		f_ptr = &f_info[cave_feat[row][col]];
+		if (tf_has(f_ptr->flags, TF_RUN2) && !cave_visible_trap(row, col))
+			option = left_dir;
+
+		/* Check to the right */
+		right_dir = cycle[chome[prev_dir] + 1];
+		row = py + ddy[right_dir];
+		col = px + ddx[right_dir];
+		f_ptr = &f_info[cave_feat[row][col]];
+		if (tf_has(f_ptr->flags, TF_RUN2) && !cave_visible_trap(row, col))
+			option2 = right_dir;
+
+		/* Stop if it's a fork */
+		if (option && option2)
+			return (TRUE);
+
+		/* Otherwise step in the secondary direction */
+		if (option) {
+			p_ptr->run_cur_dir = left_dir;
+			return (FALSE);
+		} else if (option2) {
+			p_ptr->run_cur_dir = right_dir;
+			return (FALSE);
+		}
+
+	}
+
 	/* Look at every newly adjacent square. */
 	for (i = -max; i <= max; i++) {
-	    s16b this_o_idx, next_o_idx = 0;
+		s16b this_o_idx, next_o_idx = 0;
 
 
-	    /* New direction */
-	    new_dir = cycle[chome[prev_dir] + i];
+		/* New direction */
+		new_dir = cycle[chome[prev_dir] + i];
 
-	    /* New location */
-	    row = py + ddy[new_dir];
-	    col = px + ddx[new_dir];
-
-
-	    /* Visible monsters abort running */
-	    if (cave_m_idx[row][col] > 0) {
-		monster_type *m_ptr = &m_list[cave_m_idx[row][col]];
-
-		/* Visible monster */
-		if (m_ptr->ml)
-		    return (TRUE);
-	    }
-
-	    /* Visible objects abort running */
-	    for (this_o_idx = cave_o_idx[row][col]; this_o_idx;
-		 this_o_idx = next_o_idx) {
-		object_type *o_ptr;
-
-		/* Acquire object */
-		o_ptr = &o_list[this_o_idx];
-
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
-
-		/* Visible object */
-		if (o_ptr->marked && !squelch_hide_item(o_ptr))
-		    return (TRUE);
-	    }
-	}
-
-	/* Assume main direction */
-	new_dir = p_ptr->run_old_dir;
-	row = py + ddy[new_dir];
-	col = px + ddx[new_dir];
-	f_ptr = &f_info[cave_feat[row][col]];
+		/* New location */
+		row = py + ddy[new_dir];
+		col = px + ddx[new_dir];
 
 
-	/* Step if there's a path in the right direction */
-	if (tf_has(f_ptr->flags, TF_RUN1) && !cave_visible_trap(row, col)) 
-	{
-	    p_ptr->run_cur_dir = new_dir;
-	    return (FALSE);
-	}
+		/* Visible monsters abort running */
+		if (cave_m_idx[row][col] > 0) {
+			monster_type *m_ptr = &m_list[cave_m_idx[row][col]];
 
-	/* Check to the left */
-	left_dir = cycle[chome[prev_dir] - 1];
-	row = py + ddy[left_dir];
-	col = px + ddx[left_dir];
-	f_ptr = &f_info[cave_feat[row][col]];
-	if (tf_has(f_ptr->flags, TF_RUN1) && !cave_visible_trap(row, col)) 
-	    option = left_dir;
+			/* Visible monster */
+			if (m_ptr->ml)
+				return (TRUE);
+		}
 
-	/* Check to the right */
-	right_dir = cycle[chome[prev_dir] + 1];
-	row = py + ddy[right_dir];
-	col = px + ddx[right_dir];
-	f_ptr = &f_info[cave_feat[row][col]];
-	if (tf_has(f_ptr->flags, TF_RUN1) && !cave_visible_trap(row, col)) 
-	    option2 = right_dir;
+		/* Visible objects abort running */
+		for (this_o_idx = cave_o_idx[row][col]; this_o_idx;
+			 this_o_idx = next_o_idx) {
+			object_type *o_ptr;
 
-	/* Stop if it's a fork */
-	if (option && option2)
-	    return (TRUE);
+			/* Acquire object */
+			o_ptr = &o_list[this_o_idx];
 
-	/* Otherwise step in the secondary direction */
-	if (option) {
-	    p_ptr->run_cur_dir = left_dir;
-	    return (FALSE);
-	} else if (option2) {
-	    p_ptr->run_cur_dir = right_dir;
-	    return (FALSE);
-	}
+			/* Acquire next object */
+			next_o_idx = o_ptr->next_o_idx;
 
-	/* No paths, so try grass */
-	row = py + ddy[new_dir];
-	col = px + ddx[new_dir];
-	f_ptr = &f_info[cave_feat[row][col]];
+			/* Visible object */
+			if (o_ptr->marked)
+				return (TRUE);
+		}
 
 
-	/* Step if there's grass in the right direction */
-	if (tf_has(f_ptr->flags, TF_RUN2) && !cave_visible_trap(row, col)) 
-	{
-	    p_ptr->run_cur_dir = new_dir;
-	    return (FALSE);
-	}
+		/* Assume unknown */
+		inv = TRUE;
 
-	/* Check to the left */
-	row = py + ddy[left_dir];
-	col = px + ddx[left_dir];
-	f_ptr = &f_info[cave_feat[row][col]];
-	if (tf_has(f_ptr->flags, TF_RUN2) && !cave_visible_trap(row, col)) 
-	    option = left_dir;
+		/* Check memorized grids */
+		if (sqinfo_has(cave_info[row][col], SQUARE_MARK)) {
+			bool notice = TRUE;
 
-	/* Check to the right */
-	right_dir = cycle[chome[prev_dir] + 1];
-	row = py + ddy[right_dir];
-	col = px + ddx[right_dir];
-	f_ptr = &f_info[cave_feat[row][col]];
-	if (tf_has(f_ptr->flags, TF_RUN2) && !cave_visible_trap(row, col)) 
-	    option2 = right_dir;
+			/* Examine the terrain */
+			f_ptr = &f_info[cave_feat[row][col]];
 
-	/* Stop if it's a fork */
-	if (option && option2)
-	    return (TRUE);
+			/* Open doors */
+			if (tf_has(f_ptr->flags, TF_DOOR_ANY) &&
+				tf_has(f_ptr->flags, TF_PASSABLE)) {
+				/* Option -- ignore */
+				if (OPT(run_ignore_doors))
+					notice = FALSE;
+			}
 
-	/* Otherwise step in the secondary direction */
-	if (option) {
-	    p_ptr->run_cur_dir = left_dir;
-	    return (FALSE);
-	} else if (option2) {
-	    p_ptr->run_cur_dir = right_dir;
-	    return (FALSE);
-	}
+			/* Stairs */
+			if (tf_has(f_ptr->flags, TF_STAIR)) {
+				/* Option -- ignore */
+				if (OPT(run_ignore_stairs))
+					notice = FALSE;
+			}
 
-    }
+			/* Boring grids */
+			if (!tf_has(f_ptr->flags, TF_INTERESTING) &&
+				!cave_visible_trap(row, col)) {
+				/* Ignore */
+				notice = FALSE;
+			}
 
-    /* Look at every newly adjacent square. */
-    for (i = -max; i <= max; i++) {
-	s16b this_o_idx, next_o_idx = 0;
+			/* Interesting feature */
+			if (notice)
+				return (TRUE);
 
+			/* The grid is "visible" */
+			inv = FALSE;
+		}
 
-	/* New direction */
-	new_dir = cycle[chome[prev_dir] + i];
+		/* Analyze unknown grids and floors */
+		f_ptr = &f_info[cave_feat[row][col]];
+		if (inv || tf_has(f_ptr->flags, TF_FLOOR)) {
+			/* Looking for open area */
+			if (p_ptr->run_open_area) {
+				/* Nothing */
+			}
 
-	/* New location */
-	row = py + ddy[new_dir];
-	col = px + ddx[new_dir];
+			/* The first new direction. */
+			else if (!option) {
+				option = new_dir;
+			}
 
+			/* Three new directions. Stop running. */
+			else if (option2) {
+				return (TRUE);
+			}
 
-	/* Visible monsters abort running */
-	if (cave_m_idx[row][col] > 0) {
-	    monster_type *m_ptr = &m_list[cave_m_idx[row][col]];
+			/* Two non-adjacent new directions.  Stop running. */
+			else if (option != cycle[chome[prev_dir] + i - 1]) {
+				return (TRUE);
+			}
 
-	    /* Visible monster */
-	    if (m_ptr->ml)
-		return (TRUE);
-	}
+			/* Two new (adjacent) directions (case 1) */
+			else if (new_dir & 0x01) {
+				option2 = new_dir;
+			}
 
-	/* Visible objects abort running */
-	for (this_o_idx = cave_o_idx[row][col]; this_o_idx;
-	     this_o_idx = next_o_idx) {
-	    object_type *o_ptr;
+			/* Two new (adjacent) directions (case 2) */
+			else {
+				option2 = option;
+				option = new_dir;
+			}
+		}
 
-	    /* Acquire object */
-	    o_ptr = &o_list[this_o_idx];
+		/* Obstacle, while looking for open area */
+		else {
+			if (p_ptr->run_open_area) {
+				if (i < 0) {
+					/* Break to the right */
+					p_ptr->run_break_right = TRUE;
+				}
 
-	    /* Acquire next object */
-	    next_o_idx = o_ptr->next_o_idx;
-
-	    /* Visible object */
-	    if (o_ptr->marked)
-		return (TRUE);
+				else if (i > 0) {
+					/* Break to the left */
+					p_ptr->run_break_left = TRUE;
+				}
+			}
+		}
 	}
 
 
-	/* Assume unknown */
-	inv = TRUE;
+	/* Look at every soon to be newly adjacent square. */
+	for (i = -max; i <= max; i++) {
+		/* New direction */
+		new_dir = cycle[chome[prev_dir] + i];
 
-	/* Check memorized grids */
-	if (sqinfo_has(cave_info[row][col], SQUARE_MARK)) 
-	{
-	    bool notice = TRUE;
+		/* New location */
+		row = py + ddy[prev_dir] + ddy[new_dir];
+		col = px + ddx[prev_dir] + ddx[new_dir];
 
-	    /* Examine the terrain */
-	    f_ptr = &f_info[cave_feat[row][col]];
-	    
-	    /* Open doors */
-	    if (tf_has(f_ptr->flags, TF_DOOR_ANY) && 
-		tf_has(f_ptr->flags, TF_PASSABLE))
-	    {
-		/* Option -- ignore */
-		if (OPT(run_ignore_doors))
-		    notice = FALSE;
-	    }
+		/* HACK: Ugh. Sometimes we come up with illegal bounds. This will
+		 * treat the symptom but not the disease. */
+		if (row >= DUNGEON_HGT || col >= DUNGEON_WID)
+			continue;
+		if (row < 0 || col < 0)
+			continue;
 
-	    /* Stairs */
-	    if (tf_has(f_ptr->flags, TF_STAIR)) 
-	    {
-		/* Option -- ignore */
-		if (OPT(run_ignore_stairs))
-		    notice = FALSE;
-	    }
+		/* Visible monsters abort running */
+		if (cave_m_idx[row][col] > 0) {
+			monster_type *m_ptr = &m_list[cave_m_idx[row][col]];
 
-	    /* Boring grids */
-	    if (!tf_has(f_ptr->flags, TF_INTERESTING) &&
-		!cave_visible_trap(row, col))
-	    {
-		/* Ignore */
-		notice = FALSE;
-	    }
+			/* Visible monster */
+			if (m_ptr->ml)
+				return (TRUE);
+		}
 
-	    /* Interesting feature */
-	    if (notice)
-		return (TRUE);
+		/* Visible monsters abort running */
+		if (cave_m_idx[row][col] > 0) {
+			monster_type *m_ptr = &m_list[cave_m_idx[row][col]];
 
-	    /* The grid is "visible" */
-	    inv = FALSE;
+			/* Visible monster */
+			if (m_ptr->ml)
+				return (TRUE);
+		}
 	}
 
-	/* Analyze unknown grids and floors */
-	f_ptr = &f_info[cave_feat[row][col]];
-	if (inv || tf_has(f_ptr->flags, TF_FLOOR)) {
-	    /* Looking for open area */
-	    if (p_ptr->run_open_area) {
-		/* Nothing */
-	    }
+	/* Looking for open area */
+	if (p_ptr->run_open_area) {
+		/* Hack -- look again */
+		for (i = -max; i < 0; i++) {
+			new_dir = cycle[chome[prev_dir] + i];
 
-	    /* The first new direction. */
-	    else if (!option) {
-		option = new_dir;
-	    }
+			row = py + ddy[new_dir];
+			col = px + ddx[new_dir];
+			f_ptr = &f_info[cave_feat[row][col]];
 
-	    /* Three new directions. Stop running. */
-	    else if (option2) {
-		return (TRUE);
-	    }
+			/* Unknown grid or non-wall */
+			/* Was: cave_floor_bold(row, col) */
+			if (!sqinfo_has(cave_info[row][col], SQUARE_MARK)
+				|| !tf_has(f_ptr->flags, TF_ROCK)) {
+				/* Looking to break right */
+				if (p_ptr->run_break_right)
+					return (TRUE);
+			}
 
-	    /* Two non-adjacent new directions.  Stop running. */
-	    else if (option != cycle[chome[prev_dir] + i - 1]) {
-		return (TRUE);
-	    }
+			/* Obstacle */
+			else {
+				/* Looking to break left */
+				if (p_ptr->run_break_left)
+					return (TRUE);
+			}
+		}
 
-	    /* Two new (adjacent) directions (case 1) */
-	    else if (new_dir & 0x01) {
-		option2 = new_dir;
-	    }
+		/* Hack -- look again */
+		for (i = max; i > 0; i--) {
+			new_dir = cycle[chome[prev_dir] + i];
 
-	    /* Two new (adjacent) directions (case 2) */
-	    else {
-		option2 = option;
-		option = new_dir;
-	    }
+			row = py + ddy[new_dir];
+			col = px + ddx[new_dir];
+			f_ptr = &f_info[cave_feat[row][col]];
+
+			/* Unknown grid or non-wall */
+			/* Was: cave_floor_bold(row, col) */
+			if (!sqinfo_has(cave_info[row][col], SQUARE_MARK)
+				|| !tf_has(f_ptr->flags, TF_ROCK)) {
+				/* Looking to break left */
+				if (p_ptr->run_break_left)
+					return (TRUE);
+			}
+
+			/* Obstacle */
+			else {
+				/* Looking to break right */
+				if (p_ptr->run_break_right)
+					return (TRUE);
+			}
+		}
 	}
 
-	/* Obstacle, while looking for open area */
+
+	/* Not looking for open area */
 	else {
-	    if (p_ptr->run_open_area) {
-		if (i < 0) {
-		    /* Break to the right */
-		    p_ptr->run_break_right = TRUE;
+		/* No options */
+		if (!option)
+			return (TRUE);
+
+		/* One option */
+		else if (!option2) {
+			/* Primary option */
+			p_ptr->run_cur_dir = option;
+
+			/* No other options */
+			p_ptr->run_old_dir = option;
 		}
 
-		else if (i > 0) {
-		    /* Break to the left */
-		    p_ptr->run_break_left = TRUE;
+		/* Two options, examining corners */
+		else {
+			/* Primary option */
+			p_ptr->run_cur_dir = option;
+
+			/* Hack -- allow curving */
+			p_ptr->run_old_dir = option2;
 		}
-	    }
-	}
-    }
-
-
-    /* Look at every soon to be newly adjacent square. */
-    for (i = -max; i <= max; i++)
-    {		
-	/* New direction */
-	new_dir = cycle[chome[prev_dir] + i];
-		
-	/* New location */
-	row = py + ddy[prev_dir] + ddy[new_dir];
-	col = px + ddx[prev_dir] + ddx[new_dir];
-		
-	/* HACK: Ugh. Sometimes we come up with illegal bounds. This will
-	 * treat the symptom but not the disease. */
-	if (row >= DUNGEON_HGT || col >= DUNGEON_WID) continue;
-	if (row < 0 || col < 0) continue;
-
-	    /* Visible monsters abort running */
-	    if (cave_m_idx[row][col] > 0) {
-		monster_type *m_ptr = &m_list[cave_m_idx[row][col]];
-
-		/* Visible monster */
-		if (m_ptr->ml)
-		    return (TRUE);
-	    }
-
-	/* Visible monsters abort running */
-	if (cave_m_idx[row][col] > 0)
-	{
-	    monster_type *m_ptr = &m_list[cave_m_idx[row][col]];
-			
-	    /* Visible monster */
-	    if (m_ptr->ml) return (TRUE);			
-	}
-    }
-
-    /* Looking for open area */
-    if (p_ptr->run_open_area) {
-	/* Hack -- look again */
-	for (i = -max; i < 0; i++) {
-	    new_dir = cycle[chome[prev_dir] + i];
-
-	    row = py + ddy[new_dir];
-	    col = px + ddx[new_dir];
-	    f_ptr = &f_info[cave_feat[row][col]];
-
-	    /* Unknown grid or non-wall */
-	    /* Was: cave_floor_bold(row, col) */
-	    if (!sqinfo_has(cave_info[row][col], SQUARE_MARK)
-		|| !tf_has(f_ptr->flags, TF_ROCK))
-	    {
-		/* Looking to break right */
-		if (p_ptr->run_break_right) 
-		    return (TRUE);
-	    }
-
-	    /* Obstacle */
-	    else 
-	    {
-		/* Looking to break left */
-		if (p_ptr->run_break_left) 
-		    return (TRUE);
-	    }
-	}
-	
-	/* Hack -- look again */
-	for (i = max; i > 0; i--) {
-	    new_dir = cycle[chome[prev_dir] + i];
-
-	    row = py + ddy[new_dir];
-	    col = px + ddx[new_dir];
-	    f_ptr = &f_info[cave_feat[row][col]];
-
-	    /* Unknown grid or non-wall */
-	    /* Was: cave_floor_bold(row, col) */
-	    if (!sqinfo_has(cave_info[row][col], SQUARE_MARK)
-		|| !tf_has(f_ptr->flags, TF_ROCK))
-	    {
-		/* Looking to break left */
-		if (p_ptr->run_break_left) 
-		    return (TRUE);
-	    }
-
-	    /* Obstacle */
-	    else 
-	    {
-		/* Looking to break right */
-		if (p_ptr->run_break_right) 
-		    return (TRUE);
-	    }
-	}
-    }
-    
-
-    /* Not looking for open area */
-    else 
-    {
-	/* No options */
-	if (!option) 
-	    return (TRUE);
-	
-	/* One option */
-	else if (!option2) 
-	{
-	    /* Primary option */
-	    p_ptr->run_cur_dir = option;
-
-	    /* No other options */
-	    p_ptr->run_old_dir = option;
 	}
 
-	/* Two options, examining corners */
-	else
-	{
-	    /* Primary option */
-	    p_ptr->run_cur_dir = option;
 
-	    /* Hack -- allow curving */
-	    p_ptr->run_old_dir = option2;
-	}
-    }
+	/* About to hit a known wall, stop */
+	if (see_wall(p_ptr->run_cur_dir, py, px))
+		return (TRUE);
 
 
-    /* About to hit a known wall, stop */
-    if (see_wall(p_ptr->run_cur_dir, py, px)) 
-	return (TRUE);
-    
-
-    /* Failure */
-    return (FALSE);
+	/* Failure */
+	return (FALSE);
 }
 
 
@@ -1016,102 +998,101 @@ static bool run_test(void)
  */
 void run_step(int dir)
 {
-    /* Start run */
-    if (dir) {
-	/* Paranoia */
-	p_ptr->running_withpathfind = 0;
+	/* Start run */
+	if (dir) {
+		/* Paranoia */
+		p_ptr->running_withpathfind = 0;
 
-	/* Initialize */
-	run_init(dir);
+		/* Initialize */
+		run_init(dir);
 
-	/* Hack -- Set the run counter */
-	p_ptr->running = (p_ptr->command_arg ? p_ptr->command_arg : 1000);
+		/* Hack -- Set the run counter */
+		p_ptr->running = (p_ptr->command_arg ? p_ptr->command_arg : 1000);
 
-	/* Calculate torch radius */
-	p_ptr->update |= (PU_TORCH);
-    }
-
-    /* Continue run */
-    else {
-	if (!p_ptr->running_withpathfind) {
-	    /* Update run */
-	    if (run_test()) {
-		/* Disturb */
-		disturb(0, 0);
-
-		/* Done */
-		return;
-	    }
+		/* Calculate torch radius */
+		p_ptr->update |= (PU_TORCH);
 	}
 
+	/* Continue run */
 	else {
-	    /* Abort if we have finished */
-	    if (pf_result_index < 0) {
-		disturb(0, 0);
-		p_ptr->running_withpathfind = FALSE;
-		return;
-	    }
-	    /* Abort if we would hit a wall */
-	    else if (pf_result_index == 0) {
-		int y, x;
+		if (!p_ptr->running_withpathfind) {
+			/* Update run */
+			if (run_test()) {
+				/* Disturb */
+				disturb(0, 0);
 
-		/* Get next step */
-		y = p_ptr->py + ddy[pf_result[pf_result_index] - '0'];
-		x = p_ptr->px + ddx[pf_result[pf_result_index] - '0'];
-
-		/* Known wall */
-		if (sqinfo_has(cave_info[y][x], SQUARE_MARK) && !is_valid_pf(y, x))
-		{
-		    disturb(0, 0);
-		    p_ptr->running_withpathfind = FALSE;
-		    return;
-		}
-	    }
-	    /* Hack -- walking stick lookahead. If the player has computed a
-	     * path that is going to end up in a wall, we notice this and
-	     * convert to a normal run. This allows us to click on unknown
-	     * areas to explore the map. We have to look ahead two, otherwise
-	     * we don't know which is the last direction moved and don't
-	     * initialise the run properly. */
-	    else if (pf_result_index > 0) {
-		int y, x;
-
-		/* Get next step */
-		y = p_ptr->py + ddy[pf_result[pf_result_index] - '0'];
-		x = p_ptr->px + ddx[pf_result[pf_result_index] - '0'];
-
-		/* Known wall */
-		if (sqinfo_has(cave_info[y][x], SQUARE_MARK) && !is_valid_pf(y, x))
-		{
-		    disturb(0, 0);
-		    p_ptr->running_withpathfind = FALSE;
-		    return;
+				/* Done */
+				return;
+			}
 		}
 
-		/* Get step after */
-		y = y + ddy[pf_result[pf_result_index - 1] - '0'];
-		x = x + ddx[pf_result[pf_result_index - 1] - '0'];
+		else {
+			/* Abort if we have finished */
+			if (pf_result_index < 0) {
+				disturb(0, 0);
+				p_ptr->running_withpathfind = FALSE;
+				return;
+			}
+			/* Abort if we would hit a wall */
+			else if (pf_result_index == 0) {
+				int y, x;
 
-		/* Known wall */
-		if (sqinfo_has(cave_info[y][x], SQUARE_MARK) && !is_valid_pf(y, x))
-		{
-		    p_ptr->running_withpathfind = FALSE;
+				/* Get next step */
+				y = p_ptr->py + ddy[pf_result[pf_result_index] - '0'];
+				x = p_ptr->px + ddx[pf_result[pf_result_index] - '0'];
 
-		    run_init(pf_result[pf_result_index] - '0');
+				/* Known wall */
+				if (sqinfo_has(cave_info[y][x], SQUARE_MARK)
+					&& !is_valid_pf(y, x)) {
+					disturb(0, 0);
+					p_ptr->running_withpathfind = FALSE;
+					return;
+				}
+			}
+			/* Hack -- walking stick lookahead. If the player has computed a
+			 * path that is going to end up in a wall, we notice this and
+			 * convert to a normal run. This allows us to click on unknown
+			 * areas to explore the map. We have to look ahead two, otherwise
+			 * we don't know which is the last direction moved and don't
+			 * initialise the run properly. */
+			else if (pf_result_index > 0) {
+				int y, x;
+
+				/* Get next step */
+				y = p_ptr->py + ddy[pf_result[pf_result_index] - '0'];
+				x = p_ptr->px + ddx[pf_result[pf_result_index] - '0'];
+
+				/* Known wall */
+				if (sqinfo_has(cave_info[y][x], SQUARE_MARK)
+					&& !is_valid_pf(y, x)) {
+					disturb(0, 0);
+					p_ptr->running_withpathfind = FALSE;
+					return;
+				}
+
+				/* Get step after */
+				y = y + ddy[pf_result[pf_result_index - 1] - '0'];
+				x = x + ddx[pf_result[pf_result_index - 1] - '0'];
+
+				/* Known wall */
+				if (sqinfo_has(cave_info[y][x], SQUARE_MARK)
+					&& !is_valid_pf(y, x)) {
+					p_ptr->running_withpathfind = FALSE;
+
+					run_init(pf_result[pf_result_index] - '0');
+				}
+			}
+
+			p_ptr->run_cur_dir = pf_result[pf_result_index--] - '0';
 		}
-	    }
-
-	    p_ptr->run_cur_dir = pf_result[pf_result_index--] - '0';
 	}
-    }
 
-    /* Decrease counter */
-    p_ptr->running--;
+	/* Decrease counter */
+	p_ptr->running--;
 
-    /* Take time */
-    p_ptr->energy_use = 100;
+	/* Take time */
+	p_ptr->energy_use = 100;
 
-    /* Move the player */
-    move_player(p_ptr->run_cur_dir);
+	/* Move the player */
+	move_player(p_ptr->run_cur_dir);
 }
-
