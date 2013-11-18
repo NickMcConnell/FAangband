@@ -3915,8 +3915,8 @@ static void remove_contradictory(int a_idx)
 			a_ptr->bonus_stat[i] = 6;
 	}
 	for (i = 0; i < MAX_P_BONUS; i++) {
-		if ((a_ptr->bonus_stat[i] > 6) && (i != P_BONUS_SPEED))
-			a_ptr->bonus_stat[i] = 6;
+		if ((a_ptr->bonus_other[i] > 6) && (i != P_BONUS_SPEED))
+			a_ptr->bonus_other[i] = 6;
 	}
 	if ((cf_has(a_ptr->flags_curse, CF_NO_TELEPORT))
 		&& ((a_ptr->effect = EF_RAND_TELEPORT1)

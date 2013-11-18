@@ -2845,8 +2845,8 @@ static void j_remove_contradictory(object_type * o_ptr)
 			o_ptr->bonus_stat[i] = 6;
 	}
 	for (i = 0; i < MAX_P_BONUS; i++) {
-		if ((o_ptr->bonus_stat[i] > 6) && (i != P_BONUS_SPEED))
-			o_ptr->bonus_stat[i] = 6;
+		if ((o_ptr->bonus_other[i] > 6) && (i != P_BONUS_SPEED))
+			o_ptr->bonus_other[i] = 6;
 	}
 	if ((cf_has(o_ptr->flags_curse, CF_NO_TELEPORT)) &&
 		((o_ptr->effect = EF_RAND_TELEPORT1) ||
