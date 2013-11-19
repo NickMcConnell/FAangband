@@ -3063,7 +3063,9 @@ static enum parser_error parse_v_x(struct parser *p)
 	v->typ = parser_getuint(p, "type");
 	v->rat = parser_getint(p, "rating");
 	v->hgt = parser_getuint(p, "height");
+	v->hgt = 0;
 	v->wid = parser_getuint(p, "width");
+	v->wid = 0;
 	v->min_lev = parser_getuint(p, "min_lev");
 	max_lev = parser_getuint(p, "max_lev");
 	v->max_lev = max_lev ? max_lev : MAX_DEPTH;
@@ -3078,6 +3080,11 @@ static enum parser_error parse_v_d(struct parser *p)
 	if (!v)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
 	v->text = string_append(v->text, parser_getstr(p, "text"));
+	if (v->hgt == 0)
+		v->wid = strlen(v->text);
+	if (strlen(v->text) % v->wid) 
+		return PARSE_ERROR_FIELD_TOO_LONG;
+	v->hgt++;
 	return PARSE_ERROR_NONE;
 }
 
@@ -3107,6 +3114,7 @@ static errr finish_parse_v(struct parser *p)
 	for (v = parser_priv(p); v; v = v->next) {
 		if (v->vidx >= z_info->v_max)
 			continue;
+;
 		memcpy(&v_info[v->vidx], v, sizeof(*v));
 	}
 
