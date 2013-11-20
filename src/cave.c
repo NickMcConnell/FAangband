@@ -2084,7 +2084,7 @@ bool cave_iswall(int y, int x)
 	/* Terrain */
 	feature_type *f_ptr;
 
-	if (!in_bounds_fully(y, x))
+	if (!in_bounds(y, x))
 		return FALSE;
 
 	f_ptr = &f_info[cave_feat[y][x]];
