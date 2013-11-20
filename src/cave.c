@@ -1705,7 +1705,8 @@ void regional_map(int num, int size, int centre_stage)
 				default:
 					break;
 			} else
-				c_put_str(TERM_L_RED, "(Dungeon)", row + 2, col);
+				if (stage_map[stage_map[stage[i]][DOWN]][STAGE_TYPE] != UNDERWORLD)
+					c_put_str(TERM_L_RED, "(Dungeon)", row + 2, col);
 		}
 		if (stage_map[stage[i]][SOUTH])
 			c_put_str(TERM_WHITE, "|", row + 3, col + 3);
@@ -2084,7 +2085,7 @@ bool cave_iswall(int y, int x)
 	/* Terrain */
 	feature_type *f_ptr;
 
-	if (!in_bounds_fully(y, x))
+	if (!in_bounds(y, x))
 		return FALSE;
 
 	f_ptr = &f_info[cave_feat[y][x]];
