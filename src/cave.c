@@ -1705,7 +1705,8 @@ void regional_map(int num, int size, int centre_stage)
 				default:
 					break;
 			} else
-				c_put_str(TERM_L_RED, "(Dungeon)", row + 2, col);
+				if (stage_map[stage_map[stage[i]][DOWN]][STAGE_TYPE] != UNDERWORLD)
+					c_put_str(TERM_L_RED, "(Dungeon)", row + 2, col);
 		}
 		if (stage_map[stage[i]][SOUTH])
 			c_put_str(TERM_WHITE, "|", row + 3, col + 3);
