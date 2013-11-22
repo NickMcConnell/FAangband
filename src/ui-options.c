@@ -1216,7 +1216,7 @@ static void do_cmd_options_autosave(const char *name, int row)
 
 /*** Ego item squelch menu ***/
 #define EGO_MENU_HELPTEXT \
-"{lightgreen}Movement keys{/} scroll the list\n{lightred}ESC{/} returns to the previous menu\n{lightblue}Enter{/} toggles the current setting."
+"{light green}Movement keys{/} scroll the list\n{light red}ESC{/} returns to the previous menu\n{light blue}Enter{/} toggles the current setting."
 
 /**
  * Skip common prefixes in ego-item names.
@@ -1497,7 +1497,7 @@ static void ego_menu(const char *unused, int also_unused)
 /*** Quality-squelch menu ***/
 
 #define QUALITY_MENU_HELPTEXT \
-"{lightgreen}Movement keys{/} scroll the list\n{lightred}ESC{/} returns to the previous menu\n{lightblue}Enter{/} selects a type of item or toggles the current setting."
+"{light green}Movement keys{/} scroll the list\n{light red}ESC{/} returns to the previous menu\n{light blue}Enter{/} selects a type of item or toggles the current setting."
 int current_tval;
 
 /**

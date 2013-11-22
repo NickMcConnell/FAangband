@@ -138,16 +138,16 @@ static enum birth_stage get_quickstart_command(void)
  * ------------------------------------------------------------------------ */
 #define MAP_TEXT \
     "    *    \n" \
-    "  #{lightyellow}#{/} {lightyellow}#{/}#  \n" \
-    " #{lightgreen}#{/}{lightyellow}#{/} {lightyellow}#{/}{lightgreen}#{/}# \n" \
-    "/{lightyellow}##{/}{deeplightblue}/{/}{yellow}@{/}{deeplightblue}\\{/}{lightyellow}##{/}\\\n" \
+    "  #{light yellow}#{/} {light yellow}#{/}#  \n" \
+    " #{light green}#{/}{light yellow}#{/} {light yellow}#{/}{light green}#{/}# \n" \
+    "/{light yellow}##{/}{deep light blue}/{/}{yellow}@{/}{deep light blue}\\{/}{light yellow}##{/}\\\n" \
     "*  {yellow}@{/}{orange}@{/}{yellow}@{/}  *  Welcome to First Age Angband!\n" \
-    "\\{lightyellow}##{/}{deeplightblue}\\{/}{yellow}@{/}{deeplightblue}/{/}{lightyellow}##{/}/\n" \
-    " #{lightgreen}#{/}{lightyellow}#{/} {lightyellow}#{/}{lightgreen}#{/}# \n" \
-    "  #{lightyellow}#{/} {lightyellow}#{/}#  \n" \
+    "\\{light yellow}##{/}{deep light blue}\\{/}{yellow}@{/}{deep light blue}/{/}{light yellow}##{/}/\n" \
+    " #{light green}#{/}{light yellow}#{/} {light yellow}#{/}{light green}#{/}# \n" \
+    "  #{light yellow}#{/} {light yellow}#{/}#  \n" \
     "    *    \n\n"				     \
     "There are four different ways of structuring the world\n" \
-    "of FAangband; '{lightgreen}?{/}' gives more details."
+    "of FAangband; '{light green}?{/}' gives more details."
 
 /* Show the map instructions */
 static void print_map_instructions(void)
@@ -352,24 +352,22 @@ static enum birth_stage get_map_command(void)
  * Get the game mode (formerly birth options)
  * ------------------------------------------------------------------------ */
 #define MODE_TEXT \
-    "Now, toggle any of the permanent game modes,  '{lightgreen}?{/}'\n" \
+    "Now, toggle any of the permanent game modes,  '{light green}?{/}'\n" \
     "for help, accept or quit:"
 
 
 /* Show the mode instructions */
 static void print_mode_instructions(void)
 {
-	int text_row = Term->hgt < 30 ? 0 : 11;
-
 	/* Clear screen */
-	clear_from(text_row);
+	clear_from(0);
 
 	/* Output to the screen */
 	text_out_hook = text_out_to_screen;
 
 	/* Indent output */
 	text_out_indent = 5;
-	Term_gotoxy(5, text_row);
+	Term_gotoxy(5, 0);
 
 	/* Display some helpful information */
 	text_out_e(MODE_TEXT);
@@ -527,7 +525,7 @@ static menu_type *mode_menu_new(void)
 	int i;
 	const char cmd_keys[] = { '?', (char) ESCAPE, '\0' };
 
-	region loc = { 5, Term->hgt < 30 ? 8 : 14, 70, -99 };
+	region loc = { 5, 4, 70, -99 };
 
 	/* copy across private data */
 	/* current game modes */
@@ -864,12 +862,12 @@ static void clear_question(void)
 
 
 #define BIRTH_MENU_HELPTEXT \
-	"{lightblue}Please select your character from the menu below:{/}\n\n" \
-	"Use the {lightgreen}movement keys{/} to scroll the menu, " \
-	"{lightgreen}Enter{/} to select the current menu item, '{lightgreen}*{/}' " \
-	"for a random menu item, '{lightgreen}ESC{/}' to step back through the " \
-	"birth process, '{lightgreen}?{/} " \
-	"for help, or '{lightgreen}Ctrl-X{/}' to quit."
+	"{light blue}Please select your character from the menu below:{/}\n\n" \
+	"Use the {light green}movement keys{/} to scroll the menu, " \
+	"{light green}Enter{/} to select the current menu item, '{light green}*{/}' " \
+	"for a random menu item, '{light green}ESC{/}' to step back through the " \
+	"birth process, '{light green}?{/} " \
+	"for help, or '{light green}Ctrl-X{/}' to quit."
 
 /* Show the birth instructions on an otherwise blank screen */
 static void print_menu_instructions(void)
