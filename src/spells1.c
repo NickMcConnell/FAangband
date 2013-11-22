@@ -981,6 +981,9 @@ bool chaotic_effects(monster_type * m_ptr)
 			if (rf_has(r_ptr->flags, RF_UNIQUE))
 				return (TRUE);
 
+			/* Don't polymorph if it's shapechanged */
+			if (m_ptr->orig_idx != 0) return (TRUE);
+
 			/* Pick a "new" monster race */
 			tmp = poly_r_idx(m_ptr->r_idx, FALSE);
 
@@ -1209,6 +1212,9 @@ bool chaotic_effects(monster_type * m_ptr)
 			if (rf_has(r_ptr->flags, RF_UNIQUE))
 				return (TRUE);
 
+			/* Not if it's shapechanged */
+			if (m_ptr->orig_idx != 0) return (TRUE);
+
 			/* Delete the monster */
 			delete_monster(my, mx);
 
@@ -1233,6 +1239,9 @@ bool chaotic_effects(monster_type * m_ptr)
 			if (rf_has(r_ptr->flags, RF_UNIQUE))
 				return (TRUE);
 
+			/* Not if it's shapechanged */
+			if (m_ptr->orig_idx != 0) return (TRUE);
+
 			/* Delete the monster */
 			delete_monster(my, mx);
 
@@ -1247,6 +1256,9 @@ bool chaotic_effects(monster_type * m_ptr)
 		{
 			int i, k;
 			monster_race *q_ptr;
+
+			/* Don't shapechange twice */
+			if (m_ptr->orig_idx != 0) return (TRUE);
 
 			/* Pick a "new" monster race */
 			tmp = poly_r_idx(m_ptr->r_idx, TRUE);
