@@ -63,6 +63,7 @@ extern int fanilla_map[NUM_STAGES][9];
 extern const char *locality_name[MAX_LOCALITIES];
 extern const char *short_locality_name[MAX_LOCALITIES];
 extern int towns[10];
+extern int extended_towns[10];
 extern int compressed_towns[10];
 extern int race_town_prob[10][14];
 extern byte type_of_store[MAX_STORES];

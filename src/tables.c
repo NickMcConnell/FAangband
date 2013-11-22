@@ -2905,6 +2905,7 @@ const char *short_locality_name[MAX_LOCALITIES] =
  * Stage numbers of towns 
  */
 int towns[10] = {6, 30, 37, 44, 115, 150, 151, 152, 153, 154};
+int extended_towns[10] = {6, 30, 37, 44, 115, 150, 151, 152, 153, 154};
 int compressed_towns[10] = {5, 20, 24, 27, 59, 79, 80, 81, 82, 83};
 
 

@@ -1085,6 +1085,10 @@ void set_map(struct player *p)
 	int i, j;
 	/* Set map, quests */
 	if (p->map == MAP_EXTENDED) {
+		int i;
+		for (i = 0; i < NUM_TOWNS; i++)
+			towns[i] = extended_towns[i];
+
 		for (i = 0; i < NUM_STAGES; i++)
 			for (j = 0; j < 9; j++)
 				stage_map[i][j] = extended_map[i][j];
