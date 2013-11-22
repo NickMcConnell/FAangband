@@ -359,15 +359,17 @@ static enum birth_stage get_map_command(void)
 /* Show the mode instructions */
 static void print_mode_instructions(void)
 {
+	int text_row = Term->hgt < 30 ? 0 : 11;
+
 	/* Clear screen */
-	clear_from(11);
+	clear_from(text_row);
 
 	/* Output to the screen */
 	text_out_hook = text_out_to_screen;
 
 	/* Indent output */
 	text_out_indent = 5;
-	Term_gotoxy(5, 11);
+	Term_gotoxy(5, text_row);
 
 	/* Display some helpful information */
 	text_out_e(MODE_TEXT);
@@ -525,7 +527,7 @@ static menu_type *mode_menu_new(void)
 	int i;
 	const char cmd_keys[] = { '?', (char) ESCAPE, '\0' };
 
-	region loc = { 5, 14, 70, -99 };
+	region loc = { 5, Term->hgt < 30 ? 8 : 14, 70, -99 };
 
 	/* copy across private data */
 	/* current game modes */
