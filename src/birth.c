@@ -1200,12 +1200,17 @@ void set_modes(struct player *p)
 /* Reset everything back to how it would be on loading the game. */
 static void do_birth_reset(bool use_quickstart, birther *quickstart_prev)
 {
+	size_t i;
 
-	/* If there's quickstart data, we use it to set default character choices. */
+	/* If there's quickstart data, we use it to set default character choices */
 	if (use_quickstart && quickstart_prev)
 		load_roller_data(quickstart_prev, NULL);
 
 	player_generate(p_ptr, NULL, NULL, NULL);
+
+	/* Unset the modes */
+	for (i = 0; i < GAME_MODE_MAX; i++) 
+		p_ptr->game_mode[i] = FALSE;
 
 	/* Set the map */
 	set_map(p_ptr);
