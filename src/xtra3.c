@@ -2017,7 +2017,7 @@ static void show_splashscreen(game_event_type type, game_event_data * data,
 	Term_fresh();
 
 	/* Get any key */
-	(void) inkey_ex();
+	(void) anykey();
 
 	/*** Display the "news" file ***/
 
