@@ -10,3 +10,6 @@ faangband
 FAangband.app/
 .deps
 .DS_Store
+faangband.INI
+faangband.exe
+*.dll
