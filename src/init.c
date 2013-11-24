@@ -4685,7 +4685,7 @@ void update_artifact_sets()
 bool init_angband(void)
 {
 	event_signal(EVENT_ENTER_INIT);
-	sleep(2);
+	Term_xtra(TERM_XTRA_DELAY, 2000);
 
 
 	/*** Initialize some arrays ***/
@@ -4839,7 +4839,7 @@ bool init_angband(void)
 
 	/* Done */
 	event_signal_string(EVENT_INITSTATUS, "Initialization complete");
-	sleep(1);
+	Term_xtra(TERM_XTRA_DELAY, 1000);
 	show_news();
 
 	/* Sneakily init command list */
