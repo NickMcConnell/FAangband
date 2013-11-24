@@ -1906,7 +1906,6 @@ static void splashscreen_note(game_event_type type, game_event_data * data,
 /**
  * Encode the screen colors for the opening screen
  */
-static char hack[29] = "dwsorgbuDWPyRGBUpvtmYiTVIMzZ";
 static void show_splashscreen(game_event_type type, game_event_data * data,
 							  void *user)
 {
@@ -1928,85 +1927,22 @@ static void show_splashscreen(game_event_type type, game_event_data * data,
 
 	/*** Display the splashscreen  ***/
 
+	/* Clear screen */
 	Term_clear();
 
-	/* Open the splashscreen file */
+	/* Open the News file */
 	fp = file_open(splash, MODE_READ, FTYPE_TEXT);
+
+	text_out_hook = text_out_to_screen;
 
 	/* Dump */
 	if (fp) {
-		int i, y, x;
-
-		int a = 0;
-		wchar_t c = L' ';
-
-		bool okay = TRUE;
-
-		int len;
-
-		/* Load the screen */
-		for (y = 0; okay; y++) {
-			/* Get a line of data */
-			if (!file_getl(fp, buffer, 1024))
-				okay = FALSE;
-
-			/* Stop on blank line */
-			if (!buffer[0])
-				break;
-
-			/* Get the width */
-			len = strlen(buffer);
-
-			/* XXX Restrict to current screen size */
-			if (len >= Term->wid)
-				len = Term->wid;
-
-			/* Show each row */
-			for (x = 0; x < len; x++) {
-				/* Put the attr/char */
-				Term_draw(x, y, TERM_WHITE, buffer[x]);
-			}
+		/* Dump the file to the screen */
+		while (file_getl(fp, buffer, sizeof(buffer))){
+			text_out_e("%s", buffer);
+			text_out("\n");
 		}
 
-		/* Load the screen */
-		for (y = 0; okay; y++) {
-			/* Get a line of data */
-			if (!file_getl(fp, buffer, 1024))
-				okay = FALSE;
-
-			/* Stop on blank line */
-			if (!buffer[0])
-				break;
-
-			/* Get the width */
-			len = strlen(buffer);
-
-			/* XXX Restrict to current screen size */
-			if (len >= Term->wid)
-				len = Term->wid;
-
-			/* Show each row */
-			for (x = 0; x < len; x++) {
-				/* Get the attr/char */
-				(void) (Term_what(x, y, &a, &c));
-
-				/* Look up the attr */
-				for (i = 0; i < 28; i++) {
-					/* Use attr matches */
-					if (hack[i] == buffer[x])
-						a = i;
-				}
-
-				/* Put the attr/char */
-				Term_draw(x, y, a, c);
-			}
-
-			/* Place the cursor */
-			Term_gotoxy(x, y);
-
-		}
-
-		/* Close it */
 		file_close(fp);
 	}
 
@@ -2041,77 +1977,16 @@ void show_news(void)
 	/* Open the News file */
 	fp = file_open(news, MODE_READ, FTYPE_TEXT);
 
+	text_out_hook = text_out_to_screen;
+
 	/* Dump */
 	if (fp) {
-		int i, y, x;
-
-		int a = 0;
-		wchar_t c = L' ';
-
-		bool okay = TRUE;
-
-		int len;
-
-
-		/* Load the screen */
-		for (y = 0; okay; y++) {
-			/* Get a line of data */
-			if (!file_getl(fp, buffer, 1024))
-				okay = FALSE;
-
-			/* Stop on blank line */
-			if (!buffer[0])
-				break;
-
-			/* Get the width */
-			len = strlen(buffer);
-
-			/* XXX Restrict to current screen size */
-			if (len >= Term->wid)
-				len = Term->wid;
-
-			/* Show each row */
-			for (x = 0; x < len; x++) {
-				/* Put the attr/char */
-				Term_draw(x, y, TERM_WHITE, buffer[x]);
-			}
+		/* Dump the file to the screen */
+		while (file_getl(fp, buffer, sizeof(buffer))){
+			text_out_e("%s", buffer);
+			text_out("\n");
 		}
 
-		/* Load the screen */
-		for (y = 0; okay; y++) {
-			/* Get a line of data */
-			if (!file_getl(fp, buffer, 1024))
-				okay = FALSE;
-
-			/* Stop on blank line */
-			if (!buffer[0])
-				break;
-
-			/* Get the width */
-			len = strlen(buffer);
-
-			/* XXX Restrict to current screen size */
-			if (len >= Term->wid)
-				len = Term->wid;
-
-			/* Show each row */
-			for (x = 0; x < len; x++) {
-				/* Get the attr/char */
-				(void) (Term_what(x, y, &a, &c));
-
-				/* Look up the attr */
-				for (i = 0; i < 28; i++) {
-					/* Use attr matches */
-					if (hack[i] == buffer[x])
-						a = i;
-				}
-
-				/* Put the attr/char */
-				Term_draw(x, y, a, c);
-			}
-		}
-
-		/* Close it */
 		file_close(fp);
 	}
 

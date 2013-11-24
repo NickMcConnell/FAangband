@@ -1,45 +1,22 @@
-                                  ---------                                    
-                                /   * # *   \                                   
-                              /*#*    *    *#*\                                
-                             /*###*       *###*\                              
-                            /####\##--#--##/####\                             
-                           /  *####/#####\####*  \                            
-                          | *   *#/###@###\#*   * |                           
-                          | #*   (###@@@###)   *# |                           
-                          | *   *#\###@###/#*   * |                           
-                           \  *####\#####/####*  /                            
-                            \####/##--#--##\####/                             
-                             \*###*       *###*/                             
-                              \*#*    *    *#*/                                
-                                \   * # *   /                                   
-                                  ---------                                    
-                 _____     _                   |                |              
-                 |  __|   / \                  |                |              
-                 | |_    / _ \    /\  |/\  /\| |/\   /\  |/\  /\|              
-                 | __|  / ___ \  (  ) | | (  | |  ) (  ) | | (  |              
-                 |_|   /_/   \_\  \/\ | |  \/| |\/   \/\ | |  \/|              
-                                             |                                 
-                                           _/                                  
-
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwDDYDSDYDwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwrbYDDDDSDDDDYbrwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwrbSSgDDDDDDDgSSbrwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwbSSSggYbbybbYggSSSbwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwDDYSSggbyyyyybggSSYDDwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwDYDDDgYbyyyoyyybYgDDDYDwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwDSSDDDbyyyouoyyybDDDSSDwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwDYDDDgYbyyyoyyybYgDDDYDwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwDDYSSggbyyyyybggSSYDDwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwbSSSggYbbybbYggSSSbwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwrbSSgDDDDDDDgSSbrwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwrbYDDDDSDDDDYbrwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwDDYDSDYDwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwZZZZZwwwwwZwwwwwwwwwwwwwwwwwwwYwwwwwwwwwwwwwwwwYwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwZZZZZZwwwZZZwwwwwwwwwwwwwwwwwwYwwwwwwwwwwwwwwwwYwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwZZZZwwwwZZZZZwwwwYYwwYYYwwYYYwYYYwwwYYwwYYYwwYYYwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwZZZZZwwZZZZZZZwwYwwYwYwYwYwwYwYwwYwYwwYwYwYwYwwYwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwZZZwwwZZZwwwZZZwwYYYwYwYwwYYYwYYYwwwYYYwYwYwwYYYwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwYwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwYYwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+                                  ---------
+                                /   {light yellow}*{/} {light slate}#{/} {light yellow}*{/}   \
+                              /{red}*{/}{blue}#{/}{light yellow}*{/}    {light yellow}*{/}    {light yellow}*{/}{blue}#{/}{red}*{/}\
+                             /{red}*{/}{blue}#{/}##{green}*{/}       {green}*{/}##{blue}#{/}{red}*{/}\
+                            /{blue}#{/}###{green}\#{/}{light yellow}#{/}{blue}--{/}{yellow}#{/}{blue}--{/}{light yellow}#{/}{green}#/{/}###{blue}#{/}\
+                           /  {light yellow}*{/}##{green}##{/}{blue}/{/}{yellow}#####{/}{blue}\{/}{green}##{/}##{light yellow}*{/}  \
+                          | {light yellow}*{/}   {green}*{/}{light yellow}#{/}{blue}/{/}{yellow}###{/}{orange}@{/}{yellow}###{/}{blue}\{/}{light yellow}#{/}{green}*{/}   {light yellow}*{/} |
+                          | {light slate}#{/}{light yellow}*{/}   {blue}({/}{yellow}###{/}{orange}@{/}{umber}@{/}{orange}@{/}{yellow}###{/}{blue}){/}   {light yellow}*{/}{light slate}#{/} |
+                          | {light yellow}*{/}   {green}*{/}{light yellow}#{/}{blue}\{/}{yellow}###{/}{orange}@{/}{yellow}###{/}{blue}/{/}{light yellow}#{/}{green}*{/}   {light yellow}*{/} |
+                           \  {light yellow}*{/}##{green}##{/}{blue}\{/}{yellow}#####{/}{blue}/{/}{green}##{/}##{light yellow}*{/}  /
+                            \{blue}#{/}###{green}/#{/}{light yellow}#{/}{blue}--{/}{yellow}#{/}{blue}--{/}{light yellow}#{/}{green}#\{/}###{blue}#{/}/
+                             \{red}*{/}{blue}#{/}##{green}*{/}       {green}*{/}##{blue}#{/}{red}*{/}/
+                              \{red}*{/}{blue}#{/}{light yellow}*{/}    {light yellow}*{/}    {light yellow}*{/}{blue}#{/}{red}*{/}/
+                                \   {light yellow}*{/} {light slate}#{/} {light yellow}*{/}   /
+                                  ---------
+                 {deep light blue}_____     _{/}     {light yellow}              |                |{/}
+                 {deep light blue}|  __|   / \{/}    {light yellow}              |                |{/}
+                 {deep light blue}| |_    / _ \{/}   {light yellow} /\  |/\  /\| |/\   /\  |/\  /\|{/}
+                 {deep light blue}| __|  / ___ \{/}  {light yellow}(  ) | | (  | |  ) (  ) | | (  |{/}
+                 {deep light blue}|_|   /_/   \_\{/} {light yellow} \/\ | |  \/| |\/   \/\ | |  \/|{/}
+                                             {light yellow}|{/}
+                                           {light yellow}_/{/}

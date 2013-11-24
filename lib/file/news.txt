@@ -1,45 +1,22 @@
                                                                                
-             ****************************************************              
-             **   FAangband 1.4.1  ****   First Age Angband    **              
-             ** Beleriand in the days of the War of the Jewels **              
-             ****************************************************              
-                                                                               
-     Based on Moria, Umoria, Angband and Oangband,                             
-     with ideas and features from NPPangband and Unangband                     
-                                                                               
-     Contributors include Robert Alan Koeneke, James E. Wilson, Alex Cutler,   
-     Andy Astrand, Sean Marsh, Geoff Hill, Charles Teague, Charles Swiger,     
-     Ben Harrison, Robert Ruehlmann, Leon Marrick, Bahman Rabii, Jeff Greene,  
-     Diego Gonzalez, Andrew Doull, Andi Sidwell, Pete Mack, Si Griffin.        
-	                                                                       
-     FAangband 0.1.0-1.4.1  by Nick McConnell                                  
-     FAangband 0.3.6        by Si Griffin                                      
-                                                                               
-     Send comments, bug reports, and patches to nckmccnnll@gmail.com           
-     The FAangband home page is http://angband.oook.cz/faangband               
-     Latest code is at https://github.com/NickMcConnell/FAangband              
-     Visit the Angband ladder page at http://angband.oook.cz                   
-                        '?' for in-game help.                                  
+             ****************************************************
+             **   {deep light blue}FAangband 1.4.1{/}  ****   {deep light blue}First Age Angband{/}    **
+             ** {light yellow}Beleriand in the days of the War of the Jewels{/} **
+             ****************************************************
 
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwZZZZZZZZZZZZZZZwwwwwwwwwZZZZZZZZZZZZZZZZZwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwZZZZZZZZZZZZZZZZZZZZZwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwZZZZZZZZZZZZZZZZZZZZZwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
-wwwwwwwwwwwwwwwwwwwwwwwYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
-wwwwwwwwwwwwwwwwwwwwwwwwwYwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+     Based on Moria, Umoria, Angband and Oangband,
+     with ideas and features from NPPangband and Unangband
+
+     Contributors include Robert Alan Koeneke, James E. Wilson, Alex Cutler,
+     Andy Astrand, Sean Marsh, Geoff Hill, Charles Teague, Charles Swiger,
+     Ben Harrison, Robert Ruehlmann, Leon Marrick, Bahman Rabii, Jeff Greene,
+     Diego Gonzalez, Andrew Doull, Andi Sidwell, Pete Mack, Si Griffin.
+
+     {deep light blue}FAangband 0.1.0-1.4.1  by Nick McConnell
+     {deep light blue}FAangband 0.3.6        by Si Griffin
+
+     Send comments, bug reports, and patches to {light yellow}nckmccnnll@gmail.com{/}
+     The FAangband home page is {light yellow}http://angband.oook.cz/faangband{/}
+     Latest code is at {light yellow}https://github.com/NickMcConnell/FAangband{/}
+     Visit the Angband ladder page at {light yellow}http://angband.oook.cz{/}
+                        '{light yellow}?{/}' for in-game help.
