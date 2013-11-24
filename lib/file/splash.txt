@@ -20,7 +20,6 @@
                  |_|   /_/   \_\  \/\ | |  \/| |\/   \/\ | |  \/|              
                                              |                                 
                                            _/                                  
-                           [Press any key to continue]                         
 
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwDDYDSDYDwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
@@ -44,4 +43,3 @@ wwwwwwwwwwwwwwwwwZZZZZwwZZZZZZZwwYwwYwYwYwYwwYwYwwYwYwwYwYwYwYwwYwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwZZZwwwZZZwwwZZZwwYYYwYwYwwYYYwYYYwwwYYYwYwYwwYYYwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwYwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwYYwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww

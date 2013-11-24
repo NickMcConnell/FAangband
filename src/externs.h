@@ -428,6 +428,7 @@ byte monster_health_attr(void);
 void toggle_inven_equip(void);
 void subwindows_set_flags(u32b *new_flags, size_t n_subwindows);
 char* random_hint(void);
+void show_news(void);
 
 /*
  * Hack -- conditional (or "bizarre") externs

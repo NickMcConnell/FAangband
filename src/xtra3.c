@@ -1912,17 +1912,17 @@ static void show_splashscreen(game_event_type type, game_event_data * data,
 {
 	ang_file *fp;
 
-	char buf[1024];
+	char splash[1024];
+	char buffer[1024];
 
-	/*** Verify the "news" file ***/
+	/*** Verify the opening screen files ***/
 
-	path_build(buf, sizeof(buf), ANGBAND_DIR_FILE, "news.txt");
-	if (!file_exists(buf)) {
-		char why[1024];
+	path_build(splash, sizeof(splash), ANGBAND_DIR_FILE, "splash.txt");
+	if (!file_exists(splash)) {
+		strnfmt(buffer, sizeof(buffer), "Cannot access the '%s' file!", splash);
 
 		/* Crash and burn */
-		strnfmt(why, sizeof(why), "Cannot access the '%s' file!", buf);
-		init_angband_aux(why);
+		init_angband_aux(buffer);
 	}
 
 
@@ -1930,11 +1930,8 @@ static void show_splashscreen(game_event_type type, game_event_data * data,
 
 	Term_clear();
 
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_FILE, "splash.txt");
-
-	/* Open the News file */
-	fp = file_open(buf, MODE_READ, FTYPE_TEXT);
+	/* Open the splashscreen file */
+	fp = file_open(splash, MODE_READ, FTYPE_TEXT);
 
 	/* Dump */
 	if (fp) {
@@ -1950,15 +1947,15 @@ static void show_splashscreen(game_event_type type, game_event_data * data,
 		/* Load the screen */
 		for (y = 0; okay; y++) {
 			/* Get a line of data */
-			if (!file_getl(fp, buf, 1024))
+			if (!file_getl(fp, buffer, 1024))
 				okay = FALSE;
 
 			/* Stop on blank line */
-			if (!buf[0])
+			if (!buffer[0])
 				break;
 
 			/* Get the width */
-			len = strlen(buf);
+			len = strlen(buffer);
 
 			/* XXX Restrict to current screen size */
 			if (len >= Term->wid)
@@ -1967,22 +1964,22 @@ static void show_splashscreen(game_event_type type, game_event_data * data,
 			/* Show each row */
 			for (x = 0; x < len; x++) {
 				/* Put the attr/char */
-				Term_draw(x, y, TERM_WHITE, buf[x]);
+				Term_draw(x, y, TERM_WHITE, buffer[x]);
 			}
 		}
 
 		/* Load the screen */
 		for (y = 0; okay; y++) {
 			/* Get a line of data */
-			if (!file_getl(fp, buf, 1024))
+			if (!file_getl(fp, buffer, 1024))
 				okay = FALSE;
 
 			/* Stop on blank line */
-			if (!buf[0])
+			if (!buffer[0])
 				break;
 
 			/* Get the width */
-			len = strlen(buf);
+			len = strlen(buffer);
 
 			/* XXX Restrict to current screen size */
 			if (len >= Term->wid)
@@ -1996,7 +1993,7 @@ static void show_splashscreen(game_event_type type, game_event_data * data,
 				/* Look up the attr */
 				for (i = 0; i < 28; i++) {
 					/* Use attr matches */
-					if (hack[i] == buf[x])
+					if (hack[i] == buffer[x])
 						a = i;
 				}
 
@@ -2015,20 +2012,34 @@ static void show_splashscreen(game_event_type type, game_event_data * data,
 
 	/* Flush it */
 	Term_fresh();
+}
 
-	/* Get any key */
-	(void) anykey();
+
+void show_news(void)
+{
+	ang_file *fp;
+
+	char news[1024];
+	char buffer[1024];
+
+	/*** Verify the opening screen files ***/
+
+	path_build(news, sizeof(news), ANGBAND_DIR_FILE, "news.txt");
+	if (!file_exists(news)) {
+		strnfmt(buffer, sizeof(buffer), "Cannot access the '%s' file!", news);
+
+		/* Crash and burn */
+		init_angband_aux(buffer);
+	}
+
 
 	/*** Display the "news" file ***/
 
 	/* Clear screen */
 	Term_clear();
 
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_FILE, "news.txt");
-
 	/* Open the News file */
-	fp = file_open(buf, MODE_READ, FTYPE_TEXT);
+	fp = file_open(news, MODE_READ, FTYPE_TEXT);
 
 	/* Dump */
 	if (fp) {
@@ -2045,15 +2056,15 @@ static void show_splashscreen(game_event_type type, game_event_data * data,
 		/* Load the screen */
 		for (y = 0; okay; y++) {
 			/* Get a line of data */
-			if (!file_getl(fp, buf, 1024))
+			if (!file_getl(fp, buffer, 1024))
 				okay = FALSE;
 
 			/* Stop on blank line */
-			if (!buf[0])
+			if (!buffer[0])
 				break;
 
 			/* Get the width */
-			len = strlen(buf);
+			len = strlen(buffer);
 
 			/* XXX Restrict to current screen size */
 			if (len >= Term->wid)
@@ -2062,22 +2073,22 @@ static void show_splashscreen(game_event_type type, game_event_data * data,
 			/* Show each row */
 			for (x = 0; x < len; x++) {
 				/* Put the attr/char */
-				Term_draw(x, y, TERM_WHITE, buf[x]);
+				Term_draw(x, y, TERM_WHITE, buffer[x]);
 			}
 		}
 
 		/* Load the screen */
 		for (y = 0; okay; y++) {
 			/* Get a line of data */
-			if (!file_getl(fp, buf, 1024))
+			if (!file_getl(fp, buffer, 1024))
 				okay = FALSE;
 
 			/* Stop on blank line */
-			if (!buf[0])
+			if (!buffer[0])
 				break;
 
 			/* Get the width */
-			len = strlen(buf);
+			len = strlen(buffer);
 
 			/* XXX Restrict to current screen size */
 			if (len >= Term->wid)
@@ -2091,7 +2102,7 @@ static void show_splashscreen(game_event_type type, game_event_data * data,
 				/* Look up the attr */
 				for (i = 0; i < 28; i++) {
 					/* Use attr matches */
-					if (hack[i] == buf[x])
+					if (hack[i] == buffer[x])
 						a = i;
 				}
 
