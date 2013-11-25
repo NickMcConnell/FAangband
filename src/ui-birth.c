@@ -352,8 +352,8 @@ static enum birth_stage get_map_command(void)
  * Get the game mode (formerly birth options)
  * ------------------------------------------------------------------------ */
 #define MODE_TEXT \
-    "Now, toggle any of the permanent game modes,  '{light green}?{/}'\n" \
-    "for help, accept or quit:"
+    "Toggle any of the permanent game modes, '{light green}?{/}'" \
+    "for help,\naccept or quit; selected modes appear {red}red{/}:"
 
 
 /* Show the mode instructions */
@@ -380,7 +380,6 @@ static void print_mode_instructions(void)
  * Mode descriptions
  */
 const char *mode_name[] = {
-	"Accept current options",
 	"Thrall",
 	"Ironman",
 	"Disconnected stairs",
@@ -388,11 +387,11 @@ const char *mode_name[] = {
 	"No artifacts",
 	"No selling",
 	"Smart cheat",
+	"Accept current modes",
 	"Quit"
 };
 
 const char *mode_description[] = {
-	"Accept the current state of the game modes as printed below",
 	"Start as a thrall on the steps of Angband",
 	"Only ever go into greater danger until you win or die",
 	"Taking a dungeon stair or wilderness path will not place you on a stair or path back the way you came",
@@ -400,6 +399,7 @@ const char *mode_description[] = {
 	"Artifacts are never generated",
 	"You cannot sell items to shops for money, but you will get more money from the dungeon floor and monsters",
 	"Monsters know your weaknesses without having to learn them",
+	"Accept the currently selected game modes",
 	"Quit FAangband"
 };
 
@@ -419,7 +419,7 @@ struct mode_menu_data {
 static int mode_menu_valid(menu_type * m, int oid)
 {
 	/* No thralls in FAnilla map */
-	if ((p_ptr->map == MAP_FANILLA) && (oid == 1))
+	if ((p_ptr->map == MAP_FANILLA) && (oid == GAME_MODE_THRALL))
 		return 0;
 
 	return 1;
@@ -432,7 +432,9 @@ static void mode_menu_display(menu_type * m, int oid, bool cursor,
 							  int row, int col, int wid)
 {
 	struct mode_menu_data *d = menu_priv(m);
-	int attr_name = cursor ? TERM_L_BLUE : TERM_WHITE;
+	int attr_name = cursor ? TERM_SLATE : TERM_WHITE;
+	if (d->mode_settings[oid])
+		attr_name = cursor ? TERM_L_RED : TERM_RED;
 
 	/* Dump the name */
 	c_put_str(attr_name, d->modes[oid], row, col);
@@ -447,7 +449,7 @@ static bool mode_menu_handler(menu_type * m, const ui_event * e, int oid)
 
 	if (e->type == EVT_SELECT) {
 		/* We're done, return */
-		if (oid == 0)
+		if (oid == GAME_MODE_MAX)
 			return FALSE;
 		/* Quitting */
 		else if (oid == GAME_MODE_MAX + 1) {
@@ -456,7 +458,7 @@ static bool mode_menu_handler(menu_type * m, const ui_event * e, int oid)
 		}
 		/* toggle */
 		else {
-			d->mode_settings[oid - 1] = !d->mode_settings[oid - 1];
+			d->mode_settings[oid] = !d->mode_settings[oid];
 		}
 	} else if (e->type == EVT_KBRD) {
 		if (e->key.code == ESCAPE) {
@@ -479,7 +481,6 @@ static bool mode_menu_handler(menu_type * m, const ui_event * e, int oid)
 static void mode_menu_browser(int oid, void *data, const region * loc)
 {
 	struct mode_menu_data *d = data;
-	int i, j;
 
 	/* Redirect output to the screen */
 	text_out_hook = text_out_to_screen;
@@ -489,19 +490,6 @@ static void mode_menu_browser(int oid, void *data, const region * loc)
 
 	Term_gotoxy(loc->col, loc->row + loc->page_rows);
 	text_out_c(TERM_DEEP_L_BLUE, format("\n%s\n", d->description[oid]));
-
-	Term_gotoxy(loc->col, loc->row + loc->page_rows + 4);
-	text_out_c(TERM_L_YELLOW, "Currently true:");
-	for (i = 0, j = 0; i < GAME_MODE_MAX; i++) {
-		if (d->mode_settings[i]) {
-			char tag[2] = "b";
-
-			tag[0] += i;
-			Term_gotoxy(loc->col + 16 + 2 * j++,
-						loc->row + loc->page_rows + 4);
-			text_out_c(TERM_MAGENTA, tag);
-		}
-	}
 
 	/* XXX */
 	text_out_pad = 0;

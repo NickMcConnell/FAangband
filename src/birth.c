@@ -1154,6 +1154,10 @@ void set_map(struct player *p)
 
 		/* Morgoth */
 		q_list[4].stage = 101;
+
+		/* No thralls in FAnilla map */
+		p_ptr->game_mode[GAME_MODE_THRALL] = FALSE;
+
 	} else if (p->map == MAP_COMPRESSED) {
 		int i;
 		for (i = 0; i < NUM_TOWNS; i++)
@@ -1199,6 +1203,10 @@ void set_modes(struct player *p)
 		else
 			quit("Bad game mode string");
 	}
+
+	/* No thralls in FAnilla map */
+	if (p_ptr->map == MAP_FANILLA)
+		p_ptr->game_mode[GAME_MODE_THRALL] = FALSE;
 }
 
 /* Reset everything back to how it would be on loading the game. */
