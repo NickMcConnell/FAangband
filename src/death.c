@@ -22,6 +22,7 @@
 #include "game-event.h"
 #include "history.h"
 #include "savefile.h"
+#include "store.h"
 #include "ui-menu.h"
 
 /**
@@ -473,7 +474,7 @@ static void death_knowledge(void)
 
 	object_type *o_ptr;
 
-	store_type *st_ptr = NULL;
+	struct store_type *st_ptr = NULL;
 
 	/* Get the store number of the home */
 	if ((p_ptr->map == MAP_DUNGEON) || (p_ptr->map == MAP_FANILLA))
@@ -558,7 +559,7 @@ static void death_info(const char *title, int row)
 
 	object_type *o_ptr;
 
-	store_type *st_ptr;
+	struct store_type *st_ptr;
 
 	ui_event ke;
 

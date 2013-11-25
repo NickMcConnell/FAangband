@@ -1,7 +1,15 @@
 #ifndef INCLUDED_EXTERNS_H
 #define INCLUDED_EXTERNS_H
 
+#include "cave.h"
+#include "charattr.h"
+#include "monster.h"
+#include "object.h"
 #include "spells.h"
+#include "player.h"
+#include "store.h"
+#include "trap.h"
+#include "types.h"
 #include "z-type.h"
 
 /** \file externs.h 
@@ -48,7 +56,7 @@ extern grouper group_item[];
 extern const char *stat_names[A_MAX];
 extern const char *stat_names_reduced[A_MAX];
 extern const char *window_flag_desc[32];
-extern druid_blows d_blow[NUM_D_BLOWS];
+extern struct druid_blows d_blow[NUM_D_BLOWS];
 extern const char *magic_desc[REALM_MAX][MD_MAX];
 extern const char *feel_text[FEEL_MAX];
 extern const grouper object_text_order[];
@@ -66,7 +74,6 @@ extern int towns[10];
 extern int extended_towns[10];
 extern int compressed_towns[10];
 extern int race_town_prob[10][14];
-extern byte type_of_store[MAX_STORES];
 extern byte get_angle_to_grid[41][41];
 const byte g_info[196];
 
@@ -158,13 +165,11 @@ extern int update_center_y;
 extern int update_center_x;
 extern int cost_at_center;
 
-extern maxima *z_info;
 extern trap_type *trap_list;
 extern object_type *o_list;
 extern monster_type *m_list;
 extern monster_lore *l_list;
-extern quest *q_list;
-extern store_type *store;
+extern struct store_type *store;
 extern const char *** name_sections;
 extern object_type *inventory;
 extern object_type *quiver;
@@ -181,15 +186,15 @@ extern byte misc_to_attr[256];
 extern char misc_to_char[256];
 extern byte tval_to_attr[128];
 extern player_sex *sp_ptr;
-extern player_race *rp_ptr;
-extern player_class *cp_ptr;
+extern struct player_race *rp_ptr;
+extern struct player_class *cp_ptr;
 extern player_magic *mp_ptr;
 extern player_other *op_ptr;
 extern player_type *p_ptr;
 extern int add_wakeup_chance;
 extern u32b total_wakeup_chance;
-extern vault_type *v_info;
-extern vault_type *t_info;
+extern struct vault *v_info;
+extern struct vault *t_info;
 extern feature_type *f_info;
 extern trap_kind *trap_info;
 extern object_kind *k_info;
@@ -200,9 +205,9 @@ extern monster_base *rb_info;
 extern monster_race *r_info;
 extern monster_pain *pain_messages;
 extern hist_type *h_info;
-extern player_race *p_info;
-extern player_class *c_info;
-extern owner_type *b_info;
+extern struct player_race *p_info;
+extern struct player_class *c_info;
+extern struct owner_type *b_info;
 extern spell_type *s_info;
 extern flavor_type *flavor_info;
 extern struct hint *hints;
@@ -283,59 +288,12 @@ extern struct keypress *inkey_next;
 /* attack.c */
 extern bool py_attack(int y, int x, bool can_push);
 
-/* birth.c */
-extern void player_birth(bool quickstart_allowed);
-
-/* charattr.c */
-extern void x_fprintf(ang_file *f, int encoding, const char *fmt, ...);
-extern void dump_put_str(byte attr, const char *str, int col);
-extern void dump_lnum(char *header, s32b num, int col, byte color);
-extern void dump_num(char *header, int num, int col, byte color);
-extern void dump_deci(char *header, int num, int deci, int col, byte color);
-extern void dump_line_file(char_attr *this_line);
-extern void dump_line_screen(char_attr *this_line);
-extern void dump_line_mem(char_attr *this_line);
-extern void dump_line(char_attr *this_line);
-extern int handle_item(void);
-extern int make_metric(int wgt);
-
-
-/* cmd1.c */
-bool search(bool verbose);
-extern byte py_pickup(int pickup, int y, int x);
-extern void fall_off_cliff(void);
-extern void move_player(int dir);
-
-/* cmd2.c */
-/* XXX should probably be moved to cave.c? */
-bool is_open(int feat);
-bool is_closed(int feat);
-bool is_trap(int feat);
-int count_feats(int *y, int *x, int flag, bool under);
-int count_traps(int *y, int *x);
-int count_chests(int *y, int *x, bool trapped);
-int coords_to_dir(int y, int x);
-
 /* death.c */
 void death_screen(void);
-
-/* monattk.c */
-extern bool make_attack_normal(monster_type *m_ptr, int y, int x);
-extern bool make_attack_ranged(monster_type *m_ptr, int attack);
-
-/* monmove.c */
-extern int get_scent(int y, int x);
-extern int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate);
-extern bool cave_exist_mon(monster_race *r_ptr, int y, int x, 
-                           bool occupied_ok);
-extern void process_monsters(byte minimum_energy);
-extern void reset_monsters(void);
 
 /* pathfind.c */
 extern bool findpath(int y, int x);
 extern int get_angle_to_target(int y0, int x0, int y1, int x1, int dir);
-extern void get_grid_using_angle(int angle, int y0, int x0,
-	int *ty, int *tx);
 extern void run_step(int dir);
 
 /* randart.c */
@@ -345,13 +303,6 @@ extern void initialize_random_artifacts(void);
 extern void enter_score(time_t *death_time);
 extern void show_scores(void);
 extern void predict_score(void);
-
-/* store.c */
-s32b price_item(object_type * o_ptr, int greed, bool flip);
-extern void store_shuffle(int which);
-extern void store_maint(int which);
-extern void stores_maint(int times);
-extern void store_init(void);
 
 /* util.c */
 extern void text_to_ascii(char *buf, size_t len, const char *str);
@@ -397,13 +348,6 @@ extern bool char_matches_key(wchar_t c, keycode_t key);
 extern byte gamma_table[256];
 extern void build_gamma_table(int gamma);
 #endif /* SUPPORT_GAMMA */
-
-/* x-char.c */
-extern void xchar_trans_hook(char *s, int encoding);
-extern void xstr_trans(char *str, int encoding);
-extern void escape_latin1(char *dest, size_t max, const char *src);
-extern const char seven_bit_translation[128];
-extern char xchar_trans(byte c);
 
 /* xtra2.c */
 extern void check_experience(void);

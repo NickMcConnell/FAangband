@@ -35,8 +35,6 @@
 #include "z-quark.h"
 #include "z-msg.h"
 #include "z-textblock.h"
-#include "defines.h"
-#include "types.h"
 #include "externs.h"
 
 

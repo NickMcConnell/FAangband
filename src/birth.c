@@ -23,8 +23,13 @@
 #include "game-event.h"
 #include "game-cmd.h"
 #include "history.h"
-#include "tvalsval.h"
+#include "init.h"
+#include "object.h"
+#include "player.h"
+#include "quest.h"
 #include "squelch.h"
+#include "store.h"
+#include "tvalsval.h"
 #include "ui-menu.h"
 
 /*
@@ -677,7 +682,7 @@ static void wield_all(struct player *p)
 static void player_outfit(struct player *p)
 {
 	int i;
-	start_item *e_ptr;
+	struct start_item *e_ptr;
 	object_type *i_ptr;
 	object_type object_type_body;
 

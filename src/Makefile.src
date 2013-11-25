@@ -15,6 +15,7 @@ HEADERS = \
 	birth.h \
 	buildid.h \
 	cave.h \
+	charattr.h \
 	cmds.h \
 	config.h \
 	defines.h \
@@ -37,9 +38,11 @@ HEADERS = \
 	parser.h \
 	player.h \
 	prefs.h \
+	quest.h \
 	savefile.h \
 	spells.h \
 	squelch.h \
+	store.h \
 	target.h \
 	textui.h \
 	trap.h \
@@ -126,6 +129,7 @@ ANGFILES = \
 	play-timed.o \
 	play-util.o \
 	prefs.o \
+	quest.o \
 	randart.o \
 	randname.o \
 	save.o \

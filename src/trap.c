@@ -20,6 +20,7 @@
 #include "cave.h"
 #include "generate.h"
 #include "monster.h"
+#include "quest.h"
 #include "spells.h"
 #include "squelch.h"
 #include "trap.h"

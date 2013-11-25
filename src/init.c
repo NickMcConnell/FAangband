@@ -26,13 +26,16 @@
 #include "history.h"
 #include "init.h"
 #include "keymap.h"
-#include "tvalsval.h"
 #include "monster.h"
 #include "option.h"
 #include "parser.h"
 #include "prefs.h"
+#include "quest.h"
 #include "randname.h"
 #include "squelch.h"
+#include "store.h"
+#include "types.h"
+#include "tvalsval.h"
 
 /*
  * This file is used to initialize various variables and arrays for the
@@ -4139,8 +4142,7 @@ static errr init_other(void)
 
 	/*** Prepare quest array ***/
 
-	/* Quests */
-	q_list = C_ZNEW(MAX_Q_IDX, quest);
+	quest_init();
 
 
 	/*** Prepare the inventory ***/
@@ -4152,11 +4154,11 @@ static errr init_other(void)
   /*** Prepare the stores ***/
 
 	/* Allocate the stores */
-	store = C_ZNEW(MAX_STORES, store_type);
+	store = C_ZNEW(MAX_STORES, struct store_type);
 
 	for (n = 0; n < MAX_STORES; n++) {
 		/* Access the store */
-		store_type *st_ptr = &store[n];
+		struct store_type *st_ptr = &store[n];
 
 		/* Set the type */
 		st_ptr->type = type_of_store[n];
@@ -4885,7 +4887,7 @@ void cleanup_angband(void)
 		/* Free the store inventories */
 		for (i = 0; i < MAX_STORES; i++) {
 			/* Get the store */
-			store_type *st_ptr = &store[i];
+			struct store_type *st_ptr = &store[i];
 
 			/* Free the store inventory */
 			FREE(st_ptr->stock);
@@ -4897,8 +4899,8 @@ void cleanup_angband(void)
 	/* Free the stores */
 	FREE(store);
 
-	/* Free the quest list */
-	FREE(q_list);
+	/* Free the quests */
+	quest_free();
 
 	FREE(p_ptr->inventory);
 

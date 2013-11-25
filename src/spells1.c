@@ -28,13 +28,16 @@
 
 #include "angband.h"
 #include "cave.h"
+#include "cmds.h"
 #include "generate.h"
 #include "history.h"
 #include "monster.h"
 #include "object.h"
 #include "player.h"
+#include "quest.h"
 #include "spells.h"
 #include "trap.h"
+#include "types.h"
 
 
 /**

@@ -26,8 +26,10 @@
 #include "history.h"
 #include "monster.h"
 #include "player.h"
+#include "quest.h"
 #include "target.h"
 #include "trap.h"
+#include "types.h"
 
 
 /**
@@ -4238,39 +4240,6 @@ static int get_coin_type(monster_race * r_ptr)
 
 
 /**
- * Create magical stairs after finishing a quest monster.
- */
-static void build_quest_stairs(int y, int x, char *portal)
-{
-	int ny, nx;
-
-
-	/* Stagger around */
-	while (!cave_valid_bold(y, x)) {
-		int d = 1;
-
-		/* Pick a location */
-		scatter(&ny, &nx, y, x, d, 0);
-
-		/* Stagger */
-		y = ny;
-		x = nx;
-	}
-
-	/* Destroy any objects */
-	delete_object(y, x);
-
-	/* Explain the staircase */
-	msg("A magical %s appears...", portal);
-
-	/* Create stairs down */
-	cave_set_feat(y, x, FEAT_MORE);
-
-	/* Update the visuals */
-	p_ptr->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
-}
-
-/**
  * Handle the "death" of a monster.
  *
  * Disperse treasures centered at the monster location based on the
@@ -4532,72 +4501,7 @@ void monster_death(int m_idx)
 	/* Update monster, item list windows */
 	p_ptr->redraw |= (PR_MONLIST | PR_ITEMLIST);
 
-
-	/* Only process "Quest Monsters" */
-	if (!(rf_has(r_ptr->flags, RF_QUESTOR)))
-		return;
-
-
-	/* Mark quests as complete */
-	for (i = 0; i < MAX_Q_IDX; i++) {
-		/* Note completed quests */
-		if (stage_map[q_list[i].stage][1] == r_ptr->level)
-			q_list[i].stage = 0;
-	}
-
-	/* Hack - mark Sauron's other forms as dead */
-	if (((r_ptr->level == 85) || (r_ptr->level == 99))
-		&& (rf_has(r_ptr->flags, RF_QUESTOR)))
-		for (i = 1; i < 4; i++)
-			r_info[m_ptr->r_idx - i].max_num--;
-
-	/* Make a staircase for Morgoth (or Sauron) */
-	if ((r_ptr->level == 100) || (r_ptr->level == 99))
-		build_quest_stairs(y, x, "staircase");
-
-	/* ...or a portal for ironmen wilderness games */
-	else if (MODE(IRONMAN) && (p_ptr->map != MAP_DUNGEON) &&
-			 (p_ptr->map != MAP_FANILLA) && (p_ptr->depth != 100))
-		build_quest_stairs(y, x, "portal");
-
-	/* or a path out of Nan Dungortheb for wilderness games */
-	else if ((r_ptr->level == 70) && (p_ptr->depth == 70)
-			 && (p_ptr->map != MAP_DUNGEON) && (p_ptr->map != MAP_FANILLA)) {
-		/* Make a path */
-		for (y = p_ptr->py; y < DUNGEON_HGT - 2; y++)
-			cave_set_feat(y, p_ptr->px, FEAT_ROAD);
-		cave_set_feat(DUNGEON_HGT - 2, p_ptr->px, FEAT_LESS_SOUTH);
-
-		/* Announce it */
-		msg("The way out of Nan Dungortheb is revealed!");
-	}
-
-	/* Increment complete quests */
-	p_ptr->quests++;
-
-	/* Check for new specialties */
-	p_ptr->update |= (PU_SPECIALTY);
-
-	/* Update */
-	update_stuff(p_ptr);
-
-	/* Was it the big one? */
-	if (r_ptr->level == 100) {
-		/* Total winner */
-		p_ptr->total_winner = TRUE;
-
-		/* Have a home now */
-		if (!p_ptr->home)
-			p_ptr->home = towns[rp_ptr->hometown];
-
-		/* Redraw the "title" */
-		p_ptr->redraw |= (PR_TITLE);
-
-		/* Congratulations */
-		msg("*** CONGRATULATIONS ***");
-		msg("You have won the game!");
-		msg("You may retire (commit suicide) when you are ready.");
-	}
+	quest_check(m_ptr);
 }
 
 

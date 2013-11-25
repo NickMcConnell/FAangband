@@ -51,7 +51,17 @@ extern void do_cmd_monlist(void);
 extern void do_cmd_itemlist(void);
 extern void do_cmd_unknown(void);
 
+/* cmd1.c */
+bool search(bool verbose);
+extern byte py_pickup(int pickup, int y, int x);
+extern void fall_off_cliff(void);
+extern void move_player(int dir);
+
 /* cmd2.c */
+int count_feats(int *y, int *x, int flag, bool under);
+int count_traps(int *y, int *x);
+int count_chests(int *y, int *x, bool trapped);
+int coords_to_dir(int y, int x);
 extern void do_cmd_move_house(void);
 extern void do_cmd_go_up(cmd_code code, cmd_arg args[]);
 extern void do_cmd_go_down(cmd_code code, cmd_arg args[]);

@@ -22,7 +22,9 @@
 #include "history.h"
 #include "monster.h"
 #include "option.h"
+#include "quest.h"
 #include "savefile.h"
+#include "store.h"
 
 
 /*
@@ -816,7 +818,7 @@ void wr_stores(void)
 	wr_byte(STORE_INVEN_MAX);
 	wr_byte(STORE_CHOICES);
 	for (i = 0; i < MAX_STORES; i++) {
-		const store_type *st_ptr = &store[i];
+		const struct store_type *st_ptr = &store[i];
 		int j;
 
 		/* Save the "open" counter */

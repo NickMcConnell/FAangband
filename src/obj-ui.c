@@ -20,6 +20,7 @@
 #include "cave.h"
 #include "cmds.h"
 #include "keymap.h"
+#include "store.h"
 #include "target.h"
 #include "tvalsval.h"
 #include "ui-menu.h"

@@ -26,6 +26,7 @@
 
 #include "angband.h"
 #include "squelch.h"
+#include "types.h"
 
 
 /**

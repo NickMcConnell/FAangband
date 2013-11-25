@@ -21,11 +21,14 @@
 
 #include "angband.h"
 #include "cave.h"
+#include "cmds.h"
 #include "files.h"
 #include "history.h"
 #include "monster.h"
+#include "quest.h"
 #include "spells.h"
 #include "squelch.h"
+#include "store.h"
 #include "trap.h"
 
 /** 
@@ -36,7 +39,7 @@ void do_cmd_move_house(void)
 {
 	char buf[80];
 	int old_home = 0, new_home = 0, i = 0;
-	store_type temp;
+	struct store_type temp;
 
 	const char *town = locality_name[stage_map[p_ptr->stage][LOCALITY]];
 

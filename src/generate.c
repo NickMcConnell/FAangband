@@ -24,6 +24,7 @@
 #include "cave.h"
 #include "generate.h"
 #include "monster.h"
+#include "store.h"
 #include "trap.h"
 
 

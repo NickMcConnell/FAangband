@@ -3399,24 +3399,3 @@ void disturb(int stop_search, int unused_flag)
 	/* Flush the input */
 	flush();
 }
-
-
-
-
-/**
- * Hack -- Check if a level is a "quest" level
- */
-bool is_quest(int stage)
-{
-	int i;
-
-	/* Check quests */
-	for (i = 0; i < MAX_Q_IDX; i++) {
-		/* Check for quest */
-		if (q_list[i].stage == stage)
-			return (TRUE);
-	}
-
-	/* Nope */
-	return (FALSE);
-}

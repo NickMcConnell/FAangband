@@ -1685,7 +1685,7 @@ extern bool build_themed_level(void)
 {
 	byte i, choice;
 
-	vault_type *t_ptr;
+	struct vault *t_ptr;
 
 	/* 
 	 * Down stairs aren't allowed on quest levels, and we must give

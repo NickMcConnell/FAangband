@@ -21,6 +21,7 @@
 
 #include "angband.h"
 #include "buildid.h"
+#include "types.h"
 
 
 /*
@@ -450,12 +451,12 @@ monster_lore *l_list;
 /**
  * Hack -- Array[MAX_Q_IDX] of quests
  */
-quest *q_list;
+//quest *q_list;
 
 /**
  * Array[MAX_STORES] of stores
  */
-store_type *store;
+struct store_type *store;
 
 /**
  * Array[RANDNAME_NUM_TYPES][num_names] of random names
@@ -527,8 +528,8 @@ byte tval_to_attr[128];
  * Pointer to the player tables (sex, race, class, magic)
  */
 player_sex *sp_ptr;
-player_race *rp_ptr;
-player_class *cp_ptr;
+struct player_race *rp_ptr;
+struct player_class *cp_ptr;
 player_magic *mp_ptr;
 
 /**
@@ -572,12 +573,12 @@ maxima *z_info;
 /**
  * The vault generation arrays
  */
-vault_type *v_info;
+struct vault *v_info;
 
 /**
  * The themed level generation arrays. -LM-
  */
-vault_type *t_info;
+struct vault *t_info;
 
 /**
  * The terrain feature arrays
@@ -619,7 +620,7 @@ monster_pain *pain_messages;
 /**
  * The player race arrays
  */
-player_race *p_info;
+struct player_race *p_info;
 
 
 /**
@@ -636,7 +637,7 @@ hist_type *h_info;
 /**
  * The shop owner arrays
  */
-owner_type *b_info;
+struct owner_type *b_info;
 
 /**
  * The spell arrays

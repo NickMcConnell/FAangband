@@ -29,6 +29,7 @@
 #include "game-event.h"
 #include "history.h"
 #include "squelch.h"
+#include "store.h"
 #include "textui.h"
 #include "ui-menu.h"
 
@@ -165,12 +166,12 @@ static int store_per = 12;
 /**
  * We store the current "store pointer" here so everyone can access it
  */
-static store_type *st_ptr = NULL;
+static struct store_type *st_ptr = NULL;
 
 /**
  * We store the current "owner type" here so everyone can access it
  */
-static owner_type *ot_ptr = NULL;
+static struct owner_type *ot_ptr = NULL;
 
 /**
  * We store the array of current owners here so everyone can access it
@@ -183,6 +184,31 @@ static byte owner[MAX_STORES] =
 	  255, 255, 255, 255,
 };
 
+/**
+ * Store types by index 
+ */
+
+byte type_of_store[MAX_STORES] = 
+  {
+    /* Eriador        */ STORE_MERCH, STORE_TEMPLE, STORE_ALCH, STORE_HOME,
+    /* Ossiriand      */ STORE_MERCH, STORE_TEMPLE, STORE_ALCH, STORE_HOME,
+    /* Ered Luin South*/ STORE_MERCH, STORE_TEMPLE, STORE_ALCH, STORE_HOME,
+    /* Taur-Im-Duinath*/ STORE_MERCH, STORE_TEMPLE, STORE_ALCH, STORE_HOME,
+    /* Ephel Brandir  */ STORE_MERCH, STORE_TEMPLE, STORE_ALCH, STORE_HOME,
+    /* Gladden Fields */ STORE_MERCH, STORE_TEMPLE, STORE_ALCH, STORE_HOME,
+    /* Khazad Dum     */ STORE_GEN, STORE_ARMORY, STORE_WEAPON, STORE_TEMPLE,
+                          STORE_ALCH, STORE_MAGIC, STORE_BLACKM, STORE_HOME,
+                          STORE_BOOK,
+    /* Belegost       */ STORE_GEN, STORE_ARMORY, STORE_WEAPON, STORE_TEMPLE,
+                          STORE_ALCH, STORE_MAGIC, STORE_BLACKM, STORE_HOME,
+                          STORE_BOOK,
+    /* Menegroth      */ STORE_GEN, STORE_ARMORY, STORE_WEAPON, STORE_TEMPLE,
+                          STORE_ALCH, STORE_MAGIC, STORE_BLACKM, STORE_HOME,
+                          STORE_BOOK,
+    /* Gondolin       */ STORE_GEN, STORE_ARMORY, STORE_WEAPON, STORE_TEMPLE,
+                          STORE_ALCH, STORE_MAGIC, STORE_BLACKM, STORE_HOME,
+                          STORE_BOOK};
+    
 /**
  * Determine the price of an object (qty one) in a store.  Altered in 
  * Oangband.

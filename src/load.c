@@ -36,9 +36,11 @@
 #include "cave.h"
 #include "history.h"
 #include "monster.h"
-#include "tvalsval.h"
+#include "quest.h"
 #include "savefile.h"
 #include "squelch.h"
+#include "store.h"
+#include "tvalsval.h"
 
 
 /* Object, trap constants */
@@ -1793,7 +1795,7 @@ int rd_stores(void)
 	}
 
 	for (i = 0; i < max_stores; i++) {
-		store_type *st_ptr = &store[i];
+		struct store_type *st_ptr = &store[i];
 		int j;
 		u32b tmp32u;
 

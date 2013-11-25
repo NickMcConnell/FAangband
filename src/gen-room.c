@@ -3000,7 +3000,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
  */
 static bool build_type7(void)
 {
-	vault_type *v_ptr;
+	struct vault *v_ptr;
 	int i, y, x;
 	int *v_idx = malloc(z_info->v_max * sizeof(*v_idx));
 	int v_cnt = 0;
@@ -3047,7 +3047,7 @@ static bool build_type7(void)
  */
 static bool build_type8(void)
 {
-	vault_type *v_ptr;
+	struct vault *v_ptr;
 	int i, y, x;
 	int *v_idx = malloc(z_info->v_max * sizeof(*v_idx));
 	int v_cnt = 0;
@@ -3101,7 +3101,7 @@ static bool build_type8(void)
  */
 static bool build_type9(void)
 {
-	vault_type *v_ptr;
+	struct vault *v_ptr;
 	int i, y, x;
 	int *v_idx = malloc(z_info->v_max * sizeof(int));
 	int v_cnt = 0;

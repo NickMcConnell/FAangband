@@ -510,7 +510,7 @@ int make_formation(int y, int x, int base_feat1, int base_feat2, int *feat,
 
 	/* Need to make some "wilderness vaults" */
 	if (wild_vaults) {
-		vault_type *v_ptr;
+		struct vault *v_ptr;
 		int n, yy, xx;
 		int v_cnt = 0;
 		int *v_idx = malloc(z_info->v_max * sizeof(*v_idx));
@@ -2472,7 +2472,7 @@ extern void river_gen(void)
  */
 bool place_web(int type)
 {
-	vault_type *v_ptr;
+	struct vault *v_ptr;
 	int i, y, x = DUNGEON_WID / 2, cy, cx;
 	int *v_idx = malloc(z_info->v_max * sizeof(v_idx));
 	int v_cnt = 0;

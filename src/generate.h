@@ -3,6 +3,8 @@
 #ifndef GENERATE_H
 #define GENERATE_H
 
+#include "quest.h"
+
 #if 0
 struct tunnel_profile {
 	const char *name;
@@ -64,6 +66,29 @@ struct room_profile {
 	int cutoff; /* Upper limit of 1-100 random roll for room generation */
 };
 #endif
+
+/**
+ * Information about "vault generation"
+ */
+struct vault {
+    struct vault *next;
+    unsigned int vidx;
+    char *name;
+    char *message;
+    char *text;
+
+    byte typ;		/**< Vault type */
+
+    byte rat;		/**< Vault rating */
+
+    byte hgt;		/**< Vault height */
+    byte wid;		/**< Vault width */
+
+    byte min_lev;	/**< Minimum allowable level, if specified. */
+    byte max_lev;	/**< Maximum allowable level, if specified. */
+};
+
+
 
 /**
  * Determine if a "legal" grid is a "naked" grid

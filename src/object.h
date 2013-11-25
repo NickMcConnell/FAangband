@@ -1,7 +1,8 @@
 #ifndef INCLUDED_OBJECT_H
 #define INCLUDED_OBJECT_H
 
-#include "angband.h"
+#include "charattr.h"
+#include "game-cmd.h"
 #include "z-textblock.h"
 
 /** Maximum number of scroll titles generated */
@@ -11,6 +12,7 @@
 #define INHIBIT_POWER       20000
 
 struct player;
+typedef struct autoinscription autoinscription;
 
 /*** Constants ***/
 
@@ -116,6 +118,470 @@ typedef enum
 
 	INSCRIP_MAX                  /*!< Maximum number of pseudo-ID markers */
 } obj_pseudo_t;
+
+/**
+ * Determine if a given inventory item is "aware"
+ */
+#define object_aware_p(T) \
+	(k_info[(T)->k_idx].aware)
+
+/**
+ * Determine if a given inventory item is "tried"
+ */
+#define object_tried_p(T) \
+	(k_info[(T)->k_idx].tried)
+
+
+/**
+ * Determine if a given inventory item is "known"
+ * Test One -- Check for special "known" tag
+ * Test Two -- Check for "Easy Know" + "Aware"
+ */
+#define object_known_p(T) \
+	(((T)->ident & (IDENT_KNOWN)) || \
+	 (kf_has(k_info[(T)->k_idx].flags_kind, KF_EASY_KNOW) \
+	  && k_info[(T)->k_idx].aware))
+
+#define object_is_known object_known_p
+
+/**
+ * Object is a missile
+ */
+#define is_missile(T) \
+	(((T)->tval == TV_SHOT)   || \
+	 ((T)->tval == TV_ARROW)  || \
+	 ((T)->tval == TV_BOLT))
+
+/**
+ * Object is armour
+ */
+#define is_weapon(T) \
+  (((T)->tval >= TV_SHOT) && ((T)->tval <= TV_SWORD))
+
+/**
+ * Object is armour
+ */
+#define is_armour(T) \
+  (((T)->tval >= TV_BOOTS) && ((T)->tval <= TV_DRAG_ARMOR))
+
+/**
+ * Object is a ring or amulet
+ */
+#define is_jewellery(T) \
+  (((T)->tval >= TV_AMULET) && ((T)->tval <= TV_RING))
+
+/**
+ * Determine if the attr and char should consider the item's flavor
+ *
+ * Identified scrolls should use their own tile.
+ */
+#define use_flavor_glyph(K) \
+	((k_info[(K)].flavor) && \
+	 !((k_info[(K)].tval == TV_SCROLL) && k_info[(K)].aware))
+
+
+/**
+ * Return the "attr" for a given item kind.
+ * Use "flavor" if available.
+ * Default to user definitions.
+ */
+#define object_kind_attr(K) \
+	(use_flavor_glyph(K) ? \
+	 (flavor_info[k_info[(K)].flavor].x_attr) : \
+	 (k_info[(K)].x_attr))
+
+/**
+ * Return the "char" for a given item kind.
+ * Use "flavor" if available.
+ * Default to user definitions.
+ */
+#define object_kind_char(K) \
+	(use_flavor_glyph(K) ? \
+	 (flavor_info[k_info[(K)].flavor].x_char) : \
+	 (k_info[(K)].x_char))
+
+/**
+ * Return the "attr" for a given item.
+ * Use "flavor" if available.
+ * Default to user definitions.
+ */
+#define object_attr(T) \
+	(object_kind_attr((T)->k_idx))
+
+/**
+ * Return the "char" for a given item.
+ * Use "flavor" if available.
+ * Default to user definitions.
+ */
+#define object_char(T) \
+	(object_kind_char((T)->k_idx))
+
+
+/**
+ * Return the "attr" for a given item.
+ * Use "flavor" if available.
+ * Use default definitions.
+ */
+#define object_attr_default(T) \
+	((k_info[(T)->k_idx].flavor) ? \
+	 (flavor_info[k_info[(T)->k_idx].flavor].d_attr) : \
+	 (k_info[(T)->k_idx].d_attr))
+
+/**
+ * Return the "char" for a given item.
+ * Use "flavor" if available.
+ * Use default definitions.
+ */
+#define object_char_default(T) \
+	((k_info[(T)->k_idx].flavor) ? \
+	 (flavor_info[k_info[(T)->k_idx].flavor].d_char) : \
+	 (k_info[(T)->k_idx].d_char))
+
+/**
+ * Artifacts use the "name1" field
+ */
+#define artifact_p(T) \
+	((T)->name1 ? TRUE : FALSE)
+
+/**
+ * Ego-Items use the "name2" field
+ */
+#define ego_item_p(T) \
+	((T)->name2 ? TRUE : FALSE)
+
+/**
+ * Cursed items.
+ */
+#define cursed_p(T) \
+    (!cf_is_empty((T)->flags_curse) ? TRUE : FALSE)
+
+/**
+ * Known cursed items.
+ */
+#define known_cursed_p(T) \
+    (!(cf_is_empty((T)->id_curse)) || ((T)->ident & IDENT_CURSED) ? TRUE : FALSE)
+
+
+/**
+ * Information about object "kinds", including player knowledge.
+ *
+ * Only "aware", "tried", and "known" are saved in the savefile.
+ */
+typedef struct object_kind {
+    char *name;		/**< Name (offset) */
+    char *text;		/**< Text (offset) */
+
+    struct object_kind *next;
+    u32b kidx;
+
+    byte tval;		/**< Object type */
+    byte sval;		/**< Object sub type */
+    random_value pval;   /**< Power for any flags which need it */
+
+    random_value to_h;     /**< Bonus to hit */
+    random_value to_d;     /**< Bonus to damage */
+    random_value to_a;   /**< Bonus to armor */
+    s16b ac;		/**< Base armor */
+
+    byte dd, ds;	/**< Damage dice/sides */
+
+    s16b weight;	/**< Weight */
+
+    s32b cost;		/**< Object "base cost" */
+
+    bitflag flags_obj[OF_SIZE];	/**< New object flags -NRM-*/
+    bitflag flags_curse[CF_SIZE]; /**< New curse flags  -NRM- */
+    bitflag flags_kind[KF_SIZE];	   /**< New object_kind flags -NRM- */
+
+    int percent_res[MAX_P_RES];	   /**< Percentage resists -NRM- */
+    int bonus_stat[A_MAX];	   /**< Stat bonuses       -NRM- */
+    int bonus_other[MAX_P_BONUS];  /**< Other bonuses      -NRM- */
+    int multiple_slay[MAX_P_SLAY];  /**< Slay multiples     -NRM- */
+    int multiple_brand[MAX_P_BRAND];  /**< Brand multiples    -NRM- */
+
+    byte d_attr;	/**< Default object attribute */
+    wchar_t d_char;	/**< Default object character */
+
+    byte locale[4];	/**< Allocation level(s) */
+    byte chance[4];	/**< Allocation chance(s) */
+    byte level;		/**< Level */
+
+    u16b effect;       /**< Effect this item produces (effects.c) */
+    random_value time;	       /**< Recharge time (rods/activation) */
+    random_value charge;	       /**< Number of charges (staves/wands) */
+
+    byte gen_mult_prob;	   /**< Probability of generating more than one */
+    random_value stack_size;  /**< Number to generate */
+
+    u16b flavor;	/**< Special object flavor (or zero) */
+
+    byte x_attr;	/**< Desired object attribute */
+    wchar_t x_char;	/**< Desired object character */
+
+    u16b note;     /**< Autoinscription quark number */
+
+    bool aware;		/**< The player is "aware" of the item's effects */
+    bool tried;		/**< The player has "tried" one of the items */
+    bool known_effect;
+			/**< Item's effects when used are known. -LM- */
+    bool squelch;
+    bool everseen;		/**< Used to despoilify squelch menus */
+} object_kind;
+
+
+
+/**
+ * Information about "artifacts".
+ */
+typedef struct artifact {
+    char *name;		/**< Name (offset) */
+    char *text;		/**< Text (offset) */
+
+    u32b aidx;
+
+    struct artifact *next;
+
+    byte tval;		/**< Artifact type */
+    byte sval;		/**< Artifact sub type */
+    s16b pval;		/**< Artifact extra info */
+
+    s16b to_h;		/**< Bonus to hit */
+    s16b to_d;		/**< Bonus to damage */
+    s16b to_a;		/**< Bonus to armor */
+    s16b ac;		/**< Base armor */
+
+    byte dd, ds;	/**< Damage when hits */
+
+    s16b weight;	/**< Weight */
+    s32b cost;		/**< Artifact "cost" */
+
+    bitflag flags_obj[OF_SIZE];		/**< New object flags -NRM-*/
+    bitflag flags_curse[CF_SIZE];	/**< New curse flags  -NRM- */
+    bitflag flags_kind[KF_SIZE];    /**< New object kind flags -NRM- */
+
+    int percent_res[MAX_P_RES];	   /**< Percentage resists -NRM- */
+    int bonus_stat[A_MAX];	   /**< Stat bonuses       -NRM- */
+    int bonus_other[MAX_P_BONUS];	   /**< Other bonuses      -NRM- */
+    int multiple_slay[MAX_P_SLAY];	   /**< Slay multiples     -NRM- */
+    int multiple_brand[MAX_P_BRAND];	   /**< Brand multiples    -NRM- */
+
+    byte level;		/**< Artifact level */
+    byte rarity;	/**< Artifact rarity */
+
+    bool created;	/**< Whether this artifact has been created */
+    bool seen;	/**< Whether this artifact has been seen as an artifact */
+    u16b effect;     /**< Artifact activation (see effects.c) */
+    char *effect_msg;
+
+    random_value time;  /**< Recharge time (if appropriate) */
+    random_value charge;	       /**< Number of charges (staves/wands) */
+
+    byte set_no;	/**< Stores the set number of the artifact. 
+			 * 0 if not part of a set -GS- */
+    bool set_bonus;	/**< Is the item set, is the bonus currently applied? */
+} artifact_type;
+
+
+/* Item sets */
+
+/** Information about an item in a set -GS- */
+typedef struct set_element {
+    byte a_idx;		/**< the artifact ID */
+    bitflag flags_obj[OF_SIZE];	/**< New object flags -NRM-*/
+    bitflag flags_curse[CF_SIZE];/**< New curse flags  -NRM- */
+
+    int percent_res[MAX_P_RES];	   /**< Percentage resists -NRM- */
+    int bonus_stat[A_MAX];	   /**< Stat bonuses       -NRM- */
+    int bonus_other[MAX_P_BONUS];  /**< Other bonuses      -NRM- */
+    int multiple_slay[MAX_P_SLAY];  /**< Slay multiples     -NRM- */
+    int multiple_brand[MAX_P_BRAND];  /**< Brand multiples    -NRM- */
+} set_element;
+
+/** Information about items sets -GS- */
+typedef struct set_type {
+    struct set_type *next;
+    char *name;			/**< Name */
+    char *text;			/**< Text */
+
+    byte setidx;	        /**< the set ID */
+    byte no_of_items;		/**< The number of items in the set */
+    set_element set_items[6];	/**< the artifact no and extra powers. */
+} set_type;
+
+
+/**
+ * Information about "ego-items".
+ */
+typedef struct ego_item {
+    struct ego_item *next;
+
+    char *name;			/**< Name */
+    char *text;			/**< Text */
+
+    u32b eidx;
+
+    s32b cost;			/**< Ego-item "cost" */
+
+    bitflag flags_obj[OF_SIZE];	 /**< New object flags -NRM-*/
+    bitflag flags_curse[CF_SIZE]; 	/**< New curse flags  -NRM- */
+    bitflag flags_kind[KF_SIZE];	/**< New object kind flags -NRM- */
+
+    bitflag id_curse[CF_SIZE];	/**< Curse ID flags  */
+    bitflag id_obj[OF_SIZE];	/**< Object ID flags  */
+    bitflag id_other[IF_SIZE]; /**< Miscellaneous ID flags  */
+
+    int percent_res[MAX_P_RES];	   /**< Percentage resists -NRM- */
+    int bonus_stat[A_MAX];	   /**< Stat bonuses       -NRM- */
+    int bonus_other[MAX_P_BONUS];   /**< Other bonuses      -NRM- */
+    int multiple_slay[MAX_P_SLAY];   /**< Slay multiples     -NRM- */
+    int multiple_brand[MAX_P_BRAND];  /**< Brand multiples    -NRM- */
+
+    byte level;			/**< Minimum level */
+    byte rarity;		/**< Object rarity */
+    byte rating;		/**< Rating boost */
+
+    byte tval[EGO_TVALS_MAX];	/**< Legal tval */
+    byte min_sval[EGO_TVALS_MAX];/**< Minimum legal sval */
+    byte max_sval[EGO_TVALS_MAX];/**< Maximum legal sval */
+
+    byte max_to_h;		/**< Maximum to-hit bonus */
+    byte max_to_d;		/**< Maximum to-dam bonus */
+    byte max_to_a;		/**< Maximum to-ac bonus */
+
+    random_value time;	       /**< Recharge time (rods/activation) */
+
+    u16b effect;		/**< Activation index */
+    bool everseen;		/**< Do not spoil squelch menus */
+    bool squelch;		/**< Squelch this ego-item */
+} ego_item_type;
+
+
+/**
+ * Object information, for a specific object.
+ *
+ * Note that a "discount" on an item is permanent and never goes away.
+ *
+ * Note that inscriptions are now handled via the "quark_str()" function
+ * applied to the "note" field, which will return NULL if "note" is zero.
+ *
+ * Note that "object" records are "copied" on a fairly regular basis,
+ * and care must be taken when handling such objects.
+ *
+ * Note that "object flags" must now be derived from the object kind,
+ * the artifact and ego-item indexes, and the two "xtra" fields.
+ *
+ * Note that the amount of resistance is now held in the nibble flag
+ * fields perc_res1 and perc_res2. -NRM-
+ *
+ * Each cave grid points to one (or zero) objects via the "o_idx"
+ * field (above).  Each object then points to one (or zero) objects
+ * via the "next_o_idx" field, forming a singly linked list, which
+ * in game terms, represents a "stack" of objects in the same grid.
+ *
+ * Each monster points to one (or zero) objects via the "hold_o_idx"
+ * field (below).  Each object then points to one (or zero) objects
+ * via the "next_o_idx" field, forming a singly linked list, which
+ * in game terms, represents a pile of objects held by the monster.
+ *
+ * The "held_m_idx" field is used to indicate which monster, if any,
+ * is holding the object.  Objects being held have "ix=0" and "iy=0".
+ */
+typedef struct object {
+    s16b k_idx;		/**< Kind index (zero if "dead") */
+    struct object_kind *kind;
+
+    byte iy;		/**< Y-position on map, or zero */
+    byte ix;		/**< X-position on map, or zero */
+
+    byte tval;		/**< Item type (from kind) */
+    byte sval;		/**< Item sub-type (from kind) */
+
+    s16b pval;		/**< Item extra-parameter */
+
+    byte discount;	/**< Discount (if any) */
+
+    s16b weight;	/**< Item weight */
+
+    byte name1;		/**< Artifact type, if any */
+    byte name2;		/**< Ego-Item type, if any */
+
+    bitflag flags_obj[OF_SIZE];		/**< New object flags -NRM-*/
+    bitflag flags_curse[CF_SIZE];	/**< New curse flags  -NRM- */
+
+    bitflag id_curse[CF_SIZE];	/**< Curse ID flags  */
+    bitflag id_obj[OF_SIZE];	/**< Object ID flags  */
+    bitflag id_other[IF_SIZE];	/**< Miscellaneous ID flags  */
+
+    int percent_res[MAX_P_RES];	   /**< Percentage resists -NRM- */
+    int bonus_stat[A_MAX];	   /**< Stat bonuses       -NRM- */
+    int bonus_other[MAX_P_BONUS];   /**< Other bonuses      -NRM- */
+    int multiple_slay[MAX_P_SLAY];  /**< Slay multiples     -NRM- */
+    int multiple_brand[MAX_P_BRAND];  /**< Brand multiples    -NRM- */
+
+    byte ident;		/**< ID flags  */
+    u16b effect;	/**< Activation indicator */
+
+    s16b ac;		/**< Normal AC */
+    s16b to_h;		/**< Plusses to hit */
+    s16b to_d;		/**< Plusses to damage */
+    s16b to_a;		/**< Plusses to AC */
+
+    byte dd, ds;	/**< Damage dice/sides */
+
+    s16b timeout;	/**< Timeout Counter */
+    random_value time;	       /**< Recharge time (rods/activation) */
+
+
+    byte number;	/**< Number of items */
+    byte marked;	/**< Object is marked */
+
+    byte feel;		/**< Feeling index */
+
+    s16b next_o_idx;	/**< Next object in stack (if any) */
+    s16b held_m_idx;	/**< Monster holding us (if any) */
+
+    byte origin;        /* How this item was found */
+    byte origin_stage;  /* Where the item was found */
+    u16b origin_xtra;   /* Extra information about origin */
+    
+    quark_t note;		/**< Inscription index */
+} object_type;
+
+
+
+/**
+ * And here's the structure for the "fixed" spell information
+ */
+typedef struct spell {
+	struct spell *next;
+	unsigned int sidx;
+	char *name;
+	char *text;
+} spell_type;
+
+
+/** From NPPAngband */
+
+typedef struct flavor {
+    char *text;
+    struct flavor *next;
+    unsigned int fidx;
+
+    byte tval;	  /**< Associated object type */
+    byte sval;	  /**< Associated object sub-type */
+
+    byte d_attr;  /**< Default flavor attribute */
+    wchar_t d_char;  /**< Default flavor character */
+
+    byte x_attr;  /**< Desired flavor attribute */
+    wchar_t x_char;  /**< Desired flavor character */
+} flavor_type;
+
+/** Information for object auto-inscribe */
+struct autoinscription {
+    s16b kind_idx;
+    s16b inscription_idx;
+};
 
 /*** Functions ***/
 

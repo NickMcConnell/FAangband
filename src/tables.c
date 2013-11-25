@@ -727,7 +727,7 @@ const char *window_flag_desc[32] =
 /**
  * Table of Druid blows. -LM- 
  */
-druid_blows d_blow[NUM_D_BLOWS] =
+struct druid_blows d_blow[NUM_D_BLOWS] =
   {
     { "punch",		  1, 5 },
     { "kick",		  2, 4 },
@@ -2926,31 +2926,6 @@ int race_town_prob[10][14] =
     /* Menegroth       */ {0, 5, 70, 0, 0, 0, 5, 0, 5, 5, 5, 0, 5, 0},
     /* Gondolin        */ {0, 5, 20, 0, 0, 0, 0, 0, 0, 75, 0, 0, 0, 0}};
 
-/**
- * Store types by index 
- */
-
-byte type_of_store[MAX_STORES] = 
-  {
-    /* Eriador        */ STORE_MERCH, STORE_TEMPLE, STORE_ALCH, STORE_HOME,
-    /* Ossiriand      */ STORE_MERCH, STORE_TEMPLE, STORE_ALCH, STORE_HOME,
-    /* Ered Luin South*/ STORE_MERCH, STORE_TEMPLE, STORE_ALCH, STORE_HOME,
-    /* Taur-Im-Duinath*/ STORE_MERCH, STORE_TEMPLE, STORE_ALCH, STORE_HOME,
-    /* Ephel Brandir  */ STORE_MERCH, STORE_TEMPLE, STORE_ALCH, STORE_HOME,
-    /* Gladden Fields */ STORE_MERCH, STORE_TEMPLE, STORE_ALCH, STORE_HOME,
-    /* Khazad Dum     */ STORE_GEN, STORE_ARMORY, STORE_WEAPON, STORE_TEMPLE,
-                          STORE_ALCH, STORE_MAGIC, STORE_BLACKM, STORE_HOME,
-                          STORE_BOOK,
-    /* Belegost       */ STORE_GEN, STORE_ARMORY, STORE_WEAPON, STORE_TEMPLE,
-                          STORE_ALCH, STORE_MAGIC, STORE_BLACKM, STORE_HOME,
-                          STORE_BOOK,
-    /* Menegroth      */ STORE_GEN, STORE_ARMORY, STORE_WEAPON, STORE_TEMPLE,
-                          STORE_ALCH, STORE_MAGIC, STORE_BLACKM, STORE_HOME,
-                          STORE_BOOK,
-    /* Gondolin       */ STORE_GEN, STORE_ARMORY, STORE_WEAPON, STORE_TEMPLE,
-                          STORE_ALCH, STORE_MAGIC, STORE_BLACKM, STORE_HOME,
-                          STORE_BOOK};
-    
 /*
  * Accept values for y and x (considered as the endpoints of lines) between
  * 0 and 40, and return an angle in degrees (divided by two).  -LM-

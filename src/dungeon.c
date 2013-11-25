@@ -23,6 +23,7 @@
     */
 
 #include "angband.h"
+#include "birth.h"
 #include "cave.h"
 #include "cmds.h"
 #include "files.h"
@@ -32,8 +33,10 @@
 #include "monster.h"
 #include "tvalsval.h"
 #include "prefs.h"
+#include "quest.h"
 #include "savefile.h"
 #include "spells.h"
+#include "store.h"
 #include "target.h"
 
 

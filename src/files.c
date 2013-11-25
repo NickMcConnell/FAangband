@@ -33,6 +33,7 @@
 #include "tvalsval.h"
 #include "option.h"
 #include "savefile.h"
+#include "store.h"
 #include "ui-menu.h"
 
 
@@ -845,7 +846,7 @@ extern int make_dump(char_attr_line * line, int mode)
 
 	int k, which = 0;
 
-	store_type *st_ptr = NULL;
+	struct store_type *st_ptr = NULL;
 
 	char o_name[120];
 

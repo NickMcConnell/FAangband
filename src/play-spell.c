@@ -17,10 +17,11 @@
  */
 
 #include "angband.h"
-#include "tvalsval.h"
+#include "cmds.h"
 #include "game-cmd.h"
 #include "spells.h"
 #include "trap.h"
+#include "tvalsval.h"
 
 
 /**
