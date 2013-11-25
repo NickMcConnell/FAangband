@@ -1257,6 +1257,10 @@ bool chaotic_effects(monster_type * m_ptr)
 			int i, k;
 			monster_race *q_ptr;
 
+			/* Don't shapechange uniques */
+			if (rf_has(r_ptr->flags, RF_UNIQUE))
+				return (TRUE);
+
 			/* Don't shapechange twice */
 			if (m_ptr->orig_idx != 0) return (TRUE);
 
