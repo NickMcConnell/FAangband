@@ -1724,6 +1724,7 @@ static bool sval_menu(int tval, const char *desc)
 	menu = menu_new(MN_SKIN_COLUMNS, &menu_f);
 	menu_setpriv(menu, num, choice);
 	menu_layout(menu, &area);
+	menu_set_cursor_x_offset(menu, 1); /* Place cursor in brackets. */
 	menu_select(menu, 0, FALSE);
 
 	/* Free memory */
