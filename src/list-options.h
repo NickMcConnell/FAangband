@@ -19,8 +19,6 @@ OP(show_menus,            "Enter key brings up command menu",
 INTERFACE, TRUE)
 OP(mouse_movement,        "Allow mouse clicks to move the player",
 INTERFACE, FALSE)
-OP(mouse_buttons,         "Mouse commands are enabled",
-INTERFACE, TRUE)
 OP(show_flavors,          "Show flavors in object descriptions",
 INTERFACE, TRUE)
 OP(show_detect,           "Show detection region",

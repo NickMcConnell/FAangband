@@ -23,7 +23,6 @@
     */
 
 #include "angband.h"
-#include "button.h"
 #include "cave.h"
 #include "cmds.h"
 #include "files.h"
@@ -1448,9 +1447,6 @@ static void process_player(void)
 
 	u32b temp_wakeup_chance;
 
-	byte feat = cave_feat[p_ptr->py][p_ptr->px];
-	feature_type *f_ptr = &f_info[feat];
-
 	/*** Check for interupts ***/
 
 	/* Complete resting */
@@ -1508,24 +1504,6 @@ static void process_player(void)
 			msg("Cancelled.");
 		}
 	}
-
-	/* Add context-sensitive mouse buttons */
-
-	if (tf_has(f_ptr->flags, TF_UPSTAIR))
-		button_add("[<]", '<');
-	else
-		button_kill('<');
-
-	if (tf_has(f_ptr->flags, TF_DOWNSTAIR))
-		button_add("[>]", '>');
-	else
-		button_kill('>');
-
-	if (cave_o_idx[p_ptr->py][p_ptr->px] > 0)
-		button_add("[g]", 'g');
-	else
-		button_kill('g');
-
 
 	/*** Hack - handle special mana gain ***/
 	special_mana_gain();
@@ -2015,16 +1993,6 @@ static void dungeon(void)
 	/* Combine / Reorder the pack */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER | PN_SORT_QUIVER);
 
-	/* Make basic mouse buttons */
-	(void) button_add("[ESC]", ESCAPE);
-	(void) button_add("[Ent]", KC_ENTER);
-	(void) button_add("[Spc]", ' ');
-	(void) button_add("[Rpt]", 'n');
-	(void) button_add("[Std]", ',');
-
-	/* Redraw buttons */
-	p_ptr->redraw |= (PR_BUTTONS);
-
 	/* Notice stuff */
 	notice_stuff(p_ptr);
 
@@ -2212,13 +2180,6 @@ static void dungeon(void)
 		/* Count game turns */
 		turn++;
 	}
-
-	/* Kill basic mouse buttons */
-	(void) button_kill(ESCAPE);
-	(void) button_kill(KC_ENTER);
-	(void) button_kill(' ');
-	(void) button_kill('n');
-	(void) button_kill(',');
 }
 
 

@@ -18,7 +18,6 @@
  *    are included in all such copies.  Other copyrights may also apply.
  */
 #include "angband.h"
-#include "button.h"
 #include "cmds.h"
 #include "keymap.h"
 #include "squelch.h"
@@ -936,8 +935,6 @@ void do_cmd_panel_change(const char *name, int row)
 {
 	/* Prompt */
 	prt("Command: Panel Change", 20, 0);
-	button_add("+", '+');
-	button_add("-", '-');
 
 	/* Get a new value */
 	while (1) {
@@ -961,9 +958,6 @@ void do_cmd_panel_change(const char *name, int row)
 		if (op_ptr->panel_change < 0)
 			op_ptr->panel_change = 0;
 	}
-
-	button_kill('+');
-	button_kill('-');
 }
 
 
@@ -1144,10 +1138,6 @@ static void do_cmd_options_autosave(const char *name, int row)
 		/* Hilight current option */
 		Term_gotoxy(50, k + 2);
 
-		button_add("F", 'F');
-		button_add("n", 'n');
-		button_add("y", 'y');
-
 		/* Get a key */
 		ke = inkey_ex();
 
@@ -1155,9 +1145,6 @@ static void do_cmd_options_autosave(const char *name, int row)
 		switch (ke.key.code) {
 		case ESCAPE:
 			{
-				button_kill('F');
-				button_kill('n');
-				button_kill('y');
 				return;
 			}
 
@@ -1453,11 +1440,6 @@ static void ego_menu(const char *unused, int also_unused)
 	/* Help text */
 	prt("Ego item squelch menu", 0, 0);
 
-	/* Buttons */
-	button_add("Up", ARROW_UP);
-	button_add("Down", ARROW_DOWN);
-	button_add("Toggle", '\r');
-
 	/* Output to the screen */
 	text_out_hook = text_out_to_screen;
 
@@ -1485,11 +1467,6 @@ static void ego_menu(const char *unused, int also_unused)
 
 	/* Load screen */
 	screen_load();
-
-	/* Buttons */
-	button_kill(ARROW_UP);
-	button_kill(ARROW_DOWN);
-	button_kill('\r');
 
 	return;
 }
@@ -1730,11 +1707,6 @@ static bool sval_menu(int tval, const char *desc)
 	/* Help text */
 	prt("Item type squelch menu", 0, 0);
 
-	/* Buttons */
-	button_add("Up", ARROW_UP);
-	button_add("Down", ARROW_DOWN);
-	button_add("Toggle", '\r');
-
 	/* Output to the screen */
 	text_out_hook = text_out_to_screen;
 
@@ -1759,11 +1731,6 @@ static bool sval_menu(int tval, const char *desc)
 
 	/* Load screen */
 	screen_load();
-
-	/* Buttons */
-	button_kill(ARROW_UP);
-	button_kill(ARROW_DOWN);
-	button_kill('\r');
 
 	return TRUE;
 }

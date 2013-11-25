@@ -17,7 +17,6 @@
  */
 
 #include "angband.h"
-#include "button.h"
 #include "cave.h"
 #include "cmds.h"
 #include "effects.h"
@@ -1541,10 +1540,6 @@ bool cast_spell(int tval, int sindex, int dir, int plev)
 			/* Query */
 			msg("Would you like to enchant a 'W'eapon or 'A'rmour");
 
-			/* Buttons */
-			button_add("a", 'a');
-			button_add("w", 'w');
-
 			/* Interact and enchant. */
 			while (1) {
 				ui_event ke;
@@ -1560,14 +1555,9 @@ bool cast_spell(int tval, int sindex, int dir, int plev)
 					(void) enchant_spell(0, 0, randint0(3) + 2);
 					break;
 				} else if (answer == ESCAPE) {
-					button_kill('w');
-					button_kill('a');
 					return FALSE;
 				}
 			}
-			button_kill('w');
-			button_kill('a');
-
 			break;
 		}
 	case PRAYER_LIGHT_OF_MANWE:

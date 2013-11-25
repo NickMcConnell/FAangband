@@ -17,7 +17,6 @@
  */
 
 #include "angband.h"
-#include "button.h"
 #include "cave.h"
 #include "cmds.h"
 #include "keymap.h"
@@ -607,7 +606,7 @@ static int get_tag(int *cp, char tag, cmd_code cmd, bool quiver_tags)
 }
 
 /**
- * Make the correct prompt for items, handle mouse buttons
+ * Make the correct prompt for items
  */
 void item_prompt(int mode)
 {
@@ -636,28 +635,20 @@ void item_prompt(int mode)
 		}
 
 		/* Indicate ability to "view" */
-		if (!show_list) {
+		if (!show_list)
 			my_strcat(out_val, " * to see,", sizeof(out_val));
-			button_add("[*]", '*');
-		}
 
 		/* Indicate legality of "toggle" */
-		if (use_equip) {
+		if (use_equip)
 			my_strcat(out_val, " / for Equip,", sizeof(out_val));
-			button_add("[/]", '/');
-		}
 
 		/* Indicate legality of the "floor" */
-		if (allow_floor) {
+		if (allow_floor)
 			my_strcat(out_val, " - for floor,", sizeof(out_val));
-			button_add("[-]", '-');
-		}
 
 		/* Indicate that squelched items can be selected */
-		if (can_squelch && !OPT(hide_squelchable)) {
+		if (can_squelch && !OPT(hide_squelchable))
 			my_strcat(out_val, " ! for squelched,", sizeof(out_val));
-			button_add("[!]", '!');
-		}
 	}
 
 	/* Viewing equipment */
@@ -677,22 +668,16 @@ void item_prompt(int mode)
 		}
 
 		/* Indicate ability to "view" */
-		if (!show_list) {
+		if (!show_list)
 			my_strcat(out_val, " * to see,", sizeof(out_val));
-			button_add("[*]", '*');
-		}
 
 		/* Indicate legality of "toggle" */
-		if (use_inven) {
+		if (use_inven)
 			my_strcat(out_val, " / for Inven,", sizeof(out_val));
-			button_add("[/]", '/');
-		}
 
 		/* Indicate legality of the "floor" */
-		if (allow_floor) {
+		if (allow_floor)
 			my_strcat(out_val, " - for floor,", sizeof(out_val));
-			button_add("[-]", '-');
-		}
 	}
 
 	/* Viewing floor */
@@ -710,28 +695,20 @@ void item_prompt(int mode)
 		}
 
 		/* Indicate ability to "view" */
-		if (!show_list) {
+		if (!show_list)
 			my_strcat(out_val, " * to see,", sizeof(out_val));
-			button_add("[*]", '*');
-		}
 
 		/* Append */
-		if (use_inven) {
+		if (use_inven)
 			my_strcat(out_val, " / for Inven,", sizeof(out_val));
-			button_add("[/]", '/');
-		}
 
 		/* Append */
-		else if (use_equip) {
+		else if (use_equip)
 			my_strcat(out_val, " / for Equip,", sizeof(out_val));
-			button_add("[/]", '/');
-		}
 
 		/* Indicate that squelched items can be selected */
-		if (can_squelch && !OPT(hide_squelchable)) {
+		if (can_squelch && !OPT(hide_squelchable))
 			my_strcat(out_val, " ! for squelched,", sizeof(out_val));
-			button_add("[!]", '!');
-		}
 	}
 
 	/* Finish the prompt */
@@ -1495,12 +1472,6 @@ bool get_item(int *cp, const char *pmt, const char *str, cmd_code cmd,
 		/* Hack -- Cancel "display" */
 		show_list = FALSE;
 	}
-
-	/* Kill buttons */
-	button_kill('*');
-	button_kill('/');
-	button_kill('-');
-	button_kill('!');
 
 	/* Forget the item_tester_tval restriction */
 	item_tester_tval = 0;

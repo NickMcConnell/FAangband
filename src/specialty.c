@@ -19,7 +19,6 @@
     */
 
 #include "angband.h"
-#include "button.h"
 #include "cave.h"
 #include "history.h"
 #include "ui-menu.h"
@@ -873,10 +872,6 @@ void do_cmd_specialty(void)
 
 	/* Might want to gain a new ability or browse old ones */
 	if (p_ptr->new_specialties > 0) {
-		/* Buttons */
-		button_add("l", 'l');
-		button_add("v", 'v');
-
 		/* Interact and choose. */
 		while (get_com_ex
 			   ("View abilities or Learn specialty (l/v/ESC)?", &answer)) {
@@ -898,8 +893,6 @@ void do_cmd_specialty(void)
 
 
 		}
-		button_kill('l');
-		button_kill('v');
 	}
 
 	/* View existing specialties is the only option */

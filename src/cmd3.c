@@ -21,7 +21,6 @@
  */
 
 #include "angband.h"
-#include "button.h"
 #include "cave.h"
 #include "monster.h"
 #include "player.h"
@@ -949,13 +948,6 @@ void do_cmd_query_symbol(void)
 	}
 
 
-	/* Buttons */
-	button_add("[y]", 'y');
-	button_add("[k]", 'k');
-	/* Don't collide with the repeat button */
-	button_add("[n]", 'q');
-	redraw_stuff(p_ptr);
-
 	/* Prompt */
 	put_str("Recall details? (y/k/n): ", 0, 40);
 
@@ -964,12 +956,6 @@ void do_cmd_query_symbol(void)
 
 	/* Restore */
 	prt(buf, 0, 0);
-
-	/* Buttons */
-	button_kill('y');
-	button_kill('k');
-	button_kill('q');
-	redraw_stuff(p_ptr);
 
 	/* Interpret the response */
 	if (query.key.code == 'k') {
@@ -989,12 +975,6 @@ void do_cmd_query_symbol(void)
 
 	/* Start at the end */
 	i = n - 1;
-
-	/* Button */
-	button_add("[r]", 'r');
-	button_add("[-]", '-');
-	button_add("[+]", '+');
-	redraw_stuff(p_ptr);
 
 	/* Scan the monster memory */
 	while (TRUE) {
@@ -1029,8 +1009,6 @@ void do_cmd_query_symbol(void)
 				prt(format("(#%d of %d)", i + 1, n), 0, 65);
 
 			}
-
-			button_add("-", '-');
 
 			/* Command */
 			query = inkey_ex();
@@ -1067,13 +1045,6 @@ void do_cmd_query_symbol(void)
 			}
 		}
 	}
-
-
-	/* Button */
-	button_kill('r');
-	button_kill('-');
-	button_kill('+');
-	redraw_stuff(p_ptr);
 
 	/* Re-display the identity */
 	prt(buf, 0, 0);

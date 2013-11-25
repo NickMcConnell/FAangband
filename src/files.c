@@ -25,7 +25,6 @@
 
 #include "angband.h"
 #include "buildid.h"
-#include "button.h"
 #include "cave.h"
 #include "cmds.h"
 #include "files.h"
@@ -2326,11 +2325,6 @@ bool show_file(const char *name, const char *what, int line, int mode)
 			 VERSION_MINOR, VERSION_PATCH, caption, line, size), 0, 0);
 
 
-		/* Buttons */
-		button_kill_all();
-		button_add("ESC", ESCAPE);
-		button_add("?", '?');
-
 		/* Prompt -- menu screen */
 		if (menu) {
 			/* Wait for it */
@@ -2353,20 +2347,10 @@ bool show_file(const char *name, const char *what, int line, int mode)
 					"[Space to advance, ESC for previous file, or ? to exit.]",
 					80);
 
-
-			/* More buttons */
-			button_add("Spc", ' ');
-			button_add("-", '-');
 		}
 
 		/* Finish the status line */
 		prt(prompt, hgt - 1, 0);
-		button_add("/", '/');
-		button_add("!", '!');
-		button_add("=", '=');
-		if (!menu)
-			button_add("#", '#');
-		button_add("%", '%');
 
 		/* Get a keypress */
 		ke = inkey_ex();
@@ -2492,9 +2476,6 @@ bool show_file(const char *name, const char *what, int line, int mode)
 	free(buf);
 	free(buf2);
 	free(lc_buf);
-
-	if (push_file == 0)
-		button_restore();
 
 	return ret;
 

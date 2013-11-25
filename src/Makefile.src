@@ -14,7 +14,6 @@ HEADERS = \
 	angband.h \
 	birth.h \
 	buildid.h \
-	button.h \
 	cave.h \
 	cmds.h \
 	config.h \
@@ -81,7 +80,6 @@ ANGFILES = \
 	attack.o \
 	birth.o \
 	buildid.o \
-	button.o \
 	cave.o \
 	charattr.o \
 	cmd0.o \

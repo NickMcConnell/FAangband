@@ -1457,7 +1457,6 @@ enum
 #define PR_OBJECT	0x00010000L /* Display object recall */
 #define PR_MONLIST	0x00020000L /* Display monster list */
 
-#define PR_BUTTONS      0x00040000L     /* Display mouse buttons */
 #define PR_ITEMLIST     0x00080000L /* Display item list */
 #define PR_STATE	0x00100000L	/* Display Extra (State) */
 #define PR_SPEED	0x00200000L	/* Display Extra (Speed) */

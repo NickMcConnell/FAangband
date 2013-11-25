@@ -19,7 +19,6 @@
  */
 #include "angband.h"
 #include "buildid.h"
-#include "button.h"
 #include "cave.h"
 #include "files.h"
 #include "history.h"
@@ -154,18 +153,6 @@ void do_cmd_change_name(void)
 	/* Save screen */
 	screen_save();
 
-	/* Adjust the buttons */
-	button_backup_all();
-	button_kill_all();
-	button_add("ESC", ESCAPE);
-	button_add("Spc", ' ');
-	button_add("-", '-');
-	button_add("c", 'c');
-	button_add("f", 'f');
-	button_add("->", ARROW_RIGHT);
-	button_add("<-", ARROW_LEFT);
-	p_ptr->redraw |= PR_BUTTONS;
-
 	/* Make the array of lines */
 	C_WIPE(dumpline, DUMP_MAX_LINES, char_attr_line);
 	last_line = make_dump(dumpline, 2);
@@ -265,9 +252,6 @@ void do_cmd_change_name(void)
 		message_flush();
 	}
 
-	/* Adjust the buttons */
-	button_restore();
-
 	/* Load screen */
 	screen_load();
 }
@@ -333,20 +317,6 @@ void do_cmd_messages(void)
 
 	/* Save screen */
 	screen_save();
-
-	/* Adjust the buttons */
-	button_backup_all();
-	button_kill_all();
-	button_add("ESC", ESCAPE);
-	button_add("-", '-');
-	button_add("=", '=');
-	button_add("/", '/');
-	button_add("p", 'p');
-	button_add("n", 'n');
-	button_add("+", '+');
-	button_add("->", '6');
-	button_add("<-", '4');
-	p_ptr->redraw |= (PR_BUTTONS);
 
 	/* Process requests until done */
 	while (1) {
@@ -516,9 +486,6 @@ void do_cmd_messages(void)
 		if (i == j)
 			bell(NULL);
 	}
-
-	/* Adjust the buttons */
-	button_restore();
 
 	/* Load screen */
 	screen_load();
@@ -923,9 +890,6 @@ void do_cmd_save_screen(void)
 {
 	ui_event ke;
 	msg("Dump type [(t)ext; (h)tml; (f)orum embedded html]:");
-	button_add("f", 'f');
-	button_add("h", 'h');
-	button_add("t", 't');
 	ke = inkey_ex();
 	switch (ke.key.code) {
 	case ESCAPE:
@@ -940,9 +904,6 @@ void do_cmd_save_screen(void)
 		do_cmd_save_screen_html(1);
 		break;
 	}
-	button_kill('f');
-	button_kill('t');
-	button_kill('h');
 	message_flush();
 }
 

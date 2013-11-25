@@ -691,7 +691,7 @@ static void textui_process_click(ui_event e)
 {
 	int x, y;
 
-	if (!OPT(mouse_buttons))
+	if (!OPT(mouse_movement))
 		return;
 
 	y = KEY_GRID_Y(e);

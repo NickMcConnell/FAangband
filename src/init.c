@@ -18,7 +18,6 @@
 
 #include "angband.h"
 #include "buildid.h"
-#include "button.h"
 #include "cave.h"
 #include "cmds.h"
 #include "game-cmd.h"
@@ -4138,11 +4137,6 @@ static errr init_other(void)
 	pline0 = C_ZNEW(30, char_attr_line);
 	pline1 = C_ZNEW(30, char_attr_line);
 
-	/*** Prepare mouse buttons ***/
-
-	button_init(button_add_text, button_kill_text);
-
-
 	/*** Prepare quest array ***/
 
 	/* Quests */
@@ -4906,7 +4900,6 @@ void cleanup_angband(void)
 	/* Free the quest list */
 	FREE(q_list);
 
-	button_free();
 	FREE(p_ptr->inventory);
 
 	/* Free the character screen arrays */

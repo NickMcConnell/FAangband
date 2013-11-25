@@ -17,7 +17,6 @@
  */
 
 #include "angband.h"
-#include "button.h"
 #include "cmds.h"
 #include "files.h"
 #include "game-event.h"
@@ -193,8 +192,6 @@ static void make_bones(void)
 				prt("in a bones file.  Would you like to give the", 16, 0);
 				prt("ghost a special message or description? (yes/no)", 17,
 					0);
-				button_add("Yes", 'y');
-				button_add("No", 'n');
 
 				answer = inkey_ex();
 
@@ -208,13 +205,6 @@ static void make_bones(void)
 						15, 0);
 					prt("or add to the monster description?", 16, 0);
 					prt("((M)essage/(D)escription)", 17, 0);
-
-					/* Buttons */
-					button_kill('y');
-					button_kill('n');
-					button_add("M", 'M');
-					button_add("D", 'D');
-					button_add("ESC", ESCAPE);
 
 					while (1) {
 						answer = inkey_ex();
@@ -241,8 +231,6 @@ static void make_bones(void)
 					choice = 0;
 					break;
 				}
-
-				button_kill_all();
 
 				/* If requested, get the personalized string, and write it and
 				 * info on how it should be used in the bones file.  Otherwise,
@@ -604,12 +592,6 @@ static void death_info(const char *title, int row)
 
 	/* Prompt for inventory */
 	prt("Hit any key to see more information (ESC to abort): ", 0, 0);
-
-	/* Buttons */
-	button_backup_all();
-	button_kill_all();
-	button_add("ESC", ESCAPE);
-	button_add("Continue", 'q');
 
 	/* Allow abort at this point */
 	ke = inkey_ex();

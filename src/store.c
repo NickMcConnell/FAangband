@@ -23,7 +23,6 @@
  */
 
 #include "angband.h"
-#include "button.h"
 #include "cave.h"
 #include "cmds.h"
 #include "files.h"
@@ -2371,11 +2370,6 @@ static bool order_menu(int tval, const char *desc)
 	screen_save();
 	clear_from(0);
 
-	/* Buttons */
-	button_add("Up", ARROW_UP);
-	button_add("Down", ARROW_DOWN);
-	button_add("Toggle", '\r');
-
 	/* Output to the screen */
 	text_out_hook = text_out_to_screen;
 
@@ -2411,11 +2405,6 @@ static bool order_menu(int tval, const char *desc)
 
 	/* Load screen */
 	screen_load();
-
-	/* Buttons */
-	button_kill(ARROW_UP);
-	button_kill(ARROW_DOWN);
-	button_kill('\r');
 
 	return TRUE;
 }
@@ -2958,15 +2947,6 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 	/* Do not leave */
 	leave_store = FALSE;
 
-	/* Buttons */
-	button_add("g", 'g');
-	button_add("d", 'd');
-	button_add("i", 'i');
-	button_add("l", 'l');
-	if ((st_ptr->type == STORE_MERCH)
-		&& (which < MAX_STORES_SMALL * NUM_TOWNS_SMALL))
-		button_add("o", 'o');
-
 	/* Interact with player */
 	while (!leave_store) {
 		/* Hack -- Clear line 1 */
@@ -3099,13 +3079,6 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 			leave_store = TRUE;
 	}
 
-
-	/* Buttons */
-	button_kill('g');
-	button_kill('d');
-	button_kill('i');
-	button_kill('l');
-	button_kill('o');
 
 	/* Free turn */
 	p_ptr->energy_use = 0;
