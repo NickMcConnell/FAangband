@@ -1,7 +1,7 @@
 /** \file cmd0.c
     \brief Deal with command processing.
     *
-    * Copyright (c) 2009 Nick McConnell, Andrew Sidwell, Ben Harrison
+    * Copyright (c) 2009 Nick McConnell, Andi Sidwell, Ben Harrison
     *
     * This work is free software; you can redistribute it and/or modify it
     * under the terms of either:

@@ -28,7 +28,7 @@
  *
 
  * Copyright (c) 2009 David T. Blackston, Iain McFall, DarkGod, Jeff Greene,
- * David Vestal, Pete Mack, Andrew Sidwell, Nick McConnell.
+ * David Vestal, Pete Mack, Andi Sidwell, Nick McConnell.
  *
  * This work is free software; you can redistribute it and/or modify it
  * under the terms of either:
