@@ -289,7 +289,7 @@ void dump_objects(ang_file * fff)
 			name += 2;
 
 		file_putf(fff, "K:%s:%s:%d:%d\n", tval_find_name(k_ptr->tval),
-				  name, k_ptr->x_attr, k_ptr->x_char);
+				name, k_ptr->x_attr, k_ptr->x_char);
 	}
 }
 
@@ -731,7 +731,7 @@ static enum parser_error parse_prefs_f(struct parser *p)
 	else if (streq(lighting, "all"))
 		light_idx = FEAT_LIGHTING_MAX;
 	else
-		return PARSE_ERROR_GENERIC;	/* xxx fixme */
+		return PARSE_ERROR_GENERIC; /* xxx fixme */
 
 	if (light_idx < FEAT_LIGHTING_MAX) {
 		feature = &f_info[idx];
@@ -884,7 +884,7 @@ static enum parser_error parse_prefs_q(struct parser *p)
 		tvi = tval_find_idx(parser_getsym(p, "n"));
 		if (tvi < 0)
 			return PARSE_ERROR_UNRECOGNISED_TVAL;
-
+	
 		svi = lookup_sval(tvi, parser_getsym(p, "sval"));
 		if (svi < 0)
 			return PARSE_ERROR_UNRECOGNISED_SVAL;
@@ -922,12 +922,12 @@ static enum parser_error parse_prefs_a(struct parser *p)
 {
 	const char *act;
 
-	struct prefs_data *d = parser_priv(p);
+	struct prefs_data *d = parser_priv(p);	
 	assert(d != NULL);
 	if (d->bypass)
 		return PARSE_ERROR_NONE;
 
-	act = parser_getstr(p, "act");
+		act = parser_getstr(p, "act");
 	keypress_from_text(d->keymap_buffer, N_ELEMENTS(d->keymap_buffer),
 					   act);
 
@@ -959,16 +959,22 @@ static enum parser_error parse_prefs_c(struct parser *p)
 
 static enum parser_error parse_prefs_m(struct parser *p)
 {
-	int a, type;
+	int a, msg_index;
 	const char *attr;
+	const char *type;
 
 	struct prefs_data *d = parser_priv(p);
 	assert(d != NULL);
 	if (d->bypass)
 		return PARSE_ERROR_NONE;
 
-	type = parser_getint(p, "type");
+	type = parser_getsym(p, "type");
 	attr = parser_getsym(p, "attr");
+
+	msg_index = message_lookup_by_name(type);
+
+	if (msg_index < 0)
+		return PARSE_ERROR_GENERIC;
 
 	if (strlen(attr) > 1)
 		a = color_text_to_attr(attr);
@@ -978,7 +984,7 @@ static enum parser_error parse_prefs_m(struct parser *p)
 	if (a < 0)
 		return PARSE_ERROR_INVALID_COLOR;
 
-	message_color_define((u16b) type, (byte) a);
+	message_color_define(msg_index, (byte)a);
 
 	return PARSE_ERROR_NONE;
 }
@@ -1053,7 +1059,7 @@ static enum parser_error parse_prefs_y(struct parser *p)
 	struct prefs_data *d = parser_priv(p);
 	assert(d != NULL);
 	if (d->bypass)
-		return PARSE_ERROR_NONE;
+	return PARSE_ERROR_NONE;
 
 	option_set(parser_getstr(p, "option"), TRUE);
 
@@ -1085,12 +1091,12 @@ static struct parser *init_parse_prefs(bool user)
 	parser_reg(p, "L uint idx int attr int char", parse_prefs_l);
 	parser_reg(p, "E sym tval int attr", parse_prefs_e);
 	parser_reg(p, "Q sym idx sym n ?sym sval ?sym flag", parse_prefs_q);
-	/* XXX should be split into two kinds of line */
+		/* XXX should be split into two kinds of line */
 	parser_reg(p, "B uint idx str text", parse_prefs_b);
 	/* XXX idx should be {tval,sval} pair! */
 	parser_reg(p, "A str act", parse_prefs_a);
 	parser_reg(p, "C int mode str key", parse_prefs_c);
-	parser_reg(p, "M int type sym attr", parse_prefs_m);
+	parser_reg(p, "M sym type sym attr", parse_prefs_m);
 	parser_reg(p, "V uint idx int k int r int g int b", parse_prefs_v);
 	parser_reg(p, "W int window uint flag uint value", parse_prefs_w);
 	parser_reg(p, "X str option", parse_prefs_x);
@@ -1137,7 +1143,7 @@ static void print_error(const char *name, struct parser *p)
 	struct parser_state s;
 	parser_getstate(p, &s);
 	msg("Parse error in %s line %d column %d: %s: %s", name,
-		s.line, s.col, s.msg, parser_error_str[s.error]);
+	           s.line, s.col, s.msg, parser_error_str[s.error]);
 	message_flush();
 }
 

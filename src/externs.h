@@ -141,7 +141,6 @@ extern term *angband_term[TERM_WIN_MAX];
 extern char angband_term_name[TERM_WIN_MAX][16];
 extern byte angband_color_table[256][4];
 extern color_type color_table[MAX_COLORS];
-extern const const char *angband_sound_name[MSG_MAX];
 extern int temp_n;
 extern u16b *temp_g;
 extern byte *temp_y;
