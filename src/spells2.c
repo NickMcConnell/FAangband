@@ -30,6 +30,7 @@
 #include "cmds.h"
 #include "history.h"
 #include "generate.h"
+#include "mapmode.h"
 #include "monster.h"
 #include "player.h"
 #include "quest.h"

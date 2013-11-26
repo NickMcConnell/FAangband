@@ -25,6 +25,7 @@
 #include "cave.h"
 #include "game-event.h"
 #include "game-cmd.h"
+#include "mapmode.h"
 #include "option.h"
 #include "spells.h"
 #include "squelch.h"
@@ -929,9 +930,6 @@ void map_info(unsigned y, unsigned x, grid_data * g)
 	/* Unknown */
 	else if (!sqinfo_has(cave_info[y][x], SQUARE_MARK)) {
 		g->f_idx = FEAT_NONE;
-	}
-	else if (sqinfo_has(cave_info[y][x], SQUARE_GLOW)) {
-		g->f_idx = FEAT_LIGHTING_LIT;
 	}
 
 	/* There is a trap in this grid */

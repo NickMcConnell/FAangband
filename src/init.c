@@ -26,6 +26,7 @@
 #include "history.h"
 #include "init.h"
 #include "keymap.h"
+#include "mapmode.h"
 #include "monster.h"
 #include "option.h"
 #include "parser.h"

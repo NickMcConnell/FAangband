@@ -149,48 +149,6 @@
 
 
 /**
- * Total number of towns 
- */
-#define NUM_TOWNS       10
-
-/**
- * Number of small towns 
- */
-#define NUM_TOWNS_SMALL  6
-
-/**
- * Number of large towns 
- */
-#define NUM_TOWNS_BIG    4
-
-/**
- * Map modes
- */
-#define MAP_COMPRESSED     0
-#define MAP_EXTENDED       1
-#define MAP_DUNGEON        2
-#define MAP_FANILLA        3
-#define MAP_MAX            4
-
-/**
- * Game modes
- */
-enum
-{
-    GAME_MODE_THRALL = 0,
-    GAME_MODE_IRONMAN,
-    GAME_MODE_NO_STAIRS,
-    GAME_MODE_SMALL_DEVICE,
-    GAME_MODE_NO_ARTIFACTS,
-    GAME_MODE_NO_SELLING,
-    GAME_MODE_AI_CHEAT,
-
-    GAME_MODE_MAX
-};
-
-#define MODE(gmode)	p_ptr->game_mode[GAME_MODE_##gmode]
-
-/**
  * Maximum number of player "sex" types (see "table.c", etc)
  */
 #define MAX_SEXES            2
@@ -230,32 +188,6 @@ enum
  */
 #define MAX_HISCORES	100
 
-
-/**
- * Maximum dungeon level.  The player can never reach this level
- * in the dungeon, and this value is used for various calculations
- * involving object and monster creation.  It must be at least 100.
- * Setting it below 128 may prevent the creation of some objects.
- */
-#define MAX_DEPTH	128
-
-
-/**
- * Maximum number of paths from a wilderness stage to adjoining stages.
- */
-#define MAX_PATHS       13
-
-
-/**
- * Number of recall points the player can set
- */
-#define MAX_RECALL_PTS   4
-
-/**
- * Number of stages.  The relationship between individual stages is defined
- * in the stage_map array in tables.c.     -NRM-
- */
-#define NUM_STAGES      412
 
 /**
  * OPTION: Maximum number of "quarks" (see "io.c")
@@ -342,15 +274,15 @@ enum
  * Themed level indices.  Used to activate any theme-specific code. 
  * See generate.c for the table of themed level information.
  */
-#define THEME_ELEMENTAL		1
-#define THEME_DRAGON		2
-#define THEME_WILDERNESS	3
-#define THEME_DEMON		4
-#define THEME_MINE		5
-#define THEME_WARLORDS		6
-#define THEME_AELUIN            7
-#define THEME_ESTOLAD           8
-#define THEME_SLAIN             9
+#define THEME_ELEMENTAL  1
+#define THEME_DRAGON     2
+#define THEME_WILDERNESS 3
+#define THEME_DEMON      4
+#define THEME_MINE       5
+#define THEME_WARLORDS   6
+#define THEME_AELUIN     7
+#define THEME_ESTOLAD    8
+#define THEME_SLAIN      9
 
 /**
  * Current number of defined themes.  The maximum theoretical number is 32.
@@ -369,6 +301,15 @@ enum
 #define STORE_MAX_KEEP	18	/* Max slots to "always" keep full */
 #define STORE_SHUFFLE	20	/* 1/Chance (per day) of an owner changing */
 #define STORE_TURNS	1000	/* Number of turns between turnovers */
+
+
+/**
+ * Maximum dungeon level.  The player can never reach this level
+ * in the dungeon, and this value is used for various calculations
+ * involving object and monster creation.  It must be at least 100.
+ * Setting it below 128 may prevent the creation of some objects.
+ */
+#define MAX_DEPTH	128
 
 
 /*
@@ -680,59 +621,6 @@ enum
 #define LRN_BLIND_SAVE  48 /* Both resist Blind and Saves apply */
 #define LRN_CONFU_SAVE  49 /* Both resist Confusion and Saves apply */
 #define LRN_ALL         50 /* Recurses to all the resistables */
-
-/*** Trap Indexes (see "lib/edit/trap.txt") ***/
-
-/** Nothing */
-#define TRAP_NONE	0x00
-
-/* Runes  */
-#define RUNE_HEAD       0x01
-#define RUNE_TAIL       0x07
-#define RUNE_ELEMENTS   0x01
-#define RUNE_MAGDEF     0x02
-#define RUNE_QUAKE      0x03
-#define RUNE_MANA       0x04
-#define RUNE_PROTECT    0x05
-#define RUNE_POWER      0x06
-#define RUNE_SPEED      0x07
-
-/* Other obstructions */
-#define OBST_WEB        0x0A
-
-/* Traps */
-#define TRAP_HEAD	0x10
-#define TRAP_TAIL	0x1F
-#define TRAP_TRAPDOOR	0x10
-#define TRAP_PIT	0x11
-#define TRAP_DART	0x12
-#define TRAP_SPOT	0x13
-#define TRAP_GAS	0x14
-#define TRAP_SUMMON	0x15
-#define TRAP_ALTER	0x16
-#define TRAP_HEX	0x17
-#define TRAP_PORTAL	0x18
-#define TRAP_MURDER	0x19
-#define TRAP_BRANCH	0x1A
-
-/* Specials trap that only effects monsters.  Created only by rogues. -LM- */
-#define MTRAP_HEAD		0x40
-#define MTRAP_TAIL		0x4F
-#define MTRAP_BASE		0x40 /* Level 1 */
-#define MTRAP_STURDY    	0x41 /* Level 1 */
-#define MTRAP_NET		0x42 /* Level 6 */
-#define MTRAP_CONF		0x43 /* Level 12 */
-#define MTRAP_POISON	        0x44 /* Level 18 */
-#define MTRAP_SPIRIT	        0x45 /* Level 24 */
-#define MTRAP_ELEC		0x46 /* Level 30 */
-#define MTRAP_EXPLOSIVE	        0x47 /* Level 36 */
-#define MTRAP_PORTAL	        0x48 /* Level 42 */
-#define MTRAP_STASIS	        0x49 /* Level 48 */
-#define MTRAP_DRAIN_LIFE	0x4A /* Level * */
-#define MTRAP_UNMAGIC	        0x4B /* Level * */
-#define MTRAP_DISPEL_M	        0x4C /* Level * */
-#define MTRAP_GENOCIDE	        0x4D /* Level * */
-
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
@@ -1158,38 +1046,6 @@ enum
 
 
 
-/*
- * Cave flags
- */
-
-enum
-{
-	#define SQUARE(a,b) SQUARE_##a,
-	#include "list-square-flags.h"
-	#undef SQUARE
-	SQUARE_MAX
-};
-
-#define SQUARE_SIZE                FLAG_SIZE(SQUARE_MAX)
-
-#define sqinfo_has(f, flag)        flag_has_dbg(f, SQUARE_SIZE, flag, #f, #flag)
-#define sqinfo_next(f, flag)       flag_next(f, SQUARE_SIZE, flag)
-#define sqinfo_is_empty(f)         flag_is_empty(f, SQUARE_SIZE)
-#define sqinfo_is_full(f)          flag_is_full(f, SQUARE_SIZE)
-#define sqinfo_is_inter(f1, f2)    flag_is_inter(f1, f2, SQUARE_SIZE)
-#define sqinfo_is_subset(f1, f2)   flag_is_subset(f1, f2, SQUARE_SIZE)
-#define sqinfo_is_equal(f1, f2)    flag_is_equal(f1, f2, SQUARE_SIZE)
-#define sqinfo_on(f, flag)         flag_on_dbg(f, SQUARE_SIZE, flag, #f, #flag)
-#define sqinfo_off(f, flag)        flag_off(f, SQUARE_SIZE, flag)
-#define sqinfo_wipe(f)             flag_wipe(f, SQUARE_SIZE)
-#define sqinfo_setall(f)           flag_setall(f, SQUARE_SIZE)
-#define sqinfo_negate(f)           flag_negate(f, SQUARE_SIZE)
-#define sqinfo_copy(f1, f2)        flag_copy(f1, f2, SQUARE_SIZE)
-#define sqinfo_union(f1, f2)       flag_union(f1, f2, SQUARE_SIZE)
-#define sqinfo_comp_union(f1, f2)  flag_comp_union(f1, f2, SQUARE_SIZE)
-#define sqinfo_inter(f1, f2)       flag_inter(f1, f2, SQUARE_SIZE)
-#define sqinfo_diff(f1, f2)        flag_diff(f1, f2, SQUARE_SIZE)
-
 /*** Object flags ***/
 
 
@@ -1210,18 +1066,6 @@ enum
 
 
 
-
-/*
- * Special Object Flags
- */
-#define IDENT_SENSE	  0x01	/* Item has been "sensed" */
-#define IDENT_STORE	  0x02	/* Item is in the inventory of a store */
-#define IDENT_EMPTY	  0x04	/* Item charges are known */
-#define IDENT_KNOWN	  0x08	/* Item abilities are known */
-#define IDENT_CURSED      0x10  /* Item is known to be cursed */
-#define IDENT_UNCURSED    0x20  /* Item is known not to be cursed */
-#define IDENT_KNOW_CURSES 0x40  /* Item curses are all known */
-#define IDENT_WORN	  0x80	/* Item has been wielded or worn */
 
 /*
  * Game-generated feelings.  Used for inscriptions.
@@ -1622,22 +1466,6 @@ enum
     (sqinfo_has(cave_info[Y][X], SQUARE_SEEN))
 
 
-/**
- * Is the player outside?
- */
-#define outside \
-    ((stage_map[p_ptr->stage][STAGE_TYPE] != CAVE)	\
-     && (stage_map[p_ptr->stage][STAGE_TYPE] != VALLEY) \
-       && ((p_ptr->stage < KHAZAD_DUM_TOWN) || (p_ptr->stage > MENEGROTH_TOWN)))
-
-			 
-/**
- * Is the player in daylight?
- */
-#define is_daylight  (((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2)) \
-			&& outside) 
-
-
 /*
  * Hack -- Prepare to use the "Secure" routines
  */
@@ -1668,118 +1496,6 @@ extern int PlayerUID;
  * Max number of lines of notes
  */
 #define DUMP_MAX_LINES 5000
-
-/** Number of localities */
-
-#define MAX_LOCALITIES 37
-
-
-/* Localities -NRM- */
-
-#define NOWHERE                0
-#define HITHAEGLIR             1
-#define ERIADOR                2
-#define ERED_LUIN              3
-#define ERED_LUIN_SOUTH        4
-#define OSSIRIAND              5
-#define TAUR_IM_DUINATH        6
-#define EAST_BELERIAND         7
-#define ANDRAM                 8
-#define WEST_BELERIAND         9
-#define THARGELION             10
-#define DORIATH                11
-#define HIMLAD                 12
-#define DOR_DINEN              13
-#define DORTHONION             14
-#define TALATH_DIRNEN          15
-#define BRETHIL                16
-#define SIRION_VALE            17
-#define FEN_OF_SERECH          18
-#define ANFAUGLITH             19
-#define LOTHLANN               20
-#define AMON_RUDH              21
-#define NAN_DUNGORTHEB         22
-#define NARGOTHROND            23
-#define TOL_IN_GAURHOTH        24
-#define ANGBAND                25
-#define ANDUIN_VALE            26
-#define GLADDEN_FIELDS         27
-#define KHAZAD_DUM             28
-#define BELEGOST               29
-#define MENEGROTH              30
-#define EPHEL_BRANDIR          31
-#define GONDOLIN               32
-#define ENT_PATH               33
-#define ERIADOR_SOUTH          34
-#define UNDERWORLD             35
-#define MOUNTAIN_TOP           36
-
-/** Number of stage types */
-
-#define NUM_STAGE_TYPES 10
-
-/* types of stage -NRM- */
-
-#define TOWN                   0
-#define PLAIN                  1
-#define FOREST                 2
-#define MOUNTAIN               3  
-#define SWAMP                  4
-#define RIVER                  5
-#define DESERT                 6
-#define CAVE                   7
-#define VALLEY                 8
-#define MOUNTAINTOP            9
-
-/* Fields for stage_map array */
-#define LOCALITY               0
-#define DEPTH                  1
-#define NORTH                  2
-#define EAST                   3
-#define SOUTH                  4
-#define WEST                   5
-#define UP                     6
-#define DOWN                   7
-#define STAGE_TYPE             8
-
-/* 
- * Special stage numbers 
- * 
- * These need to be changed any time the maps change
- */
-#define ERIADOR_TOWN           (p_ptr->map == MAP_COMPRESSED ? 5 : 6)
-#define OSSIRIAND_TOWN         (p_ptr->map == MAP_COMPRESSED ? 20 : 30)
-#define ERED_LUIN_SOUTH_TOWN   (p_ptr->map == MAP_COMPRESSED ? 24 : 37)
-#define TAUR_IM_DUINATH_TOWN   (p_ptr->map == MAP_COMPRESSED ? 27 : 44)
-#define EPHEL_BRANDIR_TOWN     (p_ptr->map == MAP_COMPRESSED ? 59 : 115)
-#define GLADDEN_FIELDS_TOWN    (p_ptr->map == MAP_COMPRESSED ? 79 : 150)
-#define KHAZAD_DUM_TOWN        (p_ptr->map == MAP_COMPRESSED ? 80 : 151)
-#define BELEGOST_TOWN          (p_ptr->map == MAP_COMPRESSED ? 81 : 152)
-#define MENEGROTH_TOWN         (p_ptr->map == MAP_COMPRESSED ? 82 : 153)
-#define GONDOLIN_TOWN          (p_ptr->map == MAP_COMPRESSED ? 83 : 154)
-#define UNDERWORLD_STAGE       (p_ptr->map == MAP_COMPRESSED ? 84 : 255)
-#define MOUNTAINTOP_STAGE      (p_ptr->map == MAP_COMPRESSED ? 85 : 256)
-#define THRALL_START \
-	((p_ptr->map == MAP_DUNGEON) ? 87 :	\
-	 ((p_ptr->map == MAP_COMPRESSED) ? 70 : 135))
-
-
-/*
- * Mouse click region names
- */
-#define MOUSE_NULL    0
-#define MOUSE_MAP     1
-#define MOUSE_CHAR    2
-#define MOUSE_HP      3
-#define MOUSE_SP      4
-#define MOUSE_STUDY   5
-#define MOUSE_MESSAGE 6
-#define MOUSE_PLACE   7
-#define MOUSE_OBJECTS 8
-#define MOUSE_STAND   9
-#define MOUSE_REPEAT 10
-#define MOUSE_RETURN 11
-#define MOUSE_ESCAPE 12
 
 #define SCAN_INSTANT ((u32b) -1)
 #define SCAN_OFF 0

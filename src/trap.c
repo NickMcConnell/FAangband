@@ -19,6 +19,7 @@
 #include "angband.h"
 #include "cave.h"
 #include "generate.h"
+#include "mapmode.h"
 #include "monster.h"
 #include "quest.h"
 #include "spells.h"

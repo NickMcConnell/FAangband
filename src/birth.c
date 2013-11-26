@@ -24,6 +24,7 @@
 #include "game-cmd.h"
 #include "history.h"
 #include "init.h"
+#include "mapmode.h"
 #include "object.h"
 #include "player.h"
 #include "quest.h"

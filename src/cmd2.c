@@ -24,6 +24,7 @@
 #include "cmds.h"
 #include "files.h"
 #include "history.h"
+#include "mapmode.h"
 #include "monster.h"
 #include "quest.h"
 #include "spells.h"

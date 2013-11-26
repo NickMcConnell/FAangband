@@ -21,6 +21,7 @@
 #include "files.h"
 #include "game-cmd.h"
 #include "game-event.h"
+#include "mapmode.h"
 #include "ui-birth.h"
 #include "ui-menu.h"
 

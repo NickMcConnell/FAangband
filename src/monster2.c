@@ -24,6 +24,7 @@
 #include "angband.h"
 #include "cave.h"
 #include "history.h"
+#include "mapmode.h"
 #include "monster.h"
 #include "player.h"
 #include "quest.h"

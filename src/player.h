@@ -3,6 +3,7 @@
 #ifndef PLAYER_PLAYER_H
 #define PLAYER_PLAYER_H
 
+#include "mapmode.h"
 #include "object.h"
 #include "option.h"
 

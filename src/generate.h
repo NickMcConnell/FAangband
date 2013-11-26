@@ -3,6 +3,7 @@
 #ifndef GENERATE_H
 #define GENERATE_H
 
+#include "mapmode.h"
 #include "quest.h"
 
 #if 0

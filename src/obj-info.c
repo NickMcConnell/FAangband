@@ -20,6 +20,7 @@
 #include "angband.h"
 #include "effects.h"
 #include "cmds.h"
+#include "mapmode.h"
 #include "tvalsval.h"
 #include "z-textblock.h"
 

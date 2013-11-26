@@ -25,6 +25,7 @@
 #include "cmds.h"
 #include "generate.h"
 #include "history.h"
+#include "mapmode.h"
 #include "monster.h"
 #include "tvalsval.h"
 #include "object.h"

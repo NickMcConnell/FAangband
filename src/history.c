@@ -18,6 +18,7 @@
 
 #include "angband.h"
 #include "history.h"
+#include "mapmode.h"
 
 /*
  * Number of slots available at birth in the player history list.  Defaults to

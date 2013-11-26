@@ -21,6 +21,7 @@
 #include "files.h"
 #include "game-event.h"
 #include "history.h"
+#include "mapmode.h"
 #include "savefile.h"
 #include "store.h"
 #include "ui-menu.h"

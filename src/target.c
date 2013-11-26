@@ -19,6 +19,7 @@
 #include "angband.h"
 #include "cave.h"
 #include "game-cmd.h"
+#include "mapmode.h"
 #include "monster.h"
 #include "squelch.h"
 #include "trap.h"

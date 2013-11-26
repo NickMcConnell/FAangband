@@ -32,6 +32,7 @@ HEADERS = \
 	jewel.h \
 	keymap.h \
 	main.h \
+	mapmode.h \
 	monster.h \
 	object.h \
 	option.h \
@@ -112,6 +113,7 @@ ANGFILES = \
 	keymap.o \
 	load.o \
 	load-old.o \
+	mapmode.o \
 	monattk.o \
 	monmove.o \
 	monster1.o \

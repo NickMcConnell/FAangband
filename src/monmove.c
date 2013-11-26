@@ -28,6 +28,7 @@
 #include "angband.h"
 #include "cave.h"
 #include "files.h"
+#include "mapmode.h"
 #include "monster.h"
 #include "spells.h"
 #include "squelch.h"

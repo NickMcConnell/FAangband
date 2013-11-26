@@ -22,6 +22,7 @@
 #include "angband.h"
 #include "cave.h"
 #include "game-event.h"
+#include "mapmode.h"
 #include "monster.h"
 #include "player.h"
 #include "spells.h"

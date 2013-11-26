@@ -36,6 +36,18 @@ enum
 };
 
 
+/*
+ * Special Object Flags
+ */
+#define IDENT_SENSE	  0x01	/* Item has been "sensed" */
+#define IDENT_STORE	  0x02	/* Item is in the inventory of a store */
+#define IDENT_EMPTY	  0x04	/* Item charges are known */
+#define IDENT_KNOWN	  0x08	/* Item abilities are known */
+#define IDENT_CURSED      0x10  /* Item is known to be cursed */
+#define IDENT_UNCURSED    0x20  /* Item is known not to be cursed */
+#define IDENT_KNOW_CURSES 0x40  /* Item curses are all known */
+#define IDENT_WORN	  0x80	/* Item has been wielded or worn */
+
 /**
  * Modes for object_desc().
  */

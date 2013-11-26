@@ -113,6 +113,38 @@ enum
 #define tf_has(f, flag)        flag_has_dbg(f, TF_SIZE, flag, #f, #flag)
 
 
+/*
+ * Cave flags
+ */
+
+enum
+{
+	#define SQUARE(a,b) SQUARE_##a,
+	#include "list-square-flags.h"
+	#undef SQUARE
+	SQUARE_MAX
+};
+
+#define SQUARE_SIZE                FLAG_SIZE(SQUARE_MAX)
+
+#define sqinfo_has(f, flag)        flag_has_dbg(f, SQUARE_SIZE, flag, #f, #flag)
+#define sqinfo_next(f, flag)       flag_next(f, SQUARE_SIZE, flag)
+#define sqinfo_is_empty(f)         flag_is_empty(f, SQUARE_SIZE)
+#define sqinfo_is_full(f)          flag_is_full(f, SQUARE_SIZE)
+#define sqinfo_is_inter(f1, f2)    flag_is_inter(f1, f2, SQUARE_SIZE)
+#define sqinfo_is_subset(f1, f2)   flag_is_subset(f1, f2, SQUARE_SIZE)
+#define sqinfo_is_equal(f1, f2)    flag_is_equal(f1, f2, SQUARE_SIZE)
+#define sqinfo_on(f, flag)         flag_on_dbg(f, SQUARE_SIZE, flag, #f, #flag)
+#define sqinfo_off(f, flag)        flag_off(f, SQUARE_SIZE, flag)
+#define sqinfo_wipe(f)             flag_wipe(f, SQUARE_SIZE)
+#define sqinfo_setall(f)           flag_setall(f, SQUARE_SIZE)
+#define sqinfo_negate(f)           flag_negate(f, SQUARE_SIZE)
+#define sqinfo_copy(f1, f2)        flag_copy(f1, f2, SQUARE_SIZE)
+#define sqinfo_union(f1, f2)       flag_union(f1, f2, SQUARE_SIZE)
+#define sqinfo_comp_union(f1, f2)  flag_comp_union(f1, f2, SQUARE_SIZE)
+#define sqinfo_inter(f1, f2)       flag_inter(f1, f2, SQUARE_SIZE)
+#define sqinfo_diff(f1, f2)        flag_diff(f1, f2, SQUARE_SIZE)
+
 /**
  * Information about terrain "features"
  */
@@ -185,12 +217,6 @@ typedef byte byte_wid[DUNGEON_WID];
  * An array of DUNGEON_WID s16b's
  */
 typedef s16b s16b_wid[DUNGEON_WID];
-
-/**
- * An array of NUM_STAGES u16b's
- */
-typedef u16b u16b_stage[NUM_STAGES];
-
 
 
 extern int distance(int y1, int x1, int y2, int x2);

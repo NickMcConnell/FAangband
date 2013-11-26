@@ -21,6 +21,7 @@
 #include "cave.h"
 #include "cmds.h"
 #include "externs.h"
+#include "mapmode.h"
 #include "squelch.h"
 #include "trap.h"
 

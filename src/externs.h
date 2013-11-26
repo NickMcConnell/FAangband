@@ -63,19 +63,7 @@ extern const grouper object_text_order[];
 extern byte mana_cost[RSF_MAX];
 extern byte spell_desire[RSF_MAX][D_MAX];
 extern byte spell_range[RSF_MAX];
-extern int stage_map[NUM_STAGES][9];
-extern int compressed_map[NUM_STAGES][9];
-extern int dungeon_map[NUM_STAGES][9];
-extern int extended_map[NUM_STAGES][9];
-extern int fanilla_map[NUM_STAGES][9];
-extern const char *locality_name[MAX_LOCALITIES];
-extern const char *short_locality_name[MAX_LOCALITIES];
-extern int towns[10];
-extern int extended_towns[10];
-extern int compressed_towns[10];
-extern int race_town_prob[10][14];
 extern byte get_angle_to_grid[41][41];
-const byte g_info[196];
 
 /* variable.c */
 extern const char *copyright;

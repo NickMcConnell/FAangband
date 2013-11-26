@@ -31,6 +31,7 @@
 #include "cmds.h"
 #include "generate.h"
 #include "history.h"
+#include "mapmode.h"
 #include "monster.h"
 #include "object.h"
 #include "player.h"

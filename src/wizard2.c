@@ -21,6 +21,7 @@
 #include "cave.h"
 #include "cmds.h"
 #include "files.h"
+#include "mapmode.h"
 #include "monster.h"
 #include "spells.h"
 #include "target.h"

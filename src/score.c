@@ -16,6 +16,7 @@
  */
 #include "angband.h"
 #include "buildid.h"
+#include "mapmode.h"
 
 
 /**

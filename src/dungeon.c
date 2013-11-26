@@ -30,6 +30,7 @@
 #include "game-event.h"
 #include "generate.h"
 #include "init.h"
+#include "mapmode.h"
 #include "monster.h"
 #include "tvalsval.h"
 #include "prefs.h"

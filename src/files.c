@@ -30,6 +30,7 @@
 #include "files.h"
 #include "game-cmd.h"
 #include "history.h"
+#include "mapmode.h"
 #include "tvalsval.h"
 #include "option.h"
 #include "savefile.h"

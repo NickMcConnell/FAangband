@@ -22,6 +22,7 @@
 
 #include "angband.h"
 #include "cave.h"
+#include "mapmode.h"
 #include "monster.h"
 #include "spells.h"
 

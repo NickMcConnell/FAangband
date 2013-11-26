@@ -23,6 +23,7 @@
 #include "files.h"
 #include "game-event.h"
 #include "game-cmd.h"
+#include "mapmode.h"
 #include "monster.h"
 #include "tvalsval.h"
 #include "textui.h"
