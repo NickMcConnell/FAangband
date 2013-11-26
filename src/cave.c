@@ -583,9 +583,12 @@ static void grid_get_attr(grid_data * g, int *a)
 		!((int) g->trap < trap_max)) {
 		*a += MAX_COLORS * BG_TRAP;
 	} else if (tf_has(f_ptr->flags, TF_TORCH)) {
-		if (g->lighting == FEAT_LIGHTING_BRIGHT) {
+		if (g->lighting == FEAT_LIGHTING_TORCH) {
 			if (*a == TERM_WHITE)
 				*a = TERM_YELLOW;
+		} else if (g->lighting == FEAT_LIGHTING_LIT) {
+			if (*a == TERM_WHITE)
+				*a = TERM_L_DARK;
 		} else if (g->lighting == FEAT_LIGHTING_DARK) {
 			if (*a == TERM_WHITE)
 				*a = TERM_L_DARK;
@@ -596,7 +599,7 @@ static void grid_get_attr(grid_data * g, int *a)
 			*a = *a + (MAX_COLORS * BG_SAME);
 		}
 	} else {
-		if (g->lighting == FEAT_LIGHTING_DARK) {
+		if ((g->lighting == FEAT_LIGHTING_DARK || g->lighting == FEAT_LIGHTING_LIT)) {
 			if (*a == TERM_WHITE)
 				*a = TERM_SLATE;
 		}
@@ -862,9 +865,12 @@ void grid_data_as_text(grid_data * g, int *ap, wchar_t * cp, byte * tap,
  *    be used to indicate field-of-view, such as through the OPT(view_bright_light)
  *    option.
  *  - g->lighting is set to indicate the lighting level for the grid:
+ *    FEAT_LIGHTING_DARK for unlit grids, FEAT_LIGHTING_LIT for inherently light
+ *    grids (lit rooms, etc), FEAT_LIGHTING_TORCH for grids lit by the player's
+ *    light source, and FEAT_LIGHTING_LOS for grids in the player's line of sight.
  *    LIGHT_DARK for unlit grids, LIGHT_TORCH for those lit by the player's
  *    light source, and LIGHT_GLOW for inherently light grids (lit rooms, etc).
- *    Note that lighting is always LIGHT_GLOW for known "interesting" grids
+ *    Note that lighting is always FEAT_LIGHTING_LIT for known "interesting" grids
  *    like walls.
  *  - g->is_player is TRUE if the player is on the given grid.
  *  - g->hallucinate is TRUE if the player is hallucinating something "strange"
@@ -913,16 +919,19 @@ void map_info(unsigned y, unsigned x, grid_data * g)
 
 	/* If the grid is memorised or can currently be seen */
 	if (g->in_view) {
-		g->lighting = FEAT_LIGHTING_LIT;
+		g->lighting = FEAT_LIGHTING_LOS;
 
 		if (!sqinfo_has(cave_info[y][x], SQUARE_GLOW)
 			&& OPT(view_yellow_light))
-			g->lighting = FEAT_LIGHTING_BRIGHT;
+			g->lighting = FEAT_LIGHTING_TORCH;
 
 	}
 	/* Unknown */
 	else if (!sqinfo_has(cave_info[y][x], SQUARE_MARK)) {
 		g->f_idx = FEAT_NONE;
+	}
+	else if (sqinfo_has(cave_info[y][x], SQUARE_GLOW)) {
+		g->f_idx = FEAT_LIGHTING_LIT;
 	}
 
 	/* There is a trap in this grid */

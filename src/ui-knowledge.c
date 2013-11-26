@@ -2005,13 +2005,15 @@ static void display_feature(int col, int row, bool cursor, int oid)
 
 	if (tile_height == 1) {
 		/* Display symbols */
-		col = 66;
+		col = 65;
 		col += big_pad(col, row, f_ptr->x_attr[FEAT_LIGHTING_DARK],
 					   f_ptr->x_char[FEAT_LIGHTING_DARK]);
 		col += big_pad(col, row, f_ptr->x_attr[FEAT_LIGHTING_LIT],
 					   f_ptr->x_char[FEAT_LIGHTING_LIT]);
-		col += big_pad(col, row, f_ptr->x_attr[FEAT_LIGHTING_BRIGHT],
-					   f_ptr->x_char[FEAT_LIGHTING_BRIGHT]);
+		col += big_pad(col, row, f_ptr->x_attr[FEAT_LIGHTING_TORCH],
+				f_ptr->x_char[FEAT_LIGHTING_TORCH]);
+		col += big_pad(col, row, f_ptr->x_attr[FEAT_LIGHTING_LOS],
+				f_ptr->x_char[FEAT_LIGHTING_LOS]);
 	}
 
 }
@@ -2037,7 +2039,7 @@ static const char *fkind_name(int gid)
 	return feature_group_text[gid];
 }
 
-/* Disgusting hack to allow 3 in 1 editting of terrain visuals */
+/* Disgusting hack to allow 4 in 1 editting of terrain visuals */
 static enum grid_light_level f_uik_lighting = FEAT_LIGHTING_LIT;
 /* XXX needs *better* retooling for multi-light terrain */
 static byte *f_xattr(int oid)
@@ -2070,10 +2072,13 @@ static void f_xtra_act(struct keypress ch, int oid)
 	if (ch.code == 'l') {
 		switch (f_uik_lighting) {
 		case FEAT_LIGHTING_LIT:
-			f_uik_lighting = FEAT_LIGHTING_BRIGHT;
+			f_uik_lighting = FEAT_LIGHTING_TORCH;
 			break;
-		case FEAT_LIGHTING_BRIGHT:
-			f_uik_lighting = FEAT_LIGHTING_DARK;
+		case FEAT_LIGHTING_TORCH: 
+			f_uik_lighting = FEAT_LIGHTING_LOS; 
+			break;
+		case FEAT_LIGHTING_LOS:  
+			f_uik_lighting = FEAT_LIGHTING_DARK; 
 			break;
 		default:
 			f_uik_lighting = FEAT_LIGHTING_LIT;
@@ -2082,7 +2087,10 @@ static void f_xtra_act(struct keypress ch, int oid)
 	} else if (ch.code == 'L') {
 		switch (f_uik_lighting) {
 		case FEAT_LIGHTING_DARK:
-			f_uik_lighting = FEAT_LIGHTING_BRIGHT;
+			f_uik_lighting = FEAT_LIGHTING_LOS;
+			break;
+		case FEAT_LIGHTING_LOS:  
+			f_uik_lighting = FEAT_LIGHTING_TORCH; 
 			break;
 		case FEAT_LIGHTING_LIT:
 			f_uik_lighting = FEAT_LIGHTING_DARK;
