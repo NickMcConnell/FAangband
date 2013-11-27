@@ -22,6 +22,7 @@
 #include "mapmode.h"
 #include "monster.h"
 #include "squelch.h"
+#include "target.h"
 #include "trap.h"
 
 /*

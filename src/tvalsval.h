@@ -652,4 +652,65 @@ enum sval_potion /* tval 75 */
  */
 #define SV_UNKNOWN			255
 
+/*** Artifact indexes (see "lib/edit/a_info.txt") ***/
+
+#define ART_MORGOTH		51
+#define ART_UNGOLIANT           74
+#define ART_GROND		158
+
+
+
+
+/*** Ego-Item indexes (see "lib/edit/e_info.txt") ***/
+
+
+/* Weapons */
+#define EGO_DORIATH		65
+#define EGO_GONDOLIN            67
+#define EGO_NOLDOR		68
+#define EGO_NOGROD              69
+
+/* Bows */
+#define EGO_ACCURACY		104
+#define EGO_VELOCITY		105
+
+/* Ammo */
+#define EGO_ACIDIC		119	/* Added in Oangband. */
+#define EGO_ELECT		120	/* Added in Oangband. */
+#define EGO_FLAME		121
+#define EGO_FROST		122
+#define EGO_POISON		123	/* Added in Oangband. */
+#define EGO_BACKBITING		125
+
+/* Rings */
+#define EGO_RING_ELEMENTS       128
+#define EGO_RING_PHYSICAL       129
+#define EGO_RING_COMBAT         130
+#define EGO_RING_MOBILITY       131
+#define EGO_RING_ARCANE_RES     132
+#define EGO_RING_UTILITY        133
+#define EGO_RING_BASIC_RES      134
+#define EGO_RING_HINDRANCE      135
+#define EGO_RING_DAWN           136
+#define EGO_RING_SPEED          137
+#define EGO_RING_WOE            138
+#define EGO_RING_FICKLENESS     139
+#define EGO_RING_POWER          140
+
+/* Amulets */
+
+#define EGO_AMULET_MENTAL       160
+#define EGO_AMULET_DOOM         161
+#define EGO_AMULET_BASIC_RES    162
+#define EGO_AMULET_MAGIC_MAST   163
+#define EGO_AMULET_CLARITY      164
+#define EGO_AMULET_SHADOWS      165
+#define EGO_AMULET_METAMORPH    166
+#define EGO_AMULET_SUSTENANCE   167
+#define EGO_AMULET_TRICKERY     168
+#define EGO_AMULET_WEAPONMAST   169
+#define EGO_AMULET_VITALITY     170
+#define EGO_AMULET_INSIGHT      171
+
+
 #endif

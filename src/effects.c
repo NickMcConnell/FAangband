@@ -3396,20 +3396,20 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 	case EF_ENLIST_EARTH:
 		{
 			int m_idx, targ_y, targ_x;
-			int targ = target_get_monster();
+			struct monster *mon = target_get_monster();
 
 			msg("You call on the Earth to bring forth allies!");
 
 			/* Must target a monster */
 			if (!get_aim_dir(&dir))
 				return FALSE;
-			if (targ <= 0) {
+			if (!mon) {
 				msg("You must target a monster.");
 				return FALSE;
 			}
 
-			targ_y = m_list[targ].fy;
-			targ_x = m_list[targ].fx;
+			targ_y = mon->fy;
+			targ_x = mon->fx;
 
 			/* Summon golems */
 			summon_specific(targ_y, targ_x, FALSE, p_ptr->depth,
@@ -3423,7 +3423,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 				if ((distance(targ_y, targ_x, m_ptr->fy, m_ptr->fx) < 7)
 					&& (r_ptr->d_char = 'g')
 					&& (!(rf_has(r_ptr->flags, RF_DRAGON))))
-					m_ptr->hostile = targ;
+					m_ptr->hostile = cave_m_idx[targ_y][targ_x];
 			}
 
 			return TRUE;

@@ -34,6 +34,11 @@
 #define PLAYER_GHOST_RACE       799
 
 
+/**
+ * Sign of a non-racial monster
+ */
+#define NON_RACIAL 255
+
 /*** Monster flags ***/
 
 
@@ -182,6 +187,70 @@ enum
 #define RSF_NO_PLAYER_MASK \
   RSF_HEAL, RSF_ADD_MANA, RSF_TELE_SELF_TO, RSF_CURE
 
+
+/*
+ * Legal restrictions for "summon_specific()"
+ */
+#define SUMMON_KIN		 1
+#define SUMMON_SAURON            2
+#define SUMMON_ANT		11
+#define SUMMON_SPIDER		12
+#define SUMMON_HOUND		13
+#define SUMMON_ANIMAL		14
+#define SUMMON_SWAMP     	15
+#define SUMMON_DEMON		16
+#define SUMMON_UNDEAD		17
+#define SUMMON_DRAGON		18
+#define SUMMON_HI_DEMON		20
+#define SUMMON_HI_UNDEAD	21
+#define SUMMON_HI_DRAGON	22
+#define SUMMON_WRAITH		31 /* now unused */
+#define SUMMON_UNIQUE		32
+#define SUMMON_ELEMENTAL	33
+#define SUMMON_VORTEX		34
+#define SUMMON_HYBRID		35
+#define SUMMON_BIRD		36
+#define SUMMON_GOLEM            37
+#define SUMMON_THIEF		38
+
+
+/*
+ * Some bit-flags for the "smart" field
+ *
+ * Most of these relate to OF_* object flags or P_RES_* and percentage resists
+ */
+#define SM_RES_STRONG_ACID	0x00000001
+#define SM_RES_STRONG_ELEC	0x00000002
+#define SM_RES_STRONG_FIRE	0x00000004
+#define SM_RES_STRONG_COLD	0x00000008
+#define SM_RES_STRONG_POIS	0x00000010
+#define SM_XXX1		        0x00000020
+#define SM_XXX2		        0x00000040
+#define SM_XXX3		        0x00000080
+#define SM_GOOD_SAVE		0x00000100
+#define SM_PERF_SAVE		0x00000200
+#define SM_IMM_FREE		0x00000400
+#define SM_IMM_MANA		0x00000800
+#define SM_IMM_ACID		0x00001000
+#define SM_IMM_ELEC		0x00002000
+#define SM_IMM_FIRE		0x00004000
+#define SM_IMM_COLD		0x00008000
+#define SM_RES_ACID		0x00010000
+#define SM_RES_ELEC		0x00020000
+#define SM_RES_FIRE		0x00040000
+#define SM_RES_COLD		0x00080000
+#define SM_RES_POIS		0x00100000
+#define SM_RES_FEAR		0x00200000
+#define SM_RES_LIGHT		0x00400000
+#define SM_RES_DARK		0x00800000
+#define SM_RES_BLIND	        0x01000000
+#define SM_RES_CONFU	        0x02000000
+#define SM_RES_SOUND	        0x04000000
+#define SM_RES_SHARD	        0x08000000
+#define SM_RES_NEXUS	        0x10000000
+#define SM_RES_NETHR	        0x20000000
+#define SM_RES_CHAOS	        0x40000000
+#define SM_RES_DISEN	        0x80000000
 
 /* Spell Desire Table Columns */
 #define D_BASE     0

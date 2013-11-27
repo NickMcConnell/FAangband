@@ -64,7 +64,7 @@ void delete_monster_idx(int i)
 		num_repro--;
 
 	/* Hack -- remove target monster */
-	if (target_get_monster() == i)
+	if (target_get_monster() == m_ptr)
 		target_set_monster(0);
 
 	/* Hack -- remove tracked monster */
@@ -177,8 +177,8 @@ static void compact_monsters_aux(int i1, int i2)
 	}
 
 	/* Hack -- Update the target */
-	if (target_get_monster() == i1)
-		target_set_monster(i2);
+	if (target_get_monster() == m_ptr)
+		target_set_monster(&m_list[i2]);
 
 	/* Hack -- Update the health bar */
 	if (p_ptr->health_who == i1)

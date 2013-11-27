@@ -129,23 +129,6 @@ typedef enum
 
 
 /**
- * Pseudo-ID markers.
- */
-typedef enum
-{
-	INSCRIP_NULL = 0,            /*!< No pseudo-ID status */
-	INSCRIP_STRANGE = 1,         /*!< Item that has mixed combat bonuses */
-	INSCRIP_AVERAGE = 2,         /*!< Item with no interesting features */
-	INSCRIP_MAGICAL = 3,         /*!< Item with combat bonuses */
-	INSCRIP_SPLENDID = 4,        /*!< Obviously good item */
-	INSCRIP_EXCELLENT = 5,       /*!< Ego-item */
-	INSCRIP_SPECIAL = 6,         /*!< Artifact */
-	INSCRIP_UNKNOWN = 7,
-
-	INSCRIP_MAX                  /*!< Maximum number of pseudo-ID markers */
-} obj_pseudo_t;
-
-/**
  * Determine if a given inventory item is "aware"
  */
 #define object_aware_p(T) \
@@ -287,6 +270,164 @@ typedef enum
 #define known_cursed_p(T) \
     (!(cf_is_empty((T)->id_curse)) || ((T)->ident & IDENT_CURSED) ? TRUE : FALSE)
 
+
+/*
+ * Object flags
+ */
+
+enum
+{
+	#define OF(a,b) OF_##a,
+	#include "list-object-flags.h"
+	#undef OF
+	OF_MAX
+};
+
+#define OF_SIZE                FLAG_SIZE(OF_MAX)
+
+#define of_has(f, flag)        flag_has_dbg(f, OF_SIZE, flag, #f, #flag)
+#define of_next(f, flag)       flag_next(f, OF_SIZE, flag)
+#define of_is_empty(f)         flag_is_empty(f, OF_SIZE)
+#define of_is_full(f)          flag_is_full(f, OF_SIZE)
+#define of_is_inter(f1, f2)    flag_is_inter(f1, f2, OF_SIZE)
+#define of_is_subset(f1, f2)   flag_is_subset(f1, f2, OF_SIZE)
+#define of_is_equal(f1, f2)    flag_is_equal(f1, f2, OF_SIZE)
+#define of_on(f, flag)         flag_on_dbg(f, OF_SIZE, flag, #f, #flag)
+#define of_off(f, flag)        flag_off(f, OF_SIZE, flag)
+#define of_wipe(f)             flag_wipe(f, OF_SIZE)
+#define of_setall(f)           flag_setall(f, OF_SIZE)
+#define of_negate(f)           flag_negate(f, OF_SIZE)
+#define of_copy(f1, f2)        flag_copy(f1, f2, OF_SIZE)
+#define of_union(f1, f2)       flag_union(f1, f2, OF_SIZE)
+#define of_comp_union(f1, f2)  flag_comp_union(f1, f2, OF_SIZE)
+#define of_inter(f1, f2)       flag_inter(f1, f2, OF_SIZE)
+#define of_diff(f1, f2)        flag_diff(f1, f2, OF_SIZE)
+
+#define OF_OBVIOUS_MASK \
+  OF_THROWING, OF_TWO_HANDED_REQ, OF_TWO_HANDED_DES, OF_SHOW_MODS 
+
+#define OF_PROOF_MASK \
+  OF_ACID_PROOF, OF_ELEC_PROOF, OF_FIRE_PROOF,	OF_COLD_PROOF
+ 
+/*
+ * Curse flags
+ */
+
+enum
+{
+	#define CF(a,b) CF_##a,
+	#include "list-curse-flags.h"
+	#undef CF
+	CF_MAX
+};
+
+#define CF_SIZE                FLAG_SIZE(CF_MAX)
+
+#define cf_has(f, flag)        flag_has_dbg(f, CF_SIZE, flag, #f, #flag)
+#define cf_next(f, flag)       flag_next(f, CF_SIZE, flag)
+#define cf_is_empty(f)         flag_is_empty(f, CF_SIZE)
+#define cf_is_full(f)          flag_is_full(f, CF_SIZE)
+#define cf_is_inter(f1, f2)    flag_is_inter(f1, f2, CF_SIZE)
+#define cf_is_subset(f1, f2)   flag_is_subset(f1, f2, CF_SIZE)
+#define cf_is_equal(f1, f2)    flag_is_equal(f1, f2, CF_SIZE)
+#define cf_on(f, flag)         flag_on_dbg(f, CF_SIZE, flag, #f, #flag)
+#define cf_off(f, flag)        flag_off(f, CF_SIZE, flag)
+#define cf_wipe(f)             flag_wipe(f, CF_SIZE)
+#define cf_setall(f)           flag_setall(f, CF_SIZE)
+#define cf_negate(f)           flag_negate(f, CF_SIZE)
+#define cf_copy(f1, f2)        flag_copy(f1, f2, CF_SIZE)
+#define cf_union(f1, f2)       flag_union(f1, f2, CF_SIZE)
+#define cf_comp_union(f1, f2)  flag_comp_union(f1, f2, CF_SIZE)
+#define cf_inter(f1, f2)       flag_inter(f1, f2, CF_SIZE)
+#define cf_diff(f1, f2)        flag_diff(f1, f2, CF_SIZE)
+
+
+/*
+ * Kind flags
+ */
+
+enum
+{
+	#define KF(a,b) KF_##a,
+	#include "list-kind-flags.h"
+	#undef KF
+	KF_MAX
+};
+
+#define KF_SIZE                FLAG_SIZE(KF_MAX)
+
+#define kf_has(f, flag)        flag_has_dbg(f, KF_SIZE, flag, #f, #flag)
+#define kf_next(f, flag)       flag_next(f, KF_SIZE, flag)
+#define kf_is_empty(f)         flag_is_empty(f, KF_SIZE)
+#define kf_is_full(f)          flag_is_full(f, KF_SIZE)
+#define kf_is_inter(f1, f2)    flag_is_inter(f1, f2, KF_SIZE)
+#define kf_is_subset(f1, f2)   flag_is_subset(f1, f2, KF_SIZE)
+#define kf_is_equal(f1, f2)    flag_is_equal(f1, f2, KF_SIZE)
+#define kf_on(f, flag)         flag_on_dbg(f, KF_SIZE, flag, #f, #flag)
+#define kf_off(f, flag)        flag_off(f, KF_SIZE, flag)
+#define kf_wipe(f)             flag_wipe(f, KF_SIZE)
+#define kf_setall(f)           flag_setall(f, KF_SIZE)
+#define kf_negate(f)           flag_negate(f, KF_SIZE)
+#define kf_copy(f1, f2)        flag_copy(f1, f2, KF_SIZE)
+#define kf_union(f1, f2)       flag_union(f1, f2, KF_SIZE)
+#define kf_comp_union(f1, f2)  flag_comp_union(f1, f2, KF_SIZE)
+#define kf_inter(f1, f2)       flag_inter(f1, f2, KF_SIZE)
+#define kf_diff(f1, f2)        flag_diff(f1, f2, KF_SIZE)
+
+
+/*
+ * Identify flags
+ */
+
+enum
+{
+	#define IF(a,b) IF_##a,
+	#include "list-identify-flags.h"
+	#undef IF
+	IF_MAX
+};
+
+#define IF_SIZE                FLAG_SIZE(IF_MAX)
+
+#define if_has(f, flag)        flag_has_dbg(f, IF_SIZE, flag, #f, #flag)
+#define if_next(f, flag)       flag_next(f, IF_SIZE, flag)
+#define if_is_empty(f)         flag_is_empty(f, IF_SIZE)
+#define if_is_full(f)          flag_is_full(f, IF_SIZE)
+#define if_is_inter(f1, f2)    flag_is_inter(f1, f2, IF_SIZE)
+#define if_is_subset(f1, f2)   flag_is_subset(f1, f2, IF_SIZE)
+#define if_is_equal(f1, f2)    flag_is_equal(f1, f2, IF_SIZE)
+#define if_on(f, flag)         flag_on_dbg(f, IF_SIZE, flag, #f, #flag)
+#define if_off(f, flag)        flag_off(f, IF_SIZE, flag)
+#define if_wipe(f)             flag_wipe(f, IF_SIZE)
+#define if_setall(f)           flag_setall(f, IF_SIZE)
+#define if_negate(f)           flag_negate(f, IF_SIZE)
+#define if_copy(f1, f2)        flag_copy(f1, f2, IF_SIZE)
+#define if_union(f1, f2)       flag_union(f1, f2, IF_SIZE)
+#define if_comp_union(f1, f2)  flag_comp_union(f1, f2, IF_SIZE)
+#define if_inter(f1, f2)       flag_inter(f1, f2, IF_SIZE)
+#define if_diff(f1, f2)        flag_diff(f1, f2, IF_SIZE)
+
+
+
+
+/*
+ * Random object kind flag info (base flag value)
+ */
+#define OBJECT_RAND_BASE_SUSTAIN	OF_SUSTAIN_STR
+#define OBJECT_RAND_BASE_POWER		OF_SLOW_DIGEST
+
+/*
+ * Random object kind flag info (number of flags)
+ */
+#define OBJECT_RAND_SIZE_SUSTAIN	6
+#define OBJECT_RAND_SIZE_POWER		10
+
+/* 
+ * Object ID flag info (base flag value)
+ */
+#define OBJECT_ID_BASE_RESIST           IF_RES_ACID
+#define OBJECT_ID_BASE_SLAY             IF_SLAY_ANIMAL
+#define OBJECT_ID_BASE_BRAND            IF_BRAND_ACID
 
 /**
  * Information about object "kinds", including player knowledge.

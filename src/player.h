@@ -285,6 +285,55 @@ enum
 	REST_SUNLIGHT = -3
 };
 
+/*
+ * Player race and class flags
+ */
+
+enum
+{
+#define PF(a, b, c, d) PF_##a
+	#include "list-player-flags.h"
+	#undef PF
+	PF_MAX
+};
+
+#define PF_SIZE                FLAG_SIZE(PF_MAX)
+
+enum
+{
+    PLAYER_FLAG_SPECIAL,
+    PLAYER_FLAG_RACE,
+    PLAYER_FLAG_CLASS
+};
+
+#define PF_NO_SPECIALTY		255
+
+
+#define pf_has(f, flag)        flag_has_dbg(f, PF_SIZE, flag, #f, #flag)
+#define pf_next(f, flag)       flag_next(f, PF_SIZE, flag)
+#define pf_is_empty(f)         flag_is_empty(f, PF_SIZE)
+#define pf_is_full(f)          flag_is_full(f, PF_SIZE)
+#define pf_is_inter(f1, f2)    flag_is_inter(f1, f2, PF_SIZE)
+#define pf_is_subset(f1, f2)   flag_is_subset(f1, f2, PF_SIZE)
+#define pf_is_equal(f1, f2)    flag_is_equal(f1, f2, PF_SIZE)
+#define pf_on(f, flag)         flag_on_dbg(f, PF_SIZE, flag, #f, #flag)
+#define pf_off(f, flag)        flag_off(f, PF_SIZE, flag)
+#define pf_wipe(f)             flag_wipe(f, PF_SIZE)
+#define pf_setall(f)           flag_setall(f, PF_SIZE)
+#define pf_negate(f)           flag_negate(f, PF_SIZE)
+#define pf_copy(f1, f2)        flag_copy(f1, f2, PF_SIZE)
+#define pf_union(f1, f2)       flag_union(f1, f2, PF_SIZE)
+#define pf_comp_union(f1, f2)  flag_comp_union(f1, f2, PF_SIZE)
+#define pf_inter(f1, f2)       flag_inter(f1, f2, PF_SIZE)
+#define pf_diff(f1, f2)        flag_diff(f1, f2, PF_SIZE)
+
+#define player_race_has(flag)        (pf_has(rp_ptr->pflags, (flag)))
+#define player_class_has(flag)       (pf_has(cp_ptr->pflags, (flag)))
+#define player_class_avail(flag)     (pf_has(cp_ptr->specialties, (flag)))
+#define player_chose(flag)           (pf_has(p_ptr->pflags, (flag)))
+#define player_has(flag)       (pf_has(rp_ptr->pflags, (flag)) || pf_has(cp_ptr->pflags, (flag)) || pf_has(p_ptr->pflags, (flag)))
+
+
 /*** Structures ***/
 
 /*

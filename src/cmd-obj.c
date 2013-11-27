@@ -710,8 +710,7 @@ void pseudo_probe(void)
 	char m_name[80];
 
 	/* Acquire the target monster */
-	int m_idx = target_get_monster();
-	monster_type *m_ptr = &m_list[m_idx];
+	struct monster *m_ptr = target_get_monster();
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	monster_lore *l_ptr = &l_list[m_ptr->r_idx];
 
@@ -720,7 +719,7 @@ void pseudo_probe(void)
 
 
 	/* If no target monster, fail. */
-	if (m_idx < 1) {
+	if (!m_ptr) {
 		msg("You must actually target a monster.");
 		return;
 	}
