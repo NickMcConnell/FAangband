@@ -1581,12 +1581,7 @@ void take_hit(int dam, const char *kb_str)
 
 	int warning = (p_ptr->mhp * op_ptr->hitpoint_warn / 10);
 
-#ifdef _WIN32_WCE
-	unsigned long fake_time(unsigned long *fake_time_t);
-	time_t ct = fake_time(0);
-#else
 	time_t ct = time((time_t *) 0);
-#endif
 	char long_day[25];
 	char buf[120];
 
@@ -1641,16 +1636,8 @@ void take_hit(int dam, const char *kb_str)
 		p_ptr->leaving = TRUE;
 
 		/* Get time */
-#ifdef _WIN32_WCE
-		{
-			char *fake_ctime(const unsigned long *fake_time_t);
-			sprintf(long_day, "%-.6s %-.2s", fake_ctime(&ct) + 4,
-					fake_ctime(&ct) + 22);
-		}
-#else
 		(void) strftime(long_day, 25, "%m/%d/%Y at %I:%M %p",
 						localtime(&ct));
-#endif
 
 		/* Add note */
 

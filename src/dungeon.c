@@ -2311,12 +2311,7 @@ void play_game(void)
 		u32b seed;
 
 		/* Basic seed */
-#ifdef _WIN32_WCE
-		unsigned long fake_time(unsigned long *fake_time_t);
-		seed = fake_time(NULL);
-#else
 		seed = (time(NULL));
-#endif
 
 #ifdef SET_UID
 

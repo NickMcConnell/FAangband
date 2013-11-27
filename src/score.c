@@ -372,9 +372,6 @@ static void display_scores_aux(const high_score scores[], int from, int to,
 static void build_score(high_score * entry, const char *died_from,
 						time_t * death_time)
 {
-#ifdef _WIN32_WCE
-	unsigned long fake_time(unsigned long *time_t);
-#endif
 	WIPE(entry, high_score);
 
 	/* Save the version */
@@ -391,16 +388,8 @@ static void build_score(high_score * entry, const char *died_from,
 
 	/* Time of death */
 	if (death_time)
-#ifdef _WIN32_WCE
-	{
-		char *fake_ctime(const unsigned long *time_t);
-		sprintf(entry->day, "%-.6s %-.2s",
-				fake_ctime(death_time) + 4, fake_ctime(death_time) + 22);
-	}
-#else
 		strftime(entry->day, sizeof(entry->day), "@%Y%m%d",
 				 localtime(death_time));
-#endif
 	else
 		my_strcpy(entry->day, "TODAY", sizeof(entry->day));
 

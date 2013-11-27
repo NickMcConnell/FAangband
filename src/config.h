@@ -93,10 +93,7 @@
 /*
  * OPTION: Allow the use of "sound" in various places.
  */
-#ifdef _WIN32_WCE
-#else
- #define USE_SOUND
-#endif
+#define USE_SOUND
 
 /*
  * OPTION: Allow the use of "graphics" in various places

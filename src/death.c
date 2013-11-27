@@ -285,11 +285,7 @@ static void print_tomb(void)
 
 	ang_file *fp;
 
-#ifdef _WIN32_WCE
-	time_t ct = fake_time((time_t) 0);
-#else
 	time_t ct = time((time_t) 0);
-#endif
 
 	bool boat = ((p_ptr->total_winner) && (player_has(PF_ELVEN)));
 	bool tree = ((p_ptr->total_winner)
@@ -453,14 +449,7 @@ static void print_tomb(void)
 		center_string(buf, tmp);
 		put_str(buf, 15, offset);
 	}
-#ifdef _WIN32_WCE
-	{
-		char *fake_ctime(const unsigned long *fake_time_t);
-		sprintf(tmp, "%-.24s", fake_ctime(&ct));
-	}
-#else
 	sprintf(tmp, "%-.24s", ctime(&ct));
-#endif
 	center_string(buf, tmp);
 	put_str(buf, 17, offset);
 }
@@ -830,14 +819,7 @@ void death_screen(void)
 	}
 
 	/* Get time of death */
-#ifdef _WIN32_WCE
-	{
-		unsigned long fake_time(unsigned long *fake_time_t);
-		fake_time(&death_time);
-	}
-#else
 	(void) time(&death_time);
-#endif
 
 	/* Hack - Know everything upon death */
 	death_knowledge();

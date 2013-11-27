@@ -1210,13 +1210,8 @@ static int select_property(int temp_potential, int *property_list,
 	int selection = 0;
 	int current_value = 0;
 
-#ifdef _WIN32_WCE
-	int prices[10][15];
-
-#else							/*  */
 	int prices[choices][*max_value + 1];
 
-#endif							/*  */
 	bool found_it = FALSE;
 	object_type *i_ptr;
 	object_type object_type_body;

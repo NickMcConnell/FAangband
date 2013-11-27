@@ -1272,13 +1272,8 @@ void player_birth(bool quickstart_allowed)
 
 	char long_day[25];
 
-#ifdef _WIN32_WCE
-	unsigned long fake_time(unsigned long *fake_time_t);
-	time_t ct = fake_time(0);
-
-#else
 	time_t ct = time((time_t *) 0);
-#endif
+
 	/* 
 	 * If there's a quickstart character, store it for later use.
 	 * If not, default to whatever the first of the choices is.
@@ -1441,15 +1436,7 @@ void player_birth(bool quickstart_allowed)
 	squelch_birth_init();
 
 	/* Get date */
-#ifdef _WIN32_WCE
-	{
-		char *fake_ctime(const unsigned long *fake_time_t);
-		sprintf(long_day, "%-.6s %-.2s", fake_ctime(&ct) + 4,
-				fake_ctime(&ct) + 22);
-	}
-#else
 	(void) strftime(long_day, 25, "%m/%d/%Y at %I:%M %p", localtime(&ct));
-#endif
 
 	/* Clear old messages, add new starting message */
 	history_clear();

@@ -31,11 +31,6 @@
 #include "squelch.h"
 #include "target.h"
 
-#ifdef _WIN32_WCE
-#include "angbandcw.h"
-#endif							/* _WIN32_WCE */
-
-
 /* Private function that is shared by verify_panel() and center_panel() */
 void verify_panel_int(bool centered);
 

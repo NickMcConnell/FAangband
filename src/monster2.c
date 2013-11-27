@@ -4704,16 +4704,7 @@ bool mon_take_hit(int m_idx, int dam, bool * fear, const char *note)
 			if (randint1(3) != 1) {
 				sprintf(path, "%s/bone.%03d", ANGBAND_DIR_BONE,
 						bones_selector);
-#ifdef _WIN32_WCE
-				{
-					TCHAR wcpath[1024];
-					mbstowcs(wcpath, path, 1024);
-
-					DeleteFile(wcpath);
-				}
-#else
 				remove(path);
-#endif
 			}
 		}
 
