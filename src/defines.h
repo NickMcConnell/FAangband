@@ -136,12 +136,6 @@
 #define DETECT_RAD_DEFAULT      30
 #define DETECT_RAD_MAP          255
 
-/* 
- * Hard line maxima for char_attr lines 
- */
-#define MAX_C_A_LEN 80
-#define MAX_C_A_SML 48
-
 /**
  * Maximum amount of Angband windows.
  */
@@ -152,22 +146,6 @@
  * Maximum number of player "sex" types (see "table.c", etc)
  */
 #define MAX_SEXES            2
-
-/**
- * Maximum amount of starting equipment
- */
-#define MAX_START_ITEMS	4
-#define STARTING_GOLD 600
-
-/**
- * Maximum number of specialty abilities for a single character
- */
-#define MAX_SPECIALTIES      10
-
-/**
- * Number of specialty abilities available to a character class
- */
-#define CLASS_SPECIALTIES      15
 
 /*
  * Hack -- first normal and random artifact in the artifact list.  
@@ -190,28 +168,9 @@
 
 
 /**
- * OPTION: Maximum number of "quarks" (see "io.c")
- * Default: assume at most 512 different inscriptions are used
- */
-#define QUARK_MAX	512
-
-/**
  * OPTION: Maximum number of autoinscriptions(see "object1.c")
  */
 #define AUTOINSCRIPTIONS_MAX 216
-
-/**
- * OPTION: Maximum number of messages to remember (see "io.c")
- * Default: assume maximal memorization of 2048 total messages
- */
-#define MESSAGE_MAX	2048
-
-/**
- * OPTION: Maximum space for the message text buffer (see "io.c")
- * Default: assume that each of the 2048 messages is repeated an
- * average of three times, and has an average length of 48
- */
-#define MESSAGE_BUF	32768
 
 /**
  * Defines for graphics mode
@@ -224,26 +183,6 @@
 #define NOSCORE_WIZARD		0x0002
 #define NOSCORE_DEBUG		0x0008
 #define NOSCORE_BORG		0x0010
-
-/* History message types */
-#define HISTORY_PLAYER_BIRTH     0x0001	/* Player was born */
-#define HISTORY_ARTIFACT_UNKNOWN 0x0002	/* Player found unknown artifact */
-#define HISTORY_ARTIFACT_KNOWN   0x0004	/* Player has IDed an artifact */
-#define HISTORY_ARTIFACT_LOST    0x0008	/* Player had an artifact and lost it */
-#define HISTORY_PLAYER_DEATH     0x0010	/* Player has been slain */
-#define HISTORY_SLAY_UNIQUE      0x0020	/* Player has slain a unique monster */
-#define HISTORY_USER_INPUT       0x0040	/* User-added note */
-#define HISTORY_MOVE_HOUSE       0x0080	/* PLayer moved house */
-#define HISTORY_GAIN_LEVEL       0x0100	/* Player gained a level */
-#define HISTORY_GAIN_SPECIALTY   0x0200	/* Player gained a specialty */
-
-/**
- * List of commands that will be auto-repeated
- *
- * ToDo: This string should be user-configurable.
- */
-#define AUTO_REPEAT_COMMANDS "TBDoc+"
-
 
 /** 
  * Given an array, determine how many elements are in the array.
@@ -324,37 +263,6 @@
 #define USE_DEVICE      3	/* x> Harder devices x< Easier devices     */
 
 /**
- * Percentage likelihood that monsters will be disturbed by the
- * character each ten game turns, assuming a stealth of zero.
- *
- * This value is 100 in Angband.  It has been lowered in Oangband because
- * combat and other actions can temporarily increase the noise level.
- */
-#define WAKEUP_ADJ    90
-
-
-/**
- * There is a 1/40 (2.5%) chance of inflating the requested object_level
- * during the creation of an object (see "get_obj_num()" in "object.c").
- * Lower values yield better objects more often.
- */
-#define GREAT_OBJ	40
-
-/**
- * There is a 1/25 (4%) chance that ego-items with an inflated base-level are
- * generated when an object is turned into an ego-item (see make_ego_item()
- * in object2.c). As above, lower values yield better ego-items more often.
- */
-#define GREAT_EGO	25
-
-/**
- * There is a 1/25 (4%) chance of inflating the requested monster_level
- * during the creation of a monsters (see "get_mon_num()" in "monster2.c").
- * Lower values yield harder monsters more often.  Value raised in FAangband.
- */
-#define NASTY_MON	25	/** 1/chance of inflated monster level */
-
-/**
  * Fraction of turns in which the extend magic special ability causes timers to
  * not decrement.
  */
@@ -381,41 +289,6 @@
 #define MAX_RANGE_SML   10      /* Maximum projection range (small devices) */
 #define MAX_SIGHT (MODE(SMALL_DEVICE) ? MAX_SIGHT_SML : MAX_SIGHT_LGE)  
 #define MAX_RANGE (MODE(SMALL_DEVICE) ? MAX_RANGE_SML : MAX_RANGE_LGE)
-
-
-/**
- * There is a 1/160 chance per round of creating a new monster
- */
-#define MAX_M_ALLOC_CHANCE	160
-
-/**
- * Normal levels get at least 16 monsters
- */
-#define MIN_M_ALLOC_LEVEL	16
-
-/**
- * The town starts out with 4 residents during the day
- */
-#define MIN_M_ALLOC_TD		4
-
-/**
- * The town starts out with 8 residents during the night
- */
-#define MIN_M_ALLOC_TN		8
-
-
-/**
- * A monster can only "multiply" (reproduce) if there are fewer than 100
- * monsters on the level capable of such spontaneous reproduction.  This
- * is a hack which prevents the "m_list[]" array from exploding due to
- * reproducing monsters.  Messy, but necessary.
- */
-#define MAX_REPRO	100
-
-/** 
- * Special player ghost slot in lib/edit/monster.txt 
- */
-#define PLAYER_GHOST_RACE       799
 
 
 /*** General index values ***/

@@ -1,6 +1,12 @@
 #ifndef INCLUDED_CHARATTR_H
 #define INCLUDED_CHARATTR_H
 
+/* 
+ * Hard line maxima for char_attr lines 
+ */
+#define MAX_C_A_LEN 80
+#define MAX_C_A_SML 48
+
 typedef struct char_attr char_attr;
 
 /**

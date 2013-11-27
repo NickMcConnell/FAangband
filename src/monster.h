@@ -8,6 +8,32 @@
 #include "cave.h"
 #include "object.h"
 
+/**
+ * There is a 1/25 (4%) chance of inflating the requested monster_level
+ * during the creation of a monsters (see "get_mon_num()" in "monster2.c").
+ * Lower values yield harder monsters more often.  Value raised in FAangband.
+ */
+#define NASTY_MON	25	/** 1/chance of inflated monster level */
+
+/**
+ * There is a 1/160 chance per round of creating a new monster
+ */
+#define MAX_M_ALLOC_CHANCE	160
+
+/**
+ * A monster can only "multiply" (reproduce) if there are fewer than 100
+ * monsters on the level capable of such spontaneous reproduction.  This
+ * is a hack which prevents the "m_list[]" array from exploding due to
+ * reproducing monsters.  Messy, but necessary.
+ */
+#define MAX_REPRO	100
+
+/** 
+ * Special player ghost slot in lib/edit/monster.txt 
+ */
+#define PLAYER_GHOST_RACE       799
+
+
 /*** Monster flags ***/
 
 

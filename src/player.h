@@ -7,6 +7,22 @@
 #include "object.h"
 #include "option.h"
 
+/**
+ * Maximum amount of starting equipment
+ */
+#define MAX_START_ITEMS	4
+#define STARTING_GOLD 600
+
+/**
+ * Maximum number of specialty abilities for a single character
+ */
+#define MAX_SPECIALTIES      10
+
+/**
+ * Number of specialty abilities available to a character class
+ */
+#define CLASS_SPECIALTIES      15
+
 /*
  * Player constants
  */
@@ -47,6 +63,16 @@
 
 /** Maximum number of blow types available to Druids. -LM- */
 #define NUM_D_BLOWS		20
+
+
+/**
+ * Percentage likelihood that monsters will be disturbed by the
+ * character each ten game turns, assuming a stealth of zero.
+ *
+ * This value is 100 in Angband.  It has been lowered in Oangband because
+ * combat and other actions can temporarily increase the noise level.
+ */
+#define WAKEUP_ADJ    90
 
 
 /**

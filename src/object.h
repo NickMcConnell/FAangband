@@ -11,6 +11,20 @@
 /* Power calculation */
 #define INHIBIT_POWER       20000
 
+/**
+ * There is a 1/40 (2.5%) chance of inflating the requested object_level
+ * during the creation of an object (see "get_obj_num()" in "object.c").
+ * Lower values yield better objects more often.
+ */
+#define GREAT_OBJ	40
+
+/**
+ * There is a 1/25 (4%) chance that ego-items with an inflated base-level are
+ * generated when an object is turned into an ego-item (see make_ego_item()
+ * in object2.c). As above, lower values yield better ego-items more often.
+ */
+#define GREAT_EGO	25
+
 struct player;
 typedef struct autoinscription autoinscription;
 

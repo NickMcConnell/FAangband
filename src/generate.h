@@ -198,6 +198,22 @@ struct vault {
 #define STAIR_MAX	30
 
 /**
+ * Normal levels get at least 16 monsters
+ */
+#define MIN_M_ALLOC_LEVEL	16
+
+/**
+ * The town starts out with 4 residents during the day
+ */
+#define MIN_M_ALLOC_TD		4
+
+/**
+ * The town starts out with 8 residents during the night
+ */
+#define MIN_M_ALLOC_TN		8
+
+
+/**
  * Tree type chances 
  */
 #define HIGHLAND_TREE_CHANCE 30
