@@ -194,7 +194,7 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
 	/* Success */
 	if (pstair == FEAT_LESS) {
 		/* Magical portal for dungeon-only games */
-		if ((p_ptr->map == MAP_DUNGEON) && (p_ptr->depth != 1)
+		if (MAP(DUNGEON) && (p_ptr->depth != 1)
 			&& ((stage_map[p_ptr->stage][LOCALITY]) !=
 				(stage_map[stage_map[p_ptr->stage][UP]][LOCALITY]))) {
 			/* Land properly */
@@ -222,7 +222,7 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
 		p_ptr->create_stair = FEAT_MORE;
 	} else if (pstair == FEAT_LESS_SHAFT) {
 		/* Magical portal for dungeon-only games */
-		if ((p_ptr->map == MAP_DUNGEON) && (p_ptr->depth != 2)
+		if (MAP(DUNGEON) && (p_ptr->depth != 2)
 			&& ((stage_map[p_ptr->stage][LOCALITY]) !=
 				(stage_map[stage_map[stage_map[p_ptr->stage][UP]][UP]]
 				 [LOCALITY]))) {
@@ -328,8 +328,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 	}
 
 	/* Handle ironman */
-	if (MODE(IRONMAN) && !p_ptr->depth && (p_ptr->map != MAP_DUNGEON)
-		&& (p_ptr->map != MAP_FANILLA)) {
+	if (MODE(IRONMAN) && !p_ptr->depth && (MAP(EXTENDED) || MAP(COMPRESSED))) {
 		int j, other;
 		int next = stage_map[p_ptr->stage][path_data[i].direction];
 
@@ -363,7 +362,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 
 		/* Magical portal for ironman */
 		if (MODE(IRONMAN) && !stage_map[p_ptr->stage][DOWN]
-			&& (p_ptr->map != MAP_DUNGEON) && (p_ptr->map != MAP_FANILLA)) {
+			&& (MAP(EXTENDED) || MAP(COMPRESSED))) {
 			/* Get choice */
 			if (!jump_menu(p_ptr->depth + 1, &location))
 				return;
@@ -384,7 +383,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 		}
 
 		/* Magical portal for dungeon-only games */
-		if ((p_ptr->map == MAP_DUNGEON) && (p_ptr->depth)
+		if (MAP(DUNGEON) && (p_ptr->depth)
 			&& ((stage_map[p_ptr->stage][LOCALITY]) !=
 				(stage_map[stage_map[p_ptr->stage][DOWN]][LOCALITY]))) {
 			/* Land properly */
@@ -415,10 +414,10 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 		p_ptr->create_stair = FEAT_LESS;
 	} else if (pstair == FEAT_MORE_SHAFT) {
 		/* Magical portal for dungeon-only games */
-		if ((p_ptr->map == MAP_DUNGEON)
-			&& ((stage_map[p_ptr->stage][LOCALITY]) !=
-				(stage_map[stage_map[stage_map[p_ptr->stage][DOWN]][DOWN]]
-				 [LOCALITY]))) {
+		if (MAP(DUNGEON) && 
+			((stage_map[p_ptr->stage][LOCALITY]) !=
+			 (stage_map[stage_map[stage_map[p_ptr->stage][DOWN]][DOWN]]
+			  [LOCALITY]))) {
 			/* Land properly */
 			p_ptr->last_stage = NOWHERE;
 
@@ -487,8 +486,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 	p_ptr->depth = stage_map[p_ptr->stage][DEPTH];
 
 	/* Check for quests */
-	if ((p_ptr->map == MAP_DUNGEON) && is_quest(p_ptr->stage) &&
-		(p_ptr->depth < 100)) {
+	if (MAP(DUNGEON) && is_quest(p_ptr->stage) && (p_ptr->depth < 100)) {
 		int i;
 		monster_race *r_ptr = NULL;
 

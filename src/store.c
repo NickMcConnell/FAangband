@@ -2801,8 +2801,7 @@ void get_owner(bool pick)
 		}
 
 		/* Travelling merchant or no legal owner available */
-		if ((type == STORE_MERCH) || (out_of == 0)
-			|| (p_ptr->map == MAP_FANILLA)) {
+		if ((type == STORE_MERCH) || (out_of == 0) || MAP(FANILLA)) {
 			/* Choose a random owner */
 			i = randint0(z_info->p_max);
 
@@ -2928,7 +2927,7 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 
 	/* Oops */
 	if (which == MAX_STORES) {
-		if ((p_ptr->map == MAP_DUNGEON) || (p_ptr->map == MAP_FANILLA)) {
+		if (MAP(DUNGEON) || MAP(FANILLA)) {
 			if (f_ptr->shopnum == STORE_MERCH)
 				which = 0;
 			else
@@ -2938,7 +2937,7 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 			return;
 		}
 	}
-
+	
 	/* Hack -- Check the "locked doors" */
 	if (store[which].store_open >= turn) {
 		msg("The doors are locked.");

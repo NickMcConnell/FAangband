@@ -188,7 +188,7 @@ void place_random_stairs(int y, int x)
 	/* Choose a staircase */
 	if (!p_ptr->depth) {
 		place_down_stairs(y, x);
-	} else if (((p_ptr->map == MAP_DUNGEON) || (p_ptr->map == MAP_FANILLA))
+	} else if ((MAP(DUNGEON) || MAP(FANILLA))
 			   && (!stage_map[p_ptr->stage][DOWN] || dunquest)) {
 		place_up_stairs(y, x);
 	} else if (randint0(100) < 50) {

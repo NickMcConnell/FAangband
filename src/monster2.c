@@ -551,17 +551,17 @@ s16b get_mon_num(int level)
 			if ((rf_has(r_ptr->flags, RF_FORCE_DEPTH))
 				&& (r_ptr->level != p_ptr->depth)) {
 				/* Hack for questors on FAnilla map */
-				if ((p_ptr->map != MAP_FANILLA) || (r_ptr->level >= 99)
+				if (!MAP(FANILLA) || (r_ptr->level >= 99)
 					|| (!rf_has(r_ptr->flags, RF_QUESTOR)))
 					continue;
 			}
-
+			
 			/* Hack - handle dungeon specific -NRM- */
-			if (p_ptr->map != MAP_FANILLA) {
+			if (!MAP(FANILLA)) {
 				if ((rf_has(r_ptr->flags, RF_RUDH))
 					&& (stage_map[p_ptr->stage][LOCALITY] != AMON_RUDH))
 					continue;
-
+				
 				if ((rf_has(r_ptr->flags, RF_NARGOTHROND))
 					&& (stage_map[p_ptr->stage][LOCALITY] != NARGOTHROND))
 					continue;

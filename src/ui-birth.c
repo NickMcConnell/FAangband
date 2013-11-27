@@ -408,7 +408,7 @@ struct mode_menu_data {
 static int mode_menu_valid(menu_type * m, int oid)
 {
 	/* No thralls in FAnilla map */
-	if ((p_ptr->map == MAP_FANILLA) && (oid == GAME_MODE_THRALL))
+	if (MAP(FANILLA) && (oid == GAME_MODE_THRALL))
 		return 0;
 
 	return 1;
@@ -667,7 +667,7 @@ static void race_help(int i, void *db, const region * l)
 	}
 
 	text_out_e("Hit die: %d\n", p_info[i].r_mhp);
-	if ((p_ptr->map != MAP_DUNGEON) && (p_ptr->map != MAP_FANILLA)) {
+	if (MAP(COMPRESSED) || MAP(EXTENDED)) {
 		text_out_e("Difficulty: Level %d\n", p_info[i].difficulty);
 
 		/* Color code difficulty factor */

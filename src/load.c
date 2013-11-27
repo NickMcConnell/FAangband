@@ -1882,25 +1882,24 @@ int rd_dungeon(void)
 	/*** Basic info ***/
 
 	/* Hack - rewrite stage_map if necessary */
-	if (p_ptr->map == MAP_DUNGEON) {
+	if (MAP(DUNGEON)) {
 		for (i = 0; i < NUM_STAGES; i++)
 			for (n = 0; n < 9; n++)
 				stage_map[i][n] = dungeon_map[i][n];
 	}
-
-	else if (p_ptr->map == MAP_COMPRESSED) {
+	else if (MAP(COMPRESSED)) {
 		for (i = 0; i < NUM_STAGES; i++)
 			for (n = 0; n < 9; n++)
 				stage_map[i][n] = compressed_map[i][n];
 
 		for (i = 0; i < NUM_TOWNS; i++)
 			towns[i] = compressed_towns[i];
-	} else if (p_ptr->map == MAP_EXTENDED) {
+	} else if (MAP(EXTENDED)) {
 		for (i = 0; i < NUM_STAGES; i++)
 			for (n = 0; n < 9; n++)
 				stage_map[i][n] = extended_map[i][n];
 
-	} else if (p_ptr->map == MAP_FANILLA) {
+	} else if (MAP(FANILLA)) {
 		for (i = 0; i < NUM_STAGES; i++)
 			for (n = 0; n < 9; n++)
 				stage_map[i][n] = fanilla_map[i][n];

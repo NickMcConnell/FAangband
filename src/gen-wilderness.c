@@ -2784,7 +2784,7 @@ extern void valley_gen(void)
 	}
 
 	/* Maybe place a few random portals. */
-	if ((p_ptr->map == MAP_DUNGEON) && stage_map[p_ptr->stage][DOWN]) {
+	if (MAP(DUNGEON) && stage_map[p_ptr->stage][DOWN]) {
 		feature_type *f_ptr = NULL;
 
 		k = randint1(3) + 1;

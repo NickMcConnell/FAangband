@@ -184,9 +184,7 @@ static void town_gen_hack(void)
 	int last_stage = p_ptr->last_stage;
 
 	int rooms[MAX_STORES_BIG + 1];
-	int per_row = ((p_ptr->map == MAP_DUNGEON)
-				   || (p_ptr->map == MAP_FANILLA)
-				   ? 5 : 4);
+	int per_row = (MAP(DUNGEON) || MAP(FANILLA) ? 5 : 4);
 
 	bool place = FALSE;
 	bool major = FALSE;
@@ -199,12 +197,11 @@ static void town_gen_hack(void)
 		if (stage == towns[i])
 			Rand_value = seed_town[i];
 
-	if ((p_ptr->map == MAP_DUNGEON) || (p_ptr->map == MAP_FANILLA))
+	if (MAP(DUNGEON) || MAP(FANILLA))
 		Rand_value = seed_town[0];
 
 	/* Set major town flag if necessary */
-	if ((stage > GLADDEN_FIELDS_TOWN) || (p_ptr->map == MAP_DUNGEON)
-		|| (p_ptr->map == MAP_FANILLA))
+	if ((stage > GLADDEN_FIELDS_TOWN) || MAP(DUNGEON) || MAP(FANILLA))
 		major = TRUE;
 
 	/* Hack - reduce width for minor towns */
@@ -223,7 +220,7 @@ static void town_gen_hack(void)
 		n = 4;
 	}
 
-	if ((p_ptr->map == MAP_DUNGEON) || (p_ptr->map == MAP_FANILLA))
+	if (MAP(DUNGEON) || MAP(FANILLA))
 		rooms[n++] = 9;
 
 	/* No stores for ironmen away from home */
@@ -234,43 +231,42 @@ static void town_gen_hack(void)
 			for (x = 0; x < per_row; x++) {
 				/* Pick a random unplaced store */
 				k = ((n <= 1) ? 0 : randint0(n));
-
+				
 				/* Build that store at the proper location */
 				build_store(rooms[k], y, x, stage);
-
+				
 				/* Shift the stores down, remove one store */
 				rooms[k] = rooms[--n];
-
+				
 				/* Cut short if a minor town */
 				if ((x > 0) && !major)
 					break;
 			}
 		}
 		/* Hack -- Build the 9th store.  Taken from Zangband */
-		if (major && (p_ptr->map != MAP_DUNGEON)
-			&& (p_ptr->map != MAP_FANILLA))
+		if (major && (MAP(COMPRESSED) || MAP(FANILLA)))
 			build_store(rooms[0], randint0(2), 4, stage);
 	}
-
-	if ((p_ptr->map == MAP_DUNGEON) || (p_ptr->map == MAP_FANILLA)) {
+	
+	if (MAP(DUNGEON) || MAP(FANILLA)) {
 		/* Place the stairs */
 		while (TRUE) {
 			feature_type *f_ptr;
-
+			
 			/* Pick a location at least "three" from the outer walls */
 			y = 1 + rand_range(3, DUNGEON_HGT / 3 - 4);
 			x = 1 + rand_range(3, DUNGEON_WID / 3 - 4);
-
+			
 			/* Require a floor grid */
 			f_ptr = &f_info[cave_feat[y][x]];
 			if (tf_has(f_ptr->flags, TF_FLOOR))
 				break;
 		}
-
+		
 		/* Clear previous contents, add down stairs */
 		cave_set_feat(y, x, FEAT_MORE);
-
-
+		
+		
 		/* Place the player */
 		player_place(y, x);
 	}
@@ -369,8 +365,7 @@ static void town_gen(void)
 	bool dummy;
 
 	/* Hack - smaller for minor towns */
-	if ((stage < KHAZAD_DUM_TOWN) && (p_ptr->map != MAP_DUNGEON)
-		&& (p_ptr->map != MAP_FANILLA))
+	if ((stage < KHAZAD_DUM_TOWN) && !MAP(DUNGEON)	&& !MAP(FANILLA))
 		width /= 2;
 
 	/* Day time */

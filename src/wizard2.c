@@ -1450,7 +1450,7 @@ bool jump_menu(int level, int *location)
 	u16b *choice;
 
 	/* Dungeon only is easy */
-	if ((p_ptr->map == MAP_DUNGEON) || (p_ptr->map == MAP_FANILLA)) {
+	if (MAP(DUNGEON) || MAP(FANILLA)) {
 		*location = level + 1;
 		return TRUE;
 	}

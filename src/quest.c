@@ -87,7 +87,6 @@ bool quest_check(const struct monster *m) {
 	if (!(rf_has(r_ptr->flags, RF_QUESTOR)))
 		return FALSE;
 
-
 	/* Mark quests as complete */
 	for (i = 0; i < MAX_Q_IDX; i++) {
 		/* Note completed quests */
@@ -95,9 +94,9 @@ bool quest_check(const struct monster *m) {
 			q_list[i].stage = 0;
 	}
 
-	/* Hack - mark Sauron's other forms as dead */
+	/* Mark Sauron's other forms as dead */
 	if (((r_ptr->level == 85) || (r_ptr->level == 99))
-		&& (rf_has(r_ptr->flags, RF_QUESTOR)))
+		&& rf_has(r_ptr->flags, RF_QUESTOR))
 		for (i = 1; i < 4; i++)
 			r_info[m->r_idx - i].max_num--;
 
@@ -106,13 +105,13 @@ bool quest_check(const struct monster *m) {
 		build_quest_stairs(m->fy, m->fx, "staircase");
 
 	/* ...or a portal for ironmen wilderness games */
-	else if (MODE(IRONMAN) && (p_ptr->map != MAP_DUNGEON) &&
-			 (p_ptr->map != MAP_FANILLA) && (p_ptr->depth != 100))
+	else if (MODE(IRONMAN) && (MAP(COMPRESSED) || MAP(EXTENDED)) 
+			 && (p_ptr->depth != 100))
 		build_quest_stairs(m->fy, m->fx, "portal");
 
 	/* or a path out of Nan Dungortheb for wilderness games */
 	else if ((r_ptr->level == 70) && (p_ptr->depth == 70)
-			 && (p_ptr->map != MAP_DUNGEON) && (p_ptr->map != MAP_FANILLA)) {
+			 && (MAP(COMPRESSED) || MAP(EXTENDED))) {
 		/* Make a path */
 		for (y = p_ptr->py; y < DUNGEON_HGT - 2; y++)
 			cave_set_feat(y, p_ptr->px, FEAT_ROAD);

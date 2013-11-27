@@ -707,8 +707,7 @@ void fall_off_cliff(void)
 		}
 
 		/* Check for quests */
-		if ((p_ptr->map == MAP_DUNGEON) && is_quest(p_ptr->stage)
-			&& (p_ptr->depth < 100)) {
+		if (MAP(DUNGEON) && is_quest(p_ptr->stage) && (p_ptr->depth < 100)) {
 			int i;
 			monster_race *r_ptr = NULL;
 

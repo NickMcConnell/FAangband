@@ -903,7 +903,7 @@ extern int make_dump(char_attr_line * line, int mode)
 
 	/* Get the store number of the home */
 	if (have_home) {
-		if ((p_ptr->map == MAP_DUNGEON) || (p_ptr->map == MAP_FANILLA))
+		if (MAP(DUNGEON) || MAP(FANILLA))
 			which = NUM_TOWNS_SMALL * 4 + STORE_HOME;
 		else {
 			for (k = 0; k < NUM_TOWNS; k++) {
