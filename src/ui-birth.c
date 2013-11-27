@@ -208,6 +208,7 @@ static bool map_menu_handler(menu_type * m, const ui_event * e, int oid)
 {
 	struct map_menu_data *d = menu_priv(m);
 
+	/* Select */
 	if (e->type == EVT_SELECT) {
 		d->selected_map = oid;
 		return FALSE;
@@ -215,6 +216,7 @@ static bool map_menu_handler(menu_type * m, const ui_event * e, int oid)
 		d->selected_map = -1;
 		return FALSE;
 	} else if (e->type == EVT_KBRD) {
+		/* Get help */
 		if (e->key.code == '?') {
 			screen_save();
 			show_file("mapmode.txt", NULL, 0, 0);
@@ -238,17 +240,18 @@ static void map_menu_browser(int oid, void *data, const region * loc)
 	text_out_indent = loc->col - 1;
 	text_out_pad = 1;
 
+	/* Write the description */
 	Term_gotoxy(loc->col, loc->row + loc->page_rows);
 	text_out_c(TERM_DEEP_L_BLUE, format("\n%s\n", d->description[oid]));
 
-	/* XXX */
+	/* Reset parameters */
 	text_out_pad = 0;
 	text_out_indent = 0;
 	text_out_wrap = 0;
 }
 
 static const menu_iter map_menu_iter = {
-	NULL,						/* get_tag = NULL, just use lowercase selections */
+	NULL,						/* get_tag = NULL, use lowercase selections */
 	NULL,						/* no validity hook */
 	map_menu_display,
 	map_menu_handler,
@@ -264,22 +267,21 @@ static menu_type *map_menu_new(void)
 
 	region loc = { 5, 14, 70, -99 };
 
-	/* copy across private data */
+	/* Copy across private data */
 	d->selected_map = -1;
 	for (i = 0; i <= MAP_MAX; i++) {
 		d->maps[i] = map_name[i];
 		d->description[i] = map_description[i];
 	}
-
 	menu_setpriv(m, MAP_MAX + 1, d);
 
-	/* set flags */
+	/* Set flags */
 	m->cmd_keys = "?";
 	m->flags = MN_CASELESS_TAGS;
 	m->selections = lower_case;
 	m->browse_hook = map_menu_browser;
 
-	/* set size */
+	/* Set size */
 	loc.page_rows = MAP_MAX + 2;
 	menu_layout(m, &loc);
 
@@ -311,6 +313,9 @@ static int map_menu_select(menu_type * m)
 	return d->selected_map;
 }
 
+/**
+ * Choose which map to play on
+ */
 static enum birth_stage get_map_command(void)
 {
 	enum birth_stage next;
@@ -367,6 +372,9 @@ static void print_mode_instructions(void)
 
 /**
  * Mode descriptions
+ *
+ * Note that there are two more menu entries than modes, used for 
+ * accepting and quitting
  */
 const char *mode_name[] = {
 	"Thrall",
@@ -422,6 +430,8 @@ static void mode_menu_display(menu_type * m, int oid, bool cursor,
 {
 	struct mode_menu_data *d = menu_priv(m);
 	int attr_name = cursor ? TERM_SLATE : TERM_WHITE;
+
+	/* Chosen modes show in red */
 	if (d->mode_settings[oid])
 		attr_name = cursor ? TERM_L_RED : TERM_RED;
 
@@ -445,7 +455,7 @@ static bool mode_menu_handler(menu_type * m, const ui_event * e, int oid)
 			d->mode_settings[GAME_MODE_MAX + 1] = TRUE;
 			return FALSE;
 		}
-		/* toggle */
+		/* Toggle */
 		else {
 			d->mode_settings[oid] = !d->mode_settings[oid];
 		}
@@ -453,6 +463,7 @@ static bool mode_menu_handler(menu_type * m, const ui_event * e, int oid)
 		if (e->key.code == ESCAPE) {
 			d->mode_settings[GAME_MODE_MAX] = TRUE;
 		} else if (e->key.code == '?') {
+			/* Get help */
 			const char *name = d->modes[oid];
 			screen_save();
 			show_file(format("mapmode.txt#%s", name), NULL, 0, 0);
@@ -477,17 +488,18 @@ static void mode_menu_browser(int oid, void *data, const region * loc)
 	text_out_indent = loc->col - 1;
 	text_out_pad = 1;
 
+	/* Mode description */
 	Term_gotoxy(loc->col, loc->row + loc->page_rows);
 	text_out_c(TERM_DEEP_L_BLUE, format("\n%s\n", d->description[oid]));
 
-	/* XXX */
+	/* Reset parameters */
 	text_out_pad = 0;
 	text_out_indent = 0;
 	text_out_wrap = 0;
 }
 
 static const menu_iter mode_menu_iter = {
-	NULL,						/* get_tag = NULL, just use lowercase selections */
+	NULL,						/* get_tag = NULL, use lowercase selections */
 	mode_menu_valid,
 	mode_menu_display,
 	mode_menu_handler,
@@ -504,21 +516,21 @@ static menu_type *mode_menu_new(void)
 
 	region loc = { 5, 4, 70, -99 };
 
-	/* copy across private data */
-	/* current game modes */
+	/* Current game modes */
 	for (i = 0; i < GAME_MODE_MAX; i++) {
 		d->mode_settings[i] = p_ptr->game_mode[i];
 	}
-	/* go back */
+	/* Don't go back yet */
 	d->mode_settings[GAME_MODE_MAX] = FALSE;
-	/* quit */
+	/* Don't quit yet */
 	d->mode_settings[GAME_MODE_MAX + 1] = FALSE;
-	/* actual modes and descriptions */
+	/* Actual mode names and descriptions, plus accept and quit */
 	for (i = 0; i < GAME_MODE_MAX + 2; i++) {
 		d->modes[i] = mode_name[i];
 		d->description[i] = mode_description[i];
 	}
 
+	/* Copy across private data */
 	menu_setpriv(m, GAME_MODE_MAX + 2, d);
 
 	/* set flags */
@@ -559,6 +571,10 @@ static bool *mode_menu_select(menu_type * m)
 	return (bool *) d->mode_settings;
 }
 
+/**
+ * This function gets game mode choices from the player, encodes them as a
+ * string of Ys and Ns and passes that back to the game
+ */
 static enum birth_stage get_mode_command(void)
 {
 	enum birth_stage next;
@@ -654,6 +670,8 @@ static void race_help(int i, void *db, const region * l)
 {
 	int j;
 	byte color;
+	struct player_race *race = &p_info[i];
+	int locality = stage_map[towns[race->hometown]][LOCALITY];
 
 	/* Output to the screen */
 	text_out_hook = text_out_to_screen;
@@ -663,12 +681,12 @@ static void race_help(int i, void *db, const region * l)
 	Term_gotoxy(RACE_AUX_COL, TABLE_ROW);
 
 	for (j = 0; j < A_MAX; j++) {
-		text_out_e("%s%+d\n", stat_names_reduced[j], p_info[i].r_adj[j]);
+		text_out_e("%s%+d\n", stat_names_reduced[j], race->r_adj[j]);
 	}
 
 	text_out_e("Hit die: %d\n", p_info[i].r_mhp);
 	if (MAP(COMPRESSED) || MAP(EXTENDED)) {
-		text_out_e("Difficulty: Level %d\n", p_info[i].difficulty);
+		text_out_e("Difficulty: Level %d\n", race->difficulty);
 
 		/* Color code difficulty factor */
 		if (p_info[i].difficulty < 3)
@@ -678,13 +696,10 @@ static void race_help(int i, void *db, const region * l)
 		else
 			color = TERM_RED;
 
-		text_out_c(color,
-				   format("Home town: %-15s\n",
-						  locality_name[stage_map
-										[towns[p_info[i].hometown]]
-										[LOCALITY]]));
+		text_out_c(color, format("Home town: %-15s\n", 
+								 locality_name[locality]));
 	}
-	text_out_e("Infravision: %d ft", p_info[i].infra * 10);
+	text_out_e("Infravision: %d ft", race->infra * 10);
 
 	/* Reset text_out() indentation */
 	text_out_indent = 0;
@@ -924,7 +939,7 @@ static enum birth_stage menu_question(enum birth_stage current,
 				next = current + 1;
 			}
 		} else if (cx.type == EVT_KBRD) {
-			/* '*' chooses an option at random from those the game's provided. */
+			/* '*' chooses an option at random from those the game provides. */
 			if (cx.key.code == '*' && menu_data->allow_random) {
 				current_menu->cursor = randint0(current_menu->count);
 				cmd_insert(choice_command);
