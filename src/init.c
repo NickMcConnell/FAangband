@@ -1967,7 +1967,7 @@ static enum parser_error parse_rb_f(struct parser *p)
 }
 
 const char *r_info_spell_flags[] = {
-#define RSF(a, b) #a,
+#define RSF(a, b, c, d, e, f, g, h, i, j, k) #a,
 #include "list-mon-spells.h"
 #undef RSF
 	NULL
