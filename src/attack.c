@@ -35,6 +35,42 @@
 #include "target.h"
 
 
+/** Druid blows. -LM- */
+struct druid_blows {
+
+    const char *description; /**< Name of the blow. */
+
+    s16b dd;		/**< Number of damage dice. */
+    s16b ds;		/**< Number of dice sides. */
+};
+
+/**
+ * Table of Druid blows. -LM-
+ */
+struct druid_blows d_blow[NUM_D_BLOWS] =
+  {
+    { "punch",		  1, 5 },
+    { "kick",		  2, 4 },
+    { "knee",		  1,12 },
+    { "chop",		  2, 7 },
+    { "uppercut",	  3, 6 },
+    { "boot",		  3, 9 },
+    { "bang on",	  6, 4 },
+    { "slam",		  4, 9 },
+    { "grapple with",	 13, 3 },
+    { "hammer",		  9, 6 },
+    { "head butt",	  3,24 },
+    { "strangle",	  8,10 },
+    { "roundhouse kick",  5,19 },
+    { "assault",	 10,11 },
+    { "crush",		 11,11 },
+    { "double-kick",	 21, 6 },
+    { "thunderclap belt", 8,19 },
+    { "blizzard gouge",	 14,11 },
+    { "tsunami whirl",	  7,26 },
+    { "stormwind chop",	 10,22 }
+  };
+
 /**
  * Determine if the player hits a monster (non-magical combat).
  *

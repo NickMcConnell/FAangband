@@ -565,102 +565,6 @@ int chest_traps[100] =
 
 
 /**
- * Hack -- the "basic" color names (see "TERM_xxx")
- */
-const char *color_names[16] =
-  {
-    "Dark",
-    "White",
-    "Slate",
-    "Orange",
-    "Red",
-    "Green",
-    "Blue",
-    "Umber",
-    "Light Dark",
-    "Light Slate",
-    "Violet",
-    "Yellow",
-    "Light Red",
-    "Light Green",
-    "Light Blue",
-    "Light Umber",
-  };
-
-/*
- * The next two tables are useful for generating list of items of
- * different types.  "group_item" comes from wizard1.c, which is where
- * it was previously used.
- */
-
-/**
- * Index into "grouper" for general item types.
- *
- * Must be synced to non-NULL entries in group_item.
- *
- * This is a little silly - the right solution is to initialize based
- * on the group_item table at load time.
- */
-int new_group_index[] =
-  { 0,  3,  4,  8, 11, 17, 18, 19, 20, 21,
-    22, 23, 24, 25, 26, 27, 28, 29, 30, 36,
-    -1};
-
-/**
- * The basic items categorized by type
- */
-grouper group_item[] =
-  {
-    { TV_SHOT,		"Ammo" },
-    { TV_ARROW,		  NULL },
-    { TV_BOLT,		  NULL },
-    
-    { TV_BOW,		"Bows" },
-    
-    { TV_SWORD,		"Weapons" },
-    { TV_POLEARM,	  NULL },
-    { TV_HAFTED,	  NULL },
-    { TV_DIGGING,	  NULL },
-    
-    { TV_SOFT_ARMOR,	"Armour (Body)" },
-    { TV_HARD_ARMOR,	  NULL },
-    { TV_DRAG_ARMOR,	  NULL },
-    
-    { TV_CLOAK,		"Armour (Misc)" },
-    { TV_SHIELD,	  NULL },
-    { TV_HELM,		  NULL },
-    { TV_CROWN,		  NULL },
-    { TV_GLOVES,	  NULL },
-    { TV_BOOTS,		  NULL },
-    
-    { TV_AMULET,	"Amulets" },
-    { TV_RING,		"Rings" },
-    { TV_SCROLL,	"Scrolls" },
-    { TV_POTION,	"Potions" },
-    { TV_FOOD,		"Food" },
-    { TV_ROD,		"Rods" },
-    { TV_WAND,		"Wands" },
-    { TV_STAFF,		"Staffs" },
-    
-    { TV_MAGIC_BOOK,	"Books (Mage)" },
-    { TV_PRAYER_BOOK,	"Books (Priest)" },
-    { TV_DRUID_BOOK,	"Stones (Druid)" },
-    { TV_NECRO_BOOK,	"Books (Necro)" },
-    
-    { TV_CHEST,		"Chests" },
-    
-    { TV_SPIKE,		"Various" },
-    { TV_LIGHT,		  NULL },
-    { TV_FLASK,		  NULL },
-    { TV_JUNK,		  NULL },
-    { TV_BOTTLE,	  NULL },
-    { TV_SKELETON,	  NULL },
-    
-    { 0, "" }
-  };
-
-
-/**
  * Abbreviations of healthy stats
  */
 const char *stat_names[A_MAX] =
@@ -724,33 +628,6 @@ const char *window_flag_desc[32] =
 
 
 
-/**
- * Table of Druid blows. -LM- 
- */
-struct druid_blows d_blow[NUM_D_BLOWS] =
-  {
-    { "punch",		  1, 5 },
-    { "kick",		  2, 4 },
-    { "knee",		  1,12 },
-    { "chop",		  2, 7 },
-    { "uppercut",	  3, 6 },
-    { "boot",		  3, 9 },
-    { "bang on",	  6, 4 },
-    { "slam",		  4, 9 },
-    { "grapple with",	 13, 3 },
-    { "hammer",		  9, 6 },
-    { "head butt",	  3,24 },
-    { "strangle",	  8,10 },
-    { "roundhouse kick",  5,19 },
-    { "assault",	 10,11 },
-    { "crush",		 11,11 },
-    { "double-kick",	 21, 6 },
-    { "thunderclap belt", 8,19 },
-    { "blizzard gouge",	 14,11 },
-    { "tsunami whirl",	  7,26 },
-    { "stormwind chop",	 10,22 }
-  };
-
 const char *magic_desc[REALM_MAX][MD_MAX] = 
 {
     {"","","","",""},
@@ -776,44 +653,6 @@ const char *feel_text[FEEL_MAX] =
     "good",	 /* FEEL_GOOD_WEAK */
     "special",	 /* FEEL_SPECIAL */
   };
-
-const grouper object_text_order [] =
-{
-	{TV_SWORD,		"Sword"			},
-	{TV_POLEARM,		"Polearm"		},
-	{TV_HAFTED,		"Hafted Weapon" },
-	{TV_BOW,		"Bow"			},
-	{TV_ARROW,		"Ammunition"	},
-	{TV_BOLT,		NULL			},
-	{TV_SHOT,		NULL			},
-	{TV_SHIELD,		"Shield"		},
-	{TV_CROWN,		"Crown"			},
-	{TV_HELM,		"Helm"			},
-	{TV_GLOVES,		"Gloves"		},
-	{TV_BOOTS,		"Boots"			},
-	{TV_CLOAK,		"Cloak"			},
-	{TV_DRAG_ARMOR,		"Dragon Scale Mail" },
-	{TV_HARD_ARMOR,		"Hard Armor"	},
-	{TV_SOFT_ARMOR,		"Soft Armor"	},
-	{TV_RING,		"Ring"			},
-	{TV_AMULET,		"Amulet"		},
-	{TV_LIGHT,		"Light"			},
-	{TV_POTION,		"Potion"		},
-	{TV_SCROLL,		"Scroll"		},
-	{TV_WAND,		"Wand"			},
-	{TV_STAFF,		"Staff"			},
-	{TV_ROD,		"Rod"			},
-	{TV_PRAYER_BOOK,	"Priest Book"	},
-	{TV_MAGIC_BOOK,		"Magic Book"	},
-        {TV_DRUID_BOOK,	        "Stone of Lore" },
-	{TV_NECRO_BOOK,	        "Necromantic Tome" },
-	{TV_SPIKE,		"Spike"			},
-	{TV_DIGGING,		"Digger"		},
-	{TV_FOOD,		"Food"			},
-	{TV_FLASK,		"Flask"			},
-	{TV_JUNK,		"Junk"			},
-	{0,			NULL			}
-};
 
 /**
  * Monster mana used 

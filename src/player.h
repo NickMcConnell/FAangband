@@ -827,16 +827,6 @@ typedef struct {
 } player_other;
 
 
-/** Druid blows. -LM- */
-struct druid_blows {
-
-    const char *description;
-			/**< Name of the blow. */
-
-    s16b dd;		/**< Number of damage dice. */
-    s16b ds;		/**< Number of dice sides. */
-};
-
 /* play-calcs.c */
 extern const byte adj_dex_dis[STAT_RANGE];
 extern const byte adj_dex_ta[STAT_RANGE];
