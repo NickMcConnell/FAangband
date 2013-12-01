@@ -82,6 +82,7 @@ struct store_type {
 };
 
 extern byte type_of_store[MAX_STORES];
+extern const byte adj_chr_gold[STAT_RANGE];
 
 
 s32b price_item(object_type * o_ptr, int greed, bool flip);

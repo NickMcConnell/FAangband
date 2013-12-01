@@ -835,6 +835,8 @@ extern const byte adj_dex_th[STAT_RANGE];
 extern const byte adj_str_wgt[STAT_RANGE];
 extern const byte adj_str_hold[STAT_RANGE];
 extern const byte adj_str_blow[STAT_RANGE];
+extern const byte adj_con_fix[STAT_RANGE];
+extern const byte adj_dex_safe[STAT_RANGE];
 
 extern void apply_resist(int *player_resist, int item_resist);
 void calc_bonuses(object_type inventory[], player_state *state, bool id_only);
@@ -847,6 +849,9 @@ int weight_remaining(void);
 
 
 /* play-spell.c */
+extern const byte adj_mag_fail[STAT_RANGE];
+extern const byte adj_mag_stat[STAT_RANGE];
+
 int spell_collect_from_book(const object_type *o_ptr, int spells[PY_MAX_SPELLS]);
 int spell_book_count_spells(const object_type *o_ptr, bool (*tester)(int spell));
 bool spell_okay_list(bool (*spell_test)(int spell), const int spells[], int n_spells);
