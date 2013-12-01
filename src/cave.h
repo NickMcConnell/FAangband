@@ -33,7 +33,6 @@
 
 /* Various */
 #define FEAT_FLOOR	0x01
-#define FEAT_INVIS	0x02
 #define FEAT_OPEN	0x03
 #define FEAT_BROKEN	0x04
 #define FEAT_MORE	0x05
@@ -67,11 +66,7 @@
 #define FEAT_PERM_OUTER	0x3E
 #define FEAT_PERM_SOLID	0x3F
 
-/*
- * Oangband shops are moved to 0x40 to 0x48 to make room for
- * the extra bookstore.  Method borrowed from Zangband. -LM-
- * Nother one. -NRM-
- */
+/* Shops */
 #define FEAT_SHOP_HEAD 0x40
 #define FEAT_SHOP_HOME 0x47
 #define FEAT_SHOP_TAIL 0x49
@@ -113,6 +108,36 @@ enum
 #define tf_has(f, flag)        flag_has_dbg(f, TF_SIZE, flag, #f, #flag)
 
 
+/**
+ * Determine if a legal grid can be projected through
+ * This is a pretty feeble hack -NRM-
+ */
+#define cave_project(Y,X) \
+    (tf_has(f_info[cave_feat[Y][X]].flags, TF_PROJECT)) 
+
+
+/**
+ * Determine if a legal grid is a clean floor grid
+ * Used for placing objects
+ *
+ * Line 1 -- check can hold an object
+ * Line 2 -- forbid normal objects
+ */
+#define cave_clean_bold(Y,X)		     \
+    (tf_has(f_info[cave_feat[Y][X]].flags, TF_OBJECT) && \
+     (cave_o_idx[Y][X] == 0))
+
+/**
+ * Determine if a legal grid is an empty floor grid
+ * Used for safely placing the player or a monster
+ *
+ * Line 1 -- check easily passed through
+ * Line 2 -- forbid player/monsters
+ */
+#define cave_empty_bold(Y,X) \
+    (tf_has(f_info[cave_feat[Y][X]].flags, TF_EASY) && \
+     (cave_m_idx[Y][X] == 0))
+
 /*
  * Cave flags
  */
@@ -144,6 +169,24 @@ enum
 #define sqinfo_comp_union(f1, f2)  flag_comp_union(f1, f2, SQUARE_SIZE)
 #define sqinfo_inter(f1, f2)       flag_inter(f1, f2, SQUARE_SIZE)
 #define sqinfo_diff(f1, f2)        flag_diff(f1, f2, SQUARE_SIZE)
+
+/**
+ * Determine if a "legal" grid is within "los" of the player
+ *
+ * Note the use of comparison to zero to force a "boolean" result
+ */
+#define player_has_los_bold(Y,X) \
+    (sqinfo_has(cave_info[Y][X], SQUARE_VIEW))
+
+
+/**
+ * Determine if a "legal" grid can be "seen" by the player
+ *
+ * Note the use of comparison to zero to force a "boolean" result
+ */
+#define player_can_see_bold(Y,X) \
+    (sqinfo_has(cave_info[Y][X], SQUARE_SEEN))
+
 
 /**
  * Information about terrain "features"

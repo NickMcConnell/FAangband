@@ -55,9 +55,6 @@ extern const char *stat_names_reduced[A_MAX];
 extern const char *window_flag_desc[32];
 extern const char *magic_desc[REALM_MAX][MD_MAX];
 extern const char *feel_text[FEEL_MAX];
-extern byte mana_cost[RSF_MAX];
-extern byte spell_desire[RSF_MAX][D_MAX];
-extern byte spell_range[RSF_MAX];
 extern byte get_angle_to_grid[41][41];
 
 /* variable.c */

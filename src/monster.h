@@ -263,7 +263,37 @@ enum
 #define D_RANGE    7
 #define D_MAX      8
 
+extern byte mana_cost[RSF_MAX];
+extern byte spell_desire[RSF_MAX][D_MAX];
+extern byte spell_range[RSF_MAX];
 
+
+/*** Monster blow constants ***/
+
+
+#define MONSTER_BLOW_MAX 4
+
+/*
+ * Monster blow methods
+ */
+enum
+{
+	#define RBM(x, y) RBM_##x,
+	#include "list-blow-methods.h"
+	#undef RBM
+	RBM_MAX
+};
+
+/*
+ * Monster blow effects
+ */
+enum
+{
+	#define RBE(x, y) RBE_##x,
+	#include "list-blow-effects.h"
+	#undef RBE
+	RBE_MAX
+};
 
 /**
  * Monster blow structure

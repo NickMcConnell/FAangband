@@ -184,22 +184,6 @@
 #define NOSCORE_DEBUG		0x0008
 #define NOSCORE_BORG		0x0010
 
-/** 
- * Given an array, determine how many elements are in the array.
- */
-#define N_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
-
-
-/**
- * Maximum value storable in a "byte" (hard-coded)
-
- #define MAX_UCHAR       255 */
-
-/**
- * Maximum value storable in a "s16b" (hard-coded)
- 
- #define MAX_SHORT       32767 */
-
 
 
 /*** FAangband Themed Levels ***/
@@ -469,45 +453,6 @@ enum
 #define LRN_CONFU_SAVE  49 /* Both resist Confusion and Saves apply */
 #define LRN_ALL         50 /* Recurses to all the resistables */
 
-/*** Squelch stuff ***/
-
-/** Number of bytes used in squelch sub-quality array - probably unnecessary */
-#define SQUELCH_BYTES    6
-
-
-/*** Monster blow constants ***/
-
-
-#define MONSTER_BLOW_MAX 4
-
-/*
- * Monster blow methods
- */
-enum
-{
-	#define RBM(x, y) RBM_##x,
-	#include "list-blow-methods.h"
-	#undef RBM
-	RBM_MAX
-};
-
-/*
- * Monster blow effects
- */
-enum
-{
-	#define RBE(x, y) RBE_##x,
-	#include "list-blow-effects.h"
-	#undef RBE
-	RBE_MAX
-};
-
-/** 1/x chance of reducing stats (for elemental attacks).  From Zangband
- * -LM-
- */
-#define HURT_CHANCE	25
-
-
 /*** Function flags ***/
 
 
@@ -741,25 +686,6 @@ enum
 	strchr("Evg", (R)->d_char))
 
 /**
- * Convert an "attr"/"char" pair into a "pict" (P)
- */
-#define PICT(A,C) \
-	((((u16b)(A)) << 8) | ((byte)(C)))
-
-/**
- * Convert a "pict" (P) into an "attr" (A)
- */
-#define PICT_A(P) \
-	((byte)((P) >> 8))
-
-/**
- * Convert a "pict" (P) into an "char" (C)
- */
-#define PICT_C(P) \
-	((char)((byte)(P)))
-
-
-/**
  * Convert a "location" (Y,X) into a "grid" (G)
  */
 #define GRID(Y,X) \
@@ -807,74 +733,6 @@ enum
 	 ((X) > 0) && ((X) < DUNGEON_WID-1))
 
 
-/**
- * Determines if a map location is currently "on screen"
- * Note that "panel_contains(Y,X)" always implies "in_bounds(Y,X)".
- * Pre-storing this into a cave_info flag would be nice.  XXX XXX
-#define panel_contains(Y,X) \
-	(((unsigned)((Y) - Term->offset_y) < (unsigned)(SCREEN_HGT)) && \
-	 ((unsigned)((X) - Term->offset_x) < (unsigned)(SCREEN_WID)))
- */
-
-/**
- * Determine if a legal grid can be projected through
- * This is a pretty feeble hack -NRM-
- */
-#define cave_project(Y,X) \
-    (tf_has(f_info[cave_feat[Y][X]].flags, TF_PROJECT)) 
-
-
-/**
- * Determine if a legal grid is a clean floor grid
- * Used for placing objects
- *
- * Line 1 -- check can hold an object
- * Line 2 -- forbid normal objects
- */
-#define cave_clean_bold(Y,X)		     \
-    (tf_has(f_info[cave_feat[Y][X]].flags, TF_OBJECT) && \
-     (cave_o_idx[Y][X] == 0))
-
-/**
- * Determine if a legal grid is an empty floor grid
- * Used for safely placing the player or a monster
- *
- * Line 1 -- check easily passed through
- * Line 2 -- forbid player/monsters
- */
-#define cave_empty_bold(Y,X) \
-    (tf_has(f_info[cave_feat[Y][X]].flags, TF_EASY) && \
-     (cave_m_idx[Y][X] == 0))
-
-/**
- * Determine if a "legal" grid is within "los" of the player
- *
- * Note the use of comparison to zero to force a "boolean" result
- */
-#define player_has_los_bold(Y,X) \
-    (sqinfo_has(cave_info[Y][X], SQUARE_VIEW))
-
-
-/**
- * Determine if a "legal" grid can be "seen" by the player
- *
- * Note the use of comparison to zero to force a "boolean" result
- */
-#define player_can_see_bold(Y,X) \
-    (sqinfo_has(cave_info[Y][X], SQUARE_SEEN))
-
-
-/*
- * Hack -- Prepare to use the "Secure" routines
- */
-#if defined(SET_UID) && defined(SECURE)
-extern int PlayerUID;
-# define getuid() PlayerUID
-# define geteuid() PlayerUID
-#endif
-
-
-
 /*** Hack ***/
 
 /**
@@ -891,20 +749,7 @@ extern int PlayerUID;
 #define SCAN_OFF 0
 
 
-/** 
- * Maximum rune mana reserve 
- */
-#define MAX_MANA_RESERVE 200
-
 /** Max number of items in the itemlist */
 #define MAX_ITEMLIST 256
-
-/* MSVC doesn't have va_copy (which is C99) or an alternative, so we'll just
- * copy the SRC pointer. In other cases we'll use va_copy() as we should. */
-#ifdef _MSC_VER
-#define VA_COPY(DST, SRC) (DST) = (SRC)
-#else
-#define VA_COPY(DST, SRC) va_copy(DST, SRC)
-#endif
 
 #endif /* !INCLUDED_DEFINES_H */

@@ -622,6 +622,10 @@ void do_cmd_locate(void)
 
 	/* Show panels until done */
 	while (1) {
+		/* Get the current panel */
+		y2 = Term->offset_y;
+		x2 = Term->offset_x;
+		
 		/* Describe the location */
 		if ((y2 == y1) && (x2 == x1)) {
 			tmp_val[0] = '\0';
@@ -633,9 +637,8 @@ void do_cmd_locate(void)
 
 		/* Prepare to ask which way to look */
 		sprintf(out_val,
-				"Map sector [%d(%02d),%d(%02d)], which is%s your sector.  Direction or ESC?",
-				y2 / (SCREEN_HGT / 2), y2 % (SCREEN_HGT / 2),
-				x2 / (SCREEN_WID / 2), x2 % (SCREEN_WID / 2), tmp_val);
+				"Map sector [%d,%d], which is%s your sector.  Direction?",
+		        (y2 / PANEL_HGT), (x2 / PANEL_WID), tmp_val);
 
 		/* More detail */
 		if (OPT(center_player)) {

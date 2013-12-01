@@ -3,6 +3,17 @@
 #ifndef SPELLS_H
 #define SPELLS_H
 
+/** 1/x chance of reducing stats (for elemental attacks).  From Zangband
+ * -LM-
+ */
+#define HURT_CHANCE	25
+
+/** 
+ * Maximum rune mana reserve 
+ */
+#define MAX_MANA_RESERVE 200
+
+
 /*
  * Spell types used by project(), and related functions.
  */
