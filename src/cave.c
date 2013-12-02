@@ -2796,9 +2796,16 @@ void wiz_dark(void)
 	/* Forget every grid */
 	for (y = 0; y < DUNGEON_HGT; y++) {
 		for (x = 0; x < DUNGEON_WID; x++) {
+			int idx;
+
 			/* Process the grid */
 			sqinfo_off(cave_info[y][x], SQUARE_MARK);
 			sqinfo_off(cave_info[y][x], SQUARE_DTRAP);
+
+			/* Traps become invisible */
+			idx = visible_trap_idx(y, x);
+			if (idx > -1)
+				hide_trap_idx(idx);
 		}
 	}
 

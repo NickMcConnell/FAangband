@@ -342,6 +342,27 @@ bool reveal_trap(int y, int x, int chance, bool domsg)
 }
 
 /**
+ * Hide a particular trap
+ */
+void hide_trap_idx(int idx)
+{
+	trap_type *t_ptr;
+
+	/* Paranoia */
+	if ((idx < 0) || (idx >= trap_max))
+		return;
+
+	/* Access the trap */
+	t_ptr = &trap_list[idx];
+
+	/* Hide it if it's a player trap */
+	if (trf_has(t_ptr->flags, TRF_TRAP))
+		trf_off(t_ptr->flags, TRF_VISIBLE);
+
+	return;
+}
+
+/**
  * Count the number of player traps in this location.
  *
  * Called with vis = 0 to accept any trap, = 1 to accept only visible
