@@ -244,7 +244,7 @@ static void town_gen_hack(void)
 			}
 		}
 		/* Hack -- Build the 9th store.  Taken from Zangband */
-		if (major && (MAP(COMPRESSED) || MAP(FANILLA)))
+		if (major && (MAP(COMPRESSED) || MAP(EXTENDED)))
 			build_store(rooms[0], randint0(2), 4, stage);
 	}
 	
