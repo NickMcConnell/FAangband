@@ -245,7 +245,7 @@ bool target_okay(void)
 	}
 
 	/* Check "object" targets */
-	if (target_what > 0) {
+	else if (target_what > 0) {
 		int o_idx = target_what;
 
 		/* Accept reasonable targets */
@@ -261,7 +261,7 @@ bool target_okay(void)
 		}
 	}
 
-	if (target_x && target_y) {
+	else if (target_x && target_y) {
 		/* Allow a direction without a monster */
 		return TRUE;
 	}
