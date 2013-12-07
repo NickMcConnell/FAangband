@@ -1558,12 +1558,16 @@ bool detect_traps(int range, bool show)
 		for (x = 0; x < DUNGEON_WID; x++) {
 			/* check range */
 			if (distance(py, px, y, x) <= range) {
-				/* Detect invisible traps */
+				/* Reveal invisible traps */
 				if (cave_invisible_trap(y, x)) {
 					if (reveal_trap(y, x, 100, FALSE)) {
 						detect = TRUE;
 					}
 				}
+
+				/* Notice existing traps */
+				if (cave_player_trap(y, x))
+					detect = TRUE;
 
 				/* Mark grid as detected */
 				sqinfo_on(cave_info[y][x], SQUARE_DTRAP);
