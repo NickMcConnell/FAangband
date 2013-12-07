@@ -1489,8 +1489,13 @@ static void animate_detect(int rad)
 			/* Only show the region that the player can see */
 			if (panel_contains(y, x)) {
 				/* Hack - Obtain attr/char */
-				a = gf_to_attr[GF_DETECT][BOLT_NO_MOTION];
-				c = gf_to_char[GF_DETECT][BOLT_NO_MOTION];
+				if (use_graphics == GRAPHICS_NONE) {
+					a = TERM_YELLOW;
+					c = L'*';
+				} else {
+					a = gf_to_attr[GF_DETECT][BOLT_NO_MOTION];
+					c = gf_to_char[GF_DETECT][BOLT_NO_MOTION];
+				}
 
 				/* Hack -- Visual effects -- Display a yellow star */
 				print_rel(c, a, y, x);

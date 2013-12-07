@@ -1352,6 +1352,8 @@ static byte spell_color(int type)
 {
 	/* Analyze */
 	switch (type) {
+	case GF_DETECT:
+		return (TERM_YELLOW);
 	case GF_ROCK:
 		return (TERM_SLATE);
 	case GF_SHOT:
