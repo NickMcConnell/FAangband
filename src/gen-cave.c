@@ -862,6 +862,7 @@ static void try_door(int y0, int x0)
 			}
 
 			/* Check Horizontal */
+			walls = 0;
 			for (i = -1; i <= 1; i += 2) {
 				f_ptr = &f_info[cave_feat[y0][x0 + i]];
 				if (tf_has(f_ptr->flags, TF_WALL) &&
