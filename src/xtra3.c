@@ -1122,7 +1122,7 @@ static size_t prt_dtrap(int row, int col)
 	/* The player is in a trap-detected grid */
 	if (sqinfo_has(cave_info[p_ptr->py][p_ptr->px], SQUARE_DTRAP)) {
 		/* The player is on the border */
-		if (dtrap_edge(p_ptr->py, p_ptr->px))
+		if (sqinfo_has(cave_info[p_ptr->py][p_ptr->px], SQUARE_DEDGE))
 			c_put_str(TERM_YELLOW, "DTrap", row, col);
 		else
 			c_put_str(TERM_L_GREEN, "DTrap", row, col);

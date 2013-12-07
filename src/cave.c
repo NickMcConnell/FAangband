@@ -907,7 +907,7 @@ void map_info(unsigned y, unsigned x, grid_data * g)
 	g->is_player = (cave_m_idx[y][x] < 0) ? TRUE : FALSE;
 	g->m_idx = (g->is_player) ? 0 : cave_m_idx[y][x];
 	g->hallucinate = p_ptr->timed[TMD_IMAGE] ? TRUE : FALSE;
-	g->trapborder = (dtrap_edge(y, x)) ? TRUE : FALSE;
+	g->trapborder = (sqinfo_has(cave_info[y][x], SQUARE_DEDGE)) ? TRUE : FALSE;
 	f_ptr = &f_info[g->f_idx];
 
 	/* Apply "mimic" field */
@@ -2796,6 +2796,7 @@ void wiz_dark(void)
 			/* Process the grid */
 			sqinfo_off(cave_info[y][x], SQUARE_MARK);
 			sqinfo_off(cave_info[y][x], SQUARE_DTRAP);
+			sqinfo_off(cave_info[y][x], SQUARE_DEDGE);
 
 			/* Traps become invisible */
 			idx = visible_trap_idx(y, x);

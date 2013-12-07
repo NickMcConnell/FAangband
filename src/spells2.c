@@ -1575,6 +1575,26 @@ bool detect_traps(int range, bool show)
 		}
 	}
 
+	/* Rescan the map for the new dtrap edge */
+	for (y = 0; y < DUNGEON_HGT; y++) {
+		for (x = 0; x < DUNGEON_WID; x++) {
+			/* check range */
+			if (distance(py, px, y, x) <= range) {
+				if (!in_bounds_fully(y, x)) continue;
+
+				/* see if this grid is on the edge */
+				if (dtrap_edge(y, x)) {
+					sqinfo_on(cave_info[y][x], SQUARE_DEDGE);
+				} else {
+					sqinfo_off(cave_info[y][x], SQUARE_DEDGE);
+				}
+				
+				/* Redraw */
+				light_spot(y, x);
+			}
+		}
+	}
+
 	/* Found some */
 	if (detect) {
 		/* Print success message */
