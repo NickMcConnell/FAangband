@@ -150,7 +150,7 @@ T:37:3:99
 T:38:3:99
 C:0:0:12
 F:ACID_PROOF | ELEC_PROOF | FIRE_PROOF | COLD_PROOF
-F:FREE_ACT | XTRA_AC | LIGHT 
+F:FREE_ACT | XTRA_AC | LIGHTWEIGHT 
 I:FREE_ACT | AC 
 D:Although not magical, this surprisingly light armour is made with such 
 D:skill as to resist damage by the elements and offer enhanced protection. 
@@ -747,7 +747,7 @@ T:22:0:99
 T:23:0:99
 W:0:20:0:6000
 B:TUNNEL[2] | SPEED[2] | STR[2] 
-F:LIGHT | XTRA_DICE | LIGHT 
+F:LIGHT | XTRA_DICE | LIGHTWEIGHT 
 I:LIGHT
 D:Cunningly designed by the dwarves of Nogrod, this weapon will aid swift 
 D:movement underground.  It glows permanently, and increases the wielder's 
@@ -840,7 +840,7 @@ T:23:0:99
 W:0:15:0:10000
 C:10:10:0
 B:RES_CHAOS[30]
-F:CHAOTIC | LIGHT 
+F:CHAOTIC | LIGHTWEIGHT 
 I:RES_CHAOS | CHAOTIC 
 I:CHAOTIC
 D:The forces of chaos are bound up inside.  Do not release them lightly!
@@ -917,7 +917,7 @@ T:22:0:2
 T:23:0:11
 W:0:12:0:500
 B:SLAY_TROLL[20] | SLAY_GIANT[20] | STEALTH[3] 
-F:LIGHT | TELEPORT | DRAIN_MANA | SHOW_CURSE | PERMA_CURSE 
+F:LIGHTWEIGHT | TELEPORT | DRAIN_MANA | SHOW_CURSE | PERMA_CURSE 
 I:SLAY_TROLL | SLAY_GIANT | TELEPORT | DRAIN_MANA 
 D:This weapon is small and light, making it ideal for use against the large and 
 D:slow-witted. Unfortunately it will also use up your magical energy to 
