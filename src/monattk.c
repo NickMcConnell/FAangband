@@ -159,7 +159,10 @@ static const char *desc_sneer[] = {
 	"calls Ironbark the Ent a stingy bastard.",
 	"declares that wilderness pathways dilate time.",
 	"observes that the dwarves of Khazad Dûm are getting bigger.",
-	"mutters that shopkeepers won't take no for an answer."
+	"mutters that shopkeepers won't take no for an answer.",
+	"wants to know why some doors are purely decorative.",
+	"boggles at caps that look like gloves.",
+	"boasts of walking over lava unharmed."
 };
 
 /**
@@ -708,13 +711,13 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 
 			case RBM_INSULT:
 				{
-					act = desc_insult[randint0(8)];
+					act = desc_insult[randint0(N_ELEMENTS(desc_insult))];
 					break;
 				}
 
 			case RBM_SNEER:
 				{
-					act = desc_sneer[randint0(25)];
+					act = desc_sneer[randint0(N_ELEMENTS(desc_sneer))];
 					break;
 				}
 
