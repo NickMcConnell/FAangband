@@ -1804,6 +1804,14 @@ static void store_purchase(void)
 			i_ptr->origin = ORIGIN_STORE;
 			i_ptr->origin_stage = p_ptr->stage;
 
+			/* All curses are known now */
+			cf_copy(i_ptr->id_curse, i_ptr->flags_curse);
+			i_ptr->ident |= IDENT_KNOW_CURSES;
+			if (!cf_is_empty(i_ptr->flags_curse))
+				i_ptr->ident |= IDENT_CURSED;
+			else
+				i_ptr->ident |= IDENT_UNCURSED;
+
 			/* Describe the transaction */
 			object_desc(o_name, sizeof(o_name), i_ptr,
 						ODESC_PREFIX | ODESC_FULL);
