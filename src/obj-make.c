@@ -1336,7 +1336,7 @@ void apply_magic(object_type * o_ptr, int lev, bool okay, bool good,
 		}
 	}
 
-	if (kf_has(flags_kind, KF_LIGHT)) {
+	if (kf_has(flags_kind, KF_LIGHTWEIGHT)) {
 		/* Weapons */
 		if (o_ptr->tval <= TV_SWORD)
 			o_ptr->weight = (4 * o_ptr->weight / 5);
