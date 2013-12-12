@@ -1,6 +1,6 @@
                                                                                
              ****************************************************
-             **   {deep light blue}FAangband 1.4.1{/}  ****   {deep light blue}First Age Angband{/}    **
+             **   {deep light blue}FAangband 1.4.2{/}  ****   {deep light blue}First Age Angband{/}    **
              ** {light yellow}Beleriand in the days of the War of the Jewels{/} **
              ****************************************************
 
@@ -12,7 +12,7 @@
      Ben Harrison, Robert Ruehlmann, Leon Marrick, Bahman Rabii, Jeff Greene,
      Diego Gonzalez, Andrew Doull, Andi Sidwell, Pete Mack, Si Griffin.
 
-     {deep light blue}FAangband 0.1.0-1.4.1  by Nick McConnell
+     {deep light blue}FAangband 0.1.0-1.4.2  by Nick McConnell
      {deep light blue}FAangband 0.3.6        by Si Griffin
 
      Send comments, bug reports, and patches to {light yellow}nckmccnnll@gmail.com{/}
