@@ -132,7 +132,7 @@ static coord path_start(int sy, int sx, int ty, int tx)
 }
 
 /** Move the path if it might land in a river */
-void river_move(int *xp)
+static void river_move(int *xp)
 {
 	int x = (*xp), diff;
 
@@ -190,7 +190,7 @@ static void alloc_paths(int stage, int last_stage)
 
 		/* Way back */
 		if ((north == last_stage) && (p_ptr->create_stair)) {
-			/* Hack - no paths in river */
+			/* No paths in river */
 			if (river)
 				river_move(&pcoord);
 
@@ -226,7 +226,7 @@ static void alloc_paths(int stage, int last_stage)
 			x = 1 + randint0(DUNGEON_WID / num - 2) +
 				i * DUNGEON_WID / num;
 
-			/* Hack - no paths in river */
+			/* No paths in river */
 			if (river)
 				river_move(&x);
 
@@ -325,7 +325,7 @@ static void alloc_paths(int stage, int last_stage)
 
 		/* Way back */
 		if ((south == last_stage) && (p_ptr->create_stair)) {
-			/* Hack - no paths in river */
+			/* No paths in river */
 			if (river)
 				river_move(&pcoord);
 
@@ -361,7 +361,7 @@ static void alloc_paths(int stage, int last_stage)
 			x = 1 + randint0(DUNGEON_WID / num - 2) +
 				i * DUNGEON_WID / num;
 
-			/* Hack - no paths in river */
+			/* No paths in river */
 			if (river)
 				river_move(&x);
 
@@ -488,6 +488,140 @@ static void alloc_paths(int stage, int last_stage)
 	player_place(py, px);
 }
 
+/**
+ * Make the boundaries of the stage - these may be ragged, and Nan Dungortheb
+ * requires special handling
+ */
+static void make_edges(bool ragged, bool valley)
+{
+	int i, j, x, y, num = 2;
+	int path_x[3];
+	feature_type *f_ptr;
+
+	/* Prepare places for down slides */
+	num += randint0(2);
+	for (i = 0; i < num; i++)
+		path_x[i] =
+			1 + randint0(DUNGEON_WID / num - 2) + i * DUNGEON_WID / num;
+
+	/* Special boundary walls -- Top */
+	i = (valley ? 5 : 4);
+	for (x = 0; x < DUNGEON_WID; x++) {
+		if (ragged) {
+			i += 1 - randint0(3);
+			if (i > (valley ? 10 : 7))
+				i = (valley ? 10 : 7);
+			if (i < 0)
+				i = 0;
+			for (y = 0; y < i; y++) {
+				f_ptr = &f_info[cave_feat[y][x]];
+
+				/* Clear previous contents, add "solid" perma-wall */
+				if ((cave_feat[y][x] != FEAT_ROAD)
+					&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
+					cave_set_feat(y, x, FEAT_PERM_SOLID);
+				}
+			}
+			if (valley && (x > 0) && (x == p_ptr->path_coord)) {
+				if (y == 0)
+					y++;
+				cave_set_feat(y, x, FEAT_RUBBLE);
+				player_place(y, x);
+			}
+		} else {
+			y = 0;
+
+			/* Clear previous contents, add "solid" perma-wall */
+			cave_set_feat(y, x, FEAT_PERM_SOLID);
+		}
+	}
+
+
+	/* Special boundary walls -- Bottom */
+	i = (valley ? 5 : 4);
+	j = 0;
+	for (x = 0; x < DUNGEON_WID; x++) {
+		if (ragged && !(valley && (p_ptr->depth == 70))) {
+			i += 1 - randint0(3);
+			if (i > (valley ? 10 : 7))
+				i = (valley ? 10 : 7);
+			if (i < 0)
+				i = 0;
+			for (y = DUNGEON_HGT - 1; y > DUNGEON_HGT - 1 - i; y--) {
+				f_ptr = &f_info[cave_feat[y][x]];
+
+				/* Clear previous contents, add perma-wall or void */
+				if ((cave_feat[y][x] != FEAT_ROAD)
+					&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
+					cave_set_feat(y, x, (valley ? FEAT_VOID : FEAT_PERM_SOLID));
+				}
+			}
+			/* Down slides */
+			if ((j < num) && valley)
+				if (x == path_x[j]) {
+					cave_set_feat(y, x, FEAT_MORE_SOUTH);
+					j++;
+				}
+		} else {
+			y = DUNGEON_HGT - 1;
+
+			/* Clear previous contents, add "solid" perma-wall */
+			cave_set_feat(y, x, FEAT_PERM_SOLID);
+		}
+	}
+
+	/* Special boundary walls -- Left */
+	i = 5;
+	for (y = 0; y < DUNGEON_HGT; y++) {
+		if (ragged) {
+			i += 1 - randint0(3);
+			if (i > 10)
+				i = 10;
+			if (i < 0)
+				i = 0;
+			for (x = 0; x < i; x++) {
+				f_ptr = &f_info[cave_feat[y][x]];
+
+				/* Clear previous contents, add "solid" perma-wall */
+				if ((cave_feat[y][x] != FEAT_ROAD)
+					&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
+					cave_set_feat(y, x, FEAT_PERM_SOLID);
+				}
+			}
+		} else {
+			x = 0;
+
+			/* Clear previous contents, add "solid" perma-wall */
+			cave_set_feat(y, x, FEAT_PERM_SOLID);
+		}
+	}
+
+	/* Special boundary walls -- Right */
+	i = 5;
+	for (y = 0; y < DUNGEON_HGT; y++) {
+		if (ragged) {
+			i += 1 - randint0(3);
+			if (i > 10)
+				i = 10;
+			if (i < 0)
+				i = 0;
+			for (x = DUNGEON_WID - 1; x > DUNGEON_WID - 1 - i; x--) {
+				f_ptr = &f_info[cave_feat[y][x]];
+
+				/* Clear previous contents, add "solid" perma-wall */
+				if ((cave_feat[y][x] != FEAT_ROAD)
+					&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
+					cave_set_feat(y, x, FEAT_PERM_SOLID);
+				}
+			}
+		} else {
+			x = DUNGEON_WID - 1;
+
+			/* Clear previous contents, add "solid" perma-wall */
+			cave_set_feat(y, x, FEAT_PERM_SOLID);
+		}
+	}
+}
 
 /**
  * Make a formation - a randomish group of terrain squares. -NRM-
@@ -499,8 +633,8 @@ static void alloc_paths(int stage, int last_stage)
  *
  */
 
-int make_formation(int y, int x, int base_feat1, int base_feat2, int *feat,
-				   int prob)
+static int make_formation(int y, int x, int base_feat1, int base_feat2, 
+						  int *feat, int prob)
 {
 	int terrain, j, jj, i = 0, total = 0;
 	int *all_feat = malloc(prob * sizeof(*all_feat));
@@ -643,6 +777,79 @@ int make_formation(int y, int x, int base_feat1, int base_feat2, int *feat,
 	return (total);
 }
 
+/**
+ * Place some monsters, objects and traps
+ */
+static int populate(bool valley)
+{
+	int i, j, y, x;
+	bool dummy;
+
+	/* Basic "amount" */
+	int k = (p_ptr->depth / 2);
+
+	if (valley) {
+		if (k > 30)
+			k = 30;
+	} else {
+		/* Gets hairy north of the mountains */
+		if (p_ptr->depth > 40)
+			k += 10;
+	}
+
+	/* Pick a base number of monsters */
+	i = MIN_M_ALLOC_LEVEL + randint1(8);
+
+	/* Build the monster probability table. */
+	monster_level = p_ptr->depth;
+	(void) get_mon_num(monster_level);
+
+	/* Put some monsters in the dungeon */
+	for (j = i + k; j > 0; j--) {
+		/* Always have some random monsters */
+		if ((get_mon_num_hook) && (j < 5)) {
+			/* Remove all monster restrictions. */
+			mon_restrict('\0', (byte) p_ptr->depth, &dummy, TRUE);
+
+			/* Build the monster probability table. */
+			(void) get_mon_num(p_ptr->depth);
+		}
+
+		/*
+		 * Place a random monster (quickly), but not in grids marked
+		 * "SQUARE_TEMP".
+		 */
+		(void) alloc_monster(10, TRUE, TRUE);
+	}
+
+
+	/* Place some traps in the dungeon. */
+	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_TRAP, randint1(k));
+
+	/* Put some objects in rooms */
+	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT,
+				 Rand_normal(DUN_AMT_ROOM, 3));
+
+	/* Put some objects/gold in the dungeon */
+	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT,
+				 Rand_normal(DUN_AMT_ITEM, 3));
+	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_GOLD,
+				 Rand_normal(DUN_AMT_GOLD, 3));
+
+	/* Clear "temp" flags. */
+	for (y = 0; y < DUNGEON_HGT; y++) {
+		for (x = 0; x < DUNGEON_WID; x++) {
+			sqinfo_off(cave_info[y][x], SQUARE_TEMP);
+
+			/* Paranoia - remake the dungeon walls */
+			if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
+				|| (x == DUNGEON_WID - 1))
+				cave_set_feat(y, x, FEAT_PERM_SOLID);
+		}
+	}
+
+	return k;
+}
 
 /**
  * Generate a new plain level. Place stairs, 
@@ -654,7 +861,7 @@ int make_formation(int y, int x, int base_feat1, int base_feat2, int *feat,
  */
 extern void plain_gen(void)
 {
-	int i, j, k, y, x;
+	int y, x;
 	int stage = p_ptr->stage;
 	int last_stage = p_ptr->last_stage;
 	int form_grids = 0;
@@ -665,10 +872,7 @@ extern void plain_gen(void)
 	};
 	int ponds[2] = { FEAT_WATER, FEAT_NONE };
 
-	bool dummy;
-	feature_type *f_ptr;
-
-	/* Hack -- Start with basic grass */
+	/* Start with grass */
 	for (y = 0; y < DUNGEON_HGT; y++) {
 		for (x = 0; x < DUNGEON_WID; x++) {
 			/* Create grass */
@@ -680,82 +884,8 @@ extern void plain_gen(void)
 	/* Place 2 or 3 paths to neighbouring stages, place player -NRM- */
 	alloc_paths(stage, last_stage);
 
-	/* Special boundary walls -- Top */
-	i = 4;
-	for (x = 0; x < DUNGEON_WID; x++) {
-		i += 1 - randint0(3);
-		if (i > 7)
-			i = 7;
-		if (i < 0)
-			i = 0;
-		for (y = 0; y < i; y++) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
-
-
-	/* Special boundary walls -- Bottom */
-	i = 4;
-	for (x = 0; x < DUNGEON_WID; x++) {
-		i += 1 - randint0(3);
-		if (i > 7)
-			i = 7;
-		if (i < 0)
-			i = 0;
-		for (y = DUNGEON_HGT - 1; y > DUNGEON_HGT - 1 - i; y--) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
-
-	/* Special boundary walls -- Left */
-	i = 5;
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		i += 1 - randint0(3);
-		if (i > 10)
-			i = 10;
-		if (i < 0)
-			i = 0;
-		for (x = 0; x < i; x++) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
-
-	/* Special boundary walls -- Right */
-	i = 5;
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		i += 1 - randint0(3);
-		if (i > 10)
-			i = 10;
-		if (i < 0)
-			i = 0;
-		for (x = DUNGEON_WID - 1; x > DUNGEON_WID - 1 - i; x--) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
+	/* Make stage boundaries */
+	make_edges(TRUE, FALSE);
 
 	/* Place some formations */
 	while (form_grids < (50 * p_ptr->depth + 1000)) {
@@ -786,70 +916,11 @@ extern void plain_gen(void)
 		}
 	}
 
-	/* Basic "amount" */
-	k = (p_ptr->depth / 2);
-
-	/* Gets hairy north of the mountains */
-	if (p_ptr->depth > 40)
-		k += 10;
-
-
-	/* Pick a base number of monsters */
-	i = MIN_M_ALLOC_LEVEL + randint1(8);
-
-	/* Build the monster probability table. */
-	monster_level = p_ptr->depth;
-	(void) get_mon_num(monster_level);
-
-	/* Put some monsters in the dungeon */
-	for (j = i + k; j > 0; j--) {
-		/* Always have some random monsters */
-		if ((get_mon_num_hook) && (j < 5)) {
-			/* Remove all monster restrictions. */
-			mon_restrict('\0', (byte) p_ptr->depth, &dummy, TRUE);
-
-			/* Build the monster probability table. */
-			(void) get_mon_num(p_ptr->depth);
-		}
-
-		/* 
-		 * Place a random monster (quickly), but not in grids marked 
-		 * "SQUARE_TEMP".
-		 */
-		(void) alloc_monster(10, TRUE, TRUE);
-	}
-
-
-	/* Place some traps in the dungeon. */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_TRAP, randint1(k / 2));
-
-	/* Put some objects in rooms */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT,
-				 Rand_normal(DUN_AMT_ROOM, 3));
-
-	/* Put some objects/gold in the dungeon */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT,
-				 Rand_normal(DUN_AMT_ITEM, 3));
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_GOLD,
-				 Rand_normal(DUN_AMT_GOLD, 3));
-
-
-	/* Clear "temp" flags. */
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		for (x = 0; x < DUNGEON_WID; x++) {
-			sqinfo_off(cave_info[y][x], SQUARE_TEMP);
-
-			/* Paranoia - remake the dungeon walls */
-
-			if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
-				|| (x == DUNGEON_WID - 1)) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
+	/* Place objects, traps and monsters */
+	(void) populate(FALSE);
 }
 
-void mtn_connect(int y, int x, int y1, int x1)
+static void mtn_connect(int y, int x, int y1, int x1)
 {
 	u16b gp[512];
 	int path_grids, j;
@@ -879,7 +950,7 @@ extern void mtn_gen(void)
 {
 	bool made_plat;
 
-	int i, j, k, y, x;
+	int i, j, y, x;
 	int plats, a, b;
 	int stage = p_ptr->stage;
 	int last_stage = p_ptr->last_stage;
@@ -896,11 +967,10 @@ extern void mtn_gen(void)
 		FEAT_SHOP_HEAD + 3, FEAT_SHOP_HEAD + 4, FEAT_NONE
 	};
 
-	bool dummy;
 	bool amon_rudh = FALSE;
 
 
-	/* Hack -- Start with basic grass (lets paths work -NRM-) */
+	/* Start with grass (lets paths work -NRM-) */
 	for (y = 0; y < DUNGEON_HGT; y++) {
 		for (x = 0; x < DUNGEON_WID; x++) {
 			/* Create grass */
@@ -908,38 +978,8 @@ extern void mtn_gen(void)
 		}
 	}
 
-
-	/* Special boundary walls -- Top */
-	for (x = 0; x < DUNGEON_WID; x++) {
-		y = 0;
-
-		/* Clear previous contents, add "solid" perma-wall */
-		cave_set_feat(y, x, FEAT_PERM_SOLID);
-	}
-
-	/* Special boundary walls -- Bottom */
-	for (x = 0; x < DUNGEON_WID; x++) {
-		y = DUNGEON_HGT - 1;
-
-		/* Clear previous contents, add "solid" perma-wall */
-		cave_set_feat(y, x, FEAT_PERM_SOLID);
-	}
-
-	/* Special boundary walls -- Left */
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		x = 0;
-
-		/* Clear previous contents, add "solid" perma-wall */
-		cave_set_feat(y, x, FEAT_PERM_SOLID);
-	}
-
-	/* Special boundary walls -- Right */
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		x = DUNGEON_WID - 1;
-
-		/* Clear previous contents, add "solid" perma-wall */
-		cave_set_feat(y, x, FEAT_PERM_SOLID);
-	}
+	/* Make stage boundaries */
+	make_edges(FALSE, FALSE);
 
 	/* Place 2 or 3 paths to neighbouring stages, make the paths through the
 	 * stage, place the player -NRM- */
@@ -1130,7 +1170,6 @@ extern void mtn_gen(void)
 			sqinfo_off(cave_info[y][x], SQUARE_ICKY);
 
 			/* Paranoia - remake the dungeon walls */
-
 			if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
 				|| (x == DUNGEON_WID - 1)) {
 				cave_set_feat(y, x, FEAT_PERM_SOLID);
@@ -1139,61 +1178,8 @@ extern void mtn_gen(void)
 	}
 
 
-
-
-	/* Basic "amount" */
-	k = (p_ptr->depth / 2);
-
-	/* Gets hairy north of the mountains */
-	if (p_ptr->depth > 40)
-		k += 10;
-
-	/* Pick a base number of monsters */
-	i = MIN_M_ALLOC_LEVEL + randint1(8);
-
-	/* Build the monster probability table. */
-	monster_level = p_ptr->depth;
-	(void) get_mon_num(monster_level);
-
-	/* Put some monsters in the dungeon */
-	for (j = i + k; j > 0; j--) {
-		/* Always have some random monsters */
-		if ((get_mon_num_hook) && (j < 5)) {
-			/* Remove all monster restrictions. */
-			mon_restrict('\0', (byte) p_ptr->depth, &dummy, TRUE);
-
-			/* Build the monster probability table. */
-			(void) get_mon_num(p_ptr->depth);
-		}
-
-		/* 
-		 * Place a random monster (quickly), but not in grids marked 
-		 * "SQUARE_TEMP".
-		 */
-		(void) alloc_monster(10, TRUE, TRUE);
-	}
-
-
-	/* Place some traps in the dungeon. */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_TRAP, randint1(k));
-
-	/* Put some objects in rooms */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT,
-				 Rand_normal(DUN_AMT_ROOM, 3));
-
-	/* Put some objects/gold in the dungeon */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT,
-				 Rand_normal(DUN_AMT_ITEM, 3));
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_GOLD,
-				 Rand_normal(DUN_AMT_GOLD, 3));
-
-
-	/* Clear "temp" flags. */
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		for (x = 0; x < DUNGEON_WID; x++) {
-			sqinfo_off(cave_info[y][x], SQUARE_TEMP);
-		}
-	}
+	/* Place objects, traps and monsters */
+	(void) populate(FALSE);
 }
 
 /**
@@ -1212,7 +1198,7 @@ extern void mtntop_gen(void)
 	int spot, floors = 0;
 	bool placed = FALSE;
 
-	/* Hack -- Start with void */
+	/* Start with void */
 	for (y = 0; y < DUNGEON_HGT; y++) {
 		for (x = 0; x < DUNGEON_WID; x++) {
 			/* Create void */
@@ -1220,38 +1206,8 @@ extern void mtntop_gen(void)
 		}
 	}
 
-
-	/* Special boundary walls -- Top */
-	for (x = 0; x < DUNGEON_WID; x++) {
-		y = 0;
-
-		/* Clear previous contents, add "solid" perma-wall */
-		cave_set_feat(y, x, FEAT_PERM_SOLID);
-	}
-
-	/* Special boundary walls -- Bottom */
-	for (x = 0; x < DUNGEON_WID; x++) {
-		y = DUNGEON_HGT - 1;
-
-		/* Clear previous contents, add "solid" perma-wall */
-		cave_set_feat(y, x, FEAT_PERM_SOLID);
-	}
-
-	/* Special boundary walls -- Left */
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		x = 0;
-
-		/* Clear previous contents, add "solid" perma-wall */
-		cave_set_feat(y, x, FEAT_PERM_SOLID);
-	}
-
-	/* Special boundary walls -- Right */
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		x = DUNGEON_WID - 1;
-
-		/* Clear previous contents, add "solid" perma-wall */
-		cave_set_feat(y, x, FEAT_PERM_SOLID);
-	}
+	/* Make stage boundaries */
+	make_edges(FALSE, FALSE);
 
 	/* Make the main mountaintop */
 	while (!placed) {
@@ -1396,16 +1352,12 @@ extern void mtntop_gen(void)
 			sqinfo_off(cave_info[y][x], SQUARE_ICKY);
 
 			/* Paranoia - remake the dungeon walls */
-
 			if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
 				|| (x == DUNGEON_WID - 1)) {
 				cave_set_feat(y, x, FEAT_PERM_SOLID);
 			}
 		}
 	}
-
-
-
 
 	/* Basic "amount" */
 	k = p_ptr->depth;
@@ -1449,7 +1401,7 @@ extern void forest_gen(void)
 {
 	bool made_plat;
 
-	int i, j, k, y, x;
+	int j, y, x;
 	int plats, a, b;
 	int stage = p_ptr->stage;
 	int last_stage = p_ptr->last_stage;
@@ -1461,13 +1413,7 @@ extern void forest_gen(void)
 	};
 	int ponds[2] = { FEAT_WATER, FEAT_NONE };
 
-	bool dummy;
-	feature_type *f_ptr;
-
-
-
-
-	/* Hack -- Start with basic grass so paths work */
+	/* Start with grass so paths work */
 	for (y = 0; y < DUNGEON_HGT; y++) {
 		for (x = 0; x < DUNGEON_WID; x++) {
 			/* Create grass */
@@ -1475,86 +1421,11 @@ extern void forest_gen(void)
 		}
 	}
 
-
 	/* Place 2 or 3 paths to neighbouring stages, place player -NRM- */
 	alloc_paths(stage, last_stage);
 
-	/* Special boundary walls -- Top */
-	i = 4;
-	for (x = 0; x < DUNGEON_WID; x++) {
-		i += 1 - randint0(3);
-		if (i > 7)
-			i = 7;
-		if (i < 0)
-			i = 0;
-		for (y = 0; y < i; y++) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
-
-
-	/* Special boundary walls -- Bottom */
-	i = 4;
-	for (x = 0; x < DUNGEON_WID; x++) {
-		i += 1 - randint0(3);
-		if (i > 7)
-			i = 7;
-		if (i < 0)
-			i = 0;
-		for (y = DUNGEON_HGT - 1; y > DUNGEON_HGT - 1 - i; y--) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
-
-	/* Special boundary walls -- Left */
-	i = 5;
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		i += 1 - randint0(3);
-		if (i > 10)
-			i = 10;
-		if (i < 0)
-			i = 0;
-		for (x = 0; x < i; x++) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
-
-	/* Special boundary walls -- Right */
-	i = 5;
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		i += 1 - randint0(3);
-		if (i > 10)
-			i = 10;
-		if (i < 0)
-			i = 0;
-		for (x = DUNGEON_WID - 1; x > DUNGEON_WID - 1 - i; x--) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
+	/* Make stage boundaries */
+	make_edges(TRUE, FALSE);
 
 	/* Now place trees */
 	for (y = 0; y < DUNGEON_HGT; y++) {
@@ -1637,64 +1508,8 @@ extern void forest_gen(void)
 		}
 	}
 
-	/* Basic "amount" */
-	k = (p_ptr->depth / 2);
-
-	/* Gets hairy north of the mountains */
-	if (p_ptr->depth > 40)
-		k += 10;
-
-	/* Pick a base number of monsters */
-	i = MIN_M_ALLOC_LEVEL + randint1(8);
-
-	/* Build the monster probability table. */
-	monster_level = p_ptr->depth;
-	(void) get_mon_num(monster_level);
-
-	/* Put some monsters in the dungeon */
-	for (j = i + k; j > 0; j--) {
-		/* Always have some random monsters */
-		if ((get_mon_num_hook) && (j < 5)) {
-			/* Remove all monster restrictions. */
-			mon_restrict('\0', (byte) p_ptr->depth, &dummy, TRUE);
-
-			/* Build the monster probability table. */
-			(void) get_mon_num(p_ptr->depth);
-		}
-
-		/* 
-		 * Place a random monster (quickly), but not in grids marked 
-		 * "SQUARE_TEMP".
-		 */
-		(void) alloc_monster(10, TRUE, TRUE);
-	}
-
-
-	/* Place some traps in the dungeon. */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_TRAP, randint1(k));
-
-	/* Put some objects in rooms */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT,
-				 Rand_normal(DUN_AMT_ROOM, 3));
-
-	/* Put some objects/gold in the dungeon */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT,
-				 Rand_normal(DUN_AMT_ITEM, 3));
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_GOLD,
-				 Rand_normal(DUN_AMT_GOLD, 3));
-
-
-	/* Clear "temp" flags. */
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		for (x = 0; x < DUNGEON_WID; x++) {
-			sqinfo_off(cave_info[y][x], SQUARE_TEMP);
-			/* Paranoia - remake the dungeon walls */
-
-			if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
-				|| (x == DUNGEON_WID - 1))
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-		}
-	}
+	/* Place objects, traps and monsters */
+	(void) populate(FALSE);
 }
 
 /**
@@ -1707,112 +1522,32 @@ extern void forest_gen(void)
  */
 extern void swamp_gen(void)
 {
-	int i, j, k, y, x;
+	int y, x;
 	int stage = p_ptr->stage;
 	int last_stage = p_ptr->last_stage;
 	int form_grids = 0;
-
 
 	int form_feats[8] =
 		{ FEAT_TREE, FEAT_RUBBLE, FEAT_MAGMA, FEAT_WALL_SOLID,
 		FEAT_TREE2, FEAT_QUARTZ, FEAT_NONE
 	};
 
-	bool dummy;
 	feature_type *f_ptr;
 
-
-
-
-	/* Hack -- Start with grass */
+	/* Start with grass */
 	for (y = 0; y < DUNGEON_HGT; y++) {
 		for (x = 0; x < DUNGEON_WID; x++) {
 			cave_feat[y][x] = FEAT_GRASS;
 		}
 	}
 
-
 	/* Place 2 or 3 paths to neighbouring stages, place player -NRM- */
 	alloc_paths(stage, last_stage);
 
-	/* Special boundary walls -- Top */
-	i = 4;
-	for (x = 0; x < DUNGEON_WID; x++) {
-		i += 1 - randint0(3);
-		if (i > 7)
-			i = 7;
-		if (i < 0)
-			i = 0;
-		for (y = 0; y < i; y++) {
-			f_ptr = &f_info[cave_feat[y][x]];
+	/* Make stage boundaries */
+	make_edges(TRUE, FALSE);
 
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
-
-
-	/* Special boundary walls -- Bottom */
-	i = 4;
-	for (x = 0; x < DUNGEON_WID; x++) {
-		i += 1 - randint0(3);
-		if (i > 7)
-			i = 7;
-		if (i < 0)
-			i = 0;
-		for (y = DUNGEON_HGT - 1; y > DUNGEON_HGT - 1 - i; y--) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
-
-	/* Special boundary walls -- Left */
-	i = 5;
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		i += 1 - randint0(3);
-		if (i > 10)
-			i = 10;
-		if (i < 0)
-			i = 0;
-		for (x = 0; x < i; x++) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
-
-	/* Special boundary walls -- Right */
-	i = 5;
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		i += 1 - randint0(3);
-		if (i > 10)
-			i = 10;
-		if (i < 0)
-			i = 0;
-		for (x = DUNGEON_WID - 1; x > DUNGEON_WID - 1 - i; x--) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
-
-	/* Hack -- add water */
+	/* Add water */
 	for (y = 1; y < DUNGEON_HGT - 1; y++) {
 		for (x = 1; x < DUNGEON_WID - 1; x++) {
 			f_ptr = &f_info[cave_feat[y][x]];
@@ -1848,64 +1583,8 @@ extern void swamp_gen(void)
 		}
 	}
 
-	/* Basic "amount" */
-	k = (p_ptr->depth / 2);
-
-	/* Gets hairy north of the mountains */
-	if (p_ptr->depth > 40)
-		k += 10;
-
-	/* Pick a base number of monsters */
-	i = MIN_M_ALLOC_LEVEL + randint1(8);
-
-	/* Build the monster probability table. */
-	monster_level = p_ptr->depth;
-	(void) get_mon_num(monster_level);
-
-	/* Put some monsters in the dungeon */
-	for (j = i + k; j > 0; j--) {
-		/* Always have some random monsters */
-		if ((get_mon_num_hook) && (j < 5)) {
-			/* Remove all monster restrictions. */
-			mon_restrict('\0', (byte) p_ptr->depth, &dummy, TRUE);
-
-			/* Build the monster probability table. */
-			(void) get_mon_num(p_ptr->depth);
-		}
-
-		/* 
-		 * Place a random monster (quickly), but not in grids marked 
-		 * "SQUARE_TEMP".
-		 */
-		(void) alloc_monster(10, TRUE, TRUE);
-	}
-
-
-	/* Place some traps in the dungeon. */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_TRAP, randint1(k));
-
-	/* Put some objects in rooms */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT,
-				 Rand_normal(DUN_AMT_ROOM, 3));
-
-	/* Put some objects/gold in the dungeon */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT,
-				 Rand_normal(DUN_AMT_ITEM, 3));
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_GOLD,
-				 Rand_normal(DUN_AMT_GOLD, 3));
-
-
-	/* Clear "temp" flags. */
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		for (x = 0; x < DUNGEON_WID; x++) {
-			sqinfo_off(cave_info[y][x], SQUARE_TEMP);
-			/* Paranoia - remake the dungeon walls */
-
-			if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
-				|| (x == DUNGEON_WID - 1))
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-		}
-	}
+	/* Place objects, traps and monsters */
+	(void) populate(FALSE);
 }
 
 /**
@@ -1920,7 +1599,7 @@ extern void desert_gen(void)
 {
 	bool made_plat;
 
-	int i, j, k, y, x, d;
+	int j, y, x, d;
 	int plats, a, b;
 	int stage = p_ptr->stage;
 	int last_stage = p_ptr->last_stage;
@@ -1930,13 +1609,9 @@ extern void desert_gen(void)
 		{ FEAT_GRASS, FEAT_RUBBLE, FEAT_MAGMA, FEAT_WALL_SOLID,
 		FEAT_DUNE, FEAT_QUARTZ, FEAT_NONE
 	};
-	bool dummy;
 	bool made_gate = FALSE;
-	feature_type *f_ptr;
 
-
-
-	/* Hack -- Start with basic grass so paths work */
+	/* Start with grass so paths work */
 	for (y = 0; y < DUNGEON_HGT; y++) {
 		for (x = 0; x < DUNGEON_WID; x++) {
 			/* Create grass */
@@ -1944,91 +1619,16 @@ extern void desert_gen(void)
 		}
 	}
 
-
 	/* Place 2 or 3 paths to neighbouring stages, place player -NRM- */
 	alloc_paths(stage, last_stage);
 
-	/* Special boundary walls -- Top */
-	i = 4;
-	for (x = 0; x < DUNGEON_WID; x++) {
-		i += 1 - randint0(3);
-		if (i > 7)
-			i = 7;
-		if (i < 0)
-			i = 0;
-		for (y = 0; y < i; y++) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
-
-
-	/* Special boundary walls -- Bottom */
-	i = 4;
-	for (x = 0; x < DUNGEON_WID; x++) {
-		i += 1 - randint0(3);
-		if (i > 7)
-			i = 7;
-		if (i < 0)
-			i = 0;
-		for (y = DUNGEON_HGT - 1; y > DUNGEON_HGT - 1 - i; y--) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
-
-	/* Special boundary walls -- Left */
-	i = 5;
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		i += 1 - randint0(3);
-		if (i > 10)
-			i = 10;
-		if (i < 0)
-			i = 0;
-		for (x = 0; x < i; x++) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
-
-	/* Special boundary walls -- Right */
-	i = 5;
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		i += 1 - randint0(3);
-		if (i > 10)
-			i = 10;
-		if (i < 0)
-			i = 0;
-		for (x = DUNGEON_WID - 1; x > DUNGEON_WID - 1 - i; x--) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
+	/* Make stage boundaries */
+	make_edges(TRUE, FALSE);
 
 	/* Dungeon entrance */
 	if ((stage_map[stage][DOWN])
 		&& (stage_map[stage_map[stage][DOWN]][LOCALITY] != UNDERWORLD)) {
-		/* Hack - no vaults */
+		/* No vaults */
 		wild_vaults = 0;
 
 		/* Angband! */
@@ -2123,64 +1723,8 @@ extern void desert_gen(void)
 		}
 	}
 
-	/* Basic "amount" */
-	k = (p_ptr->depth / 2);
-
-	/* Gets hairy north of the mountains */
-	if (p_ptr->depth > 40)
-		k += 10;
-
-	/* Pick a base number of monsters */
-	i = MIN_M_ALLOC_LEVEL + randint1(8);
-
-	/* Build the monster probability table. */
-	monster_level = p_ptr->depth;
-	(void) get_mon_num(monster_level);
-
-	/* Put some monsters in the dungeon */
-	for (j = i + k; j > 0; j--) {
-		/* Always have some random monsters */
-		if ((get_mon_num_hook) && (j < 5)) {
-			/* Remove all monster restrictions. */
-			mon_restrict('\0', (byte) p_ptr->depth, &dummy, TRUE);
-
-			/* Build the monster probability table. */
-			(void) get_mon_num(p_ptr->depth);
-		}
-
-		/* 
-		 * Place a random monster (quickly), but not in grids marked 
-		 * "SQUARE_TEMP".
-		 */
-		(void) alloc_monster(10, TRUE, TRUE);
-	}
-
-
-	/* Place some traps in the dungeon. */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_TRAP, randint1(k));
-
-	/* Put some objects in rooms */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT,
-				 Rand_normal(DUN_AMT_ROOM, 3));
-
-	/* Put some objects/gold in the dungeon */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT,
-				 Rand_normal(DUN_AMT_ITEM, 3));
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_GOLD,
-				 Rand_normal(DUN_AMT_GOLD, 3));
-
-
-	/* Clear "temp" flags. */
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		for (x = 0; x < DUNGEON_WID; x++) {
-			sqinfo_off(cave_info[y][x], SQUARE_TEMP);
-			/* Paranoia - remake the dungeon walls */
-
-			if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
-				|| (x == DUNGEON_WID - 1))
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-		}
-	}
+	/* Place objects, traps and monsters */
+	(void) populate(FALSE);
 }
 
 
@@ -2194,7 +1738,7 @@ extern void desert_gen(void)
  */
 extern void river_gen(void)
 {
-	int i, j, k, y, x, y1 = DUNGEON_HGT / 2;
+	int i, y, x, y1 = DUNGEON_HGT / 2;
 	int mid[DUNGEON_HGT];
 	int stage = p_ptr->stage;
 	int last_stage = p_ptr->last_stage;
@@ -2206,13 +1750,7 @@ extern void river_gen(void)
 		FEAT_TREE2, FEAT_QUARTZ, FEAT_NONE
 	};
 
-	bool dummy;
-	feature_type *f_ptr;
-
-
-
-
-	/* Hack -- Start with basic grass */
+	/* Start with grass */
 	for (y = 0; y < DUNGEON_HGT; y++) {
 		for (x = 0; x < DUNGEON_WID; x++) {
 			/* Create grass */
@@ -2220,89 +1758,14 @@ extern void river_gen(void)
 		}
 	}
 
-
 	/* Place 2 or 3 paths to neighbouring stages, place player -NRM- */
 	alloc_paths(stage, last_stage);
 
-	/* Hack - remember the path in case it has to move */
+	/* Remember the path in case it has to move */
 	path = cave_feat[p_ptr->py][p_ptr->px];
 
-	/* Special boundary walls -- Top */
-	i = 4;
-	for (x = 0; x < DUNGEON_WID; x++) {
-		i += 1 - randint0(3);
-		if (i > 7)
-			i = 7;
-		if (i < 0)
-			i = 0;
-		for (y = 0; y < i; y++) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
-
-
-	/* Special boundary walls -- Bottom */
-	i = 4;
-	for (x = 0; x < DUNGEON_WID; x++) {
-		i += 1 - randint0(3);
-		if (i > 7)
-			i = 7;
-		if (i < 0)
-			i = 0;
-		for (y = DUNGEON_HGT - 1; y > DUNGEON_HGT - 1 - i; y--) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
-
-	/* Special boundary walls -- Left */
-	i = 5;
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		i += 1 - randint0(3);
-		if (i > 10)
-			i = 10;
-		if (i < 0)
-			i = 0;
-		for (x = 0; x < i; x++) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
-
-	/* Special boundary walls -- Right */
-	i = 5;
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		i += 1 - randint0(3);
-		if (i > 10)
-			i = 10;
-		if (i < 0)
-			i = 0;
-		for (x = DUNGEON_WID - 1; x > DUNGEON_WID - 1 - i; x--) {
-			f_ptr = &f_info[cave_feat[y][x]];
-
-			/* Clear previous contents, add "solid" perma-wall */
-			if ((cave_feat[y][x] != FEAT_ROAD)
-				&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-			}
-		}
-	}
+	/* Make stage boundaries */
+	make_edges(TRUE, FALSE);
 
 	/* Place the river, start in the middle third */
 	i = DUNGEON_WID / 3 + randint0(DUNGEON_WID / 3);
@@ -2390,7 +1853,7 @@ extern void river_gen(void)
 		}
 	}
 
-	/* Hack - move the player out of the river */
+	/* Move the player out of the river */
 	y = p_ptr->py;
 	x = p_ptr->px;
 	while ((cave_feat[p_ptr->py][p_ptr->px] == FEAT_WATER)
@@ -2407,64 +1870,8 @@ extern void river_gen(void)
 				cave_set_feat(y, p_ptr->px, FEAT_ROAD);
 	}
 
-	/* Basic "amount" */
-	k = (p_ptr->depth / 2);
-
-	/* Gets hairy north of the mountains */
-	if (p_ptr->depth > 40)
-		k += 10;
-
-	/* Pick a base number of monsters */
-	i = MIN_M_ALLOC_LEVEL + randint1(8);
-
-	/* Build the monster probability table. */
-	monster_level = p_ptr->depth;
-	(void) get_mon_num(monster_level);
-
-	/* Put some monsters in the dungeon */
-	for (j = i + k; j > 0; j--) {
-		/* Always have some random monsters */
-		if ((get_mon_num_hook) && (j < 5)) {
-			/* Remove all monster restrictions. */
-			mon_restrict('\0', (byte) p_ptr->depth, &dummy, TRUE);
-
-			/* Build the monster probability table. */
-			(void) get_mon_num(p_ptr->depth);
-		}
-
-		/* 
-		 * Place a random monster (quickly), but not in grids marked 
-		 * "SQUARE_TEMP".
-		 */
-		(void) alloc_monster(10, TRUE, TRUE);
-	}
-
-
-	/* Place some traps in the dungeon. */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_TRAP, randint1(k));
-
-	/* Put some objects in rooms */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT,
-				 Rand_normal(DUN_AMT_ROOM, 3));
-
-	/* Put some objects/gold in the dungeon */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT,
-				 Rand_normal(DUN_AMT_ITEM, 3));
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_GOLD,
-				 Rand_normal(DUN_AMT_GOLD, 3));
-
-
-	/* Clear "temp" flags. */
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		for (x = 0; x < DUNGEON_WID; x++) {
-			sqinfo_off(cave_info[y][x], SQUARE_TEMP);
-			/* Paranoia - remake the dungeon walls */
-
-			if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
-				|| (x == DUNGEON_WID - 1))
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
-		}
-	}
+	/* Place objects, traps and monsters */
+	(void) populate(FALSE);
 }
 
 /**
@@ -2563,17 +1970,15 @@ extern void valley_gen(void)
 	bool made_plat;
 
 	int i, j, k, y, x;
-	int plats, a, b, num = 2;
+	int plats, a, b;
 	int form_grids = 0;
-	int path_x[3];
 	int form_feats[8] =
 		{ FEAT_GRASS, FEAT_RUBBLE, FEAT_MAGMA, FEAT_WALL_SOLID,
 		FEAT_GRASS, FEAT_QUARTZ, FEAT_NONE
 	};
-	bool dummy;
 
 
-	/* Hack -- Start with trees */
+	/* Start with trees */
 	for (y = 0; y < DUNGEON_HGT; y++) {
 		for (x = 0; x < DUNGEON_WID; x++) {
 			/* Create trees */
@@ -2585,85 +1990,8 @@ extern void valley_gen(void)
 		}
 	}
 
-	/* Prepare places for down slides */
-	num += randint0(2);
-	for (i = 0; i < num; i++)
-		path_x[i] =
-			1 + randint0(DUNGEON_WID / num - 2) + i * DUNGEON_WID / num;
-
-	/* Special boundary walls -- Top */
-	i = 5;
-	for (x = 0; x < DUNGEON_WID; x++) {
-		i += 1 - randint0(3);
-		if (i > 10)
-			i = 10;
-		if (i < 0)
-			i = 0;
-		for (y = 0; y < i; y++)
-
-			/* Clear previous contents, add "solid" perma-wall */
-			cave_set_feat(y, x, FEAT_PERM_SOLID);
-		if ((x > 0) && (x == p_ptr->path_coord)) {
-			if (y == 0)
-				y++;
-			cave_set_feat(y, x, FEAT_RUBBLE);
-			player_place(y, x);
-		}
-	}
-
-
-	/* Special boundary walls -- Bottom */
-	i = 5;
-	j = 0;
-	if (p_ptr->depth != 70) {
-		for (x = 0; x < DUNGEON_WID; x++) {
-			i += 1 - randint0(3);
-			if (i > 10)
-				i = 10;
-			if (i < 0)
-				i = 0;
-			for (y = DUNGEON_HGT - 1; y > DUNGEON_HGT - 1 - i; y--)
-
-				/* Clear previous contents, add empty space */
-				cave_set_feat(y, x, FEAT_VOID);
-
-			/* Down slides */
-			if (j < num)
-				if (x == path_x[j]) {
-					cave_set_feat(y, x, FEAT_MORE_SOUTH);
-					j++;
-				}
-		}
-	}
-
-	/* Special boundary walls -- Left */
-	i = 5;
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		i += 1 - randint0(3);
-		if (i > 10)
-			i = 10;
-		if (i < 0)
-			i = 0;
-		for (x = 0; x < i; x++)
-
-			/* Clear previous contents, add "solid" perma-wall */
-			cave_set_feat(y, x, FEAT_PERM_SOLID);
-
-	}
-
-	/* Special boundary walls -- Right */
-	i = 5;
-	for (y = 0; y < DUNGEON_HGT; y++) {
-		i += 1 - randint0(3);
-		if (i > 10)
-			i = 10;
-		if (i < 0)
-			i = 0;
-		for (x = DUNGEON_WID - 1; x > DUNGEON_WID - 1 - i; x--)
-
-			/* Clear previous contents, add "solid" perma-wall */
-			cave_set_feat(y, x, FEAT_PERM_SOLID);
-	}
+	/* Make stage boundaries */
+	make_edges(TRUE, TRUE);
 
 	/* Make a few clearings */
 	plats = rand_range(2, 4);
@@ -2717,49 +2045,8 @@ extern void valley_gen(void)
 		sqinfo_on(cave_info[y][x], SQUARE_ICKY);
 	}
 
-	/* Basic "amount" */
-	k = (p_ptr->depth / 2);
-	if (k > 30)
-		k = 30;
-
-	/* Pick a base number of monsters */
-	i = MIN_M_ALLOC_LEVEL + randint1(8);
-
-	/* Build the monster probability table. */
-	monster_level = p_ptr->depth;
-	(void) get_mon_num(monster_level);
-
-	/* Put some monsters in the dungeon */
-	for (j = i + k; j > 0; j--) {
-		/* Always have some random monsters */
-		if ((get_mon_num_hook) && (j < 5)) {
-			/* Remove all monster restrictions. */
-			mon_restrict('\0', (byte) p_ptr->depth, &dummy, TRUE);
-
-			/* Build the monster probability table. */
-			(void) get_mon_num(p_ptr->depth);
-		}
-
-		/* 
-		 * Place a random monster (quickly), but not in grids marked 
-		 * "SQUARE_TEMP".
-		 */
-		(void) alloc_monster(10, TRUE, TRUE);
-	}
-
-
-	/* Place some traps in the dungeon. */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_TRAP, randint1(k));
-
-	/* Put some objects in rooms */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT,
-				 Rand_normal(DUN_AMT_ROOM, 3));
-
-	/* Put some objects/gold in the dungeon */
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_OBJECT,
-				 Rand_normal(DUN_AMT_ITEM, 3));
-	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_GOLD,
-				 Rand_normal(DUN_AMT_GOLD, 3));
+	/* Place objects, traps and monsters */
+	k = populate(TRUE);
 
 	/* Place some webs */
 	for (i = 0; i < damroll(k / 20, 4); i++)
@@ -2775,8 +2062,8 @@ extern void valley_gen(void)
 	for (y = 0; y < DUNGEON_HGT; y++) {
 		for (x = 0; x < DUNGEON_WID; x++) {
 			sqinfo_off(cave_info[y][x], SQUARE_TEMP);
-			/* Paranoia - remake the dungeon walls */
 
+			/* Paranoia - remake the dungeon walls */
 			if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
 				|| (x == DUNGEON_WID - 1))
 				cave_set_feat(y, x, FEAT_PERM_SOLID);
