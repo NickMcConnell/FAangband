@@ -291,7 +291,7 @@ enum
 
 enum
 {
-#define PF(a, b, c, d) PF_##a
+#define PF(a, b, c) PF_##a
 	#include "list-player-flags.h"
 	#undef PF
 	PF_MAX
@@ -301,6 +301,7 @@ enum
 
 enum
 {
+    PLAYER_FLAG_NONE,
     PLAYER_FLAG_SPECIAL,
     PLAYER_FLAG_RACE,
     PLAYER_FLAG_CLASS

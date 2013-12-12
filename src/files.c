@@ -559,7 +559,7 @@ static const char *display_player_bonus_names[8] = {
  * Read in the specialty names.
  */
 static const char *specialty_names[] = {
-#define PF(x, y, z, w)    y
+#define PF(x, y, z)    y
 #include "list-player-flags.h"
 #undef PF
 	""

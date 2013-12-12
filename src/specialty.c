@@ -43,7 +43,7 @@ typedef struct {
  * Read in the descriptions.
  */
 static const ability abilities[] = {
-#define PF(x, y, z, w)    { PF_##x, y, z, w }
+#define PF(x, y, z)    { PF_##x, y, z, PLAYER_FLAG_NONE }
 #include "list-player-flags.h"
 #undef PF
 };
@@ -72,8 +72,7 @@ bool check_specialty_gain(int specialty)
 	}
 
 	/* Is it allowed for this class? */
-	if (pf_has(cp_ptr->specialties, specialty) &&
-		(abilities[specialty].type == PLAYER_FLAG_SPECIAL))
+	if (pf_has(cp_ptr->specialties, specialty))
 		return (TRUE);
 
 	return FALSE;
@@ -796,7 +795,7 @@ void view_spec_menu(void)
 
 	/* Prompt choices */
 	sprintf(buf,
-			"Race, class, and specialties abilities (%c-%c, ESC=exit): ",
+			"Race, class, and specialty abilities (%c-%c, ESC=exit): ",
 			I2A(0), I2A(spec_known - 1));
 
 	/* Set up the menu */
@@ -827,21 +826,25 @@ void view_specialties(void)
 
 	/* Count the number of specialties we know */
 	for (i = 0, spec_known = 0; i < MAX_SPECIALTIES; i++) {
-		if (p_ptr->specialty_order[i] != PF_NO_SPECIALTY)
-			spec_list[spec_known++] = abilities[p_ptr->specialty_order[i]];
+		if (p_ptr->specialty_order[i] != PF_NO_SPECIALTY) {
+			spec_list[spec_known] = abilities[p_ptr->specialty_order[i]];
+			spec_list[spec_known++].type = PLAYER_FLAG_SPECIAL;
+		}
 	}
 
 	/* Count the number of class powers we have */
 	for (i = 0; i < PF_MAX; i++) {
 		if (player_class_has(i)) {
-			spec_list[spec_known++] = abilities[i];
+			spec_list[spec_known] = abilities[i];
+			spec_list[spec_known++].type = PLAYER_FLAG_CLASS;
 		}
 	}
 
 	/* Count the number of race powers we have */
 	for (i = 0; i < PF_MAX; i++) {
 		if (player_race_has(i)) {
-			spec_list[spec_known++] = abilities[i];
+			spec_list[spec_known] = abilities[i];
+			spec_list[spec_known++].type = PLAYER_FLAG_RACE;
 		}
 	}
 
@@ -852,7 +855,7 @@ void view_specialties(void)
 		spec_list[spec_known].name = "";
 		spec_list[spec_known].desc = "";
 		view_abilities_aux(race_other_desc);
-		spec_list[spec_known++].type = PF_MAX;
+		spec_list[spec_known++].type = PLAYER_FLAG_NONE;
 	}
 
 	/* View choices until user exits */
