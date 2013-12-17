@@ -407,7 +407,7 @@ struct mode_menu_data {
 	const char *modes[GAME_MODE_MAX + 2];
 	const char *description[GAME_MODE_MAX + 2];
 
-	bool mode_settings[GAME_MODE_MAX + 1];
+	bool mode_settings[GAME_MODE_MAX + 2];
 };
 
 /**
