@@ -346,8 +346,9 @@ static enum birth_stage get_map_command(void)
  * Get the game mode (formerly birth options)
  * ------------------------------------------------------------------------ */
 #define MODE_TEXT \
-    "Toggle any of the permanent game modes, '{light green}?{/}'" \
-    "for help,\naccept or quit; selected modes appear {red}red{/}:"
+    "Use the arrows to navigate; accept, quit or toggle any of the\n" \
+    "permanent game modes with enter; '{light green}?{/}' for help.\n" \
+    "Selected modes appear {red}red{/}:"
 
 
 /* Show the mode instructions */
