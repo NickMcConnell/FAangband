@@ -2776,13 +2776,6 @@ static void store_process_command(ui_event ke)
 			break;
 		}
 
-		/* Load "screen dump" */
-	case '(':
-		{
-			do_cmd_load_screen();
-			break;
-		}
-
 		/* Save "screen dump" */
 	case ')':
 		{
