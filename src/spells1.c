@@ -8432,7 +8432,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 
 
 	/* Sort the blast grids by distance, starting at the origin. */
-	for (i = 0, k = 0; i < rad; i++) {
+	for (i = 0, k = 0; i <= rad; i++) {
 		int tmp_y, tmp_x, tmp_d;
 
 		/* Collect all the grids of a given distance together. */
@@ -8459,7 +8459,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 	/* Display the blast area if allowed. */
 	if (!blind && !(flg & (PROJECT_HIDE))) {
 		/* Do the blast from inside out */
-		for (i = 0; i < grids; i++) {
+		for (i = 0; i <= grids; i++) {
 			/* Extract the location */
 			y = gy[i];
 			x = gx[i];
