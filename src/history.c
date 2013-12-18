@@ -307,7 +307,10 @@ void history_unmask_unknown(void)
  */
 static bool history_masked(size_t i)
 {
-	return FALSE;
+	if (history_list[i].type & HISTORY_ARTIFACT_KNOWN)
+		return FALSE;
+
+	return TRUE;
 }
 
 /*
