@@ -364,7 +364,6 @@ static void history_get_place(char *place, size_t len, int i)
 
 	my_strcpy(place, buf, len);
 }
-
 /* Handles all of the display functionality for the history list. */
 void history_display(void)
 {
@@ -569,7 +568,7 @@ void dump_history(char_attr_line * line, int *curr_line, bool * dead)
 				/* Make a continued note if applicable */
 				if (startpoint)
 					dump_put_str(TERM_WHITE,
-								 "   continued...                           ",
+								 "                                          ",
 								 0);
 
 				/* Write that line */
