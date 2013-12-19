@@ -22,6 +22,7 @@
 #include "history.h"
 #include "object.h"
 #include "spells.h"
+#include "squelch.h"
 
 
 /**
@@ -114,6 +115,7 @@ void object_aware(object_type * o_ptr)
 {
 	/* Fully aware of the effects */
 	k_info[o_ptr->k_idx].aware = TRUE;
+	apply_autoinscription(o_ptr);
 }
 
 
