@@ -358,13 +358,25 @@ void textblock_dump(textblock * tb, char_attr_line ** line,
 
 	for (i = 0; i < n_lines; i++) {
 		for (j = 0; j < line_lengths[i]; j++) {
-			dump_put_str(attrs[line_starts[i] + j],
-						 format("%c", text[line_starts[i] + j]),
-						 j + indent);
+
+			/* Write the character */
+			dump_ptr[j].pattr = attrs[line_starts[i] + j];
+			dump_ptr[j].pchar = text[line_starts[i] + j];
+
+			/* Paranoia */
+			if (j >= MAX_C_A_LEN){
+				j--;
+				break;
+			}
 		}
+
+		/* Terminate */
+		dump_ptr[j].pchar = L'\0';
+
 		(*current_line)++;
-		dump_ptr = (char_attr *) & lline[*current_line];
+		dump_ptr = (char_attr *) &lline[*current_line];
 	}
+
 	if (!n_lines)
 		(*current_line)--;
 }
