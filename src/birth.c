@@ -1225,9 +1225,10 @@ static void do_birth_reset(bool use_quickstart, birther *quickstart_prev)
 
 	player_generate(p_ptr, NULL, NULL, NULL);
 
-	/* Unset the modes */
-	for (i = 0; i < GAME_MODE_MAX; i++) 
-		p_ptr->game_mode[i] = FALSE;
+	/* Unset the modes if no quickstart */
+	if (!use_quickstart)
+		for (i = 0; i < GAME_MODE_MAX; i++) 
+			p_ptr->game_mode[i] = FALSE;
 
 	/* Set the map */
 	set_map(p_ptr);
