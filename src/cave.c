@@ -1510,12 +1510,10 @@ void display_map(int *cy, int *cx)
 				g.lighting = FEAT_LIGHTING_LIT;	/*FEAT_LIGHTING_BRIGHT; */
 				grid_data_as_text(&g, &a, &c, &ta, &tc);
 
-				/* Add the character */
-				Term_putch(col + 1, row + 1, a, c);
+				Term_queue_char(Term, col + 1, row + 1, a, c, ta, tc);
 
-				if ((tile_width > 1) || (tile_height > 1)) {
-					Term_big_putch(col + 1, row + 1, a, c);
-				}
+				if ((tile_width > 1) || (tile_height > 1))
+					Term_big_queue_char(Term, col + 1, row + 1, 255, -1, 0, 0);
 
 				/* Save priority */
 				mp[row][col] = tp;

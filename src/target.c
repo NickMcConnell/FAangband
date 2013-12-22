@@ -229,7 +229,7 @@ bool target_okay(void)
 		return (FALSE);
 
 	/* Accept "location" targets */
-	if ((target_who == 0) && (target_what == 0))
+	if ((target_who == NULL) && (target_what == 0))
 		return (TRUE);
 
 	/* Check "monster" targets */
@@ -291,7 +291,7 @@ void target_set_monster(struct monster *mon)
 	else {
 		/* Reset target info */
 		target_set = FALSE;
-		target_who = 0;
+		target_who = NULL;
 		target_what = 0;
 		target_y = 0;
 		target_x = 0;
@@ -310,7 +310,7 @@ void target_set_object(int o_idx)
 
 		/* Save target info */
 		target_set = TRUE;
-		target_who = 0;
+		target_who = NULL;
 		target_what = o_idx;
 		target_y = o_ptr->iy;
 		target_x = o_ptr->ix;
@@ -320,7 +320,7 @@ void target_set_object(int o_idx)
 	else {
 		/* Reset target info */
 		target_set = FALSE;
-		target_who = 0;
+		target_who = NULL;
 		target_what = 0;
 		target_y = 0;
 		target_x = 0;
@@ -337,7 +337,7 @@ void target_set_location(int y, int x)
 	if (in_bounds_fully(y, x)) {
 		/* Save target info */
 		target_set = TRUE;
-		target_who = 0;
+		target_who = NULL;
 		target_what = 0;
 		target_y = y;
 		target_x = x;
@@ -347,7 +347,7 @@ void target_set_location(int y, int x)
 	else {
 		/* Reset target info */
 		target_set = FALSE;
-		target_who = 0;
+		target_who = NULL;
 		target_what = 0;
 		target_y = 0;
 		target_x = 0;
