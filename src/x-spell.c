@@ -133,8 +133,8 @@
 #define PRAYER_ALTER_REALITY                    100
 #define PRAYER_DETECT_MONSTERS                  101
 #define PRAYER_DETECTION                        102
-#define PRAYER_PROBING                          103
-#define PRAYER_PERCEPTION                       104
+#define PRAYER_PERCEPTION                       103
+#define PRAYER_PROBING                          104
 #define PRAYER_CLAIRVOYANCE                     105
 #define PRAYER_BANISHMENT                       106
 #define PRAYER_HEALING                          107
