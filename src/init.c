@@ -3752,6 +3752,7 @@ extern struct init_module options_module;
 static struct init_module *modules[] = {
 	&z_quark_module,
 	&messages_module,
+	&ui_visuals_module, /* This needs to load before monsters and objects. */
 	&arrays_module,
 	&player_module,
 	&generate_module,
@@ -3761,7 +3762,6 @@ static struct init_module *modules[] = {
 	&mon_make_module,
 	&store_module,
 	&options_module,
-	&ui_visuals_module,
 	NULL
 };
 
