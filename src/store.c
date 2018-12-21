@@ -2790,14 +2790,17 @@ static void store_process_command(ui_event ke)
 			if (st_ptr->type == STORE_MERCH)
 				store_order();
 			else
-				msg("You cannot order from this store.");
+				msg("You cannot order items here.");
 			break;
 		}
 
 		/* Hack -- Unknown command */
 	default:
 		{
-			msg("That command does not work in stores.");
+			if (st_ptr->type == STORE_HOME)
+				msg("That command does not work in your home.");
+			else
+				msg("That command does not work in stores.");
 			break;
 		}
 	}
@@ -3037,20 +3040,26 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 		prt("You may: ", 20, 0);
 
 		/* Commands */
-		prt(" RET) Continue", 20, 27);
-		prt("   i) Player inventory", 20, 55);
-		prt(" ESC) Exit from Building.", 21, 0);
+		prt(" RET) Continue.", 20, 27);
+		prt("   i) Player inventory.", 20, 55);
+		prt(" ESC) Exit from building.", 21, 0);
 
 		/* Browse if necessary */
 		if (st_ptr->stock_num > 12) {
-			prt(" SPACE) Next page of stock", 22, 0);
+			prt(" SPACE) Next page of stock.", 22, 0);
 		}
 
 		/* More commands */
-		prt(" g) Get/Purchase an item.", 21, 29);
-		prt(" d) Drop/Sell an item.", 22, 29);
+		if (st_ptr->type == STORE_HOME) {
+			prt(" g) Get an item.", 21, 29);
+			prt(" d) Drop an item.", 22, 29);
+		}
+		else {
+			prt(" g) Purchase an item.", 21, 29);
+			prt(" d) Sell an item.", 22, 29);
+		}
 		if (OPT(rogue_like_commands))
-			prt("   x) Look at an item.", 21, 55);
+			prt("   x) Look at an item.", 20, 55);
 		else
 			prt("   l) Look at an item.", 21, 55);
 		if ((st_ptr->type == STORE_MERCH)
