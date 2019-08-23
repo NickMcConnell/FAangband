@@ -929,6 +929,18 @@ int rd_misc(void)
 {
 	size_t i;
 	byte tmp8u;
+	char tmp[80];
+
+	/* Read the map */
+	rd_string(tmp, sizeof(tmp));
+	world = maps;
+	while (world) {
+		if (streq(world->name, tmp)) break;
+		world = world->next;
+	}
+	if (!world) {
+		quit("Failed to find world.");
+	}
 	
 	/* Read the randart seed */
 	rd_u32b(&seed_randart);
@@ -948,9 +960,6 @@ int rd_misc(void)
 
 	/* Current turn */
 	rd_s32b(&turn);
-
-	//if (player->is_dead)
-	//	return 0;
 
 	/* Handle randart file parsing */
 	if (OPT(player, birth_randarts)) {

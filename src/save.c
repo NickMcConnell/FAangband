@@ -602,6 +602,9 @@ void wr_misc(void)
 {
 	size_t i;
 
+	/* Map */
+	wr_string(world->name);
+
 	/* Random artifact seed */
 	wr_u32b(seed_randart);
 
@@ -619,9 +622,6 @@ void wr_misc(void)
 	wr_s32b(turn);
 
 	/* Property knowledge */
-	//if (player->is_dead)
-	//	return;
-
 	/* Flags */
 	for (i = 0; i < OF_SIZE; i++)
 		wr_byte(player->obj_k->flags[i]);

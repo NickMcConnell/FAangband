@@ -94,6 +94,20 @@ char *ANGBAND_DIR_SCORES;
 char *ANGBAND_DIR_INFO;
 char *ANGBAND_DIR_ARCHIVE;
 
+static const char *localities[] = {
+	#define LOC(a, b) #a,
+	#include "list-localities.h"
+	#undef LOC
+	NULL
+};
+
+static const char *topography[] = {
+	#define TOP(a, b) #a,
+	#include "list-topography.h"
+	#undef TOP
+	NULL
+};
+
 static const char *slots[] = {
 	#define EQUIP(a, b, c, d, e, f) #a,
 	#include "list-equip-slots.h"
@@ -749,34 +763,180 @@ static void cleanup_game_constants(void)
 
 /**
  * ------------------------------------------------------------------------
- * Intialize world map
+ * Intialize world maps
  * ------------------------------------------------------------------------ */
-static enum parser_error parse_world_level(struct parser *p) {
-	const int depth = parser_getint(p, "depth");
-	const char *name = parser_getsym(p, "name");
-	const char *up = parser_getsym(p, "up");
-	const char *down = parser_getsym(p, "down");
-	struct level *last = parser_priv(p);
-	struct level *lev = mem_zalloc(sizeof *lev);
+static enum parser_error parse_world_map(struct parser *p) {
+	const char *name = parser_getstr(p, "mapname");
+	struct level_map *last = parser_priv(p);
+	struct level_map *map = mem_zalloc(sizeof *map);
 
 	if (last) {
-		last->next = lev;
+		last->next = map;
 	} else {
-		world = lev;
+		maps = map;
 	}
-	lev->depth = depth;
-	lev->name = string_make(name);
-	lev->up = streq(up, "None") ? NULL : string_make(up);
-	lev->down = streq(down, "None") ? NULL : string_make(down);
-	parser_setpriv(p, lev);
+
+	map->name = string_make(name);
+	parser_setpriv(p, map);
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_world_level(struct parser *p) {
+	const char *l_name = parser_getsym(p, "locality");
+	const int danger = parser_getint(p, "danger");
+	const char *t_name = parser_getsym(p, "topography");
+	struct level_map *map = parser_priv(p);
+	struct level *lev;
+	int i;
+
+	/* Make a new level */
+	map->num_levels++;
+	if (map->num_levels == 1) {
+		map->levels = mem_zalloc(sizeof(struct level));
+	} else {
+		map->levels = mem_realloc(map->levels,
+								  map->num_levels * sizeof(struct level));
+		memset(&map->levels[map->num_levels - 1], 0, sizeof(struct level));
+	}
+	lev = &map->levels[map->num_levels - 1];
+
+	if (grab_name("locality", l_name, localities, N_ELEMENTS(localities), &i))
+		return PARSE_ERROR_INVALID_LOCALITY;
+	lev->locality = i;
+	lev->danger = danger;
+	if (grab_name("topography", t_name, topography, N_ELEMENTS(topography), &i))
+		return PARSE_ERROR_INVALID_LOCALITY;
+	lev->topography = i;
+
+	/* Record towns */
+	if (lev->topography == TOP_TOWN) {
+		map->num_towns++;
+		if (map->num_towns == 1) {
+			map->towns = mem_zalloc(sizeof(int));
+		} else {
+			map->towns = mem_realloc(map->towns, map->num_towns * sizeof(int));
+		}
+		map->towns[map->num_towns - 1] = map->num_levels - 1;
+	}
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_world_north(struct parser *p) {
+	const char *l_name = parser_getsym(p, "locality");
+	const int danger = parser_getint(p, "danger");
+	struct level_map *map = parser_priv(p);
+	struct level *lev = &map->levels[map->num_levels - 1];
+	int i;
+
+	if (grab_name("locality", l_name, localities, N_ELEMENTS(localities), &i))
+		return PARSE_ERROR_INVALID_LOCALITY;
+	if (danger)
+		lev->north = string_make(format("%s %d", locality_name(i), danger));
+	else
+		lev->north = string_make(format("%s Town", locality_name(i)));
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_world_east(struct parser *p) {
+	const char *l_name = parser_getsym(p, "locality");
+	const int danger = parser_getint(p, "danger");
+	struct level_map *map = parser_priv(p);
+	struct level *lev = &map->levels[map->num_levels - 1];
+	int i;
+
+	if (grab_name("locality", l_name, localities, N_ELEMENTS(localities), &i))
+		return PARSE_ERROR_INVALID_LOCALITY;
+	if (danger)
+		lev->east = string_make(format("%s %d", locality_name(i), danger));
+	else
+		lev->east = string_make(format("%s Town", locality_name(i)));
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_world_south(struct parser *p) {
+	const char *l_name = parser_getsym(p, "locality");
+	const int danger = parser_getint(p, "danger");
+	struct level_map *map = parser_priv(p);
+	struct level *lev = &map->levels[map->num_levels - 1];
+	int i;
+
+	if (grab_name("locality", l_name, localities, N_ELEMENTS(localities), &i))
+		return PARSE_ERROR_INVALID_LOCALITY;
+	if (danger)
+		lev->south = string_make(format("%s %d", locality_name(i), danger));
+	else
+		lev->south = string_make(format("%s Town", locality_name(i)));
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_world_west(struct parser *p) {
+	const char *l_name = parser_getsym(p, "locality");
+	const int danger = parser_getint(p, "danger");
+	struct level_map *map = parser_priv(p);
+	struct level *lev = &map->levels[map->num_levels - 1];
+	int i;
+
+	if (grab_name("locality", l_name, localities, N_ELEMENTS(localities), &i))
+		return PARSE_ERROR_INVALID_LOCALITY;
+	if (danger)
+		lev->west = string_make(format("%s %d", locality_name(i), danger));
+	else
+		lev->west = string_make(format("%s Town", locality_name(i)));
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_world_up(struct parser *p) {
+	const char *l_name = parser_getsym(p, "locality");
+	const int danger = parser_getint(p, "danger");
+	struct level_map *map = parser_priv(p);
+	struct level *lev = &map->levels[map->num_levels - 1];
+	int i;
+
+	if (grab_name("locality", l_name, localities, N_ELEMENTS(localities), &i))
+		return PARSE_ERROR_INVALID_LOCALITY;
+	if (danger)
+		lev->up = string_make(format("%s %d", locality_name(i), danger));
+	else
+		lev->up = string_make(format("%s Town", locality_name(i)));
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_world_down(struct parser *p) {
+	const char *l_name = parser_getsym(p, "locality");
+	const int danger = parser_getint(p, "danger");
+	struct level_map *map = parser_priv(p);
+	struct level *lev = &map->levels[map->num_levels - 1];
+	int i;
+
+	if (grab_name("locality", l_name, localities, N_ELEMENTS(localities), &i))
+		return PARSE_ERROR_INVALID_LOCALITY;
+	if (danger)
+		lev->down = string_make(format("%s %d", locality_name(i), danger));
+	else
+		lev->down = string_make(format("%s Town", locality_name(i)));
+
 	return PARSE_ERROR_NONE;
 }
 
 struct parser *init_parse_world(void) {
 	struct parser *p = parser_new();
 
-	parser_reg(p, "level int depth sym name sym up sym down",
+	parser_reg(p, "map str mapname", parse_world_map);
+	parser_reg(p, "level sym locality int danger sym topography",
 			   parse_world_level);
+	parser_reg(p, "north sym locality int danger", parse_world_north);
+	parser_reg(p, "east sym locality int danger", parse_world_east);
+	parser_reg(p, "south sym locality int danger", parse_world_south);
+	parser_reg(p, "west sym locality int danger", parse_world_west);
+	parser_reg(p, "up sym locality int danger", parse_world_up);
+	parser_reg(p, "down sym locality int danger", parse_world_down);
 	return p;
 }
 
@@ -785,30 +945,48 @@ static errr run_parse_world(struct parser *p) {
 }
 
 static errr finish_parse_world(struct parser *p) {
-	struct level *level_check;
+	struct level_map *map;
+	int i;
 
 	/* Check that all levels referred to exist */
-	for (level_check = world; level_check; level_check = level_check->next) {
-		struct level *level_find = world;
-
-		/* Check upwards */
-		if (level_check->up) {
-			while (level_find && !streq(level_check->up, level_find->name)) {
-				level_find = level_find->next;
+	for (map = maps; map; map = map->next) {
+		for (i = 0; i < map->num_levels; i++) {
+			struct level *lev = &map->levels[i];
+			if (lev->north) {
+				struct level *lev_next = level_by_name(map, lev->north);
+				if (!lev_next) {
+					quit_fmt("Invalid level reference %s", lev->north);
+				}
 			}
-			if (!level_find) {
-				quit_fmt("Invalid level reference %s", level_check->up);
+			if (lev->east) {
+				struct level *lev_next = level_by_name(map, lev->east);
+				if (!lev_next) {
+					quit_fmt("Invalid level reference %s", lev->east);
+				}
 			}
-		}
-
-		/* Check downwards */
-		level_find = world;
-		if (level_check->down) {
-			while (level_find && !streq(level_check->down, level_find->name)) {
-				level_find = level_find->next;
+			if (lev->south) {
+				struct level *lev_next = level_by_name(map, lev->south);
+				if (!lev_next) {
+					quit_fmt("Invalid level reference %s", lev->south);
+				}
 			}
-			if (!level_find) {
-				quit_fmt("Invalid level reference %s", level_check->down);
+			if (lev->west) {
+				struct level *lev_next = level_by_name(map, lev->west);
+				if (!lev_next) {
+					quit_fmt("Invalid level reference %s", lev->west);
+				}
+			}
+			if (lev->up) {
+				struct level *lev_next = level_by_name(map, lev->up);
+				if (!lev_next) {
+					quit_fmt("Invalid level reference %s", lev->up);
+				}
+			}
+			if (lev->down) {
+				struct level *lev_next = level_by_name(map, lev->down);
+				if (!lev_next) {
+					quit_fmt("Invalid level reference %s", lev->down);
+				}
 			}
 		}
 	}
@@ -819,14 +997,21 @@ static errr finish_parse_world(struct parser *p) {
 
 static void cleanup_world(void)
 {
-	struct level *level = world;
-	while (level) {
-		struct level *old = level;
-		string_free(level->name);
-		string_free(level->up);
-		string_free(level->down);
-		level = level->next;
-		mem_free(old);
+	int i;
+	struct level_map *map = maps;
+	while (map) {
+		for (i = 0; i < map->num_levels; i++) {
+			struct level *level = &map->levels[i];
+			string_free(level->north);
+			string_free(level->east);
+			string_free(level->south);
+			string_free(level->west);
+			string_free(level->up);
+			string_free(level->down);
+		}
+		string_free(map->name);
+		mem_free(map->levels);
+		map = map->next;
 	}
 }
 

@@ -1536,7 +1536,8 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width)
 	struct loc grid;
 	int residents = is_daytime() ? z_info->town_monsters_day :
 		z_info->town_monsters_night;
-	struct chunk *c_new, *c_old = chunk_find_name("Town");
+	struct level *lev = level_by_depth(p->depth);
+	struct chunk *c_new, *c_old = chunk_find_name(level_name(lev));
 
 	/* Make a new chunk */
 	c_new = cave_new(z_info->town_hgt, z_info->town_wid);
@@ -1551,7 +1552,7 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width)
 		/* Copy from the chunk list, remove the old one */
 		if (!chunk_copy(c_new, c_old, 0, 0, 0, 0))
 			quit_fmt("chunk_copy() level bounds failed!");
-		chunk_list_remove("Town");
+		chunk_list_remove(level_name(lev));
 		cave_free(c_old);
 
 		/* Find the stairs (lame) */

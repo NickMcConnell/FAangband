@@ -45,7 +45,8 @@ u32b seed_flavor;		/* Hack -- consistent object colors */
 s32b turn;				/* Current game turn */
 bool character_generated;	/* The character exists */
 bool character_dungeon;		/* The character has a dungeon */
-struct level *world;
+struct level_map *maps;
+struct level_map *world;
 
 /**
  * This table allows quick conversion from "speed" to "energy"
@@ -90,33 +91,66 @@ const byte extract_energy[200] =
 };
 
 /**
- * Find a level by its name
+ * List of { locality, name } pairs.
  */
-struct level *level_by_name(char *name)
+static const grouper locality_names[] =
 {
-	struct level *lev = world;
-	while (lev) {
-		if (streq(lev->name, name)) {
-			break;
-		}
-		lev = lev->next;
-	}
-	return lev;
+	#define LOC(a, b) { LOC_##a, b },
+	#include "list-localities.h"
+	#undef LOC
+};
+
+/**
+ * Get a locality name
+ */
+const char *locality_name(enum locality locality)
+{
+	return locality_names[locality].name;
 }
 
 /**
- * Find a level by its depth
+ * Form a level's name
+ */
+char *level_name(struct level *lev)
+{
+	char *name;
+
+	if (lev->danger) {
+		name = format("%s %d", locality_name(lev->locality), lev->danger);
+	} else {
+		name = format("%s Town", locality_name(lev->locality));
+	}
+	return name;
+}
+
+/**
+ * Find a level by its name
+ */
+struct level *level_by_name(struct level_map *map, char *name)
+{
+	int i;
+	for (i = 0; i < map->num_levels; i++) {
+		struct level *lev = &map->levels[i];
+		if (streq(name, level_name(lev))) {
+			return lev;
+		}
+	}
+	return NULL;
+}
+
+/**
+ * Find a level by its depth - only for use by the dungeon or fanilla map
  */
 struct level *level_by_depth(int depth)
 {
-	struct level *lev = world;
-	while (lev) {
-		if (lev->depth == depth) {
-			break;
+	int i;
+	for (i = 0; i < world->num_levels; i++) {
+		struct level *lev = &world->levels[i];
+		if (lev->danger == depth) {
+			return lev;
 		}
-		lev = lev->next;
 	}
-	return lev;
+	return NULL;
 }
 
 /**

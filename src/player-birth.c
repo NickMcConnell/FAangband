@@ -1108,6 +1108,16 @@ void do_cmd_accept_character(struct command *cmd)
 
 	ignore_birth_init();
 
+	/* Enforce fanilla map for now */
+	world = maps;
+	while (world) {
+		if (streq(world->name, "Fanilla Dungeon")) break;
+		world = world->next;
+	}
+	if (!world) {
+		quit("Failed to find world.");
+	}
+
 	/* Clear old messages, add new starting message */
 	history_clear(player);
 	history_add(player, "Began the quest to destroy Morgoth.", HIST_PLAYER_BIRTH);

@@ -21,12 +21,38 @@
 
 #include "cave.h"
 
+enum locality {
+	#define LOC(x, b)	LOC_##x,
+	#include "list-localities.h"
+	#undef LOC
+};
+
+enum topography {
+	#define TOP(x, b)	TOP_##x,
+	#include "list-topography.h"
+	#undef TOP
+};
+
 struct level {
-	int depth;
-	char *name;
+	int danger;
+	enum locality locality;
+	enum topography topography;
+	char *north;
+	char *east;
+	char *south;
+	char *west;
 	char *up;
 	char *down;
 	struct level *next;
+};
+
+struct level_map {
+	char *name;
+	int num_levels;
+	int num_towns;
+	struct level *levels;
+	int *towns;
+	struct level_map *next;
 };
 
 extern u16b daycount;
@@ -36,9 +62,12 @@ extern s32b turn;
 extern bool character_generated;
 extern bool character_dungeon;
 extern const byte extract_energy[200];
-extern struct level *world;
+extern struct level_map *maps;
+extern struct level_map *world;
 
-struct level *level_by_name(char *name);
+const char *locality_name(enum locality locality);
+char *level_name(struct level *lev);
+struct level *level_by_name(struct level_map *map, char *name);
 struct level *level_by_depth(int depth);
 bool is_daytime(void);
 int turn_energy(int speed);

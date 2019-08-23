@@ -818,6 +818,8 @@ const struct cave_profile *choose_profile(struct player *p)
 
 /**
  * Get information for constructing stairs in the correct places
+ *
+ * Currently only for use by fanilla map
  */
 static void get_join_info(struct player *p, struct dun_data *dun)
 {
@@ -826,7 +828,7 @@ static void get_join_info(struct player *p, struct dun_data *dun)
 	/* Check level above */
 	lev = level_by_depth(p->depth - 1);
 	if (lev) {
-		struct chunk *check = chunk_find_name(lev->name);
+		struct chunk *check = chunk_find_name(level_name(lev));
 		if (check) {
 			struct connector *join = check->join;
 			while (join) {
@@ -846,7 +848,7 @@ static void get_join_info(struct player *p, struct dun_data *dun)
 	/* Check level below */
 	lev = level_by_depth(p->depth + 1);
 	if (lev) {
-		struct chunk *check = chunk_find_name(lev->name);
+		struct chunk *check = chunk_find_name(level_name(lev));
 		if (check) {
 			struct connector *join = check->join;
 			while (join) {
@@ -886,6 +888,8 @@ static void	get_min_level_size(struct chunk *check, int *min_height,
 
 /**
  * Store a dungeon level for reloading
+ *
+ * Assumes fanilla map
  */
 static void cave_store(struct chunk *c, bool known, bool keep_all)
 {
@@ -898,7 +902,7 @@ static void cave_store(struct chunk *c, bool known, bool keep_all)
 	if (stored->name) {
 		string_free(stored->name);
 	}
-	stored->name = string_make(level_by_depth(c->depth)->name);
+	stored->name = string_make(level_name(level_by_depth(c->depth)));
 	if (known) {
 		stored->name = string_append(stored->name, " known");
 	}
@@ -1164,6 +1168,8 @@ static void sanitize_player_loc(struct chunk *c, struct player *p)
  * Prepare the level the player is about to enter, either by generating
  * or reloading
  *
+ * This currently assumes fanilla map
+ *
  * \param c is the level we're going to end up with, in practice the global cave
  * \param p is the current player struct, in practice the global player
 */
@@ -1191,7 +1197,8 @@ void prepare_next_level(struct chunk **c, struct player *p)
 			}
 		} else {
 			/* Save the town */
-			if (!((*c)->depth) && !chunk_find_name("Town")) {
+			char *name = level_name(level_by_depth((*c)->depth));
+			if (!((*c)->depth) && !chunk_find_name(name)) {
 				cave_store(*c, false, false);
 			}
 
@@ -1233,7 +1240,7 @@ void prepare_next_level(struct chunk **c, struct player *p)
 
 	/* Prepare the new level */
 	if (persist) {
-		char *name = level_by_depth(p->depth)->name;
+		char *name = level_name(level_by_depth(p->depth));
 		struct chunk *old_level = chunk_find_name(name);
 
 		/* If we found an old level, load the known level and assign */
@@ -1328,7 +1335,7 @@ void prepare_next_level(struct chunk **c, struct player *p)
 			/* Check level above */
 			lev = level_by_depth(p->depth - 1);
 			if (lev) {
-				struct chunk *check = chunk_find_name(lev->name);
+				struct chunk *check = chunk_find_name(level_name(lev));
 				if (check) {
 					get_min_level_size(check, &min_height, &min_width, true);
 				}
@@ -1337,7 +1344,7 @@ void prepare_next_level(struct chunk **c, struct player *p)
 			/* Check level below */
 			lev = level_by_depth(p->depth + 1);
 			if (lev) {
-				struct chunk *check = chunk_find_name(lev->name);
+				struct chunk *check = chunk_find_name(level_name(lev));
 				if (check) {
 					get_min_level_size(check, &min_height, &min_width, false);
 				}
