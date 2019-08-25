@@ -239,7 +239,26 @@ extern int FEAT_QUARTZ_K;
 /* Walls */
 extern int FEAT_GRANITE;
 extern int FEAT_PERM;
+
+/* Wilderness paths */
+extern int FEAT_LESS_NORTH;
+extern int FEAT_MORE_NORTH;
+extern int FEAT_LESS_EAST;
+extern int FEAT_MORE_EAST;
+extern int FEAT_LESS_SOUTH;
+extern int FEAT_MORE_SOUTH;
+extern int FEAT_LESS_WEST;
+extern int FEAT_MORE_WEST;
+
+/* Other terrain */
 extern int FEAT_LAVA;
+extern int FEAT_WATER;
+extern int FEAT_TREE;
+extern int FEAT_TREE2;
+extern int FEAT_GRASS;
+extern int FEAT_ROAD;
+extern int FEAT_VOID;
+extern int FEAT_DUNE;
 
 
 /* Current level */

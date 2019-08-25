@@ -52,7 +52,22 @@ int FEAT_MAGMA_K;
 int FEAT_QUARTZ_K;
 int FEAT_GRANITE;
 int FEAT_PERM;
+int FEAT_LESS_NORTH;
+int FEAT_MORE_NORTH;
+int FEAT_LESS_EAST;
+int FEAT_MORE_EAST;
+int FEAT_LESS_SOUTH;
+int FEAT_MORE_SOUTH;
+int FEAT_LESS_WEST;
+int FEAT_MORE_WEST;
 int FEAT_LAVA;
+int FEAT_WATER;
+int FEAT_TREE;
+int FEAT_TREE2;
+int FEAT_GRASS;
+int FEAT_ROAD;
+int FEAT_VOID;
+int FEAT_DUNE;
 
 /**
  * Global array for looping through the "keypad directions".
@@ -334,7 +349,22 @@ void set_terrain(void)
 	FEAT_QUARTZ_K = lookup_feat("quartz vein with treasure");
 	FEAT_GRANITE = lookup_feat("granite wall");
 	FEAT_PERM = lookup_feat("permanent wall");
+	FEAT_LESS_NORTH = lookup_feat("easy path north");
+	FEAT_MORE_NORTH = lookup_feat("hard path north");
+	FEAT_LESS_EAST = lookup_feat("easy path east");
+	FEAT_MORE_EAST = lookup_feat("hard path east");
+	FEAT_LESS_SOUTH = lookup_feat("easy path south");
+	FEAT_MORE_SOUTH = lookup_feat("hard path south");
+	FEAT_LESS_WEST = lookup_feat("easy path west");
+	FEAT_MORE_WEST = lookup_feat("hard path west");
 	FEAT_LAVA = lookup_feat("lava");
+	FEAT_WATER = lookup_feat("water");
+	FEAT_TREE = lookup_feat("lowland trees");
+	FEAT_TREE2 = lookup_feat("highland trees");
+	FEAT_GRASS = lookup_feat("grass");
+	FEAT_ROAD = lookup_feat("road");
+	FEAT_VOID = lookup_feat("empty space");
+	FEAT_DUNE = lookup_feat("sand dune");
 }
 
 /**
