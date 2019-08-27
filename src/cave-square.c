@@ -78,6 +78,14 @@ bool feat_is_wall(int feat)
 }
 
 /**
+ * True if the feature is permanent.
+ */
+bool feat_is_permanent(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_PERMANENT);
+}
+
+/**
  * True if the feature is a floor.
  */
 bool feat_is_floor(int feat)
