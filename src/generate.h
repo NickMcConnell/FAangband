@@ -283,7 +283,7 @@ extern bool generate_starburst_room(struct chunk *c, int y1, int x1, int y2,
 									int x2, bool light, int feat, 
 									bool special_ok);
 
-struct vault *random_vault(int depth, const char *typ);
+struct vault *random_vault(int depth, const char *typ1, const char *typ2);
 bool build_vault(struct chunk *c, struct loc centre, struct vault *v);
 
 bool build_staircase(struct chunk *c, struct loc centre, int rating);

@@ -68,19 +68,20 @@ struct room_template *random_room_template(int typ, int rating)
 }
 
 /**
- * Chooses a vault of a particular kind at random.
+ * Chooses a vault of one of two particular kinds at random.
  * \param depth the current depth, for vault boun checking
- * \param typ vault type
+ * \param typ1 vault type 1
+ * \param typ2 vault type 2 (can be null)
  * \return a pointer to the vault template
  */
-struct vault *random_vault(int depth, const char *typ)
+struct vault *random_vault(int depth, const char *typ1, const char *typ2)
 {
 	struct vault *v = vaults;
 	struct vault *r = NULL;
 	int n = 1;
 	do {
-		if (streq(v->typ, typ) && (v->min_lev <= depth)
-			&& (v->max_lev >= depth)) {
+		if ((streq(v->typ, typ1) || (typ2 && streq(v->typ, typ2)))
+			&& (v->min_lev <= depth) && (v->max_lev >= depth)) {
 			if (one_in_(n)) r = v;
 			n++;
 		}
@@ -1416,16 +1417,16 @@ bool build_vault(struct chunk *c, struct loc centre, struct vault *v)
  * Helper function for building vaults.
  * \param c the chunk the room is being built in
  *\ param centre the room centre; out of chunk centre invokes find_space()
- * \param typ the vault type
+ * \param typ1 the vault type
+ * \param typ2 the alternative vault type (can be null)
  * \param label name of the vault type (eg "Greater vault")
  * \return success
  */
 static bool build_vault_type(struct chunk *c, struct loc centre,
-							 const char *typ)
+							 const char *typ1, const char *typ2)
 {
-	struct vault *v = random_vault(c->depth, typ);
+	struct vault *v = random_vault(c->depth, typ1, typ2);
 	if (v == NULL) {
-		/*quit_fmt("got NULL from random_vault(%s)", typ);*/
 		return false;
 	}
 
@@ -1433,7 +1434,7 @@ static bool build_vault_type(struct chunk *c, struct loc centre,
 	if (!build_vault(c, centre, v))
 		return false;
 
-	ROOM_LOG("%s (%s)", typ, v->name);
+	ROOM_LOG("%s (%s)", typ1, v->name);
 
 	/* Boost the rating */
 	c->mon_rating += v->rat;
@@ -2561,7 +2562,7 @@ bool build_template(struct chunk *c, struct loc centre, int rating)
  */
 bool build_interesting(struct chunk *c, struct loc centre, int rating)
 {
-	return build_vault_type(c, centre, "Interesting room");
+	return build_vault_type(c, centre, "Interesting room", NULL);
 }
 
 
@@ -2573,9 +2574,7 @@ bool build_interesting(struct chunk *c, struct loc centre, int rating)
  */
 bool build_lesser_vault(struct chunk *c, struct loc centre, int rating)
 {
-	if (!streq(dun->profile->name, "classic") && (one_in_(2)))
-		return build_vault_type(c, centre, "Lesser vault (new)");
-	return build_vault_type(c, centre, "Lesser vault");
+	return build_vault_type(c, centre, "Lesser vault (new)", "Lesser vault");
 }
 
 
@@ -2587,9 +2586,7 @@ bool build_lesser_vault(struct chunk *c, struct loc centre, int rating)
  */
 bool build_medium_vault(struct chunk *c, struct loc centre, int rating)
 {
-	if (!streq(dun->profile->name, "classic") && (one_in_(2)))
-		return build_vault_type(c, centre, "Medium vault (new)");
-	return build_vault_type(c, centre, "Medium vault");
+	return build_vault_type(c, centre, "Medium vault (new)", "Medium vault");
 }
 
 
@@ -2641,10 +2638,7 @@ bool build_greater_vault(struct chunk *c, struct loc centre, int rating)
 	/* Non-classic profiles need to adjust the probability */
 	if (!streq(dun->profile->name, "classic") && !one_in_(3)) return false;
 
-	if (!streq(dun->profile->name, "classic") && (one_in_(2))) {
-		return build_vault_type(c, centre, "Greater vault (new)");
-	}
-	return build_vault_type(c, centre, "Greater vault");
+	return build_vault_type(c, centre, "Greater vault (new)", "Greater vault");
 }
 
 
