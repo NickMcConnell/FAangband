@@ -997,8 +997,8 @@ static struct player_upkeep TEST_DATA test_player_upkeep = {
 
 	.command_wrk = 0,
 
-	.create_up_stair = 0,
-	.create_down_stair = 0,
+	.path_coord = 0,
+	.create_stair = 0,
 
 	.running = 0,
 	.running_withpathfind = 0,
@@ -1096,6 +1096,10 @@ static struct player TEST_DATA test_player = {
 	.au = 500,
 	.max_depth = 10,
 	.depth = 6,
+	.recall = { 0, 0, 0, 0 },
+	.recall_pt = 0,
+	.stage = 0,
+	.last_stage = 0,
 	.max_lev = 3,
 	.lev = 3,
 	.max_exp = 100,

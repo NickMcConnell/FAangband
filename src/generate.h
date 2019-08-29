@@ -259,6 +259,16 @@ struct chunk *lair_gen(struct player *p, int min_height, int min_width);
 struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width);
 struct chunk *arena_gen(struct player *p, int min_height, int min_width);
 
+/* gen-wilderness.c */
+struct chunk *plain_gen(struct player *p, int height, int width);
+struct chunk *mtn_gen(struct player *p, int height, int width);
+struct chunk *mtntop_gen(struct player *p, int height, int width);
+struct chunk *forest_gen(struct player *p, int height, int width);
+struct chunk *swamp_gen(struct player *p, int height, int width);
+struct chunk *desert_gen(struct player *p, int height, int width);
+struct chunk *river_gen(struct player *p, int height, int width);
+struct chunk *valley_gen(struct player *p, int height, int width);
+
 /* gen-chunk.c */
 struct chunk *chunk_write(struct chunk *c);
 void chunk_list_add(struct chunk *c);
@@ -321,6 +331,7 @@ bool find_empty_range(struct chunk *c, struct loc *grid, struct loc top_left,
 bool find_nearby_grid(struct chunk *c, struct loc *grid, struct loc centre,
 					  int yd, int xd);
 void correct_dir(struct loc *offset, struct loc grid1, struct loc grid2);
+void adjust_dir(struct loc *offset, struct loc grid1, struct loc grid2);
 void rand_dir(struct loc *offset);
 void new_player_spot(struct chunk *c, struct player *p);
 void place_object(struct chunk *c, struct loc grid, int level, bool good,

@@ -1207,8 +1207,7 @@ void player_place(struct chunk *c, struct player *p, struct loc grid)
 	square_set_mon(c, grid, -1);
 
 	/* Clear stair creation */
-	p->upkeep->create_down_stair = false;
-	p->upkeep->create_up_stair = false;
+	p->upkeep->create_stair = 0;
 }
 
 

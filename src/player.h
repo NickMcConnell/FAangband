@@ -455,10 +455,10 @@ struct player_upkeep {
 							 * inventory listings when offering
 							 * a choice.  See obj-ui.c */
 
-	bool create_up_stair;	/* Create up stair on next level */
-	bool create_down_stair;	/* Create down stair on next level */
 	bool light_level;		/* Level is to be lit on creation */
 	bool arena_level;		/* Current level is an arena */
+    int path_coord;			/**< Records where the exit path was */
+	int create_stair;		/* Create defined stair on next level */
 
 	int resting;			/* Resting counter */
 
@@ -504,6 +504,11 @@ struct player {
 	s16b max_depth;	/* Max depth */
 	s16b recall_depth;	/* Recall depth */
 	s16b depth;		/* Cur depth */
+
+    s16b recall[4];	/**< Recall points */
+    s16b recall_pt;	/**< Which recall point is active */
+    s16b stage;		/**< Current stage */
+    s16b last_stage;	/**< Previous stage */
 
 	s16b max_lev;	/* Max level */
 	s16b lev;		/* Cur level */

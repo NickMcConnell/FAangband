@@ -34,7 +34,7 @@ enum topography {
 };
 
 struct level {
-	int danger;
+	int depth;
 	enum locality locality;
 	enum topography topography;
 	char *north;

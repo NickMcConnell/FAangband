@@ -784,7 +784,7 @@ static enum parser_error parse_world_map(struct parser *p) {
 
 static enum parser_error parse_world_level(struct parser *p) {
 	const char *l_name = parser_getsym(p, "locality");
-	const int danger = parser_getint(p, "danger");
+	const int depth = parser_getint(p, "depth");
 	const char *t_name = parser_getsym(p, "topography");
 	struct level_map *map = parser_priv(p);
 	struct level *lev;
@@ -804,7 +804,7 @@ static enum parser_error parse_world_level(struct parser *p) {
 	if (grab_name("locality", l_name, localities, N_ELEMENTS(localities), &i))
 		return PARSE_ERROR_INVALID_LOCALITY;
 	lev->locality = i;
-	lev->danger = danger;
+	lev->depth = depth;
 	if (grab_name("topography", t_name, topography, N_ELEMENTS(topography), &i))
 		return PARSE_ERROR_INVALID_LOCALITY;
 	lev->topography = i;
@@ -825,15 +825,15 @@ static enum parser_error parse_world_level(struct parser *p) {
 
 static enum parser_error parse_world_north(struct parser *p) {
 	const char *l_name = parser_getsym(p, "locality");
-	const int danger = parser_getint(p, "danger");
+	const int depth = parser_getint(p, "depth");
 	struct level_map *map = parser_priv(p);
 	struct level *lev = &map->levels[map->num_levels - 1];
 	int i;
 
 	if (grab_name("locality", l_name, localities, N_ELEMENTS(localities), &i))
 		return PARSE_ERROR_INVALID_LOCALITY;
-	if (danger)
-		lev->north = string_make(format("%s %d", locality_name(i), danger));
+	if (depth)
+		lev->north = string_make(format("%s %d", locality_name(i), depth));
 	else
 		lev->north = string_make(format("%s Town", locality_name(i)));
 
@@ -842,15 +842,15 @@ static enum parser_error parse_world_north(struct parser *p) {
 
 static enum parser_error parse_world_east(struct parser *p) {
 	const char *l_name = parser_getsym(p, "locality");
-	const int danger = parser_getint(p, "danger");
+	const int depth = parser_getint(p, "depth");
 	struct level_map *map = parser_priv(p);
 	struct level *lev = &map->levels[map->num_levels - 1];
 	int i;
 
 	if (grab_name("locality", l_name, localities, N_ELEMENTS(localities), &i))
 		return PARSE_ERROR_INVALID_LOCALITY;
-	if (danger)
-		lev->east = string_make(format("%s %d", locality_name(i), danger));
+	if (depth)
+		lev->east = string_make(format("%s %d", locality_name(i), depth));
 	else
 		lev->east = string_make(format("%s Town", locality_name(i)));
 
@@ -859,15 +859,15 @@ static enum parser_error parse_world_east(struct parser *p) {
 
 static enum parser_error parse_world_south(struct parser *p) {
 	const char *l_name = parser_getsym(p, "locality");
-	const int danger = parser_getint(p, "danger");
+	const int depth = parser_getint(p, "depth");
 	struct level_map *map = parser_priv(p);
 	struct level *lev = &map->levels[map->num_levels - 1];
 	int i;
 
 	if (grab_name("locality", l_name, localities, N_ELEMENTS(localities), &i))
 		return PARSE_ERROR_INVALID_LOCALITY;
-	if (danger)
-		lev->south = string_make(format("%s %d", locality_name(i), danger));
+	if (depth)
+		lev->south = string_make(format("%s %d", locality_name(i), depth));
 	else
 		lev->south = string_make(format("%s Town", locality_name(i)));
 
@@ -876,15 +876,15 @@ static enum parser_error parse_world_south(struct parser *p) {
 
 static enum parser_error parse_world_west(struct parser *p) {
 	const char *l_name = parser_getsym(p, "locality");
-	const int danger = parser_getint(p, "danger");
+	const int depth = parser_getint(p, "depth");
 	struct level_map *map = parser_priv(p);
 	struct level *lev = &map->levels[map->num_levels - 1];
 	int i;
 
 	if (grab_name("locality", l_name, localities, N_ELEMENTS(localities), &i))
 		return PARSE_ERROR_INVALID_LOCALITY;
-	if (danger)
-		lev->west = string_make(format("%s %d", locality_name(i), danger));
+	if (depth)
+		lev->west = string_make(format("%s %d", locality_name(i), depth));
 	else
 		lev->west = string_make(format("%s Town", locality_name(i)));
 
@@ -893,15 +893,15 @@ static enum parser_error parse_world_west(struct parser *p) {
 
 static enum parser_error parse_world_up(struct parser *p) {
 	const char *l_name = parser_getsym(p, "locality");
-	const int danger = parser_getint(p, "danger");
+	const int depth = parser_getint(p, "depth");
 	struct level_map *map = parser_priv(p);
 	struct level *lev = &map->levels[map->num_levels - 1];
 	int i;
 
 	if (grab_name("locality", l_name, localities, N_ELEMENTS(localities), &i))
 		return PARSE_ERROR_INVALID_LOCALITY;
-	if (danger)
-		lev->up = string_make(format("%s %d", locality_name(i), danger));
+	if (depth)
+		lev->up = string_make(format("%s %d", locality_name(i), depth));
 	else
 		lev->up = string_make(format("%s Town", locality_name(i)));
 
@@ -910,15 +910,15 @@ static enum parser_error parse_world_up(struct parser *p) {
 
 static enum parser_error parse_world_down(struct parser *p) {
 	const char *l_name = parser_getsym(p, "locality");
-	const int danger = parser_getint(p, "danger");
+	const int depth = parser_getint(p, "depth");
 	struct level_map *map = parser_priv(p);
 	struct level *lev = &map->levels[map->num_levels - 1];
 	int i;
 
 	if (grab_name("locality", l_name, localities, N_ELEMENTS(localities), &i))
 		return PARSE_ERROR_INVALID_LOCALITY;
-	if (danger)
-		lev->down = string_make(format("%s %d", locality_name(i), danger));
+	if (depth)
+		lev->down = string_make(format("%s %d", locality_name(i), depth));
 	else
 		lev->down = string_make(format("%s Town", locality_name(i)));
 
@@ -929,14 +929,14 @@ struct parser *init_parse_world(void) {
 	struct parser *p = parser_new();
 
 	parser_reg(p, "map str mapname", parse_world_map);
-	parser_reg(p, "level sym locality int danger sym topography",
+	parser_reg(p, "level sym locality int depth sym topography",
 			   parse_world_level);
-	parser_reg(p, "north sym locality int danger", parse_world_north);
-	parser_reg(p, "east sym locality int danger", parse_world_east);
-	parser_reg(p, "south sym locality int danger", parse_world_south);
-	parser_reg(p, "west sym locality int danger", parse_world_west);
-	parser_reg(p, "up sym locality int danger", parse_world_up);
-	parser_reg(p, "down sym locality int danger", parse_world_down);
+	parser_reg(p, "north sym locality int depth", parse_world_north);
+	parser_reg(p, "east sym locality int depth", parse_world_east);
+	parser_reg(p, "south sym locality int depth", parse_world_south);
+	parser_reg(p, "west sym locality int depth", parse_world_west);
+	parser_reg(p, "up sym locality int depth", parse_world_up);
+	parser_reg(p, "down sym locality int depth", parse_world_down);
 	return p;
 }
 

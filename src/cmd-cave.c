@@ -81,8 +81,7 @@ void do_cmd_go_up(struct command *cmd)
 	msgt(MSG_STAIRS_UP, "You enter a maze of up staircases.");
 
 	/* Create a way back */
-	player->upkeep->create_up_stair = false;
-	player->upkeep->create_down_stair = true;
+	player->upkeep->create_stair = FEAT_MORE;
 	
 	/* Change level */
 	dungeon_change_level(player, ascend_to);
@@ -123,8 +122,7 @@ void do_cmd_go_down(struct command *cmd)
 	msgt(MSG_STAIRS_DOWN, "You enter a maze of down staircases.");
 
 	/* Create a way back */
-	player->upkeep->create_up_stair = true;
-	player->upkeep->create_down_stair = false;
+	player->upkeep->create_stair = FEAT_LESS;
 
 	/* Change level */
 	dungeon_change_level(player, descend_to);

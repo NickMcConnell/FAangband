@@ -2,13 +2,13 @@
 
 # records are
 # map:mapname
-# level:locality:danger:topography
-# north:locality:danger
-# east:locality:danger
-# south:locality:danger
-# west:locality:danger
-# up:locality:danger
-# down:locality:danger
+# level:locality:depth:topography
+# north:locality:depth
+# east:locality:depth
+# south:locality:depth
+# west:locality:depth
+# up:locality:depth
+# down:locality:depth
 
 map:Extended Wilderness
 

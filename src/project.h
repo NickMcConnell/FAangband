@@ -91,6 +91,7 @@ enum
 	PROJECT_ARC   = 0x0400,
 	PROJECT_PLAY  = 0x0800,
 	PROJECT_INFO  = 0x1000,
+	PROJECT_ROCK  = 0x2000,
 };
 
 /* Display attrs and chars */

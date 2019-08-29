@@ -102,6 +102,7 @@ ANGFILES = \
 	gen-monster.o \
 	gen-room.o \
 	gen-util.o \
+	gen-wilderness.o \
 	grafmode.o \
 	guid.o \
 	init.o \

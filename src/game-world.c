@@ -91,6 +91,10 @@ const byte extract_energy[200] =
 };
 
 /**
+ * ------------------------------------------------------------------------
+ * Map-related functions
+ * ------------------------------------------------------------------------ */
+/**
  * List of { locality, name } pairs.
  */
 static const grouper locality_names[] =
@@ -115,8 +119,8 @@ char *level_name(struct level *lev)
 {
 	char *name;
 
-	if (lev->danger) {
-		name = format("%s %d", locality_name(lev->locality), lev->danger);
+	if (lev->depth) {
+		name = format("%s %d", locality_name(lev->locality), lev->depth);
 	} else {
 		name = format("%s Town", locality_name(lev->locality));
 	}
@@ -146,13 +150,17 @@ struct level *level_by_depth(int depth)
 	int i;
 	for (i = 0; i < world->num_levels; i++) {
 		struct level *lev = &world->levels[i];
-		if (lev->danger == depth) {
+		if (lev->depth == depth) {
 			return lev;
 		}
 	}
 	return NULL;
 }
 
+/**
+ * ------------------------------------------------------------------------
+ * Functions for handling turn-based events
+ * ------------------------------------------------------------------------ */
 /**
  * Say whether it's daytime or not
  */
@@ -557,6 +565,10 @@ static void update_scent(void)
 	}
 }
 
+/**
+ * ------------------------------------------------------------------------
+ * Main turn-by-turn processing functions
+ * ------------------------------------------------------------------------ */
 /**
  * Handle things that need updating once every 10 game turns
  */
