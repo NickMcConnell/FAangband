@@ -32,6 +32,9 @@
 #    * - treasure vein
 #    : - rubble
 #    ` - lava
+#    / - water
+#    ; - tree
+#    ( - sand dune
 #    & - treasure or trap
 #    + - secret door
 #    ^ - trap
@@ -3977,4 +3980,1023 @@ D:    %%%@@@@^@@@@@;@@;@@@@@^@@@@%%%
 D:      %%%%@@@@@;;;@*;;;@@@@@%%%%      
 D:        %%%%%%@@@@@@@@%@%%%%%         
 D:             %%%%%%%%%%%%             
+
+############ Wilderness "vaults" ################
+
+
+### Plains - lesser ###
+
+name:Snakepit
+type:Plains lesser
+rating:3
+rows:7
+columns:16
+min-depth:10
+max-depth:0
+D: :::%%,:%%::%%; 
+D:%.J.%%%::%J%.J%;
+D::::%J.JJ%%.:..%;
+D::J:%%.%%..::...%
+D:%::%,%..J.:....%
+D:%:%%,J..::..J..%
+D: ::%%%:::%%%::% 
+
+name:Plainsmen camp
+type:Plains lesser
+rating:5
+rows:8
+columns:8
+min-depth:10
+max-depth:30
+D:^      ^
+D:p  ..  p
+D:.pp||pp 
+D: .]pp]. 
+D: .~pp!. 
+D: pp_-pp 
+D:p  ..  p
+D:^      ^
+
+name:Poorly guarded stash
+type:Plains lesser
+rating:5
+rows:6
+columns:10
+min-depth:10
+max-depth:20
+D:   ;;;;   
+D:  ;;||;;  
+D:  ;$$~|;; 
+D:  .;;;];;;
+D: :...;];; 
+D:p.....;;  
+
+name:Abandoned house
+type:Plains lesser
+rating:2
+rows:6
+columns:10
+min-depth:10
+max-depth:30
+D:%%%%%%%%%%
+D:%1.+.....%
+D:%..#....^+
+D:%+##+#...%
+D:%|4#,#...%
+D:%%%%%%%%%%
+
+name:Bat cave
+type:Plains lesser
+rating:5
+rows:11
+columns:12
+min-depth:20
+max-depth:30
+D:   %%%      
+D:  ;#.###:   
+D:%##bbb..### 
+D:%bbb###;....
+D:;#bb..:##.# 
+D:%#...##b#.# 
+D:%#:.bb##.## 
+D: .##..###...
+D:  ###..###% 
+D:     ##.....
+D:      %%%%. 
+
+name:Birds nest
+type:Plains lesser
+rating:5
+rows:5
+columns:7
+min-depth:20
+max-depth:0
+D: ;;;;  
+D:;BBBB;;
+D:;BBBBB;
+D:;BBBB; 
+D: ;;;;  
+
+name:Orc raid
+type:Plains lesser
+rating:5
+rows:12
+columns:12
+min-depth:20
+max-depth:0
+D:   ////.    
+D: ooo,/,oo.  
+D:  ooo,,...  
+D: ##o.,,oo.. 
+D:%#oooo...;..
+D:%###ooo..;;.
+D:%#ooooooo.;.
+D: ##oooo....;
+D:  ##oooo....
+D:  ~!..ooo.:.
+D:  ooooooo   
+D:    ooo|]|  
+
+### Plains - greater ###
+
+name:Orc Town
+type:Plains greater
+rating:10
+rows:21
+columns:21
+min-depth:10
+max-depth:40
+D:%oooo;;;;;o#...^.$.1%
+D:%o##oT;;;;o#######.#%
+D:%###o..;;;oooooo`#$6%
+D:%]5#oo./ooooo.ooo###:
+D:%$####..//oo...:$::::
+D:%ooo7#..///...:3$o:::
+D:%###^#...//ooooo:**::
+D:%..oo#..oo/ooooo$**::
+D:%o####..o/////oo:$:* 
+D:%..o.#..o/////oo:o$$ 
+D:%###o#..o/////.::ooo^
+D:%ooo^.o...oo///.$ooo^
+D:%.#^^oooo./..//.o$...
+D:%###.oooo........oo.%
+D: ..3..oo..oooo..;;.#%
+D:%###########o##..T.#%
+D:%C.o+...+.oo..#ooo.T%
+D:%...##+##+####+###o#%
+D:%C..#..#CC..C#C..#.o.
+D:%CCC#CC#C...C#..C#...
+D:%%%%%%%%%%%%%%%%%%%%%
+
+### Mountains - lesser ###
+
+name:Troll hole
+type:Mountains lesser
+rating:0
+rows:8
+columns:23
+min-depth:20
+max-depth:40
+D:  %%%%%%%%%%           
+D: %%|..$$.T.%%%         
+D:%%.T######...%%%%%%%%  
+D:%]..:&..T#.T...##^&.%% 
+D:%%%..T#..:....:..^T.T%%
+D:  %%%%|.T...T.&.#:#..^ 
+D:     %%%%%%%|#.T..#%%%%
+D:           %%%%%%%%%   
+
+name:Crater
+type:Mountains lesser
+rating:0
+rows:9
+columns:16
+min-depth:0
+max-depth:0
+D:   :%%%%%%%%:   
+D:  %%...uu...%%  
+D: %%..#.``u#..%% 
+D:%%..#"````=#..%%
+D: ..#u``````.#u. 
+D:%%..#=````u#..%%
+D: %%.u````.#..%% 
+D:  %%`````"..%%  
+D:   :%%%%%%%%:   
+
+name:Mountain giants
+type:Mountains lesser
+rating:3
+rows:8
+columns:15
+min-depth:20
+max-depth:26
+D:      %%%%%%%  
+D:    %%..=PP..%%
+D:   %$PP..//..~%
+D:  %...;;../..%%
+D: :.../.;PPP.%% 
+D::...///...,,%  
+D::PP../P...%%   
+D::::%%%%%%%     
+
+name:Reptiles
+type:Mountains lesser
+rating:3
+rows:11
+columns:9
+min-depth:10
+max-depth:0
+D:  ....   
+D:  ..R..  
+D:  .ccc.: 
+D:  ..c...%
+D:   ..JJ.%
+D:  .....% 
+D: ..RR.%  
+D: ...JJ.% 
+D::..RR...%
+D:%......: 
+D:%..R...  
+
+name:Tricksy
+type:Mountains lesser
+rating:3
+rows:7
+columns:7
+min-depth:10
+max-depth:20
+D:%%%;%%%
+D: %h:h% 
+D:  %~%  
+D:  :::  
+D:  %-%  
+D: %h;h% 
+D:%%%:%%%
+
+name:Ered Gorgoroth
+type:Mountains lesser
+rating:5
+rows:11
+columns:12
+min-depth:31
+max-depth:35
+D: ;;;.;;;;   
+D:;;SS..C;;;  
+D: ;;S....B;; 
+D: ;;;z...1;;;
+D:;;;&....G.; 
+D:;;S......;; 
+D: ;SS...G;;  
+D: ;;&......; 
+D:;;S......;; 
+D: ;;;;;;     
+D:       ;;;  
+
+name:Small mine
+type:Mountains lesser
+rating:7
+rows:10
+columns:8
+min-depth:15
+max-depth:30
+D: %.%%   
+D:%1^.#%  
+D:%R.###% 
+D:%^.####%
+D:%=.&h:::
+D:*%|..##:
+D:%**$h$:%
+D:%##*::% 
+D: %#**:% 
+D:  %%%%  
+
+### Mountains - greater ###
+
+name:Earth creatures
+type:Mountains greater
+rating:15
+rows:22
+columns:22
+min-depth:15
+max-depth:50
+D:    ::: :::           
+D:   ::g:::.::          
+D:  ::gg::..g:::        
+D: ::......g...::       
+D: :gg gg g g gg::      
+D: :g##..g.1.g.gg:      
+D:::g###g..11..g:::     
+D::g.#####.....g##:     
+D::.gg####...1####::    
+D:::::###..gg######:::: 
+D:   :###....######::|: 
+D:   :=..g.2.######"P]: 
+D:   :.g.g.:.:.####:P:: 
+D:   :#gg.g.ggg.:::O3:  
+D:   :##..gg.ggg.::OP:: 
+D:  ::##*g...g...:O].P: 
+D::::####.gggg:.:..3.g::
+D::@@@**O..g..##..:.:..:
+D::@5#*#.O.1.####ggg..::
+D::@@@*#O....####gg:::: 
+D::::#OO.:::.:::::::    
+D:  :::::: :::          
+
+### Forest - lesser ###
+
+name:Forest village
+type:Forest lesser
+rating:2
+rows:11
+columns:24
+min-depth:0
+max-depth:0
+D:  %%%%%%%%%%%%%%%%%%%%%%
+D:  %....................%
+D:%%%##..;...#####;.######
+D:%.#.+......#p..#..#..#1#
+D:%.#1#......##+##..#..+##
+D:%.####+......^....+^...#
+D:%.#h..#..##+##....#|..]#
+D:%.#..&#..#..1#....######
+D:%%%####..#####...;......
+D:  %.....;...............
+D:  %%%%%%%%%%%%%%%%%%%%%%
+
+name:Hybrid vigour
+type:Forest lesser
+rating:3
+rows:11
+columns:20
+min-depth:0
+max-depth:0
+D:      ;;;;;;        
+D:   ;;;;;;;;;;;;;;   
+D: ;;;..H.;;;         
+D:;...;;;;.$.;;;;     
+D: ;;H.;;....;;H.;;   
+D:;;...............;;;
+D: ;;....;;;;H.....;  
+D:;;;;H...33;;;....;;;
+D:   ;;;...;;;;;;H.;  
+D:  ;;...H;;;...;;    
+D:    ;;;;;;;;;;      
+
+name:Flock
+type:Forest lesser
+rating:0
+rows:5
+columns:7
+min-depth:0
+max-depth:0
+D: ;;;;  
+D:;bBBB;;
+D:;BbbBB;
+D:;BBbb; 
+D: ;;;;  
+
+name:Orc raid
+type:Forest lesser
+rating:5
+rows:12
+columns:12
+min-depth:15
+max-depth:30
+D:.;;////;;;;.
+D:.ooo,/,oo;..
+D:;;ooo,,;;...
+D:.##o.,,oo;;.
+D:%#oooo;;;;..
+D:%###ooo..;;.
+D:%#ooooooo;;.
+D:;##oooo.;;;;
+D:;;##oooo;;..
+D:;^~!;;ooo;:.
+D:;;ooooooo;;.
+D:;;^;ooo|]|;;
+
+name:Taur-Nu-Fuin
+type:Forest lesser
+rating:8
+rows:12
+columns:12
+min-depth:30
+max-depth:50
+D:   ;;;;^;;  
+D:  ;;//..JJ; 
+D:  ;;;//..:;;
+D: ;;///:..;;;
+D:;////;;..;; 
+D:;;//G|2#;;; 
+D: ;;/34##.;;;
+D:;;;.C...BB;;
+D:;;.#..ZZW;;;
+D:;;###..ZZW.;
+D:;;;;Gz.ZZZ;;
+D: ;;;;;.^;;; 
+
+name:Sindarin storage
+type:Forest lesser
+rating:10
+rows:5
+columns:5
+min-depth:10
+max-depth:19
+D:;;;;;
+D:;####
+D:;#~~#
+D:;#^^#
+D:;#+##
+
+name:Travellers
+type:Forest lesser
+rating:5
+rows:8
+columns:8
+min-depth:10
+max-depth:30
+D:  ;;;;  
+D: ;;pp=; 
+D:;p~$p,;;
+D:;;]ppp..
+D:..;;p;;.
+D: ..;p|;.
+D:  ;;;pp;
+D:   ;;;; 
+
+### Forest - greater ###
+
+name:Glade camp
+type:Forest greater
+rating:15
+rows:13
+columns:25
+min-depth:0
+max-depth:0
+D: /;;;;;;;;; ;;;;;;;;;;   
+D:;;/.;;...4#....:..##..;; 
+D:;;;//4.;.....:.4:.;.4.;.;
+D:;.;4./;;.;.4....:....:.#;
+D: ;;;./.4;..;.....;:..;;  
+D:  ;;.4/.../.4......4.:.; 
+D: ;4.;.;/////;?.4;..;...#;
+D:;#.....;..///6;...;.4...;
+D:;#;.4;...4;//..;///;...4;
+D:;..:;.;?;...;///1../;;.; 
+D:;;...4:...;..4..4.;./4;  
+D:;;;;?#...4;;;..;..../.;;;
+D: ;;;;;;;;;  ;;;;;;;;;/;; 
+
+### Swamp - lesser ###
+
+name:Quylthulg nest
+type:Swamp lesser
+rating:5
+rows:9
+columns:12
+min-depth:40
+max-depth:45
+D:///;;;;;;///
+D://;;///;Q;//
+D:/;//Q/;;;/;/
+D:;Q./;//Q;//;
+D:;///Q44Q///;
+D:;/Q;;//;/;;;
+D:/;//..;;/;;/
+D://;/;;;Q/;//
+D:///;;;;;;///
+
+name:Midgewater
+type:Swamp lesser
+rating:0
+rows:7
+columns:16
+min-depth:10
+max-depth:0
+D:      ....      
+D:   .../I//..    
+D:..//////////..  
+D:.///I/////I.//..
+D:./////I//....   
+D:../////////...  
+D:  .........     
+
+name:Jelly mold
+type:Swamp lesser
+rating:3
+rows:7
+columns:16
+min-depth:10
+max-depth:0
+D:     ;;;;;      
+D:   ;;./m./;;    
+D:..;;/.j/.../;.  
+D:.;jj./..//m.;;..
+D:.;;/..m./j;;.   
+D:..;;;m/;;;;...  
+D:  ...;;;...     
+
+name:Copse
+type:Swamp lesser
+rating:3
+rows:6
+columns:4
+min-depth:10
+max-depth:0
+D: ;; 
+D:;;1;
+D:;4;;
+D: ;;;
+D:;,; 
+D:;;  
+
+name:Turbulent pond
+type:Swamp lesser
+rating:2
+rows:7
+columns:7
+min-depth:10
+max-depth:0
+D: v//// 
+D: //////
+D:////// 
+D://///v 
+D://////,
+D: //v///
+D: //  / 
+
+name:Sank into the swamp
+type:Swamp lesser
+rating:5
+rows:10
+columns:12
+min-depth:40
+max-depth:0
+D:%%%      %%%
+D:%|%%%%%%%%"%
+D: %/.2..///% 
+D: %1/////.^% 
+D: %/...///// 
+D: %///.....% 
+D: %.////...% 
+D:%%..3////.%%
+D:%]%%%%%%%%=%
+D:%%%      %%%
+
+name:Battle debris
+type:Swamp lesser
+rating:5
+rows:7
+columns:10
+min-depth:40
+max-depth:0
+D:;//;      
+D:///.;3    
+D: ;//1.;   
+D:  =/;]$/; 
+D:  ;;4////;
+D:     |:///
+D:       ;/ 
+
+### Swamp - greater ###
+
+name:Gross
+type:Swamp greater
+rating:20
+rows:15
+columns:20
+min-depth:40
+max-depth:45
+D:       ;;;;;;       
+D:     ;;i....i;;     
+D:    ;;j..//..j;;    
+D:   ;;m..////..m;;   
+D:  ;;;a..////..c;;;  
+D: ;;;Q.///;;///.I;;; 
+D: ;;..///;;;;///..;; 
+D:;;,z.//;;99;;//.z,;;
+D: ;;..///;;;;///..;; 
+D: ;;;I.///;;///.Q;;; 
+D:  ;;;c..////..a;;;  
+D:   ;;m..////..m;;   
+D:    ;;j..//..j;;    
+D:     ;;i....i;;     
+D:       ;;;;;;       
+
+name:Last stand
+type:Swamp greater
+rating:10
+rows:20
+columns:10
+min-depth:40
+max-depth:45
+D: ///     ;
+D: //     ; 
+D://.22...3/
+D:/$..56..//
+D://45,.6///
+D: //||]//  
+D:  //]|/;  
+D:   ////;  
+D:   ;//;;; 
+D:    ///;  
+D:    ///;  
+D:    //;;  
+D:   //;;   
+D:  //;;    
+D:   //     
+D:  ///     
+D:%#//      
+D:%#/       
+D:%//       
+D://        
+
+### Desert - lesser ###
+
+name:Dragon's Nest
+type:Desert lesser
+rating:5
+rows:11
+columns:15
+min-depth:50
+max-depth:60
+D:%%%%%%%%%%%%%%%
+D:%d@@@@@.@@@@@4%
+D:%@.@@@...@@@.@%
+D:%@@.@d....@d@@%
+D:%@@@..$$$..@@@%
+D: .....$d$..... 
+D:%@@@.d$$$..@@@%
+D:%@@.@...d.@.@@%
+D:%@.@@@...@@@.@%
+D:%4@@@@@.@@@@@d%
+D:%%%%%%%%%%%%%%%
+
+name:Unquiet dead
+type:Desert lesser
+rating:3
+rows:11
+columns:12
+min-depth:40
+max-depth:60
+D: ::::::::   
+D:%:G::|###:::
+D:%##:::::#   
+D:  ##::G::## 
+D:%#]::]::**  
+D: ::G::::|:  
+D:  ###::     
+D:   ::##|##::
+D:    :####:  
+D:   ##G#]#   
+D:   :::::    
+
+name:Reptiles and Treasure
+type:Desert lesser
+rating:4
+rows:10
+columns:12
+min-depth:40
+max-depth:60
+D: ::::::::   
+D:%:J..*###:::
+D:%##...$:#   
+D: =##.c.."## 
+D:%#R..R::::  
+D: ::c....J:  
+D: #::#::     
+D: $.::##$##::
+D: ###::::#:  
+D:   ::n#~#   
+
+name:Roving band
+type:Desert lesser
+rating:2
+rows:6
+columns:6
+min-depth:40
+max-depth:60
+D:   pp:
+D: :phhp
+D:::pp3 
+D:  1hp 
+D:  ^phh
+D:    :p
+
+name:Carrion fowl
+type:Desert lesser
+rating:3
+rows:5
+columns:7
+min-depth:0
+max-depth:0
+D: ::;:  
+D:::BBB:;
+D:;BB..B:
+D:;BBBB: 
+D: ::    
+
+name:Picnic from Angband
+type:Desert lesser
+rating:3
+rows:10
+columns:10
+min-depth:0
+max-depth:0
+D:   ::::   
+D:  ::Oo::  
+D: ::POT4:: 
+D:::oobbP1::
+D::oTT32..::
+D::OO,,,4.: 
+D:::CC..5:: 
+D: :::..6:::
+D:  :.d...::
+D:   :::..: 
+
+name:Hellpit
+type:Desert lesser
+rating:5
+rows:9
+columns:10
+min-depth:0
+max-depth:0
+D:    ::    
+D:  ::::::  
+D: ::.CC.:: 
+D: :.J``-u::
+D:::.````4::
+D:::Qu``u.: 
+D: ::1UU1:: 
+D:  ::::::  
+D:    ::    
+
+### Desert - greater ###
+
+name:Volcano
+type:Desert greater
+rating:20
+rows:19
+columns:31
+min-depth:40
+max-depth:0
+D:         :::%%%%%%::::         
+D:      ::::..........1%%%:      
+D:    %%:...#....#....#...%%:    
+D:   %%1...4.....6.....4`...::   
+D:  ::.................``....::  
+D: %%.#....`...#.#.#..``.`..#.%% 
+D: :`..4......#..`U.#``...`4...: 
+D:%%.`.......#.``````#.........%%
+D:%...`.....#U```````9#.........:
+D::..#6`...#``````````.#....6#..%
+D::....``..`#9```````.#.........%
+D:%%....````.#U`````U#.........%%
+D: %1..4`.....#..``.#......4...: 
+D: %%.#``..`...#.#`#...`....#.%% 
+D:  ::............``......1..::  
+D:   ::....4.....6.``..4....%%   
+D:    %%%...#....#.``.#...:::    
+D:      :%%%........```%%%%      
+D:         :::::::%%%%%%         
+
+name:Oasis
+type:Desert greater
+rating:25
+rows:19
+columns:37
+min-depth:50
+max-depth:0
+D:          ###                        
+D:   ...T..#####.................      
+D:    .TT.####....;;....//.........    
+D:    ...###.....;....//////.;;....... 
+D:    ...#5.....;.../////;///..;...... 
+D:    ...#5......//////;;;;;///.;......
+D:     ..##.;..///////;;.0.;;///.;;....
+D:      ....;....//////;;.;//////.;... 
+D:..........;;;....//////;//////.;.....
+D:.###.......;;;..////////////...;.....
+D:##....//....;;;.....//////...........
+D: ##..////....;;.!......./............
+D:  ....//......;.pp...........###.....
+D:  ;;..........;;~,,..;;.....###..... 
+D:   ;....14....//..###.;....#####.... 
+D:     ;.......////###...;....###..... 
+D:       ..;...///.............##..    
+D:         ;.../.................      
+D:          .................          
+
+### River - lesser ###
+
+name:Lake
+type:River lesser
+rating:0
+rows:10
+columns:23
+min-depth:0
+max-depth:0
+D:.......1.../////.......
+D:....!///////////////...
+D:...//////////////////.1
+D:.!////////////////////.
+D:./////////////////////.
+D:./////////////////////.
+D:./////////////.//////!.
+D:;////////////!..////...
+D:;;////////..1...1......
+D:;;;%%%%%%..............
+
+name:Guardroom
+type:River lesser
+rating:2
+rows:8
+columns:8
+min-depth:0
+max-depth:0
+D:  %%%%  
+D: %%||%% 
+D:%%p&&]%%
+D:+^&23^%%
+D:%%^32&^+
+D:%%p&&]%%
+D: %%||%% 
+D:  %%%%  
+
+name:Orc raid
+type:River lesser
+rating:5
+rows:12
+columns:12
+min-depth:0
+max-depth:0
+D:   ////.    
+D: ooo,/,oo.  
+D:  ooo,,...  
+D: ##o.,,oo.. 
+D:%#oooo...;..
+D:%###ooo..;;.
+D:%#ooooooo.;.
+D: ##oooo....;
+D:  ##oooo....
+D:  ~!..ooo.:.
+D:  ooooooo   
+D:    ooo|]|  
+
+name:Outcrop
+type:River lesser
+rating:0
+rows:7
+columns:7
+min-depth:0
+max-depth:0
+D:  %%%  
+D: %##1% 
+D:%:#.%  
+D:%#B.:  
+D: %*4.;;
+D: *%#.J:
+D:   %%: 
+
+name:Billabong
+type:River lesser
+rating:0
+rows:7
+columns:5
+min-depth:10
+max-depth:20
+D: //; 
+D:  // 
+D: I///
+D: ///;
+D:J//p;
+D: /;;;
+D: /;; 
+
+name:Following Glaurung
+type:River lesser
+rating:5
+rows:7
+columns:10
+min-depth:20
+max-depth:0
+D:  :::::|.d
+D:  : ::$.;;
+D:   ::d.3;;
+D:   ;d=.;; 
+D:;;."d;    
+D:.;dd.;;   
+D:;;;...;;  
+
+name:Head for the hills
+type:River lesser
+rating:3
+rows:4
+columns:10
+min-depth:10
+max-depth:20
+D:  ,,ppp   
+D:3  pp3pppp
+D:C1...ppp  
+D:CC        
+
+### River - greater ###
+
+name:Water-Troll Swamp
+type:River greater
+rating:10
+rows:22
+columns:30
+min-depth:30
+max-depth:0
+D: %%%                          
+D:%@@@@@;//////////////////     
+D:%@TTT#.///////////////////    
+D:%@TTT#;.///////////////////   
+D:%@TTT#;..;;///////////;;////  
+D:%@TTT+/.;..;/////////;;;;//// 
+D:%@####..;.TT//.///////;///////
+D:  /;/..T;TT/T.//////////////; 
+D:   ;T;TT.T;/;;////////////;...
+D: ;;T..;T.;//./;//;/T.///./.T.:
+D:;.;TT..;TT/.//./T/T;.//././.;;
+D:..TT;.T.T/;.;/./.T/T/TT//T/;.;
+D://///TT;/;T;;T//T;///T;///T.T 
+D: ;;//T.T/TT;T..//TT./T./;T;.;.
+D:;;TTT.T./;..T;;.;//T.//;..//..
+D:......;/T.T;//...T//./...///.;
+D:...TT;/T.;TT///;TT;//T.;.//;.:
+D: .;T;/;....;///....//;..T....:
+D: ///..;.T.///;TT;..//;...     
+D:   ;.../..;//..T..T;//.;.     
+D:    ..//..T..;.....T.//.      
+D:     ;;;;%%%%%%::::;;;        
+
+### Generic - lesser ###
+
+name:Orc camp
+type:Wilderness lesser
+rating:0
+rows:6
+columns:14
+min-depth:10
+max-depth:20
+D:^o....||....o^
+D:o...oo.:oo]..o
+D: ]|.$oooo.^..$
+D:  ^.~oooo$.|  
+D:o.;.oo..oo...o
+D:^o]...|...].o^
+
+name:Warrior settlement
+type:Wilderness lesser
+rating:3
+rows:12
+columns:20
+min-depth:10
+max-depth:0
+D:::::::::::::::::::::
+D::..................:
+D::.#####..######....:
+D::.#hh|#..#|.h.+....:
+D::;#]..+..######...;:
+D: ;#..h#...........; 
+D: ;#####..........&; 
+D::;........#####...;:
+D::.###.....#hh.#....:
+D::.#h#.....#||.#....:
+D::.........#...+....:
+D:::::::::::::::::::::
+
+name:Treasure heap
+type:Wilderness lesser
+rating:5
+rows:10
+columns:12
+min-depth:30
+max-depth:0
+D:   ::::::   
+D:  ::    ::  
+D: ::      :: 
+D::: 123321 ::
+D::: 24$$42 ::
+D::: 3$55$3 ::
+D::: 3$55$3 ::
+D::: 24$$42 ::
+D::: 123321 ::
+D: ::      :: 
+D:  ::    ::  
+D:   ::::::   
+
+### Generic - greater ###
+
+name:Graveyard
+type:Wilderness greater
+rating:15
+rows:22
+columns:33
+min-depth:30
+max-depth:60
+D:  .............................. 
+D:  ................#.:.:.:.:.:.:. 
+D: ......^..z:b......z.s.....bs... 
+D: ............z....#.:.:s:.:.:.:. 
+D: ...G###..z.:.M....^.z...z...z...
+D:.....#$#....s:....#.#.#G#.#z#.#..
+D:.....#+#...:..............M......
+D:.........s..........#..z...###...
+D:........................#..+b#...
+D:..#.#3#.#.#....###....s....###...
+D:.......^.z.....#7#...............
+D:..:M:.:.:.#M...#b#...#.^..#......
+D:.....z...z.....#+#..z............
+D:..:.:.:.:.#............G.::..M...
+D:........G.........#####..z.:.:...
+D:..:.:.:.:.#..z....+s5s#..:^.s....
+D:...z.s............#####..s.:.:...
+D:..:.:.:.:.#...^.........z........
+D:...b....z..M..........z....s.....
+D:..:.:.:s:.#......^......#+##.^...
+D:..............J.........#b5#.... 
+D:   .....................%%%%..   
 
