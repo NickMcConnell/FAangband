@@ -312,6 +312,7 @@ bool feat_is_fiery(int feat);
 bool feat_is_no_flow(int feat);
 bool feat_is_no_scent(int feat);
 bool feat_is_smooth(int feat);
+bool feat_is_fall(int feat);
 
 /* SQUARE FEATURE PREDICATES */
 bool square_isfloor(struct chunk *c, struct loc grid);
@@ -340,6 +341,7 @@ bool square_isplayer(struct chunk *c, struct loc grid);
 bool square_isoccupied(struct chunk *c, struct loc grid);
 bool square_isknown(struct chunk *c, struct loc grid);
 bool square_isnotknown(struct chunk *c, struct loc grid);
+bool square_isfall(struct chunk *c, struct loc grid);
 
 /* SQUARE INFO PREDICATES */
 bool square_ismark(struct chunk *c, struct loc grid);

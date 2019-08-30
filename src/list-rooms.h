@@ -43,4 +43,7 @@ ROOM("River lesser",		12,		23,		lesser_vault)
 ROOM("River greater",		22,		30,		greater_vault)
 ROOM("Wilderness lesser",	12,		20,		lesser_vault)
 ROOM("Wilderness greater",	22,		33,		greater_vault)
+ROOM("Small web",			14,		16,		lesser_vault)
+ROOM("Medium web",			16,		16,		medium_vault)
+ROOM("Large web",			15,		31,		greater_vault)
 

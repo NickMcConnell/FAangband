@@ -722,10 +722,9 @@ static int populate(struct chunk *c, bool valley)
 	alloc_objects(c, SET_BOTH, TYP_GOLD, Rand_normal(z_info->both_gold_av, 3),
 				 c->depth, ORIGIN_FLOOR);
 
-	/* Clear "temp" flags. */
+	/* Paranoia - remake the dungeon walls */
 	for (grid.y = 0; grid.y < c->height; grid.y++) {
 		for (grid.x = 0; grid.x < c->width; grid.x++) {
-			/* Paranoia - remake the dungeon walls */
 			if ((grid.y == 0) || (grid.x == 0) || (grid.y == c->height - 1)
 				|| (grid.x == c->width - 1))
 				square_set_feat(c, grid, FEAT_PERM);
@@ -754,6 +753,72 @@ static void mtn_connect(struct chunk *c, struct loc grid1, struct loc grid2)
 		square_set_feat(c, gp[j], FEAT_ROAD);
 		square_mark(c, gp[j]);
 	}
+}
+
+/**
+ * Attempt to place a web of the required type
+ */
+bool place_web(struct chunk *c, struct player *p, char *type)
+{
+	struct vault *v;
+	int i;
+	struct loc grid, top_left, centre;
+
+	bool no_good = false;
+
+	/* Choose a random web */
+	v = random_vault(c->depth, type, NULL);
+
+	/* Look for somewhere to put it */
+	for (i = 0; i < 25; i++) {
+		/* Random top left corner */
+		top_left.y = randint1(c->height - 1 - v->hgt);
+		top_left.x = randint1(c->width - 1 - v->wid);
+
+		/* Check to see if it will fit (only avoid big webs and edges) */
+		for (grid.y = top_left.y; grid.y < top_left.y + v->hgt; grid.y++) {
+			for (grid.x = top_left.x; grid.x < top_left.x + v->wid; grid.x++) {
+				if (square_isfall(c, grid) || square_isperm(c, grid)
+					|| square_ispath(c, grid) || square_isplayer(c, grid)
+					|| square_isvault(c, grid))
+					no_good = true;
+
+				/* Try again, or stop if we've found a place */
+				if (no_good) {
+					no_good = false;
+					continue;
+				} else {
+					break;
+				}
+			}
+		}
+	}
+
+	/* Give up if we couldn't find anywhere */
+	if (no_good) return false;
+
+	/* Build the vault */
+	centre = loc(grid.x + v->wid / 2, grid.y + v->hgt / 2);
+	if (!build_vault(c, centre, v)) return false;
+
+	/* Replace granite by webbed trees */
+	for (grid.y = top_left.y; grid.y < top_left.y + v->hgt; grid.y++) {
+		for (grid.x = top_left.x; grid.x < top_left.x + v->wid; grid.x++) {
+			if (square_iswall(c, grid)) {
+				if (one_in_(2)) {
+					square_set_feat(c, grid, FEAT_TREE);
+				} else {
+					square_set_feat(c, grid, FEAT_TREE2);
+				}
+				square_add_web(c, grid);
+			}
+		}
+	}
+
+	/* Boost the rating */
+	c->mon_rating += v->rat;
+
+	return true;
 }
 
 /**
@@ -1699,87 +1764,6 @@ struct chunk *river_gen(struct player *p, int height, int width)
 
 	return c;
 }
-#if 0
-/**
- * Attempt to place a web of the required type
- */
-bool place_web(int type)
-{
-	struct vault *v_ptr;
-	int i, y, x = c->width / 2, cy, cx;
-	int *v_idx = malloc(z_info->v_max * sizeof(v_idx));
-	int v_cnt = 0;
-
-	bool no_good = false;
-
-	/* Examine each web */
-	for (i = 0; i < z_info->v_max; i++) {
-		/* Access the web */
-		v_ptr = &v_info[i];
-
-		/* Accept each web that is acceptable for this depth. */
-		if ((v_ptr->typ == type) && (v_ptr->min_lev <= p_ptr->depth)
-			&& (v_ptr->max_lev >= p_ptr->depth)) {
-			v_idx[v_cnt++] = i;
-		}
-	}
-
-	/* None to be found */
-	if (v_cnt == 0) {
-		free(v_idx);
-		return (false);
-	}
-
-	/* Access a random vault record */
-	v_ptr = &v_info[v_idx[randint0(v_cnt)]];
-
-	/* Look for somewhere to put it */
-	for (i = 0; i < 25; i++) {
-		/* Random top left corner */
-		cy = randint1(c->height - 1 - v_ptr->hgt);
-		cx = randint1(c->width - 1 - v_ptr->wid);
-
-		/* Check to see if it will fit (only avoid big webs and edges) */
-		for (y = cy; y < cy + v_ptr->hgt; y++)
-			for (x = cx; x < cx + v_ptr->wid; x++)
-				if ((cave_feat[y][x] == FEAT_VOID)
-					|| (cave_feat[y][x] == FEAT_PERM_SOLID)
-					|| (cave_feat[y][x] == FEAT_MORE_SOUTH) ||
-					((y == p_ptr->py) && (x == p_ptr->px))
-					|| sqinfo_has(cave_info[y][x], SQUARE_ICKY))
-					no_good = true;
-
-		/* Try again, or stop if we've found a place */
-		if (no_good) {
-			no_good = false;
-			continue;
-		} else
-			break;
-	}
-
-	/* Give up if we couldn't find anywhere */
-	if (no_good) {
-		free(v_idx);
-		return (false);
-	}
-
-	/* Boost the rating */
-	rating += v_ptr->rat;
-
-
-	/* Build the vault (never lit, not icky unless full size) */
-	if (!build_vault
-		(y, x, v_ptr->hgt, v_ptr->wid, v_ptr->text, false,
-		 (type == 13), type)) {
-		free(v_idx);
-		return (false);
-	}
-
-	free(v_idx);
-	return (true);
-}
-#endif
-
 
 
 
@@ -1873,14 +1857,14 @@ struct chunk *valley_gen(struct player *p, int height, int width)
 	k = populate(c, true);
 
 	/* Place some webs */
-	//for (i = 0; i < damroll(k / 20, 4); i++)
-	//	place_web(11);
+	for (i = 0; i < damroll(k / 20, 4); i++)
+		place_web(c, p, "Small web");
 
-	//if (randint0(2) == 0)
-	//	place_web(12);
+	if (one_in_(2))
+		place_web(c, p, "Medium web");
 
-	//if (randint0(10) == 0)
-	//	place_web(13);
+	if (one_in_(10) == 0)
+		place_web(c, p, "Large web");
 
 	/* Unmark squares */
 	for (grid.y = 0; grid.y < c->height; grid.y++) {

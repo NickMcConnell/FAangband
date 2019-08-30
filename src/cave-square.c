@@ -198,6 +198,14 @@ bool feat_is_smooth(int feat)
 }
 
 /**
+ * True if the feature allows falling.
+ */
+bool feat_is_fall(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_FALL);
+}
+
+/**
  * SQUARE FEATURE PREDICATES
  *
  * These functions are used to figure out what kind of square something is,
@@ -432,6 +440,14 @@ bool square_isnotknown(struct chunk *c, struct loc grid) {
 	if (c != cave) return false;
 	if (player->cave == NULL) return true;
 	return square(player->cave, grid).feat != square(c, grid).feat;
+}
+
+/**
+ * True if the square is a void.
+ */
+bool square_isfall(struct chunk *c, struct loc grid)
+{
+	return feat_is_fall(square(c, grid).feat);
 }
 
 /**
