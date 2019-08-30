@@ -95,6 +95,23 @@ const byte extract_energy[200] =
  * Map-related functions
  * ------------------------------------------------------------------------ */
 /**
+ * Specific levels on which there should never be a vault
+ */
+bool no_vault(struct level *lev)
+{
+	/* No vaults on mountaintops */
+	if (lev->topography == TOP_MOUNTAINTOP)
+		return true;
+
+	/* No vaults on dungeon entrances */
+	if ((lev->topography != TOP_CAVE) && (lev->down))
+		return true;
+
+	/* Anywhere else is OK */
+	return false;
+}
+
+/**
  * List of { locality, name } pairs.
  */
 static const grouper locality_names[] =

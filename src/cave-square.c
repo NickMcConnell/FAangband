@@ -86,6 +86,14 @@ bool feat_is_permanent(int feat)
 }
 
 /**
+ * True if the feature is a wilderness path.
+ */
+bool feat_is_path(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_PATH);
+}
+
+/**
  * True if the feature is a floor.
  */
 bool feat_is_floor(int feat)
@@ -247,6 +255,14 @@ bool square_isgranite(struct chunk *c, struct loc grid)
 }
 
 /**
+ * True if the square is permanent.
+ */
+bool square_ispermanent(struct chunk *c, struct loc grid)
+{
+	return feat_is_permanent(square(c, grid).feat);
+}
+
+/**
  * True if the square is a permanent wall.
  */
 bool square_isperm(struct chunk *c, struct loc grid)
@@ -367,6 +383,14 @@ bool square_isdownstairs(struct chunk *c, struct loc grid)
 {
 	int feat = square(c, grid).feat;
 	return tf_has(f_info[feat].flags, TF_DOWNSTAIR);
+}
+
+/**
+ * True if square is a wilderness path
+ */
+bool square_ispath(struct chunk *c, struct loc grid)
+{
+	return feat_is_path(square(c, grid).feat);
 }
 
 /**

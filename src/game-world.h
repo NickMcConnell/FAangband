@@ -65,6 +65,7 @@ extern const byte extract_energy[200];
 extern struct level_map *maps;
 extern struct level_map *world;
 
+bool no_vault(struct level *lev);
 const char *locality_name(enum locality locality);
 char *level_name(struct level *lev);
 struct level *level_by_name(struct level_map *map, char *name);

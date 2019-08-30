@@ -35,33 +35,15 @@
  * Number and type of "vaults" in wilderness levels 
  * These need to be set at the start of each wilderness generation routine.
  */
-int wild_type = 0;
+int num_wild_vaults;
 
 
 /**
  * ------------------------------------------------------------------------
- * Various wilderness helper routines  
+ * Various wilderness helper routines
  * ------------------------------------------------------------------------ */
 #define HIGHLAND_TREE_CHANCE 30
 
-#if 0
-/**
- * Specific levels on which there should never be a vault
- */
-bool no_vault(struct level *lev)
-{
-	/* No vaults on mountaintops */
-	if (lev->topography == TOP_MOUNTAINTOP)
-		return true;
-
-	/* No vaults on dungeon entrances */
-	if (lev->topography != TOP_CAVE) && (lev->down))
-		return true;
-
-	/* Anywhere else is OK */
-	return false;
-}
-#endif
 #define MAX_PATHS 13
 
 /**
@@ -546,6 +528,31 @@ static void make_edges(struct chunk *c, bool ragged, bool valley)
 }
 
 /**
+ * Check whether there is space for a wilderness vault with the given corners
+ */
+static bool check_vault_space(struct chunk *c, struct loc avoid,
+							  struct loc top_left, struct loc bottom_right)
+{
+	struct loc grid;
+
+	/* Require corners to be in bounds */
+	if (!square_in_bounds_fully(c, top_left)) return false;
+	if (!square_in_bounds_fully(c, bottom_right)) return false;
+
+	/* Check every square */
+	for (grid.y = top_left.y; grid.y < bottom_right.y; grid.y++) {
+		for (grid.x = top_left.x; grid.x < bottom_right.x; grid.x++) {
+			if (square_ispath(c, grid) || (distance(grid, avoid) < 20)
+				|| square_ismark(c, grid)) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+/**
  * Make a formation - a randomish group of terrain squares. -NRM-
  * Care probably needed with declaring feat[].
  *
@@ -554,94 +561,59 @@ static void make_edges(struct chunk *c, bool ragged, bool valley)
  * formations or even "vaults" can bleed into them.
  *
  */
-static int make_formation(struct chunk *c, struct loc grid, int base_feat1,
-						  int base_feat2, int *feat, int prob)
+static int make_formation(struct chunk *c, struct player *p, struct loc grid,
+						  int base_feat1, int base_feat2, int *feat,
+						  char *name, int prob)
 {
 	int step, j, jj, i = 0, total = 0;
-	int *all_feat = malloc(prob * sizeof(*all_feat));
+	int *all_feat = mem_zalloc(prob * sizeof(*all_feat));
 	struct loc tgrid = grid;
-#if 0 //LEFT UNTIL LATER
-	/* Need to make some "wilderness vaults" */
-	if (c->wild_vaults) {
-		struct vault *v_ptr;
-		int n, yy, xx;
-		int v_cnt = 0;
-		int *v_idx = malloc(z_info->v_max * sizeof(*v_idx));
 
+	/* Need to make some wilderness vaults */
+	if (num_wild_vaults) {
+		struct vault *v;
+		struct loc top_left, bottom_right;
 		bool good_place = true;
 
-		/* Greater "vault" ? */
-		if (randint0(100 - player->depth) < 9)
-			wild_type += 1;
+		/* Greater vault? */
+		bool greater = randint0(100 - p->depth) < 9;
 
-		/* Examine each "vault" */
-		for (n = 0; n < z_info->v_max; n++) {
-			/* Access the "vault" */
-			v_ptr = &v_info[n];
-
-			/* Accept each "vault" that is acceptable for this location */
-			if ((v_ptr->typ == wild_type)
-				&& (v_ptr->min_lev <= p_ptr->depth)
-				&& (v_ptr->max_lev >= p_ptr->depth)) {
-				v_idx[v_cnt++] = n;
-			}
+		if (greater) {
+			v = random_vault(p->depth, format("%s greater", name),
+							 "Wilderness greater");
+		} else {
+			v = random_vault(p->depth, format("%s lesser", name),
+							 "Wilderness lesser");
 		}
-
-		/* If none appropriate, cancel vaults for this level */
-		if (!v_cnt) {
-			wild_vaults = 0;
-			free(all_feat);
-			free(v_idx);
-			return (0);
-		}
-
-		/* Access a random "vault" record */
-		v_ptr = &v_info[v_idx[randint0(v_cnt)]];
 
 		/* Check to see if it will fit here (only avoid edges) */
-		if ((in_bounds_fully(y - v_ptr->hgt / 2, x - v_ptr->wid / 2))
-			&& (in_bounds_fully(y + v_ptr->hgt / 2, x + v_ptr->wid / 2))) {
-			for (yy = y - v_ptr->hgt / 2; yy < y + v_ptr->hgt / 2; yy++)
-				for (xx = x - v_ptr->wid / 2; xx < x + v_ptr->wid / 2;
-					 xx++) {
-					f_ptr = &f_info[cave_feat[yy][xx]];
-					if ((tf_has(f_ptr->flags, TF_PERMANENT))
-						|| (distance(yy, xx, p_ptr->py, p_ptr->px) < 20)
-						|| sqinfo_has(cave_info[yy][xx], SQUARE_ICKY))
-						good_place = false;
-				}
-		} else
-			good_place = false;
+		top_left = loc(grid.x - v->wid / 2, grid.y - v->hgt / 2);
+		bottom_right = loc_sum(top_left, loc(v->wid, v->hgt));
+		good_place = check_vault_space(c, p->grid, top_left, bottom_right);
 
 		/* We've found a place */
 		if (good_place) {
-			/* Build the "vault" (never lit, icky) */
-			if (!build_vault
-				(y, x, v_ptr->hgt, v_ptr->wid, v_ptr->text, false,
-				 true, wild_type)) {
-				free(all_feat);
-				free(v_idx);
-				return (0);
+			/* Build the vault (never lit, icky) */
+			if (!build_vault(c, grid, v)) {
+				mem_free(all_feat);
+				return 0;
 			}
 
 			/* Boost the rating */
-			rating += v_ptr->rat;
+			c->mon_rating += v->rat;
 
 			/* Message */
-			if (OPT(cheat_room))
-				msg("%s. ", v_ptr->name);
+			//if (OPT(cheat_room))
+			//	msg("%s. ", v->name);
 
 			/* One less to make */
-			wild_vaults--;
+			num_wild_vaults--;
 
 			/* Takes up some space */
-			free(all_feat);
-			free(v_idx);
-			return (v_ptr->hgt * v_ptr->wid);
+			mem_free(all_feat);
+			return (v->hgt * v->wid);
 		}
 	}
-#endif
-
 
 	/* Extend the array of terrain types to length prob */
 	jj = 0;
@@ -658,7 +630,7 @@ static int make_formation(struct chunk *c, struct loc grid, int base_feat1,
 		if (((square_feat(c, tgrid)->fidx != base_feat1) &&
 			 (square_feat(c, tgrid)->fidx != base_feat2))
 			|| !square_in_bounds_fully(c, tgrid) || square_ismark(c, tgrid)) {
-			free(all_feat);
+			mem_free(all_feat);
 			return (total);
 		}
 
@@ -689,7 +661,7 @@ static int make_formation(struct chunk *c, struct loc grid, int base_feat1,
 		i = randint0(prob);
 	}
 
-	free(all_feat);
+	mem_free(all_feat);
 	return (total);
 }
 
@@ -753,8 +725,6 @@ static int populate(struct chunk *c, bool valley)
 	/* Clear "temp" flags. */
 	for (grid.y = 0; grid.y < c->height; grid.y++) {
 		for (grid.x = 0; grid.x < c->width; grid.x++) {
-			//sqinfo_off(cave_info[y][x], SQUARE_TEMP);  NEED TO WORK THIS OUT
-
 			/* Paranoia - remake the dungeon walls */
 			if ((grid.y == 0) || (grid.x == 0) || (grid.y == c->height - 1)
 				|| (grid.x == c->width - 1))
@@ -766,12 +736,35 @@ static int populate(struct chunk *c, bool valley)
 }
 
 /**
+ * Connect a grid to the main path through a mountain level
+ */
+static void mtn_connect(struct chunk *c, struct loc grid1, struct loc grid2)
+{
+	struct loc gp[512];
+	int path_grids, j;
+
+	/* Find the shortest path */
+	path_grids = project_path(gp, 512, grid1, grid2, PROJECT_ROCK);
+
+	/* Make the path, adding an adjacent grid 8/9 of the time */
+	for (j = 0; j < path_grids; j++) {
+		if ((square_feat(c, gp[j])->fidx == FEAT_ROAD) ||
+			(!square_in_bounds_fully(c, gp[j])))
+			break;
+		square_set_feat(c, gp[j], FEAT_ROAD);
+		square_mark(c, gp[j]);
+	}
+}
+
+/**
+ * ------------------------------------------------------------------------
+ * Wilderness level generation
+ * ------------------------------------------------------------------------ */
+/**
  * Generate a new plain level. Place stairs, 
  * and random monsters, objects, and traps.  Place any quest monsters.
  *
- * We mark grids "temp" to prevent random monsters being placed there.
- * 
- * No rooms outside the dungeons (for now, at least) -NRM
+ * Grids are marked during generation to ensure correct path placement.
  */
 struct chunk *plain_gen(struct player *p, int height, int width)
 {
@@ -802,16 +795,16 @@ struct chunk *plain_gen(struct player *p, int height, int width)
 	/* Make stage boundaries */
 	make_edges(c, true, false);
 
+	/* Set the number of wilderness vaults */
+	
+
 	/* Place some formations */
 	while (form_grids < (50 * c->depth + 1000)) {
-		/* Set the "vault" type */
-		//wild_type = ((randint0(5) == 0) ? 26 : 14);
-
 		/* Choose a place */
 		grid.y = randint0(c->height - 1) + 1;
 		grid.x = randint0(c->width - 1) + 1;
-		form_grids += make_formation(c, grid, FEAT_GRASS, FEAT_GRASS,
-									 form_feats, c->depth + 1);
+		form_grids += make_formation(c, p, grid, FEAT_GRASS, FEAT_GRASS,
+									 form_feats, "Plains", c->depth + 1);
 	}
 
 	/* And some water */
@@ -819,8 +812,8 @@ struct chunk *plain_gen(struct player *p, int height, int width)
 	while (form_grids < 300) {
 		grid.y = randint0(c->height - 1) + 1;
 		grid.x = randint0(c->width - 1) + 1;
-		form_grids += make_formation(c, grid, FEAT_GRASS, FEAT_GRASS, ponds,
-									 10);
+		form_grids += make_formation(c, p, grid, FEAT_GRASS, FEAT_GRASS, ponds,
+									 "Plains", 10);
 	}
 
 	/* Unmark squares */
@@ -836,31 +829,11 @@ struct chunk *plain_gen(struct player *p, int height, int width)
 	return c;
 }
 
-static void mtn_connect(struct chunk *c, struct loc grid1, struct loc grid2)
-{
-	struct loc gp[512];
-	int path_grids, j;
-
-	/* Find the shortest path */
-	path_grids = project_path(gp, 512, grid1, grid2, PROJECT_ROCK);
-
-	/* Make the path, adding an adjacent grid 8/9 of the time */
-	for (j = 0; j < path_grids; j++) {
-		if ((square_feat(c, gp[j])->fidx == FEAT_ROAD) ||
-			(!square_in_bounds_fully(c, gp[j])))
-			break;
-		square_set_feat(c, gp[j], FEAT_ROAD);
-		square_mark(c, gp[j]);
-	}
-}
-
 /**
  * Generate a new mountain level. Place stairs, 
  * and random monsters, objects, and traps.  Place any quest monsters.
  *
- * We mark grids "temp" to prevent random monsters being placed there.
- * 
- * No rooms outside the dungeons (for now, at least) -NRM
+ * Grids are marked during generation to ensure correct path placement.
  */
 struct chunk *mtn_gen(struct player *p, int height, int width)
 {
@@ -1019,14 +992,11 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 
 	/* Make a few formations */
 	while (form_grids < 50 * (c->depth)) {
-		/* Set the "vault" type */
-		//wild_type = ((randint0(5) == 0) ? 26 : 16);
-
 		/* Choose a place */
 		grid.y = randint0(c->height - 1) + 1;
 		grid.x = randint0(c->width - 1) + 1;
-		form_grids += make_formation(c, grid, FEAT_GRASS, FEAT_GRASS,
-									 form_feats, c->depth * 2);
+		form_grids += make_formation(c, p, grid, FEAT_GRASS, FEAT_GRASS,
+									 form_feats, "Mountain", c->depth * 2);
 		/* Now join it up */
 		min = c->width + c->height;
 		for (i = 0; i < 20; i++) {
@@ -1063,8 +1033,7 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
  * Generate a new mountaintop level. Place stairs, 
  * and random monsters, objects, and traps.  Place any quest monsters.
  *
- * We mark grids "temp" to prevent random monsters being placed there.
- * 
+ * Grids are marked during generation to ensure correct feature placement.
  */
 struct chunk *mtntop_gen(struct player *p, int height, int width)
 {
@@ -1248,10 +1217,6 @@ struct chunk *mtntop_gen(struct player *p, int height, int width)
 
 	/* Put some monsters in the dungeon */
 	for (j = k; j > 0; j--) {
-		/* 
-		 * Place a random monster (quickly), but not in grids marked 
-		 * "SQUARE_TEMP".
-		 */
 		(void) pick_and_place_distant_monster(c, player, 10, true, c->depth);
 	}
 
@@ -1261,13 +1226,6 @@ struct chunk *mtntop_gen(struct player *p, int height, int width)
 				 c->depth, ORIGIN_FLOOR);
 
 
-	/* Clear "temp" flags. */
-	//for (y = 0; y < c->height; y++) {
-	//	for (x = 0; x < c->width; x++) {
-	//		sqinfo_off(cave_info[y][x], SQUARE_TEMP);
-	//	}
-	//}
-
 	return c;
 }
 
@@ -1275,9 +1233,7 @@ struct chunk *mtntop_gen(struct player *p, int height, int width)
  * Generate a new forest level. Place stairs, 
  * and random monsters, objects, and traps.  Place any quest monsters.
  *
- * We mark grids "temp" to prevent random monsters being placed there.
- * 
- * No rooms outside the dungeons (for now, at least) -NRM
+ * Grids are marked during generation to ensure correct path placement.
  */
 struct chunk *forest_gen(struct player *p, int height, int width)
 {
@@ -1362,14 +1318,11 @@ struct chunk *forest_gen(struct player *p, int height, int width)
 
 	/* Place some formations */
 	while (form_grids < (50 * c->depth + 1000)) {
-		/* Set the "vault" type */
-		//wild_type = ((randint0(5) == 0) ? 26 : 18);
-
 		/* Choose a place */
 		grid.y = randint0(c->height - 1) + 1;
 		grid.x = randint0(c->width - 1) + 1;
-		form_grids += make_formation(c, grid, FEAT_TREE, FEAT_TREE2, form_feats,
-									 c->depth + 1);
+		form_grids += make_formation(c, p, grid, FEAT_TREE, FEAT_TREE2,
+									 form_feats, "Forest", c->depth + 1);
 	}
 
 	/* And some water */
@@ -1377,7 +1330,8 @@ struct chunk *forest_gen(struct player *p, int height, int width)
 	while (form_grids < 300) {
 		grid.y = randint0(c->height - 1) + 1;
 		grid.x = randint0(c->width - 1) + 1;
-		form_grids += make_formation(c, grid, FEAT_TREE, FEAT_TREE2, ponds, 10);
+		form_grids += make_formation(c, p, grid, FEAT_TREE, FEAT_TREE2, ponds,
+									 "Forest", 10);
 	}
 
 	/* Unmark squares */
@@ -1397,9 +1351,7 @@ struct chunk *forest_gen(struct player *p, int height, int width)
  * Generate a new swamp level. Place stairs, 
  * and random monsters, objects, and traps.  Place any quest monsters.
  *
- * We mark grids "temp" to prevent random monsters being placed there.
- * 
- * No rooms outside the dungeons (for now, at least) -NRM
+ * Grids are marked during generation to ensure correct path placement.
  */
 struct chunk *swamp_gen(struct player *p, int height, int width)
 {
@@ -1443,14 +1395,11 @@ struct chunk *swamp_gen(struct player *p, int height, int width)
 
 	/* Place some formations (but not many, and less for more danger) */
 	while (form_grids < 20000 / c->depth) {
-		/* Set the "vault" type */
-		//wild_type = ((randint0(5) == 0) ? 26 : 20);
-
 		/* Choose a place */
 		grid.y = randint0(c->height - 1) + 1;
 		grid.x = randint0(c->width - 1) + 1;
-		form_grids += make_formation(c, grid, FEAT_GRASS, FEAT_WATER,
-									 form_feats, c->depth);
+		form_grids += make_formation(c, p, grid, FEAT_GRASS, FEAT_WATER,
+									 form_feats, "Swamp", c->depth);
 	}
 
 	/* Unmark squares */
@@ -1470,9 +1419,7 @@ struct chunk *swamp_gen(struct player *p, int height, int width)
  * Generate a new desert level. Place stairs, 
  * and random monsters, objects, and traps.  Place any quest monsters.
  *
- * We mark grids "temp" to prevent random monsters being placed there.
- * 
- * No rooms outside the dungeons (for now, at least) -NRM
+ * Grids are marked during generation to ensure correct path placement.
  */
 struct chunk *desert_gen(struct player *p, int height, int width)
 {
@@ -1510,7 +1457,7 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 	/* Dungeon entrance */
 	if (world->levels[stage].down) {
 		/* No vaults */
-		//wild_vaults = 0;
+		num_wild_vaults = 0;
 
 		/* Angband! */
 		for (d = 0; d < c->width; d++) {
@@ -1579,14 +1526,11 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 
 	/* Place some formations */
 	while (form_grids < 20 * c->depth) {
-		/* Set the "vault" type */
-		//wild_type = ((randint0(5) == 0) ? 26 : 22);
-
 		/* Choose a place */
 		grid.y = randint1(c->height - 2);
 		grid.x = randint1(c->width - 2);
-		form_grids += make_formation(c, grid, FEAT_RUBBLE, FEAT_MAGMA,
-									 form_feats, c->depth);
+		form_grids += make_formation(c, p, grid, FEAT_RUBBLE, FEAT_MAGMA,
+									 form_feats, "Desert", c->depth);
 	}
 
 	/* Unmark squares */
@@ -1607,9 +1551,7 @@ struct chunk *desert_gen(struct player *p, int height, int width)
  * Generate a new river level. Place stairs, 
  * and random monsters, objects, and traps.  Place any quest monsters.
  *
- * We mark grids "temp" to prevent random monsters being placed there.
- * 
- * No rooms outside the dungeons (for now, at least) -NRM
+ * Grids are marked during generation to ensure correct path placement.
  */
 struct chunk *river_gen(struct player *p, int height, int width)
 {
@@ -1666,8 +1608,8 @@ struct chunk *river_gen(struct player *p, int height, int width)
 
 	/* Special dungeon entrances */
 	if (world->levels[stage].down) {
-		/* Hack - no "vaults" */
-		//wild_vaults = 0;
+		/* No vaults */
+		num_wild_vaults = 0;
 
 		/* If we're at Sauron's Isle... */
 		if (world->levels[stage].locality == LOC_SIRION_VALE) {
@@ -1719,15 +1661,12 @@ struct chunk *river_gen(struct player *p, int height, int width)
 
 	/* Place some formations */
 	while (form_grids < 50 * c->depth + 1000) {
-		/* Set the "vault" type */
-		//wild_type = ((randint0(5) == 0) ? 26 : 24);
-
 		/* Choose a place */
 		grid.y = randint1(c->height - 2);
 		grid.x = randint1(c->width - 2);
 
-		form_grids += make_formation(c, grid, FEAT_GRASS, FEAT_GRASS,
-									 form_feats, c->depth / 2);
+		form_grids += make_formation(c, p, grid, FEAT_GRASS, FEAT_GRASS,
+									 form_feats, "River", c->depth / 2);
 	}
 
 	/* Unmark squares */
@@ -1847,10 +1786,6 @@ bool place_web(int type)
 /**
  * Generate a new valley level. Place down slides, 
  * and random monsters, objects, and traps.  Place any quest monsters.
- *
- * We mark grids "temp" to prevent random monsters being placed there.
- * 
- * No rooms outside the dungeons (for now, at least) -NRM
  */
 struct chunk *valley_gen(struct player *p, int height, int width)
 {
@@ -1912,8 +1847,8 @@ struct chunk *valley_gen(struct player *p, int height, int width)
 	while (form_grids < (40 * c->depth)) {
 		grid.y = randint1(c->height - 2);
 		grid.x = randint1(c->width - 2);
-		form_grids += make_formation(c, grid, FEAT_TREE, FEAT_TREE2, form_feats,
-									 c->depth + 1);
+		form_grids += make_formation(c, p, grid, FEAT_TREE, FEAT_TREE2,
+									 form_feats, NULL, c->depth + 1);
 	}
 
 	/* Unmark squares */
