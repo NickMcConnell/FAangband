@@ -507,8 +507,8 @@ struct player {
 
     s16b recall[4];	/**< Recall points */
     s16b recall_pt;	/**< Which recall point is active */
-    s16b stage;		/**< Current stage */
-    s16b last_stage;	/**< Previous stage */
+    s16b place;		/**< Current place */
+    s16b last_place;	/**< Previous place */
 
 	s16b max_lev;	/* Max level */
 	s16b lev;		/* Cur level */

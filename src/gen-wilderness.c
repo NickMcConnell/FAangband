@@ -47,8 +47,8 @@ int num_wild_vaults;
 #define MAX_PATHS 13
 
 /**
- * Makes "paths to nowhere" from interstage paths toward the middle of the
- * current stage.  Adapted from tunnelling code.
+ * Makes "paths to nowhere" from interplace paths toward the middle of the
+ * current place.  Adapted from tunnelling code.
  */
 static void path_to_nowhere(struct chunk *c, struct loc start,
 							struct loc target, struct loc *pathend, int *num)
@@ -147,18 +147,18 @@ static void river_move(struct chunk *c, int *xp)
 }
 
 /**
- * Places paths to adjacent surface stages, and joins them.  Does each 
+ * Places paths to adjacent surface places, and joins them.  Does each 
  * direction separately, which is a bit repetitive -NRM-
  */
-static void alloc_paths(struct chunk *c, struct player *p, int stage,
-						int last_stage)
+static void alloc_paths(struct chunk *c, struct player *p, int place,
+						int last_place)
 {
 	int y, x, i, j, num, path;
 	int pcoord = player->upkeep->path_coord;
 	struct loc pgrid, tgrid;
 
-	struct level *lev = &world->levels[stage];
-	struct level *last_lev = &world->levels[last_stage];
+	struct level *lev = &world->levels[place];
+	struct level *last_lev = &world->levels[last_place];
 	struct level *north = level_by_name(world, lev->north);
 	struct level *east = level_by_name(world, lev->east);
 	struct level *south = level_by_name(world, lev->south);
@@ -179,8 +179,8 @@ static void alloc_paths(struct chunk *c, struct player *p, int stage,
 	}
 
 	/* Hack for finishing Nan Dungortheb */
-	//if ((last_stage == q_list[2].stage) && (last_stage != 0))
-	//	north = last_stage;
+	//if ((last_place == q_list[2].place) && (last_place != 0))
+	//	north = last_place;
 
 	/* North */
 	if (north) {
@@ -404,7 +404,7 @@ static void alloc_paths(struct chunk *c, struct player *p, int stage,
 }
 
 /**
- * Make the boundaries of the stage - these may be ragged, and Nan Dungortheb
+ * Make the boundaries of the place - these may be ragged, and Nan Dungortheb
  * requires special handling
  */
 static void make_edges(struct chunk *c, bool ragged, bool valley)
@@ -832,8 +832,8 @@ bool place_web(struct chunk *c, struct player *p, char *type)
 struct chunk *plain_gen(struct player *p, int height, int width)
 {
 	struct loc grid;
-	int stage = p->stage;
-	int last_stage = p->last_stage;
+	int place = p->place;
+	int last_place = p->last_place;
 	int form_grids = 0;
 
 	int form_feats[] = { FEAT_TREE, FEAT_RUBBLE, FEAT_MAGMA, FEAT_GRANITE,
@@ -852,10 +852,10 @@ struct chunk *plain_gen(struct player *p, int height, int width)
 		}
 	}
 
-	/* Place 2 or 3 paths to neighbouring stages, place player -NRM- */
-	alloc_paths(c, p, stage, last_stage);
+	/* Place 2 or 3 paths to neighbouring places, place player -NRM- */
+	alloc_paths(c, p, place, last_place);
 
-	/* Make stage boundaries */
+	/* Make place boundaries */
 	make_edges(c, true, false);
 
 	/* Set the number of wilderness vaults */
@@ -905,8 +905,8 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 	struct loc grid;
 	int i, j;
 	int plats;
-	int stage = p->stage;
-	int last_stage = p->last_stage;
+	int place = p->place;
+	int last_place = p->last_place;
 	int form_grids = 0;
 	int min, dist, floors = 0;
 	int randpoints[20];
@@ -931,12 +931,12 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 		}
 	}
 
-	/* Make stage boundaries */
+	/* Make place boundaries */
 	make_edges(c, false, false);
 
-	/* Place 2 or 3 paths to neighbouring stages, make the paths through the
-	 * stage, place the player -NRM- */
-	alloc_paths(c, p, stage, last_stage);
+	/* Place 2 or 3 paths to neighbouring places, make the paths through the
+	 * place, place the player -NRM- */
+	alloc_paths(c, p, place, last_place);
 
 	/* Turn grass to granite */
 	for (grid.y = 0; grid.y < c->height; grid.y++) {
@@ -948,7 +948,7 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 	}
 
 	/* Dungeon entrance */
-	if (world->levels[stage].down) {
+	if (world->levels[place].down) {
 		/* Set the flag */
 		amon_rudh = true;
 
@@ -962,7 +962,7 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 				square_set_feat(c, grid, FEAT_MORE);
 				i--;
 				stairs[2 - i] = grid;
-				if (!i && (world->levels[last_stage].topography == TOP_CAVE))
+				if (!i && (world->levels[last_place].topography == TOP_CAVE))
 					player_place(c, p, grid);
 			}
 		}
@@ -1120,7 +1120,7 @@ struct chunk *mtntop_gen(struct player *p, int height, int width)
 		}
 	}
 
-	/* Make stage boundaries */
+	/* Make place boundaries */
 	make_edges(c, false, false);
 
 	/* Make the main mountaintop */
@@ -1305,8 +1305,8 @@ struct chunk *forest_gen(struct player *p, int height, int width)
 	struct loc grid;
 	int j;
 	int plats;
-	int stage = p->stage;
-	int last_stage = p->last_stage;
+	int place = p->place;
+	int last_place = p->last_place;
 	int form_grids = 0;
 
 	int form_feats[] = { FEAT_GRASS, FEAT_RUBBLE, FEAT_MAGMA, FEAT_GRANITE,
@@ -1326,10 +1326,10 @@ struct chunk *forest_gen(struct player *p, int height, int width)
 		}
 	}
 
-	/* Place 2 or 3 paths to neighbouring stages, place player -NRM- */
-	alloc_paths(c, p, stage, last_stage);
+	/* Place 2 or 3 paths to neighbouring places, place player -NRM- */
+	alloc_paths(c, p, place, last_place);
 
-	/* Make stage boundaries */
+	/* Make place boundaries */
 	make_edges(c, true, false);
 
 	/* Now place trees */
@@ -1348,7 +1348,7 @@ struct chunk *forest_gen(struct player *p, int height, int width)
 				square_mark(c, grid);
 
 			/* Mega hack - remove paths if emerging from Nan Dungortheb */
-			//if ((last_stage == q_list[2].stage)
+			//if ((last_place == q_list[2].place)
 			//	&& (cave_feat[y][x] == FEAT_MORE_NORTH))
 			//	cave_set_feat(y, x, FEAT_GRASS);
 			}
@@ -1419,8 +1419,8 @@ struct chunk *forest_gen(struct player *p, int height, int width)
 struct chunk *swamp_gen(struct player *p, int height, int width)
 {
 	struct loc grid;
-	int stage = p->stage;
-	int last_stage = p->last_stage;
+	int place = p->place;
+	int last_place = p->last_place;
 	int form_grids = 0;
 
 	int form_feats[] = { FEAT_TREE, FEAT_RUBBLE, FEAT_MAGMA, FEAT_GRANITE,
@@ -1437,10 +1437,10 @@ struct chunk *swamp_gen(struct player *p, int height, int width)
 		}
 	}
 
-	/* Place 2 or 3 paths to neighbouring stages, place player -NRM- */
-	alloc_paths(c, p, stage, last_stage);
+	/* Place 2 or 3 paths to neighbouring places, place player -NRM- */
+	alloc_paths(c, p, place, last_place);
 
-	/* Make stage boundaries */
+	/* Make place boundaries */
 	make_edges(c, true, false);
 
 	/* Add water */
@@ -1491,8 +1491,8 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 	struct loc grid;
 	int j, d;
 	int plats;
-	int stage = p->stage;
-	int last_stage = p->last_stage;
+	int place = p->place;
+	int last_place = p->last_place;
 	int form_grids = 0;
 
 	int form_feats[] = { FEAT_GRASS, FEAT_RUBBLE, FEAT_MAGMA, FEAT_GRANITE,
@@ -1511,14 +1511,14 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 		}
 	}
 
-	/* Place 2 or 3 paths to neighbouring stages, place player -NRM- */
-	alloc_paths(c, p, stage, last_stage);
+	/* Place 2 or 3 paths to neighbouring places, place player -NRM- */
+	alloc_paths(c, p, place, last_place);
 
-	/* Make stage boundaries */
+	/* Make place boundaries */
 	make_edges(c, true, false);
 
 	/* Dungeon entrance */
-	if (world->levels[stage].down) {
+	if (world->levels[place].down) {
 		/* No vaults */
 		num_wild_vaults = 0;
 
@@ -1532,7 +1532,7 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 					/* The gate of Angband */
 					square_set_feat(c, grid, FEAT_MORE);
 					made_gate = true;
-					if ((world->levels[last_stage].topography == TOP_CAVE)
+					if ((world->levels[last_place].topography == TOP_CAVE)
 						|| (turn < 10))
 						player_place(c, p, grid);
 					break;
@@ -1621,8 +1621,8 @@ struct chunk *river_gen(struct player *p, int height, int width)
 	struct loc grid, centre;
 	int i, y1 = height / 2;
 	int mid[height];
-	int stage = p->stage;
-	int last_stage = p->last_stage;
+	int place = p->place;
+	int last_place = p->last_place;
 	int form_grids = 0;
 	int path;
 
@@ -1641,13 +1641,13 @@ struct chunk *river_gen(struct player *p, int height, int width)
 		}
 	}
 
-	/* Place 2 or 3 paths to neighbouring stages, place player -NRM- */
-	alloc_paths(c, p, stage, last_stage);
+	/* Place 2 or 3 paths to neighbouring places, place player -NRM- */
+	alloc_paths(c, p, place, last_place);
 
 	/* Remember the path in case it has to move */
 	path = square_feat(c, p->grid)->fidx;
 
-	/* Make stage boundaries */
+	/* Make place boundaries */
 	make_edges(c, true, false);
 
 	/* Place the river, start in the middle third */
@@ -1670,12 +1670,12 @@ struct chunk *river_gen(struct player *p, int height, int width)
 	centre = loc(mid[y1], y1);
 
 	/* Special dungeon entrances */
-	if (world->levels[stage].down) {
+	if (world->levels[place].down) {
 		/* No vaults */
 		num_wild_vaults = 0;
 
 		/* If we're at Sauron's Isle... */
-		if (world->levels[stage].locality == LOC_SIRION_VALE) {
+		if (world->levels[place].locality == LOC_SIRION_VALE) {
 			for (grid.y = y1 - 10; grid.y < y1 + 10; grid.y++) {
 				for (grid.x = mid[grid.y] - 10; grid.x < mid[grid.y] + 10;
 					 grid.x++) {
@@ -1694,7 +1694,7 @@ struct chunk *river_gen(struct player *p, int height, int width)
 			/* ...with door and stairs */
 			square_set_feat(c, loc(y1 + 1, mid[y1]), FEAT_CLOSED);
 			square_set_feat(c, centre, FEAT_MORE);
-			if (world->levels[last_stage].topography == TOP_CAVE) {
+			if (world->levels[last_place].topography == TOP_CAVE) {
 				player_place(c, p, centre);
 			}
 		} else {
@@ -1705,7 +1705,7 @@ struct chunk *river_gen(struct player *p, int height, int width)
 				for (grid.x = mid[y1] - 15; grid.x < mid[y1] - 5; grid.x++) {
 					if (loc_eq(grid, centre)) {
 						square_set_feat(c, grid, FEAT_MORE);
-						if (world->levels[last_stage].topography == TOP_CAVE) {
+						if (world->levels[last_place].topography == TOP_CAVE) {
 							player_place(c, p, grid);
 						}
 					} else {
@@ -1797,7 +1797,7 @@ struct chunk *valley_gen(struct player *p, int height, int width)
 		}
 	}
 
-	/* Make stage boundaries */
+	/* Make place boundaries */
 	make_edges(c, true, true);
 
 	/* Make a few clearings */
@@ -1878,7 +1878,7 @@ struct chunk *valley_gen(struct player *p, int height, int width)
 	}
 
 	/* Maybe place a few random portals. */
-	//if (MAP(DUNGEON) && stage_map[p_ptr->stage][DOWN]) {
+	//if (MAP(DUNGEON) && place_map[p_ptr->place][DOWN]) {
 	//	feature_type *f_ptr = NULL;
 
 	//	k = randint1(3) + 1;

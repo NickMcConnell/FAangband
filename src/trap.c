@@ -470,9 +470,10 @@ extern void hit_trap(struct loc grid, int delayed)
 		}
 
 		/* Some traps drop you a dungeon level */
-		if (trf_has(trap->kind->flags, TRF_DOWN))
-			dungeon_change_level(player,
-								 dungeon_get_next_level(player->depth, 1));
+		if (trf_has(trap->kind->flags, TRF_DOWN)) {
+			int target_place = player_get_next_place(player->place, "down", 1);
+			player_change_place(player,	target_place);
+		}
 
 		/* Some traps drop you onto them */
 		if (trf_has(trap->kind->flags, TRF_PIT))

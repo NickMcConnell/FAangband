@@ -800,6 +800,7 @@ static enum parser_error parse_world_level(struct parser *p) {
 		memset(&map->levels[map->num_levels - 1], 0, sizeof(struct level));
 	}
 	lev = &map->levels[map->num_levels - 1];
+	lev->index = map->num_levels - 1;
 
 	if (grab_name("locality", l_name, localities, N_ELEMENTS(localities), &i))
 		return PARSE_ERROR_INVALID_LOCALITY;

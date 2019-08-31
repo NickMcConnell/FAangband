@@ -775,8 +775,15 @@ int rd_player(void)
 		my_strcpy(player->died_from, "(alive and well)",
 				  sizeof(player->died_from));
 
+	/* Location info */
+	for (i = 0; i < 4; i++) {
+		rd_s16b(&player->recall[i]);
+	}
+	rd_s16b(&player->recall_pt);
+	rd_s16b(&player->place);
+	rd_s16b(&player->last_place);
+
 	/* More info */
-	strip_bytes(7);
 	rd_byte(&player->unignoring);
 	rd_s16b(&player->deep_descent);
 

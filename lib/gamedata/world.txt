@@ -14,6 +14,8 @@ map:Extended Wilderness
 
 level:UNDERWORLD:0:CAVE
 
+level:ARENA:0:CAVE
+
 level:MOUNTAIN_TOP:0:MOUNTAINTOP
 
 level:HITHAEGLIR:2:MOUNTAIN
@@ -1382,6 +1384,8 @@ map:Compressed Wilderness
 
 level:UNDERWORLD:0:CAVE
 
+level:ARENA:0:CAVE
+
 level:MOUNTAIN_TOP:0:MOUNTAINTOP
 
 level:HITHAEGLIR:2:MOUNTAIN
@@ -2695,6 +2699,7 @@ down:ANGBAND:127
 level:ANGBAND:127:CAVE
 up:ANGBAND:126
 
+level:ARENA:0:CAVE
 
 
 map:Fanilla Dungeon
@@ -3206,4 +3211,6 @@ down:ANGBAND:127
 
 level:ANGBAND:127:CAVE
 up:ANGBAND:126
+
+level:ARENA:0:CAVE
 

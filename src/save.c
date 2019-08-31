@@ -479,11 +479,15 @@ void wr_player(void)
 	wr_s16b(player->max_depth);
 	wr_s16b(player->recall_depth);
 
+	/* Location info */
+	for (i = 0; i < 4; i++) {
+		wr_s16b(player->recall[i]);
+	}
+	wr_s16b(player->recall_pt);
+	wr_s16b(player->place);
+	wr_s16b(player->last_place);
+
 	/* More info */
-	wr_s16b(0);	/* oops */
-	wr_s16b(0);	/* oops */
-	wr_s16b(0);	/* oops */
-	wr_byte(0);
 	wr_byte(player->unignoring);
 	wr_s16b(player->deep_descent);
 

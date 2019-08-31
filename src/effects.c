@@ -21,6 +21,7 @@
 #include "cave.h"
 #include "effects.h"
 #include "game-input.h"
+#include "game-world.h"
 #include "generate.h"
 #include "init.h"
 #include "mon-desc.h"
@@ -1429,7 +1430,7 @@ bool effect_handler_REMOVE_CURSE(effect_handler_context_t *context)
  */
 bool effect_handler_RECALL(effect_handler_context_t *context)
 {
-	int target_depth;
+	int target_place;
 	context->ident = true;	
 
 	/* No recall */
@@ -1445,9 +1446,9 @@ bool effect_handler_RECALL(effect_handler_context_t *context)
 	}
 
 	/* Warn the player if they're descending to an unrecallable level */
-	target_depth = dungeon_get_next_level(player->max_depth, 1);
+	target_place = player_get_next_place(player->max_depth, "down", 1);
 	if (OPT(player, birth_force_descend) && !(player->depth) &&
-			(is_quest(target_depth))) {
+			(is_quest(target_place))) {
 		if (!get_check("Are you sure you want to descend? ")) {
 			return false;
 		}
@@ -1491,19 +1492,21 @@ bool effect_handler_RECALL(effect_handler_context_t *context)
 
 bool effect_handler_DEEP_DESCENT(effect_handler_context_t *context)
 {
-	int i, target_increment, target_depth = player->max_depth;
+	int i, number, target_place = player->max_depth;
+	struct level *lev;
 
 	/* Calculate target depth */
-	target_increment = (4 / z_info->stair_skip) + 1;
-	target_depth = dungeon_get_next_level(player->max_depth, target_increment);
+	number = (4 / z_info->stair_skip) + 1;
+	target_place = player_get_next_place(player->max_depth, "down", number);
 	for (i = 5; i > 0; i--) {
-		if (is_quest(target_depth)) break;
-		if (target_depth >= z_info->max_depth - 1) break;
-
-		target_depth++;
+		if (is_quest(target_place)) break;
+		if (target_place >= z_info->max_depth - 1) break;
+		target_place = player_get_next_place(player->max_depth, "down", number);
 	}
 
-	if (target_depth > player->depth) {
+	lev = &world->levels[target_place];
+
+	if (lev->depth > player->depth) {
 		msgt(MSG_TPLEVEL, "The air around you starts to swirl...");
 		player->deep_descent = 3 + randint1(4);
 
@@ -1520,7 +1523,7 @@ bool effect_handler_DEEP_DESCENT(effect_handler_context_t *context)
 bool effect_handler_ALTER_REALITY(effect_handler_context_t *context)
 {
 	msg("The world changes!");
-	dungeon_change_level(player, player->depth);
+	player_change_place(player, player->place);
 	context->ident = true;
 	return true;
 }
@@ -3044,7 +3047,7 @@ bool effect_handler_TELEPORT_LEVEL(effect_handler_context_t *context)
 {
 	bool up = true;
 	bool down = true;
-	int target_depth = dungeon_get_next_level(player->max_depth, 1);
+	int target_place = player_get_next_place(player->max_depth, "down", 1);
 	struct monster *t_mon = monster_target_monster(context);
 	struct loc decoy = cave_find_decoy(cave);
 
@@ -3092,11 +3095,11 @@ bool effect_handler_TELEPORT_LEVEL(effect_handler_context_t *context)
 		up = false;
 
 	/* No forcing player down to quest levels if they can't leave */
-	if (!up && is_quest(target_depth))
+	if (!up && is_quest(target_place))
 		down = false;
 
 	/* Can't leave quest levels or go down deeper than the dungeon */
-	if (is_quest(player->depth) || (player->depth >= z_info->max_depth - 1))
+	if (is_quest(player->place) || (player->depth >= z_info->max_depth - 1))
 		down = false;
 
 	/* Determine up/down if not already done */
@@ -3110,17 +3113,17 @@ bool effect_handler_TELEPORT_LEVEL(effect_handler_context_t *context)
 	/* Now actually do the level change */
 	if (up) {
 		msgt(MSG_TPLEVEL, "You rise up through the ceiling.");
-		target_depth = dungeon_get_next_level(player->depth, -1);
-		dungeon_change_level(player, target_depth);
+		target_place = player_get_next_place(player->place, "up", 1);
+		player_change_place(player, target_place);
 	} else if (down) {
 		msgt(MSG_TPLEVEL, "You sink through the floor.");
 
 		if (OPT(player, birth_force_descend)) {
-			target_depth = dungeon_get_next_level(player->max_depth, 1);
-			dungeon_change_level(player, target_depth);
+			target_place = player_get_next_place(player->max_depth, "down", 1);
+			player_change_place(player, target_place);
 		} else {
-			target_depth = dungeon_get_next_level(player->depth, 1);
-			dungeon_change_level(player, target_depth);
+			target_place = player_get_next_place(player->place, "down", 1);
+			player_change_place(player, target_place);
 		}
 	} else {
 		msg("Nothing happens.");
@@ -4928,7 +4931,7 @@ bool effect_handler_SINGLE_COMBAT(effect_handler_context_t *context)
 
 	/* Head to the arena */
 	player->upkeep->arena_level = true;
-	dungeon_change_level(player, player->depth);
+	player_change_place(player, player->place);
 	return true;
 }
 

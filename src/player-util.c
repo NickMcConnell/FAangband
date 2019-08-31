@@ -42,31 +42,60 @@
 #include "trap.h"
 
 /**
- * Increment to the next or decrement to the preceeding level
-   accounting for the stair skip value in constants
-   Keep in mind to check all intermediate level for unskippable
-   quests
-*/
-int dungeon_get_next_level(int dlev, int added)
+ * Determine the next place on the world map the player is about to move to.
+ *
+ * \param place is the start - either current place or a recall point or similar
+ * \param direction is one of the cardinal directions or up or down
+ * \param added is how many steps to move (1 apart from deep descent)
+ * \return the place to move to
+ */
+int player_get_next_place(int place, char *direction, int multiple)
 {
-	int target_level, i;
+	int next_place = place;
+	struct level *start = &world->levels[place];
+	assert(start);
 
-	/* Get target level */
-	target_level = dlev + added * z_info->stair_skip;
-	
-	/* Don't allow levels below max */
-	if (target_level > z_info->max_depth - 1)
-		target_level = z_info->max_depth - 1;
+	/* Follow the given direction (possibly multiple times for down) */
+	if (streq(direction, "north")) {
+		next_place = start->north ?
+			level_by_name(world, start->north)->index : -1;
+	} else if (streq(direction, "east")) {
+		next_place = start->east ?
+			level_by_name(world, start->east)->index : -1;
+	} else if (streq(direction, "south")) {
+		next_place = start->south ?
+			level_by_name(world, start->south)->index : -1;
+	} else if (streq(direction, "west")) {
+		next_place = start->west ?
+			level_by_name(world, start->west)->index : -1;
+	} else if (streq(direction, "up")) {
+		next_place = start->up ?
+			level_by_name(world, start->up)->index : -1;
+	} else if (streq(direction, "down")) {
+		struct level *lev = start;
+		while (multiple) {
+			/* Stop at unfinished quest levels */
+			if (is_quest(lev->index)) break;
 
-	/* Don't allow levels above the town */
-	if (target_level < 0) target_level = 0;
-	
-	/* Check intermediate levels for quests */
-	for (i = dlev; i <= target_level; i++) {
-		if (is_quest(i)) return i;
+			/* Go down */
+			next_place = start->down ?
+				level_by_name(world, lev->down)->index : -1;
+
+			/* Check failures */
+			if (next_place < 0) {
+				/* If we've taken some steps use the last valid one */
+				if (lev != start) {
+					return lev->index;
+				} else {
+					return -1;
+				}
+			}
+			lev = &world->levels[next_place];
+			multiple--;
+		}
 	}
-	
-	return target_level;
+
+	return next_place;
 }
 
 /**
@@ -78,7 +107,7 @@ void player_set_recall_depth(struct player *p)
 	if (OPT(p, birth_force_descend)) {
 		/* Force descent to a lower level if allowed */
 		if ((p->max_depth < z_info->max_depth - 1) && !is_quest(p->max_depth)) {
-			p->recall_depth = dungeon_get_next_level(p->max_depth, 1);
+			p->recall_depth = player_get_next_place(p->max_depth, "down", 1);
 		}
 	}
 
@@ -122,16 +151,29 @@ bool player_get_recall_depth(struct player *p)
 }
 
 /**
- * Change dungeon level - e.g. by going up stairs or with WoR.
+ * Move the player to a new place in the world map.
  */
-void dungeon_change_level(struct player *p, int dlev)
+void player_change_place(struct player *p, int place)
 {
-	/* New depth */
-	p->depth = dlev;
+	int depth = world->levels[p->place].depth;
+
+	/* Set last place (unless unchanged or arena) */
+	if (p->last_place != place) {
+		p->last_place = p->place;
+	}
+
+	/* Set new place (unless arena) */
+	if (!p->upkeep->arena_level) {
+		p->place = place;
+	} else {
+		p->place = level_by_name(world, "Arena Town")->index;
+		level_by_name(world, "Arena Town")->depth = depth; 
+	}
+	p->depth = world->levels[place].depth;
 
 	/* If we're returning to town, update the store contents
 	   according to how long we've been away */
-	if (!dlev && daycount)
+	if (!p->depth && daycount)
 		store_update();
 
 	/* Leaving, make new level */

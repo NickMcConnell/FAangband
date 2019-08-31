@@ -118,7 +118,7 @@ world:feeling-total:100
 # Squares needed to see to get first feeling
 world:feeling-need:10
 
-# Number of levels for each stair
+# Number of levels for each stair - DO NOT CHANGE
 world:stair-skip:1
 
 # Energy needed by player or monsters to move

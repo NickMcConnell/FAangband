@@ -822,11 +822,11 @@ void process_world(struct chunk *c)
 			/* Determine the level */
 			if (player->depth) {
 				msgt(MSG_TPLEVEL, "You feel yourself yanked upwards!");
-				dungeon_change_level(player, 0);
+				player_change_place(player, 0);
 			} else {
 				msgt(MSG_TPLEVEL, "You feel yourself yanked downwards!");
 				player_set_recall_depth(player);
-				dungeon_change_level(player, player->recall_depth);
+				player_change_place(player, player->recall_depth);
 			}
 		}
 	}
@@ -838,19 +838,22 @@ void process_world(struct chunk *c)
 
 		/* Activate the descent */
 		if (player->deep_descent == 0) {
-			int target_increment;
-			int target_depth = player->max_depth;
+			int increment;
+			int target_place = player->max_depth;
+			struct level *lev;
 
 			/* Calculate target depth */
-			target_increment = (4 / z_info->stair_skip) + 1;
-			target_depth = dungeon_get_next_level(player->max_depth, target_increment);
+			increment = (4 / z_info->stair_skip) + 1;
+			target_place = player_get_next_place(player->max_depth, "down",
+												 increment);
+			lev = &world->levels[target_place];
 
 			disturb(player, 0);
 
 			/* Determine the level */
-			if (target_depth > player->depth) {
+			if (lev->depth > player->depth) {
 				msgt(MSG_TPLEVEL, "The floor opens beneath you!");
-				dungeon_change_level(player, target_depth);
+				player_change_place(player, target_place);
 			} else {
 				/* Otherwise do something disastrous */
 				msgt(MSG_TPLEVEL, "You are thrown back in an explosion!");

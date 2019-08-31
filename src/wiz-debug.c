@@ -1401,7 +1401,7 @@ void wiz_cheat_death(void)
 	my_strcpy(player->died_from, "Cheating death", sizeof(player->died_from));
 
 	/* Back to the town */
-	dungeon_change_level(player, 0);
+	player_change_place(player, 0);
 }
 
 /**
@@ -1497,10 +1497,10 @@ static void do_cmd_wiz_jump(void)
 		player->noscore |= NOSCORE_JUMPING;
 
 	/* Accept request */
-	msg("You jump to dungeon level %d.", depth);
+	msg("You jump to place %d.", depth);
 
 	/* New depth */
-	dungeon_change_level(player, depth);
+	player_change_place(player, depth);
 
 	/* Hack - should be handled by redoing how debug commands work - NRM */
 	cmdq_push(CMD_HOLD);

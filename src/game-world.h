@@ -34,6 +34,7 @@ enum topography {
 };
 
 struct level {
+	int index;
 	int depth;
 	enum locality locality;
 	enum topography topography;

@@ -49,16 +49,62 @@
 #include "trap.h"
 
 /**
+ * Get the direction a path is heading
+ */
+static char *path_direction(int feat)
+{
+	if (feat == FEAT_LESS_NORTH) return "north";
+	if (feat == FEAT_MORE_NORTH) return "north";
+	if (feat == FEAT_LESS_EAST) return "east";
+	if (feat == FEAT_MORE_EAST) return "east";
+	if (feat == FEAT_LESS_SOUTH) return "south";
+	if (feat == FEAT_MORE_SOUTH) return "south";
+	if (feat == FEAT_LESS_WEST) return "west";
+	if (feat == FEAT_MORE_WEST) return "west";
+	if (feat == FEAT_LESS) return "up";
+	if (feat == FEAT_MORE) return "down";
+	return "";
+}
+
+/**
+ * Get the return path of a path or stair (sigh)
+ */
+static int return_path(int feat)
+{
+	if (feat == FEAT_LESS_NORTH) return FEAT_MORE_SOUTH;
+	if (feat == FEAT_MORE_NORTH) return FEAT_LESS_SOUTH;
+	if (feat == FEAT_LESS_EAST) return FEAT_MORE_WEST;
+	if (feat == FEAT_MORE_EAST) return FEAT_LESS_WEST;
+	if (feat == FEAT_LESS_SOUTH) return FEAT_MORE_NORTH;
+	if (feat == FEAT_MORE_SOUTH) return FEAT_LESS_NORTH;
+	if (feat == FEAT_LESS_WEST) return FEAT_MORE_EAST;
+	if (feat == FEAT_MORE_WEST) return FEAT_LESS_EAST;
+	if (feat == FEAT_LESS) return FEAT_MORE;
+	if (feat == FEAT_MORE) return FEAT_LESS;
+	return -1;
+}
+
+/**
  * Go up one level
  */
 void do_cmd_go_up(struct command *cmd)
 {
-	int ascend_to;
+	int feat = square_feat(cave, player->grid)->fidx;
+	int new_place;
 
 	/* Verify stairs */
-	if (!square_isupstairs(cave, player->grid)) {
-		msg("I see no up staircase here.");
+	if (!(square_isstairs(cave, player->grid) ||
+		  square_ispath(cave, player->grid))) {
+		msg("I see no path or staircase here.");
 		return;
+	} else if (square_isdownstairs(cave, player->grid)) {
+		if (square_ispath(cave, player->grid)) {
+			msg("This is a path to greater danger.");
+			return;
+		} else {
+			msg("This staircase leads down.");
+			return;
+		}
 	}
 
 	/* Force descend */
@@ -66,10 +112,10 @@ void do_cmd_go_up(struct command *cmd)
 		msg("Nothing happens!");
 		return;
 	}
-	
-	ascend_to = dungeon_get_next_level(player->depth, -1);
-	
-	if (ascend_to == player->depth) {
+
+	new_place = player_get_next_place(player->place, path_direction(feat), 1);
+
+	if (new_place == player->depth) {
 		msg("You can't go up from here!");
 		return;
 	}
@@ -78,13 +124,26 @@ void do_cmd_go_up(struct command *cmd)
 	player->upkeep->energy_use = z_info->move_energy;
 
 	/* Success */
-	msgt(MSG_STAIRS_UP, "You enter a maze of up staircases.");
+	if (feat == FEAT_LESS) {
+		msgt(MSG_STAIRS_UP, "You enter a maze of up staircases.");
+	} else {
+		msgt(MSG_STAIRS_UP, "You enter a winding path to less danger.");
+	}
 
 	/* Create a way back */
-	player->upkeep->create_stair = FEAT_MORE;
-	
+	player->upkeep->create_stair = return_path(feat);
+
+	/* Record the non-obvious exit coordinate */
+	if ((feat == FEAT_LESS_NORTH) || (feat == FEAT_MORE_NORTH) ||
+		(feat == FEAT_LESS_SOUTH) || (feat == FEAT_MORE_SOUTH)) {
+		player->upkeep->path_coord = player->grid.x;
+	} else if ((feat == FEAT_LESS_EAST) || (feat == FEAT_MORE_EAST) ||
+			   (feat == FEAT_LESS_WEST) || (feat == FEAT_MORE_WEST)) {
+		player->upkeep->path_coord = player->grid.y;
+	}
+
 	/* Change level */
-	dungeon_change_level(player, ascend_to);
+	player_change_place(player, new_place);
 }
 
 
@@ -93,12 +152,22 @@ void do_cmd_go_up(struct command *cmd)
  */
 void do_cmd_go_down(struct command *cmd)
 {
-	int descend_to = dungeon_get_next_level(player->depth, 1);
+	int feat = square_feat(cave, player->grid)->fidx;
+	int new_place;
 
 	/* Verify stairs */
-	if (!square_isdownstairs(cave, player->grid)) {
-		msg("I see no down staircase here.");
+	if (!(square_isstairs(cave, player->grid) ||
+		  square_ispath(cave, player->grid))) {
+		msg("I see no path or staircase here.");
 		return;
+	} else if (square_isupstairs(cave, player->grid)) {
+		if (square_ispath(cave, player->grid)) {
+			msg("This is a path to less danger.");
+			return;
+		} else {
+			msg("This staircase leads up.");
+			return;
+		}
 	}
 
 	/* Paranoia, no descent from z_info->max_depth - 1 */
@@ -107,25 +176,39 @@ void do_cmd_go_down(struct command *cmd)
 		return;
 	}
 
+	new_place = player_get_next_place(player->place, path_direction(feat), 1);
+
 	/* Warn a force_descend player if they're going to a quest level */
-	if (OPT(player, birth_force_descend)) {
-		descend_to = dungeon_get_next_level(player->max_depth, 1);
-		if (is_quest(descend_to) &&
-			!get_check("Are you sure you want to descend?"))
+	if (OPT(player, birth_force_descend) && is_quest(new_place)) {
+		if (!get_check("Are you sure you want to descend?")) {
 			return;
+		}
 	}
 
-	/* Hack -- take a turn */
+	/* Take a turn */
 	player->upkeep->energy_use = z_info->move_energy;
 
 	/* Success */
-	msgt(MSG_STAIRS_DOWN, "You enter a maze of down staircases.");
+	if (feat == FEAT_MORE) {
+		msgt(MSG_STAIRS_DOWN, "You enter a maze of down staircases.");
+	} else {
+		msgt(MSG_STAIRS_DOWN, "You enter a winding path to greater danger.");
+	}
 
 	/* Create a way back */
-	player->upkeep->create_stair = FEAT_LESS;
+	player->upkeep->create_stair = return_path(feat);
+
+	/* Record the non-obvious exit coordinate */
+	if ((feat == FEAT_LESS_NORTH) || (feat == FEAT_MORE_NORTH) ||
+		(feat == FEAT_LESS_SOUTH) || (feat == FEAT_MORE_SOUTH)) {
+		player->upkeep->path_coord = player->grid.x;
+	} else if ((feat == FEAT_LESS_EAST) || (feat == FEAT_MORE_EAST) ||
+			   (feat == FEAT_LESS_WEST) || (feat == FEAT_MORE_WEST)) {
+		player->upkeep->path_coord = player->grid.y;
+	}
 
 	/* Change level */
-	dungeon_change_level(player, descend_to);
+	player_change_place(player, new_place);
 }
 
 
