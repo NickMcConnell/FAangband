@@ -275,7 +275,7 @@ void chunk_list_add(struct chunk *c);
 bool chunk_list_remove(char *name);
 struct chunk *chunk_find_name(char *name);
 bool chunk_find(struct chunk *c);
-struct chunk *chunk_find_adjacent(struct player *p, bool above);
+struct chunk *chunk_find_adjacent(struct player *p, char *direction);
 bool chunk_copy(struct chunk *dest, struct chunk *source, int y0, int x0,
 				int rotate, bool reflect);
 

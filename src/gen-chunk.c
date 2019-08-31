@@ -139,17 +139,24 @@ bool chunk_find(struct chunk *c)
 }
 
 /**
- * Find the saved chunk above or below the current player depth
- *
- * Assumes fanilla map
+ * Find the saved chunk adjacent to the current player place
  */
-struct chunk *chunk_find_adjacent(struct player *p, bool above)
+struct chunk *chunk_find_adjacent(struct player *p, char *direction)
 {
-	int depth = above ? p->depth - 1 : p->depth + 1;
-	struct level *lev = level_by_depth(depth);
+	struct level *lev = &world->levels[p->place];
 
-	if (lev) {
-		return chunk_find_name(level_name(lev));
+	if (streq(direction, "north")) {
+		return chunk_find_name(lev->north);
+	} else if (streq(direction, "east")) {
+		return chunk_find_name(lev->east);
+	} else if (streq(direction, "south")) {
+		return chunk_find_name(lev->south);
+	} else if (streq(direction, "west")) {
+		return chunk_find_name(lev->west);
+	} else if (streq(direction, "up")) {
+		return chunk_find_name(lev->up);
+	} else if (streq(direction, "down")) {
+		return chunk_find_name(lev->down);
 	}
 
 	return NULL;

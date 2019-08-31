@@ -1535,7 +1535,7 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width)
 	struct loc grid;
 	int residents = is_daytime() ? z_info->town_monsters_day :
 		z_info->town_monsters_night;
-	struct level *lev = level_by_depth(p->depth);
+	struct level *lev = &world->levels[p->place];
 	struct chunk *c_new, *c_old = chunk_find_name(level_name(lev));
 
 	/* Make a new chunk */
@@ -1786,12 +1786,12 @@ struct chunk *modified_gen(struct player *p, int min_height, int min_width) {
 		build_streamer(c, FEAT_QUARTZ, dun->profile->str.qc);
 
     /* Place 3 or 4 down stairs near some walls */
-	if (!OPT(p, birth_levels_persist) || !chunk_find_adjacent(p, false)) {
+	if (!OPT(p, birth_levels_persist) || !chunk_find_adjacent(p, "down")) {
 		alloc_stairs(c, FEAT_MORE, rand_range(3, 4));
 	}
 
     /* Place 1 or 2 up stairs near some walls */
-	if (!OPT(p, birth_levels_persist) || !chunk_find_adjacent(p, true)) {
+	if (!OPT(p, birth_levels_persist) || !chunk_find_adjacent(p, "up")) {
 		alloc_stairs(c, FEAT_LESS, rand_range(1, 2));
 	}
 

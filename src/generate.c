@@ -817,16 +817,115 @@ const struct cave_profile *choose_profile(struct player *p)
 }
 
 /**
- * Get information for constructing stairs in the correct places
- *
- * Currently only for use by fanilla map
+ * Get information for constructing stairs and paths in the correct places
  */
 static void get_join_info(struct player *p, struct dun_data *dun)
 {
+	struct level *current_lev = &world->levels[p->place];
 	struct level *lev = NULL;
 
+	/* Check level north */
+	lev = level_by_name(world, current_lev->north);
+	if (lev) {
+		struct chunk *check = chunk_find_name(level_name(lev));
+		if (check) {
+			struct connector *join = check->join;
+			while (join) {
+				if (join->feat == FEAT_MORE_SOUTH) {
+					struct connector *new = mem_zalloc(sizeof *new);
+					new->grid.x = join->grid.x;
+					new->feat = FEAT_LESS_NORTH;
+					new->next = dun->join;
+					dun->join = new;
+				} else if (join->feat == FEAT_LESS_SOUTH) {
+					struct connector *new = mem_zalloc(sizeof *new);
+					new->grid.x = join->grid.x;
+					new->feat = FEAT_MORE_NORTH;
+					new->next = dun->join;
+					dun->join = new;
+				}
+				join = join->next;
+			}
+		}
+	}
+
+	/* Check level east */
+	lev = level_by_name(world, current_lev->east);
+	if (lev) {
+		struct chunk *check = chunk_find_name(level_name(lev));
+		if (check) {
+			struct connector *join = check->join;
+			while (join) {
+				if (join->feat == FEAT_MORE_WEST) {
+					struct connector *new = mem_zalloc(sizeof *new);
+					new->grid.y = join->grid.y;
+					new->feat = FEAT_LESS_EAST;
+					new->next = dun->join;
+					dun->join = new;
+				} else if (join->feat == FEAT_LESS_WEST) {
+					struct connector *new = mem_zalloc(sizeof *new);
+					new->grid.y = join->grid.y;
+					new->feat = FEAT_MORE_EAST;
+					new->next = dun->join;
+					dun->join = new;
+				}
+				join = join->next;
+			}
+		}
+	}
+
+	/* Check level south */
+	lev = level_by_name(world, current_lev->south);
+	if (lev) {
+		struct chunk *check = chunk_find_name(level_name(lev));
+		if (check) {
+			struct connector *join = check->join;
+			while (join) {
+				if (join->feat == FEAT_MORE_NORTH) {
+					struct connector *new = mem_zalloc(sizeof *new);
+					new->grid.x = join->grid.x;
+					new->feat = FEAT_LESS_SOUTH;
+					new->next = dun->join;
+					dun->join = new;
+				} else if (join->feat == FEAT_LESS_NORTH) {
+					struct connector *new = mem_zalloc(sizeof *new);
+					new->grid.x = join->grid.x;
+					new->feat = FEAT_MORE_SOUTH;
+					new->next = dun->join;
+					dun->join = new;
+				}
+				join = join->next;
+			}
+		}
+	}
+
+	/* Check level west */
+	lev = level_by_name(world, current_lev->west);
+	if (lev) {
+		struct chunk *check = chunk_find_name(level_name(lev));
+		if (check) {
+			struct connector *join = check->join;
+			while (join) {
+				if (join->feat == FEAT_MORE_EAST) {
+					struct connector *new = mem_zalloc(sizeof *new);
+					new->grid.y = join->grid.y;
+					new->feat = FEAT_LESS_WEST;
+					new->next = dun->join;
+					dun->join = new;
+				} else if (join->feat == FEAT_LESS_EAST) {
+					struct connector *new = mem_zalloc(sizeof *new);
+					new->grid.y = join->grid.y;
+					new->feat = FEAT_MORE_WEST;
+					new->next = dun->join;
+					dun->join = new;
+				}
+				join = join->next;
+			}
+		}
+	}
+
 	/* Check level above */
-	lev = level_by_depth(p->depth - 1);
+	lev = level_by_name(world, current_lev->up);
 	if (lev) {
 		struct chunk *check = chunk_find_name(level_name(lev));
 		if (check) {
@@ -846,7 +945,7 @@ static void get_join_info(struct player *p, struct dun_data *dun)
 	}
 
 	/* Check level below */
-	lev = level_by_depth(p->depth + 1);
+	lev = level_by_name(world, current_lev->down);
 	if (lev) {
 		struct chunk *check = chunk_find_name(level_name(lev));
 		if (check) {
@@ -888,10 +987,8 @@ static void	get_min_level_size(struct chunk *check, int *min_height,
 
 /**
  * Store a dungeon level for reloading
- *
- * Assumes fanilla map
  */
-static void cave_store(struct chunk *c, bool known, bool keep_all)
+static void cave_store(struct chunk *c, char *name, bool known, bool keep_all)
 {
 	struct chunk *stored;
 	if (keep_all) {
@@ -902,7 +999,7 @@ static void cave_store(struct chunk *c, bool known, bool keep_all)
 	if (stored->name) {
 		string_free(stored->name);
 	}
-	stored->name = string_make(level_name(level_by_depth(c->depth)));
+	stored->name = string_make(name);
 	if (known) {
 		stored->name = string_append(stored->name, " known");
 	}
@@ -1168,14 +1265,14 @@ static void sanitize_player_loc(struct chunk *c, struct player *p)
  * Prepare the level the player is about to enter, either by generating
  * or reloading
  *
- * This currently assumes fanilla map
- *
  * \param c is the level we're going to end up with, in practice the global cave
  * \param p is the current player struct, in practice the global player
 */
 void prepare_next_level(struct chunk **c, struct player *p)
 {
 	bool persist = OPT(p, birth_levels_persist) || p->upkeep->arena_level;
+	char *prev_name = level_name(&world->levels[p->last_place]);
+	char *new_name = level_name(&world->levels[p->place]);
 
 	/* Deal with any existing current level */
 	if (character_dungeon) {
@@ -1192,14 +1289,13 @@ void prepare_next_level(struct chunk **c, struct player *p)
 				}
 
 				/* Save level and known level */
-				cave_store(*c, false, true);
-				cave_store(p->cave, true, true);
+				cave_store(*c, prev_name, false, true);
+				cave_store(p->cave, prev_name, true, true);
 			}
 		} else {
 			/* Save the town */
-			char *name = level_name(level_by_depth((*c)->depth));
-			if (!((*c)->depth) && !chunk_find_name(name)) {
-				cave_store(*c, false, false);
+			if (!((*c)->depth) && !chunk_find_name(prev_name)) {
+				cave_store(*c, prev_name, false, false);
 			}
 
 			/* Forget knowledge of old level */
@@ -1240,14 +1336,13 @@ void prepare_next_level(struct chunk **c, struct player *p)
 
 	/* Prepare the new level */
 	if (persist) {
-		char *name = level_name(level_by_depth(p->depth));
-		struct chunk *old_level = chunk_find_name(name);
+		struct chunk *old_level = chunk_find_name(new_name);
 
 		/* If we found an old level, load the known level and assign */
 		if (old_level && (old_level != cave)) {
 			int i;
 			bool arena = (*c)->name && streq((*c)->name, "arena");
-			char *known_name = format("%s known", name);
+			char *known_name = format("%s known", new_name);
 			struct chunk *old_known = chunk_find_name(known_name);
 			assert(old_known);
 
@@ -1322,7 +1417,7 @@ void prepare_next_level(struct chunk **c, struct player *p)
 			}
 
 			/* Remove from the list */
-			chunk_list_remove(name);
+			chunk_list_remove(new_name);
 			chunk_list_remove(known_name);
 		} else if (p->upkeep->arena_level) {
 			/* We're creating a new arena level */
@@ -1333,7 +1428,7 @@ void prepare_next_level(struct chunk **c, struct player *p)
 			int min_height = 0, min_width = 0;
 
 			/* Check level above */
-			lev = level_by_depth(p->depth - 1);
+			lev = level_by_name(world, world->levels[p->place].up);
 			if (lev) {
 				struct chunk *check = chunk_find_name(level_name(lev));
 				if (check) {
@@ -1342,7 +1437,7 @@ void prepare_next_level(struct chunk **c, struct player *p)
 			}
 
 			/* Check level below */
-			lev = level_by_depth(p->depth + 1);
+			lev = level_by_name(world, world->levels[p->place].down);
 			if (lev) {
 				struct chunk *check = chunk_find_name(level_name(lev));
 				if (check) {

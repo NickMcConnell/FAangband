@@ -160,21 +160,6 @@ struct level *level_by_name(struct level_map *map, char *name)
 }
 
 /**
- * Find a level by its depth - only for use by the dungeon or fanilla map
- */
-struct level *level_by_depth(int depth)
-{
-	int i;
-	for (i = 0; i < world->num_levels; i++) {
-		struct level *lev = &world->levels[i];
-		if (lev->depth == depth) {
-			return lev;
-		}
-	}
-	return NULL;
-}
-
-/**
  * ------------------------------------------------------------------------
  * Functions for handling turn-based events
  * ------------------------------------------------------------------------ */
