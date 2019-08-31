@@ -216,7 +216,6 @@ static void build_tunnel(struct chunk *c, struct loc grid1, struct loc grid2)
 			tmp_grid = loc_sum(grid1, offset);
 		}
 
-
 		/* Avoid the edge of the dungeon */
 		if (square_isperm(c, tmp_grid)) continue;
 

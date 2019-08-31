@@ -3248,11 +3248,8 @@ bool effect_handler_DESTRUCTION(effect_handler_context_t *context)
 			/* Delete the monster (if any) */
 			delete_monster(grid);
 
-			/* Don't remove stairs */
-			if (square_isstairs(cave, grid)) continue;
-
-			/* Destroy any grid that isn't a permament wall */
-			if (!square_isperm(cave, grid)) {
+			/* Destroy any grid that isn't permament */
+			if (!square_ispermanent(cave, grid)) {
 				/* Deal with artifacts */
 				struct object *obj = square_object(cave, grid);
 				while (obj) {

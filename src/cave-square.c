@@ -275,7 +275,7 @@ bool square_ispermanent(struct chunk *c, struct loc grid)
  */
 bool square_isperm(struct chunk *c, struct loc grid)
 {
-	return (tf_has(f_info[square(c, grid).feat].flags, TF_PERMANENT) &&
+	return (square_ispermanent(c, grid) &&
 			tf_has(f_info[square(c, grid).feat].flags, TF_ROCK));
 }
 
@@ -918,8 +918,7 @@ bool square_changeable(struct chunk *c, struct loc grid)
 	struct object *obj;
 
 	/* Forbid perma-grids */
-	if (square_isperm(c, grid) || square_isshop(c, grid) ||
-		square_isstairs(c, grid))
+	if (square_ispermanent(c, grid))
 		return (false);
 
 	/* Check objects */
@@ -1352,7 +1351,7 @@ void square_smash_wall(struct chunk *c, struct loc grid)
 		if (!square_in_bounds_fully(c, adj_grid)) continue;
 
 		/* Ignore permanent grids */
-		if (square_isperm(c, adj_grid)) continue;
+		if (square_ispermanent(c, adj_grid)) continue;
 
 		/* Give this grid a chance to survive */
 		if ((square_isgranite(c, adj_grid) && one_in_(4)) ||

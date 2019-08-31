@@ -771,6 +771,8 @@ bool place_web(struct chunk *c, struct player *p, char *type)
 
 	/* Look for somewhere to put it */
 	for (i = 0; i < 25; i++) {
+		no_good = false;
+
 		/* Random top left corner */
 		top_left.y = randint1(c->height - 1 - v->hgt);
 		top_left.x = randint1(c->width - 1 - v->wid);
@@ -778,18 +780,14 @@ bool place_web(struct chunk *c, struct player *p, char *type)
 		/* Check to see if it will fit (only avoid big webs and edges) */
 		for (grid.y = top_left.y; grid.y < top_left.y + v->hgt; grid.y++) {
 			for (grid.x = top_left.x; grid.x < top_left.x + v->wid; grid.x++) {
-				if (square_isfall(c, grid) || square_isperm(c, grid)
-					|| square_ispath(c, grid) || square_isplayer(c, grid)
-					|| square_isvault(c, grid))
+				if (square_isfall(c, grid) || square_ispermanent(c, grid)
+					|| square_isplayer(c, grid)	|| square_isvault(c, grid)) {
 					no_good = true;
-
-				/* Try again, or stop if we've found a place */
-				if (no_good) {
-					no_good = false;
-					continue;
-				} else {
 					break;
 				}
+			}
+			if (no_good) {
+				break;
 			}
 		}
 	}
