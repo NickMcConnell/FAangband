@@ -2702,7 +2702,7 @@ up:ANGBAND:126
 level:ARENA:0:CAVE
 
 
-map:Fanilla Dungeon
+map:Angband Dungeon
 
 level:ANGBAND:0:TOWN
 down:ANGBAND:1

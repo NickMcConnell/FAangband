@@ -1420,6 +1420,91 @@ static void build_store(struct chunk *c, int n, struct loc grid)
 			square_set_feat(c, door, feat);
 }
 
+/**
+ * Place town stairs
+ */
+static struct loc place_town_stairs(struct chunk *c, struct player *p)
+{
+	struct loc grid = loc(0, 0);
+
+	/* Wilderness towns have paths leaving them */
+	if (strstr(world->name, "Wilderness")) {
+		struct level *lev = &world->levels[p->place];
+		struct level *north = NULL;
+		struct level *east = NULL;
+		struct level *south = NULL;
+		struct level *west = NULL;
+
+		if (lev->north) north = level_by_name(world, lev->north);
+		if (lev->east) east = level_by_name(world, lev->east);
+		if (lev->south) south = level_by_name(world, lev->south);
+		if (lev->west) west = level_by_name(world, lev->west);
+
+		if (north) {
+			grid.x = rand_spread(z_info->town_wid / 2, z_info->town_wid / 12);
+			grid.y = z_info->town_hgt / 2;
+			while (square_isfloor(c, grid) &&
+				   !square_isperm(c, next_grid(grid, DIR_N))) {
+				grid.y--;
+			}
+
+			/* Clear previous contents, add path */
+			square_set_feat(c, grid, FEAT_MORE_NORTH);
+		}
+
+		if (east) {
+			grid.y = rand_spread(z_info->town_hgt / 2, z_info->town_hgt / 12);
+			grid.x = z_info->town_wid / 2;
+			while (square_isfloor(c, grid) &&
+				   !square_isperm(c, next_grid(grid, DIR_E))) {
+				grid.x++;
+			}
+
+			/* Clear previous contents, add path */
+			square_set_feat(c, grid, FEAT_MORE_EAST);
+		}
+
+		if (south) {
+			grid.x = rand_spread(z_info->town_wid / 2, z_info->town_wid / 12);
+			grid.y = z_info->town_hgt / 2;
+			while (square_isfloor(c, grid) &&
+				   !square_isperm(c, next_grid(grid, DIR_S))) {
+				grid.y++;
+			}
+
+			/* Clear previous contents, add path */
+			square_set_feat(c, grid, FEAT_MORE_SOUTH);
+		}
+
+		if (west) {
+			grid.y = rand_spread(z_info->town_hgt / 2, z_info->town_hgt / 12);
+			grid.x = z_info->town_wid / 2;
+			while (square_isfloor(c, grid) &&
+				   !square_isperm(c, next_grid(grid, DIR_W))) {
+				grid.x--;
+			}
+
+			/* Clear previous contents, add path */
+			square_set_feat(c, grid, FEAT_MORE_WEST);
+		}
+	} else {
+		/* Dungeon towns just have a single down stair */
+		grid.x = rand_spread(z_info->town_wid / 2, z_info->town_wid / 12);
+		grid.y = z_info->town_hgt / 2;
+		while (square_isfloor(c, grid) && (grid.y > 2)) {
+			grid.y--;
+		}
+		if (square_isfloor(c, next_grid(grid, DIR_N)) && (grid.y == 2)) {
+			grid.y--;
+		}
+
+		/* Clear previous contents, add down stairs */
+		square_set_feat(c, grid, FEAT_MORE);
+	}
+
+	assert(grid.x && grid.y);
+	return grid;
+}
 
 /**
  * Generate the town for the first time, and place the player
@@ -1436,15 +1521,19 @@ static void town_gen_layout(struct chunk *c, struct player *p)
 	draw_rectangle(c, 0, 0, c->height - 1, c->width - 1, FEAT_PERM,
 				   SQUARE_NONE);
 
-	/* Initialize to ROCK for build_streamer precondition */
+	/* Initialize to granite */
 	for (grid.y = 1; grid.y < c->height - 1; grid.y++)
 		for (grid.x = 1; grid.x < c->width - 1; grid.x++) {
 			square_set_feat(c, grid, FEAT_GRANITE);
 		}
 
-	/* Make some lava streamers */
-	for (n = 0; n < 3 + num_lava; n++)
-		build_streamer(c, FEAT_LAVA, 0);
+	/* Angband dungeon has lava in town */
+	if (streq(world->name, "Angband Dungeon")) {
+		/* Make some lava streamers */
+		for (n = 0; n < 3 + num_lava; n++) {
+			build_streamer(c, FEAT_LAVA, 0);
+		}
+	}
 
 	/* Make a town-sized starburst room. */
 	(void) generate_starburst_room(c, 1, 1, c->height - 1, c->width - 1, false,
@@ -1460,14 +1549,8 @@ static void town_gen_layout(struct chunk *c, struct player *p)
 		}
 	}
 
-	/* Place the stairs in the north wall */
-	pgrid.x = rand_spread(z_info->town_wid / 2, z_info->town_wid / 12);
-	pgrid.y = z_info->town_hgt / 2;
-	while (square_isfloor(c, pgrid) && (pgrid.y > 2)) pgrid.y--;
-	if (square_isfloor(c, next_grid(pgrid, DIR_N)) && (pgrid.y == 2)) pgrid.y--;
-
-	/* Clear previous contents, add down stairs */
-	square_set_feat(c, pgrid, FEAT_MORE);
+	/* Place stairs or paths */
+	pgrid = place_town_stairs(c, p);
 
 	/* Place stores */
 	for (n = 0; n < MAX_STORES; n++) {
@@ -1536,7 +1619,8 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width)
 	int residents = is_daytime() ? z_info->town_monsters_day :
 		z_info->town_monsters_night;
 	struct level *lev = &world->levels[p->place];
-	struct chunk *c_new, *c_old = chunk_find_name(level_name(lev));
+	char *name = level_name(lev);
+	struct chunk *c_new, *c_old = chunk_find_name(name);
 
 	/* Make a new chunk */
 	c_new = cave_new(z_info->town_hgt, z_info->town_wid);
@@ -1548,17 +1632,33 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width)
 		/* Build stuff */
 		town_gen_layout(c_new, p);
 	} else {
+		int feat = FEAT_MORE;
+
 		/* Copy from the chunk list, remove the old one */
 		if (!chunk_copy(c_new, c_old, 0, 0, 0, 0))
 			quit_fmt("chunk_copy() level bounds failed!");
-		chunk_list_remove(level_name(lev));
+		chunk_list_remove(name);
 		cave_free(c_old);
 
-		/* Find the stairs (lame) */
+		/* Get the correct path for wilderness */
+		if (strstr(world->name, "Wilderness")) {
+			struct level *last_lev = &world->levels[p->last_place];
+			if (streq(lev->north, level_name(last_lev))) {
+				feat = FEAT_MORE_NORTH;
+			} else if (streq(lev->east, level_name(last_lev))) {
+				feat = FEAT_MORE_EAST;
+			} else if (streq(lev->south, level_name(last_lev))) {
+				feat = FEAT_MORE_SOUTH;
+			} else if (streq(lev->west, level_name(last_lev))) {
+				feat = FEAT_MORE_WEST;
+			}
+		}
+
+		/* Find the required stair/path */
 		for (grid.y = 0; grid.y < c_new->height; grid.y++) {
 			bool found = false;
 			for (grid.x = 0; grid.x < c_new->width; grid.x++) {
-				if (square_feat(c_new, grid)->fidx == FEAT_MORE) {
+				if (square_feat(c_new, grid)->fidx == feat) {
 					found = true;
 					break;
 				}

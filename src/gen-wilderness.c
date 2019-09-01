@@ -159,16 +159,21 @@ static void alloc_paths(struct chunk *c, struct player *p, int place,
 
 	struct level *lev = &world->levels[place];
 	struct level *last_lev = &world->levels[last_place];
-	struct level *north = level_by_name(world, lev->north);
-	struct level *east = level_by_name(world, lev->east);
-	struct level *south = level_by_name(world, lev->south);
-	struct level *west = level_by_name(world, lev->west);
+	struct level *north = NULL;
+	struct level *east = NULL;
+	struct level *south = NULL;
+	struct level *west = NULL;
 
 	struct loc pathend[20], gp[512];
 	int pspot, num_paths = 0, path_grids = 0;
 
 	bool jumped = true;
 	bool river;
+
+	if (lev->north) north = level_by_name(world, lev->north);
+	if (lev->east) east = level_by_name(world, lev->east);
+	if (lev->south) south = level_by_name(world, lev->south);
+	if (lev->west) west = level_by_name(world, lev->west);
 
 	/* River levels need special treatment */
 	river = (lev->topography == TOP_RIVER);
