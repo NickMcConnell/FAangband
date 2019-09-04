@@ -112,8 +112,6 @@ static void path_to_nowhere(struct chunk *c, struct loc start,
 		/* This is the first one, record it and finish */
 		if (j == 0) {
 			pathend[j] = end;
-			(*num)++;
-			break;
 		}
 
 		/* Continue until we find where this grid is in x order */
@@ -155,7 +153,7 @@ static void alloc_paths(struct chunk *c, struct player *p, int place,
 {
 	int y, x, i, j, num, path;
 	int pcoord = player->upkeep->path_coord;
-	struct loc pgrid, tgrid;
+	struct loc grid, pgrid, tgrid;
 
 	struct level *lev = &world->levels[place];
 	struct level *last_lev = &world->levels[last_place];
@@ -225,14 +223,14 @@ static void alloc_paths(struct chunk *c, struct player *p, int place,
 			if (river)
 				river_move(c, &x);
 
-			pgrid = loc(x, 1);
-			square_set_feat(c, pgrid, path);
-			square_mark(c, pgrid);
+			grid = loc(x, 1);
+			square_set_feat(c, grid, path);
+			square_mark(c, grid);
 
 			/* Make paths to nowhere */
-			tgrid = loc(pgrid.x + randint1(40) - 20,
+			tgrid = loc(grid.x + randint1(40) - 20,
 						1 + c->height / 3 + randint1(20) - 10);
-			path_to_nowhere(c, pgrid, tgrid, pathend, &num_paths);
+			path_to_nowhere(c, grid, tgrid, pathend, &num_paths);
 		}
 	}
 
@@ -264,14 +262,14 @@ static void alloc_paths(struct chunk *c, struct player *p, int place,
 		/* Place "num" paths */
 		for (i = 0; i < num; i++) {
 			y = 1 + randint0(c->height / num - 2) +	i * c->height / num;
-			pgrid = loc(c->width - 2, y);
-			square_set_feat(c, pgrid, path);
-			square_mark(c, pgrid);
+			grid = loc(c->width - 2, y);
+			square_set_feat(c, grid, path);
+			square_mark(c, grid);
 
 			/* Make paths to nowhere */
 			tgrid = loc(c->width - c->height / 3 - randint1(20) + 8,
-						pgrid.y + randint1(40) - 20);
-			path_to_nowhere(c, pgrid, tgrid, pathend, &num_paths);
+						grid.y + randint1(40) - 20);
+			path_to_nowhere(c, grid, tgrid, pathend, &num_paths);
 		}
 	}
 
@@ -313,14 +311,14 @@ static void alloc_paths(struct chunk *c, struct player *p, int place,
 			if (river)
 				river_move(c, &x);
 
-			pgrid = loc(x, c->height - 2);
-			square_set_feat(c, pgrid, path);
-			square_mark(c, pgrid);
+			grid = loc(x, c->height - 2);
+			square_set_feat(c, grid, path);
+			square_mark(c, grid);
 
 			/* Make paths to nowhere */
-			tgrid = loc(pgrid.x + randint1(40) - 20,
+			tgrid = loc(grid.x + randint1(40) - 20,
 						c->height - c->height / 3 - randint1(20) + 8);
-			path_to_nowhere(c, pgrid, tgrid, pathend, &num_paths);
+			path_to_nowhere(c, grid, tgrid, pathend, &num_paths);
 		}
 	}
 
@@ -352,14 +350,14 @@ static void alloc_paths(struct chunk *c, struct player *p, int place,
 		/* Place "num" paths */
 		for (i = 0; i < num; i++) {
 			y = 1 + randint0(c->height / num - 2) +	i * c->height / num;
-			pgrid = loc(1, y);
-			square_set_feat(c, pgrid, path);
-			square_mark(c, pgrid);
+			grid = loc(1, y);
+			square_set_feat(c, grid, path);
+			square_mark(c, grid);
 
 			/* make paths to nowhere */
 			tgrid = loc(1 + c->height / 3 + randint1(20) - 10,
-						pgrid.y + randint1(40) - 20);
-			path_to_nowhere(c, pgrid, tgrid, pathend, &num_paths);
+						grid.y + randint1(40) - 20);
+			path_to_nowhere(c, grid, tgrid, pathend, &num_paths);
 		}
 	}
 
@@ -373,7 +371,7 @@ static void alloc_paths(struct chunk *c, struct player *p, int place,
 			break;
 
 		/* Find the shortest path */
-		path_grids = project_path(gp, 512, pathend[i], pathend[i + 1],
+		path_grids = project_path(c, gp, 512, pathend[i], pathend[i + 1],
 								  PROJECT_NONE);
 
 		/* Get the jumped player spot */
@@ -386,14 +384,16 @@ static void alloc_paths(struct chunk *c, struct player *p, int place,
 		for (j = 0; j < path_grids; j++) {
 			struct loc offset = loc(randint0(3) - 1, randint0(3) - 1);
 			square_set_feat(c, gp[j], FEAT_ROAD);
-			square_set_feat(c, loc_sum(gp[j], offset), FEAT_ROAD);
+			grid = loc_sum(gp[j], offset);
+			if (square_in_bounds_fully(c, grid)) {
+				square_set_feat(c, loc_sum(gp[j], offset), FEAT_ROAD);
+			}
 		}
 	}
 
 	/* Mark all the roads, so we know not to overwrite them */
-	for (y = 0; y < c->height; y++) {
-		for (x = 0; x < c->width; x++) {
-			struct loc grid = loc(x, y);
+	for (grid.y = 0; grid.y < c->height; grid.y++) {
+		for (grid.x = 0; grid.x < c->width; grid.x++) {
 			if (square(c, grid).feat == FEAT_ROAD) {
 				square_mark(c, grid);
 			}
@@ -639,11 +639,13 @@ static int make_formation(struct chunk *c, struct player *p, struct loc grid,
 			return (total);
 		}
 
-		/* Check for treasure (should really use dungeon profile info for probs*/
-		if ((all_feat[i] == FEAT_MAGMA) && (one_in_(90)))
+		/* Check for treasure */
+		if ((all_feat[i] == FEAT_MAGMA) && (one_in_(dun->profile->str.mc))) {
 			all_feat[i] = FEAT_MAGMA_K;
-		else if ((all_feat[i] == FEAT_QUARTZ) && (one_in_(40)))
+		} else if ((all_feat[i] == FEAT_QUARTZ) &&
+				   (one_in_(dun->profile->str.qc))) {
 			all_feat[i] = FEAT_QUARTZ_K;
+		}
 
 		/* Set the feature */
 		square_set_feat(c, tgrid, all_feat[i]);
@@ -655,8 +657,8 @@ static int make_formation(struct chunk *c, struct player *p, struct loc grid,
 			step++;
 		for (j = 0; j < 100; j++) {
 			tgrid = loc_sum(tgrid, ddgrid[step]);
-			if (!square_ismark(c, tgrid))
-				break;
+			if (!square_in_bounds_fully(c, tgrid)) break;
+			if (!square_ismark(c, tgrid)) break;
 		}
 
 		/* Count */
@@ -748,7 +750,7 @@ static void mtn_connect(struct chunk *c, struct loc grid1, struct loc grid2)
 	int path_grids, j;
 
 	/* Find the shortest path */
-	path_grids = project_path(gp, 512, grid1, grid2, PROJECT_ROCK);
+	path_grids = project_path(c, gp, 512, grid1, grid2, PROJECT_ROCK);
 
 	/* Make the path, adding an adjacent grid 8/9 of the time */
 	for (j = 0; j < path_grids; j++) {
@@ -846,7 +848,7 @@ struct chunk *plain_gen(struct player *p, int height, int width)
 	int ponds[] = { FEAT_WATER, FEAT_NONE };
 
     /* Make the level */
-    struct chunk *c = cave_new(height, width);
+    struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
 
 	/* Start with grass */
@@ -925,7 +927,7 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 	bool amon_rudh = false;
 
     /* Make the level */
-    struct chunk *c = cave_new(height, width);
+    struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
 
 	/* Start with grass (lets paths work -NRM-) */
@@ -1063,7 +1065,7 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 		/* Choose a place */
 		grid.y = randint0(c->height - 1) + 1;
 		grid.x = randint0(c->width - 1) + 1;
-		form_grids += make_formation(c, p, grid, FEAT_GRASS, FEAT_GRASS,
+		form_grids += make_formation(c, p, grid, FEAT_GRANITE, FEAT_GRANITE,
 									 form_feats, "Mountain", c->depth * 2);
 		/* Now join it up */
 		min = c->width + c->height;
@@ -1114,7 +1116,7 @@ struct chunk *mtntop_gen(struct player *p, int height, int width)
 	bool placed = false;
 
     /* Make the level */
-    struct chunk *c = cave_new(height, width);
+    struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
 
 	/* Start with void */
@@ -1319,7 +1321,7 @@ struct chunk *forest_gen(struct player *p, int height, int width)
 	int ponds[] = { FEAT_WATER, FEAT_NONE };
 
     /* Make the level */
-    struct chunk *c = cave_new(height, width);
+    struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
 
 	/* Start with grass so paths work */
@@ -1432,7 +1434,7 @@ struct chunk *swamp_gen(struct player *p, int height, int width)
 						 FEAT_TREE2, FEAT_QUARTZ, FEAT_NONE };
 
     /* Make the level */
-    struct chunk *c = cave_new(height, width);
+    struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
 
 	/* Start with grass */
@@ -1505,7 +1507,7 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 	bool made_gate = false;
 
     /* Make the level */
-    struct chunk *c = cave_new(height, width);
+    struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
 
 	/* Start with grass so paths work */
@@ -1635,7 +1637,7 @@ struct chunk *river_gen(struct player *p, int height, int width)
 						 FEAT_TREE2, FEAT_QUARTZ, FEAT_NONE };
 
     /* Make the level */
-    struct chunk *c = cave_new(height, width);
+    struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
 
 	/* Start with grass */
@@ -1786,7 +1788,7 @@ struct chunk *valley_gen(struct player *p, int height, int width)
 						 FEAT_GRASS, FEAT_QUARTZ, FEAT_NONE };
 
     /* Make the level */
-    struct chunk *c = cave_new(height, width);
+    struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
 
 	/* Start with trees */

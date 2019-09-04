@@ -1008,7 +1008,7 @@ bool target_set_interactive(int mode, int x, int y)
 			}
 
 			/* Find the path. */
-			path_n = project_path(path_g, z_info->max_range, loc(px, py),
+			path_n = project_path(cave, path_g, z_info->max_range, loc(px, py),
 								  loc(x, y), PROJECT_THRU | PROJECT_INFO);
 
 			/* Draw the path in "target" mode. If there is one */
@@ -1230,7 +1230,7 @@ bool target_set_interactive(int mode, int x, int y)
 			}
 
 			/* Find the path. */
-			path_n = project_path(path_g, z_info->max_range, loc(px, py),
+			path_n = project_path(cave, path_g, z_info->max_range, loc(px, py),
 								  loc(x, y), PROJECT_THRU | PROJECT_INFO);
 
 			/* Draw the path in "target" mode. If there is one */

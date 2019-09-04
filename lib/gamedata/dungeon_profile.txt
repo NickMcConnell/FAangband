@@ -191,3 +191,45 @@ cutoff:-1
 name:hard centre
 params:1:0:200:0
 cutoff:-1
+
+########### Wilderness profiles
+
+## Plain
+name:plain
+streamer:5:2:3:90:2:40
+cutoff:-1
+
+## Mountain
+name:mtn
+streamer:5:2:3:90:2:40
+cutoff:-1
+
+## Mountain top
+name:mtntop
+streamer:5:2:3:90:2:40
+cutoff:-1
+
+## Forest
+name:forest
+streamer:5:2:3:90:2:40
+cutoff:-1
+
+## Swamp
+name:swamp
+streamer:5:2:3:90:2:40
+cutoff:-1
+
+## Desert
+name:desert
+streamer:5:2:3:90:2:40
+cutoff:-1
+
+## River
+name:river
+streamer:5:2:3:90:2:40
+cutoff:-1
+
+## Valley
+name:valley
+streamer:5:2:3:90:2:40
+cutoff:-1

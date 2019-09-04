@@ -797,22 +797,34 @@ const struct cave_profile *choose_profile(struct player *p)
 	}
 
 	/* Make the profile choice */
-	if (p->depth == 0) {
-		profile = find_cave_profile("town");
-	} else if (is_quest(p->depth) && !OPT(p, birth_levels_persist)) {
-		/* Quest levels must be normal levels */
-		profile = find_cave_profile("classic");
-	} else if (labyrinth_check(p->depth)) {
-		profile = find_cave_profile("labyrinth");
-	} else if ((p->depth >= 10) && (p->depth < 40) && one_in_(40)) {
-		profile = find_cave_profile("moria");
-	} else {
-		int pick = randint0(200);
-		size_t i;
-		for (i = 0; i < z_info->profile_max; i++) {
-			profile = &cave_profiles[i];
-			if (profile->cutoff >= pick) break;
+	switch (world->levels[p->place].topography) {
+		case TOP_TOWN: profile = find_cave_profile("town"); break;
+		case TOP_PLAIN: profile = find_cave_profile("plain"); break;
+		case TOP_FOREST: profile = find_cave_profile("forest"); break;
+		case TOP_MOUNTAIN: profile = find_cave_profile("mtn"); break;
+		case TOP_SWAMP: profile = find_cave_profile("swamp"); break;
+		case TOP_RIVER: profile = find_cave_profile("river"); break;
+		case TOP_DESERT: profile = find_cave_profile("desert"); break;
+		case TOP_VALLEY: profile = find_cave_profile("valley"); break;
+		case TOP_MOUNTAINTOP: profile = find_cave_profile("mtntop"); break;
+		case TOP_CAVE: {
+			if (is_quest(p->depth) && !OPT(p, birth_levels_persist)) {
+				/* Quest levels must be normal levels */
+				profile = find_cave_profile("classic");
+			} else if (labyrinth_check(p->depth)) {
+				profile = find_cave_profile("labyrinth");
+			} else if ((p->depth >= 10) && (p->depth < 40) && one_in_(40)) {
+				profile = find_cave_profile("moria");
+			} else {
+				int pick = randint0(200);
+				size_t i;
+				for (i = 0; i < z_info->profile_max; i++) {
+					profile = &cave_profiles[i];
+					if (profile->cutoff >= pick) break;
+				}
+			}
 		}
+		default: break;
 	}
 
 	/* Return the profile or fail horribly */

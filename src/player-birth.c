@@ -1117,6 +1117,7 @@ void do_cmd_accept_character(struct command *cmd)
 	if (!world) {
 		quit("Failed to find world.");
 	}
+	player->place = 0;
 
 	/* Clear old messages, add new starting message */
 	history_clear(player);

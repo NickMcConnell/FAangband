@@ -21,6 +21,7 @@
 #include "cmds.h"
 #include "effects.h"
 #include "game-input.h"
+#include "game-world.h"
 #include "grafmode.h"
 #include "init.h"
 #include "mon-lore.h"
@@ -1471,7 +1472,7 @@ static void do_cmd_wiz_jump(void)
 	char tmp_val[160];
 
 	/* Prompt */
-	strnfmt(ppp, sizeof(ppp), "Jump to level (0-%d): ", z_info->max_depth-1);
+	strnfmt(ppp, sizeof(ppp), "Jump to place (0-%d): ", world->num_levels - 1);
 
 	/* Default */
 	strnfmt(tmp_val, sizeof(tmp_val), "%d", player->depth);
@@ -1486,8 +1487,8 @@ static void do_cmd_wiz_jump(void)
 	if (depth < 0) depth = 0;
 
 	/* Paranoia */
-	if (depth > z_info->max_depth - 1)
-		depth = z_info->max_depth - 1;
+	if (depth > world->num_levels - 1)
+		depth = world->num_levels - 1;
 
 	/* Prompt */
 	strnfmt(ppp, sizeof(ppp), "Choose cave_profile?");

@@ -120,8 +120,8 @@ const char *proj_idx_to_name(int type)
  * This algorithm is similar to, but slightly different from, the one used
  * by "update_view_los()", and very different from the one used by "los()".
  */
-int project_path(struct loc *gp, int range, struct loc grid1, struct loc grid2,
-				 int flg)
+int project_path(struct chunk *c, struct loc *gp, int range, struct loc grid1,
+				 struct loc grid2, int flg)
 {
 	int y, x;
 
@@ -144,7 +144,7 @@ int project_path(struct loc *gp, int range, struct loc grid1, struct loc grid2,
 	int m;
 
 	/* Possible decoy */
-	struct loc decoy = cave_find_decoy(cave);
+	struct loc decoy = cave_find_decoy(c);
 
 	/* No path necessary (or allowed) */
 	if (loc_eq(grid1, grid2)) return (0);
@@ -205,17 +205,17 @@ int project_path(struct loc *gp, int range, struct loc grid1, struct loc grid2,
 				/* Stop at non-initial wall grids, except where that would
 				 * leak info during targetting */
 				if (!(flg & (PROJECT_INFO))) {
-					if ((n > 0) && !square_isprojectable(cave, loc(x, y))) {
+					if ((n > 0) && !square_isprojectable(c, loc(x, y))) {
 						break;
 					}
-				} else if ((n > 0) && square_isbelievedwall(cave, loc(x, y))) {
+				} else if ((n > 0) && square_isbelievedwall(c, loc(x, y))) {
 					break;
 				}
 			}
 
 			/* Sometimes stop at non-initial monsters/players, decoys */
 			if (flg & (PROJECT_STOP)) {
-				if ((n > 0) && (square(cave, loc(x, y)).mon != 0)) break;
+				if ((n > 0) && (square(c, loc(x, y)).mon != 0)) break;
 				if (loc_eq(loc(x, y), decoy)) break;
 			}
 
@@ -271,17 +271,17 @@ int project_path(struct loc *gp, int range, struct loc grid1, struct loc grid2,
 				/* Stop at non-initial wall grids, except where that would
 				 * leak info during targetting */
 				if (!(flg & (PROJECT_INFO))) {
-					if ((n > 0) && !square_isprojectable(cave, loc(x, y))) {
+					if ((n > 0) && !square_isprojectable(c, loc(x, y))) {
 						break;
 					}
-				} else if ((n > 0) && square_isbelievedwall(cave, loc(x, y))) {
+				} else if ((n > 0) && square_isbelievedwall(c, loc(x, y))) {
 					break;
 				}
 			}
 
 			/* Sometimes stop at non-initial monsters/players, decoys */
 			if (flg & (PROJECT_STOP)) {
-				if ((n > 0) && (square(cave, loc(x, y)).mon != 0)) break;
+				if ((n > 0) && (square(c, loc(x, y)).mon != 0)) break;
 				if (loc_eq(loc(x, y), decoy)) break;
 			}
 
@@ -331,17 +331,17 @@ int project_path(struct loc *gp, int range, struct loc grid1, struct loc grid2,
 				/* Stop at non-initial wall grids, except where that would
 				 * leak info during targetting */
 				if (!(flg & (PROJECT_INFO))) {
-					if ((n > 0) && !square_isprojectable(cave, loc(x, y))) {
+					if ((n > 0) && !square_isprojectable(c, loc(x, y))) {
 						break;
 					}
-				} else if ((n > 0) && square_isbelievedwall(cave, loc(x, y))) {
+				} else if ((n > 0) && square_isbelievedwall(c, loc(x, y))) {
 					break;
 				}
 			}
 
 			/* Sometimes stop at non-initial monsters/players, decoys */
 			if (flg & (PROJECT_STOP)) {
-				if ((n > 0) && (square(cave, loc(x, y)).mon != 0)) break;
+				if ((n > 0) && (square(c, loc(x, y)).mon != 0)) break;
 				if (loc_eq(loc(x, y), decoy)) break;
 			}
 
@@ -372,7 +372,7 @@ bool projectable(struct chunk *c, struct loc grid1, struct loc grid2, int flg)
 	int grid_n = 0;
 
 	/* Check the projection path */
-	grid_n = project_path(grid_g, z_info->max_range, grid1, grid2, flg);
+	grid_n = project_path(cave, grid_g, z_info->max_range, grid1, grid2, flg);
 
 	/* No grid is ever projectable from itself */
 	if (!grid_n) return false;
@@ -666,7 +666,7 @@ bool project(struct source origin, int rad, struct loc finish,
 		int x = start.x;
 
 		/* Calculate the projection path */
-		num_path_grids = project_path(path_grid, z_info->max_range, start,
+		num_path_grids = project_path(cave, path_grid, z_info->max_range, start,
 									  finish, flg);
 
 		/* Some beams have limited length. */
