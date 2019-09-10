@@ -51,6 +51,9 @@ int test_magic_missile(void *state) {
 	/* Try making a new game */
 	cmdq_push(CMD_BIRTH_INIT);
 	cmdq_push(CMD_BIRTH_RESET);
+	cmdq_push(CMD_CHOOSE_MAP);
+	cmd_set_arg_choice(cmdq_peek(), "choice", 3);
+
 	cmdq_push(CMD_CHOOSE_RACE);
 	cmd_set_arg_choice(cmdq_peek(), "choice", 4);
 

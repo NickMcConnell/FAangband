@@ -21,6 +21,7 @@
 #include "cmd-core.h"
 #include "game-event.h"
 #include "game-input.h"
+#include "game-world.h"
 #include "obj-tval.h"
 #include "player.h"
 #include "player-spell.h"
@@ -61,6 +62,7 @@ enum birth_stage
 	BIRTH_BACK = -1,
 	BIRTH_RESET = 0,
 	BIRTH_QUICKSTART,
+	BIRTH_MAP_CHOICE,
 	BIRTH_RACE_CHOICE,
 	BIRTH_CLASS_CHOICE,
 	BIRTH_ROLLER_CHOICE,
@@ -115,7 +117,7 @@ static enum birth_stage textui_birth_quickstart(void)
 		
 		if (ke.code == 'N' || ke.code == 'n') {
 			cmdq_push(CMD_BIRTH_RESET);
-			next = BIRTH_RACE_CHOICE;
+			next = BIRTH_MAP_CHOICE;
 		} else if (ke.code == KTRL('X')) {
 			quit(NULL);
 		} else if ( !arg_force_name && (ke.code == 'C' || ke.code == 'c')) {
@@ -128,6 +130,235 @@ static enum birth_stage textui_birth_quickstart(void)
 
 	/* Clear prompt */
 	clear_from(23);
+
+	return next;
+}
+
+
+/**
+ * ------------------------------------------------------------------------
+ * Set the map
+ * ------------------------------------------------------------------------ */
+#define MAP_TEXT \
+    "    *    \n" \
+    "  #{light yellow}#{/} {light yellow}#{/}#  \n" \
+    " #{light green}#{/}{light yellow}#{/} {light yellow}#{/}{light green}#{/}# \n" \
+    "/{light yellow}##{/}{deep light blue}/{/}{yellow}@{/}{deep light blue}\\{/}{light yellow}##{/}\\\n" \
+    "*  {yellow}@{/}{orange}@{/}{yellow}@{/}  *  Welcome to First Age Angband!\n" \
+    "\\{light yellow}##{/}{deep light blue}\\{/}{yellow}@{/}{deep light blue}/{/}{light yellow}##{/}/\n" \
+    " #{light green}#{/}{light yellow}#{/} {light yellow}#{/}{light green}#{/}# \n" \
+    "  #{light yellow}#{/} {light yellow}#{/}#  \n" \
+    "    *    \n\n"				     \
+    "There are different ways of structuring the world\n" \
+    "of FAangband; '{light green}?{/}' gives more details."
+
+/**
+ * Show the map instructions
+ */
+static void print_map_instructions(void)
+{
+	/* Clear screen */
+	Term_clear();
+
+	/* Output to the screen */
+	text_out_hook = text_out_to_screen;
+
+	/* Indent output */
+	text_out_indent = 5;
+	Term_gotoxy(5, 1);
+
+	/* Display some helpful information */
+	text_out_e(MAP_TEXT);
+
+	/* Reset text_out() indentation */
+	text_out_indent = 0;
+}
+
+/**
+ * Current map and index
+ */
+int num_maps;
+int current_map_index;
+
+
+/**
+ * Map menu data struct
+ */
+struct map_menu_data {
+	const char *name;
+	const char *description;
+};
+
+
+/**
+ * Display a row of the map menu
+ */
+static void map_menu_display(struct menu *m, int oid, bool cursor,
+							 int row, int col, int wid)
+{
+	struct map_menu_data *d = menu_priv(m);
+	int attr_name = cursor ? COLOUR_L_BLUE : COLOUR_WHITE;
+
+	/* Dump the name */
+	c_put_str(attr_name, d[oid].name, row, col);
+}
+
+/**
+ * Handle an event on a menu row.
+ */
+static bool map_menu_handler(struct menu *m, const ui_event *e, int oid)
+{
+	/* Select */
+	if (e->type == EVT_SELECT) {
+		current_map_index = oid;
+		return false;
+	} else if (e->type == EVT_ESCAPE) {
+		current_map_index = -1;
+		return false;
+	} else if (e->type == EVT_KBRD) {
+		/* Get help */
+		if (e->key.code == '?') {
+			screen_save();
+			show_file("mapmode.txt", NULL, 0, 0);
+			screen_load();
+		}
+		return false;
+	}
+	return true;
+}
+
+/**
+ * Show map description when browsing
+ */
+static void map_menu_browser(int oid, void *data, const region *loc)
+{
+	struct map_menu_data *d = data;
+
+	/* Redirect output to the screen */
+	text_out_hook = text_out_to_screen;
+	text_out_wrap = 60;
+	text_out_indent = loc->col - 1;
+	text_out_pad = 1;
+
+	/* Write the description */
+	Term_gotoxy(loc->col, loc->row + loc->page_rows);
+	text_out_c(COLOUR_DEEP_L_BLUE, format("\n%s\n", d[oid].description));
+
+	/* Reset parameters */
+	text_out_pad = 0;
+	text_out_indent = 0;
+	text_out_wrap = 0;
+}
+
+static const menu_iter map_menu_iter = {
+	NULL,						/* get_tag = NULL, use lowercase selections */
+	NULL,						/* no validity hook */
+	map_menu_display,
+	map_menu_handler,
+	NULL						/* no resize hook */
+};
+
+/**
+ * Create and initialise the map menu
+ */
+static struct menu *map_menu_new(void)
+{
+	struct menu *m = menu_new(MN_SKIN_SCROLL, &map_menu_iter);
+	struct level_map *map;
+	struct map_menu_data *d;
+	int i;
+
+	region loc = { 5, 14, 70, -99 };
+
+	current_map_index = -1;
+	num_maps = 0;
+
+	/* Count the maps */
+	for (map = maps; map; map = map->next) {
+		if (world && map == world) {
+			current_map_index = num_maps;
+		}
+		num_maps++;
+	}
+	num_maps++;
+
+	/* Allocate menu array */
+	d = mem_zalloc(num_maps * sizeof(*d));
+	for (i = 0, map = maps; i < num_maps; i++) {
+		if (map) {
+			d[i].name = map->name;
+			d[i].description = map->help;
+			map = map->next;
+		} else {
+			d[i].name = "Quit";
+			d[i].description = "Quit FAangband.";
+		}
+	}
+	menu_setpriv(m, num_maps, d);
+
+	/* Set flags */
+	m->cmd_keys = "?";
+	m->flags = MN_CASELESS_TAGS;
+	m->selections = lower_case;
+	m->browse_hook = map_menu_browser;
+
+	/* Set size */
+	loc.page_rows = num_maps + 1;
+	menu_layout(m, &loc);
+
+	return m;
+}
+
+
+/**
+ * Clean up a map menu instance
+ */
+static void map_menu_destroy(struct menu *m)
+{
+	struct map_menu_data *d = menu_priv(m);
+	mem_free(d);
+	mem_free(m);
+}
+
+/**
+ * Run the map menu to select a map.
+ */
+static int map_menu_select(struct menu *m)
+{
+	screen_save();
+	region_erase_bordered(&m->active);
+
+	menu_select(m, 0, true);
+
+	screen_load();
+
+	return current_map_index;
+}
+
+/**
+ * Choose which map to play on
+ */
+static enum birth_stage get_map_command(void)
+{
+	enum birth_stage next;
+	struct menu *m;
+
+	m = map_menu_new();
+	if (m) {
+		int map = map_menu_select(m);
+		if (map == -1) {
+			next = BIRTH_BACK;
+		} else if (map == num_maps - 1) {
+			quit(NULL);
+		} else {
+			cmdq_push(CMD_CHOOSE_MAP);
+			cmd_set_arg_choice(cmdq_peek(), "choice", m->cursor);
+			next = BIRTH_RACE_CHOICE;
+		}
+	} else {
+		next = BIRTH_BACK;
+	}
+	map_menu_destroy(m);
 
 	return next;
 }
@@ -1153,7 +1384,7 @@ int textui_do_birth(void)
 				if (quickstart_allowed)
 					next = BIRTH_QUICKSTART;
 				else
-					next = BIRTH_RACE_CHOICE;
+					next = BIRTH_MAP_CHOICE;
 
 				break;
 			}
@@ -1164,6 +1395,15 @@ int textui_do_birth(void)
 				next = textui_birth_quickstart();
 				if (next == BIRTH_COMPLETE)
 					done = true;
+				break;
+			}
+
+			case BIRTH_MAP_CHOICE:
+			{
+				print_map_instructions();
+				next = get_map_command();
+				if (next == BIRTH_BACK)
+					next = BIRTH_RESET;
 				break;
 			}
 

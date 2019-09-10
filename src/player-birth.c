@@ -969,6 +969,22 @@ void do_cmd_birth_reset(struct command *cmd)
 	rolled_stats = false;
 }
 
+void do_cmd_choose_map(struct command *cmd)
+{
+	int choice;
+	world = maps;
+	cmd_get_arg_choice(cmd, "choice", &choice);
+	while (choice) {
+		world = world->next;
+		choice--;
+	}
+	player_generate(player, NULL, NULL, false);
+
+	reset_stats(stats, points_spent, &points_left, false);
+	generate_stats(stats, points_spent, &points_left);
+	rolled_stats = false;
+}
+
 void do_cmd_choose_race(struct command *cmd)
 {
 	int choice;

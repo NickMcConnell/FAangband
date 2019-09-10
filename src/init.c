@@ -782,6 +782,18 @@ static enum parser_error parse_world_map(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_world_help(struct parser *p) {
+	struct level_map *map = parser_priv(p);
+	const char *desc;
+
+	if (!map)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	desc = parser_getstr(p, "text");
+	map->help = string_append(map->help, desc);
+	return PARSE_ERROR_NONE;
+}
+
+
 static enum parser_error parse_world_level(struct parser *p) {
 	const char *l_name = parser_getsym(p, "locality");
 	const int depth = parser_getint(p, "depth");
@@ -930,6 +942,7 @@ struct parser *init_parse_world(void) {
 	struct parser *p = parser_new();
 
 	parser_reg(p, "map str mapname", parse_world_map);
+	parser_reg(p, "help str text", parse_world_help);
 	parser_reg(p, "level sym locality int depth sym topography",
 			   parse_world_level);
 	parser_reg(p, "north sym locality int depth", parse_world_north);
@@ -1011,6 +1024,7 @@ static void cleanup_world(void)
 			string_free(level->down);
 		}
 		string_free(map->name);
+		string_free(map->help);
 		mem_free(map->levels);
 		map = map->next;
 	}

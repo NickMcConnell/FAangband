@@ -49,6 +49,7 @@ struct level {
 
 struct level_map {
 	char *name;
+	char *help;
 	int num_levels;
 	int num_towns;
 	struct level *levels;
