@@ -439,7 +439,7 @@ static void birthmenu_display(struct menu *menu, int oid, bool cursor,
  */
 static const menu_iter birth_iter = { NULL, NULL, birthmenu_display, NULL, NULL };
 
-static void skill_help(const int r_skills[], const int c_skills[], int mhp, int exp, int infra)
+static void skill_help(const int r_skills[], const int c_skills[], int mhp, int infra)
 {
 	s16b skills[SKILL_MAX];
 	unsigned i;
@@ -449,7 +449,7 @@ static void skill_help(const int r_skills[], const int c_skills[], int mhp, int 
 
 	text_out_e("Hit/Shoot/Throw: %+d/%+d/%+d\n", skills[SKILL_TO_HIT_MELEE],
 			   skills[SKILL_TO_HIT_BOW], skills[SKILL_TO_HIT_THROW]);
-	text_out_e("Hit die: %2d   XP mod: %d%%\n", mhp, exp);
+	text_out_e("Hit die: %2d\n", mhp);
 	text_out_e("Disarm: %+3d/%+3d   Devices: %+3d\n", skills[SKILL_DISARM_PHYS],
 			   skills[SKILL_DISARM_MAGIC], skills[SKILL_DEVICE]);
 	text_out_e("Save:   %+3d   Stealth: %+3d\n", skills[SKILL_SAVE],
@@ -474,6 +474,7 @@ static const char *get_flag_desc(bitflag flag)
 		case OF_FREE_ACT: return "Resists paralysis";
 		case OF_REGEN: return "Regenerates quickly";
 		case OF_SEE_INVIS: return "Sees invisible creatures";
+		case OF_TELEPATHY: return "Has telepathy";
 		case OF_IMPAIR_HP: return "Regenerates slowly";
 
 		default: return "Undocumented flag";
@@ -539,7 +540,7 @@ static void race_help(int i, void *db, const region *l)
 	}
 	
 	text_out_e("\n");
-	skill_help(r->r_skills, NULL, r->r_mhp, r->r_exp, r->infra);
+	skill_help(r->r_skills, NULL, r->r_mhp, r->infra);
 	text_out_e("\n");
 
 	for (k = 1; k < OF_MAX; k++) {
@@ -609,8 +610,7 @@ static void class_help(int i, void *db, const region *l)
 
 	text_out_e("\n");
 	
-	skill_help(r->r_skills, c->c_skills, r->r_mhp + c->c_mhp,
-			   r->r_exp + c->c_exp, -1);
+	skill_help(r->r_skills, c->c_skills, r->r_mhp + c->c_mhp, r->infra);
 
 	if (c->magic.total_spells) {
 		int count;

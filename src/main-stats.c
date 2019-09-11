@@ -193,7 +193,7 @@ static void generate_player_for_stats()
 	player->max_lev = player->lev = 1;
 
 	/* Experience factor */
-	player->expfact = player->race->r_exp + player->class->c_exp;
+	player->expfact = player->class->c_exp;
 
 	/* Hitdice */
 	player->hitdie = player->race->r_mhp + player->class->c_mhp;

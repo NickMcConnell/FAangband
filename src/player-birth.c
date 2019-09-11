@@ -887,7 +887,7 @@ void player_generate(struct player *p, const struct player_race *r,
 	p->max_lev = p->lev = 1;
 
 	/* Experience factor */
-	p->expfact = p->race->r_exp + p->class->c_exp;
+	p->expfact = p->class->c_exp;
 
 	/* Hitdice */
 	p->hitdie = p->race->r_mhp + p->class->c_mhp;

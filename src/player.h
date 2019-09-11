@@ -173,7 +173,9 @@ struct player_race {
 	unsigned int ridx;
 
 	int r_mhp;		/**< Hit-dice modifier */
-	int r_exp;		/**< Experience factor */
+    int difficulty;	/**< Race difficulty factor */
+    int start_lev;	/**< Race starting level */
+    int hometown;	/**< Race starting town */
 
 	int b_age;		/**< Base age */
 	int m_age;		/**< Mod age */

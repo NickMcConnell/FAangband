@@ -2206,11 +2206,11 @@ static enum parser_error parse_p_race_hitdie(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_p_race_exp(struct parser *p) {
+static enum parser_error parse_p_race_difficulty(struct parser *p) {
 	struct player_race *r = parser_priv(p);
 	if (!r)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
-	r->r_exp = parser_getint(p, "exp");
+	r->difficulty = parser_getint(p, "diff");
 	return PARSE_ERROR_NONE;
 }
 
@@ -2219,6 +2219,22 @@ static enum parser_error parse_p_race_infravision(struct parser *p) {
 	if (!r)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
 	r->infra = parser_getint(p, "infra");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_p_race_start_lev(struct parser *p) {
+	struct player_race *r = parser_priv(p);
+	if (!r)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	r->start_lev = parser_getint(p, "start");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_p_race_hometown(struct parser *p) {
+	struct player_race *r = parser_priv(p);
+	if (!r)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	r->hometown = parser_getint(p, "home");
 	return PARSE_ERROR_NONE;
 }
 
@@ -2341,8 +2357,10 @@ struct parser *init_parse_p_race(void) {
 	parser_reg(p, "skill-throw int throw", parse_p_race_skill_throw);
 	parser_reg(p, "skill-dig int dig", parse_p_race_skill_dig);
 	parser_reg(p, "hitdie int mhp", parse_p_race_hitdie);
-	parser_reg(p, "exp int exp", parse_p_race_exp);
+	parser_reg(p, "difficulty int diff", parse_p_race_difficulty);
 	parser_reg(p, "infravision int infra", parse_p_race_infravision);
+	parser_reg(p, "start-lev int start", parse_p_race_start_lev);
+	parser_reg(p, "hometown int home", parse_p_race_hometown);
 	parser_reg(p, "history uint hist", parse_p_race_history);
 	parser_reg(p, "age int base_age int mod_age", parse_p_race_age);
 	parser_reg(p, "height int base_hgt int mod_hgt", parse_p_race_height);

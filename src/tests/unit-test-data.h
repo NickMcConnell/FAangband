@@ -629,7 +629,9 @@ static struct player_race TEST_DATA test_race = {
 	},
 
 	.r_mhp = 10,
-	.r_exp = 110,
+	.difficulty = 4,
+	.start_lev = 1,
+	.hometown = 6,
 
 	.b_age = 14,
 	.m_age = 6,

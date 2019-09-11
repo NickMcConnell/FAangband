@@ -154,14 +154,14 @@ int test_hitdie0(void *state) {
 	ok;
 }
 
-int test_exp0(void *state) {
-	enum parser_error r = parser_parse(state, "exp:20");
+int test_difficulty0(void *state) {
+	enum parser_error r = parser_parse(state, "difficulty:20");
 	struct player_race *pr;
 
 	eq(r, PARSE_ERROR_NONE);
 	pr = parser_priv(state);
 	require(pr);
-	eq(pr->r_exp, 20);
+	eq(pr->difficulty, 20);
 	ok;
 }
 
@@ -259,7 +259,7 @@ struct test tests[] = {
 	{ "skill_throw0", test_skill_throw0 },
 	{ "skill_dig0", test_skill_dig0 },
 	{ "hitdie0", test_hitdie0 },
-	{ "exp0", test_exp0 },
+	{ "difficulty0", test_difficulty0 },
 	{ "infravision0", test_infravision0 },
 	{ "history0", test_history0 },
 	{ "age0", test_age0 },
