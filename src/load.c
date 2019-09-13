@@ -694,7 +694,6 @@ int rd_player(void)
 
 	/* Special Race/Class info */
 	rd_byte(&player->hitdie);
-	rd_byte(&player->expfact);
 
 	/* Age/Height/Weight */
 	rd_s16b(&player->age);
@@ -761,6 +760,7 @@ int rd_player(void)
 
 	rd_s16b(&player->max_lev);
 	rd_s16b(&player->max_depth);
+	rd_s16b(&player->home);
 	rd_s16b(&player->recall_depth);
 
 	/* Hack -- Repair maximum player level */

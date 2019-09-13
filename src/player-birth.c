@@ -282,14 +282,14 @@ static void roll_hp(void)
 		/* Roll the hitpoint values */
 		for (i = 1; i < PY_MAX_LEVEL; i++) {
 			j = randint1(player->hitdie);
-			player->player_hp[i] = player->player_hp[i-1] + j;
+			player->player_hp[i] = player->player_hp[i - 1] + j;
 		}
 
 		/* XXX Could also require acceptable "mid-level" hitpoints */
 
 		/* Require "valid" hitpoints at highest level */
-		if (player->player_hp[PY_MAX_LEVEL-1] < min_value) continue;
-		if (player->player_hp[PY_MAX_LEVEL-1] > max_value) continue;
+		if (player->player_hp[PY_MAX_LEVEL - 1] < min_value) continue;
+		if (player->player_hp[PY_MAX_LEVEL - 1] > max_value) continue;
 
 		/* Acceptable */
 		break;
@@ -335,6 +335,40 @@ char *get_history(struct history_chart *chart)
 	return res;
 }
 
+
+/**
+ * Sets the character's starting level -NRM-
+ */
+static void get_level(struct player *p)
+{
+	/* Check if they're an "advanced race" */
+	if (world && (p->race->start_lev - 1) && !strstr(world->name, "Dungeon")) {
+		/* Add the experience */
+		p->exp = player_exp[p->race->start_lev - 2];
+		p->max_exp = player_exp[p->race->start_lev - 2];
+
+		/* Set the level */
+		p->lev = p->race->start_lev;
+		p->max_lev = p->race->start_lev;
+	} else {
+		/* Add the experience */
+		p->exp = 0;
+		p->max_exp = 0;
+
+		/* Set the level */
+		p->lev = 1;
+		p->max_lev = 1;
+	}
+
+	if (!world) return;
+
+	/* Set home town */
+	if (strstr(world->name, "Dungeon")) {
+		p->home = 0;
+	} else { 
+		p->home = level_by_name(world, p->race->hometown)->index;
+	}
+}
 
 /**
  * Computes character's age, height, and weight
@@ -883,11 +917,8 @@ void player_generate(struct player *p, const struct player_race *r,
 	p->class = c;
 	p->race = r;
 
-	/* Level 1 */
-	p->max_lev = p->lev = 1;
-
-	/* Experience factor */
-	p->expfact = p->class->c_exp;
+	/* Set the level */
+	get_level(p);
 
 	/* Hitdice */
 	p->hitdie = p->race->r_mhp + p->class->c_mhp;
@@ -917,7 +948,6 @@ static void do_birth_reset(bool use_quickstart, birther *quickstart_prev_local)
 		load_roller_data(quickstart_prev_local, NULL);
 
 	player_generate(player, NULL, NULL, use_quickstart && quickstart_prev_local);
-
 	player->depth = 0;
 
 	/* Update stats with bonuses, etc. */
@@ -1124,16 +1154,7 @@ void do_cmd_accept_character(struct command *cmd)
 
 	ignore_birth_init();
 
-	/* Enforce Angband dungeon map for now */
-	world = maps;
-	while (world) {
-		if (streq(world->name, "Angband Dungeon")) break;
-		world = world->next;
-	}
-	if (!world) {
-		quit("Failed to find world.");
-	}
-	player->place = 0;
+	player->place = player->home;
 
 	/* Clear old messages, add new starting message */
 	history_clear(player);
@@ -1196,6 +1217,9 @@ void do_cmd_accept_character(struct command *cmd)
 
 	/* Outfit the player, if they can sell the stuff */
 	player_outfit(player);
+
+	/* Max HP and SP */
+	get_bonuses();
 
 	/* Stop the player being quite so dead */
 	player->is_dead = false;

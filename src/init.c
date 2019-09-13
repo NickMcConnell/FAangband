@@ -2232,9 +2232,14 @@ static enum parser_error parse_p_race_start_lev(struct parser *p) {
 
 static enum parser_error parse_p_race_hometown(struct parser *p) {
 	struct player_race *r = parser_priv(p);
+	const char *name = parser_getsym(p, "home");
+	int i;
+
 	if (!r)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
-	r->hometown = parser_getint(p, "home");
+	if (grab_name("locality", name, localities, N_ELEMENTS(localities), &i))
+		return PARSE_ERROR_INVALID_LOCALITY;
+	r->hometown = string_make(format("%s Town", locality_name(i)));
 	return PARSE_ERROR_NONE;
 }
 
@@ -2360,7 +2365,7 @@ struct parser *init_parse_p_race(void) {
 	parser_reg(p, "difficulty int diff", parse_p_race_difficulty);
 	parser_reg(p, "infravision int infra", parse_p_race_infravision);
 	parser_reg(p, "start-lev int start", parse_p_race_start_lev);
-	parser_reg(p, "hometown int home", parse_p_race_hometown);
+	parser_reg(p, "hometown sym home", parse_p_race_hometown);
 	parser_reg(p, "history uint hist", parse_p_race_history);
 	parser_reg(p, "age int base_age int mod_age", parse_p_race_age);
 	parser_reg(p, "height int base_hgt int mod_hgt", parse_p_race_height);
@@ -2396,6 +2401,7 @@ static void cleanup_p_race(void)
 	while (p) {
 		next = p->next;
 		string_free((char *)p->name);
+		string_free(p->hometown);
 		mem_free(p);
 		p = next;
 	}

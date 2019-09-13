@@ -1627,7 +1627,7 @@ struct chunk *river_gen(struct player *p, int height, int width)
 {
 	struct loc grid, centre;
 	int i, y1 = height / 2;
-	int mid[height];
+	int *mid;
 	int place = p->place;
 	int last_place = p->last_place;
 	int form_grids = 0;
@@ -1659,6 +1659,7 @@ struct chunk *river_gen(struct player *p, int height, int width)
 
 	/* Place the river, start in the middle third */
 	i = c->width / 3 + randint0(c->width / 3);
+	mid = mem_zalloc(c->height * sizeof(int));
 	for (grid.y = 1; grid.y < c->height - 1; grid.y++) {
 		/* Remember the midpoint */
 		mid[grid.y] = i;
@@ -1767,6 +1768,7 @@ struct chunk *river_gen(struct player *p, int height, int width)
 	/* Place objects, traps and monsters */
 	(void) populate(c, false);
 
+	mem_free(mid);
 	return c;
 }
 

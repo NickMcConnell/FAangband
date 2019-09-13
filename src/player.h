@@ -175,7 +175,7 @@ struct player_race {
 	int r_mhp;		/**< Hit-dice modifier */
     int difficulty;	/**< Race difficulty factor */
     int start_lev;	/**< Race starting level */
-    int hometown;	/**< Race starting town */
+    char *hometown;	/**< Race starting town */
 
 	int b_age;		/**< Base age */
 	int m_age;		/**< Mod age */
@@ -317,7 +317,6 @@ struct player_class {
 	int x_skills[SKILL_MAX];	/**< Extra skills */
 
 	int c_mhp;					/**< Hit-dice adjustment */
-	int c_exp;					/**< Experience factor */
 
 	bitflag flags[OF_SIZE];		/**< (Object) flags */
 	bitflag pflags[PF_SIZE];	/**< (Player) flags */
@@ -495,7 +494,6 @@ struct player {
 	struct loc grid;/* Player location */
 
 	byte hitdie;	/* Hit dice (sides) */
-	byte expfact;	/* Experience factor */
 
 	s16b age;		/* Characters age */
 	s16b ht;		/* Height */
@@ -505,6 +503,7 @@ struct player {
 
 	s16b max_depth;	/* Max depth */
 	s16b recall_depth;	/* Recall depth */
+    s16b home;		/**< Home town */
 	s16b depth;		/* Cur depth */
 
     s16b recall[4];	/**< Recall points */

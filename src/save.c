@@ -429,7 +429,6 @@ void wr_player(void)
 	wr_byte(player->opts.name_suffix);
 
 	wr_byte(player->hitdie);
-	wr_byte(player->expfact);
 
 	wr_s16b(player->age);
 	wr_s16b(player->ht);
@@ -477,6 +476,7 @@ void wr_player(void)
 	/* Max Player and Dungeon Levels */
 	wr_s16b(player->max_lev);
 	wr_s16b(player->max_depth);
+	wr_s16b(player->home);
 	wr_s16b(player->recall_depth);
 
 	/* Location info */

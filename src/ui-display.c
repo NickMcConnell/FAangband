@@ -226,8 +226,7 @@ static void prt_exp(int row, int col)
 
 	/* Calculate XP for next level */
 	if (!lev50)
-		xp = (long)(player_exp[player->lev - 1] * player->expfact / 100L) -
-			player->exp;
+		xp = (long)(player_exp[player->lev - 1]) - player->exp;
 
 	/* Format XP */
 	strnfmt(out_val, sizeof(out_val), "%8d", xp);

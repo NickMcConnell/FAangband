@@ -631,7 +631,7 @@ static struct player_race TEST_DATA test_race = {
 	.r_mhp = 10,
 	.difficulty = 4,
 	.start_lev = 1,
-	.hometown = 6,
+	.hometown = "Eriador",
 
 	.b_age = 14,
 	.m_age = 6,
@@ -729,7 +729,6 @@ static struct player_class TEST_DATA test_class = {
 	},
 
 	.c_mhp = 9,
-	.c_exp = 0,
 
 	.max_attacks = 6,
 	.min_weight = 30,
@@ -1091,7 +1090,6 @@ static struct player TEST_DATA test_player = {
 	.race = &test_race,
 	.class = &test_class,
 	.hitdie = 10,
-	.expfact = 100,
 	.age = 12,
 	.ht = 40,
 	.wt = 80,

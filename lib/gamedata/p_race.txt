@@ -78,7 +78,7 @@ hitdie:9
 difficulty:6
 infravision:0
 start-lev:2
-hometown:0
+hometown:ERIADOR
 history:1
 age:14:6
 height:72:6
@@ -101,7 +101,7 @@ hitdie:10
 difficulty:6
 infravision:2
 start-lev:2
-hometown:1
+hometown:OSSIRIAND
 history:4
 age:50:20
 height:90:10
@@ -125,7 +125,7 @@ hitdie:10
 difficulty:19
 infravision:2
 start-lev:4
-hometown:8
+hometown:MENEGROTH
 history:5
 age:300:100
 height:90:10
@@ -149,7 +149,7 @@ hitdie:7
 difficulty:1
 infravision:4
 start-lev:1
-hometown:5
+hometown:GLADDEN_FIELDS
 history:10
 age:21:12
 height:36:3
@@ -173,7 +173,7 @@ hitdie:8
 difficulty:1
 infravision:5
 start-lev:1
-hometown:2
+hometown:ERED_LUIN_SOUTH
 history:13
 age:50:40
 height:44:3
@@ -198,7 +198,7 @@ hitdie:11
 difficulty:10
 infravision:5
 start-lev:3
-hometown:7
+hometown:BELEGOST
 history:16
 age:35:15
 height:48:3
@@ -222,7 +222,7 @@ hitdie:11
 difficulty:19
 infravision:0
 start-lev:4
-hometown:4
+hometown:EPHEL_BRANDIR
 history:19
 age:11:4
 height:66:1
@@ -246,7 +246,7 @@ hitdie:12
 difficulty:2
 infravision:5
 start-lev:1
-hometown:6
+hometown:KHAZAD_DUM
 history:16
 age:20:10
 height:48:3
@@ -271,7 +271,7 @@ hitdie:10
 difficulty:19
 infravision:0
 start-lev:4
-hometown:4
+hometown:EPHEL_BRANDIR
 history:20
 age:50:20
 height:82:5
@@ -296,7 +296,7 @@ hitdie:11
 difficulty:28
 infravision:2
 start-lev:5
-hometown:9
+hometown:GONDOLIN
 history:6
 age:400:200
 height:90:10
@@ -324,7 +324,7 @@ hitdie:12
 difficulty:1
 infravision:0
 start-lev:1
-hometown:5
+hometown:GLADDEN_FIELDS
 history:25
 age:10000:5000
 height:80:27
@@ -347,7 +347,7 @@ hitdie:9
 difficulty:1
 infravision:2
 start-lev:1
-hometown:3
+hometown:TAUR_IM_DUINATH
 history:28
 age:200:100
 height:90:10
@@ -370,7 +370,7 @@ hitdie:12
 difficulty:1
 infravision:0
 start-lev:1
-hometown:3
+hometown:TAUR_IM_DUINATH
 history:31
 age:120:60
 height:130:40
@@ -394,7 +394,7 @@ hitdie:10
 difficulty:1
 infravision:0
 start-lev:1
-hometown:5
+hometown:GLADDEN_FIELDS
 history:80
 age:14:6
 height:72:6

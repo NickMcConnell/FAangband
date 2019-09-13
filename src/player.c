@@ -224,13 +224,11 @@ static void adjust_level(struct player *p, bool verbose)
 
 	handle_stuff(p);
 
-	while ((p->lev > 1) &&
-	       (p->exp < (player_exp[p->lev-2] * p->expfact / 100L)))
+	while ((p->lev > 1) && (p->exp < player_exp[p->lev - 2])) {
 		p->lev--;
+	}
 
-
-	while ((p->lev < PY_MAX_LEVEL) &&
-	       (p->exp >= (player_exp[p->lev-1] * p->expfact / 100L))) {
+	while ((p->lev < PY_MAX_LEVEL) && (p->exp >= player_exp[p->lev - 1])) {
 		char buf[80];
 
 		p->lev++;
@@ -248,16 +246,22 @@ static void adjust_level(struct player *p, bool verbose)
 			msgt(MSG_LEVEL, "Welcome to level %d.",	p->lev);
 		}
 
-		effect_simple(EF_RESTORE_STAT, source_none(), "0", STAT_STR, 0, 0, 0, 0, NULL);
-		effect_simple(EF_RESTORE_STAT, source_none(), "0", STAT_INT, 0, 0, 0, 0, NULL);
-		effect_simple(EF_RESTORE_STAT, source_none(), "0", STAT_WIS, 0, 0, 0, 0, NULL);
-		effect_simple(EF_RESTORE_STAT, source_none(), "0", STAT_DEX, 0, 0, 0, 0, NULL);
-		effect_simple(EF_RESTORE_STAT, source_none(), "0", STAT_CON, 0, 0, 0, 0, NULL);
+		effect_simple(EF_RESTORE_STAT, source_none(), "0", STAT_STR,
+					  0, 0, 0, 0, NULL);
+		effect_simple(EF_RESTORE_STAT, source_none(), "0", STAT_INT,
+					  0, 0, 0, 0, NULL);
+		effect_simple(EF_RESTORE_STAT, source_none(), "0", STAT_WIS,
+					  0, 0, 0, 0, NULL);
+		effect_simple(EF_RESTORE_STAT, source_none(), "0", STAT_DEX,
+					  0, 0, 0, 0, NULL);
+		effect_simple(EF_RESTORE_STAT, source_none(), "0", STAT_CON,
+					  0, 0, 0, 0, NULL);
 	}
 
 	while ((p->max_lev < PY_MAX_LEVEL) &&
-	       (p->max_exp >= (player_exp[p->max_lev-1] * p->expfact / 100L)))
+		   (p->max_exp >= player_exp[p->max_lev - 1])) {
 		p->max_lev++;
+	}
 
 	p->upkeep->update |= (PU_BONUS | PU_HP | PU_SPELLS);
 	p->upkeep->redraw |= (PR_LEV | PR_TITLE | PR_EXP | PR_STATS);
