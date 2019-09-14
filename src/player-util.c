@@ -158,7 +158,7 @@ void player_change_place(struct player *p, int place)
 	int depth = world->levels[p->place].depth;
 
 	/* Set last place (unless unchanged or arena) */
-	if (p->last_place != place) {
+	if (p->last_place != p->place) {
 		p->last_place = p->place;
 	}
 

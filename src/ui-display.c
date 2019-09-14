@@ -489,18 +489,17 @@ static void prt_speed(int row, int col)
 /**
  * Prints depth in stat area
  */
-static void prt_depth(int row, int col)
+static size_t prt_depth(int row, int col)
 {
-	char depths[32];
+	char depths[80];
+	struct level *lev = &world->levels[player->place];
 
-	if (!player->depth)
-		my_strcpy(depths, "Town", sizeof(depths));
-	else
-		strnfmt(depths, sizeof(depths), "%d' (L%d)",
-		        player->depth * 50, player->depth);
+	my_strcpy(depths, level_name(lev), sizeof(depths));
 
 	/* Right-Adjust the "depth", and clear old values */
-	put_str(format("%-13s", depths), row, col);
+	put_str(depths, row, col);
+
+	return strlen(depths) + 1;
 }
 
 
@@ -560,7 +559,7 @@ static const struct side_handler_t
 	{ NULL,        20, 0 },
 	{ NULL,        22, 0 },
 	{ prt_speed,   13, EVENT_PLAYERSPEED }, /* Slow (-NN) / Fast (+NN) */
-	{ prt_depth,   14, EVENT_DUNGEONLEVEL }, /* Lev NNN / NNNN ft */
+	//{ prt_depth,   14, EVENT_DUNGEONLEVEL }, /* Lev NNN / NNNN ft */
 };
 
 
@@ -955,8 +954,8 @@ static size_t prt_unignore(int row, int col)
 typedef size_t status_f(int row, int col);
 
 static status_f *status_handlers[] =
-{ prt_level_feeling, prt_light, prt_unignore, prt_recall, prt_descent,
-  prt_state, prt_study, prt_tmd, prt_dtrap };
+{ prt_depth, prt_level_feeling, prt_light, prt_unignore, prt_recall,
+  prt_descent, prt_state, prt_study, prt_tmd, prt_dtrap };
 
 
 /**

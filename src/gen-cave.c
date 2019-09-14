@@ -1643,13 +1643,13 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width)
 		/* Get the correct path for wilderness */
 		if (strstr(world->name, "Wilderness")) {
 			struct level *last_lev = &world->levels[p->last_place];
-			if (streq(lev->north, level_name(last_lev))) {
+			if (lev->north && streq(lev->north, level_name(last_lev))) {
 				feat = FEAT_MORE_NORTH;
-			} else if (streq(lev->east, level_name(last_lev))) {
+			} else if (lev->east && streq(lev->east, level_name(last_lev))) {
 				feat = FEAT_MORE_EAST;
-			} else if (streq(lev->south, level_name(last_lev))) {
+			} else if (lev->south && streq(lev->south, level_name(last_lev))) {
 				feat = FEAT_MORE_SOUTH;
-			} else if (streq(lev->west, level_name(last_lev))) {
+			} else if (lev->west && streq(lev->west, level_name(last_lev))) {
 				feat = FEAT_MORE_WEST;
 			}
 		}

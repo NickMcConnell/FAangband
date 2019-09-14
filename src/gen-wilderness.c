@@ -434,7 +434,7 @@ static void make_edges(struct chunk *c, bool ragged, bool valley)
 				i = 0;
 			for (grid.y = 0; grid.y < i; grid.y++) {
 				/* Clear previous contents, add perma-wall */
-				if (square_ismark(c, grid)) {
+				if (!square_ismark(c, grid)) {
 					square_set_feat(c, grid, FEAT_PERM);
 				}
 			}

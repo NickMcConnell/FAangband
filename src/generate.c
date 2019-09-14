@@ -1368,8 +1368,12 @@ static struct chunk *cave_generate(struct player *p, int height, int width)
 void prepare_next_level(struct chunk **c, struct player *p)
 {
 	bool persist = OPT(p, birth_levels_persist) || p->upkeep->arena_level;
-	char *prev_name = level_name(&world->levels[p->last_place]);
-	char *new_name = level_name(&world->levels[p->place]);
+	char prev_name[80];
+	char new_name[80];
+
+	my_strcpy(prev_name, level_name(&world->levels[p->last_place]),
+			  sizeof(prev_name));
+	my_strcpy(new_name, level_name(&world->levels[p->place]), sizeof(new_name));
 
 	/* Deal with any existing current level */
 	if (character_dungeon) {
