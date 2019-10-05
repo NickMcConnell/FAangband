@@ -11,14 +11,17 @@
 # up:locality:depth
 # down:locality:depth
 
+# Note that it is the first level in any map should be 
+# level:ARENA:0:CAVE
+
 map:Standard Wilderness
 help:The standard FAangband wilderness.  You will start in a town, and need to
 help: traverse the map to find dungeons, fighting enemies as you go.  Each
 help: dungeon has a guardian at the bottom.
 
-level:UNDERWORLD:0:CAVE
-
 level:ARENA:0:CAVE
+
+level:UNDERWORLD:0:CAVE
 
 level:MOUNTAIN_TOP:0:MOUNTAINTOP
 
@@ -841,9 +844,9 @@ up:ANGBAND:126
 map:Extended Wilderness
 help:A more extended wilderness, which was the standard up until version 1.2.
 
-level:UNDERWORLD:0:CAVE
-
 level:ARENA:0:CAVE
+
+level:UNDERWORLD:0:CAVE
 
 level:MOUNTAIN_TOP:0:MOUNTAINTOP
 
@@ -2213,6 +2216,8 @@ help:Here you descend just through the dungeons of Beleriand, with portals at
 help: the bottom of each which will take you to the next one.  All guardians
 help: except the last are optional to fight.
 
+level:ARENA:0:CAVE
+
 level:KHAZAD_DUM:0:TOWN
 down:HITHAEGLIR:1
 
@@ -2705,12 +2710,12 @@ down:ANGBAND:127
 level:ANGBAND:127:CAVE
 up:ANGBAND:126
 
-level:ARENA:0:CAVE
-
 
 map:Angband Dungeon
 help:An experience more like regular Angband, with a single town, a single
 help: dungeon, and two quests - Sauron on level 99, and Morgoth on level 100.
+
+level:ARENA:0:CAVE
 
 level:ANGBAND:0:TOWN
 down:ANGBAND:1
@@ -3219,6 +3224,4 @@ down:ANGBAND:127
 
 level:ANGBAND:127:CAVE
 up:ANGBAND:126
-
-level:ARENA:0:CAVE
 

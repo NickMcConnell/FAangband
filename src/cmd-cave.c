@@ -115,11 +115,6 @@ void do_cmd_go_up(struct command *cmd)
 
 	new_place = player_get_next_place(player->place, path_direction(feat), 1);
 
-	if (new_place == player->depth) {
-		msg("You can't go up from here!");
-		return;
-	}
-
 	/* Take a turn */
 	player->upkeep->energy_use = z_info->move_energy;
 

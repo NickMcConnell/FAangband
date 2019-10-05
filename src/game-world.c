@@ -806,10 +806,10 @@ void process_world(struct chunk *c)
 
 			/* Determine the level */
 			if (player->depth) {
-				msgt(MSG_TPLEVEL, "You feel yourself yanked upwards!");
-				player_change_place(player, 0);
+				msgt(MSG_TPLEVEL, "You feel yourself yanked homewards!");
+				player_change_place(player, player->home);
 			} else {
-				msgt(MSG_TPLEVEL, "You feel yourself yanked downwards!");
+				msgt(MSG_TPLEVEL, "You feel yourself yanked away!");
 				player_set_recall_depth(player);
 				player_change_place(player, player->recall_depth);
 			}

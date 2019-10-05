@@ -364,7 +364,7 @@ static void get_level(struct player *p)
 
 	/* Set home town */
 	if (strstr(world->name, "Dungeon")) {
-		p->home = 0;
+		p->home = 1;
 	} else { 
 		p->home = level_by_name(world, p->race->hometown)->index;
 	}

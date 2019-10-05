@@ -1401,8 +1401,8 @@ void wiz_cheat_death(void)
 	/* Note cause of death XXX XXX XXX */
 	my_strcpy(player->died_from, "Cheating death", sizeof(player->died_from));
 
-	/* Back to the town */
-	player_change_place(player, 0);
+	/* Back home */
+	player_change_place(player, player->home);
 }
 
 /**

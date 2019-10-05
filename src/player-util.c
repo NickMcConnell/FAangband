@@ -155,19 +155,33 @@ bool player_get_recall_depth(struct player *p)
  */
 void player_change_place(struct player *p, int place)
 {
-	int depth = world->levels[p->place].depth;
+	struct level *lev = &world->levels[p->place];
 
 	/* Set last place (unless unchanged or arena) */
 	if (p->last_place != p->place) {
 		p->last_place = p->place;
 	}
 
+	/* Underworld and mountaintop levels need to be edited */
+	if (lev->locality == LOC_UNDERWORLD || lev->locality == LOC_MOUNTAIN_TOP) {
+		if (lev->up) {
+			string_free(lev->up);
+			lev->up = NULL;
+		}
+		if (lev->down) {
+			string_free(lev->down);
+			lev->down = NULL;
+		}
+		lev->depth = 0;
+	}
+
 	/* Set new place (unless arena) */
 	if (!p->upkeep->arena_level) {
 		p->place = place;
 	} else {
-		p->place = level_by_name(world, "Arena Town")->index;
-		level_by_name(world, "Arena Town")->depth = depth; 
+		/* Arena is always 0 */
+		p->place = 0;
+		world->levels[p->place].depth = lev->depth; 
 	}
 	p->depth = world->levels[place].depth;
 
