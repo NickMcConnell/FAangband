@@ -135,7 +135,7 @@ struct quest
 	struct quest *next;
 	byte index;
 	char *name;
-	byte level;					/* Dungeon level */
+	int place;					/* Place */
 	struct monster_race *race;	/* Monster race */
 	int cur_num;				/* Number killed (unused) */
 	int max_num;				/* Number required (unused) */

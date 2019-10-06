@@ -73,7 +73,7 @@ OP(birth_randarts,        "Generate a new, random artifact set",
 BIRTH, false)
 OP(birth_connect_stairs,  "Generate connected stairs",
 BIRTH, true)
-OP(birth_force_descend,   "Force player descent (never make up stairs)",
+OP(birth_force_descend,   "Force player descent (currently does nothing)",
 BIRTH, false)
 OP(birth_no_recall,       "Word of Recall has no effect",
 BIRTH, false)

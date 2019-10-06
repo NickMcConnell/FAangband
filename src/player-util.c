@@ -42,6 +42,50 @@
 #include "trap.h"
 
 /**
+ * Check if an underworld level is available
+ */
+bool underworld_possible(int place)
+{
+	struct level *current = &world->levels[place];
+
+	if (current->down) {
+		return false;
+	} else if (current->topography == TOP_CAVE) {
+		return false;
+	} else if (current->topography == TOP_MOUNTAINTOP) {
+		return false;
+	} else if (current->topography == TOP_TOWN) {
+		return false;
+	} else if (current->topography == TOP_VALLEY) {
+		return false;
+	}
+	return true;
+}
+
+/**
+ * Check if a mountain top level is available
+ */
+bool mountain_top_possible(int place)
+{
+	struct level *current = &world->levels[place];
+
+	if (current->up) {
+		return false;
+	} else if (current->topography == TOP_CAVE) {
+		return false;
+	} else if (current->topography == TOP_MOUNTAINTOP) {
+		return false;
+	} else if (current->topography == TOP_SWAMP) {
+		return false;
+	} else if (current->topography == TOP_TOWN) {
+		return false;
+	} else if (current->topography == TOP_VALLEY) {
+		return false;
+	}
+	return true;
+}
+
+/**
  * Determine the next place on the world map the player is about to move to.
  *
  * \param place is the start - either current place or a recall point or similar
@@ -69,29 +113,41 @@ int player_get_next_place(int place, char *direction, int multiple)
 		next_place = start->west ?
 			level_by_name(world, start->west)->index : -1;
 	} else if (streq(direction, "up")) {
-		next_place = start->up ?
-			level_by_name(world, start->up)->index : -1;
+		if (mountain_top_possible(place)) {
+			/* Find stupidly named level */
+			struct level *next = level_by_name(world, "Mountain Top Town");
+			next_place = next->index;
+		} else {
+			next_place = start->up ?
+				level_by_name(world, start->up)->index : -1;
+		}
 	} else if (streq(direction, "down")) {
-		struct level *lev = start;
-		while (multiple) {
-			/* Stop at unfinished quest levels */
-			if (is_quest(lev->index)) break;
+		if (underworld_possible(place)) {
+			/* Find stupidly named level */
+			struct level *next = level_by_name(world, "Underworld Town");
+			next_place = next->index;
+		} else {
+			struct level *lev = start;
+			while (multiple) {
+				/* Stop at unfinished quest levels */
+				if (is_quest(lev->index)) break;
 
-			/* Go down */
-			next_place = start->down ?
-				level_by_name(world, lev->down)->index : -1;
+				/* Go down */
+				next_place = start->down ?
+					level_by_name(world, lev->down)->index : -1;
 
-			/* Check failures */
-			if (next_place < 0) {
-				/* If we've taken some steps use the last valid one */
-				if (lev != start) {
-					return lev->index;
-				} else {
-					return -1;
+				/* Check failures */
+				if (next_place < 0) {
+					/* If we've taken some steps use the last valid one */
+					if (lev != start) {
+						return lev->index;
+					} else {
+						return -1;
+					}
 				}
+				lev = &world->levels[next_place];
+				multiple--;
 			}
-			lev = &world->levels[next_place];
-			multiple--;
 		}
 	}
 
@@ -104,12 +160,12 @@ int player_get_next_place(int place, char *direction, int multiple)
 void player_set_recall_depth(struct player *p)
 {
 	/* Account for forced descent */
-	if (OPT(p, birth_force_descend)) {
-		/* Force descent to a lower level if allowed */
-		if ((p->max_depth < z_info->max_depth - 1) && !is_quest(p->max_depth)) {
-			p->recall_depth = player_get_next_place(p->max_depth, "down", 1);
-		}
-	}
+	//if (OPT(p, birth_force_descend)) {
+	//	/* Force descent to a lower level if allowed */
+	//	if ((p->max_depth < z_info->max_depth - 1) && !is_quest(p->max_depth)) {
+	//		p->recall_depth = player_get_next_place(p->max_depth, "down", 1);
+	//	}
+	//}
 
 	/* Players who haven't left town before go to level 1 */
 	p->recall_depth = MAX(p->recall_depth, 1);
@@ -155,7 +211,7 @@ bool player_get_recall_depth(struct player *p)
  */
 void player_change_place(struct player *p, int place)
 {
-	struct level *lev = &world->levels[p->place];
+	struct level *lev = &world->levels[p->place], *next_lev;
 
 	/* Set last place (unless unchanged or arena) */
 	if (p->last_place != p->place) {
@@ -183,6 +239,18 @@ void player_change_place(struct player *p, int place)
 		p->place = 0;
 		world->levels[p->place].depth = lev->depth; 
 	}
+
+	/* Underworld and mountaintop levels need to be edited */
+	next_lev = &world->levels[p->place];
+	if (next_lev->locality == LOC_UNDERWORLD) {
+		next_lev->up = string_make(level_name(lev));
+		next_lev->depth = lev->depth;
+	}
+	if (next_lev->locality == LOC_MOUNTAIN_TOP) {
+		next_lev->down = string_make(level_name(lev));
+		next_lev->depth = lev->depth;
+	}
+
 	p->depth = world->levels[place].depth;
 
 	/* If we're returning to town, update the store contents

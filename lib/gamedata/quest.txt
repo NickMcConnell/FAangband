@@ -8,11 +8,11 @@
 # allow other quests to be added as a result of game events.
 
 name:Sauron
-level:99
+place:99
 race:Sauron, the Sorcerer
 number:1
 
 name:Morgoth
-level:100
+place:100
 race:Morgoth, Lord of Darkness
 number:1

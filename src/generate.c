@@ -737,7 +737,7 @@ bool labyrinth_check(int depth)
 	if (depth < 13) return false;
 
 	/* Don't try this on quest levels, kids... */
-	if (is_quest(depth)) return false;
+	if (is_quest(player->place)) return false;
 
 	/* Certain numbers increase the chance of having a labyrinth */
 	if (depth % 3 == 0) chance += 1;
@@ -808,7 +808,7 @@ const struct cave_profile *choose_profile(struct player *p)
 		case TOP_VALLEY: profile = find_cave_profile("valley"); break;
 		case TOP_MOUNTAINTOP: profile = find_cave_profile("mtntop"); break;
 		case TOP_CAVE: {
-			if (is_quest(p->depth) && !OPT(p, birth_levels_persist)) {
+			if (is_quest(p->place) && !OPT(p, birth_levels_persist)) {
 				/* Quest levels must be normal levels */
 				profile = find_cave_profile("classic");
 			} else if (labyrinth_check(p->depth)) {
@@ -1260,7 +1260,7 @@ static struct chunk *cave_generate(struct player *p, int height, int width)
 		}
 
 		/* Ensure quest monsters */
-		if (is_quest(chunk->depth)) {
+		if (is_quest(p->place)) {
 			int i2;
 			for (i2 = 1; i2 < z_info->r_max; i2++) {
 				struct monster_race *race = &r_info[i2];

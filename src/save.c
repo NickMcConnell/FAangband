@@ -406,7 +406,7 @@ void wr_quests(void)
 	/* Dump the quests */
 	wr_u16b(z_info->quest_max);
 	for (i = 0; i < z_info->quest_max; i++) {
-		wr_byte(player->quests[i].level);
+		wr_u16b(player->quests[i].place);
 		wr_u16b(player->quests[i].cur_num);
 	}
 }

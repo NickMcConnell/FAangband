@@ -1231,16 +1231,11 @@ bool build_vault(struct chunk *c, struct loc centre, struct vault *v)
 				/* Stairs */
 			case '<': {
 				if (OPT(player, birth_levels_persist)) break;
-				square_set_feat(c, grid, FEAT_LESS); break;
+				place_stairs(c, grid, FEAT_LESS); break;
 			}
 			case '>': {
 				if (OPT(player, birth_levels_persist)) break;
-				/* No down stairs at bottom or on quests */
-				if (is_quest(c->depth) || c->depth >= z_info->max_depth - 1)
-					square_set_feat(c, grid, FEAT_LESS);
-				else
-					square_set_feat(c, grid, FEAT_MORE);
-				break;
+				place_stairs(c, grid, FEAT_MORE); break;
 			}
 				/* Lava */
 			case '`': square_set_feat(c, grid, FEAT_LAVA); break;

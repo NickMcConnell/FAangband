@@ -828,7 +828,8 @@ void process_world(struct chunk *c)
 			struct level *lev;
 
 			/* Calculate target depth */
-			increment = (4 / z_info->stair_skip) + 1;
+			//increment = (4 / z_info->stair_skip) + 1;
+			increment = 5;
 			target_place = player_get_next_place(player->max_depth, "down",
 												 increment);
 			lev = &world->levels[target_place];

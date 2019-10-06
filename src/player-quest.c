@@ -17,6 +17,7 @@
  */
 #include "angband.h"
 #include "datafile.h"
+#include "game-world.h"
 #include "init.h"
 #include "mon-util.h"
 #include "monster.h"
@@ -45,11 +46,11 @@ static enum parser_error parse_quest_name(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_quest_level(struct parser *p) {
+static enum parser_error parse_quest_place(struct parser *p) {
 	struct quest *q = parser_priv(p);
 	assert(q);
 
-	q->level = parser_getuint(p, "level");
+	q->place = parser_getuint(p, "place");
 	return PARSE_ERROR_NONE;
 }
 
@@ -77,7 +78,7 @@ struct parser *init_parse_quest(void) {
 	struct parser *p = parser_new();
 	parser_setpriv(p, NULL);
 	parser_reg(p, "name str name", parse_quest_name);
-	parser_reg(p, "level uint level", parse_quest_level);
+	parser_reg(p, "place uint place", parse_quest_place);
 	parser_reg(p, "race str race", parse_quest_race);
 	parser_reg(p, "number uint number", parse_quest_number);
 	return p;
@@ -135,17 +136,14 @@ struct file_parser quests_parser = {
 };
 
 /**
- * Check if the given level is a quest level.
+ * Check if the given place is a quest place.
  */
-bool is_quest(int level)
+bool is_quest(int place)
 {
 	size_t i;
 
-	/* Town is never a quest */
-	if (!level) return false;
-
 	for (i = 0; i < z_info->quest_max; i++)
-		if (player->quests[i].level == level)
+		if (player->quests[i].place == place)
 			return true;
 
 	return false;
@@ -164,7 +162,7 @@ void player_quests_reset(struct player *p)
 
 	for (i = 0; i < z_info->quest_max; i++) {
 		p->quests[i].name = string_make(quests[i].name);
-		p->quests[i].level = quests[i].level;
+		p->quests[i].place = quests[i].place;
 		p->quests[i].race = quests[i].race;
 		p->quests[i].max_num = quests[i].max_num;
 	}
@@ -225,13 +223,13 @@ bool quest_check(const struct monster *m) {
 	/* Mark quests as complete */
 	for (i = 0; i < z_info->quest_max; i++) {
 		/* Note completed quests */
-		if (player->quests[i].level == m->race->level) {
-			player->quests[i].level = 0;
+		if (world->levels[player->quests[i].place].depth == m->race->level) {
+			player->quests[i].place = 0;
 			player->quests[i].cur_num++;
 		}
 
 		/* Count incomplete quests */
-		if (player->quests[i].level) total++;
+		if (player->quests[i].place) total++;
 	}
 
 	/* Build magical stairs */

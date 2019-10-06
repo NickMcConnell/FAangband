@@ -108,10 +108,10 @@ void do_cmd_go_up(struct command *cmd)
 	}
 
 	/* Force descend */
-	if (OPT(player, birth_force_descend)) {
-		msg("Nothing happens!");
-		return;
-	}
+	//if (OPT(player, birth_force_descend)) {
+	//	msg("Nothing happens!");
+	//	return;
+	//}
 
 	new_place = player_get_next_place(player->place, path_direction(feat), 1);
 
@@ -174,11 +174,11 @@ void do_cmd_go_down(struct command *cmd)
 	new_place = player_get_next_place(player->place, path_direction(feat), 1);
 
 	/* Warn a force_descend player if they're going to a quest level */
-	if (OPT(player, birth_force_descend) && is_quest(new_place)) {
-		if (!get_check("Are you sure you want to descend?")) {
-			return;
-		}
-	}
+	//if (OPT(player, birth_force_descend) && is_quest(new_place)) {
+	//	if (!get_check("Are you sure you want to descend?")) {
+	//		return;
+	//	}
+	//}
 
 	/* Take a turn */
 	player->upkeep->energy_use = z_info->move_energy;

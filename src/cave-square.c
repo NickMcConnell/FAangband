@@ -26,6 +26,7 @@
 #include "obj-util.h"
 #include "object.h"
 #include "player-timed.h"
+#include "player-util.h"
 #include "trap.h"
 
 
@@ -1266,14 +1267,38 @@ void square_add_web(struct chunk *c, struct loc grid)
 	place_trap(c, grid, web->tidx, 0);
 }
 
-void square_add_stairs(struct chunk *c, struct loc grid, int depth) {
-	int down = randint0(100) < 50;
-	if (depth == 0)
-		down = 1;
-	else if (is_quest(depth) || depth >= z_info->max_depth - 1)
-		down = 0;
+void square_add_stairs(struct chunk *c, struct loc grid, int place) {
+	struct level *current = &world->levels[place];
+	bool down = true, up = true;
 
-	square_set_feat(c, grid, down ? FEAT_MORE : FEAT_LESS);
+	/* Can't leave quest levels */
+	if (is_quest(place))
+		down = false;
+
+	/* Deal with underworld and mountain top */
+	if (!current->up && !mountain_top_possible(current->index)) {
+		up = false;
+	}
+	if (!current->down && !underworld_possible(current->index)) {
+		down = false;
+	}
+
+	/* Determine up/down if not already done */
+	if (up && down) {
+		if (randint0(100) < 50) {
+			up = false;
+		} else {
+			down = false;
+		}
+	}
+
+	if (up) {
+		square_set_feat(c, grid, FEAT_LESS);
+	} else if (down) {
+		square_set_feat(c, grid, FEAT_MORE);
+	} else {
+		msg("No stairs can be created here!");
+	}
 }
 
 void square_add_door(struct chunk *c, struct loc grid, bool closed) {

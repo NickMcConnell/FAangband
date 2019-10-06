@@ -25,6 +25,7 @@
 #include "datafile.h"
 #include "math.h"
 #include "game-event.h"
+#include "game-world.h"
 #include "generate.h"
 #include "init.h"
 #include "mon-make.h"
@@ -413,14 +414,31 @@ static void place_rubble(struct chunk *c, struct loc grid)
  *
  * All stairs from town go down. All stairs on an unfinished quest level go up.
  */
-static void place_stairs(struct chunk *c, struct loc grid, int feat)
+void place_stairs(struct chunk *c, struct loc grid, int feat)
 {
-    if (!c->depth)
-		square_set_feat(c, grid, FEAT_MORE);
-    else if (is_quest(c->depth) || c->depth >= z_info->max_depth - 1)
-		square_set_feat(c, grid, FEAT_LESS);
-    else
+	struct level *current = &world->levels[player->place];
+	bool down = true, up = true;
+
+	/* Can't leave quest levels */
+	if (is_quest(player->place))
+		down = false;
+
+	/* Deal with underworld and mountain top */
+	if (!current->up && !mountain_top_possible(current->index)) {
+		up = false;
+	}
+	if (!current->down && !underworld_possible(current->index)) {
+		down = false;
+	}
+
+	/* Determine up/down if not already done */
+	if (up && down) {
 		square_set_feat(c, grid, feat);
+	} else if (up) {
+		square_set_feat(c, grid, FEAT_LESS);
+	} else if (down) {
+		square_set_feat(c, grid, FEAT_MORE);
+	}
 }
 
 

@@ -19,6 +19,7 @@
 #include "angband.h"
 #include "cave.h"
 #include "effects.h"
+#include "game-world.h"
 #include "init.h"
 #include "mon-util.h"
 #include "obj-knowledge.h"
@@ -203,11 +204,13 @@ static int pick_trap(struct chunk *c, int feat, int trap_level)
 
 		/* Check legality of trapdoors. */
 		if (trf_has(kind->flags, TRF_DOWN)) {
+			struct level *current = &world->levels[player->place];
+			
 			/* No trap doors on quest levels */
-			if (is_quest(player->depth)) continue;
+			if (is_quest(player->place)) continue;
 
 			/* No trap doors on the deepest level */
-			if (player->depth >= z_info->max_depth - 1)
+			if (!current->down && !underworld_possible(current->index))
 				continue;
 
 			/* No trap doors with persistent levels (for now) */

@@ -59,6 +59,8 @@ enum
  */
 #define REST_REQUIRED_FOR_REGEN 5
 
+bool underworld_possible(int place);
+bool mountain_top_possible(int place);
 int player_get_next_place(int place, char *direction, int multiple);
 void player_set_recall_depth(struct player *p);
 bool player_get_recall_depth(struct player *p);

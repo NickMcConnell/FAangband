@@ -617,10 +617,10 @@ int rd_quests(void)
 	/* Load the Quests */
 	player_quests_reset(player);
 	for (i = 0; i < tmp16u; i++) {
-		u16b cur_num;
-		rd_byte(&player->quests[i].level);
-		rd_u16b(&cur_num);
-		player->quests[i].cur_num = cur_num;
+		rd_u16b(&tmp16u);
+		player->quests[i].place = tmp16u;
+		rd_u16b(&tmp16u);
+		player->quests[i].cur_num = tmp16u;
 	}
 
 	return 0;

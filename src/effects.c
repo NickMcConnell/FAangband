@@ -1440,19 +1440,19 @@ bool effect_handler_RECALL(effect_handler_context_t *context)
 	}
 
 	/* No recall from quest levels with force_descend */
-	if (OPT(player, birth_force_descend) && (is_quest(player->depth))) {
-		msg("Nothing happens.");
-		return true;
-	}
+	//if (OPT(player, birth_force_descend) && (is_quest(player->depth))) {
+	//	msg("Nothing happens.");
+	//	return true;
+	//}
 
 	/* Warn the player if they're descending to an unrecallable level */
 	target_place = player_get_next_place(player->max_depth, "down", 1);
-	if (OPT(player, birth_force_descend) && !(player->depth) &&
-			(is_quest(target_place))) {
-		if (!get_check("Are you sure you want to descend? ")) {
-			return false;
-		}
-	}
+	//if (OPT(player, birth_force_descend) && !(player->depth) &&
+	//		(is_quest(target_place))) {
+	//	if (!get_check("Are you sure you want to descend? ")) {
+	//		return false;
+	//	}
+	//}
 
 	/* Activate recall */
 	if (!player->word_recall) {
@@ -1492,16 +1492,16 @@ bool effect_handler_RECALL(effect_handler_context_t *context)
 
 bool effect_handler_DEEP_DESCENT(effect_handler_context_t *context)
 {
-	int i, number, target_place = player->max_depth;
+	int i, number, target_place = player->place;
 	struct level *lev;
 
-	/* Calculate target depth */
-	number = (4 / z_info->stair_skip) + 1;
-	target_place = player_get_next_place(player->max_depth, "down", number);
+	/* Calculate target place */
+	//number = (4 / z_info->stair_skip) + 1;
+	number = 1;
 	for (i = 5; i > 0; i--) {
 		if (is_quest(target_place)) break;
 		if (target_place >= z_info->max_depth - 1) break;
-		target_place = player_get_next_place(player->max_depth, "down", number);
+		target_place = player_get_next_place(target_place, "down", number);
 	}
 
 	lev = &world->levels[target_place];
@@ -2204,7 +2204,7 @@ bool effect_handler_CREATE_STAIRS(effect_handler_context_t *context)
 	if (square_object(cave, player->grid))
 		push_object(player->grid);
 
-	square_add_stairs(cave, player->grid, player->depth);
+	square_add_stairs(cave, player->grid, player->place);
 
 	return true;
 }
@@ -3047,7 +3047,8 @@ bool effect_handler_TELEPORT_LEVEL(effect_handler_context_t *context)
 {
 	bool up = true;
 	bool down = true;
-	int target_place = player_get_next_place(player->max_depth, "down", 1);
+	struct level *current = &world->levels[player->place];
+	int target_place = player_get_next_place(current->index, "down", 1);
 	struct monster *t_mon = monster_target_monster(context);
 	struct loc decoy = cave_find_decoy(cave);
 
@@ -3091,23 +3092,32 @@ bool effect_handler_TELEPORT_LEVEL(effect_handler_context_t *context)
 	}
 
 	/* No going up with force_descend or in the town */
-	if (OPT(player, birth_force_descend) || !player->depth)
-		up = false;
+	//if (OPT(player, birth_force_descend) || !player->depth)
+	//	up = false;
 
 	/* No forcing player down to quest levels if they can't leave */
 	if (!up && is_quest(target_place))
 		down = false;
 
 	/* Can't leave quest levels or go down deeper than the dungeon */
-	if (is_quest(player->place) || (player->depth >= z_info->max_depth - 1))
+	if (is_quest(player->place))
 		down = false;
+
+	/* Deal with underworld and mountain top */
+	if (!current->up && !mountain_top_possible(current->index)) {
+		up = false;
+	}
+	if (!current->down && !underworld_possible(current->index)) {
+		down = false;
+	}
 
 	/* Determine up/down if not already done */
 	if (up && down) {
-		if (randint0(100) < 50)
+		if (randint0(100) < 50) {
 			up = false;
-		else
+		} else {
 			down = false;
+		}
 	}
 
 	/* Now actually do the level change */
@@ -3118,13 +3128,13 @@ bool effect_handler_TELEPORT_LEVEL(effect_handler_context_t *context)
 	} else if (down) {
 		msgt(MSG_TPLEVEL, "You sink through the floor.");
 
-		if (OPT(player, birth_force_descend)) {
-			target_place = player_get_next_place(player->max_depth, "down", 1);
-			player_change_place(player, target_place);
-		} else {
-			target_place = player_get_next_place(player->place, "down", 1);
-			player_change_place(player, target_place);
-		}
+		//if (OPT(player, birth_force_descend)) {
+		//	target_place = player_get_next_place(player->max_depth, "down", 1);
+		//	player_change_place(player, target_place);
+		//} else {
+		target_place = player_get_next_place(player->place, "down", 1);
+		player_change_place(player, target_place);
+			//}
 	} else {
 		msg("Nothing happens.");
 	}
