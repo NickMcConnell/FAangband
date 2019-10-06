@@ -755,6 +755,7 @@ int player_check_terrain_damage(struct player *p, struct loc grid)
 
 		/* Feather fall makes one lightfooted. */
 		if (player_of_has(p, OF_FEATHER)) {
+			equip_learn_flag(p, OF_FEATHER);
 			dam_taken /= 2;
 		}
 	}
@@ -778,6 +779,57 @@ void player_take_terrain_damage(struct player *p, struct loc grid)
 	if (square_isfiery(cave, grid)) {
 		msg(square_feat(cave, grid)->hurt_msg);
 		inven_damage(player, PROJ_FIRE, dam_taken);
+	}
+}
+
+/**
+ * Player falls off a cliff
+ */
+void player_fall_off_cliff(struct player *p)
+{
+	int i, dam;
+	struct level *lev = &world->levels[p->place];
+
+	msg(square_feat(cave, p->grid)->hurt_msg);
+
+	/* Where we fell from */
+	p->last_place = p->place;
+
+	/* From the mountaintop, or down Nan Dungortheb */
+	if (lev->locality == LOC_MOUNTAIN_TOP) {
+		player_change_place(p, level_by_name(world, lev->down)->index);
+
+		if (player_of_has(p, OF_FEATHER)) {
+			equip_learn_flag(p, OF_FEATHER);
+			dam = damroll(2, 8);
+			(void) player_inc_timed(p, TMD_STUN, damroll(2, 8), true, true);
+			(void) player_inc_timed(p, TMD_CUT, damroll(2, 8), true, true);
+		} else {
+			dam = damroll(4, 8);
+			(void) player_inc_timed(p, TMD_STUN, damroll(4, 8), true, true);
+			(void) player_inc_timed(p, TMD_CUT, damroll(4, 8), true, true);
+		}
+		take_hit(p, dam, square_feat(cave, p->grid)->die_msg);
+	} else if (lev->locality == LOC_NAN_DUNGORTHEB) {
+		/* Fall at least one level */
+		for (i = 0; i < 1; i = randint0(3)) {
+			/* Check we haven't come to the end */
+			if (!world->levels[p->place].south) break;
+
+			player_change_place(p, level_by_name(world, lev->south)->index);
+
+			if (player_of_has(p, OF_FEATHER)) {
+				equip_learn_flag(p, OF_FEATHER);
+				dam = damroll(2, 8);
+				(void) player_inc_timed(p, TMD_STUN, damroll(2, 8), true, true);
+				(void) player_inc_timed(p, TMD_CUT, damroll(2, 8), true, true);
+			} else {
+				dam = damroll(4, 8);
+				(void) player_inc_timed(p, TMD_STUN, damroll(4, 8), true, true);
+				(void) player_inc_timed(p, TMD_CUT, damroll(4, 8), true, true);
+			}
+			take_hit(p, dam, square_feat(cave, p->grid)->die_msg);
+		}
 	}
 }
 

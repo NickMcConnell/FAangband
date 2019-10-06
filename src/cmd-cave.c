@@ -1086,8 +1086,8 @@ void move_player(int dir, bool disarm)
 			else
 				msgt(MSG_HITWALL, "There is a wall blocking your way.");
 		}
-	} else if (square_isdamaging(cave, grid)) {
-		/* Some terrain can damage the player */
+	} else if (square_isdamaging(cave, grid) || square_isfall(cave, grid)) {
+		/* Some terrain is dangerous for the player */
 		bool step = true;
 		struct feature *feat = square_feat(cave, grid);
 		int dam_taken = player_check_terrain_damage(player, grid);
@@ -1099,7 +1099,7 @@ void move_player(int dir, bool disarm)
 				step = false;
 			}
 		} else {
-			if (dam_taken > player->chp / 3) {
+			if ((dam_taken > player->chp / 3) || square_isfall(cave, grid)) {
 				step = get_check(feat->walk_msg);
 			}
 		}

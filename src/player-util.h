@@ -76,6 +76,7 @@ struct object *player_best_digger(struct player *p);
 bool player_attack_random_monster(struct player *p);
 int player_check_terrain_damage(struct player *p, struct loc grid);
 void player_take_terrain_damage(struct player *p, struct loc grid);
+void player_fall_off_cliff(struct player *p);
 struct player_shape *lookup_player_shape(const char *name);
 int shape_name_to_idx(const char *name);
 struct player_shape *player_shape_by_idx(int index);

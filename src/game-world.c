@@ -868,6 +868,12 @@ static void process_player_cleanup(void)
 		/* Player can be damaged by terrain */
 		player_take_terrain_damage(player, player->grid);
 
+		/* Player can be moved by terrain (or lack of it) */
+		if (square_isfall(cave, player->grid)) {
+			player_fall_off_cliff(player);
+			return;
+		}
+
 		/* Do nothing else if player has auto-dropped stuff */
 		if (!player->upkeep->dropping) {
 			/* Hack -- constant hallucination */

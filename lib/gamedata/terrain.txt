@@ -382,6 +382,10 @@ priority:2
 flags:LOS | PROJECT | PASSABLE | FALL 
 desc:Empty space - only flying creatures can pass across without falling.  All 
 desc:spells and missiles can pass through.
+walk-msg:It's a cliff! Really step off it?
+run-msg:You have come to a cliff.  Step off it?
+hurt-msg:You fall into darkness!
+die-msg:falling off a precipice
 
 name:sand dune
 graphics:.:y
