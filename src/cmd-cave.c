@@ -174,7 +174,7 @@ void do_cmd_go_down(struct command *cmd)
 	new_place = player_get_next_place(player->place, path_direction(feat), 1);
 
 	/* Warn a force_descend player if they're going to a quest level */
-	//if (OPT(player, birth_force_descend) && is_quest(new_place)) {
+	//if (OPT(player, birth_force_descend) && quest_forbid_downstairs(new_place)) {
 	//	if (!get_check("Are you sure you want to descend?")) {
 	//		return;
 	//	}

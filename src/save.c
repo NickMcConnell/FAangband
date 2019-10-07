@@ -33,6 +33,7 @@
 #include "obj-tval.h"
 #include "obj-util.h"
 #include "option.h"
+#include "player-quest.h"
 #include "player.h"
 #include "savefile.h"
 #include "store.h"
@@ -401,14 +402,45 @@ void wr_object_memory(void)
 
 void wr_quests(void)
 {
-	int i;
+	struct quest *quest = quests;
+	bool extra = false;
 
-	/* Dump the quests */
-	wr_u16b(z_info->quest_max);
-	for (i = 0; i < z_info->quest_max; i++) {
-		wr_u16b(player->quests[i].place);
-		wr_u16b(player->quests[i].cur_num);
+	/* Dump the quest results */
+	while (quest) {
+		struct quest_place *place = quest->place;
+		wr_string(quest->name);
+		wr_u16b(quest->complete ? 1 : 0);
+		wr_u16b(quest->cur_num);
+
+		/* Note final quest */
+		if (quest->type == QUEST_FINAL) {
+			extra = true;
+			quest = quest->next;
+			continue;
+		}
+		if (!extra) {
+			quest = quest->next;
+			continue;
+		}
+
+		/* Extra quests */
+		wr_u16b(quest->type);
+		while (place) {
+			wr_string(place->map->name);
+			wr_u16b(place->place);
+			wr_u16b(place->block ? 1 : 0);
+			place = place->next;
+		}
+		wr_string("No more places");
+		if (quest->race->name) {
+			wr_string(quest->race->name);
+		} else {
+			wr_string("none");
+		}
+		wr_u16b(quest->max_num);
+		quest = quest->next;
 	}
+	wr_string("No more quests");
 }
 
 

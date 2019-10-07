@@ -46,6 +46,7 @@
 #include "obj-util.h"
 #include "player-calcs.h"
 #include "player-history.h"
+#include "player-quest.h"
 #include "player-spell.h"
 #include "player-timed.h"
 #include "player-util.h"
@@ -1440,7 +1441,7 @@ bool effect_handler_RECALL(effect_handler_context_t *context)
 	}
 
 	/* No recall from quest levels with force_descend */
-	//if (OPT(player, birth_force_descend) && (is_quest(player->depth))) {
+	//if (OPT(player, birth_force_descend) && (quest_forbid_downstairs(player->depth))) {
 	//	msg("Nothing happens.");
 	//	return true;
 	//}
@@ -1448,7 +1449,7 @@ bool effect_handler_RECALL(effect_handler_context_t *context)
 	/* Warn the player if they're descending to an unrecallable level */
 	target_place = player_get_next_place(player->max_depth, "down", 1);
 	//if (OPT(player, birth_force_descend) && !(player->depth) &&
-	//		(is_quest(target_place))) {
+	//		(quest_forbid_downstairs(target_place))) {
 	//	if (!get_check("Are you sure you want to descend? ")) {
 	//		return false;
 	//	}
@@ -1499,7 +1500,7 @@ bool effect_handler_DEEP_DESCENT(effect_handler_context_t *context)
 	//number = (4 / z_info->stair_skip) + 1;
 	number = 1;
 	for (i = 5; i > 0; i--) {
-		if (is_quest(target_place)) break;
+		if (quest_forbid_downstairs(target_place)) break;
 		if (target_place >= z_info->max_depth - 1) break;
 		target_place = player_get_next_place(target_place, "down", number);
 	}
@@ -3096,11 +3097,11 @@ bool effect_handler_TELEPORT_LEVEL(effect_handler_context_t *context)
 	//	up = false;
 
 	/* No forcing player down to quest levels if they can't leave */
-	if (!up && is_quest(target_place))
+	if (!up && quest_forbid_downstairs(target_place))
 		down = false;
 
 	/* Can't leave quest levels or go down deeper than the dungeon */
-	if (is_quest(player->place))
+	if (quest_forbid_downstairs(player->place))
 		down = false;
 
 	/* Deal with underworld and mountain top */

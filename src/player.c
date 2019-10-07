@@ -426,9 +426,6 @@ static void cleanup_player(void) {
 	player->upkeep = NULL;
 
 	/* Free the things that are only sometimes initialised */
-	if (player->quests) {
-		player_quests_free(player);
-	}
 	if (player->spell_flags) {
 		player_spells_free(player);
 	}

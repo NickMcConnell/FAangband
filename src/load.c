@@ -604,23 +604,91 @@ int rd_object_memory(void)
 
 int rd_quests(void)
 {
-	int i;
 	u16b tmp16u;
+	struct quest *quest = quests;
+	char buf[80];
 
-	/* Load the Quests */
-	rd_u16b(&tmp16u);
-	if (tmp16u > z_info->quest_max) {
-		note(format("Too many (%u) quests!", tmp16u));
-		return (-1);
+	/* Load the standard quests */
+	while (quest) {
+		/* Check the name */
+		rd_string(buf, sizeof(buf));
+		if (!streq(buf, quest->name)) {
+			note(format("Invalid quest (%s).", buf));
+			return -1;
+		}
+
+		/* Read the data */
+		rd_u16b(&tmp16u);
+		if (tmp16u) {
+			quest->complete = true;
+		} else {
+			quest->complete = false;
+		}
+		rd_u16b(&tmp16u);
+		quest->cur_num = tmp16u;
+
+		/* If we're at the last one, stay there so we can add any more */
+		if (quest->type == QUEST_FINAL) break;
+		quest = quest->next;
 	}
 
-	/* Load the Quests */
-	player_quests_reset(player);
-	for (i = 0; i < tmp16u; i++) {
+	/* Load any extra quests */
+	while (true) {
+		/* Get the name, check if we're done */
+		rd_string(buf, sizeof(buf));
+		if (streq(buf, "No more quests")) break;
+
+		/* Make a new quest and read the data */
+		quest->next = mem_zalloc(sizeof(*quest));
+		quest->name = string_make(buf);
 		rd_u16b(&tmp16u);
-		player->quests[i].place = tmp16u;
+		if (tmp16u) {
+			quest->complete = true;
+		} else {
+			quest->complete = false;
+		}
 		rd_u16b(&tmp16u);
-		player->quests[i].cur_num = tmp16u;
+		quest->cur_num = tmp16u;
+		rd_u16b(&tmp16u);
+		quest->type = tmp16u;
+
+		/* Read the places */
+		rd_string(buf, sizeof(buf));
+		while (!streq(buf, "No more places")) {
+			struct level_map *map = maps;
+			while (map) {
+				if (streq(buf, map->name)) {
+					quest->place->map = map;
+					break;
+				}
+				map = map->next;
+			}
+			if (!map) {
+				note(format("Invalid quest map (%s).", buf));
+				return -1;
+			}
+			rd_u16b(&tmp16u);
+			quest->place->place = tmp16u;
+			rd_u16b(&tmp16u);
+			if (tmp16u) {
+				quest->place->block = true;
+			} else {
+				quest->place->block = false;
+			}
+			rd_string(buf, sizeof(buf));
+		}
+
+		/* Read the monster, if any, and number */
+		rd_string(buf, sizeof(buf));
+		if (!streq(buf, "none")) {
+			quest->race = lookup_monster(buf);
+			if (!quest->race) {
+				note(format("Invalid quest monster (%s).", buf));
+				return -1;
+			}
+		}
+		rd_u16b(&tmp16u);
+		quest->max_num = tmp16u;
 	}
 
 	return 0;

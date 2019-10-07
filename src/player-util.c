@@ -32,6 +32,7 @@
 #include "obj-util.h"
 #include "player-calcs.h"
 #include "player-history.h"
+#include "player-quest.h"
 #include "player-spell.h"
 #include "player-timed.h"
 #include "player-util.h"
@@ -130,7 +131,7 @@ int player_get_next_place(int place, char *direction, int multiple)
 			struct level *lev = start;
 			while (multiple) {
 				/* Stop at unfinished quest levels */
-				if (is_quest(lev->index)) break;
+				if (quest_forbid_downstairs(lev->index)) break;
 
 				/* Go down */
 				next_place = start->down ?
@@ -162,7 +163,7 @@ void player_set_recall_depth(struct player *p)
 	/* Account for forced descent */
 	//if (OPT(p, birth_force_descend)) {
 	//	/* Force descent to a lower level if allowed */
-	//	if ((p->max_depth < z_info->max_depth - 1) && !is_quest(p->max_depth)) {
+	//	if ((p->max_depth < z_info->max_depth - 1) && !quest_forbid_downstairs(p->max_depth)) {
 	//		p->recall_depth = player_get_next_place(p->max_depth, "down", 1);
 	//	}
 	//}

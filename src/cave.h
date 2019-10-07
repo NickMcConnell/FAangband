@@ -479,7 +479,6 @@ int count_feats(struct loc *grid,
 				bool (*test)(struct chunk *c, struct loc grid), bool under);
 struct loc cave_find_decoy(struct chunk *c);
 void prepare_next_level(struct chunk **c, struct player *p);
-bool is_quest(int level);
 
 void cave_known(struct player *p);
 

@@ -1,18 +1,89 @@
 # quest.txt
 
-# This file contains the fixed (and only) quests.  The current system is that
-# a copy of these is made into the player data at birth, and the level field
-# in that copy is zeroed when the quest is completed.  This system could be
-# improved; it could also be easily adapted to add more fixed quests (by adding
-# to this file).  It would also only require fairly small game code changes to
-# allow other quests to be added as a result of game events.
+# This file contains the fixed quests.  The current system is that a 'complete'
+# field is marked when the quest is completed.
 
-name:Sauron
-place:99
-race:Sauron, the Sorcerer
-number:1
+# This system allows for adding more fixed quests (by adding to this file); it
+# also allows for saving and loading of other quests added as a result of game
+# events.  Currently there is no game code to add such extra quests.
+# The final quest (Morgoth) should be the first fixed quest in this file.
+
+# name:quest name
+# type:quest type
+# race:monster race
+# number:number of monsters
+# map:map for place
+# place:quest place
+
+# 'name' is a label for the quest
+
+# 'type' indicates the type of quest.  Valid types are 'monster' (kill a number
+# of monsters), 'unique' (kill a unique monster), 'place' (visit a place on the
+# map) and 'final' (the game-winning quest).
+
+# 'race' is the monster race for monster and unique quests
+
+# 'number' is the number of kills for monster quests
+
+# 'map' - a map entry is needed for any of the world maps which have this quest
+
+# 'place' is the location on the relevant map where the quest takes place;
+# 'block' on the end indicates that the way forward from the quest is blocked
+# until the quest is complete.
+
+# Every quest requires a name, a type, at least one map, and a single place for
+# each map.  There should be only one quest for any place.
 
 name:Morgoth
-place:100
+type:final
 race:Morgoth, Lord of Darkness
-number:1
+map:Standard Wilderness
+place:ANGBAND:100:block
+map:Extended Wilderness
+place:ANGBAND:100:block
+map:Hybrid Dungeon
+place:ANGBAND:100:block
+map:Angband Dungeon
+place:ANGBAND:100:block
+
+name:Mîm
+type:unique
+race:Mîm, Betrayer of Turin
+map:Standard Wilderness
+place:AMON_RUDH:30
+map:Extended Wilderness
+place:AMON_RUDH:30
+map:Hybrid Dungeon
+place:AMON_RUDH:30
+
+name:Glaurung
+type:unique
+race:Glaurung, Father of the Dragons
+map:Standard Wilderness
+place:NARGOTHROND:55
+map:Extended Wilderness
+place:NARGOTHROND:55
+map:Hybrid Dungeon
+place:NARGOTHROND:55
+
+name:Ungoliant
+type:unique
+race:Ungoliant, the Unlight
+map:Standard Wilderness
+place:NAN_DUNGORTHEB:70:block
+map:Extended Wilderness
+place:NAN_DUNGORTHEB:70:block
+map:Hybrid Dungeon
+place:NAN_DUNGORTHEB:70
+
+name:Sauron
+type:unique
+race:Sauron, the Sorcerer
+map:Standard Wilderness
+place:TOL_IN_GAURHOTH:85
+map:Extended Wilderness
+place:TOL_IN_GAURHOTH:85
+map:Hybrid Dungeon
+place:TOL_IN_GAURHOTH:85
+map:Angband Dungeon
+place:ANGBAND:99:block

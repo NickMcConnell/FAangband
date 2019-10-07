@@ -44,6 +44,7 @@
 #include "obj-util.h"
 #include "object.h"
 #include "player-history.h"
+#include "player-quest.h"
 #include "player-util.h"
 #include "trap.h"
 #include "z-queue.h"
@@ -737,7 +738,7 @@ bool labyrinth_check(int depth)
 	if (depth < 13) return false;
 
 	/* Don't try this on quest levels, kids... */
-	if (is_quest(player->place)) return false;
+	if (find_quest(player->place)) return false;
 
 	/* Certain numbers increase the chance of having a labyrinth */
 	if (depth % 3 == 0) chance += 1;
@@ -808,9 +809,9 @@ const struct cave_profile *choose_profile(struct player *p)
 		case TOP_VALLEY: profile = find_cave_profile("valley"); break;
 		case TOP_MOUNTAINTOP: profile = find_cave_profile("mtntop"); break;
 		case TOP_CAVE: {
-			if (is_quest(p->place) && !OPT(p, birth_levels_persist)) {
+			if (find_quest(p->place) && !OPT(p, birth_levels_persist)) {
 				/* Quest levels must be normal levels */
-				profile = find_cave_profile("classic");
+				profile = find_cave_profile("modified");
 			} else if (labyrinth_check(p->depth)) {
 				profile = find_cave_profile("labyrinth");
 			} else if ((p->depth >= 10) && (p->depth < 40) && one_in_(40)) {
@@ -1227,6 +1228,7 @@ static struct chunk *cave_generate(struct player *p, int height, int width)
 	for (tries = 0; tries < 100 && error; tries++) {
 		int y, x;
 		struct dun_data dun_body;
+		struct quest *quest = find_quest(p->place);
 
 		error = NULL;
 
@@ -1260,19 +1262,13 @@ static struct chunk *cave_generate(struct player *p, int height, int width)
 		}
 
 		/* Ensure quest monsters */
-		if (is_quest(p->place)) {
-			int i2;
-			for (i2 = 1; i2 < z_info->r_max; i2++) {
-				struct monster_race *race = &r_info[i2];
-				struct monster_group_info info = { 0, 0 };
-				struct loc grid;
+		if (quest) {
+			struct monster_race *race = quest->race;
+			struct monster_group_info info = { 0, 0 };
+			struct loc grid;
 
-				/* The monster must be an unseen quest monster of this depth. */
-				if (race->cur_num > 0) continue;
-				if (!rf_has(race->flags, RF_QUESTOR)) continue;
-				if (race->level != chunk->depth) continue;
-	
-				/* Pick a location and place the monster */
+			/* Pick a location and place the monster(s) */
+			while (race->cur_num < quest->max_num) {
 				find_empty(chunk, &grid);
 				place_new_monster(chunk, grid, race, true, true, info,
 								  ORIGIN_DROP);

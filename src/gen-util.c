@@ -34,6 +34,7 @@
 #include "obj-pile.h"
 #include "obj-tval.h"
 #include "obj-util.h"
+#include "player-quest.h"
 #include "player-util.h"
 #include "trap.h"
 #include "z-queue.h"
@@ -420,7 +421,7 @@ void place_stairs(struct chunk *c, struct loc grid, int feat)
 	bool down = true, up = true;
 
 	/* Can't leave quest levels */
-	if (is_quest(player->place))
+	if (quest_forbid_downstairs(player->place))
 		down = false;
 
 	/* Deal with underworld and mountain top */

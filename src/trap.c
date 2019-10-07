@@ -24,6 +24,7 @@
 #include "mon-util.h"
 #include "obj-knowledge.h"
 #include "player-attack.h"
+#include "player-quest.h"
 #include "player-timed.h"
 #include "player-util.h"
 #include "trap.h"
@@ -207,7 +208,7 @@ static int pick_trap(struct chunk *c, int feat, int trap_level)
 			struct level *current = &world->levels[player->place];
 			
 			/* No trap doors on quest levels */
-			if (is_quest(player->place)) continue;
+			if (quest_forbid_downstairs(player->place)) continue;
 
 			/* No trap doors on the deepest level */
 			if (!current->down && !underworld_possible(current->index))

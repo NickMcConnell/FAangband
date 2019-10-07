@@ -446,8 +446,8 @@ void player_init(struct player *p)
 		art->seen = false;
 	}
 
-	/* Start with no quests */
-	player_quests_reset(p);
+	/* Start with no quests completed */
+	quests_reset();
 
 	for (i = 1; z_info && i < z_info->k_max; i++) {
 		struct object_kind *kind = &k_info[i];

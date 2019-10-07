@@ -23,10 +23,11 @@
 extern struct quest *quests;
 
 /* Functions */
-bool is_quest(int place);
-void player_quests_reset(struct player *p);
-void player_quests_free(struct player *p);
-bool quest_check(const struct monster *m);
+void quests_reset(void);
+struct quest *find_quest(int place);
+bool quest_forbid_downstairs(int place);
+bool quest_monster_check(const struct monster *mon);
+bool quest_place_check(void);
 extern struct file_parser quests_parser;
 
 

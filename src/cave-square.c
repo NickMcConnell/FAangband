@@ -25,6 +25,7 @@
 #include "obj-pile.h"
 #include "obj-util.h"
 #include "object.h"
+#include "player-quest.h"
 #include "player-timed.h"
 #include "player-util.h"
 #include "trap.h"
@@ -1272,7 +1273,7 @@ void square_add_stairs(struct chunk *c, struct loc grid, int place) {
 	bool down = true, up = true;
 
 	/* Can't leave quest levels */
-	if (is_quest(place))
+	if (quest_forbid_downstairs(place))
 		down = false;
 
 	/* Deal with underworld and mountain top */

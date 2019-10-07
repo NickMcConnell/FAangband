@@ -19,7 +19,6 @@ int setup_tests(void **state) {
 
 int teardown_tests(void *state) {
 	struct player *p = state;
-	player_quests_free((struct player *)state);
 	mem_free(z_info);
 	mem_free(p->upkeep->inven);
 	mem_free(p->upkeep->quiver);

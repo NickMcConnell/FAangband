@@ -128,17 +128,38 @@ enum {
 };
 
 /**
- * Structure for the "quests"
+ * Types of quest
  */
-struct quest
-{
+enum quest_type {
+	QUEST_MONSTER = 0,
+	QUEST_UNIQUE,
+	QUEST_PLACE,
+	QUEST_FINAL,
+	QUEST_MAX
+};
+
+/**
+ * Structure for quest locations per map
+ */
+struct quest_place {
+	struct level_map *map;
+	int place;
+	bool block;
+	struct quest_place *next;
+};
+
+/**
+ * Structure for the quests
+ */
+struct quest {
 	struct quest *next;
-	byte index;
 	char *name;
-	int place;					/* Place */
+	int type;
+	struct quest_place *place;	/* Place */
 	struct monster_race *race;	/* Monster race */
-	int cur_num;				/* Number killed (unused) */
-	int max_num;				/* Number required (unused) */
+	int cur_num;				/* Number killed/found */
+	int max_num;				/* Number required */
+	bool complete;
 };
 
 /**
@@ -550,7 +571,6 @@ struct player {
 	char full_name[PLAYER_NAME_LEN];	/* Full name */
 	char died_from[80];					/* Cause of death */
 	char *history;						/* Player history */
-	struct quest *quests;				/* Quest history */
 	u16b total_winner;					/* Total winner */
 
 	u16b noscore;				/* Cheating flags */
