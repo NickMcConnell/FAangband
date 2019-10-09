@@ -887,7 +887,7 @@ void monster_death(struct monster *mon, bool stats)
 		player->upkeep->update |= PU_UPDATE_VIEW;
 
 	/* Check if we progressed in or finished a quest */
-	quest_monster_check(mon);
+	quest_monster_death_check(mon);
 }
 
 /**

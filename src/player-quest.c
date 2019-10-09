@@ -80,8 +80,29 @@ static enum parser_error parse_quest_race(struct parser *p) {
 	q->race = lookup_monster(name);
 	if (!q->race)
 		return PARSE_ERROR_INVALID_MONSTER;
-	rf_on(q->race->flags, RF_QUESTOR);
 
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_quest_artifact(struct parser *p) {
+	struct quest *q = parser_priv(p);
+	int chance = parser_getuint(p, "chance");
+	struct quest_artifact *arts;
+	struct artifact *art;
+
+	if (!q)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	if ((q->type != QUEST_UNIQUE) && (q->type != QUEST_FINAL)) {
+		return PARSE_ERROR_ARTIFACT_IN_WRONG_QUEST;
+	}
+	art = lookup_artifact_name(parser_getstr(p, "name"));
+	if (!art)
+		return PARSE_ERROR_NO_ARTIFACT_NAME;
+	arts = mem_zalloc(sizeof(*arts));
+	arts->art = art;
+	arts->chance = chance;
+	arts->next = q->arts;
+	q->arts = arts;
 	return PARSE_ERROR_NONE;
 }
 
@@ -165,6 +186,7 @@ struct parser *init_parse_quest(void) {
 	parser_reg(p, "name str name", parse_quest_name);
 	parser_reg(p, "type str type", parse_quest_type);
 	parser_reg(p, "race str race", parse_quest_race);
+	parser_reg(p, "artifact uint chance str name", parse_quest_artifact);
 	parser_reg(p, "number uint number", parse_quest_number);
 	parser_reg(p, "map str mapname", parse_quest_map);
 	parser_reg(p, "place sym locality int depth ?sym block", parse_quest_place);
@@ -373,9 +395,26 @@ static void build_quest_stairs(struct loc grid)
 }
 
 /**
+ * Check if a monster is a unique quest monster
+ */
+bool quest_unique_monster_check(const struct monster_race *race)
+{
+	struct quest *quest = quests;
+
+	while (quest) {
+		if ((quest->type == QUEST_UNIQUE) && (quest->race == race )) {
+			return true;
+		}
+		quest = quest->next;
+	}
+	return false;
+}
+
+/**
  * Check if this (now dead) monster is a quest monster, and act appropriately
  */
-bool quest_monster_check(const struct monster *mon) {
+bool quest_monster_death_check(const struct monster *mon)
+{
 	struct quest *quest = find_quest(player->place);
 
 	/* Simple checks */

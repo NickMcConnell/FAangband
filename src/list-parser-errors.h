@@ -4,6 +4,7 @@
  */
 
 PARSE_ERROR(NONE,					"(none)")
+PARSE_ERROR(ARTIFACT_IN_WRONG_QUEST,"artifact in wrong quest type")
 PARSE_ERROR(BAD_EXPRESSION_STRING,	"bad expression string")
 PARSE_ERROR(ELEMENT_NAME_MISMATCH,	"element name mismatch")
 PARSE_ERROR(FIELD_TOO_LONG,			"field too long")

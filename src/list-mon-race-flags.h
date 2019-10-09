@@ -6,7 +6,6 @@
 /* symbol		type			descr */
 RF(NONE,		RFT_NONE,		"")
 RF(UNIQUE,		RFT_OBV,		"")
-RF(QUESTOR,		RFT_OBV,		"")
 RF(MALE,		RFT_OBV,		"")
 RF(FEMALE,		RFT_OBV,		"")
 RF(GROUP_AI,	RFT_OBV,		"")

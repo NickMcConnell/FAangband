@@ -32,6 +32,7 @@
 #include "obj-tval.h"
 #include "obj-util.h"
 #include "player-calcs.h"
+#include "player-quest.h"
 #include "target.h"
 
 /**
@@ -487,7 +488,7 @@ void compact_monsters(int num_to_compact)
 			chance = 90;
 
 			/* Only compact "Quest" Monsters in emergencies */
-			if (rf_has(mon->race->flags, RF_QUESTOR) && (iter < 1000))
+			if (quest_unique_monster_check(mon->race) && (iter < 1000))
 				chance = 100;
 
 			/* Try not to compact Unique Monsters */
@@ -722,36 +723,43 @@ static bool mon_create_drop(struct chunk *c, struct monster *mon, byte origin)
 	level = MAX((monlevel + player->depth) / 2, monlevel);
     level = MIN(level, 100);
 
-	/* Morgoth currently drops all artifacts with the QUEST_ART flag */
-	if (rf_has(mon->race->flags, RF_QUESTOR) && (mon->race->level == 100)) {
-		/* Search all the artifacts */
-		for (j = 1; j < z_info->a_max; j++) {
-			struct artifact *art = &a_info[j];
-			struct object_kind *kind = lookup_kind(art->tval, art->sval);
-			if (!kf_has(kind->kind_flags, KF_QUEST_ART)) {
-				continue;
-			}
+	/* Check for quest artifacts */
+	if (quest_unique_monster_check(mon->race)) {
+		struct quest *quest = find_quest(player->place);
+		if (quest && quest->arts) {
+			struct quest_artifact *arts = quest->arts;
+			while (arts) {
+				struct artifact *art = arts->art;
+				struct object_kind *kind = lookup_kind(art->tval, art->sval);
 
-			/* Allocate by hand, prep, apply magic */
-			obj = mem_zalloc(sizeof(*obj));
-			object_prep(obj, kind, 100, RANDOMISE);
-			obj->artifact = art;
-			copy_artifact_data(obj, obj->artifact);
-			obj->artifact->created = true;
+				/* Check chance */
+				if (randint1(100) > arts->chance) {
+					arts = arts->next;
+					continue;
+				}
 
-			/* Set origin details */
-			obj->origin = origin;
-			obj->origin_depth = player->depth;
-			obj->origin_race = mon->race;
-			obj->number = 1;
+				/* Allocate by hand, prep, apply magic */
+				obj = mem_zalloc(sizeof(*obj));
+				object_prep(obj, kind, 100, RANDOMISE);
+				obj->artifact = art;
+				copy_artifact_data(obj, obj->artifact);
+				obj->artifact->created = true;
 
-			/* Try to carry */
-			if (monster_carry(c, mon, obj)) {
-				any = true;
-			} else {
-				obj->artifact->created = false;
-				object_wipe(obj);
-				mem_free(obj);
+				/* Set origin details */
+				obj->origin = origin;
+				obj->origin_depth = player->depth;
+				obj->origin_race = mon->race;
+				obj->number = 1;
+
+				/* Try to carry */
+				if (monster_carry(c, mon, obj)) {
+					any = true;
+				} else {
+					obj->artifact->created = false;
+					object_wipe(obj);
+					mem_free(obj);
+				}
+				arts = arts->next;
 			}
 		}
 	}

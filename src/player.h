@@ -149,6 +149,15 @@ struct quest_place {
 };
 
 /**
+ * Structure for quest artifacts
+ */
+struct quest_artifact {
+	struct artifact *art;
+	int chance;
+	struct quest_artifact *next;
+};
+
+/**
  * Structure for the quests
  */
 struct quest {
@@ -157,6 +166,7 @@ struct quest {
 	int type;
 	struct quest_place *place;	/* Place */
 	struct monster_race *race;	/* Monster race */
+	struct quest_artifact *arts;/* Artifacts dropped by quest unique */
 	int cur_num;				/* Number killed/found */
 	int max_num;				/* Number required */
 	bool complete;

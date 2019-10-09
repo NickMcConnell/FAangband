@@ -19,6 +19,7 @@
 #include "angband.h"
 #include "init.h"
 #include "mon-lore.h"
+#include "player-quest.h"
 #include "ui-mon-lore.h"
 #include "ui-output.h"
 #include "ui-prefs.h"
@@ -147,7 +148,7 @@ void lore_description(textblock *tb, const struct monster_race *race,
 		textblock_append(tb, "You know everything about this monster.");
 
 	/* Notice "Quest" monsters */
-	if (rf_has(race->flags, RF_QUESTOR))
+	if (quest_unique_monster_check(race))
 		textblock_append(tb, "You feel an intense desire to kill this monster...  ");
 
 	textblock_append(tb, "\n");

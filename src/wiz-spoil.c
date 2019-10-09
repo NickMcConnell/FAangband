@@ -31,6 +31,7 @@
 #include "obj-tval.h"
 #include "obj-util.h"
 #include "object.h"
+#include "player-quest.h"
 #include "ui-input.h"
 #include "ui-knowledge.h"
 #include "ui-menu.h"
@@ -509,7 +510,7 @@ static void spoil_mon_desc(const char *fname)
 		const char *name = race->name;
 
 		/* Get the "name" */
-		if (rf_has(race->flags, RF_QUESTOR))
+		if (quest_unique_monster_check(race))
 			strnfmt(nam, sizeof(nam), "[Q] %s", name);
 		else if (rf_has(race->flags, RF_UNIQUE))
 			strnfmt(nam, sizeof(nam), "[U] %s", name);
@@ -621,7 +622,7 @@ static void spoil_mon_info(const char *fname)
 		tb = textblock_new();
 
 		/* Line 1: prefix, name, color, and symbol */
-		if (rf_has(race->flags, RF_QUESTOR))
+		if (quest_unique_monster_check(race))
 			textblock_append(tb, "[Q] ");
 		else if (rf_has(race->flags, RF_UNIQUE))
 			textblock_append(tb, "[U] ");
