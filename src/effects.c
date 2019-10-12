@@ -1431,11 +1431,16 @@ bool effect_handler_REMOVE_CURSE(effect_handler_context_t *context)
  */
 bool effect_handler_RECALL(effect_handler_context_t *context)
 {
-	int target_place;
+	//int target_place;
+	int i, num_recall_points = 0;
+	int num_poss = strstr(world->name, "Dungeon") ? 1 : 4;
+	int point, current = player->place;
+	bool inward = (current != player->home);
 	context->ident = true;	
 
 	/* No recall */
-	if (OPT(player, birth_no_recall) && !player->total_winner) {
+	if ((OPT(player, birth_no_recall) && !player->total_winner) ||
+		((player->place == player->home) && !player->recall_pt)) {
 		msg("Nothing happens.");
 		return true;
 	}
@@ -1447,7 +1452,7 @@ bool effect_handler_RECALL(effect_handler_context_t *context)
 	//}
 
 	/* Warn the player if they're descending to an unrecallable level */
-	target_place = player_get_next_place(player->max_depth, "down", 1);
+	//target_place = player_get_next_place(player->max_depth, "down", 1);
 	//if (OPT(player, birth_force_descend) && !(player->depth) &&
 	//		(quest_forbid_downstairs(target_place))) {
 	//	if (!get_check("Are you sure you want to descend? ")) {
@@ -1455,22 +1460,43 @@ bool effect_handler_RECALL(effect_handler_context_t *context)
 	//	}
 	//}
 
+	/* Find how many recall points currently exist */
+	for (i = 0; i < num_poss; i++) {
+		if (player->recall[i]) {
+			num_recall_points++;
+		}
+	}
+
 	/* Activate recall */
 	if (!player->word_recall) {
-		/* Reset recall depth */
-		if (player->depth > 0) {
-			if (player->depth != player->max_depth) {
-				if (get_check("Set recall depth to current depth? ")) {
-					player->recall_depth = player->max_depth = player->depth;
+		point = get_recall_point(inward, num_recall_points, num_poss);
+		if (point >= 0) {
+			if (inward) {
+				int place = 0;
+
+				/* Set the point, being careful about underworld etc */
+				if ((world->levels[current].locality == LOC_UNDERWORLD) ||
+					(world->levels[current].locality == LOC_MOUNTAIN_TOP)) {
+					place = player->last_place;
+				} else {
+					place = current;
 				}
+
+				/* Check for replacement */
+				if (point < num_recall_points + 1) {
+					player->recall[point] = place;
+				}
+
+				/* Set it */
+				player->recall_pt = place;
 			} else {
-				player->recall_depth = player->max_depth;
+				if (!player->recall[point]) {
+					return false;
+				}
+				player->recall_pt = player->recall[point];
 			}
 		} else {
-			if (OPT(player, birth_levels_persist)) {
-				/* Persistent levels players get to choose */
-				if (!player_get_recall_depth(player)) return false;
-			}
+			return false;
 		}
 
 		player->word_recall = randint0(20) + 15;

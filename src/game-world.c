@@ -805,13 +805,14 @@ void process_world(struct chunk *c)
 			disturb(player, 0);
 
 			/* Determine the level */
-			if (player->depth) {
+			if (player->place != player->home) {
 				msgt(MSG_TPLEVEL, "You feel yourself yanked homewards!");
 				player_change_place(player, player->home);
+				player->last_place = 0;
 			} else {
 				msgt(MSG_TPLEVEL, "You feel yourself yanked away!");
-				player_set_recall_depth(player);
-				player_change_place(player, player->recall_depth);
+				player_change_place(player, player->recall_pt);
+				player->last_place = 0;
 			}
 		}
 	}
@@ -1025,7 +1026,7 @@ void on_new_level(void)
 
 	/* Track maximum dungeon level */
 	if (player->max_depth < player->depth)
-		player->max_depth = player->recall_depth = player->depth;
+		player->max_depth = player->depth;
 
 	/* Flush messages */
 	event_signal(EVENT_MESSAGE_FLUSH);

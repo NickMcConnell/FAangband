@@ -829,14 +829,12 @@ int rd_player(void)
 	rd_s16b(&player->max_lev);
 	rd_s16b(&player->max_depth);
 	rd_s16b(&player->home);
-	rd_s16b(&player->recall_depth);
 
 	/* Hack -- Repair maximum player level */
 	if (player->max_lev < player->lev) player->max_lev = player->lev;
 
 	/* Hack -- Repair maximum dungeon level */
 	if (player->max_depth < 0) player->max_depth = 1;
-	if (player->recall_depth <= 0) player->recall_depth = player->max_depth;
 
 	/* Hack -- Reset cause of death */
 	if (player->chp >= 0)

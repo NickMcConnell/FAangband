@@ -192,6 +192,7 @@ ANGFILES = \
 	ui-output.o \
 	ui-player.o \
 	ui-prefs.o \
+	ui-recall.o \
 	ui-score.o \
 	ui-signals.o \
 	ui-spell.o \

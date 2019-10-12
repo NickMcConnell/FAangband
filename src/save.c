@@ -509,7 +509,6 @@ void wr_player(void)
 	wr_s16b(player->max_lev);
 	wr_s16b(player->max_depth);
 	wr_s16b(player->home);
-	wr_s16b(player->recall_depth);
 
 	/* Location info */
 	for (i = 0; i < 4; i++) {

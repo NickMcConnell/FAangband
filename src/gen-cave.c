@@ -1653,6 +1653,19 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width)
 			} else if (lev->west && streq(lev->west, level_name(last_lev))) {
 				feat = FEAT_MORE_WEST;
 			}
+
+			/* Deal with recall */
+			if (feat == FEAT_MORE) {
+				if (lev->north) {
+				feat = FEAT_MORE_NORTH;
+				} else if (lev->east) {
+					feat = FEAT_MORE_EAST;
+				} else if (lev->south) {
+					feat = FEAT_MORE_SOUTH;
+				} else if (lev->west) {
+					feat = FEAT_MORE_WEST;
+				}
+			}
 		}
 
 		/* Find the required stair/path */

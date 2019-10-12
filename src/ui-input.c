@@ -41,6 +41,7 @@
 #include "ui-output.h"
 #include "ui-player.h"
 #include "ui-prefs.h"
+#include "ui-recall.h"
 #include "ui-signals.h"
 #include "ui-spell.h"
 #include "ui-store.h"
@@ -1335,6 +1336,7 @@ void textui_input_init(void)
 	get_spell_hook = textui_get_spell;
 	get_item_hook = textui_get_item;
 	get_curse_hook = textui_get_curse;
+	get_recall_point_hook = textui_get_recall_point;
 	get_panel_hook = textui_get_panel;
 	panel_contains_hook = textui_panel_contains;
 	map_is_visible_hook = textui_map_is_visible;

@@ -34,6 +34,7 @@ int (*get_spell_hook)(const char *verb, item_tester book_filter, cmd_code cmd,
 bool (*get_item_hook)(struct object **choice, const char *pmt, const char *str,
 					  cmd_code cmd, item_tester tester, int mode);
 bool (*get_curse_hook)(int *choice, struct object *obj, char *dice_string);
+int (*get_recall_point_hook)(bool inward, int num_points, int num_poss);
 void (*get_panel_hook)(int *min_y, int *min_x, int *max_y, int *max_x);
 bool (*panel_contains_hook)(unsigned int y, unsigned int x);
 bool (*map_is_visible_hook)(void);
@@ -199,6 +200,18 @@ bool get_curse(int *choice, struct object *obj, char *dice_string)
 		return get_curse_hook(choice, obj, dice_string);
 	else
 		return false;
+}
+
+/**
+ * Get a recall point
+ */
+int get_recall_point(bool inward, int num_points, int num_poss)
+{
+	/* Ask the UI for it */
+	if (get_recall_point_hook)
+		return get_recall_point_hook(inward, num_points, num_poss);
+	else
+		return -1;
 }
 
 /**

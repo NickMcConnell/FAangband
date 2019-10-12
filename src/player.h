@@ -533,14 +533,13 @@ struct player {
 	s32b au;		/* Current Gold */
 
 	s16b max_depth;	/* Max depth */
-	s16b recall_depth;	/* Recall depth */
-    s16b home;		/**< Home town */
+    s16b home;		/* Home town */
 	s16b depth;		/* Cur depth */
 
-    s16b recall[4];	/**< Recall points */
-    s16b recall_pt;	/**< Which recall point is active */
-    s16b place;		/**< Current place */
-    s16b last_place;	/**< Previous place */
+    s16b recall[4];	/* Recall points */
+    s16b recall_pt;	/* Which recall point is active */
+    s16b place;		/* Current place */
+    s16b last_place;/* Previous place */
 
 	s16b max_lev;	/* Max level */
 	s16b lev;		/* Cur level */

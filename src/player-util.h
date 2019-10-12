@@ -62,8 +62,7 @@ enum
 bool underworld_possible(int place);
 bool mountain_top_possible(int place);
 int player_get_next_place(int place, char *direction, int multiple);
-void player_set_recall_depth(struct player *p);
-bool player_get_recall_depth(struct player *p);
+bool player_get_recall_point(struct player *p);
 void player_change_place(struct player *p, int place);
 void take_hit(struct player *p, int dam, const char *kb_str);
 void death_knowledge(struct player *p);
