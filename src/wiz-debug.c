@@ -1466,7 +1466,7 @@ static void do_cmd_wiz_cure_all(void)
  */
 static void do_cmd_wiz_jump(void)
 {
-	int depth;
+	int place;
 
 	char ppp[80];
 	char tmp_val[160];
@@ -1475,33 +1475,34 @@ static void do_cmd_wiz_jump(void)
 	strnfmt(ppp, sizeof(ppp), "Jump to place (0-%d): ", world->num_levels - 1);
 
 	/* Default */
-	strnfmt(tmp_val, sizeof(tmp_val), "%d", player->depth);
+	strnfmt(tmp_val, sizeof(tmp_val), "%d", player->place);
 
 	/* Ask for a level */
 	if (!get_string(ppp, tmp_val, 11)) return;
 
 	/* Extract request */
-	depth = atoi(tmp_val);
+	place = atoi(tmp_val);
 
 	/* Paranoia */
-	if (depth < 0) depth = 0;
+	if (place < 0) place = 0;
 
 	/* Paranoia */
-	if (depth > world->num_levels - 1)
-		depth = world->num_levels - 1;
+	if (place > world->num_levels - 1)
+		place = world->num_levels - 1;
 
 	/* Prompt */
 	strnfmt(ppp, sizeof(ppp), "Choose cave_profile?");
 
-	/* Get to choose generation algorithm */
-	if (get_check(ppp))
+	/* Get to choose cave generation algorithm */
+	if ((world->levels[place].topography == TOP_CAVE) && get_check(ppp)) {
 		player->noscore |= NOSCORE_JUMPING;
+	}
 
 	/* Accept request */
-	msg("You jump to place %d.", depth);
+	msg("You jump to place %d.", place);
 
-	/* New depth */
-	player_change_place(player, depth);
+	/* New place */
+	player_change_place(player, place);
 
 	/* Hack - should be handled by redoing how debug commands work - NRM */
 	cmdq_push(CMD_HOLD);
