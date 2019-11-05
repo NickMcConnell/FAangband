@@ -1144,7 +1144,7 @@ static bool describe_damage(textblock *tb, const struct object *obj, bool throw)
 	int *slay_damage = mem_zalloc(z_info->slay_max * sizeof(int));
 
 	/* Collect brands and slays */
-	bool has_brands_or_slays = OPT(player, birth_percent_damage) ?
+	bool has_brands_or_slays = OPT(player, birth_O_combat) ?
 		o_obj_known_damage(obj, &normal_damage, brand_damage, slay_damage,
 						   &nonweap_slay, throw) :
 		obj_known_damage(obj, &normal_damage, brand_damage, slay_damage,

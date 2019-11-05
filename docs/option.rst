@@ -206,10 +206,9 @@ Persistent levels (experimental) ``birth_levels_persist``
   from then on when the player returns the level is as they last saw it, 
   includeing monsters, items and traps.
 
-To-damage is a percentage of dice (experimental) ``birth_percent_damage``
-  Instead of bonuses to damage being just added on to damage dealt, each +1
-  adds 5% to the value of the damage dice. This option is currently not
-  very balanced.
+Use Oangband-style combat ``birth_O_combat``
+  Uses the combat system originally designed for Oangband, and traditional
+  for FAangband.
 
 Cheating options
 ================

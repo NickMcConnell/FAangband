@@ -787,7 +787,7 @@ static bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 		improve_attack_modifier(obj, mon, &b, &s, verb, false);
 		improve_attack_modifier(NULL, mon, &b, &s, verb, false);
 
-		if (!OPT(p, birth_percent_damage)) {
+		if (!OPT(p, birth_O_combat)) {
 			dmg = melee_damage(obj, b, s);
 			dmg = critical_melee(p, mon, weight, obj->to_h, dmg, &msg_type);
 		} else {
@@ -804,7 +804,7 @@ static bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 	equip_learn_on_melee_attack(p);
 
 	/* Apply the player damage bonuses */
-	if (!OPT(p, birth_percent_damage)) {
+	if (!OPT(p, birth_O_combat)) {
 		dmg += player_damage_bonus(&p->state);
 	}
 
@@ -1222,7 +1222,7 @@ static struct attack_result make_ranged_shot(struct player *p,
 	improve_attack_modifier(ammo, mon, &b, &s, result.hit_verb, true);
 	improve_attack_modifier(bow, mon, &b, &s, result.hit_verb, true);
 
-	if (!OPT(p, birth_percent_damage)) {
+	if (!OPT(p, birth_O_combat)) {
 		result.dmg = ranged_damage(p, ammo, bow, b, s);
 		result.dmg = critical_shot(p, mon, ammo->weight, ammo->to_h,
 								   result.dmg, &result.msg_type);
@@ -1258,7 +1258,7 @@ static struct attack_result make_ranged_throw(struct player *p,
 
 	improve_attack_modifier(obj, mon, &b, &s, result.hit_verb, true);
 
-	if (!OPT(p, birth_percent_damage)) {
+	if (!OPT(p, birth_O_combat)) {
 		result.dmg = ranged_damage(p, obj, NULL, b, s);
 		result.dmg = critical_shot(p, mon, obj->weight, obj->to_h,
 								   result.dmg, &result.msg_type);
