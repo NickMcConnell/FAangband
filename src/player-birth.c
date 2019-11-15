@@ -448,9 +448,6 @@ void player_init(struct player *p)
 	if (p->history) {
 		string_free(p->history);
 	}
-	if (p->quests) {
-		player_quests_free(p);
-	}
 
 	/* Wipe the player */
 	memset(p, 0, sizeof(struct player));
