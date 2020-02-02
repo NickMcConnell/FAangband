@@ -126,8 +126,11 @@ static void get_target(struct source origin, int dir, struct loc *grid,
 	switch (origin.what) {
 		case SRC_MONSTER: {
 			struct monster *monster = cave_monster(cave, origin.which.monster);
-			int conf_level = monster_effect_level(monster, MON_TMD_CONF);
-			int accuracy = 100;
+			int conf_level, accuracy = 100;
+
+			if (!monster) break;
+
+			conf_level = monster_effect_level(monster, MON_TMD_CONF);
 			while (conf_level) {
 				accuracy *= (100 - CONF_RANDOM_CHANCE);
 				accuracy /= 100;
@@ -178,6 +181,7 @@ static struct monster *monster_target_monster(effect_handler_context_t *context)
 {
 	if (context->origin.what == SRC_MONSTER) {
 		struct monster *mon = cave_monster(cave, context->origin.which.monster);
+		if (!mon) return NULL;
 		if (mon->target.midx > 0) {
 			struct monster *t_mon = cave_monster(cave, mon->target.midx);
 			assert(t_mon);
@@ -2558,7 +2562,9 @@ bool effect_handler_SUMMON(effect_handler_context_t *context)
 	/* Monster summon */
 	if (context->origin.what == SRC_MONSTER) {
 		struct monster *mon = cave_monster(cave, context->origin.which.monster);
-		int rlev = mon->race->level;
+		int rlev;
+
+		assert(mon);
 
 		/* Set the kin_base if necessary */
 		if (summon_type == summon_name_to_idx("KIN")) {
@@ -2566,6 +2572,7 @@ bool effect_handler_SUMMON(effect_handler_context_t *context)
 		}
 
 		/* Continue summoning until we reach the current dungeon level */
+		rlev = mon->race->level;
 		while ((val < player->depth * rlev) && (attempts < summon_max)) {
 			int temp;
 
@@ -2968,6 +2975,7 @@ bool effect_handler_TELEPORT_TO(effect_handler_context_t *context)
 
 	if (context->origin.what == SRC_MONSTER) {
 		mon = cave_monster(cave, context->origin.which.monster);
+		assert(mon);
 	}
 
 	/* Where are we coming from? */
@@ -3783,10 +3791,12 @@ bool effect_handler_BALL(effect_handler_context_t *context)
 	switch (context->origin.what) {
 		case SRC_MONSTER: {
 			struct monster *mon = cave_monster(cave, context->origin.which.monster);
-			int conf_level = monster_effect_level(mon, MON_TMD_CONF);
-			int accuracy = 100;
+			int conf_level, accuracy = 100;
 			struct monster *t_mon = monster_target_monster(context);
 
+			assert(mon);
+
+			conf_level = monster_effect_level(mon, MON_TMD_CONF);
 			while (conf_level) {
 				accuracy *= (100 - CONF_RANDOM_CHANCE);
 				accuracy /= 100;
@@ -4771,6 +4781,8 @@ bool effect_handler_SHAPECHANGE(effect_handler_context_t *context)
 {
 	struct player_shape *shape = player_shape_by_idx(context->subtype);
 	bool ident = false;
+
+	assert(shape);
 
 	/* Change shape */
 	player->shape = lookup_player_shape(shape->name);
