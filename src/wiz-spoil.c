@@ -200,7 +200,7 @@ static void kind_info(char *buf, size_t buf_len, char *dam, size_t dam_len,
 static void spoil_obj_desc(const char *fname)
 {
 	int i, k, s, t, n = 0;
-	u16b who[200];
+	u16b *who;
 	char buf[1024];
 	char wgt[80];
 	char dam[80];
@@ -215,6 +215,9 @@ static void spoil_obj_desc(const char *fname)
 		msg("Cannot create spoiler file.");
 		return;
 	}
+
+	/* Allocate the "who" array */
+	who = mem_zalloc(z_info->r_max * sizeof(u16b));
 
 	/* Header */
 	file_putf(fh, "Spoiler File -- Basic Items (%s)\n\n\n", buildid);
@@ -289,6 +292,9 @@ static void spoil_obj_desc(const char *fname)
 			who[n++] = k;
 		}
 	}
+
+	/* Free the "who" array */
+	mem_free(who);
 
 	/* Check for errors */
 	if (!file_close(fh)) {
@@ -552,7 +558,6 @@ static void spoil_mon_desc(const char *fname)
 
 	/* Free the "who" array */
 	mem_free(who);
-
 
 	/* Check for errors */
 	if (!file_close(fh)) {
