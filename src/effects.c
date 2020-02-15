@@ -4079,7 +4079,7 @@ bool effect_handler_LASH(effect_handler_context_t *context)
 	int rad = context->radius;
 
 	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_ARC;
-	int type = PROJ_MISSILE;
+	int type;
 
 	struct loc target = loc(-1, -1);
 
