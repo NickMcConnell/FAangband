@@ -351,6 +351,7 @@ struct player_class {
 
 	bitflag flags[OF_SIZE];		/**< (Object) flags */
 	bitflag pflags[PF_SIZE];	/**< (Player) flags */
+	bitflag specialties[PF_SIZE];	/**< (Player) flags */
 
 	int max_attacks;			/**< Maximum possible attacks */
 	int min_weight;				/**< Minimum weapon weight for calculations */
@@ -359,6 +360,19 @@ struct player_class {
 	struct start_item *start_items; /**< Starting inventory */
 
 	struct class_magic magic;	/**< Magic spells */
+};
+
+/**
+ * Info for player abilities
+ */
+struct player_ability {
+	struct player_ability *next;
+	u16b index;			/* Ability index */
+	char *type;			/* Ability type */
+	char *code;			/* Ability code */
+	char *desc;			/* Ability description */
+	char *birth_desc;	/* Ability short description */
+	int group;			/* Ability group */
 };
 
 /**
@@ -624,6 +638,7 @@ extern struct player_body *bodies;
 extern struct player_race *races;
 extern struct player_shape *shapes;
 extern struct player_class *classes;
+extern struct player_ability *player_abilities;
 extern struct magic_realm *realms;
 
 extern const s32b player_exp[PY_MAX_LEVEL];
