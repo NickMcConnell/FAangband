@@ -479,7 +479,7 @@ static int pick_trap(int feat, int trap_level)
 		case TRAP_HEX:
 		case TRAP_PORTAL:
 		case TRAP_MURDER:
-		case TRAP_BRANCH:
+		case TRAP_LIMB:
 			{
 				/* No special restrictions */
 				break;
@@ -1498,7 +1498,7 @@ void hit_trap_aux(int y, int x, int trap)
 		}
 
 		/* falling tree branch */
-	case TRAP_BRANCH:
+	case TRAP_LIMB:
 		{
 			/* determine if the missile hits. */
 			if (check_trap_hit(75 + p_ptr->depth)) {

@@ -35,7 +35,7 @@
 #define TRAP_HEX      0x17
 #define TRAP_PORTAL   0x18
 #define TRAP_MURDER   0x19
-#define TRAP_BRANCH   0x1A
+#define TRAP_LIMB     0x1A
 
 /* Specials trap that only effects monsters.  Created only by rogues. -LM- */
 #define MTRAP_HEAD       0x40
