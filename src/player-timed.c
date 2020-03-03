@@ -42,7 +42,7 @@ int PY_FOOD_STARVE;
  * ------------------------------------------------------------------------ */
 
 const char *list_player_flag_names[] = {
-	#define PF(a, b, c) #a,
+	#define PF(a) #a,
 	#include "list-player-flags.h"
 	#undef ELEM
 	NULL

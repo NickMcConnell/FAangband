@@ -28,7 +28,7 @@
 # height:hgt:modhgt
 # weight:wgt:modwgt
 # obj-flags:object flags
-# play-flags:player flags
+# player-flags:player flags
 # values:values
 
 # 'name' indicates the beginning of an entry.
@@ -57,7 +57,7 @@
 # 'obj-flags' is for object flags (as in src/list-obj-flags.h) that
 # races possess innately.
 
-# 'play-flags' is for player flags (as in src/list-player-flags.h) that
+# 'player-flags' is for player flags (as in src/list-player-flags.h) that
 # races possess innately.
 
 # 'values' is for object modifiers which take a value that races possess
@@ -85,7 +85,7 @@ history:1
 age:14:6
 height:72:6
 weight:180:25
-# player-flags:SWORD_SKILL | XBOW_SKILL | PLAINSMAN
+player-flags:SWORD_SKILL | XBOW_SKILL | PLAINSMAN
 
 name:Green-Elf
 stats:-1:-1:2:2:-1
@@ -108,7 +108,7 @@ history:4
 age:50:20
 height:90:10
 weight:190:20
-# player-flags:BOW_SKILL | ELVEN 
+player-flags:BOW_SKILL | ELVEN 
 
 name:Grey-Elf
 stats:1:0:2:2:0
@@ -133,7 +133,7 @@ age:300:100
 height:90:10
 weight:190:20
 values:RES_LIGHT[1]
-# player-flags:BOW_SKILL | ELVEN 
+player-flags:BOW_SKILL | ELVEN 
 
 name:Hobbit
 stats:-2:-1:2:3:2
@@ -157,7 +157,7 @@ age:21:12
 height:36:3
 weight:60:3
 obj-flags:SUST_DEX
-# player-flags:SLING_SKILL | HARDY | PLAINSMAN
+player-flags:SLING_SKILL | HARDY | PLAINSMAN
 
 name:Petty-Dwarf
 stats:-1:3:-3:3:-1
@@ -181,7 +181,7 @@ age:50:40
 height:44:3
 weight:140:8
 obj-flags:FREE_ACT 
-# player-flags:DWARVEN 
+player-flags:DWARVEN 
 
 name:Dwarf
 stats:2:1:-2:1:2
@@ -206,7 +206,7 @@ age:35:15
 height:48:3
 weight:150:10
 obj-flags:PROT_BLIND
-# player-flags:POLEARM_SKILL | BOW_UNSKILL | DWARVEN 
+player-flags:POLEARM_SKILL | BOW_UNSKILL | DWARVEN 
 
 name:Drúadan
 stats:2:-2:2:-1:2
@@ -230,7 +230,7 @@ age:11:4
 height:66:1
 weight:190:20
 obj-flags:TELEPATHY 
-# player-flags:EDAIN 
+player-flags:EDAIN 
 
 name:Longbeard
 stats:3:1:-1:2:2
@@ -254,7 +254,7 @@ age:20:10
 height:48:3
 weight:150:10
 obj-flags:PROT_BLIND
-# player-flags:POLEARM_SKILL | DWARVEN 
+player-flags:POLEARM_SKILL | DWARVEN 
 
 name:Adan
 stats:1:1:3:1:3
@@ -279,7 +279,7 @@ age:50:20
 height:82:5
 weight:190:20
 obj-flags:SUST_CON
-# player-flags:EDAIN
+player-flags:EDAIN
 
 name:High-Elf
 stats:2:3:0:3:2
@@ -305,7 +305,7 @@ height:90:10
 weight:190:20
 values:RES_LIGHT[1] 
 obj-flags:SEE_INVIS
-# player-flags:ELVEN
+player-flags:ELVEN
 
 # Note that this race does not get player-flags:BOW_SKILL, despite being Elven.
 # This is because they have such high missile weapon skill in general.
@@ -331,7 +331,7 @@ history:25
 age:10000:5000
 height:80:27
 weight:240:50
-# player-flags:DIVINE
+player-flags:DIVINE
 
 name:Dark-Elf
 stats:-2:-1:2:2:-1
@@ -354,7 +354,7 @@ history:28
 age:200:100
 height:90:10
 weight:190:20
-# player-flags:SHADOW | ELVEN
+player-flags:SHADOW | ELVEN
 
 name:Ent
 stats:4:-4:2:-3:3
@@ -378,7 +378,7 @@ age:120:60
 height:130:40
 weight:300:40
 values:RES_FIRE[-1]
-# player-flags:WOODEN | POLEARM_UNSKILL
+player-flags:WOODEN | POLEARM_UNSKILL
 
 name:Beorning
 stats:1:-1:1:0:1
@@ -401,4 +401,4 @@ history:80
 age:14:6
 height:72:6
 weight:180:25
-# player-flags:BEARSKIN | PLAINSMAN
+player-flags:BEARSKIN | PLAINSMAN

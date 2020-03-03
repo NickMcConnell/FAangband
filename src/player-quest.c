@@ -236,6 +236,22 @@ void quests_reset(void)
 }
 
 /**
+ * Count the number of complete quests.
+ */
+int quests_count(void)
+{
+	struct quest *quest = quests;
+	int num = 0;
+	while (quest) {
+		if (quest->complete) {
+			num++;
+		}
+		quest = quest->next;
+	}
+	return num;
+}
+
+/**
  * If the given place is a quest place, return the relevant quest.
  */
 struct quest *find_quest(int place)
@@ -431,6 +447,9 @@ bool quest_monster_death_check(const struct monster *mon)
 		if (place->block) {
 			build_quest_stairs(mon->grid);
 		}
+
+		/* Check specialties */
+		player->upkeep->update |= (PU_SPECIALTY);
 	}
 
 	/* Game over... */

@@ -24,6 +24,7 @@ extern struct quest *quests;
 
 /* Functions */
 void quests_reset(void);
+int quests_count(void);
 struct quest *find_quest(int place);
 bool quest_forbid_downstairs(int place);
 bool quest_unique_monster_check(const struct monster_race *race);

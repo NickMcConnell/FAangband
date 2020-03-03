@@ -66,7 +66,6 @@
 #include "ui-visuals.h"
 
 bool play_again = false;
-struct player_ability *player_abilities;
 
 /**
  * Structure (not array) of game constants
@@ -176,7 +175,7 @@ static const char *mon_race_flags[] =
 
 static const char *player_info_flags[] =
 {
-	#define PF(a, b, c) #a,
+	#define PF(a) #a,
 	#include "list-player-flags.h"
 	#undef PF
 	NULL
@@ -1093,13 +1092,13 @@ static enum parser_error parse_player_prop_desc(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_player_prop_birth_desc(struct parser *p) {
+static enum parser_error parse_player_prop_name(struct parser *p) {
 	const char *desc = parser_getstr(p, "desc");
 	struct player_ability *ability = parser_priv(p);
 	if (!ability)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
 
-	ability->birth_desc = string_make(desc);
+	ability->name = string_make(desc);
 	return PARSE_ERROR_NONE;
 }
 
@@ -1118,7 +1117,7 @@ struct parser *init_parse_player_prop(void) {
 	parser_reg(p, "type str type", parse_player_prop_type);
 	parser_reg(p, "code str code", parse_player_prop_code);
 	parser_reg(p, "desc str desc", parse_player_prop_desc);
-	parser_reg(p, "birth-desc str desc", parse_player_prop_birth_desc);
+	parser_reg(p, "name str desc", parse_player_prop_name);
 	parser_reg(p, "value int value", parse_player_prop_value);
 	return p;
 }
@@ -1142,9 +1141,8 @@ static errr finish_parse_player_prop(struct parser *p) {
 				new->index = i;
 				new->type = string_make(ability->type);
 				new->desc = string_make(format("%s %s.", ability->desc, name));
-				new->birth_desc = string_make(format("%s %s",
-													 ability->birth_desc,
-													 name));
+				my_strcap(name);
+				new->name = string_make(format("%s %s", name, ability->name));
 				new->value = ability->value;
 				if ((i != N_ELEMENTS(list_element_names) - 1) || ability->next){
 					previous = new;
@@ -1154,7 +1152,7 @@ static errr finish_parse_player_prop(struct parser *p) {
 			}
 			string_free(ability->type);
 			string_free(ability->desc);
-			string_free(ability->birth_desc);
+			string_free(ability->name);
 			previous = ability;
 			ability = ability->next;
 			mem_free(previous);
@@ -1162,7 +1160,7 @@ static errr finish_parse_player_prop(struct parser *p) {
 			new->type = ability->type;
 			new->index = ability->index;
 			new->desc = ability->desc;
-			new->birth_desc = ability->birth_desc;
+			new->name = ability->name;
 			if (ability->next) {
 				previous = new;
 				new = mem_zalloc(sizeof(*new));
@@ -1183,7 +1181,7 @@ static void cleanup_player_prop(void)
 	while (ability) {
 		string_free(ability->type);
 		string_free(ability->desc);
-		string_free(ability->birth_desc);
+		string_free(ability->name);
 		ability = ability->next;
 	}
 }

@@ -131,6 +131,8 @@ equip:sword:Dagger:1:1
 equip:soft armour:Soft Leather Armour:1:1
 equip:scroll:Word of Recall:1:1
 player-flags:BRAVERY_30 | NO_MANA | SHIELD_BASH
+player-flags:SPREAD_ATTACKS | PROBE | XTRA_SPECIALTY
+player-flags:BOW_SPEED_GOOD | XBOW_SPEED_GOOD
 title:Rookie
 title:Soldier
 title:Swordsman
@@ -164,7 +166,7 @@ equip:food:Ration of Food:1:3
 equip:light:Wooden Torch:1:3
 equip:sword:Rapier:1:1
 equip:scroll:Word of Recall:1:1
-player-flags:ZERO_FAIL | BEAM | CHOOSE_SPELLS
+player-flags:BEAM | CHOOSE_SPELLS | DEVICE_EXPERT | STRONG_MAGIC
 title:Novice
 title:Apprentice
 title:Trickster
@@ -439,7 +441,8 @@ equip:food:Ration of Food:1:3
 equip:hafted:Whip:1:1
 equip:light:Wooden Torch:1:3
 equip:scroll:Word of Recall:1:1
-player-flags:ZERO_FAIL | CHOOSE_SPELLS | CHARM
+player-flags:CHOOSE_SPELLS | CHARM
+player-flags:UNARMED_COMBAT | WOODSMAN | STRONG_MAGIC
 title:Wanderer
 title:Tamer
 title:Nurturer
@@ -674,7 +677,7 @@ equip:light:Wooden Torch:1:3
 equip:hafted:Mace:1:1
 equip:potion:Cure Serious Wounds:2:2
 equip:scroll:Word of Recall:1:1
-player-flags:BLESS_WEAPON | ZERO_FAIL
+player-flags:BLESS_WEAPON | STRONG_MAGIC | HOLY
 title:Believer
 title:Acolyte
 title:Devotee
@@ -941,7 +944,7 @@ strength-multiplier:3
 equip:food:Ration of Food:1:3
 equip:sword:Main Gauche:1:1
 equip:scroll:Word of Recall:1:1
-player-flags:ZERO_FAIL | CHOOSE_SPELLS | UNLIGHT | EVIL
+player-flags:CHOOSE_SPELLS | UNLIGHT | EVIL | STRONG_MAGIC
 title:Acolyte
 title:Curser
 title:Dark Student
@@ -1199,7 +1202,7 @@ equip:sword:Main Gauche:1:1
 equip:scroll:Protection from Evil:1:1
 equip:scroll:Word of Recall:1:1
 equip:prayer book:[Novice's Handbook]:1:1
-player-flags:BLESS_WEAPON | SHIELD_BASH
+player-flags:BLESS_WEAPON | SHIELD_BASH | HOLY
 title:Gallant
 title:Keeper
 title:Protector
@@ -1361,6 +1364,7 @@ equip:soft armour:Soft Leather Armour:1:1
 equip:scroll:Word of Recall:1:1
 equip:magic book:[First Spells]:1:1
 player-flags:CHOOSE_SPELLS | STEAL
+player-flags:BACKSTAB | TRAP | SLING_SPEED_GREAT
 title:Vagabond
 title:Cutpurse
 title:Footpad
@@ -1465,7 +1469,8 @@ equip:bow:Short Bow:1:1
 equip:arrow:Arrow:15:20
 equip:scroll:Word of Recall:1:1
 equip:nature book:[Lesser Charms]:1:1
-player-flags:FAST_SHOT | CHOOSE_SPELLS
+player-flags:FAST_SHOT | CHOOSE_SPELLS | LORE
+player-flags:WOODSMAN | BOW_SPEED_GREAT | SLING_SPEED_GOOD | XBOW_SPEED_GOOD
 title:Runner
 title:Strider
 title:Scout

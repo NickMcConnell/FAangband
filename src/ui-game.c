@@ -29,6 +29,7 @@
 #include "player-attack.h"
 #include "player-calcs.h"
 #include "player-path.h"
+#include "player-properties.h"
 #include "player-util.h"
 #include "savefile.h"
 #include "target.h"
@@ -135,6 +136,7 @@ struct cmd_info cmd_info[] =
 	{ "Gain new spells", { 'G' }, CMD_STUDY, NULL, player_can_study_prereq },
 	{ "Cast a spell", { 'm' }, CMD_CAST, NULL, player_can_cast_prereq },
 	{ "Cast a spell", { 'p' }, CMD_CAST, NULL, player_can_cast_prereq },
+	{ "View/gain abilities", { 'S' }, CMD_NULL, do_cmd_abilities, NULL },
 	{ "Full dungeon map", { 'M' }, CMD_NULL, do_cmd_view_map, NULL },
 	{ "Toggle ignoring of items", { 'K', 'O' }, CMD_NULL, textui_cmd_toggle_ignore, NULL },
 	{ "Display visible item list", { ']' }, CMD_NULL, do_cmd_itemlist, NULL },

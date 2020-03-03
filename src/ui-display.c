@@ -949,6 +949,21 @@ static size_t prt_study(int row, int col)
 
 
 /**
+ * Print whether a character is due a specialty or not.
+ */
+static size_t prt_spec(int row, int col)
+{
+	if (player->upkeep->new_specialties) {
+		char *text = format("Spec. (%d)", player->upkeep->new_specialties);
+		c_put_str(COLOUR_VIOLET, text, row, col);
+		return strlen(text) + 1;
+	}
+
+	return 0;
+}
+
+
+/**
  * Print all timed effects.
  */
 static size_t prt_tmd(int row, int col)
@@ -998,7 +1013,7 @@ typedef size_t status_f(int row, int col);
 
 static status_f *status_handlers[] =
 { prt_depth, prt_level_feeling, prt_light, prt_unignore, prt_recall,
-  prt_descent, prt_state, prt_study, prt_tmd, prt_dtrap, prt_terrain };
+  prt_descent, prt_state, prt_study, prt_spec, prt_tmd, prt_dtrap, prt_terrain};
 
 
 /**

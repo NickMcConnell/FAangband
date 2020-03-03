@@ -16,226 +16,588 @@
 #    element - resistance, immunity or vulnerability to an element
 # code - the effect name used by the game. Element codes are templates, and
 #        one is made for each element
-# desc - the effect description shown in game
-# birth-desc - the description shown on the birth screen
+# name - the name of the property
+# desc - the description of the property
 # value - value for elements; -1 (vulnerability), 1 (resistance) or 3 (immunity)
 
-type:player
-code:FAST_SHOT
-desc:Your shooting speed improves with tension bows every 10 levels.
-birth-desc:Gains extra shots with bow
-
-type:player
-code:BRAVERY_30
-desc:You become immune to fear at level 30.
-birth-desc:Gains immunity to fear
-
-type:player
-code:BLESS_WEAPON
-desc:You get improved melee with blessed or hafted weapons.
-birth-desc:Prefers blunt/blessed weapons
-
-type:player
-code:ZERO_FAIL
-desc:You may obtain a perfect success rate with magic.
-birth-desc:Advanced spellcasting
-
-type:player
-code:BEAM
-desc:Your bolt spells frequently turn into beams.
-birth-desc:Bolts may become beams
-
-type:player
-code:CHOOSE_SPELLS
-desc:you may choose their own spells to study.
-birth-desc:Chooses spells
-
-type:player
-code:KNOW_MUSHROOM
-desc:You easily recognize mushrooms.
-birth-desc:Identifies mushrooms
-
-type:player
-code:KNOW_ZAPPER
-desc:You easily recognize magic devices.
-birth-desc:Identifies magic devices
-
-type:player
-code:SEE_ORE
-desc:You can sense ore in the walls.
-birth-desc:Senses ore/minerals
-
-type:player
-code:NO_MANA
-desc:You cannot cast spells.
-birth-desc:Cannot cast spells
-
-type:player
-code:CHARM
-desc:You are extra persuasive to monsters.
-birth-desc:Charms monsters
-
-type:player
-code:UNLIGHT
-desc:You gain stealth in, can see in, and resist the dark.
-birth-desc:Likes the dark
+## Shapechange player flags ##
 
 type:player
 code:ROCK
+name:Rock
 desc:You are made of rock.
-birth-desc:Is made of rock
+
+## Racial player flags ##
+
+type:player
+code:KNOW_MUSHROOM
+name:Mushroom Lore
+desc:You easily recognize mushrooms.
+
+type:player
+code:KNOW_ZAPPER
+name:Device Lore
+desc:You easily recognize magic devices.
+
+type:player
+code:SEE_ORE
+name:Miner
+desc:You can sense ore in the walls.
+
+type:player
+code:SWORD_SKILL
+name:Sword Preference
+desc:You are slightly more skilled with swords than other melee weapons.
+
+type:player
+code:POLEARM_SKILL
+name:Polearm Preference
+desc:You are slightly more skilled with axes and polearms than other melee weapons.
+
+type:player
+code:HAFTED_SKILL
+name:Hafted Preference
+desc:You are slightly more skilled with blunt weapons than other melee weapons.
+
+type:player
+code:SLING_SKILL
+name:Sling Preference
+desc:You are slightly more skilled with slings than other ranged weapons.
+
+type:player
+code:BOW_SKILL
+name:Bow Preference
+desc:You are slightly more skilled with bows than other ranged weapons.
+
+type:player
+code:XBOW_SKILL
+name:Crossbow Preference
+desc:You are slightly more skilled with crossbows than other ranged weapons.
+
+type:player
+code:SWORD_UNSKILL
+name:Sword Distaste
+desc:You are slightly less skilled with swords than other melee weapons.
+
+type:player
+code:POLEARM_UNSKILL
+name:Polearm Distaste
+desc:You are slightly less skilled with axes and polearms than other melee weapons.
+
+type:player
+code:HAFTED_UNSKILL
+name:Hafted Distaste
+desc:You are slightly less skilled with blunt weapons than other melee weapons.
+
+type:player
+code:SLING_UNSKILL
+name:Sling Distaste
+desc:You are slightly less skilled with slings than other ranged weapons.
+
+type:player
+code:BOW_UNSKILL
+name:Bow Distaste
+desc:You are slightly less skilled with bows than other ranged weapons.
+
+type:player
+code:XBOW_UNSKILL
+name:Crossbow Distaste
+desc:You are slightly less skilled with crossbows than other ranged weapons.
+
+type:player
+code:HARDY
+name:Hardy
+desc:You recover quickly from poison and cuts, and succumb slowly to the Black Breath.
+
+type:player
+code:HUNGRY
+name:Ravenous
+desc:You eat.  A lot.
+
+type:player
+code:DIVINE
+name:Divine Powers
+desc:You recover very quickly from negative effects, and can move through water without being slowed.
+
+type:player
+code:SHADOW
+name:Shadow
+desc:You are incredibly stealthy.
+
+type:player
+code:WOODEN
+name:Treeish
+desc:Your bare hands tear through stone and you are almost impossible to detect in forests, but you are vulnerable to fire and falling.
+
+type:player
+code:BEARSKIN
+name:Shapeshifter
+desc:You can take the form of a bear (use the ']' command).
+
+type:player
+code:PLAINSMAN
+name:Plains Fighter
+desc:You are more able to hit monsters while in plain regions.
+
+type:player
+code:ELVEN
+name:Elven
+desc:You have an inborn ability to move freely through forests.
+
+type:player
+code:DWARVEN
+name:Dwarven
+desc:You are able to move freely through rubble, and to evade attacks while in mountain regions.
+
+type:player
+code:EDAIN
+name:Forest Fighter
+desc:You are more able to hit monsters while in forests.
+
+## Class player flags ##
+
+type:player
+code:FAST_SHOT
+name:Extra Shots
+desc:Your shooting speed improves with tension bows every 10 levels.
+
+type:player
+code:BRAVERY_30
+name:Relentless [30]
+desc:You become immune to fear at level 30.
+
+type:player
+code:BLESS_WEAPON
+name:Blessed Fighter
+desc:You get improved melee with blessed or hafted weapons.
+
+type:player
+code:BEAM
+name:Extra Spell Beaming
+desc:Your bolt spells frequently turn into beams.
+
+type:player
+code:CHOOSE_SPELLS
+name:Spell Choice
+desc:You may choose your own spells to study.
+
+type:player
+code:NO_MANA
+name:No Magic
+desc:You cannot cast spells.
+
+type:player
+code:CHARM
+name:Charms
+desc:You are extra persuasive to monsters.
+
+type:player
+code:UNLIGHT
+name:Unlight
+desc:You gain stealth in, can see in, and resist the dark.
 
 type:player
 code:STEAL
+name:Pickpocketing
 desc:You can steal from monsters.
-birth-desc:Steals from monsters
 
 type:player
 code:SHIELD_BASH
+name:Shield Bash
 desc:You can bash monsters with a shield in melee.
-birth-desc:Employs shield-bashes
 
 type:player
 code:EVIL
+name:Evil
 desc:You resist nether, but are hurt by holy attacks.
-birth-desc:Is evil
 
 type:player
 code:CROWD_FIGHT
+name:Crowd Fighter
 desc:You gains advantage from fighting many monsters at once.
-birth-desc:Fights crowds well
+
+type:player
+code:BOW_SPEED_GOOD
+name:Fast Bow Shots
+desc:Your shooting speed with a bow increases quickly with Dexterity.
+
+type:player
+code:BOW_SPEED_GREAT
+name:Very Fast Bow Shots
+desc:Your shooting speed with a bow increases very quickly with Dexterity.
+
+type:player
+code:SLING_SPEED_GOOD
+name:Fast Sling Shots
+desc:Your shooting speed with a sling increases quickly with Dexterity.
+
+type:player
+code:SLING_SPEED_GREAT
+name:Very Fast Sling Shots
+desc:Your shooting speed with a sling increases very quickly with Dexterity.
+
+type:player
+code:XBOW_SPEED_GOOD
+name:Fast Crossbow Shots
+desc:Your shooting speed with a crossbow increases quickly with Dexterity.
+
+type:player
+code:XBOW_SPEED_GREAT
+name:Very Fast Crossbow Shots
+desc:Your shooting speed with a crossbow increases very quickly with Dexterity.
+
+type:player
+code:ASSASSINATE
+name:Assassinate
+desc:You effectively assassinate unsuspecting creatures in melee and with ranged attacks.
+
+type:player
+code:STRONG_SHOOT
+name:Deadly Shot
+desc:You do extra damage when shooting.
+
+type:player
+code:BACKSTAB
+name:Backstab
+desc:You effectively backstab unsuspecting creatures in melee.
+
+type:player
+code:SPREAD_ATTACKS
+name:Crowd Combat [40]
+desc:You can efficiently spread your attacks over multiple weak opponents at level 40.
+
+type:player
+code:UNARMED_COMBAT
+name:Unarmed Combat
+desc:You are skilled in hand to hand combat, and are somewhat talented with slings.
+
+type:player
+code:DEVICE_EXPERT
+name:Magic Device Expertise
+desc:You have a great understanding of magical devices and can recharge them very reliably.
+
+type:player
+code:STRONG_MAGIC
+name:Full Spellcaster
+desc:You are an expert spellcaster capable of a perfect success rate and have a large reserve of mana.
+
+type:player
+code:LORE
+name:Lore
+desc:You learn quickly about monster abilities.
+
+type:player
+code:HOLY
+name:Pious
+desc:You carry a pious authority.  You glow with an inner light at level 35 (Priest) or level 45 (Paladin).
+
+type:player
+code:PROBE
+name:Monster Probing [35]
+desc:You can learn details of monster attributes at level 35.
+
+type:player
+code:TRAP
+name:Trap Setting
+desc:You can set monster traps.
+
+type:player
+code:WOODSMAN
+name:Woodsmanship
+desc:You are attuned to nature.  You easily move and hide in trees.
+
+type:player
+code:XTRA_SPECIALTY
+name:Specialization [1]
+desc:You can learn an extra specialty abilty at level 1.
+
+## Specialty ability player flags ##
+
+type:player
+code:ARMOR_MAST
+name:Armor Mastery
+desc:Increases the effects of body armor.
+
+type:player
+code:SHIELD_MAST
+name:Shield Mastery
+desc:Improves shield AC, chance of shield deflection, and damage from shield bashes.
+
+type:player
+code:ARMOR_PROFICIENCY
+name:Armor Proficiency
+desc:Reduces mana penalties for armor use.
+
+type:player
+code:EVASION
+name:Evasion
+desc:Gives a good chance to avoid melee attacks and a great chance to avoid missile weapons when lightly armored.
+
+type:player
+code:MAGIC_RESIST
+name:Magic Resistance
+desc:Improves your saving throws.
+
+type:player
+code:PHASEWALK
+name:Phasewalking
+desc:Causes you to speed up after teleporting.  Gives resistance to hostile teleportation.
+
+type:player
+code:ARMSMAN
+name:Armsman
+desc:Grants extra critical hits with melee weapons.
+
+type:player
+code:FAST_ATTACK
+name:Fast Attacking
+desc:Gives you extra melee attacks; better when you have more attacks to begin with.  Works armed and unarmed.
+
+type:player
+code:MARKSMAN
+name:Marksman
+desc:Grants extra critical hits in ranged combat.
+
+type:player
+code:PIERCE_SHOT
+name:Piercing Shot
+desc:Gives your successful bow and crossbow attacks a chance of continuing to additional targets.
+ 
+type:player
+code:MIGHTY_THROW
+name:Mighty Throw
+desc:Allows you to hurl throwing weapons and other objects great distances.
+
+type:player
+code:POWER_STRIKE
+name:Power Strike
+desc:Gives you a stronger barehanded attack.
+
+type:player
+code:MARTIAL_ARTS
+name:Martial Arts
+desc:Gives you a powerful unarmed attack.
+
+type:player
+code:MANA_BURN
+name:Mana Burn
+desc:Allows you to burn monster mana in melee.  Mana burned adds to melee damage.
+
+type:player
+code:RAPID_FIRE
+name:Rapid Fire
+desc:Trades some shooting accuracy for faster shooting with a short or long bow, even faster with increasing dexterity.
+
+type:player
+code:BEGUILE
+name:Beguile
+desc:Enhances your power to slow, sleep, confuse, or turn your enemies.
+
+type:player
+code:ENHANCE_MAGIC
+name:Enhance Magic
+desc:Increases the effects and durations of beneficial magical effects.
+
+type:player
+code:FAST_CAST
+name:Fast Casting
+desc:Increases spell casting speed, especially for low level spells from high level casters.
+
+type:player
+code:POWER_SIPHON
+name:Power Siphon
+desc:Gives you mana when monsters cast spells.
+
+type:player
+code:HEIGHTEN_MAGIC
+name:Heighten Magic
+desc:Causes spells cast in rapid succession to become increasingly powerful.
+
+type:player
+code:SOUL_SIPHON
+name:Soul Siphon
+desc:Gives you mana when you slay monsters.  May cause damage when overloaded.
+
+type:player
+code:HARMONY
+name:Harmony
+desc:Causes you to gain hit points when casting spells.
+
+type:player
+code:CHANNELING
+name:Channeling
+desc:Makes your spells stronger when your mana level is high.
+
+type:player
+code:ATHLETICS
+name:Athletics
+desc:Increases and partially sustains Dexterity and Constitution.
+
+type:player
+code:CLARITY
+name:Clarity
+desc:Increases and partially sustains Intelligence and Wisdom.
+
+type:player
+code:FURY
+name:Fury
+desc:Allows you to move faster after attacking or being damaged.
+
+type:player
+code:MEDITATION
+name:Meditation
+desc:Improves mana regeneration; cumulative with other forms of regeneration.
+
+type:player
+code:REGENERATION
+name:Regeneration
+desc:Improves hit point regeneration; cumulative with other forms of regeneration.
+
+type:player
+code:EXTRA_TRAP
+name:Extra Trap
+desc:Allows you to set an additional monster trap, and to learn to set more advanced types of traps.
+
+type:player
+code:HOLY_LIGHT
+name:Holy Light
+desc:Increases light radius.  Causes undead, evil, and light-sensitive creatures to take extra melee damage and makes them fear your light-based spells.  Grants resistance to light.
+
+## Object flags
 
 type:object
 code:SUST_STR
+name:Sustain Strength
 desc:Your strength is sustained.
-birth-desc:Sustains strength
 
 type:object
 code:SUST_INT
+name:Sustain Intelligence
 desc:Your intelligence is sustained.
-birth-desc:Sustains intelligence
 
 type:object
 code:SUST_WIS
+name:Sustain Wisdom
 desc:Your wisdom is sustained.
-birth-desc:Sustains wisdom
 
 type:object
 code:SUST_DEX
+name:Sustain Dexterity
 desc:Your dexterity is sustained.
-birth-desc:Sustains dexterity
 
 type:object
 code:SUST_CON
+name:Sustain Constitution
 desc:Your constitution is sustained.
-birth-desc:Sustains constitution
 
 type:object
 code:PROT_FEAR
+name:Fear Immunity
 desc:You are immune to fear.
-birth-desc:Fear immunity
 
 type:object
 code:PROT_BLIND
+name:Blindness Immunity
 desc:You cannot be blinded.
-birth-desc:Blindness immunity
 
 type:object
 code:PROT_CONF
+name:Confusion Immunity
 desc:You cannot be confused.
-birth-desc:Confusion immunity
 
 type:object
 code:PROT_STUN
+name:Stun Immunity
 desc:You cannot be stunned.
-birth-desc:Stun immunity
 
 type:object
 code:SLOW_DIGEST
+name:Slow Digestion
 desc:You have slow metabolism.
-birth-desc:Slow digestion
 
 type:object
 code:FEATHER
+name:Feather Falling
 desc:You fall lightly.
-birth-desc:Feather falling
 
 type:object
 code:REGEN
+name:Regeneration
 desc:You regenerate quickly.
-birth-desc:Regenerates quickly
 
 type:object
 code:TELEPATHY
+name:Telepathy
 desc:You have telepathy.
-birth-desc:Has telepathy
 
 type:object
 code:SEE_INVIS
-desc:You can see invisible things.
-birth-desc:Sees invisible creatures
+name:See Invisible
+desc:You can see invisible creatures.
 
 type:object
 code:FREE_ACT
+name:Free Action
 desc:You are immune to paralysis.
-birth-desc:Resists paralysis
 
 type:object
 code:HOLD_LIFE
+name:Hold Life
 desc:Your life force is sustained.
-birth-desc:Sustains experience
 
 type:object
 code:IMPACT
+name:Earthquakes
 desc:You sometimes create earthquakes on impact.
-birth-desc:Creates earthquakes
 
 type:object
 code:IMPAIR_HP
+name:Slow Regeneration
 desc:Your hitpoint recovery is impaired.
-birth-desc:Regenerates slowly
 
 type:object
 code:IMPAIR_MANA
+name:Slow Mana Regeneration
 desc:Your mana recovery is impaired.
-birth-desc:Regenerates mana slowly
 
 type:object
 code:AFRAID
+name:Constant Fear
 desc:You are afraid of melee, and bad at shooting and casting spells.
-birth-desc:Constantly afraid
 
 type:object
 code:NO_TELEPORT
+name:Teleport Ban
 desc:You cannot teleport.
-birth-desc:Cannot teleport
 
 type:object
 code:AGGRAVATE
+name:Aggravate
 desc:You aggravate creatures nearby.
-birth-desc:Aggravates creatures
 
 type:object
 code:DRAIN_EXP
+name:Experience Drain
 desc:Your experience constantly drains away.
-birth-desc:Experience drain
 
 type:object
 code:TRAP_IMMUNE
+name:Trap Immune
 desc:You are immune to traps.
-birth-desc:Immune to traps
+
+## Element properties
 
 type:element
+name:Resistance
 desc:You resist
-birth-desc:Resists
 value:1
 
 type:element
+name:Immunity
 desc:You are immune to
-birth-desc:Immune to
 value:3
 
 type:element
+name:Vulnerability
 desc:You are vulnerable to
-birth-desc:Vulnerable to
 value:-1

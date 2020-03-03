@@ -700,7 +700,7 @@ int rd_quests(void)
  */
 int rd_player(void)
 {
-	int i;
+	size_t i;
 	byte num;
 	byte stat_max = 0;
 	char buf[80];
@@ -883,8 +883,14 @@ int rd_player(void)
 	/* # of turns spent resting */
 	rd_u32b(&player->resting_turn);
 
+	/* Learned specialties */
+	for (i = 0; i < PF_SIZE; i++) {
+		rd_byte(&player->specialties[i]);
+	}
+	strip_bytes(16 - PF_SIZE);
+
 	/* Future use */
-	strip_bytes(32);
+	strip_bytes(16);
 
 	return 0;
 }

@@ -42,7 +42,7 @@ enum {
  */
 enum
 {
-	#define PF(a,b,c) PF_##a,
+	#define PF(a) PF_##a,
 	#include "list-player-flags.h"
 	#undef PF
 	PF_MAX
@@ -52,6 +52,7 @@ enum
 
 #define pf_has(f, flag)        flag_has_dbg(f, PF_SIZE, flag, #f, #flag)
 #define pf_next(f, flag)       flag_next(f, PF_SIZE, flag)
+#define pf_count(f)            flag_count(f, PF_SIZE)
 #define pf_is_empty(f)         flag_is_empty(f, PF_SIZE)
 #define pf_is_full(f)          flag_is_full(f, PF_SIZE)
 #define pf_is_inter(f1, f2)    flag_is_inter(f1, f2, PF_SIZE)
@@ -351,7 +352,7 @@ struct player_class {
 
 	bitflag flags[OF_SIZE];		/**< (Object) flags */
 	bitflag pflags[PF_SIZE];	/**< (Player) flags */
-	bitflag specialties[PF_SIZE];	/**< (Player) flags */
+	bitflag specialties[PF_SIZE];	/**< Specialty abilities for this class */
 
 	int max_attacks;			/**< Maximum possible attacks */
 	int min_weight;				/**< Minimum weapon weight for calculations */
@@ -369,8 +370,8 @@ struct player_ability {
 	struct player_ability *next;
 	u16b index;			/* PF_*, OF_* or element index */
 	char *type;			/* Ability type */
+	char *name;			/* Ability short description */
 	char *desc;			/* Ability description */
-	char *birth_desc;	/* Ability short description */
 	int group;			/* Ability group (set locally when viewing) */
 	int value;			/* Resistance value for elements */
 };
@@ -483,6 +484,7 @@ struct player_upkeep {
 
 	int energy_use;			/* Energy use this turn */
 	int new_spells;			/* Number of spells available */
+	int new_specialties;	/* Number of specialties available */
 
 	struct monster *health_who;			/* Health bar trackee */
 	struct monster_race *monster_race;	/* Monster race trackee */
@@ -590,7 +592,7 @@ struct player {
 
 	byte *spell_flags;			/* Spell flags */
 	byte *spell_order;			/* Spell order */
-	byte searching;		/* Currently searching */
+	bitflag specialties[PF_SIZE];		/* Learned specialty abilities */
 
 	char full_name[PLAYER_NAME_LEN];	/* Full name */
 	char died_from[80];					/* Cause of death */

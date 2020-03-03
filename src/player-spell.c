@@ -397,8 +397,8 @@ s16b spell_chance(int spell_index)
 	/* Get the minimum failure rate for the casting stat level */
 	minfail = min_fail(player, spell);
 
-	/* Non zero-fail characters never get better than 5 percent */
-	if (!player_has(player, PF_ZERO_FAIL) && minfail < 5) {
+	/* Non-full spellcasters never get better than 5 percent */
+	if (!player_has(player, PF_STRONG_MAGIC) && minfail < 5) {
 		minfail = 5;
 	}
 

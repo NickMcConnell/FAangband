@@ -34,6 +34,7 @@
 #include "obj-tval.h"
 #include "obj-util.h"
 #include "player-calcs.h"
+#include "player-quest.h"
 #include "player-spell.h"
 #include "player-timed.h"
 #include "player-util.h"
@@ -1406,6 +1407,40 @@ static void calc_spells(struct player *p)
 
 
 /**
+ * Calculate number of specialties player should have. -BR-
+ */
+static void calc_specialty(struct player *p)
+{
+	int num_known, questortwo = 2;
+	int quests_done = quests_count();
+	int specialties_allowed;
+
+	/* Calculate number allowed */
+	if (quests_done < 2) {
+		questortwo = quests_done;
+	}
+	specialties_allowed = 1 + questortwo;
+	//if (pf_has(player->class->pflags, PF_XTRA_SPECIALTY)) {
+	//	specialties_allowed++;
+	//}
+
+	/* Count the number of specialties we know */
+	num_known = pf_count(p->specialties);
+
+	/* See how many specialties we may learn */
+	p->upkeep->new_specialties = specialties_allowed - num_known;
+
+	/* More specialties are available */
+	if (p->upkeep->new_specialties > 0) {
+		msg("You may learn a specialist ability using the 'S' key.");
+
+		/* Redraw Study Status */
+		p->upkeep->redraw |= (PR_STUDY);
+	}
+}
+
+
+/**
  * Calculate maximum mana.  You do not need to know any spells.
  * Note that mana is lowered by heavy (or inappropriate) armor.
  *
@@ -2229,6 +2264,9 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 		pf_on(state->pflags, PF_NO_MANA);
 	}
 
+	/* Specialties */
+	calc_specialty(p);
+
 	/* Movement speed */
 	state->num_moves = 1 + extra_moves;
 
@@ -2503,6 +2541,11 @@ void update_stuff(struct player *p)
 		if (p->class->magic.total_spells > 0) {
 			calc_spells(p);
 		}
+	}
+
+	if (p->upkeep->update & (PU_SPECIALTY)) {
+		p->upkeep->update &= ~(PU_SPECIALTY);
+		calc_specialty(p);
 	}
 
 	/* Character is not ready yet, no map updates */

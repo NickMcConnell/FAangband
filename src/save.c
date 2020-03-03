@@ -446,7 +446,7 @@ void wr_quests(void)
 
 void wr_player(void)
 {
-	int i;
+	size_t i;
 
 	wr_string(player->full_name);
 
@@ -537,8 +537,17 @@ void wr_player(void)
 	/* # of turns spent resting */
 	wr_u32b(player->resting_turn);
 
+	/* Learned specialties (assumes < 128 entries in list-player-flags.h) */
+	for (i = 0; i < 16; i++) {
+		if (i < PF_SIZE) {
+			wr_byte(player->specialties[i]);
+		} else {
+			wr_byte(0L);
+		}
+	}
+
 	/* Future use */
-	for (i = 0; i < 8; i++) wr_u32b(0L);
+	for (i = 0; i < 4; i++) wr_u32b(0L);
 }
 
 

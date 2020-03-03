@@ -38,11 +38,12 @@
 #define PU_HP			0x00000004L	/* Calculate chp and mhp */
 #define PU_MANA			0x00000008L	/* Calculate csp and msp */
 #define PU_SPELLS		0x00000010L	/* Calculate spells */
-#define PU_UPDATE_VIEW	0x00000020L	/* Update field of view */
-#define PU_MONSTERS		0x00000040L	/* Update monsters */
-#define PU_DISTANCE		0x00000080L	/* Update distances */
-#define PU_PANEL		0x00000100L	/* Update panel */
-#define PU_INVEN		0x00000200L	/* Update inventory */
+#define PU_SPECIALTY	0x00000020L	/* Calculate specialties */
+#define PU_UPDATE_VIEW	0x00000040L	/* Update field of view */
+#define PU_MONSTERS		0x00000080L	/* Update monsters */
+#define PU_DISTANCE		0x00000100L	/* Update distances */
+#define PU_PANEL		0x00000200L	/* Update panel */
+#define PU_INVEN		0x00000400L	/* Update inventory */
 
 
 /**
