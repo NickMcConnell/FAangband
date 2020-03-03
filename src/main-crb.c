@@ -30,7 +30,7 @@
 #include "grafmode.h"
 
 #include <langinfo.h>
-#include <xlocale.h>
+#include <locale.h>
 
 /*
  * Notes:
