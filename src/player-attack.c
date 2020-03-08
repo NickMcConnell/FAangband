@@ -22,6 +22,7 @@
 #include "effects.h"
 #include "game-event.h"
 #include "game-input.h"
+#include "game-world.h"
 #include "generate.h"
 #include "init.h"
 #include "mon-desc.h"
@@ -45,6 +46,95 @@
 #include "player-util.h"
 #include "project.h"
 #include "target.h"
+
+struct unarmed_blow {
+	char *name;
+	int dd;
+	int ds;
+	struct unarmed_blow *next;
+};
+
+struct unarmed_blow *unarmed_blows;
+int num_unarmed_blows;
+bool confusing_blow;
+
+
+/**
+ * ------------------------------------------------------------------------
+ * Initialisation of unarmed combat blows
+ * ------------------------------------------------------------------------ */
+static enum parser_error parse_unarmed_blow_name(struct parser *p) {
+	const char *name = parser_getstr(p, "name");
+	struct unarmed_blow *h = parser_priv(p);
+
+	struct unarmed_blow *blow = mem_zalloc(sizeof *blow);
+	blow->next = h;
+	parser_setpriv(p, blow);
+	blow->name = string_make(name);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_unarmed_blow_dice(struct parser *p) {
+	struct unarmed_blow *blow = parser_priv(p);
+	struct random hd = parser_getrand(p, "hd");
+	assert(blow);
+
+	blow->dd = hd.dice;
+	blow->ds = hd.sides;
+	return PARSE_ERROR_NONE;
+}
+
+struct parser *init_parse_unarmed_blow(void) {
+	struct parser *p = parser_new();
+	parser_setpriv(p, NULL);
+	parser_reg(p, "name str name", parse_unarmed_blow_name);
+	parser_reg(p, "dice rand hd", parse_unarmed_blow_dice);
+	return p;
+}
+
+static errr run_parse_unarmed_blow(struct parser *p) {
+	return parse_file_quit_not_found(p, "player_unarmed");
+}
+
+static errr finish_parse_unarmed_blow(struct parser *p) {
+	struct unarmed_blow *blow = parser_priv(p);
+	int i;
+
+	/* Count the blows */
+	num_unarmed_blows = 0;
+	while (blow) {
+		blow = blow->next;
+		num_unarmed_blows++;
+	}
+
+	/* Allocate the array */
+	unarmed_blows = mem_zalloc(num_unarmed_blows * sizeof(struct unarmed_blow));
+	blow = parser_priv(p);
+	for (i = num_unarmed_blows - 1; i >= 0; i--) {
+		memcpy(&unarmed_blows[i], &blow, sizeof(blow));
+		blow = blow->next;
+	}
+
+	parser_destroy(p);
+	return 0;
+}
+
+static void cleanup_unarmed_blow(void)
+{
+	int i;
+	for (i = 0; i < num_unarmed_blows; i++) {
+		string_free(unarmed_blows[i].name);
+	}
+	mem_free(unarmed_blows);
+}
+
+struct file_parser unarmed_blow_parser = {
+	"unarmed_blow",
+	init_parse_unarmed_blow,
+	run_parse_unarmed_blow,
+	finish_parse_unarmed_blow,
+	cleanup_unarmed_blow
+};
 
 /**
  * ------------------------------------------------------------------------
@@ -138,6 +228,21 @@ bool test_hit(int chance, int ac, int vis) {
 	return randint0(chance) >= (ac * 2 / 3);
 }
 
+/**
+ * Players with Fury ability get a speed boost for hurting monsters
+ */
+static void fury_boost(struct player *p)
+{
+	int boost;
+
+	/* Base bonus value on energy used this round */
+	boost = (3 * p->upkeep->energy_use) / (extract_energy[p->state.speed] * 2);
+
+	/* Minimum boost */
+	boost = boost > 0 ? boost : 1;
+
+	player_add_speed_boost(p, boost);
+}
 
 /**
  * ------------------------------------------------------------------------
@@ -222,17 +327,21 @@ static bool is_debuffed(const struct monster *monster)
  *
  * Factor in item weight, total plusses, and player level.
  */
-static int critical_shot(const struct player *p,
-		const struct monster *monster,
-		int weight, int plus,
-		int dam, u32b *msg_type)
+static int critical_shot(const struct player *p, const struct monster *mon,
+						 int weight, int plus, int dam, u32b *msg_type,
+						 bool *marksman)
 {
-	int debuff_to_hit = is_debuffed(monster) ? DEBUFF_CRITICAL_HIT : 0;
+	int debuff_to_hit = is_debuffed(mon) ? DEBUFF_CRITICAL_HIT : 0;
 	int chance = weight + (p->state.to_h + plus + debuff_to_hit) * 4 + p->lev * 2;
 	int power = weight + randint1(500);
 	int new_dam = dam;
 
-	if (randint1(5000) > chance) {
+	/* Armsman Ability - 1/6 critical chance */
+	if (monster_is_visible(mon) && player_has(p, PF_ARMSMAN) && one_in_(6)) {
+		*marksman = true;
+	}
+
+	if (randint1(5000) > chance && !(*marksman)) {
 		*msg_type = MSG_SHOOT_HIT;
 	} else if (power < 500) {
 		*msg_type = MSG_HIT_GOOD;
@@ -253,14 +362,13 @@ static int critical_shot(const struct player *p,
  *
  * Factor in item weight, total plusses, and player level.
  */
-static int o_critical_shot(const struct player *p,
-						   const struct monster *monster,
+static int o_critical_shot(const struct player *p, const struct monster *mon,
 						   const struct object *missile,
 						   const struct object *launcher,
-						   u32b *msg_type)
+						   u32b *msg_type, bool *marksman)
 {
-	int debuff_to_hit = is_debuffed(monster) ? DEBUFF_CRITICAL_HIT : 0;
-	int power = chance_of_missile_hit(p, missile, launcher, monster->grid)
+	int debuff_to_hit = is_debuffed(mon) ? DEBUFF_CRITICAL_HIT : 0;
+	int power = chance_of_missile_hit(p, missile, launcher, mon->grid)
 		+ debuff_to_hit;
 	int add_dice = 0;
 
@@ -269,8 +377,13 @@ static int o_critical_shot(const struct player *p,
 		power = power * 3 / 2;
 	}
 
+	/* Armsman Ability - 1/6 critical chance */
+	if (monster_is_visible(mon) && player_has(p, PF_ARMSMAN) && one_in_(6)) {
+		*marksman = true;
+	}
+
 	/* Test for critical hit - chance power / (power + 360) */
-	if (randint1(power + 360) <= power) {
+	if (randint1(power + 360) <= power || *marksman) {
 		/* Determine level of critical hit. */
 		if (one_in_(50)) {
 			*msg_type = MSG_HIT_SUPERB;
@@ -294,18 +407,22 @@ static int o_critical_shot(const struct player *p,
  *
  * Factor in weapon weight, total plusses, player level.
  */
-static int critical_melee(const struct player *p,
-		const struct monster *monster,
-		int weight, int plus,
-		int dam, u32b *msg_type)
+static int critical_melee(const struct player *p, struct monster *mon,
+						  int weight, int plus, int dam, u32b *msg_type,
+						  bool *armsman)
 {
-	int debuff_to_hit = is_debuffed(monster) ? DEBUFF_CRITICAL_HIT : 0;
+	int debuff_to_hit = is_debuffed(mon) ? DEBUFF_CRITICAL_HIT : 0;
 	int power = weight + randint1(650);
 	int chance = weight + (p->state.to_h + plus + debuff_to_hit) * 5
 		+ p->lev * 3;
 	int new_dam = dam;
 
-	if (randint1(5000) > chance) {
+	/* Armsman Ability - 1/6 critical chance */
+	if (monster_is_visible(mon) && player_has(p, PF_ARMSMAN) && one_in_(6)) {
+		*armsman = true;
+	}
+
+	if (randint1(5000) > chance && !(*armsman)) {
 		*msg_type = MSG_HIT;
 	} else if (power < 400) {
 		*msg_type = MSG_HIT_GOOD;
@@ -324,6 +441,16 @@ static int critical_melee(const struct player *p,
 		new_dam = 4 * dam + 20;
 	}
 
+	/* Mana Burn Specialty */
+	if ((new_dam > dam) && player_has(p, PF_MANA_BURN) &&
+		monster_has_non_innate_spells(mon)) {
+		/* Impair monsters spellcasting and add to damage */
+		mflag_on(mon->mflag, MFLAG_LESS_SPELL);
+		new_dam += dam;
+
+		msgt(MSG_HIT, "Mana Burn!");
+	}
+
 	return new_dam;
 }
 
@@ -332,16 +459,21 @@ static int critical_melee(const struct player *p,
  *
  * Factor in weapon weight, total plusses, player level.
  */
-static int o_critical_melee(const struct player *p,
-							const struct monster *monster,
-							const struct object *obj, u32b *msg_type)
+static int o_critical_melee(const struct player *p, struct monster *mon,
+							const struct object *obj, u32b *msg_type,
+							bool *armsman)
 {
-	int debuff_to_hit = is_debuffed(monster) ? DEBUFF_CRITICAL_HIT : 0;
+	int debuff_to_hit = is_debuffed(mon) ? DEBUFF_CRITICAL_HIT : 0;
 	int power = chance_of_melee_hit(p, obj) + debuff_to_hit;
 	int add_dice = 0;
 
+	/* Armsman Ability - 1/6 critical chance */
+	if (monster_is_visible(mon) && player_has(p, PF_ARMSMAN) && one_in_(6)) {
+		*armsman = true;
+	}
+
 	/* Test for critical hit - chance power / (power + 240) */
-	if (randint1(power + 240) <= power) {
+	if (randint1(power + 240) <= power || *armsman) {
 		/* Determine level of critical hit. */
 		if (one_in_(40)) {
 			*msg_type = MSG_HIT_HI_SUPERB;
@@ -363,7 +495,113 @@ static int o_critical_melee(const struct player *p,
 		*msg_type = MSG_HIT;
 	}
 
+	/* Mana Burn Specialty */
+	if (add_dice && player_has(p, PF_MANA_BURN) &&
+		monster_has_non_innate_spells(mon)) {
+		/* Impair monsters spellcasting and add to damage */
+		mflag_on(mon->mflag, MFLAG_LESS_SPELL);
+		add_dice++;
+
+		msgt(MSG_HIT, "Mana Burn!");
+	}
+
 	return add_dice;
+}
+
+/**
+ * Determine melee damage by a player skilled in unarmed combat.
+ */
+static int unarmed_damage(struct player *p, struct monster_race *race,
+						  int power, int *blow_select, bool *power_strike,
+						  bool *confusing_blow)
+{
+	struct unarmed_blow *blow = NULL;
+	int deadliness = p->state.to_d;
+	int side_bonus = 0;
+	int chance, n, n_chances, i;
+	int damage;
+
+	/* Martial Arts Ability gives a 1/6 powerful blow, Power Strike 1/8 */
+	if ((player_has(p, PF_MARTIAL_ARTS) && one_in_(6)) ||
+		(player_has(p, PF_POWER_STRIKE) && one_in_(8))) {
+		*power_strike = true;
+	}
+
+	/* Minimum attack quality.
+	 * That this is not zero makes very little difference in
+	 * terms of mean damage.  It just makes players feel better
+	 * to not get the low end attacks at high plev. -BR-
+	 */
+	*blow_select = 1 + (p->lev / 10);
+
+	/* How many chances we get to choose an attack is based on deadliness.
+	 * For each chance we will choose an attack, and and keep the best one -BR-
+	 */
+
+	/* No negative deadliness */
+	if (deadliness < 1) {
+		i = 0;
+	} else {
+		i = deadliness_conversion[deadliness];
+	}
+
+	/* Get between 2 and 5 chances */
+	n_chances = 2 + (i / 100);
+
+	/* Deal with fractional chances */
+	if (randint0(100) < (i % 100)) {
+		n_chances++;
+	}
+
+	/* Loop over number of number of chances */
+	for (n = 0; n < n_chances; n++) {
+		/* Choose a (level restricted) attack */
+		chance = randint1(2 * p->lev / 5);
+
+		/* Keep the best attack */
+		if (chance > *blow_select) {
+			*blow_select = chance;
+		}
+	}
+
+	/* Better Hits on a Power Strike - sometimes better than normally allowed */
+	if (*power_strike && (*blow_select < num_unarmed_blows)) {
+		(*blow_select)++;
+	}
+
+	/* Just to make sure... */
+	if (*blow_select > num_unarmed_blows) {
+		*blow_select = num_unarmed_blows;
+	}
+
+	/* Get the blow */
+	blow = &unarmed_blows[*blow_select - 1];
+
+	/* Additional bonus for Holy Light */
+	if (player_has(p, PF_HOLY_LIGHT)) {
+		/* +2 sides versus undead and light-sensitive creatures */
+		if (rf_has(race->flags, RF_UNDEAD) ||
+			rf_has(race->flags, RF_HURT_LIGHT)) {
+			side_bonus = 2;
+		} else if (rf_has(race->flags, RF_EVIL)) {
+			/* +1 side versus other Evil creatures */
+			side_bonus = 1;
+		}
+	}
+
+	/* Calculate the damage, maximize for power strikes. */
+	if (*power_strike) {
+		damage = (blow->dd * (blow->ds + side_bonus));
+	} else {
+		damage = damroll(blow->dd, (blow->ds + side_bonus));
+	}
+
+	/* Powerful blows can also confuse monsters. */
+	if ((*power_strike && !one_in_(3)) || (power > randint0(500) + 25)) {
+		/* Use the special confusion attack. */
+		*confusing_blow = true;
+	}
+	return damage;
 }
 
 /**
@@ -371,7 +609,7 @@ static int o_critical_melee(const struct player *p,
  *
  * Factor in damage dice, to-dam and any brand or slay.
  */
-static int melee_damage(struct object *obj, int b, int s)
+static int melee_damage(struct object *obj, struct monster *mon, int b, int s)
 {
 	int dmg = damroll(obj->dd, obj->ds);
 
@@ -379,6 +617,18 @@ static int melee_damage(struct object *obj, int b, int s)
 		dmg *= slays[s].multiplier;
 	} else if (b) {
 		dmg *= brands[b].multiplier;
+	}
+
+	/* Additional bonus for Holy Light */
+	if (player_has(player, PF_HOLY_LIGHT)) {
+		/* +20% versus undead and light-sensitive creatures */
+		if (rf_has(mon->race->flags, RF_UNDEAD) ||
+			rf_has(mon->race->flags, RF_HURT_LIGHT)) {
+			dmg += (2 * dmg) / 10;
+		} else if (rf_has(mon->race->flags, RF_EVIL)) {
+			/* +10% side versus other evil creatures */
+			dmg += dmg / 10;
+		}
 	}
 
 	dmg += obj->to_d;
@@ -392,26 +642,40 @@ static int melee_damage(struct object *obj, int b, int s)
  * Deadliness and any brand or slay add extra sides to the damage dice,
  * criticals add extra dice.
  */
-static int o_melee_damage(struct player *p, const struct monster *mon,
-		struct object *obj, int b, int s, u32b *msg_type)
+static int o_melee_damage(struct player *p, struct monster *mon,
+						  struct object *obj, int b, int s, u32b *msg_type,
+						  bool *armsman)
 {
 	int dice = obj->dd;
 	int sides, dmg, add = 0;
 	bool extra;
+	int multiplier = 10;
 
 	/* Get the average value of a single damage die. (x10) */
 	int die_average = (10 * (obj->ds + 1)) / 2;
 
-	/* Adjust the average for slays and brands. (10x inflation) */
+	/* Get the multiplier for slays and brands. */
 	if (s) {
-		die_average *= slays[s].o_multiplier;
-		add = slays[s].o_multiplier - 10;
+		multiplier = slays[s].o_multiplier;
 	} else if (b) {
-		die_average *= brands[b].o_multiplier;
-		add = brands[b].o_multiplier - 10;
-	} else {
-		die_average *= 10;
+		multiplier = brands[b].o_multiplier;
 	}
+
+	/* Additional bonus for Holy Light */
+	if (player_has(player, PF_HOLY_LIGHT)) {
+		/* +2 or +3 versus undead and light-sensitive creatures */
+		if (rf_has(mon->race->flags, RF_UNDEAD) ||
+			rf_has(mon->race->flags, RF_HURT_LIGHT)) {
+			multiplier += (multiplier + 10) / 10;
+		} else if (rf_has(mon->race->flags, RF_EVIL)) {
+			/* +1 or +2 versus other evil creatures */
+			multiplier += multiplier / 10;
+		}
+	}
+
+	/* Adjust the average for slays and brands. (10x inflation) */
+	die_average *= multiplier;
+	add = multiplier - 10;
 
 	/* Apply deadliness to average. (100x inflation) */
 	apply_deadliness(&die_average, MIN(obj->to_d + p->state.to_d, 150));
@@ -423,7 +687,7 @@ static int o_melee_damage(struct player *p, const struct monster *mon,
 	sides += (extra ? 1 : 0);
 
 	/* Get number of critical dice */
-	dice += o_critical_melee(p, mon, obj, msg_type);
+	dice += o_critical_melee(p, mon, obj, msg_type, armsman);
 
 	/* Roll out the damage. */
 	dmg = damroll(dice, sides);
@@ -476,7 +740,7 @@ static int ranged_damage(struct player *p, struct object *missile,
  */
 static int o_ranged_damage(struct player *p, const struct monster *mon,
 						   struct object *missile, struct object *launcher,
-						   int b, int s, u32b *msg_type)
+						   int b, int s, u32b *msg_type, bool *marksman)
 {
 	int mult = (launcher ? p->state.ammo_mult : 1);
 	int dice = missile->dd;
@@ -518,9 +782,9 @@ static int o_ranged_damage(struct player *p, const struct monster *mon,
 
 	/* Get number of critical dice - only for suitable objects */
 	if (launcher) {
-		dice += o_critical_shot(p, mon, missile, launcher, msg_type);
+		dice += o_critical_shot(p, mon, missile, launcher, msg_type, marksman);
 	} else if (of_has(missile->flags, OF_THROWING)) {
-		dice += o_critical_shot(p, mon, missile, NULL, msg_type);
+		dice += o_critical_shot(p, mon, missile, NULL, msg_type, marksman);
 
 		/* Multiply the number of damage dice by the throwing weapon
 		 * multiplier.  This is not the prettiest equation,
@@ -630,11 +894,16 @@ static bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 	int splash = 0;
 	bool do_quake = false;
 	bool success = false;
+	bool armsman = false;
+	bool power_strike = false;
+	bool confusing_blow = false;
+	int unarmed_blow_idx;
 
 	/* Default to punching for one damage */
 	char verb[20];
 	int dmg = 1;
 	u32b msg_type = MSG_HIT;
+	const char *dmg_text = "";
 
 	/* Default to punching for one damage */
 	my_strcpy(verb, "punch", sizeof(verb));
@@ -696,10 +965,11 @@ static bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 
 		/* Get the damage */
 		if (!OPT(p, birth_O_combat)) {
-			dmg = melee_damage(obj, b, s);
-			dmg = critical_melee(p, mon, weight, obj->to_h, dmg, &msg_type);
+			dmg = melee_damage(obj, mon, b, s);
+			dmg = critical_melee(p, mon, weight, obj->to_h, dmg, &msg_type,
+								 &armsman);
 		} else {
-			dmg = o_melee_damage(p, mon, obj, b, s, &msg_type);
+			dmg = o_melee_damage(p, mon, obj, b, s, &msg_type, &armsman);
 		}
 
 		/* Splash damage and earthquakes */
@@ -708,6 +978,10 @@ static bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 			do_quake = true;
 			equip_learn_flag(p, OF_IMPACT);
 		}
+	} else if (player_has(p, PF_UNARMED_COMBAT)	||
+			   player_has(p, PF_MARTIAL_ARTS)) {
+		dmg = unarmed_damage(p, mon->race, chance, &unarmed_blow_idx,
+							 &power_strike, &confusing_blow);
 	}
 
 	/* Learn by use */
@@ -735,20 +1009,53 @@ static bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 		my_strcpy(verb, "fail to harm", sizeof(verb));
 	}
 
-	for (i = 0; i < N_ELEMENTS(melee_hit_types); i++) {
-		const char *dmg_text = "";
+	/* Set damage value text if needed */
+	if (OPT(p, show_damage)) {
+		dmg_text = format(" (%d)", dmg);
+	}
 
-		if (msg_type != melee_hit_types[i].msg_type)
-			continue;
+	/* Special messages for unarmed combat */
+	if (!obj && (player_has(p, PF_UNARMED_COMBAT) ||
+				 player_has(p, PF_MARTIAL_ARTS))) {
+		const char *name = unarmed_blows[unarmed_blow_idx].name;
 
-		if (OPT(p, show_damage))
-			dmg_text = format(" (%d)", dmg);
+		/* Display the attack message, feedback for relevant specialties */
+		if (confusing_blow) {
+			if (power_strike) {
+				msgt(MSG_HIT, "Power Strike! You attempt to confuse %s%s.",
+					 m_name, dmg_text);
+			} else {
+				msgt(MSG_HIT, "You %s and attempt to confuse %s%s.",
+					 name, m_name, dmg_text);
+			}
+		} else {
+			/* Basic attack message. */
+			if (power_strike) {
+				msgt(MSG_HIT, "Power Strike! You %s %s%s.", name, m_name,
+					 dmg_text);
+			} else {
+				msgt(MSG_HIT, "You %s %s%s.", name, m_name, dmg_text);
+			}
+		}
+	} else {
+		for (i = 0; i < N_ELEMENTS(melee_hit_types); i++) {
+			if (msg_type != melee_hit_types[i].msg_type) continue;
 
-		if (melee_hit_types[i].text)
-			msgt(msg_type, "You %s %s%s. %s", verb, m_name, dmg_text,
-					melee_hit_types[i].text);
-		else
-			msgt(msg_type, "You %s %s%s.", verb, m_name, dmg_text);
+			if (armsman) {
+				msgt(MSG_HIT, "Armsman hit!");
+			}
+
+			if (melee_hit_types[i].text)
+				msgt(msg_type, "You %s %s%s. %s", verb, m_name, dmg_text,
+					 melee_hit_types[i].text);
+			else
+				msgt(msg_type, "You %s %s%s.", verb, m_name, dmg_text);
+		}
+	}
+
+	/* Specialty ability Fury */
+	if (player_has(p, PF_FURY)) {
+		fury_boost(p);
 	}
 
 	/* Pre-damage side effects */
@@ -804,8 +1111,10 @@ bool attempt_shield_bash(struct player *p, struct monster *mon, bool *fear,
 	if (mon->race->level < p->lev / 2) return false;
 
 	/* Players bash more often when they see a real need: */
-	if (!equipped_item_by_slot_name(p, "weapon")) {
-		/* Unarmed... */
+	if (!equipped_item_by_slot_name(p, "weapon") &&
+		!player_has(p, PF_UNARMED_COMBAT) &&
+		!player_has(p, PF_MARTIAL_ARTS)) {
+		/* Unarmed and unskilled... */
 		bash_chance *= 4;
 	} else if (weapon->dd * weapon->ds * nblows < shield->dd * shield->ds * 3) {
 		/* ... or armed with a puny weapon */
@@ -819,6 +1128,10 @@ bool attempt_shield_bash(struct player *p, struct monster *mon, bool *fear,
 		/* Calculate attack quality, a mix of momentum and accuracy. */
 		bash_quality = p->state.skills[SKILL_TO_HIT_MELEE] / 4 + p->wt / 8 +
 			p->upkeep->total_weight / 80 + shield->weight / 2;
+
+		/* Enhanced for shield masters */
+		if (player_has(p, PF_SHIELD_MAST))
+			bash_quality += shield->weight / 5;
 
 		/* Calculate damage.  Big shields are deadly. */
 		bash_dam = damroll(shield->dd, shield->ds);
@@ -838,7 +1151,13 @@ bool attempt_shield_bash(struct player *p, struct monster *mon, bool *fear,
 		}
 
 		/* Damage, check for fear and death. */
-		if (mon_take_hit(mon, bash_dam, fear, NULL)) return true;
+		if (mon_take_hit(mon, bash_dam, fear, NULL)) {
+			/* Specialty ability Fury */
+			if (player_has(p, PF_FURY)) {
+				fury_boost(p);
+			}
+			return true;
+		}
 
 		/* Stunning. */
 		if (bash_quality + p->lev > randint1(200 + mon->race->level * 8)) {
@@ -871,6 +1190,7 @@ void py_attack(struct player *p, struct loc grid)
 {
 	int blow_energy = 100 * z_info->move_energy / p->state.num_blows;
 	int blows = 0;
+	bool bonus_attack = false;
 	bool fear = false;
 	struct monster *mon = square_monster(cave, grid);
 
@@ -890,6 +1210,12 @@ void py_attack(struct player *p, struct loc grid)
 	/* Deduct any energy lost due to stumbling after shield bash. */
 	p->upkeep->energy_use += blow_energy * blows;
 
+	/* Specialty Ability */
+	if (player_has(p, PF_FAST_ATTACK) &&
+		(randint1(800) <= p->state.num_blows)) {
+		bonus_attack = true;
+	}
+
 	/* Attack until energy runs out or enemy dies. We limit energy use to 100
 	 * to avoid giving monsters a possible double move. */
 	while (p->energy >= blow_energy * (blows + 1)) {
@@ -898,6 +1224,12 @@ void py_attack(struct player *p, struct loc grid)
 		if (p->upkeep->energy_use + blow_energy > z_info->move_energy ||
 			stop) break;
 		blows++;
+
+		/* Take the bonus attack last */
+		if (bonus_attack && (p->energy < blow_energy * (blows + 1)) && !stop) {
+			msg("Extra Attack!");
+			stop = py_attack_real(player, grid, &fear);
+		}
 	}
 
 	/* Hack - delay fear messages */
@@ -976,7 +1308,8 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 	path_n = project_path(cave, path_g, range, grid, target, 0);
 
 	/* Calculate potenital piercing */
-	if (player->timed[TMD_POWERSHOT] && tval_is_sharp_missile(obj)) {
+	if ((player->timed[TMD_POWERSHOT] || player_has(player, PF_PIERCE_SHOT)) &&
+		tval_is_sharp_missile(obj)) {
 		pierce = player->state.ammo_mult;
 	}
 
@@ -1048,6 +1381,10 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 
 						monster_desc(m_name, sizeof(m_name), mon, MDESC_OBJE);
 
+						if (result.marksman) {
+							msgt(MSG_HIT, "Marksmanship!");
+						}
+
 						if (hit_types[j].text) {
 							msgt(msg_type, "Your %s %s %s%s. %s", o_name, 
 								 hit_verb, m_name, dmg_text, hit_types[j].text);
@@ -1106,7 +1443,7 @@ static struct attack_result make_ranged_shot(struct player *p,
 		struct object *ammo, struct loc grid)
 {
 	char *hit_verb = mem_alloc(20 * sizeof(char));
-	struct attack_result result = {false, 0, 0, hit_verb};
+	struct attack_result result = {false, false, 0, 0, hit_verb};
 	struct object *bow = equipped_item_by_slot_name(p, "shooting");
 	struct monster *mon = square_monster(cave, grid);
 	int chance = chance_of_missile_hit(p, ammo, bow, grid);
@@ -1126,9 +1463,11 @@ static struct attack_result make_ranged_shot(struct player *p,
 	if (!OPT(p, birth_O_combat)) {
 		result.dmg = ranged_damage(p, ammo, bow, b, s);
 		result.dmg = critical_shot(p, mon, ammo->weight, ammo->to_h,
-								   result.dmg, &result.msg_type);
+								   result.dmg, &result.msg_type,
+								   &result.marksman);
 	} else {
-		result.dmg = o_ranged_damage(p, mon, ammo, bow, b, s, &result.msg_type);
+		result.dmg = o_ranged_damage(p, mon, ammo, bow, b, s, &result.msg_type,
+									 &result.marksman);
 	}
 
 	missile_learn_on_ranged_attack(p, bow);
@@ -1144,7 +1483,7 @@ static struct attack_result make_ranged_throw(struct player *p,
 	struct object *obj, struct loc grid)
 {
 	char *hit_verb = mem_alloc(20 * sizeof(char));
-	struct attack_result result = {false, 0, 0, hit_verb};
+	struct attack_result result = {false, false, 0, 0, hit_verb};
 	struct monster *mon = square_monster(cave, grid);
 	int chance = chance_of_missile_hit(p, obj, NULL, grid);
 	int b = 0, s = 0;
@@ -1162,9 +1501,11 @@ static struct attack_result make_ranged_throw(struct player *p,
 	if (!OPT(p, birth_O_combat)) {
 		result.dmg = ranged_damage(p, obj, NULL, b, s);
 		result.dmg = critical_shot(p, mon, obj->weight, obj->to_h,
-								   result.dmg, &result.msg_type);
+								   result.dmg, &result.msg_type,
+								   &result.marksman);
 	} else {
-		result.dmg = o_ranged_damage(p, mon, obj, NULL, b, s, &result.msg_type);
+		result.dmg = o_ranged_damage(p, mon, obj, NULL, b, s, &result.msg_type,
+									 &result.marksman);
 	}
 
 	/* Direct adjustment for exploding things (flasks of oil) */
@@ -1264,6 +1605,11 @@ void do_cmd_throw(struct command *cmd) {
 
 	weight = MAX(obj->weight, 10);
 	range = MIN(((str + 20) * 10) / weight, 10);
+
+	/* Specialty ability Mighty Throw */
+	if (player_has(player, PF_MIGHTY_THROW)) {
+		range *= 2;
+	}
 
 	/* Make sure the player isn't throwing wielded items */
 	if (object_is_equipped(player->body, obj)) {

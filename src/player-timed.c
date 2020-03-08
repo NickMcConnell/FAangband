@@ -258,6 +258,15 @@ static enum parser_error parse_player_timed_grade(struct parser *p)
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_player_timed_beneficial(struct parser *p)
+{
+	struct timed_effect_data *t = parser_priv(p);
+	assert(t);
+
+	t->beneficial = parser_getint(p, "good") ? true : false;
+	return PARSE_ERROR_NONE;
+}
+
 static struct parser *init_parse_player_timed(void)
 {
 	struct parser *p = parser_new();
@@ -270,6 +279,7 @@ static struct parser *init_parse_player_timed(void)
 	parser_reg(p, "msgt sym type", parse_player_timed_message_type);
 	parser_reg(p, "fail uint code str flag", parse_player_timed_fail);
 	parser_reg(p, "grade sym color int max sym name sym up_msg ?sym down_msg", parse_player_timed_grade);
+	parser_reg(p, "beneficial int good", parse_player_timed_beneficial);
 	return p;
 }
 
@@ -397,7 +407,13 @@ bool player_timed_grade_eq(struct player *p, int idx, char *match)
 	return false;
 }
 
-
+/**
+ * Return true if the player timed effect matches the given string
+ */
+bool player_timed_effect_is_beneficial(int idx)
+{
+	return timed_effects[idx].beneficial;
+}
 /**
  * ------------------------------------------------------------------------
  * Setting, increasing, decreasing and clearing timed effects

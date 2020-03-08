@@ -120,6 +120,19 @@ int effect_calculate_value(effect_handler_context_t *context, bool use_boost)
 	return final;
 }
 
+static int eff_level(struct player *p)
+{
+	int plev = p->lev;
+
+	/* Specialty abilities */
+	if (player_has(player, PF_HEIGHTEN_MAGIC))
+		plev += 1 + ((player->heighten_power + 5) / 10);
+	if (player_has(player, PF_CHANNELING))
+		plev += player_get_channeling_boost(player);
+
+	return plev;
+}
+
 static void get_target(struct source origin, int dir, struct loc *grid,
 					   int *flags)
 {
@@ -1149,6 +1162,9 @@ bool effect_handler_DRAIN_STAT(effect_handler_context_t *context)
 {
 	int stat = context->subtype;
 	int flag = sustain_flag(stat);
+	bool sust = player_of_has(player, flag);
+	bool clarity = player_has(player, PF_CLARITY);
+	bool athletics = player_has(player, PF_ATHLETICS);
 
 	/* Bounds check */
 	if (flag < 0) return false;
@@ -1156,8 +1172,16 @@ bool effect_handler_DRAIN_STAT(effect_handler_context_t *context)
 	/* ID */
 	context->ident = true;
 
+	/* Check for specialty ability partial sustains */
+	if (clarity && one_in_(2) && ((stat == STAT_INT) || (stat == STAT_WIS))) {
+		sust = true;
+	}
+	if (athletics && one_in_(2) && ((stat == STAT_DEX) || (stat == STAT_CON))) {
+		sust = true;
+	}
+
 	/* Sustain */
-	if (player_of_has(player, flag)) {
+	if (sust) {
 		/* Notice effect */
 		equip_learn_flag(player, flag);
 
@@ -1169,7 +1193,7 @@ bool effect_handler_DRAIN_STAT(effect_handler_context_t *context)
 	}
 
 	/* Attempt to reduce the stat */
-	if (player_stat_dec(player, stat, false)){
+	if (player_stat_dec(player, stat, false)) {
 		int dam = effect_calculate_value(context, false);
 
 		/* Notice effect */
@@ -2799,7 +2823,8 @@ bool effect_handler_TELEPORT(effect_handler_context_t *context)
 	int current_score = 2 * MAX(z_info->dungeon_wid, z_info->dungeon_hgt);
 	bool only_vault_grids_possible = true;
 
-	bool is_player = (context->origin.what != SRC_MONSTER || context->subtype);
+	bool hostile = context->subtype ? true : false;
+	bool is_player = (context->origin.what != SRC_MONSTER || hostile);
 	struct monster *t_mon = monster_target_monster(context);
 
 	context->ident = true;
@@ -2816,7 +2841,7 @@ bool effect_handler_TELEPORT(effect_handler_context_t *context)
 	} else if (is_player) {
 		/* Decoys get destroyed */
 		struct loc decoy = cave_find_decoy(cave);
-		if (!loc_is_zero(decoy) && context->subtype) {
+		if (!loc_is_zero(decoy) && hostile) {
 			square_destroy_decoy(cave, decoy);
 			return true;
 		}
@@ -2834,6 +2859,12 @@ bool effect_handler_TELEPORT(effect_handler_context_t *context)
 		if (player_of_has(player, OF_NO_TELEPORT)) {
 			equip_learn_flag(player, OF_NO_TELEPORT);
 			msg("Teleportation forbidden!");
+			return true;
+		}
+
+		/* Check for teleport resistance */
+		if (player_has(player, PF_PHASEWALK) && hostile) {
+			msg("Teleport resistance!");
 			return true;
 		}
 	} else {
@@ -2927,6 +2958,11 @@ bool effect_handler_TELEPORT(effect_handler_context_t *context)
 		pick--;
 	}
 
+	/* Check for specialty speed boost on friendly teleports */
+	if (is_player && !hostile && player_has(player, PF_PHASEWALK)) {
+		player_add_speed_boost(player, 20 + distance(start, spots->grid));
+	}
+
 	/* Sound */
 	sound(is_player ? MSG_TELEPORT : MSG_TPOTHER);
 
@@ -2967,6 +3003,7 @@ bool effect_handler_TELEPORT_TO(effect_handler_context_t *context)
 	struct loc start, aim, land;
 	int dis = 0, ctr = 0, dir = DIR_TARGET;
 	struct monster *t_mon = monster_target_monster(context);
+	bool friendly = false;
 
 	context->ident = true;
 
@@ -3008,6 +3045,12 @@ bool effect_handler_TELEPORT_TO(effect_handler_context_t *context)
 			msg("Teleportation forbidden!");
 			return true;
 		}
+
+		/* Check for teleport resistance */
+		if (player_has(player, PF_PHASEWALK)) {
+			msg("Teleport resistance!");
+			return true;
+		}
 	}
 
 	/* Where are we going? */
@@ -3025,6 +3068,8 @@ bool effect_handler_TELEPORT_TO(effect_handler_context_t *context)
 			aim = mon->grid;
 		}
 	} else {
+		friendly = true;
+
 		/* Player choice */
 		do {
 			get_aim_dir(&dir);
@@ -3055,6 +3100,11 @@ bool effect_handler_TELEPORT_TO(effect_handler_context_t *context)
 			ctr = 0;
 			dis++;
 		}
+	}
+
+	/* Check for specialty speed boost on friendly teleports */
+	if (friendly && player_has(player, PF_PHASEWALK)) {
+		player_add_speed_boost(player, 20 + distance(start, land));
 	}
 
 	/* Sound */
@@ -3113,6 +3163,12 @@ bool effect_handler_TELEPORT_LEVEL(effect_handler_context_t *context)
 	if (player_of_has(player, OF_NO_TELEPORT)) {
 		equip_learn_flag(player, OF_NO_TELEPORT);
 		msg("Teleportation forbidden!");
+		return true;
+	}
+
+	/* Check for teleport resistance */
+	if (player_has(player, PF_PHASEWALK)) {
+		msg("Teleport resistance!");
 		return true;
 	}
 
@@ -3744,7 +3800,7 @@ bool effect_handler_SPOT(effect_handler_context_t *context)
 
 	/* Handle increasing radius with player level */
 	if (context->other && context->origin.what == SRC_PLAYER) {
-		rad += player->lev / context->other;
+		rad += eff_level(player) / context->other;
 	}
 
 	/* Aim at the target, explode */
@@ -3847,7 +3903,7 @@ bool effect_handler_BALL(effect_handler_context_t *context)
 				target = loc_sum(player->grid, ddgrid[context->dir]);
 			}
 
-			if (context->other) rad += player->lev / context->other;
+			if (context->other) rad += eff_level(player) / context->other;
 			break;
 
 		default:
@@ -4030,8 +4086,8 @@ bool effect_handler_SHORT_BEAM(effect_handler_context_t *context)
 {
 	int dam = effect_calculate_value(context, false);
 	int type = context->subtype;
-	bool addons = (context->origin.what == SRC_PLAYER) && (context->other > 0);
-	int rad = context->radius + (addons ? player->lev / context->other : 0);
+	bool add = (context->origin.what == SRC_PLAYER) && (context->other > 0);
+	int rad = context->radius + (add ? eff_level(player) / context->other : 0);
 
 	struct loc target = loc(-1, -1);
 
@@ -4654,7 +4710,8 @@ bool effect_handler_CREATE_ARROWS(effect_handler_context_t *context)
 	object_delete(&staff);
 
 	/* Make some arrows */
-	arrows = make_object(cave, player->lev, good, great, false, NULL, TV_ARROW);
+	arrows = make_object(cave, eff_level(player), good, great, false, NULL,
+						 TV_ARROW);
 	drop_near(cave, &arrows, 0, player->grid, true);
 
 	return true;
@@ -4856,7 +4913,7 @@ bool effect_handler_COMMAND(effect_handler_context_t *context)
 	monster_wake(mon, false, 100);
 
 	/* Explicit saving throw */
-	if (randint1(player->lev) < randint1(mon->race->level)) {
+	if (randint1(eff_level(player)) < randint1(mon->race->level)) {
 		char m_name[80];
 		monster_desc(m_name, sizeof(m_name), mon, MDESC_STANDARD);
 		msg("%s resists your command!", m_name);
@@ -4954,7 +5011,7 @@ bool effect_handler_SINGLE_COMBAT(effect_handler_context_t *context)
 		int old_idx = mon->midx;
 
 		/* Monsters with high spell power can resist */
-		if (randint0(mon->race->spell_power) > player->lev) {
+		if (randint0(mon->race->spell_power) > eff_level(player)) {
 			char m_name[80];
 			monster_desc(m_name, sizeof(m_name), mon, MDESC_CAPITAL);
 			msg("%s resists!", m_name);
@@ -5076,7 +5133,7 @@ bool effect_handler_BIZARRE(effect_handler_context_t *context)
  */
 bool effect_handler_WONDER(effect_handler_context_t *context)
 {
-	int plev = player->lev;
+	int plev = eff_level(player);
 	int die = effect_calculate_value(context, false);
 	int subtype = 0, radius = 0, other = 0, y = 0, x = 0;
 	int beam = context->beam;

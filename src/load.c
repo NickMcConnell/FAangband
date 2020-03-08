@@ -889,8 +889,12 @@ int rd_player(void)
 	}
 	strip_bytes(16 - PF_SIZE);
 
+	/* More specialty info */
+	rd_s16b(&player->speed_boost);		/* Specialty Fury, Phasewalk */
+	rd_s16b(&player->heighten_power);	/* Specialty Heighten Magic */
+
 	/* Future use */
-	strip_bytes(16);
+	strip_bytes(12);
 
 	return 0;
 }

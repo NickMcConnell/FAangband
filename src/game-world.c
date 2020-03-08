@@ -372,6 +372,12 @@ static void decrease_timeouts(void)
 				break;
 			}
 		}
+		/* Specialty Enhance Magic - beneficial effects timeout at 2/3 speed */
+		if (player_has(player, PF_ENHANCE_MAGIC) && !(turn % 3) &&
+			player_timed_effect_is_beneficial(i)) {
+			continue;
+		}
+
 		/* Decrement the effect */
 		player_dec_timed(player, i, decr, false);
 	}
@@ -747,6 +753,21 @@ void process_world(struct chunk *c)
 
 	/* Timeout various things */
 	decrease_timeouts();
+
+	/* Decay special heighten power */
+	if (player->heighten_power) {
+		/* To keep it from being a free ride for high speed 
+		 * characters, Heighten Power decays quickly when highly charged */
+		int decrement = 10 + (player->heighten_power / 55);
+		player->heighten_power = MAX(0, player->heighten_power - decrement);
+		player->upkeep->update |= (PU_BONUS);
+	}
+
+	/* Decay special speed boost */
+	if (player->speed_boost) {
+		player->speed_boost = MAX(player->speed_boost - 10, 0);
+		player->upkeep->update |= (PU_BONUS);
+	}
 
 	/* Process light */
 	player_update_light(player);

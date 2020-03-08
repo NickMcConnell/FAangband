@@ -795,6 +795,14 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 		return false;
 	}
 
+	/* Try to evade missiles */
+	if ((typ == ELEM_ARROW) && (randint1(75) <= player->state.evasion_chance)) {
+		/* Message */
+		msg("You evade the missile!");
+		disturb(player, 1);
+		return true;
+	}
+
 	switch (origin.what) {
 		case SRC_PLAYER:
 			/* Never affect projector */

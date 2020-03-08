@@ -457,6 +457,8 @@ struct player_state {
 
 	int cur_light;		/**< Radius of light (if any) */
 
+	int evasion_chance;	/**< Evasion chance (if any) */
+
 	bool heavy_wield;	/**< Heavy weapon */
 	bool heavy_shoot;	/**< Heavy shooter */
 	bool bless_wield;	/**< Blessed (or blunt) weapon */
@@ -593,6 +595,8 @@ struct player {
 	byte *spell_flags;			/* Spell flags */
 	byte *spell_order;			/* Spell order */
 	bitflag specialties[PF_SIZE];		/* Learned specialty abilities */
+    s16b speed_boost;			/* Short term speed boost (Fury, Phasewalk) */
+    s16b heighten_power;		/* Magic Intensity boost (Heightn Magic) */
 
 	char full_name[PLAYER_NAME_LEN];	/* Full name */
 	char died_from[80];					/* Cause of death */

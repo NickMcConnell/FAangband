@@ -463,6 +463,9 @@ static void calculate_melee_crits(struct player_state *state, int weight,
 		int plus, int *mult, int *add, int *div)
 {
 	int k, to_crit = weight + 5 * (state->to_h + plus) + 3 * player->lev;
+	if (player_has(player, PF_ARMSMAN)) {
+		to_crit += (833 * (5000 - to_crit) / 5000);
+	}
 	to_crit = MIN(5000, MAX(0, to_crit));
 
 	*mult = *add = 0;
@@ -494,6 +497,9 @@ static int o_calculate_melee_crits(struct player_state state,
 	int chance = BTH_PLUS_ADJ * (state.to_h + obj->known->to_h) +
 		state.skills[SKILL_TO_HIT_MELEE];
 	chance = (100 * chance) / (chance + 240);
+	if (player_has(player, PF_ARMSMAN)) {
+		chance = 100 - (83 * (100 - chance)) / 100;
+	}
 	dice = (537 * chance) / 240;
 
 	return dice;
@@ -506,6 +512,9 @@ static void calculate_missile_crits(struct player_state *state, int weight,
 		int plus, int *mult, int *add, int *div)
 {
 	int k, to_crit = weight + 4 * (state->to_h + plus) + 2 * player->lev;
+	if (player_has(player, PF_MARKSMAN)) {
+		to_crit += (833 * (5000 - to_crit) / 5000);
+	}
 	to_crit = MIN(5000, MAX(0, to_crit));
 
 	*mult = *add = 0;
@@ -539,6 +548,9 @@ static int o_calculate_missile_crits(struct player_state state,
 		chance *= 3 / 2;
 	}
 	chance = (100 * chance) / (chance + 360);
+	if (player_has(player, PF_MARKSMAN)) {
+		chance = 100 - (83 * (100 - chance)) / 100;
+	}
 	dice = (569 * chance) / 500;
 
 	return dice;

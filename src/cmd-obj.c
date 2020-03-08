@@ -977,6 +977,11 @@ void do_cmd_cast(struct command *cmd)
 		} else {
 			player->upkeep->energy_use = z_info->move_energy;
 		}
+
+		/* Give credit for Heighten Magic */
+		if (player_has(player, PF_HEIGHTEN_MAGIC)) {
+			player_add_heighten_power(player, 20);
+		}
 	}
 	target_release();
 }

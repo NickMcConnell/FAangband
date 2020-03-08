@@ -23,6 +23,7 @@
 
 struct attack_result {
     bool success;
+	bool marksman;
     int dmg;
     u32b msg_type;
     char *hit_verb;
@@ -47,6 +48,7 @@ typedef struct attack_result (*ranged_attack) (struct player *p,
 											   struct object *obj,
 											   struct loc grid);
 
+extern struct file_parser unarmed_blow_parser;
 extern void do_cmd_fire(struct command *cmd);
 extern void do_cmd_fire_at_nearest(void);
 extern void do_cmd_throw(struct command *cmd);

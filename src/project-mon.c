@@ -238,6 +238,7 @@ typedef struct project_monster_handler_context_s {
 	struct monster *mon;
 	struct monster_lore *lore;
 	bool charm;
+	bool beguile;
 	bool obvious;
 	bool skipped;
 	u16b flag;
@@ -478,6 +479,9 @@ static void project_monster_sleep(project_monster_handler_context_t *context, in
 	if (context->charm && rf_has(context->mon->race->flags, RF_ANIMAL)) {
 		context->dam += context->dam / 2;
 	}
+	if (context->beguile) {
+		context->dam += context->dam / 2;
+	}
 	context->mon_timed[MON_TMD_SLEEP] = context->dam;
 	context->dam = 0;
 
@@ -531,6 +535,22 @@ static void project_monster_handler_LIGHT(project_monster_handler_context_t *con
 		context->hurt_msg = MON_MSG_CRINGE_LIGHT;
 		context->die_msg = MON_MSG_SHRIVEL_LIGHT;
 		context->dam *= 2;
+	}
+
+	/* Holy Light gives a chance to scare targets */
+	if ((context->origin.what == SRC_PLAYER) &&
+		player_has(player, PF_HOLY_LIGHT) &&
+		one_in_(5)) {
+		struct monster_race *race = context->mon->race;
+		if (rf_has(context->mon->race->flags, RF_UNDEAD) ||
+			rf_has(context->mon->race->flags, RF_HURT_LIGHT) ||
+			rf_has(context->mon->race->flags, RF_EVIL)) {
+			int save = race->level + (rf_has(race->flags, RF_UNIQUE) ? 20 : 2);
+			if (save < randint1(player->lev + 10)) {
+				context->mon_timed[MON_TMD_FEAR] = damroll(2, player->lev) + 1;
+				context->hurt_msg = MON_MSG_DISMAY_LIGHT;
+			}
+		}
 	}
 }
 
@@ -731,6 +751,22 @@ static void project_monster_handler_ARROW(project_monster_handler_context_t *con
 static void project_monster_handler_LIGHT_WEAK(project_monster_handler_context_t *context)
 {
 	project_monster_hurt_only(context, RF_HURT_LIGHT, MON_MSG_CRINGE_LIGHT, MON_MSG_SHRIVEL_LIGHT);
+
+	/* Holy Light gives a chance to scare targets */
+	if ((context->origin.what == SRC_PLAYER) &&
+		player_has(player, PF_HOLY_LIGHT) &&
+		one_in_(5)) {
+		struct monster_race *race = context->mon->race;
+		if (rf_has(context->mon->race->flags, RF_UNDEAD) ||
+			rf_has(context->mon->race->flags, RF_HURT_LIGHT) ||
+			rf_has(context->mon->race->flags, RF_EVIL)) {
+			int save = race->level + (rf_has(race->flags, RF_UNIQUE) ? 20 : 2);
+			if (save < randint1(player->lev + 10)) {
+				context->mon_timed[MON_TMD_FEAR] = damroll(2, player->lev) + 1;
+				context->hurt_msg = MON_MSG_DISMAY_LIGHT;
+			}
+		}
+	}
 }
 
 static void project_monster_handler_DARK_WEAK(project_monster_handler_context_t *context)
@@ -896,6 +932,9 @@ static void project_monster_handler_MON_POLY(project_monster_handler_context_t *
 	if (context->charm && rf_has(context->mon->race->flags, RF_ANIMAL)) {
 		context->dam += context->dam / 2;
 	}
+	if (context->beguile) {
+		context->dam += context->dam / 2;
+	}
 	/* Polymorph later */
 	context->do_poly = context->dam;
 
@@ -940,6 +979,9 @@ static void project_monster_handler_MON_SLOW(project_monster_handler_context_t *
 	if (context->charm && rf_has(context->mon->race->flags, RF_ANIMAL)) {
 		context->dam += context->dam / 2;
 	}
+	if (context->beguile) {
+		context->dam += context->dam / 2;
+	}
 	context->mon_timed[MON_TMD_SLOW] = context->dam;
 	context->dam = 0;
 }
@@ -948,6 +990,9 @@ static void project_monster_handler_MON_SLOW(project_monster_handler_context_t *
 static void project_monster_handler_MON_CONF(project_monster_handler_context_t *context)
 {
 	if (context->charm && rf_has(context->mon->race->flags, RF_ANIMAL)) {
+		context->dam += context->dam / 2;
+	}
+	if (context->beguile) {
 		context->dam += context->dam / 2;
 	}
 	context->mon_timed[MON_TMD_CONF] = context->dam;
@@ -960,6 +1005,9 @@ static void project_monster_handler_MON_HOLD(project_monster_handler_context_t *
 	if (context->charm && rf_has(context->mon->race->flags, RF_ANIMAL)) {
 		context->dam += context->dam / 2;
 	}
+	if (context->beguile) {
+		context->dam += context->dam / 2;
+	}
 	context->mon_timed[MON_TMD_HOLD] = context->dam;
 	context->dam = 0;
 }
@@ -968,6 +1016,9 @@ static void project_monster_handler_MON_HOLD(project_monster_handler_context_t *
 static void project_monster_handler_MON_STUN(project_monster_handler_context_t *context)
 {
 	if (context->charm && rf_has(context->mon->race->flags, RF_ANIMAL)) {
+		context->dam += context->dam / 2;
+	}
+	if (context->beguile) {
 		context->dam += context->dam / 2;
 	}
 	context->mon_timed[MON_TMD_STUN] = context->dam;
@@ -1295,6 +1346,10 @@ void project_m(struct source origin, int r, struct loc grid, int dam, int typ,
 	bool charm = (origin.what == SRC_PLAYER) ?
 		player_has(player, PF_CHARM) : false;
 
+	/* Is the source an extra beguiling player? */
+	bool beguile = (origin.what == SRC_PLAYER) ?
+		player_has(player, PF_BEGUILE) : false;
+
 	int m_idx = square(cave, grid).mon;
 
 	project_monster_handler_f monster_handler = monster_handlers[typ];
@@ -1309,6 +1364,7 @@ void project_m(struct source origin, int r, struct loc grid, int dam, int typ,
 		NULL, /* mon */
 		NULL, /* lore */
 		charm,
+		beguile,
 		obvious,
 		false, /* skipped */
 		0, /* flag */

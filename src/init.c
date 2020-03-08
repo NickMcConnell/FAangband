@@ -55,6 +55,7 @@
 #include "object.h"
 #include "option.h"
 #include "player.h"
+#include "player-attack.h"
 #include "player-history.h"
 #include "player-quest.h"
 #include "player-spell.h"
@@ -3821,6 +3822,7 @@ static struct {
 	{ "projections", &projection_parser },
 	{ "timed effects", &player_timed_parser },
 	{ "player properties", &player_property_parser },
+	{ "player unarmed blows", &unarmed_blow_parser },
 	{ "features", &feat_parser },
 	{ "object bases", &object_base_parser },
 	{ "slays", &slay_parser },

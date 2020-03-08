@@ -1,0 +1,72 @@
+# File: player_unarmed.txt
+
+# List of blow names and damage for characters with an unarmed combat
+# specialty ability
+
+# name:name
+# damage:dice
+
+# 'name' is the name that will be printed in messages to describe the blow
+
+# 'dice' is the damage dice determining the damage from the blow
+
+name:punch
+dice:1d5
+
+name:kick
+dice:2d4
+
+name:knee
+dice:1d12
+
+name:chop
+dice:2d7
+
+name:uppercut
+dice:3d6
+
+name:boot
+dice:3d9
+
+name:whack
+dice:6d4
+
+name:slam
+dice:4d9
+
+name:grapple with
+dice:13d3
+
+name:hammer
+dice:9d6
+
+name:head butt
+dice:3d24
+
+name:strangle
+dice:8d10
+
+name:roundhouse kick
+dice:5d19
+
+name:pummel
+dice:10d11
+
+name:double-kick
+dice:11d11
+
+name:crush
+dice:21d6
+
+name:assault
+dice:8d19
+
+name:violently thrash
+dice:14d11
+
+name:body slam
+dice:7d26
+
+name:brutalise
+dice:10d22
+

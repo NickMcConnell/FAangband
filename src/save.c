@@ -546,8 +546,12 @@ void wr_player(void)
 		}
 	}
 
+	/* More specialty info */
+	wr_s16b(player->speed_boost);		/* Specialty Fury, Phasewalk */
+	wr_s16b(player->heighten_power);	/* Specialty Heighten Magic */
+
 	/* Future use */
-	for (i = 0; i < 4; i++) wr_u32b(0L);
+	for (i = 0; i < 3; i++) wr_u32b(0L);
 }
 
 

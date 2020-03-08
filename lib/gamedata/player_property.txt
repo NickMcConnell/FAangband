@@ -311,7 +311,7 @@ code:XTRA_SPECIALTY
 name:Specialization [1]
 desc:You can learn an extra specialty abilty at level 1.
 
-## Specialty ability player flags ##
+## Specialty ability player flags (race/class flags can be used for this too) ##
 
 type:player
 code:ARMOR_MAST
@@ -397,11 +397,6 @@ type:player
 code:ENHANCE_MAGIC
 name:Enhance Magic
 desc:Increases the effects and durations of beneficial magical effects.
-
-type:player
-code:FAST_CAST
-name:Fast Casting
-desc:Increases spell casting speed, especially for low level spells from high level casters.
 
 type:player
 code:POWER_SIPHON

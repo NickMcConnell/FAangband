@@ -23,6 +23,7 @@
 #include "angband.h"
 #include "cave.h"
 #include "effects.h"
+#include "game-world.h"
 #include "init.h"
 #include "mon-attack.h"
 #include "mon-blows.h"
@@ -34,6 +35,7 @@
 #include "mon-util.h"
 #include "obj-knowledge.h"
 #include "player-attack.h"
+#include "player-calcs.h"
 #include "player-timed.h"
 #include "player-util.h"
 #include "project.h"
@@ -72,6 +74,12 @@ static bool monster_can_cast(struct monster *mon, bool innate)
 	/* Taunted monsters are likely just to attack */
 	if (player->timed[TMD_TAUNT]) {
 		chance /= 2;
+	}
+
+	/* Monsters who have had mana burnt will cast less for this turn */
+	if (mflag_has(mon->mflag, MFLAG_LESS_SPELL)) {
+		chance /= 2;
+		mflag_off(mon->mflag, MFLAG_LESS_SPELL);
 	}
 
 	/* Only do spells occasionally */
@@ -366,6 +374,15 @@ bool make_ranged_attack(struct monster *mon)
 	disturb(player, 1);
 	do_mon_spell(thrown_spell, mon, seen);
 
+	/* Power Siphon specialty ability */
+	if (player_has(player, PF_POWER_SIPHON) && monster_is_visible(mon) &&
+		(player->csp < player->msp)) {
+		int gain = mon->race->spell_power / 5;
+		msg("You gain mana.");
+		player->csp = MIN(player->csp + gain, player->msp);
+		player->upkeep->redraw |= PR_MANA;
+	}
+
 	/* Remember what the monster did */
 	if (seen) {
 		rsf_on(lore->spell_flags, thrown_spell);
@@ -468,6 +485,38 @@ bool check_hit_monster(struct monster *mon, int power, int level, int accuracy)
 }
 
 /**
+ * Determine if an otherwise successful monster attack on th eplayer is
+ * avoided for special reasons.
+ */
+bool player_avoid_blow(struct monster *mon, char *m_name, struct player *p)
+{
+	struct monster_lore *lore = get_lore(mon->race);
+	int rlev = ((mon->race->level >= 1) ? mon->race->level : 1);
+
+	/* Protection from evil */
+	if ((p->timed[TMD_PROTEVIL] > 0) && monster_is_evil(mon)) {
+		/* Learn about the evil flag */
+		if (monster_is_visible(mon)) {
+			rf_on(lore->flags, RF_EVIL);
+		}
+
+		if ((p->lev >= rlev) && (randint0(100) + p->lev > 50)) {
+			/* Message */
+			msg("%s is repelled.", m_name);
+			return true;
+		}
+	}
+
+	/* Try for Evasion */
+	if (randint1(100) <= p->state.evasion_chance && !p->timed[TMD_PARALYZED]) {
+		/* Message */
+		msg("You evade the attack!");
+	}
+
+	return false;
+}
+
+/**
  * Calculate how much damage remains after armor is taken into account
  * (does for a physical attack what adjust_dam does for an elemental attack).
  */
@@ -528,33 +577,18 @@ bool make_attack_normal(struct monster *mon, struct player *p)
 			check_hit(p, effect->power, rlev, accuracy)) {
 			melee_effect_handler_f effect_handler;
 
-			/* Always disturbing */
+			/* Always disturbing and obvious */
 			disturb(p, 1);
+			obvious = true;
 
-			/* Hack -- Apply "protection from evil" */
-			if (p->timed[TMD_PROTEVIL] > 0) {
-				/* Learn about the evil flag */
-				if (monster_is_visible(mon))
-					rf_on(lore->flags, RF_EVIL);
-
-				if (monster_is_evil(mon) && p->lev >= rlev &&
-				    randint0(100) + p->lev > 50) {
-					/* Message */
-					msg("%s is repelled.", m_name);
-
-					/* Hack -- Next attack */
-					continue;
-				}
-			}
+			/* Sometimes we can avoid the blow */
+			if (player_avoid_blow(mon, m_name, p)) continue;
 
 			/* Describe the attack method */
 			act = monster_blow_method_action(method, -1);
 			do_cut = method->cut;
 			do_stun = method->stun;
 			sound_msg = method->msgt;
-
-			/* Hack -- assume all attacks are obvious */
-			obvious = true;
 
 			/* Roll dice */
 			damage = randcalc(dice, rlev, RANDOMISE);

@@ -943,6 +943,22 @@ static void player_kill_monster(struct monster *mon, const char *note)
 			soundfx = MSG_KILL_UNIQUE;
 	}
 
+	/* Specialty ability Soul Siphon */
+	if (player_has(player, PF_SOUL_SIPHON) && (player->csp < player->msp) &&
+		monster_is_living(mon) && !monster_is_stupid(mon) &&
+		!rf_has(mon->race->flags, RF_DEMON)) {
+		int gain = 2 + (mon->maxhp / 30);
+		msg("You gain mana.");
+
+		/* If there is a lot of excess mana, it can do damage */
+		if (player->csp + gain - player->msp > player->lev) {
+			msg("You absorb too much mana!");
+			take_hit(player, damroll(2, 8), "mana burn");
+		}
+		player->csp = MIN(player->csp + gain, player->msp);
+		player->upkeep->redraw |= PR_MANA;
+	}
+
 	/* Death message */
 	if (note) {
 		if (strlen(note) <= 1) {

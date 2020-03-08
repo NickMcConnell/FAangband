@@ -475,6 +475,13 @@ void spell_learn(int spell_index)
 static int beam_chance(void)
 {
 	int plev = player->lev;
+
+	/* Specialty abilities */
+	if (player_has(player, PF_HEIGHTEN_MAGIC))
+		plev += 1 + ((player->heighten_power + 5) / 10);
+	if (player_has(player, PF_CHANNELING))
+		plev += player_get_channeling_boost(player);
+
 	return (player_has(player, PF_BEAM) ? plev : (plev / 2));
 }
 
@@ -485,7 +492,8 @@ bool spell_cast(int spell_index, int dir)
 {
 	int chance;
 	bool *ident = mem_zalloc(sizeof(*ident));
-	int beam  = beam_chance();
+	int beam = beam_chance();
+	bool failed = false;
 
 	/* Get the spell */
 	const struct class_spell *spell = spell_by_index(spell_index);
@@ -497,6 +505,7 @@ bool spell_cast(int spell_index, int dir)
 	if (randint0(100) < chance) {
 		event_signal(EVENT_INPUT_FLUSH);
 		msg("You failed to concentrate hard enough!");
+		failed = true;
 	} else {
 		/* Cast the spell */
 		if (!effect_do(spell->effect, source_player(), NULL, ident, true, dir,
@@ -526,6 +535,19 @@ bool spell_cast(int spell_index, int dir)
 	if (spell->smana <= player->csp) {
 		/* Use some mana */
 		player->csp -= spell->smana;
+
+		/* Specialty ability Harmony */
+		if (!failed && player_has(player, PF_HARMONY)) {
+			/* Percentage of max hp to be regained, capped at 10% */
+			int frac = MIN(10, 3 + (spell->smana / 3));
+
+			/* Calculate fractional bonus */
+			int boost = (frac * player->mhp) / 100;
+
+			/* Apply bonus */
+			effect_simple(EF_HEAL_HP, source_player(), format("%d", boost), 0,
+						  0, 0, 0, 0, NULL);
+		}
 	} else {
 		int oops = spell->smana - player->csp;
 
@@ -583,8 +605,15 @@ static void spell_effect_append_value_info(const struct effect *effect,
 	const char *type = NULL;
 	const char *special = NULL;
 	size_t offset = strlen(p);
+	int plev = player->lev;
 
 	type = effect_info(effect);
+
+	/* Specialty abilities */
+	if (player_has(player, PF_HEIGHTEN_MAGIC))
+		plev += 1 + ((player->heighten_power + 5) / 10);
+	if (player_has(player, PF_CHANNELING))
+		plev += player_get_channeling_boost(player);
 
 	if (effect->dice != NULL)
 		dice_roll(effect->dice, &rv);
@@ -608,7 +637,7 @@ static void spell_effect_append_value_info(const struct effect *effect,
 			if (effect->radius) {
 				int rad = effect->radius;
 				if (effect->other) {
-					rad += player->lev / effect->other;
+					rad += plev / effect->other;
 				}
 				special = format(", rad %d", rad);
 			} else {
@@ -620,7 +649,7 @@ static void spell_effect_append_value_info(const struct effect *effect,
 			if (effect->radius) {
 				int rad = effect->radius;
 				if (effect->other) {
-					rad += player->lev / effect->other;
+					rad += plev / effect->other;
 				}
 				special = format(", rad %d", rad);
 			} else {
@@ -637,7 +666,7 @@ static void spell_effect_append_value_info(const struct effect *effect,
 			/* Append length of beam */
 			int len = effect->radius;
 			if (effect->other) {
-				len += player->lev / effect->other;
+				len += plev / effect->other;
 			}
 			special = format(", len %d", len);
 			break;
@@ -694,7 +723,15 @@ static int spell_value_base_spell_power(void)
 
 static int spell_value_base_player_level(void)
 {
-	return player->lev;
+	int plev = player->lev;
+
+	/* Specialty Ability */
+	if (player_has(player, PF_HEIGHTEN_MAGIC))
+		plev += 1 + ((player->heighten_power + 5) / 10);
+	if (player_has(player, PF_CHANNELING))
+		plev += player_get_channeling_boost(player);
+
+	return plev;
 }
 
 static int spell_value_base_dungeon_level(void)

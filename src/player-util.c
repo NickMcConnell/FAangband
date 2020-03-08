@@ -282,6 +282,11 @@ void take_hit(struct player *p, int dam, const char *kb_str)
 	/* Hurt the player */
 	p->chp -= dam;
 
+	/* Specialty Ability Fury */
+	if (player_has(p, PF_FURY)) {
+		player_add_speed_boost(p, 1 + ((dam * 70) / p->mhp));
+	}
+
 	/* Display the hitpoints */
 	p->upkeep->redraw |= (PR_HP);
 
@@ -438,6 +443,8 @@ void player_regen_hp(struct player *p)
 		percent *= 2;
 	if (player_resting_can_regenerate(p))
 		percent *= 2;
+	if (player_has(p, PF_REGENERATION))
+		percent *= 2;
 
 	/* Some things slow it down */
 	if (player_of_has(p, OF_IMPAIR_HP))
@@ -502,6 +509,8 @@ void player_regen_mana(struct player *p)
 	if (player_of_has(p, OF_REGEN))
 		percent *= 2;
 	if (player_resting_can_regenerate(p))
+		percent *= 2;
+	if (player_has(p, PF_MEDITATION))
 		percent *= 2;
 
 	/* Some things slow it down */
@@ -772,6 +781,50 @@ void player_take_terrain_damage(struct player *p, struct loc grid)
 		msg(square_feat(cave, grid)->hurt_msg);
 		inven_damage(player, PROJ_FIRE, dam_taken);
 	}
+}
+
+/**
+ * Calculate level boost for Channeling ability.
+ */
+int player_get_channeling_boost(struct player *p)
+{
+	long max_channeling = 45 + (2 * p->lev);
+	long channeling = 0L;
+	int boost;
+
+	if (p->msp > 0) {
+		channeling = (max_channeling * p->csp * p->csp)	/ (p->msp * p->msp);
+	}
+	boost = ((int) channeling + 5) / 10;
+
+	return boost;
+}
+
+/**
+ * Increase the short term "heighten power".  Initially used for special
+ * ability "Heighten Magic".
+ */
+void player_add_heighten_power(struct player *p, int value)
+{
+	int max_heighten_power = 60 + ((5 * p->lev) / 2);
+
+	/* Increase heighten power, applying cap if necessary */
+	p->heighten_power = MIN(p->heighten_power + value, max_heighten_power);
+}
+
+/**
+ * Increase the short term "speed boost".  Initially used for special
+ * ability "Fury".
+ */
+void player_add_speed_boost(struct player *p, int value)
+{
+	int max_speed_boost = 25 + ((3 * p->lev) / 2);
+
+	/* Increase speed boost, applying cap if necessary */
+	p->speed_boost = MIN(p->speed_boost + value, max_speed_boost);
+
+	/* Recalculate bonuses */
+	p->upkeep->update |= (PU_BONUS);
 }
 
 /**

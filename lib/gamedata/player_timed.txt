@@ -33,6 +33,7 @@ desc:haste
 grade:G:10000:Haste:You feel yourself moving faster!
 on-end:You feel yourself slow down.
 msgt:SPEED
+beneficial:1
 
 name:SLOW
 desc:slowness
@@ -128,12 +129,14 @@ grade:G:10000:ProtEvil:You feel safe from evil!
 on-end:You no longer feel safe from evil.
 on-increase:You feel even safer from evil!
 msgt:PROT_EVIL
+beneficial:1
 
 name:INVULN
 desc:invulnerability
 grade:G:10000:Invuln:You feel invulnerable!
 on-end:You feel vulnerable once more.
 msgt:INVULN
+beneficial:1
 
 name:HERO
 desc:heroism
@@ -141,6 +144,7 @@ grade:G:10000:Hero:You feel like a hero!
 on-end:You no longer feel heroic.
 on-increase:You feel more like a hero!
 msgt:HERO
+beneficial:1
 
 name:SHERO
 desc:berserk rage
@@ -148,6 +152,7 @@ grade:G:10000:Berserk:You feel like a killing machine!
 on-end:You no longer feel berserk.
 on-increase:You feel even more berserk!
 msgt:BERSERK
+beneficial:1
 
 name:SHIELD
 desc:mystic shield
@@ -155,6 +160,7 @@ grade:G:10000:Shield:A mystic shield forms around your body!
 on-end:Your mystic shield crumbles away.
 on-increase:The mystic shield strengthens.
 msgt:SHIELD
+beneficial:1
 
 name:BLESSED
 desc:your AC and to-hit bonus
@@ -162,6 +168,7 @@ grade:G:10000:Blssd:You feel righteous!
 on-end:The prayer has expired.
 on-increase:You feel more righteous!
 msgt:BLESSED
+beneficial:1
 
 name:SINVIS
 desc:see invisible
@@ -169,6 +176,7 @@ grade:G:10000:SInvis:Your eyes feel very sensitive!
 on-end:Your eyes no longer feel so sensitive.
 on-increase:Your eyes feel more sensitive!
 msgt:SEE_INVIS
+beneficial:1
 
 name:SINFRA
 desc:enhanced infravision
@@ -176,6 +184,7 @@ grade:G:10000:Infra:Your eyes begin to tingle!
 on-end:Your eyes stop tingling.
 on-increase:Your eyes' tingling intensifies.
 msgt:INFRARED
+beneficial:1
 
 name:OPP_ACID
 desc:acid resistance
@@ -184,6 +193,7 @@ on-end:You are no longer resistant to acid.
 on-increase:You feel more resistant to acid!
 msgt:RES_ACID
 fail:3:ACID
+beneficial:1
 
 name:OPP_ELEC
 desc:electricity resistance
@@ -192,6 +202,7 @@ on-end:You are no longer resistant to electricity.
 on-increase:You feel more resistant to electricity!
 msgt:RES_ELEC
 fail:3:ELEC
+beneficial:1
 
 name:OPP_FIRE
 desc:fire resistance
@@ -200,6 +211,7 @@ on-end:You are no longer resistant to fire.
 on-increase:You feel more resistant to fire!
 msgt:RES_FIRE
 fail:3:FIRE
+beneficial:1
 
 name:OPP_COLD
 desc:cold resistance
@@ -208,6 +220,7 @@ on-end:You are no longer resistant to cold.
 on-increase:You feel more resistant to cold!
 msgt:RES_COLD
 fail:3:COLD
+beneficial:1
 
 name:OPP_POIS
 desc:poison resistance
@@ -215,12 +228,14 @@ grade:g:10000:RPois:You feel resistant to poison!
 on-end:You are no longer resistant to poison.
 on-increase:You feel more resistant to poison!
 msgt:RES_POIS
+beneficial:1
 
 name:OPP_CONF
 desc:confusion resistance
 grade:v:10000:RConf:You feel resistant to confusion!
 on-end:You are no longer resistant to confusion.
 on-increase:You feel more resistant to confusion!
+beneficial:1
 
 name:AMNESIA
 desc:amnesia
@@ -234,6 +249,7 @@ grade:B:10000:ESP:Your mind expands.
 on-end:Your horizons are once more limited.
 on-increase:Your mind expands further.
 msgt:GENERIC
+beneficial:1
 
 name:STONESKIN
 desc:stone skin
@@ -259,6 +275,7 @@ grade:G:10000:Bold:You feel bold.
 on-end:You no longer feel bold.
 on-increase:You feel even bolder!
 msgt:BOLD
+beneficial:1
 
 name:SCRAMBLE
 desc:scrambled
@@ -273,61 +290,73 @@ desc:safety from traps
 grade:G:10000:TrapSafe:You feel safe from traps.
 on-end:You feel vulnerable to traps again.
 on-increase:You feel even safer from traps!
+beneficial:1
 
 name:FASTCAST
 desc:mana channelling
 grade:i:10000:FastCast:You feel your mind accelerate.
 on-end:You feel your mind slow again.
+beneficial:1
 
 name:ATT_ACID
 desc:temporary acid brand
 grade:s:10000:AttAcid:Your {kind} start{s} to drip with acid!
 on-end:The acid disappears from your {kind}.
+beneficial:1
 
 name:ATT_ELEC
 desc:temporary lightning brand
 grade:b:10000:AttElec:Sparks gather around your {kind}!
 on-end:The sparks fade from your {kind}.
+beneficial:1
 
 name:ATT_FIRE
 desc:temporary fire brand
 grade:r:10000:AttFire:Flames surround your {kind}!
 on-end:The flames on your {kind} subside.
+beneficial:1
 
 name:ATT_COLD
 desc:temporary cold brand
 grade:w:10000:AttCold:Your {kind} {is} covered in frost!
 on-end:The frost evaporates from your {kind}.
+beneficial:1
 
 name:ATT_POIS
 desc:temporary poison brand
 grade:g:10000:AttPois:Your {kind} drip{s} with poison!
 on-end:The poison disappears from your {kind}.
+beneficial:1
 
 name:ATT_CONF
 desc:temporary monster confusion
 grade:U:10000:AttConf:Your hands begin to glow!
 on-end:The glow fades from your hands.
+beneficial:1
 
 name:ATT_EVIL
 desc:temporary slay evil
 grade:w:10000:AttEvil:Your {kind} {is} imbued with holy force!
 on-end:Holy force fades from your {kind}.
+beneficial:1
 
 name:ATT_DEMON
 desc:temporary slay demon
 grade:R:10000:AttDemon:Your {kind} become{s} a bane of demons!
 on-end:Your {kind} return{s} to normal.
+beneficial:1
 
 name:ATT_VAMP
 desc:temporary hitpoint siphoning
 grade:p:10000:AttVamp:Your can drain life from your victims!
 on-end:Your life-draining power passes.
+beneficial:1
 
 name:HEAL
 desc:turn-by-turn healing through increased metabolism
 grade:G:10000:Heal:Your metabolism speeds up!
 on-end:Your metabolism return to normal.
+beneficial:1
 
 name:COMMAND
 desc:commanding a monster
@@ -373,3 +402,4 @@ name:STEALTH
 desc:stealth
 grade:D:10000:Stealth:You feel silent!
 on-end:You feel less stealthy.
+beneficial:1
