@@ -25,6 +25,7 @@
 # title:title
 # equip:tval:sval:min:max
 # player-flags:class flags
+# specialties:abilities
 # magic:spell_first:spell_weight:num_books
 # book:tval:quality:name:spells:realm
 # book-graphics:symbol:color
@@ -59,7 +60,9 @@
 # 'equip' is for starting equipment - tval of the item, sval of the item,
 # minimum amount, maximum amount.
 
-# 'flags' is for class flags.
+# 'player-flags' is for class flags.
+
+# 'specialties' is for specialty abilities that can be chosen by this class.
 
 # 'title' is for class titles.
 
@@ -133,6 +136,9 @@ equip:scroll:Word of Recall:1:1
 player-flags:BRAVERY_30 | NO_MANA | SHIELD_BASH
 player-flags:SPREAD_ATTACKS | PROBE | XTRA_SPECIALTY
 player-flags:BOW_SPEED_GOOD | XBOW_SPEED_GOOD
+specialties:ARMOR_MAST | ARMSMAN | ATHLETICS | MIGHTY_THROW | FAST_ATTACK
+specialties:FURY | MARKSMAN | PIERCE_SHOT | REGENERATION | SHIELD_MAST
+specialties:EVASION | MARTIAL_ARTS | TRAP
 title:Rookie
 title:Soldier
 title:Swordsman
@@ -167,6 +173,9 @@ equip:light:Wooden Torch:1:3
 equip:sword:Rapier:1:1
 equip:scroll:Word of Recall:1:1
 player-flags:BEAM | CHOOSE_SPELLS | DEVICE_EXPERT | STRONG_MAGIC
+specialties:ARMOR_PROFICIENCY | BEGUILE | CLARITY | ENHANCE_MAGIC
+specialties:MEDITATION | POWER_SIPHON | MAGIC_RESIST | PHASEWALK
+specialties:HEIGHTEN_MAGIC | CHANNELING
 title:Novice
 title:Apprentice
 title:Trickster
@@ -443,6 +452,9 @@ equip:light:Wooden Torch:1:3
 equip:scroll:Word of Recall:1:1
 player-flags:CHOOSE_SPELLS | CHARM
 player-flags:UNARMED_COMBAT | WOODSMAN | STRONG_MAGIC
+specialties:ARMOR_PROFICIENCY | BEGUILE | CLARITY | MEDITATION
+specialties:ENHANCE_MAGIC | REGENERATION | HARMONY | POWER_STRIKE
+specialties:HEIGHTEN_MAGIC | CHANNELING | TRAP
 title:Wanderer
 title:Tamer
 title:Nurturer
@@ -678,6 +690,9 @@ equip:hafted:Mace:1:1
 equip:potion:Cure Serious Wounds:2:2
 equip:scroll:Word of Recall:1:1
 player-flags:BLESS_WEAPON | STRONG_MAGIC | HOLY
+specialties:CLARITY | ENHANCE_MAGIC | MEDITATION | ARMSMAN
+specialties:PHASEWALK | HOLY_LIGHT | HARMONY | FURY | HEIGHTEN_MAGIC
+specialties:CHANNELING
 title:Believer
 title:Acolyte
 title:Devotee
@@ -945,6 +960,9 @@ equip:food:Ration of Food:1:3
 equip:sword:Main Gauche:1:1
 equip:scroll:Word of Recall:1:1
 player-flags:CHOOSE_SPELLS | UNLIGHT | EVIL | STRONG_MAGIC
+specialties:UNLIGHT | ARMOR_PROFICIENCY | BEGUILE | CLARITY | ENHANCE_MAGIC
+specialties:MEDITATION | MAGIC_RESIST | SOUL_SIPHON | HEIGHTEN_MAGIC
+specialties:CHANNELING
 title:Acolyte
 title:Curser
 title:Dark Student
@@ -1157,7 +1175,7 @@ effect:SHAPECHANGE:vampire
 effect:JUMP_AND_BITE
 dice:$B
 expr:B:PLAYER_LEVEL:+ 0
-desc:Allows you to assume the form of a vampire at the cost of half your 
+desc:Allows you to assume the form of a vampire at the cost of half your
 desc: current hitpoints, than teleports you to the nearest living monster
 desc: and drains a level-dependent number of hitpoints, healing and nourishing
 desc: you.  When first transformed you will temporarily be able
@@ -1203,6 +1221,9 @@ equip:scroll:Protection from Evil:1:1
 equip:scroll:Word of Recall:1:1
 equip:prayer book:[Novice's Handbook]:1:1
 player-flags:BLESS_WEAPON | SHIELD_BASH | HOLY
+specialties:ARMOR_MAST | ARMSMAN | ATHLETICS | FAST_ATTACK | FURY
+specialties:REGENERATION | SHIELD_MAST | ENHANCE_MAGIC | MAGIC_RESIST
+specialties:HOLY_LIGHT | HARMONY | MARTIAL_ARTS
 title:Gallant
 title:Keeper
 title:Protector
@@ -1365,6 +1386,9 @@ equip:scroll:Word of Recall:1:1
 equip:magic book:[First Spells]:1:1
 player-flags:CHOOSE_SPELLS | STEAL
 player-flags:BACKSTAB | TRAP | SLING_SPEED_GREAT
+specialties:ARMSMAN | ATHLETICS | EVASION | FAST_ATTACK | MARKSMAN
+specialties:REGENERATION | MIGHTY_THROW | PHASEWALK | UNLIGHT | EXTRA_TRAP
+specialties:MANA_BURN
 title:Vagabond
 title:Cutpurse
 title:Footpad
@@ -1471,6 +1495,9 @@ equip:scroll:Word of Recall:1:1
 equip:nature book:[Lesser Charms]:1:1
 player-flags:FAST_SHOT | CHOOSE_SPELLS | LORE
 player-flags:WOODSMAN | BOW_SPEED_GREAT | SLING_SPEED_GOOD | XBOW_SPEED_GOOD
+specialties:ARMSMAN | ATHLETICS | EVASION | FAST_ATTACK | FURY
+specialties:MARKSMAN | PIERCE_SHOT | REGENERATION | MIGHTY_THROW | SHIELD_MAST
+specialties:TRAP | RAPID_FIRE
 title:Runner
 title:Strider
 title:Scout
@@ -1575,6 +1602,9 @@ equip:sword:Cutlass:1:1
 equip:scroll:Word of Recall:1:1
 obj-flags:IMPAIR_HP
 player-flags:CHOOSE_SPELLS | SHIELD_BASH | CROWD_FIGHT
+specialties:ARMSMAN | ATHLETICS | FAST_ATTACK | ARMOR_MAST
+specialties:PIERCE_SHOT | MIGHTY_THROW | UNLIGHT | FURY | SHIELD_MAST
+specialties:MANA_BURN | MARTIAL_ARTS
 title:Rat
 title:Bully
 title:Thug

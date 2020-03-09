@@ -1523,7 +1523,7 @@ static void calc_specialty(struct player *p)
 
 	/* More specialties are available */
 	if (p->upkeep->new_specialties > 0) {
-		msg("You may learn a specialist ability using the 'S' key.");
+		msg("You may learn a specialty ability using the 'S' key.");
 
 		/* Redraw Study Status */
 		p->upkeep->redraw |= (PR_STUDY);

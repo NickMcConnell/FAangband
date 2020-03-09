@@ -3292,6 +3292,27 @@ static enum parser_error parse_class_play_flags(struct parser *p) {
 	return s ? PARSE_ERROR_INVALID_FLAG : PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_class_specialties(struct parser *p) {
+	struct player_class *c = parser_priv(p);
+	char *flags;
+	char *s;
+
+	if (!c)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	if (!parser_hasval(p, "flags"))
+		return PARSE_ERROR_NONE;
+	flags = string_make(parser_getstr(p, "flags"));
+	s = strtok(flags, " |");
+	while (s) {
+		if (grab_flag(c->specialties, PF_SIZE, player_info_flags, s))
+			break;
+		s = strtok(NULL, " |");
+	}
+
+	mem_free(flags);
+	return s ? PARSE_ERROR_INVALID_FLAG : PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_class_magic(struct parser *p) {
 	struct player_class *c = parser_priv(p);
 	int num_books;
@@ -3574,6 +3595,7 @@ struct parser *init_parse_class(void) {
 			   parse_class_equip);
 	parser_reg(p, "obj-flags ?str flags", parse_class_obj_flags);
 	parser_reg(p, "player-flags ?str flags", parse_class_play_flags);
+	parser_reg(p, "specialties ?str flags", parse_class_specialties);
 	parser_reg(p, "magic uint first uint weight uint books", parse_class_magic);
 	parser_reg(p, "book sym tval sym quality sym name uint spells str realm",
 			   parse_class_book);

@@ -169,7 +169,7 @@ static void gain_spec_menu_browser(int oid, void *data, const region *loc)
 
 
 	clear_from(loc->row + loc->page_rows);
-	Term_gotoxy(loc->col, loc->row + loc->page_rows);
+	Term_gotoxy(loc->col, loc->row + loc->page_rows + 1);
 	text_out_to_screen(COLOUR_DEEP_L_BLUE, (char *) ability->desc);
 
 	/* Reset */
@@ -213,9 +213,11 @@ bool gain_spec_menu(int *pick)
 
 	/* Find the learnable specialties */
 	d->specialties = mem_zalloc(d->spec_known * sizeof(int));
+	d->spec_known = 0;
 	for (i = 0; i < PF_MAX; i++) {
 		if (check_specialty_gain(i)) {
 			d->specialties[d->spec_known] = i;
+			d->spec_known++;
 		}
 	}
 
