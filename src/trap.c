@@ -19,6 +19,7 @@
 #include "angband.h"
 #include "cave.h"
 #include "effects.h"
+#include "game-input.h"
 #include "game-world.h"
 #include "init.h"
 #include "mon-desc.h"
@@ -29,6 +30,8 @@
 #include "player-timed.h"
 #include "player-util.h"
 #include "trap.h"
+#include "ui-input.h"
+#include "ui-menu.h"
 
 /**
  * ------------------------------------------------------------------------
@@ -738,8 +741,9 @@ int square_door_power(struct chunk *c, struct loc grid)
 void monster_hit_trap(struct monster *mon, struct loc grid, bool *death)
 {
 	struct monster_race *race = mon->race;
-
 	struct trap *trap = square_trap(cave, grid);
+	char m_name[80];
+	int skill, dis_chance;
 
 	/* Assume the trap works */
 	bool trap_hit = true;
@@ -747,19 +751,82 @@ void monster_hit_trap(struct monster *mon, struct loc grid, bool *death)
 	/* Assume trap is not destroyed */
 	bool trap_destroyed = false;
 
-	char m_name[80];
-
 	/* Sanity check */
 	assert(square_ismonstertrap(cave, grid));
 
 	/* Get the monster or "it" */
 	monster_desc(m_name, sizeof(m_name), mon, MDESC_CAPITAL);
 
-	/* Determine avoidance of trap types */
+	/* Determine trap-setting skill */
+	if (trf_has(trap->flags, TRF_MAGICAL)) {
+		/* Use magic disarm skill for magical traps */
+		skill = player->state.skills[SKILL_DISARM_MAGIC];
+	} else {
+		/* Use physical disarm skill for other traps */
+		skill = player->state.skills[SKILL_DISARM_PHYS];
+	}
 
-	/* Determine disarming */
+	/* Determine avoidance of trap types */
+	if (trf_has(trap->flags, TRF_UNIVERSAL)) {
+		/* These hit everyone */
+	} else if (trf_has(trap->flags, TRF_FLYING) &&
+			   !rf_has(race->flags, RF_FLYING) &&
+			   !one_in_(3)) {
+		/* Non-flying monsters usually avoid netted traps */
+		if (monster_is_visible(mon)) {
+			msg("%s avoids your %s.", m_name, trap->kind->desc);
+		}
+		trap_hit = false;
+	} else if (trf_has(trap->flags, TRF_IMMATERIAL) &&
+			   !rf_has(race->flags, RF_PASS_WALL)) {
+		/* Solid creatures ignore immaterial traps */
+		if (monster_is_visible(mon)) {
+			msg("%s ignores your %s.", m_name, trap->kind->desc);
+		}
+		trap_hit = false;
+	} else if (((!trf_has(trap->flags, TRF_IMMATERIAL) &&
+				 rf_has(race->flags, RF_PASS_WALL)) ||
+				(!trf_has(trap->flags, TRF_FLYING) &&
+				 rf_has(race->flags, RF_FLYING))) &&
+			   !one_in_(4)) {
+		/* Immaterial and flying creatures avoid most traps */
+		if (monster_is_visible(mon)) {
+			msg("%s flies over your %s.", m_name, trap->kind->desc);
+		}
+		trap_hit = false;
+	}
+
+	/* Find the monsters base skill at disarming, capped for deep monsters */
+	dis_chance = MIN(40 + (2 * race->level), 215);
+
+	/* Smart monsters may attempts to disarm traps which would affect them */
+	if (trap_hit && rf_has(race->flags, RF_SMART)) {
+		/* Compare monster disarming skill against player trap setting skill */
+		if (randint1(dis_chance) > skill - 15) {
+			if (monster_is_visible(mon)) {
+				msg("%s finds your trap and disarms it.", m_name);
+			}
+
+			/* Trap is gone */
+			trap_destroyed = true;
+
+			/* Didn't work */
+			trap_hit = false;
+		}
+	}
 
 	/* Monsters can be wary of traps */
+	if (trap_hit && mflag_has(mon->mflag, MFLAG_WARY)) {
+		/* Avoidance is easier than disarming */
+		if (randint1(dis_chance) > (skill - 15) / 2) {
+			if (monster_is_visible(mon)) {
+				msg("%s avoids your trap.", m_name);
+			}
+
+			/* Didn't work */
+			trap_hit = false;
+		}
+	}
 
 	/* I thought traps only affected players! Unfair! */
 	if (trap_hit) {
@@ -776,22 +843,16 @@ void monster_hit_trap(struct monster *mon, struct loc grid, bool *death)
 		} else if (square_isview(cave, grid)) {
 			/* Not seen but in line of sight */
 			msg("Something sets off your cunning trap!");
-		} else {
-			/* Monster is not seen or in LOS */
-			/* HACK - no message for non-damaging traps */
+		} else if (trf_has(trap->flags, TRF_DAMAGING)) {
+			/* Monster is not seen or in LOS (damaging traps only) */
 			msg("You hear anguished yells in the distance.");
 		}
-
-		/* Explosion traps are always destroyed. */
-		/* Some traps are rarely destroyed */
-		/* Most traps are destroyed 1 time in 3 */
 
 		/* Adjust power of trap */
 		if (mflag_has(mon->mflag, MFLAG_WARY)) {
 			/* Monsters can be wary of traps */
 			adjust = -60;
-		} else if (randint1(player->state.skills[SKILL_DISARM_PHYS]) >
-				   50 + race->level) {
+		} else if (randint1(skill) > 50 + race->level) {
 			/* Trap 'critical' based on disarming skill (if not wary) */
 			adjust = 50;
 		}
@@ -799,7 +860,18 @@ void monster_hit_trap(struct monster *mon, struct loc grid, bool *death)
 		/* Affect the monster. */
 		effect_do(effect, source_trap(trap), NULL, &ident, true, 0, 0, adjust);
 
-		/* May become wary if not dumb (and still alive) */
+		/* Some traps disappear after activating */
+		if (trf_has(trap->kind->flags, TRF_ONETIME)) {
+			trap_destroyed = true;
+		} else if (trf_has(trap->kind->flags, TRF_STURDY)) {
+			/* Some traps rarely break */
+			if (one_in_(8)) trap_destroyed = true;
+		} else {
+			/* Most traps have a chance to break */
+			if (one_in_(3)) trap_destroyed = true;
+		}
+
+		/* Monster may become wary if not dumb (and still alive) */
 		if (!rf_has(race->flags, RF_STUPID)	&& (mon->midx) &&
 			(one_in_(4) || (mon->hp < mon->maxhp / 2))) {
 			mflag_on(mon->mflag, MFLAG_WARY);
@@ -808,7 +880,8 @@ void monster_hit_trap(struct monster *mon, struct loc grid, bool *death)
 
 	if (trap_destroyed) {
 		/* Kill the trap */
-		square_remove_trap(cave, grid, trap->t_idx);
+		player->num_traps--;
+		square_remove_all_traps(cave, grid);
 	}
 
 	/* Report death */
@@ -816,3 +889,180 @@ void monster_hit_trap(struct monster *mon, struct loc grid, bool *death)
 		(*death) = true;
 	}
 }
+
+/**
+ * Trap location
+ */
+static struct loc mtrap_grid;
+
+char mtrap_tag(struct menu *menu, int oid)
+{
+	return I2A(oid);
+}
+
+/**
+ * Display an entry on the sval menu
+ */
+void mtrap_display(struct menu *menu, int oid, bool cursor, int row,
+				   int col, int width)
+{
+	const struct trap_kind *choice = menu_priv(menu);
+	byte attr = (cursor ? COLOUR_L_BLUE : COLOUR_WHITE);
+	char *desc = choice[oid].desc;
+	my_strcap(desc);
+
+	/* Print it */
+	c_put_str(attr, desc, row, col);
+}
+
+/**
+ * Deal with events on the trap menu
+ */
+bool mtrap_action(struct menu *menu, const ui_event *db, int oid)
+{
+	const struct trap_kind *choice = menu_priv(menu);
+
+	/* Remove the old trap */
+	square_remove_all_traps(cave, mtrap_grid);
+	player->num_traps--;
+
+	/* Place the new trap */
+	place_trap(cave, mtrap_grid, choice[oid].tidx, 0);
+
+	return false;
+}
+
+
+/**
+ * Show monster trap long description when browsing
+ */
+static void mtrap_menu_browser(int oid, void *data, const region *loc)
+{
+	struct trap_kind *d = data;
+
+	/* Redirect output to the screen */
+	text_out_hook = text_out_to_screen;
+	text_out_wrap = 60;
+	text_out_indent = loc->col - 1;
+	text_out_pad = 1;
+
+
+	clear_from(loc->row + loc->page_rows);
+	Term_gotoxy(loc->col, loc->row + loc->page_rows + 1);
+	text_out_to_screen(COLOUR_DEEP_L_BLUE, d[oid].text);
+
+	/* Reset */
+	text_out_pad = 0;
+	text_out_indent = 0;
+	text_out_wrap = 0;
+}
+
+/**
+ * Display list of monster traps.
+ */
+bool mtrap_menu(void)
+{
+	struct menu menu;
+	menu_iter menu_f = { mtrap_tag, 0, mtrap_display, mtrap_action, 0 };
+	region area = { 15, 1, 48, -1 };
+	ui_event evt = { 0 };
+
+	size_t i, count = 0, num = 0;
+
+	struct trap_kind *choice;
+	bool basic_skipped = false;
+
+	/* See how many traps available */
+	if (player_has(player, PF_EXTRA_TRAP)) {
+		num = 1 + (player->lev / 4);
+	} else {
+		num = 1 + (player->lev / 6);
+	}
+
+	/* Create the array */
+	choice = mem_zalloc(num * sizeof(struct trap_kind));
+
+	/* Pick out the monster traps in order */
+	for (i = 0; i < z_info->trap_max; i++) {
+		if (trf_has(trap_info[i].flags, TRF_M_TRAP)) {
+			if (!basic_skipped) {
+				basic_skipped = true;
+				continue;
+			}
+			memcpy(&choice[count++], &trap_info[i], sizeof(struct trap_kind));
+		}
+		if (count == num) break; 
+	}
+
+	/* Clear space */
+	area.page_rows = num + 2;
+
+	/* Return here if there are no traps */
+	if (!num) {
+		mem_free(choice);
+		return false;
+	}
+
+
+	/* Save the screen and clear it */
+	screen_save();
+
+	/* Set up the menu */
+	menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
+	menu.title = "Choose an advanced monster trap (ESC to cancel):";
+	menu_setpriv(&menu, num, choice);
+	menu.browse_hook = mtrap_menu_browser;
+	menu.flags = MN_DBL_TAP;
+	region_erase_bordered(&area);
+	menu_layout(&menu, &area);
+	prt("", area.row + 1, area.col);
+
+	/* Select an entry */
+	evt = menu_select(&menu, 0, true);
+
+	/* Free memory */
+	mem_free(choice);
+
+	/* Load screen */
+	screen_load();
+	return (evt.type != EVT_ESCAPE);
+}
+
+/**
+ * Turn a basic monster trap into an advanced one -BR-
+ */
+bool modify_monster_trap(struct loc grid)
+{
+	if (player->timed[TMD_BLIND] || no_light()) {
+		msg("You can not see to modify your trap.");
+		return false;
+	}
+
+	if (player->timed[TMD_CONFUSED] || player->timed[TMD_IMAGE]) {
+		msg("You are too confused.");
+		return false;
+	}
+
+	/* No setting traps while shapeshifted */
+	if (player_is_shapechanged(player)) {
+		msg("You cannot do this while in %s form.",	player->shape->name);
+		if (get_check("Do you want to change back? " )) {
+			player_resume_normal_shape(player);
+		} else {
+			return false;
+		}
+	}
+
+	mtrap_grid = grid;
+
+	/* Get choice */
+	if (mtrap_menu()) {
+		/* Notify the player. */
+		msg("You modify the monster trap.");
+	}
+
+	/* Trap was modified */
+	return true;
+}
+
+

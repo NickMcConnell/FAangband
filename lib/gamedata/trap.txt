@@ -17,7 +17,8 @@
 #    - MAGICAL: uses the magic disarm skill - other traps use physical disarm
 #    - VISIBLE: trap will not be hidden when generated
 #    - FLOOR: * can be set on the floor
-#    - TRAP: * is a trap
+#    - TRAP: * is a player trap
+#    - M_TRAP: is a monster trap
 #    - DELAY: activates as the player leaves its square rather than entering
 #
 #    Flags marked '*' must be set for a trap to be generated as part of
@@ -585,12 +586,127 @@ dice:20+1d20
 msg:You feel yourself turning to stone!
 desc:A trap that stuns you and gives you stoneskin.
 
-## Monster traps ##
+## Monster traps - these should appear in this file in ascending order,
+##                 the basic trap first and then 13 advanced traps
 
-name:monster trap:basic monster trap
+name:monster trap:basic trap
 graphics:^:mud
-flags:M_TRAP | VISIBLE | FLOOR
+flags:M_TRAP | VISIBLE | FLOOR | DAMAGING
 effect:SPOT:METEOR:0
 dice:$B
 expr:B:TRAP_POWER:+ 0
 desc:A basic monster trap.
+
+name:monster trap:sturdy trap
+graphics:^:blue slate
+flags:M_TRAP | VISIBLE | FLOOR | STURDY | DAMAGING
+effect:SPOT:METEOR:0
+dice:$B
+expr:B:TRAP_POWER:* 3 / 4
+desc:A monster trap that doesn't break easily.
+
+name:monster trap:netted trap
+graphics:^:light teal
+flags:M_TRAP | VISIBLE | FLOOR | FLYING | DAMAGING
+effect:SPOT:METEOR:0
+dice:$B
+expr:B:TRAP_POWER:* 3 / 4
+desc:A net trap to hit flying monsters.
+
+name:monster trap:confusion trap
+graphics:^:magenta-pink
+flags:M_TRAP | VISIBLE | FLOOR | MAGICAL
+effect:SPOT:MON_CONF:0
+dice:$B+d5
+expr:B:TRAP_POWER:/ 20
+desc:A trap to confuse monsters.
+
+name:monster trap:poison trap
+graphics:^:teal
+flags:M_TRAP | VISIBLE | FLOOR | DAMAGING
+effect:SPOT:POIS:3
+dice:$B
+expr:B:TRAP_POWER:/ 2
+desc:A monster trap that releases a cloud of poison.
+
+name:monster trap:immaterial trap
+graphics:^:purple
+flags:M_TRAP | VISIBLE | FLOOR | IMMATERIAL | DAMAGING | MAGICAL
+effect:SPOT:METEOR:0
+dice:$B
+expr:B:TRAP_POWER:* 3 / 4
+desc:A trap to hurt immaterial monsters.
+
+name:monster trap:electric trap
+graphics:^:blue
+flags:M_TRAP | VISIBLE | FLOOR | FLYING | DAMAGING
+effect:SPOT:ELEC:0
+dice:$B
+expr:B:TRAP_POWER:* 7 / 8
+desc:An electrified monster trap.
+
+name:monster trap:explosive trap
+graphics:^:violet
+flags:M_TRAP | VISIBLE | FLOOR | DAMAGING | ONETIME
+effect:SPOT:LIGHT:0
+dice:1
+effect:SPOT:FIRE:1
+dice:$B
+expr:B:TRAP_POWER:/ 4
+effect:SPOT:FIRE:2
+dice:$B
+expr:B:TRAP_POWER:/ 4
+effect:SPOT:FORCE:1
+dice:$B
+expr:B:TRAP_POWER:/ 4
+desc:A monster trap that creates an explosion.
+
+name:monster trap:portal trap
+graphics:^:violet
+flags:M_TRAP | VISIBLE | FLOOR | MAGICAL
+effect:SPOT:AWAY_ALL:0
+dice:$B
+expr:B:TRAP_POWER:/ 10 + 5
+desc:A trap that teleports monsters.
+
+name:monster trap:stasis trap
+graphics:^:deep light blue
+flags:M_TRAP | VISIBLE | FLOOR | UNIVERSAL | ONETIME | MAGICAL
+effect:SPOT:MON_HOLD:0
+dice:$B
+expr:B:TRAP_POWER:/ 12 + 3
+desc:A trap that holds a monster in stasis.
+
+name:monster trap:drain life trap
+graphics:^:purple
+flags:M_TRAP | VISIBLE | FLOOR | DAMAGING | MAGICAL
+effect:SPOT:MON_DRAIN:3
+dice:$B
+expr:B:TRAP_POWER:* 3 / 4
+desc:A trap that hurts nearby living monsters.
+
+name:monster trap:unmagic trap
+graphics:^:magenta-pink
+flags:M_TRAP | VISIBLE | FLOOR | DAMAGING | MAGICAL
+effect:SPOT:DISEN:0
+dice:$B
+expr:B:TRAP_POWER:* 3 / 4
+desc:A trap that disenchants monsters.
+
+name:monster trap:dispelling trap
+graphics:^:light pink
+flags:M_TRAP | VISIBLE | FLOOR | DAMAGING | MAGICAL
+effect:PROJECT_LOS:DISP_ALL
+dice:$B+d$S
+expr:B:TRAP_POWER:/ 2
+expr:S:TRAP_POWER:/ 4
+desc:A trap that hurts all monsters in sight.
+
+name:monster trap:banishment trap
+graphics:^:light pink
+flags:M_TRAP | VISIBLE | FLOOR | DAMAGING | ONETIME | MAGICAL
+effect:BANISH:NONE:5
+dice:$B
+expr:B:TRAP_POWER:+ 0
+desc:A trap that removes nearby like monsters.
+

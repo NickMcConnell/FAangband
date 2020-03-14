@@ -113,5 +113,6 @@ int square_trap_timeout(struct chunk *c, struct loc grid, int t_idx);
 void square_set_door_lock(struct chunk *c, struct loc grid, int power);
 int square_door_power(struct chunk *c, struct loc grid);
 void monster_hit_trap(struct monster *mon, struct loc grid, bool *death);
+bool modify_monster_trap(struct loc grid);
 
 #endif /* !TRAP_H */

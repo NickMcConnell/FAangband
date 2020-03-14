@@ -2358,7 +2358,8 @@ static const char *trap_group_text[] =
 {
 	"Runes",
 	"Locks",
-	"Traps",
+	"Player Traps",
+	"Monster Traps",
 	"Other",
 	NULL
 };
@@ -2398,8 +2399,10 @@ static int trap_order(int trap)
 		return 1;
 	else if (trf_has(t->flags, TRF_TRAP))
 		return 2;
-	else
+	else if (trf_has(t->flags, TRF_M_TRAP))
 		return 3;
+	else
+		return 4;
 }
 
 static int t_cmp_tkind(const void *a, const void *b)

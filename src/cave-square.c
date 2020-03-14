@@ -860,6 +860,25 @@ bool square_ismonstertrap(struct chunk *c, struct loc grid)
 }
 
 /**
+ * True if there is a basic monster trap in this square.
+ */
+bool square_isbasicmonstertrap(struct chunk *c, struct loc grid)
+{
+	struct trap_kind *trap_kind = lookup_trap("basic trap");
+	struct trap *trap = square_trap(c, grid);
+	if (!trap) return false;
+	return trap->kind == trap_kind;
+}
+
+/**
+ * True if there is an advanced monster trap in this square.
+ */
+bool square_isadvancedmonstertrap(struct chunk *c, struct loc grid)
+{
+	return square_ismonstertrap(c, grid) && !square_isbasicmonstertrap(c, grid);
+}
+
+/**
  * True if there is a visible trap in this square.
  */
 bool square_isvisibletrap(struct chunk *c, struct loc grid)

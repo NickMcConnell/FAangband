@@ -968,7 +968,7 @@ void do_cmd_set_trap(struct loc grid)
 	}
 
 	/* Set the trap, and draw it. */
-	place_trap(cave, grid, lookup_trap("basic monster trap")->tidx, 0);
+	place_trap(cave, grid, lookup_trap("basic trap")->tidx, 0);
 
 	/* Notify the player. */
 	msg("You set a monster trap.");
@@ -1012,8 +1012,11 @@ void do_cmd_alter_aux(int dir)
 	} else if (square_iscloseddoor(cave, grid)) {
 		/* Open closed doors */
 		more = do_cmd_open_aux(grid);
+	} else if (square_isbasicmonstertrap(cave, grid)) {
+		/* Modify monster traps */
+		modify_monster_trap(grid);
 	} else if (square_isdisarmabletrap(cave, grid) ||
-			   square_ismonstertrap(cave, grid)) {
+			   square_isadvancedmonstertrap(cave, grid)) {
 		/* Disarm traps */
 		more = do_cmd_disarm_aux(grid);
 	} else if (player_has(player, PF_TRAP) && square_istrappable(cave, grid)) {

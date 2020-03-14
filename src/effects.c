@@ -2669,13 +2669,21 @@ bool effect_handler_BANISH(effect_handler_context_t *context)
 {
 	int i;
 	unsigned dam = 0;
-
+	bool hurt = true;
 	char typ;
+	struct monster *ref_mon = cave_monster(cave, cave->mon_current);
 
 	context->ident = true;
 
-	if (!get_com("Choose a monster race (by symbol) to banish: ", &typ))
-		return false;
+	/* If there is a current monster use its race, otherwise prompt */
+	if (cave->mon_current > 0) {
+		typ = ref_mon->race->d_char;
+		hurt = false;
+	} else {
+		if (!get_com("Choose a monster race (by symbol) to banish: ", &typ)) {
+			return false;
+		}
+	}
 
 	/* Delete the monsters of that "type" */
 	for (i = 1; i < cave_monster_max(cave); i++) {
@@ -2690,11 +2698,19 @@ bool effect_handler_BANISH(effect_handler_context_t *context)
 		/* Skip "wrong" monsters (see warning above) */
 		if ((char) mon->race->d_char != typ) continue;
 
+		/* Skip distant monsters if needed */
+		if (context->radius &&
+			(distance(mon->grid, ref_mon->grid) > context->radius)) {
+			continue;
+		}
+
 		/* Delete the monster */
 		delete_monster_idx(i);
 
 		/* Take some damage */
-		dam += randint1(4);
+		if (hurt) {
+			dam += randint1(4);
+		}
 	}
 
 	/* Hurt the player */
