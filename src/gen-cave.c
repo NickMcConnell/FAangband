@@ -1864,7 +1864,6 @@ static void town_gen_layout(struct chunk *c, struct player *p)
 	}
 
 	/* clear the street */
-	square_set_feat(c, loc(pgrid.x, pgrid.y + 1), FEAT_FLOOR);
 	fill_rectangle(c, pgrid.y + 2, pgrid.x - 1,
 				   max_store_y, pgrid.x + 1,
 				   FEAT_FLOOR, SQUARE_NONE);
@@ -1872,10 +1871,6 @@ static void town_gen_layout(struct chunk *c, struct player *p)
 	fill_rectangle(c, xroads.y, min_store_x,
 			xroads.y + 1, max_store_x,
 			FEAT_FLOOR, SQUARE_NONE);
-
-
-	/* Clear previous contents, add down stairs */
-	square_set_feat(c, pgrid, FEAT_MORE);
 
 	/* Place the player */
 	player_place(c, p, pgrid);
