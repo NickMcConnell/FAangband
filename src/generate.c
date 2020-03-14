@@ -1126,9 +1126,11 @@ static void cave_clear(struct chunk *c, struct player *p)
 		p->cave = NULL;
 	}
 
-	/* Clear the old cave */
 	/* Clear the monsters */
 	wipe_mon_list(c, p);
+
+	/* No more traps */
+	p->num_traps = 0;
 
 	/* Free the chunk */
 	cave_free(c);

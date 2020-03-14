@@ -487,7 +487,10 @@ void wr_player(void)
 	}
 
 	/* Padding */
-	wr_u32b(0);
+	wr_byte(0);
+	wr_byte(0);
+	wr_byte(0);
+	wr_byte(player->num_traps);
 
 	wr_u32b(player->au);
 

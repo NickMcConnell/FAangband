@@ -597,6 +597,7 @@ struct player {
 	bitflag specialties[PF_SIZE];		/* Learned specialty abilities */
     s16b speed_boost;			/* Short term speed boost (Fury, Phasewalk) */
     s16b heighten_power;		/* Magic Intensity boost (Heightn Magic) */
+	byte num_traps;				/* NUmber of current monster traps set */
 
 	char full_name[PLAYER_NAME_LEN];	/* Full name */
 	char died_from[80];					/* Cause of death */

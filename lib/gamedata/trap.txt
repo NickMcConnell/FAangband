@@ -584,3 +584,13 @@ effect:TIMED_INC:STUN
 dice:20+1d20
 msg:You feel yourself turning to stone!
 desc:A trap that stuns you and gives you stoneskin.
+
+## Monster traps ##
+
+name:monster trap:basic monster trap
+graphics:^:mud
+flags:M_TRAP | VISIBLE | FLOOR
+effect:SPOT:METEOR:0
+dice:$B
+expr:B:TRAP_POWER:+ 0
+desc:A basic monster trap.

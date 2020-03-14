@@ -391,6 +391,7 @@ bool square_seemslikewall(struct chunk *c, struct loc grid);
 bool square_isinteresting(struct chunk *c, struct loc grid);
 bool square_islockeddoor(struct chunk *c, struct loc grid);
 bool square_isplayertrap(struct chunk *c, struct loc grid);
+bool square_ismonstertrap(struct chunk *c, struct loc grid);
 bool square_isvisibletrap(struct chunk *c, struct loc grid);
 bool square_issecrettrap(struct chunk *c, struct loc grid);
 bool square_isdisabledtrap(struct chunk *c, struct loc grid);

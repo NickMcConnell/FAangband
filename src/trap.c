@@ -21,6 +21,7 @@
 #include "effects.h"
 #include "game-world.h"
 #include "init.h"
+#include "mon-desc.h"
 #include "mon-util.h"
 #include "obj-knowledge.h"
 #include "player-attack.h"
@@ -374,6 +375,11 @@ void place_trap(struct chunk *c, struct loc grid, int t_idx, int trap_level)
 	new_trap->power = randcalc(new_trap->kind->power, trap_level, RANDOMISE);
 	trf_copy(new_trap->flags, trap_info[t_idx].flags);
 
+	/* We created a monster trap */
+	if (trf_has(new_trap->flags, TRF_M_TRAP)) {
+		player->num_traps++;
+	}
+
 	/* Toggle on the trap marker */
 	sqinfo_on(square(c, grid).info, SQUARE_TRAP);
 
@@ -722,3 +728,91 @@ int square_door_power(struct chunk *c, struct loc grid)
  * ------------------------------------------------------------------------
  * Monster traps
  * ------------------------------------------------------------------------ */
+/**
+ * Check the effect of a monster trap.  Certain traps may be avoided
+ * by certain monsters.  Traps may be disarmed by smart monsters.
+ * If the trap works, the effects vary depending on trap type. -BR-
+ *
+ * "death" tells the calling function if the monster is killed by the trap.
+ */
+void monster_hit_trap(struct monster *mon, struct loc grid, bool *death)
+{
+	struct monster_race *race = mon->race;
+
+	struct trap *trap = square_trap(cave, grid);
+
+	/* Assume the trap works */
+	bool trap_hit = true;
+
+	/* Assume trap is not destroyed */
+	bool trap_destroyed = false;
+
+	char m_name[80];
+
+	/* Sanity check */
+	assert(square_ismonstertrap(cave, grid));
+
+	/* Get the monster or "it" */
+	monster_desc(m_name, sizeof(m_name), mon, MDESC_CAPITAL);
+
+	/* Determine avoidance of trap types */
+
+	/* Determine disarming */
+
+	/* Monsters can be wary of traps */
+
+	/* I thought traps only affected players! Unfair! */
+	if (trap_hit) {
+		int adjust = 0;
+		struct effect *effect = trap->kind->effect;
+		bool ident;
+
+		/* Monster becomes hostile */
+
+		/* Message for the player */
+		if (monster_is_visible(mon)) {
+			/* Players sees the monster */
+			msg("%s sets off your cunning trap!", m_name);
+		} else if (square_isview(cave, grid)) {
+			/* Not seen but in line of sight */
+			msg("Something sets off your cunning trap!");
+		} else {
+			/* Monster is not seen or in LOS */
+			/* HACK - no message for non-damaging traps */
+			msg("You hear anguished yells in the distance.");
+		}
+
+		/* Explosion traps are always destroyed. */
+		/* Some traps are rarely destroyed */
+		/* Most traps are destroyed 1 time in 3 */
+
+		/* Adjust power of trap */
+		if (mflag_has(mon->mflag, MFLAG_WARY)) {
+			/* Monsters can be wary of traps */
+			adjust = -60;
+		} else if (randint1(player->state.skills[SKILL_DISARM_PHYS]) >
+				   50 + race->level) {
+			/* Trap 'critical' based on disarming skill (if not wary) */
+			adjust = 50;
+		}
+
+		/* Affect the monster. */
+		effect_do(effect, source_trap(trap), NULL, &ident, true, 0, 0, adjust);
+
+		/* May become wary if not dumb (and still alive) */
+		if (!rf_has(race->flags, RF_STUPID)	&& (mon->midx) &&
+			(one_in_(4) || (mon->hp < mon->maxhp / 2))) {
+			mflag_on(mon->mflag, MFLAG_WARY);
+		}
+	}
+
+	if (trap_destroyed) {
+		/* Kill the trap */
+		square_remove_trap(cave, grid, trap->t_idx);
+	}
+
+	/* Report death */
+	if (!mon->midx) {
+		(*death) = true;
+	}
+}

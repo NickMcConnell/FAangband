@@ -151,6 +151,7 @@ void map_info(struct loc grid, struct grid_data *g)
 		while (trap) {
 			if (trf_has(trap->flags, TRF_TRAP) ||
 				trf_has(trap->flags, TRF_GLYPH) ||
+				trf_has(trap->flags, TRF_M_TRAP) ||
 				trf_has(trap->flags, TRF_WEB)) {
 				/* Accept the trap - only if not disabled, maybe we need
 				 * a special graphic for this */

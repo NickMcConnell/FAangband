@@ -713,13 +713,16 @@ static bool do_cmd_disarm_test(struct loc grid)
 		return true;
 
 	/* Look for a trap */
-	if (!square_isdisarmabletrap(cave, grid)) {
-		msg("You see nothing there to disarm.");
-		return false;
+	if (square_isdisarmabletrap(cave, grid)) {
+		return true;
+	}
+	if (square_ismonstertrap(cave, grid)) {
+		return true;
 	}
 
-	/* Okay */
-	return true;
+	/* Nothing */
+	msg("You see nothing there to disarm.");
+	return false;
 }
 
 
@@ -793,12 +796,21 @@ static bool do_cmd_disarm_aux(struct loc grid)
 	bool more = false;
 
 	/* Verify legality */
-	if (!do_cmd_disarm_test(grid)) return (false);
+	if (!do_cmd_disarm_test(grid)) return false;
 
-    /* Choose first player trap */
+    /* Choose first player or monster trap */
 	while (trap) {
-		if (trf_has(trap->flags, TRF_TRAP))
+		if (trf_has(trap->flags, TRF_TRAP)) {
 			break;
+		} else if (trf_has(trap->flags, TRF_M_TRAP)) {
+			msgt(MSG_DISARM, "You have disarmed your %s.", trap->kind->name);
+
+			/* Trap is gone */
+			player->num_traps--;
+			square_forget(cave, grid);
+			square_destroy_trap(cave, grid);
+			return false;
+		}
 		trap = trap->next;
 	}
 	if (!trap)
@@ -846,7 +858,7 @@ static bool do_cmd_disarm_aux(struct loc grid)
 	}
 
 	/* Result */
-	return (more);
+	return more;
 }
 
 
@@ -928,6 +940,41 @@ void do_cmd_disarm(struct command *cmd)
 }
 
 /**
+ * Some players may set traps.  A limited number of such traps may exist at any
+ * one time,  but an old trap can be disarmed to free up equipment for a new
+ * trap. -LM-
+ */
+void do_cmd_set_trap(struct loc grid)
+{
+	int max_traps =	1 + (player->lev >= 25) ? 1 : 0;
+
+	/* Specialty ability Extra Trap */
+	if (player_has(player, PF_EXTRA_TRAP)) max_traps++;
+
+	if (player->timed[TMD_BLIND] || no_light()) {
+		msg("You can not see to set a trap.");
+		return;
+	}
+
+	if (player->timed[TMD_CONFUSED] || player->timed[TMD_IMAGE]) {
+		msg("You are too confused.");
+		return;
+	}
+
+	/* Forbid more than max_traps being set. */
+	if (player->num_traps >= max_traps) {
+		msg("You must disarm an existing trap to free up your equipment.");
+		return;
+	}
+
+	/* Set the trap, and draw it. */
+	place_trap(cave, grid, lookup_trap("basic monster trap")->tidx, 0);
+
+	/* Notify the player. */
+	msg("You set a monster trap.");
+}
+
+/**
  * Manipulate an adjacent grid in some way
  *
  * Attack monsters, tunnel through walls, disarm traps, open doors.
@@ -965,9 +1012,13 @@ void do_cmd_alter_aux(int dir)
 	} else if (square_iscloseddoor(cave, grid)) {
 		/* Open closed doors */
 		more = do_cmd_open_aux(grid);
-	} else if (square_isdisarmabletrap(cave, grid)) {
+	} else if (square_isdisarmabletrap(cave, grid) ||
+			   square_ismonstertrap(cave, grid)) {
 		/* Disarm traps */
 		more = do_cmd_disarm_aux(grid);
+	} else if (player_has(player, PF_TRAP) && square_istrappable(cave, grid)) {
+		/* Set traps */
+		do_cmd_set_trap(grid);
 	} else {
 		/* Oops */
 		msg("You spin around.");

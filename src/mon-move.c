@@ -1200,7 +1200,8 @@ static bool monster_turn_attack_glyph(struct chunk *c, struct monster *mon,
  * Try to push past / kill another monster.  Returns true on success.
  */
 static bool monster_turn_try_push(struct chunk *c, struct monster *mon,
-									 const char *m_name, struct loc new)
+								  const char *m_name, struct loc new,
+								  bool *dead)
 {
 	struct monster *mon1 = square_monster(c, new);
 	struct monster_lore *lore = get_lore(mon->race);
@@ -1238,6 +1239,11 @@ static bool monster_turn_try_push(struct chunk *c, struct monster *mon,
 			delete_monster(new);
 
 		monster_swap(mon->grid, new);
+
+		/* Check for monster traps */
+		if (square_ismonstertrap(c, new)) {
+			monster_hit_trap(mon, new, dead);
+		}
 		return true;
 	}
 
@@ -1364,6 +1370,7 @@ static void monster_turn(struct chunk *c, struct monster *mon)
 	int dir = 0;
 	bool stagger = false;
 	bool tracking = false;
+	bool dead = false;
 	char m_name[80];
 
 	/* Get the monster name */
@@ -1489,12 +1496,20 @@ static void monster_turn(struct chunk *c, struct monster *mon)
 
 		/* A monster is in the way, try to push past/kill */
 		if (square_monster(c, new)) {
-			did_something = monster_turn_try_push(c, mon, m_name, new);
+			did_something = monster_turn_try_push(c, mon, m_name, new, &dead);
 		} else {
 			/* Otherwise we can just move */
 			monster_swap(mon->grid, new);
+
+			/* Check for monster traps */
+			if (square_ismonstertrap(c, new)) {
+				monster_hit_trap(mon, new, &dead);
+			}
 			did_something = true;
 		}
+
+		/* Monster may have died */
+		if (dead) return;
 
 		/* Scan all objects in the grid, if we reached it */
 		if (mon == square_monster(c, new)) {

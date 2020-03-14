@@ -93,6 +93,7 @@ static bool get_trap_graphics(struct chunk *c, struct grid_data *g, int *a,
     /* Trap is visible */
     if (trf_has(g->trap->flags, TRF_VISIBLE) ||
 		trf_has(g->trap->flags, TRF_GLYPH) ||
+		trf_has(g->trap->flags, TRF_M_TRAP) ||
 		trf_has(g->trap->flags, TRF_WEB)) {
 		/* Get the graphics */
 		*a = trap_x_attr[g->lighting][g->trap->kind->tidx];

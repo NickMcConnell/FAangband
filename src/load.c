@@ -802,7 +802,8 @@ int rd_player(void)
 		player->body.slots[i].name = string_make(buf);
 	}
 
-	strip_bytes(4);
+	strip_bytes(3);
+	rd_byte(&player->num_traps);
 
 	rd_s32b(&player->au);
 

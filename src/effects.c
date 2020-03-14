@@ -3787,16 +3787,27 @@ bool effect_handler_DARKEN_AREA(effect_handler_context_t *context)
 }
 
 /**
- * Project from the player's grid at the player, act as a ball
+ * Project from a grid, act as a ball
  * Affect the player, grids, objects, and monsters
  */
 bool effect_handler_SPOT(effect_handler_context_t *context)
 {
-	struct loc pgrid = player->grid;
+	struct loc grid;
 	int dam = effect_calculate_value(context, true);
 	int rad = context->radius ? context->radius : 0;
 
 	int flg = PROJECT_STOP | PROJECT_PLAY | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+
+	/* Get the centre of the spot */
+	if (context->origin.what == SRC_PLAYER) {
+		grid = player->grid;
+	} else if (context->origin.what == SRC_MONSTER) {
+		grid = cave_monster(cave, context->origin.which.monster)->grid;
+	} else {
+		/* Must be a trap */
+		assert(context->origin.what == SRC_TRAP);
+		grid = context->origin.which.trap->grid;
+	}
 
 	/* Handle increasing radius with player level */
 	if (context->other && context->origin.what == SRC_PLAYER) {
@@ -3804,7 +3815,7 @@ bool effect_handler_SPOT(effect_handler_context_t *context)
 	}
 
 	/* Aim at the target, explode */
-	if (project(context->origin, rad, pgrid, dam, context->subtype, flg, 0, 0, NULL))
+	if (project(context->origin, rad, grid, dam, context->subtype, flg, 0, 0, NULL))
 		context->ident = true;
 
 	return true;
@@ -5530,9 +5541,11 @@ int effect_subtype(int index, const char *type)
  *               (NB: no effect ever sets *ident to false)
  * \param aware  indicates whether the player is aware of the effect already
  * \param dir    is the direction the effect will go in
- * \param beam   is the base chance out of 100 that a BOLT_OR_BEAM effect will beam
- * \param boost  is the extent to which skill surpasses difficulty, used as % boost. It
- *               ranges from 0 to 138.
+ * \param beam   is the base chance out of 100 that a BOLT_OR_BEAM effect will
+ *               beam
+ * \param boost  is the extent to which device skill surpasses difficulty,
+ *               used as % boost. It ranges from 0 to 138.  It is also used
+ *               by monster traps to adjust power, where it can be negative.
  */
 bool effect_do(struct effect *effect,
 		struct source origin,

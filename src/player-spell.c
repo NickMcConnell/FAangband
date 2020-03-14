@@ -766,6 +766,13 @@ static int spell_value_base_monster_percent_hp_gone(void)
 	return mon ? (((mon->maxhp - mon->hp) * 100) / mon->maxhp) : 0;
 }
 
+static int spell_value_base_trap_power(void)
+{
+	int plev = player->lev;
+	int n = plev + (plev * plev) / 25;
+	return 3 + randint1(n) + n / 2;
+}
+
 expression_base_value_f spell_value_base_by_name(const char *name)
 {
 	static const struct value_base_s {
@@ -779,6 +786,7 @@ expression_base_value_f spell_value_base_by_name(const char *name)
 		{ "WEAPON_DAMAGE", spell_value_base_weapon_damage },
 		{ "PLAYER_HP", spell_value_base_player_hp },
 		{ "MONSTER_PERCENT_HP_GONE", spell_value_base_monster_percent_hp_gone },
+		{ "TRAP_POWER", spell_value_base_trap_power },
 		{ NULL, NULL },
 	};
 	const struct value_base_s *current = value_bases;
