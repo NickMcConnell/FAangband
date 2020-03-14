@@ -208,6 +208,70 @@ bool feat_is_fall(int feat)
 }
 
 /**
+ * True if the feature is a tree.
+ */
+bool feat_is_tree(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_TREE);
+}
+
+/**
+ * True if the feature hides objects.
+ */
+bool feat_is_hide_obj(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_HIDE_OBJ);
+}
+
+/**
+ * True if the feature is organic.
+ */
+bool feat_is_organic(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_ORGANIC);
+}
+
+/**
+ * True if the feature can freeze.
+ */
+bool feat_is_freeze(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_FREEZE);
+}
+
+/**
+ * True if the feature is watery.
+ */
+bool feat_is_watery(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_WATERY);
+}
+
+/**
+ * True if the feature is icy.
+ */
+bool feat_is_icy(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_ICY);
+}
+
+/**
+ * True if the feature protects the occupant.
+ */
+bool feat_is_protect(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_PROTECT);
+}
+
+/**
+ * True if the feature exposes the occupant.
+ */
+bool feat_is_expose(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_EXPOSE);
+}
+
+/**
  * SQUARE FEATURE PREDICATES
  *
  * These functions are used to figure out what kind of square something is,
@@ -245,6 +309,14 @@ bool square_istrappable(struct chunk *c, struct loc grid)
 bool square_isobjectholding(struct chunk *c, struct loc grid)
 {
 	return feat_is_object_holding(square(c, grid).feat);
+}
+
+/**
+ * True if the square can hide an object.
+ */
+bool square_isobjecthiding(struct chunk *c, struct loc grid)
+{
+	return feat_is_hide_obj(square(c, grid).feat);
 }
 
 /**
@@ -450,6 +522,62 @@ bool square_isnotknown(struct chunk *c, struct loc grid) {
 bool square_isfall(struct chunk *c, struct loc grid)
 {
 	return feat_is_fall(square(c, grid).feat);
+}
+
+/**
+ * True if the square is a tree.
+ */
+bool square_istree(struct chunk *c, struct loc grid)
+{
+	return feat_is_tree(square(c, grid).feat);
+}
+
+/**
+ * True if the square is organic.
+ */
+bool square_isorganic(struct chunk *c, struct loc grid)
+{
+	return feat_is_organic(square(c, grid).feat);
+}
+
+/**
+ * True if the square can freeze.
+ */
+bool square_isfreeze(struct chunk *c, struct loc grid)
+{
+	return feat_is_freeze(square(c, grid).feat);
+}
+
+/**
+ * True if the square is watery.
+ */
+bool square_iswatery(struct chunk *c, struct loc grid)
+{
+	return feat_is_watery(square(c, grid).feat);
+}
+
+/**
+ * True if the square is icy.
+ */
+bool square_isicy(struct chunk *c, struct loc grid)
+{
+	return feat_is_icy(square(c, grid).feat);
+}
+
+/**
+ * True if the square protects the occupant.
+ */
+bool square_isprotect(struct chunk *c, struct loc grid)
+{
+	return feat_is_protect(square(c, grid).feat);
+}
+
+/**
+ * True if the square exposes the occupant .
+ */
+bool square_isexpose(struct chunk *c, struct loc grid)
+{
+	return feat_is_expose(square(c, grid).feat);
 }
 
 /**

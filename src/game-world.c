@@ -341,6 +341,7 @@ static void decrease_timeouts(void)
 					decr = 0;
 				} else {
 					decr = adjust;
+					if (player_has(player, PF_HARDY)) adjust++;
 				}
 
 				/* Rock players just maintain */
@@ -351,10 +352,16 @@ static void decrease_timeouts(void)
 				break;
 			}
 
-			case TMD_POISONED:
 			case TMD_STUN:
 			{
 				decr = adjust;
+				break;
+			}
+
+			case TMD_POISONED:
+			{
+				decr = adjust;
+				if (player_has(player, PF_HARDY)) adjust++;
 				break;
 			}
 
@@ -676,15 +683,17 @@ void process_world(struct chunk *c)
 
 	/* Effects of Black Breath */
 	if (player->timed[TMD_BLACKBREATH]) {
-		if (one_in_(2)) {
+		bool hardy = player_has(player, PF_HARDY);
+
+		if (one_in_(hardy ? 4 : 2)) {
 			msg("The Black Breath sickens you.");
 			player_stat_dec(player, STAT_CON, false);
 		}
-		if (one_in_(2)) {
+		if (one_in_(hardy ? 4 : 2)) {
 			msg("The Black Breath saps your strength.");
 			player_stat_dec(player, STAT_STR, false);
 		}
-		if (one_in_(2)) {
+		if (one_in_(hardy ? 4 : 2)) {
 			/* Life draining */
 			int drain = 100 + (player->exp / 100) * z_info->life_drain_percent;
 			msg("The Black Breath dims your life force.");

@@ -208,6 +208,28 @@ static int chance_of_missile_hit(const struct player *p,
 }
 
 /**
+ * Determine the effect of terrain on a monster's defence.
+ */
+static int terrain_armor_adjust(struct loc grid, int ac, bool melee)
+{
+	/* Monsters in rubble can take advantage of cover. 
+	 * Monsters in trees can take advantage of cover, except from players who
+	 * know nature lore. */
+	if (square_isprotect(cave, grid) &&
+		!(square_isorganic(cave, grid) &&
+		  (player_has(player, PF_WOODSMAN) || player_has(player, PF_ELVEN)))) {
+		ac += ac / (melee ? 7 : 5) + 5;
+	}
+
+	/* Monsters in water are vulnerable.  */
+	if (square_isexpose(cave, grid)) {
+		ac -= ac / (melee ? 5 : 4);
+	}
+
+	return ac;
+}
+
+/**
  * Determine if the player "hits" a monster.
  */
 bool test_hit(int chance, int ac, int vis) {
@@ -898,6 +920,7 @@ static bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 	bool power_strike = false;
 	bool confusing_blow = false;
 	int unarmed_blow_idx;
+	int ac = terrain_armor_adjust(grid, mon->race->ac, true);
 
 	/* Default to punching for one damage */
 	char verb[20];
@@ -929,7 +952,7 @@ static bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 	mon_clear_timed(mon, MON_TMD_HOLD, MON_TMD_FLG_NOTIFY);
 
 	/* See if the player hit */
-	success = test_hit(chance, mon->race->ac, monster_is_visible(mon));
+	success = test_hit(chance, ac, monster_is_visible(mon));
 
 	/* If a miss, skip this hit */
 	if (!success) {
@@ -1447,12 +1470,13 @@ static struct attack_result make_ranged_shot(struct player *p,
 	struct object *bow = equipped_item_by_slot_name(p, "shooting");
 	struct monster *mon = square_monster(cave, grid);
 	int chance = chance_of_missile_hit(p, ammo, bow, grid);
+	int ac = terrain_armor_adjust(grid, mon->race->ac, false);
 	int b = 0, s = 0;
 
 	my_strcpy(hit_verb, "hits", 20);
 
 	/* Did we hit it (penalize distance travelled) */
-	if (!test_hit(chance, mon->race->ac, monster_is_visible(mon)))
+	if (!test_hit(chance, ac, monster_is_visible(mon)))
 		return result;
 
 	result.success = true;
@@ -1486,12 +1510,13 @@ static struct attack_result make_ranged_throw(struct player *p,
 	struct attack_result result = {false, false, 0, 0, hit_verb};
 	struct monster *mon = square_monster(cave, grid);
 	int chance = chance_of_missile_hit(p, obj, NULL, grid);
+	int ac = terrain_armor_adjust(grid, mon->race->ac, false);
 	int b = 0, s = 0;
 
 	my_strcpy(hit_verb, "hits", 20);
 
 	/* If we missed then we're done */
-	if (!test_hit(chance, mon->race->ac, monster_is_visible(mon)))
+	if (!test_hit(chance, ac, monster_is_visible(mon)))
 		return result;
 
 	result.success = true;

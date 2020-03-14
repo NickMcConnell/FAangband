@@ -1210,6 +1210,26 @@ void move_player(int dir, bool disarm)
 			cmdq_push(CMD_AUTOPICKUP);
 		}
 
+		/* Some terrain types need special treatment */
+		if (square_istree(cave, grid)) {
+			/* Ents, elves, druids, rangers, flyers can move easily */
+			if (!(player_has(player, PF_WOODEN) ||
+				  player_has(player, PF_WOODSMAN) ||
+				  player_has(player, PF_FLYING) ||
+				  player_has(player, PF_ELVEN))) {
+				player->upkeep->energy_use += z_info->move_energy;
+			}
+		} else if (square_isrock(cave, grid)) {
+			/* Dwarves, flyers can move easily */
+			if (!(player_has(player, PF_DWARVEN) ||
+				  player_has(player, PF_FLYING))) {
+				player->upkeep->energy_use += z_info->move_energy;
+			}
+		}
+
+		/* Speed or stealth may change */
+		player->upkeep->update |= (PU_BONUS);
+
 		/* Discover invisible traps, set off visible ones */
 		if (square_issecrettrap(cave, grid)) {
 			disturb(player, 0);

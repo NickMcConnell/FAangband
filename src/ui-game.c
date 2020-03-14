@@ -113,6 +113,7 @@ struct cmd_info cmd_action[] =
 	{ "Fire at nearest target", { 'h', KC_TAB }, CMD_NULL, do_cmd_fire_at_nearest, NULL },
 	{ "Throw an item", { 'v' }, CMD_THROW, NULL, NULL },
 	{ "Walk into a trap", { 'W', '-' }, CMD_JUMP, NULL, NULL },
+	{ "Change shape", { '!' }, CMD_RESHAPE, NULL, NULL },
 };
 
 /**

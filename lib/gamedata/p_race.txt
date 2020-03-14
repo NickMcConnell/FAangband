@@ -310,29 +310,6 @@ player-flags:ELVEN
 # Note that this race does not get player-flags:BOW_SKILL, despite being Elven.
 # This is because they have such high missile weapon skill in general.
 
-name:Maia
-stats:2:3:3:2:4
-skill-disarm-phys:10
-skill-disarm-magic:10
-skill-device:15
-skill-save:16
-skill-stealth:1
-skill-search:5
-skill-melee:4
-skill-shoot:4
-skill-throw:4
-skill-dig:0
-hitdie:12
-difficulty:1
-infravision:0
-start-lev:1
-hometown:GLADDEN_FIELDS
-history:25
-age:10000:5000
-height:80:27
-weight:240:50
-player-flags:DIVINE
-
 name:Dark-Elf
 stats:-2:-1:2:2:-1
 skill-disarm-phys:7

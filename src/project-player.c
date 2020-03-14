@@ -795,6 +795,22 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 		return false;
 	}
 
+	/* Determine if terrain is capable of preventing physical damage. */
+	if (square_isprotect(cave, grid)) {
+		/* A player behind rubble can duck. */
+		if (square_isrock(cave, grid) && one_in_(10)) {
+			msg("You duck behind a boulder!");
+			return false;
+		}
+
+		/* Rangers, elves and druids can take cover in trees. */
+		if (square_istree(cave, grid) && one_in_(8) &&
+			(player_has(player, PF_WOODSMAN) || player_has(player, PF_ELVEN))) {
+			msg("You dodge behind a tree!");
+			return false;
+		}
+	}
+
 	/* Try to evade missiles */
 	if ((typ == ELEM_ARROW) && (randint1(75) <= player->state.evasion_chance)) {
 		/* Message */

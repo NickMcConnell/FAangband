@@ -313,11 +313,20 @@ bool feat_is_no_flow(int feat);
 bool feat_is_no_scent(int feat);
 bool feat_is_smooth(int feat);
 bool feat_is_fall(int feat);
+bool feat_is_tree(int feat);
+bool feat_is_hide_obj(int feat);
+bool feat_is_organic(int feat);
+bool feat_is_freeze(int feat);
+bool feat_is_watery(int feat);
+bool feat_is_icy(int feat);
+bool feat_is_protect(int feat);
+bool feat_is_expose(int feat);
 
 /* SQUARE FEATURE PREDICATES */
 bool square_isfloor(struct chunk *c, struct loc grid);
 bool square_istrappable(struct chunk *c, struct loc grid);
 bool square_isobjectholding(struct chunk *c, struct loc grid);
+bool square_isobjecthiding(struct chunk *c, struct loc grid);
 bool square_isrock(struct chunk *c, struct loc grid);
 bool square_isgranite(struct chunk *c, struct loc grid);
 bool square_ispermanent(struct chunk *c, struct loc grid);
@@ -342,6 +351,13 @@ bool square_isoccupied(struct chunk *c, struct loc grid);
 bool square_isknown(struct chunk *c, struct loc grid);
 bool square_isnotknown(struct chunk *c, struct loc grid);
 bool square_isfall(struct chunk *c, struct loc grid);
+bool square_istree(struct chunk *c, struct loc grid);
+bool square_isorganic(struct chunk *c, struct loc grid);
+bool square_isfreeze(struct chunk *c, struct loc grid);
+bool square_iswatery(struct chunk *c, struct loc grid);
+bool square_isicy(struct chunk *c, struct loc grid);
+bool square_isprotect(struct chunk *c, struct loc grid);
+bool square_isexpose(struct chunk *c, struct loc grid);
 
 /* SQUARE INFO PREDICATES */
 bool square_ismark(struct chunk *c, struct loc grid);

@@ -452,6 +452,29 @@ bool check_hit(struct player *p, int power, int level, int accuracy)
 	/* Total armor */
 	ac = p->state.ac + p->state.to_a;
 
+	/* Players can take advantage of cover. */
+	if (character_dungeon) {
+		if (square_isprotect(cave, p->grid)) {
+			/* Players in trees can take advantage of cover, especially elves, 
+			 * rangers and druids. */
+			if (square_isorganic(cave, p->grid)) {
+				if (player_has(p, PF_WOODSMAN) || player_has(p, PF_ELVEN)) {
+					ac += ac / 8 + 10;
+				} else {
+					ac += ac / 10 + 2;
+				}
+			} else {
+				/* Players in rubble can take advantage of cover. */
+				ac += ac / 8 + 5;
+			}
+		}
+
+		/* Players can be vulnerable. */
+		if (square_isexpose(cave, p->grid)) {
+			ac -= ac / 3;
+		}
+	}
+
 	/* If the monster checks vs ac, the player learns ac bonuses */
 	equip_learn_on_defend(p);
 
@@ -485,7 +508,7 @@ bool check_hit_monster(struct monster *mon, int power, int level, int accuracy)
 }
 
 /**
- * Determine if an otherwise successful monster attack on th eplayer is
+ * Determine if an otherwise successful monster attack on the player is
  * avoided for special reasons.
  */
 bool player_avoid_blow(struct monster *mon, char *m_name, struct player *p)

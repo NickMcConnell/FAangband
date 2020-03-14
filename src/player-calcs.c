@@ -1505,15 +1505,16 @@ static void calc_specialty(struct player *p)
 	int num_known, questortwo = 2;
 	int quests_done = quests_count();
 	int specialties_allowed;
+	int old_specialties = p->upkeep->new_specialties;
 
 	/* Calculate number allowed */
 	if (quests_done < 2) {
 		questortwo = quests_done;
 	}
 	specialties_allowed = 1 + questortwo;
-	//if (pf_has(player->class->pflags, PF_XTRA_SPECIALTY)) {
-	//	specialties_allowed++;
-	//}
+	if (pf_has(player->class->pflags, PF_XTRA_SPECIALTY)) {
+		specialties_allowed++;
+	}
 
 	/* Count the number of specialties we know */
 	num_known = pf_count(p->specialties);
@@ -1522,8 +1523,11 @@ static void calc_specialty(struct player *p)
 	p->upkeep->new_specialties = specialties_allowed - num_known;
 
 	/* More specialties are available */
-	if (p->upkeep->new_specialties > 0) {
-		msg("You may learn a specialty ability using the 'S' key.");
+	if (old_specialties != p->upkeep->new_specialties) {
+		/* Message if needed */
+		if (p->upkeep->new_specialties) {
+			msg("You may learn a specialty ability using the 'S' key.");
+		}
 
 		/* Redraw Study Status */
 		p->upkeep->redraw |= (PR_STUDY);
@@ -2178,6 +2182,11 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	/* Calculate light */
 	calc_light(p, state, update);
 
+	/* Shadow players lose stealth but don't aggravate */
+	if (player_has(p, PF_SHADOW) && player_of_has(p, OF_AGGRAVATE)) {
+		state->skills[SKILL_STEALTH] -= 3;
+	}
+
 	/* Physical stat boost */
 	if (player_has(p, PF_ATHLETICS)) {
 		state->stat_add[STAT_DEX] += 2;
@@ -2188,6 +2197,38 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	if (player_has(p, PF_CLARITY)) {
 		state->stat_add[STAT_INT] += 2;
 		state->stat_add[STAT_WIS] += 2;
+	}
+
+	/* Ent */
+	if (player_has(p, PF_WOODEN)) {
+		/* Ents dig like maniacs, but only with their hands. */
+		if (!slot_object(p, slot_by_name(p, "weapon")))
+			state->skills[SKILL_DIGGING] += p->lev * 10;
+
+		/* Ents are not light */
+		of_off(state->flags, OF_FEATHER);
+
+		/* Ents get tougher and stronger as they age, but lose dexterity. */
+		if (p->lev > 25)
+			state->stat_add[STAT_STR]++;
+		if (p->lev > 40)
+			state->stat_add[STAT_STR]++;
+		if (p->lev > 45)
+			state->stat_add[STAT_STR]++;
+
+		if (p->lev > 25)
+			state->stat_add[STAT_DEX]--;
+		if (p->lev > 40)
+			state->stat_add[STAT_DEX]--;
+		if (p->lev > 45)
+			state->stat_add[STAT_DEX]--;
+
+		if (p->lev > 25)
+			state->stat_add[STAT_CON]++;
+		if (p->lev > 40)
+			state->stat_add[STAT_CON]++;
+		if (p->lev > 45)
+			state->stat_add[STAT_CON]++;
 	}
 
 	/* Specialty ability Holy Light */
@@ -2209,6 +2250,12 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	/* Speed Boost (Fury, Phasewalk) */
 	if (p->speed_boost) {
 		state->speed += (p->speed_boost + 5) / 10;
+	}
+
+	/* Speed boost in trees for elven druids and rangers */
+	if (character_dungeon && player_has(p, PF_WOODSMAN) &&
+		player_has(p, PF_ELVEN) && square_istree(cave, p->grid)) {
+		state->speed += 3;
 	}
 
 	/* Calculate the various stat values */

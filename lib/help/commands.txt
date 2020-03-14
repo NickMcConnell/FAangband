@@ -28,7 +28,7 @@ Original Keyset Command Summary
   x    -                               X    -
   y    -                               Y    -
   z    Zap a rod                       Z    -
-  !    -                               ^A   Debug mode
+  !    Change shape (Beornings)        ^A   Debug mode
   @    -                               ^B   -
   #    -                               ^C   (special - break)
   $    -                               ^D   -
@@ -89,7 +89,7 @@ Roguelike Keyset Command Summary
   x    Look around                     X    Use an item
   y    (walk - north west)             Y    (run - north west)
   z    Aim a wand (Zap)                Z    Use a staff (Zap)
-  !    -                               ^A   (special - debug command)
+  !    Change shape (Beornings)        ^A   (special - debug command)
   @    Center map                      ^B   (alter - south west)
   #    -                               ^C   (special - break)
   $    -                               ^D   Ignore an item

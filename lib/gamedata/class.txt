@@ -1493,7 +1493,7 @@ equip:bow:Short Bow:1:1
 equip:arrow:Arrow:15:20
 equip:scroll:Word of Recall:1:1
 equip:nature book:[Lesser Charms]:1:1
-player-flags:FAST_SHOT | CHOOSE_SPELLS | LORE
+player-flags:CHOOSE_SPELLS | LORE
 player-flags:WOODSMAN | BOW_SPEED_GREAT | SLING_SPEED_GOOD | XBOW_SPEED_GOOD
 specialties:ARMSMAN | ATHLETICS | EVASION | FAST_ATTACK | FURY
 specialties:MARKSMAN | PIERCE_SHOT | REGENERATION | MIGHTY_THROW | SHIELD_MAST

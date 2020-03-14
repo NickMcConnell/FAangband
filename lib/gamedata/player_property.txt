@@ -35,11 +35,6 @@ name:Mushroom Lore
 desc:You easily recognize mushrooms.
 
 type:player
-code:KNOW_ZAPPER
-name:Device Lore
-desc:You easily recognize magic devices.
-
-type:player
 code:SEE_ORE
 name:Miner
 desc:You can sense ore in the walls.
@@ -110,14 +105,9 @@ name:Hardy
 desc:You recover quickly from poison and cuts, and succumb slowly to the Black Breath.
 
 type:player
-code:HUNGRY
-name:Ravenous
-desc:You eat.  A lot.
-
-type:player
-code:DIVINE
-name:Divine Powers
-desc:You recover very quickly from negative effects, and can move through water without being slowed.
+code:FLYING
+name:Flying
+desc:You can fly.
 
 type:player
 code:SHADOW
@@ -155,11 +145,6 @@ name:Forest Fighter
 desc:You are more able to hit monsters while in forests.
 
 ## Class player flags ##
-
-type:player
-code:FAST_SHOT
-name:Extra Shots
-desc:Your shooting speed improves with tension bows every 10 levels.
 
 type:player
 code:BRAVERY_30

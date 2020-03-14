@@ -21,13 +21,15 @@
 #include "cave.h"
 #include "cmd-core.h"
 #include "cmds.h"
+#include "effects.h"
 #include "game-input.h"
 #include "init.h"
 #include "mon-lore.h"
 #include "mon-util.h"
+#include "obj-util.h"
 #include "player-calcs.h"
 #include "player-history.h"
-#include "obj-util.h"
+#include "player-util.h"
 #include "target.h"
 
 
@@ -77,6 +79,38 @@ void do_cmd_suicide(struct command *cmd)
 
 	/* Cause of death */
 	my_strcpy(player->died_from, "Quitting", sizeof(player->died_from));
+}
+
+/**
+ * Change shape
+ */
+void do_cmd_reshape(struct command *cmd)
+{
+	/* Sanity */
+	if (!(player_is_shapechanged(player) || player_has(player, PF_BEARSKIN))) {
+		return;
+	}
+
+	/* Change back or change */
+	if (player_is_shapechanged(player)) {
+		if (get_check("Change back to your original form? " )) {
+			player_resume_normal_shape(player);
+		}
+		return;
+	} else {
+		bool ident;
+
+		/* Confirm */
+		if (!get_check("Assume the form of a bear? "))
+			return;
+
+		/* Change */
+		effect_simple(EF_SHAPECHANGE, source_none(), "0",
+					  shape_name_to_idx("bear"), 0, 0, 0, 0, &ident);
+
+		/* Use some energy */
+		player->upkeep->energy_use = 100;
+	}
 }
 
 /**

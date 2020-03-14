@@ -235,7 +235,7 @@ int test_obj_flags0(void *state) {
 }
 
 int test_play_flags0(void *state) {
-	enum parser_error r = parser_parse(state, "player-flags:KNOW_ZAPPER");
+	enum parser_error r = parser_parse(state, "player-flags:KNOW_MUSHROOM");
 	struct player_race *pr;
 
 	eq(r, PARSE_ERROR_NONE);

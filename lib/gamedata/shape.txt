@@ -100,6 +100,7 @@ name:eagle
 combat:5:0:10
 obj-flags:SUST_WIS | PROT_BLIND | PROT_CONF | PROT_FEAR | SEE_INVIS | FREE_ACT
 obj-flags:TRAP_IMMUNE
+player-flags:FLYING
 values:MOVES[3]
 blow:peck
 blow:claw
@@ -109,7 +110,8 @@ blow:tear
 
 name:bat
 combat:0:-10:10
-obj-flags:FEATHER | SEE_INVIS | PROT_BLIND
+obj-flags:FEATHER | SEE_INVIS | PROT_BLIND | TRAP_IMMUNE
+player-flags:FLYING
 values:SPEED[3] | STEALTH[3] | INFRA[5]
 effect:DAMAGE
 dice:5
