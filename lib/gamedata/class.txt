@@ -133,8 +133,7 @@ equip:potion:Berserk Strength:1:1
 equip:sword:Dagger:1:1
 equip:soft armour:Soft Leather Armour:1:1
 equip:scroll:Word of Recall:1:1
-player-flags:BRAVERY_30 | NO_MANA | SHIELD_BASH
-player-flags:SPREAD_ATTACKS | PROBE | XTRA_SPECIALTY
+player-flags:BRAVERY_30 | NO_MANA | SHIELD_BASH | XTRA_SPECIALTY
 player-flags:BOW_SPEED_GOOD | XBOW_SPEED_GOOD
 specialties:ARMOR_MAST | ARMSMAN | ATHLETICS | MIGHTY_THROW | FAST_ATTACK
 specialties:FURY | MARKSMAN | PIERCE_SHOT | REGENERATION | SHIELD_MAST
@@ -960,9 +959,9 @@ equip:food:Ration of Food:1:3
 equip:sword:Main Gauche:1:1
 equip:scroll:Word of Recall:1:1
 player-flags:CHOOSE_SPELLS | UNLIGHT | EVIL | STRONG_MAGIC
-specialties:UNLIGHT | ARMOR_PROFICIENCY | BEGUILE | CLARITY | ENHANCE_MAGIC
+specialties:ARMOR_PROFICIENCY | BEGUILE | CLARITY | ENHANCE_MAGIC
 specialties:MEDITATION | MAGIC_RESIST | SOUL_SIPHON | HEIGHTEN_MAGIC
-specialties:CHANNELING
+specialties:CHANNELING | STEAL
 title:Acolyte
 title:Curser
 title:Dark Student
@@ -1493,8 +1492,8 @@ equip:bow:Short Bow:1:1
 equip:arrow:Arrow:15:20
 equip:scroll:Word of Recall:1:1
 equip:nature book:[Lesser Charms]:1:1
-player-flags:CHOOSE_SPELLS | LORE
-player-flags:WOODSMAN | BOW_SPEED_GREAT | SLING_SPEED_GOOD | XBOW_SPEED_GOOD
+player-flags:CHOOSE_SPELLS | WOODSMAN
+player-flags:BOW_SPEED_GREAT | SLING_SPEED_GOOD | XBOW_SPEED_GOOD
 specialties:ARMSMAN | ATHLETICS | EVASION | FAST_ATTACK | FURY
 specialties:MARKSMAN | PIERCE_SHOT | REGENERATION | MIGHTY_THROW | SHIELD_MAST
 specialties:TRAP | RAPID_FIRE

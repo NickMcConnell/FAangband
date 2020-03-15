@@ -24,6 +24,7 @@
 struct attack_result {
     bool success;
 	bool marksman;
+    int s_bonus;
     int dmg;
     u32b msg_type;
     char *hit_verb;

@@ -1721,6 +1721,15 @@ static void calc_light(struct player *p, struct player_state *state,
 	    state->cur_light += amt;
 	}
 
+	/* Class ability Holy */
+	if (player_has(p, PF_HOLY)) {
+		if ((p->lev > 35) && player_has(p, PF_STRONG_MAGIC)) {
+			state->cur_light++;
+		} else if (p->lev > 45) {
+			state->cur_light++;
+		}
+	}
+
 	/* Special ability Holy Light */
 	if (player_has(p, PF_HOLY_LIGHT)) {
 		state->cur_light++;

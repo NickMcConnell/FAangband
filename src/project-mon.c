@@ -419,6 +419,16 @@ static void project_monster_scare(project_monster_handler_context_t *context, in
 {
     if (context->seen) rf_on(context->lore->flags, flag);
 
+	/* Class ability Holy */
+	if (context->origin.what == SRC_PLAYER && player_has(player, PF_HOLY)) {
+		if (flag == RF_EVIL) {
+			context->dam *= 2;
+		} else {
+			context->dam *= 3;
+			context->dam /= 2;
+		}
+	}
+
 	if (rf_has(context->mon->race->flags, flag)) {
         context->mon_timed[MON_TMD_FEAR] = adjust_radius(context, context->dam);
 	} else {

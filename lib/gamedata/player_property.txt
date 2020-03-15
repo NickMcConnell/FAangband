@@ -232,24 +232,9 @@ name:Very Fast Crossbow Shots
 desc:Your shooting speed with a crossbow increases very quickly with Dexterity.
 
 type:player
-code:ASSASSINATE
-name:Assassinate
-desc:You effectively assassinate unsuspecting creatures in melee and with ranged attacks.
-
-type:player
-code:STRONG_SHOOT
-name:Deadly Shot
-desc:You do extra damage when shooting.
-
-type:player
 code:BACKSTAB
 name:Backstab
 desc:You effectively backstab unsuspecting creatures in melee.
-
-type:player
-code:SPREAD_ATTACKS
-name:Crowd Combat [40]
-desc:You can efficiently spread your attacks over multiple weak opponents at level 40.
 
 type:player
 code:UNARMED_COMBAT
@@ -267,19 +252,9 @@ name:Full Spellcaster
 desc:You are an expert spellcaster capable of a perfect success rate and have a large reserve of mana.
 
 type:player
-code:LORE
-name:Lore
-desc:You learn quickly about monster abilities.
-
-type:player
 code:HOLY
 name:Pious
 desc:You carry a pious authority.  You glow with an inner light at level 35 (Priest) or level 45 (Paladin).
-
-type:player
-code:PROBE
-name:Monster Probing [35]
-desc:You can learn details of monster attributes at level 35.
 
 type:player
 code:TRAP
