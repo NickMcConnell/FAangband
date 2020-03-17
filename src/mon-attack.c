@@ -82,6 +82,11 @@ static bool monster_can_cast(struct monster *mon, bool innate)
 		mflag_off(mon->mflag, MFLAG_LESS_SPELL);
 	}
 
+	/* Monsters at their preferred range are more likely to cast */
+	if (mon->cdis == mon->best_range) {
+		chance *= 2;
+	}
+
 	/* Only do spells occasionally */
 	if (randint0(100) >= chance) return false;
 
