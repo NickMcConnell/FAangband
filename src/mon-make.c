@@ -33,6 +33,7 @@
 #include "obj-util.h"
 #include "player-calcs.h"
 #include "player-quest.h"
+#include "player-timed.h"
 #include "target.h"
 
 /**
@@ -329,6 +330,11 @@ void delete_monster_idx(int m_idx)
 	/* Hack -- remove tracked monster */
 	if (player->upkeep->health_who == mon)
 		health_track(player->upkeep, NULL);
+
+	/* Hack -- remove any command status */
+	if (mon->m_timed[MON_TMD_COMMAND]) {
+		(void) player_clear_timed(player, TMD_COMMAND, true);
+	}
 
 	/* Monster is gone from square and group */
 	square_set_mon(cave, grid, 0);
