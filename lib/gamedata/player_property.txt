@@ -273,6 +273,17 @@ code:XTRA_SPECIALTY
 name:Specialization [1]
 desc:You can learn an extra specialty abilty at level 1.
 
+type:player
+code:COMBAT_REGEN
+name:Combat Regeneration
+desc:You draw power from the thrill of combat. This power is represented by
+desc: Spell Points (SP). You gain SP in combat when damaged by a monster or
+desc: when you attack in melee. When not in combat you *lose* SP at half the
+desc: rate others gain it, and you gain hitpoints (HP) at only half the normal
+desc: rate. When you spend SP by casting a spell you regain some HP, and
+desc: unspent SP replenish your health even more efficiently. The more damaged
+desc: the character is, the bigger these HP gains will be.
+
 ## Specialty ability player flags (race/class flags can be used for this too) ##
 
 type:player
@@ -419,6 +430,7 @@ type:player
 code:HOLY_LIGHT
 name:Holy Light
 desc:Increases light radius.  Causes undead, evil, and light-sensitive creatures to take extra melee damage and makes them fear your light-based spells.  Grants resistance to light.
+
 
 ## Object flags
 
