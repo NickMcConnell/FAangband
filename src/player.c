@@ -409,9 +409,6 @@ void player_cleanup_members(struct player *p)
 	}
 
 	/* Free the things that are only sometimes initialised */
-	if (p->quests) {
-		player_quests_free(p);
-	}
 	if (p->spell_flags) {
 		player_spells_free(p);
 	}
