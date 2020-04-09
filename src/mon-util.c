@@ -1417,8 +1417,8 @@ void steal_monster_item(struct monster *mon, int midx)
 				object_delete(&obj);
 			} else {
 				object_grab(player, obj);
-				delist_object(cave, obj);
 				delist_object(player->cave, obj->known);
+				delist_object(cave, obj);
 				/* Drop immediately if ignored to prevent pack overflow */
 				if (ignore_item_ok(obj)) {
 					char o_name[80];
