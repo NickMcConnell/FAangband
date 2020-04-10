@@ -2423,7 +2423,6 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	}
 	if (p->timed[TMD_SHERO]) {
 		of_on(state->flags, OF_PROT_FEAR);
-		state->to_h += enhance ? 30 : 24;
 		state->skills[SKILL_TO_HIT_MELEE] += enhance ? 90 : 72;
 		state->to_a -= 10;
 		state->skills[SKILL_DEVICE] = state->skills[SKILL_DEVICE] * 9 / 10;
