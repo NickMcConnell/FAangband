@@ -199,10 +199,6 @@ name:Evil
 desc:You resist nether, but are hurt by holy attacks.
 
 type:player
-code:CROWD_FIGHT
-name:Crowd Fighter
-desc:You gains advantage from fighting many monsters at once.
-
 type:player
 code:BOW_SPEED_GOOD
 name:Fast Bow Shots
