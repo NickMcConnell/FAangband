@@ -157,6 +157,35 @@ enum obj_property_type {
 #define kf_inter(f1, f2)       	flag_inter(f1, f2, KF_SIZE)
 #define kf_diff(f1, f2)        	flag_diff(f1, f2, KF_SIZE)
 
+/**
+ * Resistance limits - the number really means percentage damage taken,
+ * which is why maximum is 0 and minimum is 200
+ */
+#define RES_LEVEL_BASE		100
+#define RES_LEVEL_MIN		200
+#define RES_LEVEL_MAX		0
+#define RES_LEVEL_EFFECT	80
+#define RES_LEVEL_STRONG	20
+
+/**
+ * Resistance boost values
+ */
+#define RES_BOOST_MINOR		75
+#define RES_BOOST_NORMAL	60
+#define RES_BOOST_GREAT		45
+#define RES_BOOST_IMMUNE	0
+
+/**
+ * Vulnerability boost values
+ */
+#define RES_CUT_NORMAL		130
+
+/**
+ * Resistance cap values - best resistance items or players can attain
+ */
+#define RES_CAP_EXTREME		75
+#define RES_CAP_MODERATE	40
+#define RES_CAP_ITEM        20
 
 /**
  * ------------------------------------------------------------------------

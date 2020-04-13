@@ -477,7 +477,8 @@ bool player_knows_ego(struct player *p, struct ego_item *ego)
 
 	/* All elements known */
 	for (i = 0; i < ELEM_MAX; i++)
-		if (ego->el_info[i].res_level && !p->obj_k->el_info[i].res_level)
+		if ((ego->el_info[i].res_level != RES_LEVEL_BASE) &&
+			!p->obj_k->el_info[i].res_level)
 			return false;
 
 	/* All brands known */
@@ -596,7 +597,7 @@ bool object_has_rune(const struct object *obj, int rune_no)
 		}
 		/* Element runes */
 		case RUNE_VAR_RESIST: {
-			if (obj->el_info[r->index].res_level != 0)
+			if (obj->el_info[r->index].res_level != RES_LEVEL_BASE)
 				return true;
 			break;
 		}
@@ -666,8 +667,8 @@ static bool object_non_curse_runes_known(const struct object *obj)
 
 	/* Not all elements known */
 	for (i = 0; i < ELEM_MAX; i++)
-		if ((obj->el_info[i].res_level != 0) &&
-			(obj->known->el_info[i].res_level == 0))
+		if ((obj->el_info[i].res_level != RES_LEVEL_BASE) &&
+			(obj->known->el_info[i].res_level == RES_LEVEL_BASE))
 			return false;
 
 	/* Not all brands known */
@@ -772,7 +773,7 @@ bool object_element_is_known(const struct object *obj, int element)
 	if (player->obj_k->el_info[element].res_level) return true;
 
 	/* Object has been exposed to the element means OK */
-	if (obj->known->el_info[element].res_level) return true;
+	if (obj->known->el_info[element].res_level != RES_LEVEL_BASE) return true;
 
 	return false;
 }
@@ -787,12 +788,18 @@ bool object_element_is_known(const struct object *obj, int element)
  */
 void object_set_base_known(struct object *obj)
 {
+	int i;
+
 	assert(obj->known);
 	obj->known->kind = obj->kind;
 	obj->known->tval = obj->tval;
 	obj->known->sval = obj->sval;
 	obj->known->weight = obj->weight;
 	obj->known->number = obj->number;
+
+	for (i = 0; i < ELEM_MAX; i++) {
+		obj->known->el_info[i].res_level = RES_LEVEL_BASE;
+	}
 
 	/* Generic dice and ac, to_h for armor, and launcher multipliers */
 	if (!obj->known->dd) {
@@ -1323,7 +1330,7 @@ void player_learn_innate(struct player *p)
 
 	/* Elements */
 	for (element = 0; element < ELEM_MAX; element++) {
-		if (p->race->el_info[element].res_level != 0) {
+		if (p->race->el_info[element].res_level != RES_LEVEL_BASE) {
 			player_learn_rune(p, rune_index(RUNE_VAR_RESIST, element), false);
 		}
 	}
@@ -1616,7 +1623,7 @@ bool object_curses_find_element(struct player *p, struct object *obj, int elem)
 				continue;
 
 			/* Does the object affect the player's resistance to the element? */
-			if (curses[i].obj->el_info[elem].res_level != 0) {
+			if (curses[i].obj->el_info[elem].res_level != RES_LEVEL_BASE) {
 				/* Learn the element properties if we don't know yet */
 				if (!p->obj_k->el_info[elem].res_level) {
 					msg("Your %s glows.", o_name);
@@ -2073,7 +2080,7 @@ void equip_learn_element(struct player *p, int element)
 		assert(obj->known);
 
 		/* Does the object affect the player's resistance to the element? */
-		if (obj->el_info[element].res_level != 0) {
+		if (obj->el_info[element].res_level != RES_LEVEL_BASE) {
 			char o_name[80];
 			object_desc(o_name, sizeof(o_name), obj, ODESC_BASE);
 
@@ -2094,7 +2101,7 @@ void equip_learn_element(struct player *p, int element)
 	}
 	if (p->shape) {
 		struct player_shape *shape = lookup_player_shape(p->shape->name);
-		if (shape->el_info[element].res_level &&
+		if ((shape->el_info[element].res_level != RES_LEVEL_BASE) &&
 			!p->obj_k->el_info[element].res_level) {
 			msg("You understand your %s shape better.", p->shape->name);
 			player_learn_rune(p, rune_index(RUNE_VAR_RESIST, element), true);

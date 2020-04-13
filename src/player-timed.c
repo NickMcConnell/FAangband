@@ -453,13 +453,13 @@ bool player_set_timed(struct player *p, int idx, int v, bool notify)
 	v = MIN(v, new_grade->max);
 
 	/* Don't mention effects which already match the player state. */
-	if (idx == TMD_OPP_ACID && player_is_immune(p, ELEM_ACID)) {
+	if (idx == TMD_OPP_ACID && player_is_immune(p->state, ELEM_ACID)) {
 		notify = false;
-	} else if (idx == TMD_OPP_ELEC && player_is_immune(p, ELEM_ELEC)) {
+	} else if (idx == TMD_OPP_ELEC && player_is_immune(p->state, ELEM_ELEC)) {
 		notify = false;
-	} else if (idx == TMD_OPP_FIRE && player_is_immune(p, ELEM_FIRE)) {
+	} else if (idx == TMD_OPP_FIRE && player_is_immune(p->state, ELEM_FIRE)) {
 		notify = false;
-	} else if (idx == TMD_OPP_COLD && player_is_immune(p, ELEM_COLD)) {
+	} else if (idx == TMD_OPP_COLD && player_is_immune(p->state, ELEM_COLD)) {
 		notify = false;
 	} else if (idx == TMD_OPP_CONF && player_of_has(p, OF_PROT_CONF)) {
 		notify = false;
@@ -535,9 +535,9 @@ bool player_inc_check(struct player *p, int idx, bool lore)
 		if (((effect->fail_code == TMD_FAIL_FLAG_OBJECT) &&
 			 (of_has(p->known_state.flags, effect->fail))) ||
 			((effect->fail_code == TMD_FAIL_FLAG_RESIST) &&
-			 (p->known_state.el_info[effect->fail].res_level > 0)) ||
+			 (player_resists_effects(p->known_state, effect->fail))) ||
 			((effect->fail_code == TMD_FAIL_FLAG_VULN) &&
-			 (p->known_state.el_info[effect->fail].res_level < 0))) {
+			 (player_is_vulnerable(p->known_state, effect->fail)))) {
 			return false;
 		} else {
 			return true;
@@ -566,14 +566,14 @@ bool player_inc_check(struct player *p, int idx, bool lore)
 	} else if (effect->fail_code == TMD_FAIL_FLAG_RESIST) {
 		/* Effect is inhibited by a resist */
 		equip_learn_element(p, effect->fail);
-		if (p->state.el_info[effect->fail].res_level > 0) {
+		if (player_resists_effects(p->state, effect->fail)) {
 			return false;
 		}
 	} else if (effect->fail_code == TMD_FAIL_FLAG_VULN) {
 		/* Effect is inhibited by a vulnerability
 		 * the asymmetry with resists is OK for now - NRM */
 		equip_learn_element(p, effect->fail);
-		if (p->state.el_info[effect->fail].res_level < 0) {
+		if (player_is_vulnerable(p->state, effect->fail)) {
 			return false;
 		}
 	} else if (effect->fail_code == TMD_FAIL_FLAG_PLAYER) {

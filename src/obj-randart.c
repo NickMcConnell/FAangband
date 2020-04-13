@@ -755,20 +755,20 @@ void count_low_resists(const struct artifact *art,
 	int num = 0;
 
 	/* Count up immunities for this item, if any */
-	if (art->el_info[ELEM_ACID].res_level == 3) num++;
-	if (art->el_info[ELEM_ELEC].res_level == 3) num++;
-	if (art->el_info[ELEM_FIRE].res_level == 3) num++;
-	if (art->el_info[ELEM_COLD].res_level == 3) num++;
+	if (art->el_info[ELEM_ACID].res_level == RES_LEVEL_MAX) num++;
+	if (art->el_info[ELEM_ELEC].res_level == RES_LEVEL_MAX) num++;
+	if (art->el_info[ELEM_FIRE].res_level == RES_LEVEL_MAX) num++;
+	if (art->el_info[ELEM_COLD].res_level == RES_LEVEL_MAX) num++;
 	file_putf(log_file, "Adding %d for immunities.\n", num);
 
 	(data->art_probs[ART_IDX_GEN_IMMUNE]) += num;
 
 	/* Count up low resists (not the type, just the number) */
 	num = 0;
-	if (art->el_info[ELEM_ACID].res_level == 1) num++;
-	if (art->el_info[ELEM_ELEC].res_level == 1) num++;
-	if (art->el_info[ELEM_FIRE].res_level == 1) num++;
-	if (art->el_info[ELEM_COLD].res_level == 1) num++;
+	if (art->el_info[ELEM_ACID].res_level == RES_BOOST_NORMAL) num++;
+	if (art->el_info[ELEM_ELEC].res_level == RES_BOOST_NORMAL) num++;
+	if (art->el_info[ELEM_FIRE].res_level == RES_BOOST_NORMAL) num++;
+	if (art->el_info[ELEM_COLD].res_level == RES_BOOST_NORMAL) num++;
 
 	if (num) {
 		/* Shields treated separately */
@@ -813,18 +813,18 @@ void count_high_resists(const struct artifact *art,
 	 * generic frequencies - this number just tracks the total. */
 	if (art->tval == TV_SOFT_ARMOR || art->tval == TV_HARD_ARMOR ||
 		art->tval == TV_DRAG_ARMOR) {
-		if (art->el_info[ELEM_POIS].res_level == 1) num++;
+		if (art->el_info[ELEM_POIS].res_level == RES_BOOST_NORMAL) num++;
 		if (of_has(art->flags, OF_PROT_FEAR)) num++;
-		if (art->el_info[ELEM_LIGHT].res_level == 1) num++;
-		if (art->el_info[ELEM_DARK].res_level == 1) num++;
+		if (art->el_info[ELEM_LIGHT].res_level == RES_BOOST_NORMAL) num++;
+		if (art->el_info[ELEM_DARK].res_level == RES_BOOST_NORMAL) num++;
 		if (of_has(art->flags, OF_PROT_BLIND)) num++;
 		if (of_has(art->flags, OF_PROT_CONF)) num++;
-		if (art->el_info[ELEM_SOUND].res_level == 1) num++;
-		if (art->el_info[ELEM_SHARD].res_level == 1) num++;
-		if (art->el_info[ELEM_NEXUS].res_level == 1) num++;
-		if (art->el_info[ELEM_NETHER].res_level == 1) num++;
-		if (art->el_info[ELEM_CHAOS].res_level == 1) num++;
-		if (art->el_info[ELEM_DISEN].res_level == 1) num++;
+		if (art->el_info[ELEM_SOUND].res_level == RES_BOOST_NORMAL) num++;
+		if (art->el_info[ELEM_SHARD].res_level == RES_BOOST_NORMAL) num++;
+		if (art->el_info[ELEM_NEXUS].res_level == RES_BOOST_NORMAL) num++;
+		if (art->el_info[ELEM_NETHER].res_level == RES_BOOST_NORMAL) num++;
+		if (art->el_info[ELEM_CHAOS].res_level == RES_BOOST_NORMAL) num++;
+		if (art->el_info[ELEM_DISEN].res_level == RES_BOOST_NORMAL) num++;
 		if (of_has(art->flags, OF_PROT_STUN)) num++;
 		file_putf(log_file, "Adding %d for high resists on body armor.\n",
 				  num);
@@ -832,7 +832,7 @@ void count_high_resists(const struct artifact *art,
 	}
 
 	/* Now do the high resists individually */
-	if (art->el_info[ELEM_POIS].res_level == 1) {
+	if (art->el_info[ELEM_POIS].res_level == RES_BOOST_NORMAL) {
 		/* Resist poison ability */
 		file_putf(log_file, "Adding 1 for resist poison - general.\n");
 
@@ -845,13 +845,13 @@ void count_high_resists(const struct artifact *art,
 		(data->art_probs[ART_IDX_GEN_RFEAR])++;
 	}
 
-	if (art->el_info[ELEM_LIGHT].res_level == 1) {
+	if (art->el_info[ELEM_LIGHT].res_level == RES_BOOST_NORMAL) {
 		/* Resist light ability */
 		file_putf(log_file, "Adding 1 for resist light - general.\n");
 		(data->art_probs[ART_IDX_GEN_RLIGHT])++;
 	}
 
-	if (art->el_info[ELEM_DARK].res_level == 1) {
+	if (art->el_info[ELEM_DARK].res_level == RES_BOOST_NORMAL) {
 		/* Resist dark ability */
 		file_putf(log_file, "Adding 1 for resist dark - general.\n");
 		(data->art_probs[ART_IDX_GEN_RDARK])++;
@@ -875,37 +875,37 @@ void count_high_resists(const struct artifact *art,
 		(data->art_probs[ART_IDX_GEN_RCONF])++;
 	}
 
-	if (art->el_info[ELEM_SOUND].res_level == 1) {
+	if (art->el_info[ELEM_SOUND].res_level == RES_BOOST_NORMAL) {
 		/* Resist sound ability */
 		file_putf(log_file, "Adding 1 for resist sound - general.\n");
 		(data->art_probs[ART_IDX_GEN_RSOUND])++;
 	}
 
-	if (art->el_info[ELEM_SHARD].res_level == 1) {
+	if (art->el_info[ELEM_SHARD].res_level == RES_BOOST_NORMAL) {
 		/* Resist shards ability */
 		file_putf(log_file, "Adding 1 for resist shards - general.\n");
 		(data->art_probs[ART_IDX_GEN_RSHARD])++;
 	}
 
-	if (art->el_info[ELEM_NEXUS].res_level == 1) {
+	if (art->el_info[ELEM_NEXUS].res_level == RES_BOOST_NORMAL) {
 		/* Resist nexus ability */
 		file_putf(log_file, "Adding 1 for resist nexus - general.\n");
 		(data->art_probs[ART_IDX_GEN_RNEXUS])++;
 	}
 
-	if (art->el_info[ELEM_NETHER].res_level == 1) {
+	if (art->el_info[ELEM_NETHER].res_level == RES_BOOST_NORMAL) {
 		/* Resist nether ability */
 		file_putf(log_file, "Adding 1 for resist nether - general.\n");
 		(data->art_probs[ART_IDX_GEN_RNETHER])++;
 	}
 
-	if (art->el_info[ELEM_CHAOS].res_level == 1) {
+	if (art->el_info[ELEM_CHAOS].res_level == RES_BOOST_NORMAL) {
 		/* Resist chaos ability */
 		file_putf(log_file, "Adding 1 for resist chaos - general.\n");
 		(data->art_probs[ART_IDX_GEN_RCHAOS])++;
 	}
 
-	if (art->el_info[ELEM_DISEN].res_level == 1) {
+	if (art->el_info[ELEM_DISEN].res_level == RES_BOOST_NORMAL) {
 		/* Resist disenchantment ability */
 		file_putf(log_file, "Adding 1 for resist disenchantment - general.\n");
 		(data->art_probs[ART_IDX_GEN_RDISEN])++;
@@ -1689,10 +1689,10 @@ static bool add_flag(struct artifact *art, int flag)
  */
 static bool add_resist(struct artifact *art, int element)
 {
-	if (art->el_info[element].res_level > 0)
+	if (art->el_info[element].res_level < RES_LEVEL_BASE)
 		return false;
 
-	art->el_info[element].res_level = 1;
+	art->el_info[element].res_level = RES_BOOST_NORMAL;
 	file_putf(log_file, "Adding resistance to %s\n", projections[element].name);
 
 	return true;
@@ -1704,7 +1704,7 @@ static bool add_resist(struct artifact *art, int element)
 static void add_immunity(struct artifact *art)
 {
 	int r = randint0(4);
-	art->el_info[r].res_level = 3;
+	art->el_info[r].res_level = RES_LEVEL_MAX;
 	file_putf(log_file, "Adding immunity to %s\n", projections[r].name);
 }
 
@@ -1810,7 +1810,7 @@ static void add_low_resist(struct artifact *art)
 	size_t r, i, count = 0;
 
 	for (i = ELEM_BASE_MIN; i < ELEM_HIGH_MIN; i++)
-		if (art->el_info[i].res_level <= 0)
+		if (art->el_info[i].res_level >= RES_LEVEL_BASE)
 			count++;
 
 	if (!count) return;
@@ -1819,7 +1819,7 @@ static void add_low_resist(struct artifact *art)
 	count = 0;
 
 	for (i = ELEM_BASE_MIN; i < ELEM_HIGH_MIN; i++) {
-		if (art->el_info[i].res_level > 0) continue;
+		if (art->el_info[i].res_level < RES_LEVEL_BASE) continue;
 		if (r == count++) {
 			add_resist(art, i);
 			return;
@@ -1900,7 +1900,7 @@ static void add_brand(struct artifact *art)
 		size_t i;
 		for (i = ELEM_BASE_MIN; i < ELEM_HIGH_MIN; i++) {
 			if (streq(brand->name, projections[i].name) &&
-				(art->el_info[i].res_level <= 0)) {
+				(art->el_info[i].res_level >= RES_LEVEL_BASE)) {
 				add_resist(art, i);
 			}
 		}

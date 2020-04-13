@@ -496,30 +496,30 @@ static void get_obj_data(const struct object *obj, int y, int x, bool mon,
 		first_find(ST_FF_SI);
 	}
 	/* has at least one basic resist */
- 	if ((obj->el_info[ELEM_ACID].res_level == 1) ||
-		(obj->el_info[ELEM_ELEC].res_level == 1) ||
-		(obj->el_info[ELEM_COLD].res_level == 1) ||
-		(obj->el_info[ELEM_FIRE].res_level == 1)){
+ 	if ((obj->el_info[ELEM_ACID].res_level == RES_BOOST_NORMAL) ||
+		(obj->el_info[ELEM_ELEC].res_level == RES_BOOST_NORMAL) ||
+		(obj->el_info[ELEM_COLD].res_level == RES_BOOST_NORMAL) ||
+		(obj->el_info[ELEM_FIRE].res_level == RES_BOOST_NORMAL)) {
 
 			add_stats(ST_RESIST_EQUIPMENT, vault, mon, number);
 	}
 
 	/* has rbase */
-	if ((obj->el_info[ELEM_ACID].res_level == 1) &&
-		(obj->el_info[ELEM_ELEC].res_level == 1) &&
-		(obj->el_info[ELEM_COLD].res_level == 1) &&
-		(obj->el_info[ELEM_FIRE].res_level == 1))
+	if ((obj->el_info[ELEM_ACID].res_level == RES_BOOST_NORMAL) &&
+		(obj->el_info[ELEM_ELEC].res_level == RES_BOOST_NORMAL) &&
+		(obj->el_info[ELEM_COLD].res_level == RES_BOOST_NORMAL) &&
+		(obj->el_info[ELEM_FIRE].res_level == RES_BOOST_NORMAL))
 		add_stats(ST_RBASE_EQUIPMENT, vault, mon, number);
 
 	/* has resist poison */
-	if (obj->el_info[ELEM_POIS].res_level == 1){
+	if (obj->el_info[ELEM_POIS].res_level == RES_BOOST_NORMAL) {
 
 		add_stats(ST_RPOIS_EQUIPMENT, vault, mon, number);
 		first_find(ST_FF_RPOIS);
 		
 	}
 	/* has resist nexus */
-	if (obj->el_info[ELEM_NEXUS].res_level == 1){
+	if (obj->el_info[ELEM_NEXUS].res_level == RES_BOOST_NORMAL) {
 
 		add_stats(ST_RNEXUS_EQUIPMENT, vault, mon, number);
 		first_find(ST_FF_RNEXUS);

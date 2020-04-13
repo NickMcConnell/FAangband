@@ -91,9 +91,9 @@ static struct element_set {
 	int count;
 	const char *desc;
 } element_sets[] = {
-	{ T_LRES, 3, 6, INHIBIT_POWER, 4,    0,     "immunities" },
-	{ T_LRES, 1, 1, 10,            4,    0,     "low resists" },
-	{ T_HRES, 1, 2, 10,            9,    0,     "high resists" },
+	{ T_LRES, RES_LEVEL_MAX, 6, INHIBIT_POWER, 4,    0,     "immunities" },
+	{ T_LRES, RES_BOOST_NORMAL, 1, 10,            4,    0,     "low resists" },
+	{ T_HRES, RES_BOOST_NORMAL, 2, 10,            9,    0,     "high resists" },
 };
 
 /**
@@ -643,24 +643,24 @@ static int element_power(const struct object *obj, int p)
 			}
 		}
 
-		if (obj->el_info[i].res_level == -1) {
+		if (obj->el_info[i].res_level > RES_LEVEL_BASE) {
 			if (el_powers[i].vuln_power != 0) {
 				q = (el_powers[i].vuln_power);
 				p += q;
 				log_obj(format("Add %d power for vulnerability to %s, total is %d\n", q, el_powers[i].name, p));
 			}
-		} else if (obj->el_info[i].res_level == 1) {
-			if (el_powers[i].res_power != 0) {
-				q = (el_powers[i].res_power);
-				p += q;
-				log_obj(format("Add %d power for resistance to %s, total is %d\n", q, el_powers[i].name, p));
-			}
-		} else if (obj->el_info[i].res_level == 3) {
+		} else if (obj->el_info[i].res_level == RES_LEVEL_MAX) {
 			if (el_powers[i].im_power != 0) {
 				q = (el_powers[i].im_power + el_powers[i].res_power);
 				p += q;
 				log_obj(format("Add %d power for immunity to %s, total is %d\n",
 							   q, el_powers[i].name, p));
+			}
+		} else if (obj->el_info[i].res_level < RES_LEVEL_BASE) {
+			if (el_powers[i].res_power != 0) {
+				q = (el_powers[i].res_power);
+				p += q;
+				log_obj(format("Add %d power for resistance to %s, total is %d\n", q, el_powers[i].name, p));
 			}
 		}
 

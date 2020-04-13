@@ -128,7 +128,7 @@ alloc:2:50 to 127
 attack:1d1:0:0
 armor:0:0
 flags:SEE_INVIS | HOLD_LIFE | NO_FUEL
-values:LIGHT[3] | RES_LIGHT[1] | RES_DARK[1]
+values:LIGHT[3] | RES_LIGHT[40] | RES_DARK[40]
 act:CLAIRVOYANCE
 time:50+d50
 desc:A great globe seemingly filled with moonlight, the famed Heart of the
@@ -152,7 +152,7 @@ desc: sparks of white radiance shot with glints of the rainbow.
 #act:CLAIRVOYANCE
 #time:50+d50
 #msg:The {kind} glow{s} a deep green...
-#values:INT[2] | WIS[2] | INFRA[3] |  SEARCH[3] | LIGHT[3] | RES_CHAOS[1]
+#values:INT[2] | WIS[2] | INFRA[3] |  SEARCH[3] | LIGHT[3] | RES_CHAOS[40]
 #desc:A great globe with a heart of fire, the Palantír provides the wearer with 
 #desc:sight of far places - at a cost, for those espied upon are aware of it.
 
@@ -168,7 +168,7 @@ alloc:2:60 to 100
 attack:2d7:18:16
 armor:0:5
 flags:FREE_ACT | SUST_DEX
-values:DEX[4] | RES_ACID[1] | RES_DARK[1]
+values:DEX[4] | RES_ACID[40] | RES_DARK[40]
 brand:ACID_3
 slay:EVIL_2
 slay:TROLL_3
@@ -185,7 +185,7 @@ cost:12000
 alloc:40:1 to 50
 attack:1d4:9:12
 armor:0:10
-values:RES_FIRE[1]
+values:RES_FIRE[40]
 brand:FIRE_3
 act:FIRE_BOLT
 time:8+d8
@@ -199,7 +199,7 @@ cost:11000
 alloc:40:1 to 50
 attack:1d4:9:12
 armor:0:10
-values:RES_COLD[1]
+values:RES_COLD[40]
 brand:COLD_3
 act:COLD_BOLT
 time:7+d8
@@ -213,7 +213,7 @@ cost:13000
 alloc:40:1 to 50
 attack:1d4:9:12
 armor:0:10
-values:RES_ELEC[1]
+values:RES_ELEC[40]
 brand:ELEC_3
 act:ELEC_BOLT
 time:6+d6
@@ -227,7 +227,7 @@ cost:15000
 alloc:5:5 to 75
 attack:2d4:14:13
 armor:0:0
-values:RES_POIS[1] | RES_DISEN[1]
+values:RES_POIS[40] | RES_DISEN[40]
 slay:ORC_3
 slay:TROLL_3
 brand:POIS_3
@@ -245,7 +245,7 @@ alloc:2:10 to 80
 attack:3d4:16:14
 armor:0:0
 flags:SEE_INVIS | SLOW_DIGEST | REGEN
-values:DEX[2] | RES_COLD[1]
+values:DEX[2] | RES_COLD[40]
 brand:COLD_3
 act:COLD_BALL50
 time:5+d5
@@ -261,7 +261,7 @@ alloc:3:18 to 100
 attack:2d5:12:14
 armor:0:0
 flags:PROT_FEAR
-values:RES_FIRE[3] | RES_ACID[1]
+values:RES_FIRE[100] | RES_ACID[40]
 slay:DRAGON_5
 desc:Azaghâl, Dwarf-king of Belegost, fell before Glaurung in the Battle
 desc: of Unnumbered Tears.  With his final breath, Azaghâl plunged this
@@ -293,7 +293,7 @@ cost:15000
 alloc:38:5 to 50
 attack:1d12:12:19
 armor:0:0
-values:LIGHT[1] | RES_COLD[1] | RES_LIGHT[1]
+values:LIGHT[1] | RES_COLD[40] | RES_LIGHT[40]
 brand:COLD_3
 slay:ANIMAL_2
 desc:A slender, tapered needle of ice that coldly grips its impaled prey.
@@ -324,7 +324,7 @@ alloc:6:20 to 100
 attack:1d7:7:8
 armor:0:0
 flags:PROT_FEAR | FREE_ACT | SEE_INVIS
-values:SPEED[3] | BLOWS[2] | STR[1] | DEX[1] | CON[1] | LIGHT[1] | RES_LIGHT[1]
+values:SPEED[3] | BLOWS[2] | STR[1] | DEX[1] | CON[1] | LIGHT[1] | RES_LIGHT[40]
 slay:EVIL_2
 slay:UNDEAD_3
 slay:ORC_3
@@ -359,7 +359,7 @@ attack:1d8:10:11
 armor:0:50
 flags:FEATHER | SEE_INVIS | REGEN | FREE_ACT
 values:DEX[4] | STEALTH[2]
-values:RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1]
+values:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40]
 desc:Famed sea-defender of Lebennin.  A short, slightly curved chopping blade
 desc: with a perfect edge shining cleanly in the sun, an object of hate to the
 desc: men of Umbar who met it in combat.
@@ -389,7 +389,7 @@ alloc:1:20 to 127
 attack:4d5:22:25
 armor:0:0
 flags:PROT_FEAR | BLESSED | FREE_ACT | SEE_INVIS | SLOW_DIGEST | REGEN
-values:SPEED[10] | LIGHT[1] | RES_COLD[1] | RES_LIGHT[1]
+values:SPEED[10] | LIGHT[1] | RES_COLD[40] | RES_LIGHT[40]
 brand:COLD_3
 slay:EVIL_2
 slay:UNDEAD_3
@@ -411,7 +411,7 @@ alloc:3:20 to 127
 attack:3d5:10:15
 armor:0:10
 flags:PROT_FEAR | FREE_ACT | BLESSED | SUST_STR | SUST_DEX | SEE_INVIS
-values:STR[4] | DEX[4] | RES_FIRE[1] | RES_DISEN[1]
+values:STR[4] | DEX[4] | RES_FIRE[40] | RES_DISEN[40]
 brand:FIRE_3
 slay:EVIL_2
 slay:TROLL_3
@@ -433,7 +433,7 @@ attack:2d5:10:12
 armor:0:0
 flags:AGGRAVATE | FREE_ACT | SEE_INVIS
 values:SPEED[3] | STR[2] | CON[2] | BLOWS[1] | LIGHT[1] | 
-values:RES_ELEC[1] | RES_LIGHT[1] | RES_DARK[1]
+values:RES_ELEC[40] | RES_LIGHT[40] | RES_DARK[40]
 brand:POIS_3
 slay:EVIL_2
 slay:DEMON_3
@@ -465,7 +465,7 @@ alloc:2:20 to 100
 attack:3d5:20:12
 armor:0:0
 flags:FREE_ACT | FEATHER | SLOW_DIGEST
-values:DEX[4] | RES_COLD[1]
+values:DEX[4] | RES_COLD[40]
 slay:DEMON_3
 slay:ORC_3
 act:COLD_BOLT2
@@ -483,7 +483,7 @@ alloc:5:20 to 80
 attack:2d5:10:15
 armor:0:0
 flags:BLESSED | SLOW_DIGEST
-values:SEARCH[1] | LIGHT[1] | RES_FIRE[1] | RES_LIGHT[1]
+values:SEARCH[1] | LIGHT[1] | RES_FIRE[40] | RES_LIGHT[40]
 brand:FIRE_3
 slay:ORC_3
 slay:DEMON_3
@@ -500,7 +500,7 @@ alloc:3:20 to 100
 attack:2d5:12:16
 armor:0:0
 flags:BLESSED | PROT_BLIND | SLOW_DIGEST
-values:SEARCH[1] | LIGHT[1] | RES_ELEC[1]
+values:SEARCH[1] | LIGHT[1] | RES_ELEC[40]
 brand:ELEC_3
 slay:ORC_3
 slay:TROLL_3
@@ -518,7 +518,7 @@ alloc:5:20 to 80
 attack:2d5:10:15
 armor:0:0
 flags:BLESSED | SLOW_DIGEST
-values:SEARCH[1] | LIGHT[1] | RES_COLD[1] | RES_DARK[1]
+values:SEARCH[1] | LIGHT[1] | RES_COLD[40] | RES_DARK[40]
 brand:COLD_3
 slay:EVIL_2
 slay:ORC_3
@@ -536,7 +536,7 @@ attack:3d7:0:20
 armor:0:0
 # F:DRAIN_HP | 
 flags:AGGRAVATE
-values:CON[5] | RES_DISEN[1]
+values:CON[5] | RES_DISEN[40]
 slay:DRAGON_5
 slay:EVIL_2
 slay:DEMON_3
@@ -555,7 +555,7 @@ alloc:3:30 to 127
 attack:4d4:12:16
 armor:0:0
 flags:PROT_FEAR
-values:STR[4] | STEALTH[2] | RES_NETHER[1] | RES_DARK[1] | RES_COLD[1]
+values:STR[4] | STEALTH[2] | RES_NETHER[40] | RES_DARK[40] | RES_COLD[40]
 slay:EVIL_2
 slay:UNDEAD_5
 slay:GIANT_3
@@ -587,7 +587,7 @@ alloc:3:30 to 100
 attack:3d6:13:17
 armor:0:0
 flags:FREE_ACT | SLOW_DIGEST | REGEN
-values:STR[2] | RES_FIRE[1] | RES_POIS[1]
+values:STR[2] | RES_FIRE[40] | RES_POIS[40]
 brand:POIS_3
 brand:FIRE_3
 slay:DRAGON_5
@@ -605,7 +605,7 @@ attack:3d8:19:21
 armor:0:0
 # F:DRAIN_MANA | 
 flags:FREE_ACT | SEE_INVIS | AGGRAVATE
-values:STR[4] | INFRA[2] | RES_FIRE[1] | RES_CHAOS[1]
+values:STR[4] | INFRA[2] | RES_FIRE[40] | RES_CHAOS[40]
 brand:FIRE_3
 slay:DRAGON_5
 slay:ANIMAL_2
@@ -666,7 +666,7 @@ attack:4d7:18:28
 armor:0:-50
 # F:DRAIN_HP | 
 flags:FREE_ACT | SEE_INVIS | TELEPATHY | AGGRAVATE
-values:RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1] | RES_CHAOS[1]
+values:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40] | RES_CHAOS[40]
 brand:COLD_3
 slay:ANIMAL_2
 slay:DRAGON_5
@@ -693,7 +693,7 @@ flags:AGGRAVATE
 act:FIRE_BALL
 time:15
 values:STR[3] | INT[-3] | DEX[-3] | WIS[-3] | LIGHT[1]
-values:RES_FIRE[3] | RES_ELEC[1] | RES_DARK[1]
+values:RES_FIRE[100] | RES_ELEC[40] | RES_DARK[40]
 brand:FIRE_3
 slay:ANIMAL_2
 slay:DRAGON_5
@@ -711,7 +711,7 @@ alloc:2:65 to 127
 attack:4d4:13:17
 armor:0:10
 flags:HOLD_LIFE
-values:STR[4] | WIS[4] | LIGHT[1] | RES_FIRE[1] | RES_ELEC[1] | RES_NETHER[1]
+values:STR[4] | WIS[4] | LIGHT[1] | RES_FIRE[40] | RES_ELEC[40] | RES_NETHER[40]
 slay:EVIL_2
 slay:UNDEAD_3
 act:DISPEL_EVIL
@@ -728,7 +728,7 @@ alloc:3:20 to 75
 attack:2d6:8:22
 armor:0:0
 flags:SEE_INVIS
-values:STR[4] | RES_NEXUS[1]
+values:STR[4] | RES_NEXUS[40]
 brand:POIS_3
 slay:ANIMAL_2
 slay:TROLL_3
@@ -744,7 +744,7 @@ cost:35000
 alloc:7:20 to 100
 attack:2d6:15:17
 armor:0:2
-values:RES_FIRE[3]
+values:RES_FIRE[100]
 brand:FIRE_3
 act:FIRE_BOLT72
 time:20
@@ -762,7 +762,7 @@ armor:0:0
 flags:PROT_CONF
 act:CONFUSE2
 time:15
-values:STEALTH[2] | SPEED[2] | RES_FIRE[1]
+values:STEALTH[2] | SPEED[2] | RES_FIRE[40]
 brand:FIRE_3
 slay:EVIL_2
 desc:A flail whose head befuddles those who stare as you whirl it round and
@@ -777,7 +777,7 @@ alloc:3:45 to 127
 attack:3d9:5:18
 armor:0:0
 flags:PROT_FEAR | 
-values:STR[4] | CON[3] | RES_ELEC[1] | RES_FIRE[1] | RES_DARK[1]
+values:STR[4] | CON[3] | RES_ELEC[40] | RES_FIRE[40] | RES_DARK[40]
 brand:ELEC_3
 brand:FIRE_3
 slay:ANIMAL_2
@@ -795,7 +795,7 @@ cost:50000
 alloc:7:20 to 100
 attack:3d6:12:12
 armor:0:0
-values:RES_ELEC[3]
+values:RES_ELEC[100]
 brand:ELEC_3
 slay:DRAGON_5
 act:HASTE1
@@ -812,7 +812,7 @@ cost:70000
 alloc:5:20 to 80
 attack:1d9:10:20
 armor:0:0
-values:INT[4] | RES_FIRE[1] | RES_POIS[1]
+values:INT[4] | RES_FIRE[40] | RES_POIS[40]
 brand:FIRE_3
 slay:ANIMAL_2
 desc:Named for a fiery star and set with priceless gems bearing mystic
@@ -827,7 +827,7 @@ alloc:5:20 to 100
 attack:1d9:13:15
 armor:0:0
 flags:SEE_INVIS
-values:INT[4] | WIS[4] | LIGHT[1] | RES_LIGHT[1]
+values:INT[4] | WIS[4] | LIGHT[1] | RES_LIGHT[40]
 slay:EVIL_2
 act:DETECT_OBJECTS
 time:50+d50
@@ -843,7 +843,7 @@ alloc:1:30 to 100
 attack:2d9:10:13
 armor:0:0
 flags:HOLD_LIFE | SEE_INVIS
-values:INT[4] | WIS[4] | RES_FIRE[1] | RES_NETHER[1]
+values:INT[4] | WIS[4] | RES_FIRE[40] | RES_NETHER[40]
 brand:FIRE_3
 slay:DEMON_5
 slay:EVIL_2
@@ -867,7 +867,7 @@ armor:0:5
 # F:DRAIN_MANA | 
 flags:PROT_FEAR | FREE_ACT | SEE_INVIS
 values:TUNNEL[8] | WIS[4]
-values:RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1] | RES_NEXUS[1]
+values:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40] | RES_NEXUS[40]
 brand:ACID_3
 slay:DRAGON_5
 slay:EVIL_2
@@ -888,7 +888,7 @@ armor:0:0
 # F:DRAIN_MANA | 
 flags:AGGRAVATE
 values:STR[6] | TUNNEL[4]
-values:RES_FIRE[3] | RES_DARK[1] | RES_CHAOS[1] | RES_DISEN[1]
+values:RES_FIRE[100] | RES_DARK[40] | RES_CHAOS[40] | RES_DISEN[40]
 brand:FIRE_3
 slay:DRAGON_3
 slay:ANIMAL_2
@@ -912,7 +912,7 @@ alloc:2:15 to 100
 attack:3d6:15:25
 armor:0:5
 flags:PROT_FEAR | FREE_ACT | SLOW_DIGEST | BLESSED
-values:DEX[4] | WIS[2] | RES_COLD[1]
+values:DEX[4] | WIS[2] | RES_COLD[40]
 brand:COLD_3
 slay:EVIL_2
 slay:TROLL_3
@@ -933,7 +933,7 @@ attack:4d6:15:15
 armor:0:0
 # F:DRAIN_MANA | 
 flags:FEATHER | SEE_INVIS | BLESSED | 
-values:INT[4] | SPEED[4] | INFRA[4] | LIGHT[1] | RES_FIRE[1] | RES_LIGHT[1]
+values:INT[4] | SPEED[4] | INFRA[4] | LIGHT[1] | RES_FIRE[40] | RES_LIGHT[40]
 brand:FIRE_3
 slay:GIANT_3
 slay:ANIMAL_2
@@ -951,7 +951,7 @@ alloc:8:15 to 65
 attack:1d7:11:13
 armor:0:0
 flags:BLESSED | SEE_INVIS
-values:STEALTH[3] | SPEED[3] | RES_COLD[1]
+values:STEALTH[3] | SPEED[3] | RES_COLD[40]
 brand:COLD_3
 slay:UNDEAD_3
 desc:A thin spike of thrice-forged steel caps a straight silvan shaft cut from
@@ -969,7 +969,7 @@ attack:4d6:-12:20
 armor:0:0 
 # F:DRAIN_MANA | DRAIN_HP | 
 flags:DRAIN_EXP | AGGRAVATE | PROT_BLIND
-values:STEALTH[-4] | WIS[-4] | RES_DARK[1] | RES_LIGHT[1] | RES_NETHER[1]
+values:STEALTH[-4] | WIS[-4] | RES_DARK[40] | RES_LIGHT[40] | RES_NETHER[40]
 brand:POIS_3
 desc:A mighty, heavy black spear, once wielded by the Lord of Darkness
 desc: himself as he came to Valinor in wrath.  Its envenomed bite pierced
@@ -984,7 +984,7 @@ alloc:3:15 to 100
 attack:3d10:16:18
 armor:0:0 
 flags:SEE_INVIS | BLESSED | 
-values:STR[2] | DEX[2] | RES_LIGHT[1] | RES_DARK[1]
+values:STR[2] | DEX[2] | RES_LIGHT[40] | RES_DARK[40]
 brand:POIS_3
 slay:EVIL_2
 slay:UNDEAD_5
@@ -1001,7 +1001,7 @@ alloc:1:30 to 127
 attack:4d10:15:19
 armor:0:0
 flags:FREE_ACT | HOLD_LIFE | SEE_INVIS | SLOW_DIGEST | REGEN | BLESSED
-values:DEX[4] | RES_ACID[3] | RES_NETHER[1]
+values:DEX[4] | RES_ACID[100] | RES_NETHER[40]
 slay:DRAGON_3
 slay:ANIMAL_2
 act:TELE_OTHER
@@ -1019,7 +1019,7 @@ alloc:12:25 to 80
 attack:3d7:16:12
 armor:0:0
 flags:BLESSED | FEATHER | SEE_INVIS
-values:STR[3] | WIS[3] | RES_FIRE[1] | RES_SOUND[1]
+values:STR[3] | WIS[3] | RES_FIRE[40] | RES_SOUND[40]
 brand:FIRE_3
 slay:UNDEAD_3
 slay:GIANT_3
@@ -1035,7 +1035,7 @@ alloc:7:20 to 80
 attack:1d15:10:12
 armor:0:10
 flags:SUST_INT | SLOW_DIGEST
-values:STR[3] | INT[3] | SPEED[2] | RES_FIRE[1] | RES_COLD[1]
+values:STR[3] | INT[3] | SPEED[2] | RES_FIRE[40] | RES_COLD[40]
 brand:FIRE_3
 brand:COLD_3
 slay:DEMON_3
@@ -1071,7 +1071,7 @@ armor:0:0
 # F:DRAIN_MANA | 
 act:BERSERKER
 time:80+d80
-values:STR[2] | CON[2] | LIGHT[1] | RES_ACID[1] | RES_DARK[1] | RES_FIRE[1]
+values:STR[2] | CON[2] | LIGHT[1] | RES_ACID[40] | RES_DARK[40] | RES_FIRE[40]
 brand:ACID_3
 slay:DRAGON_3
 slay:TROLL_3
@@ -1109,8 +1109,8 @@ alloc:7:30 to 100
 attack:3d8:8:11
 armor:0:5
 flags:FREE_ACT | PROT_BLIND | FEATHER | SEE_INVIS | REGEN
-values:STR[3] | CON[3] | STEALTH[1] | RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1]
-values:RES_COLD[1]
+values:STR[3] | CON[3] | STEALTH[1] | RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40]
+values:RES_COLD[40]
 slay:DEMON_3
 slay:TROLL_3
 slay:ORC_3
@@ -1127,7 +1127,7 @@ attack:2d8:14:13
 armor:0:0
 act:CURE_SERIOUS
 time:3+d3
-values:STR[3] | DEX[3] | BLOWS[1] | RES_DISEN[1]
+values:STR[3] | DEX[3] | BLOWS[1] | RES_DISEN[40]
 slay:TROLL_3
 slay:ORC_3
 desc:A superbly crafted double-bladed axe once borne by Ceruthain, commander
@@ -1141,7 +1141,7 @@ cost:30000
 alloc:12:30 to 100
 attack:3d10:12:17
 armor:0:0
-values:RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1]
+values:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40]
 slay:EVIL_2
 slay:ANIMAL_2
 slay:DEMON_3
@@ -1159,7 +1159,7 @@ attack:4d4:10:20
 armor:0:15
 flags:FREE_ACT | PROT_FEAR
 values:TUNNEL[5] | STR[3] | CON[3] | STEALTH[-1]
-values:RES_ACID[1] | RES_FIRE[1] | RES_LIGHT[1] | RES_DARK[1] | RES_CHAOS[1]
+values:RES_ACID[40] | RES_FIRE[40] | RES_LIGHT[40] | RES_DARK[40] | RES_CHAOS[40]
 brand:ACID_3
 brand:FIRE_3
 slay:DRAGON_5
@@ -1179,7 +1179,7 @@ alloc:1:40 to 127
 attack:5d4:15:18
 armor:0:8
 flags:PROT_FEAR | FREE_ACT | SEE_INVIS | BLESSED
-values:STR[2] | INT[2] | WIS[2] | DEX[2] | CON[2] | RES_COLD[3]
+values:STR[2] | INT[2] | WIS[2] | DEX[2] | CON[2] | RES_COLD[100]
 brand:COLD_3
 slay:EVIL_2
 slay:UNDEAD_3
@@ -1202,7 +1202,7 @@ armor:0:30
 flags:FREE_ACT | SEE_INVIS
 act:RECALL
 time:200
-values:DEX[3] | SPEED[3] | LIGHT[1] | RES_FIRE[1] | RES_COLD[1] | RES_LIGHT[1]
+values:DEX[3] | SPEED[3] | LIGHT[1] | RES_FIRE[40] | RES_COLD[40] | RES_LIGHT[40]
 brand:FIRE_3
 brand:COLD_3
 desc:Holding elemental powers whose struggles turn this weapon red and purest
@@ -1249,7 +1249,7 @@ armor:0:8
 flags:BLESSED | REGEN
 act:DRAIN_LIFE1
 time:40
-values:WIS[4] | INFRA[4] | LIGHT[1] | RES_COLD[3] | RES_LIGHT[1]
+values:WIS[4] | INFRA[4] | LIGHT[1] | RES_COLD[100] | RES_LIGHT[40]
 brand:COLD_3
 slay:ORC_3
 desc:Once wielded by the High Priest of Meneltarma, this great mace gleams
@@ -1268,7 +1268,7 @@ alloc:10:30 to 100
 attack:0d0:12:15
 armor:0:0
 flags:REGEN
-values:STR[2] | CON[2] | MIGHT[2] | RES_FIRE[1] | RES_ELEC[1] | RES_COLD[1]
+values:STR[2] | CON[2] | MIGHT[2] | RES_FIRE[40] | RES_ELEC[40] | RES_COLD[40]
 desc:One of a pair of hunting bows once belonging to Fëanor's two youngest
 desc: sons.  The bows are like and yet unlike, much as the twin brothers were.
 
@@ -1282,7 +1282,7 @@ attack:0d0:12:15
 armor:0:0
 flags:SLOW_DIGEST
 values:INT[2] | WIS[2] | DEX[2] | SHOTS[5] | MIGHT[1] | SPEED[1]
-values:RES_FIRE[1] | RES_ELEC[1] | RES_COLD[1]
+values:RES_FIRE[40] | RES_ELEC[40] | RES_COLD[40]
 desc:One of a pair of hunting bows once belonging to Fëanor's two youngest
 desc: sons.  The bows are like and yet unlike, much as the twin brothers were.
 
@@ -1294,7 +1294,7 @@ cost:35000
 alloc:5:40 to 127
 attack:0d0:20:22
 armor:0:0
-values:DEX[3] | SPEED[1] | STEALTH[1] | SHOTS[10] | RES_DISEN[1]
+values:DEX[3] | SPEED[1] | STEALTH[1] | SHOTS[10] | RES_DISEN[40]
 desc:The great bow of Beleg Cúthalion, the most famous archer of the Elves. 
 desc: Its backbone of black yew holds strings of bear sinew, and of old, only
 desc: Beleg himself could draw them.
@@ -1320,7 +1320,7 @@ cost:50000
 alloc:4:50 to 127
 attack:0d0:10:14
 armor:0:0
-values:SPEED[10] | RES_FIRE[1]
+values:SPEED[10] | RES_FIRE[40]
 brand:FIRE_3
 desc:A crossbow that grants fiery speed to its finder, and imbues its bolts
 desc: with flame unquenchable.
@@ -1336,7 +1336,7 @@ armor:0:0
 flags:AGGRAVATE | PROT_BLIND
 act:ARROW
 time:20+d20
-values:MIGHT[2] | STR[1] | CON[1] | RES_LIGHT[1] | RES_DARK[1] | RES_ELEC[1]
+values:MIGHT[2] | STR[1] | CON[1] | RES_LIGHT[40] | RES_DARK[40] | RES_ELEC[40]
 desc:A great brazen arbalest with arms of gleaming steel.  It shoots quarrels
 desc: with mighty power for those brave enough to risk betrayal.
 
@@ -1353,7 +1353,7 @@ attack:4d3:5:20
 armor:0:0
 flags:SUST_STR
 values:TUNNEL[5] | STR[3] | CON[3] | LIGHT[1]
-values:RES_CHAOS[1] | RES_LIGHT[1] | RES_DARK[1]
+values:RES_CHAOS[40] | RES_LIGHT[40] | RES_DARK[40]
 brand:ACID_3
 slay:ORC_3
 slay:TROLL_3
@@ -1371,7 +1371,7 @@ attack:2d8:12:18
 armor:0:0
 act:STONE_TO_MUD
 time:2
-values:TUNNEL[6] | SEARCH[4] | INFRA[4] | STR[4] | RES_DARK[1] | RES_DISEN[1]
+values:TUNNEL[6] | SEARCH[4] | INFRA[4] | STR[4] | RES_DARK[40] | RES_DISEN[40]
 slay:ORC_3
 slay:TROLL_3
 slay:GIANT_3
@@ -1392,7 +1392,7 @@ cost:300000
 alloc:1:40 to 127
 attack:1d1:0:0
 armor:2:20
-values:SPEED[15] | RES_NEXUS[1]
+values:SPEED[15] | RES_NEXUS[40]
 act:HASTE1
 time:200
 desc:This wondrous pair of leather boots once sped Fëanor, creator of the
@@ -1411,7 +1411,7 @@ attack:1d1:0:0
 armor:2:15
 flags:FREE_ACT
 flags:PROT_CONF | SUST_CON
-values:DEX[5] | SPEED[5] | RES_NETHER[1]
+values:DEX[5] | SPEED[5] | RES_NETHER[40]
 act:REM_FEAR_POIS
 time:5
 desc:A pair of high-laced shoes, bestowing extraordinary agility and proof
@@ -1442,7 +1442,7 @@ alloc:8:15 to 70
 attack:1d1:0:0
 armor:2:12
 flags:FREE_ACT | FEATHER
-values:INFRA[5] | STEALTH[3] | WIS[1] | RES_COLD[1]
+values:INFRA[5] | STEALTH[3] | WIS[1] | RES_COLD[40]
 desc:Made of brown leather, covered with scuff marks and dust, still these
 desc: boots possess the magic of Radagast, friend of birds and nature.
 
@@ -1467,7 +1467,7 @@ cost:40000
 alloc:3:60 to 127
 attack:1d1:0:0
 armor:8:24
-values:SPEED[6] | RES_ELEC[3] | RES_SOUND[1]
+values:SPEED[6] | RES_ELEC[100] | RES_SOUND[40]
 act:BERSERKER
 time:100
 desc:And they hewed off Gelmir's hands and feet, and his head last, within
@@ -1515,7 +1515,7 @@ alloc:8:55 to 100
 attack:1d1:0:0
 armor:3:18
 values:INT[2] | DEX[2] | SEARCH[3]
-values:RES_FIRE[1] | RES_ACID[1] | RES_DISEN[1] | RES_SHARD[1]
+values:RES_FIRE[40] | RES_ACID[40] | RES_DISEN[40] | RES_SHARD[40]
 desc:A metal cap forged by the greatest Noldorin smith of the Second Age,
 desc: this helm serves equally well in battle or at the forge, and its
 desc: enchantment will never be diminished.
@@ -1531,7 +1531,7 @@ armor:7:20
 flags:PROT_FEAR
 flags:SEE_INVIS | TELEPATHY
 values:STR[4] | CON[4] | DEX[2] | STEALTH[-1]
-values:RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1]
+values:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40]
 desc:The legendary Dragon-helm, forged by one of the legendary Dwarven smiths
 desc: of the First Age.  The visage of mighty Glaurung forms its crest, and the
 desc: mere sight of the helm, borne by Túrin Turambar, struck dread into the
@@ -1576,7 +1576,7 @@ attack:1d3:0:0
 armor:9:20
 flags:FREE_ACT
 values:STR[3] | DEX[3] | CON[3] | STEALTH[-2]
-values:RES_ACID[1] | RES_NEXUS[1] | RES_COLD[1] | RES_DARK[1]
+values:RES_ACID[40] | RES_NEXUS[40] | RES_COLD[40] | RES_DARK[40]
 desc:A great helm, as steady and as distinctive as the hero of the Westdike.
 desc:  Many long months was Helm Hammerhand besieged in the Hornburg, yet he
 desc: strode out time and again among his foes and slew many.  Although they
@@ -1607,7 +1607,7 @@ armor:0:15
 flags:PROT_BLIND | PROT_CONF | PROT_STUN
 flags:SEE_INVIS | REGEN
 values:STR[3] | CON[3] | WIS[2] | LIGHT[1]
-values:RES_COLD[1] | RES_FIRE[1] | RES_LIGHT[1]
+values:RES_COLD[40] | RES_FIRE[40] | RES_LIGHT[40]
 act:HEAL1
 time:250
 desc:From dying Númenor, Elendil brought this shining winged circlet, emblem
@@ -1625,7 +1625,7 @@ armor:0:18
 flags:SEE_INVIS | FREE_ACT | PROT_STUN | PROT_BLIND
 # A:ANALYZE:50
 values:INT[3] | DEX[2] | SEARCH[3] | LIGHT[1]
-values:RES_SHARD[1] | RES_COLD[1] | RES_LIGHT[1] | RES_DARK[1]
+values:RES_SHARD[40] | RES_COLD[40] | RES_LIGHT[40] | RES_DARK[40]
 desc:A massive golden crown, set with wondrous jewels of thought and warding,
 desc: once worn by the kings of ancient Númenor.
 
@@ -1640,8 +1640,8 @@ cost:45000
 alloc:20:20 to 80
 attack:0d0:0:0
 armor:10:20
-values:STEALTH[3] | RES_DARK[1] | RES_NETHER[1]
-values:RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1]
+values:STEALTH[3] | RES_DARK[40] | RES_NETHER[40]
+values:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40]
 desc:Familiar with the secret ways hidden in darkness, this leather cuirass is
 desc: truly more than it appears.
 
@@ -1653,7 +1653,7 @@ cost:35000
 alloc:20:25 to 90
 attack:0d0:0:0
 armor:20:15
-values:RES_CHAOS[1] | RES_NETHER[1] | RES_POIS[1]
+values:RES_CHAOS[40] | RES_NETHER[40] | RES_POIS[40]
 act:PROTEVIL
 time:100+d100
 desc:In this studded cuirass of pliable leather lives the memory of
@@ -1669,7 +1669,7 @@ alloc:20:30 to 100
 attack:1d1:-1:0
 armor:20:25
 flags:FREE_ACT
-values:DEX[3] | SPEED[3] | RES_ACID[1] | RES_SHARD[1]
+values:DEX[3] | SPEED[3] | RES_ACID[40] | RES_SHARD[40]
 desc:An amazingly light tunic and skirt sewn with thick, overlapping scales of
 desc: hardened leather.  Those who wear it move with agility and assurance.
 
@@ -1684,8 +1684,8 @@ cost:32000
 alloc:30:20 to 75
 attack:1d4:-2:0
 armor:40:15
-values:STR[2] | RES_SHARD[1] | RES_NEXUS[1]
-values:RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1]
+values:STR[2] | RES_SHARD[40] | RES_NEXUS[40]
+values:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40]
 desc:A hauberk, leggings, and sleeves of interlocking steel rings, well padded
 desc: with leather.  You feel as strong and tall as Arvedui, last king of
 desc: Arnor, as you put it on.
@@ -1699,7 +1699,7 @@ alloc:11:35 to 100
 attack:1d4:-2:0
 armor:45:20
 flags:PROT_CONF
-values:INT[2] | WIS[2] | CON[3] | RES_ACID[1] | RES_POIS[1]
+values:INT[2] | WIS[2] | CON[3] | RES_ACID[40] | RES_POIS[40]
 act:DESTROY_DOORS
 time:10
 desc:A hauberk, leggings, and sleeves of interlocking steel rings,
@@ -1717,7 +1717,7 @@ attack:1d4:0:0
 armor:50:15
 flags:PROT_FEAR | PROT_CONF
 values:STR[2] | DEX[2]
-values:RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1] | RES_SOUND[1]
+values:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40] | RES_SOUND[40]
 desc:Small steel plates cover an inner layer of sturdy canvas, and both metal
 desc: and cloth bear scenes of hunting and war.  As you don the armour of Eorl
 desc: the Young, matchless in combat, you feel his spirit surround you.
@@ -1731,8 +1731,8 @@ alloc:30:55 to 127
 attack:2d4:0:0
 armor:75:25
 flags:PROT_CONF
-values:CON[1] | RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1]
-values:RES_SOUND[1] | RES_NEXUS[1]
+values:CON[1] | RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40]
+values:RES_SOUND[40] | RES_NEXUS[40]
 desc:A gleaming steel suit covering the wearer from neck to foot, with runes of
 desc: warding and stability deeply engraved into its surface.
 
@@ -1745,7 +1745,7 @@ alloc:30:55 to 127
 attack:1d4:-1:0
 armor:35:20
 values:DAM_RED[5]
-values:RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1] | RES_POIS[1]
+values:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40] | RES_POIS[40]
 act:TELE_PHASE
 time:2
 desc:This wondrous shirt of fine-linked chain shimmers before your eyes like
@@ -1762,8 +1762,8 @@ cost:150000
 alloc:30:65 to 127
 attack:2d4:-3:0
 armor:65:25
-values:STR[3] | RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1]
-values:RES_DARK[1] | RES_DISEN[1]
+values:STR[3] | RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40]
+values:RES_DARK[40] | RES_DISEN[40]
 act:BANISHMENT
 time:500
 desc:A shimmering suit of true-silver, forged long ago by dwarven smiths of
@@ -1779,8 +1779,8 @@ alloc:11:75 to 127
 attack:2d4:-4:0
 armor:90:20
 flags:HOLD_LIFE | SUST_CON | PROT_FEAR
-values:CON[2] | RES_ACID[1] | RES_COLD[1] | RES_DARK[1] | RES_NETHER[1]
-values:RES_NEXUS[1] | RES_CHAOS[1]
+values:CON[2] | RES_ACID[40] | RES_COLD[40] | RES_DARK[40] | RES_NETHER[40]
+values:RES_NEXUS[40] | RES_CHAOS[40]
 act:HEAL2
 time:444
 desc:A suit of imperishable adamant with unconquerable strength to endure evil
@@ -1798,7 +1798,7 @@ cost:50000
 alloc:2:5 to 100
 attack:0d0:0:0
 armor:1:15
-values:RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1] | RES_POIS[1]
+values:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40] | RES_POIS[40]
 act:RESIST_ALL
 time:111
 desc:A cape worn by a hero from Valinor, a land utterly beyond the strife
@@ -1812,7 +1812,7 @@ cost:18000
 alloc:5:5 to 100
 attack:0d0:0:0
 armor:1:4
-values:STEALTH[3] | INT[2] | WIS[2] | RES_ACID[1]
+values:STEALTH[3] | INT[2] | WIS[2] | RES_ACID[40]
 act:SLEEPII
 time:55
 desc:This elven-grey mantle possesses great powers of tranquility and
@@ -1828,7 +1828,7 @@ alloc:5:5 to 100
 attack:0d0:0:0
 armor:1:18
 flags:FREE_ACT
-values:DEX[3] | RES_ACID[1] | RES_FIRE[1] | RES_COLD[1]
+values:DEX[3] | RES_ACID[40] | RES_FIRE[40] | RES_COLD[40]
 act:RECHARGE
 time:70
 desc:A translucent cloak of pearly grey with glowing, energized Elven runes
@@ -1843,7 +1843,7 @@ alloc:10:5 to 75
 attack:0d0:0:0
 armor:1:10
 flags:FREE_ACT | PROT_FEAR | SEE_INVIS
-values:RES_ACID[1]
+values:RES_ACID[40]
 desc:This shimmering cloak of greens and browns was once worn by the young
 desc: Aragorn, a keen-eyed captain of Rohan and Gondor, valiant on both land
 desc: and sea.
@@ -1856,7 +1856,7 @@ cost:20000
 alloc:5:5 to 100
 attack:0d0:0:0
 armor:1:15
-values:STEALTH[2] | SPEED[2] | RES_NEXUS[1]
+values:STEALTH[2] | SPEED[2] | RES_NEXUS[40]
 act:TELE_LONG
 time:45
 desc:A crystal-blue cape of fine silk worn by a silent messenger of the forces
@@ -1871,7 +1871,7 @@ alloc:2:40 to 127
 attack:0d0:0:0
 armor:6:20
 values:INT[4] | WIS[4] | STEALTH[3] | SPEED[2]
-values:RES_ACID[1] | RES_FIRE[1] | RES_COLD[1]
+values:RES_ACID[40] | RES_FIRE[40] | RES_COLD[40]
 act:RESTORE_LIFE
 time:250
 desc:The opaque midnight folds of this cloak, inlaid with a multitude of tiny
@@ -1888,7 +1888,7 @@ alloc:2:70 to 127
 attack:0d0:0:0
 armor:6:12
 flags:FREE_ACT | SEE_INVIS
-values:STEALTH[4] | DEX[4] | RES_ACID[3]
+values:STEALTH[4] | DEX[4] | RES_ACID[100]
 desc:The great cloak given to Tuor by the Dweller in the Deep.  As you wrap
 desc: yourself from head to foot the words of Ulmo echo: "Thus thou shalt
 desc: walk under my shadow".
@@ -1917,7 +1917,7 @@ alloc:18:10 to 80
 attack:0d0:5:5
 armor:1:10
 flags:FREE_ACT | SUST_CON
-values:LIGHT[1] | RES_LIGHT[1]
+values:LIGHT[1] | RES_LIGHT[40]
 act:MISSILE
 time:2
 desc:These gloves glow so brightly as to light the way for the wearer and cast
@@ -1932,7 +1932,7 @@ alloc:40:10 to 60
 attack:1d1:0:0
 armor:3:14
 flags:REGEN
-values:RES_FIRE[1]
+values:RES_FIRE[40]
 act:FIRE_BOLT
 time:8+d8
 desc:A set of gauntlets that smoulder with an unnatural heat.
@@ -1946,7 +1946,7 @@ alloc:5:50 to 127
 attack:1d1:0:0
 armor:3:14
 flags:SLOW_DIGEST
-values:RES_COLD[1]
+values:RES_COLD[40]
 brand:COLD_2
 act:COLD_BOLT
 time:7+d7
@@ -1960,7 +1960,7 @@ cost:11000
 alloc:23:10 to 75
 attack:1d1:0:0
 armor:3:14
-values:LIGHT[1] | RES_ELEC[1] | RES_LIGHT[1]
+values:LIGHT[1] | RES_ELEC[40] | RES_LIGHT[40]
 act:ELEC_BOLT
 time:6+d6
 desc:A set of handgear with sparks that crackle across its knuckleguards.
@@ -1976,7 +1976,7 @@ armor:3:14
 flags:FEATHER
 act:ACID_BOLT
 time:5+d5
-values:RES_ACID[1]
+values:RES_ACID[40]
 desc:A set of gauntlets that give off a foul, acrid odour yet remain
 desc: untarnished.
 
@@ -1989,7 +1989,7 @@ alloc:5:10 to 100
 attack:1d1:-12:-12
 armor:3:0
 flags:FREE_ACT | DRAIN_EXP | AGGRAVATE
-values:STR[-3] | DEX[-3] | RES_FIRE[1] | RES_DISEN[1]
+values:STR[-3] | DEX[-3] | RES_FIRE[40] | RES_DISEN[40]
 desc:A pair of weakening gauntlets, named after Beren, who returned to Thingol
 desc: having lost to Carcharoth the hand that clasped a Silmaril.
 
@@ -2002,7 +2002,7 @@ alloc:3:55 to 127
 attack:1d1:0:0
 armor:3:14
 flags:FREE_ACT | FEATHER | AGGRAVATE
-values:INT[3] | RES_ELEC[1] | RES_DARK[1] | RES_POIS[1] | RES_FIRE[3]
+values:INT[3] | RES_ELEC[40] | RES_DARK[40] | RES_POIS[40] | RES_FIRE[100]
 act:MANA_BOLT
 time:30+d30
 desc:The iron-shod gauntlets of the Dark Elven smith Eöl, who imbued them
@@ -2017,7 +2017,7 @@ alloc:3:40 to 127
 attack:1d1:10:10
 armor:5:20
 flags:FREE_ACT
-values:DEX[4] | RES_ACID[1]
+values:DEX[4] | RES_ACID[40]
 act:ARROW
 time:30+d30
 msg:Your {kind} grow{s} magical spikes...
@@ -2036,7 +2036,7 @@ alloc:10:50 to 127
 attack:1d1:0:0
 armor:2:20
 flags:PROT_CONF | HOLD_LIFE
-values:CON[4] | WIS[1] | INT[1] | RES_ELEC[1] | RES_SHARD[1]
+values:CON[4] | WIS[1] | INT[1] | RES_ELEC[40] | RES_SHARD[40]
 desc:The shield of Elros Tar-Minyatur, founder of Númenor. Granted long
 desc: life by the Valar, even his shield became imbued with power.
 
@@ -2049,7 +2049,7 @@ alloc:14:40 to 127
 attack:1d2:0:0
 armor:5:25
 flags:PROT_FEAR | FREE_ACT
-values:CON[4] | STR[3] | STEALTH[-1] | RES_SOUND[1] | RES_ACID[3] | RES_CHAOS[1]
+values:CON[4] | STR[3] | STEALTH[-1] | RES_SOUND[40] | RES_ACID[100] | RES_CHAOS[40]
 desc:Invoking the strength and endurance of Thorin, King under the Mountain,
 desc: this little metal shield is proof against the Element of Earth.
 
@@ -2062,8 +2062,8 @@ alloc:28:30 to 100
 attack:1d3:0:0
 armor:8:20
 flags:PROT_BLIND
-values:RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1]
-values:RES_LIGHT[1] | RES_DARK[1]
+values:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40]
+values:RES_LIGHT[40] | RES_DARK[40]
 desc:This shield emblazoned with a multitude of creatures unseen for ages
 desc: once protected Celegorm, Lord of Himlad; around it, a mystic balance lies,
 desc: containing the conflicts of the elements.
@@ -2077,7 +2077,7 @@ alloc:10:35 to 127
 attack:1d3:5:5
 armor:9:15
 flags:SUST_STR | SUST_CON | PROT_FEAR | PROT_BLIND
-values:STR[2] | CON[2] | STEALTH[-2] | RES_POIS[1]
+values:STR[2] | CON[2] | STEALTH[-2] | RES_POIS[40]
 act:BERSERKER
 time:50
 desc:The painted shield of a chieftain of Far Harad, gaudy and barbaric. 
@@ -2093,7 +2093,7 @@ alloc:11:40 to 100
 attack:1d5:0:0
 armor:12:20
 flags:SUST_STR | SUST_INT | SUST_WIS | SUST_DEX | SUST_CON
-values:RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1]
+values:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40]
 desc:The great metal-bound shield of Elendil's younger son Anárion, whom
 desc: even Sauron could not corrupt.
 
@@ -2105,7 +2105,7 @@ cost:90000
 alloc:6:65 to 127
 attack:1d6:0:0
 armor:10:15
-values:RES_DARK[1] | RES_NETHER[1] | RES_ELEC[1] | RES_FIRE[1] | LIGHT[1]
+values:RES_DARK[40] | RES_NETHER[40] | RES_ELEC[40] | RES_FIRE[40] | LIGHT[1]
 flags:PROT_BLIND
 act:CURE_TEMP
 time:100
@@ -2123,8 +2123,8 @@ alloc:25:70 to 127
 attack:1d4:0:0
 armor:20:20
 flags:SUST_WIS | SUST_DEX
-values:WIS[5] | LIGHT[1] | RES_ELEC[1] | RES_ACID[1] | RES_DISEN[1]
-values:RES_DARK[1]
+values:WIS[5] | LIGHT[1] | RES_ELEC[40] | RES_ACID[40] | RES_DISEN[40]
+values:RES_DARK[40]
 act:STARLIGHT2
 time:100
 desc:The legendary shield of Ereinion Gil-galad, who fought his way to the
@@ -2141,7 +2141,7 @@ weight:2
 cost:65000
 alloc:4:50 to 100
 values:STR[1] | INT[1] | WIS[1] | DEX[1] | CON[1] | STEALTH[1]
-values:RES_POIS[1] | RES_DARK[1]
+values:RES_POIS[40] | RES_DARK[40]
 desc:Twinned serpents with eyes of emerald meet beneath a crown of flowers to
 desc: form this ring, an ancient treasure of Isildur's house.
 
@@ -2172,7 +2172,7 @@ flags:SUST_STR | SUST_CON | PROT_FEAR
 act:PROTEVIL
 time:200+4d50
 msg:{name} glows deep red...
-values:STR[1] | INT[1] | WIS[1] | DEX[1] | CON[1] | SPEED[5] | RES_FIRE[3]
+values:STR[1] | INT[1] | WIS[1] | DEX[1] | CON[1] | SPEED[5] | RES_FIRE[100]
 desc:The Ring of Fire, made of gold and set with a ruby that glows like flame.
 desc:  Narya is one of the three Rings of Power created by Celebrimbor and
 desc: hidden by the Elves from Sauron.
@@ -2193,7 +2193,7 @@ flags:PROT_BLIND | TELEPATHY |
 act:RESTORE_LIFE
 time:200+2d50
 msg:{name} glows bright white...
-values:STR[2] | INT[2] | WIS[2] | DEX[2] | CON[2] | SPEED[5] | RES_COLD[3]
+values:STR[2] | INT[2] | WIS[2] | DEX[2] | CON[2] | SPEED[5] | RES_COLD[100]
 desc:The Ring of Adamant, made of mithril with a pure white stone as
 desc: centerpiece.  Nenya is one of the three Rings of Power created by
 desc: Celebrimbor and hidden by the Elves from Sauron.
@@ -2214,7 +2214,7 @@ act:HEAL2
 time:200+2d50
 msg:{name} glows deep blue...
 values:STR[3] | INT[3] | WIS[3] | DEX[3] | CON[3] | SPEED[5]
-values:RES_ELEC[3] | RES_POIS[1] | RES_DARK[1]
+values:RES_ELEC[100] | RES_POIS[40] | RES_DARK[40]
 desc:The Ring of Sapphire, made of gold with a brilliant blue gem that shines
 desc: like stars.  It glitters untouchable despite all that Morgoth ever
 desc: wrought.  Vilya is one of the three Rings of Power created by Celebrimbor
@@ -2233,8 +2233,8 @@ armor:0:0
 flags:AGGRAVATE | DRAIN_EXP | SEE_INVIS | REGEN | TELEPATHY | STICKY
 flags:SUST_STR | SUST_DEX | SUST_CON | SUST_INT | SUST_WIS
 values:STR[5] | INT[5] | WIS[5] | DEX[5] | CON[5] | SPEED[5]
-values:RES_FIRE[3] | RES_COLD[3] | RES_ELEC[3] | RES_ACID[3] | RES_DARK[1]
-values:RES_DISEN[1] | RES_POIS[1] | RES_NETHER[1]
+values:RES_FIRE[100] | RES_COLD[100] | RES_ELEC[100] | RES_ACID[100] | RES_DARK[40]
+values:RES_DISEN[40] | RES_POIS[40] | RES_NETHER[40]
 act:BIZARRE
 time:200+9d50
 desc:"One Ring to rule them all, One Ring to find them, One Ring to bring
@@ -2255,7 +2255,7 @@ cost:60000
 alloc:10:50 to 100
 act:PROTEVIL
 time:225+d225
-values:CON[3] | STR[1] | RES_FIRE[1]
+values:CON[3] | STR[1] | RES_FIRE[40]
 desc:A fiery circle of bronze, with mighty spells to ward off and banish evil.
 
 name:of Ingwë
@@ -2266,7 +2266,7 @@ weight:3
 cost:90000
 alloc:3:65 to 127
 flags:SEE_INVIS | FREE_ACT | PROT_CONF
-values:INT[3] | WIS[3] | INFRA[4] | RES_ACID[1] | RES_COLD[1] | RES_ELEC[1]
+values:INT[3] | WIS[3] | INFRA[4] | RES_ACID[40] | RES_COLD[40] | RES_ELEC[40]
 act:DISPEL_EVIL
 time:50+d50
 desc:The ancient heirloom of Ingwë, high lord of the Vanyar, against whom
@@ -2297,7 +2297,7 @@ alloc:2:60 to 127
 attack:0d0:0:0
 armor:0:10
 flags:PROT_FEAR
-values:STR[2] | WIS[2] | SPEED[2] | RES_FIRE[1] | RES_POIS[1]
+values:STR[2] | WIS[2] | SPEED[2] | RES_FIRE[40] | RES_POIS[40]
 act:HEAL1
 time:200
 desc:A green stone, imbued with the power of Elvendom and the light of the Sun.
@@ -2312,7 +2312,7 @@ weight:3
 cost:25000
 alloc:2:30 to 70
 flags:HOLD_LIFE | SUST_CON | SUST_WIS | REGEN
-values:WIS[2] | RES_DARK[1] | RES_COLD[1] | RES_NETHER[1]
+values:WIS[2] | RES_DARK[40] | RES_COLD[40] | RES_NETHER[40]
 act:RESTORE_LIFE
 time:150
 desc:A plain white jewel, given by Queen Arwen to Frodo Baggins before his
@@ -2325,7 +2325,7 @@ desc: return to the Shire.
 #cost:90000
 #alloc:3:60 to 127
 #flags:PROT_FEAR | PROT_BLIND | PROT_STUN | PROT_CONF
-#values:SEARCH[4] | SPEED[2] | RES_ELEC[1] | RES_COLD[1]
+#values:SEARCH[4] | SPEED[2] | RES_ELEC[40] | RES_COLD[40]
 #desc:The pendant of Amandil, the last Lord of Andúnië, and mighty
 #desc: ship-captain of Númenor. First among Númenóreans to see
 #desc: Sauron for what he was.
@@ -2342,8 +2342,8 @@ alloc:11:90 to 127
 attack:2d4:-4:0
 armor:50:25
 flags:FREE_ACT | SEE_INVIS | AGGRAVATE
-values:LIGHT[1] | RES_ELEC[3] | RES_DISEN[1] | RES_ACID[1] | RES_FIRE[1]
-values:RES_COLD[1] | RES_POIS[1] | RES_LIGHT[1] | RES_DARK[1]
+values:LIGHT[1] | RES_ELEC[100] | RES_DISEN[40] | RES_ACID[40] | RES_FIRE[40]
+values:RES_COLD[40] | RES_POIS[40] | RES_LIGHT[40] | RES_DARK[40]
 act:STAR_BALL
 time:50
 desc:A massive suit of heavy dragon scales deeply saturated with many colors.  
@@ -2359,7 +2359,7 @@ alloc:8:95 to 127
 attack:2d4:-4:0
 armor:60:25
 flags:FREE_ACT | SLOW_DIGEST | REGEN | 
-values:RES_CHAOS[1] | RES_DISEN[1] | RES_SHARD[1] | RES_SOUND[1] | RES_NEXUS[1]
+values:RES_CHAOS[40] | RES_DISEN[40] | RES_SHARD[40] | RES_SOUND[40] | RES_NEXUS[40]
 act:STAR_BALL
 time:50
 desc:A great suit of dragon hide, set with scales of many hues.  Even the
@@ -2374,9 +2374,9 @@ alloc:6:100 to 127
 attack:2d4:-8:0
 armor:80:35
 flags:HOLD_LIFE | REGEN | PROT_FEAR | PROT_BLIND | PROT_CONF 
-values:RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1] | RES_POIS[1]
-values:RES_LIGHT[1] | RES_DARK[1] | RES_SOUND[1] | RES_SHARD[1] | RES_NETHER[1]
-values:RES_NEXUS[1] | RES_CHAOS[1] | RES_DISEN[1]
+values:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40] | RES_POIS[40]
+values:RES_LIGHT[40] | RES_DARK[40] | RES_SOUND[40] | RES_SHARD[40] | RES_NETHER[40]
+values:RES_NEXUS[40] | RES_CHAOS[40] | RES_DISEN[40]
 act:RAGE_BLESS_RESIST
 time:50
 desc:An adamant suit with scales of every color.  Untrammelled powers elemental
@@ -2415,8 +2415,8 @@ armor:0:0
 flags:PROT_CONF | SEE_INVIS | TELEPATHY | PROT_FEAR | STICKY
 values:STR[50] | INT[50] | WIS[50] | DEX[50] | CON[50] | INFRA[50]
 values:LIGHT[1]
-values:RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1] | RES_POIS[1]
-values:RES_LIGHT[1] | RES_DARK[1] | RES_NEXUS[1] | RES_NETHER[1]
+values:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40] | RES_POIS[40]
+values:RES_LIGHT[40] | RES_DARK[40] | RES_NEXUS[40] | RES_NETHER[40]
 desc:Containing much of the power of he who once was mightiest among the Ainur,
 desc: this plain iron crown has mounted upon it the two remaining Silmarils,
 desc: greatest treasures of Middle-Earth.

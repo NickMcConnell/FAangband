@@ -272,6 +272,9 @@ static enum parser_error write_book_kind(struct class_book *book,
 	kind->dd = 1;
 	kind->ds = 1;
 	kind->weight = 30;
+	for (i = 0; i < ELEM_MAX; i++) {
+		kind->el_info[i].res_level = RES_LEVEL_BASE;
+	}
 
 	/* Dungeon books get extra properties */
 	if (book->dungeon) {
@@ -2255,7 +2258,11 @@ static struct file_parser history_parser = {
 static enum parser_error parse_p_race_name(struct parser *p) {
 	struct player_race *h = parser_priv(p);
 	struct player_race *r = mem_zalloc(sizeof *r);
+	int i;
 
+	for (i = 0; i < ELEM_MAX; i++) {
+		r->el_info[i].res_level = RES_LEVEL_BASE;
+	}
 	r->next = h;
 	r->name = string_make(parser_getstr(p, "name"));
 	/* Default body is humanoid */
@@ -2492,7 +2499,7 @@ static enum parser_error parse_p_race_values(struct parser *p) {
 		bool found = false;
 		if (!grab_index_and_int(&value, &index, list_element_names, "RES_", t)) {
 			found = true;
-			r->el_info[index].res_level = value;
+			r->el_info[index].res_level = RES_LEVEL_BASE - value;
 		}
 		if (!found)
 			break;
@@ -2681,7 +2688,11 @@ static struct file_parser realm_parser = {
 static enum parser_error parse_shape_name(struct parser *p) {
 	struct player_shape *h = parser_priv(p);
 	struct player_shape *shape = mem_zalloc(sizeof *shape);
+	int i;
 
+	for (i = 0; i < ELEM_MAX; i++) {
+		shape->el_info[i].res_level = RES_LEVEL_BASE;
+	}
 	shape->next = h;
 	shape->name = string_make(parser_getstr(p, "name"));
 	parser_setpriv(p, shape);
@@ -2822,7 +2833,7 @@ static enum parser_error parse_shape_values(struct parser *p) {
 			found = true;
 		if (!grab_index_and_int(&value, &index, list_element_names, "RES_", t)) {
 			found = true;
-			shape->el_info[index].res_level = value;
+			shape->el_info[index].res_level = RES_LEVEL_BASE - value;
 		}
 		if (!found)
 			break;

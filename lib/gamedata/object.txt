@@ -780,7 +780,7 @@ cost:4000
 alloc:10:70 to 100
 attack:6d5:0:0
 armor:0:0
-values:RES_CHAOS[1]
+values:RES_CHAOS[40]
 desc:This inconstant weapon revels in disorder, hacking and slashing your foes
 desc: with bloodthirsty glee.
 
@@ -2029,7 +2029,7 @@ weight:2
 cost:16000
 alloc:50:40 to 100
 flags:EASY_KNOW
-values:RES_POIS[1]
+values:RES_POIS[40]
 
 name:Resist Fire and Cold
 type:ring
@@ -2039,7 +2039,7 @@ weight:2
 cost:250
 alloc:50:10 to 50
 flags:IGNORE_COLD | IGNORE_FIRE | EASY_KNOW
-values:RES_FIRE[1] | RES_COLD[1]
+values:RES_FIRE[40] | RES_COLD[40]
 
 ### Elemental rings ###
 
@@ -2050,7 +2050,7 @@ level:0
 weight:2
 cost:400
 alloc:20:25 to 100
-values:SEARCH[1+M5] | LIGHT[1] | RES_LIGHT[1]
+values:SEARCH[1+M5] | LIGHT[1] | RES_LIGHT[40]
 
 name:Flames
 type:ring
@@ -2062,7 +2062,7 @@ alloc:20:20 to 100
 attack:0d0:0:0
 armor:0:5+d5M10
 flags:IGNORE_FIRE
-values:RES_FIRE[1]
+values:RES_FIRE[40]
 power:11
 effect:BALL:FIRE:2
 dice:80
@@ -2080,7 +2080,7 @@ alloc:20:20 to 100
 attack:0d0:0:0
 armor:0:5+d5M10
 flags:IGNORE_ACID
-values:RES_ACID[1]
+values:RES_ACID[40]
 power:11
 effect:BALL:ACID:2
 dice:70
@@ -2098,7 +2098,7 @@ alloc:20:20 to 100
 attack:0d0:0:0
 armor:0:5+d5M10
 flags:IGNORE_COLD
-values:RES_COLD[1]
+values:RES_COLD[40]
 power:11
 effect:BALL:COLD:2
 dice:75
@@ -2116,7 +2116,7 @@ alloc:20:20 to 100
 attack:0d0:0:0
 armor:0:5+d5M10
 flags:IGNORE_ELEC
-values:RES_ELEC[1]
+values:RES_ELEC[40]
 power:11
 effect:BALL:ELEC:2
 dice:85
@@ -2318,7 +2318,7 @@ weight:3
 cost:300
 alloc:50:10 to 50
 flags:IGNORE_ELEC | EASY_KNOW
-values:RES_ELEC[1]
+values:RES_ELEC[40]
 
 name:Resist Acid
 type:amulet
@@ -2328,7 +2328,7 @@ weight:3
 cost:300
 alloc:50:10 to 50
 flags:IGNORE_ACID | EASY_KNOW
-values:RES_ACID[1]
+values:RES_ACID[40]
 
 name:Resistance
 type:amulet
@@ -2339,7 +2339,7 @@ cost:20000
 alloc:10:60 to 100
 flags:EASY_KNOW
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-values:RES_FIRE[1] | RES_ACID[1] | RES_ELEC[1] | RES_COLD[1]
+values:RES_FIRE[40] | RES_ACID[40] | RES_ELEC[40] | RES_COLD[40]
 
 ### JLE amulets ###
 
@@ -2385,7 +2385,7 @@ weight:3
 cost:30000
 alloc:10:70 to 100
 flags:HOLD_LIFE | SUST_WIS | GOOD
-values:WIS[1+M3] | LIGHT[1] | RES_DARK[1] | RES_LIGHT[1] | RES_FIRE[1]
+values:WIS[1+M3] | LIGHT[1] | RES_DARK[40] | RES_LIGHT[40] | RES_FIRE[40]
 
 name:Weaponmastery
 type:amulet
@@ -2397,7 +2397,7 @@ alloc:10:70 to 100
 attack:0d0:1+M4:1+M4
 armor:0:0
 flags:SUST_STR | SUST_CON | FREE_ACT | PROT_FEAR | GOOD
-values:STR[1+M2] | RES_DISEN[1]
+values:STR[1+M2] | RES_DISEN[40]
 
 name:Trickery
 type:amulet
@@ -2408,7 +2408,7 @@ cost:30000
 alloc:10:70 to 100
 flags:SUST_DEX | GOOD
 values:DEX[1+M4] | SPEED[1+M2] | STEALTH[1+M2] | SEARCH[1+d3M3] | INFRA[1+d3M3]
-values:RES_NEXUS[1] | RES_POIS[1]
+values:RES_NEXUS[40] | RES_POIS[40]
 
 ### Ability boosts ###
 
@@ -4932,7 +4932,7 @@ alloc:8:35 to 100
 attack:2d4:-2:0
 armor:16:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-values:RES_ACID[1]
+values:RES_ACID[40]
 power:11
 effect:BREATH:ACID:0:20
 dice:120
@@ -4949,7 +4949,7 @@ alloc:8:25 to 100
 attack:2d4:-2:0
 armor:12:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-values:RES_ELEC[1]
+values:RES_ELEC[40]
 power:18
 effect:BREATH:ELEC:0:20
 dice:150
@@ -4967,7 +4967,7 @@ alloc:8:30 to 100
 attack:2d4:-2:0
 armor:14:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-values:RES_COLD[1]
+values:RES_COLD[40]
 power:10
 effect:BREATH:COLD:0:20
 dice:100
@@ -4985,7 +4985,7 @@ alloc:8:40 to 100
 attack:2d4:-2:0
 armor:24:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-values:RES_FIRE[1]
+values:RES_FIRE[40]
 power:20
 effect:BREATH:FIRE:0:20
 dice:200
@@ -5003,7 +5003,7 @@ alloc:8:60 to 100
 attack:2d4:-2:0
 armor:20:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-values:RES_POIS[1]
+values:RES_POIS[40]
 power:19
 effect:BREATH:POIS:0:20
 dice:150
@@ -5021,7 +5021,7 @@ alloc:5:75 to 100
 attack:2d4:-2:0
 armor:45:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-values:RES_ACID[1] | RES_ELEC[1] | RES_FIRE[1] | RES_COLD[1] | RES_POIS[1]
+values:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40] | RES_POIS[40]
 power:20
 effect:RANDOM
 dice:5
@@ -5049,7 +5049,7 @@ alloc:6:75 to 100
 attack:2d4:-2:0
 armor:32:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-values:RES_LIGHT[1] | RES_DARK[1]
+values:RES_LIGHT[40] | RES_DARK[40]
 power:21
 effect:RANDOM
 dice:2
@@ -5071,7 +5071,7 @@ alloc:6:80 to 100
 attack:2d4:-2:0
 armor:36:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-values:RES_SOUND[1] | RES_SHARD[1]
+values:RES_SOUND[40] | RES_SHARD[40]
 power:23
 effect:RANDOM
 dice:2
@@ -5093,7 +5093,7 @@ alloc:8:70 to 100
 attack:2d4:-2:0
 armor:28:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-values:RES_SOUND[1]
+values:RES_SOUND[40]
 power:19
 effect:BREATH:SOUND:0:20
 dice:150
@@ -5112,7 +5112,7 @@ alloc:5:85 to 100
 attack:2d4:-2:0
 armor:40:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-values:RES_CHAOS[1] | RES_DISEN[1]
+values:RES_CHAOS[40] | RES_DISEN[40]
 power:23
 effect:RANDOM
 dice:2
@@ -5134,7 +5134,7 @@ alloc:3:95 to 100
 attack:2d4:-2:0
 armor:50:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-values:RES_SOUND[1] | RES_SHARD[1] | RES_CHAOS[1] | RES_DISEN[1]
+values:RES_SOUND[40] | RES_SHARD[40] | RES_CHAOS[40] | RES_DISEN[40]
 power:24
 effect:RANDOM
 dice:4
@@ -5162,9 +5162,9 @@ attack:2d4:-3:0
 armor:60:15
 flags:PROT_CONF
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-values:RES_ACID[1] | RES_FIRE[1] | RES_COLD[1] | RES_ELEC[1] | RES_POIS[1]
-values:RES_DISEN[1] | RES_SOUND[1] | RES_SHARD[1]
-values:RES_LIGHT[1] | RES_DARK[1] | RES_CHAOS[1]
+values:RES_ACID[40] | RES_FIRE[40] | RES_COLD[40] | RES_ELEC[40] | RES_POIS[40]
+values:RES_DISEN[40] | RES_SOUND[40] | RES_SHARD[40]
+values:RES_LIGHT[40] | RES_DARK[40] | RES_CHAOS[40]
 power:25
 effect:BREATH:MISSILE:0:20
 dice:300

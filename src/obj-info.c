@@ -100,7 +100,6 @@ static void info_out_list(textblock *tb, const char *list[], size_t count)
 	textblock_append(tb, ".\n");
 }
 
-
 /**
  * Fills recepticle with all the elements that correspond to the given `list`.
  */
@@ -115,7 +114,6 @@ static size_t element_info_collect(const bool list[], const char *recepticle[])
 
 	return count;
 }
-
 
 /**
  * ------------------------------------------------------------------------
@@ -208,44 +206,72 @@ static bool describe_stats(textblock *tb, const struct object *obj,
 static bool describe_elements(textblock *tb,
 							  const struct element_info el_info[])
 {
-	const char *i_descs[ELEM_MAX];
-	const char *r_descs[ELEM_MAX];
-	const char *v_descs[ELEM_MAX];
-	size_t i, count;
+	size_t i, res = 0, imm = 0, vul = 0;
+	int perc[ELEM_MAX];
+	bool found = false;
 
-	bool list[ELEM_MAX], prev = false;
+	/* Collect */
+	for (i = 0; i < ELEM_MAX; i++) {
+		perc[i] = el_info[i].res_level;
+		if (perc[i] == RES_LEVEL_MAX) {
+			imm++;
+			found = true;
+		} else if (perc[i] < RES_LEVEL_BASE) {
+			res++;
+			found = true;
+		} else if (perc[i] > RES_LEVEL_BASE) {
+			vul++;
+			found = true;
+		}
+	}
 
 	/* Immunities */
-	for (i = 0; i < ELEM_MAX; i++)
-		list[i] = (el_info[i].res_level == 3);
-	count = element_info_collect(list, i_descs);
-	if (count) {
+	if (imm) {
 		textblock_append(tb, "Provides immunity to ");
-		info_out_list(tb, i_descs, count);
-		prev = true;
+		for (i = 0; (i < ELEM_MAX) && imm; i++) {
+			if (perc[i] == RES_LEVEL_MAX) {
+				textblock_append(tb, format("%s", projections[i].name));
+				if (imm > 1) textblock_append(tb, ", ");
+				imm--;
+			}
+		}
+
+		textblock_append(tb, ".\n");
 	}
 
 	/* Resistances */
-	for (i = 0; i < ELEM_MAX; i++)
-		list[i] = (el_info[i].res_level == 1);
-	count = element_info_collect(list, r_descs);
-	if (count) {
+	if (res) {
 		textblock_append(tb, "Provides resistance to ");
-		info_out_list(tb, r_descs, count);
-		prev = true;
+		for (i = 0; (i < ELEM_MAX) && res; i++) {
+			if ((perc[i] < RES_LEVEL_BASE) && (perc[i] != RES_LEVEL_MAX)) {
+				textblock_append(tb, format("%s (%d", projections[i].name,
+											RES_LEVEL_BASE - perc[i]));
+				textblock_append(tb, "%%)");
+				if (res > 1) textblock_append(tb, ", ");
+				res--;
+			}
+		}
+
+		textblock_append(tb, ".\n");
 	}
 
 	/* Vulnerabilities */
-	for (i = 0; i < ELEM_MAX; i++)
-		list[i] = (el_info[i].res_level == -1);
-	count = element_info_collect(list, v_descs);
-	if (count) {
+	if (vul) {
 		textblock_append(tb, "Makes you vulnerable to ");
-		info_out_list(tb, v_descs, count);
-		prev = true;
+		for (i = 0; (i < ELEM_MAX) && vul; i++) {
+			if (perc[i] > RES_LEVEL_BASE) {
+				textblock_append(tb, format("%s (%d", projections[i].name,
+											perc[i] - RES_LEVEL_BASE));
+				textblock_append(tb, "%%)");
+				if (vul > 1) textblock_append(tb, ", ");
+				vul--;
+			}
+		}
+
+		textblock_append(tb, ".\n");
 	}
 
-	return prev;
+	return found;
 }
 
 
@@ -591,7 +617,7 @@ static void get_known_elements(const struct object *obj,
 		if (player->obj_k->el_info[i].res_level || (mode & OINFO_SPOIL))
 			el_info[i].res_level = obj->known->el_info[i].res_level;
 		else
-			el_info[i].res_level = 0;
+			el_info[i].res_level = RES_LEVEL_BASE;
 		el_info[i].flags = obj->known->el_info[i].flags;
 
 		/* Ignoring an element: */

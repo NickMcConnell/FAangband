@@ -849,10 +849,9 @@ int player_check_terrain_damage(struct player *p, struct loc grid)
 
 	if (square_isfiery(cave, grid)) {
 		int base_dam = 100 + randint1(100);
-		int res = p->state.el_info[ELEM_FIRE].res_level;
 
 		/* Fire damage */
-		dam_taken = adjust_dam(p, ELEM_FIRE, base_dam, RANDOMISE, res, false);
+		dam_taken = adjust_dam(p, ELEM_FIRE, base_dam, false);
 
 		/* Feather fall makes one lightfooted. */
 		if (player_of_has(p, OF_FEATHER)) {
@@ -1504,19 +1503,43 @@ bool player_of_has(struct player *p, int flag)
 }
 
 /**
- * Check if the player resists (or better) an element
+ * Check if the player is vulnerable to an element
  */
-bool player_resists(struct player *p, int element)
+bool player_is_vulnerable(struct player_state state, int element)
 {
-	return (p->state.el_info[element].res_level > 0);
+	return (state.el_info[element].res_level > RES_LEVEL_BASE);
 }
 
 /**
  * Check if the player resists (or better) an element
  */
-bool player_is_immune(struct player *p, int element)
+bool player_resists(struct player_state state, int element)
 {
-	return (p->state.el_info[element].res_level == 3);
+	return (state.el_info[element].res_level < RES_LEVEL_BASE);
+}
+
+/**
+ * Check if the player resists (or better) an element
+ */
+bool player_resists_effects(struct player_state state, int element)
+{
+	return (state.el_info[element].res_level <= RES_LEVEL_EFFECT);
+}
+
+/**
+ * Check if the player resists (or better) an element
+ */
+bool player_resists_strongly(struct player_state state, int element)
+{
+	return (state.el_info[element].res_level <= RES_LEVEL_STRONG);
+}
+
+/**
+ * Check if the player is immune to an element
+ */
+bool player_is_immune(struct player_state state, int element)
+{
+	return (state.el_info[element].res_level == RES_LEVEL_MAX);
 }
 
 /**

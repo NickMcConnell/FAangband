@@ -33,6 +33,7 @@
 #include "player-attack.h"
 #include "player-calcs.h"
 #include "player-timed.h"
+#include "player-util.h"
 #include "project.h"
 #include "z-textblock.h"
 
@@ -81,7 +82,7 @@ static int spell_color(struct player *p, const struct monster_race *race,
 		if (p->known_state.skills[SKILL_SAVE] < 100) {
 			if (eff->index == EF_TELEPORT_LEVEL) {
 				/* Special case - teleport level */
-				if (p->known_state.el_info[ELEM_NEXUS].res_level > 0) {
+				if (player_resists_effects(p->known_state, ELEM_NEXUS)) {
 					return level->lore_attr_resist;
 				} else {
 					return level->lore_attr;
@@ -120,7 +121,7 @@ static int spell_color(struct player *p, const struct monster_race *race,
 		switch (eff->subtype) {
 			/* Special case - sound */
 			case ELEM_SOUND:
-				if (p->known_state.el_info[ELEM_SOUND].res_level > 0) {
+				if (player_resists_effects(p->known_state, ELEM_SOUND)) {
 					return level->lore_attr_immune;
 				} else if (of_has(p->known_state.flags, OF_PROT_STUN)) {
 					return level->lore_attr_resist;
@@ -130,7 +131,7 @@ static int spell_color(struct player *p, const struct monster_race *race,
 				break;
 			/* Special case - nexus */
 			case ELEM_NEXUS:
-				if (p->known_state.el_info[ELEM_NEXUS].res_level > 0) {
+				if (player_resists_effects(p->known_state, ELEM_NEXUS)) {
 					return level->lore_attr_immune;
 				} else if (p->known_state.skills[SKILL_SAVE] >= 100) {
 					return level->lore_attr_resist;
@@ -154,9 +155,10 @@ static int spell_color(struct player *p, const struct monster_race *race,
 				break;
 			/* All other elements */
 			default:
-				if (p->known_state.el_info[eff->subtype].res_level == 3) {
+				if (player_is_immune(p->known_state, eff->subtype)) {
 					return level->lore_attr_immune;
-				} else if (p->known_state.el_info[eff->subtype].res_level > 0) {
+				} else if (player_resists_effects(p->known_state,
+												  eff->subtype)) {
 					return level->lore_attr_resist;
 				} else {
 					return level->lore_attr;
@@ -193,9 +195,9 @@ int blow_color(struct player *p, int blow_idx)
 			}
 		}
 
-		if (p->known_state.el_info[i].res_level == 3) {
+		if (player_is_immune(p->known_state, i)) {
 			return blow->lore_attr_immune;
-		} else if (p->known_state.el_info[i].res_level > 0) {
+		} else if (player_resists_effects(p->known_state, i)) {
 			return blow->lore_attr_resist;
 		} else {
 			return blow->lore_attr;
@@ -248,7 +250,7 @@ int blow_color(struct player *p, int blow_idx)
 			return blow->lore_attr_resist;
 		}
 	} else if (streq(blow->effect_type, "element")) {
-		if (p->known_state.el_info[blow->resist].res_level > 0) {
+		if (player_resists_effects(p->known_state, blow->resist)) {
 			return blow->lore_attr_resist;
 		} else {
 			return blow->lore_attr;

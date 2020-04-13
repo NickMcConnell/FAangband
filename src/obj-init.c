@@ -155,6 +155,11 @@ static enum parser_error write_dummy_object_record(struct artifact *art, const c
 	dummy->d_char = '*';
 	dummy->d_attr = COLOUR_RED;
 
+	/* Correct resistances */
+	for (i = 0; i < ELEM_MAX; i++) {
+		dummy->el_info[i].res_level = RES_LEVEL_BASE;
+	}
+
 	/* Register this as an INSTA_ART object */
 	kf_on(dummy->kind_flags, KF_INSTA_ART);
 
@@ -948,9 +953,13 @@ struct file_parser brand_parser = {
 static enum parser_error parse_curse_name(struct parser *p) {
 	const char *name = parser_getstr(p, "name");
 	struct curse *h = parser_priv(p);
+	int i;
 
 	struct curse *curse = mem_zalloc(sizeof *curse);
 	curse->obj = mem_zalloc(sizeof(struct object));
+	for (i = 0; i < ELEM_MAX; i++) {
+		curse->obj->el_info[i].res_level = RES_LEVEL_BASE;
+	}
 	curse->next = h;
 	parser_setpriv(p, curse);
 	curse->name = string_make(name);
@@ -1021,7 +1030,7 @@ static enum parser_error parse_curse_values(struct parser *p) {
 		}
 		if (!grab_index_and_int(&value, &index, element_names, "RES_", t)) {
 			found = true;
-			curse->obj->el_info[index].res_level = value;
+			curse->obj->el_info[index].res_level = RES_LEVEL_BASE - value;
 		}
 		if (!found)
 			break;
@@ -1526,8 +1535,12 @@ struct object_kind *curse_object_kind;
 static enum parser_error parse_object_name(struct parser *p) {
 	const char *name = parser_getstr(p, "name");
 	struct object_kind *h = parser_priv(p);
+	int i;
 
 	struct object_kind *k = mem_zalloc(sizeof *k);
+	for (i = 0; i < ELEM_MAX; i++) {
+		k->el_info[i].res_level = RES_LEVEL_BASE;
+	}
 	k->next = h;
 	parser_setpriv(p, k);
 	k->name = string_make(name);
@@ -1839,7 +1852,7 @@ static enum parser_error parse_object_values(struct parser *p) {
 			found = true;
 		if (!grab_index_and_int(&value, &index, element_names, "RES_", t)) {
 			found = true;
-			k->el_info[index].res_level = value;
+			k->el_info[index].res_level = RES_LEVEL_BASE - value;
 		}
 		if (!found)
 			break;
@@ -2011,8 +2024,12 @@ struct file_parser object_parser = {
 static enum parser_error parse_ego_name(struct parser *p) {
 	const char *name = parser_getstr(p, "name");
 	struct ego_item *h = parser_priv(p);
+	int i;
 
 	struct ego_item *e = mem_zalloc(sizeof *e);
+	for (i = 0; i < ELEM_MAX; i++) {
+		e->el_info[i].res_level = RES_LEVEL_BASE;
+	}
 	e->next = h;
 	parser_setpriv(p, e);
 	e->name = string_make(name);
@@ -2251,7 +2268,7 @@ static enum parser_error parse_ego_values(struct parser *p) {
 			found = true;
 		if (!grab_index_and_int(&value, &index, element_names, "RES_", t)) {
 			found = true;
-			e->el_info[index].res_level = value;
+			e->el_info[index].res_level = RES_LEVEL_BASE - value;
 		}
 		if (!found)
 			break;
@@ -2461,6 +2478,9 @@ static enum parser_error parse_artifact_name(struct parser *p) {
 	struct artifact *h = parser_priv(p);
 
 	struct artifact *a = mem_zalloc(sizeof *a);
+	for (i = 0; i < ELEM_MAX; i++) {
+		a->el_info[i].res_level = RES_LEVEL_BASE;
+	}
 	a->next = h;
 	parser_setpriv(p, a);
 	a->name = string_make(name);
@@ -2666,7 +2686,7 @@ static enum parser_error parse_artifact_values(struct parser *p) {
 			found = true;
 		if (!grab_index_and_int(&value, &index, element_names, "RES_", t)) {
 			found = true;
-			a->el_info[index].res_level = value;
+			a->el_info[index].res_level = RES_LEVEL_BASE - value;
 		}
 		if (!found)
 			break;

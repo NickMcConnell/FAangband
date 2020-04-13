@@ -39,19 +39,19 @@
  * \param p is the player
  * \param type is the attack type we are checking.
  * \param dam is the unadjusted damage.
- * \param dam_aspect is the calc we want (min, avg, max, random).
- * \param resist is the degree of resistance (-1 = vuln, 3 = immune).
+ * \param actual is whether this is actually happening or a test
  */
-int adjust_dam(struct player *p, int type, int dam, aspect dam_aspect,
-			   int resist, bool actual)
+int adjust_dam(struct player *p, int type, int dam, bool actual)
 {
-	int i, denom = 0;
+	int dam_percent = 0;
 
 	/* If an actual player exists, get their actual resist */
 	if (p && p->race) {
 		/* Ice is a special case */
 		int res_type = (type == PROJ_ICE) ? PROJ_COLD: type;
-		resist = p->state.el_info[res_type].res_level;
+
+		/* The stored resistance level is the percentage of damage taken */
+		dam_percent = p->state.el_info[res_type].res_level;
 
 		/* Notice element stuff */
 		if (actual) {
@@ -59,39 +59,28 @@ int adjust_dam(struct player *p, int type, int dam, aspect dam_aspect,
 		}
 	}
 
-	if (resist == 3) /* immune */
-		return 0;
+	/* Immune */
+	if (dam_percent == RES_LEVEL_MAX) return 0;
 
-	/* Hack - acid damage is halved by armour */
-	if (type == PROJ_ACID && p && minus_ac(p))
+	/* Acid damage is halved by armour */
+	if (type == PROJ_ACID && p && minus_ac(p)) {
 		dam = (dam + 1) / 2;
-
-	if (resist == -1) /* vulnerable */
-		return (dam * 4 / 3);
-
-	/* Variable resists vary the denominator, so we need to invert the logic
-	 * of dam_aspect. (m_bonus is unused) */
-	switch (dam_aspect) {
-		case MINIMISE:
-			denom = randcalc(projections[type].denominator, 0, MAXIMISE);
-			break;
-		case MAXIMISE:
-			denom = randcalc(projections[type].denominator, 0, MINIMISE);
-			break;
-		case AVERAGE:
-		case EXTREMIFY:
-		case RANDOMISE:
-			denom = randcalc(projections[type].denominator, 0, dam_aspect);
-			break;
-		default:
-			assert(0);
 	}
 
-	for (i = resist; i > 0; i--)
-		if (denom)
-			dam = dam * projections[type].numerator / denom;
+	/* High resists get randomised, especially chaos */
+	if ((type >= ELEM_HIGH_MIN) && (dam_percent <= RES_LEVEL_BASE)) {
+		/* How far is the closer of zero and 100 */
+		int max_range =	dam_percent > 50 ? 100 - dam_percent : dam_percent;
 
-	return dam;
+		/* Random range is 1 or 2 times 10% of that range */
+		int range = (((type == PROJ_CHAOS) ? 2 : 1) * max_range) / 10;
+
+		/* Randomize */
+		dam_percent = dam_percent - range + randint0((2 * range) + 1);
+	}
+
+	/* Apply the percentage resistance, rounded up */
+	return ((dam * dam_percent) + 99) / 100;
 }
 
 
@@ -143,21 +132,21 @@ typedef int (*project_player_handler_f)(project_player_handler_context_t *);
 
 static int project_player_handler_ACID(project_player_handler_context_t *context)
 {
-	if (player_is_immune(player, ELEM_ACID)) return 0;
+	if (player_is_immune(player->state, ELEM_ACID)) return 0;
 	inven_damage(player, PROJ_ACID, MIN(context->dam * 5, 300));
 	return 0;
 }
 
 static int project_player_handler_ELEC(project_player_handler_context_t *context)
 {
-	if (player_is_immune(player, ELEM_ELEC)) return 0;
+	if (player_is_immune(player->state, ELEM_ELEC)) return 0;
 	inven_damage(player, PROJ_ELEC, MIN(context->dam * 5, 300));
 	return 0;
 }
 
 static int project_player_handler_FIRE(project_player_handler_context_t *context)
 {
-	if (player_is_immune(player, ELEM_FIRE)) return 0;
+	if (player_is_immune(player->state, ELEM_FIRE)) return 0;
 	inven_damage(player, PROJ_FIRE, MIN(context->dam * 5, 300));
 
 	/* Occasional side-effects for powerful fire attacks */
@@ -185,7 +174,7 @@ static int project_player_handler_FIRE(project_player_handler_context_t *context
 
 static int project_player_handler_COLD(project_player_handler_context_t *context)
 {
-	if (player_is_immune(player, ELEM_COLD)) return 0;
+	if (player_is_immune(player->state, ELEM_COLD)) return 0;
 	inven_damage(player, PROJ_COLD, MIN(context->dam * 5, 300));
 
 	/* Occasional side-effects for powerful cold attacks */
@@ -219,13 +208,11 @@ static int project_player_handler_POIS(project_player_handler_context_t *context
 	/* Occasional side-effects for powerful poison attacks */
 	if (context->power >= 60) {
 		if (randint0(context->dam) > 200) {
-			if (!player_is_immune(player, ELEM_ACID)) {
+			if (!player_is_immune(player->state, ELEM_ACID)) {
 				int dam = context->dam / 5;
 				msg("The venom stings your skin!");
 				inven_damage(player, PROJ_ACID, dam);
-				xtra += adjust_dam(player, PROJ_ACID, dam, RANDOMISE,
-								 player->state.el_info[PROJ_ACID].res_level,
-								 true);
+				xtra += adjust_dam(player, PROJ_ACID, dam, true);
 			}
 		}
 		if (randint0(context->dam) > 200) {
@@ -239,7 +226,7 @@ static int project_player_handler_POIS(project_player_handler_context_t *context
 
 static int project_player_handler_LIGHT(project_player_handler_context_t *context)
 {
-	if (player_resists(player, ELEM_LIGHT)) {
+	if (player_resists_effects(player->state, ELEM_LIGHT)) {
 		msg("You resist the effect!");
 		return 0;
 	}
@@ -257,7 +244,7 @@ static int project_player_handler_LIGHT(project_player_handler_context_t *contex
 
 static int project_player_handler_DARK(project_player_handler_context_t *context)
 {
-	if (player_resists(player, ELEM_DARK)) {
+	if (player_resists_effects(player->state, ELEM_DARK)) {
 		msg("You resist the effect!");
 		return 0;
 	}
@@ -296,7 +283,7 @@ static int project_player_handler_DARK(project_player_handler_context_t *context
 
 static int project_player_handler_SOUND(project_player_handler_context_t *context)
 {
-	if (player_resists(player, ELEM_SOUND)) {
+	if (player_resists_effects(player->state, ELEM_SOUND)) {
 		msg("You resist the effect!");
 		return 0;
 	}
@@ -321,7 +308,7 @@ static int project_player_handler_SOUND(project_player_handler_context_t *contex
 
 static int project_player_handler_SHARD(project_player_handler_context_t *context)
 {
-	if (player_resists(player, ELEM_SHARD)) {
+	if (player_resists_effects(player->state, ELEM_SHARD)) {
 		msg("You resist the effect!");
 		return 0;
 	}
@@ -339,7 +326,7 @@ static int project_player_handler_NEXUS(project_player_handler_context_t *contex
 		mon = cave_monster(cave, context->origin.which.monster);
 	}
 
-	if (player_resists(player, ELEM_NEXUS)) {
+	if (player_resists_effects(player->state, ELEM_NEXUS)) {
 		msg("You resist the effect!");
 		return 0;
 	}
@@ -372,7 +359,7 @@ static int project_player_handler_NETHER(project_player_handler_context_t *conte
 {
 	int drain = 200 + (player->exp / 100) * z_info->life_drain_percent;
 
-	if (player_resists(player, ELEM_NETHER) ||
+	if (player_resists_effects(player->state, ELEM_NETHER) ||
 		player_of_has(player, OF_HOLD_LIFE)) {
 		msg("You resist the effect!");
 		equip_learn_flag(player, OF_HOLD_LIFE);
@@ -403,7 +390,7 @@ static int project_player_handler_NETHER(project_player_handler_context_t *conte
 
 static int project_player_handler_CHAOS(project_player_handler_context_t *context)
 {
-	if (player_resists(player, ELEM_CHAOS)) {
+	if (player_resists_effects(player->state, ELEM_CHAOS)) {
 		msg("You resist the effect!");
 		return 0;
 	}
@@ -427,7 +414,7 @@ static int project_player_handler_CHAOS(project_player_handler_context_t *contex
 
 static int project_player_handler_DISEN(project_player_handler_context_t *context)
 {
-	if (player_resists(player, ELEM_DISEN)) {
+	if (player_resists_effects(player->state, ELEM_DISEN)) {
 		msg("You resist the effect!");
 		return 0;
 	}
@@ -449,11 +436,11 @@ static int project_player_handler_WATER(project_player_handler_context_t *contex
 
 static int project_player_handler_ICE(project_player_handler_context_t *context)
 {
-	if (!player_is_immune(player, ELEM_COLD))
+	if (!player_is_immune(player->state, ELEM_COLD))
 		inven_damage(player, PROJ_COLD, MIN(context->dam * 5, 300));
 
 	/* Cuts */
-	if (!player_resists(player, ELEM_SHARD))
+	if (!player_resists_effects(player->state, ELEM_SHARD))
 		(void)player_inc_timed(player, TMD_CUT, damroll(5, 8), true, false);
 	else
 		msg("You resist the effect!");
@@ -578,7 +565,7 @@ static int project_player_handler_LIGHT_WEAK(project_player_handler_context_t *c
 
 static int project_player_handler_DARK_WEAK(project_player_handler_context_t *context)
 {
-	if (player_resists(player, ELEM_DARK)) {
+	if (player_resists_effects(player->state, ELEM_DARK)) {
 		if (!player_has(player, PF_UNLIGHT)) {
 			msg("You resist the effect!");
 		}
@@ -784,7 +771,6 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 		power,
 		obvious
 	};
-	int res_level = typ < ELEM_MAX ? player->state.el_info[typ].res_level : 0;
 
 	/* Decoy has been hit */
 	if (square_isdecoyed(cave, grid) && dam) {
@@ -877,12 +863,7 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 	}
 
 	/* Adjust damage for resistance, immunity or vulnerability, and apply it */
-	dam = adjust_dam(player,
-					 typ,
-					 dam,
-					 RANDOMISE,
-					 res_level,
-					 true);
+	dam = adjust_dam(player, typ, dam, true);
 	if (dam) {
 		take_hit(player, dam, killer);
 	}

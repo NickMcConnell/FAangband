@@ -102,8 +102,7 @@ extern wchar_t proj_to_char[PROJ_MAX][BOLT_MAX];
 
 void thrust_away(struct loc centre, struct loc target, int grids_away);
 int inven_damage(struct player *p, int type, int cperc);
-int adjust_dam(struct player *p, int type, int dam, aspect dam_aspect,
-			   int resist, bool actual);
+int adjust_dam(struct player *p, int type, int dam, bool actual);
 
 bool project_f(struct source, int r, struct loc grid, int dam, int typ);
 bool project_o(struct source, int r, struct loc grid, int dam, int typ,

@@ -72,7 +72,7 @@ combat:0:5:20
 skill-save:20
 obj-flags:SUST_STR | SUST_CON | PROT_STUN | REGEN | HOLD_LIFE
 player-flags:ROCK
-values:STR[4] | CON[4] | STEALTH[-2] | SPEED[-5] | RES_POIS[3] | RES_SHARD[1]
+values:STR[4] | CON[4] | STEALTH[-2] | SPEED[-5] | RES_POIS[100] | RES_SHARD[40]
 values:DAM_RED[10]
 effect:CURE:POISONED
 effect:CURE:STUN

@@ -132,7 +132,7 @@ history:5
 age:300:100
 height:90:10
 weight:190:20
-values:RES_LIGHT[1]
+values:RES_LIGHT[40]
 player-flags:BOW_SKILL | ELVEN 
 
 name:Hobbit
@@ -303,7 +303,7 @@ history:6
 age:400:200
 height:90:10
 weight:190:20
-values:RES_LIGHT[1] 
+values:RES_LIGHT[40] 
 obj-flags:SEE_INVIS
 player-flags:ELVEN
 
@@ -354,7 +354,7 @@ history:31
 age:120:60
 height:130:40
 weight:300:40
-values:RES_FIRE[-1]
+values:RES_FIRE[-30]
 player-flags:WOODEN | POLEARM_UNSKILL
 
 name:Beorning

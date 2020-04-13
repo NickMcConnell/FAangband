@@ -1925,6 +1925,14 @@ int add_special_missile_skill(struct player *p, struct player_state *state)
 }
 
 /**
+ * Apply a percentage resistance to the existing player resistance level.
+ */
+void apply_resist(s16b *player_resist, int item_resist)
+{
+	*player_resist = (*player_resist * item_resist) / 100;
+}
+
+/**
  * Calculate the effect of a shapechange on player state
  */
 static void calc_shapechange(struct player_state *state,
@@ -1968,28 +1976,8 @@ static void calc_shapechange(struct player_state *state,
 
 	/* Resists and vulnerabilities */
 	for (i = 0; i < ELEM_MAX; i++) {
-		if (state->el_info[i].res_level == 0) {
-			/* Simple, just apply shape res/vuln */
-			state->el_info[i].res_level = shape->el_info[i].res_level;
-		} else if (state->el_info[i].res_level == -1) {
-			/* Shape resists cancel, immunities trump, vulnerabilities */
-			if (shape->el_info[i].res_level == 1) {
-				state->el_info[i].res_level = 0;
-			} else if (shape->el_info[i].res_level == 3) {
-				state->el_info[i].res_level = 3;
-			}
-		} else if (state->el_info[i].res_level == 1) {
-			/* Shape vulnerabilities cancel, immunities enhance, resists */
-			if (shape->el_info[i].res_level == -1) {
-				state->el_info[i].res_level = 0;
-			} else if (shape->el_info[i].res_level == 3) {
-				state->el_info[i].res_level = 3;
-			}
-		} else if (state->el_info[i].res_level == 3) {
-			/* Immmunity, shape has no effect */
-		}
+		apply_resist(&state->el_info[i].res_level, shape->el_info[i].res_level);
 	}
-
 }
 
 /**
@@ -2028,7 +2016,6 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	struct object *weapon = equipped_item_by_slot_name(p, "weapon");
 	bitflag f[OF_SIZE];
 	bitflag collect_f[OF_SIZE];
-	bool vuln[ELEM_MAX];
 
 	/* Hack to allow calculating hypothetical blows for extra STR, DEX - NRM */
 	int str_ind = state->stat_ind[STAT_STR];
@@ -2050,12 +2037,7 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 		state->skills[i] = p->race->r_skills[i]	+ p->class->c_skills[i];
 	}
 	for (i = 0; i < ELEM_MAX; i++) {
-		vuln[i] = false;
-		if (p->race->el_info[i].res_level == -1) {
-			vuln[i] = true;
-		} else {
-			state->el_info[i].res_level = p->race->el_info[i].res_level;
-		}
+		state->el_info[i].res_level = p->race->el_info[i].res_level;
 	}
 
 	/* Base pflags */
@@ -2128,13 +2110,12 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 
 			/* Apply element info, noting vulnerabilites for later processing */
 			for (j = 0; j < ELEM_MAX; j++) {
-				if (!known_only || obj->known->el_info[j].res_level) {
-					if (obj->el_info[j].res_level == -1)
-						vuln[i] = true;
-
-					/* OK because res_level hasn't included vulnerability yet */
-					if (obj->el_info[j].res_level > state->el_info[j].res_level)
-						state->el_info[j].res_level = obj->el_info[j].res_level;
+				if (known_only) {
+					apply_resist(&state->el_info[j].res_level,
+								 obj->known->el_info[j].res_level);
+				} else {
+					apply_resist(&state->el_info[j].res_level,
+								 obj->el_info[j].res_level);
 				}
 			}
 
@@ -2184,12 +2165,6 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 
 	/* Apply the collected flags */
 	of_union(state->flags, collect_f);
-
-	/* Now deal with vulnerabilities */
-	for (i = 0; i < ELEM_MAX; i++) {
-		if (vuln[i] && (state->el_info[i].res_level < 3))
-			state->el_info[i].res_level--;
-	}
 
 	/* Add shapechange info */
 	calc_shapechange(state, p->shape, &extra_blows, &extra_shots, &extra_might,
@@ -2249,18 +2224,18 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 
 	/* Specialty ability Holy Light */
 	if (player_has(p, PF_HOLY_LIGHT)) {
-		state->el_info[ELEM_LIGHT].res_level = 1;
+		apply_resist(&state->el_info[ELEM_LIGHT].res_level, RES_BOOST_NORMAL);
 	}
 
 	/* Unlight - needs change if anything but resist is introduced for dark */
 	if (player_has(p, PF_UNLIGHT) && character_dungeon) {
-		state->el_info[ELEM_DARK].res_level = 1;
+		apply_resist(&state->el_info[ELEM_DARK].res_level, RES_BOOST_NORMAL);
 	}
 
 	/* Evil */
 	if (player_has(p, PF_EVIL) && character_dungeon) {
-		state->el_info[ELEM_NETHER].res_level = 1;
-		state->el_info[ELEM_HOLY_ORB].res_level = -1;
+		apply_resist(&state->el_info[ELEM_NETHER].res_level, RES_BOOST_NORMAL);
+		apply_resist(&state->el_info[ELEM_HOLY_ORB].res_level, RES_CUT_NORMAL);
 	}
 
 	/* Speed Boost (Fury, Phasewalk) */
@@ -2451,20 +2426,20 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	if (p->timed[TMD_TERROR]) {
 		state->speed += 10;
 	}
-	if (p->timed[TMD_OPP_ACID] && (state->el_info[ELEM_ACID].res_level < 2)) {
-			state->el_info[ELEM_ACID].res_level++;
+	if (p->timed[TMD_OPP_ACID]) {
+		apply_resist(&state->el_info[ELEM_ACID].res_level, RES_BOOST_NORMAL);
 	}
-	if (p->timed[TMD_OPP_ELEC] && (state->el_info[ELEM_ELEC].res_level < 2)) {
-			state->el_info[ELEM_ELEC].res_level++;
+	if (p->timed[TMD_OPP_ELEC]) {
+		apply_resist(&state->el_info[ELEM_ELEC].res_level, RES_BOOST_NORMAL);
 	}
-	if (p->timed[TMD_OPP_FIRE] && (state->el_info[ELEM_FIRE].res_level < 2)) {
-			state->el_info[ELEM_FIRE].res_level++;
+	if (p->timed[TMD_OPP_FIRE]) {
+		apply_resist(&state->el_info[ELEM_FIRE].res_level, RES_BOOST_NORMAL);
 	}
-	if (p->timed[TMD_OPP_COLD] && (state->el_info[ELEM_COLD].res_level < 2)) {
-			state->el_info[ELEM_COLD].res_level++;
+	if (p->timed[TMD_OPP_COLD]) {
+		apply_resist(&state->el_info[ELEM_COLD].res_level, RES_BOOST_NORMAL);
 	}
-	if (p->timed[TMD_OPP_POIS] && (state->el_info[ELEM_POIS].res_level < 2)) {
-			state->el_info[ELEM_POIS].res_level++;
+	if (p->timed[TMD_OPP_POIS]) {
+		apply_resist(&state->el_info[ELEM_POIS].res_level, RES_BOOST_NORMAL);
 	}
 	if (p->timed[TMD_OPP_CONF]) {
 		of_on(state->flags, OF_PROT_CONF);

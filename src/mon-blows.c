@@ -366,8 +366,7 @@ static void melee_effect_elemental(melee_effect_handler_context_t *context,
 		physical_dam = 0;
 
 	if (context->p) {
-		elemental_dam = adjust_dam(context->p, type, context->damage,
-								   RANDOMISE, 0, true);
+		elemental_dam = adjust_dam(context->p, type, context->damage, true);
 	} else {
 		assert(context->t_mon);
 		elemental_dam = monster_elemental_damage(context, type, &hurt_msg,
@@ -585,7 +584,7 @@ static void melee_effect_handler_DISENCHANT(melee_effect_handler_context_t *cont
 	if (monster_damage_target(context, true)) return;
 
 	/* Apply disenchantment if no resist */
-	if (!player_resists(context->p, ELEM_DISEN))
+	if (!player_resists_effects(context->p->state, ELEM_DISEN))
 		effect_simple(EF_DISENCHANT, source_monster(context->mon->midx), "0", 0, 0, 0, 0, 0, &context->obvious);
 
 	/* Learn about the player */

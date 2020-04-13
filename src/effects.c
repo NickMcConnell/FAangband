@@ -3231,7 +3231,7 @@ bool effect_handler_TELEPORT_LEVEL(effect_handler_context_t *context)
 
 	/* Resist hostile teleport */
 	if (context->origin.what == SRC_MONSTER &&
-			player_resists(player, ELEM_NEXUS)) {
+			player_resists_effects(player->state, ELEM_NEXUS)) {
 		msg("You resist the effect!");
 		return true;
 	}
@@ -3433,14 +3433,14 @@ bool effect_handler_DESTRUCTION(effect_handler_context_t *context)
 	if (elem == ELEM_LIGHT) {
 		msg("There is a searing blast of light!");
 		equip_learn_element(player, ELEM_LIGHT);
-		if (!player_resists(player, ELEM_LIGHT)) {
+		if (!player_resists_effects(player->state, ELEM_LIGHT)) {
 			(void)player_inc_timed(player, TMD_BLIND, 10 + randint1(10), true,
 								   true);
 		}
 	} else if (elem == ELEM_DARK) {
 		msg("Darkness seems to crush you!");
 		equip_learn_element(player, ELEM_DARK);
-		if (!player_resists(player, ELEM_DARK)) {
+		if (!player_resists_effects(player->state, ELEM_DARK)) {
 			(void)player_inc_timed(player, TMD_BLIND, 10 + randint1(10), true,
 								   true);
 		}
@@ -3836,7 +3836,7 @@ bool effect_handler_DARKEN_AREA(effect_handler_context_t *context)
 
 	/* Hack - blind the player directly if player-cast */
 	if (context->origin.what == SRC_PLAYER &&
-		!player_resists(player, ELEM_DARK)) {
+		!player_resists_effects(player->state, ELEM_DARK)) {
 		(void)player_inc_timed(player, TMD_BLIND, 3 + randint1(5), true, true);
 	}
 

@@ -555,14 +555,14 @@ desc:You are immune to traps.
 type:element
 name:Resistance
 desc:You resist
-value:1
+value:60
 
 type:element
 name:Immunity
 desc:You are immune to
-value:3
+value:0
 
 type:element
 name:Vulnerability
 desc:You are vulnerable to
-value:-1
+value:130

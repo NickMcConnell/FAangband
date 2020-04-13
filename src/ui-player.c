@@ -267,20 +267,6 @@ static const struct player_flag_record player_flag_table[RES_ROWS * 4] = {
 	{ "TrpIm",	-1,					OF_TRAP_IMMUNE, -1,			-1 },
 	{ "Bless",	-1,					OF_BLESSED,		-1, 		-1 },
 
-	{ "ImpHP",	-1,					OF_IMPAIR_HP,	-1, 		-1 },
-	{ "ImpSP",	-1,					OF_IMPAIR_MANA,	-1, 		-1 },
-	{ " Fear",	-1,					OF_AFRAID,		-1,			TMD_AFRAID },
-	{ "Aggrv",	-1,					OF_AGGRAVATE,	-1, 		-1 },
-	{ "NoTel",	-1,					OF_NO_TELEPORT,	-1, 		-1 },
-	{ "DrExp",	-1,					OF_DRAIN_EXP,	-1, 		-1 },
-	{ "Stick",	-1,					OF_STICKY,		-1, 		-1 },
-	{ "Fragl",	-1,					OF_FRAGILE,		-1, 		-1 },
-	{ "",	-1,		-1,				-1, 		-1 },
-	{ "",	-1,		-1,				-1, 		-1 },
-	{ "",	-1,		-1,				-1, 		-1 },
-	{ "",	-1,		-1,				-1, 		-1 },
-	{ "",	-1,		-1,				-1, 		-1 },
-
 	{ "Stea.",	OBJ_MOD_STEALTH,	-1,				-1, 		TMD_STEALTH },
 	{ "Sear.",	OBJ_MOD_SEARCH,		-1,				-1, 		-1 },
 	{ "Infra",	OBJ_MOD_INFRA,		-1,				-1,			TMD_SINFRA },
@@ -292,6 +278,20 @@ static const struct player_flag_record player_flag_table[RES_ROWS * 4] = {
 	{ "Light",	OBJ_MOD_LIGHT,		-1,				-1, 		-1 },
 	{ "D.Red",	OBJ_MOD_DAM_RED,	-1,				-1, 		-1 },
 	{ "Moves",	OBJ_MOD_MOVES,		-1,				-1, 		-1 },
+	{ "",	-1,		-1,				-1, 		-1 },
+	{ "",	-1,		-1,				-1, 		-1 },
+
+	{ "ImpHP",	-1,					OF_IMPAIR_HP,	-1, 		-1 },
+	{ "ImpSP",	-1,					OF_IMPAIR_MANA,	-1, 		-1 },
+	{ " Fear",	-1,					OF_AFRAID,		-1,			TMD_AFRAID },
+	{ "Aggrv",	-1,					OF_AGGRAVATE,	-1, 		-1 },
+	{ "NoTel",	-1,					OF_NO_TELEPORT,	-1, 		-1 },
+	{ "DrExp",	-1,					OF_DRAIN_EXP,	-1, 		-1 },
+	{ "Stick",	-1,					OF_STICKY,		-1, 		-1 },
+	{ "Fragl",	-1,					OF_FRAGILE,		-1, 		-1 },
+	{ "",	-1,		-1,				-1, 		-1 },
+	{ "",	-1,		-1,				-1, 		-1 },
+	{ "",	-1,		-1,				-1, 		-1 },
 	{ "",	-1,		-1,				-1, 		-1 },
 	{ "",	-1,		-1,				-1, 		-1 },
 };
@@ -311,6 +311,7 @@ static void display_resistance_panel(const struct player_flag_record *rec,
 	Term_putstr(col, row++, res_cols, COLOUR_WHITE, "      abcdefghijkl@");
 	for (i = 0; i < size - 3; i++, row++) {
 		byte name_attr = COLOUR_WHITE;
+		int mod_total = 0;
 		Term_gotoxy(col + 6, row);
 
 		/* Repeated extraction of flags is inefficient but more natural */
@@ -319,6 +320,7 @@ static void display_resistance_panel(const struct player_flag_record *rec,
 			byte attr = COLOUR_WHITE | (j % 2) * 8; /* alternating columns */
 			char sym = strlen(rec[i].name) ? '.' : ' ';
 			bool res = false, imm = false, vul = false, rune = false;
+			int mod = 0;
 			bool timed = false;
 			bool known = false;
 
@@ -345,7 +347,8 @@ static void display_resistance_panel(const struct player_flag_record *rec,
 					/* Get resistance, immunity and vulnerability info */
 					if (rec[i].mod != -1) {
 						if (obj->modifiers[rec[i].mod] != 0) {
-							res = true;
+							mod = obj->modifiers[rec[i].mod];
+							mod_total += mod;
 						}
 						rune = (player->obj_k->modifiers[rec[i].mod] == 1);
 					} else if (rec[i].flag != -1) {
@@ -355,13 +358,16 @@ static void display_resistance_panel(const struct player_flag_record *rec,
 						rune = of_has(player->obj_k->flags, rec[i].flag);
 					} else if (rec[i].element != -1) {
 						if (known) {
-							if (obj->el_info[rec[i].element].res_level == 3) {
+							if (obj->el_info[rec[i].element].res_level ==
+								RES_LEVEL_MAX) {
 								imm = true;
 							}
-							if (obj->el_info[rec[i].element].res_level == 1) {
+							if (obj->el_info[rec[i].element].res_level <
+								RES_LEVEL_BASE) {
 								res = true;
 							}
-							if (obj->el_info[rec[i].element].res_level == -1) {
+							if (obj->el_info[rec[i].element].res_level >
+								RES_LEVEL_BASE) {
 								vul = true;
 							}
 						}
@@ -422,14 +428,20 @@ static void display_resistance_panel(const struct player_flag_record *rec,
 							of_has(player->obj_k->flags, rec[i].flag));
 				} else if (rec[i].element != -1) {
 					int el = rec[i].element;
-					imm = (player->race->el_info[el].res_level == 3) ||
-						((player->shape->el_info[el].res_level == 3) &&
+					imm = (player->race->el_info[el].res_level ==
+						   RES_LEVEL_MAX) ||
+						((player->shape->el_info[el].res_level ==
+						  RES_LEVEL_MAX) &&
 						 (player->obj_k->el_info[el].res_level));
-					res = (player->race->el_info[el].res_level == 1) ||
-						((player->shape->el_info[el].res_level == 1) &&
+					res = (player->race->el_info[el].res_level <
+						   RES_LEVEL_BASE) ||
+						((player->shape->el_info[el].res_level <
+							RES_LEVEL_BASE) &&
 						 (player->obj_k->el_info[el].res_level));
-					vul = (player->race->el_info[el].res_level == -1) ||
-						((player->shape->el_info[el].res_level == -1) &&
+					vul = (player->race->el_info[el].res_level >
+						   RES_LEVEL_BASE) ||
+						((player->shape->el_info[el].res_level >
+							RES_LEVEL_BASE) &&
 						 (player->obj_k->el_info[el].res_level));
 				}
 			}
@@ -444,7 +456,11 @@ static void display_resistance_panel(const struct player_flag_record *rec,
 			}
 
 			/* Set the symbols and print them */
-			if (vul) {
+			if (mod > 0) {
+				sym = mod < 10 ? '0' + mod : '*';
+			} else if (mod < 0) {
+				sym = mod > -10 ? '0' + (0 - mod) : '*';
+			} else if (vul) {
 				sym = '-';
 			} else if (imm) {
 				sym = '*';
@@ -474,18 +490,34 @@ static void display_resistance_panel(const struct player_flag_record *rec,
 		if (strlen(rec[i].name)) {
 			Term_putstr(col, row, 6, name_attr, format("%5s:", rec[i].name));
 		}
+
+		/* Resist percentages */
+		if (rec[i].element != -1) {
+			int val = 100 - player->state.el_info[i].res_level;
+			char buf[10];
+			my_strcpy(buf, format("%4d", val), 5);
+			Term_putstr(res_cols, row, 4, name_attr, buf);
+			Term_putstr(res_cols + 4, row, 1, name_attr, "%");
+		}
+
+		/* Modifier totals */
+		if (rec[i].mod != -1) {
+			char buf[10];
+			my_strcpy(buf, format("%4d ", mod_total), 5);
+			Term_putstr(3 * res_cols + 7, row, 4, name_attr, buf);
+		}
 	}
 }
 
 static void display_player_flag_info(void)
 {
 	int i;
-	int res_cols = 5 + 2 + player->body.count;
+	int res_cols = 5 + 1 + player->body.count + 1;
 	region resist_region[] = {
-		{  0 * (res_cols + 1), 7, res_cols, RES_ROWS + 2 },
-		{  1 * (res_cols + 1), 7, res_cols, RES_ROWS + 2 },
-		{  2 * (res_cols + 1), 7, res_cols, RES_ROWS + 2 },
-		{  3 * (res_cols + 1), 7, res_cols, RES_ROWS + 2 },
+		{  0 * (res_cols + 1), 7, res_cols + 5, RES_ROWS + 2 },
+		{  1 * (res_cols + 1) + 5, 7, res_cols, RES_ROWS + 2 },
+		{  2 * (res_cols + 1) + 5, 7, res_cols + 5, RES_ROWS + 2 },
+		{  3 * (res_cols + 1) + 10, 7, res_cols, RES_ROWS + 2 },
 	};
 
 	for (i = 0; i < 4; i++)
@@ -1047,13 +1079,13 @@ void write_character_dump(ang_file *fff)
 	display_player(1);
 
 	/* Print a header */
-	file_putf(fff, format("%-20s%s\n", "Resistances", "Abilities"));
+	file_putf(fff, format("%-25s%s\n", "Resistances", "Abilities"));
 
 	/* Dump part of the screen */
 	for (y = 9; y < 9 + RES_ROWS; y++) {
 		p = buf;
 		/* Dump each row */
-		for (x = 0; x < 39; x++) {
+		for (x = 0; x < 44; x++) {
 			/* Get the attr/char */
 			(void)(Term_what(x, y, &a, &c));
 
@@ -1075,15 +1107,15 @@ void write_character_dump(ang_file *fff)
 	file_putf(fff, "\n");
 
 	/* Print a header */
-	file_putf(fff, format("%-20s%s\n", "Hindrances", "Modifiers"));
+	file_putf(fff, format("%-25s%s\n", "Modifiers", "Hindrances"));
 
 	/* Dump part of the screen */
 	for (y = 9; y < 20; y++) {
 		p = buf;
 		/* Dump each row */
-		for (x = 0; x < 39; x++) {
+		for (x = 0; x < 44; x++) {
 			/* Get the attr/char */
-			(void)(Term_what(x + 40, y, &a, &c));
+			(void)(Term_what(x + 45, y, &a, &c));
 
 			/* Dump it */
 			p += wctomb(p, c);

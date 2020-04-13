@@ -166,16 +166,6 @@ bool append_object_curse(struct object *obj, int pick, int power)
 				check_object_curses(obj);
 				return false;
 			}
-		} else if (status->fail_code == TMD_FAIL_FLAG_RESIST) {
-			if (obj->el_info[status->fail].res_level > 0) {
-				check_object_curses(obj);
-				return false;
-			}
-		} else if (status->fail_code == TMD_FAIL_FLAG_VULN) {
-			if (obj->el_info[status->fail].res_level < 0) {
-				check_object_curses(obj);
-				return false;
-			}
 		}
 	}
 
@@ -235,16 +225,6 @@ bool artifact_curse_conflicts(struct artifact *art, int pick)
 		status = &timed_effects[idx];
 		if (status->fail_code == TMD_FAIL_FLAG_OBJECT) {
 			if (of_has(art->flags, status->fail)) {
-				check_artifact_curses(art);
-				return true;
-			}
-		} else if (status->fail_code == TMD_FAIL_FLAG_RESIST) {
-			if (art->el_info[status->fail].res_level > 0) {
-				check_artifact_curses(art);
-				return true;
-			}
-		} else if (status->fail_code == TMD_FAIL_FLAG_VULN) {
-			if (art->el_info[status->fail].res_level < 0) {
 				check_artifact_curses(art);
 				return true;
 			}

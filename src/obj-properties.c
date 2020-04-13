@@ -19,6 +19,10 @@
 #include "init.h"
 #include "object.h"
 
+/**
+ * ------------------------------------------------------------------------
+ * Object property utilities
+ * ------------------------------------------------------------------------ */
 struct obj_property *obj_properties;
 
 struct obj_property *lookup_obj_property(int type, int index)
@@ -135,3 +139,11 @@ int sustain_flag(int stat)
 
 	return stat + 1;
 }
+
+/**
+ * ------------------------------------------------------------------------
+ * Percentage resistances
+ * ------------------------------------------------------------------------ */
+/**
+ *
+ */
