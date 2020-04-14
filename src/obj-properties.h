@@ -209,6 +209,12 @@ struct obj_property {
 	char *neg_adj;			/* adjective for negative of property */
 	char *msg;				/* message on noticing property */
 	char *desc;				/* extra text for object info */
+	int price_constant;		/* price constant */
+	int price_linear;		/* price linear coefficient */
+	int price_square;		/* price quadratic coefficient */
+	int design_constant;	/* design constant */
+	int design_linear;		/* design linear coefficient */
+	int design_square;		/* design quadratic coefficient */
 };
 
 extern struct obj_property *obj_properties;

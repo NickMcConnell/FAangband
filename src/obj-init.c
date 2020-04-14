@@ -3101,6 +3101,60 @@ static enum parser_error parse_object_property_desc(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_object_property_price_constant(struct parser *p) {
+	struct obj_property *prop = parser_priv(p);
+
+	if (!prop)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	prop->price_constant = parser_getint(p, "value");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_object_property_price_linear(struct parser *p) {
+	struct obj_property *prop = parser_priv(p);
+
+	if (!prop)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	prop->price_linear = parser_getint(p, "value");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_object_property_price_square(struct parser *p) {
+	struct obj_property *prop = parser_priv(p);
+
+	if (!prop)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	prop->price_square = parser_getint(p, "value");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_object_property_design_constant(struct parser *p) {
+	struct obj_property *prop = parser_priv(p);
+
+	if (!prop)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	prop->design_constant = parser_getint(p, "value");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_object_property_design_linear(struct parser *p) {
+	struct obj_property *prop = parser_priv(p);
+
+	if (!prop)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	prop->design_linear = parser_getint(p, "value");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_object_property_design_square(struct parser *p) {
+	struct obj_property *prop = parser_priv(p);
+
+	if (!prop)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	prop->design_square = parser_getint(p, "value");
+	return PARSE_ERROR_NONE;
+}
+
 struct parser *init_parse_object_property(void) {
 	struct parser *p = parser_new();
 	parser_setpriv(p, NULL);
@@ -3116,6 +3170,16 @@ struct parser *init_parse_object_property(void) {
 	parser_reg(p, "neg-adjective str neg_adj", parse_object_property_neg_adj);
 	parser_reg(p, "msg str msg", parse_object_property_msg);
 	parser_reg(p, "desc str desc", parse_object_property_desc);
+	parser_reg(p, "price-constant int value",
+			   parse_object_property_price_constant);
+	parser_reg(p, "price-linear int value", parse_object_property_price_linear);
+	parser_reg(p, "price-square int value", parse_object_property_price_square);
+	parser_reg(p, "design-constant int value",
+			   parse_object_property_design_constant);
+	parser_reg(p, "design-linear int value",
+			   parse_object_property_design_linear);
+	parser_reg(p, "design-square int value",
+			   parse_object_property_design_square);
 	return p;
 }
 
