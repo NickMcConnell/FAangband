@@ -2942,12 +2942,16 @@ static enum parser_error parse_object_property_type(struct parser *p) {
 		prop->type = OBJ_PROPERTY_FLAG;
 	} else if (streq(name, "ignore")) {
 		prop->type = OBJ_PROPERTY_IGNORE;
-	} else if (streq(name, "resistance")) {
-		prop->type = OBJ_PROPERTY_RESIST;
-	} else if (streq(name, "vulnerability")) {
-		prop->type = OBJ_PROPERTY_VULN;
-	} else if (streq(name, "immunity")) {
-		prop->type = OBJ_PROPERTY_IMM;
+	} else if (streq(name, "element")) {
+		prop->type = OBJ_PROPERTY_ELEMENT;
+	} else if (streq(name, "brand")) {
+		prop->type = OBJ_PROPERTY_BRAND;
+	} else if (streq(name, "slay")) {
+		prop->type = OBJ_PROPERTY_SLAY;
+	} else if (streq(name, "combat")) {
+		prop->type = OBJ_PROPERTY_COMBAT;
+	} else if (streq(name, "curse")) {
+		prop->type = OBJ_PROPERTY_CURSE;
 	} else {
 		return PARSE_ERROR_INVALID_PROPERTY;
 	}
@@ -3014,11 +3018,7 @@ static enum parser_error parse_object_property_code(struct parser *p) {
 		index = code_index_in_array(obj_flags, code);
 	} else if (prop->type == OBJ_PROPERTY_IGNORE) {
 		index = code_index_in_array(element_names, code);
-	} else if (prop->type == OBJ_PROPERTY_RESIST) {
-		index = code_index_in_array(element_names, code);
-	} else if (prop->type == OBJ_PROPERTY_VULN) {
-		index = code_index_in_array(element_names, code);
-	} else if (prop->type == OBJ_PROPERTY_IMM) {
+	} else if (prop->type == OBJ_PROPERTY_ELEMENT) {
 		index = code_index_in_array(element_names, code);
 	}
 	if (index >= 0) {

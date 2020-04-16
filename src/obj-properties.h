@@ -111,10 +111,12 @@ enum obj_property_type {
 	OBJ_PROPERTY_STAT,
 	OBJ_PROPERTY_MOD,
 	OBJ_PROPERTY_FLAG,
+	OBJ_PROPERTY_ELEMENT,
 	OBJ_PROPERTY_IGNORE,
-	OBJ_PROPERTY_RESIST,
-	OBJ_PROPERTY_VULN,
-	OBJ_PROPERTY_IMM,
+	OBJ_PROPERTY_BRAND,
+	OBJ_PROPERTY_SLAY,
+	OBJ_PROPERTY_COMBAT,
+	OBJ_PROPERTY_CURSE,
 	OBJ_PROPERTY_MAX
 };
 
@@ -179,6 +181,11 @@ enum obj_property_type {
  * Vulnerability boost values
  */
 #define RES_CUT_NORMAL		130
+
+/**
+ * Multiplier for no brand or slay
+ */
+#define MULTIPLE_BASE		10
 
 /**
  * Resistance cap values - best resistance items or players can attain

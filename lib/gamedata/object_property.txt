@@ -34,6 +34,7 @@ power:9
 mult:13
 adjective:strong
 neg-adjective:weak
+price-linear:200
 price-square:100
 design-linear:150
 design-square:8
@@ -45,6 +46,7 @@ power:5
 mult:10
 adjective:smart
 neg-adjective:stupid
+price-linear:200
 price-square:100
 design-linear:150
 design-square:8
@@ -56,6 +58,7 @@ power:5
 mult:10
 adjective:wise
 neg-adjective:naive
+price-linear:200
 price-square:100
 design-linear:150
 design-square:8
@@ -68,6 +71,7 @@ mult:10
 type-mult:gloves:2
 adjective:dextrous
 neg-adjective:clumsy
+price-linear:200
 price-square:100
 design-linear:130
 design-square:7
@@ -79,6 +83,7 @@ power:12
 mult:15
 adjective:healthy
 neg-adjective:sickly
+price-linear:200
 price-square:100
 design-linear:130
 design-square:7
@@ -815,119 +820,176 @@ power:1
 price-constant:100
 
 name:acid resistance
-type:resistance
+type:element
 code:ACID
 power:5
-price-constant:6000
-price-linear:-60
-design-constant:1000
-design-linear:-10
+price-linear:60
+design-linear:10
 
 name:electricity resistance
-type:resistance
+type:element
 code:ELEC
 power:6
-price-constant:6000
-price-linear:-60
-design-constant:1000
-design-linear:-10
+price-linear:60
+design-linear:10
 
 name:fire resistance
-type:resistance
+type:element
 code:FIRE
 power:6
-price-constant:6000
-price-linear:-60
-design-constant:1000
-design-linear:-10
+price-linear:60
+design-linear:10
 
 name:cold resistance
-type:resistance
+type:element
 code:COLD
 power:6
-price-constant:6000
-price-linear:-60
-design-constant:1000
-design-linear:-10
+price-linear:60
+design-linear:10
 
 name:poison resistance
-type:resistance
+type:element
 code:POIS
 power:28
-price-constant:12000
-price-linear:-120
-design-constant:2000
-design-linear:-20
+price-linear:120
+design-linear:20
 
 name:light resistance
-type:resistance
+type:element
 code:LIGHT
 power:6
-price-constant:6000
-price-linear:-60
-design-constant:1000
-design-linear:-10
+price-linear:60
+design-linear:10
 
 name:dark resistance
-type:resistance
+type:element
 code:DARK
 power:16
-price-constant:6000
-price-linear:-60
-design-constant:1000
-design-linear:-10
+price-linear:60
+design-linear:10
 
 name:sound resistance
-type:resistance
+type:element
 code:SOUND
 power:14
-price-constant:6000
-price-linear:-60
-design-constant:1000
-design-linear:-10
+price-linear:60
+design-linear:10
 
 name:shards resistance
-type:resistance
+type:element
 code:SHARD
 power:8
-price-constant:6000
-price-linear:-60
-design-constant:1000
-design-linear:-10
+price-linear:60
+design-linear:10
 
 name:nexus resistance
-type:resistance
+type:element
 code:NEXUS
 power:15
-price-constant:6000
-price-linear:-60
-design-constant:1000
-design-linear:-10
+price-linear:60
+design-linear:10
 
 name:nether resistance
-type:resistance
+type:element
 code:NETHER
 power:20
-price-constant:9000
-price-linear:-90
-design-constant:1500
-design-linear:-15
+price-linear:90
+design-linear:15
 
 name:chaos resistance
-type:resistance
+type:element
 code:CHAOS
 power:20
-price-constant:9000
-price-linear:-90
-design-constant:1500
-design-linear:-15
+price-linear:90
+design-linear:15
 
 name:disenchantment resistance
-type:resistance
+type:element
 code:DISEN
 power:20
-price-constant:12000
-price-linear:-120
-design-constant:2000
-design-linear:-20
+price-linear:120
+design-linear:20
 
+name:acid brand
+type:brand
+price-linear:300
+design-linear:100
+
+name:lightning brand
+type:brand
+price-linear:300
+design-linear:100
+
+name:fire brand
+type:brand
+price-linear:200
+design-linear:100
+
+name:cold brand
+type:brand
+price-linear:200
+design-linear:100
+
+name:poison brand
+type:brand
+price-linear:150
+design-linear:100
+
+name:slay animal
+type:slay
+price-linear:150
+design-linear:60
+
+name:slay evil
+type:slay
+price-linear:500
+design-linear:100
+
+name:slay undead
+type:slay
+price-linear:200
+design-linear:60
+
+name:slay demon
+type:slay
+price-linear:200
+design-linear:50
+
+name:slay orc
+type:slay
+price-linear:100
+design-linear:40
+
+name:slay troll
+type:slay
+price-linear:150
+design-linear:50
+
+name:slay giant
+type:slay
+price-linear:100
+design-linear:40
+
+name:slay dragon
+type:slay
+price-linear:200
+design-linear:60
+
+name:enhanced dice
+type:combat
+
+name:extra armor
+type:combat
+price-linear:100
+
+name:armor bonus
+type:combat
+price-linear:100
+
+name:skill bonus
+type:combat
+price-linear:100
+
+name:deadliness bonus
+type:combat
+price-linear:100
