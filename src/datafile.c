@@ -544,3 +544,50 @@ void deactivate_randart_file(void)
 	strnfmt(buf, 9, "%08x", seed_randart);
 	file_archive("randart", buf);
 }
+
+/**
+ * ------------------------------------------------------------------------
+ * Angband text file reading routines
+ * ------------------------------------------------------------------------ */
+/**
+ * Taken from Zangband.  What a good idea!
+ */
+errr get_rnd_line(char *file_name, char *output)
+{
+	ang_file *fp;
+	char buf[1024];
+	int lines = 0, line, counter;
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_GAMEDATA, file_name);
+
+	/* Open the file */
+	fp = file_open(buf, MODE_READ, FTYPE_TEXT);
+
+	/* Failed */
+	if (!fp)
+		return (-1);
+
+	/* Parse the file */
+	if (file_getl(fp, buf, 80))
+		lines = atoi(buf);
+	else
+		return (1);
+
+	/* choose a random line */
+	line = randint1(lines);
+
+	for (counter = 0; counter <= line; counter++) {
+		if (!(file_getl(fp, buf, 80)))
+			return (1);
+		else if (counter == line)
+			break;
+	}
+
+	strcpy(output, buf);
+
+	/* Close the file */
+	file_close(fp);
+
+	return (0);
+}

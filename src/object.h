@@ -167,6 +167,7 @@ struct object_base {
 
 	int break_perc;
 	int max_stack;
+	int potential;
 	int num_svals;
 };
 

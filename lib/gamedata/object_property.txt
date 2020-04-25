@@ -27,6 +27,8 @@
 # design-linear: constant used in design to multiply an associated value
 # design-square: constant used in design to multiply a value squared
 
+## Stat bonuses
+
 name:strength
 type:stat
 code:STR
@@ -87,6 +89,8 @@ price-linear:200
 price-square:100
 design-linear:130
 design-square:7
+
+## Non-stat modifiers
 
 name:stealth
 type:mod
@@ -245,6 +249,8 @@ type-mult:light:3
 price-linear:300
 design-linear:50
 design-square:4
+
+## Object flags
 
 name:sustain strength
 type:flag
@@ -795,6 +801,8 @@ code:THROWING
 power:4
 price-constant:200
 
+## Ignore elements
+
 name:ignore acid
 type:ignore
 code:ACID
@@ -818,6 +826,8 @@ type:ignore
 code:COLD
 power:1
 price-constant:100
+
+## Resistance (and immunity and vulnerability) to elements
 
 name:acid resistance
 type:element
@@ -910,86 +920,123 @@ power:20
 price-linear:120
 design-linear:20
 
+## Elemental brands
+
 name:acid brand
 type:brand
+price-constant:-3000
 price-linear:300
+design-constant:-1000
 design-linear:100
 
 name:lightning brand
 type:brand
+price-constant:-3000
 price-linear:300
+design-constant:-1000
 design-linear:100
 
 name:fire brand
 type:brand
+price-constant:-2000
 price-linear:200
+design-constant:-1000
 design-linear:100
 
 name:cold brand
 type:brand
+price-constant:-2000
 price-linear:200
+design-constant:-1000
 design-linear:100
 
 name:poison brand
 type:brand
+price-constant:-1500
 price-linear:150
+design-constant:-1000
 design-linear:100
 
-name:slay animal
+## Slays
+
+name:slay animals
 type:slay
+price-constant:-1500
 price-linear:150
+design-constant:-600
 design-linear:60
 
 name:slay evil
 type:slay
+price-constant:-5000
 price-linear:500
+design-constant:-1000
 design-linear:100
 
 name:slay undead
 type:slay
+price-constant:-2000
 price-linear:200
+design-constant:-600
 design-linear:60
 
-name:slay demon
+name:slay demons
 type:slay
+price-constant:-2000
 price-linear:200
+design-constant:-500
 design-linear:50
 
-name:slay orc
+name:slay orcs
 type:slay
+price-constant:-1000
 price-linear:100
+design-constant:-400
 design-linear:40
 
-name:slay troll
+name:slay trolls
 type:slay
+price-constant:-1500
 price-linear:150
+design-constant:-500
 design-linear:50
 
-name:slay giant
+name:slay giants
 type:slay
+price-constant:-1000
 price-linear:100
+design-constant:-400
 design-linear:40
 
-name:slay dragon
+name:slay dragons
 type:slay
+price-constant:-2000
 price-linear:200
+design-constant:-600
 design-linear:60
 
-name:enhanced dice
-type:combat
+## Combat bonuses
 
 name:extra armor
 type:combat
 price-linear:100
+design-linear:40
 
 name:armor bonus
 type:combat
 price-linear:100
+design-linear:40
 
 name:skill bonus
 type:combat
 price-linear:100
+design-linear:40
 
 name:deadliness bonus
 type:combat
 price-linear:100
+design-linear:40
+
+# enhanced dice require special calculations
+name:enhanced dice
+type:combat

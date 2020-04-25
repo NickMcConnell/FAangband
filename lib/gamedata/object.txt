@@ -18,7 +18,7 @@
 # alloc: commonness : min " to " max
 # charges: charges
 # pile: chance of being generated in a pile : dice for number of items
-# power: power of the effect for object power eveluations
+# power: power of the effect for object power evaluations
 # msg: message on using the object
 # effect: effect when used : parameter (maybe) : paramater (maybe)
 # effect-yx: y value for effect : x value for effect
@@ -204,7 +204,6 @@ graphics:,:U
 level:0
 weight:2
 cost:1
-power:0
 effect:NOURISH:INC_BY
 dice:10
 effect:CRUNCH
@@ -218,7 +217,6 @@ weight:4
 cost:3
 alloc:40:0 to 20
 pile:10:1d2
-power:0
 msg:That tastes good.
 effect:NOURISH:INC_BY
 dice:10
@@ -231,7 +229,6 @@ level:0
 weight:3
 cost:3
 alloc:40:0 to 50
-power:0
 msg:That tastes good.
 effect:NOURISH:INC_BY
 dice:15
@@ -246,7 +243,6 @@ weight:2
 cost:2
 alloc:40:30 to 100
 pile:100:2d3
-power:0
 msg:That tastes better than nothing.
 effect:NOURISH:INC_BY
 dice:15
@@ -261,7 +257,6 @@ weight:8
 cost:3
 alloc:40:0 to 50
 pile:100:1d5
-power:0
 msg:That tastes good.
 effect:NOURISH:INC_BY
 dice:30
@@ -277,7 +272,6 @@ weight:5
 cost:0
 alloc:30:50 to 100
 pile:50:1d3
-power:0
 msg:That tastes disgusting.
 effect:RANDOM
 dice:5
@@ -303,7 +297,6 @@ weight:10
 cost:3
 alloc:30:10 to 50
 pile:50:1d3
-power:0
 msg:That tastes good.
 effect:NOURISH:INC_BY
 dice:40
@@ -318,7 +311,6 @@ weight:10
 cost:10
 alloc:30:20 to 70
 pile:40:1d3
-power:1
 msg:Delicious!
 effect:NOURISH:INC_TO
 dice:60
@@ -334,7 +326,6 @@ weight:3
 cost:10
 alloc:20:30 to 100
 pile:10:1d3
-power:4
 msg:That tastes great.
 effect:NOURISH:INC_TO
 dice:75
@@ -350,7 +341,6 @@ graphics:,:y
 level:0
 weight:5
 cost:1
-power:0
 msg:That tastes great!
 effect:NOURISH:INC_BY
 dice:3
@@ -364,7 +354,6 @@ graphics:,:r
 level:0
 weight:10
 cost:2
-power:0
 msg:That tastes great!  A fine vintage.
 effect:NOURISH:INC_BY
 dice:3
@@ -379,7 +368,6 @@ level:0
 weight:2
 cost:100
 alloc:20:10 to 50
-power:0
 msg:You feel your heart warm.
 effect:NOURISH:INC_BY
 dice:3
@@ -396,7 +384,6 @@ weight:2
 cost:1
 alloc:20:20 to 100
 pile:10:1d3
-power:0
 msg:It burns your throat.
 effect:NOURISH:INC_BY
 dice:5
@@ -413,7 +400,6 @@ level:0
 weight:10
 cost:2000
 alloc:10:60 to 100
-power:0
 msg:Refreshing!
 effect:RESTORE_STAT:STR
 effect:RESTORE_STAT:CON
@@ -432,7 +418,6 @@ weight:1
 cost:200
 alloc:10:5 to 100
 pile:70:1d4
-power:10
 effect:CURE:BLIND
 effect:TIMED_INC:TELEPATHY
 dice:50+7d7
@@ -447,7 +432,6 @@ weight:1
 cost:200
 alloc:10:5 to 40
 pile:70:1d4
-power:7
 effect:HEAL_HP
 dice:30
 effect:CURE:STUN
@@ -465,7 +449,6 @@ weight:1
 cost:200
 alloc:25:20 to 100
 pile:13:1d3
-power:15
 effect:RESTORE_STAT:STR
 effect:RESTORE_STAT:INT
 effect:RESTORE_STAT:WIS
@@ -482,7 +465,6 @@ weight:1
 cost:200
 alloc:10:5 to 40
 pile:70:1d4
-power:8
 effect:RESTORE_MANA
 dice:20
 effect:CURE:CONFUSED
@@ -501,7 +483,6 @@ weight:1
 cost:60
 alloc:10:5 to 100
 pile:70:1d4
-power:7
 effect:TIMED_INC:IMAGE
 dice:25+5d5
 effect:TIMED_INC:OPP_FIRE
@@ -521,7 +502,6 @@ weight:1
 cost:60
 alloc:10:5 to 40
 pile:70:1d4
-power:5
 effect:TIMED_SET:TERROR
 dice:25+5d5
 effect:NOURISH:INC_BY
@@ -536,7 +516,6 @@ weight:1
 cost:60
 alloc:10:10 to 40
 pile:70:1d4
-power:5
 effect:TIMED_SET:STONESKIN
 dice:50+7d7
 effect:NOURISH:INC_BY
@@ -562,7 +541,6 @@ weight:1
 cost:20
 alloc:10:10 to 40
 pile:70:1d4
-power:5
 effect:RESTORE_MANA
 effect:NOURISH:INC_BY
 dice:5
@@ -579,7 +557,6 @@ weight:1
 cost:100
 alloc:1:15 to 100
 pile:70:1d4
-power:5
 effect:TIMED_INC:SPRINT
 dice:100
 effect:NOURISH:INC_BY
@@ -594,7 +571,6 @@ weight:1
 cost:60
 alloc:1:15 to 100
 pile:70:1d4
-power:5
 msg:Your stomach heaves.
 effect:NOURISH:SET_TO
 dice:5
@@ -611,7 +587,6 @@ weight:1
 cost:300
 alloc:20:50 to 100
 pile:70:1d4
-power:9
 effect:NOURISH:INC_BY
 dice:5
 effect:TIMED_INC:STEALTH
@@ -769,9 +744,10 @@ cost:850
 alloc:20:40 to 100
 attack:4d5:0:0
 armor:0:0
+power:500
 desc:A giant, curved blade designed to cleave the head cleanly from the body.
 
-name:& Blade~ of Chaos
+name:& Valinorean Sword~
 type:sword
 graphics:|:v
 level:70
@@ -780,9 +756,9 @@ cost:4000
 alloc:10:70 to 100
 attack:6d5:0:0
 armor:0:0
-values:RES_CHAOS[40]
-desc:This inconstant weapon revels in disorder, hacking and slashing your foes
-desc: with bloodthirsty glee.
+slay:EVIL_2
+power:800
+desc:A surprisingly light sword from the smithies of Valinor, refuge from evil.
 
 
 
@@ -940,6 +916,7 @@ alloc:10:80 to 100
 attack:5d8:0:0
 armor:0:0
 slay:UNDEAD_3
+power:500
 desc:A giant's weapon, enchanted with shattering power that breaks bones,
 desc: bodies, and spirit.
 
@@ -1128,6 +1105,7 @@ cost:3500
 alloc:10:60 to 100
 attack:8d4:0:0
 armor:0:0
+power:750
 desc:A reaper's weapon, the long blade almost hums in anticipation of
 desc: the blood it will spill.
 
@@ -1201,6 +1179,7 @@ cost:300
 alloc:20:30 to 100
 flags:SHOOTS_BOLTS
 pval:4
+power:750
 desc:This arbalest is so powerful it has to be reinforced with metal and
 desc: requires a crank to be cocked.
 
@@ -1708,6 +1687,7 @@ alloc:10:55 to 100
 attack:1d4:-1:0
 armor:28:0
 flags:IGNORE_ACID
+power:500
 desc:This wondrous suit of fine-linked chain shimmers as though of pure silver.
 
 name:Mithril Plate Mail~
@@ -1720,6 +1700,7 @@ alloc:10:65 to 100
 attack:2d4:-3:0
 armor:60:0
 flags:IGNORE_ACID
+power:700
 desc:A shimmering suit of true-silver, forged long ago by dwarven smiths of
 desc: legend.  It gleams with purest white as you gaze upon it.
 
@@ -1733,6 +1714,7 @@ alloc:10:75 to 100
 attack:2d4:-4:0
 armor:80:0
 flags:IGNORE_ACID
+power:500
 desc:An exquisite suit of nearly impenetrable adamantite.
 
 ### Cloaks ###
@@ -1933,6 +1915,7 @@ alloc:10:70 to 100
 attack:1d4:0:0
 armor:16:10
 flags:IGNORE_ACID
+power:500
 desc:A shield of purest white, made of mithril.
 
 
@@ -2500,7 +2483,6 @@ weight:5
 cost:15
 alloc:50:1 to 100
 pile:100:2d3
-power:5
 effect:TELEPORT
 dice:10
 
@@ -2512,7 +2494,6 @@ weight:5
 cost:40
 alloc:40:10 to 100
 pile:25:2
-power:6
 effect:TELEPORT
 dice:M60
 
@@ -2524,7 +2505,6 @@ weight:5
 cost:800
 alloc:16:20 to 100
 pile:10:2
-power:15
 effect:TELEPORT_LEVEL
 
 
@@ -2538,7 +2518,6 @@ weight:5
 cost:65
 alloc:50:5 to 100
 pile:70:1d3
-power:10
 effect:MAP_AREA
 effect-yx:22:40
 
@@ -2550,7 +2529,6 @@ weight:5
 cost:70
 alloc:50:0 to 70
 pile:40:1d5
-power:6
 effect:DETECT_GOLD
 effect-yx:22:40
 effect:SENSE_OBJECTS
@@ -2564,7 +2542,6 @@ weight:5
 cost:15
 alloc:50:1 to 70
 pile:70:1d3
-power:6
 effect:DETECT_INVISIBLE_MONSTERS
 effect-yx:22:40
 
@@ -2576,7 +2553,6 @@ weight:5
 cost:200
 alloc:50:5 to 100
 pile:70:1d4
-power:6
 effect:IDENTIFY
 
 ### Enchantments ###
@@ -2589,7 +2565,6 @@ weight:5
 cost:125
 alloc:40:15 to 70
 pile:25:2
-power:15
 effect:ENCHANT:TOHIT
 dice:1
 
@@ -2601,7 +2576,6 @@ weight:5
 cost:125
 alloc:40:15 to 70
 pile:25:2
-power:20
 effect:ENCHANT:TODAM
 dice:1
 
@@ -2613,7 +2587,6 @@ weight:5
 cost:125
 alloc:40:15 to 70
 pile:25:2
-power:12
 effect:ENCHANT:TOAC
 dice:1
 
@@ -2625,7 +2598,6 @@ weight:5
 cost:500
 alloc:40:50 to 100
 pile:25:2
-power:22
 effect:ENCHANT:TOBOTH
 dice:1d3
 
@@ -2638,7 +2610,6 @@ weight:5
 cost:500
 alloc:40:50 to 100
 pile:25:2
-power:15
 effect:ENCHANT:TOAC
 dice:2+1d3
 
@@ -2651,7 +2622,6 @@ weight:5
 cost:100
 alloc:16:10 to 100
 pile:25:2
-power:8
 effect:REMOVE_CURSE
 dice:20+d20
 
@@ -2664,7 +2634,6 @@ weight:5
 cost:8000
 alloc:16:50 to 100
 pile:25:2
-power:20
 effect:REMOVE_CURSE
 dice:50+d50
 
@@ -2678,7 +2647,6 @@ weight:5
 cost:0
 alloc:10:1 to 100
 pile:70:1d3
-power:0
 effect:SUMMON:ANY
 dice:1d3
 
@@ -2690,7 +2658,6 @@ weight:5
 cost:0
 alloc:10:15 to 100
 pile:70:1d3
-power:0
 effect:SUMMON:UNDEAD
 dice:1d3
 
@@ -2701,7 +2668,6 @@ level:20
 weight:5
 cost:5000
 alloc:10:20 to 100
-power:20000
 effect:ACQUIRE
 dice:1
 
@@ -2712,7 +2678,6 @@ level:60
 weight:5
 cost:10000
 alloc:5:60 to 100
-power:20000
 effect:ACQUIRE
 dice:1+1d2
 
@@ -2727,7 +2692,6 @@ weight:5
 cost:200
 alloc:40:40 to 100
 pile:25:2
-power:9
 effect:PROJECT_LOS:DISP_UNDEAD:0:1
 dice:60
 
@@ -2738,7 +2702,6 @@ level:40
 weight:5
 cost:2500
 alloc:25:40 to 100
-power:20
 effect:BANISH
 
 name:Mass Banishment
@@ -2748,7 +2711,6 @@ level:50
 weight:5
 cost:3000
 alloc:20:50 to 100
-power:25
 effect:MASS_BANISH
 
 
@@ -2762,7 +2724,6 @@ weight:5
 cost:10
 alloc:60:5 to 100
 pile:100:2d3
-power:7
 effect:NOURISH:INC_TO
 dice:50
 
@@ -2774,7 +2735,6 @@ weight:5
 cost:15
 alloc:50:0 to 60
 pile:35:2d3
-power:4
 effect:LIGHT_AREA
 effect:SPOT:LIGHT_WEAK:2
 dice:2d8
@@ -2787,7 +2747,6 @@ weight:5
 cost:125
 alloc:50:5 to 100
 pile:35:2d3
-power:15
 effect:RECALL
 
 name:Recharging
@@ -2798,7 +2757,6 @@ weight:5
 cost:200
 alloc:40:40 to 100
 pile:12:2d3
-power:11
 effect:RECHARGE
 dice:6
 
@@ -2810,7 +2768,6 @@ weight:5
 cost:50
 alloc:40:10 to 60
 pile:25:2d3
-power:6
 effect:TOUCH:KILL_DOOR
 
 name:Deep Descent
@@ -2821,7 +2778,6 @@ weight:5
 cost:250
 alloc:20:1 to 100
 pile:20:2
-power:19
 effect:DEEP_DESCENT
 
 
@@ -2835,7 +2791,6 @@ weight:5
 cost:15
 alloc:50:1 to 50
 pile:70:1d3
-power:6
 effect:TIMED_INC:BLESSED
 dice:6+1d12
 
@@ -2847,7 +2802,6 @@ weight:5
 cost:40
 alloc:40:10 to 70
 pile:25:2
-power:7
 effect:TIMED_INC:BLESSED
 dice:12+1d24
 
@@ -2859,7 +2813,6 @@ weight:5
 cost:80
 alloc:40:50 to 100
 pile:25:2
-power:8
 effect:TIMED_INC:BLESSED
 dice:24+1d48
 
@@ -2871,7 +2824,6 @@ weight:5
 cost:50
 alloc:40:30 to 100
 pile:25:2
-power:6
 effect:TIMED_INC:PROTEVIL
 dice:$B+1d25
 expr:B:PLAYER_LEVEL:* 3
@@ -2887,7 +2839,6 @@ weight:5
 cost:30
 alloc:16:5 to 60
 pile:25:2
-power:8
 effect:TIMED_INC:ATT_CONF
 dice:10000
 
@@ -2898,7 +2849,6 @@ level:60
 weight:5
 cost:500
 alloc:30:70 to 100
-power:20
 effect:GLYPH:WARDING
 
 name:*Destruction*
@@ -2908,7 +2858,6 @@ level:40
 weight:5
 cost:1000
 alloc:30:40 to 100
-power:12
 effect:DESTRUCTION:LIGHT:15
 
 ### Bad scrolls ###
@@ -2921,7 +2870,6 @@ weight:5
 cost:0
 alloc:10:5 to 70
 pile:70:1d3
-power:0
 msg:There is a high pitched humming noise.
 effect:WAKE
 effect:PROJECT_LOS:MON_SPEED
@@ -2935,7 +2883,6 @@ weight:5
 cost:0
 #A:10:50 to 100
 pile:70:1d3
-power:0
 effect:CURSE_WEAPON
 
 name:Curse Armour
@@ -2946,7 +2893,6 @@ weight:5
 cost:0
 #A:10:50 to 100
 pile:70:1d3
-power:0
 effect:CURSE_ARMOR
 
 name:Darkness
@@ -2957,7 +2903,6 @@ weight:5
 cost:0
 alloc:10:1 to 70
 pile:70:1d3
-power:0
 effect:DARKEN_AREA
 effect:BALL:DARK_WEAK:3
 dice:10
@@ -2970,7 +2915,6 @@ weight:5
 cost:0
 alloc:10:10 to 70
 pile:70:1d3
-power:0
 msg:You hear a low-pitched whistling sound.
 effect:TOUCH:MAKE_TRAP:3
 
@@ -2989,7 +2933,6 @@ weight:4
 cost:8000
 alloc:30:30 to 100
 pile:10:2
-power:20000
 effect:RESTORE_STAT:STR
 effect:GAIN_STAT:STR
 
@@ -3001,7 +2944,6 @@ weight:4
 cost:8000
 alloc:30:30 to 100
 pile:10:2
-power:20000
 effect:RESTORE_STAT:INT
 effect:GAIN_STAT:INT
 
@@ -3013,7 +2955,6 @@ weight:4
 cost:8000
 alloc:30:30 to 100
 pile:10:2
-power:20000
 effect:RESTORE_STAT:WIS
 effect:GAIN_STAT:WIS
 
@@ -3025,7 +2966,6 @@ weight:4
 cost:8000
 alloc:30:30 to 100
 pile:10:2
-power:20000
 effect:RESTORE_STAT:DEX
 effect:GAIN_STAT:DEX
 
@@ -3037,7 +2977,6 @@ weight:4
 cost:8000
 alloc:30:30 to 100
 pile:10:2
-power:20000
 effect:RESTORE_STAT:CON
 effect:GAIN_STAT:CON
 
@@ -3050,7 +2989,6 @@ cost:50000
 alloc:20:40 to 100
 attack:1d1:0:0
 armor:0:0
-power:20000
 effect:RESTORE_STAT:STR
 effect:GAIN_STAT:STR
 effect:RESTORE_STAT:INT
@@ -3069,7 +3007,6 @@ level:65
 weight:4
 cost:25000
 alloc:50:65 to 100
-power:20000
 effect:GAIN_EXP
 dice:200000
 
@@ -3083,7 +3020,6 @@ weight:4
 cost:20
 alloc:80:1 to 15
 pile:90:2d3
-power:3
 effect:HEAL_HP
 dice:20
 effect:CURE:BLIND
@@ -3102,7 +3038,6 @@ weight:4
 cost:70
 alloc:80:5 to 40
 pile:80:2d3
-power:6
 effect:HEAL_HP
 dice:40
 effect:CURE:BLIND
@@ -3119,7 +3054,6 @@ weight:4
 cost:200
 alloc:80:12 to 100
 pile:70:2d3
-power:9
 effect:HEAL_HP
 dice:60
 effect:CURE:BLIND
@@ -3139,7 +3073,6 @@ weight:4
 cost:800
 alloc:64:30 to 100
 pile:25:2
-power:12
 effect:HEAL_HP
 dice:300+m35
 effect:CURE:BLIND
@@ -3160,7 +3093,6 @@ cost:1500
 alloc:40:40 to 100
 attack:1d1:0:0
 armor:0:0
-power:18
 effect:HEAL_HP
 dice:1200
 effect:CURE:BLIND
@@ -3182,7 +3114,6 @@ alloc:20:60 to 100
 attack:1d1:0:0
 armor:0:0
 msg:You feel life flow through your body!
-power:21
 effect:RESTORE_EXP
 effect:CURE:BLIND
 effect:CURE:CUT
@@ -3207,7 +3138,6 @@ weight:4
 cost:75
 alloc:60:1 to 35
 pile:25:2
-power:1
 effect:CURE:POISONED
 
 name:Restore Mana
@@ -3218,7 +3148,6 @@ weight:4
 cost:350
 alloc:64:15 to 100
 pile:25:2
-power:20
 effect:RESTORE_MANA
 
 
@@ -3234,7 +3163,6 @@ weight:4
 cost:400
 alloc:40:30 to 100
 pile:25:2
-power:8
 effect:RESTORE_EXP
 
 
@@ -3248,7 +3176,6 @@ weight:4
 cost:1000
 alloc:30:20 to 40
 pile:10:2
-power:30
 effect:RESTORE_STAT:STR
 effect:GAIN_STAT:STR
 effect:LOSE_RANDOM_STAT:STR
@@ -3261,7 +3188,6 @@ weight:4
 cost:1000
 alloc:30:20 to 40
 pile:10:2
-power:25
 effect:RESTORE_STAT:INT
 effect:GAIN_STAT:INT
 effect:LOSE_RANDOM_STAT:INT
@@ -3274,7 +3200,6 @@ weight:4
 cost:1000
 alloc:30:20 to 40
 pile:10:2
-power:25
 effect:RESTORE_STAT:WIS
 effect:GAIN_STAT:WIS
 effect:LOSE_RANDOM_STAT:WIS
@@ -3287,7 +3212,6 @@ weight:4
 cost:1000
 alloc:30:20 to 40
 pile:10:2
-power:25
 effect:RESTORE_STAT:DEX
 effect:GAIN_STAT:DEX
 effect:LOSE_RANDOM_STAT:DEX
@@ -3300,7 +3224,6 @@ weight:4
 cost:1000
 alloc:30:20 to 40
 pile:10:2
-power:30
 effect:RESTORE_STAT:CON
 effect:GAIN_STAT:CON
 effect:LOSE_RANDOM_STAT:CON
@@ -3316,7 +3239,6 @@ weight:4
 cost:800
 alloc:40:25 to 100
 pile:25:2
-power:22
 effect:LIGHT_LEVEL
 dice:1
 
@@ -3329,7 +3251,6 @@ cost:12000
 alloc:8:70 to 100
 attack:1d1:0:0
 armor:0:0
-power:20000
 effect:LIGHT_LEVEL
 dice:1
 effect:RESTORE_STAT:INT
@@ -3356,7 +3277,6 @@ weight:4
 cost:75
 alloc:40:1 to 100
 pile:25:2
-power:10
 effect:TIMED_INC:FAST:0:5
 dice:20+2d10
 
@@ -3368,7 +3288,6 @@ weight:4
 cost:25
 alloc:40:1 to 100
 pile:25:2
-power:7
 effect:HEAL_HP
 dice:10
 effect:CURE:AFRAID
@@ -3383,7 +3302,6 @@ weight:4
 cost:80
 alloc:40:3 to 100
 pile:25:2
-power:8
 effect:HEAL_HP
 dice:30
 effect:CURE:AFRAID
@@ -3398,7 +3316,6 @@ weight:4
 cost:8
 alloc:40:1 to 90
 pile:25:2
-power:2
 effect:CURE:AFRAID
 
 name:Resist Heat
@@ -3409,7 +3326,6 @@ weight:4
 cost:30
 alloc:40:30 to 100
 pile:25:2
-power:4
 effect:TIMED_INC:OPP_FIRE
 dice:50+1d10
 
@@ -3421,7 +3337,6 @@ weight:4
 cost:30
 alloc:40:30 to 100
 pile:25:2
-power:4
 effect:TIMED_INC:OPP_COLD
 dice:50+1d10
 
@@ -3433,7 +3348,6 @@ weight:4
 cost:30
 alloc:40:20 to 100
 pile:25:2
-power:4
 effect:TIMED_INC:OPP_POIS
 dice:50+1d10
 effect:CURE:POISONED
@@ -3446,7 +3360,6 @@ weight:4
 cost:50
 alloc:40:3 to 40
 pile:25:2
-power:7
 effect:CURE:BLIND
 effect:TIMED_INC:SINVIS
 dice:50+2d6
@@ -3459,7 +3372,6 @@ weight:4
 cost:20
 alloc:40:3 to 40
 pile:25:2
-power:5
 effect:TIMED_INC:SINFRA
 dice:100+4d25
 
@@ -3474,7 +3386,6 @@ weight:4
 cost:2
 alloc:10:1 to 10
 pile:70:2d3
-power:0
 effect:NOURISH:INC_BY
 dice:10
 
@@ -3488,7 +3399,6 @@ alloc:10:0 to 10
 pile:70:2d3
 attack:3d4:0:0
 armor:0:0
-power:0
 effect:TIMED_INC:PARALYZED
 dice:5+1d5
 effect:NOURISH:INC_BY
@@ -3504,7 +3414,6 @@ alloc:10:0 to 10
 pile:70:2d3
 attack:3d4:0:0
 armor:0:0
-power:0
 effect:TIMED_INC:BLIND
 dice:75+4d25
 
@@ -3518,7 +3427,6 @@ alloc:10:0 to 10
 pile:70:2d3
 attack:3d4:0:0
 armor:0:0
-power:0
 effect:TIMED_INC:CONFUSED
 dice:10+4d5
 effect:NOURISH:INC_BY
@@ -3534,7 +3442,6 @@ alloc:10:0 to 10
 pile:70:2d3
 attack:3d4:0:0
 armor:0:0
-power:0
 effect:TIMED_INC:POISONED
 dice:10+2d7
 
@@ -3548,7 +3455,6 @@ alloc:10:0 to 10
 pile:70:2d3
 attack:3d4:0:0
 armor:0:0
-power:0
 effect:TIMED_INC:SLOW
 dice:15+1d25
 effect:NOURISH:INC_BY
@@ -3562,7 +3468,6 @@ weight:4
 cost:0
 alloc:10:10 to 15
 pile:25:2
-power:0
 effect:RANDOM
 dice:5
 effect:TIMED_INC:SCRAMBLE
@@ -3581,7 +3486,6 @@ weight:4
 cost:0
 alloc:10:3 to 15
 pile:100:1d2
-power:0
 msg:The potion makes you queasy.
 effect:NOURISH:SET_TO
 dice:2
@@ -3601,7 +3505,6 @@ cost:100
 pile:100:1d2
 alloc:20:40 to 100
 pile:70:1d3
-power:8
 effect:RANDOM
 dice:2
 effect:BREATH:FIRE:0:20
@@ -3625,7 +3528,6 @@ alloc:20:3 to 60
 attack:1d1:0:0
 armor:0:0
 charges:6+d10
-power:3
 effect:BOLT_OR_BEAM:MISSILE
 dice:3d4
 
@@ -3639,7 +3541,6 @@ alloc:20:15 to 60
 attack:1d1:0:0
 armor:0:0
 charges:6+d8
-power:5
 effect:BEAM:ELEC
 dice:6d6
 
@@ -3653,7 +3554,6 @@ alloc:20:20 to 60
 attack:1d1:0:0
 armor:0:0
 charges:6+d5
-power:4
 effect:BOLT:COLD
 dice:12d8
 
@@ -3667,7 +3567,6 @@ alloc:20:30 to 60
 attack:1d1:0:0
 armor:0:0
 charges:6+d8
-power:7
 effect:BOLT_OR_BEAM:FIRE
 dice:12d8
 
@@ -3681,7 +3580,6 @@ alloc:20:30 to 60
 attack:1d1:0:0
 armor:0:0
 charges:6+d8
-power:6
 effect:BOLT_OR_BEAM:ACID
 dice:10d8
 
@@ -3698,7 +3596,6 @@ alloc:20:5 to 60
 attack:1d1:0:0
 armor:0:0
 charges:6+d8
-power:3
 effect:BALL:POIS:3
 dice:12
 
@@ -3713,7 +3610,6 @@ attack:1d1:0:0
 armor:0:0
 charges:4+d8
 flags:IGNORE_ELEC
-power:9
 effect:BALL:ELEC:2
 dice:64
 
@@ -3728,7 +3624,6 @@ attack:1d1:0:0
 armor:0:0
 charges:2+d6
 flags:IGNORE_COLD
-power:10
 effect:BALL:COLD:2
 dice:100
 
@@ -3743,7 +3638,6 @@ attack:1d1:0:0
 armor:0:0
 charges:2+d4
 flags:IGNORE_FIRE
-power:11
 effect:BALL:FIRE:2
 dice:144
 
@@ -3758,7 +3652,6 @@ attack:1d1:0:0
 armor:0:0
 charges:2+d5
 flags:IGNORE_ACID
-power:11
 effect:BALL:ACID:2
 dice:120
 
@@ -3775,7 +3668,6 @@ alloc:20:5 to 100
 attack:1d1:0:0
 armor:0:0
 charges:2+d6
-power:3
 effect:BOLT_AWARE:MON_SLOW
 dice:10+1d20
 
@@ -3789,7 +3681,6 @@ alloc:20:5 to 100
 attack:1d1:0:0
 armor:0:0
 charges:2+d6
-power:3
 effect:BOLT_AWARE:MON_CONF
 dice:5+1d5
 
@@ -3803,7 +3694,6 @@ alloc:20:5 to 100
 attack:1d1:0:0
 armor:0:0
 charges:2+d6
-power:3
 effect:BOLT_AWARE:MON_HOLD
 dice:3+1d5
 
@@ -3817,7 +3707,6 @@ alloc:20:5 to 100
 attack:1d1:0:0
 armor:0:0
 charges:2+d6
-power:3
 effect:BOLT_AWARE:MON_STUN
 dice:5+1d5
 
@@ -3831,7 +3720,6 @@ alloc:20:10 to 100
 attack:1d1:0:0
 armor:0:0
 charges:3+d5
-power:3
 effect:BOLT_AWARE:TURN_ALL
 dice:10
 
@@ -3849,7 +3737,6 @@ attack:1d1:0:0
 armor:0:0
 charges:6+d10
 msg:A line of shimmering blue light appears.
-power:6
 effect:LINE:LIGHT_WEAK
 dice:6d8
 
@@ -3863,7 +3750,6 @@ alloc:20:10 to 100
 attack:1d1:0:0
 armor:0:0
 charges:6+d10
-power:6
 effect:LINE:KILL_WALL
 dice:20+1d30
 
@@ -3877,7 +3763,6 @@ alloc:20:20 to 60
 attack:1d1:0:0
 armor:0:0
 charges:6+d8
-power:7
 effect:BOLT_AWARE:MON_POLY
 dice:$B
 expr:B:PLAYER_LEVEL:+ 0
@@ -3892,7 +3777,6 @@ alloc:20:3 to 60
 attack:1d1:0:0
 armor:0:0
 charges:6+d10
-power:4
 effect:LINE:DARK_WEAK
 dice:6d8
 
@@ -3906,7 +3790,6 @@ alloc:20:15 to 100
 attack:1d1:0:0
 armor:0:0
 charges:3+d5
-power:0
 effect:BOLT_STATUS:MON_CLONE
 
 name:Teleport Other
@@ -3919,7 +3802,6 @@ alloc:20:20 to 100
 attack:1d1:0:0
 armor:0:0
 charges:6+d5
-power:11
 effect:BOLT_STATUS:AWAY_ALL
 dice:$B
 expr:B:MAX_SIGHT:* 5
@@ -3934,7 +3816,6 @@ alloc:20:20 to 60
 attack:1d1:0:0
 armor:0:0
 charges:4+d5
-power:7
 effect:ALTER:KILL_TRAP
 
 name:Wonder
@@ -3948,7 +3829,6 @@ attack:1d1:0:0
 armor:0:0
 charges:8+d15
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-power:9
 effect:WONDER
 dice:$B+1d100
 expr:B:PLAYER_LEVEL:/ 5
@@ -3968,7 +3848,6 @@ attack:1d1:0:0
 armor:0:0
 charges:1+d3
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-power:13
 effect:BREATH:FIRE:0:30
 dice:200
 
@@ -3983,7 +3862,6 @@ attack:1d1:0:0
 armor:0:0
 charges:1+d3
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-power:12
 effect:BREATH:COLD:0:30
 dice:160
 
@@ -3998,7 +3876,6 @@ attack:1d1:0:0
 armor:0:0
 charges:1+d3
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-power:12
 effect:RANDOM
 dice:5
 effect:BREATH:ACID:0:30
@@ -4025,7 +3902,6 @@ alloc:50:50 to 100
 attack:1d1:0:0
 armor:0:0
 charges:3+d3
-power:11
 effect:BOLT_STATUS_DAM:MON_DRAIN
 dice:150
 
@@ -4040,7 +3916,6 @@ attack:1d1:0:0
 armor:0:0
 charges:1+d2
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-power:12
 effect:BOLT_STATUS_DAM:MON_DRAIN
 dice:250
 
@@ -4057,7 +3932,6 @@ alloc:10:3 to 40
 attack:1d1:0:0
 armor:0:0
 charges:8+d20
-power:0
 effect:BOLT_STATUS:MON_HEAL
 dice:4d6
 
@@ -4071,7 +3945,6 @@ alloc:10:3 to 40
 attack:1d1:0:0
 armor:0:0
 charges:8+d20
-power:0
 effect:BOLT_STATUS:MON_SPEED
 dice:100
 
@@ -4092,7 +3965,6 @@ alloc:10:10 to 100
 attack:1d2:0:0
 armor:0:0
 charges:2d3
-power:0
 effect:SUMMON:ANY
 dice:1d3
 
@@ -4106,7 +3978,6 @@ alloc:10:10 to 40
 attack:1d2:0:0
 armor:0:0
 charges:8+d8
-power:0
 effect:PROJECT_LOS:MON_SPEED
 dice:50
 
@@ -4120,7 +3991,6 @@ alloc:10:5 to 40
 attack:1d2:0:0
 armor:0:0
 charges:8+d8
-power:0
 effect:DARKEN_AREA
 effect:BALL:DARK_WEAK:3
 dice:10
@@ -4137,7 +4007,6 @@ alloc:20:40 to 100
 attack:1d2:0:0
 armor:0:0
 charges:3+d5
-power:5
 effect:EARTHQUAKE:NONE:10
 
 name:*Destruction*
@@ -4150,7 +4019,6 @@ alloc:20:50 to 100
 attack:1d2:0:0
 armor:0:0
 charges:1+d3
-power:12
 effect:DESTRUCTION:LIGHT:15
 
 ### Monster-affecting ###
@@ -4165,7 +4033,6 @@ alloc:20:10 to 100
 attack:1d2:0:0
 armor:0:0
 charges:3+d3
-power:10
 effect:PROJECT_LOS_AWARE:MON_CONF
 dice:5+1d5
 
@@ -4179,7 +4046,6 @@ alloc:20:10 to 100
 attack:1d2:0:0
 armor:0:0
 charges:4+d4
-power:7
 effect:PROJECT_LOS:MON_SLOW
 dice:10+1d10
 
@@ -4193,7 +4059,6 @@ alloc:20:10 to 100
 attack:1d2:0:0
 armor:0:0
 charges:6+d5
-power:8
 effect:PROJECT_LOS_AWARE:SLEEP_ALL
 dice:$B
 expr:B:PLAYER_LEVEL:* 10 + 500
@@ -4211,7 +4076,6 @@ alloc:30:5 to 100
 attack:1d2:0:0
 armor:0:0
 charges:8+d15
-power:6
 effect:DETECT_INVISIBLE_MONSTERS
 effect-yx:22:40
 
@@ -4225,7 +4089,6 @@ alloc:30:20 to 100
 attack:1d2:0:0
 armor:0:0
 charges:8+d15
-power:6
 effect:DETECT_EVIL
 effect-yx:22:40
 
@@ -4239,7 +4102,6 @@ alloc:40:10 to 100
 attack:1d2:0:0
 armor:0:0
 charges:5+d5
-power:10
 effect:MAP_AREA
 effect-yx:22:40
 
@@ -4256,7 +4118,6 @@ alloc:30:10 to 100
 attack:1d2:0:0
 armor:0:0
 charges:4+d3
-power:9
 effect:CURE:BLIND
 effect:CURE:CUT
 effect:CURE:POISONED
@@ -4273,7 +4134,6 @@ alloc:30:5 to 100
 attack:1d2:0:0
 armor:0:0
 charges:6+d5
-power:3
 effect:HEAL_HP
 dice:20
 effect:CURE:BLIND
@@ -4292,7 +4152,6 @@ alloc:10:70 to 100
 attack:1d2:0:0
 armor:0:0
 charges:1+d2
-power:12
 effect:HEAL_HP
 dice:300+m35
 effect:CURE:BLIND
@@ -4315,7 +4174,6 @@ alloc:50:50 to 100
 attack:1d2:0:0
 armor:0:0
 charges:4+d3
-power:9
 effect:PROJECT_LOS:DISP_EVIL:0:1
 dice:60
 
@@ -4329,7 +4187,6 @@ alloc:10:70 to 100
 attack:1d2:0:0
 armor:0:0
 charges:1+d2
-power:20
 effect:BANISH
 
 name:Power
@@ -4342,7 +4199,6 @@ alloc:20:70 to 100
 attack:1d2:0:0
 armor:0:0
 charges:1+d3
-power:11
 effect:PROJECT_LOS:DISP_ALL:0:1
 dice:120
 
@@ -4356,7 +4212,6 @@ alloc:20:70 to 100
 attack:1d2:0:0
 armor:0:0
 charges:2d2
-power:12
 effect:PROJECT_LOS:DISP_EVIL:0:1
 dice:120
 effect:HEAL_HP
@@ -4388,7 +4243,6 @@ alloc:30:5 to 80
 attack:1d2:0:0
 armor:0:0
 charges:8+d20
-power:4
 effect:LIGHT_AREA
 effect:SPOT:LIGHT_WEAK:2
 dice:2d8
@@ -4403,7 +4257,6 @@ alloc:20:20 to 80
 attack:1d2:0:0
 armor:0:0
 charges:6+d5
-power:5
 effect:STAR:LIGHT
 dice:6d8
 
@@ -4417,7 +4270,6 @@ alloc:50:20 to 100
 attack:1d2:0:0
 armor:0:0
 charges:5+d4
-power:6
 effect:TELEPORT
 dice:M60
 
@@ -4431,7 +4283,6 @@ alloc:20:40 to 100
 attack:1d2:0:0
 armor:0:0
 charges:4+d3
-power:10
 effect:TIMED_INC:FAST:0:5
 dice:20+2d10
 
@@ -4445,7 +4296,6 @@ alloc:20:40 to 100
 attack:1d2:0:0
 armor:0:0
 charges:4+d3
-power:8
 effect:REMOVE_CURSE
 dice:20+d20
 
@@ -4459,7 +4309,6 @@ alloc:10:70 to 100
 attack:1d2:0:0
 armor:0:0
 charges:2+1d2
-power:20
 effect:RESTORE_STAT:INT
 effect:RESTORE_MANA
 
@@ -4476,7 +4325,6 @@ level:5
 weight:15
 cost:1000
 alloc:30:8 to 75
-power:6
 effect:DETECT_GOLD
 effect-yx:22:40
 effect:SENSE_OBJECTS
@@ -4493,7 +4341,6 @@ alloc:30:50 to 100
 attack:1d1:0:0
 armor:0:0
 flags:IGNORE_ELEC
-power:10
 effect:DETECT_GOLD
 effect-yx:22:40
 effect:SENSE_OBJECTS
@@ -4513,7 +4360,6 @@ cost:2000
 alloc:30:35 to 100
 attack:1d1:0:0
 armor:0:0
-power:10
 effect:MAP_AREA
 effect-yx:33:55
 time:100
@@ -4527,7 +4373,6 @@ cost:1000
 alloc:20:35 to 100
 attack:1d1:0:0
 armor:0:0
-power:8
 effect:PROBE
 time:100
 
@@ -4543,7 +4388,6 @@ cost:3000
 alloc:20:30 to 80
 attack:1d1:0:0
 armor:0:0
-power:7
 effect:BOLT_OR_BEAM:FIRE
 dice:12d8
 time:15
@@ -4557,7 +4401,6 @@ cost:2500
 alloc:20:25 to 80
 attack:1d1:0:0
 armor:0:0
-power:7
 effect:BOLT:COLD
 dice:12d8
 time:13
@@ -4571,7 +4414,6 @@ cost:2000
 alloc:20:20 to 80
 attack:1d1:0:0
 armor:0:0
-power:5
 effect:BEAM:ELEC
 dice:6d6
 time:11
@@ -4585,7 +4427,6 @@ cost:3500
 alloc:20:40 to 80
 attack:1d1:0:0
 armor:0:0
-power:7
 effect:BOLT_OR_BEAM:ACID
 dice:12d8
 time:12
@@ -4602,7 +4443,6 @@ cost:5000
 alloc:20:75 to 100
 attack:1d1:0:0
 armor:0:0
-power:11
 effect:BALL:FIRE:2
 dice:144
 time:30
@@ -4616,7 +4456,6 @@ cost:4500
 alloc:20:60 to 100
 attack:1d1:0:0
 armor:0:0
-power:10
 effect:BALL:COLD:2
 dice:100
 time:25
@@ -4631,7 +4470,6 @@ alloc:20:55 to 100
 attack:1d1:0:0
 armor:0:0
 flags:IGNORE_ELEC
-power:9
 effect:BALL:ELEC:2
 dice:64
 time:23
@@ -4645,7 +4483,6 @@ cost:5500
 alloc:20:70 to 100
 attack:1d1:0:0
 armor:0:0
-power:11
 effect:BALL:ACID:2
 dice:120
 time:27
@@ -4662,7 +4499,6 @@ cost:1500
 alloc:20:30 to 100
 attack:1d1:0:0
 armor:0:0
-power:3
 effect:BOLT_AWARE:MON_SLOW
 dice:10+1d20
 time:40
@@ -4676,7 +4512,6 @@ cost:1500
 alloc:20:30 to 100
 attack:1d1:0:0
 armor:0:0
-power:3
 effect:BOLT_AWARE:MON_HOLD
 dice:3+1d5
 time:40
@@ -4693,7 +4528,6 @@ cost:1000
 alloc:20:10 to 80
 attack:1d1:0:0
 armor:0:0
-power:9
 effect:CURE:BLIND
 effect:CURE:CUT
 effect:CURE:POISONED
@@ -4711,7 +4545,6 @@ alloc:20:80 to 100
 attack:1d1:0:0
 armor:0:0
 flags:IGNORE_ELEC
-power:14
 effect:HEAL_HP
 dice:500
 effect:CURE:CUT
@@ -4728,7 +4561,6 @@ alloc:10:80 to 100
 attack:1d1:0:0
 armor:0:0
 flags:IGNORE_ELEC
-power:17
 effect:RESTORE_STAT:STR
 effect:RESTORE_STAT:INT
 effect:RESTORE_STAT:WIS
@@ -4749,7 +4581,6 @@ cost:1200
 alloc:20:35 to 80
 attack:1d1:0:0
 armor:0:0
-power:7
 effect:BOLT_STATUS:MON_POLY
 dice:$B
 expr:B:PLAYER_LEVEL:+ 0
@@ -4764,7 +4595,6 @@ cost:3600
 alloc:20:75 to 100
 attack:1d1:0:0
 armor:0:0
-power:11
 effect:BOLT_STATUS_DAM:MON_DRAIN
 dice:150
 time:23
@@ -4778,7 +4608,6 @@ cost:5000
 alloc:20:45 to 100
 attack:1d1:0:0
 armor:0:0
-power:11
 effect:BOLT_STATUS:AWAY_ALL
 dice:$B
 expr:B:MAX_SIGHT:* 5
@@ -4793,7 +4622,6 @@ cost:2100
 alloc:10:10 to 100
 attack:1d1:0:0
 armor:0:0
-power:7
 effect:ALTER:KILL_TRAP
 time:30
 
@@ -4807,7 +4635,6 @@ alloc:30:5 to 100
 attack:1d1:0:0
 armor:0:0
 msg:A line of shimmering blue light appears.
-power:6
 effect:LINE:LIGHT_WEAK
 dice:6d8
 time:9
@@ -4821,7 +4648,6 @@ cost:1000
 alloc:20:10 to 100
 attack:1d1:0:0
 armor:0:0
-power:4
 effect:LIGHT_AREA
 effect:SPOT:LIGHT_WEAK:2
 dice:2d8
@@ -4837,7 +4663,6 @@ alloc:10:30 to 100
 attack:1d1:0:0
 armor:0:0
 flags:IGNORE_ELEC
-power:15
 effect:RECALL
 time:60
 
@@ -4851,7 +4676,6 @@ alloc:10:80 to 100
 attack:1d1:0:0
 armor:0:0
 flags:IGNORE_ELEC
-power:10
 effect:TIMED_INC:FAST:0:5
 dice:20+2d10
 time:100
@@ -4936,7 +4760,7 @@ attack:2d4:-2:0
 armor:16:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_ACID[40]
-power:11
+power:750
 effect:BREATH:ACID:0:20
 dice:120
 time:50
@@ -4953,7 +4777,7 @@ attack:2d4:-2:0
 armor:12:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_ELEC[40]
-power:18
+power:750
 effect:BREATH:ELEC:0:20
 dice:150
 time:50
@@ -4971,7 +4795,7 @@ attack:2d4:-2:0
 armor:14:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_COLD[40]
-power:10
+power:750
 effect:BREATH:COLD:0:20
 dice:100
 time:50
@@ -4989,7 +4813,7 @@ attack:2d4:-2:0
 armor:24:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_FIRE[40]
-power:20
+power:750
 effect:BREATH:FIRE:0:20
 dice:200
 time:50
@@ -5007,7 +4831,7 @@ attack:2d4:-2:0
 armor:20:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_POIS[40]
-power:19
+power:1000
 effect:BREATH:POIS:0:20
 dice:150
 time:50
@@ -5025,7 +4849,7 @@ attack:2d4:-2:0
 armor:45:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40] | RES_POIS[40]
-power:20
+power:1500
 effect:RANDOM
 dice:5
 effect:BREATH:ACID:0:20
@@ -5053,7 +4877,7 @@ attack:2d4:-2:0
 armor:32:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_LIGHT[40] | RES_DARK[40]
-power:21
+power:1000
 effect:RANDOM
 dice:2
 effect:BREATH:LIGHT:0:20
@@ -5075,7 +4899,7 @@ attack:2d4:-2:0
 armor:36:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_SOUND[40] | RES_SHARD[40]
-power:23
+power:1250
 effect:RANDOM
 dice:2
 effect:BREATH:SOUND:0:20
@@ -5097,7 +4921,7 @@ attack:2d4:-2:0
 armor:28:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_SOUND[40]
-power:19
+power:750
 effect:BREATH:SOUND:0:20
 dice:150
 time:50
@@ -5116,7 +4940,7 @@ attack:2d4:-2:0
 armor:40:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_CHAOS[40] | RES_DISEN[40]
-power:23
+power:1250
 effect:RANDOM
 dice:2
 effect:BREATH:CHAOS:0:20
@@ -5138,7 +4962,7 @@ attack:2d4:-2:0
 armor:50:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_SOUND[40] | RES_SHARD[40] | RES_CHAOS[40] | RES_DISEN[40]
-power:24
+power:1750
 effect:RANDOM
 dice:4
 effect:BREATH:SOUND:0:20
@@ -5168,7 +4992,7 @@ flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_ACID[40] | RES_FIRE[40] | RES_COLD[40] | RES_ELEC[40] | RES_POIS[40]
 values:RES_DISEN[40] | RES_SOUND[40] | RES_SHARD[40]
 values:RES_LIGHT[40] | RES_DARK[40] | RES_CHAOS[40]
-power:25
+power:2250
 effect:BREATH:MISSILE:0:20
 dice:300
 time:50

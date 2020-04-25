@@ -167,6 +167,11 @@ bool tval_is_launcher(const struct object *obj)
 	return obj->tval == TV_BOW;
 }
 
+bool tval_is_launcher_k(const struct object_kind *kind)
+{
+	return kind->tval == TV_BOW;
+}
+
 bool tval_is_useable(const struct object *obj)
 {
 	switch (obj->tval) {
@@ -217,6 +222,23 @@ bool tval_is_weapon(const struct object *obj)
 	}
 }
 
+bool tval_is_weapon_a(const struct artifact *art)
+{
+	switch (art->tval) {
+		case TV_SWORD:
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_DIGGING:
+		case TV_BOW:
+		case TV_BOLT:
+		case TV_ARROW:
+		case TV_SHOT:
+			return true;
+		default:
+			return false;
+	}
+}
+
 bool tval_is_armor(const struct object *obj)
 {
 	switch (obj->tval) {
@@ -238,6 +260,19 @@ bool tval_is_armor(const struct object *obj)
 bool tval_is_melee_weapon(const struct object *obj)
 {
 	switch (obj->tval) {
+		case TV_SWORD:
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_DIGGING:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool tval_is_melee_weapon_k(const struct object_kind *kind)
+{
+	switch (kind->tval) {
 		case TV_SWORD:
 		case TV_HAFTED:
 		case TV_POLEARM:
@@ -297,6 +332,28 @@ bool tval_is_wearable(const struct object *obj)
 		case TV_LIGHT:
 		case TV_AMULET:
 		case TV_RING:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool tval_can_be_artifact_k(const struct object_kind *kind)
+{
+	switch (kind->tval) {
+		case TV_BOW:
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_SWORD:
+		case TV_BOOTS:
+		case TV_GLOVES:
+		case TV_HELM:
+		case TV_CROWN:
+		case TV_SHIELD:
+		case TV_CLOAK:
+		case TV_SOFT_ARMOR:
+		case TV_HARD_ARMOR:
+		case TV_DRAG_ARMOR:
 			return true;
 		default:
 			return false;

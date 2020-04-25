@@ -24,6 +24,7 @@
  * Object property utilities
  * ------------------------------------------------------------------------ */
 struct obj_property *obj_properties;
+struct activation *activations;
 
 struct obj_property *lookup_obj_property(int type, int index)
 {
@@ -45,6 +46,33 @@ struct obj_property *lookup_obj_property(int type, int index)
 	}
 
 	return NULL;
+}
+
+struct obj_property *lookup_obj_property_name(const char *prop_name)
+{
+	struct obj_property *prop;
+	int i;
+
+	/* Find the right property */
+	for (i = 0; i < z_info->property_max; i++) {
+		prop = &obj_properties[i];
+		if (streq(prop->name, prop_name)) {
+			return prop;
+		}
+	}
+
+	return NULL;
+}
+
+struct activation *lookup_activation(const char *act_name)
+{
+	struct activation *act = &activations[1];
+	while (act) {
+		if (streq(act->name, act_name))
+			break;
+		act = act->next;
+	}
+	return act;
 }
 
 /**
@@ -142,8 +170,18 @@ int sustain_flag(int stat)
 
 /**
  * ------------------------------------------------------------------------
- * Percentage resistances
+ * Object property values for random artifacts and jewellery
  * ------------------------------------------------------------------------ */
 /**
- *
+ * The value function for an object property
  */
+
+
+/**
+ * The cost of adding a property to an object or artifact
+ */
+
+/**
+ * ------------------------------------------------------------------------
+ * Object pricing
+ * ------------------------------------------------------------------------ */

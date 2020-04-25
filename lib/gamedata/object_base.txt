@@ -10,6 +10,7 @@
 # name: tval:name
 # graphics: default attr for inventory display
 # break: breakage chance when thrown
+# potential: maximum potential of this type (for random artifacts)
 # flags: default flags
 
 default:break-chance:10
@@ -43,6 +44,7 @@ flags:SHOW_DICE
 name:bow:Bow~
 graphics:umber
 # max-stack:1
+potential:6500
 flags:HATES_ACID | HATES_FIRE
 flags:SHOW_MULT
 
@@ -54,64 +56,76 @@ flags:SHOW_DICE
 name:hafted:Hafted weapon~
 graphics:white
 # max-stack:1
+potential:8750
 flags:HATES_ACID | HATES_FIRE
 flags:SHOW_DICE
 
 name:polearm:Polearm~
 graphics:white
 # max-stack:1
+potential:8750
 flags:HATES_ACID | HATES_FIRE
 flags:SHOW_DICE
 
 name:sword:Bladed weapon~
 graphics:white
 # max-stack:1
+potential:8750
 flags:HATES_ACID
 flags:SHOW_DICE
 
 name:boots:Boot~
 graphics:light umber
 # max-stack:1
+potential:8000
 flags:HATES_ACID | HATES_FIRE
 
 name:gloves:Glove~
 graphics:light umber
 # max-stack:1
+potential:5500
 flags:HATES_ACID | HATES_FIRE
 
 name:helm:Helm~
 graphics:light umber
 # max-stack:1
+potential:6000
 flags:HATES_ACID
 
 name:crown:Crown~
 graphics:light umber
 # max-stack:1
+potential:6500
 flags:HATES_ACID
 
 name:shield:Shield~
 graphics:light umber
 # max-stack:1
+potential:6500
 flags:HATES_ACID
 
 name:cloak:Cloak~
 graphics:light umber
 # max-stack:1
+potential:5500
 flags:HATES_ACID | HATES_FIRE
 
 name:soft armor:Soft Armor~
 graphics:slate
 # max-stack:1
+potential:8750
 flags:HATES_ACID | HATES_FIRE
 
 name:hard armor:Hard Armor~
 graphics:slate
 # max-stack:1
+potential:8750
 flags:HATES_ACID
 
 name:dragon armor:Dragon Armor~
 graphics:slate
 # max-stack:1
+potential:8750
 
 name:light:Light~
 graphics:yellow

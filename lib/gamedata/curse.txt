@@ -312,3 +312,61 @@ type:polearm
 type:sword
 desc:makes it hard to hit anything
 
+name:cuts
+type:bow
+type:digger
+type:hafted
+type:polearm
+type:sword
+type:boots
+type:gloves
+type:helm
+type:crown
+type:shield
+type:cloak
+type:soft armor
+type:hard armor
+type:dragon armor
+type:light
+type:amulet
+type:ring
+effect:TIMED_INC:CUT
+dice:5+1d10
+time:1d1000
+msg:Your equipment cuts you.
+desc:cuts you every now and then
+
+name:wounds
+type:bow
+type:digger
+type:hafted
+type:polearm
+type:sword
+type:boots
+type:gloves
+type:helm
+type:crown
+type:shield
+type:cloak
+type:soft armor
+type:hard armor
+type:dragon armor
+type:light
+type:amulet
+type:ring
+effect:TIMED_INC:CUT
+dice:20+1d30
+time:1d1000
+msg:Your equipment wounds you!
+desc:cuts you deeply every now and then
+
+name:mana drain
+effect:DRAIN_MANA
+dice:10d8
+time:1d200
+msg:Your concentration weakens.
+desc:Sometimes drains your mana
+
+name:experience drain
+flags:DRAIN_EXP
+desc:Drains your experience

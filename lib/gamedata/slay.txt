@@ -29,6 +29,24 @@ multiplier:2
 o-multiplier:20
 power:115
 melee-verb:smite
+range-verb:deeply pierces
+
+code:EVIL_3
+name:evil creatures
+race-flag:EVIL
+multiplier:3
+o-multiplier:23
+power:200
+melee-verb:fiercely smite
+range-verb:deeply pierces
+
+code:ANIMAL_3
+name:animals
+race-flag:ANIMAL
+multiplier:3
+o-multiplier:25
+power:115
+melee-verb:fiercely smite
 range-verb:pierces
 
 code:ORC_3

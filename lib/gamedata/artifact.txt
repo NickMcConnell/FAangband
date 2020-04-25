@@ -657,7 +657,7 @@ desc: massive double-pronged hilt.  On its blade are written doomspells against
 desc: both the living and undead.
 
 name:'Doomcaller'
-base-object:sword:Blade of Chaos
+base-object:sword:Valinorean Sword
 level:70
 weight:180
 cost:200000

@@ -516,9 +516,9 @@ These are the most common types of ego-weapon: note that they are not the
 ONLY ego-items available in the dungeon, there may be more.
 
 Apart from these there are some very rare and well made weapons in the
-dungeon with not necessarily any special abilities. These include Blades
-of Chaos, Maces of Disruption, and Scythes of Slicing.  They can also be
-ego weapons like the ones above.  For example, a Blade of Chaos (Holy
+dungeon with not necessarily any special abilities. These include Valinorean
+Swords, Maces of Disruption, and Scythes of Slicing.  They can also be
+ego weapons like the ones above.  For example, a Scythe of Slicing (Holy
 Avenger) is much more powerful than many artifact weapons!
 
 Some pieces of armor will possess special abilities denoted by the following

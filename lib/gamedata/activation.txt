@@ -307,11 +307,24 @@ desc:cures blindness and allows you to see invisible things for 2d6+12 turns
 name:TMD_ESP
 aim:0
 power:10
-effect:CURE:BLIND
 effect:TIMED_INC:TELEPATHY
 dice:24+9d9
-desc:cures blindness and gives you telepathy for 9d9+24 turns
+desc:gives you telepathy for 9d9+24 turns
 
+name:SPEED
+aim:0
+power:10
+effect:TIMED_INC:FAST
+dice:20+d20
+desc:hastes you for 20+d20 turns
+
+name:SHIELD
+aim:0
+msg:Magics coalesce to form a shimmering barrier.
+power:10
+effect:TIMED_INC:SHIELD
+dice:24+9d9
+desc:increases your armor class for 24+9d9 turns
 
 name:ENLIGHTENMENT
 aim:0
@@ -377,6 +390,21 @@ effect:TIMED_INC:OPP_POIS
 dice:10+1d10
 desc:grants temporary resistance to poison for 1d10+10 turns
 
+name:RESIST_ELEMENTS
+aim:0
+power:10
+msg:{name} glows many colours...
+effect:TIMED_INC:OPP_ACID
+dice:20+1d20
+effect:TIMED_INC:OPP_ELEC
+dice:20+1d20
+effect:TIMED_INC:OPP_FIRE
+dice:20+1d20
+effect:TIMED_INC:OPP_COLD
+dice:20+1d20
+desc:grants temporary resistance to acid, electricity, fire and cold for
+desc: 1d20+20 turns
+
 name:RESIST_ALL
 aim:0
 power:10
@@ -391,8 +419,8 @@ effect:TIMED_INC:OPP_COLD
 dice:20+1d20
 effect:TIMED_INC:OPP_POIS
 dice:20+1d20
-desc:grants temporary resistance to acid, electricity, fire, cold and poison for 1d20+20 turns
-
+desc:grants temporary resistance to acid, electricity, fire, cold and poison
+desc: for 1d20+20 turns
 
 name:DETECT_TREASURE
 aim:0
@@ -409,6 +437,13 @@ power:6
 effect:DETECT_INVISIBLE_MONSTERS
 effect-yx:22:40
 desc:detects invisible creatures nearby
+
+name:DETECT_MONSTERS
+aim:0
+power:6
+effect:DETECT_VISIBLE_MONSTERS
+effect-yx:22:40
+desc:detects visible creatures nearby
 
 name:DETECT_EVIL
 aim:0
@@ -650,6 +685,13 @@ effect:PROJECT_LOS:MON_CONF
 dice:5+1d5
 desc:confuses all non-unique creatures within line of sight
 
+name:LOSSCARE
+aim:0
+power:10
+effect:PROJECT_LOS:TURN_ALL
+dice:5+1d5
+desc:scares all non-unique creatures within line of sight
+
 name:LOSKILL
 aim:0
 power:25
@@ -728,6 +770,14 @@ effect:PROJECT_LOS:DISP_UNDEAD:0:1
 dice:60
 desc:deals 60 damage to all undead creatures that you can see
 
+name:DISPEL_LIGHT_HATING
+aim:0
+power:9
+msg:You bathe the area in radiant light!
+effect:PROJECT_LOS:LIGHT_WEAK:0:1
+dice:175
+desc:deals 175 damage to all light-hating creatures that you can see
+
 name:DISPEL_ALL
 aim:0
 power:11
@@ -797,6 +847,11 @@ power:25
 effect:BRAND_BOLTS
 desc:brands bolts with fire, in an unbalanced fashion
 
+name:BRAND_AMMO
+aim:0
+power:25
+effect:BRAND_AMMO
+desc:brands missile ammunition
 
 name:FIRE_BOLT
 aim:1
@@ -947,6 +1002,49 @@ effect:BALL:ELEC:3
 dice:250
 desc:creates a large lightning ball with damage 250
 
+name:POIS_DART
+aim:1
+effect:BOLT:POIS
+dice:6d8
+desc:fires a poison dart for 6d8 damage
+
+name:POIS_BALL
+aim:1
+effect:BALL:POIS:2
+dice:110
+desc:fires a poison cloud for 110 damage
+
+name:LIGHT_BALL
+aim:1
+msg:You throw a radiant sphere...
+effect:BALL:LIGHT:2
+dice:70
+desc:fires a ball of light for 70 damage
+
+name:CHAOS_BALL
+aim:1
+msg:You unleash the powers of Unmaking!
+effect:BALL:CHAOS:2
+dice:d300
+desc:fires a chaos ball for d300 damage
+
+name:HOLY_ORB
+aim:1
+msg:A cleansing ball materializes on your fingertips.
+effect:BALL:HOLY_ORB:2
+dice:60
+desc:fires a holy orb for 60 damage
+
+name:SHARD_SOUND_BALL
+aim:1
+msg:You invoke the powers of Law!
+effect:RANDOM
+dice:2
+effect:BALL:SHARD:2
+dice:150
+effect:BALL:SOUND:2
+dice:150
+desc:fires a shard or sound ball for 150 damage
 
 name:DRAIN_LIFE1
 aim:1

@@ -115,18 +115,16 @@ void copy_brands(bool **dest, bool *source)
 }
 
 /**
- * Append a random brand, currently to a randart
- * This will later change so that selection is done elsewhere
+ * Append a given brand to an object or artifact, first checking that it or
+ * a weaker version is not already there
  *
  * \param current the list of brands the object already has
  * \param name the name to report for randart logging
  */
-bool append_random_brand(bool **current, struct brand **brand)
+bool append_brand(bool **current, int pick)
 {
-	int i, pick;
-
-	pick = randint1(z_info->brand_max - 1);
-	*brand = &brands[pick];
+	int i;
+	struct brand *brand = &brands[pick];
 
 	/* No existing brands means OK to add */
 	if (!(*current)) {
@@ -139,9 +137,9 @@ bool append_random_brand(bool **current, struct brand **brand)
 	for (i = 1; i < z_info->brand_max; i++) {
 		if ((*current)[i]) {
 			/* If we get the same race, check the multiplier */
-			if (streq(brands[i].name, (*brand)->name)) {
+			if (streq(brands[i].name, brand->name)) {
 				/* Same multiplier or smaller, fail */
-				if ((*brand)->multiplier <= brands[i].multiplier)
+				if (brand->multiplier <= brands[i].multiplier)
 					return false;
 
 				/* Greater multiplier, replace and accept */
@@ -159,18 +157,16 @@ bool append_random_brand(bool **current, struct brand **brand)
 }
 
 /**
- * Append a random slay, currently to a randart
- * This will later change so that selection is done elsewhere
+ * Append a given slay to an object or artifact, first checking that it or
+ * a weaker version is not already there
  *
  * \param current the list of slays the object already has
  * \param name the name to report for randart logging
  */
-bool append_random_slay(bool **current, struct slay **slay)
+bool append_slay(bool **current, int pick)
 {
-	int i, pick;
-
-	pick = randint1(z_info->slay_max - 1);
-	*slay = &slays[pick];
+	int i;
+	struct slay *slay = &slays[pick];
 
 	/* No existing slays means OK to add */
 	if (!(*current)) {
@@ -183,10 +179,10 @@ bool append_random_slay(bool **current, struct slay **slay)
 	for (i = 1; i < z_info->slay_max; i++) {
 		if ((*current)[i]) {
 			/* If we get the same race, check the multiplier */
-			if (streq(slays[i].name, (*slay)->name) &&
-				(slays[i].race_flag == (*slay)->race_flag)) {
+			if (streq(slays[i].name, slay->name) &&
+				(slays[i].race_flag == slay->race_flag)) {
 				/* Same multiplier or smaller, fail */
-				if ((*slay)->multiplier <= slays[i].multiplier)
+				if (slay->multiplier <= slays[i].multiplier)
 					return false;
 
 				/* Greater multiplier, replace and accept */

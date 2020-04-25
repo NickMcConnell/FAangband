@@ -59,5 +59,6 @@ void write_elements(ang_file *fff, const struct element_info *el_info);
 void file_archive(char *fname, char *append);
 void activate_randart_file(void);
 void deactivate_randart_file(void);
+errr get_rnd_line(char *file_name, char *output);
 
 #endif /* !DATAFILE_H */

@@ -191,16 +191,6 @@ static void write_curse_kinds(void)
 	}
 }
 
-static struct activation *findact(const char *act_name) {
-	struct activation *act = &activations[1];
-	while (act) {
-		if (streq(act->name, act_name))
-			break;
-		act = act->next;
-	}
-	return act;
-}
-
 /**
  * ------------------------------------------------------------------------
  * Initialize projections
@@ -535,6 +525,19 @@ static enum parser_error parse_object_base_max_stack(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_object_base_potential(struct parser *p) {
+
+	struct kb_parsedata *d = parser_priv(p);
+	assert(d);
+
+	struct object_base *kb = d->kb;
+	assert(kb);
+
+	kb->potential = parser_getint(p, "potential");
+
+	return PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_object_base_flags(struct parser *p) {
 	struct object_base *kb;
 	char *s, *t;
@@ -575,6 +578,7 @@ struct parser *init_parse_object_base(void) {
 	parser_reg(p, "graphics sym color", parse_object_base_graphics);
 	parser_reg(p, "break int breakage", parse_object_base_break);
 	parser_reg(p, "max-stack int size", parse_object_base_max_stack);
+	parser_reg(p, "potential int potential", parse_object_base_potential);
 	parser_reg(p, "flags str flags", parse_object_base_flags);
 	return p;
 }
@@ -2639,9 +2643,9 @@ static enum parser_error parse_artifact_act(struct parser *p) {
 
 	/* Special light activations are a property of the base object */
 	if ((a->tval == TV_LIGHT) && (k->kidx  >= z_info->ordinary_kind_max)) {
-		k->activation = findact(name);
+		k->activation = lookup_activation(name);
 	} else {
-		a->activation = findact(name);
+		a->activation = lookup_activation(name);
 	}
 
 	return PARSE_ERROR_NONE;

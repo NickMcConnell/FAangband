@@ -355,7 +355,7 @@ object:food:Pint of Fine Wine:0x89:0x8C
 ### Swords ###
 
 object:sword:Bastard Sword:0x8D:0x80
-object:sword:Blade of Chaos:0x8D:0x81
+object:sword:Valinorean Sword:0x8D:0x81
 object:sword:Broad Sword:0x8D:0x82
 object:sword:Cutlass:0x8D:0x83
 object:sword:Dagger:0x8D:0x84

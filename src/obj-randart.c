@@ -1881,30 +1881,6 @@ static void add_high_resist(struct artifact *art,
  */
 static void add_brand(struct artifact *art)
 {
-	int count;
-	struct brand *brand;
-
-	/* Mostly only one brand */
-	if (art->brands && randint0(4)) return;
-
-	/* Get a random brand */
-	for (count = 0; count < MAX_TRIES; count++) {
-		if (!append_random_brand(&art->brands, &brand)) continue;
-		file_putf(log_file, "Adding brand: %sx%d\n", brand->name,
-				  brand->multiplier);
-		break;
-	}
-
-	/* Frequently add the corresponding resist */
-	if (randint0(4)) {
-		size_t i;
-		for (i = ELEM_BASE_MIN; i < ELEM_HIGH_MIN; i++) {
-			if (streq(brand->name, projections[i].name) &&
-				(art->el_info[i].res_level >= RES_LEVEL_BASE)) {
-				add_resist(art, i);
-			}
-		}
-	}
 }
 
 /**
@@ -1912,20 +1888,6 @@ static void add_brand(struct artifact *art)
  */
 static void add_slay(struct artifact *art)
 {
-	int count;
-	struct slay *slay;
-
-	for (count = 0; count < MAX_TRIES; count++) {
-		if (!append_random_slay(&art->slays, &slay)) continue;
-		file_putf(log_file, "Adding slay: %sx%d\n", slay->name,
-				  slay->multiplier);
-		break;
-	}
-
-	/* Frequently add more slays if the first choice is weak */
-	if (randint0(4) && (slay->power < 105)) {
-		add_slay(art);
-	}
 }
 
 /**
