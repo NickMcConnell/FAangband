@@ -966,7 +966,7 @@ price-linear:150
 design-constant:-600
 design-linear:60
 
-name:slay evil
+name:slay evil creatures
 type:slay
 price-constant:-5000
 price-linear:500

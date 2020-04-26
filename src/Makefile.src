@@ -126,6 +126,7 @@ ANGFILES = \
 	obj-chest.o \
 	obj-curse.o \
 	obj-desc.o \
+	obj-design.o \
 	obj-gear.o \
 	obj-ignore.o \
 	obj-info.o \

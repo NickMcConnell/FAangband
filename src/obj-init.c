@@ -30,6 +30,7 @@
 #include "init.h"
 #include "mon-util.h"
 #include "obj-curse.h"
+#include "obj-design.h"
 #include "obj-ignore.h"
 #include "obj-list.h"
 #include "obj-make.h"
@@ -2874,17 +2875,11 @@ static errr finish_parse_randart(struct parser *p) {
 	struct artifact *a, *n;
 	int aidx;
 
-	/* Scan the list for the max id */
-	z_info->a_max = 0;
-	a = parser_priv(p);
-	while (a) {
-		z_info->a_max++;
-		a = a->next;
-	}
-
 	/* Allocate the direct access list and copy the data to it */
-	a_info = mem_zalloc((z_info->a_max + 1) * sizeof(*a));
-	aidx = z_info->a_max;
+	a_info = mem_realloc(a_info,
+						 (z_info->a_max + ART_NUM_RANDOM) * sizeof(*a));
+	z_info->a_max += ART_NUM_RANDOM;
+	aidx = z_info->a_max - 1;
 	for (a = parser_priv(p); a; a = n, aidx--) {
 		assert(aidx > 0);
 
@@ -2898,7 +2893,6 @@ static errr finish_parse_randart(struct parser *p) {
 
 		mem_free(a);
 	}
-	z_info->a_max += 1;
 
 	parser_destroy(p);
 	return 0;

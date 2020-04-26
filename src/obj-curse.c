@@ -148,7 +148,7 @@ bool append_object_curse(struct object *obj, int pick, int power)
 		obj->curses = mem_zalloc(z_info->curse_max * sizeof(struct curse_data));
 
 	/* Reject conflicting curses */
-	for (i = 0; i < z_info->curse_max; i++) {
+	for (i = 1; i < z_info->curse_max; i++) {
 		if (obj->curses[i].power && curses_conflict(i, pick)) {
 			check_object_curses(obj);
 			return false;
@@ -258,7 +258,7 @@ bool append_artifact_curse(struct artifact *art, int pick, int power)
 		art->curses = mem_zalloc(z_info->curse_max * sizeof(int));
 
 	/* Reject conflicting curses */
-	for (i = 0; i < z_info->curse_max; i++) {
+	for (i = 1; i < z_info->curse_max; i++) {
 		if (art->curses[i] && curses_conflict(i, pick)) {
 			check_artifact_curses(art);
 			return false;

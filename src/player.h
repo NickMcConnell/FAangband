@@ -257,7 +257,7 @@ struct player_shape {
 	int skills[SKILL_MAX];  /**< Skills */
 	bitflag flags[OF_SIZE];		/**< Shape (object) flags */
 	bitflag pflags[PF_SIZE];	/**< Shape (player) flags */
-	int modifiers[OBJ_MOD_MAX];	/**< Stat and other modifiers*/
+	s16b modifiers[OBJ_MOD_MAX];	/**< Stat and other modifiers*/
 	struct element_info el_info[ELEM_MAX]; /**< Resists */
 
 	struct effect *effect;	/**< Effect on taking this shape (effects.c) */

@@ -38,5 +38,6 @@ bool dice_test_values(dice_t *dice, int base, int dice_count, int sides,
 					  int bonus);
 bool dice_test_variables(dice_t *dice, const char *base, const char *dice_name,
 						 const char *sides, const char *bonus);
+bool dice_base_equal(dice_t *dice1, dice_t *dice2);
 
 #endif /* INCLUDED_Z_DICE_H */

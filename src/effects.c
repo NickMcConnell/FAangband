@@ -5500,7 +5500,7 @@ static const char *effect_names[] = {
 	#undef EFFECT
 };
 
-/*
+/**
  * Utility functions
  */
 
@@ -5573,6 +5573,27 @@ effect_index effect_lookup(const char *name)
 	}
 
 	return EF_MAX;
+}
+
+/**
+ * Check whether two effects are equal (assumes dice contain no expressions)
+ */
+bool effect_equal(struct effect *effect1, struct effect *effect2)
+{
+	while (effect1) {
+		if (!effect2) return false;
+		if (effect1->index != effect2->index) return false;
+		if (!dice_base_equal(effect1->dice, effect2->dice)) return false;
+		if (effect1->y != effect2->y) return false;
+		if (effect1->x != effect2->x) return false;
+		if (effect1->subtype != effect2->subtype) return false;
+		if (effect1->radius != effect2->radius) return false;
+		if (effect1->other != effect2->other) return false;
+		effect1 = effect1->next;
+		effect2 = effect2->next;
+		if (effect2 && !effect1) return false;
+	}
+	return true;
 }
 
 /**

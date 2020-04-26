@@ -271,13 +271,13 @@ struct artifact {
 	int tval;		/**< General artifact type (see TV_ macros) */
 	int sval;		/**< Artifact sub-type  */
 
-	int to_h;		/**< Bonus to hit */
-	int to_d;		/**< Bonus to damage */
-	int to_a;		/**< Bonus to armor */
-	int ac;		/**< Base armor */
+	s16b to_h;		/**< Bonus to hit */
+	s16b to_d;		/**< Bonus to damage */
+	s16b to_a;		/**< Bonus to armor */
+	s16b ac;		/**< Base armor */
 
-	int dd;		/**< Base damage dice */
-	int ds;		/**< Base damage sides */
+	byte dd;		/**< Base damage dice */
+	byte ds;		/**< Base damage sides */
 
 	int weight;	/**< Weight in 1/10lbs */
 
@@ -285,7 +285,7 @@ struct artifact {
 
 	bitflag flags[OF_SIZE];			/**< Flags */
 
-	int modifiers[OBJ_MOD_MAX];
+	s16b modifiers[OBJ_MOD_MAX];
 	struct element_info el_info[ELEM_MAX];
 
 	bool *brands;
@@ -340,7 +340,7 @@ struct ego_item {
 	bitflag kind_flags[KF_SIZE];	/**< Kind flags */
 
 	random_value modifiers[OBJ_MOD_MAX];
-	int min_modifiers[OBJ_MOD_MAX];
+	s16b min_modifiers[OBJ_MOD_MAX];
 	struct element_info el_info[ELEM_MAX];
 
 	bool *brands;

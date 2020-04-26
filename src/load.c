@@ -29,6 +29,7 @@
 #include "mon-util.h"
 #include "monster.h"
 #include "obj-curse.h"
+#include "obj-design.h"
 #include "obj-gear.h"
 #include "obj-ignore.h"
 #include "obj-init.h"
@@ -1053,8 +1054,7 @@ int rd_misc(void)
 	rd_s32b(&turn);
 
 	/* Handle randart file parsing */
-	if (OPT(player, birth_randarts)) {
-		cleanup_parser(&artifact_parser);
+	if (!player->is_dead) {
 		activate_randart_file();
 		run_parser(&randart_parser);
 		deactivate_randart_file();
@@ -1111,6 +1111,10 @@ int rd_artifacts(void)
 
 	/* Load the Artifacts */
 	rd_u16b(&tmp16u);
+	if (player->is_dead) {
+		/* No randarts loaded, so less artifacts to check */
+		tmp16u -= ART_NUM_RANDOM;
+	}
 	if (tmp16u > z_info->a_max) {
 		note(format("Too many (%u) artifacts!", tmp16u));
 		return (-1);

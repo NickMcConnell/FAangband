@@ -576,9 +576,7 @@ void close_game(void)
 	screen_save_depth++;
 
 	/* Deal with the randarts file */
-	if (OPT(player, birth_randarts)) {
-		deactivate_randart_file();
-	}
+	//deactivate_randart_file();
 
 	/* Handle death or life */
 	if (player->is_dead) {

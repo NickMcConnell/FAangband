@@ -103,6 +103,33 @@ power:115
 melee-verb:smite
 range-verb:pierces
 
+code:ORC_5
+name:orcs
+race-flag:ORC
+multiplier:5
+o-multiplier:35
+power:101
+melee-verb:fiercely smite
+range-verb:deeply pierces
+
+code:TROLL_5
+name:trolls
+race-flag:TROLL
+multiplier:5
+o-multiplier:35
+power:101
+melee-verb:fiercely smite
+range-verb:deeply pierces
+
+code:GIANT_5
+name:giants
+race-flag:GIANT
+multiplier:5
+o-multiplier:35
+power:102
+melee-verb:fiercely smite
+range-verb:deeply pierces
+
 code:DEMON_5
 name:demons
 race-flag:DEMON

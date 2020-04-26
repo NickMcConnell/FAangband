@@ -43,6 +43,7 @@ bool effect_aim(const struct effect *effect);
 const char *effect_info(const struct effect *effect);
 const char *effect_desc(const struct effect *effect);
 effect_index effect_lookup(const char *name);
+bool effect_equal(struct effect *effect1, struct effect *effect2);
 int effect_subtype(int index, const char *type);
 bool effect_do(struct effect *effect,
 	struct source origin,

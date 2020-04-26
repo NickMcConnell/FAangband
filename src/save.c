@@ -26,6 +26,7 @@
 #include "monster.h"
 #include "object.h"
 #include "obj-desc.h"
+#include "obj-design.h"
 #include "obj-knowledge.h"
 #include "obj-pile.h"
 #include "obj-gear.h"

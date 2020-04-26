@@ -222,7 +222,7 @@ errr grab_rand_value(random_value *value, const char **value_type,
  * \param name_and_value the value expression being matched
  * \return 0 if successful, otherwise an error value
  */
-errr grab_int_value(int *value, const char **value_type,
+errr grab_int_value(s16b *value, const char **value_type,
 					const char *name_and_value)
 {
 	int val, i = 0;
@@ -398,7 +398,7 @@ void write_flags(ang_file *fff, const char *intro_text, bitflag *flags,
 /**
  * Write value lines for a set of modifiers.
  */
-void write_mods(ang_file *fff, const int values[])
+void write_mods(ang_file *fff, const s16b values[])
 {
 	size_t i;
 	char buf[1024] = "";
@@ -463,7 +463,7 @@ void write_elements(ang_file *fff, const struct element_info *el_info)
 	/* Write value list */
 	for (i = 0; i < ELEM_MAX; i++) {
 		/* If no value, don't write */
-		if (el_info[i].res_level == 0) continue;
+		if (el_info[i].res_level == 100) continue;
 
 		/* If this line contains something, write a divider */
 		if (strlen(buf)) {
@@ -474,7 +474,8 @@ void write_elements(ang_file *fff, const struct element_info *el_info)
 		/* Write the name and value */
 		my_strcat(buf, format("RES_%s", element_names[i]), sizeof(buf));
 		pointer += strlen(element_names[i]) + 4;
-		my_strcat(buf, format("[%d]", el_info[i].res_level), sizeof(buf));
+		my_strcat(buf, format("[%d]", RES_LEVEL_BASE - el_info[i].res_level),
+				  sizeof(buf));
 		pointer += 5;
 
 		/* Move to a new line if this one is long enough */

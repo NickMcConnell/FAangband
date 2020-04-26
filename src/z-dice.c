@@ -638,3 +638,15 @@ bool dice_test_variables(dice_t *dice, const char *base, const char *dice_name,
 
 	return success;
 }
+
+/**
+ * Check that two dice objects are equal (ignoring expressions)
+ */
+bool dice_base_equal(dice_t *dice1, dice_t *dice2)
+{
+	if (dice1->b != dice2->b) return false;
+	if (dice1->x != dice2->x) return false;
+	if (dice1->y != dice2->y) return false;
+	if (dice1->m != dice2->m) return false;
+	return true;
+}
