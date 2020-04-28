@@ -36,7 +36,6 @@
 #include "obj-knowledge.h"
 #include "obj-make.h"
 #include "obj-pile.h"
-#include "obj-randart.h"
 #include "obj-slays.h"
 #include "obj-tval.h"
 #include "obj-util.h"
@@ -138,8 +137,12 @@ static struct object *rd_item(void)
 	if (buf[0]) {
 		obj->artifact = lookup_artifact_name(buf);
 		if (!obj->artifact) {
-			note(format("Couldn't find artifact %s!", buf));
-			return NULL;
+			if (player->is_dead) {
+				obj->artifact = &a_info[0];
+			} else {
+				note(format("Couldn't find artifact %s!", buf));
+				return NULL;
+			}
 		}
 	}
 	rd_string(buf, sizeof(buf));
@@ -1790,7 +1793,7 @@ int rd_history(void)
 			}
 		}
 		rd_string(text, sizeof(text));
-		if (name[0] && !art) {
+		if (name[0] && !art && !player->is_dead) {
 			note(format("Couldn't find artifact %s!", name));
 			continue;
 		}

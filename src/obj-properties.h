@@ -224,6 +224,7 @@ struct obj_property {
 	int design_square;		/* design quadratic coefficient */
 };
 
+struct object;
 extern struct obj_property *obj_properties;
 
 /**
@@ -236,5 +237,10 @@ struct activation *lookup_activation(const char *act_name);
 void create_obj_flag_mask(bitflag *f, int id, ...);
 void flag_message(int flag, char *name);
 int sustain_flag(int stat);
+struct obj_property *brand_property(int brand_idx);
+struct obj_property *slay_property(int slay_idx);
+int property_cost(struct obj_property *prop, int value, bool price);
+int object_value_real(const struct object *obj, int qty);
+int object_value(const struct object *obj, int qty);
 
 #endif /* !INCLUDED_OBJPROPERTIES_H */

@@ -28,8 +28,7 @@
 #include "mon-util.h"
 #include "monster.h"
 #include "obj-gear.h"
-#include "obj-power.h"
-#include "obj-randart.h"
+#include "obj-properties.h"
 #include "obj-tval.h"
 #include "obj-util.h"
 #include "object.h"
@@ -63,7 +62,6 @@
  * variable power between individual items
  */
 
-static int randarts = 0;
 static int no_selling = 0;
 static u32b num_runs = 1;
 static bool quiet = false;
@@ -179,7 +177,6 @@ static void free_stats_memory(void)
 /* Copied from birth.c:generate_player() */
 static void generate_player_for_stats()
 {
-	OPT(player, birth_randarts) = randarts;
 	OPT(player, birth_no_selling) = no_selling;
 	OPT(player, birth_stacking) = true;
 	OPT(player, auto_more) = true;
@@ -228,10 +225,6 @@ static void initialize_character(void)
 
 	seed_flavor = randint0(0x10000000);
 	seed_randart = randint0(0x10000000);
-
-	if (randarts) {
-		do_randart(seed_randart, false);
-	}
 
 	store_reset();
 	flavor_init();
@@ -297,10 +290,6 @@ static void log_all_objects(int level)
 			struct object *obj;
 
 			for (obj = square_object(cave, grid); obj; obj = obj->next) {
-				/*	u32b o_power = 0; */
-
-/*				o_power = object_power(obj, false, NULL, true); */
-
 				/* Capture gold amounts */
 				if (tval_is_money(obj))
 					level_data[level].gold[obj->origin] += obj->pval;
@@ -873,11 +862,6 @@ static int stats_dump_info(void)
 	/* Metadata */
 	strnfmt(sql_buf, 256, "INSERT INTO metadata VALUES('version','%s');",
 		buildver);
-	err = stats_db_exec(sql_buf);
-	if (err) return err;
-
-	strnfmt(sql_buf, 256, "INSERT INTO metadata VALUES('randarts',%d);",
-		randarts);
 	err = stats_db_exec(sql_buf);
 	if (err) return err;
 
@@ -1459,8 +1443,6 @@ static void stats_cleanup_angband_run(void)
 static errr run_stats(void)
 {
 	u32b run;
-	struct artifact *a_info_save;
-	unsigned int i;
 	int err;
 	bool status; 
 
@@ -1469,14 +1451,6 @@ static errr run_stats(void)
 	prep_output_dir();
 	create_indices();
 	alloc_memory();
-	if (randarts) {
-		a_info_save = mem_zalloc(z_info->a_max * sizeof(struct artifact));
-		for (i = 0; i < z_info->a_max; i++) {
-			if (!a_info[i].name) continue;
-
-			memcpy(&a_info_save[i], &a_info[i], sizeof(struct artifact));
-		}
-	}
 
 	if (!quiet) printf("Creating the database and dumping info...\n");
 	status = stats_prep_db();
@@ -1490,10 +1464,6 @@ static errr run_stats(void)
 	start = time(NULL);
 	for (run = 1; run <= num_runs; run++) {
 		if (!quiet) progress_bar(run - 1, start);
-
-		if (randarts)
-			for (i = 0; i < z_info->a_max; i++)
-				memcpy(&a_info[i], &a_info_save[i], sizeof(struct artifact));
 
 		initialize_character();
 		unkill_uniques();
@@ -1527,8 +1497,6 @@ static errr run_stats(void)
 	stats_db_close();
 	if (err) quit_fmt("Problems writing to database!  sqlite3 errno %d.", err);
 
-	if (randarts)
-		mem_free(a_info_save);
 	free_stats_memory();
 	cleanup_angband();
 	if (!quiet) printf("Done!\n");
@@ -1666,7 +1634,6 @@ const char help_stats[] = "Stats mode, subopts -q(uiet) -r(andarts) -n(# of runs
  * angband -mstats -- [-q] [-r] [-nNNNN] [-s]
  *
  *   -q      Quiet mode (turn off progress messages)
- *   -r      Turn on randarts
  *   -nNNNN  Make NNNN runs through the dungeon (default: 1)
  *   -s      Turn on no-selling
  */
@@ -1676,10 +1643,6 @@ errr init_stats(int argc, char *argv[]) {
 
 	/* Skip over argv[0] */
 	for (i = 1; i < argc; i++) {
-		if (streq(argv[i], "-r")) {
-			randarts = 1;
-			continue;
-		}
 		if (streq(argv[i], "-q")) {
 			quiet = true;
 			continue;

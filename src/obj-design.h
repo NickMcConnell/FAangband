@@ -52,7 +52,6 @@
 /**
  * Constants used by the artifact naming code.
  */
-#define BUFLEN 1024
 #define MIN_NAME_LEN 5
 #define MAX_NAME_LEN 9
 

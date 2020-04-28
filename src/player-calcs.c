@@ -30,7 +30,7 @@
 #include "obj-gear.h"
 #include "obj-ignore.h"
 #include "obj-knowledge.h"
-#include "obj-power.h"
+#include "obj-properties.h"
 #include "obj-tval.h"
 #include "obj-util.h"
 #include "player-calcs.h"

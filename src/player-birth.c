@@ -32,9 +32,7 @@
 #include "obj-knowledge.h"
 #include "obj-make.h"
 #include "obj-pile.h"
-#include "obj-power.h"
 #include "obj-properties.h"
-#include "obj-randart.h"
 #include "obj-tval.h"
 #include "obj-util.h"
 #include "object.h"
@@ -1201,7 +1199,7 @@ void do_cmd_accept_character(struct command *cmd)
 	//deactivate_randart_file();
 	//run_parser(&artifact_parser);
 
-	/* Now only randomize the artifacts if required */
+	/* Generate random artifacts */
 	seed_randart = randint0(0x10000000);
 	initialize_random_artifacts(seed_randart);
 	deactivate_randart_file();

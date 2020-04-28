@@ -97,7 +97,7 @@ static errr run_parse_unarmed_blow(struct parser *p) {
 }
 
 static errr finish_parse_unarmed_blow(struct parser *p) {
-	struct unarmed_blow *blow = parser_priv(p);
+	struct unarmed_blow *blow = parser_priv(p), *next;
 	int i;
 
 	/* Count the blows */
@@ -111,8 +111,10 @@ static errr finish_parse_unarmed_blow(struct parser *p) {
 	unarmed_blows = mem_zalloc(num_unarmed_blows * sizeof(struct unarmed_blow));
 	blow = parser_priv(p);
 	for (i = num_unarmed_blows - 1; i >= 0; i--) {
-		memcpy(&unarmed_blows[i], &blow, sizeof(blow));
-		blow = blow->next;
+		next = blow->next;
+		memcpy(&unarmed_blows[i], blow, sizeof(*blow));
+		mem_free(blow);
+		blow = next;
 	}
 
 	parser_destroy(p);

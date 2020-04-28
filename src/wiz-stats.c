@@ -25,7 +25,6 @@
 #include "mon-make.h"
 #include "monster.h"
 #include "obj-pile.h"
-#include "obj-randart.h"
 #include "obj-tval.h"
 #include "obj-util.h"
 #include "object.h"
@@ -78,8 +77,6 @@ int iter;
 static double addval;
 /* flag for whether we are in clearing mode */
 bool clearing = false;
-/* flag for regenning randart */
-bool regen = false;
 
 /*** These are items to track for each iteration ***/
 /* total number of artifacts found */
@@ -1526,15 +1523,6 @@ static void clearing_stats(void)
 		/* Move all uniques to alive */
 		revive_uniques();
 
-		/* Do randart regen */
-		if ((regen) && (iter<tries)) {
-			/* Get seed */
-			int seed_randart = randint0(0x10000000);
-
-			/* regen randarts */
-			do_randart(seed_randart, false);
-		}
-
 		/* Do game iterations */
 		for (depth = 1 ; depth < MAX_LVL; depth++) {
 			/* Debug 
@@ -1610,14 +1598,6 @@ static int stats_prompt(void)
 		simtype = temp;
 	else
 		return 0;
-
-	/* For clearing sim, check for randart regen */
-	if (temp == 2) {
-		/* Prompt */
-		strnfmt(prompt, sizeof(prompt), "Regen randarts? (warning SLOW)");
-
-		regen = get_check(prompt) ? true : false;
-	}
 
 	return simtype;
 }

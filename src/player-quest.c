@@ -165,6 +165,7 @@ static enum parser_error parse_quest_place(struct parser *p) {
 	lev_name = string_make(format("%s %d", locality_name(i), depth));
 	if (!q_place->map) return PARSE_ERROR_INVALID_MAP;
 	q_place->place = level_by_name(q_place->map, lev_name)->index;
+	string_free(lev_name);
 
 	if (parser_hasval(p, "block")) {
 		block = parser_getsym(p, "block");
@@ -208,8 +209,20 @@ static void cleanup_quest(void)
 	struct quest *quest = quests, *next;
 
 	while (quest) {
+		struct quest_artifact *arts = quest->arts, *next_art;
+		struct quest_place *place = quest->place, *next_place;
 		next = quest->next;
 		string_free(quest->name);
+		while (arts) {
+			next_art = arts->next;
+			mem_free(arts);
+			arts = next_art;
+		}
+		while (place) {
+			next_place = place->next;
+			mem_free(place);
+			place = next_place;
+		}
 		mem_free(quest);
 		quest = next;
 	}

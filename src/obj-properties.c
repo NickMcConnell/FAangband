@@ -17,6 +17,10 @@
  */
 #include "angband.h"
 #include "init.h"
+#include "obj-curse.h"
+#include "obj-knowledge.h"
+#include "obj-slays.h"
+#include "obj-tval.h"
 #include "object.h"
 
 /**
@@ -169,12 +173,127 @@ int sustain_flag(int stat)
 }
 
 /**
+ * Object property corresponding to a brand
+ */
+struct obj_property *brand_property(int brand_idx)
+{
+	int i;
+
+	for (i = 1; i < z_info->property_max; i++) {
+		struct obj_property *prop =	&obj_properties[i];
+		char *s = strstr(prop->name, brands[brand_idx].name);
+		if (s) return prop;
+	}
+	return NULL;
+}
+
+/**
+ * Object property corresponding to a slay
+ */
+struct obj_property *slay_property(int slay_idx)
+{
+	int i;
+
+	for (i = 1; i < z_info->property_max; i++) {
+		struct obj_property *prop =	&obj_properties[i];
+		char *s = strstr(prop->name, slays[slay_idx].name);
+		if (s) return prop;
+	}
+	return NULL;
+}
+
+/**
+ * Check if an object has a given object property
+ */
+bool object_has_property(const struct object *obj, struct obj_property *prop)
+{
+	int i, idx = prop->index;
+	switch (prop->type) {
+		case OBJ_PROPERTY_STAT :
+		case OBJ_PROPERTY_MOD :
+		{
+			return obj->modifiers[idx] ? true : false;
+			break;
+		}
+		case OBJ_PROPERTY_FLAG :
+		{
+			return of_has(obj->flags, idx + 1);
+			break;
+		}
+		case OBJ_PROPERTY_ELEMENT :
+		{
+			return (RES_LEVEL_BASE != obj->el_info[idx].res_level);
+			break;
+		}
+		case OBJ_PROPERTY_IGNORE :
+		{
+			return obj->el_info[idx].flags & EL_INFO_IGNORE ? true : false;
+			break;
+		}
+		case OBJ_PROPERTY_BRAND :
+		{
+			if (obj->brands) {
+				for (i = 1; i < z_info->brand_max; i++) {
+					if (obj->brands[i] && (prop == brand_property(i))) {
+						return true;
+					}
+				}
+			}
+			break;
+		}
+		case OBJ_PROPERTY_SLAY :
+		{
+			if (obj->slays) {
+				for (i = 1; i < z_info->slay_max; i++) {
+					if (prop == slay_property(i)) {
+						return true;
+					}
+				}
+			}
+			break;
+		}
+		case OBJ_PROPERTY_COMBAT :
+		{
+			if (streq(prop->name, "enhanced dice")) {
+				return ((obj->dd > obj->kind->dd) || (obj->ds > obj->kind->ds));
+			} else if (streq(prop->name, "extra armor")) {
+				return (obj->ac > obj->kind->ac);
+			} else if (streq(prop->name, "armor bonus")) {
+				return (obj->to_a != 0);
+			} else if (streq(prop->name, "skill bonus")) {
+				return (obj->to_h != 0);
+			} else if (streq(prop->name, "deadliness bonus")) {
+				return (obj->to_d != 0);
+			}
+			break;
+		}
+		default : break;
+	}
+	return false;
+}
+
+/**
  * ------------------------------------------------------------------------
  * Object property values for random artifacts and jewellery
  * ------------------------------------------------------------------------ */
 /**
- * The value function for an object property
+ * Calculate cost of a property with a given value.
+ *
+ * Cost is typically a quadratic in the numeric value being added.
+ * There are two types of cost: design cost (in potential) for design of
+ * random artifacts and jewellery; and money cost for buying and selling.
  */
+int property_cost(struct obj_property *prop, int value, bool price)
+{
+	if (price) {
+		return prop->price_constant + prop->price_linear * value +
+			prop->price_square * value * value;
+	}
+
+	return prop->design_constant + prop->design_linear * value +
+		prop->design_square * value * value;
+}
+
 
 
 /**
@@ -185,3 +304,194 @@ int sustain_flag(int stat)
  * ------------------------------------------------------------------------
  * Object pricing
  * ------------------------------------------------------------------------ */
+/**
+ * Return the "value" of an "unknown" item
+ * Make a guess at the value of non-aware items
+ */
+static int object_value_base(const struct object *obj)
+{
+	/* Use template cost for aware objects */
+	if (object_flavor_is_aware(obj))
+		return obj->kind->cost;
+
+	/* Analyze the type */
+	switch (obj->tval)
+	{
+		case TV_FOOD:
+		case TV_MUSHROOM:
+			return 5;
+		case TV_POTION:
+		case TV_SCROLL:
+			return 20;
+		case TV_RING:
+		case TV_AMULET:
+			return 45;
+		case TV_WAND:
+			return 50;
+		case TV_STAFF:
+			return 70;
+		case TV_ROD:
+			return 90;
+	}
+
+	return 0;
+}
+
+
+/**
+ * Return the real price of a known (or partly known) item.
+ *
+ * Wand and staffs get cost for each charge.
+ *
+ * Wearable items (weapons, launchers, jewelry, lights, armour) and ammo
+ * are priced according to their properties.
+ */
+int object_value_real(const struct object *obj, int qty)
+{
+	int value, total_value = 0;
+
+	/* Wearables and ammo have prices that vary by individual item properties */
+	if (tval_has_variable_power(obj)) {
+		int i, j;
+
+		/* Base cost */
+		value = obj->kind->cost;
+
+		/* Add/subtract value for properties */
+		for (i = 1; i < z_info->property_max; i++) {
+			struct obj_property *prop =	&obj_properties[i];
+			int idx = prop->index;
+			if (!object_has_property(obj, prop)) continue;
+			switch (prop->type) {
+				case OBJ_PROPERTY_STAT :
+				case OBJ_PROPERTY_MOD :
+				{
+					value += property_cost(prop, obj->modifiers[idx], true);
+					break;
+				}
+				case OBJ_PROPERTY_FLAG :
+				{
+					value += property_cost(prop, 0, true);
+					break;
+				}
+				case OBJ_PROPERTY_ELEMENT :
+				{
+					int amount = RES_LEVEL_BASE - obj->el_info[idx].res_level;
+					value += property_cost(prop, amount, true);
+					break;
+				}
+				case OBJ_PROPERTY_IGNORE :
+				{
+					value += property_cost(prop, 0, true);
+					break;
+				}
+				case OBJ_PROPERTY_BRAND :
+				{
+					for (j = 0; j < z_info->brand_max; j++) {
+						if (obj->brands[j] && (prop == brand_property(j))) {
+							value += property_cost(prop, brands[j].o_multiplier,
+												   true);
+						}
+					}
+					break;
+				}
+				case OBJ_PROPERTY_SLAY :
+				{
+					for (j = 0; j < z_info->slay_max; j++) {
+						if (obj->slays[j] && (prop == slay_property(j))) {
+							value += property_cost(prop, slays[j].o_multiplier,
+												   true);
+						}
+					}
+					break;
+				}
+				case OBJ_PROPERTY_COMBAT :
+				{
+					struct object_kind *kind = obj->kind;
+					if (streq(prop->name, "enhanced dice")) {
+						value += (obj->ds - kind->ds) * (obj->ds - kind->ds)
+							* obj->dd * obj->dd * 16L;
+					} else if (streq(prop->name, "extra armor")) {
+						value += property_cost(prop, obj->ac - kind->ac, true);
+					} else if (streq(prop->name, "armor bonus")) {
+						value += property_cost(prop, obj->to_a, true);
+					} else if (streq(prop->name, "skill bonus")) {
+						value += property_cost(prop, obj->to_h- kind->to_h.base,
+											   true);
+					} else if (streq(prop->name, "deadliness bonus")) {
+						value += property_cost(prop, obj->to_d, true);
+					}
+					break;
+				}
+				default : break;
+			}
+		}
+
+		/* Amend cost for curses */
+		if (obj->curses) {
+			for (i = 0; i < z_info->curse_max; i++) {
+				if (obj->curses[i].power) {
+					value += object_value_real(curses[i].obj, 1);
+				}
+			}
+		}
+
+		total_value = value;
+	} else {
+		/* Worthless items */
+		if (!obj->kind->cost) return (0L);
+
+		/* Base cost */
+		value = obj->kind->cost;
+
+		/* Account for quantity */
+		total_value = value * qty;
+
+		/* Charge-holding devices need special treatment */
+		if (tval_can_have_charges(obj)) {
+			int charges;
+
+			/* Calculate number of charges, rounded up */
+			charges = obj->pval * qty / obj->number;
+			if ((obj->pval * qty) % obj->number != 0)
+				charges++;
+
+			/* Pay extra for charges, depending on standard number of charges */
+			total_value += value * charges / 20;
+		}
+
+		/* No negative value */
+		if (total_value < 0) total_value = 0;
+	}
+
+	/* Return the value */
+	return total_value;
+}
+
+
+/**
+ * Return the price of an item including plusses (and charges).
+ *
+ * This function returns the "value" of the given item (qty one).
+ *
+ * Never notice unknown bonuses or properties, including curses,
+ * since that would give the player information they did not have.
+ */
+int object_value(const struct object *obj, int qty)
+{
+	int value;
+
+	/* Variable power items are assessed by what is known about them */
+	if (tval_has_variable_power(obj) && obj->known) {
+		value = object_value_real(obj->known, qty);
+	} else if (tval_can_have_flavor_k(obj->kind) &&
+			   object_flavor_is_aware(obj)) {
+		value = object_value_real(obj, qty);
+	} else {
+		/* Unknown constant-price items just get a base value */
+		value = object_value_base(obj) * qty;
+	}
+
+	/* Return the final value */
+	return (value);
+}

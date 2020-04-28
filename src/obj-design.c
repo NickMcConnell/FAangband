@@ -198,19 +198,6 @@ static bool has_property(struct artifact *art, struct object *obj,
 }
 
 /**
- * Calculate cost of a property with a given value.
- *
- * Cost is typically a quadratic in the numeric value being added.
- * Because there is quite a variety of object property types, 
- * there needs to be code to specialise for each type.
- */
-static int property_cost(struct obj_property *prop, int value)
-{
-	return prop->design_constant + prop->design_linear * value +
-		prop->design_square * value * value;
-}
-
-/**
  * Grant the property asked for, if the artifact or object can afford it.
  */
 static bool get_property(struct artifact *art, struct object *obj,
@@ -222,7 +209,7 @@ static bool get_property(struct artifact *art, struct object *obj,
 	assert(prop);
 
 	/* Basic cost */
-	cost = property_cost(prop, value);
+	cost = property_cost(prop, value, false);
 
 	assert(art || ((art == NULL) && obj));
 	switch (prop->type) {
@@ -231,7 +218,7 @@ static bool get_property(struct artifact *art, struct object *obj,
 		{
 			s16b *modifiers = art ? art->modifiers : obj->modifiers;
 			int cur_value = modifiers[prop->index];
-			int cur_cost = art ? 0 : property_cost(prop, cur_value);
+			int cur_cost = art ? 0 : property_cost(prop, cur_value, false);
 			if (take_money(cost - cur_cost, on_credit)) {
 				modifiers[prop->index] += value;
 				return true;
@@ -251,7 +238,7 @@ static bool get_property(struct artifact *art, struct object *obj,
 		{
 			struct element_info *el_info = art ? art->el_info : obj->el_info;
 			int cur_value = el_info[prop->index].res_level;
-			int cur_cost = art ? 0 : property_cost(prop, cur_value);
+			int cur_cost = art ? 0 : property_cost(prop, cur_value, false);
 			if (take_money(cost - cur_cost, on_credit)) {
 				el_info[prop->index].res_level -= value;
 				return true;
@@ -289,7 +276,7 @@ static bool get_property(struct artifact *art, struct object *obj,
 				}
 
 				/* Work out the current cost and subtract it */
-				cur_cost = property_cost(prop, cur_value);
+				cur_cost = property_cost(prop, cur_value, false);
 				if (take_money(cost - cur_cost, on_credit)) {
 					obj->brands[pick] = true;
 					return true;
@@ -328,7 +315,7 @@ static bool get_property(struct artifact *art, struct object *obj,
 				}
 
 				/* Work out the current cost and subtract it */
-				cur_cost = property_cost(prop, cur_value);
+				cur_cost = property_cost(prop, cur_value, false);
 				if (take_money(cost - cur_cost, on_credit)) {
 					obj->slays[pick] = true;
 					return true;
@@ -416,7 +403,7 @@ static bool get_property(struct artifact *art, struct object *obj,
 					bonus = art ? &art->to_d : &obj->to_d;
 				}
 				cur_value = *bonus;
-				cur_cost = art ? 0 : property_cost(prop, cur_value);
+				cur_cost = art ? 0 : property_cost(prop, cur_value, false);
 				if (take_money(cost - cur_cost, on_credit)) {
 					*bonus += value;
 					return true;
@@ -3305,8 +3292,10 @@ static void make_terrible(struct artifact *art, struct object *obj)
 			}
 			if (art && (i == z_info->slay_max)) {
 				mem_free(art->slays);
+				art->slays = NULL;
 			} else if (obj && (i == z_info->slay_max)) {
 				mem_free(obj->slays);
+				obj->slays = NULL;
 			}
 			//if (one_in_(3))
 			//	of_off(art->flags_obj, OF_PERFECT_BALANCE);
@@ -3324,8 +3313,10 @@ static void make_terrible(struct artifact *art, struct object *obj)
 			}
 			if (art && (i == z_info->brand_max)) {
 				mem_free(art->brands);
+				art->brands = NULL;
 			} else if (obj && (i == z_info->brand_max)) {
 				mem_free(obj->brands);
+				obj->brands = NULL;
 			}
 
 			/* Resists */

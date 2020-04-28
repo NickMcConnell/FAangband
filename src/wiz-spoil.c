@@ -27,7 +27,7 @@
 #include "obj-info.h"
 #include "obj-make.h"
 #include "obj-pile.h"
-#include "obj-power.h"
+#include "obj-properties.h"
 #include "obj-tval.h"
 #include "obj-util.h"
 #include "object.h"
@@ -428,10 +428,9 @@ static void spoil_artifact(const char *fname)
 			 * artifact can appear, its rarity, its weight, and
 			 * its power rating.
 			 */
-			text_out("\nMin Level %u, Max Level %u, Generation chance %u, Power %d, %d.%d lbs\n",
+			text_out("\nMin Level %u, Max Level %u, Gen chance %u, %d.%d lbs\n",
 					 art->alloc_min, art->alloc_max, art->alloc_prob,
-					 object_power(obj, false, NULL), (art->weight / 10),
-					 (art->weight % 10));
+					 (art->weight / 10), (art->weight % 10));
 
 			if (OPT(player, birth_randarts)) text_out("%s.\n", art->text);
 
