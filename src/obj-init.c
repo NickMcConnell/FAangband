@@ -707,15 +707,6 @@ static enum parser_error parse_slay_o_multiplier(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_slay_power(struct parser *p) {
-	struct slay *slay = parser_priv(p);
-	if (!slay)
-		return PARSE_ERROR_MISSING_RECORD_HEADER;
-
-	slay->power = parser_getuint(p, "power");
-	return PARSE_ERROR_NONE;
-}
-
 static enum parser_error parse_slay_melee_verb(struct parser *p) {
 	const char *verb = parser_getstr(p, "verb");
 	struct slay *slay = parser_priv(p);
@@ -745,7 +736,6 @@ struct parser *init_parse_slay(void) {
 	parser_reg(p, "base sym base", parse_slay_base);
 	parser_reg(p, "multiplier uint multiplier", parse_slay_multiplier);
 	parser_reg(p, "o-multiplier uint multiplier", parse_slay_o_multiplier);
-	parser_reg(p, "power uint power", parse_slay_power);
 	parser_reg(p, "melee-verb str verb", parse_slay_melee_verb);
 	parser_reg(p, "range-verb str verb", parse_slay_range_verb);
 	return p;
@@ -858,15 +848,6 @@ static enum parser_error parse_brand_o_multiplier(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_brand_power(struct parser *p) {
-	struct brand *brand = parser_priv(p);
-	if (!brand)
-		return PARSE_ERROR_MISSING_RECORD_HEADER;
-
-	brand->power = parser_getuint(p, "power");
-	return PARSE_ERROR_NONE;
-}
-
 static enum parser_error parse_brand_resist_flag(struct parser *p) {
 	int flag;
 	struct brand *brand = parser_priv(p);
@@ -892,7 +873,6 @@ struct parser *init_parse_brand(void) {
 	parser_reg(p, "verb str verb", parse_brand_verb);
 	parser_reg(p, "multiplier uint multiplier", parse_brand_multiplier);
 	parser_reg(p, "o-multiplier uint multiplier", parse_brand_o_multiplier);
-	parser_reg(p, "power uint power", parse_brand_power);
 	parser_reg(p, "resist-flag sym flag", parse_brand_resist_flag);
 	return p;
 }
@@ -1318,14 +1298,6 @@ static enum parser_error parse_act_aim(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_act_power(struct parser *p) {
-	struct activation *act = parser_priv(p);
-	assert(act);
-
-	act->power = parser_getuint(p, "power");
-	return PARSE_ERROR_NONE;
-}
-
 static enum parser_error parse_act_effect(struct parser *p) {
 	struct activation *act = parser_priv(p);
 	struct effect *effect;
@@ -1460,7 +1432,6 @@ struct parser *init_parse_act(void) {
 	parser_setpriv(p, NULL);
 	parser_reg(p, "name str name", parse_act_name);
 	parser_reg(p, "aim uint aim", parse_act_aim);
-	parser_reg(p, "power uint power", parse_act_power);
 	parser_reg(p, "effect sym eff ?sym type ?int radius ?int other", parse_act_effect);
 	parser_reg(p, "effect-yx int y int x", parse_act_effect_yx);
 	parser_reg(p, "dice str dice", parse_act_dice);
@@ -3026,38 +2997,6 @@ static enum parser_error parse_object_property_code(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_object_property_power(struct parser *p) {
-	struct obj_property *prop = parser_priv(p);
-
-	if (!prop)
-		return PARSE_ERROR_MISSING_RECORD_HEADER;
-	prop->power = parser_getint(p, "power");
-	return PARSE_ERROR_NONE;
-}
-
-static enum parser_error parse_object_property_mult(struct parser *p) {
-	struct obj_property *prop = parser_priv(p);
-
-	if (!prop)
-		return PARSE_ERROR_MISSING_RECORD_HEADER;
-	prop->mult = parser_getint(p, "mult");
-	return PARSE_ERROR_NONE;
-}
-
-static enum parser_error parse_object_property_type_mult(struct parser *p) {
-	struct obj_property *prop = parser_priv(p);
-	int tval, mult;
-
-	if (!prop)
-		return PARSE_ERROR_MISSING_RECORD_HEADER;
-	tval = tval_find_idx(parser_getsym(p, "type"));
-	if (tval < 0)
-		return PARSE_ERROR_UNRECOGNISED_TVAL;
-	mult = parser_getint(p, "mult");
-	prop->type_mult[tval] = mult;
-	return PARSE_ERROR_NONE;
-}
-
 static enum parser_error parse_object_property_adjective(struct parser *p) {
 	struct obj_property *prop = parser_priv(p);
 	const char *adj = parser_getstr(p, "adj");
@@ -3160,9 +3099,6 @@ struct parser *init_parse_object_property(void) {
 	parser_reg(p, "type str type", parse_object_property_type);
 	parser_reg(p, "subtype str subtype", parse_object_property_subtype);
 	parser_reg(p, "id-type str id", parse_object_property_id_type);
-	parser_reg(p, "power int power", parse_object_property_power);
-	parser_reg(p, "mult int mult", parse_object_property_mult);
-	parser_reg(p, "type-mult sym type int mult", parse_object_property_type_mult);
 	parser_reg(p, "adjective str adj", parse_object_property_adjective);
 	parser_reg(p, "neg-adjective str neg_adj", parse_object_property_neg_adj);
 	parser_reg(p, "msg str msg", parse_object_property_msg);

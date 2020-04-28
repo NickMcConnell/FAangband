@@ -7,12 +7,6 @@
 # id-type: how a property is identified, currently only used by flags
 # code: a code for the object property, which is used to associate it with its
 #       index among the other properties of that type
-# power: the value given to the property in object power calculations
-# mult: relative value of properties, used in power calculations
-# type-mult: extra multiplier used in power for particular properties on
-#            particular types of object.  Assumed 1 if not mentioned; setting
-#            explicitly to 0 will stop the property appearing on this type
-#            of random artifact.
 # adjective: adjective describing the property as a player attribute, currently
 #            only used by stats
 # neg-adjective: adjective describing the opposite of the property as a player
@@ -32,8 +26,6 @@
 name:strength
 type:stat
 code:STR
-power:9
-mult:13
 adjective:strong
 neg-adjective:weak
 price-linear:200
@@ -44,8 +36,6 @@ design-square:8
 name:intelligence
 type:stat
 code:INT
-power:5
-mult:10
 adjective:smart
 neg-adjective:stupid
 price-linear:200
@@ -56,8 +46,6 @@ design-square:8
 name:wisdom
 type:stat
 code:WIS
-power:5
-mult:10
 adjective:wise
 neg-adjective:naive
 price-linear:200
@@ -68,9 +56,6 @@ design-square:8
 name:dexterity
 type:stat
 code:DEX
-power:8
-mult:10
-type-mult:gloves:2
 adjective:dextrous
 neg-adjective:clumsy
 price-linear:200
@@ -81,8 +66,6 @@ design-square:7
 name:constitution
 type:stat
 code:CON
-power:12
-mult:15
 adjective:healthy
 neg-adjective:sickly
 price-linear:200
@@ -95,8 +78,6 @@ design-square:7
 name:stealth
 type:mod
 code:STEALTH
-power:8
-mult:12
 price-linear:100
 design-linear:20
 design-square:1
@@ -104,8 +85,6 @@ design-square:1
 name:searching skill
 type:mod
 code:SEARCH
-power:2
-mult:5
 price-linear:40
 design-linear:20
 design-square:1
@@ -113,8 +92,6 @@ design-square:1
 name:infravision
 type:mod
 code:INFRA
-power:4
-mult:8
 price-linear:50
 design-linear:15
 design-square:1
@@ -122,8 +99,6 @@ design-square:1
 name:tunneling
 type:mod
 code:TUNNEL
-power:3
-mult:8
 price-linear:50
 design-linear:25
 design-square:1
@@ -131,8 +106,6 @@ design-square:1
 name:speed
 type:mod
 code:SPEED
-power:20
-mult:6
 price-square:5000
 design-linear:360
 design-square:18
@@ -140,8 +113,6 @@ design-square:18
 name:damage reduction
 type:mod
 code:DAM_RED
-power:5
-mult:6
 price-linear:150
 design-linear:30
 design-square:2
@@ -149,93 +120,24 @@ design-square:2
 name:attack speed
 type:mod
 code:BLOWS
-power:0
-mult:50
-type-mult:bow:0
-type-mult:ring:3
-type-mult:amulet:3
-type-mult:light:3
-type-mult:soft armor:3
-type-mult:hard armor:3
-type-mult:dragon armor:3
-type-mult:cloak:3
-type-mult:shield:3
-type-mult:helm:3
-type-mult:crown:3
-type-mult:gloves:3
-type-mult:boots:3
 price-linear:5000
 design-linear:1000
 
 name:shooting speed
 type:mod
 code:SHOTS
-power:0
-mult:5
-type-mult:sword:0
-type-mult:polearm:0
-type-mult:hafted:0
-type-mult:digger:0
-type-mult:ring:4
-type-mult:amulet:4
-type-mult:light:4
-type-mult:soft armor:4
-type-mult:hard armor:4
-type-mult:dragon armor:4
-type-mult:cloak:4
-type-mult:shield:4
-type-mult:helm:4
-type-mult:crown:4
-type-mult:gloves:4
-type-mult:boots:4
 price-linear:800
 design-linear:150
 
 name:shooting power
 type:mod
 code:MIGHT
-power:0
-mult:30
-type-mult:sword:0
-type-mult:polearm:0
-type-mult:hafted:0
-type-mult:digger:0
-type-mult:ring:0
-type-mult:amulet:0
-type-mult:light:0
-type-mult:soft armor:0
-type-mult:hard armor:0
-type-mult:dragon armor:0
-type-mult:cloak:0
-type-mult:shield:0
-type-mult:helm:0
-type-mult:crown:0
-type-mult:gloves:0
-type-mult:boots:0
 price-linear:6000
 design-linear:1250
 
 name:movement speed
 type:mod
 code:MOVES
-power:0
-mult:50
-type-mult:sword:0
-type-mult:polearm:0
-type-mult:hafted:0
-type-mult:digger:0
-type-mult:ring:0
-type-mult:amulet:0
-type-mult:light:0
-type-mult:soft armor:0
-type-mult:hard armor:0
-type-mult:dragon armor:0
-type-mult:cloak:0
-type-mult:shield:0
-type-mult:helm:0
-type-mult:crown:0
-type-mult:gloves:0
-type-mult:boots:0
 price-square:1000
 design-linear:100
 design-square:8
@@ -243,9 +145,6 @@ design-square:8
 name:light
 type:mod
 code:LIGHT
-power:3
-mult:6
-type-mult:light:3
 price-linear:300
 design-linear:50
 design-square:4
@@ -257,7 +156,6 @@ type:flag
 subtype:sustain
 id-type:on effect
 code:SUST_STR
-power:9
 msg:Your {name} glows.
 price-constant:500
 design-constant:550
@@ -267,7 +165,6 @@ type:flag
 subtype:sustain
 id-type:on effect
 code:SUST_INT
-power:4
 msg:Your {name} glows.
 price-constant:300
 design-constant:350
@@ -277,7 +174,6 @@ type:flag
 subtype:sustain
 id-type:on effect
 code:SUST_WIS
-power:4
 msg:Your {name} glows.
 price-constant:300
 design-constant:350
@@ -287,7 +183,6 @@ type:flag
 subtype:sustain
 id-type:on effect
 code:SUST_DEX
-power:7
 msg:Your {name} glows.
 price-constant:400
 design-constant:350
@@ -297,7 +192,6 @@ type:flag
 subtype:sustain
 id-type:on effect
 code:SUST_CON
-power:8
 msg:Your {name} glows.
 price-constant:400
 design-constant:350
@@ -307,7 +201,6 @@ type:flag
 code:PROT_FEAR
 subtype:protection
 id-type:on effect
-power:6
 msg:Your {name} strengthens your courage.
 desc:fear
 price-constant:500
@@ -318,7 +211,6 @@ type:flag
 code:PROT_BLIND
 subtype:protection
 id-type:on effect
-power:16
 msg:Your {name} soothes your eyes.
 desc:blindness
 price-constant:700
@@ -329,7 +221,6 @@ type:flag
 code:PROT_CONF
 subtype:protection
 id-type:on effect
-power:24
 msg:Your {name} clears your thoughts.
 desc:confusion
 price-constant:800
@@ -340,7 +231,6 @@ type:flag
 code:PROT_STUN
 subtype:protection
 id-type:on effect
-power:12
 msg:Your {name} steadies you.
 desc:stunning
 price-constant:500
@@ -351,7 +241,6 @@ type:flag
 subtype:misc ability
 id-type:timed
 code:SLOW_DIGEST
-power:2
 msg:You realise your {name} is slowing your metabolism.
 desc:Slows your metabolism
 price-constant:200
@@ -362,7 +251,6 @@ type:flag
 subtype:misc ability
 id-type:on effect
 code:FEATHER
-power:1
 msg:Your {name} slows your fall.
 desc:Feather Falling
 price-constant:200
@@ -373,19 +261,6 @@ type:flag
 subtype:misc ability
 id-type:timed
 code:REGEN
-power:5
-type-mult:ring:2
-type-mult:amulet:2
-type-mult:light:2
-type-mult:soft armor:2
-type-mult:hard armor:2
-type-mult:dragon armor:2
-type-mult:cloak:2
-type-mult:shield:2
-type-mult:helm:2
-type-mult:crown:2
-type-mult:gloves:2
-type-mult:boots:2
 msg:You note that your {name} is speeding up your recovery.
 desc:Speeds regeneration
 price-constant:400
@@ -396,19 +271,6 @@ type:flag
 subtype:misc ability
 id-type:on wield
 code:TELEPATHY
-type-mult:ring:2
-type-mult:amulet:2
-type-mult:light:2
-type-mult:soft armor:2
-type-mult:hard armor:2
-type-mult:dragon armor:2
-type-mult:cloak:2
-type-mult:shield:2
-type-mult:helm:2
-type-mult:crown:2
-type-mult:gloves:2
-type-mult:boots:2
-power:35
 desc:Grants telepathy
 price-constant:5000
 design-constant:2500
@@ -418,19 +280,6 @@ type:flag
 subtype:misc ability
 id-type:on wield
 code:SEE_INVIS
-type-mult:ring:2
-type-mult:amulet:2
-type-mult:light:2
-type-mult:soft armor:2
-type-mult:hard armor:2
-type-mult:dragon armor:2
-type-mult:cloak:2
-type-mult:shield:2
-type-mult:helm:2
-type-mult:crown:2
-type-mult:gloves:2
-type-mult:boots:2
-power:6
 desc:Grants the ability to see invisible things
 price-constant:700
 design-constant:700
@@ -440,19 +289,6 @@ type:flag
 subtype:misc ability
 id-type:on effect
 code:FREE_ACT
-power:8
-type-mult:ring:2
-type-mult:amulet:2
-type-mult:light:2
-type-mult:soft armor:2
-type-mult:hard armor:2
-type-mult:dragon armor:2
-type-mult:cloak:2
-type-mult:shield:2
-type-mult:helm:2
-type-mult:crown:2
-type-mult:gloves:5
-type-mult:boots:2
 msg:Your {name} keeps you moving.
 desc:Prevents paralysis
 price-constant:800
@@ -463,19 +299,6 @@ type:flag
 subtype:misc ability
 id-type:on effect
 code:HOLD_LIFE
-power:5
-type-mult:ring:2
-type-mult:amulet:2
-type-mult:light:2
-type-mult:soft armor:2
-type-mult:hard armor:2
-type-mult:dragon armor:2
-type-mult:cloak:2
-type-mult:shield:2
-type-mult:helm:2
-type-mult:crown:2
-type-mult:gloves:2
-type-mult:boots:2
 msg:Your {name} warms your spirit.
 desc:Sustains your life force
 price-constant:700
@@ -486,20 +309,6 @@ type:flag
 subtype:melee
 id-type:on effect
 code:IMPACT
-power:10
-type-mult:bow:0
-type-mult:ring:0
-type-mult:amulet:0
-type-mult:light:0
-type-mult:soft armor:0
-type-mult:hard armor:0
-type-mult:dragon armor:0
-type-mult:cloak:0
-type-mult:shield:0
-type-mult:helm:0
-type-mult:crown:0
-type-mult:gloves:0
-type-mult:boots:0
 msg:Your {name} causes an earthquake!
 desc:Sometimes creates earthquakes on impact
 price-constant:50
@@ -509,20 +318,6 @@ type:flag
 subtype:melee
 id-type:on wield
 code:BLESSED
-power:1
-type-mult:bow:0
-type-mult:ring:0
-type-mult:amulet:0
-type-mult:light:0
-type-mult:soft armor:0
-type-mult:hard armor:0
-type-mult:dragon armor:0
-type-mult:cloak:0
-type-mult:shield:0
-type-mult:helm:0
-type-mult:crown:0
-type-mult:gloves:0
-type-mult:boots:0
 desc:Blessed by the gods
 price-constant:500
 design-constant:100
@@ -532,76 +327,24 @@ type:flag
 subtype:light
 id-type:on wield
 code:BURNS_OUT
-power:0
-type-mult:sword:0
-type-mult:polearm:0
-type-mult:hafted:0
-type-mult:digger:0
-type-mult:bow:0
-type-mult:ring:0
-type-mult:amulet:0
-type-mult:soft armor:0
-type-mult:hard armor:0
-type-mult:dragon armor:0
-type-mult:cloak:0
-type-mult:shield:0
-type-mult:helm:0
-type-mult:crown:0
-type-mult:gloves:0
-type-mult:boots:0
 
 name:takes fuel
 type:flag
 subtype:light
 id-type:on wield
 code:TAKES_FUEL
-power:0
-type-mult:sword:0
-type-mult:polearm:0
-type-mult:hafted:0
-type-mult:digger:0
-type-mult:bow:0
-type-mult:ring:0
-type-mult:amulet:0
-type-mult:soft armor:0
-type-mult:hard armor:0
-type-mult:dragon armor:0
-type-mult:cloak:0
-type-mult:shield:0
-type-mult:helm:0
-type-mult:crown:0
-type-mult:gloves:0
-type-mult:boots:0
 
 name:no fuel
 type:flag
 subtype:light
 id-type:on wield
 code:NO_FUEL
-power:5
-type-mult:sword:0
-type-mult:polearm:0
-type-mult:hafted:0
-type-mult:digger:0
-type-mult:bow:0
-type-mult:ring:0
-type-mult:amulet:0
-type-mult:soft armor:0
-type-mult:hard armor:0
-type-mult:dragon armor:0
-type-mult:cloak:0
-type-mult:shield:0
-type-mult:helm:0
-type-mult:crown:0
-type-mult:gloves:0
-type-mult:boots:0
 
 name:impaired hitpoint recovery
 type:flag
 subtype:bad
 id-type:timed
 code:IMPAIR_HP
-power:-8
 msg:You feel your {name} is slowing your recovery.
 desc:Impairs hitpoint recovery
 price-constant:-200
@@ -612,7 +355,6 @@ type:flag
 subtype:bad
 id-type:timed
 code:IMPAIR_MANA
-power:-8
 msg:You feel your {name} is slowing your mana recovery.
 desc:Impairs mana recovery
 price-constant:-200
@@ -623,7 +365,6 @@ type:flag
 subtype:bad
 id-type:on wield
 code:AFRAID
-power:-20
 desc:Makes you afraid of melee, and worse at shooting and casting spells
 price-constant:-500
 design-constant:-100
@@ -633,7 +374,6 @@ type:flag
 subtype:bad
 id-type:on effect
 code:NO_TELEPORT
-power:-20
 msg:Your {name} prevents you teleporting.
 desc:Prevents teleportation
 price-constant:-1000
@@ -644,7 +384,6 @@ type:flag
 subtype:bad
 id-type:timed
 code:AGGRAVATE
-power:-20
 msg:You notice your {name} aggravating things around you.
 desc:Aggravates creatures nearby
 price-constant:-2000
@@ -655,7 +394,6 @@ type:flag
 subtype:bad
 id-type:timed
 code:DRAIN_EXP
-power:-5
 msg:You sense your {name} is draining your life.
 desc:Drains experience
 price-constant:-800
@@ -666,7 +404,6 @@ type:flag
 subtype:bad
 id-type:on wield
 code:STICKY
-power:-5
 desc:Can't be removed
 price-constant:-2500
 design-constant:-500
@@ -676,7 +413,6 @@ type:flag
 subtype:bad
 id-type:on wield
 code:FRAGILE
-power:-1
 desc:Can be destroyed if you attempt to remove its curses
 price-constant:-50
 
@@ -685,109 +421,42 @@ type:flag
 subtype:light
 id-type:on wield
 code:LIGHT_2
-power:9
-type-mult:sword:0
-type-mult:polearm:0
-type-mult:hafted:0
-type-mult:digger:0
-type-mult:bow:0
-type-mult:ring:0
-type-mult:amulet:0
-type-mult:soft armor:0
-type-mult:hard armor:0
-type-mult:dragon armor:0
-type-mult:cloak:0
-type-mult:shield:0
-type-mult:helm:0
-type-mult:crown:0
-type-mult:gloves:0
-type-mult:boots:0
 
 name:intensity 3 light
 type:flag
 subtype:light
 id-type:on wield
 code:LIGHT_3
-power:18
-type-mult:sword:0
-type-mult:polearm:0
-type-mult:hafted:0
-type-mult:digger:0
-type-mult:bow:0
-type-mult:ring:0
-type-mult:amulet:0
-type-mult:soft armor:0
-type-mult:hard armor:0
-type-mult:dragon armor:0
-type-mult:cloak:0
-type-mult:shield:0
-type-mult:helm:0
-type-mult:crown:0
-type-mult:gloves:0
-type-mult:boots:0
 
 name:power 1 digging
 type:flag
 subtype:dig
 id-type:on wield
 code:DIG_1
-power:3
 
 name:power 2 digging
 type:flag
 subtype:dig
 id-type:on wield
 code:DIG_2
-power:6
 
 name:power 3 digging
 type:flag
 subtype:dig
 id-type:on wield
 code:DIG_3
-power:9
 
 name:explode
 type:flag
 subtype:light
 id-type:on wield
 code:EXPLODE
-power:0
-type-mult:sword:0
-type-mult:polearm:0
-type-mult:hafted:0
-type-mult:digger:0
-type-mult:bow:0
-type-mult:ring:0
-type-mult:amulet:0
-type-mult:soft armor:0
-type-mult:hard armor:0
-type-mult:dragon armor:0
-type-mult:cloak:0
-type-mult:shield:0
-type-mult:helm:0
-type-mult:crown:0
-type-mult:gloves:0
-type-mult:boots:0
 
 name:trap immunity
 type:flag
 subtype:misc ability
 id-type:on effect
 code:TRAP_IMMUNE
-power:5
-type-mult:ring:2
-type-mult:amulet:2
-type-mult:light:2
-type-mult:soft armor:2
-type-mult:hard armor:2
-type-mult:dragon armor:2
-type-mult:cloak:2
-type-mult:shield:2
-type-mult:helm:2
-type-mult:crown:2
-type-mult:gloves:2
-type-mult:boots:2
 msg:Your {name} stops you from setting off the trap.
 desc:Gives immunity to traps
 price-constant:800
@@ -798,7 +467,6 @@ type:flag
 subtype:throw
 id-type:on wield
 code:THROWING
-power:4
 price-constant:200
 
 ## Ignore elements
@@ -806,25 +474,21 @@ price-constant:200
 name:ignore acid
 type:ignore
 code:ACID
-power:3
 price-constant:100
 
 name:ignore electricity
 type:ignore
 code:ELEC
-power:1
 price-constant:100
 
 name:ignore fire
 type:ignore
 code:FIRE
-power:3
 price-constant:100
 
 name:ignore cold
 type:ignore
 code:COLD
-power:1
 price-constant:100
 
 ## Resistance (and immunity and vulnerability) to elements
@@ -832,91 +496,78 @@ price-constant:100
 name:acid resistance
 type:element
 code:ACID
-power:5
 price-linear:60
 design-linear:10
 
 name:electricity resistance
 type:element
 code:ELEC
-power:6
 price-linear:60
 design-linear:10
 
 name:fire resistance
 type:element
 code:FIRE
-power:6
 price-linear:60
 design-linear:10
 
 name:cold resistance
 type:element
 code:COLD
-power:6
 price-linear:60
 design-linear:10
 
 name:poison resistance
 type:element
 code:POIS
-power:28
 price-linear:120
 design-linear:20
 
 name:light resistance
 type:element
 code:LIGHT
-power:6
 price-linear:60
 design-linear:10
 
 name:dark resistance
 type:element
 code:DARK
-power:16
 price-linear:60
 design-linear:10
 
 name:sound resistance
 type:element
 code:SOUND
-power:14
 price-linear:60
 design-linear:10
 
 name:shards resistance
 type:element
 code:SHARD
-power:8
 price-linear:60
 design-linear:10
 
 name:nexus resistance
 type:element
 code:NEXUS
-power:15
 price-linear:60
 design-linear:10
 
 name:nether resistance
 type:element
 code:NETHER
-power:20
 price-linear:90
 design-linear:15
 
 name:chaos resistance
 type:element
 code:CHAOS
-power:20
 price-linear:90
 design-linear:15
 
 name:disenchantment resistance
 type:element
 code:DISEN
-power:20
 price-linear:120
 design-linear:20
 

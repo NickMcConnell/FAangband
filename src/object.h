@@ -87,7 +87,6 @@ struct brand {
 	int resist_flag;
 	int multiplier;
 	int o_multiplier;
-	int power;
 	struct brand *next;
 };
 
@@ -103,7 +102,6 @@ struct slay {
 	int race_flag;
 	int multiplier;
 	int o_multiplier;
-	int power;
 	struct slay *next;
 };
 
@@ -142,7 +140,6 @@ struct activation {
 	char *name;
 	int index;
 	bool aim;
-	int power;
 	struct effect *effect;
 	char *message;
 	char *desc;
@@ -224,7 +221,7 @@ struct object_kind {
 
 	struct activation *activation;	/**< Artifact-like activation */
 	struct effect *effect;	/**< Effect this item produces (effects.c) */
-	int power;				/**< Power of the item's effect */
+	int power;				/**< Power of the item for randart calculations */
 	char *effect_msg;
 	random_value time;		/**< Recharge time (rods/activation) */
 	random_value charge;	/**< Number of charges (staves/wands) */

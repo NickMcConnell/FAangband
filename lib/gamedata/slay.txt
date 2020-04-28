@@ -6,7 +6,6 @@
 # base: monster base which this flag affects
 # multiplier: slay multiplier applied to damage dice
 # o-multiplier: slay multiplier applied to damage dice (O-combat)
-# power: weighting in object power calculations (100 is neutral)
 # melee-verb: verb used when a susceptible monster is hit in melee
 # range-verb: verb used when a susceptible monster is hit at range
 
@@ -18,7 +17,6 @@ name:evil creatures
 race-flag:EVIL
 multiplier:2
 o-multiplier:18
-power:200
 melee-verb:smite
 range-verb:pierces
 
@@ -27,7 +25,6 @@ name:animals
 race-flag:ANIMAL
 multiplier:2
 o-multiplier:20
-power:115
 melee-verb:smite
 range-verb:deeply pierces
 
@@ -36,7 +33,6 @@ name:evil creatures
 race-flag:EVIL
 multiplier:3
 o-multiplier:23
-power:200
 melee-verb:fiercely smite
 range-verb:deeply pierces
 
@@ -45,7 +41,6 @@ name:animals
 race-flag:ANIMAL
 multiplier:3
 o-multiplier:25
-power:115
 melee-verb:fiercely smite
 range-verb:pierces
 
@@ -54,7 +49,6 @@ name:orcs
 race-flag:ORC
 multiplier:3
 o-multiplier:25
-power:101
 melee-verb:smite
 range-verb:pierces
 
@@ -63,7 +57,6 @@ name:trolls
 race-flag:TROLL
 multiplier:3
 o-multiplier:25
-power:101
 melee-verb:smite
 range-verb:pierces
 
@@ -72,7 +65,6 @@ name:giants
 race-flag:GIANT
 multiplier:3
 o-multiplier:25
-power:102
 melee-verb:smite
 range-verb:pierces
 
@@ -81,7 +73,6 @@ name:demons
 race-flag:DEMON
 multiplier:3
 o-multiplier:25
-power:110
 melee-verb:smite
 range-verb:pierces
 
@@ -90,7 +81,6 @@ name:dragons
 race-flag:DRAGON
 multiplier:3
 o-multiplier:25
-power:105
 melee-verb:smite
 range-verb:pierces
 
@@ -99,7 +89,6 @@ name:undead
 race-flag:UNDEAD
 multiplier:3
 o-multiplier:25
-power:115
 melee-verb:smite
 range-verb:pierces
 
@@ -108,7 +97,6 @@ name:orcs
 race-flag:ORC
 multiplier:5
 o-multiplier:35
-power:101
 melee-verb:fiercely smite
 range-verb:deeply pierces
 
@@ -117,7 +105,6 @@ name:trolls
 race-flag:TROLL
 multiplier:5
 o-multiplier:35
-power:101
 melee-verb:fiercely smite
 range-verb:deeply pierces
 
@@ -126,7 +113,6 @@ name:giants
 race-flag:GIANT
 multiplier:5
 o-multiplier:35
-power:102
 melee-verb:fiercely smite
 range-verb:deeply pierces
 
@@ -135,7 +121,6 @@ name:demons
 race-flag:DEMON
 multiplier:5
 o-multiplier:35
-power:120
 melee-verb:fiercely smite
 range-verb:deeply pierces
 
@@ -144,7 +129,6 @@ name:dragons
 race-flag:DRAGON
 multiplier:5
 o-multiplier:35
-power:110
 melee-verb:fiercely smite
 range-verb:deeply pierces
 
@@ -153,6 +137,5 @@ name:undead
 race-flag:UNDEAD
 multiplier:5
 o-multiplier:35
-power:130
 melee-verb:fiercely smite
 range-verb:deeply pierces

@@ -2,7 +2,8 @@
  * \file obj-properties.c
  * \brief functions to deal with object properties
  *
- * Copyright (c) 2014 Chris Carr, Nick McConnell
+ * Copyright (c) 2014 Chris Carr
+ * Copyright (c) 2020 Nick McConnell
  *
  * This work is free software; you can redistribute it and/or modify it
  * under the terms of either:
@@ -293,12 +294,6 @@ int property_cost(struct obj_property *prop, int value, bool price)
 	return prop->design_constant + prop->design_linear * value +
 		prop->design_square * value * value;
 }
-
-
-
-/**
- * The cost of adding a property to an object or artifact
- */
 
 /**
  * ------------------------------------------------------------------------
