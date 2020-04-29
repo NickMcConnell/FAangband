@@ -43,6 +43,7 @@
 #include "option.h"
 #include "player-spell.h"
 #include "project.h"
+#include "ui-entry.h"
 
 static const char *mon_race_flags[] =
 {
@@ -3091,6 +3092,23 @@ static enum parser_error parse_object_property_design_square(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_object_property_bindui(struct parser* p) {
+	struct obj_property *prop = parser_priv(p);
+	const char *uiname = parser_getsym(p, "ui");
+	bool isaux = (parser_getint(p, "aux") != 0);
+	bool have_val = parser_hasval(p, "uival");
+	int val = (have_val) ? parser_getint(p, "uival") : 0;
+
+	if (!prop)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	if (prop->type == OBJ_PROPERTY_NONE) {
+		return PARSE_ERROR_INVALID_PROPERTY;
+	}
+	(void) bind_object_property_to_ui_entry_by_name(uiname, prop->type,
+		prop->index, val, have_val, isaux);
+	return PARSE_ERROR_NONE;
+}
+
 struct parser *init_parse_object_property(void) {
 	struct parser *p = parser_new();
 	parser_setpriv(p, NULL);
@@ -3113,6 +3131,7 @@ struct parser *init_parse_object_property(void) {
 			   parse_object_property_design_linear);
 	parser_reg(p, "design-square int value",
 			   parse_object_property_design_square);
+	parser_reg(p, "bindui sym ui int aux ?int uival", parse_object_property_bindui);
 	return p;
 }
 
