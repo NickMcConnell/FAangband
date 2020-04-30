@@ -90,7 +90,6 @@ design-square:7
 bindui:stat_mod_ui_compact_0<CON>:0
 
 ## Non-stat modifiers
-=======
 
 name:stealth
 type:mod
@@ -106,8 +105,6 @@ code:SEARCH
 price-linear:40
 design-linear:20
 design-square:1
-power:2
-mult:5
 bindui:search_ui_compact_0:0
 
 name:infravision
@@ -457,7 +454,6 @@ type:flag
 subtype:bad
 id-type:on wield
 code:STICKY
-power:-5
 bindui:sticky_ui_compact_0:0
 desc:Can't be removed
 price-constant:-2500

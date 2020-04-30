@@ -564,9 +564,7 @@ bool is_ui_entry_for_known_rune(const struct ui_entry *entry,
 			break;
 
 		case OBJ_PROPERTY_IGNORE:
-		case OBJ_PROPERTY_RESIST:
-		case OBJ_PROPERTY_VULN:
-		case OBJ_PROPERTY_IMM:
+		case OBJ_PROPERTY_ELEMENT:
 			if (p->obj_k->el_info[ind].res_level == 0) {
 				result = false;
 			}
@@ -731,9 +729,7 @@ void compute_ui_entry_values_for_object(const struct ui_entry *entry,
 				}
 				break;
 
-			case OBJ_PROPERTY_RESIST:
-			case OBJ_PROPERTY_VULN:
-			case OBJ_PROPERTY_IMM:
+			case OBJ_PROPERTY_ELEMENT:
 				if (object_element_is_known(obj, ind)) {
 					int v = obj->el_info[ind].res_level;
 					int a = 0;
@@ -872,7 +868,7 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 				 * special cases.
 				 */
 				switch (ind) {
-				case PF_FAST_SHOT:
+				case PF_BOW_SPEED_GREAT:
 					launcher = equipped_item_by_slot_name(
 						p, "shooting");
 					if (kf_has(launcher->kind->kind_flags,

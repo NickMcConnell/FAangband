@@ -186,8 +186,8 @@ static void configure_char_sheet(void)
 	char* region_categories[] = {
 		"resistances",
 		"abilities",
-		"hindrances",
-		"modifiers"
+		"modifiers",
+		"hindrances"
 	};
 	char* test_categories[2];
 	struct ui_entry_iterator* ui_iter;
@@ -420,22 +420,6 @@ static void display_resistance_panel(int ipart, struct char_sheet_config *config
 	for (i = 0; i < player->body.count; ++i) {
 		if (ocaches[i]) {
 			release_cached_object_data(ocaches[i]);
-		}
-
-		/* Resist percentages */
-		if (rec[i].element != -1) {
-			int val = 100 - player->state.el_info[i].res_level;
-			char buf[10];
-			my_strcpy(buf, format("%4d", val), 5);
-			Term_putstr(res_cols, row, 4, name_attr, buf);
-			Term_putstr(res_cols + 4, row, 1, name_attr, "%");
-		}
-
-		/* Modifier totals */
-		if (rec[i].mod != -1) {
-			char buf[10];
-			my_strcpy(buf, format("%4d ", mod_total), 5);
-			Term_putstr(3 * res_cols + 7, row, 4, name_attr, buf);
 		}
 	}
 	mem_free(ocaches);
