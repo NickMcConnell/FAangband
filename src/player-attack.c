@@ -635,14 +635,14 @@ static int unarmed_damage(struct player *p, struct monster_race *race,
  *
  * Factor in damage dice, to-dam and any brand or slay.
  */
-static int melee_damage(struct object *obj, struct monster *mon, int b, int s)
+static int melee_damage(const struct monster *mon, struct object *obj, int b, int s)
 {
 	int dmg = damroll(obj->dd, obj->ds);
 
 	if (s) {
 		dmg *= slays[s].multiplier;
 	} else if (b) {
-		dmg *= brands[b].multiplier;
+		dmg *= get_monster_brand_multiplier(mon, &brands[b]);
 	}
 
 	/* Additional bonus for Holy Light */
@@ -684,7 +684,12 @@ static int o_melee_damage(struct player *p, struct monster *mon,
 	if (s) {
 		multiplier = slays[s].o_multiplier;
 	} else if (b) {
-		multiplier = brands[b].o_multiplier;
+		int bmult = get_monster_brand_multiplier(mon, &brands[b]);
+
+		die_average *= bmult;
+		add = bmult - 10;
+	} else {
+		die_average *= 10;
 	}
 
 	/* Additional bonus for Holy Light */
@@ -729,15 +734,16 @@ static int o_melee_damage(struct player *p, struct monster *mon,
  *
  * Factor in damage dice, to-dam, multiplier and any brand or slay.
  */
-static int ranged_damage(struct player *p, struct object *missile,
-						 struct object *launcher, int b, int s)
+static int ranged_damage(struct player *p, const struct monster *mon,
+						 struct object *missile, struct object *launcher,
+						 int b, int s)
 {
 	int dmg;
 	int mult = (launcher ? p->state.ammo_mult : 1);
 
 	/* If we have a slay or brand, modify the multiplier appropriately */
 	if (b) {
-		mult += brands[b].multiplier;
+		mult += get_monster_brand_multiplier(mon, &brands[b]);
 	} else if (s) {
 		mult += slays[s].multiplier;
 	}
@@ -782,8 +788,10 @@ static int o_ranged_damage(struct player *p, const struct monster *mon,
 
 	/* Adjust the average for slays and brands. (10x inflation) */
 	if (b) {
-		die_average *= brands[b].o_multiplier;
-		add = brands[b].o_multiplier - 10;
+		int bmult = get_monster_brand_multiplier(mon, &brands[b]);
+
+		die_average *= bmult;
+		add = bmult - 10;
 	} else if (s) {
 		die_average *= slays[s].o_multiplier;
 		add = slays[s].o_multiplier - 10;
@@ -995,7 +1003,7 @@ bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 
 		/* Get the damage */
 		if (!OPT(p, birth_O_combat)) {
-			dmg = melee_damage(obj, mon, b, s);
+			dmg = melee_damage(mon, obj, b, s);
 			dmg = critical_melee(p, mon, weight, obj->to_h, dmg, sleeping_bonus,
 								 &msg_type, &armsman);
 		} else {
@@ -1534,7 +1542,7 @@ static struct attack_result make_ranged_shot(struct player *p,
 	improve_attack_modifier(bow, mon, &b, &s, result.hit_verb, true);
 
 	if (!OPT(p, birth_O_combat)) {
-		result.dmg = ranged_damage(p, ammo, bow, b, s);
+		result.dmg = ranged_damage(p, mon, ammo, bow, b, s);
 		result.dmg = critical_shot(p, mon, ammo->weight, ammo->to_h,
 								   result.dmg, result.s_bonus, &result.msg_type,
 								   &result.marksman);
@@ -1579,7 +1587,7 @@ static struct attack_result make_ranged_throw(struct player *p,
 	improve_attack_modifier(obj, mon, &b, &s, result.hit_verb, true);
 
 	if (!OPT(p, birth_O_combat)) {
-		result.dmg = ranged_damage(p, obj, NULL, b, s);
+		result.dmg = ranged_damage(p, mon, obj, NULL, b, s);
 		result.dmg = critical_shot(p, mon, obj->weight, obj->to_h,
 								   result.dmg, result.s_bonus, &result.msg_type,
 								   &result.marksman);

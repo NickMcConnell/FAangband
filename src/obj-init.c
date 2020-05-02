@@ -868,6 +868,23 @@ static enum parser_error parse_brand_resist_flag(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_brand_vuln_flag(struct parser *p) {
+	int flag;
+	struct brand *brand = parser_priv(p);
+	if (!brand)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	flag = lookup_flag(mon_race_flags, parser_getsym(p, "flag"));
+
+	if (flag == FLAG_END) {
+		return PARSE_ERROR_INVALID_FLAG;
+	} else {
+		brand->vuln_flag = flag;
+	}
+
+	return PARSE_ERROR_NONE;
+}
+
 struct parser *init_parse_brand(void) {
 	struct parser *p = parser_new();
 	parser_setpriv(p, NULL);
@@ -877,6 +894,7 @@ struct parser *init_parse_brand(void) {
 	parser_reg(p, "multiplier uint multiplier", parse_brand_multiplier);
 	parser_reg(p, "o-multiplier uint multiplier", parse_brand_o_multiplier);
 	parser_reg(p, "resist-flag sym flag", parse_brand_resist_flag);
+	parser_reg(p, "vuln-flag sym flag", parse_brand_vuln_flag);
 	return p;
 }
 
