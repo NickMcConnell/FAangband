@@ -23,6 +23,7 @@
 #include "init.h"
 #include "obj-chest.h"
 #include "obj-curse.h"
+#include "obj-design.h"
 #include "obj-gear.h"
 #include "obj-knowledge.h"
 #include "obj-make.h"
@@ -203,7 +204,7 @@ static void cleanup_obj_make(void) {
  * and returns an entry from newf, or 0 if there are no
  * new flags available.
  */
-static int get_new_attr(bitflag flags[OF_SIZE], bitflag newf[OF_SIZE])
+int get_new_attr(bitflag *flags, bitflag *newf)
 {
 	size_t i;
 	int options = 0, flag = 0;
@@ -253,7 +254,7 @@ static int random_base_resist(struct object *obj, int *resist)
 /**
  * Get a random new high resist on an item
  */
-static int random_high_resist(struct object *obj, int *resist)
+int random_high_resist(struct object *obj, int *resist)
 {
 	int i, r, count = 0;
 
@@ -941,12 +942,8 @@ int apply_magic(struct object *obj, int lev, bool allow_artifacts, bool good,
 		apply_magic_weapon(obj, lev, power);
 	} else if (tval_is_armor(obj)) {
 		apply_magic_armour(obj, lev, power);
-	} else if (tval_is_ring(obj)) {
-		if (obj->sval == lookup_sval(obj->tval, "Speed")) {
-			/* Super-charge the ring */
-			while (one_in_(2))
-				obj->modifiers[OBJ_MOD_SPEED]++;
-		}
+	} else if (tval_is_jewelry(obj)) {
+		design_jewellery(obj, lev);
 	} else if (tval_is_chest(obj)) {
 		/* Get a random, level-dependent set of chest traps */
 		obj->pval = pick_chest_traps(obj);

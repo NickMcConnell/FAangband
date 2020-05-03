@@ -55,6 +55,24 @@
 #define MIN_NAME_LEN 5
 #define MAX_NAME_LEN 9
 
+/**
+ * Ranking methods
+ */
+enum rank_method {
+	RANK_CHEAPEST_FIRST,	/* Pick the cheapest property available */
+	RANK_DEAREST_FIRST,		/* Pick the most expensive property available */
+	RANK_RANDOM_CHOICE,		/* Pick a property at random */
+	RANK_FIRST_VALID,		/* Pick the first affordable and new property */
+	RANK_FIND_MAX_VALUE,	/* Find the maximum value usable with a property */
+	RANK_MAX
+};
+
+/**
+ * More than you can afford...
+ */
+#define TOO_MUCH         10000
+
 void initialize_random_artifacts(u32b randart_seed);
+bool design_jewellery(struct object *obj, int lev);
 
 #endif /* !INCLUDED_OBJDESIGN_H */

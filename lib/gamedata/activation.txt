@@ -1343,3 +1343,14 @@ dice:$B+1d100
 expr:B:PLAYER_LEVEL:/ 5
 desc:creates random and unpredictable effects
 
+name:METAMORPHOSIS
+effect:RANDOM
+dice:8
+effect:SHAPECHANGE:bat
+effect:SHAPECHANGE:fox
+effect:SHAPECHANGE:Pukel-man
+effect:SHAPECHANGE:eagle
+effect:SHAPECHANGE:bear
+effect:SHAPECHANGE:warg
+effect:SHAPECHANGE:vampire
+effect:SHAPECHANGE:werewolf

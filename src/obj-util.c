@@ -115,16 +115,13 @@ static void flavor_assign_random(byte tval)
  * Reset svals on flavors, effectively removing any fixed flavors.
  *
  * Mainly useful for randarts so that fixed flavors for standards aren't
- * predictable. The One Ring is kept as fixed, since it lives through randarts.
+ * predictable.
  */
 void flavor_reset_fixed(void)
 {
 	struct flavor *f;
 
 	for (f = flavors; f; f = f->next) {
-		if (f->tval == TV_RING && strstr(f->text, "Plain Gold"))
-			continue;
-
 		f->sval = SV_UNKNOWN;
 	}
 }
@@ -179,8 +176,6 @@ void flavor_init(void)
 
 	flavor_assign_fixed();
 
-	flavor_assign_random(TV_RING);
-	flavor_assign_random(TV_AMULET);
 	flavor_assign_random(TV_STAFF);
 	flavor_assign_random(TV_WAND);
 	flavor_assign_random(TV_ROD);

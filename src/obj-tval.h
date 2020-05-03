@@ -57,6 +57,7 @@ bool tval_is_money_k(const struct object_kind *kind);
 bool tval_is_digger(const struct object *obj);
 bool tval_is_potion(const struct object *obj);
 bool tval_is_ring(const struct object *obj);
+bool tval_is_amulet(const struct object *obj);
 bool tval_is_rod(const struct object *obj);
 bool tval_is_scroll(const struct object *obj);
 bool tval_is_staff(const struct object *obj);

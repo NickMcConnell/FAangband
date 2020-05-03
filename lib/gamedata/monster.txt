@@ -6935,12 +6935,12 @@ spells:S_MONSTER
 spells:BLIND | WOUND | CONF | SCARE
 desc:A strange creature that disguises itself as a discarded ring to lure
 desc: unsuspecting adventurers within reach of its venomous claws.
-mimic:ring:Speed
-mimic:ring:Slaying
-mimic:ring:Constitution
-mimic:ring:Resist Poison
-mimic:ring:Free Action
-mimic:ring:See Invisible
+mimic:ring:Pewter
+mimic:ring:Galvorn
+mimic:ring:Brass
+mimic:ring:Bronze
+mimic:ring:Copper
+mimic:ring:Silver
 
 name:young blue dragon
 base:dragon

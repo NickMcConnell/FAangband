@@ -27,6 +27,8 @@
  */
 #define NO_MINIMUM 	255
 
+int get_new_attr(bitflag *flags, bitflag *newf);
+int random_high_resist(struct object *obj, int *resist);
 void ego_apply_magic(struct object *obj, int level);
 void copy_artifact_data(struct object *obj, const struct artifact *art);
 bool make_fake_artifact(struct object *obj, const struct artifact *artifact);

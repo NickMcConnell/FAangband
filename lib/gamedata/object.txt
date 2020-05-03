@@ -1920,554 +1920,189 @@ desc:A shield of purest white, made of mithril.
 
 
 
-
 ##### Rings #####
 
-### Stat rings ###
-
-name:Strength
+name:Steel
+graphics:=:W
 type:ring
-graphics:=:d
-level:30
-weight:2
-cost:500
-alloc:50:30 to 100
-flags:SUST_STR | 
-values:STR[1+M5]
-
-name:Intelligence
-type:ring
-graphics:=:d
-level:30
-weight:2
-cost:500
-alloc:50:30 to 100
-flags:SUST_INT | 
-values:INT[1+M5]
-
-name:Dexterity
-type:ring
-graphics:=:d
-level:30
-weight:2
-cost:500
-alloc:50:30 to 100
-flags:SUST_DEX | 
-values:DEX[1+M5]
-
-name:Constitution
-type:ring
-graphics:=:d
-level:30
-weight:2
-cost:500
-alloc:50:30 to 100
-flags:SUST_CON | 
-values:CON[1+M5]
-
-name:Speed
-type:ring
-graphics:=:d
-level:75
-weight:2
-cost:100000
-alloc:40:75 to 100
-flags:GOOD
-values:SPEED[4+M6]
-
-name:Searching
-type:ring
-graphics:=:d
 level:5
 weight:2
-cost:250
-alloc:20:5 to 90
-values:SEARCH[d4M2]
+cost:20
+alloc:30:0 to 20
+desc:A shining steel ring.
 
-### Stat sustain rings ###
-
-name:Bodykeeping
+name:Pewter
+graphics:=:s
 type:ring
-graphics:=:d
-level:30
+level:15
 weight:2
-cost:750
-alloc:20:30 to 100
-flags:SUST_STR | SUST_DEX | SUST_CON | EASY_KNOW
+cost:50
+alloc:30:10 to 30
+desc:A ring of worked pewter.
 
-name:Soulkeeping
+name:Galvorn
+graphics:=:D
 type:ring
-graphics:=:d
-level:30
+level:25
 weight:2
-cost:600
-alloc:20:30 to 100
-flags:SUST_STR | SUST_INT | SUST_WIS | EASY_KNOW
+cost:70
+alloc:30:20 to 40
+desc:A ring made from the black metal of the Dark Elf.
 
-
-### Resistance rings ###
-
-name:Resist Poison
+name:Brass
+graphics:=:M
 type:ring
-graphics:=:d
-level:40
+level:35
 weight:2
-cost:16000
-alloc:50:40 to 100
-flags:EASY_KNOW
-values:RES_POIS[40]
+cost:100
+alloc:30:30 to 50
+desc:A ring of polished brass.
 
-name:Resist Fire and Cold
+name:Bronze
+graphics:=:U
 type:ring
-graphics:=:d
-level:10
+level:45
 weight:2
-cost:250
-alloc:50:10 to 50
-flags:IGNORE_COLD | IGNORE_FIRE | EASY_KNOW
-values:RES_FIRE[40] | RES_COLD[40]
+cost:120
+alloc:30:40 to 60
+desc:A ring crafted of deep burnished bronze.
 
-### Elemental rings ###
-
-name:Light
+name:Copper
+graphics:=:u
 type:ring
-graphics:=:d
-level:0
+level:55
 weight:2
-cost:400
-alloc:20:25 to 100
-values:SEARCH[1+M5] | LIGHT[1] | RES_LIGHT[40]
+cost:300
+alloc:30:50 to 70
+desc:A circle of beaten copper.
 
-name:Flames
+name:Silver
+graphics:=:w
 type:ring
-graphics:=:d
-level:50
-weight:2
-cost:500
-alloc:20:20 to 100
-attack:0d0:0:0
-armor:0:5+d5M10
-flags:IGNORE_FIRE
-values:RES_FIRE[40]
-power:11
-effect:BALL:FIRE:2
-dice:80
-effect:TIMED_INC:OPP_FIRE
-dice:20+1d20
-time:50+d50
-
-name:Acid
-type:ring
-graphics:=:d
-level:50
-weight:2
-cost:500
-alloc:20:20 to 100
-attack:0d0:0:0
-armor:0:5+d5M10
-flags:IGNORE_ACID
-values:RES_ACID[40]
-power:11
-effect:BALL:ACID:2
-dice:70
-effect:TIMED_INC:OPP_ACID
-dice:20+1d20
-time:50+d50
-
-name:Ice
-type:ring
-graphics:=:d
-level:50
-weight:2
-cost:500
-alloc:20:20 to 100
-attack:0d0:0:0
-armor:0:5+d5M10
-flags:IGNORE_COLD
-values:RES_COLD[40]
-power:11
-effect:BALL:COLD:2
-dice:75
-effect:TIMED_INC:OPP_COLD
-dice:20+1d20
-time:50+d50
-
-name:Lightning
-type:ring
-graphics:=:d
-level:50
-weight:2
-cost:500
-alloc:20:20 to 100
-attack:0d0:0:0
-armor:0:5+d5M10
-flags:IGNORE_ELEC
-values:RES_ELEC[40]
-power:11
-effect:BALL:ELEC:2
-dice:85
-effect:TIMED_INC:OPP_ELEC
-dice:20+1d20
-time:50+d50
-
-### Combat rings ###
-
-name:Damage
-type:ring
-graphics:=:d
-level:20
-weight:2
-cost:500
-alloc:30:20 to 100
-attack:0d0:0:5+d3M7
-armor:0:0
-desc:It boosts your to-dam value.
-
-name:Accuracy
-type:ring
-graphics:=:d
-level:20
-weight:2
-cost:500
-alloc:30:20 to 100
-attack:0d0:10+d6M7:0
-armor:0:0
-desc:It boosts your to-hit value.
-
-name:Slaying
-type:ring
-graphics:=:d
-level:40
-weight:2
-cost:1000
-alloc:20:40 to 100
-attack:0d0:d10M10:d5M5
-armor:0:0
-desc:It boosts your to-hit and to-dam values.
-
-name:Protection
-type:ring
-graphics:=:d
-level:10
-weight:2
-cost:500
-alloc:50:10 to 40
-attack:0d0:0:0
-armor:0:5+d5M10
-desc:It increases your armor class.
-
-
-### Mixed blessings ###
-
-name:Teleportation
-type:ring
-graphics:=:d
-level:5
-weight:2
-cost:1000
-alloc:20:10 to 50
-flags:EASY_KNOW
-curse:teleportation:100
-values:SPEED[2]
-
-name:Reckless Attacks
-type:ring
-graphics:=:d
-level:0
-weight:2
-cost:200
-alloc:30:10 to 50
-attack:0d0:2+d3:2+d3
-armor:0:-8+4d3
-
-name:Open Wounds
-type:ring
-graphics:=:d
-level:10
+level:65
 weight:2
 cost:700
-alloc:20:10 to 50
-flags:IMPAIR_HP | EASY_KNOW
-power:25
-effect:HEAL_HP
-dice:40
-effect:CURE:BLIND
-effect:CURE:CUT
-effect:CURE:CONFUSED
-time:10+5d8
+alloc:30:60 to 80
+desc:A ring of bright shining silver, polished to a mirror sheen.
 
-name:Escaping
+name:Gold
+graphics:=:y
 type:ring
-graphics:=:d
-level:30
+level:75
 weight:2
-cost:4000
-alloc:50:15 to 80
-flags:AFRAID | EASY_KNOW
-values:SPEED[2]
+cost:1200
+alloc:30:70 to 90
+desc:A ring of rich pure gold, glowing with an inner fire.
 
-name:the Mouse
+name:Adamantite
+graphics:=:G
 type:ring
-graphics:=:d
-level:30
+level:85
 weight:2
-cost:100
-alloc:50:10 to 50
-attack:0d0:0:-3d5
-armor:0:0
-values:DEX[d4] | STEALTH[d4]
+cost:2000
+alloc:30:80 to 100
+desc:A lovingly crafted ring of mighty adamantite.
 
-name:the Dog
+name:Mithril
+graphics:=:B
 type:ring
-graphics:=:d
-level:0
+level:95
 weight:2
-cost:100
-alloc:50:10 to 50
-flags:PROT_FEAR | EASY_KNOW
-values:STEALTH[-2]
-
-### Misc rings ###
-
-name:Slow Digestion
-type:ring
-graphics:=:d
-level:5
-weight:2
-cost:250
-alloc:30:10 to 50
-flags:SLOW_DIGEST | EASY_KNOW
-
-name:Feather Falling
-type:ring
-graphics:=:d
-level:5
-weight:2
-cost:200
-alloc:20:10 to 50
-flags:FEATHER | EASY_KNOW
-
-name:Free Action
-type:ring
-graphics:=:d
-level:20
-weight:2
-cost:1500
-alloc:50:20 to 100
-flags:FREE_ACT | EASY_KNOW
-
-name:See Invisible
-type:ring
-graphics:=:d
-level:30
-weight:2
-cost:340
-alloc:50:30 to 100
-flags:SEE_INVIS | EASY_KNOW
-
-name:Digging
-type:ring
-graphics:=:d
-level:0
-weight:2
-cost:800
-alloc:20:10 to 50
-values:TUNNEL[2+d3]
-power:6
-effect:LINE:KILL_WALL
-dice:20+1d30
-time:15+2d10
-
-
+cost:5000
+alloc:30:90 to 100
+desc:A precious ring of brightest mithril from the mines of the dwarves.
 
 ##### Amulets #####
 
-### Stat boosts ###
-
-name:Wisdom
+name:Chalcedony
+graphics:":r
 type:amulet
-graphics:":d
-level:30
+level:5
 weight:3
-cost:500
-alloc:50:20 to 90
-flags:SUST_WIS | 
-values:WIS[1+M5]
+cost:100
+alloc:30:0 to 20
+desc:A necklet of deep red chalcedony.
 
-### Resistances ###
-
-name:Resist Lightning
+name:Malachite
+graphics:":t
 type:amulet
-graphics:":d
-level:10
-weight:3
-cost:300
-alloc:50:10 to 50
-flags:IGNORE_ELEC | EASY_KNOW
-values:RES_ELEC[40]
-
-name:Resist Acid
-type:amulet
-graphics:":d
-level:10
-weight:3
-cost:300
-alloc:50:10 to 50
-flags:IGNORE_ACID | EASY_KNOW
-values:RES_ACID[40]
-
-name:Resistance
-type:amulet
-graphics:":d
-level:60
-weight:3
-cost:20000
-alloc:10:60 to 100
-flags:EASY_KNOW
-flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-values:RES_FIRE[40] | RES_ACID[40] | RES_ELEC[40] | RES_COLD[40]
-
-### JLE amulets ###
-
-name:Sustenance
-type:amulet
-graphics:":d
-level:60
-weight:3
-cost:20000
-alloc:10:60 to 100
-flags:SUST_STR | SUST_INT | SUST_WIS | SUST_DEX | SUST_CON |
-flags:HOLD_LIFE | SLOW_DIGEST | EASY_KNOW | 
-flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-
-name:the Magi
-type:amulet
-graphics:":d
-level:70
-weight:3
-cost:30000
-alloc:10:70 to 100
-attack:0d0:0:0
-armor:0:d5M5
-flags:FREE_ACT | SEE_INVIS | SUST_INT | PROT_BLIND | GOOD
-flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-values:SEARCH[1+M3] | INT[1+M3]
-
-name:ESP
-type:amulet
-graphics:":d
-level:50
-weight:3
-cost:25000
-alloc:10:60 to 100
-flags:TELEPATHY
-flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | 
-
-name:Devotion
-type:amulet
-graphics:":d
-level:70
-weight:3
-cost:30000
-alloc:10:70 to 100
-flags:HOLD_LIFE | SUST_WIS | GOOD
-values:WIS[1+M3] | LIGHT[1] | RES_DARK[40] | RES_LIGHT[40] | RES_FIRE[40]
-
-name:Weaponmastery
-type:amulet
-graphics:":d
-level:70
-weight:3
-cost:30000
-alloc:10:70 to 100
-attack:0d0:1+M4:1+M4
-armor:0:0
-flags:SUST_STR | SUST_CON | FREE_ACT | PROT_FEAR | GOOD
-values:STR[1+M2] | RES_DISEN[40]
-
-name:Trickery
-type:amulet
-graphics:":d
-level:70
-weight:3
-cost:30000
-alloc:10:70 to 100
-flags:SUST_DEX | GOOD
-values:DEX[1+M4] | SPEED[1+M2] | STEALTH[1+M2] | SEARCH[1+d3M3] | INFRA[1+d3M3]
-values:RES_NEXUS[40] | RES_POIS[40]
-
-### Ability boosts ###
-
-name:Regeneration
-type:amulet
-graphics:":d
-level:30
-weight:3
-cost:600
-alloc:20:30 to 100
-flags:REGEN | EASY_KNOW
-
-name:Infravision
-type:amulet
-graphics:":d
-level:10
-weight:3
-cost:200
-alloc:30:10 to 70
-values:INFRA[1+M5]
-
-name:Searching
-type:amulet
-graphics:":d
 level:15
 weight:3
-cost:600
-alloc:20:10 to 40
-values:SEARCH[d5M5]
+cost:120
+alloc:30:10 to 30
+desc:A green malachite amulet.
 
-### Powers ###
-
-name:Teleportation
+name:Opal
+graphics:":b
 type:amulet
-graphics:":d
-level:10
+level:25
 weight:3
-cost:10
-alloc:20:10 to 40
-flags:EASY_KNOW
-curse:teleportation:100
+cost:250
+alloc:30:20 to 40
+desc:A fiery opal set in silver filigree.
 
-name:Slow Digestion
+name:Garnet
+graphics:":p
 type:amulet
-graphics:":d
-level:15
+level:35
 weight:3
-cost:200
-alloc:20:15 to 40
-flags:SLOW_DIGEST | EASY_KNOW
+cost:400
+alloc:30:30 to 50
+desc:A necklace with a chain of rich garnets.
 
-name:Adornment
+name:Pearl
+graphics:":W
 type:amulet
-graphics:":d
-level:10
+level:45
 weight:3
-cost:0
-alloc:20:10 to 40
-flags:EASY_KNOW
+cost:750
+alloc:30:40 to 60
+desc:An amulet featuring a gleaming pearl from the Bay of Balar.
 
-
-### Mixed ###
-
-name:Inertia
+name:Amethyst
+graphics:":v
 type:amulet
-graphics:":d
-level:15
+level:55
 weight:3
-cost:10
-alloc:20:15 to 40
-flags:FREE_ACT
-values:SPEED[-3+1d2]
+cost:1000
+alloc:30:50 to 70
+desc:A choker set with deep violet amethyst from the mines of the Ered Luin.
 
+name:Sapphire
+graphics:":b
+type:amulet
+level:65
+weight:3
+cost:1500
+alloc:30:60 to 80
+desc:A pure blue sapphire on a golden chain.
+
+name:Ruby
+graphics:":R
+type:amulet
+level:75
+weight:3
+cost:2500
+alloc:30:70 to 90
+desc:A fiery ruby from Khazad Dûm sparkling from a clasp of mithril.
+
+name:Emerald
+graphics:":g
+type:amulet
+level:85
+weight:3
+cost:5000
+alloc:30:80 to 100
+desc:An amulet set with an emerald as green as the grass of Valinor.
+
+name:Diamond
+graphics:":w
+type:amulet
+level:95
+weight:3
+cost:10000
+alloc:30:90 to 100
+desc:A chain of entwined precious metals blazing with diamonds.
 
 
 

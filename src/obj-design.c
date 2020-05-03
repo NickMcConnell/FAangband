@@ -37,6 +37,8 @@
 #include "init.h"
 #include "obj-curse.h"
 #include "obj-design.h"
+#include "obj-make.h"
+#include "obj-pile.h"
 #include "obj-properties.h"
 #include "obj-slays.h"
 #include "obj-tval.h"
@@ -46,6 +48,7 @@
 
 /**
  * ------------------------------------------------------------------------
+ * Potential variables
  * ------------------------------------------------------------------------ */
 /**
  * A global variable whose contents will be bartered to acquire powers.
@@ -53,7 +56,7 @@
 static int potential = 0;
 
 /**
- * The initial potential of the object.
+ * The initial potential of the artifact or object.
  */
 static int initial_potential = 0;
 
@@ -65,7 +68,7 @@ static int max_potential = 0;
 
 /**
  * ------------------------------------------------------------------------
- * Allocation of object properties
+ * Utilities for allocation of object properties
  * ------------------------------------------------------------------------ */
 /**
  * Debit an object's account.
@@ -419,8 +422,143 @@ static bool get_property(struct artifact *art, struct object *obj,
 }
 
 /**
- * ------------------------------------------------------------------------
- * ------------------------------------------------------------------------ */
+ * Select a property from a group, subject to affordability, and ranked by
+ * various methods.  Properties which cost a negative amount don't need to be
+ * considered for ranking methods, since they are always affordable.
+ */
+static int select_property(int temp_potential, char **property_list,
+						   const int choices, int *max_value,
+						   int rank_method, struct object *obj)
+{
+	int i, j, optimal = 0;
+	int selection = 0;
+	int current_value = 0;
+
+	int prices[choices][*max_value + 1];
+
+	bool found_it = false;
+	struct object *test_obj = object_new();
+
+	/* Run through choices, record costs */
+	for (i = 0; i < choices; i++) {
+		for (j = 0; j <= *max_value; j++) {
+
+			/* Copy the object, try buying the property */
+			object_copy(test_obj, obj);
+			if (get_property(NULL, test_obj, property_list[i], j, false)) {
+				prices[i][j] = temp_potential - potential;
+				potential = temp_potential;
+			} else {
+				prices[i][j] = TOO_MUCH;
+			}
+
+			/* If the copy hasn't changed, the property was already there */
+			if (object_similar(obj, test_obj, OSTACK_NONE)) {
+				prices[i][j] = 0;
+			}
+		}
+	}
+	object_delete(&test_obj);
+
+	/* Initialise best */
+	if (rank_method == RANK_CHEAPEST_FIRST) {
+		optimal = TOO_MUCH;
+	}
+
+	/* Run through again, selecting best */
+	for (i = 0; i < choices; i++) {
+		for (j = 0; j <= *max_value; j++) {
+			switch (rank_method) {
+				case RANK_CHEAPEST_FIRST: {
+					if ((prices[i][j] > 0) && (prices[i][j] < optimal)) {
+						optimal = prices[i][j];
+						selection = i;
+						current_value = j;
+					}
+					break;
+				}
+				case RANK_DEAREST_FIRST: {
+					if ((prices[i][j] < TOO_MUCH)
+						&& (prices[i][j] > optimal)) {
+						optimal = prices[i][j];
+						selection = i;
+						current_value = j;
+					}
+					break;
+				}
+				case RANK_RANDOM_CHOICE: {
+					int paranoia = 0;
+					while ((!optimal) && (paranoia < 20)) {
+						selection = randint0(choices);
+						current_value = randint0(*max_value + 1);
+						if ((prices[selection][current_value] < TOO_MUCH)
+							&& (prices[selection][current_value] != 0)) {
+							optimal = prices[selection][current_value];
+						}
+						paranoia++;
+					}
+					if (optimal) {
+						found_it = true;
+					}
+					break;
+				}
+				case RANK_FIRST_VALID: {
+					if ((prices[i][j] < TOO_MUCH) && (prices[i][j] > 0)) {
+						selection = i;
+						current_value = j;
+						found_it = true;
+					}
+					break;
+				}
+				case RANK_FIND_MAX_VALUE: {
+					if ((prices[i][j] < TOO_MUCH) && (prices[i][j] > 0)) {
+						if (current_value < j) {
+							current_value = j;
+							selection = i;
+						}
+					}
+					break;
+				}
+			}
+			if (found_it)
+				break;
+		}
+		if (found_it)
+			break;
+	}
+
+	/* Set the max value */
+	*max_value = current_value;
+
+	/* Have we found one? */
+	switch (rank_method) {
+		case RANK_CHEAPEST_FIRST: {
+			if (optimal < TOO_MUCH) {
+				found_it = true;
+			}
+			break;
+		}
+		case RANK_DEAREST_FIRST: {
+			if (optimal > 0) {
+				found_it = true;
+			}
+			break;
+		}
+		case RANK_FIND_MAX_VALUE: {
+			if (current_value > 0)
+				found_it = true;
+			break;
+		}
+	}
+
+	/* Return if found */
+	if (found_it) {
+		return (selection);
+	} else {
+		return 0;
+	}
+}
+
 /**
  * Find an activation that matches an object's effect (if one exists)
  */
@@ -436,6 +574,10 @@ static struct activation *find_activation_for_effect(struct effect *effect)
 	return NULL;
 }
 
+/**
+ * ------------------------------------------------------------------------
+ * Creation of random artifacts
+ * ------------------------------------------------------------------------ */
 /**
  * Assign a tval and sval, grant a certain amount of potential to be used 
  * for acquiring powers, and determine rarity and native depth.
@@ -2222,7 +2364,7 @@ static void choose_gloves_theme(struct artifact *art)
 
 		/* Sometimes vulnerable to confusion */
 		//if (one_in_(6)) {
-		//	get_property(art, NULL, ""FALSE, VUL_CONFU, 0, a_idx);
+		//	get_property(art, NULL, ""false, VUL_CONFU, 0, a_idx);
 		//}
 	}
 
@@ -3065,7 +3207,8 @@ static void make_terrible(struct artifact *art, struct object *obj)
 {
 	int i, gauntlet_runs;
 	int num_curses = 1;
-	struct object_kind *kind = lookup_kind(art->tval, art->sval);
+	struct object_kind *kind = art ? lookup_kind(art->tval, art->sval) :
+		lookup_kind(obj->tval, obj->sval);
 	bool weapon = tval_is_melee_weapon_k(kind);
 
 	/* Determine whether the artifact's magics are perilous enough to warrant
@@ -3639,4 +3782,892 @@ void initialize_random_artifacts(u32b randart_seed)
 	if (!file_close(randart_file)) {
 		quit_fmt("Error - can't close %s.", fname);
 	}
+}
+
+/**
+ * ------------------------------------------------------------------------
+ * Creation of rings and amulets
+ * ------------------------------------------------------------------------ */
+/**
+ * Grant a certain amount of potential to be used for acquiring powers.
+ */
+static void allocate_potential(struct object *obj, int lev)
+{
+	int random;
+
+	/* The total potential of a ring or amulet ranges from 0 to 9000, 
+	 * depending on depth and type. */
+	potential = (obj->kind->level * 40) + (lev * 10);
+
+	/* Randomise 10% either way */
+	random = randint0(potential / 5);
+	potential += random - potential / 10;
+
+	/* Remember how much potential was allowed. */
+	initial_potential = potential;
+}
+
+/**
+ * Assign an ego type to a ring or amulet, and then give it properties based
+ * on that type.
+ */
+static bool choose_type(struct object *obj)
+{
+	int j, temp, bonus;
+	bool done = false;
+	struct ego_item *ego = NULL;
+
+	/* Get a standard bonus */
+	bonus = MAX((potential / 1000), 1);
+
+	/* The main design loop */
+	while (!done) {
+		/* Pick a random ego type */
+		int value = randint0(z_info->e_max);
+		struct poss_item *poss;
+		ego = &e_info[value];
+		poss = ego->poss_items;
+
+		/* Check whether it's a suitable ego type */
+		while (poss) {
+			if (poss->kidx == obj->kind->kidx) {
+				break;
+			}
+			poss = poss->next;
+		}
+		if (!poss) continue;
+
+		/* Now the rest of this function simply takes ring or amulet names
+		 * and gives them properties appropriate to their theme.  Note that
+		 * we may have to go back and pick a new ego type if the object
+		 * doesn't have sufficient potential for the chosen ego type. */
+		if (streq(ego->name, "of Mental Strength")) {
+			/* Min potential 350 */
+			int paranoia = 20;
+
+			/* Mostly mental properties */
+			while (potential > MIN(2000, (2 * initial_potential / 3))) {
+				if (one_in_(2)) {
+					/* Deepened wisdom, sustained */
+					get_property(NULL, obj, "wisdom", bonus, true);
+					get_property(NULL, obj, "sustain wisdom", 0, true);
+
+					/* Maybe an activation */
+					if (one_in_(5)) {
+						obj->activation = lookup_activation("BLESSING2");
+					} else if (one_in_(5)) {
+						obj->activation = lookup_activation("HERO");
+					} else if (one_in_(5)) {
+						obj->activation = lookup_activation("PROTEVIL");
+					}
+
+					/* Sometimes vulnerable to dark and/or cold */
+					if (one_in_(8)) {
+						get_property(NULL, obj, "cold resistance",
+									 -5 * randint1(6), false);
+					}
+					if (one_in_(8)) {
+						get_property(NULL, obj, "dark resistance",
+									 -5 * randint1(6), false);
+					}
+				} else {
+					/* Sharpened intelligence, sustained */
+					get_property(NULL, obj, "intelligence", bonus, true);
+					get_property(NULL, obj, "sustain intelligence", 0, true);
+
+					/* Maybe an activation */
+					if (one_in_(5)) {
+						obj->activation = lookup_activation("DETECT_MONSTERS");
+					} else if (one_in_(5)) {
+						obj->activation = lookup_activation("DETECT_INVIS");
+					} else if (one_in_(6)) {
+						obj->activation = lookup_activation("TMD_ESP");
+					}
+
+					/* Sometimes vulnerable to electricity and/or light */
+					if (one_in_(8)) {
+						get_property(NULL, obj, "electricity resistance",
+									 -5 * randint1(6), false);
+					}
+					if (one_in_(8)) {
+						get_property(NULL, obj, "light resistance",
+									 -5 * randint1(6), false);
+					}
+				}
+				if (paranoia-- <= 0) break;
+			}
+			done = true;
+		} else if (streq(ego->name, "of Doom")) {
+			/* Chance to recover similar to damage done */
+			potential = 0;
+
+			/* Hurt all stats */
+			temp = 0 - randint1(bonus);
+			get_property(NULL, obj, "strength", temp, true);
+			get_property(NULL, obj, "wisdom", temp, true);
+			get_property(NULL, obj, "intelligence", temp, true);
+			get_property(NULL, obj, "dexterity", temp, true);
+			get_property(NULL, obj, "constitution", temp, true);
+
+			/* Maybe more curses */
+			while (!one_in_(10)) {
+				int pick = randint1(z_info->curse_max - 1);
+				int power = randint1(9) + 10 * m_bonus(9, obj->kind->alloc_min);
+				if (!curses[pick].poss[obj->tval]) continue;
+				append_object_curse(obj, pick, power);
+			}
+			done = true;
+		} else if (streq(ego->name, "of Basic Resistance")) {
+			/* Amulet and ring of the same name, so we do them both here */
+			if (tval_is_amulet(obj)) {
+				/* Min potential 300 */
+				if (one_in_(2)) {
+					/* Electricity... */
+					get_property(NULL, obj, "electricity resistance",
+								 45 + 5 * randint0(3), true);
+					if (one_in_(3)) {
+						/* and maybe acid */
+						get_property(NULL, obj, "acid resistance",
+									 45 + 5 * randint0(3), true);
+					}
+				} else {
+					/* Acid... */
+					get_property(NULL, obj, "acid resistance",
+								 45 + 5 * randint0(3), true);
+					if (one_in_(3)) {
+						/* and maybe electricity */
+						get_property(NULL, obj, "electricity resistance",
+									 45 + 5 * randint0(3), true);
+					}
+				}
+
+				/* Small chance of another one */
+				if (potential > 1000) {
+					if (one_in_(10)) {
+						get_property(NULL, obj, "cold resistance",
+									 35 + 5 * randint0(3), true);
+					}
+					if (one_in_(10)) {
+						get_property(NULL, obj, "fire resistance",
+									 35 + 5 * randint0(3), true);
+					}
+				}
+			} else if (tval_is_ring(obj)) {
+				/* Min potential 300 */
+				if (one_in_(2)) {
+					/* Fire... */
+					get_property(NULL, obj, "fire resistance",
+								 45 + 5 * randint0(3), true);
+					if (one_in_(3)) {
+						/* and maybe cold */
+						get_property(NULL, obj, "cold resistance",
+									 45 + 5 * randint0(3), true);
+					}
+				} else {
+					/* Cold... */
+					get_property(NULL, obj, "cold resistance",
+								 45 + 5 * randint0(3), true);
+					if (one_in_(3)) {
+						/* and maybe fire */
+						get_property(NULL, obj, "fire resistance",
+									 45 + 5 * randint0(3), true);
+					}
+				}
+
+				/* Small chance of another one */
+				if (potential > 1000) {
+					if (one_in_(10)) {
+						get_property(NULL, obj, "acid resistance",
+									 35 + 5 * randint0(3), true);
+					}
+					if (one_in_(10)) {
+						get_property(NULL, obj, "electricity resistance",
+									 35 + 5 * randint0(3), true);
+					}
+				}
+			}
+			done = true;
+		} else if (streq(ego->name, "of Magical Item Mastery")) {
+			/* min potential 105 */
+
+			/* This is an exclusive club */
+			if (potential > 1000) {
+
+				/* Bonus to magical item mastery */
+				//get_property(NULL, obj, "magic mastery", randint1(bonus), true);
+
+				/* Bonus to DEX */
+				if (!one_in_(4)) {
+					get_property(NULL, obj, "dexterity", randint1(bonus), true);
+				}
+
+				/* Protection for the devices */
+				if (one_in_(5)) {
+					get_property(NULL, obj, "electricity resistance",
+								 35 + 5 * randint0(3), true);
+				}
+				if (one_in_(5)) {
+					get_property(NULL, obj, "fire resistance",
+								 35 + 5 * randint0(3), true);
+				}
+				if (one_in_(5)) {
+					get_property(NULL, obj, "acid resistance",
+								 35 + 5 * randint0(3), true);
+				}
+				done = true;
+			}
+		} else if (streq(ego->name, "of Clarity")) {
+			/* min potential 800 */
+
+			/* This is an exclusive club */
+			if (potential > 2000) {
+
+				/* Freedom of action (weaker objects may get a subset) */
+				if (randint1(3500) > initial_potential) {
+					get_property(NULL, obj, "protection from blindness", 0,
+								 true);
+				}
+				if (randint1(3500) > initial_potential) {
+					get_property(NULL, obj, "protection from confusion", 0,
+								 true);
+				}
+				if (randint1(3500) > initial_potential) {
+					get_property(NULL, obj, "free action", 0, true);
+				}
+				if (randint1(3500) > initial_potential) {
+					get_property(NULL, obj, "see invisible", 0, true);
+				}
+
+				/* Sometimes the lock */
+				if (one_in_(4)) {
+					get_property(NULL, obj, "protection from stunning", 0,
+								 true);
+				}
+
+				/* Can't be damaged */
+				get_property(NULL, obj, "ignore electricity", 0, true);
+
+				/* Sometimes vulnerable to nether and/or disenchantment */
+				if (one_in_(8)) {
+					get_property(NULL, obj, "nether resistance",
+								 -5 * randint1(6), false);
+				} else if (one_in_(8)) {
+					get_property(NULL, obj, "disenchantment resistance",
+								 -5 * randint1(6), false);
+				}
+				done = true;
+			}
+		} else if (streq(ego->name, "of the Shadows")) {
+			/* min potential 1200 */
+
+			/* This is an exclusive club */
+			if (potential > 1500) {
+
+				/* Creature of the night  */
+				//get_property(NULL, obj, "darkness", 0, true);
+				get_property(NULL, obj, "stealth", randint0(bonus), true);
+				get_property(NULL, obj, "dark resistance",
+							 35 + 5 * randint0(bonus), true);
+				get_property(NULL, obj, "light resistance",
+							 -5 * randint0(bonus), true);
+
+				/* Maybe some infravision and perception */
+				if (one_in_(4)) {
+					get_property(NULL, obj, "infravision", 1 + randint0(3),
+								 true);
+				}
+				if (one_in_(4)) {
+					get_property(NULL, obj, "searching skill", 1 + randint0(3),
+								 true);
+				}
+				done = true;
+			}
+		} else if (streq(ego->name, "of Metamorphosis")) {
+			/* Min potential 2000 */
+
+			/* This is an exclusive club */
+			if (potential > 3000) {
+
+				obj->activation = lookup_activation("METAMORPHOSIS");;
+				obj->time.base = 300;
+				potential -= 2000;
+				done = true;
+			}
+		} else if (streq(ego->name, "of Sustenance")) {
+			/* Min potential 50 */
+			char *sustains[7] =
+				{ "sustain strength", "sustain intelligence", "sustain wisdom",
+				  "sustain dexterity", "sustain constitution", "hold life",
+				  "slow digestion"
+				};
+			int max = 0;
+			int property = 1;
+			while (property > 0) {
+				property = select_property(potential, sustains, 7, &max,
+										   RANK_RANDOM_CHOICE, obj);
+				get_property(NULL, obj, sustains[property], 0, true);
+			}
+			done = true;
+		} else if (streq(ego->name, "of Trickery")) {
+			/* min potential 1650 */
+
+			/* This is an exclusive club */
+			if (potential > 2000) {
+				/* Some properties for everyone */
+				get_property(NULL, obj, "poison resistance",
+							 35 + 5 * randint0(5), true);
+				get_property(NULL, obj, "dexterity", 2 + randint0(bonus), true);
+				get_property(NULL, obj, "sustain dexterity", 0, true);
+				get_property(NULL, obj, "stealth", 2 + randint0(bonus), true);
+
+				/* Better amulets get more */
+				if (randint1(500) < potential) {
+					get_property(NULL, obj, "searching skill",
+								 2 + randint0(bonus), true);
+				}
+				if (randint1(1000) < potential) {
+					get_property(NULL, obj, "nexus resistance",
+								 35 + 5 * randint0(5), true);
+				}
+				if (randint1(1500) < potential) {
+					get_property(NULL, obj, "speed", randint1(bonus), true);
+				}
+				done = true;
+			}
+		} else if (streq(ego->name, "of Weaponmastery")) {
+			/* min potential 2650 */
+
+			/* This is an exclusive club */
+			if (potential > 3000) {
+				/* Safe to get up close */
+				get_property(NULL, obj, "protection from fear", 0, false);
+				get_property(NULL, obj, "disenchantment resistance",
+							 35 + 5 * randint0(5), false);
+				get_property(NULL, obj, "hold life", 0, false);
+
+				/* Combat bonuses */
+				temp = 6 + randint1(4);
+				get_property(NULL, obj, "deadliness bonus", temp, true);
+				get_property(NULL, obj, "skill bonus", temp, true);
+
+				/* Sometimes vulnerable to confusion or chaos */
+				//if (one_in_(8)) 
+				//		get_property(NULL, obj, ""VUL_CONFU, 0, false);
+
+				if (one_in_(8)) {
+					get_property(NULL, obj, "chaos resistance",
+								 -5 * randint0(bonus), false);
+				}
+				done = true;
+			}
+		} else if (streq(ego->name, "of Vitality")) {
+			/* min potential 3300 */
+
+			/* This is an exclusive club */
+			if (potential > 4500) {
+
+				/* Nice resists */
+				get_property(NULL, obj, "poison resistance",
+							 35 + 5 * randint0(5), false);
+				get_property(NULL, obj, "nether resistance",
+							 35 + 5 * randint0(5), false);
+				get_property(NULL, obj, "chaos resistance",
+							 35 + 5 * randint0(5), false);
+				get_property(NULL, obj, "hold life", 0, false);
+
+				/* And an activation */
+				temp = randint1(3);
+				if (temp == 1) {
+					obj->activation = lookup_activation("RESTORE_EXP");
+				} else if (temp == 2) {
+					obj->activation = lookup_activation("RESTORE_ALL");
+				} else {
+					obj->activation = lookup_activation("RESIST_ALL");
+				}
+				done = true;
+			}
+		} else if (streq(ego->name, "of Insight")) {
+			/* min potential 16 */
+			int property = 2;
+			int max_value = randint1(5);
+			char *insight[3] = { "telepathy", "see invisible", "infravision" };
+
+			/* Telepathy, See Invisible, or at least infravision */
+			property = select_property(potential, insight, 3, &max_value,
+									   RANK_DEAREST_FIRST, obj);
+			get_property(NULL, obj, insight[property], max_value, true);
+			done = true;
+		} else if (streq(ego->name, "of the Elements")) {
+			/* min potential 900 */
+
+			/* This is an exclusive club */
+			if (potential > 2000) {
+				/* Brand, resistance, activation */
+				temp = randint1(4);
+				if (temp == 1) {
+					get_property(NULL, obj, "acid brand", 15, true);
+					get_property(NULL, obj, "acid resistance",
+								 35 + 5 * bonus, true);
+					obj->activation = lookup_activation("RING_ACID");
+				} else if (temp == 2) {
+					get_property(NULL, obj, "lightning brand", 15, true);
+					get_property(NULL, obj, "electricity resistance",
+								 35 + 5 * bonus, true);
+					obj->activation = lookup_activation("RING_LIGHTNING");
+				} else if (temp == 3) {
+					get_property(NULL, obj, "fire brand", 15, true);
+					get_property(NULL, obj, "fire resistance",
+								 35 + 5 * bonus, true);
+					obj->activation = lookup_activation("RING_FLAMES");
+				} else {
+					get_property(NULL, obj, "cold brand", 15, true);
+					get_property(NULL, obj, "cold resistance",
+								 35 + 5 * bonus, true);
+					obj->activation = lookup_activation("RING_ICE");
+				}
+				obj->time.base = 50;
+				obj->time.dice = 1;
+				obj->time.sides = 100;
+				done = true;
+			}
+		} else if (streq(ego->name, "of Physical Prowess")) {
+			/* min potential 350 */
+			int property = 0;
+			int max_value = bonus + 1;
+			char *stats[3] = { "strength", "dexterity", "constitution" };
+			char *sustains[3] = { "sustain strength", "sustain dexterity",
+								  "sustain constitution" };
+			int tries = 5;
+
+			/* Stat boost... */
+			property = select_property(potential, stats, 3, &max_value,
+									   RANK_RANDOM_CHOICE, obj);
+			get_property(NULL, obj, stats[property], randint1(max_value), true);
+
+			/* And corresponding sustain */
+			get_property(NULL, obj, sustains[property], 0, true);
+
+			/* Sometimes get another sustain */
+			if (one_in_(3)) {
+				property = select_property(potential, sustains, 3, &max_value,
+										   RANK_RANDOM_CHOICE, obj);
+				get_property(NULL, obj, sustains[property], 0, true);
+			}
+
+			/* Repeat while relatively good */
+			while ((randint1(initial_potential) > initial_potential - potential)
+				   && (tries > 0)) {
+				max_value = bonus + 1;
+				property = select_property(potential, stats, 3,	&max_value,
+										   RANK_RANDOM_CHOICE, obj);
+				get_property(NULL, obj, stats[property], randint1(max_value),
+							 true);
+				get_property(NULL, obj, sustains[property], 0, true);
+				tries--;
+			}
+			done = true;
+		} else if (streq(ego->name, "of Combat")) {
+			/* min potential 580 */
+
+			/* Combat bonuses */
+			temp = 1 + bonus;
+			get_property(NULL, obj, "skill bonus", temp + randint1(5), true);
+			get_property(NULL, obj, "deadliness bonus", temp + randint1(5),
+						 true);
+
+			/* Particularly low level items become skill OR deadliness */
+			if (randint1(initial_potential) > potential) {
+				if (one_in_(2)) {
+					obj->to_h += obj->to_d;
+					obj->to_d = 0;
+				} else {
+					obj->to_d += obj->to_h;
+					obj->to_h = 0;
+				}
+			}
+
+			/* Maybe some stat boosts */
+			temp = potential;
+			if (randint1(temp) > (initial_potential / 6)) {
+				get_property(NULL, obj, "strength", randint1(bonus), true);
+			}
+			if (randint1(temp) > (initial_potential / 6)) {
+				get_property(NULL, obj, "dexterity", randint1(bonus), true);
+			}
+
+			/* And fearlessness */
+			get_property(NULL, obj, "protection from fear", 0, true);
+
+			/* Sometimes confusion vulnerability or aggravation */
+			//if (one_in_(5))
+			//			get_property(NULL, obj, ""VUL_CONFU, 0, false);
+
+			if (one_in_(5)) {
+				append_object_curse(obj, lookup_curse("siren"),
+									40 + randint0(20));
+			} else if (one_in_(5)) {
+				get_property(NULL, obj, "aggravation", 0, false);
+			}
+			done = true;
+		} else if (streq(ego->name, "of Mobility")) {
+			/* min potential 700 */
+			int property;
+			int max_value = 0;
+			char *mobility[5] =	{ "see invisible", "protection from fear",
+								  "protection from blindness",
+								  "protection from confusion",
+								  "nexus resistance" };
+
+			/* This is an exclusive club */
+			if (potential > 500) {
+				/* Free action... */
+				get_property(NULL, obj, "free action", 0, true);
+
+				/* ... and more nice properties, if affordable */
+				property = select_property(potential, mobility, 5, &max_value,
+										   RANK_RANDOM_CHOICE, obj);
+				get_property(NULL, obj, mobility[property], 0, false);
+			}
+			done = true;
+		} else if (streq(ego->name, "of Arcane Resistance")) {
+			/* min potential 440 */
+
+			/* This is an exclusive club */
+			if (potential > 2000) {
+				/* Poison or nether resist */
+				if (one_in_(2)) {
+					get_property(NULL, obj, "poison resistance",
+								 40 + 5 * randint0(5), true);
+				} else {
+					get_property(NULL, obj, "nether resistance",
+								 40 + 5 * randint0(5), true);
+				}
+
+				/* Rack 'em up while we're feeling lucky */
+				while (randint1(potential) > 1000) {
+					int choice = randint0(9);
+					char *resists[9] = { "poison resistance",
+										 "light resistance",
+										 "dark resistance", "sound resistance",
+										 "shards resistance",
+										 "nexus resistance",
+										 "nether resistance",
+										 "chaos resistance",
+										 "disenchantment resistance" };
+
+					if (obj->el_info[ELEM_POIS + choice].res_level ==
+						RES_LEVEL_BASE) {
+						get_property(NULL, obj, resists[choice],
+									 30 + 5 * randint0(5), true);
+					}
+				}
+				done = true;
+			}
+		} else if (streq(ego->name, "of Utility")) {
+			/* min potential 21 */
+			int property;
+			int max_value = 5;
+			char *utility[5] = { "searching skill", "slow digestion",
+								 "feather falling", "light", "regeneration" };
+			int tries = randint1(bonus + 2);
+
+			/* Pick a few properties */
+			if (tries > 6) {
+				tries = 6;
+			}
+			for (j = 0; j < tries; j++) {
+				property = select_property(potential, utility, 5, &max_value,
+										   RANK_RANDOM_CHOICE, obj);
+				get_property(NULL, obj, utility[property], max_value, true);
+			}
+
+			/* And maybe a useful activation, if some potential left  */
+			if (potential > 300) {
+				temp = randint1(6);
+				if (temp == 1) {
+					obj->activation = lookup_activation("DISABLE_TRAPS");
+				}
+				if (temp == 2) {
+					obj->activation = lookup_activation("RECALL");
+				}
+				if (temp == 3) {
+					obj->activation = lookup_activation("RECHARGE");
+				}
+				if (temp == 4) {
+					obj->activation = lookup_activation("SATISFY");
+				}
+			}
+			done = true;
+		} else if (streq(ego->name, "of Hindrance")) {
+			/* min potential 0 */
+			int tries = randint1(3);
+			int max_value = 5;
+			int property;
+			char *stats[5] = { "strength", "wisdom", "intelligence",
+							   "dexterity", "constitution" };
+
+			/* Sticky */
+			//get_property(NULL, obj, ""STICKY_WIELD, 0, true);
+
+			/* Cripple some stats */
+			for (j = 0; j < tries; j++) {
+				property = select_property(potential, stats, 5,	&max_value,
+										   RANK_RANDOM_CHOICE, obj);
+				get_property(NULL, obj, stats[property], -randint1(5), true);
+			}
+
+			/* Potential gained counts as lost */
+			if (potential - initial_potential > initial_potential) {
+				potential = 0;
+			} else {
+				potential = (2 * initial_potential) - potential;
+			}
+			done = true;
+		} else if (streq(ego->name, "of the Dawn")) {
+			/* min potential 1300 */
+
+			/* This is an exclusive club */
+			if (potential > 2000) {
+
+				/* Power of seeing */
+				get_property(NULL, obj, "protection from blindness", 0, true);
+				get_property(NULL, obj, "light resistance",
+							 40 + 5 * randint0(6), true);
+				get_property(NULL, obj, "dark resistance",
+							 40 + 5 * randint0(6), true);
+
+				/* Maybe see invisible, if affordable */
+				if (one_in_(3)) {
+					get_property(NULL, obj, "see invisible", 0, false);
+				}
+				done = true;
+			}
+		} else if (streq(ego->name, "of the Dawn")) {
+			char *speed[1] = { "speed" };
+			int max_value = 14;
+
+			/* This is an exclusive club */
+			if (potential < 3000) {
+				/* SPEED! */
+				(void) select_property(potential, speed, 1, &max_value,
+									   RANK_FIND_MAX_VALUE, obj);
+
+				/* Either sacrifice for some other properties... */
+				if (one_in_(2)) {
+					get_property(NULL, obj, "speed", 1 + max_value / 2, true);
+
+					/* Maybe get combat bonuses... */
+					if (one_in_(4)) {
+						temp = 2 + randint1(bonus);
+						get_property(NULL, obj, "deadliness bonus", temp, true);
+						get_property(NULL, obj, "skill bonus", temp, true);
+					} else if (one_in_(3)) {
+						/* ...or a high resist... */
+						int choice;
+						struct obj_property *prop = NULL;
+						random_high_resist(obj, &choice);
+						prop = lookup_obj_property(OBJ_PROPERTY_ELEMENT,
+												   ELEM_HIGH_MIN + choice);
+						if (obj->el_info[ELEM_POIS + choice].res_level ==
+							RES_LEVEL_BASE) {
+							get_property(NULL, obj, prop->name,
+										 30 + 5 * randint0(5), true);
+						}
+					} else if (one_in_(2)) {
+						/* ...or nice power */
+						bitflag flags[OF_SIZE];
+						struct obj_property *prop = NULL;
+						create_obj_flag_mask(flags, false, OFT_PROT, OFT_MISC,
+											 OFT_MAX);
+						prop = lookup_obj_property(OBJ_PROPERTY_FLAG,
+												   get_new_attr(obj->flags,
+																flags));
+						get_property(NULL, obj, prop->name, 0, true);
+					}
+				} else {
+					/* ...or go all out */
+					while (one_in_(2)) {
+							max_value++;
+					}
+					get_property(NULL, obj, "speed", max_value, true);
+				}
+				done = true;
+			}
+		} else if (streq(ego->name, "of Woe")) {
+			/* min potential 0 */
+
+			/* Don't find these too early */
+			if (potential > 1500) {
+
+				/* Curses */
+				append_object_curse(obj, lookup_curse("teleportation"),
+									40 + randint0(20));
+				//get_property(NULL, obj, ""STICKY_WIELD, 0, true);
+
+				/* Hit stats */
+				get_property(NULL, obj, "wisdom", 0 - bonus, true);
+				get_property(NULL, obj, "intelligence", 0 - bonus, true);
+
+				/* Some advantages */
+				get_property(NULL, obj, "nexus resistance",
+							 5 * randint0(8), true);
+				get_property(NULL, obj, "free action", 0, true);
+
+				/* Reduce chance to recover */
+				potential /= 2;
+				done = true;
+			}
+		} else if (streq(ego->name, "of Fickleness")) {
+			/* min potential 0 */
+			// NRM - NEED BETTER CURSE HANDLING
+			//int curse;
+			//int max_value = 0;
+			//int fickle[7] =
+			//			{ TELEPORT, NO_TELEPORT, CUT_RAND, HALLU_RAND,
+			//			AGGRO_RAND, ATTRACT_DEMON, PARALYZE
+			//		};
+			//		while (1) {
+			//			curse =
+			//				select_property(potential, fickle, 7,
+			//								&max_value, RANK_RANDOM_CHOICE,
+			//								obj);
+			//			get_property(NULL, obj, ""curse, 0, true);
+			//			if (one_in_(3))
+			//				break;
+			//		}
+			//		done = true;
+			//		break;
+			//	}
+		} else if (streq(ego->name, "of Power")) {
+			/* min potential  */
+			int element = randint0(4);
+
+			/* This is an exclusive club */
+			if (potential > 4000) {
+
+				/* Free bonuses to Deadliness, Skill and Armour Class */
+				temp = 3 + randint1(5) + potential / 2000;
+				obj->to_d += temp;
+				obj->to_h += temp;
+				obj->to_a += 3 + randint1(5) + potential / 1000;
+
+				/* Power over an element */
+				switch (element) {
+					case 0: {
+						get_property(NULL, obj, "acid resistance", 100, false);
+						//obj->activation = lookup_activation("");
+						break;
+					}
+					case 1: {
+						get_property(NULL, obj, "electricity resistance", 100,
+									 false);
+						//obj->activation = lookup_activation("");
+						break;
+					}
+					case 2: {
+						get_property(NULL, obj, "fire resistance", 100, false);
+						//obj->activation = lookup_activation("");
+						break;
+					}
+					case 3: {
+						get_property(NULL, obj, "cold resistance", 100, false);
+						//obj->activation = lookup_activation("");
+						break;
+					}
+				}
+
+				/* Sometimes vulnerable to high elements... */
+				if (one_in_(8)) {
+					get_property(NULL, obj, "nexus resistance",
+								 -5 * randint0(4), false);
+				}
+				if (one_in_(8)) {
+					get_property(NULL, obj, "nether resistance",
+								 -5 * randint0(4), false);
+				}
+				if (one_in_(8)) {
+					get_property(NULL, obj, "chaos resistance",
+								 -5 * randint0(4), false);
+				}
+				if (one_in_(8)) {
+					get_property(NULL, obj, "disenchantment resistance",
+								 -5 * randint0(4), false);
+				}
+
+				/* ...but likely to sustain stats */
+				if (one_in_(3)) {
+					get_property(NULL, obj, "sustain strength", 0, false);
+				}
+				if (one_in_(3)) {
+					get_property(NULL, obj, "sustain wisdom", 0, false);
+				}
+				if (one_in_(3)) {
+					get_property(NULL, obj, "sustain intelligence",0,false);
+				}
+				if (one_in_(3)) {
+					get_property(NULL, obj, "sustain dexterity", 0, false);
+				}
+				if (one_in_(3)) {
+					get_property(NULL, obj, "sustain constitution",0,false);
+				}
+
+				// NRM -NEED BETTER ACTIVATION HANDLING TOO
+				/* And with a powerful activation at a bargain price... */
+				//temp = randint0(EF_POWER_MAX - EF_POWER_BASE + 1);
+
+				/* Hack - summon friendlies needs more work */
+				//while (temp == EF_ENLIST_EARTH - EF_POWER_BASE)
+				//	temp = randint0(EF_POWER_MAX - EF_POWER_BASE + 1);
+				//if (temp < 4) {
+				//	get_activation(true, EF_POWER_BASE + element,
+				//				   obj);
+				//	potential +=
+				//		effect_power(EF_POWER_BASE + element) / 2;
+				//}
+
+				//else {
+				//	get_activation(true, EF_POWER_BASE + temp, obj);
+				//	potential +=
+				//		effect_power(EF_POWER_BASE + temp) / 2;
+				//}
+
+				/* ...plus help to activate it */
+				//get_property(NULL, obj, "magic mastery", bonus, true);
+				done = true;
+			}
+		}
+	}
+	obj->ego = ego;
+	return (done);
+}
+
+/**
+ * Design a ring or amulet.
+ */
+bool design_jewellery(struct object *obj, int lev)
+{
+
+	/* Assign it a potential. */
+	allocate_potential(obj, lev);
+
+	/* Assign a type. */
+	if (!choose_type(obj))
+		return false;
+
+	/* Add extra qualities until done. */
+	haggle_till_done(NULL, obj);
+
+	/* Decide if the object is to be terrible. */
+	if (TERRIBLE_CHANCE > randint0(100)) {
+
+		/* If it is, add a few benefits and more drawbacks. */
+		make_terrible(NULL, obj);
+	}
+
+	/* Remove contradictory powers. */
+	final_check(NULL, obj);
+
+	/* Add effect timeout */
+	//effect_time(obj->effect, &obj->time);
+	return true;
 }

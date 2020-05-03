@@ -81,6 +81,11 @@ bool tval_is_ring(const struct object *obj)
 	return obj->tval == TV_RING;
 }
 
+bool tval_is_amulet(const struct object *obj)
+{
+	return obj->tval == TV_AMULET;
+}
+
 bool tval_is_chest(const struct object *obj)
 {
 	return obj->tval == TV_CHEST;

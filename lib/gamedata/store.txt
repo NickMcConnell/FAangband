@@ -177,12 +177,10 @@ owner:25000:Inglorian the Mage (Human)
 owner:30000:Luthien Starshine (High-Elf)
 slots:4:14
 turnover:9
-normal:ring:Searching
-normal:ring:Feather Falling
-normal:ring:Protection
-normal:ring:Open Wounds
-normal:amulet:Slow Digestion
-normal:amulet:Resist Acid
+normal:ring:Steel
+normal:ring:Pewter
+normal:amulet:Chalcedony
+normal:amulet:Malachite
 normal:wand:Light
 normal:wand:Slow Monster
 normal:wand:Confuse Monster

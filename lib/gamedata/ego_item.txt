@@ -9,6 +9,9 @@
 # Note that several "ego-item" types may share the same "textual name",
 # such as with "Armor of Resistance" and "Shield of Resistance".
 
+# Note that jewellery egos are special; see the comments above the ring and
+# amulet sections at th ebottom of this file.
+
 # === Understanding ego_item.txt ===
 
 # name: ego type
@@ -1136,3 +1139,119 @@ min-combat:255:0:0
 type:dragon armor
 values:SPEED[d5]
 min-values:SPEED[0]
+
+# Rings and amulets in FAangband are designed individually, based on one of
+# the themes below.  Editing the descriptions is fine, but changing a name
+# or adding new ring/amulet ego types will require additional code in
+# src/obj-design.c.
+
+### Amulets ###
+
+name:of Mental Strength
+type:amulet
+desc:It will enhance your mental abilities.
+
+name:of Doom
+type:amulet
+desc:As a millstone around your neck, this amulet drags you toward destruction.
+
+name:of Basic Resistance
+type:amulet
+desc:It gives magical protection from one of the base elements; the elements
+desc: of Acid and Lightning are most easily controlled by an amulet.
+
+name:of Magical Item Mastery
+type:amulet
+desc:It helps your ability to use rods, wands and staves.
+
+name:of Clarity
+type:amulet
+desc:Its wearer gains the mental powers to be master of their own destiny.
+
+name:of the Shadows
+type:amulet
+desc:As you don this amulet you feel yourself at one with the night.
+
+name:of Metamorphosis
+type:amulet
+desc:Within this amulet is locked the Maiar secret of shapechanging; a pity
+desc: that it is not a power that lesser beings can easily control.
+
+name:of Sustenance
+type:amulet
+desc:It will help to ward off attacks that would reduce your potency.
+
+name:of Trickery
+type:amulet
+desc:Wary should be the foe who attacks the wearer of this amulet.
+
+name:of Weaponmastery
+type:amulet
+desc:It allows the warrior to concentrate on his attacking with no fear of fell 
+desc:magic.
+
+name:of Vitality
+type:amulet
+desc:The life force of this amulet's fortunate wearer is held secure by the
+desc: power within.
+
+name:of Insight
+type:amulet
+desc:It gives you vision of that which would otherwise be hard to see.
+
+### Rings ###
+
+name:of the Elements
+type:ring
+desc:It imparts elemental force to your blows.
+
+name:of Physical Prowess
+type:ring
+desc:It enhances your physical powers.
+
+name:of Combat
+type:ring
+desc:You feel your combative urges rising as you slip this ring on.
+
+name:of Mobility
+type:ring
+desc:It guarantees your freedom to move.
+
+name:of Arcane Resistance
+type:ring
+desc:It protects you from at least one high element.
+
+name:of Utility
+type:ring
+desc:It seems designed to make your life a little easier.
+
+name:of Basic Resistance
+type:ring
+desc:It gives magical protection from one of the base elements; 
+desc: the elements of Fire and Cold are most easily controlled by a ring.
+
+name:of Hindrance
+type:ring
+desc:It grabs you and reduces your abilities.
+
+name:of the Dawn
+type:ring
+desc:It calls a truce around you between the powers of Dark and Light.
+
+name:of Speed
+type:ring
+desc:As you put on this ring, you feel the world slow down around you.
+
+name:of Woe
+type:ring
+desc:It seems to be draining everything good and joyous from your being.
+
+name:of Fickleness
+type:ring
+desc:Wearing this ring will put you at the mercy of the whims and chances of
+desc: fate.
+
+name:of Power
+type:ring
+desc:Immunity from one of the base elements is just one prize for the finder of 
+desc: this mighty ring.
