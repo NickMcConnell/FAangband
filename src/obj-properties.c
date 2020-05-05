@@ -278,6 +278,10 @@ bool object_has_property(const struct object *obj, struct obj_property *prop)
  * Object property values for random artifacts and jewellery
  * ------------------------------------------------------------------------ */
 /**
+ * ------------------------------------------------------------------------
+ * Object pricing
+ * ------------------------------------------------------------------------ */
+/**
  * Calculate cost of a property with a given value.
  *
  * Cost is typically a quadratic in the numeric value being added.
@@ -295,10 +299,6 @@ int property_cost(struct obj_property *prop, int value, bool price)
 		prop->design_square * value * value;
 }
 
-/**
- * ------------------------------------------------------------------------
- * Object pricing
- * ------------------------------------------------------------------------ */
 /**
  * Return the "value" of an "unknown" item
  * Make a guess at the value of non-aware items

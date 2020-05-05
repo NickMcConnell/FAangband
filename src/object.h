@@ -141,6 +141,7 @@ struct activation {
 	char *name;
 	int index;
 	bool aim;
+	int power;
 	struct effect *effect;
 	char *message;
 	char *desc;

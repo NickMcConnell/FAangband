@@ -1319,6 +1319,14 @@ static enum parser_error parse_act_aim(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_act_power(struct parser *p) {
+	struct activation *act = parser_priv(p);
+	assert(act);
+
+	act->power = parser_getuint(p, "power");
+	return PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_act_effect(struct parser *p) {
 	struct activation *act = parser_priv(p);
 	struct effect *effect;
@@ -1453,6 +1461,7 @@ struct parser *init_parse_act(void) {
 	parser_setpriv(p, NULL);
 	parser_reg(p, "name str name", parse_act_name);
 	parser_reg(p, "aim uint aim", parse_act_aim);
+	parser_reg(p, "power uint power", parse_act_power);
 	parser_reg(p, "effect sym eff ?sym type ?int radius ?int other", parse_act_effect);
 	parser_reg(p, "effect-yx int y int x", parse_act_effect_yx);
 	parser_reg(p, "dice str dice", parse_act_dice);
