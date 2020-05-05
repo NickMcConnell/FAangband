@@ -887,7 +887,7 @@ void inven_drop(struct object *obj, int amt)
 	}
 
 	/* Drop it near the player */
-	drop_near(cave, &dropped, 0, player->grid, false);
+	drop_near(cave, &dropped, 0, player->grid, false, true);
 
 	/* Sound for quiver objects */
 	if (quiver)
@@ -1036,7 +1036,7 @@ void pack_overflow(struct object *obj)
 
 	/* Excise the object and drop it (carefully) near the player */
 	gear_excise_object(obj);
-	drop_near(cave, &obj, 0, player->grid, false);
+	drop_near(cave, &obj, 0, player->grid, false, true);
 
 	/* Describe */
 	if (artifact)
