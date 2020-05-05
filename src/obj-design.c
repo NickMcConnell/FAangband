@@ -1047,9 +1047,9 @@ static void choose_melee_weapon_theme(struct artifact *art)
 		/* Provide resistance to blindness. */
 		get_property(art, NULL, "protection from blindness", 0, false);
 		/* Bonus to magic mastery. */
-		//if (one_in_(2)) {
-		//	get_property(art, NULL, "magic mastery", randint1(4), false);
-		//}
+		if (one_in_(2)) {
+			get_property(art, NULL, "magic mastery", randint1(4), false);
+		}
 		/* Sometimes vulnerable to light or dark */
 		if (one_in_(8)) {
 			get_property(art, NULL, "light resistance", -5 * randint1(6),
@@ -2477,8 +2477,8 @@ static void choose_gloves_theme(struct artifact *art)
 		/* ...that untangles magical conundrums. */
 		else if (selection < 90) {
 
-			//	/* Mark the gloves for a later bonus to magic item mastery. */
-			//get_property(art, NULL, "magic mastery", randint1(4), false);
+			/* Mark the gloves for a later bonus to magic item mastery. */
+			get_property(art, NULL, "magic mastery", randint1(4), false);
 		}
 	}
 
@@ -3994,7 +3994,7 @@ static bool choose_type(struct object *obj)
 			if (potential > 1000) {
 
 				/* Bonus to magical item mastery */
-				//get_property(NULL, obj, "magic mastery", randint1(bonus), true);
+				get_property(NULL, obj, "magic mastery", randint1(bonus), true);
 
 				/* Bonus to DEX */
 				if (!one_in_(4)) {
@@ -4632,7 +4632,7 @@ static bool choose_type(struct object *obj)
 				//}
 
 				/* ...plus help to activate it */
-				//get_property(NULL, obj, "magic mastery", bonus, true);
+				get_property(NULL, obj, "magic mastery", bonus, true);
 				done = true;
 			}
 		}

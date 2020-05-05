@@ -176,6 +176,14 @@ design-linear:50
 design-square:4
 bindui:light_ui_compact_0:0
 
+name:magic mastery
+type:mod
+code:MAGIC_MASTERY
+price-linear:600
+design-linear:20
+design-square:1
+bindui:magic_mastery_ui_compact_0:0
+
 ## Object flags
 
 name:sustain strength
