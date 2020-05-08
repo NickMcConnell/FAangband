@@ -595,6 +595,14 @@ static void project_feature_handler_DISP_UNDEAD(project_feature_handler_context_
 {
 }
 
+static void project_feature_handler_DISP_DEMON(project_feature_handler_context_t *context)
+{
+}
+
+static void project_feature_handler_DISP_DRAGON(project_feature_handler_context_t *context)
+{
+}
+
 static void project_feature_handler_DISP_EVIL(project_feature_handler_context_t *context)
 {
 }

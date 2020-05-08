@@ -646,6 +646,16 @@ static int project_player_handler_DISP_UNDEAD(project_player_handler_context_t *
 	return 0;
 }
 
+static int project_player_handler_DISP_DEMON(project_player_handler_context_t *context)
+{
+	return 0;
+}
+
+static int project_player_handler_DISP_DRAGON(project_player_handler_context_t *context)
+{
+	return 0;
+}
+
 static int project_player_handler_DISP_EVIL(project_player_handler_context_t *context)
 {
 	return 0;

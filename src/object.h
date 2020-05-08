@@ -143,6 +143,7 @@ struct activation {
 	bool aim;
 	int power;
 	struct effect *effect;
+	random_value time;	/**< Recharge time (if appropriate) */
 	char *message;
 	char *desc;
 };

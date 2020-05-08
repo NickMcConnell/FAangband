@@ -408,6 +408,14 @@ static void project_object_handler_DISP_UNDEAD(project_object_handler_context_t 
 {
 }
 
+static void project_object_handler_DISP_DEMON(project_object_handler_context_t *context)
+{
+}
+
+static void project_object_handler_DISP_DRAGON(project_object_handler_context_t *context)
+{
+}
+
 static void project_object_handler_DISP_EVIL(project_object_handler_context_t *context)
 {
 }

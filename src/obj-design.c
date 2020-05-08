@@ -575,6 +575,29 @@ static struct activation *find_activation_for_effect(struct effect *effect)
 }
 
 /**
+ * Grant the activation asked for, if the object can afford it.
+ */
+static bool get_activation(bool on_credit, char *act_name, struct object *obj)
+{
+	struct activation *act = lookup_activation(act_name);
+
+	/* Allocate the activation, if affordable */
+	if (act && take_money(act->power * EFFECT_MULT, on_credit)) {
+		obj->activation = act;
+		if (act->time.base) {
+			obj->time = act->time;
+		} else {
+			obj->time.base = (act->power * 8);
+			obj->time.dice = 1;
+			obj->time.sides = (act->power * 8);
+		}
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * ------------------------------------------------------------------------
  * Creation of random artifacts
  * ------------------------------------------------------------------------ */
@@ -774,7 +797,7 @@ static void choose_melee_weapon_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if (one_in_(3)) {
 			if (potential >= 6000) {
-				art->activation = lookup_activation("ACID_BALL160");
+				art->activation = lookup_activation("ACID_BALL");
 			} else if (potential >= 3000) {
 				art->activation = lookup_activation("ACID_BOLT3");
 			} else {

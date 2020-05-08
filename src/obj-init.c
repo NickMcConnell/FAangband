@@ -1445,6 +1445,13 @@ static enum parser_error parse_act_msg(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_act_time(struct parser *p) {
+	struct activation *act = parser_priv(p);
+	assert(act);
+	act->time = parser_getrand(p, "time");
+	return PARSE_ERROR_NONE;
+}
+
 
 static enum parser_error parse_act_desc(struct parser *p) {
 	struct activation *act = parser_priv(p);
@@ -1467,6 +1474,7 @@ struct parser *init_parse_act(void) {
 	parser_reg(p, "dice str dice", parse_act_dice);
 	parser_reg(p, "expr sym name sym base str expr", parse_act_expr);
 	parser_reg(p, "msg str msg", parse_act_msg);
+	parser_reg(p, "time rand time", parse_act_time);
 	parser_reg(p, "desc str desc", parse_act_desc);
 	return p;
 }

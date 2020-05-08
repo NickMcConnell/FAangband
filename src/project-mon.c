@@ -887,6 +887,18 @@ static void project_monster_handler_DISP_UNDEAD(project_monster_handler_context_
 	project_monster_dispel(context, RF_UNDEAD);
 }
 
+/* Dispel demon */
+static void project_monster_handler_DISP_DEMON(project_monster_handler_context_t *context)
+{
+	project_monster_dispel(context, RF_DEMON);
+}
+
+/* Dispel dragon */
+static void project_monster_handler_DISP_DRAGON(project_monster_handler_context_t *context)
+{
+	project_monster_dispel(context, RF_DRAGON);
+}
+
 /* Dispel evil */
 static void project_monster_handler_DISP_EVIL(project_monster_handler_context_t *context)
 {

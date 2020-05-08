@@ -517,6 +517,20 @@ blind-desc:something
 obvious:0
 color:White
 
+code:DISP_DEMON
+type:monster
+desc:damages demons
+blind-desc:something
+obvious:0
+color:White
+
+code:DISP_DRAGON
+type:monster
+desc:damages dragons
+blind-desc:something
+obvious:0
+color:White
+
 code:DISP_EVIL
 type:monster
 desc:damages evil monsters
