@@ -859,7 +859,8 @@ void monster_hit_trap(struct monster *mon, struct loc grid, bool *death)
 		}
 
 		/* Affect the monster. */
-		effect_do(effect, source_trap(trap), NULL, &ident, true, 0, 0, adjust);
+		effect_do(effect, source_trap(trap), NULL, &ident, true, 0, 0, adjust,
+			NULL);
 
 		/* Some traps disappear after activating */
 		if (trf_has(trap->kind->flags, TRF_ONETIME)) {

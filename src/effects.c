@@ -3897,7 +3897,7 @@ bool effect_handler_SPOT(effect_handler_context_t *context)
 	}
 
 	/* Aim at the target, explode */
-	if (project(context->origin, rad, pgrid, dam, context->subtype, flg, 0,
+	if (project(context->origin, rad, grid, dam, context->subtype, flg, 0,
 				rad, NULL))
 		context->ident = true;
 
