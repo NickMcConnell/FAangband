@@ -370,7 +370,7 @@ subtype:melee
 id-type:on wield
 code:BLESSED
 bindui:bless_ui_compact_0:0
-desc:Blessed by the gods
+desc:Blessed by the gods (combat bonuses for holy casters)
 price-constant:500
 design-constant:100
 
