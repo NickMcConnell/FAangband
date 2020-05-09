@@ -134,12 +134,26 @@ struct element_info {
 };
 
 /**
+ * Activation types
+ */
+enum activation_type {
+	ACTIVATION_RAND = 0,
+	ACTIVATION_RING_ELEMENT,
+	ACTIVATION_AMULET,
+	ACTIVATION_RING_POWER,
+	ACTIVATION_POWER,
+	ACTIVATION_DRAGON,
+	ACTIVATION_ARTIFACT,
+};
+
+/**
  * Activation structure
  */
 struct activation {
 	struct activation *next;
 	char *name;
 	int index;
+	byte type;
 	bool aim;
 	int power;
 	struct effect *effect;

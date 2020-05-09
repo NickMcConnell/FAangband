@@ -577,12 +577,12 @@ static struct activation *find_activation_for_effect(struct effect *effect)
 /**
  * Grant the activation asked for, if the object can afford it.
  */
-static bool get_activation(bool on_credit, char *act_name, struct object *obj)
+static bool get_activation(char *act_name, struct object *obj)
 {
 	struct activation *act = lookup_activation(act_name);
 
 	/* Allocate the activation, if affordable */
-	if (act && take_money(act->power * EFFECT_MULT, on_credit)) {
+	if (act && take_money(act->power * EFFECT_MULT, true)) {
 		obj->activation = act;
 		if (act->time.base) {
 			obj->time = act->time;
@@ -594,6 +594,35 @@ static bool get_activation(bool on_credit, char *act_name, struct object *obj)
 		return true;
 	}
 
+	return false;
+}
+
+/**
+ * Get a random activation of the required type.
+ */
+static bool get_random_activation(int type, struct object *obj) {
+	int i, count = 0, pick;
+
+	/* Count the appropraite activations */
+	for (i = 0; i < z_info->act_max; i++) {
+		struct activation *act = &activations[i];
+		if (act->type == type) count++;
+	}
+
+	/* Pick an activation and add it */
+	pick = randint0(count);
+	for (i = 0; i < z_info->act_max; i++) {
+		struct activation *act = &activations[i];
+		if (act->type != type) continue;
+
+		/* Found it? */
+		if (!pick) {
+			get_activation(act->name, obj);
+			return true;
+		} else {
+			pick--;
+		}
+	}
 	return false;
 }
 
@@ -723,11 +752,11 @@ static void choose_melee_weapon_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if (one_in_(3)) {
 			if (potential >= 6000) {
-				art->activation = lookup_activation("FIRE_BALL");
+				art->activation = lookup_activation("RAND_FIRE3");
 			} else if (potential >= 3000) {
-				art->activation = lookup_activation("FIRE_BALL2");
+				art->activation = lookup_activation("RAND_FIRE2");
 			} else {
-				art->activation = lookup_activation("FIRE_BOLT72");
+				art->activation = lookup_activation("RAND_FIRE1");
 			}
 		}
 
@@ -760,11 +789,11 @@ static void choose_melee_weapon_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if (one_in_(3)) {
 			if (potential >= 6000) {
-				art->activation = lookup_activation("COLD_BALL160");
+				art->activation = lookup_activation("RAND_COLD3");
 			} else if (potential >= 3000) {
-				art->activation = lookup_activation("COLD_BALL100");
+				art->activation = lookup_activation("RAND_COLD2");
 			} else {
-				art->activation = lookup_activation("COLD_BALL50");
+				art->activation = lookup_activation("RAND_COLD1");
 			}
 		}
 
@@ -797,11 +826,11 @@ static void choose_melee_weapon_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if (one_in_(3)) {
 			if (potential >= 6000) {
-				art->activation = lookup_activation("ACID_BALL");
+				art->activation = lookup_activation("RAND_ACID3");
 			} else if (potential >= 3000) {
-				art->activation = lookup_activation("ACID_BOLT3");
+				art->activation = lookup_activation("RAND_ACID2");
 			} else {
-				art->activation = lookup_activation("ACID_BOLT2");
+				art->activation = lookup_activation("RAND_ACID1");
 			}
 		}
 
@@ -822,11 +851,11 @@ static void choose_melee_weapon_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if (one_in_(3)) {
 			if (potential >= 6000) {
-				art->activation = lookup_activation("ELEC_BALL2");
+				art->activation = lookup_activation("RAND_ELEC3");
 			} else if (potential >= 3000) {
-				art->activation = lookup_activation("ELEC_BALL");
+				art->activation = lookup_activation("RAND_ELEC2");
 			} else {
-				art->activation = lookup_activation("ELEC_BOLT");
+				art->activation = lookup_activation("RAND_ELEC1");
 			}
 		}
 
@@ -847,9 +876,9 @@ static void choose_melee_weapon_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if (one_in_(3)) {
 			if (potential >= 4500) {
-				art->activation = lookup_activation("POIS_BALL");
+				art->activation = lookup_activation("RAND_POIS2");
 			} else {
-				art->activation = lookup_activation("POIS_DART");
+				art->activation = lookup_activation("RAND_POIS1");
 			}
 		}
 
@@ -874,7 +903,7 @@ static void choose_melee_weapon_theme(struct artifact *art)
 
 			/* Possibly assign an activation for free. */
 			if (one_in_(3)) {
-				art->activation = lookup_activation("RESTORE_EXP");
+				art->activation = lookup_activation("RAND_REGAIN");
 			}
 
 			/* Grant hold life. */
@@ -913,7 +942,7 @@ static void choose_melee_weapon_theme(struct artifact *art)
 
 			/* Possibly assign an activation for free. */
 			if (one_in_(3)) {
-				art->activation = lookup_activation("RESTORE_ALL");
+				art->activation = lookup_activation("RAND_RESTORE");
 			}
 
 			/* Grant resist nexus. */
@@ -959,9 +988,9 @@ static void choose_melee_weapon_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if (one_in_(3)) {
 			if (potential < 4500) {
-				art->activation = lookup_activation("LIGHT_BALL");
+				art->activation = lookup_activation("RAND_LIGHT1");
 			} else {
-				art->activation = lookup_activation("DISPEL_LIGHT_HATING");
+				art->activation = lookup_activation("RAND_LIGHT2");
 			}
 		}
 
@@ -1045,7 +1074,7 @@ static void choose_melee_weapon_theme(struct artifact *art)
 
 		/* Possibly assign an activation for free. */
 		if ((randint1(3) != 1) && (potential >= 2500)) {
-			art->activation = lookup_activation("MON_SLOW");
+			art->activation = lookup_activation("RAND_SLOW_FOE");
 		}
 
 		/* Provide regenerative powers. */
@@ -1064,7 +1093,7 @@ static void choose_melee_weapon_theme(struct artifact *art)
 
 		/* Possibly assign an activation for free. */
 		if (!one_in_(3) && (potential >= 2500)) {
-			art->activation = lookup_activation("SLEEP_ALL");
+			art->activation = lookup_activation("RAND_SLEEP_FOE");
 		}
 
 		/* Provide resistance to blindness. */
@@ -1092,7 +1121,7 @@ static void choose_melee_weapon_theme(struct artifact *art)
 
 		/* Possibly assign an activation for free. */
 		if (!one_in_(3) && (potential >= 2500)) {
-			art->activation = lookup_activation("MON_SCARE");
+			art->activation = lookup_activation("RAND_TURN_FOE");
 		}
 
 		/* Provide permanant light. */
@@ -1112,7 +1141,7 @@ static void choose_melee_weapon_theme(struct artifact *art)
 
 		/* Possibly assign an activation for free. */
 		if (!one_in_(3) && (potential >= 2500)) {
-			art->activation = lookup_activation("MON_CONFUSE");
+			art->activation = lookup_activation("RAND_CONFU_FOE");
 		}
 
 		/* Provide resistance to confusion. */
@@ -1139,7 +1168,7 @@ static void choose_melee_weapon_theme(struct artifact *art)
 		if (potential >= 4000) {
 
 			/* Assign an activation for free. */
-			art->activation = lookup_activation("BALL_CHAOS");
+			art->activation = lookup_activation("RAND_CHAOS");
 			/* Resist chaos and disenchantment. */
 			get_property(art, NULL, "chaos resistance",  35 + 5 * randint0(5),
 						 true);
@@ -1166,7 +1195,7 @@ static void choose_melee_weapon_theme(struct artifact *art)
 		if (potential >= 4000) {
 
 			/* Assign an activation for free. */
-			art->activation = lookup_activation("SHARD_SOUND_BALL");
+			art->activation = lookup_activation("RAND_SHARD_SOUND");
 			/* Resist shards, sound, and confusion. */
 			get_property(art, NULL, "shards resistance", 35 + 5 * randint0(5),
 						 true);
@@ -1190,7 +1219,7 @@ static void choose_melee_weapon_theme(struct artifact *art)
 
 		/* Possibly assign an activation for free. */
 		if (!one_in_(3)) {
-			art->activation = lookup_activation("EARTHQUAKES");
+			art->activation = lookup_activation("RAND_EARTHQUAKE");
 		}
 
 		/* Enhance the damage dice. */
@@ -1230,7 +1259,7 @@ static void choose_melee_weapon_theme(struct artifact *art)
 
 		/* Possibly assign an activation for free. */
 		if (!one_in_(3)) {
-			art->activation = lookup_activation("DETECT_MONSTERS");
+			art->activation = lookup_activation("RAND_DETECT_MONSTERS");
 		}
 
 		/* Naturally, the appropriate slay. */
@@ -1250,9 +1279,9 @@ static void choose_melee_weapon_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if (!one_in_(3)) {
 			if (potential >= 3000)
-				art->activation = lookup_activation("STARLIGHT");
+				art->activation = lookup_activation("RAND_STARLIGHT");
 			else
-				art->activation = lookup_activation("LIGHT_LINE");
+				art->activation = lookup_activation("RAND_LINE_LIGHT");
 		}
 
 		/* Naturally, the appropriate slays. */
@@ -1276,7 +1305,11 @@ static void choose_melee_weapon_theme(struct artifact *art)
 
 		/* Possibly assign an activation for free. */
 		if (!one_in_(3) && (potential > 2500)) {
-			art->activation = lookup_activation("DISPEL_UNDEAD");
+			if (potential < 5000) {
+				art->activation = lookup_activation("RAND_SMITE_UNDEAD");
+			} else {
+				art->activation = lookup_activation("RAND_DISPEL_UNDEAD");
+			}
 		}
 
 		/* Grant slay undead and see invisible. */
@@ -1301,15 +1334,15 @@ static void choose_melee_weapon_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if (!one_in_(3)) {
 			if ((potential >= 5000) && one_in_(2)) {
-				art->activation = lookup_activation("DISPEL_EVIL");
+				art->activation = lookup_activation("RAND_DISPEL_EVIL");
 			} else if (potential >= 5000) {
-				art->activation = lookup_activation("DISPEL_EVIL60");
+				art->activation = lookup_activation("RAND_BANISH_EVIL");
 			} else if ((potential >= 3500) && !one_in_(3)) {
-				art->activation = lookup_activation("HOLY_ORB");
+				art->activation = lookup_activation("RAND_HOLY_ORB");
 			} else if (potential >= 2000) {
-				art->activation = lookup_activation("PROTEVIL");
+				art->activation = lookup_activation("RAND_PROT_FROM_EVIL");
 			} else {
-				art->activation = lookup_activation("DETECT_EVIL");
+				art->activation = lookup_activation("RAND_DETECT_EVIL");
 			}
 		}
 
@@ -1337,6 +1370,11 @@ static void choose_melee_weapon_theme(struct artifact *art)
 	/* ...that demons intensely hate. */
 	else if (selection < 93) {
 
+		/* Possibly assign an activation for free. */
+		if (!one_in_(3) && (potential > 2500)) {
+			art->activation = lookup_activation("RAND_SMITE_DEMON");
+		}
+
 		/* Naturally, the appropriate slay. */
 		get_property(art, NULL, "slay demons", one_in_(3) ? 35 : 25,	true);
 		/* Sometimes, nip the spawn of hell with cold as well. */
@@ -1357,6 +1395,11 @@ static void choose_melee_weapon_theme(struct artifact *art)
 	/* ...that dragons long to destroy. */
 	else if (selection < 96) {
 		int temp = randint1(5);
+
+		/* Possibly assign an activation for free. */
+		if (!one_in_(3) && (potential > 2500)) {
+			art->activation = lookup_activation("RAND_SMITE_DRAGON");
+		}
 
 		/* Naturally, the appropriate slay. */
 		get_property(art, NULL, "slay dragons", one_in_(3) ? 35 : 25, true);
@@ -1389,9 +1432,9 @@ static void choose_melee_weapon_theme(struct artifact *art)
 			/* Possibly assign an activation for free. */
 			if (!one_in_(3)) {
 				if (potential >= 5000) {
-					art->activation = lookup_activation("SHIELD");
+					art->activation = lookup_activation("RAND_SHIELD");
 				} else {
-					art->activation = lookup_activation("BLESSING");
+					art->activation = lookup_activation("RAND_BLESS");
 				}
 			}
 
@@ -1467,7 +1510,11 @@ static void choose_launcher_theme(struct artifact *art)
 
 	/* Sometimes, assign an activation. */
 	if (potential > randint1(5000) && !one_in_(3)) {
-		art->activation = lookup_activation("BRAND_AMMO");
+		if (one_in_(2)) {
+			art->activation = lookup_activation("RAND_SUPER_SHOOTING");
+		} else {
+			art->activation = lookup_activation("RAND_BRAND_MISSILE");
+		}
 	}
 
 	/* Hack - avoid boring bows. */
@@ -1494,9 +1541,9 @@ static void choose_armor_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if (one_in_(2) && (potential >= 3000)) {
 			if (potential >= 5500) {
-				art->activation = lookup_activation("RESIST_ALL");
+				art->activation = lookup_activation("RAND_RESIST_ALL");
 			} else {
-				art->activation = lookup_activation("RESIST_ELEMENTS");
+				art->activation = lookup_activation("RAND_RESIST_ELEMENTS");
 			}
 		}
 		if (!one_in_(5)) {
@@ -1530,9 +1577,9 @@ static void choose_armor_theme(struct artifact *art)
 			/* Possibly assign an activation for free. */
 			if (!one_in_(3)) {
 				if (one_in_(2)) {
-					art->activation = lookup_activation("HEAL3");
+					art->activation = lookup_activation("RAND_HEAL3");
 				} else {
-					art->activation = lookup_activation("RESTORE_EXP");
+					art->activation = lookup_activation("RAND_REGAIN");
 				}
 			}
 
@@ -1598,7 +1645,7 @@ static void choose_armor_theme(struct artifact *art)
 
 		/* Possibly assign an activation for free. */
 		if (one_in_(3) && (potential >= 4000)) {
-			art->activation = lookup_activation("SHIELD");
+			art->activation = lookup_activation("RAND_SHIELD");
 		}
 
 		/* Increase both base and magical ac. */
@@ -1637,9 +1684,9 @@ static void choose_armor_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if (!one_in_(3)) {
 			if (one_in_(2)) {
-				art->activation = lookup_activation("TELE_LONG");
+				art->activation = lookup_activation("RAND_TELEPORT1");
 			} else {
-				art->activation = lookup_activation("BLESSING");
+				art->activation = lookup_activation("RAND_BLESS");
 			}
 		}
 
@@ -1682,7 +1729,7 @@ static void choose_armor_theme(struct artifact *art)
 
 			/* Possibly assign an activation for free. */
 			if (!one_in_(3)) {
-				art->activation = lookup_activation("CURE_TEMP");
+				art->activation = lookup_activation("RAND_CURE");
 			}
 
 			/* Resist poison. */
@@ -1715,9 +1762,9 @@ static void choose_armor_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if (!one_in_(3)) {
 			if (potential < 4500) {
-				art->activation = lookup_activation("LIGHT_BALL");
+				art->activation = lookup_activation("RAND_LIGHT1");
 			} else {
-				art->activation = lookup_activation("DISPEL_LIGHT_HATING");
+				art->activation = lookup_activation("RAND_LIGHT2");
 			}
 		}
 
@@ -1757,7 +1804,7 @@ static void choose_armor_theme(struct artifact *art)
 
 				/* Assign an activation for free. */
 				if (!one_in_(3)) {
-					art->activation = lookup_activation("FIRE_BALL");
+					art->activation = lookup_activation("RAND_FIRE3");
 				}
 
 				/* Immunity. */
@@ -1775,7 +1822,7 @@ static void choose_armor_theme(struct artifact *art)
 
 				/* Assign an activation for free. */
 				if (!one_in_(3)) {
-					art->activation = lookup_activation("COLD_BALL160");
+					art->activation = lookup_activation("RAND_COLD3");
 				}
 
 				/* Immunity. */
@@ -1793,7 +1840,7 @@ static void choose_armor_theme(struct artifact *art)
 
 				/* Assign an activation for free. */
 				if (!one_in_(3)) {
-					art->activation = lookup_activation("ACID_BALL160");
+					art->activation = lookup_activation("RAND_ACID3");
 				}
 
 				/* Immunity. */
@@ -1805,7 +1852,7 @@ static void choose_armor_theme(struct artifact *art)
 
 				/* Assign an activation for free. */
 				if (!one_in_(3)) {
-					art->activation = lookup_activation("ELEC_BALL2");
+					art->activation = lookup_activation("RAND_ELEC3");
 				}
 
 				/* Immunity. */
@@ -1859,9 +1906,9 @@ static void choose_shield_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if ((one_in_(3)) && (potential >= 3000)) {
 			if (potential >= 5500) {
-				art->activation = lookup_activation("RESIST_ALL");
+				art->activation = lookup_activation("RAND_RESIST_ALL");
 			} else {
-				art->activation = lookup_activation("RESIST_ELEMENTS");
+				art->activation = lookup_activation("RAND_RESIST_ELEMENTS");
 			}
 		}
 		if (!one_in_(5)) {
@@ -1916,7 +1963,7 @@ static void choose_shield_theme(struct artifact *art)
 
 		/* Possibly assign an activation for free. */
 		if (one_in_(3) && (potential >= 4000)) {
-			art->activation = lookup_activation("SHIELD");
+			art->activation = lookup_activation("RAND_SHIELD");
 		}
 
 		/* Increase magical ac. */
@@ -2035,11 +2082,11 @@ static void choose_boots_theme(struct artifact *art)
 
 		/* Assign an activation,... */
 		if (potential >= 4000) {
-			art->activation = lookup_activation("RECALL");
+			art->activation = lookup_activation("RAND_RECALL");
 		} else if (potential >= 2000) {
-			art->activation = lookup_activation("TELE_LONG");
+			art->activation = lookup_activation("RAND_TELEPORT2");
 		} else {
-			art->activation = lookup_activation("TELE_PHASE");
+			art->activation = lookup_activation("RAND_TELEPORT1");
 		}
 
 		/* ...but not for free. */
@@ -2066,11 +2113,11 @@ static void choose_boots_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if (one_in_(2)) {
 			if (potential >= 5500) {
-				art->activation = lookup_activation("HEAL3");
+				art->activation = lookup_activation("RAND_HEAL3");
 			} else if (potential >= 3000) {
-				art->activation = lookup_activation("HEAL2");
+				art->activation = lookup_activation("RAND_HEAL2");
 			} else {
-				art->activation = lookup_activation("HEAL1");
+				art->activation = lookup_activation("RAND_HEAL1");
 			}
 
 			/* Grant regenerative powers. */
@@ -2084,8 +2131,9 @@ static void choose_boots_theme(struct artifact *art)
 		else if (selection < 70) {
 
 			/* Possibly assign an activation for free. */
-			//if (!one_in_(3) && (potential >= 2500))
-			//	art->activation = EF_RAND_STORM_DANCE;
+			if (!one_in_(3) && (potential >= 2500)) {
+				art->activation = lookup_activation("RAND_STORM_DANCE");
+			}
 
 			/* Grant feather fall. */
 			get_property(art, NULL, "feather falling", 0, true);
@@ -2099,7 +2147,7 @@ static void choose_boots_theme(struct artifact *art)
 
 			/* Possibly assign an activation for free. */
 			if (!one_in_(3)) {
-				art->activation = lookup_activation("DETECT_MONSTERS");
+				art->activation = lookup_activation("RAND_DETECT_MONSTERS");
 			}
 
 			/* Grant regeneration and slow digest. */
@@ -2117,7 +2165,7 @@ static void choose_boots_theme(struct artifact *art)
 
 		/* Possibly assign a speed activation for free. */
 		if (one_in_(4) && (!art->activation) && (potential >= 2000)) {
-			art->activation = lookup_activation("SPEED");
+			art->activation = lookup_activation("RAND_SPEED");
 		}
 	}
 }
@@ -2139,7 +2187,7 @@ static void choose_cloak_theme(struct artifact *art)
 
 		/* Possibly assign an activation for free. */
 		if (one_in_(2)) {
-			art->activation = lookup_activation("LOSSLEEP");
+			art->activation = lookup_activation("RAND_SLEEP_FOES");
 		}
 
 		/* Bonus to stealth. */
@@ -2152,9 +2200,9 @@ static void choose_cloak_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if (one_in_(2)) {
 			if (one_in_(2)) {
-				art->activation = lookup_activation("LOSCONF");
+				art->activation = lookup_activation("RAND_CONFU_FOES");
 			} else {
-				art->activation = lookup_activation("LOSSCARE");
+				art->activation = lookup_activation("RAND_TURN_FOES");
 			}
 		}
 	}
@@ -2164,7 +2212,7 @@ static void choose_cloak_theme(struct artifact *art)
 
 		/* Possibly assign an activation for free. */
 		if ((one_in_(4)) && (potential >= 3000)) {
-			art->activation = lookup_activation("SHIELD");
+			art->activation = lookup_activation("RAND_SHIELD");
 		}
 
 		/* Increase both base and magical ac. */
@@ -2179,9 +2227,9 @@ static void choose_cloak_theme(struct artifact *art)
 
 		/* Assign an activation for free. */
 		if (one_in_(2)) {
-			art->activation = lookup_activation("DETECT_MONSTERS");
+			art->activation = lookup_activation("RAND_DETECT_MONSTERS");
 		} else {
-			art->activation = lookup_activation("DETECT_EVIL");
+			art->activation = lookup_activation("RAND_DETECT_EVIL");
 		}
 	}
 
@@ -2191,11 +2239,11 @@ static void choose_cloak_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if (!one_in_(3)) {
 			if ((potential >= 4000) && !one_in_(3)) {
-				art->activation = lookup_activation("DETECT_ALL");
+				art->activation = lookup_activation("RAND_DETECT_ALL");
 			} else if (potential >= 3000) {
-				art->activation = lookup_activation("MAPPING");
+				art->activation = lookup_activation("RAND_MAGIC_MAP");
 			} else {
-				art->activation = lookup_activation("DETECT_TREASURE");
+				art->activation = lookup_activation("RAND_DETECT_D_S_T");
 			}
 		}
 
@@ -2209,7 +2257,7 @@ static void choose_cloak_theme(struct artifact *art)
 
 		/* Possibly assign an activation for free. */
 		if (one_in_(2)) {
-			art->activation = lookup_activation("LOSSLOW");
+			art->activation = lookup_activation("RAND_SLOW_FOES");
 		}
 
 		/* Resist chaos, dark, or nether */
@@ -2268,7 +2316,7 @@ static void choose_hat_theme(struct artifact *art)
 
 		/* Possibly assign an activation for free. */
 		if (one_in_(2) && (potential >= 4500)) {
-			art->activation = lookup_activation("CURE_TEMP");
+			art->activation = lookup_activation("RAND_CURE");
 		}
 
 		/* Grant resistance to confusion and sound. */
@@ -2283,9 +2331,9 @@ static void choose_hat_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if (!one_in_(3)) {
 			if (potential >= 3750) {
-				art->activation = lookup_activation("DETECT_ALL");
+				art->activation = lookup_activation("RAND_DETECT_ALL");
 			} else {
-				art->activation = lookup_activation("DETECT_TREASURE");
+				art->activation = lookup_activation("RAND_DETECT_D_S_T");
 			}
 		}
 
@@ -2314,9 +2362,9 @@ static void choose_hat_theme(struct artifact *art)
 
 		/* Possibly assign an activation for free. */
 		if ((potential >= 2500) && !one_in_(3)) {
-			art->activation = lookup_activation("LOSSCARE");
+			art->activation = lookup_activation("RAND_FRIGHTEN_ALL");
 		} else {
-			art->activation = lookup_activation("HERO");
+			art->activation = lookup_activation("RAND_HEROISM");
 		}
 
 		/* No fear. */
@@ -2337,7 +2385,7 @@ static void choose_hat_theme(struct artifact *art)
 		if (potential < 2500) {
 
 			/* Assign an activation for free. */
-			art->activation = lookup_activation("REMOVE_CURSE2");
+			art->activation = lookup_activation("RAND_IDENTIFY");
 		}
 	}
 
@@ -2347,11 +2395,11 @@ static void choose_hat_theme(struct artifact *art)
 		/* Possibly assign an activation for free. */
 		if (!one_in_(3)) {
 			if (potential >= 4000) {
-				art->activation = lookup_activation("HEAL3");
+				art->activation = lookup_activation("RAND_HEAL3");
 			} else if (potential >= 2500) {
-				art->activation = lookup_activation("HEAL2");
+				art->activation = lookup_activation("RAND_HEAL2");
 			} else {
-				art->activation = lookup_activation("HEAL1");
+				art->activation = lookup_activation("RAND_HEAL1");
 			}
 
 			/* Grant regeneration. */
@@ -2458,16 +2506,16 @@ static void choose_gloves_theme(struct artifact *art)
 				/* Sometimes add a bolt activation for free. */
 				if ((potential >= 500) && !one_in_(3)) {
 					if (temp == 1) {
-						art->activation = lookup_activation("FIRE_BOLT2");
+						art->activation = lookup_activation("RAND_FIRE1");
 					}
 					if (temp == 2) {
-						art->activation = lookup_activation("COLD_BOLT2");
+						art->activation = lookup_activation("RAND_COLD1");
 					}
 					if (temp == 3) {
-						art->activation = lookup_activation("ACID_BOLT3");
+						art->activation = lookup_activation("RAND_ACID1");
 					}
 					if (temp == 4) {
-						art->activation = lookup_activation("ELEC_BOLT");
+						art->activation = lookup_activation("RAND_ELEC1");
 					}
 				}
 			}
@@ -2477,7 +2525,7 @@ static void choose_gloves_theme(struct artifact *art)
 		else if (selection < 75) {
 
 			/* Assign an activation for free. */
-			art->activation = lookup_activation("DISABLE_TRAPS");
+			art->activation = lookup_activation("RAND_DISARM");
 
 			/* Bonus to stealth. */
 			get_property(art, NULL, "stealth", randint1(4), false);
@@ -2513,8 +2561,8 @@ static void choose_gloves_theme(struct artifact *art)
 		if (potential < 3500) {
 
 			/* Always grant an activation, but not for free. */
-			//art->activation = EF_RAND_SUPER_SHOOTING;
-			//potential -= 750;
+			art->activation = lookup_activation("RAND_SUPER_SHOOTING");
+			potential -= 750;
 
 			/* Add equal bonuses to Skill and to Deadliness. */
 			temp = 5 + randint1(5);
@@ -3877,11 +3925,11 @@ static bool choose_type(struct object *obj)
 
 					/* Maybe an activation */
 					if (one_in_(5)) {
-						obj->activation = lookup_activation("BLESSING2");
+						get_activation("RAND_BLESS", obj);
 					} else if (one_in_(5)) {
-						obj->activation = lookup_activation("HERO");
+						get_activation("RAND_HEROISM", obj);
 					} else if (one_in_(5)) {
-						obj->activation = lookup_activation("PROTEVIL");
+						get_activation("RAND_PROT_FROM_EVIL", obj);
 					}
 
 					/* Sometimes vulnerable to dark and/or cold */
@@ -3900,11 +3948,11 @@ static bool choose_type(struct object *obj)
 
 					/* Maybe an activation */
 					if (one_in_(5)) {
-						obj->activation = lookup_activation("DETECT_MONSTERS");
+						get_activation("RAND_IDENTIFY", obj);
 					} else if (one_in_(5)) {
-						obj->activation = lookup_activation("DETECT_INVIS");
+						get_activation("RAND_DETECT_MONSTERS", obj);
 					} else if (one_in_(6)) {
-						obj->activation = lookup_activation("TMD_ESP");
+						get_activation("RAND_DETECT_D_S_T", obj);
 					}
 
 					/* Sometimes vulnerable to electricity and/or light */
@@ -4111,7 +4159,7 @@ static bool choose_type(struct object *obj)
 			/* This is an exclusive club */
 			if (potential > 3000) {
 
-				obj->activation = lookup_activation("METAMORPHOSIS");;
+				obj->activation = lookup_activation("AMULET_METAMORPH");
 				obj->time.base = 300;
 				potential -= 2000;
 				done = true;
@@ -4201,11 +4249,11 @@ static bool choose_type(struct object *obj)
 				/* And an activation */
 				temp = randint1(3);
 				if (temp == 1) {
-					obj->activation = lookup_activation("RESTORE_EXP");
+					get_activation("RAND_REGAIN", obj);
 				} else if (temp == 2) {
-					obj->activation = lookup_activation("RESTORE_ALL");
+					get_activation("RAND_RESTORE", obj);
 				} else {
-					obj->activation = lookup_activation("RESIST_ALL");
+					get_activation("RAND_RESIST_ALL", obj);
 				}
 				done = true;
 			}
@@ -4236,17 +4284,17 @@ static bool choose_type(struct object *obj)
 					get_property(NULL, obj, "lightning brand", 15, true);
 					get_property(NULL, obj, "electricity resistance",
 								 35 + 5 * bonus, true);
-					obj->activation = lookup_activation("RING_LIGHTNING");
+					obj->activation = lookup_activation("RING_ELEC");
 				} else if (temp == 3) {
 					get_property(NULL, obj, "fire brand", 15, true);
 					get_property(NULL, obj, "fire resistance",
 								 35 + 5 * bonus, true);
-					obj->activation = lookup_activation("RING_FLAMES");
+					obj->activation = lookup_activation("RING_FIRE");
 				} else {
 					get_property(NULL, obj, "cold brand", 15, true);
 					get_property(NULL, obj, "cold resistance",
 								 35 + 5 * bonus, true);
-					obj->activation = lookup_activation("RING_ICE");
+					obj->activation = lookup_activation("RING_COLD");
 				}
 				obj->time.base = 50;
 				obj->time.dice = 1;
@@ -4408,16 +4456,13 @@ static bool choose_type(struct object *obj)
 			if (potential > 300) {
 				temp = randint1(6);
 				if (temp == 1) {
-					obj->activation = lookup_activation("DISABLE_TRAPS");
+					get_activation("RAND_DISARM", obj);
 				}
 				if (temp == 2) {
-					obj->activation = lookup_activation("RECALL");
+					get_activation("RAND_RECALL", obj);
 				}
 				if (temp == 3) {
-					obj->activation = lookup_activation("RECHARGE");
-				}
-				if (temp == 4) {
-					obj->activation = lookup_activation("SATISFY");
+					get_activation("RAND_IDENTIFY", obj);
 				}
 			}
 			done = true;
@@ -4465,7 +4510,7 @@ static bool choose_type(struct object *obj)
 				}
 				done = true;
 			}
-		} else if (streq(ego->name, "of the Dawn")) {
+		} else if (streq(ego->name, "of Speed")) {
 			char *speed[1] = { "speed" };
 			int max_value = 14;
 
@@ -4578,23 +4623,19 @@ static bool choose_type(struct object *obj)
 				switch (element) {
 					case 0: {
 						get_property(NULL, obj, "acid resistance", 100, false);
-						//obj->activation = lookup_activation("");
 						break;
 					}
 					case 1: {
 						get_property(NULL, obj, "electricity resistance", 100,
 									 false);
-						//obj->activation = lookup_activation("");
 						break;
 					}
 					case 2: {
 						get_property(NULL, obj, "fire resistance", 100, false);
-						//obj->activation = lookup_activation("");
 						break;
 					}
 					case 3: {
 						get_property(NULL, obj, "cold resistance", 100, false);
-						//obj->activation = lookup_activation("");
 						break;
 					}
 				}
@@ -4634,25 +4675,31 @@ static bool choose_type(struct object *obj)
 					get_property(NULL, obj, "sustain constitution",0,false);
 				}
 
-				// NRM -NEED BETTER ACTIVATION HANDLING TOO
 				/* And with a powerful activation at a bargain price... */
-				//temp = randint0(EF_POWER_MAX - EF_POWER_BASE + 1);
-
-				/* Hack - summon friendlies needs more work */
-				//while (temp == EF_ENLIST_EARTH - EF_POWER_BASE)
-				//	temp = randint0(EF_POWER_MAX - EF_POWER_BASE + 1);
-				//if (temp < 4) {
-				//	get_activation(true, EF_POWER_BASE + element,
-				//				   obj);
-				//	potential +=
-				//		effect_power(EF_POWER_BASE + element) / 2;
-				//}
-
-				//else {
-				//	get_activation(true, EF_POWER_BASE + temp, obj);
-				//	potential +=
-				//		effect_power(EF_POWER_BASE + temp) / 2;
-				//}
+				if (one_in_(2)) {
+					/* ...either thematic for this element... */
+					switch (element) {
+						case 0: {
+							get_activation("ACID_BLAST", obj);
+							break;
+						}
+						case 1: {
+							get_activation("CHAIN_LIGHTNING", obj);
+							break;
+						}
+						case 2: {
+							get_activation("LAVA_POOL", obj);
+							break;
+						}
+						case 3: {
+							get_activation("ICE_WHIRLPOOL", obj);
+							break;
+						}
+					}
+				} else {
+					/* ... or a random powerful effect. */
+					get_random_activation(ACTIVATION_POWER, obj);
+				}
 
 				/* ...plus help to activate it */
 				get_property(NULL, obj, "magic mastery", bonus, true);
@@ -4690,7 +4737,5 @@ bool design_jewellery(struct object *obj, int lev)
 	/* Remove contradictory powers. */
 	final_check(NULL, obj);
 
-	/* Add effect timeout */
-	//effect_time(obj->effect, &obj->time);
 	return true;
 }

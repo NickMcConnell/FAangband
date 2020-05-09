@@ -1319,6 +1319,27 @@ static enum parser_error parse_act_aim(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_act_type(struct parser *p) {
+	struct activation *act = parser_priv(p);
+	const char *a_type = parser_getstr(p, "type");
+	assert(act);
+
+	if (streq(a_type, "element ring")) {
+		act->type = ACTIVATION_RING_ELEMENT;
+	} else if (streq(a_type, "amulet")) {
+		act->type = ACTIVATION_AMULET;
+	} else if (streq(a_type, "ring of power")) {
+		act->type = ACTIVATION_RING_POWER;
+	} else if (streq(a_type, "power")) {
+		act->type = ACTIVATION_POWER;
+	} else if (streq(a_type, "dragon")) {
+		act->type = ACTIVATION_DRAGON;
+	} else if (streq(a_type, "artifact")) {
+		act->type = ACTIVATION_ARTIFACT;
+	}
+	return PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_act_power(struct parser *p) {
 	struct activation *act = parser_priv(p);
 	assert(act);
@@ -1468,6 +1489,7 @@ struct parser *init_parse_act(void) {
 	parser_setpriv(p, NULL);
 	parser_reg(p, "name str name", parse_act_name);
 	parser_reg(p, "aim uint aim", parse_act_aim);
+	parser_reg(p, "type str type", parse_act_type);
 	parser_reg(p, "power uint power", parse_act_power);
 	parser_reg(p, "effect sym eff ?sym type ?int radius ?int other", parse_act_effect);
 	parser_reg(p, "effect-yx int y int x", parse_act_effect_yx);

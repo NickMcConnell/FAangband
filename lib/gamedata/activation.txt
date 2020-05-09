@@ -1537,6 +1537,7 @@ effect:SHAPECHANGE:werewolf
 
 name:GWINDOR
 aim:0
+type:artifact
 power:0
 effect:LIGHT_AREA
 effect:SPOT:LIGHT_WEAK:3
@@ -1547,6 +1548,7 @@ desc: monsters
 
 name:DWARVES
 aim:0
+type:artifact
 power:0
 effect:LIGHT_LEVEL
 time:200+d200
@@ -1554,6 +1556,7 @@ desc:maps and illuminates the entire level
 
 name:ELESSAR
 aim:0
+type:artifact
 power:0
 effect:HEAL_HP
 dice:500
@@ -1564,6 +1567,7 @@ desc:heals 500HP and restores your life levels
 
 name:RAZORBACK
 aim:0
+type:artifact
 power:0
 # not done
 time:200
@@ -1571,6 +1575,7 @@ desc:transforms you into a dragon; Activation in Dragonform: star ball (150)
 
 name:BLADETURNER
 aim:0
+type:artifact
 power:0
 # not done
 time:400
@@ -1579,6 +1584,7 @@ desc: and resistance
 
 name:SOULKEEPER
 aim:0
+type:artifact
 power:0
 effect:HEAL_HP
 dice:1000
@@ -1588,6 +1594,7 @@ desc:heals 1000HP
 
 name:ELEMENTS
 aim:0
+type:artifact
 power:0
 effect:TIMED_INC:OPP_ACID
 dice:20+1d20
@@ -1602,6 +1609,7 @@ desc:gives resistance to the elements for 20 + d20 turns
 
 name:GIL_GALAD
 aim:0
+type:artifact
 power:0
 # not done
 time:250
@@ -1609,6 +1617,7 @@ desc:emits blinding light (75 damage)
 
 name:NARGOTHROND
 aim:0
+type:artifact
 power:0
 effect:HEAL_HP
 dice:500
@@ -1618,6 +1627,7 @@ desc:heals 500HP
 
 name:VALINOR
 aim:0
+type:artifact
 power:0
 effect:TIMED_INC:OPP_ACID
 dice:20+1d20
@@ -1634,6 +1644,7 @@ desc:gives resistance to the elements and poison for 20 + d20 turns
 
 name:HOLCOLLETH
 aim:0
+type:artifact
 power:0
 effect:TOUCH_AWARE:SLEEP_ALL
 dice:$B
@@ -1643,6 +1654,7 @@ desc:sleeps adjacent monsters
 
 name:THINGOL
 aim:0
+type:artifact
 power:0
 effect:RECHARGE
 dice:10
@@ -1651,6 +1663,7 @@ desc:recharges a magical device
 
 name:MAEGLIN
 aim:1
+type:artifact
 power:0
 # not done
 time:7+d7
@@ -1658,6 +1671,7 @@ desc:fires a mana bolt for 9d8 damage
 
 name:PAURNIMMEN
 aim:0
+type:artifact
 power:0
 # not done
 time:100+d50
@@ -1665,6 +1679,7 @@ desc:adds cold damage to your melee attacks for 50 turns
 
 name:PAURNEN
 aim:0
+type:artifact
 power:0
 # not done
 time:100+d50
@@ -1672,12 +1687,14 @@ desc:adds acid damage to your melee attacks for 30 turns
 
 name:DAL
 aim:0
+type:artifact
 power:0
 time:5
 desc:removes fear and cures poison
 
 name:NARTHANC
 aim:1
+type:artifact
 power:0
 effect:BOLT:FIRE
 dice:6d8
@@ -1686,6 +1703,7 @@ desc:fires a fire bolt for 6d8 damage
 
 name:NIMTHANC
 aim:1
+type:artifact
 power:0
 effect:BOLT:COLD
 dice:5d8
@@ -1694,6 +1712,7 @@ desc:fires a frost bolt for 5d8 damage
 
 name:DETHANC
 aim:1
+type:artifact
 power:0
 effect:BOLT:ELEC
 dice:4d8
@@ -1702,6 +1721,7 @@ desc:fires a lightning bolt for 4d8 damage
 
 name:RILIA
 aim:1
+type:artifact
 power:0
 effect:BALL:POIS:3
 dice:12
@@ -1710,6 +1730,7 @@ desc:fires a stinking cloud for 12 damage
 
 name:BELANGIL
 aim:1
+type:artifact
 power:0
 effect:BALL:COLD:2
 dice:$B
@@ -1719,6 +1740,7 @@ desc:fires a frost ball (3 * level / 2)
 
 name:ARANRUTH
 aim:1
+type:artifact
 power:0
 effect:BOLT:COLD
 dice:12d8
@@ -1727,6 +1749,7 @@ desc:fires a frost bolt for 12d8 damage
 
 name:RINGIL
 aim:1
+type:artifact
 power:0
 effect:ARC:COLD:10:40
 dice:250
@@ -1735,6 +1758,7 @@ desc:fires a frost cone for 250 damage
 
 name:NARSIL
 aim:1
+type:artifact
 power:0
 effect:BALL:FIRE:2
 dice:150
@@ -1743,6 +1767,7 @@ desc:fires a fire ball for 150 damage
 
 name:MANWE
 aim:1
+type:artifact
 power:0
 effect:ARC:FORCE:10:180
 dice:300
@@ -1751,6 +1776,7 @@ desc:fires a wide arc of force for 300 damage
 
 name:AEGLOS
 aim:1
+type:artifact
 power:0
 effect:BALL:COLD:2
 dice:100
@@ -1759,6 +1785,7 @@ desc:fires a frost ball for 100 damage
 
 name:LOTHARANG
 aim:0
+type:artifact
 power:0
 # not done
 time:3+d3
@@ -1766,6 +1793,7 @@ desc:cure wounds for 4d12 damage
 
 name:ULMO
 aim:1
+type:artifact
 power:0
 effect:BOLT_STATUS:AWAY_ALL
 dice:$B
@@ -1775,6 +1803,7 @@ desc:teleport away (distance: 45-60+)
 
 name:AVAVIR
 aim:0
+type:artifact
 power:0
 effect:RECALL
 time:200
@@ -1783,6 +1812,7 @@ desc: delay
 
 name:TOTILA
 aim:1
+type:artifact
 power:0
 effect:BOLT_AWARE:MON_CONF
 dice:$B
@@ -1792,6 +1822,7 @@ desc:confuses a monster
 
 name:FIRESTAR
 aim:1
+type:artifact
 power:0
 effect:BALL:FIRE:3
 dice:125
@@ -1800,6 +1831,7 @@ desc:fires a large fire ball for 125 damage
 
 name:TURMIL
 aim:1
+type:artifact
 power:0
 effect:BOLT:MON_DRAIN
 dice:90
@@ -1810,6 +1842,7 @@ desc:drains life for 90 damage
 
 name:DRAGON_BLACK
 aim:0
+type:dragon
 power:9
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe acid for
@@ -1817,6 +1850,7 @@ desc: 45-270 damage
 
 name:DRAGON_BLUE
 aim:0
+type:dragon
 power:20
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe lightning
@@ -1824,6 +1858,7 @@ desc: for 40-260 damage
 
 name:DRAGON_WHITE
 aim:0
+type:dragon
 power:20
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe frost for
@@ -1831,6 +1866,7 @@ desc: 45-270 damage
 
 name:DRAGON_RED
 aim:0
+type:dragon
 power:20
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe fire for
@@ -1838,6 +1874,7 @@ desc: 50-300 damage
 
 name:DRAGON_GREEN
 aim:0
+type:dragon
 power:20
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe poison gas
@@ -1845,6 +1882,7 @@ desc: for 45-270 damage
 
 name:DRAGON_MULTIHUED
 aim:0
+type:dragon
 power:20
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe an element
@@ -1852,6 +1890,7 @@ desc: or poison for 60-360 damage
 
 name:DRAGON_SHINING
 aim:0
+type:dragon
 power:22
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe
@@ -1859,6 +1898,7 @@ desc: light/darkness for 50-300 damage
 
 name:DRAGON_LAW
 aim:0
+type:dragon
 power:22
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe sound or
@@ -1866,6 +1906,7 @@ desc: shards for 60-360 damage
 
 name:DRAGON_BRONZE
 aim:0
+type:dragon
 power:20
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe confusion
@@ -1873,6 +1914,7 @@ desc: for 40-260 damage
 
 name:DRAGON_GOLD
 aim:0
+type:dragon
 power:20
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe sound for
@@ -1880,6 +1922,7 @@ desc: 40-260 damage
 
 name:DRAGON_CHAOS
 aim:0
+type:dragon
 power:22
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe chaos or
@@ -1887,6 +1930,7 @@ desc: disenchantment for 55-330 damage
 
 name:DRAGON_BALANCE
 aim:0
+type:dragon
 power:23
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe sound,
@@ -1894,6 +1938,7 @@ desc: shards, chaos, or disenchantment for 60-360 damage
 
 name:DRAGON_POWER
 aim:0
+type:dragon
 power:25
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe the
@@ -1903,6 +1948,7 @@ desc: elements for 75-450 damage
 
 name:RING_ACID
 aim:1
+type:element ring
 power:11
 effect:BALL:ACID:3
 dice:$B
@@ -1914,6 +1960,7 @@ desc:cast an acid ball for 80 damage and opposes acid
 
 name:RING_ELEC
 aim:1
+type:element ring
 power:11
 effect:BALL:ELEC:3
 dice:$B
@@ -1925,6 +1972,7 @@ desc:cast a cold ball for 80 damage and opposes cold
 
 name:RING_FIRE
 aim:1
+type:element ring
 power:11
 effect:BALL:FIRE:3
 dice:$B
@@ -1935,6 +1983,7 @@ time:100+d50
 desc:cast a fire ball for 80 damage and opposes fire
 
 name:RING_COLD
+type:element ring
 aim:1
 power:11
 effect:BALL:COLD:3
@@ -1945,16 +1994,11 @@ dice:20+1d20
 time:100+d50
 desc:cast an electricity ball for 80 damage and opposes electricity
 
-name:RING_POIS
-aim:1
-power:11
-time:100+d50
-desc:cast a poison ball for 80 damage and opposes poison
-
 # Amulet of metamorphosis
 
 name:AMULET_METAMORPH
 aim:0
+type:amulet
 power:15
 effect:RANDOM
 dice:8
@@ -2620,6 +2664,7 @@ desc:slows monsters
 
 name:ACID_BLAST
 aim:0
+type:power
 power:18
 msg:A blast of corrosion strikes your foes!
 effect:SPHERE:ACID:5:2
@@ -2633,6 +2678,7 @@ desc:produces a powerful acid blast
 
 name:CHAIN_LIGHTNING
 aim:0
+type:power
 power:19
 # not done
 time:2000
@@ -2640,6 +2686,7 @@ desc:produces chain lightning between monsters
 
 name:LAVA_POOL
 aim:0
+type:power
 power:22
 # not done
 time:2000
@@ -2647,6 +2694,7 @@ desc:creates a lava pool
 
 name:ICE_WHIRLPOOL
 aim:0
+type:power
 power:22
 msg:A howling vortex of ice rises in wrath around you.
 effect:SPHERE:5:2
@@ -2660,6 +2708,7 @@ desc:conjures forth a whirlpool of ice
 
 name:GROW_FOREST
 aim:0
+type:power
 power:22
 # not done
 time:2000
@@ -2667,6 +2716,7 @@ desc:grows a forest
 
 name:RESTORE_AND_ENHANCE
 aim:0
+type:power
 power:23
 msg:You feel life flow through your body!
 effect:RESTORE_EXP
@@ -2697,6 +2747,7 @@ desc:restores and enhances you
 
 name:ZONE_OF_CHAOS
 aim:0
+type:power
 power:23
 # not done
 time:3000
@@ -2704,6 +2755,7 @@ desc:creates a zone of chaos
 
 name:PRESSURE_WAVE
 aim:0
+type:power
 power:21
 msg:Your foes are thrown backward!
 effect:SPHERE:FORCE:10:2
@@ -2713,6 +2765,7 @@ desc:creates a pressure wave
 
 name:ENERGY_DRAIN
 aim:0
+type:power
 power:25
 msg:Your foes slow, and you seem to have an eternity to act...
 # not done
@@ -2721,6 +2774,7 @@ desc:drains energy from your foes
 
 name:MASS_STASIS
 aim:0
+type:power
 power:20
 msg:You command your foes to be still!
 effect:PROJECT_LOS:MON_HOLD
@@ -2730,6 +2784,7 @@ desc:invokes mass stasis
 
 name:LIGHT_FROM_ABOVE
 aim:0
+type:power
 power:22
 msg:The light of the Valar shines from above!
 # not done
@@ -2738,6 +2793,7 @@ desc:calls forth light from above
 
 name:MASS_POLYMORPH
 aim:0
+type:power
 power:18
 msg:Reality warps...
 effect:PROJECT_LOS:MON_POLY
@@ -2748,6 +2804,7 @@ desc:polymorphs everything in sight
 
 name:GRAVITY_WAVE
 aim:0
+type:power
 power:25
 msg:Gravity crushes, then releases, your foes!
 effect:SPHERE:GRAVITY:5:2
@@ -2757,6 +2814,7 @@ desc:creates a gravity wave
 
 name:ENLIST_EARTH
 aim:1
+type:power
 power:20
 # not done
 time:3000
@@ -2764,6 +2822,7 @@ desc:summons allies from the Earth
 
 name:TELEPORT_ALL
 aim:0
+type:power
 power:25
 effect:PROJECT_LOS:AWAY_ALL
 dice:80
