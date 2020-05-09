@@ -2499,7 +2499,7 @@ bool effect_handler_RECHARGE(effect_handler_context_t *context)
 bool effect_handler_PROJECT_LOS(effect_handler_context_t *context)
 {
 	int i;
-	int dam = effect_calculate_value(context, context->radius ? true : false);
+	int dam = effect_calculate_value(context, context->other ? true : false);
 	int typ = context->subtype;
 	struct loc origin = origin_get_loc(context->origin);
 	int flg = PROJECT_JUMP | PROJECT_KILL | PROJECT_HIDE;
@@ -3846,8 +3846,9 @@ bool effect_handler_DARKEN_AREA(effect_handler_context_t *context)
 }
 
 /**
- * Project from a grid, act as a ball
- * Affect the player, grids, objects, and monsters
+ * Project from the player's grid at the player, with full intensity out to
+ * its radius
+ * Affect the player (even when player-cast), grids, objects, and monsters
  */
 bool effect_handler_SPOT(effect_handler_context_t *context)
 {
@@ -3855,7 +3856,7 @@ bool effect_handler_SPOT(effect_handler_context_t *context)
 	int dam = effect_calculate_value(context, true);
 	int rad = context->radius ? context->radius : 0;
 
-	int flg = PROJECT_STOP | PROJECT_PLAY | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+	int flg = PROJECT_STOP | PROJECT_PLAY | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF;
 
 	/* Get the centre of the spot */
 	if (context->origin.what == SRC_PLAYER) {
@@ -3874,7 +3875,8 @@ bool effect_handler_SPOT(effect_handler_context_t *context)
 	}
 
 	/* Aim at the target, explode */
-	if (project(context->origin, rad, grid, dam, context->subtype, flg, 0, 0, NULL))
+	if (project(context->origin, rad, pgrid, dam, context->subtype, flg, 0,
+				rad, NULL))
 		context->ident = true;
 
 	return true;
@@ -4004,9 +4006,9 @@ bool effect_handler_BREATH(effect_handler_context_t *context)
 
 	struct loc target = loc(-1, -1);
 
-	/* Diameter of source starts at 40, so full strength up to 3 grids from
+	/* Diameter of source starts at 4, so full strength up to 3 grids from
 	 * the breather. */
-	int diameter_of_source = 40;
+	int diameter_of_source = 4;
 
 	/* Minimum breath width is 20 degrees */
 	int degrees_of_arc = MAX(context->other, 20);
@@ -4064,8 +4066,8 @@ bool effect_handler_BREATH(effect_handler_context_t *context)
 		diameter_of_source = diameter_of_source * 60 / degrees_of_arc;
 
 		/* Max */
-		if (diameter_of_source > 250)
-			diameter_of_source = 250;
+		if (diameter_of_source > 25)
+			diameter_of_source = 25;
 	}
 
 	/* Breathe at the target */
@@ -4100,9 +4102,9 @@ bool effect_handler_ARC(effect_handler_context_t *context)
 
 	struct loc target = loc(-1, -1);
 
-	/* Diameter of source starts at 40, so full strength up to 3 grids from
+	/* Diameter of source starts at 4, so full strength up to 3 grids from
 	 * the caster. */
-	int diameter_of_source = 40;
+	int diameter_of_source = 4;
 
 	/* Short beams now have their own effect, so we set a minimum arc width */
 	int degrees_of_arc = MAX(context->other, 20);
@@ -4133,8 +4135,8 @@ bool effect_handler_ARC(effect_handler_context_t *context)
 	}
 
 	/* Max */
-	if (diameter_of_source > 250) {
-		diameter_of_source = 250;
+	if (diameter_of_source > 25) {
+		diameter_of_source = 25;
 	}
 
 	/* Aim at the target */
@@ -4164,9 +4166,9 @@ bool effect_handler_SHORT_BEAM(effect_handler_context_t *context)
 
 	struct loc target = loc(-1, -1);
 
-	/* Diameter of source is 10 times radius, so the effect is essentially
-	 * full strength for its entire length. */
-	int diameter_of_source = rad * 10;
+	/* Diameter of source is the same as the radius, so the effect is
+	 * essentially full strength for its entire length. */
+	int diameter_of_source = rad;
 
 	int flg = PROJECT_ARC | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
@@ -4184,8 +4186,8 @@ bool effect_handler_SHORT_BEAM(effect_handler_context_t *context)
 	}
 
 	/* Check bounds */
-	if (diameter_of_source > 250) {
-		diameter_of_source = 250;
+	if (diameter_of_source > 25) {
+		diameter_of_source = 25;
 	}
 
 	/* Aim at the target */
@@ -4200,7 +4202,7 @@ bool effect_handler_SHORT_BEAM(effect_handler_context_t *context)
 /**
  * Crack a whip, or spit at the player; actually just a finite length beam
  * Affect grids, objects, and monsters
- * context->p1 is length of beam
+ * context->radius is length of beam
  */
 bool effect_handler_LASH(effect_handler_context_t *context)
 {
@@ -4212,9 +4214,9 @@ bool effect_handler_LASH(effect_handler_context_t *context)
 
 	struct loc target = loc(-1, -1);
 
-	/* Diameter of source is 10 times radius, so the effect is essentially
-	 * full strength for its entire length. */
-	int diameter_of_source = rad * 10;
+	/* Diameter of source is the same as the radius, so the effect is
+	 * essentially full strength for its entire length. */
+	int diameter_of_source = rad;
 
 	/* Monsters only */
 	if (context->origin.what == SRC_MONSTER) {
@@ -4259,8 +4261,8 @@ bool effect_handler_LASH(effect_handler_context_t *context)
 	}
 
 	/* Check bounds */
-	if (diameter_of_source > 250) {
-		diameter_of_source = 250;
+	if (diameter_of_source > 25) {
+		diameter_of_source = 25;
 	}
 
 	/* Lash the target */

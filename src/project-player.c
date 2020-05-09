@@ -762,7 +762,7 @@ static const project_player_handler_f player_handlers[] = {
  * We assume the player is aware of some effect, and always return "true".
  */
 bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
-			   int power)
+			   int power, bool self)
 {
 	bool blind = (player->timed[TMD_BLIND] ? true : false);
 	bool seen = !blind;
@@ -817,9 +817,12 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 	}
 
 	switch (origin.what) {
-		case SRC_PLAYER:
-			/* Never affect projector */
-			return false;
+		case SRC_PLAYER: {
+			/* Don't affect projector unless explicitly allowed */
+			if (!self) return false;
+
+			break;
+		}
 
 		case SRC_MONSTER: {
 			struct monster *mon = cave_monster(cave, origin.which.monster);
@@ -875,6 +878,10 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 	/* Adjust damage for resistance, immunity or vulnerability, and apply it */
 	dam = adjust_dam(player, typ, dam, true);
 	if (dam) {
+		/* Self-inflicted damage is scaled down */
+		if (self) {
+			dam /= 10;
+		}
 		take_hit(player, dam, killer);
 	}
 
