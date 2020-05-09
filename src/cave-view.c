@@ -23,6 +23,7 @@
 #include "monster.h"
 #include "player-calcs.h"
 #include "player-timed.h"
+#include "player-util.h"
 #include "trap.h"
 
 /**
@@ -584,7 +585,8 @@ static void update_view_one(struct chunk *c, struct loc grid, struct player *p)
 	if (d > z_info->max_sight) return;
 
 	/* UNLIGHT players have a special radius of view */
-	if (player_has(p, PF_UNLIGHT) && (p->state.cur_light <= 1)) {
+	if ((player_has(p, PF_UNLIGHT) || player_of_has(p, OF_DARKNESS))
+		&& (p->state.cur_light <= 1)) {
 		close = d < (2 + p->lev / 6 - p->state.cur_light);
 	}
 
@@ -687,7 +689,7 @@ void update_view(struct chunk *c, struct player *p)
 	/* Assume we can view the player grid */
 	sqinfo_on(square(c, p->grid).info, SQUARE_VIEW);
 	if (p->state.cur_light > 0 || square_isglow(c, p->grid) ||
-		player_has(p, PF_UNLIGHT)) {
+		player_has(p, PF_UNLIGHT) || player_of_has(p, OF_DARKNESS)) {
 		sqinfo_on(square(c, p->grid).info, SQUARE_SEEN);
 	}
 

@@ -769,6 +769,16 @@ static void apply_magic_weapon(struct object *obj, int level, int power)
 	obj->to_h += randint1(5) + m_bonus(5, level);
 	obj->to_d += randint1(5) + m_bonus(5, level);
 
+	/* Throwing weapons, especially ego-items may be perfectly  balanced. */
+	if (of_has(obj->kind->flags, OF_THROWING) && !tval_is_ammo(obj)) {
+		/* 22% of standard items, 44% of ego items */
+		int j = (obj->ego) ? 4 : 2;
+
+		if (randint0(9) < j) {
+			of_on(obj->flags, OF_PERFECT_BALANCE);
+		}
+	}
+
 	if (power > 1) {
 		obj->to_h += m_bonus(10, level);
 		obj->to_d += m_bonus(10, level);

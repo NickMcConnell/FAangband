@@ -237,10 +237,17 @@ label5:TrpIm
 label2:TI
 priority:-11
 
+name:darkness_ui_compact_0
+template:good_flag_ui_compact_0
+label:Darkness
+label5:Darkn
+label2:Da
+priority:-12
+
 name:bless_ui_compact_0
 template:good_flag_ui_compact_0
 label:Bless
-priority:-12
+priority:-13
 
 # The following use other_flag_ui_compact_0 from ui_entry_base.txt.
 

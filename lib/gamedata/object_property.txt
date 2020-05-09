@@ -533,6 +533,23 @@ id-type:on wield
 code:THROWING
 price-constant:200
 
+name:perfect balance
+type:flag
+subtype:melee
+id-type:on wield
+code:PERFECT_BALANCE
+desc:Is ideal for throwing
+price-constant:400
+
+name:darkness
+type:flag
+subtype:misc ability
+id-type:on wield
+code:DARKNESS
+bindui:darkness_ui_compact_0:0
+desc:Allows you to see in the dark
+price-constant:400
+
 ## Ignore elements
 
 name:ignore acid

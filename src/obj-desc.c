@@ -182,8 +182,9 @@ static const char *obj_desc_get_basename(const struct object *obj, bool aware,
  * Start to description, indicating number/uniqueness (a, the, no more, 7, etc)
  */
 static size_t obj_desc_name_prefix(char *buf, size_t max, size_t end,
-		const struct object *obj, const char *basename,
-		const char *modstr, bool terse)
+								   const struct object *obj,
+								   const char *basename, const char *modstr,
+								   bool terse, bool balanced)
 {
 	if (obj->number == 0) {
 		strnfcat(buf, max, &end, "no more ");
@@ -205,11 +206,15 @@ static size_t obj_desc_name_prefix(char *buf, size_t max, size_t end,
 		}
 
 		if (!terse) {
-			if (an)
+			if (an && !balanced)
 				strnfcat(buf, max, &end, "an ");
 			else
 				strnfcat(buf, max, &end, "a ");			
 		}
+	}
+
+	if (balanced) {
+		strnfcat(buf, max, &end, "well-balanced ");
 	}
 
 	return end;
@@ -308,12 +313,15 @@ static size_t obj_desc_name(char *buf, size_t max, size_t end,
 	bool plural = !(mode & ODESC_SINGULAR) &&
 		!obj->artifact &&
 		(obj->number != 1 || (mode & ODESC_PLURAL));
+	bool balanced = obj->known && of_has(obj->known->flags, OF_PERFECT_BALANCE)
+		&& !obj->artifact;
 	const char *basename = obj_desc_get_basename(obj, aware, terse, mode);
 	const char *modstr = obj_desc_get_modstr(obj->kind);
 
 	/* Quantity prefix */
 	if (prefix)
-		end = obj_desc_name_prefix(buf, max, end, obj, basename, modstr, terse);
+		end = obj_desc_name_prefix(buf, max, end, obj, basename, modstr, terse,
+			balanced);
 
 	/* Base name */
 	end = obj_desc_name_format(buf, max, end, basename, modstr, plural);

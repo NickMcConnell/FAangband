@@ -754,6 +754,10 @@ static int ranged_damage(struct player *p, const struct monster *mon,
 	if (launcher) {
 		dmg += launcher->to_d;
 	} else if (of_has(missile->flags, OF_THROWING)) {
+		/* Perfectly balanced weapons do even more damage. */
+		if (of_has(missile->flags, OF_PERFECT_BALANCE))
+			dmg *= 2;
+
 		/* Multiply the damage dice by the throwing weapon multiplier.
 		 * This is not the prettiest equation, but it does at least try to
 		 * keep throwing weapons competitive. */
@@ -820,6 +824,11 @@ static int o_ranged_damage(struct player *p, const struct monster *mon,
 		dice += o_critical_shot(p, mon, missile, launcher, sleeping_bonus,
 								msg_type, marksman);
 	} else if (of_has(missile->flags, OF_THROWING)) {
+		/* Perfectly balanced weapons do even more damage. */
+		if (of_has(missile->flags, OF_PERFECT_BALANCE)) {
+			dice *= 2;
+		}
+
 		dice += o_critical_shot(p, mon, missile, NULL, sleeping_bonus,
 								msg_type, marksman);
 

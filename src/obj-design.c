@@ -2054,12 +2054,6 @@ static void choose_boots_theme(struct artifact *art)
 			/* Add a speed bonus immediately. */
 			get_property(art, NULL, "speed", 5 + damroll(3, 2), true);
 		}
-
-		/* Speed can be tiring */
-		//if (one_in_(5)) {
-		//	cf_on(art->flags_curse, CF_HUNGRY);
-		//	potential += 100;
-		//}
 	}
 
 	/* ...that keeps a guy's feet on the ground. */
@@ -2276,10 +2270,9 @@ static void choose_cloak_theme(struct artifact *art)
 		get_property(art, NULL, "infravision", randint1(4), false);
 
 		/* Costs the device user */
-		//if (one_in_(6)) {
-		//	cf_on(art->flags_curse, CF_DRAIN_CHARGE);
-		//	potential += 800;
-		//}
+		if (one_in_(6)) {
+			get_property(art, NULL, "magic mastery", 0 - randint1(2), false);
+		}
 	}
 
 	/* Hack -- Elven Cloaks have STEALTH */
@@ -2433,10 +2426,10 @@ static void choose_gloves_theme(struct artifact *art)
 			get_property(art, NULL, "free action", 0, true);
 		}
 
-		/* Sometimes vulnerable to confusion */
-		//if (one_in_(6)) {
-		//	get_property(art, NULL, ""false, VUL_CONFU, 0, a_idx);
-		//}
+		/* Sometimes negative to stealth */
+		if (one_in_(6)) {
+			get_property(art, NULL, "stealth", 0 - randint1(3), true);
+		}
 	}
 
 	/* ...with the dauntless spirit of a mighty warrior. */
@@ -2476,81 +2469,81 @@ static void choose_gloves_theme(struct artifact *art)
 			get_property(art, NULL, "poison resistance", -5 * randint1(6),
 						 false);
 		}
+	}
 
-		/* ...able to protect the wearer. */
-		else if (selection < 60) {
+	/* ...able to protect the wearer. */
+	else if (selection < 60) {
 
-			/* Increase bonus to AC. */
-			get_property(art, NULL, "armor bonus", 4 + randint1(4), false);
+		/* Increase bonus to AC. */
+		get_property(art, NULL, "armor bonus", 4 + randint1(4), false);
 
-			/* Grant (usually) two basic resists. */
-			for (i = 0; i < 2; i++) {
-				int temp = randint1(4);
+		/* Grant (usually) two basic resists. */
+		for (i = 0; i < 2; i++) {
+			int temp = randint1(4);
+			if (temp == 1) {
+				get_property(art, NULL, "fire resistance",
+							 35 + 5 * randint0(5), true);
+			}
+			if (temp == 2) {
+				get_property(art, NULL, "cold resistance",
+							 35 + 5 * randint0(5), true);
+			}
+			if (temp == 3) {
+				get_property(art, NULL, "acid resistance",
+							 35 + 5 * randint0(5), true);
+			}
+			if (temp == 4) {
+				get_property(art, NULL, "electricity resistance",
+							 35 + 5 * randint0(5), true);
+			}
+
+			/* Sometimes add a bolt activation for free. */
+			if ((potential >= 500) && !one_in_(3)) {
 				if (temp == 1) {
-					get_property(art, NULL, "fire resistance",
-								 35 + 5 * randint0(5), true);
+					art->activation = lookup_activation("RAND_FIRE1");
 				}
 				if (temp == 2) {
-					get_property(art, NULL, "cold resistance",
-								 35 + 5 * randint0(5), true);
+					art->activation = lookup_activation("RAND_COLD1");
 				}
 				if (temp == 3) {
-					get_property(art, NULL, "acid resistance",
-								 35 + 5 * randint0(5), true);
+					art->activation = lookup_activation("RAND_ACID1");
 				}
 				if (temp == 4) {
-					get_property(art, NULL, "electricity resistance",
-								 35 + 5 * randint0(5), true);
-				}
-
-				/* Sometimes add a bolt activation for free. */
-				if ((potential >= 500) && !one_in_(3)) {
-					if (temp == 1) {
-						art->activation = lookup_activation("RAND_FIRE1");
-					}
-					if (temp == 2) {
-						art->activation = lookup_activation("RAND_COLD1");
-					}
-					if (temp == 3) {
-						art->activation = lookup_activation("RAND_ACID1");
-					}
-					if (temp == 4) {
-						art->activation = lookup_activation("RAND_ELEC1");
-					}
+					art->activation = lookup_activation("RAND_ELEC1");
 				}
 			}
 		}
+	}
 
-		/* ...with the cunning of a rogue of legend. */
-		else if (selection < 75) {
+	/* ...with the cunning of a rogue of legend. */
+	else if (selection < 75) {
 
-			/* Assign an activation for free. */
-			art->activation = lookup_activation("RAND_DISARM");
+		/* Assign an activation for free. */
+		art->activation = lookup_activation("RAND_DISARM");
 
-			/* Bonus to stealth. */
-			get_property(art, NULL, "stealth", randint1(4), false);
+		/* Bonus to stealth. */
+		get_property(art, NULL, "stealth", randint1(4), false);
 
-			/* Bonus to searching. */
-			get_property(art, NULL, "searching skill", randint1(4), false);
+		/* Bonus to searching. */
+		get_property(art, NULL, "searching skill", randint1(4), false);
 
-			/* Often, acquire free action. */
-			if (!one_in_(3)) {
-				get_property(art, NULL, "free action", 0, false);
-			}
-
-			/* Sometimes vulnerable to sound */
-			if (one_in_(5)) {
-				get_property(art, NULL, "sound resistance", -5 * randint1(6),
-							 false);
-			}
+		/* Often, acquire free action. */
+		if (!one_in_(3)) {
+			get_property(art, NULL, "free action", 0, false);
 		}
 
-		/* ...that untangles magical conundrums. */
-		else if (selection < 90) {
-
-			/* Mark the gloves for a later bonus to magic item mastery. */
-			get_property(art, NULL, "magic mastery", randint1(4), false);
+		/* Sometimes vulnerable to sound */
+		if (one_in_(5)) {
+			get_property(art, NULL, "sound resistance", -5 * randint1(6),
+						 false);
 		}
+	}
+
+	/* ...that untangles magical conundrums. */
+	else if (selection < 90) {
+
+		/* Mark the gloves for a later bonus to magic item mastery. */
+		get_property(art, NULL, "magic mastery", randint1(4), false);
 	}
 
 	/* ...with a deadly mastery of archery. */
@@ -2834,8 +2827,8 @@ static void haggle_till_done(struct artifact *art, struct object *obj)
 			assert(art);
 
 			/* Some throwing weapons can be thrown hard and fast. */
-			//if (of_has(art->flags_obj, OF_THROWING) && one_in_(2))
-			//	get_property(art, obj, PERFECT_BALANCE, 0, true);
+			if (of_has(art->flags, OF_THROWING) && one_in_(2))
+				get_property(art, obj, "perfect balance", 0, true);
 			/* Some weapons already will have superb base damage. */
 			if (has_property(art, obj, "enhanced dice")) {
 
@@ -3294,8 +3287,8 @@ static void make_terrible(struct artifact *art, struct object *obj)
 	/* Greatly decrease the chance for an activation. */
 	if (art && art->activation && !one_in_(3)) {
 		art->activation = NULL;
-	} else if (obj && obj->effect && !one_in_(3)) {
-		//TODO
+	} else if (obj && obj->activation && !one_in_(3)) {
+		obj->activation = NULL;
 	}
 
 	/* Force the artifact though the gauntlet two or three times. */
@@ -3511,8 +3504,9 @@ static void make_terrible(struct artifact *art, struct object *obj)
 				mem_free(obj->slays);
 				obj->slays = NULL;
 			}
-			//if (one_in_(3))
-			//	of_off(art->flags_obj, OF_PERFECT_BALANCE);
+			if (one_in_(3)) {
+				of_off(art->flags, OF_PERFECT_BALANCE);
+			}
 
 			/* Brands */
 			for (i = 0; i < z_info->brand_max; i++) {
@@ -4135,7 +4129,7 @@ static bool choose_type(struct object *obj)
 			if (potential > 1500) {
 
 				/* Creature of the night  */
-				//get_property(NULL, obj, "darkness", 0, true);
+				get_property(NULL, obj, "darkness", 0, true);
 				get_property(NULL, obj, "stealth", randint0(bonus), true);
 				get_property(NULL, obj, "dark resistance",
 							 35 + 5 * randint0(bonus), true);
@@ -4221,10 +4215,11 @@ static bool choose_type(struct object *obj)
 				get_property(NULL, obj, "deadliness bonus", temp, true);
 				get_property(NULL, obj, "skill bonus", temp, true);
 
-				/* Sometimes vulnerable to confusion or chaos */
-				//if (one_in_(8)) 
-				//		get_property(NULL, obj, ""VUL_CONFU, 0, false);
-
+				/* Sometimes vulnerable to nexus or chaos */
+				if (one_in_(8)) {
+					get_property(NULL, obj, "nexus resistance",
+								 -5 * randint0(bonus), false);
+				}
 				if (one_in_(8)) {
 					get_property(NULL, obj, "chaos resistance",
 								 -5 * randint0(bonus), false);
@@ -4369,10 +4364,7 @@ static bool choose_type(struct object *obj)
 			/* And fearlessness */
 			get_property(NULL, obj, "protection from fear", 0, true);
 
-			/* Sometimes confusion vulnerability or aggravation */
-			//if (one_in_(5))
-			//			get_property(NULL, obj, ""VUL_CONFU, 0, false);
-
+			/* Sometimes a form of aggravation */
 			if (one_in_(5)) {
 				append_object_curse(obj, lookup_curse("siren"),
 									40 + randint0(20));
@@ -4474,8 +4466,14 @@ static bool choose_type(struct object *obj)
 			char *stats[5] = { "strength", "wisdom", "intelligence",
 							   "dexterity", "constitution" };
 
-			/* Sticky */
-			//get_property(NULL, obj, ""STICKY_WIELD, 0, true);
+			/* Too much or too little movement */
+			if (one_in_(4)) {
+				append_object_curse(obj, lookup_curse("teleportation"),
+									40 + randint0(20));
+			} else if (one_in_(3)) {
+				append_object_curse(obj, lookup_curse("anti-teleportation"),
+									40 + randint0(20));
+			}
 
 			/* Cripple some stats */
 			for (j = 0; j < tries; j++) {
@@ -4570,7 +4568,13 @@ static bool choose_type(struct object *obj)
 				/* Curses */
 				append_object_curse(obj, lookup_curse("teleportation"),
 									40 + randint0(20));
-				//get_property(NULL, obj, ""STICKY_WIELD, 0, true);
+				if (one_in_(2)) {
+					append_object_curse(obj, lookup_curse("impair mana recovery"),
+										40 + randint0(20));
+				} else {
+					append_object_curse(obj, lookup_curse("impair hitpoint recovery"),
+										40 + randint0(20));
+				}
 
 				/* Hit stats */
 				get_property(NULL, obj, "wisdom", 0 - bonus, true);
@@ -4587,27 +4591,18 @@ static bool choose_type(struct object *obj)
 			}
 		} else if (streq(ego->name, "of Fickleness")) {
 			/* min potential 0 */
-			// NRM - NEED BETTER CURSE HANDLING
-			//int curse;
-			//int max_value = 0;
-			//int fickle[7] =
-			//			{ TELEPORT, NO_TELEPORT, CUT_RAND, HALLU_RAND,
-			//			AGGRO_RAND, ATTRACT_DEMON, PARALYZE
-			//		};
-			//		while (1) {
-			//			curse =
-			//				select_property(potential, fickle, 7,
-			//								&max_value, RANK_RANDOM_CHOICE,
-			//								obj);
-			//			get_property(NULL, obj, ""curse, 0, true);
-			//			if (one_in_(3))
-			//				break;
-			//		}
-			//		done = true;
-			//		break;
-			//	}
+			char *fickle[7] = { "teleportation", "anti-teleportation",
+								"cuts", "hallucination", "siren",
+								"demon summon", "paralysis" };
+			while (1) {
+				append_object_curse(obj, lookup_curse(fickle[randint0(7)]),
+									40 + randint0(20));
+				if (one_in_(3))
+					break;
+			}
+			done = true;
 		} else if (streq(ego->name, "of Power")) {
-			/* min potential  */
+			/* min potential >> 4000 */
 			int element = randint0(4);
 
 			/* This is an exclusive club */
@@ -4666,13 +4661,13 @@ static bool choose_type(struct object *obj)
 					get_property(NULL, obj, "sustain wisdom", 0, false);
 				}
 				if (one_in_(3)) {
-					get_property(NULL, obj, "sustain intelligence",0,false);
+					get_property(NULL, obj, "sustain intelligence", 0, false);
 				}
 				if (one_in_(3)) {
 					get_property(NULL, obj, "sustain dexterity", 0, false);
 				}
 				if (one_in_(3)) {
-					get_property(NULL, obj, "sustain constitution",0,false);
+					get_property(NULL, obj, "sustain constitution", 0, false);
 				}
 
 				/* And with a powerful activation at a bargain price... */

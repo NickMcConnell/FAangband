@@ -1870,9 +1870,6 @@ void object_learn_brand(struct player *p, struct object *obj, int index)
  */
 void missile_learn_on_ranged_attack(struct player *p, struct object *obj)
 {
-	if (p->obj_k->to_h && p->obj_k->to_d)
-		return;
-
 	assert(obj->known);
 	if (!object_has_standard_to_h(obj)) {
 		int index = rune_index(RUNE_VAR_COMBAT, COMBAT_RUNE_TO_H);
@@ -1884,6 +1881,9 @@ void missile_learn_on_ranged_attack(struct player *p, struct object *obj)
 	}
 	object_curses_find_to_h(p, obj);
 	object_curses_find_to_d(p, obj);
+	if (of_has(obj->flags, OF_PERFECT_BALANCE)) {
+		player_learn_flag(p, OF_PERFECT_BALANCE);
+	}
 }
 
 /**
