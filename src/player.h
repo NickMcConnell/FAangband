@@ -258,6 +258,8 @@ struct player_shape {
 	bitflag flags[OF_SIZE];		/**< Shape (object) flags */
 	bitflag pflags[PF_SIZE];	/**< Shape (player) flags */
 	s16b modifiers[OBJ_MOD_MAX];	/**< Stat and other modifiers*/
+	const char *breath_name;
+	struct activation *breath;
 	struct element_info el_info[ELEM_MAX]; /**< Resists */
 
 	struct effect *effect;	/**< Effect on taking this shape (effects.c) */

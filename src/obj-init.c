@@ -1334,6 +1334,8 @@ static enum parser_error parse_act_type(struct parser *p) {
 		act->type = ACTIVATION_POWER;
 	} else if (streq(a_type, "dragon")) {
 		act->type = ACTIVATION_DRAGON;
+	} else if (streq(a_type, "dragon breath")) {
+		act->type = ACTIVATION_DRAGON_BREATH;
 	} else if (streq(a_type, "artifact")) {
 		act->type = ACTIVATION_ARTIFACT;
 	}
@@ -1508,6 +1510,7 @@ static errr run_parse_act(struct parser *p) {
 static errr finish_parse_act(struct parser *p) {
 	struct activation *act, *next = NULL;
 	int count = 1;
+	struct player_shape *shape = shapes;
 
 	/* Count the entries */
 	z_info->act_max = 0;
@@ -1531,6 +1534,17 @@ static errr finish_parse_act(struct parser *p) {
 		mem_free(act);
 	}
 	z_info->act_max += 1;
+
+	/* Add player shape activations now */
+	while (shape) {
+		if (shape->breath_name) {
+			shape->breath = lookup_activation(shape->breath_name);
+			if (!shape->breath) {
+				return PARSE_ERROR_INVALID_BREATH_CODE;
+			}
+		}
+		shape = shape->next;
+	}
 
 	parser_destroy(p);
 	return 0;
@@ -1953,6 +1967,20 @@ static enum parser_error parse_object_curse(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_object_act(struct parser *p) {
+	struct object_kind *k = parser_priv(p);
+	const char *name = parser_getstr(p, "name");
+
+	if (!k)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	k->activation = lookup_activation(name);
+	if (k->activation->time.base) {
+		k->time = k->activation->time;
+	}
+	return PARSE_ERROR_NONE;
+}
+
 
 struct parser *init_parse_object(void) {
 	struct parser *p = parser_new();
@@ -1982,6 +2010,7 @@ struct parser *init_parse_object(void) {
 	parser_reg(p, "slay str code", parse_object_slay);
 	parser_reg(p, "brand str code", parse_object_brand);
 	parser_reg(p, "curse sym name int power", parse_object_curse);
+	parser_reg(p, "act str name", parse_object_act);
 	return p;
 }
 

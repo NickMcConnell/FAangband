@@ -5525,6 +5525,34 @@ bool effect_handler_WONDER(effect_handler_context_t *context)
 	}
 }
 
+/**
+ * Special effect for dragon scale mail.
+ *
+ * If the player is in normal shape, this transforms them into the appropriate
+ * dragon.  If already a dragon, this becomes a breath.
+ */
+bool effect_handler_DRAGON(effect_handler_context_t *context)
+{
+	struct player_shape *shape = player_shape_by_idx(context->subtype);
+	bool ident = false;
+	int dir = DIR_TARGET;
+
+	assert(shape);
+
+	/* Change shape... */
+	if (!player_is_shapechanged(player)) {
+		effect_simple(EF_SHAPECHANGE, source_none(), "0", context->subtype, 0,
+					  0, 0, 0, &ident);
+	} else {
+		/* ...or breathe */
+		get_aim_dir(&dir);
+		player_confuse_dir(player, &dir, false);
+		return effect_do(shape->breath->effect, source_player(), NULL, &ident,
+						 true, dir, 0, 0, NULL);
+	}
+
+	return true;
+}
 
 /**
  * ------------------------------------------------------------------------
@@ -5743,7 +5771,8 @@ int effect_subtype(int index, const char *type)
 			}
 
 				/* Player shape name */
-			case EF_SHAPECHANGE: {
+			case EF_SHAPECHANGE:
+			case EF_DRAGON: {
 				val = shape_name_to_idx(type);
 				break;
 			}

@@ -2806,6 +2806,14 @@ static enum parser_error parse_shape_skill_disarm_magic(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_shape_skill_device(struct parser *p) {
+	struct player_shape *shape = parser_priv(p);
+	if (!shape)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	shape->skills[SKILL_DEVICE] = parser_getint(p, "device");
+	return PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_shape_skill_save(struct parser *p) {
 	struct player_shape *shape = parser_priv(p);
 	if (!shape)
@@ -3058,6 +3066,17 @@ static enum parser_error parse_shape_effect_msg(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_shape_breath_code(struct parser *p) {
+	struct player_shape *shape = parser_priv(p);
+	const char *code = parser_getstr(p, "code");
+
+	if (!shape)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	shape->breath_name = string_make(code);
+	return PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_shape_blow(struct parser *p) {
 	const char *verb = parser_getstr(p, "blow");
 	struct player_blow *blow = mem_zalloc(sizeof(*blow));
@@ -3081,6 +3100,7 @@ struct parser *init_parse_shape(void) {
 	parser_reg(p, "skill-disarm-phys int disarm", parse_shape_skill_disarm_phys);
 	parser_reg(p, "skill-disarm-magic int disarm", parse_shape_skill_disarm_magic);
 	parser_reg(p, "skill-save int save", parse_shape_skill_save);
+	parser_reg(p, "skill-device int device", parse_shape_skill_device);
 	parser_reg(p, "skill-stealth int stealth", parse_shape_skill_stealth);
 	parser_reg(p, "skill-search int search", parse_shape_skill_search);
 	parser_reg(p, "skill-melee int melee", parse_shape_skill_melee);
@@ -3094,6 +3114,7 @@ struct parser *init_parse_shape(void) {
 	parser_reg(p, "dice str dice", parse_shape_dice);
 	parser_reg(p, "expr sym name sym base str expr", parse_shape_expr);
 	parser_reg(p, "effect-msg str text", parse_shape_effect_msg);
+	parser_reg(p, "breath-code str code", parse_shape_breath_code);
 	parser_reg(p, "blow str blow", parse_shape_blow);
 	return p;
 }
@@ -3118,6 +3139,9 @@ static void cleanup_shape(void)
 		next = shape->next;
 		string_free((char *)shape->name);
 		free_effect(shape->effect);
+		if (shape->breath_name) {
+			string_free((char *)shape->breath_name);
+		}
 		while (blow) {
 			struct player_blow *next = blow->next;
 			string_free(blow->name);
@@ -3948,8 +3972,8 @@ static struct {
 	{ "summons", &summon_parser },
 	{ "curses", &curse_parser },
 	{ "player shapes", &shape_parser },
-	{ "objects", &object_parser },
 	{ "activations", &act_parser },
+	{ "objects", &object_parser },
 	{ "ego-items", &ego_parser },
 	{ "history charts", &history_parser },
 	{ "bodies", &body_parser },

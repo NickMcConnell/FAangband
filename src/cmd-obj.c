@@ -771,7 +771,8 @@ void do_cmd_activate(struct command *cmd)
 {
 	struct object *obj;
 
-	if (player_is_shapechanged(player)) {
+	if (player_is_shapechanged(player) &&
+		!strstr(player->shape->name, "dragon")) {
 		msg("You cannot do this while in %s form.",	player->shape->name);
 		if (get_check("Do you want to change back? " )) {
 			player_resume_normal_shape(player);

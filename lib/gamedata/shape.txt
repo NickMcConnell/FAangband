@@ -9,6 +9,7 @@
 # combat:to-h:to-d:to-a
 # skill-disarm-phys:change
 # skill-disarm-magic:change
+# skill-device:change
 # skill-save:change
 # skill-stealth:change
 # skill-search:change
@@ -22,6 +23,7 @@
 # dice:dice string
 # expr:dice expression
 # effect-msg:message
+# breath-code:code
 # blow:blow verb
 
 # 'name' is the name of the shape.
@@ -54,6 +56,9 @@
 
 # 'effect-msg' provides a message which can be used in whatever way the effect
 # needs, typically to print during the effect, or as a death message.
+
+# 'breath-code' is for dragon shapes, and directs the game to the correct
+# activation for the dragon's breath.
 
 # 'blow' is for verbs for how the shapechanged character will hit monsters.
 # Frequencies can be adjusted by having more than one line the same.
@@ -160,4 +165,140 @@ dice:5+1d20
 blow:bite
 blow:bite
 blow:slash
+blow:tear
+
+name:black dragon
+breath-code:DRAGON_BREATH_BLACK
+combat:0:5:10
+skill-device:10
+skill-throw:-30
+values:STEALTH[-3] | RES_ACID[100]
+blow:bite
+blow:bite
+blow:claw
+blow:tear
+
+name:blue dragon
+breath-code:DRAGON_BREATH_BLUE
+combat:0:5:10
+skill-device:10
+skill-throw:-30
+values:STEALTH[-3] | RES_ELEC[100]
+blow:bite
+blow:bite
+blow:claw
+blow:tear
+
+name:white dragon
+breath-code:DRAGON_BREATH_WHITE
+combat:0:5:10
+skill-device:10
+skill-throw:-30
+values:STEALTH[-3] | RES_COLD[100]
+blow:bite
+blow:bite
+blow:claw
+blow:tear
+
+name:red dragon
+breath-code:DRAGON_BREATH_RED
+combat:0:5:10
+skill-device:10
+skill-throw:-30
+values:STEALTH[-3] | RES_FIRE[100]
+blow:bite
+blow:bite
+blow:claw
+blow:tear
+
+name:green dragon
+breath-code:DRAGON_BREATH_GREEN
+combat:0:5:10
+skill-device:10
+skill-throw:-30
+values:STEALTH[-3] | RES_POIS[100]
+blow:bite
+blow:bite
+blow:claw
+blow:tear
+
+name:shining dragon
+breath-code:DRAGON_BREATH_SHINING
+combat:0:5:10
+skill-device:10
+skill-throw:-30
+obj-flags:SEE_INVIS
+values:STEALTH[-3]
+blow:bite
+blow:bite
+blow:claw
+blow:tear
+
+name:law dragon
+breath-code:DRAGON_BREATH_LAW
+combat:0:5:10
+skill-device:10
+skill-throw:-30
+obj-flags:HOLD_LIFE
+values:STEALTH[-3]
+blow:bite
+blow:bite
+blow:claw
+blow:tear
+
+name:chaos dragon
+breath-code:DRAGON_BREATH_CHAOS
+combat:0:5:10
+skill-device:10
+skill-throw:-30
+obj-flags:HOLD_LIFE
+values:STEALTH[-3]
+blow:bite
+blow:bite
+blow:claw
+blow:tear
+
+name:gold dragon
+breath-code:DRAGON_BREATH_GOLD
+combat:0:5:10
+skill-device:10
+skill-throw:-30
+obj-flags:FREE_ACT | PROT_CONF
+values:STEALTH[-3]
+blow:bite
+blow:bite
+blow:claw
+blow:tear
+
+name:multi-hued dragon
+breath-code:DRAGON_BREATH_MULTIHUED
+combat:0:5:10
+skill-device:10
+skill-throw:-30
+values:STEALTH[-3]
+blow:bite
+blow:bite
+blow:claw
+blow:tear
+
+name:balance dragon
+breath-code:DRAGON_BREATH_BALANCE
+combat:0:5:10
+skill-device:10
+skill-throw:-30
+values:STEALTH[-3]
+blow:bite
+blow:bite
+blow:claw
+blow:tear
+
+name:power dragon
+breath-code:DRAGON_BREATH_POWER
+combat:0:5:10
+skill-device:10
+skill-throw:-30
+values:STEALTH[-3]
+blow:bite
+blow:bite
+blow:claw
 blow:tear

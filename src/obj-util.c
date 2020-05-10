@@ -606,6 +606,7 @@ bool obj_can_zap(const struct object *obj)
 bool obj_is_activatable(const struct object *obj)
 {
 	if (!tval_is_wearable(obj)) return false;
+	if (obj->activation) return true;
 	return object_effect(obj) ? true : false;
 }
 

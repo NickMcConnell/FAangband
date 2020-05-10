@@ -1611,7 +1611,11 @@ name:GIL_GALAD
 aim:0
 type:artifact
 power:0
-# not done
+effect:SPHERE:LIGHT:6:2
+dice:75
+effect:PROJECT_LOS:MON_CONF
+dice:$B
+expr:B:PLAYER_LEVEL:* 3 / 2
 time:250
 desc:emits blinding light (75 damage)
 
@@ -1665,7 +1669,8 @@ name:MAEGLIN
 aim:1
 type:artifact
 power:0
-# not done
+effect:BOLT:MANA
+dice:9d8
 time:7+d7
 desc:fires a mana bolt for 9d8 damage
 
@@ -1673,7 +1678,8 @@ name:PAURNIMMEN
 aim:0
 type:artifact
 power:0
-# not done
+effect:TIMED_INC:ATT_COLD:0:5
+dice:30
 time:100+d50
 desc:adds cold damage to your melee attacks for 50 turns
 
@@ -1681,7 +1687,8 @@ name:PAURNEN
 aim:0
 type:artifact
 power:0
-# not done
+effect:TIMED_INC:ATT_ACID:0:5
+dice:30
 time:100+d50
 desc:adds acid damage to your melee attacks for 30 turns
 
@@ -1689,6 +1696,8 @@ name:DAL
 aim:0
 type:artifact
 power:0
+effect:CURE:AFRAID
+effect:CURE:POISONED
 time:5
 desc:removes fear and cures poison
 
@@ -1787,7 +1796,11 @@ name:LOTHARANG
 aim:0
 type:artifact
 power:0
-# not done
+effect:HEAL_HP
+dice:4d12
+effect:TIMED_DEC:CUT:0:2
+effect:TIMED_DEC:CUT
+dice:50
 time:3+d3
 desc:cure wounds for 4d12 damage
 
@@ -1838,12 +1851,13 @@ dice:90
 time:70
 desc:drains life for 90 damage
 
-# Dragon Scale Mail activatinos
+# Dragon Scale Mail activations
 
 name:DRAGON_BLACK
 aim:0
 type:dragon
 power:9
+effect:DRAGON:black dragon
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe acid for
 desc: 45-270 damage
@@ -1852,6 +1866,7 @@ name:DRAGON_BLUE
 aim:0
 type:dragon
 power:20
+effect:DRAGON:blue dragon
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe lightning
 desc: for 40-260 damage
@@ -1860,6 +1875,7 @@ name:DRAGON_WHITE
 aim:0
 type:dragon
 power:20
+effect:DRAGON:white dragon
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe frost for
 desc: 45-270 damage
@@ -1868,6 +1884,7 @@ name:DRAGON_RED
 aim:0
 type:dragon
 power:20
+effect:DRAGON:red dragon
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe fire for
 desc: 50-300 damage
@@ -1876,6 +1893,7 @@ name:DRAGON_GREEN
 aim:0
 type:dragon
 power:20
+effect:DRAGON:green dragon
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe poison gas
 desc: for 45-270 damage
@@ -1884,6 +1902,7 @@ name:DRAGON_MULTIHUED
 aim:0
 type:dragon
 power:20
+effect:DRAGON:multi-hued dragon
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe an element
 desc: or poison for 60-360 damage
@@ -1892,6 +1911,7 @@ name:DRAGON_SHINING
 aim:0
 type:dragon
 power:22
+effect:DRAGON:shining dragon
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe
 desc: light/darkness for 50-300 damage
@@ -1900,22 +1920,16 @@ name:DRAGON_LAW
 aim:0
 type:dragon
 power:22
+effect:DRAGON:law dragon
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe sound or
 desc: shards for 60-360 damage
-
-name:DRAGON_BRONZE
-aim:0
-type:dragon
-power:20
-time:50+d50
-desc:transforms you into a dragon; Activation in dragon form: breathe confusion
-desc: for 40-260 damage
 
 name:DRAGON_GOLD
 aim:0
 type:dragon
 power:20
+effect:DRAGON:gold dragon
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe sound for
 desc: 40-260 damage
@@ -1924,6 +1938,7 @@ name:DRAGON_CHAOS
 aim:0
 type:dragon
 power:22
+effect:DRAGON:chaos dragon
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe chaos or
 desc: disenchantment for 55-330 damage
@@ -1932,6 +1947,7 @@ name:DRAGON_BALANCE
 aim:0
 type:dragon
 power:23
+effect:DRAGON:balance dragon
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe sound,
 desc: shards, chaos, or disenchantment for 60-360 damage
@@ -1940,9 +1956,126 @@ name:DRAGON_POWER
 aim:0
 type:dragon
 power:25
+effect:DRAGON:power dragon
 time:50+d50
 desc:transforms you into a dragon; Activation in dragon form: breathe the
 desc: elements for 75-450 damage
+
+# Dragon Scale Mail breaths (for use by the DRAGON effect)
+
+name:DRAGON_BREATH_BLACK
+aim:1
+type:dragon breath
+effect:BREATH:ACID:0:20
+dice:120
+desc:allows you to breathe acid for 120 damage
+
+name:DRAGON_BREATH_WHITE
+aim:1
+type:dragon breath
+effect:BREATH:COLD:0:20
+dice:100
+desc:allows you to breathe cold for 100 damage
+
+name:DRAGON_BREATH_BLUE
+aim:1
+type:dragon breath
+effect:BREATH:ELEC:0:20
+dice:150
+desc:allows you to breathe lightning for 150 damage
+
+name:DRAGON_BREATH_GREEN
+aim:1
+type:dragon breath
+effect:BREATH:POIS:0:20
+dice:150
+desc:allows you to breathe poison gas for 150 damage
+
+name:DRAGON_BREATH_RED
+aim:1
+type:dragon breath
+effect:BREATH:FIRE:0:20
+dice:200
+desc:allows you to breathe fire for 200 damage
+
+name:DRAGON_BREATH_MULTIHUED
+aim:1
+type:dragon breath
+effect:RANDOM
+dice:5
+effect:BREATH:ACID:0:20
+dice:250
+effect:BREATH:ELEC:0:20
+dice:250
+effect:BREATH:FIRE:0:20
+dice:250
+effect:BREATH:COLD:0:20
+dice:250
+effect:BREATH:POIS:0:20
+dice:250
+desc:allows you to breathe the elements for 250 damage
+
+name:DRAGON_BREATH_GOLD
+aim:1
+type:dragon breath
+effect:BREATH:SOUND:0:20
+dice:150
+desc:allows you to breathe sound for 150 damage
+
+name:DRAGON_BREATH_CHAOS
+aim:1
+type:dragon breath
+effect:RANDOM
+dice:2
+effect:BREATH:CHAOS:0:20
+dice:220
+effect:BREATH:DISEN:0:20
+dice:220
+desc:allows you to breathe chaos or disenchantment for 220 damage
+
+name:DRAGON_BREATH_LAW
+aim:1
+type:dragon breath
+effect:RANDOM
+dice:2
+effect:BREATH:SOUND:0:20
+dice:230
+effect:BREATH:SHARD:0:20
+dice:230
+desc:allows you to breathe sound or shards for 230 damage
+
+name:DRAGON_BREATH_BALANCE
+aim:1
+type:dragon breath
+effect:RANDOM
+dice:4
+effect:BREATH:SOUND:0:20
+dice:250
+effect:BREATH:SHARD:0:20
+dice:250
+effect:BREATH:CHAOS:0:20
+dice:250
+effect:BREATH:DISEN:0:20
+dice:250
+desc:allows you to breathe balance for 250 damage
+
+name:DRAGON_BREATH_SHINING
+aim:1
+type:dragon breath
+effect:RANDOM
+dice:2
+effect:BREATH:LIGHT:0:20
+dice:200
+effect:BREATH:DARK:0:20
+dice:200
+desc:allows you to breathe light or darkness for 200 damage
+
+name:DRAGON_BREATH_POWER
+aim:1
+type:dragon breath
+effect:BREATH:MISSILE:0:20
+dice:300
+desc:allows you to breathe for 300 damage
 
 # Element ring activations
 
@@ -2395,9 +2528,15 @@ desc:grant heroism
 name:RAND_STORM_DANCE
 aim:0
 power:11
-# not done
+msg:Wild music plays, and you dance up a storm...
+effect:SPHERE:SOUND:8:2
+dice:24
+effect:SPHERE:SHARD:8:2
+dice:32
+effect:SPHERE:FORCE:8:2
+dice:5
 time:300
-desc:makes you dance a storm of sound, shards and confusion
+desc:makes you dance a storm of sound, shards and force
 
 name:RAND_RESIST_ELEMENTS
 aim:0
@@ -2500,9 +2639,11 @@ desc:brands missiles
 name:RAND_SUPER_SHOOTING
 aim:0
 power:10
-# not done
+msg:Your arrows and bolts seem sharper
+effect:TIMED_INC:POWERSHOT
+dice:100
 time:200+d200
-desc:gives you an especially deadly shot
+desc:gives you a piercing arrow or bolt
 
 name:RAND_DETECT_MONSTERS
 aim:0

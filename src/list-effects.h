@@ -115,3 +115,4 @@ EFFECT(MELEE_BLOWS,					true,	"blows",	0,		EFINFO_NONE,	"strikes %d blows agains
 EFFECT(SWEEP,						true,	"blows",	1,		EFINFO_NONE,	"strikes %d blows against all adjacent monsters")
 EFFECT(BIZARRE,						true,	NULL,		0,		EFINFO_NONE,	"does bizarre things")
 EFFECT(WONDER,						true,	NULL,		0,		EFINFO_NONE,	"creates random and unpredictable effects")
+EFFECT(DRAGON,						false,	NULL,		0,		EFINFO_NONE,	"changes the player's shape to a type of dragon; if changed, breathes")

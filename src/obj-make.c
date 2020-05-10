@@ -852,6 +852,7 @@ void object_prep(struct object *obj, struct object_kind *k, int lev,
 	obj->ds = k->ds;
 	obj->weight = k->weight;
 	obj->effect = k->effect;
+	obj->activation = k->activation;
 	obj->time = k->time;
 
 	/* Default number */

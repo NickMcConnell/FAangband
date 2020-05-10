@@ -4396,9 +4396,7 @@ armor:16:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_ACID[40]
 power:750
-effect:BREATH:ACID:0:20
-dice:120
-time:50
+act:DRAGON_BLACK
 desc:A suit of utterly black scales, against which no metal or wood can rest.
 
 name:Blue Dragon Scale Mail~
@@ -4413,9 +4411,7 @@ armor:12:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_ELEC[40]
 power:750
-effect:BREATH:ELEC:0:20
-dice:150
-time:50
+act:DRAGON_BLUE
 desc:A suit of scales as blue as sapphires, emitting eerie sparks and coronas
 desc: as you move about in it.
 
@@ -4431,9 +4427,7 @@ armor:14:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_COLD[40]
 power:750
-effect:BREATH:COLD:0:20
-dice:100
-time:50
+act:DRAGON_WHITE
 desc:A suit of scales, coldly gleaming in frosty white.  A shiver runs down
 desc: through your spine even as you look at it.
 
@@ -4449,9 +4443,7 @@ armor:24:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_FIRE[40]
 power:750
-effect:BREATH:FIRE:0:20
-dice:200
-time:50
+act:DRAGON_RED
 desc:A suit of scales, with all the reds of every fire ever lit.  The scar
 desc: tissue from an old burn aches as you put this armour on.
 
@@ -4467,9 +4459,7 @@ armor:20:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_POIS[40]
 power:1000
-effect:BREATH:POIS:0:20
-dice:150
-time:50
+act:DRAGON_GREEN
 desc:A suit of scales, glistening in sickly green, out from which falls the
 desc: skeleton of a rat who touched it and died in agony.
 
@@ -4485,19 +4475,7 @@ armor:45:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40] | RES_POIS[40]
 power:1500
-effect:RANDOM
-dice:5
-effect:BREATH:ACID:0:20
-dice:250
-effect:BREATH:ELEC:0:20
-dice:250
-effect:BREATH:FIRE:0:20
-dice:250
-effect:BREATH:COLD:0:20
-dice:250
-effect:BREATH:POIS:0:20
-dice:250
-time:50
+act:DRAGON_MULTIHUED
 desc:A suit of scales that throbs with angry energies; it takes all your energy
 desc: to master the Elements fighting an endless war trapped inside.
 
@@ -4513,13 +4491,7 @@ armor:32:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_LIGHT[40] | RES_DARK[40]
 power:1000
-effect:RANDOM
-dice:2
-effect:BREATH:LIGHT:0:20
-dice:200
-effect:BREATH:DARK:0:20
-dice:200
-time:50
+act:DRAGON_SHINING
 desc:A suit of scales shining like a beacon of Light even as it greedily sucks
 desc: the energy away from everything that glows into Dark insatiate.
 
@@ -4535,13 +4507,7 @@ armor:36:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_SOUND[40] | RES_SHARD[40]
 power:1250
-effect:RANDOM
-dice:2
-effect:BREATH:SOUND:0:20
-dice:230
-effect:BREATH:SHARD:0:20
-dice:230
-time:50
+act:DRAGON_LAW
 desc:A suit of scales in stern blue and silver.  You feel the slightest tremor
 desc: as you touch it, like massed trumpets heard and cyclones felt from afar.
 
@@ -4557,9 +4523,7 @@ armor:28:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_SOUND[40]
 power:750
-effect:BREATH:SOUND:0:20
-dice:150
-time:50
+act:DRAGON_GOLD
 desc:A suit of scales in mirror-like gold.  You hear nothing unusual as you
 desc: wear this armour, yet your ears ache as though in the midst of a
 desc: cacophony.
@@ -4576,13 +4540,7 @@ armor:40:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_CHAOS[40] | RES_DISEN[40]
 power:1250
-effect:RANDOM
-dice:2
-effect:BREATH:CHAOS:0:20
-dice:220
-effect:BREATH:DISEN:0:20
-dice:220
-time:50
+act:DRAGON_CHAOS
 desc:A suit of scales that ripples and twists through every color and shape
 desc:imaginable as you stare in fascination.
 
@@ -4598,17 +4556,7 @@ armor:50:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 values:RES_SOUND[40] | RES_SHARD[40] | RES_CHAOS[40] | RES_DISEN[40]
 power:1750
-effect:RANDOM
-dice:4
-effect:BREATH:SOUND:0:20
-dice:250
-effect:BREATH:SHARD:0:20
-dice:250
-effect:BREATH:CHAOS:0:20
-dice:250
-effect:BREATH:DISEN:0:20
-dice:250
-time:50
+act:DRAGON_BALANCE
 desc:A suit of scales.  Featureless grey to casual inspection, yet a closer
 desc: look reveals patterns within patterns of iridescence that throb with
 desc: leashed energies bound as though by chains of adamant.
@@ -4628,9 +4576,7 @@ values:RES_ACID[40] | RES_FIRE[40] | RES_COLD[40] | RES_ELEC[40] | RES_POIS[40]
 values:RES_DISEN[40] | RES_SOUND[40] | RES_SHARD[40]
 values:RES_LIGHT[40] | RES_DARK[40] | RES_CHAOS[40]
 power:2250
-effect:BREATH:MISSILE:0:20
-dice:300
-time:50
+act:DRAGON_POWER
 desc:A suit with scales of every color, surrounded in a nimbus of perfectly
 desc: untramelled yet inextricably intermingled and utterly mastered powers
 desc: elemental and ethereal.
