@@ -2506,7 +2506,7 @@ effect:CURE:AFRAID
 effect:TIMED_INC:HERO
 dice:25+1d25
 time:200
-desc:grant heroism
+desc:grants heroism
 
 name:RAND_STORM_DANCE
 aim:0
@@ -2738,10 +2738,10 @@ desc:banishes evil
 name:RAND_DISARM
 aim:1
 power:4
-msg:You feel skilled hands guiding your disarming.
+msg:You feel skilled hands guiding your actions.
 effect:ALTER:KILL_TRAP
 time:7+d7
-desc:disarms traps
+desc:disables traps
 
 name:RAND_CONFU_FOES
 aim:0

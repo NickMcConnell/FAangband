@@ -76,10 +76,10 @@ static int max_potential = 0;
 static bool take_money(int cost, bool on_credit)
 {
 	/* Take the money. */
-	if (potential > cost - 1) {
+	if (potential > cost) {
 		potential -= cost;
 		return true;
-	} else if (on_credit) {
+	} else if (on_credit && (potential != 0)) {
 		/* <<mutter>> OK, I'll charge it to your account... */
 		potential = 0;
 		return true;
@@ -240,7 +240,7 @@ static bool get_property(struct artifact *art, struct object *obj,
 		case OBJ_PROPERTY_ELEMENT:
 		{
 			struct element_info *el_info = art ? art->el_info : obj->el_info;
-			int cur_value = el_info[prop->index].res_level;
+			int cur_value = RES_LEVEL_BASE - el_info[prop->index].res_level;
 			int cur_cost = art ? 0 : property_cost(prop, cur_value, false);
 			if (take_money(cost - cur_cost, on_credit)) {
 				el_info[prop->index].res_level -= value;
@@ -3254,7 +3254,7 @@ static void haggle_till_done(struct artifact *art, struct object *obj)
 	/* On sale free! Last chance! */
 
 	/* If an artifact affects a stat, it may also possibly sustain it. */
-	choice = randint1(6);
+	choice = randint0(STAT_MAX);
 	for (i = 0; i < STAT_MAX; i++) {
 		const char *stat = lookup_obj_property(OBJ_PROPERTY_STAT, i)->name;
 		const char *sust = lookup_obj_property(OBJ_PROPERTY_FLAG, i + 1)->name;
@@ -3267,11 +3267,11 @@ static void haggle_till_done(struct artifact *art, struct object *obj)
 	 * and weapons with 25% probability. */
 	if ((weapon && one_in_(4)) || one_in_(2)) {
 		s16b *res;
-		choice = randint0(5);
+		choice = randint0(6);
 		res = art ? &(art->el_info[choice].res_level) :
 			&(obj->el_info[choice].res_level);
 		if (choice < 4) {
-			*res = (*res) / 2;
+			*res = ((*res) * 2) / 3;
 		} else if (choice == 4) {
 			get_property(art, obj, "slow digestion", 0, true);
 		} else if (choice == 5) {
@@ -4552,7 +4552,7 @@ static bool choose_type(struct object *obj)
 			int max_value = 14;
 
 			/* This is an exclusive club */
-			if (potential < 3000) {
+			if (potential > 3000) {
 				/* SPEED! */
 				(void) select_property(potential, speed, 1, &max_value,
 									   RANK_FIND_MAX_VALUE, obj);

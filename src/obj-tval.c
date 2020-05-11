@@ -210,6 +210,11 @@ bool tval_is_jewelry(const struct object *obj)
 	return obj->tval == TV_RING || obj->tval == TV_AMULET;
 }
 
+bool tval_is_jewelry_k(const struct object_kind *kind)
+{
+	return kind->tval == TV_RING || kind->tval == TV_AMULET;
+}
+
 bool tval_is_weapon(const struct object *obj)
 {
 	switch (obj->tval) {
@@ -379,8 +384,6 @@ bool tval_is_edible(const struct object *obj)
 bool tval_can_have_flavor_k(const struct object_kind *kind)
 {
 	switch (kind->tval) {
-		case TV_AMULET:
-		case TV_RING:
 		case TV_STAFF:
 		case TV_WAND:
 		case TV_ROD:

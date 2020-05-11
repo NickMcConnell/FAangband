@@ -68,7 +68,7 @@ static const char *obj_desc_get_modstr(const struct object_kind *kind)
 	if (tval_can_have_flavor_k(kind))
 		return kind->flavor ? kind->flavor->text : "";
 
-	if (tval_is_book_k(kind))
+	if (tval_is_book_k(kind) || tval_is_jewelry_k(kind))
 		return kind->name;
 
 	return "";
@@ -82,7 +82,7 @@ static const char *obj_desc_get_modstr(const struct object_kind *kind)
 static const char *obj_desc_get_basename(const struct object *obj, bool aware,
 										 bool terse, int mode)
 {
-	bool show_flavor = !terse && obj->kind->flavor;
+	bool show_flavor = !terse && (obj->kind->flavor || tval_is_jewelry(obj));
 
 	if (mode & ODESC_STORE)
 		show_flavor = false;
