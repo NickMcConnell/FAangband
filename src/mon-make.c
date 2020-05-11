@@ -168,6 +168,116 @@ void get_mon_num_prep(bool (*get_mon_num_hook)(struct monster_race *race))
 }
 
 /**
+ * Helper function for get_mon_num(). Excludes monsters from selection
+ * based on time, uniqueness, depth, locality, or topography
+ */
+static bool get_mon_forbidden(struct monster_race *race)
+{
+	time_t cur_time = time(NULL);
+	struct tm *date = localtime(&cur_time);
+	struct level *lev = &world->levels[player->place];
+
+	/* No seasonal monsters outside of Christmas */
+	if (rf_has(race->flags, RF_SEASONAL) &&
+		!(date->tm_mon == 11 && date->tm_mday >= 24 && date->tm_mday <= 26))
+		return true;
+
+	/* Only one copy of a a unique must be around at the same time */
+	if (rf_has(race->flags, RF_UNIQUE) && race->cur_num >= race->max_num)
+		return true;
+
+	/* Some monsters never appear out of depth */
+	if (rf_has(race->flags, RF_FORCE_DEPTH) && race->level > player->depth)
+		return true;
+
+	/* Some monsters only appear in a given dungeon... */
+	if (rf_has(race->flags, RF_ANGBAND) && (lev->locality != LOC_ANGBAND))
+		return true;
+
+	/* ...if it exists on the current map */
+	if (!streq(world->name, "Angband Dungeon")) {
+		if (rf_has(race->flags, RF_AMON_RUDH) &&
+			(lev->locality != LOC_AMON_RUDH)) {
+			return true;
+		} else if (rf_has(race->flags, RF_NARGOTHROND) &&
+				   (lev->locality != LOC_NARGOTHROND)) {
+			return true;
+		} else if (rf_has(race->flags, RF_DUNGORTHEB) &&
+				   (lev->locality != LOC_NAN_DUNGORTHEB)) {
+			return true;
+		} else if (rf_has(race->flags, RF_GAURHOTH) &&
+				   (lev->locality != LOC_TOL_IN_GAURHOTH)) {
+			return true;
+		}
+	}
+
+	/* Dungeon-only monsters */
+	if (rf_has(race->flags, RF_DUNGEON)	&& (lev->topography != TOP_CAVE)) {
+		return true;
+	}
+
+	/* Flying monsters for mountaintop */
+	if (!rf_has(race->flags, RF_FLYING) &&
+		(lev->topography == TOP_MOUNTAINTOP)) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Helper function for get_mon_num().  Adjust the probabilities of monsters
+ * based on the locality and topography into which they are vying to spawn
+ *
+ * Ideally topography and locality and their effects on monsters would be
+ * read from datafiles
+ */
+static int get_mon_adjust(int prob, struct monster_race *race)
+{
+	struct level *lev = &world->levels[player->place];
+
+	/* Locality adjustments */
+	if (lev->locality == LOC_NAN_DUNGORTHEB) {
+		/* Nan Dungortheb is spiderland, bad for humans and humanoids */
+		if (streq(race->base->name, "spider")) {
+			prob *= 5;
+		} else if (streq(race->base->name, "person") ||
+				   streq(race->base->name, "humanoid")) {
+			prob /= 3;
+		}
+	} else if (lev->locality == LOC_TOL_IN_GAURHOTH) {
+		/* Tol-In-Gaurhoth is full of wolves and undead */
+		if (streq(race->base->name, "wolf")) {
+			prob *= 4;
+		} else if (rf_has(race->flags, RF_UNDEAD)) {
+			prob *= 2;
+		}
+	}
+
+	/* Topography adjustments */
+	if ((lev->topography == TOP_DESERT)	|| (lev->topography == TOP_MOUNTAIN)) {
+		/* Some animals love desert and mountains, most don't */
+		if (streq(race->base->name, "reptile") ||
+			streq(race->base->name, "snake") ||
+			streq(race->base->name, "centipede")) {
+			prob *= 2;
+		} else if (rf_has(race->flags, RF_ANIMAL)) {
+			prob /= 2;
+		}
+	} else if (lev->topography == TOP_FOREST) {
+		/* Most animals do like forest */
+		if (streq(race->base->name, "reptile")) {
+			prob /= 2;
+		} else if (rf_has(race->flags, RF_ANIMAL) &&
+				   !streq(race->base->name, "zephyr hound")) {
+			prob *= 2;
+		}
+	}
+
+	return prob;
+}
+
+/**
  * Helper function for get_mon_num(). Scans the prepared monster allocation
  * table and picks a random monster. Returns the index of a monster in
  * `table`.
@@ -220,8 +330,6 @@ struct monster_race *get_mon_num(int level)
 	long total;
 	struct monster_race *race;
 	alloc_entry *table = alloc_race_table;
-	time_t cur_time = time(NULL);
-	struct tm *date = localtime(&cur_time);
 
 	/* Occasionally produce a nastier monster in the dungeon */
 	if (level > 0 && one_in_(z_info->ood_monster_chance))
@@ -243,21 +351,14 @@ struct monster_race *get_mon_num(int level)
 		/* Get the chosen monster */
 		race = &r_info[table[i].index];
 
-		/* No seasonal monsters outside of Christmas */
-		if (rf_has(race->flags, RF_SEASONAL) &&
-			!(date->tm_mon == 11 && date->tm_mday >= 24 && date->tm_mday <= 26))
-			continue;
-
-		/* Only one copy of a a unique must be around at the same time */
-		if (rf_has(race->flags, RF_UNIQUE) && race->cur_num >= race->max_num)
-			continue;
-
-		/* Some monsters never appear out of depth */
-		if (rf_has(race->flags, RF_FORCE_DEPTH) && race->level > player->depth)
-			continue;
+		/* Some monsters will not be allowed on the current level */
+		if (get_mon_forbidden(race)) continue;
 
 		/* Accept */
 		table[i].prob3 = table[i].prob2;
+
+		/* Adjust for locality and topography */
+		table[i].prob3 = get_mon_adjust(table[i].prob3, race);
 
 		/* Total */
 		total += table[i].prob3;
