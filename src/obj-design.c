@@ -1048,6 +1048,11 @@ static void choose_melee_weapon_theme(struct artifact *art)
 			}
 		}
 
+		/* Occasionally an extra blow */
+		if (one_in_(10)) {
+			get_property(art, NULL, "attack speed", 1, false);
+		}
+
 		/* Sometimes warn the enemy - but with compensation */
 		if (one_in_(10)) {
 			append_artifact_curse(art, lookup_curse("siren"),
@@ -1471,6 +1476,11 @@ static void choose_melee_weapon_theme(struct artifact *art)
 	if (((art->dd * art->ds) < 9) && (initial_potential >= 3500)) {
 		get_property(art, NULL, "enhanced dice", 3, true);
 	}
+
+	/* Any melee weapon has a chance at an extra blow */
+	if (one_in_(12)) {
+		get_property(art, NULL, "attack speed", 1, false);
+	}
 }
 
 /**
@@ -1653,6 +1663,12 @@ static void choose_armor_theme(struct artifact *art)
 							true);
 		get_property(art, NULL, "extra armor", randint1(3) + potential / 1600,
 					 true);
+
+		/* Probably damage reduction */
+		if (!one_in_(3)) {
+			get_property(art, NULL, "damage reduction", 5 + randint1(10), true);
+		}
+
 		/* Collect a suite of basic resists. */
 		if (randint1(5) < 3) {
 			get_property(art, NULL, "acid resistance", 35 + 5 * randint0(5),
@@ -2086,8 +2102,9 @@ static void choose_boots_theme(struct artifact *art)
 		/* ...but not for free. */
 		potential = 2 * potential / 3;
 
-		/* Resist nexus. */
+		/* Resist nexus and immunity to traps */
 		get_property(art, NULL, "nexus resistance", 35 + 5 * randint0(5), true);
+		get_property(art, NULL, "trap immunity", 0, true);
 
 		/* Possibly bonus to dexerity. */
 		if (potential >= 1000)
@@ -2113,54 +2130,61 @@ static void choose_boots_theme(struct artifact *art)
 			} else {
 				art->activation = lookup_activation("RAND_HEAL1");
 			}
-
-			/* Grant regenerative powers. */
-			get_property(art, NULL, "regeneration", 0, true);
-
-			/* Bonus to constitution. */
-			get_property(art, NULL, "constitution", randint1(4), false);
 		}
 
-		/* ...that dance up a storm. */
-		else if (selection < 70) {
+		/* Grant regenerative powers. */
+		get_property(art, NULL, "regeneration", 0, true);
 
-			/* Possibly assign an activation for free. */
-			if (!one_in_(3) && (potential >= 2500)) {
-				art->activation = lookup_activation("RAND_STORM_DANCE");
-			}
-
-			/* Grant feather fall. */
-			get_property(art, NULL, "feather falling", 0, true);
-
-			/* Bonus to dexterity. */
-			get_property(art, NULL, "dexterity", randint1(4), false);
+		/* Movement speed */
+		if (one_in_(4)) {
+			get_property(art, NULL, "movement speed", 2, true);
+		} else {
+			get_property(art, NULL, "movement speed", 1, true);
 		}
 
-		/* ...worn by a famous ranger of old. */
-		else if (selection < 80) {
+		/* Bonus to constitution. */
+		get_property(art, NULL, "constitution", randint1(4), false);
+	}
 
-			/* Possibly assign an activation for free. */
-			if (!one_in_(3)) {
-				art->activation = lookup_activation("RAND_DETECT_MONSTERS");
-			}
+	/* ...that dance up a storm. */
+	else if (selection < 70) {
 
-			/* Grant regeneration and slow digest. */
-			get_property(art, NULL, "regeneration", 0, true);
-			get_property(art, NULL, "slow digestion", 0, true);
-
-			/* Possibly telepathy. */
-			if (one_in_(6)) {
-				get_property(art, NULL, "telepathy", 0, false);
-			}
-
-			/* Bonus to stealth. */
-			get_property(art, NULL, "stealth", randint1(4), false);
+		/* Possibly assign an activation for free. */
+		if (!one_in_(3) && (potential >= 2500)) {
+			art->activation = lookup_activation("RAND_STORM_DANCE");
 		}
 
-		/* Possibly assign a speed activation for free. */
-		if (one_in_(4) && (!art->activation) && (potential >= 2000)) {
-			art->activation = lookup_activation("RAND_SPEED");
+		/* Grant feather fall. */
+		get_property(art, NULL, "feather falling", 0, true);
+
+		/* Bonus to dexterity. */
+		get_property(art, NULL, "dexterity", randint1(4), false);
+	}
+
+	/* ...worn by a famous ranger of old. */
+	else if (selection < 80) {
+
+		/* Possibly assign an activation for free. */
+		if (!one_in_(3)) {
+			art->activation = lookup_activation("RAND_DETECT_MONSTERS");
 		}
+
+		/* Grant regeneration and slow digest. */
+		get_property(art, NULL, "regeneration", 0, true);
+		get_property(art, NULL, "slow digestion", 0, true);
+
+		/* Possibly telepathy. */
+		if (one_in_(6)) {
+			get_property(art, NULL, "telepathy", 0, false);
+		}
+
+		/* Bonus to stealth. */
+		get_property(art, NULL, "stealth", randint1(4), false);
+	}
+
+	/* Possibly assign a speed activation for free. */
+	if (one_in_(4) && (!art->activation) && (potential >= 2000)) {
+		art->activation = lookup_activation("RAND_SPEED");
 	}
 }
 
@@ -2214,6 +2238,11 @@ static void choose_cloak_theme(struct artifact *art)
 					 true);
 		get_property(art, NULL, "extra armor", randint1(3) + potential / 1600,
 					 true);
+
+		/* Perhaps demage reduction */
+		if (one_in_(3)) {
+			get_property(art, NULL, "damage reduction", 3 + randint1(5), true);
+		}
 	}
 
 	/* ...that unmasks the locations of foes. */
@@ -2330,9 +2359,12 @@ static void choose_hat_theme(struct artifact *art)
 			}
 		}
 
-		/* Grant resistance to blindness and see invisible. */
+		/* Grant resistance to blindness, see invisible and maybe dark vision */
 		get_property(art, NULL, "protection from blindness", 0, false);
 		get_property(art, NULL, "see invisible", 0, false);
+		if (one_in_(2)) {
+			get_property(art, NULL, "darkness", 0, false);
+		}
 
 		/* Bonus to searching. */
 		get_property(art, NULL, "searching skill", randint1(4), false);
@@ -2544,6 +2576,9 @@ static void choose_gloves_theme(struct artifact *art)
 
 		/* Mark the gloves for a later bonus to magic item mastery. */
 		get_property(art, NULL, "magic mastery", randint1(4), false);
+
+		/* Trap immunity */
+		get_property(art, NULL, "trap immunity", 0, false);
 	}
 
 	/* ...with a deadly mastery of archery. */
@@ -4189,6 +4224,8 @@ static bool choose_type(struct object *obj)
 				if (randint1(500) < potential) {
 					get_property(NULL, obj, "searching skill",
 								 2 + randint0(bonus), true);
+				} else if (randint1(1500) < potential) {
+					get_property(NULL, obj, "trap immunity", 0, true);
 				}
 				if (randint1(1000) < potential) {
 					get_property(NULL, obj, "nexus resistance",
@@ -4196,6 +4233,8 @@ static bool choose_type(struct object *obj)
 				}
 				if (randint1(1500) < potential) {
 					get_property(NULL, obj, "speed", randint1(bonus), true);
+				} else if (randint1(1000) < potential) {
+					get_property(NULL, obj, "movement speed", 1, true);
 				}
 				done = true;
 			}
@@ -4376,10 +4415,10 @@ static bool choose_type(struct object *obj)
 			/* min potential 700 */
 			int property;
 			int max_value = 0;
-			char *mobility[5] =	{ "see invisible", "protection from fear",
+			char *mobility[6] =	{ "see invisible", "protection from fear",
 								  "protection from blindness",
 								  "protection from confusion",
-								  "nexus resistance" };
+								  "nexus resistance", "trap immunity" };
 
 			/* This is an exclusive club */
 			if (potential > 500) {
