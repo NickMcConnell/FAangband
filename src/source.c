@@ -62,3 +62,11 @@ struct source source_chest_trap(struct chest_trap *chest_trap)
 	src.which.chest_trap = chest_trap;
 	return src;
 }
+
+struct source source_grid(struct loc grid)
+{
+	struct source src;
+	src.what = SRC_GRID;
+	src.which.grid = grid;
+	return src;
+}

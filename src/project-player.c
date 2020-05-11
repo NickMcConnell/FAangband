@@ -864,10 +864,12 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 			break;
 		}
 
+		case SRC_GRID:
 		case SRC_NONE: {
 			/* Assume the caller has set the killer variable */
 			break;
 		}
+		default: break;
 	}
 
 	/* Let player know what is going on */

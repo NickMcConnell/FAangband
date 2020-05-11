@@ -1565,23 +1565,6 @@ effect:RESTORE_EXP
 time:500
 desc:heals 500HP and restores your life levels
 
-name:RAZORBACK
-aim:0
-type:artifact
-power:0
-# not done
-time:200
-desc:transforms you into a dragon; Activation in Dragonform: star ball (150)
-
-name:BLADETURNER
-aim:0
-type:artifact
-power:0
-# not done
-time:400
-desc:transforms you into a dragon; Activation in Dragonform: heroism, bless,
-desc: and resistance
-
 name:SOULKEEPER
 aim:0
 type:artifact
@@ -2821,7 +2804,9 @@ name:CHAIN_LIGHTNING
 aim:0
 type:power
 power:19
-# not done
+msg:The lightning of Manwe leaps from your hands!
+effect:CHAIN:ELEC
+dice:100+d100
 time:2000
 desc:produces chain lightning between monsters
 
@@ -2829,7 +2814,8 @@ name:LAVA_POOL
 aim:0
 type:power
 power:22
-# not done
+msg:Lava wells around you!
+effect:LAVA_POOL:NONE:7
 time:2000
 desc:creates a lava pool
 
@@ -2851,7 +2837,7 @@ name:GROW_FOREST
 aim:0
 type:power
 power:22
-# not done
+effect:GROW_FOREST
 time:2000
 desc:grows a forest
 
@@ -2890,7 +2876,9 @@ name:ZONE_OF_CHAOS
 aim:0
 type:power
 power:23
-# not done
+msg:The forces of chaos surround you!
+effect:ZONE:CHAOS:10:80
+dice:50
 time:3000
 desc:creates a zone of chaos
 
@@ -2909,7 +2897,7 @@ aim:0
 type:power
 power:25
 msg:Your foes slow, and you seem to have an eternity to act...
-# not done
+effect:ENERGY_DRAIN:NONE:5
 time:3000
 desc:drains energy from your foes
 
@@ -2928,7 +2916,7 @@ aim:0
 type:power
 power:22
 msg:The light of the Valar shines from above!
-# not done
+effect:ZONE:LIGHT:10:100
 time:1500
 desc:calls forth light from above
 
@@ -2953,13 +2941,14 @@ dice:100
 time:2000
 desc:creates a gravity wave
 
-name:ENLIST_EARTH
-aim:1
-type:power
-power:20
-# not done
-time:3000
-desc:summons allies from the Earth
+# name:ENLIST_EARTH
+# aim:1
+# type:power
+# power:20
+# msg:You call on the Earth to bring forth allies!
+# effect not done
+# time:3000
+# desc:summons allies from the Earth
 
 name:TELEPORT_ALL
 aim:0

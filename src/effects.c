@@ -714,6 +714,7 @@ bool effect_handler_DAMAGE(effect_handler_context_t *context)
 			my_strcpy(killer, "a bug", sizeof(killer));
 			break;
 		}
+		default: break;
 	}
 
 	/* Hit the player */
@@ -3776,6 +3777,117 @@ bool effect_handler_EARTHQUAKE(effect_handler_context_t *context)
 	return true;
 }
 
+/**
+ * Turn everything in the given radius to lava.
+ *
+ * To do: allow other grids (eg water)
+ */
+bool effect_handler_LAVA_POOL(effect_handler_context_t *context)
+{
+	int r = context->radius;
+	struct loc grid, pgrid = player->grid;
+
+	/* Everything in range */
+	for (grid.y = pgrid.y - r; grid.y <= pgrid.y + r; grid.y++) {
+		for (grid.x = pgrid.x - r; grid.x <= pgrid.x + r; grid.x++) {
+			int dist = distance(pgrid, grid);
+
+			/* Skip distant grids */
+			if (dist > r) continue;
+
+			/* Skip grids that are out of bounds */
+			if (!square_in_bounds_fully(cave, grid)) continue;
+
+			/* Skip grids that are permanent */
+			if (square_ispermanent(cave, grid)) continue;
+
+			/* Skip grids in vaults */
+			if (square_isvault(cave, grid)) continue;
+
+			/* Lava now */
+			square_set_feat(cave, grid, FEAT_LAVA);
+		}
+	}
+	return true;
+}
+
+/**
+ * Grow trees wherever you can see.
+ *
+ * To do: unite with LAVA_POOL
+ */
+bool effect_handler_ENERGY_DRAIN(effect_handler_context_t *context)
+{
+	struct loc grid, pgrid = player->grid;
+	int r = context->radius;
+
+	/* Check everything in range */
+	for (grid.y = pgrid.y - r; grid.y <= pgrid.y + r; grid.y++) {
+		for (grid.x = pgrid.x - r; grid.x <= pgrid.x + r; grid.x++) {
+			int dist = distance(pgrid, grid);
+			struct monster *mon = NULL;
+
+			/* Skip distant grids */
+			if (dist > r) continue;
+
+			/* Skip grids that are out of bounds */
+			if (!square_in_bounds_fully(cave, grid)) continue;
+
+			/* Skip grids the player can't see */
+			if (!square_isview(cave, grid)) continue;
+
+			/* Get the monster, skip if none */
+			mon = square_monster(cave, grid);
+			if (!mon) continue;
+
+			/* Take the energy */
+			player->energy += mon->energy;
+			mon->energy = 0;
+		}
+	}
+
+	return true;
+}
+
+/**
+ * Grow trees wherever you can see.
+ *
+ * To do: unite with LAVA_POOL
+ */
+bool effect_handler_GROW_FOREST(effect_handler_context_t *context)
+{
+	struct loc grid, pgrid = player->grid;
+	int r = z_info->max_sight;
+
+	/* Check everything in line of sight */
+	for (grid.y = pgrid.y - r; grid.y <= pgrid.y + r; grid.y++) {
+		for (grid.x = pgrid.x - r; grid.x <= pgrid.x + r; grid.x++) {
+			int dist = distance(pgrid, grid);
+
+			/* Skip distant grids */
+			if (dist > r) continue;
+
+			/* Skip grids that are out of bounds */
+			if (!square_in_bounds_fully(cave, grid)) continue;
+
+			/* Skip grids the player can't see */
+			if (!square_isview(cave, grid)) continue;
+
+			/* Skip grids that aren't floor or road */
+			if (!square_isfloor(cave, grid)) continue;
+
+			/* Grow a tree */
+			if (player->depth < 40) {
+				square_set_feat(cave, grid, FEAT_TREE);
+			} else {
+				square_set_feat(cave, grid, FEAT_TREE2);
+			}
+		}
+	}
+
+	return true;
+}
+
 bool effect_handler_LIGHT_LEVEL(effect_handler_context_t *context)
 {
 	bool full = context->value.base ? true : false;
@@ -3923,6 +4035,37 @@ bool effect_handler_SPHERE(effect_handler_context_t *context)
 				diameter_of_source, NULL))
 		context->ident = true;
 
+	return true;
+}
+
+/**
+ * Hit context->other% of grids in the given radius of the player 
+ * Affect grids, objects, and monsters
+ */
+bool effect_handler_ZONE(effect_handler_context_t *context)
+{
+	struct loc grid, pgrid = player->grid;
+	int dam = effect_calculate_value(context, false);
+	int rad = context->radius;
+	int type = context->subtype;
+	int chance = context->other;
+	int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL |
+		PROJECT_JUMP;
+
+	/* Everything in range */
+	for (grid.y = pgrid.y - rad; grid.y <= pgrid.y + rad; grid.y++) {
+		for (grid.x = pgrid.x - rad; grid.x <= pgrid.x + rad; grid.x++) {
+			int dist = distance(pgrid, grid);
+
+			/* Skip distant grids */
+			if (dist > rad) continue;
+
+			/* Percentage chance of hitting */
+			if (randint0(100) < chance) continue;
+
+			project(source_player(), 1, grid, dam, type, flg, 0, 0, NULL);
+		}
+	}
 	return true;
 }
 
@@ -4407,6 +4550,78 @@ bool effect_handler_STAR_BALL(effect_handler_context_t *context)
 					context->subtype, flg, 0, 0, context->obj))
 			context->ident = true;
 	}
+	return true;
+}
+
+/**
+ * Cast a chain of bolts which leap from monster to monster
+ * Affect monsters
+ */
+bool effect_handler_CHAIN(effect_handler_context_t *context)
+{
+	int dam = effect_calculate_value(context, false);
+	int k, strikes = 2 + randint1(10);
+	struct loc grid, target, cur = player->grid;
+	int pick, avail_mon_num;
+	int flag = PROJECT_STOP | PROJECT_KILL;
+	struct monster *avail_mon[100];
+	struct source src = source_player();
+
+	/* Initialise */
+	for (k = 0; k < 100; k++) {
+		avail_mon[k] = NULL;
+	}
+	target = cur;
+
+	/* Start striking */
+	for (k = 0; k < strikes; k++) {
+		/* No targets yet */
+		avail_mon_num = 0;
+
+		/* Find something in range */
+		for (grid.y = cur.y - 5; grid.y <= cur.y + 5; grid.y++) {
+			for (grid.x = cur.x - 5; grid.x <= cur.x + 5; grid.x++) {
+				int dist = distance(cur, grid);
+
+				/* Skip distant grids */
+				if (dist > 5) continue;
+
+				/* Skip grids that are out of bounds */
+				if (!square_in_bounds_fully(cave, grid)) continue;
+
+				/* Skip grids that are not projectable */
+				if (!projectable(cave, cur, grid, flag)) continue;
+
+				/* Skip grids with no monster (including player) */
+				if (!square_monster(cave, grid)) continue;
+
+				/* Record the monster */
+				avail_mon[avail_mon_num++] = square_monster(cave, grid);
+			}
+		}
+
+		/* Maybe we're at a dead end */
+		if (!avail_mon_num)	return true;
+
+		/* Pick a target... */
+		pick = randint0(avail_mon_num);
+		target = avail_mon[pick]->grid;
+
+		/* Paranoia */
+		if (!square_monster(cave, target)) return true;
+
+		/* ...and hit it */
+		project(src, 1, target, dam, context->subtype, flag, 0, 0, NULL);
+
+		/* Set next source (current monster may be dead) */
+		cur = target;
+		if (square_monster(cave, cur) == avail_mon[pick]) {
+			src = source_monster(avail_mon[pick]->midx);
+		} else {
+			src = source_grid(cur);
+		}
+	}
+
 	return true;
 }
 
@@ -5692,6 +5907,7 @@ int effect_subtype(int index, const char *type)
 			case EF_DESTRUCTION:
 			case EF_SPOT:
 			case EF_SPHERE:
+			case EF_ZONE:
 			case EF_BALL:
 			case EF_BREATH:
 			case EF_ARC:
@@ -5701,6 +5917,7 @@ int effect_subtype(int index, const char *type)
 			case EF_STRIKE:
 			case EF_STAR:
 			case EF_STAR_BALL:
+			case EF_CHAIN:
 			case EF_BOLT:
 			case EF_BEAM:
 			case EF_BOLT_OR_BEAM:
