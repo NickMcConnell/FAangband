@@ -539,9 +539,7 @@ static bool get_move_find_safety(struct chunk *c, struct monster *mon)
 				continue;
 
 			/* Ignore damaging terrain if they can't handle it */
-			if (square_isdamaging(c, grid) &&
-				!rf_has(mon->race->flags, square_feat(c, grid)->resist_flag))
-				continue;
+			if (monster_hates_grid(c, mon, grid)) continue;
 
 			/* Check for absence of shot (more or less) */
 			if (!square_isview(c, grid)) {
@@ -826,10 +824,7 @@ static bool get_move(struct chunk *c, struct monster *mon, int *dir, bool *good)
 		struct monster *tracker = group_monster_tracking(c, mon);
 		if (tracker && los(c, mon->grid, tracker->grid)) { /* Need los? */
 			grid = loc_diff(tracker->grid, mon->grid);
-		} //else {
-			/* Head blindly straight for the "player" if no better idea */
-			//grid = loc_diff(target, mon->grid);
-		//}
+		}
 
 		/* No longer tracking */
 		mflag_off(mon->mflag, MFLAG_TRACKING);
@@ -1047,6 +1042,81 @@ static bool monster_turn_should_stagger(struct monster *mon)
 	return randint0(100) < chance;
 }
 
+/**
+ * Work out what chance a monster has of moving through a passable grid.
+ *
+ * Returns the true if the monster succeeded in moving
+ */
+static bool monster_can_move_passable(struct chunk *c, struct monster *mon,
+									  struct loc grid)
+{
+	struct monster_race *race = mon->race;
+
+	/* Go through all the passable terrain types that affect movement speed */
+	if (square_iswatery(cave, grid)) {
+		if (rf_has(race->flags, RF_FLYING)) {
+			/* Flying monsters can always cross water */
+			return true;
+		} else if (rsf_has(race->spell_flags, RSF_BR_FIRE)) {
+			/* Firebreathers cannot cross water */
+			return false;
+		} else if (rf_has(race->flags, RF_DEMON)) {
+			/* Earthbound demons cannot cross water */
+			return false;
+		} else if (rf_has(race->flags, RF_HUMANOID)) {
+			/* Humanoid-type monsters are slowed a little */
+			return one_in_(4) ? false : true;
+		} else if (rf_has(race->flags, RF_UNDEAD)) {
+			/* Undead are slowed a little more (a la Ringwraiths) */
+			return one_in_(2) ? true : false;
+		} else {
+			/* Everything else has no problems crossing water */
+			return true;
+		}
+	} else if (square_isfiery(cave, grid)) {
+		/* Only fiery or strong flying creatures will cross lava */
+		if (rf_has(race->flags, RF_IM_FIRE) ||
+			(rf_has(race->flags, RF_FLYING) && (mon->hp >= 50))) {
+			return true;
+		} else {
+			return false;
+		}
+	} else if (square_isrubble(cave, grid)) {
+		/* Some monsters move easily through rubble */
+		if (rf_has(race->flags, RF_PASS_WALL) ||
+			rf_has(race->flags, RF_KILL_WALL) ||
+			rf_has(race->flags, RF_SMASH_WALL)) {
+			return true;
+		} else {
+			/* For most monsters, rubble takes more time to cross. */
+			return one_in_(2) ? true : false;
+		}
+	} else if (square_istree(cave, grid)) {
+		if (rf_has(race->flags, RF_PASS_WALL)) {
+			/* Some monsters can pass right through trees */
+			return true;
+		} else if (rf_has(race->flags, RF_FLYING)) {
+			/* Some monsters can fly over trees */
+			return true;
+		} else if (rf_has(race->flags, RF_ANIMAL)) {
+			/* Some monsters can fly over trees, or know them well */
+			return true;
+		} else {
+			/* For many monsters, trees take more time to cross. */
+			return one_in_(2) ? true : false;
+		}
+	} else if (square_isfall(cave, grid)) {
+		/* Have to be able to fly */
+		if (rf_has(race->flags, RF_FLYING)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/* Everything else is fine */
+	return true;
+}
 
 /**
  * Work out if a monster can move through the grid, if necessary bashing 
@@ -1064,9 +1134,10 @@ static bool monster_turn_can_move(struct chunk *c, struct monster *mon,
 		return false;
 	}
 
-	/* Floor is open? */
+	/* See if we can pass the square; some terrain requires thought */
 	if (square_ispassable(c, new)) {
-		return true;
+		/* Check to see if we got to move */
+		return monster_can_move_passable(c, mon, new);
 	}
 
 	/* Permanent wall in the way */

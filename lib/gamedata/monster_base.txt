@@ -163,7 +163,7 @@ desc:Ghost
 name:giant
 glyph:P
 pain:1
-flags:GIANT | EVIL | SPIRIT
+flags:GIANT | EVIL | SPIRIT | HUMANOID
 flags:BASH_DOOR | CLEAR_WEB
 desc:Giant Humanoid
 
@@ -173,13 +173,13 @@ glyph:g
 pain:1
 flags:EMPTY_MIND | CLEAR_WEB
 flags:IM_ELEC | NO_FEAR | NO_CONF | NO_SLEEP
-flags:NONLIVING
+flags:NONLIVING | HUMANOID
 desc:Golem
 
 name:humanoid
 glyph:h
 pain:1
-flags:OPEN_DOOR | BASH_DOOR | SPIRIT | CLEAR_WEB
+flags:OPEN_DOOR | BASH_DOOR | SPIRIT | CLEAR_WEB | HUMANOID
 desc:Hobbit/Elf/Dwarf
 
 # Weird legendary stuff, mostly without spells, sometimes with breath
@@ -236,7 +236,7 @@ desc:Killer Beetle
 name:kobold
 glyph:k
 pain:1
-flags:EVIL
+flags:EVIL | HUMANOID
 flags:OPEN_DOOR | BASH_DOOR | SPIRIT | CLEAR_WEB
 flags:IM_POIS
 desc:Kobold
@@ -323,7 +323,7 @@ desc:Naga
 name:ogre
 glyph:O
 pain:1
-flags:GIANT | EVIL | SPIRIT
+flags:GIANT | EVIL | SPIRIT | HUMANOID
 flags:OPEN_DOOR | BASH_DOOR | CLEAR_WEB
 desc:Ogre
 
@@ -332,14 +332,14 @@ desc:Ogre
 name:orc
 glyph:o
 pain:1
-flags:MALE | ORC | EVIL | SPIRIT
+flags:MALE | ORC | EVIL | SPIRIT | HUMANOID
 flags:OPEN_DOOR | BASH_DOOR | CLEAR_WEB
 desc:Orc
 
 name:person
 glyph:p
 pain:1
-flags:BASH_DOOR | SPIRIT | CLEAR_WEB
+flags:BASH_DOOR | SPIRIT | CLEAR_WEB | HUMANOID
 desc:Person/Human
 
 # A grab-bag of four-legged things with no real defining quality
@@ -406,7 +406,7 @@ desc:Spider/Scorpion/Tick
 name:townsfolk
 glyph:t
 pain:4
-flags:SPIRIT | CLEAR_WEB
+flags:SPIRIT | CLEAR_WEB | HUMANOID
 desc:Townsfolk
 
 # High hitpoints and armor class
@@ -423,7 +423,7 @@ desc:Tree/Ent
 name:troll
 glyph:T
 pain:1
-flags:TROLL | EVIL | SPIRIT
+flags:TROLL | EVIL | SPIRIT | HUMANOID
 flags:OPEN_DOOR | BASH_DOOR | CLEAR_WEB
 desc:Troll
 
@@ -469,7 +469,7 @@ desc:Wight/Wraith
 name:xorn
 glyph:X
 pain:4
-flags:COLD_BLOOD | EMPTY_MIND | CLEAR_WEB
+flags:COLD_BLOOD | EMPTY_MIND | CLEAR_WEB | HUMANOID
 flags:HURT_ROCK | IM_POIS | NO_CONF | NO_SLEEP
 desc:Xorn/Xaren
 
@@ -477,7 +477,7 @@ desc:Xorn/Xaren
 name:yeek
 glyph:y
 pain:1
-flags:ANIMAL | SPIRIT
+flags:ANIMAL | SPIRIT | HUMANOID
 flags:OPEN_DOOR | BASH_DOOR | CLEAR_WEB
 flags:IM_ACID
 desc:Yeek
