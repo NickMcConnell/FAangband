@@ -51,6 +51,7 @@ struct owner {
 	unsigned int oidx;
 	struct owner *next;
 	char *name;
+	struct player_race *race;
 	s32b max_cost;
 };
 

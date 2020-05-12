@@ -195,6 +195,18 @@ struct player_body {
 	struct equip_slot *slots;
 };
 
+struct player_race;
+
+/**
+ * Player race list structure to record likes and dislikes
+ */
+struct player_race_list {
+	struct player_race_list *next;
+	const char *name;
+	struct player_race *race;
+	int rel;
+};
+
 /**
  * Player race info
  */
@@ -674,5 +686,6 @@ void player_cleanup_members(struct player *p);
 
 /* player-race.c */
 struct player_race *player_id2race(guid id);
+struct player_race *player_race_from_name(char *name);
 
 #endif /* !PLAYER_H */

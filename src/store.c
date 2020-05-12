@@ -246,6 +246,7 @@ static enum parser_error parse_always(struct parser *p) {
 static enum parser_error parse_owner(struct parser *p) {
 	struct store *s = parser_priv(p);
 	unsigned int maxcost = parser_getuint(p, "purse");
+	char *race = string_make(parser_getsym(p, "race"));
 	char *name = string_make(parser_getstr(p, "name"));
 	struct owner *o;
 
@@ -256,6 +257,7 @@ static enum parser_error parse_owner(struct parser *p) {
 	o->oidx = (s->owners ? s->owners->oidx + 1 : 0);
 	o->next = s->owners;
 	o->name = name;
+	o->race = player_race_from_name(race);
 	o->max_cost = maxcost;
 	s->owners = o;
 	return PARSE_ERROR_NONE;
@@ -302,7 +304,7 @@ struct parser *init_parse_stores(void) {
 	struct parser *p = parser_new();
 	parser_setpriv(p, NULL);
 	parser_reg(p, "store uint index str name", parse_store);
-	parser_reg(p, "owner uint purse str name", parse_owner);
+	parser_reg(p, "owner uint purse sym race str name", parse_owner);
 	parser_reg(p, "slots uint min uint max", parse_slots);
 	parser_reg(p, "turnover uint turnover", parse_turnover);
 	parser_reg(p, "normal sym tval sym sval", parse_normal);

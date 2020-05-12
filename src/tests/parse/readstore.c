@@ -52,7 +52,7 @@ int test_slots0(void *state) {
 }
 
 int test_owner0(void *state) {
-	enum parser_error r = parser_parse(state, "owner:5000:Foo");
+	enum parser_error r = parser_parse(state, "owner:5000:Munchkin:Foo");
 	struct store *s;
 
 	eq(r, PARSE_ERROR_NONE);

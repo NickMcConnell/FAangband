@@ -345,9 +345,11 @@ static void store_display_frame(struct store_context *ctx)
 		/* Normal stores */
 		const char *store_name = store->name;
 		const char *owner_name = proprietor->name;
+		const char *owner_race = proprietor->race->name;
 
 		/* Put the owner name */
-		put_str(owner_name, ctx->scr_places_y[LOC_OWNER], 1);
+		strnfmt(buf, sizeof(buf), "%s (%s)", owner_name, owner_race);
+		put_str(buf, ctx->scr_places_y[LOC_OWNER], 1);
 
 		/* Show the max price in the store (above prices) */
 		strnfmt(buf, sizeof(buf), "%s (%d)", store_name,

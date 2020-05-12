@@ -17,12 +17,22 @@
  */
 
 #include "player.h"
+#include "z-util.h"
 
 struct player_race *player_id2race(guid id)
 {
 	struct player_race *r;
 	for (r = races; r; r = r->next)
 		if (guid_eq(r->ridx, id))
+			break;
+	return r;
+}
+
+struct player_race *player_race_from_name(char *name)
+{
+	struct player_race *r;
+	for (r = races; r; r = r->next)
+		if (streq(r->name, name))
 			break;
 	return r;
 }
