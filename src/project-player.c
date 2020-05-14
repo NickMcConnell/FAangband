@@ -51,7 +51,8 @@ int adjust_dam(struct player *p, int type, int dam, bool actual)
 		int res_type = (type == PROJ_ICE) ? PROJ_COLD: type;
 
 		/* The stored resistance level is the percentage of damage taken */
-		dam_percent = p->state.el_info[res_type].res_level;
+		dam_percent = res_type < ELEM_MAX ?
+			p->state.el_info[res_type].res_level : 0;
 
 		/* Notice element stuff */
 		if (actual) {
