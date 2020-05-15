@@ -53,7 +53,7 @@ static void store_maint(struct store *s);
 
 
 /**
- * Array[MAX_STORES] of stores
+ * Array of stores
  */
 struct store *stores;
 
@@ -61,6 +61,12 @@ struct store *stores;
  * The hints array
  */
 struct hint *hints;
+
+/**
+ * Stores that need to be commonly referred to
+ */
+static unsigned int store_black_market_idx;
+static unsigned int store_home_idx;
 
 
 static const char *obj_flags[] = {
@@ -76,10 +82,24 @@ static const char *obj_flags[] = {
  */
 struct store *store_at(struct chunk *c, struct loc grid)
 {
-	if (square_isshop(c, grid))
-		return &stores[square_shopnum(cave, grid)];
+	struct store *s = NULL;
 
-	return NULL;
+	if (square_isshop(c, grid)) {
+		struct level *lev = &world->levels[player->place];
+		struct town *town = NULL;
+		int i;
+		for (i = 0; i < world->num_towns; i++) {
+			town = &world->towns[i];
+			if (town->index == lev->index) break;
+		}
+		if (i < world->num_towns) {
+			for (s = town->stores; s; s = s->next) {
+				if ((int) s->sidx == square_shopnum(cave, grid)) break;
+			}
+		}
+	}
+
+	return s;
 }
 
 
@@ -94,6 +114,17 @@ static struct store *store_new(int idx) {
 }
 
 /**
+ * Free an actual store.
+ */
+void free_store(struct store *store)
+{
+	/* Free the store inventory */
+	object_pile_free(store->stock_k);
+	object_pile_free(store->stock);
+	mem_free(store);
+}
+
+/**
  * Get rid of stores at cleanup. Gets rid of everything.
  */
 void cleanup_stores(void)
@@ -105,14 +136,12 @@ void cleanup_stores(void)
 	if (!stores)
 		return;
 
-	/* Free the store inventories */
-	for (i = 0; i < MAX_STORES; i++) {
+	/* Free the store tables and owners */
+	for (i = 0; i < z_info->store_max; i++) {
 		/* Get the store */
 		struct store *store = &stores[i];
 
 		/* Free the store inventory */
-		object_pile_free(store->stock_k);
-		object_pile_free(store->stock);
 		mem_free(store->always_table);
 		mem_free(store->normal_table);
 
@@ -132,7 +161,6 @@ void cleanup_stores(void)
 	mem_free(stores);
 }
 
-
 /**
  * ------------------------------------------------------------------------
  * Edit file parsing
@@ -144,15 +172,40 @@ void cleanup_stores(void)
 static enum parser_error parse_store(struct parser *p) {
 	struct store *h = parser_priv(p);
 	struct store *s;
-	unsigned int idx = parser_getuint(p, "index") - 1;
 
-	if (idx >= MAX_STORES)
-		return PARSE_ERROR_OUT_OF_BOUNDS;
-
-	s = store_new(parser_getuint(p, "index") - 1);
+	s = store_new(z_info->store_max++);
 	s->name = string_make(parser_getstr(p, "name"));
+
+	/* Note black market and home */
+	if (streq(s->name, "Black Market")) {
+		store_black_market_idx = s->sidx;
+	} else if (streq(s->name, "Home")) {
+		store_home_idx = s->sidx;
+	}
+
 	s->next = h;
 	parser_setpriv(p, s);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_town(struct parser *p) {
+	struct store *s = parser_priv(p);
+	const char *name = parser_getstr(p, "name");
+	int i;
+	struct level_map *map = maps;
+	while (map) {
+		for (i = 0; i < map->num_towns; i++) {
+			struct town *town = &map->towns[i];
+			if (streq(name, town->code)) {
+				/* Add a new store ready to fill up with details */
+				struct store *new = store_new(s->sidx);
+				new->name = string_make(s->name);
+				new->next = town->stores;
+				town->stores = new;
+			}
+		}
+		map = map->next;
+	}
 	return PARSE_ERROR_NONE;
 }
 
@@ -184,7 +237,8 @@ static enum parser_error parse_normal(struct parser *p) {
 		s->normal_table = mem_zalloc(s->normal_size * sizeof *s->normal_table);
 	} else if (s->normal_num >= s->normal_size) {
 		s->normal_size += 8; 
-		s->normal_table = mem_realloc(s->normal_table, s->normal_size * sizeof *s->normal_table);
+		s->normal_table = mem_realloc(s->normal_table,
+									  s->normal_size * sizeof *s->normal_table);
 	}
 
 	s->normal_table[s->normal_num++] = kind;
@@ -208,10 +262,12 @@ static enum parser_error parse_always(struct parser *p) {
 		/* Expand if necessary */
 		if (!s->always_num) {
 			s->always_size = 8;
-			s->always_table = mem_zalloc(s->always_size * sizeof *s->always_table);
+			s->always_table = mem_zalloc(s->always_size *
+										 sizeof *s->always_table);
 		} else if (s->always_num >= s->always_size) {
 			s->always_size += 8;
-			s->always_table = mem_realloc(s->always_table, s->always_size * sizeof *s->always_table);
+			s->always_table = mem_realloc(s->always_table, s->always_size *
+										  sizeof *s->always_table);
 		}
 
 		s->always_table[s->always_num++] = kind;
@@ -229,10 +285,13 @@ static enum parser_error parse_always(struct parser *p) {
 				/* Expand if necessary */
 				if (!s->always_num) {
 					s->always_size = 8;
-					s->always_table = mem_zalloc(s->always_size * sizeof *s->always_table);
+					s->always_table = mem_zalloc(s->always_size *
+												 sizeof *s->always_table);
 				} else if (s->always_num >= s->always_size) {
 					s->always_size += 8;
-					s->always_table = mem_realloc(s->always_table, s->always_size * sizeof *s->always_table);
+					s->always_table = mem_realloc(s->always_table,
+												  s->always_size *
+												  sizeof *s->always_table);
 				}
 
 				s->always_table[s->always_num++] = kind;
@@ -246,7 +305,7 @@ static enum parser_error parse_always(struct parser *p) {
 static enum parser_error parse_owner(struct parser *p) {
 	struct store *s = parser_priv(p);
 	unsigned int maxcost = parser_getuint(p, "purse");
-	char *race = string_make(parser_getsym(p, "race"));
+	const char *race = parser_getsym(p, "race");
 	char *name = string_make(parser_getstr(p, "name"));
 	struct owner *o;
 
@@ -302,8 +361,10 @@ static enum parser_error parse_buy_flag(struct parser *p) {
 
 struct parser *init_parse_stores(void) {
 	struct parser *p = parser_new();
+	z_info->store_max = 0;
 	parser_setpriv(p, NULL);
-	parser_reg(p, "store uint index str name", parse_store);
+	parser_reg(p, "store str name", parse_store);
+	parser_reg(p, "town str name", parse_town);
 	parser_reg(p, "owner uint purse sym race str name", parse_owner);
 	parser_reg(p, "slots uint min uint max", parse_slots);
 	parser_reg(p, "turnover uint turnover", parse_turnover);
@@ -339,12 +400,14 @@ static struct file_parser store_parser = {
  * ------------------------------------------------------------------------ */
 
 
-static struct store *flatten_stores(struct store *store_list) {
+static struct store *distribute_stores(struct store *store_list) {
 	struct store *s;
-	struct store *stores_local = mem_zalloc(MAX_STORES * sizeof(*stores_local));
+	struct store *stores_local = mem_zalloc(z_info->store_max *
+											sizeof(*stores_local));
+	struct level_map *map = maps;
 
 	for (s = store_list; s; s = s->next) {
-		if (s->sidx < MAX_STORES)
+		if (s->sidx < z_info->store_max)
 			memcpy(&stores_local[s->sidx], s, sizeof(*s));
 	}
 
@@ -356,6 +419,31 @@ static struct store *flatten_stores(struct store *store_list) {
 		store_list = s;
 	}
 
+	/* Copy relevant data to all the town stores */
+	while (map) {
+		int i;
+		for (i = 0; i < map->num_towns; i++) {
+			struct town *town = &map->towns[i];
+			s = town->stores;
+			while (s) {
+				s->town = town;
+				s->owners = stores_local[s->sidx].owners;
+				s->always_size = stores_local[s->sidx].always_size;
+				s->always_num = stores_local[s->sidx].always_num;
+				s->always_table = stores_local[s->sidx].always_table;
+				s->normal_size = stores_local[s->sidx].normal_size;
+				s->normal_num = stores_local[s->sidx].normal_num;
+				s->normal_table = stores_local[s->sidx].normal_table;
+				s->buy = stores_local[s->sidx].buy;
+				s->turnover = stores_local[s->sidx].turnover;
+				s->normal_stock_min = stores_local[s->sidx].normal_stock_min;
+				s->normal_stock_max = stores_local[s->sidx].normal_stock_max;
+				s = s->next;
+			}
+		}
+		map = map->next;
+	}
+
 	return stores_local;
 }
 
@@ -363,23 +451,43 @@ void store_init(void)
 {
 	event_signal_message(EVENT_INITSTATUS, 0, "Initializing stores...");
 	if (run_parser(&store_parser)) quit("Can't initialize stores");
-	stores = flatten_stores(stores);
+	stores = distribute_stores(stores);
+}
+
+void place_home(struct town *town)
+{
+	struct store *home;
+
+	/* Make sure there isn't one there already */
+	if (town->stores->sidx == store_home_idx) return;
+
+	home = store_new(store_home_idx);
+	home->next = town->stores;
+	town->stores = home;
 }
 
 void store_reset(void) {
 	int i, j;
-	struct store *s;
 
-	for (i = 0; i < MAX_STORES; i++) {
-		s = &stores[i];
-		s->stock_num = 0;
-		store_shuffle(s);
-		object_pile_free(s->stock);
-		s->stock = NULL;
-		if (i == STORE_HOME)
-			continue;
-		for (j = 0; j < 10; j++)
-			store_maint(s);
+	for (i = 0; i < world->num_towns; i++) {
+		struct town *town = &world->towns[i];
+		struct store *s = town->stores;
+
+		/* Place the home in the hometown */
+		if (town->index == player->home) {
+			place_home(town);
+		}
+
+		/* Initial stock setup for stores */
+		while (s) {
+			s->stock_num = 0;
+			store_shuffle(s);
+			object_pile_free(s->stock);
+			s->stock = NULL;
+			for (j = 0; j < 10; j++)
+				store_maint(s);
+			s = s->next;
+		}
 	}
 }
 
@@ -437,6 +545,37 @@ static bool store_can_carry(struct store *store, struct object_kind *kind) {
 
 /* Randomly select one of the entries in an array */
 #define ONE_OF(x)	x[randint0(N_ELEMENTS(x))]
+
+bool store_is_black_market(struct store *store)
+{
+	return store->sidx == store_black_market_idx;
+}
+
+bool store_is_home(struct store *store)
+{
+	return store->sidx == store_home_idx;
+}
+
+struct store *store_home(struct player *p)
+{
+	struct store *store;
+	int i;
+	struct town *hometown = NULL;
+
+	for (i = 0; i < world->num_towns; i++) {
+		if (world->towns[i].index == p->home) {
+			hometown = &world->towns[i];
+		}
+	}
+	assert(hometown);
+
+	store = hometown->stores;
+	while (store) {
+		if (store->sidx == store_home_idx) break;
+		store = store->next;
+	}
+	return store;
+}
 
 
 /**
@@ -542,7 +681,7 @@ static bool store_will_buy(struct store *store, const struct object *obj)
 	struct object_buy *buy;
 
 	/* Home accepts anything */
-	if (store->sidx == STORE_HOME) return true;
+	if (store_is_home(store)) return true;
 
 	/* Ignore apparently worthless items, except no-selling {??} items */
 	if (object_value(obj, 1) <= 0 && !(OPT(player, birth_no_selling) &&
@@ -618,7 +757,7 @@ int price_item(struct store *store, const struct object *obj,
 	}
 
 	/* The black market is always a worse deal */
-	if (store->sidx == STORE_B_MARKET)
+	if (store_is_black_market(store))
 		adjust = 150;
 
 	/* Shop is buying */
@@ -633,7 +772,7 @@ int price_item(struct store *store, const struct object *obj,
 		price = price * 2 / 3;
 
 		/* Black market sucks */
-		if (store->sidx == STORE_B_MARKET) {
+		if (store_is_black_market(store)) {
 			price = price / 2;
 		}
 
@@ -650,7 +789,7 @@ int price_item(struct store *store, const struct object *obj,
 		}
 
 		/* Black market sucks */
-		if (store->sidx == STORE_B_MARKET) {
+		if (store_is_black_market(store)) {
 			price = price * 2;
 		}
 	}
@@ -782,7 +921,7 @@ static void mass_produce(struct object *obj)
  */
 void store_stock_list(struct store *store, struct object **list, int n)
 {
-	bool home = (store->sidx != STORE_HOME);
+	bool not_home = store_is_home(store) ? false : true;
 	int list_num;
 	int num = 0;
 
@@ -800,7 +939,7 @@ void store_stock_list(struct store *store, struct object **list, int n)
 			/* If still possible, choose the first in order */
 			if (!possible)
 				continue;
-			else if (earlier_object(first, current, home))
+			else if (earlier_object(first, current, not_home))
 				first = current;
 		}
 
@@ -851,7 +990,7 @@ bool store_check_num(struct store *store, const struct object *obj)
 	if (store->stock_num < store->stock_size) return true;
 
 	/* The "home" acts like the player */
-	if (store->sidx == STORE_HOME) {
+	if (store_is_home(store)) {
 		for (stock_obj = store->stock; stock_obj; stock_obj = stock_obj->next) {
 			/* Can the new object be combined with the old one? */
 			if (object_similar(stock_obj, obj, OSTACK_PACK))
@@ -880,7 +1019,7 @@ bool store_check_num(struct store *store, const struct object *obj)
 void home_carry(struct object *obj)
 {
 	struct object *temp_obj;
-	struct store *store = &stores[STORE_HOME];
+	struct store *store = store_home(player);
 
 	/* Check each existing object (try to combine) */
 	for (temp_obj = store->stock; temp_obj; temp_obj = temp_obj->next) {
@@ -1104,9 +1243,9 @@ static void store_delete_random(struct store *store)
  *
  * Based on a suggestion by Lee Vogt <lvogt@cig.mcel.mot.com>.
  */
-static bool black_market_ok(const struct object *obj)
+static bool black_market_ok(struct town *town, const struct object *obj)
 {
-	int i;
+	struct store *store;
 
 	/* Ego items are always fine */
 	if (obj->ego) return true;
@@ -1120,15 +1259,15 @@ static bool black_market_ok(const struct object *obj)
 	if (object_value_real(obj, 1) < 10) return (false);
 
 	/* Check the other stores */
-	for (i = 0; i < MAX_STORES; i++) {
+	for (store = town->stores; store; store = store->next) {
 		struct object *stock_obj;
 
 		/* Skip home and black market */
-		if (i == STORE_B_MARKET || i == STORE_HOME)
+		if (store_is_black_market(store) || store_is_home(store))
 			continue;
 
 		/* Check every object in the store */
-		for (stock_obj = stores[i].stock; stock_obj; stock_obj = stock_obj->next) {
+		for (stock_obj = store->stock; stock_obj; stock_obj = stock_obj->next) {
 			/* Compare object kinds */
 			if (obj->kind == stock_obj->kind)
 				return false;
@@ -1161,7 +1300,7 @@ static bool store_create_random(struct store *store)
 	int min_level, max_level;
 
 	/* Decide min/max levels */
-	if (store->sidx == STORE_B_MARKET) {
+	if (store_is_black_market(store)) {
 		min_level = player->max_depth + 5;
 		max_level = player->max_depth + 20;
 	} else {
@@ -1181,7 +1320,7 @@ static bool store_create_random(struct store *store)
 		level = rand_range(min_level, max_level);
 
 		/* Black Markets have a random object, of a given level */
-		if (store->sidx == STORE_B_MARKET)
+		if (store_is_black_market(store))
 			kind = get_obj_num(level, false, 0);
 		else
 			kind = store_get_choice(store);
@@ -1221,7 +1360,8 @@ static bool store_create_random(struct store *store)
 		obj->origin = ORIGIN_NONE;
 
 		/* Black markets have expensive tastes */
-		if ((store->sidx == STORE_B_MARKET) && !black_market_ok(obj)) {
+		if ((store_is_black_market(store)) &&
+			!black_market_ok(store->town, obj)) {
 			object_delete(&known_obj);
 			obj->known = NULL;
 			object_delete(&obj);
@@ -1286,15 +1426,15 @@ static struct object *store_create_item(struct store *store,
 static void store_maint(struct store *s)
 {
 	/* Ignore home */
-	if (s->sidx == STORE_HOME)
+	if (store_is_home(s))
 		return;
 
 	/* Destroy crappy black market items */
-	if (s->sidx == STORE_B_MARKET) {
+	if (store_is_black_market(s)) {
 		struct object *obj = s->stock;
 		while (obj) {
 			struct object *next = obj->next;
-			if (!black_market_ok(obj))
+			if (!black_market_ok(s->town, obj))
 				store_delete(s, obj, obj->number);
 			obj = next;
 		}
@@ -1405,30 +1545,41 @@ void store_update(void)
 {
 	if (OPT(player, cheat_xtra)) msg("Updating Shops...");
 	while (daycount--) {
-		int n;
+		int i;
+		struct store *s;
 
 		/* Maintain each shop (except home) */
-		for (n = 0; n < MAX_STORES; n++) {
-			/* Skip the home */
-			if (n == STORE_HOME) continue;
+		for (i = 0; i < world->num_towns; i++) {
+			struct town *town = &world->towns[i];
+			for (s = town->stores; s; s = s->next) {
+				/* Skip the home */
+				if (store_is_home(s)) continue;
 
-			/* Maintain */
-			store_maint(&stores[n]);
+				/* Maintain */
+				store_maint(s);
+			}
 		}
 
 		/* Sometimes, shuffle the shop-keepers */
 		if (one_in_(z_info->store_shuffle)) {
+			struct store *s;
 			/* Message */
 			if (OPT(player, cheat_xtra)) msg("Shuffling a Shopkeeper...");
 
-			/* Pick a random shop (except home) */
+			/* Pick a random shop in a random town */
 			while (1) {
-				n = randint0(MAX_STORES);
-				if (n != STORE_HOME) break;
+				int m = randint0(world->num_towns);
+				struct town *town = &world->towns[m];
+				unsigned int n = randint0(z_info->store_max);
+				if (n == store_home_idx) continue;
+				for (s = town->stores; s; s = s->next) {
+					if (n == s->sidx) break;
+				}
+				if (s) break;
 			}
 
 			/* Shuffle it */
-			store_shuffle(&stores[n]);
+			store_shuffle(s);
 		}
 	}
 	daycount = 0;
@@ -1444,7 +1595,9 @@ struct owner *store_ownerbyidx(struct store *s, unsigned int idx) {
 			return o;
 	}
 
-	quit_fmt("Bad call to store_ownerbyidx: idx is %d\n", idx);
+	/* Allow no owner for home */
+	if (!store_is_home(s))
+		quit_fmt("Bad call to store_ownerbyidx: idx is %d\n", idx);
 	return 0; /* Needed to avoid Windows compiler warning */
 }
 
@@ -1759,7 +1912,7 @@ void do_cmd_retrieve(struct command *cmd)
 	struct store *store = store_at(cave, player->grid);
 	if (!store) return;
 
-	if (store->sidx != STORE_HOME) {
+	if (!store_is_home(store)) {
 		msg("You are not currently at home.");
 		return;
 	}
@@ -1979,7 +2132,7 @@ void do_cmd_stash(struct command *cmd)
 		return;
 
 	/* Check we are somewhere we can stash items. */
-	if (store->sidx != STORE_HOME) {
+	if (!store_is_home(store)) {
 		msg("You are not in your home.");
 		return;
 	}

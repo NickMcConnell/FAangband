@@ -16,6 +16,7 @@
 
 #include "cave.h"
 #include "game-input.h"
+#include "game-world.h"
 #include "init.h"
 #include "object.h"
 #include "obj-desc.h"
@@ -2211,12 +2212,17 @@ static int initialize_summary(struct player *p,
 	}
 	visitor.selfunc = select_wearable;
 	visitor.selfunc_closure = NULL;
-	apply_visitor_to_pile(stores[STORE_HOME].stock, &visitor);
-	for (i = 0; i < MAX_STORES; ++i) {
-		if (i == STORE_HOME) {
-			continue;
+	apply_visitor_to_pile(store_home(p)->stock, &visitor);
+	for (i = 0; i < world->num_towns; i++) {
+		struct town *town = &world->towns[i];
+		struct store *store = town->stores;
+		if (!world->levels[town->index].visited) continue;
+		while (store) {
+			if (store_is_home(store)) {
+				continue;
+			}
+			apply_visitor_to_pile(store->stock, &visitor);
 		}
-		apply_visitor_to_pile(stores[i].stock, &visitor);
 	}
 
 	/* Allocate storage and add the available items. */
@@ -2251,13 +2257,18 @@ static int initialize_summary(struct player *p,
 	add_obj_data.src = EQUIP_SOURCE_HOME;
 	visitor.selfunc = select_wearable;
 	visitor.selfunc_closure = NULL;
-	apply_visitor_to_pile(stores[STORE_HOME].stock, &visitor);
+	apply_visitor_to_pile(store_home(p)->stock, &visitor);
 	add_obj_data.src = EQUIP_SOURCE_STORE;
-	for (i = 0; i < MAX_STORES; ++i) {
-		if (i == STORE_HOME) {
-			continue;
+	for (i = 0; i < world->num_towns; i++) {
+		struct town *town = &world->towns[i];
+		struct store *store = town->stores;
+		if (!world->levels[town->index].visited) continue;
+		while (store) {
+			if (store_is_home(store)) {
+				continue;
+			}
+			apply_visitor_to_pile(store->stock, &visitor);
 		}
-		apply_visitor_to_pile(stores[i].stock, &visitor);
 	}
 
 	compute_player_and_equipment_values(p, *s);

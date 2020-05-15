@@ -653,9 +653,15 @@ void wr_ignore(void)
 void wr_misc(void)
 {
 	size_t i;
+	int j;
 
 	/* Map */
 	wr_string(world->name);
+
+	/* Where we've been */
+	for (j = 0; j < world->num_levels; j++) {
+		wr_byte(world->levels[j].visited ? 1 : 0);
+	}
 
 	/* Random artifact seed */
 	wr_u32b(seed_randart);
@@ -788,21 +794,28 @@ void wr_stores(void)
 {
 	int i;
 
-	wr_u16b(MAX_STORES);
-	for (i = 0; i < MAX_STORES; i++) {
-		const struct store *store = &stores[i];
-		struct object *obj;
+	wr_u16b(z_info->store_max);
+	for (i = 0; i < world->num_towns; i++) {
+		struct town *town = &world->towns[i];
+		struct store *store = town->stores;
+		while (store) {
+			struct object *obj;
 
-		/* Save the current owner */
-		wr_byte(store->owner->oidx);
+			/* Save the current owner */
+			if (store_is_home(store))
+				wr_byte(-1);
+			else
+				wr_byte(store->owner->oidx);
 
-		/* Save the stock size */
-		wr_byte(store->stock_num);
+			/* Save the stock size */
+			wr_byte(store->stock_num);
 
-		/* Save the stock */
-		for (obj = store->stock; obj; obj = obj->next) {
-			wr_item(obj->known);
-			wr_item(obj);
+			/* Save the stock */
+			for (obj = store->stock; obj; obj = obj->next) {
+				wr_item(obj->known);
+				wr_item(obj);
+			}
+			store = store->next;
 		}
 	}
 }

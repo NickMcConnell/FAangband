@@ -28,7 +28,7 @@ struct player_race *player_id2race(guid id)
 	return r;
 }
 
-struct player_race *player_race_from_name(char *name)
+struct player_race *player_race_from_name(const char *name)
 {
 	struct player_race *r;
 	for (r = races; r; r = r->next)

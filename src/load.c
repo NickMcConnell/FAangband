@@ -1023,6 +1023,7 @@ int rd_ignore(void)
 int rd_misc(void)
 {
 	size_t i;
+	int j;
 	byte tmp8u;
 	char tmp[80];
 
@@ -1037,6 +1038,12 @@ int rd_misc(void)
 		quit("Failed to find world.");
 	}
 	
+	/* Where we've been */
+	for (j = 0; j < world->num_levels; j++) {
+		rd_byte(&tmp8u);
+		world->levels[j].visited = tmp8u ? true : false;
+	}
+
 	/* Read the randart seed */
 	rd_u32b(&seed_randart);
 
@@ -1278,42 +1285,51 @@ static int rd_stores_aux(rd_item_t rd_item_version)
 
 	/* Read the stores */
 	rd_u16b(&tmp16u);
-	for (i = 0; i < tmp16u; i++) {
-		struct store *store = &stores[i];
+	for (i = 0; i < world->num_towns; i++) {
+		struct town *town = &world->towns[i];
+		struct store *store = town->stores;
+		/* Place the home in the hometown */
+		if (town->index == player->home) {
+			place_home(town);
+		}
+		store = town->stores;
 
-		byte own, num;
+		while (store) {
+			byte own, num;
 
-		/* Read the basic info */
-		rd_byte(&own);
-		rd_byte(&num);
+			/* Read the basic info */
+			rd_byte(&own);
+			rd_byte(&num);
 
-		/* XXX: refactor into store.c */
-		store->owner = store_ownerbyidx(store, own);
+			/* XXX: refactor into store.c */
+			store->owner = store_ownerbyidx(store, own);
 
-		/* Read the items */
-		for (; num; num--) {
-			/* Read the known item */
-			struct object *obj, *known_obj = (*rd_item_version)();
-			if (!known_obj) {
-				note("Error reading known item");
-				return (-1);
+			/* Read the items */
+			for (; num; num--) {
+				/* Read the known item */
+				struct object *obj, *known_obj = (*rd_item_version)();
+				if (!known_obj) {
+					note("Error reading known item");
+					return (-1);
+				}
+
+				/* Read the item */
+				obj = (*rd_item_version)();
+				if (!obj) {
+					note("Error reading item");
+					return (-1);
+				}
+				obj->known = known_obj;
+
+				/* Accept any valid items */
+				if (store->stock_num < z_info->store_inven_max && obj->kind) {
+					if (store_is_home(store))
+						home_carry(obj);
+					else
+						store_carry(store, obj);
+				}
 			}
-
-			/* Read the item */
-			obj = (*rd_item_version)();
-			if (!obj) {
-				note("Error reading item");
-				return (-1);
-			}
-			obj->known = known_obj;
-
-			/* Accept any valid items */
-			if (store->stock_num < z_info->store_inven_max && obj->kind) {
-				if (store->sidx == STORE_HOME)
-					home_carry(obj);
-				else
-					store_carry(store, obj);
-			}
+			store = store->next;
 		}
 	}
 

@@ -686,6 +686,6 @@ void player_cleanup_members(struct player *p);
 
 /* player-race.c */
 struct player_race *player_id2race(guid id);
-struct player_race *player_race_from_name(char *name);
+struct player_race *player_race_from_name(const char *name);
 
 #endif /* !PLAYER_H */

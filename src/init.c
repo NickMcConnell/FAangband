@@ -833,11 +833,14 @@ static enum parser_error parse_world_level(struct parser *p) {
 	if (lev->topography == TOP_TOWN) {
 		map->num_towns++;
 		if (map->num_towns == 1) {
-			map->towns = mem_zalloc(sizeof(int));
+			map->towns = mem_zalloc(sizeof(struct town));
 		} else {
-			map->towns = mem_realloc(map->towns, map->num_towns * sizeof(int));
+			map->towns = mem_realloc(map->towns,
+									 map->num_towns * sizeof(struct town));
 		}
-		map->towns[map->num_towns - 1] = map->num_levels - 1;
+		map->towns[map->num_towns - 1].index = map->num_levels - 1;
+		map->towns[map->num_towns - 1].code = string_make(l_name);
+		map->towns[map->num_towns - 1].stores = NULL;
 	}
 
 	return PARSE_ERROR_NONE;
@@ -1030,6 +1033,18 @@ static void cleanup_world(void)
 			string_free(level->up);
 			string_free(level->down);
 		}
+		for (i = 0; i < map->num_towns; i++) {
+			struct town *town = &map->towns[i];
+			struct store *store = town->stores, *next;
+			while (store) {
+				next = store->next;
+				string_free((char *)store->name);
+				free_store(store);
+				store = next;
+			}
+			string_free(map->towns[i].code);
+		}
+		mem_free(map->towns);
 		string_free(map->name);
 		string_free(map->help);
 		mem_free(map->levels);

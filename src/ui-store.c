@@ -229,7 +229,7 @@ static void store_display_recalc(struct store_context *ctx)
 	ctx->scr_places_x[LOC_WEIGHT] = wid - 14;
 
 	/* Add space for for prices */
-	if (store->sidx != STORE_HOME)
+	if (!store_is_home(store))
 		ctx->scr_places_x[LOC_WEIGHT] -= 10;
 
 	/* Then Y */
@@ -282,7 +282,7 @@ static void store_display_entry(struct menu *menu, int oid, bool cursor, int row
 	obj = ctx->list[oid];
 
 	/* Describe the object - preserving insriptions in the home */
-	if (store->sidx == STORE_HOME) {
+	if (store_is_home(store)) {
 		desc |= ODESC_FULL;
 	} else {
 		desc |= ODESC_FULL | ODESC_STORE;
@@ -299,7 +299,7 @@ static void store_display_entry(struct menu *menu, int oid, bool cursor, int row
 	c_put_str(colour, out_val, row, ctx->scr_places_x[LOC_WEIGHT]);
 
 	/* Describe an object (fully) in a store */
-	if (store->sidx != STORE_HOME) {
+	if (!store_is_home(store)) {
 		/* Extract the "minimum" price */
 		x = price_item(store, obj, false, 1);
 
@@ -331,7 +331,7 @@ static void store_display_frame(struct store_context *ctx)
 	Term_clear();
 
 	/* The "Home" is special */
-	if (store->sidx == STORE_HOME) {
+	if (store_is_home(store)) {
 		/* Put the owner name */
 		put_str("Your Home", ctx->scr_places_y[LOC_OWNER], 1);
 
@@ -377,7 +377,7 @@ static void store_display_help(struct store_context *ctx)
 {
 	struct store *store = ctx->store;
 	int help_loc = ctx->scr_places_y[LOC_HELP_PROMPT];
-	bool is_home = (store->sidx == STORE_HOME) ? true : false;
+	bool is_home = store_is_home(store);
 
 	/* Clear */
 	clear_from(ctx->scr_places_y[LOC_HELP_CLEAR]);
@@ -497,7 +497,7 @@ static bool store_sell(struct store_context *ctx)
 	msg_flag = false;
 	prt("", 0, 0);
 
-	if (store->sidx == STORE_HOME) {
+	if (store_is_home(store)) {
 		prompt = "Drop which item? ";
 	} else {
 		tester = store_will_buy_tester;
@@ -530,7 +530,7 @@ static bool store_sell(struct store_context *ctx)
 
 	if (!store_check_num(store, temp_obj)) {
 		object_wipe(temp_obj);
-		if (store->sidx == STORE_HOME)
+		if (store_is_home(store))
 			msg("Your home is full.");
 		else
 			msg("I have not the room in my store to keep it.");
@@ -542,7 +542,7 @@ static bool store_sell(struct store_context *ctx)
 	object_desc(o_name, sizeof(o_name), temp_obj, ODESC_PREFIX | ODESC_FULL);
 
 	/* Real store */
-	if (store->sidx != STORE_HOME) {
+	if (!store_is_home(store)) {
 		/* Extract the value of the items */
 		u32b price = price_item(store, temp_obj, true, amt);
 
@@ -608,13 +608,13 @@ static bool store_purchase(struct store_context *ctx, int item, bool single)
 		amt = 1;
 
 		/* Check if the player can afford any at all */
-		if (store->sidx != STORE_HOME &&
+		if (!store_is_home(store) &&
 				(int)player->au < (int)price_item(store, obj, false, 1)) {
 			msg("You do not have enough gold for this item.");
 			return false;
 		}
 	} else {
-		if (store->sidx == STORE_HOME) {
+		if (store_is_home(store)) {
 			amt = obj->number;
 		} else {
 			/* Price of one */
@@ -656,7 +656,7 @@ static bool store_purchase(struct store_context *ctx, int item, bool single)
 			num = find_inven(obj);
 
 		strnfmt(o_name, sizeof o_name, "%s how many%s? (max %d) ",
-				(store->sidx == STORE_HOME) ? "Take" : "Buy",
+				(store_is_home(store)) ? "Take" : "Buy",
 				num ? format(" (you have %d)", num) : "", amt);
 
 		/* Get a quantity */
@@ -682,7 +682,7 @@ static bool store_purchase(struct store_context *ctx, int item, bool single)
 		ODESC_STORE);
 
 	/* Attempt to buy it */
-	if (store->sidx != STORE_HOME) {
+	if (!store_is_home(store)) {
 		bool response;
 
 		/* Extract the price for the entire stack */
@@ -737,7 +737,7 @@ static void store_examine(struct store_context *ctx, int item)
 	obj = ctx->list[item];
 
 	/* Items in the home get less description */
-	if (ctx->store->sidx == STORE_HOME) {
+	if (store_is_home(ctx->store)) {
 		odesc_flags |= ODESC_CAPITAL;
 	} else {
 		odesc_flags |= ODESC_STORE;
@@ -878,8 +878,7 @@ enum {
 /* pick the context menu options appropiate for a store */
 static int context_menu_store(struct store_context *ctx, const int oid, int mx, int my)
 {
-	struct store *store = ctx->store;
-	bool home = (store->sidx == STORE_HOME) ? true : false;
+	bool home = store_is_home(ctx->store);
 
 	struct menu *m = menu_dynamic_new();
 
@@ -923,8 +922,7 @@ static int context_menu_store(struct store_context *ctx, const int oid, int mx, 
 /* pick the context menu options appropiate for an item available in a store */
 static void context_menu_store_item(struct store_context *ctx, const int oid, int mx, int my)
 {
-	struct store *store = ctx->store;
-	bool home = (store->sidx == STORE_HOME) ? true : false;
+	bool home = store_is_home(ctx->store);
 
 	struct menu *m = menu_dynamic_new();
 	struct object *obj = ctx->list[oid];
@@ -1032,7 +1030,7 @@ static bool store_menu_handle(struct menu *m, const ui_event *event, int oid)
 			case 'g':
 				/* use the old way of purchasing items */
 				msg_flag = false;
-				if (store->sidx != STORE_HOME) {
+				if (!store_is_home(store)) {
 					prt("Purchase which item? (ESC to cancel, Enter to select)",
 						0, 0);
 				} else {
@@ -1215,7 +1213,7 @@ void use_store(game_event_type type, game_event_data *data, void *user)
 	store_menu_init(&ctx, store, false);
 
 	/* Say a friendly hello. */
-	if (store->sidx != STORE_HOME)
+	if (!store_is_home(store))
 		prt_welcome(store->owner);
 
 	/* Shopping */

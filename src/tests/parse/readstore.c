@@ -28,7 +28,7 @@ int teardown_tests(void *state) {
 }
 
 int test_store0(void *state) {
-	enum parser_error r = parser_parse(state, "store:1:foobar");
+	enum parser_error r = parser_parse(state, "store:foobar");
 	struct store *s;
 
 	eq(r, PARSE_ERROR_NONE);

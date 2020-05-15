@@ -917,7 +917,7 @@ void write_character_dump(ang_file *fff)
 	int a;
 	wchar_t c;
 
-	struct store *home = &stores[STORE_HOME];
+	struct store *home = store_home(player);
 	struct object **home_list = mem_zalloc(sizeof(struct object *) *
 										   z_info->store_inven_max);
 	char o_name[80];

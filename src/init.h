@@ -51,6 +51,7 @@ struct angband_constants
 	u16b property_max;	/**< Maximum number of object properties */
 	u16b ordinary_kind_max;	/**< Maximum number of objects in object.txt */
 	u16b shape_max;		/**< Maximum number of player shapes */
+	u16b store_max;		/**< Maximum number of store types */
 
 	/* Maxima of things on a given level, read from constants.txt */
 	u16b level_monster_max;	/**< Maximum number of monsters on a given level */

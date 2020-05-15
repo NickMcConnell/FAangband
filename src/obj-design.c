@@ -3540,7 +3540,7 @@ static void make_terrible(struct artifact *art, struct object *obj)
 				obj->slays = NULL;
 			}
 			if (one_in_(3)) {
-				of_off(art->flags, OF_PERFECT_BALANCE);
+				of_off(flags, OF_PERFECT_BALANCE);
 			}
 
 			/* Brands */

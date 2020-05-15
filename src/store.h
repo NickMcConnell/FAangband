@@ -62,6 +62,8 @@ struct store {
 	unsigned int sidx;
 	const char *name;
 
+	struct town *town;
+
 	byte stock_num;				/* Stock -- Number of entries */
 	s16b stock_size;			/* Stock -- Total Size of Array */
 	struct object *stock;		/* Stock -- Actual stock items */
@@ -88,8 +90,12 @@ struct store {
 extern struct store *stores;
 
 struct store *store_at(struct chunk *c, struct loc grid);
+void free_store(struct store *store);
 void store_init(void);
-void free_stores(void);
+void place_home(struct town *town);
+bool store_is_black_market(struct store *store);
+bool store_is_home(struct store *store);
+struct store *store_home(struct player *p);
 void store_stock_list(struct store *store, struct object **list, int n);
 void home_carry(struct object *obj);
 struct object *store_carry(struct store *store, struct object *obj);

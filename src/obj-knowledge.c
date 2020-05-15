@@ -18,6 +18,7 @@
 
 #include "angband.h"
 #include "cave.h"
+#include "game-world.h"
 #include "init.h"
 #include "obj-curse.h"
 #include "obj-desc.h"
@@ -539,11 +540,16 @@ bool object_is_in_store(const struct object *obj)
 	struct object *obj1;
 
 	/* Check all the store objects */
-	for (i = 0; i < MAX_STORES; i++) {
-		struct store *s = &stores[i];
-		if (s->sidx == STORE_HOME) continue;
-		for (obj1 = s->stock; obj1; obj1 = obj1->next)
-			if (obj1 == obj) return true;
+	for (i = 0; i < world->num_towns; i++) {
+		struct town *town = &world->towns[i];
+		struct store *s = town->stores;
+		while (s) {
+			if (store_is_home(s)) continue;
+			for (obj1 = s->stock; obj1; obj1 = obj1->next) {
+				if (obj1 == obj) return true;
+			}
+			s = s->next;
+		}
 	}
 
 	return false;
@@ -1155,10 +1161,15 @@ void update_player_object_knowledge(struct player *p)
 		player_know_object(p, obj);
 
 	/* Store objects */
-	for (i = 0; i < MAX_STORES; i++) {
-		struct store *s = &stores[i];
-		for (obj = s->stock; obj; obj = obj->next)
-			player_know_object(p, obj);
+	for (i = 0; i < world->num_towns; i++) {
+		struct town *town = &world->towns[i];
+		struct store *s = town->stores;
+		while (s) {
+			for (obj = s->stock; obj; obj = obj->next) {
+				player_know_object(p, obj);
+			}
+			s = s->next;
+		}
 	}
 
 	/* Curse objects */
@@ -2207,10 +2218,15 @@ void object_flavor_aware(struct object *obj)
 		object_set_base_known(obj1);
 
 	/* Store objects */
-	for (i = 0; i < MAX_STORES; i++) {
-		struct store *s = &stores[i];
-		for (obj1 = s->stock; obj1; obj1 = obj1->next)
-			object_set_base_known(obj1);
+	for (i = 0; i < world->num_towns; i++) {
+		struct town *town = &world->towns[i];
+		struct store *s = town->stores;
+		while (s) {
+			for (obj1 = s->stock; obj1; obj1 = obj1->next) {
+				object_set_base_known(obj1);
+			}
+			s = s->next;
+		}
 	}
 
 	/* Quit if no dungeon yet */

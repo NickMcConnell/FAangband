@@ -182,7 +182,7 @@ static void death_file(const char *title, int row)
  */
 static void death_info(const char *title, int row)
 {
-	struct store *home = &stores[STORE_HOME];
+	struct store *home = store_home(player);
 
 	screen_save();
 

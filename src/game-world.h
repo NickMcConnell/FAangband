@@ -36,6 +36,7 @@ enum topography {
 struct level {
 	int index;
 	int depth;
+	bool visited;
 	enum locality locality;
 	enum topography topography;
 	char *north;
@@ -47,13 +48,19 @@ struct level {
 	struct level *next;
 };
 
+struct town {
+	int index;
+	char *code;
+	struct store *stores;
+};
+
 struct level_map {
 	char *name;
 	char *help;
 	int num_levels;
 	int num_towns;
 	struct level *levels;
-	int *towns;
+	struct town *towns;
 	struct level_map *next;
 };
 

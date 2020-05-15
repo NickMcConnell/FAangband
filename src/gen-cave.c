@@ -1483,7 +1483,7 @@ bool lot_has_shop(struct chunk *c, struct loc xroads, struct loc lot,
  * \param xroads is the location of the town crossroads
  * \param lot the location of this store in the town layout
  */
-static void build_store(struct chunk *c, int n, struct loc xroads,
+static void build_store(struct chunk *c, struct store *s, struct loc xroads,
 						struct loc lot, int lot_wid, int lot_hgt)
 {
 	int feat;
@@ -1618,7 +1618,7 @@ static void build_store(struct chunk *c, int n, struct loc xroads,
 
 	/* Clear previous contents, add a store door */
 	for (feat = 0; feat < z_info->f_max; feat++)
-		if (feat_is_shop(feat) && (f_info[feat].shopnum == n + 1))
+		if (feat_is_shop(feat) && (f_info[feat].shopnum == s->sidx + 1))
 			square_set_feat(c, door, feat);
 }
 
@@ -1762,7 +1762,7 @@ static void build_ruin(struct chunk *c, struct loc xroads, struct loc lot, int l
  * \param c is the current chunk
  * \param p is the player
  */
-static void town_gen_layout(struct chunk *c, struct player *p)
+static void town_gen_layout(struct chunk *c, struct player *p, struct town *t)
 {
 	int n, x, y;
 	struct loc grid, pgrid, xroads;
@@ -1780,6 +1780,7 @@ static void town_gen_layout(struct chunk *c, struct player *p)
 
 	/* divide the town into lots */
 	u16b lot_hgt = 4, lot_wid = 6;
+	struct store *s;
 
 	/* Create walls */
 	draw_rectangle(c, 0, 0, c->height - 1, c->width - 1, FEAT_PERM,
@@ -1839,7 +1840,7 @@ static void town_gen_layout(struct chunk *c, struct player *p)
 
 		/* place stores along the streets */
 		num_attempts = 0;
-		for (n = 0; n < MAX_STORES; n++) {
+		for (s = t->stores; s; s = s->next) {
 			struct loc store_lot;
 			bool found_spot = false;
 			while (!found_spot && num_attempts < max_attempts) {
@@ -1863,7 +1864,7 @@ static void town_gen_layout(struct chunk *c, struct player *p)
 			min_store_x = MIN(min_store_x, xroads.x + lot_wid * store_lot.x);
 			max_store_x = MAX(max_store_x, xroads.x + lot_wid * store_lot.x);
 
-			build_store(c, n, xroads, store_lot, lot_wid, lot_hgt);
+			build_store(c, s, xroads, store_lot, lot_wid, lot_hgt);
 		}
 		if (num_attempts >= max_attempts) continue;
 
@@ -1913,6 +1914,14 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width)
 	struct level *lev = &world->levels[p->place];
 	char *name = level_name(lev);
 	struct chunk *c_new, *c_old = chunk_find_name(name);
+	struct town *town;
+
+	/* Find the town */
+	for (i = 0; i < world->num_towns; i++) {
+		town = &world->towns[i];
+		if (town->index == p->place) break;
+	}
+	assert (i < world->num_towns);
 
 	/* Make a new chunk */
 	c_new = cave_new(z_info->town_hgt, z_info->town_wid);
@@ -1922,7 +1931,7 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width)
 		c_new->depth = p->depth;
 
 		/* Build stuff */
-		town_gen_layout(c_new, p);
+		town_gen_layout(c_new, p, town);
 	} else {
 		int feat = FEAT_MORE;
 

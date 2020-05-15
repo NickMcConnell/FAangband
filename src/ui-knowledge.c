@@ -21,6 +21,7 @@
 #include "cave.h"
 #include "cmds.h"
 #include "game-input.h"
+#include "game-world.h"
 #include "grafmode.h"
 #include "init.h"
 #include "mon-lore.h"
@@ -1468,10 +1469,14 @@ static struct object *find_artifact(struct artifact *artifact)
 	}
 
 	/* Store objects */
-	for (i = 0; i < MAX_STORES; i++) {
-		struct store *s = &stores[i];
-		for (obj = s->stock; obj; obj = obj->next) {
-			if (obj->artifact == artifact) return obj;
+	for (i = 0; i < world->num_towns; i++) {
+		struct town *town = &world->towns[i];
+		struct store *s = town->stores;
+		while (s) {
+			for (obj = s->stock; obj; obj = obj->next) {
+				if (obj->artifact == artifact) return obj;
+			}
+			s = s->next;
 		}
 	}
 

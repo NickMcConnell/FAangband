@@ -237,6 +237,9 @@ void player_change_place(struct player *p, int place)
 
 	p->depth = world->levels[place].depth;
 
+	/* We've been here now */
+	lev->visited = true;
+
 	/* If we're returning to town, update the store contents
 	   according to how long we've been away */
 	if (!p->depth && daycount)
@@ -349,7 +352,7 @@ void take_hit(struct player *p, int dam, const char *kb_str)
  */
 void death_knowledge(struct player *p)
 {
-	struct store *home = &stores[STORE_HOME];
+	struct store *home = store_home(p);
 	struct object *obj;
 	time_t death_time = (time_t)0;
 

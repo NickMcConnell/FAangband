@@ -3,6 +3,7 @@
 # Syntax for this file:
 
 # store: store number : store name
+# town: town code                   - towns which have one of these stores
 # owner: max purse : name			- as many or few as you like >1
 # turnover: turnover				- how many items the store turns over
 # slots: min : max					- number of 'normal' slots to keep stocked
@@ -13,7 +14,12 @@
 
 
 # General store
-store:1:General Store
+store:General Store
+town:KHAZAD_DUM
+town:BELEGOST
+town:MENEGROTH
+town:GONDOLIN
+town:ANGBAND
 owner:300:Easterling:Rincewind the Chicken
 owner:300:Green-Elf:Ella the Quiet
 owner:300:Grey-Elf:Lyar-el the Comely
@@ -51,7 +57,12 @@ buy:flask
 buy:digger
 
 # Armoury
-store:2:Armoury
+store:Armoury
+town:KHAZAD_DUM
+town:BELEGOST
+town:MENEGROTH
+town:GONDOLIN
+town:ANGBAND
 owner:10000:Easterling:Darg-Low the Grim
 owner:20000:Green-Elf:Ambol of Legolin
 owner:25000:Grey-Elf:Ella the Dextrous
@@ -96,7 +107,12 @@ buy:hard armor
 buy:dragon armor
 
 # Weaponsmith
-store:3:Weapon Smiths
+store:Weapon Smiths
+town:KHAZAD_DUM
+town:BELEGOST
+town:MENEGROTH
+town:GONDOLIN
+town:ANGBAND
 owner:7500:Easterling:William Wrathful
 owner:20000:Green-Elf:Jarl the Generous
 owner:15000:Grey-Elf:Arndal the Staunch
@@ -151,7 +167,18 @@ buy:hafted
 
 
 # Bookseller
-store:4:Bookseller
+store:Bookseller
+town:ERIADOR
+town:OSSIRIAND
+town:ERED_LUIN_SOUTH
+town:TAUR_IM_DUINATH
+town:EPHEL_BRANDIR
+town:GLADDEN_FIELDS
+town:KHAZAD_DUM
+town:BELEGOST
+town:MENEGROTH
+town:GONDOLIN
+town:ANGBAND
 owner:15000:Easterling:Borfang the Learned
 owner:12500:Green-Elf:Marwë of Tol Galen
 owner:10000:Grey-Elf:Nastra the Dusty
@@ -177,7 +204,18 @@ buy:nature book
 buy:shadow book
 
 # Alchemist
-store:5:Alchemy Shop
+store:Alchemy Shop
+town:ERIADOR
+town:OSSIRIAND
+town:ERED_LUIN_SOUTH
+town:TAUR_IM_DUINATH
+town:EPHEL_BRANDIR
+town:GLADDEN_FIELDS
+town:KHAZAD_DUM
+town:BELEGOST
+town:MENEGROTH
+town:GONDOLIN
+town:ANGBAND
 owner:10000:Easterling:Mauser the Chemist
 owner:10000:Green-Elf:Vella the Slender
 owner:7500:Grey-Elf:Dilon of Region
@@ -216,7 +254,12 @@ buy:scroll
 buy:potion
 
 # Magic-user's
-store:6:Magic Shop
+store:Magic Shop
+town:KHAZAD_DUM
+town:BELEGOST
+town:MENEGROTH
+town:GONDOLIN
+town:ANGBAND
 owner:10000:Easterling:Murid the Skinflint
 owner:20000:Green-Elf:Ariel the Sorceress
 owner:30000:Grey-Elf:Inglorian the Mage
@@ -257,7 +300,12 @@ buy:scroll
 buy:potion
 
 # Black Market - no stock given but we still need slot/turnover info
-store:7:Black Market
+store:Black Market
+town:KHAZAD_DUM
+town:BELEGOST
+town:MENEGROTH
+town:GONDOLIN
+town:ANGBAND
 owner:25000:Easterling:Tancred of the Axe
 owner:30000:Green-Elf:Ravil of Thalos
 owner:30000:Grey-Elf:Drago the Fair
@@ -274,11 +322,7 @@ owner:20000:Beorning:Lo-Hak the Awful
 slots:6:18
 turnover:9
 
-store:8:Home
-owner:0:none:Your home
-owner:0:none:Your home
-owner:0:none:Your home
-owner:0:none:Your home
+store:Home
 
 # Temple
 # owner:10000:Easterling:Gunnar the Paladin
