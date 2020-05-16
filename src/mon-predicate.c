@@ -163,6 +163,14 @@ bool monster_is_powerful(const struct monster *mon)
 }
 
 /**
+ * Monster is a player-race monster
+ */
+bool monster_is_player_race(const struct monster *mon)
+{
+	return rf_has(mon->race->flags, RF_PLAYER);
+}
+
+/**
  * Monster has spells
  */
 bool monster_has_spells(const struct monster *mon)

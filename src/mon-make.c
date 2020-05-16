@@ -36,6 +36,7 @@
 #include "player-timed.h"
 #include "target.h"
 
+int **race_prob;
 /**
  * ------------------------------------------------------------------------
  * Monster race allocation
@@ -396,6 +397,154 @@ struct monster_race *get_mon_num(int level)
 
 	/* Result */
 	return race;
+}
+
+/**
+ * ------------------------------------------------------------------------
+ * Handling of 'player race' monsters
+ * ------------------------------------------------------------------------ */
+/**
+ * Initialize the racial probability array
+ */
+void init_race_probs(void)
+{
+	int i, j, k, n;
+	int race_count = 0;
+	int **adjacency, **lev_path, **temp_path;
+
+	/* Count the player races */
+	struct player_race *p_race = races;
+	while (p_race) {
+		p_race = p_race->next;
+		race_count++;
+	}
+
+	/* Make the array */
+	race_prob = mem_zalloc(race_count * sizeof(int*));
+	for (i = 0; i < race_count; i++) {
+		race_prob[i] = mem_zalloc(world->num_levels * sizeof(int));
+	}
+
+	/* Prepare temporary adjacency arrays */
+	adjacency = mem_zalloc(world->num_levels * sizeof(int*));
+	lev_path = mem_zalloc(world->num_levels * sizeof(int*));
+	temp_path = mem_zalloc(world->num_levels * sizeof(int*));
+	for (i = 0; i < world->num_levels; i++) {
+		adjacency[i] = mem_zalloc(world->num_levels * sizeof(int));
+		lev_path[i] = mem_zalloc(world->num_levels * sizeof(int));
+		temp_path[i] = mem_zalloc(world->num_levels * sizeof(int));
+	}
+
+	/* Make the adjacency matrix */
+	for (i = 0; i < world->num_levels; i++) {
+		/* Get the horizontally adjacent levels */
+		struct level *lev = &world->levels[i];
+		struct level *north = NULL;
+		struct level *east = NULL;
+		struct level *south = NULL;
+		struct level *west = NULL;
+		if (lev->north) north = level_by_name(world, lev->north);
+		if (lev->east) east = level_by_name(world, lev->east);
+		if (lev->south) south = level_by_name(world, lev->south);
+		if (lev->west) west = level_by_name(world, lev->west);
+
+		/* Initialise this row */
+		for (k = 0; k < world->num_levels; k++) {
+			adjacency[i][k] = 0;
+			lev_path[i][k] = 0;
+			temp_path[i][k] = 0;
+		}
+
+		/* Add 1s where there's an adjacent stage (not up or down) */
+		if (north) {
+			adjacency[i][north->index] = 1;
+			temp_path[i][north->index] = 1;
+		}
+		if (east) {
+			adjacency[i][east->index] = 1;
+			temp_path[i][east->index] = 1;
+		}
+		if (south) {
+			adjacency[i][south->index] = 1;
+			temp_path[i][south->index] = 1;
+		}
+		if (west) {
+			adjacency[i][west->index] = 1;
+			temp_path[i][west->index] = 1;
+		}
+	}
+
+	/* Power it up (squaring 3 times gives eighth power) */
+	for (n = 0; n < 3; n++) {
+		/* Square */
+		for (i = 0; i < world->num_levels; i++) {
+			for (j = 0; j < world->num_levels; j++) {
+				lev_path[i][j] = 0;
+				for (k = 0; k < world->num_levels; k++) {
+					lev_path[i][j] += temp_path[i][k] * temp_path[k][j];
+				}
+			}
+		}
+
+		/* Copy it over for the next squaring or final multiply */
+		for (i = 0; i < world->num_levels; i++) {
+			for (j = 0; j < world->num_levels; j++) {
+				temp_path[i][j] = lev_path[i][j];
+			}
+		}
+	}
+
+	/* Get the max of length 8 and length 9 paths */
+	for (i = 0; i < world->num_levels; i++) {
+		for (j = 0; j < world->num_levels; j++) {
+			/* Multiply to get the length 9s */
+			lev_path[i][j] = 0;
+			for (k = 0; k < world->num_levels; k++) {
+				lev_path[i][j] += temp_path[i][k] * adjacency[k][j];
+			}
+
+			/* Now replace by the length 8s if it's larger */
+			if (lev_path[i][j] < temp_path[i][j]) {
+				lev_path[i][j] = temp_path[i][j];
+			}
+		}
+	}
+
+	/* We now have the maximum of the number of paths of length 8 and the
+	 * number of paths of length 9 (we need to try odd and even length paths,
+	 * as using just one leads to anomalies) from any level to any other,
+	 * which we will use as a basis for the racial probability table for
+	 * racially based monsters in any given level.  For a level, we give
+	 * every race a 1, then add the number of paths of length 8 from their
+	 * hometown to that level.  We then turn every row entry into the
+	 * cumulative total of the row to that point.  Whenever a racially based
+	 * monster is called for, we will take a random integer less than the
+	 * last entry of the row for that level, and proceed along the row,
+	 * allocating the race corresponding to the position where we first
+	 * exceed that integer.
+	 */
+	for (i = 0; i < world->num_levels; i++) {
+		int prob = 0;
+		struct player_race *p_race = races;
+		while (p_race) {
+			int hometown = 	strstr(world->name, "Dungeon") ? 1 :
+				level_by_name(world, p_race->hometown)->index;
+			/* Enter the cumulative probability */
+			prob += 1 + lev_path[world->levels[hometown].index][i];
+			race_prob[p_race->ridx][i] = prob;
+			p_race = p_race->next;
+		}
+	}
+
+	/* Free the temporary arrays */
+	mem_free(temp_path);
+	mem_free(adjacency);
+	mem_free(lev_path);
+}
+
+void free_race_probs(void)
+{
+	mem_free(race_prob);
 }
 
 /**
@@ -956,7 +1105,7 @@ static bool mon_create_drop(struct chunk *c, struct monster *mon, byte origin)
 
 
 /**
- * Creates the onbject a mimic is imitating.
+ * Creates the object a mimic is imitating.
  */
 void mon_create_mimicked_object(struct chunk *c, struct monster *mon, int index)
 {
@@ -1037,6 +1186,33 @@ int mon_hp(const struct monster_race *race, aspect hp_aspect)
 	return 0;
 }
 
+/**
+ * Get a player race according to the probabilites in race_prob[][]
+ */
+struct player_race *get_player_race(int place)
+{
+	struct player_race *p_race = races;
+	int i, k, max = 0;
+
+	/* Count the races */
+	while (p_race) {
+		max++;
+		p_race = p_race->next;
+	}
+
+	/* Pick one according to the probablilities */
+	k = randint0(race_prob[max - 1][player->place]);
+	for (i = 0; i < max; i++) {
+		if (race_prob[i][player->place] > k) break;
+	}
+
+	/* Find the actual race */
+	for (p_race = races; p_race; p_race = p_race->next) {
+		if (i == 0) break;
+		i--;
+	}
+	return p_race;
+}
 
 /**
  * ------------------------------------------------------------------------
@@ -1095,6 +1271,20 @@ s16b place_monster(struct chunk *c, struct loc grid, struct monster *mon,
 	monster_group_assign(c, new_mon, info, loading);
 
 	update_mon(new_mon, c, true);
+
+	/* Set player race if needed */
+	if (rf_has(new_mon->race->flags, RF_PLAYER) && !new_mon->player_race) {
+		struct player_race *p_race = monster_group_player_race(c, new_mon);
+		if (p_race) {
+			/* Use the existing race */
+			new_mon->player_race = p_race;
+		} else {
+			/* Pick a race and set the monster and group races to it */
+			p_race = get_player_race(player->place);
+			new_mon->player_race = p_race;
+			set_monster_group_player_race(c, new_mon, p_race);
+		}
+	}
 
 	/* Count the number of "reproducers" */
 	if (rf_has(new_mon->race->flags, RF_MULTIPLY)) c->num_repro++;

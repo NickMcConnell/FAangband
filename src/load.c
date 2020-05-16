@@ -284,6 +284,12 @@ static bool rd_monster(struct chunk *c, struct monster *mon)
 	} else {
 		mon->original_race = lookup_monster(race_name);
 	}
+	rd_string(race_name, sizeof(race_name));
+	if (streq(race_name, "none")) {
+		mon->player_race = NULL;
+	} else {
+		mon->player_race = player_race_from_name(race_name);
+	}
 
 	/* Read the other information */
 	rd_byte(&tmp8u);

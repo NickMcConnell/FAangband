@@ -837,7 +837,7 @@ rarity:1
 experience:6
 blow:HIT:HURT:1d7
 blow:HIT:HURT:1d7
-flags:MALE
+flags:MALE | PLAYER
 flags:DROP_60
 flags:OPEN_DOOR
 friends-base:20:1d3:person
@@ -859,7 +859,7 @@ rarity:1
 experience:6
 blow:HIT:HURT:1d6
 blow:TOUCH:EAT_GOLD
-flags:MALE | EVIL
+flags:MALE | EVIL | PLAYER
 flags:DROP_40
 flags:OPEN_DOOR | TAKE_ITEM
 drop:scroll:Phase Door:35:1:3
@@ -882,7 +882,7 @@ depth:2
 rarity:1
 experience:6
 blow:HIT:HURT:1d5
-flags:MALE
+flags:MALE | PLAYER
 flags:DROP_40
 flags:OPEN_DOOR
 flags:FORCE_SLEEP
@@ -908,7 +908,7 @@ depth:2
 rarity:1
 experience:6
 blow:HIT:HURT:1d4
-flags:MALE
+flags:MALE | PLAYER
 flags:DROP_40
 flags:OPEN_DOOR
 flags:FORCE_SLEEP
@@ -1480,7 +1480,7 @@ rarity:1
 experience:18
 blow:HIT:HURT:1d5
 blow:HIT:HURT:1d5
-flags:MALE
+flags:MALE | PLAYER
 flags:DROP_60
 flags:OPEN_DOOR
 flags:FORCE_SLEEP
@@ -1509,7 +1509,7 @@ rarity:1
 experience:18
 blow:HIT:HURT:1d7
 blow:HIT:HURT:1d7
-flags:MALE
+flags:MALE | PLAYER
 flags:DROP_60
 flags:OPEN_DOOR
 flags:FORCE_SLEEP
@@ -1536,7 +1536,7 @@ rarity:1
 experience:13
 blow:HIT:HURT:1d2
 blow:HIT:HURT:1d2
-flags:OPEN_DOOR
+flags:OPEN_DOOR | PLAYER
 flags:FORCE_SLEEP
 spell-freq:8
 spells:HASTE | SLOW | CONF
@@ -2476,7 +2476,7 @@ rarity:2
 experience:26
 blow:HIT:HURT:2d4
 blow:HIT:HURT:2d4
-flags:MALE | EVIL
+flags:MALE | EVIL | PLAYER
 flags:DROP_1
 flags:OPEN_DOOR | TAKE_ITEM
 innate-freq:8
@@ -3120,7 +3120,7 @@ depth:10
 rarity:2
 experience:35
 blow:HIT:HURT:1d6
-flags:FEMALE | EVIL
+flags:FEMALE | EVIL | PLAYER
 flags:DROP_1
 flags:OPEN_DOOR | TAKE_ITEM
 innate-freq:5
@@ -3381,7 +3381,7 @@ rarity:1
 experience:36
 blow:HIT:HURT:2d3
 blow:HIT:HURT:2d3
-flags:MALE | SMART
+flags:MALE | SMART | PLAYER
 flags:DROP_60
 flags:OPEN_DOOR
 flags:FORCE_SLEEP
@@ -3523,7 +3523,7 @@ rarity:1
 experience:40
 blow:HIT:HURT:3d5
 blow:HIT:HURT:3d5
-flags:MALE
+flags:MALE | PLAYER
 flags:DROP_1
 flags:OPEN_DOOR
 innate-freq:10
@@ -3686,7 +3686,7 @@ depth:13
 rarity:2
 experience:50
 blow:HIT:HURT:2d2
-flags:MALE | EVIL | SMART
+flags:MALE | EVIL | SMART | PLAYER
 flags:DROP_1
 flags:OPEN_DOOR
 flags:FORCE_SLEEP
@@ -3715,7 +3715,7 @@ rarity:2
 experience:50
 blow:HIT:HURT:2d4
 blow:HIT:HURT:2d4
-flags:MALE | SMART
+flags:MALE | SMART | PLAYER
 flags:DROP_1
 flags:OPEN_DOOR
 flags:FORCE_SLEEP
@@ -4218,7 +4218,7 @@ experience:50
 blow:HIT:HURT:2d4
 blow:HIT:HURT:2d4
 blow:TOUCH:EAT_ITEM
-flags:MALE | EVIL
+flags:MALE | EVIL | PLAYER
 flags:DROP_1
 flags:OPEN_DOOR | TAKE_ITEM
 innate-freq:8
@@ -4543,7 +4543,7 @@ experience:180
 blow:HIT:HURT:3d5
 blow:HIT:HURT:3d5
 blow:HIT:HURT:3d5
-flags:MALE | EVIL
+flags:MALE | EVIL | PLAYER
 flags:DROP_1
 flags:OPEN_DOOR
 flags:FORCE_SLEEP
@@ -5167,7 +5167,7 @@ rarity:1
 experience:55
 blow:HIT:HURT:5d4
 blow:HIT:HURT:5d4
-flags:MALE
+flags:MALE | PLAYER
 flags:DROP_1
 flags:OPEN_DOOR | TAKE_ITEM
 innate-freq:4
@@ -5199,7 +5199,7 @@ rarity:1
 experience:55
 blow:HIT:HURT:4d6
 blow:HIT:HURT:4d6
-flags:MALE
+flags:MALE | PLAYER
 flags:DROP_1
 flags:OPEN_DOOR | TAKE_ITEM
 spell-freq:4
@@ -5599,7 +5599,7 @@ blow:HIT:HURT:2d8
 blow:HIT:HURT:2d8
 blow:HIT:EAT_GOLD:4d4
 blow:HIT:EAT_ITEM:4d4
-flags:MALE | EVIL
+flags:MALE | EVIL | PLAYER
 flags:DROP_2
 flags:OPEN_DOOR | TAKE_ITEM
 innate-freq:4
@@ -5915,7 +5915,7 @@ rarity:2
 experience:330
 blow:HIT:HURT:2d4
 blow:HIT:HURT:2d4
-flags:MALE | EVIL | SMART
+flags:MALE | EVIL | SMART | PLAYER
 flags:DROP_60 | ONLY_ITEM
 flags:OPEN_DOOR
 flags:FORCE_SLEEP
@@ -6556,7 +6556,7 @@ experience:240
 blow:HIT:HURT:5d5
 blow:HIT:HURT:5d5
 blow:HIT:HURT:5d5
-flags:MALE | EVIL
+flags:MALE | EVIL | PLAYER
 flags:DROP_1
 flags:OPEN_DOOR
 flags:FORCE_SLEEP
@@ -6611,7 +6611,7 @@ rarity:1
 experience:150
 blow:HIT:HURT:2d5
 blow:HIT:HURT:2d5
-flags:MALE | SMART
+flags:MALE | SMART | PLAYER
 flags:DROP_1 | ONLY_ITEM
 flags:OPEN_DOOR
 flags:FORCE_SLEEP
@@ -8082,7 +8082,7 @@ blow:HIT:HURT:2d8
 blow:HIT:HURT:3d4
 blow:HIT:EAT_GOLD:4d4
 blow:HIT:EAT_ITEM:4d5
-flags:MALE | EVIL
+flags:MALE | EVIL | PLAYER
 flags:DROP_2
 flags:OPEN_DOOR | TAKE_ITEM
 innate-freq:10
@@ -9579,7 +9579,7 @@ experience:2150
 blow:HIT:HURT:2d8
 blow:HIT:HURT:2d8
 blow:HIT:HURT:2d8
-flags:MALE | EVIL
+flags:MALE | EVIL | PLAYER
 flags:DROP_3 | ONLY_ITEM
 flags:OPEN_DOOR
 flags:NO_CONF | NO_SLEEP | NO_HOLD
@@ -9719,7 +9719,7 @@ experience:1800
 blow:HIT:HURT:3d4
 blow:HIT:HURT:3d4
 blow:HIT:HURT:3d5
-flags:MALE | SMART
+flags:MALE | SMART | PLAYER
 flags:DROP_2 | ONLY_ITEM
 flags:OPEN_DOOR
 flags:NO_CONF | NO_SLEEP | NO_HOLD
@@ -9943,7 +9943,7 @@ experience:1600
 blow:HIT:HURT:5d5
 blow:HIT:HURT:5d5
 blow:HIT:HURT:5d5
-flags:MALE | INVISIBLE
+flags:MALE | INVISIBLE | PLAYER
 flags:DROP_2 | ONLY_ITEM
 flags:OPEN_DOOR | TAKE_ITEM
 flags:IM_COLD | IM_ELEC | IM_FIRE | IM_POIS | NO_CONF | NO_SLEEP | NO_HOLD
@@ -10552,7 +10552,7 @@ experience:2500
 blow:HIT:HURT:6d6
 blow:HIT:HURT:6d6
 blow:HIT:HURT:6d6
-flags:MALE
+flags:MALE | PLAYER
 flags:DROP_2 | ONLY_ITEM
 flags:KILL_BODY
 flags:NO_FEAR | NO_CONF | NO_SLEEP

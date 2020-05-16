@@ -183,15 +183,25 @@ void monster_desc(char *desc, size_t max, const struct monster *mon, int mode)
 			/* Start with the name (thus nominative and objective) */
 			my_strcpy(desc, mon->race->name, max);
 		} else {
-			if (mode & MDESC_IND_VIS) {
-				/* XXX Check plurality for "some" */
-				/* Indefinite monsters need an indefinite article */
-				my_strcpy(desc, is_a_vowel(mon->race->name[0]) ? "an " : "a ", max);
+			if (mon->player_race) {
+				if (mode & MDESC_IND_VIS) {
+					/* Indefinite monsters need an indefinite article */
+					my_strcpy(desc, is_a_vowel(mon->player_race->name[0]) ? "an " : "a ", max);
+				} else {
+					/* Definite monsters need a definite article */
+					my_strcpy(desc, "the ", max);
+				}
+				/* Add the player race name */
+				my_strcat(desc, format("%s ", mon->player_race->name), max);
 			} else {
-				/* Definite monsters need a definite article */
-				my_strcpy(desc, "the ", max);
+				if (mode & MDESC_IND_VIS) {
+					/* Indefinite monsters need an indefinite article */
+					my_strcpy(desc, is_a_vowel(mon->race->name[0]) ? "an " : "a ", max);
+				} else {
+					/* Definite monsters need a definite article */
+					my_strcpy(desc, "the ", max);
+				}
 			}
-
 			my_strcat(desc, mon->race->name, max);
 		}
 

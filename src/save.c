@@ -215,6 +215,11 @@ static void wr_monster(const struct monster *mon)
 	} else {
 		wr_string("none");
 	}
+	if (mon->player_race) {
+		wr_string(mon->player_race->name);
+	} else {
+		wr_string("none");
+	}
 	wr_byte(mon->grid.y);
 	wr_byte(mon->grid.x);
 	wr_s16b(mon->hp);

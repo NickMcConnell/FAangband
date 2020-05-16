@@ -416,6 +416,8 @@ static void start_game(bool new_game)
 		update_player_object_knowledge(player);
 	}
 
+	init_race_probs();
+
 	/* Tell the UI we've started. */
 	event_signal(EVENT_LEAVE_INIT);
 	event_signal(EVENT_ENTER_GAME);
@@ -611,6 +613,8 @@ void close_game(void)
 
 	/* Wipe the monster list */
 	wipe_mon_list(cave, player);
+
+	free_race_probs();
 
 	/* Hack -- Decrease "icky" depth */
 	screen_save_depth--;

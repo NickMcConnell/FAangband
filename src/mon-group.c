@@ -483,6 +483,28 @@ struct monster *monster_group_leader(struct chunk *c, struct monster *mon)
 }
 
 /**
+ * Get the player race (if any) of a monster group
+ */
+struct player_race *monster_group_player_race(struct chunk *c,
+											  struct monster *mon)
+{
+	int index = mon->group_info[PRIMARY_GROUP].index;
+	struct monster_group *group = c->monster_groups[index];
+	return group->player_race;
+}
+
+/**
+ * Set the player race of a monster group
+ */
+void set_monster_group_player_race(struct chunk *c, struct monster *mon,
+								   struct player_race *race)
+{
+	int index = mon->group_info[PRIMARY_GROUP].index;
+	struct monster_group *group = c->monster_groups[index];
+	group->player_race = race;
+}
+
+/**
  * Verify the integrity of all the monster groups
  */
 void monster_groups_verify(struct chunk *c)

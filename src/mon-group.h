@@ -28,6 +28,7 @@ struct mon_group_list_entry {
 struct monster_group {
 	int index;
 	int leader;
+	struct player_race *player_race;
 	struct mon_group_list_entry *member_list;
 };
 
@@ -50,6 +51,10 @@ struct monster *group_monster_tracking(struct chunk *c,
 									   const struct monster *mon);
 int monster_group_leader_idx(struct monster_group *group);
 struct monster *monster_group_leader(struct chunk *c, struct monster *mon);
+struct player_race *monster_group_player_race(struct chunk *c,
+											  struct monster *mon);
+void set_monster_group_player_race(struct chunk *c, struct monster *mon,
+								   struct player_race *race);
 void monster_groups_verify(struct chunk *c);
 
 #endif /* !MON_GROUP_H */
