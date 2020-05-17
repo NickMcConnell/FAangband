@@ -491,7 +491,7 @@ static int o_critical_melee(const struct player *p, struct monster *mon,
 							const struct object *obj, int sleeping_bonus,
 							u32b *msg_type, bool *armsman)
 {
-	int debuff_to_hit = is_debuffed(monster) ? DEBUFF_CRITICAL_HIT : 0;
+	int debuff_to_hit = is_debuffed(mon) ? DEBUFF_CRITICAL_HIT : 0;
 	int power = (chance_of_melee_hit(p, obj) + debuff_to_hit + sleeping_bonus)
 		/ 3;
 	int add_dice = 0;
