@@ -813,7 +813,7 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 	if ((typ == ELEM_ARROW) && (randint1(75) <= player->state.evasion_chance)) {
 		/* Message */
 		msg("You evade the missile!");
-		disturb(player, 1);
+		disturb(player);
 		return true;
 	}
 
