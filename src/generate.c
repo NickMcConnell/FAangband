@@ -726,6 +726,26 @@ static int calc_mon_feeling(struct chunk *c)
  * Level profile routines
  * ------------------------------------------------------------------------ */
 /**
+ * Find a cave_profile by name
+ * \param name is the name of the cave_profile being looked for
+ */
+const struct cave_profile *find_cave_profile(char *name)
+{
+	int i;
+
+	for (i = 0; i < z_info->profile_max; i++) {
+		const struct cave_profile *profile;
+
+		profile = &cave_profiles[i];
+		if (!strcmp(name, profile->name))
+			return profile;
+	}
+
+	/* Not there */
+	return NULL;
+}
+
+/**
  * Do d_m's prime check for labyrinths
  * \param depth is the depth where we're trying to generate a labyrinth
  */
@@ -755,32 +775,14 @@ bool labyrinth_check(int depth)
 }
 
 /**
- * Find a cave_profile by name
- * \param name is the name of the cave_profile being looked for
- */
-const struct cave_profile *find_cave_profile(char *name)
-{
-	int i;
-
-	for (i = 0; i < z_info->profile_max; i++) {
-		const struct cave_profile *profile;
-
-		profile = &cave_profiles[i];
-		if (!strcmp(name, profile->name))
-			return profile;
-	}
-
-	/* Not there */
-	return NULL;
-}
-
-/**
  * Choose a cave profile
  * \param p is the player
  */
 const struct cave_profile *choose_profile(struct player *p)
 {
 	const struct cave_profile *profile = NULL;
+	int moria_cutoff = find_cave_profile("moria")->cutoff;
+	int labyrinth_cutoff = find_cave_profile("labyrinth")->cutoff;
 
 	/* A bit of a hack, but worth it for now NRM */
 	if (player->noscore & NOSCORE_JUMPING) {
@@ -812,9 +814,10 @@ const struct cave_profile *choose_profile(struct player *p)
 			if (find_quest(p->place) && !OPT(p, birth_levels_persist)) {
 				/* Quest levels must be normal levels */
 				profile = find_cave_profile("modified");
-			} else if (labyrinth_check(p->depth)) {
+			} else if (labyrinth_check(p->depth) && (labyrinth_cutoff >= -1)) {
 				profile = find_cave_profile("labyrinth");
-			} else if ((p->depth >= 10) && (p->depth < 40) && one_in_(40)) {
+			} else if ((p->depth >= 10) && (p->depth < 40) && one_in_(40) &&
+					   (moria_cutoff >= -1)) {
 				profile = find_cave_profile("moria");
 			} else {
 				int pick = randint0(200);
