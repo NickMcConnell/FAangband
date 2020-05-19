@@ -1049,6 +1049,7 @@ int rd_misc(void)
 		rd_byte(&tmp8u);
 		world->levels[j].visited = tmp8u ? true : false;
 	}
+	init_race_probs();
 
 	/* Read the randart seed */
 	rd_u32b(&seed_randart);

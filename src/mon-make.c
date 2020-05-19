@@ -409,19 +409,11 @@ struct monster_race *get_mon_num(int level)
 void init_race_probs(void)
 {
 	int i, j, k, n;
-	int race_count = 0;
 	int **adjacency, **lev_path, **temp_path;
 
-	/* Count the player races */
-	struct player_race *p_race = races;
-	while (p_race) {
-		p_race = p_race->next;
-		race_count++;
-	}
-
 	/* Make the array */
-	race_prob = mem_zalloc(race_count * sizeof(int*));
-	for (i = 0; i < race_count; i++) {
+	race_prob = mem_zalloc(z_info->p_race_max * sizeof(int*));
+	for (i = 0; i < z_info->p_race_max; i++) {
 		race_prob[i] = mem_zalloc(world->num_levels * sizeof(int));
 	}
 
@@ -1192,17 +1184,11 @@ int mon_hp(const struct monster_race *race, aspect hp_aspect)
 struct player_race *get_player_race(int place)
 {
 	struct player_race *p_race = races;
-	int i, k, max = 0;
-
-	/* Count the races */
-	while (p_race) {
-		max++;
-		p_race = p_race->next;
-	}
+	int i, k;
 
 	/* Pick one according to the probablilities */
-	k = randint0(race_prob[max - 1][player->place]);
-	for (i = 0; i < max; i++) {
+	k = randint0(race_prob[z_info->p_race_max - 1][player->place]);
+	for (i = 0; i < z_info->p_race_max; i++) {
 		if (race_prob[i][player->place] > k) break;
 	}
 

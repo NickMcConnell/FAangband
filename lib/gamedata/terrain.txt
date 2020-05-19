@@ -187,6 +187,14 @@ info:8:0
 desc:Your safe piece of Middle Earth, and the only place you can store goods 
 desc:apart from on your person.
 
+name:Travelling Merchant
+graphics:9:u
+priority:20
+flags:SHOP | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY
+info:9:0
+desc:This merchant travels around, buying anything of value and selling
+desc:a range of basic commodities, weapons and armor.
+
 name:secret door
 graphics:#:w
 priority:10

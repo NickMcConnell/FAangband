@@ -2644,6 +2644,7 @@ static errr finish_parse_p_race(struct parser *p) {
 	int num = 0;
 	races = parser_priv(p);
 	for (r = races; r; r = r->next) num++;
+	z_info->p_race_max = num;
 	for (r = races; r; r = r->next, num--) {
 		assert(num);
 		r->ridx = num - 1;

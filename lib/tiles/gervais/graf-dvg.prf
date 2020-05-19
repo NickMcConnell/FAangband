@@ -79,6 +79,9 @@ feat:Black Market:*:0x96:0xAB
 # Home
 feat:Home:*:0x96:0xAA
 
+# Travelling Merchant
+feat:Travelling Merchant:*:0x96:0xA5
+
 # pile of rubble
 feat:pile of rubble:torch:0x9B:0x96
 feat:pile of rubble:los:0x9B:0x96

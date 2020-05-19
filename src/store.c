@@ -24,6 +24,7 @@
 #include "game-world.h"
 #include "hint.h"
 #include "init.h"
+#include "mon-make.h"
 #include "monster.h"
 #include "obj-desc.h"
 #include "obj-gear.h"
@@ -66,6 +67,7 @@ struct hint *hints;
  * Stores that need to be commonly referred to
  */
 static unsigned int store_black_market_idx;
+static unsigned int store_merchant_idx;
 static unsigned int store_home_idx;
 
 
@@ -179,6 +181,8 @@ static enum parser_error parse_store(struct parser *p) {
 	/* Note black market and home */
 	if (streq(s->name, "Black Market")) {
 		store_black_market_idx = s->sidx;
+	} else if (streq(s->name, "Travelling Merchant")) {
+		store_merchant_idx = s->sidx;
 	} else if (streq(s->name, "Home")) {
 		store_home_idx = s->sidx;
 	}
@@ -549,6 +553,11 @@ static bool store_can_carry(struct store *store, struct object_kind *kind) {
 bool store_is_black_market(struct store *store)
 {
 	return store->sidx == store_black_market_idx;
+}
+
+bool store_is_merchant(struct store *store)
+{
+	return store->sidx == store_merchant_idx;
 }
 
 bool store_is_home(struct store *store)
@@ -989,6 +998,9 @@ bool store_check_num(struct store *store, const struct object *obj)
 	/* Free space is always usable */
 	if (store->stock_num < store->stock_size) return true;
 
+	/* Merchant will take anything */
+	if (store_is_merchant(store)) return true;
+
 	/* The "home" acts like the player */
 	if (store_is_home(store)) {
 		for (stock_obj = store->stock; stock_obj; stock_obj = stock_obj->next) {
@@ -1070,6 +1082,11 @@ struct object *store_carry(struct store *store, struct object *obj)
 	/* Cursed/Worthless items "disappear" when sold */
 	if (value <= 0)
 		return NULL;
+
+	/* The merchant puts everything not displayed in his travelling bag */
+	if (store_is_merchant(store) && !store_can_carry(store, obj->kind)) {
+		return NULL;
+	}
 
 	/* Erase the inscription */
 	obj->note = 0;
@@ -1598,19 +1615,67 @@ struct owner *store_ownerbyidx(struct store *s, unsigned int idx) {
 	/* Allow no owner for home */
 	if (!store_is_home(s))
 		quit_fmt("Bad call to store_ownerbyidx: idx is %d\n", idx);
-	return 0; /* Needed to avoid Windows compiler warning */
+
+	return NULL;
 }
 
+/**
+ * Choose an appropriate owner for a store based (usually) on the probability
+ * of a player race being in a town
+ *
+ * This function assumes there is exactly one owner for each store type of each
+ * player race, and they appear in the correct order in store.txt
+ */
 static struct owner *store_choose_owner(struct store *s) {
 	struct owner *o;
-	unsigned int n = 0;
+	size_t i;
+	int total_prob = 0, n, chance = 0;
 
-	for (o = s->owners; o; o = o->next) {
-		n++;
+	/* Make array of unavailable owners */
+	int *busy = mem_zalloc(z_info->p_race_max * sizeof(int));
+	for (i = 0; i < (size_t) world->num_towns; i++) {
+		struct store *store = world->towns[i].stores;
+		while (store && (store->sidx != s->sidx)) store = store->next;
+		if (store) {
+			struct player_race *p_race = races;
+			while (store->owner && (p_race->ridx != store->owner->race->ridx)) {
+				p_race = p_race->next;
+			}
+			if (p_race) {
+				busy[p_race->ridx] = 1;
+			}
+		}
 	}
 
-	n = randint0(n);
-	return store_ownerbyidx(s, n);
+	/* Get the total of all the relevant "probabilities" */
+	for (i = 0; i < z_info->p_race_max; i++) {
+		if (store_is_merchant(s)) {
+			/* Merchants are travellers, so make a completely random choice */
+			total_prob += (1 - busy[i]);
+		} else {
+			/* Weight by race probability of reaching the town */
+			total_prob += race_prob[i][s->town->index] * (1 - busy[i]);
+		}
+	}
+
+	/* Pick a race, and then find it */
+	n = randint0(total_prob);
+	for (i = 0; i < z_info->p_race_max; i++) {
+		if (store_is_merchant(s)) {
+			chance += (1 - busy[i]);
+		} else {
+			chance += race_prob[i][s->town->index] * (1 - busy[i]);
+		}
+		if (chance > n) break;
+	}
+
+	/* Owner indices should correspond to race indices */
+	for (o = s->owners; o; o = o->next) {
+		if (o->oidx == i) break;
+	}
+	assert(o->race->ridx == i);
+
+	return store_ownerbyidx(s, i);
 }
 
 /**
@@ -2096,7 +2161,7 @@ void do_cmd_sell(struct command *cmd)
 	handle_stuff(player);
 
 	/* The store gets that (known) object */
-	if (! store_carry(store, sold_item)) {
+	if (!store_carry(store, sold_item)) {
 		/* The store rejected it; delete. */
 		if (sold_item->known) {
 			object_delete(&sold_item->known);

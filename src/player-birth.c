@@ -23,6 +23,7 @@
 #include "game-world.h"
 #include "init.h"
 #include "mon-lore.h"
+#include "mon-make.h"
 #include "monster.h"
 #include "obj-curse.h"
 #include "obj-design.h"
@@ -1188,6 +1189,7 @@ void do_cmd_accept_character(struct command *cmd)
 	player->obj_k->to_d = 1;
 
 	/* Initialise the stores, dungeon */
+	init_race_probs();
 	store_reset();
 	chunk_list_max = 0;
 

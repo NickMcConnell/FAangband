@@ -4,7 +4,7 @@
 
 # store: store number : store name
 # town: town code                   - towns which have one of these stores
-# owner: max purse : name			- as many or few as you like >1
+# owner: max purse : name			- one per player race, ordered as p_race.txt
 # turnover: turnover				- how many items the store turns over
 # slots: min : max					- number of 'normal' slots to keep stocked
 # normal: type name : item name		- for the normal stocking list
@@ -75,7 +75,7 @@ owner:25000:Adan:Decado the Handsome
 owner:30000:High-Elf:Mardil of the Harp
 owner:15000:Dark-Elf:Vivirion True-Forger
 owner:25000:Ent:Ironbark of Arvernien
-owner:20000:Beorning:Rognor the Woodsman
+owner:20000:Beorning:Cuddle the Victorious
 slots:6:18
 turnover:9
 normal:boots:Pair of Leather Sandals
@@ -308,7 +308,7 @@ town:GONDOLIN
 town:ANGBAND
 owner:25000:Easterling:Tancred of the Axe
 owner:30000:Green-Elf:Ravil of Thalos
-owner:30000:Grey-Elf:Drago the Fair
+owner:20000:Grey-Elf:Saeros the Sarcastic
 owner:20000:Hobbit:Grollo Marshdweller
 owner:27500:Petty-Dwarf:Neo the Twisted
 owner:30000:Dwarf:Ara Blacklock
@@ -324,32 +324,55 @@ turnover:9
 
 store:Home
 
-# Temple
-# owner:10000:Easterling:Gunnar the Paladin
-# owner:25000:Green-Elf:Delilah the Pure
-# owner:5000:Grey-Elf:Saeros the Sarcastic
-# owner:30000:Hobbit:Folco Harfoot
-# owner:20000:Petty-Dwarf:Arbot the Small
-# owner:30000:Dwarf:Bosk the Wise
-# owner:25000:Drúadan:Aghan the Faithful
-# owner:5000:Longbeard:Grundalo the Humble
-# owner:15000:Adan:Andor of Teiglin
-# owner:20000:High-Elf:Egaldor of the Heavenly Arch
-# owner:20000:Dark-Elf:Irivin the Kind
-# owner:25000:Ent:Beechnut the White
-# owner:15000:Beorning:Cuddle the Victorious
-
-# Travelling Merchant
-# owner:25000:Easterling:Sandor the Pedlar
-# owner:30000:Green-Elf:Erdil the Traveller
-# owner:30000:Grey-Elf:Damleg the Grey
-# owner:20000:Hobbit:Bongo the Wanderer
-# owner:27500:Petty-Dwarf:Ild son of Gild
-# owner:30000:Dwarf:Volin Stonefoot
-# owner:20000:Drúadan:Gald of the Woods
-# owner:30000:Longbeard:Gilette the Lawful
-# owner:30000:Adan:Bella the Merchant
-# owner:25000:High-Elf:Erdan of the Harp
-# owner:22500:Dark-Elf:Tervin of Arda
-# owner:27500:Ent:Fairleaf of Neldoreth
-# owner:20000:Beorning:Bergin of Hithaeglir
+store:Travelling Merchant
+town:ERIADOR
+town:OSSIRIAND
+town:ERED_LUIN_SOUTH
+town:TAUR_IM_DUINATH
+town:EPHEL_BRANDIR
+town:GLADDEN_FIELDS
+owner:25000:Easterling:Sandor the Pedlar
+owner:30000:Green-Elf:Erdil the Traveller
+owner:30000:Grey-Elf:Damleg the Grey
+owner:20000:Hobbit:Bongo the Wanderer
+owner:27500:Petty-Dwarf:Ild son of Gild
+owner:30000:Dwarf:Volin Stonefoot
+owner:20000:Drúadan:Gald of the Woods
+owner:30000:Longbeard:Gilette the Lawful
+owner:30000:Adan:Bella the Merchant
+owner:25000:High-Elf:Erdan of the Harp
+owner:22500:Dark-Elf:Tervin of Arda
+owner:27500:Ent:Fairleaf of Neldoreth
+owner:20000:Beorning:Bergin of Hithaeglir
+slots:2:6
+turnover:6
+always:food:Ration of Food
+always:light:Wooden Torch
+always:flask:Flask of Oil
+always:digger:Pick
+always:shot:Iron Shot
+always:arrow:Arrow
+always:bolt:Bolt
+normal:food:Pint of Fine Wine
+normal:food:Flask of Whisky
+normal:food:Hard Biscuit
+normal:bow:Sling
+normal:bow:Short Bow
+normal:bow:Long Bow
+normal:bow:Light Crossbow
+normal:cloak:Cloak
+normal:soft armour:Robe
+normal:soft armour:Soft Leather Armour
+normal:soft armour:Hard Leather Armour
+normal:hard armour:Chain Mail
+normal:gloves:Set of Leather Gloves
+normal:boots:Pair of Leather Boots
+normal:boots:Pair of Iron Shod Boots
+normal:helm:Hard Leather Cap
+normal:helm:Iron Helm
+normal:shield:Wicker Shield
+normal:sword:Dagger
+normal:sword:Short Sword
+normal:polearm:Spear
+normal:polearm:Throwing Axe
+normal:hafted:Mace

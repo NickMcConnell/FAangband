@@ -25,22 +25,6 @@
 #include "datafile.h"
 #include "object.h"
 
-/**
- * List of store indices
- */
-enum {
-	STORE_NONE      = -1,
-	STORE_GENERAL	= 0,
-	STORE_ARMOR	= 1,
-	STORE_WEAPON	= 2,
-	STORE_TEMPLE	= 3,
-	STORE_ALCHEMY	= 4,
-	STORE_MAGIC	= 5,
-	STORE_B_MARKET	= 6,
-	STORE_HOME	= 7,
-	MAX_STORES	= 8
-};
-
 struct object_buy {
 	struct object_buy *next;
 	size_t tval;
@@ -94,6 +78,7 @@ void free_store(struct store *store);
 void store_init(void);
 void place_home(struct town *town);
 bool store_is_black_market(struct store *store);
+bool store_is_merchant(struct store *store);
 bool store_is_home(struct store *store);
 struct store *store_home(struct player *p);
 void store_stock_list(struct store *store, struct object **list, int n);
