@@ -1181,7 +1181,7 @@ int mon_hp(const struct monster_race *race, aspect hp_aspect)
 /**
  * Get a player race according to the probabilites in race_prob[][]
  */
-struct player_race *get_player_race(int place)
+struct player_race *get_player_race(void)
 {
 	struct player_race *p_race = races;
 	int i, k;
@@ -1266,7 +1266,7 @@ s16b place_monster(struct chunk *c, struct loc grid, struct monster *mon,
 			new_mon->player_race = p_race;
 		} else {
 			/* Pick a race and set the monster and group races to it */
-			p_race = get_player_race(player->place);
+			p_race = get_player_race();
 			new_mon->player_race = p_race;
 			set_monster_group_player_race(c, new_mon, p_race);
 		}

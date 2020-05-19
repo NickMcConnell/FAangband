@@ -370,6 +370,7 @@ struct monster {
 	struct monster_race *race;			/* Monster's (current) race */
 	struct monster_race *original_race;	/* Changed monster's original race */
 	struct player_race *player_race;	/* Monster's player race (if any) */
+	struct player_race *original_player_race;	/* Both of the above! */
 	int midx;
 
 	struct loc grid;					/* Location on map */

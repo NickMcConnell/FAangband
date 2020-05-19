@@ -1599,6 +1599,10 @@ bool monster_change_shape(struct monster *mon)
 	if (race) {
 		mon->original_race = mon->race;
 		mon->race = race;
+		mon->original_player_race = mon->player_race;
+		if (rf_has(race->flags, RF_PLAYER)) {
+			mon->player_race = get_player_race();
+		}
 		mon->mspeed += mon->race->speed - mon->original_race->speed;
 	}
 
@@ -1630,6 +1634,8 @@ bool monster_revert_shape(struct monster *mon)
 		mon->mspeed += mon->original_race->speed - mon->race->speed;
 		mon->race = mon->original_race;
 		mon->original_race = NULL;
+		mon->player_race = mon->original_player_race;
+		mon->original_player_race = NULL;
 
 		/* Emergency teleport if needed */
 		if (!monster_passes_walls(mon) && square_iswall(cave, mon->grid)) {
