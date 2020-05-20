@@ -220,12 +220,20 @@ static void wr_monster(const struct monster *mon)
 	} else {
 		wr_string("none");
 	}
+	if (mon->original_player_race) {
+		wr_string(mon->original_player_race->name);
+	} else {
+		wr_string("none");
+	}
 	wr_byte(mon->grid.y);
 	wr_byte(mon->grid.x);
 	wr_s16b(mon->hp);
 	wr_s16b(mon->maxhp);
 	wr_byte(mon->mspeed);
 	wr_byte(mon->energy);
+	wr_byte(mon->target.grid.y);
+	wr_byte(mon->target.grid.x);
+	wr_s16b(mon->target.midx);
 	wr_byte(MON_TMD_MAX);
 
 	for (j = 0; j < MON_TMD_MAX; j++)

@@ -1728,6 +1728,7 @@ void do_cmd_mon_command(struct command *cmd)
 				lore->deaths++;
 			}
 			lore_update(mon->race, lore);
+			mon->target.midx = -1;
 
 			break;
 		}

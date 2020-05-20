@@ -1248,6 +1248,9 @@ s16b place_monster(struct chunk *c, struct loc grid, struct monster *mon,
 	/* Set the ID */
 	new_mon->midx = m_idx;
 
+	/* Set to target the player */
+	new_mon->target.midx = -1;
+
 	/* Set the location */
 	square_set_mon(c, grid, new_mon->midx);
 	new_mon->grid = grid;

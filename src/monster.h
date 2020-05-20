@@ -395,6 +395,7 @@ struct monster {
 	struct player_state known_pstate;	/* Known player state */
 
     struct target target;				/* Monster target */
+	struct loc home;					/* Home for territorial monsters */
 
 	struct monster_group_info group_info[GROUP_MAX];/* Monster group details */
 	struct heatmap heatmap;				/* Monster location heatmap */

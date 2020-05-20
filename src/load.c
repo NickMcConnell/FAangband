@@ -266,6 +266,7 @@ static bool rd_monster(struct chunk *c, struct monster *mon)
 {
 	byte tmp8u;
 	u16b tmp16u;
+	s16b tmp16s;
 	char race_name[80];
 	size_t j;
 
@@ -290,6 +291,12 @@ static bool rd_monster(struct chunk *c, struct monster *mon)
 	} else {
 		mon->player_race = player_race_from_name(race_name);
 	}
+	rd_string(race_name, sizeof(race_name));
+	if (streq(race_name, "none")) {
+		mon->original_player_race = NULL;
+	} else {
+		mon->original_player_race = player_race_from_name(race_name);
+	}
 
 	/* Read the other information */
 	rd_byte(&tmp8u);
@@ -301,7 +308,13 @@ static bool rd_monster(struct chunk *c, struct monster *mon)
 	rd_byte(&mon->mspeed);
 	rd_byte(&mon->energy);
 	rd_byte(&tmp8u);
+	mon->target.grid.y = tmp8u;
+	rd_byte(&tmp8u);
+	mon->target.grid.x = tmp8u;
+	rd_s16b(&tmp16s);
+	mon->target.midx = tmp16s;
 
+	rd_byte(&tmp8u);
 	for (j = 0; j < tmp8u; j++)
 		rd_s16b(&mon->m_timed[j]);
 
