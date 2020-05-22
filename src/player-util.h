@@ -117,7 +117,7 @@ bool player_resists_effects(struct player_state state, int element);
 bool player_resists_strongly(struct player_state state, int element);
 bool player_is_immune(struct player_state state, int element);
 void player_place(struct chunk *c, struct player *p, struct loc grid);
-void disturb(struct player *p, int stop_search);
+void disturb(struct player *p);
 void search(struct player *p);
 
 #endif /* !PLAYER_UTIL_H */

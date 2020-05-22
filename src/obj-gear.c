@@ -1007,7 +1007,7 @@ void pack_overflow(struct object *obj)
 	if (!pack_is_overfull()) return;
 
 	/* Disturbing */
-	disturb(player, 0);
+	disturb(player);
 
 	/* Warning */
 	msg("Your pack overflows!");

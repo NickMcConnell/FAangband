@@ -376,7 +376,7 @@ bool make_ranged_attack(struct monster *mon)
 	}
 
 	/* Cast the spell. */
-	disturb(player, 1);
+	disturb(player);
 	do_mon_spell(thrown_spell, mon, seen);
 
 	/* Power Siphon specialty ability */
@@ -606,7 +606,7 @@ bool make_attack_normal(struct monster *mon, struct player *p)
 			melee_effect_handler_f effect_handler;
 
 			/* Always disturbing and obvious */
-			disturb(p, 1);
+			disturb(p);
 			obvious = true;
 
 			/* Sometimes we can avoid the blow */
@@ -732,7 +732,7 @@ bool make_attack_normal(struct monster *mon, struct player *p)
 			/* Visible monster missed player, so notify if appropriate. */
 			if (monster_is_visible(mon) &&	method->miss) {
 				/* Disturbing */
-				disturb(p, 1);
+				disturb(p);
 				msg("%s misses you.", m_name);
 			}
 		}
