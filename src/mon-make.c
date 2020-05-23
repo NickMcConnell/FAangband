@@ -529,6 +529,11 @@ void init_race_probs(void)
 	}
 
 	/* Free the temporary arrays */
+	for (i = 0; i < world->num_levels; i++) {
+		mem_free(temp_path[i]);
+		mem_free(adjacency[i]);
+		mem_free(lev_path[i]);
+	}
 	mem_free(temp_path);
 	mem_free(adjacency);
 	mem_free(lev_path);
@@ -536,6 +541,10 @@ void init_race_probs(void)
 
 void free_race_probs(void)
 {
+	int i;
+	for (i = 0; i < z_info->p_race_max; i++) {
+		mem_free(race_prob[i]);
+	}
 	mem_free(race_prob);
 }
 
