@@ -746,6 +746,7 @@ int price_item(struct store *store, const struct object *obj,
 	int adjust = 100;
 	int price;
 	struct owner *proprietor;
+	struct player_race_list *dislikes;
 
 	if (!store) {
 		return 0;
@@ -765,9 +766,18 @@ int price_item(struct store *store, const struct object *obj,
 		return 0;
 	}
 
+	/* Compute the racial factor */
+	dislikes = proprietor->race->dislikes;
+	while (dislikes) {
+		if (dislikes->race == player->race) break;
+		dislikes = dislikes->next;
+	}
+	adjust = dislikes->rel;
+
 	/* The black market is always a worse deal */
-	if (store_is_black_market(store))
-		adjust = 150;
+	if (store_is_black_market(store)) {
+		adjust = (adjust * 3) / 2;
+	}
 
 	/* Shop is buying */
 	if (store_buying) {

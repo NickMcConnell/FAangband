@@ -2709,7 +2709,7 @@ static enum parser_error parse_race_relations_dislike(struct parser *p) {
 	list = r->dislikes;
 	r->dislikes = mem_zalloc(sizeof(struct player_race_list));
 	r->dislikes->next = list;
-	r->dislikes->race = r;
+	r->dislikes->race = d;
 	r->dislikes->name = string_make(name);
 	r->dislikes->rel = parser_getint(p, "rel");
 	return PARSE_ERROR_NONE;
