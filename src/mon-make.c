@@ -1428,6 +1428,11 @@ static bool place_new_monster_one(struct chunk *c, struct loc grid,
 	mon->group_info[PRIMARY_GROUP].index = group_info.index;
 	mon->group_info[PRIMARY_GROUP].role = group_info.role;
 
+	/* Mark territorial monster's home */
+	if (rf_has(race->flags, RF_TERRITORIAL)) {
+		mon->home = grid;
+	}
+
 	/* Place the monster in the dungeon */
 	if (!place_monster(c, grid, mon, origin))
 		return (false);

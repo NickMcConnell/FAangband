@@ -313,6 +313,10 @@ static bool rd_monster(struct chunk *c, struct monster *mon)
 	mon->target.grid.x = tmp8u;
 	rd_s16b(&tmp16s);
 	mon->target.midx = tmp16s;
+	rd_byte(&tmp8u);
+	mon->home.y = tmp8u;
+	rd_byte(&tmp8u);
+	mon->home.x = tmp8u;
 
 	rd_byte(&tmp8u);
 	for (j = 0; j < tmp8u; j++)

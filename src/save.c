@@ -234,6 +234,8 @@ static void wr_monster(const struct monster *mon)
 	wr_byte(mon->target.grid.y);
 	wr_byte(mon->target.grid.x);
 	wr_s16b(mon->target.midx);
+	wr_byte(mon->home.y);
+	wr_byte(mon->home.x);
 	wr_byte(MON_TMD_MAX);
 
 	for (j = 0; j < MON_TMD_MAX; j++)

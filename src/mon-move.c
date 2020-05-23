@@ -1497,6 +1497,27 @@ static void monster_turn(struct chunk *c, struct monster *mon)
 		}
 	}
 
+	/* Handle territorial monsters */
+	if (rf_has(mon->race->flags, RF_TERRITORIAL) &&
+		(world->levels[player->place].topography != TOP_CAVE)) {
+		/* Territorial monsters get a direct energy boost when close to home */
+		int from_home =	distance(mon->home, mon->grid);
+
+		/* Step up in units of a fifth of monster detection range */
+		for (i = 5; i > 0; i--) {
+			if ((from_home * i) > (mon->race->hearing * 5))
+				break;
+		}
+
+		/* Add some energy */
+		mon->energy += (5 - i);
+
+		/* If target is too far away from home, go back */
+		if (distance(mon->home, mon->target.grid) >	5 * mon->race->hearing) {
+			mon->target.grid = mon->home;
+		}
+	}
+
 	/* Let other group monsters know about the player */
 	monster_group_rouse(c, mon);
 
