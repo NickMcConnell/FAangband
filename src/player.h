@@ -213,6 +213,7 @@ struct player_race_list {
 struct player_race {
 	struct player_race *next;
 	const char *name;
+	struct player_race_list *dislikes;
 
 	unsigned int ridx;
 

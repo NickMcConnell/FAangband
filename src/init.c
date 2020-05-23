@@ -2346,7 +2346,7 @@ static struct file_parser history_parser = {
 
 /**
  * ------------------------------------------------------------------------
- * Intialize player races
+ * Initialize player races
  * ------------------------------------------------------------------------ */
 
 static enum parser_error parse_p_race_name(struct parser *p) {
@@ -2659,7 +2659,14 @@ static void cleanup_p_race(void)
 	struct player_race *next;
 
 	while (p) {
+		struct player_race_list *list = p->dislikes;
 		next = p->next;
+		while (list) {
+			struct player_race_list *old = list;
+			string_free((char *)list->name);
+			list = list->next;
+			mem_free(old);
+		}
 		string_free((char *)p->name);
 		string_free(p->hometown);
 		mem_free(p);
@@ -2673,6 +2680,68 @@ static struct file_parser p_race_parser = {
 	run_parse_p_race,
 	finish_parse_p_race,
 	cleanup_p_race
+};
+
+/**
+ * ------------------------------------------------------------------------
+ * Initialize player race likes and dislikes
+ * ------------------------------------------------------------------------ */
+
+static enum parser_error parse_race_relations_name(struct parser *p) {
+	struct player_race *r = player_race_from_name(parser_getstr(p, "name"));
+
+	if (!r)
+		return PARSE_ERROR_INVALID_PLAY_RACE_NAME;
+	parser_setpriv(p, r);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_race_relations_dislike(struct parser *p) {
+	struct player_race *r = parser_priv(p);
+	const char *name = parser_getsym(p, "name");
+	struct player_race *d = player_race_from_name(name);
+	struct player_race_list *list;
+
+	if (!r)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	if (!d)
+		return PARSE_ERROR_INVALID_PLAY_RACE_NAME;
+	list = r->dislikes;
+	r->dislikes = mem_zalloc(sizeof(struct player_race_list));
+	r->dislikes->next = list;
+	r->dislikes->race = r;
+	r->dislikes->name = string_make(name);
+	r->dislikes->rel = parser_getint(p, "rel");
+	return PARSE_ERROR_NONE;
+}
+
+struct parser *init_parse_race_relations(void) {
+	struct parser *p = parser_new();
+	parser_setpriv(p, NULL);
+	parser_reg(p, "name str name", parse_race_relations_name);
+	parser_reg(p, "dislike sym name int rel", parse_race_relations_dislike);
+	return p;
+}
+
+static errr run_parse_race_relations(struct parser *p) {
+	return parse_file_quit_not_found(p, "race_relations");
+}
+
+static errr finish_parse_race_relations(struct parser *p) {
+	parser_destroy(p);
+	return 0;
+}
+
+static void cleanup_race_relations(void)
+{
+}
+
+static struct file_parser race_relations_parser = {
+	"race_relations",
+	init_parse_race_relations,
+	run_parse_race_relations,
+	finish_parse_race_relations,
+	cleanup_race_relations
 };
 
 /**
@@ -3994,6 +4063,7 @@ static struct {
 	{ "history charts", &history_parser },
 	{ "bodies", &body_parser },
 	{ "player races", &p_race_parser },
+	{ "race relations", &race_relations_parser },
 	{ "magic realms", &realm_parser },
 	{ "player classes", &class_parser },
 	{ "artifacts", &artifact_parser },
