@@ -605,7 +605,7 @@ void close_game(void)
 			prt("Press Return (or Escape).", 0, 40);
 			ch = inkey();
 			if (ch.code != ESCAPE)
-				predict_score();
+				predict_score(false);
 		}
 	}
 
