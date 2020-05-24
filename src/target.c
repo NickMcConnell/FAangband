@@ -91,6 +91,17 @@ void look_mon_desc(char *buf, size_t max, int m_idx)
 	if (mon->m_timed[MON_TMD_STUN]) my_strcat(buf, ", stunned", max);
 	if (mon->m_timed[MON_TMD_SLOW]) my_strcat(buf, ", slowed", max);
 	if (mon->m_timed[MON_TMD_FAST]) my_strcat(buf, ", hasted", max);
+
+	/* Hostility */
+	if (rf_has(mon->race->flags, RF_PLAYER)) {
+		if (mon->target.midx < 0) {
+			/* Hostile monsters */
+			my_strcat(buf, ", hostile", max);
+		} else {
+			/* Not hostile to the player */
+			my_strcat(buf, ", neutral", max);
+		}
+	}
 }
 
 

@@ -224,10 +224,16 @@ int monster_group_index_new(struct chunk *c)
 void monster_add_to_group(struct chunk *c, struct monster *mon,
 						  struct monster_group *group)
 {
-	struct mon_group_list_entry *list_entry;
+	struct mon_group_list_entry *list_entry = group->member_list;
 
 	/* Confirm we're adding to the right group */
 	assert(mon->group_info[PRIMARY_GROUP].index == group->index);
+
+	/* Check we haven't already added it */
+	while (list_entry) {
+		if (list_entry->midx == mon->midx) return;
+		list_entry = list_entry->next;
+	}
 
 	/* Make a new list entry and add it to the start of the list */
 	list_entry = mem_zalloc(sizeof(struct mon_group_list_entry));
@@ -490,7 +496,7 @@ struct player_race *monster_group_player_race(struct chunk *c,
 {
 	int index = mon->group_info[PRIMARY_GROUP].index;
 	struct monster_group *group = c->monster_groups[index];
-	return group->player_race;
+	return group ? group->player_race : NULL;
 }
 
 /**

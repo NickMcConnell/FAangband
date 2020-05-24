@@ -1210,6 +1210,32 @@ struct player_race *get_player_race(void)
 }
 
 /**
+ * Decides whether a player race monster is neutral
+ */
+static bool mon_is_neutral(struct chunk *c, struct monster *mon,
+						   struct loc grid)
+{
+	struct player_race_list *dislikes = mon->player_race->dislikes;
+	int k, chance;
+
+	while (dislikes) {
+		if (dislikes->race == player->race) break;
+		dislikes = dislikes->next;
+	}
+
+	chance = MAX(dislikes->rel - 100, 0);
+	k = randint0(chance + 20);
+	if ((k > 20) ||
+		(world->levels[player->place].topography != TOP_CAVE) ||
+		//(player->themed_level == THEME_WARLORDS) ||
+		square_isvault(c, grid)) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
  * ------------------------------------------------------------------------
  * Placement of a single monster
  * These are the functions that actually put the monster into the world
@@ -1257,9 +1283,6 @@ s16b place_monster(struct chunk *c, struct loc grid, struct monster *mon,
 	/* Set the ID */
 	new_mon->midx = m_idx;
 
-	/* Set to target the player */
-	new_mon->target.midx = -1;
-
 	/* Set the location */
 	square_set_mon(c, grid, new_mon->midx);
 	new_mon->grid = grid;
@@ -1269,20 +1292,6 @@ s16b place_monster(struct chunk *c, struct loc grid, struct monster *mon,
 	monster_group_assign(c, new_mon, info, loading);
 
 	update_mon(new_mon, c, true);
-
-	/* Set player race if needed */
-	if (rf_has(new_mon->race->flags, RF_PLAYER) && !new_mon->player_race) {
-		struct player_race *p_race = monster_group_player_race(c, new_mon);
-		if (p_race) {
-			/* Use the existing race */
-			new_mon->player_race = p_race;
-		} else {
-			/* Pick a race and set the monster and group races to it */
-			p_race = get_player_race();
-			new_mon->player_race = p_race;
-			set_monster_group_player_race(c, new_mon, p_race);
-		}
-	}
 
 	/* Count the number of "reproducers" */
 	if (rf_has(new_mon->race->flags, RF_MULTIPLY)) c->num_repro++;
@@ -1436,6 +1445,35 @@ static bool place_new_monster_one(struct chunk *c, struct loc grid,
 	/* Set the group info */
 	mon->group_info[PRIMARY_GROUP].index = group_info.index;
 	mon->group_info[PRIMARY_GROUP].role = group_info.role;
+
+	/* Set hostility, or possible neutrality for player race monsters */
+	if (rf_has(mon->race->flags, RF_PLAYER)) {
+		struct player_race *p_race = monster_group_player_race(c, mon);
+
+		/* Assign the monster to its group */
+		monster_group_assign(c, mon, &group_info, false);
+
+		/* Set player race if needed */
+		if (p_race) {
+			/* Use the existing race */
+			mon->player_race = p_race;
+		} else {
+			/* Pick a race and set the monster and group races to it */
+			p_race = get_player_race();
+			mon->player_race = p_race;
+			set_monster_group_player_race(c, mon, p_race);
+		}
+
+		/* Set hostility */
+		if (mon_is_neutral(c, mon, grid)) {
+			mon->target.midx = 0;
+		} else {
+			mon->target.midx = -1;
+		}
+	} else {
+		/* Set to target the player */
+		mon->target.midx = -1;
+	}
 
 	/* Mark territorial monster's home */
 	if (rf_has(race->flags, RF_TERRITORIAL)) {
