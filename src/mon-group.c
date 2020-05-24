@@ -220,6 +220,12 @@ int monster_group_index_new(struct chunk *c)
 
 /**
  * Add a monster to an existing monster group
+ *
+ * Note that player race monsters can be added to, or start, groups before
+ * they have been allocated an index.  In this case they are intially added
+ * via a call to monster_group_assign() using the special index MIDX_FAKE,
+ * which must be replaced with the correct index by this function when
+ * monster_group_assign() is called a second time for the same monster.
  */
 void monster_add_to_group(struct chunk *c, struct monster *mon,
 						  struct monster_group *group)
@@ -229,9 +235,15 @@ void monster_add_to_group(struct chunk *c, struct monster *mon,
 	/* Confirm we're adding to the right group */
 	assert(mon->group_info[PRIMARY_GROUP].index == group->index);
 
-	/* Check we haven't already added it */
+	/* Replace any fake monster indices with the real one */
 	while (list_entry) {
-		if (list_entry->midx == mon->midx) return;
+		if (list_entry->midx == MIDX_FAKE) {
+			list_entry->midx = mon->midx;
+			if (group->leader == MIDX_FAKE) {
+				group->leader = mon->midx;
+			}
+			return;
+		}
 		list_entry = list_entry->next;
 	}
 

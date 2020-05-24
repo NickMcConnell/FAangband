@@ -2354,11 +2354,15 @@ static enum parser_error parse_p_race_name(struct parser *p) {
 	struct player_race *r = mem_zalloc(sizeof *r);
 	int i;
 
+	if (h) {
+		h->next = r;
+	} else {
+		races = r;
+	}
+	r->name = string_make(parser_getstr(p, "name"));
 	for (i = 0; i < ELEM_MAX; i++) {
 		r->el_info[i].res_level = RES_LEVEL_BASE;
 	}
-	r->next = h;
-	r->name = string_make(parser_getstr(p, "name"));
 	/* Default body is humanoid */
 	r->body = 0;
 	parser_setpriv(p, r);
@@ -2642,13 +2646,10 @@ static errr run_parse_p_race(struct parser *p) {
 static errr finish_parse_p_race(struct parser *p) {
 	struct player_race *r;
 	int num = 0;
-	races = parser_priv(p);
-	for (r = races; r; r = r->next) num++;
-	z_info->p_race_max = num;
-	for (r = races; r; r = r->next, num--) {
-		assert(num);
-		r->ridx = num - 1;
+	for (r = races; r; r = r->next, num++) {
+		r->ridx = num;
 	}
+	z_info->p_race_max = num;
 	parser_destroy(p);
 	return 0;
 }

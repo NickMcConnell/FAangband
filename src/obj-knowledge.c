@@ -544,7 +544,10 @@ bool object_is_in_store(const struct object *obj)
 		struct town *town = &world->towns[i];
 		struct store *s = town->stores;
 		while (s) {
-			if (store_is_home(s)) continue;
+			if (store_is_home(s)) {
+				s = s->next;
+				continue;
+			}
 			for (obj1 = s->stock; obj1; obj1 = obj1->next) {
 				if (obj1 == obj) return true;
 			}

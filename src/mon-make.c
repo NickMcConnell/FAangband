@@ -1240,6 +1240,7 @@ static bool mon_is_neutral(struct chunk *c, struct monster *mon,
  * Placement of a single monster
  * These are the functions that actually put the monster into the world
  * ------------------------------------------------------------------------ */
+
 /**
  * Attempts to place a copy of the given monster at the given position in
  * the dungeon.
@@ -1288,7 +1289,7 @@ s16b place_monster(struct chunk *c, struct loc grid, struct monster *mon,
 	new_mon->grid = grid;
 	assert(square_monster(c, grid) == new_mon);
 
-	/* Assign monster to its monster group */
+	/* Assign monster to its monster group, or update its entry */
 	monster_group_assign(c, new_mon, info, loading);
 
 	update_mon(new_mon, c, true);
@@ -1449,6 +1450,9 @@ static bool place_new_monster_one(struct chunk *c, struct loc grid,
 	/* Set hostility, or possible neutrality for player race monsters */
 	if (rf_has(mon->race->flags, RF_PLAYER)) {
 		struct player_race *p_race = monster_group_player_race(c, mon);
+
+		/* Give the monster the special index to indicate it needs updating */
+		mon->midx = MIDX_FAKE;
 
 		/* Assign the monster to its group */
 		monster_group_assign(c, mon, &group_info, false);

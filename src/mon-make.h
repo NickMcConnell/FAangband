@@ -23,6 +23,12 @@
 
 extern int **race_prob;
 
+/**
+ * Special monster index, given when the group code needs an index but
+ * the monster does not have one yet.  Needs to be updated by the group code.
+ */
+#define MIDX_FAKE -2
+
 void init_race_probs(void);
 void free_race_probs(void);
 void delete_monster_idx(int m_idx);
