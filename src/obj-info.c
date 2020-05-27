@@ -488,7 +488,7 @@ static bool describe_brands(textblock *tb, const struct object *obj)
 static void calculate_melee_crits(struct player_state *state, int weight,
 		int plus, int *mult, int *add, int *div)
 {
-	int k, to_crit = weight + 5 * (state->to_h + plus) + 3 * player->lev;
+	int k, to_crit = weight + 5 * (state->to_h + plus) + 3 * state->skills[SKILL_TO_HIT_MELEE] - 60;
 	if (player_has(player, PF_ARMSMAN)) {
 		to_crit += (833 * (5000 - to_crit) / 5000);
 	}
