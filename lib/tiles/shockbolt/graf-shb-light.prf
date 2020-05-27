@@ -1,8 +1,8 @@
-# File: graf-shb.prf
+# File: graf-shb-light.prf
 
 #
 # This file defines special attr/char mappings for use in "graphics" mode
-# with Shockbolt's 64x64 tiles.
+# with Shockbolt's 64x64 tiles, with light-coloured background.
 #
 # Converted by Mogami from the dg32-assign of AngbandTK
 # Additional work by Ivan Jekic (the.edge@Net.yu)
