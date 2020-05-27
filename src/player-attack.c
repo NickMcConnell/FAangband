@@ -442,7 +442,7 @@ static int critical_melee(const struct player *p, struct monster *mon,
 	int debuff_to_hit = is_debuffed(mon) ? DEBUFF_CRITICAL_HIT : 0;
 	int power = weight + randint1(650);
 	int chance = weight + (p->state.to_h + plus + debuff_to_hit) * 5
-		+ p->lev * 3 + sleeping_bonus;
+		+ (p->state.skills[SKILL_TO_HIT_MELEE] - 60) + sleeping_bonus;
 	int new_dam = dam;
 
 	/* Armsman Ability - 1/6 critical chance */
