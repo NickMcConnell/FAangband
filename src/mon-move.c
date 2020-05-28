@@ -55,27 +55,6 @@
  * Routines to enable decisions on monster behaviour
  * ------------------------------------------------------------------------ */
 /**
- * The grid which the player (or occasionally monster which the given monster
- * is targeting) is; this may be different to mon->target.grid, which is a
- * short-term target
- */
-static struct loc monster_target_loc(struct chunk *c, const struct monster *mon)
-{
-	if (mon->target.midx == -1) {
-		/* Player (or decoy) */
-		struct loc decoy = cave_find_decoy(c);
-		return loc_is_zero(decoy) ? player->grid : decoy;
-	} else if (mon->target.midx > 0) {
-		/* Monster */
-		return cave_monster(cave, mon->target.midx)->grid;
-	} else if (!loc_eq(mon->target.grid, loc(0, 0))) {
-		return mon->target.grid;
-	}
-	/* Probably an error */
-	return mon->grid;
-}
-
-/**
  * From Will Asher in DJA:
  * Find whether a monster is near a permanent wall
  *

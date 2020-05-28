@@ -319,9 +319,11 @@ void update_mon(struct monster *mon, struct chunk *c, bool full)
 	
 	/* Compute distance, or just use the current one */
 	if (full) {
+		/* Target */
+		struct loc target = monster_target_loc(c, mon);
 		/* Distance components */
-		int dy = ABS(pgrid.y - mon->grid.y);
-		int dx = ABS(pgrid.x - mon->grid.x);
+		int dy = ABS(target.y - mon->grid.y);
+		int dx = ABS(target.x - mon->grid.x);
 
 		/* Approximate distance */
 		d = (dy > dx) ? (dy + (dx >>  1)) : (dx + (dy >> 1));
@@ -1647,4 +1649,29 @@ bool monster_revert_shape(struct monster *mon)
 	}
 
 	return false;
+}
+
+/**
+ * ------------------------------------------------------------------------
+ * Monster targeting utilities
+ * ------------------------------------------------------------------------ */
+/**
+ * The grid which the player (or occasionally monster which the given monster
+ * is targeting) is; this may be different to mon->target.grid, which is a
+ * short-term target
+ */
+struct loc monster_target_loc(struct chunk *c, const struct monster *mon)
+{
+	if (mon->target.midx == -1) {
+		/* Player (or decoy) */
+		struct loc decoy = cave_find_decoy(c);
+		return loc_is_zero(decoy) ? player->grid : decoy;
+	} else if (mon->target.midx > 0) {
+		/* Monster */
+		return cave_monster(cave, mon->target.midx)->grid;
+	} else if (!loc_eq(mon->target.grid, loc(0, 0))) {
+		return mon->target.grid;
+	}
+	/* Probably an error */
+	return mon->grid;
 }

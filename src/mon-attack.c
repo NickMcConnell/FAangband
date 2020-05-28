@@ -64,6 +64,7 @@
 static bool monster_can_cast(struct monster *mon, bool innate)
 {
 	int chance = innate ? mon->race->freq_innate : mon->race->freq_spell;
+	struct loc target = monster_target_loc(cave, mon);
 
 	/* Cannot cast spells when nice */
 	if (mflag_has(mon->mflag, MFLAG_NICE)) return false;
@@ -94,8 +95,7 @@ static bool monster_can_cast(struct monster *mon, bool innate)
 	if (mon->cdis > z_info->max_range) return false;
 
 	/* Check path */
-	if (!projectable(cave, mon->grid, player->grid, PROJECT_SHORT))
-		return false;
+	if (!projectable(cave, mon->grid, target, PROJECT_SHORT)) return false;
 
 	return true;
 }
@@ -139,7 +139,7 @@ static void remove_bad_spells(struct monster *mon, bitflag f[RSF_SIZE])
 	}
 
 	/* Update acquired knowledge */
-	if (OPT(player, birth_ai_learn)) {
+	if (OPT(player, birth_ai_learn) && (mon->target.midx == -1)) {
 		size_t i;
 		bitflag ai_flags[OF_SIZE], ai_pflags[PF_SIZE];
 		struct element_info el[ELEM_MAX];
@@ -341,9 +341,11 @@ bool make_ranged_attack(struct monster *mon)
 		remove_bad_spells(mon, f);
 
 		/* Check for a clean bolt shot */
-		if (test_spells(f, RST_BOLT) &&
-			!projectable(cave, mon->grid, player->grid, PROJECT_STOP)) {
-			ignore_spells(f, RST_BOLT);
+		if (test_spells(f, RST_BOLT)) {
+			struct loc target = monster_target_loc(cave, mon);
+			if (!projectable(cave, mon->grid, target, PROJECT_STOP)) {
+				ignore_spells(f, RST_BOLT);
+			}
 		}
 
 		/* Check for a possible summon */
