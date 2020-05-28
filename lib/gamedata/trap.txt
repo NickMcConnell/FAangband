@@ -160,7 +160,7 @@ graphics:^:B
 appear:1:3:0
 visibility:0
 flags:TRAP | FLOOR | ONETIME | MAGICAL
-effect:SUMMON:MONSTER:0:5
+effect:SUMMON:MONSTER:5
 dice:1
 desc:A magical rune which calls a monster to attack you.
 msg:A new foe appears from nowhere!

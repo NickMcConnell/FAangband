@@ -2657,7 +2657,8 @@ bool effect_handler_SUMMON(effect_handler_context_t *context)
 {
 	int summon_max = effect_calculate_value(context, false);
 	int summon_type = context->subtype;
-	int level_boost = context->other;
+	int level_boost = context->radius;
+	bool friendly = context->other ? true : false;
 	int message_type = summon_message_type(summon_type);
 	int fallback_type = summon_fallback_type(summon_type);
 	int count = 0, val = 0, attempts = 0;
@@ -2686,7 +2687,7 @@ bool effect_handler_SUMMON(effect_handler_context_t *context)
 
 			/* Get a monster */
 			temp = summon_specific(mon->grid, rlev + level_boost, summon_type,
-								   false, false);
+								   false, false, friendly);
 
 			val += temp * temp;
 
@@ -2706,7 +2707,7 @@ bool effect_handler_SUMMON(effect_handler_context_t *context)
 
 				/* Get a monster */
 				temp = summon_specific(mon->grid, rlev + level_boost,
-									   fallback_type, false, false);
+									   fallback_type, false, false, friendly);
 
 				val += temp * temp;
 
@@ -2726,7 +2727,7 @@ bool effect_handler_SUMMON(effect_handler_context_t *context)
 		/* If not a monster summon, it's simple */
 		while (summon_max) {
 			count += summon_specific(player->grid, player->depth + level_boost,
-									 summon_type, true, one_in_(4));
+									 summon_type, true, one_in_(4), friendly);
 			summon_max--;
 		}
 	}
@@ -3832,7 +3833,7 @@ bool effect_handler_LAVA_POOL(effect_handler_context_t *context)
 }
 
 /**
- * Grow trees wherever you can see.
+ * Suck energy from nearby monsters.
  *
  * To do: unite with LAVA_POOL
  */

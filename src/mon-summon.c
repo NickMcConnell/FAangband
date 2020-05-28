@@ -378,7 +378,7 @@ static int call_monster(struct loc grid)
 
 /**
  * Places a monster (of the specified "type") near the given
- * location.  Return the siummoned monster's level iff a monster was
+ * location.  Return the summoned monster's level iff a monster was
  * actually summoned.
  *
  * We will attempt to place the monster up to 10 times before giving up.
@@ -397,11 +397,13 @@ static int call_monster(struct loc grid)
  *
  * Note that this function may not succeed, though this is very rare.
  */
-int summon_specific(struct loc grid, int lev, int type, bool delay, bool call)
+int summon_specific(struct loc grid, int lev, int type, bool delay, bool call,
+					bool friendly)
 {
 	int i;
 	struct loc near;
 	struct monster *mon;
+	struct monster *t_mon = target_get_monster();
 	struct monster_race *race;
 	struct monster_group_info info = { 0, 0 };
 
@@ -464,6 +466,12 @@ int summon_specific(struct loc grid, int lev, int type, bool delay, bool call)
 
 	/* Success, return the level of the monster */
 	mon = square_monster(cave, near);
+
+	/* Friendly monster will target the player's target - if it exists... */
+	if (friendly && t_mon) {
+		mon->target.midx = t_mon->midx;
+		monster_make_heatmaps(cave, t_mon);
+	}
 
 	/* If delay, try to let the player act before the summoned monsters,
 	 * including holding faster monsters for the required number of turns */
