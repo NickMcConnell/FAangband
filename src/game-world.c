@@ -439,30 +439,33 @@ static void decrease_timeouts(void)
  * values, thereby homing in on the player even though twisty tunnels and
  * mazes.  Monsters have a hearing value, which is the largest sound value
  * they can detect.
+ *
+ * Update: Monsters can also have noise heatmaps generated for them
  */
-static void make_noise(struct player *p)
+static void make_noise(struct player *p, struct monster *mon)
 {
-	struct loc next = p->grid;
+	struct loc next = p ? p->grid : mon->grid;
 	int y, x, d;
 	int noise = 0;
-	int noise_increment = p->timed[TMD_COVERTRACKS] ? 4 : 1;
+	int noise_increment = p && p->timed[TMD_COVERTRACKS] ? 4 : 1;
     struct queue *queue = q_new(cave->height * cave->width);
 	struct loc decoy = cave_find_decoy(cave);
+	struct heatmap noise_map = p ? cave->noise : mon->noise;
 
 	/* Set all the grids to silence */
 	for (y = 1; y < cave->height - 1; y++) {
 		for (x = 1; x < cave->width - 1; x++) {
-			cave->noise.grids[y][x] = 0;
+			noise_map.grids[y][x] = 0;
 		}
 	}
 
 	/* If there's a decoy, use that instead of the player */
-	if (!loc_is_zero(decoy)) {
+	if (p && !loc_is_zero(decoy)) {
 		next = decoy;
 	}
 
-	/* Player makes noise */
-	cave->noise.grids[next.y][next.x] = noise;
+	/* Player/monster makes noise */
+	noise_map.grids[next.y][next.x] = noise;
 	q_push_int(queue, grid_to_i(next, cave->width));
 	noise += noise_increment;
 
@@ -472,7 +475,7 @@ static void make_noise(struct player *p)
 		i_to_grid(q_pop_int(queue), cave->width, &next);
 
 		/* If we've reached the current noise level, put it back and step */
-		if (cave->noise.grids[next.y][next.x] == noise) {
+		if (noise_map.grids[next.y][next.x] == noise) {
 			q_push_int(queue, grid_to_i(next, cave->width));
 			noise += noise_increment;
 			continue;
@@ -489,13 +492,17 @@ static void make_noise(struct player *p)
 			if (square_isnoflow(cave, grid)) continue;
 
 			/* Skip grids that already have noise */
-			if (cave->noise.grids[grid.y][grid.x] != 0) continue;
+			if (noise_map.grids[grid.y][grid.x] != 0) continue;
 
-			/* Skip the player grid */
-			if (loc_eq(player->grid, grid)) continue;
+			/* Skip the player/monster grid */
+			if (p && loc_eq(player->grid, grid)) {
+				continue;
+			} else if (mon && loc_eq(mon->grid, grid)) {
+				continue;
+			}
 
 			/* Save the noise */
-			cave->noise.grids[grid.y][grid.x] = noise;
+			noise_map.grids[grid.y][grid.x] = noise;
 
 			/* Enqueue that entry */
 			q_push_int(queue, grid_to_i(grid, cave->width));
@@ -519,7 +526,7 @@ static void make_noise(struct player *p)
  * player has never been will have scent 0.  The player's grid will also have
  * scent 0, but this is OK as no monster will ever be smelling it.
  */
-static void update_scent(void)
+static void update_scent(struct player *p, struct monster *mon)
 {
 	int y, x;
 	int scent_strength[5][5] = {
@@ -529,12 +536,13 @@ static void update_scent(void)
 		{2, 1, 1, 1, 2},
 		{2, 2, 2, 2, 2},
 	};
+	struct heatmap scent_map = p ? cave->scent : mon->scent;
 
 	/* Update scent for all grids */
 	for (y = 1; y < cave->height - 1; y++) {
 		for (x = 1; x < cave->width - 1; x++) {
-			if (cave->scent.grids[y][x] > 0) {
-				cave->scent.grids[y][x]++;
+			if (scent_map.grids[y][x] > 0) {
+				scent_map.grids[y][x]++;
 			}
 		}
 	}
@@ -545,14 +553,14 @@ static void update_scent(void)
 	/* Lay down new scent around the player */
 	for (y = 0; y < 5; y++) {
 		for (x = 0; x < 5; x++) {
-			struct loc scent;
+			struct loc scent, grid = p ? player->grid : mon->grid;
 			int new_scent = scent_strength[y][x];
 			int d;
 			bool add_scent = false;
 
 			/* Initialize */
-			scent.y = y + player->grid.y - 2;
-			scent.x = x + player->grid.x - 2;
+			scent.y = y + grid.y - 2;
+			scent.x = x + grid.x - 2;
 
 			/* Ignore invalid or non-scent-carrying grids */
 			if (!square_in_bounds(cave, scent)) continue;
@@ -572,7 +580,7 @@ static void update_scent(void)
 				}
 
 				/* Adjacent to a closer grid, so valid */
-				if (cave->scent.grids[adj.y][adj.x] == new_scent - 1) {
+				if (scent_map.grids[adj.y][adj.x] == new_scent - 1) {
 					add_scent = true;
 				}
 			}
@@ -583,7 +591,7 @@ static void update_scent(void)
 			}
 
 			/* Mark the scent */
-			cave->scent.grids[scent.y][scent.x] = new_scent;
+			scent_map.grids[scent.y][scent.x] = new_scent;
 		}
 	}
 }
@@ -788,8 +796,8 @@ void process_world(struct chunk *c)
 	player_update_light(player);
 
 	/* Update noise and scent */
-	make_noise(player);
-	update_scent();
+	make_noise(player, NULL);
+	update_scent(player, NULL);
 
 
 	/*** Process Inventory ***/

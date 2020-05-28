@@ -398,7 +398,8 @@ struct monster {
 	struct loc home;					/* Home for territorial monsters */
 
 	struct monster_group_info group_info[GROUP_MAX];/* Monster group details */
-	struct heatmap heatmap;				/* Monster location heatmap */
+	struct heatmap noise;				/* Monster noise heatmap */
+	struct heatmap scent;				/* Monster scent heatmap */
 
     byte min_range;						/* What is the closest we want to be? */
     byte best_range;					/* How close do we want to be? */
