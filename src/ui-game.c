@@ -21,6 +21,7 @@
 #include "cmds.h"
 #include "datafile.h"
 #include "game-world.h"
+#include "generate.h"
 #include "grafmode.h"
 #include "init.h"
 #include "mon-lore.h"

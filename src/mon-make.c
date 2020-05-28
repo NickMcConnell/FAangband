@@ -591,6 +591,14 @@ void delete_monster_idx(int m_idx)
 	square_set_mon(cave, grid, 0);
 	monster_remove_from_groups(cave, mon);
 
+	/* Free any heatmaps */
+	if (mon->noise.grids) {
+		heatmap_free(cave, mon->noise);
+	}
+	if (mon->scent.grids) {
+		heatmap_free(cave, mon->scent);
+	}
+
 	/* Delete objects */
 	struct object *obj = mon->held_obj;
 	while (obj) {

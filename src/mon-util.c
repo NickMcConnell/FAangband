@@ -317,7 +317,7 @@ void update_mon(struct monster *mon, struct chunk *c, bool full)
 
 	lore = get_lore(mon->race);
 	
-	/* Compute distance, or just use the current one */
+	/* Compute distance, or just use the current one; update any heatmaps */
 	if (full) {
 		/* Target */
 		struct loc target = monster_target_loc(c, mon);
@@ -333,9 +333,22 @@ void update_mon(struct monster *mon, struct chunk *c, bool full)
 
 		/* Save the distance */
 		mon->cdis = d;
+
+		/* Heatmaps */
+		if (mon->noise.grids) {
+			make_noise(c, NULL, mon);
+		}
+		if (mon->scent.grids) {
+			update_scent(c, NULL, mon);
+		}
 	} else {
 		/* Extract the distance */
 		d = mon->cdis;
+	}
+
+	/* Remove any dead monster targets (then what happens? - NRM)*/
+	if ((mon->target.midx > 0) && !cave_monster(c, mon->target.midx)) {
+		mon->target.midx = 0;
 	}
 
 	/* Detected */
@@ -1668,10 +1681,22 @@ struct loc monster_target_loc(struct chunk *c, const struct monster *mon)
 		return loc_is_zero(decoy) ? player->grid : decoy;
 	} else if (mon->target.midx > 0) {
 		/* Monster */
-		return cave_monster(cave, mon->target.midx)->grid;
+		return cave_monster(c, mon->target.midx)->grid;
 	} else if (!loc_eq(mon->target.grid, loc(0, 0))) {
 		return mon->target.grid;
 	}
 	/* Probably an error */
 	return mon->grid;
+}
+
+/**
+ * Create noise and scent heatmaps for a monster
+ *
+ * This function should be called when a monster becomes the long-term target
+ * of another monster, to allow movement to work properly
+ */
+void monster_make_heatmaps(struct chunk *c, struct monster *mon)
+{
+	mon->noise.grids = heatmap_new(c);
+	mon->scent.grids = heatmap_new(c);
 }

@@ -37,7 +37,6 @@
 #include "source.h"
 #include "target.h"
 #include "trap.h"
-#include "z-queue.h"
 
 u16b daycount = 0;
 u32b seed_randart;		/* Hack -- consistent random artifacts */
@@ -423,179 +422,6 @@ static void decrease_timeouts(void)
 	return;
 }
 
-
-/**
- * Every turn, the character makes enough noise that nearby monsters can use
- * it to home in.
- *
- * This function actually just computes distance from the player; this is
- * used in combination with the player's stealth value to determine what
- * monsters can hear.  We mark the player's grid with 0, then fill in the noise
- * field of every grid that the player can reach with that "noise"
- * (actally distance) plus the number of steps needed to reach that grid
- * - so higher values mean further from the player.
- *
- * Monsters use this information by moving to adjacent grids with lower noise
- * values, thereby homing in on the player even though twisty tunnels and
- * mazes.  Monsters have a hearing value, which is the largest sound value
- * they can detect.
- *
- * Update: Monsters can also have noise heatmaps generated for them
- */
-static void make_noise(struct player *p, struct monster *mon)
-{
-	struct loc next = p ? p->grid : mon->grid;
-	int y, x, d;
-	int noise = 0;
-	int noise_increment = p && p->timed[TMD_COVERTRACKS] ? 4 : 1;
-    struct queue *queue = q_new(cave->height * cave->width);
-	struct loc decoy = cave_find_decoy(cave);
-	struct heatmap noise_map = p ? cave->noise : mon->noise;
-
-	/* Set all the grids to silence */
-	for (y = 1; y < cave->height - 1; y++) {
-		for (x = 1; x < cave->width - 1; x++) {
-			noise_map.grids[y][x] = 0;
-		}
-	}
-
-	/* If there's a decoy, use that instead of the player */
-	if (p && !loc_is_zero(decoy)) {
-		next = decoy;
-	}
-
-	/* Player/monster makes noise */
-	noise_map.grids[next.y][next.x] = noise;
-	q_push_int(queue, grid_to_i(next, cave->width));
-	noise += noise_increment;
-
-	/* Propagate noise */
-	while (q_len(queue) > 0) {
-		/* Get the next grid */
-		i_to_grid(q_pop_int(queue), cave->width, &next);
-
-		/* If we've reached the current noise level, put it back and step */
-		if (noise_map.grids[next.y][next.x] == noise) {
-			q_push_int(queue, grid_to_i(next, cave->width));
-			noise += noise_increment;
-			continue;
-		}
-
-		/* Assign noise to the children and enqueue them */
-		for (d = 0; d < 8; d++)	{
-			/* Child location */
-			struct loc grid = loc_sum(next, ddgrid_ddd[d]);
-
-			if (!square_in_bounds(cave, grid)) continue;
-
-			/* Ignore features that don't transmit sound */
-			if (square_isnoflow(cave, grid)) continue;
-
-			/* Skip grids that already have noise */
-			if (noise_map.grids[grid.y][grid.x] != 0) continue;
-
-			/* Skip the player/monster grid */
-			if (p && loc_eq(player->grid, grid)) {
-				continue;
-			} else if (mon && loc_eq(mon->grid, grid)) {
-				continue;
-			}
-
-			/* Save the noise */
-			noise_map.grids[grid.y][grid.x] = noise;
-
-			/* Enqueue that entry */
-			q_push_int(queue, grid_to_i(grid, cave->width));
-		}
-	}
-
-	q_free(queue);
-}
-
-/**
- * Characters leave scent trails for perceptive monsters to track.
- *
- * Scent is rather more limited than sound.  Many creatures cannot use
- * it at all, it doesn't extend very far outwards from the character's
- * current position, and monsters can use it to home in the character,
- * but not to run away.
- *
- * Scent is valued according to age.  When a character takes his turn,
- * scent is aged by one, and new scent is laid down.  Monsters have a smell
- * value which indicates the oldest scent they can detect.  Grids where the
- * player has never been will have scent 0.  The player's grid will also have
- * scent 0, but this is OK as no monster will ever be smelling it.
- */
-static void update_scent(struct player *p, struct monster *mon)
-{
-	int y, x;
-	int scent_strength[5][5] = {
-		{2, 2, 2, 2, 2},
-		{2, 1, 1, 1, 2},
-		{2, 1, 0, 1, 2},
-		{2, 1, 1, 1, 2},
-		{2, 2, 2, 2, 2},
-	};
-	struct heatmap scent_map = p ? cave->scent : mon->scent;
-
-	/* Update scent for all grids */
-	for (y = 1; y < cave->height - 1; y++) {
-		for (x = 1; x < cave->width - 1; x++) {
-			if (scent_map.grids[y][x] > 0) {
-				scent_map.grids[y][x]++;
-			}
-		}
-	}
-
-	/* Scentless player */
-	if (player->timed[TMD_COVERTRACKS]) return;
-
-	/* Lay down new scent around the player */
-	for (y = 0; y < 5; y++) {
-		for (x = 0; x < 5; x++) {
-			struct loc scent, grid = p ? player->grid : mon->grid;
-			int new_scent = scent_strength[y][x];
-			int d;
-			bool add_scent = false;
-
-			/* Initialize */
-			scent.y = y + grid.y - 2;
-			scent.x = x + grid.x - 2;
-
-			/* Ignore invalid or non-scent-carrying grids */
-			if (!square_in_bounds(cave, scent)) continue;
-			if (square_isnoscent(cave, scent)) continue;
-
-			/* Check scent is spreading on floors, not going through walls */
-			for (d = 0; d < 8; d++)	{
-				struct loc adj = loc_sum(scent, ddgrid_ddd[d]);
-
-				if (!square_in_bounds(cave, adj)) {
-					continue;
-				}
-
-				/* Player grid is always valid */
-				if (x == 2 && y == 2) {
-					add_scent = true;
-				}
-
-				/* Adjacent to a closer grid, so valid */
-				if (scent_map.grids[adj.y][adj.x] == new_scent - 1) {
-					add_scent = true;
-				}
-			}
-
-			/* Not valid */
-			if (!add_scent) {
-				continue;
-			}
-
-			/* Mark the scent */
-			scent_map.grids[scent.y][scent.x] = new_scent;
-		}
-	}
-}
-
 /**
  * ------------------------------------------------------------------------
  * Main turn-by-turn processing functions
@@ -796,8 +622,8 @@ void process_world(struct chunk *c)
 	player_update_light(player);
 
 	/* Update noise and scent */
-	make_noise(player, NULL);
-	update_scent(player, NULL);
+	make_noise(cave, player, NULL);
+	update_scent(cave, player, NULL);
 
 
 	/*** Process Inventory ***/

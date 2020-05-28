@@ -285,6 +285,7 @@ void wiz_dark(struct chunk *c, struct player *p, bool full);
 void cave_illuminate(struct chunk *c, bool daytime);
 void cave_update_flow(struct chunk *c);
 void cave_forget_flow(struct chunk *c);
+void cave_known(struct player *p);
 
 /* cave-square.c */
 /**
@@ -485,6 +486,8 @@ int motion_dir(struct loc source, struct loc target);
 struct loc next_grid(struct loc grid, int dir);
 int lookup_feat(const char *name);
 void set_terrain(void);
+u16b **heatmap_new(struct chunk *c);
+void heatmap_free(struct chunk *c, struct heatmap map);
 struct chunk *cave_new(int height, int width);
 void cave_free(struct chunk *c);
 void list_object(struct chunk *c, struct object *obj);
@@ -500,8 +503,8 @@ int cave_monster_count(struct chunk *c);
 int count_feats(struct loc *grid,
 				bool (*test)(struct chunk *c, struct loc grid), bool under);
 struct loc cave_find_decoy(struct chunk *c);
-void prepare_next_level(struct chunk **c, struct player *p);
+void make_noise(struct chunk *c, struct player *p, struct monster *mon);
+void update_scent(struct chunk *c, struct player *p, struct monster *mon);
 
-void cave_known(struct player *p);
 
 #endif /* !CAVE_H */
