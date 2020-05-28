@@ -480,6 +480,13 @@ void store_reset(void) {
 		/* Place the home in the hometown */
 		if (town->index == player->home) {
 			place_home(town);
+		} else {
+			/* May need to remove previous home for a dead character */
+			if (store_is_home(s)) {
+				town->stores = s->next;
+				free_store(s);
+				s = town->stores;
+			}
 		}
 
 		/* Initial stock setup for stores */
