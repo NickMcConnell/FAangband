@@ -89,6 +89,13 @@ uniques:0
 base:hydra
 desc:hydras
 
+name:EARTH
+msgt:SUM_MONSTER
+uniques:0
+base:xorn
+base:golem
+desc:creatures of earth
+
 name:AINU
 msgt:SUM_AINU
 uniques:0

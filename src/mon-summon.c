@@ -434,7 +434,7 @@ int summon_specific(struct loc grid, int lev, int type, bool delay, bool call,
 	summon_specific_type = type;
 
 	/* Use the new calling scheme if requested */
-	if (call && (type != summon_name_to_idx("UNIQUE")) &&
+	if (call && !friendly && (type != summon_name_to_idx("UNIQUE")) &&
 		(type != summon_name_to_idx("WRAITH"))) {
 		return (call_monster(near));
 	}

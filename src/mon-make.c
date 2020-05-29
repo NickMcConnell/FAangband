@@ -587,9 +587,10 @@ void delete_monster_idx(int m_idx)
 		(void) player_clear_timed(player, TMD_COMMAND, true);
 	}
 
-	/* Monster is gone from square and group */
+	/* Monster is gone from square and group, and no longer targeted */
 	square_set_mon(cave, grid, 0);
 	monster_remove_from_groups(cave, mon);
+	monster_remove_from_targets(cave, mon);
 
 	/* Free any heatmaps */
 	if (mon->noise.grids) {

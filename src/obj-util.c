@@ -764,12 +764,13 @@ struct effect *object_effect(const struct object *obj)
 bool obj_needs_aim(struct object *obj)
 {
 	struct effect *effect = object_effect(obj);
+	struct activation *act = obj->activation;
 
 	/* If the effect needs aiming, or if the object type needs
 	   aiming, this object needs aiming. */
-	return effect_aim(effect) || tval_is_ammo(obj) ||
-			tval_is_wand(obj) ||
-			(tval_is_rod(obj) && !object_flavor_is_aware(obj));
+	return effect_aim(effect) || (act && act->aim) ||
+		tval_is_ammo(obj) || tval_is_wand(obj) ||
+		(tval_is_rod(obj) && !object_flavor_is_aware(obj));
 }
 
 /**

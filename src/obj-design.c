@@ -603,7 +603,7 @@ static bool get_activation(char *act_name, struct object *obj)
 static bool get_random_activation(int type, struct object *obj) {
 	int i, count = 0, pick;
 
-	/* Count the appropraite activations */
+	/* Count the appropriate activations */
 	for (i = 0; i < z_info->act_max; i++) {
 		struct activation *act = &activations[i];
 		if (act->type == type) count++;

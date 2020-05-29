@@ -1697,6 +1697,27 @@ struct loc monster_target_loc(struct chunk *c, const struct monster *mon)
  */
 void monster_make_heatmaps(struct chunk *c, struct monster *mon)
 {
-	mon->noise.grids = heatmap_new(c);
-	mon->scent.grids = heatmap_new(c);
+	if (!mon->noise.grids) {
+		mon->noise.grids = heatmap_new(c);
+	}
+	if (!mon->scent.grids) {
+		mon->scent.grids = heatmap_new(c);
+	}
+}
+
+/**
+ * Remove a monster as the target of any other monster
+ *
+ * Currently the monster with its target removed does not acquire a new one
+ */
+void monster_remove_from_targets(struct chunk *c, struct monster *mon)
+{
+	int i;
+	for (i = 1; i < cave_monster_max(c); i++) {
+		struct monster *mon1 = cave_monster(c, i);
+		if (!mon1->race) continue;
+		if (mon1->target.midx == mon->midx) {
+			mon1->target.midx = 0;
+		}
+	}
 }

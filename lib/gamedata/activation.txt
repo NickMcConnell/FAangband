@@ -2941,14 +2941,15 @@ dice:100
 time:2000
 desc:creates a gravity wave
 
-# name:ENLIST_EARTH
-# aim:1
-# type:power
-# power:20
-# msg:You call on the Earth to bring forth allies!
-# effect not done
-# time:3000
-# desc:summons allies from the Earth
+name:ENLIST_EARTH
+aim:1
+type:power
+power:20
+msg:You call on the Earth to bring forth allies!
+effect:SUMMON:EARTH:0:1
+dice:5+d5
+time:3000
+desc:summons allies from the Earth
 
 name:TELEPORT_ALL
 aim:0
