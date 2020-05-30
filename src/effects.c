@@ -4505,7 +4505,8 @@ bool effect_handler_STRIKE(effect_handler_context_t *context)
 	}
 
 	/* Enforce line of sight */
-	if (!los(cave, player->grid, target)) {
+	if (!projectable(cave, player->grid, target, PROJECT_NONE) ||
+		!square_isknown(cave, target)) {
 		return false;
 	}
 
