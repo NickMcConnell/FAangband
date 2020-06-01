@@ -1083,7 +1083,7 @@ alloc:20:20 to 100
 attack:2d6:0:0
 armor:0:0
 desc:A reinforced wooden pole eight feet long, topped by a massive knife blade
-desc: that can can be used to thrust or chop.
+desc: that can be used to thrust or chop.
 
 name:& Lance~
 type:polearm
@@ -4576,7 +4576,7 @@ values:RES_LIGHT[40] | RES_DARK[40] | RES_CHAOS[40]
 power:2250
 act:DRAGON_POWER
 desc:A suit with scales of every color, surrounded in a nimbus of perfectly
-desc: untramelled yet inextricably intermingled and utterly mastered powers
+desc: untrammelled yet inextricably intermingled and utterly mastered powers
 desc: elemental and ethereal.
 
 
