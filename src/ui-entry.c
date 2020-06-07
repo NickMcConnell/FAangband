@@ -564,6 +564,7 @@ void compute_ui_entry_values_for_object(const struct ui_entry *entry,
 	struct cached_object_data *cache2;
 	bool first, all_unknown, all_aux_unknown, any_aux, all_aux;
 	int curse_ind;
+	int base = 0;
 
 	if (!obj || !entry->n_obj_prop) {
 		*val = UI_ENTRY_VALUE_NOT_PRESENT;
@@ -684,9 +685,10 @@ void compute_ui_entry_values_for_object(const struct ui_entry *entry,
 				break;
 
 			case OBJ_PROPERTY_ELEMENT:
+				base = RES_LEVEL_BASE;
 				if (object_element_is_known(obj, ind)) {
 					int v = obj->el_info[ind].res_level;
-					int a = 0;
+					int a = RES_LEVEL_BASE;
 
 					if (v && entry->obj_props[i].have_value) {
 						v = entry->obj_props[i].value;
@@ -742,17 +744,17 @@ void compute_ui_entry_values_for_object(const struct ui_entry *entry,
 		}
 	}
 	if (all_unknown && all_aux_unknown) {
-		*val = (all_aux) ? 0 : UI_ENTRY_UNKNOWN_VALUE;
-		*auxval = (any_aux) ? UI_ENTRY_UNKNOWN_VALUE : 0;
+		*val = (all_aux) ? base : UI_ENTRY_UNKNOWN_VALUE;
+		*auxval = (any_aux) ? UI_ENTRY_UNKNOWN_VALUE : base;
 	} else {
 		(*combiner.finish_func)(&cst);
 		if (all_unknown) {
-			*val = (all_aux) ? 0 : UI_ENTRY_UNKNOWN_VALUE;
+			*val = (all_aux) ? base : UI_ENTRY_UNKNOWN_VALUE;
 		} else {
 			*val = cst.accum;
 		}
 		if (all_aux_unknown) {
-			*auxval = (any_aux) ? UI_ENTRY_UNKNOWN_VALUE : 0;
+			*auxval = (any_aux) ? UI_ENTRY_UNKNOWN_VALUE : base;
 		} else {
 			*auxval = cst.accum_aux;
 		}
@@ -767,7 +769,7 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 	struct ui_entry_combiner_state cst = { 0, 0, 0 };
 	struct ui_entry_combiner_funcs combiner;
 	bool first;
-	int i;
+	int i, base = 0;
 
 	if (!p) {
 		*val = UI_ENTRY_VALUE_NOT_PRESENT;
@@ -912,11 +914,12 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 			"element")) {
 			int v = p->race->el_info[ind].res_level;
 			int a;
+			base = RES_LEVEL_BASE;
 
 			if (entry->flags & ENTRY_FLAG_TIMED_AUX) {
 				a = get_timed_element_effect(p, ind);
 			} else {
-				a = 0;
+				a = base;
 			}
 			if (entry->p_abilities[i].isaux) {
 				int t = v;
@@ -931,7 +934,7 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 				(*combiner.accum_func)(v, a, &cst);
 			}
 			v = p->shape->el_info[ind].res_level;
-			a = 0;
+			a = base;
 			if (v != 0 && p->obj_k->el_info[ind].res_level) {
 				if (entry->p_abilities[i].isaux) {
 					int t = v;
@@ -1016,8 +1019,8 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 		}
 	}
 	if (first) {
-		*val = 0;
-		*auxval = 0;
+		*val = base;
+		*auxval = base;
 	} else {
 		(*combiner.finish_func)(&cst);
 		*val = cst.accum;
@@ -1203,27 +1206,27 @@ static int get_timed_element_effect(const struct player *p, int ind)
 
 	switch (ind) {
 	case ELEM_ACID:
-		result = p->timed[TMD_OPP_ACID] ? 1 : 0;
+		result = p->timed[TMD_OPP_ACID] ? RES_BOOST_NORMAL : RES_LEVEL_BASE;
 		break;
 
 	case ELEM_ELEC:
-		result = p->timed[TMD_OPP_ELEC] ? 1 : 0;
+		result = p->timed[TMD_OPP_ELEC] ? RES_BOOST_NORMAL : RES_LEVEL_BASE;
 		break;
 
 	case ELEM_FIRE:
-		result = p->timed[TMD_OPP_FIRE] ? 1 : 0;
+		result = p->timed[TMD_OPP_FIRE] ? RES_BOOST_NORMAL : RES_LEVEL_BASE;
 		break;
 
 	case ELEM_COLD:
-		result = p->timed[TMD_OPP_COLD] ? 1 : 0;
+		result = p->timed[TMD_OPP_COLD] ? RES_BOOST_NORMAL : RES_LEVEL_BASE;
 		break;
 
 	case ELEM_POIS:
-		result = p->timed[TMD_OPP_POIS] ? 1 : 0;
+		result = p->timed[TMD_OPP_POIS] ? RES_BOOST_NORMAL : RES_LEVEL_BASE;
 		break;
 
 	default:
-		result = 0;
+		result = RES_LEVEL_BASE;
 		break;
 	}
 	return result;

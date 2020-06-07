@@ -40,8 +40,10 @@
 # other settings, a positive number of resistances with a positive number of
 # vulnerabilities will be no resistance, a positive number of resistances with
 # no vulnerablities equals resistance, a positive number of vulnerabilities
-# with no resistances equal vulnerable.  All the combiners treat the auxiliary
-# values (usually for timed effects) separately.
+# with no resistances equal vulnerable.  RESIST_P uses FA's percentage resists:
+# resists are accumulated by multiplying together and dividing by 100 (since
+# 0 represents immunity, 100 no resistance, 200 max vulnerability).  All the
+# combiners treat the auxiliary values (usually for timed effects) separately.
 # The category and priority fields can be set multiple times.  The
 # categories are used to select if an entry appears in a screen.   If you want
 # an entry to be included in the second character screen, one of the categories
@@ -78,8 +80,8 @@ desc: categories.
 
 name:resist_ui_compact_0
 parameter:element
-renderer:char_screen1_resist_renderer
-combine:RESIST_0
+renderer:char_screen1_percentage_resist_renderer
+combine:RESIST_P
 priority:negative_index
 category:resistances
 flags:TIMED_AS_AUX

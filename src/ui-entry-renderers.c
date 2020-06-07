@@ -60,6 +60,16 @@ static void renderer_COMPACT_RESIST_RENDERER_WITH_COMBINED_AUX(
 	const struct renderer_info *info);
 static int valuewidth_COMPACT_RESIST_RENDERER_WITH_COMBINED_AUX(
 	const struct renderer_info *info);
+static void renderer_COMPACT_PERCENTAGE_RESIST_RENDERER_WITH_COMBINED_AUX(
+	const wchar_t *label,
+	int nlabel,
+	const int *vals,
+	const int *auxvals,
+	int n,
+	const struct ui_entry_details *details,
+	const struct renderer_info *info);
+static int valuewidth_COMPACT_PERCENTAGE_RESIST_RENDERER_WITH_COMBINED_AUX(
+	const struct renderer_info *info);
 static void renderer_COMPACT_FLAG_RENDERER_WITH_COMBINED_AUX(
 	const wchar_t *label,
 	int nlabel,
@@ -602,6 +612,130 @@ static void renderer_COMPACT_RESIST_RENDERER_WITH_COMBINED_AUX(
 
 
 static int valuewidth_COMPACT_RESIST_RENDERER_WITH_COMBINED_AUX(
+	const struct renderer_info *info)
+{
+	return 1;
+}
+
+
+/**
+ * Result is  0 (no resistance)), 1 (resistance), 2 (vulnerable), 3 (immune),
+ * 4 (unknown), 5 (not present), 6 (strong resistance), 7 (resistance, but
+ * not to effects)
+ */
+static int convert_fa_res_level(int i)
+{
+	int result = 0;
+
+	if (i == UI_ENTRY_UNKNOWN_VALUE) {
+		result = 0;
+	} else if (i == UI_ENTRY_VALUE_NOT_PRESENT) {
+		result = 1;
+	} else if (i == RES_LEVEL_MAX) {
+		result = 6;
+	} else if (i <= RES_LEVEL_EFFECT) {
+		result = 4;
+	} else if (i < RES_LEVEL_BASE) {
+		result = 3;
+	} else if (i > RES_LEVEL_BASE) {
+		result = 5;
+	} else {
+		result = 2;
+	}
+	return result;
+}
+
+
+static void renderer_COMPACT_PERCENTAGE_RESIST_RENDERER_WITH_COMBINED_AUX(
+	const wchar_t *label,
+	int nlabel,
+	const int *vals,
+	const int *auxvals,
+	int n,
+	const struct ui_entry_details *details,
+	const struct renderer_info *info)
+{
+	struct loc p = details->value_position;
+	int color_offset = (details->alternate_color_first) ? 7 : 0;
+	struct ui_entry_combiner_funcs combiner;
+	int vc, ac;
+	int i;
+
+	/* Check for defaults that are too short in list-ui-entry-renders.h. */
+	assert(info->ncolors >= 7 && info->nlabcolors >= 7 &&
+		info->nsym >= 7);
+
+	if (ui_entry_combiner_get_funcs(info->combiner_index, &combiner)) {
+		assert(0);
+	}
+	for (i = 0; i < n; ++i) {
+		/* Hack - this should be rewritten without aux - NRM */
+		int val = RES_LEVEL_BASE, effect_index;
+
+		if (vals[i] > RES_LEVEL_MAX) {
+			val = vals[i];
+		} else if (auxvals[i] > RES_LEVEL_MAX) {
+			val = auxvals[i];
+		} else {
+			val = (vals[i] * auxvals[i]) / RES_LEVEL_BASE;
+		}
+		effect_index = convert_fa_res_level(val);
+
+		assert(effect_index >= 0 && effect_index < 7);
+		Term_putch(p.x, p.y,
+			info->colors[effect_index + color_offset],
+			info->symbols[effect_index]);
+		p = loc_sum(p, details->position_step);
+		color_offset ^= 7;
+	}
+
+	if (nlabel <= 0 && !details->show_combined) {
+		return;
+	}
+
+	(*combiner.vec_func)(n, vals, auxvals, &vc, &ac);
+
+	if (nlabel > 0) {
+		int effect_index = 0;
+
+		if (details->known_rune) {
+			/* Hack - this should be rewritten without aux - NRM */
+			int val = RES_LEVEL_BASE;
+
+			if (vc > RES_LEVEL_MAX) {
+				val = vc;
+			} else if (ac > RES_LEVEL_MAX) {
+				val = ac;
+			} else {
+				val = (vc * ac) / RES_LEVEL_BASE;
+			}
+			effect_index = convert_fa_res_level(val);
+
+			assert(effect_index >= 0 && effect_index < 7);
+		}
+
+		if (details->vertical_label) {
+			p = details->label_position;
+			for (i = 0; i < nlabel; ++i) {
+				Term_putch(p.x, p.y,
+					info->label_colors[effect_index],
+					label[i]);
+				p.y += 1;
+			}
+		} else {
+			Term_queue_chars(details->label_position.x,
+				details->label_position.y, nlabel,
+				info->label_colors[effect_index], label);
+		}
+	}
+
+	if (details->show_combined) {
+		show_combined_generic(info, details, vc, ac);
+	}
+}
+
+
+static int valuewidth_COMPACT_PERCENTAGE_RESIST_RENDERER_WITH_COMBINED_AUX(
 	const struct renderer_info *info)
 {
 	return 1;

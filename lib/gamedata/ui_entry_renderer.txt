@@ -44,6 +44,9 @@
 # configured in this file for the combined value to be shown.  If
 # combined-renderer is omitted, the renderer will not show a combined value.
 
+
+
+
 # COMPACT_RESIST_RENDERER_WITH_COMBINED_AUX renders one or more resistance
 # values with the label colored by the combined resistance.  The auxiliary
 # values are treated as timed resistances.  The default combiner is RESIST_0.
@@ -70,6 +73,30 @@
 # timed immunity with net permanent resistance
 # timed immunity with net permanent vulnerability
 
+name:char_screen1_resist_renderer
+code:COMPACT_RESIST_RENDERER_WITH_COMBINED_AUX
+colors:wwwwwwGGGrrGGGWWWWWWGGGrrGGG
+labelcolors:swBrgwBrwBwBr
+symbols:?..+-*!^.=.%%%
+
+# COMPACT_PERCENTAGE_RESIST_RENDERER_WITH_COMBINED_AUX renders one or more
+# resistance values with the label colored by the combined resistance.  The
+# auxiliary values are treated as timed resistances.  The default combiner is
+# RESIST_P.
+# One of seven symbols (unknown, not present, none, resist (but not effects),
+# resist effects, vulnerable, immune) are used for each resistance value.
+# Each of those symbols has a corresponding color (from the first 7 colors) and
+# alternate color (from the second 7 colors).  The alternate color is used for
+# every other resist.  The same palette of 7 colors is used for the label.
+# In every case the net effect is represented, with no distinction between
+# timed and permanent effects.
+
+name:char_screen1_percentage_resist_renderer
+code:COMPACT_PERCENTAGE_RESIST_RENDERER_WITH_COMBINED_AUX
+colors:wwwoGrgWWWoGrg
+labelcolors:swwoGrg
+symbols:?..++-*
+
 # COMPACT_FLAG_RENDERER_WITH_COMBINED_AUX renders one or more boolean flags
 # with the label colored by the combined (logical or) value.  The auxiliary
 # values are treated as timed effects.  The default combiner is LOGICAL_OR.
@@ -82,24 +109,11 @@
 # known to be on and there is no timed effect, at least one flag is on, and no
 # flags are known to be on but there is at least one timed effect.
 
-# NUMERIC_AS_SIGN_RENDERER_WITH_COMBINED_AUX renders one or more integer
-# modifiers with the label colored by the combined (by addition) value.  The
-# auxiliary values are treated as timed effects.  The default combiner is ADD.
-# One of seven symbols (unknown, not present, zero, positive, negative, timed
-# positive, timed negative) is used for each modifier.  The symbols for the
-# timed effects are only used if the permanent effect is known and is zero.
-# Each of the symbols has a corresponding color (from the first seven colors)
-# and alternate color (from the second seven colors).  The alternate color is
-# used for every other modifier.  A palette of six colors is used for the
-# label.  They are:
-# unknown rune
-# the sum of the known effects is zero and the sum of the timed effects is zero
-# the sum of the known effects is positive
-# the sum of the known effects is negative
-# the sum of the known effects is zero; the sum of the timed effects is
-#     positive
-# the sum of the known effects is zero; the sum of the timed effects is
-#     negative
+name:char_screen1_flag_renderer
+code:COMPACT_FLAG_RENDERER_WITH_COMBINED_AUX
+colors:wwwwGWWWWG
+labelcolors:swBw
+symbols:?..+!
 
 # NUMERIC_RENDERER_WITH_COMBINED_AUX renders one or more integer values
 # as decimal integers with the label colored by the combined value.  The
@@ -140,6 +154,38 @@
 # configures whether that label is shown after each numeric value.  By
 # default, no such label is shown.
 
+name:char_screen1_numeric_renderer
+code:NUMERIC_RENDERER_WITH_COMBINED_AUX
+colors:wwwBrbowwwBrbo
+labelcolors:swBrww
+symbols:?00****
+ndigit:1
+
+# NUMERIC_AS_SIGN_RENDERER_WITH_COMBINED_AUX renders one or more integer
+# modifiers with the label colored by the combined (by addition) value.  The
+# auxiliary values are treated as timed effects.  The default combiner is ADD.
+# One of seven symbols (unknown, not present, zero, positive, negative, timed
+# positive, timed negative) is used for each modifier.  The symbols for the
+# timed effects are only used if the permanent effect is known and is zero.
+# Each of the symbols has a corresponding color (from the first seven colors)
+# and alternate color (from the second seven colors).  The alternate color is
+# used for every other modifier.  A palette of six colors is used for the
+# label.  They are:
+# unknown rune
+# the sum of the known effects is zero and the sum of the timed effects is zero
+# the sum of the known effects is positive
+# the sum of the known effects is negative
+# the sum of the known effects is zero; the sum of the timed effects is
+#     positive
+# the sum of the known effects is zero; the sum of the timed effects is
+#     negative
+
+name:char_screen1_numeric_as_sign_renderer
+code:NUMERIC_AS_SIGN_RENDERER_WITH_COMBINED_AUX
+colors:wwwwwGwWWWWWGW
+labelcolors:swBrww
+symbols:?..+-!=
+
 # NUMERIC_RENDERER_WITH_BOOL_AUX renders one or more integer values
 # as decimal integers with the label colored by the combined value.  The
 # auxiliary values are treated as booleans (one use would be for sustains).
@@ -174,28 +220,10 @@
 # indicator.  By default, a sign indicator will not be shown.  The units label
 # configures whether that label is shown after each numeric value.  By default,
 # no such label is shown.
-
-name:char_screen1_resist_renderer
-code:COMPACT_RESIST_RENDERER_WITH_COMBINED_AUX
-colors:wwwwwwGGGrrGGGWWWWWWGGGrrGGG
-labelcolors:swBrgwBrwBwBr
-symbols:?..+-*!^.=.%%%
-
-name:char_screen1_flag_renderer
-code:COMPACT_FLAG_RENDERER_WITH_COMBINED_AUX
-colors:wwwwGWWWWG
-labelcolors:swBw
-symbols:?..+!
-
-name:char_screen1_numeric_as_sign_renderer
-code:NUMERIC_AS_SIGN_RENDERER_WITH_COMBINED_AUX
-colors:wwwwwGwWWWWWGW
-labelcolors:swBrww
-symbols:?..+-!=
-
 # Currently, labelcolors has no impact on what's shown in the character screen
 # and what uses this internally expects ndigit to be one, sign to be NO_SIGN,
 # and nothing to be set for units.
+
 name:char_screen1_stat_mod_renderer
 code:NUMERIC_RENDERER_WITH_BOOL_AUX
 colors:sdsgGgrRsdsgGgrR

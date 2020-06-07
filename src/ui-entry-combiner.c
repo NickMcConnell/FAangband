@@ -13,6 +13,7 @@
  *    and not for profit purposes provided that this copyright and statement
  *    are included in all such copies.  Other copyrights may also apply.
  */
+#include "obj-properties.h"
 #include "ui-entry-combiner.h"
 #include "z-virt.h"
 
@@ -62,6 +63,13 @@ static void resist_0_combine_accum(int v, int a,
 static void resist_0_combine_finish(struct ui_entry_combiner_state *st);
 static void resist_0_vec(int n, const int *vals, const int *auxs,
 	int *accum, int *accum_aux);
+static void resist_p_combine_init(int v, int a,
+	struct ui_entry_combiner_state *st);
+static void resist_p_combine_accum_help(int x, int *accum);
+static void resist_p_combine_accum(int v, int a,
+	struct ui_entry_combiner_state *st);
+static void resist_p_vec(int n, const int *vals, const int *auxs,
+	int *accum, int *accum_aux);
 static void smallest_combine_accum_help(int x, int *accum);
 static void smallest_combine_accum(int v, int a,
 	struct ui_entry_combiner_state *st);
@@ -85,6 +93,8 @@ static struct combining_algorithm combiners[] = {
 		dummy_combine_finish, logical_or_vec } },
 	{ "RESIST_0", { resist_0_combine_init, resist_0_combine_accum,
 		resist_0_combine_finish, resist_0_vec } },
+	{ "RESIST_P", { resist_p_combine_init, resist_p_combine_accum,
+		dummy_combine_finish, resist_p_vec } },
 	{ "SMALLEST", { simple_combine_init, smallest_combine_accum,
 		dummy_combine_finish, smallest_vec } }
 };
@@ -531,6 +541,54 @@ static void resist_0_vec(int n, const int *vals, const int *auxs,
 			*accum_aux != UI_ENTRY_VALUE_NOT_PRESENT) {
 			--*accum_aux;
 		}
+	}
+}
+
+
+static void resist_p_combine_init(int v, int a,
+	struct ui_entry_combiner_state *st)
+{
+	st->work = 0;
+	if (v == UI_ENTRY_UNKNOWN_VALUE || v == UI_ENTRY_VALUE_NOT_PRESENT) {
+		st->accum = RES_LEVEL_BASE;
+	} else {
+		st->accum = v;
+	}
+	if (a == UI_ENTRY_UNKNOWN_VALUE || a == UI_ENTRY_VALUE_NOT_PRESENT) {
+		st->accum_aux = RES_LEVEL_BASE;
+	} else {
+		st->accum_aux = a;
+	}
+}
+
+
+static void resist_p_combine_accum_help(int x, int *accum)
+{
+	if (x == UI_ENTRY_UNKNOWN_VALUE || x == UI_ENTRY_VALUE_NOT_PRESENT) {
+		return;
+	}
+	*accum = (*accum * x) / RES_LEVEL_BASE;
+}
+
+
+static void resist_p_combine_accum(int v, int a,
+	struct ui_entry_combiner_state *st)
+{
+	resist_p_combine_accum_help(v, &st->accum);
+	resist_p_combine_accum_help(a, &st->accum_aux);
+}
+
+
+static void resist_p_vec(int n, const int *vals, const int *auxs,
+	int *accum, int *accum_aux)
+{
+	int i;
+
+	*accum = RES_LEVEL_BASE;
+	*accum_aux = RES_LEVEL_BASE;
+	for (i = 0; i < n; ++i) {
+		resist_p_combine_accum_help(vals[i], accum);
+		resist_p_combine_accum_help(auxs[i], accum_aux);
 	}
 }
 

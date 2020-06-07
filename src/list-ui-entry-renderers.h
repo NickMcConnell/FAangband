@@ -11,6 +11,7 @@
 /* symbol, default colors, default label colors, default symbols,
    default number of digits, sign indicator handling */
 UI_ENTRY_RENDERER(COMPACT_RESIST_RENDERER_WITH_COMBINED_AUX, "RESIST_0", "wwwwwwGGGrrGGGWWWWWWGGGrrGGG", "swBrgwBrwBwBr", "?..+-*!^.=.%%%", 0, NO_SIGN)
+UI_ENTRY_RENDERER(COMPACT_PERCENTAGE_RESIST_RENDERER_WITH_COMBINED_AUX, "RESIST_P", "wwwoGrgWWWoGrg", "swwoGrg", "?..++-*", 0, NO_SIGN)
 UI_ENTRY_RENDERER(COMPACT_FLAG_RENDERER_WITH_COMBINED_AUX, "LOGICAL_OR", "wwwwGWWWWG", "swBw", "?..+!", 0, NO_SIGN)
 UI_ENTRY_RENDERER(NUMERIC_AS_SIGN_RENDERER_WITH_COMBINED_AUX, "ADD", "wwwwwGGWWWWWGG", "swBrww", "?..+-!=", 0, NO_SIGN)
 UI_ENTRY_RENDERER(NUMERIC_RENDERER_WITH_COMBINED_AUX, "ADD", "wwwBrbowwwBrbo", "swBrww", "?00****", 1, NO_SIGN)
