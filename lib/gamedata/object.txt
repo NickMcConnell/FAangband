@@ -924,6 +924,18 @@ desc: bodies, and spirit.
 
 ### Spears ###
 
+name:& Dart~
+graphics:/:s
+level:10
+weight:20
+cost:30
+alloc:20:10 to 100
+attack:1d5:0:0
+armor:0:0
+flags:THROWING
+desc:A light javelin that can be easily carried in bunches, perfect for
+desc: harassing a stronger foe.
+
 name:& Spear~
 type:polearm
 graphics:/:s
@@ -936,6 +948,19 @@ armor:0:0
 flags:THROWING
 desc:The basic polearm, with a double-edged knife mounted on a light shaft.
 desc:  This weapon can be thrown effectively.
+
+name:& Thrusting Spear~
+type:polearm
+graphics:/:s
+level:7
+weight:65
+cost:50
+alloc:20:7 to 100
+attack:1d7:0:0
+armor:0:0
+desc:A more robust version of the basic polearm, with a double-edged knife
+desc: mounted on a sturdy shaft.  It cannot be thrown effectively, but offers
+desc: some protection to the wielder.
 
 name:& Awl-Pike~
 type:polearm
@@ -1482,7 +1507,7 @@ armor:0:0
 desc:A plain band of iron, crowned with iron spikes.  It is a tyrant's
 desc: symbol.
 
-name:& Golden Crown~
+name:& Silver Crown~
 type:crown
 graphics:]:y
 level:45
@@ -1492,7 +1517,7 @@ alloc:10:45 to 100
 attack:1d1:0:0
 armor:0:0
 flags:IGNORE_ACID
-desc:An elegant golden circlet, with slender spines thrusting upward.
+desc:An elegant silver circlet, with slender spines thrusting upward.
 desc:  It looks like it should be resting over the brow of a king.
 
 name:& Jewel Encrusted Crown~
@@ -1744,15 +1769,26 @@ desc:A heavy cloak made from fur and lined with leather; a luxury.
 name:& Elven Cloak~
 type:cloak
 graphics:(:D
-level:60
+level:35
 weight:5
 cost:2000
-alloc:8:40 to 100
+alloc:8:35 to 100
 attack:0d0:0:0
 armor:6:0
 values:STEALTH[1] | SPEED[1]
-desc:A mantle made of curious silken material by the Galadrim that wondrously 
-desc:takes on the hues and shapes of its surroundings.
+desc:A mantle made of curious silken material by the Green Elves that wondrously
+desc: takes on the hues and shapes of its surroundings.
+
+name:& Shadow Cloak~
+type:cloak
+graphics:(:D
+level:50
+weight:5
+cost:1500
+alloc:12:50 to 100
+attack:0d0:0:0
+armor:8:0
+desc:A midnight-hued cloak that wreathes the wearer in folds of shadow.
 
 name:& Ethereal Cloak~
 type:cloak
@@ -1905,7 +1941,7 @@ armor:15:0
 desc:A kite-shaped shield with rounded corners that covers the wearer from
 desc: chest to toe, emblazoned with heraldic symbols.
 
-name:& Mithril Shield~
+name:& Shield of Deflection~
 type:shield
 graphics:):B
 level:70

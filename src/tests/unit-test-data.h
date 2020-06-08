@@ -310,7 +310,7 @@ static struct object_kind TEST_DATA test_lantern = {
 
 	.cost = 1,
 
-	.flags = { 0, 0, 8, 0 }, /* OF_TAKES_FUEL */
+	.flags = { 0, 0, 32, 0 }, /* OF_TAKES_FUEL */
 	.kind_flags = { 32, 0 },
 
 	.modifiers = { 

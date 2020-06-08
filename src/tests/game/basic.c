@@ -9,6 +9,7 @@
 #include "cmd-core.h"
 #include "game-event.h"
 #include "game-world.h"
+#include "generate.h"
 #include "init.h"
 #include "savefile.h"
 #include "player.h"

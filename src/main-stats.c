@@ -22,6 +22,7 @@
 
 #include "buildid.h"
 #include "game-world.h"
+#include "generate.h"
 #include "init.h"
 #include "main.h"
 #include "mon-make.h"

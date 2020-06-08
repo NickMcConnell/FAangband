@@ -374,6 +374,20 @@ desc:Blessed by the gods (combat bonuses for holy casters)
 price-constant:500
 design-constant:100
 
+name:two hands desired
+type:flag
+subtype:melee
+id-type:on wield
+code:TWO_HANDED_DES
+desc:two-handed wielding desirable
+
+name:two hands required
+type:flag
+subtype:melee
+id-type:on wield
+code:TWO_HANDED_REQ
+desc:two-handed wielding needed
+
 name:burns out
 type:flag
 subtype:light

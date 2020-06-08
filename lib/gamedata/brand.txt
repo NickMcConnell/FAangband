@@ -9,6 +9,13 @@
 # vuln-flag: monster race flag for special vulnerability to the brand element
 # This file encodes the brands that can appear on object.
 
+code:ELEC_4
+name:lightning
+verb:electrify
+multiplier:4
+o-multiplier:35
+resist-flag:IM_ELEC
+
 code:ACID_3
 name:acid
 verb:dissolve
