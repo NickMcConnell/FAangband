@@ -162,10 +162,11 @@ symbols:?..+!
 
 name:char_screen1_numeric_renderer
 code:NUMERIC_RENDERER_WITH_COMBINED_AUX
-colors:wwwBrbowwwBrbo
-labelcolors:swBrww
-symbols:?00****
+colors:wwwGrboWWWGrbo
+labelcolors:swGrww
+symbols:?..**
 ndigit:1
+combined-renderer:modifier_combined_renderer
 
 # NUMERIC_AS_SIGN_RENDERER_WITH_COMBINED_AUX renders one or more integer
 # modifiers with the label colored by the combined (by addition) value.  The
@@ -191,7 +192,6 @@ code:NUMERIC_AS_SIGN_RENDERER_WITH_COMBINED_AUX
 colors:wwwwwGwWWWWWGW
 labelcolors:swBrww
 symbols:?..+-!=
-combined-renderer:modifier_combined_renderer
 
 name:modifier_combined_renderer
 code:MODIFIER_COMBINED_RENDERER

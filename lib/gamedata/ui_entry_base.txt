@@ -37,3 +37,13 @@ flags:TIMED_AS_AUX
 desc:Template for one of the auxiliary statistics shown on the second
 desc: character screen.  Each occupies a row and has the label colored by
 desc: combination of the flags across several sources.
+
+name:numeric_modifier_ui_0
+renderer:char_screen1_numeric_renderer
+combine:ADD
+category:CHAR_SCREEN1
+category:modifiers
+flags:TIMED_AS_AUX
+desc:Template for one of the modifiers shown on the second character screen.
+desc:  Each occupies a row and has the label colored by combination of the
+desc: modifiers across several sources.  Sign is indicated by color.
