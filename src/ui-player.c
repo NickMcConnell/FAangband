@@ -191,7 +191,7 @@ static void configure_char_sheet(void)
 	};
 	char* test_categories[2];
 	struct ui_entry_iterator* ui_iter;
-	int i, n;
+	int i, n, next_col;
 
 	release_char_sheet_config();
 
@@ -222,13 +222,17 @@ static void configure_char_sheet(void)
 	cached_config->res_cols =
 		cached_config->res_nlabel + 1 + player->body.count;
 	cached_config->res_rows = 0;
+	next_col = 0;
 	for (i = 0; i < 4; ++i) {
 		int j;
 
-		cached_config->res_regions[i].col =
-			i * (cached_config->res_cols + 1);
+		//cached_config->res_regions[i].col =
+		//	i * (cached_config->res_cols + 1);
+		cached_config->res_regions[i].col = next_col;
 		cached_config->res_regions[i].row = 2 + STAT_MAX;
-		cached_config->res_regions[i].width = cached_config->res_cols;
+		cached_config->res_regions[i].width = cached_config->res_cols
+			+ ((i % 2 == 0) ? 5 : 0);
+		next_col += cached_config->res_regions[i].width + 1;
 
 		test_categories[1] = region_categories[i];
 		ui_iter = initialize_ui_entry_iterator(check_for_two_categories, test_categories, region_categories[i]);
@@ -398,10 +402,11 @@ static void display_resistance_panel(int ipart, struct char_sheet_config *config
 	render_details.label_position.x = col;
 	render_details.value_position.x = col + config->res_nlabel;
 	render_details.position_step = loc(1, 0);
-	render_details.combined_position = loc(0, 0);
+	render_details.combined_position.x = col + config->res_nlabel +
+		player->body.count + 1;
 	render_details.vertical_label = false;
 	render_details.alternate_color_first = false;
-	render_details.show_combined = false;
+	render_details.show_combined = ipart % 2 ? false : true;
 	for (i = 0; i < config->n_resist_by_region[ipart]; i++, row++) {
 		const struct ui_entry *entry = config->resists_by_region[ipart][i].entry;
 
@@ -412,6 +417,7 @@ static void display_resistance_panel(int ipart, struct char_sheet_config *config
 
 		render_details.label_position.y = row;
 		render_details.value_position.y = row;
+		render_details.combined_position.y = row;
 		render_details.known_rune = is_ui_entry_for_known_rune(entry, player);
 		ui_entry_renderer_apply(get_ui_entry_renderer_index(entry), config->resists_by_region[ipart][i].label, config->res_nlabel, vals, auxs, player->body.count + 1, &render_details);
 	}
@@ -968,7 +974,7 @@ void write_character_dump(ang_file *fff)
 	for (y = cached_config->res_regions[0].row + 2; y < ylim; y++) {
 		p = buf;
 		/* Dump each row */
-		for (x = 0; x < 2 * cached_config->res_cols + 1; x++) {
+		for (x = 0; x < 2 * cached_config->res_cols + 6; x++) {
 			/* Get the attr/char */
 			(void)(Term_what(x, y, &a, &c));
 
@@ -1001,9 +1007,9 @@ void write_character_dump(ang_file *fff)
 	for (y = cached_config->res_regions[0].row + 2; y < ylim; y++) {
 		p = buf;
 		/* Dump each row */
-		for (x = 0; x < 2 * cached_config->res_cols + 1; x++) {
+		for (x = 0; x < 2 * cached_config->res_cols + 6; x++) {
 			/* Get the attr/char */
-			(void)(Term_what(x + 2 * cached_config->res_cols + 2, y, &a, &c));
+			(void)(Term_what(x + 2 * cached_config->res_cols + 7, y, &a, &c));
 
 			/* Dump it */
 			p += wctomb(p, c);

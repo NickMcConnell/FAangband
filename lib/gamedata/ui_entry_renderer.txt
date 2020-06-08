@@ -96,6 +96,12 @@ code:COMPACT_PERCENTAGE_RESIST_RENDERER_WITH_COMBINED_AUX
 colors:wwwoGrgWWWoGrg
 labelcolors:swwoGrg
 symbols:?..++-*
+combined-renderer:percentage_resist_combined_renderer
+
+name:percentage_resist_combined_renderer
+code:PERCENTAGE_RESIST_COMBINED_RENDERER
+colors:wwwoGrg
+sign:NEGATIVE_SIGN
 
 # COMPACT_FLAG_RENDERER_WITH_COMBINED_AUX renders one or more boolean flags
 # with the label colored by the combined (logical or) value.  The auxiliary
@@ -185,6 +191,12 @@ code:NUMERIC_AS_SIGN_RENDERER_WITH_COMBINED_AUX
 colors:wwwwwGwWWWWWGW
 labelcolors:swBrww
 symbols:?..+-!=
+combined-renderer:modifier_combined_renderer
+
+name:modifier_combined_renderer
+code:MODIFIER_COMBINED_RENDERER
+colors:wGr
+sign:NEGATIVE_SIGN
 
 # NUMERIC_RENDERER_WITH_BOOL_AUX renders one or more integer values
 # as decimal integers with the label colored by the combined value.  The

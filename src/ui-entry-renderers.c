@@ -70,6 +70,16 @@ static void renderer_COMPACT_PERCENTAGE_RESIST_RENDERER_WITH_COMBINED_AUX(
 	const struct renderer_info *info);
 static int valuewidth_COMPACT_PERCENTAGE_RESIST_RENDERER_WITH_COMBINED_AUX(
 	const struct renderer_info *info);
+static void renderer_PERCENTAGE_RESIST_COMBINED_RENDERER(
+	const wchar_t *label,
+	int nlabel,
+	const int *vals,
+	const int *auxvals,
+	int n,
+	const struct ui_entry_details *details,
+	const struct renderer_info *info);
+static int valuewidth_PERCENTAGE_RESIST_COMBINED_RENDERER(
+	const struct renderer_info *info);
 static void renderer_COMPACT_FLAG_RENDERER_WITH_COMBINED_AUX(
 	const wchar_t *label,
 	int nlabel,
@@ -90,6 +100,16 @@ static void renderer_NUMERIC_AS_SIGN_RENDERER_WITH_COMBINED_AUX(
 	const struct ui_entry_details *details,
 	const struct renderer_info *info);
 static int valuewidth_NUMERIC_AS_SIGN_RENDERER_WITH_COMBINED_AUX(
+	const struct renderer_info *info);
+static void renderer_MODIFIER_COMBINED_RENDERER(
+	const wchar_t *label,
+	int nlabel,
+	const int *vals,
+	const int *auxvals,
+	int n,
+	const struct ui_entry_details *details,
+	const struct renderer_info *info);
+static int valuewidth_MODIFIER_COMBINED_RENDERER(
 	const struct renderer_info *info);
 static void renderer_NUMERIC_RENDERER_WITH_COMBINED_AUX(
 	const wchar_t *label,
@@ -658,7 +678,7 @@ static void renderer_COMPACT_PERCENTAGE_RESIST_RENDERER_WITH_COMBINED_AUX(
 	struct loc p = details->value_position;
 	int color_offset = (details->alternate_color_first) ? 7 : 0;
 	struct ui_entry_combiner_funcs combiner;
-	int vc, ac;
+	int vc, ac, val;
 	int i;
 
 	/* Check for defaults that are too short in list-ui-entry-renders.h. */
@@ -669,12 +689,13 @@ static void renderer_COMPACT_PERCENTAGE_RESIST_RENDERER_WITH_COMBINED_AUX(
 		assert(0);
 	}
 	for (i = 0; i < n; ++i) {
+		int effect_index;
 		/* Hack - this should be rewritten without aux - NRM */
-		int val = RES_LEVEL_BASE, effect_index;
+		val = RES_LEVEL_BASE;
 
-		if (vals[i] > RES_LEVEL_MAX) {
+		if (vals[i] > RES_LEVEL_MIN) {
 			val = vals[i];
-		} else if (auxvals[i] > RES_LEVEL_MAX) {
+		} else if (auxvals[i] > RES_LEVEL_MIN) {
 			val = auxvals[i];
 		} else {
 			val = (vals[i] * auxvals[i]) / RES_LEVEL_BASE;
@@ -700,11 +721,11 @@ static void renderer_COMPACT_PERCENTAGE_RESIST_RENDERER_WITH_COMBINED_AUX(
 
 		if (details->known_rune) {
 			/* Hack - this should be rewritten without aux - NRM */
-			int val = RES_LEVEL_BASE;
+			val = RES_LEVEL_BASE;
 
-			if (vc > RES_LEVEL_MAX) {
+			if (vc > RES_LEVEL_MIN) {
 				val = vc;
-			} else if (ac > RES_LEVEL_MAX) {
+			} else if (ac > RES_LEVEL_MIN) {
 				val = ac;
 			} else {
 				val = (vc * ac) / RES_LEVEL_BASE;
@@ -730,7 +751,7 @@ static void renderer_COMPACT_PERCENTAGE_RESIST_RENDERER_WITH_COMBINED_AUX(
 	}
 
 	if (details->show_combined) {
-		show_combined_generic(info, details, vc, ac);
+		show_combined_generic(info, details, val, val);
 	}
 }
 
@@ -739,6 +760,39 @@ static int valuewidth_COMPACT_PERCENTAGE_RESIST_RENDERER_WITH_COMBINED_AUX(
 	const struct renderer_info *info)
 {
 	return 1;
+}
+
+
+static void renderer_PERCENTAGE_RESIST_COMBINED_RENDERER(
+	const wchar_t *label,
+	int nlabel,
+	const int *vals,
+	const int *auxvals,
+	int n,
+	const struct ui_entry_details *details,
+	const struct renderer_info *info)
+{
+	int color = convert_fa_res_level(*vals);
+	char *percent = format("%4d", RES_LEVEL_BASE - *vals);
+	wchar_t w_percent[5];
+	text_mbstowcs(w_percent, percent, 4);
+	if (color < 2) {
+		return;
+	}
+	Term_queue_chars(details->value_position.x,
+					 details->value_position.y,
+					 4, //ui_entry_renderer_query_value_width(n),
+					 info->colors[color], w_percent);
+	Term_putch(details->value_position.x + 4,
+			   details->value_position.y,
+			   info->colors[color], '%');
+}
+
+
+static int valuewidth_PERCENTAGE_RESIST_COMBINED_RENDERER(
+	const struct renderer_info *info)
+{
+	return 5;
 }
 
 
@@ -936,6 +990,45 @@ static int valuewidth_NUMERIC_AS_SIGN_RENDERER_WITH_COMBINED_AUX(
 	const struct renderer_info *info)
 {
 	return 1;
+}
+
+
+static void renderer_MODIFIER_COMBINED_RENDERER(
+	const wchar_t *label,
+	int nlabel,
+	const int *vals,
+	const int *auxvals,
+	int n,
+	const struct ui_entry_details *details,
+	const struct renderer_info *info)
+{
+	int color = 0;
+	int val = *vals + *auxvals;
+	char *total = format("%d", val);
+	wchar_t w_total[5];
+	text_mbstowcs(w_total, total, 5);
+	if ((*vals == UI_ENTRY_UNKNOWN_VALUE) ||
+		(*vals == UI_ENTRY_VALUE_NOT_PRESENT) ||
+		(*auxvals == UI_ENTRY_UNKNOWN_VALUE) ||
+		(*auxvals == UI_ENTRY_VALUE_NOT_PRESENT)) {
+		return;
+	}
+	if (val > 0) {
+		color = 1;
+	} else if (val < 0) {
+		color = 2;
+	}
+	Term_queue_chars(details->value_position.x + 1,
+					 details->value_position.y,
+					 strlen(total), //ui_entry_renderer_query_value_width(n),
+					 info->colors[color], w_total);
+}
+
+
+static int valuewidth_MODIFIER_COMBINED_RENDERER(
+	const struct renderer_info *info)
+{
+	return 4;
 }
 
 
