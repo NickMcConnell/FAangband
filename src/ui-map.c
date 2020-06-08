@@ -18,6 +18,7 @@
 
 #include "angband.h"
 #include "cave.h"
+#include "game-world.h"
 #include "grafmode.h"
 #include "init.h"
 #include "mon-predicate.h"
@@ -742,7 +743,169 @@ void display_map(int *cy, int *cx)
 }
 
 
-/*
+/**
+ * Display a map of the type of wilderness surrounding the current level
+ */
+void regional_map(int num, int centre_place)
+{
+	int i, j, col, row;
+	int side = 2 * num + 1;
+	int size = side * side;
+	int *place = mem_zalloc(size * sizeof(*place));
+	int north, east, south, west;
+	const char *lev_name;
+	struct level *lev;
+
+	/* Set the centre */
+	place[size / 2] = centre_place;
+
+	/* Redo the right number of times */
+	for (j = 0; j < side; j++) {
+		/* Pass across the whole array */
+		for (i = 0; i < size; i++) {
+			if (!place[i]) continue;
+			lev = &world->levels[place[i]];
+
+			/* See what's adjacent */
+			north = (i > (side - 1) ? (i - side) : -1);
+			east = ((i % side) != (side - 1) ? (i + 1) : -1);
+			south = (i < (size - side) ? (i + side) : -1);
+			west = ((i % side) ? (i - 1) : -1);
+
+			/* Set them */
+			if ((north >= 0) && lev->north && (!place[north]))
+				place[north] = level_by_name(world, lev->north)->index;
+			if ((east >= 0) && lev->east && (!place[east]))
+				place[east] = level_by_name(world, lev->east)->index;
+			if ((south >= 0) && lev->south && (!place[south]))
+				place[south] = level_by_name(world, lev->south)->index;
+			if ((west >= 0) && lev->west && (!place[west]))
+				place[west] = level_by_name(world, lev->west)->index;
+		}
+	}
+
+	/* Now print the info */
+	for (i = 0; i < size; i++) {
+		/* Nowhere */
+		if (!place[i])
+			continue;
+
+		/* Get the place */
+		col = (i % side) * 10 + 1;
+		row = (i / side) * 4 + 1;
+
+		/* Get the level string */
+		lev_name = format("Level %d", world->levels[place[i]].depth);
+
+		switch (world->levels[place[i]].topography) {
+			case TOP_TOWN:
+			{
+				c_put_str(COLOUR_SLATE, "Town", row, col);
+				break;
+			}
+			case TOP_PLAIN:
+			{
+				c_put_str(COLOUR_UMBER, "Plain", row, col);
+				break;
+			}
+			case TOP_FOREST:
+			{
+				c_put_str(COLOUR_GREEN, "Forest", row, col);
+				break;
+			}
+			case TOP_MOUNTAIN:
+			{
+				c_put_str(COLOUR_L_DARK, "Mountain", row, col);
+				break;
+			}
+			case TOP_SWAMP:
+			{
+				c_put_str(COLOUR_L_GREEN, "Swamp", row, col);
+				break;
+			}
+			case TOP_RIVER:
+			{
+				c_put_str(COLOUR_BLUE, "River", row, col);
+				break;
+			}
+			case TOP_DESERT:
+			{
+				c_put_str(COLOUR_L_UMBER, "Desert", row, col);
+				break;
+			}
+			case TOP_VALLEY:
+			{
+				c_put_str(COLOUR_RED, "Valley", row, col);
+				break;
+			}
+			default:
+				break;
+		}
+		if (place[i] == player->place)
+			c_put_str(COLOUR_VIOLET, "Current ", row, col);
+		c_put_str(i == size / 2 ? COLOUR_WHITE : COLOUR_L_DARK, lev_name,
+				  row + 1, col);
+		if (world->levels[place[i]].east) {
+			c_put_str(COLOUR_WHITE, "-", row + 1, col + 8);
+		}
+		if (world->levels[place[i]].down) {
+			lev = &world->levels[place[i]];
+			if (lev->topography == TOP_MOUNTAINTOP) {
+				lev = level_by_name(world, lev->down);
+				switch (lev->topography) {
+					case TOP_TOWN:
+					{
+						c_put_str(COLOUR_SLATE, "(Town)", row + 2, col);
+						break;
+					}
+					case TOP_PLAIN:
+					{
+						c_put_str(COLOUR_UMBER, "(Plain)", row + 2, col);
+						break;
+					}
+					case TOP_FOREST:
+					{
+						c_put_str(COLOUR_GREEN, "(Forest)", row + 2, col);
+						break;
+					}
+					case TOP_MOUNTAIN:
+					{
+						c_put_str(COLOUR_L_DARK, "(Mountain)", row + 2, col);
+						break;
+					}
+					case TOP_RIVER:
+					{
+						c_put_str(COLOUR_BLUE, "(River)", row + 2, col);
+						break;
+					}
+					case TOP_DESERT:
+					{
+						c_put_str(COLOUR_L_UMBER, "(Desert)", row + 2, col);
+						break;
+					}
+					case TOP_VALLEY:
+					{
+						c_put_str(COLOUR_RED, "(Valley)", row + 2, col);
+						break;
+					}
+					default:
+						break;
+				}
+			} else if (lev->locality != LOC_UNDERWORLD) {
+				c_put_str(COLOUR_L_RED, "(Dungeon)", row + 2, col);
+			}
+		}
+		if (world->levels[place[i]].south) {
+			c_put_str(COLOUR_WHITE, "|", row + 3, col + 3);
+		}
+		if (world->levels[place[i]].south && !world->levels[place[i]].down) {
+			c_put_str(COLOUR_WHITE, "|", row + 2, col + 3);
+		}
+	}
+	mem_free(place);
+}
+
+/**
  * Display a "small-scale" map of the dungeon.
  *
  * Note that the "player" is always displayed on the map.
@@ -752,10 +915,24 @@ void do_cmd_view_map(void)
 	int cy, cx;
 	byte w, h;
 	const char *prompt = "Hit any key to continue";
+	/* variables for regional map */
+	int wid, hgt;
+	int num_down, num_across, num, centre_place, next_place;
+	ui_event ke;
+
 	if (Term->view_map_hook) {
 		(*(Term->view_map_hook))(Term);
 		return;
 	}
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+
+	/* Get dimensions for the regional map */
+	num_down = (hgt - 6) / 8;
+	num_across = (wid - 24) / 20;
+	num = (num_down < num_across ? num_down : num_across);
+
 	/* Save screen */
 	screen_save();
 
@@ -789,6 +966,62 @@ void do_cmd_view_map(void)
 	/* Restore the tile multipliers */
 	tile_width = w;
 	tile_height = h;
+
+	/* Regional map if not in the dungeon */
+	if (world->levels[player->place].topography != TOP_CAVE) {
+		centre_place = player->place;
+		while (true) {
+			/* Get the adjacent levels */
+			struct level *lev = &world->levels[centre_place];
+			struct level *north = NULL;
+			struct level *east = NULL;
+			struct level *south = NULL;
+			struct level *west = NULL;
+			if (lev->north) north = level_by_name(world, lev->north);
+			if (lev->east) east = level_by_name(world, lev->east);
+			if (lev->south) south = level_by_name(world, lev->south);
+			if (lev->west) west = level_by_name(world, lev->west);
+
+			/* Flush */
+			Term_fresh();
+
+			/* Clear the screen */
+			Term_clear();
+
+			/* Display the regional map */
+			regional_map(num, centre_place);
+
+			/* Wait for it */
+			put_str("Move keys to scroll, other input to continue",
+					hgt - 1, (wid - 40) / 2);
+
+			/* Get any key */
+			ke = inkey_ex();
+			next_place = -1;
+			switch (ke.key.code) {
+			case 'k':
+			case ARROW_UP:
+				next_place = north ? north->index : 0;
+				break;
+			case 'j':
+			case ARROW_DOWN:
+				next_place = south ? south->index : 0;
+				break;
+			case 'h':
+			case ARROW_LEFT:
+				next_place = west ? west->index : 0;
+				break;
+			case 'l':
+			case ARROW_RIGHT:
+				next_place = east ? east->index : 0;
+				break;
+			}
+			if (next_place == -1)
+				break;
+			if (next_place)
+				centre_place = next_place;
+		}
+	}
 
 	/* Load screen */
 	screen_load();
