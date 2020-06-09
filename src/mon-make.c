@@ -1234,8 +1234,7 @@ static bool mon_is_neutral(struct chunk *c, struct monster *mon,
 
 	chance = MAX(dislikes->rel - 100, 0);
 	k = randint0(chance + 20);
-	if ((k > 20) ||
-		(world->levels[player->place].topography != TOP_CAVE) ||
+	if ((k > 20) || (level_topography(player->place) != TOP_CAVE) ||
 		//(player->themed_level == THEME_WARLORDS) ||
 		square_isvault(c, grid)) {
 		return false;

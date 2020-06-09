@@ -968,7 +968,7 @@ void do_cmd_view_map(void)
 	tile_height = h;
 
 	/* Regional map if not in the dungeon */
-	if (world->levels[player->place].topography != TOP_CAVE) {
+	if (level_topography(player->place) != TOP_CAVE) {
 		centre_place = player->place;
 		while (true) {
 			/* Get the adjacent levels */

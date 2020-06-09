@@ -159,6 +159,14 @@ struct level *level_by_name(struct level_map *map, char *name)
 }
 
 /**
+ * Return a current world level's topography
+ */
+int level_topography(int index)
+{
+	return world->levels[index].topography;
+}
+
+/**
  * ------------------------------------------------------------------------
  * Functions for handling turn-based events
  * ------------------------------------------------------------------------ */

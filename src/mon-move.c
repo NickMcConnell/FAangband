@@ -1557,7 +1557,7 @@ static void monster_turn(struct chunk *c, struct monster *mon)
 
 	/* Handle territorial monsters */
 	if (rf_has(mon->race->flags, RF_TERRITORIAL) &&
-		(world->levels[player->place].topography != TOP_CAVE)) {
+		(level_topography(player->place) != TOP_CAVE)) {
 		/* Territorial monsters get a direct energy boost when close to home */
 		int from_home =	distance(mon->home, mon->grid);
 

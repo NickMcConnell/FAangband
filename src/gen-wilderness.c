@@ -970,7 +970,7 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 				square_set_feat(c, grid, FEAT_MORE);
 				i--;
 				stairs[2 - i] = grid;
-				if (!i && (world->levels[last_place].topography == TOP_CAVE))
+				if (!i && (level_topography(last_place) == TOP_CAVE))
 					player_place(c, p, grid);
 			}
 		}
@@ -1540,8 +1540,7 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 					/* The gate of Angband */
 					square_set_feat(c, grid, FEAT_MORE);
 					made_gate = true;
-					if ((world->levels[last_place].topography == TOP_CAVE)
-						|| (turn < 10))
+					if (level_topography(last_place) == TOP_CAVE || turn < 10)
 						player_place(c, p, grid);
 					break;
 				} else {
@@ -1703,7 +1702,7 @@ struct chunk *river_gen(struct player *p, int height, int width)
 			/* ...with door and stairs */
 			square_set_feat(c, loc(y1 + 1, mid[y1]), FEAT_CLOSED);
 			square_set_feat(c, centre, FEAT_MORE);
-			if (world->levels[last_place].topography == TOP_CAVE) {
+			if (level_topography(last_place) == TOP_CAVE) {
 				player_place(c, p, centre);
 			}
 		} else {
@@ -1714,7 +1713,7 @@ struct chunk *river_gen(struct player *p, int height, int width)
 				for (grid.x = mid[y1] - 15; grid.x < mid[y1] - 5; grid.x++) {
 					if (loc_eq(grid, centre)) {
 						square_set_feat(c, grid, FEAT_MORE);
-						if (world->levels[last_place].topography == TOP_CAVE) {
+						if (level_topography(last_place) == TOP_CAVE) {
 							player_place(c, p, grid);
 						}
 					} else {

@@ -1544,7 +1544,7 @@ static void do_cmd_wiz_jump(void)
 	strnfmt(ppp, sizeof(ppp), "Choose cave_profile?");
 
 	/* Get to choose cave generation algorithm */
-	if ((world->levels[place].topography == TOP_CAVE) && get_check(ppp)) {
+	if ((level_topography(place) == TOP_CAVE) && get_check(ppp)) {
 		player->noscore |= NOSCORE_JUMPING;
 	}
 
