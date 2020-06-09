@@ -20,6 +20,7 @@
 #include "angband.h"
 #include "cave.h"
 #include "cmds.h"
+#include "game-world.h"
 #include "init.h"
 #include "mon-predicate.h"
 #include "obj-ignore.h"
@@ -499,6 +500,11 @@ static void run_init(int dir)
 	/* Assume running straight */
 	run_old_dir = dir;
 
+	/* If it's wilderness, done -NRM- */
+	if ((level_topography(player->place) != TOP_CAVE) &&
+		(level_topography(player->place) != TOP_TOWN))
+		return;
+
 	/* Assume looking for open area */
 	run_open_area = true;
 
@@ -568,6 +574,8 @@ static bool run_test(void)
 {
 	int prev_dir;
 	int new_dir;
+	int left_dir;
+	int right_dir;
 
 	struct loc grid;
 	int i, max, inv;
@@ -612,137 +620,215 @@ static bool run_test(void)
 			/* Visible object */
 			if (obj->known && !ignore_item_ok(obj)) return true;
 
-		/* Assume unknown */
-		inv = true;
+		/* Simplistic running for outdoors -NRM- */
+		if ((level_topography(player->place) != TOP_CAVE) &&
+			(level_topography(player->place) != TOP_TOWN)) {
 
-		/* Check memorized grids */
-		if (square_isknown(cave, grid)) {
-			bool notice = square_isinteresting(cave, grid);
+			/* Assume main direction */
+			new_dir = run_old_dir;
+			grid = loc_sum(player->grid, ddgrid[new_dir]);
 
-			/* Interesting feature */
-			if (notice) return true;
+			/* Step if there's a path in the right direction */
+			if (square_isrun1(cave, grid)) {
+				run_cur_dir = new_dir;
+				return false;
+			}
 
-			/* The grid is "visible" */
-			inv = false;
-		}
+			/* Check to the left */
+			left_dir = cycle[chome[prev_dir] - 1];
+			grid = loc_sum(player->grid, ddgrid[left_dir]);
+			if (square_isrun1(cave, grid)) {
+				option = left_dir;
+			}
 
-		/* Analyze unknown grids and floors */
-		if (inv || square_ispassable(cave, grid)) {
-			/* Looking for open area */
-			if (run_open_area) {
-				/* Nothing */
-			} else if (!option) {
-				/* The first new direction. */
-				option = new_dir;
+			/* Check to the right */
+			right_dir = cycle[chome[prev_dir] + 1];
+			grid = loc_sum(player->grid, ddgrid[right_dir]);
+			if (square_isrun1(cave, grid)) {
+				option2 = right_dir;
+			}
+
+			/* Stop if it's a fork */
+			if (option && option2) return true;
+
+			/* Otherwise step in the secondary direction */
+			if (option) {
+				run_cur_dir = left_dir;
+				return false;
 			} else if (option2) {
-				/* Three new directions. Stop running. */
-				return true;
-			} else if (option != cycle[chome[prev_dir] + i - 1]) {
-				/* Two non-adjacent new directions.  Stop running. */
-				return true;
-			} else if (new_dir & 0x01) {
-				/* Two new (adjacent) directions (case 1) */
-				option2 = new_dir;
-			} else {
-				/* Two new (adjacent) directions (case 2) */
-				option2 = option;
-				option = new_dir;
+				run_cur_dir = right_dir;
+				return false;
 			}
-		} else { /* Obstacle, while looking for open area */
-			if (run_open_area) {
-				if (i < 0) {
-					/* Break to the right */
-					run_break_right = true;
-				} else if (i > 0) {
-					/* Break to the left */
-					run_break_left = true;
-				}
-			}
-		}
-	}
 
-
-	/* Look at every soon to be newly adjacent square. */
-	for (i = -max; i <= max; i++) {		
-		/* New direction */
-		new_dir = cycle[chome[prev_dir] + i];
-		
-		/* New location */
-		grid = loc_sum(player->grid,
-					   loc_sum(ddgrid[prev_dir], ddgrid[new_dir]));
-		
-		/* HACK: Ugh. Sometimes we come up with illegal bounds. This will
-		 * treat the symptom but not the disease. */
-		if (!square_in_bounds(cave, grid)) continue;
-
-		/* Obvious monsters abort running */
-		if (square(cave, grid).mon > 0) {
-			struct monster *mon = square_monster(cave, grid);
-			if (monster_is_obvious(mon))
-				return true;
-		}
-	}
-
-	/* Looking for open area */
-	if (run_open_area) {
-		/* Hack -- look again */
-		for (i = -max; i < 0; i++) {
-			new_dir = cycle[chome[prev_dir] + i];
+			/* No paths, so try grass */
 			grid = loc_sum(player->grid, ddgrid[new_dir]);
 
-			/* Unknown grid or non-wall */
-			if (!square_isknown(cave, grid) || square_ispassable(cave, grid)) {
-				/* Looking to break right */
-				if (run_break_right) {
+			/* Step if there's grass in the right direction */
+			if (square_isrun2(cave, grid)) {
+				run_cur_dir = new_dir;
+				return false;
+			}
+
+			/* Check to the left */
+			left_dir = cycle[chome[prev_dir] - 1];
+			grid = loc_sum(player->grid, ddgrid[left_dir]);
+			if (square_isrun2(cave, grid)) {
+				option = left_dir;
+			}
+
+			/* Check to the right */
+			right_dir = cycle[chome[prev_dir] + 1];
+			grid = loc_sum(player->grid, ddgrid[right_dir]);
+			if (square_isrun2(cave, grid)) {
+				option2 = right_dir;
+			}
+
+			/* Stop if it's a fork */
+			if (option && option2) return true;
+
+			/* Otherwise step in the secondary direction */
+			if (option) {
+				run_cur_dir = left_dir;
+				return false;
+			} else if (option2) {
+				run_cur_dir = right_dir;
+				return false;
+			}
+		} else {
+			/* Assume unknown */
+			inv = true;
+
+			/* Check memorized grids */
+			if (square_isknown(cave, grid)) {
+				bool notice = square_isinteresting(cave, grid);
+
+				/* Interesting feature */
+				if (notice) return true;
+
+				/* The grid is "visible" */
+				inv = false;
+			}
+
+			/* Analyze unknown grids and floors */
+			if (inv || square_ispassable(cave, grid)) {
+				/* Looking for open area */
+				if (run_open_area) {
+					/* Nothing */
+				} else if (!option) {
+					/* The first new direction. */
+					option = new_dir;
+				} else if (option2) {
+					/* Three new directions. Stop running. */
 					return true;
+				} else if (option != cycle[chome[prev_dir] + i - 1]) {
+					/* Two non-adjacent new directions.  Stop running. */
+					return true;
+				} else if (new_dir & 0x01) {
+					/* Two new (adjacent) directions (case 1) */
+					option2 = new_dir;
+				} else {
+					/* Two new (adjacent) directions (case 2) */
+					option2 = option;
+					option = new_dir;
 				}
-			} else { /* Obstacle */
-				/* Looking to break left */
-				if (run_break_left) {
-					return true;
+			} else { /* Obstacle, while looking for open area */
+				if (run_open_area) {
+					if (i < 0) {
+						/* Break to the right */
+						run_break_right = true;
+					} else if (i > 0) {
+						/* Break to the left */
+						run_break_left = true;
+					}
 				}
 			}
 		}
 
-		/* Hack -- look again */
-		for (i = max; i > 0; i--) {
+
+		/* Look at every soon to be newly adjacent square. */
+		for (i = -max; i <= max; i++) {
+			/* New direction */
 			new_dir = cycle[chome[prev_dir] + i];
-			grid = loc_sum(player->grid, ddgrid[new_dir]);
 
-			/* Unknown grid or non-wall */
-			if (!square_isknown(cave, grid) || square_ispassable(cave, grid)) {
-				/* Looking to break left */
-				if (run_break_left) {
+			/* New location */
+			grid = loc_sum(player->grid,
+						   loc_sum(ddgrid[prev_dir], ddgrid[new_dir]));
+
+			/* HACK: Ugh. Sometimes we come up with illegal bounds. This will
+			 * treat the symptom but not the disease. */
+			if (!square_in_bounds(cave, grid)) continue;
+
+			/* Obvious monsters abort running */
+			if (square(cave, grid).mon > 0) {
+				struct monster *mon = square_monster(cave, grid);
+				if (monster_is_obvious(mon))
 					return true;
-				}
-			} else { /* Obstacle */
-				/* Looking to break right */
-				if (run_break_right) {
-					return true;
-				}
 			}
 		}
-	} else { /* Not looking for open area */
-		/* No options */
-		if (!option) {
-			return true;
-		} else if (!option2) { /* One option */
-			/* Primary option */
-			run_cur_dir = option;
 
-			/* No other options */
-			run_old_dir = option;
-		} else { /* Two options, examining corners */
-			/* Primary option */
-			run_cur_dir = option;
+		/* Looking for open area */
+		if (run_open_area) {
+			/* Hack -- look again */
+			for (i = -max; i < 0; i++) {
+				new_dir = cycle[chome[prev_dir] + i];
+				grid = loc_sum(player->grid, ddgrid[new_dir]);
 
-			/* Hack -- allow curving */
-			run_old_dir = option2;
+				/* Unknown grid or non-wall */
+				if (!square_isknown(cave, grid) ||
+					square_ispassable(cave, grid)) {
+					/* Looking to break right */
+					if (run_break_right) {
+						return true;
+					}
+				} else { /* Obstacle */
+					/* Looking to break left */
+					if (run_break_left) {
+						return true;
+					}
+				}
+			}
+
+			/* Hack -- look again */
+			for (i = max; i > 0; i--) {
+				new_dir = cycle[chome[prev_dir] + i];
+				grid = loc_sum(player->grid, ddgrid[new_dir]);
+
+				/* Unknown grid or non-wall */
+				if (!square_isknown(cave, grid) ||
+					square_ispassable(cave, grid)) {
+					/* Looking to break left */
+					if (run_break_left) {
+						return true;
+					}
+				} else { /* Obstacle */
+					/* Looking to break right */
+					if (run_break_right) {
+						return true;
+					}
+				}
+			}
+		} else { /* Not looking for open area */
+			/* No options */
+			if (!option) {
+				return true;
+			} else if (!option2) { /* One option */
+				/* Primary option */
+				run_cur_dir = option;
+
+				/* No other options */
+				run_old_dir = option;
+			} else { /* Two options, examining corners */
+				/* Primary option */
+				run_cur_dir = option;
+
+				/* Hack -- allow curving */
+				run_old_dir = option2;
+			}
 		}
 	}
 
 	/* About to hit a known wall, stop */
-		if (see_wall(run_cur_dir, player->grid))
+	if (see_wall(run_cur_dir, player->grid))
 		return true;
 
 	/* Failure */

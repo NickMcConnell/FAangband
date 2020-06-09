@@ -303,6 +303,8 @@ bool feat_is_wall(int feat);
 bool feat_is_permanent(int feat);
 bool feat_is_path(int feat);
 bool feat_is_floor(int feat);
+bool feat_is_run1(int feat);
+bool feat_is_run2(int feat);
 bool feat_is_trap_holding(int feat);
 bool feat_is_object_holding(int feat);
 bool feat_is_monster_walkable(int feat);
@@ -327,6 +329,8 @@ bool feat_is_expose(int feat);
 
 /* SQUARE FEATURE PREDICATES */
 bool square_isfloor(struct chunk *c, struct loc grid);
+bool square_isrun1(struct chunk *c, struct loc grid);
+bool square_isrun2(struct chunk *c, struct loc grid);
 bool square_istrappable(struct chunk *c, struct loc grid);
 bool square_isobjectholding(struct chunk *c, struct loc grid);
 bool square_isobjecthiding(struct chunk *c, struct loc grid);

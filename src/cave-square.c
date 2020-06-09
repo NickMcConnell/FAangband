@@ -104,6 +104,22 @@ bool feat_is_floor(int feat)
 }
 
 /**
+ * True if the feature is first choice running terrain.
+ */
+bool feat_is_run1(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_RUN1);
+}
+
+/**
+ * True if the feature is second choice running terrain.
+ */
+bool feat_is_run2(int feat)
+{
+	return tf_has(f_info[feat].flags, TF_RUN2);
+}
+
+/**
  * True if the feature can hold a trap.
  */
 bool feat_is_trap_holding(int feat)
@@ -293,6 +309,22 @@ bool feat_is_expose(int feat)
 bool square_isfloor(struct chunk *c, struct loc grid)
 {
 	return feat_is_floor(square(c, grid).feat);
+}
+
+/**
+ * True if the square is first choice for running.
+ */
+bool square_isrun1(struct chunk *c, struct loc grid)
+{
+	return feat_is_run1(square(c, grid).feat);
+}
+
+/**
+ * True if the square is second choice for running.
+ */
+bool square_isrun2(struct chunk *c, struct loc grid)
+{
+	return feat_is_run2(square(c, grid).feat);
 }
 
 /**
