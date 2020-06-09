@@ -24,6 +24,7 @@
 #include "cmd-core.h"
 
 /* cmd-cave.c */
+void do_cmd_move_house(struct command *cmd);
 void do_cmd_go_up(struct command *cmd);
 void do_cmd_go_down(struct command *cmd);
 void do_cmd_open(struct command *cmd);

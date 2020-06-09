@@ -95,6 +95,7 @@ typedef enum cmd_code {
 	CMD_STEAL,
 	CMD_SLEEP,
 	CMD_RESHAPE,
+	CMD_MOVE,
 
     /* Store commands */	
 	CMD_SELL,

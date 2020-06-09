@@ -1167,6 +1167,21 @@ bool square_suits_stairs_ok(struct chunk *c, struct loc grid)
 		(square_num_walls_diagonal(c, grid) == 4) && square_isempty(c, grid);
 }
 
+/**
+ * Checks if a square in town can be the centre of a building
+ */
+bool square_isinemptysquare(struct chunk *c, struct loc grid)
+{
+	struct loc test;
+	for (test.y = grid.y - 2; test.y <= grid.y + 2; test.y++) {
+		for (test.x = grid.x - 2; test.x <= grid.x + 2; test.x++) {
+			if (!square_in_bounds(c, test)) return false;
+			if (!square_isfloor(c, test)) return false;
+		}
+	}
+	return true;
+}
+
 
 
 /**

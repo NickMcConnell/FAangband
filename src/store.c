@@ -572,6 +572,14 @@ bool store_is_home(struct store *store)
 	return store->sidx == store_home_idx;
 }
 
+/**
+ * Used for finding former homes
+ */
+bool index_is_home(unsigned int index)
+{
+	return index == store_home_idx;
+}
+
 struct store *store_home(struct player *p)
 {
 	struct store *store;

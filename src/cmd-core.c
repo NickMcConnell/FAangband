@@ -104,6 +104,7 @@ static const struct command_info game_cmds[] =
 	{ CMD_STUDY, "study", do_cmd_study, false, 0 },
 	{ CMD_CAST, "cast", do_cmd_cast, false, 0 },
 	{ CMD_RESHAPE, "change shape", do_cmd_reshape, false, 0 },
+	{ CMD_MOVE, "move house", do_cmd_move_house, false, 0 },
 	{ CMD_SELL, "sell", do_cmd_sell, false, 0 },
 	{ CMD_STASH, "stash", do_cmd_stash, false, 0 },
 	{ CMD_BUY, "buy", do_cmd_buy, false, 0 },

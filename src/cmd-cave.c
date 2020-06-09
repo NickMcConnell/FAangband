@@ -22,6 +22,7 @@
 #include "cmds.h"
 #include "game-event.h"
 #include "game-input.h"
+#include "game-world.h"
 #include "generate.h"
 #include "init.h"
 #include "mon-attack.h"
@@ -41,12 +42,80 @@
 #include "obj-util.h"
 #include "player-attack.h"
 #include "player-calcs.h"
+#include "player-history.h"
 #include "player-path.h"
 #include "player-timed.h"
 #include "player-util.h"
 #include "project.h"
 #include "store.h"
 #include "trap.h"
+
+/**
+ * Move house to the current town
+ */
+void do_cmd_move_house(struct command *cmd)
+{
+	int i;
+	const char *town = locality_name(world->levels[player->place].locality);
+	char *prompt = format("Do you really want to move to %s?", town);
+
+	if (!player->depth) {
+		/* Already home */
+		if (player->place == player->home) {
+			msg("You already live here!");
+			return;
+		}
+
+		/* Check */
+		if (!get_check(prompt)) return;
+
+		/* Thralls have no stuff to shift */
+		if (player->home) {
+			/* Get the current home */
+			struct level *hometown = &world->levels[player->home];
+			struct town *old_home = NULL, *new_home = NULL;
+			struct store *temp;
+			for (i = 0; i < world->num_towns; i++) {
+				old_home = &world->towns[i];
+				if (old_home->index == hometown->index) {
+					/* Found it */
+					assert(store_is_home(old_home->stores));
+					break;
+				}
+			}
+			assert(i < world->num_towns);
+
+			/* Get the new home */
+			for (i = 0; i < world->num_towns; i++) {
+				new_home = &world->towns[i];
+				if (new_home->index == player->place) {
+					/* Found it */
+					assert(!store_is_home(new_home->stores));
+					break;
+				}
+			}
+			assert(i < world->num_towns);
+
+			/* Move */
+			temp = old_home->stores;
+			old_home->stores = old_home->stores->next;
+			temp->next = new_home->stores;
+			new_home->stores = temp;
+		}
+
+		/* Set the new town */
+		player->home = player->place;
+		msg("Your home will be here when you return.");
+
+		/* Write message */
+		history_add(player, format("Moved house to %s.", town),
+					HIST_PLAYER_MOVE);
+	} else {
+		msg("You can only move to another town!");
+	}
+
+	return;
+}
 
 /**
  * Get the direction a path is heading

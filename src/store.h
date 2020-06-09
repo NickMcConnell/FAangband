@@ -80,6 +80,7 @@ void place_home(struct town *town);
 bool store_is_black_market(struct store *store);
 bool store_is_merchant(struct store *store);
 bool store_is_home(struct store *store);
+bool index_is_home(unsigned int index);
 struct store *store_home(struct player *p);
 void store_stock_list(struct store *store, struct object **list, int n);
 void home_carry(struct object *obj);

@@ -1896,6 +1896,76 @@ static void town_gen_layout(struct chunk *c, struct player *p, struct town *t)
 	player_place(c, p, pgrid);
 }
 
+/**
+ * Find a home entrance prior to demolition
+ */
+bool find_home(struct chunk *c, struct loc *home)
+{
+	struct loc grid;
+	for (grid.y = 0; grid.y < c->height - 1; grid.y++) {
+		for (grid.x = 0; grid.x < c->width - 1; grid.x++) {
+			if (index_is_home(square_shopnum(c, grid))) break;
+		}
+		if (index_is_home((size_t) square_shopnum(c, grid))) break;
+	}
+	*home = grid;
+	return (grid.y < c->height - 1) && (grid.x < c->width - 1);
+}
+
+/**
+ * Remove a home building (after moving)
+ */
+void demolish_house(struct chunk *c, struct loc entrance)
+{
+	struct loc top_left, bottom_right, grid;
+	top_left = entrance;
+	while (square_ispermanent(c, top_left)) {
+		top_left.x--;
+	}
+	top_left.x++;
+	while (square_ispermanent(c, top_left)) {
+		top_left.y--;
+	}
+	top_left.y++;
+	bottom_right = entrance;
+	while (square_ispermanent(c, bottom_right)) {
+		bottom_right.x++;
+	}
+	bottom_right.x--;
+	while (square_ispermanent(c, bottom_right)) {
+		bottom_right.y++;
+	}
+	bottom_right.y--;
+	for (grid.y = top_left.y; grid.y <= bottom_right.y; grid.y++) {
+		for (grid.x = top_left.x; grid.x <= bottom_right.x; grid.x++) {
+			square_set_feat(c, grid, FEAT_FLOOR);
+		}
+	}
+}
+
+void build_new_house(struct chunk *c)
+{
+	struct loc centre, grid;
+	int count = 8;
+	bool door_done = false;
+	assert(cave_find(c, &centre, square_isinemptysquare));
+	for (grid.y = centre.y - 1; grid.y <= centre.y + 1; grid.y++) {
+		for (grid.x = centre.x - 1; grid.x <= centre.x + 1; grid.x++) {
+			if (loc_eq(grid, centre)) {
+				square_set_feat(c, grid, FEAT_PERM);
+			} else {
+				if (!door_done && one_in_(count)) {
+					square_set_feat(c, grid, lookup_feat("Home"));
+					door_done = true;
+				} else {
+					square_set_feat(c, grid, FEAT_PERM);
+				}
+				count--;
+			}
+		}
+	}
+}
+
 
 /**
  * Town logic flow for generation of new town.
@@ -1940,6 +2010,22 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width)
 			quit_fmt("chunk_copy() level bounds failed!");
 		chunk_list_remove(name);
 		cave_free(c_old);
+
+		/* Build a new house if needed */
+		if (p->place == p->home) {
+			struct loc door;
+			if (!find_home(c_new, &door)) {
+				build_new_house(c_new);
+			}
+		}
+
+		/* Demolish an old house if needed */
+		if (p->place != p->home) {
+			struct loc door;
+			if (find_home(c_new, &door)) {
+				demolish_house(c_new, door);
+			}
+		}
 
 		/* Get the correct path for wilderness */
 		if (strstr(world->name, "Wilderness")) {

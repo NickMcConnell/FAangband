@@ -116,6 +116,7 @@ struct cmd_info cmd_action[] =
 	{ "Throw an item", { 'v' }, CMD_THROW, NULL, NULL },
 	{ "Walk into a trap", { 'W', '-' }, CMD_JUMP, NULL, NULL },
 	{ "Change shape", { '!' }, CMD_RESHAPE, NULL, NULL },
+	{ "Move house", { '$' }, CMD_MOVE, NULL, NULL },
 };
 
 /**

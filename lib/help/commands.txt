@@ -31,7 +31,7 @@ Original Keyset Command Summary
   !    Change shape (Beornings)        ^A   Debug mode
   @    -                               ^B   -
   #    -                               ^C   (special - break)
-  $    -                               ^D   -
+  $    Move house                      ^D   -
   %    -                               ^E   Toggle inven/equip window
   ^    (special - control key)         ^F   Repeat level feeling
   &    -                               ^G   Do autopickup
@@ -92,7 +92,7 @@ Roguelike Keyset Command Summary
   !    Change shape (Beornings)        ^A   (special - debug command)
   @    Center map                      ^B   (alter - south west)
   #    -                               ^C   (special - break)
-  $    -                               ^D   Ignore an item
+  $    Move house                      ^D   Ignore an item
   %    -                               ^E   Toggle inven/equip window
   ^    (special - control key)         ^F   Repeat level feeling
   &    -                               ^G   Do autopickup

@@ -428,6 +428,7 @@ bool square_in_bounds_fully(struct chunk *c, struct loc grid);
 bool square_isbelievedwall(struct chunk *c, struct loc grid);
 bool square_suits_stairs_well(struct chunk *c, struct loc grid);
 bool square_suits_stairs_ok(struct chunk *c, struct loc grid);
+bool square_isinemptysquare(struct chunk *c, struct loc grid);
 
 
 struct square square(struct chunk *c, struct loc grid);
