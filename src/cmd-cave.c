@@ -562,7 +562,7 @@ void do_cmd_close(struct command *cmd)
 	}
 
 	/* Monster - alert, then attack */
-	if (square(cave, grid).mon > 0) {
+	if (square(cave, grid)->mon > 0) {
 		msg("There is a monster in the way!");
 		py_attack(player, grid);
 	} else
@@ -758,7 +758,7 @@ void do_cmd_tunnel(struct command *cmd)
 	}
 
 	/* Attack any monster we run into */
-	if (square(cave, grid).mon > 0) {
+	if (square(cave, grid)->mon > 0) {
 		msg("There is a monster in the way!");
 		py_attack(player, grid);
 	} else {
@@ -865,7 +865,7 @@ static bool do_cmd_lock_door(struct loc grid)
 static bool do_cmd_disarm_aux(struct loc grid)
 {
 	int skill, power, chance;
-    struct trap *trap = square(cave, grid).trap;
+    struct trap *trap = square(cave, grid)->trap;
 	bool more = false;
 
 	/* Verify legality */
@@ -994,7 +994,7 @@ void do_cmd_disarm(struct command *cmd)
 
 
 	/* Monster */
-	if (square(cave, grid).mon > 0) {
+	if (square(cave, grid)->mon > 0) {
 		msg("There is a monster in the way!");
 		py_attack(player, grid);
 	} else if (obj)
@@ -1083,7 +1083,7 @@ void do_cmd_alter_aux(int dir)
 	o_chest_trapped = chest_check(grid, CHEST_TRAPPED);
 
 	/* Action depends on what's there */
-	if (square(cave, grid).mon > 0) {
+	if (square(cave, grid)->mon > 0) {
 		/* Attack monster */
 		py_attack(player, grid);
 	} else if (square_isdiggable(cave, grid)) {
@@ -1146,7 +1146,7 @@ void do_cmd_steal_aux(int dir)
 	}
 
 	/* Attack or steal from monsters */
-	if ((square(cave, grid).mon > 0) && player_has(player, PF_STEAL)) {
+	if ((square(cave, grid)->mon > 0) && player_has(player, PF_STEAL)) {
 		steal_monster_item(square_monster(cave, grid), -1);
 	} else {
 		/* Oops */
@@ -1177,7 +1177,7 @@ void move_player(int dir, bool disarm)
 {
 	struct loc grid = loc_sum(player->grid, ddgrid[dir]);
 
-	int m_idx = square(cave, grid).mon;
+	int m_idx = square(cave, grid)->mon;
 	struct monster *mon = cave_monster(cave, m_idx);
 	bool trapsafe = player_is_trapsafe(player);
 	bool trap = square_isdisarmabletrap(cave, grid);
@@ -1341,7 +1341,7 @@ void move_player(int dir, bool disarm)
  */
 static bool do_cmd_walk_test(struct loc grid)
 {
-	int m_idx = square(cave, grid).mon;
+	int m_idx = square(cave, grid)->mon;
 	struct monster *mon = cave_monster(cave, m_idx);
 
 	/* Allow attack on visible monsters if unafraid */

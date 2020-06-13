@@ -394,7 +394,7 @@ static void alloc_paths(struct chunk *c, struct player *p, int place,
 	/* Mark all the roads, so we know not to overwrite them */
 	for (grid.y = 0; grid.y < c->height; grid.y++) {
 		for (grid.x = 0; grid.x < c->width; grid.x++) {
-			if (square(c, grid).feat == FEAT_ROAD) {
+			if (square(c, grid)->feat == FEAT_ROAD) {
 				square_mark(c, grid);
 			}
 		}
