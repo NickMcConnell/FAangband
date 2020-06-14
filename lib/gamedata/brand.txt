@@ -16,6 +16,13 @@ multiplier:4
 o-multiplier:35
 resist-flag:IM_ELEC
 
+code:FIRE_4
+name:fire
+verb:sear
+multiplier:4
+o-multiplier:35
+resist-flag:IM_ELEC
+
 code:ACID_3
 name:acid
 verb:dissolve

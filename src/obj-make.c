@@ -250,38 +250,47 @@ int get_new_attr(bitflag *flags, bitflag *newf)
 }
 
 /**
- * Get a random new base resist on an item
+ * Get a random new base resist on an item, or enhance an existing one
  */
-static int random_base_resist(struct object *obj, int *resist)
+static void random_base_resist(struct object *obj)
 {
 	int i, r, count = 0;
+	int all = false;
 
 	/* Count the available base resists */
 	for (i = ELEM_BASE_MIN; i < ELEM_HIGH_MIN; i++)
 		if (obj->el_info[i].res_level == RES_LEVEL_BASE) count++;
 
-	if (count == 0) return false;
+	/* All covered or decided to enhance */
+	if ((count == 0) || one_in_(10)) {
+		if (count == 0) all = true;
+		count = ELEM_HIGH_MIN - ELEM_BASE_MIN;
+	}
 
 	/* Pick one */
 	r = randint0(count);
 
 	/* Find the one we picked */
 	for (i = ELEM_BASE_MIN; i < ELEM_HIGH_MIN; i++) {
-		if (obj->el_info[i].res_level != RES_LEVEL_BASE) continue;
+		if ((obj->el_info[i].res_level != RES_LEVEL_BASE) && !all) continue;
 		if (r == 0) {
-			*resist = i;
-			return true;
+			if (obj->el_info[i].res_level == RES_LEVEL_BASE) {
+				/* Mark it as random if it's new */
+				obj->el_info[i].flags |= EL_INFO_RANDOM;
+			}
+			obj->el_info[i].res_level *= 3;
+			obj->el_info[i].res_level /= 5;
+			return;
 		}
 		r--;
 	}
-
-	return false;
 }
 
 /**
- * Get a random new high resist on an item
+ * Get a random new high resist on an item, or enhance an existing one if
+ * they're all covered already
  */
-int random_high_resist(struct object *obj, int *resist)
+bool random_high_resist(struct object *obj, int *resist)
 {
 	int i, r, count = 0;
 
@@ -289,7 +298,10 @@ int random_high_resist(struct object *obj, int *resist)
 	for (i = ELEM_HIGH_MIN; i < ELEM_HIGH_MAX; i++)
 		if (obj->el_info[i].res_level == RES_LEVEL_BASE) count++;
 
-	if (count == 0) return false;
+	/* All covered */
+	if (count == 0) {
+		count = ELEM_HIGH_MAX - ELEM_HIGH_MIN;
+	}
 
 	/* Pick one */
 	r = randint0(count);
@@ -303,7 +315,6 @@ int random_high_resist(struct object *obj, int *resist)
 		}
 		r--;
 	}
-
 	return false;
 }
 
@@ -385,38 +396,230 @@ static struct ego_item *ego_find_random(struct object *obj, int level)
 	return NULL;
 }
 
+static int pick_resist(bool low)
+{
+	if (low) return randint0(ELEM_HIGH_MIN);
+	return randint0(ELEM_HIGH_MAX) + ELEM_HIGH_MIN;
+}
+
+/**
+ * Apply slightly randomised percentage resistances -NRM-
+ * Also add element proofing flags where appropriate
+ */
+void apply_resistances(struct object *obj, int lev)
+{
+	int i, res = 0;
+	bitflag *flags = obj->ego->kind_flags;
+
+	/* Add extra resists */
+	if (kf_has(obj->ego->kind_flags, KF_RAND_BASE_RES)) {
+		random_base_resist(obj);
+	}
+	if (kf_has(obj->ego->kind_flags, KF_RAND_HI_RES)) {
+		int resist;
+		random_high_resist(obj, &resist);
+		if (obj->el_info[resist].res_level == RES_LEVEL_BASE) {
+			/* Mark it as random if it's new */
+			obj->el_info[resist].flags |= EL_INFO_RANDOM;
+		}
+		obj->el_info[resist].res_level *= 3;
+		obj->el_info[resist].res_level /= 5;
+	}
+
+	/* Vulnerability */
+	if (kf_has(flags, KF_RAND_RES_NEG)) {
+		int roll = 0;
+		/* This gets done more often as we go deeper */
+		while (roll < 2) {
+			/* Low resists more likely at low levels */
+			bool low = (randint0(128) < (128 - lev));
+			int k = pick_resist(low);
+			obj->el_info[k].res_level += 10 + randint0(5) + m_bonus(30, lev);
+
+			roll = randint0(10 - (lev / 30));
+		}
+	}
+
+	/* Cloaks of Protection, etc */
+	if (kf_has(flags, KF_RAND_RES_SML)) {
+		int roll = 0;
+		/* This gets done more often as we go deeper */
+		while (roll < 2) {
+			/* Low resists more likely at low levels */
+			bool low = (randint0(128) < (128 - lev));
+			int k = pick_resist(low);
+			obj->el_info[k].res_level -= 4 + randint0(8) + m_bonus(10, lev);
+
+			/* Twice as many of these */
+			low = (randint0(128) < (128 - lev));
+			k = pick_resist(low);
+			obj->el_info[k].res_level -= 4 + randint0(8) + m_bonus(10, lev);
+
+			/* Occasionally reverse one */
+			if (one_in_(3)) {
+				obj->el_info[k].res_level =
+					RES_LEVEL_MAX - obj->el_info[k].res_level;
+			}
+
+			roll = randint0(10 - (lev / 30));
+		}
+	}
+
+	/* Armour of Resistance etc */
+	if (kf_has(flags, KF_RAND_RES)) {
+		int roll = 0;
+		/* This gets done more often as we go deeper */
+		while (roll < 2) {
+			/* Low resists more likely at low levels */
+			bool low = (randint0(128) < (128 - lev));
+			int k = pick_resist(low);
+			obj->el_info[k].res_level -= 20 + randint0(5) + m_bonus(20, lev);
+
+			roll = randint0(10 - (lev / 30));
+		}
+	}
+
+	/* Former one high resist objects */
+	if (kf_has(flags, KF_RAND_RES_XTRA)) {
+		int roll = 0;
+		/* This gets done more often as we go deeper */
+		while (roll < 2) {
+			/* Low resists less likely here */
+			int k = pick_resist(one_in_(10));
+			obj->el_info[k].res_level -= 30 + randint0(5) + m_bonus(20, lev);
+
+			roll = randint0(10 - (lev / 30));
+		}
+	}
+
+
+	/* Randomise a bit */
+	for (i = 0; i < ELEM_MAX; i++) {
+		res = RES_LEVEL_BASE - obj->el_info[i].res_level;
+
+		/* Only randomise proper resistances */
+		if ((res > RES_LEVEL_MIN) && (res < RES_LEVEL_BASE)) {
+			if (randint0(2) == 0) {
+				obj->el_info[i].res_level -= randint0(res >> 2);
+			} else {
+				obj->el_info[i].res_level += randint0(res >> 2);
+			}
+		}
+
+		/* Enforce bounds - no item gets better than 80% resistance */
+		if (obj->el_info[i].res_level < RES_CAP_ITEM)
+			obj->el_info[i].res_level = RES_CAP_ITEM;
+		if (obj->el_info[i].res_level > RES_LEVEL_MAX)
+			obj->el_info[i].res_level = RES_LEVEL_MAX;
+	}
+
+	/* Low resist means object is proof against that element */
+	for (i = 0; i < ELEM_HIGH_MIN; i++) {
+		if (obj->el_info[i].res_level < RES_LEVEL_BASE) {
+			obj->el_info[i].flags |= EL_INFO_IGNORE;
+		}
+	}
+}
+
+/**
+ * Attempt to apply curses to an object, with a corresponding increase in
+ * generation level of the object
+ */
+static int apply_curse(struct object *obj, int lev)
+{
+	int pick, max_curses = randint1(4);
+	int power = randint1(9) + 10 * m_bonus(9, lev);
+	int new_lev = lev;
+
+	if (of_has(obj->flags, OF_BLESSED)) return lev;
+
+	while (max_curses--) {
+		/* Try to curse it */
+		int tries = 3;
+		while (tries--) {
+			pick = randint1(z_info->curse_max - 1);
+			if (curses[pick].poss[obj->tval]) {
+				if (append_object_curse(obj, pick, power)) {
+					new_lev += randint1(1 + power / 10);
+				}
+				break;
+			}
+		}
+	}
+
+	return new_lev;
+}
 
 /**
  * Apply generation magic to an ego-item.
  */
 void ego_apply_magic(struct object *obj, int level)
 {
-	int i, x, resist = 0, pick = 0;
+	int i, x;
 	bitflag newf[OF_SIZE];
 
-	/* Resist or power? */
-	if (kf_has(obj->ego->kind_flags, KF_RAND_RES_POWER))
-		pick = randint1(3);
-
-	/* Extra powers */
+	/* Random sustain */
 	if (kf_has(obj->ego->kind_flags, KF_RAND_SUSTAIN)) {
 		create_obj_flag_mask(newf, false, OFT_SUST, OFT_MAX);
 		of_on(obj->flags, get_new_attr(obj->flags, newf));
-	} else if (kf_has(obj->ego->kind_flags, KF_RAND_POWER) || (pick == 1)) {
+	}
+
+	/* Extra power */
+	if (kf_has(obj->ego->kind_flags, KF_RAND_POWER)) {
 		create_obj_flag_mask(newf, false, OFT_PROT, OFT_MISC, OFT_MAX);
 		of_on(obj->flags, get_new_attr(obj->flags, newf));
-	} else if (kf_has(obj->ego->kind_flags, KF_RAND_BASE_RES) || (pick > 1)) {
-		/* Get a base resist if available, mark it as random */
-		if (random_base_resist(obj, &resist)) {
-			obj->el_info[resist].res_level = RES_BOOST_NORMAL;
-			obj->el_info[resist].flags |= EL_INFO_RANDOM | EL_INFO_IGNORE;
+	}
+
+	/* Curses */
+	if (kf_has(obj->ego->kind_flags, KF_RAND_CURSE)) {
+		apply_curse(obj, level);
+	}
+
+	/* Extra dice */
+	if (kf_has(obj->ego->kind_flags, KF_XTRA_DICE)) {
+		if (((obj->dd + 1) * obj->ds) < 41) {
+			obj->dd += 1;
+		} else {
+			/* If we can't get an extra dice then weapon is lighter */
+			obj->weight = (5 * obj->weight / 6);
 		}
-	} else if (kf_has(obj->ego->kind_flags, KF_RAND_HI_RES)) {
-		/* Get a high resist if available, mark it as random */
-		if (random_high_resist(obj, &resist)) {
-			obj->el_info[resist].res_level = RES_BOOST_NORMAL;
-			obj->el_info[resist].flags |= EL_INFO_RANDOM | EL_INFO_IGNORE;
+	}
+
+	/* Light or heavy */
+	if (kf_has(obj->ego->kind_flags, KF_LIGHTWEIGHT)) {
+		if (tval_is_weapon(obj)) {
+			obj->weight = (4 * obj->weight / 5);
+		} else {
+			obj->weight = (2 * obj->weight / 3);
 		}
+	} else if (kf_has(obj->ego->kind_flags, KF_HEAVY)) {
+		obj->weight = obj->weight * 3;
+	}
+
+	/* Extra base armour class */
+	if (kf_has(obj->ego->kind_flags, KF_XTRA_AC)) {
+		obj->ac += 5;
+	}
+
+	/* Extra skill bonus */
+	if (kf_has(obj->ego->kind_flags, KF_XTRA_TO_H)) {
+		if (obj->to_h < 0)
+			obj->to_h = 0 - obj->to_h;
+		obj->to_h += m_bonus(10, level);
+	}
+
+	/* Extra deadliness bonus */
+	if (kf_has(obj->ego->kind_flags, KF_XTRA_TO_D)) {
+		if (obj->to_d < 0)
+			obj->to_d = 0 - obj->to_d;
+		obj->to_d += m_bonus(10, level);
+	}
+
+	/* Extra armour class bonus */
+	if (kf_has(obj->ego->kind_flags, KF_XTRA_TO_A)) {
+		if (obj->to_a < 0)
+			obj->to_a = 0 - obj->to_a;
+		obj->to_a += m_bonus(10, level);
 	}
 
 	/* Apply extra obj->ego bonuses */
@@ -430,6 +633,31 @@ void ego_apply_magic(struct object *obj, int level)
 		obj->modifiers[i] += x;
 	}
 
+	/* Calculate extra sides for, eg, Angband weapons */
+	if (kf_has(obj->ego->kind_flags, KF_XTRA_SIDES)) {
+		int num = 0, av = 0, chances;
+		for (i = 0; i < STAT_MAX; i++) {
+			if (obj->modifiers[i] < 0) {
+				av += obj->modifiers[i];
+				num++;
+			}
+		}
+
+		/* Extra sides to compensate for stat penalties */
+		if (num) {
+			av /= num;
+			chances = (randint1(1 - av) + 1 - av) / 2;
+			for (i = 0; i < chances; i++) {
+				if (randint1(3 - av) < (1 - av)) {
+					obj->ds++;
+				}
+			}
+		} else {
+			/* Mainly for bashing shields */
+			obj->ds += m_bonus(2, level);
+		}
+	}
+
 	/* Apply flags */
 	of_union(obj->flags, obj->ego->flags);
 	of_diff(obj->flags, obj->ego->flags_off);
@@ -439,7 +667,7 @@ void ego_apply_magic(struct object *obj, int level)
 	copy_brands(&obj->brands, obj->ego->brands);
 	copy_curses(obj, obj->ego->curses);
 
-	/* Add resists */
+	/* Add standard resists */
 	for (i = 0; i < ELEM_MAX; i++) {
 		/* Take the larger (!) of ego and base object resist levels */
 		obj->el_info[i].res_level =
@@ -449,11 +677,8 @@ void ego_apply_magic(struct object *obj, int level)
 		obj->el_info[i].flags |= obj->ego->el_info[i].flags;
 	}
 
-	/* Add effect (ego effect will trump object effect, when there are any) */
-	if (obj->ego->effect) {
-		obj->effect = obj->ego->effect;
-		obj->time = obj->ego->time;
-	}
+	/* Apply special resistances and randomise */
+	apply_resistances(obj, level);
 
 	return;
 }
@@ -506,8 +731,14 @@ static void make_ego_item(struct object *obj, int level)
 	obj->ego = ego_find_random(obj, level);
 
 	/* Actually apply the ego template to the item */
-	if (obj->ego)
+	if (obj->ego) {
 		ego_apply_magic(obj, level);
+
+		/* Activation */
+		if (obj->ego->activation) {
+			obj->activation = obj->ego->activation;
+		}
+	}
 
 	return;
 }
@@ -900,35 +1131,6 @@ void object_prep(struct object *obj, struct object_kind *k, int lev,
 		obj->el_info[i].flags = k->el_info[i].flags;
 		obj->el_info[i].flags |= k->base->el_info[i].flags;
 	}
-}
-
-/**
- * Attempt to apply curses to an object, with a corresponding increase in
- * generation level of the object
- */
-static int apply_curse(struct object *obj, int lev)
-{
-	int pick, max_curses = randint1(4);
-	int power = randint1(9) + 10 * m_bonus(9, lev);
-	int new_lev = lev;
-
-	if (of_has(obj->flags, OF_BLESSED)) return lev;
-
-	while (max_curses--) {
-		/* Try to curse it */
-		int tries = 3;
-		while (tries--) {
-			pick = randint1(z_info->curse_max - 1);
-			if (curses[pick].poss[obj->tval]) {
-				if (append_object_curse(obj, pick, power)) {
-					new_lev += randint1(1 + power / 10);
-				}
-				break;
-			}
-		}
-	}
-
-	return new_lev;
 }
 
 /**

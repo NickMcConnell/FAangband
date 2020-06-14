@@ -22,7 +22,7 @@ int teardown_tests(void *state) {
 }
 
 int test_order(void *state) {
-	enum parser_error r = parser_parse(state, "info:4");
+	enum parser_error r = parser_parse(state, "combat:4");
 	eq(r, PARSE_ERROR_MISSING_FIELD);
 	ok;
 }
@@ -38,14 +38,24 @@ int test_name0(void *state) {
 	ok;
 }
 
-int test_info0(void *state) {
-	enum parser_error r = parser_parse(state, "info:6:8");
+int test_cost0(void *state) {
+	enum parser_error r = parser_parse(state, "cost:6");
 	struct ego_item *e;
 
 	eq(r, PARSE_ERROR_NONE);
 	e = parser_priv(state);
 	require(e);
 	eq(e->cost, 6);
+	ok;
+}
+
+int test_rating0(void *state) {
+	enum parser_error r = parser_parse(state, "rating:8");
+	struct ego_item *e;
+
+	eq(r, PARSE_ERROR_NONE);
+	e = parser_priv(state);
+	require(e);
 	eq(e->rating, 8);
 	ok;
 }
@@ -107,7 +117,8 @@ const char *suite_name = "parse/e-info";
 struct test tests[] = {
 	{ "order", test_order },
 	{ "name0", test_name0 },
-	{ "info0", test_info0 },
+	{ "cost0", test_cost0 },
+	{ "rating0", test_rating0 },
 	{ "combat0", test_combat0 },
 	{ "min_combat0", test_min0 },
 	{ "flags0", test_flags0 },

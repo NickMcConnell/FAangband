@@ -1167,6 +1167,7 @@ bool effect_handler_RESTORE_STAT(effect_handler_context_t *context)
 
 /**
  * Drain a stat temporarily.  The stat index is context->subtype.
+ * If the index is -1, a random stat is drained.
  */
 bool effect_handler_DRAIN_STAT(effect_handler_context_t *context)
 {
@@ -1181,6 +1182,11 @@ bool effect_handler_DRAIN_STAT(effect_handler_context_t *context)
 
 	/* ID */
 	context->ident = true;
+
+	/* Pick a random stat if needed */
+	if (stat < 0) {
+		stat = randint0(STAT_MAX);
+	}
 
 	/* Check for specialty ability partial sustains */
 	if (clarity && one_in_(2) && ((stat == STAT_INT) || (stat == STAT_WIS))) {

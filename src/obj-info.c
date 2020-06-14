@@ -380,7 +380,7 @@ static bool describe_misc_magic(textblock *tb, const bitflag flags[OF_SIZE])
 
 	for (i = 1; i < OF_MAX; i++) {
 		struct obj_property *prop = lookup_obj_property(OBJ_PROPERTY_FLAG, i);
-		if ((prop->subtype != OFT_MISC)  && (prop->subtype != OFT_MELEE) &&
+		if ((prop->subtype != OFT_MISC)  && (prop->subtype != OFT_WEAPON) &&
 			(prop->subtype != OFT_BAD)) continue;
 		if (of_has(flags, prop->index)) {
 			textblock_append(tb, "%s.  ", prop->desc);
@@ -2155,8 +2155,8 @@ static bool describe_ego(textblock *tb, const struct ego_item *ego)
 		textblock_append(tb, "It provides one random sustain.  ");
 	else if (kf_has(ego->kind_flags, KF_RAND_POWER))
 		textblock_append(tb, "It provides one random ability.  ");
-	else if (kf_has(ego->kind_flags, KF_RAND_RES_POWER))
-		textblock_append(tb, "It provides one random ability or base resistance.  ");
+	else if (kf_has(ego->kind_flags, KF_RAND_RES))
+		textblock_append(tb, "It provides one random resistance.  ");
 	else
 		return false;
 

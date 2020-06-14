@@ -67,7 +67,9 @@ static struct rune *rune_list;
 static char *c_rune[] = {
 	"enchantment to armor",
 	"enchantment to hit",
-	"enchantment to damage"
+	"enchantment to damage",
+	"armor class",
+	"damage dice"
 };
 
 /**
@@ -261,6 +263,12 @@ bool player_knows_rune(struct player *p, size_t i)
 			} else if (r->index == COMBAT_RUNE_TO_D) {
 				if (p->obj_k->to_d)
 					return true;
+			} else if (r->index == COMBAT_RUNE_AC) {
+				if (p->obj_k->ac)
+					return true;
+			} else if (r->index == COMBAT_RUNE_DICE) {
+				if (p->obj_k->dd)
+					return true;
 			}
 			break;
 		}
@@ -351,6 +359,10 @@ char *rune_desc(size_t i)
 				return "Object magically increases the player's chance to hit";
 			else if (r->index == COMBAT_RUNE_TO_D)
 				return "Object magically increases the player's damage";
+			else if (r->index == COMBAT_RUNE_AC)
+				return "Object has increased armor class";
+			else if (r->index == COMBAT_RUNE_DICE)
+				return "Object has increased damage dice";
 			break;
 		}
 		/* Mod runes */
@@ -577,6 +589,38 @@ bool object_has_standard_to_h(const struct object *obj)
 }
 
 /**
+ * Checks whether the object has the usual armor value
+ *
+ * \param obj is the object
+ */
+bool object_has_standard_ac(const struct object *obj)
+{
+	/* Hack for curse object structures */
+	if (!obj->kind) {
+		return true;
+	}
+	if (tval_is_body_armor(obj)) {
+		return (obj->ac == obj->kind->ac);
+	} else {
+		return true;
+	}
+}
+
+/**
+ * Checks whether the object has the usual damage dice
+ *
+ * \param obj is the object
+ */
+bool object_has_standard_dice(const struct object *obj)
+{
+	/* Hack for curse object structures */
+	if (!obj->kind) {
+		return true;
+	}
+	return ((obj->dd == obj->kind->dd) && (obj->ds == obj->kind->ds));
+}
+
+/**
  * Check if an object has a rune
  *
  * \param obj is the object
@@ -595,6 +639,12 @@ bool object_has_rune(const struct object *obj, int rune_no)
 					 !object_has_standard_to_h(obj))
 				return true;
 			else if ((r->index == COMBAT_RUNE_TO_D) && (obj->to_d))
+				return true;
+			else if ((r->index == COMBAT_RUNE_AC) &&
+					 !object_has_standard_ac(obj))
+				return true;
+			else if ((r->index == COMBAT_RUNE_DICE) &&
+					 !object_has_standard_dice(obj))
 				return true;
 			break;
 		}
@@ -1221,6 +1271,16 @@ static void player_learn_rune(struct player *p, size_t i, bool message)
 			} else if (r->index == COMBAT_RUNE_TO_D) {
 				if (!p->obj_k->to_d) {
 					p->obj_k->to_d = 1;
+					learned = true;
+				}
+			} else if (r->index == COMBAT_RUNE_AC) {
+				if (!p->obj_k->ac) {
+					p->obj_k->ac = 1;
+					learned = true;
+				}
+			} else if (r->index == COMBAT_RUNE_DICE) {
+				if (!p->obj_k->dd) {
+					p->obj_k->dd = 1;
 					learned = true;
 				}
 			}
@@ -1893,6 +1953,10 @@ void missile_learn_on_ranged_attack(struct player *p, struct object *obj)
 		int index = rune_index(RUNE_VAR_COMBAT, COMBAT_RUNE_TO_D);
 		player_learn_rune(p, index, true);
 	}
+	if (!object_has_standard_dice(obj)) {
+		int index = rune_index(RUNE_VAR_COMBAT, COMBAT_RUNE_DICE);
+		player_learn_rune(p, index, true);
+	}
 	object_curses_find_to_h(p, obj);
 	object_curses_find_to_d(p, obj);
 	if (of_has(obj->flags, OF_PERFECT_BALANCE)) {
@@ -1921,6 +1985,10 @@ void equip_learn_on_defend(struct player *p)
 		struct object *obj = slot_object(p, i);
 		if (obj) {
 			assert(obj->known);
+			if (!object_has_standard_ac(obj)) {
+				int index = rune_index(RUNE_VAR_COMBAT, COMBAT_RUNE_AC);
+				player_learn_rune(p, index, true);
+			}
 			if (obj->to_a) {
 				int index = rune_index(RUNE_VAR_COMBAT, COMBAT_RUNE_TO_A);
 				player_learn_rune(p, index, true);
@@ -1992,6 +2060,10 @@ void equip_learn_on_melee_attack(struct player *p)
 		if (i == slot_by_name(p, "shooting")) continue;
 		if (obj) {
 			assert(obj->known);
+			if (!object_has_standard_dice(obj)) {
+				int index = rune_index(RUNE_VAR_COMBAT, COMBAT_RUNE_DICE);
+				player_learn_rune(p, index, true);
+			}
 			if (!object_has_standard_to_h(obj)) {
 				int index = rune_index(RUNE_VAR_COMBAT, COMBAT_RUNE_TO_H);
 				player_learn_rune(p, index, true);

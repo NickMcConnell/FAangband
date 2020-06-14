@@ -371,3 +371,8 @@ desc:Sometimes drains your mana
 name:experience drain
 flags:DRAIN_EXP
 desc:Drains your experience
+
+name:stat drain
+effect:DRAIN_STAT
+desc:Drains a random stat
+time:1d1500

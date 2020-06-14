@@ -2111,13 +2111,23 @@ static enum parser_error parse_ego_name(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_ego_info(struct parser *p) {
+static enum parser_error parse_ego_cost(struct parser *p) {
 	struct ego_item *e = parser_priv(p);
 	if (!e) {
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
 	}
 
 	e->cost = parser_getint(p, "cost");
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ego_rating(struct parser *p) {
+	struct ego_item *e = parser_priv(p);
+	if (!e) {
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	}
+
 	e->rating = parser_getint(p, "rating");
 
 	return PARSE_ERROR_NONE;
@@ -2220,58 +2230,15 @@ static enum parser_error parse_ego_min(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-static enum parser_error parse_ego_effect(struct parser *p) {
+static enum parser_error parse_ego_act(struct parser *p) {
 	struct ego_item *e = parser_priv(p);
-	struct effect *effect;
-	struct effect *new_effect = mem_zalloc(sizeof(*new_effect));
+	const char *name = parser_getstr(p, "name");
 
 	if (!e)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
 
-	/* Go to the next vacant effect and set it to the new one  */
-	if (e->effect) {
-		effect = e->effect;
-		while (effect->next)
-			effect = effect->next;
-		effect->next = new_effect;
-	} else
-		e->effect = new_effect;
+	e->activation = lookup_activation(name);
 
-	/* Fill in the detail */
-	return grab_effect_data(p, new_effect);
-}
-
-static enum parser_error parse_ego_dice(struct parser *p) {
-	struct ego_item *e = parser_priv(p);
-	dice_t *dice = NULL;
-	const char *string = NULL;
-
-	if (!e)
-		return PARSE_ERROR_MISSING_RECORD_HEADER;
-
-	dice = dice_new();
-
-	if (dice == NULL)
-		return PARSE_ERROR_INVALID_DICE;
-
-	string = parser_getstr(p, "dice");
-
-	if (dice_parse_string(dice, string)) {
-		e->effect->dice = dice;
-	}
-	else {
-		dice_free(dice);
-		return PARSE_ERROR_INVALID_DICE;
-	}
-
-	return PARSE_ERROR_NONE;
-}
-
-static enum parser_error parse_ego_time(struct parser *p) {
-	struct ego_item *e = parser_priv(p);
-	assert(e);
-
-	e->time = parser_getrand(p, "time");
 	return PARSE_ERROR_NONE;
 }
 
@@ -2399,7 +2366,7 @@ static enum parser_error parse_ego_slay(struct parser *p) {
 	if (!e)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
 	for (i = 1; i < z_info->slay_max; i++) {
-		if (streq(s, slays[i].code)) break;
+		if (strstr(s, slays[i].code)) break;
 	}
 	if (i == z_info->slay_max)
 		return PARSE_ERROR_UNRECOGNISED_SLAY;
@@ -2418,7 +2385,7 @@ static enum parser_error parse_ego_brand(struct parser *p) {
 	if (!e)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
 	for (i = 1; i < z_info->brand_max; i++) {
-		if (streq(s, brands[i].code)) break;
+		if (strstr(s, brands[i].code)) break;
 	}
 	if (i == z_info->brand_max)
 		return PARSE_ERROR_UNRECOGNISED_BRAND;
@@ -2453,15 +2420,14 @@ struct parser *init_parse_ego(void) {
 	struct parser *p = parser_new();
 	parser_setpriv(p, NULL);
 	parser_reg(p, "name str name", parse_ego_name);
-	parser_reg(p, "info int cost int rating", parse_ego_info);
+	parser_reg(p, "cost int cost", parse_ego_cost);
+	parser_reg(p, "rating int rating", parse_ego_rating);
 	parser_reg(p, "alloc int common str minmax", parse_ego_alloc);
 	parser_reg(p, "type sym tval", parse_ego_type);
 	parser_reg(p, "item sym tval sym sval", parse_ego_item);
 	parser_reg(p, "combat rand th rand td rand ta", parse_ego_combat);
 	parser_reg(p, "min-combat int th int td int ta", parse_ego_min);
-	parser_reg(p, "effect sym eff ?sym type ?int radius ?int other", parse_ego_effect);
-	parser_reg(p, "dice str dice", parse_ego_dice);
-	parser_reg(p, "time rand time", parse_ego_time);
+	parser_reg(p, "act str name", parse_ego_act);
 	parser_reg(p, "flags ?str flags", parse_ego_flags);
 	parser_reg(p, "flags-off ?str flags", parse_ego_flags_off);
 	parser_reg(p, "values str values", parse_ego_values);
@@ -2522,7 +2488,6 @@ static void cleanup_ego(void)
 		mem_free(ego->brands);
 		mem_free(ego->slays);
 		mem_free(ego->curses);
-		free_effect(ego->effect);
 
 		poss = ego->poss_items;
 		while (poss) {
@@ -2980,6 +2945,7 @@ struct file_parser randart_parser = {
  * ------------------------------------------------------------------------
  * Initialize object properties
  * ------------------------------------------------------------------------ */
+static int combat_property_index = 1;
 
 static enum parser_error parse_object_property_name(struct parser *p) {
 	const char *name = parser_getstr(p, "name");
@@ -3018,6 +2984,7 @@ static enum parser_error parse_object_property_type(struct parser *p) {
 		prop->type = OBJ_PROPERTY_SLAY;
 	} else if (streq(name, "combat")) {
 		prop->type = OBJ_PROPERTY_COMBAT;
+		prop->index = combat_property_index++;
 	} else if (streq(name, "curse")) {
 		prop->type = OBJ_PROPERTY_CURSE;
 	} else {
@@ -3038,8 +3005,8 @@ static enum parser_error parse_object_property_subtype(struct parser *p) {
 		prop->subtype = OFT_MISC;
 	} else if (streq(name, "light")) {
 		prop->subtype = OFT_LIGHT;
-	} else if (streq(name, "melee")) {
-		prop->subtype = OFT_MELEE;
+	} else if (streq(name, "weapon")) {
+		prop->subtype = OFT_WEAPON;
 	} else if (streq(name, "bad")) {
 		prop->subtype = OFT_BAD;
 	} else if (streq(name, "dig")) {

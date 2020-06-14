@@ -826,6 +826,20 @@ desc: to properly wield.
 
 ### Clubs ###
 
+name:& Magestaff~
+type:hafted
+graphics:\:W
+level:6
+weight:50
+cost:400
+alloc:20:5 to 100
+attack:1d3:0:0
+armor:0:0
+act:MAGESTAFF
+desc:A slender birch staff, enchanted to give light from the tip, which can be
+desc: activated by mages and necromancers to restore a little mana. It can be
+desc: used for attack or defence in an emergency.
+
 name:& Mace~
 type:hafted
 graphics:\:D
@@ -1942,6 +1956,18 @@ armor:15:0
 desc:A kite-shaped shield with rounded corners that covers the wearer from
 desc: chest to toe, emblazoned with heraldic symbols.
 
+name:& Body Shield~
+type:shield
+graphics:):m
+level:55
+weight:200
+cost:800
+alloc:10:55 to 100
+attack:1d7:0:0
+armor:18:0
+desc:A massive, rounded rectangular shield, curved back at both sides, that
+desc: almost completely covers the wearer.
+
 name:& Shield of Deflection~
 type:shield
 graphics:):B
@@ -1950,10 +1976,11 @@ weight:100
 cost:10000
 alloc:10:70 to 100
 attack:1d4:0:0
-armor:16:10
+armor:20:10
 flags:IGNORE_ACID
 power:500
-desc:A shield of purest white, made of mithril.
+desc:A shield of purest white, made of mithril, and engraved with runes to keep
+desc: all hurt and harm from you.
 
 
 

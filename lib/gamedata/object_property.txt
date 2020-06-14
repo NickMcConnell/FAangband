@@ -357,7 +357,7 @@ design-constant:1400
 
 name:earthquakes
 type:flag
-subtype:melee
+subtype:weapon
 id-type:on effect
 code:IMPACT
 msg:Your {name} causes an earthquake!
@@ -366,7 +366,7 @@ price-constant:50
 
 name:blessed melee
 type:flag
-subtype:melee
+subtype:weapon
 id-type:on wield
 code:BLESSED
 bindui:bless_ui_compact_0:0
@@ -376,17 +376,31 @@ design-constant:100
 
 name:two hands desired
 type:flag
-subtype:melee
+subtype:weapon
 id-type:on wield
 code:TWO_HANDED_DES
 desc:two-handed wielding desirable
 
 name:two hands required
 type:flag
-subtype:melee
+subtype:weapon
 id-type:on wield
 code:TWO_HANDED_REQ
 desc:two-handed wielding needed
+
+name:accurate
+type:flag
+subtype:weapon
+id-type:on effect
+code:ACCURATE
+desc:accurate shooter
+
+name:velocity
+type:flag
+subtype:weapon
+id-type:on effect
+code:VELOCITY
+desc:powerful shooter
 
 name:burns out
 type:flag
@@ -549,7 +563,7 @@ price-constant:200
 
 name:perfect balance
 type:flag
-subtype:melee
+subtype:weapon
 id-type:on wield
 code:PERFECT_BALANCE
 desc:Is ideal for throwing
@@ -774,12 +788,7 @@ price-linear:200
 design-constant:-600
 design-linear:60
 
-## Combat bonuses
-
-name:extra armor
-type:combat
-price-linear:100
-design-linear:40
+## Combat bonuses - these should stay in this order
 
 name:armor bonus
 type:combat
@@ -792,6 +801,11 @@ price-linear:100
 design-linear:40
 
 name:deadliness bonus
+type:combat
+price-linear:100
+design-linear:40
+
+name:extra armor
 type:combat
 price-linear:100
 design-linear:40

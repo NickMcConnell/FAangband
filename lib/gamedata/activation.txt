@@ -2974,14 +2974,17 @@ desc:teleports everything in sight
 name:BALROG_WHIP
 aim:1
 power:0
-# not done
+effect:SHORT_BEAM:FIRE:2
+dice:$B
+expr:B:WEAPON_DAMAGE:+ 0
 desc:lashes out at at range 2 for base weapon damage (unless target resists
 desc: fire)
 
 name:MAGESTAFF
 aim:0
 power:0
-# not done
+effect:RESTORE_MANA
+dice:10
 time:15+d10
 desc:restores 10 spell points (mages and necromancers only)
 

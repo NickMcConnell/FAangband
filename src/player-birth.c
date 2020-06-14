@@ -1187,6 +1187,8 @@ void do_cmd_accept_character(struct command *cmd)
 	player->obj_k->to_a = 1;
 	player->obj_k->to_h = 1;
 	player->obj_k->to_d = 1;
+	player->obj_k->ac = 1;
+	player->obj_k->dd = 1;
 
 	/* Initialise the stores, dungeon */
 	init_race_probs();
