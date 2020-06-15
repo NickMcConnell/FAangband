@@ -509,8 +509,8 @@ void apply_resistances(struct object *obj, int lev)
 		/* Enforce bounds - no item gets better than 80% resistance */
 		if (obj->el_info[i].res_level < RES_CAP_ITEM)
 			obj->el_info[i].res_level = RES_CAP_ITEM;
-		if (obj->el_info[i].res_level > RES_LEVEL_MAX)
-			obj->el_info[i].res_level = RES_LEVEL_MAX;
+		if (obj->el_info[i].res_level > RES_LEVEL_MIN)
+			obj->el_info[i].res_level = RES_LEVEL_MIN;
 	}
 
 	/* Low resist means object is proof against that element */
