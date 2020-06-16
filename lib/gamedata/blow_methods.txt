@@ -186,13 +186,33 @@ stun:0
 miss:0
 phys:0
 msg:MON_MOAN
-act:wants his mushrooms back
-act:tells {target} to get off his land
-act:looks for his dogs
-act:says 'Did you kill my Fang?'
-act:asks 'Do you want to buy any mushrooms?'
-act:seems sad about something
-act:asks if {target} {has} seen his dogs
-act:mumbles something about mushrooms
+act:tells you it's too hard to cross rivers
+act:worries about getting lost in the mountains
+act:whines about the gang of novice paladins he met
+act:asks you the way to Nowhere Town
+act:says he can hear someone imprisoned in the rock
+act:wonders how a trapdoor can take you to a different dungeon
+act:babbles about mirages in the swamp
+act:theorises that time is standing still
+act:tries to give you an order for pizza
+act:requests some help with map-reading
+act:claims he can see through walls
+act:decries the standard of today's arrows
+act:questions the presence of vorpal bunnies in Beleriand
+act:gasps that he's just drunk a wooden potion
+act:relates his problems with running in the right direction
+act:testifies that some monsters speak in tongues
+act:reports that some adventurers lie about their past
+act:reminisces about bargaining with shopkeepers
+act:asserts that he has been cloned
+act:maintains that vaults are really just big larders
+act:alleges that patches of grass are really magical staircases
+act:calls Ironbark the Ent a stingy bastard
+act:declares that wilderness pathways dilate time
+act:observes that the dwarves of Khazad Dûm are getting bigger
+act:mutters that shopkeepers won't take no for an answer
+act:wants to know why some doors are purely decorative
+act:boggles at caps that look like gloves
+act:boasts of walking over lava unharmed
 desc:moan
 

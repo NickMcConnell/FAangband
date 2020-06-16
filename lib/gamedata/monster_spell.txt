@@ -783,6 +783,17 @@ lore-color-resist:Light Green
 message-vis:{name} unleashes a ray of death.
 message-invis:Something intones with deadly menace.
 
+name:HUNGER
+hit:100
+effect:NOURISH:DEC_BY
+dice:10
+lore:create hunger
+lore-color-base:Yellow
+lore-color-resist:Light Green
+message-vis:{name} gestures at you, and you suddenly feel hungry.
+message-invis:You suddenly feel hungry.
+message-save:You resist the effects!
+
 name:SCARE
 msgt:CAST_FEAR
 hit:100
@@ -1014,6 +1025,16 @@ lore:summon spiders
 lore-color-base:Orange
 message-vis:{name} summons spiders.
 message-invis:You hear chittering things appear nearby!
+
+name:S_ANT
+msgt:SUM_SPIDER
+hit:100
+effect:SUMMON:ANT
+dice:10
+lore:summon ants
+lore-color-base:Orange
+message-vis:{name} summons ants.
+message-invis:You hear crawling things appear nearby!
 
 name:S_HOUND
 msgt:SUM_HOUND

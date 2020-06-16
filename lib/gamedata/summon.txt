@@ -76,6 +76,12 @@ uniques:0
 base:spider
 desc:spiders
 
+name:ANT
+msgt:SUM_SPIDER
+uniques:0
+base:ant
+desc:ants
+
 name:HOUND
 msgt:SUM_HOUND
 uniques:0

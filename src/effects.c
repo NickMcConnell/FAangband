@@ -907,6 +907,8 @@ bool effect_handler_NOURISH(effect_handler_context_t *context)
 		if (player->timed[TMD_FOOD] < amount) {
 			player_set_timed(player, TMD_FOOD, MAX(amount + 1, 0), false);
 		}
+	} else if (context->subtype == 3) {
+		player_dec_timed(player, TMD_FOOD, MAX(amount, PY_FOOD_WEAK), false);
 	} else {
 		return false;
 	}
@@ -5982,6 +5984,8 @@ int effect_subtype(int index, const char *type)
 					val = 1;
 				else if (streq(type, "INC_TO"))
 					val = 2;
+				else if (streq(type, "DEC_BY"))
+					val = 3;
 				break;
 			}
 
