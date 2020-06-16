@@ -1084,6 +1084,28 @@ blow:BITE:HURT:1d3
 blow:BITE:HURT:1d3
 desc:It is a hooded crow, gray except for the black wings and head.
 
+name:Pongo the Devious
+base:humanoid
+color:M
+speed:110
+hit-points:40
+armor-class:20
+hearing:20
+sleepiness:20
+depth:2
+rarity:2
+experience:30
+blow:HIT:HURT:2d3
+blow:HIT:HURT:2d3
+flags:UNIQUE
+flags:MALE | SMART
+flags:ONLY_ITEM | DROP_1
+flags:BASH_DOOR
+flags:EVIL
+spells:BLIND
+spell-freq:9
+desc:A wicked, power-hungry hobbit outlawed from the Gladden Fields settlement.
+
 ### Dungeon level 3 ###
 
 name:green ooze
@@ -1821,6 +1843,26 @@ flags:HURT_LIGHT | IM_POIS | HURT_COLD | NO_CONF | NO_SLEEP
 desc:It is a large pile of rotting flesh, whose touch spoils your food.  The
 desc: terrible smell it exudes is also very hard to get rid of...
 
+name:The Thief of the Mountains
+base:humanoid
+color:b
+speed:120
+hit-points:48
+armor-class:20
+hearing:12
+sleepiness:10
+depth:5
+rarity:3
+experience:90
+blow:HIT:HURT:1d6
+blow:TOUCH:EAT_ITEM
+blow:TOUCH:EAT_GOLD
+flags:UNIQUE | MALE | SMART
+flags:ONLY_ITEM | DROP_2 | DROP_GOOD
+flags:BASH_DOOR
+desc:He is a sturdy hobbit who is renowned for his unusual strength and
+desc: vigour.  He can prove a troublesome opponent.
+
 ### Dungeon level 6 ###
 
 name:purple mushroom patch
@@ -2186,7 +2228,7 @@ blow:BITE:HURT:1d6
 blow:BITE:HURT:1d6
 desc:It is a black lizard with overlapping scales and a powerful jaw.
 
-name:Mughash the Kobold Lord
+name:Mughâsh the Kobold Lord
 base:kobold
 color:v
 speed:110
@@ -2209,6 +2251,30 @@ friends:100:1d3:Kobold shaman:servant
 friends:100:1d5:Kobold archer:servant
 friends:100:1d5:Large kobold:bodyguard
 desc:Strong and powerful, for a kobold.
+
+name:The Ickiness
+base:icky thing
+color:U
+speed:110
+hit-points:90
+armor-class:20
+hearing:10
+sleepiness:20
+depth:7
+rarity:3
+experience:100
+blow:TOUCH:ACID:1d3
+blow:TOUCH:POISON:1d3
+blow:TOUCH:EAT_FOOD:1d3
+flags:UNIQUE | NEVER_MOVE | EMPTY_MIND
+flags:NO_CONF | NO_SLEEP | NO_FEAR
+flags:ONLY_ITEM | DROP_60 | DROP_60 | DROP_GOOD
+flags:IM_POIS | IM_ACID
+spells:S_KIN
+spell-freq:2
+friends-base:100:4d2:icky thing:
+desc:You prepare to avoid this foul mess on the ground, then you realise
+desc: it's alive...
 
 ### Dungeon level 8 ###
 
@@ -2336,6 +2402,50 @@ flags:OPEN_DOOR | TAKE_ITEM
 innate-freq:8
 spells:SHOT | WHIP
 desc:An uncultured brute with a club, a sling and a whip.
+
+name:Ulfast, son of Ulfang
+base:person
+color:t
+speed:110
+hit-points:190
+armor-class:20
+hearing:15
+sleepiness:20
+depth:8
+rarity:1
+experience:150
+blow:HIT:HURT:1d5
+blow:HIT:HURT:1d5
+blow:TOUCH:EAT_GOLD
+flags:UNIQUE | MALE | SMART
+flags:FORCE_SLEEP | MOVE_BODY
+flags:ONLY_ITEM | DROP_60 | DROP_1 | DROP_GOOD | DROP_GREAT
+flags:TAKE_ITEM | EVIL
+spells:HEAL | SLOW | TRAPS | BO_COLD | BA_POIS
+spell-freq:5
+desc:He's been spying for his brother Uldor, and doesn't mind making a profit
+desc: for himself.
+
+name:Balcmeg, the cave orc
+base:orc
+color:T
+speed:110
+hit-points:140
+armor-class:20
+hearing:20
+sleepiness:30
+depth:8
+rarity:2
+experience:80
+blow:HIT:HURT:1d10
+blow:HIT:HURT:1d10
+blow:HIT:HURT:1d9
+blow:HIT:HURT:1d9
+flags:UNIQUE | SMART
+flags:ONLY_ITEM | DROP_60 | DROP_1 | DROP_GOOD
+friends-base:100:2d7:orc
+desc:A captain of a regiment of weaker orcs, Balcmeg keeps his troop in order
+desc: with displays of excessive violence.
 
 ### Dungeon level 9 ###
 
@@ -2983,6 +3093,27 @@ friends:50:1d2:Priest
 friends:50:1d2:warrior
 friends:50:1d2:Same
 desc:She is dressed in black and smells of decay.
+
+name:Lug, the hill orc
+base:orc
+color:m
+speed:110
+hit-points:160
+armor-class:20
+hearing:20
+sleepiness:20
+depth:10
+rarity:3
+experience:160
+blow:HIT:HURT:1d12
+blow:HIT:HURT:1d10
+blow:HIT:HURT:1d12
+blow:HIT:HURT:1d10
+flags:UNIQUE | SMART
+flags:ONLY_ITEM | DROP_60 | DROP_1 | DROP_GOOD
+flags:IM_POIS
+friends-base:100:2d7:orc
+desc:He is a cunning and devious orc with a chaotic nature.
 
 ### Dungeon level 11 ###
 
@@ -4050,29 +4181,6 @@ friends:50:1d2:Priest
 friends:50:1d2:warrior
 friends:50:1d2:Same
 desc:He is eyeing your backpack.
-
-name:Ulfast, Son of Ulfang
-base:person
-color:U
-speed:110
-hit-points:340
-light:2
-hearing:20
-smell:20
-armor-class:48
-sleepiness:40
-depth:16
-rarity:3
-experience:200
-blow:HIT:HURT:3d5
-blow:HIT:HURT:3d5
-blow:HIT:HURT:3d5
-blow:HIT:HURT:3d5
-flags:UNIQUE | MALE | EVIL
-flags:DROP_60 | DROP_GOOD | ONLY_ITEM
-flags:OPEN_DOOR | TAKE_ITEM
-friends:60:1d3:warrior:servant
-desc:A short and swarthy Easterling.
 
 name:quasit
 base:minor demon
@@ -5154,6 +5262,28 @@ flags:DROP_20
 flags:NO_FEAR
 desc:It is an orcish figure covered in wrappings.
 
+name:Othrod, Lord of the orcs
+base:orc
+color:g
+speed:110
+hit-points:280
+armor-class:20
+hearing:30
+sleepiness:20
+depth:21
+rarity:2
+experience:300
+blow:HIT:HURT:3d8
+blow:HIT:HURT:3d8
+blow:HIT:HURT:3d5
+blow:HIT:HURT:3d5
+flags:UNIQUE | SMART
+flags:ONLY_ITEM | DROP_60 | DROP_1 | DROP_GOOD
+flags:IM_POIS
+friends-base:100:3d7:orc
+desc:He is an Uruk of power and great cunning.  He doesn't think much of you,
+desc: but then he doesn't think much at all.
+
 ### Dungeon level 22 ###
 
 name:neekerbreeker
@@ -5431,6 +5561,28 @@ flags:RAND_25
 innate-freq:6
 spells:SPIT
 desc:A giant silver ant with a caustic bite and hard scales.
+
+name:Orcogar, Son of Orcobal
+base:orc
+color:P
+speed:120
+hit-points:330
+armor-class:20
+hearing:25
+sleepiness:20
+depth:23
+rarity:3
+experience:320
+blow:HIT:HURT:3d5
+blow:HIT:HURT:3d5
+blow:HIT:HURT:3d5
+blow:HIT:HURT:3d5
+flags:UNIQUE | SMART
+flags:ONLY_ITEM | DROP_2 | DROP_GOOD
+flags:IM_POIS
+friends-base:100:3d9:orc
+desc:A large and powerful orc.  He looks just like his daddy.  He is tall and
+desc: fast, but fortunately blessed with orcish brains.
 
 ### Dungeon level 24 ###
 
@@ -6202,6 +6354,27 @@ flags:EMPTY_MIND | STUPID | ATTR_FLICKER
 flags:IM_ELEC
 desc:It is a strange growth on the dungeon floor, glowing and crackling with
 desc: sparks.
+
+name:Orcobal the Mighty
+base:orc
+color:R
+speed:120
+hit-points:630
+armor-class:20
+hearing:40
+sleepiness:20
+depth:27
+rarity:5
+experience:550
+blow:HIT:HURT:5d5
+blow:HIT:HURT:5d5
+blow:HIT:HURT:5d5
+flags:UNIQUE | SMART
+flags:ONLY_ITEM | DROP_3 | DROP_GOOD
+flags:IM_POIS
+friends-base:100:5d9:orc
+desc:He is the champion fighter of the expeditionary orc forces of Angband.  He
+desc: leers and swaggers as he approaches you.
 
 ### Dungeon level 28 ###
 
@@ -9598,36 +9771,6 @@ friends-base:80:1d3:skeleton:servant
 desc:A skeletal form wrapped in robes.  Powerful magic crackles along its bony
 desc: fingers.
 
-name:Gorlim, Betrayer of Barahir
-base:person
-color:z
-speed:120
-hit-points:1600
-light:2
-hearing:20
-armor-class:144
-sleepiness:40
-depth:41
-rarity:3
-experience:7000
-blow:HIT:HURT:8d6
-blow:HIT:HURT:8d6
-blow:HIT:DISENCHANT:6d8
-blow:HIT:DISENCHANT:6d8
-flags:UNIQUE | MALE | SMART
-flags:DROP_2 | DROP_GOOD | ONLY_ITEM
-flags:OPEN_DOOR
-flags:IM_ACID | IM_COLD | IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP | NO_HOLD
-flags:FORCE_SLEEP
-spell-freq:2
-spells:WOUND
-spells:BO_MANA | BO_WATE
-desc:This sad creature - once a mighty warrior - betrayed his former friends to
-desc: Morgoth's army in return for, he thought, safety for himself and his
-desc: wife.   And so he fell under Morgoth's power and became little more than
-desc: a mindless servant of evil, even though the other side of his "bargain"
-desc: was not kept.
-
 name:ranger chieftain
 base:person
 color:W
@@ -11088,6 +11231,34 @@ spells:TELE_TO | TELE_SELF_TO | BLINK | TRAPS | DARKNESS | BLIND | HOLD
 desc:He is a master of disguise, an expert of stealth, a genius at traps, and
 desc: moves with blinding speed.  Check your pockets!
 
+name:The Phantom of Eilenel
+base:ghost
+color:v
+speed:120
+hit-points:800
+armor-class:30
+hearing:12
+sleepiness:20
+depth:51
+rarity:6
+experience:1200
+blow:TOUCH:EXP_80:1d8
+blow:TOUCH:EXP_80:1d8
+blow:CLAW:LOSE_INT:2d8
+blow:CLAW:LOSE_WIS:2d8
+flags:UNIQUE
+flags:SMART | REGENERATE
+flags:INVISIBLE
+flags:EVIL | IM_COLD | IM_POIS
+flags:ONLY_ITEM | DROP_3 | DROP_GOOD
+flags:NO_CONF | NO_FEAR
+spells:BO_NETH | WOUND | BO_WATE
+spells:FORGET | HOLD | MIND_BLAST
+spell-freq:5
+desc:A creature of Sauron in the form of a woman. This phantom was made to
+desc: appear like Eilenel, the murdered wife of Gorlim the Unhappy, in order to
+desc: trap him into betraying Barahir and the outlaws of Dorthonion.
+
 ### Dungeon level 52 ###
 
 name:Maia of Oromë
@@ -12514,6 +12685,33 @@ spells:S_UNDEAD
 desc:A skeletal form, black as night, constructed from the bones of its previous
 desc: victims.
 
+name:The Defiler
+base:killer beetle
+color:D
+speed:120
+hit-points:3800
+armor-class:20
+hearing:60
+sleepiness:70
+depth:68
+rarity:3
+experience:20000
+blow:CLAW:ACID:5d12
+blow:CLAW:ACID:6d12
+blow:CLAW:HURT:8d12
+blow:BITE:HURT:10d14
+flags:UNIQUE
+flags:FORCE_SLEEP | KILL_WALL
+flags:ONLY_ITEM | DROP_2 | DROP_4 | DROP_GOOD
+flags:OPEN_DOOR | POWERFUL | MOVE_BODY
+flags:EVIL | IM_ACID | IM_FIRE | IM_POIS
+flags:NO_CONF | NO_SLEEP | NO_FEAR
+spells:BR_ACID | BR_POIS | S_KIN
+innate-freq:5
+spell-freq:4
+desc:A hulking creature with massive pincers.  The Defiler oozes acidic
+desc: venom as it smashes the living rock to reach you.
+
 ### Dungeon level 69 ###
 
 name:hound of Tindalos
@@ -12637,6 +12835,34 @@ desc: extremely large, insect-like body towering a full twelve feet tall, with
 desc: great claws on its hands and pincers on its mouth, and its head bulges
 desc: with great multi-faceted eyes.  Its tail is covered with razor-sharp
 desc: spikes.
+
+name:Errata the Mage
+base:person
+color:w
+speed:120
+hit-points:2300
+armor-class:30
+hearing:40
+sleepiness:10
+depth:69
+rarity:4
+experience:18000
+blow:HIT:HURT:8d5
+blow:HIT:HURT:8d5
+flags:UNIQUE | FEMALE
+flags:FORCE_SLEEP | SMART
+flags:ONLY_ITEM | DROP_2 | DROP_4 | DROP_GOOD
+flags:SMART | TAKE_ITEM | MOVE_BODY
+flags:IM_FIRE | IM_ELEC | NO_CONF
+spells:HOLD | BLIND | SCARE | CONF | HASTE
+spells:BLINK | TPORT | TELE_AWAY | TELE_SELF_TO | DRAIN_MANA
+spells:BA_ACID | BA_ELEC | BA_COLD | BA_FIRE | BA_LIGHT 
+spells:BA_MANA
+spell-power:90
+spell-freq:2
+desc:Errata is a bold and mighty mage.  Her power and guile are legendary. 
+desc: Hers is the right to face Morgoth in single combat and she will not let
+desc: you stand in her way.  Defend yourself!
 
 
 ########## DUNGEON LEVELS 70-79 ##########
@@ -13285,6 +13511,37 @@ desc:Glaurung is the father of all dragons, and was for a long time the most
 desc: powerful.  Though this is no longer so, he still has full command over his
 desc: brood and can command them to appear whenever he so wishes.  He is the
 desc: definition of dragonfire.
+
+name:Krotus, the Dark Lord
+base:major demon
+color:D
+speed:130
+hit-points:3200
+armor-class:40
+hearing:70
+sleepiness:10
+depth:75
+rarity:5
+experience:30000
+blow:TOUCH:EXP_80
+blow:HIT:FIRE:8d10
+blow:HIT:FIRE:8d10
+blow:HIT:HURT:8d10
+flags:UNIQUE | MALE
+flags:KILL_WALL
+flags:ONLY_ITEM | DROP_3 | DROP_4 | DROP_GOOD
+flags:SMART | TAKE_ITEM | FLYING | POWERFUL | MOVE_BODY
+flags:IM_ACID | IM_FIRE | IM_ELEC | IM_POIS
+spells:TELE_TO | BLIND
+spells:BA_DARK | BA_NETH | BA_FIRE
+spells:BR_FIRE | BR_NETH | BR_DARK
+spell-power:92
+innate-freq:5
+spell-freq:4
+desc:This mighty Balrog commands awesome power, his visage grave enough
+desc: to shrivel your soul.  You shriek with disbelief as his mastery of
+desc: death draws you to your grave.  It is truly beyond all but the
+desc: mightiest of warriors to stand against him and live.
 
 ### Dungeon level 76 ###
 
