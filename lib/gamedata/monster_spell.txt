@@ -306,6 +306,36 @@ lore-color-resist:Yellow
 message-vis:{name} breathes plasma.
 message-invis:You hear a hissing roar.
 
+name:BR_ICE
+msgt:BR_ICE
+hit:100
+effect:BREATH:ICE:0:30
+lore:ice
+lore-color-base:Orange
+lore-color-resist:Yellow
+message-vis:{name} breathes ice.
+message-invis:You hear a tinkling roar.
+
+name:BR_STORM
+msgt:BR_STORM
+hit:100
+effect:BREATH:STORM:0:30
+lore:storm
+lore-color-base:Orange
+lore-color-resist:Yellow
+message-vis:{name} breathes storm.
+message-invis:You hear a tempestuous roar.
+
+name:BR_DFIRE
+msgt:BR_DRAGONFIRE
+hit:100
+effect:BREATH:DRAGONFIRE:0:30
+lore:dragonfire
+lore-color-base:Light Red
+lore-color-resist:Yellow
+message-vis:{name} breathes dragonfire.
+message-invis:You hear a violent roar.
+
 name:BR_WALL
 msgt:BR_FORCE
 hit:100
@@ -1121,9 +1151,9 @@ msgt:SUM_HI_DRAGON
 hit:100
 effect:SUMMON:HI_DRAGON
 dice:8
-lore:summon ancient dragons
+lore:summon winged dragons
 lore-color-base:Light Red
-message-vis:{name} summons ancient dragons.
+message-vis:{name} summons winged dragons.
 message-invis:You hear powerful things appear nearby!
 
 name:S_WRAITH

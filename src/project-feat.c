@@ -514,6 +514,65 @@ static void project_feature_handler_PLASMA(project_feature_handler_context_t *co
 	}
 }
 
+static void project_feature_handler_STORM(project_feature_handler_context_t *context)
+{
+	/* Grid is in line of sight and player is not blind */
+	if (square_isview(cave, context->grid) && !player->timed[TMD_BLIND]) {
+		/* Observe */
+		context->obvious = true;
+	}
+}
+
+static void project_feature_handler_DRAGONFIRE(project_feature_handler_context_t *context)
+{
+	/* Grid is in line of sight and player is not blind */
+	if (square_isview(cave, context->grid) && !player->timed[TMD_BLIND]) {
+		/* Observe */
+		context->obvious = true;
+	}
+
+	/* Removes webs */
+	if (square_iswebbed(cave, context->grid)) {
+		square_destroy_trap(cave, context->grid);
+	}
+
+	/* Can create lava if extremely powerful. */
+	if ((context->dam > randint1(1800) + 600) &&
+		square_isfloor(cave, context->grid)) {
+		/* Forget the floor, make lava. */
+		square_unmark(cave, context->grid);
+		square_set_feat(cave, context->grid, FEAT_LAVA);
+
+		/* Objects that have survived should move */
+		push_object(context->grid);
+	}
+}
+
+static void project_feature_handler_HELLFIRE(project_feature_handler_context_t *context)
+{
+	/* Grid is in line of sight and player is not blind */
+	if (square_isview(cave, context->grid) && !player->timed[TMD_BLIND]) {
+		/* Observe */
+		context->obvious = true;
+	}
+
+	/* Removes webs */
+	if (square_iswebbed(cave, context->grid)) {
+		square_destroy_trap(cave, context->grid);
+	}
+
+	/* Can create lava if extremely powerful. */
+	if ((context->dam > randint1(1800) + 600) &&
+		square_isfloor(cave, context->grid)) {
+		/* Forget the floor, make lava. */
+		square_unmark(cave, context->grid);
+		square_set_feat(cave, context->grid, FEAT_LAVA);
+
+		/* Objects that have survived should move */
+		push_object(context->grid);
+	}
+}
+
 static void project_feature_handler_METEOR(project_feature_handler_context_t *context)
 {
 	/* Grid is in line of sight and player is not blind */

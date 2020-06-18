@@ -96,7 +96,7 @@ room:1
 alloc:6:85
 obj-rarity:0
 mon-base:dragon
-mon-base:ancient dragon
+mon-base:flying dragon
 spell-req:BR_ACID
 spell-ban:BR_ELEC
 
@@ -105,7 +105,7 @@ room:1
 alloc:6:85
 obj-rarity:0
 mon-base:dragon
-mon-base:ancient dragon
+mon-base:flying dragon
 spell-req:BR_ELEC
 spell-ban:BR_ACID
 
@@ -114,7 +114,7 @@ room:1
 alloc:6:85
 obj-rarity:0
 mon-base:dragon
-mon-base:ancient dragon
+mon-base:flying dragon
 spell-req:BR_FIRE
 spell-ban:BR_COLD
 
@@ -123,7 +123,7 @@ room:1
 alloc:6:85
 obj-rarity:0
 mon-base:dragon
-mon-base:ancient dragon
+mon-base:flying dragon
 spell-req:BR_COLD
 spell-ban:BR_FIRE
 
@@ -132,7 +132,7 @@ room:1
 alloc:6:85
 obj-rarity:0
 mon-base:dragon
-mon-base:ancient dragon
+mon-base:flying dragon
 spell-req:BR_POIS
 spell-ban:BR_FIRE
 
@@ -141,7 +141,7 @@ room:1
 alloc:6:85
 obj-rarity:0
 mon-base:dragon
-mon-base:ancient dragon
+mon-base:flying dragon
 spell-req:BR_ACID | BR_ELEC | BR_FIRE
 spell-req:BR_COLD | BR_POIS
 
@@ -332,7 +332,7 @@ room:1
 alloc:6:85
 obj-rarity:0
 mon-base:dragon
-mon-base:ancient dragon
+mon-base:flying dragon
 spell-req:BR_SOUN
 spell-ban:BR_SHAR
 

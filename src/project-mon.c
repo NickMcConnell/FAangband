@@ -737,6 +737,22 @@ static void project_monster_handler_PLASMA(project_monster_handler_context_t *co
 	project_monster_resist_other(context, RF_IM_PLASMA, 3, true, MON_MSG_RESIST);
 }
 
+static void project_monster_handler_STORM(project_monster_handler_context_t *context)
+{
+	/* Zero out the damage because this is an immunity flag. */
+	project_monster_resist_other(context, RF_IM_WATER, 0, false, MON_MSG_IMMUNE);
+}
+
+static void project_monster_handler_DRAGONFIRE(project_monster_handler_context_t *context)
+{
+	project_monster_hurt_immune(context, RF_HURT_FIRE, RF_IM_FIRE, 2, 9, MON_MSG_CATCH_FIRE, MON_MSG_DISINTEGRATES);
+}
+
+static void project_monster_handler_HELLFIRE(project_monster_handler_context_t *context)
+{
+	project_monster_hurt_immune(context, RF_HURT_FIRE, RF_IM_FIRE, 2, 9, MON_MSG_CATCH_FIRE, MON_MSG_DISINTEGRATES);
+}
+
 static void project_monster_handler_METEOR(project_monster_handler_context_t *context)
 {
 }

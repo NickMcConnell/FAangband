@@ -143,8 +143,8 @@ desc:greater undead
 name:HI_DRAGON
 msgt:SUM_HI_DRAGON
 uniques:1
-base:ancient dragon
-desc:ancient dragons
+base:flying dragon
+desc:winged dragons
 
 name:WRAITH
 msgt:SUM_WRAITH

@@ -43,20 +43,37 @@
  */
 int adjust_dam(struct player *p, int type, int dam, bool actual)
 {
-	int dam_percent = 0;
+	int dam_percent = 100;
 
 	/* If an actual player exists, get their actual resist */
 	if (p && p->race) {
-		/* Ice is a special case */
-		int res_type = (type == PROJ_ICE) ? PROJ_COLD: type;
+		int special_dam = 0;
 
-		/* The stored resistance level is the percentage of damage taken */
-		dam_percent = res_type < ELEM_MAX ?
-			p->state.el_info[res_type].res_level : 0;
+		/* Handle special cases */
+		if (type == PROJ_ICE) {
+			return adjust_dam(p, PROJ_COLD, dam, actual);
+		} else if (type == PROJ_PLASMA) {
+			special_dam = adjust_dam(p, PROJ_FIRE, dam / 2, actual);
+			special_dam += adjust_dam(p, PROJ_ELEC, dam / 2, actual);
+			return special_dam;
+		} else if (type == PROJ_STORM) {
+			/* Extra storm damage will come later */
+			return dam / 2;
+		} else if (type == PROJ_DRAGONFIRE) {
+			special_dam = adjust_dam(p, PROJ_FIRE, dam / 2, actual);
+			special_dam += adjust_dam(p, PROJ_POIS, dam / 2, actual);
+		} else if (type == PROJ_HELLFIRE) {
+			special_dam = adjust_dam(p, PROJ_FIRE, 2 * dam / 3, actual);
+			special_dam += adjust_dam(p, PROJ_DARK, dam / 3, actual);
+		} else if (type < ELEM_MAX) {
+			/* For the regular elements, the stored resistance level is the
+			 * percentage of damage taken */
+			dam_percent = p->state.el_info[type].res_level;
 
-		/* Notice element stuff */
-		if (actual) {
-			equip_learn_element(p, res_type);
+			/* Notice element stuff */
+			if (actual) {
+				equip_learn_element(p, type);
+			}
 		}
 	}
 
@@ -523,13 +540,80 @@ static int project_player_handler_TIME(project_player_handler_context_t *context
 
 static int project_player_handler_PLASMA(project_player_handler_context_t *context)
 {
-	/* Stun */
-	if (!player_of_has(player, OF_PROT_STUN)) {
-		int duration = 5 + randint1(context->dam * 3 / 4);
-		if (duration > 35) duration = 35;
-		(void)player_inc_timed(player, TMD_STUN, duration, true, true);
+	return 0;
+}
+
+static int project_player_handler_STORM(project_player_handler_context_t *context)
+{
+	int xtra = 0;
+
+	/* Electrical damage. */
+	if (one_in_(3)) {
+		/* Lightning strikes. */
+		msg("You are struck by lightning!");
+		xtra += adjust_dam(player, PROJ_ELEC, context->dam / 2, true);
 	} else {
-		equip_learn_flag(player, OF_PROT_STUN);
+		/* Lightning doesn't strike - at least not directly. */
+		xtra += adjust_dam(player, PROJ_ELEC, context->dam / 4, true);
+	}
+
+	/* Possibly cold and/or acid damage. */
+	if (one_in_(2)) {
+		if (!one_in_(3)) {
+			msg("You are blasted by freezing winds.");
+		} else {
+			msg("You are bombarded with hail.");
+		}
+		xtra += adjust_dam(player, PROJ_COLD, context->dam / 4, true);
+	}
+	if (one_in_(2)) {
+		msg("You are drenched by acidic rain.");
+		xtra += adjust_dam(player, PROJ_ACID, context->dam / 4, true);
+	}
+
+	/* Sometimes, confuse the player. */
+	if (one_in_(2)) {
+		(void) player_inc_timed(player, TMD_CONFUSED,
+								5 + randint1(context->dam / 3), true, true);
+	}
+	return xtra;
+}
+
+static int project_player_handler_DRAGONFIRE(project_player_handler_context_t *context)
+{
+	/* Side-effects for powerful dragonfire attacks */
+	if (context->power >= 80) {
+		if (!player_of_has(player, OF_FREE_ACT)) {
+			msg("The stench overwhelms you, and you faint away!");
+			(void) player_inc_timed(player, TMD_PARALYZED, randint0(3) + 2,
+									true, true);
+		}
+		if (!player_resists_effects(player->state, ELEM_CHAOS)) {
+			msg("The fumes affect your vision!");
+			(void) player_inc_timed(player, TMD_IMAGE, randint0(17) + 16, true,
+									true);
+		}
+	}
+
+	return 0;
+}
+
+static int project_player_handler_HELLFIRE(project_player_handler_context_t *context)
+{
+	/* Blind the player */
+	(void) player_inc_timed(player, TMD_BLIND, 2 + randint1(5), true, true);
+
+	/* Allow a save against further effects */
+	if (randint0(context->power) < player->state.skills[SKILL_SAVE]) {
+		msg("Visions of hell invade your mind!");
+
+		/* Possible fear, hallucination and confusion. */
+		(void) player_inc_timed(player, TMD_AFRAID,
+								randint1(30) + context->power * 2, true, true);
+		(void) player_inc_timed(player, TMD_IMAGE, randint1(101) + 100, true,
+								true);
+		(void) player_inc_timed(player, TMD_CONFUSED, randint1(31) + 30, true,
+								true);
 	}
 	return 0;
 }

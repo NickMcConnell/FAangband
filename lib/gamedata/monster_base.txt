@@ -27,18 +27,6 @@
 
 ##### Normal monster templates #####
 
-# Dragons are the most important breathing monsters in Angband, and their
-# breaths are their most important quality.
-name:ancient dragon
-glyph:D
-pain:1
-flags:DRAGON | EVIL | POWERFUL | SMART | SPIRIT
-flags:DROP_4
-flags:MOVE_BODY | CLEAR_WEB
-flags:NO_CONF | NO_SLEEP | NO_HOLD
-flags:FORCE_SLEEP
-desc:Ancient Dragon/Wyrm
-
 # Ainur were the founding spirits of Arda, and could take any form they wished.
 # Ainur in Angband typically have shapechanges and many possibe other spells,
 # but typically don't breathe
@@ -146,6 +134,18 @@ glyph:f
 pain:6
 flags:ANIMAL | CLEAR_WEB
 desc:Feline (Cat)
+
+# Dragons are the most important breathing monsters in Angband, and their
+# breaths are their most important quality.
+name:flying dragon
+glyph:D
+pain:1
+flags:DRAGON | EVIL | POWERFUL | SMART | SPIRIT | FLYING
+flags:DROP_4
+flags:MOVE_BODY | CLEAR_WEB
+flags:NO_CONF | NO_SLEEP | NO_HOLD
+flags:FORCE_SLEEP
+desc:Winged Dragon
 
 # Wall-passing invisible spirits, frequently drain experience and/or stats.
 # Relatively weak to compensate for being hard to escape

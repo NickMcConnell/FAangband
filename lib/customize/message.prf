@@ -350,6 +350,18 @@ message:BR_GRAVITY:w
 # MSG_BR_PLASMA
 message:BR_PLASMA:w
 
+# MSG_BR_ICE
+message:BR_ICE:w
+
+# MSG_BR_STORM
+message:BR_STORM:w
+
+# MSG_BR_DRAGONFIRE
+message:BR_DRAGONFIRE:w
+
+# MSG_BR_HELLFIRE
+message:BR_HELLFIRE:w
+
 # MSG_BR_FORCE
 message:BR_FORCE:w
 

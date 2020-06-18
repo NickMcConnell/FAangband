@@ -304,6 +304,21 @@ static void project_object_handler_PLASMA(project_object_handler_context_t *cont
 	project_object_elemental(context, ELEM_ELEC, "is destroyed", "are destroyed");
 }
 
+static void project_object_handler_STORM(project_object_handler_context_t *context)
+{
+	project_object_elemental(context, ELEM_ELEC, "is destroyed", "are destroyed");
+}
+
+static void project_object_handler_DRAGONFIRE(project_object_handler_context_t *context)
+{
+	project_object_elemental(context, ELEM_FIRE, "burns up", "burn up");
+}
+
+static void project_object_handler_HELLFIRE(project_object_handler_context_t *context)
+{
+	project_object_elemental(context, ELEM_FIRE, "burns up", "burn up");
+}
+
 /* Fire + Cold */
 static void project_object_handler_METEOR(project_object_handler_context_t *context)
 {
