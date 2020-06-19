@@ -597,7 +597,7 @@ rarity:1
 experience:2
 blow:BITE:HURT:1d1
 blow:CRUSH:HURT:1d1
-flags:RAND_50
+flags:RAND_50 | TERRITORIAL
 desc:It is about eight feet long.
 
 name:small kobold
@@ -677,7 +677,7 @@ depth:1
 rarity:1
 experience:1
 blow:BITE:HURT:1d1
-flags:GROUP_AI
+flags:GROUP_AI | TERRITORIAL
 friends:100:2d7:Same
 desc:It is a yapping snarling dog, dangerous when in a pack.
 
@@ -694,6 +694,7 @@ depth:1
 rarity:1
 experience:3
 blow:BITE:HURT:1d2
+flags:TERRITORIAL
 desc:A large ant with powerful mandibles.
 
 name:fruit bat
@@ -961,7 +962,7 @@ depth:2
 rarity:1
 experience:8
 blow:BITE:HURT:1d4
-flags:RAND_25
+flags:RAND_25 | TERRITORIAL
 desc:It is about three feet long.
 
 name:salamander
@@ -997,7 +998,7 @@ experience:5
 blow:CLAW:HURT:1d1
 blow:CLAW:HURT:1d1
 blow:BITE:HURT:1d2
-flags:FEMALE | EVIL | ANIMAL
+flags:FEMALE | EVIL | ANIMAL | FLYING
 flags:RAND_50
 desc:A flying, screeching bird with a woman's face.
 
@@ -1065,7 +1066,7 @@ rarity:2
 experience:8
 blow:CLAW:HURT:1d3
 blow:CLAW:HURT:1d3
-flags:BASH_DOOR
+flags:BASH_DOOR | TERRITORIAL
 desc:A larger than normal feline, hissing loudly.  Its velvet paws conceal a
 desc: fistful of needles.
 
@@ -1282,6 +1283,7 @@ depth:3
 rarity:1
 experience:7
 blow:BITE:HURT:1d4
+flags:TERRITORIAL
 friends:100:4d4:same
 desc:It is about two feet long and has sharp pincers.
 
@@ -1407,6 +1409,7 @@ depth:4
 rarity:1
 experience:8
 blow:BITE:HURT:1d5
+flags:TERRITORIAL
 desc:It is an armoured lizard with a powerful bite.
 
 name:scout
@@ -1572,7 +1575,7 @@ rarity:1
 experience:14
 blow:BITE:HURT:1d5
 blow:CRUSH:HURT:1d8
-flags:RAND_25
+flags:RAND_25 | TERRITORIAL
 desc:It is about ten feet long.
 
 name:kobold archer
@@ -1784,7 +1787,7 @@ rarity:1
 experience:15
 blow:BITE:POISON:2d4
 flags:RAND_50
-flags:IM_POIS
+flags:IM_POIS | TERRITORIAL
 desc:It has a copper head and sharp venomous fangs.
 
 name:giant white dragon fly
@@ -1965,7 +1968,7 @@ rarity:1
 experience:20
 blow:BITE:POISON:2d5
 flags:RAND_50
-flags:IM_POIS
+flags:IM_POIS | TERRITORIAL
 desc:It is recognized by the hard-scaled end of its body that is often rattled
 desc: to frighten its prey.
 
@@ -2226,6 +2229,7 @@ rarity:2
 experience:35
 blow:BITE:HURT:1d6
 blow:BITE:HURT:1d6
+flags:TERRITORIAL
 desc:It is a black lizard with overlapping scales and a powerful jaw.
 
 name:Mughâsh the Kobold Lord
@@ -2533,7 +2537,7 @@ experience:19
 blow:CLAW:HURT:1d2
 blow:CLAW:HURT:1d2
 blow:BITE:HURT:1d3
-flags:FEMALE | EVIL | ANIMAL
+flags:FEMALE | EVIL | ANIMAL | FLYING
 flags:RAND_25
 desc:A woman's face on the body of a vicious black bird.
 
@@ -2574,6 +2578,7 @@ rarity:2
 experience:22
 blow:BITE:HURT:1d4
 blow:STING:LOSE_STR:1d4
+flags:TERRITORIAL
 desc:It is large and has venomous mandibles.
 
 name:Brodda, the Easterling
@@ -2610,7 +2615,7 @@ rarity:2
 experience:28
 blow:SPIT:BLIND:1d2
 blow:BITE:POISON:3d4
-flags:RAND_50
+flags:RAND_50 | TERRITORIAL
 flags:IM_POIS
 innate-freq:4
 spells:SPIT
@@ -2839,7 +2844,7 @@ depth:10
 rarity:1
 experience:40
 blow:HIT:HURT:1d8
-flags:OPEN_DOOR | BASH_DOOR
+flags:OPEN_DOOR | BASH_DOOR | FLYING
 flags:NO_FEAR
 spell-freq:3
 spells:BLINK | TELE_TO
@@ -2879,7 +2884,7 @@ depth:10
 rarity:1
 experience:30
 blow:BITE:HURT:1d6
-flags:RAND_25 | BASH_DOOR
+flags:RAND_25 | BASH_DOOR | TERRITORIAL
 flags:GROUP_AI
 friends:100:2d10:Same
 desc:It howls and snaps at you.
@@ -2913,7 +2918,7 @@ rarity:2
 experience:25
 blow:CLAW:HURT:1d8
 blow:CLAW:HURT:1d8
-flags:BASH_DOOR
+flags:BASH_DOOR | TERRITORIAL
 desc:A large black cat, stalking you with intent.  It thinks you're its next
 desc: meal.
 
@@ -3000,7 +3005,7 @@ rarity:1
 experience:30
 blow:HIT:HURT:2d5
 blow:BITE:HURT:2d5
-flags:ANIMAL
+flags:ANIMAL | FLYING
 flags:BASH_DOOR
 desc:A strange hybrid of eagle and horse.  It looks weird.
 
@@ -3101,7 +3106,7 @@ depth:12
 rarity:3
 experience:40
 blow:BITE:POISON:4d6
-flags:RAND_50
+flags:RAND_50 | TERRITORIAL
 flags:IM_POIS
 innate-freq:4
 spells:SPIT
@@ -3122,7 +3127,7 @@ rarity:1
 experience:30
 blow:BITE:HURT:1d3
 blow:BITE:HURT:1d4
-flags:RAND_25 | BASH_DOOR
+flags:RAND_25 | BASH_DOOR | TERRITORIAL
 flags:IM_COLD | GROUP_AI
 friends:100:2d7:Same
 desc:A large and muscled wolf from the northern wastes.  Its breath is cold and
@@ -3255,7 +3260,7 @@ depth:12
 rarity:2
 experience:40
 blow:HIT:HURT:1d3
-flags:COLD_BLOOD | INVISIBLE
+flags:COLD_BLOOD | INVISIBLE | FLYING
 flags:RAND_25 | RAND_50 | BASH_DOOR
 flags:IM_ELEC
 desc:A whirlwind of sentient air.
@@ -3308,7 +3313,7 @@ experience:40
 blow:CLAW:HURT:1d8
 blow:CLAW:HURT:1d8
 blow:BITE:HURT:1d6
-flags:BASH_DOOR
+flags:BASH_DOOR | TERRITORIAL
 desc:One of the largest of its species, a sleek orange and black shape creeps
 desc: towards you, ready to pounce.
 
@@ -3874,7 +3879,7 @@ rarity:1
 experience:70
 blow:HIT:HURT:3d4
 blow:BITE:HURT:2d6
-flags:ANIMAL
+flags:ANIMAL | FLYING
 flags:BASH_DOOR
 desc:It is half lion, half eagle.  It flies menacingly towards you.
 
@@ -3993,7 +3998,7 @@ blow:TOUCH:ACID:1d10
 blow:TOUCH:ACID:1d10
 flags:COLD_BLOOD
 flags:DROP_4
-flags:OPEN_DOOR | BASH_DOOR | TAKE_ITEM
+flags:OPEN_DOOR | BASH_DOOR | TAKE_ITEM | DUNGEON
 flags:IM_ACID | IM_COLD | IM_ELEC | IM_FIRE | IM_POIS
 flags:NO_CONF | NO_SLEEP
 flags-off:HURT_COLD
@@ -4091,7 +4096,7 @@ blow:CLAW:HURT:1d8
 blow:CLAW:HURT:1d8
 blow:BITE:HURT:1d12
 blow:CRUSH:HURT:1d10
-flags:ANIMAL
+flags:ANIMAL | TERRITORIAL
 desc:A huge, beastly bear, more savage than most of its kind.
 
 name:craban
@@ -4194,7 +4199,7 @@ experience:58
 blow:HIT:HURT:2d4
 blow:HIT:HURT:2d4
 flags:COLD_BLOOD
-flags:RAND_25 | BASH_DOOR
+flags:RAND_25 | BASH_DOOR | FLYING
 flags:IM_ACID | IM_WATER
 desc:A whirlpool of sentient liquid.
 
@@ -4230,7 +4235,7 @@ experience:64
 blow:HIT:HURT:1d8
 blow:HIT:HURT:1d8
 flags:COLD_BLOOD
-flags:RAND_25 | PASS_WALL
+flags:RAND_25 | PASS_WALL | FLYING
 flags:HURT_ROCK | IM_COLD | IM_ELEC | IM_FIRE
 desc:A whirling form of sentient rock.
 
@@ -4322,7 +4327,7 @@ rarity:2
 experience:75
 blow:HIT:FIRE:2d6
 blow:HIT:FIRE:2d6
-flags:RAND_25 | BASH_DOOR
+flags:RAND_25 | BASH_DOOR | FLYING
 flags:IM_FIRE | HURT_COLD
 desc:A whirlwind of sentient flame.
 
@@ -4745,7 +4750,7 @@ blow:BITE:POISON:1d8
 blow:BITE:POISON:1d8
 blow:CLAW:HURT:3d3
 blow:CLAW:HURT:3d3
-flags:BASH_DOOR
+flags:BASH_DOOR | FLYING
 flags:IM_POIS
 flags:FORCE_SLEEP
 innate-freq:10
@@ -4770,7 +4775,7 @@ blow:CLAW:HURT:1d10
 blow:CLAW:HURT:1d10
 blow:BITE:HURT:1d10
 blow:BITE:HURT:1d10
-flags:BASH_DOOR
+flags:BASH_DOOR | TERRITORIAL
 desc:A fierce and dangerous cat, its huge tusks and sharp claws would lacerate
 desc: even the strongest armour.
 
@@ -4814,7 +4819,7 @@ experience:200
 blow:BUTT:HURT:2d8
 blow:BITE:HURT:2d10
 blow:BITE:FIRE:2d6
-flags:BASH_DOOR
+flags:BASH_DOOR | FLYING
 flags:IM_FIRE
 flags:FORCE_SLEEP
 innate-freq:10
@@ -5297,7 +5302,7 @@ experience:60
 blow:CLAW:HURT:1d8
 blow:CLAW:HURT:1d8
 blow:STING:POISON:2d5
-flags:ANIMAL | WEIRD_MIND
+flags:ANIMAL | WEIRD_MIND | TERRITORIAL
 flags:IM_POIS
 desc:It is a giant scorpion with a sharp stinger.
 
@@ -5546,7 +5551,7 @@ rarity:1
 experience:80
 blow:BITE:ACID:4d4
 blow:BITE:ACID:4d4
-flags:RAND_25
+flags:RAND_25 | TERRITORIAL
 innate-freq:6
 spells:SPIT
 desc:A giant silver ant with a caustic bite and hard scales.
@@ -6003,7 +6008,7 @@ rarity:1
 experience:120
 blow:BITE:HURT:2d12
 blow:BITE:HURT:2d12
-flags:RAND_25 | KILL_BODY
+flags:RAND_25 | KILL_BODY | TERRITORIAL
 desc:It is an ant encased in an impenetrable exoskeleton.
 
 name:Ulwarth, Son of Ulfang
@@ -6135,36 +6140,6 @@ friends:100:4d4:Same
 desc:Flesh is falling off in chunks from this decaying abomination.
 
 ### Dungeon level 27 ###
-
-name:Mîm, Betrayer of Turin
-base:humanoid
-color:I
-speed:120
-hit-points:1100
-hearing:20
-armor-class:96
-sleepiness:20
-depth:27
-rarity:4
-experience:1000
-blow:HIT:HURT:3d8
-blow:HIT:HURT:3d8
-blow:HIT:HURT:3d8
-blow:HIT:DISENCHANT
-flags:UNIQUE | MALE | EVIL
-flags:DROP_2 | DROP_GOOD | DROP_GREAT | ONLY_ITEM
-flags:IM_ACID | IM_COLD | IM_ELEC | IM_FIRE | IM_POIS | NO_CONF
-flags:NO_SLEEP | NO_HOLD
-flags:FORCE_SLEEP
-spell-freq:6
-spells:HEAL | SCARE
-spells:BA_ACID
-spells:BO_ACID
-friends:100:1d1:Ibun, Son of Mîm
-friends:100:1d1:Khîm, Son of Mîm
-desc:The last of his race, Mîm is a Petty-Dwarf.  Petty-Dwarves are strange
-desc: creatures, powerful in sorcery and originating in the East.  They have
-desc: been hunted nearly to extinction by the High Elves.
 
 name:killer fire beetle
 base:killer beetle
@@ -6613,7 +6588,7 @@ blow:BITE:HURT:2d12
 blow:BITE:HURT:2d12
 blow:BITE:HURT:2d12
 flags:DROP_1 | ONLY_ITEM
-flags:OPEN_DOOR | BASH_DOOR
+flags:OPEN_DOOR | BASH_DOOR | TERRITORIAL
 flags:IM_POIS | NO_CONF | NO_SLEEP | NO_HOLD
 innate-freq:8
 spells:BR_POIS
@@ -6736,7 +6711,7 @@ blow:CLAW:HURT:1d11
 blow:CLAW:HURT:1d11
 blow:STING:POISON:3d4
 blow:STING:BLIND:3d4
-flags:ANIMAL | WEIRD_MIND
+flags:ANIMAL | WEIRD_MIND | TERRITORIAL
 flags:IM_POIS
 desc:A gleaming black scorpion as large as a lion, with a pulsating stinger
 desc: and two great deadly claws.
@@ -6939,7 +6914,7 @@ blow:CLAW:EAT_FOOD:1d5
 blow:CLAW:EAT_FOOD:1d5
 blow:BITE:HURT:2d9
 blow:BITE:HURT:2d9
-flags:INVISIBLE | BASH_DOOR 
+flags:INVISIBLE | BASH_DOOR | TERRITORIAL
 spells:TELE_SELF_TO
 spell-freq:7
 desc:A great black cat, hidden from ordinary sight.  Twin scimitars gleam in its
@@ -6961,7 +6936,7 @@ blow:HIT:HURT:3d4
 blow:HIT:HURT:3d4
 blow:HIT:HURT:3d4
 blow:HIT:HURT:3d4
-flags:EVIL
+flags:EVIL | FLYING
 flags:BASH_DOOR
 flags:FORCE_SLEEP
 innate-freq:5
@@ -6982,7 +6957,7 @@ depth:30
 rarity:2
 experience:80
 blow:BITE:ELEC:5d5
-flags:RAND_25
+flags:RAND_25 | TERRITORIAL
 flags:IM_ELEC | GROUP_AI
 innate-freq:6
 spells:SPIT
@@ -7003,7 +6978,7 @@ rarity:3
 experience:90
 blow:BITE:HURT:2d12
 blow:BITE:HURT:2d12
-flags:RAND_25 | KILL_BODY | GROUP_AI
+flags:RAND_25 | KILL_BODY | GROUP_AI | TERRITORIAL
 friends:100:4d4:Same
 desc:An armoured form moving with purpose.  Powerful on its own, flee when
 desc: hordes of them march.
@@ -7100,6 +7075,36 @@ friends:40:1d3:Mummified troll
 friends:100:4d4:Ghoul
 desc:This vile abomination is a relative of ghouls, and often leads packs of
 desc: them.  It smells foul, and its bite carries a rotting disease.
+
+name:Mîm, Betrayer of Turin
+base:humanoid
+color:I
+speed:120
+hit-points:1100
+hearing:20
+armor-class:96
+sleepiness:20
+depth:30
+rarity:4
+experience:1000
+blow:HIT:HURT:3d8
+blow:HIT:HURT:3d8
+blow:HIT:HURT:3d8
+blow:HIT:DISENCHANT
+flags:UNIQUE | MALE | EVIL | AMON_RUDH | FORCE_DEPTH
+flags:DROP_2 | DROP_GOOD | DROP_GREAT | ONLY_ITEM
+flags:IM_ACID | IM_COLD | IM_ELEC | IM_FIRE | IM_POIS | NO_CONF
+flags:NO_SLEEP | NO_HOLD
+flags:FORCE_SLEEP
+spell-freq:6
+spells:HEAL | SCARE
+spells:BA_ACID
+spells:BO_ACID
+friends:100:1d1:Ibun, Son of Mîm
+friends:100:1d1:Khîm, Son of Mîm
+desc:The last of his race, Mîm is a Petty-Dwarf.  Petty-Dwarves are strange
+desc: creatures, powerful in sorcery and originating in the East.  They have
+desc: been hunted nearly to extinction by the High Elves.
 
 ### Dungeon level 31 ###
 
@@ -7891,7 +7896,7 @@ experience:390
 blow:HIT:HURT:1d10
 blow:HIT:CONFUSE:1d4
 blow:HIT:HURT:1d10
-flags:COLD_BLOOD
+flags:COLD_BLOOD | FLYING
 flags:RAND_25 | BASH_DOOR | KILL_BODY | KILL_ITEM
 flags:IM_ACID | IM_COLD | IM_ELEC
 flags:FORCE_SLEEP
@@ -8028,7 +8033,7 @@ blow:CLAW:HURT:2d8
 blow:CLAW:HURT:2d8
 blow:BITE:HURT:2d8
 blow:BITE:HURT:2d8
-flags:BASH_DOOR
+flags:BASH_DOOR | FLYING
 flags:NO_CONF | NO_SLEEP
 flags:FORCE_SLEEP
 innate-freq:5
@@ -8124,7 +8129,7 @@ rarity:1
 experience:350
 blow:BITE:FIRE:3d12
 blow:BITE:FIRE:3d12
-flags:KILL_BODY
+flags:KILL_BODY | TERRITORIAL
 flags:IM_FIRE | GROUP_AI
 innate-freq:6
 spells:SPIT
@@ -9755,7 +9760,7 @@ blow:BITE:HURT:2d12
 blow:BITE:HURT:2d12
 blow:BITE:HURT:2d8
 blow:BITE:HURT:2d8
-flags:UNIQUE | FEMALE
+flags:UNIQUE | FEMALE | TERRITORIAL
 flags:DROP_2 | DROP_GOOD | ONLY_ITEM
 flags:OPEN_DOOR
 flags:NO_CONF | NO_SLEEP
@@ -10046,7 +10051,7 @@ blow:HIT:HURT:4d6
 blow:HIT:HURT:4d6
 blow:HIT:CONFUSE:4d4
 blow:HIT:CONFUSE:4d4
-flags:UNIQUE | FEMALE | COLD_BLOOD | POWERFUL
+flags:UNIQUE | FEMALE | COLD_BLOOD | POWERFUL | FLYING
 flags:RAND_25 | BASH_DOOR | KILL_BODY | KILL_ITEM
 flags:IM_ACID | IM_COLD | IM_ELEC
 flags:FORCE_SLEEP
@@ -11583,6 +11588,36 @@ desc:A captain of thieves and assassins who has buried all challengers to his
 desc: control of the underworld. He sharpens his knives as he awaits your
 desc: attack.
 
+name:Glaurung, Father of the Dragons
+base:dragon
+color:r
+speed:130
+hit-points:7500
+light:2
+hearing:30
+armor-class:210
+sleepiness:20
+depth:75
+rarity:3
+experience:55000
+blow:CLAW:HURT:6d12
+blow:CLAW:HURT:6d12
+blow:BITE:POISON:8d14
+blow:BITE:FIRE:8d14
+flags:UNIQUE | MALE | NARGOTHROND | FORCE_DEPTH
+flags:DROP_GOOD | DROP_GREAT | ONLY_ITEM
+flags:BASH_DOOR
+flags:IM_FIRE | IM_POIS
+innate-freq:5
+spell-freq:3
+spells:BRAIN_SMASH | FORGET | SCARE
+spells:BR_FIRE | BR_POIS
+spells:S_HI_DRAGON
+desc:Glaurung is the father of all dragons, and was for a long time the most
+desc: powerful.  Though this is no longer so, he still has full command over his
+desc: brood and can command them to appear whenever he so wishes.  He is the
+desc: definition of dragonfire.
+
 ### Dungeon level 56 ###
 
 name:lesser titan
@@ -12012,7 +12047,7 @@ experience:4000
 blow:BITE:EXP_20:2d4
 blow:CLAW:POISON:4d10
 blow:CLAW:POISON:4d10
-flags:FORCE_SLEEP | SMART | EVIL
+flags:FORCE_SLEEP | SMART | EVIL | GAURHOTH
 flags:OPEN_DOOR | BASH_DOOR | MOVE_BODY
 flags:IM_POIS | IM_COLD | IM_FIRE | IM_NETHER
 flags:NO_FEAR | NO_CONF | NO_SLEEP
@@ -12043,7 +12078,7 @@ blow:CLAW:POISON:6d6
 blow:CLAW:POISON:6d6
 blow:BITE:PARALYZE:5d10
 blow:STING:LOSE_STR:5d4
-flags:FEMALE | EVIL | ANIMAL | SMART | SPIRIT
+flags:FEMALE | EVIL | ANIMAL | SMART | SPIRIT | DUNGORTHEB
 flags:DROP_2 | DROP_GOOD | ONLY_ITEM
 flags:HURT_LIGHT | IM_ACID | IM_POIS | NO_CONF | NO_SLEEP | NO_HOLD
 flags:FORCE_SLEEP
@@ -12372,7 +12407,7 @@ blow:BITE:EXP_80:6d6
 blow:BITE:EXP_80:6d6
 blow:HIT:CONFUSE:6d6
 blow:HIT:CONFUSE:6d6
-flags:UNIQUE | FEMALE | SMART
+flags:UNIQUE | FEMALE | SMART | FLYING
 flags:DROP_4 | DROP_GOOD | ONLY_ITEM
 flags-off:HURT_FIRE
 spell-freq:3
@@ -12679,6 +12714,38 @@ desc: you stand in her way.  Defend yourself!
 
 
 ### Dungeon level 70 ###
+
+name:Ungoliant, the Unlight
+base:spider
+color:D
+speed:130
+hit-points:13000
+light:-4
+hearing:40
+armor-class:240
+sleepiness:10
+depth:70
+rarity:1
+experience:35000
+blow:CLAW:POISON:8d6
+blow:CLAW:POISON:8d6
+blow:BITE:PARALYZE:8d10
+blow:STING:LOSE_STR:8d4
+flags:UNIQUE | FEMALE | EVIL | ANIMAL | SMART | SPIRIT | DUNGORTHEB
+flags:DROP_4 | DROP_GOOD | ONLY_ITEM
+flags:HURT_LIGHT | IM_ACID | IM_POIS | NO_CONF | NO_SLEEP | NO_HOLD
+flags:FORCE_SLEEP | FORCE_DEPTH
+innate-freq:11
+spell-freq:4
+spells:BLIND | CONF | HEAL | SCARE | WEAVE
+spells:BA_DARK
+spells:BR_DARK | BR_POIS
+spells:S_KIN
+desc:This enormous, hideous spirit of void is in the form of a spider of immense
+desc: proportions.  She is surrounded by a cloud of Unlight as she sucks in all
+desc: living light into her bloated body, and breathes out the blackest of
+desc: darkness. She is always ravenously hungry and would even eat herself to
+desc: avoid starvation.
 
 ### Dungeon level 71 ###
 
@@ -13024,38 +13091,6 @@ spells:BR_ACID | BR_POIS
 desc:An acrid stench fills the air as this immense dragon spreads its wings.
 desc:  Your courage seems to melt away as you feel you fear and nausea rising.
 
-name:Ungoliant, the Unlight
-base:spider
-color:D
-speed:130
-hit-points:13000
-light:-4
-hearing:40
-armor-class:240
-sleepiness:10
-depth:75
-rarity:1
-experience:35000
-blow:CLAW:POISON:8d6
-blow:CLAW:POISON:8d6
-blow:BITE:PARALYZE:8d10
-blow:STING:LOSE_STR:8d4
-flags:UNIQUE | FEMALE | EVIL | ANIMAL | SMART | SPIRIT
-flags:DROP_4 | DROP_GOOD | ONLY_ITEM
-flags:HURT_LIGHT | IM_ACID | IM_POIS | NO_CONF | NO_SLEEP | NO_HOLD
-flags:FORCE_SLEEP
-innate-freq:11
-spell-freq:4
-spells:BLIND | CONF | HEAL | SCARE | WEAVE
-spells:BA_DARK
-spells:BR_DARK | BR_POIS
-spells:S_KIN
-desc:This enormous, hideous spirit of void is in the form of a spider of immense
-desc: proportions.  She is surrounded by a cloud of Unlight as she sucks in all
-desc: living light into her bloated body, and breathes out the blackest of
-desc: darkness. She is always ravenously hungry and would even eat herself to
-desc: avoid starvation.
-
 name:bronze golem
 base:golem
 color:o
@@ -13086,36 +13121,6 @@ spells:S_DEMON
 desc:A gigantic four-armed animated bronze statue of demonic shape, glowing with
 desc: great heat.
 
-name:Glaurung, Father of the Dragons
-base:flying dragon
-color:v
-speed:130
-hit-points:7500
-light:2
-hearing:30
-armor-class:210
-sleepiness:20
-depth:75
-rarity:3
-experience:55000
-blow:CLAW:HURT:6d12
-blow:CLAW:HURT:6d12
-blow:BITE:POISON:8d14
-blow:BITE:FIRE:8d14
-flags:UNIQUE | MALE
-flags:DROP_GOOD | DROP_GREAT | ONLY_ITEM
-flags:BASH_DOOR
-flags:IM_FIRE | IM_POIS
-innate-freq:5
-spell-freq:3
-spells:BRAIN_SMASH | FORGET | SCARE
-spells:BR_FIRE | BR_POIS
-spells:S_HI_DRAGON
-desc:Glaurung is the father of all dragons, and was for a long time the most
-desc: powerful.  Though this is no longer so, he still has full command over his
-desc: brood and can command them to appear whenever he so wishes.  He is the
-desc: definition of dragonfire.
-
 name:Krotus, the Dark Lord
 base:major demon
 color:D
@@ -13134,7 +13139,7 @@ blow:HIT:HURT:8d10
 flags:UNIQUE | MALE
 flags:KILL_WALL
 flags:ONLY_ITEM | DROP_3 | DROP_4 | DROP_GOOD
-flags:SMART | TAKE_ITEM | FLYING | POWERFUL | MOVE_BODY
+flags:SMART | TAKE_ITEM | POWERFUL | MOVE_BODY
 flags:IM_ACID | IM_FIRE | IM_ELEC | IM_POIS
 spells:TELE_TO | BLIND
 spells:BA_DARK | BA_NETH | BA_FIRE
@@ -13481,7 +13486,7 @@ blow:HIT:ELEC:12d12
 blow:HIT:ELEC:12d12
 blow:HIT:ELEC:12d12
 blow:HIT:ELEC:12d12
-flags:UNIQUE | MALE | INVISIBLE
+flags:UNIQUE | MALE | INVISIBLE | FLYING
 flags:DROP_4 | DROP_GOOD
 flags:IM_ACID | IM_COLD | IM_ELEC | IM_FIRE | IM_POIS
 spell-freq:3
@@ -13699,6 +13704,121 @@ desc:Originally of the semi-divine Maiar, this evil spirit swore allegiance to
 desc: Morgoth at the beginning of time and is now one of his most terrible
 desc: demonic servants.  With its flaming whip and sword it seeks to destroy
 desc: you.
+
+name:Sauron, the Sorcerer
+base:ainu
+color:p
+speed:130
+hit-points:8000
+hearing:100
+armor-class:192
+sleepiness:0
+depth:85
+rarity:1
+experience:50000
+blow:HIT:DISENCHANT:10d12
+blow:HIT:DISENCHANT:10d12
+blow:HIT:DRAIN_CHARGES:8d12
+blow:HIT:DRAIN_CHARGES:8d12
+flags:UNIQUE | MALE | EVIL | REGENERATE | GAURHOTH | FORCE_DEPTH
+flags:DROP_4 | DROP_GOOD | DROP_GREAT
+flags:MOVE_BODY
+flags:IM_ELEC | NO_FEAR
+spell-freq:2
+spell-power:130
+spells:BRAIN_SMASH | WOUND | TELE_LEVEL | TPORT
+spells:BA_DARK | BA_FIRE | BA_NETH
+spells:BO_ICE | BO_MANA | BO_PLAS
+spells:SHAPECHANGE
+spells:S_HI_DEMON | S_HI_DRAGON | S_HI_UNDEAD | S_UNIQUE | S_WRAITH
+shape:Wolf-Sauron
+shape:Serpent-Sauron
+shape:Vampire-Sauron
+desc:Greatest and most terrible of the servants of Morgoth.  A sorcerer of
+desc: dreadful powers, master of shadows and of phantoms, foul in wisdom, cruel
+desc: in strength, misshaping what he rules, lord of werewolves; his dominion
+desc: is torment.  He has many servants, and rarely fights without them.
+
+name:Wolf-Sauron
+base:canine
+color:p
+speed:140
+hearing:100
+armor-class:164
+sleepiness:0
+depth:85
+rarity:0
+blow:BITE:POISON:8d10
+blow:BITE:POISON:8d10
+blow:CLAW:CONFUSE:6d8
+blow:CLAW:PARALYZE:6d8
+flags:UNIQUE | MALE | EVIL | REGENERATE
+flags:FORCE_SLEEP
+flags:SMART | OPEN_DOOR | BASH_DOOR | MOVE_BODY
+flags:IM_POIS | IM_ELEC | IM_FIRE | IM_COLD
+flags:NO_CONF | NO_SLEEP | NO_FEAR
+innate-freq:3
+spell-freq:3
+spell-power:105
+spells:BLINK | TPORT | TELE_LEVEL | TELE_SELF_TO
+spells:BLIND | CONF | SCARE | WOUND
+spells:BR_FIRE | BR_NETH | BA_DARK
+spells:S_HOUND | S_DRAGON | S_HI_DEMON | S_HI_UNDEAD
+desc:Sauron's form as the mightiest wolf to walk the world.
+
+name:Serpent-Sauron
+base:snake
+color:p
+speed:130
+hearing:100
+armor-class:164
+sleepiness:0
+depth:85
+rarity:0
+blow:BITE:POISON:7d12
+blow:BITE:POISON:7d12
+blow:CRUSH:HURT:8d12
+blow:SPIT:ACID:4d12
+flags:UNIQUE | MALE | EVIL
+flags:FORCE_SLEEP
+flags:SMART | OPEN_DOOR | MOVE_BODY | REGENERATE
+flags:IM_POIS | IM_ACID | IM_ELEC | IM_COLD
+flags:NO_CONF | NO_SLEEP | NO_FEAR
+innate-freq:4
+spell-freq:4
+spell-power:108
+spells:BLINK | TPORT | TELE_LEVEL | TELE_SELF_TO
+spells:BLIND | CONF | SCARE | WOUND
+spells:BRAIN_SMASH | FORGET
+spells:BR_POIS | BR_CHAO | BR_ACID
+spells:S_DRAGON | S_HI_DEMON | S_HI_UNDEAD
+desc:Sauron's form as a serpent: poisonous, biting, spitting, and threatening
+desc: to crush you in its mighty coils.
+
+name:Vampire-Sauron
+base:vampire
+color:p
+speed:130
+hearing:100
+armor-class:164
+sleepiness:0
+depth:85
+rarity:0
+blow:BITE:EXP_80:6d12
+blow:CLAW:TERRIFY:8d12
+blow:HIT:DRAIN_CHARGES:8d12
+blow:HIT:DRAIN_CHARGES:8d12
+flags:UNIQUE | MALE | FLYING
+flags:MOVE_BODY | IM_ELEC
+flags:NO_FEAR
+spell-freq:2
+spell-power:130
+spells:BLINK | TPORT | TELE_LEVEL | BLIND | CONF
+spells:BRAIN_SMASH | FORGET
+spells:BO_ICE | BO_PLAS | BE_NETH
+spells:BA_NETH | STORM | BA_DARK | BA_POIS | BA_ACID
+spells:S_DRAGON | S_HI_DEMON | S_HI_UNDEAD
+desc:Sauron's form as a vampire, great as a dark cloud across the moon.
 
 ### Dungeon level 86 ###
 
@@ -14173,125 +14293,6 @@ desc:A gigantic wyrm, in command of the forces of Time itself.  You shudder
 desc: as you turn to face an emperor of Dragons, a despot of Life and Death,
 desc: and slowly realize that you have just encountered what might quite
 desc: possibly be your doom.
-
-### Dungeon level 99 ###
-
-name:Sauron, the Sorcerer
-base:ainu
-color:p
-speed:130
-hit-points:8000
-hearing:100
-armor-class:192
-sleepiness:0
-depth:99
-rarity:1
-experience:50000
-blow:HIT:DISENCHANT:10d12
-blow:HIT:DISENCHANT:10d12
-blow:HIT:DRAIN_CHARGES:8d12
-blow:HIT:DRAIN_CHARGES:8d12
-flags:UNIQUE | MALE | EVIL | REGENERATE
-flags:DROP_4 | DROP_GOOD | DROP_GREAT
-flags:MOVE_BODY
-flags:IM_ELEC | NO_FEAR
-flags:FORCE_DEPTH
-spell-freq:2
-spell-power:130
-spells:BRAIN_SMASH | WOUND | TELE_LEVEL | TPORT
-spells:BA_DARK | BA_FIRE | BA_NETH
-spells:BO_ICE | BO_MANA | BO_PLAS
-spells:SHAPECHANGE
-spells:S_HI_DEMON | S_HI_DRAGON | S_HI_UNDEAD | S_UNIQUE | S_WRAITH
-shape:Wolf-Sauron
-shape:Serpent-Sauron
-shape:Vampire-Sauron
-desc:Greatest and most terrible of the servants of Morgoth.  A sorcerer of
-desc: dreadful powers, master of shadows and of phantoms, foul in wisdom, cruel
-desc: in strength, misshaping what he rules, lord of werewolves; his dominion
-desc: is torment.  He has many servants, and rarely fights without them.
-
-name:Wolf-Sauron
-base:canine
-color:p
-speed:140
-hearing:100
-armor-class:164
-sleepiness:0
-depth:99
-rarity:0
-blow:BITE:POISON:8d10
-blow:BITE:POISON:8d10
-blow:CLAW:CONFUSE:6d8
-blow:CLAW:PARALYZE:6d8
-flags:UNIQUE | MALE | EVIL | REGENERATE
-flags:FORCE_SLEEP | FORCE_DEPTH
-flags:SMART | OPEN_DOOR | BASH_DOOR | MOVE_BODY
-flags:IM_POIS | IM_ELEC | IM_FIRE | IM_COLD
-flags:NO_CONF | NO_SLEEP | NO_FEAR
-innate-freq:3
-spell-freq:3
-spell-power:105
-spells:BLINK | TPORT | TELE_LEVEL | TELE_SELF_TO
-spells:BLIND | CONF | SCARE | WOUND
-spells:BR_FIRE | BR_NETH | BA_DARK
-spells:S_HOUND | S_DRAGON | S_HI_DEMON | S_HI_UNDEAD
-desc:Sauron's form as the mightiest wolf to walk the world.
-
-name:Serpent-Sauron
-base:snake
-color:p
-speed:130
-hearing:100
-armor-class:164
-sleepiness:0
-depth:99
-rarity:0
-blow:BITE:POISON:7d12
-blow:BITE:POISON:7d12
-blow:CRUSH:HURT:8d12
-blow:SPIT:ACID:4d12
-flags:UNIQUE | MALE | EVIL
-flags:FORCE_SLEEP | FORCE_DEPTH
-flags:SMART | OPEN_DOOR | MOVE_BODY | REGENERATE
-flags:IM_POIS | IM_ACID | IM_ELEC | IM_COLD
-flags:NO_CONF | NO_SLEEP | NO_FEAR
-innate-freq:4
-spell-freq:4
-spell-power:108
-spells:BLINK | TPORT | TELE_LEVEL | TELE_SELF_TO
-spells:BLIND | CONF | SCARE | WOUND
-spells:BRAIN_SMASH | FORGET
-spells:BR_POIS | BR_CHAO | BR_ACID
-spells:S_DRAGON | S_HI_DEMON | S_HI_UNDEAD
-desc:Sauron's form as a serpent: poisonous, biting, spitting, and threatening
-desc: to crush you in its mighty coils.
-
-name:Vampire-Sauron
-base:vampire
-color:p
-speed:130
-hearing:100
-armor-class:164
-sleepiness:0
-depth:99
-rarity:0
-blow:BITE:EXP_80:6d12
-blow:CLAW:TERRIFY:8d12
-blow:HIT:DRAIN_CHARGES:8d12
-blow:HIT:DRAIN_CHARGES:8d12
-flags:UNIQUE | MALE
-flags:FORCE_DEPTH
-flags:MOVE_BODY | IM_ELEC
-flags:NO_FEAR
-spell-freq:2
-spell-power:130
-spells:BLINK | TPORT | TELE_LEVEL | BLIND | CONF
-spells:BRAIN_SMASH | FORGET
-spells:BO_ICE | BO_PLAS | BE_NETH
-spells:BA_NETH | STORM | BA_DARK | BA_POIS | BA_ACID
-spells:S_DRAGON | S_HI_DEMON | S_HI_UNDEAD
-desc:Sauron's form as a vampire, great as a dark cloud across the moon.
 
 ### Dungeon level 100 ###
 

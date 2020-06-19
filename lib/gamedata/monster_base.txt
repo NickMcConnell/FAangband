@@ -53,14 +53,14 @@ desc:Ant
 name:bat
 glyph:b
 pain:4
-flags:ANIMAL
+flags:ANIMAL | FLYING
 desc:Bat
 
 # Quickish monsters usually with some effect beyond melee
 name:bird
 glyph:B
 pain:8
-flags:ANIMAL | CLEAR_WEB
+flags:ANIMAL | CLEAR_WEB | FLYING
 desc:Bird
 
 # Wolves are animals which mostly come in packs, and are associated with evil
@@ -104,7 +104,7 @@ desc:Dragon
 name:dragon fly
 glyph:F
 pain:7
-flags:ANIMAL | WEIRD_MIND
+flags:ANIMAL | WEIRD_MIND | FLYING
 flags:RAND_50 | BASH_DOOR
 flags:FORCE_SLEEP
 desc:Dragon Fly
@@ -140,7 +140,7 @@ desc:Feline (Cat)
 name:flying dragon
 glyph:D
 pain:1
-flags:DRAGON | EVIL | POWERFUL | SMART | SPIRIT | FLYING
+flags:DRAGON | EVIL | POWERFUL | SMART | SPIRIT | FLYING | ANGBAND
 flags:DROP_4
 flags:MOVE_BODY | CLEAR_WEB
 flags:NO_CONF | NO_SLEEP | NO_HOLD
