@@ -1062,7 +1062,6 @@ int rd_misc(void)
 		rd_byte(&tmp8u);
 		world->levels[j].visited = tmp8u ? true : false;
 	}
-	init_race_probs();
 
 	/* Read the randart seed */
 	rd_u32b(&seed_randart);
@@ -1083,11 +1082,12 @@ int rd_misc(void)
 	/* Current turn */
 	rd_s32b(&turn);
 
-	/* Handle randart file parsing */
+	/* Handle randart file parsing, race probabilities */
 	if (!player->is_dead) {
 		activate_randart_file();
 		run_parser(&randart_parser);
 		deactivate_randart_file();
+		init_race_probs();
 	}
 
 	/* Property knowledge */

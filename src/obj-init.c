@@ -2398,12 +2398,12 @@ static enum parser_error parse_ego_brand(struct parser *p) {
 
 static enum parser_error parse_ego_curse(struct parser *p) {
 	struct ego_item *e = parser_priv(p);
-	char *s;
+	const char *s = parser_getsym(p, "name");
 	int i;
 
 	if (!e)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
-	s = string_make(parser_getsym(p, "name"));
+	//s = parser_getsym(p, "name");
 	for (i = 1; i < z_info->curse_max; i++) {
 		if (streq(s, curses[i].name)) break;
 	}

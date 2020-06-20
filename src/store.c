@@ -491,6 +491,10 @@ void store_reset(void) {
 
 		/* Initial stock setup for stores */
 		while (s) {
+			if (store_is_home(s)) {
+				s = s->next;
+				continue;
+			}
 			s->stock_num = 0;
 			store_shuffle(s);
 			object_pile_free(s->stock);
@@ -1700,6 +1704,7 @@ static struct owner *store_choose_owner(struct store *s) {
 	}
 	assert(o->race->ridx == i);
 
+	mem_free(busy);
 	return store_ownerbyidx(s, i);
 }
 

@@ -437,11 +437,11 @@ static int select_property(int temp_potential, char **property_list,
 	int prices[choices][*max_value + 1];
 
 	bool found_it = false;
-	struct object *test_obj = object_new();
 
 	/* Run through choices, record costs */
 	for (i = 0; i < choices; i++) {
 		for (j = 0; j <= *max_value; j++) {
+			struct object *test_obj = object_new();
 
 			/* Copy the object, try buying the property */
 			object_copy(test_obj, obj);
@@ -456,9 +456,9 @@ static int select_property(int temp_potential, char **property_list,
 			if (object_similar(obj, test_obj, OSTACK_NONE)) {
 				prices[i][j] = 0;
 			}
+			object_delete(&test_obj);
 		}
 	}
-	object_delete(&test_obj);
 
 	/* Initialise best */
 	if (rank_method == RANK_CHEAPEST_FIRST) {
