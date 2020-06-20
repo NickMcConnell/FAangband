@@ -2126,6 +2126,8 @@ static enum parser_error parse_lore_name(struct parser *p) {
 	if (race) {
 		l = &l_list[race->ridx];
 		l->ridx = race->ridx;
+		l->friends = NULL;
+		l->friends_base = NULL;
 	}
 	parser_setpriv(p, l);
 	return PARSE_ERROR_NONE;
@@ -2456,7 +2458,7 @@ static errr finish_parse_lore(struct parser *p) {
 				l->blows[j].times_seen = 0;
 		}
 
-	   /* Convert friend names into race pointers - failure leaves NULL race */
+		/* Convert friend names into race pointers - failure leaves NULL race */
 		for (f = l->friends; f; f = f->next) {
 			if (!my_stricmp(f->name, "same"))
 				f->race = r;

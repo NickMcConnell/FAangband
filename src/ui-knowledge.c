@@ -1125,7 +1125,7 @@ static struct
 	{ L"V",        "Vampires" },
 	{ L"W",        "Wights/Wraiths" },
 	{ L"w",        "Worms/Worm Masses" },
-	{ L"X",        "Xorns/Xarens" },
+	{ L"X#",       "Xorns/Xarens" },
 	{ L"y",        "Yeeks" },
 	{ L"Y",        "Yeti" },
 	{ L"Z",        "Zephyr Hounds" },

@@ -130,8 +130,9 @@ strength-multiplier:5
 equip:food:Ration of Food:1:3
 equip:light:Wooden Torch:1:3
 equip:potion:Berserk Strength:1:1
-equip:sword:Dagger:1:1
+equip:sword:Broad Sword:1:1
 equip:soft armour:Soft Leather Armour:1:1
+equip:shield:Wicker Shield:1:1
 equip:scroll:Word of Recall:1:1
 player-flags:BRAVERY_30 | NO_MANA | SHIELD_BASH | XTRA_SPECIALTY
 player-flags:BOW_SPEED_GOOD | XBOW_SPEED_GOOD
@@ -169,7 +170,7 @@ min-weight:40
 strength-multiplier:2
 equip:food:Ration of Food:1:3
 equip:light:Wooden Torch:1:3
-equip:sword:Rapier:1:1
+equip:hafted:Magestaff:1:1
 equip:scroll:Word of Recall:1:1
 player-flags:BEAM | CHOOSE_SPELLS | DEVICE_EXPERT | STRONG_MAGIC
 specialties:ARMOR_PROFICIENCY | BEGUILE | CLARITY | ENHANCE_MAGIC
@@ -446,7 +447,6 @@ max-attacks:4
 min-weight:35
 strength-multiplier:3
 equip:food:Ration of Food:1:3
-equip:hafted:Whip:1:1
 equip:light:Wooden Torch:1:3
 equip:scroll:Word of Recall:1:1
 player-flags:CHOOSE_SPELLS | CHARM
@@ -957,7 +957,7 @@ max-attacks:4
 min-weight:35
 strength-multiplier:3
 equip:food:Ration of Food:1:3
-equip:sword:Main Gauche:1:1
+equip:hafted:Whip:1:1
 equip:scroll:Word of Recall:1:1
 player-flags:CHOOSE_SPELLS | UNLIGHT | EVIL | STRONG_MAGIC
 specialties:ARMOR_PROFICIENCY | BEGUILE | CLARITY | ENHANCE_MAGIC
@@ -1138,7 +1138,7 @@ expr:B:PLAYER_LEVEL:+ 0
 desc:Fires a chaos beam, arc or ball in the chosen direction, wakes everything
 desc: in the area, and attempts to frighten everything in line of sight.
 
-spell:Fume of Mordor:40:50:80:150
+spell:Fume of Thangorodrim:40:50:80:150
 effect:DARKEN_LEVEL
 dice:1
 desc:Darkens, maps out, and detects all objects on the complete current
@@ -1216,7 +1216,8 @@ min-weight:30
 strength-multiplier:5
 equip:food:Ration of Food:1:3
 equip:light:Wooden Torch:1:3
-equip:sword:Main Gauche:1:1
+equip:sword:Long Sword:1:1
+equip:shield:Wicker Shield:1:1
 equip:scroll:Protection from Evil:1:1
 equip:scroll:Word of Recall:1:1
 equip:prayer book:[Novice's Handbook]:1:1
@@ -1488,7 +1489,7 @@ min-weight:35
 strength-multiplier:4
 equip:food:Ration of Food:1:3
 equip:light:Wooden Torch:1:3
-equip:sword:Main Gauche:1:1
+equip:polearm:Thrusting Spear:1:1
 equip:bow:Short Bow:1:1
 equip:arrow:Arrow:15:20
 equip:scroll:Word of Recall:1:1
@@ -1599,7 +1600,7 @@ strength-multiplier:5
 equip:shadow book:[Into the Shadows]:1:1
 equip:food:Ration of Food:1:3
 equip:light:Wooden Torch:1:3
-equip:sword:Tulwar:1:1
+equip:polearm:Battle Axe:1:1
 equip:shield:Leather Shield:1:1
 equip:scroll:Word of Recall:1:1
 equip:potion:Cure Light Wounds:1:1

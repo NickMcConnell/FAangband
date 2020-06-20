@@ -1046,6 +1046,16 @@ lore-color-base:Orange
 message-vis:{name} summons animals.
 message-invis:You hear some things appear nearby!
 
+name:S_SWAMP
+msgt:SUM_ANIMAL
+hit:100
+effect:SUMMON:SWAMP
+dice:12
+lore:summon swamp creatures
+lore-color-base:Orange
+message-vis:{name} summons swamp creaturess.
+message-invis:You hear many squishy things appear nearby!
+
 name:S_SPIDER
 msgt:SUM_SPIDER
 hit:100

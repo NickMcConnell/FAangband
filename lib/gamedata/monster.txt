@@ -2922,7 +2922,7 @@ flags:BASH_DOOR | TERRITORIAL
 desc:A large black cat, stalking you with intent.  It thinks you're its next
 desc: meal.
 
-name:Petty-Dwarven rogue
+name:petty-dwarven rogue
 base:humanoid
 color:Z
 speed:120
@@ -5556,7 +5556,7 @@ innate-freq:6
 spells:SPIT
 desc:A giant silver ant with a caustic bite and hard scales.
 
-name:Orcogar, Son of Orcobal
+name:Orcogar, son of Orcobal
 base:orc
 color:P
 speed:120
@@ -9485,6 +9485,21 @@ friends:60:2d3:olog:servant
 desc:This troll's great strength and size have won it the place of chieftain of
 desc: its tribe.  It fears nothing.
 
+name:swamp quylthulg
+base:quylthulg
+color:m
+speed:110
+hit-points:75
+armor-class:1
+hearing:10
+sleepiness:1
+depth:40
+rarity:1
+experience:900
+spell-freq:2
+spells:TPORT | S_SWAMP
+desc:It is a squishy, stinking mound of flesh.
+
 ### Dungeon level 41 ###
 
 name:fire drake
@@ -10525,9 +10540,7 @@ flags:IM_COLD | IM_POIS | IM_NETHER
 innate-freq:6
 spells:BR_DARK | BR_NETH | BR_POIS
 desc:A terrifying sight: a winged creature greater than any bird you have ever
-desc: seen, and with no feathers on its horrid black leathery wings.  Descended
-desc: from a creature of an older world perhaps, bred by Sauron to be a winged
-desc: steed for his Ringwraiths.
+desc: seen, and with no feathers on its horrid black leathery wings.
 
 name:gorgon
 base:naga
@@ -12092,7 +12105,7 @@ friends:100:2d4:spider
 desc:One of the hideous brood of Ungoliant, spawned in the endless shadow of
 desc: Nan Dungortheb beneath the mountains of Ered Gorgoroth.
 
-name:Living dungeon
+name:living dungeon
 base:xorn
 color:D
 speed:110

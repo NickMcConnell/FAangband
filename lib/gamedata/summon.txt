@@ -70,6 +70,18 @@ uniques:0
 race-flag:ANIMAL
 desc:animals
 
+name:SWAMP
+msgt:SUM_ANIMAL
+uniques:0
+race-flag:ANIMAL
+base:icky thing
+base:jelly
+base:mold
+base:insect
+base:dragon fly
+base:mushroom
+desc:swamp creatures
+
 name:SPIDER
 msgt:SUM_SPIDER
 uniques:0

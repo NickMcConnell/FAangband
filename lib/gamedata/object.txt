@@ -605,6 +605,7 @@ level:0
 weight:12
 cost:30
 alloc:20:0 to 100
+pile:50:1d3
 attack:1d4:0:0
 armor:0:0
 flags:THROWING
@@ -882,6 +883,7 @@ level:40
 weight:55
 cost:250
 alloc:10:40 to 100
+pile:30:1d3
 attack:2d4:0:0
 armor:0:0
 flags:THROWING
@@ -945,6 +947,7 @@ level:10
 weight:20
 cost:30
 alloc:20:10 to 100
+pile:70:1d4
 attack:1d5:0:0
 armor:0:0
 flags:THROWING
@@ -958,6 +961,7 @@ level:5
 weight:50
 cost:36
 alloc:20:5 to 100
+pile:30:1d3
 attack:1d6:0:0
 armor:0:0
 flags:THROWING
@@ -1036,6 +1040,7 @@ level:25
 weight:40
 cost:150
 alloc:10:25 to 100
+pile:40:1d3
 attack:2d3:0:0
 armor:0:0
 flags:THROWING
