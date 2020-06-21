@@ -540,6 +540,39 @@ void wield_all(struct player *p)
 	return;
 }
 
+/**
+ * Upgrade weapon for advanced races.
+ */
+static void upgrade_weapon(struct player *p)
+{
+	int weapon_slot = slot_by_name(player, "weapon");
+	struct object *weapon = slot_object(player, weapon_slot);
+	struct town *hometown = town_by_name(world, p->race->hometown);
+	struct ego_item *ego;
+
+	/* Check if this is possible */
+	if (!weapon) return;
+	if (!hometown) return;
+	if (!hometown->ego) return;
+
+	/* Find the ego */
+	ego = lookup_ego_item(hometown->ego, weapon->tval, weapon->sval);
+	if (ego) {
+		/* Upgrade */
+		struct object *prev = weapon->prev;
+		struct object *next = weapon->next;
+		struct object *known = weapon->known;
+		object_prep(weapon, weapon->kind, p->depth, MINIMISE);
+		weapon->ego = ego;
+		weapon->prev = prev;
+		weapon->next = next;
+		weapon->known = known;
+		ego_apply_magic(weapon, p->depth, MINIMISE);
+		while (!object_fully_known(weapon)) {
+			object_learn_unknown_rune(p, weapon, false);
+		}
+	}
+}
 
 /**
  * Init players with some belongings
@@ -608,6 +641,9 @@ static void player_outfit(struct player *p)
 
 	/* Now try wielding everything */
 	wield_all(p);
+
+	/* Upgrade weapon for free if an advanced race */
+	upgrade_weapon(p);
 
 	/* Update knowledge */
 	update_player_object_knowledge(p);

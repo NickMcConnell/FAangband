@@ -10,6 +10,10 @@
 # west:locality:depth
 # up:locality:depth
 # down:locality:depth
+# ego:name
+
+# The 'ego' field is only used for towns with an advanced race who get an ego
+# weapon to start with.
 
 # Note that it is the first level in any map should be 
 # level:ARENA:0:CAVE
@@ -270,6 +274,7 @@ level:EPHEL_BRANDIR:0:TOWN
 north:BRETHIL:20
 south:WEST_BELERIAND:19
 west:TALATH_DIRNEN:20
+ego:of the Noldor
 
 level:BRETHIL:20:FOREST
 north:BRETHIL:24
@@ -363,13 +368,16 @@ north:ERED_LUIN:12
 east:ERIADOR:9
 south:ERED_LUIN:10
 west:THARGELION:11
+ego:of Nogrod
 
 level:MENEGROTH:0:TOWN
 north:DORIATH:20
 south:DORIATH:18
+ego:of Doriath
 
 level:GONDOLIN:0:TOWN
 west:SIRION_VALE:28
+ego:of Gondolin
 
 level:AMON_RUDH:15:MOUNTAIN
 north:WEST_BELERIAND:17
@@ -1315,6 +1323,7 @@ level:EPHEL_BRANDIR:0:TOWN
 north:BRETHIL:20
 south:WEST_BELERIAND:19
 west:TALATH_DIRNEN:20
+ego:of the Noldor
 
 level:BRETHIL:20:FOREST
 north:BRETHIL:22
@@ -1468,13 +1477,16 @@ north:ERED_LUIN:11
 east:ERIADOR:10
 south:ERED_LUIN:10
 west:THARGELION:11
+ego:of Nogrod
 
 level:MENEGROTH:0:TOWN
 north:DORIATH:20
 south:DORIATH:19
+ego:of Doriath
 
 level:GONDOLIN:0:TOWN
 west:SIRION_VALE:28
+ego:of Gondolon
 
 level:AMON_RUDH:15:MOUNTAIN
 north:WEST_BELERIAND:16

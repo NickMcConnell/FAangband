@@ -1746,7 +1746,7 @@ int object_find_unknown_rune(struct player *p, struct object *obj)
  * \param p is the player
  * \param obj is the object
  */
-void object_learn_unknown_rune(struct player *p, struct object *obj)
+void object_learn_unknown_rune(struct player *p, struct object *obj, bool msg)
 {
 	/* Get a random unknown rune from the object */
 	int i = object_find_unknown_rune(p, obj);
@@ -1755,7 +1755,7 @@ void object_learn_unknown_rune(struct player *p, struct object *obj)
 	if (i < 0) return;
 
 	/* Learn the rune */
-	player_learn_rune(p, i, true);
+	player_learn_rune(p, i, msg);
 }
 
 /**

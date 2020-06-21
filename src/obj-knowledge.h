@@ -89,7 +89,7 @@ void equip_learn_flag(struct player *p, int flag);
 void equip_learn_element(struct player *p, int element);
 void equip_learn_after_time(struct player *p);
 
-void object_learn_unknown_rune(struct player *p, struct object *obj);
+void object_learn_unknown_rune(struct player *p, struct object *obj, bool msg);
 void object_learn_on_wield(struct player *p, struct object *obj);
 void shape_learn_on_assume(struct player *p, const char *name);
 void object_learn_on_use(struct player *p, struct object *obj);

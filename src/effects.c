@@ -574,7 +574,7 @@ void brand_object(struct object *obj, const char *name)
 
 		/* Make it an ego item */
 		obj->ego = &e_info[i];
-		ego_apply_magic(obj, 0);
+		ego_apply_magic(obj, 0, RANDOMISE);
 		player_know_object(player, obj);
 
 		/* Update the gear */
@@ -2308,7 +2308,7 @@ bool effect_handler_IDENTIFY(effect_handler_context_t *context)
 		return used;
 
 	/* Identify the object */
-	object_learn_unknown_rune(player, obj);
+	object_learn_unknown_rune(player, obj, true);
 
 	return true;
 }

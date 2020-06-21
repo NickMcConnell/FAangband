@@ -252,6 +252,7 @@ desc: unnatural speed, letting out demonic shrieks that rouse everything nearby.
 name:of Nogrod
 rating:19
 alloc:5:0 to 50
+combat:d5:d5:0
 type:hafted
 type:polearm
 type:sword

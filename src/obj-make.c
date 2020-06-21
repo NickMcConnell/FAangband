@@ -553,21 +553,29 @@ static int apply_curse(struct object *obj, int lev)
 /**
  * Apply generation magic to an ego-item.
  */
-void ego_apply_magic(struct object *obj, int level)
+void ego_apply_magic(struct object *obj, int level, aspect rand_aspect)
 {
 	int i, x;
 	bitflag newf[OF_SIZE];
 
 	/* Random sustain */
 	if (kf_has(obj->ego->kind_flags, KF_RAND_SUSTAIN)) {
-		create_obj_flag_mask(newf, false, OFT_SUST, OFT_MAX);
-		of_on(obj->flags, get_new_attr(obj->flags, newf));
+		if (rand_aspect == MINIMISE) {
+			of_on(obj->flags, OF_SUST_WIS);
+		} else {
+			create_obj_flag_mask(newf, false, OFT_SUST, OFT_MAX);
+			of_on(obj->flags, get_new_attr(obj->flags, newf));
+		}
 	}
 
 	/* Extra power */
 	if (kf_has(obj->ego->kind_flags, KF_RAND_POWER)) {
-		create_obj_flag_mask(newf, false, OFT_PROT, OFT_MISC, OFT_MAX);
-		of_on(obj->flags, get_new_attr(obj->flags, newf));
+		if (rand_aspect == MINIMISE) {
+			of_on(obj->flags, OF_FEATHER);
+		} else {
+			create_obj_flag_mask(newf, false, OFT_PROT, OFT_MISC, OFT_MAX);
+			of_on(obj->flags, get_new_attr(obj->flags, newf));
+		}
 	}
 
 	/* Curses */
@@ -623,13 +631,13 @@ void ego_apply_magic(struct object *obj, int level)
 	}
 
 	/* Apply extra obj->ego bonuses */
-	obj->to_h += randcalc(obj->ego->to_h, level, RANDOMISE);
-	obj->to_d += randcalc(obj->ego->to_d, level, RANDOMISE);
-	obj->to_a += randcalc(obj->ego->to_a, level, RANDOMISE);
+	obj->to_h += randcalc(obj->ego->to_h, level, rand_aspect);
+	obj->to_d += randcalc(obj->ego->to_d, level, rand_aspect);
+	obj->to_a += randcalc(obj->ego->to_a, level, rand_aspect);
 
 	/* Apply modifiers */
 	for (i = 0; i < OBJ_MOD_MAX; i++) {
-		x = randcalc(obj->ego->modifiers[i], level, RANDOMISE);
+		x = randcalc(obj->ego->modifiers[i], level, rand_aspect);
 		obj->modifiers[i] += x;
 	}
 
@@ -732,7 +740,7 @@ static void make_ego_item(struct object *obj, int level)
 
 	/* Actually apply the ego template to the item */
 	if (obj->ego) {
-		ego_apply_magic(obj, level);
+		ego_apply_magic(obj, level, RANDOMISE);
 
 		/* Activation */
 		if (obj->ego->activation) {

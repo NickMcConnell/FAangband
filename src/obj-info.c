@@ -2277,7 +2277,7 @@ textblock *object_info_ego(struct ego_item *ego)
 	obj.tval = kind->tval;
 	obj.sval = kind->sval;
 	obj.ego = ego;
-	ego_apply_magic(&obj, 0);
+	ego_apply_magic(&obj, 0, MINIMISE);
 
 	object_copy(&known_obj, &obj);
 	obj.known = &known_obj;

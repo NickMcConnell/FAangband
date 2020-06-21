@@ -29,7 +29,7 @@
 
 int get_new_attr(bitflag *flags, bitflag *newf);
 bool random_high_resist(struct object *obj, int *resist);
-void ego_apply_magic(struct object *obj, int level);
+void ego_apply_magic(struct object *obj, int level, aspect rand_aspect);
 void copy_artifact_data(struct object *obj, const struct artifact *art);
 bool make_fake_artifact(struct object *obj, const struct artifact *artifact);
 void object_prep(struct object *obj, struct object_kind *kind, int lev,

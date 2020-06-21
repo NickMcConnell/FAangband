@@ -920,7 +920,7 @@ static void wiz_tweak_item(struct object *obj)
 		obj->prev = prev;
 		obj->next = next;
 		obj->known = known;
-		ego_apply_magic(obj, player->depth);
+		ego_apply_magic(obj, player->depth, RANDOMISE);
 	}
 	wiz_display_item(obj, true);
 

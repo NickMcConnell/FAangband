@@ -1956,7 +1956,7 @@ void do_cmd_buy(struct command *cmd)
 	object_flavor_aware(bought);
 	bought->known->effect = bought->effect;
 	while (!object_fully_known(bought)) {
-		object_learn_unknown_rune(player, bought);
+		object_learn_unknown_rune(player, bought, true);
 		player_know_object(player, bought);
 	}
 
@@ -2154,7 +2154,7 @@ void do_cmd_sell(struct command *cmd)
 	object_flavor_aware(obj);
 	obj->known->effect = obj->effect;
 	while (!object_fully_known(obj)) {
-		object_learn_unknown_rune(player, obj);
+		object_learn_unknown_rune(player, obj, true);
 		player_know_object(player, obj);
 	}
 

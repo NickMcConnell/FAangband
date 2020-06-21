@@ -948,6 +948,19 @@ static enum parser_error parse_world_down(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_world_ego(struct parser *p) {
+	struct level_map *map = parser_priv(p);
+	const char *name;
+
+	if (!map)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	assert(map->levels[map->num_levels - 1].depth == 0);
+	assert(map->towns[map->num_towns - 1].index == map->num_levels - 1);
+	name = parser_getstr(p, "name");
+	map->towns[map->num_towns - 1].ego = string_make(name);
+	return PARSE_ERROR_NONE;
+}
+
 struct parser *init_parse_world(void) {
 	struct parser *p = parser_new();
 
@@ -961,6 +974,7 @@ struct parser *init_parse_world(void) {
 	parser_reg(p, "west sym locality int depth", parse_world_west);
 	parser_reg(p, "up sym locality int depth", parse_world_up);
 	parser_reg(p, "down sym locality int depth", parse_world_down);
+	parser_reg(p, "ego str name", parse_world_ego);
 	return p;
 }
 

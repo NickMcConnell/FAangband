@@ -159,6 +159,26 @@ struct level *level_by_name(struct level_map *map, char *name)
 }
 
 /**
+ * Find a town by its name
+ */
+struct town *town_by_name(struct level_map *map, char *name)
+{
+	int i;
+
+	/* No hometown */
+	if (!name) return NULL;
+
+	for (i = 0; i < map->num_towns; i++) {
+		struct town *town = &map->towns[i];
+		struct level *lev = &map->levels[town->index];
+		if (streq(name, level_name(lev))) {
+			return town;
+		}
+	}
+	return NULL;
+}
+
+/**
  * Return a current world level's topography
  */
 int level_topography(int index)
