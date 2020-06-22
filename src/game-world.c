@@ -664,10 +664,11 @@ void process_world(struct chunk *c)
 	/* Process light */
 	player_update_light(player);
 
-	/* Update noise and scent */
-	make_noise(cave, player, NULL);
-	update_scent(cave, player, NULL);
-
+	/* Update noise and scent (not if resting) */
+	if (!player_is_resting(player)) {
+		make_noise(cave, player, NULL);
+		update_scent(cave, player, NULL);
+	}
 
 	/*** Process Inventory ***/
 
