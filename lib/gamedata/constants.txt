@@ -98,7 +98,7 @@ dun-gen:pit-max:2
 world:max-depth:128
 
 # Number of turns from dawn to dawn
-world:day-length:10000
+world:day-length:2000
 
 # Max number of grids in each dungeon level (vertically)
 world:dungeon-hgt:66

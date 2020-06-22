@@ -50,6 +50,7 @@ void do_cmd_wizard(void);
 void do_cmd_suicide(struct command *cmd);
 void do_cmd_reshape(struct command *cmd);
 void do_cmd_note(void);
+void do_cmd_time(void);
 
 /* cmd-obj.c */
 void do_cmd_uninscribe(struct command *cmd);

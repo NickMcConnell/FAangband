@@ -82,6 +82,8 @@ struct level *level_by_name(struct level_map *map, char *name);
 struct town *town_by_name(struct level_map *map, char *name);
 int level_topography(int index);
 bool is_daytime(void);
+bool outside(void);
+bool is_daylight(void);
 int turn_energy(int speed);
 void play_ambient_sound(void);
 void process_world(struct chunk *c);

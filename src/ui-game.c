@@ -150,6 +150,7 @@ struct cmd_info cmd_info[] =
 	{ "Identify symbol", { '/' }, CMD_NULL, do_cmd_query_symbol, NULL },
 	{ "Character description", { 'C' }, CMD_NULL, do_cmd_change_name, NULL },
 	{ "Check knowledge", { '~' }, CMD_NULL, textui_browse_knowledge, NULL },
+	{ "Check time", { '#' }, CMD_NULL, do_cmd_time, NULL },
 	{ "Repeat level feeling", { KTRL('F') }, CMD_NULL, do_cmd_feeling, NULL },
 	{ "Show previous message", { KTRL('O') }, CMD_NULL, do_cmd_message_one, NULL },
 	{ "Show previous messages", { KTRL('P') }, CMD_NULL, do_cmd_messages, NULL }

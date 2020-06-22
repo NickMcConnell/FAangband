@@ -1361,6 +1361,9 @@ static bool place_new_monster_one(struct chunk *c, struct loc grid,
 	/* Not where the player already is */
 	if (loc_eq(player->grid, grid)) return false;
 
+	/* No light hating monsters in daytime */
+	if (rf_has(race->flags, RF_HURT_LIGHT) && is_daylight()) return false;
+
 	/* Prevent monsters from being placed where they cannot walk, but allow
 	 * other feature types */
 	if (!square_is_monster_walkable(c, grid)) return false;
@@ -1407,6 +1410,10 @@ static bool place_new_monster_one(struct chunk *c, struct loc grid,
 	if (sleep && race->sleep) {
 		int val = race->sleep;
 		mon->m_timed[MON_TMD_SLEEP] = ((val * 2) + randint1(val * 10));
+	} else if (!is_daylight() &&
+			   (level_topography(player->place) != TOP_VALLEY) &&
+			   (level_topography(player->place) != TOP_TOWN)) {
+		mon->m_timed[MON_TMD_SLEEP] += 20;
 	}
 
 	/* Uniques get a fixed amount of HP */

@@ -202,6 +202,24 @@ bool is_daytime(void)
 }
 
 /**
+ * Say whether we're out where the sun shines
+ */
+bool outside(void)
+{
+	if (level_topography(player->place) == TOP_CAVE) return false;
+	if (level_topography(player->place) == TOP_VALLEY) return false;
+	return true;
+}
+
+/**
+ * Say whether it's daylight or not
+ */
+bool is_daylight(void)
+{
+	return is_daytime() && outside();
+}
+
+/**
  * The amount of energy gained in a turn by a player or monster
  */
 int turn_energy(int speed)
@@ -476,8 +494,8 @@ void process_world(struct chunk *c)
 		play_ambient_sound();
 
 	/* Handle stores and sunshine */
-	if (!player->depth) {
-		/* Daybreak/Nighfall in town */
+	if (outside()) {
+		/* Daybreak/Nightfall in town */
 		if (!(turn % ((10L * z_info->day_length) / 2))) {
 			/* Check for dawn */
 			bool dawn = (!(turn % (10L * z_info->day_length)));

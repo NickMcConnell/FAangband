@@ -18,6 +18,7 @@
 
 #include "angband.h"
 #include "cave.h"
+#include "game-world.h"
 #include "init.h"
 #include "monster.h"
 #include "mon-predicate.h"
@@ -578,9 +579,9 @@ void cave_illuminate(struct chunk *c, bool daytime)
 			}
 
 			/* Only interesting grids at night */
-			if (daytime || !square_isfloor(c, grid)) {
+			if (is_daylight()) {
 				sqinfo_on(square(c, grid).info, SQUARE_GLOW);
-				if(light) square_memorize(c, grid);
+				if (light && square_isview(c, grid)) square_memorize(c, grid);
 			} else if (!square_isbright(c, grid)) {
 				sqinfo_off(square(c, grid).info, SQUARE_GLOW);
 				square_forget(c, grid);
