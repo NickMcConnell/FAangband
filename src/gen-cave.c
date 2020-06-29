@@ -1625,13 +1625,15 @@ static void build_store(struct chunk *c, struct store *s, struct loc xroads,
 /**
  * Place town stairs
  */
-static struct loc place_town_stairs(struct chunk *c, struct player *p)
+static struct loc place_town_stairs(struct chunk *c, struct player *p,
+									struct loc xroads)
 {
-	struct loc grid = loc(0, 0);
+	struct loc grid = loc(0, 0), oldgrid = loc(0, 0);
 
 	/* Wilderness towns have paths leaving them */
 	if (strstr(world->name, "Wilderness")) {
 		struct level *lev = &world->levels[p->place];
+		struct level *last_lev = &world->levels[p->last_place];
 		struct level *north = NULL;
 		struct level *east = NULL;
 		struct level *south = NULL;
@@ -1643,51 +1645,59 @@ static struct loc place_town_stairs(struct chunk *c, struct player *p)
 		if (lev->west) west = level_by_name(world, lev->west);
 
 		if (north) {
-			grid.x = rand_spread(z_info->town_wid / 2, z_info->town_wid / 12);
-			grid.y = z_info->town_hgt / 2;
-			while (square_isfloor(c, grid) &&
-				   !square_isperm(c, next_grid(grid, DIR_N))) {
-				grid.y--;
-			}
-
-			/* Clear previous contents, add path */
-			square_set_feat(c, grid, FEAT_MORE_NORTH);
-		}
-
-		if (east) {
-			grid.y = rand_spread(z_info->town_hgt / 2, z_info->town_hgt / 12);
-			grid.x = z_info->town_wid / 2;
-			while (square_isfloor(c, grid) &&
-				   !square_isperm(c, next_grid(grid, DIR_E))) {
-				grid.x++;
-			}
-
-			/* Clear previous contents, add path */
-			square_set_feat(c, grid, FEAT_MORE_EAST);
-		}
-
-		if (south) {
-			grid.x = rand_spread(z_info->town_wid / 2, z_info->town_wid / 12);
-			grid.y = z_info->town_hgt / 2;
-			while (square_isfloor(c, grid) &&
-				   !square_isperm(c, next_grid(grid, DIR_S))) {
+			grid.x = xroads.x;
+			grid.y = 1;
+			while (!square_isfloor(c, grid)) {
 				grid.y++;
 			}
 
 			/* Clear previous contents, add path */
-			square_set_feat(c, grid, FEAT_MORE_SOUTH);
+			square_set_feat(c, grid, FEAT_MORE_NORTH);
+
+			/* Way back */
+			if (north == last_lev) oldgrid = grid;
 		}
 
-		if (west) {
-			grid.y = rand_spread(z_info->town_hgt / 2, z_info->town_hgt / 12);
-			grid.x = z_info->town_wid / 2;
-			while (square_isfloor(c, grid) &&
-				   !square_isperm(c, next_grid(grid, DIR_W))) {
+		if (east) {
+			grid.y = xroads.y;
+			grid.x = z_info->town_wid - 1;
+			while (!square_isfloor(c, grid)) {
 				grid.x--;
 			}
 
 			/* Clear previous contents, add path */
+			square_set_feat(c, grid, FEAT_MORE_EAST);
+
+			/* Way back */
+			if (east == last_lev) oldgrid = grid;
+		}
+
+		if (south) {
+			grid.x = xroads.x;
+			grid.y = z_info->town_hgt - 1;
+			while (!square_isfloor(c, grid)) {
+				grid.y--;
+			}
+
+			/* Clear previous contents, add path */
+			square_set_feat(c, grid, FEAT_MORE_SOUTH);
+
+			/* Way back */
+			if (south == last_lev) oldgrid = grid;
+		}
+
+		if (west) {
+			grid.y = xroads.y;
+			grid.x = 1;
+			while (!square_isfloor(c, grid)) {
+				grid.x++;
+			}
+
+			/* Clear previous contents, add path */
 			square_set_feat(c, grid, FEAT_MORE_WEST);
+
+			/* Check for way back */
+			if (!loc_eq(oldgrid, loc(0, 0))) grid = oldgrid;
 		}
 	} else {
 		/* Dungeon towns just have a single down stair */
@@ -1774,6 +1784,7 @@ static void town_gen_layout(struct chunk *c, struct player *p, struct town *t)
 	int num_attempts = 0;
 	bool success = false;
 
+	int min_store_y = z_info->town_hgt;
 	int max_store_y = 0;
 	int min_store_x = z_info->town_wid;
 	int max_store_x = 0;
@@ -1815,22 +1826,10 @@ static void town_gen_layout(struct chunk *c, struct player *p, struct town *t)
 			}
 		}
 
-		/* Place stairs or paths */
-		pgrid = place_town_stairs(c, p);
-
-		/* no lava next to stairs */
-		for (x = pgrid.x - 1; x <= pgrid.x + 1; x++) {
-			for (y = pgrid.y - 1; y <= pgrid.y + 1; y++) {
-				if (square_isfiery(c, loc(x, y))) {
-					square_set_feat(c, loc(x, y), FEAT_GRANITE);
-				}
-			}
-		}
-
-		xroads.x = pgrid.x;
-		xroads.y = z_info->town_hgt / 2
-				- randint0(z_info->town_hgt / 4)
-				+ randint0(z_info->town_hgt / 8);
+		xroads.x = z_info->town_wid / 4
+			+ randint0(z_info->town_wid / 2);
+		xroads.y = z_info->town_hgt / 4
+			+ randint0(z_info->town_hgt / 2);
 
 
 		int lot_min_x = -1 * xroads.x / lot_wid;
@@ -1860,6 +1859,7 @@ static void town_gen_layout(struct chunk *c, struct player *p, struct town *t)
 			}
 			if (num_attempts >= max_attempts) break;
 
+			min_store_y = MIN(min_store_y, xroads.y + lot_hgt * store_lot.y);
 			max_store_y = MAX(max_store_y, xroads.y + lot_hgt * store_lot.y);
 			min_store_x = MIN(min_store_x, xroads.x + lot_wid * store_lot.x);
 			max_store_x = MAX(max_store_x, xroads.x + lot_wid * store_lot.x);
@@ -1884,13 +1884,25 @@ static void town_gen_layout(struct chunk *c, struct player *p, struct town *t)
 	}
 
 	/* clear the street */
-	fill_rectangle(c, pgrid.y + 2, pgrid.x - 1,
-				   max_store_y, pgrid.x + 1,
-				   FEAT_FLOOR, SQUARE_NONE);
+	fill_rectangle(c, min_store_y, xroads.x,
+			max_store_y, xroads.x + 1,
+			FEAT_FLOOR, SQUARE_NONE);
 
 	fill_rectangle(c, xroads.y, min_store_x,
 			xroads.y + 1, max_store_x,
 			FEAT_FLOOR, SQUARE_NONE);
+
+	/* Place stairs or paths */
+	pgrid = place_town_stairs(c, p, xroads);
+
+	/* no lava next to stairs */
+	for (x = pgrid.x - 1; x <= pgrid.x + 1; x++) {
+		for (y = pgrid.y - 1; y <= pgrid.y + 1; y++) {
+			if (square_isfiery(c, loc(x, y))) {
+				square_set_feat(c, loc(x, y), FEAT_GRANITE);
+			}
+		}
+	}
 
 	/* Place the player */
 	player_place(c, p, pgrid);

@@ -578,7 +578,7 @@ static bool run_test(void)
 	int right_dir;
 
 	struct loc grid;
-	int i, max, inv;
+	int i, j, max, inv;
 	int option, option2;
 
 	/* No options yet */
@@ -746,9 +746,9 @@ static bool run_test(void)
 
 
 		/* Look at every soon to be newly adjacent square. */
-		for (i = -max; i <= max; i++) {
+		for (j = -max; j <= max; j++) {
 			/* New direction */
-			new_dir = cycle[chome[prev_dir] + i];
+			new_dir = cycle[chome[prev_dir] + j];
 
 			/* New location */
 			grid = loc_sum(player->grid,
@@ -769,8 +769,8 @@ static bool run_test(void)
 		/* Looking for open area */
 		if (run_open_area) {
 			/* Hack -- look again */
-			for (i = -max; i < 0; i++) {
-				new_dir = cycle[chome[prev_dir] + i];
+			for (j = -max; j < 0; j++) {
+				new_dir = cycle[chome[prev_dir] + j];
 				grid = loc_sum(player->grid, ddgrid[new_dir]);
 
 				/* Unknown grid or non-wall */
@@ -789,8 +789,8 @@ static bool run_test(void)
 			}
 
 			/* Hack -- look again */
-			for (i = max; i > 0; i--) {
-				new_dir = cycle[chome[prev_dir] + i];
+			for (j = max; j > 0; j--) {
+				new_dir = cycle[chome[prev_dir] + j];
 				grid = loc_sum(player->grid, ddgrid[new_dir]);
 
 				/* Unknown grid or non-wall */
