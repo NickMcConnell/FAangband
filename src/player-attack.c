@@ -178,7 +178,7 @@ int chance_of_melee_hit(const struct player *p, const struct object *weapon)
 
 	if (weapon)
 		bonus += weapon->to_h;
-	chance = p->state.skills[SKILL_TO_HIT_MELEE] + bonus * BTH_PLUS_ADJ;
+	chance = (p->state.skills[SKILL_TO_HIT_MELEE] + bonus * BTH_PLUS_ADJ) / 3;
 	return chance;
 }
 
@@ -210,7 +210,7 @@ static int chance_of_missile_hit(const struct player *p,
 		chance = p->state.skills[SKILL_TO_HIT_BOW] + bonus * BTH_PLUS_ADJ;
 	}
 
-	return chance - distance(p->grid, grid);
+	return (chance - distance(p->grid, grid)) / 3;
 }
 
 /**
@@ -241,16 +241,18 @@ static int terrain_armor_adjust(struct loc grid, int ac, bool melee)
 bool test_hit(int chance, int ac, int vis) {
 	int k = randint0(100);
 
-	/* There is an automatic 12% chance to hit,
-	 * and 5% chance to miss.
-	 */
-	if (k < 17) return k < 12;
+	/* Instant 5% miss or hit chance */
+	if (k < 10) {
+		return (k < 5);
+	}
 
 	/* Penalize invisible targets */
 	if (!vis) chance /= 2;
 
-	/* Starting a bit higher up on the scale */
-	if (chance < 9) chance = 9;
+	/* Can't be negative */
+	if (chance < 0) {
+		chance = 0;
+	}
 
 	/* Power competes against armor */
 	return randint0(chance) >= (ac * 2 / 3);
@@ -687,12 +689,7 @@ static int o_melee_damage(struct player *p, struct monster *mon,
 	if (s) {
 		multiplier = slays[s].o_multiplier;
 	} else if (b) {
-		int bmult = get_monster_brand_multiplier(mon, &brands[b]);
-
-		die_average *= bmult;
-		add = bmult - 10;
-	} else {
-		die_average *= 10;
+		multiplier = get_monster_brand_multiplier(mon, &brands[b]);
 	}
 
 	/* Additional bonus for Holy Light */
