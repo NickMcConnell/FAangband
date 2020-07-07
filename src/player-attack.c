@@ -975,6 +975,9 @@ bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 	monster_wake(mon, false, 100);
 	mon_clear_timed(mon, MON_TMD_HOLD, MON_TMD_FLG_NOTIFY);
 
+	/* Become hostile */
+	mon->target.midx = -1;
+
 	/* See if the player hit */
 	success = test_hit(chance + sleeping_bonus, ac, monster_is_visible(mon));
 
@@ -1491,6 +1494,9 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 					if (fear && monster_is_visible(mon)) {
 						add_monster_message(mon, MON_MSG_FLEE_IN_TERROR, true);
 					}
+
+					/* Become hostile */
+					mon->target.midx = -1;
 				}
 			}
 			/* Stop the missile, or reduce its piercing effect */

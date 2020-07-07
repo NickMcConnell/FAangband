@@ -1546,6 +1546,9 @@ void steal_monster_item(struct monster *mon, int midx)
 			msg("%s cries out in anger!", m_name);
 			effect_simple(EF_WAKE, source_monster(mon->midx), "", 0, 0, 0, 0, 0,
 						  NULL);
+
+			/* Become hostile */
+			mon->target.midx = -1;
 		}
 
 		/* Player hit and run */
@@ -1575,6 +1578,9 @@ void steal_monster_item(struct monster *mon, int midx)
 			obj->held_m_idx = 0;
 			pile_excise(&mon->held_obj, obj);
 			(void)monster_carry(cave, thief, obj);
+
+			/* Become hostile */
+			mon->target.midx = thief->midx;
 		}
 	}
 }

@@ -1472,8 +1472,9 @@ void project_m(struct source origin, int r, struct loc grid, int dam, int typ,
 		mon_died = project_m_player_attack(&context);
 	}
 
-	if (!mon_died)
+	if (!mon_died) {
 		project_m_apply_side_effects(&context, m_idx);
+	}
 
 	/* Update locals, since the project_m_* functions can change some values. */
 	mon = context.mon;
@@ -1482,8 +1483,14 @@ void project_m(struct source origin, int r, struct loc grid, int dam, int typ,
 	/* Check for NULL, since polymorph can occasionally return NULL. */
 	if (mon != NULL) {
 		/* Update the monster */
-		if (!mon_died)
+		if (!mon_died) {
 			update_mon(mon, cave, false);
+
+			/* Become hostile (to the player only, for now) */
+			if (origin.what == SRC_PLAYER) {
+				mon->target.midx = -1;
+			}
+		}
 
 		/* Redraw the (possibly new) monster grid */
 		square_light_spot(cave, mon->grid);

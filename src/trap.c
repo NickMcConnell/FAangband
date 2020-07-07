@@ -836,6 +836,7 @@ void monster_hit_trap(struct monster *mon, struct loc grid, bool *death)
 		bool ident;
 
 		/* Monster becomes hostile */
+		mon->target.midx = -1;
 
 		/* Message for the player */
 		if (monster_is_visible(mon)) {
