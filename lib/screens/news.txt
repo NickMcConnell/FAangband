@@ -1,22 +1,22 @@
+                                                                               
+             ****************************************************
+             **   {deep light blue}FAangband 2.0beta{/}  ****   {deep light blue}First Age Angband{/}  **
+             ** {light yellow}Beleriand in the days of the War of the Jewels{/} **
+             ****************************************************
 
-{mud}                                       ^                        {/}
-{mud}                                      ^^^                       {/}
-{mud}                ^                    ^^^^^                   ^  {/}
-{mud}               ^^^                  ^^^^^^^                 ^^^ {/}
-{mud}              ^^^^^                ^^^^^^^^^               ^^^^^{/}
-{mud}             ^^^^  {/}{red}_{/}{mud}              ^ {/}{red}_{/}{mud}  ^^^^^^             {/}{red}_{/}{mud}  ^^^^{/}
-{mud}            ^^^^ {/}{red} / \   _ __   __ _| |__   __ _ _ __   __| | {/}{mud}^^^^^   {/}
-{mud}           ^^^^ {/}{red} / _ \ | '_ \ / _` | '_ \ / _` | '_ \ / _` | {/}{mud}^^^^^^  {/}
-{mud}          ^^^^  {/}{red}/ ___ \| | | | (_| | |_) | (_| | | | | (_| | {/}{mud}^^^^^^^ {/}
-{mud}         ^^^^  {/}{red}/_/   \_\_| |_|\__, |_.__/ \__,_|_| |_|\__,_| {/}{mud}^^^^^^^^{/}
-{mud}        ^^^^^                {/}{red} |___/{/}  $VERSION
-{mud}       ^^^^^^^^^^^^^^^^^^                     ^^^^  ^^^^^^^^^^^^^^^^^^^ {/}
-{light slate}         "When the world is old and the Powers grow weary, then Morgoth,{/}
-{light slate}          seeing that the guard sleepeth, shall come back through the   {/}
-{light slate}          Door of Night out of the Timeless Void.  Then shall the Last  {/}
-{light slate}          Battle be gathered..."                                        {/}
+     Based on Moria, Umoria, Angband and Oangband,
+     with ideas and features from NPPangband and Unangband
 
-{light slate}                         Website: http://rephial.org/           {/}
-{light slate}                     Forums: http://angband.oook.cz/forum/      {/}
-              
-                           For help press '?' in-game
+     Contributors include Robert Alan Koeneke, James E. Wilson, Alex Cutler,
+     Andy Astrand, Sean Marsh, Geoff Hill, Charles Teague, Charles Swiger,
+     Ben Harrison, Robert Ruehlmann, Leon Marrick, Bahman Rabii, Jeff Greene,
+     Diego Gonzalez, Andrew Doull, Andi Sidwell, Pete Mack, Si Griffin.
+
+     {deep light blue}FAangband 0.1.0-2.0beta{/}  by Nick McConnell
+     {deep light blue}FAangband 0.3.6{/}          by Si Griffin
+
+     Send comments, bug reports, and patches to {light yellow}nckmccnnll@gmail.com{/}
+     The FAangband home page is {light yellow}http://angband.oook.cz/faangband{/}
+     Latest code is at {light yellow}https://github.com/NickMcConnell/FirstAgeAngband{/}
+     Visit the Angband ladder page at {light yellow}http://angband.oook.cz{/}
+                        '{light yellow}?{/}' for brief in-game help.
