@@ -578,7 +578,7 @@ static bool run_test(void)
 	int right_dir;
 
 	struct loc grid;
-	int i, j, max, inv;
+	int i, max, inv;
 	int option, option2;
 
 	/* No options yet */
@@ -743,87 +743,86 @@ static bool run_test(void)
 				}
 			}
 		}
+	}
 
+	/* Look at every soon to be newly adjacent square. */
+	for (i = -max; i <= max; i++) {
+		/* New direction */
+		new_dir = cycle[chome[prev_dir] + i];
 
-		/* Look at every soon to be newly adjacent square. */
-		for (j = -max; j <= max; j++) {
-			/* New direction */
-			new_dir = cycle[chome[prev_dir] + j];
+		/* New location */
+		grid = loc_sum(player->grid,
+					   loc_sum(ddgrid[prev_dir], ddgrid[new_dir]));
 
-			/* New location */
-			grid = loc_sum(player->grid,
-						   loc_sum(ddgrid[prev_dir], ddgrid[new_dir]));
+		/* HACK: Ugh. Sometimes we come up with illegal bounds. This will
+		 * treat the symptom but not the disease. */
+		if (!square_in_bounds(cave, grid)) continue;
 
-			/* HACK: Ugh. Sometimes we come up with illegal bounds. This will
-			 * treat the symptom but not the disease. */
-			if (!square_in_bounds(cave, grid)) continue;
+		/* Obvious monsters abort running */
+		if (square(cave, grid)->mon > 0) {
+			struct monster *mon = square_monster(cave, grid);
+			if (monster_is_obvious(mon))
+				return true;
+		}
+	}
 
-			/* Obvious monsters abort running */
-			if (square(cave, grid)->mon > 0) {
-				struct monster *mon = square_monster(cave, grid);
-				if (monster_is_obvious(mon))
+	/* Looking for open area */
+	if (run_open_area) {
+		/* Hack -- look again */
+		for (i = -max; i < 0; i++) {
+			new_dir = cycle[chome[prev_dir] + i];
+			grid = loc_sum(player->grid, ddgrid[new_dir]);
+
+			/* Unknown grid or non-wall */
+			if (!square_isknown(cave, grid) ||
+				square_ispassable(cave, grid)) {
+				/* Looking to break right */
+				if (run_break_right) {
 					return true;
+				}
+			} else { /* Obstacle */
+				/* Looking to break left */
+				if (run_break_left) {
+					return true;
+				}
 			}
 		}
 
-		/* Looking for open area */
-		if (run_open_area) {
-			/* Hack -- look again */
-			for (j = -max; j < 0; j++) {
-				new_dir = cycle[chome[prev_dir] + j];
-				grid = loc_sum(player->grid, ddgrid[new_dir]);
+		/* Hack -- look again */
+		for (i = max; i > 0; i--) {
+			new_dir = cycle[chome[prev_dir] + i];
+			grid = loc_sum(player->grid, ddgrid[new_dir]);
 
-				/* Unknown grid or non-wall */
-				if (!square_isknown(cave, grid) ||
-					square_ispassable(cave, grid)) {
-					/* Looking to break right */
-					if (run_break_right) {
-						return true;
-					}
-				} else { /* Obstacle */
-					/* Looking to break left */
-					if (run_break_left) {
-						return true;
-					}
+			/* Unknown grid or non-wall */
+			if (!square_isknown(cave, grid) ||
+				square_ispassable(cave, grid)) {
+				/* Looking to break left */
+				if (run_break_left) {
+					return true;
+				}
+			} else { /* Obstacle */
+				/* Looking to break right */
+				if (run_break_right) {
+					return true;
 				}
 			}
+		}
+	} else { /* Not looking for open area */
+		/* No options */
+		if (!option) {
+			return true;
+		} else if (!option2) { /* One option */
+			/* Primary option */
+			run_cur_dir = option;
 
-			/* Hack -- look again */
-			for (j = max; j > 0; j--) {
-				new_dir = cycle[chome[prev_dir] + j];
-				grid = loc_sum(player->grid, ddgrid[new_dir]);
+			/* No other options */
+			run_old_dir = option;
+		} else { /* Two options, examining corners */
+			/* Primary option */
+			run_cur_dir = option;
 
-				/* Unknown grid or non-wall */
-				if (!square_isknown(cave, grid) ||
-					square_ispassable(cave, grid)) {
-					/* Looking to break left */
-					if (run_break_left) {
-						return true;
-					}
-				} else { /* Obstacle */
-					/* Looking to break right */
-					if (run_break_right) {
-						return true;
-					}
-				}
-			}
-		} else { /* Not looking for open area */
-			/* No options */
-			if (!option) {
-				return true;
-			} else if (!option2) { /* One option */
-				/* Primary option */
-				run_cur_dir = option;
-
-				/* No other options */
-				run_old_dir = option;
-			} else { /* Two options, examining corners */
-				/* Primary option */
-				run_cur_dir = option;
-
-				/* Hack -- allow curving */
-				run_old_dir = option2;
-			}
+			/* Hack -- allow curving */
+			run_old_dir = option2;
 		}
 	}
 
