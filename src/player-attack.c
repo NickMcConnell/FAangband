@@ -178,7 +178,7 @@ int chance_of_melee_hit(const struct player *p, const struct object *weapon)
 
 	if (weapon)
 		bonus += weapon->to_h;
-	chance = (p->state.skills[SKILL_TO_HIT_MELEE] + bonus * BTH_PLUS_ADJ) / 2;
+	chance = p->state.skills[SKILL_TO_HIT_MELEE] + bonus * BTH_PLUS_ADJ;
 	return chance;
 }
 
@@ -210,7 +210,7 @@ static int chance_of_missile_hit(const struct player *p,
 		chance = p->state.skills[SKILL_TO_HIT_BOW] + bonus * BTH_PLUS_ADJ;
 	}
 
-	return (chance - distance(p->grid, grid)) / 2;
+	return chance - distance(p->grid, grid);
 }
 
 /**
@@ -495,7 +495,7 @@ static int o_critical_melee(const struct player *p, struct monster *mon,
 {
 	int debuff_to_hit = is_debuffed(mon) ? DEBUFF_CRITICAL_HIT : 0;
 	int power = (chance_of_melee_hit(p, obj) + debuff_to_hit + sleeping_bonus)
-		/ 3;
+		/ 4;
 	int add_dice = 0;
 
 	/* Armsman Ability - 1/6 critical chance */
