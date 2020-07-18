@@ -871,7 +871,7 @@ static bool obj_known_damage(const struct object *obj, int *normal_damage,
 		if (of_has(obj->known->flags, OF_PERFECT_BALANCE)) {
 			dam *= 2;
 		}
-		dam *= 1 + player->lev / 12;
+		dam *= 2 + obj->weight / 12;
 	}
 
 	if (ammo) multiplier = player->state.ammo_mult;
@@ -1045,7 +1045,7 @@ static bool o_obj_known_damage(const struct object *obj, int *normal_damage,
 			dice *= 2;
 		}
 		dice += o_calculate_missile_crits(player->state, obj, NULL);
-		dice *= 2 + player->lev / 12;
+		dice *= 2 + obj->weight / 12;
 	}
 
 	if (ammo) multiplier = player->state.ammo_mult;
