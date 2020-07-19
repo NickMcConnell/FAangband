@@ -1568,8 +1568,7 @@ bool effect_handler_DEEP_DESCENT(effect_handler_context_t *context)
 	//number = (4 / z_info->stair_skip) + 1;
 	number = 1;
 	for (i = 5; i > 0; i--) {
-		if (quest_forbid_downstairs(target_place)) break;
-		if (target_place >= z_info->max_depth - 1) break;
+		if (!world->levels[target_place].down) break;
 		target_place = player_get_next_place(target_place, "down", number);
 	}
 
@@ -1583,7 +1582,7 @@ bool effect_handler_DEEP_DESCENT(effect_handler_context_t *context)
 		player->upkeep->redraw |= PR_STATUS;
 		handle_stuff(player);
 	} else {
-		msgt(MSG_TPLEVEL, "You sense a malevolent presence blocking passage to the levels below.");
+		msgt(MSG_TPLEVEL, "Nothing happens.");
 	}
 	context->ident = true;
 	return true;
