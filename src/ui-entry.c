@@ -768,7 +768,7 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 {
 	struct ui_entry_combiner_state cst = { 0, 0, 0 };
 	struct ui_entry_combiner_funcs combiner;
-	bool first;
+	bool first, element_done = false;
 	int i, base = 0;
 
 	if (!p) {
@@ -911,7 +911,7 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 				(*combiner.accum_func)(v, a, &cst);
 			}
 		} else if (streq(entry->p_abilities[i].ability->type,
-			"element")) {
+			"element") && !element_done) {
 			int v = p->race->el_info[ind].res_level;
 			int a;
 			base = RES_LEVEL_BASE;
@@ -944,6 +944,7 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 				}
 				(*combiner.accum_func)(v, a, &cst);
 			}
+			element_done = true;
 		}
 	}
 	/*
