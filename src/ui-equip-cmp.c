@@ -2218,10 +2218,10 @@ static int initialize_summary(struct player *p,
 		struct store *store = town->stores;
 		if (!world->levels[town->index].visited) continue;
 		while (store) {
-			if (store_is_home(store)) {
-				continue;
+			if (!store_is_home(store)) {
+				apply_visitor_to_pile(store->stock, &visitor);
 			}
-			apply_visitor_to_pile(store->stock, &visitor);
+			store = store->next;
 		}
 	}
 
@@ -2264,10 +2264,10 @@ static int initialize_summary(struct player *p,
 		struct store *store = town->stores;
 		if (!world->levels[town->index].visited) continue;
 		while (store) {
-			if (store_is_home(store)) {
-				continue;
+			if (!store_is_home(store)) {
+				apply_visitor_to_pile(store->stock, &visitor);
 			}
-			apply_visitor_to_pile(store->stock, &visitor);
+			store = store->next;
 		}
 	}
 
