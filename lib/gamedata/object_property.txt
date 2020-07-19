@@ -559,7 +559,7 @@ type:flag
 subtype:throw
 id-type:on wield
 code:THROWING
-price-constant:200
+price-constant:10
 
 name:perfect balance
 type:flag
@@ -567,7 +567,7 @@ subtype:weapon
 id-type:on wield
 code:PERFECT_BALANCE
 desc:Is ideal for throwing
-price-constant:400
+price-constant:100
 
 name:darkness
 type:flag

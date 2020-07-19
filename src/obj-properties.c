@@ -218,7 +218,7 @@ bool object_has_property(const struct object *obj, struct obj_property *prop)
 		}
 		case OBJ_PROPERTY_FLAG :
 		{
-			return of_has(obj->flags, idx + 1);
+			return of_has(obj->flags, idx);
 			break;
 		}
 		case OBJ_PROPERTY_ELEMENT :
