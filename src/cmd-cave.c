@@ -1283,7 +1283,8 @@ void move_player(int dir, bool disarm)
 
 		/* Handle store doors, or notice objects */
 		if (square_isshop(cave, grid)) {
-			if (player_is_shapechanged(player)) {
+			if (player_is_shapechanged(player) &&
+				!index_is_home(square_shopnum(cave, grid))) {
 				msg("There is a scream and the door slams shut!");
 				return;
 			}
@@ -1557,7 +1558,8 @@ void do_cmd_hold(struct command *cmd)
 
 	/* Enter a store if we are on one, otherwise look at the floor */
 	if (square_isshop(cave, player->grid)) {
-		if (player_is_shapechanged(player)) {
+		if (player_is_shapechanged(player) &&
+			!index_is_home(square_shopnum(cave, player->grid))) {
 			msg("There is a scream and the door slams shut!");
 			return;
 		}
