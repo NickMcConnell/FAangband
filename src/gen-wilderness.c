@@ -1626,7 +1626,7 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 struct chunk *river_gen(struct player *p, int height, int width)
 {
 	struct loc grid, centre;
-	int i, y1 = height / 2;
+	int i, y1;
 	int *mid;
 	int place = p->place;
 	int last_place = p->last_place;
@@ -1639,6 +1639,7 @@ struct chunk *river_gen(struct player *p, int height, int width)
     /* Make the level */
     struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
+	y1 = c->height / 2;
 
 	/* Start with grass */
 	for (grid.y = 0; grid.y < c->height; grid.y++) {
