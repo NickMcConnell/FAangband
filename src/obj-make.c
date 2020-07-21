@@ -399,7 +399,7 @@ static struct ego_item *ego_find_random(struct object *obj, int level)
 static int pick_resist(bool low)
 {
 	if (low) return randint0(ELEM_HIGH_MIN);
-	return randint0(ELEM_HIGH_MAX) + ELEM_HIGH_MIN;
+	return randint0(ELEM_HIGH_MAX - ELEM_HIGH_MIN) + ELEM_HIGH_MIN;
 }
 
 /**
