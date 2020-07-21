@@ -447,7 +447,7 @@ phrase:a Wizard of legend.
 
 
 chart:74:75:100
-phrase:You have  
+phrase:You have 
 
 chart:75:76:5
 phrase:three fingers and toes, and are covered in 

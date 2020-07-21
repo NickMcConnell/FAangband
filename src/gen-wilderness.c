@@ -1701,7 +1701,7 @@ struct chunk *river_gen(struct player *p, int height, int width)
 				}
 			}
 			/* ...with door and stairs */
-			square_set_feat(c, loc(y1 + 1, mid[y1]), FEAT_CLOSED);
+			square_set_feat(c, loc(mid[y1], y1 + 1), FEAT_CLOSED);
 			square_set_feat(c, centre, FEAT_MORE);
 			if (level_topography(last_place) == TOP_CAVE) {
 				player_place(c, p, centre);
@@ -1720,12 +1720,12 @@ struct chunk *river_gen(struct player *p, int height, int width)
 					} else {
 						square_set_feat(c, grid, FEAT_GRANITE);
 					}
-					for (grid.x = mid[y1] - 5; grid.x < mid[y1]; grid.x++) {
-						square_set_feat(c, grid, FEAT_ROAD);
-					}
-					for (grid.x = mid[y1] - 4; grid.x < mid[y1] + 5; grid.x++) {
-						square_set_feat(c, grid, FEAT_WATER);
-					}
+				}
+				for (grid.x = mid[y1] - 5; grid.x < mid[y1]; grid.x++) {
+					square_set_feat(c, grid, FEAT_ROAD);
+				}
+				for (grid.x = mid[y1] - 4; grid.x < mid[y1] + 5; grid.x++) {
+					square_set_feat(c, grid, FEAT_WATER);
 				}
 			}
 		}
