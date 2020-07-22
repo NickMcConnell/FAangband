@@ -1244,7 +1244,7 @@ static struct chunk *cave_generate(struct player *p, int height, int width)
 
 		wiz_light(chunk, p, false);
 		chunk->turn = turn;
-
+ 
 		return chunk;
 	}
 
@@ -1286,7 +1286,7 @@ static struct chunk *cave_generate(struct player *p, int height, int width)
 		}
 
 		/* Ensure quest monsters */
-		if (quest) {
+		if (quest && !quest->complete) {
 			struct monster_race *race = quest->race;
 			struct monster_group_info info = { 0, 0 };
 			struct loc grid;
