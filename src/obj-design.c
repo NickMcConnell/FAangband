@@ -4571,10 +4571,8 @@ static bool choose_type(struct object *obj)
 						int choice;
 						struct obj_property *prop = NULL;
 						random_high_resist(obj, &choice);
-						prop = lookup_obj_property(OBJ_PROPERTY_ELEMENT,
-												   ELEM_HIGH_MIN + choice);
-						if (obj->el_info[ELEM_POIS + choice].res_level ==
-							RES_LEVEL_BASE) {
+						prop = lookup_obj_property(OBJ_PROPERTY_ELEMENT,choice);
+						if (obj->el_info[choice].res_level == RES_LEVEL_BASE) {
 							get_property(NULL, obj, prop->name,
 										 30 + 5 * randint0(5), true);
 						}

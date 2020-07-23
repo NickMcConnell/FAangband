@@ -1529,7 +1529,7 @@ desc: symbol.
 
 name:& Silver Crown~
 type:crown
-graphics:]:y
+graphics:]:w
 level:45
 weight:30
 cost:1000
