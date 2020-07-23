@@ -1645,7 +1645,7 @@ bool monster_change_shape(struct monster *mon)
 	} else {
 		/* Choose something the monster can summon */
 		bitflag summon_spells[RSF_SIZE];
-		int i, poss = 0, which, index, summon_type;
+		int i, poss = 0, which, index, summon_type = 0;
 		const struct monster_spell *spell;
 
 		/* Extract the summon spells */
@@ -1658,18 +1658,20 @@ bool monster_change_shape(struct monster *mon)
 			poss++;
 		}
 
-		/* Pick one */
-		which = randint0(poss);
-		index = rsf_next(summon_spells, FLAG_START);
-		for (i = 0; i < which; i++) {
-			index = rsf_next(summon_spells, index);
-		}
-		spell = monster_spell_by_index(index);
+		/* Pick one (defaults to ANY if no summons) */
+		if (poss) {
+			which = randint0(poss);
+			index = rsf_next(summon_spells, FLAG_START);
+			for (i = 0; i < which; i++) {
+				index = rsf_next(summon_spells, index);
+			}
+			spell = monster_spell_by_index(index);
 
-		/* Set the summon type, and the kin_base if necessary */
-		summon_type = spell->effect->subtype;
-		if (summon_type == summon_name_to_idx("KIN")) {
-			kin_base = mon->race->base;
+			/* Set the summon type, and the kin_base if necessary */
+			summon_type = spell->effect->subtype;
+			if (summon_type == summon_name_to_idx("KIN")) {
+				kin_base = mon->race->base;
+			}
 		}
 
 		/* Choose a race */
@@ -1679,7 +1681,7 @@ bool monster_change_shape(struct monster *mon)
 	/* Print a message immediately, update visuals */
 	if (monster_is_obvious(mon)) {
 		char m_name[80];
-		monster_desc(m_name, sizeof(m_name), mon, MDESC_IND_HID);
+		monster_desc(m_name, sizeof(m_name), mon, MDESC_STANDARD);
 		msgt(MSG_GENERIC, "%s %s", m_name, "shimmers and changes!");
 		if (player->upkeep->health_who == mon)
 			player->upkeep->redraw |= (PR_HEALTH);
@@ -1695,6 +1697,8 @@ bool monster_change_shape(struct monster *mon)
 		mon->original_player_race = mon->player_race;
 		if (rf_has(race->flags, RF_PLAYER)) {
 			mon->player_race = get_player_race();
+		} else {
+			mon->player_race = NULL;
 		}
 		mon->mspeed += mon->race->speed - mon->original_race->speed;
 	}
@@ -1716,7 +1720,7 @@ bool monster_revert_shape(struct monster *mon)
 	if (mon->original_race) {
 		if (monster_is_obvious(mon)) {
 			char m_name[80];
-			monster_desc(m_name, sizeof(m_name), mon, MDESC_IND_HID);
+			monster_desc(m_name, sizeof(m_name), mon, MDESC_STANDARD);
 			msgt(MSG_GENERIC, "%s %s", m_name, "shimmers and changes!");
 			if (player->upkeep->health_who == mon)
 				player->upkeep->redraw |= (PR_HEALTH);
