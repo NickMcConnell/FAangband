@@ -458,7 +458,7 @@ void apply_resistances(struct object *obj, int lev)
 			/* Occasionally reverse one */
 			if (one_in_(3)) {
 				obj->el_info[k].res_level =
-					RES_LEVEL_MAX - obj->el_info[k].res_level;
+					RES_LEVEL_MIN - obj->el_info[k].res_level;
 			}
 
 			roll = randint0(10 - (lev / 30));
