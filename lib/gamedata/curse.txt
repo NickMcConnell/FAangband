@@ -366,13 +366,13 @@ effect:DRAIN_MANA
 dice:10d8
 time:1d200
 msg:Your concentration weakens.
-desc:Sometimes drains your mana
+desc:sometimes drains your mana
 
 name:experience drain
 flags:DRAIN_EXP
-desc:Drains your experience
+desc:drains your experience
 
 name:stat drain
 effect:DRAIN_STAT
-desc:Drains a random stat
+desc:drains a random stat
 time:1d1500

@@ -281,7 +281,7 @@ static bool get_property(struct artifact *art, struct object *obj,
 				/* Work out the current cost and subtract it */
 				cur_cost = property_cost(prop, cur_value, false);
 				if (take_money(cost - cur_cost, on_credit)) {
-					obj->brands[pick] = true;
+					append_brand(&obj->brands, pick);
 					return true;
 				}
 			}
@@ -320,7 +320,7 @@ static bool get_property(struct artifact *art, struct object *obj,
 				/* Work out the current cost and subtract it */
 				cur_cost = property_cost(prop, cur_value, false);
 				if (take_money(cost - cur_cost, on_credit)) {
-					obj->slays[pick] = true;
+					append_slay(&obj->slays, pick);
 					return true;
 				}
 			}

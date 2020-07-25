@@ -2093,7 +2093,7 @@ expr:B:PLAYER_LEVEL:* 3 / 2 + 45
 effect:TIMED_INC:OPP_ELEC
 dice:20+1d20
 time:100+d50
-desc:cast a cold ball for 80 damage and opposes cold
+desc:cast an electricity ball for 80 damage and opposes electricity
 
 name:RING_FIRE
 aim:1
@@ -2117,7 +2117,7 @@ expr:B:PLAYER_LEVEL:* 3 / 2 + 45
 effect:TIMED_INC:OPP_COLD
 dice:20+1d20
 time:100+d50
-desc:cast an electricity ball for 80 damage and opposes electricity
+desc:cast a cold ball for 80 damage and opposes cold
 
 # Amulet of metamorphosis
 
