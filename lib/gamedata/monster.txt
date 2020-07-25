@@ -11605,12 +11605,12 @@ name:Glaurung, Father of the Dragons
 base:dragon
 color:r
 speed:130
-hit-points:7500
+hit-points:5000
 light:2
 hearing:30
 armor-class:210
 sleepiness:20
-depth:75
+depth:55
 rarity:3
 experience:55000
 blow:CLAW:HURT:6d12
