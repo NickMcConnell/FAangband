@@ -125,6 +125,14 @@ static bool has_property(struct artifact *art, struct object *obj,
 			}
 			break;
 		}
+		case OBJ_PROPERTY_IGNORE:
+		{
+			struct element_info *el_info = art ? art->el_info : obj->el_info;
+			if (el_info[prop->index].flags & EL_INFO_IGNORE) {
+				return true;
+			}
+			break;
+		}
 		case OBJ_PROPERTY_BRAND:
 		{
 			bool *b = art ? art->brands : obj->brands;
@@ -244,6 +252,15 @@ static bool get_property(struct artifact *art, struct object *obj,
 			int cur_cost = art ? 0 : property_cost(prop, cur_value, false);
 			if (take_money(cost - cur_cost, on_credit)) {
 				el_info[prop->index].res_level -= value;
+				return true;
+			}
+			break;
+		}
+		case OBJ_PROPERTY_IGNORE:
+		{
+			struct element_info *el_info = art ? art->el_info : obj->el_info;
+			if (take_money(cost, on_credit)) {
+				el_info[prop->index].flags |= EL_INFO_IGNORE;
 				return true;
 			}
 			break;

@@ -388,7 +388,9 @@ static int pick_one_chest_trap(int level)
  */
 int pick_chest_traps(struct object *obj)
 {
-	int level = obj->kind->level;
+	/* This MAX is a temporary fix for the formulas below needing to allow for
+	 * deeper chests */
+	int level = MAX(obj->kind->level, 55);
 	int trap = 0;
 
 	/* One in ten chance of no trap */
