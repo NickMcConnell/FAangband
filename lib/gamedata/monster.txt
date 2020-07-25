@@ -11574,7 +11574,7 @@ desc:A foul, humanoid creature with a long tail, clawed hands and feet, and a
 desc: disgusting, wiry, snaky beard.  They are the elite shock troops of the
 desc: hells, capable of a terrifying berserk fury.
 
-name:lord of misrule
+name:lords of misrule
 plural:lords of misrule
 base:person
 color:D
