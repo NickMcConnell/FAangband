@@ -98,6 +98,7 @@ rating:10
 alloc:40:10 to 100
 item:light:Lantern
 values:STEALTH[d2] | RES_LIGHT[40] | LIGHT[-4]
+min-values:LIGHT[-4]
 desc:Desired by necromancers, this uncanny lamp burns dark and guards against
 desc: the dangers of the light.
 
@@ -271,7 +272,9 @@ item:hafted:Whip
 alloc:5:0 to 50
 cost:10000
 combat:-20:10:0
+min-combat:255:0:0
 values:STEALTH[-4] | RES_FIRE[45] | LIGHT[1]
+min-values:STEALTH[-4]
 flags:XTRA_DICE | HEAVY | IGNORE_FIRE
 brand:FIRE_4
 act:BALROG_WHIP
@@ -407,6 +410,7 @@ type:sword
 cost:500
 flags:PROT_FEAR
 values:SPEED[-d2] | CON[d2]
+min-values:SPEED[-2]
 slay:ORC_3
 desc:This weapon embodies the Drû-folk - slow, but courageous and sturdy,
 desc: and with a hatred of orcs.
@@ -555,9 +559,11 @@ type:sword
 alloc:10:10 to 80
 cost:-3000
 combat:-d10:d5:0
+min-combat:255:0:0
 flags:SEE_INVIS | HOLD_LIFE | RAND_CURSE | XTRA_SIDES | XTRA_TO_D | RAND_POWER
 values:RES_NETHER[50] | RES_COLD[20] | RES_POIS[20] | RES_FIRE[-30]
 values:RES_LIGHT[-15] | CON[-d4] | DEX[-d4] | STEALTH[-d4]
+min-values:CON[-4] | DEX[-4] | STEALTH[-4]
 brand:COLD_3
 brand:POIS_3
 desc:A weapon of despair, that draws you ever deeper into the realm
@@ -772,6 +778,7 @@ cost:0
 rating:0
 alloc:0:10 to 80
 combat:-26+d25:-26+d25:0
+min-combat:255:255:0
 type:shot
 type:arrow
 type:bolt
@@ -989,6 +996,7 @@ alloc:100:1 to 20
 cost:0
 type:helm
 values:INT[-d5] | WIS[-d5] | STR[d3] | CON[d3]
+min-values: INT[-5] | WIS[-5]
 desc:This headgear saps the powers of the mind, but adds to the powers of the
 desc: body.
 
@@ -1051,6 +1059,7 @@ item:hard armor:Full Plate Armour
 item:hard armor:Ribbed Plate Armour
 combat:0:0:10
 values:RES_FIRE[40] | STEALTH[-d2]
+min-values:STEALTH[-2]
 flags:HOLD_LIFE | XTRA_TO_A
 curse:cuts:100
 curse:impair hitpoint recovery:100
@@ -1194,6 +1203,7 @@ rating:0
 alloc:30:0 to 40
 cost:0
 combat:-10:-10:10
+min-combat:255:255:0
 type:cloak
 flags:XTRA_TO_A
 values:DAM_RED[2+d3]
@@ -1303,6 +1313,7 @@ item:shield:Knight's Shield
 item:shield:Body Shield
 item:shield:Shield of Deflection
 values:RES_ELEC[50] | INFRA[-d2] | SEARCH[-d2]
+min-values:INFRA[-2] | SEARCH[-2]
 flags:IGNORE_ACID
 desc:Cunningly constructed to divert electricity from its bearer, this shield
 desc: also makes perception less clear.
