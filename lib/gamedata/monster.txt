@@ -10726,6 +10726,7 @@ blow:CLAW:HURT:6d8
 blow:CLAW:HURT:6d8
 blow:BITE:ELEC:7d8
 flags:BASH_DOOR
+flags:DROP_4
 flags:IM_ELEC
 innate-freq:12
 spell-freq:8
@@ -10748,6 +10749,7 @@ blow:CLAW:HURT:6d8
 blow:CLAW:HURT:6d8
 blow:BITE:COLD:7d8
 flags:BASH_DOOR
+flags:DROP_4
 flags:IM_COLD
 innate-freq:12
 spell-freq:8
@@ -10770,6 +10772,7 @@ blow:CLAW:HURT:6d8
 blow:CLAW:HURT:6d8
 blow:BITE:POISON:7d8
 flags:BASH_DOOR
+flags:DROP_4
 flags:IM_POIS
 innate-freq:12
 spell-freq:8
@@ -10795,6 +10798,7 @@ blow:BITE:EXP_80:7d10
 flags:INVISIBLE
 flags:ONLY_ITEM
 flags:PASS_WALL | TAKE_ITEM
+flags:DROP_4
 flags:IM_COLD | IM_NETHER
 innate-freq:12
 spell-freq:6
@@ -10821,6 +10825,7 @@ blow:BITE:HURT:7d10
 flags:ATTR_FLICKER
 flags:ONLY_ITEM
 flags:BASH_DOOR
+flags:DROP_4
 flags:IM_COLD
 innate-freq:12
 spell-freq:6
@@ -10847,7 +10852,7 @@ blow:CLAW:HURT:6d10
 blow:CLAW:HURT:6d10
 blow:BITE:CONFUSE:7d10
 flags:INVISIBLE
-flags:ONLY_ITEM
+flags:DROP_4
 flags:PASS_WALL
 innate-freq:9
 spell-freq:10
@@ -10929,6 +10934,7 @@ blow:CLAW:HURT:6d9
 blow:CLAW:HURT:6d9
 blow:BITE:ACID:7d9
 flags:BASH_DOOR
+flags:DROP_4
 flags:IM_ACID
 innate-freq:12
 spell-freq:8
@@ -10952,6 +10958,7 @@ blow:CLAW:HURT:6d9
 blow:CLAW:HURT:6d9
 blow:BITE:FIRE:7d9
 flags:BASH_DOOR
+flags:DROP_4
 flags:IM_FIRE
 innate-freq:12
 spell-freq:8
@@ -10975,6 +10982,7 @@ blow:CLAW:HURT:6d9
 blow:CLAW:HURT:6d9
 blow:BITE:HURT:7d9
 flags:BASH_DOOR | NO_STUN
+flags:DROP_4
 innate-freq:12
 spell-freq:8
 spells:BLIND | CONF | SCARE
@@ -11186,7 +11194,7 @@ blow:CLAW:HURT:4d11
 blow:BITE:FIRE:4d15
 blow:BITE:FIRE:4d15
 flags:UNIQUE | MALE
-flags:DROP_GOOD | ONLY_ITEM
+flags:DROP_4 | DROP_GOOD | ONLY_ITEM
 flags:BASH_DOOR
 flags:IM_FIRE
 innate-freq:8
@@ -11266,6 +11274,7 @@ blow:CLAW:HURT:6d10
 blow:BITE:HURT:7d10
 flags:ONLY_ITEM
 flags:BASH_DOOR
+flags:DROP_4
 flags:IM_ACID | IM_COLD | IM_ELEC | IM_FIRE | IM_POIS
 flags:ATTR_MULTI
 innate-freq:6
@@ -11313,7 +11322,7 @@ blow:CLAW:HURT:4d11
 blow:CLAW:COLD:4d15
 blow:BITE:COLD:4d15
 flags:UNIQUE | MALE
-flags:DROP_GOOD | ONLY_ITEM
+flags:DROP_4 | DROP_GOOD | ONLY_ITEM
 flags:BASH_DOOR
 flags:IM_COLD
 innate-freq:8
@@ -11511,7 +11520,7 @@ blow:CLAW:HURT:6d12
 blow:CLAW:HURT:6d12
 blow:BITE:EXP_80:7d14
 flags:UNDEAD | COLD_BLOOD
-flags:ONLY_ITEM
+flags:DROP_2 | ONLY_ITEM
 flags:BASH_DOOR | TAKE_ITEM
 flags:IM_COLD | IM_POIS | NO_STUN | IM_NETHER
 innate-freq:10
@@ -11538,7 +11547,7 @@ blow:BITE:HURT:6d12
 blow:BITE:FIRE:7d14
 blow:GAZE:PARALYZE
 flags:ANIMAL
-flags:ONLY_ITEM
+flags:DROP_2 | ONLY_ITEM
 flags:BASH_DOOR
 flags:IM_ACID | IM_FIRE | IM_NEXUS
 innate-freq:10
@@ -11618,7 +11627,7 @@ blow:CLAW:HURT:6d12
 blow:BITE:POISON:8d14
 blow:BITE:FIRE:8d14
 flags:UNIQUE | MALE | NARGOTHROND | FORCE_DEPTH
-flags:DROP_GOOD | DROP_GREAT | ONLY_ITEM
+flags:DROP_4 | DROP_GOOD | DROP_GREAT | ONLY_ITEM
 flags:BASH_DOOR
 flags:IM_FIRE | IM_POIS
 innate-freq:5
@@ -13096,6 +13105,7 @@ blow:CLAW:ACID:5d12
 blow:CLAW:ACID:5d12
 blow:BITE:POISON:6d14
 flags:ATTR_MULTI
+flags:DROP_4 | ONLY_ITEM
 flags:IM_ACID | IM_POIS 
 innate-freq:8
 spell-freq:5
@@ -13226,6 +13236,7 @@ blow:CLAW:HURT:5d12
 blow:CLAW:COLD:5d12
 blow:CLAW:COLD:5d12
 blow:BITE:HURT:6d14
+flags:DROP_4 | ONLY_ITEM
 flags:IM_COLD
 innate-freq:8
 spell-freq:5
@@ -13367,6 +13378,7 @@ blow:CLAW:HURT:5d12
 blow:CLAW:ELEC:5d12
 blow:CLAW:ELEC:5d12
 blow:BITE:HURT:6d14
+flags:DROP_4 | ONLY_ITEM
 flags:IM_ELEC
 innate-freq:8
 spell-freq:5
@@ -13472,6 +13484,7 @@ blow:CLAW:HURT:5d13
 blow:CLAW:FIRE:5d13
 blow:CLAW:FIRE:5d13
 blow:BITE:HURT:6d16
+flags:DROP_4 | ONLY_ITEM
 flags:IM_FIRE
 innate-freq:8
 spell-freq:5
@@ -13587,7 +13600,7 @@ blow:CLAW:HURT:5d12
 blow:CLAW:HURT:5d12
 blow:BITE:HURT:7d14
 blow:BITE:HURT:7d14
-flags:ONLY_ITEM
+flags:DROP_4 | ONLY_ITEM
 flags:BASH_DOOR
 flags:IM_FIRE | IM_DISEN
 flags:ATTR_MULTI
@@ -13617,7 +13630,7 @@ blow:CLAW:HURT:5d12
 blow:BITE:HURT:7d14
 blow:BITE:HURT:7d14
 flags:ATTR_FLICKER
-flags:ONLY_ITEM
+flags:DROP_4 | ONLY_ITEM
 flags:BASH_DOOR
 flags:IM_COLD | NO_STUN
 innate-freq:5
@@ -13645,7 +13658,7 @@ blow:CLAW:HURT:5d12
 blow:CLAW:HURT:5d12
 blow:CLAW:HURT:5d12
 blow:BITE:HURT:7d14
-flags:ONLY_ITEM
+flags:DROP_4 | ONLY_ITEM
 flags:PASS_WALL
 innate-freq:5
 spell-freq:5
@@ -13880,7 +13893,7 @@ blow:CLAW:HURT:6d12
 blow:CLAW:HURT:6d12
 blow:BITE:HURT:7d14
 blow:BITE:HURT:7d14
-flags:ONLY_ITEM
+flags:DROP_4 | ONLY_ITEM
 flags:BASH_DOOR
 flags:IM_FIRE
 flags:ATTR_MULTI
@@ -13909,7 +13922,7 @@ blow:CLAW:HURT:6d12
 blow:BITE:HURT:7d14
 blow:BITE:HURT:7d14
 flags:ATTR_FLICKER
-flags:ONLY_ITEM
+flags:DROP_4 | ONLY_ITEM
 flags:BASH_DOOR
 flags:IM_COLD | NO_STUN
 innate-freq:5
@@ -14009,7 +14022,7 @@ blow:CLAW:HURT:6d12
 blow:BITE:HURT:7d14
 blow:BITE:HURT:7d14
 flags:ATTR_FLICKER
-flags:ONLY_ITEM
+flags:DROP_4 | ONLY_ITEM
 flags:BASH_DOOR
 flags:IM_COLD | IM_FIRE | IM_DISEN | NO_STUN
 innate-freq:5
@@ -14039,7 +14052,7 @@ blow:CLAW:HURT:6d12
 blow:CLAW:HURT:6d12
 blow:BITE:HURT:7d14
 blow:BITE:HURT:7d14
-flags:ONLY_ITEM
+flags:DROP_4 | ONLY_ITEM
 flags:BASH_DOOR
 flags:IM_ACID | IM_COLD | IM_ELEC | IM_FIRE | IM_POIS
 flags:ATTR_MULTI
@@ -14130,7 +14143,7 @@ blow:CLAW:HURT:6d12
 blow:BITE:FIRE:7d14
 blow:BITE:FIRE:7d14
 flags:UNIQUE | MALE
-flags:DROP_GOOD | ONLY_ITEM
+flags:DROP_4 | DROP_2 | DROP_GOOD | ONLY_ITEM
 flags:BASH_DOOR
 flags:IM_FIRE
 innate-freq:4
@@ -14258,7 +14271,7 @@ blow:CLAW:HURT:8d12
 blow:BITE:HURT:10d14
 blow:BITE:HURT:10d14
 flags:UNIQUE | MALE
-flags:DROP_GOOD | DROP_GREAT | ONLY_ITEM
+flags:DROP_4 | DROP_2 | DROP_GOOD | DROP_GREAT | ONLY_ITEM
 flags:BASH_DOOR
 flags:IM_ACID | IM_COLD | IM_ELEC | IM_FIRE | IM_POIS
 innate-freq:4
@@ -14290,7 +14303,7 @@ blow:CLAW:HURT:6d12
 blow:CLAW:HURT:6d12
 blow:BITE:HURT:8d16
 flags:ATTR_MULTI
-flags:DROP_2 | DROP_4
+flags:DROP_2 | DROP_4 | ONLY_ITEM
 flags:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS
 flags:KILL_WALL | NO_FEAR
 spell-freq:8
