@@ -505,7 +505,11 @@ static struct object const OBJECT_NULL = {
 	.to_d = 0,
 	.flags = { 0 },
 	.modifiers = { 0 },
-	.el_info = { { 100, 0 } },
+	.el_info = {
+		#define ELEM(a) { RES_LEVEL_BASE, 0 },
+		#include "list-elements.h"
+		#undef ELEM
+	},
 	.brands = NULL,
 	.slays = NULL,
 	.curses = NULL,
