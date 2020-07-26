@@ -282,7 +282,10 @@ bool pile_contains(const struct object *top, const struct object *obj)
  */
 struct object *object_new(void)
 {
-	return mem_zalloc(sizeof(struct object));
+	struct object *o = mem_alloc(sizeof(*o));
+
+	memcpy(o, &OBJECT_NULL, sizeof(*o));
+	return o;
 }
 
 /**

@@ -847,18 +847,12 @@ bool object_element_is_known(const struct object *obj, int element)
  */
 void object_set_base_known(struct object *obj)
 {
-	int i;
-
 	assert(obj->known);
 	obj->known->kind = obj->kind;
 	obj->known->tval = obj->tval;
 	obj->known->sval = obj->sval;
 	obj->known->weight = obj->weight;
 	obj->known->number = obj->number;
-
-	for (i = 0; i < ELEM_MAX; i++) {
-		obj->known->el_info[i].res_level = RES_LEVEL_BASE;
-	}
 
 	/* Generic dice and ac, to_h for armor, and launcher multipliers */
 	if (!obj->known->dd) {
