@@ -3556,7 +3556,7 @@ attack:1d1:0:0
 armor:0:0
 charges:1+d3
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-effect:BREATH:FIRE:0:30
+effect:ARC:FIRE:0:30
 dice:200
 
 name:Dragon's Frost
@@ -3570,7 +3570,7 @@ attack:1d1:0:0
 armor:0:0
 charges:1+d3
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-effect:BREATH:COLD:0:30
+effect:ARC:COLD:0:30
 dice:160
 
 name:Dragon's Breath
@@ -3586,15 +3586,15 @@ charges:1+d3
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 effect:RANDOM
 dice:5
-effect:BREATH:ACID:0:30
+effect:ARC:ACID:0:30
 dice:160
-effect:BREATH:ELEC:0:30
+effect:ARC:ELEC:0:30
 dice:160
-effect:BREATH:FIRE:0:30
+effect:ARC:FIRE:0:30
 dice:160
-effect:BREATH:COLD:0:30
+effect:ARC:COLD:0:30
 dice:160
-effect:BREATH:POIS:0:30
+effect:ARC:POIS:0:30
 dice:160
 
 
