@@ -774,8 +774,9 @@ bool place_web(struct chunk *c, struct player *p, char *type)
 
 	bool no_good = false;
 
-	/* Choose a random web */
+	/* Choose a random web, can fail */
 	v = random_vault(c->depth, type, NULL);
+	if (!v) return false;
 
 	/* Look for somewhere to put it */
 	for (i = 0; i < 25; i++) {
@@ -804,7 +805,7 @@ bool place_web(struct chunk *c, struct player *p, char *type)
 	if (no_good) return false;
 
 	/* Build the vault */
-	centre = loc(grid.x + v->wid / 2, grid.y + v->hgt / 2);
+	centre = loc(top_left.x + v->wid / 2, top_left.y + v->hgt / 2);
 	if (!build_vault(c, centre, v)) return false;
 
 	/* Replace granite by webbed trees */
@@ -1861,10 +1862,8 @@ struct chunk *valley_gen(struct player *p, int height, int width)
 		square_mark(c, grid);
 	}
 
-	/* Place objects, traps and monsters */
-	k = populate(c, true);
-
 	/* Place some webs */
+	k = MIN(30, c->depth / 2);
 	for (i = 0; i < damroll(k / 20, 4); i++)
 		place_web(c, p, "Small web");
 
@@ -1873,6 +1872,9 @@ struct chunk *valley_gen(struct player *p, int height, int width)
 
 	if (one_in_(10) == 0)
 		place_web(c, p, "Large web");
+
+	/* Place objects, traps and monsters */
+	k = populate(c, true);
 
 	/* Unmark squares */
 	for (grid.y = 0; grid.y < c->height; grid.y++) {
