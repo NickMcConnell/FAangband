@@ -62,9 +62,11 @@ int adjust_dam(struct player *p, int type, int dam, bool actual)
 		} else if (type == PROJ_DRAGONFIRE) {
 			special_dam = adjust_dam(p, PROJ_FIRE, dam / 2, actual);
 			special_dam += adjust_dam(p, PROJ_POIS, dam / 2, actual);
+			return special_dam;
 		} else if (type == PROJ_HELLFIRE) {
 			special_dam = adjust_dam(p, PROJ_FIRE, 2 * dam / 3, actual);
 			special_dam += adjust_dam(p, PROJ_DARK, dam / 3, actual);
+			return special_dam;
 		} else if (type < ELEM_MAX) {
 			/* For the regular elements, the stored resistance level is the
 			 * percentage of damage taken */
