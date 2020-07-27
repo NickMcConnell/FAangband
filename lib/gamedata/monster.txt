@@ -11634,7 +11634,7 @@ innate-freq:5
 spell-freq:3
 spells:BRAIN_SMASH | FORGET | SCARE
 spells:BR_FIRE | BR_POIS
-spells:S_HI_DRAGON
+spells:S_DRAGON
 desc:Glaurung is the father of all dragons, and was for a long time the most
 desc: powerful.  Though this is no longer so, he still has full command over his
 desc: brood and can command them to appear whenever he so wishes.  He is the
