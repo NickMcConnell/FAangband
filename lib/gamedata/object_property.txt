@@ -388,7 +388,7 @@ id-type:on wield
 code:TWO_HANDED_REQ
 desc:two-handed wielding needed
 
-name:accurate
+name:accuracy
 type:flag
 subtype:weapon
 id-type:on effect
