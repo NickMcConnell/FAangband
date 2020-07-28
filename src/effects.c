@@ -5381,8 +5381,7 @@ bool effect_handler_MOVE_ATTACK(effect_handler_context_t *context)
 	/* Ask for a target */
 	if (context->dir == DIR_TARGET) {
 		target_get(&target);
-	}
-	else {
+	} else {
 		target = loc_sum(player->grid, ddgrid[context->dir]);
 	}
 
@@ -5394,6 +5393,7 @@ bool effect_handler_MOVE_ATTACK(effect_handler_context_t *context)
 
 	while (distance(player->grid, target) > 1 && moves > 0) {
 		int choice[] = { 0, 1, -1 };
+		bool attack = false;
 		grid_diff = loc_diff(target, player->grid);
 
 		/* Choice of direction simplified by prioritizing diagonals */
@@ -5413,6 +5413,7 @@ bool effect_handler_MOVE_ATTACK(effect_handler_context_t *context)
 			next_grid = loc_sum(player->grid, clockwise_grid[d_test]);
 			if (square_ispassable(cave, next_grid)) {
 				d = d_test;
+				if (square_monster(cave, next_grid)) attack = true;
 				break;
 			} else if (i == 2) {
 				msg("The way is barred.");
@@ -5422,6 +5423,7 @@ bool effect_handler_MOVE_ATTACK(effect_handler_context_t *context)
 
 		move_player(clockwise_ddd[d], false);
 		moves--;
+		if (attack) return false;
 	}
 
 	/* Reduce blows based on distance traveled, round to nearest blow */
