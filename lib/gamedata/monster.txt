@@ -13644,6 +13644,7 @@ desc: and despises all other life.  It sees all who do not obey it as mere
 desc: insects to be crushed underfoot.
 
 name:winged dragon of Ilmen
+plural:winged dragons of Ilmen
 base:flying dragon
 color:Z
 speed:130
@@ -14288,6 +14289,7 @@ desc: terrible of all dragonkind, his power dismayed even the Valar for a time.
 ### Dungeon level 97 ###
 
 name:winged dragon of power
+plural:winged dragons of power
 base:flying dragon
 color:v
 speed:135
