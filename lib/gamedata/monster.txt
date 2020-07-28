@@ -9876,6 +9876,7 @@ shape:time vortex
 desc:A servant of Mandos, the summoner of the spirits of the slain.
 
 name:blade of slaughter
+plural:blades of slaughter
 base:mimic
 glyph:|
 color:R
