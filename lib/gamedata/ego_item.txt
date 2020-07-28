@@ -415,7 +415,7 @@ type:polearm
 type:sword
 cost:500
 flags:PROT_FEAR
-values:SPEED[-d2] | CON[d2]
+values:SPEED[-3+1d2] | CON[d2]
 min-values:SPEED[-2]
 slay:ORC_3
 desc:This weapon embodies the Drû-folk - slow, but courageous and sturdy,
@@ -568,7 +568,7 @@ combat:-d10:d5:0
 min-combat:255:0:0
 flags:SEE_INVIS | HOLD_LIFE | RAND_CURSE | XTRA_SIDES | XTRA_TO_D | RAND_POWER
 values:RES_NETHER[50] | RES_COLD[20] | RES_POIS[20] | RES_FIRE[-30]
-values:RES_LIGHT[-15] | CON[-d4] | DEX[-d4] | STEALTH[-d4]
+values:RES_LIGHT[-15] | CON[-5+1d4] | DEX[-5+1d4] | STEALTH[-5+1d4]
 min-values:CON[-4] | DEX[-4] | STEALTH[-4]
 brand:COLD_3
 brand:POIS_3
@@ -1001,7 +1001,7 @@ rating:0
 alloc:100:1 to 20
 cost:0
 type:helm
-values:INT[-d5] | WIS[-d5] | STR[d3] | CON[d3]
+values:INT[-6+1d5] | WIS[-6+1d5] | STR[d3] | CON[d3]
 min-values: INT[-5] | WIS[-5]
 desc:This headgear saps the powers of the mind, but adds to the powers of the
 desc: body.
@@ -1064,7 +1064,7 @@ item:hard armor:Metal Lamellar Armour
 item:hard armor:Full Plate Armour
 item:hard armor:Ribbed Plate Armour
 combat:0:0:10
-values:RES_FIRE[40] | STEALTH[-d2]
+values:RES_FIRE[40] | STEALTH[-3+1d2]
 min-values:STEALTH[-2]
 flags:HOLD_LIFE | XTRA_TO_A
 curse:cuts:100
@@ -1319,7 +1319,7 @@ item:shield:Large Metal Shield
 item:shield:Knight's Shield
 item:shield:Body Shield
 item:shield:Shield of Deflection
-values:RES_ELEC[50] | INFRA[-d2] | SEARCH[-d2]
+values:RES_ELEC[50] | INFRA[-3+1d2] | SEARCH[-3+1d2]
 min-values:INFRA[-2] | SEARCH[-2]
 flags:IGNORE_ACID
 desc:Cunningly constructed to divert electricity from its bearer, this shield
