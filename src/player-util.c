@@ -1342,6 +1342,7 @@ bool player_resting_is_special(s16b count)
 		case REST_COMPLETE:
 		case REST_ALL_POINTS:
 		case REST_SOME_POINTS:
+		case REST_SUNLIGHT:
 			return true;
 	}
 
@@ -1472,6 +1473,13 @@ void player_resting_complete_special(struct player *p)
 		if ((p->chp == p->mhp) || (p->csp == p->msp))
 			/* Stop resting */
 			disturb(p);
+	} else if (p->upkeep->resting == REST_SUNLIGHT) {
+		/* Allow some slop so reliably wake close to sunset/sunrise. */
+		s32b ttest = (turn / 10L) * 10L;
+
+		if (! (ttest % ((10L * z_info->day_length) / 2))) {
+			disturb(p);
+		}
 	}
 }
 

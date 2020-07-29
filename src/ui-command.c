@@ -226,7 +226,7 @@ void textui_cmd_suicide(void)
  */
 void textui_cmd_rest(void)
 {
-	const char *p = "Rest (0-9999, '!' for HP or SP, '*' for HP and SP, '&' as needed): ";
+	const char *p = "Rest (0-9999, '!' for HP or SP, '*' for HP and SP, '&' for all, '$' until sunrise/set): ";
 
 	char out_val[5] = "& ";
 
@@ -246,6 +246,10 @@ void textui_cmd_rest(void)
 		/* ...until HP or SP filled */
 		cmdq_push(CMD_REST);
 		cmd_set_arg_choice(cmdq_peek(), "choice", REST_SOME_POINTS);
+	} else if (out_val[0] == '$') {
+		/* ...until sunrise or sunset */
+		cmdq_push(CMD_REST);
+		cmd_set_arg_choice(cmdq_peek(), "choice", REST_SUNLIGHT);
 	} else {
 		/* ...some */
 		int turns = atoi(out_val);

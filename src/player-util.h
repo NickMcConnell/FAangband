@@ -51,7 +51,8 @@ enum
 {
 	REST_COMPLETE = -2,
 	REST_ALL_POINTS = -1,
-	REST_SOME_POINTS = -3
+	REST_SOME_POINTS = -3,
+	REST_SUNLIGHT = -4
 };
 
 /**
