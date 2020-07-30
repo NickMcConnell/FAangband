@@ -4446,8 +4446,8 @@ static bool choose_type(struct object *obj)
 				property = select_property(potential, mobility, 5, &max_value,
 										   RANK_RANDOM_CHOICE, obj);
 				get_property(NULL, obj, mobility[property], 0, false);
+				done = true;
 			}
-			done = true;
 		} else if (streq(ego->name, "of Arcane Resistance")) {
 			/* min potential 440 */
 
