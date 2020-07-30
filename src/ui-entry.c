@@ -935,7 +935,7 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 			}
 			v = p->shape->el_info[ind].res_level;
 			a = base;
-			if (v != 0 && p->obj_k->el_info[ind].res_level) {
+			if (v != base && p->obj_k->el_info[ind].res_level) {
 				if (entry->p_abilities[i].isaux) {
 					int t = v;
 
