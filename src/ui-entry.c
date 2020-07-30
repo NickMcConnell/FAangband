@@ -690,7 +690,7 @@ void compute_ui_entry_values_for_object(const struct ui_entry *entry,
 					int v = obj->el_info[ind].res_level;
 					int a = RES_LEVEL_BASE;
 
-					if (v && entry->obj_props[i].have_value) {
+					if (v != base && entry->obj_props[i].have_value) {
 						v = entry->obj_props[i].value;
 					}
 					if (entry->obj_props[i].isaux) {
