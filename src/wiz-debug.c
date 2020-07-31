@@ -1516,40 +1516,43 @@ static void do_cmd_wiz_cure_all(void)
  */
 static void do_cmd_wiz_jump(void)
 {
-	int place;
+	int place, i;
 
 	char ppp[80];
 	char tmp_val[160];
 
 	/* Prompt */
-	strnfmt(ppp, sizeof(ppp), "Jump to place (0-%d): ", world->num_levels - 1);
+	strnfmt(ppp, sizeof(ppp), "Jump to place (name): ");
 
 	/* Default */
-	strnfmt(tmp_val, sizeof(tmp_val), "%d", player->place);
+	strnfmt(tmp_val, sizeof(tmp_val), "%s",
+			level_name(&world->levels[player->place]));
 
 	/* Ask for a level */
-	if (!get_string(ppp, tmp_val, 11)) return;
+	if (!get_string(ppp, tmp_val, 20)) return;
 
 	/* Extract request */
-	place = atoi(tmp_val);
-
-	/* Paranoia */
-	if (place < 0) place = 0;
-
-	/* Paranoia */
-	if (place > world->num_levels - 1)
-		place = world->num_levels - 1;
-
-	/* Prompt */
-	strnfmt(ppp, sizeof(ppp), "Choose cave_profile?");
+	for (i = 0; i < world->num_levels; i++) {
+		place = i;
+		if (!my_stricmp(tmp_val, level_name(&world->levels[i]))) {
+			break;
+		}
+	}
+	if (i == world->num_levels) {
+		return;
+	}
 
 	/* Get to choose cave generation algorithm */
-	if ((level_topography(place) == TOP_CAVE) && get_check(ppp)) {
-		player->noscore |= NOSCORE_JUMPING;
+	if (level_topography(place) == TOP_CAVE) {
+		/* Prompt */
+		strnfmt(ppp, sizeof(ppp), "Choose cave_profile?");
+		if (get_check(ppp)) {
+			player->noscore |= NOSCORE_JUMPING;
+		}
 	}
 
 	/* Accept request */
-	msg("You jump to place %d.", place);
+	msg("You jump to %s.", level_name(&world->levels[i]));
 
 	/* New place */
 	player_change_place(player, place);
