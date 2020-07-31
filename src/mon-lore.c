@@ -1247,6 +1247,11 @@ void lore_append_abilities(textblock *tb, const struct monster_race *race,
 						   initial_pronoun);
 	if (rf_has(known_flags, RF_REGENERATE))
 		textblock_append(tb, "%s regenerates quickly.  ", initial_pronoun);
+	if (rf_has(known_flags, RF_FLYING))
+		textblock_append(tb, "%s can fly.  ", initial_pronoun);
+	if (rf_has(known_flags, RF_TERRITORIAL))
+		textblock_append(tb, "%s is more aggressive in %s own territory.  ",
+						 initial_pronoun, lore_pronoun_possessive(msex, false));
 
 	/* Describe light */
 	if (race->light > 1) {
