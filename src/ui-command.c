@@ -226,7 +226,7 @@ void textui_cmd_suicide(void)
  */
 void textui_cmd_rest(void)
 {
-	const char *p = "Rest (0-9999, '!' for HP or SP, '*' for HP and SP, '&' for all, '$' until sunrise/set): ";
+	const char *p = "Rest (0-9999, '!': HP/SP, '*': HP+SP, '&': all, '$': sunrise/set): ";
 
 	char out_val[5] = "& ";
 
