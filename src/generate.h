@@ -286,6 +286,10 @@ void chunk_validate_objects(struct chunk *c);
 /* gen-room.c */
 void fill_rectangle(struct chunk *c, int y1, int x1, int y2, int x2, int feat,
 					int flag);
+void fill_circle(struct chunk *c, int y0, int x0, int radius, int border,
+				 int feat, int flag, bool light);
+void fill_ellipse(struct chunk *c, int y0, int x0, int y_radius, int x_radius,
+				  int feat, int flag, bool light);
 void generate_mark(struct chunk *c, int y1, int x1, int y2, int x2, int flag);
 void draw_rectangle(struct chunk *c, int y1, int x1, int y2, int x2, int feat, 
 					int flag);

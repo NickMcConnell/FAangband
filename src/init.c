@@ -842,6 +842,7 @@ static enum parser_error parse_world_level(struct parser *p) {
 		map->towns[map->num_towns - 1].code = string_make(l_name);
 		map->towns[map->num_towns - 1].ego = NULL;
 		map->towns[map->num_towns - 1].stores = NULL;
+		map->towns[map->num_towns - 1].num_stores = 0;
 	}
 
 	return PARSE_ERROR_NONE;

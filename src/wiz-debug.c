@@ -1529,7 +1529,7 @@ static void do_cmd_wiz_jump(void)
 			level_name(&world->levels[player->place]));
 
 	/* Ask for a level */
-	if (!get_string(ppp, tmp_val, 20)) return;
+	if (!get_string(ppp, tmp_val, 30)) return;
 
 	/* Extract request */
 	for (i = 0; i < world->num_levels; i++) {

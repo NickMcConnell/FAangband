@@ -248,8 +248,8 @@ static void fill_yrange(struct chunk *c, int x, int y1, int y2, int feat,
  * \param flag the SQUARE_* flag we are marking with
  * \param light lit or not
  */
-static void fill_circle(struct chunk *c, int y0, int x0, int radius, int border,
-						int feat, int flag, bool light)
+void fill_circle(struct chunk *c, int y0, int x0, int radius, int border,
+				 int feat, int flag, bool light)
 {
 	int i, last = 0;
 	int r2 = radius * radius;
@@ -265,6 +265,32 @@ static void fill_circle(struct chunk *c, int y0, int x0, int radius, int border,
 		fill_yrange(c, x0 - i, y0 - k - b, y0 + k + b, feat, flag, light);
 		fill_yrange(c, x0 + i, y0 - k - b, y0 + k + b, feat, flag, light);
 		last = k;
+	}
+}
+
+/**
+ * Fill a circle with the given feature/info.
+ * \param c the current chunk
+ * \param y0 the circle centre
+ * \param x0 the circle centre
+ * \param y_radius the half-axis in the y direction
+ * \param x_radius the half-axis in the x direction
+ * \param feat the terrain feature
+ * \param flag the SQUARE_* flag we are marking with
+ * \param light lit or not
+ */
+void fill_ellipse(struct chunk *c, int y0, int x0, int y_radius, int x_radius,
+				  int feat, int flag, bool light)
+{
+	int y;
+	for (y = -y_radius; y <= y_radius; y++) {
+		int x = 0;
+		while (x * x * y_radius * y_radius + y * y * x_radius * x_radius <=
+			   y_radius * y_radius * x_radius * x_radius) {
+			x++;
+		}
+
+		fill_xrange(c, y0 + y, x0 - x, x0 + x, feat, flag, light);
 	}
 }
 

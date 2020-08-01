@@ -1810,11 +1810,15 @@ static void town_gen_layout(struct chunk *c, struct player *p, struct town *t)
 			for (n = 0; n < 3 + num_lava; n++) {
 				build_streamer(c, FEAT_LAVA, 0);
 			}
-		}
 
-		/* Make a town-sized starburst room. */
-		(void) generate_starburst_room(c, 1, 1, c->height - 1, c->width - 1,
-									   false, FEAT_FLOOR, false);
+			/* Make a town-sized starburst room. */
+			(void) generate_starburst_room(c, 1, 1, c->height - 1, c->width - 1,
+										   false, FEAT_FLOOR, false);
+		} else {
+			fill_ellipse(c, (c->height - 1) / 2, (c->width - 1) / 2,
+						 (c->height - 4) / 2, (c->width - 6) / 2,
+						 FEAT_FLOOR, SQUARE_NONE, false);
+		}
 
 		/* Turn off room illumination flag */
 		for (grid.y = 1; grid.y < c->height - 1; grid.y++) {
