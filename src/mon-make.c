@@ -1372,6 +1372,7 @@ static bool place_new_monster_one(struct chunk *c, struct loc grid,
 	/* Prevent monsters from being placed where they cannot walk, but allow
 	 * other feature types */
 	if (!square_is_monster_walkable(c, grid)) return false;
+	assert(square_ispassable(c, grid));
 
 	/* No creation on glyphs */
 	if (square_iswarded(c, grid) || square_isdecoyed(c, grid)) return false;

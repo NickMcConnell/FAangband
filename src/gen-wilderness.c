@@ -1792,6 +1792,7 @@ struct chunk *river_gen(struct player *p, int height, int width)
 	grid = p->grid;
 	while ((square_feat(c, grid)->fidx == FEAT_WATER)
 		   || (square_feat(c, grid)->fidx == FEAT_GRANITE)) {
+		c->squares[grid.y][grid.x].mon = 0;
 		grid.x++;
 	}
 
