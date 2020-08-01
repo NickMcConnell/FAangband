@@ -1563,7 +1563,9 @@ void player_place(struct chunk *c, struct player *p, struct loc grid)
 	assert(!square_monster(c, grid));
 
 	/* Unmark previous grid */
-	square_set_mon(c, p->grid, 0);
+	if (square_in_bounds(c, p->grid)) {
+		square_set_mon(c, p->grid, 0);
+	}
 
 	/* Save player location */
 	p->grid = grid;

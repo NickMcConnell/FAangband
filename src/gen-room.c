@@ -1198,7 +1198,7 @@ bool build_vault(struct chunk *c, struct loc centre, struct vault *v)
 			square_set_feat(c, grid, FEAT_FLOOR);
 
 			/* Debugging assertion */
-			assert(square_isempty(c, grid));
+			//assert(square_isempty(c, grid));
 
 			/* By default vault squares are marked icky */
 			icky = true;

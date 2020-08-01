@@ -569,10 +569,13 @@ static bool check_vault_space(struct chunk *c, struct loc avoid,
 	/* Check every square */
 	for (grid.y = top_left.y; grid.y < bottom_right.y; grid.y++) {
 		for (grid.x = top_left.x; grid.x < bottom_right.x; grid.x++) {
-			if (square_ispath(c, grid) || (distance(grid, avoid) < 20)
-				|| square_ismark(c, grid)) {
-				return false;
-			}
+			if (square_ispath(c, grid)) return false;
+			if (distance(grid, avoid) < 20) return false;
+			if (square_ismark(c, grid)) return false;
+			if (square(c, grid)->mon) return false;
+			if (square_isplayertrap(c, grid)) return false;
+			if (square_object(c, grid)) return false;
+			if (square_iswebbed(c, grid)) return false;
 		}
 	}
 
@@ -612,33 +615,34 @@ static int make_formation(struct chunk *c, struct player *p, struct loc grid,
 			v = random_vault(p->depth, format("%s lesser", name),
 							 "Wilderness lesser");
 		}
+		if (v) {
+			/* Check to see if it will fit here (only avoid edges) */
+			top_left = loc(grid.x - v->wid / 2, grid.y - v->hgt / 2);
+			bottom_right = loc_sum(top_left, loc(v->wid, v->hgt));
+			good_place = check_vault_space(c, p->grid, top_left, bottom_right);
 
-		/* Check to see if it will fit here (only avoid edges) */
-		top_left = loc(grid.x - v->wid / 2, grid.y - v->hgt / 2);
-		bottom_right = loc_sum(top_left, loc(v->wid, v->hgt));
-		good_place = check_vault_space(c, p->grid, top_left, bottom_right);
+			/* We've found a place */
+			if (good_place) {
+				/* Build the vault (never lit, icky) */
+				if (!build_vault(c, grid, v)) {
+					mem_free(all_feat);
+					return 0;
+				}
 
-		/* We've found a place */
-		if (good_place) {
-			/* Build the vault (never lit, icky) */
-			if (!build_vault(c, grid, v)) {
+				/* Boost the rating */
+				c->mon_rating += v->rat;
+
+				/* Message */
+				if (OPT(p, cheat_room))
+					msg("%s. ", v->name);
+
+				/* One less to make */
+				num_wild_vaults--;
+
+				/* Takes up some space */
 				mem_free(all_feat);
-				return 0;
+				return (v->hgt * v->wid);
 			}
-
-			/* Boost the rating */
-			c->mon_rating += v->rat;
-
-			/* Message */
-			//if (OPT(cheat_room))
-			//	msg("%s. ", v->name);
-
-			/* One less to make */
-			num_wild_vaults--;
-
-			/* Takes up some space */
-			mem_free(all_feat);
-			return (v->hgt * v->wid);
 		}
 	}
 
