@@ -1697,7 +1697,7 @@ static struct loc place_town_stairs(struct chunk *c, struct player *p,
 			square_set_feat(c, grid, FEAT_MORE_WEST);
 
 			/* Check for way back */
-			if (!loc_eq(oldgrid, loc(0, 0))) grid = oldgrid;
+			if (west == last_lev) oldgrid = grid;
 		}
 	} else {
 		/* Dungeon towns just have a single down stair */
@@ -1714,6 +1714,7 @@ static struct loc place_town_stairs(struct chunk *c, struct player *p,
 		square_set_feat(c, grid, FEAT_MORE);
 	}
 
+	if (oldgrid.x && oldgrid.y) return oldgrid;
 	assert(grid.x && grid.y);
 	return grid;
 }
