@@ -96,8 +96,10 @@ const byte extract_energy[200] =
 /**
  * Specific levels on which there should never be a vault
  */
-bool no_vault(struct level *lev)
+bool no_vault(int place)
 {
+	struct level *lev = &world->levels[place];
+
 	/* No vaults on mountaintops */
 	if (lev->topography == TOP_MOUNTAINTOP)
 		return true;

@@ -47,6 +47,27 @@ int num_wild_vaults;
 #define MAX_PATHS 13
 
 /**
+ * Set the number of wilderness vaults
+ */
+void set_num_vaults(struct chunk *c)
+{
+	int max = 2;
+	num_wild_vaults = 0;
+
+	if (c->depth > 10)
+		num_wild_vaults += randint0(max);
+	if (c->depth > 20)
+		num_wild_vaults += randint0(max);
+	if (c->depth > 30)
+		num_wild_vaults += randint0(max);
+	if (c->depth > 40)
+		num_wild_vaults += randint0(max);
+
+	if (no_vault(player->place))
+		num_wild_vaults = 0;
+}
+
+/**
  * Makes "paths to nowhere" from interplace paths toward the middle of the
  * current place.  Adapted from tunnelling code.
  */
@@ -868,7 +889,7 @@ struct chunk *plain_gen(struct player *p, int height, int width)
 	make_edges(c, true, false);
 
 	/* Set the number of wilderness vaults */
-	
+	set_num_vaults(c);
 
 	/* Place some formations */
 	while (form_grids < (50 * c->depth + 1000)) {
@@ -939,6 +960,9 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 			square_set_feat(c, grid, FEAT_GRASS);
 		}
 	}
+
+	/* Set the number of wilderness vaults */
+	set_num_vaults(c);
 
 	/* Make place boundaries */
 	make_edges(c, false, false);
@@ -1128,6 +1152,9 @@ struct chunk *mtntop_gen(struct player *p, int height, int width)
 			square_set_feat(c, grid, FEAT_VOID);
 		}
 	}
+
+	/* Set the number of wilderness vaults */
+	set_num_vaults(c);
 
 	/* Make place boundaries */
 	make_edges(c, false, false);
@@ -1338,6 +1365,9 @@ struct chunk *forest_gen(struct player *p, int height, int width)
 	/* Place 2 or 3 paths to neighbouring places, place player -NRM- */
 	alloc_paths(c, p, place, last_place);
 
+	/* Set the number of wilderness vaults */
+	set_num_vaults(c);
+
 	/* Make place boundaries */
 	make_edges(c, true, false);
 
@@ -1449,6 +1479,9 @@ struct chunk *swamp_gen(struct player *p, int height, int width)
 	/* Place 2 or 3 paths to neighbouring places, place player -NRM- */
 	alloc_paths(c, p, place, last_place);
 
+	/* Set the number of wilderness vaults */
+	set_num_vaults(c);
+
 	/* Make place boundaries */
 	make_edges(c, true, false);
 
@@ -1522,6 +1555,9 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 
 	/* Place 2 or 3 paths to neighbouring places, place player -NRM- */
 	alloc_paths(c, p, place, last_place);
+
+	/* Set the number of wilderness vaults */
+	set_num_vaults(c);
 
 	/* Make place boundaries */
 	make_edges(c, true, false);
@@ -1655,6 +1691,9 @@ struct chunk *river_gen(struct player *p, int height, int width)
 
 	/* Remember the path in case it has to move */
 	path = square_feat(c, p->grid)->fidx;
+
+	/* Set the number of wilderness vaults */
+	set_num_vaults(c);
 
 	/* Make place boundaries */
 	make_edges(c, true, false);
@@ -1807,6 +1846,9 @@ struct chunk *valley_gen(struct player *p, int height, int width)
 			}
 		}
 	}
+
+	/* Set the number of wilderness vaults */
+	set_num_vaults(c);
 
 	/* Make place boundaries */
 	make_edges(c, true, true);
