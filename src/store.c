@@ -206,6 +206,7 @@ static enum parser_error parse_town(struct parser *p) {
 				new->name = string_make(s->name);
 				new->next = town->stores;
 				town->stores = new;
+				town->num_stores++;
 			}
 		}
 		map = map->next;

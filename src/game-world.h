@@ -53,6 +53,7 @@ struct town {
 	char *code;
 	char *ego;
 	struct store *stores;
+	int num_stores;
 };
 
 struct level_map {

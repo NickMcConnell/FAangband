@@ -1406,7 +1406,7 @@ struct chunk *cavern_gen(struct player *p, int min_height, int min_width) {
  * @param east - a pointer to put the maximum x coord of the lot
  * @param south - a pointer to put the maximum y coord of the lot
  */
-void get_lot_bounds(struct loc xroads, struct loc lot,
+void get_lot_bounds(struct chunk *c, struct loc xroads, struct loc lot,
 		int lot_wid, int lot_hgt,
 		int *west, int *north, int *east, int *south) {
 
@@ -1421,18 +1421,18 @@ void get_lot_bounds(struct loc xroads, struct loc lot,
 
 	if (lot.x < 0) {
 		*west = MAX(2, xroads.x - 1 + (lot.x) * lot_wid);
-		*east = MIN(z_info->town_wid - 3, xroads.x - 2 + (lot.x + 1) * lot_wid);
+		*east = MIN(c->width - 3, xroads.x - 2 + (lot.x + 1) * lot_wid);
 	} else {
 		*west = MAX(2, xroads.x + 2 + (lot.x - 1) * lot_wid);
-		*east = MIN(z_info->town_wid - 3, xroads.x + 1 + (lot.x) * lot_wid);
+		*east = MIN(c->width - 3, xroads.x + 1 + (lot.x) * lot_wid);
 	}
 
 	if (lot.y < 0) {
 		*north = MAX(2, xroads.y + (lot.y) * lot_hgt);
-		*south = MIN(z_info->town_hgt - 3, xroads.y - 1 + (lot.y + 1) * lot_hgt);
+		*south = MIN(c->height - 3, xroads.y - 1 + (lot.y + 1) * lot_hgt);
 	} else {
 		*north = MAX(2, xroads.y + 2 + (lot.y - 1) * lot_hgt);
-		*south = MIN(z_info->town_hgt - 3, xroads.y + 1 + (lot.y) * lot_hgt);
+		*south = MIN(c->height - 3, xroads.y + 1 + (lot.y) * lot_hgt);
 	}
 }
 
@@ -1440,7 +1440,7 @@ bool lot_is_clear(struct chunk *c, struct loc xroads, struct loc lot,
 				  int lot_wid, int lot_hgt) {
 	struct loc nw_corner, se_corner, probe;
 
-	get_lot_bounds(xroads, lot, lot_wid, lot_hgt, &nw_corner.x, &nw_corner.y,
+	get_lot_bounds(c, xroads, lot, lot_wid, lot_hgt, &nw_corner.x, &nw_corner.y,
 				   &se_corner.x, &se_corner.y);
 
 	if (se_corner.x - nw_corner.x < lot_wid - 1 || se_corner.y - nw_corner.y < lot_hgt - 1) {
@@ -1462,7 +1462,7 @@ bool lot_has_shop(struct chunk *c, struct loc xroads, struct loc lot,
 		int lot_wid, int lot_hgt) {
 	struct loc nw_corner, se_corner, probe;
 
-	get_lot_bounds(xroads, lot, lot_wid, lot_hgt, &nw_corner.x, &nw_corner.y,
+	get_lot_bounds(c, xroads, lot, lot_wid, lot_hgt, &nw_corner.x, &nw_corner.y,
 			&se_corner.x, &se_corner.y);
 
 	for (probe.x = nw_corner.x; probe.x <= se_corner.x; probe.x++) {
@@ -1493,7 +1493,7 @@ static void build_store(struct chunk *c, struct store *s, struct loc xroads,
 
     int build_w, build_n, build_e, build_s;
 
-	get_lot_bounds(xroads, lot, lot_wid, lot_hgt, &lot_w, &lot_n, &lot_e,
+	get_lot_bounds(c, xroads, lot, lot_wid, lot_hgt, &lot_w, &lot_n, &lot_e,
 				   &lot_s);
 
 	if (lot.x < -1 || lot.x > 1) {
@@ -1660,7 +1660,7 @@ static struct loc place_town_stairs(struct chunk *c, struct player *p,
 
 		if (east) {
 			grid.y = xroads.y;
-			grid.x = z_info->town_wid - 1;
+			grid.x = c->width - 1;
 			while (!square_isfloor(c, grid)) {
 				grid.x--;
 			}
@@ -1674,7 +1674,7 @@ static struct loc place_town_stairs(struct chunk *c, struct player *p,
 
 		if (south) {
 			grid.x = xroads.x;
-			grid.y = z_info->town_hgt - 1;
+			grid.y = c->height - 1;
 			while (!square_isfloor(c, grid)) {
 				grid.y--;
 			}
@@ -1701,8 +1701,8 @@ static struct loc place_town_stairs(struct chunk *c, struct player *p,
 		}
 	} else {
 		/* Dungeon towns just have a single down stair */
-		grid.x = rand_spread(z_info->town_wid / 2, z_info->town_wid / 12);
-		grid.y = z_info->town_hgt / 2;
+		grid.x = rand_spread(c->width / 2, c->width / 12);
+		grid.y = c->height / 2;
 		while (square_isfloor(c, grid) && (grid.y > 2)) {
 			grid.y--;
 		}
@@ -1722,7 +1722,7 @@ static void build_ruin(struct chunk *c, struct loc xroads, struct loc lot, int l
 	int lot_west, lot_north, lot_east, lot_south;
 	int wid, hgt;
 
-	get_lot_bounds(xroads, lot, lot_wid, lot_hgt, &lot_west, &lot_north,
+	get_lot_bounds(c, xroads, lot, lot_wid, lot_hgt, &lot_west, &lot_north,
 				   &lot_east, &lot_south);
 
 	if (lot_east - lot_west < 1 || lot_south - lot_north < 1) return;
@@ -1754,13 +1754,13 @@ static void build_ruin(struct chunk *c, struct loc xroads, struct loc lot, int l
 					   square_isfloor(c, loc(x,y)) &&
 					   /* Avoid placing rubble next to a store */
 					   (x > lot_west || x == 2 ||
-						!square_isperm(c, loc(x-1, y))) &&
-					   (x < lot_east || x == z_info->town_wid-2 ||
-						!square_isperm(c, loc(x+1, y))) &&
+						!square_isperm(c, loc(x - 1, y))) &&
+					   (x < lot_east || x == c->width - 2 ||
+						!square_isperm(c, loc(x + 1, y))) &&
 					   (y > lot_north || y == 2 ||
-						!square_isperm(c, loc(x, y-1))) &&
-					   (y < lot_south || y == z_info-> town_hgt-2 ||
-						!square_isperm(c, loc(x, y+1)))) {
+						!square_isperm(c, loc(x, y - 1))) &&
+					   (y < lot_south || y == c->height - 2 ||
+						!square_isperm(c, loc(x, y + 1)))) {
 				square_set_feat(c, loc(x,y), FEAT_PASS_RUBBLE);
 			}
 		}
@@ -1784,9 +1784,9 @@ static void town_gen_layout(struct chunk *c, struct player *p, struct town *t)
 	int num_attempts = 0;
 	bool success = false;
 
-	int min_store_y = z_info->town_hgt;
+	int min_store_y = c->height;
 	int max_store_y = 0;
-	int min_store_x = z_info->town_wid;
+	int min_store_x = c->width;
 	int max_store_x = 0;
 
 	/* divide the town into lots */
@@ -1826,16 +1826,16 @@ static void town_gen_layout(struct chunk *c, struct player *p, struct town *t)
 			}
 		}
 
-		xroads.x = z_info->town_wid / 4
-			+ randint0(z_info->town_wid / 2);
-		xroads.y = z_info->town_hgt / 4
-			+ randint0(z_info->town_hgt / 2);
+		xroads.x = c->width / 4
+			+ randint0(c->width / 2);
+		xroads.y = c->height / 4
+			+ randint0(c->height / 2);
 
 
 		int lot_min_x = -1 * xroads.x / lot_wid;
-		int lot_max_x = (z_info->town_wid - xroads.x) / lot_wid;
+		int lot_max_x = (c->width - xroads.x) / lot_wid;
 		int lot_min_y = -1 * xroads.y / lot_hgt;
-		int lot_max_y = (z_info->town_hgt - xroads.y) / lot_hgt;
+		int lot_max_y = (c->height - xroads.y) / lot_hgt;
 
 		/* place stores along the streets */
 		num_attempts = 0;
@@ -2006,7 +2006,8 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width)
 	assert (i < world->num_towns);
 
 	/* Make a new chunk */
-	c_new = cave_new(z_info->town_hgt, z_info->town_wid);
+	c_new = cave_new(z_info->town_hgt, town->num_stores > 4 ?
+					 z_info->town_wid : z_info->town_wid / 2);
 
 	/* First time */
 	if (!c_old) {
