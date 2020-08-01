@@ -1562,10 +1562,13 @@ void player_place(struct chunk *c, struct player *p, struct loc grid)
 {
 	assert(!square_monster(c, grid));
 
+	/* Unmark previous grid */
+	square_set_mon(c, p->grid, 0);
+
 	/* Save player location */
 	p->grid = grid;
 
-	/* Mark cave grid */
+	/* Mark grid */
 	square_set_mon(c, grid, -1);
 
 	/* Clear stair creation */
