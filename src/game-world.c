@@ -343,6 +343,44 @@ static void recharge_objects(void)
 
 
 /**
+ * Remove light-sensitive monsters from sunlit areas
+ */
+void sun_banish(void)
+{
+	bool some_gone = false;
+	struct monster *mon;
+	struct monster_race *race;
+	int i;
+
+	/* Process all monsters */
+	for (i = 1; i < cave_monster_max(cave) - 1; i++) {
+		/* Access the monster */
+		mon = cave_monster(cave, i);
+
+		/* Check if it hates light */
+		race = mon->race;
+
+		/* Paranoia -- Skip dead monsters */
+		if (!race) continue;
+
+		/* Skip Unique Monsters */
+		if (rf_has(race->flags, RF_UNIQUE)) continue;
+
+		/* Skip monsters not hurt by light */
+		if (!(rf_has(race->flags, RF_HURT_LIGHT))) continue;
+
+		/* Banish */
+		delete_monster_idx(i);
+		some_gone = true;
+	}
+
+	process_monsters(cave, 0);
+	if (some_gone) {
+		msg("Creatures of the darkness flee from the sunlight!");
+	}
+}
+
+/**
  * Play an ambient sound dependent on dungeon level, and day or night in town
  */
 void play_ambient_sound(void)
@@ -505,6 +543,7 @@ void process_world(struct chunk *c)
 			if (dawn) {
 				/* Day breaks */
 				msg("The sun has risen.");
+				sun_banish();
 			} else {
 				/* Night falls */
 				msg("The sun has fallen.");
