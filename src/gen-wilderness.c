@@ -452,8 +452,8 @@ static void make_edges(struct chunk *c, bool ragged, bool valley)
 			i += 1 - randint0(3);
 			if (i > (valley ? 10 : 7))
 				i = (valley ? 10 : 7);
-			if (i < 0)
-				i = 0;
+			if (i < 1)
+				i = 1;
 			for (grid.y = 0; grid.y < i; grid.y++) {
 				/* Clear previous contents, add perma-wall */
 				if (!square_ismark(c, grid)) {
@@ -485,8 +485,8 @@ static void make_edges(struct chunk *c, bool ragged, bool valley)
 			i += 1 - randint0(3);
 			if (i > (valley ? 10 : 7))
 				i = (valley ? 10 : 7);
-			if (i < 0)
-				i = 0;
+			if (i < 1)
+				i = 1;
 			for (grid.y = c->height - 1; grid.y > c->height - 1 - i; grid.y--) {
 				/* Clear previous contents, add perma-wall or void */
 				if (!square_ismark(c, grid)) {
@@ -514,8 +514,8 @@ static void make_edges(struct chunk *c, bool ragged, bool valley)
 			i += 1 - randint0(3);
 			if (i > 10)
 				i = 10;
-			if (i < 0)
-				i = 0;
+			if (i < 1)
+				i = 1;
 			for (grid.x = 0; grid.x < i; grid.x++) {
 				/* Clear previous contents, add perma-wall */
 				if (!square_ismark(c, grid)) {
@@ -537,8 +537,8 @@ static void make_edges(struct chunk *c, bool ragged, bool valley)
 			i += 1 - randint0(3);
 			if (i > 10)
 				i = 10;
-			if (i < 0)
-				i = 0;
+			if (i < 1)
+				i = 1;
 			for (grid.x = c->width - 1; grid.x > c->width - 1 - i; grid.x--) {
 				/* Clear previous contents, add perma-wall */
 				if (!square_ismark(c, grid)) {
