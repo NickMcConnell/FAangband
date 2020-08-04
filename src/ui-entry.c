@@ -875,6 +875,25 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 					}
 					break;
 
+				case PF_FURY:
+				case PF_PHASEWALK:
+					v = (p->speed_boost) ?
+						 ((p->speed_boost + 5) / 10) : 0;
+					a = 0;
+					if (entry->p_abilities[i].isaux) {
+						int t = v;
+
+						v = a;
+						a = t;
+					}
+					if (first) {
+						(*combiner.init_func)(v, a, &cst);
+						first = false;
+					} else {
+						(*combiner.accum_func)(v, a, &cst);
+					}
+					break;
+
 				case PF_HOLY:
 					if ((p->lev > 35 &&
 						player_has(p, PF_STRONG_MAGIC)) ||

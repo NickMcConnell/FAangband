@@ -325,6 +325,7 @@ desc:Improves your saving throws.
 
 type:player
 code:PHASEWALK
+bindui:speed_ui_compact_0:0:special
 name:Phasewalking
 desc:Causes you to speed up after teleporting.  Gives resistance to hostile teleportation.
 
@@ -420,6 +421,7 @@ desc:Increases and partially sustains Intelligence and Wisdom.
 
 type:player
 code:FURY
+bindui:speed_ui_compact_0:0:special
 name:Fury
 desc:Allows you to move faster after attacking or being damaged.
 
