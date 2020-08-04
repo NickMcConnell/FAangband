@@ -192,7 +192,7 @@ desc:You are extra persuasive to monsters.
 
 type:player
 code:UNLIGHT
-bindui:resist_ui_compact_0<DARK>:0:1
+bindui:resist_ui_compact_0<DARK>:0:60
 name:Unlight
 desc:You gain stealth in, can see in, and resist the dark.
 
@@ -208,7 +208,7 @@ desc:You can bash monsters with a shield in melee.
 
 type:player
 code:EVIL
-bindui:resist_ui_compact_0<NETHER>:0:1
+bindui:resist_ui_compact_0<NETHER>:0:60
 name:Evil
 desc:You resist nether, but are hurt by holy attacks.
 
