@@ -276,6 +276,7 @@ desc:You can set monster traps.
 
 type:player
 code:WOODSMAN
+bindui:speed_ui_compact_0:0:special
 name:Woodsmanship
 desc:You are attuned to nature.  You easily move and hide in trees.
 

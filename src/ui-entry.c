@@ -14,6 +14,7 @@
  *    are included in all such copies.  Other copyrights may also apply.
  */
 
+#include "game-world.h"
 #include "init.h"
 #include "object.h"
 #include "obj-curse.h"
@@ -899,6 +900,29 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 						player_has(p, PF_STRONG_MAGIC)) ||
 						p->lev > 45) {
 						v = 1;
+					} else {
+						v = 0;
+					}
+					a = 0;
+					if (entry->p_abilities[i].isaux) {
+						int t = v;
+
+						v = a;
+						a = t;
+					}
+					if (first) {
+						(*combiner.init_func)(v, a, &cst);
+						first = false;
+					} else {
+						(*combiner.accum_func)(v, a, &cst);
+					}
+					break;
+
+				case PF_WOODSMAN:
+					if (character_dungeon &&
+						player_has(p, PF_ELVEN) &&
+						square_istree(cave, p->grid)) {
+						v = 3;
 					} else {
 						v = 0;
 					}
