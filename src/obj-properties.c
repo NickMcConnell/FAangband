@@ -384,8 +384,9 @@ int object_value_real(const struct object *obj, int qty)
 				{
 					for (j = 0; j < z_info->brand_max; j++) {
 						if (obj->brands[j] && (prop == brand_property(j))) {
-							value += property_cost(prop, brands[j].o_multiplier,
-												   true);
+							int mult = brands[j].o_multiplier - 10;
+							int div = tval_is_ammo(obj) ? 10 : 1;
+							value += property_cost(prop, mult, true) / div;
 						}
 					}
 					break;
@@ -394,8 +395,9 @@ int object_value_real(const struct object *obj, int qty)
 				{
 					for (j = 0; j < z_info->slay_max; j++) {
 						if (obj->slays[j] && (prop == slay_property(j))) {
-							value += property_cost(prop, slays[j].o_multiplier,
-												   true);
+							int mult = slays[j].o_multiplier - 10;
+							int div = tval_is_ammo(obj) ? 10 : 1;
+							value += property_cost(prop, mult, true) / div;
 						}
 					}
 					break;
