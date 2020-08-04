@@ -367,7 +367,7 @@ static int critical_shot(const struct player *p, const struct monster *mon,
 	int new_dam = dam;
 
 	/* Armsman Ability - 1/6 critical chance */
-	if (monster_is_visible(mon) && player_has(p, PF_ARMSMAN) && one_in_(6)) {
+	if (monster_is_visible(mon) && player_has(p, PF_MARKSMAN) && one_in_(6)) {
 		*marksman = true;
 	}
 
@@ -408,7 +408,7 @@ static int o_critical_shot(const struct player *p, const struct monster *mon,
 	}
 
 	/* Armsman Ability - 1/6 critical chance */
-	if (monster_is_visible(mon) && player_has(p, PF_ARMSMAN) && one_in_(6)) {
+	if (monster_is_visible(mon) && player_has(p, PF_MARKSMAN) && one_in_(6)) {
 		*marksman = true;
 	}
 
