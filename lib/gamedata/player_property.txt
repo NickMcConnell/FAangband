@@ -439,6 +439,8 @@ desc:Allows you to set an additional monster trap, and to learn to set more adva
 
 type:player
 code:HOLY_LIGHT
+bindui:resist_ui_compact_0<LIGHT>:0:60
+bindui:light_ui_compact_0:0:1
 name:Holy Light
 desc:Increases light radius.  Causes undead, evil, and light-sensitive creatures to take extra melee damage and makes them fear your light-based spells.  Grants resistance to light.
 
