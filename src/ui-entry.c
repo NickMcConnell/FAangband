@@ -874,6 +874,29 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 						(*combiner.accum_func)(v, a, &cst);
 					}
 					break;
+
+				case PF_HOLY:
+					if ((p->lev > 35 &&
+						player_has(p, PF_STRONG_MAGIC)) ||
+						p->lev > 45) {
+						v = 1;
+					} else {
+						v = 0;
+					}
+					a = 0;
+					if (entry->p_abilities[i].isaux) {
+						int t = v;
+
+						v = a;
+						a = t;
+					}
+					if (first) {
+						(*combiner.init_func)(v, a, &cst);
+						first = false;
+					} else {
+						(*combiner.accum_func)(v, a, &cst);
+					}
+					break;
 				}
 			}
 		} else if (streq(entry->p_abilities[i].ability->type,

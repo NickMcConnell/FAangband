@@ -265,6 +265,7 @@ desc:You are an expert spellcaster capable of a perfect success rate and have a 
 
 type:player
 code:HOLY
+bindui:light_ui_compact_0:0:special
 name:Pious
 desc:You carry a pious authority.  You glow with an inner light at level 35 (Priest) or level 45 (Paladin).
 
