@@ -769,7 +769,7 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 	struct ui_entry_combiner_state cst = { 0, 0, 0 };
 	struct ui_entry_combiner_funcs combiner;
 	bool first, element_done = false;
-	int i, base = 0;
+	int i;
 
 	if (!p) {
 		*val = UI_ENTRY_VALUE_NOT_PRESENT;
@@ -802,7 +802,7 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 			}
 			if (entry->p_abilities[i].have_value) {
 				int v = entry->p_abilities[i].value;
-				int a = 0;
+				int a = UI_ENTRY_VALUE_NOT_PRESENT;
 
 				if (entry->p_abilities[i].isaux) {
 					int t = v;
@@ -914,7 +914,7 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 			"element") && !element_done) {
 			int v = p->race->el_info[ind].res_level;
 			int a;
-			base = RES_LEVEL_BASE;
+			int base = RES_LEVEL_BASE;
 
 			if (entry->flags & ENTRY_FLAG_TIMED_AUX) {
 				a = get_timed_element_effect(p, ind);
@@ -1020,8 +1020,8 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 		}
 	}
 	if (first) {
-		*val = base;
-		*auxval = base;
+		*val = UI_ENTRY_VALUE_NOT_PRESENT;
+		*auxval = UI_ENTRY_VALUE_NOT_PRESENT;
 	} else {
 		(*combiner.finish_func)(&cst);
 		*val = cst.accum;
