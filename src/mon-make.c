@@ -1413,13 +1413,15 @@ static bool place_new_monster_one(struct chunk *c, struct loc grid,
 	mon->race = race;
 
 	/* Enforce sleeping if needed */
-	if (sleep && race->sleep) {
-		int val = race->sleep;
-		mon->m_timed[MON_TMD_SLEEP] = ((val * 2) + randint1(val * 10));
-	} else if (!is_daylight() &&
-			   (level_topography(player->place) != TOP_VALLEY) &&
-			   (level_topography(player->place) != TOP_TOWN)) {
-		mon->m_timed[MON_TMD_SLEEP] += 20;
+	if (sleep) {
+		if (race->sleep) {
+			int val = race->sleep;
+			mon->m_timed[MON_TMD_SLEEP] = ((val * 2) + randint1(val * 10));
+		} else if (!is_daylight() &&
+				   (level_topography(player->place) != TOP_VALLEY) &&
+				   (level_topography(player->place) != TOP_TOWN)) {
+			mon->m_timed[MON_TMD_SLEEP] += 20;
+		}
 	}
 
 	/* Uniques get a fixed amount of HP */
@@ -1781,6 +1783,12 @@ bool pick_and_place_monster(struct chunk *c, struct loc grid, int depth,
 	/* Pick a monster race, no specified group */
 	struct monster_race *race = get_mon_num(depth);
 	struct monster_group_info info = { 0, 0 };
+
+	/* Enforce sleep at nighttime in the wilderness */
+	if (!is_daylight() && (level_topography(player->place) != TOP_VALLEY) &&
+		(level_topography(player->place) != TOP_TOWN)) {
+		sleep = true;
+	}
 
 	if (race) {
 		return place_new_monster(c, grid, race, sleep, group_okay, info,
