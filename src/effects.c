@@ -1410,6 +1410,15 @@ bool effect_handler_DRAIN_MANA(effect_handler_context_t *context)
 bool effect_handler_RESTORE_MANA(effect_handler_context_t *context)
 {
 	int amount = effect_calculate_value(context, false);
+
+	/* Special case - magestaff activations only for mages and necromancers */
+	bool special = context->subtype ? true : false;
+	int count;
+	struct magic_realm *realm = class_magic_realms(player->class, &count);
+	if (special && !(player_has(player, PF_STRONG_MAGIC) && (count == 1) &&
+					 (realm->stat == STAT_INT))) {
+		return false;
+	}
 	if (!amount) amount = player->msp;
 	if (player->csp < player->msp) {
 		player->csp += amount;
@@ -6088,6 +6097,13 @@ int effect_subtype(int index, const char *type)
 				/* Allow monster teleport toward */
 			case EF_TELEPORT_TO: {
 				if (streq(type, "SELF"))
+					val = 1;
+				break;
+			}
+
+				/* Restrict mana restoration */
+			case EF_RESTORE_MANA: {
+				if (streq(type, "SPECIAL"))
 					val = 1;
 				break;
 			}

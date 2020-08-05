@@ -1243,7 +1243,7 @@ effect:RANDOM
 dice:2
 effect:DRAIN_STAT:STR
 effect:DRAIN_STAT:CON
-desc:restores some mana but also drains either your strength or constitution
+desc:restores your mana but also drains either your strength or constitution
 
 name:SHROOM_PURGING
 aim:0
@@ -2983,7 +2983,7 @@ desc: fire)
 name:MAGESTAFF
 aim:0
 power:0
-effect:RESTORE_MANA
+effect:RESTORE_MANA:SPECIAL
 dice:10
 time:15+d10
 desc:restores 10 spell points (mages and necromancers only)
