@@ -552,12 +552,11 @@ void process_world(struct chunk *c)
 			/* Illuminate */
 			cave_illuminate(c, dawn);
 		}
-	} else {
-		/* Update the stores once a day (while in the dungeon).
-		   The changes are not actually made until return to town,
-		   to avoid giving details away in the knowledge menu. */
-		if (!(turn % (10L * z_info->store_turns))) daycount++;
 	}
+
+	/* Update the stores once a day.  The changes are not actually made until
+	 * return to town, to avoid giving details away in the knowledge menu. */
+	if (player->depth && !(turn % (10L * z_info->store_turns))) daycount++;
 
 	/* Check for light change */
 	if (player_has(player, PF_UNLIGHT)) {
