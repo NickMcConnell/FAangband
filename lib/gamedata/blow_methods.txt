@@ -214,5 +214,9 @@ act:mutters that shopkeepers won't take no for an answer
 act:wants to know why some doors are purely decorative
 act:boggles at caps that look like gloves
 act:boasts of walking over lava unharmed
+act:screams that there are monsters in the walls
+act:marvels that his memory seems to disappear with the sun
+act:rails against towns with forbidden exits
+act:relates his difficulties in stopping running
 desc:moan
 
