@@ -918,6 +918,28 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 					}
 					break;
 
+				case PF_WOODEN:
+					/* Account for unarmed digging bonus. */
+					if (! slot_object(p, slot_by_name(p, "weapon"))) {
+						v = p->lev / 2;
+					} else {
+						v = 0;
+					}
+					a = 0;
+					if (entry->p_abilities[i].isaux) {
+						int t = v;
+
+						v = a;
+						a = t;
+					}
+					if (first) {
+						(*combiner.init_func)(v, a, &cst);
+						first = false;
+					} else {
+						(*combiner.accum_func)(v, a, &cst);
+					}
+					break;
+
 				case PF_WOODSMAN:
 					if (character_dungeon &&
 						player_has(p, PF_ELVEN) &&
