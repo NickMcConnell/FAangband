@@ -660,8 +660,8 @@ void player_update_light(struct player *p)
 	if (obj && tval_is_light(obj)) {
 		bool burn_fuel = true;
 
-		/* Turn off the wanton burning of light during the day in the town */
-		if (!p->depth && is_daytime())
+		/* Turn off the wanton burning of light during the day when not in a dungeon */
+		if (level_topography(p->place) != TOP_CAVE && is_daytime())
 			burn_fuel = false;
 
 		/* If the light has the NO_FUEL flag, well... */
