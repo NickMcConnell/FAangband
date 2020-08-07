@@ -4992,7 +4992,7 @@ bool effect_handler_BRAND_AMMO(effect_handler_context_t *context)
 	bool used = false;
 
 	/* Select the brand */
-	const char *brand = one_in_(3) ? "Flame" : (one_in_(2) ? "Frost" : "Venom");
+	const char *brand = one_in_(3) ? "Flame" : (one_in_(2) ? "Frost" : "Poison");
 
 	context->ident = true;
 
