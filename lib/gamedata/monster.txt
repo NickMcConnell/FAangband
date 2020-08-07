@@ -5846,6 +5846,7 @@ blow:BITE:HURT:1d10
 flags:RAND_25 | DROP_1
 flags:IM_POIS | IM_COLD
 flags:OPEN_DOOR | WEIRD_MIND 
+flags-off:HURT_COLD
 spells:HOLD | CONF | HEAL | DARKNESS
 spells:BO_COLD | S_ANIMAL
 spell-power:13
