@@ -130,6 +130,7 @@ desc:You are incredibly stealthy.
 type:player
 code:WOODEN
 bindui:tunneling_ui_compact_0:0:special
+bindui:feather_falling_ui_compact_0:0:-1
 name:Treeish
 desc:Your bare hands tear through stone and you are almost impossible to detect in forests, but you are vulnerable to fire and falling.
 

@@ -220,8 +220,14 @@ label5:FrAct
 label2:FA
 priority:-8
 
+# Gets special treatment to handle the ent player race.
 name:feather_falling_ui_compact_0
-template:good_flag_ui_compact_0
+renderer:char_screen1_flag_with_cancel_renderer
+combine:LOGICAL_OR_WITH_CANCEL
+category:CHAR_SCREEN1
+category:EQUIPCMP_SCREEN
+category:abilities
+flags:TIMED_AS_AUX
 label:Feather falling
 label5:Feath
 label2:Ft
