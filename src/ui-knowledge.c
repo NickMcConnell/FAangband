@@ -21,6 +21,7 @@
 #include "cave.h"
 #include "cmds.h"
 #include "effects.h"
+#include "effects-info.h"
 #include "game-input.h"
 #include "game-world.h"
 #include "grafmode.h"
@@ -2919,7 +2920,7 @@ static void shape_lore_append_misc_flags(textblock *tb,
 		struct obj_property *prop =
 			lookup_obj_property(OBJ_PROPERTY_FLAG, i);
 
-		if ((prop->subtype == OFT_MISC || prop->subtype == OFT_MELEE ||
+		if ((prop->subtype == OFT_MISC || prop->subtype == OFT_WEAPON ||
 			prop->subtype == OFT_BAD) &&
 			of_has(s->flags, prop->index)) {
 			textblock_append(tb, "%s%s.", (n > 0) ? "  " : "",
@@ -2939,6 +2940,20 @@ static void shape_lore_append_misc_flags(textblock *tb,
 
 	if (n > 0) {
 		textblock_append(tb, "\n");
+	}
+}
+
+
+static void shape_lore_append_change_effects(textblock *tb,
+	const struct player_shape *s)
+{
+	textblock *tbe = effect_describe(s->effect, "Changing into the shape ",
+		0, false);
+
+	if (tbe) {
+		textblock_append_textblock(tb, tbe);
+		textblock_free(tbe);
+		textblock_append(tb, ".\n");
 	}
 }
 
@@ -3012,6 +3027,7 @@ static void shape_lore(const struct player_shape *s)
 	shape_lore_append_protection_flags(tb, s);
 	shape_lore_append_sustains(tb, s);
 	shape_lore_append_misc_flags(tb, s);
+	shape_lore_append_change_effects(tb, s);
 	shape_lore_append_triggering_spells(tb, s);
 
 	textui_textblock_show(tb, SCREEN_REGION, NULL);
@@ -3200,6 +3216,7 @@ static menu_action knowledge_actions[] =
 { 0, 0, "Display monster knowledge",  	   do_cmd_knowledge_monsters  },
 { 0, 0, "Display feature knowledge",  	   do_cmd_knowledge_features  },
 { 0, 0, "Display trap knowledge",          do_cmd_knowledge_traps  },
+{ 0, 0, "Display shapechange effects",     do_cmd_knowledge_shapechange },
 //{ 0, 0, "Display contents of general store", do_cmd_knowledge_store     },
 //{ 0, 0, "Display contents of armourer",      do_cmd_knowledge_store     },
 //{ 0, 0, "Display contents of weaponsmith",   do_cmd_knowledge_store     },
