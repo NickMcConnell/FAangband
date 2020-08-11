@@ -1493,6 +1493,7 @@ bool effect_handler_RECALL(effect_handler_context_t *context)
 
 	/* No recall */
 	if ((OPT(player, birth_no_recall) && !player->total_winner) ||
+		((!current) && (cave->mon_cnt == 1)) ||
 		((player->place == player->home) && !player->recall_pt)) {
 		msg("Nothing happens.");
 		return true;
@@ -1536,7 +1537,7 @@ bool effect_handler_RECALL(effect_handler_context_t *context)
 				}
 
 				/* Check for replacement */
-				if (point < num_recall_points + 1) {
+				if ((point < num_recall_points + 1) && (place)) {
 					player->recall[point] = place;
 				}
 
@@ -3432,8 +3433,8 @@ bool effect_handler_DESTRUCTION(effect_handler_context_t *context)
 
 	context->ident = true;
 
-	/* No effect in town */
-	if (!player->depth) {
+	/* No effect in town or arena */
+	if ((!player->depth) || (player->upkeep->arena_level)) {
 		msg("The ground shakes for a moment.");
 		return true;
 	}
@@ -3549,10 +3550,10 @@ bool effect_handler_EARTHQUAKE(effect_handler_context_t *context)
 
 	context->ident = true;
 
-	if (player->depth) {
+	if ((player->depth) && ((!player->upkeep->arena_level) || (context->origin.what == SRC_MONSTER))) {
 		msg("The ground shakes! The ceiling caves in!");
 	} else {
-		/* No effect in town */
+		/* No effect in town or arena */
 		msg("The ground shakes for a moment.");
 		return true;
 	}
@@ -5490,7 +5491,8 @@ bool effect_handler_SINGLE_COMBAT(effect_handler_context_t *context)
 		}
 
 		/* Swap the targeted monster with the first in the monster list */
-		if (cave_monster(cave, 1)->race) {
+		if (old_idx == 1) { /* Do nothing */ }
+		else if (cave_monster(cave, 1)->race) {
 			monster_index_move(old_idx, cave_monster_max(cave));
 			monster_index_move(1, old_idx);
 			monster_index_move(cave_monster_max(cave), 1);

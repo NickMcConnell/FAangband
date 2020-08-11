@@ -761,9 +761,10 @@ void process_world(struct chunk *c)
 
 			/* Determine the level */
 			if (player->place != player->home) {
+				int new_last_place = (player->upkeep->arena_level) ? player->last_place : 0;
 				msgt(MSG_TPLEVEL, "You feel yourself yanked homewards!");
 				player_change_place(player, player->home);
-				player->last_place = 0;
+				player->last_place = new_last_place;
 			} else {
 				msgt(MSG_TPLEVEL, "You feel yourself yanked away!");
 				player_change_place(player, player->recall_pt);
@@ -1144,7 +1145,7 @@ void run_game_loop(void)
 			/* Kill arena monster */
 			if (arena) {
 				player->upkeep->arena_level = false;
-				kill_arena_monster(player->upkeep->health_who);
+				if (player->upkeep->health_who) kill_arena_monster(player->upkeep->health_who);
 			}
 		}
 

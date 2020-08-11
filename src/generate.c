@@ -1413,6 +1413,23 @@ void prepare_next_level(struct chunk **c, struct player *p)
 				cave_store(*c, prev_name, false, true);
 				cave_store(p->cave, prev_name, true, true);
 			}
+			else if (!p->place)
+			/* Paranoia - try to catch unusual exits from Arena
+			 * Ideally unusual exits never happen and this code is unnecessary */
+			{
+				p->upkeep->arena_level = false;
+				if (!p->last_place) 
+				{
+					p->last_place = p->home; /* paranoia */
+					persist = OPT(p, birth_levels_persist);
+				}
+				player_change_place(p, p->last_place);
+				p->upkeep->arena_level = true;				
+				p->upkeep->health_who = NULL; /* Suppress "defeated" message for unusual exit */
+				my_strcpy(prev_name, level_name(&world->levels[p->last_place]),
+				  sizeof(prev_name));
+				my_strcpy(new_name, level_name(&world->levels[p->place]), sizeof(new_name));
+			}
 		} else {
 			/* Save the town */
 			if (!((*c)->depth) && !chunk_find_name(prev_name)) {
@@ -1432,7 +1449,7 @@ void prepare_next_level(struct chunk **c, struct player *p)
 		/* Persistent levels need careful work */
 		struct chunk *old_level = chunk_find_name(new_name);
 
-		/* Check all the possibilites */
+		/* Check all the possibilities */
 		if (old_level && (old_level != cave)) {
 			/* We found an old level, load the known level and assign */
 			int i;
@@ -1504,12 +1521,13 @@ void prepare_next_level(struct chunk **c, struct player *p)
 	}
 
 	/* Know the town */
-	if (!(p->depth)) {
+	if ((!(p->depth)) || (!(p->place))) {
 		cave_known(p);
 	}
 
 	/* Apply illumination */
-	cave_illuminate(*c, is_daytime());
+	if (p->place) cave_illuminate(*c, is_daytime());
+	else wiz_light(*c, p, true);
 
 	/* The dungeon is ready */
 	character_dungeon = true;
