@@ -23,6 +23,7 @@
 #include "obj-util.h"
 #include "player.h"
 #include "player-timed.h"
+#include "player-util.h"
 #include "ui-entry.h"
 #include "ui-entry-combiner.h"
 #include "ui-entry-init.h"
@@ -916,6 +917,25 @@ void compute_ui_entry_values_for_player(const struct ui_entry *entry,
 					} else {
 						(*combiner.accum_func)(v, a, &cst);
 					}
+					break;
+
+				case PF_SHADOW:
+					if (player_of_has(p, OF_AGGRAVATE)) {
+						v = -3;
+						a = 0;
+						if (entry->p_abilities[i].isaux) {
+							int t = v;
+
+							v = a;
+							a = t;
+						}
+						if (first) {
+							(*combiner.init_func)(v, a, &cst);
+							first = false;
+						} else {
+							(*combiner.accum_func)(v, a, &cst);
+						}
+					};
 					break;
 
 				case PF_WOODEN:

@@ -124,6 +124,8 @@ desc:You can fly.
 
 type:player
 code:SHADOW
+bindui:stealth_ui_compact_0:0:special
+bindui:aggravate_ui_compact_0:0:-1
 name:Shadow
 desc:You are incredibly stealthy.
 

@@ -280,8 +280,13 @@ template:other_flag_ui_compact_0
 label:Fear
 priority:-2
 
+# Gets special treatment to handle the interaction with the SHADOW ability.
 name:aggravate_ui_compact_0
-template:other_flag_ui_compact_0
+renderer:char_screen1_flag_with_cancel_renderer
+combine:LOGICAL_OR_WITH_CANCEL
+category:CHAR_SCREEN1
+category:EQUIPCMP_SCREEN
+category:hindrances
 label:Aggravate
 label5:Aggrv
 priority:-3
