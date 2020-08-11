@@ -226,6 +226,8 @@ graphics:9:u
 priority:20
 flags:SHOP | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY
 info:9:0
+look-prefix:the entrance to the
+look-in-preposition:at
 desc:This merchant travels around, buying anything of value and selling
 desc:a range of basic commodities, weapons and armor.
 
@@ -385,6 +387,8 @@ name:water
 graphics:.:b
 priority:6
 flags:LOS | PROJECT | PASSABLE | NO_SCENT | EXPOSE | WATERY
+look-prefix:some
+look-in-preposition:in
 desc:Cannot be passed by fiery, earthbound monsters, slows down most other 
 desc:monsters.  Slows you down if you are carrying too much.  You and your 
 desc:enemies are easier to hit when in water, and most spells (especially 
@@ -396,6 +400,8 @@ name:lowland trees
 graphics:+:g
 priority:14
 flags:PASSABLE | OBJECT | TREE | PROTECT | ORGANIC | HIDE_OBJ | TRAP
+look-prefix:some
+look-in-preposition:amid
 desc:Slows down characters not familiar with druidic techniques, and all 
 desc:non-natural monsters that neither fly nor pass through rock.  Ends LOS, 
 desc:stops missiles, bolts, and beams, and reduces the radius of ball spells.  
@@ -407,6 +413,8 @@ name:highland trees
 graphics:+:t
 priority:14
 flags:PASSABLE | OBJECT | TREE | PROTECT | ORGANIC | HIDE_OBJ | TRAP
+look-prefix:some
+look-in-preposition:amid
 desc:Slows down characters not familiar with druidic techniques, and all 
 desc:non-natural monsters that neither fly nor pass through rock.  Ends LOS, 
 desc:stops missiles, bolts, and beams, and reduces the radius of ball spells.  
@@ -418,6 +426,7 @@ graphics:.:g
 priority:5
 flags:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | ORGANIC | EASY | RUN2 | TRAP
 flags:MTRAP
+look-prefix:some
 desc:Open ground that can be crossed easily by all creatures.  It occurs only
 desc:in wilderness.  It may contain traps. 
 
