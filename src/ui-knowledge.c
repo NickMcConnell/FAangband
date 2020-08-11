@@ -2816,15 +2816,15 @@ static void shape_lore_append_resistances(textblock *tb,
 	int i;
 
 	for (i = 0; i < ELEM_MAX; ++i) {
-		if (s->el_info[i].res_level < 0) {
-			vul[nvul] = projections[i].name;
-			++nvul;
-		} else if (s->el_info[i].res_level >= 3) {
+		if (s->el_info[i].res_level == RES_LEVEL_MAX) {
 			imm[nimm] = projections[i].name;
 			++nimm;
-		} else if (s->el_info[i].res_level != 0) {
+		} else if (s->el_info[i].res_level < RES_LEVEL_BASE) {
 			res[nres] = projections[i].name;
 			++nres;
+		} else if (s->el_info[i].res_level > RES_LEVEL_BASE) {
+			vul[nvul] = projections[i].name;
+			++nvul;
 		}
 	}
 
