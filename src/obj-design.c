@@ -1066,8 +1066,8 @@ static void choose_melee_weapon_theme(struct artifact *art)
 		}
 
 		/* Occasionally an extra blow */
-		if (one_in_(10)) {
-			get_property(art, NULL, "attack speed", 1, false);
+		if (one_in_(20)) {
+			get_property(art, NULL, "extra blows", 1, false);
 		}
 
 		/* Sometimes warn the enemy - but with compensation */
@@ -1495,8 +1495,8 @@ static void choose_melee_weapon_theme(struct artifact *art)
 	}
 
 	/* Any melee weapon has a chance at an extra blow */
-	if (one_in_(12)) {
-		get_property(art, NULL, "attack speed", 1, false);
+	if (one_in_(40)) {
+		get_property(art, NULL, "extra blows", 1, false);
 	}
 }
 
@@ -2152,11 +2152,11 @@ static void choose_boots_theme(struct artifact *art)
 		/* Grant regenerative powers. */
 		get_property(art, NULL, "regeneration", 0, true);
 
-		/* Movement speed */
+		/* Extra moves */
 		if (one_in_(4)) {
-			get_property(art, NULL, "movement speed", 2, true);
+			get_property(art, NULL, "extra moves", 2, true);
 		} else {
-			get_property(art, NULL, "movement speed", 1, true);
+			get_property(art, NULL, "extra moves", 1, true);
 		}
 
 		/* Bonus to constitution. */
@@ -4251,7 +4251,7 @@ static bool choose_type(struct object *obj)
 				if (randint1(1500) < potential) {
 					get_property(NULL, obj, "speed", randint1(bonus), true);
 				} else if (randint1(1000) < potential) {
-					get_property(NULL, obj, "movement speed", 1, true);
+					get_property(NULL, obj, "extra moves", 1, true);
 				}
 				done = true;
 			}
