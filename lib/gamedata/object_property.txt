@@ -139,7 +139,7 @@ design-linear:30
 design-square:2
 bindui:damage_reduction_ui_compact_0:0
 
-name:attack speed
+name:extra blows
 type:mod
 code:BLOWS
 price-linear:5000
@@ -160,7 +160,7 @@ price-linear:6000
 design-linear:1250
 bindui:shooting_power_ui_compact_0:0
 
-name:movement speed
+name:extra moves
 type:mod
 code:MOVES
 price-square:1000
