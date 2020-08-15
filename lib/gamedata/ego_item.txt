@@ -1269,7 +1269,6 @@ item:gloves:Set of Leather Gloves
 item:gloves:Set of Alchemist's Gloves
 flags:FEATHER | FREE_ACT
 values:DEX[1+M4] | SEARCH[1+d2M3] | MOVES[-1+d2]
-min-values:MOVES[-3]
 desc:After slipping on these gloves an adventurer will feel agile enough to
 desc: slip through dangers and pick the very pockets of death.
 
