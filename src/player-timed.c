@@ -414,6 +414,25 @@ bool player_timed_effect_is_beneficial(int idx)
 {
 	return timed_effects[idx].beneficial;
 }
+
+static bool player_of_has_prot_conf(struct player *p)
+{
+    bitflag collect_f[OF_SIZE], f[OF_SIZE];
+    int i;
+
+    player_flags(p, collect_f);
+
+    for (i = 0; i < p->body.count; i++) {
+        struct object *obj = slot_object(p, i);
+
+        if (!obj) continue;
+        object_flags(obj, f);
+        of_union(collect_f, f);
+    }
+
+    return of_has(collect_f, OF_PROT_CONF);
+}
+
 /**
  * ------------------------------------------------------------------------
  * Setting, increasing, decreasing and clearing timed effects
@@ -461,7 +480,7 @@ bool player_set_timed(struct player *p, int idx, int v, bool notify)
 		notify = false;
 	} else if (idx == TMD_OPP_COLD && player_is_immune(p->state, ELEM_COLD)) {
 		notify = false;
-	} else if (idx == TMD_OPP_CONF && player_of_has(p, OF_PROT_CONF)) {
+	} else if (idx == TMD_OPP_CONF && player_of_has_prot_conf(p)) {
 		notify = false;
 	}
 
