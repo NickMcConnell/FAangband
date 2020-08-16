@@ -492,14 +492,14 @@ void store_reset(void) {
 
 		/* Initial stock setup for stores */
 		while (s) {
+			s->stock_num = 0;
+			object_pile_free(s->stock);
+			s->stock = NULL;
 			if (store_is_home(s)) {
 				s = s->next;
 				continue;
 			}
-			s->stock_num = 0;
 			store_shuffle(s);
-			object_pile_free(s->stock);
-			s->stock = NULL;
 			for (j = 0; j < 10; j++)
 				store_maint(s);
 			s = s->next;
