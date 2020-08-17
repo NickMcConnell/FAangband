@@ -3397,7 +3397,7 @@ static void make_terrible(struct artifact *art, struct object *obj)
 
 			if (art) {
 				/* Weapons. */
-				if (art->tval < TV_BOOTS) {
+				if (tval_is_weapon_a(art)) {
 					/* Blast items with bonuses, Deadliness more rarely. */
 					art->to_h = -(5 + randint1(7)) * 2;
 					if (!one_in_(3)) {
@@ -3465,9 +3465,11 @@ static void make_terrible(struct artifact *art, struct object *obj)
 		 * stat or three with large negative bonuses. */
 		if (wheel_of_doom == 3) {
 			if (!one_in_(3)) {
-				for (j = 0; j < OBJ_MOD_MAX; j++) {
+				for (j = 0; j < STAT_MAX; j++) {
 					s16b *bonus = art ? &art->modifiers[j] : &obj->modifiers[j];
-					*bonus = -(*bonus);
+					if ((*bonus) > 0) {
+						*bonus = -(*bonus);
+					}
 				}
 
 				/* Artifact is highly unlikely to have any value. */
@@ -3475,7 +3477,6 @@ static void make_terrible(struct artifact *art, struct object *obj)
 					art->cost = MAX(art->cost - 30000L, 0);
 				}
 			} else {
-
 				/* Iron Crown of Beruthiel, here we come... */
 				penalty = -(randint1(5)) - 3;
 				if (one_in_(3)) {
@@ -3484,21 +3485,32 @@ static void make_terrible(struct artifact *art, struct object *obj)
 				for (j = 0; j < OBJ_MOD_MAX; j++) {
 					s16b *bonus = art ? &art->modifiers[j] : &obj->modifiers[j];
 					*bonus = 0;
-					if (one_in_(5)) {
+				}
+				if (one_in_(5)) {
+					for (j = 0; j < STAT_MAX; j++) {
+						s16b *bonus = art ? &art->modifiers[j] :
+							&obj->modifiers[j];
 						if (j == OBJ_MOD_STR) *bonus = penalty;
 						if (j == OBJ_MOD_DEX) *bonus = penalty;
 						if (j == OBJ_MOD_CON) *bonus = penalty;
-					} else if (one_in_(4)) {
+					}
+				} else if (one_in_(4)) {
+					for (j = 0; j < STAT_MAX; j++) {
+						s16b *bonus = art ? &art->modifiers[j] :
+							&obj->modifiers[j];
 						if (j == OBJ_MOD_WIS) *bonus = penalty;
 						if (j == OBJ_MOD_INT) *bonus = penalty;
-					} else if (one_in_(6)) {
-						if (j == OBJ_MOD_SPEED) *bonus = penalty;
-					} else {
-						int k;
-						for (k = 0; k < STAT_MAX; k++) {
-							if (one_in_(4)) {
-								*bonus = penalty;
-							}
+					}
+				} else if (one_in_(6)) {
+					s16b *bonus = art ? &art->modifiers[OBJ_MOD_SPEED] :
+						&obj->modifiers[OBJ_MOD_SPEED];
+					*bonus = penalty;
+				} else {
+					for (j = 0; j < STAT_MAX; j++) {
+						s16b *bonus = art ? &art->modifiers[j] :
+							&obj->modifiers[j];
+						if (one_in_(4)) {
+							*bonus = penalty;
 						}
 					}
 				}
@@ -4535,7 +4547,7 @@ static bool choose_type(struct object *obj)
 			for (j = 0; j < tries; j++) {
 				property = select_property(potential, stats, 5,	&max_value,
 										   RANK_RANDOM_CHOICE, obj);
-				get_property(NULL, obj, stats[property], -randint1(5), true);
+				get_property(NULL, obj, stats[property], 0 - randint1(5), true);
 			}
 
 			/* Potential gained counts as lost */
