@@ -288,11 +288,13 @@ static void random_base_resist(struct object *obj)
 
 /**
  * Get a random new high resist on an item, or enhance an existing one if
- * they're all covered already
+ * they're all covered already.  Return true if the resist is new.  Otherwise,
+ * return false.
  */
 bool random_high_resist(struct object *obj, int *resist)
 {
 	int i, r, count = 0;
+	bool some_uncovered = true;
 
 	/* Count the available high resists */
 	for (i = ELEM_HIGH_MIN; i < ELEM_HIGH_MAX; i++)
@@ -301,12 +303,17 @@ bool random_high_resist(struct object *obj, int *resist)
 	/* All covered */
 	if (count == 0) {
 		count = ELEM_HIGH_MAX - ELEM_HIGH_MIN;
+		some_uncovered = false;
 	}
 
 	/* Pick one */
 	r = randint0(count);
 
-	/* Find the one we picked */
+	/* Find the one we picked.  First handle easy case (any possible). */
+	if (count == ELEM_HIGH_MAX - ELEM_HIGH_MIN) {
+		*resist = r + ELEM_HIGH_MIN;
+		return some_uncovered;
+	}
 	for (i = ELEM_HIGH_MIN; i < ELEM_HIGH_MAX; i++) {
 		if (obj->el_info[i].res_level != RES_LEVEL_BASE) continue;
 		if (r == 0) {
@@ -315,6 +322,8 @@ bool random_high_resist(struct object *obj, int *resist)
 		}
 		r--;
 	}
+	/* Should never get here. */
+	assert(0);
 	return false;
 }
 
