@@ -99,7 +99,7 @@ static enum parser_error parse_quest_artifact(struct parser *p) {
 	if (!art)
 		return PARSE_ERROR_NO_ARTIFACT_NAME;
 	arts = mem_zalloc(sizeof(*arts));
-	arts->art = art;
+	arts->index = art->aidx;
 	arts->chance = chance;
 	arts->next = q->arts;
 	q->arts = arts;
@@ -431,7 +431,8 @@ bool quest_unique_monster_check(const struct monster_race *race)
 	struct quest *quest = quests;
 
 	while (quest) {
-		if ((quest->type == QUEST_UNIQUE) && (quest->race == race )) {
+		if (((quest->type == QUEST_UNIQUE) || (quest->type == QUEST_FINAL))
+			&& (quest->race == race)) {
 			return true;
 		}
 		quest = quest->next;

@@ -71,6 +71,7 @@ place:NARGOTHROND:55
 name:Ungoliant
 type:unique
 race:Ungoliant, the Unlight
+artifact:100:of Ungoliant
 map:Standard Wilderness
 place:NAN_DUNGORTHEB:70:block
 map:Extended Wilderness

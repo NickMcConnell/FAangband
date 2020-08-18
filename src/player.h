@@ -153,7 +153,7 @@ struct quest_place {
  * Structure for quest artifacts
  */
 struct quest_artifact {
-	struct artifact *art;
+	int index;
 	int chance;
 	struct quest_artifact *next;
 };

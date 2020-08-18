@@ -1017,7 +1017,7 @@ static bool mon_create_drop(struct chunk *c, struct monster *mon, byte origin)
 		if (quest && quest->arts) {
 			struct quest_artifact *arts = quest->arts;
 			while (arts) {
-				struct artifact *art = arts->art;
+				struct artifact *art = &a_info[arts->index];
 				struct object_kind *kind = lookup_kind(art->tval, art->sval);
 
 				/* Check chance */
