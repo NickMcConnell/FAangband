@@ -59,12 +59,43 @@
  */
 
 /**
+ * Given the monster, *mon, and cave *c, set *dist to the distance to the
+ * monster's target and *grid to the target's location.  Accounts for a player
+ * decoy, if present.  Either dist or grid may be NULL if that value is not
+ * needed.
+ */
+static void monster_get_target_dist_grid(struct monster *mon, struct chunk *c,
+	int *dist, struct loc *grid)
+{
+	struct loc decoy = cave_find_decoy(c);
+
+	if (loc_is_zero(decoy)) {
+		if (dist) {
+			*dist = mon->cdis;
+		}
+		if (grid) {
+			*grid = player->grid;
+		}
+	} else {
+		if (dist) {
+			*dist = distance(mon->grid, decoy);
+		}
+		if (grid) {
+			*grid = decoy;
+		}
+	}
+}
+
+/**
  * Check if a monster has a chance of casting a spell this turn
  */
 static bool monster_can_cast(struct monster *mon, bool innate)
 {
 	int chance = innate ? mon->race->freq_innate : mon->race->freq_spell;
-	struct loc target = monster_target_loc(cave, mon);
+	int tdist;
+	struct loc tgrid;
+
+	monster_get_target_dist_grid(mon, cave, &tdist, &tgrid);
 
 	/* Cannot cast spells when nice */
 	if (mflag_has(mon->mflag, MFLAG_NICE)) return false;
@@ -87,7 +118,7 @@ static bool monster_can_cast(struct monster *mon, bool innate)
 	}
 
 	/* Monsters at their preferred range are more likely to cast */
-	if (mon->cdis == mon->best_range) {
+	if (tdist == mon->best_range) {
 		chance *= 2;
 	}
 
@@ -95,10 +126,11 @@ static bool monster_can_cast(struct monster *mon, bool innate)
 	if (randint0(100) >= chance) return false;
 
 	/* Check range */
-	if (mon->cdis > z_info->max_range) return false;
+	if (tdist > z_info->max_range) return false;
 
 	/* Check path */
-	if (!projectable(cave, mon->grid, target, PROJECT_SHORT)) return false;
+	if (!projectable(cave, mon->grid, tgrid, PROJECT_SHORT))
+		return false;
 
 	return true;
 }
@@ -109,6 +141,9 @@ static bool monster_can_cast(struct monster *mon, bool innate)
 static void remove_bad_spells(struct monster *mon, bitflag f[RSF_SIZE])
 {
 	bitflag f2[RSF_SIZE];
+	int tdist;
+
+	monster_get_target_dist_grid(mon, cave, &tdist, NULL);
 
 	/* Take working copy of spell flags */
 	rsf_copy(f2, f);
@@ -129,15 +164,15 @@ static void remove_bad_spells(struct monster *mon, bitflag f[RSF_SIZE])
 	}
 
 	/* Don't teleport to if the player is already next to us */
-	if (mon->cdis == 1) {
+	if (tdist == 1) {
 		rsf_off(f2, RSF_TELE_TO);
 	}
 
 	/* Don't use the lash effect if the player is too far away */
-	if (mon->cdis > 2) {
+	if (tdist > 2) {
 		rsf_off(f2, RSF_WHIP);
 	}
-	if (mon->cdis > 3) {
+	if (tdist > 3) {
 		rsf_off(f2, RSF_SPIT);
 	}
 
@@ -340,15 +375,16 @@ bool make_ranged_attack(struct monster *mon)
 
 	/* Non-stupid monsters do some filtering */
 	if (!monster_is_stupid(mon)) {
+		struct loc tgrid;
+
 		/* Remove the "ineffective" spells */
 		remove_bad_spells(mon, f);
 
 		/* Check for a clean bolt shot */
-		if (test_spells(f, RST_BOLT)) {
-			struct loc target = monster_target_loc(cave, mon);
-			if (!projectable(cave, mon->grid, target, PROJECT_STOP)) {
-				ignore_spells(f, RST_BOLT);
-			}
+		monster_get_target_dist_grid(mon, cave, NULL, &tgrid);
+		if (test_spells(f, RST_BOLT) &&
+			!projectable(cave, mon->grid, tgrid, PROJECT_STOP)) {
+			ignore_spells(f, RST_BOLT);
 		}
 
 		/* Check for a possible summon */
