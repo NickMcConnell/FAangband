@@ -1675,19 +1675,6 @@ flags:PROT_FEAR | HOLD_LIFE
 desc:The golden cloak of Glorfindel the Valiant, lord of the House of the Golden
 desc: Flower of Gondolin. 
 
-name:of Ungoliant
-base-object:cloak:Unlight Cloak
-level:70
-weight:0
-cost:100000
-alloc:1:70 to 70
-attack:1d1:0:0
-armor:0:30
-values:INFRA[6] | RES_FIRE[-20] | RES_POIS[80] | RES_DARK[80] 
-flags:DARKNESS | PROT_BLIND | SEE_INVIS | TELEPATHY
-desc:"A cloak of darkness she wove about them ... an Unlight, in which things
-desc: seemed to be no more, and which eyes could not pierce, for it was void."
-
 
 ### Gloves and Gauntlets ###
 
