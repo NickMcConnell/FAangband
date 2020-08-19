@@ -73,7 +73,7 @@ H:Immunity to an element prevents inventory destruction from that element.
 H:Phase door is a good escape if the terrain is appropriate.
 H:In open rooms Phase Door may well keep you in the line of fire.
 H:In a vault, any form of teleportation will always teleport you outside.
-H:Identical resistances on different pieces of equipment do not stack.
+H:Resistances on different pieces of equipment stack.
 H:Curing potions and spells reduce or eliminate cuts, stunning and poison.
 H:Nexus attacks can teleport to, teleport away, teleport level, or swap stats.
 H:Time attacks are not mitigated by sustains.

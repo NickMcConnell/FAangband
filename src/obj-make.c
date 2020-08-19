@@ -686,9 +686,9 @@ void ego_apply_magic(struct object *obj, int level, aspect rand_aspect)
 
 	/* Add standard resists */
 	for (i = 0; i < ELEM_MAX; i++) {
-		/* Take the larger (!) of ego and base object resist levels */
+		/* Combine the ego and base object resist levels */
 		obj->el_info[i].res_level =
-			MIN(obj->ego->el_info[i].res_level, obj->el_info[i].res_level);
+			obj->ego->el_info[i].res_level * obj->el_info[i].res_level / 100;
 
 		/* Union of flags so as to know when ignoring is notable */
 		obj->el_info[i].flags |= obj->ego->el_info[i].flags;
