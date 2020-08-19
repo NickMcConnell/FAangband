@@ -1983,6 +1983,16 @@ flags:DARKNESS | PROT_BLIND | SEE_INVIS | TELEPATHY
 desc:"A cloak of darkness she wove about them ... an Unlight, in which things
 desc: seemed to be no more, and which eyes could not pierce, for it was void."
 
+name:dummy
+base-object:cloak:Cloak
+level:100
+weight:0
+cost:10
+alloc:0:70 to 70
+attack:1d1:0:0
+armor:0:0
+desc:A cloak.
+
 name:'Grond'
 base-object:hafted:Mighty Hammer
 level:100
