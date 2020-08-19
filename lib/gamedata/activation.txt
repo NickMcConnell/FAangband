@@ -316,6 +316,13 @@ effect:TIMED_INC:FAST
 dice:20+d20
 desc:hastes you for 20+d20 turns
 
+name:SPEED2
+aim:0
+power:12
+effect:TIMED_INC:FAST
+dice:30+d15
+desc:hastes you for 30+d15 turns
+
 name:SHIELD
 aim:0
 power:10

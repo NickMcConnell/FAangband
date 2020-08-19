@@ -139,7 +139,7 @@ static bool monster_can_cast(struct monster *mon, bool innate)
 		struct loc *path = mem_alloc(z_info->max_range * sizeof(*path));
 		int npath, ipath;
 
-		npath = project_path(path, z_info->max_range, mon->grid, tgrid,
+		npath = project_path(cave, path, z_info->max_range, mon->grid, tgrid,
 			PROJECT_SHORT);
 		ipath = 0;
 		while (1) {

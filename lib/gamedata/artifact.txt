@@ -1441,7 +1441,7 @@ alloc:18:25 to 90
 attack:0d0:0:0
 armor:16:15
 values:RES_CHAOS[45] | RES_NETHER[45] | RES_POIS[45]
-act:PROT_FROM_EVIL
+act:PROTEVIL
 time:200+d200
 msg:A shrill wailing sound surrounds you...
 desc:In this studded cuirass of pliable leather lives the memory of
@@ -1489,7 +1489,7 @@ attack:1d4:-2:0
 armor:45:27
 flags:PROT_CONF
 values:INT[3] | WIS[3] | CON[3] | RES_ACID[40] | RES_POIS[40]
-act:DOOR_DESTRUCT
+act:DESTROY_DOORS
 time:0
 msg:Your armor glows bright red...
 desc:A hauberk, leggings, and sleeves of interlocking steel rings,
@@ -1521,7 +1521,7 @@ attack:1d4:-1:0
 armor:35:20
 values:DAM_RED[5]
 values:RES_ACID[45] | RES_ELEC[45] | RES_FIRE[40] | RES_COLD[40] | RES_POIS[40]
-act:PHASE_DOOR
+act:TELE_PHASE
 time:2
 msg:Your armor twists space around you...
 desc:This wondrous shirt of fine-linked chain shimmers before your eyes like
@@ -1540,7 +1540,7 @@ attack:2d4:-3:0
 armor:65:26
 values:STR[4] | RES_ACID[40] | RES_ELEC[40] | RES_FIRE[40] | RES_COLD[40]
 values:RES_DARK[40] | RES_DISEN[50]
-act:GENOCIDE
+act:BANISHMENT
 time:1500
 msg:Your armor glows deep blue...
 desc:A shimmering suit of true-silver, forged by dwarven smiths for Celeborn of
@@ -1624,7 +1624,7 @@ alloc:8:3 to 100
 attack:0d0:0:0
 armor:1:15
 values:STEALTH[3] | SPEED[3] | RES_CHAOS[40]
-act:TELEPORT100
+act:TELE_LONG
 time:45
 msg:Your cloak twists space around you...
 desc:A crystal-blue cape of fine silk worn by a silent messenger of the forces
@@ -1864,7 +1864,7 @@ attack:1d6:0:0
 armor:10:15
 values:RES_DARK[45] | RES_NETHER[40] | RES_ELEC[45] | RES_FIRE[50] | LIGHT[1]
 flags:PROT_BLIND
-act:CURING
+act:CURE_TEMP
 time:100
 msg:Your shield throbs deep blue...
 desc:A shining shield wrought for Eärendil Half-Elven, son of Tuor and Idril,
