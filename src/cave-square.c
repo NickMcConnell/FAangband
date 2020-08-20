@@ -1473,6 +1473,7 @@ void square_add_glyph(struct chunk *c, struct loc grid, int type)
 	switch (type) {
 		case GLYPH_WARDING: {
 			glyph = lookup_trap("glyph of warding");
+			c->feeling_squares += (1 << 8);
 			break;
 		}
 		case GLYPH_DECOY: {

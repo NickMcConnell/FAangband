@@ -1083,6 +1083,7 @@ bool effect_handler_TIMED_DEC(effect_handler_context_t *context)
 bool effect_handler_GLYPH(effect_handler_context_t *context)
 {
 	struct loc decoy = cave_find_decoy(cave);
+	int num_runes = cave->feeling_squares >> 8;
 
 	/* Always notice */
 	context->ident = true;
@@ -1090,6 +1091,12 @@ bool effect_handler_GLYPH(effect_handler_context_t *context)
 	/* Only one decoy at a time */
 	if (!loc_is_zero(decoy) && (context->subtype == GLYPH_DECOY)) {
 		msg("You can only deploy one decoy at a time.");
+		return false;
+	}
+
+	/* No more than four glyphs at a time */
+	if ((num_runes >= 4) && (context->subtype == GLYPH_WARDING)) {
+		msg("You can only lay four glyphs at a time.");
 		return false;
 	}
 

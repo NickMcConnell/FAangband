@@ -805,6 +805,12 @@ static bool do_cmd_disarm_test(struct loc grid)
 	if (square_ismonstertrap(cave, grid)) {
 		return true;
 	}
+	if (square_iswarded(cave, grid)) {
+		return true;
+	}
+	if (square_isdecoyed(cave, grid)) {
+		return true;
+	}
 
 	/* Nothing */
 	msg("You see nothing there to disarm.");
@@ -896,7 +902,16 @@ static bool do_cmd_disarm_aux(struct loc grid)
 			square_forget(cave, grid);
 			square_destroy_trap(cave, grid);
 			return false;
+		} else if (trf_has(trap->flags, TRF_GLYPH)) {
+			msgt(MSG_DISARM, "You have removed the %s.", trap->kind->name);
+
+			/* Glyph is gone */
+			cave->feeling_squares -= (1 << 8);
+			square_forget(cave, grid);
+			square_destroy_trap(cave, grid);
+			return false;
 		}
+
 		trap = trap->next;
 	}
 	if (!trap)
