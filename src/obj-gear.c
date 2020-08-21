@@ -684,7 +684,6 @@ void inven_carry(struct player *p, struct object *obj, bool absorb,
 		sound(MSG_QUIVER);
 }
 
-
 /**
  * Wield or wear a single item from the pack or floor
  */

@@ -377,6 +377,10 @@ static size_t obj_desc_combat(const struct object *obj, char *buf, size_t max,
 							  size_t end, int mode)
 {
 	bool spoil = mode & ODESC_SPOIL ? true : false;
+	bool back = player->state.shield_on_back &&
+		(obj == slot_object(player, slot_by_name(player, "arm")));
+	int ac = back ? obj->ac / 3 : obj->ac;
+	int to_a = back ? obj->to_a / 2 : obj->to_a;
 
 	/* Display damage dice if they are known */
 	if (kf_has(obj->kind->kind_flags, KF_SHOW_DICE) &&
@@ -410,13 +414,14 @@ static size_t obj_desc_combat(const struct object *obj, char *buf, size_t max,
 	}
 
 	/* Show armor bonuses */
-	if (player->obj_k->to_a) {
-		if (obj_desc_show_armor(obj))
-			strnfcat(buf, max, &end, " [%d,%+d]", obj->ac, obj->to_a);
-		else if (obj->to_a)
-			strnfcat(buf, max, &end, " [%+d]", obj->to_a);
-	} else if (obj_desc_show_armor(obj)) {
-		strnfcat(buf, max, &end, " [%d]", obj->ac);
+	if (obj_desc_show_armor(obj)) {
+		if (player->obj_k->to_a) {
+			strnfcat(buf, max, &end, " [%d,%+d]", ac, to_a);
+		} else {
+			strnfcat(buf, max, &end, " [%d]", ac);
+		}
+	} else if ((player->obj_k->to_a) && (obj->to_a)) {
+		strnfcat(buf, max, &end, " [%+d]", to_a);
 	}
 
 	return end;

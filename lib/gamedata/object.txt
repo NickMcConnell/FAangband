@@ -740,6 +740,7 @@ cost:700
 alloc:20:30 to 100
 attack:3d6:0:0
 armor:0:0
+flags:TWO_HANDED_DES
 desc:A sword designed for two hands.
 
 name:& Executioner's Sword~
@@ -752,6 +753,7 @@ alloc:20:40 to 100
 attack:4d5:0:0
 armor:0:0
 power:500
+flags:TWO_HANDED_DES
 desc:A giant, curved blade designed to cleave the head cleanly from the body.
 
 name:& Valinorean Sword~
@@ -827,6 +829,7 @@ cost:590
 alloc:20:45 to 100
 attack:3d6:0:0
 armor:0:0
+flags:TWO_HANDED_DES
 desc:Two great bars of wood connected by a massive chain, needing two hands
 desc: to properly wield.
 
@@ -879,6 +882,7 @@ cost:200
 alloc:20:10 to 100
 attack:1d9:0:0
 armor:0:0
+flags:TWO_HANDED_REQ
 desc:Six feet of oak which can be wielded in both hands to give a drubbing or
 desc: block one.
 
@@ -939,6 +943,7 @@ attack:5d8:0:0
 armor:0:0
 slay:UNDEAD_3
 power:500
+flags:TWO_HANDED_DES
 desc:A giant's weapon, enchanted with shattering power that breaks bones,
 desc: bodies, and spirit.
 
@@ -1020,6 +1025,7 @@ cost:430
 alloc:20:25 to 100
 attack:3d5:0:0
 armor:0:0
+flags:TWO_HANDED_REQ
 desc:The most successful of the polearms, the halberd has a long haft mounted
 desc: with a heavy axe blade and opposing spike, and topped by a thrusting
 desc: spine.
@@ -1033,6 +1039,7 @@ cost:358
 alloc:20:15 to 100
 attack:2d5:0:0
 armor:0:0
+flags:TWO_HANDED_REQ
 desc:A fifteen foot spear, requiring two hands to wield, principally used in
 desc: infantry formations.
 
@@ -1106,6 +1113,7 @@ cost:500
 alloc:20:40 to 100
 attack:4d4:0:0
 armor:0:0
+flags:TWO_HANDED_DES
 desc:An enormous two-handed battle axe, carried by Dwarven champions, who
 desc: compete to see who can cleave the most orc heads.
 
@@ -1121,6 +1129,7 @@ cost:800
 alloc:20:45 to 100
 attack:5d3:0:0
 armor:0:0
+flags:TWO_HANDED_DES
 desc:The long crescent blade stands out from the handle of this
 desc: polearm, and it is swung with two hands to harvest grain or blood.
 
@@ -1133,6 +1142,7 @@ cost:363
 alloc:20:20 to 100
 attack:2d6:0:0
 armor:0:0
+flags:TWO_HANDED_REQ
 desc:A reinforced wooden pole eight feet long, topped by a massive knife blade
 desc: that can be used to thrust or chop.
 
@@ -1145,6 +1155,7 @@ cost:230
 alloc:20:10 to 100
 attack:2d8:0:0
 armor:0:0
+flags:TWO_HANDED_DES
 desc:A massive, tapered spear used primarily from horseback.
 
 name:& Scythe~ of Slicing
@@ -1157,6 +1168,7 @@ alloc:10:60 to 100
 attack:8d4:0:0
 armor:0:0
 power:750
+flags:TWO_HANDED_DES
 desc:A reaper's weapon, the long blade almost hums in anticipation of
 desc: the blood it will spill.
 

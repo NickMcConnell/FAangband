@@ -2132,8 +2132,9 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 				pf_has(state->pflags, PF_SHIELD_MAST)) {
 				state->ac += obj->ac;
 			}
-			if (!known_only || obj->known->to_a)
+			if (!known_only || obj->known->to_a) {
 				state->to_a += obj->to_a;
+			}
 			if (!slot_type_is(i, EQUIP_WEAPON) && !slot_type_is(i, EQUIP_BOW)) {
 				if (!known_only || obj->known->to_h) {
 					state->to_h += obj->to_h;
@@ -2585,6 +2586,25 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 			state->to_d += 2;
 			state->bless_wield = true;
 		}
+
+		/* Analyze weapon for two-handed-use. */
+		if (of_has(weapon->flags, OF_TWO_HANDED_REQ)) {
+			state->shield_on_back = true;
+		} else if (of_has(weapon->flags, OF_TWO_HANDED_DES)) {
+			int cutoff = 29 + MIN(weapon->weight / 50, 8);
+			if (state->stat_ind[STAT_STR] < cutoff) {
+				state->shield_on_back = true;
+			}
+		} else {
+			state->shield_on_back = false;
+		}
+		if (state->shield_on_back) {
+			struct object *shield = equipped_item_by_slot_name(player, "arm");
+			if (shield) {
+				state->ac -= (2 * shield->ac) / 3;
+				state->to_a -= shield->to_a / 2;
+			}
+		}
 	} else {
 		/* Unarmed */
 		state->num_blows = calc_blows(p, NULL, state, extra_blows);
@@ -2722,6 +2742,16 @@ static void update_bonuses(struct player *p)
 				msg("The weight of your armor encumbers your movement.");
 			else
 				msg("You feel able to move more freely.");
+		}
+
+		/* Take note when player moves his shield on and off his back. */
+		if (p->state.shield_on_back != state.shield_on_back) {
+			/* Messages */
+			if (state.shield_on_back) {
+				msg("You are carrying your shield on your back.");
+			} else if (equipped_item_by_slot_name(p, "arm")) {
+				msg("You are carrying your shield in your hand.");
+			}
 		}
 	}
 

@@ -1166,8 +1166,8 @@ bool attempt_shield_bash(struct player *p, struct monster *mon, bool *fear)
 	int bash_chance = p->state.skills[SKILL_TO_HIT_MELEE] / 8 +
 		adj_dex_th[p->state.stat_ind[STAT_DEX]] / 2;
 
-	/* No shield, no bash */
-	if (!shield) return false;
+	/* No shield on arm, no bash */
+	if (!shield || player->state.shield_on_back) return false;
 
 	/* Monster is too pathetic, don't bother */
 	if (mon->race->level < p->lev / 2) return false;

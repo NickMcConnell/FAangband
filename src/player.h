@@ -475,6 +475,7 @@ struct player_state {
 
 	int evasion_chance;	/**< Evasion chance (if any) */
 
+    bool shield_on_back;/**< Player carrying a shield on his back. -LM- */
 	bool heavy_wield;	/**< Heavy weapon */
 	bool heavy_shoot;	/**< Heavy shooter */
 	bool bless_wield;	/**< Blessed (or blunt) weapon */
