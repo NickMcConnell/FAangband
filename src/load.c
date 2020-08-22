@@ -148,7 +148,8 @@ static struct object *rd_item(void)
 	rd_string(buf, sizeof(buf));
 	if (buf[0]) {
 		obj->ego = lookup_ego_item(buf, obj->tval, obj->sval);
-		if (!obj->ego) {
+		/* Allow jewellery egos to change without breaking savefiles */
+		if (!(obj->ego || tval_is_jewelry(obj))) {
 			note(format("Couldn't find ego item %s!", buf));
 			return NULL;
 		}

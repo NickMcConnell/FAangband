@@ -3924,8 +3924,8 @@ static void allocate_potential(struct object *obj, int lev)
 {
 	int random;
 
-	/* The total potential of a ring or amulet ranges from 0 to 9000, 
-	 * depending on depth and type. */
+	/* The total potential of a ring or amulet (found by level 100)
+	 * ranges from 0 to 5280, depending on depth and type. */
 	potential = (obj->kind->level * 40) + (lev * 10);
 
 	/* Randomise 10% either way */
@@ -4053,20 +4053,20 @@ static bool choose_type(struct object *obj)
 				if (one_in_(2)) {
 					/* Electricity... */
 					get_property(NULL, obj, "electricity resistance",
-								 45 + 5 * randint0(3), true);
+								 45 + 5 * bonus, true);
 					if (one_in_(3)) {
 						/* and maybe acid */
 						get_property(NULL, obj, "acid resistance",
-									 45 + 5 * randint0(3), true);
+									 45 + 5 * bonus, true);
 					}
 				} else {
 					/* Acid... */
 					get_property(NULL, obj, "acid resistance",
-								 45 + 5 * randint0(3), true);
+								 45 + 5 * bonus, true);
 					if (one_in_(3)) {
 						/* and maybe electricity */
 						get_property(NULL, obj, "electricity resistance",
-									 45 + 5 * randint0(3), true);
+									 45 + 5 * bonus, true);
 					}
 				}
 
@@ -4074,11 +4074,11 @@ static bool choose_type(struct object *obj)
 				if (potential > 1000) {
 					if (one_in_(10)) {
 						get_property(NULL, obj, "cold resistance",
-									 35 + 5 * randint0(3), true);
+									 35 + 5 * bonus, true);
 					}
 					if (one_in_(10)) {
 						get_property(NULL, obj, "fire resistance",
-									 35 + 5 * randint0(3), true);
+									 35 + 5 * bonus, true);
 					}
 				}
 			} else if (tval_is_ring(obj)) {
@@ -4086,20 +4086,20 @@ static bool choose_type(struct object *obj)
 				if (one_in_(2)) {
 					/* Fire... */
 					get_property(NULL, obj, "fire resistance",
-								 45 + 5 * randint0(3), true);
+								 45 + 5 * bonus, true);
 					if (one_in_(3)) {
 						/* and maybe cold */
 						get_property(NULL, obj, "cold resistance",
-									 45 + 5 * randint0(3), true);
+									 45 + 5 * bonus, true);
 					}
 				} else {
 					/* Cold... */
 					get_property(NULL, obj, "cold resistance",
-								 45 + 5 * randint0(3), true);
+								 45 + 5 * bonus, true);
 					if (one_in_(3)) {
 						/* and maybe fire */
 						get_property(NULL, obj, "fire resistance",
-									 45 + 5 * randint0(3), true);
+									 45 + 5 * bonus, true);
 					}
 				}
 
@@ -4107,11 +4107,11 @@ static bool choose_type(struct object *obj)
 				if (potential > 1000) {
 					if (one_in_(10)) {
 						get_property(NULL, obj, "acid resistance",
-									 35 + 5 * randint0(3), true);
+									 35 + 5 * bonus, true);
 					}
 					if (one_in_(10)) {
 						get_property(NULL, obj, "electricity resistance",
-									 35 + 5 * randint0(3), true);
+									 35 + 5 * bonus, true);
 					}
 				}
 			}
@@ -4133,15 +4133,15 @@ static bool choose_type(struct object *obj)
 				/* Protection for the devices */
 				if (one_in_(5)) {
 					get_property(NULL, obj, "electricity resistance",
-								 35 + 5 * randint0(3), true);
+								 35 + 5 * bonus, true);
 				}
 				if (one_in_(5)) {
 					get_property(NULL, obj, "fire resistance",
-								 35 + 5 * randint0(3), true);
+								 35 + 5 * bonus, true);
 				}
 				if (one_in_(5)) {
 					get_property(NULL, obj, "acid resistance",
-								 35 + 5 * randint0(3), true);
+								 35 + 5 * bonus, true);
 				}
 				done = true;
 			}
@@ -4152,18 +4152,18 @@ static bool choose_type(struct object *obj)
 			if (potential > 2000) {
 
 				/* Freedom of action (weaker objects may get a subset) */
-				if (randint1(3500) > initial_potential) {
+				if (randint1(3500) < initial_potential) {
 					get_property(NULL, obj, "protection from blindness", 0,
 								 true);
 				}
-				if (randint1(3500) > initial_potential) {
+				if (randint1(3500) < initial_potential) {
 					get_property(NULL, obj, "protection from confusion", 0,
 								 true);
 				}
-				if (randint1(3500) > initial_potential) {
+				if (randint1(3500) < initial_potential) {
 					get_property(NULL, obj, "free action", 0, true);
 				}
-				if (randint1(3500) > initial_potential) {
+				if (randint1(3500) < initial_potential) {
 					get_property(NULL, obj, "see invisible", 0, true);
 				}
 
@@ -4275,7 +4275,7 @@ static bool choose_type(struct object *obj)
 				/* Safe to get up close */
 				get_property(NULL, obj, "protection from fear", 0, false);
 				get_property(NULL, obj, "disenchantment resistance",
-							 35 + 5 * randint0(5), false);
+							 35 + 5 * bonus, false);
 				get_property(NULL, obj, "hold life", 0, false);
 
 				/* Combat bonuses */
@@ -4457,7 +4457,8 @@ static bool choose_type(struct object *obj)
 				/* ... and more nice properties, if affordable */
 				property = select_property(potential, mobility, 5, &max_value,
 										   RANK_RANDOM_CHOICE, obj);
-				get_property(NULL, obj, mobility[property], 0, false);
+				get_property(NULL, obj, mobility[property], 35 + 5 * bonus,
+							 false);
 				done = true;
 			}
 		} else if (streq(ego->name, "of Arcane Resistance")) {
@@ -4468,10 +4469,10 @@ static bool choose_type(struct object *obj)
 				/* Poison or nether resist */
 				if (one_in_(2)) {
 					get_property(NULL, obj, "poison resistance",
-								 40 + 5 * randint0(5), true);
+								 40 + 5 * randint0(bonus), true);
 				} else {
 					get_property(NULL, obj, "nether resistance",
-								 40 + 5 * randint0(5), true);
+								 40 + 5 * randint0(bonus), true);
 				}
 
 				/* Rack 'em up while we're feeling lucky */
@@ -4489,7 +4490,7 @@ static bool choose_type(struct object *obj)
 					if (obj->el_info[ELEM_POIS + choice].res_level ==
 						RES_LEVEL_BASE) {
 						get_property(NULL, obj, resists[choice],
-									 30 + 5 * randint0(5), true);
+									 30 + 5 * randint0(bonus), true);
 					}
 				}
 				done = true;
@@ -4768,6 +4769,10 @@ static bool choose_type(struct object *obj)
 			}
 		}
 	}
+
+	/* Limit off-type features */
+	potential /= 2;
+
 	obj->ego = ego;
 	return (done);
 }

@@ -708,6 +708,8 @@ static void ego_apply_minima(struct object *obj)
 	int i;
 
 	if (!obj->ego) return;
+	/* Jewellery has no minima */
+	if (tval_is_jewelry(obj)) return;
 
 	if (obj->ego->min_to_h != NO_MINIMUM &&
 			obj->to_h < obj->ego->min_to_h)
