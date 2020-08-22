@@ -1417,8 +1417,7 @@ static bool place_new_monster_one(struct chunk *c, struct loc grid,
 		if (race->sleep) {
 			int val = race->sleep;
 			mon->m_timed[MON_TMD_SLEEP] = ((val * 2) + randint1(val * 10));
-		} else if (!is_daylight() &&
-				   (level_topography(player->place) != TOP_VALLEY) &&
+		} else if (is_night() &&
 				   (level_topography(player->place) != TOP_TOWN)) {
 			mon->m_timed[MON_TMD_SLEEP] += 20;
 		}
@@ -1785,8 +1784,7 @@ bool pick_and_place_monster(struct chunk *c, struct loc grid, int depth,
 	struct monster_group_info info = { 0, 0 };
 
 	/* Enforce sleep at nighttime in the wilderness */
-	if (!is_daylight() && (level_topography(player->place) != TOP_VALLEY) &&
-		(level_topography(player->place) != TOP_TOWN)) {
+	if (is_night() && (level_topography(player->place) != TOP_TOWN)) {
 		sleep = true;
 	}
 

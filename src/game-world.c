@@ -222,6 +222,14 @@ bool is_daylight(void)
 }
 
 /**
+ * Say whether it's night or not
+ */
+bool is_night(void)
+{
+	return !is_daytime() && outside();
+}
+
+/**
  * The amount of energy gained in a turn by a player or monster
  */
 int turn_energy(int speed)
