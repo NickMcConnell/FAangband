@@ -239,9 +239,8 @@ static int terrain_armor_adjust(struct loc grid, int ac, bool melee)
  * Determine if the player "hits" a monster.
  */
 bool test_hit(int chance, int ac, int vis) {
-	int k = randint0(100);
-
 	/* Instant 5% miss or hit chance */
+	int k = randint0(100);
 	if (k < 10) {
 		return (k < 5);
 	}
@@ -255,7 +254,7 @@ bool test_hit(int chance, int ac, int vis) {
 	}
 
 	/* Power competes against armor */
-	return randint0(chance) >= (ac * 2 / 3);
+	return randint0(chance) >= ac;
 }
 
 /**

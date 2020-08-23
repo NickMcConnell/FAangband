@@ -1090,7 +1090,7 @@ base:humanoid
 color:M
 speed:110
 hit-points:40
-armor-class:20
+armor-class:60
 hearing:20
 sleepiness:20
 depth:2
@@ -1851,7 +1851,7 @@ base:humanoid
 color:b
 speed:120
 hit-points:48
-armor-class:20
+armor-class:36
 hearing:12
 sleepiness:10
 depth:5
@@ -2019,7 +2019,7 @@ color:D
 speed:120
 hit-points:12
 hearing:40
-armor-class:14
+armor-class:48
 sleepiness:0
 depth:7
 rarity:3
@@ -2239,7 +2239,7 @@ speed:110
 hit-points:150
 hearing:20
 smell:20
-armor-class:30
+armor-class:45
 sleepiness:40
 depth:7
 rarity:3
@@ -2261,7 +2261,7 @@ base:icky thing
 color:U
 speed:110
 hit-points:90
-armor-class:20
+armor-class:36
 hearing:10
 sleepiness:20
 depth:7
@@ -2412,7 +2412,7 @@ base:person
 color:t
 speed:110
 hit-points:190
-armor-class:20
+armor-class:45
 hearing:15
 sleepiness:20
 depth:8
@@ -2435,7 +2435,7 @@ base:orc
 color:T
 speed:110
 hit-points:140
-armor-class:20
+armor-class:60
 hearing:20
 sleepiness:30
 depth:8
@@ -2588,7 +2588,7 @@ speed:110
 hit-points:210
 light:2
 hearing:20
-armor-class:37
+armor-class:60
 sleepiness:40
 depth:9
 rarity:2
@@ -2701,7 +2701,7 @@ speed:120
 hit-points:120
 hearing:18
 smell:20
-armor-class:24
+armor-class:48
 sleepiness:10
 depth:10
 rarity:3
@@ -2973,7 +2973,7 @@ base:orc
 color:m
 speed:110
 hit-points:160
-armor-class:20
+armor-class:60
 hearing:20
 sleepiness:20
 depth:10
@@ -3444,7 +3444,7 @@ speed:120
 hit-points:180
 hearing:18
 smell:20
-armor-class:28
+armor-class:60
 sleepiness:10
 depth:13
 rarity:3
@@ -3825,8 +3825,7 @@ friends:50:2d4:Warg
 friends:50:1d2:orc tracker
 friends:100:4d4:Same
 desc:He is a hideous deformed cross-breed with man and orc, combining man's
-desc: strength and cunning with orcish evil.  The traitorous wizard Saruman is
-desc: generally believed to be responsible for this abomination.
+desc: strength and cunning with orcish evil.
 
 name:giant tarantula
 base:spider
@@ -5190,7 +5189,7 @@ base:orc
 color:g
 speed:110
 hit-points:280
-armor-class:20
+armor-class:90
 hearing:30
 sleepiness:20
 depth:21
@@ -5561,7 +5560,7 @@ base:orc
 color:P
 speed:120
 hit-points:330
-armor-class:20
+armor-class:75
 hearing:25
 sleepiness:20
 depth:23
@@ -5632,7 +5631,7 @@ color:o
 speed:110
 hit-points:820
 hearing:20
-armor-class:96
+armor-class:120
 sleepiness:10
 depth:24
 rarity:2
@@ -5657,7 +5656,7 @@ color:o
 speed:110
 hit-points:820
 hearing:20
-armor-class:96
+armor-class:120
 sleepiness:10
 depth:24
 rarity:2
@@ -5786,7 +5785,7 @@ color:R
 speed:120
 hit-points:50
 hearing:20
-armor-class:16
+armor-class:48
 sleepiness:8
 depth:25
 rarity:2
@@ -5835,7 +5834,7 @@ base:naga
 color:D
 speed:110
 hit-points:100
-armor-class:60
+armor-class:90
 hearing:32
 sleepiness:60
 depth:25
@@ -6019,7 +6018,7 @@ speed:110
 hit-points:850
 light:2
 hearing:20
-armor-class:48
+armor-class:100
 sleepiness:40
 depth:26
 rarity:4
@@ -6350,7 +6349,7 @@ base:orc
 color:R
 speed:120
 hit-points:630
-armor-class:20
+armor-class:120
 hearing:40
 sleepiness:20
 depth:27
@@ -6476,7 +6475,7 @@ speed:110
 hit-points:1000
 light:2
 hearing:20
-armor-class:84
+armor-class:135
 sleepiness:40
 depth:28
 rarity:4
@@ -7083,7 +7082,7 @@ color:I
 speed:120
 hit-points:1100
 hearing:20
-armor-class:96
+armor-class:120
 sleepiness:20
 depth:30
 rarity:4
@@ -7152,7 +7151,7 @@ base:giant
 color:w
 speed:110
 hit-points:380
-armor-class:30
+armor-class:120
 hearing:40
 sleepiness:90
 depth:31
@@ -7957,7 +7956,7 @@ speed:120
 hit-points:1500
 hearing:20
 smell:20
-armor-class:120
+armor-class:135
 sleepiness:20
 depth:35
 rarity:2
@@ -8562,7 +8561,7 @@ base:bird
 color:U
 speed:130
 hit-points:120
-armor-class:25
+armor-class:90
 hearing:30
 sleepiness:20
 depth:37
@@ -9671,7 +9670,7 @@ color:D
 speed:120
 hit-points:1300
 hearing:20
-armor-class:102
+armor-class:120
 sleepiness:30
 depth:41
 rarity:3
@@ -9747,8 +9746,8 @@ base:insect
 color:i
 speed:120
 hit-points:2
-armor-class:20
-hearing:1
+armor-class:3
+hearing:20
 sleepiness:0
 depth:42
 rarity:9
@@ -9767,7 +9766,7 @@ speed:120
 hit-points:1500
 hearing:30
 smell:20
-armor-class:120
+armor-class:135
 sleepiness:10
 depth:42
 rarity:2
@@ -9798,7 +9797,7 @@ speed:120
 hit-points:2000
 hearing:20
 smell:20
-armor-class:105
+armor-class:150
 sleepiness:30
 depth:42
 rarity:3
@@ -9882,8 +9881,8 @@ glyph:|
 color:R
 speed:130
 hit-points:55
-armor-class:17
-hearing:35
+armor-class:105
+hearing:17
 sleepiness:15
 depth:43
 rarity:4
@@ -9909,8 +9908,8 @@ base:giant
 color:u
 speed:115
 hit-points:550
-armor-class:20
-hearing:30
+armor-class:90
+hearing:20
 sleepiness:50
 depth:44
 rarity:4
@@ -9963,7 +9962,7 @@ speed:120
 hit-points:2400
 light:2
 hearing:12
-armor-class:75
+armor-class:105
 sleepiness:30
 depth:43
 rarity:3
@@ -10058,7 +10057,7 @@ color:Z
 speed:130
 hit-points:2700
 hearing:12
-armor-class:75
+armor-class:180
 sleepiness:30
 depth:43
 rarity:3
@@ -10688,8 +10687,8 @@ glyph:#
 color:W
 speed:110
 hit-points:500
-armor-class:20
-hearing:48
+armor-class:144
+hearing:20
 sleepiness:100
 depth:49
 rarity:5
@@ -11101,7 +11100,7 @@ base:ghost
 color:v
 speed:120
 hit-points:800
-armor-class:30
+armor-class:36
 hearing:12
 sleepiness:20
 depth:51
@@ -11185,7 +11184,7 @@ speed:120
 hit-points:2200
 light:2
 hearing:30
-armor-class:144
+armor-class:180
 sleepiness:70
 depth:52
 rarity:2
@@ -11212,8 +11211,8 @@ base:troll
 color:Z
 speed:120
 hit-points:900
-armor-class:20
-hearing:50
+armor-class:150
+hearing:20
 sleepiness:100
 depth:53
 rarity:2
@@ -11313,7 +11312,7 @@ color:W
 speed:120
 hit-points:2500
 hearing:30
-armor-class:156
+armor-class:195
 sleepiness:70
 depth:53
 rarity:2
@@ -11590,8 +11589,8 @@ base:person
 color:D
 speed:120
 hit-points:400
-armor-class:20
-hearing:35
+armor-class:105
+hearing:20
 sleepiness:10
 depth:55
 rarity:3
@@ -12120,8 +12119,8 @@ base:xorn
 color:D
 speed:110
 hit-points:2800
-armor-class:14
-hearing:68
+armor-class:204
+hearing:14
 sleepiness:5
 depth:63
 rarity:2
@@ -12307,8 +12306,8 @@ base:humanoid
 color:B
 speed:140
 hit-points:580
-armor-class:30
-hearing:45
+armor-class:135
+hearing:30
 sleepiness:0
 depth:65
 rarity:3
@@ -12558,7 +12557,7 @@ base:killer beetle
 color:D
 speed:120
 hit-points:3800
-armor-class:20
+armor-class:180
 hearing:60
 sleepiness:70
 depth:68
@@ -12709,7 +12708,7 @@ base:person
 color:w
 speed:120
 hit-points:2300
-armor-class:30
+armor-class:120
 hearing:40
 sleepiness:10
 depth:69
@@ -13150,8 +13149,8 @@ base:major demon
 color:D
 speed:130
 hit-points:3200
-armor-class:40
-hearing:70
+armor-class:210
+hearing:40
 sleepiness:10
 depth:75
 rarity:5
@@ -13342,7 +13341,7 @@ color:v
 speed:130
 hit-points:5000
 hearing:30
-armor-class:1
+armor-class:3
 sleepiness:0
 depth:79
 rarity:3
@@ -13420,7 +13419,7 @@ color:z
 speed:140
 hit-points:3500
 hearing:50
-armor-class:10
+armor-class:30
 sleepiness:10
 depth:80
 rarity:2
@@ -13534,8 +13533,8 @@ glyph:~
 color:v
 speed:130
 hit-points:1000
-armor-class:30
-hearing:20
+armor-class:60
+hearing:30
 sleepiness:100
 depth:83
 rarity:6
@@ -14105,7 +14104,7 @@ hit-points:8000
 light:2
 hearing:50
 smell:50
-armor-class:192
+armor-class:132
 sleepiness:10
 depth:90
 rarity:1
@@ -14202,8 +14201,8 @@ base:vortex
 color:v
 speed:140
 hit-points:600
-hearing:50
-armor-class:48
+hearing:40
+armor-class:120
 sleepiness:0
 depth:95
 rarity:3

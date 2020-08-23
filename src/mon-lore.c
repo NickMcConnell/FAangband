@@ -1046,12 +1046,9 @@ void lore_append_toughness(textblock *tb, const struct monster_race *race,
 
 		/* The following calculations are based on test_hit();
 		 * make sure to keep it in sync */
-		if (chance < 9) {
-			chance = 9;
-		}
-		chance2 = 12 + (100 - 12 - 5) * (chance - (race->ac * 2 / 3)) / chance;
-		if (chance2 < 12) {
-			chance2 = 12;
+		chance2 = 5 + (100 - 5 - 5) * (chance - race->ac) / chance;
+		if (chance2 < 5) {
+			chance2 = 5;
 		}
 
 		textblock_append(tb, "You have a");
