@@ -9,39 +9,39 @@
 # vuln-flag: monster race flag for special vulnerability to the brand element
 # This file encodes the brands that can appear on object.
 
+code:FIRE_5
+name:fire
+verb:sear
+multiplier:5
+o-multiplier:30
+resist-flag:IM_ELEC
+
 code:ELEC_4
 name:lightning
 verb:electrify
 multiplier:4
-o-multiplier:35
-resist-flag:IM_ELEC
-
-code:FIRE_4
-name:fire
-verb:sear
-multiplier:4
-o-multiplier:35
+o-multiplier:25
 resist-flag:IM_ELEC
 
 code:ACID_3
 name:acid
 verb:dissolve
 multiplier:3
-o-multiplier:25
+o-multiplier:17
 resist-flag:IM_ACID
 
 code:ELEC_3
 name:lightning
 verb:shock
 multiplier:3
-o-multiplier:25
+o-multiplier:17
 resist-flag:IM_ELEC
 
 code:FIRE_3
 name:fire
 verb:burn
 multiplier:3
-o-multiplier:25
+o-multiplier:17
 resist-flag:IM_FIRE
 vuln-flag:HURT_FIRE
 
@@ -49,7 +49,7 @@ code:COLD_3
 name:cold
 verb:freeze
 multiplier:3
-o-multiplier:25
+o-multiplier:17
 resist-flag:IM_COLD
 vuln-flag:HURT_COLD
 
@@ -57,28 +57,28 @@ code:POIS_3
 name:poison
 verb:poison
 multiplier:3
-o-multiplier:25
+o-multiplier:17
 resist-flag:IM_POIS
 
 code:ACID_2
 name:acid
 verb:corrode
 multiplier:2
-o-multiplier:15
+o-multiplier:14
 resist-flag:IM_ACID
 
 code:ELEC_2
 name:lightning
 verb:zap
 multiplier:2
-o-multiplier:15
+o-multiplier:14
 resist-flag:IM_ELEC
 
 code:FIRE_2
 name:fire
 verb:singe
 multiplier:2
-o-multiplier:15
+o-multiplier:14
 resist-flag:IM_FIRE
 vuln-flag:HURT_FIRE
 
@@ -86,7 +86,7 @@ code:COLD_2
 name:cold
 verb:chill
 multiplier:2
-o-multiplier:15
+o-multiplier:14
 resist-flag:IM_COLD
 vuln-flag:HURT_COLD
 
@@ -94,5 +94,5 @@ code:POIS_2
 name:poison
 verb:sicken
 multiplier:2
-o-multiplier:15
+o-multiplier:14
 resist-flag:IM_POIS

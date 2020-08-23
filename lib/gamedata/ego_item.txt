@@ -282,7 +282,7 @@ min-combat:255:0:0
 values:STEALTH[-4] | RES_FIRE[45] | LIGHT[1]
 min-values:STEALTH[-4]
 flags:XTRA_DICE | HEAVY | IGNORE_FIRE
-brand:FIRE_4
+brand:FIRE_5
 act:BALROG_WHIP
 desc:This perilous demon's lash burns redly with the dread fires of Utumno,
 desc: doing triple damage to all monsters not resitant to fire, and

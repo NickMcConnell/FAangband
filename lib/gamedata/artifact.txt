@@ -783,7 +783,7 @@ values:RES_FIRE[100] | RES_DARK[35] | RES_CHAOS[35] | RES_DISEN[35]
 brand:FIRE_3
 slay:DRAGON_3
 slay:ANIMAL_2
-slay:EVIL_2
+slay:EVIL_3
 slay:UNDEAD_5
 desc:A weapon so massive it seems beyond the strength of mortals, yet you feel
 desc: the might of giants within you as you heft it.  As you grip the handle

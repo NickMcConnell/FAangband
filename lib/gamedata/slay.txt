@@ -16,7 +16,7 @@ code:EVIL_2
 name:evil creatures
 race-flag:EVIL
 multiplier:2
-o-multiplier:18
+o-multiplier:15
 melee-verb:smite
 range-verb:pierces
 
@@ -24,7 +24,7 @@ code:ANIMAL_2
 name:animals
 race-flag:ANIMAL
 multiplier:2
-o-multiplier:20
+o-multiplier:17
 melee-verb:smite
 range-verb:deeply pierces
 
@@ -32,7 +32,7 @@ code:EVIL_3
 name:evil creatures
 race-flag:EVIL
 multiplier:3
-o-multiplier:23
+o-multiplier:17
 melee-verb:fiercely smite
 range-verb:deeply pierces
 
@@ -40,7 +40,7 @@ code:ANIMAL_3
 name:animals
 race-flag:ANIMAL
 multiplier:3
-o-multiplier:25
+o-multiplier:20
 melee-verb:fiercely smite
 range-verb:pierces
 
@@ -48,7 +48,7 @@ code:ORC_3
 name:orcs
 race-flag:ORC
 multiplier:3
-o-multiplier:25
+o-multiplier:20
 melee-verb:smite
 range-verb:pierces
 
@@ -56,7 +56,7 @@ code:TROLL_3
 name:trolls
 race-flag:TROLL
 multiplier:3
-o-multiplier:25
+o-multiplier:20
 melee-verb:smite
 range-verb:pierces
 
@@ -64,7 +64,7 @@ code:GIANT_3
 name:giants
 race-flag:GIANT
 multiplier:3
-o-multiplier:25
+o-multiplier:20
 melee-verb:smite
 range-verb:pierces
 
@@ -72,7 +72,7 @@ code:DEMON_3
 name:demons
 race-flag:DEMON
 multiplier:3
-o-multiplier:25
+o-multiplier:20
 melee-verb:smite
 range-verb:pierces
 
@@ -80,7 +80,7 @@ code:DRAGON_3
 name:dragons
 race-flag:DRAGON
 multiplier:3
-o-multiplier:25
+o-multiplier:20
 melee-verb:smite
 range-verb:pierces
 
@@ -88,7 +88,7 @@ code:UNDEAD_3
 name:undead
 race-flag:UNDEAD
 multiplier:3
-o-multiplier:25
+o-multiplier:20
 melee-verb:smite
 range-verb:pierces
 
@@ -96,7 +96,7 @@ code:ORC_5
 name:orcs
 race-flag:ORC
 multiplier:5
-o-multiplier:35
+o-multiplier:25
 melee-verb:fiercely smite
 range-verb:deeply pierces
 
@@ -104,7 +104,7 @@ code:TROLL_5
 name:trolls
 race-flag:TROLL
 multiplier:5
-o-multiplier:35
+o-multiplier:25
 melee-verb:fiercely smite
 range-verb:deeply pierces
 
@@ -112,7 +112,7 @@ code:GIANT_5
 name:giants
 race-flag:GIANT
 multiplier:5
-o-multiplier:35
+o-multiplier:25
 melee-verb:fiercely smite
 range-verb:deeply pierces
 
@@ -120,7 +120,7 @@ code:DEMON_5
 name:demons
 race-flag:DEMON
 multiplier:5
-o-multiplier:35
+o-multiplier:25
 melee-verb:fiercely smite
 range-verb:deeply pierces
 
@@ -128,7 +128,7 @@ code:DRAGON_5
 name:dragons
 race-flag:DRAGON
 multiplier:5
-o-multiplier:35
+o-multiplier:25
 melee-verb:fiercely smite
 range-verb:deeply pierces
 
@@ -136,6 +136,6 @@ code:UNDEAD_5
 name:undead
 race-flag:UNDEAD
 multiplier:5
-o-multiplier:35
+o-multiplier:25
 melee-verb:fiercely smite
 range-verb:deeply pierces
