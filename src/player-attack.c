@@ -322,21 +322,18 @@ void apply_deadliness(int *die_average, int deadliness)
 	if (deadliness < -150)
 		deadliness = -150;
 
-	/* Deadliness is positive - damage is increased */
 	if (deadliness >= 0) {
+		/* Deadliness is positive - damage is increased */
 		i = deadliness_conversion[deadliness];
-
 		*die_average *= (100 + i);
-	}
-
-	/* Deadliness is negative - damage is decreased */
-	else {
+	} else {
+		/* Deadliness is negative - damage is decreased */
 		i = deadliness_conversion[ABS(deadliness)];
-
-		if (i >= 100)
+		if (i >= 100) {
 			*die_average = 0;
-		else
+		} else {
 			*die_average *= (100 - i);
+		}
 	}
 }
 
@@ -492,9 +489,7 @@ static int o_critical_melee(const struct player *p, struct monster *mon,
 							const struct object *obj, int sleeping_bonus,
 							u32b *msg_type, bool *armsman)
 {
-	int debuff_to_hit = is_debuffed(mon) ? DEBUFF_CRITICAL_HIT : 0;
-	int power = (chance_of_melee_hit(p, obj) + debuff_to_hit + sleeping_bonus)
-		/ 4;
+	int power = chance_of_melee_hit(p, obj) + sleeping_bonus;
 	int add_dice = 0;
 
 	/* Armsman Ability - 1/6 critical chance */
@@ -506,20 +501,17 @@ static int o_critical_melee(const struct player *p, struct monster *mon,
 	if (randint1(power + 240) <= power || *armsman) {
 		/* Determine level of critical hit. */
 		if (one_in_(40)) {
-			*msg_type = MSG_HIT_HI_SUPERB;
+			*msg_type = MSG_HIT_HI_GREAT;
 			add_dice = 5;
 		} else if (one_in_(12)) {
-			*msg_type = MSG_HIT_HI_GREAT;
+			*msg_type = MSG_HIT_SUPERB;
 			add_dice = 4;
 		} else if (one_in_(3)) {
-			*msg_type = MSG_HIT_SUPERB;
-			add_dice = 3;
-		} else if (one_in_(2)) {
 			*msg_type = MSG_HIT_GREAT;
-			add_dice = 2;
+			add_dice = 3;
 		} else {
 			*msg_type = MSG_HIT_GOOD;
-			add_dice = 1;
+			add_dice = 2;
 		}
 	} else {
 		*msg_type = MSG_HIT;
