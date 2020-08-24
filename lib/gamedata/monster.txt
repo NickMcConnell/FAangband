@@ -11200,7 +11200,7 @@ flags:IM_FIRE
 innate-freq:8
 spell-freq:8
 spells:WOUND | CONF
-spells:BR_FIRE
+spells:BR_FIRE | BR_DFIRE
 desc:A mighty dragon, Itangast's form scorches your flesh.  Wisps of
 desc: smoke curl up from his nostrils as he regards you with disdain.
 
@@ -11633,7 +11633,7 @@ flags:IM_FIRE | IM_POIS
 innate-freq:5
 spell-freq:3
 spells:BRAIN_SMASH | FORGET | SCARE
-spells:BR_FIRE | BR_POIS
+spells:BR_FIRE | BR_POIS | BR_DFIRE
 spells:S_DRAGON
 desc:Glaurung is the father of all dragons, and was for a long time the most
 desc: powerful.  Though this is no longer so, he still has full command over his
