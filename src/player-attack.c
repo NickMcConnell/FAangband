@@ -184,20 +184,28 @@ int chance_of_melee_hit(const struct player *p, const struct object *weapon)
 
 /**
  * Return the player's chance to hit with a particular missile and
- * (optionally) launcher.
+ * (optionally) launcher at a given grid.
  */
 static int chance_of_missile_hit(const struct player *p,
 								 const struct object *missile,
 								 const struct object *launcher,
-								 struct loc grid)
+								 struct loc grid, int tries)
 {
 	int bonus = missile->to_h;
+	int cur_range = distance(p->grid, grid);
 	int chance;
 
 	if (!launcher) {
+		int str = adj_str_blow[p->state.stat_ind[STAT_STR]];
+		int range = MIN(((str + 20) * 10) / MAX(missile->weight, 10), 10) / 2;
+
+		/* Specialty ability Mighty Throw */
+		if (player_has(p, PF_MIGHTY_THROW)) {
+			range *= 2;
+		}
+
 		/* Other thrown objects are easier to use, but only throwing weapons 
-		 * take advantage of bonuses to Skill and Deadliness from other 
-		 * equipped items. */
+		 * take advantage of bonuses to skill from other equipped items. */
 		if (of_has(missile->flags, OF_THROWING)) {
 			bonus += p->state.to_h;
 			chance = p->state.skills[SKILL_TO_HIT_THROW] + bonus * BTH_PLUS_ADJ;
@@ -205,12 +213,26 @@ static int chance_of_missile_hit(const struct player *p,
 			chance = 3 * p->state.skills[SKILL_TO_HIT_THROW] / 2
 				+ bonus * BTH_PLUS_ADJ;
 		}
+		if (range < cur_range) {
+			/* Penalize Range */
+			chance -= 3 * (cur_range - range);
+		}
 	} else {
+		int i, range = MIN(12 + 2 * p->state.ammo_mult, z_info->max_range) / 2;
 		bonus += p->state.to_h + launcher->to_h;
 		chance = p->state.skills[SKILL_TO_HIT_BOW] + bonus * BTH_PLUS_ADJ;
+		if (range < cur_range) {
+			/* Penalize Range */
+			chance -= 3 * (cur_range - range);
+		}
+
+		/* Each miss makes a hit less likely */
+		for (i = 0; i < tries; i++) {
+			chance -= chance / 3;
+		}
 	}
 
-	return chance - distance(p->grid, grid);
+	return chance;
 }
 
 /**
@@ -391,11 +413,11 @@ static int critical_shot(const struct player *p, const struct monster *mon,
 static int o_critical_shot(const struct player *p, const struct monster *mon,
 						   const struct object *missile,
 						   const struct object *launcher,
-						   int sleeping_bonus, u32b *msg_type, bool *marksman)
+						   int sleeping_bonus, u32b *msg_type, bool *marksman,
+						   int tries)
 {
-	int debuff_to_hit = is_debuffed(mon) ? DEBUFF_CRITICAL_HIT : 0;
-	int power = chance_of_missile_hit(p, missile, launcher, mon->grid)
-		+ debuff_to_hit + sleeping_bonus;
+	int power = chance_of_missile_hit(p, missile, launcher, mon->grid, tries)
+		+ sleeping_bonus;
 	int add_dice = 0;
 
 	/* Thrown weapons get lots of critical hits. */
@@ -403,7 +425,7 @@ static int o_critical_shot(const struct player *p, const struct monster *mon,
 		power = power * 3 / 2;
 	}
 
-	/* Armsman Ability - 1/6 critical chance */
+	/* Marksman Ability - 1/6 critical chance */
 	if (monster_is_visible(mon) && player_has(p, PF_MARKSMAN) && one_in_(6)) {
 		*marksman = true;
 	}
@@ -768,7 +790,7 @@ static int ranged_damage(struct player *p, const struct monster *mon,
 static int o_ranged_damage(struct player *p, const struct monster *mon,
 						   struct object *missile, struct object *launcher,
 						   int b, int s, int sleeping_bonus, u32b *msg_type,
-						   bool *marksman)
+						   bool *marksman, int tries)
 {
 	int mult = (launcher ? p->state.ammo_mult : 1);
 	int dice = missile->dd;
@@ -813,20 +835,20 @@ static int o_ranged_damage(struct player *p, const struct monster *mon,
 	/* Get number of critical dice - only for suitable objects */
 	if (launcher) {
 		dice += o_critical_shot(p, mon, missile, launcher, sleeping_bonus,
-								msg_type, marksman);
-	} else if (of_has(missile->flags, OF_THROWING)) {
+								msg_type, marksman, tries);
+	} else if (of_has(missile->flags, OF_THROWING) && !tval_is_ammo(missile)) {
 		/* Perfectly balanced weapons do even more damage. */
 		if (of_has(missile->flags, OF_PERFECT_BALANCE)) {
 			dice *= 2;
 		}
 
 		dice += o_critical_shot(p, mon, missile, NULL, sleeping_bonus,
-								msg_type, marksman);
+								msg_type, marksman, tries);
 
 		/* Multiply the number of damage dice by the throwing weapon
 		 * multiplier.  This is not the prettiest equation,
 		 * but it does at least try to keep throwing weapons competitive. */
-		dice *= 2 + missile->weight / 12;
+		dice *= 2 + p->lev / 12;
 	}
 
 	/* Roll out the damage. */
@@ -1325,13 +1347,10 @@ static const struct hit_types ranged_hit_types[] = {
  * kind of attack.
  */
 static void ranged_helper(struct player *p,	struct object *obj, int dir,
-						  int range, int shots, ranged_attack attack,
-						  const struct hit_types *hit_types, int num_types)
+						  int shots, ranged_attack attack)
 {
-	int i, j;
-
+	int i;
 	char o_name[80];
-
 	int path_n;
 	struct loc path_g[256];
 
@@ -1346,19 +1365,11 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 
 	struct object *missile;
 	int pierce = 1;
+	int tries = 0;
 
 	/* Check for target validity */
 	if ((dir == DIR_TARGET) && target_okay()) {
-		int taim;
 		target_get(&target);
-		taim = distance(grid, target);
-		if (taim > range) {
-			char msg[80];
-			strnfmt(msg, sizeof(msg),
-					"Target out of range by %d squares. Fire anyway? ",
-				taim - range);
-			if (!get_check(msg)) return;
-		}
 	}
 
 	/* Sound */
@@ -1371,7 +1382,8 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 	p->upkeep->energy_use = (z_info->move_energy * 10 / shots);
 
 	/* Calculate the path */
-	path_n = project_path(cave, path_g, range, grid, target, 0);
+	path_n = project_path(cave, path_g, z_info->max_range, grid, target,
+		PROJECT_THRU);
 
 	/* Calculate potential piercing */
 	if ((player->timed[TMD_POWERSHOT] || player_has(player, PF_PIERCE_SHOT)) &&
@@ -1384,6 +1396,7 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 
 	/* Project along the path */
 	for (i = 0; i < path_n; ++i) {
+		size_t j;
 		struct monster *mon = NULL;
 		bool see = square_isseen(cave, path_g[i]);
 
@@ -1407,7 +1420,7 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 			const char *note_dies = monster_is_destroyed(mon) ? 
 				" is destroyed." : " dies.";
 
-			struct attack_result result = attack(p, obj, grid);
+			struct attack_result result = attack(p, obj, grid, tries);
 			int dmg = result.dmg;
 			u32b msg_type = result.msg_type;
 			char hit_verb[20];
@@ -1433,11 +1446,11 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 					/* Invisible monster */
 					msgt(MSG_SHOOT_HIT, "The %s finds a mark.", o_name);
 				} else {
-					for (j = 0; j < num_types; j++) {
+					for (j = 0; j < N_ELEMENTS(ranged_hit_types); j++) {
 						char m_name[80];
 						const char *dmg_text = "";
 
-						if (msg_type != hit_types[j].msg_type) {
+						if (msg_type != ranged_hit_types[j].msg_type) {
 							continue;
 						}
 
@@ -1449,7 +1462,7 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 
 						/* Encourage the player to throw and shoot things at
 						 * sleeping monsters */
-						if ((result.s_bonus) && (visible)) {
+						if (result.s_bonus && visible) {
 							if (of_has(obj->flags, OF_THROWING) &&
 								((msg_type == MSG_HIT_GREAT) ||
 								 (msg_type == MSG_HIT_SUPERB))) {
@@ -1463,9 +1476,10 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 							msgt(MSG_HIT, "Marksmanship!");
 						}
 
-						if (hit_types[j].text) {
+						if (ranged_hit_types[j].text) {
 							msgt(msg_type, "Your %s %s %s%s. %s", o_name, 
-								 hit_verb, m_name, dmg_text, hit_types[j].text);
+								 hit_verb, m_name, dmg_text,
+								 ranged_hit_types[j].text);
 						} else {
 							msgt(msg_type, "Your %s %s %s%s.", o_name, hit_verb,
 								 m_name, dmg_text);
@@ -1478,7 +1492,6 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 						health_track(p->upkeep, mon);
 					}
 				}
-
 				/* Hit the monster, check for death */
 				if (!mon_take_hit(mon, dmg, &fear, note_dies)) {
 					message_pain(mon, dmg);
@@ -1489,7 +1502,12 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 					/* Become hostile */
 					mon->target.midx = -1;
 				}
+			} else if (result.keep_going) {
+				/* Keep going */
+				tries++;
+				continue;
 			}
+
 			/* Stop the missile, or reduce its piercing effect */
 			pierce--;
 			if (pierce) continue;
@@ -1513,7 +1531,8 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 	}
 
 	/* Drop (or break) near that location */
-	drop_near(cave, &missile, breakage_chance(missile, hit_target), grid, true, false);
+	drop_near(cave, &missile, breakage_chance(missile, hit_target), grid, true,
+			  false);
 }
 
 
@@ -1521,13 +1540,14 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
  * Helper function used with ranged_helper by do_cmd_fire.
  */
 static struct attack_result make_ranged_shot(struct player *p,
-		struct object *ammo, struct loc grid)
+											 struct object *ammo,
+											 struct loc grid, int tries)
 {
 	char *hit_verb = mem_alloc(20 * sizeof(char));
-	struct attack_result result = {false, false, 0, 0, 0, hit_verb};
+	struct attack_result result = {false, false, true, 0, 0, 0, hit_verb};
 	struct object *bow = equipped_item_by_slot_name(p, "shooting");
 	struct monster *mon = square_monster(cave, grid);
-	int chance = chance_of_missile_hit(p, ammo, bow, grid);
+	int chance = chance_of_missile_hit(p, ammo, bow, grid, tries);
 	int ac = terrain_armor_adjust(grid, mon->race->ac, false);
 	int b = 0, s = 0;
 
@@ -1538,9 +1558,10 @@ static struct attack_result make_ranged_shot(struct player *p,
 		result.s_bonus = 5 + p->lev / 5;
 	}
 
-	/* Did we hit it (penalize distance travelled) */
-	if (!test_hit(chance + result.s_bonus, ac, monster_is_visible(mon)))
+	/* Did we hit it */
+	if (!test_hit(chance + result.s_bonus, ac, monster_is_visible(mon))) {
 		return result;
+	}
 
 	result.success = true;
 
@@ -1554,7 +1575,7 @@ static struct attack_result make_ranged_shot(struct player *p,
 								   &result.marksman);
 	} else {
 		result.dmg = o_ranged_damage(p, mon, ammo, bow, b, s, result.s_bonus,
-									 &result.msg_type, &result.marksman);
+									 &result.msg_type, &result.marksman, tries);
 	}
 
 	missile_learn_on_ranged_attack(p, bow);
@@ -1567,12 +1588,13 @@ static struct attack_result make_ranged_shot(struct player *p,
  * Helper function used with ranged_helper by do_cmd_throw.
  */
 static struct attack_result make_ranged_throw(struct player *p,
-	struct object *obj, struct loc grid)
+											  struct object *obj,
+											  struct loc grid, int tries)
 {
 	char *hit_verb = mem_alloc(20 * sizeof(char));
-	struct attack_result result = {false, false, 0, 0, 0, hit_verb};
+	struct attack_result result = {false, false, false, 0, 0, 0, hit_verb};
 	struct monster *mon = square_monster(cave, grid);
-	int chance = chance_of_missile_hit(p, obj, NULL, grid);
+	int chance = chance_of_missile_hit(p, obj, NULL, grid, tries);
 	int ac = terrain_armor_adjust(grid, mon->race->ac, false);
 	int b = 0, s = 0;
 
@@ -1599,7 +1621,7 @@ static struct attack_result make_ranged_throw(struct player *p,
 								   &result.marksman);
 	} else {
 		result.dmg = o_ranged_damage(p, mon, obj, NULL, b, s, result.s_bonus,
-									 &result.msg_type, &result.marksman);
+									 &result.msg_type, &result.marksman, tries);
 	}
 
 	/* Direct adjustment for exploding things (flasks of oil) */
@@ -1615,7 +1637,6 @@ static struct attack_result make_ranged_throw(struct player *p,
  */
 void do_cmd_fire(struct command *cmd) {
 	int dir;
-	int range = MIN(6 + 2 * player->state.ammo_mult, z_info->max_range);
 	int shots = player->state.num_shots;
 
 	ranged_attack attack = make_ranged_shot;
@@ -1664,8 +1685,7 @@ void do_cmd_fire(struct command *cmd) {
 		return;
 	}
 
-	ranged_helper(player, obj, dir, range, shots, attack, ranged_hit_types,
-				  (int) N_ELEMENTS(ranged_hit_types));
+	ranged_helper(player, obj, dir, shots, attack);
 }
 
 
@@ -1675,11 +1695,7 @@ void do_cmd_fire(struct command *cmd) {
 void do_cmd_throw(struct command *cmd) {
 	int dir;
 	int shots = 10;
-	int str = adj_str_blow[player->state.stat_ind[STAT_STR]];
 	ranged_attack attack = make_ranged_throw;
-
-	int weight;
-	int range;
 	struct object *obj;
 
 	if (player_is_shapechanged(player)) {
@@ -1705,23 +1721,13 @@ void do_cmd_throw(struct command *cmd) {
 	else
 		return;
 
-
-	weight = MAX(obj->weight, 10);
-	range = MIN(((str + 20) * 10) / weight, 10);
-
-	/* Specialty ability Mighty Throw */
-	if (player_has(player, PF_MIGHTY_THROW)) {
-		range *= 2;
-	}
-
 	/* Make sure the player isn't throwing wielded items */
 	if (object_is_equipped(player->body, obj)) {
 		msg("You cannot throw wielded items.");
 		return;
 	}
 
-	ranged_helper(player, obj, dir, range, shots, attack, ranged_hit_types,
-				  (int) N_ELEMENTS(ranged_hit_types));
+	ranged_helper(player, obj, dir, shots, attack);
 }
 
 /**

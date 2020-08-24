@@ -317,7 +317,7 @@ alloc:10:10 to 80
 attack:1d7:5:11
 armor:0:0
 flags:SLOW_DIGEST | REGEN
-values:CON[3]
+values:DEX[3] | CON[3]
 slay:ANIMAL_2
 desc:A stubby blade worn by Beren, whose horn sounded of old in the glades of
 desc: Brethil.

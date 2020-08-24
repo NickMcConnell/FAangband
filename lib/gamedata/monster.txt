@@ -14133,7 +14133,7 @@ speed:135
 hit-points:4200
 light:2
 hearing:30
-armor-class:195
+armor-class:260
 sleepiness:120
 depth:90
 rarity:2
@@ -14261,7 +14261,7 @@ color:D
 speed:140
 hit-points:10000
 hearing:40
-armor-class:255
+armor-class:260
 sleepiness:20
 depth:95
 rarity:3
@@ -14292,8 +14292,8 @@ base:flying dragon
 color:v
 speed:135
 hit-points:7500
-armor-class:30
-hearing:65
+armor-class:255
+hearing:30
 sleepiness:160
 depth:97
 rarity:4
