@@ -384,16 +384,15 @@ int object_value_real(const struct object *obj, int qty)
 				{
 					for (j = 0; j < z_info->brand_max; j++) {
 						if (obj->brands[j] && (prop == brand_property(j))) {
-							int mult = brands[j].o_multiplier;
+							int mult = brands[j].multiplier;
 							int div = tval_is_ammo(obj) ? 10 : 1;
 							s32b bonus = property_cost(prop, mult, true) / div;
-							/* With V combat, brands are worth more on things with big dice 
-							 * With O combat, weapons with big dice are just better, so
-							 * anything that enhances attacks is worth more on them */
-							if ((tval_is_melee_weapon(obj)) || (div == 10))
-							{
+							/* Weapons with big dice are just better, so
+							 * anything that enhances attacks is worth more on
+							 them */
+							if ((tval_is_melee_weapon(obj)) || (div == 10))	{
 								bonus *= ((obj->dd + 1) * (obj->ds));
-								bonus /= 24;                                           
+								bonus /= 24;
 							}
 							value += bonus;
 						}
@@ -404,12 +403,12 @@ int object_value_real(const struct object *obj, int qty)
 				{
 					for (j = 0; j < z_info->slay_max; j++) {
 						if (obj->slays[j] && (prop == slay_property(j))) {
-							int mult = slays[j].o_multiplier;
+							int mult = slays[j].multiplier;
 							int div = tval_is_ammo(obj) ? 10 : 1;
 							s32b bonus = property_cost(prop, mult, true) / div;
-							/* With V combat, slays are worth more on things with big dice 
-							 * With O combat, weapons with big dice are just better, so
-							 * anything that enhances attacks is worth more on them */
+							/* Weapons with big dice are just better, so
+							 * anything that enhances attacks is worth more on
+							 them */
 							if ((tval_is_melee_weapon(obj)) || (div == 10))
 							{
 								bonus *= ((obj->dd + 1) * (obj->ds));
@@ -417,16 +416,18 @@ int object_value_real(const struct object *obj, int qty)
 							}
 							/* Cheap check for brands with broader applicability
 							 * that might reduce the slay's practical value */
-							if ((obj->brands) && (!streq(prop->name, "slay evil creatures")))
-							{
+							if ((obj->brands) &&
+								(!streq(prop->name, "slay evil creatures"))) {
 								int k;
 								bool reduce_bonus = false;
 								for (k = 1; k < z_info->brand_max; k++)
 								{
 									if (!obj->brands[k]) continue;
-									if (strstr(brands[k].name, "poison brand")) continue;
-									if ((strstr(brands[k].name, "cold brand")) && 
-									    (streq(prop->name, "slay undead"))) continue;
+									if (strstr(brands[k].name, "poison brand"))
+										continue;
+									if ((strstr(brands[k].name, "cold brand"))
+										&& (streq(prop->name, "slay undead")))
+										continue;
 									reduce_bonus = true;
 									break;
 								}
@@ -449,9 +450,11 @@ int object_value_real(const struct object *obj, int qty)
 						value += property_cost(prop, obj->to_a, true);
 					} else if (streq(prop->name, "skill bonus")) {
 						value += property_cost(prop, obj->to_h- kind->to_h.base,
-											   true) / (tval_is_ammo(obj) ? 20 : 1);
+											   true) /
+							(tval_is_ammo(obj) ? 20 : 1);
 					} else if (streq(prop->name, "deadliness bonus")) {
-						value += property_cost(prop, obj->to_d, true) / (tval_is_ammo(obj) ? 20 : 1);
+						value += property_cost(prop, obj->to_d, true) /
+							(tval_is_ammo(obj) ? 20 : 1);
 					}
 					break;
 				}

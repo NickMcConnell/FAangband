@@ -204,11 +204,7 @@ Know all flavors on birth ``birth_know_flavors``
 Persistent levels (experimental) ``birth_levels_persist``
   Each level is generated for the first time when the player enters it, and 
   from then on when the player returns the level is as they last saw it, 
-  includeing monsters, items and traps.
-
-Use Oangband-style combat ``birth_O_combat``
-  Uses the combat system originally designed for Oangband, and traditional
-  for FAangband.
+  including monsters, items and traps.
 
 Cheating options
 ================

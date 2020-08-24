@@ -360,57 +360,11 @@ void apply_deadliness(int *die_average, int deadliness)
 }
 
 /**
- * Check if a monster is debuffed in such a way as to make a critical
- * hit more likely.
- */
-static bool is_debuffed(const struct monster *monster)
-{
-	return monster->m_timed[MON_TMD_CONF] > 0 ||
-			monster->m_timed[MON_TMD_HOLD] > 0 ||
-			monster->m_timed[MON_TMD_STUN] > 0;
-}
-
-/**
  * Determine damage for critical hits from shooting.
  *
  * Factor in item weight, total plusses, and player level.
  */
 static int critical_shot(const struct player *p, const struct monster *mon,
-						 int weight, int plus, int dam, int sleeping_bonus,
-						 u32b *msg_type, bool *marksman)
-{
-	int debuff_to_hit = is_debuffed(mon) ? DEBUFF_CRITICAL_HIT : 0;
-	int chance = weight + (p->state.to_h + plus + debuff_to_hit) * 4 + p->lev * 2;
-	int power = weight + randint1(500) + sleeping_bonus;
-	int new_dam = dam;
-
-	/* Armsman Ability - 1/6 critical chance */
-	if (monster_is_visible(mon) && player_has(p, PF_MARKSMAN) && one_in_(6)) {
-		*marksman = true;
-	}
-
-	if (randint1(5000) > chance && !(*marksman)) {
-		*msg_type = MSG_SHOOT_HIT;
-	} else if (power < 500) {
-		*msg_type = MSG_HIT_GOOD;
-		new_dam = 2 * dam + 5;
-	} else if (power < 1000) {
-		*msg_type = MSG_HIT_GREAT;
-		new_dam = 2 * dam + 10;
-	} else {
-		*msg_type = MSG_HIT_SUPERB;
-		new_dam = 3 * dam + 15;
-	}
-
-	return new_dam;
-}
-
-/**
- * Determine O-combat damage for critical hits from shooting.
- *
- * Factor in item weight, total plusses, and player level.
- */
-static int o_critical_shot(const struct player *p, const struct monster *mon,
 						   const struct object *missile,
 						   const struct object *launcher,
 						   int sleeping_bonus, u32b *msg_type, bool *marksman,
@@ -456,58 +410,6 @@ static int o_critical_shot(const struct player *p, const struct monster *mon,
  * Factor in weapon weight, total plusses, player level.
  */
 static int critical_melee(const struct player *p, struct monster *mon,
-						  int weight, int plus, int dam, int sleeping_bonus,
-						  u32b *msg_type, bool *armsman)
-{
-	int debuff_to_hit = is_debuffed(mon) ? DEBUFF_CRITICAL_HIT : 0;
-	int power = weight + randint1(650);
-	int chance = weight + (p->state.to_h + plus + debuff_to_hit) * 5
-		+ (p->state.skills[SKILL_TO_HIT_MELEE] - 60) + sleeping_bonus;
-	int new_dam = dam;
-
-	/* Armsman Ability - 1/6 critical chance */
-	if (monster_is_visible(mon) && player_has(p, PF_ARMSMAN) && one_in_(6)) {
-		*armsman = true;
-	}
-
-	if (randint1(5000) > chance && !(*armsman)) {
-		*msg_type = MSG_HIT;
-	} else if (power < 400) {
-		*msg_type = MSG_HIT_GOOD;
-		new_dam = 2 * dam + 5;
-	} else if (power < 700) {
-		*msg_type = MSG_HIT_GREAT;
-		new_dam = 2 * dam + 10;
-	} else if (power < 900) {
-		*msg_type = MSG_HIT_SUPERB;
-		new_dam = 3 * dam + 15;
-	} else if (power < 1300) {
-		*msg_type = MSG_HIT_HI_GREAT;
-		new_dam = 3 * dam + 20;
-	} else {
-		*msg_type = MSG_HIT_HI_SUPERB;
-		new_dam = 4 * dam + 20;
-	}
-
-	/* Mana Burn Specialty */
-	if ((new_dam > dam) && player_has(p, PF_MANA_BURN) &&
-		monster_has_non_innate_spells(mon)) {
-		/* Impair monsters spellcasting and add to damage */
-		mflag_on(mon->mflag, MFLAG_LESS_SPELL);
-		new_dam += dam;
-
-		msgt(MSG_HIT, "Mana Burn!");
-	}
-
-	return new_dam;
-}
-
-/**
- * Determine O-combat damage for critical hits from melee.
- *
- * Factor in weapon weight, total plusses, player level.
- */
-static int o_critical_melee(const struct player *p, struct monster *mon,
 							const struct object *obj, int sleeping_bonus,
 							u32b *msg_type, bool *armsman)
 {
@@ -649,46 +551,14 @@ static int unarmed_damage(struct player *p, struct monster_race *race,
 }
 
 /**
- * Determine standard melee damage.
- *
- * Factor in damage dice, to-dam and any brand or slay.
- */
-static int melee_damage(const struct monster *mon, struct object *obj, int b, int s)
-{
-	int dmg = damroll(obj->dd, obj->ds);
-
-	if (s) {
-		dmg *= slays[s].multiplier;
-	} else if (b) {
-		dmg *= get_monster_brand_multiplier(mon, &brands[b]);
-	}
-
-	/* Additional bonus for Holy Light */
-	if (player_has(player, PF_HOLY_LIGHT)) {
-		/* +20% versus undead and light-sensitive creatures */
-		if (rf_has(mon->race->flags, RF_UNDEAD) ||
-			rf_has(mon->race->flags, RF_HURT_LIGHT)) {
-			dmg += (2 * dmg) / 10;
-		} else if (rf_has(mon->race->flags, RF_EVIL)) {
-			/* +10% side versus other evil creatures */
-			dmg += dmg / 10;
-		}
-	}
-
-	dmg += obj->to_d;
-
-	return dmg;
-}
-
-/**
- * Determine O-combat melee damage.
+ * Determine melee damage.
  *
  * Deadliness and any brand or slay add extra sides to the damage dice,
  * criticals add extra dice.
  */
-static int o_melee_damage(struct player *p, struct monster *mon,
-						  struct object *obj, int b, int s, int sleeping_bonus,
-						  u32b *msg_type, bool *armsman)
+static int melee_damage(struct player *p, struct monster *mon,
+						struct object *obj, int b, int s, int sleeping_bonus,
+						u32b *msg_type, bool *armsman)
 {
 	int dice = obj->dd;
 	int sides, dmg, add = 0;
@@ -700,7 +570,7 @@ static int o_melee_damage(struct player *p, struct monster *mon,
 
 	/* Get the multiplier for slays and brands. */
 	if (s) {
-		multiplier = slays[s].o_multiplier;
+		multiplier = slays[s].multiplier;
 	} else if (b) {
 		multiplier = get_monster_brand_multiplier(mon, &brands[b]);
 	}
@@ -731,7 +601,7 @@ static int o_melee_damage(struct player *p, struct monster *mon,
 	sides += (extra ? 1 : 0);
 
 	/* Get number of critical dice */
-	dice += o_critical_melee(p, mon, obj, sleeping_bonus, msg_type, armsman);
+	dice += critical_melee(p, mon, obj, sleeping_bonus, msg_type, armsman);
 
 	/* Roll out the damage. */
 	dmg = damroll(dice, sides);
@@ -743,51 +613,12 @@ static int o_melee_damage(struct player *p, struct monster *mon,
 }
 
 /**
- * Determine standard ranged damage.
- *
- * Factor in damage dice, to-dam, multiplier and any brand or slay.
- */
-static int ranged_damage(struct player *p, const struct monster *mon,
-						 struct object *missile, struct object *launcher,
-						 int b, int s)
-{
-	int dmg;
-	int mult = (launcher ? p->state.ammo_mult : 1);
-
-	/* If we have a slay or brand, modify the multiplier appropriately */
-	if (b) {
-		mult += get_monster_brand_multiplier(mon, &brands[b]);
-	} else if (s) {
-		mult += slays[s].multiplier;
-	}
-
-	/* Apply damage: multiplier, slays, bonuses */
-	dmg = damroll(missile->dd, missile->ds);
-	dmg += missile->to_d;
-	if (launcher) {
-		dmg += launcher->to_d;
-	} else if (of_has(missile->flags, OF_THROWING)) {
-		/* Perfectly balanced weapons do even more damage. */
-		if (of_has(missile->flags, OF_PERFECT_BALANCE))
-			dmg *= 2;
-
-		/* Adjust damage for throwing weapons.
-		 * This is not the prettiest equation, but it does at least try to
-		 * keep throwing weapons competitive. */
-		dmg *= 2 + missile->weight / 12;
-	}
-	dmg *= mult;
-
-	return dmg;
-}
-
-/**
- * Determine O-combat ranged damage.
+ * Determine ranged damage.
  *
  * Deadliness, launcher multiplier and any brand or slay add extra sides to the
  * damage dice, criticals add extra dice.
  */
-static int o_ranged_damage(struct player *p, const struct monster *mon,
+static int ranged_damage(struct player *p, const struct monster *mon,
 						   struct object *missile, struct object *launcher,
 						   int b, int s, int sleeping_bonus, u32b *msg_type,
 						   bool *marksman, int tries)
@@ -810,8 +641,8 @@ static int o_ranged_damage(struct player *p, const struct monster *mon,
 		die_average *= bmult;
 		add = bmult - 10;
 	} else if (s) {
-		die_average *= slays[s].o_multiplier;
-		add = slays[s].o_multiplier - 10;
+		die_average *= slays[s].multiplier;
+		add = slays[s].multiplier - 10;
 	} else {
 		die_average *= 10;
 	}
@@ -834,16 +665,16 @@ static int o_ranged_damage(struct player *p, const struct monster *mon,
 
 	/* Get number of critical dice - only for suitable objects */
 	if (launcher) {
-		dice += o_critical_shot(p, mon, missile, launcher, sleeping_bonus,
-								msg_type, marksman, tries);
+		dice += critical_shot(p, mon, missile, launcher, sleeping_bonus,
+							  msg_type, marksman, tries);
 	} else if (of_has(missile->flags, OF_THROWING) && !tval_is_ammo(missile)) {
 		/* Perfectly balanced weapons do even more damage. */
 		if (of_has(missile->flags, OF_PERFECT_BALANCE)) {
 			dice *= 2;
 		}
 
-		dice += o_critical_shot(p, mon, missile, NULL, sleeping_bonus,
-								msg_type, marksman, tries);
+		dice += critical_shot(p, mon, missile, NULL, sleeping_bonus,
+							  msg_type, marksman, tries);
 
 		/* Multiply the number of damage dice by the throwing weapon
 		 * multiplier.  This is not the prettiest equation,
@@ -858,14 +689,6 @@ static int o_ranged_damage(struct player *p, const struct monster *mon,
 	dmg += add;
 
 	return dmg;
-}
-
-/**
- * Apply the player damage bonuses
- */
-static int player_damage_bonus(struct player_state *state)
-{
-	return state->to_d;
 }
 
 /**
@@ -1027,14 +850,8 @@ bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 		improve_attack_modifier(NULL, mon, &b, &s, verb, false);
 
 		/* Get the damage */
-		if (!OPT(p, birth_O_combat)) {
-			dmg = melee_damage(mon, obj, b, s);
-			dmg = critical_melee(p, mon, weight, obj->to_h, dmg, sleeping_bonus,
-								 &msg_type, &armsman);
-		} else {
-			dmg = o_melee_damage(p, mon, obj, b, s, sleeping_bonus, &msg_type,
-								 &armsman);
-		}
+		dmg = melee_damage(p, mon, obj, b, s, sleeping_bonus, &msg_type,
+						   &armsman);
 
 		/* Splash damage and earthquakes */
 		splash = (weight * dmg) / 100;
@@ -1050,11 +867,6 @@ bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 
 	/* Learn by use */
 	equip_learn_on_melee_attack(p);
-
-	/* Apply the player damage bonuses */
-	if (!OPT(p, birth_O_combat)) {
-		dmg += player_damage_bonus(&p->state);
-	}
 
 	/* Substitute shape-specific blows for shapechanged players */
 	if (player_is_shapechanged(p)) {
@@ -1568,15 +1380,8 @@ static struct attack_result make_ranged_shot(struct player *p,
 	improve_attack_modifier(ammo, mon, &b, &s, result.hit_verb, true);
 	improve_attack_modifier(bow, mon, &b, &s, result.hit_verb, true);
 
-	if (!OPT(p, birth_O_combat)) {
-		result.dmg = ranged_damage(p, mon, ammo, bow, b, s);
-		result.dmg = critical_shot(p, mon, ammo->weight, ammo->to_h,
-								   result.dmg, result.s_bonus, &result.msg_type,
-								   &result.marksman);
-	} else {
-		result.dmg = o_ranged_damage(p, mon, ammo, bow, b, s, result.s_bonus,
+	result.dmg = ranged_damage(p, mon, ammo, bow, b, s, result.s_bonus,
 									 &result.msg_type, &result.marksman, tries);
-	}
 
 	missile_learn_on_ranged_attack(p, bow);
 
@@ -1614,15 +1419,8 @@ static struct attack_result make_ranged_throw(struct player *p,
 
 	improve_attack_modifier(obj, mon, &b, &s, result.hit_verb, true);
 
-	if (!OPT(p, birth_O_combat)) {
-		result.dmg = ranged_damage(p, mon, obj, NULL, b, s);
-		result.dmg = critical_shot(p, mon, obj->weight, obj->to_h,
-								   result.dmg, result.s_bonus, &result.msg_type,
-								   &result.marksman);
-	} else {
-		result.dmg = o_ranged_damage(p, mon, obj, NULL, b, s, result.s_bonus,
-									 &result.msg_type, &result.marksman, tries);
-	}
+	result.dmg = ranged_damage(p, mon, obj, NULL, b, s, result.s_bonus,
+							   &result.msg_type, &result.marksman, tries);
 
 	/* Direct adjustment for exploding things (flasks of oil) */
 	if (of_has(obj->flags, OF_EXPLODE))

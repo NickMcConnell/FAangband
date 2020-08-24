@@ -87,7 +87,6 @@ struct brand {
 	int resist_flag;
 	int vuln_flag;
 	int multiplier;
-	int o_multiplier;
 	struct brand *next;
 };
 
@@ -102,7 +101,6 @@ struct slay {
 	char *range_verb;
 	int race_flag;
 	int multiplier;
-	int o_multiplier;
 	struct slay *next;
 };
 

@@ -306,22 +306,16 @@ bool player_has_temporary_slay(int idx)
  * Return the multiplicative factor for a brand hitting a given monster.
  * Account for any elemental vulnerabilities but not for resistances.
  */
-int get_monster_brand_multiplier(const struct monster *mon, const struct brand *b)
+int get_monster_brand_multiplier(const struct monster *mon,
+								 const struct brand *b)
 {
-	bool is_o_combat = OPT(player, birth_O_combat);
 	int mult;
 
-	mult = (is_o_combat) ? b->o_multiplier : b->multiplier;
+	mult = b->multiplier;
 	if (b->vuln_flag && rf_has(mon->race->flags, b->vuln_flag)) {
-		/*
-		 * If especially vulnerable, apply a factor of two to the
-		 * extra damage from the brand.
-		 */
-		if (is_o_combat) {
-			mult = 2 * (mult - 10) + 10;
-		} else {
-			mult *= 2;
-		}
+		/* If especially vulnerable, apply a factor of two to the
+		 * extra damage from the brand. */
+		mult = 2 * (mult - 10) + 10;
 	}
 
 	return mult;
@@ -351,11 +345,7 @@ void improve_attack_modifier(struct object *obj, const struct monster *mon,
 		best_mult = MAX(best_mult, get_monster_brand_multiplier(mon, b));
 	} else if (*slay_used) {
 		struct slay *s = &slays[*slay_used];
-		if (!OPT(player, birth_O_combat)) {
-			best_mult = MAX(best_mult, s->multiplier);
-		} else {
-			best_mult = MAX(best_mult, s->o_multiplier);
-		}
+		best_mult = MAX(best_mult, s->multiplier);
 	}
 
 	/* Brands */
@@ -417,8 +407,7 @@ void improve_attack_modifier(struct object *obj, const struct monster *mon,
  
 		/* Is the monster is vulnerable? */
 		if (react_to_specific_slay(s, mon)) {
-			int mult = OPT(player, birth_O_combat) ?
-				s->o_multiplier : s->multiplier;
+			int mult = s->multiplier;
 
 			/* Record the best multiplier */
 			if (best_mult < mult) {

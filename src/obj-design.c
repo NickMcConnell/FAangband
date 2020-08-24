@@ -271,7 +271,7 @@ static bool get_property(struct artifact *art, struct object *obj,
 			int pick;
 			for (pick = 1; pick < z_info->brand_max; pick++) {
 				char *s = strstr(prop->name, brands[pick].name);
-				if (s && (brands[pick].o_multiplier == value))
+				if (s && (brands[pick].multiplier == value))
 					break;
 			}
 			assert(pick < z_info->brand_max);
@@ -290,7 +290,7 @@ static bool get_property(struct artifact *art, struct object *obj,
 					for (i = 1; i < z_info->brand_max; i++) {
 						if (obj->brands[i] &&
 							streq(prop->name, brands[i].name)) {
-							cur_value = brands[i].o_multiplier;
+							cur_value = brands[i].multiplier;
 						}
 					}
 				}
@@ -310,7 +310,7 @@ static bool get_property(struct artifact *art, struct object *obj,
 			int pick;
 			for (pick = 1; pick < z_info->slay_max; pick++) {
 				char *s = strstr(prop->name, slays[pick].name);
-				if (s && (slays[pick].o_multiplier == value))
+				if (s && (slays[pick].multiplier == value))
 					break;
 			}
 			assert(pick < z_info->slay_max);
@@ -329,7 +329,7 @@ static bool get_property(struct artifact *art, struct object *obj,
 					for (i = 1; i < z_info->slay_max; i++) {
 						if (obj->slays[i] &&
 							streq(prop->name, slays[i].name)) {
-							cur_value = slays[i].o_multiplier;
+							cur_value = slays[i].multiplier;
 						}
 					}
 				}
