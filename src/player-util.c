@@ -134,7 +134,7 @@ int player_get_next_place(int place, char *direction, int multiple)
 				if (quest_forbid_downstairs(lev->index)) break;
 
 				/* Go down */
-				next_place = start->down ?
+				next_place = lev->down ?
 					level_by_name(world, lev->down)->index : -1;
 
 				/* Check failures */
