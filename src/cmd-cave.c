@@ -1047,7 +1047,7 @@ void do_cmd_disarm(struct command *cmd)
  */
 void do_cmd_set_trap(struct loc grid)
 {
-	int max_traps =	1 + (player->lev >= 25) ? 1 : 0;
+	int max_traps =	1 + ((player->lev >= 25) ? 1 : 0);
 
 	/* Specialty ability Extra Trap */
 	if (player_has(player, PF_EXTRA_TRAP)) max_traps++;
