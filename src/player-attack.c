@@ -47,13 +47,6 @@
 #include "project.h"
 #include "target.h"
 
-struct unarmed_blow {
-	char *name;
-	int dd;
-	int ds;
-	struct unarmed_blow *next;
-};
-
 struct unarmed_blow *unarmed_blows;
 int num_unarmed_blows;
 bool confusing_blow;
@@ -304,7 +297,7 @@ static void fury_boost(struct player *p)
  * Much of this table is not intended ever to be used, and is included
  * only to handle possible inflation elsewhere. -LM-
  */
-byte deadliness_conversion[151] =
+const byte deadliness_conversion[151] =
   {
     0,
     5,  10,  14,  18,  22,  26,  30,  33,  36,  39,
@@ -893,7 +886,7 @@ bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 	/* Special messages for unarmed combat */
 	if (!obj && (player_has(p, PF_UNARMED_COMBAT) ||
 				 player_has(p, PF_MARTIAL_ARTS))) {
-		const char *name = unarmed_blows[unarmed_blow_idx].name;
+		const char *name = unarmed_blows[unarmed_blow_idx - 1].name;
 
 		/* Display the attack message, feedback for relevant specialties */
 		if (confusing_blow) {

@@ -26,6 +26,7 @@
 #include "obj-knowledge.h"
 #include "obj-util.h"
 #include "player.h"
+#include "player-attack.h"
 #include "player-calcs.h"
 #include "player-timed.h"
 #include "player-util.h"
@@ -344,6 +345,83 @@ static const char *likert(int x, int y, byte *attr)
 	}
 }
 
+
+/**
+ * Calculate average unarmed damage
+ */
+static int average_unarmed_damage(struct player *p)
+{
+	int bonus = deadliness_conversion[MAX(p->state.to_d, 0)];
+	int chances = 2 + (bonus / 100) + (randint0(100) < (bonus % 100) ? 1 : 0);
+	int min_blow = 1 + (p->lev / 10);
+	int max_blow = MAX(2 * p->lev / 5, min_blow);
+	int n;
+	int *num_events = mem_zalloc((max_blow - min_blow + 1) * sizeof(int));
+	int *powers = mem_zalloc((max_blow - min_blow + 1) * sizeof(int));
+	int total, sum = 0, big_sum = 0;
+
+	/* Record powers */
+	for (n = 0; n <= max_blow - min_blow; n++) {
+		int k;
+		powers[n] = 1;
+		for (k = 0; k < chances; k++) {
+			powers[n] *= n + min_blow;
+		}
+	}
+
+	/* Calculate number of events with largest choice n + min_blow */
+	if (min_blow == max_blow) {
+		/* Trivial case */
+		num_events[0] = 1;
+	} else {
+		/* Total number of events */
+		total = powers[max_blow - min_blow];
+
+		/* Events where the max is reached is the total minus the number where
+		 * max_blow-1 is reached */
+		num_events[max_blow - min_blow] = powers[max_blow - min_blow]
+			- powers[max_blow - min_blow - 1];
+		total -= num_events[max_blow - min_blow];
+
+		/* Now keep applying this until we get to the minimum */
+		for (n = max_blow - min_blow - 1; n > 0; n--) {
+			num_events[n] = powers[max_blow - min_blow] - powers[n - 1];
+			num_events[n] -= num_events[n + 1];
+			total -= num_events[n];
+		}
+
+		/* NUmber of events with the minimum is the number left over */
+		num_events[0] = total;
+	}
+
+	/* Get the weighted damage sums */
+	for (n = min_blow; n <= max_blow; n++) {
+		struct unarmed_blow blow = unarmed_blows[n - 1];
+		int max, average = damcalc(blow.dd, blow.ds, AVERAGE);
+
+		/* Get the average damage from regular strikes */
+		sum += average * num_events[n - min_blow];
+
+		/* Get the damage from power strikes */
+		if (n < num_unarmed_blows - 1) {
+			blow = unarmed_blows[n];
+		}
+		max = damcalc(blow.dd, blow.ds, MAXIMISE);
+		big_sum += max * num_events[n - min_blow];
+	}
+
+	/* Adjust for Martial Arts and Power Strike abilities */
+	if (player_has(p, PF_MARTIAL_ARTS)) {
+		sum = (sum * 5 + big_sum) / 6;
+	} else if (player_has(p, PF_POWER_STRIKE)) {
+		sum = (sum * 7 + big_sum) / 8;
+	}
+
+	/* Turn into an average */
+	sum /= powers[max_blow - min_blow];
+
+	return sum;
+}
 
 /**
  * Equippy chars
@@ -741,15 +819,21 @@ static struct panel *get_panel_combat(void) {
 	bth = (player->state.skills[SKILL_TO_HIT_MELEE] * 10) / BTH_PLUS_ADJ;
 	dam = player->known_state.to_d + (obj ? obj->known->to_d : 0);
 	hit = player->known_state.to_h + (obj ? obj->known->to_h : 0);
-
-	panel_space(p);
-
 	if (obj) {
 		melee_dice = obj->dd;
 		melee_sides = obj->ds;
 	}
 
-	panel_line(p, COLOUR_L_BLUE, "Melee", "%dd%d,%+d", melee_dice, melee_sides, dam);
+	panel_space(p);
+
+	if (!obj && (player_has(player, PF_UNARMED_COMBAT) ||
+				 player_has(player, PF_MARTIAL_ARTS))) {
+		panel_line(p, COLOUR_L_BLUE, "Melee", "Av.%d,%+d%%",
+				   average_unarmed_damage(player), deadliness_conversion[dam]);
+	} else {
+		panel_line(p, COLOUR_L_BLUE, "Melee", "%dd%d,%+d%%", melee_dice,
+				   melee_sides, deadliness_conversion[dam]);
+	}
 	panel_line(p, COLOUR_L_BLUE, "To-hit", "%d,%+d", bth / 10, hit);
 	panel_line(p, COLOUR_L_BLUE, "Blows", "%d.%d/turn",
 			player->state.num_blows / 100, (player->state.num_blows / 10 % 10));
