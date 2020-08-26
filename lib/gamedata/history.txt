@@ -83,7 +83,7 @@ phrase:You are of the clan of Lenwë.
 chart:4:7:98
 phrase:You are regarded as a leader of the Nandor.  
 chart:4:7:100
-phrase:You were a counsellor of Denethor son of Lenwë.  
+phrase:You were a counsellor of Denethor son of Lenwe.  
 
 chart:5:7:40
 phrase:You are of the Sindar.  
@@ -190,9 +190,9 @@ chart:18:57:100
 phrase:You are a well liked child.  
 
 chart:19:23:85
-phrase:You are one of several children of a Drúadan 
+phrase:You are one of several children of a Druadan 
 chart:19:23:100
-phrase:You are the only child of a Drúadan 
+phrase:You are the only child of a Druadan 
 
 chart:20:21:10
 phrase:You are the illegitimate and unacknowledged child 
@@ -210,9 +210,9 @@ phrase:of a Haladin woodsman.
 chart:21:3:80
 phrase:of a foot-soldier slain in the Dagor Bragollach.  
 chart:21:3:90
-phrase:of a fugitive of the House of Bëor.  
+phrase:of a fugitive of the House of Beor.  
 chart:21:3:96
-phrase:of a dispossessed landowner of Dor-Lómin.  
+phrase:of a dispossessed landowner of Dor-Lomin.  
 chart:21:3:99
 phrase:of a guard of Handir of Brethil.  
 chart:21:3:100
