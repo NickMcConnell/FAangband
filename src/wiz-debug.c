@@ -915,11 +915,18 @@ static void wiz_tweak_item(struct object *obj)
 		struct object *prev = obj->prev;
 		struct object *next = obj->next;
 		struct object *known = obj->known;
+		u16b oidx = obj->oidx;
+		struct loc grid = obj->grid;
+		bitflag notice = obj->notice;
+
 		object_prep(obj, obj->kind, player->depth, RANDOMISE);
 		obj->ego = e;
 		obj->prev = prev;
 		obj->next = next;
 		obj->known = known;
+		obj->oidx = oidx;
+		obj->grid = grid;
+		obj->notice = notice;
 		ego_apply_magic(obj, player->depth, RANDOMISE);
 	}
 	wiz_display_item(obj, true);
@@ -943,12 +950,19 @@ static void wiz_tweak_item(struct object *obj)
 		struct object *prev = obj->prev;
 		struct object *next = obj->next;
 		struct object *known = obj->known;
+		u16b oidx = obj->oidx;
+		struct loc grid = obj->grid;
+		bitflag notice = obj->notice;
+
 		obj->ego = NULL;
 		object_prep(obj, obj->kind, obj->artifact->alloc_min, RANDOMISE);
 		obj->artifact = a;
 		obj->prev = prev;
 		obj->next = next;
 		obj->known = known;
+		obj->oidx = oidx;
+		obj->grid = grid;
+		obj->notice = notice;
 		copy_artifact_data(obj, obj->artifact);
 	}
 	wiz_display_item(obj, true);
@@ -1031,6 +1045,9 @@ static void wiz_reroll_item(struct object *obj)
 		struct object *prev = obj->prev;
 		struct object *next = obj->next;
 		struct object *known_obj = obj->known;
+		u16b oidx = obj->oidx;
+		struct loc grid = obj->grid;
+		bitflag notice = obj->notice;
 
 		/* Free slays and brands on the old object by hand */
 		mem_free(obj->slays);
@@ -1045,6 +1062,9 @@ static void wiz_reroll_item(struct object *obj)
 		obj->prev = prev;
 		obj->next = next;
 		obj->known = known_obj;
+		obj->oidx = oidx;
+		obj->grid = grid;
+		obj->notice = notice;
 
 		/* Mark as cheat */
 		obj->origin = ORIGIN_CHEAT;
