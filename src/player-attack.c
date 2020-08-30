@@ -771,7 +771,9 @@ bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 	char verb[20];
 	int dmg = 1;
 	u32b msg_type = MSG_HIT;
-	const char *dmg_text = "";
+	char dmg_text[20];
+
+	my_strcpy(dmg_text, "", sizeof(dmg_text));
 
 	/* Default to punching for one damage */
 	my_strcpy(verb, "punch", sizeof(verb));
@@ -880,7 +882,7 @@ bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 
 	/* Set damage value text if needed */
 	if (OPT(p, show_damage)) {
-		dmg_text = format(" (%d)", dmg);
+		my_strcpy(dmg_text, format(" (%d)", dmg), sizeof(dmg_text));
 	}
 
 	/* Special messages for unarmed combat */
@@ -1253,14 +1255,16 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 				} else {
 					for (j = 0; j < N_ELEMENTS(ranged_hit_types); j++) {
 						char m_name[80];
-						const char *dmg_text = "";
+						char dmg_text[20];
 
+						my_strcpy(dmg_text, "", sizeof(dmg_text));
 						if (msg_type != ranged_hit_types[j].msg_type) {
 							continue;
 						}
 
 						if (OPT(p, show_damage)) {
-							dmg_text = format(" (%d)", dmg);
+							my_strcpy(dmg_text, format(" (%d)", dmg),
+									  sizeof(dmg_text));
 						}
 
 						monster_desc(m_name, sizeof(m_name), mon, MDESC_OBJE);
