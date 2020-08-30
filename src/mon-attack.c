@@ -554,7 +554,7 @@ bool check_hit(struct player *p, int power, int level, int accuracy)
 	chance /= 100;
 
 	/* Check if the player was hit */
-	return test_hit(chance, ac, true);
+	return test_hit(chance, (ac * 3) / 4, true);
 }
 
 /**
