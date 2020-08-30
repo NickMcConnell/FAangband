@@ -1337,7 +1337,7 @@ void move_player(int dir, bool disarm)
 				  player_has(player, PF_ELVEN))) {
 				player->upkeep->energy_use += z_info->move_energy;
 			}
-		} else if (square_isrock(cave, grid)) {
+		} else if (square_isrubble(cave, grid)) {
 			/* Dwarves, flyers can move easily */
 			if (!(player_has(player, PF_DWARVEN) ||
 				  player_has(player, PF_FLYING))) {

@@ -300,6 +300,15 @@ static enum parser_error parse_projection_divisor(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_projection_terrain_factor(struct parser *p) {
+	struct projection *projection = parser_priv(p);
+	if (!projection)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	projection->terrain_factor = parser_getuint(p, "fact");
+	return PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_projection_damage_cap(struct parser *p) {
 	struct projection *projection = parser_priv(p);
 	if (!projection)
@@ -374,6 +383,7 @@ struct parser *init_parse_projection(void) {
 	parser_reg(p, "numerator uint num", parse_projection_numerator);
 	parser_reg(p, "denominator rand denom", parse_projection_denominator);
 	parser_reg(p, "divisor uint div", parse_projection_divisor);
+	parser_reg(p, "terrain-factor uint fact", parse_projection_terrain_factor);
 	parser_reg(p, "damage-cap uint cap", parse_projection_damage_cap);
 	parser_reg(p, "msgt sym type", parse_projection_message_type);
 	parser_reg(p, "obvious uint answer", parse_projection_obvious);

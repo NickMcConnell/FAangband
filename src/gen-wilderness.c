@@ -882,7 +882,7 @@ struct chunk *plain_gen(struct player *p, int height, int width)
 	int last_place = p->last_place;
 	int form_grids = 0;
 
-	int form_feats[] = { FEAT_TREE, FEAT_RUBBLE, FEAT_MAGMA, FEAT_GRANITE,
+	int form_feats[] = { FEAT_TREE, FEAT_PASS_RUBBLE, FEAT_MAGMA, FEAT_GRANITE,
 						 FEAT_TREE2, FEAT_QUARTZ, FEAT_NONE };
 	int ponds[] = { FEAT_WATER, FEAT_NONE };
 
@@ -1361,7 +1361,7 @@ struct chunk *forest_gen(struct player *p, int height, int width)
 	int last_place = p->last_place;
 	int form_grids = 0;
 
-	int form_feats[] = { FEAT_GRASS, FEAT_RUBBLE, FEAT_MAGMA, FEAT_GRANITE,
+	int form_feats[] = { FEAT_GRASS, FEAT_PASS_RUBBLE, FEAT_MAGMA, FEAT_GRANITE,
 						 FEAT_GRASS, FEAT_QUARTZ, FEAT_NONE	};
 	int ponds[] = { FEAT_WATER, FEAT_NONE };
 
@@ -1478,7 +1478,7 @@ struct chunk *swamp_gen(struct player *p, int height, int width)
 	int last_place = p->last_place;
 	int form_grids = 0;
 
-	int form_feats[] = { FEAT_TREE, FEAT_RUBBLE, FEAT_MAGMA, FEAT_GRANITE,
+	int form_feats[] = { FEAT_TREE, FEAT_PASS_RUBBLE, FEAT_MAGMA, FEAT_GRANITE,
 						 FEAT_TREE2, FEAT_QUARTZ, FEAT_NONE };
 
     /* Make the level */
@@ -1553,7 +1553,7 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 	int last_place = p->last_place;
 	int form_grids = 0;
 
-	int form_feats[] = { FEAT_GRASS, FEAT_RUBBLE, FEAT_MAGMA, FEAT_GRANITE,
+	int form_feats[] = { FEAT_GRASS, FEAT_PASS_RUBBLE, FEAT_MAGMA, FEAT_GRANITE,
 						 FEAT_DUNE, FEAT_QUARTZ, FEAT_NONE };
 	bool made_gate = false;
 
@@ -1686,7 +1686,7 @@ struct chunk *river_gen(struct player *p, int height, int width)
 	int form_grids = 0;
 	int path;
 
-	int form_feats[] = { FEAT_TREE, FEAT_RUBBLE, FEAT_MAGMA, FEAT_GRANITE,
+	int form_feats[] = { FEAT_TREE, FEAT_PASS_RUBBLE, FEAT_MAGMA, FEAT_GRANITE,
 						 FEAT_TREE2, FEAT_QUARTZ, FEAT_NONE };
 
     /* Make the level */
@@ -1843,7 +1843,7 @@ struct chunk *valley_gen(struct player *p, int height, int width)
 	int i, j, k;
 	int plats;
 	int form_grids = 0;
-	int form_feats[] = { FEAT_GRASS, FEAT_RUBBLE, FEAT_MAGMA, FEAT_GRANITE,
+	int form_feats[] = { FEAT_GRASS, FEAT_PASS_RUBBLE, FEAT_MAGMA, FEAT_GRANITE,
 						 FEAT_GRASS, FEAT_QUARTZ, FEAT_NONE };
 
     /* Make the level */

@@ -1447,6 +1447,28 @@ void project_m(struct source origin, int r, struct loc grid, int dam, int typ,
 			return;
 	}
 
+	/* Determine if terrain is capable of preventing physical damage. */
+	if (square_isprotect(cave, grid)) {
+		if (one_in_(4) && !rf_has(mon->race->flags, RF_NEVER_MOVE) &&
+			!mon->m_timed[MON_TMD_SLEEP]) {
+			char m_name[80];
+
+			/* Get the monster name (or "it") */
+			monster_desc(m_name, sizeof(m_name), mon, MDESC_STANDARD);
+
+			/* Monsters can duck behind rubble */
+			if (square_isrubble(cave, grid)) {
+				msg("%s ducks behind a boulder!", m_name);
+				return;
+			}
+
+			if (square_istree(cave, grid)) {
+				msg("%s hides behind a tree!", m_name);
+				return;
+			}
+		}
+	}
+
 	/* Some monsters get "destroyed" */
 	if (monster_is_destroyed(mon))
 		context.die_msg = MON_MSG_DESTROYED;
@@ -1454,6 +1476,9 @@ void project_m(struct source origin, int r, struct loc grid, int dam, int typ,
 	/* Force obviousness for certain types if seen. */
 	if (projections[typ].obvious && context.seen)
 		context.obvious = true;
+
+	/* Adjust damage for terrain */
+	context.dam = terrain_adjust_dam(NULL, context.mon, typ, context.dam);
 
 	if (monster_handler != NULL)
 		monster_handler(&context);

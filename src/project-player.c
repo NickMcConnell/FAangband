@@ -34,6 +34,88 @@
 #include "trap.h"
 
 /**
+ * ------------------------------------------------------------------------
+ * Damage adjustment
+ * ------------------------------------------------------------------------ */
+
+/**
+ * Attack is water based
+ */
+static bool attack_is_water_based(int type)
+{
+	return (type == PROJ_WATER) || (type == PROJ_STORM);
+}
+
+/**
+ * Attack is cold based
+ */
+static bool attack_is_cold_based(int type)
+{
+	return (type == PROJ_COLD) || (type == PROJ_ICE);
+}
+
+/**
+ * Attack is fire based
+ */
+static bool attack_is_fire_based(int type)
+{
+	return (type == PROJ_FIRE) || (type == PROJ_PLASMA) ||
+		(type == PROJ_HELLFIRE) || (type == PROJ_DRAGONFIRE);
+}
+
+/**
+ * Adjust damage according to terrain and attack type for player or a monster
+ * (but not both).
+ *
+ * \param p is the player
+ * \param mon is the monster
+ * \param type is the attack type we are checking.
+ * \param dam is the unadjusted damage.
+ * \param grid is the grid the damage is being calculated at
+ */
+int terrain_adjust_dam(struct player *p, struct monster *mon, int type, int dam)
+{
+	struct loc grid = loc(0, 0);
+
+	/* Set grid */
+	if (p) {
+		assert(mon == NULL);
+		grid = p->grid;
+	} else {
+		assert(mon);
+		grid = mon->grid;
+	}
+
+	/* Trees and rubble offer general protection */
+	if (square_isprotect(cave, grid)) {
+		dam -= (dam * projections[type].terrain_factor) / (p ? 12 : 8);
+	}
+
+	/* Water: Fire-based spells suffer, but other spells benefit slightly
+	 * (player is easier to hit).  Water spells come into their own. */
+	if (square_iswatery(cave, grid)) {
+		if (attack_is_fire_based(type)) {
+			dam -= (dam * projections[type].terrain_factor) / (p ? 8 : 4);
+		} else if (attack_is_water_based(type)) {
+			dam += (dam * projections[type].terrain_factor) / (p ? 8 : 6);
+		} else if (p) {
+			dam += (dam * projections[type].terrain_factor) / 20;
+		}
+	}
+
+	/* Lava: Cold and water-based spells suffer, fire-based spells benefit. */
+	if (square_isfiery(cave, grid)) {
+		if (attack_is_fire_based(type)) {
+			dam += (dam * projections[type].terrain_factor) / (p ? 8 : 10);
+		} else if (attack_is_water_based(type) || attack_is_cold_based(type)) {
+			dam -= (dam * projections[type].terrain_factor) / (p ? 8 : 6);
+		}
+	}
+
+	return dam;
+}
+
+/**
  * Adjust damage according to resistance or vulnerability.
  *
  * \param p is the player
@@ -882,7 +964,7 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 	/* Determine if terrain is capable of preventing physical damage. */
 	if (square_isprotect(cave, grid)) {
 		/* A player behind rubble can duck. */
-		if (square_isrock(cave, grid) && one_in_(10)) {
+		if (square_isrubble(cave, grid) && one_in_(10)) {
 			msg("You duck behind a boulder!");
 			return false;
 		}
@@ -964,7 +1046,8 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 		msg("You are hit by %s!", projections[typ].blind_desc);
 	}
 
-	/* Adjust damage for resistance, immunity or vulnerability, and apply it */
+	/* Adjust damage for terrain and element properties, and apply it */
+	dam = terrain_adjust_dam(player, NULL, typ, dam);
 	dam = adjust_dam(player, typ, dam, true);
 	if (dam) {
 		/* Self-inflicted damage is scaled down */

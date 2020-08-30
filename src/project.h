@@ -36,6 +36,7 @@ struct projection {
 	int numerator;
 	random_value denominator;
 	int divisor;
+	int terrain_factor;
 	int damage_cap;
 	int msgt;
 	bool obvious;
@@ -105,6 +106,8 @@ extern wchar_t proj_to_char[PROJ_MAX][BOLT_MAX];
 
 void thrust_away(struct loc centre, struct loc target, int grids_away);
 int inven_damage(struct player *p, int type, int cperc);
+int terrain_adjust_dam(struct player *p, struct monster *mon, int type,
+					   int dam);
 int adjust_dam(struct player *p, int type, int dam, bool actual);
 
 bool project_f(struct source, int r, struct loc grid, int dam, int typ);

@@ -44,6 +44,9 @@
 # 'divisor' is used to divide the attacking creature's hitpoints by to determine
 # breath damage
 
+# 'terrain-factor' is how much this projection is affected by any adjustments
+# due to terrain - normal values 0 (no entry needed in this file), 1 or 2.
+
 # 'damage-cap' is the maximum breath damage, regardless of monster hitpoints,
 # before resistance is applied
 
@@ -67,6 +70,7 @@ lash-desc:acid
 numerator:1  
 denominator:3
 divisor:3
+terrain-factor:2
 damage-cap:1600
 msgt:BR_ACID
 obvious:1
@@ -83,6 +87,7 @@ lash-desc:lightning
 numerator:1  
 denominator:3
 divisor:3
+terrain-factor:2
 damage-cap:1600
 msgt:BR_ELEC
 obvious:1
@@ -99,6 +104,7 @@ lash-desc:fire
 numerator:1  
 denominator:3
 divisor:3
+terrain-factor:2
 damage-cap:1600
 msgt:BR_FIRE
 obvious:1
@@ -115,6 +121,7 @@ lash-desc:frost
 numerator:1  
 denominator:3
 divisor:3
+terrain-factor:2
 damage-cap:1600
 msgt:BR_FROST
 obvious:1
@@ -131,6 +138,7 @@ lash-desc:venom
 numerator:1  
 denominator:3
 divisor:3
+terrain-factor:1
 damage-cap:800
 msgt:BR_GAS
 obvious:1
@@ -147,6 +155,7 @@ lash-desc:brightness
 numerator:6
 denominator:8+1d4
 divisor:6
+terrain-factor:1
 damage-cap:500
 msgt:BR_LIGHT
 obvious:1
@@ -163,6 +172,7 @@ lash-desc:blackness
 numerator:6
 denominator:8+1d4
 divisor:6
+terrain-factor:1
 damage-cap:500
 msgt:BR_DARK
 obvious:1
@@ -179,6 +189,7 @@ lash-desc:sound
 numerator:6
 denominator:8+1d4
 divisor:6
+terrain-factor:1
 damage-cap:500
 msgt:BR_SOUND
 obvious:1
@@ -195,6 +206,7 @@ lash-desc:razors
 numerator:6
 denominator:8+1d4
 divisor:6
+terrain-factor:2
 damage-cap:500
 msgt:BR_SHARDS
 obvious:1
@@ -227,6 +239,7 @@ lash-desc:withering
 numerator:6
 denominator:8+1d4
 divisor:6
+terrain-factor:1
 damage-cap:600
 msgt:BR_NETHER
 obvious:1
@@ -243,6 +256,7 @@ lash-desc:confusion
 numerator:6
 denominator:8+1d4
 divisor:6
+terrain-factor:1
 damage-cap:600
 msgt:BR_CHAOS
 obvious:1
@@ -273,6 +287,7 @@ player-desc:water
 blind-desc:water
 lash-desc:water
 divisor:6
+terrain-factor:2
 damage-cap:0
 msgt:GENERIC
 obvious:1
@@ -289,6 +304,7 @@ lash-desc:icicles
 numerator:1
 denominator:3
 divisor:6
+terrain-factor:2
 damage-cap:1600
 msgt:GENERIC
 obvious:1
@@ -317,6 +333,7 @@ player-desc:inertia
 blind-desc:something strange
 lash-desc:lassitude
 divisor:6
+terrain-factor:1
 damage-cap:200
 msgt:BR_INERTIA
 obvious:1
@@ -331,6 +348,7 @@ player-desc:force
 blind-desc:something hard
 lash-desc:impact
 divisor:6
+terrain-factor:2
 damage-cap:200
 msgt:BR_FORCE
 obvious:1
@@ -359,6 +377,7 @@ player-desc:plasma
 blind-desc:something
 lash-desc:living fire
 divisor:6
+terrain-factor:2
 damage-cap:150
 msgt:BR_PLASMA
 obvious:1
@@ -373,6 +392,7 @@ player-desc:storm
 blind-desc:something
 lash-desc:lightning
 divisor:6
+terrain-factor:2
 damage-cap:600
 msgt:GENERIC
 obvious:1
@@ -387,6 +407,7 @@ player-desc:dragonfire
 blind-desc:something
 lash-desc:dragonfire
 divisor:3
+terrain-factor:2
 damage-cap:1000
 msgt:GENERIC
 obvious:1
@@ -401,6 +422,7 @@ player-desc:hellfire
 blind-desc:something
 lash-desc:hellfire
 divisor:6
+terrain-factor:2
 damage-cap:800
 msgt:GENERIC
 obvious:1
@@ -415,6 +437,7 @@ player-desc:meteor
 blind-desc:something
 lash-desc:meteoric iron
 divisor:6
+terrain-factor:2
 damage-cap:0
 msgt:GENERIC
 obvious:1
@@ -428,6 +451,7 @@ desc:a missile
 player-desc:magical energy
 blind-desc:something
 divisor:6
+terrain-factor:2
 damage-cap:0
 msgt:GENERIC
 obvious:1
@@ -442,6 +466,7 @@ player-desc:the elements
 blind-desc:something
 lash-desc:raw magic
 divisor:3
+terrain-factor:2
 damage-cap:1600
 msgt:BR_ELEMENTS
 obvious:1
@@ -456,6 +481,7 @@ player-desc:holy power
 blind-desc:something
 lash-desc:holy power
 divisor:6
+terrain-factor:1
 damage-cap:0
 msgt:GENERIC
 obvious:1
@@ -469,6 +495,7 @@ desc:an arrow
 player-desc:arrows
 blind-desc:something sharp
 divisor:6
+terrain-factor:2
 damage-cap:0
 msgt:GENERIC
 obvious:1
@@ -480,6 +507,7 @@ type:environs
 desc:light
 player-desc:weak light
 blind-desc:something
+terrain-factor:1
 obvious:1
 color:ORANGE
 
@@ -488,6 +516,7 @@ type:environs
 desc:darkness
 player-desc:darkness
 blind-desc:something
+terrain-factor:1
 obvious:0
 color:L_DARK
 
