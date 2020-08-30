@@ -100,14 +100,16 @@ void do_cmd_reshape(struct command *cmd)
 		return;
 	} else {
 		bool ident;
+		char *shape_name = (player->lev < 20) ? "bear cub" :
+			((player->lev < 40) ? "bear" : "great bear");
 
 		/* Confirm */
-		if (!get_check("Assume the form of a bear? "))
+		if (!get_check(format("Assume the form of a %s? ", shape_name)))
 			return;
 
 		/* Change */
 		effect_simple(EF_SHAPECHANGE, source_none(), "0",
-					  shape_name_to_idx("bear"), 0, 0, 0, 0, &ident);
+					  shape_name_to_idx(shape_name), 0, 0, 0, 0, &ident);
 
 		/* Use some energy */
 		player->upkeep->energy_use = 100;

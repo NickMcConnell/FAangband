@@ -86,7 +86,30 @@ blow:crush
 blow:thump
 blow:strike
 
+name:bear cub
+combat:5:5:0
+skill-disarm-phys:-15
+skill-disarm-magic:-15
+values: STR[1] | INT[-3] | INFRA[3] | STEALTH[-1]
+blow:cuff
+blow:claw
+blow:hit
+blow:hit
+
 name:bear
+combat:10:10:2
+skill-disarm-phys:-10
+skill-disarm-magic:-12
+skill-melee:5
+obj-flags:PROT_FEAR
+values: STR[2] | INT[-2] | CON[1] | INFRA[2] | STEALTH[-2]
+blow:cuff
+blow:claw
+blow:hit
+blow:hit
+blow:swipe
+
+name:great bear
 combat:15:15:5
 skill-disarm-phys:-5
 skill-disarm-magic:-10
