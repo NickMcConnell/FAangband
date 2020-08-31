@@ -1702,6 +1702,23 @@ static void monster_turn(struct chunk *c, struct monster *mon)
 	if (monster_turn_multiply(c, mon))
 		return;
 
+	/* Monsters can speak.  -originally by TY- */
+	if (rf_has(mon->race->flags, RF_SPEAKING) && monster_is_obvious(mon) &&
+		!mon->m_timed[MON_TMD_FEAR] && one_in_(16)) {
+		char bravado[80];
+
+		/* Acquire the monster name/poss */
+		if (monster_is_visible(mon)) {
+			monster_desc(m_name, sizeof(m_name), mon, MDESC_CAPITAL);
+		} else {
+			strcpy(m_name, "It");
+		}
+
+		if (!get_rnd_line("bravado.txt", bravado)) {
+			msg("%s %s", m_name, bravado);
+		}
+	}
+
 	/* Attempt a ranged attack */
 	if (make_ranged_attack(mon)) return;
 
