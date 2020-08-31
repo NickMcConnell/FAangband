@@ -41,6 +41,7 @@
  */
 struct monster_race_message {
 	struct monster_race *race;	/* The race of the monster */
+	struct player_race *p_race;	/* The player race of the monster */
 	int flags;					/* Flags */
 	int msg_code;				/* The coded message */
 	int count;					/* How many monsters triggered this message */
@@ -177,8 +178,9 @@ static bool stack_message(struct monster *mon, int msg_code, int flags)
 	for (i = 0; i < size_mon_msg; i++) {
 		/* We found the race and the message code */
 		if (mon_msg[i].race == mon->race &&
-					mon_msg[i].flags == flags &&
-					mon_msg[i].msg_code == msg_code) {
+			mon_msg[i].p_race == mon->player_race &&
+			mon_msg[i].flags == flags &&
+			mon_msg[i].msg_code == msg_code) {
 			mon_msg[i].count++;
 			store_monster(mon, msg_code);
 			return true;
@@ -215,6 +217,7 @@ bool add_monster_message(struct monster *mon, int msg_code, bool delay)
 			!stack_message(mon, msg_code, flags) &&
 			size_mon_msg < MAX_STORED_MON_MSG) {
 		mon_msg[size_mon_msg].race = mon->race;
+		mon_msg[size_mon_msg].p_race = mon->player_race;
 		mon_msg[size_mon_msg].flags = flags;
 		mon_msg[size_mon_msg].msg_code = msg_code;
 		mon_msg[size_mon_msg].count = 1;
@@ -236,6 +239,7 @@ bool add_monster_message(struct monster *mon, int msg_code, bool delay)
  */
 static void get_subject(char *buf, size_t buflen,
 		struct monster_race *race,
+		struct player_race *p_race,
 		int count,
 		bool invisible,
 		bool offscreen)
@@ -247,17 +251,19 @@ static void get_subject(char *buf, size_t buflen,
 			strnfmt(buf, buflen, "%d monsters", count);
 		}
 	} else {
+		char *p_name = p_race ? format("%s ", p_race->name) : "";
+
 		/* Uniques, multiple monsters, or just one */
 		if (rf_has(race->flags, RF_UNIQUE)) {
 			my_strcpy(buf, race->name, buflen);
 		} else if (count == 1) {
-			strnfmt(buf, buflen, "The %s", race->name);
+			strnfmt(buf, buflen, "The %s%s", p_name, race->name);
 		} else {
 			/* Get the plural of the race name */
 			if (race->plural != NULL) {
-				strnfmt(buf, buflen, "%d %s", count, race->plural);
+				strnfmt(buf, buflen, "%d %s%s", count, p_name, race->plural);
 			} else {
-				strnfmt(buf, buflen, "%d %s", count, race->name);
+				strnfmt(buf, buflen, "%d %s%s", count, p_name, race->name);
 				plural_aux(buf, buflen);
 			}
 		}
@@ -385,6 +391,7 @@ static void show_message(struct monster_race_message *msg)
 		/* Get 'it ' or '3 monsters (offscreen) ' or '15000 snakes ' etc */
 		get_subject(subject, sizeof(subject),
 				msg->race,
+				msg->p_race,
 				msg->count,
 				msg->flags & MON_MSG_FLAG_INVISIBLE,
 				msg->flags & MON_MSG_FLAG_OFFSCREEN);
