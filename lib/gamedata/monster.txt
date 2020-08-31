@@ -10653,7 +10653,7 @@ spells:BO_NETH
 desc:A figure that seems made of void, its strangely human shape is cloaked in
 desc: shadow.  It reaches out at you.
 
-name:Eöl, the Dark Elf
+name:Eöl, the Dark Elven Smith
 base:humanoid
 color:v
 speed:130
@@ -11152,7 +11152,6 @@ spells:SHAPECHANGE
 spells:S_HOUND
 shape:ranger chieftain
 shape:giant
-shape:Huan, Wolfhound of the Valar
 desc:A servant of Oromë, hunter of monsters and fell beasts.
 
 name:hasty ent
@@ -14069,34 +14068,6 @@ desc:A gigantic dragon whose scales shimmer in myriad hues.
 
 
 ### Dungeon level 90 ###
-
-name:Huan, Wolfhound of the Valar
-base:canine
-color:W
-speed:130
-hit-points:8000
-hearing:50
-smell:50
-armor-class:192
-sleepiness:10
-depth:90
-rarity:1
-experience:40000
-blow:CLAW:COLD:9d12
-blow:CLAW:COLD:9d12
-blow:BITE:COLD:9d12
-blow:BITE:COLD:9d12
-flags:UNIQUE | MALE | SMART | ATTR_FLICKER
-flags:DROP_4 | DROP_GOOD | ONLY_ITEM
-flags:OPEN_DOOR | BASH_DOOR | KILL_BODY
-flags:IM_ACID | IM_COLD | IM_ELEC | NO_FEAR | NO_CONF | NO_SLEEP | NO_HOLD
-flags:NO_STUN | FORCE_SLEEP
-innate-freq:5
-spells:BR_COLD | BR_LIGHT | BR_SHAR | BR_SOUN
-desc:The wolfhound of the Valar, Huan has served many masters in his time, from
-desc: Celegorm son of Fëanor to Beren son of Barahir: but now he runs wild and
-desc: acknowledges no master save himself, as he hunts alone for his nemesis -
-desc: Carcharoth, the terrible wolf of Angband.
 
 name:Carcharoth, the Jaws of Thirst
 base:canine

@@ -1440,7 +1440,6 @@ monster:The Tarrasque:0xAF:0x9E
 monster:Lungorthin, the Balrog of White Fire:0xB2:0x90
 monster:Draugluin, Sire of All Werewolves:0xA1:0x9D
 monster:Vecna, the Emperor Lich:0xAA:0x8E
-monster:Huan, Wolfhound of the Valar:0xA1:0x9F
 monster:Carcharoth, the Jaws of Thirst:0xA1:0x9E
 monster:Gothmog, the High Captain of Balrogs:0xB2:0x91
 monster:Sauron, the Sorcerer:0xAE:0x90
@@ -1488,7 +1487,7 @@ monster:Gauth:0xA5:0x86
 monster:Beholder hive-mother:0xA5:0x89
 monster:Neekerbreeker:0xA8:0x83
 monster:Giant firefly:0xA8:0x84
-monster:Eöl, the Dark Elf:0xA7:0x9D
+monster:Eöl, the Dark Elven Smith:0xA7:0x9D
 monster:Maeglin, the Traitor of Gondolin:0xA7:0x9F
 monster:Elder vampire:0xB3:0x83
 monster:Silent watcher:0xA6:0x99
