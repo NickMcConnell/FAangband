@@ -2708,6 +2708,7 @@ bool effect_handler_SUMMON(effect_handler_context_t *context)
 	if (context->origin.what == SRC_MONSTER) {
 		struct monster *mon = cave_monster(cave, context->origin.which.monster);
 		int rlev;
+		struct loc grid = one_in_(2) ? player->grid : mon->grid;
 
 		assert(mon);
 
@@ -2722,7 +2723,7 @@ bool effect_handler_SUMMON(effect_handler_context_t *context)
 			int temp;
 
 			/* Get a monster */
-			temp = summon_specific(mon->grid, rlev + level_boost, summon_type,
+			temp = summon_specific(grid, rlev + level_boost, summon_type,
 								   false, false, friendly);
 
 			val += temp * temp;
@@ -2742,7 +2743,7 @@ bool effect_handler_SUMMON(effect_handler_context_t *context)
 				int temp;
 
 				/* Get a monster */
-				temp = summon_specific(mon->grid, rlev + level_boost,
+				temp = summon_specific(grid, rlev + level_boost,
 									   fallback_type, false, false, friendly);
 
 				val += temp * temp;
