@@ -20,12 +20,15 @@ name:chest:Chest~
 graphics:slate
 # max-stack:1
 flags:HATES_ACID | HATES_FIRE
+desc:Chests may have some really good treasures hidden inside, but can be
+desc: perilous to open...
 
 name:shot:Shot~
 graphics:light umber
 break:25
 # max-stack:40
 flags:SHOW_DICE
+desc:Sling ammo.
 
 name:arrow:Arrow~
 graphics:light umber
@@ -33,6 +36,7 @@ break:35
 # max-stack:40
 flags:HATES_ACID | HATES_FIRE
 flags:SHOW_DICE
+desc:Bow ammo.
 
 name:bolt:Bolt~
 graphics:light umber
@@ -40,6 +44,7 @@ break:25
 # max-stack:40
 flags:HATES_ACID
 flags:SHOW_DICE
+desc:Crossbow ammo.
 
 name:bow:Bow~
 graphics:umber
@@ -47,11 +52,15 @@ graphics:umber
 potential:6500
 flags:HATES_ACID | HATES_FIRE
 flags:SHOW_MULT
+desc:Missile launchers allow you to inflict damage from a distance without
+desc: using magic.
 
 name:digger:Digger~
 graphics:slate
 # max-stack:1
 flags:SHOW_DICE
+desc:Diggers, especially heavy ones, are invaluable for forced entry and
+desc: escape and can make a lucky miner rich.
 
 name:hafted:Hafted weapon~
 graphics:white
@@ -59,6 +68,7 @@ graphics:white
 potential:8750
 flags:HATES_ACID | HATES_FIRE
 flags:SHOW_DICE
+desc:Hafted weapons rely on blunt force to inflict damage.
 
 name:polearm:Polearm~
 graphics:white
@@ -66,6 +76,9 @@ graphics:white
 potential:8750
 flags:HATES_ACID | HATES_FIRE
 flags:SHOW_DICE
+desc:Pole-mounted weapons are often cumbersome and may require two hands to
+desc: wield, but some offer both a high degree of protection and powerful
+desc: attacks.
 
 name:sword:Bladed weapon~
 graphics:white
@@ -73,94 +86,138 @@ graphics:white
 potential:8750
 flags:HATES_ACID
 flags:SHOW_DICE
+desc:The effectiveness of edged weapons depends on keen edges and sharp points.
+desc:  They tend to be quite light and are easy to use, but some may not deal
+desc: enough damage for your liking.
 
 name:boots:Boot~
 graphics:light umber
 # max-stack:1
 potential:8000
 flags:HATES_ACID | HATES_FIRE
+desc:Footwear protects the feet only, but some rare items of this type have
+desc: magics to render them fleet, light, or steady.
 
 name:gloves:Glove~
 graphics:light umber
 # max-stack:1
 potential:5500
 flags:HATES_ACID | HATES_FIRE
+desc:Your hands would benefit from protection too.
 
 name:helm:Helm~
 graphics:light umber
 # max-stack:1
 potential:6000
 flags:HATES_ACID
+desc:Many a blow will be struck upon your head, and protection here will
+desc: certainly be helpful.  Some rare items may protect and enhance your mind.
 
 name:crown:Crown~
 graphics:light umber
 # max-stack:1
 potential:6500
 flags:HATES_ACID
+desc:Many a blow will be struck upon your head, and protection here will
+desc: certainly be helpful.  Some rare items may protect and enhance your mind.
 
 name:shield:Shield~
 graphics:light umber
 # max-stack:1
 potential:6500
 flags:HATES_ACID
+desc:Shields can be worn on your arm, or on your back if you need both hands to
+desc: use your weapon.  So protective can a shield be that it can reduce damage
+desc: as much or more than body armour, and you can perhaps deflect physical
+desc: missiles (even shards) or take advantage of opportunities to bash your
+desc: foe if you have one on your arm.
 
 name:cloak:Cloak~
 graphics:light umber
 # max-stack:1
 potential:5500
 flags:HATES_ACID | HATES_FIRE
+desc:Experienced adventurers wrap a cloak around their body.  Some rare items
+desc: of this type may allow you to slip silently around less alert enemies.
 
 name:soft armor:Soft Armor~
 graphics:slate
 # max-stack:1
 potential:8750
 flags:HATES_ACID | HATES_FIRE
+desc:Some kind of body protection will become a necessity as you face ever more
+desc: dangerous opponents; rare items of this type may hold many and varied
+desc: protective magics.
 
 name:hard armor:Hard Armor~
 graphics:slate
 # max-stack:1
 potential:8750
 flags:HATES_ACID
+desc:Some kind of body protection will become a necessity as you face ever more
+desc: dangerous opponents; rare items of this type may hold many and varied
+desc: protective magics.
 
 name:dragon armor:Dragon Armor~
 graphics:slate
 # max-stack:1
 potential:8750
+desc:Armour made of dragon scales is rare indeed, and powerful dragon magics
+desc: allow you to sometimes breathe even as great dragons do.
 
 name:light:Light~
 graphics:yellow
 break:50
 # max-stack:10
 flags:HATES_FIRE
+desc:An adventurer who cannot see is dog food.  The further away your
+desc: illumination ends, the greater your chance to ready yourself for
+desc: desperate combat.
 
 name:amulet:Amulet~
 graphics:orange
 # max-stack:2
+desc:Amulets slip around your neck, and almost all have magics wondrous or
+desc: perilous bound inside.
 
 name:ring:Ring~
 graphics:red
 # max-stack:5
 flags:HATES_ELEC
+desc:You may wear a ring upon each of your two ring fingers, and benefit or
+desc: suffer from the magics it contains.
 
 name:staff:Staff~
 graphics:light umber
 # max-stack:5
 flags:HATES_ACID | HATES_FIRE | EASY_KNOW
+desc:Staffs are heavy, and take up plenty of space in your backpack, but can
+desc: hold a lot of sometimes powerful spells that affect large areas.  Staffs
+desc: recharge easily and well.
 
 name:wand:Wand~
 graphics:green
 # max-stack:5
 flags:HATES_ELEC | EASY_KNOW
+desc:Wands hold a variety of spells, useful both in combat and for exploration.
+desc:  Bolt spells in wands often beam, and ball spells affect large areas.
+desc:  Once its charges are exhausted, a wand is useless until recharged.
 
 name:rod:Rod~
 graphics:light purple
 # max-stack:5
 flags:HATES_ELEC | EASY_KNOW
+desc:The magics stored in rods never run out, given enough time between uses to
+desc: recover.  Rods can do a lot of damage, but they affect only small areas.
+desc:  Bolt spells in rods seldom or never beam.
 
 name:scroll:Scroll~
 graphics:white
 # max-stack:20
 flags:HATES_ACID | HATES_FIRE | EASY_KNOW
+desc:One will often find sheets of parchment with magic spells.  They are easy
+desc: to read, and are a warrior or paladin's best chance at making use of
+desc: magic.
 
 name:potion:Potion~
 graphics:light blue
@@ -168,6 +225,10 @@ break:100
 # max-stack:20
 flags:HATES_COLD | HATES_SOUND | HATES_SHARD | HATES_ICE | HATES_FORCE
 flags:EASY_KNOW
+desc:Healers, alchemists, and sages create potions in vast quantities, and
+desc: store them in small flasks of clear glass or gleaming crystal.  Once
+desc: quaffed, a potion is guaranteed to work, but not every strange liquid was
+desc: mixed for your benefit...
 
 name:flask:Flask~
 graphics:yellow
@@ -175,38 +236,49 @@ break:100
 # max-stack:20
 flags:HATES_COLD | HATES_SOUND | HATES_SHARD | HATES_ICE | HATES_FORCE
 flags:EASY_KNOW
+desc:Flasks can be used to hold oil, which can fuel a lamp or explode if thrown.
 
 name:food:Food
 graphics:light umber
 break:100
 # max-stack:10
 flags:EASY_KNOW
+desc:Deep in the murky dungeons strange mushrooms grow, and monsters rout about
+desc: sealed packets of food that their owners will never need again.
 
 name:mushroom:Mushroom~
 graphics:light umber
 break:100
 # max-stack:10
 flags:EASY_KNOW
+desc:Deep in the murky dungeons strange mushrooms grow, and monsters rout about
+desc: sealed packets of food that their owners will never need again.
 
 name:magic book:Magic Book~
 graphics:light red
 # max-stack:5
 flags:HATES_FIRE | EASY_KNOW
+desc:A manual of sorcerous magics, bound in fine linen dyed deep red.
 
 name:prayer book:Prayer Book~
 graphics:light green
 # max-stack:5
 flags:HATES_FIRE | EASY_KNOW
+desc:A shining gospel of piety in flawless white and gold.
 
 name:nature book:Nature Book~
 graphics:yellow
 # max-stack:5
 flags:HATES_FIRE | EASY_KNOW
+desc:A runed volume with earthly and natural magics inscribed in brown and rich
+desc: greens.
 
 name:shadow book:Shadow Book~
 graphics:light purple
 # max-stack:5
 flags:HATES_FIRE | EASY_KNOW
+desc:A black tome of necromantic rituals, with shadows lying deep around it.
 
 name:gold
 graphics:light yellow
+desc:Small valuables and coins.

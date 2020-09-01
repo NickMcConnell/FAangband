@@ -591,6 +591,17 @@ static enum parser_error parse_object_base_flags(struct parser *p) {
 	return t ? PARSE_ERROR_INVALID_FLAG : PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_object_base_desc(struct parser *p) {
+	struct kb_parsedata *d = parser_priv(p);
+	assert(d);
+
+	struct object_base *kb = d->kb;
+	assert(kb);
+
+	kb->text = string_append(kb->text, parser_getstr(p, "text"));
+	return PARSE_ERROR_NONE;
+}
+
 struct parser *init_parse_object_base(void) {
 	struct parser *p = parser_new();
 
@@ -604,6 +615,7 @@ struct parser *init_parse_object_base(void) {
 	parser_reg(p, "max-stack int size", parse_object_base_max_stack);
 	parser_reg(p, "potential int potential", parse_object_base_potential);
 	parser_reg(p, "flags str flags", parse_object_base_flags);
+	parser_reg(p, "desc str text", parse_object_base_desc);
 	return p;
 }
 

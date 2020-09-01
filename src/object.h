@@ -168,6 +168,7 @@ extern struct activation *activations;
  */
 struct object_base {
 	char *name;
+	char *text;
 
 	int tval;
 	struct object_base *next;

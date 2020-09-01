@@ -1728,8 +1728,13 @@ static textblock *object_info_out(const struct object *obj, int mode)
 	}
 
 	/* Don't append anything in terse (for chararacter dump) */
-	if (!something && !terse)
+	if (!something && !terse) {
 		textblock_append(tb, "\n\nThis item does not seem to possess any special abilities.");
+	} else {
+		textblock_append(tb, "\n");
+		textblock_append(tb, kb_info[obj->tval].text);
+		textblock_append(tb, "\n");
+	}
 
 	return tb;
 }
