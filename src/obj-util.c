@@ -46,6 +46,7 @@
 struct object_base *kb_info;
 struct object_kind *k_info;
 struct artifact *a_info;
+struct artifact_set *set_info;
 struct ego_item *e_info;
 struct flavor *flavors;
 

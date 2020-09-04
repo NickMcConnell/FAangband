@@ -60,6 +60,9 @@ void combine_pack(void);
 bool pack_is_full(void);
 bool pack_is_overfull(void);
 void pack_overflow(struct object *obj);
+struct artifact_set *check_sets(struct artifact *art);
+void apply_set(struct artifact_set *set);
+void remove_set(struct artifact_set *set);
 
 
 #endif /* OBJECT_GEAR_H */

@@ -26,6 +26,7 @@
 #include "obj-ignore.h"
 #include "obj-knowledge.h"
 #include "obj-pile.h"
+#include "obj-slays.h"
 #include "obj-tval.h"
 #include "obj-util.h"
 #include "player-calcs.h"
@@ -757,6 +758,14 @@ void inven_wield(struct object *obj, int slot)
 		msgt(MSG_CURSED, "Oops! It feels deathly cold!");
 	}
 
+	/* Check to see if a set item is being wielded */
+	if (wielded->artifact) {
+		struct artifact_set *set = check_sets(wielded->artifact);
+		if (set) {
+			apply_set(set);
+		}
+	}
+
 	/* See if we have to overflow the pack */
 	combine_pack();
 	pack_overflow(old);
@@ -790,6 +799,14 @@ void inven_takeoff(struct object *obj)
 
 	/* Paranoia */
 	if (slot == player->body.count) return;
+
+	/* Check to see if a set item is being removed */
+	if (obj->artifact) {
+		struct artifact_set *set = check_sets(obj->artifact);
+		if (set) {
+			remove_set(set);
+		}
+	}
 
 	/* Describe the object */
 	object_desc(o_name, sizeof(o_name), obj, ODESC_PREFIX | ODESC_FULL);
@@ -1047,4 +1064,179 @@ void pack_overflow(struct object *obj)
 	if (player->upkeep->notice) notice_stuff(player);
 	if (player->upkeep->update) update_stuff(player);
 	if (player->upkeep->redraw) redraw_stuff(player);
+}
+
+/**
+ * ------------------------------------------------------------------------
+ * Artifact sets
+ * ------------------------------------------------------------------------ */
+
+/**
+ * Check whether an artifact is a member of an artifact set, and if so,
+ * whether the player is using the entire set
+ */
+struct artifact_set *check_sets(struct artifact *art)
+{
+	struct artifact_set *set = set_info;
+	struct set_item *item = NULL;
+
+	/* No artifact, return */
+	if (!art) return NULL;
+
+	/* Find the set containing the artifact, if any */
+	while (set) {
+		item = set->set_item;
+		while (item) {
+			if (item->aidx == art->aidx) break;
+			item = item->next;
+		}
+		if (item) break;
+		set = set->next;
+	}
+
+	/* Exit if not found */
+	if (!set) return NULL;
+
+	/* Now go back and check if we're using the whole set */
+	for (item = set->set_item; item; item = item->next) {
+		int i;
+		for (i = 0; i < player->body.count; i++) {
+			struct object *obj = player->body.slots[i].obj;
+			if (obj && obj->artifact && (obj->artifact->aidx == item->aidx))
+				break;
+		}
+
+		/* Return if we haven't found it */
+		if (i == player->body.count) {
+			return NULL;
+		}
+	}
+
+	/* If we've made it here then the set is in use */
+	return set;
+}
+
+/**
+ * Apply bonuses for a complete artifact set
+ */
+void apply_set(struct artifact_set *set)
+{
+	struct set_item *item = set->set_item;
+	while (item) {
+		int i, j;
+		/* Find the item worn by the player */
+		for (i = 0; i < player->body.count; i++) {
+			struct object *obj = player->body.slots[i].obj;
+			if (obj && obj->artifact && (obj->artifact->aidx == item->aidx)) {
+				/* Add flags */
+				of_union(obj->flags, item->flags);
+
+				/* Add modifiers */
+				for (j = 0; j < OBJ_MOD_MAX; j++) {
+					obj->modifiers[j] += item->modifiers[j];
+				}
+
+				/* Extra resists */
+				for (j = 0; j < ELEM_MAX; j++) {
+					obj->el_info[j].res_level =
+						(item->el_info[j].res_level *
+						 obj->el_info[j].res_level)
+						/ 100;
+				}
+
+				/* Brands */
+				if (item->brands) {
+					for (j = 0; j < z_info->brand_max; j++) {
+						if (item->brands[j]) {
+							append_brand(&obj->brands, j);
+						}
+					}
+				}
+
+				/* Slays */
+				if (item->slays) {
+					for (j = 0; j < z_info->slay_max; j++) {
+						if (item->slays[j]) {
+							append_slay(&obj->slays, j);
+						}
+					}
+				}
+				player_know_object(player, obj);
+			}
+		}
+		item = item->next;
+	}
+
+	/* Notify */
+	msg("Item set completed!");
+}
+
+/**
+ * Remove bonuses for a no-longer-complete artifact set
+ */
+void remove_set(struct artifact_set *set)
+{
+	struct set_item *item = set->set_item;
+	while (item) {
+		int i, j;
+		/* Find the item worn by the player */
+		for (i = 0; i < player->body.count; i++) {
+			struct object *obj = player->body.slots[i].obj;
+			if (obj && obj->artifact && (obj->artifact->aidx == item->aidx)) {
+				/* Remove flags */
+				of_wipe(obj->flags);
+				of_union(obj->flags, obj->artifact->flags);
+
+				/* Remove modifiers */
+				for (j = 0; j < OBJ_MOD_MAX; j++) {
+					obj->modifiers[j] = obj->artifact->modifiers[j];
+				}
+
+				/* Remove extra resists */
+				for (j = 0; j < ELEM_MAX; j++) {
+					obj->el_info[j].res_level =
+						obj->artifact->el_info[j].res_level;
+				}
+
+				/* Brands */
+				if (item->brands) {
+					bool none_left = true;
+					for (j = 0; j < z_info->brand_max; j++) {
+						if (item->brands[j]) {
+							obj->brands[j] = false;
+						}
+						if (obj->brands[j]) {
+							none_left = false;
+						}
+					}
+					if (none_left) {
+						mem_free(obj->brands);
+						obj->brands = NULL;
+					}
+				}
+
+				/* Slays */
+				if (item->slays) {
+					bool none_left = true;
+					for (j = 0; j < z_info->slay_max; j++) {
+						if (item->slays[j]) {
+							obj->slays[j] = false;
+						}
+						if (obj->slays[j]) {
+							none_left = false;
+						}
+					}
+					if (none_left) {
+						mem_free(obj->slays);
+						obj->slays = NULL;
+					}
+				}
+				player_know_object(player, obj);
+			}
+		}
+		item = item->next;
+	}
+
+	/* Notify */
+	msg("Item set no longer completed.");
 }

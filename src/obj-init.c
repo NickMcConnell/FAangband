@@ -2903,6 +2903,207 @@ struct file_parser artifact_parser = {
 
 /**
  * ------------------------------------------------------------------------
+ * Initialize artifact sets
+ * ------------------------------------------------------------------------ */
+
+static enum parser_error parse_artifact_set_name(struct parser *p) {
+	const char *name = parser_getstr(p, "name");
+	struct artifact_set *h = parser_priv(p);
+
+	struct artifact_set *set = mem_zalloc(sizeof *set);
+	set->next = h;
+	parser_setpriv(p, set);
+	set->name = string_make(name);
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_artifact_set_number(struct parser *p) {
+	struct artifact_set *set = parser_priv(p);
+	assert(set);
+
+	set->number = parser_getint(p, "number");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_artifact_set_desc(struct parser *p) {
+	struct artifact_set *set = parser_priv(p);
+	assert(set);
+
+	set->text = string_append(set->text, parser_getstr(p, "text"));
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_artifact_set_artifact_name(struct parser *p) {
+	size_t i;
+	const char *name = parser_getstr(p, "name");
+	struct artifact_set *set = parser_priv(p);
+	struct set_item *e = mem_zalloc(sizeof *e);
+	struct artifact *art = NULL;
+	for (i = 0; i < ELEM_MAX; i++) {
+		e->el_info[i].res_level = RES_LEVEL_BASE;
+	}
+	art = lookup_artifact_name(name);
+	assert(art->aidx);
+	e->aidx = art->aidx;
+	e->next = set->set_item;
+	set->set_item = e;
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_artifact_set_flags(struct parser *p) {
+	struct artifact_set *set = parser_priv(p);
+	struct set_item *e = set->set_item;
+	char *s;
+	char *t;
+	assert(set);
+	assert(e);
+
+	if (!parser_hasval(p, "flags"))
+		return PARSE_ERROR_NONE;
+	s = string_make(parser_getstr(p, "flags"));
+
+	t = strtok(s, " |");
+	while (t) {
+		bool found = false;
+		if (!grab_flag(e->flags, OF_SIZE, obj_flags, t))
+			found = true;
+		if (grab_element_flag(e->el_info, t))
+			found = true;
+		if (!found)
+			break;
+		t = strtok(NULL, " |");
+	}
+	mem_free(s);
+	return t ? PARSE_ERROR_INVALID_FLAG : PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_artifact_set_values(struct parser *p) {
+	struct artifact_set *set = parser_priv(p);
+	struct set_item *e = set->set_item;
+	char *s;
+	char *t;
+	assert(set);
+	assert(e);
+
+	s = string_make(parser_getstr(p, "values"));
+	t = strtok(s, " |");
+
+	while (t) {
+		bool found = false;
+		int value = 0;
+		int index = 0;
+		if (!grab_int_value(e->modifiers, obj_mods, t))
+			found = true;
+		if (!grab_index_and_int(&value, &index, element_names, "RES_", t)) {
+			found = true;
+			e->el_info[index].res_level = RES_LEVEL_BASE - value;
+		}
+		if (!found)
+			break;
+
+		t = strtok(NULL, " |");
+	}
+
+	mem_free(s);
+	return t ? PARSE_ERROR_INVALID_VALUE : PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_artifact_set_slay(struct parser *p) {
+	struct artifact_set *set = parser_priv(p);
+	struct set_item *e = set->set_item;
+	const char *s = parser_getstr(p, "code");
+	int i;
+
+	if (!set)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	for (i = 1; i < z_info->slay_max; i++) {
+		if (streq(s, slays[i].code)) break;
+	}
+	if (i == z_info->slay_max)
+		return PARSE_ERROR_UNRECOGNISED_SLAY;
+
+	if (!e->slays)
+		e->slays = mem_zalloc(z_info->slay_max * sizeof(bool));
+	e->slays[i] = true;
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_artifact_set_brand(struct parser *p) {
+	struct artifact_set *set = parser_priv(p);
+	struct set_item *e = set->set_item;
+	const char *s = parser_getstr(p, "code");
+	int i;
+
+	if (!set)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	for (i = 1; i < z_info->brand_max; i++) {
+		if (streq(s, brands[i].code)) break;
+	}
+	if (i == z_info->brand_max)
+		return PARSE_ERROR_UNRECOGNISED_BRAND;
+
+	if (!e->brands)
+		e->brands = mem_zalloc(z_info->brand_max * sizeof(bool));
+	e->brands[i] = true;
+	return PARSE_ERROR_NONE;
+}
+
+struct parser *init_parse_artifact_set(void) {
+	struct parser *p = parser_new();
+	parser_setpriv(p, NULL);
+	parser_reg(p, "set-name str name", parse_artifact_set_name);
+	parser_reg(p, "number int number", parse_artifact_set_number);
+	parser_reg(p, "desc str text", parse_artifact_set_desc);
+	parser_reg(p, "artifact-name str name", parse_artifact_set_artifact_name);
+	parser_reg(p, "flags ?str flags", parse_artifact_set_flags);
+	parser_reg(p, "values str values", parse_artifact_set_values);
+	parser_reg(p, "slay str code", parse_artifact_set_slay);
+	parser_reg(p, "brand str code", parse_artifact_set_brand);
+	return p;
+}
+
+static errr run_parse_artifact_set(struct parser *p) {
+	return parse_file_quit_not_found(p, "set_item");
+}
+
+static errr finish_parse_artifact_set(struct parser *p) {
+	set_info = parser_priv(p);
+	parser_destroy(p);
+	return 0;
+}
+
+static void cleanup_artifact_set(void)
+{
+	struct artifact_set *s = set_info, *next_s;
+	while (s) {
+		struct set_item *i = s->set_item, *next_i;
+		string_free(s->name);
+		string_free(s->text);
+		while (i) {
+			mem_free(i->brands);
+			mem_free(i->slays);
+			next_i = i->next;
+			mem_free(i);
+			i = next_i;
+		}
+		next_s = s->next;
+		mem_free(s);
+		s = next_s;
+	}
+}
+
+struct file_parser artifact_set_parser = {
+	"set_item",
+	init_parse_artifact_set,
+	run_parse_artifact_set,
+	finish_parse_artifact_set,
+	cleanup_artifact_set
+};
+
+/**
+ * ------------------------------------------------------------------------
  * Initialize random artifacts
  * This mostly uses the artifact functions
  * ------------------------------------------------------------------------ */

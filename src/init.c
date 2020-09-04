@@ -4123,6 +4123,7 @@ static struct {
 	{ "magic realms", &realm_parser },
 	{ "player classes", &class_parser },
 	{ "artifacts", &artifact_parser },
+	{ "artifact sets", &artifact_set_parser },
 	{ "object properties", &object_property_parser },
 	{ "blow methods", &meth_parser },
 	{ "blow effects", &eff_parser },

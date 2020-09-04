@@ -1,0 +1,93 @@
+# File: set_item.txt
+
+# This file is used to initialize the "set item" information for FAangband.
+
+
+#set-name: name
+#number: number of items to gain bonus
+#desc: set description
+#artifact-name: name
+#values: values added
+#flags: flags added
+#slays: slays added
+
+# Light/Dark Set
+
+set-name:Shadow Ward
+number:2
+desc:It is one of the Shadow Ward items
+
+artifact-name:'Hithlomir'
+values:SEARCH[4] | SPEED[4] | RES_NETHER[40]
+flags:PROT_BLIND
+
+artifact-name:'Cammithrim'
+values:DEX[3] | MAGIC_MASTERY[3] 
+flags:SUST_DEX
+
+
+# Vinyamar Set
+
+set-name:Messenger's Arms
+number:3
+desc:It is part of the armor left by Turgon for the messenger of Ulmo
+
+artifact-name:of Nevrast
+values:RES_DISEN[40] | CON[3] | SPEED[3]
+
+artifact-name:of the Swan
+values:WIS[2]
+flags:HOLD_LIFE
+
+artifact-name:of Vinyamar
+values:STR[5] | CON[5] 
+flags:REGEN | TELEPATHY
+
+
+# Turin's Set
+
+set-name:The Mormegil's Armor
+number:3
+desc:It is from the battle gear worn by Turin Turambar while at Nargothrond
+
+artifact-name:of Dor-Lómin
+values:RES_FIRE[100]
+
+artifact-name:'Gurthang'
+values:RES_POIS[50] | STR[4] | INFRA[4] | SPEED[4] 
+
+artifact-name:of the Mormegil
+flags:PROT_CONF | SUST_STR | SUST_DEX | SUST_CON 
+
+# Gil-Galad's Set
+
+set-name:Gil-Galad's Battle Gear
+number:2
+desc:It is one of Gil-Galad's items
+
+artifact-name:of Gil-Galad
+values:RES_FIRE[35] | RES_COLD[35] | RES_POIS[35] | DEX[3]
+flags:SUST_DEX 
+
+artifact-name:'Aiglos'
+slay:TROLL_5
+slay:EVIL_3
+slay:GIANT_5
+slay:ORC_5
+slay:DEMON_5
+values:RES_DARK[35] | SPEED[4] 
+
+# Mablung's Set
+
+set-name:Mablung's Items
+number:2
+desc:It was borne by Mablung, chief hunter of King Thingol
+
+artifact-name:of Mablung
+flags:PROT_CONF
+values:RES_SOUND[40] | INT[3] | WIS[3] | SPEED[3]
+
+artifact-name:of Boldog
+values:STR[3] |  STEALTH[3]
+slay:EVIL_3
+slay:ANIMAL_3
