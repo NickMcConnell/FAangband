@@ -1468,6 +1468,7 @@ static bool place_new_monster_one(struct chunk *c, struct loc grid,
 	/* Set the group info */
 	mon->group_info[PRIMARY_GROUP].index = group_info.index;
 	mon->group_info[PRIMARY_GROUP].role = group_info.role;
+	mon->group_info[PRIMARY_GROUP].player_race = group_info.player_race;
 
 	/* Set hostility, or possible neutrality for player race monsters */
 	if (rf_has(mon->race->flags, RF_PLAYER)) {
@@ -1781,7 +1782,7 @@ bool pick_and_place_monster(struct chunk *c, struct loc grid, int depth,
 {
 	/* Pick a monster race, no specified group */
 	struct monster_race *race = get_mon_num(depth);
-	struct monster_group_info info = { 0, 0 };
+	struct monster_group_info info = { 0, 0, 0 };
 
 	/* Enforce sleep at nighttime in the wilderness */
 	if (is_night() && (level_topography(player->place) != TOP_TOWN)) {

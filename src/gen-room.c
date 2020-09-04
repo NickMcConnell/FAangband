@@ -2244,7 +2244,7 @@ bool build_nest(struct chunk *c, struct loc centre, int rating)
 	int size_vary = randint0(4);
 	int height = 9;
 	int width = 11 + 2 * size_vary;
-	struct monster_group_info info = {0, 0};
+	struct monster_group_info info = { 0, 0, 0 };
 
 	/* Find and reserve some space in the dungeon.  Get center of room. */
 	if ((centre.y >= c->height) || (centre.x >= c->width)) {
@@ -2373,7 +2373,7 @@ bool build_pit(struct chunk *c, struct loc centre, int rating)
 	int height = 9;
 	int width = 15;
 	int group_index = 0;
-	struct monster_group_info info = {0, 0};
+	struct monster_group_info info = { 0, 0, 0 };
 
 	/* Find and reserve some space in the dungeon.  Get center of room. */
 	if ((centre.y >= c->height) || (centre.x >= c->width)) {

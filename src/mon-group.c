@@ -277,6 +277,7 @@ void monster_group_start(struct chunk *c, struct monster *mon, int which)
 	/* Write the index to the monster's group info, make it leader */
 	mon->group_info[which].index = index;
 	mon->group_info[which].role = MON_GROUP_LEADER;
+	mon->group_info[which].player_race = mon->player_race;
 }
 
 /**
@@ -524,6 +525,7 @@ void set_monster_group_player_race(struct chunk *c, struct monster *mon,
 	int index = mon->group_info[PRIMARY_GROUP].index;
 	struct monster_group *group = c->monster_groups[index];
 	group->player_race = race;
+	mon->group_info[PRIMARY_GROUP].player_race = race;
 }
 
 /**

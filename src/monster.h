@@ -263,6 +263,7 @@ struct monster_friends_base {
 struct monster_group_info {
 	int index;
 	enum monster_group_role role;
+	struct player_race *player_race;
 };
 
 enum monster_group_type {

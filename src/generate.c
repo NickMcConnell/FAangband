@@ -1288,7 +1288,7 @@ static struct chunk *cave_generate(struct player *p, int height, int width)
 		/* Ensure quest monsters */
 		if (quest && !quest->complete) {
 			struct monster_race *race = quest->race;
-			struct monster_group_info info = { 0, 0 };
+			struct monster_group_info info = { 0, 0, 0 };
 			struct loc grid;
 
 			/* Pick a location and place the monster(s) */

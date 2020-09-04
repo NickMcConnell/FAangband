@@ -1673,7 +1673,7 @@ static void do_cmd_wiz_summon(int num)
 static void do_cmd_wiz_named(struct monster_race *r, bool slp)
 {
 	int i;
-	struct monster_group_info info = { 0, 0 };
+	struct monster_group_info info = { 0, 0, 0 };
 
 	/* Paranoia */
 	assert(r);

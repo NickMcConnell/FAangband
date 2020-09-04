@@ -1269,7 +1269,7 @@ static void project_m_apply_side_effects(project_monster_handler_context_t *cont
 
 		/* Handle polymorph */
 		if (new != old) {
-			struct monster_group_info info = {0, 0 };
+			struct monster_group_info info = { 0, 0, 0 };
 
 			/* Report the polymorph before changing the monster */
 			hurt_msg = MON_MSG_CHANGE;
