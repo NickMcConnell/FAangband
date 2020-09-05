@@ -1,21 +1,21 @@
 
                                                                               
-            _______________________                                         
-           /                       \         ___                            
-          /                         \ ___   /   \                    
-         /            RIP            \   \  :   :                  
-        /                             \  : _;,,,;_                
-       /                               \,;_         
-      |                                 |   ___                             
-      |                                 |  /   \                            
-      |                                 |  :   :                            
-      |                                 | _;,,,;_   ____                    
-      |                                 |          /    \                   
-      |                                 |          :    :                   
-      |                                 |          :    :                   
-      |                                 |         _;,,,,;_                  
-      |                                 |                                   
-      |                                 |                                   
-      |                                 |                                   
-     *|   *     *     *    *   *     *  | *                                 
-_____)/\\_)_/___(\/___(//_\)/_\//__\\(/_|_)__________________________
+           {light dark} _______________________{/}                                         
+           {light dark}/                       \         ___{/}                            
+          {light dark}/                         \ ___   /   \{/}                    
+         {light dark}/{/}            RIP            {light dark}\   \  :   :{/}                  
+        {light dark}/                             \  :{/} {green}_{/}{light dark};,,,;{/}{green}_{/}                
+       {light dark}/                               \,;{/}{green}_{/}         
+      {light dark}|                                 |   ___{/}                             
+      {light dark}|                                 |  /   \{/}                            
+      {light dark}|                                 |  :   :{/}                            
+      {light dark}|                                 |{/} {green}_{/}{light dark};,,,;{/}{green}_{/}   {light dark}____{/}                    
+      {light dark}|                                 |          /    \{/}                   
+      {light dark}|                                 |          :    :{/}                   
+      {light dark}|                                 |          :    :{/}                   
+      {light dark}|                                 |{/}         {green}_{/}{light dark};,,,,;{/}{green}_{/}                  
+      {light dark}|                                 |{/}                                   
+      {light dark}|                                 |{/}                                   
+      {light dark}|                                 |{/}                                   
+     {yellow}*{/}{light dark}|{/}   {yellow}*{/}     {red}*{/}     {light red}*{/}    {yellow}*{/}   {light red}*{/}     {yellow}*{/}  {light dark}|{/} {yellow}*{/}                                 
+{green}_____)/\\_)_/___(\/___(//_\)/_\//__\\(/_{/}{light dark}|{/}{green}_)__________________________{/}

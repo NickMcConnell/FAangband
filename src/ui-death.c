@@ -19,6 +19,7 @@
 #include "angband.h"
 #include "cmds.h"
 #include "game-input.h"
+#include "game-world.h"
 #include "init.h"
 #include "obj-desc.h"
 #include "obj-info.h"
@@ -64,45 +65,65 @@ static void print_tomb(void)
 {
 	ang_file *fp;
 	char buf[1024];
-	int line = 0;
+	int line = 7, start = 8;
 	time_t death_time = (time_t)0;
+	bool boat = player->total_winner && player_has(player, PF_ELVEN);
+	bool tree = player->total_winner && player_has(player, PF_WOODEN);
+	struct level *lev = &world->levels[player->place];
 
 
 	Term_clear();
 	(void)time(&death_time);
 
+	/* Build the filename */
+	if (tree) {
+		path_build(buf, sizeof(buf), ANGBAND_DIR_SCREENS, "tree.txt");
+		start = 12;
+	} else if (boat) {
+		path_build(buf, sizeof(buf), ANGBAND_DIR_SCREENS, "boat.txt");
+		start = 12;
+	} else {
+		path_build(buf, sizeof(buf), ANGBAND_DIR_SCREENS, "dead.txt");
+	}
+
 	/* Open the death file */
-	path_build(buf, sizeof(buf), ANGBAND_DIR_SCREENS, "dead.txt");
 	fp = file_open(buf, MODE_READ, FTYPE_TEXT);
 
 	if (fp) {
-		while (file_getl(fp, buf, sizeof(buf)))
-			put_str(buf, line++, 0);
+		/* Dump the file to the screen */
+		while (file_getl(fp, buf, sizeof(buf))) {
+			text_out_e("%s", buf);
+			text_out("\n");
+		}
 
 		file_close(fp);
 	}
 
-	line = 7;
-
-	put_str_centred(line++, 8, 8+31, "%s", player->full_name);
-	put_str_centred(line++, 8, 8+31, "the");
+	put_str_centred(line++, start, start+31, "%s", player->full_name);
+	put_str_centred(line++, start, start+31, "the");
 	if (player->total_winner)
-		put_str_centred(line++, 8, 8+31, "Magnificent");
+		put_str_centred(line++, start, start+31, "Magnificent");
 	else
-		put_str_centred(line++, 8, 8+31, "%s", player->class->title[(player->lev - 1) / 5]);
+		put_str_centred(line++, start, start+31, "%s", player->class->title[(player->lev - 1) / 5]);
 
 	line++;
 
-	put_str_centred(line++, 8, 8+31, "%s", player->class->name);
-	put_str_centred(line++, 8, 8+31, "Level: %d", (int)player->lev);
-	put_str_centred(line++, 8, 8+31, "Exp: %d", (int)player->exp);
-	put_str_centred(line++, 8, 8+31, "AU: %d", (int)player->au);
-	put_str_centred(line++, 8, 8+31, "Killed on Level %d", player->depth);
-	put_str_centred(line++, 8, 8+31, "by %s.", player->died_from);
+	put_str_centred(line++, start, start+31, "%s", player->class->name);
+	put_str_centred(line++, start, start+31, "Level: %d", (int)player->lev);
+	put_str_centred(line++, start, start+31, "Exp: %d", (int)player->exp);
+	put_str_centred(line++, start, start+31, "AU: %d", (int)player->au);
+	if (boat) {
+		put_str_centred(line++, start, start+31, "Sailed victorious to Aman.");
+	} else if (tree) {
+		put_str_centred(line++,start, start+31, "Retired to Fangorn Forest.");
+	} else {
+		put_str_centred(line++, start, start+31, "Killed in %s", level_name(lev));
+		put_str_centred(line++, start, start+31, "by %s.", player->died_from);
+	}
 
 	line++;
 
-	put_str_centred(line, 8, 8+31, "on %-.24s", ctime(&death_time));
+	put_str_centred(line, start, start+31, "on %-.24s", ctime(&death_time));
 }
 
 
