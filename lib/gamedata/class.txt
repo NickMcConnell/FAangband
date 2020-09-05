@@ -1642,7 +1642,7 @@ desc: over time) for a level-dependent duration.
 
 spell:Leap into Battle:5:4:25:6
 effect:MOVE_ATTACK
-dice:$B
+dice:1+$B
 expr:B:PLAYER_LEVEL:+ 10 / 15
 desc:You may run up to 4 spaces towards targeted enemy, then perform a
 desc: level-dependent number of melee blows. The number of blows starts at 1
@@ -1674,7 +1674,7 @@ book:shadow book:town:[Fear and Torment]:5:shadow
 
 spell:Maim Foe:15:6:35:14
 effect:MELEE_BLOWS:MON_STUN:3
-dice:$S
+dice:1+$S
 expr:S:PLAYER_LEVEL:/ 15
 desc:Attempts a level-dependent number of melee blows against the targeted
 desc: monster.  You get 1 blow for every 15 levels.  Each blow that hits stuns
