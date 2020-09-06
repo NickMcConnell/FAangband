@@ -933,6 +933,9 @@ void do_cmd_view_map(void)
 	num_across = (wid - 24) / 20;
 	num = (num_down < num_across ? num_down : num_across);
 
+	/* Hack - limit range for now */
+	num = 2;
+
 	/* Save screen */
 	screen_save();
 
