@@ -1581,9 +1581,6 @@ void do_cmd_hold(struct command *cmd)
 	/* Searching (probably not necessary - NRM)*/
 	search(player);
 
-	/* Pick things up, not using extra energy */
-	do_autopickup(player);
-
 	/* Enter a store if we are on one, otherwise look at the floor */
 	if (square_isshop(cave, player->grid)) {
 		if (player_is_shapechanged(player) &&
@@ -1602,8 +1599,15 @@ void do_cmd_hold(struct command *cmd)
 		/* Turn will be taken exiting the shop */
 		player->upkeep->energy_use = 0;
 	} else {
-	    event_signal(EVENT_SEEFLOOR);
-		square_know_pile(cave, player->grid);
+		if (OPT(player, pickup_always)) {
+			/* Pick things up, not using extra energy */
+			cmdq_push(CMD_PICKUP);
+			if (player->upkeep->energy_use > z_info->move_energy)
+				player->upkeep->energy_use = z_info->move_energy;
+		} else {
+			event_signal(EVENT_SEEFLOOR);
+			square_know_pile(cave, player->grid);
+		}
 	}
 }
 
