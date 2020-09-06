@@ -2492,6 +2492,9 @@ static void trap_lore(int oid)
 	struct trap_kind *trap = &trap_info[oid];
 	textblock *tb = textblock_new();
 	char *title = string_make(trap->desc);
+	textblock *tbe = effect_describe(trap->effect, "This trap ", 0, false);
+	textblock *tbex = effect_describe(trap->effect_xtra,
+									  "if you're unlucky it also ", 0, false);
 
 	if (trap->text) {
 		my_strcap(title);
@@ -2499,6 +2502,17 @@ static void trap_lore(int oid)
 		textblock_append(tb, "\n");
 		textblock_append(tb, trap->text);
 		textblock_append(tb, "\n");
+		if (tbe) {
+			textblock_append(tb, "\n");
+			textblock_append_textblock(tb, tbe);
+			textblock_free(tbe);
+			if (tbex) {
+				textblock_append(tb, "; ");
+				textblock_append_textblock(tb, tbex);
+				textblock_free(tbex);
+			}
+			textblock_append(tb, ".\n");
+		}
 		textui_textblock_show(tb, SCREEN_REGION, NULL);
 		textblock_free(tb);
 	}

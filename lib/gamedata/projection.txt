@@ -523,6 +523,7 @@ color:L_DARK
 code:KILL_WALL
 type:environs
 desc:rock remover
+player-desc:rock remover
 blind-desc:something
 obvious:1
 color:WHITE
