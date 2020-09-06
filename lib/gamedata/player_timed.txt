@@ -188,46 +188,46 @@ msgt:INFRARED
 beneficial:1
 
 name:OPP_ACID
-desc:acid resistance
+desc:40% acid resistance
 grade:s:10000:RAcid:You feel resistant to acid!
 on-end:You are no longer resistant to acid.
-on-increase:You feel more resistant to acid!
+on-increase:Your resistance to acid feels renewed!
 msgt:RES_ACID
 fail:3:ACID
 beneficial:1
 
 name:OPP_ELEC
-desc:electricity resistance
+desc:40% electricity resistance
 grade:b:10000:RElec:You feel resistant to electricity!
 on-end:You are no longer resistant to electricity.
-on-increase:You feel more resistant to electricity!
+on-increase:Your resistance to electricity feels renewed!
 msgt:RES_ELEC
 fail:3:ELEC
 beneficial:1
 
 name:OPP_FIRE
-desc:fire resistance
+desc:40% fire resistance
 grade:r:10000:RFire:You feel resistant to fire!
 on-end:You are no longer resistant to fire.
-on-increase:You feel more resistant to fire!
+on-increase:Your resistance to fire feels renewed!
 msgt:RES_FIRE
 fail:3:FIRE
 beneficial:1
 
 name:OPP_COLD
-desc:cold resistance
+desc:40% cold resistance
 grade:w:10000:RCold:You feel resistant to cold!
 on-end:You are no longer resistant to cold.
-on-increase:You feel more resistant to cold!
+on-increase:Your resistance to cold feels renewed!
 msgt:RES_COLD
 fail:3:COLD
 beneficial:1
 
 name:OPP_POIS
-desc:poison resistance
+desc:40% poison resistance
 grade:g:10000:RPois:You feel resistant to poison!
 on-end:You are no longer resistant to poison.
-on-increase:You feel more resistant to poison!
+on-increase:Your resistance to poison feels renewed!
 msgt:RES_POIS
 fail:3:POIS
 beneficial:1
@@ -236,7 +236,7 @@ name:OPP_CONF
 desc:confusion resistance
 grade:v:10000:RConf:You feel resistant to confusion!
 on-end:You are no longer resistant to confusion.
-on-increase:You feel more resistant to confusion!
+on-increase:Your resistance to confusion feels renewed!
 beneficial:1
 
 name:AMNESIA
