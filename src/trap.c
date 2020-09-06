@@ -297,6 +297,10 @@ static int pick_trap(struct chunk *c, int feat, int trap_level)
 		/* Require that trap_level not be too low */
 		if (kind->min_depth > trap_level) continue;
 
+		/* Tree? */
+		if (feat_is_tree(feat) && !trf_has(kind->flags, TRF_TREE))
+			continue;
+
 		/* Floor? */
 		if (feat_is_floor(feat) && !trf_has(kind->flags, TRF_FLOOR))
 			continue;

@@ -586,6 +586,24 @@ dice:20+1d20
 msg:You feel yourself turning to stone!
 desc:A trap that stuns you and gives you stoneskin.
 
+# falling tree branch
+
+name:trap:falling branch
+graphics:^:g
+appear:1:0:0
+flags:TRAP | TREE
+effect:DAMAGE
+dice:3d5
+effect-xtra:DAMAGE
+dice-xtra:2d5
+effect-xtra:TIMED_INC:STUN
+dice-xtra:4d5
+msg:A branch hits you from above.
+msg-xtra:It was heavy!
+desc:A falling branch could be random, or an act of an enemy, animal or
+desc: vegetable.
+
+
 ## Monster traps - these should appear in this file in ascending order,
 ##                 the basic trap first and then 13 advanced traps
 
