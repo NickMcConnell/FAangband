@@ -714,6 +714,7 @@ type:monster
 desc:attempts to confuse monsters
 blind-desc:something
 obvious:0
+wake:1
 color:White
 
 code:MON_HOLD
@@ -728,6 +729,7 @@ type:monster
 desc:attempts to stun monsters
 blind-desc:something
 obvious:0
+wake:1
 color:White
 
 code:MON_DRAIN
