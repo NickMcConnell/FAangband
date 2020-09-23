@@ -342,23 +342,22 @@ static int map_menu_select(struct menu *m)
  */
 static enum birth_stage get_map_command(void)
 {
-	enum birth_stage next;
+	enum birth_stage next = BIRTH_BACK;
 	struct menu *m;
 
 	m = map_menu_new();
 	if (m) {
 		int map = map_menu_select(m);
-		if (map == -1) {
-			next = BIRTH_BACK;
-		} else if (map == num_maps - 1) {
-			quit(NULL);
-		} else {
-			cmdq_push(CMD_CHOOSE_MAP);
-			cmd_set_arg_choice(cmdq_peek(), "choice", m->cursor);
-			next = BIRTH_RACE_CHOICE;
+		if (map != -1) {
+			if (map == num_maps - 1) {
+				quit(NULL);
+			} else {
+				cmdq_push(CMD_CHOOSE_MAP);
+				cmd_set_arg_choice(cmdq_peek(), "choice",
+					m->cursor);
+				next = BIRTH_RACE_CHOICE;
+			}
 		}
-	} else {
-		next = BIRTH_BACK;
 	}
 	map_menu_destroy(m);
 
