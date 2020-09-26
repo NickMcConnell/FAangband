@@ -52,6 +52,7 @@
 
 struct pit_profile *pit_info;
 struct vault *vaults;
+struct vault *themed_levels;
 static struct cave_profile *cave_profiles;
 struct dun_data *dun;
 struct room_template *room_templates;
@@ -605,6 +606,82 @@ static struct file_parser vault_parser = {
 	cleanup_vault
 };
 
+/**
+ * ------------------------------------------------------------------------
+ * Parsing functions for themed.txt
+ * ------------------------------------------------------------------------ */
+static enum parser_error parse_themed_name(struct parser *p) {
+	struct vault *h = parser_priv(p);
+	struct vault *v = mem_zalloc(sizeof *v);
+
+	v->name = string_make(parser_getstr(p, "name"));
+	v->next = h;
+	parser_setpriv(p, v);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_themed_message(struct parser *p) {
+	struct vault *v = parser_priv(p);
+
+	if (!v)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	v->typ = string_make(parser_getstr(p, "message"));
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_themed_d(struct parser *p) {
+	struct vault *v = parser_priv(p);
+	const char *desc;
+
+	if (!v)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+	desc = parser_getstr(p, "text");
+	if (strlen(desc) != z_info->dungeon_wid)
+		return PARSE_ERROR_VAULT_DESC_WRONG_LENGTH;
+	else
+		v->text = string_append(v->text, desc);
+	return PARSE_ERROR_NONE;
+}
+
+struct parser *init_parse_themed(void) {
+	struct parser *p = parser_new();
+	parser_setpriv(p, NULL);
+	parser_reg(p, "name str name", parse_themed_name);
+	parser_reg(p, "message str message", parse_themed_message);
+	parser_reg(p, "D str text", parse_themed_d);
+	return p;
+}
+
+static errr run_parse_themed(struct parser *p) {
+	return parse_file_quit_not_found(p, "themed");
+}
+
+static errr finish_parse_themed(struct parser *p) {
+	themed_levels = parser_priv(p);
+	parser_destroy(p);
+	return 0;
+}
+
+static void cleanup_themed(void)
+{
+	struct vault *v, *next;
+	for (v = themed_levels; v; v = next) {
+		next = v->next;
+		mem_free(v->name);
+		mem_free(v->typ);
+		mem_free(v->text);
+		mem_free(v);
+	}
+}
+
+static struct file_parser themed_parser = {
+	"themed",
+	init_parse_themed,
+	run_parse_themed,
+	finish_parse_themed,
+	cleanup_themed
+};
+
 static void run_template_parser(void) {
 	/* Initialize room info */
 	event_signal_message(EVENT_INITSTATUS, 0,
@@ -623,6 +700,12 @@ static void run_template_parser(void) {
 						 "Initializing arrays... (vaults)");
 	if (run_parser(&vault_parser))
 		quit("Cannot initialize vaults");
+
+	/* Initialize themed level info */
+	event_signal_message(EVENT_INITSTATUS, 0,
+						 "Initializing arrays... (themed levels)");
+	if (run_parser(&themed_parser))
+		quit("Cannot initialize themed levels");
 }
 
 
@@ -634,6 +717,7 @@ static void cleanup_template_parser(void)
 	cleanup_parser(&profile_parser);
 	cleanup_parser(&room_parser);
 	cleanup_parser(&vault_parser);
+	cleanup_parser(&themed_parser);
 }
 
 

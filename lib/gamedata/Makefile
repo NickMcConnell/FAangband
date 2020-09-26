@@ -8,7 +8,7 @@ CONFIG = a_cursed.txt a_normal.txt activation.txt artifact.txt body.txt \
  names.txt object.txt object_base.txt object_property.txt p_race.txt pain.txt \
  pit.txt player_property.txt player_timed.txt player_unarmed.txt \
  projection.txt quest.txt race_relations.txt realm.txt room_template.txt \
- set_item.txt shape.txt slay.txt store.txt summon.txt terrain.txt trap.txt \
- ui_entry.txt ui_entry_base.txt ui_entry_renderer.txt vault.txt visuals.txt \
- w_cursed.txt w_normal.txt world.txt
+ set_item.txt shape.txt slay.txt store.txt summon.txt terrain.txt themed.txt \
+ trap.txt ui_entry.txt ui_entry_base.txt ui_entry_renderer.txt vault.txt \
+ visuals.txt w_cursed.txt w_normal.txt world.txt
 PACKAGE = gamedata

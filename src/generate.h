@@ -245,6 +245,7 @@ struct room_template {
 
 extern struct dun_data *dun;
 extern struct vault *vaults;
+extern struct vault *themed_levels;
 extern struct room_template *room_templates;
 
 /* gen-cave.c */

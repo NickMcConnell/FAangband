@@ -833,7 +833,8 @@ int rd_player(void)
 		player->body.slots[i].name = string_make(buf);
 	}
 
-	strip_bytes(3);
+	rd_u16b(&player->themed_level_appeared);
+	rd_byte(&player->themed_level);
 	rd_byte(&player->num_traps);
 
 	rd_s32b(&player->au);

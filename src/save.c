@@ -502,10 +502,8 @@ void wr_player(void)
 		wr_string(player->body.slots[i].name);
 	}
 
-	/* Padding */
-	wr_byte(0);
-	wr_byte(0);
-	wr_byte(0);
+	wr_s16b(player->themed_level_appeared);
+	wr_byte(player->themed_level);
 	wr_byte(player->num_traps);
 
 	wr_u32b(player->au);
