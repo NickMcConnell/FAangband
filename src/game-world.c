@@ -189,6 +189,42 @@ int level_topography(int index)
 }
 
 /**
+ * Return the themed level of the given index
+ */
+struct vault *themed_level(int index)
+{
+	int which = player->themed_level;
+	struct vault *level = themed_levels;
+	assert(index >= 1);
+
+	/* Iterate to the themed level */
+	while (which > 1) {
+		level = level->next;
+		assert(level);
+		which--;
+	}
+	return level;
+}
+
+/**
+ * Return the themed level index of the given named level
+ */
+int themed_level_index(char *name)
+{
+	int which = 1;
+	struct vault *level = themed_levels;
+
+	/* Search for the themed level */
+	while (!streq(name, level->name)) {
+		level = level->next;
+		which++;
+		if (!level) return 0;
+	}
+
+	return which;
+}
+
+/**
  * ------------------------------------------------------------------------
  * Functions for handling turn-based events
  * ------------------------------------------------------------------------ */
@@ -571,8 +607,8 @@ void process_world(struct chunk *c)
 		player->upkeep->update |= PU_BONUS;
 	}
 
-	/* Check for creature generation */
-	if (one_in_(z_info->alloc_monster_chance))
+	/* Check for creature generation, except on themed levels */
+	if (one_in_(z_info->alloc_monster_chance) && (!player->themed_level))
 		(void)pick_and_place_distant_monster(c, player, z_info->max_sight + 5,
 											 true, player->depth);
 

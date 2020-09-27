@@ -1208,6 +1208,22 @@ struct player_race *get_player_race(void)
 	struct player_race *p_race = races;
 	int i, k;
 
+	/* Special case -  Estolad themed level - Edain or Druedain */
+	if (player->themed_level == themed_level_index("Estolad")) {
+		/* Pick one of the races from Sphel Brandir */
+		bool pick = (one_in_(2) ? true : false);
+		while (p_race) {
+			if (streq(p_race->hometown, "Ephel Brandir Town")) {
+				if (pick) {
+					return p_race;
+				} else {
+					pick = true;
+				}
+			}
+			p_race = p_race->next;
+		}
+	}
+
 	/* Pick one according to the probablilities */
 	k = randint0(race_prob[z_info->p_race_max - 1][player->place]);
 	for (i = 0; i < z_info->p_race_max; i++) {
@@ -1239,7 +1255,7 @@ static bool mon_is_neutral(struct chunk *c, struct monster *mon,
 	chance = MAX(dislikes->rel - 100, 0);
 	k = randint0(chance + 20);
 	if ((k > 20) || (level_topography(player->place) == TOP_CAVE) ||
-		//(player->themed_level == THEME_WARLORDS) ||
+		(player->themed_level == themed_level_index("Warlords")) ||
 		square_isvault(c, grid)) {
 		return false;
 	}

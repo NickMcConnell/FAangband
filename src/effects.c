@@ -2664,7 +2664,8 @@ bool effect_handler_WAKE(effect_handler_context_t *context)
 	for (i = 1; i < cave_monster_max(cave); i++) {
 		struct monster *mon = cave_monster(cave, i);
 		if (mon->race) {
-			int radius = z_info->max_sight * 2;
+			int radius = player->themed_level ? z_info->max_sight :
+				z_info->max_sight * 2;
 			int dist = distance(origin, mon->grid);
 
 			/* Skip monsters too far away */

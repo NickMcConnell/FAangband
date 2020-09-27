@@ -791,6 +791,9 @@ static size_t prt_level_feeling(int row, int col)
 	/* No useful feeling in town */
 	if (!player->depth) return 0;
 
+	/* No numerical feelings on themed levels */
+	if (player->themed_level) return 0;
+
 	/* Get feelings */
 	obj_feeling = cave->feeling / 10;
 	mon_feeling = cave->feeling - (10 * obj_feeling);
