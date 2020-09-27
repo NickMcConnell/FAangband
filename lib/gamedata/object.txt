@@ -2749,7 +2749,7 @@ effect:TIMED_DEC:CUT
 dice:20
 effect:TIMED_DEC:CONFUSED
 dice:20
-effect:NOURISH:DEC_BY
+effect:NOURISH:INC_BY
 dice:1
 
 name:Cure Serious Wounds
@@ -2765,7 +2765,7 @@ dice:40
 effect:CURE:BLIND
 effect:CURE:CUT
 effect:CURE:CONFUSED
-effect:NOURISH:DEC_BY
+effect:NOURISH:INC_BY
 dice:1
 
 name:Cure Critical Wounds
@@ -2784,7 +2784,7 @@ effect:CURE:POISONED
 effect:CURE:STUN
 effect:CURE:AMNESIA
 effect:CURE:CONFUSED
-effect:NOURISH:DEC_BY
+effect:NOURISH:INC_BY
 dice:1
 
 name:Healing
@@ -2803,7 +2803,7 @@ effect:CURE:POISONED
 effect:CURE:STUN
 effect:CURE:AMNESIA
 effect:CURE:CONFUSED
-effect:NOURISH:DEC_BY
+effect:NOURISH:INC_BY
 dice:1
 
 name:*Healing*
