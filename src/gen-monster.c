@@ -26,6 +26,7 @@
 #include "cave.h"
 #include "math.h"
 #include "game-event.h"
+#include "game-world.h"
 #include "generate.h"
 #include "init.h"
 #include "monster.h"
@@ -58,6 +59,37 @@ struct pit_profile *lookup_pit_profile(const char *name)
 }
 
 /**
+ * Hack - select beings of the four basic elements.  Used in the elemental 
+ * war themed level.
+ */
+static bool vault_aux_elemental(struct monster_race *race)
+{
+	/* Demons are always welcome. */
+	if (my_stristr(race->base->name, "demon"))
+		return true;
+
+	/* Certain names are a givaway. */
+	if (strstr(race->name, "Fire")
+		|| strstr(race->name, "Hell")
+		|| strstr(race->name, "Frost")
+		|| strstr(race->name, "Cold")
+		|| strstr(race->name, "Acid")
+		|| strstr(race->name, "Water")
+		|| strstr(race->name, "Energy"))
+		return true;
+
+	/* Otherwise, try selecting by breath attacks. */
+	if (rf_has(race->spell_flags, RSF_BR_ACID)
+		|| rf_has(race->spell_flags, RSF_BR_ELEC)
+		|| rf_has(race->spell_flags, RSF_BR_FIRE)
+		|| rf_has(race->spell_flags, RSF_BR_COLD))
+		return true;
+
+	/* Nope */
+	return false;
+}
+
+/**
  * This function selects monsters by monster base symbol 
  * (may be any of the characters allowed)
  * \param race the monster race being tested for suitability
@@ -69,6 +101,17 @@ struct pit_profile *lookup_pit_profile(const char *name)
  */
 static bool mon_select(struct monster_race *race)
 {
+	/* Special case: Elemental war themed level. */
+	if (player->themed_level == themed_level_index("Elemental")) {
+		return (vault_aux_elemental(race));
+	}
+
+	/* Special case: Estolad themed level. */
+	if (player->themed_level == themed_level_index("Estolad")) {
+		if (!rf_has(race->flags, RF_PLAYER))
+			return false;
+	}
+
     /* Require that the monster symbol be correct. */
     if (base_d_char[0] != '\0') {
 		if (strchr(base_d_char, race->base->d_char) == 0)
@@ -177,6 +220,35 @@ bool mon_restrict(const char *monster_type, int depth, bool unique_ok)
 	}
 }
 
+
+/**
+ * Apply any general restrictions on monsters in (vaults and) themed levels.
+ */
+void general_monster_restrictions(void)
+{
+	int i;
+
+	/* Clear global monster restriction variables. */
+	allow_unique = true;
+    for (i = 0; i < 10; i++)
+		base_d_char[i] = '\0';
+
+	/* Most themed levels have monster restrictions. */
+	if (player->themed_level == themed_level_index("Elemental")) {
+		get_mon_num_prep(mon_select);
+	} else if (player->themed_level == themed_level_index("Dragon")) {
+		my_strcpy(base_d_char, "dD", sizeof(base_d_char));
+		get_mon_num_prep(mon_select);
+	} else if (player->themed_level == themed_level_index("Wilderness")) {
+		get_mon_num_prep(mon_select);
+	} else if (player->themed_level == themed_level_index("Demon")) {
+		get_mon_num_prep(mon_select);
+	} else if (player->themed_level == themed_level_index("Mines")) {
+		get_mon_num_prep(mon_select);
+	} else if (player->themed_level == themed_level_index("Estolad")) {
+		get_mon_num_prep(mon_select);
+	}
+}
 
 /**
  * Place monsters, up to the number asked for, in a rectangle centered on 

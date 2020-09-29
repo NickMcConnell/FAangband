@@ -594,6 +594,10 @@ static enum parser_error parse_constants_world(struct parser *p) {
 		z->stair_skip = value;
 	else if (streq(label, "move-energy"))
 		z->move_energy = value;
+	else if (streq(label, "themed-dun"))
+		z->themed_dun = value;
+	else if (streq(label, "themed-wild"))
+		z->themed_wild = value;
 	else
 		return PARSE_ERROR_UNDEFINED_DIRECTIVE;
 

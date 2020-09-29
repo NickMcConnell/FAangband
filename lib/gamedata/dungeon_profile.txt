@@ -240,3 +240,9 @@ cutoff:-1
 name:valley
 streamer:5:2:3:90:2:40
 cutoff:-1
+
+########### Special themed level profile
+
+## Themed level
+name:themed
+cutoff:-1

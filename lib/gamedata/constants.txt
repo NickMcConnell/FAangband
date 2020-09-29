@@ -124,6 +124,12 @@ world:stair-skip:1
 # Energy needed by player or monsters to move
 world:move-energy:100
 
+# 1/Chance of a themed level in the dungeon
+world:themed-dun:180
+
+# 1/Chance of a themed level in the wilderness
+world:themed-wild:70
+
 #---------------------------------------------------------------------
 # Carrying Capacity
 #---------------------------------------------------------------------

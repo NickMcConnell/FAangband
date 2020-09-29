@@ -53,6 +53,7 @@ struct angband_constants
 	u16b shape_max;		/**< Maximum number of player shapes */
 	u16b p_race_max;	/**< Maximum number of player races */
 	u16b store_max;		/**< Maximum number of store types */
+	u16b themed_max;		/**< Maximum number of themed levels */
 
 	/* Maxima of things on a given level, read from constants.txt */
 	u16b level_monster_max;	/**< Maximum number of monsters on a given level */
@@ -96,6 +97,8 @@ struct angband_constants
 	u16b feeling_need;	/* Squares needed to see to get first feeling */
     u16b stair_skip;    /* Number of levels to skip for each down stair */
 	u16b move_energy;	/* Energy the player or monster needs to move */
+	u16b themed_dun;	/* !/Chance of a themed level in the dungeon */
+	u16b themed_wild;	/* !/Chance of a themed level in the wilderness */
 
 	/* Carrying capacity constants, read from constants.txt */
 	u16b pack_size;		/**< Maximum number of pack slots */

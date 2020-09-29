@@ -3145,4 +3145,29 @@ struct chunk *arena_gen(struct player *p, int min_height, int min_width) {
 
 	return c;
 }
-	
+
+/* ------------------ THEMED LEVEL ---------------- */
+
+/**
+ * Generate a themed level.
+ *
+ * \param p is the player
+ * \return a pointer to the generated chunk
+ */
+struct chunk *themed_gen(struct player *p, int min_height, int min_width) {
+	struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
+	c->depth = p->depth;
+
+	/* Build the themed level. */
+	if (!build_vault(c, loc(z_info->dungeon_wid / 2, z_info->dungeon_hgt / 2),
+					 themed_level(p->themed_level))) {
+		/* Oops.  We're /not/ on a themed level. */
+		player->themed_level = 0;
+		return NULL;
+	}
+
+	/* Indicate that this theme is built, and should not appear again. */
+	p->themed_level_appeared |= (1L << (p->themed_level - 1));
+
+	return c;
+}

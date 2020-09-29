@@ -260,6 +260,7 @@ struct chunk *hard_centre_gen(struct player *p, int min_height, int min_width);
 struct chunk *lair_gen(struct player *p, int min_height, int min_width);
 struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width);
 struct chunk *arena_gen(struct player *p, int min_height, int min_width);
+struct chunk *themed_gen(struct player *p, int min_height, int min_width);
 
 /* gen-wilderness.c */
 struct chunk *plain_gen(struct player *p, int height, int width);
@@ -357,6 +358,7 @@ bool alloc_object(struct chunk *c, int set, int typ, int depth, byte origin);
 
 /* gen-monster.c */
 bool mon_restrict(const char *monster_type, int depth, bool unique_ok);
+void general_monster_restrictions(void);
 void spread_monsters(struct chunk *c, const char *type, int depth, int num, 
 					 int y0, int x0, int dy, int dx, byte origin);
 void get_vault_monsters(struct chunk *c, char racial_symbol[], char *vault_type,
