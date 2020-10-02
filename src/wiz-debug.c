@@ -1542,7 +1542,7 @@ static void do_cmd_wiz_cure_all(void)
  */
 static void do_cmd_wiz_jump(void)
 {
-	int place, i;
+	int place = 0, i;
 
 	char ppp[80];
 	char tmp_val[160];

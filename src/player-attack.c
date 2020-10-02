@@ -760,7 +760,7 @@ bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 	bool armsman = false;
 	bool power_strike = false;
 	bool confusing_blow = false;
-	int unarmed_blow_idx;
+	int unarmed_blow_idx = 0;
 
 	/* Bonus to attack if monster is sleeping. */
 	int sleeping_bonus = 0;

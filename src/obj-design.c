@@ -184,18 +184,18 @@ static bool has_property(struct artifact *art, struct object *obj,
 				}
 			} else {
 				/* Various things get checked to here */
-				s16b *bonus, standard = 0;
+				s16b bonus = 0, standard = 0;
 				if (streq(prop->name, "extra armor")) {
-					bonus = art ? &art->ac : &obj->ac;
+					bonus = art ? art->ac : obj->ac;
 					standard = kind->ac;
 				} else if (streq(prop->name, "armor bonus")) {
-					bonus = art ? &art->to_a : &obj->to_a;
+					bonus = art ? art->to_a : obj->to_a;
 				} else if (streq(prop->name, "skill bonus")) {
-					bonus = art ? &art->to_h : &obj->to_h;
+					bonus = art ? art->to_h : obj->to_h;
 				} else if (streq(prop->name, "deadliness bonus")) {
-					bonus = art ? &art->to_d : &obj->to_d;
+					bonus = art ? art->to_d : obj->to_d;
 				}
-				if (*bonus != standard) {
+				if (bonus != standard) {
 					return true;
 				}
 			}
