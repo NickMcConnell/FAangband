@@ -834,8 +834,6 @@ static bool run_test(void)
 	return false;
 }
 
-
-
 /**
  * Take one step along the current "run" path
  *
@@ -943,7 +941,7 @@ void run_step(int dir)
 	}
 
 	/* Take time */
-	player->upkeep->energy_use = z_info->move_energy / player->state.num_moves;
+	player->upkeep->energy_use = energy_per_move(player);
 
 	/* Move the player; running straight into a trap == trying to disarm */
 	move_player(run_cur_dir, dir && disarm ? true : false);
