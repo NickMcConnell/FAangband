@@ -3264,6 +3264,7 @@ armor:0:0
 charges:6+d8
 effect:BEAM:ELEC
 dice:6d6
+flags:IGNORE_ELEC
 
 name:Frost Bolts
 type:wand
@@ -4138,6 +4139,7 @@ armor:0:0
 effect:BEAM:ELEC
 dice:6d6
 time:11
+flags:IGNORE_ELEC
 
 name:Acid Bolts
 type:rod
