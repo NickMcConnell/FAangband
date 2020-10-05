@@ -830,12 +830,10 @@ static struct object *make_artifact_special(int level, int tval)
 	struct object *new_obj;
 
 	/* No artifacts, do nothing */
-	if (OPT(player, birth_no_artifacts))
-		return NULL;
+	if (OPT(player, birth_no_artifacts)) return NULL;
 
 	/* No artifacts in the town */
-	if (!player->depth)
-		return NULL;
+	if (!player->depth) return NULL;
 
 	/* Check the special artifacts */
 	for (i = 0; i < z_info->a_max; ++i) {
@@ -915,18 +913,15 @@ static struct object *make_artifact_special(int level, int tval)
 static bool make_artifact(struct object *obj)
 {
 	int i;
-	bool art_ok = true;
 
 	/* Make sure birth no artifacts isn't set */
-	if (OPT(player, birth_no_artifacts)) art_ok = false;
-
-	if (!art_ok) return (false);
+	if (!OPT(player, birth_no_artifacts)) return false;
 
 	/* No artifacts in the town */
-	if (!player->depth) return (false);
+	if (!player->depth) return false;
 
 	/* Paranoia -- no "plural" artifacts */
-	if (obj->number != 1) return (false);
+	if (obj->number != 1) return false;
 
 	/* Check the artifact list (skip the "specials") */
 	for (i = 0; !obj->artifact && i < z_info->a_max; i++) {
