@@ -791,11 +791,17 @@ void copy_artifact_data(struct object *obj, const struct artifact *art)
 	} else if (kind->activation) {
 		obj->activation = kind->activation;
 		obj->time = kind->time;
+	} else if (art->effect) {
+		obj->effect = art->effect;
 	}
 
 	/* Fix for artifact lights */
 	of_off(obj->flags, OF_TAKES_FUEL);
 	of_off(obj->flags, OF_BURNS_OUT);
+
+	/* Assign charges (wands/staves only) */
+	if (tval_can_have_charges(obj))
+		obj->pval = randcalc(art->charge, art->level, RANDOMISE);
 
 	/* Timeouts are always 0 */
 	obj->timeout = 0;

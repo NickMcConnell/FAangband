@@ -1968,6 +1968,83 @@ desc:An adamant suit with scales of every color.  Untrammelled powers elemental
 desc: and ethereal swirl around it in an inextricably intermingled nimbus.
 
 
+### Wands ###
+
+name:'Ilkorin'
+base-object:wand
+level:40
+weight:10
+cost:15000
+alloc:5:40 to 100
+attack:1d1:0:0
+armor:0:0
+charges:5+d5
+effect:BOLT:POIS
+dice:$Dd11
+expr:D:PLAYER_LEVEL:/ 2
+effect:CLOUD:POIS:6
+dice:30
+msg:Deadly venom spurts and steams from your wand.
+desc:Deadly venoms that blight and wither seep continually from this wand.
+
+name:of Beguiling
+base-object:wand
+level:70
+weight:10
+cost:27500
+alloc:5:70 to 100
+attack:1d1:0:0
+armor:0:0
+charges:3+d3
+effect:RANDOM
+dice:2
+effect:NONE
+effect:BOLT_AWARE:MON_SLOW
+dice:$B
+expr:B:PLAYER_LEVEL:* 2
+effect:RANDOM
+dice:2
+effect:BOLT_AWARE:SLEEP_ALL
+dice:$B
+expr:B:PLAYER_LEVEL:* 2
+effect:BOLT_AWARE:MON_CONF
+dice:$B
+expr:B:PLAYER_LEVEL:* 2
+msg:You speak soft, beguiling words.
+desc:Every creature has its soft spot...
+
+name:of Unmaking
+base-object:wand
+level:100
+weight:10
+cost:150000
+alloc:5:90 to 127
+attack:1d1:0:0
+armor:0:0
+charges:3+d3
+effect:UNMAKE
+msg:You envoke the powers of Unmaking!
+desc:Most treacherous of all spells of doom are those that rip asunder the
+desc: fabric of the created world, annhilating order and reveling in the primal
+desc: chaos that howls against all that is - and ever threatens to consume it
+desc: at the last.
+
+name:of Ossë
+base-object:wand
+level:70
+weight:10
+cost:22500
+alloc:5:70 to 100
+attack:1d1:0:0
+armor:0:0
+charges:4+d4
+effect:ARC:WATER:14:90
+dice:$B+d100
+expr:B:PLAYER_LEVEL:* 3
+msg:You raise a foam-crested tidal wave.
+desc:The Maia Ossë was at one time drawn to Melkor, and still finds delight in
+desc: the destructive power of the sea.
+
 ### Quest artifacts ###
 
 name:of Ungoliant

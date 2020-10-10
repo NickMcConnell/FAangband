@@ -835,7 +835,7 @@ static const menu_iter wiz_create_item_menu =
  */
 static void wiz_create_item(bool art)
 {
-	int tvals[TV_MAX];
+	int tvals[TV_MAX] = { 0 };
 	int i, n;
 
 	struct menu *menu = menu_new(MN_SKIN_COLUMNS, &wiz_create_item_menu);

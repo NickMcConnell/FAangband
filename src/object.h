@@ -319,8 +319,11 @@ struct artifact {
 
 	struct activation *activation;	/**< Artifact activation */
 	char *alt_msg;
+	struct effect *effect;	/**< Effect this item produces (effects.c) */
+	char *effect_msg;
 
 	random_value time;	/**< Recharge time (if appropriate) */
+	random_value charge;/**< Number of charges (staves/wands) */
 };
 
 /**

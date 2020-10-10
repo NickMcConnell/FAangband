@@ -91,7 +91,7 @@ static const char *obj_desc_get_basename(const struct object *obj, bool aware,
 	/* Artifacts are special */
 	if (obj->artifact && (aware || object_is_known_artifact(obj) || terse ||
 						  !obj->kind->flavor))
-		return obj->kind->name;
+		return tval_is_wearable(obj) ? obj->kind->name : obj->kind->base->name;
 
 	/* Analyze the object */
 	switch (obj->tval)

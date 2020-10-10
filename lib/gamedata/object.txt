@@ -3555,7 +3555,48 @@ effect:WONDER
 dice:$B+1d100
 expr:B:PLAYER_LEVEL:/ 5
 
+### Fancy attack wands ###
 
+name:Striking
+graphics:-:d
+level:65
+weight:10
+cost:3800
+alloc:20:60 to 100
+attack:1d1:0:0
+armor:0:0
+charges:3+d3
+flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+effect:BOLT:METEOR
+dice:$Dd9
+expr:D:PLAYER_LEVEL:/ 3 + 10
+
+name:Storms
+graphics:-:d
+level:50
+weight:10
+cost:3000
+alloc:10:55 to 100
+attack:1d1:0:0
+armor:0:0
+charges:3+d3
+flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+effect:BOLT:STORM
+dice:$Dd4
+expr:D:PLAYER_LEVEL:/ 5 + 25
+
+name:Shrapnel
+graphics:-:d
+level:20
+weight:10
+cost:3000
+alloc:20:20 to 70
+attack:1d1:0:0
+armor:0:0
+charges:5+d5
+effect:BOLT:SHARD
+dice:$Dd8
+expr:D:PLAYER_LEVEL:/ 14 + 4
 
 ### Dragons' wands ###
 

@@ -2547,7 +2547,7 @@ static enum parser_error parse_artifact_name(struct parser *p) {
 
 static enum parser_error parse_artifact_base_object(struct parser *p) {
 	struct artifact *a = parser_priv(p);
-	int tval, sval;
+	int tval, sval = -1;
 	const char *sval_name;
 
 	assert(a);
@@ -2557,10 +2557,18 @@ static enum parser_error parse_artifact_base_object(struct parser *p) {
 		return PARSE_ERROR_UNRECOGNISED_TVAL;
 	a->tval = tval;
 
-	sval_name = parser_getsym(p, "sval");
-	sval = lookup_sval(a->tval, sval_name);
-	if (sval < 0)
+	if (parser_hasval(p, "sval")) {
+		sval_name = parser_getsym(p, "sval");
+		sval = lookup_sval(a->tval, sval_name);
+	} else {
+		/* Artifact devices */
+		return write_dummy_object_record(a, a->name);
+	}
+
+	if (sval < 0) {
+		/* Artifact wearables */
 		return write_dummy_object_record(a, sval_name);
+	}
 	a->sval = sval;
 
 	return PARSE_ERROR_NONE;
@@ -2657,6 +2665,14 @@ static enum parser_error parse_artifact_armor(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_artifact_charges(struct parser *p) {
+	struct artifact *a = parser_priv(p);
+	assert(a);
+
+	a->charge = parser_getrand(p, "charges");
+	return PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_artifact_flags(struct parser *p) {
 	struct artifact *a = parser_priv(p);
 	char *s;
@@ -2700,6 +2716,123 @@ static enum parser_error parse_artifact_act(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_artifact_effect(struct parser *p) {
+	struct artifact *a = parser_priv(p);
+	struct effect *effect;
+	struct effect *new_effect = mem_zalloc(sizeof(*new_effect));
+
+	if (!a)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	/* Go to the next vacant effect and set it to the new one  */
+	if (a->effect) {
+		effect = a->effect;
+		while (effect->next)
+			effect = effect->next;
+		effect->next = new_effect;
+	} else
+		a->effect = new_effect;
+
+	/* Fill in the detail */
+	return grab_effect_data(p, new_effect);
+}
+
+static enum parser_error parse_artifact_effect_yx(struct parser *p) {
+	struct artifact *a = parser_priv(p);
+	struct effect *effect = a->effect;
+
+	if (!a)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	/* If there is no effect, assume that this is human and not parser error. */
+	if (effect == NULL)
+		return PARSE_ERROR_NONE;
+
+	while (effect->next) effect = effect->next;
+	effect->y = parser_getint(p, "y");
+	effect->x = parser_getint(p, "x");
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_artifact_dice(struct parser *p) {
+	struct artifact *a = parser_priv(p);
+	dice_t *dice = NULL;
+	struct effect *effect = a->effect;
+	const char *string = NULL;
+
+	if (!a)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	/* If there is no effect, assume that this is human and not parser error. */
+	if (effect == NULL)
+		return PARSE_ERROR_NONE;
+
+	while (effect->next) effect = effect->next;
+
+	dice = dice_new();
+
+	if (dice == NULL)
+		return PARSE_ERROR_INVALID_DICE;
+
+	string = parser_getstr(p, "dice");
+
+	if (dice_parse_string(dice, string)) {
+		effect->dice = dice;
+	}
+	else {
+		dice_free(dice);
+		return PARSE_ERROR_INVALID_DICE;
+	}
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_artifact_expr(struct parser *p) {
+	struct artifact *a = parser_priv(p);
+	struct effect *effect = a->effect;
+	expression_t *expression = NULL;
+	expression_base_value_f function = NULL;
+	const char *name;
+	const char *base;
+	const char *expr;
+
+	if (!a)
+		return PARSE_ERROR_MISSING_RECORD_HEADER;
+
+	/* If there is no effect, assume that this is human and not parser error. */
+	if (effect == NULL)
+		return PARSE_ERROR_NONE;
+
+	while (effect->next) effect = effect->next;
+
+	/* If there are no dice, assume that this is human and not parser error. */
+	if (effect->dice == NULL)
+		return PARSE_ERROR_NONE;
+
+	name = parser_getsym(p, "name");
+	base = parser_getsym(p, "base");
+	expr = parser_getstr(p, "expr");
+	expression = expression_new();
+
+	if (expression == NULL)
+		return PARSE_ERROR_INVALID_EXPRESSION;
+
+	function = spell_value_base_by_name(base);
+	expression_set_base_value(expression, function);
+
+	if (expression_add_operations_string(expression, expr) < 0)
+		return PARSE_ERROR_BAD_EXPRESSION_STRING;
+
+	if (dice_bind_expression(effect->dice, name, expression) < 0)
+		return PARSE_ERROR_UNBOUND_EXPRESSION;
+
+	/* The dice object makes a deep copy of the expression, so we can free it */
+	expression_free(expression);
+
+	return PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_artifact_time(struct parser *p) {
 	struct artifact *a = parser_priv(p);
 	struct object_kind *k = lookup_kind(a->tval, a->sval);
@@ -2718,7 +2851,11 @@ static enum parser_error parse_artifact_msg(struct parser *p) {
 	struct artifact *a = parser_priv(p);
 	assert(a);
 
-	a->alt_msg = string_append(a->alt_msg, parser_getstr(p, "text"));
+	if (a->effect) {
+		a->effect_msg = string_append(a->effect_msg, parser_getstr(p, "text"));
+	} else {
+		a->alt_msg = string_append(a->alt_msg, parser_getstr(p, "text"));
+	}
 	return PARSE_ERROR_NONE;
 }
 
@@ -2821,7 +2958,7 @@ struct parser *init_parse_artifact(void) {
 	struct parser *p = parser_new();
 	parser_setpriv(p, NULL);
 	parser_reg(p, "name str name", parse_artifact_name);
-	parser_reg(p, "base-object sym tval sym sval", parse_artifact_base_object);
+	parser_reg(p, "base-object sym tval ?sym sval", parse_artifact_base_object);
 	parser_reg(p, "graphics char glyph sym color", parse_artifact_graphics);
 	parser_reg(p, "level int level", parse_artifact_level);
 	parser_reg(p, "weight int weight", parse_artifact_weight);
@@ -2829,8 +2966,14 @@ struct parser *init_parse_artifact(void) {
 	parser_reg(p, "alloc int common str minmax", parse_artifact_alloc);
 	parser_reg(p, "attack rand hd int to-h int to-d", parse_artifact_attack);
 	parser_reg(p, "armor int ac int to-a", parse_artifact_armor);
+	parser_reg(p, "charges rand charges", parse_artifact_charges);
 	parser_reg(p, "flags ?str flags", parse_artifact_flags);
 	parser_reg(p, "act str name", parse_artifact_act);
+	parser_reg(p, "effect sym eff ?sym type ?int radius ?int other",
+			   parse_artifact_effect);
+	parser_reg(p, "effect-yx int y int x", parse_artifact_effect_yx);
+	parser_reg(p, "dice str dice", parse_artifact_dice);
+	parser_reg(p, "expr sym name sym base str expr", parse_artifact_expr);
 	parser_reg(p, "time rand time", parse_artifact_time);
 	parser_reg(p, "msg str text", parse_artifact_msg);
 	parser_reg(p, "values str values", parse_artifact_values);
@@ -2894,10 +3037,12 @@ static void cleanup_artifact(void)
 		struct artifact *art = &a_info[idx];
 		string_free(art->name);
 		string_free(art->alt_msg);
+		string_free(art->effect_msg);
 		string_free(art->text);
 		mem_free(art->brands);
 		mem_free(art->slays);
 		mem_free(art->curses);
+		free_effect(art->effect);
 	}
 	mem_free(a_info);
 }

@@ -4220,6 +4220,93 @@ bool effect_handler_BALL(effect_handler_context_t *context)
 
 
 /**
+ * Cast a ball spell
+ * Stop if we hit a monster or the player, act as a ball
+ * Allow target mode to pass over monsters
+ * Affect grids, objects, monsters and the player (even if player cast)
+ */
+bool effect_handler_CLOUD(effect_handler_context_t *context)
+{
+	int dam = effect_calculate_value(context, true);
+	int rad = context->radius ? context->radius : 2;
+	struct loc target = loc(-1, -1);
+
+	int flg = PROJECT_THRU | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_PLAY | PROJECT_SELF;
+
+	/* Player or monster? */
+	switch (context->origin.what) {
+		case SRC_MONSTER: {
+			struct monster *mon = cave_monster(cave, context->origin.which.monster);
+			int conf_level, accuracy = 100;
+			struct monster *t_mon = monster_target_monster(context);
+
+			assert(mon);
+
+			conf_level = monster_effect_level(mon, MON_TMD_CONF);
+			while (conf_level) {
+				accuracy *= (100 - CONF_RANDOM_CHANCE);
+				accuracy /= 100;
+				conf_level--;
+			}
+
+			/* Powerful monster */
+			if (monster_is_powerful(mon)) {
+				rad++;
+			}
+
+			flg &= ~(PROJECT_STOP | PROJECT_THRU);
+
+			if (randint1(100) > accuracy) {
+				/* Confused direction */
+				int dir = randint1(9);
+				target = loc_sum(mon->grid, ddgrid[dir]);
+			} else if (t_mon) {
+				/* Target monster */
+				target = t_mon->grid;
+			} else {
+				/* Target player */
+				struct loc decoy = cave_find_decoy(cave);
+				if (!loc_is_zero(decoy)) {
+					target = decoy;
+				} else {
+					target = player->grid;
+				}
+			}
+
+			break;
+		}
+
+		case SRC_TRAP: {
+			struct trap *trap = context->origin.which.trap;
+			target = trap->grid;
+			break;
+		}
+
+		case SRC_PLAYER:
+			/* Ask for a target if no direction given */
+			if (context->dir == DIR_TARGET && target_okay()) {
+				flg &= ~(PROJECT_STOP | PROJECT_THRU);
+				target_get(&target);
+			} else {
+				target = loc_sum(player->grid, ddgrid[context->dir]);
+			}
+
+			if (context->other) rad += eff_level(player) / context->other;
+			break;
+
+		default:
+			break;
+	}
+
+	/* Aim at the target, explode */
+	if (project(context->origin, rad, target, dam, context->subtype, flg, 0, 0, context->obj))
+		context->ident = true;
+
+	return true;
+}
+
+
+/**
  * Breathe an element, in a cone from the breather
  * Affect grids, objects, and monsters
  * context->subtype is element, context->other degrees of arc
@@ -4372,7 +4459,7 @@ bool effect_handler_ARC(effect_handler_context_t *context)
 
 	/* Diameter of the energy source. */
 	if (degrees_of_arc < 60) {
-			diameter_of_source = diameter_of_source * 60 / degrees_of_arc;
+		diameter_of_source = diameter_of_source * 60 / degrees_of_arc;
 	}
 
 	/* Max */
@@ -5602,7 +5689,86 @@ bool effect_handler_SWEEP(effect_handler_context_t *context)
 	return true;
 }
 
+/**
+ * Wand of Unmaking activation
+ */
+bool effect_handler_UNMAKE(effect_handler_context_t *context)
+{
+	bool repeat = true;
 
+	context->ident = true;
+
+	while (repeat) {
+		/* Pick an effect. */
+		int chaotic_effect = randint0(18);
+
+		switch (chaotic_effect) {
+			/* Massive chaos bolt. */
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			{
+				int flg = PROJECT_STOP | PROJECT_KILL;
+				(void) project_aimed(context->origin, PROJ_CHAOS, context->dir,
+									 randint1(500), flg, NULL);
+				break;
+			}
+			/* Chaos balls in every direction */
+			case 8:
+			case 9:
+			{
+				effect_simple(EF_STAR_BALL, source_player(), "1d400",
+							  PROJ_CHAOS, 2, 0, 0, 0, NULL);
+				break;
+			}
+			/* Tear up the dungeon. */
+			case 10:
+			{
+				effect_simple(EF_DESTRUCTION, source_player(), "0", 0,
+							  5 + randint1(20), 0, 0, 0, NULL);
+				break;
+			}
+			/* Chaos cloud right on top of the poor caster. */
+			case 11:
+			{
+				effect_simple(EF_CLOUD, source_player(), "1d400", PROJ_CHAOS,
+							  6, 0, 0, 0, NULL);
+				break;
+			}
+			/* Chaos spray. */
+			case 12:
+			case 13:
+			case 14:
+			case 15:
+			case 16:
+			{
+				effect_simple(EF_ARC, source_player(), "1d600", PROJ_CHAOS,
+							  6, 0, 0, 0, NULL);
+				break;
+			}
+			/* Unmake the caster. */
+			case 17:
+			{
+				(void) player_stat_dec(player, STAT_STR, one_in_(3));
+				(void) player_stat_dec(player, STAT_INT, one_in_(3));
+				(void) player_stat_dec(player, STAT_WIS, one_in_(3));
+				(void) player_stat_dec(player, STAT_DEX, one_in_(3));
+				(void) player_stat_dec(player, STAT_CON, one_in_(3));
+				break;
+			}
+		}
+
+		/* Chaos, once unleashed, likes to stay... */
+		if (!one_in_(4)) repeat = false;
+	}
+
+	return false;
+}
 
 /**
  * One Ring activation
@@ -6006,6 +6172,7 @@ int effect_subtype(int index, const char *type)
 			case EF_SPHERE:
 			case EF_ZONE:
 			case EF_BALL:
+			case EF_CLOUD:
 			case EF_BREATH:
 			case EF_ARC:
 			case EF_SHORT_BEAM:
