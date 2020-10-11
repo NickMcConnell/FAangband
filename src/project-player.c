@@ -885,6 +885,11 @@ static int project_player_handler_MON_HOLD(project_player_handler_context_t *con
 	return 0;
 }
 
+static int project_player_handler_HOLD_UNDEAD(project_player_handler_context_t *context)
+{
+	return 0;
+}
+
 static int project_player_handler_MON_STUN(project_player_handler_context_t *context)
 {
 	return 0;

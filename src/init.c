@@ -3958,11 +3958,6 @@ static enum parser_error parse_flavor_flavor(struct parser *p) {
 	f->tval = flavor_tval;
 	f->d_char = flavor_glyph;
 
-	if (parser_hasval(p, "sval"))
-		f->sval = lookup_sval(f->tval, parser_getsym(p, "sval"));
-	else
-		f->sval = SV_UNKNOWN;
-
 	attr = parser_getsym(p, "attr");
 	if (strlen(attr) == 1)
 		d_attr = color_char_to_attr(attr[0]);
@@ -3996,7 +3991,6 @@ struct parser *init_parse_flavor(void) {
 
 	parser_reg(p, "kind sym tval char glyph", parse_flavor_kind);
 	parser_reg(p, "flavor uint index sym attr ?str desc", parse_flavor_flavor);
-	parser_reg(p, "fixed uint index sym sval sym attr ?str desc", parse_flavor_flavor);
 
 	return p;
 }

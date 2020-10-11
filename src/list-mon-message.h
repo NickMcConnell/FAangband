@@ -60,6 +60,7 @@ MON_MSG(FREEZE_SHATTER,		MSG_KILL,		false,	"freeze[s] and shatter[s]!")
 MON_MSG(MANA_DRAIN,			MSG_GENERIC,	false,	"lose[s] some mana!")
 MON_MSG(BRIEF_PUZZLE,		MSG_GENERIC,	false,	"look[s] briefly puzzled.")
 MON_MSG(MAINTAIN_SHAPE,		MSG_GENERIC,	false,	"maintain[s] the same shape.")
+MON_MSG(SAVE_HELD,			MSG_GENERIC,	false,	"fight[s] off your spell.")
 MON_MSG(UNHARMED,			MSG_GENERIC,	false,	"[is|are] unharmed.")
 /* Dummy messages for monster pain - we use edit file info instead. */
 MON_MSG(95,					MSG_GENERIC,	false,	"")

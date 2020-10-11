@@ -1049,6 +1049,25 @@ static void project_monster_handler_MON_HOLD(project_monster_handler_context_t *
 	context->dam = 0;
 }
 
+/* Powerful Holding magics against undead only. */
+static void project_monster_handler_HOLD_UNDEAD(project_monster_handler_context_t *context)
+{
+	/* Only affect undead */
+	if (!rf_has(context->mon->race->flags, RF_UNDEAD)) {
+		context->dam = 0;
+		return;
+	}
+
+	/* Attempt a saving throw. */
+	if ((randint1(context->mon->race->level) > player->lev * 2) || one_in_(5)) {
+		context->hurt_msg = MON_MSG_SAVE_HELD;
+	} else {
+		context->mon_timed[MON_TMD_HOLD] = context->dam;
+		context->hurt_msg = MON_MSG_HELD;
+	}
+	context->dam = 0;
+}
+
 /* Stun (Use "dam" as "power") */
 static void project_monster_handler_MON_STUN(project_monster_handler_context_t *context)
 {

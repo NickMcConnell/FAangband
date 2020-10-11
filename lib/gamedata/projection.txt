@@ -724,6 +724,13 @@ blind-desc:something
 obvious:0
 color:White
 
+code:HOLD_UNDEAD
+type:monster
+desc:attempts to hold undead still
+blind-desc:something
+obvious:0
+color:White
+
 code:MON_STUN
 type:monster
 desc:attempts to stun monsters

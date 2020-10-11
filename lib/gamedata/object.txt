@@ -3558,6 +3558,7 @@ expr:B:PLAYER_LEVEL:/ 5
 ### Fancy attack wands ###
 
 name:Striking
+type:wand
 graphics:-:d
 level:65
 weight:10
@@ -3572,6 +3573,7 @@ dice:$Dd9
 expr:D:PLAYER_LEVEL:/ 3 + 10
 
 name:Storms
+type:wand
 graphics:-:d
 level:50
 weight:10
@@ -3586,6 +3588,7 @@ dice:$Dd4
 expr:D:PLAYER_LEVEL:/ 5 + 25
 
 name:Shrapnel
+type:wand
 graphics:-:d
 level:20
 weight:10

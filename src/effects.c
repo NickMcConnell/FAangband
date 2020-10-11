@@ -1712,6 +1712,7 @@ bool effect_handler_MAP_AREA(effect_handler_context_t *context)
  * the width either side of each monster context->x.
  * For player level dependent areas, we use the hack of applying value dice
  * and sides as the height and width.
+ * If context->other is set, detect traps level-wide on success
  */
 bool effect_handler_READ_MINDS(effect_handler_context_t *context)
 {
@@ -1739,6 +1740,10 @@ bool effect_handler_READ_MINDS(effect_handler_context_t *context)
 	if (found) {
 		msg("Images form in your mind!");
 		context->ident = true;
+		if (context->other) {
+			effect_simple(EF_DETECT_TRAPS, source_player(), "0", 0, 0, 0,
+						  cave->height, cave->width, NULL);
+		}
 		return true;
 	}
 
@@ -2307,6 +2312,24 @@ bool effect_handler_DETECT_SOUL(effect_handler_context_t *context)
 		msg("You sense the presence of spirits!");
 	else if (context->aware)
 		msg("You sense no spirits.");
+
+	context->ident = true;
+	return true;
+}
+
+/**
+ * Detect monsters animals around the player.
+ * The height to detect above and below the player is context->value.dice,
+ * the width either side of the player context->value.sides.
+ */
+bool effect_handler_DETECT_ANIMAL(effect_handler_context_t *context)
+{
+	bool monsters = detect_monsters(context->y, context->x, monster_is_natural);
+
+	if (monsters)
+		msg("You sense the presence of animals!");
+	else if (context->aware)
+		msg("You sense no animals.");
 
 	context->ident = true;
 	return true;
@@ -4100,12 +4123,13 @@ bool effect_handler_SPHERE(effect_handler_context_t *context)
 }
 
 /**
- * Hit context->other% of grids in the given radius of the player 
+ * Hit context->other% of grids in the given radius of the player or the given
+ * coordinates
  * Affect grids, objects, and monsters
  */
 bool effect_handler_ZONE(effect_handler_context_t *context)
 {
-	struct loc grid, pgrid = player->grid;
+	struct loc grid, centre = player->grid;
 	int dam = effect_calculate_value(context, false);
 	int rad = context->radius;
 	int type = context->subtype;
@@ -4113,16 +4137,21 @@ bool effect_handler_ZONE(effect_handler_context_t *context)
 	int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL |
 		PROJECT_JUMP;
 
+	/* Check for coordinates */
+	if (context->x && context->y) {
+		centre = loc(context->x, context->y);
+	}
+
 	/* Everything in range */
-	for (grid.y = pgrid.y - rad; grid.y <= pgrid.y + rad; grid.y++) {
-		for (grid.x = pgrid.x - rad; grid.x <= pgrid.x + rad; grid.x++) {
-			int dist = distance(pgrid, grid);
+	for (grid.y = centre.y - rad; grid.y <= centre.y + rad; grid.y++) {
+		for (grid.x = centre.x - rad; grid.x <= centre.x + rad; grid.x++) {
+			int dist = distance(centre, grid);
 
 			/* Skip distant grids */
 			if (dist > rad) continue;
 
 			/* Percentage chance of hitting */
-			if (randint0(100) < chance) continue;
+			if (randint0(100) >= chance) continue;
 
 			project(source_player(), 1, grid, dam, type, flg, 0, 0, NULL);
 		}
@@ -4713,6 +4742,71 @@ bool effect_handler_STAR_BALL(effect_handler_context_t *context)
 		if (project(source_player(), context->radius, target, dam,
 					context->subtype, flg, 0, 0, context->obj))
 			context->ident = true;
+	}
+	return true;
+}
+
+/**
+ * Special code for staff of starlight and the Staff of Starfire.  Most 
+ * effective against monsters that start out in darkness, and against 
+ * those who hate light. -LM-
+ */
+bool effect_handler_STAR_BURST(effect_handler_context_t *context)
+{
+	int dam = effect_calculate_value(context, true);
+	int i, j, radius = context->radius, burst_number = 7 + randint0(8);
+	struct loc grid = loc(0, 0);
+	int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL |
+		PROJECT_JUMP;
+
+	/* Is the player in a square already magically lit? */
+	bool player_lit = square_isglow(cave, player->grid);
+
+	for (i = 0; i < burst_number; i++) {
+		/* First, we find the spot. */
+		for (j = 0; j < 20; j++) {
+			/* Pick a (scattered) distance. */
+			int d = 2 + randint0(4);
+
+			/* Admit failure.  Switch to Plan B. */
+			if (j == 19) {
+				grid = player->grid;
+				break;
+			}
+
+			/* Pick a location */
+			scatter(cave, &grid, player->grid, d, true);
+
+			/* Not on top of the player. */
+			if (loc_eq(grid, player->grid)) continue;
+
+			/* Require passable terrain */
+			if (!square_ispassable(cave, grid)) continue;
+
+			/* Spot chosen. */
+			break;
+		}
+
+		/* Then we hit the spot. */
+
+		/* Confusing to be suddenly lit up. */
+		if (!square_isglow(cave, grid)) {
+			project(source_player(), radius, grid, dam, PROJ_MON_CONF, flg, 0,
+					0, NULL);
+		}
+
+		/* The actual burst of light. */
+		project(source_player(), radius + 1, grid, dam, PROJ_LIGHT_WEAK, flg, 0,
+				0, NULL);
+		project(source_player(), radius, grid, dam, PROJ_LIGHT, flg, 0,	0,NULL);
+
+		/* Hack - assume that the player's square is typical of the area, and
+		 * only light those squares that weren't already magically lit
+		 * temporarily. */
+		if (!player_lit) {
+			project(source_player(), radius + 1, grid, dam, PROJ_LIGHT_WEAK,
+					flg, 0, 0, NULL);
+		}
 	}
 	return true;
 }

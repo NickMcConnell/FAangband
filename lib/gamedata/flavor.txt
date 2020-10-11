@@ -6,7 +6,6 @@
 
 # kind:<tval>:<char>
 # flavor:<index>:<attr>:<text>
-# fixed:<index>:<sval>:<attr>:<text>
 
 
 
@@ -73,6 +72,8 @@ flavor:102:Light Umber:Willow
 
 kind:wand:-
 
+flavor:10:Light Green:Adamantium
+flavor:11:Light Yellow:Damascene Steel
 flavor:103:Light Blue:Aluminium
 flavor:104:Light Dark:Cast Iron
 flavor:105:White:Chromium
@@ -109,12 +110,10 @@ flavor:135:Slate:Lead-Plated
 flavor:136:White:Ivory
 flavor:137:Slate:Pewter
 
-# Adamantium
 # Antimony
 # Blackened
 # Cobalt
 # Corroded
-# Damascened Steel
 # Electrum
 # Jeweled
 # Stubby

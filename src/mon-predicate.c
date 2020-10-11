@@ -30,6 +30,14 @@
 /**
  * Undead monsters
  */
+bool monster_is_natural(const struct monster *mon)
+{
+	return rf_has(mon->race->flags, RF_ANIMAL);
+}
+
+/**
+ * Undead monsters
+ */
 bool monster_is_undead(const struct monster *mon)
 {
 	return rf_has(mon->race->flags, RF_UNDEAD);

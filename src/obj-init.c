@@ -138,7 +138,6 @@ static enum parser_error write_dummy_object_record(struct artifact *art, const c
 	my_strcpy(mod_name, format("& %s~", name), sizeof(mod_name));
 	dummy->name = string_make(mod_name);
 	dummy->kidx = z_info->k_max - 1;
-	dummy->level = art->level;
 
 	/* Increase the sval count for this tval, set the new one to the max */
 	for (i = 0; i < TV_MAX; i++)
@@ -2084,12 +2083,16 @@ static void cleanup_object(void)
 		struct object_kind *kind = &k_info[idx];
 		string_free(kind->name);
 		string_free(kind->text);
-		string_free(kind->effect_msg);
+		if (idx < z_info->ordinary_kind_max) {
+			string_free(kind->effect_msg);
+		}
 		string_free(kind->vis_msg);
 		mem_free(kind->brands);
 		mem_free(kind->slays);
 		mem_free(kind->curses);
-		free_effect(kind->effect);
+		if (idx < z_info->ordinary_kind_max) {
+			free_effect(kind->effect);
+		}
 	}
 	mem_free(k_info);
 }
@@ -3018,7 +3021,7 @@ static errr finish_parse_artifact(struct parser *p) {
 	}
 	z_info->a_max += 1;
 
-	/* Now we're done with object kinds, deal with object-like things */
+	/* Now we're done with object kinds, deal with object-like things... */
 	none = tval_find_idx("none");
 	unknown_item_kind = lookup_kind(none, lookup_sval(none, "<unknown item>"));
 	unknown_gold_kind = lookup_kind(none,
@@ -3026,6 +3029,18 @@ static errr finish_parse_artifact(struct parser *p) {
 	pile_kind = lookup_kind(none, lookup_sval(none, "<pile>"));
 	curse_object_kind = lookup_kind(none, lookup_sval(none, "<curse object>"));
 	write_curse_kinds();
+
+	/* ..and fill in all object data */
+	for (aidx = 1; aidx < z_info->a_max; aidx++) {
+		struct artifact *art = &a_info[aidx];
+		struct object_kind *kind = lookup_kind(art->tval, art->sval);
+		if (kind->kidx > z_info->ordinary_kind_max) {
+			kind->level = art->level;
+			kind->effect = art->effect;
+			kind->effect_msg = art->effect_msg;
+		}
+	}
+
 	parser_destroy(p);
 	return 0;
 }

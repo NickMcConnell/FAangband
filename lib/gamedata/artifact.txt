@@ -2045,6 +2045,74 @@ msg:You raise a foam-crested tidal wave.
 desc:The Maia Ossë was at one time drawn to Melkor, and still finds delight in
 desc: the destructive power of the sea.
 
+### Staffs ###
+
+name:of Starfire
+base-object:staff
+level:85
+weight:50
+cost:35000
+alloc:5:80 to 127
+attack:1d2:0:0
+armor:0:0
+charges:4+d4
+effect:STAR_BURST:NONE:1
+dice:30
+msg:The staff blazes with unearthly light.
+desc:A thorny staff with whorls and faintly gleaming engravings covering its
+desc: surface from heel to crown.
+
+name:of Winds
+base-object:staff
+level:50
+weight:50
+cost:20000
+alloc:5:50 to 100
+attack:1d2:0:0
+armor:0:0
+charges:4+d4
+effect:SPHERE:FORCE:6:2
+dice:100+d100
+effect:SPHERE:AWAY_ALL:6
+dice:12
+effect:TELEPORT
+dice:6
+msg:A howling whirlwind rises in wrath around you.
+desc:This staff trembles ever so slightly, buffeted by the Four Winds that
+desc: impatiently await release.
+
+name:of Holding
+base-object:staff
+level:80
+weight:50
+cost:30000
+alloc:5:80 to 127
+attack:1d2:0:0
+armor:0:0
+charges:3+d3
+effect:PROJECT_LOS:HOLD_UNDEAD
+dice:6+d7
+msg:You envoke binding magics upon the undead nearby!
+desc:Suddenly, the cries of beings that cling to existence beyond life seem
+desc: thin and weak, and you call out with a mighty voice for them to hold and
+desc: await your will!
+
+name:of the Kelvar
+base-object:staff
+level:50
+weight:50
+cost:20000
+alloc:5:50 to 100
+attack:1d2:0:0
+armor:0:0
+charges:3+d3
+effect:DETECT_ANIMAL
+effect-yx:300:300
+effect:READ_MINDS:NONE:0:1
+effect-yx:22:40
+msg:You listen for what you can learn from natural creatures.
+desc:Inside this staff lies the power of Yavanna to listen to her creations. 
+
 ### Quest artifacts ###
 
 name:of Ungoliant
