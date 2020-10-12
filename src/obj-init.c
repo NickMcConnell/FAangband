@@ -3038,6 +3038,7 @@ static errr finish_parse_artifact(struct parser *p) {
 			kind->level = art->level;
 			kind->effect = art->effect;
 			kind->effect_msg = art->effect_msg;
+			kind->time = art->time;
 		}
 	}
 

@@ -4762,6 +4762,7 @@ bool effect_handler_STAR_BURST(effect_handler_context_t *context)
 	/* Is the player in a square already magically lit? */
 	bool player_lit = square_isglow(cave, player->grid);
 
+	context->ident = true;
 	for (i = 0; i < burst_number; i++) {
 		/* First, we find the spot. */
 		for (j = 0; j < 20; j++) {
@@ -4807,6 +4808,69 @@ bool effect_handler_STAR_BURST(effect_handler_context_t *context)
 			project(source_player(), radius + 1, grid, dam, PROJ_LIGHT_WEAK,
 					flg, 0, 0, NULL);
 		}
+	}
+	return true;
+}
+
+/**
+ * Unleash the wrath of the beings of Air. -LM-
+ */
+bool effect_handler_AIR_SMITE(effect_handler_context_t *context)
+{
+	int dam = effect_calculate_value(context, true);
+	int i, j;
+	struct loc grid = loc(0, 0);
+	int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL |
+		PROJECT_JUMP;
+
+	context->ident = true;
+
+	/* Due warning. */
+	msg("The powers of Air rain down destruction!");
+
+	/* Multiple gravity, light, and electricity balls. */
+	for (i = 0; i < 8; i++) {
+		/* First, we find the spot. */
+		for (j = 0; j < 20; j++) {
+			/* Pick a (short) distance. */
+			int d = randint1(3);
+
+			/* Admit failure.  Switch to Plan B. */
+			if (j == 19) {
+				grid = player->grid;
+				break;
+			}
+
+			/* Pick a location */
+			scatter(cave, &grid, player->grid, d, true);
+
+			/* Not on top of the player. */
+			if (loc_eq(grid, player->grid)) continue;
+
+			/* Require passable terrain */
+			if (!square_ispassable(cave, grid)) continue;
+
+			/* Slight preference for actual monsters. */
+			if (square_monster(cave, grid)) {
+				break;
+			} else if (j > 3) {
+				/* Will accept any passable grid after a few tries. */
+				break;
+			}
+		}
+
+		/* Choice of 3 */
+		if (one_in_(3)) {
+			project(source_player(), 1, grid, dam, PROJ_GRAVITY, flg, 0, 0,
+					NULL);
+		} else if (one_in_(2)) {
+			project(source_player(), 1, grid, dam, PROJ_LIGHT, flg, 0, 0, NULL);
+		} else {
+			project(source_player(), 1, grid, dam, PROJ_ELEC, flg, 0, 0, NULL);
+		}
+
+		/* This is a bombardment.  Make it look like one. */
+		event_signal_pause(EVENT_PAUSE, 10);
 	}
 	return true;
 }
@@ -5780,6 +5844,30 @@ bool effect_handler_SWEEP(effect_handler_context_t *context)
 	}
 
 	/* Should return some energy if all enemies killed and blows remain? */
+	return true;
+}
+
+/**
+ * Rod of Delving activation
+ */
+bool effect_handler_DELVING(effect_handler_context_t *context)
+{
+	struct loc grid = loc(0, 0);
+	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_THRU;
+	target_get(&grid);
+
+	context->ident = true;
+
+	/* Aimed at oneself, this rod creates a room. */
+	if (loc_eq(grid, player->grid)) {
+		/* Lots of damage to creatures of stone. */
+		(void) project(context->origin, 4, player->grid, 300, PROJ_KILL_WALL,
+					   flg, 0, 2, NULL);
+	} else {
+		/* Otherwise, an extremely powerful destroy wall/stone. */
+		effect_simple(EF_LINE, source_player(), "160 + d240", PROJ_KILL_WALL, 0,
+					  0, 0, 0, NULL);
+	}
 	return true;
 }
 

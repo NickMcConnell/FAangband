@@ -2113,6 +2113,69 @@ effect-yx:22:40
 msg:You listen for what you can learn from natural creatures.
 desc:Inside this staff lies the power of Yavanna to listen to her creations. 
 
+### Rods ###
+
+name:of Delving
+base-object:rod
+level:50
+weight:40
+cost:20000
+alloc:5:50 to 100
+attack:1d1:0:0
+armor:0:0
+effect:DELVING
+time:0
+desc:Even Dwarven skill must yield to he who can dissolve the sinews of
+desc: mountains at a word.
+
+
+name:'Mantle of Shadow'
+base-object:rod
+level:50
+weight:40
+cost:20000
+alloc:5:50 to 100
+attack:1d1:0:0
+armor:0:0
+effect:TIMED_INC:STEALTH:0:20
+dice:50
+effect:TIMED_INC:COVERTRACKS:0:20
+dice:50
+time:300
+desc:The legendary rogues of old could wrap themselves in shadows, and become
+desc: as mist and rumour to their unwitting foes.
+
+
+name:of Air
+base-object:rod
+level:50
+weight:40
+cost:20000
+alloc:5:50 to 100
+attack:1d1:0:0
+armor:0:0
+effect:AIR_SMITE
+dice:100
+time:75
+msg:You raise your rod skyward and call upon the powers of Air.
+desc:The Host of the vast Airs above Arda wield powers unknown to beings who
+desc: live below, and will gladly smite those upon whom you call their wrath.
+
+
+name:of Portals
+base-object:rod
+level:50
+weight:40
+cost:20000
+alloc:5:50 to 100
+attack:1d1:0:0
+armor:0:0
+effect:TELEPORT_TO
+time:40
+msg:Choose a location to teleport to.
+desc:The mastery of mystic entrances and exits is now almost unknown, and
+desc: fortunate he who finds the Rod of Hidden Ways.
+
 ### Quest artifacts ###
 
 name:of Ungoliant

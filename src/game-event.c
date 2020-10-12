@@ -248,3 +248,12 @@ void event_signal_missile(game_event_type type,
 
 	game_event_dispatch(type, &data);
 }
+
+void event_signal_pause(game_event_type type,
+						int pause)
+{
+	game_event_data data;
+	data.pause.pause = pause;
+
+	game_event_dispatch(type, &data);
+}
