@@ -991,10 +991,10 @@ static const struct cave_profile *choose_profile(struct player *p)
 						if (p->depth < profile->min_level) continue;
 						if (profile->cutoff >= pick) break;
 					}
-					if (profile) break;
+					if (profile && i < z_info->profile_max) break;
 					tries--;
 				}
-				if (!profile) {
+				if (!profile || !tries) {
 					profile = find_cave_profile("classic");
 				}
 			}
