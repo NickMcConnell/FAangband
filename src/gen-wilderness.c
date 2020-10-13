@@ -1948,20 +1948,18 @@ struct chunk *valley_gen(struct player *p, int height, int width)
 	}
 
 	/* Maybe place a few random portals. */
-	//if (MAP(DUNGEON) && place_map[p_ptr->place][DOWN]) {
-	//	feature_type *f_ptr = NULL;
-
-	//	k = randint1(3) + 1;
-	//	while (k > 0) {
-	//		y = randint1(c->height - 1);
-	//		x = randint1(c->width - 1);
-	//		f_ptr = &f_info[cave_feat[y][x]];
-	//		if (tf_has(f_ptr->flags, TF_TREE)) {
-	//			cave_set_feat(y, x, FEAT_MORE);
-	//			k--;
-	//		}
-	//	}
-	//}
+	if (strstr(world->name, "Dungeon") && world->levels[p->place].down) {
+		k = randint1(3) + 1;
+		while (k > 0) {
+			struct loc grid;
+			grid.y = randint1(c->height - 1);
+			grid.x = randint1(c->width - 1);
+			if (square_istree(c, grid)) {
+				square_set_feat(c, grid, FEAT_MORE);
+				k--;
+			}
+		}
+	}
 
 	return c;
 }
