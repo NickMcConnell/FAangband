@@ -4023,8 +4023,8 @@ alloc:20:20 to 80
 attack:1d2:0:0
 armor:0:0
 charges:6+d5
-effect:STAR:LIGHT
-dice:6d8
+effect:STAR_BURST:NONE:0
+dice:12
 
 name:Teleportation
 type:staff
@@ -4253,6 +4253,69 @@ armor:0:0
 effect:BALL:ACID:2
 dice:120
 time:27
+
+
+### Powerful Bolts ###
+
+name:Lightning Strike
+type:rod
+graphics:-:d
+level:74
+weight:15
+cost:12500
+alloc:10:74 to 100
+attack:1d1:0:0
+armor:0:0
+effect:BOLT_OR_BEAM:ELEC
+dice:$Dd8
+expr:D:PLAYER_LEVEL:/ 3 + 18
+time:29
+flags:IGNORE_ELEC
+
+name:Northwinds
+type:rod
+graphics:-:d
+level:78
+weight:15
+cost:15000
+alloc:10:78 to 100
+attack:1d1:0:0
+armor:0:0
+effect:BOLT_OR_BEAM:COLD
+dice:$Dd8
+expr:D:PLAYER_LEVEL:/ 3 + 21
+time:32
+flags:IGNORE_ELEC
+
+name:Dragonfire
+type:rod
+graphics:-:d
+level:82
+weight:15
+cost:17500
+alloc:10:82 to 100
+attack:1d1:0:0
+armor:0:0
+effect:BOLT_OR_BEAM:FIRE
+dice:$Dd8
+expr:D:PLAYER_LEVEL:/ 3 + 24
+time:35
+flags:IGNORE_ELEC
+
+name:Glaurung's Blood
+type:rod
+graphics:-:d
+level:86
+weight:15
+cost:20000
+alloc:10:86 to 100
+attack:1d1:0:0
+armor:0:0
+effect:BOLT_OR_BEAM:ACID
+dice:$Dd8
+expr:D:PLAYER_LEVEL:/ 3 + 27
+time:38
+flags:IGNORE_ELEC
 
 
 ### Status-affecting ###

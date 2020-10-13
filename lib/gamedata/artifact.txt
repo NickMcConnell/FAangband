@@ -2117,10 +2117,10 @@ desc:Inside this staff lies the power of Yavanna to listen to her creations.
 
 name:of Delving
 base-object:rod
-level:50
+level:65
 weight:40
 cost:20000
-alloc:5:50 to 100
+alloc:5:65 to 100
 attack:1d1:0:0
 armor:0:0
 effect:DELVING
@@ -2131,10 +2131,10 @@ desc: mountains at a word.
 
 name:'Mantle of Shadow'
 base-object:rod
-level:50
+level:80
 weight:40
 cost:20000
-alloc:5:50 to 100
+alloc:5:80 to 127
 attack:1d1:0:0
 armor:0:0
 effect:TIMED_INC:STEALTH:0:20
@@ -2148,10 +2148,10 @@ desc: as mist and rumour to their unwitting foes.
 
 name:of Air
 base-object:rod
-level:50
+level:85
 weight:40
 cost:20000
-alloc:5:50 to 100
+alloc:5:85 to 127
 attack:1d1:0:0
 armor:0:0
 effect:AIR_SMITE
@@ -2164,10 +2164,10 @@ desc: live below, and will gladly smite those upon whom you call their wrath.
 
 name:of Portals
 base-object:rod
-level:50
+level:70
 weight:40
 cost:20000
-alloc:5:50 to 100
+alloc:5:70 to 100
 attack:1d1:0:0
 armor:0:0
 effect:TELEPORT_TO
