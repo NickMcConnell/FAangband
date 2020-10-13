@@ -322,7 +322,7 @@ slay:ANIMAL_2
 desc:A stubby blade worn by Beren, whose horn sounded of old in the glades of
 desc: Brethil.
 
-name:of Eglamoth
+name:of Egalmoth
 base-object:sword:Scimitar
 level:20
 weight:130
@@ -335,7 +335,7 @@ values:DEX[4] | BLOWS[1]
 slay:ANIMAL_2
 slay:EVIL_2
 slay:UNDEAD_3
-desc:A damascened scimitar that hefts with wondrous ease.  Wielded by Eglamoth,
+desc:A damascened scimitar that hefts with wondrous ease.  Wielded by Egalmoth,
 desc: lord of the House of the Heavenly Arch of Gondolin, and the only one of
 desc: the Noldor to use a curved sword.
 

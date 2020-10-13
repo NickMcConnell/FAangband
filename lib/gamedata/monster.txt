@@ -11096,7 +11096,7 @@ spells:TELE_TO | TELE_SELF_TO | BLINK | TRAPS | DARKNESS | BLIND | HOLD
 desc:He is a master of disguise, an expert of stealth, a genius at traps, and
 desc: moves with blinding speed.  Check your pockets!
 
-name:The Phantom of Eilenel
+name:The Phantom of Eilinel
 base:ghost
 color:v
 speed:120
@@ -11121,7 +11121,7 @@ spells:BO_NETH | WOUND | BO_WATE
 spells:FORGET | HOLD | MIND_BLAST
 spell-freq:5
 desc:A creature of Sauron in the form of a woman. This phantom was made to
-desc: appear like Eilenel, the murdered wife of Gorlim the Unhappy, in order to
+desc: appear like Eilinel, the murdered wife of Gorlim the Unhappy, in order to
 desc: trap him into betraying Barahir and the outlaws of Dorthonion.
 
 ### Dungeon level 52 ###
