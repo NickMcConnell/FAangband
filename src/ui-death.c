@@ -117,7 +117,13 @@ static void print_tomb(void)
 	} else if (tree) {
 		put_str_centred(line++,start, start+31, "Retired to Fangorn Forest.");
 	} else {
-		put_str_centred(line++, start, start+31, "Killed in %s", level_name(lev));
+		if (lev->depth) {
+			put_str_centred(line++, start, start+31, "Killed in %s %d",
+							locality_name(lev->locality), lev->depth);
+		} else {
+			put_str_centred(line++, start, start+31, "Killed in %s Town",
+							locality_name(lev->locality));
+		}
 		put_str_centred(line++, start, start+31, "by %s.", player->died_from);
 	}
 
