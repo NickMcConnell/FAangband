@@ -1375,7 +1375,7 @@ struct object_kind *get_obj_num(int level, bool good, int tval)
 		level * (z_info->k_max + 1);
 
 	/* Pick an object. */
-	if (! objects[z_info->k_max]) {
+	if (!objects[z_info->k_max]) {
 		return NULL;
 	}
 	value = randint0(objects[z_info->k_max]);

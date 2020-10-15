@@ -56,6 +56,13 @@ effect:DRAIN_STAT:CON
 msg:A small needle has pricked you!
 msg-death:a poison needle
 
+name:a strange rune
+code:SCATTER
+level:12
+effect:CHEST_SCATTER
+magic:1
+msg:The contents of the chest scatter to the four winds!
+
 name:summoning runes
 code:SUMMON
 level:15
@@ -79,3 +86,72 @@ dice:5d8
 destroy:1
 msg:There is a sudden explosion! Everything inside the chest is destroyed!
 msg-death:an exploding chest
+
+name:summoning runes
+code:E_SUMMON
+level:27
+effect:SUMMON:ELEMENTAL
+dice:5+1d3
+magic:1
+msg:Elemental beings appear to protect their treasures!
+
+name:summoning runes
+code:BIRD_STORM
+level:30
+effect:SWARM:FORCE:3
+dice:5+M3
+effect:SUMMON:BIRD
+dice:5+1d5
+magic:1
+msg:A storm of birds swirls around you!
+
+name:summoning runes
+code:V_SUMMON
+level:55
+effect:SUMMON:VORTEX
+dice:2+1d3
+magic:1
+msg:Vortices coalesce and wreak destruction!"
+
+name:summoning runes
+code:DE_SUMMON
+level:55
+effect:CLOUD:FIRE:5
+dice:10
+effect:SUMMON:DEMON
+dice:d2
+effect:CLOUD:FIRE:5
+dice:10
+effect:SUMMON:DEMON
+dice:d2
+effect:CLOUD:FIRE:5
+dice:10
+effect:SUMMON:DEMON
+dice:d2
+magic:1
+msg:Demons materialize in clouds of fire and brimstone!
+
+name:summoning runes
+code:DR_SUMMON
+level:55
+effect:CLOUD:DARK_WEAK:5
+dice:10
+effect:SUMMON:DRAGON
+dice:2+1d3
+magic:1
+msg:Draconic forms loom out of the darkness!
+
+name:summoning runes
+code:H_SUMMON
+level:55
+effect:SUMMON:HYBRID
+dice:3+1d5
+magic:1
+msg:Creatures strange and twisted assault you!
+
+name:gleaming black runes
+code:RUNES_OF_EVIL
+level:90
+effect:RUNES_OF_EVIL
+magic:1
+msg:Hideous voices bid: 'Let the darkness have thee!'

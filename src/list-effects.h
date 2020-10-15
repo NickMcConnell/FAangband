@@ -125,6 +125,8 @@ EFFECT(MELEE_BLOWS,					true,	"blows",	0,		EFINFO_NONE,	"strikes %d blows agains
 EFFECT(SWEEP,						false,	"blows",	1,		EFINFO_NONE,	"strikes %d blows against all adjacent monsters")
 EFFECT(DELVING,						true,	NULL,		0,		EFINFO_NONE,	"makes a room or turns stone to mud")
 EFFECT(UNMAKE,						true,	NULL,		0,		EFINFO_NONE,	"unmakes")
+EFFECT(RUNES_OF_EVIL,				true,	NULL,		0,		EFINFO_NONE,	"plays several nasty tricks on the player")
 EFFECT(BIZARRE,						true,	NULL,		0,		EFINFO_NONE,	"does bizarre things")
 EFFECT(WONDER,						true,	NULL,		0,		EFINFO_NONE,	"creates random and unpredictable effects")
 EFFECT(DRAGON,						false,	NULL,		0,		EFINFO_NONE,	"changes the player's shape to a type of dragon; if changed, breathes")
+EFFECT(CHEST_SCATTER,				false,	NULL,		0,		EFINFO_NONE,	"scatters chest contents across the level")

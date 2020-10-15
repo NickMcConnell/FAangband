@@ -21,6 +21,7 @@
 #include "cave.h"
 #include "effects.h"
 #include "init.h"
+#include "generate.h"
 #include "mon-lore.h"
 #include "obj-chest.h"
 #include "obj-ignore.h"
@@ -383,14 +384,12 @@ static int pick_one_chest_trap(int level)
 }
 
 /**
- * Pick a set of chest traps
+ * Pick one or two chest traps
  * Currently this only depends on the level of the chest object
  */
 int pick_chest_traps(struct object *obj)
 {
-	/* This MIN is a temporary fix for the formulas below needing to allow for
-	 * deeper chests */
-	int level = MIN(obj->kind->level, 55);
+	int level = obj->kind->level;
 	int trap = 0;
 
 	/* One in ten chance of no trap */
@@ -401,18 +400,10 @@ int pick_chest_traps(struct object *obj)
 	/* Pick a trap, add it */
 	trap |= pick_one_chest_trap(level);
 
-	/* Level dependent chance of a second trap (may overlap the first one) */
-	if ((level > 5) && one_in_(1 + ((65 - level) / 10))) {
-		trap |= pick_one_chest_trap(level);
-	}
-
-	/* Chance of a third trap for deep chests (may overlap existing traps) */
-	if ((level > 45) && one_in_(65 - level)) {
-		trap |= pick_one_chest_trap(level);
-		/* Small chance of a fourth trap (may overlap existing traps) */
-		if (one_in_(40)) {
-			trap |= pick_one_chest_trap(level);
-		}
+	/* Chance of a second trap (may overlap the first one) */
+	if ((level > 10) && one_in_(4)) {
+		/* Second traps are never deep */
+		trap |= pick_one_chest_trap(MIN(level, 25));
 	}
 
 	return trap;
@@ -504,7 +495,7 @@ int count_chests(struct loc *grid, enum chest_query check_type)
  *
  * Judgment of size and construction of chests is currently made from the name.
  */
-static void chest_death(struct loc grid, struct object *chest)
+static void chest_death(struct loc grid, struct object *chest, bool scatter)
 {
 	int number, level;
 	bool large = strstr(chest->kind->name, "Large") ? true : false;;
@@ -536,6 +527,11 @@ static void chest_death(struct loc grid, struct object *chest)
 			continue;
 		}
 
+		/* If chest scatters its contents, pick any floor square. */
+		if (scatter) {
+			cave_find(cave, &grid, square_isempty);
+		}
+
 		treasure->origin = ORIGIN_CHEST;
 		treasure->origin_depth = chest->origin_depth;
 		drop_near(cave, &treasure, 0, grid, true, false);
@@ -551,7 +547,7 @@ static void chest_death(struct loc grid, struct object *chest)
 /**
  * Chests have traps too.
  */
-static void chest_trap(struct object *obj)
+static void chest_trap(struct object *obj, bool *scatter)
 {
 	int traps = obj->pval;
 	struct chest_trap *trap;
@@ -567,8 +563,13 @@ static void chest_trap(struct object *obj)
 				msg(trap->msg);
 			}
 			if (trap->effect) {
-				effect_do(trap->effect, source_chest_trap(trap), obj, &ident,
-						  false, 0, 0, 0, NULL);
+				/* Special scatter effect */
+				if (trap->effect->index == EF_CHEST_SCATTER) {
+					*scatter = true;
+				} else {
+					effect_do(trap->effect, source_chest_trap(trap), obj,
+							  &ident, false, 0, 0, 0, NULL);
+				}
 			}
 			if (trap->destroy) {
 				obj->pval = 0;
@@ -627,16 +628,18 @@ bool do_cmd_open_chest(struct loc grid, struct object *obj)
 
 	/* Allowed to open */
 	if (flag) {
+		bool scatter = false;
+
 		/* Apply chest traps, if any and player is not trapsafe */
 		if (!player_is_trapsafe(player)) {
-			chest_trap(obj);
+			chest_trap(obj, &scatter);
 		} else if ((obj->pval > 0) && player_of_has(player, OF_TRAP_IMMUNE)) {
 			/* Learn trap immunity if there are traps */
 			equip_learn_flag(player, OF_TRAP_IMMUNE);
 		}
 
 		/* Let the Chest drop items */
-		chest_death(grid, obj);
+		chest_death(grid, obj, scatter);
 
 		/* Ignore chest if autoignore calls for it */
 		player->upkeep->notice |= PN_IGNORE;
@@ -702,7 +705,7 @@ bool do_cmd_disarm_chest(struct object *obj)
 	}
 
 	/* Extract the difficulty */
-	diff = skill - obj->pval;
+	diff = skill - (5 + obj->pval / 2);
 
 	/* Always have a small chance of success */
 	if (diff < 2) diff = 2;
@@ -718,15 +721,20 @@ bool do_cmd_disarm_chest(struct object *obj)
 		msgt(MSG_DISARM, "You have disarmed the chest.");
 		player_exp_gain(player, obj->pval);
 		obj->pval = (0 - obj->pval);
-	} else if (randint0(100) < diff) {
+	} else if (randint1(diff) > 5) {
 		/* Failure -- Keep trying */
 		more = true;
 		event_signal(EVENT_INPUT_FLUSH);
 		msg("You failed to disarm the chest.");
 	} else {
+		bool scatter = false;
+
 		/* Failure -- Set off the trap */
 		msg("You set off a trap!");
-		chest_trap(obj);
+		chest_trap(obj, &scatter);
+		if (scatter) {
+			chest_death(obj->grid, obj, true);
+		}
 	}
 
 	/* Result */

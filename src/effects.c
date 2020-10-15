@@ -4311,6 +4311,11 @@ bool effect_handler_CLOUD(effect_handler_context_t *context)
 			break;
 		}
 
+		case SRC_CHEST_TRAP: {
+			target = context->obj->grid;
+			break;
+		}
+
 		case SRC_PLAYER:
 			/* Ask for a target if no direction given */
 			if (context->dir == DIR_TARGET && target_okay()) {
@@ -5872,6 +5877,47 @@ bool effect_handler_DELVING(effect_handler_context_t *context)
 }
 
 /**
+ * "Gleaming black runes" chest trap
+ */
+bool effect_handler_RUNES_OF_EVIL(effect_handler_context_t *context)
+{
+	/* Determine how many nasty tricks can be played. */
+	int nasty_tricks_count = 4 + randint0(3);
+
+	/* This is gonna hurt... */
+	for (; nasty_tricks_count > 0; nasty_tricks_count--) {
+		/* ...but a high saving throw does help a little. */
+		if (2 * context->obj->pval < player->state.skills[SKILL_SAVE]) {
+			if (one_in_(6)) {
+				take_hit(player, damroll(5, 20), "a chest dispel-player trap");
+			} else if (one_in_(5)) {
+				player_inc_timed(player, TMD_CUT, 200, true, true);
+			} else if (one_in_(4)) {
+				if (!player_of_has(player, OF_FREE_ACT)) {
+					player_inc_timed(player, TMD_PARALYZED, 2 + randint0(6),
+									 true, true);
+				} else {
+					player_inc_timed(player, TMD_STUN, 10 + randint0(100),
+									 true, true);
+				}
+			} else if (one_in_(3)) {
+				effect_simple(EF_DISENCHANT, context->origin, "0", 0, 0, 0, 0, 0, NULL);
+			} else if (one_in_(2)) {
+				effect_simple(EF_DRAIN_STAT, context->origin, "0", STAT_STR, 0, 0, 0, 0, NULL);
+				effect_simple(EF_DRAIN_STAT, context->origin, "0", STAT_INT, 0, 0, 0, 0, NULL);
+				effect_simple(EF_DRAIN_STAT, context->origin, "0", STAT_WIS, 0, 0, 0, 0, NULL);
+				effect_simple(EF_DRAIN_STAT, context->origin, "0", STAT_DEX, 0, 0, 0, 0, NULL);
+				effect_simple(EF_DRAIN_STAT, context->origin, "0", STAT_CON, 0, 0, 0, 0, NULL);
+			} else {
+				effect_simple(EF_CLOUD, context->origin, "150", PROJ_NETHER, 1, 0, 0, 0, NULL);
+			}
+		}
+	}
+
+	return false;
+}
+
+/**
  * Wand of Unmaking activation
  */
 bool effect_handler_UNMAKE(effect_handler_context_t *context)
@@ -6211,6 +6257,15 @@ bool effect_handler_DRAGON(effect_handler_context_t *context)
 						 true, dir, 0, 0, NULL);
 	}
 
+	return true;
+}
+
+/**
+ * Special effect for scattering chest contents - actually handled in
+ * obj-chest.c.
+ */
+bool effect_handler_CHEST_SCATTER(effect_handler_context_t *context)
+{
 	return true;
 }
 

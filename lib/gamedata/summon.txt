@@ -70,6 +70,18 @@ uniques:0
 race-flag:ANIMAL
 desc:animals
 
+name:BIRD
+msgt:SUM_ANIMAL
+uniques:0
+base:bird
+desc:birds
+
+name:HYBRID
+msgt:SUM_ANIMAL
+uniques:0
+base:hybrid
+desc:hybrids
+
 name:SWAMP
 msgt:SUM_ANIMAL
 uniques:0
@@ -113,6 +125,18 @@ uniques:0
 base:xorn
 base:golem
 desc:creatures of earth
+
+name:ELEMENTAL
+msgt:SUM_MONSTER
+uniques:0
+base:elemental
+desc:elementals
+
+name:VORTEX
+msgt:SUM_MONSTER
+uniques:0
+base:vortex
+desc:vortices
 
 name:AINU
 msgt:SUM_AINU
