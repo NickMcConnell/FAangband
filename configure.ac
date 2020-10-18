@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(FAangband, 2.0beta, nckmccnnll@gmail.com)
+AC_INIT(FAangband, 2.0beta1, nckmccnnll@gmail.com)
 AC_CONFIG_SRCDIR(src)
 
 AC_CANONICAL_HOST

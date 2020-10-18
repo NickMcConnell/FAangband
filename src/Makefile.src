@@ -6,7 +6,7 @@
 #
 
 NAME = FAangband
-VERSION = 2.0beta
+VERSION = 2.0beta1
 COPYRIGHT = (c) 1995-2020 Angband contributors
 PROGNAME = faangband
 
