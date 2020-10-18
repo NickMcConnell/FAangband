@@ -421,6 +421,8 @@ static bool get_property(struct artifact *art, struct object *obj,
 					bonus = art ? &art->to_h : &obj->to_h;
 				} else if (streq(prop->name, "deadliness bonus")) {
 					bonus = art ? &art->to_d : &obj->to_d;
+				} else {
+					assert(0);
 				}
 				cur_value = *bonus;
 				cur_cost = art ? 0 : property_cost(prop, cur_value, false);
