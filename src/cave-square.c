@@ -845,7 +845,7 @@ bool square_isdiggable(struct chunk *c, struct loc grid) {
  */
 bool square_iswebbable(struct chunk *c, struct loc grid) {
 	if (square_trap(c, grid)) return false;
-	return square_isfloor(c, grid);
+	return square_istrappable(c, grid);
 }
 
 /**
