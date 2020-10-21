@@ -270,7 +270,7 @@ type:cloak
 type:soft armor
 type:hard armor
 type:dragon armor
-values:RES_FIRE[-30] | RES_COLD[40]
+values:RES_FIRE[-50] | RES_COLD[40]
 desc:makes you vulnerable to fire attacks, but resistant to cold
 conflict:chilled to the bone
 
@@ -284,7 +284,7 @@ type:cloak
 type:soft armor
 type:hard armor
 type:dragon armor
-values:RES_FIRE[40] | RES_COLD[-30]
+values:RES_FIRE[40] | RES_COLD[-50]
 desc:makes you vulnerable to cold attacks, but resistant to fire
 conflict:burning up
 
@@ -302,7 +302,7 @@ type:light
 type:amulet
 type:ring
 combat:0:0:20
-values:RES_ELEC[-30] | RES_SHARD[40]
+values:RES_ELEC[-50] | RES_SHARD[40]
 desc:makes your skin harder to damage, but conduct electricity
 
 name:air swing
