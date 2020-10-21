@@ -6399,7 +6399,7 @@ armor-class:90
 sleepiness:120
 depth:28
 rarity:2
-experience:60
+experience:160
 blow:CRUSH:HURT:2d8
 blow:CRUSH:HURT:2d8
 blow:BITE:HURT:1d8
