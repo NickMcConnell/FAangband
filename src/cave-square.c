@@ -1400,6 +1400,11 @@ void square_set_feat(struct chunk *c, struct loc grid, int feat)
 	assert(square_in_bounds(c, grid));
 	current_feat = square(c, grid)->feat;
 
+	/* Floor and road have only cosmetic differences; use road when outside */
+	if ((feat == FEAT_FLOOR) && (level_topography(player->place) != TOP_CAVE)) {
+		feat = FEAT_ROAD;
+	}
+
 	/* Track changes */
 	if (current_feat) c->feat_count[current_feat]--;
 	if (feat) c->feat_count[feat]++;
