@@ -3029,7 +3029,7 @@ struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width) {
 	k = MAX(MIN(p->depth / 3, 10), 2) / 2;
 
 	/* Put the character in the arrival cavern */
-	new_player_spot(p->upkeep->create_down_stair ? right : left, p);
+	new_player_spot((p->upkeep->create_stair == FEAT_MORE) ? right : left, p);
 
 	/* Pick some monsters for the left cavern */
 	i = z_info->level_monster_min + randint1(4) + k;
