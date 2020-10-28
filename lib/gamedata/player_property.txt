@@ -306,151 +306,182 @@ desc: you are, the bigger these health gains will be.
 type:player
 code:ARMOR_MAST
 name:Armor Mastery
-desc:Increases the effects of body armor.
+desc:Increases the armor class of body armor by 2/3.
 
 type:player
 code:SHIELD_MAST
 name:Shield Mastery
-desc:Improves shield AC, chance of shield deflection, and damage from shield bashes.
+desc:Doubles shield AC, increases chance of shield deflection of missiles, and
+desc: increases damage from shield bashes (more so for heavier shields).
 
 type:player
 code:ARMOR_PROFICIENCY
 name:Armor Proficiency
-desc:Reduces mana penalties for armor use.
+desc:Allows an extra 5 pounds of armor before mana penalties for armor use take
+desc: effect.
 
 type:player
 code:EVASION
 name:Evasion
-desc:Gives a good chance to avoid melee attacks and a great chance to avoid missile weapons when lightly armored.
+desc:Gives up to 40% chance to avoid melee attacks and up to 50% chance to avoid
+desc: missile weapons when lightly armored (15 + .3 per level pounds of armor).
 
 type:player
 code:MAGIC_RESIST
 name:Magic Resistance
-desc:Improves your saving throws.
+desc:Halves the distance between your saving throw and perfect, or if close
+desc: enough makes it perfect.
 
 type:player
 code:PHASEWALK
 bindui:speed_ui_compact_0:0:special
 name:Phasewalking
-desc:Causes you to speed up after teleporting.  Gives resistance to hostile teleportation.
+desc:Causes you to speed up after teleporting.  Gives resistance to hostile
+desc: teleportation.
 
 type:player
 code:ARMSMAN
 name:Armsman
-desc:Grants extra critical hits with melee weapons.
+desc:Grants one in 6 chance of a critical hit with melee weapons against visible
+desc: monsters.
 
 type:player
 code:FAST_ATTACK
 name:Fast Attacking
-desc:Gives you extra melee attacks; better when you have more attacks to begin with.  Works armed and unarmed.
+desc:Gives you a (number of blows) in 8 chance of an extra melee attack each
+desc: round.  Works armed and unarmed.
 
 type:player
 code:MARKSMAN
 name:Marksman
-desc:Grants extra critical hits in ranged combat.
+desc:Grants one in 6 chance of a critical hit in ranged combat against visible
+desc: monsters.
 
 type:player
 code:PIERCE_SHOT
 name:Piercing Shot
-desc:Gives your successful bow and crossbow attacks a chance of continuing to additional targets.
+desc:Gives your successful bow and crossbow attacks a chance of continuing to
+desc: additional targets (up to a maximum of the bow multiplier).
  
 type:player
 code:MIGHTY_THROW
 name:Mighty Throw
-desc:Allows you to hurl throwing weapons and other objects great distances.
+desc:Allows you to hurl throwing weapons and other objects twice as far.
 
 type:player
 code:POWER_STRIKE
 name:Power Strike
-desc:Gives you a stronger barehanded attack.
+desc:Gives you a one in 8 chance of a better-than-usual barehanded attack, with
+desc: maximised damage dice and a 2 in 3 chance to attempt to confuse the
+desc: struck monster.
 
 type:player
 code:MARTIAL_ARTS
 name:Martial Arts
-desc:Gives you a powerful unarmed attack.
+desc:Gives you a one in 6 chance of a better-than-usual barehanded attack, with
+desc: maximised damage dice and a 2 in 3 chance to attempt to confuse the
+desc: struck monster.
 
 type:player
 code:MANA_BURN
 name:Mana Burn
-desc:Allows you to burn monster mana in melee.  Mana burned adds to melee damage.
+desc:Adds a damage die to critical hits against spellcasting monsters.
 
 type:player
 code:RAPID_FIRE
 name:Rapid Fire
-desc:Trades some shooting accuracy for faster shooting with a short or long bow, even faster with increasing dexterity.
+desc:Trades some shooting accuracy for faster shooting with a short or long bow,
+desc: even faster with increasing dexterity.
 
 type:player
 code:BEGUILE
 name:Beguile
-desc:Enhances your power to slow, sleep, confuse, or turn your enemies.
+desc:Enhances your power to slow, sleep, confuse, stun, hold or polymorph your
+desc: enemies by 50%.
 
 type:player
 code:ENHANCE_MAGIC
 name:Enhance Magic
-desc:Increases the effects and durations of beneficial magical effects.
+desc:Increases the effects (by 25-100%) and durations (by one third) of
+desc: beneficial magical effects.
 
 type:player
 code:POWER_SIPHON
 name:Power Siphon
-desc:Gives you mana when monsters cast spells.
+desc:When a monster casts a spell, gives you mana equal to a fifth of the
+desc: monster's spell power.
 
 type:player
 code:HEIGHTEN_MAGIC
 name:Heighten Magic
-desc:Causes spells cast in rapid succession to become increasingly powerful.
+desc:Gives a boost to the effective player level for spells when a spell is
+desc: cast.  This boost is at least 1, increases with every spell cast up to a
+desc: maximum boost of 20, and decreases every turn with no spell cast.
 
 type:player
 code:SOUL_SIPHON
 name:Soul Siphon
-desc:Gives you mana when you slay monsters.  May cause damage when overloaded.
+desc:When you slay a living, non-stupid, non-demon monster, gives you mana equal
+desc: to a thirtieth of the monster's maximum HP.  Causes damage when it makes
+desc: your mana exceed your maximum mana by more than your level.
 
 type:player
 code:HARMONY
 name:Harmony
-desc:Causes you to gain hit points when casting spells.
+desc:When you cast a spell, regain a percentage of your hitpoints equal to a
+desc: third of that spell's mana (capped at 10%).
 
 type:player
 code:CHANNELING
 name:Channeling
-desc:Makes your spells stronger when your mana level is high.
+desc:Gives a boost to the effective player level for spells when your mana
+desc: level is high.  This boost is 5 plus 1 for every 5 levels at full mana,
+desc: reduced by the square of your mana as a fraction of maximum mana.
 
 type:player
 code:ATHLETICS
 name:Athletics
-desc:Increases and partially sustains Dexterity and Constitution.
+desc:Increases Dexterity and Constitution by 2 points and sustains them half
+desc: the time.  Adds 5% to maximum hitpoints.
 
 type:player
 code:CLARITY
 name:Clarity
-desc:Increases and partially sustains Intelligence and Wisdom.
+desc:Increases Intelligence and Wisdom by 2 points and sustains them half
+desc: the time.  Adds 5% to maximum mana.
 
 type:player
 code:FURY
 bindui:speed_ui_compact_0:0:special
 name:Fury
-desc:Allows you to move faster after attacking or being damaged.
+desc:Gives you a speed boost after melee attacks or being damaged.  Maximum
+desc: boost varies from 3 up to 10 with player level.
 
 type:player
 code:MEDITATION
 name:Meditation
-desc:Improves mana regeneration; cumulative with other forms of regeneration.
+desc:Doubles mana regeneration; cumulative with other forms of regeneration.
 
 type:player
 code:REGENERATION
 name:Regeneration
-desc:Improves hit point regeneration; cumulative with other forms of regeneration.
+desc:Doubles hit point regeneration; cumulative with other forms of
+desc: regeneration.
 
 type:player
 code:EXTRA_TRAP
 name:Extra Trap
-desc:Allows you to set an additional monster trap, and to learn to set more advanced types of traps.
+desc:Allows you to set an additional monster trap, and to learn to set more
+desc: advanced types of traps.
 
 type:player
 code:HOLY_LIGHT
 bindui:resist_ui_compact_0<LIGHT>:0:60
 bindui:light_ui_compact_0:0:1
 name:Holy Light
-desc:Increases light radius.  Causes undead, evil, and light-sensitive creatures to take extra melee damage and makes them fear your light-based spells.  Grants resistance to light.
+desc:Increases light radius.  Causes undead, evil, and light-sensitive
+desc: creatures to take extra melee damage and makes them fear your light-based
+desc: spells.  Grants 40% resistance to light.
 
 
 ## Object flags
