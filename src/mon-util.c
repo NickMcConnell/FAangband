@@ -1432,6 +1432,7 @@ struct object *get_random_monster_object(struct monster *mon)
 {
 	struct object *obj = mon->held_obj;
 	int count = 0;
+	bool valid = false;
 
 	if (!obj) return NULL;
 
@@ -1443,10 +1444,28 @@ struct object *get_random_monster_object(struct monster *mon)
 
 	/* Now pick one... */
 	obj = mon->held_obj;
-	count -= randint1(count);
-	while (count) {
-		obj = obj->next;
-		count--;
+	while (!valid) {
+		count -= randint1(count);
+		while (count) {
+			obj = obj->next;
+			count--;
+		}
+		/* Check it isn't a quest artifact */
+		valid = true;
+		if (obj->artifact && quest_unique_monster_check(mon->race)) {
+			struct quest *quest = find_quest(player->place);
+			if (quest && quest->arts) {
+				struct quest_artifact *arts = quest->arts;
+				while (arts) {
+					struct artifact *art = &a_info[arts->index];
+					if (art->aidx == obj->artifact->aidx) {
+						valid = false;
+						break;
+					}
+					arts = arts->next;
+				}
+			}
+		}
 	}
 
 	return obj;
