@@ -2118,9 +2118,9 @@ static void rune_lore(int oid)
 	char *title = string_make(rune_name(oid));
 
 	my_strcap(title);
-	textblock_append_c(tb, COLOUR_L_BLUE, title);
+	textblock_append_c(tb, COLOUR_L_BLUE, "%s", title);
 	textblock_append(tb, "\n");
-	textblock_append(tb, rune_desc(oid));
+	textblock_append(tb, "%s", rune_desc(oid));
 	textblock_append(tb, "\n");
 	textui_textblock_show(tb, SCREEN_REGION, NULL);
 	textblock_free(tb);
@@ -2307,9 +2307,9 @@ static void feat_lore(int oid)
 
 	if (feat->desc) {
 		my_strcap(title);
-		textblock_append_c(tb, COLOUR_L_BLUE, title);
+		textblock_append_c(tb, COLOUR_L_BLUE, "%s", title);
 		textblock_append(tb, "\n");
-		textblock_append(tb, feat->desc);
+		textblock_append(tb, "%s", feat->desc);
 		textblock_append(tb, "\n");
 		textui_textblock_show(tb, SCREEN_REGION, NULL);
 		textblock_free(tb);
@@ -2498,9 +2498,9 @@ static void trap_lore(int oid)
 
 	if (trap->text) {
 		my_strcap(title);
-		textblock_append_c(tb, COLOUR_L_BLUE, title);
+		textblock_append_c(tb, COLOUR_L_BLUE, "%s", title);
 		textblock_append(tb, "\n");
-		textblock_append(tb, trap->text);
+		textblock_append(tb, "%s", trap->text);
 		textblock_append(tb, "\n");
 		if (tbe) {
 			textblock_append(tb, "\n");
