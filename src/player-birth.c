@@ -1200,6 +1200,9 @@ void do_cmd_accept_character(struct command *cmd)
 {
 	options_init_cheat();
 
+	/* Turn off persistent levels, for now */
+	option_set(option_name(OPT_birth_levels_persist), 0);
+
 	roll_hp();
 
 	ignore_birth_init();
