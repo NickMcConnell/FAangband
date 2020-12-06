@@ -1695,7 +1695,7 @@ bool monster_change_shape(struct monster *mon)
 
 	/* Set the race */
 	if (race) {
-		mon->original_race = mon->race;
+		if (!mon->original_race) mon->original_race = mon->race;
 		mon->race = race;
 		mon->original_player_race = mon->player_race;
 		if (rf_has(race->flags, RF_PLAYER)) {
