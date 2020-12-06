@@ -941,6 +941,7 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 	bool blind = (player->timed[TMD_BLIND] ? true : false);
 	bool seen = !blind;
 	bool obvious = true;
+	struct monster *mon = NULL;
 
 	/* Monster or trap name (for damage) */
 	char killer[80];
@@ -982,14 +983,6 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 		}
 	}
 
-	/* Try to evade missiles */
-	if ((typ == ELEM_ARROW) && (randint1(80) <= player->state.evasion_chance)) {
-		/* Message */
-		msg("You evade the missile!");
-		disturb(player);
-		return true;
-	}
-
 	switch (origin.what) {
 		case SRC_PLAYER: {
 			/* Don't affect projector unless explicitly allowed */
@@ -999,7 +992,7 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 		}
 
 		case SRC_MONSTER: {
-			struct monster *mon = cave_monster(cave, origin.which.monster);
+			mon = cave_monster(cave, origin.which.monster);
 
 			/* Check it is visible */
 			if (!monster_is_visible(mon))
@@ -1044,6 +1037,32 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 			break;
 		}
 		default: break;
+	}
+
+	/* Try to evade or deflect missiles */
+	if ((typ == ELEM_ARROW) && mon) {
+		/* Get effective armor values */
+		int armor = player->state.ac + player->state.to_a;
+		struct object *shld = slot_object(player, slot_by_name(player, "arm"));
+		int shield_ac = shld ? shld->ac : 0;
+		if (player->state.shield_on_back) {
+			shield_ac = 0;
+		} else if (player_has(player, PF_SHIELD_MAST)) {
+			shield_ac += 3;
+		}
+
+		if (randint1(80) <= player->state.evasion_chance) {
+			/* Evasion */
+			msg("You evade the missile!");
+			disturb(player);
+			return true;
+		} else if (MIN(armor, 150) > randint1((10 + mon->race->level) * 20)) {
+			/* Armor deflection */
+			msg("The missile glances off your armour.");
+		} else if (shield_ac > randint0(20 * 6)) {
+			/* Shield deflection (20 is max shield AC) */
+			msg("The missile ricochets off your shield.");
+		}
 	}
 
 	/* Let player know what is going on */

@@ -493,7 +493,7 @@ name:arrows
 type:element
 desc:an arrow
 player-desc:arrows
-blind-desc:something sharp
+blind-desc:something hard
 divisor:6
 terrain-factor:2
 damage-cap:0
