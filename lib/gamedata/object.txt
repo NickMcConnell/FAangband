@@ -4756,7 +4756,7 @@ values:RES_CHAOS[40] | RES_DISEN[40]
 power:1250
 act:DRAGON_CHAOS
 desc:A suit of scales that ripples and twists through every color and shape
-desc:imaginable as you stare in fascination.
+desc: imaginable as you stare in fascination.
 
 name:Balance Dragon Scale Mail~
 type:dragon armor
