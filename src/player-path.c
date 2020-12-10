@@ -623,6 +623,7 @@ static bool run_test(void)
 		/* Simplistic running for outdoors -NRM- */
 		if ((level_topography(player->place) != TOP_CAVE) &&
 			(level_topography(player->place) != TOP_TOWN)) {
+			bool on_path = square_isrun1(cave, player->grid);
 
 			/* Assume main direction */
 			new_dir = run_old_dir;
@@ -659,6 +660,9 @@ static bool run_test(void)
 				run_cur_dir = right_dir;
 				return false;
 			}
+
+			/* If we're on a path and about to step off, stop */
+			if (on_path) return true;
 
 			/* No paths, so try grass */
 			grid = loc_sum(player->grid, ddgrid[new_dir]);
