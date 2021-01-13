@@ -66,7 +66,7 @@ extern void do_cmd_throw(struct command *cmd);
 extern const byte deadliness_conversion[151];
 extern struct unarmed_blow *unarmed_blows;
 extern int num_unarmed_blows;
-bool confusing_blow;
+extern bool confusing_blow;
 
 
 extern int breakage_chance(const struct object *obj, bool hit_target);
