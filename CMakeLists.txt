@@ -180,27 +180,27 @@ ADD_EXECUTABLE(FAangband
         src/z-virt.c
 )
 
-SET_TARGET_PROPERTIES(Angband PROPERTIES C_STANDARD 99)
+SET_TARGET_PROPERTIES(FAangband PROPERTIES C_STANDARD 99)
 
 IF (SUPPORT_X11_FRONTEND)
 
     INCLUDE(src/cmake/macros/X11_Frontend.cmake)
-    CONFIGURE_X11_FRONTEND(Angband)
+    CONFIGURE_X11_FRONTEND(FAangband)
 
 ELSEIF(SUPPORT_NCURSES_FRONTEND)
 
     INCLUDE(src/cmake/macros/CURSES_Frontend.cmake)
-    CONFIGURE_CURSES_FRONTEND(Angband)
+    CONFIGURE_CURSES_FRONTEND(FAangband)
 
 ELSEIF(SUPPORT_SDL_FRONTEND)
 
     INCLUDE(src/cmake/macros/SDL_Frontend.cmake)
-    CONFIGURE_SDL_FRONTEND(Angband)
+    CONFIGURE_SDL_FRONTEND(FAangband)
 
     IF (SUPPORT_SDL_SOUND)
 
         INCLUDE(src/cmake/macros/SDL_Sound.cmake)
-        CONFIGURE_SDL_SOUND(Angband)
+        CONFIGURE_SDL_SOUND(FAangband)
 
     ENDIF()
 
@@ -219,7 +219,7 @@ must be given the directive -lm.
 
 Ref: https://en.wikipedia.org/wiki/C_mathematical_functions#libm
 ]]
-TARGET_LINK_LIBRARIES(Angband PRIVATE $<$<PLATFORM_ID:Linux>:m>)
+TARGET_LINK_LIBRARIES(FAangband PRIVATE $<$<PLATFORM_ID:Linux>:m>)
 
 MESSAGE(STATUS "Moving files needed")
 
