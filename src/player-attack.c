@@ -49,7 +49,6 @@
 
 struct unarmed_blow *unarmed_blows;
 int num_unarmed_blows;
-bool confusing_blow;
 
 
 /**
