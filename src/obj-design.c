@@ -3889,6 +3889,9 @@ void initialize_random_artifacts(u32b randart_seed)
 	/* Open the file, write a header */
 	path_build(fname, sizeof(fname), ANGBAND_DIR_USER, "randart.txt");
 	randart_file = file_open(fname, MODE_WRITE, FTYPE_TEXT);
+	if (!randart_file) {
+		quit_fmt("Error - can't create %s.", fname);
+	}
 	file_putf(randart_file,
 			  "# Artifact file for random artifacts with seed %08x\n\n\n",
 			  randart_seed);
