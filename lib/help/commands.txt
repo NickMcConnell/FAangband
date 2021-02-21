@@ -30,7 +30,7 @@ Original Keyset Command Summary
   z    Zap a rod                       Z    -
   !    Change shape (Beornings)        ^A   Debug mode
   @    -                               ^B   -
-  #    -                               ^C   (special - break)
+  #    Check time                      ^C   (special - break)
   $    Move house                      ^D   -
   %    -                               ^E   Toggle inven/equip window
   ^    (special - control key)         ^F   Repeat level feeling
@@ -91,7 +91,7 @@ Roguelike Keyset Command Summary
   z    Aim a wand (Zap)                Z    Use a staff (Zap)
   !    Change shape (Beornings)        ^A   (special - debug command)
   @    Center map                      ^B   (alter - south west)
-  #    -                               ^C   (special - break)
+  #    Check time                      ^C   (special - break)
   $    Move house                      ^D   Ignore an item
   %    -                               ^E   Toggle inven/equip window
   ^    (special - control key)         ^F   Repeat level feeling
