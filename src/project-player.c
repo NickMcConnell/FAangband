@@ -222,7 +222,7 @@ typedef struct project_player_handler_context_s {
 	const struct source origin;
 	const int r;
 	const struct loc grid;
-	const int dam;
+	int dam; /* May need adjustment */
 	const int type;
 	const int power;
 
@@ -958,7 +958,7 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 	};
 
 	/* Decoy has been hit */
-	if (square_isdecoyed(cave, grid) && dam) {
+	if (square_isdecoyed(cave, grid) && context.dam) {
 		square_destroy_decoy(cave, grid);
 	}
 
@@ -1071,14 +1071,14 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 	}
 
 	/* Adjust damage for terrain and element properties, and apply it */
-	dam = terrain_adjust_dam(player, NULL, typ, dam);
-	dam = adjust_dam(player, typ, dam, true);
+	context.dam = terrain_adjust_dam(player, NULL, typ, context.dam);
+	context.dam = adjust_dam(player, typ, context.dam, true);
 	if (dam) {
 		/* Self-inflicted damage is scaled down */
 		if (self) {
-			dam /= 10;
+			context.dam /= 10;
 		}
-		take_hit(player, dam, killer);
+		take_hit(player, context.dam, killer);
 	}
 
 	/* Handle side effects, possibly including extra damage */
