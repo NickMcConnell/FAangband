@@ -9,7 +9,7 @@
 extern bool arg_force_name;
 
 void display_player_stat_info(void);
-void display_player_xtra_info(void);
+void display_player_xtra_info(int mode);
 void display_player(int mode);
 void write_character_dump(ang_file *fff);
 bool dump_save(const char *path);

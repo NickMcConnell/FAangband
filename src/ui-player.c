@@ -112,16 +112,6 @@ static void panel_line(struct panel *p, byte attr, const char *label,
 }
 
 /**
- * Add a spacer line in a panel
- */
-static void panel_space(struct panel *p) {
-	assert(p);
-	assert(p->len != p->max);
-	p->len++;
-}
-
-
-/**
  * Cache the layout of the character sheet, currently only for the resistance
  * panel, since it is no longer hardwired.
  */
@@ -771,7 +761,7 @@ static const byte colour_table[] =
 
 
 static struct panel *get_panel_topleft(void) {
-	struct panel *p = panel_allocate(6);
+	struct panel *p = panel_allocate(7);
 
 	panel_line(p, COLOUR_L_BLUE, "Name", "%s", player->full_name);
 	panel_line(p, COLOUR_L_BLUE, "Race",	"%s", player->race->name);
@@ -779,12 +769,13 @@ static struct panel *get_panel_topleft(void) {
 	panel_line(p, COLOUR_L_BLUE, "Title", "%s", show_title());
 	panel_line(p, COLOUR_L_BLUE, "HP", "%d/%d", player->chp, player->mhp);
 	panel_line(p, COLOUR_L_BLUE, "SP", "%d/%d", player->csp, player->msp);
+	panel_line(p, COLOUR_L_BLUE, "Gold", "%d", player->au);
 
 	return p;
 }
 
 static struct panel *get_panel_midleft(void) {
-	struct panel *p = panel_allocate(9);
+	struct panel *p = panel_allocate(7);
 	int diff = weight_remaining(player);
 	byte attr = diff < 0 ? COLOUR_L_RED : COLOUR_L_GREEN;
 
@@ -794,8 +785,6 @@ static struct panel *get_panel_midleft(void) {
 			"Cur Exp", "%d", player->exp);
 	panel_line(p, COLOUR_L_GREEN, "Max Exp", "%d", player->max_exp);
 	panel_line(p, COLOUR_L_GREEN, "Adv Exp", "%s", show_adv_exp());
-	panel_space(p);
-	panel_line(p, COLOUR_L_GREEN, "Gold", "%d", player->au);
 	panel_line(p, attr, "Burden", "%.1f lb",
 			   player->upkeep->total_weight / 10.0F);
 	panel_line(p, attr, "Overweight", "%d.%d lb", -diff / 10, abs(diff) % 10);
@@ -805,7 +794,7 @@ static struct panel *get_panel_midleft(void) {
 }
 
 static struct panel *get_panel_combat(void) {
-	struct panel *p = panel_allocate(9);
+	struct panel *p = panel_allocate(7);
 	struct object *obj;
 	int bth, dam, hit;
 	int melee_dice = 1, melee_sides = 1;
@@ -823,8 +812,6 @@ static struct panel *get_panel_combat(void) {
 		melee_dice = obj->dd;
 		melee_sides = obj->ds;
 	}
-
-	panel_space(p);
 
 	if (!obj && (player_has(player, PF_UNARMED_COMBAT) ||
 				 player_has(player, PF_MARTIAL_ARTS))) {
@@ -844,7 +831,6 @@ static struct panel *get_panel_combat(void) {
 	hit = player->known_state.to_h + (obj ? obj->known->to_h : 0);
 	dam = obj ? obj->known->to_d : 0;
 
-	panel_space(p);
 	panel_line(p, COLOUR_L_BLUE, "Shoot to-dam", "%+d", dam);
 	panel_line(p, COLOUR_L_BLUE, "To-hit", "%d,%+d", bth / 10, hit);
 	panel_line(p, COLOUR_L_BLUE, "Shots", "%d.%d/turn",
@@ -916,6 +902,7 @@ static struct panel *get_panel_misc(void) {
 	return p;
 }
 
+
 /**
  * Panels for main character screen
  */
@@ -928,14 +915,16 @@ static const struct {
 	/*   x  y wid rows */
 	{ {  1, 1, 40, 7 }, true,  get_panel_topleft },	/* Name, Class, ... */
 	{ { 21, 1, 18, 3 }, false, get_panel_misc },	/* Age, ht, wt, ... */
-	{ {  1, 9, 24, 9 }, false, get_panel_midleft },	/* Cur Exp, Max Exp, ... */
-	{ { 29, 9, 19, 9 }, false, get_panel_combat },
+	{ {  1, 9, 24, 7 }, false, get_panel_midleft },/* Cur Exp, Max Exp, ... */
+	{ { 29, 9, 19, 7 }, false, get_panel_combat },
 	{ { 52, 9, 20, 8 }, false, get_panel_skills },
 };
 
-void display_player_xtra_info(void)
+void display_player_xtra_info(int mode)
 {
 	size_t i;
+	char points[65];
+	size_t free_space = Term->hgt - 24;
 	for (i = 0; i < N_ELEMENTS(panels); i++) {
 		struct panel *p = panels[i].panel();
 		display_panel(p, panels[i].align_left, &panels[i].bounds);
@@ -946,8 +935,32 @@ void display_player_xtra_info(void)
 	text_out_wrap = 72;
 	text_out_indent = 1;
 
+	/* Recall points */
+	if (player->recall[0]) {
+		int i;
+
+		my_strcpy(points, level_name(&world->levels[player->recall[0]]),
+				  sizeof(points));
+		for (i = 1; i < 4; i++) {
+			if (player->recall[i]) {
+				my_strcat(points, ", ", sizeof(points));
+				my_strcat(points, level_name(&world->levels[player->recall[i]]),
+						  sizeof(points));
+			} else {
+				break;
+			}
+		}
+	} else {
+		my_strcpy(points, "None", sizeof(points));
+	}
+	Term_gotoxy(text_out_indent, free_space ? 18 : 17);
+	text_out_to_screen(COLOUR_WHITE, "Recall pts: ");
+	text_out_indent = 13;
+	text_out_to_screen(COLOUR_L_BLUE, points);
+	text_out_indent = 1;
+
 	/* History */
-	Term_gotoxy(text_out_indent, 19);
+	Term_gotoxy(text_out_indent, (free_space > 1) ? 21 : 20);
 	text_out_to_screen(COLOUR_WHITE, player->history);
 
 	/* Reset text_out() vars */
@@ -964,6 +977,7 @@ void display_player_xtra_info(void)
  *
  * Mode 0 = standard display with skills/history
  * Mode 1 = special display with equipment flags
+ * Mode 2 = standard display with skills/history, extra space enforced
  */
 void display_player(int mode)
 {
@@ -980,7 +994,7 @@ void display_player(int mode)
 	/* Stat info */
 	display_player_stat_info();
 
-	if (mode) {
+	if (mode == 1) {
 		struct panel *p = panels[0].panel();
 		display_panel(p, panels[0].align_left, &panels[0].bounds);
 		panel_free(p);
@@ -992,7 +1006,7 @@ void display_player(int mode)
 		display_player_flag_info();
 	} else {
 		/* Extra info */
-		display_player_xtra_info();
+		display_player_xtra_info(mode);
 	}
 }
 
@@ -1029,7 +1043,7 @@ void write_character_dump(ang_file *fff)
 	file_putf(fff, "  [%s Character Dump]\n\n", buildid);
 
 	/* Display player basics */
-	display_player(0);
+	display_player(2);
 
 	/* Dump part of the screen */
 	for (y = 1; y < 23; y++) {
@@ -1271,7 +1285,7 @@ void do_cmd_change_name(void)
 {
 	ui_event ke;
 	int mode = 0;
-
+	int prompt_line = 23 + MIN(Term->hgt - 24, 2);
 	const char *p;
 
 	bool more = true;
@@ -1288,7 +1302,7 @@ void do_cmd_change_name(void)
 		display_player(mode);
 
 		/* Prompt */
-		Term_putstr(2, 23, -1, COLOUR_WHITE, p);
+		Term_putstr(2, prompt_line, -1, COLOUR_WHITE, p);
 
 		/* Query */
 		ke = inkey_ex();
