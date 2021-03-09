@@ -448,19 +448,17 @@ static void skill_help(const int r_skills[], const int c_skills[], int mhp, int 
 	for (i = 0; i < SKILL_MAX ; ++i)
 		skills[i] = (r_skills ? r_skills[i] : 0 ) + (c_skills ? c_skills[i] : 0);
 
-	text_out_e("Hit/Shoot/Throw: %+d/%+d/%+d\n", skills[SKILL_TO_HIT_MELEE],
-			   skills[SKILL_TO_HIT_BOW], skills[SKILL_TO_HIT_THROW]);
-	text_out_e("Hit die: %2d\n", mhp);
+	text_out_e("Hit/Shoot/Throw: %+d/%+d/%+d  Hit die: %2d\n",
+			   skills[SKILL_TO_HIT_MELEE], skills[SKILL_TO_HIT_BOW],
+			   skills[SKILL_TO_HIT_THROW], mhp);
 	text_out_e("Disarm: %+3d/%+3d   Devices: %+3d\n", skills[SKILL_DISARM_PHYS],
 			   skills[SKILL_DISARM_MAGIC], skills[SKILL_DEVICE]);
-	text_out_e("Save:   %+3d   Stealth: %+3d\n", skills[SKILL_SAVE],
+	text_out_e("Save:       %+3d   Stealth: %+3d\n", skills[SKILL_SAVE],
 			   skills[SKILL_STEALTH]);
+	text_out_e("Digging:    %+3d   Search:  %+3d\n", skills[SKILL_DIGGING],
+			   skills[SKILL_SEARCH]);
 	if (infra >= 0)
 		text_out_e("Infravision:  %d ft\n", infra * 10);
-	text_out_e("Digging:      %+d\n", skills[SKILL_DIGGING]);
-	text_out_e("Search:       %+d", skills[SKILL_SEARCH]);
-	if (infra < 0)
-		text_out_e("\n");
 }
 
 static void race_help(int i, void *db, const region *l)
@@ -499,6 +497,19 @@ static void race_help(int i, void *db, const region *l)
 	
 	text_out_e("\n");
 	skill_help(r->r_skills, NULL, r->r_mhp, r->infra);
+	if (strstr(world->name, "Wilderness")) {
+		byte color = COLOUR_RED;
+		text_out_e("Difficulty: Level %d\n", r->difficulty);
+
+		/* Color code difficulty factor */
+		if (r->difficulty < 3) {
+			color = COLOUR_GREEN;
+		} else if (r->difficulty < 15) {
+			color = COLOUR_ORANGE;
+		}
+
+		text_out_c(color, format("Home town: %-15s", r->hometown));
+	}
 	text_out_e("\n");
 
 	for (ability = player_abilities; ability; ability = ability->next) {
@@ -563,7 +574,7 @@ static void class_help(int i, void *db, const region *l)
 
 	text_out_e("\n");
 	
-	skill_help(r->r_skills, c->c_skills, r->r_mhp + c->c_mhp, r->infra);
+	skill_help(r->r_skills, c->c_skills, r->r_mhp + c->c_mhp, -1);
 
 	if (c->magic.total_spells) {
 		int count;
