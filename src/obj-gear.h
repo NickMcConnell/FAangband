@@ -40,15 +40,17 @@ struct object *equipped_item_by_slot_name(struct player *p, const char *name);
 int object_slot(struct player_body body, const struct object *obj);
 bool object_is_equipped(struct player_body body, const struct object *obj);
 bool object_is_carried(struct player *p, const struct object *obj);
+int pack_slots_used(struct player *p);
 const char *equip_mention(struct player *p, int slot);
 const char *equip_describe(struct player *p, int slot);
 int wield_slot(const struct object *obj);
 bool minus_ac(struct player *p);
 char gear_to_label(struct object *obj);
 struct object *gear_last_item(void);
+void gear_insert_end(struct object *obj);
 struct object *gear_object_for_use(struct object *obj, int num, bool message,
 								   bool *none_left);
-int inven_carry_num(const struct object *obj, bool stack);
+int inven_carry_num(const struct object *obj);
 bool inven_carry_okay(const struct object *obj);
 void inven_item_charges(struct object *obj);
 void inven_carry(struct player *p, struct object *obj, bool absorb,
@@ -63,6 +65,7 @@ void pack_overflow(struct object *obj);
 struct artifact_set *check_sets(struct artifact *art);
 void apply_set(struct artifact_set *set);
 void remove_set(struct artifact_set *set);
+int preferred_quiver_slot(const struct object *obj);
 
 
 #endif /* OBJECT_GEAR_H */
