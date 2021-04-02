@@ -7,6 +7,7 @@
 #include "cmd-core.h"
 #include "effects.h"
 #include "game-world.h"
+#include "generate.h"
 #include "init.h"
 #include "obj-curse.h"
 #include "obj-gear.h"
@@ -184,10 +185,14 @@ static bool check_similar(const struct object* obj1, const struct object *obj2) 
 int setup_tests(void **state) {
 	set_file_paths();
 	init_angband();
+	/* Necessary for creating the randart file. */
+	create_needed_dirs();
 
 	/* Set up the player. */
 	cmdq_push(CMD_BIRTH_INIT);
 	cmdq_push(CMD_BIRTH_RESET);
+	cmdq_push(CMD_CHOOSE_MAP);
+	cmd_set_arg_choice(cmdq_peek(), "choice", 3);
 	cmdq_push(CMD_CHOOSE_RACE);
 	cmd_set_arg_choice(cmdq_peek(), "choice", 0);
 	cmdq_push(CMD_CHOOSE_CLASS);
