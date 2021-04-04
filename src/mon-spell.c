@@ -360,6 +360,11 @@ void unset_spells(bitflag *spells, bitflag *flags, bitflag *pflags,
 {
 	const struct mon_spell_info *info;
 	bool smart = monster_is_smart(mon);
+	int lowest_resist = RES_LEVEL_BASE;
+	bitflag backup[RSF_SIZE];
+	int restore_chance = 0;
+
+	rsf_wipe(backup);
 
 	for (info = mon_spell_types; info->index < RSF_MAX; info++) {
 		const struct monster_spell *spell = monster_spell_by_index(info->index);
@@ -375,8 +380,16 @@ void unset_spells(bitflag *spells, bitflag *flags, bitflag *pflags,
 		/* First we test the elemental spells */
 		if (info->type & (RST_BOLT | RST_BALL | RST_BREATH)) {
 			int element = effect->subtype;
-			int learn_chance = el[element].res_level * (smart ? 50 : 25);
-			if (randint0(100) < learn_chance) {
+			int raw_resist = RES_LEVEL_BASE - el[element].res_level;
+
+			/* Smart monsters keep a backup */
+			if (smart && (raw_resist <= lowest_resist)) {
+				lowest_resist = raw_resist;
+				rsf_on(backup, info->index);
+			}
+
+			/* High resist means more likely to drop the spell */
+			if (randint0(100) < raw_resist) {
 				rsf_off(spells, info->index);
 			}
 		} else {
@@ -398,6 +411,22 @@ void unset_spells(bitflag *spells, bitflag *flags, bitflag *pflags,
 			}
 			if (effect)
 				rsf_off(spells, info->index);
+		}
+	}
+
+	/* Smart monsters re-assess dropped elemental spells */
+	restore_chance = 1 + rsf_count(spells);
+	if (smart && one_in_(restore_chance)) {
+		for (info = mon_spell_types; info->index < RSF_MAX; info++) {
+			const struct monster_spell *spell =
+				monster_spell_by_index(info->index);
+			int element;
+			if (!spell) continue;
+			if (!rsf_has(backup, info->index)) continue;
+			element = spell->effect->subtype;
+			if (RES_LEVEL_BASE - el[element].res_level == lowest_resist) {
+				rsf_on(spells, info->index);
+			}
 		}
 	}
 }

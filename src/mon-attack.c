@@ -204,37 +204,38 @@ static void remove_bad_spells(struct monster *mon, bitflag f[RSF_SIZE])
 	/* Update acquired knowledge */
 	if (OPT(player, birth_ai_learn) && (mon->target.midx == -1)) {
 		size_t i;
-		bitflag ai_flags[OF_SIZE], ai_pflags[PF_SIZE];
-		struct element_info el[ELEM_MAX];
-		bool know_something = false;
 
 		/* Occasionally forget player status */
 		if (one_in_(20)) {
 			of_wipe(mon->known_pstate.flags);
 			pf_wipe(mon->known_pstate.pflags);
-			for (i = 0; i < ELEM_MAX; i++)
-				mon->known_pstate.el_info[i].res_level = 0;
-		}
+			for (i = 0; i < ELEM_MAX; i++) {
+				mon->known_pstate.el_info[i].res_level = RES_LEVEL_BASE;
+			}
+		} else {
+			bitflag ai_flags[OF_SIZE], ai_pflags[PF_SIZE];
+			struct element_info el[ELEM_MAX];
+			bool know_something = false;
 
-		/* Use the memorized info */
-		of_wipe(ai_flags);
-		pf_wipe(ai_pflags);
-		of_copy(ai_flags, mon->known_pstate.flags);
-		pf_copy(ai_pflags, mon->known_pstate.pflags);
-		if (!of_is_empty(ai_flags) || !pf_is_empty(ai_pflags)) {
-			know_something = true;
-		}
-
-		for (i = 0; i < ELEM_MAX; i++) {
-			el[i].res_level = mon->known_pstate.el_info[i].res_level;
-			if (el[i].res_level != 0) {
+			/* Use the memorized info */
+			of_wipe(ai_flags);
+			pf_wipe(ai_pflags);
+			of_copy(ai_flags, mon->known_pstate.flags);
+			pf_copy(ai_pflags, mon->known_pstate.pflags);
+			if (!of_is_empty(ai_flags) || !pf_is_empty(ai_pflags)) {
 				know_something = true;
 			}
-		}
+			for (i = 0; i < ELEM_MAX; i++) {
+				el[i].res_level = mon->known_pstate.el_info[i].res_level;
+				if (el[i].res_level != RES_LEVEL_BASE) {
+					know_something = true;
+				}
+			}
 
-		/* Cancel out certain flags based on knowledge */
-		if (know_something) {
-			unset_spells(f2, ai_flags, ai_pflags, el, mon);
+			/* Cancel out certain flags based on knowledge */
+			if (know_something) {
+				unset_spells(f2, ai_flags, ai_pflags, el, mon);
+			}
 		}
 	}
 
