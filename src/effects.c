@@ -1919,7 +1919,7 @@ bool effect_handler_DETECT_STAIRS(effect_handler_context_t *context)
 			if (!square_in_bounds_fully(cave, grid)) continue;
 
 			/* Detect stairs */
-			if (square_isstairs(cave, grid)) {
+			if (square_isstairs(cave, grid) || square_ispath(cave, grid)) {
 				/* Memorize */
 				square_memorize(cave, grid);
 				square_light_spot(cave, grid);
