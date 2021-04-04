@@ -278,7 +278,6 @@ static bool wiz_create_item_action(struct menu *m, const ui_event *e, int oid)
 		/* ...We have to search the whole artifact list. */
 		for (num = 0, i = 1; (num < 60) && (i < z_info->a_max); i++) {
 			struct artifact *art = &a_info[i];
-)
 
 			if (art->tval != oid) continue;
 
@@ -444,8 +443,8 @@ void wiz_cheat_death(void)
 	/* Note cause of death XXX XXX XXX */
 	my_strcpy(player->died_from, "Cheating death", sizeof(player->died_from));
 
-	/* Back to the town */
-	dungeon_change_level(player, 0);
+	/* Back home */
+	player_change_place(player, player->home);
 }
 
 

@@ -18,6 +18,7 @@
 #include "cmds.h"
 #include "effects.h"
 #include "game-input.h"
+#include "game-world.h"
 #include "generate.h"
 #include "init.h"
 #include "mon-lore.h"
@@ -29,7 +30,6 @@
 #include "obj-knowledge.h"
 #include "obj-make.h"
 #include "obj-pile.h"
-#include "obj-power.h"
 #include "obj-tval.h"
 #include "obj-util.h"
 #include "player-calcs.h"
@@ -1322,26 +1322,36 @@ void do_cmd_wiz_increase_exp(struct command *cmd)
  */
 void do_cmd_wiz_jump_level(struct command *cmd)
 {
-	int level, choose_gen;
+	int place, choose_gen = 0;
+	int i;
 
-	if (cmd_get_arg_number(cmd, "level", &level) != CMD_OK) {
+	if (cmd_get_arg_number(cmd, "level", &place) != CMD_OK) {
 		char prompt[80], s[80];
 
-		strnfmt(prompt, sizeof(prompt), "Jump to level (0-%d): ",
+		strnfmt(prompt, sizeof(prompt), "Jump to place (name): ",
 			z_info->max_depth - 1);
 
-		/* Set default */
-		strnfmt(s, sizeof(s), "%d", player->depth);
+		/* Default */
+		strnfmt(s, sizeof(s), "%s",	level_name(&world->levels[player->place]));
 
-		if (!get_string(prompt, s, sizeof(s))) return;
-		if (!get_int_from_string(s, &level)) return;
-		cmd_set_arg_number(cmd, "level", level);
+		/* Ask for a level */
+		if (!get_string(prompt, s, 30)) return;
+
+		/* Extract request */
+		for (i = 0; i < world->num_levels; i++) {
+			place = i;
+			if (!my_stricmp(s, level_name(&world->levels[i]))) {
+				break;
+			}
+		}
+		if (i == world->num_levels) {
+			return;
+		}
+		cmd_set_arg_number(cmd, "level", i);
 	}
 
-	/* Paranoia */
-	if (level < 0 || level >= z_info->max_depth) return;
-
-	if (cmd_get_arg_choice(cmd, "choice", &choose_gen) != CMD_OK) {
+	if (level_topography(place) == TOP_CAVE &&
+		cmd_get_arg_choice(cmd, "choice", &choose_gen) != CMD_OK) {
 		choose_gen = (get_check("Choose cave profile? ")) ? 1 : 0;
 		cmd_set_arg_choice(cmd, "choice", choose_gen);
 	}
@@ -1350,8 +1360,11 @@ void do_cmd_wiz_jump_level(struct command *cmd)
 		player->noscore |= NOSCORE_JUMPING;
 	}
 
-	msg("You jump to dungeon level %d.", level);
-	dungeon_change_level(player, level);
+	/* Accept request */
+	msg("You jump to %s.", level_name(&world->levels[i]));
+
+	/* New place */
+	player_change_place(player, place);
 
 	/*
 	 * Because of the structure of the game loop, need to take some energy,
@@ -2683,7 +2696,7 @@ void do_cmd_wiz_tweak_item(struct command *cmd)
 		obj->oidx = oidx;
 		obj->grid = grid;
 		obj->notice = notice;
-		ego_apply_magic(obj, player->depth);
+		ego_apply_magic(obj, player->depth, RANDOMISE);
 	}
 	wiz_display_item(obj, true);
 

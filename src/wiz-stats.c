@@ -1578,7 +1578,7 @@ void stats_collect(int nsim, int simtype)
 	char buf[1024];
 
 	/* Make sure the inputs are good! */
-	if (nsim < 1 || simtype < 1 || simtype > 3) return;
+	if (nsim < 1 || simtype < 1 || simtype > 2) return;
 
 	tries = nsim;
 	addval = 1.0 / tries;
@@ -1588,7 +1588,6 @@ void stats_collect(int nsim, int simtype)
 		clearing = false;
 	} else {
 		clearing = true;
-		regen = (simtype == 3);
 	}
 
 	/* Open log file */
@@ -1851,8 +1850,8 @@ void disconnect_stats(int nsim, bool stop_on_disconnect)
 				/* Can we get there? */
 				if (cave_dist[y][x] >= 0) {
 
-					/* Is it a  down stairs? */
-					if (square_isdownstairs(cave, grid)) {
+					/* Is it a down stairs? */
+					if (square_isstairs(cave, grid)||square_ispath(cave, grid)){
 
 						has_dsc_from_stairs = false;
 
