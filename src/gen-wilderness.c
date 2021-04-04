@@ -960,7 +960,7 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 	struct loc nearest_point = { height / 2, width / 2 };
 	struct loc stairs[3];
 
-	int form_feats[] = { FEAT_PASS_RUBBLE, FEAT_RUBBLE, FEAT_MAGMA, FEAT_GRASS,
+	int form_feats[] = { FEAT_PASS_RUBBLE, FEAT_RUBBLE, FEAT_GRASS,
 						 FEAT_TREE, FEAT_TREE2, FEAT_ROAD, FEAT_NONE };
 
 	bool amon_rudh = false;
