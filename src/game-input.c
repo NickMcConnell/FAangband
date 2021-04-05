@@ -35,6 +35,7 @@ bool (*get_item_hook)(struct object **choice, const char *pmt, const char *str,
 					  cmd_code cmd, item_tester tester, int mode);
 bool (*get_curse_hook)(int *choice, struct object *obj, char *dice_string);
 int (*get_recall_point_hook)(bool inward, int num_points, int num_poss);
+bool (*confirm_debug_hook)(void);
 void (*get_panel_hook)(int *min_y, int *min_x, int *max_y, int *max_x);
 bool (*panel_contains_hook)(unsigned int y, unsigned int x);
 bool (*map_is_visible_hook)(void);
@@ -212,6 +213,25 @@ int get_recall_point(bool inward, int num_points, int num_poss)
 		return get_recall_point_hook(inward, num_points, num_poss);
 	else
 		return -1;
+}
+
+/**
+ * Confirm whether to enable the debugging commands.
+ */
+bool confirm_debug(void)
+{
+	/* Use a UI-specific method. */
+	if (confirm_debug_hook) {
+		return confirm_debug_hook();
+	}
+
+	/* Otherwise, use a generic procedure.  First, mention effects. */
+	msg("You are about to use the dangerous, unsupported, debug commands!");
+	msg("Your machine may crash, and your savefile may become corrupted!");
+	event_signal(EVENT_MESSAGE_FLUSH);
+
+	/* Then verify. */
+	return get_check("Are you sure you want to use the debug commands?");
 }
 
 /**

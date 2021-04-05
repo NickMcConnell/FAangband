@@ -57,6 +57,7 @@ extern bool (*get_item_hook)(struct object **choice, const char *pmt,
 extern bool (*get_curse_hook)(int *choice, struct object *obj,
 							  char *dice_string);
 extern int (*get_recall_point_hook)(bool inward, int num_points, int num_poss);
+extern bool (*confirm_debug_hook)(void);
 extern void (*get_panel_hook)(int *min_y, int *min_x, int *max_y, int *max_x);
 extern bool (*panel_contains_hook)(unsigned int y, unsigned int x);
 extern bool (*map_is_visible_hook)(void);
@@ -76,6 +77,7 @@ bool get_item(struct object **choice, const char *pmt, const char *str,
 bool get_curse(int *choice, struct object *obj, char *dice_string);
 int get_recall_point(bool inward, int num_points, int num_poss);
 void get_panel(int *min_y, int *min_x, int *max_y, int *max_x);
+bool confirm_debug(void);
 bool panel_contains(unsigned int y, unsigned int x);
 bool map_is_visible(void);
 
