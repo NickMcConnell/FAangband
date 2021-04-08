@@ -1344,11 +1344,11 @@ void do_cmd_wiz_increase_exp(struct command *cmd)
  */
 void do_cmd_wiz_jump_level(struct command *cmd)
 {
-	int place, choose_gen = 0;
-	int i;
+	int place = 0, choose_gen = 0;
 
 	if (cmd_get_arg_number(cmd, "level", &place) != CMD_OK) {
 		char prompt[80], s[80];
+		int i;
 
 		strnfmt(prompt, sizeof(prompt), "Jump to place (name): ",
 			z_info->max_depth - 1);
@@ -1369,7 +1369,7 @@ void do_cmd_wiz_jump_level(struct command *cmd)
 		if (i == world->num_levels) {
 			return;
 		}
-		cmd_set_arg_number(cmd, "level", i);
+		cmd_set_arg_number(cmd, "level", place);
 	}
 
 	if (level_topography(place) == TOP_CAVE &&
@@ -1383,7 +1383,7 @@ void do_cmd_wiz_jump_level(struct command *cmd)
 	}
 
 	/* Accept request */
-	msg("You jump to %s.", level_name(&world->levels[i]));
+	msg("You jump to %s.", level_name(&world->levels[place]));
 
 	/* New place */
 	player_change_place(player, place);
