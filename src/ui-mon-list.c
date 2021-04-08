@@ -135,6 +135,7 @@ static void monster_list_format_section(const monster_list_t *list, textblock *t
 		name_width = MIN(full_width - utf8_strlen(asleep), sizeof(line_buffer));
 		get_mon_name(line_buffer, sizeof(line_buffer),
 					 list->entries[index].race,
+					 list->entries[index].p_race,
 					 list->entries[index].count[section]);
 		utf8_clipto(line_buffer, name_width);
 		my_strcat(line_buffer, asleep, sizeof(line_buffer));

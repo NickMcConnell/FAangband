@@ -41,8 +41,8 @@ void plural_aux(char *name, size_t max)
  * followed by either a singular or plural version of the race name as
  * appropriate.
  */
-void get_mon_name(char *buf, size_t buflen,
-				  const struct monster_race *race, int num)
+void get_mon_name(char *buf, size_t buflen, const struct monster_race *race,
+				  const struct player_race *p_race, int num)
 {
 	assert(race != NULL);
 
@@ -52,6 +52,10 @@ void get_mon_name(char *buf, size_t buflen,
     } else {
 	    strnfmt(buf, buflen, "%3d ", num);
 
+	    if (p_race) {
+	        my_strcat(buf, p_race->name, buflen);
+	        my_strcat(buf, " ", buflen);
+		}
 	    if (num == 1) {
 	        my_strcat(buf, race->name, buflen);
 	    } else if (race->plural != NULL) {

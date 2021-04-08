@@ -163,9 +163,10 @@ void monster_list_collect(monster_list_t *list)
 				entry = &list->entries[j];
 				memset(entry, 0, sizeof(monster_list_entry_t));
 				entry->race = mon->race;
+				entry->p_race = mon->player_race;
 				break;
-			}
-			else if (list->entries[j].race == mon->race) {
+			} else if ((list->entries[j].race == mon->race) &&
+					   (list->entries[j].p_race == mon->player_race)) {
 				/* We found a matching race and we'll use that. */
 				entry = &list->entries[j];
 				break;
