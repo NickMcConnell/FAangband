@@ -3194,14 +3194,6 @@ static void do_cmd_knowledge_shapechange(const char *name, int row)
  * Main knowledge menus
  * ------------------------------------------------------------------------ */
 
-/* The first row of the knowledge_actions menu which does store knowledge */
-#define STORE_KNOWLEDGE_ROW 8
-
-static void do_cmd_knowledge_store(const char *name, int row)
-{
-	textui_store_knowledge(row - STORE_KNOWLEDGE_ROW);
-}
-
 static void do_cmd_knowledge_scores(const char *name, int row)
 {
 	show_scores();
@@ -3215,27 +3207,6 @@ static void do_cmd_knowledge_history(const char *name, int row)
 static void do_cmd_knowledge_equip_cmp(const char* name, int row)
 {
 	equip_cmp_display();
-}
-
-static bool handle_store_shortcuts(struct menu *m, const ui_event *ev, int oid)
-{
-	int i = 0;
-
-	assert(ev->type == EVT_KBRD);
-	while (1) {
-		if (! m->cmd_keys[i]) {
-			return false;
-		}
-		if (ev->key.code == (unsigned) m->cmd_keys[i]) {
-			menu_action *acts = menu_priv(m);
-
-			do_cmd_knowledge_store(
-				acts[i + STORE_KNOWLEDGE_ROW].name,
-				i + STORE_KNOWLEDGE_ROW);
-			return true;
-		}
-		++i;
-	}
 }
 
 /**
@@ -3274,10 +3245,6 @@ void textui_knowledge_init(void)
 
 	menu->title = "Display current knowledge";
 	menu->selections = lower_case;
-	/* Shortcuts to get the contents of the stores by number; does prevent
-	 * the normal use of 4 and 6 to go to the previous or next menu */
-	menu->cmd_keys = "12345678";
-	menu->keys_hook = handle_store_shortcuts;
 
 	/* initialize other static variables */
 	if (!obj_group_order) {
