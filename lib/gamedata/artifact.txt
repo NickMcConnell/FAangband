@@ -1703,8 +1703,7 @@ values:LIGHT[1] | RES_LIGHT[45]
 act:LIGHT
 time:5
 msg:Your gloves glow extremely brightly...
-desc:These gloves glow so brightly as to light the way for the wearer and cast
-desc: magical bolts with great frequency.
+desc:These gloves glow so brightly as to light the way for the wearer.
 
 name:'Paurnimmen'
 base-object:gloves:Set of Gauntlets
