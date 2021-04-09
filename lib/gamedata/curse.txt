@@ -176,7 +176,7 @@ type:dragon armor
 effect:SUMMON:DRAGON
 dice:1
 time:1d500
-msg:Your armour lets out a cry...
+msg:Your equipment lets out a cry...
 desc:sometimes summons a dragon
 
 name:demon summon
@@ -187,7 +187,7 @@ type:sword
 effect:SUMMON:DEMON
 dice:1
 time:1d500
-msg:Your weapon gives out a demonic shriek!
+msg:Your equipment gives out a demonic shriek!
 desc:occasionally summons a demon
 
 name:undead summon
@@ -198,7 +198,7 @@ type:sword
 effect:SUMMON:UNDEAD
 dice:1
 time:1d500
-msg:Your weapon calls beyond the grave!
+msg:Your equipment calls beyond the grave!
 desc:occasionally summons an undead
 
 name:impair mana recovery
