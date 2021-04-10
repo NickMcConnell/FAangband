@@ -415,7 +415,7 @@ static size_t obj_desc_combat(const struct object *obj, char *buf, size_t max,
 
 	/* Show armor bonuses */
 	if (obj_desc_show_armor(obj)) {
-		if ((player->obj_k->to_a) && (obj->to_a)) {
+		if ((player->obj_k->to_a) && ((obj->to_a) || tval_is_armor(obj))) {
 			strnfcat(buf, max, &end, " [%d,%+d]", ac, to_a);
 		} else {
 			strnfcat(buf, max, &end, " [%d]", ac);
