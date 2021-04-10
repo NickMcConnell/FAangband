@@ -444,10 +444,6 @@ static int handle_key_equip_cmp_general(struct keypress ch, int istate,
 		"Unknown key pressed; ? will list available keys";
 	static const char *trans_msg_view =
 		"Showing alternate attributes; press v to cycle";
-	static const char *trans_msg_onlystore =
-		"Only showing goods from stores; press c to change";
-	static const char *trans_msg_withstore =
-		"Showing possessions and goods from stores; press c to change";
 	static const char *trans_msg_carried =
 		"Only showing carried items; press c to change";
 	static const char *trans_msg_save_ok = "Successfully saved to file";
@@ -558,30 +554,7 @@ static int handle_key_equip_cmp_general(struct keypress ch, int istate,
 				(s->easy_filt.nv == 1 || s->easy_filt.nv == 2) &&
 				s->easy_filt.v[0].s.func == sel_exclude_src &&
 				s->easy_filt.v[0].s.ex.src == EQUIP_SOURCE_STORE);
-			s->easy_filt.v[0].s.func = sel_only_src;
-			s->stores = EQUIPPABLE_ONLY_STORE;
-			s->dlg_trans_msg = trans_msg_onlystore;
-			break;
-
-		case EQUIPPABLE_ONLY_STORE:
-			assert(s->easy_filt.simple == EQUIP_EXPR_AND &&
-				(s->easy_filt.nv == 1 || s->easy_filt.nv == 2) &&
-				s->easy_filt.v[0].s.func == sel_only_src &&
-				s->easy_filt.v[0].s.ex.src == EQUIP_SOURCE_STORE);
-			s->easy_filt.v[0] = s->easy_filt.v[1];
-			if (s->easy_filt.nv == 2) {
-				s->easy_filt.v[1] = s->easy_filt.v[2];
-			} else {
-				s->easy_filt.simple = EQUIP_EXPR_TERMINATOR;
-			}
-			--s->easy_filt.nv;
-			s->stores = EQUIPPABLE_YES_STORE;
-			s->dlg_trans_msg = trans_msg_withstore;
-			break;
-
-		case EQUIPPABLE_YES_STORE:
-			assert(s->easy_filt.nv == 0 || s->easy_filt.nv == 1);
-			s->easy_filt.v[3] = s->easy_filt.v[0];
+			s->easy_filt.v[3] = s->easy_filt.v[1];
 			s->easy_filt.simple = EQUIP_EXPR_AND;
 			s->easy_filt.v[0].s.func = sel_exclude_src;
 			s->easy_filt.v[0].s.ex.src = EQUIP_SOURCE_STORE;
@@ -592,7 +565,7 @@ static int handle_key_equip_cmp_general(struct keypress ch, int istate,
 			s->easy_filt.v[2].s.func = sel_exclude_src;
 			s->easy_filt.v[2].s.ex.src = EQUIP_SOURCE_FLOOR;
 			s->easy_filt.v[2].c = EQUIP_EXPR_SELECTOR;
-			s->easy_filt.nv += 3;
+			s->easy_filt.nv += 2;
 			s->stores = EQUIPPABLE_ONLY_CARRIED;
 			s->dlg_trans_msg = trans_msg_carried;
 			break;
@@ -614,6 +587,10 @@ static int handle_key_equip_cmp_general(struct keypress ch, int istate,
 			s->easy_filt.v[3].c = EQUIP_EXPR_TERMINATOR;
 			s->easy_filt.nv -= 2;
 			s->stores = EQUIPPABLE_NO_STORE;
+			break;
+
+		default:
+			assert(0);
 			break;
 		}
 		filter_items(s);
@@ -2284,17 +2261,6 @@ static int initialize_summary(struct player *p,
 	visitor.selfunc = select_wearable;
 	visitor.selfunc_closure = NULL;
 	apply_visitor_to_pile(store_home(p)->stock, &visitor);
-	for (i = 0; i < world->num_towns; i++) {
-		struct town *town = &world->towns[i];
-		struct store *store = town->stores;
-		if (!world->levels[town->index].visited) continue;
-		while (store) {
-			if (!store_is_home(store)) {
-				apply_visitor_to_pile(store->stock, &visitor);
-			}
-			store = store->next;
-		}
-	}
 
 	/* Allocate storage and add the available items. */
 	if (count > (*s)->nalloc) {
@@ -2329,18 +2295,6 @@ static int initialize_summary(struct player *p,
 	visitor.selfunc = select_wearable;
 	visitor.selfunc_closure = NULL;
 	apply_visitor_to_pile(store_home(p)->stock, &visitor);
-	add_obj_data.src = EQUIP_SOURCE_STORE;
-	for (i = 0; i < world->num_towns; i++) {
-		struct town *town = &world->towns[i];
-		struct store *store = town->stores;
-		if (!world->levels[town->index].visited) continue;
-		while (store) {
-			if (!store_is_home(store)) {
-				apply_visitor_to_pile(store->stock, &visitor);
-			}
-			store = store->next;
-		}
-	}
 
 	compute_player_and_equipment_values(p, *s);
 
