@@ -845,7 +845,7 @@ weight:50
 cost:400
 alloc:20:5 to 100
 attack:1d3:0:0
-armor:0:0
+armor:4:0
 act:MAGESTAFF
 desc:A slender birch staff, enchanted to give light from the tip, which can be
 desc: activated by mages and necromancers to restore a little mana. It can be
@@ -882,7 +882,7 @@ weight:150
 cost:200
 alloc:20:10 to 100
 attack:1d9:0:0
-armor:0:0
+armor:8:0
 flags:TWO_HANDED_REQ
 desc:Six feet of oak which can be wielded in both hands to give a drubbing or
 desc: block one.
@@ -988,7 +988,7 @@ weight:65
 cost:50
 alloc:20:7 to 100
 attack:1d7:0:0
-armor:0:0
+armor:2:0
 desc:A more robust version of the basic polearm, with a double-edged knife
 desc: mounted on a sturdy shaft.  It cannot be thrown effectively, but offers
 desc: some protection to the wielder.
@@ -1014,7 +1014,7 @@ weight:70
 cost:120
 alloc:20:5 to 100
 attack:1d10:0:0
-armor:0:0
+armor:4:0
 desc:A three-pronged spear, originally for catching fish.
 
 name:& Halberd~
@@ -1025,7 +1025,7 @@ weight:190
 cost:430
 alloc:20:25 to 100
 attack:3d5:0:0
-armor:0:0
+armor:8:0
 flags:TWO_HANDED_REQ
 desc:The most successful of the polearms, the halberd has a long haft mounted
 desc: with a heavy axe blade and opposing spike, and topped by a thrusting
@@ -1039,7 +1039,7 @@ weight:160
 cost:358
 alloc:20:15 to 100
 attack:2d5:0:0
-armor:0:0
+armor:6:0
 flags:TWO_HANDED_REQ
 desc:A fifteen foot spear, requiring two hands to wield, principally used in
 desc: infantry formations.
@@ -1142,7 +1142,7 @@ weight:190
 cost:363
 alloc:20:20 to 100
 attack:2d6:0:0
-armor:0:0
+armor:8:0
 flags:TWO_HANDED_REQ
 desc:A reinforced wooden pole eight feet long, topped by a massive knife blade
 desc: that can be used to thrust or chop.
