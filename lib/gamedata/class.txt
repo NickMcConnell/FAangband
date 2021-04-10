@@ -23,7 +23,7 @@
 # info:mhp:exp
 # attack:max_attacks:min_weight:att_multiply
 # title:title
-# equip:tval:sval:min:max
+# equip:tval:sval:min:max:eopts
 # player-flags:class flags
 # specialties:abilities
 # magic:spell_first:spell_weight:num_books
@@ -58,7 +58,10 @@
 # attack calculations.
 
 # 'equip' is for starting equipment - tval of the item, sval of the item,
-# minimum amount, maximum amount.
+# minimum amount, maximum amount, names of birth options separated by spaces
+# or | (or none for no exclusion rules) which will exclude the item if set
+# (or, if the name of the option is preceded by NOT-, will exclude the item if
+# not set).
 
 # 'player-flags' is for class flags.
 
@@ -127,13 +130,13 @@ hitdie:9
 max-attacks:6
 min-weight:30
 strength-multiplier:5
-equip:food:Ration of Food:1:3
-equip:light:Wooden Torch:1:3
-equip:potion:Berserk Strength:1:1
-equip:sword:Broad Sword:1:1
-equip:soft armour:Soft Leather Armour:1:1
-equip:shield:Wicker Shield:1:1
-equip:scroll:Word of Recall:1:1
+equip:food:Ration of Food:1:3:none
+equip:light:Wooden Torch:1:3:none
+equip:potion:Berserk Strength:1:1:none
+equip:sword:Broad Sword:1:1:none
+equip:soft armour:Soft Leather Armour:1:1:none
+equip:shield:Wicker Shield:1:1:none
+equip:scroll:Word of Recall:1:1:birth_no_recall
 player-flags:BRAVERY_30 | NO_MANA | SHIELD_BASH | XTRA_SPECIALTY
 player-flags:BOW_SPEED_GOOD | XBOW_SPEED_GOOD
 specialties:ARMOR_MAST | ARMSMAN | ATHLETICS | MIGHTY_THROW | FAST_ATTACK
@@ -168,10 +171,10 @@ hitdie:0
 max-attacks:4
 min-weight:40
 strength-multiplier:2
-equip:food:Ration of Food:1:3
-equip:light:Wooden Torch:1:3
-equip:hafted:Magestaff:1:1
-equip:scroll:Word of Recall:1:1
+equip:food:Ration of Food:1:3:none
+equip:light:Wooden Torch:1:3:none
+equip:hafted:Magestaff:1:1:none
+equip:scroll:Word of Recall:1:1:birth_no_recall
 player-flags:BEAM | CHOOSE_SPELLS | DEVICE_EXPERT | STRONG_MAGIC
 specialties:ARMOR_PROFICIENCY | BEGUILE | CLARITY | ENHANCE_MAGIC
 specialties:MEDITATION | POWER_SIPHON | MAGIC_RESIST | PHASEWALK
@@ -192,7 +195,7 @@ magic:1:300:5
 book:magic book:town:[First Spells]:7:arcane
 book-graphics:?:R
 book-properties:25:40:1 to 100
-equip:magic book:[First Spells]:1:1
+equip:magic book:[First Spells]:1:1:none
 
 spell:Magic Missile:1:1:22:4
 effect:BOLT_OR_BEAM:MISSILE:0:-10
@@ -446,9 +449,9 @@ hitdie:2
 max-attacks:4
 min-weight:35
 strength-multiplier:3
-equip:food:Ration of Food:1:3
-equip:light:Wooden Torch:1:3
-equip:scroll:Word of Recall:1:1
+equip:food:Ration of Food:1:3:none
+equip:light:Wooden Torch:1:3:none
+equip:scroll:Word of Recall:1:1:birth_no_recall
 player-flags:CHOOSE_SPELLS | CHARM
 player-flags:UNARMED_COMBAT | WOODSMAN | STRONG_MAGIC
 specialties:ARMOR_PROFICIENCY | BEGUILE | CLARITY | MEDITATION
@@ -470,7 +473,7 @@ magic:1:350:5
 book:nature book:town:[Lesser Charms]:6:nature
 book-graphics:?:y
 book-properties:25:40:1 to 100
-equip:nature book:[Lesser Charms]:1:1
+equip:nature book:[Lesser Charms]:1:1:none
 
 spell:Detect Life:1:1:23:2
 effect:DETECT_LIVING_MONSTERS
@@ -684,11 +687,11 @@ hitdie:2
 max-attacks:4
 min-weight:35
 strength-multiplier:3
-equip:food:Ration of Food:1:3
-equip:light:Wooden Torch:1:3
-equip:hafted:Mace:1:1
-equip:potion:Cure Serious Wounds:2:2
-equip:scroll:Word of Recall:1:1
+equip:food:Ration of Food:1:3:none
+equip:light:Wooden Torch:1:3:none
+equip:hafted:Mace:1:1:none
+equip:potion:Cure Serious Wounds:2:2:none
+equip:scroll:Word of Recall:1:1:birth_no_recall
 player-flags:BLESS_WEAPON | STRONG_MAGIC | HOLY
 specialties:CLARITY | ENHANCE_MAGIC | MEDITATION | ARMSMAN
 specialties:PHASEWALK | HOLY_LIGHT | HARMONY | FURY | HEIGHTEN_MAGIC
@@ -709,7 +712,7 @@ magic:1:350:5
 book:prayer book:town:[Novice's Handbook]:6:divine
 book-graphics:?:G
 book-properties:25:40:1 to 100
-equip:prayer book:[Novice's Handbook]:1:1
+equip:prayer book:[Novice's Handbook]:1:1:none
 
 spell:Call Light:1:1:10:2
 effect:LIGHT_AREA
@@ -956,9 +959,9 @@ hitdie:2
 max-attacks:4
 min-weight:35
 strength-multiplier:3
-equip:food:Ration of Food:1:3
-equip:hafted:Whip:1:1
-equip:scroll:Word of Recall:1:1
+equip:food:Ration of Food:1:3:none
+equip:hafted:Whip:1:1:none
+equip:scroll:Word of Recall:1:1:birth_no_recall
 player-flags:CHOOSE_SPELLS | UNLIGHT | EVIL | STRONG_MAGIC
 specialties:ARMOR_PROFICIENCY | BEGUILE | CLARITY | ENHANCE_MAGIC
 specialties:MEDITATION | MAGIC_RESIST | SOUL_SIPHON | HEIGHTEN_MAGIC
@@ -979,7 +982,7 @@ magic:1:300:5
 book:shadow book:town:[Into the Shadows]:5:shadow
 book-graphics:?:P
 book-properties:25:40:1 to 100
-equip:shadow book:[Into the Shadows]:1:1
+equip:shadow book:[Into the Shadows]:1:1:none
 
 spell:Nether Bolt:1:1:22:2
 effect:BOLT:NETHER
@@ -1214,13 +1217,13 @@ hitdie:6
 max-attacks:5
 min-weight:30
 strength-multiplier:5
-equip:food:Ration of Food:1:3
-equip:light:Wooden Torch:1:3
-equip:sword:Long Sword:1:1
-equip:shield:Wicker Shield:1:1
-equip:scroll:Protection from Evil:1:1
-equip:scroll:Word of Recall:1:1
-equip:prayer book:[Novice's Handbook]:1:1
+equip:food:Ration of Food:1:3:none
+equip:light:Wooden Torch:1:3:none
+equip:sword:Long Sword:1:1:none
+equip:shield:Wicker Shield:1:1:none
+equip:scroll:Protection from Evil:1:1:none
+equip:scroll:Word of Recall:1:1:birth_no_recall
+equip:prayer book:[Novice's Handbook]:1:1:none
 player-flags:BLESS_WEAPON | SHIELD_BASH | HOLY
 specialties:ARMOR_MAST | ARMSMAN | ATHLETICS | FAST_ATTACK | FURY
 specialties:REGENERATION | SHIELD_MAST | ENHANCE_MAGIC | MAGIC_RESIST
@@ -1379,12 +1382,12 @@ hitdie:4
 max-attacks:5
 min-weight:20
 strength-multiplier:4
-equip:food:Ration of Food:1:3
-equip:light:Wooden Torch:1:3
-equip:sword:Dagger:1:1
-equip:soft armour:Soft Leather Armour:1:1
-equip:scroll:Word of Recall:1:1
-equip:magic book:[First Spells]:1:1
+equip:food:Ration of Food:1:3:none
+equip:light:Wooden Torch:1:3:none
+equip:sword:Dagger:1:1:none
+equip:soft armour:Soft Leather Armour:1:1:none
+equip:scroll:Word of Recall:1:1:birth_no_recall
+equip:magic book:[First Spells]:1:1:none
 player-flags:CHOOSE_SPELLS | STEAL
 player-flags:BACKSTAB | TRAP | SLING_SPEED_GREAT
 specialties:ARMSMAN | ATHLETICS | EVASION | FAST_ATTACK | MARKSMAN
@@ -1487,13 +1490,13 @@ hitdie:5
 max-attacks:5
 min-weight:35
 strength-multiplier:4
-equip:food:Ration of Food:1:3
-equip:light:Wooden Torch:1:3
-equip:polearm:Thrusting Spear:1:1
-equip:bow:Short Bow:1:1
-equip:arrow:Arrow:15:20
-equip:scroll:Word of Recall:1:1
-equip:nature book:[Lesser Charms]:1:1
+equip:food:Ration of Food:1:3:none
+equip:light:Wooden Torch:1:3:none
+equip:polearm:Thrusting Spear:1:1:none
+equip:bow:Short Bow:1:1:none
+equip:arrow:Arrow:15:20:none
+equip:scroll:Word of Recall:1:1:birth_no_recall
+equip:nature book:[Lesser Charms]:1:1:none
 player-flags:CHOOSE_SPELLS | WOODSMAN
 player-flags:BOW_SPEED_GREAT | SLING_SPEED_GOOD | XBOW_SPEED_GOOD
 specialties:ARMSMAN | ATHLETICS | EVASION | FAST_ATTACK | FURY
@@ -1597,13 +1600,13 @@ hitdie:8
 max-attacks:5
 min-weight:100
 strength-multiplier:5
-equip:shadow book:[Into the Shadows]:1:1
-equip:food:Ration of Food:1:3
-equip:light:Wooden Torch:1:3
-equip:polearm:Battle Axe:1:1
-equip:shield:Leather Shield:1:1
-equip:scroll:Word of Recall:1:1
-equip:potion:Cure Light Wounds:1:1
+equip:shadow book:[Into the Shadows]:1:1:none
+equip:food:Ration of Food:1:3:none
+equip:light:Wooden Torch:1:3:none
+equip:polearm:Battle Axe:1:1:none
+equip:shield:Leather Shield:1:1:none
+equip:scroll:Word of Recall:1:1:birth_no_recall
+equip:potion:Cure Light Wounds:1:1:none
 obj-flags:IMPAIR_HP
 player-flags:CHOOSE_SPELLS | SHIELD_BASH
 specialties:COMBAT_REGEN | ARMSMAN | ATHLETICS | FAST_ATTACK | ARMOR_MAST
