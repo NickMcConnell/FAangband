@@ -125,6 +125,8 @@ static bool describe_curses(textblock *tb, const struct object *obj,
 			textblock_append_c(tb, COLOUR_L_RED, "%s", curses[i].desc);
 			if (c[i].power == 100) {
 				textblock_append(tb, "; this curse cannot be removed");
+			} else {
+				textblock_append(tb, " (power %d)", c[i].power);
 			}
 			textblock_append(tb, ".\n");
 		}
