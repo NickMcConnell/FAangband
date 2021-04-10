@@ -1377,14 +1377,14 @@ static bool sel_better_than(const struct equippable *eq,
 static bool sel_at_least_resists(const struct equippable *eq,
 	const union equippable_selfunc_extra *ex)
 {
-	return eq->vals[ex->propind] >= 1;
+	return eq->vals[ex->propind] < RES_LEVEL_BASE;
 }
 
 
 static bool sel_does_not_resist(const struct equippable *eq,
 	const union equippable_selfunc_extra *ex)
 {
-	return eq->vals[ex->propind] < 1;
+	return eq->vals[ex->propind] >= RES_LEVEL_BASE;
 }
 
 
