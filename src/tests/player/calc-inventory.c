@@ -35,8 +35,10 @@ struct simple_test_case {
 int setup_tests(void **state) {
 	set_file_paths();
 	init_angband();
+#ifdef UNIX
 	/* Necessary for creating the randart file. */
 	create_needed_dirs();
+#endif
 
 	/* Set up the player. */
 	cmdq_push(CMD_BIRTH_INIT);
