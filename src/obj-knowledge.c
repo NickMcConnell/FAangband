@@ -818,18 +818,20 @@ bool object_fully_known(const struct object *obj)
 
 
 /**
- * Checks whether the player knows whether an object has a given flag
+ * Checks whether a player knows whether an object has a given flag
  *
+ * \param p is the player
  * \param obj is the object
  * \param flag is the flag
  */
-bool object_flag_is_known(const struct object *obj, int flag)
+bool object_flag_is_known(const struct player *p, const struct object *obj,
+	int flag)
 {
 	/* Object fully known means OK */
 	if (object_fully_known(obj)) return true;
 
 	/* Player knows the flag means OK */
-	if (of_has(player->obj_k->flags, flag)) return true;
+	if (of_has(p->obj_k->flags, flag)) return true;
 
 	/* Object has had a chance to display the flag means OK */
 	if (of_has(obj->known->flags, flag)) return true;
@@ -838,12 +840,14 @@ bool object_flag_is_known(const struct object *obj, int flag)
 }
 
 /**
- * Checks whether the player knows the given element properties of an object
+ * Checks whether a player knows the given element properties of an object
  *
+ * \param p is the player
  * \param obj is the object
  * \param element is the element
  */
-bool object_element_is_known(const struct object *obj, int element)
+bool object_element_is_known(const struct player *p, const struct object *obj,
+	int element)
 {
 	if (element < 0 || element >= ELEM_MAX) return false;
 
@@ -851,7 +855,7 @@ bool object_element_is_known(const struct object *obj, int element)
 	if (object_fully_known(obj)) return true;
 
 	/* Player knows the element means OK */
-	if (player->obj_k->el_info[element].res_level) return true;
+	if (p->obj_k->el_info[element].res_level) return true;
 
 	/* Object has been exposed to the element means OK */
 	if (obj->known->el_info[element].res_level != RES_LEVEL_BASE) return true;
