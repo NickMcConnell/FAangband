@@ -73,7 +73,7 @@ static unsigned int store_home_idx;
 
 static const char *obj_flags[] = {
 	"NONE",
-	#define OF(a) #a,
+	#define OF(a, b) #a,
 	#include "list-object-flags.h"
 	#undef OF
 	NULL
