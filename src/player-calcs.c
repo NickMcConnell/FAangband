@@ -2801,10 +2801,12 @@ static void update_bonuses(struct player *p)
 		/* Take note when player moves his shield on and off his back. */
 		if (p->state.shield_on_back != state.shield_on_back) {
 			/* Messages */
-			if (state.shield_on_back) {
-				msg("You are carrying your shield on your back.");
-			} else if (equipped_item_by_slot_name(p, "arm")) {
-				msg("You are carrying your shield in your hand.");
+			if (equipped_item_by_slot_name(p, "arm")) {
+				if (state.shield_on_back) {
+					msg("You are carrying your shield on your back.");
+				} else {
+					msg("You are carrying your shield in your hand.");
+				}
 			}
 		}
 	}
