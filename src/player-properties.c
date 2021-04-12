@@ -246,6 +246,7 @@ bool gain_spec_menu(int *pick)
 		if (!done && (d->selected_spec)) {
 			int idx = d->selected_spec;
 			struct player_ability *ability = lookup_ability("player", idx, 0);
+			region_erase_bordered(&loc);
 			menu_layout(&menu, &loc);
 			done = get_check(format("Definitely choose %s? ",
 									ability->name));
