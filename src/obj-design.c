@@ -3779,7 +3779,7 @@ static void write_randart_file_entry(ang_file *fff, struct artifact *art)
 
 	static const char *obj_flags[] = {
 		"NONE",
-		#define OF(a) #a,
+		#define OF(a, b) #a,
 		#include "list-object-flags.h"
 		#undef OF
 		NULL

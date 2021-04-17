@@ -688,7 +688,7 @@ void compute_ui_entry_values_for_object(const struct ui_entry *entry,
 
 			case OBJ_PROPERTY_ELEMENT:
 				base = RES_LEVEL_BASE;
-				if (object_element_is_known(obj, ind)) {
+				if (object_element_is_known(p, obj, ind)) {
 					int v = obj->el_info[ind].res_level;
 					int a = RES_LEVEL_BASE;
 
