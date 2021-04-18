@@ -277,6 +277,9 @@ static enum parser_error write_book_kind(struct class_book *book,
 		kind->el_info[i].res_level = RES_LEVEL_BASE;
 	}
 
+	/* Inherit base flags. */
+	kf_union(kind->kind_flags, kb_info[kind->tval].kind_flags);
+
 	/* Dungeon books get extra properties */
 	if (book->dungeon) {
 		for (i = ELEM_BASE_MIN; i < ELEM_BASE_MAX; i++) {
