@@ -249,7 +249,7 @@ void do_cmd_go_down(struct command *cmd)
 
 	/* Make certain the player really wants to leave a themed level. -LM- */
 	if (player->themed_level) {
-		if (!get_check("This level will never appear again.  Really leave?")) {
+		if (!get_check("This level will never appear again.  Really leave? ")) {
 			return;
 		}
 	}
