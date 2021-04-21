@@ -14,6 +14,7 @@
 #include "mon-make.h"
 #include "savefile.h"
 #include "player.h"
+#include "player-birth.h"
 #include "player-timed.h"
 #include "z-util.h"
 
@@ -54,23 +55,7 @@ int teardown_tests(void *state) {
 int test_magic_missile(void *state) {
 
 	/* Try making a new game */
-	cmdq_push(CMD_BIRTH_INIT);
-	cmdq_push(CMD_BIRTH_RESET);
-	cmdq_push(CMD_CHOOSE_MAP);
-	cmd_set_arg_choice(cmdq_peek(), "choice", 3);
-
-	cmdq_push(CMD_CHOOSE_RACE);
-	cmd_set_arg_choice(cmdq_peek(), "choice", 4);
-
-	cmdq_push(CMD_CHOOSE_CLASS);
-	cmd_set_arg_choice(cmdq_peek(), "choice", 1);
-
-	cmdq_push(CMD_ROLL_STATS);
-	cmdq_push(CMD_NAME_CHOICE);
-	cmd_set_arg_string(cmdq_peek(), "name", "Tyrion");
-
-	cmdq_push(CMD_ACCEPT_CHARACTER);
-	cmdq_execute(CTX_BIRTH);
+	eq(player_make_simple("Petty-Dwarf", "Mage", "Tyrion"), true);
 
 	eq(player->is_dead, false);
 	prepare_next_level(&cave, player);

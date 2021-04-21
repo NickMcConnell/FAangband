@@ -13,6 +13,7 @@
 #include "init.h"
 #include "savefile.h"
 #include "player.h"
+#include "player-birth.h"
 #include "player-timed.h"
 #include "z-util.h"
 
@@ -76,24 +77,7 @@ int teardown_tests(void *state) {
 int test_newgame(void *state) {
 
 	/* Try making a new game */
-
-	cmdq_push(CMD_BIRTH_INIT);
-	cmdq_push(CMD_BIRTH_RESET);
-	cmdq_push(CMD_CHOOSE_MAP);
-	cmd_set_arg_choice(cmdq_peek(), "choice", 3);
-
-	cmdq_push(CMD_CHOOSE_RACE);
-	cmd_set_arg_choice(cmdq_peek(), "choice", 0);
-
-	cmdq_push(CMD_CHOOSE_CLASS);
-	cmd_set_arg_choice(cmdq_peek(), "choice", 0);
-
-	cmdq_push(CMD_ROLL_STATS);
-	cmdq_push(CMD_NAME_CHOICE);
-	cmd_set_arg_string(cmdq_peek(), "name", "Tester");
-
-	cmdq_push(CMD_ACCEPT_CHARACTER);
-	cmdq_execute(CTX_BIRTH);
+	eq(player_make_simple(NULL, NULL, "Tester"), true);
 
 	eq(player->is_dead, false);
 	prepare_next_level(&cave, player);
@@ -131,7 +115,7 @@ int test_stairs1(void *state) {
 
 	cmdq_push(CMD_GO_DOWN);
 	run_game_loop();
-	eq(player->depth, 1);
+	require(player->depth > 1);
 
 	ok;
 }
@@ -154,7 +138,7 @@ int test_stairs2(void *state) {
 	}
 	cmdq_push(CMD_GO_DOWN);
 	run_game_loop();
-	eq(player->depth, 1);
+	require(player->depth > 1);
 
 	ok;
 }

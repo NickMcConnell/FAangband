@@ -3,13 +3,13 @@
 
 #include "test-utils.h"
 #include "unit-test.h"
-#include "cmd-core.h"
 #include "init.h"
 #include "obj-gear.h"
 #include "obj-knowledge.h"
 #include "obj-make.h"
 #include "obj-pile.h"
 #include "obj-util.h"
+#include "player-birth.h"
 #include "player-calcs.h"
 
 struct carry_num_state {
@@ -44,27 +44,14 @@ int setup_tests(void **state) {
 	 * three so it is possible to fill it up with one stack of arrows, one
 	 * stack of shots, and one stack of flasks.
 	 */
-	z_info->pack_size = 5;
+	z_info->pack_size = 6;
 	z_info->quiver_size = 3;
 
 	/* Set up the player. */
-	cmdq_push(CMD_BIRTH_INIT);
-	cmdq_push(CMD_BIRTH_RESET);
-	cmdq_push(CMD_CHOOSE_MAP);
-	cmd_set_arg_choice(cmdq_peek(), "choice", 3);
-	cmdq_push(CMD_CHOOSE_RACE);
-	cmd_set_arg_choice(cmdq_peek(), "choice", 0);
-	cmdq_push(CMD_CHOOSE_CLASS);
-	/*
-	 * A druid starts with three items and so plays nicely with the
-	 * reduced pack size.
-	 */
-	cmd_set_arg_choice(cmdq_peek(), "choice", 2);
-	cmdq_push(CMD_ROLL_STATS);
-	cmdq_push(CMD_NAME_CHOICE);
-	cmd_set_arg_string(cmdq_peek(), "name", "Tester");
-	cmdq_push(CMD_ACCEPT_CHARACTER);
-	cmdq_execute(CTX_BIRTH);
+	if (!player_make_simple(NULL, NULL, "Tester")) {
+		cleanup_angband();
+		return 1;
+	}
 
 	cns = mem_zalloc(sizeof *cns);
 	cns->p = player;
