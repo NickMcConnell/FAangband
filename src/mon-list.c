@@ -193,6 +193,8 @@ void monster_list_collect(monster_list_t *list)
 
 		if (mon->m_timed[MON_TMD_SLEEP] > 0)
 			entry->asleep[field]++;
+		if (mon->target.midx >= 0)
+			entry->neutral[field]++;
 
 		/* Store the location offset from the player; this is only used for
 		 * monster counts of 1 */

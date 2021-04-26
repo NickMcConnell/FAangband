@@ -35,6 +35,7 @@
  * - number of monsters;
  * - monster name (truncated, if needed to fit the line);
  * - whether or not the monster is asleep (and how many if in a group);
+ * - whether or not the monster is neutral (and how many if in a group);
  * - monster distance from the player (aligned to the right side of the list).
  * By passing in a NULL textblock, the maximum line width of the section can be
  * found.
@@ -102,6 +103,7 @@ static void monster_list_format_section(const monster_list_t *list, textblock *t
 		size_t name_width;
 		u16b count_in_section = 0;
 		u16b asleep_in_section = 0;
+		u16b neutral_in_section = 0;
 
 		line_buffer[0] = '\0';
 
@@ -124,12 +126,33 @@ static void monster_list_format_section(const monster_list_t *list, textblock *t
 		full_width = max_width - 2 - utf8_strlen(location) - 1;
 
 		asleep_in_section = list->entries[index].asleep[section];
+		neutral_in_section = list->entries[index].neutral[section];
 		count_in_section = list->entries[index].count[section];
 
-		if (asleep_in_section > 0 && count_in_section > 1)
-			strnfmt(asleep, sizeof(asleep), " (%d asleep)", asleep_in_section);
-		else if (asleep_in_section == 1 && count_in_section == 1)
-			strnfmt(asleep, sizeof(asleep), " (asleep)");
+		if (count_in_section > 1) {
+			if (asleep_in_section > 0) {
+				if (neutral_in_section > 0) {
+					strnfmt(asleep, sizeof(asleep), " (%d asleep, %d neutral)",
+							asleep_in_section, neutral_in_section);
+				} else {
+					strnfmt(asleep, sizeof(asleep), " (%d asleep)",
+							asleep_in_section);
+				}
+			} else if (neutral_in_section > 0) {
+					strnfmt(asleep, sizeof(asleep), " (%d neutral)",
+							neutral_in_section);
+			}
+		} else {
+			if (asleep_in_section == 1) {
+				if (neutral_in_section == 1) {
+					strnfmt(asleep, sizeof(asleep), " (asleep, neutral)");
+				} else {
+					strnfmt(asleep, sizeof(asleep), " (asleep)");
+				}
+			} else if (neutral_in_section == 1) {
+				strnfmt(asleep, sizeof(asleep), " (neutral)");
+			}
+		}
 
 		/* Clip the monster name to fit, and append the sleep tag. */
 		name_width = MIN(full_width - utf8_strlen(asleep), sizeof(line_buffer));

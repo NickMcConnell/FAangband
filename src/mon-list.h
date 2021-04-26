@@ -33,6 +33,7 @@ typedef struct monster_list_entry_s {
 	struct player_race *p_race;
 	u16b count[MONSTER_LIST_SECTION_MAX];
 	u16b asleep[MONSTER_LIST_SECTION_MAX];
+	u16b neutral[MONSTER_LIST_SECTION_MAX];
 	s16b dx[MONSTER_LIST_SECTION_MAX], dy[MONSTER_LIST_SECTION_MAX];
 	byte attr;
 } monster_list_entry_t;
