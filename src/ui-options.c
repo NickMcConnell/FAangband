@@ -1439,8 +1439,6 @@ static bool quality_action(struct menu *m, const ui_event *event, int oid)
 
 	/* Work out how many options we have */
 	count = IGNORE_MAX;
-	if ((oid == ITYPE_RING) || (oid == ITYPE_AMULET))
-		count = area.page_rows = IGNORE_BAD + 1;
 
 	/* Run menu */
 	menu_init(&menu, MN_SKIN_SCROLL, &menu_f);
@@ -1520,8 +1518,6 @@ static tval_desc sval_dependent[] =
 	{ TV_ROD,			"Rods" },
 	{ TV_SCROLL,		"Scrolls" },
 	{ TV_POTION,		"Potions" },
-	{ TV_RING,			"Rings" },
-	{ TV_AMULET,		"Amulets" },
 	{ TV_FOOD,			"Food" },
 	{ TV_MUSHROOM,		"Mushrooms" },
 	{ TV_MAGIC_BOOK,	"Magic books" },

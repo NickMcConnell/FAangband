@@ -78,8 +78,6 @@ static quality_ignore_struct quality_mapping[] =
 	{ ITYPE_HANDGEAR,				TV_GLOVES,		"" },
 	{ ITYPE_FEET,					TV_BOOTS,		"" },
 	{ ITYPE_DIGGER,					TV_DIGGING,		"" },
-	{ ITYPE_RING,					TV_RING,		"" },
-	{ ITYPE_AMULET,					TV_AMULET,		"" },
 	{ ITYPE_LIGHT, 					TV_LIGHT, 		"" },
 };
 
@@ -459,27 +457,8 @@ static int is_object_good(const struct object *obj)
 byte ignore_level_of(const struct object *obj)
 {
 	byte value = 0;
-	int i;
 
 	if (!obj->known) return IGNORE_MAX;
-
-	/* Deal with jewelry specially - only bad or average */
-	if (tval_is_jewelry(obj)) {
-		/* One positive modifier means not bad*/
-		for (i = 0; i < OBJ_MOD_MAX; i++)
-			if (obj->known->modifiers[i] > 0)
-				return IGNORE_AVERAGE;
-
-		/* One positive combat value means not bad, one negative means bad */
-		if ((obj->known->to_h > 0) || (obj->known->to_d > 0) ||
-			(obj->known->to_a > 0))
-			return IGNORE_AVERAGE;
-		if ((obj->known->to_h < 0) || (obj->known->to_d < 0) ||
-			(obj->known->to_a < 0))
-			return IGNORE_BAD;
-
-		return IGNORE_AVERAGE;
-	}
 
 	/* Now just do bad, average, good, ego */
 	if (object_fully_known(obj)) {
