@@ -1166,16 +1166,6 @@ lore-color-base:Light Red
 message-vis:{name} summons winged dragons.
 message-invis:You hear powerful things appear nearby!
 
-name:S_WRAITH
-msgt:SUM_WRAITH
-hit:100
-effect:SUMMON:WRAITH
-dice:8
-lore:summon ringwraiths
-lore-color-base:Light Red
-message-vis:{name} summons ringwraiths.
-message-invis:You hear powerful things appear nearby!
-
 name:S_UNIQUE
 msgt:SUM_UNIQUE
 hit:100

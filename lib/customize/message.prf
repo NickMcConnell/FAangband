@@ -401,9 +401,6 @@ message:SUM_HI_DRAGON:w
 # MSG_SUM_HI_DEMON
 message:SUM_HI_DEMON:w
 
-# MSG_SUM_WRAITH
-message:SUM_WRAITH:w
-
 # MSG_SUM_UNIQUE
 message:SUM_UNIQUE:w
 

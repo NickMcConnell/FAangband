@@ -13757,7 +13757,7 @@ spells:BRAIN_SMASH | WOUND | TELE_LEVEL | TPORT
 spells:BA_DARK | BA_FIRE | BA_NETH
 spells:BO_ICE | BO_MANA | BO_PLAS
 spells:SHAPECHANGE
-spells:S_HI_DEMON | S_HI_DRAGON | S_HI_UNDEAD | S_UNIQUE | S_WRAITH
+spells:S_HI_DEMON | S_HI_DRAGON | S_HI_UNDEAD | S_UNIQUE
 shape:Wolf-Sauron
 shape:Serpent-Sauron
 shape:Vampire-Sauron

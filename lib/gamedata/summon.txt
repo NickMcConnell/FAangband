@@ -18,8 +18,8 @@
 # sound played on the summon happening
 
 # 'uniques' is 1 if the summon type allows uniques to be summoned, 0 otherwise.
-# Traditionally UNIQUE and WRAITH will summon uniques, ANY, HI_UNDEAD, HI_DEMON
-# and HI_DRAGON may summon uniques, and none of the other summon codes will ever
+# Traditionally UNIQUE will summon uniques, ANY, HI_UNDEAD, HI_DEMON and
+# HI_DRAGON may summon uniques, and none of the other summon codes will ever
 # summon uniques.
 
 # 'base' indicates a possible monster base for the summon.  If a summon type
@@ -31,16 +31,16 @@
 # only monsters with the given flag can be chosen.
 
 # 'fallback' gives the name of another summon type to try if the given type
-# fails to summon any monsters.  Traditionally the only summon types with a
-# fallback are WRAITH and UNIQUE, which both fall back to HI_UNDEAD.
+# fails to summon any monsters.  Traditionally the only summon type with a
+# fallback is UNIQUE, which falls back to HI_UNDEAD.
 
 # 'desc' is the description of the summon type used in messages.
 
 # Note that the KIN summon is a special case which has special code in
-# src/effects.c to handle it, and UNIQUE and WRAITH have code in
-# src/mon-summon.c that exclude them from being used for the "call" type of
-# summon (where summoned monsters are chosen from those already on the level
-# rather than newly created).
+# src/effects.c to handle it, and UNIQUE has code in src/mon-summon.c that
+# excludes it from being used for the "call" type of summon (where summoned
+# monsters are chosen from those already on the level rather than newly
+# created).
 
 # Note also that the ANY summon should always be the first in this file.
 
@@ -181,14 +181,6 @@ msgt:SUM_HI_DRAGON
 uniques:1
 base:flying dragon
 desc:winged dragons
-
-name:WRAITH
-msgt:SUM_WRAITH
-uniques:1
-base:wraith
-race-flag:UNIQUE
-fallback:HI_UNDEAD
-desc:ringwraiths
 
 name:UNIQUE
 msgt:SUM_UNIQUE

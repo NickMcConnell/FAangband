@@ -431,9 +431,6 @@ sound:SUM_HI_DRAGON:sum_gong_temple
 # Summon greater demons.
 sound:SUM_HI_DEMON:sum_ghost_moan
 
-# Summon Ringwraiths.
-sound:SUM_WRAITH:sum_bell_hand
-
 # Summon uniques.
 sound:SUM_UNIQUE:sum_bell_tone
 
