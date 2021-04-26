@@ -13,7 +13,7 @@ TRF(NONE,		"")
 TRF(GLYPH,		"Is a glyph")
 TRF(TRAP,		"Is a player trap")
 TRF(VISIBLE,	"Is visible")
-TRF(INVISIBLE,	"Is invisible") // UNUSED
+TRF(DUNGEON,	"Only appears in dungeons")
 TRF(FLOOR,		"Can be set on a floor")
 TRF(TREE,		"Appears in trees")
 TRF(DOWN,		"Takes the player down a level")

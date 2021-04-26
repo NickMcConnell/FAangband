@@ -305,6 +305,11 @@ static int pick_trap(struct chunk *c, int feat, int trap_level)
 		if (feat_is_floor(feat) && !trf_has(kind->flags, TRF_FLOOR))
 			continue;
 
+		/* Dungeon? */
+		if ((level_topography(player->place) != TOP_CAVE) &&
+			trf_has(kind->flags, TRF_DUNGEON))
+			continue;
+
 		/* Check legality of trapdoors. */
 		if (trf_has(kind->flags, TRF_DOWN)) {
 			struct level *current = &world->levels[player->place];
