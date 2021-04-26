@@ -2364,5 +2364,9 @@ void object_flavor_tried(struct object *obj)
 {
 	assert(obj);
 	assert(obj->kind);
+	/* Don't mark artifacts as tried */
+	if (obj->kind->kidx >= z_info->ordinary_kind_max) {
+		return;
+	}
 	obj->kind->tried = true;
 }
