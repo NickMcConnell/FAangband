@@ -31,8 +31,9 @@
 # only monsters with the given flag can be chosen.
 
 # 'fallback' gives the name of another summon type to try if the given type
-# fails to summon any monsters.  Traditionally the only summon type with a
-# fallback is UNIQUE, which falls back to HI_UNDEAD.
+# fails to summon any monsters.  Traditionally the only summon types with any
+# fallback are UNIQUE, which falls back to HI_UNDEAD, and HI_DRAGON, which
+# falls back to DRAGON.
 
 # 'desc' is the description of the summon type used in messages.
 
@@ -180,6 +181,7 @@ name:HI_DRAGON
 msgt:SUM_HI_DRAGON
 uniques:1
 base:flying dragon
+fallback:DRAGON
 desc:winged dragons
 
 name:UNIQUE
