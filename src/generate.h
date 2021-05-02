@@ -309,7 +309,7 @@ void fill_ellipse(struct chunk *c, int y0, int x0, int y_radius, int x_radius,
 				  int feat, int flag, bool light);
 void generate_mark(struct chunk *c, int y1, int x1, int y2, int x2, int flag);
 void draw_rectangle(struct chunk *c, int y1, int x1, int y2, int x2, int feat, 
-					int flag);
+					int flag, bool overwrite_perm);
 void set_marked_granite(struct chunk *c, struct loc grid, int flag);
 extern bool generate_starburst_room(struct chunk *c, int y1, int x1, int y2, 
 									int x2, bool light, int feat, 
