@@ -2681,6 +2681,7 @@ struct chunk *hard_centre_gen(struct player *p, int min_height, int min_width)
 
 	/* No persistent levels of this type for now */
 	if (OPT(p, birth_levels_persist)) {
+		wipe_mon_list(centre, p);
 		cave_free(centre);
 		return NULL;
 	}
@@ -2716,6 +2717,7 @@ struct chunk *hard_centre_gen(struct player *p, int min_height, int min_width)
 		if (left_cavern) cave_free(left_cavern);
 		if (lower_cavern) cave_free(lower_cavern);
 		if (upper_cavern) cave_free(upper_cavern);
+		wipe_mon_list(centre, p);
 		cave_free(centre);
 		return NULL;
 	}
@@ -2870,6 +2872,7 @@ struct chunk *lair_gen(struct player *p, int min_height, int min_width) {
 
 	lair = cavern_chunk(p->depth, y_size, x_size / 2);
 	if (!lair) {
+		wipe_mon_list(normal, p);
 		cave_free(normal);
 		return NULL;
 	}
