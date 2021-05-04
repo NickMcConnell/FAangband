@@ -512,6 +512,8 @@ int cave_monster_count(struct chunk *c);
 
 int count_feats(struct loc *grid,
 				bool (*test)(struct chunk *c, struct loc grid), bool under);
+int count_neighbors(struct loc *match, struct chunk *c, struct loc grid,
+	bool (*test)(struct chunk *c, struct loc grid), bool under);
 struct loc cave_find_decoy(struct chunk *c);
 void make_noise(struct chunk *c, struct player *p, struct monster *mon);
 void update_scent(struct chunk *c, struct player *p, struct monster *mon);
