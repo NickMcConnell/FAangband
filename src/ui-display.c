@@ -1343,6 +1343,7 @@ static void update_maps(game_event_type type, game_event_data *data, void *user)
 
 		int ky, kx;
 		int vy, vx;
+		int clipy;
 
 		/* Location relative to panel */
 		ky = data->point.y - t->offset_y;
@@ -1356,6 +1357,9 @@ static void update_maps(game_event_type type, game_event_data *data, void *user)
 			/* Location in window */
 			vy = tile_height * ky + ROW_MAP;
 			vx = tile_width * kx + COL_MAP;
+
+			/* Protect the status line against modification. */
+			clipy = ROW_MAP + SCREEN_ROWS;
 		} else {
 			/* Verify location */
 			if ((ky < 0) || (ky >= t->hgt / tile_height)) return;
@@ -1364,6 +1368,9 @@ static void update_maps(game_event_type type, game_event_data *data, void *user)
 			/* Location in window */
 			vy = tile_height * ky;
 			vx = tile_width * kx;
+
+			/* All the rows may be used for the map. */
+			clipy = t->hgt;
 		}
 
 
@@ -1377,7 +1384,7 @@ static void update_maps(game_event_type type, game_event_data *data, void *user)
 #endif
 
 		if ((tile_width > 1) || (tile_height > 1))
-			Term_big_queue_char(t, vx, vy, a, c, COLOUR_WHITE, L' ');
+			Term_big_queue_char(t, vx, vy, clipy, a, c, COLOUR_WHITE, L' ');
 	}
 
 	/* Refresh the main screen unless the map needs to center */
