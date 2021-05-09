@@ -25,6 +25,7 @@ struct carry_num_state {
 	struct object *shot;
 	struct object *flask;
 	struct object *inscribed_flask;
+	struct object *treasure;
 };
 
 int setup_tests(void **state) {
@@ -83,6 +84,10 @@ int setup_tests(void **state) {
 	cns->inscribed_flask->known = object_new();
 	object_set_base_known(cns->inscribed_flask);
 	object_touch(cns->p, cns->inscribed_flask);
+	cns->treasure = make_gold(1, "any");
+	cns->treasure->known = object_new();
+	object_set_base_known(cns->treasure);
+	object_touch(cns->p, cns->treasure);
 	*state = cns;
 
 	return 0;
@@ -111,6 +116,10 @@ int teardown_tests(void *state) {
 		object_free(cns->inscribed_flask->known);
 	}
 	object_free(cns->inscribed_flask);
+	if (cns->treasure->known) {
+		object_free(cns->treasure->known);
+	}
+	object_free(cns->treasure);
 	mem_free(state);
 
 	cleanup_angband();
@@ -303,6 +312,7 @@ static int test_carry_num_empty_pack_empty_quiver(void *state) {
 		z_info->quiver_slot_size));
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size, z_info->quiver_slot_size));
+	require(perform_one_test(cns, cns->treasure, 10, 10));
 	ok;
 }
 
@@ -324,6 +334,7 @@ static int test_carry_num_partial_pack_empty_quiver(void *state) {
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size,
 		z_info->quiver_slot_size / z_info->thrown_quiver_mult));
+	require(perform_one_test(cns, cns->treasure, 8, 8));
 	ok;
 }
 
@@ -341,6 +352,7 @@ static int test_carry_num_full_pack_empty_quiver(void *state) {
 	require(perform_one_test(cns, cns->flask, z_info->quiver_slot_size, 0));
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size, 0));
+	require(perform_one_test(cns, cns->treasure, 15, 15));
 	ok;
 }
 
@@ -367,6 +379,7 @@ static int test_carry_num_empty_pack_partial_quiver(void *state) {
 	 */
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size, z_info->quiver_slot_size));
+	require(perform_one_test(cns, cns->treasure, 3, 3));
 
 	require(fill_pack_quiver(cns, 0,
 		z_info->quiver_slot_size - n_arrow_miss, 0,
@@ -390,6 +403,7 @@ static int test_carry_num_empty_pack_partial_quiver(void *state) {
 	 */
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size, z_info->quiver_slot_size));
+	require(perform_one_test(cns, cns->treasure, 30, 30));
 
 	require(fill_pack_quiver(cns, 0, 0,
 		z_info->quiver_slot_size - n_shot_miss,
@@ -413,6 +427,7 @@ static int test_carry_num_empty_pack_partial_quiver(void *state) {
 	 */
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size, z_info->quiver_slot_size));
+	require(perform_one_test(cns, cns->treasure, 1, 1));
 
 	/* Then do tests with all slots filled but with room in each stack. */
 	require(fill_pack_quiver(cns, 0,
@@ -445,6 +460,7 @@ static int test_carry_num_empty_pack_partial_quiver(void *state) {
 	 */
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size, z_info->quiver_slot_size));
+	require(perform_one_test(cns, cns->treasure, 25, 25));
 
 	ok;
 }
@@ -476,6 +492,7 @@ static int test_carry_num_partial_pack_partial_quiver(void *state) {
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size,
 		z_info->quiver_slot_size / z_info->thrown_quiver_mult));
+	require(perform_one_test(cns, cns->treasure, 13, 13));
 
 	require(fill_pack_quiver(cns, z_info->pack_size - 3,
 		z_info->quiver_slot_size - n_arrow_miss, 0,
@@ -498,6 +515,7 @@ static int test_carry_num_partial_pack_partial_quiver(void *state) {
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size,
 		z_info->quiver_slot_size / z_info->thrown_quiver_mult));
+	require(perform_one_test(cns, cns->treasure, 6, 6));
 
 	require(fill_pack_quiver(cns, z_info->pack_size - 3, 0,
 		z_info->quiver_slot_size - n_shot_miss,
@@ -520,6 +538,7 @@ static int test_carry_num_partial_pack_partial_quiver(void *state) {
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size,
 		z_info->quiver_slot_size / z_info->thrown_quiver_mult));
+	require(perform_one_test(cns, cns->treasure, 21, 21));
 
 	/* Then do tests with all slots filled but with room in each stack. */
 	require(fill_pack_quiver(cns, z_info->pack_size - 4,
@@ -543,6 +562,7 @@ static int test_carry_num_partial_pack_partial_quiver(void *state) {
 	 */
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size, z_info->quiver_slot_size));
+	require(perform_one_test(cns, cns->treasure, 9, 9));
 
 	ok;
 }
@@ -573,6 +593,7 @@ static int test_carry_num_full_pack_partial_quiver(void *state) {
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size,
 		(n_arrow_miss + n_shot_miss) / z_info->thrown_quiver_mult));
+	require(perform_one_test(cns, cns->treasure, 2, 2));
 
 	require(fill_pack_quiver(cns, z_info->pack_size - 2,
 		z_info->quiver_slot_size - n_arrow_miss, 0,
@@ -594,6 +615,7 @@ static int test_carry_num_full_pack_partial_quiver(void *state) {
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size,
 		n_arrow_miss / z_info->thrown_quiver_mult + n_flask_miss));
+	require(perform_one_test(cns, cns->treasure, 41, 41));
 
 	require(fill_pack_quiver(cns, z_info->pack_size - 2, 0,
 		z_info->quiver_slot_size - n_shot_miss,
@@ -610,6 +632,7 @@ static int test_carry_num_full_pack_partial_quiver(void *state) {
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size,
 		n_shot_miss / z_info->thrown_quiver_mult + n_flask_miss));
+	require(perform_one_test(cns, cns->treasure, 50, 50));
 
 	/* Then do tests with all slots filled but with room in each stack. */
 	require(fill_pack_quiver(cns, z_info->pack_size - 3,
@@ -626,6 +649,7 @@ static int test_carry_num_full_pack_partial_quiver(void *state) {
 		n_flask_miss));
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size, n_flask_miss));
+	require(perform_one_test(cns, cns->treasure, 5, 5));
 
 	ok;
 }
@@ -644,6 +668,7 @@ static int test_carry_num_empty_pack_full_quiver(void *state) {
 		z_info->quiver_slot_size));
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size, z_info->quiver_slot_size));
+	require(perform_one_test(cns, cns->treasure, 17, 17));
 	ok;
 }
 
@@ -662,6 +687,7 @@ static int test_carry_num_partial_pack_full_quiver(void *state) {
 		z_info->quiver_slot_size));
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size, z_info->quiver_slot_size));
+	require(perform_one_test(cns, cns->treasure, 36, 36));
 	ok;
 }
 
@@ -677,6 +703,7 @@ static int test_carry_num_full_pack_full_quiver(void *state) {
 	require(perform_one_test(cns, cns->flask, z_info->quiver_slot_size, 0));
 	require(perform_one_test(cns, cns->inscribed_flask,
 		z_info->quiver_slot_size, 0));
+	require(perform_one_test(cns, cns->treasure, 24, 24));
 	ok;
 }
 
