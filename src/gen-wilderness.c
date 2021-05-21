@@ -1134,7 +1134,7 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 			}
 		}
 	}
-	ensure_connectedness(c);
+	ensure_connectedness(c, false);
 
 	/* Place objects, traps and monsters */
 	(void) populate(c, false);
