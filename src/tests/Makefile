@@ -29,7 +29,8 @@ bin/% : %.o ../faangband.o test-utils.o unit-test.o
 	@echo "  CC $@"
 
 clean :
-	$(RM) bin/*/* $(TESTOBJS)
+	$(RM) $(TESTOBJS)
+	$(RM) -rf bin
 
 .PHONY : all clean
 .PRECIOUS : %.o
