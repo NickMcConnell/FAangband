@@ -3670,6 +3670,10 @@ struct chunk *themed_gen(struct player *p, int min_height, int min_width) {
 		return NULL;
 	}
 
+	/* Bound with perma-rock */
+	draw_rectangle(c, 0, 0, c->height - 1, c->width - 1, FEAT_PERM,
+				   SQUARE_NONE, true);
+
 	/* Indicate that this theme is built, and should not appear again. */
 	p->themed_level_appeared |= (1L << (p->themed_level - 1));
 
