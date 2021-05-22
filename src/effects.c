@@ -2564,16 +2564,23 @@ bool effect_handler_RECHARGE(effect_handler_context_t *context)
 		bool none_left = false;
 
 		msg("The recharge backfires!");
-		msg("There is a bright flash of light.");
 
-		/* Reduce and describe inventory */
-		if (object_is_carried(player, obj))
-			destroyed = gear_object_for_use(obj, 1, true, &none_left);
-		else
-			destroyed = floor_object_for_use(obj, 1, true, &none_left);
-		if (destroyed->known)
-			object_delete(&destroyed->known);
-		object_delete(&destroyed);
+		/* Artifacts are drained, and the player is hurt */
+		if (obj->artifact) {
+			obj->pval = 0;
+			take_hit(player, damroll(5, 5), "Failed recharging");
+		} else {
+			msg("There is a bright flash of light.");
+
+			/* Reduce and describe inventory */
+			if (object_is_carried(player, obj))
+				destroyed = gear_object_for_use(obj, 1, true, &none_left);
+			else
+				destroyed = floor_object_for_use(obj, 1, true, &none_left);
+			if (destroyed->known)
+				object_delete(&destroyed->known);
+			object_delete(&destroyed);
+		}
 	} else {
 		/* Extract a "power" */
 		int ease_of_recharge = (100 - obj->kind->level) / 10;
