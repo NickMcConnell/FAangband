@@ -236,7 +236,8 @@ ELSEIF(SUPPORT_SDL_FRONTEND)
     IF (SUPPORT_SDL_SOUND)
 
         INCLUDE(src/cmake/macros/SDL_Sound.cmake)
-        CONFIGURE_SDL_SOUND(FAangband)
+        CONFIGURE_SDL_SOUND(FAangband NO)
+        CONFIGURE_SDL_SOUND(AngbandCoreLib YES)
 
     ENDIF()
 
@@ -248,7 +249,8 @@ ELSEIF(SUPPORT_SDL2_FRONTEND)
     IF (SUPPORT_SDL2_SOUND)
 
         INCLUDE(src/cmake/macros/SDL2_Sound.cmake)
-        CONFIGURE_SDL2_SOUND(FAangband)
+        CONFIGURE_SDL2_SOUND(FAangband NO)
+        CONFIGURE_SDL2_SOUND(AngbandCoreLib YES)
 
     ENDIF()
 
