@@ -428,8 +428,7 @@ void object_list_format_name(const object_list_entry_t *entry,
 	if (!has_singular_prefix && entry->count[field] == 1) {
 		chunk = " ";
 		source = name;
-	}
-	else {
+	} else {
 		chunk = strtok(name, " ");
 		source = NULL;
 	}
@@ -439,6 +438,8 @@ void object_list_format_name(const object_list_entry_t *entry,
 
 	/* Get the rest of the name and clip it to fit the max width. */
 	chunk = strtok(source, "\0");
-	my_strcat(line_buffer, chunk, size);
+	if (chunk) {
+		my_strcat(line_buffer, chunk, size);
+	}
 }
 

@@ -204,7 +204,7 @@ void flavor_set_all_aware(void)
 	int i;
 
 	/* Analyze every object */
-	for (i = 0; i < z_info->k_max; i++) {
+	for (i = 0; i < z_info->ordinary_kind_max; i++) {
 		struct object_kind *kind = &k_info[i];
 
 		/* Skip empty objects */
