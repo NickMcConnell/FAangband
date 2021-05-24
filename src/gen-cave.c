@@ -543,8 +543,10 @@ static void build_tunnel(struct chunk *c, struct loc grid1, struct loc grid2)
 		}
 
 		/* Avoid obstacles */
-		if (square_isperm(c, tmp_grid) ||
-			square_is_granite_with_flag(c, tmp_grid, SQUARE_WALL_SOLID)) {
+		if ((square_isperm(c, tmp_grid) && !sqinfo_has(square(c,
+				tmp_grid)->info, SQUARE_WALL_INNER)) ||
+				square_is_granite_with_flag(c, tmp_grid,
+				SQUARE_WALL_SOLID)) {
 			continue;
 		}
 
