@@ -789,7 +789,7 @@ static void renderer_COMPACT_PERCENTAGE_RESIST_RENDERER_WITH_COMBINED_AUX(
 				p.y += 1;
 			}
 		} else {
-			Term_queue_chars(details->label_position.x,
+			safe_queue_chars(details->label_position.x,
 				details->label_position.y, nlabel,
 				info->label_colors[effect_index], label);
 		}
@@ -824,7 +824,7 @@ static void renderer_PERCENTAGE_RESIST_COMBINED_RENDERER(
 	if (color < 2) {
 		return;
 	}
-	Term_queue_chars(details->value_position.x,
+	safe_queue_chars(details->value_position.x,
 					 details->value_position.y,
 					 4, //ui_entry_renderer_query_value_width(n),
 					 info->colors[color], w_percent);
@@ -1188,7 +1188,7 @@ static void renderer_MODIFIER_COMBINED_RENDERER(
 	} else if (val < 0) {
 		color = 2;
 	}
-	Term_queue_chars(details->value_position.x + 1,
+	safe_queue_chars(details->value_position.x + 1,
 					 details->value_position.y,
 					 strlen(total), //ui_entry_renderer_query_value_width(n),
 					 info->colors[color], w_total);
