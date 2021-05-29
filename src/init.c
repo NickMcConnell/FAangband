@@ -146,7 +146,7 @@ const char *list_element_names[] = {
 
 static const char *effect_list[] = {
 	"NONE",
-	#define EFFECT(x, a, b, c, d, e) #x,
+	#define EFFECT(x, a, b, c, d, e, f) #x,
 	#include "list-effects.h"
 	#undef EFFECT
 	"MAX"
