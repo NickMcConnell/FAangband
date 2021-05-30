@@ -553,7 +553,6 @@ static void decrease_timeouts(void)
 }
 
 /**
-/**
  * Handle things that need updating once every 10 game turns
  */
 void process_world(struct chunk *c)
