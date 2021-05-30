@@ -553,9 +553,6 @@ static void decrease_timeouts(void)
 }
 
 /**
- * ------------------------------------------------------------------------
- * Main turn-by-turn processing functions
- * ------------------------------------------------------------------------ */
 /**
  * Handle things that need updating once every 10 game turns
  */

@@ -1762,8 +1762,8 @@ struct loc monster_target_loc(struct chunk *c, const struct monster *mon)
 {
 	if (mon->target.midx == -1) {
 		/* Player (or decoy) */
-		struct loc decoy = cave_find_decoy(c);
-		return loc_is_zero(decoy) ? player->grid : decoy;
+		return monster_is_decoyed(mon) ? player->grid :
+			cave_find_decoy(c);
 	} else if (mon->target.midx > 0) {
 		/* Monster */
 		return cave_monster(c, mon->target.midx)->grid;
