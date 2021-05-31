@@ -129,7 +129,7 @@ void free_store(struct store *store)
 /**
  * Get rid of stores at cleanup. Gets rid of everything.
  */
-void cleanup_stores(void)
+static void cleanup_stores(void)
 {
 	struct owner *o, *o_next;
 	struct object_buy *buy, *buy_next;
@@ -1176,7 +1176,7 @@ struct object *store_carry(struct store *store, struct object *obj)
 }
 
 
-void store_delete(struct store *s, struct object *obj, int amt)
+static void store_delete(struct store *s, struct object *obj, int amt)
 {
 	struct object *known_obj = obj->known;
 

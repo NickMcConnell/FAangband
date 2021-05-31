@@ -19,6 +19,7 @@
 #include "game-world.h"
 #include "init.h"
 #include "player.h"
+#include "save-charoutput.h"
 #include "z-file.h"
 #include "z-util.h"
 

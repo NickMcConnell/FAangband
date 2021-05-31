@@ -1143,7 +1143,7 @@ static bool lab_is_tunnel(struct chunk *c, struct loc grid) {
  * \param soft is true if we use regular walls, false if permanent walls
  * \return a pointer to the generated chunk
  */
-struct chunk *labyrinth_chunk(int depth, int h, int w, bool lit, bool soft)
+static struct chunk *labyrinth_chunk(int depth, int h, int w, bool lit, bool soft)
 {
 	int i, j, k;
 	struct loc grid;
@@ -1760,7 +1760,7 @@ void ensure_connectedness(struct chunk *c, bool allow_vault_disconnect) {
  * \param w the chunk's dimensions
  * \return a pointer to the generated chunk
  */
-struct chunk *cavern_chunk(int depth, int h, int w)
+static struct chunk *cavern_chunk(int depth, int h, int w)
 {
 	int i;
 	int size = h * w;
@@ -1895,7 +1895,7 @@ struct chunk *cavern_gen(struct player *p, int min_height, int min_width) {
  * @param east - a pointer to put the maximum x coord of the lot
  * @param south - a pointer to put the maximum y coord of the lot
  */
-void get_lot_bounds(struct chunk *c, struct loc xroads, struct loc lot,
+static void get_lot_bounds(struct chunk *c, struct loc xroads, struct loc lot,
 		int lot_wid, int lot_hgt,
 		int *west, int *north, int *east, int *south) {
 
@@ -1925,7 +1925,7 @@ void get_lot_bounds(struct chunk *c, struct loc xroads, struct loc lot,
 	}
 }
 
-bool lot_is_clear(struct chunk *c, struct loc xroads, struct loc lot,
+static bool lot_is_clear(struct chunk *c, struct loc xroads, struct loc lot,
 		int lot_wid, int lot_hgt) {
 	struct loc nw_corner, se_corner, probe;
 
@@ -1947,7 +1947,7 @@ bool lot_is_clear(struct chunk *c, struct loc xroads, struct loc lot,
 	return true;
 }
 
-bool lot_has_shop(struct chunk *c, struct loc xroads, struct loc lot,
+static bool lot_has_shop(struct chunk *c, struct loc xroads, struct loc lot,
 		int lot_wid, int lot_hgt) {
 	struct loc nw_corner, se_corner, probe;
 
@@ -2596,7 +2596,7 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width)
  * \param width are the chunk's dimensions
  * \return a pointer to the generated chunk
  */
-struct chunk *modified_chunk(int depth, int height, int width)
+static struct chunk *modified_chunk(int depth, int height, int width)
 {
 	int i;
 	int by = 0, bx = 0, key, rarity;
@@ -2818,7 +2818,7 @@ struct chunk *modified_gen(struct player *p, int min_height, int min_width) {
  * \param width are the chunk's dimensions
  * \return a pointer to the generated chunk
  */
-struct chunk *moria_chunk(int depth, int height, int width)
+static struct chunk *moria_chunk(int depth, int height, int width)
 {
 	int i;
 	int by = 0, bx = 0, key, rarity;
@@ -3011,7 +3011,7 @@ struct chunk *moria_gen(struct player *p, int min_height, int min_width) {
  * \param p is the player
  * \return a pointer to the generated chunk
  */
-struct chunk *vault_chunk(struct player *p)
+static struct chunk *vault_chunk(struct player *p)
 {
 	struct vault *v;
 	struct chunk *c;
@@ -3040,7 +3040,7 @@ struct chunk *vault_chunk(struct player *p)
  * \param floor is an array of sample floor grids, one from each cavern in the
  * order left, upper, lower, right
  */
-void connect_caverns(struct chunk *c, struct loc floor[])
+static void connect_caverns(struct chunk *c, struct loc floor[])
 {
 	int i;
 	int size = c->height * c->width;

@@ -869,7 +869,7 @@ static int calc_mon_feeling(struct chunk *c)
  * Find a cave_profile by name
  * \param name is the name of the cave_profile being looked for
  */
-static const struct cave_profile *find_cave_profile(char *name)
+static const struct cave_profile *find_cave_profile(const char *name)
 {
 	int i;
 
@@ -1076,7 +1076,7 @@ static const struct cave_profile *choose_profile(struct player *p)
 /**
  * Get information for constructing stairs and paths in the correct places
  */
-static void get_join_info(struct player *p, struct dun_data *dun)
+static void get_join_info(struct player *p, struct dun_data *dd)
 {
 	struct level *current_lev = &world->levels[p->place];
 	struct level *lev = NULL;
@@ -1193,8 +1193,8 @@ static void get_join_info(struct player *p, struct dun_data *dun)
 					new->grid.y = join->grid.y;
 					new->grid.x = join->grid.x;
 					new->feat = FEAT_LESS;
-					new->next = dun->join;
-					dun->join = new;
+					new->next = dd->join;
+					dd->join = new;
 				}
 				join = join->next;
 			}
@@ -1213,8 +1213,8 @@ static void get_join_info(struct player *p, struct dun_data *dun)
 					new->grid.y = join->grid.y;
 					new->grid.x = join->grid.x;
 					new->feat = FEAT_MORE;
-					new->next = dun->join;
-					dun->join = new;
+					new->next = dd->join;
+					dd->join = new;
 				}
 				join = join->next;
 			}

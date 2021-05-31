@@ -21,6 +21,7 @@
 #include "game-input.h"
 #include "player-calcs.h"
 #include "player-history.h"
+#include "player-properties.h"
 #include "ui-input.h"
 #include "ui-menu.h"
 
@@ -313,8 +314,8 @@ static char view_ability_tag(struct menu *menu, int oid)
 /**
  * Display an entry on the gain ability menu
  */
-void view_ability_display(struct menu *menu, int oid, bool cursor, int row,
-					   int col, int width)
+static void view_ability_display(struct menu *menu, int oid, bool cursor,
+	int row, int col, int width)
 {
 	char buf[80];
 	byte color;
@@ -378,7 +379,7 @@ static void view_ability_menu_browser(int oid, void *data, const region *loc)
 /**
  * Display list available specialties.
  */
-void view_ability_menu(void)
+static void view_ability_menu(void)
 {
 	struct menu menu;
 	menu_iter menu_f = { view_ability_tag, 0, view_ability_display, 0, 0 };

@@ -1102,7 +1102,7 @@ void do_cmd_set_trap(struct loc grid)
  * The "semantics" of this command must be chosen before the player
  * is confused, and it must be verified against the new grid.
  */
-void do_cmd_alter_aux(int dir)
+static void do_cmd_alter_aux(int dir)
 {
 	struct loc grid;
 	bool more = false;
@@ -1175,7 +1175,7 @@ void do_cmd_alter(struct command *cmd)
 	do_cmd_alter_aux(dir);
 }
 
-void do_cmd_steal_aux(int dir)
+static void do_cmd_steal_aux(int dir)
 {
 	/* Get location */
 	struct loc grid = loc_sum(player->grid, ddgrid[dir]);
@@ -1809,7 +1809,6 @@ void do_cmd_feeling(void)
  */
 void do_cmd_mon_command(struct command *cmd)
 {
-	int dir;
 	struct monster *mon = get_commanded_monster();
 	struct monster_lore *lore = NULL;
 	char m_name[80];
@@ -1893,6 +1892,7 @@ void do_cmd_mon_command(struct command *cmd)
 			break;
 		}
 		case CMD_WALK: {
+			int dir;
 			struct loc grid;
 			bool can_move = false;
 			bool has_hit = false;

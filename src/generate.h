@@ -327,8 +327,8 @@ struct chunk *valley_gen(struct player *p, int height, int width);
 /* gen-chunk.c */
 struct chunk *chunk_write(struct chunk *c);
 void chunk_list_add(struct chunk *c);
-bool chunk_list_remove(char *name);
-struct chunk *chunk_find_name(char *name);
+bool chunk_list_remove(const char *name);
+struct chunk *chunk_find_name(const char *name);
 bool chunk_find(struct chunk *c);
 struct chunk *chunk_find_adjacent(struct player *p, char *direction);
 void symmetry_transform(struct loc *grid, int y0, int x0, int height, int width,
