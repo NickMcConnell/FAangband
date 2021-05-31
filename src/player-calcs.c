@@ -2251,7 +2251,7 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	/* Ent */
 	if (player_has(p, PF_WOODEN)) {
 		/* Ents dig like maniacs, but only with their hands. */
-		if (!slot_object(p, slot_by_name(p, "weapon")))
+		if (character_generated && !slot_object(p, slot_by_name(p, "weapon")))
 			state->skills[SKILL_DIGGING] += p->lev * 10;
 
 		/* Ents are not light */
