@@ -24,6 +24,7 @@
 #include "mon-lore.h"
 #include "monster.h"
 #include "obj-desc.h"
+#include "obj-design.h"
 #include "obj-info.h"
 #include "obj-make.h"
 #include "obj-pile.h"
@@ -454,7 +455,10 @@ void spoil_artifact(const char *fname)
 					 art->alloc_min, art->alloc_max, art->alloc_prob,
 					 (art->weight / 10), (art->weight % 10));
 
-			if (OPT(player, birth_randarts)) text_out("%s.\n", art->text);
+			/* Include description for randarts, which gives generation info */
+			if (j >= z_info->a_max - ART_NUM_RANDOM) {
+				text_out("%s.\n", art->text);
+			}
 
 			/* Terminate the entry */
 			spoiler_blanklines(2);

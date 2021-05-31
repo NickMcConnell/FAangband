@@ -127,13 +127,6 @@ future characters, 'r' to reset the current selections to the defaults
 for a new character, and 'm' to reset the current selections to the
 Angband maintainer's defaults for the birth options.
 
-Generate a new, random artifact set ``birth_randarts``
-  A different set of artifacts will be created, in place of the standard
-  ones. This is intended primarily for people who have played enough to
-  know what most of the standard artifacts do and want some variety. The
-  number, findability and power of random artifacts will all match the
-  standard set - approximately.
-
 Generate connected stairs ``birth_connect_stairs``
   With this option turned on, if you go down stairs, you start the new level
   on an up staircase, and vice versa (if you go up stairs, you start the
