@@ -11,6 +11,7 @@
 #include "effects.h"
 #include "effects-info.h"
 #include "game-world.h"
+#include "generate.h"
 #include "init.h"
 #include "player.h"
 #include "player-birth.h"
