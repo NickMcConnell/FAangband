@@ -660,7 +660,8 @@ static int make_formation(struct chunk *c, struct player *p, struct loc grid,
 		/* Avoid paths, stay in bounds */
 		if (((square_feat(c, tgrid)->fidx != base_feat1) &&
 			 (square_feat(c, tgrid)->fidx != base_feat2))
-			|| !square_in_bounds_fully(c, tgrid) || square_ismark(c, tgrid)) {
+			|| !square_in_bounds_fully(c, tgrid) || square_ismark(c, tgrid)
+			|| square_isvault(c, tgrid)) {
 			mem_free(all_feat);
 			return (total);
 		}
