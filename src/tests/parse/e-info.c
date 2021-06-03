@@ -21,13 +21,13 @@ int teardown_tests(void *state) {
 	return 0;
 }
 
-int test_order(void *state) {
+static int test_order(void *state) {
 	enum parser_error r = parser_parse(state, "combat:4");
 	eq(r, PARSE_ERROR_MISSING_FIELD);
 	ok;
 }
 
-int test_name0(void *state) {
+static int test_name0(void *state) {
 	enum parser_error r = parser_parse(state, "name:of Resist Lightning");
 	struct ego_item *e;
 
@@ -38,7 +38,7 @@ int test_name0(void *state) {
 	ok;
 }
 
-int test_cost0(void *state) {
+static int test_cost0(void *state) {
 	enum parser_error r = parser_parse(state, "cost:6");
 	struct ego_item *e;
 
@@ -60,7 +60,7 @@ int test_rating0(void *state) {
 	ok;
 }
 
-int test_combat0(void *state) {
+static int test_combat0(void *state) {
 	enum parser_error r = parser_parse(state, "combat:1d2:3d4:5d6");
 	struct ego_item *e;
 
@@ -76,7 +76,7 @@ int test_combat0(void *state) {
 	ok;
 }
 
-int test_min0(void *state) {
+static int test_min0(void *state) {
 	enum parser_error r = parser_parse(state, "min-combat:10:13:4");
 	struct ego_item *e;
 
@@ -89,7 +89,7 @@ int test_min0(void *state) {
 	ok;
 }
 
-int test_flags0(void *state) {
+static int test_flags0(void *state) {
 	enum parser_error r = parser_parse(state, "flags:SEE_INVIS");
 	struct ego_item *e;
 
@@ -100,7 +100,7 @@ int test_flags0(void *state) {
 	ok;
 }
 
-int test_desc0(void *state) {
+static int test_desc0(void *state) {
 	enum parser_error r = parser_parse(state, "desc:foo");
 	struct ego_item *e;
 	eq(r, PARSE_ERROR_NONE);
