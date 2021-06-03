@@ -156,7 +156,9 @@ static int spell_color(struct player *p, const struct monster_race *race,
 			/* All other elements */
 			default:
 				if (player_is_immune(p->known_state, eff->subtype)) {
-					return level->lore_attr_immune;
+					/* There may not be an immunity color */
+					return level->lore_attr_immune ? level->lore_attr_immune :
+						level->lore_attr_resist;
 				} else if (player_resists_effects(p->known_state,
 												  eff->subtype)) {
 					return level->lore_attr_resist;
