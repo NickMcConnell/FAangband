@@ -3174,6 +3174,7 @@ static bool effect_handler_TELEPORT_TO(effect_handler_context_t *context)
 	int dis = 0, ctr = 0, dir = DIR_TARGET;
 	struct monster *t_mon = monster_target_monster(context);
 	bool friendly = false;
+	bool dim_door = false;
 
 	context->ident = true;
 
@@ -3251,6 +3252,7 @@ static bool effect_handler_TELEPORT_TO(effect_handler_context_t *context)
 
 		/* Randomise the landing a bit if it's a vault */
 		if (square_isvault(cave, aim)) dis = 10;
+		dim_door = true;
 	}
 
 	/* Find a usable location */
@@ -3281,6 +3283,11 @@ static bool effect_handler_TELEPORT_TO(effect_handler_context_t *context)
 
 	/* Move player or monster */
 	monster_swap(start, land);
+
+	/* Cancel target if necessary */
+	if (dim_door) {
+		target_set_location(0, 0);
+	}
 
 	/* Clear any projection marker to prevent double processing */
 	sqinfo_off(square(cave, land)->info, SQUARE_PROJECT);
