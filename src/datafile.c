@@ -579,7 +579,7 @@ void deactivate_randart_file(void)
 /**
  * Taken from Zangband.  What a good idea!
  */
-errr get_rnd_line(char *file_name, char *output)
+errr get_rnd_line(const char *file_name, char *output)
 {
 	ang_file *fp;
 	char buf[1024];

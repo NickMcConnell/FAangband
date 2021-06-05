@@ -445,7 +445,7 @@ static bool get_property(struct artifact *art, struct object *obj,
  * various methods.  Properties which cost a negative amount don't need to be
  * considered for ranking methods, since they are always affordable.
  */
-static int select_property(int temp_potential, char **property_list,
+static int select_property(int temp_potential, const char **property_list,
 						   const int choices, int *max_value,
 						   int rank_method, struct object *obj)
 {
@@ -596,7 +596,7 @@ static struct activation *find_activation_for_effect(struct effect *effect)
 /**
  * Grant the activation asked for, if the object can afford it.
  */
-static bool get_activation(char *act_name, struct object *obj)
+static bool get_activation(const char *act_name, struct object *obj)
 {
 	struct activation *act = lookup_activation(act_name);
 
@@ -3300,19 +3300,19 @@ static void haggle_till_done(struct artifact *art, struct object *obj)
 
 	/* Frequently neaten bonuses to Armour Class, Skill, and Deadliness. */
 	for (i = 0; i < 3; i++) {
-		s16b *bonus = art ? &art->to_a : &obj->to_a;
+		s16b *bonus_chg = art ? &art->to_a : &obj->to_a;
 		if (i == 1) { 
-			bonus = art ? &art->to_h : &obj->to_h;
+			bonus_chg = art ? &art->to_h : &obj->to_h;
 		}
 		if (i == 2) { 
-			bonus = art ? &art->to_d : &obj->to_d;
+			bonus_chg = art ? &art->to_d : &obj->to_d;
 		}
-		if (((*bonus) % 5 == 4) && one_in_(2)) {
-			(*bonus)++;
-		} else if (((*bonus) % 5 == 1) && one_in_(2)) {
-			(*bonus)--;
-		} else if (((*bonus) % 2 == 1) && !one_in_(4)) {
-			(*bonus)++;
+		if (((*bonus_chg) % 5 == 4) && one_in_(2)) {
+			(*bonus_chg)++;
+		} else if (((*bonus_chg) % 5 == 1) && one_in_(2)) {
+			(*bonus_chg)--;
+		} else if (((*bonus_chg) % 2 == 1) && !one_in_(4)) {
+			(*bonus_chg)++;
 		}
 	}
 }
@@ -4229,7 +4229,7 @@ static bool choose_type(struct object *obj)
 			}
 		} else if (streq(ego->name, "of Sustenance")) {
 			/* Min potential 50 */
-			char *sustains[7] =
+			const char *sustains[7] =
 				{ "sustain strength", "sustain intelligence", "sustain wisdom",
 				  "sustain dexterity", "sustain constitution", "hold life",
 				  "slow digestion"
@@ -4329,7 +4329,7 @@ static bool choose_type(struct object *obj)
 			/* min potential 16 */
 			int property = 2;
 			int max_value = randint1(5);
-			char *insight[3] = { "telepathy", "see invisible", "infravision" };
+			const char *insight[3] = { "telepathy", "see invisible", "infravision" };
 
 			/* Telepathy, See Invisible, or at least infravision */
 			property = select_property(potential, insight, 3, &max_value,
@@ -4373,8 +4373,8 @@ static bool choose_type(struct object *obj)
 			/* min potential 350 */
 			int property = 0;
 			int max_value = bonus + 1;
-			char *stats[3] = { "strength", "dexterity", "constitution" };
-			char *sustains[3] = { "sustain strength", "sustain dexterity",
+			const char *stats[3] = { "strength", "dexterity", "constitution" };
+			const char *sustains[3] = { "sustain strength", "sustain dexterity",
 								  "sustain constitution" };
 			int tries = 5;
 
@@ -4449,7 +4449,7 @@ static bool choose_type(struct object *obj)
 			/* min potential 700 */
 			int property;
 			int max_value = 0;
-			char *mobility[6] =	{ "see invisible", "protection from fear",
+			const char *mobility[6] =	{ "see invisible", "protection from fear",
 								  "protection from blindness",
 								  "protection from confusion",
 								  "nexus resistance", "trap immunity" };
@@ -4483,7 +4483,7 @@ static bool choose_type(struct object *obj)
 				/* Rack 'em up while we're feeling lucky */
 				while (randint1(potential) > 1000) {
 					int choice = randint0(9);
-					char *resists[9] = { "poison resistance",
+					const char *resists[9] = { "poison resistance",
 										 "light resistance",
 										 "dark resistance", "sound resistance",
 										 "shards resistance",
@@ -4504,7 +4504,7 @@ static bool choose_type(struct object *obj)
 			/* min potential 21 */
 			int property;
 			int max_value = 5;
-			char *utility[5] = { "searching skill", "slow digestion",
+			const char *utility[5] = { "searching skill", "slow digestion",
 								 "feather falling", "light", "regeneration" };
 			int tries = randint1(bonus + 2);
 
@@ -4537,7 +4537,7 @@ static bool choose_type(struct object *obj)
 			int tries = randint1(3);
 			int max_value = 5;
 			int property;
-			char *stats[5] = { "strength", "wisdom", "intelligence",
+			const char *stats[5] = { "strength", "wisdom", "intelligence",
 							   "dexterity", "constitution" };
 
 			/* Too much or too little movement */
@@ -4583,7 +4583,7 @@ static bool choose_type(struct object *obj)
 				done = true;
 			}
 		} else if (streq(ego->name, "of Speed")) {
-			char *speed[1] = { "speed" };
+			const char *speed[1] = { "speed" };
 			int max_value = 14;
 
 			/* This is an exclusive club */
@@ -4663,7 +4663,7 @@ static bool choose_type(struct object *obj)
 			}
 		} else if (streq(ego->name, "of Fickleness")) {
 			/* min potential 0 */
-			char *fickle[7] = { "teleportation", "anti-teleportation",
+			const char *fickle[7] = { "teleportation", "anti-teleportation",
 								"cuts", "hallucination", "siren",
 								"demon summon", "paralysis" };
 			while (1) {

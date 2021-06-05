@@ -1895,7 +1895,7 @@ int weight_remaining(struct player *p)
 /**
  * Calculate all class-based bonuses and penalties to melee skill.
  */
-int add_special_melee_skill(struct player *p, const struct object *obj)
+static int add_special_melee_skill(struct player *p, const struct object *obj)
 {
 	int add_skill = 0;
 
@@ -1936,7 +1936,7 @@ int add_special_melee_skill(struct player *p, const struct object *obj)
 /**
  * Calculate all class and race-based bonuses and penalties to missile skill
  */
-int add_special_missile_skill(struct player *p, struct player_state *state)
+static int add_special_missile_skill(struct player *p, struct player_state *state)
 {
 	int add_skill = 0;
 
@@ -1981,7 +1981,7 @@ int add_special_missile_skill(struct player *p, struct player_state *state)
 /**
  * Apply a percentage resistance to the existing player resistance level.
  */
-void apply_resist(s16b *player_resist, int item_resist)
+static void apply_resist(s16b *player_resist, int item_resist)
 {
 	*player_resist = (*player_resist * item_resist) / 100;
 }

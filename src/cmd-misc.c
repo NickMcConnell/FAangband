@@ -100,7 +100,7 @@ void do_cmd_reshape(struct command *cmd)
 		return;
 	} else {
 		bool ident;
-		char *shape_name = (player->lev < 20) ? "bear cub" :
+		const char *shape_name = (player->lev < 20) ? "bear cub" :
 			((player->lev < 40) ? "bear" : "great bear");
 
 		/* Confirm */

@@ -140,7 +140,7 @@ bool chunk_find(struct chunk *c)
 /**
  * Find the saved chunk adjacent to the current player place
  */
-struct chunk *chunk_find_adjacent(struct player *p, char *direction)
+struct chunk *chunk_find_adjacent(struct player *p, const char *direction)
 {
 	struct level *lev = &world->levels[p->place];
 

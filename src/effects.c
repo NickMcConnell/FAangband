@@ -2323,7 +2323,7 @@ static bool effect_handler_DETECT_SOUL(effect_handler_context_t *context)
  * The height to detect above and below the player is context->value.dice,
  * the width either side of the player context->value.sides.
  */
-bool effect_handler_DETECT_ANIMAL(effect_handler_context_t *context)
+static bool effect_handler_DETECT_ANIMAL(effect_handler_context_t *context)
 {
 	bool monsters = detect_monsters(context->y, context->x, monster_is_natural);
 

@@ -1609,7 +1609,6 @@ void store_update(void)
 
 		/* Sometimes, shuffle the shop-keepers */
 		if (one_in_(z_info->store_shuffle)) {
-			struct store *s;
 			/* Message */
 			if (OPT(player, cheat_xtra)) msg("Shuffling a Shopkeeper...");
 

@@ -892,7 +892,7 @@ void display_map(int *cy, int *cx)
 /**
  * Display a map of the type of wilderness surrounding the current level
  */
-void regional_map(int num, int centre_place)
+static void regional_map(int num, int centre_place)
 {
 	int i, j, col, row;
 	int side = 2 * num + 1;

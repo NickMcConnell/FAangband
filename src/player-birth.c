@@ -559,14 +559,14 @@ static void upgrade_weapon(struct player *p)
 	ego = lookup_ego_item(hometown->ego, weapon->tval, weapon->sval);
 	if (ego) {
 		/* Upgrade */
-		struct object *prev = weapon->prev;
-		struct object *next = weapon->next;
-		struct object *known = weapon->known;
+		struct object *prevw = weapon->prev;
+		struct object *nextw = weapon->next;
+		struct object *knownw = weapon->known;
 		object_prep(weapon, weapon->kind, p->depth, MINIMISE);
 		weapon->ego = ego;
-		weapon->prev = prev;
-		weapon->next = next;
-		weapon->known = known;
+		weapon->prev = prevw;
+		weapon->next = nextw;
+		weapon->known = knownw;
 		ego_apply_magic(weapon, p->depth, MINIMISE);
 		while (!object_fully_known(weapon)) {
 			object_learn_unknown_rune(p, weapon, false);

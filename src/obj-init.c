@@ -3220,7 +3220,7 @@ static enum parser_error parse_artifact_set_brand(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-struct parser *init_parse_artifact_set(void) {
+static struct parser *init_parse_artifact_set(void) {
 	struct parser *p = parser_new();
 	parser_setpriv(p, NULL);
 	parser_reg(p, "set-name str name", parse_artifact_set_name);

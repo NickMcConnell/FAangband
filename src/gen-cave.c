@@ -2405,7 +2405,7 @@ static void town_gen_layout(struct chunk *c, struct player *p, struct town *t)
 /**
  * Find a home entrance prior to demolition
  */
-bool find_home(struct chunk *c, struct loc *home)
+static bool find_home(struct chunk *c, struct loc *home)
 {
 	struct loc grid;
 	for (grid.y = 0; grid.y < c->height - 1; grid.y++) {
@@ -2421,7 +2421,7 @@ bool find_home(struct chunk *c, struct loc *home)
 /**
  * Remove a home building (after moving)
  */
-void demolish_house(struct chunk *c, struct loc entrance)
+static void demolish_house(struct chunk *c, struct loc entrance)
 {
 	struct loc top_left, bottom_right, grid;
 	top_left = entrance;
@@ -2449,7 +2449,7 @@ void demolish_house(struct chunk *c, struct loc entrance)
 	}
 }
 
-void build_new_house(struct chunk *c)
+static void build_new_house(struct chunk *c)
 {
 	struct loc centre, grid;
 	int count = 8;

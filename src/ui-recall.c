@@ -22,6 +22,7 @@
 #include "init.h"
 #include "ui-menu.h"
 #include "ui-output.h"
+#include "ui-recall.h"
 
 /**
  * Choice of recall point (or nowhere)
@@ -41,7 +42,7 @@ static char recall_tag(struct menu *menu, int oid)
 /**
  * Display an entry on the recall menu
  */
-void recall_display(struct menu *menu, int oid, bool cursor, int row,
+static void recall_display(struct menu *menu, int oid, bool cursor, int row,
 					int col, int width)
 {
 	const u16b *choice = menu_priv(menu);
@@ -75,7 +76,7 @@ void recall_display(struct menu *menu, int oid, bool cursor, int row,
 /**
  * Deal with events on the recall menu
  */
-bool recall_action(struct menu *menu, const ui_event *e, int oid)
+static bool recall_action(struct menu *menu, const ui_event *e, int oid)
 {
 	u16b *choice = menu_priv(menu);
 	if (e->type == EVT_SELECT) {

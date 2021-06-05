@@ -49,7 +49,7 @@ int num_wild_vaults;
 /**
  * Set the number of wilderness vaults
  */
-void set_num_vaults(struct chunk *c)
+static void set_num_vaults(struct chunk *c)
 {
 	int max = 2;
 	num_wild_vaults = 0;
@@ -593,7 +593,7 @@ static bool check_vault_space(struct chunk *c, struct loc avoid,
  */
 static int make_formation(struct chunk *c, struct player *p, struct loc grid,
 						  int base_feat1, int base_feat2, int *feat,
-						  char *name, int prob)
+						  const char *name, int prob)
 {
 	int step, j, jj, i = 0, total = 0;
 	int *all_feat = mem_zalloc(prob * sizeof(*all_feat));
@@ -804,7 +804,7 @@ static void mtn_connect(struct chunk *c, struct loc grid1, struct loc grid2)
 /**
  * Attempt to place a web of the required type
  */
-bool place_web(struct chunk *c, struct player *p, char *type)
+static bool place_web(struct chunk *c, struct player *p, const char *type)
 {
 	struct vault *v;
 	int i;
@@ -1953,7 +1953,6 @@ struct chunk *valley_gen(struct player *p, int height, int width)
 	if (strstr(world->name, "Dungeon") && world->levels[p->place].down) {
 		k = randint1(3) + 1;
 		while (k > 0) {
-			struct loc grid;
 			grid.y = randint1(c->height - 1);
 			grid.x = randint1(c->width - 1);
 			if (square_istree(c, grid)) {

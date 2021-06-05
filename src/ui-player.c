@@ -937,14 +937,14 @@ void display_player_xtra_info(int mode)
 
 	/* Recall points */
 	if (player->recall[0]) {
-		int i;
+		int j;
 
 		my_strcpy(points, level_name(&world->levels[player->recall[0]]),
 				  sizeof(points));
-		for (i = 1; i < 4; i++) {
+		for (j = 1; j < 4; j++) {
 			if (player->recall[i]) {
 				my_strcat(points, ", ", sizeof(points));
-				my_strcat(points, level_name(&world->levels[player->recall[i]]),
+				my_strcat(points, level_name(&world->levels[player->recall[j]]),
 						  sizeof(points));
 			} else {
 				break;

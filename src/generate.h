@@ -330,7 +330,7 @@ void chunk_list_add(struct chunk *c);
 bool chunk_list_remove(const char *name);
 struct chunk *chunk_find_name(const char *name);
 bool chunk_find(struct chunk *c);
-struct chunk *chunk_find_adjacent(struct player *p, char *direction);
+struct chunk *chunk_find_adjacent(struct player *p, const char *direction);
 void symmetry_transform(struct loc *grid, int y0, int x0, int height, int width,
 	int rotate, bool reflect);
 void get_random_symmetry_transform(int height, int width, int flags,

@@ -913,7 +913,7 @@ void monster_hit_trap(struct monster *mon, struct loc grid, bool *death)
  */
 static struct loc mtrap_grid;
 
-char mtrap_tag(struct menu *menu, int oid)
+static char mtrap_tag(struct menu *menu, int oid)
 {
 	return I2A(oid);
 }
@@ -921,7 +921,7 @@ char mtrap_tag(struct menu *menu, int oid)
 /**
  * Display an entry on the sval menu
  */
-void mtrap_display(struct menu *menu, int oid, bool cursor, int row,
+static void mtrap_display(struct menu *menu, int oid, bool cursor, int row,
 				   int col, int width)
 {
 	const struct trap_kind *choice = menu_priv(menu);
@@ -936,7 +936,7 @@ void mtrap_display(struct menu *menu, int oid, bool cursor, int row,
 /**
  * Deal with events on the trap menu
  */
-bool mtrap_action(struct menu *menu, const ui_event *db, int oid)
+static bool mtrap_action(struct menu *menu, const ui_event *db, int oid)
 {
 	const struct trap_kind *choice = menu_priv(menu);
 
@@ -978,7 +978,7 @@ static void mtrap_menu_browser(int oid, void *data, const region *loc)
 /**
  * Display list of monster traps.
  */
-bool mtrap_menu(void)
+static bool mtrap_menu(void)
 {
 	struct menu menu;
 	menu_iter menu_f = { mtrap_tag, 0, mtrap_display, mtrap_action, 0 };

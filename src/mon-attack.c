@@ -582,7 +582,7 @@ bool check_hit_monster(struct monster *mon, int power, int level, int accuracy)
  * Determine if an otherwise successful monster attack on the player is
  * avoided for special reasons.
  */
-bool player_avoid_blow(struct monster *mon, char *m_name, struct player *p)
+static bool player_avoid_blow(struct monster *mon, char *m_name, struct player *p)
 {
 	struct monster_lore *lore = get_lore(mon->race);
 	int rlev = ((mon->race->level >= 1) ? mon->race->level : 1);

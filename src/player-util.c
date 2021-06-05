@@ -95,7 +95,7 @@ bool mountain_top_possible(int place)
  * \param added is how many steps to move (1 apart from deep descent)
  * \return the place to move to
  */
-int player_get_next_place(int place, char *direction, int multiple)
+int player_get_next_place(int place, const char *direction, int multiple)
 {
 	int next_place = place;
 	struct level *start = &world->levels[place];

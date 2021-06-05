@@ -251,7 +251,7 @@ static void get_subject(char *buf, size_t buflen,
 			strnfmt(buf, buflen, "%d monsters", count);
 		}
 	} else {
-		char *p_name = p_race ? format("%s ", p_race->name) : "";
+		const char *p_name = p_race ? format("%s ", p_race->name) : "";
 
 		/* Uniques, multiple monsters, or just one */
 		if (rf_has(race->flags, RF_UNIQUE)) {

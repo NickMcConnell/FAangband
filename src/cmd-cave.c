@@ -120,7 +120,7 @@ void do_cmd_move_house(struct command *cmd)
 /**
  * Get the direction a path is heading
  */
-static char *path_direction(int feat)
+static const char *path_direction(int feat)
 {
 	if (feat == FEAT_LESS_NORTH) return "north";
 	if (feat == FEAT_MORE_NORTH) return "north";
@@ -1061,7 +1061,7 @@ void do_cmd_disarm(struct command *cmd)
  * one time,  but an old trap can be disarmed to free up equipment for a new
  * trap. -LM-
  */
-void do_cmd_set_trap(struct loc grid)
+static void do_cmd_set_trap(struct loc grid)
 {
 	int max_traps =	1 + ((player->lev >= 25) ? 1 : 0);
 

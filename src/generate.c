@@ -688,7 +688,7 @@ static enum parser_error parse_themed_d(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-struct parser *init_parse_themed(void) {
+static struct parser *init_parse_themed(void) {
 	struct parser *p = parser_new();
 	parser_setpriv(p, NULL);
 	z_info->themed_max = 0;
@@ -919,7 +919,7 @@ static bool labyrinth_check(int depth)
  * is built more than once.  Store the current themed level number for later 
  * reference.  -LM-
  */
-bool themed_level_ok(int choice)
+static bool themed_level_ok(int choice)
 {
 	struct level *current = &world->levels[player->place];
 

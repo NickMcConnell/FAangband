@@ -60,6 +60,6 @@ void set_archive_user_prefix(const char *pfx);
 void file_archive(const char *fname, const char *append);
 void activate_randart_file(void);
 void deactivate_randart_file(void);
-errr get_rnd_line(char *file_name, char *output);
+errr get_rnd_line(const char *file_name, char *output);
 
 #endif /* !DATAFILE_H */

@@ -2783,7 +2783,7 @@ static enum parser_error parse_race_relations_dislike(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-struct parser *init_parse_race_relations(void) {
+static struct parser *init_parse_race_relations(void) {
 	struct parser *p = parser_new();
 	parser_setpriv(p, NULL);
 	parser_reg(p, "name str name", parse_race_relations_name);

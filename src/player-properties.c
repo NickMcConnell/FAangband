@@ -36,7 +36,7 @@ enum {
     PLAYER_FLAG_CLASS
 };
 
-static struct player_ability *lookup_ability(char *type, int index, int value)
+static struct player_ability *lookup_ability(const char *type, int index, int value)
 {
 	struct player_ability *ability;
 	for (ability = player_abilities; ability; ability = ability->next) {
@@ -94,7 +94,7 @@ struct spec_menu_data {
 /**
  * Check if we can gain a specialty ability -BR-
  */
-bool check_specialty_gain(int specialty)
+static bool check_specialty_gain(int specialty)
 {
 	/* Can't learn it if we already know it */
 	if (pf_has(player->specialties, specialty)) {
@@ -121,7 +121,7 @@ static char gain_spec_tag(struct menu *menu, int oid)
 /**
  * Display an entry on the gain specialty menu
  */
-void gain_spec_display(struct menu *menu, int oid, bool cursor, int row,
+static void gain_spec_display(struct menu *menu, int oid, bool cursor, int row,
 					   int col, int width)
 {
 	struct spec_menu_data *d = menu_priv(menu);
@@ -137,7 +137,7 @@ void gain_spec_display(struct menu *menu, int oid, bool cursor, int row,
 /**
  * Deal with events on the gain specialty menu
  */
-bool gain_spec_action(struct menu *menu, const ui_event *e, int oid)
+static bool gain_spec_action(struct menu *menu, const ui_event *e, int oid)
 {
 	struct spec_menu_data *d = menu_priv(menu);
 	static int i;
@@ -182,7 +182,7 @@ static void gain_spec_menu_browser(int oid, void *data, const region *loc)
 /**
  * Display list available specialties.
  */
-bool gain_spec_menu(int *pick)
+static bool gain_spec_menu(int *pick)
 {
 	struct menu menu;
 	menu_iter menu_f = { gain_spec_tag, 0, gain_spec_display,
@@ -267,7 +267,7 @@ bool gain_spec_menu(int *pick)
  * Gain a new specialty ability
  * Adapted from birth.c get_player_choice -BR-
  */
-void gain_specialty(void)
+static void gain_specialty(void)
 {
 	int pick;
 

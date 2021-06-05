@@ -148,7 +148,7 @@ char *level_name(struct level *lev)
 /**
  * Find a level by its name
  */
-struct level *level_by_name(struct level_map *map, char *name)
+struct level *level_by_name(struct level_map *map, const char *name)
 {
 	int i;
 	for (i = 0; i < map->num_levels; i++) {
@@ -163,7 +163,7 @@ struct level *level_by_name(struct level_map *map, char *name)
 /**
  * Find a town by its name
  */
-struct town *town_by_name(struct level_map *map, char *name)
+struct town *town_by_name(struct level_map *map, const char *name)
 {
 	int i;
 
@@ -209,7 +209,7 @@ struct vault *themed_level(int index)
 /**
  * Return the themed level index of the given named level
  */
-int themed_level_index(char *name)
+int themed_level_index(const char *name)
 {
 	int which = 1;
 	struct vault *level = themed_levels;
@@ -389,7 +389,7 @@ static void recharge_objects(void)
 /**
  * Remove light-sensitive monsters from sunlit areas
  */
-void sun_banish(void)
+static void sun_banish(void)
 {
 	bool some_gone = false;
 	struct monster *mon;

@@ -76,7 +76,7 @@ static enum parser_error parse_unarmed_blow_dice(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
-struct parser *init_parse_unarmed_blow(void) {
+static struct parser *init_parse_unarmed_blow(void) {
 	struct parser *p = parser_new();
 	parser_setpriv(p, NULL);
 	parser_reg(p, "name str name", parse_unarmed_blow_name);

@@ -415,7 +415,7 @@ static int pick_resist(bool low)
  * Apply slightly randomised percentage resistances -NRM-
  * Also add element proofing flags where appropriate
  */
-void apply_resistances(struct object *obj, int lev)
+static void apply_resistances(struct object *obj, int lev)
 {
 	int i, res = 0;
 	bitflag *flags = obj->ego->kind_flags;

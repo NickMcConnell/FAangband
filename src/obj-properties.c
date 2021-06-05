@@ -206,7 +206,7 @@ struct obj_property *slay_property(int slay_idx)
 /**
  * Check if an object has a given object property
  */
-bool object_has_property(const struct object *obj, struct obj_property *prop)
+static bool object_has_property(const struct object *obj, struct obj_property *prop)
 {
 	int i, idx = prop->index;
 	switch (prop->type) {
