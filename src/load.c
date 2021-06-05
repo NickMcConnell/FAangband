@@ -1079,6 +1079,15 @@ int rd_misc(void)
 		world->levels[j].visited = tmp8u ? true : false;
 	}
 
+	/* Check underworld and mountain top way back */
+	if (world->levels[player->place].locality == LOC_UNDERWORLD) {
+		world->levels[player->place].up =
+			string_make(level_name(&world->levels[player->last_place]));
+	} else if (world->levels[player->place].locality == LOC_MOUNTAIN_TOP) {
+		world->levels[player->place].down =
+			string_make(level_name(&world->levels[player->last_place]));
+	}
+
 	/* Read the randart seed */
 	rd_u32b(&seed_randart);
 

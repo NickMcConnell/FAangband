@@ -3386,7 +3386,9 @@ static bool effect_handler_TELEPORT_LEVEL(effect_handler_context_t *context)
 
 	/* Now actually do the level change */
 	if (up) {
-		msgt(MSG_TPLEVEL, "You rise up through the ceiling.");
+		char *msg = (current->topography == TOP_CAVE) ?
+			"You rise up through the ceiling." : "You rise into the air.";
+		msgt(MSG_TPLEVEL, msg);
 		target_place = player_get_next_place(player->place, "up", 1);
 		player_change_place(player, target_place);
 	} else if (down) {
