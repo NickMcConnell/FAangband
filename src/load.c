@@ -170,6 +170,7 @@ static struct object *rd_item(void)
 
 	rd_byte(&obj->origin);
 	rd_byte(&obj->origin_depth);
+	rd_s16b(&obj->origin_place);
 	rd_string(buf, sizeof(buf));
 	if (buf[0]) {
 		obj->origin_race = lookup_monster(buf);

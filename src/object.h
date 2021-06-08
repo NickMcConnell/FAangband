@@ -514,6 +514,7 @@ struct object {
 
 	byte origin;			/**< How this item was found */
 	byte origin_depth;		/**< What depth the item was found at */
+	s16b origin_place;		/**< What place the item was found at */
 	struct monster_race *origin_race;	/**< Monster race that dropped it */
 
 	quark_t note; 			/**< Inscription index */
@@ -562,6 +563,7 @@ static struct object const OBJECT_NULL = {
 	.mimicking_m_idx = 0,
 	.origin = 0,
 	.origin_depth = 0,
+	.origin_place = 0,
 	.origin_race = NULL,
 	.note = 0,
 };

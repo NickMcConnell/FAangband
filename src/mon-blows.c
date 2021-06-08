@@ -714,6 +714,7 @@ static void melee_effect_handler_EAT_GOLD(melee_effect_handler_context_t *contex
              * dropped treasure in monster_death */
             obj->origin = ORIGIN_STOLEN;
 			obj->origin_depth = current_player->depth;
+			obj->origin_place = current_player->place;
 
             /* Give the gold to the monster */
             monster_carry(cave, context->mon, obj);

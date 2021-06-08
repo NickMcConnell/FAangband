@@ -1100,6 +1100,7 @@ static struct object TEST_DATA test_player_knowledge = {
 	.mimicking_m_idx = 0,
 	.origin = 0,
 	.origin_depth = 0,
+	.origin_place = 0,
 	.origin_race = NULL,
 	.note = 0,
 };

@@ -1060,6 +1060,7 @@ static bool mon_create_drop(struct chunk *c, struct monster *mon, byte origin)
 				/* Set origin details */
 				obj->origin = origin;
 				obj->origin_depth = player->depth;
+				obj->origin_place = player->place;
 				obj->origin_race = mon->race;
 				obj->number = 1;
 
@@ -1100,6 +1101,7 @@ static bool mon_create_drop(struct chunk *c, struct monster *mon, byte origin)
 		/* Set origin details */
 		obj->origin = origin;
 		obj->origin_depth = player->depth;
+		obj->origin_place = player->place;
 		obj->origin_race = mon->race;
 		obj->number = (obj->artifact) ?
 			1 : randint0(drop->max - drop->min) + drop->min;
@@ -1125,6 +1127,7 @@ static bool mon_create_drop(struct chunk *c, struct monster *mon, byte origin)
 		/* Set origin details */
 		obj->origin = origin;
 		obj->origin_depth = player->depth;
+		obj->origin_place = player->place;
 		obj->origin_race = mon->race;
 
 		/* Try to carry */
@@ -1172,6 +1175,7 @@ void mon_create_mimicked_object(struct chunk *c, struct monster *mon, int index)
 		obj->number = 1;
 		obj->origin = ORIGIN_DROP_MIMIC;
 		obj->origin_depth = player->depth;
+		obj->origin_place = player->place;
 	}
 
 	obj->mimicking_m_idx = index;
