@@ -8,6 +8,7 @@
 #include "game-world.h"
 #include "generate.h"
 #include "init.h"
+#include "mon-make.h"
 #include "obj-curse.h"
 #include "obj-gear.h"
 #include "obj-knowledge.h"
@@ -206,6 +207,7 @@ int setup_tests(void **state) {
 }
 
 int teardown_tests(void *state) {
+	wipe_mon_list(cave, player);
 	cleanup_angband();
 
 	return 0;
