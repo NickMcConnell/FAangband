@@ -11,6 +11,7 @@
 #include "game-world.h"
 #include "generate.h"
 #include "init.h"
+#include "mon-make.h"
 #include "savefile.h"
 #include "player.h"
 #include "player-birth.h"
@@ -49,6 +50,15 @@ static int reverse_direction(int dir) {
 	return (dir >= 0 && dir <= 9) ? rdir[dir] : -1;
 }
 
+static void reset_before_load(void) {
+	play_again = true;
+	wipe_mon_list(cave, player);
+	cleanup_angband();
+	chunk_list_max = 0;
+	init_angband();
+	play_again = false;
+}
+
 int setup_tests(void **state) {
 	/* Register a basic error handler */
 	plog_aux = println;
@@ -70,6 +80,7 @@ int setup_tests(void **state) {
 
 int teardown_tests(void *state) {
 	file_delete("Test1");
+	wipe_mon_list(cave, player);
 	cleanup_angband();
 	return 0;
 }
@@ -96,6 +107,7 @@ static int test_newgame(void *state) {
 }
 
 static int test_loadgame(void *state) {
+	reset_before_load();
 
 	/* Try loading the just-saved game */
 	eq(savefile_load("Test1", false), true);
@@ -109,6 +121,7 @@ static int test_loadgame(void *state) {
 }
 
 static int test_stairs1(void *state) {
+	reset_before_load();
 
 	/* Load the saved game */
 	eq(savefile_load("Test1", false), true);
@@ -122,6 +135,7 @@ static int test_stairs1(void *state) {
 
 static int test_stairs2(void *state) {
 	int dir;
+	reset_before_load();
 
 	/* Load the saved game */
 	eq(savefile_load("Test1", false), true);
@@ -145,6 +159,7 @@ static int test_stairs2(void *state) {
 
 static int test_drop_pickup(void *state) {
 	int dir;
+	reset_before_load();
 
 	/* Load the saved game */
 	eq(savefile_load("Test1", false), true);
@@ -173,6 +188,8 @@ static int test_drop_pickup(void *state) {
 static int test_drop_eat(void *state) {
 	int num = 0;
 	int dir;
+
+	reset_before_load();
 
 	/* Load the saved game */
 	eq(savefile_load("Test1", false), true);
