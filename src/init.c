@@ -4195,6 +4195,7 @@ static struct {
 	{ "blow effects", &eff_parser },
 	{ "monster spells", &mon_spell_parser },
 	{ "monsters", &monster_parser },
+	{ "player ghosts", &ghost_parser },
 	{ "monster pits" , &pit_parser },
 	{ "monster lore" , &lore_parser },
 	{ "traps", &trap_parser },

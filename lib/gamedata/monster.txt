@@ -14334,3 +14334,294 @@ desc: him.  His disgusting visage, twisted with evil, is crowned with iron, the
 desc: two remaining Silmarils forever burning him.  Grond, the mighty Hammer of
 desc: the Underworld, cries defiance as he strides towards you to crush you to
 desc: a pulp!
+
+#################### Dungeon Monsters - Player Ghosts #####################
+
+name:Skeleton
+base:skeleton
+color:m
+speed:110
+hit-points:225
+hearing:20
+armor-class:14
+sleepiness:0
+depth:6
+rarity:3
+experience:30
+blow:HIT:HURT:2d5
+blow:HIT:HURT:2d5
+flags:UNIQUE | PLAYER_GHOST
+flags:SMART | BASH_DOOR | OPEN_DOOR
+flags:ONLY_ITEM | DROP_60 | DROP_60 | DROP_GOOD
+flags:NO_CONF
+spell-freq:9
+spell-power:4
+spells:SCARE
+desc:An animated skeleton, creaking as it advances.  You feel you know it and
+desc: it knows you.
+
+name:Zombie
+base:zombie
+color:m
+speed:110
+hit-points:400
+hearing:20
+armor-class:14
+sleepiness:0
+depth:12
+rarity:4
+experience:90
+blow:HIT:HURT:3d7
+blow:HIT:POISON:3d7
+flags:UNIQUE | PLAYER_GHOST
+flags:SMART | REGENERATE
+flags:ONLY_ITEM | DROP_1 | DROP_GOOD | DROP_GREAT
+flags:NO_CONF
+spell-power:8
+desc:A rotting corpse animated by dark magics.  Flesh falls off in large chunks
+desc: as it shambles forward.  You feel you know it and it knows you.
+
+name:Spirit
+base:ghost
+color:m
+speed:120
+hit-points:350
+hearing:20
+armor-class:14
+sleepiness:0
+depth:18
+rarity:4
+experience:120
+blow:TOUCH:HURT:3d6
+blow:TOUCH:TERRIFY:1d2
+blow:TOUCH:LOSE_DEX:1d2
+flags:UNIQUE | PLAYER_GHOST
+flags:RAND_25 | SMART
+flags:INVISIBLE
+flags:EVIL | IM_POIS | IM_COLD
+flags:ONLY_ITEM | DROP_CHEST
+flags:NO_CONF | NO_FEAR
+spell-freq:6
+spell-power:14
+spells:SCARE | DARKNESS | DRAIN_MANA | BLIND
+desc:A ghostly apparition that shrieks horribly.  You feel you know it and it
+desc: knows you.
+
+name:Mummy
+base:zombie
+color:m
+speed:110
+hit-points:900
+hearing:20
+armor-class:16
+sleepiness:0
+depth:24
+rarity:4
+experience:150
+blow:HIT:HURT:2d8
+blow:HIT:HURT:2d8
+blow:HIT:POISON:3d8
+blow:HIT:POISON:3d8
+flags:UNIQUE | PLAYER_GHOST
+flags:SMART | REGENERATE
+flags:ONLY_ITEM | DROP_CHEST
+flags:NO_CONF
+spell-freq:8
+spell-power:18
+spells:SCARE | BLIND
+desc:A larger-than life figure covered in wrappings.  Twin flames burn in its
+desc: head.  You feel you know it and it knows you.
+
+name:Wight
+base:wraith
+color:m
+speed:115
+hit-points:700
+hearing:20
+armor-class:20
+sleepiness:0
+depth:30
+rarity:5
+experience:210
+blow:WAIL:TERRIFY
+blow:TOUCH:HURT:4d14
+blow:TOUCH:EXP_40:1d5
+blow:TOUCH:HURT:4d14
+flags:UNIQUE | PLAYER_GHOST
+flags:OPEN_DOOR | BASH_DOOR | TAKE_ITEM
+flags:ONLY_ITEM | DROP_CHEST
+flags:NO_CONF | NO_FEAR
+spell-freq:5
+spell-power:28
+spells:DARKNESS | WOUND | HOLD | SCARE
+desc:This eldritch form rises from a grave shrouded in dust.  As it reaches out
+desc: towards you, your panicked soul cowers away.  You feel you know it and it
+desc: knows you.
+
+name:Ghost
+base:ghost
+color:m
+speed:120
+hit-points:800
+hearing:20
+armor-class:12
+sleepiness:0
+depth:36
+rarity:5
+experience:350
+blow:WAIL:TERRIFY
+blow:TOUCH:EXP_20:1d6
+blow:CLAW:LOSE_INT:3d7
+blow:CLAW:LOSE_WIS:3d7
+flags:UNIQUE | PLAYER_GHOST
+flags:SMART
+flags:INVISIBLE
+flags:EVIL | IM_POIS | IM_COLD
+flags:ONLY_ITEM | DROP_CHEST
+flags:NO_CONF | NO_FEAR
+spell-freq:4
+spell-power:36
+spells:DARKNESS | DRAIN_MANA | SCARE | BLIND | HOLD
+desc:A phantasm, a shadow given life.  The nimbus of corpse-light around it
+desc: illuminates nothing.  You feel you know it and it knows you.
+
+name:Vampire
+base:vampire
+color:m
+speed:115
+hit-points:1400
+hearing:20
+armor-class:18
+sleepiness:0
+depth:42
+rarity:5
+experience:600
+blow:HIT:HURT:5d8
+blow:HIT:HURT:5d8
+blow:BITE:EXP_20:2d9
+blow:BITE:EXP_20:2d9
+flags:UNIQUE | PLAYER_GHOST
+flags:UNDEAD | HURT_LIGHT
+flags:ONLY_ITEM | DROP_CHEST
+flags:NO_CONF | NO_FEAR
+spell-freq:6
+spell-power:43
+spells:HOLD | MIND_BLAST | DARKNESS
+desc:A humanoid with an aura of power.  You notice a sharp set of front
+desc: teeth.  You feel you know it and it knows you.
+
+name:Phantom
+base:ghost
+color:V
+speed:120
+hit-points:1600
+hearing:30
+armor-class:12
+sleepiness:20
+depth:46
+rarity:6
+experience:1200
+blow:TOUCH:EXP_80:1d15
+blow:TOUCH:EXP_80:1d15
+blow:CLAW:LOSE_INT:3d8
+blow:CLAW:LOSE_WIS:3d8
+flags:UNIQUE | PLAYER_GHOST
+flags:SMART | REGENERATE
+flags:INVISIBLE
+flags:EVIL | IM_COLD | IM_POIS
+flags:ONLY_ITEM | DROP_CHEST
+flags:NO_CONF | NO_FEAR
+spell-freq:5
+spell-power:51
+spells:BO_NETH
+spells:FORGET | HOLD | MIND_BLAST
+desc:An unholy creature of darkness; the aura emanating from this evil being
+desc: saps your very soul.  You feel you know it and it knows you.
+
+name:Lich
+base:lich
+color:I
+speed:120
+hit-points:2400
+hearing:20
+armor-class:24
+sleepiness:0
+depth:56
+rarity:6
+experience:3000
+blow:TOUCH:EXP_40
+blow:TOUCH:DRAIN_CHARGES
+blow:TOUCH:LOSE_DEX:4d9
+blow:TOUCH:LOSE_DEX:4d9
+flags:UNIQUE | PLAYER_GHOST
+flags:REGENERATE | HURT_LIGHT
+flags:DROP_CHEST
+flags:NO_CONF | NO_FEAR
+spell-freq:4
+spell-power:63
+spells:BA_COLD | BA_ELEC
+spells:BLINK | TELE_TO | TELE_AWAY | HOLD | SLOW | SCARE
+spells:DRAIN_MANA | MIND_BLAST
+desc:A skeletal form dressed in robes, radiating vastly evil
+desc: power.  You feel you know it and it knows you.
+
+name:Nether Wraith
+base:wraith
+color:T
+speed:120
+hit-points:3000
+hearing:20
+armor-class:22
+sleepiness:0
+depth:65
+rarity:6
+experience:8000
+blow:HIT:HURT:4d15
+blow:HIT:HURT:4d15
+blow:TOUCH:EXP_80:2d9
+blow:TOUCH:EXP_80:2d9
+flags:UNIQUE | PLAYER_GHOST
+flags:REGENERATE
+flags:INVISIBLE | PASS_WALL
+flags:ONLY_ITEM | DROP_CHEST
+flags:NO_CONF | NO_FEAR
+spell-freq:4
+spell-power:75
+spells:BE_NETH
+spells:BLIND | SCARE | WOUND | BRAIN_SMASH | DARKNESS
+spells:S_UNDEAD
+desc:As it advances, your soul wilts under the threat of death and a dreadful
+desc: chill invades your bones.  You feel you know it and it knows you.
+
+name:Deathlord
+base:wraith
+color:p
+speed:130
+hit-points:4000
+hearing:20
+armor-class:40
+sleepiness:0
+depth:74
+rarity:6
+experience:20000
+blow:HIT:HURT:7d12
+blow:HIT:DISENCHANT:4d8
+blow:WAIL:PARALYZE:4d8
+blow:TOUCH:EXP_80:4d8
+flags:UNIQUE | PLAYER_GHOST
+flags:REGENERATE
+flags:ONLY_ITEM | DROP_CHEST
+flags:OPEN_DOOR | BASH_DOOR | FLYING
+flags:NO_CONF | NO_FEAR
+spell-freq:4
+spell-power:90
+spells:BRAIN_SMASH | WOUND | TELE_TO
+spells:BA_NETH | BA_DARK
+spells:S_UNDEAD
+desc:Cloaked in midnight, and supported by minions of death, this lord of the
+desc: undead comes to claim your soul.  You feel you know it and it knows you.
+
+# This entry is used as a dummy for player ghosts, and should always be last
+
+name:player ghost
+rarity:0

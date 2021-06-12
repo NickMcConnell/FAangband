@@ -41,6 +41,7 @@ struct monster_pain *pain_messages;
 struct monster_spell *monster_spells;
 struct monster_base *rb_info;
 struct monster_race *r_info;
+struct ghost *ghosts;
 const struct monster_race *ref_race = NULL;
 struct monster_lore *l_list;
 
@@ -1706,7 +1707,6 @@ static errr finish_parse_monster(struct parser *p) {
 
 		mem_free(r);
 	}
-	z_info->r_max += 1;
 
 	/* Convert friend and shape names into race pointers */
 	for (i = 0; i < z_info->r_max; i++) {
@@ -1806,6 +1806,323 @@ struct file_parser monster_parser = {
 	run_parse_monster,
 	finish_parse_monster,
 	cleanup_monster
+};
+
+/**
+ * ------------------------------------------------------------------------
+ * Initialize player ghost race/class modifications
+ * ------------------------------------------------------------------------ */
+
+static enum parser_error parse_ghost_name(struct parser *p) {
+	struct ghost *h = parser_priv(p);
+	struct ghost *g = mem_zalloc(sizeof *g);
+	g->next = h;
+	g->name = string_make(parser_getstr(p, "name"));
+	g->level = mem_zalloc(sizeof(*(g->level)));
+	parser_setpriv(p, g);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ghost_cutoff(struct parser *p) {
+	struct ghost *g = parser_priv(p);
+	struct ghost_level *l, *new;
+	assert(g);
+	new = mem_zalloc(sizeof(*new));
+	new->level = parser_getint(p, "level");
+	l = g->level;
+	while (l->next) {
+		l = l->next;
+	}
+	l->next = new;
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ghost_spell_power(struct parser *p) {
+	struct ghost *g = parser_priv(p);
+	struct ghost_level *l;
+	assert(g);
+	l = g->level;
+	while (l->next) {
+		l = l->next;
+	}
+
+	l->spell_power.param1 = parser_getuint(p, "mult");
+	l->spell_power.param2 = parser_getuint(p, "div");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ghost_freq(struct parser *p) {
+	struct ghost *g = parser_priv(p);
+	struct ghost_level *l;
+	assert(g);
+	l = g->level;
+	while (l->next) {
+		l = l->next;
+	}
+
+	l->freq.param1 = parser_getuint(p, "exists");
+	l->freq.param2 = parser_getint(p, "add");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ghost_hearing(struct parser *p) {
+	struct ghost *g = parser_priv(p);
+	struct ghost_level *l;
+	assert(g);
+	l = g->level;
+	while (l->next) {
+		l = l->next;
+	}
+
+	l->hearing = parser_getint(p, "hearing") * 20 / z_info->max_sight;
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ghost_hit_points(struct parser *p) {
+	struct ghost *g = parser_priv(p);
+	struct ghost_level *l;
+	assert(g);
+	l = g->level;
+	while (l->next) {
+		l = l->next;
+	}
+
+	l->avg_hp.param1 = parser_getuint(p, "mult");
+	l->avg_hp.param2 = parser_getuint(p, "div");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ghost_armor_class(struct parser *p) {
+	struct ghost *g = parser_priv(p);
+	struct ghost_level *l;
+	assert(g);
+	l = g->level;
+	while (l->next) {
+		l = l->next;
+	}
+
+	l->ac.param1 = parser_getuint(p, "mult");
+	l->ac.param2 = parser_getuint(p, "div");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ghost_blow_sides(struct parser *p) {
+	struct ghost *g = parser_priv(p);
+	struct ghost_level *l;
+	assert(g);
+	l = g->level;
+	while (l->next) {
+		l = l->next;
+	}
+
+	l->blow_sides.param1 = parser_getuint(p, "mult");
+	l->blow_sides.param2 = parser_getuint(p, "div");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ghost_speed(struct parser *p) {
+	struct ghost *g = parser_priv(p);
+	struct ghost_level *l;
+	assert(g);
+	l = g->level;
+	while (l->next) {
+		l = l->next;
+	}
+
+	l->speed.param1 = parser_getint(p, "add");
+	l->speed.param2 = parser_getint(p, "max");
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ghost_blow_effect1(struct parser *p) {
+	struct ghost *g = parser_priv(p);
+	struct ghost_level *l;
+	assert(g);
+	l = g->level;
+	while (l->next) {
+		l = l->next;
+	}
+
+	l->blow_effect1 = string_make(parser_getsym(p, "effect"));
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ghost_blow_effect2(struct parser *p) {
+	struct ghost *g = parser_priv(p);
+	struct ghost_level *l;
+	assert(g);
+	l = g->level;
+	while (l->next) {
+		l = l->next;
+	}
+
+	l->blow_effect2 = string_make(parser_getsym(p, "effect"));
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ghost_flags(struct parser *p) {
+	struct ghost *g = parser_priv(p);
+	struct ghost_level *l;
+	char *flags;
+	char *s;
+	assert(g);
+	l = g->level;
+	while (l->next) {
+		l = l->next;
+	}
+
+	if (!parser_hasval(p, "flags"))
+		return PARSE_ERROR_NONE;
+	flags = string_make(parser_getstr(p, "flags"));
+	s = strtok(flags, " |");
+	while (s) {
+		if (grab_flag(l->flags, RF_SIZE, r_info_flags, s)) {
+			mem_free(flags);
+			quit_fmt("bad f2-flag: %s", s);
+			return PARSE_ERROR_INVALID_FLAG;
+		}
+		s = strtok(NULL, " |");
+	}
+
+	mem_free(flags);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ghost_flags_off(struct parser *p) {
+	struct ghost *g = parser_priv(p);
+	struct ghost_level *l;
+	char *flags;
+	char *s;
+	assert(g);
+	l = g->level;
+	while (l->next) {
+		l = l->next;
+	}
+
+	if (!parser_hasval(p, "flags"))
+		return PARSE_ERROR_NONE;
+	flags = string_make(parser_getstr(p, "flags"));
+	s = strtok(flags, " |");
+	while (s) {
+		if (grab_flag(l->flags_off, RF_SIZE, r_info_flags, s)) {
+			mem_free(flags);
+			quit_fmt("bad mf-flag: %s", s);
+			return PARSE_ERROR_INVALID_FLAG;
+		}
+		s = strtok(NULL, " |");
+	}
+
+	mem_free(flags);
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_ghost_spells(struct parser *p) {
+	struct ghost *g = parser_priv(p);
+	struct ghost_level *l;
+	char *flags;
+	char *s;
+	int ret = PARSE_ERROR_NONE;
+	assert(g);
+	l = g->level;
+	while (l->next) {
+		l = l->next;
+	}
+
+	flags = string_make(parser_getstr(p, "spells"));
+	s = strtok(flags, " |");
+	while (s) {
+		if (grab_flag(l->spell_flags, RSF_SIZE, r_info_spell_flags, s)) {
+			quit_fmt("bad spell flag: %s", s);
+			ret = PARSE_ERROR_INVALID_FLAG;
+			break;
+		}
+		s = strtok(NULL, " |");
+	}
+
+	mem_free(flags);
+	return ret;
+}
+
+static enum parser_error parse_ghost_spells_off(struct parser *p) {
+	struct ghost *g = parser_priv(p);
+	struct ghost_level *l;
+	char *flags;
+	char *s;
+	int ret = PARSE_ERROR_NONE;
+	assert(g);
+	l = g->level;
+	while (l->next) {
+		l = l->next;
+	}
+
+	flags = string_make(parser_getstr(p, "spells"));
+	s = strtok(flags, " |");
+	while (s) {
+		if (grab_flag(l->spell_flags_off, RSF_SIZE, r_info_spell_flags, s)) {
+			quit_fmt("bad spell flag: %s", s);
+			ret = PARSE_ERROR_INVALID_FLAG;
+			break;
+		}
+		s = strtok(NULL, " |");
+	}
+
+	mem_free(flags);
+	return ret;
+}
+
+struct parser *init_parse_ghost(void) {
+	struct parser *p = parser_new();
+	parser_setpriv(p, NULL);
+
+	parser_reg(p, "name str name", parse_ghost_name);
+	parser_reg(p, "cut-off int level", parse_ghost_cutoff);
+	parser_reg(p, "spell-power uint mult uint div", parse_ghost_spell_power);
+	parser_reg(p, "freq uint exists int add", parse_ghost_freq);
+	parser_reg(p, "hearing int hearing", parse_ghost_hearing);
+	parser_reg(p, "hit-points uint mult uint div", parse_ghost_hit_points);
+	parser_reg(p, "armor-class uint mult uint div", parse_ghost_armor_class);
+	parser_reg(p, "blow-sides uint mult uint div", parse_ghost_blow_sides);
+	parser_reg(p, "speed int add int max", parse_ghost_speed);
+	parser_reg(p, "blow-effect1 sym effect", parse_ghost_blow_effect1);
+	parser_reg(p, "blow-effect2 sym effect", parse_ghost_blow_effect2);
+	parser_reg(p, "flags ?str flags", parse_ghost_flags);
+	parser_reg(p, "flags-off ?str flags", parse_ghost_flags_off);
+	parser_reg(p, "spells str spells", parse_ghost_spells);
+	parser_reg(p, "spells-off str spells", parse_ghost_spells_off);
+	return p;
+}
+
+static errr run_parse_ghost(struct parser *p) {
+	return parse_file_quit_not_found(p, "ghost");
+}
+
+static errr finish_parse_ghost(struct parser *p) {
+	ghosts = parser_priv(p);
+	parser_destroy(p);
+	return 0;
+}
+
+static void cleanup_ghost(void)
+{
+	struct ghost *g;
+	for (g = ghosts; g; g = g->next) {
+		struct ghost_level *l;
+		for (l = g->level; l; l = l->next) {
+			if (l->blow_effect1) string_free(l->blow_effect1);
+			if (l->blow_effect2) string_free(l->blow_effect2);
+		}
+		string_free(g->name);
+	}
+	mem_free(ghosts);
+}
+
+
+struct file_parser ghost_parser = {
+	"ghost",
+	init_parse_ghost,
+	run_parse_ghost,
+	finish_parse_ghost,
+	cleanup_ghost
 };
 
 /**

@@ -1,0 +1,209 @@
+# File: ghost.txt
+
+# This file is used to initialize the player ghost race and class information
+# for FAangband.
+
+# name: race or class name
+# cut-off: ghost dungeon level at which we move to a new set of properties
+# spell-power: add to spell power
+# freq: 0 if 0, 1 if not: add to innate/spell freq
+# hearing: add to hearing
+# hit-points: multiply average hp: divide average hp
+# armor-class: multiply ac : divide ac
+# blow-sides: multiple sides for each blow: divide sides for each blow
+# speed: add to speed: limit of speed
+# blow-effect1: blow effect to change first occurrence of HURT to
+# blow-effect2: blow effect to change second occurrence of HURT to
+# flags: race flags to add
+# flags-off: race flags to remove
+# spells: spells to add
+# spells-off: spells to remove
+
+
+
+name:Easterling
+
+name:Green-Elf
+freq:1:3
+hearing:2
+hit-points:5:6
+flags-off:HURT_LIGHT
+
+name:Grey-Elf
+freq:1:5
+hearing:4
+hit-points:6:7
+flags-off:HURT_LIGHT
+
+name:Hobbit
+hit-points:4:5
+blow-effect1:EAT_GOLD
+blow-effect2:EAT_ITEM
+freq:0:4
+spells:SHOT
+
+name:Petty-Dwarf
+hit-points:4:5
+flags:NO_SLEEP
+spells:BLINK
+
+name:Dwarf
+hit-points:6:5
+
+name:Drúadan
+
+name:Longbeard
+hit-points:6:5
+
+name:Adan
+armor-class:10:5
+blow-sides:6:5
+
+name:High-Elf
+armor-class:10:2
+freq:1:8
+hearing:5
+flags-off:HURT_LIGHT
+
+name:Dark-Elf
+freq:1:5
+hearing:2
+hit-points:3:4
+flags:INVISIBLE
+
+name:Ent
+hit-points:4:3
+flags:HURT_FIRE | KILL_WALL
+
+name:Beorning
+
+name:Warrior
+freq:1:-5
+spell-power:2:3
+hit-points:4:3
+armor-class:10:5
+blow-sides:3:2
+cut-off:24
+spells:BOLT
+cut-off:54
+freq:1:5
+
+name:Mage
+freq:0:10
+freq:1:10
+hit-points:3:4
+blow-sides:2:3
+spells:BO_FIRE | BLINK | BLIND
+spells-off:SHOT | ARROW | BOLT
+cut-off:8
+spells:BO_ELEC
+cut-off:14
+spells:BA_FIRE
+cut-off:20
+spells:BO_COLD | TPORT
+cut-off:30
+spells:BA_ACID
+cut-off:40
+speed:5:130
+cut-off:50
+spells:TELE_AWAY | BA_SHAR
+cut-off:70
+spells:TELE_SELF_TO | BO_MANA
+cut-off:90
+spells:BA_MANA
+
+name:Druid
+freq:0:10
+freq:1:5
+hit-points:4:5
+spells:BA_POIS
+cut-off:15
+spells:SHAPECHANGE | SLOW | CONF
+cut-off:25:
+spells:BA_ELEC | S_ANT | S_SPIDER
+cut-off:30
+spells:HOLD
+cut-off:40
+speed:10:130
+spells:BO_PLAS | S_ANIMAL | S_HOUND
+spells-off:S_ANT | S_SPIDER
+cut-off:50
+spells:BA_WATE | BA_SHAR
+cut-off:70
+spells:STORM
+spells-off:BA_WATE
+
+name:Priest
+freq:0:10
+freq:1:5
+hit-points:4:5
+spells:HEAL | HEAL_KIN
+cut-off:20
+spells:BLINK | BA_LIGHT
+cut-off:40
+spells:SCARE | HOLD | FORGET
+cut-off:50
+spells:S_KIN | MIND_BLAST
+cut-off:70
+spells:BRAIN_SMASH
+spells-off:HOLD | MIND_BLAST
+
+name:Necromancer
+freq:0:10
+freq:1:10
+hit-points:3:4
+blow-sides:2:3
+spells:WOUND | BO_NETH | DARKNESS
+cut-off:20
+spells:S_UNDEAD | BLINK
+cut-off:40
+spells:S_DEMON | SHAPECHANGE
+cut-off:60
+spells:S_HI_UNDEAD | BA_DARK | BE_NETH
+spells-off:S_UNDEAD | BO_NETH
+cut-off:80
+spells:S_HI_DEMON | BA_NETH
+spells-off:S_DEMON
+
+name:Paladin
+freq:0:8
+hit-points:5:4
+flags:IM_ACID | IM_ELEC | IM_FIRE | IM_COLD
+spells:SHRIEK | SCARE
+cut-off:20
+spells:HEAL
+cut-off:40
+spells:BLINK
+cut-off:60
+spells:HOLD
+
+name:Rogue
+freq:0:8
+hit-points:4:5
+blow-effect1:EAT_GOLD
+blow-effect2:EAT_ITEM
+spells:SHOT | DARKNESS
+cut-off:15
+speed:5:130
+spells:BLINK
+cut-off:25
+flags:WEIRD_MIND
+cut-off:40
+flags:EMPTY_MIND | INVISIBLE
+
+name:Ranger
+freq:0:8
+hearing:5
+spells:ARROW | HASTE
+
+name:Blackguard
+blow-sides:5:4
+blow-effect1:POISON
+cut-off:20
+flags:NO_CONF | NO_HOLD | NO_FEAR
+spells:SCARE | HASTE
+cut-off:40
+spells:SHRIEK
+cut-off:60
+blow-effect2:SHATTER
+
