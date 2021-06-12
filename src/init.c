@@ -98,6 +98,7 @@ char *ANGBAND_DIR_SAVE;
 char *ANGBAND_DIR_SCORES;
 char *ANGBAND_DIR_INFO;
 char *ANGBAND_DIR_ARCHIVE;
+char *ANGBAND_DIR_BONE;
 
 static const char *localities[] = {
 	#define LOC(a, b) #a,
@@ -344,6 +345,7 @@ void init_file_paths(const char *configpath, const char *libpath, const char *da
 	string_free(ANGBAND_DIR_SCORES);
 	string_free(ANGBAND_DIR_INFO);
 	string_free(ANGBAND_DIR_ARCHIVE);
+	string_free(ANGBAND_DIR_BONE);
 
 	/*** Prepare the paths ***/
 
@@ -406,6 +408,7 @@ void init_file_paths(const char *configpath, const char *libpath, const char *da
 	BUILD_DIRECTORY_PATH(ANGBAND_DIR_SCORES, userpath, "scores");
 	BUILD_DIRECTORY_PATH(ANGBAND_DIR_SAVE, userpath, "save");
 	BUILD_DIRECTORY_PATH(ANGBAND_DIR_ARCHIVE, userpath, "archive");
+	BUILD_DIRECTORY_PATH(ANGBAND_DIR_BONE, userpath, "bone");
 
 #undef BUILD_DIRECTORY_PATH
 }
@@ -441,6 +444,8 @@ void create_needed_dirs(void)
 	path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_ARCHIVE, "");
 	if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
 
+	path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_BONE, "");
+	if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
 }
 
 /**
@@ -4371,4 +4376,5 @@ void cleanup_angband(void)
 	string_free(ANGBAND_DIR_SCORES);
 	string_free(ANGBAND_DIR_INFO);
 	string_free(ANGBAND_DIR_ARCHIVE);
+	string_free(ANGBAND_DIR_BONE);
 }
