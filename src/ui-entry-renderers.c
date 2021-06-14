@@ -725,7 +725,7 @@ static void renderer_COMPACT_PERCENTAGE_RESIST_RENDERER_WITH_COMBINED_AUX(
 	struct loc p = details->value_position;
 	int color_offset = (details->alternate_color_first) ? 7 : 0;
 	struct ui_entry_combiner_funcs combiner;
-	int vc, ac, val;
+	int vc, ac, val = RES_LEVEL_BASE;
 	int i;
 
 	/* Check for defaults that are too short in list-ui-entry-renders.h. */
