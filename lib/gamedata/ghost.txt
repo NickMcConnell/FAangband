@@ -5,7 +5,7 @@
 
 # name: race or class name
 # cut-off: ghost dungeon level at which we move to a new set of properties
-# spell-power: add to spell power
+# spell-power: multiply spell power : divide spell power
 # freq: 0 if 0, 1 if not: add to innate/spell freq
 # hearing: add to hearing
 # hit-points: multiply average hp: divide average hp
@@ -19,7 +19,9 @@
 # spells: spells to add
 # spells-off: spells to remove
 
+# frequency adjustments can only apply to the base level
 
+# cut-offs must be in ascending order within a race or class.
 
 name:Easterling
 

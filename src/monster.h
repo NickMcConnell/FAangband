@@ -305,7 +305,6 @@ struct ghost_level {
 	struct ghost_level *next;
 	int level;
 	struct param_pair spell_power;
-	struct param_pair freq;
 	int hearing;
 	struct param_pair avg_hp;
 	struct param_pair ac;
@@ -325,6 +324,8 @@ struct ghost_level {
 struct ghost {
 	struct ghost *next;
 	char *name;
+	int freq_if_zero;
+	int freq_if_positive;
 	struct ghost_level *level;
 };
 
@@ -448,6 +449,7 @@ struct monster {
 
 extern struct monster_pain *pain_messages;
 extern struct monster_spell *monster_spells;
+extern struct ghost *ghosts;
 extern struct monster_base *rb_info;
 extern struct monster_race *r_info;
 extern const struct monster_race *ref_race;

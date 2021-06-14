@@ -134,6 +134,218 @@ static void print_tomb(void)
 
 
 /**
+ * Gets a personalized string for ghosts.  Code originally from get_name. -LM-
+ */
+static char *get_personalized_string(byte choice)
+{
+	static char tmp[80], info[80];
+	byte n, i;
+
+	/* Clear last line */
+	clear_from(15);
+
+	/* Prompt and ask */
+	if (choice == 1) {
+		prt("Enter a message for your character's ghost", 15, 0);
+		prt("above, or hit ESCAPE.", 16, 0);
+	} else if (choice == 2) {
+		prt("Enter an addition to your character ghost's", 15, 0);
+		prt("description above, or hit ESCAPE.", 16, 0);
+	} else
+		return NULL;
+
+	sprintf(info, "(%d characters maximum.  Entry will be used as", 79);
+
+	prt(info, 17, 0);
+	prt("(a) sentence(s).)", 18, 0);
+
+	/* Ask until happy */
+	while (1) {
+		/* Start at beginning of field. */
+		Term_gotoxy(0, 14);
+
+		/* Get an input */
+		(void) askfor_aux(tmp, sizeof(tmp) - 1, NULL);
+
+		/* All done */
+		break;
+	}
+
+	/* Pad the string (to clear junk and allow room for a ending) */
+	sprintf(tmp, "%-79.79s", tmp);
+
+	/* Ensure that strings end like a sentence, and neatly clip the string. */
+	for (n = 79;; n--) {
+		if ((tmp[n] == ' ') || (tmp[n] == '\0'))
+			continue;
+		else {
+			if ((tmp[n] == '!') || (tmp[n] == '.') || (tmp[n] == '?')) {
+				tmp[n + 1] = '\0';
+				for (i = n + 2; i < 80; i++)
+					tmp[i] = '\0';
+				break;
+			} else {
+				tmp[n + 1] = '.';
+				tmp[n + 2] = '\0';
+				for (i = n + 3; i < 80; i++)
+					tmp[i] = '\0';
+				break;
+			}
+		}
+	}
+
+	/* Start the sentence with a capital letter. */
+	if (islower(tmp[0]))
+		tmp[0] = toupper(tmp[0]);
+
+	/* Return the string */
+	return tmp;
+
+}
+
+/**
+ * Save a "bones" file for a dead character.  Now activated and (slightly) 
+ * altered.  Allows the inclusion of personalized strings. 
+ */
+static void make_bones(void)
+{
+	ang_file *fp;
+
+	char str[1024];
+	ui_event answer;
+	byte choice = 0;
+
+	int i;
+
+	/* Ignore wizards and borgs */
+	if (!(player->noscore & (NOSCORE_WIZARD | NOSCORE_DEBUG))) {
+		/* Ignore people who die in town */
+		if (player->depth) {
+			int level;
+			char tmp[128];
+
+			/* Slightly more tenacious saving routine. */
+			for (i = 0; i < 5; i++) {
+				/* Ghost hovers near level of death. */
+				if (i == 0)
+					level = player->depth;
+				else
+					level = player->depth + 5 - damroll(2, 4);
+				if (level < 1)
+					level = randint1(4);
+
+				/* "Bones" name */
+				sprintf(tmp, "bone.%03d", level);
+
+				/* Build the filename */
+				path_build(str, sizeof(str), ANGBAND_DIR_BONE, tmp);
+
+				/* Attempt to open the bones file */
+				fp = file_open(str, MODE_READ, FTYPE_TEXT);
+
+				/* Close it right away */
+				if (fp)
+					file_close(fp);
+
+				/* Do not over-write a previous ghost */
+				if (fp)
+					continue;
+
+				/* If no file by that name exists, we can make a new one. */
+				if (!(fp))
+					break;
+			}
+
+			/* Failure */
+			if (fp)
+				return;
+
+			/* Try to write a new "Bones File" */
+			fp = file_open(str, MODE_WRITE, FTYPE_TEXT);
+
+			/* Not allowed to write it? Weird. */
+			if (!fp)
+				return;
+
+			/* Save the info */
+			if (player->full_name[0] != '\0') {
+				file_putf(fp, "%s\n", player->full_name);
+			} else {
+				file_putf(fp, "Anonymous\n");
+			}
+
+			file_putf(fp, "%d\n", player->race->ridx);
+			file_putf(fp, "%d\n", player->class->cidx);
+
+			/* Clear screen */
+			Term_clear();
+
+			while (1) {
+				/* Ask the player if he wants to add a personalized string. */
+				prt("Information about your character has been saved", 15,
+					0);
+				prt("in a bones file.  Would you like to give the", 16, 0);
+				prt("ghost a special message or description? (yes/no)", 17,
+					0);
+
+				answer = inkey_ex();
+
+				/* Clear last line */
+				clear_from(15);
+				clear_from(16);
+
+				/* Determine what the personalized string will be used for.  */
+				if ((answer.key.code == 'Y') || (answer.key.code == 'y')) {
+					prt("Will you add something for your ghost to say,",
+						15, 0);
+					prt("or add to the monster description?", 16, 0);
+					prt("((M)essage/(D)escription)", 17, 0);
+
+					while (1) {
+						answer = inkey_ex();
+
+						clear_from(15);
+						clear_from(16);
+
+						if ((answer.key.code == 'M')
+							|| (answer.key.code == 'm')) {
+							choice = 1;
+							break;
+						} else if ((answer.key.code == 'D')
+								   || (answer.key.code == 'd')) {
+							choice = 2;
+							break;
+						} else {
+							choice = 0;
+							break;
+						}
+					}
+				} else if ((answer.key.code == 'N')
+						   || (answer.key.code == 'n')
+						   || (answer.key.code == ESCAPE)) {
+					choice = 0;
+					break;
+				}
+
+				/* If requested, get the personalized string, and write it and
+				 * info on how it should be used in the bones file.  Otherwise,
+				 * indicate the absence of such a string. */
+				if (choice)
+					file_putf(fp, "%d:%s\n", choice,
+							  get_personalized_string(choice));
+				else
+					file_putf(fp, "0: \n");
+
+				/* Close and save the Bones file */
+				file_close(fp);
+
+				return;
+			}
+		}
+	}
+}
+
+/**
  * Display the winner crown
  */
 static void display_winner(void)
@@ -393,6 +605,9 @@ void death_screen(void)
 	struct menu *death_menu;
 	bool done = false;
 	const region area = { 51, 2, 0, N_ELEMENTS(death_actions) };
+
+	/* Dump bones file */
+	make_bones();
 
 	/* Winner */
 	if (player->total_winner)

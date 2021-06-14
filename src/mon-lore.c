@@ -1757,7 +1757,7 @@ static void write_lore_entries(ang_file *fff)
 {
 	int i, n;
 
-	for (i = 0; i < z_info->r_max; i++) {
+	for (i = 0; i < z_info->r_max - 1; i++) {
 		/* Current entry */
 		struct monster_race *race = &r_info[i];
 		struct monster_lore *lore = &l_list[i];

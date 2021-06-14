@@ -180,6 +180,15 @@ struct connector {
 	struct connector *next;
 };
 
+struct ghost_info {
+	int bones_selector;
+	int race;
+	char name[80];
+	int string_type;
+	char string[80];
+	bool has_spoken;
+};
+
 struct chunk {
 	char *name;
 	s32b turn;
@@ -209,6 +218,7 @@ struct chunk {
 	u16b mon_cnt;
 	int mon_current;
 	int num_repro;
+	struct ghost_info *ghost;
 
 	struct monster_group **monster_groups;
 

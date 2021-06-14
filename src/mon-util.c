@@ -158,6 +158,19 @@ struct monster_base *lookup_monster_base(const char *name)
 }
 
 /**
+ * Return the monster blow effect matching the given name
+ */
+struct blow_effect *lookup_monster_blow_effect(const char *eff_name) {
+	struct blow_effect *eff = &blow_effects[0];
+	while (eff) {
+		if (streq(eff->name, eff_name))
+			break;
+		eff = eff->next;
+	}
+	return eff;
+}
+
+/**
  * Return whether the given base matches any of the names given.
  *
  * Accepts a variable-length list of name strings. The list must end with NULL.
@@ -1122,16 +1135,25 @@ static void player_kill_monster(struct monster *mon, const char *note)
 		assert(mon->original_race == NULL);
 		mon->race->max_num = 0;
 
-		/*
-		 * This gets the correct name if we slay an invisible
-		 * unique and don't have See Invisible.
-		 */
+		/* This gets the correct name if we slay an invisible
+		 * unique and don't have See Invisible. */
 		monster_desc(unique_name, sizeof(unique_name), mon,
 					 MDESC_DIED_FROM);
 
 		/* Log the slaying of a unique */
 		strnfmt(buf, sizeof(buf), "Killed %s", unique_name);
 		history_add(player, buf, HIST_SLAY_UNIQUE);
+	}
+
+	/* When the player kills a player ghost, the bones file that it used
+	 * is (often) deleted. */
+	if (rf_has(mon->race->flags, RF_PLAYER_GHOST)) {
+		if (!one_in_(3)) {
+			char path[1024];
+			sprintf(path, "%s/bone.%03d", ANGBAND_DIR_BONE,
+					cave->ghost->bones_selector);
+			file_delete(path);
+		}
 	}
 
 	/* Gain experience */

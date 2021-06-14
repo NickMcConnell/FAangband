@@ -61,7 +61,11 @@ void lore_title(textblock *tb, const struct monster_race *race)
 	}
 
 	/* Dump the name and then append standard attr/char info */
-	textblock_append(tb, "%s", race->name);
+	if (rf_has(race->flags, RF_PLAYER_GHOST)) {
+		textblock_append(tb, "%s, the %s", cave->ghost->name, race->name);
+	} else {
+		textblock_append(tb, "%s", race->name);
+	}
 
 	textblock_append(tb, " ('");
 	textblock_append_pict(tb, standard_attr, standard_char);
@@ -102,8 +106,8 @@ void lore_description(textblock *tb, const struct monster_race *race,
 	/* Now get the known monster flags */
 	monster_flags_known(race, lore, known_flags);
 
-	/* Spoilers -- know everything */
-	if (spoilers)
+	/* Spoilers or player ghost -- know everything */
+	if (spoilers || rf_has(race->flags, RF_PLAYER_GHOST))
 		cheat_monster_lore(race, lore);
 
 	/* Appending the title here simplifies code in the callers. It also causes
@@ -143,6 +147,10 @@ void lore_description(textblock *tb, const struct monster_race *race,
 	/* Do we know everything */
 	if (lore_is_fully_known(race))
 		textblock_append(tb, "You know everything about this monster.");
+
+	/* Player ghosts may have unique descriptions. */
+	if (rf_has(race->flags, RF_PLAYER_GHOST) && (cave->ghost->string_type == 2))
+		textblock_append(tb, format("%s  ", cave->ghost->string));
 
 	/* Notice "Quest" monsters */
 	if (quest_unique_monster_check(race))

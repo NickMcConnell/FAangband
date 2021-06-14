@@ -14621,7 +14621,3 @@ spells:S_UNDEAD
 desc:Cloaked in midnight, and supported by minions of death, this lord of the
 desc: undead comes to claim your soul.  You feel you know it and it knows you.
 
-# This entry is used as a dummy for player ghosts, and should always be last
-
-name:player ghost
-rarity:0

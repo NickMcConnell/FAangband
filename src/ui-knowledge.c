@@ -1167,7 +1167,12 @@ static void display_monster(int col, int row, bool cursor, int oid)
 		a = COLOUR_VIOLET;
 
 	/* Display the name */
-	c_prt(attr, race->name, row, col);
+	if (rf_has(race->flags, RF_PLAYER_GHOST)) {
+		c_prt(attr, format("%s, the %s", cave->ghost->name, race->name),
+			  row, col);
+	} else {
+		c_prt(attr, race->name, row, col);
+	}
 
 	/* Display symbol */
 	big_pad(66, row, a, c);
@@ -3929,7 +3934,7 @@ void do_cmd_query_symbol(void)
 	who = mem_zalloc(z_info->r_max * sizeof(u16b));
 
 	/* Collect matching monsters */
-	for (num = 0, idx = 1; idx < z_info->r_max - 1; idx++) {
+	for (num = 0, idx = 1; idx < z_info->r_max; idx++) {
 		struct monster_race *race = &r_info[idx];
 		struct monster_lore *lore = &l_list[idx];
 

@@ -274,6 +274,11 @@ static bool summon_specific_okay(struct monster_race *race)
 	struct monster_base_list *bases = summon->bases;
 	bool unique = rf_has(race->flags, RF_UNIQUE);
 
+	/* Player ghosts cannot be summoned. */
+	if (rf_has(race->flags, RF_PLAYER_GHOST)) {
+		return false;
+	}
+
 	/* Forbid uniques? */
 	if (!summon->unique_allowed && unique) {
 		return false;

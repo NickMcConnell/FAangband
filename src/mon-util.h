@@ -26,6 +26,7 @@ const char *describe_race_flag(int flag);
 void create_mon_flag_mask(bitflag *f, ...);
 struct monster_race *lookup_monster(const char *name);
 struct monster_base *lookup_monster_base(const char *name);
+struct blow_effect *lookup_monster_blow_effect(const char *eff_name);
 bool match_monster_bases(const struct monster_base *base, ...);
 void update_mon(struct monster *mon, struct chunk *c, bool full);
 void update_monsters(bool full);

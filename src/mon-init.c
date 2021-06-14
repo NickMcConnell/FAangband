@@ -275,16 +275,6 @@ struct file_parser meth_parser = {
  * Initialize monster blow effects
  * ------------------------------------------------------------------------ */
 
-static struct blow_effect *findeff(const char *eff_name) {
-	struct blow_effect *eff = &blow_effects[0];
-	while (eff) {
-		if (streq(eff->name, eff_name))
-			break;
-		eff = eff->next;
-	}
-	return eff;
-}
-
 static enum parser_error parse_eff_name(struct parser *p) {
 	const char *name = parser_getstr(p, "name");
 	struct blow_effect *h = parser_priv(p);
@@ -1248,11 +1238,11 @@ static enum parser_error parse_monster_blow(struct parser *p) {
 	if (!b->method)
 		return PARSE_ERROR_UNRECOGNISED_BLOW;
 	if (parser_hasval(p, "effect")) {
-		b->effect = findeff(parser_getsym(p, "effect"));
+		b->effect = lookup_monster_blow_effect(parser_getsym(p, "effect"));
 		if (!b->effect)
 			return PARSE_ERROR_INVALID_EFFECT;
 	} else {
-		b->effect = findeff("NONE");
+		b->effect = lookup_monster_blow_effect("NONE");
 	}
 	if (parser_hasval(p, "damage"))
 		b->dice = parser_getrand(p, "damage");
@@ -1707,6 +1697,7 @@ static errr finish_parse_monster(struct parser *p) {
 
 		mem_free(r);
 	}
+	z_info->r_max += 1;
 
 	/* Convert friend and shape names into race pointers */
 	for (i = 0; i < z_info->r_max; i++) {
@@ -1753,7 +1744,7 @@ static void cleanup_monster(void)
 {
 	int ridx;
 
-	for (ridx = 0; ridx < z_info->r_max; ridx++) {
+	for (ridx = 0; ridx < z_info->r_max - 1; ridx++) {
 		struct monster_race *r = &r_info[ridx];
 		struct monster_drop *d;
 		struct monster_friends *f;
@@ -1823,6 +1814,20 @@ static enum parser_error parse_ghost_name(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_ghost_freq(struct parser *p) {
+	struct ghost *g = parser_priv(p);
+	uint exists;
+	assert(g);
+
+	exists = parser_getuint(p, "exists");
+	if (exists) {
+		g->freq_if_positive = parser_getint(p, "add");
+	} else {
+		g->freq_if_zero = parser_getint(p, "add");
+	}
+	return PARSE_ERROR_NONE;
+}
+
 static enum parser_error parse_ghost_cutoff(struct parser *p) {
 	struct ghost *g = parser_priv(p);
 	struct ghost_level *l, *new;
@@ -1848,20 +1853,6 @@ static enum parser_error parse_ghost_spell_power(struct parser *p) {
 
 	l->spell_power.param1 = parser_getuint(p, "mult");
 	l->spell_power.param2 = parser_getuint(p, "div");
-	return PARSE_ERROR_NONE;
-}
-
-static enum parser_error parse_ghost_freq(struct parser *p) {
-	struct ghost *g = parser_priv(p);
-	struct ghost_level *l;
-	assert(g);
-	l = g->level;
-	while (l->next) {
-		l = l->next;
-	}
-
-	l->freq.param1 = parser_getuint(p, "exists");
-	l->freq.param2 = parser_getint(p, "add");
 	return PARSE_ERROR_NONE;
 }
 
@@ -2075,9 +2066,9 @@ struct parser *init_parse_ghost(void) {
 	parser_setpriv(p, NULL);
 
 	parser_reg(p, "name str name", parse_ghost_name);
+	parser_reg(p, "freq uint exists int add", parse_ghost_freq);
 	parser_reg(p, "cut-off int level", parse_ghost_cutoff);
 	parser_reg(p, "spell-power uint mult uint div", parse_ghost_spell_power);
-	parser_reg(p, "freq uint exists int add", parse_ghost_freq);
 	parser_reg(p, "hearing int hearing", parse_ghost_hearing);
 	parser_reg(p, "hit-points uint mult uint div", parse_ghost_hit_points);
 	parser_reg(p, "armor-class uint mult uint div", parse_ghost_armor_class);
@@ -2497,7 +2488,7 @@ static enum parser_error parse_lore_blow(struct parser *p) {
 	if (!method)
 		return PARSE_ERROR_UNRECOGNISED_BLOW;
 	if (parser_hasval(p, "effect")) {
-		effect = findeff(parser_getsym(p, "effect"));
+		effect = lookup_monster_blow_effect(parser_getsym(p, "effect"));
 		if (!effect)
 			return PARSE_ERROR_INVALID_EFFECT;
 	}

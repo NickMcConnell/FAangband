@@ -920,6 +920,9 @@ static void wr_dungeon_aux(struct chunk *c)
 	wr_u16b(c->feeling_squares);
 	wr_s32b(c->turn);
 
+	/* Write bones selector */
+	wr_byte(c->ghost->bones_selector);
+
 	/* Write connector info */
 	if (OPT(player, birth_levels_persist)) {
 		if (c->join) {
@@ -1113,6 +1116,7 @@ void wr_chunks(void)
 			for (i = 0; i < z_info->f_max + 1; i++) {
 				wr_u16b(c->feat_count[i]);
 			}
+			wr_byte(c->ghost->bones_selector);
 		}
 	}
 }

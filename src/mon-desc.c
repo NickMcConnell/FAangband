@@ -46,8 +46,10 @@ void get_mon_name(char *buf, size_t buflen, const struct monster_race *race,
 {
 	assert(race != NULL);
 
-    /* Unique names don't have a number */
-	if (rf_has(race->flags, RF_UNIQUE)) {
+    /* Unique and ghost names don't have a number */
+	if (rf_has(race->flags, RF_PLAYER_GHOST)) {
+		strnfmt(buf, buflen, "[U] %s, the %s", cave->ghost->name, race->name);
+	} else if (rf_has(race->flags, RF_UNIQUE)) {
 		strnfmt(buf, buflen, "[U] %s", race->name);
     } else {
 	    strnfmt(buf, buflen, "%3d ", num);
@@ -182,9 +184,14 @@ void monster_desc(char *desc, size_t max, const struct monster *mon, int mode)
 		else
 			my_strcpy(desc, "itself", max);
 	} else {
-		/* Unique, indefinite or definite */
-		if (rf_has(mon->race->flags, RF_UNIQUE)) {
-			/* Start with the name (thus nominative and objective) */
+		/* It could be a player ghost. */
+		if (rf_has(mon->race->flags, RF_PLAYER_GHOST)) {
+			/* Get the ghost name. */
+			my_strcpy(desc, cave->ghost->name, max);
+			my_strcat(desc, format(", the %s", mon->race->name), max);
+		} else if (rf_has(mon->race->flags, RF_UNIQUE)) {
+			/* Unique, indefinite or definite
+			 * Start with the name (thus nominative and objective) */
 			my_strcpy(desc, mon->race->name, max);
 		} else {
 			if (mon->player_race) {

@@ -24,6 +24,7 @@
 #include "mon-lore.h"
 #include "mon-make.h"
 #include "mon-predicate.h"
+#include "mon-spell.h"
 #include "mon-timed.h"
 #include "mon-util.h"
 #include "obj-knowledge.h"
@@ -550,6 +551,292 @@ void free_race_probs(void)
 
 /**
  * ------------------------------------------------------------------------
+ * Player ghost code
+ * ------------------------------------------------------------------------ */
+#define PLAYER_GHOST_RACE z_info->r_max - 1
+#define GHOST_NAME_LENGTH 15
+
+/**
+ * Adjust various player ghost attributes depending on race and class.
+ */
+static void process_ghost_race_class(struct player_race *p_race,
+									 struct player_class *class,
+									 struct monster_race *race)
+{
+	struct ghost *g;
+	int hurt = 0;
+	for (g = ghosts; g; g = g->next) {
+		struct ghost_level *lev;
+		if (strcmp(p_race->name, g->name) && strcmp(class->name, g->name)) {
+			continue;
+		}
+
+		/* Iterate through properties that kick in at various dungeon levels */
+		for (lev = g->level; lev; lev = lev->next) {
+			/* Only handle deep enough properties */
+			if (race->level < lev->level) break;
+
+			/* Spell power */
+			if (lev->spell_power.param1) {
+				race->spell_power *= lev->spell_power.param1;
+				race->spell_power /= lev->spell_power.param2;
+			}
+
+			/* Hearing */
+			race->hearing += lev->hearing;
+
+			/* Hit points */
+			if (lev->avg_hp.param1) {
+				race->avg_hp *= lev->avg_hp.param1;
+				race->avg_hp /= lev->avg_hp.param2;
+			}
+
+			/* Armor class */
+			if (lev->ac.param1) {
+				race->ac *= lev->ac.param1;
+				race->ac /= lev->ac.param2;
+			}
+
+			/* Increase in blow sides */
+			if (lev->blow_sides.param1) {
+				int i;
+				for (i = 0; i < z_info->mon_blows_max; i++) {
+					if (race->blow[i].method) {
+						race->blow[i].dice.sides *= lev->blow_sides.param1;
+						race->blow[i].dice.sides /= lev->blow_sides.param2;
+					}
+				}
+			}
+
+			/* Speed */
+			if (lev->speed.param1) {
+				race->speed += lev->speed.param1;
+				race->speed = MIN(race->speed, lev->speed.param2);
+			}
+
+			/* New blow effects */
+			if (lev->blow_effect1) {
+				int i;
+				for (i = 0; i < z_info->mon_blows_max && (hurt == 0); i++) {
+					if (strcmp(race->blow[i].effect->name, "HURT") == 0) {
+						race->blow[i].effect =
+							lookup_monster_blow_effect(lev->blow_effect1);
+						hurt++;
+						break;
+					}
+				}
+			}
+			if (lev->blow_effect2) {
+				int i;
+				for (i = 0; i < z_info->mon_blows_max && (hurt == 1); i++) {
+					if (strcmp(race->blow[i].effect->name, "HURT") == 0) {
+						race->blow[i].effect =
+							lookup_monster_blow_effect(lev->blow_effect1);
+						hurt++;
+						break;
+					}
+				}
+			}
+
+			/* Race flags, add and remove */
+			rf_union(race->flags, lev->flags);
+			rf_diff(race->flags, lev->flags_off);
+
+			/* Spells, add and remove */
+			rf_union(race->spell_flags, lev->spell_flags);
+			rf_diff(race->spell_flags, lev->spell_flags_off);
+		}
+
+		/* Spell frequency */
+		if (g->freq_if_zero) {
+			bitflag innate_spells[RSF_SIZE], non_innate_spells[RSF_SIZE];
+
+			/* Check for innate spells */
+			create_mon_spell_mask(innate_spells, RST_INNATE, RST_NONE);
+			rsf_inter(innate_spells, race->spell_flags);
+			if (!rsf_is_empty(innate_spells) && !race->freq_innate) {
+				race->freq_innate = g->freq_if_zero;
+			}
+
+			/* Check for regular spells */
+			rsf_copy(non_innate_spells, race->spell_flags);
+			rsf_diff(non_innate_spells, innate_spells);
+			if (!rsf_is_empty(non_innate_spells) && !race->freq_spell) {
+				race->freq_spell = g->freq_if_zero;
+			}
+		}
+		if (g->freq_if_positive) {
+			bitflag innate_spells[RSF_SIZE], non_innate_spells[RSF_SIZE];
+
+			/* Check for innate spells */
+			create_mon_spell_mask(innate_spells, RST_INNATE, RST_NONE);
+			rsf_inter(innate_spells, race->spell_flags);
+			if (race->freq_innate) {
+				if (!rsf_is_empty(innate_spells)) {
+					race->freq_innate += g->freq_if_positive;
+				} else {
+					race->freq_innate = 0;
+				}
+			}
+
+			/* Check for regular spells */
+			rsf_copy(non_innate_spells, race->spell_flags);
+			rsf_diff(non_innate_spells, innate_spells);
+			if (race->freq_spell) {
+				if (!rsf_is_empty(non_innate_spells)) {
+					race->freq_spell += g->freq_if_positive;
+				} else {
+					race->freq_spell = 0;
+				}
+			}
+		}
+	}
+}
+
+/**
+ * Once a monster with the flag "PLAYER_GHOST" is generated, it needs
+ * to have a little color added, if it hasn't been prepared before.
+ * This function uses a bones file to get a name and adds flags depending on
+ * the race and class of the slain adventurer.  -LM-
+ */
+bool prepare_ghost(struct chunk *c, int r_idx, struct monster *mon,
+				   bool from_savefile)
+{
+	int ghost_race, ghost_class = 0;
+	byte try, i;
+
+	struct monster_race *race = &r_info[r_idx];
+	struct monster_lore *lore = &l_list[PLAYER_GHOST_RACE];
+	struct player_race *p_race;
+	struct player_class *class;
+
+	ang_file *fp;
+	char path[1024];
+	char buf[80];
+
+	/* Paranoia. */
+	if (!rf_has(race->flags, RF_PLAYER_GHOST))
+		return true;
+
+	/* Hack -- No easy player ghosts, unless the ghost is from a savefile.
+	 * This also makes player ghosts much rarer, and effectively (almost)
+	 * prevents more than one from being on a level. From 0.5.1, other code
+	 * makes it is formally impossible to have more than one ghost at a time.
+	 * -BR- */
+	if ((race->level < c->depth - 5) && (from_savefile == false))
+		return false;
+
+	/* Store the index of the base race. */
+	c->ghost->race = r_idx;
+
+	/* Copy the info from the template to the special "ghost slot", and use
+	 * that from here on */
+	memcpy(&r_info[PLAYER_GHOST_RACE], race, sizeof(*race));
+	race = &r_info[PLAYER_GHOST_RACE];
+
+	/* Choose a bones file.  Use the variable bones_selector if it has any
+	 * information in it (this allows saved ghosts to reacquire all special
+	 * features), then use the current depth, and finally pick at random. */
+	for (try = 0; try < 40; ++try) {
+		/* Prepare a path, and store the file number for future reference. */
+		if (try == 0) {
+			if (!c->ghost->bones_selector) {
+				c->ghost->bones_selector = player->depth;
+			}
+		} else {
+			c->ghost->bones_selector = randint1(z_info->max_depth - 1);
+		}
+		path_build(path, sizeof(path), ANGBAND_DIR_BONE,
+				   format("bone.%03d", c->ghost->bones_selector));
+
+		/* Attempt to open the bones file. */
+		fp = file_open(path, MODE_READ, FTYPE_TEXT);
+
+		/* No bones file with that number, try again. */
+		if (!fp) {
+			c->ghost->bones_selector = 0;
+			continue;
+		}
+
+		/* Success. */
+		if (fp) break;
+	}
+
+	/* No bones file found, so no Ghost is made. */
+	if (!fp) return false;
+
+	/* Scan the file */
+
+	/* Name */
+	if (!file_getl(fp, buf, sizeof(buf))) return false;
+	my_strcpy(c->ghost->name, buf, GHOST_NAME_LENGTH);
+
+	/* Race */
+	if (!file_getl(fp, buf, sizeof(buf))) return false;
+	if (1 != sscanf(buf, "%d", &ghost_race)) return false;
+
+	/* Class */
+	if (!file_getl(fp, buf, sizeof(buf))) return false;
+	if (1 != sscanf(buf, "%d", &ghost_class)) return false;
+
+	/* String type (maybe) */
+	if (file_getl(fp, buf, sizeof(buf))) {
+		if (1 != sscanf(buf, "%d", &c->ghost->string_type))
+			c->ghost->string_type = 0;
+	}
+
+	/* String (maybe) */
+	if (file_getl(fp, buf, sizeof(buf))) {
+		if (strlen(buf) > 0) {
+			my_strcpy(c->ghost->string, buf, strlen(buf));
+		} else {
+			c->ghost->string_type = 0;
+		}
+	}
+
+	/* Close the file */
+	file_close(fp);
+
+	/* Process the ghost name and store it. */
+	for (i = 0; (i < 16) && (c->ghost->name[i]) &&
+			 (c->ghost->name[i] != ','); i++);
+
+	/* Terminate the name */
+	c->ghost->name[i] = '\0';
+
+	/* Force a name */
+	if (!c->ghost->name[0]) {
+		my_strcpy(c->ghost->name, "Nobody", strlen(c->ghost->name));
+	}
+
+	/* Capitalize the name */
+	if (islower(c->ghost->name[0])) {
+		c->ghost->name[0] = toupper(c->ghost->name[0]);
+	}
+
+	/* Process race and class. */
+	p_race = player_id2race(ghost_race);
+	class = player_id2class(ghost_class);
+	process_ghost_race_class(p_race, class, race);
+
+	/* A little extra help for the deepest ghosts */
+	if (c->depth > 75) {
+		race->spell_power += 3 * (c->depth - 75) / 2;
+	}
+
+	/* Increase the level feeling */
+	c->mon_rating += 10;
+
+	/* Player ghosts are "seen" whenever generated. */
+	lore->sights = 1;
+
+	/* Success */
+	return true;
+}
+
+
+/**
+ * ------------------------------------------------------------------------
  * Deleting of monsters and monster list handling
  * ------------------------------------------------------------------------ */
 /**
@@ -634,6 +921,23 @@ void delete_monster_idx(int m_idx)
 	/* Delete mimicked objects */
 	if (mon->mimicked_obj) {
 		square_delete_object(cave, mon->grid, mon->mimicked_obj, true, false);
+	}
+
+	/* If the monster was a player ghost, remove it from the monster memory,
+	 * ensure that it never appears again, clear its data and allow the
+	 * next ghost to speak. */
+	if (rf_has(mon->race->flags, RF_PLAYER_GHOST)) {
+		struct monster_lore *lore = &l_list[mon->race->ridx];
+		cave->ghost->bones_selector = 0;
+		cave->ghost->has_spoken = false;
+		my_strcpy(cave->ghost->name, "", sizeof(cave->ghost->name));
+		my_strcpy(cave->ghost->string, "", sizeof(cave->ghost->string));
+		cave->ghost->string_type = 0;
+		if (player->upkeep->monster_race == mon->race) {
+			player->upkeep->monster_race = NULL;
+		}
+		memset(lore, 0, sizeof(*lore));
+		memset(mon->race, 0, sizeof(*mon->race));
 	}
 
 	/* Wipe the Monster */
@@ -849,6 +1153,23 @@ void wipe_mon_list(struct chunk *c, struct player *p)
 
 		/* Monster is gone from square */
 		square_set_mon(c, mon->grid, 0);
+
+		/* If the monster was a player ghost, remove it from the monster memory,
+		 * ensure that it never appears again, clear its data and allow the
+		 * next ghost to speak. */
+		if (rf_has(mon->race->flags, RF_PLAYER_GHOST)) {
+			struct monster_lore *lore = &l_list[mon->race->ridx];
+			cave->ghost->bones_selector = 0;
+			cave->ghost->has_spoken = false;
+			my_strcpy(cave->ghost->name, "", sizeof(cave->ghost->name));
+			my_strcpy(cave->ghost->string, "", sizeof(cave->ghost->string));
+			cave->ghost->string_type = 0;
+			if (player->upkeep->monster_race == mon->race) {
+				player->upkeep->monster_race = NULL;
+			}
+			memset(lore, 0, sizeof(*lore));
+			memset(mon->race, 0, sizeof(*mon->race));
+		}
 
 		/* Wipe the Monster */
 		memset(mon, 0, sizeof(struct monster));
@@ -1426,6 +1747,10 @@ static bool place_new_monster_one(struct chunk *c, struct loc grid,
 	if (rf_has(race->flags, RF_UNIQUE) && (race->cur_num >= race->max_num))
 		return false;
 
+	/* Only 1 player ghost at a time */
+	if (rf_has(race->flags, RF_PLAYER_GHOST) && c->ghost->bones_selector)
+		return false;
+
 	/* Depth monsters may NOT be created out of depth */
 	if (rf_has(race->flags, RF_FORCE_DEPTH) && player->depth < race->level)
 		return false;
@@ -1453,6 +1778,15 @@ static bool place_new_monster_one(struct chunk *c, struct loc grid,
 
 	/* Clean out the monster */
 	memset(mon, 0, sizeof(struct monster));
+
+	/* If the monster is a player ghost, perform various manipulations 
+	 * on it, and forbid ghost creation if something goes wrong. */
+	if (rf_has(race->flags, RF_PLAYER_GHOST)) {
+		if (!prepare_ghost(c, race->ridx, mon, false)) return false;
+
+		/* Point to the special "ghost slot" */
+		race = &r_info[PLAYER_GHOST_RACE];
+	}
 
 	/* Save the race */
 	mon->race = race;

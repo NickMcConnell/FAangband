@@ -448,6 +448,37 @@ void play_ambient_sound(void)
 }
 
 /**
+ * Array of ghost challenge strings
+ */
+static const char *challenge_text[14] = {
+	"challenges you from beyond the grave!",
+	"thunders 'Prove worthy of your traditions - or die ashamed!'.",
+	"desires to test your mettle!",
+	"has risen from the dead to test you!",
+	"roars 'Fight, or know yourself for a coward!'.",
+	"summons you to a duel of life and death!",
+	"desires you to know that you face a mighty champion of yore!",
+	"demands that you prove your worthiness in combat!",
+	"calls you unworthy of your ancestors!",
+	"challenges you to a deathmatch!",
+	"walks Middle-Earth once more!",
+	"challenges you to demonstrate your prowess!",
+	"demands you prove yourself here and now!",
+	"asks 'Can ye face the best of those who came before?'."
+};
+
+/**
+ * Personalize, randomize, and announce the challenge of a player ghost. -LM-
+ */
+static void ghost_challenge(void)
+{
+	struct monster_race *race = &r_info[cave->ghost->race];
+
+	msg("%s, the %s %s", cave->ghost->name, race->name,
+		challenge_text[randint0(14)]);
+}
+
+/**
  * Helper for process_world -- decrement player->timed[] and curse effect fields
  */
 static void decrease_timeouts(void)
@@ -558,6 +589,7 @@ static void decrease_timeouts(void)
 void process_world(struct chunk *c)
 {
 	int i, y, x;
+	bool was_ghost = false;
 
 	/* Compact the monster list if we're approaching the limit */
 	if (cave_monster_count(c) + 32 > z_info->level_monster_max)
@@ -603,10 +635,20 @@ void process_world(struct chunk *c)
 		player->upkeep->update |= PU_BONUS;
 	}
 
+	/* See if there is already a player ghost on the level */
+	if (c->ghost->bones_selector) {
+		was_ghost = true;
+	}
+
 	/* Check for creature generation, except on themed levels */
 	if (one_in_(z_info->alloc_monster_chance) && (!player->themed_level))
 		(void)pick_and_place_distant_monster(c, player, z_info->max_sight + 5,
 											 true, player->depth);
+
+	/* If there is ghost now, and there was not before, give a challenge */
+	if (c->ghost->bones_selector && !was_ghost) {
+		ghost_challenge();
+	}
 
 	/*** Damage (or healing) over Time ***/
 
@@ -1054,6 +1096,10 @@ void on_new_level(void)
 	/* Announce (or repeat) the feeling */
 	if (player->depth)
 		display_feeling(false);
+
+	/* Announce a player ghost challenge. -LM- */
+	if (cave->ghost->bones_selector)
+		ghost_challenge();
 
 	/* Check the surroundings */
 	search(player);

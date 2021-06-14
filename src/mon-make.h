@@ -31,6 +31,8 @@ extern int **race_prob;
 
 void init_race_probs(void);
 void free_race_probs(void);
+bool prepare_ghost(struct chunk *c, int r_idx, struct monster *mon,
+				   bool from_savefile);
 void delete_monster_idx(int m_idx);
 void delete_monster(struct loc grid);
 void monster_index_move(int i1, int i2);
