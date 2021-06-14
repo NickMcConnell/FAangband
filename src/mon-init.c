@@ -1816,7 +1816,7 @@ static enum parser_error parse_ghost_name(struct parser *p) {
 
 static enum parser_error parse_ghost_freq(struct parser *p) {
 	struct ghost *g = parser_priv(p);
-	uint exists;
+	int exists;
 	assert(g);
 
 	exists = parser_getuint(p, "exists");
