@@ -3200,6 +3200,11 @@ static void do_cmd_knowledge_shapechange(const char *name, int row)
  * Main knowledge menus
  * ------------------------------------------------------------------------ */
 
+static void do_cmd_knowledge_home(const char *name, int row)
+{
+	textui_store_knowledge(store_home(player));
+}
+
 static void do_cmd_knowledge_scores(const char *name, int row)
 {
 	show_scores();
@@ -3228,6 +3233,7 @@ static menu_action knowledge_actions[] =
 { 0, 0, "Display feature knowledge",  	   do_cmd_knowledge_features  },
 { 0, 0, "Display trap knowledge",          do_cmd_knowledge_traps  },
 { 0, 0, "Display shapechange effects",     do_cmd_knowledge_shapechange },
+{ 0, 0, "Display contents of home",        do_cmd_knowledge_home },
 { 0, 0, "Display hall of fame",       	   do_cmd_knowledge_scores    },
 { 0, 0, "Display character history",  	   do_cmd_knowledge_history   },
 { 0, 0, "Display equippable comparison",   do_cmd_knowledge_equip_cmp },

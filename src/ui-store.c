@@ -1148,14 +1148,14 @@ static void store_menu_init(struct store_context *ctx, struct store *store, bool
  *
  * The only allowed actions are 'I' to inspect an item
  */
-void textui_store_knowledge(int n)
+void textui_store_knowledge(struct store *store)
 {
 	struct store_context ctx;
 
 	screen_save();
 	clear_from(0);
 
-	store_menu_init(&ctx, &stores[n], true);
+	store_menu_init(&ctx, store, true);
 	menu_select(&ctx.menu, 0, false);
 
 	/* Flush messages XXX XXX XXX */
