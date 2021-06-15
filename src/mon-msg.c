@@ -253,11 +253,8 @@ static void get_subject(char *buf, size_t buflen,
 	} else {
 		const char *p_name = p_race ? format("%s ", p_race->name) : "";
 
-		/* Ghosts, uniques, multiple monsters, or just one */
-		if (rf_has(race->flags, RF_PLAYER_GHOST)) {
-			my_strcpy(buf, format("%s, the %s", cave->ghost->name, race->name),
-					  buflen);
-		} else if (rf_has(race->flags, RF_UNIQUE)) {
+		/* Uniques, multiple monsters, or just one */
+		if (rf_has(race->flags, RF_UNIQUE)) {
 			my_strcpy(buf, race->name, buflen);
 		} else if (count == 1) {
 			strnfmt(buf, buflen, "The %s%s", p_name, race->name);

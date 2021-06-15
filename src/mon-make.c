@@ -734,6 +734,9 @@ bool prepare_ghost(struct chunk *c, int r_idx, struct monster *mon,
 	memcpy(&r_info[PLAYER_GHOST_RACE], race, sizeof(*race));
 	race = &r_info[PLAYER_GHOST_RACE];
 
+	/* Set rarity to 0 so the ghost can't rise again */
+	race->rarity = 0;
+
 	/* Choose a bones file.  Use the variable bones_selector if it has any
 	 * information in it (this allows saved ghosts to reacquire all special
 	 * features), then use the current depth, and finally pick at random. */
@@ -928,16 +931,15 @@ void delete_monster_idx(int m_idx)
 	 * next ghost to speak. */
 	if (rf_has(mon->race->flags, RF_PLAYER_GHOST)) {
 		struct monster_lore *lore = &l_list[mon->race->ridx];
-		cave->ghost->bones_selector = 0;
-		cave->ghost->has_spoken = false;
-		my_strcpy(cave->ghost->name, "", sizeof(cave->ghost->name));
-		my_strcpy(cave->ghost->string, "", sizeof(cave->ghost->string));
-		cave->ghost->string_type = 0;
+		memset(lore, 0, sizeof(*lore));
 		if (player->upkeep->monster_race == mon->race) {
 			player->upkeep->monster_race = NULL;
 		}
-		memset(lore, 0, sizeof(*lore));
-		memset(mon->race, 0, sizeof(*mon->race));
+		cave->ghost->bones_selector = 0;
+		cave->ghost->has_spoken = false;
+		cave->ghost->string_type = 0;
+		my_strcpy(cave->ghost->name, "", sizeof(cave->ghost->name));
+		my_strcpy(cave->ghost->string, "", sizeof(cave->ghost->string));
 	}
 
 	/* Wipe the Monster */
@@ -1168,12 +1170,14 @@ void wipe_mon_list(struct chunk *c, struct player *p)
 				player->upkeep->monster_race = NULL;
 			}
 			memset(lore, 0, sizeof(*lore));
-			memset(mon->race, 0, sizeof(*mon->race));
 		}
 
 		/* Wipe the Monster */
 		memset(mon, 0, sizeof(struct monster));
 	}
+
+	/* Delete the player ghost record completely */
+	memset(&r_info[PLAYER_GHOST_RACE], 0, sizeof(struct monster_race));
 
 	/* Delete all the monster groups */
 	for (i = 1; i < z_info->level_monster_max; i++) {
