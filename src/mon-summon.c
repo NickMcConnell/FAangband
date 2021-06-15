@@ -473,9 +473,14 @@ int summon_specific(struct loc grid, int lev, int type, bool delay, bool call,
 	mon = square_monster(cave, near);
 
 	/* Friendly monster will target the player's target - if it exists... */
-	if (friendly && t_mon) {
-		mon->target.midx = t_mon->midx;
-		monster_make_heatmaps(cave, t_mon);
+	if (friendly) {
+		if (t_mon) {
+			mon->target.midx = t_mon->midx;
+			monster_make_heatmaps(cave, t_mon);
+		}
+	} else {
+		/* All other summons are hostile */
+		mon->target.midx = -1;
 	}
 
 	/* If delay, try to let the player act before the summoned monsters,
