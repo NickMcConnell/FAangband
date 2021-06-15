@@ -14399,11 +14399,11 @@ flags:UNIQUE | PLAYER_GHOST
 flags:RAND_25 | SMART
 flags:INVISIBLE
 flags:EVIL | IM_POIS | IM_COLD
-flags:ONLY_ITEM | DROP_CHEST
 flags:NO_CONF | NO_FEAR
 spell-freq:6
 spell-power:14
 spells:SCARE | DARKNESS | DRAIN_MANA | BLIND
+drop-base:chest:90:1:1
 desc:A ghostly apparition that shrieks horribly.  You feel you know it and it
 desc: knows you.
 
@@ -14424,11 +14424,11 @@ blow:HIT:POISON:3d8
 blow:HIT:POISON:3d8
 flags:UNIQUE | PLAYER_GHOST
 flags:SMART | REGENERATE
-flags:ONLY_ITEM | DROP_CHEST
 flags:NO_CONF
 spell-freq:8
 spell-power:18
 spells:SCARE | BLIND
+drop-base:chest:90:1:1
 desc:A larger-than life figure covered in wrappings.  Twin flames burn in its
 desc: head.  You feel you know it and it knows you.
 
@@ -14449,11 +14449,11 @@ blow:TOUCH:EXP_40:1d5
 blow:TOUCH:HURT:4d14
 flags:UNIQUE | PLAYER_GHOST
 flags:OPEN_DOOR | BASH_DOOR | TAKE_ITEM
-flags:ONLY_ITEM | DROP_CHEST
 flags:NO_CONF | NO_FEAR
 spell-freq:5
 spell-power:28
 spells:DARKNESS | WOUND | HOLD | SCARE
+drop-base:chest:90:1:1
 desc:This eldritch form rises from a grave shrouded in dust.  As it reaches out
 desc: towards you, your panicked soul cowers away.  You feel you know it and it
 desc: knows you.
@@ -14477,11 +14477,11 @@ flags:UNIQUE | PLAYER_GHOST
 flags:SMART
 flags:INVISIBLE
 flags:EVIL | IM_POIS | IM_COLD
-flags:ONLY_ITEM | DROP_CHEST
 flags:NO_CONF | NO_FEAR
 spell-freq:4
 spell-power:36
 spells:DARKNESS | DRAIN_MANA | SCARE | BLIND | HOLD
+drop-base:chest:90:1:1
 desc:A phantasm, a shadow given life.  The nimbus of corpse-light around it
 desc: illuminates nothing.  You feel you know it and it knows you.
 
@@ -14502,11 +14502,11 @@ blow:BITE:EXP_20:2d9
 blow:BITE:EXP_20:2d9
 flags:UNIQUE | PLAYER_GHOST
 flags:UNDEAD | HURT_LIGHT
-flags:ONLY_ITEM | DROP_CHEST
 flags:NO_CONF | NO_FEAR
 spell-freq:6
 spell-power:43
 spells:HOLD | MIND_BLAST | DARKNESS
+drop-base:chest:90:1:1
 desc:A humanoid with an aura of power.  You notice a sharp set of front
 desc: teeth.  You feel you know it and it knows you.
 
@@ -14529,12 +14529,12 @@ flags:UNIQUE | PLAYER_GHOST
 flags:SMART | REGENERATE
 flags:INVISIBLE
 flags:EVIL | IM_COLD | IM_POIS
-flags:ONLY_ITEM | DROP_CHEST
 flags:NO_CONF | NO_FEAR
 spell-freq:5
 spell-power:51
 spells:BO_NETH
 spells:FORGET | HOLD | MIND_BLAST
+drop-base:chest:90:1:1
 desc:An unholy creature of darkness; the aura emanating from this evil being
 desc: saps your very soul.  You feel you know it and it knows you.
 
@@ -14555,13 +14555,13 @@ blow:TOUCH:LOSE_DEX:4d9
 blow:TOUCH:LOSE_DEX:4d9
 flags:UNIQUE | PLAYER_GHOST
 flags:REGENERATE | HURT_LIGHT
-flags:DROP_CHEST
 flags:NO_CONF | NO_FEAR
 spell-freq:4
 spell-power:63
 spells:BA_COLD | BA_ELEC
 spells:BLINK | TELE_TO | TELE_AWAY | HOLD | SLOW | SCARE
 spells:DRAIN_MANA | MIND_BLAST
+drop-base:chest:90:1:1
 desc:A skeletal form dressed in robes, radiating vastly evil
 desc: power.  You feel you know it and it knows you.
 
@@ -14583,13 +14583,13 @@ blow:TOUCH:EXP_80:2d9
 flags:UNIQUE | PLAYER_GHOST
 flags:REGENERATE
 flags:INVISIBLE | PASS_WALL
-flags:ONLY_ITEM | DROP_CHEST
 flags:NO_CONF | NO_FEAR
 spell-freq:4
 spell-power:75
 spells:BE_NETH
 spells:BLIND | SCARE | WOUND | BRAIN_SMASH | DARKNESS
 spells:S_UNDEAD
+drop-base:chest:90:1:1
 desc:As it advances, your soul wilts under the threat of death and a dreadful
 desc: chill invades your bones.  You feel you know it and it knows you.
 
@@ -14610,7 +14610,6 @@ blow:WAIL:PARALYZE:4d8
 blow:TOUCH:EXP_80:4d8
 flags:UNIQUE | PLAYER_GHOST
 flags:REGENERATE
-flags:ONLY_ITEM | DROP_CHEST
 flags:OPEN_DOOR | BASH_DOOR | FLYING
 flags:NO_CONF | NO_FEAR
 spell-freq:4
@@ -14618,6 +14617,7 @@ spell-power:90
 spells:BRAIN_SMASH | WOUND | TELE_TO
 spells:BA_NETH | BA_DARK
 spells:S_UNDEAD
+drop-base:chest:90:1:1
 desc:Cloaked in midnight, and supported by minions of death, this lord of the
 desc: undead comes to claim your soul.  You feel you know it and it knows you.
 
