@@ -1486,7 +1486,7 @@ ego:of Doriath
 
 level:GONDOLIN:0:TOWN
 west:SIRION_VALE:28
-ego:of Gondolon
+ego:of Gondolin
 
 level:AMON_RUDH:15:MOUNTAIN
 north:WEST_BELERIAND:16
