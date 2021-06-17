@@ -568,6 +568,7 @@ static void upgrade_weapon(struct player *p)
 		weapon->next = nextw;
 		weapon->known = knownw;
 		ego_apply_magic(weapon, p->depth, MINIMISE);
+		player_know_object(p, weapon);
 		while (!object_fully_known(weapon)) {
 			object_learn_unknown_rune(p, weapon, false);
 		}
