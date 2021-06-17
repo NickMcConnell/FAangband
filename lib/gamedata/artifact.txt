@@ -97,7 +97,7 @@ alloc:40:1 to 50
 attack:1d1:0:0
 armor:0:0
 flags:NO_FUEL
-values:LIGHT[3]
+values:LIGHT[4]
 act:GWINDOR
 time:10+d10
 msg:The lantern wells with clear light...
@@ -114,7 +114,7 @@ alloc:4:40 to 100
 attack:1d1:0:0
 armor:0:0
 flags:SEE_INVIS | NO_FUEL
-values:LIGHT[3]
+values:LIGHT[4]
 act:MAPPING
 time:40+d40
 msg:The pearl shines brightly...
@@ -132,7 +132,7 @@ alloc:2:90 to 127
 attack:1d1:0:0
 armor:0:0
 flags:SEE_INVIS | HOLD_LIFE | NO_FUEL
-values:LIGHT[3]
+values:LIGHT[4]
 act:DETECTION
 time:120+d120
 msg:The palantir clouds, then clears...
