@@ -509,6 +509,7 @@ void set_terrain(void);
 u16b **heatmap_new(struct chunk *c);
 void heatmap_free(struct chunk *c, struct heatmap map);
 struct chunk *cave_new(int height, int width);
+void cave_connectors_free(struct connector *join);
 void cave_free(struct chunk *c);
 void list_object(struct chunk *c, struct object *obj);
 void delist_object(struct chunk *c, struct object *obj);
