@@ -3658,7 +3658,7 @@ static void final_check(struct artifact *art, struct object *obj)
 			of_off(flags, i + 1);
 		}
 		if (i != OBJ_MOD_SPEED) {
-			modifiers[i]  = MIN(modifiers[i], 6);
+			modifiers[i] = MIN(modifiers[i], 6);
 		}
 	}
 
@@ -3667,6 +3667,14 @@ static void final_check(struct artifact *art, struct object *obj)
 		if (el_info[i].res_level < RES_LEVEL_BASE) {
 			el_info[i].flags |= EL_INFO_IGNORE;
 		}
+	}
+
+	/* Remove contradictory properties */
+	if ((modifiers[OBJ_MOD_STEALTH] > 0) && of_has(flags, OF_AGGRAVATE)) {
+		modifiers[OBJ_MOD_STEALTH] = 0;
+	}
+	if ((modifiers[OBJ_MOD_LIGHT] > 0) && of_has(flags, OF_DARKNESS)) {
+		modifiers[OBJ_MOD_LIGHT] = 0;
 	}
 }
 
