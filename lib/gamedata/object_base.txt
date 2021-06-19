@@ -26,7 +26,7 @@ desc: perilous to open...
 
 name:shot:Shot~
 graphics:light umber
-break:25
+break:0
 # max-stack:40
 flags:SHOW_DICE
 desc:Sling ammo.
@@ -41,7 +41,7 @@ desc:Bow ammo.
 
 name:bolt:Bolt~
 graphics:light umber
-break:25
+break:20
 # max-stack:40
 flags:HATES_ACID
 flags:SHOW_DICE
