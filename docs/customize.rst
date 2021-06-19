@@ -2,7 +2,7 @@
 Customising the game
 ====================
 
-Angband allows you to change various aspects of the game to suit your tastes.  These include:
+FAangband allows you to change various aspects of the game to suit your tastes.  These include:
 
 * Options - which let you change interface or gameplay behaviour
 * `Ignoring items`_ and `inscribing items`_ to change how the game treats them
@@ -22,7 +22,7 @@ while playing.
 User Pref Files
 ===============
 
-User pref files are Angband's way of saving and loading certain settings.  They can store:
+User pref files are FAangband's way of saving and loading certain settings.  They can store:
 
 * Altered visual appearances for game entities
 * Inscriptions to automatically apply to items
@@ -39,9 +39,9 @@ Several options menu (``=``) items allow you to load existing user pref files, c
 Where to find them
 ~~~~~~~~~~~~~~~~~~
 
-On macOS, you can find them in your user directory, in ``Documents/Angband/``.
+On macOS, you can find them in your user directory, in ``Documents/FAangband/``.
 
-On Linux, they will be stored in ``~/.angband/Angband``.
+On Linux, they will be stored in ``~/.angband/FAangband``.
 
 On Windows you can find them in ``lib/user/``.
 
@@ -60,13 +60,13 @@ So, you can save some settings - for example, keymaps - to the ``Mage.prf`` file
 
 You may also enter single user pref commands directly, using the special "Enter a user pref command" command, activated by pressing ``"``.
 
-You may have to use the redraw command (``^R``) after changing certain of the aspects of the game to allow Angband to adapt to your changes.
+You may have to use the redraw command (``^R``) after changing certain of the aspects of the game to allow FAangband to adapt to your changes.
 
 
 Ignoring items
 ==============
 
-Angband allows you to ignore specific items that you don't want to see anymore. These items are marked 'ignored' and any similar items are hidden from view. The easiest way to ignore an item is with the ``k`` (or ``^D``) command; the object is dropped and then hidden from view.  When ignoring an object, you will be given a choice of ignoring just that object, or all objects like it in some way.
+FAangband allows you to ignore specific items that you don't want to see anymore. These items are marked 'ignored' and any similar items are hidden from view. The easiest way to ignore an item is with the ``k`` (or ``^D``) command; the object is dropped and then hidden from view.  When ignoring an object, you will be given a choice of ignoring just that object, or all objects like it in some way.
 
 The entire ignoring system can also be accessed from the options menu (``=``) by choosing ``i`` for ``Item ignoring setup``.  This allows ignore settings for non-wearable items, and quality and ego ignore settings (described below) for wearable items, to be viewed or changed.
 
@@ -171,7 +171,7 @@ There are a variety of subwindow choices and you should experiment to see which 
 Keymaps
 =======
 
-You can set up keymaps in Angband, which allow you to map a single keypress to a series of keypresses.  For example you might map the key F1 to "maa" (the keypresses to cast "Magic Missile" as a spellcaster). This can speed up access to commonly-used features.
+You can set up keymaps in FAangband, which allow you to map a single keypress to a series of keypresses.  For example you might map the key F1 to "maa" (the keypresses to cast "Magic Missile" as a spellcaster). This can speed up access to commonly-used features.
 
 To set up keymaps, go to the options menu (``=``) and select "Edit keymaps" (``k``).
 
@@ -212,7 +212,7 @@ The action must always come first,  ```<type>``` means 'keyset type', which is e
 	A:maa
 	C:0:[F1]
 
-Angband uses a few built-in keymaps.  These are for the movement keys (they are mapped to ``;`` plus the number, e.g. ``5`` -> ``;5``), amongst others.  You can see the full list in pref.prf but they shouldn't impact on you in any way.
+FAangband uses a few built-in keymaps.  These are for the movement keys (they are mapped to ``;`` plus the number, e.g. ``5`` -> ``;5``), amongst others.  You can see the full list in pref.prf but they shouldn't impact on you in any way.
 
 To avoid triggering a keymap for a given key, you can type the backslash (``\``) command before pressing that key.
 
@@ -317,7 +317,7 @@ With the X11 front end, the number of windows opened is set by the '-n' option
 on the command line, i.e. running ``./angband -mx11 -- -n4`` will open the
 main window and subwindows one through three if the executable is in the
 current working directory.  To control the font, placement, and size used for
-each of the windows, set enviroment variables before running Angband.  Those
+each of the windows, set enviroment variables before running FAangband.  Those
 environment variables for window 'z' where 'z' is an integer between 0 (the
 main window) and 7 are:
 

@@ -5,7 +5,7 @@ MAKEINDEX := makeindex
 
 DOC = manual.html manual.pdf
 
-SECTIONS := general birth playing attack dungeon customize option command \
+SECTIONS := general birth playing attack world customize option command \
             debug ../../thanks version
 
 INDEX := index

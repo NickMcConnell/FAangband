@@ -2,8 +2,8 @@
 Playing the Game
 ================
 
-Most of your interaction with Angband will take the form of "commands".
-Every Angband command consists of an "underlying command" plus a variety of
+Most of your interaction with FAangband will take the form of "commands".
+Every FAangband command consists of an "underlying command" plus a variety of
 optional or required arguments, such as a repeat count, a direction, or the
 index of an inventory object. Commands are normally specified by typing a
 series of keypresses, from which the underlying command is extracted, along
@@ -101,10 +101,10 @@ Original Keyset Command Summary
  ``m``  Cast a spell                  ``M``  Full dungeon map
  ``n``  Repeat previous command       ``N``  (unused)
  ``o``  Open a door or chest          ``O``  (unused)
- ``p``  Cast a spell                  ``P``  (unused)
+ ``p``                                ``P``  (unused)
  ``q``  Quaff a potion                ``Q``  End character & quit
  ``r``  Read a scroll                 ``R``  Rest for a period
- ``s``  Steal (rogues only)           ``S``  (unused)
+ ``s``  Steal (rogues only)           ``S``  View or learn specialties
  ``t``  Take off equipment            ``T``  Dig a tunnel
  ``u``  Use a staff                   ``U``  Use an item
  ``v``  Throw an item                 ``V``  Version info
@@ -112,10 +112,10 @@ Original Keyset Command Summary
  ``x``  (unused)                      ``X``  (unused)
  ``y``  (unused)                      ``Y``  (unused)
  ``z``  Zap a rod                     ``Z``  (unused)
- ``!``  (unused)                      ``^A`` Debug mode
+ ``!``  Change shape (Beornings)      ``^A`` Debug mode
  ``@``  (unused)                      ``^B`` (unused)
- ``#``  (unused)                      ``^C`` (special - break)
- ``$``  (unused)                      ``^D`` (unused)
+ ``#``  Check the time                ``^C`` (special - break)
+ ``$``  Move house                    ``^D`` (unused)
  ``%``  (unused)                      ``^E`` Toggle inven/equip window
  ``^``  (special - control key)       ``^F`` Repeat level feeling
  ``&``  (unused)                      ``^G`` Do autopickup
@@ -163,10 +163,10 @@ Roguelike Keyset Command Summary
   m    Cast a spell                    M    Full dungeon map
   n    (walk - south east)             N    (run - south east)
   o    Open a door or chest            O    Toggle ignore
-  p    Cast a spell                    P    Browse a book
+  p    -                               P    Browse a book
   q    Quaff a potion                  Q    End character & quit
   r    Read a scroll                   R    Rest for a period
-  s    Steal (rogues only)             S    (unused)
+  s    Steal (rogues only)             S    View or learn specialties
   t    Fire an item                    T    Take off equipment
   u    (walk - north east)             U    (run - north east)
   v    Throw an item                   V    Version info
@@ -174,10 +174,10 @@ Roguelike Keyset Command Summary
   x    Look around                     X    Use an item
   y    (walk - north west)             Y    (run - north west)
   z    Aim a wand (Zap)                Z    Use a staff (Zap)
-  !    (unused)                        ^A   (special - debug command)
+  !    Change shape (Beornings)        ^A   (special - debug command)
   @    Center map                      ^B   (alter - south west)
-  #    (unused)                        ^C   (special - break)
-  $    (unused)                        ^D   Ignore an item
+  #    Check the time                  ^C   (special - break)
+  $    Move house                      ^D   Ignore an item
   %    (unused)                        ^E   Toggle inven/equip window
   ^    (special - control key)         ^F   Repeat level feeling
   &    (unused)                        ^G   Do autopickup
@@ -215,7 +215,7 @@ machine, causing unexpected results. In general, these special keys are
 control keys, and often, you can disable their special effects.
 
 If you are playing on a UNIX or similar system, then 'Ctrl-C' will
-interrupt Angband. The second and third interrupt will induce a warning
+interrupt FAangband. The second and third interrupt will induce a warning
 bell, and the fourth will induce both a warning bell and a special message,
 since the fifth will quit the game, after killing your character. Also,
 'Ctrl-Z' will suspend the game, and return you to the original command
@@ -271,7 +271,7 @@ character. This character is ignored, but it is safest to use a 'SPACE'
 or 'ESCAPE' which are always ignored as commands in case you type the
 command just after the count expires.
 
-You can tell Angband to automatically use a repeat count of 99 with
+You can tell FAangband to automatically use a repeat count of 99 with
 commands you normally want to repeat (open, disarm, tunnel, bash, alter,
 etc) by setting the 'always_repeat' option.
   

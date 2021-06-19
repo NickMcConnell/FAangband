@@ -58,13 +58,13 @@ Quiver list (``|``)
 
 Drop an item (``d``)
   This drops an item from your inventory or equipment onto the dungeon
-  floor. If the floor spot you are standing on already has an object in it,
+  floor or ground. If the spot you are standing on already has an object in it,
   Angband will attempt to drop the item onto an adjacent space.  Doors and
   traps are considered objects for the purpose of determining if the space 
   is occupied. This command may take a quantity, and takes some energy.
 
 Ignore an item (``k``) or Ignore an item ('^D')
-  This ignores an item in your inventory or on the dungeon floor. If the
+  This ignores an item in your inventory or on the floor. If the
   selected pile contains multiple objects, you may specify a quantity. When
   ignored, the game will sometimes prompt you whether to ignore only this
   item or all others like it.  If the second option is chosen, all similar
@@ -116,24 +116,21 @@ Run (``.``) or Run (``,``)
   This command may take an argument, requires a direction, and takes some
   energy.
 
-Go up staircase (``<``)
-  Climbs up an up staircase you are standing on. There is always at least
-  one staircase going up on every level except for the town level (this
-  doesn't mean it's easy to find). Going up a staircase will take you to a
-  new dungeon level unless you are at 50 feet (dungeon level 1), in which
-  case you will return to the town level. Note that whenever you leave a
-  level (not the town), you will never find it again. This means that for
-  all intents and purposes, any objects on that level are destroyed. This
-  includes artifacts unless the "Create characters in preserve mode" option
-  was set when your character was created, in which case the artifacts may
-  show up again later. This command takes some energy.
+Go up staircase or along a path (``<``)
+  Climbs up an up staircase you are standing on. Going up a staircase will
+  take you to a new level. Note that whenever you leave a level (not towns),
+  you will never find it again. This means that for all intents and purposes,
+  any objects on that level are destroyed. This includes artifacts unless
+  the "Create characters in preserve mode" option was set when your character
+  was created, in which case the artifacts may show up again later. If you
+  are in the wilderness, this command will  take you on a path to a less
+  dangerous level. This command takes some energy.
 
-Go down staircase (``>``)
-  Descends a down staircase you are standing on. There are always at least
-  one staircase going down on each level, except for the town which has
-  only one, and "quest" levels, which have none until the quest monster is
-  killed. Going down a staircase will take you to a new dungeon level. See
-  "Go Up Staircase" for more info. This command takes some energy.
+Go down staircase or along a path (``>``)
+  Descends a down staircase you are standing on. Going down a staircase will
+  take you to a new dungeon level. If you are in the wilderness, this command
+  will take you on a path to a more dangerous level. See "Go Up Staircase" for
+  more info. This command takes some energy.
 
 Resting Commands
 ================
@@ -236,9 +233,9 @@ Gain new spells (``G``)
   your gods will choose a prayer for you. There are five books of each
   realm, but hybrid classes - paladins, rogues, rangers and blackguards - can
   only cast from two or three of these.  Higher level books are normally found
-  only in the dungeon. This command takes some energy.
+  only in the dungeon or wilderness. This command takes some energy.
 
-Cast a spell (``m`` and ``p`` in both keysets)
+Cast a spell (``m``)
   To cast a spell, you must have previously learned the spell and must have
   in your inventory a book from which the spell can be read. Each spell has
   a chance of failure which starts out fairly large but decreases as you
@@ -262,8 +259,9 @@ Eat some food (``E``)
   (accompanied by increasingly alarming messages on your hunger meter).
   It is also possible to be "Full", which will make you move slowly; more
   slowly the fuller you get. You may use this command to eat food in your
-  inventory. Note that you can sometimes find food in the dungeon, but it
-  is not always wise to eat strange food. This command takes some energy.
+  inventory. Note that you can sometimes find food in the dungeon or
+  wilderness, but it is not always wise to eat strange food. This command
+  takes some energy.
 
 Fuel your lantern/torch (``F``)
   If you are using a lantern and have flasks of oil in your pack, then you
@@ -421,16 +419,18 @@ Looking Commands
 ================
 
 Full screen map (``M``)
-  This command will show a map of the entire dungeon, reduced by a factor
-  of nine, on the screen. Only the major dungeon features will be visible
+  This command will show a map of the entire level, reduced by a factor
+  of nine, on the screen. Only the major terrain features will be visible
   because of the scale, so even some important objects may not show up on
   the map. This is particularly useful in locating where the stairs are
   relative to your current position, or for identifying unexplored areas of
-  the dungeon.
+  the level.  Press a key, and if you are in wilderness you will get a
+  diagram of the local area, which is scrollable (but may get less accurate
+  as you get further away from your current level).
 
 Locate player on map (``L``) or Where is the player (``W``)
   This command lets you scroll your map around, looking at all sectors of
-  the current dungeon level, until you press escape, at which point the map
+  the current level, until you press escape, at which point the map
   will be re-centered on the player if necessary. To scroll the map around,
   simply press any of the "direction" keys. The top line will display the
   sector location, and the offset from your current sector.
@@ -468,7 +468,7 @@ Message Commands
 ================
 
 Repeat level feeling ('^F')
-  Repeats the feeling about the monsters in the dungeon level that you got
+  Repeats the feeling about the monsters in the level that you got
   when you first entered the level.  If you have explored enough of the 
   level, you will also get a feeling about how good the treasures are.
 
@@ -505,6 +505,10 @@ Check knowledge (``~``)
   object, and this command will allow you to display all "known" flavors.
   Inscribing items in this list will cause you to similarly inscribe all
   similar items you find from this point on.
+
+Time of Day (``#``)
+  This command tells you how many days it has been since your character
+  started their adventure, and what time of day or night it is. 
 
 Saving and Exiting Commands
 ===========================
@@ -558,7 +562,7 @@ Help Commands
 =============
 
 Help (``?``)
-  Brings up the Angband on-line help system. Note that the help files are
+  Brings up the Angband on-line help system. Note that these help files are
   just text files in a particular format, and that other help files may be
   available on the Net. In particular, there are a variety of spoiler files
   which do not come with the standard distribution. Check the place you got
@@ -584,7 +588,7 @@ Identify Symbol (``/``)
   have encountered with that symbol is shown in the Recall window if
   available, or on the screen if not. You can also answer ``k`` to see the
   list sorted by number of kills, or ``p`` to see the list sorted by 
-  dungeon level the monster is normally found on. Pressing 'ESCAPE' at 
+  danger level the monster is normally found at. Pressing 'ESCAPE' at 
   any point will exit this command.
 
 Game Version (``V``)

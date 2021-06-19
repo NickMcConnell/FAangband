@@ -2,11 +2,11 @@
 A quick demonstration
 =====================
 
-Angband is a very complex game, so you may want to try the following quick
+FAangband is a very complex game, so you may want to try the following quick
 demonstration. The following instructions are for demonstration purposes only,
 and so they are intentionally boring.
 
-For this demo, we will assume that you have never played Angband before,
+For this demo, we will assume that you have never played FAangband before,
 that you have not requested any special "sub-windows", that you have not
 requested any special "graphics" modes, that you have a "numeric keypad" on
 your computer, and that you are using the default options, including, in
@@ -25,16 +25,16 @@ When the game starts up, depending on what platform you are using, you may
 be taken directly to the character creation screen, or you may have to ask
 to create a new character by using the File menu. In either case, you will
 be shown the character information screen, and you will be given a series
-of choices. For this demo, press ``a`` three times to elect a "human warrior"
-character with the point-based stat allocation system. You will now be
+of choices. For this demo, press ``a`` three times to elect an "Easterling
+warrior" character with the point-based stat allocation system. You will now be
 presented with a description of your character. Look over the
 description briefly, there is a lot of information here, and most of it
 will not make any sense. Press enter four times and your character will be
-placed into the "town".
+placed into a "town".
 
-You should now be looking at the basic dungeon interaction screen. To the
+You should now be looking at the basic world interaction screen. To the
 left is some information about your character. To the right is an overhead
-view of the town. Nothing happens in Angband while the game is waiting for
+view of the town. Nothing happens in FAangband while the game is waiting for
 you to specify a command, so take a good look at the town. You will see a
 variety of symbols on the screen. Each symbol normally represents a terrain
 feature, an object, or a monster. The ``@`` symbol is special, it
@@ -44,8 +44,7 @@ the ``@`` symbol.
 
 The solid blocks (which may be ``#`` symbols on some systems) around the
 edge of the town represent the walls that surround the town. You cannot
-leave the town above ground, although some games derived from Angband
-(called "variants") have an overground element.
+leave the town except by a ``>`` symbol (path or staircase).
 
 The 3x3 squares represent stores. The "numeric" symbols represent an
 "entrance" to a store. The ``.`` symbols represent the "floor". It is
@@ -136,7 +135,7 @@ To make matters worse, as you get used to the difference between the player
 and the character, it becomes so "obvious" that you start to ignore it. At
 that point, you find yourself merging the player and the character in your
 mind, and you find yourself saying things like "So yesterday, I was at my
-friend's house, and I stayed up late playing Angband, and I was attacked by
+friend's house, and I stayed up late playing FAangband, and I was attacked by
 some wild dogs, and I got killed by a demon, but I made it to the high
 score list", in which the pronoun changes back and forth from the real
 world to the virtual one several times in the same sentence. So, from this
@@ -171,51 +170,43 @@ marked with an ``8``, is your "home", and is not a real store. You can drop
 things off at home and they will stay there until you return to pick them
 up. The interface is exactly the same as a store, but there is no payment.
 
-Now move to the staircase, represented by the ``>`` symbol, and press
-``>``, to go down the stairs. At this point, you are in the dungeon. Use
-the ``l`` command to look around. Note that you are standing on a staircase
-leading back to town. Use the ``<`` command to take the stairs back to
+Now move to a path out of town, represented by the ``>`` symbol, and press
+``>``, to take the path. At this point, you are in the wilderness. Use
+the ``l`` command to look around. Note that you are standing on a path
+leading back to town. Use the ``<`` command to take the path back to
 town. You may find that any townspeople that were here before have
 disappeared and new ones have appeared instead. Now use the ``>`` command
-to go back down the stairs into the dungeon. You are now in a different
-part of the dungeon than you were in before. The dungeon is so huge, once
-you leave one part of the dungeon, you will never find it again.
+to go back along the path into the wilderness. You are now in a different
+part of the wilderness than you were in before. The world is so huge, once
+you leave one part of it, you will never find it again.
 
-Now look at the screen. Your character may be in a lit room, represented as a
-large rectangle of illuminated floor grids (``.``), surrounded by walls. If
-you are not in a lit room, keep going back up to the town and back down
-into the dungeon until you are. Now look around. You may see some closed
-doors (``+``) or some open doors (``'``) or some open exits (``.``) in the
-walls which surround the room. If you do not, keep playing the stairway
-game until you are in such a room. This will keep the demo simple.
+Now look at the screen. Your character will probably see grass (green ``.``)
+and trees (green ``+``), and likely some rock formations (``#``).
 
 Now look around using the ``l`` command. You may see some monsters and/or
-some objects in the room with you. You may see some stairs up (``<``) or 
-some stairs down (``>``). If you see any monsters, move up next to the 
+some objects in the area with you. You may see some other paths (``<``)
+back to town. If you see any monsters, move up next to the 
 monster, using the movement keys, and then try and move into the monster.
 This will cause you to attack the monster. Keep moving into the monster
 until you kill the monster, or it runs away, or you die. If you die, start
 a new game. If the monster runs away, ignore it, or chase it, but do not
 leave the room. Once all the monsters in the room are dead or gone, walk on
 top of any objects in the room. Press ``g`` to get the object, and it will
-be added to your inventory. If there are any closed doors (``+``) in the
-room walk up next to them and press ``o`` and then the direction key which
-would move you into the door, which should attempt to "open" the door.
+be added to your inventory.
 
-Now use the movement keys to explore the dungeon. As you leave the room,
-you will probably notice that your character cannot see nearly as far as
-she could in the room. Also, you will notice that as she moves around, the
-screen keeps displaying some of the grids that your character has seen.
+Now use the movement keys to explore the area. You will notice that as
+your character moves around, the screen keeps displaying some of the grids that
+your character has seen.
 Think of this as a kind of "map" superimposed on the world itself, the
 player can see the entire map, but the character can only see those parts
 of the world which are actually nearby. If the character gets near the edge
 of the "map" portion of the screen the entire map will scroll to show a new
-portion of the world. Only about ten percent of the dungeon level can be
+portion of the world. Only about ten percent of the current level can be
 seen by the player at one time, but you can use the ``L`` command to look
 at other pieces of the map. Use the ``.`` key, then a direction, to "run"
-through the dungeon. Use the ``R`` key, then return, to force your
+through the world. Use the ``R`` key, then return, to force your
 character to "rest" until she has recovered from any damage she incurs
-while attacking monsters. Use the ``M`` key to see the entire dungeon level
+while attacking monsters. Use the ``M`` key to see the entire level
 at once, and hit escape when done. If your food rations are still at index
 ``a`` in your inventory, press ``E``, ``a`` to eat some food. If your oil
 is still at index ``b`` in your inventory, and there is a monster nearby,
@@ -223,7 +214,7 @@ press ``v``, ``b``, ``'`` to throw a flask of oil at the nearest monster.
 To drop an item from your inventory, press ``d`` plus the index of that
 item. You can use the '^X' key to quit and save the game.
 
-You now know enough to play a quick game of Angband. There is a lot more
+You now know enough to play a quick game of FAangband. There is a lot more
 for you to learn, including how to interpret information about your
 character, how to create different kinds of characters, how to determine
 which equipment to wield/wear, how to use various kinds of objects, and how

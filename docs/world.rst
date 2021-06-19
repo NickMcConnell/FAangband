@@ -1,9 +1,9 @@
-=====================
-Exploring the Dungeon
-=====================
+===================
+Exploring the World
+===================
 
-After you have created your character, you will begin your Angband
-adventure. Symbols appearing on your screen will represent the dungeon's
+After you have created your character, you will begin your FAangband
+adventure. Symbols appearing on your screen will represent wilderness terrain,
 walls, floor, objects, features, and creatures lurking about. In order to
 direct your character through their adventure, you will enter single
 character commands (see 'commands.txt').
@@ -14,7 +14,7 @@ Symbols On Your Map
 Symbols on your map can be broken down into three categories: Features of
 the dungeon such as walls, floor, doors, and traps; Objects which can be
 picked up such as treasure, weapons, magical devices, etc; and creatures
-which may or may not move about the dungeon, but are mostly harmful to your
+which may or may not move about the world, but are mostly harmful to your
 character's well being.
 
 Some symbols are used to represent more than one type of entity, and some
@@ -34,7 +34,7 @@ Features that do not block line of sight
 ----------------------------------------
 
 ===== =========================    =====  ================================== 
-``.``   A floor space              ``1``    Entrance to General Store
+``.``   A floor or road            ``1``    Entrance to General Store
 ``.``   A trap (hidden)            ``2``    Entrance to Armoury
 ``^``   A trap (known)             ``3``    Entrance to Weapon Smith
 ``;``   A glyph of warding         ``4``    Entrance to Bookseller
@@ -150,13 +150,13 @@ name of the store, the maximum amount of cash that the store owner will pay
 for any one item, and the store inventory, listed along with the prices.
 
 You will also see an (incomplete) list of available commands. Note that
-many of the commands which work in the dungeon work in the stores as well,
+many of the commands which work in the wideer world work in the stores as well,
 but some do not, especially those which involve "using" objects.
 
 Stores do not always have everything in stock. As the game progresses, they
 may get new items so check from time to time. Stores restock after 10000
 game turns have passed, but the inventory will never change while you are
-in town, even if you save the game and return. You must be in the dungeon
+in town, even if you save the game and return. You must be away from town
 for the store to restock. Also, if you sell them an item, it may get sold
 to a customer while you are adventuring, so don't always expect to be able
 to get back everything you have sold. If you have a lot of spare gold, you
@@ -178,7 +178,7 @@ The General Store (``1``)
 
 The Armoury (``2``)
   The Armoury is where the town's armour is fashioned. All sorts of
-  protective gear may be bought and sold here. The deeper into the dungeon
+  protective gear may be bought and sold here. The further into the wilderness
   you progress the more exotic the equipment you will find stocked in the
   armoury. However, some armour types will never appear here unless you
   sell them.
@@ -191,7 +191,7 @@ The Weaponsmith's Shop (``3``)
 
 The Bookseller (``4``)
   The Bookseller holds supplies of the simpler books needed by magic users,
-  and will buy the more advanced books which can be found in the dungeon.
+  and will buy the more advanced books which can be found in the wild.
 
 The Alchemy shop (``5``)
   The Alchemy Shop deals in all types of potions and scrolls.
@@ -203,32 +203,29 @@ The Magic User's Shop (``6``)
 The Black Market (``7``)
   The Black Market will sell and buy anything at extortionate prices.
   However it occasionally has **very** good items in it. With the exception
-  of artifacts, every item found in the dungeon may appear in the black
-  market.
+  of artifacts, every item in the game may appear in the black market.
 
 Your Home (``8``)
   This is your house where you can store objects that you cannot carry on
   your travels, or will need at a later date.
 
-Within The Dungeon
-==================
+Out in the World
+================
 
 Once your character is adequately supplied with food, light, armor, and
 weapons, they are ready to enter the dungeon. Move on top of the ``>`` symbol
 and use the "Down" command (``>``).
 
-Your character will enter a maze of interconnecting staircases and finally
-arrive somewhere on the first level of the dungeon. Each level of the
-dungeon is fifty feet high (thus dungeon level "Lev 1" is often called "50
-ft"), and is divided into (large) rectangular regions (several times larger
-than the screen) by permanent rock. Once you leave a level by a staircase,
-you will never again find your way back to that region of that level, but
-there are an infinite number of other regions at that same "depth" that you
-can explore later. Monsters, of course, can use the stairs, and you may
-eventually encounter them again, but they will not chase you up or down
-stairs.
+Your character will enter a maze of interconnecting staircases and arrive
+somewhere on the first level of the dungeon (for dungeon games) or follow a
+winding path to some wilderness (for wilderness games). Once you leave a
+level by a staircase or path, you will never again find your way back to that
+region of that level, but there are an infinite number of other regions at
+that same "depth" that you can explore later. Monsters, of course, can use
+stairs and paths, and you may eventually encounter them again, but they will
+not chase you up or down stairs or along paths.
 
-In the dungeon, there are many things to find, but your character must
+In the wild, there are many things to find, but your character must
 survive many horrible and challenging encounters to find the treasure lying
 about and take it safely back to the town to sell.
 
@@ -238,6 +235,10 @@ the player. If neither is present, the character will be unable to see.
 This will affect searching, picking locks, disarming traps, reading
 scrolls, casting spells, browsing books, etc. So be very careful not to run
 out of light!
+
+In the wilderness, there is light during the day, but at night you will need
+your own source of light.  Fortunately, monsters sleep at night-time in the
+wilderness.
 
 A character must wield a torch or lamp in order to supply his own light. A
 torch or lamp burns fuel as it is used, and once it is out of fuel, it
@@ -252,14 +253,13 @@ Necromancers dislike light, and shroud themselves in darkness.  They are
 usually better off not carrying a light, but also do not gain any of the
 bonuses that may come from magical light sources.
 
-Objects Found In The Dungeon
-============================
+Objects Found In The Dungeon And Wilderness
+===========================================
 
-The mines are full of objects just waiting to be picked up and used. How
-did they get there? Well, the main source for useful items are all the
-foolish adventurers that proceeded into the dungeon before you. They get
-killed, and the helpful creatures scatter the various treasure throughout
-the dungeon. 
+The mines, woods, plains, mountains and deserts are full of objects just
+waiting to be picked up and used. How did they get there? Well, the main
+source for useful items are all the foolish adventurers that went before you.
+They get killed, and the helpful creatures scatter the various treasure. 
 
 Several objects may occupy a given floor location, which may or may not
 also contain one creature. However, doors, rubble, traps, and staircases 
@@ -284,7 +284,7 @@ to chase you. Note that there is no upper bound on how much you can carry,
 if you do not mind being slow. Your weight "limit" is determined by your
 strength.
 
-Many objects found within the dungeon have special commands for their use.
+Many objects found within the world have special commands for their use.
 Wands must be Aimed, staves must be Used, scrolls must be Read, and potions
 must be Quaffed. You may, in general, not only use items in your pack, but
 also items on the ground, if you are standing on top of them. At the
@@ -302,17 +302,17 @@ that apply to traps or doors also apply to chests and, like traps and
 doors, these commands do not work if you are carrying the chest.
 
 One item in particular will be discussed here. The scroll of "Word of
-Recall" can be found within the dungeon, or bought at the alchemist in town.
+Recall" can be found within the dungeon, or bought at the alchemist in towns.
 All classes start with one of these scrolls in their inventory. It acts in
 two manners, depending upon your current location. If read within the
-dungeon, it will teleport you back to town. If read in town, it will
-teleport you back down to the deepest level of the dungeon which your
-character has previously been on. This makes the scroll very useful for
-getting back to the deeper levels of Angband. Once the scroll has been read
-it takes a while for the spell to act, so don't expect it to save you in a
-crisis. During this time the word 'recall' will appear on the bottom of the
-screen below the dungeon. Reading a second scroll before the first takes
-effect will cancel the action.
+dungeon or wilderness or another town, it will teleport you back to your
+hometowntown. If read in your hometown, it will teleport you back down to
+one of your chose "recall points", of which you can have up to four. This
+makes the scroll very useful for getting back to the more dangerous levels
+of FAangband. Once the scroll has been read it takes a while for the spell
+to act, so don't expect it to save you in a crisis. During this time the word
+'recall' will appear on the bottom of the screen below the dungeon. Reading a
+second scroll before the first takes effect will cancel the action.
 
 You may "inscribe" any object with a textual inscription of your choice.
 These inscriptions are not limited in length, though you may not be able to
@@ -350,7 +350,7 @@ of cursed items.
 Mining
 ======
 
-Some treasure within the dungeon can be found only by mining it out of the
+Some treasure can be found only by mining it out of rock formations and
 walls. Many rich strikes exist within each level, but must be found and
 mined. Quartz veins are the richest, yielding the most metals and gems, but
 magma veins will have some hoards hidden within.
@@ -359,16 +359,16 @@ Mining is rather difficult without a pick or shovel. Picks and shovels have
 an additional magical ability expressed as '(+#)'. The higher the number,
 the better the magical digging ability of the tool. A pick or shovel also
 has plusses to hit and damage, and can be used as a weapon, because, in
-fact, it is one.
+fact, it is one. The game will automatically pick the best digging tool you
+are carrying when you choose to dig.
 
-When a vein of quartz or magma is located, the character may wield his pick
-or shovel and begin digging out a section. When that section is removed, he
-can locate another section of the vein and begin the process again. Since
-granite rock is much harder to dig through, it is much faster to follow the
-vein exactly and dig around the granite. Eventually, it becomes easier to
-simply kill monsters and discover items in the dungeon to sell, than to 
-walk around digging for treasure. But, early on, mineral veins can be a
-wonderful source of easy treasure.
+When a vein of quartz or magma is located, the character may begin digging
+out a section. When that section is removed, they can locate another section
+of the vein and begin the process again. Since granite rock is much harder
+to dig through, it is much faster to follow softer rock and dig around the
+granite. Eventually, it becomes easier to simply kill monsters and discover
+items in the dungeon to sell, than to walk around digging for treasure. But,
+early on, mineral veins can be a wonderful source of easy treasure.
 
 If the character has a scroll, staff, or spell of treasure location, they can
 immediately locate all strikes of treasure within a vein shown on the
@@ -384,7 +384,7 @@ carry some kind of digging tool, even when you are not planning on
 tunneling for treasure.
 
 There are rumors of certain incredibly profitable rooms buried deep in the
-dungeon and completely surrounded by permanent rock and granite walls,
+dungeons and completely surrounded by permanent rock and granite walls,
 requiring a digging implement or magical means to enter. The same rumors
 imply that these rooms are guarded by incredibly powerful monsters, so
 beware!
@@ -392,10 +392,10 @@ beware!
 Traps
 =====
 
-There are many traps located in the dungeon of varying danger. These traps
-are hidden from sight and are triggered only when your character walks over
-them. If you have found a trap you can attempt to |``D``isarm| it, but
-failure may mean activating it.  Traps can be physical dangers such as pits,
+There are many traps located in the dungeon and wilds of varying danger.
+These traps are hidden from sight and are triggered only when your character
+walks over them. If you have found a trap you can attempt to |``D``isarm| it,
+but failure may mean activating it.  Traps can be physical dangers such as pits,
 or magical runes or inscriptions which will cause an effect when triggered.
 Your character may be better at disarming one of these types of traps than
 the other.
@@ -420,13 +420,19 @@ Staircases are the manner in which you get deeper or climb out of the
 dungeon. The symbols for the up and down staircases are the same as the
 commands to use them. A ``<`` represents an up staircase and a ``>``
 represents a down staircase. You must move your character over the
-staircase before you can use it.
+staircase before you can use it.  In a similar way, paths lead from one
+wilderness level to another, with ``<`` leading to lesser danger and  ``>``
+to greater danger.
 
-Most levels have at least one up staircase and at least two down staircases.
-You may have trouble finding some well hidden secret doors, or you may have
-to dig through obstructions to get to them, but you can always find the stairs
-if you look hard enough.  Stairs, like permanent rock, and shop entrances,
-cannot be destroyed by any means.
+Most dungeon levels have at least one up staircase and at least two down
+staircases. You may have trouble finding some well hidden secret doors, or
+you may have to dig through obstructions to get to them, but you can always
+find the stairs if you look hard enough.  Stairs, like permanent rock, and
+shop entrances, cannot be destroyed by any means.
+
+Wilderness levels will always have a path or two to every level that is
+adjacent, north, south, east or west.  Note that there will usually only be an
+adjecent level in one or two of these directions.
 
 Many secret doors are used within the dungeon to confuse and demoralize
 adventurers foolish enough to enter, although all secret doors can be
@@ -444,7 +450,7 @@ Level and object feelings
 =========================
 
 Unless you have disabled the option to get feelings you will get a message 
-upon entering a dungeon giving you a general feel of how dangerous that 
+upon entering a level giving you a general feel of how dangerous that 
 level is.
 
 The possible messages are :
@@ -461,12 +467,12 @@ The possible messages are :
  9    "Omens of death haunt this place"
 ===   ========================================= 
 
-This feeling depends only on the monsters present in the dungeon when you
+This feeling depends only on the monsters present in the level when you
 first enter it. It will not get reduced to safer feeling as you kill 
 monsters neither will it increase if new ones are summoned.
 This feeling also depends on your current dungeon depth. A dungeon you
-feel nervous about at 2000' is way more dangerous than a murderous one
-at 50'.
+feel nervous about at level 40 is way more dangerous than a murderous one
+at 1.
 
 Once you have explored a certain amount of the dungeon you will also
 get a feeling about how good are the objects lying on the floor of the
@@ -495,18 +501,19 @@ You may also consult it by checking the LF: indicator at the bottom
 left of the screen. The first number after it is the level feeling
 and the second one is the object feeling. The second one will be ?
 if you need to explore more before getting a feeling about the value
-of the treasures present in the dungeon.
+of the treasures present.
 
 Winning The Game
 ================
 
-If your character has killed Sauron (a difficult task), who lives on level
-99 (4950') in the dungeon, a magical staircase will appear that will allow
-you to finally reach level 100. Morgoth lurks on this level of his dungeon,
-and you will not be able to go below his level until you have killed him.
-Try to avoid wandering around on level 100 unless you are ready for him,
-since he has a habit of coming at you across the dungeon, the Mighty Hammer
-'Grond' in hand, to slay you for your impudence.
+Morgoth lurks on level 100 of the Angband dungeon, and you will not be able to
+go below his level until you have killed him. Try to avoid wandering around on
+level 100 unless you are ready for him, since he has a habit of coming at you
+across the dungeon, the Mighty Hammer 'Grond' in hand, to slay you for your
+impudence.
+
+The other dungeons also have guardians at their bottom levels. Any of these
+not already dead are available for Morgoth to call on to help him.
 
 If you should actually survive the attempt of killing Morgoth, you will
 receive the status of WINNER. You may continue to explore, and may even save

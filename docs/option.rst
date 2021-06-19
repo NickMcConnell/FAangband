@@ -125,7 +125,7 @@ well-known state for all the birth options.  They are:  's' to save the
 current selections so that they will be used as the starting point for
 future characters, 'r' to reset the current selections to the defaults
 for a new character, and 'm' to reset the current selections to the
-Angband maintainer's defaults for the birth options.
+FAangband maintainer's defaults for the birth options.
 
 Generate connected stairs ``birth_connect_stairs``
   With this option turned on, if you go down stairs, you start the new level

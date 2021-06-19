@@ -39,7 +39,7 @@ It's very likely that your console is not set to display 256 colours. Try settin
 I'm playing in a terminal and the Escape key isn't working as it should
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This is a feature of terminals to allow you to enter keypresses that can't be sent directly.  Use the backtick ``\`` key instead - it's equivalent in every way to Escape.  (This doesn't apply in Sangband, or NPPAngband.)
+This is a feature of terminals to allow you to enter keypresses that can't be sent directly.  Use the backtick ``\`` key instead - it's equivalent in every way to Escape.
 
 Is there a way to disable that thing that pops up when you hit the enter key?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -2,8 +2,8 @@
 Creating a Character
 ====================
 
-Angband is a roleplaying game, in which you, the player, control a
-character in the world of Angband. Perhaps the most important thing you
+FAangband is a roleplaying game, in which you, the player, control a
+character in the world of FAangband. Perhaps the most important thing you
 control is the birth of your character, in which you choose or allow to be
 chosen various attributes that will affect the future life of your
 character.
@@ -49,15 +49,17 @@ abilities such as infravision.
 
 Each character has a number of "experience points", which increases as the
 character defeats monsters and attempts new spells and uses new items.
-Characters also have a level, which is based on experience. The amount of
-experience required to gain a new level is dependent on the character race
-and class. Races and classes with more intrinsic benefits require more
-experience to gain levels. As the experience rises, so does the level, and
-as the level rises, certain other abilities and characteristics rise as
-well. All characters start at 0 experience and at the first level.
+Characters also have a level, which is based on experience. As the experience
+rises, so does the level, and as the level rises, certain other abilities
+and characteristics rise as well.
+
+In wilderness modes, different races start in different towns spread out
+across the world. Those that start in more dangerous areas will already have
+enough experience to be at a level above 1.  In dungeon modes, all characters
+start at 0 experience and at the first level.
 
 Each character has some gold, which can be used to buy items from the shops
-in the town, and which can be obtained not only from selling items to the
+in their hometown, and which can be obtained not only from selling items to the
 shops, but also by taking it from dead monsters and by finding it in the
 dungeon. Each character starts out with some gold, the amount of which is
 based on the character's social class (higher is better) and stats (less
@@ -114,132 +116,161 @@ sought after.
 Races
 =====
 
-There are eleven different races that you can choose to play in Angband.  
+There are twelve different races that you can choose to play in FAangband.  
 Each race has its own adjustments to a character's stats and abilities. 
 Most races also have intrinsic abilities.  The bonuses to statistics and 
 the experience penalty will be displayed next to the races as you move 
 to select one.
 
-.. _Human:
+Hobbits, Beornings and Longbeards make good races for players new to Angband
+in general and FAangband in particular.  Druedain, Edain, Grey Elves and
+High Elves particularly are only recommended for experienced players.
 
-Human
-  The human is the base character.  All other races are compared to them.
-  Humans are average at everything and tend to go up levels faster than any
-  other race due to their shorter life spans.  No racial adjustments or 
-  intrinsics occur to human characters.  Humans do not have any infravision.
-
-.. _Half-Elf:
-
-Half-Elf
-  Half-elves tend to be smarter and faster than a human, but not as wise or
-  strong. Half-elves are slightly better at magic, disarming, saving
-  throws, stealth, archery and searching, but they are not as good at
-  hand-to-hand combat. Half-elves are immune to dexterity draining, and
-  have weak infravision.
-
-.. _Elf:
-
-Elf
-  Elves are better magicians than humans, but not as good at fighting. They
-  tend to be smarter and faster than humans, though not as wise or strong.
-  Elves are better at searching, disarming, perception, stealth, archery
-  and magic, but they are not as good at hand-to-hand combat. They are
-  resistant to attacks involving bright light, are immune to dexterity
-  draining, and have fair infravision.
-
+.. _Easterling:
+Easterling:
+  Easterlings are the swarthy humans who came into Beleriand late in the
+  First Age of Middle-Earth.   All other races are compared to them.
+  Easterlings can choose any class and are average at everything.  They 
+  have a slight bonus to fighting skill when using swords and 
+  crossbows, and have more hit points than many other races.  They get
+  a bonus to hit in plains.
+ 
+.. _Green-Elf:
+Green Elf:
+  Green elves are a branch of the Teleri who abandoned the Great Journey
+  of the elves to Aman, but later crossed the Blue Mountains into the
+  Land of the Seven Rivers, Ossiriand.  They tend to be smarter and 
+  more agile than Easterlings, but are not as strong.  Green elves are 
+  better at searching, saving throws, stealth, perception, 
+  and shooting (especially with bows), but they are not as good 
+  at hand weapons, disarming and magic devices.  Like all elves, Green 
+  elves are able to move freely among trees
+ 
+.. _Grey-Elf:
+Grey Elf:
+  Grey elves are the people of King Thingol, and the first elves to
+  settle in Beleriand.  They tend to be wiser and more dexterous than 
+  humans and tougher and stronger than green elves.  Grey elves have
+  better saving throws but less stealth than green elves, and are better
+  at hand-to-hand combat but not as good at shooting.  Grey elves
+  resist light effects intrinsically, and like the forest.
+ 
 .. _Hobbit:
-
-Hobbit
-  Hobbits, or Halflings, are very good at shooting, throwing, and have good
-  saving throws. They also are very good at searching, disarming,
-  perception, and stealth; so they make excellent rogues, but prefer to
-  be called burglars. They will be much weaker than humans, and not good at
-  melee fighting. Halflings have fair infravision. They have a strong hold
-  on their life force, and are thus resistant to life draining. Hobbits are
-  very partial to mushrooms and can identify them when found.
-
-.. _Gnome:
-
-Gnome
-  Gnomes are smaller than dwarves but larger than halflings. They, like the
-  halflings, live in the earth in burrow-like homes. Gnomes make excellent
-  mages, and have very good saving throws. They are good at searching,
-  disarming, perception, and stealth. They have lower strength than humans
-  so they are not very good at fighting with hand weapons. Gnomes have good
-  infravision.  Gnomes are intrinsically protected against paralysis and 
-  some slowing effects. Gnomes are excellent at using wands and staves
-  and can identify them when found.
-
+Hobbit:
+  Hobbits are very good at bows (especially slings), throwing, and have 
+  good saving throws.  They are even better at searching, disarming, 
+  perception, and stealth; so they make excellent rogues, but prefer to 
+  be called burglars.  They will be much weaker than humans, and no 
+  good at melee fighting.  They have few hit points, but can sometimes 
+  endure ailments that would lay other races low.  Hobbits have fair 
+  infravision, so they can detect warm creatures at a distance.  
+  Hobbits, like Easterlings, are people of the plains.
+ 
+.. _Petty-Dwarf:
+Petty-Dwarf:
+  Petty-dwarves are an ancient and diminished race of dwarves thought
+  at first by the elves to be orcs.  They were all but wiped out, with
+  just one small settlement left in the south of the Ered Luin.
+  Petty-dwarves make excellent mages, are the best magical device users 
+  of any race, and are good at searching, disarming, and perception.  
+  They are reasonably stealthy. They are, however, rather frail and
+  are not very good at fighting with hand weapons.  Petty-dwarves have 
+  good infra-vision, so they can detect warm-blooded creatures at a 
+  distance.  Petty-dwarves are intrinsically protected against 
+  paralysis and some slowing effects, and like all dwarves are harder
+  to hit when in the mountains, and can move easily through rubble.
+ 
 .. _Dwarf:
+Dwarf:
+  Dwarves are the headstrong miners and fighters of legend.  They are 
+  strong, smart, and tough, but not very wise or agile.  Since 
+  dungeons are their natural home, dwarves have very good infravision, 
+  can never be blinded, and make good warriors, mages, and necromancers.
+  They gain a small bonus to combat skill when using polearms, but 
+  don't know the first thing about bows.  Because they are so 
+  headstrong, they resist spells which are cast on them.  They do have 
+  one big drawback, though:  Dwarves are loudmouthed and proud, singing 
+  in loud voices, arguing with themselves for no good reason, screaming 
+  out challenges at imagined foes.  In other words, dwarves have a 
+  miserable stealth.  They get the same terrain bonuses as 
+  Petty-Dwarves.
+ 
+.. _Druadan:
+Druadan:
+  Druedain, also known as woses, are the woodspeople who live alongside
+  the people of Haleth.  They are tough, wise and stealthy, but not very
+  street-smart and are poor at devices, disarming and shooting; they
+  make excellent druids.  Druedain look, well, funny.  They tend to pay 
+  more for goods in town.  Their uncanny appreciation of the natural
+  environment gives them the power of telepathy, and they fight more
+  skilfully in forest.
+ 
+.. _Longbeard:
+Longbeard:
+  The longbeards are the eldest of the seven lines of the dwarves.  
+  Their home is in Khazad Dum, away from the chief conflicts of 
+  Beleriand, but they are always ready for a challenge.  They have all
+  the strengths of other dwarves, but their weaknesses are less.
 
-Dwarf
-  Dwarves are the headstrong miners and fighters of legend. Since dungeons
-  are the natural home of a dwarf, they are excellent choices for a warrior
-  or priest - or indeed, that combination of the two, the paladin. Dwarves
-  tend to be stronger and tougher but slower and less intelligent than
-  humans. Because they are so headstrong and are somewhat wise, they resist
-  spells which are cast on them. Dwarves also have excellent infravision.
-  They can never be blinded. Dwarves are excellent at digging, and can
-  sense nearby buried treasure. They have one big drawback, though. Dwarves
-  are loudmouthed and proud, singing in loud voices, arguing with
-  themselves for no good reason, screaming out challenges at imagined foes.
-  In other words, dwarves have a miserable stealth.
-
-.. _Half-Orc:
-
-Half-Orc
-  Half-Orcs make excellent warriors and decent priests, but are terrible at
-  magic. They are as bad as dwarves at stealth, and horrible at searching,
-  disarming, and perception. Half-Orcs are, let's face it, ugly. They tend
-  to pay more for goods in town. Half-Orcs do make good warriors and
-  rogues, for the simple reason that Half-Orcs tend to have great
-  constitution and lots of hit points. Because of their preference to
-  living underground to on the surface, half-orcs resist darkness attacks.
-  They have fair infravision.
-
-.. _Half-Troll:
-
-Half-Troll
-  Half-Trolls are incredibly strong, and have more hit points than any
-  other character race. They are also very stupid and slow. They will make
-  great warriors and iffy priests. They are bad at searching, disarming,
-  perception, and stealth. They are so ugly that a Half-Orc grimaces in
-  their presence. Half-trolls always have their strength sustained, and
-  they regenerate quickly like other trolls. Unfortunately, this
-  regeneration also requires them to eat more food than other races. They
-  have fair infravision.
-
-.. _Dunadan:
-
-Dunadan
-  Dunedain are a race of hardy men from the West. This elder race surpasses
-  human abilities in every field, especially constitution. Their hardiness
-  ensures that their constitution cannot be reduced. They have no infravision.
-
+.. _Adan:
+Adan:
+  The edain are the elf-friends of the houses of Beor, Hador and 
+  Haleth.  First of men to enter Beleriand, they surpass the abilities 
+  of other humans in every field, are superb melee fighters, and have 
+  amazing wisdom and constitution.  They may play any class.  Their 
+  constitution cannot be reduced, and like druedain fight their best in
+  the forests of Beleriand.
+ 
 .. _High-Elf:
+High Elf:
+  High elves are the Noldor, who fled from the Undying Lands to try and
+  wrest the Silmarils back from Morgoth.  They are masters of all 
+  skills, and are agile and intelligent, although their wisdom is 
+  sometimes suspect.  High-elves begin their lives able to see the 
+  unseen, and resist light effects just like Grey elves.  As other 
+  elves, they move freely through trees.
+ 
+.. _Dark-Elf:
+Dark Elf:
+  Dark elves are those who chose to stay among the stars of Middle-
+  Earth rather than see the Light of the Trees in Aman.  They are
+  wise and agile, but frail and poor with weapons.  However, dark
+  elves are not merely stealthiest of all races, but they never 
+  aggravate monsters.  (If they normally would, they suffer a penalty 
+  of three to stealth).  The price they pay, though, is an increased
+  sensitivity to bright light.  Dark elves have the usual elvish 
+  ability to move unhindered through trees.
 
-High-Elf
-  High-Elves are descended from those among the Elves who heard and
-  answered the call from the Valar at the very beginning of time, before
-  the sun and moon were made, and lived in the Blessed Realm for many
-  thousands of years before returning to mortal lands. Because of this,
-  they are far superior in terms of abilities when compared to their lesser
-  Elven kindred. They can also see into the invisible world of ghosts and
-  wraiths. However, they find new experience harder to come by than other
-  races. Like normal Elves, they resist attacks involving bright light.
-  They have good infravision and can even see cold-blooded invisible
-  creatures.
+.. _Ent:
+Ent:
+  Clad in bark-like skin, and with bodies like the trunks of trees, Ents
+  can nevertheless move about perfectly well.  They have poor dungeon 
+  survival skills, and are bad at archery and with polearms, but handle 
+  other weapons well.  As long as they stay away from fire, Ents will 
+  find themselves well capable of surviving many a bitter fight.  As 
+  they age, Ents slowly lose the relative suppleness of their sapling 
+  youth, trading dexterity for increased strength and constitution.  
+  Members of this wise race can never gain feather fall by any means, 
+  but will slowly acquire the ability needed to tear rock apart with 
+  their weaponless hands.  Since they only need to stand still to be
+  mistaken for trees, Ents are incredibly stealthy in forests.
+ 
+.. _Beorning:
+Beorning:
+  These hardy woodsfolk, though of human origin, have developed a deep
+  affinity with nature.  Many of the Beornings have learned the secret
+  languanges of animals and some have learned to transform themselves
+  into the forms of great bears.  They have respectable survival
+  skills and are comfortable with all manner of weapons, but they are
+  mediocre with magical devices.  They are at a slight disadvantage in
+  charisma and intellegence, but they have better wisdom and 
+  consistution than other humans.  When needed, they can take the form
+  of an increasingly powerful bear (use the ']' command), making them
+  more effective in combat and weaker in magic and archery.  Beorning
+  are best known as warriors, rangers, and druids, though they make 
+  fine rogues and priests as well.  They fight most skilfully on the 
+  plains.
 
-.. _Kobold:
-
-Kobold
-  Kobolds are a race of small dog-headed humanoids that dwell underground.
-  They have excellent infravision, and are intrinsically resistant to
-  poisons of all kinds. They have a good dexterity and constitution.
-  However, they are weaker than humans, and also not noted for great
-  intelligence. Furthermore, they are ugly, and not trusted in town. And
-  while their constitution makes them tough, it still cannot prevent the
-  fact that they are not the biggest of creatures, and have few hit points.
 
 Classes
 =======
@@ -430,7 +461,7 @@ Infravision
   is cool or cold, infravision will not allow the player to see walls and
   objects. Infravision will allow a character to see any warm-blooded
   creatures up to a certain distance. This ability works equally well with
-  or without a light source. However, some of Angband's creatures are
+  or without a light source. However, some of FAangband's creatures are
   cold-blooded, and will not be detected unless lit up by a light source.
   All non-human races have innate infravision. Humans (including Dunedain)
   cannot gain infravision unless it is magically enhanced. Infravision does
@@ -497,21 +528,22 @@ dice, add the "race" and "class" numbers: for instance, a Dwarf Priest
 has a hit die of 11+2=13 (i.e. they will get 1d13 hit points per level,
 adjusted for constitution).
 
-================ ===  ===  ===  ===  ===  =========  ========  ====== 
-      Race       STR  INT  WIS  DEX  CON  HD (base)  XP/level  Infra
-================ ===  ===  ===  ===  ===  =========  ========  ======
-      Human        0    0    0    0    0      10        100%   None
-      Half-Elf     0   +1   -1   +1   -1      10        120%   20'
-      Elf         -1   +2   -1   +1   -1       9        120%   30'
-      Hobbit      -2   +2   +1   +3   +2       7        120%   40'
-      Gnome       -1   +2    0   +2   +1       8        120%   40'
-      Dwarf       +2   -3   +2   -2   +2      11        120%   50'
-      Half-Orc    +2   -1    0    0   +1      10        120%   30'
-      Half-Troll  +4   -4   -2   -4   +3      12        120%   30'
-      Dunadan     +1   +2   +2   +2   +3      10        120%   None
-      High-Elf    +1   +3   -1   +3   +1      10        145%   40'
-      Kobold      -1   -1    0   +2   +2       8        120%   50'
-================ ===  ===  ===  ===  ===  =========  ========  ======
+================== ===  ===  ===  ===  ===  ======  ========  =========
+     Race          STR  INT  WIS  DEX  CON   Infra  Hit Dice  Home Town
+================== ===  ===  ===  ===  ===  ======  ========  =========
+     Easterling     +1    0    0    0   +1     0       9      Eriador
+     Green Elf      -1   -1   +2   +2   -1    +2      10      Ossiriand
+     Grey Elf       +1    0   +2   +2    0    +2      10      Menegroth
+     Hobbit         -2   -1   +2   +3   +2    +4       7      Gladden Fields
+     Petty-Dwarf    -1   +3   -3   +3   -1    +5       8      Ered Luin South
+     Dwarf          +2   +1   -2   +1   +2    +5      11      Belegost
+     Druadan        +2   -2   +2   -1   +2     0      11      Ephel Brandir
+     Longbeard      +3   +1   -1   +2   +2    +5      12      Khazad Dum
+     Adan           +1   +1   +3   +1   +3     0      10      Ephel Brandir
+     High Elf       +2   +3    0   +3   +2    +2      10      Gondolin
+     Dark Elf       -2   -1   +2   +2   -1    +2       7      Taur-Im-Duinath
+     Ent            +4   -4   +2   -3   +3     0      12      Taur-Im-Duinath
+     Beorning       +1   -1   +1    0   +1     0      10      Gladden Fields
 
 
 ================= ===  ===  ===  ===  ===  ==========
@@ -531,21 +563,23 @@ adjusted for constitution).
 Ability Tables
 ==============
 
-============ =======  =======  ======  =====  =======  ======  ======  =====
-  Race       DisarmP  DisarmM  Device   Save  Stealth  Search   Fight   Bows
-============ =======  =======  ======  =====  =======  ======  ======  ===== 
-  Human         0        0        0       0       0       0       0       0
-  Half-Elf      2        2        3       3       1       3      -1       5
-  Elf           5        5        6       6       2       6      -5      15
-  Hobbit       15       15       18      18       4       6     -10      20
-  Gnome        10       10       22      12       3       4      -8      12
-  Dwarf         2        2        9       9      -1       2      15       0
-  Half-Orc     -3       -3       -3      -3      -1      -3      12      -5
-  Half-Troll   -5       -5       -8      -8      -2      -9      20     -10
-  Dunadan       4        4        5       5       1       3      15      10
-  High-Elf      4        4       20      20       2      10      10      25
-  Kobold       10       10        5       0       3      10      -5      10
-============ =======  =======  ======  =====  =======  ======  ======  =====
+============ =======  ======  =====  =======  ======  ======  =====  =====
+  Race       Disarm   Device   Save  Stealth  Search   Fight  Shoot  Throw
+============ =======  ======  =====  =======  ======  ======  =====  =====
+  Easterling    0       0       0       0        0       0      0      0
+  Green Elf    -1      -1       3       3        7      -1      3      3
+  Grey Elf     -1      -1       5       1        4       0      2      2
+  Hobbit       15       8      10       3       10      -3      2      2
+  Petty-Dwarf  10      18       3       1        6      -3      0      0
+  Dwarf         2       2      10      -2        2       2      0      0
+  Druadan      -3      -5       7       2        2       2     -2     -2
+  Longbeard     2       2      10      -2        2       3      0      0
+  Adan          5       5       0       1        3       2      0      0
+  High Elf      6      13       9       2        4       2      2      2
+  Dark Elf      7       7       0       6       10       0     -1     -1
+  Ent          -5      -2       7       0       -5       2     -2     -2
+  Beorning      2      -2       0       1        3       2      0      0
+============ =======  ======  =====  =======  ======  ======  =====  =====
 
 
 ============   ======= ======= ======= ======= ======= =======  ======= =======

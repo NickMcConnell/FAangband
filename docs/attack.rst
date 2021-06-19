@@ -5,7 +5,7 @@ Attacking monsters
 Attacking and Being Attacked
 ============================
 
-Attacking is simple in Angband. If you move into a creature, you attack it.
+Attacking is simple in FAangband. If you move into a creature, you attack it.
 You can attack from a distance by firing a missile or by magical means
 (such as aiming a wand). Creatures attack in the same way. If they move
 into you, they attack you. Some creatures can also cast spells from a
@@ -52,11 +52,11 @@ other types of monsters differently.
 Monster Memories
 ================
 
-There are hundreds of different creatures in the pits of Angband, many of
+There are hundreds of different creatures in the world of FAangband, many of
 which have the same letter symbol and color on the screen. The exact
 species of a creature can be discovered by |``l``ooking| at it. It is also
 very difficult to keep track of the capabilities of various creatures.
-Luckily, Angband automatically keeps track of your experiences with a
+Luckily, FAangband automatically keeps track of your experiences with a
 particular creature. This feature is called the monster memory. Your
 monster memory recalls the particular attacks of each creature (whether or
 not technically a monster) which you have suffered, as well as recalling if
@@ -79,8 +79,8 @@ other magical means to learn about monster's abilities that don't require
 you to actually experience the attacks.
 
 This memory can be used by all your characters; it is stored in a file
-called 'lore.txt' in your user directory (~/.angband/Angband in Linux,
-lib/user in Windows, Documents/Angband in macOS).
+called 'lore.txt' in your user directory (~/.angband/FAangband in Linux,
+lib/user in Windows, Documents/FAangband in macOS).
 
 Your Weapon
 ===========
@@ -95,10 +95,10 @@ to dig your best digging tool will automatically be used.
 
 Weapons have two main magical characteristics, their enchanted ability to
 hit and their enchanted ability to do damage, expressed as '(+#,+#)'. A
-normal weapon would be '(+0,+0)'. Many weapons in Angband have bonuses to
+normal weapon would be '(+0,+0)'. Many weapons in FAangband have bonuses to
 hit and/or to damage.
 
-Angband assumes that your youth in the rough environment near the dungeons
+FAangband assumes that your youth in the rough environment near the dungeons
 has taught you the relative merits of different weapons, and displays as
 part of their description the damage dice which define their capabilities.
 Any damage enchantment is added to the dice roll for that weapon. The dice
@@ -151,7 +151,7 @@ as a miss, and is described as a miss. Second, good armor will absorb
 some of the damage that your character would have taken from normal
 attacks. Third, acid damage is reduced by wearing body armor (but the
 armor may be damaged instead). It is obvious that a high armor class is
-vital for surviving the deeper levels of Angband.
+vital for surviving the dangerous areas of FAangband.
 
 Armor class values are always displayed between a set of square brackets,
 as '[#]' or '[#,+#]'. The first value is the base armor class of the
@@ -270,16 +270,14 @@ character or monster level.
 
 In the case of fire, cold, lightning, acid and poison, if the monster has
 resistance to a player attack of this kind it will take almost no damage.
-If the player has one or more permanent sources of resistance, they will take
-1/3 of the damage they would normally take: if the player has a temporary
-source of resistance (whether from potion, spell or item activation), this
-will also reduce the damage to 1/3 of its normal level, allowing the
-character to take only 1/9 damage if they have both permanent and temporary
-resistance. Having more than one source of permanent resistance confers no
-extra bonus, and using more than one source of temporary resistance
-increases only the duration of the resistance: in both cases, either the
-resistance is present or it is not. But one permanent resistance and one
-temporary resistance are both effective simultaneously.
+If the player has one or more permanent sources of resistance, the damage
+they would normally take is reduced according to the percentage resistance
+the item affords.  Multiple sources of resistance stack, so that an item
+with 40% resistance (so allowing 60% of damage through) and one of 30%
+resistance (allowing 70% through) will combine to allow 60% of 70% or 42%
+through - so 58% resistance.  Temporary sources of resistance (whether from
+potion, spell or item activation) give 40% resistance, which stacks in the
+same way.
 
 Elemental attacks also have a chance to damage wielded equipment or destroy
 items in the character's inventory. Fire attacks destroy scrolls, staves,
@@ -414,7 +412,7 @@ to continue. Ego weapons are denoted by the following "names":
 
 Ego Melee Weapons:
 ------------------
-(Defender)
+Weapomn of Doriath
   A magical weapon that actually helps the wielder defend himself, thus
   increasing his/her armor class, and protecting him/her against damage
   from fire, cold, acid, lightning, and falls. This weapon also will
@@ -441,16 +439,12 @@ Ego Melee Weapons:
   prayers: a blessed blade may be wielded without this penalty. Blessed
   blades also have one extra, random, power.
 
-Weapon of Westernesse
+Weapon of the Noldor
   A Weapon of Westernesse is one of the more powerful weapons. It does
   extra damage against orcs, trolls, and giants, while increasing your
   strength, dexterity, and constitution. It also lets you see invisible
   creatures and protects from paralyzation and some slowing attacks. These
   blades were made by the Dunedain.
-
-Weapon of Extra Attacks
-  A weapon of extra attacks will allow the wielder to deliver extra attacks
-  during each round.
 
 Elemental Branded Weapons
   Each of the five elemental attacks has a corresponding weapon which will
@@ -483,11 +477,11 @@ Ego Missile Launchers and Ammo:
 -------------------------------
 Launchers of Accuracy
   These launchers have an unnaturally high to-hit number, making them
-  extremely accurate.
+  extremely accurate, and will occasionally shoot a very accurate shot.
 
-Launchers of Power
+Launchers of Velocity
   These launchers do an unnaturally high amount of damage due to their high
-  to-dam number.
+  to-dam number, and will occasionally shoot a very powerful shot.
 
 Launchers of Extra Shots
   These launchers allow the wielder to shoot more times per round than
@@ -526,24 +520,18 @@ names:
 
 Ego Armors and Shields:
 -----------------------
-of Resist Acid, Lightning, Fire or Cold
-  A character wearing armor or a shield with one such resistance will take
-  only 1/3 of normal damage from attacks involving the relevant element of
-  acid, lightning, fire or cold. Note that multiple permanent sources of
-  resistance are NOT cumulative: wearing two is no better than wearing one.
-  However, armor which provides resistance to acid cannot itself be damaged
-  by acid, and this is a good reason to wear more than one such piece of
-  armor.
- 
 of Resistance
+  A character wearing armor with this ability will have resistance to one
+  or more random elemnts to varying degrees.
   A character wearing armor with this ability will have resistance to Acid,
   Cold, Fire, and Lightning as explained in each part above.
 
 Armor of Elvenkind
-  This is the same as Resistance armor, only generally better enchanted. It
+  This armor will give resistance to Acid, Cold, Fire, and Lightning. It
   will make you more stealthy. This armor also possesses an extra
   resistance, at random from the following list: poison, light, dark,
-  nexus, nether, chaos, disenchantment, sound, and shards.
+  nexus, nether, chaos, disenchantment, sound, and shards, and possibly
+  more random resitances.
 
 Robes of Permanence
   These robes are designed especially for wizards. Just like Elvenkind
@@ -555,8 +543,9 @@ Robes of Permanence
 Dragon Scale Mails
   These extremely rare pieces of armour come in many different colors, each
   protecting you against the relevant dragons. Naturally they are all
-  resistant to acid damage. They also occasionally allow you to breathe as
-  a dragon would.  Dragon Scale Mails can also have egos as well.
+  resistant to acid damage. They allow you to to take the form of a dragon,
+  and once you have to breathe as a dragon would.  Dragon Scale Mails can
+  also have their own ego types.
 
 Ego Helms:
 ----------
@@ -634,13 +623,11 @@ Gloves of Slaying
   wearer's to-hit and to-dam values.
 
 Gloves of Agility
-  These gloves will increase the wearer's dexterity. Because of the special
-  nature of these gloves, magic users may wear these gloves without
-  incurring a mana penalty.
+  These gloves will increase the wearer's dexterity.
 
-Gauntlets of Power
-  These spiked gauntlets will boost the wearer's strength as well as the
-  wearer's to-hit and to-dam numbers.
+Gloves of Power
+  These gloves will boost the wearer's strength as well as the wearer's
+  to-hit and to-dam numbers.
 
 Ego Boots:
 ----------
@@ -658,7 +645,7 @@ Boots of Speed
   The wearer of these boots will become unnaturally fast.
 
 Once again, these are not necessarily the ONLY ego-items in the dungeon, 
-only the most common.
+just a sample.
 
 Apart from these there are some very rare and well-made armours in the
 dungeon with not necessarily any special abilities. These include Shields

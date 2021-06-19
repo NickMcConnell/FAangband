@@ -2,6 +2,9 @@
 Version Information
 ===================
 
+FAangband is a variant of Angband; the following file has some history of
+Angband.
+
 Angband has been maintained and developed by a succession of volunteers since
 it was written in the early 1990s. The current maintainer is Nick McConnell.
 

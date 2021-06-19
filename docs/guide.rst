@@ -3,52 +3,48 @@
 ===============================
 
 This guide assumes familiarity with the basic mechanics of the game. If you're
-completely new to Angband, check out the user's manual and just start playing,
+completely new to FAangband, check out the user's manual and just start playing,
 get into the dungeon and try, well, whatever seems to be prudent. You'll
 probably die rather quickly, but the following will make much more sense to you
 if you have just a little actual gameplay experience.
 
-This guide was written for Angband 3.5.0, and is now a little out of date
-(although the worst of the obsolete stuff has been cleaned out).  It is still
-a handy source of hints and advice; just don't take it as an authority.
+It also assumes you are playing in one of the wilderness modes.
 
 The basics
 ----------
 
 As borrowed from a classic rgra post, there's not much that you actually have
-to do. Your one and only mission is to slay Morgoth on dungeon level 100. In
-order to get there, you need to go down a lot of stairs and kill Sauron on
-dungeon level 99. That's about it - everything else is optional. Of course,
+to do. Your one and only mission is to slay Morgoth on Angband level 100. In
+order to get there, you need to go traverse a lot of wilderness and at least
+one dungeon. That's about it - everything else is optional. Of course,
 before you can kill Sauron you'll need lots of experience and good equipment,
 but by the time you get that deep you'll have both. Just see to it that you
 don't die along the way.
 
 The one and most important thing you need to get in your head is that you can't
 possibly kill every monster on every level. Think of the game as forays into
-the dungeon from which you want to return with cool stuff; think of the
+the wild from which you want to return with cool stuff; think of the
 shallower levels as obstacles you need to overcome on your way deeper into the
 dungeon; or whatever you like. Just never-ever think of it as a killing spree.
-Until you find Sauron, your task is to survive and eventually get to level 99.
+Your task is to survive and eventually get to Morgoth.
 
 The next point is that you don't need to fight any particular monster (other
-than the big two). Yes, there might be a rather impressive hoard in that
+than the big one). Yes, there might be a rather impressive hoard in that
 vault – but if the monsters guarding it are too many or too fierce, well, just
-give it a pass. Angband offers an endless supply of monsters and treasure and
+give it a pass. FAangband offers an endless supply of monsters and treasure and
 everything. There will always be another day – provided you live to see another
 day. Sometimes you just have to bug out and run for your life.
 
-So, let me recap, the vital points of Angband are:
+So, let me recap, the vital points of FAangband are:
 
-* go down a lot of stairs
-* kill Sauron (dl 99)
-* kill Morgoth (dl 100)
+* travel a lot
+* kill Morgoth (Angband 100)
 * Quick start
 
 From this point, the guide assumes that you are playing a fighting class
-(warrior, ranger, rogue or paladin) and race (Dunedain, High-Elf, Dwarf,
-Half-Orc, Half-Troll.) First, use the 'cost-based' stats selection, and create
-a character with 3 or 4 blows (Don't pick a class/race combinations, like Dwarf
-Ranger, that can only get 2 blows.)
+(warrior, ranger, rogue or paladin).  First, use the 'cost-based' stats
+selection, and create a character with 3 or 4 blows (Don't pick a class/race
+combinations, like Dwarf Ranger, that can only get 2 blows.)
 
 First, set your stats to get maximum blows. If you have a combination with good
 dexterity, select 18/10 dexterity, and then set your strength to 17 or 18. Set
@@ -58,25 +54,24 @@ because it doesn't add significant HP until well above 18.
 
 Example character::
 
-  [Angband 3.5.0 Character Dump]
+  [FAangband 2.0beta2 Character Dump]
 
- Name   Anar         Age            102          Self  RB  CB  EB   Best
- Sex    Female       Height       5'11"   STR:     17  +1  +0  +0     18
- Race   High-Elf     Weight    14st 0lb   INT:     10  +3  +2  +0     15
- Class  Ranger       Turns used:          WIS:     10  -1  -2  +0      7
- Title  Runner       Game             1   DEX:     18  +3  +1  +0  18/40
- HP     14/14        Standard         0   CON:     10  +1  -1  +0     10
- SP     0/0          Resting          0
+ Name   Harry        Age             25          Self  RB  CB  EB   Best
+ Race   Longbeard    Height        4'0"   STR:     17  +3  +3  +0  18/50
+ Class  Warrior      Weight     9st 7lb   INT:     10  +1  -2  +0      9
+ Title  Rookie       Turns used:          WIS:     10  -1  -2  +0      7
+ HP     23/23        Game             1   DEX:     16  +2  +2  +0  18/20
+ SP     0/0          Standard         0   CON:     16  +2  +2  +0  18/20
+ Gold   47           Resting          0
 
- Level                  1    Armor        [0,+2]    Saving Throw     49%
- Cur Exp                0                           Stealth         Good
- Max Exp                0    Melee        1d4,+2    Disarming        36%
- Adv Exp               23    To-hit        23,+4    Magic Devices     55
-                             Blows      2.0/turn    Perception   1 in 20
- Gold                 139                           Searching        27%
- Burden          18.5 lbs    Shoot to-dam     +0    Infravision    40 ft
- Speed             Normal    To-hit        33,+4
- Max Depth           Town    Shots        1/turn
+ Level                  1    Armor       [10,+2]    Saving Throw     29%
+ Cur Exp                0    Melee      2d5,+14%    Stealth          Bad
+ Max Exp                0    To-hit        25,+4    Disarm - phys.   31%
+ Adv Exp               10    Blows      2.0/turn    Disarm - magic   24%
+ Burden           30.7 lb    Shoot to-dam     +0    Magic Devices     21
+ Overweight     -149.2 lb    To-hit        19,+4    Searching        13%
+ Max Depth           Town    Shots      0.0/turn    Infravision    50 ft
+                                                    Speed         Normal
 
 
 A Fighting Chance
@@ -84,25 +79,26 @@ A Fighting Chance
 
 For a melee character, the most important measure of power is how much damage
 they can do in a single turn. Consider the above cl 1 character with 3 blows
-from a Rapier (+7,+9), in a fight vs an out-of-depth Bullroarer, with no
-escapes, no ranged weapons, and no armor. On the face, she has no chance.
-However, if she can get in the first blow, she in fact has a 71% chance of
-killing Bullroarer in a single turn, and a 95% chance of frightening him.
+from a Rapier (+7,+9), in a fight vs an out-of-depth Thief of the Mountains,
+with no escapes, no ranged weapons, and no armor. On the face, she has no
+chance. However, if she can get in the first blow, she in fact has a 71%
+chance of killing the Thief in a single turn, and a 95% chance of frightening
+him.
 
 Further, with full buffing (!Hero, ?Blessing ?Berserk Strength), the character
 has an 81% chance of killing him in a single turn. As well as improving the
 to-hit probability from 91% to 95%, this corresponds to a 50% reduction in the
-chance of failure in a dangerous situation. Finally, assuming 'Anar' does win
+chance of failure in a dangerous situation. Finally, assuming 'Harry' does win
 this battle, she gets 450 experience, and immediately goes jumps to cl 8.
 
 Missile Damage
 ``````````````
 
 With proper preparation even a weak character has an almost guaranteed chance
-of killing Bullroarer, if you meet him at a distance (across a lighted room).
+of killing the Thief, if you meet him at a distance (across a lighted area).
 An unenchanted longbow does 7.5 damage/shot with ordinary (unenchanted) arrows.
 However, flasks of oil do 7HP nominal damage when thrown, and do triple damage
-(21HP) vs fire-vulnerable monsters. Bullroarer has 60 HP, so even a small stack
+(21HP) vs fire-vulnerable monsters. The Thief has 48 HP, so even a small stack
 of oil will finish him off.
 
 Summary
@@ -117,8 +113,8 @@ Summary
   jellies, or groups of orcs.)
 * Buffing, generally with !Heroism, can be very helpful to get starting
   characters out of sticky situations.
-* Going deeper in the dungeon is often a more conservative (safer) strategy
-  than staying at a shallow (cl < dl) depth. (cl: character level; dl: dungeon
+* Going into more danger is often a more conservative (safer) strategy
+  than staying at an easy (cl < dl) depth. (cl: character level; dl: danger
   level)  HP and character level are easy to come by.
 * Starting Equipment
 
@@ -133,11 +129,11 @@ Plan to be deep
 ---------------
 
 Always make sure to have a scroll of recall, even on your first trip into the
-dungeon. Monsters and items at dl 5 (250') and deeper are much (~100x) more
+wild. Monsters and items at dl 5 (250') and deeper are much (~100x) more
 valuable than items at dl 1. (The example above may be contrived, but it is
 representative.)
 
-To survive deep(er) you will want:
+To survive further you will want:
 
 a. Escapes:
 
@@ -173,8 +169,8 @@ the first trip down.
 The first trip
 ``````````````
 
-It's quite possible to get to 500' (dl 10) or deeper in the first trip into the
-dungeon. Plan to return when you run out of either escapes (?Phase door),
+It's quite possible to get to dl 10 or more in the first trip into the
+wild. Plan to return when you run out of either escapes (?Phase door),
 protection from side-effects (curing potions), or damage (arrows if you are a
 ranger, flasks of oil if you are otherwise weak.)
 
@@ -187,7 +183,7 @@ What to kill
   and either give good experience (a pack of wolves) or good drops (weaker
   orcs, novice humans.) If you are deep enough, this is likely to increase your
   character by several levels in a single battle.
-* Uniques with good drops (Bullroarer, Brodda, Wormtongue)
+* Uniques with good drops (The Thief, Brodda, Ulfast)
 * Easy kills that are likely to drop something worthwhile.
 
 What to ignore
@@ -213,8 +209,8 @@ What to avoid
 On Bad Luck
 -----------
 
-This is rule number one of Angband: don't take unnecessary risks. If you take
-enough low-probability chances of death, you'll never survive to fight Sauron.
+This is rule number one of FAangband: don't take unnecessary risks. If you take
+enough low-probability chances of death, you'll never survive to fight Morgoth.
 Such deaths are generally called 'stupid', but that's not always accurate.
 Sometimes it's just bad luck. But given enough chances, you are guaranteed to
 receive it. It's the trick to extremely fast dives: the fewer moves you make,
@@ -232,20 +228,16 @@ following is intended to state what many perceive to be blatantly obvious,
 hence "you did WHAT!" face-palm deaths. This really should be cleaned up and
 refactored, but placing here for now.
 
-WARNING. I have yet to defeat Angband. This is a compilation of some of the
-better tips I've learned while trying to explore the depths... (to Level ~35).
-Additional advice would be greatly appreciated!
-
 Start simple
 ````````````
 
-Begin your Angband career as a warrior. Warriors are relatively simple to
-begin with, and are less likely to be eaten by a pack of jackals.
+Begin your FAangband career as a warrior. Warriors are relatively simple to
+begin with, and are less likely to be eaten by a pack of wild dogs.
 
 Focus!
 ``````
 
-Angband is a very harsh game, in that the character you've been playing for
+FAangband is a very harsh game, in that the character you've been playing for
 months could be killed by a single careless action. Playing when tired or
 drunk is probably a good way to leave yourself with nothing but a sad tale to
 share on the forums. If you have the ability to sense monsters or traps then
@@ -255,7 +247,7 @@ that, without the appropriate gear, will kill your character in a single move.
 Use that stuff
 ``````````````
 
-Angband has potions, spell books, wands, staffs, rods, activate-able items,
+FAangband has potions, spell books, wands, staffs, rods, activate-able items,
 melee weapons, ranged weapons, and whatnot. They're meant to be used, for
 crying out loud! It can take a while to get used to using all the different
 types of items, but they work best when used in concert. For those able to use
@@ -269,7 +261,7 @@ Rangers have a bow
 Really a subset of the previous point, but it happens so often... Don't try to
 play a ranger like a warrior -- rely on the bow! Similarly for mages, don't do
 a Gandalf. He may be able to draw a sword and rush headlong in to a pack or
-orcs, but mages in Angband are considerably more fragile. Priests are better
+orcs, but mages in FAangband are considerably more fragile. Priests are better
 equipped to engage in melee combat - with their healing abilities compensating
 for their somewhat fragile nature.
 
@@ -334,7 +326,7 @@ black. ALWAYS carry a light source. DON'T drop a light source for more loot!
 You can RUN AWAY
 ````````````````
 
-There is NO RULE that you have to clean out a dungeon -- AT ALL. See something
+There is NO RULE that you have to clean out a level -- AT ALL. See something
 you can't handle? Don't be afraid to leave -- NOW. Sure you could try to avoid
 it, but then again, it could be a hummerhorn. Half way through the level? You
 can still LEAVE NOW. Nearly finished with the level? You can still leave NOW.
@@ -356,7 +348,7 @@ monsters simultaneously, but even they should consider leaving if it becomes
 apparent that the monsters are breeding more quickly than the player can kill
 them.
 
-Level 1 is still there
+Early levels are still there
 ``````````````````````
 
 Don't forget that you can always replay, and re-re-play the early levels for
@@ -463,7 +455,7 @@ yet, you have a higher chance of survival.
 Information Awareness
 `````````````````````
 
-Angband offers a LOT of information on a LOT of different screens. If you
+FAangband offers a LOT of information on a LOT of different screens. If you
 haven't already, try enabling multiple consoles -- ALL of them -- and then try
 out different options / combinations. Being able to view a lot of information
 simultaneously at a glance is a considerable benefit over having to be
@@ -472,7 +464,7 @@ diligent enough to manually check each relevant screen each time.
 Also, change the text size. Sure you may be accustomed to your terminal font
 and size for reading; however, you can read and make sense from context a lot
 easier than you can reliably identify the glyph, color, and relative position
-of every character on the screen. Angband may be a text-based game, but you
+of every character on the screen. FAangband may be a text-based game, but you
 don't have to play with a tiny (or even normal size font). Using a slightly
 larger font makes identifying things a LOT easier. The SDL interface is
 perhaps the easiest for using multiple terminals and changing fonts.

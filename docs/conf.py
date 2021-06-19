@@ -17,9 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "Angband"
-copyright = "2019, Angband developers past and present"
-author = "Angband developers past and present"
+project = "FAangband"
+copyright = "2019, FAangband developers past and present"
+author = "FAangband developers past and present"
 
 # The full version, including alpha/beta/rc tags
 import subprocess
@@ -58,7 +58,7 @@ from better import better_theme_path
 html_theme_path = [better_theme_path]
 html_theme = "better"
 
-html_title = "<img> The Angband Manual"
+html_title = "<img> The FAangband Manual"
 html_short_title = "Home"
 html_sidebars = {
     "**": ["localtoc.html", "searchbox.html"],
