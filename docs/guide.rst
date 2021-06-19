@@ -1,5 +1,5 @@
 ===============================
- A Players' Guide to Angband 
+ A Players' Guide to FAangband 
 ===============================
 
 This guide assumes familiarity with the basic mechanics of the game. If you're
