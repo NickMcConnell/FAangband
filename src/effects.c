@@ -3242,7 +3242,7 @@ static bool effect_handler_TELEPORT_TO(effect_handler_context_t *context)
 
 		/* Player choice */
 		do {
-			get_aim_dir(&dir);
+			if (!get_aim_dir(&dir)) return false;
 		} while (dir == DIR_TARGET && !target_okay());
 
 		if (dir == DIR_TARGET)
