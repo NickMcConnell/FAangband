@@ -400,14 +400,13 @@ name:RESIST_ELEMENTS
 aim:0
 power:10
 msg:{name} glows many colours...
+effect:SET_VALUE
+dice:20+1d20
 effect:TIMED_INC:OPP_ACID
-dice:20+1d20
 effect:TIMED_INC:OPP_ELEC
-dice:20+1d20
 effect:TIMED_INC:OPP_FIRE
-dice:20+1d20
 effect:TIMED_INC:OPP_COLD
-dice:20+1d20
+effect:CLEAR_VALUE
 desc:grants temporary resistance to acid, electricity, fire and cold for
 desc: 1d20+20 turns
 
@@ -415,16 +414,14 @@ name:RESIST_ALL
 aim:0
 power:10
 msg:{name} glows many colours...
+effect:SET_VALUE
+dice:20+1d20
 effect:TIMED_INC:OPP_ACID
-dice:20+1d20
 effect:TIMED_INC:OPP_ELEC
-dice:20+1d20
 effect:TIMED_INC:OPP_FIRE
-dice:20+1d20
 effect:TIMED_INC:OPP_COLD
-dice:20+1d20
 effect:TIMED_INC:OPP_POIS
-dice:20+1d20
+effect:CLEAR_VALUE
 desc:grants temporary resistance to acid, electricity, fire, cold and poison
 desc: for 1d20+20 turns
 
@@ -496,20 +493,16 @@ msg:{name} glow{s} many colors...
 effect:HEAL_HP
 dice:30
 effect:CURE:AFRAID
+effect:SET_VALUE
+dice:50+1d50
 effect:TIMED_INC:SHERO
-dice:50+1d50
 effect:TIMED_INC:BLESSED
-dice:50+1d50
 effect:TIMED_INC:OPP_ACID
-dice:50+1d50
 effect:TIMED_INC:OPP_ELEC
-dice:50+1d50
 effect:TIMED_INC:OPP_FIRE
-dice:50+1d50
 effect:TIMED_INC:OPP_COLD
-dice:50+1d50
 effect:TIMED_INC:OPP_POIS
-dice:50+1d50
+effect:CLEAR_VALUE
 desc:bestows upon you berserk rage, bless, and resistance
 
 name:SHROOM_SPRINTING
@@ -1233,10 +1226,11 @@ aim:0
 power:7
 effect:TIMED_INC:IMAGE
 dice:249+1d101
+effect:SET_VALUE
+dice:19+1d21
 effect:TIMED_INC:OPP_FIRE
-dice:19+1d21
 effect:TIMED_INC:OPP_COLD
-dice:19+1d21
+effect:CLEAR_VALUE
 effect:HEAL_HP
 dice:200
 desc:grants temporary resistance to fire and cold, cures 200HP, but also makes
@@ -1586,14 +1580,13 @@ name:ELEMENTS
 aim:0
 type:artifact
 power:0
+effect:SET_VALUE
+dice:20+1d20
 effect:TIMED_INC:OPP_ACID
-dice:20+1d20
 effect:TIMED_INC:OPP_ELEC
-dice:20+1d20
 effect:TIMED_INC:OPP_FIRE
-dice:20+1d20
 effect:TIMED_INC:OPP_COLD
-dice:20+1d20
+effect:CLEAR_VALUE
 time:160
 desc:gives resistance to the elements for 20 + d20 turns
 
@@ -1623,16 +1616,14 @@ name:VALINOR
 aim:0
 type:artifact
 power:0
+effect:SET_VALUE
+dice:20+1d20
 effect:TIMED_INC:OPP_ACID
-dice:20+1d20
 effect:TIMED_INC:OPP_ELEC
-dice:20+1d20
 effect:TIMED_INC:OPP_FIRE
-dice:20+1d20
 effect:TIMED_INC:OPP_COLD
-dice:20+1d20
 effect:TIMED_INC:OPP_POIS
-dice:20+1d20
+effect:CLEAR_VALUE
 time:200
 desc:gives resistance to the elements and poison for 20 + d20 turns
 
@@ -2541,14 +2532,13 @@ name:RAND_RESIST_ELEMENTS
 aim:0
 power:8
 msg:Quadricolored magics swirl around you protectingly.
+effect:SET_VALUE
+dice:20+1d20
 effect:TIMED_INC:OPP_ACID
-dice:20+1d20
 effect:TIMED_INC:OPP_ELEC
-dice:20+1d20
 effect:TIMED_INC:OPP_FIRE
-dice:20+1d20
 effect:TIMED_INC:OPP_COLD
-dice:20+1d20
+effect:CLEAR_VALUE
 time:400
 desc:gives resistance to the elements
 
@@ -2556,16 +2546,14 @@ name:RAND_RESIST_ALL
 aim:0
 power:10
 msg:Penticolored magics swirl around you protectingly.
+effect:SET_VALUE
+dice:20+1d20
 effect:TIMED_INC:OPP_ACID
-dice:20+1d20
 effect:TIMED_INC:OPP_ELEC
-dice:20+1d20
 effect:TIMED_INC:OPP_FIRE
-dice:20+1d20
 effect:TIMED_INC:OPP_COLD
-dice:20+1d20
 effect:TIMED_INC:OPP_POIS
-dice:20+1d20
+effect:CLEAR_VALUE
 time:400
 desc:gives resistance
 
@@ -2879,12 +2867,12 @@ effect:RESTORE_STAT:DEX
 effect:RESTORE_STAT:CON
 effect:HEAL_HP
 dice:2000
+effect:SET_VALUE
+dice:25+d25
 effect:TIMED_INC:HERO
-dice:25+d25
 effect:TIMED_INC:SHERO
-dice:25+d25
 effect:TIMED_INC:PROTEVIL
-dice:25+d25
+effect:CLEAR_VALUE
 time:3000
 desc:restores and enhances you
 
