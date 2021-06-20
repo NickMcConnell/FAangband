@@ -2001,7 +2001,7 @@ effect:NONE
 effect:BOLT_AWARE:MON_SLOW
 dice:$B
 expr:B:PLAYER_LEVEL:* 2
-effect:RANDOM
+effect:SELECT
 dice:2
 effect:BOLT_AWARE:SLEEP_ALL
 dice:$B

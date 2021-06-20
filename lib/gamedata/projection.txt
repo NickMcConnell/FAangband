@@ -666,7 +666,7 @@ color:White
 
 code:SLEEP_ALL
 type:monster
-desc:attempts to put all monsters to sleep
+desc:attempts to put any monster to sleep
 blind-desc:something
 obvious:0
 color:White
