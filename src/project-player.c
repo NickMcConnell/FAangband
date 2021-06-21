@@ -660,6 +660,16 @@ static int project_player_handler_STORM(project_player_handler_context_t *contex
 		(void) player_inc_timed(player, TMD_CONFUSED,
 								5 + randint1(context->dam / 3), true, true);
 	}
+
+	/* Sometimes, if no feather fall, throw the player around. */
+	if (!player_of_has(player, OF_FEATHER) && !one_in_(3) &&
+		(randint0(context->dam / 2) > player->lev)) {
+		const char *six = "6";
+		msg("The wind grabs you, and whirls you around!");
+		effect_simple(EF_TELEPORT, context->origin, six, 1, 0, 0, 0, 0, NULL);
+	}
+	equip_learn_flag(player, OF_FEATHER);
+
 	return xtra;
 }
 

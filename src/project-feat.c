@@ -519,6 +519,27 @@ static void project_feature_handler_STORM(project_feature_handler_context_t *con
 		/* Observe */
 		context->obvious = true;
 	}
+
+	/* Require strong attack.  Require floor. */
+	if ((context->dam >= 60) && square_isfloor(cave, context->grid)) {
+		int d, k = 0;
+
+		/* Look around for nearby water. */
+		for (d = 0; d < 8; d++) {
+			/* Extract adjacent (legal) location */
+			struct loc grid = loc_sum(context->grid, ddgrid_ddd[d]);
+
+			/* Count the water grids. */
+			if (square_iswatery(cave, grid))
+				k++;
+		}
+
+		/* If enough water available, make pool. */
+		if ((context->dam + (k * 20)) > 100 + (randint0(400))) {
+			/* Create water */
+			square_set_feat(cave, context->grid, FEAT_WATER);
+		}
+	}
 }
 
 static void project_feature_handler_DRAGONFIRE(project_feature_handler_context_t *context)

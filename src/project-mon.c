@@ -739,8 +739,36 @@ static void project_monster_handler_PLASMA(project_monster_handler_context_t *co
 
 static void project_monster_handler_STORM(project_monster_handler_context_t *context)
 {
-	/* Zero out the damage because this is an immunity flag. */
+	/* Water - zero out the damage because this is an immunity flag. */
 	project_monster_resist_other(context, RF_IM_WATER, 0, false, MON_MSG_IMMUNE);
+	if (context->dam == 0) return;
+
+	/* Electricity */
+	if (rf_has(context->mon->race->flags, RF_IM_ELEC)) {
+		context->dam /= 2;
+		context->hurt_msg = MON_MSG_RESIST_SOMEWHAT;
+	} else if (one_in_(6)) {
+		context->dam += context->dam / 2;
+		context->hurt_msg = MON_MSG_STRUCK_ELEC;
+	}
+
+	/* Can stun, if enough damage is done. */
+	if ((context->dam > 50) && one_in_(2)) {
+		context->mon_timed[MON_TMD_STUN] =
+			adjust_radius(context, MIN(context->dam / 12, 20));
+	}
+
+	/* Can confuse, if monster can be confused. */
+	if ((context->dam > 20) && one_in_(3)) {
+		context->mon_timed[MON_TMD_CONF] =
+			adjust_radius(context, context->dam / 10);
+	}
+
+	/* Throw the monster around sometimes */
+	if (!rsf_has(context->mon->race->flags, RSF_BR_GRAV) &&
+		context->mon->maxhp < randint0(context->dam * 3)) {
+		context->teleport_distance = 10;
+	}
 }
 
 static void project_monster_handler_DRAGONFIRE(project_monster_handler_context_t *context)
