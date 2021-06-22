@@ -1341,11 +1341,6 @@ void do_cmd_accept_character(struct command *cmd)
 	/* Player learns innate runes */
 	player_learn_innate(player);
 
-	/* Restore the standard artifacts (randarts may have been loaded) */
-	//cleanup_parser(&randart_parser);
-	//deactivate_randart_file();
-	//run_parser(&artifact_parser);
-
 	/* Generate random artifacts */
 	seed_randart = randint0(0x10000000);
 	initialize_random_artifacts(seed_randart);

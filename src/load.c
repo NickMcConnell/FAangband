@@ -1110,8 +1110,12 @@ int rd_misc(void)
 
 	/* Handle randart file parsing, race probabilities */
 	if (!player->is_dead) {
-		activate_randart_file();
-		run_parser(&randart_parser);
+		if (randart_file_exists()) {
+			activate_randart_file();
+			run_parser(&randart_parser);
+		} else {
+			initialize_random_artifacts(seed_randart);
+		}
 		deactivate_randart_file();
 		init_race_probs();
 	}

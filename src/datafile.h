@@ -58,6 +58,7 @@ void write_mods(ang_file *fff, const s16b values[]);
 void write_elements(ang_file *fff, const struct element_info *el_info);
 void set_archive_user_prefix(const char *pfx);
 void file_archive(const char *fname, const char *append);
+bool randart_file_exists(void);
 void activate_randart_file(void);
 void deactivate_randart_file(void);
 errr get_rnd_line(const char *file_name, char *output);
