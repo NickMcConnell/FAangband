@@ -2136,7 +2136,7 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 			state->skills[SKILL_SEARCH] += (obj->modifiers[OBJ_MOD_SEARCH] * 5)
 				* p->obj_k->modifiers[OBJ_MOD_SEARCH];
 			state->skills[SKILL_DEVICE] +=
-				(obj->modifiers[OBJ_MOD_MAGIC_MASTERY] * 10) *
+				(obj->modifiers[OBJ_MOD_MAGIC_MASTERY] * 5) *
 				p->obj_k->modifiers[OBJ_MOD_SEARCH];
 
 			state->see_infra += obj->modifiers[OBJ_MOD_INFRA]

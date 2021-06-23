@@ -139,7 +139,7 @@ desc:Your bare hands tear through stone and you are almost impossible to detect 
 type:player
 code:BEARSKIN
 name:Shapeshifter
-desc:You can take the form of a bear (use the ']' command).
+desc:You can take the form of a bear (use the '!' command).
 
 type:player
 code:PLAINSMAN
