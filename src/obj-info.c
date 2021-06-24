@@ -1655,6 +1655,34 @@ static bool describe_ego(textblock *tb, const struct ego_item *ego)
 	return true;
 }
 
+/**
+ * Describe the set an artifact belongs to
+ */
+static bool describe_set(textblock *tb, const struct object *obj)
+{
+	if (object_is_known_artifact(obj)) {
+		/* Is it a set item? */
+		struct artifact_set *set = get_artifact_set(obj->artifact);
+		if (set) {
+			struct set_item *item = set->set_item;
+			while (item) {
+				if (item->aidx == obj->artifact->aidx) {
+					/* Description */
+					textblock_append(tb, "\n");
+					textblock_append_c(tb, COLOUR_BLUE, set->text);
+
+					/* End sentence */
+					textblock_append_c(tb, COLOUR_BLUE, ".\n");
+					return true;
+				}
+				item = item->next;
+			}
+		}
+	}
+
+	return false;
+}
+
 
 /**
  * ------------------------------------------------------------------------
@@ -1696,6 +1724,7 @@ static textblock *object_info_out(const struct object *obj, int mode)
 		something = true;
 	}
 
+	if (describe_set(tb, obj)) something = true;
 	if (describe_curses(tb, obj, flags)) something = true;
 	if (describe_stats(tb, obj, mode)) something = true;
 	if (describe_slays(tb, obj)) something = true;

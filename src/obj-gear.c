@@ -1229,29 +1229,42 @@ int preferred_quiver_slot(const struct object *obj)
  * Check whether an artifact is a member of an artifact set, and if so,
  * whether the player is using the entire set
  */
-struct artifact_set *check_sets(struct artifact *art)
+struct artifact_set *get_artifact_set(struct artifact *art)
 {
 	struct artifact_set *set = set_info;
-	struct set_item *item = NULL;
 
 	/* No artifact, return */
 	if (!art) return NULL;
 
 	/* Find the set containing the artifact, if any */
 	while (set) {
-		item = set->set_item;
+		struct set_item *item = set->set_item;
 		while (item) {
-			if (item->aidx == art->aidx) break;
+			if (item->aidx == art->aidx) {
+				return set;
+			}
 			item = item->next;
 		}
-		if (item) break;
 		set = set->next;
 	}
 
-	/* Exit if not found */
+	/* No set found */
+	return NULL;
+}
+
+/**
+ * Check whether an artifact is a member of an artifact set, and if so,
+ * whether the player is using the entire set
+ */
+struct artifact_set *check_sets(struct artifact *art)
+{
+	struct artifact_set *set = get_artifact_set(art);
+	struct set_item *item = NULL;
+
+	/* No set, return */
 	if (!set) return NULL;
 
-	/* Now go back and check if we're using the whole set */
+	/* Check if we're using the whole set */
 	for (item = set->set_item; item; item = item->next) {
 		int i;
 		for (i = 0; i < player->body.count; i++) {

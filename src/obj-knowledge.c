@@ -1013,6 +1013,8 @@ void object_see(struct player *p, struct object *obj)
  */
 void object_touch(struct player *p, struct object *obj)
 {
+	bool already = obj->known->notice & OBJ_NOTICE_ASSESSED;
+
 	/* Automatically notice artifacts, mark as assessed */
 	obj->known->artifact = obj->artifact;
 	obj->known->notice |= OBJ_NOTICE_ASSESSED;
@@ -1020,9 +1022,13 @@ void object_touch(struct player *p, struct object *obj)
 	/* Apply known properties to the object */
 	player_know_object(p, obj);
 
-	/* Log artifacts if found */
-	if (obj->artifact)
+	/* Log artifacts if found, mention sets */
+	if (obj->artifact) {
 		history_find_artifact(p, obj->artifact);
+		if (get_artifact_set(obj->artifact) && !already) {
+			msg("This item is part of a set!");
+		}
+	}
 }
 
 
