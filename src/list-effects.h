@@ -132,5 +132,5 @@ EFFECT(WONDER,						true,	NULL,		0,		EFINFO_NONE,	"creates random and unpredicta
 EFFECT(DRAGON,						false,	NULL,		0,		EFINFO_NONE,	"changes the player's shape to a type of dragon; if changed, breathes",	"change shape or breathe a cone of %s")
 EFFECT(CHEST_SCATTER,				false,	NULL,		0,		EFINFO_NONE,	"scatters chest contents across the level",	"")
 EFFECT(SELECT,						false,	NULL,		0,		EFINFO_NONE,	"selects one of ",	"")
-EFFECT(SET_VALUE,					false,	NULL,		0,		EFINFO_NONE,	"selects one of ",	"")
-EFFECT(CLEAR_VALUE,					false,	NULL,		0,		EFINFO_NONE,	"selects one of ",	"")
+EFFECT(SET_VALUE,					false,	NULL,		0,		EFINFO_NONE,	"",					"")
+EFFECT(CLEAR_VALUE,					false,	NULL,		0,		EFINFO_NONE,	"",					"")
