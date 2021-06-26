@@ -1597,7 +1597,8 @@ bool build_vault(struct chunk *c, struct loc centre, struct vault *v)
 		
 
 			/* Part of a vault */
-			sqinfo_on(square(c, grid)->info, SQUARE_ROOM);
+			if (!player->themed_level)
+				sqinfo_on(square(c, grid)->info, SQUARE_ROOM);
 			if (icky) sqinfo_on(square(c, grid)->info, SQUARE_VAULT);
 		}
 	}
@@ -1752,7 +1753,7 @@ bool build_vault(struct chunk *c, struct loc centre, struct vault *v)
 					/* Inner or non-tunnelable outside granite wall */
 				case '#': {
 					/* Check consistency with first pass. */
-					assert(square_isroom(c, grid) &&
+					assert((square_isroom(c, grid) || player->themed_level) &&
 						square_isvault(c, grid) &&
 						square_isgranite(c, grid) &&
 						sqinfo_has(square(c, grid)->info, SQUARE_WALL_SOLID));
@@ -1773,7 +1774,7 @@ bool build_vault(struct chunk *c, struct loc centre, struct vault *v)
 					/* Permanent wall */
 				case '@': {
 					/* Check consistency with first pass. */
-					assert(square_isroom(c, grid) &&
+					assert((square_isroom(c, grid) || player->themed_level) &&
 						square_isvault(c, grid) &&
 						square_isperm(c, grid));
 					/*
