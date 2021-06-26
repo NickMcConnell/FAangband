@@ -245,10 +245,13 @@ static void initialize_character(void)
 	seed_flavor = randint0(0x10000000);
 	seed_randart = randint0(0x10000000);
 
+	world = maps;
+	init_race_probs();
 	store_reset();
 	flavor_init();
 	player->upkeep->playing = true;
 	player->upkeep->autosave = false;
+	player->place = 3;
 	prepare_next_level(&cave, player);
 }
 
@@ -393,8 +396,9 @@ static void descend_dungeon(void)
 
 	clock_t wait = CLOCKS_PER_SEC / 5;
 
-	for (level = 1; level < LEVEL_MAX; level++)
+	for (level = 1; level < world->num_levels - 1; level++)
 	{
+		if (!world->levels[player->place].depth) continue;
 		if (!quiet) {
 			clock_t now = clock();
 			if (now - last > wait) {
