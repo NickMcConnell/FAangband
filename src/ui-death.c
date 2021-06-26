@@ -140,6 +140,7 @@ static char *get_personalized_string(byte choice)
 {
 	static char tmp[80], info[80];
 	byte n, i;
+	bool no_string = true;
 
 	/* Clear last line */
 	clear_from(15);
@@ -175,22 +176,22 @@ static char *get_personalized_string(byte choice)
 	sprintf(tmp, "%-79.79s", tmp);
 
 	/* Ensure that strings end like a sentence, and neatly clip the string. */
-	for (n = 79;; n--) {
-		if ((tmp[n] == ' ') || (tmp[n] == '\0'))
-			continue;
-		else {
-			if ((tmp[n] == '!') || (tmp[n] == '.') || (tmp[n] == '?')) {
-				tmp[n + 1] = '\0';
-				for (i = n + 2; i < 80; i++)
-					tmp[i] = '\0';
-				break;
-			} else {
-				tmp[n + 1] = '.';
-				tmp[n + 2] = '\0';
-				for (i = n + 3; i < 80; i++)
-					tmp[i] = '\0';
-				break;
+	for (n = 79; n <= 0 ; n--) {
+		if ((tmp[n] == ' ') || (tmp[n] == '\0')) continue;
+		no_string = false;
+		if ((tmp[n] == '!') || (tmp[n] == '.') || (tmp[n] == '?')) {
+			tmp[n + 1] = '\0';
+			for (i = n + 2; i < 80; i++) {
+				tmp[i] = '\0';
 			}
+			break;
+		} else {
+			tmp[n + 1] = '.';
+			tmp[n + 2] = '\0';
+			for (i = n + 3; i < 80; i++) {
+				tmp[i] = '\0';
+			}
+			break;
 		}
 	}
 
@@ -199,7 +200,7 @@ static char *get_personalized_string(byte choice)
 		tmp[0] = toupper(tmp[0]);
 
 	/* Return the string */
-	return tmp;
+	return no_string ? NULL : tmp;
 
 }
 
@@ -219,6 +220,8 @@ static void make_bones(void)
 
 	/* Ignore wizards and borgs */
 	if (!(player->noscore & (NOSCORE_WIZARD | NOSCORE_DEBUG))) {
+		bool path_written = false;
+
 		/* Ignore people who die in town */
 		if (player->depth) {
 			int level;
@@ -239,6 +242,7 @@ static void make_bones(void)
 
 				/* Build the filename */
 				path_build(str, sizeof(str), ANGBAND_DIR_BONE, tmp);
+				path_written = true;
 
 				/* Attempt to open the bones file */
 				fp = file_open(str, MODE_READ, FTYPE_TEXT);
@@ -264,8 +268,10 @@ static void make_bones(void)
 			fp = file_open(str, MODE_WRITE, FTYPE_TEXT);
 
 			/* Not allowed to write it? Weird. */
-			if (!fp)
+			if (!fp) {
+				if (path_written) file_delete(str);
 				return;
+			}
 
 			/* Save the info */
 			if (player->full_name[0] != '\0') {
@@ -330,11 +336,16 @@ static void make_bones(void)
 				/* If requested, get the personalized string, and write it and
 				 * info on how it should be used in the bones file.  Otherwise,
 				 * indicate the absence of such a string. */
-				if (choice)
-					file_putf(fp, "%d:%s\n", choice,
-							  get_personalized_string(choice));
-				else
+				if (choice) {
+					char *string = get_personalized_string(choice);
+					if (string) {
+						file_putf(fp, "%d:%s\n", choice, string);
+					} else {
+						file_putf(fp, "0: \n");
+					}
+				} else {
 					file_putf(fp, "0: \n");
+				}
 
 				/* Close and save the Bones file */
 				file_close(fp);

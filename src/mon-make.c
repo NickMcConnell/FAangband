@@ -789,12 +789,10 @@ bool prepare_ghost(struct chunk *c, int r_idx, struct monster *mon,
 	}
 
 	/* String (maybe) */
-	if (file_getl(fp, buf, sizeof(buf))) {
-		if (strlen(buf) > 0) {
-			my_strcpy(c->ghost->string, buf, strlen(buf));
-		} else {
-			c->ghost->string_type = 0;
-		}
+	if (strlen(buf) > 2) {
+		my_strcpy(c->ghost->string, buf + 2, strlen(buf));
+	} else {
+		c->ghost->string_type = 0;
 	}
 
 	/* Close the file */
