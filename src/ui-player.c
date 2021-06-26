@@ -756,7 +756,6 @@ static const byte colour_table[] =
 {
 	COLOUR_RED, COLOUR_RED, COLOUR_RED, COLOUR_L_RED, COLOUR_ORANGE,
 	COLOUR_YELLOW, COLOUR_YELLOW, COLOUR_GREEN, COLOUR_GREEN, COLOUR_L_GREEN,
-	COLOUR_L_BLUE, COLOUR_L_BLUE, COLOUR_L_BLUE, COLOUR_L_BLUE, COLOUR_L_BLUE,
 	COLOUR_L_BLUE, COLOUR_L_BLUE
 };
 
@@ -867,7 +866,7 @@ static struct panel *get_panel_skills(void) {
 	panel_line(p, colour_table[skill / 10], "Disarm - magic", "%d%%", skill);
 
 	/* Magic devices */
-	skill = player->state.skills[SKILL_DEVICE];
+	skill = BOUND(player->state.skills[SKILL_DEVICE], 10, 150);
 	panel_line(p, colour_table[skill / 13], "Magic Devices", "%d", skill);
 
 	/* Searching ability */

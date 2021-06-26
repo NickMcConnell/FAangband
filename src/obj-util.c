@@ -768,7 +768,7 @@ int get_use_device_chance(const struct object *obj)
 {
 	int lev, fail, numerator, denominator;
 
-	int skill = player->state.skills[SKILL_DEVICE];
+	int skill = MIN(MAX(player->state.skills[SKILL_DEVICE], 10), 150);
 
 	int skill_min = 10;
 	int skill_max = 141;
