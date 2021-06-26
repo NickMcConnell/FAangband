@@ -473,11 +473,15 @@ int object_value_real(const struct object *obj, int qty)
 
 		total_value = value;
 	} else {
-		/* Worthless items */
-		if (!obj->kind->cost) return (0L);
-
 		/* Base cost */
-		value = obj->kind->cost;
+		if (obj->artifact) {
+			value = obj->artifact->cost;
+		} else {
+			value = obj->kind->cost;
+		}
+
+		/* Worthless items */
+		if (!value) return (0L);
 
 		/* Account for quantity */
 		total_value = value * qty;
