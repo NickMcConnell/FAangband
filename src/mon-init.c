@@ -2061,7 +2061,7 @@ static enum parser_error parse_ghost_spells_off(struct parser *p) {
 	return ret;
 }
 
-struct parser *init_parse_ghost(void) {
+static struct parser *init_parse_ghost(void) {
 	struct parser *p = parser_new();
 	parser_setpriv(p, NULL);
 
