@@ -101,7 +101,7 @@ Original Keyset Command Summary
  ``m``  Cast a spell                  ``M``  Full dungeon map
  ``n``  Repeat previous command       ``N``  (unused)
  ``o``  Open a door or chest          ``O``  (unused)
- ``p``                                ``P``  (unused)
+ ``p``  (unused)                      ``P``  (unused)
  ``q``  Quaff a potion                ``Q``  End character & quit
  ``r``  Read a scroll                 ``R``  Rest for a period
  ``s``  Steal (rogues only)           ``S``  View or learn specialties
@@ -163,7 +163,7 @@ Roguelike Keyset Command Summary
   m    Cast a spell                    M    Full dungeon map
   n    (walk - south east)             N    (run - south east)
   o    Open a door or chest            O    Toggle ignore
-  p    -                               P    Browse a book
+  p    (unused)                        P    Browse a book
   q    Quaff a potion                  Q    End character & quit
   r    Read a scroll                   R    Rest for a period
   s    Steal (rogues only)             S    View or learn specialties
