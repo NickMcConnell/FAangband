@@ -227,7 +227,7 @@ static bool gain_spec_menu(int *pick)
 	clear_from(0);
 
 	/* Prompt choices */
-	sprintf(buf,
+	strnfmt(buf, sizeof(buf),
 			"(Specialties: %c-%c, ESC=exit) Gain which specialty (%d available)? ",
 			I2A(0), I2A(d->spec_known - 1), player->upkeep->new_specialties);
 
@@ -280,7 +280,7 @@ static void gain_specialty(void)
 		pf_on(player->specialties, pick);
 
 		/* Specialty taken */
-		sprintf(buf, "Gained the %s specialty.", ability->name);
+		strnfmt(buf, sizeof(buf), "Gained the %s specialty.", ability->name);
 
 		/* Write a note */
 		history_add(player, buf, HIST_GAIN_SPECIALTY);
@@ -324,25 +324,28 @@ static void view_ability_display(struct menu *menu, int oid, bool cursor,
 	switch (choices[oid].group) {
 	case PLAYER_FLAG_SPECIAL:
 		{
-			sprintf(buf, "Specialty Ability: %s", choices[oid].name);
+			strnfmt(buf, sizeof(buf), "Specialty Ability: %s",
+				choices[oid].name);
 			color = COLOUR_GREEN;
 			break;
 		}
 	case PLAYER_FLAG_CLASS:
 		{
-			sprintf(buf, "Class: %s", choices[oid].name);
+			strnfmt(buf, sizeof(buf), "Class: %s",
+				choices[oid].name);
 			color = COLOUR_UMBER;
 			break;
 		}
 	case PLAYER_FLAG_RACE:
 		{
-			sprintf(buf, "Racial: %s", choices[oid].name);
+			strnfmt(buf, sizeof(buf), "Racial: %s",
+				choices[oid].name);
 			color = COLOUR_ORANGE;
 			break;
 		}
 	default:
 		{
-			sprintf(buf, "Mysterious");
+			my_strcpy(buf, "Mysterious", sizeof(buf));
 			color = COLOUR_PURPLE;
 		}
 	}
@@ -390,7 +393,7 @@ static void view_ability_menu(void)
 	screen_save();
 
 	/* Prompt choices */
-	sprintf(buf,
+	strnfmt(buf, sizeof(buf),
 			"Race, class, and specialty abilities (%c-%c, ESC=exit): ",
 			I2A(0), I2A(num_abilities - 1));
 

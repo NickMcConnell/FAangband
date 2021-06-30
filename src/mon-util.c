@@ -1146,7 +1146,7 @@ static void player_kill_monster(struct monster *mon, const char *note)
 	if (rf_has(mon->race->flags, RF_PLAYER_GHOST)) {
 		if (!one_in_(3)) {
 			char path[1024];
-			sprintf(path, "%s/bone.%03d", ANGBAND_DIR_BONE,
+			strnfmt(path, sizeof(path), "%s/bone.%03d", ANGBAND_DIR_BONE,
 					cave->ghost->bones_selector);
 			file_delete(path);
 		}

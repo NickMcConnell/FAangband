@@ -155,7 +155,8 @@ static char *get_personalized_string(byte choice)
 	} else
 		return NULL;
 
-	sprintf(info, "(%d characters maximum.  Entry will be used as", 79);
+	strnfmt(info, sizeof(info),"(%d characters maximum.  Entry will be used as",
+			79);
 
 	prt(info, 17, 0);
 	prt("(a) sentence(s).)", 18, 0);
@@ -173,7 +174,7 @@ static char *get_personalized_string(byte choice)
 	}
 
 	/* Pad the string (to clear junk and allow room for a ending) */
-	sprintf(tmp, "%-79.79s", tmp);
+	strnfmt(tmp, sizeof(tmp), "%-79.79s", tmp);
 
 	/* Ensure that strings end like a sentence, and neatly clip the string. */
 	for (n = 79; n <= 0 ; n--) {
@@ -238,7 +239,7 @@ static void make_bones(void)
 					level = randint1(4);
 
 				/* "Bones" name */
-				sprintf(tmp, "bone.%03d", level);
+				strnfmt(tmp, sizeof(tmp), "bone.%03d", level);
 
 				/* Build the filename */
 				path_build(str, sizeof(str), ANGBAND_DIR_BONE, tmp);
