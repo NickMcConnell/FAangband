@@ -1337,6 +1337,10 @@ void apply_set(struct artifact_set *set)
 					}
 				}
 				player_know_object(player, obj);
+
+				/* Pretend the item isn't worn yet to learn new stuff */
+				obj->known->notice &= ~(OBJ_NOTICE_WORN);
+				object_learn_on_wield(player, obj);
 			}
 		}
 		item = item->next;
