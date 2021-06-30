@@ -922,7 +922,6 @@ static bool do_cmd_disarm_aux(struct loc grid)
 			msgt(MSG_DISARM, "You have removed the %s.", trap->kind->name);
 
 			/* Glyph is gone */
-			cave->feeling_squares -= (1 << 8);
 			square_forget(cave, grid);
 			square_destroy_trap(cave, grid);
 			return false;

@@ -177,11 +177,16 @@ void square_free_trap(struct chunk *c, struct loc grid)
 bool square_remove_all_traps(struct chunk *c, struct loc grid)
 {
 	struct trap *trap = square(c, grid)->trap;
+	struct trap_kind *rune = lookup_trap("glyph of warding");
 	bool were_there_traps = trap == NULL ? false : true;
 
 	assert(square_in_bounds(c, grid));
 	while (trap) {
 		struct trap *next_trap = trap->next;
+		/* Keep count of glyphs of warding */
+		if (trap->kind == rune) {
+			c->feeling_squares -= (1 << 8);
+		}
 		mem_free(trap);
 		trap = next_trap;
 	}

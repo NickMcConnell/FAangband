@@ -1440,7 +1440,6 @@ static bool monster_turn_attack_glyph(struct chunk *c, struct monster *mon,
 
 		/* Break the rune */
 		square_destroy_trap(c, new);
-		c->feeling_squares -= (1 << 8);
 
 		return true;
 	}
