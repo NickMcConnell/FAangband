@@ -799,6 +799,14 @@ void inven_wield(struct object *obj, int slot)
 		inven_carry(player, wielded, false, false);
 	}
 
+	/* Check to see if a set item is being removed */
+	if (old && old->artifact) {
+		struct artifact_set *set = check_sets(old->artifact);
+		if (set) {
+			remove_set(set);
+		}
+	}
+
 	/* Wear the new stuff */
 	player->body.slots[slot].obj = wielded;
 
