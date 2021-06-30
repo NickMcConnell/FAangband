@@ -1404,6 +1404,10 @@ void square_set_feat(struct chunk *c, struct loc grid, int feat)
 		if (!square_player_trap_allowed(c, grid))
 			square_destroy_trap(c, grid);
 
+		/* Remove objects if necessary */
+		if (!square_isobjectholding(c, grid))
+			square_excise_pile(c, grid);
+
 		square_note_spot(c, grid);
 		square_light_spot(c, grid);
 	} else {
