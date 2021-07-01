@@ -1376,10 +1376,11 @@ void monster_take_terrain_damage(struct monster *mon)
 	/* Damage the monster */
 	if (square_isfiery(cave, mon->grid)) {
 		bool fear = false;
+		int hurt = rf_has(mon->race->flags, RF_FLYING) ? 20 : 100;
 
 		if (!rf_has(mon->race->flags, RF_IM_FIRE)) {
-			mon_take_nonplayer_hit(100 + randint1(100), mon, MON_MSG_CATCH_FIRE,
-								   MON_MSG_DISINTEGRATES);
+			mon_take_nonplayer_hit(hurt + randint1(hurt), mon,
+								   MON_MSG_CATCH_FIRE, MON_MSG_DISINTEGRATES);
 		}
 
 		if (fear && monster_is_visible(mon)) {
