@@ -2574,9 +2574,6 @@ effect:TELEPORT
 dice:M60
 desc:teleports you randomly about 60 per cent of the largest distance you
 desc: could go
-time:80
-desc:teleports you randomly about 60 per cent of the largest distance you
-desc: could go
 
 name:RAND_RECALL
 aim:0
