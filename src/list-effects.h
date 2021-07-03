@@ -134,3 +134,4 @@ EFFECT(CHEST_SCATTER,				false,	NULL,		0,		EFINFO_NONE,	"scatters chest contents
 EFFECT(SELECT,						false,	NULL,		0,		EFINFO_NONE,	"selects one of ",	"")
 EFFECT(SET_VALUE,					false,	NULL,		0,		EFINFO_NONE,	"",					"")
 EFFECT(CLEAR_VALUE,					false,	NULL,		0,		EFINFO_NONE,	"",					"")
+EFFECT(REFUND_ENERGY,				false,	NULL,		0,		EFINFO_NONE,	"",					"")

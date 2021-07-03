@@ -984,11 +984,15 @@ void do_cmd_cast(struct command *cmd)
 	/* Cast a spell */
 	target_fix();
 	if (spell_cast(spell_index, dir, cmd)) {
-		if (player->timed[TMD_FASTCAST]) {
+		/* Use the right amount of energy */
+		if (player->upkeep->free_energy) {
+			/* No energy used */
+		} else if (player->timed[TMD_FASTCAST]) {
 			player->upkeep->energy_use = (z_info->move_energy * 3) / 4;
 		} else {
 			player->upkeep->energy_use = z_info->move_energy;
 		}
+		player->upkeep->free_energy = false;
 
 		/* Give credit for Heighten Magic */
 		if (player_has(player, PF_HEIGHTEN_MAGIC)) {

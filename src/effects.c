@@ -3251,6 +3251,14 @@ static bool effect_handler_TELEPORT_TO(effect_handler_context_t *context)
 		/* Player choice */
 		do {
 			if (!get_aim_dir(&dir)) return false;
+
+			/* Insist on LoS */
+			target_get(&aim);
+			if (dir == DIR_TARGET && !los(cave, player->grid, aim)) {
+				/* Set a silly target */
+				target_set_location(0, 0);
+				msg("Target grid must be in view!");
+			}
 		} while (dir == DIR_TARGET && !target_okay());
 
 		if (dir == DIR_TARGET)
@@ -3300,7 +3308,7 @@ static bool effect_handler_TELEPORT_TO(effect_handler_context_t *context)
 	/* Clear any projection marker to prevent double processing */
 	sqinfo_off(square(cave, land)->info, SQUARE_PROJECT);
 
-	/* Lots of updates after monster_swap */
+	/* Lots of updates after monster_swap() */
 	handle_stuff(player);
 
 	return true;
@@ -6327,6 +6335,17 @@ static bool effect_handler_SET_VALUE(effect_handler_context_t *context)
 static bool effect_handler_CLEAR_VALUE(effect_handler_context_t *context)
 {
 	set_value = 0;
+	return true;
+}
+
+/**
+ * Special effect to refund energy, to be used at the end of an effect chain
+ * so that the playereffectively gets a free move
+ */
+static bool effect_handler_REFUND_ENERGY(effect_handler_context_t *context)
+{
+	assert(context->origin.what == SRC_PLAYER);
+	player->upkeep->free_energy = true;
 	return true;
 }
 

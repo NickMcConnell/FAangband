@@ -112,7 +112,7 @@ void do_cmd_reshape(struct command *cmd)
 					  shape_name_to_idx(shape_name), 0, 0, 0, 0, &ident);
 
 		/* Use some energy */
-		player->upkeep->energy_use = 100;
+		player->upkeep->energy_use = z_info->move_energy;
 	}
 }
 

@@ -500,6 +500,7 @@ struct player_upkeep {
 	bool generate_level;	/* True if level needs regenerating */
 	bool only_partial;		/* True if only partial updates are needed */
 	bool dropping;			/* True if auto-drop is in progress */
+	bool free_energy;		/* True if this turn is using no energy */
 
 	int energy_use;			/* Energy use this turn */
 	int new_spells;			/* Number of spells available */

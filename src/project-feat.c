@@ -242,12 +242,20 @@ static void project_feature_handler_KILL_TRAP(project_feature_handler_context_t 
 static void project_feature_handler_MAKE_DOOR(project_feature_handler_context_t *context)
 {
 	const struct loc grid = context->grid;
+	int d, count = 0;
 
 	/* Require a grid without monsters */
 	if (square_monster(cave, grid) || square_isplayer(cave, grid)) return;
 
 	/* Require a floor grid */
 	if (!square_isfloor(cave, grid)) return;
+
+	/* Require at least two walls in cardinal directions */
+	for (d = 0; d < 4; d++) {
+		struct loc grid1 = loc_sum(player->grid, ddgrid_ddd[2 * d]);
+		if (square_isstrongwall(cave, grid1)) count++;
+	}
+	if (count < 2) return;
 
 	/* Push objects off the grid */
 	if (square_object(cave, grid))

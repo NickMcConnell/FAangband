@@ -378,9 +378,11 @@ effect-yx:22:40
 desc:Detects all traps, doors, stairs, treasure, objects and monsters in the
 desc: immediate area.
 
-spell:Dimension Door:35:30:80:40
+spell:Timeless Blink:35:80:80:40
 effect:TELEPORT_TO
-desc:Teleports you to (or near to) a square of your choice.
+effect:REFUND_ENERGY
+desc:Teleports you to a square of your choice within your line of sight.
+desc:  This spell takes no time.
 
 spell:Thrust Away:40:12:90:40
 effect:SHORT_BEAM:FORCE:1:10
