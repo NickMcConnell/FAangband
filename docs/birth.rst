@@ -756,9 +756,9 @@ Automatic for Necromancers, available to Rogues and Blackguards.
 Allowed Specialty Abilities for Each Class
 ==========================================
 
-               Warrior      Priest      Ranger      Druid      Blackguard
-                       Mage       Rogue      Paladin      Necro
-
+================ ===   ===   ===   ===   ===   ===   ===   ===   ===
+Ability          Wa    Ma    Pr    Ro    Ra    Pa    Dr    Ne    Bg
+================ ===   ===   ===   ===   ===   ===   ===   ===   ===
 Armour Mastery   Yes   No    No    No    No    Yes   No    No    Yes
 Armour Profiency No    Yes   No    No    No    No    Yes   Yes   No
 Armsman          Yes   No    Yes   Yes   Yes   Yes   No    No    Yes
@@ -792,6 +792,7 @@ Soul Siphon      No    No    No    No    No    No    No    Yes   No
 Stealing         No    No    No   (Auto) No    No    No    Yes   No
 Trap Setting     Yes   No    No   (Auto) Yes   No    Yes   No    No
 Unlight          No    No    No    Yes   No    No    No   (Auto) Yes
+================ ===   ===   ===   ===   ===   ===   ===   ===   ===
 
 Stat rollers
 ============
