@@ -107,11 +107,10 @@ Monsters
 The Town Level
 ==============
 
-The town level is where you will begin your adventure. The town consists of
-eight buildings (each with an entrance), some townspeople, and a wall which
-surrounds the town and may contain streams of lava. The first time you are
-in town it will be daytime, but note that the sun rises and falls (rather
-instantly) as time passes.
+Every adventure begins in a town.  The town consists of either four or
+nine buildings (each with an entrance), some townspeople, and a wall which
+surrounds the town.  The first time you are in town it will be daytime, but
+note that the sun rises and sets (rather instantly) as time passes.
 
 Townspeople
 ===========
@@ -132,6 +131,16 @@ when you wander from store to store. Fights will break out, though, so be
 prepared. Since your character grew up in this world of intrigue, no
 experience is awarded for killing the town inhabitants, though you may
 acquire treasure.
+
+Other Towns
+===========
+
+If you are on a wilderness map, you will encounter other towns.  If your
+race originates in a small town, finding a larger town will allow you to do
+some more extensive shopping, and maybe sell some of the weapons and armour
+you've been carrying around.  The large towns are Khazad Dum, Belegost,
+Menegroth and Gondolin; the small ones are Gladden Fields, Eriador, Ossiriand,
+Taur-Im-Duinath, Ephel Brandir and Ered Luin South.
 
 Town Buildings
 ==============
@@ -208,6 +217,64 @@ The Black Market (``7``)
 Your Home (``8``)
   This is your house where you can store objects that you cannot carry on
   your travels, or will need at a later date.
+
+Middle Earth
+============
+
+There are four maps you can choose when beginning a game of FAangband.  The
+standard wilderness, extended wilderness and hybrid dungeon basically use the
+map below (although in the case of the hybrid dungeon, travel between dungeons
+is via portal).  The Angband dungeon map uses a standard Angband model, where
+the player starts in town, and there is dungeon immediately below.
+
+Below is a rough diagram of the linkages between the regions of Middle
+Earth which your character can visit.  Dungeons are shown in brackets under
+the region where their entrance lies (Nan Dungortheb is not strictly a dungeon,
+but acts like one in some ways).  Some towns are clearly marked; for the
+others and for a description of towns, see "town.txt".  For more information
+about wilderness and dungeons, see "wild-dun.txt".  Note that the routes
+marked with *s are only available in the compressed_map (default) option.
+
+   Anfauglith -------------------------Lothlann
+    (Angband) \                              \
+        |      \_____Dorthonion               \
+    Fen of Serech  (Nan Dungortheb)            \
+        |                   \                   |
+Sirion Vale-----Gondolin  Dor Dinen             |
+(Tol-in-Gaurhoth)           |    \              |         Hithaeglir--Gladden
+          \                 |    Himlad         |             /       Fields
+          Brethil        Doriath     \        Ered Luin   Khazad Dum
+             \              |         East        \         /
+          ___ Ephel      Menegroth   Beleriand     \    Hithaeglir
+        /    Brandir             \       |          |     /
+Talath /         \           Doriath     Thargelion |   Eriador
+Dirnen       West Beleriand       |     *    \      |  /    \
+(Nargothrond)     \                \   *       Belegost      \
+              Amon Rudh      East Beleriand        |          Eriador
+              (Amon Rudh)     *           \     Ered Luin      town
+                    \        *             \        |            |
+                West Beleriand              \       |            |
+                     \                       \    Ossiriand      |
+                   Andram                     \      |           |
+                      \                        \     |           |
+                    East Beleriand              Ossiriand        |
+                        \                        /town           |
+                      Taur-Im-Duinath   _Ent Path   |            |
+                          \            /           Ossiriand     |
+                        Taur-Im-Duinath             |            |
+                            town                Ered Luin South  |
+                                                        |       /
+                                                    Ered Luin South
+                                                        town
+
+Moving House
+============
+
+There may come a time when you want to leave your home town - particularly if
+it is too small.  Once you have reached another town, you will notice that
+you do not have a house there.  If you choose, you can move there; simply use
+the '$' command and your house will have appeared next time you return to your
+new home town.
 
 Out in the World
 ================

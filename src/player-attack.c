@@ -1101,7 +1101,8 @@ void py_attack(struct player *p, struct loc grid)
 
 	/* Player attempts a shield bash if they can, and if monster is visible
 	 * and not too pathetic */
-	if (player_has(p, PF_SHIELD_BASH) && monster_is_visible(mon)) {
+	if ((player_has(p, PF_SHIELD_BASH) || player_has(p, PF_SHIELD_MAST))
+		&& monster_is_visible(mon)) {
 		/* Monster may die */
 		if (attempt_shield_bash(p, mon, &fear)) return;
 	}
