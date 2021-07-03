@@ -227,45 +227,6 @@ map below (although in the case of the hybrid dungeon, travel between dungeons
 is via portal).  The Angband dungeon map uses a standard Angband model, where
 the player starts in town, and there is dungeon immediately below.
 
-Below is a rough diagram of the linkages between the regions of Middle
-Earth which your character can visit.  Dungeons are shown in brackets under
-the region where their entrance lies (Nan Dungortheb is not strictly a dungeon,
-but acts like one in some ways).  Some towns are clearly marked; for the
-others and for a description of towns, see "town.txt".  For more information
-about wilderness and dungeons, see "wild-dun.txt".  Note that the routes
-marked with *s are only available in the compressed_map (default) option.::
-
-     Anfauglith -------------------------Lothlann
-      (Angband) \                              \
-          |      \_____Dorthonion               \
-      Fen of Serech  (Nan Dungortheb)            \
-          |                   \                   |
-  Sirion Vale-----Gondolin  Dor Dinen             |
-  (Tol-in-Gaurhoth)           |    \              |         Hithaeglir--Gladden
-            \                 |    Himlad         |             /       Fields
-            Brethil        Doriath     \        Ered Luin   Khazad Dum
-               \              |         East        \         /
-            ___ Ephel      Menegroth   Beleriand     \    Hithaeglir
-          /    Brandir             \       |          |     /
-  Talath /         \           Doriath     Thargelion |   Eriador
-  Dirnen       West Beleriand       |     *    \      |  /    \
-  (Nargothrond)     \                \   *       Belegost      \
-                Amon Rudh      East Beleriand        |          Eriador
-                (Amon Rudh)     *           \     Ered Luin      town
-                      \        *             \        |            |
-                  West Beleriand              \       |            |
-                       \                       \    Ossiriand      |
-                     Andram                     \      |           |
-                        \                        \     |           |
-                      East Beleriand              Ossiriand        |
-                          \                        /town           |
-                        Taur-Im-Duinath   _Ent Path   |            |
-                            \            /           Ossiriand     |
-                          Taur-Im-Duinath             |            |
-                              town                Ered Luin South  |
-                                                          |       /
-                                                      Ered Luin South
-                                                          town
 
 Moving House
 ============

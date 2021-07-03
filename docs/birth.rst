@@ -789,9 +789,9 @@ Rapid Fire       No    No    No    No    Yes   No    No    No    No
 Regeneration     Yes   No    No    Yes   Yes   Yes   Yes   No    No
 Shield Mastery   Yes   No    No    No    Yes   Yes   No    No    Yes
 Soul Siphon      No    No    No    No    No    No    No    Yes   No
-Stealing         No    No    No   (Auto) No    No    No    Yes   No
-Trap Setting     Yes   No    No   (Auto) Yes   No    Yes   No    No
-Unlight          No    No    No    Yes   No    No    No   (Auto) Yes
+Stealing         No    No    No    Aut   No    No    No    Yes   No
+Trap Setting     Yes   No    No    Aut   Yes   No    Yes   No    No
+Unlight          No    No    No    Yes   No    No    No    Aut  Yes
 ================ ===   ===   ===   ===   ===   ===   ===   ===   ===
 
 Stat rollers
