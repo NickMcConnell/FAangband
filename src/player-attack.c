@@ -1429,6 +1429,16 @@ static struct attack_result make_ranged_throw(struct player *p,
 
 
 /**
+ * Help do_cmd_throw():  restrict which equipment can be thrown.
+ */
+static bool restrict_for_throwing(const struct object *obj)
+{
+	return !object_is_equipped(player->body, obj) ||
+			(tval_is_melee_weapon(obj) && obj_can_takeoff(obj));
+}
+
+
+/**
  * Fire an object from the quiver, pack or floor at a target.
  */
 void do_cmd_fire(struct command *cmd) {
@@ -1481,7 +1491,8 @@ void do_cmd_fire(struct command *cmd) {
 
 
 /**
- * Throw an object from the quiver, pack or floor.
+ * Throw an object from the quiver, pack, floor, or, in limited circumstances,
+ * the equipment.
  */
 void do_cmd_throw(struct command *cmd) {
 	int dir;
@@ -1493,12 +1504,18 @@ void do_cmd_throw(struct command *cmd) {
 		return;
 	}
 
-	/* Get arguments */
+	/*
+	 * Get arguments.  Never default to showing the equipment as the first
+	 * list (since throwing the equipped weapon leaves that slot empty will
+	 * have to choose another source anyways).
+	 */
+	if (player->upkeep->command_wrk == USE_EQUIP)
+		player->upkeep->command_wrk = USE_INVEN;
 	if (cmd_get_item(cmd, "item", &obj,
 			/* Prompt */ "Throw which item?",
 			/* Error  */ "You have nothing to throw.",
-			/* Filter */ NULL,
-			/* Choice */ USE_QUIVER | USE_INVEN | USE_FLOOR | SHOW_THROWING)
+			/* Filter */ restrict_for_throwing,
+			/* Choice */ USE_EQUIP | USE_QUIVER | USE_INVEN | USE_FLOOR | SHOW_THROWING)
 		!= CMD_OK)
 		return;
 
@@ -1507,10 +1524,9 @@ void do_cmd_throw(struct command *cmd) {
 	else
 		return;
 
-	/* Make sure the player isn't throwing wielded items */
 	if (object_is_equipped(player->body, obj)) {
-		msg("You cannot throw wielded items.");
-		return;
+		assert(obj_can_takeoff(obj) && tval_is_melee_weapon(obj));
+		inven_takeoff(obj);
 	}
 
 	ranged_helper(player, obj, dir, shots, attack);
