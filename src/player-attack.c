@@ -986,7 +986,7 @@ static bool attempt_shield_bash(struct player *p, struct monster *mon, bool *fea
 		adj_dex_th[p->state.stat_ind[STAT_DEX]] / 2;
 
 	/* No shield on arm, no bash */
-	if (!shield || player->state.shield_on_back) return false;
+	if (!shield || p->state.shield_on_back) return false;
 
 	/* Monster is too pathetic, don't bother */
 	if (mon->race->level < p->lev / 2) return false;

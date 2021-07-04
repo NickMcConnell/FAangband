@@ -406,7 +406,7 @@ static bool describe_slays(textblock *tb, const struct object *obj)
 		if (!s[i]) continue;
 
 		textblock_append(tb, "%s", slays[i].name);
-		if (slays[i].multiplier > 3)
+		if (slays[i].multiplier > 20)
 			textblock_append(tb, " (powerfully)");
 		if (count > 1)
 			textblock_append(tb, ", ");
@@ -443,7 +443,7 @@ static bool describe_brands(textblock *tb, const struct object *obj)
 	for (i = 1; i < z_info->brand_max; i++) {
 		if (!b[i]) continue;
 
-		if (brands[i].multiplier < 3)
+		if (brands[i].multiplier < 15)
 			textblock_append(tb, "weak ");
 		textblock_append(tb, "%s", brands[i].name);
 		if (count > 1)
@@ -1104,7 +1104,8 @@ static void obj_known_misc_combat(const struct object *obj, bool *thrown_effect,
 	}
 
 	if (ammo)
-		*range = 10 * MIN(6 + 2 * player->state.ammo_mult, z_info->max_range);
+		*range = 10 *
+			MIN(12 + 2 * player->state.ammo_mult, z_info->max_range) / 2;
 
 	/* Add breakage chance */
 	*break_chance = breakage_chance(obj, true);
