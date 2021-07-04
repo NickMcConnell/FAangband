@@ -3551,7 +3551,7 @@ flags:FORCE_SLEEP
 spell-freq:3
 spells:BLIND | HASTE | HOLD | SLOW | CONF
 spells:BO_POIS | BO_FIRE | SHAPECHANGE
-spells:S_ANIMAL
+spells:S_SPIDER | S_ANT
 drop-base:nature book:8:1:1
 drop-base:nature book:8:1:1
 desc:A priest devoted to Nature.
@@ -7445,7 +7445,7 @@ flags:IM_ACID | IM_POIS | NO_CONF | NO_SLEEP | NO_HOLD
 flags:FORCE_SLEEP
 spell-freq:6
 spells:HEAL
-spells:S_ANIMAL | S_SPIDER
+spells:S_ANT | S_ANIMAL | S_SPIDER
 drop-base:nature book:10:1:1
 drop-base:nature book:5:1:1
 friends-base:50:2d4:spider
@@ -13352,7 +13352,7 @@ flags:DROP_4 | DROP_GOOD | ONLY_ITEM
 flags:ATTR_MULTI
 spell-freq:1
 spells:S_AINU | S_ANIMAL | S_HI_DEMON | S_HI_DRAGON | S_HI_UNDEAD | S_HOUND
-spells:S_HYDRA | S_KIN | S_MONSTERS | S_SPIDER | S_UNIQUE
+spells:S_HYDRA | S_KIN | S_MONSTERS | S_SPIDER | S_ANT | S_UNIQUE
 desc:A gigantic seething mass of flesh, Qlzqqlzuup changes colours in front of
 desc: your eyes.  Pulsating first one colour then the next, it knows only it
 desc: must bring help to protect itself.
