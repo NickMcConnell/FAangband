@@ -1028,7 +1028,7 @@ name:SHARD_SOUND_BALL
 aim:1
 power:14
 msg:You invoke the powers of Law!
-effect:RANDOM
+effect:SELECT
 dice:2
 effect:BALL:SHARD:2
 dice:150
@@ -1071,7 +1071,7 @@ desc:fires a stinking cloud with damage 12
 name:WAND_BREATH
 aim:1
 power:12
-effect:RANDOM
+effect:SELECT
 dice:5
 effect:BREATH:ACID:0:30
 dice:160
@@ -1088,7 +1088,7 @@ desc:shoots a large cone of one of the base elements for 120-200 damage
 name:DRINK_BREATH
 aim:1
 power:8
-effect:RANDOM
+effect:SELECT
 dice:2
 effect:BREATH:FIRE:0:30
 dice:80
@@ -1991,7 +1991,7 @@ desc:allows you to breathe fire for 200 damage
 name:DRAGON_BREATH_MULTIHUED
 aim:1
 type:dragon breath
-effect:RANDOM
+effect:SELECT
 dice:5
 effect:BREATH:ACID:0:20
 dice:250
@@ -2015,7 +2015,7 @@ desc:allows you to breathe sound for 150 damage
 name:DRAGON_BREATH_CHAOS
 aim:1
 type:dragon breath
-effect:RANDOM
+effect:SELECT
 dice:2
 effect:BREATH:CHAOS:0:20
 dice:220
@@ -2026,7 +2026,7 @@ desc:allows you to breathe chaos or disenchantment for 220 damage
 name:DRAGON_BREATH_LAW
 aim:1
 type:dragon breath
-effect:RANDOM
+effect:SELECT
 dice:2
 effect:BREATH:SOUND:0:20
 dice:230
@@ -2037,7 +2037,7 @@ desc:allows you to breathe sound or shards for 230 damage
 name:DRAGON_BREATH_BALANCE
 aim:1
 type:dragon breath
-effect:RANDOM
+effect:SELECT
 dice:4
 effect:BREATH:SOUND:0:20
 dice:250
@@ -2052,7 +2052,7 @@ desc:allows you to breathe balance for 250 damage
 name:DRAGON_BREATH_SHINING
 aim:1
 type:dragon breath
-effect:RANDOM
+effect:SELECT
 dice:2
 effect:BREATH:LIGHT:0:20
 dice:200
@@ -2434,7 +2434,7 @@ name:RAND_SHARD_SOUND
 aim:1
 power:9
 msg:You invoke the powers of Law!
-effect:RANDOM
+effect:SELECT
 dice:2
 effect:BALL:SHARD:4
 dice:150
