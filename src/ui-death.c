@@ -177,7 +177,7 @@ static char *get_personalized_string(byte choice)
 	strnfmt(tmp, sizeof(tmp), "%-79.79s", tmp);
 
 	/* Ensure that strings end like a sentence, and neatly clip the string. */
-	for (n = 79; n <= 0 ; n--) {
+	for (n = 78; n > 0 ; n--) {
 		if ((tmp[n] == ' ') || (tmp[n] == '\0')) continue;
 		no_string = false;
 		if ((tmp[n] == '!') || (tmp[n] == '.') || (tmp[n] == '?')) {
@@ -212,149 +212,141 @@ static char *get_personalized_string(byte choice)
 static void make_bones(void)
 {
 	ang_file *fp;
-
 	char str[1024];
 	ui_event answer;
 	byte choice = 0;
-
 	int i;
+	bool path_written = false;
+	bool no_answer = true;
+	int level;
+	char tmp[128];
 
 	/* Ignore wizards and borgs */
-	if (!(player->noscore & (NOSCORE_WIZARD | NOSCORE_DEBUG))) {
-		bool path_written = false;
+	if (player->noscore & (NOSCORE_WIZARD | NOSCORE_DEBUG)) return;
 
-		/* Ignore people who die in town */
-		if (player->depth) {
-			int level;
-			char tmp[128];
+	/* Ignore people who die in town */
+	if (!player->depth) return;
 
-			/* Slightly more tenacious saving routine. */
-			for (i = 0; i < 5; i++) {
-				/* Ghost hovers near level of death. */
-				if (i == 0)
-					level = player->depth;
-				else
-					level = player->depth + 5 - damroll(2, 4);
-				if (level < 1)
-					level = randint1(4);
+	/* Slightly more tenacious saving routine. */
+	for (i = 0; i < 5; i++) {
+		/* Ghost hovers near level of death. */
+		if (i == 0) {
+			level = player->depth;
+		} else {
+			level = player->depth + 5 - damroll(2, 4);
+		}
+		if (level < 1)
+			level = randint1(4);
 
-				/* "Bones" name */
-				strnfmt(tmp, sizeof(tmp), "bone.%03d", level);
+		/* "Bones" name */
+		strnfmt(tmp, sizeof(tmp), "bone.%03d", level);
 
-				/* Build the filename */
-				path_build(str, sizeof(str), ANGBAND_DIR_BONE, tmp);
-				path_written = true;
+		/* Build the filename */
+		path_build(str, sizeof(str), ANGBAND_DIR_BONE, tmp);
+		path_written = true;
 
-				/* Attempt to open the bones file */
-				fp = file_open(str, MODE_READ, FTYPE_TEXT);
+		/* Attempt to open the bones file */
+		fp = file_open(str, MODE_READ, FTYPE_TEXT);
 
-				/* Close it right away */
-				if (fp)
-					file_close(fp);
+		/* Close it right away */
+		if (fp) file_close(fp);
 
-				/* Do not over-write a previous ghost */
-				if (fp)
-					continue;
+		/* Do not over-write a previous ghost */
+		if (fp) continue;
 
-				/* If no file by that name exists, we can make a new one. */
-				if (!(fp))
-					break;
-			}
+		/* If no file by that name exists, we can make a new one. */
+		if (!(fp)) break;
+	}
 
-			/* Failure */
-			if (fp)
-				return;
+	/* Failure */
+	if (fp) return;
 
-			/* Try to write a new "Bones File" */
-			fp = file_open(str, MODE_WRITE, FTYPE_TEXT);
+	/* Try to write a new "Bones File" */
+	fp = file_open(str, MODE_WRITE, FTYPE_TEXT);
 
-			/* Not allowed to write it? Weird. */
-			if (!fp) {
-				if (path_written) file_delete(str);
-				return;
-			}
+	/* Not allowed to write it? Weird. */
+	if (!fp) {
+		if (path_written) file_delete(str);
+		return;
+	}
 
-			/* Save the info */
-			if (player->full_name[0] != '\0') {
-				file_putf(fp, "%s\n", player->full_name);
-			} else {
-				file_putf(fp, "Anonymous\n");
-			}
+	/* Save the info */
+	if (player->full_name[0] != '\0') {
+		file_putf(fp, "%s\n", player->full_name);
+	} else {
+		file_putf(fp, "Anonymous\n");
+	}
 
-			file_putf(fp, "%d\n", player->race->ridx);
-			file_putf(fp, "%d\n", player->class->cidx);
+	file_putf(fp, "%d\n", player->race->ridx);
+	file_putf(fp, "%d\n", player->class->cidx);
 
-			/* Clear screen */
-			Term_clear();
+	/* Clear screen */
+	Term_clear();
+
+	/* Ask if the player wants to add a personalized string. */
+	prt("Information about your character has been saved", 15, 0);
+	prt("in a bones file.  Would you like to give the", 16, 0);
+	prt("ghost a special message or description? (y/n)", 17, 0);
+
+	while (no_answer) {
+		answer = inkey_ex();
+
+		/* Clear last line */
+		clear_from(15);
+		clear_from(16);
+
+		/* Determine what the personalized string will be used for.  */
+		if ((answer.key.code == 'Y') || (answer.key.code == 'y')) {
+			prt("Will you add something for your ghost to say,", 15, 0);
+			prt("or add to the monster description?", 16, 0);
+			prt("((M)essage/(D)escription/ESC for neither)", 17, 0);
 
 			while (1) {
-				/* Ask the player if he wants to add a personalized string. */
-				prt("Information about your character has been saved", 15,
-					0);
-				prt("in a bones file.  Would you like to give the", 16, 0);
-				prt("ghost a special message or description? (yes/no)", 17,
-					0);
-
 				answer = inkey_ex();
 
-				/* Clear last line */
 				clear_from(15);
 				clear_from(16);
 
-				/* Determine what the personalized string will be used for.  */
-				if ((answer.key.code == 'Y') || (answer.key.code == 'y')) {
-					prt("Will you add something for your ghost to say,",
-						15, 0);
-					prt("or add to the monster description?", 16, 0);
-					prt("((M)essage/(D)escription)", 17, 0);
-
-					while (1) {
-						answer = inkey_ex();
-
-						clear_from(15);
-						clear_from(16);
-
-						if ((answer.key.code == 'M')
-							|| (answer.key.code == 'm')) {
-							choice = 1;
-							break;
-						} else if ((answer.key.code == 'D')
-								   || (answer.key.code == 'd')) {
-							choice = 2;
-							break;
-						} else {
-							choice = 0;
-							break;
-						}
-					}
-				} else if ((answer.key.code == 'N')
-						   || (answer.key.code == 'n')
-						   || (answer.key.code == ESCAPE)) {
+				if ((answer.key.code == 'M') ||
+					(answer.key.code == 'm')) {
+					choice = 1;
+					no_answer = false;
+					break;
+				} else if ((answer.key.code == 'D') ||
+						   (answer.key.code == 'd')) {
+					choice = 2;
+					no_answer = false;
+					break;
+				} else if (answer.key.code == ESCAPE) {
 					choice = 0;
+					no_answer = false;
 					break;
 				}
-
-				/* If requested, get the personalized string, and write it and
-				 * info on how it should be used in the bones file.  Otherwise,
-				 * indicate the absence of such a string. */
-				if (choice) {
-					char *string = get_personalized_string(choice);
-					if (string) {
-						file_putf(fp, "%d:%s\n", choice, string);
-					} else {
-						file_putf(fp, "0: \n");
-					}
-				} else {
-					file_putf(fp, "0: \n");
-				}
-
-				/* Close and save the Bones file */
-				file_close(fp);
-
-				return;
 			}
+		} else if ((answer.key.code == 'N') ||
+				   (answer.key.code == 'n') ||
+				   (answer.key.code == ESCAPE)) {
+			choice = 0;
+			break;
 		}
 	}
+
+	/* If requested, get the personalized string, and write it and
+	 * info on how it should be used in the bones file.  Otherwise,
+	 * indicate the absence of such a string. */
+	if (choice) {
+		char *string = get_personalized_string(choice);
+		if (string) {
+			file_putf(fp, "%d:%s\n", choice, string);
+		} else {
+			file_putf(fp, "0: \n");
+		}
+	} else {
+		file_putf(fp, "0: \n");
+	}
+
+	/* Close and save the Bones file */
+	file_close(fp);
 }
 
 /**
