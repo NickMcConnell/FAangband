@@ -762,17 +762,17 @@ static int populate(struct chunk *c, bool valley)
 			if ((grid.y == 0) || (grid.x == 0) || (grid.y == c->height - 1)
 				|| (grid.x == c->width - 1))
 				square_set_feat(c, grid, FEAT_PERM);
-		}
 
-		/* Super paranoia */
-		if (feat_is_permanent(c->squares[grid.y][grid.x].feat)) {
-			struct monster *mon = square_monster(c, grid);
-			struct object *obj = square_object(c, grid);
-			if (mon) {
-				delete_monster(grid);
-			}
-			if (obj) {
-				square_delete_object(c, grid, obj, false, false);
+			/* Super paranoia */
+			if (feat_is_permanent(c->squares[grid.y][grid.x].feat)) {
+				struct monster *mon = square_monster(c, grid);
+				struct object *obj = square_object(c, grid);
+				if (mon) {
+					delete_monster(grid);
+				}
+				if (obj) {
+					square_delete_object(c, grid, obj, false, false);
+				}
 			}
 		}
 	}
