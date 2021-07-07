@@ -862,7 +862,8 @@ static void summarize_cure(int tmd, struct effect_object_property **summaries,
 		add_to_summaries(summaries, timed_effects[tmd].fail, 0, 0,
 			EFPROP_CURE_FLAG);
 	} else if (timed_effects[tmd].fail_code == TMD_FAIL_FLAG_RESIST) {
-		add_to_summaries(summaries, timed_effects[tmd].fail, -1, 0,
+		add_to_summaries(summaries, timed_effects[tmd].fail,
+			RES_LEVEL_EFFECT + 1, RES_LEVEL_MIN,
 			EFPROP_CURE_RESIST);
 	} else {
 		++*unsummarized_count;
@@ -959,14 +960,23 @@ struct effect_object_property *effect_summarize_properties(
 					summarized = true;
 				}
 				if (timed_effects[ef->subtype].temp_resist >= 0) {
-					int rmin = -1, rmax = 1;
+					/*
+					 * At RES_LEVEL_BASE, the benefit from
+					 * RES_BOOST_NORMAL is a drop of 40
+					 * in the resistance level.  When the
+					 * benefit drops to less than a 1/10th
+					 * of that say that there's limited
+					 * benefit.  That happens when the
+					 * resistance level is less than 10.
+					 */
+					int rmin = 10, rmax = RES_LEVEL_MIN;
 
 					if (timed_effects[ef->subtype].fail ==
 							timed_effects[ef->subtype].temp_resist) {
 						if (timed_effects[ef->subtype].fail_code == TMD_FAIL_FLAG_RESIST) {
-							rmax = MIN(rmax, 0);
+							rmin = MAX(rmin, RES_LEVEL_EFFECT + 1);
 						} else if (timed_effects[ef->subtype].fail_code == TMD_FAIL_FLAG_VULN) {
-							rmin = MAX(rmin, 0);
+							rmax = MIN(rmax, RES_LEVEL_BASE);
 						}
 					}
 					add_to_summaries(&summaries,
@@ -979,13 +989,15 @@ struct effect_object_property *effect_summarize_properties(
 					if (timed_effects[ef->subtype].fail_code == TMD_FAIL_FLAG_RESIST) {
 						add_to_summaries(&summaries,
 							timed_effects[ef->subtype].fail,
-							-1, 0,
+							RES_LEVEL_EFFECT + 1,
+							RES_LEVEL_MIN,
 							EFPROP_CONFLICT_RESIST);
 						summarized = true;
 					} else if (timed_effects[ef->subtype].fail_code == TMD_FAIL_FLAG_VULN) {
 						add_to_summaries(&summaries,
 							timed_effects[ef->subtype].fail,
-							0, 3,
+							RES_LEVEL_MAX,
+							RES_LEVEL_BASE,
 							EFPROP_CONFLICT_VULN);
 						summarized = true;
 					}
