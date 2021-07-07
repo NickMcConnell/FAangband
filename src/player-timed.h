@@ -71,6 +71,11 @@ struct timed_effect_data {
 	int fail;
 	bool beneficial;
 	struct timed_grade *grade;
+	int oflag_dup;
+	bool oflag_syn;
+	int temp_resist;
+	int temp_brand;
+	int temp_slay;
 };
 
 /**
