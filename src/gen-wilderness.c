@@ -80,11 +80,11 @@ static void path_to_nowhere(struct chunk *c, struct loc start,
 
 	bool done = false;
 
-	/* make sure targets are in bounds, reflect back in if not */
-	target.y += ABS(target.y) - target.y
-		- ABS(c->height - 1 - target.y) + (c->height - 1 - target.y);
-	target.x += ABS(target.x) - target.x
-		- ABS(c->width - 1 - target.x) + (c->width - 1 - target.x);
+	/* make sure targets are in fully in bounds, reflect back in if not */
+	target.y += ABS(target.y - 1) - (target.y - 1)
+		- ABS(c->height - 2 - target.y) + (c->height - 2 - target.y);
+	target.x += ABS(target.x - 1) - (target.x - 1)
+		- ABS(c->width - 2 - target.x) + (c->width - 2 - target.x);
 
 	/* Start */
 	correct_dir(&direction, start, target);
@@ -95,6 +95,8 @@ static void path_to_nowhere(struct chunk *c, struct loc start,
 		end = grid;
 	} else {
 		/* No good, just finish at the start */
+		assert(square_in_bounds_fully(c, start));
+		end = start;
 		done = true;
 	}
 
@@ -124,9 +126,6 @@ static void path_to_nowhere(struct chunk *c, struct loc start,
 		if ((ABS(grid.x - target.x) < 3) && (ABS(grid.y - target.y) < 3))
 			break;
 	}
-
-	/* Record where we have finished */
-	end = grid;
 
 	/* Store the end */
 	for (j = MAX_PATHS - 1; j >= 0; j--) {
