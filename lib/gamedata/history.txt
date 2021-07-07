@@ -132,6 +132,7 @@ phrase:You are one of several children of a Hobbit
 chart:10:11:100
 phrase:You are the only child of a Hobbit 
 
+chart:11:3:5
 phrase:Bum.  
 chart:11:3:30
 phrase:Tavern Owner.  
