@@ -129,8 +129,12 @@ struct monster_race *lookup_monster(const char *name)
 			continue;
 
 		/* Test for equality */
-		if (my_stricmp(name, race->name) == 0)
+		if (streq(name, race->name))
 			return race;
+
+		/* Test for near equality */
+		if (my_stricmp(name, race->name) == 0)
+			closest = race;
 
 		/* Test for close matches */
 		if (!closest && my_stristr(race->name, name))
@@ -1148,7 +1152,7 @@ static void player_kill_monster(struct monster *mon, const char *note)
 			char path[1024];
 			strnfmt(path, sizeof(path), "%s/bone.%03d", ANGBAND_DIR_BONE,
 					cave->ghost->bones_selector);
-			file_delete(path);
+			if (file_exists(path)) file_delete(path);
 		}
 	}
 

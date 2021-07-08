@@ -618,6 +618,7 @@ static void process_ghost_race_class(struct player_race *p_race,
 			if (lev->blow_effect1) {
 				int i;
 				for (i = 0; i < z_info->mon_blows_max && (hurt == 0); i++) {
+					if (!race->blow[i].effect) break;
 					if (strcmp(race->blow[i].effect->name, "HURT") == 0) {
 						race->blow[i].effect =
 							lookup_monster_blow_effect(lev->blow_effect1);
@@ -629,6 +630,7 @@ static void process_ghost_race_class(struct player_race *p_race,
 			if (lev->blow_effect2) {
 				int i;
 				for (i = 0; i < z_info->mon_blows_max && (hurt == 1); i++) {
+					if (!race->blow[i].effect) break;
 					if (strcmp(race->blow[i].effect->name, "HURT") == 0) {
 						race->blow[i].effect =
 							lookup_monster_blow_effect(lev->blow_effect1);
@@ -715,8 +717,9 @@ bool prepare_ghost(struct chunk *c, int r_idx, struct monster *mon,
 	char buf[80];
 
 	/* Paranoia. */
+	assert(c->ghost);
 	if (!rf_has(race->flags, RF_PLAYER_GHOST))
-		return true;
+		return false;
 
 	/* Hack -- No easy player ghosts, unless the ghost is from a savefile.
 	 * This also makes player ghosts much rarer, and effectively (almost)
@@ -739,7 +742,12 @@ bool prepare_ghost(struct chunk *c, int r_idx, struct monster *mon,
 
 	/* Choose a bones file.  Use the variable bones_selector if it has any
 	 * information in it (this allows saved ghosts to reacquire all special
-	 * features), then use the current depth, and finally pick at random. */
+	 * features), then use the current depth, and finally pick at random.
+	 *
+	 * Note the hackery with bitflags to choose between a genuine player
+	 * ghost and a preloaded one, and the chance that a ghost will be
+	 * different on reloading on a multiplayer server if someone else has
+	 * killed the original one in the mean time. */
 	for (try = 0; try < 40; ++try) {
 		/* Prepare a path, and store the file number for future reference. */
 		if (try == 0) {
@@ -749,8 +757,31 @@ bool prepare_ghost(struct chunk *c, int r_idx, struct monster *mon,
 		} else {
 			c->ghost->bones_selector = randint1(z_info->max_depth - 1);
 		}
-		path_build(path, sizeof(path), ANGBAND_DIR_BONE,
-				   format("bone.%03d", c->ghost->bones_selector));
+
+		/* Loaded ghosts need to check for preloaded or not */
+		if (!try && from_savefile) {
+			if (c->ghost->bones_selector & 0x80) {
+				c->ghost->bones_selector &= 0x7F;
+				path_build(path, sizeof(path), ANGBAND_DIR_GHOST,
+						   format("bone.%03d", c->ghost->bones_selector));
+				c->ghost->bones_selector |= 0x80;
+			} else {
+				path_build(path, sizeof(path), ANGBAND_DIR_BONE,
+						   format("bone.%03d", c->ghost->bones_selector));
+			}
+		}
+
+		/* After the first attempt, randomly try preloaded ghosts */
+		if (try) {
+			if (!one_in_(3)) {
+				path_build(path, sizeof(path), ANGBAND_DIR_BONE,
+						   format("bone.%03d", c->ghost->bones_selector));
+			} else {
+				path_build(path, sizeof(path), ANGBAND_DIR_GHOST,
+						   format("bone.%03d", c->ghost->bones_selector));
+				c->ghost->bones_selector |= 0x80;
+			}
+		}
 
 		/* Attempt to open the bones file. */
 		fp = file_open(path, MODE_READ, FTYPE_TEXT);

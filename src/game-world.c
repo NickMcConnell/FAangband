@@ -647,6 +647,7 @@ void process_world(struct chunk *c)
 
 	/* If there is ghost now, and there was not before, give a challenge */
 	if (c->ghost->bones_selector && !was_ghost) {
+		assert(c->ghost && c->ghost->race);
 		ghost_challenge();
 	}
 
@@ -1098,8 +1099,10 @@ void on_new_level(void)
 		display_feeling(false);
 
 	/* Announce a player ghost challenge. -LM- */
-	if (cave->ghost->bones_selector)
+	if (cave->ghost->bones_selector) {
+		assert(cave->ghost && cave->ghost->race);
 		ghost_challenge();
+	}
 
 	/* Check the surroundings */
 	search(player);

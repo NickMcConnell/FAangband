@@ -189,6 +189,7 @@ static const struct {
 	{ "tiles", &ANGBAND_DIR_TILES, true },
 	{ "sounds", &ANGBAND_DIR_SOUNDS, true },
 	{ "icons", &ANGBAND_DIR_ICONS, true },
+	{ "ghost", &ANGBAND_DIR_GHOST, true },
 	{ "user", &ANGBAND_DIR_USER, true },
 	{ "save", &ANGBAND_DIR_SAVE, false },
 	{ "archive", &ANGBAND_DIR_ARCHIVE, true },
