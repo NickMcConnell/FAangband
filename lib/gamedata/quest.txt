@@ -39,6 +39,7 @@ type:final
 race:Morgoth, Lord of Darkness
 artifact:100:of Morgoth
 artifact:100:'Grond'
+number:1
 map:Standard Wilderness
 place:ANGBAND:100:block
 map:Extended Wilderness
