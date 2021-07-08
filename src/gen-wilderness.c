@@ -1416,13 +1416,23 @@ struct chunk *forest_gen(struct player *p, int height, int width)
 
 	/* Try fairly hard */
 	for (j = 0; j < 50; j++) {
-		int a, b, x, y;
+		int a, b, x, xlo, xhi, y, ylo, yhi;
 
-		/* Try for a clearing */
+		/*
+		 * Try for a clearing.  Constrain the center choice so the
+		 * bounding box is in bounds and the center won't be within
+		 * the maximum possible extent of the walls created by
+		 * make_edges() (that's to avoid a room that's entirely
+		 * surrounded by those walls).
+		 */
 		a = randint0(6) + 4;
 		b = randint0(5) + 4;
-		y = randint0(c->height - 1) + 1;
-		x = randint0(c->width - 1) + 1;
+		ylo = MAX(b, 7);
+		yhi = MIN(c->height - 1 - b, c->height - 8);
+		y = rand_range(ylo, yhi);
+		xlo = MAX(a, 10);
+		xhi = MIN(c->width - 1 - a, c->height - 11);
+		x = rand_range(xlo, xhi);
 		made_plat = generate_starburst_room(c, y - b, x - a, y + b, x + a,
 											false, FEAT_GRASS, true);
 
