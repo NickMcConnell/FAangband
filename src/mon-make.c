@@ -759,7 +759,7 @@ bool prepare_ghost(struct chunk *c, int r_idx, struct monster *mon,
 		}
 
 		/* Loaded ghosts need to check for preloaded or not */
-		if (!try && from_savefile) {
+		if (!try) {
 			if (c->ghost->bones_selector & 0x80) {
 				c->ghost->bones_selector &= 0x7F;
 				path_build(path, sizeof(path), ANGBAND_DIR_GHOST,
@@ -782,6 +782,9 @@ bool prepare_ghost(struct chunk *c, int r_idx, struct monster *mon,
 				c->ghost->bones_selector |= 0x80;
 			}
 		}
+
+		/* Check we actually have a path */
+		if (strlen(path) == 0) continue;
 
 		/* Attempt to open the bones file. */
 		fp = file_open(path, MODE_READ, FTYPE_TEXT);

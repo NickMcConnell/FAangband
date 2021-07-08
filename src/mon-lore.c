@@ -1260,7 +1260,10 @@ void lore_append_drop(textblock *tb, const struct monster_race *race,
 				textblock_append_c(tb, COLOUR_BLUE,
 					format(" %d", nspec));
 			}
-			textblock_append(tb, " specific items");
+			textblock_append(tb, " specific item");
+			if (nspec > 1) {
+				textblock_append(tb, "s");
+			}
 		}
 
 		textblock_append(tb, ".  ");
