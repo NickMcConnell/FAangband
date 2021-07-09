@@ -406,7 +406,7 @@ int summon_specific(struct loc grid, int lev, int type, bool delay, bool call,
 					bool friendly)
 {
 	int i;
-	struct loc near;
+	struct loc near = grid;
 	struct monster *mon;
 	struct monster *t_mon = target_get_monster();
 	struct monster_race *race;
