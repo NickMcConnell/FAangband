@@ -442,7 +442,13 @@ static void make_edges(struct chunk *c, bool ragged, bool valley)
 	/* Prepare places for down slides */
 	num += randint0(2);
 	for (i = 0; i < num; i++)
-		path_x[i] =	1 + randint0(c->width / num - 2) + i * c->width / num;
+		/*
+		 * Skip first and last ten columns to avoid surrounding the
+		 * slide in permanent walls.  Avoid last two columns in each
+		 * interval to limit the possibility of nearby slides.
+		 */
+		path_x[i] = 10 + randint0((c->width - 20) / num - 2)
+			+ (i * (c->width - 20)) / num;
 
 	/* Special boundary walls -- Top */
 	i = (valley ? 5 : 4);
@@ -489,13 +495,15 @@ static void make_edges(struct chunk *c, bool ragged, bool valley)
 			for (grid.y = c->height - 1; grid.y > c->height - 1 - i; grid.y--) {
 				/* Clear previous contents, add perma-wall or void */
 				if (!square_ismark(c, grid)) {
-					square_set_feat(c, grid, (valley ? FEAT_VOID : FEAT_PERM));
+					square_set_feat(c, grid, (valley && grid.y != c->height - 1) ? FEAT_VOID : FEAT_PERM);
 				}
 			}
 			/* Down slides */
 			if ((j < num) && valley)
 				if (grid.x == path_x[j]) {
 					square_set_feat(c, grid, FEAT_MORE_SOUTH);
+					/* Mark so it won't be overwritten. */
+					square_mark(c, grid);
 					j++;
 				}
 		} else {
@@ -1921,8 +1929,26 @@ struct chunk *valley_gen(struct player *p, int height, int width)
 	}
 
 	if (!p->upkeep->path_coord) {
-		grid.y = c->height / 2 - 10 + randint0(20);
-		grid.x = c->width / 2 - 15 + randint0(30);
+		/* Try to find an appropriate space. */
+		j = 0;
+		while (1) {
+			if (j >= 100) {
+				/*
+				 * Give up; let the caller retry from scratch.
+				 */
+				wipe_mon_list(c, p);
+				cave_free(c);
+				return NULL;
+			}
+			grid.y = c->height / 2 - 10 + randint0(20);
+			grid.x = c->width / 2 - 15 + randint0(30);
+			if (!square_isvault(c, grid)
+					&& !square_monster(c, grid)
+					&& !square_object(c, grid)) {
+				break;
+			}
+			++j;
+		}
 		square_set_feat(c, grid, FEAT_GRASS);
 		player_place(c, p, grid);
 		p->upkeep->path_coord = 0;
