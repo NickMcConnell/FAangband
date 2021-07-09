@@ -590,6 +590,43 @@ static bool check_vault_space(struct chunk *c, struct loc avoid,
 }
 
 /**
+ * Help make_formation():  test if adding blocking terrain to a grid could
+ * disconnect regions.  The test is local and only tests for conditions that
+ * are sufficient but not guaranteed (since that requires looking at the
+ * entire cave) to disconnect regions.
+ * \param c Is the chunk to check.
+ * \param grid Is the grid to check.  Assumed to be fully in bounds.
+ */
+static bool potentially_disconnects(struct chunk *c, struct loc grid)
+{
+	int i, btonb_count = 0;
+	struct loc neighbor;
+	bool last_nonblock;
+
+	neighbor = loc_sum(grid, ddgrid[clockwise_ddd[7]]);
+	last_nonblock = square_ispassable(c, neighbor)
+			|| square_isrubble(c, neighbor);
+	for (i = 0; i < 8; ++i) {
+		neighbor = loc_sum(grid, ddgrid[clockwise_ddd[i]]);
+		if (square_ispassable(c, neighbor)
+				|| square_isrubble(c, neighbor)) {
+			if (!last_nonblock) {
+				++btonb_count;
+			}
+			last_nonblock = true;
+		} else {
+			last_nonblock = false;
+		}
+	}
+	/*
+	 * If no neighbors are nonblocking or all the nonblocking neighbors
+	 * will still be a contiguous group when the center is blocking, then
+	 * there's no possibility of a disconnect.
+	 */
+	return btonb_count > 1;
+}
+
+/**
  * Make a formation - a randomish group of terrain squares. -NRM-
  * Care probably needed with declaring feat[].
  *
@@ -665,12 +702,20 @@ static int make_formation(struct chunk *c, struct player *p, struct loc grid,
 	/* Make a formation */
 	while (i != (prob - 1)) {
 		/* Avoid paths, stay in bounds */
-		if (((square_feat(c, tgrid)->fidx != base_feat1) &&
-			 (square_feat(c, tgrid)->fidx != base_feat2))
-			|| !square_in_bounds_fully(c, tgrid) || square_ismark(c, tgrid)
-			|| square_isvault(c, tgrid)) {
-			mem_free(all_feat);
-			return (total);
+		if (!square_in_bounds_fully(c, tgrid)
+			|| (square_feat(c, tgrid)->fidx != base_feat1
+				&& square_feat(c, tgrid)->fidx != base_feat2)
+			|| square_ismark(c, tgrid)
+			|| square_isvault(c, tgrid)
+			|| loc_eq(tgrid, p->grid)
+			|| (!feat_is_monster_walkable(all_feat[i])
+				&& square_monster(c, tgrid))
+			|| (!feat_is_object_holding(all_feat[i])
+				&& square_object(c, tgrid))
+			|| (!feat_is_passable(all_feat[i])
+				&& all_feat[i] != FEAT_RUBBLE
+				&& potentially_disconnects(c, tgrid))) {
+			break;
 		}
 
 		/* Check for treasure */
@@ -918,8 +963,8 @@ struct chunk *plain_gen(struct player *p, int height, int width)
 	/* Place some formations */
 	while (form_grids < (50 * c->depth + 1000)) {
 		/* Choose a place */
-		grid.y = randint0(c->height - 1) + 1;
-		grid.x = randint0(c->width - 1) + 1;
+		grid.y = randint1(c->height - 2);
+		grid.x = randint1(c->width - 2);
 		form_grids += make_formation(c, p, grid, FEAT_GRASS, FEAT_GRASS,
 									 form_feats, "Plains", c->depth + 1);
 	}
@@ -927,8 +972,8 @@ struct chunk *plain_gen(struct player *p, int height, int width)
 	/* And some water */
 	form_grids = 0;
 	while (form_grids < 300) {
-		grid.y = randint0(c->height - 1) + 1;
-		grid.x = randint0(c->width - 1) + 1;
+		grid.y = randint1(c->height - 2);
+		grid.x = randint1(c->width - 2);
 		form_grids += make_formation(c, p, grid, FEAT_GRASS, FEAT_GRASS, ponds,
 									 "Plains", 10);
 	}
@@ -1113,8 +1158,8 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 	/* Make a few formations */
 	while (form_grids < 50 * (c->depth)) {
 		/* Choose a place */
-		grid.y = randint0(c->height - 1) + 1;
-		grid.x = randint0(c->width - 1) + 1;
+		grid.y = randint1(c->height - 2);
+		grid.x = randint1(c->width - 2);
 		form_grids += make_formation(c, p, grid, FEAT_GRANITE, FEAT_GRANITE,
 									 form_feats, "Mountain", c->depth * 2);
 		/* Now join it up */
@@ -1456,8 +1501,8 @@ struct chunk *forest_gen(struct player *p, int height, int width)
 	/* Place some formations */
 	while (form_grids < (50 * c->depth + 1000)) {
 		/* Choose a place */
-		grid.y = randint0(c->height - 1) + 1;
-		grid.x = randint0(c->width - 1) + 1;
+		grid.y = randint1(c->height - 2);
+		grid.x = randint1(c->width - 2);
 		form_grids += make_formation(c, p, grid, FEAT_TREE, FEAT_TREE2,
 									 form_feats, "Forest", c->depth + 1);
 	}
@@ -1465,8 +1510,8 @@ struct chunk *forest_gen(struct player *p, int height, int width)
 	/* And some water */
 	form_grids = 0;
 	while (form_grids < 300) {
-		grid.y = randint0(c->height - 1) + 1;
-		grid.x = randint0(c->width - 1) + 1;
+		grid.y = randint1(c->height - 2);
+		grid.x = randint1(c->width - 2);
 		form_grids += make_formation(c, p, grid, FEAT_TREE, FEAT_TREE2, ponds,
 									 "Forest", 10);
 	}
@@ -1536,8 +1581,8 @@ struct chunk *swamp_gen(struct player *p, int height, int width)
 	/* Place some formations (but not many, and less for more danger) */
 	while (form_grids < 20000 / c->depth) {
 		/* Choose a place */
-		grid.y = randint0(c->height - 1) + 1;
-		grid.x = randint0(c->width - 1) + 1;
+		grid.y = randint1(c->height - 2);
+		grid.x = randint1(c->width - 2);
 		form_grids += make_formation(c, p, grid, FEAT_GRASS, FEAT_WATER,
 									 form_feats, "Swamp", c->depth);
 	}
