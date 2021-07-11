@@ -695,7 +695,6 @@ static int make_formation(struct chunk *c, struct player *p, struct loc grid,
 static int populate(struct chunk *c, bool valley)
 {
 	int i, j;
-	struct loc grid;
 
 	/* Basic "amount" */
 	int k = (c->depth / 2);
@@ -709,8 +708,8 @@ static int populate(struct chunk *c, bool valley)
 			k += 10;
 	}
 
-    /* Pick a base number of monsters */
-    i = z_info->level_monster_min + randint1(8) + k;
+	/* Pick a base number of monsters */
+	i = z_info->level_monster_min + randint1(8) + k;
 
 	/* Build the monster probability table. */
 	(void) get_mon_num(c->depth);
@@ -746,28 +745,63 @@ static int populate(struct chunk *c, bool valley)
 	alloc_objects(c, SET_BOTH, TYP_GOLD, Rand_normal(z_info->both_gold_av, 3),
 				 c->depth, ORIGIN_FLOOR);
 
-	/* Paranoia - remake the dungeon walls */
+	return k;
+}
+
+/**
+ * Perform some sanity checks on the generated level.
+ */
+static bool verify_level(struct chunk *c)
+{
+	struct loc last_bad_bnd = loc(0, 0);
+	struct loc last_bad_mon = loc(0, 0);
+	struct loc last_bad_obj = loc(0, 0);
+	int broken_bnd = 0, broken_mon = 0, broken_obj = 0;
+	struct loc grid;
+
 	for (grid.y = 0; grid.y < c->height; grid.y++) {
 		for (grid.x = 0; grid.x < c->width; grid.x++) {
-			if ((grid.y == 0) || (grid.x == 0) || (grid.y == c->height - 1)
-				|| (grid.x == c->width - 1))
-				square_set_feat(c, grid, FEAT_PERM);
-
-			/* Super paranoia */
-			if (feat_is_permanent(c->squares[grid.y][grid.x].feat)) {
-				struct monster *mon = square_monster(c, grid);
-				struct object *obj = square_object(c, grid);
-				if (mon) {
-					delete_monster(grid);
-				}
-				if (obj) {
-					square_delete_object(c, grid, obj, false, false);
-				}
+			if ((grid.y == 0 || grid.x == 0
+					|| grid.y == c->height - 1
+					|| grid.x == c->width - 1)
+					&& square(c, grid)->feat != FEAT_PERM) {
+				++broken_bnd;
+				last_bad_bnd = grid;
+			}
+			if (square_monster(c, grid)
+					&& !square_is_monster_walkable(c, grid)) {
+				++broken_mon;
+				last_bad_mon = grid;
+			}
+			if (square_object(c, grid)
+					&& !square_isobjectholding(c, grid)) {
+				++broken_obj;
+				last_bad_obj = grid;
 			}
 		}
 	}
 
-	return k;
+	if (broken_bnd || broken_mon || broken_obj) {
+		const char *title;
+
+		if (broken_bnd) {
+			title = format("Broken Wilderness:  %d Bounding Walls; Last at (x=%d,y=%d) with Feature=%d",
+				broken_bnd, last_bad_bnd.x, last_bad_bnd.y,
+				(int) square(c, last_bad_bnd)->feat);
+		} else if (broken_mon) {
+			title = format("Broken Monster:  %d Embedded in Terrain; Last at (x=%d,y=%d) with Terrain=%d",
+				broken_mon, last_bad_mon.x, last_bad_mon.y,
+				(int) square(c, last_bad_mon)->feat);
+		} else {
+			title = format("Broken Object:  %d Embedded in Terrain; Last at (x=%d,y=%d) with Terrain=%d",
+				broken_obj, last_bad_obj.x, last_bad_obj.y,
+				(int) square(c, last_bad_obj)->feat);
+		}
+		dump_level_simple(NULL, title, c);
+		msg("Restarting wilderness generation; bad level in dumpedlevel.html");
+		return false;
+	}
+	return true;
 }
 
 /**
@@ -926,6 +960,12 @@ struct chunk *plain_gen(struct player *p, int height, int width)
 
 	/* Place objects, traps and monsters */
 	(void) populate(c, false);
+
+	if (!verify_level(c)) {
+		wipe_mon_list(c, p);
+		cave_free(c);
+		return NULL;
+	}
 
 	return c;
 }
@@ -1130,6 +1170,12 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 
 	/* Place objects, traps and monsters */
 	(void) populate(c, false);
+
+	if (!verify_level(c)) {
+		wipe_mon_list(c, p);
+		cave_free(c);
+		return NULL;
+	}
 
 	return c;
 }
@@ -1465,6 +1511,12 @@ struct chunk *forest_gen(struct player *p, int height, int width)
 	/* Place objects, traps and monsters */
 	(void) populate(c, false);
 
+	if (!verify_level(c)) {
+		wipe_mon_list(c, p);
+		cave_free(c);
+		return NULL;
+	}
+
 	return c;
 }
 
@@ -1535,6 +1587,12 @@ struct chunk *swamp_gen(struct player *p, int height, int width)
 
 	/* Place objects, traps and monsters */
 	(void) populate(c, false);
+
+	if (!verify_level(c)) {
+		wipe_mon_list(c, p);
+		cave_free(c);
+		return NULL;
+	}
 
 	return c;
 }
@@ -1678,6 +1736,12 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 
 	/* Place objects, traps and monsters */
 	(void) populate(c, false);
+
+	if (!verify_level(c)) {
+		wipe_mon_list(c, p);
+		cave_free(c);
+		return NULL;
+	}
 
 	return c;
 }
@@ -1839,6 +1903,13 @@ struct chunk *river_gen(struct player *p, int height, int width)
 	(void) populate(c, false);
 
 	mem_free(mid);
+
+	if (!verify_level(c)) {
+		wipe_mon_list(c, p);
+		cave_free(c);
+		return NULL;
+	}
+
 	return c;
 }
 
@@ -1978,12 +2049,6 @@ struct chunk *valley_gen(struct player *p, int height, int width)
 	for (grid.y = 0; grid.y < c->height; grid.y++) {
 		for (grid.x = 0; grid.x < c->width; grid.x++) {
 			square_unmark(c, grid);
-
-			/* Paranoia - remake the dungeon walls */
-			if ((grid.y == 0) || (grid.x == 0) ||
-				(grid.y == c->height - 1) || (grid.x == c->width - 1)) {
-				square_set_feat(c, grid, FEAT_PERM);
-			}
 		}
 	}
 
@@ -1998,6 +2063,12 @@ struct chunk *valley_gen(struct player *p, int height, int width)
 				k--;
 			}
 		}
+	}
+
+	if (!verify_level(c)) {
+		wipe_mon_list(c, p);
+		cave_free(c);
+		return NULL;
 	}
 
 	return c;
