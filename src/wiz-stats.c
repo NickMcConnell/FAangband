@@ -19,6 +19,7 @@
 #include "cave.h"
 #include "cmds.h"
 #include "effects.h"
+#include "game-world.h"
 #include "generate.h"
 #include "init.h"
 #include "mon-make.h"
@@ -27,6 +28,7 @@
 #include "obj-tval.h"
 #include "obj-util.h"
 #include "object.h"
+#include "player-util.h"
 #include "ui-command.h"
 #include "wizard.h"
 
@@ -2756,20 +2758,114 @@ void disconnect_stats(int nsim, bool stop_on_disconnect)
 	for (i = 1; i <= nsim; i++) {
 		/* Assume no disconnected areas */
 		bool has_dsc = false;
-		/* Assume you can't get to the down staircase */
+		/* Assume you can't get to the staircase */
 		bool has_dsc_from_stairs = true;
-		bool has_bad_start, use_stairs;
+		bool has_bad_start;
+		int return_path;
 
 		/*
-		 * 50% of the time act as if came in via a down staircase;
-		 * otherwise come in as if by word of recall/trap door/teleport
-		 * level.
+		 * 50% of the time act as if came in via a down staircase
+		 * (for dungeon) or path (wilderness); otherwise come in as if
+		 * by word of recall/trap door/teleport level.
 		 */
 		if (one_in_(2)) {
-			player->upkeep->create_stair = FEAT_LESS;
-			use_stairs = OPT(player, birth_connect_stairs);
+			if (level_topography(player->place) == TOP_VALLEY) {
+				/* Valleys have special treatment. */
+				int j = 0;
+
+				player->upkeep->create_stair = FEAT_LESS_NORTH;
+				while (1) {
+					if (j >= world->num_levels) {
+						player->last_place =
+							player->place;
+						break;
+					}
+					if (player_get_next_place(j, "south", 1) == player->place) {
+						player->last_place = j;
+						break;
+					}
+					++j;
+				}
+				player->upkeep->path_coord =
+					rand_range(z_info->dungeon_wid / 3,
+						(2 * z_info->dungeon_wid) / 3);
+				return_path = FEAT_PASS_RUBBLE;
+			} else if (level_topography(player->place) != TOP_CAVE) {
+				int dirs[6], places[6], navail = 0, chosen;
+
+				if (world->levels[player->place].north) {
+					places[navail] = player_get_next_place(
+						player->place, "north", 1);
+					dirs[navail] =
+						(world->levels[places[navail]].depth >
+						world->levels[player->place].depth) ?
+						FEAT_MORE_NORTH : FEAT_LESS_NORTH;
+					++navail;
+				}
+				if (world->levels[player->place].east) {
+					places[navail] = player_get_next_place(
+						player->place, "east", 1);
+					dirs[navail] =
+						(world->levels[places[navail]].depth >
+						world->levels[player->place].depth) ?
+						FEAT_MORE_EAST : FEAT_LESS_EAST;
+					++navail;
+				}
+				if (world->levels[player->place].south) {
+					places[navail] = player_get_next_place(
+						player->place, "south", 1);
+					dirs[navail] =
+						(world->levels[places[navail]].depth >
+						world->levels[player->place].depth) ?
+						FEAT_MORE_SOUTH : FEAT_LESS_SOUTH;
+					++navail;
+				}
+				if (world->levels[player->place].west) {
+					places[navail] = player_get_next_place(
+						player->place, "west", 1);
+					dirs[navail] =
+						(world->levels[places[navail]].depth >
+						world->levels[player->place].depth) ?
+						FEAT_MORE_WEST : FEAT_LESS_WEST;
+					++navail;
+				}
+				if (world->levels[player->place].up) {
+					places[navail] = player_get_next_place(
+						player->place, "up", 1);
+					dirs[navail] = FEAT_LESS;
+					++navail;
+				}
+				if (world->levels[player->place].down) {
+					places[navail] = player_get_next_place(
+					player->place, "down", 1);
+					dirs[navail] = FEAT_MORE;
+					++navail;
+				}
+				chosen = randint0(navail);
+				player->upkeep->create_stair = dirs[chosen];
+				player->last_place = places[chosen];
+				if (dirs[chosen] == FEAT_MORE_EAST
+						|| dirs[chosen] == FEAT_LESS_EAST
+						|| dirs[chosen] == FEAT_MORE_WEST
+						|| dirs[chosen] == FEAT_LESS_WEST) {
+					player->upkeep->path_coord =
+						rand_range(z_info->dungeon_hgt / 3,
+							(2 * z_info->dungeon_hgt) / 3);
+				} else if (dirs[chosen] != FEAT_MORE
+						&& dirs[chosen] != FEAT_LESS) {
+					player->upkeep->path_coord =
+						rand_range(z_info->dungeon_wid / 3,
+							(2 * z_info->dungeon_wid) / 3);
+				}
+				return_path = dirs[chosen];
+			} else {
+				player->upkeep->create_stair = FEAT_LESS;
+				return_path =
+					OPT(player, birth_connect_stairs) ?
+					FEAT_LESS : -1;
+			}
 		} else {
-			use_stairs = false;
+			return_path = -1;
 		}
 
 		/* Make a new cave */
@@ -2805,7 +2901,7 @@ void disconnect_stats(int nsim, bool stop_on_disconnect)
 				/* Can we get there? */
 				if (cave_dist[y][x] >= 0) {
 
-					/* Is it a down stairs? */
+					/* Is it a stairs? */
 					if (square_isstairs(cave, grid)||square_ispath(cave, grid)){
 
 						has_dsc_from_stairs = false;
@@ -2824,8 +2920,8 @@ void disconnect_stats(int nsim, bool stop_on_disconnect)
 			}
 		}
 
-		if ((use_stairs && !square_isupstairs(cave, player->grid))
-				|| (!use_stairs
+		if ((return_path != -1 && square(cave, player->grid)->feat != return_path)
+				|| (return_path == -1
 				&& !square_ispassable(cave, player->grid))) {
 			has_bad_start = true;
 			bad_starts++;
