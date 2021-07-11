@@ -1044,7 +1044,7 @@ bool multiply_monster(struct chunk *c, const struct monster *mon)
 	struct loc grid = mon->grid;
 	int i;
 	bool result = false;
-	struct monster_group_info info = { 0, 0 };
+	struct monster_group_info info = { 0, 0, 0 };
 
 	/* Try up to 18 times */
 	for (i = 0; i < 18; i++) {

@@ -2632,7 +2632,7 @@ void do_cmd_wiz_summon_named(struct command *cmd)
 {
 	int r_idx, i = 0;
 	struct monster_race *r = NULL;
-	struct monster_group_info info = { 0, 0 };
+	struct monster_group_info info = { 0, 0, 0 };
 
 	if (cmd_get_arg_number(cmd, "index", &r_idx) == CMD_OK) {
 		if (r_idx > 0 && r_idx < z_info->r_max) {
