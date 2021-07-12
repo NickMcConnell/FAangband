@@ -1429,8 +1429,8 @@ cost:4
 alloc:20:1 to 100
 attack:1d1:0:0
 armor:1:0
-desc:A set of open-topped footgear with soft calfskin lacings and a sturdy 
-desc:cured leather base.
+desc:A set of open-topped footgear with soft calfskin lacings and a sturdy
+desc: cured leather base.
 
 name:& Pair~ of Leather Boots
 type:boots
@@ -1847,8 +1847,8 @@ alloc:10:70 to 100
 attack:0d0:0:0
 armor:0:10
 flags:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD 
-desc:This unearthly, completely transparent body mantle folds and drapes in 
-desc:iridescent patterns around you.  It weighs absolutely nothing.
+desc:This unearthly, completely transparent body mantle folds and drapes in
+desc: iridescent patterns around you.  It weighs absolutely nothing.
 
 
 ### Gloves ###

@@ -66,7 +66,7 @@
 # list-mon-race-flags.h or monster bases in monster_base.txt) and resistances
 # (based on list-elements.h).
 
-# 'desc' is for the artifact description.  These appear when the item is 
+# 'desc' is for the artifact description.  These appear when the item is
 # identified.  Special thanks to J.R.R Tolkien, without whom the words would
 # be unwritten, the images unconceived, the deed undone. -LM-
 # Contributors: Jeff Butler, Neal Hackler, Ethan Sicotte, Pat Tracy,
@@ -1945,8 +1945,8 @@ values:LIGHT[1] | SPEED[10] | RES_ELEC[100] | RES_DISEN[40] | RES_ACID[40]
 values:RES_FIRE[40] | RES_COLD[40] | RES_POIS[40] | RES_LIGHT[40] | RES_DARK[40]
 act:RAZORBACK
 time:200
-desc:A massive suit of heavy dragon scales deeply saturated with many colors.  
-desc: It throbs with angry energies, and you feel the raw elemental might of
+desc:A massive suit of heavy dragon scales deeply saturated with many colors.
+desc:  It throbs with angry energies, and you feel the raw elemental might of
 desc: untamed Lightning as you put it on.
 
 name:'Bladeturner'
