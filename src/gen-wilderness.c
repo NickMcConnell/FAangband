@@ -500,6 +500,32 @@ static void make_edges(struct chunk *c, bool ragged, bool valley)
 }
 
 /**
+ * Check whether the is space for a clearing with the given corners.
+ */
+static bool check_clearing_space(struct chunk *c, struct loc top_left,
+		struct loc bottom_right)
+{
+	struct loc grid;
+
+	/* Require corners to be in bounds */
+	if (!square_in_bounds(c, top_left)) return false;
+	if (!square_in_bounds(c, bottom_right)) return false;
+
+	/*
+	 * Check every square within the bounds (starburst rooms go up to
+	 * but do not include the bounds)
+	 */
+	for (grid.y = top_left.y + 1; grid.y < bottom_right.y; grid.y++) {
+		for (grid.x = top_left.x + 1; grid.x < bottom_right.x; grid.x++) {
+			if (square_ispath(c, grid)) return false;
+			if (square_ismark(c, grid)) return false;
+		}
+	}
+
+	return true;
+}
+
+/**
  * Check whether there is space for a wilderness vault with the given corners
  */
 static bool check_vault_space(struct chunk *c, struct loc avoid,
@@ -978,8 +1004,6 @@ struct chunk *plain_gen(struct player *p, int height, int width)
  */
 struct chunk *mtn_gen(struct player *p, int height, int width)
 {
-	bool made_plat;
-
 	struct loc grid;
 	int i, j;
 	int plats;
@@ -997,8 +1021,8 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 
 	bool amon_rudh = false;
 
-    /* Make the level */
-    struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
+	/* Make the level */
+	struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
 
 	/* Start with grass (lets paths work -NRM-) */
@@ -1041,6 +1065,7 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 			if ((square_feat(c, grid)->fidx == FEAT_ROAD) ||
 				(square_feat(c, grid)->fidx == FEAT_GRASS)) {
 				square_set_feat(c, grid, FEAT_MORE);
+				square_mark(c, grid);
 				i--;
 				stairs[2 - i] = grid;
 				if (!i && (level_topography(last_place) == TOP_CAVE))
@@ -1106,28 +1131,27 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 		/* Try for a plateau */
 		a = randint0(6) + 4;
 		b = randint0(5) + 4;
-		y = randint0(c->height - 1) + 1;
-		x = randint0(c->width - 1) + 1;
-		made_plat =	generate_starburst_room(c, y - b, x - a, y + b, x + a,
-											false, FEAT_GRASS, true);
+		y = rand_range(b, c->height - 1 - b);
+		x = rand_range(a, c->width - 1 - a);
+		if (!check_clearing_space(c, loc_sum(loc(x, y), loc(-a, -b)),
+				loc_sum(loc(x, y), loc(a, b)))
+				|| !generate_starburst_room(c, y - b, x - a,
+				y + b, x + a, false, FEAT_GRASS, true)) continue;
 
-		/* Success ? */
-		if (made_plat) {
-			grid = loc(x, y);
-			plats--;
+		/* Success */
+		grid = loc(x, y);
+		plats--;
 
-			/* Now join it up */
-			min = c->width + c->height;
-			for (i = 0; i < 20; i++) {
-				dist = distance(grid, pathpoints[i]);
-				if (dist < min) {
-					min = dist;
-					nearest_point = pathpoints[i];
-				}
+		/* Now join it up */
+		min = c->width + c->height;
+		for (i = 0; i < 20; i++) {
+			dist = distance(grid, pathpoints[i]);
+			if (dist < min) {
+				min = dist;
+				nearest_point = pathpoints[i];
 			}
-			mtn_connect(c, grid, nearest_point);
 		}
-
+		mtn_connect(c, grid, nearest_point);
 
 		/* Done ? */
 		if (!plats)
@@ -1158,12 +1182,6 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 	for (grid.y = 0; grid.y < c->height; grid.y++) {
 		for (grid.x = 0; grid.x < c->width; grid.x++) {
 			square_unmark(c, grid);
-
-			/* Paranoia - remake the dungeon walls */
-			if ((grid.y == 0) || (grid.x == 0) ||
-				(grid.y == c->height - 1) || (grid.x == c->width - 1)) {
-				square_set_feat(c, grid, FEAT_PERM);
-			}
 		}
 	}
 	ensure_connectedness(c, false);
@@ -1188,16 +1206,14 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
  */
 struct chunk *mtntop_gen(struct player *p, int height, int width)
 {
-	bool made_plat;
-
 	struct loc grid, top;
 	int i, j, k;
 	int plats, a, b;
 	int spot, floors = 0;
 	bool placed = false;
 
-    /* Make the level */
-    struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
+	/* Make the level */
+	struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
 
 	/* Start with void */
@@ -1226,8 +1242,10 @@ struct chunk *mtntop_gen(struct player *p, int height, int width)
 
 	/* Summit */
 	square_set_feat(c, top, FEAT_GRANITE);
+	square_mark(c, top);
 	for (i = 0; i < 8; i++) {
 		square_set_feat(c, loc_sum(top, ddgrid[i]), FEAT_GRANITE);
+		square_mark(c, loc_sum(top, ddgrid[i]));
 	}
 
 	/* Count the floors */
@@ -1307,39 +1325,40 @@ struct chunk *mtntop_gen(struct player *p, int height, int width)
 		/* Try for a plateau */
 		a = randint0(6) + 4;
 		b = randint0(5) + 4;
-		top.y = randint0(c->height - 1) + 1;
-		top.x = randint0(c->width - 1) + 1;
-		made_plat = generate_starburst_room(c, top.y - b, top.x - a, top.y + b,
-											top.x + a, false, FEAT_ROAD, false);
+		top.y = rand_range(b, c->height - 1 - b);
+		top.x = rand_range(a, c->width - 1 - a);
+		if (!check_clearing_space(c, loc_sum(top, loc(-a, -b)),
+				loc_sum(top, loc(a, b)))
+				|| !generate_starburst_room(c, top.y - b,
+				top.x - a, top.y + b, top.x + a, false,
+				FEAT_ROAD, false)) continue;
 
-		/* Success ? */
-		if (made_plat) {
-			plats--;
+		/* Success */
+		plats--;
 
-			/* Adjust the terrain a bit */
-			for (grid.y = top.y - b; grid.y < top.y + b; grid.y++) {
-				for (grid.x = top.x - a; grid.x < top.x + a; grid.x++) {
-					/* Only change generated stuff */
-					if (square_feat(c, grid)->fidx == FEAT_VOID)
-						continue;
+		/* Adjust the terrain a bit */
+		for (grid.y = top.y - b; grid.y < top.y + b; grid.y++) {
+			for (grid.x = top.x - a; grid.x < top.x + a; grid.x++) {
+				/* Only change generated stuff */
+				if (square_feat(c, grid)->fidx == FEAT_VOID)
+					continue;
 
-					/* Place some rock */
-					if (one_in_(5)) {
-						square_set_feat(c, grid, FEAT_GRANITE);
-						continue;
-					}
+				/* Place some rock */
+				if (one_in_(5)) {
+					square_set_feat(c, grid, FEAT_GRANITE);
+					continue;
+				}
 
-					/* rubble */
-					if (one_in_(8)) {
-						square_set_feat(c, grid, FEAT_PASS_RUBBLE);
-						continue;
-					}
+				/* rubble */
+				if (one_in_(8)) {
+					square_set_feat(c, grid, FEAT_PASS_RUBBLE);
+					continue;
+				}
 
-					/* and the odd tree */
-					if (one_in_(20)) {
-						square_set_feat(c, grid, FEAT_TREE2);
-						continue;
-					}
+				/* and the odd tree */
+				if (one_in_(20)) {
+					square_set_feat(c, grid, FEAT_TREE2);
+					continue;
 				}
 			}
 		}
