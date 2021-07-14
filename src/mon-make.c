@@ -752,27 +752,28 @@ bool prepare_ghost(struct chunk *c, int r_idx, struct monster *mon,
 		/* Prepare a path, and store the file number for future reference. */
 		if (try == 0) {
 			if (!c->ghost->bones_selector) {
+				/* Try for an actual ghost of the player's depth first */
 				c->ghost->bones_selector = player->depth;
-			}
-		} else {
-			c->ghost->bones_selector = randint1(z_info->max_depth - 1);
-		}
-
-		/* Loaded ghosts need to check for preloaded or not */
-		if (!try) {
-			if (c->ghost->bones_selector & 0x80) {
-				c->ghost->bones_selector &= 0x7F;
-				path_build(path, sizeof(path), ANGBAND_DIR_GHOST,
-						   format("bone.%03d", c->ghost->bones_selector));
-				c->ghost->bones_selector |= 0x80;
-			} else {
 				path_build(path, sizeof(path), ANGBAND_DIR_BONE,
 						   format("bone.%03d", c->ghost->bones_selector));
+			} else {
+				/* Loading a preloaded ghost from savefile */
+				if (c->ghost->bones_selector & 0x80) {
+					c->ghost->bones_selector &= 0x7F;
+					path_build(path, sizeof(path), ANGBAND_DIR_GHOST,
+							   format("bone.%03d", c->ghost->bones_selector));
+					c->ghost->bones_selector |= 0x80;
+				} else {
+					/* Loading an actual ghost from savefile */
+					path_build(path, sizeof(path), ANGBAND_DIR_BONE,
+							   format("bone.%03d", c->ghost->bones_selector));
+				}
 			}
-		}
+		} else {
+			/* Just pick a random depth if we can't get the player's */
+			c->ghost->bones_selector = randint1(z_info->max_depth - 1);
 
-		/* After the first attempt, randomly try preloaded ghosts */
-		if (try) {
+			/* After the first attempt, randomly try preloaded ghosts */
 			if (!one_in_(3)) {
 				path_build(path, sizeof(path), ANGBAND_DIR_BONE,
 						   format("bone.%03d", c->ghost->bones_selector));
