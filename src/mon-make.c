@@ -736,6 +736,7 @@ bool prepare_ghost(struct chunk *c, int r_idx, struct monster *mon,
 	 * that from here on */
 	memcpy(&r_info[PLAYER_GHOST_RACE], race, sizeof(*race));
 	race = &r_info[PLAYER_GHOST_RACE];
+	mon->race = race;
 
 	/* Set rarity to 0 so the ghost can't rise again */
 	race->rarity = 0;
