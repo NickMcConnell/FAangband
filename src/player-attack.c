@@ -1364,12 +1364,12 @@ static struct attack_result make_ranged_shot(struct player *p,
 	my_strcpy(hit_verb, "hits", 20);
 
 	/* Sleeping, visible monsters are easier to hit. */
-	if (mon->m_timed[MON_TMD_SLEEP] && monster_is_obvioius(mon)) {
+	if (mon->m_timed[MON_TMD_SLEEP] && monster_is_obvious(mon)) {
 		result.s_bonus = 5 + p->lev / 5;
 	}
 
 	/* Did we hit it (penalize distance travelled) */
-	if (!test_hit(chance, mon->race->ac, monster_is_obvious(mon)))
+	if (!test_hit(chance, ac, monster_is_obvious(mon))) {
 		return result;
 	}
 
