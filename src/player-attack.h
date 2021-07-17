@@ -69,8 +69,10 @@ extern int num_unarmed_blows;
 
 
 extern int breakage_chance(const struct object *obj, bool hit_target);
-int chance_of_melee_hit(const struct player *p, const struct object *weapon);
-extern bool test_hit(int chance, int ac, int vis);
+int chance_of_melee_hit_base(const struct player *p,
+	const struct object *weapon);
+extern bool test_hit(int to_hit, int ac);
+void hit_chance(random_chance *, int, int);
 void apply_deadliness(int *die_average, int deadliness);
 extern void py_attack(struct player *p, struct loc grid);
 extern bool py_attack_real(struct player *p, struct loc grid, bool *fear);
