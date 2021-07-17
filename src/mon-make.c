@@ -708,7 +708,7 @@ bool prepare_ghost(struct chunk *c, int r_idx, struct monster *mon,
 	byte try, i;
 
 	struct monster_race *race = &r_info[r_idx];
-	struct monster_lore *lore = &l_list[PLAYER_GHOST_RACE];
+	struct monster_lore *lore = get_lore(race);
 	struct player_race *p_race;
 	struct player_class *class;
 
@@ -968,8 +968,11 @@ void delete_monster_idx(int m_idx)
 	 * ensure that it never appears again, clear its data and allow the
 	 * next ghost to speak. */
 	if (rf_has(mon->race->flags, RF_PLAYER_GHOST)) {
-		struct monster_lore *lore = &l_list[mon->race->ridx];
-		memset(lore, 0, sizeof(*lore));
+		struct monster_lore *lore = get_lore(mon->race);
+		lore->sights = 0;
+		lore->deaths = 0;
+		lore->pkills = 0;
+		lore->tkills = 0;
 		if (player->upkeep->monster_race == mon->race) {
 			player->upkeep->monster_race = NULL;
 		}
@@ -1198,7 +1201,11 @@ void wipe_mon_list(struct chunk *c, struct player *p)
 		 * ensure that it never appears again, clear its data and allow the
 		 * next ghost to speak. */
 		if (rf_has(mon->race->flags, RF_PLAYER_GHOST)) {
-			struct monster_lore *lore = &l_list[mon->race->ridx];
+			struct monster_lore *lore = get_lore(mon->race);
+			lore->sights = 0;
+			lore->deaths = 0;
+			lore->pkills = 0;
+			lore->tkills = 0;
 			cave->ghost->bones_selector = 0;
 			cave->ghost->has_spoken = false;
 			my_strcpy(cave->ghost->name, "", sizeof(cave->ghost->name));
@@ -1207,7 +1214,6 @@ void wipe_mon_list(struct chunk *c, struct player *p)
 			if (player->upkeep->monster_race == mon->race) {
 				player->upkeep->monster_race = NULL;
 			}
-			memset(lore, 0, sizeof(*lore));
 		}
 
 		/* Wipe the Monster */
