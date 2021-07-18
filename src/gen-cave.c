@@ -2616,10 +2616,11 @@ static void town_gen_layout(struct chunk *c, struct player *p, struct town *t)
 		/* Turn off room illumination flag */
 		for (grid.y = 1; grid.y < c->height - 1; grid.y++) {
 			for (grid.x = 1; grid.x < c->width - 1; grid.x++) {
-				if (square_isfloor(c, grid))
-					sqinfo_off(square(c, grid)->info, SQUARE_ROOM);
-				else if (!square_isperm(c, grid) && !square_isfiery(c, grid))
+				sqinfo_off(square(c, grid)->info, SQUARE_ROOM);
+				if (!square_isperm(c, grid) && !square_isfiery(c, grid) &&
+					!square_isfloor(c, grid)) {
 					square_set_feat(c, grid, FEAT_PERM);
+				}
 			}
 		}
 
