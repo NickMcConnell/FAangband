@@ -1812,6 +1812,21 @@ int rd_chunks(void)
 			}
 			rd_byte(&tmp8u);
 			c->ghost->bones_selector = tmp8u;
+		} else if (c->name) {
+			struct level *lev = level_by_name(world, c->name);
+
+			if (lev) {
+				c->depth = lev->depth;
+			} else if (suffix(c->name, " known")) {
+				size_t offset = strlen(c->name) -
+					strlen(" known");
+				c->name[offset] = '\0';
+				lev = level_by_name(world, c->name);
+				if (lev) {
+					c->depth = lev->depth;
+				}
+				c->name[offset] = ' ';
+			}
 		}
 
 		chunk_list_add(c);
