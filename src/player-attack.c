@@ -1194,9 +1194,9 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 		PROJECT_THRU);
 
 	/* Calculate potential piercing */
-	if ((player->timed[TMD_POWERSHOT] || player_has(player, PF_PIERCE_SHOT)) &&
+	if ((p->timed[TMD_POWERSHOT] || player_has(p, PF_PIERCE_SHOT)) &&
 		tval_is_sharp_missile(obj)) {
-		pierce = player->state.ammo_mult;
+		pierce = p->state.ammo_mult;
 	}
 
 	/* Hack -- Handle stuff */
