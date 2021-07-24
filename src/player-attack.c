@@ -228,28 +228,6 @@ static int chance_of_missile_hit(const struct player *p,
 }
 
 /**
- * Determine the effect of terrain on a monster's defence.
- */
-static int terrain_armor_adjust(struct loc grid, int ac, bool melee)
-{
-	/* Monsters in rubble can take advantage of cover. 
-	 * Monsters in trees can take advantage of cover, except from players who
-	 * know nature lore. */
-	if (square_isprotect(cave, grid) &&
-		!(square_isorganic(cave, grid) &&
-		  (player_has(player, PF_WOODSMAN) || player_has(player, PF_ELVEN)))) {
-		ac += ac / (melee ? 7 : 5) + 5;
-	}
-
-	/* Monsters in water are vulnerable.  */
-	if (square_isexpose(cave, grid)) {
-		ac -= ac / (melee ? 5 : 4);
-	}
-
-	return ac;
-}
-
-/**
  * Determine if the player "hits" a monster.
  */
 bool test_hit(int chance, int ac, int vis) {
@@ -269,6 +247,28 @@ bool test_hit(int chance, int ac, int vis) {
 
 	/* Power competes against armor */
 	return randint0(chance) >= ac;
+}
+
+/**
+ * Determine the effect of terrain on a monster's defence.
+ */
+static int terrain_armor_adjust(struct loc grid, int ac, bool melee)
+{
+	/* Monsters in rubble can take advantage of cover.
+	 * Monsters in trees can take advantage of cover, except from players who
+	 * know nature lore. */
+	if (square_isprotect(cave, grid) &&
+		!(square_isorganic(cave, grid) &&
+		  (player_has(player, PF_WOODSMAN) || player_has(player, PF_ELVEN)))) {
+		ac += ac / (melee ? 7 : 5) + 5;
+	}
+
+	/* Monsters in water are vulnerable.  */
+	if (square_isexpose(cave, grid)) {
+		ac -= ac / (melee ? 5 : 4);
+	}
+
+	return ac;
 }
 
 /**
