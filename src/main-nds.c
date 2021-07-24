@@ -591,13 +591,13 @@ static void init_files(void)
 	char path[1024];
 
 	/* Prepare the path */
-	strcpy(path, "/angband/lib/");
+	strcpy(path, "/faangband/lib/");
 
 	/* Pass the paths to the game */
 	init_file_paths(path, path, path);
 
 	/* Set the savefile path to a well-known value */
-	strcpy(savefile, "/angband/lib/save/PLAYER");
+	strcpy(savefile, "/faangband/lib/save/PLAYER");
 
 	/* Create all the missing required directories */
 	create_needed_dirs();
