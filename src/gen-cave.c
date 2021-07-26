@@ -2898,9 +2898,11 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width)
  * \param depth is the chunk's native depth
  * \param height are the chunk's dimensions
  * \param width are the chunk's dimensions
+ * \param persistent If true, handle the connections for persistent levels.
  * \return a pointer to the generated chunk
  */
-static struct chunk *modified_chunk(int depth, int height, int width)
+static struct chunk *modified_chunk(int depth, int height, int width,
+		bool persistent)
 {
 	int i;
 	int by = 0, bx = 0, key, rarity;
@@ -2939,7 +2941,7 @@ static struct chunk *modified_chunk(int depth, int height, int width)
 	reset_entrance_data(c);
 
 	/* Build the special staircase rooms */
-	if (OPT(player, birth_levels_persist)) {
+	if (persistent) {
 		build_staircase_rooms(c, "Modified Generation");
 	}
 
@@ -3037,7 +3039,7 @@ struct chunk *modified_gen(struct player *p, int min_height, int min_width) {
 	dun->block_wid = dun->profile->block_size;
 
 	c = modified_chunk(p->depth, MIN(z_info->dungeon_hgt, y_size),
-		MIN(z_info->dungeon_wid, x_size));
+		MIN(z_info->dungeon_wid, x_size), OPT(p, birth_levels_persist));
 	c->depth = p->depth;
 
 	/* Generate permanent walls around the edge of the generated area */
@@ -3097,9 +3099,11 @@ struct chunk *modified_gen(struct player *p, int min_height, int min_width) {
  * \param depth is the chunk's native depth
  * \param height are the chunk's dimensions
  * \param width are the chunk's dimensions
+ * \param persistent If true, handle the connections for persistent levels.
  * \return a pointer to the generated chunk
  */
-static struct chunk *moria_chunk(int depth, int height, int width)
+static struct chunk *moria_chunk(int depth, int height, int width,
+		bool persistent)
 {
 	int i;
 	int by = 0, bx = 0, key, rarity;
@@ -3138,7 +3142,7 @@ static struct chunk *moria_chunk(int depth, int height, int width)
 	reset_entrance_data(c);
 
 	/* Build the special staircase rooms */
-	if (OPT(player, birth_levels_persist)) {
+	if (persistent) {
 		build_staircase_rooms(c, "Moria Generation");
 	}
 
@@ -3231,7 +3235,7 @@ struct chunk *moria_gen(struct player *p, int min_height, int min_width) {
 	dun->block_wid = dun->profile->block_size;
 
 	c = moria_chunk(p->depth, MIN(z_info->dungeon_hgt, y_size),
-		MIN(z_info->dungeon_wid, x_size));
+		MIN(z_info->dungeon_wid, x_size), OPT(p, birth_levels_persist));
 	c->depth = p->depth;
 
 	/* Generate permanent walls around the edge of the generated area */
@@ -3629,7 +3633,8 @@ struct chunk *lair_gen(struct player *p, int min_height, int min_width) {
 	 */
 	dun->join = transform_join_list(cached_join, y_size, normal_width,
 		0, normal_offset, 0, false);
-	normal = modified_chunk(p->depth, y_size, normal_width);
+	normal = modified_chunk(p->depth, y_size, normal_width,
+		OPT(p, birth_levels_persist));
 	/* Done with the transformed connector information. */
 	cave_connectors_free(dun->join);
 	dun->join = cached_join;
