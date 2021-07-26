@@ -1049,7 +1049,7 @@ void wr_dungeon(void)
 	wr_dungeon_aux(player->cave);
 
 	/* Compact the monsters */
-	compact_monsters(0);
+	compact_monsters(cave, 0);
 }
 
 
