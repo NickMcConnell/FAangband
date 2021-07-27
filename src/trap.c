@@ -1047,7 +1047,7 @@ static bool mtrap_menu(void)
  */
 bool modify_monster_trap(struct loc grid)
 {
-	if (player->timed[TMD_BLIND] || no_light()) {
+	if (player->timed[TMD_BLIND] || no_light(player)) {
 		msg("You can not see to modify your trap.");
 		return false;
 	}

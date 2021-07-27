@@ -340,7 +340,7 @@ void update_mon(struct monster *mon, struct chunk *c, bool full)
 	/* Compute distance, or just use the current one; update any heatmaps */
 	if (full) {
 		/* Target */
-		struct loc target = monster_target_loc(c, mon);
+		struct loc target = monster_target_loc(mon);
 		/* Distance components */
 		int dy = ABS(target.y - mon->grid.y);
 		int dx = ABS(target.x - mon->grid.x);

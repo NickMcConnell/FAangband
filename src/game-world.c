@@ -418,7 +418,7 @@ static void sun_banish(void)
 		some_gone = true;
 	}
 
-	process_monsters(cave, 0);
+	process_monsters(0);
 	if (some_gone) {
 		msg("Creatures of the darkness flee from the sunlight!");
 	}

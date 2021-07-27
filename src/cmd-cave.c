@@ -1073,7 +1073,7 @@ static void do_cmd_set_trap(struct loc grid)
 	/* Specialty ability Extra Trap */
 	if (player_has(player, PF_EXTRA_TRAP)) max_traps++;
 
-	if (player->timed[TMD_BLIND] || no_light()) {
+	if (player->timed[TMD_BLIND] || no_light(player)) {
 		msg("You can not see to set a trap.");
 		return;
 	}
