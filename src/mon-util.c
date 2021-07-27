@@ -1790,14 +1790,14 @@ bool monster_revert_shape(struct monster *mon)
  * is targeting) is; this may be different to mon->target.grid, which is a
  * short-term target
  */
-struct loc monster_target_loc(struct chunk *c, const struct monster *mon)
+struct loc monster_target_loc(const struct monster *mon)
 {
 	if (mon->target.midx == -1) {
 		/* Player (or decoy) */
-		return monster_is_decoyed(mon) ? cave_find_decoy(c) : player->grid;
+		return monster_is_decoyed(mon) ? cave_find_decoy(cave) : player->grid;
 	} else if (mon->target.midx > 0) {
 		/* Monster */
-		return cave_monster(c, mon->target.midx)->grid;
+		return cave_monster(cave, mon->target.midx)->grid;
 	} else if (!loc_eq(mon->target.grid, loc(0, 0))) {
 		return mon->target.grid;
 	}
