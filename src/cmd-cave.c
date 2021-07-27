@@ -333,7 +333,7 @@ static bool do_cmd_open_aux(struct loc grid)
 		i = player->state.skills[SKILL_DISARM_PHYS];
 
 		/* Penalize some conditions */
-		if (player->timed[TMD_BLIND] || no_light())
+		if (player->timed[TMD_BLIND] || no_light(player))
 			i = i / 10;
 		if (player->timed[TMD_CONFUSED] || player->timed[TMD_IMAGE])
 			i = i / 10;
@@ -859,7 +859,7 @@ static bool do_cmd_lock_door(struct loc grid)
 	i = player->state.skills[SKILL_DISARM_PHYS];
 
 	/* Penalize some conditions */
-	if (player->timed[TMD_BLIND] || no_light())
+	if (player->timed[TMD_BLIND] || no_light(player))
 		i = i / 10;
 	if (player->timed[TMD_CONFUSED] || player->timed[TMD_IMAGE])
 		i = i / 10;
@@ -946,7 +946,7 @@ static bool do_cmd_disarm_aux(struct loc grid)
 
 	/* Penalize some conditions */
 	if (player->timed[TMD_BLIND] ||
-			no_light() ||
+			no_light(player) ||
 			player->timed[TMD_CONFUSED] ||
 			player->timed[TMD_IMAGE])
 		skill = skill / 10;
