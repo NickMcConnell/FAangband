@@ -138,11 +138,14 @@ bool chunk_find(struct chunk *c)
 }
 
 /**
- * Find the saved chunk adjacent to the current player place
+ * Find the saved chunk adjacent to the given place
+ *
+ * \param place is the place to use.
+ * \param direction is the direction of adjacency.
  */
-struct chunk *chunk_find_adjacent(struct player *p, const char *direction)
+struct chunk *chunk_find_adjacent(int place, const char *direction)
 {
-	struct level *lev = &world->levels[p->place];
+	struct level *lev = &world->levels[place];
 
 	if (streq(direction, "north")) {
 		return chunk_find_name(lev->north);
@@ -338,6 +341,9 @@ int calc_default_transpose_weight(int height, int width)
  * are in their original positions.
  *
  * \param dest the chunk where the copy is going
+ * \param p is the player; if the player is in the chunk being copied, the
+ * player's position will be updated to be the player's location in the
+ * destination
  * \param source the chunk being copied
  * \param y0 transformation parameters  - see symmetry_transform()
  * \param x0 transformation parameters  - see symmetry_transform()
@@ -345,8 +351,8 @@ int calc_default_transpose_weight(int height, int width)
  * \param reflect transformation parameters  - see symmetry_transform()
  * \return success - fails if the copy would not fit in the destination chunk
  */
-bool chunk_copy(struct chunk *dest, struct chunk *source, int y0, int x0,
-				int rotate, bool reflect)
+bool chunk_copy(struct chunk *dest, struct player *p, struct chunk *source,
+		int y0, int x0, int rotate, bool reflect)
 {
 	int i, max_group_id = 0;
 	struct loc grid;
@@ -405,7 +411,7 @@ bool chunk_copy(struct chunk *dest, struct chunk *source, int y0, int x0,
 			/* Player */
 			if (square(source, grid)->mon == -1) {
 				dest->squares[dest_grid.y][dest_grid.x].mon = -1;
-				player->grid = dest_grid;
+				p->grid = dest_grid;
 			}
 		}
 	}

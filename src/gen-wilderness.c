@@ -738,7 +738,7 @@ static int populate(struct chunk *c, bool valley)
 	i = z_info->level_monster_min + randint1(8) + k;
 
 	/* Build the monster probability table. */
-	(void) get_mon_num(c->depth);
+	(void) get_mon_num(c->depth, c->depth);
 
 	/* Put some monsters in the dungeon */
 	for (j = i + k; j > 0; j--) {
@@ -748,7 +748,7 @@ static int populate(struct chunk *c, bool valley)
 			get_mon_num_prep(NULL);
 
 			/* Build the monster probability table. */
-			(void) get_mon_num(c->depth);
+			(void) get_mon_num(c->depth, c->depth);
 		}
 
 		/*
@@ -1386,7 +1386,7 @@ struct chunk *mtntop_gen(struct player *p, int height, int width)
 	k = c->depth;
 
 	/* Build the monster probability table. */
-	(void) get_mon_num(c->depth);
+	(void) get_mon_num(c->depth, c->depth);
 
 	/* Put some monsters in the dungeon */
 	for (j = k; j > 0; j--) {

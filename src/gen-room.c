@@ -1222,7 +1222,7 @@ static bool build_room_template(struct chunk *c, struct loc centre, int ymax,
 			case '8': {
 				/* Put something nice in this square
 				 * Object (80%) or Stairs (20%) */
-				if ((randint0(100) < 80) || OPT(player, birth_levels_persist)) {
+				if (randint0(100) < 80 || dun->persist) {
 					place_object(c, grid, c->depth, false, false,
 								 ORIGIN_SPECIAL, 0);
 				} else {
@@ -1524,11 +1524,12 @@ bool build_vault(struct chunk *c, struct loc centre, struct vault *v)
 			}
 				/* Stairs */
 			case '<': {
-				if (OPT(player, birth_levels_persist)) break;
+				if (dun->persist) break;
 				if (lev->up) {
 					place_stairs(c, grid, FEAT_LESS);
 				}
 				/* Place player only in themed level, and only once. */
+				/* Note incorrect use of player global here - NRM */
 				if ((player->themed_level) && (!placed)) {
 					player_place(c, player, grid);
 					placed = true;
@@ -1536,7 +1537,7 @@ bool build_vault(struct chunk *c, struct loc centre, struct vault *v)
 				break;
 			}
 			case '>': {
-				if (OPT(player, birth_levels_persist)) break;
+				if (dun->persist) break;
 				if (lev->down) {
 					place_stairs(c, grid, FEAT_MORE);
 				}
@@ -2580,10 +2581,11 @@ bool build_large(struct chunk *c, struct loc centre, int rating)
 		vault_monsters(c, centre, c->depth + 2, randint1(3) + 2);
 
 		/* Object (80%) or Stairs (20%) */
-		if ((randint0(100) < 80) || OPT(player, birth_levels_persist))
+		if (randint0(100) < 80 || dun->persist) {
 			place_object(c, centre, c->depth, false, false, ORIGIN_SPECIAL, 0);
-		else
+		} else {
 			place_random_stairs(c, centre);
+		}
 
 		/* Traps to protect the treasure */
 		vault_traps(c, centre, 4, 10, 2 + randint1(3));
@@ -2809,7 +2811,7 @@ bool build_nest(struct chunk *c, struct loc centre, int rating)
 	/* Pick some monster types */
 	for (i = 0; i < 64; i++) {
 		/* Get a (hard) monster type */
-		what[i] = get_mon_num(c->depth + 10);
+		what[i] = get_mon_num(c->depth + 10, c->depth);
 
 		/* Notice failure */
 		if (!what[i]) empty = true;
@@ -2935,7 +2937,7 @@ bool build_pit(struct chunk *c, struct loc centre, int rating)
 	/* Pick some monster types */
 	for (i = 0; i < 16; i++) {
 		/* Get a (hard) monster type */
-		what[i] = get_mon_num(c->depth + 10);
+		what[i] = get_mon_num(c->depth + 10, c->depth);
 
 		/* Notice failure */
 		if (!what[i]) empty = true;
