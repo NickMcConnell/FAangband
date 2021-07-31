@@ -324,10 +324,10 @@ bool quest_forbid_downstairs(int place)
  * This assumes that any exit from the quest level except upstairs is
  * blocked until the quest is complete.
  */
-static void build_quest_stairs(struct loc grid)
+static void build_quest_stairs(struct player *p, struct loc grid)
 {
 	struct loc new_grid = grid;
-	struct level *lev = &world->levels[player->place];
+	struct level *lev = &world->levels[p->place];
 	bool path_msg = false;
 
 	/* Downstairs */
@@ -353,7 +353,7 @@ static void build_quest_stairs(struct loc grid)
 		square_set_feat(cave, grid, FEAT_MORE);
 
 		/* Update the visuals */
-		player->upkeep->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
+		p->upkeep->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
 	}
 
 	/* Other directions */
@@ -443,9 +443,9 @@ bool quest_unique_monster_check(const struct monster_race *race)
 /**
  * Check if this (now dead) monster is a quest monster, and act appropriately
  */
-bool quest_monster_death_check(const struct monster *mon)
+bool quest_monster_death_check(struct player *p, const struct monster *mon)
 {
-	struct quest *quest = find_quest(player->place);
+	struct quest *quest = find_quest(p->place);
 
 	/* Simple checks */
 	if (!quest) return false;
@@ -459,17 +459,17 @@ bool quest_monster_death_check(const struct monster *mon)
 
 		/* Build magical stairs if needed */
 		if (place->block) {
-			build_quest_stairs(mon->grid);
+			build_quest_stairs(p, mon->grid);
 		}
 
 		/* Check specialties */
-		player->upkeep->update |= (PU_SPECIALTY);
+		p->upkeep->update |= (PU_SPECIALTY);
 	}
 
 	/* Game over... */
 	if ((quest->type == QUEST_FINAL) && quest->complete) {
-		player->total_winner = true;
-		player->upkeep->redraw |= (PR_TITLE);
+		p->total_winner = true;
+		p->upkeep->redraw |= (PR_TITLE);
 		msg("*** CONGRATULATIONS ***");
 		msg("You have won the game!");
 		msg("You may retire (commit suicide) when you are ready.");
@@ -481,9 +481,9 @@ bool quest_monster_death_check(const struct monster *mon)
 /**
  * Check if the player has arrived at a quest place
  */
-bool quest_place_check(void)
+bool quest_place_check(struct player *p)
 {
-	struct quest *quest = find_quest(player->place);
+	struct quest *quest = find_quest(p->place);
 	if (!quest) return false;
 	if (quest->type != QUEST_PLACE) return false;
 	quest->complete = true;
