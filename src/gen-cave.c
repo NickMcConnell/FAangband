@@ -1279,7 +1279,11 @@ struct chunk *classic_gen(struct player *p, int min_height, int min_width) {
 	alloc_objects(c, SET_CORR, TYP_TRAP, randint1(k)/5, c->depth, 0);
 
 	/* Determine the character location */
-	new_player_spot(c, p);
+	if (!new_player_spot(c, p)) {
+		wipe_mon_list(c, p);
+		cave_free(c);
+		return NULL;
+	}
 
 	/* Pick a base number of monsters */
 	i = z_info->level_monster_min + randint1(8) + k;
@@ -1520,7 +1524,10 @@ struct chunk *labyrinth_gen(struct player *p, int min_height, int min_width) {
 	if (!c) return NULL;
 
 	/* Determine the character location */
-	new_player_spot(c, p);
+	if (!new_player_spot(c, p)) {
+		cave_free(c);
+		return NULL;
+	}
 
 	/* Generate a single set of stairs up if necessary. */
 	if (!cave_find(c, &grid, square_isupstairs))
@@ -2157,7 +2164,10 @@ struct chunk *cavern_gen(struct player *p, int min_height, int min_width) {
 	alloc_objects(c, SET_CORR, TYP_TRAP, randint1(k), c->depth, 0);
 
 	/* Determine the character location */
-	new_player_spot(c, p);
+	if (!new_player_spot(c, p)) {
+		cave_free(c);
+		return NULL;
+	}
 
 	/* Put some monsters in the dungeon */
 	for (i = randint1(8) + k; i > 0; i--)
@@ -3056,7 +3066,11 @@ struct chunk *modified_gen(struct player *p, int min_height, int min_width) {
 	alloc_objects(c, SET_CORR, TYP_TRAP, randint1(k)/5, c->depth, 0);
 
 	/* Determine the character location */
-	new_player_spot(c, p);
+	if (!new_player_spot(c, p)) {
+		wipe_mon_list(c, p);
+		cave_free(c);
+		return NULL;
+	}
 
 	/* Pick a base number of monsters */
 	i = z_info->level_monster_min + randint1(8) + k;
@@ -3251,7 +3265,11 @@ struct chunk *moria_gen(struct player *p, int min_height, int min_width) {
 	alloc_objects(c, SET_CORR, TYP_TRAP, randint1(k)/5, c->depth, 0);
 
 	/* Determine the character location */
-	new_player_spot(c, p);
+	if (!new_player_spot(c, p)) {
+		wipe_mon_list(c, p);
+		cave_free(c);
+		return NULL;
+	}
 
 	/* Pick a base number of monsters */
 	i = z_info->level_monster_min + randint1(8) + k;
@@ -3535,7 +3553,11 @@ struct chunk *hard_centre_gen(struct player *p, int min_height, int min_width)
 	alloc_objects(c, SET_CORR, TYP_TRAP, randint1(k), c->depth, 0);
 
 	/* Determine the character location */
-	new_player_spot(c, p);
+	if (!new_player_spot(c, p)) {
+		wipe_mon_list(c, p);
+		cave_free(c);
+		return NULL;
+	}
 
 	/* Put some monsters in the dungeon */
 	for (i = randint1(8) + k; i > 0; i--)
@@ -3650,7 +3672,12 @@ struct chunk *lair_gen(struct player *p, int min_height, int min_width) {
 	k = MAX(MIN(p->depth / 3, 10), 2) / 2;
 
 	/* Put the character in the normal half */
-	new_player_spot(normal, p);
+	if (!new_player_spot(normal, p)) {
+		cave_free(lair);
+		wipe_mon_list(normal, p);
+		cave_free(normal);
+		return NULL;
+	}
 
 	/* Pick a smallish number of monsters for the normal half */
 	i = randint1(4) + k;
@@ -3834,7 +3861,12 @@ struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width) {
 	k = MAX(MIN(p->depth / 3, 10), 2) / 2;
 
 	/* Put the character in the arrival cavern */
-	new_player_spot((p->upkeep->create_stair == FEAT_MORE) ? right : left, p);
+	if (!new_player_spot((p->upkeep->create_stair == FEAT_MORE) ? right : left, p)) {
+		cave_free(gauntlet);
+		cave_free(left);
+		cave_free(right);
+		return NULL;
+	}
 
 	/* Pick some monsters for the left cavern */
 	i = z_info->level_monster_min + randint1(4) + k;

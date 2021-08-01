@@ -1809,7 +1809,7 @@ bool build_vault(struct chunk *c, struct loc centre, struct vault *v)
 	/* Ensure that the player is always placed in a themed level. */
 	if (player->themed_level && !placed) {
 		if (lev->topography == TOP_CAVE) {
-			new_player_spot(c, player);
+			if (!new_player_spot(c, player)) return false;
 		} else {
 			player_place(c, player, panic);
 		}
