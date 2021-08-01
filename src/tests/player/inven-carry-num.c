@@ -168,7 +168,7 @@ static bool fill_pack_quiver(struct carry_num_state *cns, int n_pack,
 			object_copy(curr->known, cns->torch->known);
 		}
 		inven_carry(cns->p, curr, false, false);
-		calc_inventory(cns->p->upkeep, cns->p->gear, cns->p->body);
+		calc_inventory(cns->p);
 		if (! object_is_carried(cns->p, curr) ||
 				object_is_equipped(cns->p->body, curr)) {
 			return false;
@@ -195,7 +195,7 @@ static bool fill_pack_quiver(struct carry_num_state *cns, int n_pack,
 			curr->known->number = n;
 		}
 		inven_carry(cns->p, curr, false, false);
-		calc_inventory(cns->p->upkeep, cns->p->gear, cns->p->body);
+		calc_inventory(cns->p);
 		if (! object_is_carried(cns->p, curr) ||
 				object_is_equipped(cns->p->body, curr)) {
 			return false;
@@ -224,7 +224,7 @@ static bool fill_pack_quiver(struct carry_num_state *cns, int n_pack,
 			curr->known->number = n;
 		}
 		inven_carry(cns->p, curr, false, false);
-		calc_inventory(cns->p->upkeep, cns->p->gear, cns->p->body);
+		calc_inventory(cns->p);
 		if (! object_is_carried(cns->p, curr) ||
 				object_is_equipped(cns->p->body, curr)) {
 			return false;
@@ -265,7 +265,7 @@ static bool fill_pack_quiver(struct carry_num_state *cns, int n_pack,
 			curr->known->note = curr->note;
 		}
 		inven_carry(cns->p, curr, false, false);
-		calc_inventory(cns->p->upkeep, cns->p->gear, cns->p->body);
+		calc_inventory(cns->p);
 		if (! object_is_carried(cns->p, curr) ||
 				object_is_equipped(cns->p->body, curr)) {
 			return false;

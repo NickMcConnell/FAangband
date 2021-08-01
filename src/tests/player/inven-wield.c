@@ -133,7 +133,7 @@ static bool fill_pack(void) {
 		if (!obj) return false;
 		/* Inscribe it so it doesn't stack. */
 		obj->note = quark_add(format("%d", slots_used));
-		gear_insert_end(obj);
+		gear_insert_end(player, obj);
 		if (!object_is_carried(player, obj)) return false;
 		player->upkeep->total_weight += obj->weight;
 		++slots_used;
@@ -222,7 +222,7 @@ static int test_inven_wield_pack_single_empty(void *state) {
 	require(empty_gear(player));
 	obj = setup_object(TV_CLOAK, 1, 1);
 	require(obj != NULL);
-	gear_insert_end(obj);
+	gear_insert_end(player, obj);
 	require(object_is_carried(player, obj));
 	player->upkeep->total_weight += obj->weight;
 	old_weight = player->upkeep->total_weight;
@@ -249,7 +249,7 @@ static int test_inven_wield_pack_stack_empty(void *state) {
 	require(empty_gear(player));
 	obj = setup_object(TV_LIGHT, 1, 3);
 	require(obj != NULL);
-	gear_insert_end(obj);
+	gear_insert_end(player, obj);
 	require(object_is_carried(player, obj));
 	player->upkeep->total_weight += obj->weight * obj->number;
 	old_weight = player->upkeep->total_weight;
@@ -281,14 +281,14 @@ static int test_inven_wield_pack_single_filled(void *state) {
 	require(empty_gear(player));
 	obj1 = setup_object(TV_SHIELD, 1, 1);
 	require(obj1 != NULL);
-	gear_insert_end(obj1);
+	gear_insert_end(player, obj1);
 	require(object_is_carried(player, obj1));
 	player->upkeep->total_weight += obj1->weight;
 	slot = wield_slot(obj1);
 	inven_wield(obj1, slot);
 	obj2 = setup_object(TV_SHIELD, 2, 1);
 	require(obj2 != NULL);
-	gear_insert_end(obj2);
+	gear_insert_end(player, obj2);
 	require(object_is_carried(player, obj2));
 	player->upkeep->total_weight += obj2->weight;
 	old_weight = player->upkeep->total_weight;
@@ -317,14 +317,14 @@ static int test_inven_wield_pack_stack_filled(void *state) {
 	require(empty_gear(player));
 	obj1 = setup_object(TV_GLOVES, 1, 1);
 	require(obj1 != NULL);
-	gear_insert_end(obj1);
+	gear_insert_end(player, obj1);
 	require(object_is_carried(player, obj1));
 	player->upkeep->total_weight += obj1->weight;
 	slot = wield_slot(obj1);
 	inven_wield(obj1, slot);
 	obj2 = setup_object(TV_GLOVES, 2, 2);
 	require(obj2 != NULL);
-	gear_insert_end(obj2);
+	gear_insert_end(player, obj2);
 	require(object_is_carried(player, obj2));
 	player->upkeep->total_weight += obj2->weight * obj2->number;
 	old_weight = player->upkeep->total_weight;
@@ -418,7 +418,7 @@ static int test_inven_wield_floor_single_filled(void *state) {
 	require(empty_floor(cave, player->grid));
 	obj1 = setup_object(TV_AMULET, 1, 1);
 	require(obj1 != NULL);
-	gear_insert_end(obj1);
+	gear_insert_end(player, obj1);
 	require(object_is_carried(player, obj1));
 	player->upkeep->total_weight += obj1->weight;
 	slot = wield_slot(obj1);
@@ -456,7 +456,7 @@ static int test_inven_wield_floor_stack_filled(void *state) {
 	require(empty_floor(cave, player->grid));
 	obj1 = setup_object(TV_DIGGING, 1, 1);
 	require(obj1 != NULL);
-	gear_insert_end(obj1);
+	gear_insert_end(player, obj1);
 	require(object_is_carried(player, obj1));
 	player->upkeep->total_weight += obj1->weight;
 	slot = wield_slot(obj1);
@@ -498,14 +498,14 @@ static int test_inven_wield_pack_full_no_overflow(void *state) {
 	require(empty_floor(cave, player->grid));
 	obj1 = setup_object(TV_SOFT_ARMOR, 1, 1);
 	require(obj1 != NULL);
-	gear_insert_end(obj1);
+	gear_insert_end(player, obj1);
 	require(object_is_carried(player, obj1));
 	player->upkeep->total_weight += obj1->weight;
 	slot = wield_slot(obj1);
 	inven_wield(obj1, slot);
 	obj2 = setup_object(TV_HARD_ARMOR, 1, 1);
 	require(obj2 != NULL);
-	gear_insert_end(obj2);
+	gear_insert_end(player, obj2);
 	require(object_is_carried(player, obj2));
 	player->upkeep->total_weight += obj2->weight;
 	require(fill_pack());
@@ -538,14 +538,14 @@ static int test_inven_wield_pack_full_overflow(void *state) {
 	require(empty_floor(cave, player->grid));
 	obj1 = setup_object(TV_HELM, 1, 1);
 	require(obj1 != NULL);
-	gear_insert_end(obj1);
+	gear_insert_end(player, obj1);
 	require(object_is_carried(player, obj1));
 	player->upkeep->total_weight += obj1->weight;
 	slot = wield_slot(obj1);
 	inven_wield(obj1, slot);
 	obj2 = setup_object(TV_HELM, 2, 3);
 	require(obj2 != NULL);
-	gear_insert_end(obj2);
+	gear_insert_end(player, obj2);
 	require(object_is_carried(player, obj2));
 	player->upkeep->total_weight += obj2->weight * obj2->number;
 	require(fill_pack());
@@ -583,7 +583,7 @@ static int test_inven_wield_floor_full_overflow(void *state) {
 	require(empty_floor(cave, player->grid));
 	obj1 = setup_object(TV_BOW, 1, 1);
 	require(obj1 != NULL);
-	gear_insert_end(obj1);
+	gear_insert_end(player, obj1);
 	require(object_is_carried(player, obj1));
 	player->upkeep->total_weight += obj1->weight;
 	slot = wield_slot(obj1);
@@ -620,7 +620,7 @@ static int test_inven_wield_ring_none(void *state) {
 	require(empty_gear(player));
 	obj = setup_object(TV_RING, 1, 1);
 	require(obj != NULL);
-	gear_insert_end(obj);
+	gear_insert_end(player, obj);
 	require(object_is_carried(player, obj));
 	player->upkeep->total_weight += obj->weight;
 	old_weight = player->upkeep->total_weight;
@@ -647,7 +647,7 @@ static int test_inven_wield_ring_one(void *state) {
 	require(empty_gear(player));
 	obj1 = setup_object(TV_RING, 1, 1);
 	require(obj1 != NULL);
-	gear_insert_end(obj1);
+	gear_insert_end(player, obj1);
 	require(object_is_carried(player, obj1));
 	player->upkeep->total_weight += obj1->weight;
 	slot1 = wield_slot(obj1);
@@ -655,7 +655,7 @@ static int test_inven_wield_ring_one(void *state) {
 	inven_wield(obj1, slot1);
 	obj2 = setup_object(TV_RING, 2, 1);
 	require(obj2 != NULL);
-	gear_insert_end(obj2);
+	gear_insert_end(player, obj2);
 	require(object_is_carried(player, obj2));
 	player->upkeep->total_weight += obj2->weight;
 	old_weight = player->upkeep->total_weight;
@@ -689,7 +689,7 @@ static int test_inven_wield_ring_two(void *state) {
 	require(empty_gear(player));
 	obj1 = setup_object(TV_RING, 1, 1);
 	require(obj1 != NULL);
-	gear_insert_end(obj1);
+	gear_insert_end(player, obj1);
 	require(object_is_carried(player, obj1));
 	player->upkeep->total_weight += obj1->weight;
 	slot1 = wield_slot(obj1);
@@ -697,7 +697,7 @@ static int test_inven_wield_ring_two(void *state) {
 	inven_wield(obj1, slot1);
 	obj2 = setup_object(TV_RING, 2, 1);
 	require(obj2 != NULL);
-	gear_insert_end(obj2);
+	gear_insert_end(player, obj2);
 	require(object_is_carried(player, obj2));
 	player->upkeep->total_weight += obj2->weight;
 	slot2 = wield_slot(obj2);
@@ -706,7 +706,7 @@ static int test_inven_wield_ring_two(void *state) {
 	inven_wield(obj2, slot2);
 	obj3 = setup_object(TV_RING, 3, 1);
 	require(obj3 != NULL);
-	gear_insert_end(obj3);
+	gear_insert_end(player, obj3);
 	require(object_is_carried(player, obj3));
 	player->upkeep->total_weight += obj3->weight;
 	old_weight = player->upkeep->total_weight;

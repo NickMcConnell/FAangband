@@ -115,7 +115,7 @@ static bool populate_gear(const struct in_slot_desc *slots) {
 		if (slots->known && ! object_flavor_is_aware(obj)) {
 			object_learn_on_use(player, obj);
 		}
-		gear_insert_end(obj);
+		gear_insert_end(player, obj);
 		if (!object_is_carried(player, obj)) {
 			return false;
 		}
@@ -246,7 +246,7 @@ static bool verify_stability(struct player *p) {
 	for (i = 0; i < z_info->quiver_size; ++i) {
 		old_quiver[i] = p->upkeep->quiver[i];
 	}
-	calc_inventory(p->upkeep, p->gear, p->body);
+	calc_inventory(p);
 	for (i = 0; i < z_info->pack_size; ++i) {
 		if (old_pack[i] != p->upkeep->inven[i]) {
 			result = false;
@@ -266,7 +266,7 @@ static int test_calc_inventory_empty(void *state) {
 	struct out_slot_desc empty = { -1, -1, -1 };
 
 	require(flush_gear());
-	calc_inventory(player->upkeep, player->gear, player->body);
+	calc_inventory(player);
 	require(verify_pack(player, &empty, 0));
 	require(verify_quiver(player, &empty));
 	require(verify_stability(player));
@@ -289,7 +289,7 @@ static int test_calc_inventory_only_equipped(void *state) {
 
 	require(flush_gear());
 	require(populate_gear(only_equipped_case.gear_in));
-	calc_inventory(player->upkeep, player->gear, player->body);
+	calc_inventory(player);
 	require(verify_pack(player, only_equipped_case.pack_out, 0));
 	require(verify_quiver(player, only_equipped_case.quiv_out));
 	require(verify_stability(player));
@@ -333,7 +333,7 @@ static int test_calc_inventory_only_pack(void *state) {
 
 	require(flush_gear());
 	require(populate_gear(only_pack_case.gear_in));
-	calc_inventory(player->upkeep, player->gear, player->body);
+	calc_inventory(player);
 	require(verify_pack(player, only_pack_case.pack_out, 0));
 	require(verify_quiver(player, only_pack_case.quiv_out));
 	require(verify_stability(player));
@@ -383,7 +383,7 @@ static int test_calc_inventory_only_quiver(void *state) {
 		}
 		obj = obj->next;
 	}
-	calc_inventory(player->upkeep, player->gear, player->body);
+	calc_inventory(player);
 	require(verify_pack(player, only_quiver_case.pack_out,
 		(quiver_size + z_info->quiver_slot_size - 1) /
 		z_info->quiver_slot_size));
@@ -468,7 +468,7 @@ static int test_calc_inventory_equipped_pack_quiver(void *state) {
 		}
 		obj = obj->next;
 	}
-	calc_inventory(player->upkeep, player->gear, player->body);
+	calc_inventory(player);
 	require(verify_pack(player, this_test_case.pack_out,
 		(quiver_size + z_info->quiver_slot_size - 1) /
 		z_info->quiver_slot_size));
@@ -531,7 +531,7 @@ static int test_calc_inventory_oversubscribed_quiver(void *state) {
 	}
 	/* Adjust for the ones that will end up in the pack. */
 	quiver_size -= 57;
-	calc_inventory(player->upkeep, player->gear, player->body);
+	calc_inventory(player);
 	require(verify_pack(player, this_test_case.pack_out,
 		(quiver_size + z_info->quiver_slot_size - 1) /
 		z_info->quiver_slot_size));
@@ -596,7 +596,7 @@ static int test_calc_inventory_oversubscribed_quiver_slot(void *state) {
 		++i;
 		obj = obj->next;
 	}
-	calc_inventory(player->upkeep, player->gear, player->body);
+	calc_inventory(player);
 	require(verify_pack(player, this_test_case.pack_out,
 		(quiver_size + z_info->quiver_slot_size - 1) /
 		z_info->quiver_slot_size));
@@ -626,7 +626,7 @@ static int test_calc_inventory_quiver_split_pile(void *state) {
 	require(populate_gear(this_test_case.gear_in));
 	/* Inscribe the flasks so they want to go to the quiver. */
 	player->gear->note = quark_add("@v1");
-	calc_inventory(player->upkeep, player->gear, player->body);
+	calc_inventory(player);
 	require(verify_pack(player, this_test_case.pack_out, 1));
 	require(verify_quiver(player, this_test_case.quiv_out));
 	require(verify_stability(player));
