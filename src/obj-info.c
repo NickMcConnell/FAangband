@@ -722,8 +722,8 @@ static bool describe_blows(textblock *tb, const struct object *obj)
  * the actual ego may have different properties.
  */
 static bool obj_known_damage(const struct object *obj, int *normal_damage,
-								 int *brand_damage, int *slay_damage,
-							   bool *nonweap_slay, bool throw)
+							 int *brand_damage, int *slay_damage,
+							 bool *nonweap_slay, bool throw)
 {
 	int i;
 	int dice, sides, die_average, total_dam;
