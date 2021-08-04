@@ -628,13 +628,13 @@ static int melee_damage(struct player *p, struct monster *mon,
 						struct object *obj, int b, int s, int sleeping_bonus,
 						u32b *msg_type, bool *armsman)
 {
-	int dice = obj->dd;
+	int dice = (obj) ? obj->dd : 1;
 	int sides, dmg, add = 0;
 	bool extra;
 	int multiplier = 10;
 
 	/* Get the average value of a single damage die. (x10) */
-	int die_average = (10 * (obj->ds + 1)) / 2;
+	int die_average = (10 * (((obj) ? obj->ds : 1) + 1)) / 2;
 
 	/* Get the multiplier for slays and brands. */
 	if (s) {
@@ -660,7 +660,8 @@ static int melee_damage(struct player *p, struct monster *mon,
 	add = multiplier - 10;
 
 	/* Apply deadliness to average. (100x inflation) */
-	apply_deadliness(&die_average, MIN(obj->to_d + p->state.to_d, 150));
+	apply_deadliness(&die_average,
+		MIN(((obj) ? obj->to_d : 0) + p->state.to_d, 150));
 
 	/* Calculate the actual number of sides to each die. */
 	sides = (2 * die_average) - 10000;
@@ -842,15 +843,14 @@ bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 
 	int ac = terrain_armor_adjust(grid, mon->race->ac, true);
 
-	/* Default to punching for one damage */
 	char verb[20];
-	int dmg = 1;
 	u32b msg_type = MSG_HIT;
 	char dmg_text[20];
+	int j, b, s, weight, dmg;
 
 	my_strcpy(dmg_text, "", sizeof(dmg_text));
 
-	/* Default to punching for one damage */
+	/* Default to punching */
 	my_strcpy(verb, "punch", sizeof(verb));
 
 	/* Extract monster name (or "it") */
@@ -900,40 +900,44 @@ bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 		return false;
 	}
 
-	/* Handle normal weapon */
 	if (obj) {
-		int j;
-		int b = 0, s = 0;
-		int weight = obj->weight;
-
+		/* Handle normal weapon */
+		weight = obj->weight;
 		my_strcpy(verb, "hit", sizeof(verb));
+	} else {
+		weight = 0;
+	}
 
-		/* Best attack from all slays or brands on all non-launcher equipment */
-		for (j = 2; j < p->body.count; j++) {
-			struct object *obj_local = slot_object(p, j);
-			if (obj_local)
-				improve_attack_modifier(p, obj_local, mon,
-					&b, &s, verb, false);
+	/* Best attack from all slays or brands on all non-launcher equipment */
+	b = 0;
+	s = 0;
+	for (j = 2; j < p->body.count; j++) {
+		struct object *obj_local = slot_object(p, j);
+		if (obj_local) {
+			improve_attack_modifier(p, obj_local, mon, &b, &s, verb, false);
 		}
+	}
 
-		/* Get the best attack from all slays or brands - weapon or temporary */
+	/* Get the best attack from all slays or brands - weapon or temporary */
+	if (obj) {
 		improve_attack_modifier(p, obj, mon, &b, &s, verb, false);
-		improve_attack_modifier(p, NULL, mon, &b, &s, verb, false);
+	}
+	improve_attack_modifier(p, NULL, mon, &b, &s, verb, false);
 
+	if (player_has(p, PF_UNARMED_COMBAT) || player_has(p, PF_MARTIAL_ARTS)) {
+		dmg = unarmed_damage(p, mon->race, chance + sleeping_bonus,
+							 &unarmed_blow_idx, &power_strike, &confusing_blow);
+	} else {
 		/* Get the damage */
 		dmg = melee_damage(p, mon, obj, b, s, sleeping_bonus, &msg_type,
 						   &armsman);
+	}
 
-		/* Splash damage and earthquakes */
-		splash = (weight * dmg) / 100;
-		if (player_of_has(p, OF_IMPACT) && dmg > 50) {
-			do_quake = true;
-			equip_learn_flag(p, OF_IMPACT);
-		}
-	} else if (player_has(p, PF_UNARMED_COMBAT)	||
-			   player_has(p, PF_MARTIAL_ARTS)) {
-		dmg = unarmed_damage(p, mon->race, chance + sleeping_bonus,
-							 &unarmed_blow_idx, &power_strike, &confusing_blow);
+	/* Splash damage and earthquakes */
+	splash = (weight * dmg) / 100;
+	if (player_of_has(p, OF_IMPACT) && dmg > 50) {
+		do_quake = true;
+		equip_learn_flag(p, OF_IMPACT);
 	}
 
 	/* Learn by use */
