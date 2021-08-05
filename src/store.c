@@ -1967,7 +1967,7 @@ void do_cmd_buy(struct command *cmd)
 	bought->known = known_obj;
 
 	/* Learn flavor, any effect and all the runes */
-	object_flavor_aware(bought);
+	object_flavor_aware(player, bought);
 	bought->known->effect = bought->effect;
 	while (!object_fully_known(bought)) {
 		object_learn_unknown_rune(player, bought, true);
@@ -2166,7 +2166,7 @@ void do_cmd_sell(struct command *cmd)
 	object_wipe(&dummy_item);
 
 	/* Know flavor of consumables */
-	object_flavor_aware(obj);
+	object_flavor_aware(player, obj);
 	obj->known->effect = obj->effect;
 	while (!object_fully_known(obj)) {
 		object_learn_unknown_rune(player, obj, true);
