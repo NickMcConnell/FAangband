@@ -1163,6 +1163,15 @@ bool square_isinemptysquare(struct chunk *c, struct loc grid)
 	return true;
 }
 
+/**
+ * Checks if a square is appropriate for placing a summoned creature.
+ */
+bool square_allows_summon(struct chunk *c, struct loc grid)
+{
+	return square_isempty(c, grid) && !square_iswarded(c, grid)
+		&& !square_isdecoyed(c, grid);
+}
+
 
 
 /**

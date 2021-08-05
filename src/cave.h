@@ -443,6 +443,7 @@ bool square_isbelievedwall(struct chunk *c, struct loc grid);
 bool square_suits_stairs_well(struct chunk *c, struct loc grid);
 bool square_suits_stairs_ok(struct chunk *c, struct loc grid);
 bool square_isinemptysquare(struct chunk *c, struct loc grid);
+bool square_allows_summon(struct chunk *c, struct loc grid);
 
 
 const struct square *square(struct chunk *c, struct loc grid);
@@ -517,6 +518,8 @@ void delist_object(struct chunk *c, struct object *obj);
 void object_lists_check_integrity(struct chunk *c, struct chunk *c_k);
 void scatter(struct chunk *c, struct loc *place, struct loc grid, int d,
 			 bool need_los);
+int scatter_ext(struct chunk *c, struct loc *places, int n, struct loc grid,
+		int d, bool need_los, bool (*pred)(struct chunk *, struct loc));
 
 struct monster *cave_monster(struct chunk *c, int idx);
 int cave_monster_max(struct chunk *c);
