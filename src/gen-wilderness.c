@@ -941,6 +941,7 @@ struct chunk *plain_gen(struct player *p, int height, int width)
     /* Make the level */
     struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
+	c->place = place;
 
 	/* Start with grass */
 	for (grid.y = 0; grid.y < c->height; grid.y++) {
@@ -1024,6 +1025,7 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 	/* Make the level */
 	struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
+	c->place = place;
 
 	/* Start with grass (lets paths work -NRM-) */
 	for (grid.y = 0; grid.y < c->height; grid.y++) {
@@ -1215,6 +1217,7 @@ struct chunk *mtntop_gen(struct player *p, int height, int width)
 	/* Make the level */
 	struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
+	c->place = p->place;
 
 	/* Start with void */
 	for (grid.y = 0; grid.y < c->height; grid.y++) {
@@ -1426,6 +1429,7 @@ struct chunk *forest_gen(struct player *p, int height, int width)
     /* Make the level */
     struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
+	c->place = place;
 
 	/* Start with grass so paths work */
 	for (grid.y = 0; grid.y < c->height; grid.y++) {
@@ -1558,6 +1562,7 @@ struct chunk *swamp_gen(struct player *p, int height, int width)
     /* Make the level */
     struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
+	c->place = place;
 
 	/* Start with grass */
 	for (grid.y = 0; grid.y < c->height; grid.y++) {
@@ -1640,6 +1645,7 @@ struct chunk *desert_gen(struct player *p, int height, int width)
     /* Make the level */
     struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
+	c->place = place;
 
 	/* Start with grass so paths work */
 	for (grid.y = 0; grid.y < c->height; grid.y++) {
@@ -1788,6 +1794,7 @@ struct chunk *river_gen(struct player *p, int height, int width)
     /* Make the level */
     struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
+	c->place = place;
 	y1 = c->height / 2;
 
 	/* Start with grass */
@@ -1952,6 +1959,7 @@ struct chunk *valley_gen(struct player *p, int height, int width)
     /* Make the level */
     struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
+	c->place = p->place;
 
 	/* Start with trees */
 	for (grid.y = 0; grid.y < c->height; grid.y++) {

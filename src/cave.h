@@ -193,6 +193,7 @@ struct chunk {
 	char *name;
 	s32b turn;
 	int depth;
+	int place;
 
 	byte feeling;
 	u32b obj_rating;

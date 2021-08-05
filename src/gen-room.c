@@ -1380,6 +1380,8 @@ static bool build_room_template_type(struct chunk *c, struct loc centre,
  * \param centre the room centre; out of chunk centre invokes find_space()
  * \param v pointer to the vault template
  * \return success
+ *
+ * Note slightly incorrect use of player global for themed levels
  */
 bool build_vault(struct chunk *c, struct loc centre, struct vault *v)
 {
@@ -1390,7 +1392,7 @@ bool build_vault(struct chunk *c, struct loc centre, struct vault *v)
 	char racial_symbol[30] = "";
 	bool icky;
 	bool placed = false;
-	struct level *lev = &world->levels[player->place];
+	struct level *lev = &world->levels[c->place];
 	struct loc panic = loc(0, 0);
 	int rotate, thgt, twid;
 	bool reflect;
@@ -1529,7 +1531,6 @@ bool build_vault(struct chunk *c, struct loc centre, struct vault *v)
 					place_stairs(c, grid, FEAT_LESS);
 				}
 				/* Place player only in themed level, and only once. */
-				/* Note incorrect use of player global here - NRM */
 				if ((player->themed_level) && (!placed)) {
 					player_place(c, player, grid);
 					placed = true;
@@ -1550,28 +1551,28 @@ bool build_vault(struct chunk *c, struct loc centre, struct vault *v)
 				/* Work out which direction */
 				if ((grid.y == 1) && lev->north) {
 					adj = level_by_name(world, lev->north);
-					if (adj->depth > player->depth) {
+					if (adj->depth > c->depth) {
 						square_set_feat(c, grid, FEAT_MORE_NORTH);
 					} else {
 						square_set_feat(c, grid, FEAT_LESS_NORTH);
 					}
 				} else if ((grid.x == 1) && lev->west) {
 					adj = level_by_name(world, lev->west);
-					if (adj->depth > player->depth) {
+					if (adj->depth > c->depth) {
 						square_set_feat(c, grid, FEAT_MORE_WEST);
 					} else {
 						square_set_feat(c, grid, FEAT_LESS_WEST);
 					}
 				} else if ((grid.y == c->height - 2) && lev->south) {
 					adj = level_by_name(world, lev->south);
-					if (adj->depth > player->depth) {
+					if (adj->depth > c->depth) {
 						square_set_feat(c, grid, FEAT_MORE_SOUTH);
 					} else {
 						square_set_feat(c, grid, FEAT_LESS_SOUTH);
 					}
 				} else if ((grid.x == c->width - 2) && lev->east) {
 					adj = level_by_name(world, lev->east);
-					if (adj->depth > player->depth) {
+					if (adj->depth > c->depth) {
 						square_set_feat(c, grid, FEAT_MORE_EAST);
 					} else {
 						square_set_feat(c, grid, FEAT_LESS_EAST);

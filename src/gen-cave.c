@@ -1150,6 +1150,7 @@ struct chunk *classic_gen(struct player *p, int min_height, int min_width) {
 	dun->block_wid = dun->profile->block_size;
 	c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
+	c->place = p->place;
 	ROOM_LOG("height=%d  width=%d  nrooms=%d", c->height, c->width, num_rooms);
 
 	/* Fill cave area with basic granite */
@@ -1522,6 +1523,7 @@ struct chunk *labyrinth_gen(struct player *p, int min_height, int min_width) {
 	/* Generate the actual labyrinth */
 	c = labyrinth_chunk(p->depth, h, w, lit, soft);
 	if (!c) return NULL;
+	c->place = p->place;
 
 	/* Determine the character location */
 	if (!new_player_spot(c, p)) {
@@ -2144,6 +2146,7 @@ struct chunk *cavern_gen(struct player *p, int min_height, int min_width) {
 	/* Try to build the cavern, fail gracefully */
 	c = cavern_chunk(p->depth, h, w, dun->join);
 	if (!c) return NULL;
+	c->place = p->place;
 
 	/* Surround the level with perma-rock */
 	draw_rectangle(c, 0, 0, h - 1, w - 1, FEAT_PERM, SQUARE_NONE, true);
@@ -2809,6 +2812,7 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width)
 	/* First time */
 	if (!c_old) {
 		c_new->depth = p->depth;
+		c_new->place = p->place;
 
 		/* Build stuff */
 		town_gen_layout(c_new, p, town);
@@ -2817,6 +2821,7 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width)
 
 		/* Copy from the chunk list, remove the old one */
 		c_new->depth = c_old->depth;
+		c_new->place = p->place;
 		if (!chunk_copy(c_new, p, c_old, 0, 0, 0, 0))
 			quit_fmt("chunk_copy() level bounds failed!");
 		chunk_list_remove(name);
@@ -3040,6 +3045,7 @@ struct chunk *modified_gen(struct player *p, int min_height, int min_width) {
 
 	c = modified_chunk(p->depth, MIN(z_info->dungeon_hgt, y_size),
 		MIN(z_info->dungeon_wid, x_size), dun->persist);
+	c->place = p->place;
 
 	/* Generate permanent walls around the edge of the generated area */
 	draw_rectangle(c, 0, 0, c->height - 1, c->width - 1,
@@ -3239,6 +3245,7 @@ struct chunk *moria_gen(struct player *p, int min_height, int min_width) {
 
 	c = moria_chunk(p->depth, MIN(z_info->dungeon_hgt, y_size),
 		MIN(z_info->dungeon_wid, x_size), dun->persist);
+	c->place = p->place;
 
 	/* Generate permanent walls around the edge of the generated area */
 	draw_rectangle(c, 0, 0, c->height - 1, c->width - 1,
@@ -3315,6 +3322,7 @@ static struct chunk *vault_chunk(struct player *p)
 	/* Make the chunk */
 	c = cave_new(v->hgt, v->wid);
 	c->depth = p->depth;
+	c->place = p->place;
 
 	/* Fill with granite; the vault will override for the grids it sets. */
 	fill_rectangle(c, 0, 0, v->hgt - 1, v->wid - 1, FEAT_GRANITE,
@@ -3490,6 +3498,7 @@ struct chunk *hard_centre_gen(struct player *p, int min_height, int min_width)
 	/* Make a cave to copy them into, and find a floor square in each cavern */
 	c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
+	c->place = p->place;
 
 	/* Left */
 	chunk_copy(c, p, left_cavern, 0, 0, 0, false);
@@ -3727,6 +3736,7 @@ struct chunk *lair_gen(struct player *p, int min_height, int min_width) {
 	/* Make the level */
 	c = cave_new(y_size, x_size);
 	c->depth = p->depth;
+	c->place = p->place;
 	chunk_copy(c, p, normal, 0, normal_offset, 0, false);
 	chunk_copy(c, p, lair, 0, lair_offset, 0, false);
 
@@ -3916,6 +3926,7 @@ struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width) {
 	/* Make the level */
 	c = cave_new(y_size, left->width + gauntlet->width + right->width);
 	c->depth = p->depth;
+	c->place = p->place;
 
 	/* Fill cave area with basic granite */
 	fill_rectangle(c, 0, 0, c->height - 1, c->width - 1,
@@ -3975,6 +3986,7 @@ struct chunk *arena_gen(struct player *p, int min_height, int min_width) {
 
 	c = cave_new(min_height, min_width);
 	c->depth = p->depth;
+	c->place = p->place;
 	c->name = string_make("arena");
 
 	/* Fill cave area with floors */
@@ -4019,6 +4031,7 @@ struct chunk *arena_gen(struct player *p, int min_height, int min_width) {
 struct chunk *themed_gen(struct player *p, int min_height, int min_width) {
 	struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
+	c->place = p->place;
 
 	/* Build the themed level. */
 	if (!build_vault(c, loc(z_info->dungeon_wid / 2, z_info->dungeon_hgt / 2),

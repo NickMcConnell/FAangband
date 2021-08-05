@@ -1672,6 +1672,7 @@ int rd_dungeon(void)
 	/* Load player depth */
 	player->depth = depth;
 	cave->depth = depth;
+	cave->place = player->place;
 
 	/* Place player in dungeon */
 	player_place(cave, player, loc(px, py));
