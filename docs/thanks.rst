@@ -7,6 +7,8 @@ Version 4.2.0
 
 Code contribution:
 
+* Adriankhl
+* Adrian Siekierka (asiekierka)
 * Alex Mooney
 * Anna Sidwell (takkaria)
 * Bardur Arantsson
@@ -23,6 +25,8 @@ Code contribution:
 * PowerWyrm
 * Ryan Schmidt
 * Stefan Strogin
+* tangar
+* Tim Schumacher (timschumi)
 * Vic K
 * wkmanire
 * wobbly
