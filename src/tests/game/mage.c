@@ -58,7 +58,7 @@ static int test_magic_missile(void *state) {
 	eq(player_make_simple("Petty-Dwarf", "Mage", "Tyrion"), true);
 
 	eq(player->is_dead, false);
-	prepare_next_level(&cave, player);
+	prepare_next_level(player);
 	on_new_level();
 	notnull(cave);
 	eq(player->chp, player->mhp);

@@ -532,6 +532,7 @@ int count_neighbors(struct loc *match, struct chunk *c, struct loc grid,
 struct loc cave_find_decoy(struct chunk *c);
 void make_noise(struct chunk *c, struct player *p, struct monster *mon);
 void update_scent(struct chunk *c, struct player *p, struct monster *mon);
+bool is_quest(int level);
 
 
 #endif /* !CAVE_H */

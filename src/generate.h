@@ -314,6 +314,7 @@ extern struct vault *themed_levels;
 extern struct room_template *room_templates;
 
 /* generate.c */
+void prepare_next_level(struct player *p);
 int get_room_builder_count(void);
 int get_room_builder_index_from_name(const char *name);
 const char *get_room_builder_name_from_index(int i);
@@ -456,8 +457,5 @@ void spread_monsters(struct chunk *c, const char *type, int depth, int num,
 void get_vault_monsters(struct chunk *c, char racial_symbol[], char *vault_type,
 						const char *data, int y1, int y2, int x1, int x2);
 void get_chamber_monsters(struct chunk *c, int y1, int x1, int y2, int x2, char *name, int area);
-
-/* generate.h */
-void prepare_next_level(struct chunk **c, struct player *p);
 
 #endif /* !GENERATE_H */

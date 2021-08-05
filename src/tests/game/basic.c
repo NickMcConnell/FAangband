@@ -91,7 +91,7 @@ static int test_newgame(void *state) {
 	eq(player_make_simple(NULL, NULL, "Tester"), true);
 
 	eq(player->is_dead, false);
-	prepare_next_level(&cave, player);
+	prepare_next_level(player);
 	on_new_level();
 	notnull(cave);
 	eq(player->chp, player->mhp);

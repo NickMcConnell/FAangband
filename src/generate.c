@@ -1680,7 +1680,7 @@ static struct chunk *cave_generate(struct player *p, int height, int width)
  * \param c is the level we're going to end up with, in practice the global cave
  * \param p is the current player struct, in practice the global player
 */
-void prepare_next_level(struct chunk **c, struct player *p)
+void prepare_next_level(struct player *p)
 {
 	bool persist = OPT(p, birth_levels_persist) || p->upkeep->arena_level;
 	char prev_name[80];
@@ -1692,20 +1692,20 @@ void prepare_next_level(struct chunk **c, struct player *p)
 
 	/* Deal with any existing current level */
 	if (character_dungeon) {
-		assert (p->cave && (*c == cave));
+		assert (p->cave);
 
 		if (persist) {
 			/* Arenas don't get stored */
-			if (!(*c)->name || !streq((*c)->name, "arena")) {
+			if (!cave->name || !streq(cave->name, "arena")) {
 				/* Tidy up */
-				compact_monsters(*c, 0);
+				compact_monsters(cave, 0);
 				if (!p->upkeep->arena_level) {
 					/* Leave the player marker if going to an arena */
-					square_set_mon(*c, p->grid, 0);
+					square_set_mon(cave, p->grid, 0);
 				}
 
 				/* Save level and known level */
-				cave_store(*c, prev_name, false, true);
+				cave_store(cave, prev_name, false, true);
 				cave_store(p->cave, prev_name, true, true);
 			}
 			else if (!p->place)
@@ -1727,14 +1727,14 @@ void prepare_next_level(struct chunk **c, struct player *p)
 			}
 		} else {
 			/* Save the town */
-			if (!((*c)->depth) && !chunk_find_name(prev_name)) {
-				cave_store(*c, prev_name, false, false);
+			if (!cave->depth && !chunk_find_name(prev_name)) {
+				cave_store(cave, prev_name, false, false);
 			}
 
 			/* Forget knowledge of old level */
-			if (*c) {
-				cave_clear(*c, p);
-				*c = NULL;
+			if (cave) {
+				cave_clear(cave, p);
+				cave = NULL;
 			}
 		}
 	}
@@ -1748,19 +1748,19 @@ void prepare_next_level(struct chunk **c, struct player *p)
 		if (old_level && (old_level != cave)) {
 			/* We found an old level, load the known level and assign */
 			int i;
-			bool arena = (*c)->name && streq((*c)->name, "arena");
+			bool arena = cave->name && streq(cave->name, "arena");
 			char *known_name = format("%s known", new_name);
 			struct chunk *old_known = chunk_find_name(known_name);
 			assert(old_known);
 
 			/* Assign the new ones */
-			*c = old_level;
+			cave = old_level;
 			p->cave = old_known;
 
 			/* Associate known objects */
 			for (i = 0; i < p->cave->obj_max; i++) {
-				if ((*c)->objects[i] && p->cave->objects[i]) {
-					(*c)->objects[i]->known = p->cave->objects[i];
+				if (cave->objects[i] && p->cave->objects[i]) {
+					cave->objects[i]->known = p->cave->objects[i];
 				}
 			}
 
@@ -1769,13 +1769,13 @@ void prepare_next_level(struct chunk **c, struct player *p)
 
 			/* Leaving arenas requires special treatment */
 			if (arena) {
-				leave_arena(*c, p);
+				leave_arena(cave, p);
 			} else {
 				/* Map boundary changes may not cooperate with level teleport */
-				sanitize_player_loc(*c, p);
+				sanitize_player_loc(cave, p);
 
 				/* Place the player */
-				player_place(*c, p, p->grid);
+				player_place(cave, p, p->grid);
 			}
 
 			/* Remove from the list */
@@ -1783,7 +1783,7 @@ void prepare_next_level(struct chunk **c, struct player *p)
 			chunk_list_remove(known_name);
 		} else if (p->upkeep->arena_level) {
 			/* We're creating a new arena level */
-			*c = cave_generate(p, 6, 6);
+			cave = cave_generate(p, 6, 6);
 			event_signal_flag(EVENT_GEN_LEVEL_END, true);
 		} else {
 			/* Creating a new level, make sure it joins existing ones right */
@@ -1809,12 +1809,12 @@ void prepare_next_level(struct chunk **c, struct player *p)
 			}
 
 			/* Generate a new level */
-			*c = cave_generate(p, min_height, min_width);
+			cave = cave_generate(p, min_height, min_width);
 			event_signal_flag(EVENT_GEN_LEVEL_END, true);
 		}
 	} else {
 		/* Just generate a new level */
-		*c = cave_generate(p, 0, 0);
+		cave = cave_generate(p, 0, 0);
 		event_signal_flag(EVENT_GEN_LEVEL_END, true);
 	}
 
@@ -1824,8 +1824,8 @@ void prepare_next_level(struct chunk **c, struct player *p)
 	}
 
 	/* Apply illumination */
-	if (p->place) cave_illuminate(*c, is_daytime());
-	else wiz_light(*c, p, true);
+	if (p->place) cave_illuminate(cave, is_daytime());
+	else wiz_light(cave, p, true);
 
 	/* The dungeon is ready */
 	character_dungeon = true;

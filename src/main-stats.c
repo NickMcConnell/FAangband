@@ -252,7 +252,7 @@ static void initialize_character(void)
 	player->upkeep->playing = true;
 	player->upkeep->autosave = false;
 	player->place = 3;
-	prepare_next_level(&cave, player);
+	prepare_next_level(player);
 }
 
 static void kill_all_monsters(int level)
@@ -409,7 +409,7 @@ static void descend_dungeon(void)
 		}
 
 		player_change_place(player, level);
-		prepare_next_level(&cave, player);
+		prepare_next_level(player);
 
 		/* Store level feelings */
 		obj_f = cave->feeling / 10;

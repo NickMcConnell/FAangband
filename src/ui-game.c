@@ -658,7 +658,7 @@ static void start_game(bool new_game)
 
 	/* Enter the level, generating a new one if needed */
 	if (!character_dungeon) {
-		prepare_next_level(&cave, player);
+		prepare_next_level(player);
 	}
 	on_new_level();
 }
