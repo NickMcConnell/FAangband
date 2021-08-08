@@ -410,6 +410,9 @@ static int average_unarmed_damage(struct player *p)
 	/* Turn into an average */
 	sum /= powers[max_blow - min_blow];
 
+	mem_free(powers);
+	mem_free(num_events);
+
 	return sum;
 }
 
