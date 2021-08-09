@@ -3895,7 +3895,7 @@ static void design_random_artifact(struct artifact *art)
 /**
  * Write an artifact data file entry
  */
-static void write_randart_file_entry(ang_file *fff, struct artifact *art)
+static void write_randart_file_entry(ang_file *fff, const struct artifact *art)
 {
 	char name[120] = "";
 	struct object_kind *kind = lookup_kind(art->tval, art->sval);
