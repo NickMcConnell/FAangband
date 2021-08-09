@@ -3010,6 +3010,7 @@ static errr finish_parse_artifact(struct parser *p) {
 
 	/* Allocate the direct access list and copy the data to it */
 	a_info = mem_zalloc((z_info->a_max + 1) * sizeof(*a));
+	aup_info = mem_zalloc((z_info->a_max + 1) * sizeof(*aup_info));
 	aidx = z_info->a_max;
 	for (a = parser_priv(p); a; a = n, aidx--) {
 		assert(aidx > 0);
@@ -3017,12 +3018,11 @@ static errr finish_parse_artifact(struct parser *p) {
 		memcpy(&a_info[aidx], a, sizeof(*a));
 		a_info[aidx].aidx = aidx;
 		n = a->next;
-		if (aidx < z_info->a_max)
-			a_info[aidx].next = &a_info[aidx + 1];
-		else
-			a_info[aidx].next = NULL;
-
+		a_info[aidx].next = (aidx < z_info->a_max) ?
+			&a_info[aidx + 1] : NULL;
 		mem_free(a);
+
+		aup_info[aidx].aidx = aidx;
 	}
 	z_info->a_max += 1;
 
@@ -3066,6 +3066,7 @@ static void cleanup_artifact(void)
 		free_effect(art->effect);
 	}
 	mem_free(a_info);
+	mem_free(aup_info);
 }
 
 struct file_parser artifact_parser = {
@@ -3114,7 +3115,7 @@ static enum parser_error parse_artifact_set_artifact_name(struct parser *p) {
 	const char *name = parser_getstr(p, "name");
 	struct artifact_set *set = parser_priv(p);
 	struct set_item *e = mem_zalloc(sizeof *e);
-	struct artifact *art = NULL;
+	const struct artifact *art = NULL;
 	for (i = 0; i < ELEM_MAX; i++) {
 		e->el_info[i].res_level = RES_LEVEL_BASE;
 	}
@@ -3291,8 +3292,9 @@ static errr finish_parse_randart(struct parser *p) {
 	int aidx;
 
 	/* Allocate the direct access list and copy the data to it */
-	a_info = mem_realloc(a_info,
-						 (z_info->a_max + ART_NUM_RANDOM) * sizeof(*a));
+	a_info = mem_realloc(a_info, (z_info->a_max + ART_NUM_RANDOM) * sizeof(*a));
+	aup_info = mem_realloc(aup_info, (z_info->a_max + ART_NUM_RANDOM)
+		* sizeof(*aup_info));
 	z_info->a_max += ART_NUM_RANDOM;
 	aidx = z_info->a_max - 1;
 	for (a = parser_priv(p); a; a = n, aidx--) {
@@ -3301,12 +3303,11 @@ static errr finish_parse_randart(struct parser *p) {
 		memcpy(&a_info[aidx], a, sizeof(*a));
 		a_info[aidx].aidx = aidx;
 		n = a->next;
-		if (aidx < z_info->a_max)
-			a_info[aidx].next = &a_info[aidx + 1];
-		else
-			a_info[aidx].next = NULL;
-
+		a_info[aidx].next = (aidx < z_info->a_max) ?
+			&a_info[aidx + 1] : NULL;
 		mem_free(a);
+
+		aup_info[aidx].aidx = aidx;
 	}
 
 	parser_destroy(p);

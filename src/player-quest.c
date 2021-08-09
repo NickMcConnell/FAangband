@@ -88,7 +88,7 @@ static enum parser_error parse_quest_artifact(struct parser *p) {
 	struct quest *q = parser_priv(p);
 	int chance = parser_getuint(p, "chance");
 	struct quest_artifact *arts;
-	struct artifact *art;
+	const struct artifact *art;
 
 	if (!q)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;

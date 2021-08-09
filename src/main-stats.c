@@ -300,9 +300,9 @@ static void reset_artifacts(void)
 		fflush(stdout);
 	}
 
-	for (i = 0; i < z_info->a_max; i++)
-		a_info[i].created = false;
-
+	for (i = 0; i < z_info->a_max; i++) {
+		mark_artifact_created(&a_info[i], false);
+	}
 }
 
 static void log_all_objects(int level)

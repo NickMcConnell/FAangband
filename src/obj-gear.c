@@ -1252,7 +1252,7 @@ int preferred_quiver_slot(const struct object *obj)
  * Check whether an artifact is a member of an artifact set, and if so,
  * whether the player is using the entire set
  */
-struct artifact_set *get_artifact_set(struct artifact *art)
+struct artifact_set *get_artifact_set(const struct artifact *art)
 {
 	struct artifact_set *set = set_info;
 
@@ -1279,7 +1279,7 @@ struct artifact_set *get_artifact_set(struct artifact *art)
  * Check whether an artifact is a member of an artifact set, and if so,
  * whether the player is using the entire set
  */
-struct artifact_set *check_sets(struct artifact *art)
+struct artifact_set *check_sets(const struct artifact *art)
 {
 	struct artifact_set *set = get_artifact_set(art);
 	struct set_item *item = NULL;
