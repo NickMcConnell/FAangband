@@ -213,8 +213,8 @@ void do_cmd_autoinscribe(struct command *cmd)
 {
 	if (player_is_shapechanged(player)) return;
 
-	autoinscribe_ground();
-	autoinscribe_pack();
+	autoinscribe_ground(player);
+	autoinscribe_pack(player);
 
 	player->upkeep->redraw |= (PR_INVEN | PR_EQUIP);
 }
@@ -606,7 +606,7 @@ static void use_aux(struct command *cmd, struct object *obj, enum use use,
 
 	/* Autoinscribe if we are guaranteed to still have any */
 	if (!none_left && !from_floor)
-		apply_autoinscription(obj);
+		apply_autoinscription(player, obj);
 
 	/* Mark as tried and redisplay */
 	player->upkeep->notice |= (PN_COMBINE);
