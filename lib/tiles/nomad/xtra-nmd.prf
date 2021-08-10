@@ -11,141 +11,248 @@
 
 ##### Remap the player icon #####
 
-?:[AND [EQU $CLASS Warrior] [EQU $RACE Human] ]
+?:[AND [EQU $CLASS Warrior] [EQU $RACE Easterling] ]
 monster:<player>:0x9B:0x80
-?:[AND [EQU $CLASS Warrior] [EQU $RACE Half-Elf] ]
+?:[AND [EQU $CLASS Warrior] [EQU $RACE Green-Elf] ]
 monster:<player>:0x9B:0x81
-?:[AND [EQU $CLASS Warrior] [EQU $RACE Elf] ]
+?:[AND [EQU $CLASS Warrior] [EQU $RACE Dark-Elf] ]
+monster:<player>:0x9B:0x81
+?:[AND [EQU $CLASS Warrior] [EQU $RACE Grey-Elf] ]
 monster:<player>:0x9B:0x82
 ?:[AND [EQU $CLASS Warrior] [EQU $RACE Hobbit] ]
 monster:<player>:0x9B:0x83
-?:[AND [EQU $CLASS Warrior] [EQU $RACE Gnome] ]
+?:[AND [EQU $CLASS Warrior] [EQU $RACE Drúadan] ]
 monster:<player>:0x9B:0x84
+?:[AND [EQU $CLASS Warrior] [EQU $RACE Petty-Dwarf] ]
+monster:<player>:0x9B:0x85
 ?:[AND [EQU $CLASS Warrior] [EQU $RACE Dwarf] ]
 monster:<player>:0x9B:0x85
-?:[AND [EQU $CLASS Warrior] [EQU $RACE Half-Orc] ]
-monster:<player>:0x9B:0x86
-?:[AND [EQU $CLASS Warrior] [EQU $RACE Half-Troll] ]
+?:[AND [EQU $CLASS Warrior] [EQU $RACE Longbeard] ]
+monster:<player>:0x9B:0x85
+?:[AND [EQU $CLASS Warrior] [EQU $RACE Ent] ]
 monster:<player>:0x9B:0x87
-?:[AND [EQU $CLASS Warrior] [EQU $RACE Dunadan] ]
+?:[AND [EQU $CLASS Warrior] [EQU $RACE Adan] ]
 monster:<player>:0x9B:0x88
 ?:[AND [EQU $CLASS Warrior] [EQU $RACE High-Elf] ]
 monster:<player>:0x9B:0x89
-?:[AND [EQU $CLASS Warrior] [EQU $RACE Kobold] ]
+?:[AND [EQU $CLASS Warrior] [EQU $RACE Beorning] ]
 monster:<player>:0x9B:0x8A
 
-?:[AND [EQU $CLASS Mage] [EQU $RACE Human] ]
+?:[AND [EQU $CLASS Mage] [EQU $RACE Easterling] ]
 monster:<player>:0x9B:0x90
-?:[AND [EQU $CLASS Mage] [EQU $RACE Half-Elf] ]
+?:[AND [EQU $CLASS Mage] [EQU $RACE Green-Elf] ]
 monster:<player>:0x9B:0x91
-?:[AND [EQU $CLASS Mage] [EQU $RACE Elf] ]
+?:[AND [EQU $CLASS Mage] [EQU $RACE Dark-Elf] ]
+monster:<player>:0x9B:0x91
+?:[AND [EQU $CLASS Mage] [EQU $RACE Grey-Elf] ]
 monster:<player>:0x9B:0x92
 ?:[AND [EQU $CLASS Mage] [EQU $RACE Hobbit] ]
 monster:<player>:0x9B:0x93
-?:[AND [EQU $CLASS Mage] [EQU $RACE Gnome] ]
-monster:<player>:0x9B:0x94
+?:[AND [EQU $CLASS Mage] [EQU $RACE Drúadan] ]
+monster:<player>:0x9B:0x9C
+?:[AND [EQU $CLASS Mage] [EQU $RACE Petty-Dwarf] ]
+monster:<player>:0x9B:0x95
 ?:[AND [EQU $CLASS Mage] [EQU $RACE Dwarf] ]
 monster:<player>:0x9B:0x95
-?:[AND [EQU $CLASS Mage] [EQU $RACE Half-Orc] ]
-monster:<player>:0x9B:0x96
-?:[AND [EQU $CLASS Mage] [EQU $RACE Half-Troll] ]
+?:[AND [EQU $CLASS Mage] [EQU $RACE Longbeard] ]
+monster:<player>:0x9B:0x95
+?:[AND [EQU $CLASS Mage] [EQU $RACE Ent] ]
 monster:<player>:0x9B:0x97
-?:[AND [EQU $CLASS Mage] [EQU $RACE Dunadan] ]
+?:[AND [EQU $CLASS Mage] [EQU $RACE Adan] ]
 monster:<player>:0x9B:0x98
 ?:[AND [EQU $CLASS Mage] [EQU $RACE High-Elf] ]
 monster:<player>:0x9B:0x99
-?:[AND [EQU $CLASS Mage] [EQU $RACE Kobold] ]
+?:[AND [EQU $CLASS Mage] [EQU $RACE Beorning] ]
 monster:<player>:0x9B:0x9A
 
-?:[AND [EQU $CLASS Priest] [EQU $RACE Human] ]
+?:[AND [EQU $CLASS Druid] [EQU $RACE Easterling] ]
 monster:<player>:0x9C:0x80
-?:[AND [EQU $CLASS Priest] [EQU $RACE Half-Elf] ]
+?:[AND [EQU $CLASS Druid] [EQU $RACE Green-Elf] ]
 monster:<player>:0x9C:0x81
-?:[AND [EQU $CLASS Priest] [EQU $RACE Elf] ]
+?:[AND [EQU $CLASS Druid] [EQU $RACE Dark-Elf] ]
+monster:<player>:0x9C:0x81
+?:[AND [EQU $CLASS Druid] [EQU $RACE Grey-Elf] ]
 monster:<player>:0x9C:0x82
-?:[AND [EQU $CLASS Priest] [EQU $RACE Hobbit] ]
+?:[AND [EQU $CLASS Druid] [EQU $RACE Hobbit] ]
 monster:<player>:0x9C:0x83
-?:[AND [EQU $CLASS Priest] [EQU $RACE Gnome] ]
+?:[AND [EQU $CLASS Druid] [EQU $RACE Drúadan] ]
 monster:<player>:0x9C:0x84
-?:[AND [EQU $CLASS Priest] [EQU $RACE Dwarf] ]
+?:[AND [EQU $CLASS Druid] [EQU $RACE Petty-Dwarf] ]
 monster:<player>:0x9C:0x85
-?:[AND [EQU $CLASS Priest] [EQU $RACE Half-Orc] ]
-monster:<player>:0x9C:0x86
-?:[AND [EQU $CLASS Priest] [EQU $RACE Half-Troll] ]
+?:[AND [EQU $CLASS Druid] [EQU $RACE Dwarf] ]
+monster:<player>:0x9C:0x85
+?:[AND [EQU $CLASS Druid] [EQU $RACE Longbeard] ]
+monster:<player>:0x9C:0x85
+?:[AND [EQU $CLASS Druid] [EQU $RACE Ent] ]
 monster:<player>:0x9C:0x87
-?:[AND [EQU $CLASS Priest] [EQU $RACE Dunadan] ]
+?:[AND [EQU $CLASS Druid] [EQU $RACE Adan] ]
 monster:<player>:0x9C:0x88
-?:[AND [EQU $CLASS Priest] [EQU $RACE High-Elf] ]
+?:[AND [EQU $CLASS Druid] [EQU $RACE High-Elf] ]
 monster:<player>:0x9C:0x89
-?:[AND [EQU $CLASS Priest] [EQU $RACE Kobold] ]
+?:[AND [EQU $CLASS Druid] [EQU $RACE Beorning] ]
 monster:<player>:0x9C:0x8A
 
-?:[AND [EQU $CLASS Rogue] [EQU $RACE Human] ]
+?:[AND [EQU $CLASS Rogue] [EQU $RACE Easterling] ]
 monster:<player>:0x9C:0x90
-?:[AND [EQU $CLASS Rogue] [EQU $RACE Half-Elf] ]
+?:[AND [EQU $CLASS Rogue] [EQU $RACE Green-Elf] ]
 monster:<player>:0x9C:0x91
-?:[AND [EQU $CLASS Rogue] [EQU $RACE Elf] ]
+?:[AND [EQU $CLASS Rogue] [EQU $RACE Dark-Elf] ]
+monster:<player>:0x9C:0x91
+?:[AND [EQU $CLASS Rogue] [EQU $RACE Grey-Elf] ]
 monster:<player>:0x9C:0x92
 ?:[AND [EQU $CLASS Rogue] [EQU $RACE Hobbit] ]
 monster:<player>:0x9C:0x93
-?:[AND [EQU $CLASS Rogue] [EQU $RACE Gnome] ]
+?:[AND [EQU $CLASS Rogue] [EQU $RACE Drúadan] ]
 monster:<player>:0x9C:0x94
+?:[AND [EQU $CLASS Rogue] [EQU $RACE Petty-Dwarf] ]
+monster:<player>:0x9C:0x95
 ?:[AND [EQU $CLASS Rogue] [EQU $RACE Dwarf] ]
 monster:<player>:0x9C:0x95
-?:[AND [EQU $CLASS Rogue] [EQU $RACE Half-Orc] ]
-monster:<player>:0x9C:0x96
-?:[AND [EQU $CLASS Rogue] [EQU $RACE Half-Troll] ]
+?:[AND [EQU $CLASS Rogue] [EQU $RACE Longbeard] ]
+monster:<player>:0x9C:0x95
+?:[AND [EQU $CLASS Rogue] [EQU $RACE Ent] ]
 monster:<player>:0x9C:0x97
-?:[AND [EQU $CLASS Rogue] [EQU $RACE Dunadan] ]
+?:[AND [EQU $CLASS Rogue] [EQU $RACE Adan] ]
 monster:<player>:0x9C:0x98
 ?:[AND [EQU $CLASS Rogue] [EQU $RACE High-Elf] ]
 monster:<player>:0x9C:0x99
-?:[AND [EQU $CLASS Rogue] [EQU $RACE Kobold] ]
+?:[AND [EQU $CLASS Rogue] [EQU $RACE Beorning] ]
 monster:<player>:0x9C:0x9A
 
-?:[AND [EQU $CLASS Ranger] [EQU $RACE Human] ]
+?:[AND [EQU $CLASS Ranger] [EQU $RACE Easterling] ]
 monster:<player>:0x9D:0x80
-?:[AND [EQU $CLASS Ranger] [EQU $RACE Half-Elf] ]
+?:[AND [EQU $CLASS Ranger] [EQU $RACE Green-Elf] ]
 monster:<player>:0x9D:0x81
-?:[AND [EQU $CLASS Ranger] [EQU $RACE Elf] ]
+?:[AND [EQU $CLASS Ranger] [EQU $RACE Dark-Elf] ]
+monster:<player>:0x9D:0x81
+?:[AND [EQU $CLASS Ranger] [EQU $RACE Grey-Elf] ]
 monster:<player>:0x9D:0x82
 ?:[AND [EQU $CLASS Ranger] [EQU $RACE Hobbit] ]
 monster:<player>:0x9D:0x83
-?:[AND [EQU $CLASS Ranger] [EQU $RACE Gnome] ]
+?:[AND [EQU $CLASS Ranger] [EQU $RACE Druadan] ]
 monster:<player>:0x9D:0x84
+?:[AND [EQU $CLASS Ranger] [EQU $RACE Petty-Dwarf] ]
+monster:<player>:0x9D:0x85
 ?:[AND [EQU $CLASS Ranger] [EQU $RACE Dwarf] ]
 monster:<player>:0x9D:0x85
-?:[AND [EQU $CLASS Ranger] [EQU $RACE Half-Orc] ]
-monster:<player>:0x9D:0x86
-?:[AND [EQU $CLASS Ranger] [EQU $RACE Half-Troll] ]
+?:[AND [EQU $CLASS Ranger] [EQU $RACE Longbeard] ]
+monster:<player>:0x9D:0x85
+?:[AND [EQU $CLASS Ranger] [EQU $RACE Ent] ]
 monster:<player>:0x9D:0x87
-?:[AND [EQU $CLASS Ranger] [EQU $RACE Dunadan] ]
+?:[AND [EQU $CLASS Ranger] [EQU $RACE Adan] ]
 monster:<player>:0x9D:0x88
 ?:[AND [EQU $CLASS Ranger] [EQU $RACE High-Elf] ]
 monster:<player>:0x9D:0x89
-?:[AND [EQU $CLASS Ranger] [EQU $RACE Kobold] ]
+?:[AND [EQU $CLASS Ranger] [EQU $RACE Beorning] ]
 monster:<player>:0x9D:0x8A
 
-?:[AND [EQU $CLASS Paladin] [EQU $RACE Human] ]
+?:[AND [EQU $CLASS Paladin] [EQU $RACE Easterling] ]
 monster:<player>:0x9D:0x90
-?:[AND [EQU $CLASS Paladin] [EQU $RACE Half-Elf] ]
+?:[AND [EQU $CLASS Paladin] [EQU $RACE Green-Elf] ]
 monster:<player>:0x9D:0x91
-?:[AND [EQU $CLASS Paladin] [EQU $RACE Elf] ]
+?:[AND [EQU $CLASS Paladin] [EQU $RACE Dark-Elf] ]
+monster:<player>:0x9D:0x91
+?:[AND [EQU $CLASS Paladin] [EQU $RACE Grey-Elf] ]
 monster:<player>:0x9D:0x92
 ?:[AND [EQU $CLASS Paladin] [EQU $RACE Hobbit] ]
 monster:<player>:0x9D:0x93
-?:[AND [EQU $CLASS Paladin] [EQU $RACE Gnome] ]
+?:[AND [EQU $CLASS Paladin] [EQU $RACE Drúadan] ]
 monster:<player>:0x9D:0x94
+?:[AND [EQU $CLASS Paladin] [EQU $RACE Petty-Dwarf] ]
+monster:<player>:0x9D:0x95
 ?:[AND [EQU $CLASS Paladin] [EQU $RACE Dwarf] ]
 monster:<player>:0x9D:0x95
-?:[AND [EQU $CLASS Paladin] [EQU $RACE Half-Orc] ]
-monster:<player>:0x9D:0x96
-?:[AND [EQU $CLASS Paladin] [EQU $RACE Half-Troll] ]
+?:[AND [EQU $CLASS Paladin] [EQU $RACE Longbeard] ]
+monster:<player>:0x9D:0x95
+?:[AND [EQU $CLASS Paladin] [EQU $RACE Ent] ]
 monster:<player>:0x9D:0x97
-?:[AND [EQU $CLASS Paladin] [EQU $RACE Dunadan] ]
+?:[AND [EQU $CLASS Paladin] [EQU $RACE Adan] ]
 monster:<player>:0x9D:0x98
 ?:[AND [EQU $CLASS Paladin] [EQU $RACE High-Elf] ]
 monster:<player>:0x9D:0x99
-?:[AND [EQU $CLASS Paladin] [EQU $RACE Kobold] ]
+?:[AND [EQU $CLASS Paladin] [EQU $RACE Beorning] ]
 monster:<player>:0x9D:0x9A
+
+?:[AND [EQU $CLASS Blackguard] [EQU $RACE Easterling] ]
+monster:<player>:0x9B:0x80
+?:[AND [EQU $CLASS Blackguard] [EQU $RACE Green-Elf] ]
+monster:<player>:0x9B:0x81
+?:[AND [EQU $CLASS Blackguard] [EQU $RACE Dark-Elf] ]
+monster:<player>:0x9B:0x81
+?:[AND [EQU $CLASS Blackguard] [EQU $RACE Grey-Elf] ]
+monster:<player>:0x9B:0x82
+?:[AND [EQU $CLASS Blackguard] [EQU $RACE Hobbit] ]
+monster:<player>:0x9B:0x83
+?:[AND [EQU $CLASS Blackguard] [EQU $RACE Drúadan] ]
+monster:<player>:0x9B:0x84
+?:[AND [EQU $CLASS Blackguard] [EQU $RACE Petty-Dwarf] ]
+monster:<player>:0x9B:0x85
+?:[AND [EQU $CLASS Blackguard] [EQU $RACE Dwarf] ]
+monster:<player>:0x9B:0x85
+?:[AND [EQU $CLASS Blackguard] [EQU $RACE Longbeard] ]
+monster:<player>:0x9B:0x85
+?:[AND [EQU $CLASS Blackguard] [EQU $RACE Ent] ]
+monster:<player>:0x9B:0x87
+?:[AND [EQU $CLASS Blackguard] [EQU $RACE Adan] ]
+monster:<player>:0x9B:0x88
+?:[AND [EQU $CLASS Blackguard] [EQU $RACE High-Elf] ]
+monster:<player>:0x9B:0x89
+?:[AND [EQU $CLASS Blackguard] [EQU $RACE Beorning] ]
+monster:<player>:0x9B:0x8A
+
+?:[AND [EQU $CLASS Necromancer] [EQU $RACE Easterling] ]
+monster:<player>:0x9B:0x90
+?:[AND [EQU $CLASS Necromancer] [EQU $RACE Green-Elf] ]
+monster:<player>:0x9B:0x91
+?:[AND [EQU $CLASS Necromancer] [EQU $RACE Dark-Elf] ]
+monster:<player>:0x9B:0x91
+?:[AND [EQU $CLASS Necromancer] [EQU $RACE Grey-Elf] ]
+monster:<player>:0x9B:0x92
+?:[AND [EQU $CLASS Necromancer] [EQU $RACE Hobbit] ]
+monster:<player>:0x9B:0x93
+?:[AND [EQU $CLASS Necromancer] [EQU $RACE Drúadan] ]
+monster:<player>:0x9B:0x9C
+?:[AND [EQU $CLASS Necromancer] [EQU $RACE Petty-Dwarf] ]
+monster:<player>:0x9B:0x95
+?:[AND [EQU $CLASS Necromancer] [EQU $RACE Dwarf] ]
+monster:<player>:0x9B:0x95
+?:[AND [EQU $CLASS Necromancer] [EQU $RACE Longbeard] ]
+monster:<player>:0x9B:0x95
+?:[AND [EQU $CLASS Necromancer] [EQU $RACE Ent] ]
+monster:<player>:0x9B:0x97
+?:[AND [EQU $CLASS Necromancer] [EQU $RACE Adan] ]
+monster:<player>:0x9B:0x98
+?:[AND [EQU $CLASS Necromancer] [EQU $RACE High-Elf] ]
+monster:<player>:0x9B:0x99
+?:[AND [EQU $CLASS Necromancer] [EQU $RACE Beorning] ]
+monster:<player>:0x9B:0x9A
+
+?:[AND [EQU $CLASS Priest] [EQU $RACE Easterling] ]
+monster:<player>:0x9D:0x90
+?:[AND [EQU $CLASS Priest] [EQU $RACE Green-Elf] ]
+monster:<player>:0x9D:0x91
+?:[AND [EQU $CLASS Priest] [EQU $RACE Dark-Elf] ]
+monster:<player>:0x9D:0x91
+?:[AND [EQU $CLASS Priest] [EQU $RACE Grey-Elf] ]
+monster:<player>:0x9D:0x92
+?:[AND [EQU $CLASS Priest] [EQU $RACE Hobbit] ]
+monster:<player>:0x9D:0x93
+?:[AND [EQU $CLASS Priest] [EQU $RACE Drúadan] ]
+monster:<player>:0x9D:0x94
+?:[AND [EQU $CLASS Priest] [EQU $RACE Petty-Dwarf] ]
+monster:<player>:0x9D:0x95
+?:[AND [EQU $CLASS Priest] [EQU $RACE Dwarf] ]
+monster:<player>:0x9D:0x95
+?:[AND [EQU $CLASS Priest] [EQU $RACE Longbeard] ]
+monster:<player>:0x9D:0x95
+?:[AND [EQU $CLASS Priest] [EQU $RACE Ent] ]
+monster:<player>:0x9D:0x97
+?:[AND [EQU $CLASS Priest] [EQU $RACE Adan] ]
+monster:<player>:0x9D:0x98
+?:[AND [EQU $CLASS Priest] [EQU $RACE High-Elf] ]
+monster:<player>:0x9D:0x99
+?:[AND [EQU $CLASS Priest] [EQU $RACE Beorning] ]
+monster:<player>:0x9D:0x9A
+
+
 

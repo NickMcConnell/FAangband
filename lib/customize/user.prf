@@ -7,44 +7,52 @@
 #
 # See "lib/help/command.txt" and "src/files.c" for more information.
 #
+# If the race name is longer then 8 characters, include an abbreviated name too
 
 ##### Race Specific Subfiles #####
 
-?:[EQU $RACE Human]
-%:Human.prf
+?:[EQU $RACE Easterling]
+%:Easterling.prf
+%:Easter.prf
 
-?:[EQU $RACE Half-Elf]
-%:Half-Elf.prf
+?:[EQU $RACE Green-Elf]
+%:Green-Elf.prf
+%:GreenElf.prf
 
-?:[EQU $RACE Elf]
-%:Elf.prf
+?:[EQU $RACE Grey-Elf]
+%:Grey-Elf.prf
 
 ?:[EQU $RACE Hobbit]
 %:Hobbit.prf
 
-?:[EQU $RACE Gnome]
-%:Gnome.prf
+?:[EQU $RACE Petty-Dwarf]
+%:Petty-Dwarf.prf
+%:P-Dwarf.prf
 
 ?:[EQU $RACE Dwarf]
 %:Dwarf.prf
 
-?:[EQU $RACE Half-Orc]
-%:Half-Orc.prf
+?:[EQU $RACE Drúadan]
+%:Druadan.prf
 
-# "Half-Troll.prf" is too long for stupid 8.3 filenames,
-# so try to load the shortened filename too.
-?:[EQU $RACE Half-Troll]
-%:Half-Troll.prf
-%:H-Troll.prf
+?:[EQU $RACE Longbeard]
+%:Longbeard.prf
+%:Longbrd.prf
 
-?:[EQU $RACE Dunadan]
-%:Dunadan.prf
+?:[EQU $RACE Adan]
+%:Adan.prf
 
 ?:[EQU $RACE High-Elf]
 %:High-Elf.prf
 
-?:[EQU $RACE Kobold]
-%:Kobold.prf
+?:[EQU $RACE Dark-Elf]
+%:Dark-Elf.prf
+
+?:[EQU $RACE Ent]
+%:Ent.prf
+
+?:[EQU $RACE Beorning]
+%:Beorning.prf
 
 
 ##### Class Specific Subfiles #####
