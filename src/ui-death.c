@@ -490,7 +490,7 @@ static void death_info(const char *title, int row)
 
 				/* Get the object description */
 				object_desc(o_name, sizeof(o_name), obj,
-						ODESC_PREFIX | ODESC_FULL);
+					ODESC_PREFIX | ODESC_FULL, player);
 
 				/* Get the inventory color */
 				attr = obj->kind->base->attr;
@@ -550,7 +550,7 @@ static void death_examine(const char *title, int row)
 
 		tb = object_info(obj, OINFO_NONE);
 		object_desc(header, sizeof(header), obj,
-				ODESC_PREFIX | ODESC_FULL | ODESC_CAPITAL);
+			ODESC_PREFIX | ODESC_FULL | ODESC_CAPITAL, player);
 
 		textui_textblock_show(tb, area, header);
 		textblock_free(tb);

@@ -862,7 +862,8 @@ struct object *floor_object_for_use(struct object *obj, int num, bool message,
 			obj->number = 0;
 
 		/* Get a description */
-		object_desc(name, sizeof(name), obj, ODESC_PREFIX | ODESC_FULL);
+		object_desc(name, sizeof(name), obj, ODESC_PREFIX | ODESC_FULL,
+			player);
 
 		if (usable == obj)
 			obj->number = num;
@@ -992,7 +993,7 @@ static void floor_carry_fail(struct chunk *c, struct object *drop, bool broke)
 		const char *verb = broke ?
 			VERB_AGREEMENT(drop->number, "breaks", "break") :
 			VERB_AGREEMENT(drop->number, "disappears", "disappear");
-		object_desc(o_name, sizeof(o_name), drop, ODESC_BASE);
+		object_desc(o_name, sizeof(o_name), drop, ODESC_BASE, player);
 		msg("The %s %s.", o_name, verb);
 		if (!loc_is_zero(known->grid))
 			square_excise_object(player->cave, known->grid, known);
@@ -1126,7 +1127,7 @@ void drop_near(struct chunk *c, struct object **dropped, int chance,
 	assert(c == cave);
 
 	/* Describe object */
-	object_desc(o_name, sizeof(o_name), *dropped, ODESC_BASE);
+	object_desc(o_name, sizeof(o_name), *dropped, ODESC_BASE, player);
 
 	/* Handle normal breakage */
 	if (!((*dropped)->artifact) && (randint0(100) < chance)) {
