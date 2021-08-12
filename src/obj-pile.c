@@ -879,12 +879,13 @@ struct object *floor_object_for_use(struct object *obj, int num, bool message,
 /**
  * Find and return the oldest object on the given grid marked as "ignore".
  */
-static struct object *floor_get_oldest_ignored(struct chunk *c, struct loc grid)
+static struct object *floor_get_oldest_ignored(const struct player *p,
+		struct chunk *c, struct loc grid)
 {
 	struct object *obj, *ignore = NULL;
 
 	for (obj = square_object(c, grid); obj; obj = obj->next)
-		if (ignore_item_ok(obj))
+		if (ignore_item_ok(p, obj))
 			ignore = obj;
 
 	return ignore;
@@ -901,7 +902,7 @@ bool floor_carry(struct chunk *c, struct loc grid, struct object *drop,
 				 bool *note)
 {
 	int n = 0;
-	struct object *obj, *ignore = floor_get_oldest_ignored(c, grid);
+	struct object *obj, *ignore = floor_get_oldest_ignored(player, c, grid);
 
 	/* Fail if the square can't hold objects */
 	if (!square_isobjectholding(c, grid))
@@ -920,7 +921,7 @@ bool floor_carry(struct chunk *c, struct loc grid, struct object *drop,
 			}
 
 			/* Don't mention if ignored */
-			if (ignore_item_ok(obj)) {
+			if (ignore_item_ok(player, obj)) {
 				*note = false;
 			}
 
@@ -971,7 +972,7 @@ bool floor_carry(struct chunk *c, struct loc grid, struct object *drop,
 	square_light_spot(c, grid);
 
 	/* Don't mention if ignored */
-	if (ignore_item_ok(drop)) {
+	if (ignore_item_ok(player, drop)) {
 		*note = false;
 	}
 
@@ -1016,8 +1017,8 @@ static void floor_carry_fail(struct chunk *c, struct object *drop, bool broke)
  *
  * If no appropriate grid is found, the given grid is unchanged
  */
-static void drop_find_grid(struct chunk *c, struct object *drop,
-		bool prefer_pile, struct loc *grid)
+static void drop_find_grid(const struct player *p, struct chunk *c,
+		struct object *drop, bool prefer_pile, struct loc *grid)
 {
 	int best_score = -1;
 	struct loc start = *grid;
@@ -1050,7 +1051,7 @@ static void drop_find_grid(struct chunk *c, struct object *drop,
 					combine = true;
 
 				/* Count objects */
-				if (!ignore_item_ok(obj))
+				if (!ignore_item_ok(p, obj))
 					num_shown++;
 				else
 					num_ignored++;
@@ -1059,9 +1060,9 @@ static void drop_find_grid(struct chunk *c, struct object *drop,
 				num_shown++;
 
 			/* Disallow if the stack size is too big */
-			if ((!OPT(player, birth_stacking) && (num_shown > 1)) ||
+			if ((!OPT(p, birth_stacking) && (num_shown > 1)) ||
 				((num_shown + num_ignored) > z_info->floor_size &&
-				 !floor_get_oldest_ignored(c, try)))
+				 !floor_get_oldest_ignored(p, c, try)))
 				continue;
 
 			/* Score the location based on how close and how full the grid is */
@@ -1121,7 +1122,7 @@ void drop_near(struct chunk *c, struct object **dropped, int chance,
 {
 	char o_name[80];
 	struct loc best = grid;
-	bool dont_ignore = verbose && !ignore_item_ok(*dropped);
+	bool dont_ignore = verbose && !ignore_item_ok(player, *dropped);
 
 	/* Only called in the current level */
 	assert(c == cave);
@@ -1136,7 +1137,7 @@ void drop_near(struct chunk *c, struct object **dropped, int chance,
 	}
 
 	/* Find the best grid and drop the item, destroying if there's no space */
-	drop_find_grid(c, *dropped, prefer_pile, &best);
+	drop_find_grid(player, c, *dropped, prefer_pile, &best);
 	if (floor_carry(c, best, *dropped, &dont_ignore)) {
 		sound(MSG_DROP);
 		if (dont_ignore && (square(c, best)->mon < 0)) {
@@ -1304,8 +1305,8 @@ int scan_floor(struct object **items, int max_size, object_floor_t mode,
 		if ((mode & OFLOOR_SENSE) && (!obj->known)) continue;
 
 		/* Visible */
-		if ((mode & OFLOOR_VISIBLE) && !is_unknown(obj) && ignore_item_ok(obj))
-			continue;
+		if ((mode & OFLOOR_VISIBLE) && !is_unknown(obj)
+				&& ignore_item_ok(player, obj)) continue;
 
 		/* Accept this item */
 		items[num++] = obj;
@@ -1339,7 +1340,7 @@ int scan_distant_floor(struct object **items, int max_size, struct loc grid)
 		if (obj->kind == unknown_item_kind) continue;
 
 		/* Visible */
-		if (ignore_known_item_ok(obj)) continue;
+		if (ignore_known_item_ok(player, obj)) continue;
 
 		/* Accept this item's base object */
 		items[num++] = cave->objects[obj->oidx];
