@@ -161,10 +161,10 @@ int default_layout_win(term_data *data, int maxterms)
 		return 0;
 	}
 	if ((sx == 1280) && (sy == 1024)) {
-		arg_graphics = 5;
+		arg_graphics = 0;
 		arg_graphics_nice = 0;
-		tile_width = 4;
-		tile_height = 2;
+		tile_width = 1;
+		tile_height = 1;
 
 		string_free(data[0].font_want);
 		data[0].font_want = string_make("8x12x.fon");
@@ -263,7 +263,7 @@ int default_layout_win(term_data *data, int maxterms)
 		main_font = "5x8x.fon";
 		fx = 5;
 		fy = 8;
-		tx = 4;
+		tx = 5;
 		ty = 8;
 		sub_font = NULL;/* "5x8x.fon"; */
 		fx2 = 4;
@@ -276,11 +276,11 @@ int default_layout_win(term_data *data, int maxterms)
 		fx = 8;
 		fy = 12;
 		tx = 8;
-		ty = 16;
+		ty = 12;
 		sub_font = NULL;/* "6x10x.fon"; */
 		fx2 = 6;
 		fy2 = 10;
-		mode = 4;
+		mode = 0;
 		mult_wid = 1;
 		mult_hgt = 1;
 	} else if (sy <= 800) {
@@ -288,25 +288,25 @@ int default_layout_win(term_data *data, int maxterms)
 		fx = 8;
 		fy = 12;
 		tx = 8;
-		ty = 16;
+		ty = 12;
 		sub_font = "6x10x.fon";
 		fx2 = 6;
 		fy2 = 10;
-		mode = 3;
-		mult_wid = 4;
-		mult_hgt = 2;
+		mode = 0;
+		mult_wid = 1;
+		mult_hgt = 1;
 	} else if (sy <= 1024) {
 		main_font = "8x12x.fon";
 		fx = 8;
 		fy = 12;
 		tx = 8;
-		ty = 16;
+		ty = 12;
 		sub_font = "6x10x.fon";
 		fx2 = 6;
 		fy2 = 10;
-		mode = 5;
-		mult_wid = 6;
-		mult_hgt = 3;
+		mode = 0;
+		mult_wid = 1;
+		mult_hgt = 1;
 	} else if (sy <= 1600) {
 		main_font = "16x24x.fon";
 		fx = 16;
@@ -316,21 +316,21 @@ int default_layout_win(term_data *data, int maxterms)
 		sub_font = "8x12x.fon";
 		fx2 = 8;
 		fy2 = 12;
-		mode = 5;
-		mult_wid = 3;
-		mult_hgt = 2;
+		mode = 0;
+		mult_wid = 1;
+		mult_hgt = 1;
 	} else {
 		main_font = "16x24x.fon";
 		fx = 16;
 		fy = 24;
 		tx = 16;
-		ty = 32;
+		ty = 24;
 		sub_font = "12x18x.fon";
 		fx2 = 12;
 		fy2 = 18;
-		mode = 5;
-		mult_wid = 4;
-		mult_hgt = 2;
+		mode = 0;
+		mult_wid = 1;
+		mult_hgt = 1;
 	}
 
 	/* Setup main window */
