@@ -1418,7 +1418,7 @@ static void calc_spells(struct player *p)
 		if (j >= 99) continue;
 
 		/* Get the spell */
-		spell = spell_by_index(j);
+		spell = spell_by_index(p, j);
 
 		/* Skip spells we are allowed to know */
 		if (spell->slevel <= p->lev) continue;
@@ -1452,7 +1452,7 @@ static void calc_spells(struct player *p)
 		if (j >= 99) continue;
 
 		/* Get the spell */
-		spell = spell_by_index(j);
+		spell = spell_by_index(p, j);
 
 		/* Forget it (if learned) */
 		if (p->spell_flags[j] & PY_SPELL_LEARNED) {
@@ -1483,7 +1483,7 @@ static void calc_spells(struct player *p)
 		if (j >= 99) break;
 
 		/* Get the spell */
-		spell = spell_by_index(j);
+		spell = spell_by_index(p, j);
 
 		/* Skip spells we cannot remember */
 		if (spell->slevel > p->lev) continue;
@@ -1511,7 +1511,7 @@ static void calc_spells(struct player *p)
 	/* Count spells that can be learned */
 	for (j = 0; j < num_total; j++) {
 		/* Get the spell */
-		spell = spell_by_index(j);
+		spell = spell_by_index(p, j);
 
 		/* Skip spells we cannot remember or don't exist */
 		if (!spell) continue;

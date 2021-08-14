@@ -38,7 +38,7 @@ struct spell_menu_data {
 	int n_spells;
 
 	bool browse;
-	bool (*is_valid)(int spell_index);
+	bool (*is_valid)(const struct player *p, int spell_index);
 	bool show_description;
 
 	int selected_spell;
@@ -53,7 +53,7 @@ static int spell_menu_valid(struct menu *m, int oid)
 	struct spell_menu_data *d = menu_priv(m);
 	int *spells = d->spells;
 
-	return d->is_valid(spells[oid]);
+	return d->is_valid(player, spells[oid]);
 }
 
 /**
@@ -64,7 +64,7 @@ static void spell_menu_display(struct menu *m, int oid, bool cursor,
 {
 	struct spell_menu_data *d = menu_priv(m);
 	int spell_index = d->spells[oid];
-	const struct class_spell *spell = spell_by_index(spell_index);
+	const struct class_spell *spell = spell_by_index(player, spell_index);
 
 	char help[30];
 	char out[80];
@@ -132,6 +132,7 @@ static void spell_menu_browser(int oid, void *data, const region *loc)
 {
 	struct spell_menu_data *d = data;
 	int spell_index = d->spells[oid];
+	const struct class_spell *spell = spell_by_index(player, spell_index);
 
 	if (d->show_description) {
 		/* Redirect output to the screen */
@@ -141,7 +142,7 @@ static void spell_menu_browser(int oid, void *data, const region *loc)
 		text_out_pad = 1;
 
 		Term_gotoxy(loc->col, loc->row + loc->page_rows);
-		text_out("\n%s\n\n", spell_by_index(spell_index)->text);
+		text_out("\n%s\n\n", spell_by_index(player, spell_index)->text);
 
 		/* XXX */
 		text_out_pad = 0;
@@ -161,7 +162,8 @@ static const menu_iter spell_menu_iter = {
  * Create and initialise a spell menu, given an object and a validity hook
  */
 static struct menu *spell_menu_new(const struct object *obj,
-		bool (*is_valid)(int spell_index), bool show_description)
+		bool (*is_valid)(const struct player *p, int spell_index),
+		bool show_description)
 {
 	struct menu *m = menu_new(MN_SKIN_SCROLL, &spell_menu_iter);
 	struct spell_menu_data *d = mem_alloc(sizeof *d);
@@ -170,8 +172,8 @@ static struct menu *spell_menu_new(const struct object *obj,
 	region loc = { 0 - width, 1, width, -99 };
 
 	/* collect spells from object */
-	d->n_spells = spell_collect_from_book(obj, &d->spells);
-	if (d->n_spells == 0 || !spell_okay_list(is_valid, d->spells, d->n_spells)){
+	d->n_spells = spell_collect_from_book(player, obj, &d->spells);
+	if (d->n_spells == 0 || !spell_okay_list(player, is_valid, d->spells, d->n_spells)) {
 		mem_free(m);
 		mem_free(d->spells);
 		mem_free(d);
@@ -292,15 +294,15 @@ void textui_spell_browse(void)
 /**
  * Get a spell from specified book.
  */
-int textui_get_spell_from_book(const char *verb, struct object *book,
-							   const char *error,
-							   bool (*spell_filter)(int spell_index))
+int textui_get_spell_from_book(struct player *p, const char *verb,
+	struct object *book, const char *error,
+	bool (*spell_filter)(const struct player *p, int spell_index))
 {
-	const char *noun = player_object_to_book(player, book)->realm->spell_noun;
+	const char *noun = player_object_to_book(p, book)->realm->spell_noun;
 	struct menu *m;
 
-	track_object(player->upkeep, book);
-	handle_stuff(player);
+	track_object(p->upkeep, book);
+	handle_stuff(p);
 
 	m = spell_menu_new(book, spell_filter, false);
 	if (m) {
@@ -315,9 +317,9 @@ int textui_get_spell_from_book(const char *verb, struct object *book,
 /**
  * Get a spell from the player.
  */
-int textui_get_spell(const char *verb, item_tester book_filter,
-					 cmd_code cmd, const char *error,
-					 bool (*spell_filter)(int spell_index))
+int textui_get_spell(struct player *p, const char *verb,
+		item_tester book_filter, cmd_code cmd, const char *error,
+		bool (*spell_filter)(const struct player *p, int spell_index))
 {
 	char prompt[1024];
 	struct object *book;
@@ -330,5 +332,5 @@ int textui_get_spell(const char *verb, item_tester book_filter,
 				  cmd, book_filter, (USE_INVEN | USE_FLOOR)))
 		return -1;
 
-	return textui_get_spell_from_book(verb, book, error, spell_filter);
+	return textui_get_spell_from_book(p, verb, book, error, spell_filter);
 }
