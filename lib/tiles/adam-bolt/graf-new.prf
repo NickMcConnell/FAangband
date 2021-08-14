@@ -214,6 +214,53 @@ feat:pile of passable rubble:los:0x80:0x9E
 feat:pile of passable rubble:lit:0x80:0x9C
 feat:pile of passable rubble:dark:0x80:0x9D
 
+# path north
+feat:easy path north:*:0x90:0x94
+
+# path north
+feat:hard path north:*:0x90:0x94
+
+# path east
+feat:easy path east:*:0x90:0x95
+
+# path east
+feat:hard path east:*:0x90:0x95
+
+# path south
+feat:easy path south:*:0x90:0x94
+
+# path south
+feat:hard path south:*:0x90:0x94
+
+# path west
+feat:easy path west:*:0x90:0x95
+
+# path west
+feat:hard path west:*:0x90:0x95
+
+# water
+feat:water:*:0x83:0x80
+
+# tree
+feat:lowland trees:*:0x82:0x97
+
+# tree
+feat:highland trees:*:0x82:0x9D
+
+# patch of grass
+feat:grass:*:0x82:0x9A
+
+# road
+feat:road:dark:0x80:0x83
+feat:road:lit:0x80:0x83
+feat:road:torch:0x80:0x81
+feat:road:los:0x80:0x82
+
+# Empty space
+feat:empty space:*:0x80:0x80
+
+# sand dune
+feat:sand dune:*:0x82:0x91
 
 
 

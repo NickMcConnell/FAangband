@@ -231,6 +231,54 @@ feat:pile of passable rubble:lit:0x81:0xBC
 feat:pile of passable rubble:los:0x81:0xBD
 feat:pile of passable rubble:torch:0x81:0xBD
 
+# path north
+feat:easy path north:*:0x80:0x9F
+
+# path north
+feat:hard path north:*:0x80:0x9F
+
+# path east
+feat:easy path east:*:0x80:0x9E
+
+# path east
+feat:hard path east:*:0x80:0x9E
+
+# path south
+feat:easy path south:*:0x80:0x9F
+
+# path south
+feat:hard path south:*:0x80:0x9F
+
+# path west
+feat:easy path west:*:0x80:0x9E
+
+# path west
+feat:hard path west:*:0x80:0x9E
+
+# water
+feat:water:*:0xD2:0x81
+
+# tree
+feat:lowland trees:*:0xCB:0x86
+
+# tree
+feat:highland trees:*:0xCF:0x82
+
+# patch of grass
+feat:grass:*:0xD0:0x8E
+
+# road
+feat:road:dark:0x80:0xA0
+feat:road:lit:0x80:0xA1
+feat:road:torch:0x80:0xA2
+feat:road:los:0x80:0xA2
+
+# Empty space
+feat:empty space:*:0x81:0x80
+
+# sand dune
+feat:sand dune:*:0xD0:0x87
+
 
 
 # glyph of warding
