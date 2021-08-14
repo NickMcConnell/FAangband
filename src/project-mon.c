@@ -1585,7 +1585,7 @@ void project_m(struct source origin, int r, struct loc grid, int dam, int typ,
 	if (mon != NULL) {
 		/* Update the monster */
 		if (!mon_died) {
-			update_mon(mon, cave, false);
+			update_mon(player, mon, cave, false);
 
 			/* Become hostile (to the player only, for now) */
 			if (origin.what == SRC_PLAYER) {
