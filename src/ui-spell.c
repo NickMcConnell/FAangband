@@ -132,7 +132,6 @@ static void spell_menu_browser(int oid, void *data, const region *loc)
 {
 	struct spell_menu_data *d = data;
 	int spell_index = d->spells[oid];
-	const struct class_spell *spell = spell_by_index(player, spell_index);
 
 	if (d->show_description) {
 		/* Redirect output to the screen */
