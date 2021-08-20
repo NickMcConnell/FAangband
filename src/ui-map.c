@@ -900,6 +900,7 @@ static void regional_map(int num, int centre_place)
 	int *place = mem_zalloc(size * sizeof(*place));
 	int north, east, south, west;
 	const char *lev_name;
+	const char *locality;
 	struct level *lev;
 
 	/* Set the centre */
@@ -942,11 +943,14 @@ static void regional_map(int num, int centre_place)
 
 		/* Get the level string */
 		lev_name = format("Level %d", world->levels[place[i]].depth);
+		/* Get the locality name */
+		locality = locality_name(world->levels[place[i]].locality);
 
 		switch (world->levels[place[i]].topography) {
 			case TOP_TOWN:
 			{
-				c_put_str(COLOUR_SLATE, "Town", row, col);
+			    /* If current topography is TOWN then display its name */
+			    c_put_str(COLOUR_SLATE, locality, row, col);
 				break;
 			}
 			case TOP_PLAIN:
@@ -1001,7 +1005,8 @@ static void regional_map(int num, int centre_place)
 				switch (lev->topography) {
 					case TOP_TOWN:
 					{
-						c_put_str(COLOUR_SLATE, "(Town)", row + 2, col);
+					    /* If current topography is TOWN then display its name */
+						c_put_str(COLOUR_SLATE, locality_name(lev->locality), row + 2, col);
 						break;
 					}
 					case TOP_PLAIN:
