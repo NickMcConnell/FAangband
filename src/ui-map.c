@@ -1077,7 +1077,6 @@ void do_cmd_view_map(void)
 	/* Get dimensions for the regional map */
 	num_down = (hgt - 6) / 8;
 	num_across = (wid - 24) / 20;
-	num = (num_down < num_across ? num_down : num_across);
 
 	/* Hack - limit range for now */
 	num = 2;
