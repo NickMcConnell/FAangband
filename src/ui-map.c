@@ -938,7 +938,7 @@ static void regional_map(int num, int centre_place)
 			continue;
 
 		/* Get the place */
-		col = (i % side) * 10 + 1;
+		col = (i % side) * 18 + 1;
 		row = (i / side) * 4 + 1;
 
 		/* Get the level string */
@@ -996,7 +996,7 @@ static void regional_map(int num, int centre_place)
 		c_put_str(i == size / 2 ? COLOUR_WHITE : COLOUR_L_DARK, lev_name,
 				  row + 1, col);
 		if (world->levels[place[i]].east) {
-			c_put_str(COLOUR_WHITE, "-", row + 1, col + 8);
+			c_put_str(COLOUR_WHITE, "   ---", row + 1, col + 8);
 		}
 		if (world->levels[place[i]].down) {
 			lev = &world->levels[place[i]];
