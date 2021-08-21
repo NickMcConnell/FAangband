@@ -1071,11 +1071,6 @@ void do_cmd_view_map(void)
 	int num_down, num_across, num, centre_place, next_place;
 	ui_event ke;
 
-	//if (Term->view_map_hook) {
-	//	(*(Term->view_map_hook))(Term);
-	//	return;
-	//}
-
 	/* Get size */
 	Term_get_size(&wid, &hgt);
 
