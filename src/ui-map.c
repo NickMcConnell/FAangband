@@ -888,6 +888,42 @@ void display_map(int *cy, int *cx)
 	mem_free(mp);
 }
 
+static void print_map_name(int place, int row, int col, bool down)
+{
+	byte attr = COLOUR_L_PINK;
+	char name[30];
+	const char *locality = locality_name(world->levels[place].locality);
+
+	/* Get the correct colour */
+	switch (world->levels[place].topography) {
+		case TOP_TOWN: attr = COLOUR_L_BLUE; break;
+		case TOP_PLAIN: attr = COLOUR_UMBER; break;
+		case TOP_FOREST: attr = COLOUR_GREEN; break;
+		case TOP_MOUNTAIN: attr = COLOUR_L_DARK; break;
+		case TOP_SWAMP: attr = COLOUR_L_GREEN; break;
+		case TOP_RIVER: attr = COLOUR_BLUE; break;
+		case TOP_DESERT: attr = COLOUR_L_UMBER; break;
+		case TOP_VALLEY: attr = COLOUR_RED; break;
+		case TOP_CAVE: attr = COLOUR_L_RED; break;
+		default: break;
+	}
+	if (place == player->place) {
+		attr = COLOUR_VIOLET;
+	}
+
+	/* Build the name */
+	if (down) {
+		my_strcpy(name, "(", sizeof(name));
+		my_strcat(name, locality, sizeof(name));
+		my_strcat(name, ")", sizeof(name));
+	} else {
+		my_strcpy(name, locality, sizeof(name));
+	}
+
+	/* Print it */
+	c_put_str(attr, name, row, col);
+}
+
 
 /**
  * Display a map of the type of wilderness surrounding the current level
@@ -900,7 +936,6 @@ static void regional_map(int num, int centre_place)
 	int *place = mem_zalloc(size * sizeof(*place));
 	int north, east, south, west;
 	const char *lev_name;
-	const char *locality;
 	struct level *lev;
 
 	/* Set the centre */
@@ -943,107 +978,23 @@ static void regional_map(int num, int centre_place)
 
 		/* Get the level string */
 		lev_name = format("Level %d", world->levels[place[i]].depth);
-		/* Get the locality name */
-		locality = locality_name(world->levels[place[i]].locality);
+		/* Print the locality name */
+		print_map_name(place[i], row, col, false);
 
-		switch (world->levels[place[i]].topography) {
-			case TOP_TOWN:
-			{
-			    /* If current topography is TOWN then display its name */
-			    c_put_str(COLOUR_SLATE, locality, row, col);
-				break;
-			}
-			case TOP_PLAIN:
-			{
-				c_put_str(COLOUR_UMBER, "Plain", row, col);
-				break;
-			}
-			case TOP_FOREST:
-			{
-				c_put_str(COLOUR_GREEN, "Forest", row, col);
-				break;
-			}
-			case TOP_MOUNTAIN:
-			{
-				c_put_str(COLOUR_L_DARK, "Mountain", row, col);
-				break;
-			}
-			case TOP_SWAMP:
-			{
-				c_put_str(COLOUR_L_GREEN, "Swamp", row, col);
-				break;
-			}
-			case TOP_RIVER:
-			{
-				c_put_str(COLOUR_BLUE, "River", row, col);
-				break;
-			}
-			case TOP_DESERT:
-			{
-				c_put_str(COLOUR_L_UMBER, "Desert", row, col);
-				break;
-			}
-			case TOP_VALLEY:
-			{
-				c_put_str(COLOUR_RED, "Valley", row, col);
-				break;
-			}
-			default:
-				break;
-		}
-		if (place[i] == player->place)
-			c_put_str(COLOUR_VIOLET, "Current ", row, col);
+		/* Print the other details */
 		c_put_str(i == size / 2 ? COLOUR_WHITE : COLOUR_L_DARK, lev_name,
 				  row + 1, col);
 		if (world->levels[place[i]].east) {
 			c_put_str(COLOUR_WHITE, "   ---", row + 1, col + 8);
 		}
+
+		/* Deal with mountain tops and dungeons */
 		if (world->levels[place[i]].down) {
-			lev = &world->levels[place[i]];
+			lev = level_by_name(world, world->levels[place[i]].down);
 			if (lev->topography == TOP_MOUNTAINTOP) {
-				lev = level_by_name(world, lev->down);
-				switch (lev->topography) {
-					case TOP_TOWN:
-					{
-					    /* If current topography is TOWN then display its name */
-						c_put_str(COLOUR_SLATE, locality_name(lev->locality), row + 2, col);
-						break;
-					}
-					case TOP_PLAIN:
-					{
-						c_put_str(COLOUR_UMBER, "(Plain)", row + 2, col);
-						break;
-					}
-					case TOP_FOREST:
-					{
-						c_put_str(COLOUR_GREEN, "(Forest)", row + 2, col);
-						break;
-					}
-					case TOP_MOUNTAIN:
-					{
-						c_put_str(COLOUR_L_DARK, "(Mountain)", row + 2, col);
-						break;
-					}
-					case TOP_RIVER:
-					{
-						c_put_str(COLOUR_BLUE, "(River)", row + 2, col);
-						break;
-					}
-					case TOP_DESERT:
-					{
-						c_put_str(COLOUR_L_UMBER, "(Desert)", row + 2, col);
-						break;
-					}
-					case TOP_VALLEY:
-					{
-						c_put_str(COLOUR_RED, "(Valley)", row + 2, col);
-						break;
-					}
-					default:
-						break;
-				}
+				print_map_name(lev->index, row + 2, col, true);
 			} else if (lev->locality != LOC_UNDERWORLD) {
-				c_put_str(COLOUR_L_RED, "(Dungeon)", row + 2, col);
+				print_map_name(lev->index, row + 2, col, true);
 			}
 		}
 		if (world->levels[place[i]].south) {
