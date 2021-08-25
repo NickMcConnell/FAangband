@@ -4025,8 +4025,12 @@ void initialize_random_artifacts(u32b randart_seed)
 		/* Extend the artifact array with a zero entry */
 		struct artifact *art;
 		a_info = mem_realloc(a_info, (z_info->a_max + 1) * sizeof(*art));
+		aup_info = mem_realloc(aup_info, (z_info->a_max + 1)
+							   * sizeof(*aup_info));
 		art = &a_info[z_info->a_max];
 		memset(art, 0, sizeof(*art));
+		memset(&aup_info[z_info->a_max], 0, sizeof(*aup_info));
+		aup_info[z_info->a_max].aidx = z_info->a_max;
 		z_info->a_max += 1;
 
 		/* Design the artifact, storing information as we go along. */

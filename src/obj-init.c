@@ -3307,6 +3307,7 @@ static errr finish_parse_randart(struct parser *p) {
 			&a_info[aidx + 1] : NULL;
 		mem_free(a);
 
+		memset(&aup_info[aidx], 0, sizeof(*aup_info));
 		aup_info[aidx].aidx = aidx;
 	}
 
