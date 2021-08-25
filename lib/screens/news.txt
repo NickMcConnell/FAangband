@@ -1,6 +1,6 @@
                                                                                
              ****************************************************
-             **   {deep light blue}FAangband 2.0.0{/}  ****  {deep light blue}First Age Angband{/}  **
+             **   {deep light blue}FAangband 2.0.0{/}   ****   {deep light blue}First Age Angband{/}   **
              ** {light yellow}Beleriand in the days of the War of the Jewels{/} **
              ****************************************************
 
