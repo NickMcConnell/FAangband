@@ -2760,7 +2760,7 @@ static void build_new_house(struct chunk *c)
 	struct loc centre, grid;
 	int count = 8;
 	bool door_done = false;
-	assert(cave_find(c, &centre, square_isinemptysquare));
+	if (!cave_find(c, &centre, square_isinemptysquare)) assert(0);
 	for (grid.y = centre.y - 1; grid.y <= centre.y + 1; grid.y++) {
 		for (grid.x = centre.x - 1; grid.x <= centre.x + 1; grid.x++) {
 			if (loc_eq(grid, centre)) {
