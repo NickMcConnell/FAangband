@@ -101,6 +101,13 @@ char *ANGBAND_DIR_ARCHIVE;
 char *ANGBAND_DIR_BONE;
 char *ANGBAND_DIR_GHOST;
 
+static const char *weather[] = {
+	#define LOC(a, b) #a,
+	#include "list-weather.h"
+	#undef LOC
+    NULL
+};
+
 static const char *localities[] = {
 	#define LOC(a, b) #a,
 	#include "list-localities.h"
@@ -846,6 +853,8 @@ static enum parser_error parse_world_level(struct parser *p) {
 	if (grab_name("topography", t_name, topography, N_ELEMENTS(topography), &i))
 		return PARSE_ERROR_INVALID_TOPOGRAPHY;
 	lev->topography = i;
+
+	lev->weather = rand() % N_ELEMENTS(weather);
 
 	/* Record towns */
 	if (lev->topography == TOP_TOWN) {

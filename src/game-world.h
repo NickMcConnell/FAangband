@@ -21,6 +21,12 @@
 
 #include "cave.h"
 
+enum weather {
+	#define LOC(x, b)	LOC_##x,
+	#include "list-weather.h"
+	#undef LOC
+};
+
 enum locality {
 	#define LOC(x, b)	LOC_##x,
 	#include "list-localities.h"
@@ -37,6 +43,7 @@ struct level {
 	int index;
 	int depth;
 	bool visited;
+	enum weather weather;
 	enum locality locality;
 	enum topography topography;
 	char *north;

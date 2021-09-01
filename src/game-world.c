@@ -113,6 +113,16 @@ bool no_vault(int place)
 }
 
 /**
+ * List of { weather, name } pairs.
+ */
+static const grouper weather_names[] =
+{
+	#define LOC(a, b) { LOC_##a, b },
+	#include "list-weather.h"
+	#undef LOC
+};
+
+/**
  * List of { locality, name } pairs.
  */
 static const grouper locality_names[] =
@@ -121,6 +131,14 @@ static const grouper locality_names[] =
 	#include "list-localities.h"
 	#undef LOC
 };
+
+/**
+ * Get a weather name
+ */
+const char *weather_name(enum weather weather)
+{
+    return weather_names[weather].name;
+}
 
 /**
  * Get a locality name
