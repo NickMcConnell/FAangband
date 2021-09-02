@@ -844,7 +844,7 @@ static enum parser_error parse_world_level(struct parser *p) {
 	lev->locality = i;
 	lev->depth = depth;
 	if (grab_name("topography", t_name, topography, N_ELEMENTS(topography), &i))
-		return PARSE_ERROR_INVALID_LOCALITY;
+		return PARSE_ERROR_INVALID_TOPOGRAPHY;
 	lev->topography = i;
 
 	/* Record towns */
