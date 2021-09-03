@@ -373,7 +373,7 @@ static void display_winner(void)
 		/* longest line is */
 		file_getl(fp, buf, sizeof(buf));
 		sscanf(buf, "%d", &width);
-		if (!width) width = 25;
+		if (!width) width = 74;
 
 		/* Dump the file to the screen */
 		while (file_getl(fp, buf, sizeof(buf)))
