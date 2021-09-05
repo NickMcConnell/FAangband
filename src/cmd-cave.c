@@ -196,6 +196,27 @@ void do_cmd_go_up(struct command *cmd)
 
 	/* Success */
 	if (feat == FEAT_LESS) {
+		/* Magical portal for dungeon-only games */
+		if (streq(world->name, "Hybrid Dungeon") && (player->depth != 1)) {
+			struct level *lev = &world->levels[player->place];
+			if (lev->up) {
+				struct level *up = level_by_name(world, lev->up);
+				if (lev->locality != up->locality) {
+					/* Land properly */
+					player->last_place = 0;
+
+					/* Portal */
+					msgt(MSG_STAIRS_UP, "You trigger a magic portal.");
+
+					/* Change level */
+					player_change_place(player, new_place);
+					return;
+				}
+			} else {
+				msg("Nothing happens!");
+				return;
+			}
+		}
 		msgt(MSG_STAIRS_UP, "You enter a maze of up staircases.");
 	} else {
 		msgt(MSG_STAIRS_UP, "You enter a winding path to less danger.");
