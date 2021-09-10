@@ -133,7 +133,7 @@ attack:1d1:0:0
 armor:0:0
 flags:SEE_INVIS | HOLD_LIFE | NO_FUEL
 values:LIGHT[4]
-act:DETECTION
+act:DETECT_ALL
 time:120+d120
 msg:The palantir clouds, then clears...
 desc:A crystal made by Fëanor in Aman, wherein things far away could be seen
