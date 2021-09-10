@@ -657,20 +657,20 @@ bool do_cmd_open_chest(struct loc grid, struct object *obj)
  * Attempt to disarm the chest at the given location
  * Assume there is no monster blocking the destination
  *
- * The calculation of difficulty assumes that there are 6 types of chest
+ * The calculation of difficulty assumes that there are 14 types of chest
  * trap; if more are added, it will need adjusting.
  *
  * Returns true if repeated commands may continue
  */
 bool do_cmd_disarm_chest(struct object *obj)
 {
-	int skill = player->state.skills[SKILL_DISARM_PHYS], diff;
+	int skill = player->state.skills[SKILL_DISARM_PHYS], level = 0, diff;
 	struct chest_trap *traps;
 	bool physical = false;
 	bool magic = false;
 	bool more = false;
 
-	/* Check whether the traps are magic, physical or both */
+	/* Check whether the traps are magic, physical or both, and get level */
 	for (traps = chest_traps; traps; traps = traps->next) {
 		if (!(traps->pval & obj->pval)) continue;
 		if (traps->magic) {
@@ -678,6 +678,7 @@ bool do_cmd_disarm_chest(struct object *obj)
 		} else {
 			physical = true;
 		}
+		level += traps->level;
 	}
 
 	/* Physical disarming is the default, if there are magic traps we adjust */ 
@@ -699,7 +700,7 @@ bool do_cmd_disarm_chest(struct object *obj)
 	}
 
 	/* Extract the difficulty */
-	diff = skill - (5 + obj->pval / 2);
+	diff = skill - level;
 
 	/* Always have a small chance of success */
 	if (diff < 2) diff = 2;
