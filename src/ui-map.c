@@ -36,6 +36,8 @@
 #include "ui-term.h"
 
 
+bool showRegionalMap();
+
 /**
  * Hack -- Hallucinatory monster
  */
@@ -1072,8 +1074,8 @@ void do_cmd_view_map(void)
 	tile_width = w;
 	tile_height = h;
 
-	/* Show regional map only if there is wilderness */
-	if (!streq(world->name, "Hybrid Dungeon") && !streq(world->name, "Angband Dungeon")) {
+	/* Show regional map only if there is wilderness and player not in the dungeon */
+	if (showRegionalMap()) {
 		centre_place = player->place;
 		while (true) {
 			/* Get the adjacent levels */
@@ -1130,6 +1132,11 @@ void do_cmd_view_map(void)
 
 	/* Load screen */
 	screen_load();
+}
+
+bool showRegionalMap(void) {
+    return (!streq(world->name, "Hybrid Dungeon") && !streq(world->name, "Angband Dungeon")) &&
+        level_topography(player->place) != TOP_CAVE;
 }
 
 

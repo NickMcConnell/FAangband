@@ -23,3 +23,4 @@ extern void print_rel(wchar_t c, byte a, int y, int x);
 extern void prt_map(void);
 extern void display_map(int *cy, int *cx);
 extern void do_cmd_view_map(void);
+bool showRegionalMap(void);
