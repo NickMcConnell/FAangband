@@ -63,7 +63,7 @@ static void recall_display(struct menu *menu, int oid, bool cursor, int row,
 			my_strcpy(place, format("%s Town   ", locality_name(region)),
 					  sizeof(place));
 		} else {
-			my_strcpy(place, "Nowhere     ", sizeof(place));
+		    my_strcpy(place, "No location set     ", sizeof(place));
 		}
 	} else {
 		my_strcpy(place, "Don't replace     ", sizeof(place));
