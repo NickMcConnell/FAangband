@@ -45,7 +45,7 @@
 			<string>$NAME$ saved game</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
-				<string>SAVE</string>
+				<string>FAAN</string>
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
