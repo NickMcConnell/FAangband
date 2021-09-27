@@ -1574,7 +1574,7 @@ void player_resting_complete_special(struct player *p)
 		/* Allow some slop so reliably wake close to sunset/sunrise. */
 		s32b ttest = (turn / 10L) * 10L;
 
-		if (! (ttest % ((10L * z_info->day_length) / 2))) {
+		if (ttest % ((10L * z_info->day_length) / 2) < 10) {
 			disturb(p);
 		}
 	}
