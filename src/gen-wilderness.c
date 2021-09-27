@@ -1632,15 +1632,16 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 	bool made_plat;
 
 	struct loc grid;
-	int j, d;
+	int j, d = 0;
 	int plats;
 	int place = p->place;
 	int last_place = p->last_place;
 	int form_grids = 0;
+	int form_grids_target = p->depth * 20;
 
 	int form_feats[] = { FEAT_GRASS, FEAT_PASS_RUBBLE, FEAT_MAGMA, FEAT_GRANITE,
 						 FEAT_DUNE, FEAT_QUARTZ, FEAT_NONE };
-	bool made_gate = false;
+	struct loc stair = loc(0, 0);
 
     /* Make the level */
     struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
@@ -1678,7 +1679,7 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 				if (square_feat(c, grid)->fidx == FEAT_ROAD) {
 					/* The gate of Angband */
 					square_set_feat(c, grid, FEAT_MORE);
-					made_gate = true;
+					stair = grid;
 					if (level_topography(last_place) == TOP_CAVE || turn < 10)
 						player_place(c, p, grid);
 					break;
@@ -1687,9 +1688,13 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 					square_set_feat(c, grid, FEAT_GRANITE);
 				}
 			}
-			if (made_gate)
+			if (stair.y)
 				break;
 		}
+
+		/* Adjust formation grids for how much of the level is removed */
+		form_grids_target *= (c->width * c->height - (d * d / 2));
+		form_grids_target /= (c->width * c->height);
 	}
 
 	/* Now place rubble, sand and magma */
@@ -1731,6 +1736,8 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 		xlo = MAX(a, 10);
 		xhi = MIN(c->width - 1 - a, c->height - 11);
 		x = rand_range(xlo, xhi);
+		if (square_isgranite(c, loc(x, y))) continue;
+		if (distance(loc(x, y), stair) < a + b) continue;
 		made_plat = generate_starburst_room(c, y - b, x - a, y + b, x + a,
 											false, FEAT_GRASS, false);
 
@@ -1744,7 +1751,7 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 	}
 
 	/* Place some formations */
-	while (form_grids < 20 * c->depth) {
+	while (form_grids < (20 * c->depth)) {
 		/* Choose a place */
 		grid.y = randint1(c->height - 2);
 		grid.x = randint1(c->width - 2);
