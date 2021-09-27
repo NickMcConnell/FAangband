@@ -5729,7 +5729,7 @@ static void cocoa_file_open_hook(const char *path, file_type ftype)
 	    if (ftype == FTYPE_RAW)
 		mac_type = 'DATA';
 	    else if (ftype == FTYPE_SAVE)
-		mac_type = 'SAVE';
+		mac_type = 'FAAN';
 
 	    NSDictionary *attrs =
 		[NSDictionary dictionaryWithObjectsAndKeys:
