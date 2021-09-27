@@ -1073,7 +1073,9 @@ void do_cmd_view_map(void)
 	tile_height = h;
 
 	/* Show regional map only if there is wilderness */
-	if (!streq(world->name, "Hybrid Dungeon") && !streq(world->name, "Angband Dungeon")) {
+	if (!streq(world->name, "Hybrid Dungeon") &&
+		!streq(world->name, "Angband Dungeon") &&
+		(level_topography(player->place) != TOP_CAVE)) {
 		centre_place = player->place;
 		while (true) {
 			/* Get the adjacent levels */
