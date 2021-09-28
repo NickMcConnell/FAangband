@@ -516,7 +516,7 @@ static void chest_death(struct loc grid, struct object *chest, bool scatter)
 		if (!treasure)
 			continue;
 		if (tval_is_chest(treasure)) {
-			object_delete(&treasure);
+			object_delete(cave, player->cave, &treasure);
 			continue;
 		}
 

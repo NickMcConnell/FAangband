@@ -178,8 +178,8 @@ static void kind_info(char *buf, size_t buf_len, char *dam, size_t dam_len,
 
 	/* Hack */
 	if (!dam) {
-		object_delete(&known_obj);
-		object_delete(&obj);
+		object_delete(NULL, NULL, &known_obj);
+		object_delete(NULL, NULL, &obj);
 		return;
 	}
 
@@ -192,8 +192,8 @@ static void kind_info(char *buf, size_t buf_len, char *dam, size_t dam_len,
 	else if (tval_is_armor(obj))
 		strnfmt(dam, dam_len, "%d", obj->ac);
 
-	object_delete(&known_obj);
-	object_delete(&obj);
+	object_delete(NULL, NULL, &known_obj);
+	object_delete(NULL, NULL, &obj);
 }
 
 
@@ -430,8 +430,8 @@ void spoil_artifact(const char *fname)
 
 			/* Attempt to "forge" the artifact */
 			if (!make_fake_artifact(obj, &artc)) {
-				object_delete(&known_obj);
-				object_delete(&obj);
+				object_delete(NULL, NULL, &known_obj);
+				object_delete(NULL, NULL, &obj);
 				continue;
 			}
 
@@ -463,8 +463,8 @@ void spoil_artifact(const char *fname)
 
 			/* Terminate the entry */
 			spoiler_blanklines(2);
-			object_delete(&known_obj);
-			object_delete(&obj);
+			object_delete(NULL, NULL, &known_obj);
+			object_delete(NULL, NULL, &obj);
 		}
 	}
 

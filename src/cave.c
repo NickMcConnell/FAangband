@@ -458,7 +458,8 @@ void cave_free(struct chunk *c) {
 	/* Look for orphaned objects and delete them. */
 	for (i = 1; i < c->obj_max; i++) {
 		if (c->objects[i] && loc_is_zero(c->objects[i]->grid)) {
-			object_delete(&c->objects[i]);
+			struct chunk *p_c = (c == cave) ? player->cave : NULL;
+			object_delete(c, p_c, &c->objects[i]);
 		}
 	}
 
@@ -468,7 +469,7 @@ void cave_free(struct chunk *c) {
 			if (c->squares[y][x].trap)
 				square_free_trap(c, loc(x, y));
 			if (c->squares[y][x].obj)
-				object_pile_free(c->squares[y][x].obj);
+				object_pile_free(c, c->squares[y][x].obj);
 		}
 		mem_free(c->squares[y]);
 	}

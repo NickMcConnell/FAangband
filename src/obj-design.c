@@ -476,7 +476,7 @@ static int select_property(int temp_potential, const char **property_list,
 			if (object_similar(obj, test_obj, OSTACK_NONE)) {
 				prices[i][j] = 0;
 			}
-			object_delete(&test_obj);
+			object_delete(NULL, NULL, &test_obj);
 		}
 	}
 

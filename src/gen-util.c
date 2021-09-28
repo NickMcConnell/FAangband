@@ -494,7 +494,7 @@ void place_object(struct chunk *c, struct loc grid, int level, bool good,
 		if (new_obj->artifact) {
 			mark_artifact_created(new_obj->artifact, false);
 		}
-		object_delete(&new_obj);
+		object_delete(c, NULL, &new_obj);
 		return;
 	} else {
 		list_object(c, new_obj);
@@ -531,7 +531,7 @@ void place_gold(struct chunk *c, struct loc grid, int level, byte origin)
 	money->origin_place = player->place;
 
 	if (!floor_carry(c, grid, money, &dummy)) {
-		object_delete(&money);
+		object_delete(c, NULL, &money);
 	} else {
 		list_object(c, money);
 	}
