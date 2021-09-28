@@ -389,9 +389,9 @@ desc: spells.  May dissolve or be tunnelled to normal floor, and can be walked
 desc: through by the player and monsters.
 
 name:water
-graphics:.:b
+graphics:.:Z
 priority:6
-flags:LOS | PROJECT | PASSABLE | NO_SCENT | EXPOSE | WATERY
+flags:LOS | PROJECT | PASSABLE | NO_SCENT | EXPOSE | WATERY | TORCH
 look-prefix:some
 look-in-preposition:in
 desc:Cannot be passed by fiery, earthbound monsters, slows down most other 
@@ -402,9 +402,9 @@ desc:However, fire-based spells become much less powerful, so find a lake if
 desc:you battle Smaug.  Water may evaporate.
 
 name:lowland trees
-graphics:+:g
+graphics:+:t
 priority:14
-flags:PASSABLE | OBJECT | TREE | PROTECT | ORGANIC | HIDE_OBJ | TRAP
+flags:PASSABLE | OBJECT | TREE | PROTECT | ORGANIC | HIDE_OBJ | TRAP | TORCH
 look-prefix:some
 look-in-preposition:amid
 desc:Slows down characters not familiar with druidic techniques, and all 
@@ -415,9 +415,9 @@ desc:ranged, or magical attacks.  Trees can burn.
 
 
 name:highland trees
-graphics:+:t
+graphics:+:g
 priority:14
-flags:PASSABLE | OBJECT | TREE | PROTECT | ORGANIC | HIDE_OBJ | TRAP
+flags:PASSABLE | OBJECT | TREE | PROTECT | ORGANIC | HIDE_OBJ | TRAP | TORCH
 look-prefix:some
 look-in-preposition:amid
 desc:Slows down characters not familiar with druidic techniques, and all 
@@ -430,7 +430,7 @@ name:grass
 graphics:.:g
 priority:5
 flags:LOS | PROJECT | PASSABLE | FLOOR | OBJECT | ORGANIC | EASY | RUN2 | TRAP
-flags:MTRAP
+flags:MTRAP | TORCH
 look-prefix:some
 desc:Open ground that can be crossed easily by all creatures.  It occurs only
 desc:in wilderness.  It may contain traps. 
@@ -457,7 +457,7 @@ die-msg:falling off a precipice
 name:sand dune
 graphics:.:y
 priority:13
-flags:PASSABLE | OBJECT | EASY
+flags:PASSABLE | OBJECT | EASY | TORCH
 desc:Ends LOS, stops missiles, bolts, and beams, and reduces the radius of ball 
 desc:spells.  
 

@@ -50,6 +50,7 @@
 #define COLOUR_BLUE_SLATE  26    /* z */
 #define COLOUR_DEEP_L_BLUE 27    /* Z */
 #define COLOUR_SHADE       28    /* for shaded backgrounds */
+#define COLOUR_D_GREEN     29    /* e */
 
 /**
  * The following allow color 'translations' to support environments with a

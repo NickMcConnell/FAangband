@@ -119,7 +119,13 @@ static void grid_get_attr(struct grid_data *g, int *a)
 	if (feat_is_torch(g->f_idx)) {
 		/* Brighten if torchlit, darken if out of LoS, super dark for UNLIGHT */
 		switch (g->lighting) {
-			case LIGHTING_TORCH: *a = get_color(*a, ATTR_LIGHT, 1); break;
+			case LIGHTING_TORCH: {
+				/* Silly outside */
+				if (!outside()) {
+					*a = get_color(*a, ATTR_LIGHT, 1);
+				}
+				break;
+			}
 			case LIGHTING_LIT: *a = get_color(*a, ATTR_DARK, 1); break;
 			case LIGHTING_DARK: *a = get_color(*a, ATTR_DARK, 2); break;
 			default: break;
