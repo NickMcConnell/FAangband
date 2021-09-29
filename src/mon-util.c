@@ -311,7 +311,7 @@ void update_mon(struct player *p, struct monster *mon, struct chunk *c,
 {
 	struct monster_lore *lore;
 
-	int d;
+	int d, dy, dx;
 
 	/* If still generating the level, measure distances from the middle */
 	struct loc pgrid = character_dungeon ? p->grid :
@@ -342,9 +342,10 @@ void update_mon(struct player *p, struct monster *mon, struct chunk *c,
 	if (full) {
 		/* Target */
 		struct loc target = monster_target_loc(mon);
+
 		/* Distance components */
-		int dy = ABS(target.y - mon->grid.y);
-		int dx = ABS(target.x - mon->grid.x);
+		dy = ABS(target.y - mon->grid.y);
+		dx = ABS(target.x - mon->grid.x);
 
 		/* Approximate distance */
 		d = (dy > dx) ? (dy + (dx >>  1)) : (dx + (dy >> 1));
@@ -362,10 +363,13 @@ void update_mon(struct player *p, struct monster *mon, struct chunk *c,
 		if (mon->scent.grids) {
 			update_scent(c, NULL, mon);
 		}
-	} else {
-		/* Extract the distance */
-		d = mon->cdis;
 	}
+
+	/* Get the actual distance from the player (mon->cdis is now
+	 * the distance from the monster to its target) */
+	dy = ABS(player->grid.y - mon->grid.y);
+	dx = ABS(player->grid.x - mon->grid.x);
+	d = (dy > dx) ? (dy + (dx >>  1)) : (dx + (dy >> 1));
 
 	/* Remove any dead monster targets (then what happens? - NRM)*/
 	if ((mon->target.midx > 0) && !cave_monster(c, mon->target.midx)) {
