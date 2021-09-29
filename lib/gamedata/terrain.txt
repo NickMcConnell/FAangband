@@ -391,7 +391,7 @@ desc: through by the player and monsters.
 name:water
 graphics:.:Z
 priority:6
-flags:LOS | PROJECT | PASSABLE | NO_SCENT | EXPOSE | WATERY | TORCH
+flags:LOS | PROJECT | PASSABLE | NO_SCENT | EXPOSE | WATERY | TORCH | SMOOTH
 look-prefix:some
 look-in-preposition:in
 desc:Cannot be passed by fiery, earthbound monsters, slows down most other 

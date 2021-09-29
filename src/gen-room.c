@@ -3308,14 +3308,35 @@ bool build_moria(struct chunk *c, struct loc centre, int rating)
 		return (false);
 	}
 
-	/* Sometimes, the room may have rubble in it. */
-	if (one_in_(10)) {
+	/* Sometimes, the room may have rubble, trees or water in it. */
+	if (one_in_(20)) {
 		event_signal_string(EVENT_GEN_ROOM_CHOOSE_SUBTYPE, "rubble");
 		(void) generate_starburst_room(c, y1 + randint0(height / 4),
 									   x1 + randint0(width / 4),
 									   y2 - randint0(height / 4),
 									   x2 - randint0(width / 4), false,
 									   FEAT_PASS_RUBBLE, false);
+	} else if (one_in_(50)) {
+		event_signal_string(EVENT_GEN_ROOM_CHOOSE_SUBTYPE, "trees");
+		(void) generate_starburst_room(c, y1 + randint0(height / 4),
+									   x1 + randint0(width / 4),
+									   y2 - randint0(height / 4),
+									   x2 - randint0(width / 4), false,
+									   FEAT_TREE, false);
+	} else if (one_in_(50)) {
+		event_signal_string(EVENT_GEN_ROOM_CHOOSE_SUBTYPE, "trees");
+		(void) generate_starburst_room(c, y1 + randint0(height / 4),
+									   x1 + randint0(width / 4),
+									   y2 - randint0(height / 4),
+									   x2 - randint0(width / 4), false,
+									   FEAT_TREE2, false);
+	} else if (one_in_(10)) {
+		event_signal_string(EVENT_GEN_ROOM_CHOOSE_SUBTYPE, "water");
+		(void) generate_starburst_room(c, y1 + randint0(height / 4),
+									   x1 + randint0(width / 4),
+									   y2 - randint0(height / 4),
+									   x2 - randint0(width / 4), false,
+									   FEAT_WATER, false);
 	}
 
 	/* Success */
