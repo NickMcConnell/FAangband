@@ -370,7 +370,7 @@ desc:A path to the neighbouring region.
 name:lava
 graphics:#:r
 priority:10
-flags:PROJECT | FIERY | PASSABLE | NO_SCENT | BRIGHT
+flags:LOS | PROJECT | FIERY | PASSABLE | NO_SCENT | BRIGHT
 look-prefix:some
 desc:A fiery pool of glowing lava.  Step in it at your peril!
 walk-msg:The lava will scald you!  Really step in? 

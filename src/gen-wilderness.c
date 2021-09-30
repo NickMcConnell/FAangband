@@ -900,7 +900,7 @@ static bool place_web(struct chunk *c, struct player *p, const char *type)
 	/* Replace granite by webbed trees */
 	for (grid.y = top_left.y; grid.y < top_left.y + v->hgt; grid.y++) {
 		for (grid.x = top_left.x; grid.x < top_left.x + v->wid; grid.x++) {
-			if (square_iswall(c, grid)) {
+			if (square_isgranite(c, grid)) {
 				if (one_in_(2)) {
 					square_set_feat(c, grid, FEAT_TREE);
 				} else {
@@ -1926,7 +1926,7 @@ struct chunk *river_gen(struct player *p, int height, int width)
 		player_place(c, p, grid);
 		square_set_feat(c, grid, path);
 		for (grid.y = p->grid.y; grid.y > 0; grid.y--) {
-			if (square_iswall(c, grid)) {
+			if (!square_ispassable(c, grid)) {
 				square_set_feat(c, grid, FEAT_ROAD);
 			}
 		}
