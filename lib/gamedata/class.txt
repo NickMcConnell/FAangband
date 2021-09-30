@@ -848,8 +848,8 @@ desc:Restores experience points to maximum if it is currently below maximum.
 
 spell:Word of Recall:25:30:75:10
 effect:RECALL
-desc:Teleports you from the dungeon to the town or from the town to the
-desc: deepest level you have visited in the dungeon.
+desc:Teleports you from the dungeon or wilderness to the town, or from the town
+desc: to any of four points you have visited and set.
 desc:  The recall effect is not immediate; it is delayed by 14+1d20 turns.
 desc:  During that delay, the prayer can be canceled by invoking the prayer
 desc: of recall again.
@@ -1335,8 +1335,8 @@ desc: character levels.
 
 spell:Word of Recall:25:30:75:10
 effect:RECALL
-desc:Teleports you from the dungeon to the town or from the town to the
-desc: deepest level you have visited in the dungeon.
+desc:Teleports you from the dungeon or wilderness to the town, or from the town
+desc: to any of four points you have visited and set.
 desc:  The recall effect is not immediate; it is delayed by 14+1d20 turns.
 desc:  During that delay, the prayer can be canceled by invoking the prayer
 desc: of recall again.
