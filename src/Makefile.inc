@@ -1035,9 +1035,9 @@ depgen:
  game-world.h list-localities.h list-topography.h generate.h monster.h \
  target.h mon-predicate.h mon-timed.h list-mon-timed.h mon-blows.h \
  list-mon-temp-flags.h list-mon-race-flags.h list-mon-spells.h \
- list-room-flags.h obj-pile.h obj-util.h player-calcs.h player-timed.h \
- list-player-timed.h project.h source.h list-projections.h trap.h \
- list-trap-flags.h
+ list-room-flags.h obj-ignore.h list-ignore-types.h obj-pile.h obj-util.h \
+ player-calcs.h player-timed.h list-player-timed.h project.h source.h \
+ list-projections.h trap.h list-trap-flags.h
 ./project-mon.o: project-mon.c angband.h h-basic.h z-bitflag.h z-form.h \
  z-virt.h z-color.h z-util.h z-rand.h config.h game-event.h z-type.h \
  message.h list-message.h player.h guid.h obj-properties.h z-file.h \
@@ -1305,7 +1305,7 @@ depgen:
  obj-ignore.h list-ignore-types.h obj-info.h z-textblock.h obj-tval.h \
  store.h ui-entry.h ui-entry-renderers.h ui-entry-combiner.h \
  ui-equip-cmp.h ui-event.h ui-input.h game-event.h ui-term.h ui-object.h \
- ui-output.h z-color.h z-util.h
+ ui-menu.h ui-output.h z-color.h z-util.h
 ./ui-event.o: ui-event.c angband.h h-basic.h z-bitflag.h z-form.h z-virt.h \
  z-color.h z-util.h z-rand.h config.h game-event.h z-type.h message.h \
  list-message.h player.h guid.h obj-properties.h z-file.h list-tvals.h \
@@ -1373,8 +1373,8 @@ depgen:
  player-calcs.h player-path.h savefile.h target.h mon-predicate.h \
  ui-command.h ui-context.h ui-input.h ui-event.h ui-term.h ui-curse.h \
  ui-display.h ui-effect.h ui-help.h ui-keymap.h ui-knowledge.h ui-map.h \
- ui-object.h ui-output.h z-textblock.h ui-player.h ui-prefs.h ui-recall.h \
- ui-signals.h ui-spell.h ui-store.h ui-target.h
+ ui-menu.h ui-output.h z-textblock.h ui-object.h ui-player.h ui-prefs.h \
+ ui-recall.h ui-signals.h ui-spell.h ui-store.h ui-target.h
 ./ui-keymap.o: ui-keymap.c angband.h h-basic.h z-bitflag.h z-form.h \
  z-virt.h z-color.h z-util.h z-rand.h config.h game-event.h z-type.h \
  message.h list-message.h player.h guid.h obj-properties.h z-file.h \

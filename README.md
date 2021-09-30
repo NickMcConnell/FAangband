@@ -1,4 +1,4 @@
-# [FAangband](https://github.com/NickMcConnell/FAangband) 2.0.0
+# [FAangband](https://github.com/NickMcConnell/FAangband) 2.0.1
 
 First Age Angband is a variant of [Angband](http://angband.github.io/angband/).
 

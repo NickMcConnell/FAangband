@@ -11,7 +11,7 @@ and developed until around 2014 with version 1.4.4.
 Development was restarted in 2020, with a rewrite aimed at re-implementing
 the best features of original FAangband but based on the latest Angband
 code base.  Version 2 was first released on the 22nd of August, 2021.  The
-current version is 2.0.0.
+current version is 2.0.1.
 
 
 Angband

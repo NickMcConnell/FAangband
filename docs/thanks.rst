@@ -9,6 +9,7 @@ For specific contributions to FAangband, thanks go to:
 
 * Arralen
 * backwardsEric
+* Blinkhog
 * Cuboideb (Diego Gonzalez)
 * David Medley
 * dhouseholder
@@ -18,9 +19,14 @@ For specific contributions to FAangband, thanks go to:
 * Ingwe Ingweron
 * jevansau
 * kheldar
+* Kodiologist
 * MITZE
 * Rodent/Sideways/sulkasormi
 * Sacksquatch
+* Shaun Lemonds
+* swim
+* tg122
+* Thraalbee
 * wobbly
 
 and Luke McConnell as always for both coming up with ridiculous ideas and

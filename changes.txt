@@ -1,6 +1,11 @@
 Welcome to the changelog for FAangband. This file tracks the changes made since
 1.4.4.
 
+FAangband 2.0.1
+===============
+
+This version mainly fixes bugs and corrects balance from version 2.0.1.
+
 FAangband 2.0.0
 ===============
 
