@@ -931,7 +931,7 @@ static enum parser_error parse_prefs_a(struct parser *p)
 	if (d->bypass)
 		return PARSE_ERROR_NONE;
 
-		act = parser_getstr(p, "act");
+	act = parser_getstr(p, "act");
 	keypress_from_text(d->keymap_buffer, N_ELEMENTS(d->keymap_buffer),
 					   act);
 

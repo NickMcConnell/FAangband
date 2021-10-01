@@ -78,7 +78,6 @@ enum
 #define rf_negate(f)           flag_negate(f, RF_SIZE)
 #define rf_copy(f1, f2)        flag_copy(f1, f2, RF_SIZE)
 #define rf_union(f1, f2)       flag_union(f1, f2, RF_SIZE)
-#define rf_comp_union(f1, f2)  flag_comp_union(f1, f2, RF_SIZE)
 #define rf_inter(f1, f2)       flag_inter(f1, f2, RF_SIZE)
 #define rf_diff(f1, f2)        flag_diff(f1, f2, RF_SIZE)
 
@@ -122,7 +121,6 @@ enum
 #define rsf_negate(f)          flag_negate(f, RSF_SIZE)
 #define rsf_copy(f1, f2)       flag_copy(f1, f2, RSF_SIZE)
 #define rsf_union(f1, f2)      flag_union(f1, f2, RSF_SIZE)
-#define rsf_comp_union(f1, f2) flag_comp_union(f1, f2, RSF_SIZE)
 #define rsf_inter(f1, f2)      flag_inter(f1, f2, RSF_SIZE)
 #define rsf_diff(f1, f2)       flag_diff(f1, f2, RSF_SIZE)
 

@@ -35,7 +35,7 @@
 #define TRAP_HEX      0x17
 #define TRAP_PORTAL   0x18
 #define TRAP_MURDER   0x19
-#define TRAP_BRANCH   0x1A
+#define TRAP_FALL     0x1A
 
 /* Specials trap that only effects monsters.  Created only by rogues. -LM- */
 #define MTRAP_HEAD       0x40
@@ -82,7 +82,6 @@ enum
 #define trf_negate(f)           flag_negate(f, TRF_SIZE)
 #define trf_copy(f1, f2)        flag_copy(f1, f2, TRF_SIZE)
 #define trf_union(f1, f2)       flag_union(f1, f2, TRF_SIZE)
-#define trf_comp_union(f1, f2)  flag_comp_union(f1, f2, TRF_SIZE)
 #define trf_inter(f1, f2)       flag_inter(f1, f2, TRF_SIZE)
 #define trf_diff(f1, f2)        flag_diff(f1, f2, TRF_SIZE)
 

@@ -299,7 +299,6 @@ enum
 #define of_negate(f)           flag_negate(f, OF_SIZE)
 #define of_copy(f1, f2)        flag_copy(f1, f2, OF_SIZE)
 #define of_union(f1, f2)       flag_union(f1, f2, OF_SIZE)
-#define of_comp_union(f1, f2)  flag_comp_union(f1, f2, OF_SIZE)
 #define of_inter(f1, f2)       flag_inter(f1, f2, OF_SIZE)
 #define of_diff(f1, f2)        flag_diff(f1, f2, OF_SIZE)
 
@@ -337,7 +336,6 @@ enum
 #define cf_negate(f)           flag_negate(f, CF_SIZE)
 #define cf_copy(f1, f2)        flag_copy(f1, f2, CF_SIZE)
 #define cf_union(f1, f2)       flag_union(f1, f2, CF_SIZE)
-#define cf_comp_union(f1, f2)  flag_comp_union(f1, f2, CF_SIZE)
 #define cf_inter(f1, f2)       flag_inter(f1, f2, CF_SIZE)
 #define cf_diff(f1, f2)        flag_diff(f1, f2, CF_SIZE)
 
@@ -370,7 +368,6 @@ enum
 #define kf_negate(f)           flag_negate(f, KF_SIZE)
 #define kf_copy(f1, f2)        flag_copy(f1, f2, KF_SIZE)
 #define kf_union(f1, f2)       flag_union(f1, f2, KF_SIZE)
-#define kf_comp_union(f1, f2)  flag_comp_union(f1, f2, KF_SIZE)
 #define kf_inter(f1, f2)       flag_inter(f1, f2, KF_SIZE)
 #define kf_diff(f1, f2)        flag_diff(f1, f2, KF_SIZE)
 
@@ -403,7 +400,6 @@ enum
 #define if_negate(f)           flag_negate(f, IF_SIZE)
 #define if_copy(f1, f2)        flag_copy(f1, f2, IF_SIZE)
 #define if_union(f1, f2)       flag_union(f1, f2, IF_SIZE)
-#define if_comp_union(f1, f2)  flag_comp_union(f1, f2, IF_SIZE)
 #define if_inter(f1, f2)       flag_inter(f1, f2, IF_SIZE)
 #define if_diff(f1, f2)        flag_diff(f1, f2, IF_SIZE)
 

@@ -4099,6 +4099,7 @@ void update_smart_learn(int m_idx, int what)
 				m_ptr->smart &= ~(SM_IMM_ACID);
 			if (p_resist_good(P_RES_CONFU))
 				m_ptr->smart |= (SM_RES_CONFU);
+			break;
 		}
 
 		/* Water attacks learn about sound/confusion resists */
@@ -4112,6 +4113,7 @@ void update_smart_learn(int m_idx, int what)
 				m_ptr->smart |= (SM_RES_CONFU);
 			else
 				m_ptr->smart &= ~(SM_RES_CONFU);
+			break;
 		}
 
 		/* 

@@ -314,7 +314,7 @@ void spell_learn(int spell)
 		msg("You can learn %d more %s%s.", p_ptr->new_spells,
 			magic_desc[mp_ptr->spell_realm][SPELL_NOUN],
 			((p_ptr->new_spells != 1)
-			 && (!mp_ptr->spell_book != TV_DRUID_BOOK)) ? "s" : "");
+			 && (mp_ptr->spell_book != TV_DRUID_BOOK)) ? "s" : "");
 	}
 
 	/* Redraw Study Status */

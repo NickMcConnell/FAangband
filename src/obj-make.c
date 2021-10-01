@@ -1664,6 +1664,7 @@ static bool kind_is_good(int k_idx)
 				return (TRUE);
 			if (k_ptr->sval == SV_POTION_RESTORE_MANA)
 				return (TRUE);
+			return (FALSE);
 		}
 	case TV_SCROLL:
 		{

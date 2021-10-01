@@ -2320,6 +2320,7 @@ void object_absorb(object_type * o_ptr, const object_type * j_ptr)
 				o_ptr->origin = j_ptr->origin;
 				o_ptr->origin_stage = j_ptr->origin_stage;
 				o_ptr->origin_xtra = j_ptr->origin_xtra;
+				break;
 			}
 
 			/* Set as "mixed" */

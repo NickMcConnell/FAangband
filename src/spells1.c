@@ -3316,6 +3316,7 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 				/* Hack - maximum jamming. */
 				cave_feat[y][x] = FEAT_DOOR_TAIL;
 			}
+			break;
 		}
 
 		/* Light up the grid */
@@ -3554,6 +3555,7 @@ static bool project_o(int who, int y, int x, int dam, int typ)
 				do_kill = TRUE;
 				note_kill =
 					(plural ? " are destroyed!" : " is destroyed!");
+				break;
 			}
 
 			/* Elemental attack -- acid, fire, cold, electricity */

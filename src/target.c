@@ -1633,6 +1633,7 @@ bool target_set_interactive(int mode, int x, int y)
 
 						y = py;
 						x = px;
+						break;
 					}
 
 				case 'o':

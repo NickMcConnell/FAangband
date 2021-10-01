@@ -555,8 +555,7 @@ static int find_resist(int m_idx, int spell_lrn)
 				a += 10;
 			else if (smart & (SM_GOOD_SAVE))
 				a += 5;
-			else
-				return (a);
+			return (a);
 		}
 		/* Unresistable, but sound prevents stun */
 	case LRN_SOUND2:

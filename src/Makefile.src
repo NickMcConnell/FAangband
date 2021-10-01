@@ -69,8 +69,7 @@ HEADERS = \
 
 ZFILES = z-bitflag.o z-file.o z-form.o z-msg.o z-quark.o z-rand.o z-set.o \
          z-term.o z-type.o z-util.o z-virt.o z-textblock.o
-MAINFILES = main.o main-crb.o main-gcu.o main-leo.o \
-            main-sdl.o main-x11.o snd-sdl.o
+MAINFILES = main.o main-gcu.o main-leo.o main-sdl.o main-x11.o snd-sdl.o
 
 WINMAINFILES = \
         win/faangband.res \

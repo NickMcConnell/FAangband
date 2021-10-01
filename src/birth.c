@@ -572,11 +572,13 @@ static void object_upgrade(object_type *o_ptr)
 				{
 					o_ptr->bonus_other[P_BONUS_STEALTH] = rp_ptr->re_bonus;
 					of_on(o_ptr->flags_obj, OF_SUSTAIN_CHR);
+					break;
 				}
 			case EGO_GONDOLIN:
 				{
 					of_on(o_ptr->flags_obj, OF_FEATHER);
 				}
+				default: break;
 			}
 
 			/* Get flags */
