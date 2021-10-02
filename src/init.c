@@ -1024,8 +1024,8 @@ static enum parser_error parse_set_p(struct parser *p)
 	struct set_type *set = parser_priv(p);
 	assert(set);
 
-	set->setidx = parser_getint(p, "a_idx");
 	current_item++;
+	set->set_items[current_item].a_idx = parser_getint(p, "a_idx");
 
 	/* Initialise values */
 	for (i = 0; i < MAX_P_RES; i++)
