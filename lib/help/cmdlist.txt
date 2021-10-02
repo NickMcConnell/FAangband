@@ -40,11 +40,11 @@ mation about any command, consult the help file "cmddesc.txt".
  u  Use a staff                          U  (unused)
  v  Throw an item                        V  Version info
  w  Wear/wield equipment                 W  (unused)
- x  (unused - easy rest macro)           X  (unused - switch weapon macro)
+ x  (unused - easy rest keymap)          X  (unused - switch weapon keymap)
  y  (unused)                             Y  (unused)
  z  Zap a rod                            Z  (unused)
  !  Interact with system                ^A  (special - debug command)
- @  Interact with macros                ^B  (unused)
+ @  Interact with keymaps               ^B  (unused)
  #  (unused)                            ^C  (special - break)
  $  User interface                      ^D  (unused)
  %  Interact with visuals               ^E  Toggle choice window
@@ -101,11 +101,11 @@ mation about any command, consult the help file "cmddesc.txt".
  u  (walk - north east)                  U  (run - north east)
  v  Throw an item                        V  Version info
  w  Wear/wield equipment                 W  Locate player on map (Where)
- x  Look around                          X  (unused - switch weapon macro)
+ x  Look around                          X  (unused - switch weapon keymap)
  y  (walk - north west)                  Y  (run - north west)
  z  Aim a wand (Zap)                     Z  Use a staff (Zap)
  !  Interact with system                ^A  (special - debug command)
- @  Interact with macros                ^B  (alter - south west)
+ @  Interact with keymaps               ^B  (alter - south west)
  #  Toggle search mode                  ^C  (special - break)
  $  Move house                          ^D  Destroy item
  %  Interact with visuals               ^E  Toggle choice window

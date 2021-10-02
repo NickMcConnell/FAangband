@@ -57,7 +57,7 @@ tities will stop if you are disturbed, accomplish your intended task, hit any
 key, or when the count expires.
 
 Doing More with Less Effort:
-     In the help file "macro.txt" is a section on making keymaps to:
+     In the help file "keymap.txt" is a section on making keymaps to:
 -quickly switch to a shovel or backup weapon, 
 -fire a missile or cast commonly used spells with a single keystroke, 
 -prevent accidental use of valuable equipment, 
@@ -128,7 +128,7 @@ Take off equipment (t) or Take off equipment (T)
      drop the item after taking it off.  This command takes some energy.
 
 Switch primary and secondary weapon (X)
-     Actually a macro, this command exchanges whatever weapon you have wielded 
+     Actually a keymap, this command exchanges whatever weapon you have wielded 
      with the first weapon in your inventory inscribed {@0} or {@w0}.
 
 
@@ -200,7 +200,7 @@ Rest (R)
      some energy.
 
 Easy Rest (x)   (not available in the roguelike keyset)
-     Actually a macro, this command automatically makes you rest until your 
+     Actually a keymap, this command automatically makes you rest until your 
      HPs and mana are restored or you are disturbed.  Oangband included it to 
      cut down on wrist stress and allow more effective waiting.
 
@@ -287,7 +287,7 @@ Disarm a trap or chest / Desanctify a glyph (D)
 Alter (+)
      This special command allows the use of a single keypress to select any of 
      the alteration commands above (attack, tunnel, bash, open, disarm,
-     close), and, by using macros or keymaps, to combine this keypress with 
+     close), and, by using keymaps, to combine this keypress with 
      directions.  For (non-shapeshifted) Rogues, it also allows stealing; for
      Rogues and those with the "Trap Setting" specialty ability, it allow the
      setting traps.  In  general, this allows the use of the control key plus
@@ -359,9 +359,9 @@ Move house (H) or ($)
 Eat some food (E)
      You may use this command to eat food in your inventory or from the floor, 
      which you must do regularly to prevent starvation.  As you grow hungry, a 
-     message will appear at the bottom of the screen saying "Hungry".  If you go 
-     hungry long enough, you will become weak, then start fainting, and eventu-
-     ally will die of starvation.  This command takes some energy.
+     message will appear at the bottom of the screen saying "Hungry".  If you
+	 go hungry long enough, you will become weak, then start fainting, and
+	 eventually will die of starvation.  This command takes some energy.
 
 Fuel your lantern/torch (F)
      If you are using a torch and have more torches in your pack, or you are 
@@ -549,11 +549,11 @@ Interact with options (=)
      special sub-windows (not available on all platforms).  See the help file 
      "optdesc.txt" for more information.
 
-Interact with macros (@)
-     Allow you to interact with macros.  You may load or save macros from user 
-     pref files, create macros of various types, or define keymaps.  You must 
-     define a "current action", shown at the bottom of the screen, before you 
-     attempt to use any of the "create macro" commands, which use that 
+Interact with keymaps (@)
+     Allow you to interact with keymaps.  You may load or save keymaps from
+	 user pref files, create keymaps of various types, or define keymaps.  You
+	 must define a "current action", shown at the bottom of the screen, before
+	 you attempt to use any of the "create keymap" commands, which use that 
      "current action" as their action.
 
 Interact with visuals (%)
@@ -646,7 +646,7 @@ by the operating system as explained above.
 and the next keypress will be interpreted as an "underlying command" key,
 unless it is a caret ("^"), in which case the keypress after that will be
 turned into a control-key and interpreted as a command in the underlying
-angband keyset.  The backslash key is useful for creating macro actions
+angband keyset.  The backslash key is useful for creating keymap actions
 which are not affected by any keymap definitions that may be in force, for
 example, the sequence "\" + "." + "6" will always mean "run east", even if
 the "." key has been mapped to a different underlying command.

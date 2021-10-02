@@ -1,9 +1,9 @@
 
-======================= Preferences, Macros and Keymaps  ======================
+======================= Preferences and Keymaps  ===========================
 
      Once you've played Angband for a while, you may decide to customize 
 commands and various other things to better suit your tastes.  
-     The first thing you'll discover a use for are keymaps and macros.  They 
+     The first thing you'll discover a use for are keymaps.  They 
 can be set up relatively easily, and allow you to perform common tasks with a 
 single keystroke.  Setting and changing ASCII (textual symbol) preferences 
 works similarly.
@@ -43,7 +43,7 @@ the information in it should be fairly reliable anyway).
 
         Angband allows you to change various aspects of the game to suit
 your tastes.  You may define keymaps (changing the way Angband maps your
-keypresses to underlying commands), create macros (allowing you to map a
+keypresses to underlying commands), create keymaps (allowing you to map a
 single keypress to a series of keypresses), modify the visuals (allowing
 you to change the appearance of monsters, objects, or terrain features),
 change the colors (allowing you to make a given color brighter, darker,
@@ -69,7 +69,7 @@ commands which will work on all platforms.  Then one of "font-xxx.prf"
 files contain attr/char changes to allow the monsters, objects, and/or
 terrain features to look "better" on your system.  Then the "pref-xxx.prf"
 file is loaded.  This file contains pre-defined system specific stuff
-(macros, color definitions, etc).  Then, the "user-xxx.prf" file is loaded.
+(keymaps, color definitions, etc).  Then, the "user-xxx.prf" file is loaded.
 This file contains user-defined system specific stuff.  The "user-xxx.prf"
 file is used as the "default" user pref file in many places.  The "xxx" is
 the "system suffix" for your system, taken from the "main-xxx.c" file which
@@ -81,7 +81,7 @@ replaced by the actual race, class, and name of the current character.
 create new user pref files, append information to existing user pref files,
 and/or interact with various of the user preferences in a more intuitive
 way than the user pref commands allow.  The commands include "Interact with
-macros" (@), "Interact with visuals" (%), and "Interact with colors" (&),
+keymaps" (@), "Interact with visuals" (%), and "Interact with colors" (&),
 described below.
 
 

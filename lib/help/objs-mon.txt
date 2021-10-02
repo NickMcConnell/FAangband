@@ -43,8 +43,9 @@ Specific Types of Objects:
      pack, but also items on the ground, if you are standing on top of them.
 
      Wands:
-          In FAangband, known wands stack, combining their charges.  Such a stack 
-          may be heavier, but can be recharged more safely and effectively.
+          In FAangband, known wands stack, combining their charges.  Such a
+		  stack may be heavier, but can be recharged more safely and
+		  effectively.
      Staffs:
           Staffs do not combine their charges and only stack if they happen to 
           have the same number of charges (they take up plenty of space in your 
@@ -62,20 +63,21 @@ Specific Types of Objects:
           Note:  In FAangband, rods are not invulnerable...
 
      Chests:
-          Chests are difficult and dangerous to open, as they contain both traps 
-     and locks, but the adventurer that opens one may be rewarded handsomely.
+          Chests are difficult and dangerous to open, as they contain both
+		  traps and locks, but the adventurer that opens one may be rewarded
+		  handsomely.
 
      Scroll of Word of Recall:
           The Scroll of Word of Recall deserves special mention.  Read away 
-     from home, it brings you back to your home town.  Read in your home town, 
-     it takes you to one of four points you have been to.  This spell takes a 
-     little time to take effect, so don't expect it to save you in a crisis.  
-     Should you mistakenly read a Scroll of Word of Recall, you may cancel it 
-     by reading another.
+     	  from home, it brings you back to your home town.  Read in your home
+		  town, it takes you to one of four points you have been to.  This
+		  spell takes a little time to take effect, so don't expect it to save
+		  you in a crisis.  Should you mistakenly read a Scroll of Word of
+		  Recall, you may cancel it by reading another.
 
 Object Inscriptions:
-      Use the '{' and '}' keys to inscribe and uninscribe objects.  Inscriptions 
-      go very well with keymaps and macros:  See the help file "macro.txt".
+      Use the '{' and '}' keys to inscribe and uninscribe objects.
+	  Inscriptions go very well with keymaps:  See the help file "keymap.txt".
 
      To designate a main and backup weapon:
           Inscribe both with "@0" (or "@w0").  The 'X' command will replace 
@@ -93,9 +95,9 @@ Object Inscriptions:
      To set up a wand that is always aimed with the same set of keystrokes:
           Inscribe it with "@a#", or "@z#" in the roguelike keyset, replacing 
           the '#' with whatever digit you desire.  This allows you to set up 
-          macros to, say, check for traps instantly.  Similar inscriptions make 
-          archery very convenient, and make certain that spellbooks are always 
-          accessed using the same keystrokes.
+          keymaps to, say, check for traps instantly.  Similar inscriptions
+		  make archery very convenient, and make certain that spellbooks are
+		  always accessed using the same keystrokes.
 
      To get notification when an object that recharges automatically is ready 
      for use:

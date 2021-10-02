@@ -11,9 +11,9 @@ their environment and hurting and hindering their foes.
      Characters use magic by typing the 'm' or 'p' keys.  Any class may use 
 either key.  They then choose a book, and then a spell.  This process can be 
 sped up for commonly-used spells by using keymaps (see the help file 
-"macro.txt").  Spellbooks may also be given absolute reference numbers, so that 
-"m5b" always casts the same spell, no matter where the book is in inventory.  
-See the help file "objs-mon.txt", section on inscribing.
+"keymap.txt").  Spellbooks may also be given absolute reference numbers, so
+that "m5b" always casts the same spell, no matter where the book is in
+inventory.  See the help file "objs-mon.txt", section on inscribing.
 
      All classes other than warriors need to carry around books; the pure spell-
 casters always have nine books, and the half-spellcasters use between four and 

@@ -26,8 +26,7 @@ option in brackets, followed by a textual description of the option.
 
 Various concepts mentioned in the descriptions below: 
      "disturb"    : (cancel any running, resting, or repeated commands)
-     "flush"      : (forget any keypresses waiting in the keypress queue, 
-                     including any macros in progress), 
+     "flush"      : (forget any keypresses waiting in the keypress queue), 
      "fresh"      : (dump any pending output to the screen)
      "sub-windows": (see below).
 
