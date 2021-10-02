@@ -1542,7 +1542,7 @@ static bool artifact_is_known(int a_idx)
 
 	/* Check all objects to see if it exists but hasn't been IDed */
 	o_ptr = find_artifact(a_idx);
-	if (o_ptr && (o_ptr->feel != FEEL_SPECIAL))
+	if (o_ptr && !(o_ptr->ident & IDENT_KNOWN) && (o_ptr->feel != FEEL_SPECIAL))
 		return FALSE;
 
 	return TRUE;
