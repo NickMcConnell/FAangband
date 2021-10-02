@@ -109,7 +109,7 @@ endif
 # Targets
 #
 
-../$(EXE): $(EXE)
+..\$(EXE): $(EXE)
 	$(CP) $(EXE) ..
 	$(CP) win$(BAR)dll$(BAR)libpng12.dll ..
 	$(CP) win$(BAR)dll$(BAR)zlib1.dll ..
