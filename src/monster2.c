@@ -3316,7 +3316,7 @@ int assess_shapechange(int m_idx, monster_type * m_ptr)
 
 	bitflag summons[RSF_SIZE];
 
-	flags_init(summons, RSF_SIZE, RSF_SUMMON_MASK);
+	flags_init(summons, RSF_SIZE, RSF_SUMMON_MASK, FLAG_END);
 	rsf_inter(summons, r_ptr->spell_flags);
 
 	/* Pick some possible monsters, using the level calculation */
