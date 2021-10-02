@@ -2294,6 +2294,7 @@ void play_game(void)
 		if (p_ptr->is_dead && arg_wizard) {
 			p_ptr->is_dead = FALSE;
 			p_ptr->noscore |= NOSCORE_WIZARD;
+			p_ptr->chp = p_ptr->mhp;
 		}
 	}
 
