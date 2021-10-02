@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(FAangband, 1.2.0, nckmccnnll@gmail.com)
+AC_INIT(FAangband, 1.4.5, nckmccnnll@gmail.com)
 AC_CONFIG_SRCDIR(src)
 
 BUILDSYS_INIT

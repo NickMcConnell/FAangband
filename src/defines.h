@@ -62,7 +62,7 @@
  */
 /*
 #ifdef BUILD_ID
-#define VERSION_STRING	"1.4.4 (" BUILD_ID ")"
+#define VERSION_STRING	"1.4.5 (" BUILD_ID ")"
 #endif
 */
 
