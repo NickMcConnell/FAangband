@@ -802,11 +802,6 @@ void do_cmd_cast(cmd_code code, cmd_arg args[])
 
 	/* Warriors will eventually learn to pseudo-probe monsters. */
 	if (player_has(PF_PROBE)) {
-		/* Get a target. */
-		msg("Target a monster to probe.");
-		if (!get_aim_dir(&dir))
-			return;
-
 		/* Low-level probe spell. */
 		pseudo_probe();
 

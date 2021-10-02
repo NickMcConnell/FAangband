@@ -384,7 +384,10 @@ void textui_obj_study(void)
 	char s[80];
 
 	if (mp_ptr->spell_realm == REALM_NONE) {
-		msg("You cannot read books!");
+		if (player_has(PF_PROBE))
+			warrior_probe_desc();
+		else
+			msg("You cannot read books!");
 		return;
 	}
 
@@ -426,7 +429,11 @@ void textui_obj_cast(void)
 	char s[80];
 
 	if (mp_ptr->spell_realm == REALM_NONE) {
-		msg("You cannot read books!");
+		if (player_has(PF_PROBE)) {
+			cmd_insert(CMD_CAST);
+		} else {
+			msg("You cannot read books!");
+		}
 		return;
 	}
 
