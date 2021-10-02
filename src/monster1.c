@@ -2899,7 +2899,7 @@ bool prepare_ghost(int r_idx, monster_type * m_ptr, bool from_savefile)
 	/* Name */
 	if (!file_getl(fp, buf, sizeof(buf)))
 		return FALSE;
-	my_strcpy(ghost_name, buf, 15);
+	my_strcpy(ghost_name, buf, 20);
 
 	/* Sex */
 	if (!file_getl(fp, buf, sizeof(buf)))
@@ -2939,7 +2939,7 @@ bool prepare_ghost(int r_idx, monster_type * m_ptr, bool from_savefile)
   /*** Process the ghost name and store it in a global variable. ***/
 
 	/* XXX XXX XXX Find the first comma, or end of string */
-	for (i = 0; (i < 16) && (ghost_name[i]) && (ghost_name[i] != ',');
+	for (i = 0; (i < 21) && (ghost_name[i]) && (ghost_name[i] != ',');
 		 i++);
 
 	/* Terminate the name */
