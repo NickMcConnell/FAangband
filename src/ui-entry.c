@@ -608,6 +608,7 @@ void compute_ui_entry_values_for_object(const struct ui_entry *entry,
 	const struct curse_data *curse;
 	struct cached_object_data *cache2;
 	bool first, all_unknown, all_aux_unknown, any_aux, all_aux;
+	bool any_curse_unknown;
 	int curse_ind;
 	int base = 0;
 
@@ -635,6 +636,7 @@ void compute_ui_entry_values_for_object(const struct ui_entry *entry,
 	}
 	cache2 = *cache;
 	curse = obj->curses;
+	any_curse_unknown = false;
 	curse_ind = 0;
 	while (obj) {
 		int i;
@@ -677,6 +679,8 @@ void compute_ui_entry_values_for_object(const struct ui_entry *entry,
 					} else {
 						(*combiner.accum_func)(v, a, &cst);
 					}
+				} else if (curse_ind > 0) {
+					any_curse_unknown = true;
 				}
 				break;
 
@@ -703,6 +707,8 @@ void compute_ui_entry_values_for_object(const struct ui_entry *entry,
 					} else {
 						(*combiner.accum_func)(v, a, &cst);
 					}
+				} else if (curse_ind > 0) {
+					any_curse_unknown = true;
 				}
 				break;
 
@@ -730,6 +736,8 @@ void compute_ui_entry_values_for_object(const struct ui_entry *entry,
 					} else {
 						(*combiner.accum_func)(v, a, &cst);
 					}
+				} else if (curse_ind > 0) {
+					any_curse_unknown = true;
 				}
 				break;
 
@@ -757,6 +765,8 @@ void compute_ui_entry_values_for_object(const struct ui_entry *entry,
 					} else {
 						(*combiner.accum_func)(v, a, &cst);
 					}
+				} else if (curse_ind > 0) {
+					any_curse_unknown = true;
 				}
 				break;
 
@@ -802,12 +812,12 @@ void compute_ui_entry_values_for_object(const struct ui_entry *entry,
 		*auxval = (any_aux) ? UI_ENTRY_UNKNOWN_VALUE : base;
 	} else {
 		(*combiner.finish_func)(&cst);
-		if (all_unknown) {
+		if (all_unknown || (cst.accum == 0 && any_curse_unknown)) {
 			*val = (all_aux) ? base : UI_ENTRY_UNKNOWN_VALUE;
 		} else {
 			*val = cst.accum;
 		}
-		if (all_aux_unknown) {
+		if (all_aux_unknown || (cst.accum_aux == 0 && any_curse_unknown)) {
 			*auxval = (any_aux) ? UI_ENTRY_UNKNOWN_VALUE : base;
 		} else {
 			*auxval = cst.accum_aux;
