@@ -1455,8 +1455,9 @@ bool build_vault(struct chunk *c, struct loc centre, struct vault *v)
 			assert(grid.x >= x1 && grid.x <= x2 &&
 				grid.y >= y1 && grid.y <= y2);
 
-			/* Skip non-grids */
-			if (*t == ' ') continue;
+			/* Skip non-grids, except for themed levels which should be
+			 * perfectly rectangular and so a space is probably a typo */
+			if ((*t == ' ') && (!player->themed_level)) continue;
 
 			/* Lay floor or grass */
 			if (((lev->topography == TOP_CAVE) ||
