@@ -121,8 +121,8 @@ static struct store *store_new(int idx) {
 void free_store(struct store *store)
 {
 	/* Free the store inventory */
-	object_pile_free(NULL, store->stock_k);
-	object_pile_free(NULL, store->stock);
+	object_pile_free(NULL, NULL, store->stock_k);
+	object_pile_free(NULL, NULL, store->stock);
 	mem_free(store);
 }
 
@@ -493,7 +493,7 @@ void store_reset(void) {
 		/* Initial stock setup for stores */
 		while (s) {
 			s->stock_num = 0;
-			object_pile_free(NULL, s->stock);
+			object_pile_free(NULL, NULL, s->stock);
 			s->stock = NULL;
 			if (store_is_home(s)) {
 				s = s->next;

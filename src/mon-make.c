@@ -1194,7 +1194,8 @@ void wipe_mon_list(struct chunk *c, struct player *p)
 				}
 				obj = obj->next;
 			}
-			object_pile_free(c, held_obj);
+			object_pile_free(c, (p && c == cave) ? p->cave : NULL,
+				held_obj);
 		}
 
 		/* Reduce the racial counter */
