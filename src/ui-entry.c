@@ -812,12 +812,12 @@ void compute_ui_entry_values_for_object(const struct ui_entry *entry,
 		*auxval = (any_aux) ? UI_ENTRY_UNKNOWN_VALUE : base;
 	} else {
 		(*combiner.finish_func)(&cst);
-		if (all_unknown || (cst.accum == 0 && any_curse_unknown)) {
+		if (all_unknown || (cst.accum == base && any_curse_unknown)) {
 			*val = (all_aux) ? base : UI_ENTRY_UNKNOWN_VALUE;
 		} else {
 			*val = cst.accum;
 		}
-		if (all_aux_unknown || (cst.accum_aux == 0 && any_curse_unknown)) {
+		if (all_aux_unknown || (cst.accum_aux == base && any_curse_unknown)) {
 			*auxval = (any_aux) ? UI_ENTRY_UNKNOWN_VALUE : base;
 		} else {
 			*auxval = cst.accum_aux;
