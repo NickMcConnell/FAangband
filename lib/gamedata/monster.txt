@@ -10730,7 +10730,7 @@ blow:CLAW:HURT:6d8
 blow:BITE:ELEC:7d8
 flags:BASH_DOOR
 flags:DROP_4
-flags:IM_ELEC
+flags:IM_ELEC | NO_CONF | NO_SLEEP
 innate-freq:12
 spell-freq:8
 spells:BLIND | CONF | SCARE
@@ -10753,7 +10753,7 @@ blow:CLAW:HURT:6d8
 blow:BITE:COLD:7d8
 flags:BASH_DOOR
 flags:DROP_4
-flags:IM_COLD
+flags:IM_COLD | NO_CONF | NO_SLEEP
 innate-freq:12
 spell-freq:8
 spells:BLIND | CONF | SCARE
@@ -10776,7 +10776,7 @@ blow:CLAW:HURT:6d8
 blow:BITE:POISON:7d8
 flags:BASH_DOOR
 flags:DROP_4
-flags:IM_POIS
+flags:IM_POIS | NO_CONF | NO_SLEEP
 innate-freq:12
 spell-freq:8
 spells:BLIND | CONF | SCARE
@@ -10802,7 +10802,7 @@ flags:INVISIBLE
 flags:ONLY_ITEM
 flags:PASS_WALL | TAKE_ITEM
 flags:DROP_4
-flags:IM_COLD | IM_NETHER
+flags:IM_COLD | IM_NETHER | NO_CONF | NO_SLEEP
 innate-freq:12
 spell-freq:6
 spells:CONF | DARKNESS | SCARE | SLOW
@@ -10829,7 +10829,7 @@ flags:ATTR_FLICKER
 flags:ONLY_ITEM
 flags:BASH_DOOR
 flags:DROP_4
-flags:IM_COLD
+flags:IM_COLD | NO_CONF | NO_SLEEP
 innate-freq:12
 spell-freq:6
 spells:CONF | SCARE | SLOW
@@ -10856,7 +10856,7 @@ blow:CLAW:HURT:6d10
 blow:BITE:CONFUSE:7d10
 flags:INVISIBLE
 flags:DROP_4
-flags:PASS_WALL
+flags:PASS_WALL | NO_CONF | NO_SLEEP
 innate-freq:9
 spell-freq:10
 spells:BLIND | CONF
@@ -10938,7 +10938,7 @@ blow:CLAW:HURT:6d9
 blow:BITE:ACID:7d9
 flags:BASH_DOOR
 flags:DROP_4
-flags:IM_ACID
+flags:IM_ACID | NO_CONF | NO_SLEEP
 innate-freq:12
 spell-freq:8
 spells:BLIND | CONF | SCARE
@@ -10962,7 +10962,7 @@ blow:CLAW:HURT:6d9
 blow:BITE:FIRE:7d9
 flags:BASH_DOOR
 flags:DROP_4
-flags:IM_FIRE
+flags:IM_FIRE | NO_CONF | NO_SLEEP
 innate-freq:12
 spell-freq:8
 spells:BLIND | CONF | SCARE
@@ -10984,7 +10984,7 @@ experience:2800
 blow:CLAW:HURT:6d9
 blow:CLAW:HURT:6d9
 blow:BITE:HURT:7d9
-flags:BASH_DOOR | NO_STUN
+flags:BASH_DOOR | NO_STUN | NO_CONF | NO_SLEEP
 flags:DROP_4
 innate-freq:12
 spell-freq:8
@@ -11198,7 +11198,7 @@ blow:BITE:FIRE:4d15
 flags:UNIQUE | MALE | SPEAKING
 flags:DROP_4 | DROP_GOOD | ONLY_ITEM
 flags:BASH_DOOR
-flags:IM_FIRE
+flags:IM_FIRE | NO_CONF | NO_SLEEP
 innate-freq:8
 spell-freq:8
 spells:WOUND | CONF
@@ -11275,7 +11275,7 @@ blow:CLAW:HURT:6d10
 blow:CLAW:HURT:6d10
 blow:BITE:HURT:7d10
 flags:ONLY_ITEM
-flags:BASH_DOOR
+flags:BASH_DOOR | NO_CONF | NO_SLEEP
 flags:DROP_4
 flags:IM_ACID | IM_COLD | IM_ELEC | IM_FIRE | IM_POIS
 flags:ATTR_MULTI
@@ -11326,7 +11326,7 @@ blow:BITE:COLD:4d15
 flags:UNIQUE | MALE | SPEAKING
 flags:DROP_4 | DROP_GOOD | ONLY_ITEM
 flags:BASH_DOOR
-flags:IM_COLD
+flags:IM_COLD | NO_CONF | NO_SLEEP
 innate-freq:8
 spell-freq:8
 spells:WOUND | CONF
@@ -11523,7 +11523,7 @@ blow:CLAW:HURT:6d12
 blow:BITE:EXP_80:7d14
 flags:UNDEAD | COLD_BLOOD
 flags:DROP_2 | ONLY_ITEM
-flags:BASH_DOOR | TAKE_ITEM
+flags:BASH_DOOR | TAKE_ITEM | NO_CONF | NO_SLEEP
 flags:IM_COLD | IM_POIS | NO_STUN | IM_NETHER
 innate-freq:10
 spell-freq:12
@@ -11550,7 +11550,7 @@ blow:BITE:FIRE:7d14
 blow:GAZE:PARALYZE
 flags:ANIMAL
 flags:DROP_2 | ONLY_ITEM
-flags:BASH_DOOR
+flags:BASH_DOOR | NO_CONF | NO_SLEEP
 flags:IM_ACID | IM_FIRE | IM_NEXUS
 innate-freq:10
 spell-freq:12
@@ -11631,7 +11631,7 @@ blow:BITE:FIRE:8d14
 flags:UNIQUE | MALE | SPEAKING | NARGOTHROND | FORCE_DEPTH
 flags:DROP_4 | DROP_GOOD | DROP_GREAT | ONLY_ITEM
 flags:BASH_DOOR
-flags:IM_FIRE | IM_POIS
+flags:IM_FIRE | IM_POIS | NO_CONF | NO_SLEEP | NO_FEAR
 innate-freq:5
 spell-freq:3
 spells:BRAIN_SMASH | FORGET | SCARE
