@@ -580,6 +580,7 @@ color:White
 code:AWAY_ALL
 type:monster
 desc:teleports monsters away
+player-desc:wind
 blind-desc:something
 obvious:1
 wake:1

@@ -1447,8 +1447,36 @@ static struct attack_result make_ranged_shot(struct player *p,
 	struct monster *mon = square_monster(cave, grid);
 	int ac = terrain_armor_adjust(grid, mon->race->ac, false);
 	int b = 0, s = 0;
+	bool special_dam = false;
+	char name[120];
 
 	my_strcpy(hit_verb, "hits", 20);
+
+	/* Missile launchers of Velocity sometimes "supercharge" */
+	if (of_has(bow->flags, OF_VELOCITY) && one_in_(5)) {
+		/* Learn the ego */
+		equip_learn_flag(p, OF_VELOCITY);
+
+		/* Set special damage */
+		special_dam = true;
+
+		/* Give a hint to the player. */
+		object_desc(name, sizeof(name), bow, ODESC_FULL | ODESC_SINGULAR, p);
+		msg("Your %s feels very powerful.", name);
+	}
+
+	/* Missile launchers of Accuracy sometimes "supercharge" */
+	if (of_has(bow->flags, OF_ACCURATE) && one_in_(5)) {
+		/* Learn the ego */
+		equip_learn_flag(p, OF_ACCURATE);
+
+		/* Set special accuracy -  almost negate monster armour */
+		ac /= 3;
+
+		/* Give a hint to the player. */
+		object_desc(name, sizeof(name), bow, ODESC_FULL | ODESC_SINGULAR, p);
+		msg("Your %s feels very accurate.", name);
+	}
 
 	/* Sleeping, visible monsters are easier to hit. */
 	if (mon->m_timed[MON_TMD_SLEEP] && monster_is_obvious(mon)) {
@@ -1467,6 +1495,11 @@ static struct attack_result make_ranged_shot(struct player *p,
 
 	result.dmg = ranged_damage(p, mon, ammo, bow, b, s, result.s_bonus,
 							   &result.msg_type, &result.marksman, tries);
+
+	/* If a weapon of velocity activates, increase damage. */
+	if (special_dam) {
+		result.dmg += 15;
+	}
 
 	missile_learn_on_ranged_attack(p, bow);
 	learn_brand_slay_from_launch(p, ammo, bow, mon);
