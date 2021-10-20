@@ -73,7 +73,7 @@
  * Maximum number of colours, and number of "basic" Angband colours
  */ 
 #define MAX_COLORS        256
-#define BASIC_COLORS    29
+#define BASIC_COLORS    30
 #define BG_BLACK 0	/* The set number for the black-background glyphs */
 #define BG_SAME  1	/* The set number for the same-background glyphs */
 #define BG_DARK  2	/* The set number for the dark-background glyphs */

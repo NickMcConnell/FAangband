@@ -1834,10 +1834,10 @@ int rd_chunks(void)
 
 #if OBJ_RECOVER
 	for (j = 0; j < chunk_max; j++) {
-		if (j == 0 && streq(chunk_list[j].name, "Town")) continue;
+		if (j == 0 && streq(chunk_list[j]->name, "Town")) continue;
 		chunk_list[j] = 0;
 	}
-	if (streq(chunk_list[0].name, "Town")) {
+	if (chunk_list[0] && streq(chunk_list[0]->name, "Town")) {
 		chunk_list_max = 1;
 	} else {
 		chunk_list_max = 0;
