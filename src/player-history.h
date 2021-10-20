@@ -46,7 +46,7 @@ enum {
  */
 struct history_info {
 	bitflag type[HIST_SIZE];/* Kind of history item */
-	s16b dlev;				/* Dungeon level when this item was recorded */
+	s16b place;				/* Place when this item was recorded */
 	s16b clev;				/* Character level when this item was recorded */
 	byte a_idx;				/* Artifact this item relates to */
 	s32b turn;				/* Turn this item was recorded on */
@@ -57,7 +57,7 @@ void history_clear(struct player *p);
 bool history_add_full(struct player *p,
 		bitflag *type,
 		int aidx,
-		int dlev,
+		int place,
 		int clev,
 		int turn,
 		const char *text);

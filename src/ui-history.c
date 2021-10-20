@@ -17,6 +17,7 @@
  */
 
 #include "angband.h"
+#include "game-world.h"
 #include "player-history.h"
 #include "ui-history.h"
 #include "ui-input.h"
@@ -28,7 +29,7 @@
 static void print_history_header(void)
 {
 	c_put_str(COLOUR_WHITE, "[Player history]", 0, 0);
-	c_put_str(COLOUR_L_BLUE, "      Turn   Depth  Note", 1, 0);
+	c_put_str(COLOUR_L_BLUE, "      Turn   Place               Note", 1, 0);
 }
 
 
@@ -64,10 +65,10 @@ void history_display(void)
 		row = 0;
 		for (i = first_item; row <= page_size && i < max_item; i++)
 		{
-			strnfmt(buf, sizeof(buf), "%10d%7d\'  %s",
-				history_list_local[i].turn,
-				history_list_local[i].dlev * 50,
-				history_list_local[i].event);
+			strnfmt(buf, sizeof(buf), "%10d%20s\'  %s",
+					history_list_local[i].turn,
+					level_name(&world->levels[history_list_local[i].place]),
+					history_list_local[i].event);
 
 			if (hist_has(history_list_local[i].type, HIST_ARTIFACT_LOST))
 				my_strcat(buf, " (LOST)", sizeof(buf));
@@ -131,12 +132,12 @@ void dump_history(ang_file *file)
 	char buf[120];
 
 	file_putf(file, "[Player history]\n");
-	file_putf(file, "      Turn   Depth  Note\n");
+	file_putf(file, "      Turn   Place               Note\n");
 
 	for (i = 0; i < max_item; i++) {
-		strnfmt(buf, sizeof(buf), "%10d%7d\'  %s",
+		strnfmt(buf, sizeof(buf), "%10d%20s\'  %s",
 				history_list_local[i].turn,
-				history_list_local[i].dlev * 50,
+				level_name(&world->levels[history_list_local[i].place]),
 				history_list_local[i].event);
 
 		if (hist_has(history_list_local[i].type, HIST_ARTIFACT_LOST))

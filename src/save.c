@@ -1135,7 +1135,7 @@ void wr_history(void)
 		for (j = 0; j < HIST_SIZE; j++)
 			wr_byte(history_list[i].type[j]);
 		wr_s32b(history_list[i].turn);
-		wr_s16b(history_list[i].dlev);
+		wr_s16b(history_list[i].place);
 		wr_s16b(history_list[i].clev);
 		if (history_list[i].a_idx) {
 			wr_string(a_info[history_list[i].a_idx].name);
