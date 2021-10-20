@@ -3760,7 +3760,7 @@ void do_cmd_locate(void)
 			dir = target_dir(command);
 
 			/* Error */
-			if (!dir) bell("Illegal direction for locate!");
+			if (!dir) bell();
 		}
 
 		/* No direction */
