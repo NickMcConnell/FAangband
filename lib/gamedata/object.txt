@@ -1811,6 +1811,7 @@ cost:600
 alloc:20:20 to 100
 attack:0d0:0:0
 armor:3:0
+values:RES_COLD[10]
 desc:A heavy cloak made from fur and lined with leather; a luxury.
 
 name:& Elven Cloak~
