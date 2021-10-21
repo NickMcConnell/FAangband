@@ -20,6 +20,7 @@
 #ifndef PLAYER_PROPS_H
 #define PLAYER_PROPS_H
 
+struct player_ability *lookup_ability(const char *type, int index, int value);
 bool class_has_ability(const struct player_class *class,
 					   struct player_ability *ability);
 bool race_has_ability(const struct player_race *race,

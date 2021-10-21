@@ -28,6 +28,7 @@
 #include "player.h"
 #include "player-attack.h"
 #include "player-calcs.h"
+#include "player-properties.h"
 #include "player-timed.h"
 #include "player-util.h"
 #include "store.h"
@@ -1075,7 +1076,14 @@ void write_character_dump(ang_file *fff)
 		file_putf(fff, "%s\n", buf);
 	}
 
-	/* Display player resistances etc */
+	/* Dump specialties if any */
+	file_putf(fff, "\n  [Specialty Abilities]\n\n");
+	for (i = 0; i < PF_MAX; i++) {
+		if (!pf_has(player->specialties, i)) continue;
+		file_putf(fff, "%s\n", lookup_ability("player", i, 0)->name);
+	}
+	file_putf(fff, "\n");
+
 	display_player(1);
 
 	/* Print a header */

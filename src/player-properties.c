@@ -36,7 +36,7 @@ enum {
     PLAYER_FLAG_CLASS
 };
 
-static struct player_ability *lookup_ability(const char *type, int index, int value)
+struct player_ability *lookup_ability(const char *type, int index, int value)
 {
 	struct player_ability *ability;
 	for (ability = player_abilities; ability; ability = ability->next) {
