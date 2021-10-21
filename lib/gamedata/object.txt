@@ -941,6 +941,18 @@ attack:8d1:0:0
 armor:0:0
 desc:A mighty hammer with a massive head designed to crush and stun.
 
+name:& Storm Hammer~
+type:hafted
+graphics:\:b
+level:50
+weight:125
+cost:950
+alloc:10:50 to 100
+attack:1d11:0:0
+flags:THROWING
+desc:A heavy throwing hammer, carved with runes of Air.  Only the very
+desc: strong can hurl it any great distance.
+
 name:& Mace~ of Disruption
 type:hafted
 graphics:\:v
