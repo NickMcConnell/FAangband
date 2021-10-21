@@ -370,7 +370,7 @@ subtype:weapon
 id-type:on wield
 code:BLESSED
 bindui:bless_ui_compact_0:0
-desc:blessing by the valar (combat bonuses for holy casters)
+desc:Blessed by the valar (combat bonuses for holy casters)
 price-constant:500
 design-constant:100
 
@@ -379,28 +379,28 @@ type:flag
 subtype:weapon
 id-type:on wield
 code:TWO_HANDED_DES
-desc:preferring two-handed wielding
+desc:Prefers two-handed wielding
 
 name:two hands required
 type:flag
 subtype:weapon
 id-type:on wield
 code:TWO_HANDED_REQ
-desc:needing two-handed wielding
+desc:Needs two-handed wielding
 
 name:accuracy
 type:flag
 subtype:weapon
 id-type:on effect
 code:ACCURATE
-desc:accurate shooting
+desc:Shoots accurately, sometimes very accurately
 
 name:velocity
 type:flag
 subtype:weapon
 id-type:on effect
 code:VELOCITY
-desc:powerful shooting
+desc:Shoots powerfully, sometimes very powerfully
 
 name:burns out
 type:flag
