@@ -984,7 +984,6 @@ void delete_monster_idx(int m_idx)
 		cave->ghost->bones_selector = 0;
 		cave->ghost->has_spoken = false;
 		cave->ghost->string_type = 0;
-		my_strcpy(cave->ghost->name, "", sizeof(cave->ghost->name));
 		my_strcpy(cave->ghost->string, "", sizeof(cave->ghost->string));
 	}
 
@@ -1367,6 +1366,14 @@ int mon_create_drop_count(const struct monster_race *race, bool maximize,
 }
 
 /**
+ * Get a correct origin race - needed for player ghosts
+ */
+static struct monster_race *get_origin_race(struct monster_race *race)
+{
+	return rf_has(race->flags, RF_PLAYER_GHOST) ? &r_info[race->ridx] : race;
+}
+
+/**
  * Creates a specific monster's drop, including any drops specified
  * in the monster.txt file.
  *
@@ -1438,7 +1445,7 @@ static bool mon_create_drop(struct chunk *c, struct monster *mon, byte origin)
 				obj->origin = origin;
 				obj->origin_depth = c->depth;
 				obj->origin_place = c->place;
-				obj->origin_race = mon->race;
+				obj->origin_race = get_origin_race(mon->race);
 				obj->number = 1;
 
 				/* Try to carry */
@@ -1479,7 +1486,7 @@ static bool mon_create_drop(struct chunk *c, struct monster *mon, byte origin)
 		obj->origin = origin;
 		obj->origin_depth = c->depth;
 		obj->origin_place = c->place;
-		obj->origin_race = mon->race;
+		obj->origin_race = get_origin_race(mon->race);
 		obj->number = (obj->artifact) ?
 			1 : randint0(drop->max - drop->min) + drop->min;
 
@@ -1505,7 +1512,7 @@ static bool mon_create_drop(struct chunk *c, struct monster *mon, byte origin)
 		obj->origin = origin;
 		obj->origin_depth = c->depth;
 		obj->origin_place = c->place;
-		obj->origin_race = mon->race;
+		obj->origin_race = get_origin_race(mon->race);
 
 		/* Try to carry */
 		if (monster_carry(c, mon, obj)) {

@@ -1584,7 +1584,7 @@ static bool describe_origin(textblock *tb, const struct object *obj, bool terse)
 		dropper = "monster lost to history";
 	}
 	article = is_a_vowel(dropper[0]) ? "an " : "a ";
-	if (unique)
+	if (unique && !rf_has(obj->origin_race->flags, RF_PLAYER_GHOST))
 		my_strcpy(name, dropper, sizeof(name));
 	else {
 		my_strcpy(name, article, sizeof(name));
