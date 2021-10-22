@@ -128,6 +128,7 @@ LIBFILES = \
   ../lib/screens/*.txt \
   ../lib/help/*.txt \
   ../lib/customize/*.prf \
+  ../lib/ghost/bone.* \
 
 install: $(EXE) $(ICONFILES) $(PLIST) $(LIBFILES)
 	@echo making directories...
@@ -137,6 +138,7 @@ install: $(EXE) $(ICONFILES) $(PLIST) $(LIBFILES)
 	@mkdir -p $(APPRES)
 	@mkdir -p $(APPRES)/en.lproj
 	@mkdir -p $(APPRES)/lib/gamedata
+	@mkdir -p $(APPRES)/lib/ghost
 	@mkdir -p $(APPRES)/lib/screens
 	@mkdir -p $(APPRES)/lib/help
 	@mkdir -p $(APPRES)/lib/customize
@@ -146,6 +148,7 @@ install: $(EXE) $(ICONFILES) $(PLIST) $(LIBFILES)
 
 	@echo copying files...
 	@cp ../lib/gamedata/*.txt $(APPRES)/lib/gamedata
+	@cp ../lib/ghost/bone.* $(APPRES)/lib/ghost
 	@cp ../lib/screens/*.txt $(APPRES)/lib/screens
 	@cp ../lib/help/*.txt $(APPRES)/lib/help
 	@cp ../lib/customize/*.prf $(APPRES)/lib/customize
