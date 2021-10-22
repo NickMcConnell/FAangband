@@ -40,6 +40,7 @@ mkdir docs/hacking
 mkdir lib
 mkdir lib/gamedata
 mkdir lib/customize
+mkdir lib/ghost
 mkdir lib/help
 mkdir lib/screens
 mkdir lib/fonts
@@ -56,6 +57,7 @@ mkdir lib/user/save
 mkdir lib/user/scores
 mkdir lib/user/info
 mkdir lib/user/archive
+mkdir lib/user/bone
 
 touch lib/user/delete.me lib/user/save/delete.me lib/user/scores/delete.me \
       lib/user/info/delete.me lib/user/archive/delete.me
@@ -97,6 +99,10 @@ for f in `find ../lib/help -name '*.txt' -print` ; do
 done
 
 for f in `find ../lib/customize -name '*.prf' -print` ; do
+	cp_unix2dos "$f" `echo "$f" | sed -E -e 's%^\.\./%%'`
+done
+
+for f in `find ../lib/ghost -name 'bone.*' -print` ; do
 	cp_unix2dos "$f" `echo "$f" | sed -E -e 's%^\.\./%%'`
 done
 
