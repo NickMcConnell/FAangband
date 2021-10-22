@@ -1749,7 +1749,7 @@ void prepare_next_level(struct player *p)
 			/* We found an old level, load the known level and assign */
 			int i;
 			bool arena = cave->name && streq(cave->name, "arena");
-			char *known_name = format("%s known", new_name);
+			char *known_name = string_make(format("%s known", new_name));
 			struct chunk *old_known = chunk_find_name(known_name);
 			assert(old_known);
 
@@ -1781,6 +1781,7 @@ void prepare_next_level(struct player *p)
 			/* Remove from the list */
 			chunk_list_remove(new_name);
 			chunk_list_remove(known_name);
+			string_free(known_name);
 		} else if (p->upkeep->arena_level) {
 			/* We're creating a new arena level */
 			cave = cave_generate(p, 6, 6);
