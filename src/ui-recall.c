@@ -18,6 +18,7 @@
  */
 
 #include "angband.h"
+#include "game-input.h"
 #include "game-world.h"
 #include "init.h"
 #include "ui-menu.h"
@@ -97,11 +98,9 @@ int textui_get_recall_point(bool inward, int num_points, int num_poss)
 	region area = { 15, 1, 48, -1 };
 	ui_event evt = { 0 };
 	int cursor = 0;
-	int num_entries;
-
-	int i;
-
+	int num_entries, i;
 	u16b *choice;
+	bool replace_check = false;
 
 	if (inward && (num_points < num_poss))
 		num_points++;
@@ -144,6 +143,22 @@ int textui_get_recall_point(bool inward, int num_points, int num_poss)
 
 	/* Select an entry */
 	evt = menu_select(m, cursor, true);
+
+	/* Make every effort not to make accidental replacements */
+	replace_check = inward && (player->recall[selection] != player->place);
+	while (replace_check && selection < num_entries - 2) {
+		char place[30];
+		int region = world->levels[player->recall[selection]].locality;
+		int level = world->levels[player->recall[selection]].depth;
+		my_strcpy(place, format("%s %d   ", locality_name(region), level),
+				  sizeof(place));
+		if (get_check(format("Really replace recall point %s", place))) break;
+		if (get_check(format("Cancel recall?", place))) {
+			evt.type = EVT_ESCAPE;
+			break;
+		}
+		evt = menu_select(m, cursor, true);
+	}
 
 	/* Free memory */
 	mem_free(choice);
