@@ -1708,8 +1708,8 @@ static void monster_turn(struct monster *mon)
 		return;
 
 	/* Monsters can speak.  -originally by TY- */
-	if (rf_has(mon->race->flags, RF_SPEAKING) && monster_is_obvious(mon) &&
-		!mon->m_timed[MON_TMD_FEAR] && one_in_(16)) {
+	if (one_in_(16) && rf_has(mon->race->flags, RF_SPEAKING) &&
+		los(cave, mon->grid, player->grid) && !mon->m_timed[MON_TMD_FEAR]) {
 		char bravado[80];
 
 		/* Acquire the monster name/poss */
