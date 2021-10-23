@@ -2773,8 +2773,7 @@ void disconnect_stats(int nsim, bool stop_on_disconnect)
 				player->upkeep->create_stair = FEAT_LESS_NORTH;
 				while (1) {
 					if (j >= world->num_levels) {
-						player->last_place =
-							player->place;
+						player->last_place = player->place;
 						break;
 					}
 					if (player_get_next_place(j, "south", 1) == player->place) {

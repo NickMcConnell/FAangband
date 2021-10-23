@@ -1707,23 +1707,23 @@ void prepare_next_level(struct player *p)
 				/* Save level and known level */
 				cave_store(cave, prev_name, false, true);
 				cave_store(p->cave, prev_name, true, true);
-			}
-			else if (!p->place)
-			/* Paranoia - try to catch unusual exits from Arena
-			 * Ideally unusual exits never happen and this code is unnecessary */
-			{
+			} else if (!p->place) {
+				/* Paranoia - try to catch unusual exits from Arena.  Ideally
+				 * unusual exits never happen and this code is unnecessary */
 				p->upkeep->arena_level = false;
-				if (!p->last_place) 
-				{
+				if (!p->last_place) {
 					p->last_place = p->home; /* paranoia */
 					persist = OPT(p, birth_levels_persist);
 				}
 				player_change_place(p, p->last_place);
-				p->upkeep->arena_level = true;				
-				p->upkeep->health_who = NULL; /* Suppress "defeated" message for unusual exit */
+				p->upkeep->arena_level = true;
+
+				/* Suppress "defeated" message for unusual exit */
+				p->upkeep->health_who = NULL;
 				my_strcpy(prev_name, level_name(&world->levels[p->last_place]),
 				  sizeof(prev_name));
-				my_strcpy(new_name, level_name(&world->levels[p->place]), sizeof(new_name));
+				my_strcpy(new_name, level_name(&world->levels[p->place]),
+						  sizeof(new_name));
 			}
 		} else {
 			/* Save the town */

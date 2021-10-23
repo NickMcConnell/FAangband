@@ -235,8 +235,7 @@ static void alloc_paths(struct chunk *c, struct player *p, int place,
 			dirs[dir].f_more : dirs[dir].f_less;
 
 		/* Way back */
-		if (dirs[dir].level == last_lev
-				&& player->upkeep->create_stair) {
+		if (dirs[dir].level == last_lev	&& player->upkeep->create_stair) {
 			/* No paths in river */
 			if (river && dirs[dir].river_special)
 				river_move(c, &pcoord);

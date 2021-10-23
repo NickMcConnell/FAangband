@@ -858,7 +858,6 @@ void process_world(struct chunk *c)
 			} else {
 				msgt(MSG_TPLEVEL, "You feel yourself yanked away!");
 				player_change_place(player, player->recall_pt);
-				player->last_place = 0;
 			}
 		}
 	}

@@ -202,9 +202,6 @@ void do_cmd_go_up(struct command *cmd)
 			if (lev->up) {
 				struct level *up = level_by_name(world, lev->up);
 				if (lev->locality != up->locality) {
-					/* Land properly */
-					player->last_place = 0;
-
 					/* Portal */
 					msgt(MSG_STAIRS_UP, "You trigger a magic portal.");
 
