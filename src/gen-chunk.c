@@ -427,6 +427,19 @@ bool chunk_copy(struct chunk *dest, struct player *p, struct chunk *source,
 		/* Valid monster */
 		if (!source_mon->race) continue;
 
+		/* Deal with player ghosts */
+		if (source_mon->race &&
+			rf_has(source_mon->race->flags, RF_PLAYER_GHOST)) {
+			/* Only allow one ghost */
+			if (dest->ghost->bones_selector) {
+				continue;
+			} else {
+				/* Shift the ghost */
+				dest->ghost = source->ghost;
+				source->ghost = NULL;
+			}
+		}
+
 		/* Copy */
 		memcpy(dest_mon, source_mon, sizeof(struct monster));
 
