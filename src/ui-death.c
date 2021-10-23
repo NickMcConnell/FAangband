@@ -224,6 +224,9 @@ static void make_bones(void)
 	/* Ignore wizards and borgs */
 	if (player->noscore & (NOSCORE_WIZARD | NOSCORE_DEBUG)) return;
 
+	/* Ignore suicide */
+	if (!player->total_winner && streq(player->died_from, "Quitting")) return;
+
 	/* Ignore people who die in town */
 	if (!player->depth) return;
 
