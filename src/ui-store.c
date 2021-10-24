@@ -693,6 +693,9 @@ static bool store_purchase(struct store_context *ctx, int item, bool single)
 	if (!store_is_home(store)) {
 		bool response;
 
+		bool obj_is_book = tval_is_book_k(obj->kind);
+		bool obj_can_use = !obj_is_book || obj_can_browse(obj);
+
 		/* Extract the price for the entire stack */
 		price = price_item(store, dummy, false, dummy->number);
 
@@ -702,7 +705,11 @@ static bool store_purchase(struct store_context *ctx, int item, bool single)
 		prt(format("Price: %d", price), 1, 0);
 
 		/* Confirm purchase */
-		response = store_get_check(format("Buy %s? [ESC, any other key to accept]", o_name));
+		response = store_get_check(format("Buy %s?%s %s",
+					o_name,
+					obj_can_use ? "" : " (Can't use!)",
+					"[ESC, any other key to accept]"));
+
 		screen_load();
 
 		/* Negative response, so give up */
