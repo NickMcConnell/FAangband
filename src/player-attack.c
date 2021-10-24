@@ -1251,7 +1251,10 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 
 	bool hit_target = false;
 	bool none_left = false;
+	bool super = false;
 
+	char name[120];
+	struct object *bow = equipped_item_by_slot_name(p, "shooting");
 	struct object *missile;
 	int pierce = 1;
 	int tries = 0;
@@ -1275,6 +1278,32 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 	if ((p->timed[TMD_POWERSHOT] || player_has(p, PF_PIERCE_SHOT)) &&
 		tval_is_sharp_missile(obj)) {
 		pierce = p->state.ammo_mult;
+	}
+
+	/* Missile launchers of Velocity sometimes "supercharge" */
+	if (bow && of_has(bow->flags, OF_VELOCITY) && one_in_(5)) {
+		/* Learn the ego */
+		equip_learn_flag(p, OF_VELOCITY);
+
+		/* Set special damage */
+		super = true;
+
+		/* Give a hint to the player. */
+		object_desc(name, sizeof(name), bow, ODESC_FULL | ODESC_SINGULAR, p);
+		msg("Your %s feels very powerful.", name);
+	}
+
+	/* Missile launchers of Accuracy sometimes "supercharge" */
+	if (bow && of_has(bow->flags, OF_ACCURATE) && one_in_(5)) {
+		/* Learn the ego */
+		equip_learn_flag(p, OF_ACCURATE);
+
+		/* Set special accuracy */
+		super = true;
+
+		/* Give a hint to the player. */
+		object_desc(name, sizeof(name), bow, ODESC_FULL | ODESC_SINGULAR, p);
+		msg("Your %s feels very accurate.", name);
 	}
 
 	/* Hack -- Handle stuff */
@@ -1306,7 +1335,7 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 			const char *note_dies = monster_is_destroyed(mon) ? 
 				" is destroyed." : " dies.";
 
-			struct attack_result result = attack(p, obj, grid, tries);
+			struct attack_result result = attack(p, obj, grid, tries, super);
 			int dmg = result.dmg;
 			u32b msg_type = result.msg_type;
 			char hit_verb[20];
@@ -1439,7 +1468,8 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
  */
 static struct attack_result make_ranged_shot(struct player *p,
 											 struct object *ammo,
-											 struct loc grid, int tries)
+											 struct loc grid, int tries,
+											 bool super)
 {
 	char *hit_verb = mem_alloc(20 * sizeof(char));
 	struct attack_result result = {false, false, true, 0, 0, 0, hit_verb};
@@ -1448,34 +1478,18 @@ static struct attack_result make_ranged_shot(struct player *p,
 	int ac = terrain_armor_adjust(grid, mon->race->ac, false);
 	int b = 0, s = 0;
 	bool special_dam = false;
-	char name[120];
 
 	my_strcpy(hit_verb, "hits", 20);
 
-	/* Missile launchers of Velocity sometimes "supercharge" */
-	if (of_has(bow->flags, OF_VELOCITY) && one_in_(5)) {
-		/* Learn the ego */
-		equip_learn_flag(p, OF_VELOCITY);
-
-		/* Set special damage */
-		special_dam = true;
-
-		/* Give a hint to the player. */
-		object_desc(name, sizeof(name), bow, ODESC_FULL | ODESC_SINGULAR, p);
-		msg("Your %s feels very powerful.", name);
-	}
-
-	/* Missile launchers of Accuracy sometimes "supercharge" */
-	if (of_has(bow->flags, OF_ACCURATE) && one_in_(5)) {
-		/* Learn the ego */
-		equip_learn_flag(p, OF_ACCURATE);
-
-		/* Set special accuracy -  almost negate monster armour */
-		ac /= 3;
-
-		/* Give a hint to the player. */
-		object_desc(name, sizeof(name), bow, ODESC_FULL | ODESC_SINGULAR, p);
-		msg("Your %s feels very accurate.", name);
+	/* Check for supercharge */
+	if (super) {
+		if (of_has(bow->flags, OF_VELOCITY)) {
+			/* Set special damage */
+			special_dam = true;
+		} else if (of_has(bow->flags, OF_ACCURATE)) {
+			/* Set special accuracy -  almost negate monster armour */
+			ac /= 3;
+		}
 	}
 
 	/* Sleeping, visible monsters are easier to hit. */
@@ -1513,7 +1527,8 @@ static struct attack_result make_ranged_shot(struct player *p,
  */
 static struct attack_result make_ranged_throw(struct player *p,
 											  struct object *obj,
-											  struct loc grid, int tries)
+											  struct loc grid, int tries,
+											  bool super)
 {
 	char *hit_verb = mem_alloc(20 * sizeof(char));
 	struct attack_result result = {false, false, false, 0, 0, 0, hit_verb};

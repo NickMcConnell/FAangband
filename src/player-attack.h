@@ -57,7 +57,8 @@ struct hit_types {
  */
 typedef struct attack_result (*ranged_attack) (struct player *p,
 											   struct object *obj,
-											   struct loc grid, int tries);
+											   struct loc grid, int tries,
+											   bool super);
 
 extern struct file_parser unarmed_blow_parser;
 extern void do_cmd_fire(struct command *cmd);
