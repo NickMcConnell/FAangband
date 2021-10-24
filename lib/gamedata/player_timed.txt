@@ -221,7 +221,6 @@ grade:s:10000:RAcid:You feel resistant to acid!
 on-end:You are no longer resistant to acid.
 on-increase:Your resistance to acid feels renewed!
 msgt:RES_ACID
-fail:3:ACID
 beneficial:1
 resist:ACID
 
@@ -231,7 +230,6 @@ grade:b:10000:RElec:You feel resistant to electricity!
 on-end:You are no longer resistant to electricity.
 on-increase:Your resistance to electricity feels renewed!
 msgt:RES_ELEC
-fail:3:ELEC
 beneficial:1
 resist:ELEC
 
@@ -241,7 +239,6 @@ grade:r:10000:RFire:You feel resistant to fire!
 on-end:You are no longer resistant to fire.
 on-increase:Your resistance to fire feels renewed!
 msgt:RES_FIRE
-fail:3:FIRE
 beneficial:1
 resist:FIRE
 
@@ -251,7 +248,6 @@ grade:w:10000:RCold:You feel resistant to cold!
 on-end:You are no longer resistant to cold.
 on-increase:Your resistance to cold feels renewed!
 msgt:RES_COLD
-fail:3:COLD
 beneficial:1
 resist:COLD
 
@@ -261,7 +257,6 @@ grade:g:10000:RPois:You feel resistant to poison!
 on-end:You are no longer resistant to poison.
 on-increase:Your resistance to poison feels renewed!
 msgt:RES_POIS
-fail:3:POIS
 beneficial:1
 resist:POIS
 
