@@ -1369,7 +1369,8 @@ static bool lab_is_tunnel(struct chunk *c, struct loc grid) {
  * \param soft is true if we use regular walls, false if permanent walls
  * \return a pointer to the generated chunk
  */
-static struct chunk *labyrinth_chunk(int depth, int h, int w, bool lit, bool soft)
+static struct chunk *labyrinth_chunk(struct player *p, int h, int w, bool lit,
+									 bool soft)
 {
 	int i, j, k;
 	struct loc grid;
@@ -1391,7 +1392,7 @@ static struct chunk *labyrinth_chunk(int depth, int h, int w, bool lit, bool sof
 
 	/* The labyrinth chunk */
 	struct chunk *c = cave_new(h + 2, w + 2);
-	c->depth = depth;
+	c->depth = p->depth;
 	/* allocate our arrays */
 	sets = mem_zalloc(n * sizeof(int));
 	walls = mem_zalloc(n * sizeof(int));
@@ -1521,7 +1522,7 @@ struct chunk *labyrinth_gen(struct player *p, int min_height, int min_width) {
 	w = MAX(w, min_width);
 
 	/* Generate the actual labyrinth */
-	c = labyrinth_chunk(p->depth, h, w, lit, soft);
+	c = labyrinth_chunk(p, h, w, lit, soft);
 	if (!c) return NULL;
 	c->place = p->place;
 
@@ -2059,8 +2060,8 @@ void ensure_connectedness(struct chunk *c, bool allow_vault_disconnect) {
  * to not build in stairs during cavern generation.
  * \return a pointer to the generated chunk
  */
-static struct chunk *cavern_chunk(int depth, int h, int w,
-		const struct connector *join)
+static struct chunk *cavern_chunk(struct player *p, int h, int w,
+								  const struct connector *join)
 {
 	int i;
 	int size = h * w;
@@ -2074,7 +2075,7 @@ static struct chunk *cavern_chunk(int depth, int h, int w,
 	int tries;
 
 	struct chunk *c = cave_new(h, w);
-	c->depth = depth;
+	c->depth = p->depth;
 
 	ROOM_LOG("cavern h=%d w=%d size=%d density=%d times=%d", h, w, size,
 			 density, times);
@@ -2144,7 +2145,7 @@ struct chunk *cavern_gen(struct player *p, int min_height, int min_width) {
 	w = MAX(w, min_width);
 
 	/* Try to build the cavern, fail gracefully */
-	c = cavern_chunk(p->depth, h, w, dun->join);
+	c = cavern_chunk(p, h, w, dun->join);
 	if (!c) return NULL;
 	c->place = p->place;
 
@@ -2908,8 +2909,8 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width)
  * \param persistent If true, handle the connections for persistent levels.
  * \return a pointer to the generated chunk
  */
-static struct chunk *modified_chunk(struct player *p, int depth, int height,
-		int width, bool persistent)
+static struct chunk *modified_chunk(struct player *p, int height, int width,
+									bool persistent)
 {
 	int i;
 	int by = 0, bx = 0, key, rarity;
@@ -2920,7 +2921,8 @@ static struct chunk *modified_chunk(struct player *p, int depth, int height,
 
 	/* Make the cave */
 	struct chunk *c = cave_new(height, width);
-	c->depth = depth;
+	c->depth = p->depth;
+	c->place = p->place;
 
 	/* Set the intended number of floor grids based on cave floor area */
 	num_floors = c->height * c->width / 7;
@@ -3070,8 +3072,8 @@ struct chunk *modified_gen(struct player *p, int min_height, int min_width) {
 	dun->block_hgt = dun->profile->block_size;
 	dun->block_wid = dun->profile->block_size;
 
-	c = modified_chunk(p, p->depth, MIN(z_info->dungeon_hgt, y_size),
-		MIN(z_info->dungeon_wid, x_size), dun->persist);
+	c = modified_chunk(p, MIN(z_info->dungeon_hgt, y_size),
+					   MIN(z_info->dungeon_wid, x_size), dun->persist);
 	if (!c) return NULL;
 	c->place = p->place;
 
@@ -3141,7 +3143,7 @@ struct chunk *modified_gen(struct player *p, int min_height, int min_width) {
  * \param persistent If true, handle the connections for persistent levels.
  * \return a pointer to the generated chunk
  */
-static struct chunk *moria_chunk(struct player *p, int depth, int height,
+static struct chunk *moria_chunk(struct player *p, int height,
 		int width, bool persistent)
 {
 	int i;
@@ -3153,7 +3155,8 @@ static struct chunk *moria_chunk(struct player *p, int depth, int height,
 
 	/* Make the cave */
 	struct chunk *c = cave_new(height, width);
-	c->depth = depth;
+	c->depth = p->depth;
+	c->place = p->place;
 
 	/* Set the intended number of floor grids based on cave floor area */
 	num_floors = c->height * c->width / 7;
@@ -3297,8 +3300,8 @@ struct chunk *moria_gen(struct player *p, int min_height, int min_width) {
 	dun->block_hgt = dun->profile->block_size;
 	dun->block_wid = dun->profile->block_size;
 
-	c = moria_chunk(p, p->depth, MIN(z_info->dungeon_hgt, y_size),
-		MIN(z_info->dungeon_wid, x_size), dun->persist);
+	c = moria_chunk(p, MIN(z_info->dungeon_hgt, y_size),
+					MIN(z_info->dungeon_wid, x_size), dun->persist);
 	if (!c) return NULL;
 	c->place = p->place;
 
@@ -3527,17 +3530,13 @@ struct chunk *hard_centre_gen(struct player *p, int min_height, int min_width)
 	lower_cavern_ypos = centre_cavern_ypos + centre_cavern_hgt;
 
 	/* Make the caverns */
-	upper_cavern = cavern_chunk(p->depth, upper_cavern_hgt,
-		centre_cavern_wid, NULL);
-	lower_cavern = cavern_chunk(p->depth, lower_cavern_hgt,
-		centre_cavern_wid, NULL);
+	upper_cavern = cavern_chunk(p, upper_cavern_hgt, centre_cavern_wid, NULL);
+	lower_cavern = cavern_chunk(p, lower_cavern_hgt, centre_cavern_wid, NULL);
 	left_cavern_wid = (z_info->dungeon_wid - centre_cavern_wid) / 2;
 	right_cavern_wid = z_info->dungeon_wid - left_cavern_wid -
 		centre_cavern_wid;
-	left_cavern = cavern_chunk(p->depth, z_info->dungeon_hgt,
-		left_cavern_wid, NULL);
-	right_cavern = cavern_chunk(p->depth, z_info->dungeon_hgt,
-		right_cavern_wid, NULL);
+	left_cavern = cavern_chunk(p, z_info->dungeon_hgt, left_cavern_wid, NULL);
+	right_cavern = cavern_chunk(p, z_info->dungeon_hgt, right_cavern_wid, NULL);
 
 	/* Return on failure */
 	if (!upper_cavern || !lower_cavern || !left_cavern || !right_cavern) {
@@ -3714,8 +3713,7 @@ struct chunk *lair_gen(struct player *p, int min_height, int min_width) {
 	 */
 	dun->join = transform_join_list(cached_join, y_size, normal_width,
 		0, normal_offset, 0, false);
-	normal = modified_chunk(p, p->depth, y_size, normal_width,
-		dun->persist);
+	normal = modified_chunk(p, y_size, normal_width, dun->persist);
 	/* Done with the transformed connector information. */
 	cave_connectors_free(dun->join);
 	dun->join = cached_join;
@@ -3729,7 +3727,7 @@ struct chunk *lair_gen(struct player *p, int min_height, int min_width) {
 	 */
 	dun->join = transform_join_list(cached_join, y_size, lair_width,
 		0, lair_offset, 0, false);
-	lair = cavern_chunk(p->depth, y_size, lair_width, dun->join);
+	lair = cavern_chunk(p, y_size, lair_width, dun->join);
 	/* Done with the transformed connector information. */
 	cave_connectors_free(dun->join);
 	dun->join = cached_join;
@@ -3855,17 +3853,16 @@ struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width) {
 	/* No persistent levels of this type for now */
 	if (dun->persist) return NULL;
 
-	gauntlet = labyrinth_chunk(p->depth, gauntlet_hgt, gauntlet_wid, false,
-		false);
+	gauntlet = labyrinth_chunk(p, gauntlet_hgt, gauntlet_wid, false, false);
 	if (!gauntlet) return NULL;
 
-	left = cavern_chunk(p->depth, y_size, x_size, NULL);
+	left = cavern_chunk(p, y_size, x_size, NULL);
 	if (!left) {
 		cave_free(gauntlet);
 		return NULL;
 	}
 
-	right = cavern_chunk(p->depth, y_size, x_size, NULL);
+	right = cavern_chunk(p, y_size, x_size, NULL);
 	if (!right) {
 		cave_free(gauntlet);
 		cave_free(left);
