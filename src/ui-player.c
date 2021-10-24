@@ -832,10 +832,11 @@ static struct panel *get_panel_combat(void) {
 	/* Ranged */
 	obj = equipped_item_by_slot_name(player, "shooting");
 	bth = (player->state.skills[SKILL_TO_HIT_BOW] * 10) / BTH_PLUS_ADJ;
+	dam = player->known_state.to_d + (obj ? obj->known->to_d : 0);
 	hit = player->known_state.to_h + (obj ? obj->known->to_h : 0);
-	dam = obj ? obj->known->to_d : 0;
 
-	panel_line(p, COLOUR_L_BLUE, "Shoot to-dam", "%+d", dam);
+	panel_line(p, COLOUR_L_BLUE, "Shoot to-dam", "%+d%%",
+			   deadliness_conversion[dam]);
 	panel_line(p, COLOUR_L_BLUE, "To-hit", "%d,%+d", bth / 10, hit);
 	panel_line(p, COLOUR_L_BLUE, "Shots", "%d.%d/turn",
 			   player->state.num_shots / 10, player->state.num_shots % 10);
