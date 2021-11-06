@@ -1236,8 +1236,9 @@ static const struct hit_types ranged_hit_types[] = {
  * logic, while using the 'attack' parameter to do work particular to each
  * kind of attack.
  */
-static void ranged_helper(struct player *p,	struct object *obj, int dir,
-						  int shots, ranged_attack attack)
+static void ranged_helper(struct player *p,	struct object *bow,
+						  struct object *obj, int dir, int shots,
+						  ranged_attack attack)
 {
 	int i;
 	int path_n;
@@ -1254,7 +1255,6 @@ static void ranged_helper(struct player *p,	struct object *obj, int dir,
 	bool super = false;
 
 	char name[120];
-	struct object *bow = equipped_item_by_slot_name(p, "shooting");
 	struct object *missile;
 	int pierce = 1;
 	int tries = 0;
@@ -1624,7 +1624,7 @@ void do_cmd_fire(struct command *cmd) {
 		return;
 	}
 
-	ranged_helper(player, obj, dir, shots, attack);
+	ranged_helper(player, bow, obj, dir, shots, attack);
 }
 
 
@@ -1667,7 +1667,7 @@ void do_cmd_throw(struct command *cmd) {
 		inven_takeoff(obj);
 	}
 
-	ranged_helper(player, obj, dir, shots, attack);
+	ranged_helper(player, NULL, obj, dir, shots, attack);
 }
 
 /**
