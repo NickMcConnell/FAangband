@@ -90,9 +90,10 @@
 # or resistances ('RES_' prepended to the element name from list-elements.h).
 # The value appears in brackets after the property name.  For object modifiers,
 # the value can be any random expression.  For resistances, it must be a plain
-# integer value with the useful ones being 1 (resist), 3 (immune), and -1
-# (vulnerable).  Like flags, values are separated by '|' and as many values:
-# lines as needed can be used.
+# integer value between -100 (maximum vulnerability) to 100 (maximum resistance)
+# with zero indicating no change from the current level of resistance.  Like
+# flags, values are separated by '|' and as many values: lines as needed can
+# be used.
 
 # 'min-values' is for minimum values of values recorded in a 'values' line.
 # These work like minimum combat values, but for value-defined modifiers.

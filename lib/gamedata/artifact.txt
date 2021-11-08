@@ -65,8 +65,9 @@
 # object modifiers (as found in list-stats.h and list-object-modifiers.h) or
 # resistances ('RES_' prepended to the element name from list-elements.h).
 # The value appears in brackets after the property name and must be an integer.
-# For resistances, the useful values are 1 (resist), 3 (immune), and -1
-# (vulnerable).  Use as many 'values' lines as are needed to specify the
+# For resistances, the value should be between -100 (maximum vulnerability) to
+# 100 (maximum resistance) with zero indicating no change from the current
+# level of resistance.  Use as many 'values' lines as are needed to specify the
 # properties of the object.  If listing more than one property on a line,
 # separate them with '|'.
 
