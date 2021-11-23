@@ -454,12 +454,13 @@ static int select_property(int temp_potential, const char **property_list,
 	int selection = 0;
 	int current_value = 0;
 
-	int prices[choices][*max_value + 1];
+	int **prices = mem_alloc(choices * sizeof(*prices));
 
 	bool found_it = false;
 
 	/* Run through choices, record costs */
 	for (i = 0; i < choices; i++) {
+		prices[i] = mem_alloc((*max_value + 1) * sizeof(*prices[i]));
 		for (j = 0; j <= *max_value; j++) {
 			struct object *test_obj = object_new();
 
@@ -549,6 +550,11 @@ static int select_property(int temp_potential, const char **property_list,
 
 	/* Set the max value */
 	*max_value = current_value;
+
+	for (i = 0; i < choices; i++) {
+		mem_free(prices[i]);
+	}
+	mem_free(prices);
 
 	/* Have we found one? */
 	switch (rank_method) {
