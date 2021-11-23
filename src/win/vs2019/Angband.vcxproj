@@ -510,7 +510,7 @@ xcopy $(MSBuildProjectDirectory)\lib\* $(OutDir)lib\ /DESY /exclude:$(MSBuildPro
     <Image Include="src\win\angband.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="src\win\angband.rc" />
+    <ResourceCompile Include="src\win\faangband.rc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\customize\font-gcu.prf" />
