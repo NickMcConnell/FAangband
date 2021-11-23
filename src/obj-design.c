@@ -413,7 +413,7 @@ static bool get_property(struct artifact *art, struct object *obj,
 			} else {
 				/* Various things get added to here */
 				int cur_value, cur_cost;
-				s16b *bonus;
+				s16b *bonus = NULL;
 				if (streq(prop->name, "extra armor")) {
 					bonus = art ? &art->ac : &obj->ac;
 				} else if (streq(prop->name, "armor bonus")) {

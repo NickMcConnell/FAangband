@@ -717,7 +717,7 @@ bool prepare_ghost(struct chunk *c, int r_idx, struct monster *mon,
 	struct player_race *p_race;
 	struct player_class *class;
 
-	ang_file *fp;
+	ang_file *fp = NULL;
 	char path[1024];
 	char buf[80];
 
