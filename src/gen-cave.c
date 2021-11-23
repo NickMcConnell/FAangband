@@ -2797,7 +2797,7 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width)
 	struct level *lev = &world->levels[p->place];
 	char *name = level_name(lev);
 	struct chunk *c_new, *c_old = chunk_find_name(name);
-	struct town *town;
+	struct town *town = NULL;
 
 	/* Find the town */
 	for (i = 0; i < world->num_towns; i++) {
