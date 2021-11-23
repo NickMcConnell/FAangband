@@ -190,6 +190,7 @@ xcopy $(MSBuildProjectDirectory)\lib\* $(OutDir)lib\ /DESY /exclude:$(MSBuildPro
     <ClCompile Include="src\gen-monster.c" />
     <ClCompile Include="src\gen-room.c" />
     <ClCompile Include="src\gen-util.c" />
+    <ClCompile Include="src\gen-wilderness.c" />
     <ClCompile Include="src\generate.c" />
     <ClCompile Include="src\grafmode.c" />
     <ClCompile Include="src\guid.c" />
@@ -215,6 +216,7 @@ xcopy $(MSBuildProjectDirectory)\lib\* $(OutDir)lib\ /DESY /exclude:$(MSBuildPro
     <ClCompile Include="src\obj-chest.c" />
     <ClCompile Include="src\obj-curse.c" />
     <ClCompile Include="src\obj-desc.c" />
+    <ClCompile Include="src\obj-design.c" />
     <ClCompile Include="src\obj-gear.c" />
     <ClCompile Include="src\obj-ignore.c" />
     <ClCompile Include="src\obj-info.c" />
@@ -223,9 +225,7 @@ xcopy $(MSBuildProjectDirectory)\lib\* $(OutDir)lib\ /DESY /exclude:$(MSBuildPro
     <ClCompile Include="src\obj-list.c" />
     <ClCompile Include="src\obj-make.c" />
     <ClCompile Include="src\obj-pile.c" />
-    <ClCompile Include="src\obj-power.c" />
     <ClCompile Include="src\obj-properties.c" />
-    <ClCompile Include="src\obj-randart.c" />
     <ClCompile Include="src\obj-slays.c" />
     <ClCompile Include="src\obj-tval.c" />
     <ClCompile Include="src\obj-util.c" />
@@ -288,6 +288,7 @@ xcopy $(MSBuildProjectDirectory)\lib\* $(OutDir)lib\ /DESY /exclude:$(MSBuildPro
     <ClCompile Include="src\ui-output.c" />
     <ClCompile Include="src\ui-player.c" />
     <ClCompile Include="src\ui-prefs.c" />
+    <ClCompile Include="src\ui-recall.c" />
     <ClCompile Include="src\ui-score.c" />
     <ClCompile Include="src\ui-signals.c" />
     <ClCompile Include="src\ui-spell.c" />
@@ -348,6 +349,7 @@ xcopy $(MSBuildProjectDirectory)\lib\* $(OutDir)lib\ /DESY /exclude:$(MSBuildPro
     <ClInclude Include="src\list-history-types.h" />
     <ClInclude Include="src\list-ignore-types.h" />
     <ClInclude Include="src\list-kind-flags.h" />
+    <ClInclude Include="src\list-localities.h" />
     <ClInclude Include="src\list-message.h" />
     <ClInclude Include="src\list-mon-message.h" />
     <ClInclude Include="src\list-mon-race-flags.h" />
@@ -362,12 +364,12 @@ xcopy $(MSBuildProjectDirectory)\lib\* $(OutDir)lib\ /DESY /exclude:$(MSBuildPro
     <ClInclude Include="src\list-player-flags.h" />
     <ClInclude Include="src\list-player-timed.h" />
     <ClInclude Include="src\list-projections.h" />
-    <ClInclude Include="src\list-randart-properties.h" />
     <ClInclude Include="src\list-rooms.h" />
     <ClInclude Include="src\list-room-flags.h" />
     <ClInclude Include="src\list-square-flags.h" />
     <ClInclude Include="src\list-stats.h" />
     <ClInclude Include="src\list-terrain-flags.h" />
+    <ClInclude Include="src\list-topography.h" />
     <ClInclude Include="src\list-trap-flags.h" />
     <ClInclude Include="src\list-tvals.h" />
     <ClInclude Include="src\list-ui-entry-renderers.h" />
@@ -391,6 +393,7 @@ xcopy $(MSBuildProjectDirectory)\lib\* $(OutDir)lib\ /DESY /exclude:$(MSBuildPro
     <ClInclude Include="src\obj-chest.h" />
     <ClInclude Include="src\obj-curse.h" />
     <ClInclude Include="src\obj-desc.h" />
+    <ClInclude Include="src\obj-design.h" />
     <ClInclude Include="src\obj-gear.h" />
     <ClInclude Include="src\obj-ignore.h" />
     <ClInclude Include="src\obj-info.h" />
@@ -399,9 +402,7 @@ xcopy $(MSBuildProjectDirectory)\lib\* $(OutDir)lib\ /DESY /exclude:$(MSBuildPro
     <ClInclude Include="src\obj-list.h" />
     <ClInclude Include="src\obj-make.h" />
     <ClInclude Include="src\obj-pile.h" />
-    <ClInclude Include="src\obj-power.h" />
     <ClInclude Include="src\obj-properties.h" />
-    <ClInclude Include="src\obj-randart.h" />
     <ClInclude Include="src\obj-slays.h" />
     <ClInclude Include="src\obj-tval.h" />
     <ClInclude Include="src\obj-util.h" />
@@ -461,6 +462,7 @@ xcopy $(MSBuildProjectDirectory)\lib\* $(OutDir)lib\ /DESY /exclude:$(MSBuildPro
     <ClInclude Include="src\ui-output.h" />
     <ClInclude Include="src\ui-player.h" />
     <ClInclude Include="src\ui-prefs.h" />
+    <ClInclude Include="src\ui-recall.h" />
     <ClInclude Include="src\ui-score.h" />
     <ClInclude Include="src\ui-signals.h" />
     <ClInclude Include="src\ui-spell.h" />
@@ -583,7 +585,6 @@ xcopy $(MSBuildProjectDirectory)\lib\* $(OutDir)lib\ /DESY /exclude:$(MSBuildPro
     <Text Include="lib\gamedata\monster_base.txt" />
     <Text Include="lib\gamedata\monster_spell.txt" />
     <Text Include="lib\gamedata\names.txt" />
-    <Text Include="lib\gamedata\negativity.txt" />
     <Text Include="lib\gamedata\object.txt" />
     <Text Include="lib\gamedata\object_base.txt" />
     <Text Include="lib\gamedata\object_property.txt" />
@@ -610,7 +611,6 @@ xcopy $(MSBuildProjectDirectory)\lib\* $(OutDir)lib\ /DESY /exclude:$(MSBuildPro
     <Text Include="lib\gamedata\visuals.txt" />
     <Text Include="lib\gamedata\world.txt" />
     <Text Include="lib\help\commands.txt" />
-    <Text Include="lib\help\debug.txt" />
     <Text Include="lib\help\index.txt" />
     <Text Include="lib\help\symbols.txt" />
     <Text Include="lib\screens\crown.txt" />
