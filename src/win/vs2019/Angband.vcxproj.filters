@@ -135,6 +135,9 @@
     <ClCompile Include="src\gen-util.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\gen-wilderness.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\grafmode.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -207,6 +210,9 @@
     <ClCompile Include="src\obj-desc.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\obj-design.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\obj-gear.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -231,13 +237,7 @@
     <ClCompile Include="src\obj-pile.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\obj-power.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\obj-properties.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\obj-randart.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\obj-slays.c">
@@ -406,6 +406,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ui-prefs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui-recall.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ui-score.c">
@@ -602,6 +605,9 @@
     <ClInclude Include="src\list-kind-flags.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\list-localities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="src\list-message.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -644,9 +650,6 @@
     <ClInclude Include="src\list-projections.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\list-randart-properties.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\list-rooms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -660,6 +663,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\list-terrain-flags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\list-topography.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\list-trap-flags.h">
@@ -731,6 +737,9 @@
     <ClInclude Include="src\obj-desc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\obj-design.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="src\object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -758,13 +767,7 @@
     <ClInclude Include="src\obj-pile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\obj-power.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\obj-properties.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\obj-randart.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\obj-slays.h">
@@ -921,6 +924,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ui-prefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui-recall.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ui-score.h">
@@ -1291,9 +1297,6 @@
     <Text Include="lib\gamedata\names.txt">
       <Filter>Resource Files\gamedata</Filter>
     </Text>
-    <Text Include="lib\gamedata\negativity.txt">
-      <Filter>Resource Files\gamedata</Filter>
-    </Text>
     <Text Include="lib\gamedata\object.txt">
       <Filter>Resource Files\gamedata</Filter>
     </Text>
@@ -1370,9 +1373,6 @@
       <Filter>Resource Files\gamedata</Filter>
     </Text>
     <Text Include="lib\help\commands.txt">
-      <Filter>Resource Files\help</Filter>
-    </Text>
-    <Text Include="lib\help\debug.txt">
       <Filter>Resource Files\help</Filter>
     </Text>
     <Text Include="lib\help\index.txt">
