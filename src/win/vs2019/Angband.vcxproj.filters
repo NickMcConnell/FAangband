@@ -22,6 +22,9 @@
     <Filter Include="Resource Files\gamedata">
       <UniqueIdentifier>{14f36840-4171-45cc-85c3-1c40b9dbb45f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\ghost">
+      <UniqueIdentifier>{f40000df-904e-42cc-a335-f5fe768b2146}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Resource Files\help">
       <UniqueIdentifier>{2f230f9e-eca0-4db4-9b56-71de201fb1c9}</UniqueIdentifier>
     </Filter>
@@ -1368,6 +1371,57 @@
     </Text>
     <Text Include="lib\gamedata\world.txt">
       <Filter>Resource Files\gamedata</Filter>
+    </Text>
+    <Text Include="lib\ghost\bone.020">
+      <Filter>Resource Files\ghost</Filter>
+    </Text>
+    <Text Include="lib\ghost\bone.025">
+      <Filter>Resource Files\ghost</Filter>
+    </Text>
+    <Text Include="lib\ghost\bone.030">
+      <Filter>Resource Files\ghost</Filter>
+    </Text>
+    <Text Include="lib\ghost\bone.035">
+      <Filter>Resource Files\ghost</Filter>
+    </Text>
+    <Text Include="lib\ghost\bone.040">
+      <Filter>Resource Files\ghost</Filter>
+    </Text>
+    <Text Include="lib\ghost\bone.045">
+      <Filter>Resource Files\ghost</Filter>
+    </Text>
+    <Text Include="lib\ghost\bone.045">
+      <Filter>Resource Files\ghost</Filter>
+    </Text>
+    <Text Include="lib\ghost\bone.050">
+      <Filter>Resource Files\ghost</Filter>
+    </Text>
+    <Text Include="lib\ghost\bone.055">
+      <Filter>Resource Files\ghost</Filter>
+    </Text>
+    <Text Include="lib\ghost\bone.060">
+      <Filter>Resource Files\ghost</Filter>
+    </Text>
+    <Text Include="lib\ghost\bone.065">
+      <Filter>Resource Files\ghost</Filter>
+    </Text>
+    <Text Include="lib\ghost\bone.070">
+      <Filter>Resource Files\ghost</Filter>
+    </Text>
+    <Text Include="lib\ghost\bone.075">
+      <Filter>Resource Files\ghost</Filter>
+    </Text>
+    <Text Include="lib\ghost\bone.080">
+      <Filter>Resource Files\ghost</Filter>
+    </Text>
+    <Text Include="lib\ghost\bone.085">
+      <Filter>Resource Files\ghost</Filter>
+    </Text>
+    <Text Include="lib\ghost\bone.090">
+      <Filter>Resource Files\ghost</Filter>
+    </Text>
+    <Text Include="lib\ghost\bone.095">
+      <Filter>Resource Files\ghost</Filter>
     </Text>
     <Text Include="lib\help\commands.txt">
       <Filter>Resource Files\help</Filter>
