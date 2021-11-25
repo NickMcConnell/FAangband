@@ -1226,9 +1226,6 @@
     <None Include="lib\tiles\shockbolt\flvr-shb.prf">
       <Filter>Resource Files\tiles\shockbolt</Filter>
     </None>
-    <None Include="lib\tiles\shockbolt\graf-shb.prf">
-      <Filter>Resource Files\tiles\shockbolt</Filter>
-    </None>
     <None Include="lib\tiles\shockbolt\graf-shb-dark.prf">
       <Filter>Resource Files\tiles\shockbolt</Filter>
     </None>

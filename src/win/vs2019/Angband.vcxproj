@@ -560,7 +560,6 @@ xcopy $(MSBuildProjectDirectory)\lib\* $(OutDir)lib\ /DESY /exclude:$(MSBuildPro
     <None Include="lib\tiles\old\graf-xxx.prf" />
     <None Include="lib\tiles\old\xtra-xxx.prf" />
     <None Include="lib\tiles\shockbolt\flvr-shb.prf" />
-    <None Include="lib\tiles\shockbolt\graf-shb.prf" />
     <None Include="lib\tiles\shockbolt\graf-shb-dark.prf" />
     <None Include="lib\tiles\shockbolt\graf-shb-light.prf" />
     <None Include="lib\tiles\shockbolt\xtra-shb.prf" />
