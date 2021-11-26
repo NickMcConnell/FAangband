@@ -192,6 +192,7 @@ static const struct {
 	{ "ghost", &ANGBAND_DIR_GHOST, true },
 	{ "user", &ANGBAND_DIR_USER, true },
 	{ "save", &ANGBAND_DIR_SAVE, false },
+	{ "panic", &ANGBAND_DIR_PANIC, false },
 	{ "archive", &ANGBAND_DIR_ARCHIVE, true },
 	{ "bone", &ANGBAND_DIR_BONE, false },
 };
