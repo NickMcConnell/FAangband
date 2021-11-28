@@ -104,7 +104,7 @@ Original Keyset Command Summary
 ``p``  (unused)                      ``P``  (unused)
 ``q``  Quaff a potion                ``Q``  Kill character & quit
 ``r``  Read a scroll                 ``R``  Rest for a period
-``s``  Steal (rogues only)           ``S``  (unused)
+``s``  Steal (rogues only)           ``S``  View or learn specialties
 ``t``  Take off equipment            ``T``  Dig a tunnel
 ``u``  Use a staff                   ``U``  Use an item
 ``v``  Throw an item                 ``V``  Display version info
@@ -112,10 +112,10 @@ Original Keyset Command Summary
 ``x``  (unused)                      ``X``  (unused)
 ``y``  (unused)                      ``Y``  (unused)
 ``z``  Zap a rod                     ``Z``  (unused)
-``!``  (unused)                      ``^A`` (special - debug command)
+``!``  Change shape (Beornings)      ``^A`` (special - debug command)
 ``@``  (unused)                      ``^B`` (unused)
-``#``  (unused)                      ``^C`` (special - break)
-``$``  (unused)                      ``^D`` (unused)
+``#``  Check the time                ``^C`` (special - break)
+``$``  Move house                    ``^D`` (unused)
 ``%``  (unused)                      ``^E`` Toggle inven/equip window
 ``^``  (special - control key)       ``^F`` Repeat level feeling
 ``&``  (unused)                      ``^G`` Do autopickup
@@ -128,7 +128,7 @@ Original Keyset Command Summary
 ``]``  Display visible object list   ``^N`` (unused)
 ``-``  (unused)                      ``^O`` Show previous message
 ``_``  Enter store                   ``^P`` Show previous messages
-``+``  Alter grid                    ``^Q`` (unused)
+``+``  Alter grid, set monster trap  ``^Q`` (unused)
 ``=``  Set options                   ``^R`` Redraw the screen
 ``;``  Walk (with pickup)            ``^S`` Save and don't quit
 ``:``  Take notes                    ``^T`` (unused)
@@ -190,7 +190,7 @@ Roguelike Keyset Command Summary
  ``]``  Display visible object list   ``^N`` (alter - south east)
  ``-``  Walk into a trap              ``^O`` Show previous message
  ``_``  Enter store                   ``^P`` Show previous messages
- ``+``  Alter grid                    ``^Q`` (unused)
+ ``+``  Alter grid, set monster trap  ``^Q`` (unused)
  ``=``  Set options                   ``^R`` Redraw the screen
  ``;``  Walk (with pickup)            ``^S`` Save and don't quit
  ``:``  Take notes                    ``^T`` Dig a tunnel
