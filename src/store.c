@@ -493,7 +493,9 @@ void store_reset(void) {
 		/* Initial stock setup for stores */
 		while (s) {
 			s->stock_num = 0;
+			object_pile_free(NULL, NULL, s->stock_k);
 			object_pile_free(NULL, NULL, s->stock);
+			s->stock_k = NULL;
 			s->stock = NULL;
 			if (store_is_home(s)) {
 				s = s->next;
