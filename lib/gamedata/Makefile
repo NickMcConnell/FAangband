@@ -1,7 +1,7 @@
 MKPATH=../../mk/
 include $(MKPATH)buildsys.mk
 
-CONFIG = a_cursed.txt a_normal.txt activation.txt artifact.txt body.txt \
+FILES = a_cursed.txt a_normal.txt activation.txt artifact.txt body.txt \
  blow_methods.txt blow_effects.txt brand.txt bravado.txt chest_trap.txt \
  class.txt constants.txt curse.txt dungeon_profile.txt ego_item.txt flavor.txt \
  ghost.txt hints.txt history.txt monster.txt monster_base.txt \
@@ -11,4 +11,10 @@ CONFIG = a_cursed.txt a_normal.txt activation.txt artifact.txt body.txt \
  room_template.txt set_item.txt shape.txt slay.txt store.txt summon.txt \
  terrain.txt themed.txt trap.txt ui_entry.txt ui_entry_base.txt \
  ui_entry_renderer.txt vault.txt visuals.txt w_cursed.txt w_normal.txt world.txt
+
+R1 = $(GAMEDATA_IN_LIB:true=$(FILES))
+DATA = $(R1:false=)
+R2 = $(GAMEDATA_IN_LIB:false=$(FILES))
+CONFIG = $(R2:true=)
+
 PACKAGE = gamedata
