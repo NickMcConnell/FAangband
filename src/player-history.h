@@ -46,10 +46,10 @@ enum {
  */
 struct history_info {
 	bitflag type[HIST_SIZE];/* Kind of history item */
-	s16b place;				/* Place when this item was recorded */
-	s16b clev;				/* Character level when this item was recorded */
-	byte a_idx;				/* Artifact this item relates to */
-	s32b turn;				/* Turn this item was recorded on */
+	int16_t place;			/* Place when this item was recorded */
+	int16_t clev;			/* Character level when this item was recorded */
+	uint8_t a_idx;			/* Artifact this item relates to */
+	int32_t turn;			/* Turn this item was recorded on */
 	char event[80];			/* The text of the item */
 };
 

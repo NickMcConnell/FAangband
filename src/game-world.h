@@ -66,13 +66,13 @@ struct level_map {
 	struct level_map *next;
 };
 
-extern u16b daycount;
-extern u32b seed_randart;
-extern u32b seed_flavor;
-extern s32b turn;
+extern uint16_t daycount;
+extern uint32_t seed_randart;
+extern uint32_t seed_flavor;
+extern int32_t turn;
 extern bool character_generated;
 extern bool character_dungeon;
-extern const byte extract_energy[200];
+extern const uint8_t extract_energy[200];
 extern struct level_map *maps;
 extern struct level_map *world;
 

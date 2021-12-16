@@ -2586,7 +2586,7 @@ static void town_gen_layout(struct chunk *c, struct player *p, struct town *t)
 	int max_store_x = 0;
 
 	/* divide the town into lots */
-	u16b lot_hgt = 4, lot_wid = 6;
+	uint16_t lot_hgt = 4, lot_wid = 6;
 	struct store *s;
 
 	/* Create walls */

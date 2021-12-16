@@ -811,7 +811,7 @@ static void place_feeling(struct chunk *c)
  */
 static int calc_obj_feeling(struct chunk *c, struct player *p)
 {
-	u32b x;
+	uint32_t x;
 
 	/* Town gets no feeling */
 	if (c->depth == 0) return 0;
@@ -842,7 +842,7 @@ static int calc_obj_feeling(struct chunk *c, struct player *p)
  */
 static int calc_mon_feeling(struct chunk *c)
 {
-	u32b x;
+	uint32_t x;
 
 	/* Town gets no feeling */
 	if (c->depth == 0) return 0;

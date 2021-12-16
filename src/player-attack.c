@@ -372,7 +372,7 @@ static void fury_boost(struct player *p)
  * Much of this table is not intended ever to be used, and is included
  * only to handle possible inflation elsewhere. -LM-
  */
-const byte deadliness_conversion[151] =
+const uint8_t deadliness_conversion[151] =
   {
     0,
     5,  10,  14,  18,  22,  26,  30,  33,  36,  39,
@@ -433,10 +433,10 @@ void apply_deadliness(int *die_average, int deadliness)
  * Factor in item weight, total plusses, and player level.
  */
 static int critical_shot(const struct player *p, const struct monster *mon,
-						   const struct object *missile,
-						   const struct object *launcher,
-						   int sleeping_bonus, u32b *msg_type, bool *marksman,
-						   int tries)
+						 const struct object *missile,
+						 const struct object *launcher,
+						 int sleeping_bonus, uint32_t *msg_type,
+						 bool *marksman, int tries)
 {
 	int power = chance_of_missile_hit(p, missile, launcher, mon, tries)
 		+ sleeping_bonus;
@@ -479,7 +479,7 @@ static int critical_shot(const struct player *p, const struct monster *mon,
  */
 static int critical_melee(const struct player *p, struct monster *mon,
 							const struct object *obj, int sleeping_bonus,
-							u32b *msg_type, bool *armsman)
+							uint32_t *msg_type, bool *armsman)
 {
 	int power = chance_of_melee_hit(p, obj, mon) + sleeping_bonus;
 	int add_dice = 0;
@@ -626,7 +626,7 @@ static int unarmed_damage(struct player *p, struct monster_race *race,
  */
 static int melee_damage(struct player *p, struct monster *mon,
 						struct object *obj, int b, int s, int sleeping_bonus,
-						u32b *msg_type, bool *armsman)
+						uint32_t *msg_type, bool *armsman)
 {
 	int dice = (obj) ? obj->dd : 1;
 	int sides, dmg, add = 0;
@@ -688,9 +688,9 @@ static int melee_damage(struct player *p, struct monster *mon,
  * damage dice, criticals add extra dice.
  */
 static int ranged_damage(struct player *p, const struct monster *mon,
-						   struct object *missile, struct object *launcher,
-						   int b, int s, int sleeping_bonus, u32b *msg_type,
-						   bool *marksman, int tries)
+						 struct object *missile, struct object *launcher,
+						 int b, int s, int sleeping_bonus, uint32_t *msg_type,
+						 bool *marksman, int tries)
 {
 	int mult = (launcher ? p->state.ammo_mult : 1);
 	int dice = missile->dd;
@@ -844,7 +844,7 @@ bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 	int ac = terrain_armor_adjust(grid, mon->race->ac, true);
 
 	char verb[20];
-	u32b msg_type = MSG_HIT;
+	uint32_t msg_type = MSG_HIT;
 	char dmg_text[20];
 	int j, b, s, weight, dmg;
 
@@ -1178,7 +1178,7 @@ void py_attack(struct player *p, struct loc grid)
 
 	/* Reward BGs with 5% of max SPs, min 1/2 point */
 	if (player_has(p, PF_COMBAT_REGEN)) {
-		s32b sp_gain = (s32b)(MAX(p->msp, 10) << 16) / 20;
+		int32_t sp_gain = (int32_t)(MAX(p->msp, 10) << 16) / 20;
 		player_adjust_mana_precise(p, sp_gain);
 	}
 
@@ -1337,7 +1337,7 @@ static void ranged_helper(struct player *p,	struct object *bow,
 
 			struct attack_result result = attack(p, obj, grid, tries, super);
 			int dmg = result.dmg;
-			u32b msg_type = result.msg_type;
+			uint32_t msg_type = result.msg_type;
 			char hit_verb[20];
 			my_strcpy(hit_verb, result.hit_verb, sizeof(hit_verb));
 			mem_free(result.hit_verb);

@@ -1365,7 +1365,7 @@ static void calc_spells(struct player *p)
 
 	const struct class_spell *spell;
 
-	s16b old_spells;
+	int16_t old_spells;
 
 	/* Hack -- must be literate */
 	if (!p->class->magic.total_spells) return;
@@ -1986,7 +1986,7 @@ static int add_special_missile_skill(struct player *p, struct player_state *stat
 /**
  * Apply a percentage resistance to the existing player resistance level.
  */
-static void apply_resist(s16b *player_resist, int item_resist)
+static void apply_resist(int16_t *player_resist, int item_resist)
 {
 	*player_resist = (*player_resist * item_resist) / 100;
 }
@@ -3029,7 +3029,7 @@ void update_stuff(struct player *p)
 
 struct flag_event_trigger
 {
-	u32b flag;
+	uint32_t flag;
 	game_event_type event;
 };
 
@@ -3074,7 +3074,7 @@ static const struct flag_event_trigger redraw_events[] =
 void redraw_stuff(struct player *p)
 {
 	size_t i;
-	u32b redraw = p->upkeep->redraw;
+	uint32_t redraw = p->upkeep->redraw;
 
 	/* Redraw stuff */
 	if (!redraw) return;

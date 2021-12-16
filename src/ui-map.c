@@ -241,7 +241,7 @@ void grid_data_as_text(struct grid_data *g, int *ap, wchar_t *cp, int *tap,
 		} else if (!monster_is_mimicking(cave_monster(cave, g->m_idx)))	{
 			struct monster *mon = cave_monster(cave, g->m_idx);
 
-			byte da;
+			uint8_t da;
 			wchar_t dc;
 
 			/* Desired attr & char */
@@ -505,7 +505,7 @@ void move_cursor_relative(int y, int x)
  *
  * Note the use of "Term_queue_char()" for efficiency.
  */
-static void print_rel_map(wchar_t c, byte a, int y, int x)
+static void print_rel_map(wchar_t c, uint8_t a, int y, int x)
 {
 	int ky, kx;
 
@@ -586,7 +586,7 @@ static void print_rel_map(wchar_t c, byte a, int y, int x)
  *
  * The main screen will always be at least 24x80 in size.
  */
-void print_rel(wchar_t c, byte a, int y, int x)
+void print_rel(wchar_t c, uint8_t a, int y, int x)
 {
 	int ky, kx;
 	int vy, vx;
@@ -778,14 +778,14 @@ void display_map(int *cy, int *cx)
 	int a, ta;
 	wchar_t c, tc;
 
-	byte tp;
+	uint8_t tp;
 
 	struct monster_race *race = &r_info[0];
 
 	/* Priority array */
-	byte **mp = mem_zalloc(cave->height * sizeof(byte*));
+	uint8_t **mp = mem_zalloc(cave->height * sizeof(uint8_t*));
 	for (y = 0; y < cave->height; y++)
-		mp[y] = mem_zalloc(cave->width * sizeof(byte));
+		mp[y] = mem_zalloc(cave->width * sizeof(uint8_t));
 
 	/* Desired map height */
 	get_minimap_dimensions(Term, cave, tile_width, tile_height,
@@ -896,7 +896,7 @@ void display_map(int *cy, int *cx)
 
 static void print_map_name(int place, int row, int col, bool down)
 {
-	byte attr = COLOUR_L_PINK;
+	uint8_t attr = COLOUR_L_PINK;
 	char name[30];
 	const char *locality = locality_name(world->levels[place].locality);
 
@@ -1021,7 +1021,7 @@ static void regional_map(int num, int centre_place)
 void do_cmd_view_map(void)
 {
 	int cy, cx;
-	byte w, h;
+	uint8_t w, h;
 	const char *prompt = "Hit any key to continue";
 	/* variables for regional map */
 	int wid, hgt;

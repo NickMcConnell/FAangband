@@ -56,7 +56,7 @@ struct flavor *flavors;
  */
 static char scroll_adj[MAX_TITLES][18];
 
-static void flavor_assign_random(byte tval)
+static void flavor_assign_random(uint8_t tval)
 {
 	int i;
 	int flavor_count = 0;

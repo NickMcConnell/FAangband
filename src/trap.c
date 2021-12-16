@@ -921,7 +921,7 @@ static void mtrap_display(struct menu *menu, int oid, bool cursor, int row,
 				   int col, int width)
 {
 	const struct trap_kind *choice = menu_priv(menu);
-	byte attr = (cursor ? COLOUR_L_BLUE : COLOUR_WHITE);
+	uint8_t attr = (cursor ? COLOUR_L_BLUE : COLOUR_WHITE);
 	char *desc = choice[oid].desc;
 	my_strcap(desc);
 

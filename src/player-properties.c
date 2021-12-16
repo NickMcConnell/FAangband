@@ -126,7 +126,7 @@ static void gain_spec_display(struct menu *menu, int oid, bool cursor, int row,
 {
 	struct spec_menu_data *d = menu_priv(menu);
 	int idx = d->specialties[oid];
-	byte attr = (cursor ? COLOUR_L_GREEN : COLOUR_GREEN);
+	uint8_t attr = (cursor ? COLOUR_L_GREEN : COLOUR_GREEN);
 	struct player_ability *ability = lookup_ability("player", idx, 0);
 
 	/* Print it */
@@ -318,7 +318,7 @@ static void view_ability_display(struct menu *menu, int oid, bool cursor,
 	int row, int col, int width)
 {
 	char buf[80];
-	byte color;
+	uint8_t color;
 	struct player_ability *choices = menu->menu_data;
 
 	switch (choices[oid].group) {

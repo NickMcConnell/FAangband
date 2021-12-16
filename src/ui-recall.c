@@ -46,11 +46,11 @@ static char recall_tag(struct menu *menu, int oid)
 static void recall_display(struct menu *menu, int oid, bool cursor, int row,
 					int col, int width)
 {
-	const u16b *choice = menu_priv(menu);
+	const uint16_t *choice = menu_priv(menu);
 	int idx = choice[oid];
 	char place[30];
 
-	byte attr = (cursor ? COLOUR_L_BLUE : COLOUR_WHITE);
+	uint8_t attr = (cursor ? COLOUR_L_BLUE : COLOUR_WHITE);
 
 	if (idx < num_recall_points) {
 		int region = world->levels[player->recall[idx]].locality;
@@ -79,7 +79,7 @@ static void recall_display(struct menu *menu, int oid, bool cursor, int row,
  */
 static bool recall_action(struct menu *menu, const ui_event *e, int oid)
 {
-	u16b *choice = menu_priv(menu);
+	uint16_t *choice = menu_priv(menu);
 	if (e->type == EVT_SELECT) {
 		selection = choice[oid];
 	}
@@ -99,7 +99,7 @@ int textui_get_recall_point(bool inward, int num_points, int num_poss)
 	ui_event evt = { 0 };
 	int cursor = 0;
 	int num_entries, i;
-	u16b *choice;
+	uint16_t *choice;
 	bool replace_check = false;
 
 	if (inward && (num_points < num_poss))
@@ -112,7 +112,7 @@ int textui_get_recall_point(bool inward, int num_points, int num_poss)
 	num_recall_points = num_points;
 
 	/* Create the array */
-	choice = mem_zalloc(num_entries * sizeof(u16b));
+	choice = mem_zalloc(num_entries * sizeof(uint16_t));
 
 	/* Obvious */
 	for (i = 0; i < num_entries; i++) {

@@ -74,16 +74,16 @@ int FEAT_DUNE;
 /**
  * Global array for looping through the "keypad directions".
  */
-const s16b ddd[9] =
+const int16_t ddd[9] =
 { 2, 8, 6, 4, 3, 1, 9, 7, 5 };
 
 /**
  * Global arrays for converting "keypad direction" into "offsets".
  */
-const s16b ddx[10] =
+const int16_t ddx[10] =
 { 0, -1, 0, 1, -1, 0, 1, -1, 0, 1 };
 
-const s16b ddy[10] =
+const int16_t ddy[10] =
 { 0, 1, 1, 1, 0, 0, 0, -1, -1, -1 };
 
 
@@ -98,17 +98,17 @@ const struct loc ddgrid[10] =
  * This means that each entry in this array corresponds to the direction
  * with the same array index in ddd[].
  */
-const s16b ddx_ddd[9] =
+const int16_t ddx_ddd[9] =
 { 0, 0, 1, -1, 1, -1, 1, -1, 0 };
 
-const s16b ddy_ddd[9] =
+const int16_t ddy_ddd[9] =
 { 1, -1, 0, 0, 1, 1, -1, -1, 0 };
 
 const struct loc ddgrid_ddd[9] =
 {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {-1, 1}, {1, -1}, {-1, -1}, {0, 0}};
 
 /* Can mult these by 45 deg or 1.5 o'clock e.g. [6] -> 270 deg or 9 o'clock */
-const s16b clockwise_ddd[9] =
+const int16_t clockwise_ddd[9] =
 { 8, 9, 6, 3, 2, 1, 4, 7, 5 };
 
 const struct loc clockwise_grid[9] =
@@ -253,7 +253,7 @@ const int *dist_offsets_x[10] =
  * first.  If the left, it must add 10 to the central direction to
  * access the second part of the table.
  */
-const byte side_dirs[20][8] = {
+const uint8_t side_dirs[20][8] = {
 	{0, 0, 0, 0, 0, 0, 0, 0},	/* bias right */
 	{1, 4, 2, 7, 3, 8, 6, 9},
 	{2, 1, 3, 4, 6, 7, 9, 8},
@@ -376,13 +376,13 @@ void set_terrain(void)
 	FEAT_DUNE = lookup_feat("sand dune");
 }
 
-u16b **heatmap_new(struct chunk *c)
+uint16_t **heatmap_new(struct chunk *c)
 {
-	u16b **grids;
+	uint16_t **grids;
 	int y;
-	grids = mem_zalloc(c->height * sizeof(u16b*));
+	grids = mem_zalloc(c->height * sizeof(uint16_t*));
 	for (y = 0; y < c->height; y++) {
-		grids[y] = mem_zalloc(c->width * sizeof(u16b));
+		grids[y] = mem_zalloc(c->width * sizeof(uint16_t));
 	}
 	return grids;
 }

@@ -72,7 +72,7 @@ enum rank_method {
  */
 #define TOO_MUCH         10000
 
-void initialize_random_artifacts(u32b randart_seed);
+void initialize_random_artifacts(uint32_t randart_seed);
 bool design_jewellery(struct object *obj, int lev);
 
 #endif /* !INCLUDED_OBJDESIGN_H */

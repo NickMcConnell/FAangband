@@ -104,7 +104,7 @@ static bool has_property(struct artifact *art, struct object *obj,
 		case OBJ_PROPERTY_STAT:
 		case OBJ_PROPERTY_MOD:
 		{
-			s16b *modifiers = art ? art->modifiers : obj->modifiers;
+			int16_t *modifiers = art ? art->modifiers : obj->modifiers;
 			if (modifiers[prop->index] != 0) {
 				return true;
 			}
@@ -185,7 +185,7 @@ static bool has_property(struct artifact *art, struct object *obj,
 				}
 			} else {
 				/* Various things get checked to here */
-				s16b bonus = 0, standard = 0;
+				int16_t bonus = 0, standard = 0;
 				if (streq(prop->name, "extra armor")) {
 					bonus = art ? art->ac : obj->ac;
 					standard = kind->ac;
@@ -228,7 +228,7 @@ static bool get_property(struct artifact *art, struct object *obj,
 		case OBJ_PROPERTY_STAT:
 		case OBJ_PROPERTY_MOD:
 		{
-			s16b *modifiers = art ? art->modifiers : obj->modifiers;
+			int16_t *modifiers = art ? art->modifiers : obj->modifiers;
 			int cur_value = modifiers[prop->index];
 			int cur_cost = art ? 0 : property_cost(prop, cur_value, false);
 			if (take_money(cost - cur_cost, on_credit)) {
@@ -413,7 +413,7 @@ static bool get_property(struct artifact *art, struct object *obj,
 			} else {
 				/* Various things get added to here */
 				int cur_value, cur_cost;
-				s16b *bonus = NULL;
+				int16_t *bonus = NULL;
 				if (streq(prop->name, "extra armor")) {
 					bonus = art ? &art->ac : &obj->ac;
 				} else if (streq(prop->name, "armor bonus")) {
@@ -3292,7 +3292,7 @@ static void haggle_till_done(struct artifact *art, struct object *obj)
 	/* Armour gets a basic resist or low-level ability with 50% probability,
 	 * and weapons with 25% probability. */
 	if ((weapon && one_in_(4)) || one_in_(2)) {
-		s16b *res;
+		int16_t *res;
 		choice = randint0(6);
 		res = art ? &(art->el_info[choice].res_level) :
 			&(obj->el_info[choice].res_level);
@@ -3307,7 +3307,7 @@ static void haggle_till_done(struct artifact *art, struct object *obj)
 
 	/* Frequently neaten bonuses to Armour Class, Skill, and Deadliness. */
 	for (i = 0; i < 3; i++) {
-		s16b *bonus_chg = art ? &art->to_a : &obj->to_a;
+		int16_t *bonus_chg = art ? &art->to_a : &obj->to_a;
 		if (i == 1) { 
 			bonus_chg = art ? &art->to_h : &obj->to_h;
 		}
@@ -3475,7 +3475,7 @@ static void make_terrible(struct artifact *art, struct object *obj)
 		if (wheel_of_doom == 3) {
 			if (!one_in_(3)) {
 				for (j = 0; j < STAT_MAX; j++) {
-					s16b *bonus = art ? &art->modifiers[j] : &obj->modifiers[j];
+					int16_t *bonus = art ? &art->modifiers[j] : &obj->modifiers[j];
 					if ((*bonus) > 0) {
 						*bonus = -(*bonus);
 					}
@@ -3492,12 +3492,12 @@ static void make_terrible(struct artifact *art, struct object *obj)
 					penalty *= 5;
 				}
 				for (j = 0; j < OBJ_MOD_MAX; j++) {
-					s16b *bonus = art ? &art->modifiers[j] : &obj->modifiers[j];
+					int16_t *bonus = art ? &art->modifiers[j] : &obj->modifiers[j];
 					*bonus = 0;
 				}
 				if (one_in_(5)) {
 					for (j = 0; j < STAT_MAX; j++) {
-						s16b *bonus = art ? &art->modifiers[j] :
+						int16_t *bonus = art ? &art->modifiers[j] :
 							&obj->modifiers[j];
 						if (j == OBJ_MOD_STR) *bonus = penalty;
 						if (j == OBJ_MOD_DEX) *bonus = penalty;
@@ -3505,18 +3505,18 @@ static void make_terrible(struct artifact *art, struct object *obj)
 					}
 				} else if (one_in_(4)) {
 					for (j = 0; j < STAT_MAX; j++) {
-						s16b *bonus = art ? &art->modifiers[j] :
+						int16_t *bonus = art ? &art->modifiers[j] :
 							&obj->modifiers[j];
 						if (j == OBJ_MOD_WIS) *bonus = penalty;
 						if (j == OBJ_MOD_INT) *bonus = penalty;
 					}
 				} else if (one_in_(6)) {
-					s16b *bonus = art ? &art->modifiers[OBJ_MOD_SPEED] :
+					int16_t *bonus = art ? &art->modifiers[OBJ_MOD_SPEED] :
 						&obj->modifiers[OBJ_MOD_SPEED];
 					*bonus = penalty;
 				} else {
 					for (j = 0; j < STAT_MAX; j++) {
-						s16b *bonus = art ? &art->modifiers[j] :
+						int16_t *bonus = art ? &art->modifiers[j] :
 							&obj->modifiers[j];
 						if (one_in_(4)) {
 							*bonus = penalty;
@@ -3602,7 +3602,7 @@ static void make_terrible(struct artifact *art, struct object *obj)
 
 			/* Resists */
 			for (i = 0; i < ELEM_HIGH_MAX; i++) {
-				s16b *level = art ? &art->el_info[i].res_level :
+				int16_t *level = art ? &art->el_info[i].res_level :
 					&obj->el_info[i].res_level;
 				if (one_in_(3) && (*level < RES_LEVEL_BASE)) {
 					*level += 2 * (RES_LEVEL_BASE - *level);
@@ -3769,7 +3769,7 @@ static void remove_contradictory_activation(struct artifact *art,
 static void final_check(struct artifact *art, struct object *obj)
 {
 	bitflag *flags = art ? art->flags : obj->flags;
-	s16b *modifiers = art ? art->modifiers : obj->modifiers;
+	int16_t *modifiers = art ? art->modifiers : obj->modifiers;
 	struct element_info *el_info = art ? art->el_info : obj->el_info;
 	int i;
 
@@ -4006,7 +4006,7 @@ static void write_randart_file_entry(ang_file *fff, const struct artifact *art)
  * Initialize all the random artifacts in the artifact array.  This function 
  * is only called when a player is born.
  */
-void initialize_random_artifacts(u32b randart_seed)
+void initialize_random_artifacts(uint32_t randart_seed)
 {
 	char fname[1024];
 	ang_file *randart_file = NULL;

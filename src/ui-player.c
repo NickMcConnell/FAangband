@@ -52,7 +52,7 @@
  * Panel line type
  */
 struct panel_line {
-	byte attr;
+	uint8_t attr;
 	const char *label;
 	char value[20];
 };
@@ -91,7 +91,7 @@ static void panel_free(struct panel *p) {
 /**
  * Add a new line to the panel
  */
-static void panel_line(struct panel *p, byte attr, const char *label,
+static void panel_line(struct panel *p, uint8_t attr, const char *label,
 		const char *fmt, ...) {
 	va_list vp;
 
@@ -264,7 +264,7 @@ static void configure_char_sheet(void)
  * Returns a "rating" of x depending on y, and sets "attr" to the
  * corresponding "attribute".
  */
-static const char *likert(int x, int y, byte *attr)
+static const char *likert(int x, int y, uint8_t *attr)
 {
 	/* Paranoia */
 	if (y <= 0) y = 1;
@@ -424,7 +424,7 @@ static void display_player_equippy(int y, int x)
 {
 	int i;
 
-	byte a;
+	uint8_t a;
 	wchar_t c;
 
 	struct object *obj;
@@ -711,7 +711,7 @@ static const char *show_adv_exp(void)
 {
 	if (player->lev < PY_MAX_LEVEL) {
 		static char buffer[30];
-		s32b advance = (player_exp[player->lev - 1]);
+		int32_t advance = (player_exp[player->lev - 1]);
 		strnfmt(buffer, sizeof(buffer), "%d", advance);
 		return buffer;
 	}
@@ -748,7 +748,7 @@ static const char *show_speed(void)
 	return buffer;
 }
 
-static byte max_color(int val, int max)
+static uint8_t max_color(int val, int max)
 {
 	return val < max ? COLOUR_YELLOW : COLOUR_L_GREEN;
 }
@@ -756,7 +756,7 @@ static byte max_color(int val, int max)
 /**
  * Colours for table items
  */
-static const byte colour_table[] =
+static const uint8_t colour_table[] =
 {
 	COLOUR_RED, COLOUR_RED, COLOUR_RED, COLOUR_L_RED, COLOUR_ORANGE,
 	COLOUR_YELLOW, COLOUR_YELLOW, COLOUR_GREEN, COLOUR_GREEN, COLOUR_L_GREEN,
@@ -781,7 +781,7 @@ static struct panel *get_panel_topleft(void) {
 static struct panel *get_panel_midleft(void) {
 	struct panel *p = panel_allocate(7);
 	int diff = weight_remaining(player);
-	byte attr = diff < 0 ? COLOUR_L_RED : COLOUR_L_GREEN;
+	uint8_t attr = diff < 0 ? COLOUR_L_RED : COLOUR_L_GREEN;
 
 	panel_line(p, max_color(player->lev, player->max_lev),
 			"Level", "%d", player->lev);
@@ -848,7 +848,7 @@ static struct panel *get_panel_skills(void) {
 	struct panel *p = panel_allocate(8);
 
 	int skill;
-	byte attr;
+	uint8_t attr;
 	const char *desc;
 	int depth = cave ? cave->depth : 0;
 
@@ -894,7 +894,7 @@ static struct panel *get_panel_skills(void) {
 
 static struct panel *get_panel_misc(void) {
 	struct panel *p = panel_allocate(7);
-	byte attr = COLOUR_L_BLUE;
+	uint8_t attr = COLOUR_L_BLUE;
 
 	panel_line(p, attr, "Age", "%d", player->age);
 	panel_line(p, attr, "Height", "%d'%d\"", player->ht / 12, player->ht % 12);
@@ -1171,7 +1171,7 @@ void write_character_dump(ang_file *fff)
 		file_putf(fff, "  [Last Messages]\n\n");
 		while (i-- > 0)
 		{
-			file_putf(fff, "> %s\n", message_str((s16b)i));
+			file_putf(fff, "> %s\n", message_str((int16_t)i));
 		}
 		file_putf(fff, "\nKilled by %s.\n\n", player->died_from);
 	}

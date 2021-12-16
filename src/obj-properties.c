@@ -386,7 +386,7 @@ int object_value_real(const struct object *obj, int qty)
 						if (obj->brands[j] && (prop == brand_property(j))) {
 							int mult = brands[j].multiplier;
 							int div = tval_is_ammo(obj) ? 10 : 1;
-							s32b bonus = property_cost(prop, mult, true) / div;
+							int32_t bonus = property_cost(prop, mult, true) / div;
 							/* Weapons with big dice are just better, so
 							 * anything that enhances attacks is worth more on
 							 them */
@@ -405,7 +405,7 @@ int object_value_real(const struct object *obj, int qty)
 						if (obj->slays[j] && (prop == slay_property(j))) {
 							int mult = slays[j].multiplier;
 							int div = tval_is_ammo(obj) ? 10 : 1;
-							s32b bonus = property_cost(prop, mult, true) / div;
+							int32_t bonus = property_cost(prop, mult, true) / div;
 							/* Weapons with big dice are just better, so
 							 * anything that enhances attacks is worth more on
 							 them */

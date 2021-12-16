@@ -40,7 +40,7 @@ int lookup_flag(const char **flag_table, const char *flag_name);
 int code_index_in_array(const char *code_name[], const char *code);
 errr grab_rand_value(random_value *value, const char **value_type,
 					 const char *name_and_value);
-errr grab_int_value(s16b *value, const char **value_type,
+errr grab_int_value(int16_t *value, const char **value_type,
 					const char *name_and_value);
 errr grab_index_and_int(int *value, int *index, const char **value_type,
 						const char *prefix, const char *name_and_value);
@@ -54,7 +54,7 @@ errr remove_flag(bitflag *flags, const size_t size, const char **flag_table,
 
 void write_flags(ang_file *fff, const char *intro_text, const bitflag *flags,
 				 int flag_size, const char *names[]);
-void write_mods(ang_file *fff, const s16b values[]);
+void write_mods(ang_file *fff, const int16_t values[]);
 void write_elements(ang_file *fff, const struct element_info *el_info);
 void set_archive_user_prefix(const char *pfx);
 void file_archive(const char *fname, const char *append);

@@ -26,18 +26,18 @@ struct player;
 struct monster;
 struct monster_group;
 
-extern const s16b ddd[9];
-extern const s16b ddx[10];
-extern const s16b ddy[10];
+extern const int16_t ddd[9];
+extern const int16_t ddx[10];
+extern const int16_t ddy[10];
 extern const struct loc ddgrid[10];
-extern const s16b ddx_ddd[9];
-extern const s16b ddy_ddd[9];
+extern const int16_t ddx_ddd[9];
+extern const int16_t ddy_ddd[9];
 extern const struct loc ddgrid_ddd[9];
-extern const s16b clockwise_ddd[9];
+extern const int16_t clockwise_ddd[9];
 extern const struct loc clockwise_grid[9];
 extern const int *dist_offsets_y[10];
 extern const int *dist_offsets_x[10];
-extern const byte side_dirs[20][8];
+extern const uint8_t side_dirs[20][8];
 
 enum {
 	DIR_UNKNOWN = 0,
@@ -113,15 +113,15 @@ struct feature {
 
 	struct feature *next;
 
-	char *mimic;	/**< Name of feature to mimic */
-	byte priority;	/**< Display priority */
+	char *mimic;		/**< Name of feature to mimic */
+	uint8_t priority;	/**< Display priority */
 
-	byte shopnum;	/**< Which shop does it take you to? */
-	byte dig;      /**< How hard is it to dig through? */
+	uint8_t shopnum;	/**< Which shop does it take you to? */
+	uint8_t dig;		/**< How hard is it to dig through? */
 
 	bitflag flags[TF_SIZE];	/**< Terrain flags */
 
-	byte d_attr;	/**< Default feature attribute */
+	uint8_t d_attr;	/**< Default feature attribute */
 	wchar_t d_char;	/**< Default feature character */
 
 	char *walk_msg;	/**< Message on walking into feature */
@@ -146,8 +146,8 @@ enum grid_light_level
 };
 
 struct grid_data {
-	u32b m_idx;				/* Monster index */
-	u32b f_idx;				/* Feature index */
+	uint32_t m_idx;			/* Monster index */
+	uint32_t f_idx;			/* Feature index */
 	struct object_kind *first_kind;	/* The kind of the first item on the grid */
 	struct trap *trap;		/* Trap */
 	bool multiple_objects;	/* Is there more than one item there? */
@@ -161,21 +161,21 @@ struct grid_data {
 };
 
 struct square {
-	byte feat;
+	uint8_t feat;
 	bitflag *info;
 	int light;
-	s16b mon;
+	int16_t mon;
 	struct object *obj;
 	struct trap *trap;
 };
 
 struct heatmap {
-    u16b **grids;
+	uint16_t **grids;
 };
 
 struct connector {
 	struct loc grid;
-	byte feat;
+	uint8_t feat;
 	bitflag *info;
 	struct connector *next;
 };
@@ -191,19 +191,19 @@ struct ghost_info {
 
 struct chunk {
 	char *name;
-	s32b turn;
+	int32_t turn;
 	int depth;
 	int place;
 
-	byte feeling;
-	u32b obj_rating;
-	u32b mon_rating;
+	uint8_t feeling;
+	uint32_t obj_rating;
+	uint32_t mon_rating;
 	bool good_item;
 
 	int height;
 	int width;
 
-	u16b feeling_squares; /* How many feeling squares the player has visited */
+	uint16_t feeling_squares; /* How many feeling squares the player has visited */
 	int *feat_count;
 
 	struct square **squares;
@@ -212,11 +212,11 @@ struct chunk {
 	struct loc decoy;
 
 	struct object **objects;
-	u16b obj_max;
+	uint16_t obj_max;
 
 	struct monster *monsters;
-	u16b mon_max;
-	u16b mon_cnt;
+	uint16_t mon_max;
+	uint16_t mon_cnt;
 	int mon_current;
 	int num_repro;
 	struct ghost_info *ghost;
@@ -281,7 +281,7 @@ extern int FEAT_DUNE;
 extern struct chunk *cave;
 /* Stored levels */
 extern struct chunk **chunk_list;
-extern u16b chunk_list_max;
+extern uint16_t chunk_list_max;
 
 /* cave-view.c */
 int distance(struct loc grid1, struct loc grid2);
@@ -509,7 +509,7 @@ int motion_dir(struct loc source, struct loc target);
 struct loc next_grid(struct loc grid, int dir);
 int lookup_feat(const char *name);
 void set_terrain(void);
-u16b **heatmap_new(struct chunk *c);
+uint16_t **heatmap_new(struct chunk *c);
 void heatmap_free(struct chunk *c, struct heatmap map);
 struct chunk *cave_new(int height, int width);
 void cave_connectors_free(struct connector *join);

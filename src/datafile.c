@@ -228,7 +228,7 @@ errr grab_rand_value(random_value *value, const char **value_type,
  * \param name_and_value the value expression being matched
  * \return 0 if successful, otherwise an error value
  */
-errr grab_int_value(s16b *value, const char **value_type,
+errr grab_int_value(int16_t *value, const char **value_type,
 					const char *name_and_value)
 {
 	int val, i = 0;
@@ -404,7 +404,7 @@ void write_flags(ang_file *fff, const char *intro_text, const bitflag *flags,
 /**
  * Write value lines for a set of modifiers.
  */
-void write_mods(ang_file *fff, const s16b values[])
+void write_mods(ang_file *fff, const int16_t values[])
 {
 	size_t i;
 	char buf[1024] = "";

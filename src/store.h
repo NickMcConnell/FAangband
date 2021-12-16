@@ -36,7 +36,7 @@ struct owner {
 	struct owner *next;
 	char *name;
 	struct player_race *race;
-	s32b max_cost;
+	int32_t max_cost;
 };
 
 struct store {
@@ -48,8 +48,8 @@ struct store {
 
 	struct town *town;
 
-	byte stock_num;				/* Stock -- Number of entries */
-	s16b stock_size;			/* Stock -- Total Size of Array */
+	uint8_t stock_num;		/* Stock -- Number of entries */
+	int16_t stock_size;		/* Stock -- Total Size of Array */
 	struct object *stock;		/* Stock -- Actual stock items */
 	struct object *stock_k;		/* Stock -- Stock as known by the character */
 

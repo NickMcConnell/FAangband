@@ -159,8 +159,8 @@ void do_cmd_note(void)
  */
 void do_cmd_time(void)
 {
-	s32b len = 10L * z_info->day_length;
-	s32b tick = turn % len + len / 4;
+	int32_t len = 10L * z_info->day_length;
+	int32_t tick = turn % len + len / 4;
 
 	int day = turn / len + 1;
 	int hour = (24 * tick / len) % 24;

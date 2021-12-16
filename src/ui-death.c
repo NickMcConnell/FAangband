@@ -136,10 +136,10 @@ static void print_tomb(void)
 /**
  * Gets a personalized string for ghosts.  Code originally from get_name. -LM-
  */
-static char *get_personalized_string(byte choice)
+static char *get_personalized_string(uint8_t choice)
 {
 	static char tmp[80], info[80];
-	byte n, i;
+	uint8_t n, i;
 	bool no_string = true;
 
 	/* Clear last line */
@@ -214,7 +214,7 @@ static void make_bones(void)
 	ang_file *fp;
 	char str[1024];
 	ui_event answer;
-	byte choice = 0;
+	uint8_t choice = 0;
 	int i;
 	bool path_written = false;
 	bool no_answer = true;
@@ -482,7 +482,7 @@ static void death_info(const char *title, int row)
 
 			/* Show 12 items */
 			for (line = 0; obj && line < 12; obj = obj->next, line++) {
-				byte attr;
+				uint8_t attr;
 
 				char o_name[80];
 				char tmp_val[80];
