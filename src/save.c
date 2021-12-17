@@ -495,7 +495,8 @@ void wr_player(void)
 
 	wr_s16b(player->ht_birth);
 	wr_s16b(player->wt_birth);
-	wr_s16b(0);
+	wr_byte(player->old_grid.y);
+	wr_byte(player->old_grid.x);
 	wr_u32b(player->au_birth);
 
 	/* Player body */

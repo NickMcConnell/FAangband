@@ -2293,6 +2293,7 @@ bool effect_handler_SINGLE_COMBAT(effect_handler_context_t *context)
 
 	/* Head to the arena */
 	player->upkeep->arena_level = true;
+	player->old_grid = player->grid;
 	player_change_place(player, player->place);
 	return true;
 }
