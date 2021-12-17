@@ -1477,7 +1477,7 @@ void acquirement(struct loc grid, int level, int num, bool great)
 		if (!nice_obj) continue;
 
 		nice_obj->origin = ORIGIN_ACQUIRE;
-		nice_obj->origin_depth = player->depth;
+		nice_obj->origin_depth = convert_depth_to_origin(player->depth);
 		nice_obj->origin_place = player->place;
 
 		/* Drop the object */
