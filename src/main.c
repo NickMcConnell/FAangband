@@ -174,9 +174,9 @@ static const struct {
 	char **path;
 	bool setgid_ok;
 } change_path_values[] = {
-	{ "scores", &ANGBAND_DIR_SCORES, true },
-	{ "gamedata", &ANGBAND_DIR_GAMEDATA, false },
-	{ "screens", &ANGBAND_DIR_SCREENS, false },
+	{ "scores", &ANGBAND_DIR_SCORES, false },
+	{ "gamedata", &ANGBAND_DIR_GAMEDATA, true },
+	{ "screens", &ANGBAND_DIR_SCREENS, true },
 	{ "help", &ANGBAND_DIR_HELP, true },
 	{ "info", &ANGBAND_DIR_INFO, true },
 	{ "pref", &ANGBAND_DIR_CUSTOMIZE, true },
@@ -188,7 +188,7 @@ static const struct {
 	{ "user", &ANGBAND_DIR_USER, true },
 	{ "save", &ANGBAND_DIR_SAVE, false },
 	{ "panic", &ANGBAND_DIR_PANIC, false },
-	{ "archive", &ANGBAND_DIR_ARCHIVE, true },
+	{ "archive", &ANGBAND_DIR_ARCHIVE, false },
 	{ "bone", &ANGBAND_DIR_BONE, false },
 };
 
@@ -269,13 +269,19 @@ static void user_name(char *buf, size_t len, int id)
 static void list_saves(void)
 {
 	char fname[256];
-	ang_dir *d = my_dopen(ANGBAND_DIR_SAVE);
+	ang_dir *d;
+	size_t len_uid = 0;
 
 #ifdef SETGID
 	char uid[10];
 	strnfmt(uid, sizeof(uid), "%d.", player_uid);
+	len_uid = strlen(uid);
 #endif
 
+	/* Need enhanced privileges to read from the save directory. */
+	safe_setuid_grab();
+	d = my_dopen(ANGBAND_DIR_SAVE);
+	safe_setuid_drop();
 	if (!d) quit_fmt("Can't open savefile directory");
 
 	printf("Savefiles you can use are:\n");
@@ -286,7 +292,7 @@ static void list_saves(void)
 
 #ifdef SETGID
 		/* Check that the savefile name begins with the user'd ID */
-		if (strncmp(fname, uid, strlen(uid)))
+		if (strncmp(fname, uid, len_uid))
 			continue;
 #endif
 
@@ -294,9 +300,9 @@ static void list_saves(void)
 		desc = savefile_get_description(path);
 
 		if (desc)
-			printf(" %-15s  %s\n", fname, desc);
+			printf(" %-15s  %s\n", fname + len_uid, desc);
 		else
-			printf(" %-15s\n", fname);
+			printf(" %-15s\n", fname + len_uid);
 	}
 
 	my_dclose(d);
