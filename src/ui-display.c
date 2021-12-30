@@ -1327,10 +1327,6 @@ static void update_statusline(game_event_type type, game_event_data *data, void 
 {
 	int row = Term->hgt - 1;
 
-	if (Term->sidebar_mode == SIDEBAR_NONE) {
-		return;
-	}
-
 	if (Term->sidebar_mode == SIDEBAR_TOP) {
 		row = 3;
 	}
