@@ -545,7 +545,7 @@ static void chest_trap(struct object *obj, bool *scatter)
 {
 	int traps = obj->pval;
 	struct chest_trap *trap;
-	bool ident;
+	bool ident = false;
 
 	/* Ignore disarmed chests */
 	if (traps <= 0) return;
