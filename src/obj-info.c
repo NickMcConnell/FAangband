@@ -1559,6 +1559,7 @@ static bool describe_origin(textblock *tb, const struct object *obj, bool terse)
 	const char *dropper = NULL;
 	const char *article;
 	bool unique = false;
+	bool comma = false;
 
 	/* Only give this info in chardumps if wieldable */
 	if (terse && !obj_can_wear(obj))
@@ -1580,6 +1581,9 @@ static bool describe_origin(textblock *tb, const struct object *obj, bool terse)
 		if (rf_has(obj->origin_race->flags, RF_UNIQUE)) {
 			unique = true;
 		}
+		if (rf_has(obj->origin_race->flags, RF_NAME_COMMA)) {
+			comma = true;
+		}
 	} else {
 		dropper = "monster lost to history";
 	}
@@ -1589,6 +1593,9 @@ static bool describe_origin(textblock *tb, const struct object *obj, bool terse)
 	else {
 		my_strcpy(name, article, sizeof(name));
 		my_strcat(name, dropper, sizeof(name));
+	}
+	if (comma) {
+		my_strcat(name, ",", sizeof(name));
 	}
 
 	/* Print an appropriate description */
