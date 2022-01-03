@@ -1,7 +1,7 @@
 This is a short in-game reference to available commands and the symbols
 you might encounter in-game.  For more detailed help, please see:
 
-   https://faangband.readthedocs.io/en/latest/
+   https://angband.readthedocs.io/en/latest/
 
 
 Please choose one of the following help files:
@@ -18,6 +18,6 @@ Browser/help commands:
   RET   advance 1 line     =  back up 1 line     &  show (highlight) some text
   +     advance 1/2 page   _  back up 1/2 page   !  toggle case sensitivity
 
-.. menu:: [a] commands.txt
+.. menu:: [a] r_comm.txt
 
 .. menu:: [b] symbols.txt
