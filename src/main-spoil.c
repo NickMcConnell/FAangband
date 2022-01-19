@@ -148,20 +148,34 @@ errr init_spoil(int argc, char *argv[]) {
 	init_angband();
 
 	if (load_randart) {
-		if (file_exists(savefile)) {
-			bool loaded_save = savefile_load(savefile, false);
+		bool exists;
+
+		safe_setuid_grab();
+		exists = file_exists(savefile);
+		safe_setuid_drop();
+		if (exists) {
+			bool loaded_save =
+				savefile_load(savefile, false);
 
 			deactivate_randart_file();
 			if (!loaded_save) {
-				printf("init-spoil: using artifacts associated with a savefile, but the savefile set by main, '%s', failed to load.\n", savefile);
+				printf("init-spoil: using artifacts "
+					   "associated with a savefile, "
+					   "but the savefile set by "
+					   "main, '%s', failed to load.\n",
+					   savefile);
 				result = 1;
 			}
+		} else if (savefile[0]) {
+			printf("init-spoil: using artifacts associated "
+				   "with a savefile, but the savefile set "
+				   "by main, '%s', does not exist.\n",
+				   savefile);
+			result = 1;
 		} else {
-			if (savefile[0]) {
-				printf("init-spoil: using artifacts associated with a savefile, but the savefile set by main, '%s', does not exist.\n", savefile);
-			} else {
-				printf("init-spoil: using artifacts associated with a savefile, but main did not set the savefile.\n");
-			}
+			printf("init-spoil: using artifacts associated "
+				   "with a savefile, but main did not set "
+				   "the savefile.\n");
 			result = 1;
 		}
 	} else if (!player_make_simple(NULL, NULL, "Spoiler")) {
