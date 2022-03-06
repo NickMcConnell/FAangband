@@ -19,6 +19,7 @@
 #include "angband.h"
 #include "cmd-core.h"
 #include "game-input.h"
+#include "player.h"
 
 bool (*get_string_hook)(const char *prompt, char *buf, size_t len);
 int (*get_quantity_hook)(const char *prompt, int max);
@@ -42,6 +43,10 @@ bool (*confirm_debug_hook)(void);
 void (*get_panel_hook)(int *min_y, int *min_x, int *max_y, int *max_x);
 bool (*panel_contains_hook)(unsigned int y, unsigned int x);
 bool (*map_is_visible_hook)(void);
+void (*view_abilities_hook)(struct player_ability *ability_list,
+							int num_abilities);
+bool (*gain_specialty_hook)(int *pick);
+void (*interact_with_specialties_hook)(void);
 
 /**
  * Prompt for a string from the user.
@@ -301,4 +306,37 @@ bool map_is_visible(void)
 		return map_is_visible_hook();
 	else
 		return true;
+}
+
+/**
+ * Browse player abilities
+ */
+void view_ability_menu(struct player_ability *ability_list,
+					   int num_abilities)
+{
+	/* Ask the UI for it */
+	if (view_abilities_hook)
+		view_abilities_hook(ability_list, num_abilities);
+}
+
+/**
+ * Interact with player abilities
+ */
+bool gain_specialty_menu(int *pick)
+{
+	/* Ask the UI for it */
+	if (gain_specialty_hook)
+		return gain_specialty_hook(pick);
+	else
+		return false;
+}
+
+/**
+ * Interact with player abilities
+ */
+void interact_with_specialties(void)
+{
+	/* Ask the UI for it */
+	if (interact_with_specialties_hook)
+		interact_with_specialties_hook();
 }

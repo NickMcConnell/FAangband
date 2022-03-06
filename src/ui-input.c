@@ -40,6 +40,7 @@
 #include "ui-menu.h"
 #include "ui-object.h"
 #include "ui-output.h"
+#include "ui-player-properties.h"
 #include "ui-player.h"
 #include "ui-prefs.h"
 #include "ui-recall.h"
@@ -1619,6 +1620,9 @@ void textui_input_init(void)
 	get_panel_hook = textui_get_panel;
 	panel_contains_hook = textui_panel_contains;
 	map_is_visible_hook = textui_map_is_visible;
+	view_abilities_hook = textui_view_ability_menu;
+	gain_specialty_hook = textui_gain_spec_menu;
+	interact_with_specialties_hook = textui_interact_with_specialties;
 }
 
 

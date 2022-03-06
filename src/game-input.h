@@ -20,6 +20,7 @@
 #define INCLUDED_GAME_INPUT_H
 
 #include "cmd-core.h"
+#include "player.h"
 
 /**
  * Bit flags for get_item() function
@@ -62,6 +63,10 @@ extern bool (*confirm_debug_hook)(void);
 extern void (*get_panel_hook)(int *min_y, int *min_x, int *max_y, int *max_x);
 extern bool (*panel_contains_hook)(unsigned int y, unsigned int x);
 extern bool (*map_is_visible_hook)(void);
+extern void (*view_abilities_hook)(struct player_ability *ability_list,
+								   int num_abilities);
+extern bool (*gain_specialty_hook)(int *pick);
+extern void (*interact_with_specialties_hook)(void);
 
 bool get_string(const char *prompt, char *buf, size_t len);
 int get_quantity(const char *prompt, int max);
@@ -85,5 +90,9 @@ void get_panel(int *min_y, int *min_x, int *max_y, int *max_x);
 bool confirm_debug(void);
 bool panel_contains(unsigned int y, unsigned int x);
 bool map_is_visible(void);
+void view_ability_menu(struct player_ability *ability_list,
+						 int num_abilities);
+bool gain_specialty_menu(int *pick);
+void interact_with_specialties(void);
 
 #endif /* INCLUDED_GAME_INPUT_H */
