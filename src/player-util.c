@@ -1676,6 +1676,75 @@ void player_place(struct chunk *c, struct player *p, struct loc grid)
 }
 
 /*
+ * Take care of bookkeeping after moving the player with monster_swap().
+ *
+ * \param p is the player that was moved.
+ * \param eval_trap, if true, will cause evaluation (possibly affecting the
+ * player) of the traps in the grid.
+ */
+void player_handle_post_move(struct player *p, bool eval_trap)
+{
+	/* Handle store doors, or notice objects */
+	if (square_isshop(cave, p->grid)) {
+		if ((player_is_shapechanged(p) &&
+			 !index_is_home(square_shopnum(cave, p->grid)))) {
+			msg("There is a scream and the door slams shut!");
+			return;
+		}
+		disturb(p);
+		event_signal(EVENT_ENTER_STORE);
+		event_remove_handler_type(EVENT_ENTER_STORE);
+		event_signal(EVENT_USE_STORE);
+		event_remove_handler_type(EVENT_USE_STORE);
+		event_signal(EVENT_LEAVE_STORE);
+		event_remove_handler_type(EVENT_LEAVE_STORE);
+	} else {
+		square_know_pile(cave, p->grid);
+		cmdq_push(CMD_AUTOPICKUP);
+	}
+
+	/* Some terrain types need special treatment */
+	if (square_istree(cave, p->grid)) {
+		/* Ents, elves, druids, rangers, flyers can move easily */
+		if (!(player_has(p, PF_WOODEN) || player_has(p, PF_WOODSMAN) ||
+			  player_has(p, PF_FLYING) || player_has(p, PF_ELVEN))) {
+			p->upkeep->energy_use += z_info->move_energy;
+		}
+	} else if (square_isrubble(cave, p->grid)) {
+		/* Dwarves, flyers can move easily */
+		if (!(player_has(p, PF_DWARVEN) ||
+			  player_has(p, PF_FLYING))) {
+			p->upkeep->energy_use += z_info->move_energy;
+		}
+	}
+
+	/* Speed or stealth may change */
+	player->upkeep->update |= (PU_BONUS);
+
+	/* Discover invisible traps, set off visible ones */
+	if (eval_trap) {
+		if (square_issecrettrap(cave, p->grid)) {
+			disturb(p);
+			hit_trap(p->grid, 0);
+		} else if (square_isdisarmabletrap(cave, p->grid)) {
+			if (player_is_trapsafe(p)) {
+				/* Trap immune player learns that they are */
+				if (player_of_has(p, OF_TRAP_IMMUNE)) {
+					equip_learn_flag(p, OF_TRAP_IMMUNE);
+				}
+			} else {
+				disturb(p);
+				hit_trap(p->grid, 0);
+			}
+		}
+	}
+
+	/* Update view and search */
+	update_view(cave, p);
+	search(p);
+}
+
+/*
  * Something has happened to disturb the player.
  *
  * The first arg indicates a major disturbance, which affects search.

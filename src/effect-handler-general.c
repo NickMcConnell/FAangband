@@ -2632,8 +2632,11 @@ bool effect_handler_TELEPORT(effect_handler_context_t *context)
 	/* Sound */
 	sound(is_player ? MSG_TELEPORT : MSG_TPOTHER);
 
-	/* Move player */
+	/* Move player or monster */
 	monster_swap(start, spots->grid);
+	if (is_player) {
+		player_handle_post_move(player, true);
+	}
 
 	/* Clear any projection marker to prevent double processing */
 	sqinfo_off(square(cave, spots->grid)->info, SQUARE_PROJECT);
@@ -2671,6 +2674,7 @@ bool effect_handler_TELEPORT_TO(effect_handler_context_t *context)
 	struct monster *t_mon = monster_target_monster(context);
 	bool friendly = false;
 	bool dim_door = false;
+	bool player_moves = false;
 
 	context->ident = true;
 
@@ -2697,6 +2701,7 @@ bool effect_handler_TELEPORT_TO(effect_handler_context_t *context)
 		}
 
 		/* Player being teleported */
+		player_moves = true;
 		start = player->grid;
 
 		/* Check for a no teleport grid */
@@ -2781,6 +2786,9 @@ bool effect_handler_TELEPORT_TO(effect_handler_context_t *context)
 
 	/* Move player or monster */
 	monster_swap(start, land);
+	if (player_moves) {
+		player_handle_post_move(player, true);
+	}
 
 	/* Cancel target if necessary */
 	if (dim_door) {
