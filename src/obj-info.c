@@ -825,8 +825,11 @@ static bool obj_known_damage(const struct object *obj, int *normal_damage,
 	for (i = 1; i < z_info->brand_max; i++) {
 		int brand_average, add = brands[i].multiplier - 10;
 
-		/* Must have the brand, possibly from a spell */
-		if (player_has_temporary_brand(player, i)) {
+		/*
+		 * Must have the brand, possibly from a spell; temporary brands
+		 * only affect melee attacks.
+		 */
+		if (player_has_temporary_brand(player, i) && !ammo && !throw) {
 			*nonweap_slay = true;
 		} else if (!total_brands[i]) {
 			continue;
@@ -858,8 +861,11 @@ static bool obj_known_damage(const struct object *obj, int *normal_damage,
 	for (i = 1; i < z_info->slay_max; i++) {
 		int slay_average, add = slays[i].multiplier - 10;
 
-		/* Must have the slay, possibly from a spell */
-		if (player_has_temporary_slay(player, i)) {
+		/*
+		 * Must have the slay, possibly from a spell; temporary slays
+		 * only affect melee attacks.
+		 */
+		if (player_has_temporary_slay(player, i) && !ammo && !throw) {
 			*nonweap_slay = true;
 		} else if (!total_slays[i]) {
 			continue;
