@@ -549,11 +549,9 @@ Check knowledge (``~``)
     from some spells and a few items which change the shape of your
     character's body.
 
-  stores and home
-    Each of these will display the contents of the corresponding store
-    or your player's home at the time your character last visited the
-    town. If your character is currently in town, what is displayed here
-    will be the current contents.
+  home
+    Displays the contents of your player's home at the time your character
+    last visited the town.
 
   hall of fame
     Displays a list of current and past characters, sorted by how far they
@@ -566,13 +564,13 @@ Check knowledge (``~``)
     This displays a summary of the known properties of the equippable
     items your character has access to, whether they are currently equipped,
     in your character's pack, on the floor at your character's current
-    location, or in a store. Near the top of the display is line, beginning
-    with "@", which summarizes the state of your character given his or her
-    current equipment. Every line after that corresponds to an item, sorted
-    by which equipment slot it can fill. The first character on each of those
-    lines is the representation of that item as it would appear in the map if
-    it was on the floor. After that is single character, "e" for equipped,
-    "p" for pack, "f" for floor, "h" for home, and "s" for store, which
+    location, or in your character's home. Near the top of the display is
+    a line, beginning with "@", which summarizes the state of your character
+    given his or her current equipment. Every line after that corresponds to
+    an item, sorted by which equipment slot it can fill. The first character
+    on each of those lines is the representation of that item as it would
+    appear in the map if it was on the floor. After that is single character,
+    "e" for equipped, "p" for pack, "f" for floor, and "h" for home, which
     indicates where the item is. The remainder of the line summarizes the
     properties of the object, with one property per column. In the default
     view, those properties are the resistances, flags, and modifiers present
@@ -583,13 +581,12 @@ Check knowledge (``~``)
     by pressing 'v'. You can use 'c' to cycle through which items, based
     on their location, are included in the display. The default is to show
     only the items that are equipped, in the pack, on the floor at your
-    character's current location, and in the home. The other options are:
-    show only the items in stores other than the home, show all items,
-    or show only those that equipped or in the pack. There are some
-    additional commands, notably for filtering which items are displayed based
-    on a particular property and for displaying the details about one or
-    two items. To see what those additional commands are, use the '?' key
-    to bring up the in-game help for the equippable comparison.
+    character's current location, and in the home. The other option is
+    to show only those that equipped or in the pack. There are some additional
+    commands, notably for filtering which items are displayed based on a
+    particular property and for displaying the details about one or two items.
+    To see what those additional commands are, use the '?' key to bring up the
+    in-game help for the equippable comparison.
 
 Time of Day (``#``)
   This command tells you how many days it has been since your character
