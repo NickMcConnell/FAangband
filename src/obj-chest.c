@@ -725,8 +725,13 @@ bool do_cmd_disarm_chest(struct object *obj)
 		bool scatter = false;
 
 		/* Failure -- Set off the trap */
-		msg("You set off a trap!");
-		chest_trap(obj, &scatter);
+		if (!player_is_trapsafe(player)) {
+			msg("You set off a trap!");
+			chest_trap(obj, &scatter);
+		} else if (player_of_has(player, OF_TRAP_IMMUNE)) {
+			/* Learn trap immunity. */
+			equip_learn_flag(player, OF_TRAP_IMMUNE);
+		}
 		if (scatter) {
 			chest_death(obj->grid, obj, true);
 		}
