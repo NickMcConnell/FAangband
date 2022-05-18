@@ -573,6 +573,9 @@ extern void hit_trap(struct loc grid, int delayed)
 			effect = trap->kind->effect;
 			effect_do(effect, source_trap(trap), NULL, &ident, false, 0, 0, 0, NULL);
 
+			/* Trap may have gone */
+			if (!square_trap(cave, grid)) break;
+
 			/* Do any extra effects */
 			if (trap->kind->effect_xtra && one_in_(2)) {
 				if (trap->kind->msg_xtra)
@@ -580,6 +583,9 @@ extern void hit_trap(struct loc grid, int delayed)
 				effect = trap->kind->effect_xtra;
 				effect_do(effect, source_trap(trap), NULL, &ident, false,
 						  0, 0, 0, NULL);
+
+				/* Trap may have gone */
+				if (!square_trap(cave, grid)) break;
 			}
 		}
 
