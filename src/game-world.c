@@ -641,10 +641,11 @@ void process_world(struct chunk *c)
 		was_ghost = true;
 	}
 
-	/* Check for creature generation, except on themed levels */
-	if (one_in_(z_info->alloc_monster_chance) && (!player->themed_level))
-		(void)pick_and_place_distant_monster(c, player, z_info->max_sight + 5,
-											 true, player->depth);
+	/* Check for creature generation */
+	if (one_in_(z_info->alloc_monster_chance) && (!player->themed_level)) {
+		(void)pick_and_place_distant_monster(c, player->grid,
+			z_info->max_sight + 5, true, player->depth);
+	}
 
 	/* If there is ghost now, and there was not before, give a challenge */
 	if (c->ghost->bones_selector && !was_ghost) {

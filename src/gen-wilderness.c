@@ -754,7 +754,8 @@ static int populate(struct chunk *c, bool valley)
 		 * Place a random monster (quickly), but not in grids marked
 		 * "SQUARE_TEMP".
 		 */
-		(void) pick_and_place_distant_monster(c, player, 10, true, c->depth);
+		(void) pick_and_place_distant_monster(c, player->grid, 10, true,
+											  c->depth);
 	}
 
 	/* Place some traps in the dungeon. */
@@ -1392,7 +1393,8 @@ struct chunk *mtntop_gen(struct player *p, int height, int width)
 
 	/* Put some monsters in the dungeon */
 	for (j = k; j > 0; j--) {
-		(void) pick_and_place_distant_monster(c, player, 10, true, c->depth);
+		(void) pick_and_place_distant_monster(c, player->grid, 10, true,
+											  c->depth);
 	}
 
 
