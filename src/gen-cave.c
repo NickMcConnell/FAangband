@@ -3855,11 +3855,13 @@ struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width) {
 	struct chunk *left;
 	struct chunk *gauntlet;
 	struct chunk *right;
+	struct chunk *arrival;
 	int gauntlet_hgt = 2 * randint1(5) + 3;
 	int gauntlet_wid = 2 * randint1(10) + 19;
 	int y_size = z_info->dungeon_hgt - randint0(25 - gauntlet_hgt);
 	int x_size = (z_info->dungeon_wid - gauntlet_wid) / 2 -
 		randint0(45 - gauntlet_wid);
+	struct loc p_loc_in_r, p_loc_in_l;
 	int line1, line2;
 
 	/* No persistent levels of this type for now */
@@ -3942,11 +3944,27 @@ struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width) {
 	k = MAX(MIN(p->depth / 3, 10), 2) / 2;
 
 	/* Put the character in the arrival cavern */
-	if (!new_player_spot((p->upkeep->create_stair == FEAT_MORE) ? right : left, p)) {
+	arrival = (p->upkeep->create_stair == FEAT_MORE) ? right : left;
+	if (!new_player_spot(arrival, p)) {
 		cave_free(gauntlet);
 		cave_free(left);
 		cave_free(right);
 		return NULL;
+	}
+	/*
+	 * Account for the player's location relative to the right and left
+	 * chunks for use in pick_and_place_distant_monster().  The
+	 * transformations here have to match what the calls to chunk_copy()
+	 * below do.
+	 */
+	if (arrival == right) {
+		p_loc_in_r = p->grid;
+		p_loc_in_l.x = line2 + p->grid.x;
+		p_loc_in_l.y = p->grid.y;
+	} else {
+		p_loc_in_l = p->grid;
+		p_loc_in_r.x = p->grid.x - line2;
+		p_loc_in_r.y = p->grid.y;
 	}
 
 	/* Pick some monsters for the left cavern */
@@ -3954,7 +3972,7 @@ struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width) {
 
 	/* Place the monsters */
 	for (; i > 0; i--) {
-		pick_and_place_distant_monster(left, p->grid, 0, true,
+		pick_and_place_distant_monster(left, p_loc_in_l, 0, true,
 			left->depth);
 	}
 
@@ -3963,7 +3981,7 @@ struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width) {
 
 	/* Place the monsters */
 	for (; i > 0; i--) {
-		pick_and_place_distant_monster(right, p->grid, 0, true,
+		pick_and_place_distant_monster(right, p_loc_in_r, 0, true,
 			right->depth);
 	}
 
