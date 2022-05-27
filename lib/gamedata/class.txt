@@ -1665,7 +1665,7 @@ dice:$B+d$S
 expr:B:PLAYER_LEVEL:+ 5
 expr:S:PLAYER_LEVEL:+ 5
 desc:Removes fear and grants you berserk strength (resistance to fear,
-desc: +75 melee skill, -10 to AC, and prevents healing
+desc: +72 melee skill, -10 to AC, and prevents healing
 desc: over time) for a level-dependent duration.
 
 spell:Whirlwind Attack:5:4:25:6
