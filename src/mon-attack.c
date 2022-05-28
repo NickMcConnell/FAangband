@@ -772,7 +772,10 @@ bool make_attack_normal(struct monster *mon, struct player *p)
 				}
 
 				/* Apply the cut */
-				if (amt) (void)player_inc_timed(p, TMD_CUT, amt, true, true);
+				if (amt) {
+					(void)player_inc_timed(p, TMD_CUT, amt,
+						true, true, true);
+				}
 			}
 
 			/* Handle stun */
@@ -793,8 +796,10 @@ bool make_attack_normal(struct monster *mon, struct player *p)
 				}
 
 				/* Apply the stun */
-				if (amt)
-					(void)player_inc_timed(p, TMD_STUN, amt, true, true);
+				if (amt) {
+					(void)player_inc_timed(p, TMD_STUN, amt,
+						true, true, true);
+				}
 			}
 
 			string_free(act);

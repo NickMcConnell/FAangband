@@ -853,16 +853,16 @@ void player_over_exert(struct player *p, int flag, int chance, int amount)
 			msg("You faint from the effort!");
 
 			/* Bypass free action */
-			(void)player_inc_timed(p, TMD_PARALYZED, randint1(amount),
-								   true, false);
+			(void)player_inc_timed(p, TMD_PARALYZED,
+				randint1(amount), true, true, false);
 		}
 	}
 
 	/* Scrambled stats */
 	if (flag & PY_EXERT_SCRAMBLE) {
 		if (randint0(100) < chance) {
-			(void)player_inc_timed(p, TMD_SCRAMBLE, randint1(amount),
-								   true, true);
+			(void)player_inc_timed(p, TMD_SCRAMBLE,
+				randint1(amount), true, true, true);
 		}
 	}
 
@@ -871,15 +871,15 @@ void player_over_exert(struct player *p, int flag, int chance, int amount)
 		if (randint0(100) < chance) {
 			msg("Wounds appear on your body!");
 			(void)player_inc_timed(p, TMD_CUT, randint1(amount),
-								   true, false);
+				true, true, false);
 		}
 	}
 
 	/* Confusion */
 	if (flag & PY_EXERT_CONF) {
 		if (randint0(100) < chance) {
-			(void)player_inc_timed(p, TMD_CONFUSED, randint1(amount),
-								   true, true);
+			(void)player_inc_timed(p, TMD_CONFUSED,
+				randint1(amount), true, true, true);
 		}
 	}
 
@@ -887,7 +887,7 @@ void player_over_exert(struct player *p, int flag, int chance, int amount)
 	if (flag & PY_EXERT_HALLU) {
 		if (randint0(100) < chance) {
 			(void)player_inc_timed(p, TMD_IMAGE, randint1(amount),
-								   true, true);
+				true, true, true);
 		}
 	}
 
@@ -896,7 +896,7 @@ void player_over_exert(struct player *p, int flag, int chance, int amount)
 		if (randint0(100) < chance) {
 			msg("You feel suddenly lethargic.");
 			(void)player_inc_timed(p, TMD_SLOW, randint1(amount),
-								   true, false);
+				true, true, false);
 		}
 	}
 
@@ -1016,12 +1016,16 @@ void player_fall_off_cliff(struct player *p)
 		if (player_of_has(p, OF_FEATHER)) {
 			equip_learn_flag(p, OF_FEATHER);
 			dam = damroll(2, 8);
-			(void) player_inc_timed(p, TMD_STUN, damroll(2, 8), true, true);
-			(void) player_inc_timed(p, TMD_CUT, damroll(2, 8), true, true);
+			(void) player_inc_timed(p, TMD_STUN, damroll(2, 8), true, true,
+									true);
+			(void) player_inc_timed(p, TMD_CUT, damroll(2, 8), true, true,
+									true);
 		} else {
 			dam = damroll(4, 8);
-			(void) player_inc_timed(p, TMD_STUN, damroll(4, 8), true, true);
-			(void) player_inc_timed(p, TMD_CUT, damroll(4, 8), true, true);
+			(void) player_inc_timed(p, TMD_STUN, damroll(4, 8), true, true,
+									true);
+			(void) player_inc_timed(p, TMD_CUT, damroll(4, 8), true, true,
+									true);
 		}
 		take_hit(p, dam, square_feat(cave, p->grid)->die_msg);
 	} else if (lev->locality == LOC_NAN_DUNGORTHEB) {
@@ -1035,12 +1039,16 @@ void player_fall_off_cliff(struct player *p)
 			if (player_of_has(p, OF_FEATHER)) {
 				equip_learn_flag(p, OF_FEATHER);
 				dam = damroll(2, 8);
-				(void) player_inc_timed(p, TMD_STUN, damroll(2, 8), true, true);
-				(void) player_inc_timed(p, TMD_CUT, damroll(2, 8), true, true);
+				(void) player_inc_timed(p, TMD_STUN, damroll(2, 8), true, true,
+										true);
+				(void) player_inc_timed(p, TMD_CUT, damroll(2, 8), true, true,
+										true);
 			} else {
 				dam = damroll(4, 8);
-				(void) player_inc_timed(p, TMD_STUN, damroll(4, 8), true, true);
-				(void) player_inc_timed(p, TMD_CUT, damroll(4, 8), true, true);
+				(void) player_inc_timed(p, TMD_STUN, damroll(4, 8), true, true,
+										true);
+				(void) player_inc_timed(p, TMD_CUT, damroll(4, 8), true, true,
+										true);
 			}
 			take_hit(p, dam, square_feat(cave, p->grid)->die_msg);
 		}
@@ -1133,7 +1141,7 @@ void player_resume_normal_shape(struct player *p)
 	msg("You resume your usual shape.");
 
 	/* Kill vampire attack */
-	(void) player_clear_timed(p, TMD_ATT_VAMP, true);
+	(void) player_clear_timed(p, TMD_ATT_VAMP, true, false);
 
 	/* Update */
 	p->upkeep->update |= (PU_BONUS);

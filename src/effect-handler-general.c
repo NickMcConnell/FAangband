@@ -442,21 +442,27 @@ bool effect_handler_NOURISH(effect_handler_context_t *context)
 	amount *= z_info->food_value;
 	if (context->subtype == 0) {
 		/* Increase food level by amount */
-		player_inc_timed(player, TMD_FOOD, MAX(amount, 0), false, false);
+		player_inc_timed(player, TMD_FOOD, MAX(amount, 0), false,
+			context->origin.what != SRC_PLAYER || !context->aware,
+			false);
 	} else if (context->subtype == 1) {
 		/* Decrease food level by amount */
-		player_dec_timed(player, TMD_FOOD, MAX(amount, 0), false);
+		player_dec_timed(player, TMD_FOOD, MAX(amount, 0), false,
+			context->origin.what != SRC_PLAYER || !context->aware);
 	} else if (context->subtype == 2) {
 		/* Set food level to amount, vomiting if necessary */
 		bool message = player->timed[TMD_FOOD] > amount;
 		if (message) {
 			msg("You vomit!");
 		}
-		player_set_timed(player, TMD_FOOD, MAX(amount, 0), false);
+		player_set_timed(player, TMD_FOOD, MAX(amount, 0), false,
+			context->origin.what != SRC_PLAYER || !context->aware);
 	} else if (context->subtype == 3) {
 		/* Increase food level to amount if needed */
 		if (player->timed[TMD_FOOD] < amount) {
-			player_set_timed(player, TMD_FOOD, MAX(amount + 1, 0), false);
+			player_set_timed(player, TMD_FOOD, MAX(amount + 1, 0),
+				false, context->origin.what != SRC_PLAYER
+				|| !context->aware);
 		}
 	} else {
 		return false;
@@ -481,7 +487,8 @@ bool effect_handler_CRUNCH(effect_handler_context_t *context)
 bool effect_handler_CURE(effect_handler_context_t *context)
 {
 	int type = context->subtype;
-	(void) player_clear_timed(player, type, true);
+	(void) player_clear_timed(player, type, true,
+		context->origin.what != SRC_PLAYER || !context->aware);
 	context->ident = true;
 	return true;
 }
@@ -492,7 +499,8 @@ bool effect_handler_CURE(effect_handler_context_t *context)
 bool effect_handler_TIMED_SET(effect_handler_context_t *context)
 {
 	int amount = effect_calculate_value(context, false);
-	player_set_timed(player, context->subtype, MAX(amount, 0), true);
+	player_set_timed(player, context->subtype, MAX(amount, 0), true,
+		context->origin.what != SRC_PLAYER || !context->aware);
 	context->ident = true;
 	return true;
 
@@ -558,9 +566,13 @@ bool effect_handler_TIMED_INC(effect_handler_context_t *context)
 	}
 
 	if (!player->timed[context->subtype] || !context->other) {
-		player_inc_timed(player, context->subtype, MAX(amount, 0), true, true);
+		player_inc_timed(player, context->subtype, MAX(amount, 0), true,
+			context->origin.what != SRC_PLAYER || !context->aware,
+			true);
 	} else {
-		player_inc_timed(player, context->subtype, context->other, true, true);
+		player_inc_timed(player, context->subtype, context->other, true,
+			context->origin.what != SRC_PLAYER || !context->aware,
+			true);
 	}
 	return true;
 }
@@ -575,9 +587,14 @@ bool effect_handler_TIMED_INC_NO_RES(effect_handler_context_t *context)
 	int amount = effect_calculate_value(context, false);
 
 	if (!player->timed[context->subtype] || !context->other)
-		player_inc_timed(player, context->subtype, MAX(amount, 0), true, false);
+		player_inc_timed(player, context->subtype, MAX(amount, 0),
+			true,
+			context->origin.what != SRC_PLAYER || !context->aware,
+			false);
 	else
-		player_inc_timed(player, context->subtype, context->other, true, false);
+		player_inc_timed(player, context->subtype, context->other, true,
+			context->origin.what != SRC_PLAYER || !context->aware,
+			false);
 	context->ident = true;
 	return true;
 }
@@ -609,7 +626,8 @@ bool effect_handler_TIMED_DEC(effect_handler_context_t *context)
 	int amount = effect_calculate_value(context, false);
 	if (context->other)
 		amount = player->timed[context->subtype] / context->other;
-	(void) player_dec_timed(player, context->subtype, MAX(amount, 0), true);
+	(void) player_dec_timed(player, context->subtype, MAX(amount, 0), true,
+		context->origin.what != SRC_PLAYER || !context->aware);
 	context->ident = true;
 	return true;
 }
@@ -1349,9 +1367,6 @@ bool effect_handler_DETECT_TRAPS(effect_handler_context_t *context)
 
 					/* Know the trap */
 					obj->known->pval = obj->pval;
-
-					/* Notice it */
-					disturb(player);
 
 					/* We found something to detect */
 					detect = true;
@@ -3073,7 +3088,8 @@ bool effect_handler_DARKEN_AREA(effect_handler_context_t *context)
 	/* Hack - blind the player directly if player-cast */
 	if (context->origin.what == SRC_PLAYER &&
 		!player_resists_effects(player->state, ELEM_DARK)) {
-		(void)player_inc_timed(player, TMD_BLIND, 3 + randint1(5), true, true);
+		(void)player_inc_timed(player, TMD_BLIND, 3 + randint1(5), true,
+							   !context->aware, true);
 	}
 
 	/* Assume seen */
@@ -3400,7 +3416,9 @@ bool effect_handler_TAP_DEVICE(effect_handler_context_t *context)
 
 			msg("You feel your head clear.");
 			used = true;
-			player_inc_timed(player, TMD_STUN, randint1(2), true, true);
+			player_inc_timed(player, TMD_STUN, randint1(2), true,
+				context->origin.what != SRC_PLAYER
+				|| !context->aware, true);
 
 			player->upkeep->redraw |= (PR_MANA);
 		} else {
@@ -3472,7 +3490,7 @@ bool effect_handler_COMMAND(effect_handler_context_t *context)
 	}
 
 	/* Player is commanding */
-	player_set_timed(player, TMD_COMMAND, MAX(amount, 0), false);
+	player_set_timed(player, TMD_COMMAND, MAX(amount, 0), false, false);
 
 	/* Monster is commanded */
 	mon_inc_timed(mon, MON_TMD_COMMAND, MAX(amount, 0), 0);
@@ -3519,14 +3537,14 @@ bool effect_handler_RUNES_OF_EVIL(effect_handler_context_t *context)
 			if (one_in_(6)) {
 				take_hit(player, damroll(5, 20), "a chest dispel-player trap");
 			} else if (one_in_(5)) {
-				player_inc_timed(player, TMD_CUT, 200, true, true);
+				player_inc_timed(player, TMD_CUT, 200, true, true, true);
 			} else if (one_in_(4)) {
 				if (!player_of_has(player, OF_FREE_ACT)) {
 					player_inc_timed(player, TMD_PARALYZED, 2 + randint0(6),
-									 true, true);
+									 true, true, true);
 				} else {
 					player_inc_timed(player, TMD_STUN, 10 + randint0(100),
-									 true, true);
+									 true, true, true);
 				}
 			} else if (one_in_(3)) {
 				effect_simple(EF_DISENCHANT, context->origin, "0", 0, 0, 0, 0, 0, NULL);
