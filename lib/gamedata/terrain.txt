@@ -229,7 +229,7 @@ desc: apart from on your person.
 name:Travelling Merchant
 graphics:9:u
 priority:20
-flags:SHOP | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY
+flags:SHOP | LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY
 info:9:0
 look-prefix:the entrance to the
 look-in-preposition:at
