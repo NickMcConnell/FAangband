@@ -1752,7 +1752,7 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 	}
 
 	/* Place some formations */
-	while (form_grids < (20 * c->depth)) {
+	while (form_grids < form_grids_target) {
 		/* Choose a place */
 		grid.y = randint1(c->height - 2);
 		grid.x = randint1(c->width - 2);
