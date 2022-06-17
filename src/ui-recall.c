@@ -53,15 +53,15 @@ static void recall_display(struct menu *menu, int oid, bool cursor, int row,
 	uint8_t attr = (cursor ? COLOUR_L_BLUE : COLOUR_WHITE);
 
 	if (idx < num_recall_points) {
-		int region = world->levels[player->recall[idx]].locality;
+		int locality = world->levels[player->recall[idx]].locality;
 		int level = world->levels[player->recall[idx]].depth;
 
 		/* Get the recall point description */
 		if (level) {
-			my_strcpy(place, format("%s %d   ", locality_name(region), level),
+			my_strcpy(place, format("%s %d   ", locality_name(locality), level),
 					  sizeof(place));
-		} else if (region != LOC_ARENA) {
-			my_strcpy(place, format("%s Town   ", locality_name(region)),
+		} else if (locality != LOC_ARENA) {
+			my_strcpy(place, format("%s Town   ", locality_name(locality)),
 					  sizeof(place));
 		} else {
 		    my_strcpy(place, "No location set     ", sizeof(place));
@@ -148,9 +148,9 @@ int textui_get_recall_point(bool inward, int num_points, int num_poss)
 	replace_check = inward && (player->recall[selection] != player->place);
 	while (replace_check && selection < num_entries - 2) {
 		char place[30];
-		int region = world->levels[player->recall[selection]].locality;
+		int locality = world->levels[player->recall[selection]].locality;
 		int level = world->levels[player->recall[selection]].depth;
-		my_strcpy(place, format("%s %d   ", locality_name(region), level),
+		my_strcpy(place, format("%s %d   ", locality_name(locality), level),
 				  sizeof(place));
 		if (get_check(format("Really replace recall point %s", place))) break;
 		if (get_check("Cancel recall? ")) {
