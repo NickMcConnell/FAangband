@@ -1308,10 +1308,9 @@ bool effect_handler_READ_MINDS(effect_handler_context_t *context)
 			effect_simple(EF_DETECT_TRAPS, source_player(), "0", 0, 0, 0,
 						  cave->height, cave->width, NULL);
 		}
-		return true;
 	}
 
-	return false;
+	return true;
 }
 
 /**
