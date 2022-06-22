@@ -108,6 +108,55 @@ struct monster *monster_target_monster(effect_handler_context_t *context)
 }
 
 /**
+ * Check that a grid is sufficient for use as teleport destination.
+ *
+ * \param c is the chunk to examine.
+ * \param grid is the grid to test.
+ * \param is_player_moving is true if a player is being teleported; it is
+ * false if a monster is being teleported.
+ * \return true if the specified grid is sufficient for use as a telepoort
+ * destination; otherwise, return false
+ *
+ * In 4.2.4, the sufficient requirements were a floor grid with no players
+ * or monsters, no player traps, no webs, and no objects.  Post 4.2.4,
+ * the requirements are:
+ *     1) passable but not damaging nor automatically triggers a transition
+ *         to a different level or environment (i.e. a shop)
+ *     2) does not already have a player or monster
+ *     3) does not have webs
+ *     3) if a player is moving, it does not have player traps
+ *     4) if a monster is moving, it does not have a glyph of warding
+ * There's some discussion here,
+ * http://angband.oook.cz/forum/showthread.php?t=11066
+ */
+static bool has_teleport_destination_prereqs(struct chunk *c, struct loc grid,
+		bool is_player_moving)
+{
+	if (is_player_moving) {
+		if (!square_ispassable(c, grid)) {
+			return false;
+		}
+		if (square_isplayertrap(c, grid)) {
+			return false;
+		}
+	} else {
+		if (!square_is_monster_walkable(c, grid)) {
+			return false;
+		}
+		if (square_iswarded(c, grid)) {
+			return false;
+		}
+	}
+	if (square(c, grid)->mon
+			|| square_isdamaging(c, grid)
+			|| square_iswebbed(c, grid)
+			|| square_isshop(c, grid)) {
+		return false;
+	}
+	return true;
+}
+
+/**
  * Selects items that have at least one removable curse.
  */
 static bool item_tester_uncursable(const struct object *obj)
@@ -2569,11 +2618,8 @@ bool effect_handler_TELEPORT(effect_handler_context_t *context)
 			/* Must move */
 			if (d == 0) continue;
 
-			/* Require "naked" floor space */
-			if (!square_isempty(cave, grid)) continue;
-
-			/* No monster teleport onto glyph of warding */
-			if (!is_player && square_iswarded(cave, grid)) continue;
+			if (!has_teleport_destination_prereqs(cave, grid,
+					is_player)) continue;
 
 			/* No teleporting into vaults and such, unless there's no choice */
 			if (square_isvault(cave, grid)) {
@@ -2654,7 +2700,8 @@ bool effect_handler_TELEPORT(effect_handler_context_t *context)
 	/* Move player or monster */
 	monster_swap(start, spots->grid);
 	if (is_player) {
-		player_handle_post_move(player, true);
+		player_handle_post_move(player, true,
+			context->origin.what == SRC_MONSTER);
 	}
 
 	/* Clear any projection marker to prevent double processing */
@@ -2785,8 +2832,8 @@ bool effect_handler_TELEPORT_TO(effect_handler_context_t *context)
 			if (square_in_bounds_fully(cave, land)) break;
 		}
 
-		/* Accept "naked" floor grids */
-		if (square_isempty(cave, land)) break;
+		if (has_teleport_destination_prereqs(cave, land,
+				player_moves)) break;
 
 		/* Occasionally advance the distance */
 		if (++ctr > (4 * dis * dis + 4 * dis + 1)) {
@@ -2806,7 +2853,8 @@ bool effect_handler_TELEPORT_TO(effect_handler_context_t *context)
 	/* Move player or monster */
 	monster_swap(start, land);
 	if (player_moves) {
-		player_handle_post_move(player, true);
+		player_handle_post_move(player, true,
+			context->origin.what == SRC_MONSTER);
 	}
 
 	/* Cancel target if necessary */
@@ -2907,15 +2955,22 @@ bool effect_handler_TELEPORT_LEVEL(effect_handler_context_t *context)
 		}
  	}
 
-	/* Now actually do the level change */
+	/*
+	 * Now actually do the level change; flush the command queue to
+	 * prevent the character from losing an action when first entering
+	 * the new level (for instance, player moves putting an autopickup
+	 * command in the queue and is then hit by a teleport level spell)
+	 */
 	if (up) {
 		const char *msg = (current->topography == TOP_CAVE) ?
 			"You rise up through the ceiling." : "You rise into the air.";
 		msgt(MSG_TPLEVEL, msg);
+		cmdq_flush();
 		target_place = player_get_next_place(player->place, "up", 1);
 		player_change_place(player, target_place);
  	} else if (down) {
  		msgt(MSG_TPLEVEL, "You sink through the floor.");
+		cmdq_flush();
  
 		//if (OPT(player, birth_force_descend)) {
 		//	target_place = player_get_next_place(player->max_depth, "down", 1);
