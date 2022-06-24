@@ -236,7 +236,7 @@ static void prt_exp(int row, int col)
 		xp = (long)(player_exp[player->lev - 1]) - player->exp;
 
 	/* Format XP */
-	strnfmt(out_val, sizeof(out_val), "%8d", xp);
+	strnfmt(out_val, sizeof(out_val), "%8ld", xp);
 
 
 	if (player->exp >= player->max_exp) {
@@ -631,7 +631,7 @@ static int prt_exp_short(int row, int col)
 		xp = (long)(player_exp[player->lev - 1]) - player->exp;
 
 	/* Format XP */
-	strnfmt(out_val, sizeof(out_val), "%d", xp);
+	strnfmt(out_val, sizeof(out_val), "%ld", xp);
 
 	if (player->exp >= player->max_exp) {
 		put_str((lev50 ? "EXP:" : "NXT:"), row, col);
