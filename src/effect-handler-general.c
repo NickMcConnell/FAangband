@@ -149,6 +149,7 @@ static bool has_teleport_destination_prereqs(struct chunk *c, struct loc grid,
 	}
 	if (square(c, grid)->mon
 			|| square_isdamaging(c, grid)
+			|| square_isfall(c, grid)
 			|| square_iswebbed(c, grid)
 			|| square_isshop(c, grid)) {
 		return false;
