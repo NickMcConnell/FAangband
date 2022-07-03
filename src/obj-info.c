@@ -215,7 +215,7 @@ static bool describe_elements(textblock *tb,
 		textblock_append(tb, "Provides immunity to ");
 		for (i = 0; (i < ELEM_MAX) && imm; i++) {
 			if (perc[i] == RES_LEVEL_MAX) {
-				textblock_append(tb, format("%s", projections[i].name));
+				textblock_append(tb, "%s", projections[i].name);
 				if (imm > 1) textblock_append(tb, ", ");
 				imm--;
 			}
@@ -229,9 +229,9 @@ static bool describe_elements(textblock *tb,
 		textblock_append(tb, "Provides resistance to ");
 		for (i = 0; (i < ELEM_MAX) && res; i++) {
 			if ((perc[i] < RES_LEVEL_BASE) && (perc[i] != RES_LEVEL_MAX)) {
-				textblock_append(tb, format("%s (%d", projections[i].name,
-											RES_LEVEL_BASE - perc[i]));
-				textblock_append(tb, "%%)");
+				textblock_append(tb, "%s (%d%%)",
+					projections[i].name,
+					RES_LEVEL_BASE - perc[i]);
 				if (res > 1) textblock_append(tb, ", ");
 				res--;
 			}
@@ -245,9 +245,9 @@ static bool describe_elements(textblock *tb,
 		textblock_append(tb, "Makes you vulnerable to ");
 		for (i = 0; (i < ELEM_MAX) && vul; i++) {
 			if (perc[i] > RES_LEVEL_BASE) {
-				textblock_append(tb, format("%s (%d", projections[i].name,
-											perc[i] - RES_LEVEL_BASE));
-				textblock_append(tb, "%%)");
+				textblock_append(tb, "%s (%d%%)",
+					projections[i].name,
+					perc[i] - RES_LEVEL_BASE);
 				if (vul > 1) textblock_append(tb, ", ");
 				vul--;
 			}
@@ -1687,10 +1687,8 @@ static bool describe_set(textblock *tb, const struct object *obj)
 				if (item->aidx == obj->artifact->aidx) {
 					/* Description */
 					textblock_append(tb, "\n");
-					textblock_append_c(tb, COLOUR_BLUE, set->text);
-
-					/* End sentence */
-					textblock_append_c(tb, COLOUR_BLUE, ".\n");
+					textblock_append_c(tb, COLOUR_BLUE,
+						"%s.\n", set->text);
 					return true;
 				}
 				item = item->next;
@@ -1779,9 +1777,7 @@ static textblock *object_info_out(const struct object *obj, int mode)
 		if (!something) {
 			textblock_append(tb, "\n\nThis item does not seem to possess any special abilities.");
 		} else {
-			textblock_append(tb, "\n");
-			textblock_append(tb, kb_info[obj->tval].text);
-			textblock_append(tb, "\n");
+			textblock_append(tb, "\n%s\n", kb_info[obj->tval].text);
 		}
 	}
 

@@ -246,7 +246,7 @@ static void map_menu_browser(int oid, void *data, const region *loc)
 
 	/* Write the description */
 	Term_gotoxy(loc->col, loc->row + loc->page_rows);
-	text_out_c(COLOUR_DEEP_L_BLUE, format("\n%s\n", d[oid].description));
+	text_out_c(COLOUR_DEEP_L_BLUE, "\n%s\n", d[oid].description);
 
 	/* Reset parameters */
 	text_out_pad = 0;
@@ -512,7 +512,7 @@ static void race_help(int i, void *db, const region *l)
 			color = COLOUR_ORANGE;
 		}
 
-		text_out_c(color, format("Home town: %-15s", r->hometown));
+		text_out_c(color, "Home town: %-15s", r->hometown);
 	}
 	text_out_e("\n");
 

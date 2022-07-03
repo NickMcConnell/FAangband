@@ -153,7 +153,7 @@ int textui_get_recall_point(bool inward, int num_points, int num_poss)
 		my_strcpy(place, format("%s %d   ", locality_name(region), level),
 				  sizeof(place));
 		if (get_check(format("Really replace recall point %s", place))) break;
-		if (get_check(format("Cancel recall?", place))) {
+		if (get_check("Cancel recall? ")) {
 			evt.type = EVT_ESCAPE;
 			break;
 		}
