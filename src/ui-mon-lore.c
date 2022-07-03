@@ -150,7 +150,7 @@ void lore_description(textblock *tb, const struct monster_race *race,
 
 	/* Player ghosts may have unique descriptions. */
 	if (rf_has(race->flags, RF_PLAYER_GHOST) && (cave->ghost->string_type == 2))
-		textblock_append(tb, format("%s  ", cave->ghost->string));
+		textblock_append(tb, "%s  ", cave->ghost->string);
 
 	/* Notice "Quest" monsters */
 	if (quest_unique_monster_check(race))

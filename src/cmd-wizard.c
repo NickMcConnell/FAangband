@@ -1376,8 +1376,7 @@ void do_cmd_wiz_jump_level(struct command *cmd)
 		char prompt[80], s[80];
 		int i;
 
-		strnfmt(prompt, sizeof(prompt), "Jump to place (name): ",
-			z_info->max_depth - 1);
+		strnfmt(prompt, sizeof(prompt), "Jump to place (name): ");
 
 		/* Default */
 		strnfmt(s, sizeof(s), "%s",	level_name(&world->levels[player->place]));
