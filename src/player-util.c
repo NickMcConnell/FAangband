@@ -916,9 +916,14 @@ void player_over_exert(struct player *p, int flag, int chance, int amount)
 
 
 /**
- * See how much damage the player will take from damaging terrain
+ * See how much damage the player will take from terrain.
+ *
+ * \param p is the player to check
+ * \param grid is the location of the terrain
+ * \param actual, if true, will cause the player to learn the appropriate
+ * runes if equipment or effects mitigate the damage.
  */
-int player_check_terrain_damage(struct player *p, struct loc grid)
+int player_check_terrain_damage(struct player *p, struct loc grid, bool actual)
 {
 	int dam_taken = 0;
 
@@ -926,13 +931,15 @@ int player_check_terrain_damage(struct player *p, struct loc grid)
 		int base_dam = 100 + randint1(100);
 
 		/* Fire damage */
-		dam_taken = adjust_dam(p, ELEM_FIRE, base_dam, false);
+		dam_taken = adjust_dam(p, ELEM_FIRE, base_dam, actual);
 
 		/* Feather fall makes one lightfooted. */
 		if (player_of_has(p, OF_FEATHER)) {
 			equip_learn_flag(p, OF_FEATHER);
 			dam_taken /= 2;
-			equip_learn_flag(p, OF_FEATHER);
+			if (actual) {
+				equip_learn_flag(p, OF_FEATHER);
+			}
 		}
 	}
 
@@ -944,7 +951,7 @@ int player_check_terrain_damage(struct player *p, struct loc grid)
  */
 void player_take_terrain_damage(struct player *p, struct loc grid)
 {
-	int dam_taken = player_check_terrain_damage(p, grid);
+	int dam_taken = player_check_terrain_damage(p, grid, true);
 
 	if (!dam_taken) {
 		return;
