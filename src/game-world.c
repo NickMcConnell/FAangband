@@ -656,8 +656,12 @@ void process_world(struct chunk *c)
 	/*** Damage (or healing) over Time ***/
 
 	/* Take damage from poison */
-	if (player->timed[TMD_POISONED])
+	if (player->timed[TMD_POISONED]) {
 		take_hit(player, 1, "poison");
+		if (player->is_dead) {
+			return;
+		}
+	}
 
 	/* Take damage from cuts, worse from serious cuts */
 	if (player->timed[TMD_CUT]) {
@@ -675,6 +679,9 @@ void process_world(struct chunk *c)
 
 		/* Take damage */
 		take_hit(player, i, "a fatal wound");
+		if (player->is_dead) {
+			return;
+		}
 	}
 
 	/* Side effects of diminishing bloodlust */
@@ -682,6 +689,9 @@ void process_world(struct chunk *c)
 		player_over_exert(player, PY_EXERT_HP | PY_EXERT_CUT | PY_EXERT_SLOW,
 						  MAX(0, 10 - player->timed[TMD_BLOODLUST]),
 						  player->chp / 10);
+		if (player->is_dead) {
+			return;
+		}
 	}
 
 	/* Timed healing */
@@ -769,6 +779,9 @@ void process_world(struct chunk *c)
 
 		/* Take damage */
 		take_hit(player, i, "starvation");
+		if (player->is_dead) {
+			return;
+		}
 	}
 
 	/* Regenerate Hit Points if needed */
