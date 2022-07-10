@@ -1018,7 +1018,8 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 		case SRC_PLAYER: {
 			/* Don't affect projector unless explicitly allowed */
 			if (!self) return false;
-
+			/* Use the same message as the DAMAGE handler. */
+			my_strcpy(killer, "yourself", sizeof(killer));
 			break;
 		}
 
@@ -1065,7 +1066,8 @@ bool project_p(struct source origin, int r, struct loc grid, int dam, int typ,
 
 		case SRC_GRID:
 		case SRC_NONE: {
-			/* Assume the caller has set the killer variable */
+			/* Use the same message as the DAMAGE handler. */
+			my_strcpy(killer, "a bug", sizeof(killer));
 			break;
 		}
 		default: break;
