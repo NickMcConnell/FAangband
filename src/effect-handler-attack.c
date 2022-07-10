@@ -1708,7 +1708,7 @@ bool effect_handler_EARTHQUAKE(effect_handler_context_t *context)
 		}
 	}
 
-	/* First, affect the player (if necessary) */
+	/* First, determine the effects on the player (if necessary) */
 	if (hurt) {
 		/* Check around the player */
 		for (i = 0; i < 8; i++) {
@@ -1782,9 +1782,6 @@ bool effect_handler_EARTHQUAKE(effect_handler_context_t *context)
 			monster_swap(pgrid, safe_grid);
 			player_handle_post_move(player, true, true);
 		}
-
-		/* Take some damage */
-		if (damage) take_hit(player, damage, "an earthquake");
 	}
 
 
@@ -1900,6 +1897,12 @@ bool effect_handler_EARTHQUAKE(effect_handler_context_t *context)
 			}
 		}
 	}
+
+	/*
+	 * Apply damage to player; done here so messages are ordered properly
+	 * if the player dies.
+	 */
+	if (damage) take_hit(player, damage, "an earthquake");
 
 	/* Fully update the visuals */
 	player->upkeep->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
