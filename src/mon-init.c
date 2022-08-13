@@ -1362,10 +1362,6 @@ static enum parser_error parse_monster_spells(struct parser *p) {
 		s = strtok(NULL, " |");
 	}
 
-	/* Add the "base monster" flags to the monster */
-	if (r->base)
-		rsf_union(r->spell_flags, r->base->spell_flags);
-
 	/* Make sure innate frequency is set if necessary */
 	create_mon_spell_mask(current_flags, RST_INNATE, RST_NONE);
 	rsf_inter(current_flags, r->spell_flags);
@@ -2836,7 +2832,6 @@ static errr finish_parse_lore(struct parser *p) {
 		/* Base flag knowledge */
 		if (r->base) {
 			rf_union(l->flags, r->base->flags);
-			rsf_union(l->spell_flags, r->base->spell_flags);
 		}
 
 		/* Remove blows data for non-blows */
