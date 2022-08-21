@@ -647,8 +647,8 @@ static void spell_effect_append_value_info(const struct effect *effect,
 		case EF_HEAL_HP:
 			/* Append percentage only, as the fixed value is always displayed */
 			if (rv.m_bonus) {
-				my_strcpy(special, format("/%d%%", rv.m_bonus),
-						  sizeof(special));
+				strnfmt(special, sizeof(special), "/%d%%",
+					rv.m_bonus);
 			}
 			break;
 		case EF_TELEPORT:
@@ -661,7 +661,8 @@ static void spell_effect_append_value_info(const struct effect *effect,
 			/* Append radius */
 			if (effect->radius) {
 				int rad = effect->radius;
-				my_strcpy(special, format(", rad %d", rad), sizeof(special));
+				strnfmt(special, sizeof(special), ", rad %d",
+					rad);
 			} else {
 				my_strcpy(special, ", rad 2", sizeof(special));
 			}
@@ -673,7 +674,8 @@ static void spell_effect_append_value_info(const struct effect *effect,
 				if (effect->other) {
 					rad += plev / effect->other;
 				}
-				my_strcpy(special, format(", rad %d", rad), sizeof(special));
+				strnfmt(special, sizeof(special), ", rad %d",
+					rad);
 			} else {
 				my_strcpy(special, "rad 2", sizeof(special));
 			}
@@ -681,8 +683,8 @@ static void spell_effect_append_value_info(const struct effect *effect,
 		case EF_STRIKE:
 			/* Append radius */
 			if (effect->radius) {
-				my_strcpy(special, format(", rad %d", effect->radius),
-						  sizeof(special));
+				strnfmt(special, sizeof(special), ", rad %d",
+					effect->radius);
 			}
 			break;
 		case EF_SHORT_BEAM: {
@@ -692,12 +694,12 @@ static void spell_effect_append_value_info(const struct effect *effect,
 				beam_len += plev / effect->other;
 				beam_len = MIN(beam_len, z_info->max_range);
 			}
-			my_strcpy(special, format(", len %d", beam_len), sizeof(special));
+			strnfmt(special, sizeof(special), ", len %d", beam_len);
 			break;
 		}
 		case EF_SWARM:
 			/* Append number of projectiles. */
-			my_strcpy(special, format("x%d", rv.m_bonus), sizeof(special));
+			strnfmt(special, sizeof(special), "x%d", rv.m_bonus);
 			break;
 	}
 
