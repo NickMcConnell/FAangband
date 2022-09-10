@@ -220,9 +220,6 @@ static bool get_property(struct artifact *art, struct object *obj,
 	struct obj_property *prop = lookup_obj_property_name(prop_name);
 	assert(prop);
 
-	/* Basic cost */
-	cost = property_cost(prop, value, false);
-
 	assert(art || ((art == NULL) && obj));
 	switch (prop->type) {
 		case OBJ_PROPERTY_STAT:
@@ -231,6 +228,8 @@ static bool get_property(struct artifact *art, struct object *obj,
 			int16_t *modifiers = art ? art->modifiers : obj->modifiers;
 			int cur_value = modifiers[prop->index];
 			int cur_cost = art ? 0 : property_cost(prop, cur_value, false);
+
+			cost = property_cost(prop, cur_value + value, false);
 			if (take_money(cost - cur_cost, on_credit)) {
 				modifiers[prop->index] += value;
 				return true;
@@ -240,6 +239,8 @@ static bool get_property(struct artifact *art, struct object *obj,
 		case OBJ_PROPERTY_FLAG:
 		{
 			bitflag *flags = art ? art->flags : obj->flags;
+
+			cost = property_cost(prop, value, false);
 			if (take_money(cost, on_credit)) {
 				of_on(flags, prop->index);
 				return true;
@@ -251,6 +252,8 @@ static bool get_property(struct artifact *art, struct object *obj,
 			struct element_info *el_info = art ? art->el_info : obj->el_info;
 			int cur_value = RES_LEVEL_BASE - el_info[prop->index].res_level;
 			int cur_cost = art ? 0 : property_cost(prop, cur_value, false);
+
+			cost = property_cost(prop, cur_value - value, false);
 			if (take_money(cost - cur_cost, on_credit)) {
 				el_info[prop->index].res_level -= value;
 				return true;
@@ -260,6 +263,8 @@ static bool get_property(struct artifact *art, struct object *obj,
 		case OBJ_PROPERTY_IGNORE:
 		{
 			struct element_info *el_info = art ? art->el_info : obj->el_info;
+
+			cost = property_cost(prop, value, false);
 			if (take_money(cost, on_credit)) {
 				el_info[prop->index].flags |= EL_INFO_IGNORE;
 				return true;
@@ -276,6 +281,8 @@ static bool get_property(struct artifact *art, struct object *obj,
 					break;
 			}
 			assert(pick < z_info->brand_max);
+
+			cost = property_cost(prop, value, false);
 
 			/* Simple for artifacts */
 			if (art) {
@@ -315,6 +322,8 @@ static bool get_property(struct artifact *art, struct object *obj,
 					break;
 			}
 			assert(pick < z_info->slay_max);
+
+			cost = property_cost(prop, value, false);
 
 			/* Simple for artifacts */
 			if (art) {
@@ -427,6 +436,8 @@ static bool get_property(struct artifact *art, struct object *obj,
 				}
 				cur_value = *bonus;
 				cur_cost = art ? 0 : property_cost(prop, cur_value, false);
+				cost = property_cost(prop,
+					value + cur_value, false);
 				if (take_money(cost - cur_cost, on_credit)) {
 					*bonus += value;
 					return true;
