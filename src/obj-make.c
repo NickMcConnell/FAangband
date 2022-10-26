@@ -507,7 +507,7 @@ static void apply_resistances(struct object *obj, int lev)
 		res = RES_LEVEL_BASE - obj->el_info[i].res_level;
 
 		/* Only randomise proper resistances */
-		if ((res > RES_LEVEL_MIN) && (res < RES_LEVEL_BASE)) {
+		if ((res > 0) && (res < RES_LEVEL_BASE - RES_LEVEL_MAX)) {
 			if (randint0(2) == 0) {
 				obj->el_info[i].res_level -= randint0(res >> 2);
 			} else {
