@@ -659,8 +659,8 @@ static enum parser_error parse_themed_name(struct parser *p) {
 	v->name = string_make(parser_getstr(p, "name"));
 	v->next = h;
 	parser_setpriv(p, v);
-	v->hgt = z_info->dungeon_hgt;
-	v->wid = z_info->dungeon_wid;
+	v->hgt = (uint8_t) MIN(255, z_info->dungeon_hgt);
+	v->wid = (uint8_t) MIN(255, z_info->dungeon_wid);
 	z_info->themed_max++;
 	return PARSE_ERROR_NONE;
 }
