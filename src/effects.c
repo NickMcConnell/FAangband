@@ -360,7 +360,7 @@ static int32_t effect_value_base_monster_percent_hp_gone(void)
 	return mon ? (((mon->maxhp - mon->hp) * 100) / mon->maxhp) : 0;
 }
 
-static int effect_value_base_trap_power(void)
+static int32_t effect_value_base_trap_power(void)
 {
 	int plev = player->lev;
 	int n = plev + (plev * plev) / 25;
