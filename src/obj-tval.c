@@ -431,7 +431,7 @@ static const grouper tval_names[] =
 };
 
 /**
- * Small hack to allow both spellings of armer
+ * Small hack to allow both spellings of armor
  */
 static char *de_armour(const char *name)
 {
