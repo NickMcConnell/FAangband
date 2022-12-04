@@ -23,7 +23,6 @@ TESTPROGS += parse/a-info \
 	parse/parse \
 	parse/partrap \
 	parse/pit \
-	parse/pprop \
 	parse/proj \
 	parse/ptimed \
 	parse/r-info \
@@ -32,5 +31,4 @@ TESTPROGS += parse/a-info \
 	parse/shape \
 	parse/slay \
 	parse/v-info \
-	parse/world \
 	parse/z-info
