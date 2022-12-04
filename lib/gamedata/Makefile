@@ -10,7 +10,8 @@ FILES = a_cursed.txt a_normal.txt activation.txt artifact.txt body.txt \
  player_unarmed.txt projection.txt quest.txt race_relations.txt realm.txt \
  room_template.txt set_item.txt shape.txt slay.txt store.txt summon.txt \
  terrain.txt themed.txt trap.txt ui_entry.txt ui_entry_base.txt \
- ui_entry_renderer.txt vault.txt visuals.txt w_cursed.txt w_normal.txt world.txt
+ ui_entry_renderer.txt ui_knowledge.txt vault.txt visuals.txt w_cursed.txt \
+ w_normal.txt world.txt
 
 R1 = $(GAMEDATA_IN_LIB:true=$(FILES))
 DATA = $(R1:false=)
