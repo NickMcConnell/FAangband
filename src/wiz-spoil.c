@@ -395,7 +395,7 @@ void spoil_artifact(const char *fname)
 	/* Dump the header */
 	spoiler_underline(format("Artifact Spoilers for %s", buildid), '=');
 
-	text_out("\n Randart seed is %u\n", seed_randart);
+	text_out("\n Randart seed is %lu\n", (unsigned long)seed_randart);
 
 	/* List the artifacts by tval */
 	for (i = 0; group_artifact[i].tval; i++) {

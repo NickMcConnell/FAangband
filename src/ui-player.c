@@ -714,7 +714,7 @@ static const char *show_adv_exp(void)
 	if (player->lev < PY_MAX_LEVEL) {
 		static char buffer[30];
 		int32_t advance = (player_exp[player->lev - 1]);
-		strnfmt(buffer, sizeof(buffer), "%d", advance);
+		strnfmt(buffer, sizeof(buffer), "%ld", (long)advance);
 		return buffer;
 	}
 	else {

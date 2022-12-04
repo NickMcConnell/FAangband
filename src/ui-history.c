@@ -65,8 +65,8 @@ void history_display(void)
 		row = 0;
 		for (i = first_item; row <= page_size && i < max_item; i++)
 		{
-			strnfmt(buf, sizeof(buf), "%10d%20s\'  %s",
-					history_list_local[i].turn,
+			strnfmt(buf, sizeof(buf), "%10ld%20s\'  %s",
+					(long)history_list_local[i].turn,
 					level_name(&world->levels[history_list_local[i].place]),
 					history_list_local[i].event);
 
@@ -137,8 +137,8 @@ void dump_history(ang_file *file)
 	file_putf(file, "      Turn   Place               Note\n");
 
 	for (i = 0; i < max_item; i++) {
-		strnfmt(buf, sizeof(buf), "%10d%20s\'  %s",
-				history_list_local[i].turn,
+		strnfmt(buf, sizeof(buf), "%10ld%20s\'  %s",
+				(long)history_list_local[i].turn,
 				level_name(&world->levels[history_list_local[i].place]),
 				history_list_local[i].event);
 
