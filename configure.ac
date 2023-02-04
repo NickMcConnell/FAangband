@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(FAangband, 2.0.1, nckmccnnll@gmail.com)
+AC_INIT([FAangband], [2.0.1], [nckmccnnll@gmail.com])
 AC_CONFIG_SRCDIR(src)
 AC_CONFIG_MACRO_DIR([m4])
 
