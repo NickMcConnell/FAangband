@@ -943,9 +943,10 @@ int rd_player(void)
 	/* More specialty info */
 	rd_s16b(&player->speed_boost);		/* Specialty Fury, Phasewalk */
 	rd_s16b(&player->heighten_power);	/* Specialty Heighten Magic */
+	rd_byte(&player->skip_cmd_coercion);
 
 	/* Future use */
-	strip_bytes(12);
+	strip_bytes(11);
 
 	return 0;
 }
