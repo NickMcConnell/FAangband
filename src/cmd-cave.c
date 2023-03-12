@@ -1031,6 +1031,7 @@ void do_cmd_disarm(struct command *cmd)
 
 	struct object *obj;
 	bool more = false;
+	struct monster *mon;
 
 	/* Get arguments */
 	err = cmd_get_arg_direction(cmd, "direction", &dir);
@@ -1078,9 +1079,16 @@ void do_cmd_disarm(struct command *cmd)
 
 
 	/* Monster */
-	if (square(cave, grid)->mon > 0) {
-		msg("There is a monster in the way!");
-		py_attack(player, grid);
+	mon = square_monster(cave, grid);
+	if (mon) {
+		if (monster_is_camouflaged(mon)) {
+			become_aware(cave, mon);
+
+			monster_wake(mon, false, 100);
+		} else {
+			msg("There is a monster in the way!");
+			py_attack(player, grid);
+		}
 	} else if (obj)
 		/* Chest */
 		more = do_cmd_disarm_chest(obj);
