@@ -35,8 +35,8 @@ the game that you wish to do the command multiple times, unless you press a
 key or are otherwise disturbed. To enter a "repeat count", type ``0``,
 followed by the numerical count, followed by the command. You must type
 'space' before entering certain commands. Skipping the numerical count
-yields a count of 99. An option allows certain commands (open, disarm,
-alter, etc) to auto-repeat.
+yields a count of 99 for the open, tunnel, disarm, alter, and close
+commands. All other commands do not repeat unless requested.
 
 Some commands will prompt for extra information, such as a direction, an
 inventory or equipment item, a spell, a textual inscription, the symbol of
@@ -264,7 +264,9 @@ be repeated will flash by on the line at the bottom of the screen.
 To give a count to a command, type 0, the repeat count, and then the
 command. If you want to give a movement command and you are using the
 original command set (where the movement commands are digits), press space
-after the count and you will be prompted for the command.
+after the count and you will be prompted for the command.  The open, tunnel,
+disarm, alter, and close commands default to having a repeat count of 99;
+all other commands default to not repeating at all.
  
 Counted commands are very useful for time consuming commands, as they
 automatically terminate on success, or if you are attacked. You may also
