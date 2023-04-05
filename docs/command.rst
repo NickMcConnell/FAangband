@@ -514,10 +514,10 @@ Check knowledge (``~``)
   artifacts
     Will display all artifacts that your character has encountered. Normally,
     once an artifact is "generated" and "lost", it can never again be found,
-    and will become "known" to the player. With "preserve" mode, an artifact
-    can never be "lost" until it is "known" to the player. In either case,
-    any "known" artifacts not in the possession of the player will never
-    again be "generated".
+    and will become "known" to the player. With the "Lose artifacts when
+    leaving level" option turned off, an artifact can never be "lost" until
+    it is "known" to the player. In either case, any "known" artifacts not
+    in the possession of the player will never again be "generated".
 
   ego items
     Will display the "egos" your character has encountered.  Each "ego" is
