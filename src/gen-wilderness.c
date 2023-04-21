@@ -927,7 +927,8 @@ static bool place_web(struct chunk *c, struct player *p, const char *type)
  *
  * Grids are marked during generation to ensure correct path placement.
  */
-struct chunk *plain_gen(struct player *p, int height, int width)
+struct chunk *plain_gen(struct player *p, int height, int width,
+						const char **p_error)
 {
 	struct loc grid;
 	int place = p->place;
@@ -991,6 +992,7 @@ struct chunk *plain_gen(struct player *p, int height, int width)
 	if (!verify_level(c)) {
 		wipe_mon_list(c, p);
 		cave_free(c);
+		*p_error = "wilderness level had generation issues";
 		return NULL;
 	}
 
@@ -1003,7 +1005,8 @@ struct chunk *plain_gen(struct player *p, int height, int width)
  *
  * Grids are marked during generation to ensure correct path placement.
  */
-struct chunk *mtn_gen(struct player *p, int height, int width)
+struct chunk *mtn_gen(struct player *p, int height, int width,
+					  const char **p_error)
 {
 	struct loc grid;
 	int i, j;
@@ -1194,6 +1197,7 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
 	if (!verify_level(c)) {
 		wipe_mon_list(c, p);
 		cave_free(c);
+		*p_error = "wilderness level had generation issues";
 		return NULL;
 	}
 
@@ -1206,7 +1210,8 @@ struct chunk *mtn_gen(struct player *p, int height, int width)
  *
  * Grids are marked during generation to ensure correct feature placement.
  */
-struct chunk *mtntop_gen(struct player *p, int height, int width)
+struct chunk *mtntop_gen(struct player *p, int height, int width,
+						 const char **p_error)
 {
 	struct loc grid, top;
 	int i, j, k;
@@ -1412,7 +1417,8 @@ struct chunk *mtntop_gen(struct player *p, int height, int width)
  *
  * Grids are marked during generation to ensure correct path placement.
  */
-struct chunk *forest_gen(struct player *p, int height, int width)
+struct chunk *forest_gen(struct player *p, int height, int width,
+						 const char **p_error)
 {
 	bool made_plat;
 
@@ -1538,6 +1544,7 @@ struct chunk *forest_gen(struct player *p, int height, int width)
 	if (!verify_level(c)) {
 		wipe_mon_list(c, p);
 		cave_free(c);
+		*p_error = "wilderness level had generation issues";
 		return NULL;
 	}
 
@@ -1550,7 +1557,8 @@ struct chunk *forest_gen(struct player *p, int height, int width)
  *
  * Grids are marked during generation to ensure correct path placement.
  */
-struct chunk *swamp_gen(struct player *p, int height, int width)
+struct chunk *swamp_gen(struct player *p, int height, int width,
+						const char **p_error)
 {
 	struct loc grid;
 	int place = p->place;
@@ -1616,6 +1624,7 @@ struct chunk *swamp_gen(struct player *p, int height, int width)
 	if (!verify_level(c)) {
 		wipe_mon_list(c, p);
 		cave_free(c);
+		*p_error = "wilderness level had generation issues";
 		return NULL;
 	}
 
@@ -1628,7 +1637,8 @@ struct chunk *swamp_gen(struct player *p, int height, int width)
  *
  * Grids are marked during generation to ensure correct path placement.
  */
-struct chunk *desert_gen(struct player *p, int height, int width)
+struct chunk *desert_gen(struct player *p, int height, int width,
+						 const char **p_error)
 {
 	bool made_plat;
 
@@ -1773,6 +1783,7 @@ struct chunk *desert_gen(struct player *p, int height, int width)
 	if (!verify_level(c)) {
 		wipe_mon_list(c, p);
 		cave_free(c);
+		*p_error = "wilderness level had generation issues";
 		return NULL;
 	}
 
@@ -1786,7 +1797,8 @@ struct chunk *desert_gen(struct player *p, int height, int width)
  *
  * Grids are marked during generation to ensure correct path placement.
  */
-struct chunk *river_gen(struct player *p, int height, int width)
+struct chunk *river_gen(struct player *p, int height, int width,
+						const char **p_error)
 {
 	struct loc grid, centre;
 	int i, y1;
@@ -1941,6 +1953,7 @@ struct chunk *river_gen(struct player *p, int height, int width)
 	if (!verify_level(c)) {
 		wipe_mon_list(c, p);
 		cave_free(c);
+		*p_error = "wilderness level had generation issues";
 		return NULL;
 	}
 
@@ -1953,7 +1966,8 @@ struct chunk *river_gen(struct player *p, int height, int width)
  * Generate a new valley level. Place down slides, 
  * and random monsters, objects, and traps.  Place any quest monsters.
  */
-struct chunk *valley_gen(struct player *p, int height, int width)
+struct chunk *valley_gen(struct player *p, int height, int width,
+						 const char **p_error)
 {
 	bool made_plat;
 
@@ -2103,6 +2117,7 @@ struct chunk *valley_gen(struct player *p, int height, int width)
 	if (!verify_level(c)) {
 		wipe_mon_list(c, p);
 		cave_free(c);
+		*p_error = "wilderness level had generation issues";
 		return NULL;
 	}
 

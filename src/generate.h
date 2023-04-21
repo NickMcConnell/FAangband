@@ -208,7 +208,8 @@ struct streamer_profile {
 /*
  * cave_builder is a function pointer which builds a level.
  */
-typedef struct chunk * (*cave_builder) (struct player *p, int h, int w);
+typedef struct chunk * (*cave_builder) (struct player *p, int h, int w,
+		const char **p_error);
 
 
 struct cave_profile {
@@ -322,28 +323,46 @@ int get_level_profile_index_from_name(const char *name);
 const char *get_level_profile_name_from_index(int i);
 
 /* gen-cave.c */
-struct chunk *town_gen(struct player *p, int min_height, int min_width);
-struct chunk *classic_gen(struct player *p, int min_height, int min_width);
-struct chunk *labyrinth_gen(struct player *p, int min_height, int min_width);
+struct chunk *town_gen(struct player *p, int min_height, int min_width,
+	const char **p_error);
+struct chunk *classic_gen(struct player *p, int min_height, int min_width,
+	const char **p_error);
+struct chunk *labyrinth_gen(struct player *p, int min_height, int min_width,
+	const char **p_error);
 void ensure_connectedness(struct chunk *c, bool allow_vault_disconnect);
-struct chunk *cavern_gen(struct player *p, int min_height, int min_width);
-struct chunk *modified_gen(struct player *p, int min_height, int min_width);
-struct chunk *moria_gen(struct player *p, int min_height, int min_width);
-struct chunk *hard_centre_gen(struct player *p, int min_height, int min_width);
-struct chunk *lair_gen(struct player *p, int min_height, int min_width);
-struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width);
+struct chunk *cavern_gen(struct player *p, int min_height, int min_width,
+	const char **p_error);
+struct chunk *modified_gen(struct player *p, int min_height, int min_width,
+	const char **p_error);
+struct chunk *moria_gen(struct player *p, int min_height, int min_width,
+	const char **p_error);
+struct chunk *hard_centre_gen(struct player *p, int min_height, int min_width,
+	const char **p_error);
+struct chunk *lair_gen(struct player *p, int min_height, int min_width,
+	const char **p_error);
+struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width,
+	const char **p_error);
 struct chunk *arena_gen(struct player *p, int min_height, int min_width);
-struct chunk *themed_gen(struct player *p, int min_height, int min_width);
+struct chunk *themed_gen(struct player *p, int min_height, int min_width,
+						 const char **p_error);
 
 /* gen-wilderness.c */
-struct chunk *plain_gen(struct player *p, int height, int width);
-struct chunk *mtn_gen(struct player *p, int height, int width);
-struct chunk *mtntop_gen(struct player *p, int height, int width);
-struct chunk *forest_gen(struct player *p, int height, int width);
-struct chunk *swamp_gen(struct player *p, int height, int width);
-struct chunk *desert_gen(struct player *p, int height, int width);
-struct chunk *river_gen(struct player *p, int height, int width);
-struct chunk *valley_gen(struct player *p, int height, int width);
+struct chunk *plain_gen(struct player *p, int height, int width,
+						const char **p_error);
+struct chunk *mtn_gen(struct player *p, int height, int width,
+					  const char **p_error);
+struct chunk *mtntop_gen(struct player *p, int height, int width,
+						 const char **p_error);
+struct chunk *forest_gen(struct player *p, int height, int width,
+						 const char **p_error);
+struct chunk *swamp_gen(struct player *p, int height, int width,
+						const char **p_error);
+struct chunk *desert_gen(struct player *p, int height, int width,
+						 const char **p_error);
+struct chunk *river_gen(struct player *p, int height, int width,
+						const char **p_error);
+struct chunk *valley_gen(struct player *p, int height, int width,
+						 const char **p_error);
 
 /* gen-chunk.c */
 struct chunk *chunk_write(struct chunk *c);
@@ -445,6 +464,7 @@ void vault_monsters(struct chunk *c, struct loc grid, int depth, int num);
 void alloc_objects(struct chunk *c, int set, int typ, int num, int depth,
 	uint8_t origin);
 bool alloc_object(struct chunk *c, int set, int typ, int depth, uint8_t origin);
+void uncreate_artifacts(struct chunk *c);
 void dump_level_simple(const char *basefilename, const char *title,
 	struct chunk *c);
 void dump_level(ang_file *fo, const char *title, struct chunk *c, int **dist);

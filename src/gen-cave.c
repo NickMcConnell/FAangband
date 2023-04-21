@@ -1123,9 +1123,16 @@ static struct connector *transform_join_list(const struct connector *join,
 /**
  * Generate a new dungeon level.
  * \param p is the player 
+ * \param min_height is the minimum expected height, in grids, for the level.
+ * \param min_width is the minimum expected width, in grids, for the level.
+ * \param p_error will be dereferenced and set to a the address of a constant
+ * string describing the failure when the returned chunk is NULL.
  * \return a pointer to the generated chunk
+ * This level builder ignores the minimum height and width.
  */
-struct chunk *classic_gen(struct player *p, int min_height, int min_width) {
+struct chunk *classic_gen(struct player *p, int min_height, int min_width,
+		const char **p_error)
+{
 	int i, j, k;
 	int by, bx = 0, tby, tbx, key, rarity, built;
 	int num_rooms, size_percent;
@@ -1281,8 +1288,10 @@ struct chunk *classic_gen(struct player *p, int min_height, int min_width) {
 
 	/* Determine the character location */
 	if (!new_player_spot(c, p)) {
+		uncreate_artifacts(c);
 		wipe_mon_list(c, p);
 		cave_free(c);
+		*p_error = "could not place player";
 		return NULL;
 	}
 
@@ -1492,12 +1501,14 @@ static struct chunk *labyrinth_chunk(struct player *p, int h, int w, bool lit,
 /**
  * Build a labyrinth level.
  * \param p is the player
- * Note that if the function returns false, a level wasn't generated.
- * Labyrinths use the dungeon level's number to determine whether to generate
- * themselves (which means certain level numbers are more likely to generate
- * labyrinths than others).
+ * \param min_height is the minimum expected height, in grids, for the level.
+ * \param min_width is the minimum expected width, in grids, for the level.
+ * \param p_error will be dereferenced and set to a the address of a constant
+ * string describing the failure when the returned chunk is NULL.
+ * \return a pointer to the generated chunk
  */
-struct chunk *labyrinth_gen(struct player *p, int min_height, int min_width) {
+struct chunk *labyrinth_gen(struct player *p, int min_height, int min_width,
+		const char **p_error) {
 	int i, k;
 	struct chunk *c;
 	struct loc grid;
@@ -1518,7 +1529,10 @@ struct chunk *labyrinth_gen(struct player *p, int min_height, int min_width) {
 	bool soft = randint0(p->depth) < 35 || randint0(3) < 2;
 
 	/* No persistent levels of this type for now */
-	if (dun->persist) return NULL;
+	if (dun->persist) {
+		*p_error = "no labyrinth levels in persistent dungeons";
+		return NULL;
+	}
 
 	/* Enforce minimum dimensions */
 	h = MAX(h, min_height);
@@ -1526,12 +1540,17 @@ struct chunk *labyrinth_gen(struct player *p, int min_height, int min_width) {
 
 	/* Generate the actual labyrinth */
 	c = labyrinth_chunk(p, h, w, lit, soft);
-	if (!c) return NULL;
+	if (!c) {
+		*p_error = "labyrinth chunk could not be created";
+		return NULL;
+	}
 	c->place = p->place;
 
 	/* Determine the character location */
 	if (!new_player_spot(c, p)) {
+		uncreate_artifacts(c);
 		cave_free(c);
+		*p_error = "could not place player";
 		return NULL;
 	}
 
@@ -2135,8 +2154,15 @@ static struct chunk *cavern_chunk(struct player *p, int h, int w,
 /**
  * Make a cavern level.
  * \param p is the player
+ * \param min_height is the minimum expected height, in grids, for the level.
+ * \param min_width is the minimum expected width, in grids, for the level.
+ * \param p_error will be dereferenced and set to a the address of a constant
+ * string describing the failure when the returned chunk is NULL.
+ * \return a pointer to the generated chunk
  */
-struct chunk *cavern_gen(struct player *p, int min_height, int min_width) {
+struct chunk *cavern_gen(struct player *p, int min_height, int min_width,
+		const char **p_error)
+{
 	int i, k;
 
 	int h = rand_range(z_info->dungeon_hgt / 2, (z_info->dungeon_hgt * 3) / 4);
@@ -2150,7 +2176,10 @@ struct chunk *cavern_gen(struct player *p, int min_height, int min_width) {
 
 	/* Try to build the cavern, fail gracefully */
 	c = cavern_chunk(p, h, w, dun->join);
-	if (!c) return NULL;
+	if (!c) {
+		*p_error = "cavern chunk could not be created";
+		return NULL;
+	}
 	c->place = p->place;
 
 	/* Surround the level with perma-rock */
@@ -2174,6 +2203,7 @@ struct chunk *cavern_gen(struct player *p, int min_height, int min_width) {
 	/* Determine the character location */
 	if (!new_player_spot(c, p)) {
 		cave_free(c);
+		*p_error = "could not place player";
 		return NULL;
 	}
 
@@ -2788,12 +2818,18 @@ static void build_new_house(struct chunk *c)
 /**
  * Town logic flow for generation of new town.
  * \param p is the player
+ * \param min_height is the minimum expected height, in grids, for the level.
+ * \param min_width is the minimum expected width, in grids, for the level.
+ * \param p_error will be dereferenced and set to a the address of a constant
+ * string describing the failure when the returned chunk is NULL.
  * \return a pointer to the generated chunk
  * We start with a fully wiped cave of normal floors. This function does NOT do
  * anything about the owners of the stores, nor the contents thereof. It only
- * handles the physical layout.
+ * handles the physical layout.  This level builder ignores the minimum height
+ * and width.
  */
-struct chunk *town_gen(struct player *p, int min_height, int min_width)
+struct chunk *town_gen(struct player *p, int min_height, int min_width,
+		const char **p_error)
 {
 	int i;
 	struct loc grid;
@@ -2983,6 +3019,7 @@ static struct chunk *modified_chunk(struct player *p, int height, int width,
 		 * saying no further progress is likely.
 		 */
 		if (n_attempt > 500) {
+			uncreate_artifacts(c);
 			wipe_mon_list(c, p);
 			cave_free(c);
 			return NULL;
@@ -3034,6 +3071,10 @@ static struct chunk *modified_chunk(struct player *p, int height, int width,
 /**
  * Generate a new dungeon level.
  * \param p is the player
+ * \param min_height is the minimum expected height, in grids, for the level.
+ * \param min_width is the minimum expected width, in grids, for the level.
+ * \param p_error will be dereferenced and set to a the address of a constant
+ * string describing the failure when the returned chunk is NULL.
  * \return a pointer to the generated chunk
  *
  * This is sample code to illustrate some of the new dungeon generation
@@ -3054,7 +3095,9 @@ static struct chunk *modified_chunk(struct player *p, int height, int width,
  *   interesting rooms, as well as to make general monster restrictions in
  *   areas or the whole dungeon
  */
-struct chunk *modified_gen(struct player *p, int min_height, int min_width) {
+struct chunk *modified_gen(struct player *p, int min_height, int min_width,
+		const char **p_error)
+{
 	int i, k;
 	int size_percent, y_size, x_size;
 	struct chunk *c;
@@ -3081,7 +3124,10 @@ struct chunk *modified_gen(struct player *p, int min_height, int min_width) {
 
 	c = modified_chunk(p, MIN(z_info->dungeon_hgt, y_size),
 					   MIN(z_info->dungeon_wid, x_size), dun->persist);
-	if (!c) return NULL;
+	if (!c) {
+		*p_error = "modified chunk could not be created";
+		return NULL;
+	}
 	c->place = p->place;
 
 	/* Generate permanent walls around the edge of the generated area */
@@ -3110,8 +3156,10 @@ struct chunk *modified_gen(struct player *p, int min_height, int min_width) {
 
 	/* Determine the character location */
 	if (!new_player_spot(c, p)) {
+		uncreate_artifacts(c);
 		wipe_mon_list(c, p);
 		cave_free(c);
+		*p_error = "could not place player";
 		return NULL;
 	}
 
@@ -3219,6 +3267,7 @@ static struct chunk *moria_chunk(struct player *p, int height,
 		 * cutoff for saying no further progress is likely.
 		 */
 		if (n_attempt > 500) {
+			uncreate_artifacts(c);
 			wipe_mon_list(c, p);
 			cave_free(c);
 			return NULL;
@@ -3268,11 +3317,13 @@ static struct chunk *moria_chunk(struct player *p, int height,
 }
 
 /**
- * Generate a new dungeon level.
+ * Generate an Oangband-style moria level.
  * \param p is the player
+ * \param min_height is the minimum expected height, in grids, for the level.
+ * \param min_width is the minimum expected width, in grids, for the level.
+ * \param p_error will be dereferenced and set to a the address of a constant
+ * string describing the failure when the returned chunk is NULL.
  * \return a pointer to the generated chunk
- *
- * This produces Oangband-style moria levels.
  *
  * Most rooms on these levels are large, ragged-edged and roughly oval-shaped.
  *
@@ -3283,7 +3334,9 @@ static struct chunk *moria_chunk(struct player *p, int height,
  * labyrinth levels are selected) would be
  *	if ((c->depth >= 10) && (c->depth < 40) && one_in_(40))
  */
-struct chunk *moria_gen(struct player *p, int min_height, int min_width) {
+struct chunk *moria_gen(struct player *p, int min_height, int min_width,
+		const char **p_error)
+{
 	int i, k;
 	int size_percent, y_size, x_size;
 	struct chunk *c;
@@ -3310,7 +3363,10 @@ struct chunk *moria_gen(struct player *p, int min_height, int min_width) {
 
 	c = moria_chunk(p, MIN(z_info->dungeon_hgt, y_size),
 					MIN(z_info->dungeon_wid, x_size), dun->persist);
-	if (!c) return NULL;
+	if (!c) {
+		*p_error = "moria chunk could not be created";
+		return NULL;
+	}
 	c->place = p->place;
 
 	/* Generate permanent walls around the edge of the generated area */
@@ -3339,8 +3395,10 @@ struct chunk *moria_gen(struct player *p, int min_height, int min_width) {
 
 	/* Determine the character location */
 	if (!new_player_spot(c, p)) {
+		uncreate_artifacts(c);
 		wipe_mon_list(c, p);
 		cave_free(c);
+		*p_error = "could not place player";
 		return NULL;
 	}
 
@@ -3402,6 +3460,7 @@ static struct chunk *vault_chunk(struct player *p)
 	built = build_vault(c, loc(v->wid / 2, v->hgt / 2), v);
 	event_signal_flag(EVENT_GEN_ROOM_END, built);
 	if (!built) {
+		uncreate_artifacts(c);
 		cave_free(c);
 		c = NULL;
 	}
@@ -3450,9 +3509,15 @@ static void connect_caverns(struct chunk *c, struct loc floor[])
 /**
  * Generate a hard centre level - a greater vault surrounded by caverns
  * \param p is the player
+ * \param min_height is the minimum expected height, in grids, for the level.
+ * \param min_width is the minimum expected width, in grids, for the level.
+ * \param p_error will be dereferenced and set to a the address of a constant
+ * string describing the failure when the returned chunk is NULL.
  * \return a pointer to the generated chunk
-*/
-struct chunk *hard_centre_gen(struct player *p, int min_height, int min_width)
+ * This level builder ignores the minimum height and width.
+ */
+struct chunk *hard_centre_gen(struct player *p, int min_height, int min_width,
+		const char **p_error)
 {
 	/* Make a vault for the centre */
 	struct chunk *centre = vault_chunk(p);
@@ -3475,8 +3540,10 @@ struct chunk *hard_centre_gen(struct player *p, int min_height, int min_width)
 
 	/* No persistent levels of this type for now */
 	if (dun->persist) {
+		uncreate_artifacts(centre);
 		wipe_mon_list(centre, p);
 		cave_free(centre);
+		*p_error = "no hard centre levels in persistent dungeons";
 		return NULL;
 	}
 
@@ -3495,8 +3562,10 @@ struct chunk *hard_centre_gen(struct player *p, int min_height, int min_width)
 			 */
 			if (!cave_find(centre, &grid, square_iswall_outer)) {
 				if (i == 0) {
+					uncreate_artifacts(centre);
 					wipe_mon_list(centre, p);
 					cave_free(centre);
+					*p_error = "no SQUARE_WALL_OUTER grid for an entrance to the centre vault";
 					return NULL;
 				}
 				break;
@@ -3506,8 +3575,10 @@ struct chunk *hard_centre_gen(struct player *p, int min_height, int min_width)
 				dun->wall, i);
 			if (loc_eq(grid, loc(0, 0))) {
 				if (i == 0) {
+					uncreate_artifacts(centre);
 					wipe_mon_list(centre, p);
 					cave_free(centre);
+					*p_error = "random selection of entrance to the centre vault failed";
 					return NULL;
 				}
 				break;
@@ -3549,12 +3620,26 @@ struct chunk *hard_centre_gen(struct player *p, int min_height, int min_width)
 
 	/* Return on failure */
 	if (!upper_cavern || !lower_cavern || !left_cavern || !right_cavern) {
-		if (right_cavern) cave_free(right_cavern);
-		if (left_cavern) cave_free(left_cavern);
-		if (lower_cavern) cave_free(lower_cavern);
-		if (upper_cavern) cave_free(upper_cavern);
+		if (right_cavern) {
+			uncreate_artifacts(right_cavern);
+			cave_free(right_cavern);
+		}
+		if (left_cavern) {
+			uncreate_artifacts(left_cavern);
+			cave_free(left_cavern);
+		}
+		if (lower_cavern) {
+			uncreate_artifacts(lower_cavern);
+			cave_free(lower_cavern);
+		}
+		if (upper_cavern) {
+			uncreate_artifacts(upper_cavern);
+			cave_free(upper_cavern);
+		}
+		uncreate_artifacts(centre);
 		wipe_mon_list(centre, p);
 		cave_free(centre);
+		*p_error = "could not create one or more of the surrounding caverns";
 		return NULL;
 	}
 
@@ -3633,8 +3718,10 @@ struct chunk *hard_centre_gen(struct player *p, int min_height, int min_width)
 
 	/* Determine the character location */
 	if (!new_player_spot(c, p)) {
+		uncreate_artifacts(c);
 		wipe_mon_list(c, p);
 		cave_free(c);
+		*p_error = "could not place player";
 		return NULL;
 	}
 
@@ -3661,9 +3748,15 @@ struct chunk *hard_centre_gen(struct player *p, int min_height, int min_width)
  * Generate a lair level - a regular cave generated with the modified
  * algorithm, connected to a cavern with themed monsters
  * \param p is the player
+ * \param min_height is the minimum expected height, in grids, for the level.
+ * \param min_width is the minimum expected width, in grids, for the level.
+ * \param p_error will be dereferenced and set to a the address of a constant
+ * string describing the failure when the returned chunk is NULL.
  * \return a pointer to the generated chunk
  */
-struct chunk *lair_gen(struct player *p, int min_height, int min_width) {
+struct chunk *lair_gen(struct player *p, int min_height, int min_width,
+		const char **p_error)
+{
 	int i, k;
 	int size_percent, y_size, x_size;
 	int left_width, normal_width, lair_width;
@@ -3728,6 +3821,7 @@ struct chunk *lair_gen(struct player *p, int min_height, int min_width) {
 	cave_connectors_free(dun->join);
 	dun->join = cached_join;
 	if (!normal) {
+		*p_error = "modified chunk could not be created";
 		return NULL;
 	}
 
@@ -3742,8 +3836,10 @@ struct chunk *lair_gen(struct player *p, int min_height, int min_width) {
 	cave_connectors_free(dun->join);
 	dun->join = cached_join;
 	if (!lair) {
+		uncreate_artifacts(normal);
 		wipe_mon_list(normal, p);
 		cave_free(normal);
+		*p_error = "cavern chunk could not be created";
 		return NULL;
 	}
 
@@ -3752,9 +3848,12 @@ struct chunk *lair_gen(struct player *p, int min_height, int min_width) {
 
 	/* Put the character in the normal half */
 	if (!new_player_spot(normal, p)) {
+		uncreate_artifacts(lair);
 		cave_free(lair);
+		uncreate_artifacts(normal);
 		wipe_mon_list(normal, p);
 		cave_free(normal);
+		*p_error = "could not place player";
 		return NULL;
 	}
 
@@ -3847,9 +3946,16 @@ struct chunk *lair_gen(struct player *p, int min_height, int min_width) {
  * player starts.
  *
  * \param p is the player
+ * \param min_height is the minimum expected height, in grids, for the level.
+ * \param min_width is the minimum expected width, in grids, for the level.
+ * \param p_error will be dereferenced and set to a the address of a constant
+ * string describing the failure when the returned chunk is NULL.
  * \return a pointer to the generated chunk
+ * This level builder ignores the minimum height and width.
  */
-struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width) {
+struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width,
+		const char **p_error)
+{
 	int i, k;
 	struct chunk *c;
 	struct chunk *left;
@@ -3865,21 +3971,32 @@ struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width) {
 	int line1, line2;
 
 	/* No persistent levels of this type for now */
-	if (dun->persist) return NULL;
+	if (dun->persist) {
+		*p_error = "no gauntlet levels in persistent dungeons";
+		return NULL;
+	}
 
 	gauntlet = labyrinth_chunk(p, gauntlet_hgt, gauntlet_wid, false, false);
-	if (!gauntlet) return NULL;
+	if (!gauntlet) {
+		*p_error = "labyrinth chunk could not be generated";
+		return NULL;
+	}
 
 	left = cavern_chunk(p, y_size, x_size, NULL);
 	if (!left) {
+		uncreate_artifacts(gauntlet);
 		cave_free(gauntlet);
+		*p_error = "left cavern chunk could not be generated";
 		return NULL;
 	}
 
 	right = cavern_chunk(p, y_size, x_size, NULL);
 	if (!right) {
+		uncreate_artifacts(gauntlet);
 		cave_free(gauntlet);
+		uncreate_artifacts(left);
 		cave_free(left);
+		*p_error = "right cavern chunk could not be generated";
 		return NULL;
 	}
 
@@ -3911,9 +4028,13 @@ struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width) {
 		struct loc grid = loc(0, randint1(gauntlet->height - 2));
 
 		if (i >= 20) {
+			uncreate_artifacts(gauntlet);
 			cave_free(gauntlet);
+			uncreate_artifacts(left);
 			cave_free(left);
+			uncreate_artifacts(right);
 			cave_free(right);
+			*p_error = "could not open entrance to the labyrinth";
 			return NULL;
 		}
 		if (!square_isperm(gauntlet, loc_sum(grid, loc(1, 0)))) {
@@ -3928,9 +4049,13 @@ struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width) {
 			randint1(gauntlet->height - 2));
 
 		if (i >= 20) {
+			uncreate_artifacts(gauntlet);
 			cave_free(gauntlet);
+			uncreate_artifacts(left);
 			cave_free(left);
+			uncreate_artifacts(right);
 			cave_free(right);
+			*p_error = "could not open entrance to the labyrinth";
 			return NULL;
 		}
 		if (!square_isperm(gauntlet, loc_sum(grid, loc(-1, 0)))) {
@@ -3946,9 +4071,13 @@ struct chunk *gauntlet_gen(struct player *p, int min_height, int min_width) {
 	/* Put the character in the arrival cavern */
 	arrival = (p->upkeep->create_stair == FEAT_MORE) ? right : left;
 	if (!new_player_spot(arrival, p)) {
+		uncreate_artifacts(gauntlet);
 		cave_free(gauntlet);
+		uncreate_artifacts(left);
 		cave_free(left);
+		uncreate_artifacts(right);
 		cave_free(right);
+		*p_error = "could not place player";
 		return NULL;
 	}
 	/*
@@ -4114,7 +4243,9 @@ struct chunk *arena_gen(struct player *p, int min_height, int min_width) {
  * \param p is the player
  * \return a pointer to the generated chunk
  */
-struct chunk *themed_gen(struct player *p, int min_height, int min_width) {
+struct chunk *themed_gen(struct player *p, int min_height, int min_width,
+						 const char **p_error)
+{
 	struct chunk *c = cave_new(z_info->dungeon_hgt, z_info->dungeon_wid);
 	c->depth = p->depth;
 	c->place = p->place;
@@ -4124,6 +4255,7 @@ struct chunk *themed_gen(struct player *p, int min_height, int min_width) {
 					 themed_level(p->themed_level))) {
 		/* Oops.  We're /not/ on a themed level. */
 		player->themed_level = 0;
+		*p_error = "not a themed level";
 		return NULL;
 	}
 
