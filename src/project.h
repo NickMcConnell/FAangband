@@ -6,6 +6,7 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
+#include "monster.h"
 #include "source.h"
 
 /**
