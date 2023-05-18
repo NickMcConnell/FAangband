@@ -42,6 +42,7 @@ name:numeric_modifier_ui_0
 renderer:char_screen1_numeric_renderer
 combine:ADD
 category:CHAR_SCREEN1
+category:EQUIPCMP_SCREEN
 category:modifiers
 flags:TIMED_AS_AUX
 desc:Template for one of the modifiers shown on the second character screen.
