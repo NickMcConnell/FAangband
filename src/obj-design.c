@@ -253,7 +253,7 @@ static bool get_property(struct artifact *art, struct object *obj,
 			int cur_value = RES_LEVEL_BASE - el_info[prop->index].res_level;
 			int cur_cost = art ? 0 : property_cost(prop, cur_value, false);
 
-			cost = property_cost(prop, cur_value - value, false);
+			cost = property_cost(prop, value - cur_value, false);
 			if (take_money(cost - cur_cost, on_credit)) {
 				el_info[prop->index].res_level -= value;
 				return true;
