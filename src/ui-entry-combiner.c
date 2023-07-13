@@ -552,6 +552,9 @@ static void resist_0_combine_init(int v, int a,
 	if (v == UI_ENTRY_UNKNOWN_VALUE || v == UI_ENTRY_VALUE_NOT_PRESENT) {
 		st->accum = v;
 		work[0] = v;
+	} else if (v == UI_ENTRY_RESIST0_RES_VUL) {
+		st->accum = 1;
+		work[0] = -1;
 	} else if (v > 0) {
 		st->accum = v;
 		work[0] = 0;
@@ -562,6 +565,9 @@ static void resist_0_combine_init(int v, int a,
 	if (a == UI_ENTRY_UNKNOWN_VALUE || a == UI_ENTRY_VALUE_NOT_PRESENT) {
 		st->accum_aux = a;
 		work[1] = a;
+	} else if (a == UI_ENTRY_RESIST0_RES_VUL) {
+		st->accum_aux = 1;
+		work[1] = -1;
 	} else if (a > 0) {
 		st->accum_aux = a;
 		work[1] = 0;
@@ -584,17 +590,32 @@ static void resist_0_combine_accum_help(int x, int *pos, int *neg)
 		}
 		return;
 	}
+	if (x == UI_ENTRY_RESIST0_RES_VUL) {
+		if (*pos == UI_ENTRY_UNKNOWN_VALUE
+				|| *pos == UI_ENTRY_VALUE_NOT_PRESENT) {
+			*pos = 1;
+			*neg = -1;
+		} else {
+			if (*pos < 1) {
+				*pos = 1;
+			}
+			if (*neg > -1) {
+				*neg = -1;
+			}
+		}
+		return;
+	}
 	if (x > 0) {
-		if (*pos == UI_ENTRY_UNKNOWN_VALUE ||
-			*pos == UI_ENTRY_VALUE_NOT_PRESENT) {
+		if (*pos == UI_ENTRY_UNKNOWN_VALUE
+				|| *pos == UI_ENTRY_VALUE_NOT_PRESENT) {
 			*pos = x;
 			*neg = 0;
 		} else if (*pos < x) {
 			*pos = x;
 		}
 	} else {
-		if (*neg == UI_ENTRY_UNKNOWN_VALUE ||
-			*neg == UI_ENTRY_VALUE_NOT_PRESENT) {
+		if (*neg == UI_ENTRY_UNKNOWN_VALUE
+				|| *neg == UI_ENTRY_VALUE_NOT_PRESENT) {
 			*neg = x;
 			*pos = 0;
 		} else if (*neg > x) {
@@ -618,20 +639,28 @@ static void resist_0_combine_finish(struct ui_entry_combiner_state *st)
 {
 	int *work = st->work;
 
-	if (work[0] < 0 && work[0] != UI_ENTRY_UNKNOWN_VALUE &&
-		work[0] != UI_ENTRY_VALUE_NOT_PRESENT) {
+	if (work[0] < 0 && work[0] != UI_ENTRY_UNKNOWN_VALUE
+			&& work[0] != UI_ENTRY_VALUE_NOT_PRESENT) {
 		/* A vulnerability cancels a resist but not an immunity. */
-		if (st->accum < 3 && st->accum != UI_ENTRY_UNKNOWN_VALUE &&
-			st->accum != UI_ENTRY_VALUE_NOT_PRESENT) {
-			--st->accum;
+		if (st->accum < 3 && st->accum != UI_ENTRY_UNKNOWN_VALUE
+				&& st->accum != UI_ENTRY_VALUE_NOT_PRESENT) {
+			if (st->accum == 0) {
+				st->accum = -1;
+			} else {
+				st->accum = UI_ENTRY_RESIST0_RES_VUL;
+			}
 		}
 	}
-	if (work[1] < 0 && work[1] != UI_ENTRY_UNKNOWN_VALUE &&
-		work[1] != UI_ENTRY_VALUE_NOT_PRESENT) {
-		if (st->accum_aux < 3 &&
-			st->accum_aux != UI_ENTRY_UNKNOWN_VALUE &&
-			st->accum_aux != UI_ENTRY_VALUE_NOT_PRESENT) {
-			--st->accum_aux;
+	if (work[1] < 0 && work[1] != UI_ENTRY_UNKNOWN_VALUE
+			&& work[1] != UI_ENTRY_VALUE_NOT_PRESENT) {
+		if (st->accum_aux < 3
+				&& st->accum_aux != UI_ENTRY_UNKNOWN_VALUE
+				&& st->accum_aux != UI_ENTRY_VALUE_NOT_PRESENT) {
+			if (st->accum_aux == 0) {
+				st->accum_aux = -1;
+			} else {
+				st->accum_aux = UI_ENTRY_RESIST0_RES_VUL;
+			}
 		}
 	}
 	mem_free(work);
@@ -649,12 +678,16 @@ static void resist_0_vec(int n, const int *vals, const int *auxs,
 	for (i = 0; i < n; ++i) {
 		resist_0_combine_accum_help(vals[i], accum, &neg);
 	}
-	if (neg < 0 && neg != UI_ENTRY_UNKNOWN_VALUE &&
-		neg != UI_ENTRY_VALUE_NOT_PRESENT) {
+	if (neg < 0 && neg != UI_ENTRY_UNKNOWN_VALUE
+			&& neg != UI_ENTRY_VALUE_NOT_PRESENT) {
 		/* A vulnerability cancels a resist but not an immunity. */
-		if (*accum < 3 && *accum != UI_ENTRY_UNKNOWN_VALUE &&
-			*accum != UI_ENTRY_VALUE_NOT_PRESENT) {
-			--*accum;
+		if (*accum < 3 && *accum != UI_ENTRY_UNKNOWN_VALUE
+				&& *accum != UI_ENTRY_VALUE_NOT_PRESENT) {
+			if (*accum == 0) {
+				*accum = -1;
+			} else {
+				*accum = UI_ENTRY_RESIST0_RES_VUL;
+			}
 		}
 	}
 
@@ -665,9 +698,13 @@ static void resist_0_vec(int n, const int *vals, const int *auxs,
 	}
 	if (neg < 0 && neg != UI_ENTRY_UNKNOWN_VALUE &&
 		neg != UI_ENTRY_VALUE_NOT_PRESENT) {
-		if (*accum_aux < 3 && *accum_aux != UI_ENTRY_UNKNOWN_VALUE &&
-			*accum_aux != UI_ENTRY_VALUE_NOT_PRESENT) {
-			--*accum_aux;
+		if (*accum_aux < 3 && *accum_aux != UI_ENTRY_UNKNOWN_VALUE
+				&& *accum_aux != UI_ENTRY_VALUE_NOT_PRESENT) {
+			if (*accum_aux == 0) {
+				*accum_aux = -1;
+			} else {
+				*accum_aux = UI_ENTRY_RESIST0_RES_VUL;
+			}
 		}
 	}
 }
