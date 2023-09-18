@@ -155,6 +155,12 @@ static enum parser_error write_dummy_object_record(struct artifact *art, const c
 	dummy->d_char = '*';
 	dummy->d_attr = COLOUR_RED;
 
+	/* Inherit the flags and element information of the tval */
+	of_copy(dummy->flags, kb_info[i].flags);
+	kf_copy(dummy->kind_flags, kb_info[i].kind_flags);
+	(void)memcpy(dummy->el_info, kb_info[i].el_info,
+		sizeof(dummy->el_info[0]) * ELEM_MAX);
+
 	/* Correct resistances */
 	for (i = 0; i < ELEM_MAX; i++) {
 		dummy->el_info[i].res_level = RES_LEVEL_BASE;
