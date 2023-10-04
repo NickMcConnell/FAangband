@@ -103,12 +103,12 @@ void lore_description(textblock *tb, const struct monster_race *race,
 	/* Hack -- create a copy of the monster-memory that we can modify */
 	memcpy(lore, original_lore, sizeof(struct monster_lore));
 
-	/* Now get the known monster flags */
-	monster_flags_known(race, lore, known_flags);
-
 	/* Spoilers or player ghost -- know everything */
 	if (spoilers || rf_has(race->flags, RF_PLAYER_GHOST))
 		cheat_monster_lore(race, lore);
+
+	/* Now get the known monster flags */
+	monster_flags_known(race, lore, known_flags);
 
 	/* Appending the title here simplifies code in the callers. It also causes
 	 * a crash when generating spoilers (we don't need titles for them anwyay)*/
