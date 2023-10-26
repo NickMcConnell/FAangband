@@ -191,7 +191,7 @@ void monster_desc(char *desc, size_t max, const struct monster *mon, int mode)
 			if (!(mode & MDESC_POSS)) {
 				my_strcat(desc, format(", the %s", mon->race->name), max);
 			}
-		} else if (rf_has(mon->race->flags, RF_UNIQUE)) {
+		} else if (monster_is_shape_unique(mon)) {
 			/* Unique, indefinite or definite */
 			/* Start with the name (thus nominative and objective) */
 			/*
