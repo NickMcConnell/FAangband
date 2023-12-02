@@ -2,7 +2,7 @@
 Name=Angband (SDL2)
 Type=Application
 Comment=A roguelike dungeon exploration game based on the books of J.R.R.Tolkien
-Exec=sh -c "if [ \\$XDG_SESSION_TYPE == \"wayland\" ]; then env SDL_VIDEODRIVER=wayland faangband -msdl2; else faangband -msdl2; fi"
+Exec=faangband -msdl2
 TryExec=faangband
 Icon=/usr/share/faangband/xtra/icon/att-32.png
 Categories=Game;RolePlaying;
