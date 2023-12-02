@@ -97,10 +97,11 @@ depgen:
  list-elements.h list-origins.h option.h list-options.h \
  list-player-flags.h cmds.h cave.h list-square-flags.h \
  list-terrain-flags.h cmd-core.h effects-info.h z-textblock.h \
- game-input.h obj-chest.h obj-desc.h obj-tval.h obj-util.h \
- player-attack.h player-birth.h player-calcs.h player-spell.h \
- player-timed.h list-player-timed.h player-util.h store.h datafile.h \
- parser.h list-parser-errors.h target.h mon-predicate.h
+ game-input.h game-world.h list-localities.h list-topography.h \
+ obj-chest.h obj-desc.h obj-tval.h obj-util.h player-attack.h \
+ player-birth.h player-calcs.h player-spell.h player-timed.h \
+ list-player-timed.h player-util.h store.h datafile.h parser.h \
+ list-parser-errors.h target.h mon-predicate.h
 ./cmd-misc.o: cmd-misc.c angband.h h-basic.h z-bitflag.h z-form.h z-virt.h \
  z-color.h z-util.h z-rand.h config.h game-event.h z-type.h message.h \
  list-message.h player.h guid.h obj-properties.h z-file.h list-tvals.h \
@@ -756,7 +757,9 @@ depgen:
  list-player-flags.h game-world.h cave.h list-square-flags.h \
  list-terrain-flags.h list-localities.h list-topography.h obj-desc.h \
  obj-ignore.h list-ignore-types.h obj-knowledge.h obj-list.h obj-pile.h \
- obj-tval.h obj-util.h project.h source.h list-projections.h
+ obj-tval.h obj-util.h project.h monster.h target.h mon-predicate.h \
+ mon-timed.h list-mon-timed.h mon-blows.h list-mon-temp-flags.h \
+ list-mon-race-flags.h list-mon-spells.h source.h list-projections.h
 ./obj-make.o: obj-make.c angband.h h-basic.h z-bitflag.h z-form.h z-virt.h \
  z-color.h z-util.h z-rand.h config.h game-event.h z-type.h message.h \
  list-message.h player.h guid.h obj-properties.h z-file.h list-tvals.h \
@@ -1647,7 +1650,9 @@ depgen:
  list-player-flags.h cmds.h cave.h list-square-flags.h \
  list-terrain-flags.h cmd-core.h game-input.h grafmode.h init.h \
  datafile.h parser.h list-parser-errors.h obj-desc.h obj-make.h \
- obj-pile.h obj-util.h player-calcs.h project.h source.h \
+ obj-pile.h obj-util.h player-calcs.h project.h monster.h target.h \
+ mon-predicate.h mon-timed.h list-mon-timed.h mon-blows.h \
+ list-mon-temp-flags.h list-mon-race-flags.h list-mon-spells.h source.h \
  list-projections.h ui-input.h ui-event.h ui-term.h ui-menu.h ui-output.h \
  z-textblock.h ui-prefs.h ui-keymap.h ui-wizard.h
 ./wiz-debug.o: wiz-debug.c angband.h h-basic.h z-bitflag.h z-form.h \
