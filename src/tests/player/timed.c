@@ -1394,28 +1394,32 @@ static int test_set_timed4(void *state) {
 		require(timed_effects[TMD_OPP_ACID].temp_resist != -1);
 		if (test_cases[i].immune) {
 			player->state.el_info[timed_effects[
-				TMD_OPP_ACID].temp_resist].res_level = 3;
+				TMD_OPP_ACID].temp_resist].res_level =
+					RES_LEVEL_MAX;
 			player->obj_k->el_info[timed_effects[
 				TMD_OPP_ACID].temp_resist].res_level = 1;
 		} else {
 			switch (randint0(3)) {
 			case 0:
 				player->state.el_info[timed_effects[
-					TMD_OPP_ACID].temp_resist].res_level = 0;
+					TMD_OPP_ACID].temp_resist].res_level =
+					RES_LEVEL_BASE;
 				player->obj_k->el_info[timed_effects[
 					TMD_OPP_ACID].temp_resist].res_level = 0;
 				break;
 
 			case 1:
 				player->state.el_info[timed_effects[
-					TMD_OPP_ACID].temp_resist].res_level = 3;
+					TMD_OPP_ACID].temp_resist].res_level =
+					RES_LEVEL_MAX;
 				player->obj_k->el_info[timed_effects[
 					TMD_OPP_ACID].temp_resist].res_level = 0;
 				break;
 
 			case 2:
 				player->state.el_info[timed_effects[
-					TMD_OPP_ACID].temp_resist].res_level = 0;
+					TMD_OPP_ACID].temp_resist].res_level =
+					RES_LEVEL_BASE;
 				player->obj_k->el_info[timed_effects[
 					TMD_OPP_ACID].temp_resist].res_level = 1;
 				break;
@@ -1916,8 +1920,9 @@ static int test_inc_check0(void *state) {
 	 * without the resist set and then with it set.
 	 */
 	eq(timed_effects[TMD_POISONED].fail_code, TMD_FAIL_FLAG_RESIST);
-	player->state.el_info[timed_effects[TMD_POISONED].fail].res_level = 0;
-	player->known_state.el_info[timed_effects[TMD_POISONED].fail].res_level = 0;
+	player->state.el_info[timed_effects[TMD_POISONED].fail].res_level =
+		RES_LEVEL_BASE;
+	player->known_state.el_info[timed_effects[TMD_POISONED].fail].res_level = RES_LEVEL_BASE;
 	player->obj_k->el_info[timed_effects[TMD_POISONED].fail].res_level = 0;
 	player->body.slots[weapon_slot].obj = NULL;
 	result = player_inc_check(player, TMD_POISONED, false);
@@ -1926,13 +1931,16 @@ static int test_inc_check0(void *state) {
 	result = player_inc_check(player, TMD_POISONED, true);
 	eq(result, true);
 	require(player->obj_k->el_info[timed_effects[TMD_POISONED].fail].res_level == 0);
-	player->state.el_info[timed_effects[TMD_POISONED].fail].res_level = 1;
-	st->weapon->el_info[timed_effects[TMD_POISONED].fail].res_level = 1;
+	player->state.el_info[timed_effects[TMD_POISONED].fail].res_level =
+		RES_LEVEL_EFFECT;
+	st->weapon->el_info[timed_effects[TMD_POISONED].fail].res_level =
+		RES_LEVEL_EFFECT;
 	player->body.slots[weapon_slot].obj = st->weapon;
 	result = player_inc_check(player, TMD_POISONED, false);
 	eq(result, false);
 	require(player->obj_k->el_info[timed_effects[TMD_POISONED].fail].res_level != 0);
-	player->state.el_info[timed_effects[TMD_POISONED].fail].res_level = 3;
+	player->state.el_info[timed_effects[TMD_POISONED].fail].res_level =
+		RES_LEVEL_MAX;
 	player->obj_k->el_info[timed_effects[TMD_POISONED].fail].res_level = 0;
 	result = player_inc_check(player, TMD_POISONED, false);
 	eq(result, false);
@@ -1955,11 +1963,17 @@ static int test_inc_check0(void *state) {
 	require(player->obj_k->el_info[timed_effects[TMD_POISONED].fail].res_level == 0);
 
 	/*
+	 * FAAngband has no timed effect which has elemental vulnerability
+	 * protection so skip this.
+	 */
+#if 0
+	/*
 	 * Test for effect that has elemental vulnerability protection.
 	 * First without the resist set and then with it set.
 	 */
 	eq(timed_effects[TMD_OPP_ACID].fail_code, TMD_FAIL_FLAG_VULN);
-	player->state.el_info[timed_effects[TMD_OPP_ACID].fail].res_level = 0;
+	player->state.el_info[timed_effects[TMD_OPP_ACID].fail].res_level =
+		RES_LEVEL_BASE;
 	player->known_state.el_info[timed_effects[TMD_OPP_ACID].fail].res_level = 0;
 	player->obj_k->el_info[timed_effects[TMD_OPP_ACID].fail].res_level = 0;
 	player->body.slots[weapon_slot].obj = NULL;
@@ -1969,8 +1983,10 @@ static int test_inc_check0(void *state) {
 	result = player_inc_check(player, TMD_OPP_ACID, true);
 	eq(result, true);
 	require(player->obj_k->el_info[timed_effects[TMD_OPP_ACID].fail].res_level == 0);
-	player->state.el_info[timed_effects[TMD_OPP_ACID].fail].res_level = -1;
-	st->weapon->el_info[timed_effects[TMD_OPP_ACID].fail].res_level = 1;
+	player->state.el_info[timed_effects[TMD_OPP_ACID].fail].res_level =
+		RES_LEVEL_BASE + (RES_LEVEL_MIN - RES_LEVEL_BASE) / 2;
+	st->weapon->el_info[timed_effects[TMD_OPP_ACID].fail].res_level =
+		RES_LEVEL_EFFECT;
 	player->body.slots[weapon_slot].obj = st->weapon;
 	result = player_inc_check(player, TMD_OPP_ACID, false);
 	eq(result, false);
@@ -1990,6 +2006,7 @@ static int test_inc_check0(void *state) {
 	require(player->obj_k->el_info[timed_effects[TMD_OPP_ACID].fail].res_level != 0);
 	result = player_inc_check(player, TMD_OPP_ACID, true);
 	eq(result, false);
+#endif
 
 	/*
 	 * Test for effect that has player flag protection.
@@ -2025,8 +2042,8 @@ static int test_inc_check0(void *state) {
 	 * player_inc_check() and TMD_OPP_POIS on would always return true.
 	 * See https://github.com/angband/angband/issues/5431 .
 	 */
-	player->state.el_info[ELEM_POIS].res_level = 0;
-	player->known_state.el_info[ELEM_POIS].res_level = 0;
+	player->state.el_info[ELEM_POIS].res_level = RES_LEVEL_BASE;
+	player->known_state.el_info[ELEM_POIS].res_level = RES_LEVEL_BASE;
 	player->timed[TMD_OPP_POIS] = 0;
 	result = player_inc_check(player, TMD_POISONED, false);
 	eq(result, true);
