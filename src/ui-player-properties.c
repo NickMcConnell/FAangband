@@ -201,12 +201,9 @@ static void gain_spec_display(struct menu *menu, int oid, bool cursor, int row,
 static bool gain_spec_action(struct menu *menu, const ui_event *e, int oid)
 {
 	struct spec_menu_data *d = menu_priv(menu);
-	static int i;
-	if (oid)
-		i = oid;
 
 	if (e->type == EVT_SELECT) {
-		d->selected_spec = d->specialties[i];
+		d->selected_spec = d->specialties[oid];
 		return false;
 	}
 
@@ -252,7 +249,6 @@ bool textui_gain_spec_menu(int *pick)
 	ui_event evt = { 0 };
 	struct spec_menu_data *d = mem_alloc(sizeof *d);
 	region loc = { 0, 0, 70, -99 };
-	bool done = false;
 
 	size_t i;
 
@@ -276,6 +272,7 @@ bool textui_gain_spec_menu(int *pick)
 	/* Find the learnable specialties */
 	d->specialties = mem_zalloc(d->spec_known * sizeof(int));
 	d->spec_known = 0;
+	d->selected_spec = 0;
 	for (i = 0; i < PF_MAX; i++) {
 		if (check_specialty_gain(i)) {
 			d->specialties[d->spec_known] = i;
@@ -302,16 +299,21 @@ bool textui_gain_spec_menu(int *pick)
 	region_erase_bordered(&loc);
 	menu_layout(&menu, &loc);
 
-	while (!done) {
+	while (1) {
 		evt = menu_select(&menu, EVT_SELECT, true);
-		done = (evt.type == EVT_ESCAPE);
-		if (!done && (d->selected_spec)) {
+		if (evt.type == EVT_ESCAPE) {
+			break;
+		}
+		if (d->selected_spec) {
 			int idx = d->selected_spec;
 			struct player_ability *ability = lookup_ability("player", idx, 0);
 			region_erase_bordered(&loc);
 			menu_layout(&menu, &loc);
-			done = get_check(format("Definitely choose %s? ",
-									ability->name));
+			if (get_check(format("Definitely choose %s? ",
+					ability->name))) {
+				break;
+			}
+			d->selected_spec = 0;
 		}
 	}
 
