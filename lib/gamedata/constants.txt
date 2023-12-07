@@ -208,3 +208,111 @@ player:start-gold:600
 
 # Number of turns that 1% of player food capacity feeds them for
 player:food-value:100
+
+#---------------------------------------------------------------------
+# Constants for critical calculations
+# In general, those calculations compute a "power" of the critical
+# by scaling the chance of a hit.  The "power" is then converted to
+# a chance of a critical (neglecting the armsman and marksman
+# abilities) using (a * power) / (b * power + c) as the chance where
+# a, b, and c are constants specified here.  For more details, see
+# critical_melee() and critical_shot() in player-attack.c.
+#---------------------------------------------------------------------
+
+# The numerator for the scale factor applied to the combined to-hit value to
+# get the power of the critical
+melee-critical:power-toh-scale-numerator:1
+
+# The denominator for the scale factor applied to the combined to-hit value to
+# get the power of the critical
+melee-critical:power-toh-scale-denominator:1
+
+# The scale factor for the critical's power in the numerator for the chance
+# of the critical
+melee-critical:chance-power-scale-numerator:1
+
+# The scale factor for the critical's power in the denominator for the chance
+# of the critical
+melee-critical:chance-power-scale-denominator:1
+
+# Value of an added term in the denominator for the chance of a critical
+melee-critical:chance-add-denominator:240
+
+# Players with the armsman ability have a chance, 1 / armsman-chance,
+# of inflicting a critical on any melee hit against an obvious opponent.
+# If they do not get a critical from that they still can get a critical
+# the standard way.  armsman-chance must be positive.
+melee-critical:armsman-chance:6
+
+# Define each of the levels for melee criticals.  They are considered in the
+# order they appear so it's convenient to put the least likely first.  If no
+# critical levels are defined, then there's no extra damage due to critical
+# hits.
+# Except for the last level, one over the first value is the probability that
+# this level occurs when none of the prior levels have been selected; the last
+# level will always be used if none of the prior levels have been selected.
+# The first value must be positive.
+# The second value is the number of dice to add for the critical.  It must be
+# non-negative.
+# The third value is the name of the message, from list-messages.h, to use
+# when a critical happens for that power level.
+melee-critical-level:40:5:HIT_HI_GREAT
+melee-critical-level:12:4:HIT_SUPERB
+melee-critical-level:3:3:HIT_GREAT
+melee-critical-level:1:2:HIT_GOOD
+
+# Players with the mana burn ability inflict mana-burn-dice additional
+# dice of damage when a melee critical causes extra damage against a target
+# with non-innate spells.  That critical also impairs the target's spell
+# casting.  mana-burn-dice must be non-negative.
+melee-critical:mana-burn-dice:1
+
+# The numerator for the scale factor applied to the combined to-hit value to
+# get the power of the critical with a launched missile
+ranged-critical:power-launched-toh-scale-numerator:1
+
+# The denominator for the scale factor applied to the combined to-hit value to
+# get the power of the critical whith a launched missile
+ranged-critical:power-launched-toh-scale-denominator:1
+
+# The numerator for the scale factor applied to the combined to-hit value to
+# get the power of the critical with a thrown missile; this and the
+# denominator are currently set so thrown missiles get more criticals
+ranged-critical:power-thrown-toh-scale-numerator:3
+
+# The denominator for the scale factor applied to the combined to-hit value to
+# get the power of the critical whith a thrown missile
+ranged-critical:power-thrown-toh-scale-denominator:2
+
+# The scale factor for the critical's power in the numerator for the chance
+# of the critical
+ranged-critical:chance-power-scale-numerator:1
+
+# The scale factor for the critical's power in the denominator for the chance
+# of the critical
+ranged-critical:chance-power-scale-denominator:1
+
+# Value of an added term in the denominator for the chance of a critical
+ranged-critical:chance-add-denominator:360
+
+# Players with the marksman ability have a chance, 1 / marksman-chance,
+# of inflicting a critical on any ranged hit against a visible opponent.
+# If they do not get a critical from that they still can get a critical
+# the standard way.  marksman-chance must be positive.
+ranged-critical:marksman-chance:6
+
+# Define each of the levels for ranged criticals.  They are considered in the
+# order they appear so it's convenient to put the least likely first.  If no
+# critical levels are defined, then there's no extra damage due to critical
+# hits.
+# Except for the last level, one over the first value is the probability that
+# this level occurs when none of the prior levels have been selected; the last
+# level will always be used if none of the prior levels have been selected.
+# The first value must be positive.
+# The second value is the number of dice to add for the critical.  It must be
+# non-negative.
+# The third value is the name of the message, from list-messages.h, to use
+# when a critical happens for that power level.
+ranged-critical-level:50:3:HIT_SUPERB
+ranged-critical-level:10:2:HIT_GREAT
+ranged-critical-level:1:1:HIT_GOOD

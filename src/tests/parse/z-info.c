@@ -14,7 +14,8 @@ int setup_tests(void **state) {
 
 int teardown_tests(void *state) {
 	struct angband_constants *z = parser_priv(state);
-	mem_free(z);
+	z_info = z;
+	constants_parser.cleanup();
 	parser_destroy(state);
 	return 0;
 }
@@ -40,6 +41,12 @@ static int test_negative(void *state) {
 	eq(r, PARSE_ERROR_INVALID_VALUE);
 	r = parser_parse(p, "player:max-sight:-1");
 	eq(r, PARSE_ERROR_INVALID_VALUE);
+	r = parser_parse(p, "melee-critical:armsman-chance:-1");
+	eq(r, PARSE_ERROR_INVALID_VALUE);
+	r = parser_parse(p, "melee-critical:mana-burn-dice:-1");
+	eq(r, PARSE_ERROR_INVALID_VALUE);
+	r = parser_parse(p, "ranged-critical:marksman-chance:-1");
+	eq(r, PARSE_ERROR_INVALID_VALUE);
 	ok;
 }
 
@@ -63,6 +70,10 @@ static int test_baddirective(void *state) {
 	r = parser_parse(p, "obj-make:xyzzy:5000");
 	eq(r, PARSE_ERROR_UNDEFINED_DIRECTIVE);
 	r = parser_parse(p, "player:xyzzy:300");
+	eq(r, PARSE_ERROR_UNDEFINED_DIRECTIVE);
+	r = parser_parse(p, "melee-critical:xyzzy:300");
+	eq(r, PARSE_ERROR_UNDEFINED_DIRECTIVE);
+	r = parser_parse(p, "ranged-critical:xyzzy:300");
 	eq(r, PARSE_ERROR_UNDEFINED_DIRECTIVE);
 	ok;
 }
@@ -140,10 +151,140 @@ TEST_CONSTANT(max_range, "max-range", "player")
 TEST_CONSTANT(start_gold, "start-gold", "player")
 TEST_CONSTANT(food_value, "food-value", "player")
 
+TEST_CONSTANT(m_crit_power_toh_scl_num, "power-toh-scale-numerator", "melee-critical")
+TEST_CONSTANT(m_crit_power_toh_scl_den, "power-toh-scale-denominator", "melee-critical")
+TEST_CONSTANT(m_crit_chance_power_scl_num, "chance-power-scale-numerator", "melee-critical")
+TEST_CONSTANT(m_crit_chance_power_scl_den, "chance-power-scale-denominator", "melee-critical")
+TEST_CONSTANT(m_crit_chance_add_den, "chance-add-denominator", "melee-critical")
+TEST_CONSTANT(m_armsman_chance, "armsman-chance", "melee-critical")
+TEST_CONSTANT(m_manaburn_dice, "mana-burn-dice", "melee-critical")
+
+TEST_CONSTANT(r_crit_power_launched_toh_scl_num, "power-launched-toh-scale-numerator", "ranged-critical")
+TEST_CONSTANT(r_crit_power_launched_toh_scl_den, "power-launched-toh-scale-denominator", "ranged-critical")
+TEST_CONSTANT(r_crit_power_thrown_toh_scl_num, "power-thrown-toh-scale-numerator", "ranged-critical")
+TEST_CONSTANT(r_crit_power_thrown_toh_scl_den, "power-thrown-toh-scale-denominator", "ranged-critical")
+TEST_CONSTANT(r_crit_chance_power_scl_num, "chance-power-scale-numerator", "ranged-critical")
+TEST_CONSTANT(r_crit_chance_power_scl_den, "chance-power-scale-denominator", "ranged-critical")
+TEST_CONSTANT(r_crit_chance_add_den, "chance-add-denominator", "ranged-critical")
+TEST_CONSTANT(r_marksman_chance, "marksman-chance", "ranged-critical")
+
+static int test_bad_m_crit_level(void *s) {
+	struct parser *p = (struct parser*)s;
+	struct angband_constants *m = parser_priv(p);
+	enum parser_error r;
+
+	null(m->m_crit_level_head);
+	/* Check invalid chance. */
+	r = parser_parse(p, "melee-critical-level:0:5:HIT_HI_SUPERB");
+	eq(r, PARSE_ERROR_INVALID_VALUE);
+	null(m->m_crit_level_head);
+	/* Check invalid message. */
+	r = parser_parse(p, "melee-critical-level:40:5:XYZZY");
+	eq(r, PARSE_ERROR_INVALID_MESSAGE);
+	null(m->m_crit_level_head);
+	/* Check invalid chance and invalid message. */
+	r = parser_parse(p, "melee-critical-level:0:5:XYZZY");
+	noteq(r, PARSE_ERROR_NONE);
+	null(m->m_crit_level_head);
+	ok;
+}
+
+static int test_m_crit_level(void *s) {
+	struct parser *p = (struct parser*)s;
+	struct angband_constants *m = parser_priv(p);
+	enum parser_error r = parser_parse(p,
+		"melee-critical-level:40:5:HIT_HI_SUPERB");
+	const struct critical_level *this_l, *last_l;
+
+	eq(r, PARSE_ERROR_NONE);
+	notnull(m->m_crit_level_head);
+	for (this_l = m->m_crit_level_head;
+			this_l->next;
+			this_l = this_l->next) {}
+	eq(this_l->chance, 40);
+	eq(this_l->added_dice, 5);
+	eq(this_l->msgt, MSG_HIT_HI_SUPERB);
+
+	r = parser_parse(p, "melee-critical-level:12:4:HIT_HI_GREAT");
+	eq(r, PARSE_ERROR_NONE);
+	for (last_l = NULL, this_l = m->m_crit_level_head;
+			this_l->next;
+			last_l = this_l, this_l = this_l->next) {}
+	notnull(last_l);
+	eq(last_l->chance, 40);
+	eq(last_l->added_dice, 5);
+	eq(last_l->msgt, MSG_HIT_HI_SUPERB);
+	eq(this_l->chance, 12);
+	eq(this_l->added_dice, 4);
+	eq(this_l->msgt, MSG_HIT_HI_GREAT);
+
+	ok;
+}
+
+static int test_bad_r_crit_level(void *s) {
+	struct parser *p = (struct parser*)s;
+	struct angband_constants *m = parser_priv(p);
+	enum parser_error r;
+
+	null(m->r_crit_level_head);
+	/* Check invalid chance. */
+	r = parser_parse(p, "ranged-critical-level:0:3:HIT_SUPERB");
+	eq(r, PARSE_ERROR_INVALID_VALUE);
+	null(m->r_crit_level_head);
+	/* Check invalid message. */
+	r = parser_parse(p, "ranged-critical-level:50:3:XYZZY");
+	eq(r, PARSE_ERROR_INVALID_MESSAGE);
+	null(m->r_crit_level_head);
+	/* Check invalid chance and invalid message. */
+	r = parser_parse(p, "ranged-critical-level:0:3:XYZZY");
+	noteq(r, PARSE_ERROR_NONE);
+	null(m->r_crit_level_head);
+	ok;
+}
+
+static int test_r_crit_level(void *s) {
+	struct parser *p = (struct parser*)s;
+	struct angband_constants *m = parser_priv(p);
+	enum parser_error r = parser_parse(p,
+		"ranged-critical-level:50:3:HIT_SUPERB");
+	const struct critical_level *this_l, *last_l;
+
+	eq(r, PARSE_ERROR_NONE);
+	notnull(m->r_crit_level_head);
+	for (this_l = m->r_crit_level_head;
+			this_l->next;
+			this_l = this_l->next) {}
+	eq(this_l->chance, 50);
+	eq(this_l->added_dice, 3);
+	eq(this_l->msgt, MSG_HIT_SUPERB);
+
+	r = parser_parse(p, "ranged-critical-level:10:2:HIT_GREAT");
+	eq(r, PARSE_ERROR_NONE);
+	notnull(m->r_crit_level_head);
+	for (last_l = NULL, this_l = m->r_crit_level_head;
+			this_l->next;
+			last_l = this_l, this_l = this_l->next) {}
+	notnull(last_l);
+	eq(last_l->chance, 50);
+	eq(last_l->added_dice, 3);
+	eq(last_l->msgt, MSG_HIT_SUPERB);
+	eq(this_l->chance, 10);
+	eq(this_l->added_dice, 2);
+	eq(this_l->msgt, MSG_HIT_GREAT);
+
+	ok;
+}
+
+/*
+ * test_bad_m_crit_level() and test_bad_r_crit_level() have to be before
+ * test_m_crit_level() and test_r_crit_level().
+ */
 const char *suite_name = "parse/z-info";
 struct test tests[] = {
 	{ "negative", test_negative },
 	{ "baddirective", test_baddirective },
+	{ "bad_m_crit_level", test_bad_m_crit_level },
+	{ "bad_r_crit_level", test_bad_r_crit_level },
 	{ "monsters_max", test_level_monster_max },
 	{ "mon_chance", test_alloc_monster_chance },
 	{ "monsters_min", test_level_monster_min },
@@ -196,5 +337,22 @@ struct test tests[] = {
 	{ "max_range", test_max_range },
 	{ "start_gold", test_start_gold },
 	{ "food_value", test_food_value },
+	{ "m_crit_power_toh_scl_num", test_m_crit_power_toh_scl_num },
+	{ "m_crit_power_toh_scl_den", test_m_crit_power_toh_scl_den },
+	{ "m_crit_chance_power_scl_num", test_m_crit_chance_power_scl_num },
+	{ "m_crit_chance_power_scl_den", test_m_crit_chance_power_scl_den },
+	{ "m_crit_chance_add_den", test_m_crit_chance_add_den },
+	{ "m_armsman_chance", test_m_armsman_chance },
+	{ "m_manaburn_dice", test_m_manaburn_dice },
+	{ "m_crit_level", test_m_crit_level },
+	{ "r_crit_power_launched_toh_scl_num", test_r_crit_power_launched_toh_scl_num },
+	{ "r_crit_power_launched_toh_scl_den", test_r_crit_power_launched_toh_scl_den },
+	{ "r_crit_power_thrown_toh_scl_num", test_r_crit_power_thrown_toh_scl_num },
+	{ "r_crit_power_thrown_toh_scl_den", test_r_crit_power_thrown_toh_scl_den },
+	{ "r_crit_chance_power_scl_num", test_r_crit_chance_power_scl_num },
+	{ "r_crit_chance_power_scl_den", test_r_crit_chance_power_scl_den },
+	{ "r_crit_chance_add_den", test_r_crit_chance_add_den },
+	{ "r_marksman_chance", test_r_marksman_chance },
+	{ "r_crit_level", test_r_crit_level },
 	{ NULL, NULL }
 };

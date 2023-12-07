@@ -35,6 +35,7 @@
 #include "generate.h"
 #include "hint.h"
 #include "init.h"
+#include "message.h"
 #include "mon-init.h"
 #include "mon-list.h"
 #include "mon-lore.h"
@@ -728,6 +729,139 @@ static enum parser_error parse_constants_player(struct parser *p) {
 	return PARSE_ERROR_NONE;
 }
 
+static enum parser_error parse_constants_melee_critical(struct parser *p)
+{
+	struct angband_constants *z = parser_priv(p);
+	const char *label = parser_getsym(p, "label");
+	int value = parser_getint(p, "value");
+
+	if (streq(label, "power-toh-scale-numerator")) {
+		z->m_crit_power_toh_scl_num = value;
+	} else if (streq(label, "power-toh-scale-denominator")) {
+		z->m_crit_power_toh_scl_den = value;
+	} else if (streq(label, "chance-power-scale-numerator")) {
+		z->m_crit_chance_power_scl_num = value;
+	} else if (streq(label, "chance-power-scale-denominator")) {
+		z->m_crit_chance_power_scl_den = value;
+	} else if (streq(label, "chance-add-denominator")) {
+		z->m_crit_chance_add_den = value;
+	} else if (streq(label, "armsman-chance")) {
+		if (value <= 0) {
+			return PARSE_ERROR_INVALID_VALUE;
+		}
+		z->m_armsman_chance = value;
+	} else if (streq(label, "mana-burn-dice")) {
+		if (value < 0) {
+			return PARSE_ERROR_INVALID_VALUE;
+		}
+		z->m_manaburn_dice = value;
+	} else {
+		return PARSE_ERROR_UNDEFINED_DIRECTIVE;
+	}
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_constants_melee_critical_level(struct parser *p)
+{
+	struct angband_constants *z = parser_priv(p);
+	struct critical_level *new_level;
+	unsigned int chance = parser_getuint(p, "chance");
+	const char *msgt_str = parser_getstr(p, "msg");
+	int msgt = message_lookup_by_name(msgt_str);
+
+	if (chance == 0) {
+		return PARSE_ERROR_INVALID_VALUE;
+	}
+	if (msgt < 0) {
+		return PARSE_ERROR_INVALID_MESSAGE;
+	}
+	new_level = mem_alloc(sizeof(*new_level));
+	new_level->next = NULL;
+	new_level->chance = chance;
+	new_level->added_dice = parser_getuint(p, "dice");
+	new_level->msgt = msgt;
+	/* Add it to the end of the linked list. */
+	if (z->m_crit_level_head) {
+		struct critical_level *cursor = z->m_crit_level_head;
+
+		while (cursor->next) {
+			cursor = cursor->next;
+		}
+		cursor->next = new_level;
+	} else {
+		z->m_crit_level_head = new_level;
+	}
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_constants_ranged_critical(struct parser *p)
+{
+	struct angband_constants *z = parser_priv(p);
+	const char *label = parser_getsym(p, "label");
+	int value = parser_getint(p, "value");
+
+	if (streq(label, "power-launched-toh-scale-numerator")) {
+		z->r_crit_power_launched_toh_scl_num = value;
+	} else if (streq(label, "power-launched-toh-scale-denominator")) {
+		z->r_crit_power_launched_toh_scl_den = value;
+	} else if (streq(label, "power-thrown-toh-scale-numerator")) {
+		z->r_crit_power_thrown_toh_scl_num = value;
+	} else if (streq(label, "power-thrown-toh-scale-denominator")) {
+		z->r_crit_power_thrown_toh_scl_den = value;
+	} else if (streq(label, "chance-power-scale-numerator")) {
+		z->r_crit_chance_power_scl_num = value;
+	} else if (streq(label, "chance-power-scale-denominator")) {
+		z->r_crit_chance_power_scl_den = value;
+	} else if (streq(label, "chance-add-denominator")) {
+		z->r_crit_chance_add_den = value;
+	} else if (streq(label, "marksman-chance")) {
+		if (value <= 0) {
+			return PARSE_ERROR_INVALID_VALUE;
+		}
+		z->r_marksman_chance = value;
+	} else {
+		return PARSE_ERROR_UNDEFINED_DIRECTIVE;
+	}
+
+	return PARSE_ERROR_NONE;
+}
+
+static enum parser_error parse_constants_ranged_critical_level(struct parser *p)
+{
+	struct angband_constants *z = parser_priv(p);
+	struct critical_level *new_level;
+	unsigned int chance = parser_getuint(p, "chance");
+	const char *msgt_str = parser_getstr(p, "msg");
+	int msgt = message_lookup_by_name(msgt_str);
+
+	if (chance == 0) {
+		return PARSE_ERROR_INVALID_VALUE;
+	}
+	if (msgt < 0) {
+		return PARSE_ERROR_INVALID_MESSAGE;
+	}
+	new_level = mem_alloc(sizeof(*new_level));
+	new_level->next = NULL;
+	new_level->chance = chance;
+	new_level->added_dice = parser_getuint(p, "dice");
+	new_level->msgt = msgt;
+	/* Add it to the end of the linked list. */
+	if (z->r_crit_level_head) {
+		struct critical_level *cursor = z->r_crit_level_head;
+
+		while (cursor->next) {
+			cursor = cursor->next;
+		}
+		cursor->next = new_level;
+	} else {
+		z->r_crit_level_head = new_level;
+	}
+
+	return PARSE_ERROR_NONE;
+}
+
 static struct parser *init_parse_constants(void) {
 	struct angband_constants *z = mem_zalloc(sizeof *z);
 	struct parser *p = parser_new();
@@ -742,6 +876,14 @@ static struct parser *init_parse_constants(void) {
 	parser_reg(p, "store sym label int value", parse_constants_store);
 	parser_reg(p, "obj-make sym label int value", parse_constants_obj_make);
 	parser_reg(p, "player sym label int value", parse_constants_player);
+	parser_reg(p, "melee-critical sym label int value",
+		parse_constants_melee_critical);
+	parser_reg(p, "melee-critical-level uint chance uint dice str msg",
+		parse_constants_melee_critical_level);
+	parser_reg(p, "ranged-critical sym label int value",
+		parse_constants_ranged_critical);
+	parser_reg(p, "ranged-critical-level uint chance uint dice str msg",
+		parse_constants_ranged_critical_level);
 	return p;
 }
 
@@ -755,8 +897,20 @@ static errr finish_parse_constants(struct parser *p) {
 	return 0;
 }
 
+static void cleanup_critical_levels(struct critical_level *head)
+{
+	while (head) {
+		struct critical_level *target = head;
+
+		head = head->next;
+		mem_free(target);
+	}
+}
+
 static void cleanup_constants(void)
 {
+	cleanup_critical_levels(z_info->m_crit_level_head);
+	cleanup_critical_levels(z_info->r_crit_level_head);
 	mem_free(z_info);
 }
 

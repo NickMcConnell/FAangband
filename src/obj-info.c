@@ -457,22 +457,129 @@ static bool describe_brands(textblock *tb, const struct object *obj)
 }
 
 /**
+ * Sum over the critical levels to get the expected number of
+ * dice added when a crtical happens.
+ */
+static struct my_rational sum_criticals(const struct critical_level *head)
+{
+	struct my_rational remaining_chance = my_rational_construct(1, 1);
+	struct my_rational added_dice = my_rational_construct(0, 1);
+
+	while (head) {
+		/* The last level of criticals takes all the remainder. */
+		struct my_rational level_added_dice = my_rational_construct(
+			head->added_dice, (head->next) ? head->chance : 1);
+
+		level_added_dice = my_rational_product(&level_added_dice,
+			&remaining_chance);
+		added_dice = my_rational_sum(&added_dice, &level_added_dice);
+		if (head->next) {
+			struct my_rational pr_not_this = my_rational_construct(
+				head->chance - 1, head->chance);
+
+			remaining_chance = my_rational_product(
+				&remaining_chance, &pr_not_this);
+		}
+		head = head->next;
+	}
+
+	return added_dice;
+}
+
+/**
  * Account for criticals in the calculation of melee prowess for O-combat;
  * crit chance * average number of dice added
  *
  * Return value is 100x number of dice
  */
-static int calculate_melee_crits(struct player_state state,
-								   const struct object *obj)
+static unsigned int calculate_melee_crits(struct player_state *state,
+		const struct object *obj)
 {
-	int dice = 0;
-	int chance = BTH_PLUS_ADJ * (state.to_h + obj->known->to_h) +
-		state.skills[SKILL_TO_HIT_MELEE];
-	chance = (100 * chance) / (chance + 240);
-	if (player_has(player, PF_ARMSMAN)) {
-		chance = 100 - (83 * (100 - chance)) / 100;
+	unsigned int dice;
+
+	if (z_info->m_crit_level_head) {
+		/*
+		 * Optimistically assume the target is visible (so
+		 * can use chance_of_melee_hit_base() rather than
+		 * chance_of_melee_hit()) and obvious (so armsman will be
+		 * useful).  Pessimistically assume that the target is not
+		 * sleeping and is not subject ot the effects of the mana
+		 * burn ability.  Otherwise, these calculations must agree
+		 * with those in player-attack.c's critical_melee().
+		 */
+		struct player_state old_state = player->state;
+		struct my_rational chance;
+		int power, chance_std_num, chance_std_den;
+		unsigned int tr;
+
+		if (z_info->m_max_added.n == 0) {
+			z_info->m_max_added =
+				sum_criticals(z_info->m_crit_level_head);
+		}
+
+		player->state = *state;
+		power = chance_of_melee_hit_base(player, obj);
+		power = (power * z_info->m_crit_power_toh_scl_num)
+			/ z_info->m_crit_power_toh_scl_den;
+		chance_std_num = power * z_info->m_crit_chance_power_scl_num;
+		chance_std_den = power * z_info->m_crit_chance_power_scl_den
+			+ z_info->m_crit_chance_add_den;
+		if (chance_std_num > 0 && chance_std_den > 0) {
+			chance = my_rational_construct(chance_std_num,
+				chance_std_den);
+		} else {
+			chance = my_rational_construct(0, 1);
+		}
+		if (player_has(player, PF_ARMSMAN)) {
+			/*
+			 * Get a critical if the standard calculation succeeds
+			 * or the armsman ability triggers.
+			 */
+			if (z_info->m_armsman_chance > 0) {
+				struct my_rational chance_armsman =
+					my_rational_construct(
+					1, z_info->m_armsman_chance);
+				struct my_rational chance_not_armsman =
+					my_rational_construct(
+					z_info->m_armsman_chance - 1,
+					z_info->m_armsman_chance);
+
+				chance = my_rational_product(&chance,
+					&chance_not_armsman);
+				chance = my_rational_sum(&chance,
+					&chance_armsman);
+			} else {
+				chance = my_rational_construct(1, 1);
+			}
+		}
+		player->state = old_state;
+		if (chance.n < chance.d) {
+			/*
+			 * Critical only happens some of the time.
+			 * Scale by chance and 100.  Round to the nearest
+			 * integer.
+			 */
+			chance = my_rational_product(&chance,
+				&z_info->m_max_added);
+			dice = my_rational_to_uint(&chance, 100, &tr);
+			if (dice < UINT_MAX && tr >= chance.d / 2) {
+				++dice;
+			}
+		} else {
+			/*
+			 * Critical always happens.  Scale by 100 and
+			 * round to the nearest integer.
+			 */
+			dice = my_rational_to_uint(
+				&z_info->m_max_added, 100, &tr);
+			if (dice < UINT_MAX && tr >= z_info->m_max_added.d / 2) {
+				++dice;
+			}
+		}
+	} else {
+		/* No critical levels defined so no additional damage. */
+		dice = 0;
 	}
-	dice = (537 * chance) / 240;
 
 	return dice;
 }
@@ -480,25 +587,101 @@ static int calculate_melee_crits(struct player_state state,
 /**
  * Missile crits follow the same approach as melee crits.
  */
-static int calculate_missile_crits(struct player_state state,
-									 const struct object *obj,
-									 const struct object *launcher)
+static unsigned int calculate_missile_crits(struct player_state *state,
+		const struct object *obj,
+		const struct object *launcher)
 {
-	int dice = 0;
-	int bonus = state.to_h + obj->known->to_h
-		+ (launcher ? launcher->known->to_h : 0);
-	int chance = BTH_PLUS_ADJ * bonus;
-	if (launcher) {
-		chance += state.skills[SKILL_TO_HIT_BOW];
+	unsigned int dice;
+
+	if (z_info->r_crit_level_head) {
+		/*
+		 * Optimistically assume the target is obvious, that this
+		 * is the first try, and that target's range incurs no
+		 * penalty to hit.  Thus, can use chance_of_missile_hit_base()
+		 * rather than chance_of_missile_hit()).  Also optimistically
+		 * assume that the target is visible so that armsman will be
+		 * useful.  Pessimistically assume that the target is not
+		 * sleeping.  Otherwise, these calculations must agree with
+		 * those in player-attack.c's critical_shot().
+		 */
+		struct player_state old_state = player->state;
+		struct my_rational chance;
+		int power, chance_std_num, chance_std_den;
+		unsigned int tr;
+
+		if (z_info->r_max_added.n == 0) {
+			z_info->r_max_added =
+				sum_criticals(z_info->r_crit_level_head);
+		}
+
+		player->state = *state;
+		power = chance_of_missile_hit_base(player, obj, launcher);
+		if (launcher) {
+			power = (power * z_info->r_crit_power_launched_toh_scl_num)
+				/ z_info->r_crit_power_launched_toh_scl_den;
+		} else {
+			power = (power * z_info->r_crit_power_thrown_toh_scl_num)
+				/ z_info->r_crit_power_thrown_toh_scl_den;
+		}
+		chance_std_num = power * z_info->r_crit_chance_power_scl_num;
+		chance_std_den = power * z_info->r_crit_chance_power_scl_den
+			+ z_info->r_crit_chance_add_den;
+		if (chance_std_num > 0 && chance_std_den > 0) {
+			chance = my_rational_construct(chance_std_num,
+				chance_std_den);
+		} else {
+			chance = my_rational_construct(0, 1);
+		}
+		if (player_has(player, PF_MARKSMAN)) {
+			/*
+			 * Get a critical if the standard calculation succeeds
+			 * or the marksman ability triggers.
+			 */
+			if (z_info->r_marksman_chance > 0) {
+				struct my_rational chance_marksman =
+					my_rational_construct(
+					1, z_info->r_marksman_chance);
+				struct my_rational chance_not_marksman =
+					my_rational_construct(
+					z_info->r_marksman_chance - 1,
+					z_info->r_marksman_chance);
+
+				chance = my_rational_product(&chance,
+					&chance_not_marksman);
+				chance = my_rational_sum(&chance,
+					&chance_marksman);
+			} else {
+				chance = my_rational_construct(1, 1);
+			}
+		}
+		player->state = old_state;
+		if (chance.n < chance.d) {
+			/*
+			 * Critical only happens some of the time.
+			 * Scale by chance and 100.  Round to the nearest
+			 * integer.
+			 */
+			chance = my_rational_product(&chance,
+				&z_info->r_max_added);
+			dice = my_rational_to_uint(&chance, 100, &tr);
+			if (dice < UINT_MAX && tr >= chance.d / 2) {
+				++dice;
+			}
+		} else {
+			/*
+			 * Critical always happens.  Scale by 100 and
+			 * round to the nearest integer.
+			 */
+			dice = my_rational_to_uint(
+				&z_info->r_max_added, 100, &tr);
+			if (dice < UINT_MAX && tr >= z_info->m_max_added.d / 2) {
+				++dice;
+			}
+		}
 	} else {
-		chance += state.skills[SKILL_TO_HIT_THROW];
-		chance *= 3 / 2;
+		/* No critical levels defined so no additional damage. */
+		dice = 0;
 	}
-	chance = (100 * chance) / (chance + 360);
-	if (player_has(player, PF_MARKSMAN)) {
-		chance = 100 - (83 * (100 - chance)) / 100;
-	}
-	dice = (569 * chance) / 500;
 
 	return dice;
 }
@@ -762,15 +945,15 @@ static bool obj_known_damage(const struct object *obj, int *normal_damage,
 
 	/* Get the number of additional dice from criticals (x100) */
 	if (weapon)	{
-		dice += calculate_melee_crits(state, obj);
+		dice += calculate_melee_crits(&state, obj);
 		old_blows = state.num_blows;
 	} else if (ammo) {
-		dice += calculate_missile_crits(player->state, obj, bow);
+		dice += calculate_missile_crits(&player->state, obj, bow);
 	} else {
 		if (of_has(obj->known->flags, OF_PERFECT_BALANCE)) {
 			dice *= 2;
 		}
-		dice += calculate_missile_crits(player->state, obj, NULL);
+		dice += calculate_missile_crits(&player->state, obj, NULL);
 		dice *= 2 + player->lev / 12;
 	}
 
