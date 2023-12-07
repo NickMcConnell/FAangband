@@ -201,7 +201,7 @@ static int chance_of_melee_hit(const struct player *p,
  * \param missile The missile to launch
  * \param launcher The launcher to use (optional)
  */
-static int chance_of_missile_hit_base(const struct player *p,
+int chance_of_missile_hit_base(const struct player *p,
 									  const struct object *missile,
 									  const struct object *launcher)
 {
@@ -438,33 +438,54 @@ static int critical_shot(const struct player *p, const struct monster *mon,
 						 int sleeping_bonus, uint32_t *msg_type,
 						 bool *marksman, int tries)
 {
-	int power = chance_of_missile_hit(p, missile, launcher, mon, tries)
-		+ sleeping_bonus;
 	int add_dice = 0;
+	bool iscrit = false;
 
-	/* Thrown weapons get lots of critical hits. */
-	if (!launcher) {
-		power = power * 3 / 2;
-	}
-
-	/* Marksman Ability - 1/6 critical chance */
-	if (monster_is_visible(mon) && player_has(p, PF_MARKSMAN) && one_in_(6)) {
-		*marksman = true;
-	}
-
-	/* Test for critical hit - chance power / (power + 360) */
-	if (randint1(power + 360) <= power || *marksman) {
-		/* Determine level of critical hit. */
-		if (one_in_(50)) {
-			*msg_type = MSG_HIT_SUPERB;
-			add_dice = 3;
-		} else if (one_in_(10)) {
-			*msg_type = MSG_HIT_GREAT;
-			add_dice = 2;
-		} else {
-			*msg_type = MSG_HIT_GOOD;
-			add_dice = 1;
+	/*
+	 * Marksman ability gives fixed chance for critical against visible
+	 * opponents in addition to the standard critical chance.
+	 */
+	if (monster_is_visible(mon) && player_has(p, PF_MARKSMAN)) {
+		if (*marksman || one_in_(z_info->r_marksman_chance)) {
+			*marksman = true;
+			iscrit = true;
 		}
+	}
+
+	/* Compute standard critical chance if marksman did not trigger. */
+	if (!iscrit) {
+		int power = chance_of_missile_hit(p, missile, launcher, mon,
+			tries) + sleeping_bonus;
+		int chance_num, chance_den;
+
+		/* Apply a rational scale factor. */
+		if (launcher) {
+			power = (power * z_info->r_crit_power_launched_toh_scl_num)
+				/ z_info->r_crit_power_launched_toh_scl_den;
+		} else {
+			power = (power * z_info->r_crit_power_thrown_toh_scl_num)
+				/ z_info->r_crit_power_thrown_toh_scl_den;
+		}
+
+		/*
+		 * Test for critical hit:  chance is a * power /
+		 * (b * power + c)
+		 */
+		chance_num = power * z_info->r_crit_chance_power_scl_num;
+		chance_den = power * z_info->r_crit_chance_power_scl_den
+			+ z_info->r_crit_chance_add_den;
+		iscrit = randint1(chance_den) <= chance_num;
+	}
+
+	/* Determine level of critical hit. */
+	if (iscrit && z_info->r_crit_level_head) {
+		const struct critical_level *this_l = z_info->r_crit_level_head;
+
+		while (this_l->next && !one_in_(this_l->chance)) {
+			this_l = this_l->next;
+		}
+		add_dice = this_l->added_dice;
+		*msg_type = this_l->msgt;
 	} else {
 		*msg_type = MSG_SHOOT_HIT;
 	}
@@ -481,30 +502,48 @@ static int critical_melee(const struct player *p, struct monster *mon,
 							const struct object *obj, int sleeping_bonus,
 							uint32_t *msg_type, bool *armsman)
 {
-	int power = chance_of_melee_hit(p, obj, mon) + sleeping_bonus;
 	int add_dice = 0;
+	bool iscrit = false;
 
-	/* Armsman Ability - 1/6 critical chance */
-	if (monster_is_obvious(mon) && player_has(p, PF_ARMSMAN) && one_in_(6)) {
-		*armsman = true;
+	/*
+	 * Armsman ability gives fixed chance for critical against obvious
+	 * opponents in addition to the standard critical chance.
+	 */
+	if (monster_is_obvious(mon) && player_has(p, PF_ARMSMAN)) {
+		if (*armsman || one_in_(z_info->m_armsman_chance)) {
+			*armsman = true;
+			iscrit = true;
+		}
 	}
 
-	/* Test for critical hit - chance power / (power + 240) */
-	if (randint1(power + 240) <= power || *armsman) {
-		/* Determine level of critical hit. */
-		if (one_in_(40)) {
-			*msg_type = MSG_HIT_HI_GREAT;
-			add_dice = 5;
-		} else if (one_in_(12)) {
-			*msg_type = MSG_HIT_SUPERB;
-			add_dice = 4;
-		} else if (one_in_(3)) {
-			*msg_type = MSG_HIT_GREAT;
-			add_dice = 3;
-		} else {
-			*msg_type = MSG_HIT_GOOD;
-			add_dice = 2;
+	/* Compute standard critical chance if armsman did not trigger. */
+	if (!iscrit) {
+		int power = chance_of_melee_hit(p, obj, mon) + sleeping_bonus;
+		int chance_num, chance_den;
+
+		/* Apply a rational scale factor. */
+		power = (power * z_info->m_crit_power_toh_scl_num)
+			/ z_info->m_crit_power_toh_scl_den;
+
+		/*
+		 * Test for critical hit:  chance is a * power /
+		 * (b * power + c)
+		 */
+		chance_num = power * z_info->m_crit_chance_power_scl_num;
+		chance_den = power * z_info->m_crit_chance_power_scl_den
+			+ z_info->m_crit_chance_add_den;
+		iscrit = randint1(chance_den) <= chance_num;
+	}
+
+	/* Determine level of critical hit. */
+	if (iscrit && z_info->m_crit_level_head) {
+		const struct critical_level *this_l = z_info->m_crit_level_head;
+
+		while (this_l->next && !one_in_(this_l->chance)) {
+			this_l = this_l->next;
 		}
+		add_dice = this_l->added_dice;
+		*msg_type = this_l->msgt;
 	} else {
 		*msg_type = MSG_HIT;
 	}
@@ -514,7 +553,7 @@ static int critical_melee(const struct player *p, struct monster *mon,
 		monster_has_non_innate_spells(mon)) {
 		/* Impair monsters spellcasting and add to damage */
 		mflag_on(mon->mflag, MFLAG_LESS_SPELL);
-		add_dice++;
+		add_dice += z_info->m_manaburn_dice;
 
 		msgt(MSG_HIT, "Mana Burn!");
 	}
