@@ -56,19 +56,103 @@
 #        preferences in the user's files) and the sound played when the
 #        message is displayed (configured globally by lib/customize/sound.prf;
 #        also configurable by preferences in the user's files)
-# fail - determines what makes the effect fail.
+# fail - determines what makes the effect fail; may be specified more than
+#        once - the effect will fail if any of the conditions are met
 #        param one:
 #          1 - object flag
 #          2 - resist
 #          3 - vulnerability
 #          4 - player flag
+#          5 - presence of timed effect
 #        param two:
 #          the actual flag that causes the failure; for an object flag, the
 #          flag must match the first argument to one of the OF() macros in
 #          list-object-flags.h; for a player flag, the flag must match the
 #          first argument to one of the PF() macros in list-player-flags.h; for
 #          a resist or vulnerability, the flag must match the argument to one
-#          of the ELEM() macros in list-elements.h
+#          of the ELEM() macros in list-elements.h; for a timed effect, the
+#          flag must match the argument to one of the TMD() macros in
+#          list-player-timed.h
+# on-begin-effect - (optional) specifies an effect to be invoked when the
+#                   timed effect starts; can be used more than once - the
+#                   additional effects will be executed in the order in which
+#                   they appear
+#                   param one: name of the effect (argument to one of the
+#                       EFFECT() macros in list-effects.h)
+#                   param two: name of the subtype of the effect; can be
+#                       omitted
+#                   param three: radius of the effect; can be omitted and
+#                       must be omitted if the subtype is omitted
+#                   param four: the "other" parameter for the effect; can be
+#                       omitted and must be omitted if the subtype or radius is
+#                       omitted
+# on-end-effect - (optional) specifies an effect to be invoked when the timed
+#                 effect lapses; can be used more than once - the additional
+#                 effects will be executed in the order in which they appear
+#                 param one: name of the effect (argument to one of the
+#                     EFFECT() macros in list-effects.h)
+#                 param two: name of the subtype of the effect; can be omitted
+#                 param three: radius of the effect; can be omitted and must
+#                     be omitted if the subtype is omitted
+#                 param four: the "other" parameter for the effect; can be
+#                     omitted and must be omitted if the subtype or radius is
+#                     omitted
+# effect-yx - (optional) specifies the y and x parameters of the most recently
+#             set effect (i.e. from a prior on-begin-effect or on-end-effect
+#             directive)
+#             param one: is the value of the y parameter for the effect
+#             param two: is the value of the x parameter for the effect
+# effect-dice - (optional) specifies the dice string for the most recently
+#               set effect (i.e. from a prior on-begin-effect or on-end-effect
+#               directive)
+# effect-expr - (optional) defines an expression for the dice string of the
+#               most recently set effect (i.e. from a prior on-begin-effect
+#               or on-end-effect directive); requires that the dice string has
+#               been set for the effect with an effect-dice directive
+#               param one: is the name of the variable to substitute with the
+#                   value of the expression; variable names must be all
+#                   capital letters and a reference to a variable in a dice
+#                   string starts with a $; if the dice string does not contain
+#                   a reference to the given variable, parsing of the game's
+#                   data files will stop with an error
+#               param two: set the name of the base value to modify with the
+#                   operations in the third parameter; the name can be one of
+#                   those listed below; if it does not match any in the list,
+#                   the base value will be zero
+#                     PLAYER_LEVEL - the player's level
+#                     DUNGEON_LEVEL - the dungeon's level
+#                     MAX_SIGHT - the maximum sight range, in grids
+#                     WEAPON_DAMAGE - a random roll for the base damage (only
+#                         the weapon's dice and damage modifiers are included;
+#                         no damage modifiers from the player or equipment
+#                         other than the weapon are used) of the player's
+#                         equipped weapon; if the player has no equipped
+#                         weapon, the value of this is zero
+#                     PLAYER_HP - the player's current number of hit points
+#                     MONSTER_PERCENT_HP_GONE - ((maximum hit points for the
+#                         player's target monster - current hit points for the
+#                         player's target monster) * 100) / maximum hit points
+#                         for the player's target monster or 0 if the player
+#                         doesn't currently have a targeted monster
+#                     TRAP_POWER - 3 + random integer between 1 and n +
+#                         n / 2 where n is player level + (player level *
+#                         player level) / 25
+#               param three: sets the operations to perform on the base value to
+#                   get the value substituted into the dice expression; for
+#                   instance, "* 2 / 3" would multiply the base value by 2 then
+#                   divide that result by three, discarding any remainder;
+#                   operators that are allowed are '+' (addition),
+#                   '-' (subtraction), '*' (multiplication), '/' (integer
+#                   division; discards remainder), and 'n' or 'N' (either negate
+#                   the result from before the operator); integer constants
+#                   in the operations must be between -32768 and 32767;
+#                   operators and integer constants in the operations should be
+#                   separated by single spaces
+# effect-msg - (optional) appends to the message associated with the most
+#              recently set effect (i.e. from a prior on-begin-effect or
+#              on-end-effect directive); how that message is used depends on
+#              the effect - typically it may be printed during the effect or
+#              is used as a death message
 # resist - (optional) when this timed property is active, the recipient gains
 #          a temporary resistance to the named element
 # brand - (optional) when this timed property is active, the recipient gains
@@ -84,13 +168,37 @@
 #                exact synonym, except for duration; if the second parameter is
 #                zero, the timed property has other effects that are not
 #                implied by the named object property
+# lower-bound - (optional) overrides the default lower bound of zero for the
+#               timed effect; the lower bound must be non-negative, less
+#               than 32768, and less than or equal to the maximum for any of
+#               the timed effect's grades; if the lower bound is greater than
+#               zero, the timed effect is always active (so a message set by
+#               on-end or an effect by on-begin-effect or on-end-effect will
+#               not be used)
+# flags - (optional) specifies one or more flags for the timed effect; can
+#         appear more than once with all the flags specified accumulating;
+#         more than one flag can be specified each time it is used - the names
+#         of the flags must be separated by spaces or '|'; the flag names or
+#         that are understood are:
+#         BENEFICIAL - this timed effect is beneficial and will time out more
+#             slowly if the player has the Enhance Magic specialty
+#         NONSTACKING - any attempt to increase the timed effect while it is
+#             already active will not increase the duration; this is a stronger
+#             restriction than having the timed effect fail because of the
+#             timed effect itself, primarily because NONSTACKING also affects
+#             cases, like TIMED_INC_NO_RES effects, where the failure check is
+#             bypassed; NONSTACKING is also handled differently than failing
+#             for the timed effect itself in terms of lore checks (if a timed
+#             effect is NONSTACKING, lore for a monster won't show that the
+#             monster's attack inflicting that status is resisted solely
+#             because the character is already subject to the timed effect)
 
 name:FAST
 desc:haste
 grade:G:10000:Haste:You feel yourself moving faster!
 on-end:You feel yourself slow down.
 msgt:SPEED
-beneficial:1
+flags:BENEFICIAL
 
 name:SLOW
 desc:slowness
@@ -112,6 +220,7 @@ grade:r:10000:Paralyzed!:You are paralysed!
 on-end:You can move again.
 msgt:PARALYZED
 fail:1:FREE_ACT
+flags:NONSTACKING
 
 name:CONFUSED
 desc:confusion
@@ -146,6 +255,7 @@ on-increase:You are more poisoned!
 on-decrease:You are less poisoned.
 msgt:POISONED
 fail:2:POIS
+fail:5:OPP_POIS
 
 name:CUT
 desc:wounds
@@ -169,7 +279,7 @@ on-end:You are no longer stunned.
 msgt:STUN
 fail:1:PROT_STUN
 
-# Note food grades are in percantages here, and are translated on parsing
+# Note food grades are in percentages here, and are translated on parsing
 name:FOOD
 desc:nourishment
 grade:R:1:Starving: :You are starving!!
@@ -179,6 +289,7 @@ grade:y:15:Hungry:You are still hungry.:You are getting hungry.
 grade:G:90:Fed:You are no longer hungry.:You are no longer full.
 grade:g:100:Full:You are full!:
 msgt:HUNGRY
+lower-bound:1
 
 name:PROTEVIL
 desc:protection from evil
@@ -186,14 +297,14 @@ grade:G:10000:ProtEvil:You feel safe from evil!
 on-end:You no longer feel safe from evil.
 on-increase:You feel even safer from evil!
 msgt:PROT_EVIL
-beneficial:1
+flags:BENEFICIAL
 
 name:INVULN
 desc:invulnerability
 grade:G:10000:Invuln:You feel invulnerable!
 on-end:You feel vulnerable once more.
 msgt:INVULN
-beneficial:1
+flags:BENEFICIAL
 
 name:HERO
 desc:heroism
@@ -201,8 +312,8 @@ grade:G:10000:Hero:You feel like a hero!
 on-end:You no longer feel heroic.
 on-increase:You feel more like a hero!
 msgt:HERO
-beneficial:1
 flag-synonym:PROT_FEAR:0
+flags:BENEFICIAL
 
 name:SHERO
 desc:berserk rage
@@ -210,8 +321,8 @@ grade:G:10000:Berserk:You feel like a killing machine!
 on-end:You no longer feel berserk.
 on-increase:You feel even more berserk!
 msgt:BERSERK
-beneficial:1
 flag-synonym:PROT_FEAR:0
+flags:BENEFICIAL
 
 name:SHIELD
 desc:mystic shield
@@ -219,7 +330,7 @@ grade:G:10000:Shield:A mystic shield forms around your body!
 on-end:Your mystic shield crumbles away.
 on-increase:The mystic shield strengthens.
 msgt:SHIELD
-beneficial:1
+flags:BENEFICIAL
 
 name:BLESSED
 desc:your AC and to-hit bonus
@@ -227,7 +338,7 @@ grade:G:10000:Blssd:You feel righteous!
 on-end:The prayer has expired.
 on-increase:You feel more righteous!
 msgt:BLESSED
-beneficial:1
+flags:BENEFICIAL
 
 name:SINVIS
 desc:see invisible
@@ -235,8 +346,8 @@ grade:G:10000:SInvis:Your eyes feel very sensitive!
 on-end:Your eyes no longer feel so sensitive.
 on-increase:Your eyes feel more sensitive!
 msgt:SEE_INVIS
-beneficial:1
 flag-synonym:SEE_INVIS:1
+flags:BENEFICIAL
 
 name:SINFRA
 desc:enhanced infravision
@@ -244,7 +355,7 @@ grade:G:10000:Infra:Your eyes begin to tingle!
 on-end:Your eyes stop tingling.
 on-increase:The tingling in your eyes intensifies.
 msgt:INFRARED
-beneficial:1
+flags:BENEFICIAL
 
 name:OPP_ACID
 desc:40% acid resistance
@@ -252,8 +363,8 @@ grade:s:10000:RAcid:You feel resistant to acid!
 on-end:You are no longer resistant to acid.
 on-increase:Your resistance to acid feels renewed!
 msgt:RES_ACID
-beneficial:1
 resist:ACID
+flags:BENEFICIAL
 
 name:OPP_ELEC
 desc:40% electricity resistance
@@ -261,8 +372,8 @@ grade:b:10000:RElec:You feel resistant to electricity!
 on-end:You are no longer resistant to electricity.
 on-increase:Your resistance to electricity feels renewed!
 msgt:RES_ELEC
-beneficial:1
 resist:ELEC
+flags:BENEFICIAL
 
 name:OPP_FIRE
 desc:40% fire resistance
@@ -270,8 +381,8 @@ grade:r:10000:RFire:You feel resistant to fire!
 on-end:You are no longer resistant to fire.
 on-increase:Your resistance to fire feels renewed!
 msgt:RES_FIRE
-beneficial:1
 resist:FIRE
+flags:BENEFICIAL
 
 name:OPP_COLD
 desc:40% cold resistance
@@ -279,8 +390,8 @@ grade:w:10000:RCold:You feel resistant to cold!
 on-end:You are no longer resistant to cold.
 on-increase:Your resistance to cold feels renewed!
 msgt:RES_COLD
-beneficial:1
 resist:COLD
+flags:BENEFICIAL
 
 name:OPP_POIS
 desc:40% poison resistance
@@ -288,16 +399,16 @@ grade:g:10000:RPois:You feel resistant to poison!
 on-end:You are no longer resistant to poison.
 on-increase:Your resistance to poison feels renewed!
 msgt:RES_POIS
-beneficial:1
 resist:POIS
+flags:BENEFICIAL
 
 name:OPP_CONF
 desc:confusion resistance
 grade:v:10000:RConf:You feel resistant to confusion!
 on-end:You are no longer resistant to confusion.
 on-increase:Your resistance to confusion feels renewed!
-beneficial:1
 flag-synonym:PROT_CONF:1
+flags:BENEFICIAL
 
 name:AMNESIA
 desc:amnesia
@@ -311,8 +422,8 @@ grade:B:10000:ESP:Your mind expands.
 on-end:Your horizons are once more limited.
 on-increase:Your mind expands further.
 msgt:GENERIC
-beneficial:1
 flag-synonym:TELEPATHY:1
+flags:BENEFICIAL
 
 name:STONESKIN
 desc:stone skin
@@ -331,6 +442,8 @@ desc:sprinting
 grade:G:10000:Sprint:You start sprinting.
 on-end:You suddenly stop sprinting.
 msgt:SPEED
+on-end-effect:TIMED_INC_NO_RES:SLOW
+effect-dice:100
 
 name:BOLD
 desc:fearlessness
@@ -338,8 +451,8 @@ grade:G:10000:Bold:You feel bold.
 on-end:You no longer feel bold.
 on-increase:You feel even bolder!
 msgt:BOLD
-beneficial:1
 flag-synonym:PROT_FEAR:1
+flags:BENEFICIAL
 
 name:SCRAMBLE
 desc:scrambled
@@ -348,87 +461,89 @@ on-end:Your body reasserts its true nature.
 on-increase:You are more scrambled!
 msgt:SCRAMBLE
 fail:2:NEXUS
+on-begin-effect:SCRAMBLE_STATS
+on-end-effect:UNSCRAMBLE_STATS
 
 name:TRAPSAFE
 desc:safety from traps
 grade:G:10000:TrapSafe:You feel safe from traps.
 on-end:You feel vulnerable to traps again.
 on-increase:You feel even safer from traps!
-beneficial:1
 flag-synonym:TRAP_IMMUNE:1
+flags:BENEFICIAL
 
 name:FASTCAST
 desc:mana channelling
 grade:i:10000:FastCast:You feel your mind accelerate.
 on-end:You feel your mind slow again.
-beneficial:1
+flags:BENEFICIAL
 
 name:ATT_ACID
 desc:temporary acid brand
 grade:s:10000:AttAcid:Your {kind} start{s} to drip with acid!
 on-end:The acid disappears from your {kind}.
-beneficial:1
 brand:ACID_3
+flags:BENEFICIAL
 
 name:ATT_ELEC
 desc:temporary lightning brand
 grade:b:10000:AttElec:Sparks gather around your {kind}!
 on-end:The sparks fade from your {kind}.
-beneficial:1
 brand:ELEC_3
+flags:BENEFICIAL
 
 name:ATT_FIRE
 desc:temporary fire brand
 grade:r:10000:AttFire:Flames surround your {kind}!
 on-end:The flames on your {kind} subside.
-beneficial:1
 brand:FIRE_3
+flags:BENEFICIAL
 
 name:ATT_COLD
 desc:temporary cold brand
 grade:w:10000:AttCold:Your {kind} {is} covered in frost!
 on-end:The frost evaporates from your {kind}.
-beneficial:1
 brand:COLD_3
+flags:BENEFICIAL
 
 name:ATT_POIS
 desc:temporary poison brand
 grade:g:10000:AttPois:Your {kind} drip{s} with poison!
 on-end:The poison disappears from your {kind}.
-beneficial:1
 brand:POIS_3
+flags:BENEFICIAL
 
 name:ATT_CONF
 desc:temporary monster confusion
 grade:U:10000:AttConf:Your hands begin to glow!
 on-end:The glow fades from your hands.
-beneficial:1
+flags:BENEFICIAL
 
 name:ATT_EVIL
 desc:temporary slay evil
 grade:w:10000:AttEvil:Your {kind} {is} imbued with holy force!
 on-end:Holy force fades from your {kind}.
-beneficial:1
 slay:EVIL_2
+flags:BENEFICIAL
 
 name:ATT_DEMON
 desc:temporary slay demon
 grade:R:10000:AttDemon:Your {kind} become{s} a bane of demons!
 on-end:Your {kind} return{s} to normal.
-beneficial:1
 slay:DEMON_5
+flags:BENEFICIAL
 
 name:ATT_VAMP
 desc:temporary hitpoint siphoning
 grade:p:10000:AttVamp:Your can drain life from your victims!
 on-end:Your life-draining power passes.
-beneficial:1
+flags:BENEFICIAL
 
 name:HEAL
 desc:turn-by-turn healing through increased metabolism
 grade:G:10000:Heal:Your metabolism speeds up!
 on-end:Your metabolism return to normal.
-beneficial:1
+flags:BENEFICIAL
 
 name:COMMAND
 desc:commanding a monster
@@ -474,12 +589,12 @@ name:STEALTH
 desc:stealth
 grade:D:10000:Stealth:You feel silent!
 on-end:You feel less stealthy.
-beneficial:1
+flags:BENEFICIAL
 
 name:FREE_ACT
 desc:free action
 grade:G:10000:FrAct:Your limbs fill with energy!
 on-end:Your limbs return to normal.
 on-increase:Your limbs feel more energetic!
-beneficial:1
 flag-synonym:FREE_ACT:1
+flags:BENEFICIAL
