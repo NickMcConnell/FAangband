@@ -3786,6 +3786,29 @@ bool effect_handler_CLEAR_VALUE(effect_handler_context_t *context)
 }
 
 /**
+ * Scramble the player's stats.  This is only intended for use by the
+ * timed effect, TMD_SCRAMBLE.  Other effect chains wanting to incur a
+ * scrambling effect should use TIMED_INC:SCRAMBLE or TIMED_INC_NO_RES:SCRAMBLE.
+ */
+bool effect_handler_SCRAMBLE_STATS(effect_handler_context_t *context)
+{
+	player_scramble_stats(player);
+	return true;
+}
+
+/**
+ * Unscramble the player's stats.  This is only intended for use by the
+ * timed effect, TMD_SCRAMBLE.  Other effect chains wanting to undo a
+ * scrambling effect should use CURE:SCRAMBLE (or perhaps TIMED_DEC:SCRAMBLE
+ * to merely reduce the duration of an existing scramble effect).
+ */
+bool effect_handler_UNSCRAMBLE_STATS(effect_handler_context_t *context)
+{
+	player_fix_scramble(player);
+	return true;
+}
+
+/**
  * Special effect to refund energy, to be used at the end of an effect chain
  * so that the playereffectively gets a free move
  */
