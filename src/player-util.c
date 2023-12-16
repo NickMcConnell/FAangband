@@ -1821,7 +1821,7 @@ void player_handle_post_move(struct player *p, bool eval_trap,
 		if (is_involuntary) {
 			cmdq_flush();
 		}
-		square_know_pile(cave, p->grid);
+		square_know_pile(cave, p->grid, NULL);
 	}
 
 	/* Some terrain types need special treatment */

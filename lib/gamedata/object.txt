@@ -2293,7 +2293,9 @@ weight:5
 cost:70
 alloc:50:0 to 70
 pile:40:1d5
-effect:DETECT_GOLD
+effect:DETECT_ORE
+effect-yx:22:40
+effect:SENSE_GOLD
 effect-yx:22:40
 effect:SENSE_OBJECTS
 effect-yx:22:40
@@ -3019,6 +3021,8 @@ effect:RESTORE_STAT:INT
 effect:GAIN_STAT:INT
 effect:RESTORE_STAT:WIS
 effect:GAIN_STAT:WIS
+effect:DETECT_ORE
+effect-yx:22:40
 effect:DETECT_GOLD
 effect-yx:22:40
 effect:DETECT_OBJECTS
@@ -4132,7 +4136,9 @@ level:5
 weight:15
 cost:1000
 alloc:30:8 to 75
-effect:DETECT_GOLD
+effect:DETECT_ORE
+effect-yx:22:40
+effect:SENSE_GOLD
 effect-yx:22:40
 effect:SENSE_OBJECTS
 effect-yx:22:40
@@ -4148,7 +4154,9 @@ alloc:30:50 to 100
 attack:1d1:0:0
 armor:0:0
 flags:IGNORE_ELEC
-effect:DETECT_GOLD
+effect:DETECT_ORE
+effect-yx:22:40
+effect:SENSE_GOLD
 effect-yx:22:40
 effect:SENSE_OBJECTS
 effect-yx:22:40

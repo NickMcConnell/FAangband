@@ -1638,7 +1638,7 @@ void do_cmd_hold(struct command *cmd)
 				player->upkeep->energy_use = z_info->move_energy;
 		} else {
 			event_signal(EVENT_SEEFLOOR);
-			square_know_pile(cave, player->grid);
+			square_know_pile(cave, player->grid, NULL);
 		}
 	}
 }
