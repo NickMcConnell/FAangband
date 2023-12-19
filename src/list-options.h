@@ -95,4 +95,5 @@ OP(birth_know_flavors,    "Know all flavors on birth",
 BIRTH, false)
 OP(birth_levels_persist,  "Persistent levels (disabled)",
 BIRTH, false)
-
+OP(birth_thrall,          "Start on steps of Angband (wilderness only)",
+BIRTH, false)

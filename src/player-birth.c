@@ -353,7 +353,8 @@ char *get_history(struct history_chart *chart)
 static void get_level(struct player *p)
 {
 	/* Check if they're an "advanced race" */
-	if (world && (p->race->start_lev - 1) && !strstr(world->name, "Dungeon")) {
+	if (world && (p->race->start_lev - 1) && !strstr(world->name, "Dungeon") &&
+		!OPT(player, birth_thrall)) {
 		/* Add the experience */
 		p->exp = player_exp[p->race->start_lev - 2];
 		p->max_exp = player_exp[p->race->start_lev - 2];
@@ -376,6 +377,11 @@ static void get_level(struct player *p)
 	/* Set home town */
 	if (strstr(world->name, "Dungeon")) {
 		p->home = 1;
+
+		/* Hack - not a thrall */
+		option_set(option_name(OPT_birth_thrall), 0);
+	} else if (OPT(player, birth_thrall)) {
+		p->home = 0;
 	} else {
 		p->home = level_by_name(world, p->race->hometown)->index;
 	}
@@ -552,6 +558,7 @@ static void upgrade_weapon(struct player *p)
 
 	/* Check if this is possible */
 	if (!weapon) return;
+	if (!player->home) return;
 	if (!hometown) return;
 	if (!hometown->ego) return;
 
@@ -677,7 +684,7 @@ static void player_outfit(struct player *p)
 		assert(kind);
 
 		/* Without start_kit, only start with 1 food and 1 light */
-		if (!OPT(p, birth_start_kit)) {
+		if (!OPT(p, birth_start_kit) && !OPT(p, birth_thrall)) {
 			if (!tval_is_food_k(kind) && !tval_is_light_k(kind))
 				continue;
 
@@ -722,6 +729,90 @@ static void player_outfit(struct player *p)
 		p->au -= object_value_real(obj, obj->number);
 
 		/* Carry the item */
+		inven_carry(p, obj, true, false);
+		kind->everseen = true;
+	}
+
+	/* Dungeon gear for escaping thralls */
+	if (OPT(p, birth_thrall)) {
+		struct object_kind *kind;
+
+		/* Nice amulet */
+		obj = object_new();
+		kind = lookup_kind(TV_AMULET, lookup_sval(TV_AMULET, "Amethyst"));
+		object_prep(obj, kind, 0, MINIMISE);
+		obj->modifiers[OBJ_MOD_MAGIC_MASTERY] = 4;
+		of_on(obj->flags, OF_TELEPATHY);
+		obj->origin = ORIGIN_BIRTH;
+		known_obj = object_new();
+		obj->known = known_obj;
+		object_set_base_known(p, obj);
+		object_flavor_aware(p, obj);
+		obj->known->pval = obj->pval;
+		obj->known->effect = obj->effect;
+		obj->known->notice |= OBJ_NOTICE_ASSESSED;
+		inven_carry(p, obj, true, false);
+		kind->everseen = true;
+
+		/* Detection */
+		obj = object_new();
+		kind = lookup_kind(TV_ROD, lookup_sval(TV_ROD, "Detection"));
+		object_prep(obj, kind, 0, MINIMISE);
+		obj->origin = ORIGIN_BIRTH;
+		known_obj = object_new();
+		obj->known = known_obj;
+		object_set_base_known(p, obj);
+		object_flavor_aware(p, obj);
+		obj->known->pval = obj->pval;
+		obj->known->effect = obj->effect;
+		obj->known->notice |= OBJ_NOTICE_ASSESSED;
+		inven_carry(p, obj, true, false);
+		kind->everseen = true;
+
+		/* Mapping */
+		obj = object_new();
+		kind = lookup_kind(TV_ROD, lookup_sval(TV_ROD, "Magic Mapping"));
+		object_prep(obj, kind, 0, MINIMISE);
+		obj->origin = ORIGIN_BIRTH;
+		known_obj = object_new();
+		obj->known = known_obj;
+		object_set_base_known(p, obj);
+		object_flavor_aware(p, obj);
+		obj->known->pval = obj->pval;
+		obj->known->effect = obj->effect;
+		obj->known->notice |= OBJ_NOTICE_ASSESSED;
+		inven_carry(p, obj, true, false);
+		kind->everseen = true;
+
+		/* Destruction */
+		obj = object_new();
+		kind = lookup_kind(TV_SCROLL, lookup_sval(TV_SCROLL, "*Destruction*"));
+		object_prep(obj, kind, 0, MINIMISE);
+		obj->number = 5;
+		obj->origin = ORIGIN_BIRTH;
+		known_obj = object_new();
+		obj->known = known_obj;
+		object_set_base_known(p, obj);
+		object_flavor_aware(p, obj);
+		obj->known->pval = obj->pval;
+		obj->known->effect = obj->effect;
+		obj->known->notice |= OBJ_NOTICE_ASSESSED;
+		inven_carry(p, obj, true, false);
+		kind->everseen = true;
+		
+		/* Identify */
+		obj = object_new();
+		kind = lookup_kind(TV_SCROLL, lookup_sval(TV_SCROLL, "Identify Rune"));
+		object_prep(obj, kind, 0, MINIMISE);
+		obj->number = 15;
+		obj->origin = ORIGIN_BIRTH;
+		known_obj = object_new();
+		obj->known = known_obj;
+		object_set_base_known(p, obj);
+		object_flavor_aware(p, obj);
+		obj->known->pval = obj->pval;
+		obj->known->effect = obj->effect;
+		obj->known->notice |= OBJ_NOTICE_ASSESSED;
 		inven_carry(p, obj, true, false);
 		kind->everseen = true;
 	}
@@ -1107,7 +1198,7 @@ static void do_birth_reset(bool use_quickstart, birther *quickstart_prev_local)
 		load_roller_data(quickstart_prev_local, NULL);
 
 	player_generate(player, NULL, NULL, use_quickstart && quickstart_prev_local);
-	player->depth = 0;
+	player->depth = OPT(player, birth_thrall) ? 58 : 0;
 
 	/* Update stats with bonuses, etc. */
 	get_bonuses();
@@ -1327,7 +1418,13 @@ void do_cmd_accept_character(struct command *cmd)
 
 	ignore_birth_init();
 
-	player->place = player->home;
+	/* Handle player placement */
+	if (OPT(player, birth_thrall)) {
+		player->place = level_by_name(world, "Anfauglith 58")->index;
+		player->upkeep->create_stair = FEAT_MORE;
+	} else {
+		player->place = player->home;
+	}
 
 	/* Clear old messages, add new starting message */
 	history_clear(player);

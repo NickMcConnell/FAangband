@@ -2543,7 +2543,9 @@ static int initialize_summary(struct player *p,
 	}
 	visitor.selfunc = select_wearable;
 	visitor.selfunc_closure = NULL;
-	apply_visitor_to_pile(store_home(p)->stock, &visitor);
+	if (store_home(p)) {
+		apply_visitor_to_pile(store_home(p)->stock, &visitor);
+	}
 
 	/* Allocate storage and add the available items. */
 	if (count > (*s)->nalloc) {
@@ -2577,7 +2579,9 @@ static int initialize_summary(struct player *p,
 	add_obj_data.src = EQUIP_SOURCE_HOME;
 	visitor.selfunc = select_wearable;
 	visitor.selfunc_closure = NULL;
-	apply_visitor_to_pile(store_home(p)->stock, &visitor);
+	if (store_home(p)) {
+		apply_visitor_to_pile(store_home(p)->stock, &visitor);
+	}
 
 	compute_player_and_equipment_values(p, *s);
 

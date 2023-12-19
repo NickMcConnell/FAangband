@@ -358,9 +358,10 @@ static void alloc_paths(struct chunk *c, struct player *p, int place,
 	}
 
 	/* Place the player, unless we've just come upstairs */
-	if ((last_lev->topography == TOP_CAVE) &&
-		(last_lev->locality != LOC_UNDERWORLD) &&
-		(last_lev->locality != LOC_ARENA))
+	if (((last_lev->topography == TOP_CAVE) &&
+		 (last_lev->locality != LOC_UNDERWORLD) &&
+		 (last_lev->locality != LOC_ARENA))
+		|| ((turn <= 10) && OPT(player, birth_thrall)))
 		return;
 
 	player_place(c, player, pgrid);

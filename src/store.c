@@ -604,6 +604,8 @@ struct store *store_home(struct player *p)
 	int i;
 	struct town *hometown = NULL;
 
+	if (OPT(player, birth_thrall) && !p->home) return NULL; 
+
 	for (i = 0; i < world->num_towns; i++) {
 		if (world->towns[i].index == p->home) {
 			hometown = &world->towns[i];
@@ -1087,6 +1089,8 @@ void home_carry(struct object *obj)
 {
 	struct object *temp_obj;
 	struct store *store = store_home(player);
+
+	if (!store) return;
 
 	/* Check each existing object (try to combine) */
 	for (temp_obj = store->stock; temp_obj; temp_obj = temp_obj->next) {

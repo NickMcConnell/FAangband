@@ -478,7 +478,7 @@ static void death_info(const char *title, int row)
 	}
 
 	/* Home -- if anything there */
-	if (home->stock) {
+	if (home && home->stock) {
 		int page;
 		struct object *obj = home->stock;
 

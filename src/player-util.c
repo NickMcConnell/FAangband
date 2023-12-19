@@ -376,10 +376,13 @@ void death_knowledge(struct player *p)
 		obj->known->activation = obj->activation;
 	}
 
-	for (obj = home->stock; obj; obj = obj->next) {
-		object_flavor_aware(p, obj);
-		obj->known->effect = obj->effect;
-		obj->known->activation = obj->activation;
+	/* Thralls may not have a home */
+	if (home) {
+		for (obj = home->stock; obj; obj = obj->next) {
+			object_flavor_aware(p, obj);
+			obj->known->effect = obj->effect;
+			obj->known->activation = obj->activation;
+		}
 	}
 
 	history_unmask_unknown(p);

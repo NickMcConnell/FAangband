@@ -1224,24 +1224,26 @@ void write_character_dump(ang_file *fff)
 	file_putf(fff, "\n\n");
 
 	/* Dump the Home -- if anything there */
-	store_stock_list(home, home_list, z_info->store_inven_max);
-	if (home->stock_num) {
-		/* Header */
-		file_putf(fff, "  [Home Inventory]\n\n");
+	if (home) {
+		store_stock_list(home, home_list, z_info->store_inven_max);
+		if (home->stock_num) {
+			/* Header */
+			file_putf(fff, "  [Home Inventory]\n\n");
 
-		/* Dump all available items */
-		for (i = 0; i < z_info->store_inven_max; i++) {
-			struct object *obj = home_list[i];
-			if (!obj) break;
-			object_desc(o_name, sizeof(o_name), obj,
-				ODESC_PREFIX | ODESC_FULL, player);
-			file_putf(fff, "%c) %s\n", I2A(i), o_name);
+			/* Dump all available items */
+			for (i = 0; i < z_info->store_inven_max; i++) {
+				struct object *obj = home_list[i];
+				if (!obj) break;
+				object_desc(o_name, sizeof(o_name), obj,
+							ODESC_PREFIX | ODESC_FULL, player);
+				file_putf(fff, "%c) %s\n", I2A(i), o_name);
 
-			object_info_chardump(fff, obj, 5, 72);
+				object_info_chardump(fff, obj, 5, 72);
+			}
+
+			/* Add an empty line */
+			file_putf(fff, "\n\n");
 		}
-
-		/* Add an empty line */
-		file_putf(fff, "\n\n");
 	}
 
 	/* Dump character history */

@@ -1219,6 +1219,13 @@ void textui_store_knowledge(struct store *store)
 	screen_save();
 	clear_from(0);
 
+	if (!store) {
+		prt("You have no home!", 15, 0);
+		anykey();
+		screen_load();
+		return;
+	}
+
 	store_menu_init(&ctx, store, true);
 	menu_select(&ctx.menu, 0, false);
 
