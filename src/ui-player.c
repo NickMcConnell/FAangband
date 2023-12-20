@@ -737,7 +737,8 @@ static const char *show_speed(void)
 {
 	static char buffer[10];
 	int tmp = player->state.speed;
-	if (player->timed[TMD_FAST]) tmp -= 10;
+	if (player->timed[TMD_FAST])
+		tmp -= (player_has(player, PF_ENHANCE_MAGIC)) ? 13 : 10;
 	if (player->timed[TMD_SLOW]) tmp += 10;
 	if (tmp == 110) return "Normal";
 	int multiplier = 10 * extract_energy[tmp] / extract_energy[110];
@@ -886,7 +887,8 @@ static struct panel *get_panel_skills(void) {
 
 	/* Speed */
 	skill = player->state.speed;
-	if (player->timed[TMD_FAST]) skill -= 10;
+	if (player->timed[TMD_FAST])
+		skill -= (player_has(player, PF_ENHANCE_MAGIC)) ? 13 : 10;
 	if (player->timed[TMD_SLOW]) skill += 10;
 	attr = skill < 110 ? COLOUR_L_UMBER : COLOUR_L_GREEN;
 	panel_line(p, attr, "Speed", "%s", show_speed());

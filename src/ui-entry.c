@@ -1443,6 +1443,7 @@ static int get_timed_element_effect(const struct player *p, int ind)
 
 static int get_timed_modifier_effect(const struct player *p, int ind)
 {
+	bool enhance = player_has(p, PF_ENHANCE_MAGIC);
 	int result;
 
 	/* Mimics calculations made in player-calcs.c. */
@@ -1453,11 +1454,12 @@ static int get_timed_modifier_effect(const struct player *p, int ind)
 		break;
 
 	case OBJ_MOD_INFRA:
-		result = (p->timed[TMD_SINFRA]) ? 5 : 0;
+		result = (p->timed[TMD_SINFRA]) ? ((enhance) ? 8 : 5) : 0;
 		break;
 
 	case OBJ_MOD_SPEED:
-		result = (p->timed[TMD_FAST] || p->timed[TMD_SPRINT]) ? 10 : 0;
+		result = (p->timed[TMD_FAST] || p->timed[TMD_SPRINT]) ?
+			((enhance) ? 13 : 10) : 0;
 		if (p->timed[TMD_STONESKIN]) {
 			result -= 5;
 		}
@@ -1470,7 +1472,7 @@ static int get_timed_modifier_effect(const struct player *p, int ind)
 		break;
 
 	case OBJ_MOD_STEALTH:
-		result = (p->timed[TMD_STEALTH]) ? 10 : 0;
+		result = (p->timed[TMD_STEALTH]) ? ((enhance) ? 13 : 10) : 0;
 		break;
 
 	default:
