@@ -1117,7 +1117,8 @@ bool effect_handler_RECALL(effect_handler_context_t *context)
 	/* No recall */
 	if ((OPT(player, birth_no_recall) && !player->total_winner) ||
 		((!current) && (cave->mon_cnt == 1)) ||
-		((player->place == player->home) && !player->recall_pt)) {
+		((player->place == player->home) && !player->recall_pt) ||
+		!player->home) {
 		msg("Nothing happens.");
 		return true;
 	}

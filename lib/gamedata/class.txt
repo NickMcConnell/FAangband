@@ -1409,7 +1409,7 @@ equip:food:Ration of Food:1:3:none
 equip:light:Wooden Torch:1:3:none
 equip:sword:Dagger:1:1:none
 equip:soft armour:Soft Leather Armour:1:1:none
-equip:scroll:Word of Recall:1:1:birth_no_recall
+equip:scroll:Word of Recall:1:1:birth_no_recall | birth_thrall
 equip:magic book:[First Spells]:1:1:none
 player-flags:CHOOSE_SPELLS | STEAL
 player-flags:BACKSTAB | TRAP | SLING_SPEED_GREAT
