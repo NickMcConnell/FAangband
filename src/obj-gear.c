@@ -1596,38 +1596,33 @@ void remove_set(struct artifact_set *set)
 				}
 
 				/* Brands */
-				if (item->brands) {
-					bool none_left = true;
-					for (j = 0; j < z_info->brand_max; j++) {
-						if (item->brands[j]) {
-							obj->brands[j] = false;
-						}
-						if (obj->brands[j]) {
-							none_left = false;
-						}
+				if (obj->artifact->brands) {
+					if (obj->brands) {
+						memset(obj->brands, 0,
+							z_info->brand_max
+							* sizeof(*obj->brands));
 					}
-					if (none_left) {
-						mem_free(obj->brands);
-						obj->brands = NULL;
-					}
+					copy_brands(&obj->brands,
+						obj->artifact->brands);
+				} else {
+					mem_free(obj->brands);
+					obj->brands = NULL;
 				}
 
 				/* Slays */
-				if (item->slays) {
-					bool none_left = true;
-					for (j = 0; j < z_info->slay_max; j++) {
-						if (item->slays[j]) {
-							obj->slays[j] = false;
-						}
-						if (obj->slays[j]) {
-							none_left = false;
-						}
+				if (obj->artifact->slays) {
+					if (obj->slays) {
+						memset(obj->slays, 0,
+							z_info->slay_max
+							* sizeof(*obj->slays));
 					}
-					if (none_left) {
-						mem_free(obj->slays);
-						obj->slays = NULL;
-					}
+					copy_slays(&obj->slays,
+						obj->artifact->slays);
+				} else {
+					mem_free(obj->slays);
+					obj->slays = NULL;
 				}
+
 				player_know_object(player, obj);
 			}
 		}
