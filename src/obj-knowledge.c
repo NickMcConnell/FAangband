@@ -1123,7 +1123,7 @@ void player_know_object(struct player *p, struct object *obj)
 			obj->known->el_info[i].res_level = obj->el_info[i].res_level;
 			obj->known->el_info[i].flags = obj->el_info[i].flags;
 		} else {
-			obj->known->el_info[i].res_level = 0;
+			obj->known->el_info[i].res_level = RES_LEVEL_BASE;
 			obj->known->el_info[i].flags = 0;
 		}
 	}
