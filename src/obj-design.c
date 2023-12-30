@@ -3902,6 +3902,19 @@ static void design_random_artifact(struct artifact *art)
 	/* Check powers for validity and contradictions. */
 	final_check(art, NULL);
 
+	/* If the base activation has been overridden, assign the timeout */
+	if (art->activation
+			&& art->activation != k_info[art->tval].activation) {
+		/* Duplicates logic from get_activation(). */
+		if (art->activation->time.base) {
+			art->time = art->activation->time;
+		} else {
+			art->time.base = (art->activation->power * 8);
+			art->time.dice = 1;
+			art->time.sides = (art->activation->power * 8);
+		}
+	}
+
 	/* Give the artifact a rudimentary description */
 	describe_artifact(art);
 
