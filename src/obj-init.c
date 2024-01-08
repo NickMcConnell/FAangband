@@ -3263,7 +3263,13 @@ static errr finish_parse_artifact(struct parser *p) {
 			kind->level = art->level;
 			kind->effect = art->effect;
 			kind->effect_msg = art->effect_msg;
-			kind->time = art->time;
+			/*
+			 * Timeout for a light already handled in
+			 * parse_artifact_time().
+			 */
+			if (kind->tval != TV_LIGHT) {
+				kind->time = art->time;
+			}
 		}
 	}
 
