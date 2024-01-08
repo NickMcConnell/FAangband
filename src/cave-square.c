@@ -888,7 +888,8 @@ bool square_isprojectable(struct chunk *c, struct loc grid) {
  * True if the square could be used as a feeling square.
  */
 bool square_allowsfeel(struct chunk *c, struct loc grid) {
-	return square_ispassable(c, grid) && !square_isdamaging(c, grid);
+	return square_ispassable(c, grid) && !square_isdamaging(c, grid) &&
+		!square_isfall(c, grid);
 }
 
 /**
