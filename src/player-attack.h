@@ -80,4 +80,10 @@ void apply_deadliness(int *die_average, int deadliness);
 extern void py_attack(struct player *p, struct loc grid);
 extern bool py_attack_real(struct player *p, struct loc grid, bool *fear);
 
+/* These are public for use by unit test cases. */
+struct attack_result make_ranged_shot(struct player *p, struct object *ammo,
+		struct loc grid, int tries, bool super);
+struct attack_result make_ranged_throw(struct player *p, struct object *obj,
+		struct loc grid, int tries, bool super);
+
 #endif /* !PLAYER_ATTACK_H */

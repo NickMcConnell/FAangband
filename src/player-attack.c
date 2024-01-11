@@ -1505,7 +1505,7 @@ static void ranged_helper(struct player *p,	struct object *bow,
 /**
  * Helper function used with ranged_helper by do_cmd_fire.
  */
-static struct attack_result make_ranged_shot(struct player *p,
+struct attack_result make_ranged_shot(struct player *p,
 											 struct object *ammo,
 											 struct loc grid, int tries,
 											 bool super)
@@ -1564,7 +1564,7 @@ static struct attack_result make_ranged_shot(struct player *p,
 /**
  * Helper function used with ranged_helper by do_cmd_throw.
  */
-static struct attack_result make_ranged_throw(struct player *p,
+struct attack_result make_ranged_throw(struct player *p,
 											  struct object *obj,
 											  struct loc grid, int tries,
 											  bool super)
