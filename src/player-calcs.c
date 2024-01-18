@@ -1630,7 +1630,7 @@ static void calc_mana(struct player *p, struct player_state *state, bool update)
 	}
 
 	/* Modest boost for Clarity ability */
-	if (player_has(p, PF_CLARITY)) {
+	if (pf_has(state->pflags, PF_CLARITY)) {
 		msp += msp / 20;
 	}
 
@@ -1773,7 +1773,7 @@ static void calc_light(struct player *p, struct player_state *state,
 		amt += obj->modifiers[OBJ_MOD_LIGHT];
 
 		/* Adjustment to allow UNLIGHT players to use +1 LIGHT gear */
-		if ((obj->modifiers[OBJ_MOD_LIGHT] > 0) && player_has(p, PF_UNLIGHT)) {
+		if ((obj->modifiers[OBJ_MOD_LIGHT] > 0) && pf_has(state->pflags, PF_UNLIGHT)) {
 			amt--;
 		}
 
@@ -1788,8 +1788,8 @@ static void calc_light(struct player *p, struct player_state *state,
 	}
 
 	/* Class ability Holy */
-	if (player_has(p, PF_HOLY)) {
-		if ((p->lev > 35) && player_has(p, PF_STRONG_MAGIC)) {
+	if (pf_has(state->pflags, PF_HOLY)) {
+		if ((p->lev > 35) && pf_has(state->pflags, PF_STRONG_MAGIC)) {
 			state->cur_light++;
 		} else if (p->lev > 45) {
 			state->cur_light++;
@@ -1797,7 +1797,7 @@ static void calc_light(struct player *p, struct player_state *state,
 	}
 
 	/* Special ability Holy Light */
-	if (player_has(p, PF_HOLY_LIGHT)) {
+	if (pf_has(state->pflags, PF_HOLY_LIGHT)) {
 		state->cur_light++;
 	}
 }
@@ -1900,36 +1900,36 @@ int weight_remaining(struct player *p)
 /**
  * Calculate all class-based bonuses and penalties to melee skill.
  */
-static int add_special_melee_skill(struct player *p, const struct object *obj)
+static int add_special_melee_skill(const struct player *p, const struct player_state *state, const struct object *obj)
 {
 	int add_skill = 0;
 
 	/* Unarmed combat specialists love to fight barehanded */
 	if (!obj) {
-		if (player_has(p, PF_UNARMED_COMBAT)) {
+		if (pf_has(state->pflags, PF_UNARMED_COMBAT)) {
 			add_skill = 14 + p->lev;
-		} else if (player_has(p, PF_MARTIAL_ARTS)) {
+		} else if (pf_has(state->pflags, PF_MARTIAL_ARTS)) {
 			add_skill = p->lev / 2;
 		}
 	} else {
 		/* Now, special racial abilities and limitations are considered.  Most
 		 * modifiers are relatively small, to keep options open to the player */
 		if (obj->tval == TV_SWORD) {
-			if (player_has(p, PF_SWORD_SKILL)) {
+			if (pf_has(state->pflags, PF_SWORD_SKILL)) {
 				add_skill += 3 + p->lev / 7;
-			} else if (player_has(p, PF_SWORD_UNSKILL)) {
+			} else if (pf_has(state->pflags, PF_SWORD_UNSKILL)) {
 				add_skill -= 3 + p->lev / 7;
 			}
 		} else if (obj->tval == TV_POLEARM) {
-			if (player_has(p, PF_POLEARM_SKILL)) {
+			if (pf_has(state->pflags, PF_POLEARM_SKILL)) {
 				add_skill += 3 + p->lev / 7;
-			} else if (player_has(p, PF_POLEARM_UNSKILL)) {
+			} else if (pf_has(state->pflags, PF_POLEARM_UNSKILL)) {
 				add_skill -= 3 + p->lev / 7;
 			}
 		} else if (obj->tval == TV_HAFTED) {
-			if (player_has(p, PF_HAFTED_SKILL)) {
+			if (pf_has(state->pflags, PF_HAFTED_SKILL)) {
 				add_skill += 3 + p->lev / 7;
-			} else if (player_has(p, PF_HAFTED_UNSKILL)) {
+			} else if (pf_has(state->pflags, PF_HAFTED_UNSKILL)) {
 				add_skill -= 3 + p->lev / 7;
 			}
 		}
@@ -1946,37 +1946,37 @@ static int add_special_missile_skill(struct player *p, struct player_state *stat
 	int add_skill = 0;
 
 	/* Nice bonus for most favored weapons - if no tradeoff */
-	if (((player_has(p, PF_BOW_SPEED_GREAT) && (state->ammo_tval == TV_ARROW))||
-		 (player_has(p, PF_XBOW_SPEED_GREAT) && (state->ammo_tval == TV_BOLT))||
-		 (player_has(p, PF_SLING_SPEED_GREAT) && (state->ammo_tval == TV_SHOT)))
-		&& (!player_has(p, PF_RAPID_FIRE))) {
+	if (((pf_has(state->pflags, PF_BOW_SPEED_GREAT) && (state->ammo_tval == TV_ARROW))||
+		 (pf_has(state->pflags, PF_XBOW_SPEED_GREAT) && (state->ammo_tval == TV_BOLT))||
+		 (pf_has(state->pflags, PF_SLING_SPEED_GREAT) && (state->ammo_tval == TV_SHOT)))
+		&& (!pf_has(state->pflags, PF_RAPID_FIRE))) {
 		/* Big bonus */
 		add_skill = 3 + p->lev / 4;
 	}
 
 	/* Unarmed fighters do a bit better with slings */
-	if ((player_has(p, PF_UNARMED_COMBAT)) & (state->ammo_tval == TV_SHOT)) {
+	if ((pf_has(state->pflags, PF_UNARMED_COMBAT)) & (state->ammo_tval == TV_SHOT)) {
 		add_skill = p->lev / 7;
 	}
 
 	/* Now, special racial abilities and limitations are considered.  The
 	 * choice of race can be of some significance. */
 	if (state->ammo_tval == TV_BOLT) {
-		if (player_has(p, PF_XBOW_SKILL)) {
+		if (pf_has(state->pflags, PF_XBOW_SKILL)) {
 			add_skill += 3 + p->lev / 7;
-		} else if (player_has(p, PF_XBOW_UNSKILL)) {
+		} else if (pf_has(state->pflags, PF_XBOW_UNSKILL)) {
 			add_skill -= 3 + p->lev / 7;
 		}
 	} else if (state->ammo_tval == TV_ARROW) {
-		if (player_has(p, PF_BOW_SKILL)) {
+		if (pf_has(state->pflags, PF_BOW_SKILL)) {
 			add_skill += 3 + p->lev / 7;
-		} else if (player_has(p, PF_BOW_UNSKILL)) {
+		} else if (pf_has(state->pflags, PF_BOW_UNSKILL)) {
 			add_skill -= 3 + p->lev / 7;
 		}
 	} else if (state->ammo_tval == TV_SHOT) {
-		if (player_has(p, PF_SLING_SKILL)) {
+		if (pf_has(state->pflags, PF_SLING_SKILL)) {
 			add_skill += 3 + p->lev / 7;
-		} else if (player_has(p, PF_SLING_UNSKILL)) {
+		} else if (pf_has(state->pflags, PF_SLING_UNSKILL)) {
 			add_skill -= 3 + p->lev / 7;
 		}
 	}
@@ -2106,8 +2106,7 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	int str_ind = state->stat_ind[STAT_STR];
 	int dex_ind = state->stat_ind[STAT_DEX];
 
-	/* Specialty ability Enhance Magic */
-	bool enhance = player_has(p, PF_ENHANCE_MAGIC);
+	bool enhance;
 
 	/* Reset */
 	memset(state, 0, sizeof *state);
@@ -2130,6 +2129,9 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	pf_copy(state->pflags, p->race->pflags);
 	pf_union(state->pflags, p->class->pflags);
 	pf_union(state->pflags, p->specialties);
+
+	/* Specialty ability Enhance Magic */
+	enhance = pf_has(state->pflags, PF_ENHANCE_MAGIC);
 
 	/* Extract the player flags */
 	player_flags(p, collect_f);
@@ -2264,24 +2266,24 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	calc_light(p, state, update);
 
 	/* Shadow players lose stealth but don't aggravate */
-	if (player_has(p, PF_SHADOW) && player_of_has(p, OF_AGGRAVATE)) {
+	if (pf_has(state->pflags, PF_SHADOW) && of_has(state->flags, OF_AGGRAVATE)) {
 		state->skills[SKILL_STEALTH] -= 3;
 	}
 
 	/* Physical stat boost */
-	if (player_has(p, PF_ATHLETICS)) {
+	if (pf_has(state->pflags, PF_ATHLETICS)) {
 		state->stat_add[STAT_DEX] += 2;
 		state->stat_add[STAT_CON] += 2;
 	}
 
 	/* Mental stat boost */
-	if (player_has(p, PF_CLARITY)) {
+	if (pf_has(state->pflags, PF_CLARITY)) {
 		state->stat_add[STAT_INT] += 2;
 		state->stat_add[STAT_WIS] += 2;
 	}
 
 	/* Ent */
-	if (player_has(p, PF_WOODEN)) {
+	if (pf_has(state->pflags, PF_WOODEN)) {
 		/* Ents dig like maniacs, but only with their hands. */
 		if (character_generated && !slot_object(p, slot_by_name(p, "weapon")))
 			state->skills[SKILL_DIGGING] += p->lev * 10;
@@ -2313,17 +2315,17 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	}
 
 	/* Specialty ability Holy Light */
-	if (player_has(p, PF_HOLY_LIGHT)) {
+	if (pf_has(state->pflags, PF_HOLY_LIGHT)) {
 		apply_resist(&state->el_info[ELEM_LIGHT].res_level, RES_BOOST_NORMAL);
 	}
 
 	/* Unlight - needs change if anything but resist is introduced for dark */
-	if (player_has(p, PF_UNLIGHT) && character_dungeon) {
+	if (pf_has(state->pflags, PF_UNLIGHT) && character_dungeon) {
 		apply_resist(&state->el_info[ELEM_DARK].res_level, RES_BOOST_NORMAL);
 	}
 
 	/* Evil */
-	if (player_has(p, PF_EVIL) && character_dungeon) {
+	if (pf_has(state->pflags, PF_EVIL) && character_dungeon) {
 		apply_resist(&state->el_info[ELEM_NETHER].res_level, RES_BOOST_NORMAL);
 		apply_resist(&state->el_info[ELEM_HOLY_ORB].res_level, RES_CUT_NORMAL);
 	}
@@ -2334,8 +2336,8 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	}
 
 	/* Speed boost in trees for elven druids and rangers */
-	if (character_dungeon && player_has(p, PF_WOODSMAN) &&
-		player_has(p, PF_ELVEN) && square_istree(cave, p->grid)) {
+	if (character_dungeon && pf_has(state->pflags, PF_WOODSMAN) &&
+		pf_has(state->pflags, PF_ELVEN) && square_istree(cave, p->grid)) {
 		state->speed += 3;
 	}
 
@@ -2383,10 +2385,10 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	state->evasion_chance = 0;
 
 	/* Evasion AC boost */
-	if (player_has(p, PF_EVASION) ||
-		(player_has(p, PF_DWARVEN) && topography == TOP_MOUNTAIN) ||
-		(player_has(p, PF_PLAINSMAN)  && topography == TOP_PLAIN) ||
-		(player_has(p, PF_EDAIN) && topography == TOP_FOREST)) {
+	if (pf_has(state->pflags, PF_EVASION) ||
+		(pf_has(state->pflags, PF_DWARVEN) && topography == TOP_MOUNTAIN) ||
+		(pf_has(state->pflags, PF_PLAINSMAN) && topography == TOP_PLAIN) ||
+		(pf_has(state->pflags, PF_EDAIN) && topography == TOP_FOREST)) {
 		/* Highest weight to get any bonus */
 		int evasion_weight = 150 + (3 * p->lev);
 
@@ -2572,7 +2574,7 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	hold = adj_str_hold[state->stat_ind[STAT_STR]];
 
 	/* Specialty magic resistance; gives great saving throws even above 100 */
-	if (player_has(p, PF_MAGIC_RESIST)) {
+	if (pf_has(state->pflags, PF_MAGIC_RESIST)) {
 		if (state->skills[SKILL_SAVE] <= 80) {
 			state->skills[SKILL_SAVE] += (100 - state->skills[SKILL_SAVE]) / 2;
 		} else {
@@ -2610,23 +2612,23 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 			state->ammo_mult += extra_might;
 
 			/* Bonuses for increasing dexterity */
-			if ((player_has(p, PF_BOW_SPEED_GREAT)
+			if ((pf_has(state->pflags, PF_BOW_SPEED_GREAT)
 				 && (state->ammo_tval == TV_ARROW)) ||
-				(player_has(p, PF_SLING_SPEED_GREAT)
+				(pf_has(state->pflags, PF_SLING_SPEED_GREAT)
 				 && (state->ammo_tval == TV_SHOT)) ||
-				(player_has(p, PF_XBOW_SPEED_GREAT)
+				(pf_has(state->pflags, PF_XBOW_SPEED_GREAT)
 				 && (state->ammo_tval == TV_BOLT))) {
 				/* Big bonus... */
 				state->num_shots += (3 * dex_factor) / 4;
 
 				/* ...and sometimes even more */
-				if (player_has(p, PF_RAPID_FIRE))
+				if (pf_has(state->pflags, PF_RAPID_FIRE))
 					state->num_shots += dex_factor / 4;
-			} else if ((player_has(p, PF_BOW_SPEED_GOOD)
+			} else if ((pf_has(state->pflags, PF_BOW_SPEED_GOOD)
 						&& (state->ammo_tval == TV_ARROW)) ||
-					   (player_has(p, PF_SLING_SPEED_GOOD)
+					   (pf_has(state->pflags, PF_SLING_SPEED_GOOD)
 						&& (state->ammo_tval == TV_SHOT)) ||
-					   (player_has(p, PF_XBOW_SPEED_GOOD)
+					   (pf_has(state->pflags, PF_XBOW_SPEED_GOOD)
 						&& (state->ammo_tval == TV_BOLT))) {
 				/* Medium bonus */
 				state->num_shots += dex_factor / 2;
@@ -2661,7 +2663,7 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 		}
 
 		/* Divine weapon bonus for blessed weapons */
-		if (player_has(p, PF_BLESS_WEAPON)
+		if (pf_has(state->pflags, PF_BLESS_WEAPON)
 				&& (weapon->tval == TV_HAFTED
 				|| of_has(state->flags, OF_BLESSED))) {
 			state->to_h += 2;
@@ -2693,7 +2695,7 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	}
 
 	/* Add all other class and race-specific adjustments to melee skill. */
-	state->skills[SKILL_TO_HIT_MELEE] += add_special_melee_skill(p, weapon);
+	state->skills[SKILL_TO_HIT_MELEE] += add_special_melee_skill(p, state, weapon);
 
 	/* Mana */
 	calc_mana(p, state, update);
