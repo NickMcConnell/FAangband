@@ -580,6 +580,13 @@ price-constant:400
 
 ## Ignore elements
 
+# Only relevant as part of a curse so disable directly adding to an object.
+name:multiply weight
+type:flag
+subtype:curse-only
+id-type:on wield
+code:MULTIPLY_WEIGHT
+
 name:ignore acid
 type:ignore
 code:ACID

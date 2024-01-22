@@ -787,7 +787,7 @@ static int ranged_damage(struct player *p, const struct monster *mon,
 		/* Multiply the number of damage dice by the throwing weapon
 		 * multiplier.  This is not the prettiest equation,
 		 * but it does at least try to keep throwing weapons competitive. */
-		dice *= 2 + p->lev / 12;
+		dice *= 2 + object_weight_one(missile) / 12;
 	}
 
 	/* Roll out the damage. */
@@ -941,7 +941,7 @@ bool py_attack_real(struct player *p, struct loc grid, bool *fear)
 
 	if (obj) {
 		/* Handle normal weapon */
-		weight = obj->weight;
+		weight = object_weight_one(obj);
 		my_strcpy(verb, "hit", sizeof(verb));
 	} else {
 		weight = 0;
@@ -1134,7 +1134,7 @@ static bool attempt_shield_bash(struct player *p, struct monster *mon, bool *fea
 
 	/* Calculate attack quality, a mix of momentum and accuracy. */
 	bash_quality = p->state.skills[SKILL_TO_HIT_MELEE] / 4 + p->wt / 8 +
-		p->upkeep->total_weight / 80 + shield->weight / 2;
+		p->upkeep->total_weight / 80 + object_weight_one(shield) / 2;
 
 	/* Enhanced for shield masters */
 	if (player_has(p, PF_SHIELD_MAST))

@@ -963,7 +963,7 @@ bool obj_known_damage(const struct object *obj, int *normal_damage,
 			&added_dice, &frac_dice);
 		dice += added_dice;
 	} else {
-		unsigned int thrown_scl = 2 + player->lev / 12;
+		unsigned int thrown_scl = 2 + object_weight_one(obj) / 12;
 
 		if (of_has(obj->known->flags, OF_PERFECT_BALANCE)) {
 			dice *= 2;
