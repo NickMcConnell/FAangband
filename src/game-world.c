@@ -657,7 +657,8 @@ void process_world(struct chunk *c)
 
 	/* Take damage from poison */
 	if (player->timed[TMD_POISONED]) {
-		take_hit(player, 1, "poison");
+		take_hit(player, player_apply_damage_reduction(player, 1),
+			"poison");
 		if (player->is_dead) {
 			return;
 		}
@@ -678,7 +679,8 @@ void process_world(struct chunk *c)
 		}
 
 		/* Take damage */
-		take_hit(player, i, "a fatal wound");
+		take_hit(player, player_apply_damage_reduction(player, i),
+			"a fatal wound");
 		if (player->is_dead) {
 			return;
 		}
@@ -778,7 +780,8 @@ void process_world(struct chunk *c)
 		i = (PY_FOOD_STARVE - player->timed[TMD_FOOD]) / 10;
 
 		/* Take damage */
-		take_hit(player, i, "starvation");
+		take_hit(player, player_apply_damage_reduction(player, i),
+			"starvation");
 		if (player->is_dead) {
 			return;
 		}
