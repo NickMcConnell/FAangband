@@ -2502,7 +2502,7 @@ cost:15
 alloc:50:0 to 60
 pile:35:2d3
 effect:LIGHT_AREA
-effect:SPOT:LIGHT_WEAK:2
+effect:SPHERE:LIGHT_WEAK:2
 dice:2d8
 
 name:Word of Recall
@@ -2670,7 +2670,7 @@ cost:0
 alloc:10:1 to 70
 pile:70:1d3
 effect:DARKEN_AREA
-effect:SPOT:DARK_WEAK:3
+effect:SPHERE:DARK_WEAK:3
 dice:10
 
 name:Trap Creation
@@ -3803,7 +3803,7 @@ attack:1d2:0:0
 armor:0:0
 charges:8+d8
 effect:DARKEN_AREA
-effect:SPOT:DARK_WEAK:3
+effect:SPHERE:DARK_WEAK:3
 dice:10
 
 ### Destruction ###
@@ -4055,7 +4055,7 @@ attack:1d2:0:0
 armor:0:0
 charges:8+d20
 effect:LIGHT_AREA
-effect:SPOT:LIGHT_WEAK:2
+effect:SPHERE:LIGHT_WEAK:2
 dice:2d8
 
 name:Starlight
@@ -4528,7 +4528,7 @@ alloc:20:10 to 100
 attack:1d1:0:0
 armor:0:0
 effect:LIGHT_AREA
-effect:SPOT:LIGHT_WEAK:2
+effect:SPHERE:LIGHT_WEAK:2
 dice:2d8
 time:30
 
