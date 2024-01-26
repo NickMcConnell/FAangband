@@ -142,7 +142,7 @@ static void path_dist_info_init(void)
 static bool set_up_path_distances(struct loc grid)
 {
 	int i;
-	struct point_set *reached = point_set_new(MAX_PF_RADIUS * MAX_PF_RADIUS);
+	struct point_set *reached;
 
 	/* Initialize the pathfinding region */
 	get_pathfind_region();
@@ -161,6 +161,7 @@ static bool set_up_path_distances(struct loc grid)
 	}
 
 	/* Add the player's grid to the set of marked grids */
+	reached = point_set_new(MAX_PF_RADIUS * MAX_PF_RADIUS);
 	add_to_point_set(reached, player->grid);
 
 	/* Add the neighbours of any marked grid in the area */
