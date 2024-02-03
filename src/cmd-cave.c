@@ -312,7 +312,7 @@ void do_cmd_go_down(struct command *cmd)
 /**
  * Determine if a given grid may be "opened"
  */
-static bool do_cmd_open_test(struct loc grid)
+static bool do_cmd_open_test(struct player *p, struct loc grid)
 {
 	/* Must have knowledge */
 	if (!square_isknown(cave, grid)) {
@@ -323,6 +323,10 @@ static bool do_cmd_open_test(struct loc grid)
 	/* Must be a closed door */
 	if (!square_iscloseddoor(cave, grid)) {
 		msgt(MSG_NOTHING_TO_OPEN, "You see nothing there to open.");
+		if (square_iscloseddoor(p->cave, grid)) {
+			square_forget(cave, grid);
+			square_light_spot(cave, grid);
+		}
 		return false;
 	}
 
@@ -342,7 +346,7 @@ static bool do_cmd_open_aux(struct loc grid)
 	bool more = false;
 
 	/* Verify legality */
-	if (!do_cmd_open_test(grid)) return (false);
+	if (!do_cmd_open_test(player, grid)) return (false);
 
 	/* Locked door */
 	if (square_islockeddoor(cave, grid)) {
@@ -431,7 +435,7 @@ void do_cmd_open(struct command *cmd)
 	obj = chest_check(player, grid, CHEST_OPENABLE);
 
 	/* Check for door */
-	if (!obj && !do_cmd_open_test(grid)) {
+	if (!obj && !do_cmd_open_test(player, grid)) {
 		/* Cancel repeat */
 		disturb(player);
 		return;
@@ -481,7 +485,7 @@ void do_cmd_open(struct command *cmd)
 /**
  * Determine if a given grid may be "closed"
  */
-static bool do_cmd_close_test(struct loc grid)
+static bool do_cmd_close_test(struct player *p, struct loc grid)
 {
 	/* Must have knowledge */
 	if (!square_isknown(cave, grid)) {
@@ -496,6 +500,11 @@ static bool do_cmd_close_test(struct loc grid)
 	if (!square_isopendoor(cave, grid) && !square_isbrokendoor(cave, grid)) {
 		/* Message */
 		msg("You see nothing there to close.");
+		if (square_isopendoor(p->cave, grid)
+				|| square_isbrokendoor(p->cave, grid)) {
+			square_forget(cave, grid);
+			square_light_spot(cave, grid);
+		}
 
 		/* Nope */
 		return (false);
@@ -527,7 +536,7 @@ static bool do_cmd_close_aux(struct loc grid)
 	bool more = false;
 
 	/* Verify legality */
-	if (!do_cmd_close_test(grid)) return (false);
+	if (!do_cmd_close_test(player, grid)) return (false);
 
 	/* Broken door */
 	if (square_isbrokendoor(cave, grid)) {
@@ -575,7 +584,7 @@ void do_cmd_close(struct command *cmd)
 	grid = loc_sum(player->grid, ddgrid[dir]);
 
 	/* Verify legality */
-	if (!do_cmd_close_test(grid)) {
+	if (!do_cmd_close_test(player, grid)) {
 		/* Cancel repeat */
 		disturb(player);
 		return;
@@ -606,7 +615,7 @@ void do_cmd_close(struct command *cmd)
 /**
  * Determine if a given grid may be "tunneled"
  */
-static bool do_cmd_tunnel_test(struct loc grid)
+static bool do_cmd_tunnel_test(struct player *p, struct loc grid)
 {
 
 	/* Must have knowledge */
@@ -618,12 +627,21 @@ static bool do_cmd_tunnel_test(struct loc grid)
 	/* Titanium */
 	if (square_isperm(cave, grid)) {
 		msg("This seems to be permanent rock.");
+		if (!square_isperm(p->cave, grid)) {
+			square_memorize(cave, grid);
+			square_light_spot(cave, grid);
+		}
 		return (false);
 	}
 
 	/* Must be a wall/door/etc */
 	if (!(square_isdiggable(cave, grid) || square_iscloseddoor(cave, grid))) {
 		msg("You see nothing there to tunnel.");
+		if (square_isdiggable(p->cave, grid)
+				|| square_iscloseddoor(p->cave, grid)) {
+			square_forget(cave, grid);
+			square_light_spot(cave, grid);
+		}
 		return (false);
 	}
 
@@ -689,7 +707,7 @@ static bool do_cmd_tunnel_aux(struct loc grid)
 	const char *with_clause = current_weapon == NULL ? "with your hands" : "with your weapon";
 
 	/* Verify legality */
-	if (!do_cmd_tunnel_test(grid)) return (false);
+	if (!do_cmd_tunnel_test(player, grid)) return (false);
 
 	/* Find what we're digging with and our chance of success */
 	best_digger = player_best_digger(player, false);
@@ -799,7 +817,7 @@ void do_cmd_tunnel(struct command *cmd)
 	grid = loc_sum(player->grid, ddgrid[dir]);
 
 	/* Oops */
-	if (!do_cmd_tunnel_test(grid)) {
+	if (!do_cmd_tunnel_test(player, grid)) {
 		/* Cancel repeat */
 		disturb(player);
 		return;
@@ -830,7 +848,7 @@ void do_cmd_tunnel(struct command *cmd)
 /**
  * Determine if a given grid may be "disarmed"
  */
-static bool do_cmd_disarm_test(struct loc grid)
+static bool do_cmd_disarm_test(struct player *p, struct loc grid)
 {
 	/* Must have knowledge */
 	if (!square_isknown(cave, grid)) {
@@ -875,7 +893,7 @@ static bool do_cmd_lock_door(struct loc grid)
 	bool more = false;
 
 	/* Verify legality */
-	if (!do_cmd_disarm_test(grid)) return false;
+	if (!do_cmd_disarm_test(player, grid)) return false;
 
 	/* Get the "disarm" factor */
 	i = player->state.skills[SKILL_DISARM_PHYS];
@@ -932,7 +950,7 @@ static bool do_cmd_disarm_aux(struct loc grid)
 	bool more = false;
 
 	/* Verify legality */
-	if (!do_cmd_disarm_test(grid)) return false;
+	if (!do_cmd_disarm_test(player, grid)) return false;
 
     /* Choose first player or monster trap */
 	while (trap) {
@@ -1048,7 +1066,7 @@ void do_cmd_disarm(struct command *cmd)
 	obj = chest_check(player, grid, CHEST_TRAPPED);
 
 	/* Verify legality */
-	if (!obj && !do_cmd_disarm_test(grid)) {
+	if (!obj && !do_cmd_disarm_test(player, grid)) {
 		/* Cancel repeat */
 		disturb(player);
 		return;
@@ -1305,13 +1323,28 @@ void move_player(int dir, bool disarm)
 				square_light_spot(cave, grid);
 			}
 		} else {
-			if (square_isrubble(cave, grid))
+			if (square_isrubble(cave, grid)) {
 				msgt(MSG_HITWALL,
 					 "There is a pile of rubble blocking your way.");
-			else if (square_iscloseddoor(cave, grid))
+				if (!square_isrubble(player->cave, grid)) {
+					square_memorize(cave, grid);
+					square_light_spot(cave, grid);
+				}
+			} else if (square_iscloseddoor(cave, grid)) {
 				msgt(MSG_HITWALL, "There is a door blocking your way.");
-			else
+				if (!square_iscloseddoor(player->cave, grid)) {
+					square_memorize(cave, grid);
+					square_light_spot(cave, grid);
+				}
+			} else {
 				msgt(MSG_HITWALL, "There is a wall blocking your way.");
+				if (square_ispassable(player->cave, grid)
+						|| square_isrubble(player->cave, grid)
+						|| square_iscloseddoor(player->cave, grid)) {
+					square_forget(cave, grid);
+					square_light_spot(cave, grid);
+				}
+			}
 		}
 		/*
 		 * No move but do not refund energy:  primarily so that
@@ -1387,7 +1420,7 @@ void move_player(int dir, bool disarm)
 /**
  * Determine if a given grid may be "walked"
  */
-static bool do_cmd_walk_test(struct loc grid)
+static bool do_cmd_walk_test(struct player *p, struct loc grid)
 {
 	int m_idx = square(cave, grid)->mon;
 	struct monster *mon = cave_monster(cave, m_idx);
@@ -1395,14 +1428,14 @@ static bool do_cmd_walk_test(struct loc grid)
 	/* Allow attack on obvious monsters if unafraid */
 	if (m_idx > 0 && monster_is_obvious(mon)) {
 		/* Handle player fear */
-		if (player_of_has(player, OF_AFRAID)) {
+		if (player_of_has(p, OF_AFRAID)) {
 			/* Extract monster name (or "it") */
 			char m_name[80];
 			monster_desc(m_name, sizeof(m_name), mon, MDESC_DEFAULT);
 
 			/* Message */
 			msgt(MSG_AFRAID, "You are too afraid to attack %s!", m_name);
-			equip_learn_flag(player, OF_AFRAID);
+			equip_learn_flag(p, OF_AFRAID);
 
 			/* Nope */
 			return (false);
@@ -1415,21 +1448,35 @@ static bool do_cmd_walk_test(struct loc grid)
 	if (!square_isknown(cave, grid))
 		return true;
 
-	/* Require open space */
+	/*
+	 * Require open space; if the messaging indicates what is there and
+	 * that does not agree with the player's memory then update the
+	 * player's memory
+	 */
 	if (!square_ispassable(cave, grid)) {
 		if (square_isrubble(cave, grid)) {
 			/* Rubble */
 			msgt(MSG_HITWALL, "There is a pile of rubble in the way!");
+			if (!square_isrubble(p->cave, grid)) {
+				square_memorize(cave, grid);
+				square_light_spot(cave, grid);
+			}
 		} else if (square_iscloseddoor(cave, grid)) {
 			/* Door */
 			return true;
 		} else {
 			/* Wall */
 			msgt(MSG_HITWALL, "There is a wall in the way!");
+			if (square_ispassable(p->cave, grid)
+					|| square_isrubble(p->cave, grid)
+					|| square_iscloseddoor(p->cave, grid)) {
+				square_forget(cave, grid);
+				square_light_spot(cave, grid);
+			}
 		}
 
 		/* Cancel repeat */
-		disturb(player);
+		disturb(p);
 
 		/* Nope */
 		return (false);
@@ -1472,7 +1519,7 @@ void do_cmd_walk(struct command *cmd)
 	
 	/* Verify walkability */
 	grid = loc_sum(player->grid, ddgrid[dir]);
-	if (!do_cmd_walk_test(grid))
+	if (!do_cmd_walk_test(player, grid))
 		return;
 
 	player->upkeep->energy_use = energy_per_move(player);
@@ -1512,7 +1559,7 @@ void do_cmd_jump(struct command *cmd)
 
 	/* Verify walkability */
 	grid = loc_sum(player->grid, ddgrid[dir]);
-	if (!do_cmd_walk_test(grid))
+	if (!do_cmd_walk_test(player, grid))
 		return;
 
 	player->upkeep->energy_use = energy_per_move(player);
@@ -1552,7 +1599,7 @@ void do_cmd_run(struct command *cmd)
 	/* Get location */
 	if (dir) {
 		grid = loc_sum(player->grid, ddgrid[dir]);
-		if (!do_cmd_walk_test(grid))
+		if (!do_cmd_walk_test(player, grid))
 			return;
 			
 		/* Hack: convert repeat count to running count */
