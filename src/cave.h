@@ -372,7 +372,7 @@ bool square_isshop(struct chunk *c, struct loc grid);
 bool square_isplayer(struct chunk *c, struct loc grid);
 bool square_isoccupied(struct chunk *c, struct loc grid);
 bool square_isknown(struct chunk *c, struct loc grid);
-bool square_isnotknown(struct chunk *c, struct loc grid);
+bool square_ismemorybad(struct chunk *c, struct loc grid);
 bool square_isfall(struct chunk *c, struct loc grid);
 bool square_istree(struct chunk *c, struct loc grid);
 bool square_isorganic(struct chunk *c, struct loc grid);
