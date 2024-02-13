@@ -1916,6 +1916,8 @@ void disturb(struct player *p)
 	/* Cancel running */
 	if (p->upkeep->running) {
 		p->upkeep->running = 0;
+		mem_free(p->upkeep->steps);
+		p->upkeep->steps = NULL;
 
 		/* Cancel queued commands */
 		cmdq_flush();
