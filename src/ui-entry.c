@@ -1410,34 +1410,14 @@ static void modifier_to_skill(int modind, int *skillind, int *skill2mod_num,
 
 static int get_timed_element_effect(const struct player *p, int ind)
 {
-	int result;
+	int i;
 
-	switch (ind) {
-	case ELEM_ACID:
-		result = p->timed[TMD_OPP_ACID] ? RES_BOOST_NORMAL : RES_LEVEL_BASE;
-		break;
-
-	case ELEM_ELEC:
-		result = p->timed[TMD_OPP_ELEC] ? RES_BOOST_NORMAL : RES_LEVEL_BASE;
-		break;
-
-	case ELEM_FIRE:
-		result = p->timed[TMD_OPP_FIRE] ? RES_BOOST_NORMAL : RES_LEVEL_BASE;
-		break;
-
-	case ELEM_COLD:
-		result = p->timed[TMD_OPP_COLD] ? RES_BOOST_NORMAL : RES_LEVEL_BASE;
-		break;
-
-	case ELEM_POIS:
-		result = p->timed[TMD_OPP_POIS] ? RES_BOOST_NORMAL : RES_LEVEL_BASE;
-		break;
-
-	default:
-		result = RES_LEVEL_BASE;
-		break;
+	for (i = 0; i < TMD_MAX; ++i) {
+		if (p->timed[i] && timed_effects[i].temp_resist == ind) {
+			return RES_BOOST_NORMAL;
+		}
 	}
-	return result;
+	return RES_LEVEL_BASE;
 }
 
 
