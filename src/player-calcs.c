@@ -2525,8 +2525,20 @@ void calc_bonuses(struct player *p, struct player_state *state, bool known_only,
 	if (p->timed[TMD_TERROR]) {
 		state->speed += 10;
 	}
-	for (i = 0; i < TMD_MAX; ++i) {
-		apply_resist(&state->el_info[i].res_level, RES_BOOST_NORMAL);
+	if (p->timed[TMD_OPP_ACID]) {
+		apply_resist(&state->el_info[ELEM_ACID].res_level, RES_BOOST_NORMAL);
+	}
+	if (p->timed[TMD_OPP_ELEC]) {
+		apply_resist(&state->el_info[ELEM_ELEC].res_level, RES_BOOST_NORMAL);
+	}
+	if (p->timed[TMD_OPP_FIRE]) {
+		apply_resist(&state->el_info[ELEM_FIRE].res_level, RES_BOOST_NORMAL);
+	}
+	if (p->timed[TMD_OPP_COLD]) {
+		apply_resist(&state->el_info[ELEM_COLD].res_level, RES_BOOST_NORMAL);
+	}
+	if (p->timed[TMD_OPP_POIS]) {
+		apply_resist(&state->el_info[ELEM_POIS].res_level, RES_BOOST_NORMAL);
 	}
 	if (p->timed[TMD_CONFUSED]) {
 		adjust_skill_scale(&state->skills[SKILL_DEVICE], -1, 4, 0);
