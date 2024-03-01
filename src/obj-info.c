@@ -920,7 +920,7 @@ bool obj_known_damage(const struct object *obj, int *normal_damage,
 	unsigned int added_dice, remainder;
 	struct my_rational frac_dice, frac_temp;
 	int temp0, round;
-	int deadliness = obj->known->to_d;
+	int deadliness = object_to_dam(obj->known);
 	int old_blows = 0;
 	bool *total_brands;
 	bool *total_slays;
@@ -986,9 +986,9 @@ bool obj_known_damage(const struct object *obj, int *normal_damage,
 
 	/* Apply deadliness to average. (100x inflation) */
 	if (ammo) {
-		deadliness = obj->known->to_d + bow->known->to_d + state.to_d;
+		deadliness += object_to_dam(bow->known) + state.to_d;
 	} else {
-		deadliness = obj->known->to_d + state.to_d;
+		deadliness += state.to_d;
 	}
 	apply_deadliness(&die_average, MIN(deadliness, 150));
 

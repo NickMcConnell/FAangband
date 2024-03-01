@@ -172,7 +172,7 @@ int breakage_chance(const struct object *obj, bool hit_target) {
 int chance_of_melee_hit_base(const struct player *p,
 		const struct object *weapon)
 {
-	int bonus = p->state.to_h + (weapon ? weapon->to_h : 0);
+	int bonus = p->state.to_h + (weapon ? object_to_hit(weapon) : 0);
 	return p->state.skills[SKILL_TO_HIT_MELEE] + bonus * BTH_PLUS_ADJ;
 }
 
@@ -205,7 +205,7 @@ int chance_of_missile_hit_base(const struct player *p,
 									  const struct object *missile,
 									  const struct object *launcher)
 {
-	int bonus = missile->to_h;
+	int bonus = object_to_hit(missile);
 	int chance;
 
 	if (!launcher) {
@@ -219,7 +219,7 @@ int chance_of_missile_hit_base(const struct player *p,
 				+ bonus * BTH_PLUS_ADJ;
 		}
 	} else {
-		bonus += p->state.to_h + launcher->to_h;
+		bonus += p->state.to_h + object_to_hit(launcher);
 		chance = p->state.skills[SKILL_TO_HIT_BOW] + bonus * BTH_PLUS_ADJ;
 	}
 
@@ -668,7 +668,7 @@ static int melee_damage(struct player *p, struct monster *mon,
 						uint32_t *msg_type, bool *armsman)
 {
 	int dice = (obj) ? obj->dd : 1;
-	int sides, dmg, add = 0;
+	int sides, deadliness, dmg, add = 0;
 	bool extra;
 	int multiplier = 10;
 
@@ -699,8 +699,8 @@ static int melee_damage(struct player *p, struct monster *mon,
 	add = multiplier - 10;
 
 	/* Apply deadliness to average. (100x inflation) */
-	apply_deadliness(&die_average,
-		MIN(((obj) ? obj->to_d : 0) + p->state.to_d, 150));
+	deadliness = p->state.to_d + ((obj) ? object_to_dam(obj) : 0);
+	apply_deadliness(&die_average, MIN(deadliness, 150));
 
 	/* Calculate the actual number of sides to each die. */
 	sides = (2 * die_average) - 10000;
@@ -756,12 +756,11 @@ static int ranged_damage(struct player *p, const struct monster *mon,
 	}
 
 	/* Apply deadliness to average. (100x inflation) */
+	deadliness = object_to_dam(missile);
 	if (launcher) {
-		deadliness = missile->to_d + launcher->to_d + p->state.to_d;
+		deadliness += object_to_dam(launcher) + p->state.to_d;
 	} else if (of_has(missile->flags, OF_THROWING)) {
-		deadliness = missile->to_d + p->state.to_d;
-	} else {
-		deadliness = missile->to_d;
+		deadliness += p->state.to_d;
 	}
 	apply_deadliness(&die_average, MIN(deadliness, 150));
 
