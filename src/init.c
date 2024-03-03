@@ -4726,7 +4726,7 @@ void cleanup_angband(void)
 
 	cleanup_game_constants();
 
-	cmdq_flush();
+	cmdq_release();
 
 	if (play_again) return;
 
