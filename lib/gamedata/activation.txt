@@ -351,7 +351,7 @@ effect:CURE:AFRAID
 effect:TIMED_INC:SHERO
 dice:25+1d25
 desc:restores 30 hit points, removes fear and grants you resistance to fear,
-desc: +25 to-hit, and -10AC for 1d25+25 turns
+desc: +24 to-hit for melee, and -10AC for 1d25+25 turns
 
 name:BERSERKER
 aim:0
