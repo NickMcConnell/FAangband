@@ -39,7 +39,7 @@ include Makefile.inc
 build : $(TESTPROGS)
 
 run : build
-	@./run-tests
+	@test x"$CROSS_COMPILE" = xyes || ./run-tests
 
 .SUFFIXES : .exe
 
