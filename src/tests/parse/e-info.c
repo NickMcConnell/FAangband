@@ -194,7 +194,7 @@ static int test_cost0(void *state) {
 	ok;
 }
 
-int test_rating0(void *state) {
+static int test_rating0(void *state) {
 	enum parser_error r = parser_parse(state, "rating:8");
 	struct ego_item *e;
 
