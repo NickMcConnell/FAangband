@@ -728,7 +728,6 @@ ENDIF()
 # make maintenance easier though, when running them, it would be preferable to
 # run the lower level ones first.
 SET(ANGBAND_TEST_CASE_SOURCES
-    artifact/name.c
     cave/find.c
     cave/scatter.c
     command/lookup.c
@@ -774,7 +773,6 @@ SET(ANGBAND_TEST_CASE_SOURCES
     parse/parse.c
     parse/partrap.c
     parse/pit.c
-    parse/pprop.c
     parse/proj.c
     parse/ptimed.c
     parse/r-info.c
@@ -784,7 +782,6 @@ SET(ANGBAND_TEST_CASE_SOURCES
     parse/slay.c
     parse/ui_knowledge.c
     parse/v-info.c
-    parse/world.c
     parse/z-info.c
     player/birth.c
     player/calc-inventory.c
