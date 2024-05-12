@@ -2533,13 +2533,16 @@ static struct loc place_town_stairs(struct chunk *c, struct player *p,
 		}
 	} else {
 		/* Dungeon towns just have a single down stair */
-		grid.x = rand_spread(c->width / 2, c->width / 12);
-		grid.y = c->height / 2;
-		while (square_isfloor(c, grid) && (grid.y > 2)) {
-			grid.y--;
-		}
-		if (square_isfloor(c, next_grid(grid, DIR_N)) && (grid.y == 2)) {
-			grid.y--;
+		while (1) {
+			grid.x = rand_spread(c->width / 2, c->width / 12);
+			grid.y = 0;
+			while (!square_isfloor(c, grid)
+					&& grid.y < c->height / 2) {
+				++grid.y;
+			}
+			if (grid.y < c->height / 2) {
+				break;
+			}
 		}
 
 		/* Clear previous contents, add down stairs */
