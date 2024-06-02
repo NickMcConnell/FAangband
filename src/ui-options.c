@@ -380,6 +380,8 @@ static void option_toggle_menu(const char *name, int page)
 void do_cmd_options_birth(void)
 {
 	option_toggle_menu("Birth options", OPT_PAGE_BIRTH + 10);
+	/* Keep player's depth consistent with the thrall setting. */
+	player->depth = OPT(player, birth_thrall) ? 58 : 0;
 }
 
 
