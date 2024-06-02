@@ -60,6 +60,8 @@ void do_cmd_move_house(struct command *cmd)
 	char *prompt = format("Do you really want to move to %s?", town);
 
 	if (!player->depth) {
+		struct town *new_home;
+
 		/* Already home */
 		if (player->place == player->home) {
 			msg("You already live here!");
@@ -69,11 +71,23 @@ void do_cmd_move_house(struct command *cmd)
 		/* Check */
 		if (!get_check(prompt)) return;
 
+		/* Get the new home */
+		new_home = NULL;
+		for (i = 0; i < world->num_towns; i++) {
+			new_home = &world->towns[i];
+			if (new_home->index == player->place) {
+				/* Found it */
+				assert(!store_is_home(new_home->stores));
+				break;
+			}
+		}
+		assert(i < world->num_towns);
+
 		/* Thralls have no stuff to shift */
 		if (player->home) {
 			/* Get the current home */
 			struct level *hometown = &world->levels[player->home];
-			struct town *old_home = NULL, *new_home = NULL;
+			struct town *old_home = NULL;
 			struct store *temp;
 			for (i = 0; i < world->num_towns; i++) {
 				old_home = &world->towns[i];
@@ -85,22 +99,14 @@ void do_cmd_move_house(struct command *cmd)
 			}
 			assert(i < world->num_towns);
 
-			/* Get the new home */
-			for (i = 0; i < world->num_towns; i++) {
-				new_home = &world->towns[i];
-				if (new_home->index == player->place) {
-					/* Found it */
-					assert(!store_is_home(new_home->stores));
-					break;
-				}
-			}
-			assert(i < world->num_towns);
-
 			/* Move */
 			temp = old_home->stores;
 			old_home->stores = old_home->stores->next;
 			temp->next = new_home->stores;
 			new_home->stores = temp;
+		} else {
+			/* Create a new and empty home for the thrall. */
+			place_home(new_home);
 		}
 
 		/* Set the new town */
