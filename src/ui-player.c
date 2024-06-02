@@ -825,10 +825,13 @@ static struct panel *get_panel_combat(void) {
 	if (!obj && (player_has(player, PF_UNARMED_COMBAT) ||
 				 player_has(player, PF_MARTIAL_ARTS))) {
 		panel_line(p, COLOUR_L_BLUE, "Melee", "Av.%d,%+d%%",
-				   average_unarmed_damage(player), deadliness_conversion[dam]);
+				   average_unarmed_damage(player),
+				   deadliness_conversion[MAX(dam, 0)]);
 	} else {
-		panel_line(p, COLOUR_L_BLUE, "Melee", "%dd%d,%+d%%", melee_dice,
-				   melee_sides, deadliness_conversion[dam]);
+		panel_line(p, COLOUR_L_BLUE, "Melee", "%dd%d,%c%d%%", melee_dice,
+				   melee_sides,
+				   (dam >= 0) ? '+' : '-',
+				   deadliness_conversion[MIN(ABS(dam), 150)]);
 	}
 	panel_line(p, COLOUR_L_BLUE, "To-hit", "%d,%+d", bth / 10, hit);
 	panel_line(p, COLOUR_L_BLUE, "Blows", "%d.%d/turn",
@@ -844,8 +847,9 @@ static struct panel *get_panel_combat(void) {
 		hit += object_to_hit(obj);
 	}
 
-	panel_line(p, COLOUR_L_BLUE, "Shoot to-dam", "%+d%%",
-			   deadliness_conversion[dam]);
+	panel_line(p, COLOUR_L_BLUE, "Shoot to-dam", "%c%d%%",
+			   (dam >= 0) ? '+' : '-',
+			   deadliness_conversion[MIN(ABS(dam), 150)]);
 	panel_line(p, COLOUR_L_BLUE, "To-hit", "%d,%+d", bth / 10, hit);
 	panel_line(p, COLOUR_L_BLUE, "Shots", "%d.%d/turn",
 			   player->state.num_shots / 10, player->state.num_shots % 10);
