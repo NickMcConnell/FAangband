@@ -435,6 +435,7 @@ bool chunk_copy(struct chunk *dest, struct player *p, struct chunk *source,
 				continue;
 			} else {
 				/* Shift the ghost */
+				mem_free(dest->ghost);
 				dest->ghost = source->ghost;
 				source->ghost = NULL;
 			}
