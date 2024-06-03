@@ -1214,11 +1214,11 @@ void wipe_mon_list(struct chunk *c, struct player *p)
 			lore->deaths = 0;
 			lore->pkills = 0;
 			lore->tkills = 0;
-			cave->ghost->bones_selector = 0;
-			cave->ghost->has_spoken = false;
-			my_strcpy(cave->ghost->name, "", sizeof(cave->ghost->name));
-			my_strcpy(cave->ghost->string, "", sizeof(cave->ghost->string));
-			cave->ghost->string_type = 0;
+			c->ghost->bones_selector = 0;
+			c->ghost->has_spoken = false;
+			my_strcpy(c->ghost->name, "", sizeof(c->ghost->name));
+			my_strcpy(c->ghost->string, "", sizeof(c->ghost->string));
+			c->ghost->string_type = 0;
 			if (player->upkeep->monster_race == mon->race) {
 				player->upkeep->monster_race = NULL;
 			}
