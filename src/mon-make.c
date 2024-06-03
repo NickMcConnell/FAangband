@@ -639,7 +639,7 @@ static void process_ghost_race_class(struct player_race *p_race,
 					if (!race->blow[i].effect) break;
 					if (strcmp(race->blow[i].effect->name, "HURT") == 0) {
 						race->blow[i].effect =
-							lookup_monster_blow_effect(lev->blow_effect1);
+							lookup_monster_blow_effect(lev->blow_effect2);
 						hurt++;
 						break;
 					}
