@@ -1906,6 +1906,12 @@ static void cleanup_monster(void)
 		mem_free(r->blow);
 	}
 
+	/*
+	 * Melee blows for the ghost race have to be freed.  The rest of it
+	 * is a shallow copy of one of the other races.
+	 */
+	mem_free(r_info[z_info->r_max - 1].blow);
+
 	mem_free(r_info);
 }
 

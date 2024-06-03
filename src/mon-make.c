@@ -712,6 +712,7 @@ bool prepare_ghost(struct chunk *c, int r_idx, struct monster *mon,
 {
 	int ghost_race, ghost_class = 0;
 	uint8_t try, i;
+	uint16_t iblow;
 
 	struct monster_race *race = &r_info[r_idx];
 	struct monster_lore *lore = get_lore(race);
@@ -739,8 +740,18 @@ bool prepare_ghost(struct chunk *c, int r_idx, struct monster *mon,
 	c->ghost->race = r_idx;
 
 	/* Copy the info from the template to the special "ghost slot", and use
-	 * that from here on */
+	 * that from here on.  Melee blows have to be deeply copied so those of
+	 * the base race are not modified. */
+	mem_free(r_info[PLAYER_GHOST_RACE].blow);
 	memcpy(&r_info[PLAYER_GHOST_RACE], race, sizeof(*race));
+	r_info[PLAYER_GHOST_RACE].blow = mem_alloc(z_info->mon_blows_max
+		* sizeof(*r_info[PLAYER_GHOST_RACE].blow));
+	for (iblow = 0; iblow < z_info->mon_blows_max; ++iblow) {
+		r_info[PLAYER_GHOST_RACE].blow[iblow] = race->blow[iblow];
+		r_info[PLAYER_GHOST_RACE].blow[iblow].next =
+			(iblow < z_info->mon_blows_max - 1) ?
+			r_info[PLAYER_GHOST_RACE].blow + iblow + 1 : NULL;
+	}
 	race = &r_info[PLAYER_GHOST_RACE];
 	mon->race = race;
 
@@ -1229,6 +1240,7 @@ void wipe_mon_list(struct chunk *c, struct player *p)
 	}
 
 	/* Delete the player ghost record completely */
+	mem_free(r_info[PLAYER_GHOST_RACE].blow);
 	memset(&r_info[PLAYER_GHOST_RACE], 0, sizeof(struct monster_race));
 
 	/* Delete all the monster groups */
