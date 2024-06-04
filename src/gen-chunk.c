@@ -358,6 +358,8 @@ bool chunk_copy(struct chunk *dest, struct player *p, struct chunk *source,
 	struct loc grid;
 	int h = source->height, w = source->width;
 	int mon_skip = dest->mon_max - 1;
+	struct monster *source_ghost = NULL;
+	struct monster local_mon;
 
 	/* Check bounds */
 	if (rotate % 1) {
@@ -430,8 +432,20 @@ bool chunk_copy(struct chunk *dest, struct player *p, struct chunk *source,
 		/* Deal with player ghosts */
 		if (source_mon->race &&
 			rf_has(source_mon->race->flags, RF_PLAYER_GHOST)) {
-			/* Only allow one ghost */
+			/*
+			 * Only allow one ghost, preferring the ghost from
+			 * the destination if both chunks have a ghost.
+			 * Remember a ghost from the source that was not
+			 * transferred so group information can be updated
+			 * later.
+			 */
 			if (dest->ghost->bones_selector) {
+				/* source should not have multiple ghosts. */
+				assert(!source_ghost);
+				memcpy(&local_mon, source_mon,
+					sizeof(local_mon));
+				local_mon.midx += mon_skip;
+				source_ghost = &local_mon;
 				continue;
 			} else {
 				/* Shift the ghost */
@@ -484,12 +498,37 @@ bool chunk_copy(struct chunk *dest, struct player *p, struct chunk *source,
 		group->leader += mon_skip;
 		while (entry) {
 			int idx = entry->midx;
-			struct monster *mon = &dest->monsters[mon_skip + idx];
-			entry->midx = mon->midx;
-			assert(entry->midx == mon_skip + idx);
-			mon->group_info[0].index += max_group_id;
+
+			if (!source_ghost || idx + mon_skip
+					!= source_ghost->midx) {
+				struct monster *mon =
+					&dest->monsters[mon_skip + idx];
+
+				entry->midx = mon->midx;
+				assert(entry->midx == mon_skip + idx);
+				mon->group_info[0].index += max_group_id;
+			} else {
+				/*
+				 * It is a ghost that was not transferred.
+				 * Leave it in place for now, and later call
+				 * monster_remove_from_groups() to purge it.
+				 */
+				entry->midx = source_ghost->midx;
+				source_ghost->group_info[0].index
+					+= max_group_id;
+			}
 			entry = entry->next;
 		}
+	}
+	if (source_ghost) {
+		/*
+		 * This is a bit of a hack, as source_ghost is not properly
+		 * in dest's monster list.  Relies on
+		 * monster_remove_from_groups() accessing stuff in source_ghost
+		 * that is okay (midx, group_info, race) and not checking
+		 * against dest->monsters[source_ghost->midx].
+		 */
+		monster_remove_from_groups(dest, source_ghost);
 	}
 	monster_groups_verify(dest);
 
