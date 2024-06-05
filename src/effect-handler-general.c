@@ -2490,7 +2490,7 @@ bool effect_handler_BANISH(effect_handler_context_t *context)
 		}
 
 		/* Delete the monster */
-		delete_monster_idx(i);
+		delete_monster_idx(cave, i);
 
 		/* Take some damage */
 		if (hurt) {
@@ -2544,7 +2544,7 @@ bool effect_handler_MASS_BANISH(effect_handler_context_t *context)
 		if (mon->cdis > radius) continue;
 
 		/* Delete the monster */
-		delete_monster_idx(i);
+		delete_monster_idx(cave, i);
 
 		/* Take some damage */
 		dam += randint1(3);
@@ -2987,7 +2987,7 @@ bool effect_handler_TELEPORT_LEVEL(effect_handler_context_t *context)
 	if (t_mon) {
 		/* Monster is just gone */
 		add_monster_message(t_mon, MON_MSG_DISAPPEAR, false);
-		delete_monster_idx(t_mon->midx);
+		delete_monster_idx(cave, t_mon->midx);
 		return true;
 	}
 

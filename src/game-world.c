@@ -414,7 +414,7 @@ static void sun_banish(void)
 		if (!(rf_has(race->flags, RF_HURT_LIGHT))) continue;
 
 		/* Banish */
-		delete_monster_idx(i);
+		delete_monster_idx(cave, i);
 		some_gone = true;
 	}
 
