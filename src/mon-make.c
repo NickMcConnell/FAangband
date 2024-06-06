@@ -995,10 +995,10 @@ void delete_monster_idx(struct chunk *c, int m_idx)
 		if (player->upkeep->monster_race == mon->race) {
 			player->upkeep->monster_race = NULL;
 		}
-		cave->ghost->bones_selector = 0;
-		cave->ghost->has_spoken = false;
-		cave->ghost->string_type = 0;
-		my_strcpy(cave->ghost->string, "", sizeof(cave->ghost->string));
+		c->ghost->bones_selector = 0;
+		c->ghost->has_spoken = false;
+		c->ghost->string_type = 0;
+		my_strcpy(c->ghost->string, "", sizeof(c->ghost->string));
 	}
 
 	/* Wipe the Monster */

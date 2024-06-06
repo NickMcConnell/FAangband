@@ -358,6 +358,7 @@ bool chunk_copy(struct chunk *dest, struct player *p, struct chunk *source,
 	struct loc grid;
 	int h = source->height, w = source->width;
 	int mon_skip = dest->mon_max - 1;
+	int skipped_ghost_id = -1;
 
 	/* Check bounds */
 	if (rotate % 1) {
@@ -430,9 +431,17 @@ bool chunk_copy(struct chunk *dest, struct player *p, struct chunk *source,
 		/* Deal with player ghosts */
 		if (source_mon->race &&
 			rf_has(source_mon->race->flags, RF_PLAYER_GHOST)) {
-			/* Only allow one ghost */
+			/*
+			 * Only allow one ghost, preferring the ghost from
+			 * the destination if both chunks have a ghost.
+			 * Remember a ghost from the source that was not
+			 * put in dest->ghost so it can be deleted once the
+			 * monsters and monster groups are copied.
+			 */
 			if (dest->ghost->bones_selector) {
-				continue;
+				/* source should not have multiple ghosts. */
+				assert(skipped_ghost_id == -1);
+				skipped_ghost_id = source_mon->midx + mon_skip;
 			} else {
 				/* Shift the ghost */
 				mem_free(dest->ghost);
@@ -520,6 +529,18 @@ bool chunk_copy(struct chunk *dest, struct player *p, struct chunk *source,
 
 	if (source->good_item)
 		dest->good_item = true;
+
+	if (skipped_ghost_id != -1) {
+		/*
+		 * dest->ghost does not refer to the ghost at skipped_ghost_id
+		 * so remember it and restore it after delete_monster_idx()
+		 * does its work.
+		 */
+		struct ghost_info preserved_ghost = *dest->ghost;
+
+		delete_monster_idx(dest, skipped_ghost_id);
+		*dest->ghost = preserved_ghost;
+	}
 
 	return true;
 }
