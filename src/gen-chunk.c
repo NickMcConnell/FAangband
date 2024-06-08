@@ -540,6 +540,15 @@ bool chunk_copy(struct chunk *dest, struct player *p, struct chunk *source,
 
 		delete_monster_idx(dest, skipped_ghost_id);
 		*dest->ghost = preserved_ghost;
+		/*
+		 * Compensate for the change to monster rating, but do
+		 * nothing if it saturated:  do not know what to subtract
+		 * in that case.
+		 */
+		if (dest->mon_rating != UINT32_MAX) {
+			assert(dest->mon_rating >= 10);
+			dest->mon_rating -= 10;
+		}
 	}
 
 	return true;
