@@ -879,7 +879,7 @@ bool prepare_ghost(struct chunk *c, int r_idx, struct monster *mon,
 	}
 
 	/* Increase the level feeling */
-	c->mon_rating += 10;
+	add_to_monster_rating(c, 10);
 
 	/* Player ghosts are "seen" whenever generated. */
 	lore->sights = 1;
