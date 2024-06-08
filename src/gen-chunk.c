@@ -470,6 +470,8 @@ bool chunk_copy(struct chunk *dest, struct player *p, struct chunk *source,
 		}
 		if (source_mon->mimicked_obj) {
 			dest_mon->mimicked_obj = source_mon->mimicked_obj;
+			dest_mon->mimicked_obj->mimicking_m_idx =
+				dest_mon->midx;
 		}
 	}
 
