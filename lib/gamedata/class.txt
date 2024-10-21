@@ -601,7 +601,7 @@ effect:SHAPECHANGE:eagle
 desc:Gives you the form of one of the great eagles of Manwë.
 
 spell:Bear Form:40:20:85:100
-effect:SHAPECHANGE:bear
+effect:SHAPECHANGE:great bear
 desc:Allows you to take the form of a great bear of the mountains, sweeping
 desc: aside your enemies with your mighty paws.
 
