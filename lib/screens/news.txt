@@ -18,5 +18,5 @@
      Send comments, bug reports, and patches to {light yellow}nckmccnnll@gmail.com{/}
      The FAangband home page is {light yellow}http://nickmcconnell.github.io/FAangband/{/}
      Latest code is at {light yellow}https://github.com/NickMcConnell/FAangband{/}
-     Visit the Angband ladder page at {light yellow}http://angband.oook.cz{/}
+     Visit the Angband live site at {light yellow}http://angband.live{/}
                         '{light yellow}?{/}' for brief in-game help.
