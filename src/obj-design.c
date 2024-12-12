@@ -4051,23 +4051,26 @@ void initialize_random_artifacts(uint32_t randart_seed)
 			  randart_seed);
 
 	/* Initialize, name and write artifacts to the file */
+	a_info = mem_realloc(a_info,
+		(z_info->a_max + ART_NUM_RANDOM) * sizeof(*a_info));
+	aup_info = mem_realloc(aup_info,
+		(z_info->a_max + ART_NUM_RANDOM) * sizeof(*aup_info));
 	for (i = 0; i < ART_NUM_RANDOM; i++) {
 		/* Extend the artifact array with a zero entry */
 		struct artifact *art;
-		a_info = mem_realloc(a_info, (z_info->a_max + 1) * sizeof(*art));
-		aup_info = mem_realloc(aup_info, (z_info->a_max + 1)
-							   * sizeof(*aup_info));
 		art = &a_info[z_info->a_max];
 		memset(art, 0, sizeof(*art));
 		memset(&aup_info[z_info->a_max], 0, sizeof(*aup_info));
 		aup_info[z_info->a_max].aidx = z_info->a_max;
-		z_info->a_max += 1;
 
 		/* Design the artifact, storing information as we go along. */
 		design_random_artifact(art);
+		art->aidx = z_info->a_max;
 
 		/* Write the entry to the randart file */
 		write_randart_file_entry(randart_file, art);
+
+		z_info->a_max += 1;
 	}
 
 	/* Close the file */
