@@ -1469,13 +1469,13 @@ errr init_gcu(int argc, char **argv) {
       space.
 
       Examples:
-        angband -mgcu -- -right 30x27,* -bottom *x7 will layout as
+        faangband -mgcu -- -right 30x27,* -bottom *x7 will layout as
 
         Term-0: Map (COLS-30)x(LINES-7) | Term-1: 30x27
         --------------------------------|----------------------
         <----Term-3: (COLS-30)x7------->| Term-2: 30x(LINES-27)
 
-        composband -mgcu -- -bottom *x7 -right 30x27,* will layout as
+        angband -mgcu -- -bottom *x7 -right 30x27,* will layout as
 
         Term-0: Map (COLS-30)x(LINES-7) | Term-2: 30x27
                                         |------------------------------
