@@ -944,7 +944,7 @@ static void cleanup_game_constants(void)
 
 /**
  * ------------------------------------------------------------------------
- * Intialize world maps
+ * Initialize world map
  * ------------------------------------------------------------------------ */
 static enum parser_error parse_world_map(struct parser *p) {
 	const char *name = parser_getstr(p, "mapname");
@@ -1496,7 +1496,7 @@ struct file_parser player_property_parser = {
 
 /**
  * ------------------------------------------------------------------------
- * Intialize random names
+ * Initialize random names
  * ------------------------------------------------------------------------ */
 
 struct name {
@@ -1592,7 +1592,7 @@ struct file_parser names_parser = {
 
 /**
  * ------------------------------------------------------------------------
- * Intialize traps
+ * Initialize traps
  * ------------------------------------------------------------------------ */
 
 static enum parser_error parse_trap_name(struct parser *p) {
@@ -2079,7 +2079,7 @@ struct file_parser trap_parser = {
 
 /**
  * ------------------------------------------------------------------------
- * Intialize terrain
+ * Initialize terrain
  * ------------------------------------------------------------------------ */
 
 static enum parser_error parse_feat_name(struct parser *p) {
@@ -2359,7 +2359,7 @@ struct file_parser feat_parser = {
 
 /**
  * ------------------------------------------------------------------------
- * Intialize player bodies
+ * Initialize player bodies
  * ------------------------------------------------------------------------ */
 
 static enum parser_error parse_body_body(struct parser *p) {
@@ -3117,7 +3117,7 @@ struct file_parser realm_parser = {
 
 /**
  * ------------------------------------------------------------------------
- * Intialize player shapechange shapes
+ * Initialize player shapechange shapes
  * ------------------------------------------------------------------------ */
 
 static enum parser_error parse_shape_name(struct parser *p) {
@@ -4380,7 +4380,7 @@ struct file_parser class_parser = {
 
 /**
  * ------------------------------------------------------------------------
- * Intialize flavors
+ * Initialize flavors
  * ------------------------------------------------------------------------ */
 
 static wchar_t flavor_glyph;

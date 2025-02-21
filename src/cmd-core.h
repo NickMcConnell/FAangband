@@ -324,7 +324,7 @@ void cmdq_execute(cmd_context ctx);
 
 /**
  * Remove all commands from the queue.  cmdq_release() also releases any
- * resource allocated.
+ * resources allocated.
  */
 void cmdq_flush(void);
 void cmdq_release(void);
