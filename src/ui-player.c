@@ -821,6 +821,9 @@ static struct panel *get_panel_combat(void) {
 		dam += object_to_dam(obj->known);
 		hit += object_to_hit(obj->known);
 	}
+	if (player->known_state.bless_wield) {
+		hit += 2;
+	}
 
 	if (!obj && (player_has(player, PF_UNARMED_COMBAT) ||
 				 player_has(player, PF_MARTIAL_ARTS))) {
