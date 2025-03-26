@@ -4081,30 +4081,6 @@ spells:BLIND | BLINK | CONF | SCARE | TELE_LEVEL | TELE_TO
 spells:TPORT
 desc:A demon of small stature with an annoying bite.
 
-name:uruk
-base:orc
-color:B
-speed:110
-hit-points:70
-hearing:20
-smell:20
-armor-class:75
-sleepiness:30
-depth:16
-rarity:1
-experience:60
-blow:HIT:HURT:3d5
-blow:HIT:HURT:3d5
-flags:DROP_20
-innate-freq:9
-spells:ARROW | WHIP
-friends:40:1d4:Half-orc
-friends:80:2d5:Warg
-friends:50:1d2:orc tracker
-friends:50:1d2:orc archer
-friends:100:3d3:Same
-desc:A cunning orc of power, as tall as a man, and stronger.  It fears little.
-
 name:grizzly bear
 base:quadruped
 color:U
@@ -5214,7 +5190,7 @@ flags:UNIQUE | MALE | NAME_COMMA | SMART | SPEAKING
 flags:ONLY_ITEM | DROP_60 | DROP_1 | DROP_GOOD
 flags:IM_POIS
 friends-base:100:3d7:orc
-desc:He is an Uruk of power and great cunning.  He doesn't think much of you,
+desc:He is an orc of power and great cunning.  He doesn't think much of you,
 desc: but then he doesn't think much at all.
 
 ### Dungeon level 22 ###
@@ -11535,7 +11511,6 @@ spells:BLIND | WOUND | CONF | HEAL | SCARE
 spells:SLOW | WEAVE
 spells:BR_DARK | BR_POIS
 spells:S_KIN
-friends:80:4d4:uruk
 friends:100:3d7:mirkwood spider
 desc:Shelob is an enormous bloated spider, the last daughter of Ungoliant the
 desc: Unlight.  Her poison is legendary, as is her ego.  She normally guards the
