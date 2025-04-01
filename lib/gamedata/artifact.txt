@@ -732,7 +732,7 @@ desc: auras of protection and thought.
 
 name:'Eriril'
 base-object:hafted:Magestaff
-level:20
+level:15
 weight:150
 cost:20000
 alloc:5:20 to 100
@@ -748,7 +748,7 @@ desc: grants keen sight and clear knowledge of many hidden things.
 
 name:of Olórin
 base-object:hafted:Quarterstaff
-level:60
+level:20
 weight:170
 cost:120000
 alloc:1:60 to 100
@@ -871,7 +871,7 @@ desc:The mighty spear of Gil-galad, famed as "Snow-point" in the songs of Elves.
 
 name:of Oromë
 base-object:polearm:Spear
-level:35
+level:15
 weight:50
 cost:80000
 alloc:4:35 to 127
@@ -937,8 +937,8 @@ desc: evil and undead.
 
 name:of Ulmo
 base-object:polearm:Trident
-level:80
-weight:90
+level:27
+weight:70
 cost:120000
 alloc:1:80 to 127
 attack:4d6:15:19
@@ -1137,7 +1137,7 @@ desc: hosts of evil at a word, and grants Maia-like powers of body and mind.
 
 name:'Avavir'
 base-object:polearm:Scythe
-level:50
+level:20
 weight:200
 cost:22000
 alloc:12:50 to 100
@@ -1257,7 +1257,7 @@ desc: with flame unquenchable.
 
 name:of Fëanor
 base-object:boots:Pair of Leather Boots
-level:60
+level:30
 weight:40
 cost:250000
 alloc:1:60 to 127
@@ -1532,7 +1532,7 @@ desc: warding and stability deeply engraved into its surface.
 
 name:'Belegennon'
 base-object:hard armour:Mithril Chain Mail
-level:50
+level:20
 weight:150
 cost:105000
 alloc:30:55 to 127
@@ -1726,7 +1726,7 @@ desc:These gloves glow so brightly as to light the way for the wearer.
 
 name:'Paurnimmen'
 base-object:gloves:Set of Gauntlets
-level:10
+level:1
 weight:25
 cost:13000
 alloc:4:10 to 127
@@ -1874,7 +1874,7 @@ desc: it conveys the same powers of endurance to its bearer.
 
 name:of Eärendil
 base-object:shield:Knight's Shield
-level:65
+level:32
 weight:160
 cost:90000
 alloc:6:65 to 127
@@ -1890,7 +1890,7 @@ desc: "scored with runes to keep all wounds and harm from him".
 
 name:of Gil-galad
 base-object:shield:Shield of Deflection
-level:70
+level:30
 weight:80
 cost:65000
 alloc:25:70 to 127
@@ -1953,7 +1953,7 @@ desc: bring to all that they touch healing from hurt.
 
 name:'Razorback'
 base-object:dragon armour:Multi-Hued Dragon Scale Mail
-level:90
+level:60
 weight:200
 cost:400000
 alloc:11:90 to 127
@@ -1970,7 +1970,7 @@ desc: untamed Lightning as you put it on.
 
 name:'Bladeturner'
 base-object:dragon armour:Power Dragon Scale Mail
-level:100
+level:55
 weight:150
 cost:500000
 alloc:33:100 to 127
