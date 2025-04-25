@@ -315,7 +315,12 @@ void hit_chance(random_chance *chance, int to_hit, int ac)
 	chance->denominator = MAX(0, to_hit);
 
 	/* Convert the ratio to a scaled percentage */
-	chance->numerator = HUNDRED_PCT * chance->numerator / chance->denominator;
+	if (chance->denominator > 0) {
+		chance->numerator = HUNDRED_PCT * chance->numerator
+			/ chance->denominator;
+	} else {
+		chance->numerator = 0;
+	}
 	chance->denominator = HUNDRED_PCT;
 
 	/* The calculated rate only applies when the guaranteed hit/miss don't */
