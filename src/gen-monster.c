@@ -37,8 +37,30 @@
  * mon_select().
  */
 static bool allow_unique;
-static char base_d_char[15];
+static wchar_t base_d_chars[3]; /* always terminated with 0 */
 static int select_current_level;
+
+/**
+ * Return true if the given glyph matches the restrictions by glyph.
+ */
+static bool matches_glyph_restrictions(wchar_t x)
+{
+	int i = 0;
+
+	while (base_d_chars[i]) {
+		/*
+		 * If the glyph matches one of the allowed glyphs, it passes
+		 * the restrictions.
+		 */
+		if (x == base_d_chars[i]) {
+			return true;
+		}
+		++i;
+		assert(i < (int)N_ELEMENTS(base_d_chars));
+	}
+	/* If there were no restrictions, then the glyph is always accepted. */
+	return (i == 0);
+}
 
 /**
  * Return the pit profile matching the given name.
@@ -113,10 +135,8 @@ static bool mon_select(struct monster_race *race)
 	}
 
 	/* Require that the monster symbol be correct. */
-	if (base_d_char[0] != '\0') {
-		if (strchr(base_d_char, race->base->d_char) == 0)
-			return (false);
-	}
+	if (!matches_glyph_restrictions(race->base->d_char))
+		return (false);
 
 	/* No invisible undead until deep. */
 	if (select_current_level < 40 && rf_has(race->flags, RF_UNDEAD)
@@ -163,9 +183,8 @@ bool mon_restrict(const char *monster_type, int depth, int current_depth,
 
 	/* Clear global monster restriction variables. */
 	allow_unique = unique_ok;
-	for (i = 0; i < 10; i++)
-		base_d_char[i] = '\0';
-        select_current_level = current_depth;
+	base_d_chars[0] = 0;
+	select_current_level = current_depth;
 
 	/* No monster type specified, no restrictions. */
 	if (monster_type == NULL) {
@@ -198,8 +217,8 @@ bool mon_restrict(const char *monster_type, int depth, int current_depth,
 		/* We've found a monster. */
 		if (i < 2499) {
 			/* Use that monster's base type for all monsters. */
-			my_strcpy(base_d_char, format("%c", r_info[j].base->d_char),
-				sizeof(base_d_char));
+			base_d_chars[0] = r_info[j].base->d_char;
+			base_d_chars[1] = 0;
 
 			/* Prepare allocation table */
 			get_mon_num_prep(mon_select);
@@ -229,18 +248,17 @@ bool mon_restrict(const char *monster_type, int depth, int current_depth,
  */
 void general_monster_restrictions(void)
 {
-	int i;
-
 	/* Clear global monster restriction variables. */
 	allow_unique = true;
-    for (i = 0; i < 10; i++)
-		base_d_char[i] = '\0';
+	base_d_chars[0] = 0;
 
 	/* Most themed levels have monster restrictions. */
 	if (player->themed_level == themed_level_index("Elemental")) {
 		get_mon_num_prep(mon_select);
 	} else if (player->themed_level == themed_level_index("Dragon")) {
-		my_strcpy(base_d_char, "dD", sizeof(base_d_char));
+		base_d_chars[0] = L'd';
+		base_d_chars[1] = L'D';
+		base_d_chars[2] = 0;
 		get_mon_num_prep(mon_select);
 	} else if (player->themed_level == themed_level_index("Wilderness")) {
 		get_mon_num_prep(mon_select);
@@ -353,13 +371,23 @@ void get_vault_monsters(struct chunk *c, char racial_symbol[], char *vault_type,
 						const char *data, int y1, int y2, int x1, int x2)
 {
 	int i, y, x, depth;
+	char stmp[2] = { '\0', '\0' };
+	wchar_t wtmp[2];
 	const char *t;
 
 	for (i = 0; racial_symbol[i] != '\0'; i++) {
 		/* Require correct race, allow uniques. */
 		allow_unique = true;
-		my_strcpy(base_d_char, format("%c", racial_symbol[i]),
-			sizeof(base_d_char));
+		stmp[0] = racial_symbol[i];
+		if (text_mbstowcs(wtmp, stmp, N_ELEMENTS(wtmp)) != 1) {
+			/*
+			 * Skip if could not convert the character to one
+			 * wide character.
+			 */
+			continue;
+		}
+		base_d_chars[0] = wtmp[0];
+		base_d_chars[1] = 0;
 		select_current_level = c->depth;
 
 		/* Determine level of monster */
