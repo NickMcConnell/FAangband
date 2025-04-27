@@ -682,7 +682,7 @@ void deactivate_randart_file(void)
 /**
  * Taken from Zangband.  What a good idea!
  */
-errr get_rnd_line(const char *file_name, char *output)
+errr get_rnd_line(const char *file_name, char *output, size_t outsz)
 {
 	ang_file *fp;
 	char buf[1024];
@@ -714,7 +714,7 @@ errr get_rnd_line(const char *file_name, char *output)
 			break;
 	}
 
-	strcpy(output, buf);
+	my_strcpy(output, buf, outsz);
 
 	/* Close the file */
 	file_close(fp);

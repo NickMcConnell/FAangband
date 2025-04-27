@@ -3824,15 +3824,15 @@ static void find_word(struct artifact *art, char *word, size_t len)
 	art_name[0] = '\0';
 	if (art->cost == 0L) {
 		if (tval_is_weapon_a(art)) {
-			get_rnd_line("w_cursed.txt", art_name);
+			get_rnd_line("w_cursed.txt", art_name, sizeof(art_name));
 		} else {
-			get_rnd_line("a_cursed.txt", art_name);
+			get_rnd_line("a_cursed.txt", art_name, sizeof(art_name));
 		}
 	} else {
 		if (tval_is_weapon_a(art)) {
-			get_rnd_line("w_normal.txt", art_name);
+			get_rnd_line("w_normal.txt", art_name, sizeof(art_name));
 		} else {
-			get_rnd_line("a_normal.txt", art_name);
+			get_rnd_line("a_normal.txt", art_name, sizeof(art_name));
 		}
 	}
 
