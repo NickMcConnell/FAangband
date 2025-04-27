@@ -786,10 +786,11 @@ void alloc_stairs(struct chunk *c, int feat, int num, int minsep, bool sepany,
  * \param num number to place
  * \param depth generation depth
  * \param origin item origin (if appropriate)
+ * \return the number of entities that were not allocated
  *
  * See alloc_object() for more information.
  */
-void alloc_objects(struct chunk *c, int set, int typ, int num, int depth,
+int alloc_objects(struct chunk *c, int set, int typ, int num, int depth,
 		uint8_t origin)
 {
 	int k, l = 0;
@@ -797,6 +798,7 @@ void alloc_objects(struct chunk *c, int set, int typ, int num, int depth,
 		bool ok = alloc_object(c, set, typ, depth, origin);
 		if (!ok) l++;
 	}
+	return l;
 }
 
 
