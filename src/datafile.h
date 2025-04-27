@@ -62,6 +62,6 @@ void file_archive(const char *fname, const char *append);
 bool randart_file_exists(void);
 void activate_randart_file(void);
 void deactivate_randart_file(void);
-errr get_rnd_line(const char *file_name, char *output);
+errr get_rnd_line(const char *file_name, char *output, size_t outsz);
 
 #endif /* !DATAFILE_H */

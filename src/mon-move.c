@@ -1731,10 +1731,10 @@ static void monster_turn(struct monster *mon)
 		if (monster_is_visible(mon)) {
 			monster_desc(m_name, sizeof(m_name), mon, MDESC_CAPITAL);
 		} else {
-			strcpy(m_name, "It");
+			my_strcpy(m_name, "It", sizeof(m_name));
 		}
 
-		if (!get_rnd_line("bravado.txt", bravado)) {
+		if (!get_rnd_line("bravado.txt", bravado, sizeof(bravado))) {
 			msg("%s %s", m_name, bravado);
 		}
 	} else if (rf_has(mon->race->flags, RF_PLAYER_GHOST)) {
