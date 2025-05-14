@@ -337,10 +337,10 @@ void fill_circle(struct chunk *c, int y0, int x0, int radius, int border,
 }
 
 /**
- * Fill a circle with the given feature/info.
+ * Fill an ellipse with the given feature/info.
  * \param c the current chunk
- * \param y0 the circle centre
- * \param x0 the circle centre
+ * \param y0 the ellipse centre
+ * \param x0 the ellipse centre
  * \param y_radius the half-axis in the y direction
  * \param x_radius the half-axis in the x direction
  * \param feat the terrain feature
