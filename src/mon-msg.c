@@ -300,6 +300,7 @@ bool add_monster_message_show_damage(struct monster *mon, int msg_code,
 			!stack_message(mon, msg_code, flags, damage) &&
 			size_mon_msg < MAX_STORED_MON_MSG) {
 		mon_msg[size_mon_msg].race = mon->race;
+		mon_msg[size_mon_msg].p_race = mon->player_race;
 		mon_msg[size_mon_msg].flags = flags;
 		mon_msg[size_mon_msg].msg_code = msg_code;
 		mon_msg[size_mon_msg].count = 1;
