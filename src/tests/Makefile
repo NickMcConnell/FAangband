@@ -34,6 +34,9 @@ TESTPROGS := $(TESTPROGS:%=%.exe)
 
 TESTOBJS += test-utils.o unit-test.o
 
+# gcov intermediate data
+GCOBJS = $(TESTOBJS:.o=.gcno) $(TESTOBJS:.o=.gcda)
+
 include Makefile.inc
 
 build : $(TESTPROGS)
@@ -56,5 +59,8 @@ $(TESTPROGS) : ../faangband.a test-utils.o unit-test.o
 clean :
 	-$(RM) $(TESTOBJS) $(TESTPROGS)
 
-.PHONY : all clean
+clean-coverage :
+	-$(RM) $(GCOBJS)
+
+.PHONY : all clean clean-coverage
 .PRECIOUS : %.o
