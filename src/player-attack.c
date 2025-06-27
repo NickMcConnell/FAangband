@@ -1351,7 +1351,7 @@ static void ranged_helper(struct player *p,	struct object *bow,
 		msg("Your %s feels very accurate.", name);
 	}
 
-	/* Hack -- Handle stuff */
+	/* Handle stuff */
 	handle_stuff(p);
 
 	/* Project along the path */

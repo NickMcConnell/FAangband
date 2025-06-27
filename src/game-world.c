@@ -39,8 +39,8 @@
 #include "trap.h"
 
 uint16_t daycount = 0;
-uint32_t seed_randart;		/* Hack -- consistent random artifacts */
-uint32_t seed_flavor;		/* Hack -- consistent object colors */
+uint32_t seed_randart;		/* Consistent random artifacts */
+uint32_t seed_flavor;		/* Consistent object colors */
 int32_t turn;			/* Current game turn */
 bool character_generated;	/* The character exists */
 bool character_dungeon;		/* The character has a dungeon */
@@ -965,7 +965,7 @@ static void process_player_cleanup(void)
 
 		/* Do nothing else if player has auto-dropped stuff */
 		if (!player->upkeep->dropping) {
-			/* Hack -- constant hallucination */
+			/* Constant hallucination */
 			if (player->timed[TMD_IMAGE])
 				player->upkeep->redraw |= (PR_MAP);
 
@@ -1043,7 +1043,7 @@ void process_player(void)
 		handle_stuff(player);
 		event_signal(EVENT_REFRESH);
 
-		/* Hack -- Pack Overflow */
+		/* Pack Overflow */
 		pack_overflow(NULL);
 
 		/* Assume free turn */

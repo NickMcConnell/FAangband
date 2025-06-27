@@ -38,7 +38,7 @@ const char *buildid = VERSION_NAME " " VERSION_STRING;
 const char *buildver = VERSION_STRING;
 
 /**
- * Hack -- Link a copyright message into the executable
+ * Link a copyright message into the executable
  */
 const char *copyright =
 	"Copyright (c) 1987-2019 Angband contributors.\n"

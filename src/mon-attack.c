@@ -723,7 +723,7 @@ bool make_attack_normal(struct monster *mon, struct player *p)
 				do_stun = false;
 			}
 
-			/* Hack -- only one of cut or stun */
+			/* Only one of cut or stun */
 			if (do_cut && do_stun) {
 				/* Cancel cut */
 				if (randint0(100) < 50)
@@ -870,7 +870,7 @@ bool monster_attack_monster(struct monster *mon, struct monster *t_mon)
 
 			do_stun = method->stun;
 
-			/* Hack -- assume all attacks are obvious */
+			/* Assume all attacks are obvious */
 			obvious = true;
 
 			/* Roll dice */

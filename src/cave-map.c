@@ -338,7 +338,7 @@ static void cave_unlight(struct point_set *ps)
 			square_memorize(cave, grid);
 		}
 
-		/* Hack -- Forget "boring" grids */
+		/* Forget "boring" grids */
 		if (square_isfloor(cave, grid))
 			square_forget(cave, grid);
 	}

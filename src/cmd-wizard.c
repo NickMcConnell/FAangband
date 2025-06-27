@@ -2353,7 +2353,7 @@ void do_cmd_wiz_reroll_item(struct command *cmd)
 		return;
 	}
 
-	/* Hack -- leave artifacts alone */
+	/* Leave artifacts alone */
 	if (obj->artifact) {
 		return;
 	}
@@ -2606,7 +2606,7 @@ void do_cmd_wiz_stat_item(struct command *cmd)
 	msg(repfmt, i, matches, better, worse, other);
 	event_signal(EVENT_MESSAGE_FLUSH);
 
-	/* Hack -- normally only make a single artifact */
+	/* Normally only make a single artifact */
 	if (obj->artifact) {
 		mark_artifact_created(obj->artifact, true);
 	}
@@ -2780,7 +2780,7 @@ void do_cmd_wiz_tweak_item(struct command *cmd)
 		cmd_set_arg_item(cmd, "item", obj);
 	}
 
-	/* Hack -- leave artifacts alone */
+	/* Leave artifacts alone */
 	if (obj->artifact) return;
 
 	/*
