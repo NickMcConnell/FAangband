@@ -21,7 +21,6 @@ import os
 project = "FAangband"
 copyright = "2025, Angband developers past and present"
 author = "Angband developers past and present"
-)
 
 # The full version, including alpha/beta/rc tags
 # There's extra clutter here (and for the HTML theme) to allow conf.py to
