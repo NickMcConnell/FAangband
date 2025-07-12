@@ -110,7 +110,7 @@ struct chunk *t_build_arena(int height, int width) {
 
 struct monster *t_add_monster(struct chunk *c, struct loc g, const char *race) {
 	struct monster_race *r = lookup_monster(race);
-	struct monster_group_info info = { 0, 0 };
+	struct monster_group_info info = { 0, 0, 0 };
 	place_new_monster(c, g, r, false, false, info, ORIGIN_DROP);
 	struct monster *m = square_monster(c, g);
 	assert(m);

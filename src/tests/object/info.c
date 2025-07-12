@@ -72,7 +72,7 @@ static void fill_in_monster_race(struct monster_race *race,
 
 int setup_tests(void **state)
 {
-	struct monster_group_info gi = { 0, 0 };
+	struct monster_group_info gi = { 0, 0, 0 };
 	struct info_test_state *ts;
 
 	set_file_paths();

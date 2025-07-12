@@ -636,6 +636,7 @@ static struct object_kind TEST_DATA test_gold = {
 	.flavor = NULL,
 };
 
+static char race_name[16] = "Eriador";
 static struct player_race TEST_DATA test_race = {
 	.name = "TestRace",
 	.r_adj = {
@@ -661,7 +662,7 @@ static struct player_race TEST_DATA test_race = {
 	.r_mhp = 10,
 	.difficulty = 4,
 	.start_lev = 1,
-	.hometown = "Eriador",
+	.hometown = race_name,
 
 	.b_age = 14,
 	.m_age = 6,
