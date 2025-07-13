@@ -1328,7 +1328,7 @@ bool dump_save(const char *path)
 
 
 /**
- * Hack -- change name
+ * Change name
  */
 void do_cmd_change_name(void)
 {

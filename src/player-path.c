@@ -1581,21 +1581,21 @@ static bool run_break_right;	/* Looking for a break (right) */
 static bool run_break_left;	/* Looking for a break (left) */
 
 /**
- * Hack -- allow quick "cycling" through the legal directions
+ * Allow quick "cycling" through the legal directions
  */
 static const uint8_t cycle[] =
 { 1, 2, 3, 6, 9, 8, 7, 4, 1, 2, 3, 6, 9, 8, 7, 4, 1 };
 
 
 /**
- * Hack -- map each direction into the "middle" of the "cycle[]" array
+ * Map each direction into the "middle" of the "cycle[]" array
  */
 static const uint8_t chome[] =
 { 0, 8, 9, 10, 7, 0, 11, 6, 5, 4 };
 
 
 /**
- * Hack -- Check for a "known wall" (see below)
+ * Check for a "known wall" (see below)
  */
 static bool see_wall(int dir, struct loc grid)
 {
@@ -1921,7 +1921,7 @@ static bool run_test(const struct player *p)
 
 	/* Looking for open area */
 	if (run_open_area) {
-		/* Hack -- look again */
+		/* Look again */
 		for (i = -max; i < 0; i++) {
 			new_dir = cycle[chome[prev_dir] + i];
 			grid = loc_sum(p->grid, ddgrid[new_dir]);
@@ -1941,7 +1941,7 @@ static bool run_test(const struct player *p)
 			}
 		}
 
-		/* Hack -- look again */
+		/* Look again */
 		for (i = max; i > 0; i--) {
 			new_dir = cycle[chome[prev_dir] + i];
 			grid = loc_sum(p->grid, ddgrid[new_dir]);
@@ -1974,7 +1974,7 @@ static bool run_test(const struct player *p)
 			/* Primary option */
 			run_cur_dir = option;
 
-			/* Hack -- allow curving */
+			/* Allow curving */
 			run_old_dir = option2;
 		}
 	}
@@ -2003,7 +2003,7 @@ void run_step(int dir)
 		/* Initialize */
 		run_init(dir);
 
-		/* Hack -- Set the run counter if no count given */
+		/* Set the run counter if no count given */
 		if (player->upkeep->running == 0)
 			player->upkeep->running = 9999;
 
