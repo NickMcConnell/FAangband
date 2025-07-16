@@ -440,7 +440,7 @@ void rune_set_note(size_t i, const char *inscription)
  * Check if a brand is known to the player
  *
  * \param p is the player
- * \param b is the brand
+ * \param i is the index of the brand
  */
 bool player_knows_brand(struct player *p, int i)
 {
@@ -451,7 +451,7 @@ bool player_knows_brand(struct player *p, int i)
  * Check if a slay is known to the player
  *
  * \param p is the player
- * \param s is the slay
+ * \param i is the index of the slay
  */
 bool player_knows_slay(struct player *p, int i)
 {
@@ -462,7 +462,7 @@ bool player_knows_slay(struct player *p, int i)
  * Check if a curse is known to the player
  *
  * \param p is the player
- * \param c is the curse
+ * \param index is the index of the curse
  */
 bool player_knows_curse(struct player *p, int index)
 {
