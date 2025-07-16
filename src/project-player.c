@@ -121,7 +121,9 @@ int terrain_adjust_dam(struct player *p, struct monster *mon, int type, int dam)
  * \param p is the player
  * \param type is the attack type we are checking.
  * \param dam is the unadjusted damage.
- * \param actual is whether this is actually happening or a test
+ * \param actual will, if true, cause the player to learn about resistances
+ * that affected the damage.  If actual is false, the player's knowledge
+ * is not changed by the damage calculation.
  */
 int adjust_dam(struct player *p, int type, int dam, bool actual)
 {
@@ -958,12 +960,16 @@ static const project_player_handler_f player_handlers[] = {
  * Called for projections with the PROJECT_PLAY flag set, which includes
  * bolt, beam, ball and breath effects.
  *
- * \param src is the origin of the effect
+ * \param origin describes what generated the projection
  * \param r is the distance from the centre of the effect
- * \param y the coordinates of the grid being handled
- * \param x the coordinates of the grid being handled
+ * \param grid is the coordinates of the grid being handled
  * \param dam is the "damage" from the effect at distance r from the centre
  * \param typ is the projection (PROJ_) type
+ * \param power is, if the origin of the projection is a monster, the spell
+ * power of that monster
+ * \param self will, if true, allows the caster of a projection to be affected
+ * by the projection.  If self is false, the caster of the projection is not
+ * affected by the projection.
  * \return whether the effects were obvious
  *
  * If "r" is non-zero, then the blast was centered elsewhere; the damage
