@@ -903,7 +903,7 @@ static bool describe_blows(textblock *tb, const struct object *obj)
  * \param nonweap_slay is dereferenced and set to true if an off-weapon slay
  * or brand affects the damage or to false if no off-weapon slay or brand
  * affects the damage.
- * \param thow causes, if true, the damage to be calculated as if obj is
+ * \param throw causes, if true, the damage to be calculated as if obj is
  * thrown.
  * \return true if there is at least one known brand or slay that could
  * affect the damage; otherwise, return false.
