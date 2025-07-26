@@ -235,6 +235,7 @@ int chance_of_missile_hit_base(const struct player *p,
  * \param missile The missile to launch
  * \param launcher Optional launcher to use (thrown weapons use no launcher)
  * \param mon The monster
+ * \param tries The number of prior misses along the missile's path
  */
 static int chance_of_missile_hit(const struct player *p,
 								 const struct object *missile,

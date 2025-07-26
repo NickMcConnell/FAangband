@@ -1840,7 +1840,6 @@ bool build_vault(struct chunk *c, struct loc centre, struct vault *v)
  * \param centre the room centre; out of chunk centre invokes find_space()
  * \param typ1 the vault type
  * \param typ2 the alternative vault type (can be null)
- * \param label name of the vault type (eg "Greater vault")
  * \return success
  */
 static bool build_vault_type(struct chunk *c, struct loc centre,

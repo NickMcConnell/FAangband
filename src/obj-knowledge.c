@@ -1871,6 +1871,7 @@ static int object_find_unknown_rune(struct player *p, struct object *obj)
  *
  * \param p is the player
  * \param obj is the object
+ * \param msg is whether or not to print a message
  */
 void object_learn_unknown_rune(struct player *p, struct object *obj, bool msg)
 {
