@@ -71,7 +71,6 @@ static bool attack_is_fire_based(int type)
  * \param mon is the monster
  * \param type is the attack type we are checking.
  * \param dam is the unadjusted damage.
- * \param grid is the grid the damage is being calculated at
  */
 int terrain_adjust_dam(struct player *p, struct monster *mon, int type, int dam)
 {

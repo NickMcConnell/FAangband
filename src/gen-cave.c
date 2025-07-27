@@ -1370,7 +1370,7 @@ static bool lab_is_tunnel(struct chunk *c, struct loc grid) {
 /**
  * Build a labyrinth chunk of a given height and width
  *
- * \param depth is the native depth 
+ * \param p is the player
  * \param h are the dimensions of the chunk
  * \param w are the dimensions of the chunk
  * \param lit is whether the labyrinth is lit
@@ -2074,7 +2074,7 @@ void ensure_connectedness(struct chunk *c, bool allow_vault_disconnect) {
 #define MAX_CAVERN_TRIES 10
 /**
  * The cavern generator's main function.
- * \param depth the chunk's native depth
+ * \param p is the player
  * \param h the chunk's dimensions
  * \param w the chunk's dimensions
  * \param join Is a linked list of the connection information to adjacent
@@ -2226,6 +2226,7 @@ struct chunk *cavern_gen(struct player *p, int min_height, int min_width,
 
 /**
  * Get the bounds of a town lot.
+ * @param c is the chunk holding the town
  * @param xroads - the location of the town crossroads
  * @param lot - the lot location, indexed from the nw corner
  * @param lot_wid - lot width for the town
@@ -2308,7 +2309,7 @@ static bool lot_has_shop(struct chunk *c, struct loc xroads, struct loc lot,
 /**
  * Builds a store at a given pseudo-location
  * \param c is the current chunk
- * \param n is which shop it is
+ * \param s points to the store to build
  * \param xroads is the location of the town crossroads
  * \param lot the upper left corner of this store in the town layout
  * \param lot_wid is the width, in grids, for the store
@@ -2606,6 +2607,7 @@ static void build_ruin(struct chunk *c, struct loc xroads, struct loc lot, int l
  * Generate the town for the first time, and place the player
  * \param c is the current chunk
  * \param p is the player
+ * \param t is the town to generate
  */
 static void town_gen_layout(struct chunk *c, struct player *p, struct town *t)
 {
@@ -2950,7 +2952,6 @@ struct chunk *town_gen(struct player *p, int min_height, int min_width,
  * The main modified generation algorithm
  * \param p is the player, in case generation fails and the partially created
  * level needs to be cleaned up
- * \param depth is the chunk's native depth
  * \param height are the chunk's dimensions
  * \param width are the chunk's dimensions
  * \param persistent If true, handle the connections for persistent levels.
@@ -3197,7 +3198,6 @@ struct chunk *modified_gen(struct player *p, int min_height, int min_width,
  * The main moria generation algorithm
  * \param p is the player, in case generation fails and the partially created
  * level needs to be cleaned up
- * \param depth is the chunk's native depth
  * \param height are the chunk's dimensions
  * \param width are the chunk's dimensions
  * \param persistent If true, handle the connections for persistent levels.
@@ -4251,6 +4251,10 @@ struct chunk *arena_gen(struct player *p, int min_height, int min_width) {
  * Generate a themed level.
  *
  * \param p is the player
+ * \param min_height is the minimum expected height, in grids, for the level
+ * \param min_width is the minimum expected width, in grids, for the level
+ * \param p_error will be dereferenced and set to a the address of a constant
+ * string describing the failure when the returned chunk is NULL.
  * \return a pointer to the generated chunk
  */
 struct chunk *themed_gen(struct player *p, int min_height, int min_width,

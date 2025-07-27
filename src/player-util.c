@@ -93,7 +93,7 @@ bool mountain_top_possible(int place)
  *
  * \param place is the start - either current place or a recall point or similar
  * \param direction is one of the cardinal directions or up or down
- * \param added is how many steps to move (1 apart from deep descent)
+ * \param multiple is how many steps to move (1 apart from deep descent)
  * \return the place to move to
  */
 int player_get_next_place(int place, const char *direction, int multiple)
