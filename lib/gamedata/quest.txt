@@ -89,6 +89,5 @@ map:Extended Wilderness
 place:TOL_IN_GAURHOTH:85
 map:Hybrid Dungeon
 place:TOL_IN_GAURHOTH:85
-#Make Sauron not a quest while he can apparently appear earlier
-#map:Angband Dungeon
-#place:ANGBAND:99:block
+map:Angband Dungeon
+place:ANGBAND:99:block

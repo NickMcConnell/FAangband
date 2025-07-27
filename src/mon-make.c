@@ -225,6 +225,11 @@ static bool get_mon_forbidden(struct monster_race *race)
 		return true;
 	}
 
+	/* Forbid a unique quest monster if this is not its quest level */
+	if (quest_misplaced_unique_monster_check(race, player)) {
+		return true;
+	}
+
 	return false;
 }
 
