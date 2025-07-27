@@ -28,6 +28,8 @@ int quests_count(void);
 struct quest *find_quest(int place);
 bool quest_forbid_downstairs(int place);
 bool quest_unique_monster_check(const struct monster_race *race);
+bool quest_misplaced_unique_monster_check(const struct monster_race *race,
+		struct player *p);
 bool quest_monster_death_check(struct player *p, const struct monster *mon);
 bool quest_place_check(struct player *p);
 extern struct file_parser quests_parser;

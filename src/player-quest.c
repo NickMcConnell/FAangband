@@ -441,6 +441,35 @@ bool quest_unique_monster_check(const struct monster_race *race)
 }
 
 /**
+ * Check if a monster is a unique quest monster and the player is not in
+ * the place where that monster appears.
+ */
+bool quest_misplaced_unique_monster_check(const struct monster_race *race,
+		struct player *p)
+{
+	const struct quest *quest = quests;
+
+	while (quest) {
+		if (((quest->type == QUEST_UNIQUE)
+				|| (quest->type == QUEST_FINAL))
+				&& (quest->race == race)) {
+			const struct quest_place *q_place = quest->place;
+
+			while (q_place) {
+				if (q_place->map == world) {
+					return (q_place->place == p->place) ?
+						false : true;
+				}
+				q_place = q_place->next;
+			}
+			return false;
+		}
+		quest = quest->next;
+	}
+	return false;
+}
+
+/**
  * Check if this (now dead) monster is a quest monster, and act appropriately
  */
 bool quest_monster_death_check(struct player *p, const struct monster *mon)
