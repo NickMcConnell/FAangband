@@ -697,6 +697,11 @@ void ego_apply_magic(struct object *obj, int level, aspect rand_aspect)
 	/* Apply special resistances and randomise */
 	apply_resistances(obj, level);
 
+	/* Activation */
+	if (obj->ego->activation) {
+		obj->activation = obj->ego->activation;
+	}
+
 	return;
 }
 
@@ -752,11 +757,6 @@ static void make_ego_item(struct object *obj, int level)
 	/* Actually apply the ego template to the item */
 	if (obj->ego) {
 		ego_apply_magic(obj, level, RANDOMISE);
-
-		/* Activation */
-		if (obj->ego->activation) {
-			obj->activation = obj->ego->activation;
-		}
 	}
 
 	return;
