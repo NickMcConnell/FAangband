@@ -3769,7 +3769,11 @@ static void remove_contradictory_activation(struct artifact *art,
 	}
 
 	if (redundant) {
-		act = NULL;
+		if (art) {
+			art->activation = NULL;
+		} else {
+			obj->activation = NULL;
+		}
 	}
 }
 
