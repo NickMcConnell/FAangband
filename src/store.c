@@ -2282,7 +2282,7 @@ void do_cmd_stash(struct command *cmd)
 		return;
 
 	/* Check we are somewhere we can stash items. */
-	if (!store_is_home(store)) {
+	if (!store || !store_is_home(store)) {
 		msg("You are not in your home.");
 		return;
 	}

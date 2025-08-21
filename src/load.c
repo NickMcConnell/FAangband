@@ -1769,7 +1769,7 @@ int rd_chunks(void)
 
 	rd_u16b(&chunk_max);
 	for (j = 0; j < chunk_max; j++) {
-		struct chunk *c;
+		struct chunk *c = NULL;
 
 		/* Read the dungeon */
 		if (rd_dungeon_aux(&c))
