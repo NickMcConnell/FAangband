@@ -84,24 +84,23 @@ static const char *obj_flags[] = {
  */
 struct store *store_at(struct chunk *c, struct loc grid)
 {
-	struct store *s = NULL;
-
 	if (square_isshop(c, grid)) {
 		struct level *lev = &world->levels[player->place];
 		struct town *town = NULL;
 		int i;
 		for (i = 0; i < world->num_towns; i++) {
 			town = &world->towns[i];
-			if (town->index == lev->index) break;
-		}
-		if (i < world->num_towns) {
-			for (s = town->stores; s; s = s->next) {
-				if ((int) s->sidx == square_shopnum(cave, grid)) break;
+			if (town->index == lev->index) {
+				struct store *s;
+				for (s = town->stores; s; s = s->next) {
+					if ((int)s->sidx == square_shopnum(cave, grid)) {
+						return s;
+					}
+				}
 			}
 		}
 	}
-
-	return s;
+	return NULL;
 }
 
 
