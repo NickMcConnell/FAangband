@@ -88,22 +88,22 @@ void do_cmd_move_house(struct command *cmd)
 			/* Get the current home */
 			struct level *hometown = &world->levels[player->home];
 			struct town *old_home = NULL;
-			struct store *temp;
 			for (i = 0; i < world->num_towns; i++) {
 				old_home = &world->towns[i];
 				if (old_home->index == hometown->index) {
 					/* Found it */
+					struct store *temp;
 					assert(store_is_home(old_home->stores));
+					/* Move */
+					temp = old_home->stores;
+					old_home->stores =
+						old_home->stores->next;
+					temp->next = new_home->stores;
+					new_home->stores = temp;
 					break;
 				}
 			}
 			assert(i < world->num_towns);
-
-			/* Move */
-			temp = old_home->stores;
-			old_home->stores = old_home->stores->next;
-			temp->next = new_home->stores;
-			new_home->stores = temp;
 		} else {
 			/* Create a new and empty home for the thrall. */
 			place_home(new_home);
