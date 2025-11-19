@@ -1667,6 +1667,7 @@ void do_cmd_navigate_down(struct command *cmd)
 		square_isdownstairs, &player->upkeep->path_dest,
 		&player->upkeep->steps);
 	if (player->upkeep->step_count > 0) {
+		player->upkeep->running_firststep = true;
 		player->upkeep->running = player->upkeep->step_count;
 		/* Calculate torch radius */
 		player->upkeep->update |= (PU_TORCH);
@@ -1712,6 +1713,7 @@ void do_cmd_navigate_up(struct command *cmd)
 		square_isupstairs, &player->upkeep->path_dest,
 		&player->upkeep->steps);
 	if (player->upkeep->step_count > 0) {
+		player->upkeep->running_firststep = true;
 		player->upkeep->running = player->upkeep->step_count;
 		/* Calculate torch radius */
 		player->upkeep->update |= (PU_TORCH);
@@ -1761,6 +1763,7 @@ void do_cmd_explore(struct command *cmd)
 	player->upkeep->step_count = path_nearest_unknown(player, player->grid,
 		&player->upkeep->path_dest, &player->upkeep->steps);
 	if (player->upkeep->step_count > 0) {
+		player->upkeep->running_firststep = true;
 		player->upkeep->running = player->upkeep->step_count;
 		/* Calculate torch radius */
 		player->upkeep->update |= (PU_TORCH);
@@ -1792,6 +1795,7 @@ void do_cmd_pathfind(struct command *cmd)
 		find_path(player, player->grid, grid, &player->upkeep->steps);
 	if (player->upkeep->step_count > 0) {
 		player->upkeep->path_dest = grid;
+		player->upkeep->running_firststep = true;
 		player->upkeep->running = player->upkeep->step_count;
 		/* Calculate torch radius */
 		player->upkeep->update |= (PU_TORCH);
