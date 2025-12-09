@@ -1,10 +1,10 @@
 Compiling Instructions
 ======================
 
-The methods for compiling Angband vary by platform and by build system. If
-you get Angband working on a different platform or build system please let us
+The methods for compiling FAangband vary by platform and by build system. If
+you get FAangband working on a different platform or build system please let us
 know so we can add to this file.  Unless otherwise noted, all the commands
-listed are to be run from top-level directory of the Angband source files.
+listed are to be run from top-level directory of the FAangband source files.
 
 .. contents:: Contents
    :local:
@@ -17,7 +17,7 @@ To build the new Cocoa front-end::
     cd src
     make -f Makefile.osx
 
-That'll create a self-contained Mac application, Angband.app, in the directory
+That'll create a self-contained Mac application, FAangband.app, in the directory
 above src.  You may use that application where it is or move it to wherever
 is convenient for you.
 
@@ -62,8 +62,8 @@ UndefinedBehaviorSanitizer tools.
 To run the generated executable under Xcode's command-line debugger, lldb, do
 this if you are already in the src directory from the compilation step::
 
-    cd ../Angband.app/Contents/MacOS
-    lldb ./angband
+    cd ../FAangband.app/Contents/MacOS
+    lldb ./faangband
 
 Test cases
 ~~~~~~~~~~
@@ -127,7 +127,7 @@ first need to run the following command to create that script::
 
     ./autogen.sh
 
-To build Angband to be run in-place, then run this::
+To build FAangband to be run in-place, then run this::
 
     ./configure --with-no-install [other options as needed]
     make
@@ -135,20 +135,20 @@ To build Angband to be run in-place, then run this::
 That'll create an executable in the src directory.  You can run it from the
 same directory where you ran make with::
 
-    src/angband
+    src/faangband
 
 To see what command line options are accepted, use::
 
-    src/angband -?
+    src/faangband -?
 
-Note that some of Angband's makefiles (src/Makefile and src/tests/Makefile are
+Note that some of FAangband's makefiles (src/Makefile and src/tests/Makefile are
 the primary offenders) assume features present in GNU make.  If the default
 make on your system is not GNU make, you'll likely have to replace instances
 of make in the quoted commands with whatever will run GNU make.  On OpenBSD,
 for instance, that is gmake (which can be installed by running "pkg_add gmake").
 
 On systems where there's several C compilers, ./configure may choose the
-wrong one.  One example of that is on OpenBSD 6.9 when building Angband with
+wrong one.  One example of that is on OpenBSD 6.9 when building FAangband with
 SDL2:  ./configure chooses gcc but the installed version of gcc can't handle
 the SDL2 header files that are installed via pkg_add.  To override ./configure's
 default selection of the compiler, use::
@@ -159,7 +159,7 @@ Replace the_good_compiler in that command with the command for running the
 compiler that you want.  For OpenBSD 6.9 when compiling with SDL2, you'd
 replace the_good_compiler with cc or clang.
 
-To build Angband to be installed in some other location, run this::
+To build FAangband to be installed in some other location, run this::
 
     ./configure --prefix /path/to [other options as needed]
     make
@@ -177,9 +177,9 @@ one or more of the other graphical front ends are selected. The graphical front
 ends are: GCU, SDL, SDL2 and X11.  All of the following generate a
 self-contained directory, build/game, that you can move elsewhere or rename.  To
 run the result, change directories to build/game or whatever you renamed it to) and
-run ./angband .
+run ./faangband .
 
-To build Angband with the X11 front end::
+To build FAangband with the X11 front end::
 
     mkdir build && cd build
     cmake ..
@@ -188,19 +188,19 @@ To build Angband with the X11 front end::
 If you want to build the X11 front end while building one of the other
 graphical front ends, the option to pass to cmake is -DSUPPORT_X11_FRONTEND=ON .
 
-To build Angband with the SDL front end::
+To build FAangband with the SDL front end::
 
     mkdir build && cd build
     cmake -DSUPPORT_SDL_FRONTEND=ON ..
     make
 
-To build Angband with the SDL2 front end::
+To build FAangband with the SDL2 front end::
 
     mkdir build && cd build
     cmake -DSUPPORT_SDL2_FRONTEND=ON ..
     make
 
-To build Angband with the GCU front end::
+To build FAangband with the GCU front end::
 
     mkdir build && cd build
     cmake -DSUPPORT_GCU_FRONTEND=ON ..
@@ -252,8 +252,8 @@ READONLY_INSTALL when SUPPORT_WINDOWS_FRONTEND is on is also not supported
 and will cause cmake to exit with an error.  To customize where the shared
 and read-only installations place files, pass -DCMAKE_INSTALL_PREFIX=prefix
 to install all the files within the given prefix (i.e. using
--DCMAKE_INSTALL_PREFIX=/opt/Angband-4.2.3 would place all the files within
-/opt/Angband-4.2.3 or its subdirectories).  For finer-grained placement
+-DCMAKE_INSTALL_PREFIX=/opt/FAangband-2.0.1 would place all the files within
+/opt/FAangband-2.0.1 or its subdirectories).  For finer-grained placement
 of the files within the given prefix, you could also set CMAKE_INSTALL_BINDIR
 (for the subdirectory of prefix where the executable will be placed; by
 default that is bin), CMAKE_INSTALL_DATAROOTDIR (for the subdirectory of
@@ -299,7 +299,7 @@ which works regardless of the generator used (Ninja, Makefiles, etc.).
 Cross-building for Windows with Mingw
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Many developers (as well as the auto-builder) build Angband for Windows using
+Many developers (as well as the auto-builder) build FAangband for Windows using
 Mingw on Linux. This requires that the necessary Mingw packages are all
 installed.
 
@@ -314,11 +314,11 @@ To perform the build::
         ..
     ninja
 
-That will leave an angband.exe and the needed .dll files in the sub directory
+That will leave an faangband.exe and the needed .dll files in the sub directory
 game/.  That executable can be run with wine::
 
     cd game
-    wine angband.exe
+    wine faangband.exe
 
 The unit test cases can also be run from cmake.
 
@@ -350,17 +350,17 @@ only works with very recent version.  For older ones, use this instead of the
 last step::
 
     make
-    cp src/angband.exe .
+    cp src/faangband.exe .
     cp src/win/dll/*.dll .
 
 To run the result, you can use wine like this::
 
-    wine angband.exe
+    wine faangband.exe
 
-TODO: except for recent versions (after Angband 4.2.3) you likely need to
+TODO: except for recent versions (after FAangband 2.0.0) you likely need to
 manually disable curses (add --disable-curses to the options passed to
 configure), or the host curses installation will be found causing the build
-process to fail when linking angband.exe (the error message will likely be
+process to fail when linking faangband.exe (the error message will likely be
 "cannot find -lncursesw" and "cannot find -ltinfo").  Most of the --with or
 --enable options for configure are not appropriate when using --enable-win.
 The ones that are okay are --with-private-dirs (on by default),
@@ -371,7 +371,7 @@ Debug build
 
 **WARNING** this build is intended primarily for debugging purposes. It might have a somewhat slower performance, higher memory requirements and panic saves don't always work (in case of a crash there is a higher chance of losing progress).
 
-When debugging crashes it can be very useful to get more information about *what exactly* went wrong. There are many tools that can detect common issues and provide useful information. Two such tools that are best used together are AddressSanitizer (ASan) and UndefinedBehaviorSanitizer (UBSan). To use them you'll need to enable them when compiling angband::
+When debugging crashes it can be very useful to get more information about *what exactly* went wrong. There are many tools that can detect common issues and provide useful information. Two such tools that are best used together are AddressSanitizer (ASan) and UndefinedBehaviorSanitizer (UBSan). To use them you'll need to enable them when compiling FAangband::
 
     ./configure [options]
     SANITIZE_FLAGS="-fsanitize=undefined -fsanitize=address" make
@@ -493,7 +493,7 @@ Then run these commands::
         make install
 
 The last step only works with very recent versions.  For older ones, use
-"make" rather than "make install" and copy src/angband.exe,
+"make" rather than "make install" and copy src/faangband.exe,
 src/win/dll/libpng12.dll, and src/win/dll/zlib1.dll to the top-level directory.
 
 Using Cygwin (with MinGW)
@@ -517,7 +517,7 @@ Build with::
 Run with::
 
     cd game
-    ./angband.exe
+    ./faangband.exe
 
 Alternatively you can use autotools, for which we need the autoconf,
 automake, make, and ming64-i686-gcc-core::
@@ -528,9 +528,9 @@ automake, make, and ming64-i686-gcc-core::
 
 And run::
 
-    ./angband.exe
+    ./faangband.exe
 
-If you want to build the Unix version of Angband that uses X11 or
+If you want to build the Unix version of FAangband that uses X11 or
 Curses and run it under Cygwin, then follow the native build
 instructions.
 
@@ -577,10 +577,10 @@ For SDL2, do::
         ..
     ninja
 
-Once built, go to game/ subdirectory and start angband by::
+Once built, go to game/ subdirectory and start FAangband by::
 
     cd game
-    ./angband
+    ./faangband
 
 Using eclipse (Indigo) on Windows (with MinGW)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -589,7 +589,7 @@ Using eclipse (Indigo) on Windows (with MinGW)
 * Clone your/the upstream repo, or Add your existing cloned repo, Next >
 * Select "Use the New Projects Wizard", Finish
 * In the New Project Wizard, select C/C++ | Makefile Project with Existing Code, Next >
-* Give the project a name (Angband),
+* Give the project a name (FAangband),
   * navigate to the repo you cloned in "Existing Code Location",
   * Select "C", but not "C++"
   * Choose "MinGW GCC" Toolchain, Finish
@@ -640,7 +640,7 @@ terminal::
 
     winpty ninja alltests
     cd game
-    winpty ./angband.exe
+    winpty ./faangband.exe
 
 We also still need the path from the MSYS2 shell so that it can find the
 required DLLs (libclang_rt.asan_dynamic-x86_64.dll and libc++.dll), although
@@ -669,9 +669,9 @@ The executable can then be built using::
         cd src
         make -f Makefile.nds
 
-This will generate ``angband.nds`` in the current directory. For the Nintendo
+This will generate ``faangband.nds`` in the current directory. For the Nintendo
 3DS, replace the ``Makefile.nds`` part of the command with ``Makefile.3ds``,
-and ``angband.3dsx`` will be generated instead.
+and ``faangband.3dsx`` will be generated instead.
 
 Debugging
 ~~~~~~~~~
@@ -687,12 +687,12 @@ as this disables some optimization and enables more debugging information.
 Once the GDB server has been set up (and the host and port noted), the GDB client
 can be loaded with the executable information::
 
-        /path/to/devkitARM/bin/arm-none-eabi-gdb angband.elf
+        /path/to/devkitARM/bin/arm-none-eabi-gdb faangband.elf
 
-The ``angband.elf`` file is a byproduct from the build process, and it has to match
+The ``faangband.elf`` file is a byproduct from the build process, and it has to match
 the executable that is currently running in the emulator or on the device.
-It is always named ``angband.elf`` for the Nintendo 3DS, and it's always either
-``angband.arm7.elf`` or ``angband.arm9.elf`` for the Nintendo DS, depending on
+It is always named ``faangband.elf`` for the Nintendo 3DS, and it's always either
+``faangband.arm7.elf`` or ``faangband.arm9.elf`` for the Nintendo DS, depending on
 which processor should be debugged (as the main game runs on the ARM9 core exclusively,
 this will almost always be the core that should be debugged).
 
@@ -715,9 +715,9 @@ https://github.com/andrewwutw/build-djgpp , by running::
     cd build-djgpp
     DJGPP_PREFIX=$HOME/local/cross-djgpp ./build-djgpp.sh 10.3.0
 
-Then build angband using the cross-compiler::
+Then build FAangband using the cross-compiler::
 
-    cd angband/src
+    cd FAangband/src
     PATH=$PATH:$HOME/local/cross-djgpp/bin
     make -f Makefile.ibm
 
