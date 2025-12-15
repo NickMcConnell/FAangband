@@ -382,36 +382,11 @@ Throw an item (``v``)
   'Direction?' prompt. This command takes some energy.
 
 Targeting Mode (``*``)
-  This will allow you to aim your ranged attacks at a specific monster or
-  grid, so that you can point directly towards that monster or grid (even
-  if this is not a "compass" direction) when you are asked for a direction.
-  You can set a target using this command, or you can set a new target at
-  the "Direction?" prompt when appropriate. At the targeting prompt, you
-  have many options. First of all, targeting mode starts targeting nearby
-  monsters which can be reached by "projectable" spells and thrown objects.
-  In this mode, you can press ``t`` (or ``5`` or ``.``) to select the
-  current monster, space to advance to the next monster, ``-`` to back up to
-  the previous monster, direction keys to advance to a monster more or less
-  in that direction, ``r`` to "recall" the current monster, ``q`` to exit
-  targeting mode, and ``p`` (or ``o``) to stop targeting monsters and
-  enter the mode for targeting a location on the floor or in a wall. Note
-  that if there are no nearby monsters, you will automatically enter this
-  mode. Note that hitting ``o`` is just like ``p``, except that the
-  location cursor starts on the last examined monster instead of on the
-  player. In this mode, you use the "direction" keys to move around, and
-  the ``q`` key to quit, and the ``t`` (or ``5`` or ``.``) key to target
-  the cursor location. Note that targeting a location is slightly
-  "dangerous", as the target is maintained even if you are far away. To
-  cancel an old target, simply hit ``*`` and then 'ESCAPE' (or ``q``).
-  Note that when you cast a spell or throw an object at the target
-  location, the path chosen is the "optimal" path towards that location,
-  which may or may not be the path you want. Sometimes, by clever choice of
-  a location on the floor for your target, you may be able to convince a
-  thrown object or cast spell to squeeze through a hole or corridor that is
-  blocking direct access to a different grid. Launching a ball spell or
-  breath weapon at a location in the middle of a group of monsters can
-  often improve the effects of that attack, since ball attacks are not
-  stopped by interposed monsters if the ball is launched at a target.
+  This will allow you to change or clear the current target.  That target
+  can be recalled when other commands ask for a target.  When the
+  current target is a monster, the status of that monster is tracked in the
+  sidebar.  For more details about the targeting interface that this
+  command uses, see :ref:`Targeting <targeting>`.
 
 Looking Commands
 ================
@@ -437,13 +412,10 @@ Look around (``l``) or Examine things (``x``)
   This command is used to look around at nearby monsters (to determine 
   their type and health) and objects (to determine their type). It is also 
   used to find out if a monster is currently inside a wall, and what is 
-  under the player. When you are looking at something, you may hit space 
-  for more details, or to advance to the next interesting monster or 
-  object, or minus (``-``) to go back to the previous monster or object, 
-  or a direction key to advance to the nearest interesting monster or 
-  object (if any) in that general direction, or ``r`` to recall 
-  information about the current monster race, or ``q`` or escape to stop 
-  looking around. You always start out looking at "yourself". 
+  under the player. You could also use it to set the current target, but,
+  when you want to target a monster, the targeting command, ``*``, will be
+  more useful.  For more information about the targeting interface that
+  this command uses, see :ref:`Targeting <targeting>`.
 
 Inspect an item (``I``)
   This command lets you inspect an item. This will tell you things about
