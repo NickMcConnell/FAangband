@@ -46,11 +46,13 @@ The solid blocks (which may be ``#`` symbols on some systems) around the
 edge of the town represent the walls that surround the town. You cannot
 leave the town except by a ``>`` symbol (path or staircase).
 
-The 3x3 squares represent stores. The "numeric" symbols represent an
-"entrance" to a store. The ``.`` symbols represent the "floor". It is
-currently daytime, so most of the town should consist of stores and
-illuminated floor grids.  There will also be a few ``:`` symbols which
-represent "passable rubble".
+The rectangular blocks of walls with a number on the edge represent stores.
+The number is the entrance to the store.  The ``.`` symbols represent the
+"floor". It is currently daytime, so most of the town should consist of stores
+and illuminated floor grids.  There will also be a few ``:`` symbols which
+represent rubble.  Rubble comes in two varieties, "passable rubble" and just
+"rubble", distinguished by color.  Both block vision, but you can move through
+passable rubble.
 
 Any "alphabetic" symbols always represent monsters, where the word
 "monsters" specifies a wide variety of entities, including people, animals,
@@ -59,25 +61,26 @@ most of them are harmless (avoid any mercenaries or veterans if you see
 them). The most common "monsters" in town are small animals (cats and dogs)
 and townspeople (merchants, mercenaries, miscreants, etc).
 
-Now use the ``l`` command to "look" around. This will cause the cursor to
-be moved onto each "interesting" square, one at a time, giving you a
-description of that square. The cursor always starts on the square
-containing your character. In this case, you will see a message telling you
-that your character is standing on a staircase. Keep pressing space until
-the prompt goes away.
+Now use the ``l`` command to "look" around. This allows you to move the
+cursor around and get a description of what is present at the cursor. The
+cursor always starts on the square containing your character. In this case,
+you will see a message telling you that your character is standing on a
+staircase. Pressing space will cycle through the interesting locations
+nearby. Press ``q`` or ESCAPE to exit the look command.
 
 Now press ``i``, to display your character's "inventory". New characters
 start out with some objects to help them survive (though there is an option
 to start with more money instead). Your character will have some food, a
-potion, some torches, and a scroll. Press ``e`` to see what you are
-wearing. You will find you are wearing armour on your body, wielding a
-dagger and lighting the way with a torch. You have many other equipment
-slots but they are all currently empty.
+potion, some torches, and a scroll. Press ESCAPE to get out of the inventory
+display. Press ``e`` to see what you are wearing. You will find you are
+wearing armour on your body, wielding a dagger and lighting the way with a
+torch. You have many other equipment slots but they are all currently empty.
+Press ESCAPE to get out of the equipment display.
 
 Press ``t`` to take something off. Note that the equipment listing is
 reduced to those objects which can actually be taken off. Press ``g`` to
 take off the armour, and then press ``e`` again. Note that the armour is no
-longer shown in the equipment. Press escape. Press ``w`` to wield something
+longer shown in the equipment. Press ESCAPE. Press ``w`` to wield something
 and observe that the inventory listing is reduced to those objects which
 can actually be wielded or worn, press ``e`` to put the armour back on.
 
@@ -219,8 +222,7 @@ for you to learn, including how to interpret information about your
 character, how to create different kinds of characters, how to determine
 which equipment to wield/wear, how to use various kinds of objects, and how
 to use the more than fifty different commands available to your character.
-The best resource for learning these things is the online help, which
-include, among other things, a complete list of all commands available to
-you, and a list of all the symbols which you may encounter in the dungeon,
-and information about creating new characters.
-
+The best resource for learning these things is the
+:doc:`manual that includes this demo <index>`. The in-game help, which you
+access by pressing ``?``, does have a list of the commands with the key and
+very brief description for each.
