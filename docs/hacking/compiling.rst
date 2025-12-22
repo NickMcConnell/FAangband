@@ -713,7 +713,7 @@ Optionally build the documentation (requires Sphinx)::
 
     make -f Makefile.ibm docs
 
-To create the angband.zip distribution, run::
+To create the faangband.zip distribution, run::
 
     make -f Makefile.ibm dist
 
