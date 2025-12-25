@@ -4058,8 +4058,8 @@ void initialize_random_artifacts(uint32_t randart_seed)
 		quit_fmt("Error - can't create %s.", fname);
 	}
 	file_putf(randart_file,
-			  "# Artifact file for random artifacts with seed %08x\n\n\n",
-			  randart_seed);
+			  "# Artifact file for random artifacts with seed %08lx\n\n\n",
+			  (unsigned long)randart_seed);
 
 	/* Initialize, name and write artifacts to the file */
 	a_info = mem_realloc(a_info,

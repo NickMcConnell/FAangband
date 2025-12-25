@@ -2366,7 +2366,7 @@ static errr Term_pict_win(int x, int y, int n,
  *     require success and a partial conversion. So allocate space for it to
  *     succeed, and do the partial copy into dest.
  */
-size_t Term_mbstowcs_win(wchar_t *dest, const char *src, int n)
+static size_t Term_mbstowcs_win(wchar_t *dest, const char *src, int n)
 {
 	int res;
 	int required;
@@ -2404,7 +2404,7 @@ size_t Term_mbstowcs_win(wchar_t *dest, const char *src, int n)
 }
 
 
-int Term_wcsz_win(void)
+static int Term_wcsz_win(void)
 {
 	/*
 	 * Any Unicode code point is representable by at most 4 bytes in UTF-8.
@@ -2421,7 +2421,7 @@ int Term_wcsz_win(void)
  * the reverse conversion so that file output from screen captures and text
  * blocks properly translates any multibyte characters.
  */
-int Term_wctomb_win(char *s, wchar_t wchar)
+static int Term_wctomb_win(char *s, wchar_t wchar)
 {
 	/*
 	 * If only want compatibility with Vista and later, could use
@@ -2442,7 +2442,7 @@ int Term_wctomb_win(char *s, wchar_t wchar)
  * of wide characters in the core's text_out_to_screen() is consistent with what
  * Term_mbstowcs_win() does.
  */
-int Term_iswprint_win(wint_t wc)
+static int Term_iswprint_win(wint_t wc)
 {
 	/*
 	 * It's a UTF-16 value, but can cast and test as UTF-32 (if it's the

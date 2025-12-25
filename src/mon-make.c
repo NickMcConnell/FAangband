@@ -869,8 +869,8 @@ bool prepare_ghost(struct chunk *c, int r_idx, struct monster *mon,
 	}
 
 	/* Capitalize the name */
-	if (islower(c->ghost->name[0])) {
-		c->ghost->name[0] = toupper(c->ghost->name[0]);
+	if (islower((unsigned char)c->ghost->name[0])) {
+		c->ghost->name[0] = toupper((unsigned char)c->ghost->name[0]);
 	}
 
 	/* Process race and class. */
