@@ -203,8 +203,8 @@ static char *get_personalized_string(uint8_t choice)
 	}
 
 	/* Start the sentence with a capital letter. */
-	if (islower(tmp[0]))
-		tmp[0] = toupper(tmp[0]);
+	if (islower((unsigned char)tmp[0]))
+		tmp[0] = toupper((unsigned char)tmp[0]);
 
 	/* Return the string */
 	return no_string ? NULL : tmp;
