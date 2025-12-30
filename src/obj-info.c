@@ -1734,10 +1734,14 @@ static bool describe_effect(textblock *tb, const struct object *obj,
 			textblock_append(tb, "It can be drunk.\n");
 		} else if (tval_is_scroll(obj)) {
 			textblock_append(tb, "It can be read.\n");
-		} else if (aimed) {
-			textblock_append(tb, "It can be aimed.\n");
+		} else if (tval_is_wand(obj)) {
+			textblock_append(tb,
+				"It requires a target. It can be used.");
+		} else if (tval_is_staff(obj)) {
+			textblock_append(tb, "It can be used.");
 		} else {
-			textblock_append(tb, "It can be activated.\n");
+			textblock_append(tb,
+				"It may require a target. It can be used.");
 		}
 
 		return true;
@@ -1745,7 +1749,10 @@ static bool describe_effect(textblock *tb, const struct object *obj,
 
 	/* Activations get a special message */
 	if (obj->activation && obj->activation->desc) {
-		textblock_append(tb, "When activated, it ");
+		if (aimed) {
+			textblock_append(tb, "It requires a target. ");
+		}
+		textblock_append(tb, "When used, it ");
 		textblock_append(tb, "%s", obj->activation->desc);
 	} else {
 		int level = obj->artifact ?
@@ -1754,16 +1761,23 @@ static bool describe_effect(textblock *tb, const struct object *obj,
 		const char *prefix;
 		textblock *tbe;
 
-		if (aimed)
-			prefix = "When aimed, it ";
-		else if (tval_is_edible(obj))
-			prefix = "When eaten, it ";
-		else if (tval_is_potion(obj))
-			prefix = "When quaffed, it ";
-		else if (tval_is_scroll(obj))
-			prefix = "When read, it ";
-		else
-			prefix = "When activated, it ";
+		if (tval_is_edible(obj)) {
+			prefix = (aimed)
+				? "It requires a target. When eaten, it "
+				: "When eaten, it ";
+		} else if (tval_is_potion(obj)) {
+			prefix = (aimed)
+				? "It requires a target. When quaffed, it "
+				: "When quaffed, it ";
+		} else if (tval_is_scroll(obj)) {
+			prefix = (aimed)
+				? "It requires a target. When read, it "
+				: "When read, it ";
+		} else {
+			prefix = (aimed)
+				? "It requires a target. When used, it "
+				: "When used, it ";
+		}
 
 		tbe = effect_describe(effect, prefix, boost, false);
 		if (! tbe) {
