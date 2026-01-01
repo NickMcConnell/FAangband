@@ -7,7 +7,7 @@
 
 NAME = FAangband
 VERSION = 2.0.1
-COPYRIGHT = (c) 1995-2021 Angband contributors
+COPYRIGHT = (c) 1995-2026 Angband contributors
 PROGNAME = faangband
 
 HEADERS = \
