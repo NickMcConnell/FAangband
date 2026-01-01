@@ -22,9 +22,9 @@ export ZFILES           :=      $(ZFILES)
 # User config
 # ===========
 
-NAME			:= angband
+NAME			:= $(PROGNAME)
 
-GAME_TITLE		:= Angband
+GAME_TITLE		:= FAangband
 GAME_DESCRIPTION	:= Dungeon exploration
 GAME_AUTHOR		:= The Angband team
 GAME_ICON		:= nds/att-32.png
