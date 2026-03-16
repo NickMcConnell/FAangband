@@ -1377,10 +1377,14 @@ static int rd_stores_aux(rd_item_t rd_item_version)
 
 				/* Accept any valid items */
 				if (store->stock_num < z_info->store_inven_max && obj->kind) {
-					if (store_is_home(store))
+					if (store_is_home(store)) {
 						home_carry(obj);
-					else
-						store_carry(store, obj);
+					} else if (!store_carry(store, obj, false)) {
+						if (obj->known) {
+							object_delete(NULL, NULL, &obj->known);
+						}
+						object_delete(NULL, NULL, &obj);
+					}
 				}
 			}
 			store = store->next;
