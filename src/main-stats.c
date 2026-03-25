@@ -134,6 +134,8 @@ static uint32_t extract_arr_ptr_uint32(const uint8_t *p, int i0, int n0,
 static uint32_t extract_ptr_uint32(const uint8_t *p, int i0, int n0, int i1);
 static int convert_to_consumables_index(int i0);
 
+static const char *chosen_class = NULL;
+static const char *chosen_race = NULL;
 static int no_selling = 0;
 static uint32_t num_runs = 1;
 static bool quiet = false;
@@ -430,7 +432,31 @@ static void generate_player_for_stats(void)
 	player->wizard = 1; /* Set wizard mode on */
 
 	player->race = races;  /* Human   */
+	if (chosen_race) {
+		while (1) {
+			if (!player->race) {
+				quit_fmt("No player race matches '%s'.",
+					chosen_race);
+			}
+			if (!my_stricmp(chosen_race, player->race->name)) {
+				break;
+			}
+			player->race = player->race->next;
+		}
+	}
 	player->class = classes; /* Warrior */
+	if (chosen_class) {
+		while (1) {
+			if (!player->class) {
+				quit_fmt("No player class matches '%s'.",
+					chosen_class);
+			}
+			if (!my_stricmp(chosen_class, player->class->name)) {
+				break;
+			}
+			player->class = player->class->next;
+		}
+	}
 
 	/* Needs a body; duplicates logic from the private player_embody(). */
 	memcpy(&player->body, &bodies[player->race->body],
@@ -1884,7 +1910,7 @@ static void term_data_link(int i) {
 	angband_term[i] = t;
 }
 
-const char help_stats[] = "Stats mode, subopts -q(uiet) -r(andarts) -n(# of runs) -s(no selling)";
+const char help_stats[] = "Stats mode, subopts -q(uiet) -r(andarts) -n(# of runs) -s(no selling) -C(class name) -R(race name)";
 
 /**
  * Usage:
@@ -1894,6 +1920,10 @@ const char help_stats[] = "Stats mode, subopts -q(uiet) -r(andarts) -n(# of runs
  *   -q      Quiet mode (turn off progress messages)
  *   -nNNNN  Make NNNN runs through the dungeon (default: 1)
  *   -s      Turn on no-selling
+ *   -Cname  Use name, case-insensitive, as the player's class.  When not set,
+ *           the player's class is the first class in lib/gamedata/class.txt.
+ *   -Rname  Use name, case-insensitive, as the player's race.  When not set,
+ *           the player's race is the first race in lib/gamedata/p_race.txt.
  */
 
 errr init_stats(int argc, char *argv[]) {
@@ -1911,6 +1941,14 @@ errr init_stats(int argc, char *argv[]) {
 		}
 		if (prefix(argv[i], "-s")) {
 			no_selling = 1;
+			continue;
+		}
+		if (prefix(argv[i], "-C")) {
+			chosen_class = argv[i] + 2;
+			continue;
+		}
+		if (prefix(argv[i], "-R")) {
+			chosen_race = argv[i] + 2;
 			continue;
 		}
 		printf("init-stats: bad argument '%s'\n", argv[i]);
