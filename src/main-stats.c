@@ -1757,7 +1757,6 @@ static errr run_stats(void)
 	if (err) quit_fmt("Problems writing to database!  sqlite3 errno %d.", err);
 
 	free_stats_memory();
-	cleanup_angband();
 	if (!quiet) printf("Done!\n");
 	quit(NULL);
 	exit(0);
