@@ -123,7 +123,7 @@ void flavor_init(void)
 	/* Use the "simple" RNG */
 	Rand_quick = true;
 
-	/* Induce consistant flavors */
+	/* Induce consistent flavors */
 	Rand_value = seed_flavor;
 
 	/* Scrub all flavors and re-parse for new players */
