@@ -137,7 +137,9 @@ void flavor_init(void)
 			f->sval = SV_UNKNOWN;
 		}
 		cleanup_parser(&flavor_parser);
-		run_parser(&flavor_parser);
+		if (run_parser(&flavor_parser)) {
+			quit("Could not parse flavor.txt.");
+		}
 	}
 
 	flavor_assign_random(TV_STAFF);

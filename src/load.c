@@ -1116,7 +1116,9 @@ int rd_misc(void)
 	if (!player->is_dead) {
 		if (randart_file_exists()) {
 			activate_randart_file();
-			run_parser(&randart_parser);
+			if (run_parser(&randart_parser)) {
+				quit("Could not parse random artifacts.");
+			}
 		} else {
 			initialize_random_artifacts(seed_randart);
 		}

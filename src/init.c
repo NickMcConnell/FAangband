@@ -892,9 +892,11 @@ static errr run_parse_constants(struct parser *p) {
 }
 
 static errr finish_parse_constants(struct parser *p) {
+	errr result = PARSE_ERROR_NONE;
+
 	z_info = parser_priv(p);
 	parser_destroy(p);
-	return 0;
+	return result;
 }
 
 static void cleanup_critical_levels(struct critical_level *head)
@@ -1160,7 +1162,8 @@ static errr run_parse_world(struct parser *p) {
 
 static errr finish_parse_world(struct parser *p) {
 	struct level_map *map;
-	int i;
+	errr result = PARSE_ERROR_NONE;
+	int i, maxe = get_parser_error_limit(), counte = 0;
 
 	/* Check that all levels referred to exist */
 	for (map = maps; map; map = map->next) {
@@ -1169,44 +1172,98 @@ static errr finish_parse_world(struct parser *p) {
 			if (lev->north) {
 				struct level *lev_next = level_by_name(map, lev->north);
 				if (!lev_next) {
-					quit_fmt("Invalid level reference %s", lev->north);
+					if (result == PARSE_ERROR_NONE) {
+						result = PARSE_ERROR_INVALID_VALUE;
+					}
+					plog_fmt("Invalid north level reference, %s.", lev->north);
+					if (maxe) {
+						if (counte >= maxe - 1) {
+							break;
+						}
+						++counte;
+					}
 				}
 			}
 			if (lev->east) {
 				struct level *lev_next = level_by_name(map, lev->east);
 				if (!lev_next) {
-					quit_fmt("Invalid level reference %s", lev->east);
+					if (result == PARSE_ERROR_NONE) {
+						result = PARSE_ERROR_INVALID_VALUE;
+					}
+					plog_fmt("Invalid east level reference, %s.", lev->east);
+					if (maxe) {
+						if (counte >= maxe - 1) {
+							break;
+						}
+						++counte;
+					}
 				}
 			}
 			if (lev->south) {
 				struct level *lev_next = level_by_name(map, lev->south);
 				if (!lev_next) {
-					quit_fmt("Invalid level reference %s", lev->south);
+					if (result == PARSE_ERROR_NONE) {
+						result = PARSE_ERROR_INVALID_VALUE;
+					}
+					plog_fmt("Invalid south level reference, %s.", lev->south);
+					if (maxe) {
+						if (counte >= maxe - 1) {
+							break;
+						}
+						++counte;
+					}
 				}
 			}
 			if (lev->west) {
 				struct level *lev_next = level_by_name(map, lev->west);
 				if (!lev_next) {
-					quit_fmt("Invalid level reference %s", lev->west);
+					if (result == PARSE_ERROR_NONE) {
+						result = PARSE_ERROR_INVALID_VALUE;
+					}
+					plog_fmt("Invalid west level reference, %s.", lev->west);
+					if (maxe) {
+						if (counte >= maxe - 1) {
+							break;
+						}
+						++counte;
+					}
 				}
 			}
 			if (lev->up) {
 				struct level *lev_next = level_by_name(map, lev->up);
 				if (!lev_next) {
-					quit_fmt("Invalid level reference %s", lev->up);
+					if (result == PARSE_ERROR_NONE) {
+						result = PARSE_ERROR_INVALID_VALUE;
+					}
+					plog_fmt("Invalid up level reference, %s.", lev->up);
+					if (maxe) {
+						if (counte >= maxe - 1) {
+							break;
+						}
+						++counte;
+					}
 				}
 			}
 			if (lev->down) {
 				struct level *lev_next = level_by_name(map, lev->down);
 				if (!lev_next) {
-					quit_fmt("Invalid level reference %s", lev->down);
+					if (result == PARSE_ERROR_NONE) {
+						result = PARSE_ERROR_INVALID_VALUE;
+					}
+					plog_fmt("Invalid down level reference, %s.", lev->down);
+					if (maxe) {
+						if (counte >= maxe - 1) {
+							break;
+						}
+						++counte;
+					}
 				}
 			}
 		}
 	}
 
 	parser_destroy(p);
-	return 0;
+	return result;
 }
 
 static void cleanup_world(void)
@@ -2546,6 +2603,9 @@ static errr run_parse_history(struct parser *p) {
 static errr finish_parse_history(struct parser *p) {
 	struct history_chart *c;
 	struct history_entry *e, *prev, *next;
+	errr result = PARSE_ERROR_NONE;
+	int maxe = get_parser_error_limit(), counte = 0;
+
 	histories = parser_priv(p);
 
 	/* Go fix up the entry successor pointers. We can't compute them at
@@ -2568,13 +2628,24 @@ static errr finish_parse_history(struct parser *p) {
 				continue;
 			e->succ = findchart(histories, e->isucc);
 			if (!e->succ) {
-				return -1;
+				if (result == PARSE_ERROR_NONE) {
+					result = PARSE_ERROR_INVALID_VALUE;
+				}
+				plog_fmt("No successor found for history "
+					"entry, '%s': requested successor "
+					"is %d", e->text, e->isucc);
+				if (maxe) {
+					if (counte >= maxe - 1) {
+						break;
+					}
+					++counte;
+				}
 			}
 		}
 	}
 
 	parser_destroy(p);
-	return 0;
+	return result;
 }
 
 static void cleanup_history(void)
