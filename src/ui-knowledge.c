@@ -978,10 +978,11 @@ static void display_knowledge(const char *title, int *obj_list, int o_count,
 		if (!tile_picker && !glyph_picker) {
 			ui_event ke0 = EVENT_EMPTY;
 
-			if (ke.type == EVT_MOUSE)
+			if (ke.type == EVT_MOUSE) {
 				menu_handle_mouse(active_menu, &ke, &ke0);
-			else if (ke.type == EVT_KBRD)
+			} else if (ke.type == EVT_KBRD) {
 				menu_handle_keypress(active_menu, &ke, &ke0);
+			}
 
 			if (ke0.type != EVT_NONE)
 				ke = ke0;
@@ -1033,6 +1034,7 @@ static void display_knowledge(const char *title, int *obj_list, int o_count,
 			}
 
 			case EVT_ESCAPE:
+			case EVT_DISCONNECT:
 			{
 				if (panel == 1)
 					do_swap = true;
@@ -3196,6 +3198,7 @@ static void do_cmd_knowledge_shapechange(const char *name, int row)
 				break;
 
 			case EVT_ESCAPE:
+			case EVT_DISCONNECT:
 				displaying = false;
 				break;
 
@@ -3762,6 +3765,8 @@ void do_cmd_messages(void)
 					i = (i >= 20) ? (i - 20) : 0;
 					break;
 			}
+		} else if (ke.type == EVT_ESCAPE || ke.type == EVT_DISCONNECT) {
+			more = false;
 		}
 
 		/* Find the next item */
