@@ -744,6 +744,7 @@ static void display_knowledge(const char *title, int *obj_list, int o_count,
 	/* This could (should?) be (void **) */
 	int *g_list, *g_offset;
 
+	void *g_names_mem;
 	const char **g_names;
 
 	int g_name_len = 8;  /* group name length, minumum is 8 */
@@ -818,7 +819,8 @@ static void display_knowledge(const char *title, int *obj_list, int o_count,
 
 
 	/* The compact set of group names, in display order */
-	g_names = mem_zalloc(grp_cnt * sizeof(char*));
+	g_names_mem = mem_zalloc(grp_cnt * sizeof(char*));
+	g_names = g_names_mem;
 
 	for (i = 0; i < grp_cnt; i++) {
 		int len;
@@ -840,7 +842,7 @@ static void display_knowledge(const char *title, int *obj_list, int o_count,
 
 	/* Set up the two menus */
 	menu_init(&group_menu, MN_SKIN_SCROLL, menu_find_iter(MN_ITER_STRINGS));
-	menu_setpriv(&group_menu, grp_cnt, g_names);
+	menu_setpriv(&group_menu, grp_cnt, g_names_mem);
 	menu_layout(&group_menu, &group_region);
 	group_menu.flags |= MN_DBL_TAP;
 
@@ -1078,7 +1080,7 @@ static void display_knowledge(const char *title, int *obj_list, int o_count,
 	if (!grp_cnt)
 		prt(format("No %s known.", title), 15, 0);
 
-	mem_free(g_names);
+	mem_free(g_names_mem);
 	mem_free(g_offset);
 	mem_free(g_list);
 
@@ -2671,7 +2673,7 @@ static void shape_lore_helper_append_to_list(const char* item,
 			assert(*p_nmax > 0);
 			*p_nmax *= 2;
 		}
-		*list = mem_realloc(*list, *p_nmax * sizeof(**list));
+		*list = mem_realloc((char**)*list, *p_nmax * sizeof(**list));
 	}
 	(*list)[*p_n] = string_make(item);
 	++*p_n;
@@ -2800,7 +2802,7 @@ static void shape_lore_append_skills(textblock *tb,
 		}
 	}
 
-	mem_free(msgs);
+	mem_free((char**)msgs);
 }
 
 
@@ -2830,7 +2832,7 @@ static void shape_lore_append_non_stat_modifiers(textblock *tb,
 		}
 	}
 
-	mem_free(msgs);
+	mem_free((char**)msgs);
 }
 
 
@@ -2860,7 +2862,7 @@ static void shape_lore_append_stat_modifiers(textblock *tb,
 		}
 	}
 
-	mem_free(msgs);
+	mem_free((char**)msgs);
 }
 
 
@@ -2933,7 +2935,7 @@ static void shape_lore_append_protection_flags(textblock *tb,
 		}
 	}
 
-	mem_free(msgs);
+	mem_free((char**)msgs);
 }
 
 
@@ -2963,7 +2965,7 @@ static void shape_lore_append_sustains(textblock *tb,
 		}
 	}
 
-	mem_free(msgs);
+	mem_free((char**)msgs);
 }
 
 
@@ -3104,6 +3106,7 @@ static void do_cmd_knowledge_shapechange(const char *name, int row)
 	int count = count_interesting_shapes();
 	struct menu* m;
 	struct player_shape **sarray;
+	void *narray_mem;
 	const char **narray;
 	int h, mark, mark_old;
 	bool displaying, redraw;
@@ -3131,12 +3134,13 @@ static void do_cmd_knowledge_shapechange(const char *name, int row)
 	 * names.
 	 */
 	sort(sarray, count, sizeof(sarray[0]), compare_shape_names);
-	narray = mem_alloc(count * sizeof(*narray));
+	narray_mem = mem_alloc(count * sizeof(*narray));
+	narray = narray_mem;
 	for (i = 0; i < count; ++i) {
 		narray[i] = sarray[i]->name;
 	}
 
-	menu_setpriv(m, count, narray);
+	menu_setpriv(m, count, narray_mem);
 	menu_layout(m, &list_region);
 	m->flags |= MN_DBL_TAP;
 
@@ -3224,7 +3228,7 @@ static void do_cmd_knowledge_shapechange(const char *name, int row)
 
 	screen_load();
 
-	mem_free(narray);
+	mem_free(narray_mem);
 	mem_free(sarray);
 	menu_free(m);
 }
@@ -3273,7 +3277,7 @@ static enum parser_error parse_mcat_include_base(struct parser *p)
 		s->categories->max_inc_bases = (s->categories->max_inc_bases)
 			? 2 * s->categories->max_inc_bases : 2;
 		s->categories->inc_bases = mem_realloc(
-			s->categories->inc_bases,
+			(struct monster_base**)s->categories->inc_bases,
 			s->categories->max_inc_bases
 			* sizeof(struct monster_base*));
 	}
@@ -3379,7 +3383,7 @@ static errr finish_ui_knowledge_parser(struct parser *p)
 
 			cursor = cursor->next;
 			string_free((char*) tgt->name);
-			mem_free(tgt->inc_bases);
+			mem_free((struct monster_base**)tgt->inc_bases);
 			mem_free(tgt);
 		}
 		mem_free(s);
@@ -3437,7 +3441,7 @@ static void cleanup_ui_knowledge_parsed_data(void)
 
 	for (i = 0; i < n_monster_group; ++i) {
 		string_free((char*) monster_group[i].name);
-		mem_free(monster_group[i].inc_bases);
+		mem_free((struct monster_base**)monster_group[i].inc_bases);
 	}
 	mem_free(monster_group);
 	monster_group = NULL;
