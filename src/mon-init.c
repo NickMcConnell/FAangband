@@ -1846,6 +1846,8 @@ static errr finish_parse_monster(struct parser *p) {
 		}
 		for (s = race->shapes; s; s = s->next) {
 			if (s->base) {
+				string_free(s->name);
+				s->name = NULL;
 				continue;
 			}
 			s->race = lookup_monster(s->name);
@@ -1864,6 +1866,7 @@ static errr finish_parse_monster(struct parser *p) {
 					race->name);
 			}
 			string_free(s->name);
+			s->name = NULL;
 		}
 	}
 
