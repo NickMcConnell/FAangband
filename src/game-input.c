@@ -41,6 +41,7 @@ bool (*get_curse_hook)(int *choice, struct object *obj, char *dice_string);
 int (*get_recall_point_hook)(bool inward, int num_points, int num_poss);
 int (*get_effect_from_list_hook)(const char* prompt,
 	struct effect *effect, int count, bool allow_random);
+bool (*check_break_hook)(bool user_event, int messaging);
 bool (*confirm_debug_hook)(void);
 void (*get_panel_hook)(int *min_y, int *min_x, int *max_y, int *max_x);
 bool (*panel_contains_hook)(unsigned int y, unsigned int x);
@@ -373,4 +374,31 @@ void interact_with_specialties(void)
 	/* Ask the UI for it */
 	if (interact_with_specialties_hook)
 		interact_with_specialties_hook();
+}
+
+/**
+ * Keep the user interface responsive during extended calculations.
+ *
+ * \param user_event will, if true, allow some input events to signal a break
+ * while discarding all other input events.  Which input events signal a break
+ * is at the discretion of the UI layer.  When false, pending input events are
+ * transferred to the UI layer's event queue.
+ * \param messaging will, if one and user_event is true, cause a message to
+ * be displayed about how the player can request a break for the calculations.
+ * If two, clears the message displayed with check_break(true, 1) and
+ * immediately returns false without checking for a break.
+ * \return true if a break was requested (either user_event is true and the
+ * player generated a necessary event or another mechanism, like an asynchronous
+ * signal, window manager, or a front end's interface around the game, requested
+ * a break.
+ *
+ * The default implementation does nothing and returns false.  A UI layer's
+ * implementation, via check_break_hook, should do the minimum possible to keep
+ * the UI responsive to events and asynchronous signals that have deferred
+ * processing without waiting for an event or signal.
+ */
+bool check_break(bool user_event, int messaging)
+{
+	return (check_break_hook)
+		? check_break_hook(user_event, messaging) : false;
 }

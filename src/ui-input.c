@@ -1713,6 +1713,53 @@ static bool textui_get_point(struct loc *grid)
 }
 
 /**
+ * Keep the textui responsive during extended calculations.
+ *
+ * \param user_event will, if true, allow ESCAPE or a click with the second
+ * mouse button to request a break.  When user_event is true, any pending
+ * events, up to the first ESCAPE or click with the second mouse button will
+ * be discarded.  When user_event is false, input events are simply added to
+ * the input event queue.
+ * \param messaging will, if one and user_event is true, display a message that
+ * ESCAPE or a click with the second mouse button will request a break.  If two,
+ * clears the message displayed with textui_check_break(true, 1) and immediately
+ * returns false, without checking for a break.
+ * \return true if user_event is true and an ESCAPE or click with the second
+ * mouse button was received or if something happened such that Term_inkey()
+ * produces EVT_DISCONNECT events.
+ */
+static bool textui_check_break(bool user_event, int messaging)
+{
+	ui_event ch;
+	bool result;
+
+	if (messaging == 2) {
+		prt("", 0, 0);
+		return false;
+	}
+	if (user_event && messaging == 1) {
+		prt("To break out, press Escape or click the second mouse "
+			"button.", 0, 0);
+		Term_fresh();
+	}
+	result = false;
+	while (!Term_inkey(&ch, false, user_event)) {
+		if (ch.type == EVT_DISCONNECT) {
+			result = true;
+			break;
+		}
+		if (user_event && ((ch.type == EVT_KBRD
+				&& ch.key.code == ESCAPE)
+				|| (ch.type == EVT_MOUSE
+				&& ch.mouse.button == 2))) {
+			result = true;
+			break;
+		}
+	}
+	return result;
+}
+
+/**
  * Initialise the UI hooks to give input asked for by the game
  */
 void textui_input_init(void)
@@ -1736,6 +1783,7 @@ void textui_input_init(void)
 	view_abilities_hook = textui_view_ability_menu;
 	gain_specialty_hook = textui_gain_spec_menu;
 	interact_with_specialties_hook = textui_interact_with_specialties;
+	check_break_hook = textui_check_break;
 }
 
 

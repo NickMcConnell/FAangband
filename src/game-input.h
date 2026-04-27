@@ -69,6 +69,7 @@ extern void (*view_abilities_hook)(struct player_ability *ability_list,
 								   int num_abilities);
 extern bool (*gain_specialty_hook)(int *pick);
 extern void (*interact_with_specialties_hook)(void);
+extern bool (*check_break_hook)(bool user_event, int messaging);
 
 bool get_string(const char *prompt, char *buf, size_t len);
 int get_quantity(const char *prompt, int max);
@@ -98,5 +99,6 @@ void view_ability_menu(struct player_ability *ability_list,
 						 int num_abilities);
 bool gain_specialty_menu(int *pick);
 void interact_with_specialties(void);
+bool check_break(bool user_event, int messaging);
 
 #endif /* INCLUDED_GAME_INPUT_H */
