@@ -45,6 +45,7 @@ FAangband is a very complex game, and it may be difficult to grasp everything at
 
    hacking/modifying
    hacking/compiling
+   hacking/cmake
    hacking/debug
    hacking/how-it-works
    hacking/metadoc
