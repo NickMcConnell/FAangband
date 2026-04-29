@@ -81,6 +81,14 @@ static void handle_signal_suspend(int sig)
 #endif /* ifdef SIGTSTP */
 
 
+static void exit_on_signal(int sig, const char *msg)
+{
+	plog(msg);
+	(void)install_handler(sig, SIG_DFL);
+	raise(sig);
+}
+
+
 /**
  * Handle signals -- simple (interrupt and quit)
  *
@@ -98,12 +106,26 @@ static void handle_signal_suspend(int sig)
 static void handle_signal_simple(int sig)
 {
 	/* Protect errno from library calls in signal handler */
-	int save_errno = errno;
+	int save_errno;
 	/*
 	 * Use own buffer to avoid interactions with the static variables
-	 * used to implement vformat() (and thus quit_fmt() and format()).
+	 * used to implement vformat() (and thus format()).
 	 */
 	char msg[48];
+
+	/* Make an attempt at a normal exit. */
+	terms_disconnecting = 1;
+
+	/*
+	 * Escalate the response if the player is impatient or the game is
+	 * genuinely stuck and has received multiple signals.
+	 */
+	++signal_count;
+	if (signal_count < 4) {
+		return;
+	}
+
+	save_errno = errno;
 
 #ifndef HAVE_SIGACTION
 	/* Disable handler */
@@ -113,11 +135,11 @@ static void handle_signal_simple(int sig)
 	/* Construct the exit message in case it is needed */
 	(void)strnfmt(msg, sizeof(msg), "Exiting on signal %d!", sig);
 
-	/* Nothing to save, just quit */
-	if (!character_generated || character_saved) quit(msg);
-
-	/* Count the signals */
-	signal_count++;
+	/* Nothing to save; exit on the given signal */
+	if (!character_generated || character_saved) {
+		exit_on_signal(sig, msg);
+		return;
+	}
 
 	/*
 	 * Terminate dead characters; quit without saving (non-setgid
@@ -130,9 +152,10 @@ static void handle_signal_simple(int sig)
 
 		close_game(false);
 
-		/* Quit */
-		quit(msg);
-	} else if (signal_count >= 5) {
+		exit_on_signal(sig, msg);
+		return;
+	}
+	if (signal_count >= 5) {
 #ifdef SETGID
 		/* Cause of "death" */
 		my_strcpy(player->died_from, "Interrupting", sizeof(player->died_from));
@@ -147,9 +170,10 @@ static void handle_signal_simple(int sig)
 		close_game(false);
 #endif
 
-		/* Quit */
-		quit(msg);
-	} else if (signal_count >= 4) {
+		exit_on_signal(sig, msg);
+		return;
+	}
+	if (signal_count >= 4) {
 		/*
 		 * Remember where the cursor was so it can be restored after
 		 * the message is displayed.
@@ -177,9 +201,6 @@ static void handle_signal_simple(int sig)
 
 		/* Flush */
 		Term_fresh();
-	} else if (signal_count >= 2) {
-		/* Make a noise */
-		Term_xtra(TERM_XTRA_NOISE, 0);
 	}
 
 #ifndef HAVE_SIGACTION
@@ -199,7 +220,7 @@ static void handle_signal_abort(int sig)
 {
 	/*
 	 * Use own buffer to avoid interactions with the static variables
-	 * used to implement vformat() (and thus quit_fmt() and format()).
+	 * used to implement vformat() (and thus format()).
 	 */
 	char msg[48];
 
@@ -211,8 +232,11 @@ static void handle_signal_abort(int sig)
 	/* Construct the exit message */
 	(void)strnfmt(msg, sizeof(msg), "Exiting on signal %d!", sig);
 
-	/* Nothing to save, just quit */
-	if (!character_generated || character_saved) quit(msg);
+	/* Nothing to save, exit on the signal */
+	if (!character_generated || character_saved) {
+		exit_on_signal(sig, msg);
+		return;
+	}
 
 	/* Clear the bottom line */
 	Term_erase(0, 23, 255);
@@ -243,8 +267,7 @@ static void handle_signal_abort(int sig)
 	/* Flush output */
 	Term_fresh();
 
-	/* Quit */
-	quit(msg);
+	exit_on_signal(sig, msg);
 }
 
 

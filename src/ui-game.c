@@ -511,7 +511,7 @@ size_t cmd_list_lookup_by_name(const char *name)
 void textui_process_command(void)
 {
 	int count = 0;
-	bool done = true;
+	bool done = true, saved;
 	ui_event e = textui_get_command(&count);
 	struct cmd_info *cmd = NULL;
 	unsigned char key = '\0';
@@ -520,22 +520,19 @@ void textui_process_command(void)
 	switch (e.type) {
 		case EVT_DISCONNECT:
 			/*
-			 * If the front end provides a way to confirm with
-			 * the player, try to save before exiting, and if that
-			 * fails, check with the player whether to proceed with
-			 * the exit or to proceed with the game and cancel
-			 * disconnecting the UI.
+			 * Try to save before exiting.  If the front end
+			 * provides a way to confirm with the player, check
+			 * with the player whether to proceed with the exit
+			 * when the save fails or to proceed with the game and
+			 * cancel disconnecting the UI.
 			 */
-			if (disconnect_denier_hook) {
-				bool saved;
-
-				signals_protect(true);
-				saved = save_game_checked();
-				signals_protect(false);
-				if (!saved && (*disconnect_denier_hook)()) {
-					terms_disconnecting = 0;
-					return;
-				}
+			signals_protect(true);
+			saved = save_game_checked();
+			signals_protect(false);
+			if (!saved && disconnect_denier_hook
+					&& (*disconnect_denier_hook)()) {
+				terms_disconnecting = 0;
+				return;
 			}
 			textui_quit();
 			return;
