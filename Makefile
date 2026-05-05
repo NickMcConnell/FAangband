@@ -33,8 +33,12 @@ dist:
 	scripts/version.sh > $(TAG)/version
 	$(TAG)/autogen.sh
 	rm -rf $(TAG)/autogen.sh $(TAG)/autom4te.cache
-	tar --exclude .gitignore --exclude *.dll --exclude .github \
-		--exclude .travis.yml -czvf $(OUT) $(TAG)
+	tar \
+		--exclude .github \
+		--exclude .gitignore \
+		--exclude .readthedocs.yaml \
+		--exclude .travis.yml \
+		-czvf $(OUT) $(TAG)
 	rm -rf $(TAG)
 
 # If this isn't a --with-no-install build, build and install the documentation

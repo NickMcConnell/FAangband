@@ -240,10 +240,10 @@ jobs:
 
           # Create compressed archive
           tar \
-            --exclude .gitignore \
             --exclude .github \
+            --exclude .gitignore \
+            --exclude .readthedocs.yaml \
             --exclude .travis.yml \
-            --exclude '*.dll' \
             -czvf ${archive_prefix}.tar.gz \
             ${archive_prefix}
 
