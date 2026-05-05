@@ -342,14 +342,41 @@ static bool tile_picker_command(ui_event ke, bool *tile_picker_ptr,
 			*cur_char_ptr = c = *char_left_ptr + mx;
 
 			/* Move the frame */
-			if (*char_left_ptr > MAX(0, (int)c - frame_left))
+			if (c > (wchar_t)frame_left) {
+				if (*char_left_ptr > c - frame_left) {
+					(*char_left_ptr)--;
+				}
+			} else if (*char_left_ptr > 0) {
 				(*char_left_ptr)--;
-			if (*char_left_ptr + eff_width <= MIN(255, (int)c + frame_right))
+			}
+			if (frame_right <= 255
+					&& c <= (wchar_t)(255 - frame_right)) {
+				if (c + frame_right >= (wchar_t)eff_width
+						&& *char_left_ptr <= c
+						+ frame_right - eff_width) {
+					(*char_left_ptr)++;
+				}
+			} else if (eff_width <= 255 && *char_left_ptr <=
+					(wchar_t)(255 - eff_width)) {
 				(*char_left_ptr)++;
-			if (*attr_top_ptr > MAX(0, (int)a - frame_top))
+			}
+			if (a > frame_top) {
+				if (*attr_top_ptr > a - frame_top) {
+					(*attr_top_ptr)--;
+				}
+			} else if (*attr_top_ptr > 0) {
 				(*attr_top_ptr)--;
-			if (*attr_top_ptr + eff_height <= MIN(255, (int)a + frame_bottom))
+			}
+			if (frame_bottom <= 255 && a <= 255 - frame_bottom) {
+				if (a + frame_bottom >= eff_height
+						&& *attr_top_ptr <= a
+						+ frame_bottom - eff_height) {
+					(*attr_top_ptr)++;
+				}
+			} else if (eff_height <= 255 && *attr_top_ptr <=
+					255 - eff_height) {
 				(*attr_top_ptr)++;
+			}
 
 			/* Delay */
 			*delay = 100;
@@ -482,21 +509,56 @@ static bool tile_picker_command(ui_event ke, bool *tile_picker_ptr,
 			*cur_char_ptr = c;
 
 			/* Move the frame */
-			if (ddx[d] < 0 &&
-					*char_left_ptr > MAX(0, (int)c - frame_left))
-				(*char_left_ptr)--;
-			if ((ddx[d] > 0) &&
-					*char_left_ptr + (width / tile_width) <=
-							MIN(255, (int)c + frame_right))
-			(*char_left_ptr)++;
-
-			if (ddy[d] < 0 &&
-					*attr_top_ptr > MAX(0, (int)a - frame_top))
-				(*attr_top_ptr)--;
-			if (ddy[d] > 0 &&
-					*attr_top_ptr + (height / tile_height) <=
-							MIN(255, (int)a + frame_bottom))
-				(*attr_top_ptr)++;
+			if (ddx[d] < 0) {
+				if (c > (wchar_t)frame_left) {
+					if (*char_left_ptr > c - frame_left) {
+						(*char_left_ptr)--;
+					}
+				} else if (*char_left_ptr > 0) {
+					(*char_left_ptr)--;
+				}
+			} else if (ddx[d] > 0) {
+				if (frame_right <= 255
+						&& c <= (wchar_t)(255
+						- frame_right)) {
+					if (c + frame_right >= (wchar_t)(width
+							/ tile_width)
+							&& *char_left_ptr <=
+							c + frame_right
+							- (width / tile_width)) {
+						(*char_left_ptr)++;
+					}
+				} else if (width / tile_width <= 255
+						&& *char_left_ptr <=
+						(wchar_t)(255 - (width
+						/ tile_width))) {
+					(*char_left_ptr)++;
+				}
+			}
+			if (ddy[d] < 0) {
+				if (a > frame_top) {
+					if (*attr_top_ptr > a - frame_top) {
+						(*attr_top_ptr)--;
+					}
+				} else if (*attr_top_ptr > 0) {
+					(*attr_top_ptr)--;
+				}
+			} else if (ddy[d] > 0) {
+				if (frame_bottom <= 255 && a <= 255
+						- frame_bottom) {
+					if (a + frame_bottom >= height
+							/ tile_height
+							&& *attr_top_ptr
+							<= a + frame_bottom
+							- (height / tile_height)) {
+						(*attr_top_ptr)++;
+					}
+				} else if (height / tile_height <= 255
+						&& *attr_top_ptr <=
+						255 - (height / tile_height)) {
+					(*attr_top_ptr)++;
+				}
+			}
 
 			/* We need to always eat the input even if it is clipped,
 			 * otherwise it will be interpreted as a change object
