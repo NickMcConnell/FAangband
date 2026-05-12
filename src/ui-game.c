@@ -526,10 +526,16 @@ void textui_process_command(void)
 			 * the exit or to proceed with the game and cancel
 			 * disconnecting the UI.
 			 */
-			if (disconnect_denier_hook && !save_game_checked()
-					&& (*disconnect_denier_hook)()) {
-				terms_disconnecting = 0;
-				return;
+			if (disconnect_denier_hook) {
+				bool saved;
+
+				signals_protect(true);
+				saved = save_game_checked();
+				signals_protect(false);
+				if (!saved && (*disconnect_denier_hook)()) {
+					terms_disconnecting = 0;
+					return;
+				}
 			}
 			textui_quit();
 			return;
@@ -1026,7 +1032,9 @@ bool savefile_name_already_used(const char *fname, bool make_safe,
  */
 void save_game(void)
 {
-	(void) save_game_checked();
+	signals_protect(true);
+	(void)save_game_checked();
+	signals_protect(false);
 }
 
 /**
@@ -1057,9 +1065,6 @@ bool save_game_checked(void)
 	/* The player is not dead */
 	my_strcpy(player->died_from, "(saved)", sizeof(player->died_from));
 
-	/* Forbid suspend */
-	signals_ignore_tstp();
-
 	/* Save the player */
 	if (savefile_save(savefile)) {
 		prt("Saving game... done.", 0, 0);
@@ -1071,9 +1076,6 @@ bool save_game_checked(void)
 
 	/* Refresh */
 	Term_fresh();
-
-	/* Allow suspend again */
-	signals_handle_tstp();
 
 	/* Save the window prefs */
 	path_build(path, sizeof(path), ANGBAND_DIR_USER, "window.prf");
@@ -1126,11 +1128,11 @@ void close_game(bool prompt_failed_save)
 	/* Flush the input */
 	event_signal(EVENT_INPUT_FLUSH);
 
-	/* No suspending now */
-	signals_ignore_tstp();
-
 	/* Increase "icky" depth */
 	screen_save_depth++;
+
+	/* No suspending or user-initiated interruption now */
+	signals_protect(true);
 
 	/* Deal with the randarts file */
 	//deactivate_randart_file();
@@ -1170,6 +1172,9 @@ void close_game(bool prompt_failed_save)
 		}
 	}
 
+	/* Allow suspending or user-initiated interruptions now */
+	signals_protect(false);
+
 	/* Wipe the monster list */
 	wipe_mon_list(cave, player);
 
@@ -1180,9 +1185,6 @@ void close_game(bool prompt_failed_save)
 
 	/* Tell the UI we're done with the game state */
 	event_signal(EVENT_LEAVE_GAME);
-
-	/* Allow suspending now */
-	signals_handle_tstp();
 }
 
 
