@@ -445,12 +445,54 @@ static int cmp_desc_prio(const void *left, const void *right)
  * which the given predicate returns true.
  *
  * \param predicate is the function to test the user interface element.  It
+ * takes two arguments, a const pointer to the element to test, and a const
+ * void pointer whose value is equal to closure.  When predicate returns true,
+ * the user interface element will be included in the iterator's enumeration.
+ * \param closure is the value to pass as the second argument to predicate.
+ * \param sortcategory points to the name of the category whose priority
+ * ordering will set the order of the enumeration.
+ * \return the pointer to the iterator.  When that iterator is no longer
+ * needed, release it with release_ui_entry_iterator().
+ *
+ * The iterator will present those elements in descending order of priority
+ * where the priority is that configured for the element in the category named
+ * sortcategory.
+ */
+struct ui_entry_iterator *initialize_ui_entry_iterator_const(
+		ui_entry_const_predicate predicate, const void *closure,
+		const char *sortcategory)
+{
+	struct ui_entry_iterator *result = mem_alloc(sizeof(*result));
+	int i;
+
+	result->entries = mem_alloc(n_entry * sizeof(*result->entries));
+	result->n = 0;
+	result->i = 0;
+	for (i = 0; i < n_entry; ++i) {
+		if (!(entries[i]->flags & ENTRY_FLAG_TEMPLATE_ONLY)
+				&& (*predicate)(entries[i], closure)) {
+			result->entries[result->n] = entries[i];
+			++result->n;
+		}
+	}
+	category_for_cmp_desc_prio = sortcategory;
+	sort(result->entries, result->n, sizeof(*result->entries),
+		cmp_desc_prio);
+	return result;
+}
+
+
+/**
+ * Constructs an iterator to enumerate all the user interface elements for
+ * which the given predicate returns true.
+ *
+ * \param predicate is the function to test the user interface element.  It
  * takes two arguments, a const pointer to the element to test, and a void
  * pointer whose value is equal to closure.  When predicate returns true,
  * the user interface element will be included in the iterator's enumeration.
  * \param closure is the value to pass as the second argument to predicate.
  * \param sortcategory points to the name of the category whose priority
- * ordering will set the order of the enumberation.
+ * ordering will set the order of the enumeration.
  * \return the pointer to the iterator.  When that iterator is no longer
  * needed, release it with release_ui_entry_iterator().
  *
@@ -468,8 +510,8 @@ struct ui_entry_iterator *initialize_ui_entry_iterator(
 	result->n = 0;
 	result->i = 0;
 	for (i = 0; i < n_entry; ++i) {
-		if (! (entries[i]->flags & ENTRY_FLAG_TEMPLATE_ONLY) &&
-			(*predicate)(entries[i], closure)) {
+		if (!(entries[i]->flags & ENTRY_FLAG_TEMPLATE_ONLY)
+				&& (*predicate)(entries[i], closure)) {
 			result->entries[result->n] = entries[i];
 			++result->n;
 		}

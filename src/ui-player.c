@@ -165,9 +165,9 @@ static void release_char_sheet_config(void)
 
 
 static bool check_for_two_categories(const struct ui_entry* entry,
-	void *closure)
+		const void *closure)
 {
-	const char **categories = closure;
+	const char * const *categories = closure;
 
 	return ui_entry_has_category(entry, categories[0]) &&
 		ui_entry_has_category(entry, categories[1]);
@@ -192,7 +192,7 @@ static void configure_char_sheet(void)
 
 	test_categories[0] = "CHAR_SCREEN1";
 	test_categories[1] = "stat_modifiers";
-	ui_iter = initialize_ui_entry_iterator(check_for_two_categories,
+	ui_iter = initialize_ui_entry_iterator_const(check_for_two_categories,
 		test_categories, test_categories[1]);
 	n = count_ui_entry_iterator(ui_iter);
 	/*
@@ -228,7 +228,9 @@ static void configure_char_sheet(void)
 		next_col += cached_config->res_regions[i].width + 1;
 
 		test_categories[1] = region_categories[i];
-		ui_iter = initialize_ui_entry_iterator(check_for_two_categories, test_categories, region_categories[i]);
+		ui_iter = initialize_ui_entry_iterator_const(
+			check_for_two_categories, test_categories,
+			region_categories[i]);
 		n = count_ui_entry_iterator(ui_iter);
 		/*
 		 * Fit in 24 row display; leave at least one row blank before

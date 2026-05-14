@@ -12,7 +12,10 @@ struct object;
 struct player;
 
 struct ui_entry;
-typedef bool (*ui_entry_predicate)(const struct ui_entry *entry, void *closure);
+typedef bool (*ui_entry_const_predicate)(const struct ui_entry *entry,
+	const void *closure);
+typedef bool (*ui_entry_predicate)(const struct ui_entry *entry,
+	void *closure);
 struct ui_entry_iterator;
 struct cached_object_data;
 struct cached_player_data;
@@ -23,6 +26,9 @@ int bind_player_ability_to_ui_entry_by_name(const char *name,
 	struct player_ability *ability, int value, bool have_value,
 	bool isaux);
 
+struct ui_entry_iterator *initialize_ui_entry_iterator_const(
+	ui_entry_const_predicate predicate, const void *closure,
+	const char *sortcategory);
 struct ui_entry_iterator *initialize_ui_entry_iterator(
 	ui_entry_predicate predicate, void *closure, const char *sortcategory);
 void release_ui_entry_iterator(struct ui_entry_iterator *i);
