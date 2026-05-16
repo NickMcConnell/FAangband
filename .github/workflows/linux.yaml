@@ -99,7 +99,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake -G Ninja -DCMAKE_C_FLAGS="-Werror" -DSUPPORT_SDL2_FRONTEND=ON -DSUPPORT_SDL2_SOUND=ON ..
+          cmake -G Ninja -DCMAKE_C_FLAGS="-Werror -DSDLPUI_TRACE_EVENTS -DSDLPUI_TRACE_RENDER" -DSUPPORT_SDL2_FRONTEND=ON -DSUPPORT_SDL2_SOUND=ON ..
           ninja -j$(nproc)
 
   cmake-statbuild:
