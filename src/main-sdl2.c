@@ -1478,14 +1478,17 @@ static SDL_bool handle_shortcut_editor_key(struct sdlpui_dialog *d,
 	keyboard_event_to_angband_key(e, w->app->kp_as_mod, &ch, &mods);
 	if (ch) {
 		char keypress_desc[40];
+		struct keypress tmp[2];
 
 		SDL_assert(pse->changing_shortcut >= 0
 			&& pse->changing_shortcut < MAX_WINDOWS);
 		w->app->menu_shortcuts[pse->changing_shortcut].type = EVT_KBRD;
 		w->app->menu_shortcuts[pse->changing_shortcut].code = ch;
 		w->app->menu_shortcuts[pse->changing_shortcut].mods = mods;
-		keypress_to_text(keypress_desc, sizeof(keypress_desc),
-			&w->app->menu_shortcuts[pse->changing_shortcut], true);
+		tmp[0] = w->app->menu_shortcuts[pse->changing_shortcut];
+		tmp[1] = KEYPRESS_NULL;
+		keypress_to_text(keypress_desc, sizeof(keypress_desc), tmp,
+			true);
 		sdlpui_change_caption(
 			&pse->shortcut_displays[pse->changing_shortcut],
 			d, w, keypress_desc);
@@ -1511,14 +1514,17 @@ static SDL_bool handle_shortcut_editor_textin(struct sdlpui_dialog *d,
 	textinput_event_to_angband_key(e, w->app->kp_as_mod, &ch, &mods);
 	if (ch) {
 		char keypress_desc[40];
+		struct keypress tmp[2];
 
 		SDL_assert(pse->changing_shortcut >= 0
 			&& pse->changing_shortcut < MAX_WINDOWS);
 		w->app->menu_shortcuts[pse->changing_shortcut].type = EVT_KBRD;
 		w->app->menu_shortcuts[pse->changing_shortcut].code = ch;
 		w->app->menu_shortcuts[pse->changing_shortcut].mods = mods;
-		keypress_to_text(keypress_desc, sizeof(keypress_desc),
-			&w->app->menu_shortcuts[pse->changing_shortcut], true);
+		tmp[0] = w->app->menu_shortcuts[pse->changing_shortcut];
+		tmp[1] = KEYPRESS_NULL;
+		keypress_to_text(keypress_desc, sizeof(keypress_desc), tmp,
+			true);
 		sdlpui_change_caption(
 			&pse->shortcut_displays[pse->changing_shortcut],
 			d, w, keypress_desc);
@@ -2075,8 +2081,12 @@ static void show_shortcut_editor(struct sdlpui_window *w, int x, int y)
 		sdlpui_create_label(&pse->labels[i],
 			format("Window %d menu", i + 1),  SDLPUI_HOR_LEFT);
 		if (w->app->menu_shortcuts[i].type == EVT_KBRD) {
+			struct keypress tmp[2];
+
+			tmp[0] = w->app->menu_shortcuts[i];
+			tmp[1] = KEYPRESS_NULL;
 			keypress_to_text(keypress_desc, sizeof(keypress_desc),
-				&w->app->menu_shortcuts[i], true);
+				tmp, true);
 		} else {
 			(void)my_strcpy(keypress_desc, "None",
 				sizeof(keypress_desc));
@@ -7555,12 +7565,16 @@ static void dump_config_file(const struct my_app *a)
 		}
 	}
 	for (size_t i = 0; i < N_ELEMENTS(a->menu_shortcuts); i++) {
-		char keypress[1024];
+		char keypress[40];
 
 		if (a->menu_shortcuts[i].type == EVT_KBRD
 				&& a->menu_shortcuts[i].code) {
-			keypress_to_text(keypress, sizeof(keypress),
-				a->menu_shortcuts + i, false);
+			struct keypress tmp[2];
+
+			tmp[0] = a->menu_shortcuts[i];
+			tmp[1] = KEYPRESS_NULL;
+			keypress_to_text(keypress, sizeof(keypress), tmp,
+				false);
 		} else {
 			my_strcpy(keypress, "None", sizeof(keypress));
 		}
