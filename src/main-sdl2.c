@@ -3672,15 +3672,33 @@ static void handle_window_closed(struct my_app *a, struct sdlpui_window *window)
 	}
 }
 
+#ifdef SDLPUI_TRACE_EVENTS
+static const char *fill_window_name(const struct sdlpui_window *w, char *name,
+		size_t name_sz)
+{
+	if (w) {
+		(void)SDL_snprintf(name, name_sz, "index %d%s", w->index,
+			(w->index == MAIN_WINDOW) ? " (main)" : "");
+	} else {
+		(void)SDL_strlcpy(name, "NULL", name_sz);
+	}
+	return name;
+}
+#endif
+
 static void handle_window_focus(struct my_app *a, const SDL_WindowEvent *event)
 {
 	struct sdlpui_window *new_w;
+#ifdef SDLPUI_TRACE_EVENTS
+	char name[24];
+#endif
 
 	switch (event->event) {
 		case SDL_WINDOWEVENT_ENTER:
 			new_w = get_window_by_id(a, event->windowID);
 			SDLPUI_EVENT_TRACER("window", new_w,
-				"(not extracted)", "mouse entered");
+				fill_window_name(new_w, name, sizeof(name)),
+				"mouse entered");
 			if (a->w_mouse && a->w_mouse->index != new_w->index
 					&& a->w_mouse->d_mouse) {
 				if (a->w_mouse->d_mouse->ftb->handle_window_loses_mouse) {
@@ -3694,7 +3712,8 @@ static void handle_window_focus(struct my_app *a, const SDL_WindowEvent *event)
 			break;
 		case SDL_WINDOWEVENT_LEAVE:
 			SDLPUI_EVENT_TRACER("window", a->w_mouse,
-				"(not extracted)", "mouse left");
+				fill_window_name(a->w_mouse, name,
+				sizeof(name)), "mouse left");
 			if (a->w_mouse && a->w_mouse->d_mouse) {
 				if (a->w_mouse->d_mouse->ftb->handle_window_loses_mouse) {
 					(*a->w_mouse->d_mouse->ftb->handle_window_loses_mouse)(
@@ -3708,7 +3727,8 @@ static void handle_window_focus(struct my_app *a, const SDL_WindowEvent *event)
 		case SDL_WINDOWEVENT_FOCUS_GAINED:
 			new_w = get_window_by_id(a, event->windowID);
 			SDLPUI_EVENT_TRACER("window", new_w,
-				"(not extracted)", "gained key focus");
+				fill_window_name(new_w, name, sizeof(name)),
+				"gained key focus");
 			if (a->w_key && a->w_key->index != new_w->index
 					&& a->w_key->d_key) {
 				if (a->w_key->d_key->ftb->handle_window_loses_key) {
@@ -3721,7 +3741,8 @@ static void handle_window_focus(struct my_app *a, const SDL_WindowEvent *event)
 			break;
 		case SDL_WINDOWEVENT_FOCUS_LOST:
 			SDLPUI_EVENT_TRACER("window", a->w_key,
-				"(not extracted)", "lost key focus");
+				fill_window_name(a->w_key, name, sizeof(name)),
+				"lost key focus");
 			if (a->w_key && a->w_key->d_key) {
 				if (a->w_key->d_key->ftb->handle_window_loses_key) {
 					(*a->w_key->d_key->ftb->handle_window_loses_key)(
