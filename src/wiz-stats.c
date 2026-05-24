@@ -441,8 +441,8 @@ static const struct stat_data stat_message[] = {
 	{ST_SCROLLS, "\n ***SCROLLS***   \n All:        "},
 	{ST_ENDGAME_SCROLLS, " Endgame     "},// destruction, banish, mass banish, rune
 	{ST_ACQUIRE_SCROLLS, " Acquire.    "},
-	{ST_RODS, "\n ***RODS***      \n All:        "},
-	{ST_UTILITY_RODS, " Utility     "},//dtrap, dstairs, dobj, light, illum
+	{ST_RODS, "\n ***RODS***\n All         "},
+	{ST_UTILITY_RODS, " Utility     "},//treasure location, magic mapping, light, illum
 	{ST_TELEPOTHER_RODS, " Tele Other  "},
 	{ST_DETECTALL_RODS, " Detect all  "},
 	{ST_ENDGAME_RODS, " Endgame     "},//speed, healing
@@ -1033,9 +1033,8 @@ static void get_obj_data(const struct object *obj, int y, int x, bool mon,
 		/* add to total */
 		add_stats(ST_RODS, STGRP_GENERAL, vault, mon, number, lvl, cr);
 
-		if (strstr(obj->kind->name, "Trap Detection")
-				|| strstr(obj->kind->name, "Treasure Detection")
-				|| strstr(obj->kind->name, "Door/Stair Location")
+		if (strstr(obj->kind->name, "Treasure Location")
+				|| strstr(obj->kind->name, "Magic Mapping")
 				|| strstr(obj->kind->name, "Illumination")
 				|| strstr(obj->kind->name, "Light")) {
 			add_stats(ST_UTILITY_RODS, STGRP_GENERAL, vault, mon,
@@ -1427,8 +1426,8 @@ static void print_heading(struct collect_results *cr)
 		"Rune, MBan and Ban\n");
 	file_putf(cr->log, "            *Acq* counts as two Acq "
 		"scrolls\n");
-	file_putf(cr->log, " Rods:      Utility rods: d-obj, d-stairs, "
-		"d-traps, light, illum\n");
+	file_putf(cr->log, " Rods:      Utility rods: treasure location, "
+		"magic mapping, light, illum\n");
 	file_putf(cr->log, "            Endgame rods: Speed, Healing\n");
 	file_putf(cr->log, " Staves:    Kill staves: dispel evil, power, "
 		"holiness.\n");
