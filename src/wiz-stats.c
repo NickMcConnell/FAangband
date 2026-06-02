@@ -375,7 +375,7 @@ struct collect_results {
 	struct book_lookup books;	/**< track how books are included in the
 						statistics */
 	double addval;	/**< 1.0 / number of trials */
-	int slay_evil_ind;	/**< remember which slay is slay evil */
+	int* slay_evil_inds;	/**< remember which slays are slay evil */
 	int max_lvl;	/**< collect statistics for levels 0 to max_lvl - 1 */
 	int tries;	/**< number of trials */
 	int tries_lim;	/**< MIN(TRIES_LIMIT, tries) */
@@ -646,6 +646,51 @@ static int get_book_index(const struct object_kind *k,
 }
 
 /**
+ * Remember which slays are slay evil.
+ */
+static void remember_slay_evil(int **inds)
+{
+	int alloc = 4, count = 0, i;
+	int *indices;
+
+	indices = mem_alloc(alloc * sizeof(*indices));
+	for (i = 1; i < z_info->slay_max; ++i) {
+		if (slays[i].name && slays[i].race_flag == RF_EVIL) {
+			if (count == alloc - 1) {
+				if (count > INT_MAX - 4 || (size_t)count
+						> SIZE_MAX / sizeof(*indices)
+						- 4) {
+					break;
+				}
+				alloc += 4;
+				indices = mem_realloc(indices, alloc
+					* sizeof(&*indices));
+			}
+			indices[count] = i;
+			++count;
+		}
+	}
+	indices[count] = -1;
+	*inds = indices;
+}
+
+static bool has_slay_evil(const struct object *obj, const int *slay_inds)
+{
+	int i = 0;
+
+	while (1) {
+		if (slay_inds[i] < 0) {
+			return false;
+		}
+		assert(slay_inds[i] < z_info->slay_max);
+		if (obj->slays[slay_inds[i]]) {
+			return true;
+		}
+		++i;
+	}
+}
+
+/**
  * This will get data on an object
  * It gets a lot of stuff, pretty much everything that I
  * thought was reasonable to get.  However, you might have
@@ -903,9 +948,8 @@ static void get_obj_data(const struct object *obj, int y, int x, bool mon,
 				number, lvl, cr);
 
 			if (obj->modifiers[OBJ_MOD_BLOWS] > 0
-					|| (obj->slays
-					&& cr->slay_evil_ind > 0
-					&& obj->slays[cr->slay_evil_ind])) {
+					|| (obj->slays && has_slay_evil(obj,
+					cr->slay_evil_inds))) {
 				add_stats(ST_ENDGAME_WEAPONS, STGRP_GENERAL,
 					vault, mon, number, lvl, cr);
 			}
@@ -2325,7 +2369,6 @@ void stats_collect(int nsim, int simtype)
 	bool auto_flag;
 	char buf[1024];
 	struct collect_results cr;
-	int i;
 
 	/* Make sure the inputs are good! */
 	if (nsim < 1 || simtype < 1 || simtype > 2) return;
@@ -2336,14 +2379,7 @@ void stats_collect(int nsim, int simtype)
 	/* Determine the maximum depth of interest. */
 	cr.max_lvl = stats_get_maximum_level();
 
-	/* Remember which slay is slay evil. */
-	cr.slay_evil_ind = -1;
-	for (i = 1; i < z_info->slay_max; ++i) {
-		if (slays[i].name && slays[i].race_flag == RF_EVIL) {
-			cr.slay_evil_ind = i;
-			break;
-		}
-	}
+	remember_slay_evil(&cr.slay_evil_inds);
 
 	/* Are we in diving or clearing mode */
 	if (simtype == 1) {
@@ -2357,6 +2393,7 @@ void stats_collect(int nsim, int simtype)
 	/* Set up to track books. */
 	if (initialize_books(&cr.books)) {
 		msg("Error - too many book kinds to track.");
+		mem_free(cr.slay_evil_inds);
 		return;
 	}
 
@@ -2365,6 +2402,7 @@ void stats_collect(int nsim, int simtype)
 	if (stats_allocate(&cr)) {
 		msg("Error - machine's limits do not allow the calculation.");
 		cleanup_books(&cr.books);
+		mem_free(cr.slay_evil_inds);
 		return;
 	}
 
@@ -2415,6 +2453,7 @@ void stats_collect(int nsim, int simtype)
 
 	stats_deallocate(&cr);
 	cleanup_books(&cr.books);
+	mem_free(cr.slay_evil_inds);
 }
 
 #define DIST_MAX 10000
