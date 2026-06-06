@@ -1799,14 +1799,49 @@ static void stats_reset_level_counters(struct collect_results *cr)
  */
 static void diving_stats(struct collect_results *cr)
 {
-	int depth;
-	bool running;
+	int level;
+	bool used_town = false, running;
 
 	/* Iterate through levels */
 	event_signal(EVENT_MESSAGE_FLUSH);
 	running = !check_break(true, 1);
-	for (depth = 0; depth < cr->max_lvl && running; depth += 5) {
-		player->depth = (depth == 0) ? 1 : depth;
+	for (level = 0; level < world->num_levels && running; level += 5) {
+		if (world->levels[level].depth >= cr->max_lvl) {
+			continue;
+		}
+		if (world->levels[level].depth < 1) {
+			/*
+			 * For the first sampled level that is a town (or other
+			 * special cases that use a depth of zero), substitute
+			 * a level that is not one of the sampled levels and
+			 * has the shallowest depth greater than zero.
+			 */
+			const struct level *substitute = NULL;
+			int level2;
+
+			if (used_town) {
+				continue;
+			}
+			for (level2 = 1; level2 < world->num_levels; ++level2) {
+				if (level2 % 5 != 0
+						&& world->levels[level2].depth
+						> 0
+						&& world->levels[level2].depth
+						< cr->max_lvl
+						&& (!substitute
+						|| substitute->depth
+						> world->levels[level2].depth)) {
+					substitute = &world->levels[level2];
+				}
+			}
+			used_town = true;
+			if (!substitute) {
+				continue;
+			}
+			player_change_place(player, substitute->index);
+		} else {
+			player_change_place(player, level);
+		}
 
 		/* Do many iterations of each level */
 		for (cr->iter = 0; cr->iter < cr->tries; cr->iter++) {
@@ -1844,6 +1879,8 @@ static void clearing_stats(struct collect_results *cr)
 	event_signal(EVENT_MESSAGE_FLUSH);
 	running = !check_break(true, 1);
 	for (cr->iter = 0; cr->iter < cr->tries && running; cr->iter++) {
+		int level;
+
 		/* Move all artifacts to uncreated */
 		uncreate_all_artifacts();
 
@@ -1851,14 +1888,19 @@ static void clearing_stats(struct collect_results *cr)
 		revive_uniques();
 
 		/* Do game iterations */
-		for (depth = 1; depth < cr->max_lvl; depth++) {
+		for (level = 0; level < world->num_levels; ++level) {
 			if (check_break(true, 0)) {
 				running = false;
 				break;
 			}
+			if (world->levels[level].depth < 1
+					|| world->levels[level].depth
+					>= cr->max_lvl) {
+				continue;
+			}
 
 			/* Move player to that depth */
-			player->depth = depth;
+			player_change_place(player, level);
 
 			/*
 			 * Forget whether the items being tracked for first find
@@ -2070,11 +2112,20 @@ static bool initialize_books(struct book_lookup *b)
 static int stats_get_maximum_level(void)
 {
 	/* Find the deepest quest monster. */
-	int deepest_quest = -1, i;
+	const struct quest *q;
+	int deepest_quest = -1;
 
-	for (i = 0; i < z_info->quest_max; ++i) {
-		if (deepest_quest < quests[i].race->level) {
-			deepest_quest = quests[i].race->level;
+	for (q = quests; q; q = q->next) {
+		const struct quest_place *qp;
+
+		for (qp = q->place; qp; qp = qp->next) {
+			if (qp->map != world) {
+				continue;
+			}
+			if (deepest_quest < world->levels[qp->place].depth) {
+				deepest_quest = world->levels[qp->place].depth;
+			}
+			break;
 		}
 	}
 
