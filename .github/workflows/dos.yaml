@@ -32,15 +32,18 @@ jobs:
 
       - name: Prepare DOS runtime environment
         run: |
+          projname=$(cd src && make -f Makefile.ibm print-project-name | sed -En 's/^our-project-name=//p')
           mkdir dosroot
           wget --no-verbose https://sandmann.dotster.com/cwsdpmi/csdpmi7b.zip
           unzip csdpmi7b.zip -d dosroot
-          unzip angband.zip -d dosroot
+          unzip $projname.zip -d dosroot
 
       - name: DOS runtime smoke test
         timeout-minutes: 2
         run: |
-          cat > dosbox.conf << 'EOF'
+          projname=$(cd src && make -f Makefile.ibm print-project-name | sed -En 's/^our-project-name=//p')
+          exename=$(cd src && make -f Makefile.ibm print-executable-name | sed -En 's/^our-executable-name=//p' | tr "[:lower:]" "[:upper:]")
+          cat > dosbox.conf << EOF
           [sdl]
           fullscreen=false
           [dosbox]
@@ -52,31 +55,31 @@ jobs:
           mount c dosroot
           c:
           BIN\CWSDPMI.EXE
-          cd angband
+          cd $projname
           echo "Queue keys to create DOSUSER and exit" >> ..\OUT.LOG
           addkey p500 Enter @ Enter
           addkey p10000 ^ x
           addkey p11000 Enter Enter
-          echo "Run ANGBAND.EXE" >> ..\OUT.LOG
-          ANGBAND.EXE >> ..\OUT.LOG
-          echo "ANGBAND.EXE finished" >> ..\OUT.LOG
+          echo "Run $exename" >> ..\OUT.LOG
+          $exename >> ..\OUT.LOG
+          echo "$exename finished" >> ..\OUT.LOG
           EOF
 
-          rm -f dosbox.log dosroot/OUT.LOG dosroot/angband/lib/save/DOSUSER
+          rm -f dosbox.log dosroot/OUT.LOG dosroot/$projname/lib/save/DOSUSER
           dosbox-x -conf dosbox.conf -nogui -exit > dosbox.log 2>&1
 
           echo "=== OUT.LOG ==="
           [ -f dosroot/OUT.LOG ] && cat dosroot/OUT.LOG || echo "(OUT.LOG not found)"
           echo "=== Save Directory ==="
-          ls -l dosroot/angband/lib/save || echo "(save directory not found)"
+          ls -l dosroot/$projname/lib/save || echo "(save directory not found)"
 
-          if [ ! -f dosroot/OUT.LOG ] || ! grep -q "ANGBAND.EXE finished" dosroot/OUT.LOG; then
-            echo "ERROR: OUT.LOG missing or ANGBAND did not finish"
+          if [ ! -f dosroot/OUT.LOG ] || ! grep -q "$exename finished" dosroot/OUT.LOG; then
+            echo "ERROR: OUT.LOG missing or $exename did not finish"
             cat dosbox.log
             exit 1
           fi
 
-          if [ ! -f dosroot/angband/lib/save/DOSUSER ]; then
+          if [ ! -f dosroot/$projname/lib/save/DOSUSER ]; then
             echo "ERROR: DOSUSER save file missing"
             cat dosbox.log
             exit 1

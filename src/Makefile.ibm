@@ -48,8 +48,9 @@ default: edit install
 # we include it
 include Makefile.inc
 
-# Version info
-EXE = $(PROGNAME).exe
+# Ensure that the executable's name fits in DOS's limits
+EXEBASE != echo $(PROGNAME) | head -c 8
+EXE = $(EXEBASE).exe
 
 
 #
@@ -94,7 +95,7 @@ DIRS = lib/gamedata lib/customiz lib/help lib/screens lib/fonts lib/tiles/old \
        lib/sounds lib/icons lib/user lib/save lib/scores lib/info lib/archive \
        docs
 
-TMPDIR = ./$(PROGNAME)
+TMPDIR = ./$(EXEBASE)
 dist:
 	@-rm -rf $(TMPDIR)
 	@echo making directories...
@@ -130,7 +131,7 @@ dist:
 	@iconv -f UTF-8 -t CP437//TRANSLIT -o $(TMPDIR)/changes.txt ../changes.txt
 	@cp ../README.md $(TMPDIR)
 	@cp $(EXE) $(TMPDIR)
-	zip -r ../$(PROGNAME).zip $(TMPDIR)
+	zip -r ../$(EXEBASE).zip $(TMPDIR)
 	rm -rf $(TMPDIR)
 
 
@@ -145,6 +146,14 @@ depend:
 	makedepend -D__MAKEDEPEND__ $(SRCS)
 
 
+# These two mimic rules from src/Makefile.
+print-project-name:
+	@echo our-project-name=${EXEBASE}
+
+print-executable-name:
+	@echo our-executable-name=${EXE}
+
+
 # Some file dependencies
 %.o: %.c
 	@printf "%10s %-20s\n" CC $<
@@ -157,3 +166,5 @@ $(MAINOBJS) : main.h $(HEADERS)
 # fake Dependency
 doc/index.html: $(HEADERS)
 	doxygen doc/doxygen.conf
+
+.PHONY: clean depend dist docs edit install print-project-name print-executable-name
