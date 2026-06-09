@@ -1118,7 +1118,7 @@ void home_carry(struct object *obj)
  * the maintenance actions have already been done (reloading a store's
  * inventory from a save file, for instance).
  * \return a pointer to the stack added to.  If the store rejects the object,
- * that will be NJULL.  In that case, the caller must handle cleanup for the
+ * that will be NULL.  In that case, the caller must handle cleanup for the
  * object it tried to add.  Otherwise, the store assumes the responsibility
  * for cleaning up the added object.
  */
