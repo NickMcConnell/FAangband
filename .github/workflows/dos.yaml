@@ -66,21 +66,29 @@ jobs:
           EOF
 
           rm -f dosbox.log dosroot/OUT.LOG dosroot/$projname/lib/save/DOSUSER
-          dosbox-x -conf dosbox.conf -nogui -exit > dosbox.log 2>&1
+          dosbox-x -debug -conf dosbox.conf -nogui -exit > dosbox.log 2>&1
 
-          echo "=== OUT.LOG ==="
-          [ -f dosroot/OUT.LOG ] && cat dosroot/OUT.LOG || echo "(OUT.LOG not found)"
           echo "=== Save Directory ==="
           ls -l dosroot/$projname/lib/save || echo "(save directory not found)"
 
           if [ ! -f dosroot/OUT.LOG ] || ! grep -q "$exename finished" dosroot/OUT.LOG; then
             echo "ERROR: OUT.LOG missing or $exename did not finish"
-            cat dosbox.log
             exit 1
           fi
 
           if [ ! -f dosroot/$projname/lib/save/DOSUSER ]; then
             echo "ERROR: DOSUSER save file missing"
-            cat dosbox.log
             exit 1
           fi
+
+      - name: Get Contents of OUT.LOG
+        if: failure() || success()
+        run: |
+          echo "=== OUT.LOG ==="
+          [ -f dosroot/OUT.LOG ] && cat dosroot/OUT.LOG || echo "(OUT.LOG not found)"
+
+      - name: Get Contents of dosbox.log if Jobs Failed
+        if: failure()
+        run: |
+          echo "=== dosbox.log ==="
+          [ -f dosbox.log ] && cat dosbox.log || echo "(dosbox.log not found)"
