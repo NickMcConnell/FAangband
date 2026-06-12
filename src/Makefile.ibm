@@ -29,7 +29,7 @@ LIBS = -lpc
 
 
 # Extract CFLAGS and LIBS from the system definitions
-CFLAGS += $(INCLUDES) -DUSE_IBM
+CFLAGS += $(INCLUDES) -DUSE_IBM -DSHORT_DEFAULT_OPTION_FILENAMES
 
 # Object definitions
 MAINOBJS = main-ibm.o main.o

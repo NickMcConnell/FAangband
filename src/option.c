@@ -80,6 +80,9 @@ static enum parser_error parse_option(struct parser *p)
 
 /**
  * Given the option type, return a short name in all lower case.
+ *
+ * Each name must be unique.  If SHORT_DEFAULT_OPTION_FILENAMES is set, each
+ * name must be unique after truncating to the first five characters.
  */
 const char *option_type_name(int page)
 {
@@ -217,8 +220,12 @@ bool options_save_custom(struct player_options *opts, int page)
 	char path[1024], file_name[80];
 	ang_file *f;
 
+#ifdef SHORT_DEFAULT_OPTION_FILENAMES
+	strnfmt(file_name, sizeof(file_name), "co_%.5s.txt", page_name);
+#else
 	strnfmt(file_name, sizeof(file_name), "customized_%s_options.txt",
 		page_name);
+#endif
 	path_build(path, sizeof(path), ANGBAND_DIR_USER, file_name);
 	f = file_open(path, MODE_WRITE, FTYPE_TEXT);
 	if (f) {
@@ -272,8 +279,13 @@ bool options_restore_custom(struct player_options *opts, int page)
 	struct option_parser_context ctx;
 	int maxe, counte;
 
+#ifdef SHORT_DEFAULT_OPTION_FILENAMES
+	strnfmt(file_name, sizeof(file_name), "co_%.5s.txt",
+		option_type_name(page));
+#else
 	strnfmt(file_name, sizeof(file_name), "customized_%s_options.txt",
 		option_type_name(page));
+#endif
 	path_build(path, sizeof(path), ANGBAND_DIR_USER, file_name);
 	if (!file_exists(path)) {
 		options_restore_maintainer(opts, page);
