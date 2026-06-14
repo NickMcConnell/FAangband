@@ -629,7 +629,7 @@ size_t object_desc(char *buf, size_t max, const struct object *obj,
 	if (!obj || !obj->known)
 		return strnfmt(buf, max, "(nothing)");
 
-	/* Unknown itema and cash get straightforward descriptions */
+	/* Unknown items and cash get straightforward descriptions */
 	if (obj->known && obj->kind != obj->known->kind) {
 		if (prefix)
 			return strnfmt(buf, max, "an unknown item");
