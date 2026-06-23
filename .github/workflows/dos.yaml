@@ -2,7 +2,7 @@ name: DOS Cross-compiler
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
 
 jobs:
@@ -39,7 +39,7 @@ jobs:
           unzip $projname.zip -d dosroot
 
       - name: DOS runtime smoke test
-        timeout-minutes: 2
+        timeout-minutes: 3
         run: |
           projname=$(cd src && make -f Makefile.ibm print-project-name | sed -En 's/^our-project-name=//p')
           exename=$(cd src && make -f Makefile.ibm print-executable-name | sed -En 's/^our-executable-name=//p' | tr "[:lower:]" "[:upper:]")
@@ -57,9 +57,9 @@ jobs:
           BIN\CWSDPMI.EXE
           cd $projname
           echo "Queue keys to create DOSUSER and exit" >> ..\OUT.LOG
-          addkey p500 Enter @ Enter
-          addkey p10000 ^ x
-          addkey p11000 Enter Enter
+          addkey p500 Enter a @ Enter
+          addkey p30000 ^ p500 x
+          addkey p30000 Enter p1000 Enter
           echo "Run $exename" >> ..\OUT.LOG
           $exename >> ..\OUT.LOG
           echo "$exename finished" >> ..\OUT.LOG
