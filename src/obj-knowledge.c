@@ -1990,7 +1990,7 @@ void shape_learn_on_assume(struct player *p, const char *name)
 
 	/* Learn elements */
 	for (element = 0; element < ELEM_MAX; element++) {
-		if (shape->el_info[element].res_level &&
+		if (shape->el_info[element].res_level != RES_LEVEL_BASE &&
 			!p->obj_k->el_info[element].res_level) {
 			equip_learn_element(p, element);
 		}
