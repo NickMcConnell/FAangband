@@ -2259,7 +2259,7 @@ void equip_learn_element(struct player *p, int element)
 	}
 
 	/* May learn from the shape. */
-	if (p->shape && p->shape->el_info[element].res_level
+	if (p->shape && p->shape->el_info[element].res_level != RES_LEVEL_BASE
 			&& !p->obj_k->el_info[element].res_level) {
 		player_learn_rune(p, rune_index(RUNE_VAR_RESIST, element),
 			true);
