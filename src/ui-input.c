@@ -368,7 +368,7 @@ static void msg_flush(int x)
 		anykey();
 
 	/* Clear the line */
-	Term_erase(0, 0, 255);
+	Term_erase(0, 0, Term->wid);
 }
 
 /**
@@ -619,7 +619,7 @@ void clear_from(int row)
 
 	/* Erase requested rows */
 	for (y = row; y < Term->hgt; y++)
-		Term_erase(0, y, 255);
+		Term_erase(0, y, Term->wid);
 }
 
 /**
