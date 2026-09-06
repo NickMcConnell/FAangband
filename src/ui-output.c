@@ -104,16 +104,25 @@ static void display_area(const wchar_t *text, const uint8_t *attrs,
 		size_t n_lines,
 		region area, size_t line_from)
 {
-	size_t i, j;
+	size_t i;
 
 	n_lines = MIN(n_lines, (size_t) area.page_rows);
 
 	for (i = 0; i < n_lines; i++) {
+		size_t st = line_starts[line_from + i];
+		size_t ll = line_lengths[line_from + i];
+		size_t j0, j1;
+
 		Term_erase(area.col, area.row + i, area.width);
-		for (j = 0; j < line_lengths[line_from + i]; j++) {
-			Term_putch(area.col + j, area.row + i,
-					attrs[line_starts[line_from + i] + j],
-					text[line_starts[line_from + i] + j]);
+		for (j0 = 0; j0 < ll; j0 = j1) {
+			uint8_t a = attrs[st + j0];
+
+			j1 = j0 + 1;
+			while (j1 < ll && attrs[st + j1] == a) {
+				++j1;
+			}
+			Term_queue_chars(area.col + j0, area.row + i,
+				(int)(j1 - j0), a, text + st + j0);
 		}
 	}
 }
