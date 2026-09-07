@@ -678,7 +678,10 @@ static int mon_spell_dam(int index, int hp, const struct monster_race *race,
 /**
  * Create a mask of monster spell flags of a specific type.
  *
- * \param f is the flag array we're filling
+ * \param f is the flag array we're filling.  Given the contents of ..., the
+ * result in f is known at compile time:  it only depends on ... and what is in
+ * list-mon-spells.h.  So, if used repeatedly, compute the result once and
+ * memorize it for later use.
  * \param ... is the list of flags we're looking for
  *
  * N.B. RST_NONE must be the last item in the ... list
@@ -694,7 +697,7 @@ void create_mon_spell_mask(bitflag *f, ...)
 	va_start(args, f);
 
 	/* Process each type in the va_args */
-    for (i = va_arg(args, int); i != RST_NONE; i = va_arg(args, int)) {
+	for (i = va_arg(args, int); i != RST_NONE; i = va_arg(args, int)) {
 		for (rs = mon_spell_types; rs->index < RSF_MAX; rs++) {
 			if (rs->type & i) {
 				rsf_on(f, rs->index);

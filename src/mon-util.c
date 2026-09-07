@@ -79,7 +79,10 @@ const char *describe_race_flag(int flag)
 /**
  * Create a mask of monster flags of a specific type.
  *
- * \param f is the flag array we're filling
+ * \param f is the flag array we're filling.  Given the contents of ..., the
+ * result in f is known at compile time:  it only depends on ... and what is
+ * in list-mon-race-flags.h.  So, if used repeatedly, compute the result once
+ * and memorize it for later use.
  * \param ... is the list of flags we're looking for
  *
  * N.B. RFT_MAX must be the last item in the ... list
@@ -95,7 +98,7 @@ void create_mon_flag_mask(bitflag *f, ...)
 	va_start(args, f);
 
 	/* Process each type in the va_args */
-    for (i = va_arg(args, int); i != RFT_MAX; i = va_arg(args, int)) {
+	for (i = va_arg(args, int); i != RFT_MAX; i = va_arg(args, int)) {
 		for (rf = monster_flag_table; rf->index < RF_MAX; rf++)
 			if (rf->type == i)
 				rf_on(f, rf->index);
@@ -1663,6 +1666,8 @@ static bool monster_base_shape_okay(struct monster_race *race)
  */
 bool monster_change_shape(struct monster *mon)
 {
+	static bitflag summon_mask[RSF_SIZE];
+	static bool initialize_mask = true;
 	struct monster_shape *shape = mon->race->shapes;
 	struct monster_race *race = NULL;
 
@@ -1697,9 +1702,15 @@ bool monster_change_shape(struct monster *mon)
 		int i, poss = 0, which, index, summon_type = 0;
 		const struct monster_spell *spell;
 
+		if (initialize_mask) {
+			create_mon_spell_mask(summon_mask, RST_SUMMON,
+				RST_NONE);
+			initialize_mask = false;
+		}
+
 		/* Extract the summon spells */
-		create_mon_spell_mask(summon_spells, RST_SUMMON, RST_NONE);
-		rsf_inter(summon_spells, mon->race->spell_flags);
+		rsf_copy(summon_spells, mon->race->spell_flags);
+		rsf_inter(summon_spells, summon_mask);
 
 		/* Count possibilities */
 		for (i = rsf_next(summon_spells, FLAG_START); i != FLAG_END;

@@ -208,10 +208,19 @@ bool monster_has_spells(const struct monster *mon)
  */
 bool monster_breathes(const struct monster *mon)
 {
-	bitflag breaths[RSF_SIZE];
-	create_mon_spell_mask(breaths, RST_BREATH, RST_NONE);
-	rsf_inter(breaths, mon->race->spell_flags);
-	return rsf_is_empty(breaths) ? false : true;
+	/*
+	 * This mask is fixed once the code is compiled.  Without the
+	 * infrastructure to compile in the result, settle for computing it
+	 * once at runtime and memorizing the result for later calls.
+	 */
+	static bitflag breath_mask[RSF_SIZE];
+	static bool initialize_mask = true;
+
+	if (initialize_mask) {
+		create_mon_spell_mask(breath_mask, RST_BREATH, RST_NONE);
+		initialize_mask = false;
+	}
+	return rsf_is_inter(breath_mask, mon->race->spell_flags);
 }
 
 /**
@@ -219,10 +228,19 @@ bool monster_breathes(const struct monster *mon)
  */
 bool monster_has_innate_spells(const struct monster *mon)
 {
-	bitflag innate_spells[RSF_SIZE];
-	create_mon_spell_mask(innate_spells, RST_INNATE, RST_NONE);
-	rsf_inter(innate_spells, mon->race->spell_flags);
-	return rsf_is_empty(innate_spells) ? false : true;
+	/*
+	 * This mask is fixed once the code is compiled.  Without the
+	 * infrastructure to compile in the result, settle for computing it
+	 * once at runtime and memorizing the result for later calls.
+	 */
+	static bitflag innate_mask[RSF_SIZE];
+	static bool initialize_mask = true;
+
+	if (initialize_mask) {
+		create_mon_spell_mask(innate_mask, RST_INNATE, RST_NONE);
+		initialize_mask = false;
+	}
+	return rsf_is_inter(innate_mask, mon->race->spell_flags);
 }
 
 /**
@@ -230,11 +248,23 @@ bool monster_has_innate_spells(const struct monster *mon)
  */
 bool monster_has_non_innate_spells(const struct monster *mon)
 {
-	bitflag innate_spells[RSF_SIZE], mon_spells[RSF_SIZE];
-	create_mon_spell_mask(innate_spells, RST_INNATE, RST_NONE);
-	rsf_copy(mon_spells, mon->race->spell_flags);
-	rsf_diff(mon_spells, innate_spells);
-	return rsf_is_empty(mon_spells) ? false : true;
+	/*
+	 * This mask is fixed once the code is compiled.  Without the
+	 * infrastructure to compile in the result, settle for computing it
+	 * once at runtime and memorizing the result for later calls.
+	 */
+	static bitflag non_innate_mask[RSF_SIZE];
+	static bool initialize_mask = true;
+
+	if (initialize_mask) {
+		bitflag flags[RSF_SIZE];
+
+		create_mon_spell_mask(flags, RST_INNATE, RST_NONE);
+		rsf_setall(non_innate_mask);
+		rsf_diff(non_innate_mask, flags);
+		initialize_mask = false;
+	}
+	return rsf_is_inter(non_innate_mask, mon->race->spell_flags);
 }
 
 /**
@@ -242,10 +272,19 @@ bool monster_has_non_innate_spells(const struct monster *mon)
  */
 bool monster_loves_archery(const struct monster *mon)
 {
-	bitflag shooting[RSF_SIZE];
-	create_mon_spell_mask(shooting, RST_ARCHERY, RST_NONE);
-	rsf_inter(shooting, mon->race->spell_flags);
-	if (rsf_is_empty(shooting)) return false;
+	/*
+	 * This mask is fixed once the code is compiled.  Without the
+	 * infrastructure to compile in the result, settle for computing it
+	 * once at runtime and memorizing the result for later calls.
+	 */
+	static bitflag archery_mask[RSF_SIZE];
+	static bool initialize_mask = true;
+
+	if (initialize_mask) {
+		create_mon_spell_mask(archery_mask, RST_ARCHERY, RST_NONE);
+		initialize_mask = false;
+	}
+	if (!rsf_is_inter(archery_mask, mon->race->spell_flags)) return false;
 	return (mon->race->freq_innate < 4) ? true : false;
 }
 

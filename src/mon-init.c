@@ -1390,11 +1390,12 @@ static enum parser_error parse_monster_spell_power(struct parser *p) {
 }
 
 static enum parser_error parse_monster_spells(struct parser *p) {
+	static bitflag innate_mask[RSF_SIZE], non_innate_mask[RSF_SIZE];
+	static bool initialize_masks = true;
 	struct monster_race *r = parser_priv(p);
 	char *flags;
 	char *s;
 	int ret = PARSE_ERROR_NONE;
-	bitflag current_flags[RSF_SIZE], test_flags[RSF_SIZE];
 
 	if (!r)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
@@ -1409,19 +1410,29 @@ static enum parser_error parse_monster_spells(struct parser *p) {
 		s = strtok(NULL, " |");
 	}
 
+	/*
+	 * These masks are fixed once the code is compiled.  Without the
+	 * infrastructure to compile in the result, settle for computing
+	 * them once at runtime and memorizing the result for later calls.
+	 */
+	if (initialize_masks) {
+		bitflag mask[RSF_SIZE];
+
+		create_mon_spell_mask(innate_mask, RST_INNATE, RST_NONE);
+		create_mon_spell_mask(mask, RST_BREATH, RST_INNATE, RST_NONE);
+		rsf_setall(non_innate_mask);
+		rsf_diff(non_innate_mask, mask);
+		initialize_masks = false;
+	}
+
 	/* Make sure innate frequency is set if necessary */
-	create_mon_spell_mask(current_flags, RST_INNATE, RST_NONE);
-	rsf_inter(current_flags, r->spell_flags);
-	if (!rsf_is_empty(current_flags) && !r->freq_innate) {
+	if (rsf_is_inter(innate_mask, r->spell_flags) && !r->freq_innate) {
 		/* Set frequency to the lowest found value */
 		r->freq_innate = 4;
 	}
 
 	/* Make sure non-innate frequency is set if necessary */
-	rsf_copy(current_flags, r->spell_flags);
-	create_mon_spell_mask(test_flags, RST_BREATH, RST_INNATE, RST_NONE);
-	rsf_diff(current_flags, test_flags);
-	if (!rsf_is_empty(current_flags) && !r->freq_spell) {
+	if (rsf_is_inter(non_innate_mask, r->spell_flags) && !r->freq_spell) {
 		/* Set frequency to the lowest found value */
 		r->freq_spell = 4;
 	}

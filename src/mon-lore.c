@@ -306,14 +306,27 @@ void lore_learn_flag_if_visible(struct monster_lore *lore, const struct monster 
  */
 void lore_update(const struct monster_race *race, struct monster_lore *lore)
 {
+	static bitflag obv_mask[RF_SIZE], obv_at_death_mask[RF_SIZE];
+	static bool initialize_masks = true;
 	int i;
-	bitflag mask[RF_SIZE];
 
 	if (!race || !lore) return;
 
+	/*
+	 * These masks are fixed once the code is compiled.  Without the
+	 * infrastructure to compile in the result, settle for computing them
+	 * once at runtime and memorizing the result for later calls.
+	 */
+	if (initialize_masks) {
+		create_mon_flag_mask(obv_mask, RFT_OBV, RFT_MAX);
+		create_mon_flag_mask(obv_at_death_mask, RFT_RACE_A, RFT_RACE_N,
+			RFT_DROP, RFT_MAX);
+		rf_on(obv_at_death_mask, RF_FORCE_DEPTH);
+		initialize_masks = false;
+	}
+
 	/* Assume some "obvious" flags */
-	create_mon_flag_mask(mask, RFT_OBV, RFT_MAX);
-	rf_union(lore->flags, mask);
+	rf_union(lore->flags, obv_mask);
 
 	/* Blows */
 	for (i = 0; i < z_info->mon_blows_max; i++) {
@@ -331,9 +344,7 @@ void lore_update(const struct monster_race *race, struct monster_lore *lore)
 	if ((lore->tkills > 0) || lore->all_known) {
 		lore->armour_known = true;
 		lore->drop_known = true;
-		create_mon_flag_mask(mask, RFT_RACE_A, RFT_RACE_N, RFT_DROP, RFT_MAX);
-		rf_union(lore->flags, mask);
-		rf_on(lore->flags, RF_FORCE_DEPTH);
+		rf_union(lore->flags, obv_at_death_mask);
 	}
 
 	/* Awareness */
@@ -966,23 +977,36 @@ void lore_append_movement(textblock *tb, const struct monster_race *race,
 						  const struct monster_lore *lore,
 						  bitflag known_flags[RF_SIZE])
 {
+	static bitflag adj_mask[RF_SIZE], noun_mask[RF_SIZE];
+	static bool initialize_masks = true;
 	int f;
 	bitflag flags[RF_SIZE];
 
 	assert(tb && race && lore);
 
+	/*
+	 * These masks are fixed once the code is compiled.  Without the
+	 * infrastructure to compile in the result, settle for computing them
+	 * once at runtime and memorizing the result for later calls.
+	 */
+	if (initialize_masks) {
+		create_mon_flag_mask(adj_mask, RFT_RACE_A, RFT_MAX);
+		create_mon_flag_mask(noun_mask, RFT_RACE_N, RFT_MAX);
+		initialize_masks = false;
+	}
+
 	textblock_append(tb, "This");
 
 	/* Get adjectives */
-	create_mon_flag_mask(flags, RFT_RACE_A, RFT_MAX);
-	rf_inter(flags, race->flags);
+	rf_copy(flags, race->flags);
+	rf_inter(flags, adj_mask);
 	for (f = rf_next(flags, FLAG_START); f; f = rf_next(flags, f + 1)) {
 		textblock_append_c(tb, COLOUR_L_BLUE, " %s", describe_race_flag(f));
 	}
 
 	/* Get noun */
-	create_mon_flag_mask(flags, RFT_RACE_N, RFT_MAX);
-	rf_inter(flags, race->flags);
+	rf_copy(flags, race->flags);
+	rf_inter(flags, noun_mask);
 	f = rf_next(flags, FLAG_START);
 	if (f) {
 		textblock_append_c(tb, COLOUR_L_BLUE, " %s", describe_race_flag(f));
@@ -1281,6 +1305,10 @@ void lore_append_abilities(textblock *tb, const struct monster_race *race,
 						   const struct monster_lore *lore,
 						   bitflag known_flags[RF_SIZE])
 {
+	static bitflag alter_mask[RF_SIZE], det_mask[RF_SIZE];
+	static bitflag vuln_mask[RF_SIZE], vuln_i_mask[RF_SIZE];
+	static bitflag res_mask[RF_SIZE], prot_mask[RF_SIZE];
+	static bool initialize_masks = true;
 	int flag;
 	char start[40];
 	const char *initial_pronoun;
@@ -1290,20 +1318,35 @@ void lore_append_abilities(textblock *tb, const struct monster_race *race,
 
 	assert(tb && race && lore);
 
+	/*
+	 * These masks are fixed once the code is compiled.  Without the
+	 * infrastructure to compile in the result, settle for computing them
+	 * once at runtime and memorizing the result for later calls.
+	 */
+	if (initialize_masks) {
+		create_mon_flag_mask(alter_mask, RFT_ALTER, RFT_MAX);
+		create_mon_flag_mask(det_mask, RFT_DET, RFT_MAX);
+		create_mon_flag_mask(vuln_mask, RFT_VULN, RFT_MAX);
+		create_mon_flag_mask(vuln_i_mask, RFT_VULN_I, RFT_MAX);
+		create_mon_flag_mask(res_mask, RFT_RES, RFT_MAX);
+		create_mon_flag_mask(prot_mask, RFT_PROT, RFT_MAX);
+		initialize_masks = false;
+	}
+
 	/* Extract a gender (if applicable) and get a pronoun for the start of
 	 * sentences */
 	msex = lore_monster_sex(race);
 	initial_pronoun = lore_pronoun_nominative(msex, true);
 
 	/* Describe environment-shaping abilities. */
-	create_mon_flag_mask(current_flags, RFT_ALTER, RFT_MAX);
-	rf_inter(current_flags, known_flags);
+	rf_copy(current_flags, known_flags);
+	rf_inter(current_flags, alter_mask);
 	strnfmt(start, sizeof(start), "%s can ", initial_pronoun);
 	lore_append_clause(tb, current_flags, COLOUR_WHITE, start, "and", ".  ");
 
 	/* Describe detection traits */
-	create_mon_flag_mask(current_flags, RFT_DET, RFT_MAX);
-	rf_inter(current_flags, known_flags);
+	rf_copy(current_flags, known_flags);
+	rf_inter(current_flags, det_mask);
 	strnfmt(start, sizeof(start), "%s is ", initial_pronoun);
 	lore_append_clause(tb, current_flags, COLOUR_WHITE, start, "and", ".  ");
 
@@ -1336,7 +1379,8 @@ void lore_append_abilities(textblock *tb, const struct monster_race *race,
 	}
 
 	/* Collect susceptibilities */
-	create_mon_flag_mask(current_flags, RFT_VULN, RFT_VULN_I, RFT_MAX);
+	rf_copy(current_flags, vuln_mask);
+	rf_union(current_flags, vuln_i_mask);
 	rf_inter(current_flags, known_flags);
 	strnfmt(start, sizeof(start), "%s is hurt by ", initial_pronoun);
 	lore_append_clause(tb, current_flags, COLOUR_VIOLET, start, "and", "");
@@ -1345,13 +1389,12 @@ void lore_append_abilities(textblock *tb, const struct monster_race *race,
 	}
 
 	/* Collect immunities and resistances */
-	create_mon_flag_mask(current_flags, RFT_RES, RFT_MAX);
-	rf_inter(current_flags, known_flags);
+	rf_copy(current_flags, known_flags);
+	rf_inter(current_flags, res_mask);
 
 	/* Note lack of vulnerability as a resistance */
-	create_mon_flag_mask(test_flags, RFT_VULN, RFT_MAX);
-	for (flag = rf_next(test_flags, FLAG_START); flag;
-		 flag = rf_next(test_flags, flag + 1)) {
+	for (flag = rf_next(vuln_mask, FLAG_START); flag;
+			flag = rf_next(vuln_mask, flag + 1)) {
 		if (rf_has(lore->flags, flag) && !rf_has(known_flags, flag)) {
 			rf_on(current_flags, flag);
 		}
@@ -1368,17 +1411,16 @@ void lore_append_abilities(textblock *tb, const struct monster_race *race,
 
 	/* Collect known but average susceptibilities */
 	rf_wipe(current_flags);
-	create_mon_flag_mask(test_flags, RFT_RES, RFT_MAX);
-	for (flag = rf_next(test_flags, FLAG_START); flag;
-		 flag = rf_next(test_flags, flag + 1)) {
+	for (flag = rf_next(res_mask, FLAG_START); flag;
+			flag = rf_next(res_mask, flag + 1)) {
 		if (rf_has(lore->flags, flag) && !rf_has(known_flags, flag)) {
 			rf_on(current_flags, flag);
 		}
 	}
 
 	/* Vulnerabilities need to be specifically removed */
-	create_mon_flag_mask(test_flags, RFT_VULN_I, RFT_MAX);
-	rf_inter(test_flags, known_flags);
+	rf_copy(test_flags, known_flags);
+	rf_inter(test_flags, vuln_i_mask);
 	for (flag = rf_next(test_flags, FLAG_START); flag;
 		 flag = rf_next(test_flags, flag + 1)) {
 		int susc_flag;
@@ -1406,8 +1448,8 @@ void lore_append_abilities(textblock *tb, const struct monster_race *race,
 	}
 
 	/* Collect non-effects */
-	create_mon_flag_mask(current_flags, RFT_PROT, RFT_MAX);
-	rf_inter(current_flags, known_flags);
+	rf_copy(current_flags, known_flags);
+	rf_inter(current_flags, prot_mask);
 	if (prev) {
 		my_strcpy(start, ", and cannot be ", sizeof(start));
 	} else {
@@ -1501,15 +1543,28 @@ void lore_append_spells(textblock *tb, const struct monster_race *race,
 						const struct monster_lore *lore,
 						bitflag known_flags[RF_SIZE])
 {
+	static bitflag innate_mask[RSF_SIZE], breath_mask[RSF_SIZE];
+	static bool initialize_masks = true;
 	monster_sex_t msex = MON_SEX_NEUTER;
 	bool innate = false;
 	bool breath = false;
 	const char *initial_pronoun;
 	bool know_hp;
-	bitflag current_flags[RSF_SIZE], test_flags[RSF_SIZE];
+	bitflag current_flags[RSF_SIZE];
 	const struct monster_race *old_ref;
 
 	assert(tb && race && lore);
+
+	/*
+	 * These masks are fixed once the code is compiled.  Without the
+	 * infrastructure to compile in the result, settle for computing them
+	 * once at runtime and memorizing the result for later calls.
+	 */
+	if (initialize_masks) {
+		create_mon_spell_mask(innate_mask, RST_INNATE, RST_NONE);
+		create_mon_spell_mask(breath_mask, RST_BREATH, RST_NONE);
+		initialize_masks = false;
+	}
 
 	/* Set the race for expressions in the spells. */
 	old_ref = ref_race;
@@ -1523,10 +1578,9 @@ void lore_append_spells(textblock *tb, const struct monster_race *race,
 	initial_pronoun = lore_pronoun_nominative(msex, true);
 
 	/* Collect innate (non-breath) attacks */
-	create_mon_spell_mask(current_flags, RST_INNATE, RST_NONE);
-	rsf_inter(current_flags, lore->spell_flags);
-	create_mon_spell_mask(test_flags, RST_BREATH, RST_NONE);
-	rsf_diff(current_flags, test_flags);
+	rsf_copy(current_flags, lore->spell_flags);
+	rsf_inter(current_flags, innate_mask);
+	rsf_diff(current_flags, breath_mask);
 	if (!rsf_is_empty(current_flags)) {
 		textblock_append(tb, "%s may ", initial_pronoun);
 		lore_append_spell_clause(tb, current_flags, know_hp, race, "or", "");
@@ -1534,8 +1588,8 @@ void lore_append_spells(textblock *tb, const struct monster_race *race,
 	}
 
 	/* Collect breaths */
-	create_mon_spell_mask(current_flags, RST_BREATH, RST_NONE);
-	rsf_inter(current_flags, lore->spell_flags);
+	rsf_copy(current_flags, lore->spell_flags);
+	rsf_inter(current_flags, breath_mask);
 	if (!rsf_is_empty(current_flags)) {
 		if (innate) {
 			textblock_append(tb, ", and may ");
@@ -1569,10 +1623,10 @@ void lore_append_spells(textblock *tb, const struct monster_race *race,
 		textblock_append(tb, ".  ");
 	}
 
-	/* Collect spell information */
+	/* Collect other spell information */
 	rsf_copy(current_flags, lore->spell_flags);
-	create_mon_spell_mask(test_flags, RST_BREATH, RST_INNATE, RST_NONE);
-	rsf_diff(current_flags, test_flags);
+	rsf_diff(current_flags, innate_mask);
+	rsf_diff(current_flags, breath_mask);
 	if (!rsf_is_empty(current_flags)) {
 		/* Intro */
 		textblock_append(tb, "%s may ", initial_pronoun);
