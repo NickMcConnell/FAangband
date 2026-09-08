@@ -308,20 +308,20 @@ void text_out_to_screen(uint8_t a, const char *str)
 
 		/* Wrap words as needed */
 		if ((x >= wrap - 1) && (ch != L' ')) {
-			int i, n = 0;
-
-			int av[256];
-			wchar_t cv[256];
+			int i, j, n = 0;
+			int av[40];
+			wchar_t cv[40];
 
 			/* Wrap word */
 			if (x < wrap) {
 				/* Scan existing text */
-				for (i = wrap - 2; i >= 0; i--) {
+				for (i = wrap - 2, j = (int)N_ELEMENTS(av) - 1;
+						i >= 0 && j >= 0; i--, j--) {
 					/* Grab existing attr/char */
-					Term_what(i, y, &av[i], &cv[i]);
+					Term_what(i, y, &av[j], &cv[j]);
 
 					/* Break on space */
-					if (cv[i] == L' ') break;
+					if (cv[j] == L' ') break;
 
 					/* Track current word */
 					n = i;
@@ -345,12 +345,22 @@ void text_out_to_screen(uint8_t a, const char *str)
 			Term_gotoxy(x, y);
 
 			/* Wrap the word (if any) */
-			for (i = n; i < wrap - 1; i++) {
+			for (i = n, j = (int)N_ELEMENTS(av) + 1 - wrap + n;
+					i < wrap - 1; i++, j++) {
 				/* Dump */
-				Term_addch(av[i], cv[i]);
+				Term_addch(av[j], cv[j]);
+			}
 
-				/* Advance (no wrap) */
-				if (++x > wrap) x = wrap;
+			/*
+			 * Advance (no wrap) after adding wrap - 1 - n
+			 * characters
+			 */
+			if (wrap - 1 > n) {
+				if (x <= n + 1) {
+					x += wrap - 1 - n;
+				} else {
+					x = wrap;
+				}
 			}
 		}
 
