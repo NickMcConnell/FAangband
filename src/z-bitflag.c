@@ -335,8 +335,8 @@ bool flag_inter(bitflag *flags1, const bitflag *flags2, const size_t size)
 	bool delta = false;
 
 	for (i = 0; i < size; i++) {
-		/* !flag_is_equal() */
-		if (!(flags1[i] == flags2[i])) delta = true;
+		/* !flag_is_subset(flags2, flags1, ...) */
+		if (flags1[i] & ~flags2[i]) delta = true;
 
 		flags1[i] &= flags2[i];
 	}
