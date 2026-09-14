@@ -1237,7 +1237,13 @@ static enum parser_error parse_monster_depth(struct parser *p) {
 	if (!r)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
 	r->level = parser_getint(p, "level");
-
+	/*
+	 * Since experience calculations use r->mexp scaled by r->level, reject
+	 * values that are less than zero or are greater than z_info->max_depth.
+	 */
+	if (r->level < 0 || r->level > z_info->max_depth) {
+		return PARSE_ERROR_INVALID_VALUE;
+	}
 	/* Level is default spell power */
 	r->spell_power = r->level;
 	return PARSE_ERROR_NONE;
@@ -1258,6 +1264,13 @@ static enum parser_error parse_monster_experience(struct parser *p) {
 	if (!r)
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
 	r->mexp = parser_getint(p, "mexp");
+	/*
+	 * Reject negative experience point values or ones that when scaled
+	 * by a level (at most z_info->max_depth) would overflow.
+	 */
+	if (r->mexp < 0 || r->mexp > INT_MAX / MAX(1, z_info->max_depth)) {
+		return PARSE_ERROR_INVALID_VALUE;
+	}
 	return PARSE_ERROR_NONE;
 }
 

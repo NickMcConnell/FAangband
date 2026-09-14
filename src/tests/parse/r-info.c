@@ -26,6 +26,7 @@ int setup_tests(void **state) {
 	int i;
 
 	z_info = mem_zalloc(sizeof(struct angband_constants));
+	z_info->max_depth = 128;
 	z_info->max_sight = 20;
 	/*
 	 * Initialize just enough of the blow methods and effects so the tests
@@ -411,6 +412,15 @@ static int test_depth0(void *state) {
 	ok;
 }
 
+static int test_depth_bad0(void *state) {
+	enum parser_error r = parser_parse(state, "depth:-1");
+
+	eq(r, PARSE_ERROR_INVALID_VALUE);
+	r = parser_parse(state, "depth:129");
+	eq(r, PARSE_ERROR_INVALID_VALUE);
+	ok;
+}
+
 static int test_rarity0(void *state) {
 	enum parser_error r = parser_parse(state, "rarity:11");
 	struct monster_race *mr;
@@ -430,6 +440,15 @@ static int test_mexp0(void *state) {
 	mr = parser_priv(state);
 	require(mr);
 	eq(mr->mexp, 4);
+	ok;
+}
+
+static int test_mexp_bad0(void *state) {
+	enum parser_error r = parser_parse(state, "experience:-1");
+
+	eq(r, PARSE_ERROR_INVALID_VALUE);
+	r = parser_parse(state, "experience:16909320");
+	eq(r, PARSE_ERROR_INVALID_VALUE);
 	ok;
 }
 
@@ -1039,8 +1058,10 @@ struct test tests[] = {
 	{ "ac0", test_ac0 },
 	{ "sleep0", test_sleep0 },
 	{ "depth0", test_depth0 },
+	{ "depth_bad0", test_depth_bad0 },
 	{ "rarity0", test_rarity0 },
 	{ "mexp0", test_mexp0 },
+	{ "mexp_bad0", test_mexp_bad0 },
 	{ "blow0", test_blow0 },
 	{ "blow1", test_blow1 },
 	{ "blow_bad0", test_blow_bad0 },

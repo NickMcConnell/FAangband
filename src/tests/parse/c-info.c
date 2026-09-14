@@ -1207,12 +1207,25 @@ static int test_desc0(void *state) {
 
 static int test_spell_bad0(void *state) {
 	struct parser *p = (struct parser*) state;
+	enum parser_error r;
+
+	/*
+	 * Try some spells with bad values.  These should not count towards
+	 * the maximum of spells in the book.
+	 */
+	r = parser_parse(p, "spell:Spell with Bad Level:-1:5:10:1");
+	eq(r, PARSE_ERROR_INVALID_VALUE);
+	r = parser_parse(p, "spell:Spell 1 with Bad Exp:3:6:2:-1");
+	eq(r, PARSE_ERROR_INVALID_VALUE);
+	r = parser_parse(p, "spell:Spell 2 with Bad Exp:30:50:35:71582789");
+	eq(r, PARSE_ERROR_INVALID_VALUE);
+
 	/*
 	 * test_book0() specified a maximum of two spells.  One was used in
 	 * test_spell0().  Use up the other here.  The one after that should
 	 * trigger an error.
 	 */
-	enum parser_error r = parser_parse(p, "spell:Test Spell 1:2:2:22:4");
+	r = parser_parse(p, "spell:Test Spell 1:2:2:22:4");
 
 	eq(r, PARSE_ERROR_NONE);
 	r = parser_parse(p, "spell:Bad Spell:3:2:24:4");

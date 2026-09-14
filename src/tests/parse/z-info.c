@@ -8,6 +8,7 @@
 
 
 int setup_tests(void **state) {
+	Rand_init();
 	*state = constants_parser.init();
 	return !*state;
 }
@@ -90,6 +91,22 @@ static int test_baddirective(void *state) {
 		ok; \
 	}
 
+#define TEST_CONSTANT_WITH_MAX(l,u,section,max) \
+	static int test_##l(void *s) { \
+		struct angband_constants *m = parser_priv(s); \
+		char buf[64]; \
+		errr r; \
+		int v = randint0(max + 1); \
+		snprintf(buf, sizeof(buf), "%s:%s:%d", section, u, v); \
+		r = parser_parse(s, buf); \
+		eq(m->l, v); \
+		eq(r, 0); \
+		snprintf(buf, sizeof(buf), "%s:%s:%d", section, u, max + 1); \
+		r = parser_parse(s, buf); \
+		eq(r, PARSE_ERROR_INVALID_VALUE); \
+		ok; \
+	}
+
 TEST_CONSTANT(level_monster_max, "monsters", "level-max")
 
 TEST_CONSTANT(alloc_monster_chance, "chance", "mon-gen")
@@ -104,7 +121,7 @@ TEST_CONSTANT(monster_group_dist, "group-dist", "mon-gen")
 
 TEST_CONSTANT(glyph_hardness, "break-glyph", "mon-play")
 TEST_CONSTANT(repro_monster_rate, "mult-rate", "mon-play")
-TEST_CONSTANT(life_drain_percent, "life-drain", "mon-play")
+TEST_CONSTANT_WITH_MAX(life_drain_percent, "life-drain", "mon-play", 100)
 TEST_CONSTANT(flee_range, "flee-range", "mon-play")
 TEST_CONSTANT(turn_range, "turn-range", "mon-play")
 

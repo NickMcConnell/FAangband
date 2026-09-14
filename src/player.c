@@ -207,18 +207,6 @@ bool player_stat_dec(struct player *p, int stat, bool permanent)
 
 static void adjust_level(struct player *p, bool verbose)
 {
-	if (p->exp < 0)
-		p->exp = 0;
-
-	if (p->max_exp < 0)
-		p->max_exp = 0;
-
-	if (p->exp > PY_MAX_EXP)
-		p->exp = PY_MAX_EXP;
-
-	if (p->max_exp > PY_MAX_EXP)
-		p->max_exp = PY_MAX_EXP;
-
 	if (p->exp > p->max_exp)
 		p->max_exp = p->exp;
 
@@ -272,14 +260,35 @@ static void adjust_level(struct player *p, bool verbose)
 
 void player_exp_gain(struct player *p, int32_t amount)
 {
+	if (amount < 0) {
+		msg("That triggered a negative experience gain.  Please "
+			"report this bug.");
+		return;
+	}
+	assert(p->exp >= 0 && p->exp <= p->max_exp && p->max_exp <= PY_MAX_EXP);
+	if (amount > PY_MAX_EXP - p->exp) {
+		amount = PY_MAX_EXP - p->exp;
+	}
 	p->exp += amount;
-	if (p->exp < p->max_exp)
-		p->max_exp += amount / 10;
+	if (p->exp < p->max_exp) {
+		int32_t adj = amount / 10;
+
+		if (adj > PY_MAX_EXP - p->max_exp) {
+			adj = PY_MAX_EXP - p->max_exp;
+		}
+		p->max_exp += adj;
+	}
 	adjust_level(p, true);
 }
 
 void player_exp_lose(struct player *p, int32_t amount, bool permanent)
 {
+	if (amount < 0) {
+		msg("That triggered a negative experience drain.  Please "
+			"report this bug.");
+		return;
+	}
+	assert(p->exp >= 0 && p->exp <= p->max_exp && p->max_exp <= PY_MAX_EXP);
 	if (p->exp < amount)
 		amount = p->exp;
 	p->exp -= amount;

@@ -861,6 +861,18 @@ int rd_player(void)
 	rd_s32b(&player->exp);
 	rd_u16b(&player->exp_frac);
 
+	/* Verify experience. */
+	if (player->max_exp < 0 || player->max_exp > PY_MAX_EXP) {
+		note(format("Invalid player maximum experience (%ld).\n",
+			(long)player->max_exp));
+		return -1;
+	}
+	if (player->exp < 0 || player->exp > player->max_exp) {
+		note(format("Invalid player experience (%ld).\n",
+			(long)player->exp));
+		return -1;
+	}
+
 	rd_s16b(&player->lev);
 
 	/* Verify player level */

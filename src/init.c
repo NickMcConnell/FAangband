@@ -527,18 +527,22 @@ static enum parser_error parse_constants_mon_play(struct parser *p) {
 	if (value < 0)
 		return PARSE_ERROR_INVALID_VALUE;
 
-	if (streq(label, "break-glyph"))
+	if (streq(label, "break-glyph")) {
 		z->glyph_hardness = value;
-	else if (streq(label, "mult-rate"))
+	} else if (streq(label, "mult-rate")) {
 		z->repro_monster_rate = value;
-	else if (streq(label, "life-drain"))
+	} else if (streq(label, "life-drain")) {
+		if (value > 100) {
+			return PARSE_ERROR_INVALID_VALUE;
+		}
 		z->life_drain_percent = value;
-	else if (streq(label, "flee-range"))
+	} else if (streq(label, "flee-range")) {
 		z->flee_range = value;
-	else if (streq(label, "turn-range"))
+	} else if (streq(label, "turn-range")) {
 		z->turn_range = value;
-	else
+	} else {
 		return PARSE_ERROR_UNDEFINED_DIRECTIVE;
+	}
 
 	return PARSE_ERROR_NONE;
 }
@@ -4056,6 +4060,7 @@ static enum parser_error parse_class_spell(struct parser *p) {
 	struct player_class *c = parser_priv(p);
 	struct class_book *book;
 	struct class_spell *spell;
+	int slevel, sexp;
 
 	if (!c) {
 		return PARSE_ERROR_MISSING_RECORD_HEADER;
@@ -4075,16 +4080,38 @@ static enum parser_error parse_class_spell(struct parser *p) {
 		return PARSE_ERROR_TOO_MANY_ENTRIES;
 	}
 	assert(book->spells && book->num_spells >= 0);
+
+	/*
+	 * Enforce checks on some values, before incrementing spell counts
+	 * and assigning names.
+	 */
+	/*
+	 * Since the spell level is used to scale the experience gained when
+	 * the spell is first cast, reject negative levels.
+	 */
+	slevel = parser_getint(p, "level");
+	if (slevel < 0) {
+		return PARSE_ERROR_INVALID_VALUE;
+	}
+	/*
+	 * Reject negative experience gained for first cast or experience
+	 * values that would overflow when scaled by the level.
+	 */
+	sexp = parser_getint(p, "exp");
+	if (sexp < 0 || sexp > INT_MAX / MAX(1, slevel)) {
+		return PARSE_ERROR_INVALID_VALUE;
+	}
+
 	spell = &book->spells[book->num_spells];
 	spell->realm = book->realm;
 	spell->name = string_make(parser_getsym(p, "name"));
 	spell->sidx = c->magic.total_spells;
 	c->magic.total_spells++;
 	spell->bidx = c->magic.num_books - 1;
-	spell->slevel = parser_getint(p, "level");
+	spell->slevel = slevel;
 	spell->smana = parser_getint(p, "mana");
 	spell->sfail = parser_getint(p, "fail");
-	spell->sexp = parser_getint(p, "exp");
+	spell->sexp = sexp;
 	++book->num_spells;
 	return PARSE_ERROR_NONE;
 }
