@@ -285,7 +285,7 @@ bool monster_loves_archery(const struct monster *mon)
 		initialize_mask = false;
 	}
 	if (!rsf_is_inter(archery_mask, mon->race->spell_flags)) return false;
-	return (mon->race->freq_innate < 4) ? true : false;
+	return (mon->race->freq_innate > 25) ? true : false;
 }
 
 
