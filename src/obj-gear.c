@@ -1009,7 +1009,7 @@ void inven_wield(struct object *obj, int slot)
 	/* Sticky flag geats a special mention */
 	if (of_has(wielded->flags, OF_STICKY)) {
 		/* Warn the player */
-		msgt(MSG_CURSED, "Oops! It feels deathly cold!");
+		msgt(MSG_CURSED, "Oops!  It feels deathly cold!");
 	}
 
 	/* Check to see if a set item is being wielded */

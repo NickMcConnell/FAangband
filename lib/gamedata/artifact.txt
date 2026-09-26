@@ -901,7 +901,7 @@ brand:COLD_3
 slay:UNDEAD_3
 desc:A thin spike of thrice-forged steel caps a straight silvan shaft cut from
 desc: a legendary tree, and spells to break the wills of the undead and strike
-desc: cold into the breasts of your enemies lay upon this perfectly balanced
+desc: cold into the breasts of your enemies lie upon this perfectly balanced
 desc: spear.
 
 name:of Boldog
@@ -2242,6 +2242,6 @@ values:STR[10] | INT[10] | WIS[10] | DEX[10] | CON[10] | INFRA[10]
 values:LIGHT[1]
 values:RES_ACID[60] | RES_ELEC[60] | RES_FIRE[60] | RES_COLD[60]
 values:RES_POIS[60] | RES_LIGHT[60] | RES_DARK[60] | RES_NEXUS[60]
-desc:Containing much of the power of he who once was mightiest among the Ainur,
+desc:Containing much of the power of him who once was mightiest among the Ainur,
 desc: this plain iron crown has mounted upon it the two remaining Silmarils,
 desc: greatest treasures of Middle-Earth.

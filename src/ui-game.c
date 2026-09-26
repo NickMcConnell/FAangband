@@ -1084,7 +1084,7 @@ bool save_game_checked(void)
 
 	/* Save monster memory to user directory */
 	if (!lore_save("lore.txt")) {
-		msg("lore save failed!");
+		msg("Lore save failed!");
 		event_signal(EVENT_MESSAGE_FLUSH);
 	}
 
@@ -1146,7 +1146,7 @@ void close_game(bool prompt_failed_save)
 			if (!prompt_failed_save || terms_disconnecting
 					|| !get_check("Saving failed.  Try again? ")) {
 				prompting = false;
-				msg("death save failed!");
+				msg("Death save failed!");
 				event_signal(EVENT_MESSAGE_FLUSH);
 			}
 		}

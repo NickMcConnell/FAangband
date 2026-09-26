@@ -223,7 +223,7 @@ flags:SHOP | LOS | PROJECT | PASSABLE | PERMANENT | INTERESTING | EASY
 info:8:0
 look-prefix:the entrance to the
 look-in-preposition:at
-desc:Your safe piece of Middle Earth, and the only place you can store goods
+desc:Your safe piece of Middle-earth, and the only place you can store goods
 desc: apart from on your person.
 
 name:Travelling Merchant

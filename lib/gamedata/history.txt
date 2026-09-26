@@ -296,7 +296,7 @@ phrase:You have green eyes,
 chart:50:51:90
 phrase:You have blue eyes, 
 chart:50:51:100
-phrase:You have blue-gray eyes, 
+phrase:You have blue-grey eyes, 
 
 chart:51:52:70
 phrase:straight 
