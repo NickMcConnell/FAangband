@@ -489,7 +489,7 @@ desc:hastens you for d75+75 turns
 name:RAGE_BLESS_RESIST
 aim:0
 power:21
-msg:{name} glow{s} many colors...
+msg:{name} glow{s} many colours...
 effect:HEAL_HP
 dice:30
 effect:CURE:AFRAID
@@ -1233,8 +1233,6 @@ effect:TIMED_INC:OPP_COLD
 effect:CLEAR_VALUE
 effect:HEAL_HP
 dice:200
-desc:grants temporary resistance to fire and cold, cures 200HP, but also makes
-desc: you hallucinate wildly
 
 name:SHROOM_DEBILITY
 aim:0
