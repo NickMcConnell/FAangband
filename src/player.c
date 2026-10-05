@@ -207,12 +207,13 @@ bool player_stat_dec(struct player *p, int stat, bool permanent)
 
 static void adjust_level(struct player *p, bool verbose)
 {
+	int16_t old_lev = p->lev, old_max_lev = p->max_lev;
+
 	if (p->exp > p->max_exp)
 		p->max_exp = p->exp;
 
+	/* Experience values changed by caller and above:  request redraw */
 	p->upkeep->redraw |= PR_EXP;
-
-	handle_stuff(p);
 
 	while ((p->lev > 1) && (p->exp < player_exp[p->lev - 2])) {
 		p->lev--;
@@ -253,8 +254,12 @@ static void adjust_level(struct player *p, bool verbose)
 		p->max_lev++;
 	}
 
-	p->upkeep->update |= (PU_BONUS | PU_HP | PU_SPELLS);
-	p->upkeep->redraw |= (PR_LEV | PR_TITLE | PR_EXP | PR_STATS);
+	if (p->lev != old_lev) {
+		p->upkeep->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
+		p->upkeep->redraw |= (PR_LEV | PR_TITLE);
+	} else if (p->max_lev != old_max_lev) {
+		p->upkeep->redraw |= (PR_LEV);
+	}
 	handle_stuff(p);
 }
 
