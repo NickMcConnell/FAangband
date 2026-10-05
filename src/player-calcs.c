@@ -3132,7 +3132,8 @@ void redraw_stuff(struct player *p)
 	if (!map_is_visible()) return;
 
 	/*
-	 * Do any plotting, etc. delayed from earlier - this set of updates
+	 * Do any plotting, etc. delayed from earlier.  Takes care of
+	 * PR_REFRESH_MAP which is not handled above.  This set of updates
 	 * is over.
 	 */
 	event_signal(EVENT_END);
